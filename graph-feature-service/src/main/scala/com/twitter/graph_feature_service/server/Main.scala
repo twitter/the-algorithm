@@ -1,56 +1,56 @@
-package com.twitter.graph_feature_service.server
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr
 
-import com.google.inject.Module
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters.{
-  AccessLoggingFilter,
-  LoggingMDCFilter,
-  StatsFilter,
-  ThriftMDCFilter,
-  TraceIdMDCFilter
+import com.googlelon.injelonct.Modulelon
+import com.twittelonr.finatra.deloncidelonr.modulelons.DeloncidelonrModulelon
+import com.twittelonr.finatra.mtls.thriftmux.Mtls
+import com.twittelonr.finatra.thrift.ThriftSelonrvelonr
+import com.twittelonr.finatra.thrift.filtelonrs.{
+  AccelonssLoggingFiltelonr,
+  LoggingMDCFiltelonr,
+  StatsFiltelonr,
+  ThriftMDCFiltelonr,
+  TracelonIdMDCFiltelonr
 }
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.graph_feature_service.server.controllers.ServerController
-import com.twitter.graph_feature_service.server.handlers.ServerWarmupHandler
-import com.twitter.graph_feature_service.server.modules.{
-  GetIntersectionStoreModule,
-  GraphFeatureServiceWorkerClientsModule,
-  ServerFlagsModule
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsThriftWelonbFormsModulelon
+import com.twittelonr.finatra.thrift.routing.ThriftRoutelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.controllelonrs.SelonrvelonrControllelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.handlelonrs.SelonrvelonrWarmupHandlelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.modulelons.{
+  GelontIntelonrselonctionStorelonModulelon,
+  GraphFelonaturelonSelonrvicelonWorkelonrClielonntsModulelon,
+  SelonrvelonrFlagsModulelon
 }
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala
+import com.twittelonr.injelonct.thrift.modulelons.ThriftClielonntIdModulelon
 
-object Main extends ServerMain
+objelonct Main elonxtelonnds SelonrvelonrMain
 
-class ServerMain extends ThriftServer with Mtls {
+class SelonrvelonrMain elonxtelonnds ThriftSelonrvelonr with Mtls {
 
-  override val name = "graph_feature_service-server"
+  ovelonrridelon val namelon = "graph_felonaturelon_selonrvicelon-selonrvelonr"
 
-  override val modules: Seq[Module] = {
-    Seq(
-      ServerFlagsModule,
-      DeciderModule,
-      ThriftClientIdModule,
-      GraphFeatureServiceWorkerClientsModule,
-      GetIntersectionStoreModule,
-      new MtlsThriftWebFormsModule[thriftscala.Server.MethodPerEndpoint](this)
+  ovelonrridelon val modulelons: Selonq[Modulelon] = {
+    Selonq(
+      SelonrvelonrFlagsModulelon,
+      DeloncidelonrModulelon,
+      ThriftClielonntIdModulelon,
+      GraphFelonaturelonSelonrvicelonWorkelonrClielonntsModulelon,
+      GelontIntelonrselonctionStorelonModulelon,
+      nelonw MtlsThriftWelonbFormsModulelon[thriftscala.Selonrvelonr.MelonthodPelonrelonndpoint](this)
     )
   }
 
-  override def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[AccessLoggingFilter]
-      .filter[StatsFilter]
-      .add[ServerController]
+  ovelonrridelon delonf configurelonThrift(routelonr: ThriftRoutelonr): Unit = {
+    routelonr
+      .filtelonr[LoggingMDCFiltelonr]
+      .filtelonr[TracelonIdMDCFiltelonr]
+      .filtelonr[ThriftMDCFiltelonr]
+      .filtelonr[AccelonssLoggingFiltelonr]
+      .filtelonr[StatsFiltelonr]
+      .add[SelonrvelonrControllelonr]
   }
 
-  override protected def warmup(): Unit = {
-    handle[ServerWarmupHandler]()
+  ovelonrridelon protelonctelond delonf warmup(): Unit = {
+    handlelon[SelonrvelonrWarmupHandlelonr]()
   }
 }

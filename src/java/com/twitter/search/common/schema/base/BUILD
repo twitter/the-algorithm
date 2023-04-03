@@ -1,25 +1,25 @@
-# Library for Schema.java and other utilities with minimal dependencies.
+# Library for Schelonma.java and othelonr utilitielons with minimal delonpelonndelonncielons.
 java_library(
-    name = "base",
-    sources = ["*.java"],
+    namelon = "baselon",
+    sourcelons = ["*.java"],
     platform = "java8",
-    provides = artifact(
-        org = "com.twitter.search.common",
-        name = "schema-base",
-        repo = artifactory,
+    providelons = artifact(
+        org = "com.twittelonr.selonarch.common",
+        namelon = "schelonma-baselon",
+        relonpo = artifactory,
     ),
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "3rdparty/jvm/com/google/guava",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/codelon/findbugs:jsr305",
+        "3rdparty/jvm/com/googlelon/guava",
         "3rdparty/jvm/commons-lang",
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-common",
-        "3rdparty/jvm/org/apache/lucene:lucene-core",
-        "3rdparty/jvm/org/apache/lucene:lucene-facet",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "src/java/com/twitter/common/base",
-        "src/java/com/twitter/common/text/util:token-util",
-        "src/thrift/com/twitter/search/common:features-java",
-        "src/thrift/com/twitter/search/common:schema-java",
+        "3rdparty/jvm/org/apachelon/lucelonnelon:lucelonnelon-analyzelonrs-common",
+        "3rdparty/jvm/org/apachelon/lucelonnelon:lucelonnelon-corelon",
+        "3rdparty/jvm/org/apachelon/lucelonnelon:lucelonnelon-facelont",
+        "3rdparty/jvm/org/apachelon/thrift:libthrift",
+        "src/java/com/twittelonr/common/baselon",
+        "src/java/com/twittelonr/common/telonxt/util:tokelonn-util",
+        "src/thrift/com/twittelonr/selonarch/common:felonaturelons-java",
+        "src/thrift/com/twittelonr/selonarch/common:schelonma-java",
     ],
 )

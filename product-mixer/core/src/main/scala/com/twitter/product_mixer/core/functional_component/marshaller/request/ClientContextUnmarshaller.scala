@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.request
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonquelonst
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ClientContextUnmarshaller @Inject() () {
+@Singlelonton
+class ClielonntContelonxtUnmarshallelonr @Injelonct() () {
 
-  def apply(clientContext: t.ClientContext): ClientContext = {
-    ClientContext(
-      userId = clientContext.userId,
-      guestId = clientContext.guestId,
-      guestIdAds = clientContext.guestIdAds,
-      guestIdMarketing = clientContext.guestIdMarketing,
-      appId = clientContext.appId,
-      ipAddress = clientContext.ipAddress,
-      userAgent = clientContext.userAgent,
-      countryCode = clientContext.countryCode,
-      languageCode = clientContext.languageCode,
-      isTwoffice = clientContext.isTwoffice,
-      userRoles = clientContext.userRoles.map(_.toSet),
-      deviceId = clientContext.deviceId,
-      mobileDeviceId = clientContext.mobileDeviceId,
-      mobileDeviceAdId = clientContext.mobileDeviceAdId,
-      limitAdTracking = clientContext.limitAdTracking
+  delonf apply(clielonntContelonxt: t.ClielonntContelonxt): ClielonntContelonxt = {
+    ClielonntContelonxt(
+      uselonrId = clielonntContelonxt.uselonrId,
+      guelonstId = clielonntContelonxt.guelonstId,
+      guelonstIdAds = clielonntContelonxt.guelonstIdAds,
+      guelonstIdMarkelonting = clielonntContelonxt.guelonstIdMarkelonting,
+      appId = clielonntContelonxt.appId,
+      ipAddrelonss = clielonntContelonxt.ipAddrelonss,
+      uselonrAgelonnt = clielonntContelonxt.uselonrAgelonnt,
+      countryCodelon = clielonntContelonxt.countryCodelon,
+      languagelonCodelon = clielonntContelonxt.languagelonCodelon,
+      isTwofficelon = clielonntContelonxt.isTwofficelon,
+      uselonrRolelons = clielonntContelonxt.uselonrRolelons.map(_.toSelont),
+      delonvicelonId = clielonntContelonxt.delonvicelonId,
+      mobilelonDelonvicelonId = clielonntContelonxt.mobilelonDelonvicelonId,
+      mobilelonDelonvicelonAdId = clielonntContelonxt.mobilelonDelonvicelonAdId,
+      limitAdTracking = clielonntContelonxt.limitAdTracking
     )
   }
 }

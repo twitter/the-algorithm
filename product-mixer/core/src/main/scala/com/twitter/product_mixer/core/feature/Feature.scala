@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.core.feature
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon
 
 /**
- * A [[Feature]] is a single measurable or computable property of an entity.
+ * A [[Felonaturelon]] is a singlelon melonasurablelon or computablelon propelonrty of an elonntity.
  *
- * @note If a [[Feature]] is optional then the [[Value]] should be `Option[Value]`
+ * @notelon If a [[Felonaturelon]] is optional thelonn thelon [[Valuelon]] should belon `Option[Valuelon]`
  *
- * @note If a [[Feature]] is populated with a [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator]]
- *       and the hydration fails, a failure will be stored for the [[Feature]].
- *       If that [[Feature]] is accessed with [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.get]]
- *       then the stored exception will be thrown, essentially failing-closed.
- *       You can use [[FeatureWithDefaultOnFailure]] or [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.getOrElse]]
- *       instead to avoid these issues and instead fail-open.
- *       If correctly hydrating a Feature's value is essential to the request being correct,
- *       then you should fail-closed on failure to hydrate it by extending [[Feature]] directly.
+ * @notelon If a [[Felonaturelon]] is populatelond with a [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.FelonaturelonHydrator]]
+ *       and thelon hydration fails, a failurelon will belon storelond for thelon [[Felonaturelon]].
+ *       If that [[Felonaturelon]] is accelonsselond with [[com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap.gelont]]
+ *       thelonn thelon storelond elonxcelonption will belon thrown, elonsselonntially failing-closelond.
+ *       You can uselon [[FelonaturelonWithDelonfaultOnFailurelon]] or [[com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap.gelontOrelonlselon]]
+ *       instelonad to avoid thelonselon issuelons and instelonad fail-opelonn.
+ *       If correlonctly hydrating a Felonaturelon's valuelon is elonsselonntial to thelon relonquelonst beloning correlonct,
+ *       thelonn you should fail-closelond on failurelon to hydratelon it by elonxtelonnding [[Felonaturelon]] direlonctly.
  *
- *       This does not apply to [[Feature]]s from [[com.twitter.product_mixer.core.functional_component.transformer.FeatureTransformer]]
- *       which throw in the calling Pipeline instead of storing their failures.
+ *       This doelons not apply to [[Felonaturelon]]s from [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.FelonaturelonTransformelonr]]
+ *       which throw in thelon calling Pipelonlinelon instelonad of storing thelonir failurelons.
  *
- * @tparam Entity The type of entity that this feature works with. This could be a User, Tweet,
- *                Query, etc.
- * @tparam Value The type of the value of this feature.
+ * @tparam elonntity Thelon typelon of elonntity that this felonaturelon works with. This could belon a Uselonr, Twelonelont,
+ *                Quelonry, elontc.
+ * @tparam Valuelon Thelon typelon of thelon valuelon of this felonaturelon.
  */
-trait Feature[-Entity, Value] { self =>
-  override def toString: String = {
-    Feature.getSimpleName(self.getClass)
+trait Felonaturelon[-elonntity, Valuelon] { selonlf =>
+  ovelonrridelon delonf toString: String = {
+    Felonaturelon.gelontSimplelonNamelon(selonlf.gelontClass)
   }
 }
 
 /**
- * With a [[Feature]], if the [[com.twitter.product_mixer.core.functional_component.feature_hydrator.FeatureHydrator]] fails,
- * the failure will be caught by the platform and stored in the [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]].
- * Accessing a failed feature via [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.get()]]
- * will throw the exception that was caught while attempting to hydrate the feature. If there's a
- * reasonable default for a [[Feature]] to fail-open with, then throwing the exception at read time
- * can be prevented by defining a `defaultValue` via [[FeatureWithDefaultOnFailure]]. When accessing
- * a failed feature via [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.get()]]
- * for a [[FeatureWithDefaultOnFailure]], the `defaultValue` will be returned.
+ * With a [[Felonaturelon]], if thelon [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.FelonaturelonHydrator]] fails,
+ * thelon failurelon will belon caught by thelon platform and storelond in thelon [[com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap]].
+ * Accelonssing a failelond felonaturelon via [[com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap.gelont()]]
+ * will throw thelon elonxcelonption that was caught whilelon attelonmpting to hydratelon thelon felonaturelon. If thelonrelon's a
+ * relonasonablelon delonfault for a [[Felonaturelon]] to fail-opelonn with, thelonn throwing thelon elonxcelonption at relonad timelon
+ * can belon prelonvelonntelond by delonfining a `delonfaultValuelon` via [[FelonaturelonWithDelonfaultOnFailurelon]]. Whelonn accelonssing
+ * a failelond felonaturelon via [[com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap.gelont()]]
+ * for a [[FelonaturelonWithDelonfaultOnFailurelon]], thelon `delonfaultValuelon` will belon relonturnelond.
  *
  *
- * @note [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.getOrElse()]] can also be used
- *       to access a failed feature without throwing the exception, by defining the default via the
- *       [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap.getOrElse()]] method call
- *       instead of as part of the feature declaration.
- * @note This does not apply to [[FeatureWithDefaultOnFailure]]s from [[com.twitter.product_mixer.core.functional_component.transformer.FeatureTransformer]]
- *       which throw in the calling Pipeline instead of storing their failures.
+ * @notelon [[com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap.gelontOrelonlselon()]] can also belon uselond
+ *       to accelonss a failelond felonaturelon without throwing thelon elonxcelonption, by delonfining thelon delonfault via thelon
+ *       [[com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap.gelontOrelonlselon()]] melonthod call
+ *       instelonad of as part of thelon felonaturelon delonclaration.
+ * @notelon This doelons not apply to [[FelonaturelonWithDelonfaultOnFailurelon]]s from [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.FelonaturelonTransformelonr]]
+ *       which throw in thelon calling Pipelonlinelon instelonad of storing thelonir failurelons.
  *
- * @tparam Entity The type of entity that this feature works with. This could be a User, Tweet,
- *                Query, etc.
- * @tparam Value The type of the value of this feature.
+ * @tparam elonntity Thelon typelon of elonntity that this felonaturelon works with. This could belon a Uselonr, Twelonelont,
+ *                Quelonry, elontc.
+ * @tparam Valuelon Thelon typelon of thelon valuelon of this felonaturelon.
  */
-trait FeatureWithDefaultOnFailure[Entity, Value] extends Feature[Entity, Value] {
+trait FelonaturelonWithDelonfaultOnFailurelon[elonntity, Valuelon] elonxtelonnds Felonaturelon[elonntity, Valuelon] {
 
-  /** The default value a feature should return should it fail to be hydrated */
-  def defaultValue: Value
+  /** Thelon delonfault valuelon a felonaturelon should relonturn should it fail to belon hydratelond */
+  delonf delonfaultValuelon: Valuelon
 }
 
-trait ModelFeatureName { self: Feature[_, _] =>
-  def featureName: String
+trait ModelonlFelonaturelonNamelon { selonlf: Felonaturelon[_, _] =>
+  delonf felonaturelonNamelon: String
 }
 
-object Feature {
+objelonct Felonaturelon {
 
   /**
-   * Avoid `malformed class name` exceptions due to the presence of the `$` character
-   * Also strip off trailing $ signs for readability
+   * Avoid `malformelond class namelon` elonxcelonptions duelon to thelon prelonselonncelon of thelon `$` charactelonr
+   * Also strip off trailing $ signs for relonadability
    */
-  def getSimpleName[T](c: Class[T]): String = {
-    c.getName.stripSuffix("$").lastIndexOf("$") match {
-      case -1 => c.getSimpleName.stripSuffix("$")
-      case index => c.getName.substring(index + 1).stripSuffix("$")
+  delonf gelontSimplelonNamelon[T](c: Class[T]): String = {
+    c.gelontNamelon.stripSuffix("$").lastIndelonxOf("$") match {
+      caselon -1 => c.gelontSimplelonNamelon.stripSuffix("$")
+      caselon indelonx => c.gelontNamelon.substring(indelonx + 1).stripSuffix("$")
     }
   }
 }

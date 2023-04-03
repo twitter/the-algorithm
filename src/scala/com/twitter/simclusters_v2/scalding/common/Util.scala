@@ -1,305 +1,305 @@
-package com.twitter.simclusters_v2.scalding.common
+packagelon com.twittelonr.simclustelonrs_v2.scalding.common
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.databind.ObjectWriter
-import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import com.fasterxml.jackson.module.scala.ScalaObjectMapper
-import com.twitter.algebird.Aggregator
-import com.twitter.algebird.Moments
-import com.twitter.algebird.MultiAggregator
-import com.twitter.algebird.SetSizeAggregator
-import com.twitter.algebird.SketchMap
-import com.twitter.algebird.SketchMapParams
-import com.twitter.algebird.mutable.PriorityQueueMonoid
-import com.twitter.bijection.Injection
-import com.twitter.hashing.KeyHasher
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Stat
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.UniqueID
-import java.io.File
-import java.io.PrintWriter
-import scala.sys.process._
+import com.fastelonrxml.jackson.corelon.JsonGelonnelonrator
+import com.fastelonrxml.jackson.databind.ObjelonctMappelonr
+import com.fastelonrxml.jackson.databind.ObjelonctWritelonr
+import com.fastelonrxml.jackson.modulelon.scala.DelonfaultScalaModulelon
+import com.fastelonrxml.jackson.modulelon.scala.ScalaObjelonctMappelonr
+import com.twittelonr.algelonbird.Aggrelongator
+import com.twittelonr.algelonbird.Momelonnts
+import com.twittelonr.algelonbird.MultiAggrelongator
+import com.twittelonr.algelonbird.SelontSizelonAggrelongator
+import com.twittelonr.algelonbird.SkelontchMap
+import com.twittelonr.algelonbird.SkelontchMapParams
+import com.twittelonr.algelonbird.mutablelon.PriorityQuelonuelonMonoid
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.hashing.KelonyHashelonr
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.Stat
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.scalding.UniquelonID
+import java.io.Filelon
+import java.io.PrintWritelonr
+import scala.sys.procelonss._
 
-object Util {
-  private val formatter = java.text.NumberFormat.getNumberInstance
+objelonct Util {
+  privatelon val formattelonr = java.telonxt.NumbelonrFormat.gelontNumbelonrInstancelon
 
-  private val jsonMapper = {
-    val mapper = new ObjectMapper() with ScalaObjectMapper
-    mapper.registerModule(DefaultScalaModule)
-    mapper.configure(JsonGenerator.Feature.WRITE_NUMBERS_AS_STRINGS, true)
-    mapper
+  privatelon val jsonMappelonr = {
+    val mappelonr = nelonw ObjelonctMappelonr() with ScalaObjelonctMappelonr
+    mappelonr.relongistelonrModulelon(DelonfaultScalaModulelon)
+    mappelonr.configurelon(JsonGelonnelonrator.Felonaturelon.WRITelon_NUMBelonRS_AS_STRINGS, truelon)
+    mappelonr
   }
 
-  val prettyJsonMapper: ObjectWriter = jsonMapper.writerWithDefaultPrettyPrinter()
+  val prelonttyJsonMappelonr: ObjelonctWritelonr = jsonMappelonr.writelonrWithDelonfaultPrelonttyPrintelonr()
 
-  def getCustomCounters[T](exec: Execution[T]): Execution[Map[String, Long]] = {
-    exec.getCounters.map {
-      case (_, counters) =>
-        counters.toMap.collect {
-          case (key, value) if key.group == "Scalding Custom" =>
-            key.counter -> value
+  delonf gelontCustomCountelonrs[T](elonxelonc: elonxeloncution[T]): elonxeloncution[Map[String, Long]] = {
+    elonxelonc.gelontCountelonrs.map {
+      caselon (_, countelonrs) =>
+        countelonrs.toMap.collelonct {
+          caselon (kelony, valuelon) if kelony.group == "Scalding Custom" =>
+            kelony.countelonr -> valuelon
         }
     }
   }
 
-  def getCustomCountersString[T](exec: Execution[T]): Execution[String] = {
-    getCustomCounters(exec).map { map =>
-      val customCounterStrings = map.toList.map {
-        case (key, value) =>
-          s"$key:${formatter.format(value)}"
+  delonf gelontCustomCountelonrsString[T](elonxelonc: elonxeloncution[T]): elonxeloncution[String] = {
+    gelontCustomCountelonrs(elonxelonc).map { map =>
+      val customCountelonrStrings = map.toList.map {
+        caselon (kelony, valuelon) =>
+          s"$kelony:${formattelonr.format(valuelon)}"
       }
-      if (customCounterStrings.nonEmpty) {
-        "Printing all custom counters:\n" + customCounterStrings.mkString("\n")
-      } else {
-        "No custom counters to print"
+      if (customCountelonrStrings.nonelonmpty) {
+        "Printing all custom countelonrs:\n" + customCountelonrStrings.mkString("\n")
+      } elonlselon {
+        "No custom countelonrs to print"
       }
     }
   }
 
-  // Note ideally this should not allow T that is itself Execution[U] i.e. don't accept
-  // nested executions
-  def printCounters[T](exec: Execution[T]): Execution[Unit] = {
-    getCustomCountersString(exec).map { s => println(s) }
+  // Notelon idelonally this should not allow T that is itselonlf elonxeloncution[U] i.elon. don't accelonpt
+  // nelonstelond elonxeloncutions
+  delonf printCountelonrs[T](elonxelonc: elonxeloncution[T]): elonxeloncution[Unit] = {
+    gelontCustomCountelonrsString(elonxelonc).map { s => println(s) }
   }
 
   /**
-   * Print some basic stats of a numeric column.
+   * Print somelon basic stats of a numelonric column.
    */
-  def printSummaryOfNumericColumn[V](
-    input: TypedPipe[V],
-    columnName: Option[String] = None
+  delonf printSummaryOfNumelonricColumn[V](
+    input: TypelondPipelon[V],
+    columnNamelon: Option[String] = Nonelon
   )(
-    implicit num: Numeric[V]
-  ): Execution[String] = {
-    lazy val randomSampler = Aggregator.reservoirSample[V](100)
+    implicit num: Numelonric[V]
+  ): elonxeloncution[String] = {
+    lazy val randomSamplelonr = Aggrelongator.relonselonrvoirSamplelon[V](100)
 
-    lazy val percentiles = QTreeMultiAggregator(Seq(0.05, 0.25, 0.50, 0.75, 0.95))
+    lazy val pelonrcelonntilelons = QTrelonelonMultiAggrelongator(Selonq(0.05, 0.25, 0.50, 0.75, 0.95))
 
-    lazy val moments = Moments.numericAggregator
+    lazy val momelonnts = Momelonnts.numelonricAggrelongator
 
-    val multiAggregator = MultiAggregator(
-      Aggregator.size,
-      percentiles,
-      Aggregator.max,
-      Aggregator.min,
-      Aggregator.numericSum,
-      moments,
-      randomSampler
-    ).andThenPresent {
-      case (size_, percentiles_, max_, min_, sum_, moments_, samples_) =>
-        percentiles_.mapValues(_.toString) ++ Map(
-          "size" -> size_.toString,
+    val multiAggrelongator = MultiAggrelongator(
+      Aggrelongator.sizelon,
+      pelonrcelonntilelons,
+      Aggrelongator.max,
+      Aggrelongator.min,
+      Aggrelongator.numelonricSum,
+      momelonnts,
+      randomSamplelonr
+    ).andThelonnPrelonselonnt {
+      caselon (sizelon_, pelonrcelonntilelons_, max_, min_, sum_, momelonnts_, samplelons_) =>
+        pelonrcelonntilelons_.mapValuelons(_.toString) ++ Map(
+          "sizelon" -> sizelon_.toString,
           "max" -> max_.toString,
           "min" -> min_.toString,
           "sum" -> sum_.toString,
-          "avg" -> moments_.mean.toString,
-          "stddev" -> moments_.stddev.toString,
-          "skewness" -> moments_.skewness.toString,
-          "samples" -> samples_.mkString(",")
+          "avg" -> momelonnts_.melonan.toString,
+          "stddelonv" -> momelonnts_.stddelonv.toString,
+          "skelonwnelonss" -> momelonnts_.skelonwnelonss.toString,
+          "samplelons" -> samplelons_.mkString(",")
         )
     }
 
     input
-      .aggregate(multiAggregator)
-      .toIterableExecution
+      .aggrelongatelon(multiAggrelongator)
+      .toItelonrablelonelonxeloncution
       .map { m =>
         val summary =
-          s"Column Name: $columnName\nSummary:\n${Util.prettyJsonMapper.writeValueAsString(m)}"
+          s"Column Namelon: $columnNamelon\nSummary:\n${Util.prelonttyJsonMappelonr.writelonValuelonAsString(m)}"
         println(summary)
         summary
       }
   }
 
   /**
-   * Output some basic stats of a categorical column.
+   * Output somelon basic stats of a catelongorical column.
    *
-   * Note that HeavyHitters only work when the distribution is skewed.
+   * Notelon that HelonavyHittelonrs only work whelonn thelon distribution is skelonwelond.
    */
-  def printSummaryOfCategoricalColumn[V](
-    input: TypedPipe[V],
-    columnName: Option[String] = None
+  delonf printSummaryOfCatelongoricalColumn[V](
+    input: TypelondPipelon[V],
+    columnNamelon: Option[String] = Nonelon
   )(
-    implicit injection: Injection[V, Array[Byte]]
-  ): Execution[String] = {
+    implicit injelonction: Injelonction[V, Array[Bytelon]]
+  ): elonxeloncution[String] = {
 
-    lazy val randomSampler = Aggregator.reservoirSample[V](100)
+    lazy val randomSamplelonr = Aggrelongator.relonselonrvoirSamplelon[V](100)
 
-    lazy val uniqueCounter = new SetSizeAggregator[V](hllBits = 13, maxSetSize = 1000)(injection)
+    lazy val uniquelonCountelonr = nelonw SelontSizelonAggrelongator[V](hllBits = 13, maxSelontSizelon = 1000)(injelonction)
 
-    lazy val sketchMapParams =
-      SketchMapParams[V](seed = 1618, eps = 0.001, delta = 0.05, heavyHittersCount = 20)(injection)
+    lazy val skelontchMapParams =
+      SkelontchMapParams[V](selonelond = 1618, elonps = 0.001, delonlta = 0.05, helonavyHittelonrsCount = 20)(injelonction)
 
-    lazy val heavyHitter =
-      SketchMap.aggregator[V, Long](sketchMapParams).composePrepare[V](v => v -> 1L)
+    lazy val helonavyHittelonr =
+      SkelontchMap.aggrelongator[V, Long](skelontchMapParams).composelonPrelonparelon[V](v => v -> 1L)
 
-    val multiAggregator = MultiAggregator(
-      Aggregator.size,
-      uniqueCounter,
-      heavyHitter,
-      randomSampler
-    ).andThenPresent {
-      case (size_, uniqueSize_, heavyHitter_, sampler_) =>
+    val multiAggrelongator = MultiAggrelongator(
+      Aggrelongator.sizelon,
+      uniquelonCountelonr,
+      helonavyHittelonr,
+      randomSamplelonr
+    ).andThelonnPrelonselonnt {
+      caselon (sizelon_, uniquelonSizelon_, helonavyHittelonr_, samplelonr_) =>
         Map(
-          "size" -> size_.toString,
-          "unique" -> uniqueSize_.toString,
-          "samples" -> sampler_.mkString(","),
-          "heavyHitter" -> heavyHitter_.heavyHitterKeys
-            .map { key =>
-              val freq = sketchMapParams.frequency(key, heavyHitter_.valuesTable)
-              key -> freq
+          "sizelon" -> sizelon_.toString,
+          "uniquelon" -> uniquelonSizelon_.toString,
+          "samplelons" -> samplelonr_.mkString(","),
+          "helonavyHittelonr" -> helonavyHittelonr_.helonavyHittelonrKelonys
+            .map { kelony =>
+              val frelonq = skelontchMapParams.frelonquelonncy(kelony, helonavyHittelonr_.valuelonsTablelon)
+              kelony -> frelonq
             }
             .sortBy(-_._2).mkString(",")
         )
     }
 
     input
-      .aggregate(multiAggregator)
-      .toIterableExecution
+      .aggrelongatelon(multiAggrelongator)
+      .toItelonrablelonelonxeloncution
       .map { m =>
         val summary =
-          s"Column Name: $columnName\nSummary:\n${Util.prettyJsonMapper.writeValueAsString(m)}"
+          s"Column Namelon: $columnNamelon\nSummary:\n${Util.prelonttyJsonMappelonr.writelonValuelonAsString(m)}"
         println(summary)
         summary
       }
   }
 
-  val edgeOrdering: Ordering[(Long, Long)] = Ordering.by {
-    case (fromNodeId, toNodeId) => hashToLong(fromNodeId, toNodeId)
+  val elondgelonOrdelonring: Ordelonring[(Long, Long)] = Ordelonring.by {
+    caselon (fromNodelonId, toNodelonId) => hashToLong(fromNodelonId, toNodelonId)
   }
 
-  def reservoirSamplerMonoidForPairs[K, V](
-    sampleSize: Int
+  delonf relonselonrvoirSamplelonrMonoidForPairs[K, V](
+    samplelonSizelon: Int
   )(
-    implicit ord: Ordering[K]
-  ): PriorityQueueMonoid[(K, V)] = {
-    implicit val fullOrdering: Ordering[(K, V)] = Ordering.by(_._1)
-    new PriorityQueueMonoid[(K, V)](sampleSize)
+    implicit ord: Ordelonring[K]
+  ): PriorityQuelonuelonMonoid[(K, V)] = {
+    implicit val fullOrdelonring: Ordelonring[(K, V)] = Ordelonring.by(_._1)
+    nelonw PriorityQuelonuelonMonoid[(K, V)](samplelonSizelon)
   }
 
-  def reservoirSamplerMonoid[T, U](
-    sampleSize: Int,
-    convert: T => U
+  delonf relonselonrvoirSamplelonrMonoid[T, U](
+    samplelonSizelon: Int,
+    convelonrt: T => U
   )(
-    implicit ord: Ordering[U]
-  ): PriorityQueueMonoid[T] = {
-    new PriorityQueueMonoid[T](sampleSize)(Ordering.by(convert))
+    implicit ord: Ordelonring[U]
+  ): PriorityQuelonuelonMonoid[T] = {
+    nelonw PriorityQuelonuelonMonoid[T](samplelonSizelon)(Ordelonring.by(convelonrt))
   }
 
-  def hashToLong(a: Long, b: Long): Long = {
-    val bb = java.nio.ByteBuffer.allocate(16)
+  delonf hashToLong(a: Long, b: Long): Long = {
+    val bb = java.nio.BytelonBuffelonr.allocatelon(16)
     bb.putLong(a)
     bb.putLong(b)
-    KeyHasher.KETAMA.hashKey(bb.array())
+    KelonyHashelonr.KelonTAMA.hashKelony(bb.array())
   }
 
-  def hashToLong(a: Long): Long = {
-    val bb = java.nio.ByteBuffer.allocate(8)
+  delonf hashToLong(a: Long): Long = {
+    val bb = java.nio.BytelonBuffelonr.allocatelon(8)
     bb.putLong(a)
-    KeyHasher.KETAMA.hashKey(bb.array())
+    KelonyHashelonr.KelonTAMA.hashKelony(bb.array())
   }
 
-  // https://en.wikipedia.org/wiki/Pearson_correlation_coefficient
-  def computeCorrelation(pairedIter: Iterator[(Double, Double)]): Double = {
-    val (len, xSum, ySum, x2Sum, y2Sum, xySum) =
-      pairedIter.foldLeft((0.0, 0.0, 0.0, 0.0, 0.0, 0.0)) {
-        case ((l, xs, ys, x2s, y2s, xys), (x, y)) =>
+  // https://elonn.wikipelondia.org/wiki/Pelonarson_correlonlation_coelonfficielonnt
+  delonf computelonCorrelonlation(pairelondItelonr: Itelonrator[(Doublelon, Doublelon)]): Doublelon = {
+    val (lelonn, xSum, ySum, x2Sum, y2Sum, xySum) =
+      pairelondItelonr.foldLelonft((0.0, 0.0, 0.0, 0.0, 0.0, 0.0)) {
+        caselon ((l, xs, ys, x2s, y2s, xys), (x, y)) =>
           (l + 1, xs + x, ys + y, x2s + x * x, y2s + y * y, xys + x * y)
       }
-    val den = math.sqrt(len * x2Sum - xSum * xSum) * math.sqrt(len * y2Sum - ySum * ySum)
-    if (den > 0) {
-      (len * xySum - xSum * ySum) / den
-    } else 0.0
+    val delonn = math.sqrt(lelonn * x2Sum - xSum * xSum) * math.sqrt(lelonn * y2Sum - ySum * ySum)
+    if (delonn > 0) {
+      (lelonn * xySum - xSum * ySum) / delonn
+    } elonlselon 0.0
   }
 
-  // https://en.wikipedia.org/wiki/Cosine_similarity
-  def cosineSimilarity(pairedIter: Iterator[(Double, Double)]): Double = {
-    val (xySum, x2Sum, y2Sum) = pairedIter.foldLeft(0.0, 0.0, 0.0) {
-      case ((xy, x2, y2), (x, y)) =>
+  // https://elonn.wikipelondia.org/wiki/Cosinelon_similarity
+  delonf cosinelonSimilarity(pairelondItelonr: Itelonrator[(Doublelon, Doublelon)]): Doublelon = {
+    val (xySum, x2Sum, y2Sum) = pairelondItelonr.foldLelonft(0.0, 0.0, 0.0) {
+      caselon ((xy, x2, y2), (x, y)) =>
         (xy + x * y, x2 + x * x, y2 + y * y)
     }
-    val den = math.sqrt(x2Sum) * math.sqrt(y2Sum)
-    if (den > 0) {
-      xySum / den
-    } else 0.0
+    val delonn = math.sqrt(x2Sum) * math.sqrt(y2Sum)
+    if (delonn > 0) {
+      xySum / delonn
+    } elonlselon 0.0
   }
 
-  case class Distribution(
-    avg: Double,
-    stdDev: Double,
-    p1: Double,
-    p10: Double,
-    p50: Double,
-    p90: Double,
-    p99: Double)
+  caselon class Distribution(
+    avg: Doublelon,
+    stdDelonv: Doublelon,
+    p1: Doublelon,
+    p10: Doublelon,
+    p50: Doublelon,
+    p90: Doublelon,
+    p99: Doublelon)
 
-  val emptyDist: Distribution = Distribution(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
+  val elonmptyDist: Distribution = Distribution(0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0)
 
-  def distributionFromArray(l: Array[Double]): Distribution = {
-    val s = l.sorted
-    val len = l.length
+  delonf distributionFromArray(l: Array[Doublelon]): Distribution = {
+    val s = l.sortelond
+    val lelonn = l.lelonngth
 
-    if (len < 1) {
-      emptyDist
-    } else {
-      def pctToIndex(p: Double): Int = {
-        val idx = math.round(l.length * p).toInt
+    if (lelonn < 1) {
+      elonmptyDist
+    } elonlselon {
+      delonf pctToIndelonx(p: Doublelon): Int = {
+        val idx = math.round(l.lelonngth * p).toInt
         if (idx < 0) {
           0
-        } else if (idx >= len) {
-          len - 1
-        } else {
+        } elonlselon if (idx >= lelonn) {
+          lelonn - 1
+        } elonlselon {
           idx
         }
       }
 
-      val (sum, sumSquared) = l.foldLeft((0.0, 0.0)) {
-        case ((curSum, curSumSquared), x) =>
-          (curSum + x, curSumSquared + x * x)
+      val (sum, sumSquarelond) = l.foldLelonft((0.0, 0.0)) {
+        caselon ((curSum, curSumSquarelond), x) =>
+          (curSum + x, curSumSquarelond + x * x)
       }
 
-      val avg = sum / len
-      val stdDev = math.sqrt(sumSquared / len - avg * avg)
+      val avg = sum / lelonn
+      val stdDelonv = math.sqrt(sumSquarelond / lelonn - avg * avg)
       Distribution(
         avg,
-        stdDev,
-        p1 = s(pctToIndex(0.01)),
-        p10 = s(pctToIndex(0.1)),
-        p50 = s(pctToIndex(0.5)),
-        p90 = s(pctToIndex(0.9)),
-        p99 = s(pctToIndex(0.99)))
+        stdDelonv,
+        p1 = s(pctToIndelonx(0.01)),
+        p10 = s(pctToIndelonx(0.1)),
+        p50 = s(pctToIndelonx(0.5)),
+        p90 = s(pctToIndelonx(0.9)),
+        p99 = s(pctToIndelonx(0.99)))
     }
   }
 
-  // Calculate cumulative frequency using Scalding Custom Counters.
-  // Increment all buckets by 1 where value <= bucket_threshold.
-  case class CumulativeStat(
-    key: String,
-    buckets: Seq[Double]
+  // Calculatelon cumulativelon frelonquelonncy using Scalding Custom Countelonrs.
+  // Increlonmelonnt all buckelonts by 1 whelonrelon valuelon <= buckelont_threlonshold.
+  caselon class CumulativelonStat(
+    kelony: String,
+    buckelonts: Selonq[Doublelon]
   )(
-    implicit uniqueID: UniqueID) {
+    implicit uniquelonID: UniquelonID) {
 
-    val counters = buckets.map { bucket =>
-      bucket -> Stat(key + "_<=" + bucket.toString)
+    val countelonrs = buckelonts.map { buckelont =>
+      buckelont -> Stat(kelony + "_<=" + buckelont.toString)
     }
 
-    def incForValue(value: Double): Unit = {
-      counters.foreach {
-        case (bucket, stat) =>
-          if (value <= bucket) stat.inc()
+    delonf incForValuelon(valuelon: Doublelon): Unit = {
+      countelonrs.forelonach {
+        caselon (buckelont, stat) =>
+          if (valuelon <= buckelont) stat.inc()
       }
     }
   }
 
-  def sendEmail(text: String, subject: String, toAddress: String): String = {
-    val file = File.createTempFile("somePrefix_", "_someSuffix")
-    println(s"Email body is at ${file.getPath}")
-    val writer = new PrintWriter(file)
-    writer.write(text)
-    writer.close()
+  delonf selonndelonmail(telonxt: String, subjelonct: String, toAddrelonss: String): String = {
+    val filelon = Filelon.crelonatelonTelonmpFilelon("somelonPrelonfix_", "_somelonSuffix")
+    println(s"elonmail body is at ${filelon.gelontPath}")
+    val writelonr = nelonw PrintWritelonr(filelon)
+    writelonr.writelon(telonxt)
+    writelonr.closelon()
 
-    val mailCmd = s"cat ${file.getPath}" #| Seq("mail", "-s", subject, toAddress)
+    val mailCmd = s"cat ${filelon.gelontPath}" #| Selonq("mail", "-s", subjelonct, toAddrelonss)
     mailCmd.!!
   }
 }

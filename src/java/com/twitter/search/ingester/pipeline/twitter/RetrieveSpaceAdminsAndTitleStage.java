@@ -1,246 +1,246 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.CompletableFuture;
+import java.util.Selont;
+import java.util.concurrelonnt.ComplelontablelonFuturelon;
 
 import scala.Option;
-import scala.Tuple2;
+import scala.Tuplelon2;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+import org.apachelon.commons.lang.StringUtils;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
 
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessageUser;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceCoreFetcher;
-import com.twitter.search.ingester.pipeline.strato_fetchers.AudioSpaceParticipantsFetcher;
-import com.twitter.strato.catalog.Fetch;
-import com.twitter.ubs.thriftjava.AudioSpace;
-import com.twitter.ubs.thriftjava.ParticipantUser;
-import com.twitter.ubs.thriftjava.Participants;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
-import com.twitter.util.Futures;
-import com.twitter.util.Try;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelonUselonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.strato_felontchelonrs.AudioSpacelonCorelonFelontchelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.strato_felontchelonrs.AudioSpacelonParticipantsFelontchelonr;
+import com.twittelonr.strato.catalog.Felontch;
+import com.twittelonr.ubs.thriftjava.AudioSpacelon;
+import com.twittelonr.ubs.thriftjava.ParticipantUselonr;
+import com.twittelonr.ubs.thriftjava.Participants;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Futurelons;
+import com.twittelonr.util.Try;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class RetrieveSpaceAdminsAndTitleStage extends TwitterBaseStage
-    <IngesterTwitterMessage, CompletableFuture<IngesterTwitterMessage>> {
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class RelontrielonvelonSpacelonAdminsAndTitlelonStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <IngelonstelonrTwittelonrMelonssagelon, ComplelontablelonFuturelon<IngelonstelonrTwittelonrMelonssagelon>> {
 
-  @VisibleForTesting
-  protected static final String RETRIEVE_SPACE_ADMINS_AND_TITLE_DECIDER_KEY =
-      "ingester_all_retrieve_space_admins_and_title";
+  @VisiblelonForTelonsting
+  protelonctelond static final String RelonTRIelonVelon_SPACelon_ADMINS_AND_TITLelon_DelonCIDelonR_KelonY =
+      "ingelonstelonr_all_relontrielonvelon_spacelon_admins_and_titlelon";
 
-  private AudioSpaceCoreFetcher coreFetcher;
-  private AudioSpaceParticipantsFetcher participantsFetcher;
+  privatelon AudioSpacelonCorelonFelontchelonr corelonFelontchelonr;
+  privatelon AudioSpacelonParticipantsFelontchelonr participantsFelontchelonr;
 
-  private SearchRateCounter tweetsWithSpaceAdmins;
-  private SearchRateCounter tweetsWithSpaceTitle;
-  private SearchRateCounter coreFetchSuccess;
-  private SearchRateCounter coreFetchFailure;
-  private SearchRateCounter participantsFetchSuccess;
-  private SearchRateCounter participantsFetchFailure;
-  private SearchRateCounter emptyCore;
-  private SearchRateCounter emptyParticipants;
-  private SearchRateCounter emptySpaceTitle;
-  private SearchRateCounter emptySpaceAdmins;
-  private SearchRateCounter parallelFetchAttempts;
-  private SearchRateCounter parallelFetchFailure;
+  privatelon SelonarchRatelonCountelonr twelonelontsWithSpacelonAdmins;
+  privatelon SelonarchRatelonCountelonr twelonelontsWithSpacelonTitlelon;
+  privatelon SelonarchRatelonCountelonr corelonFelontchSuccelonss;
+  privatelon SelonarchRatelonCountelonr corelonFelontchFailurelon;
+  privatelon SelonarchRatelonCountelonr participantsFelontchSuccelonss;
+  privatelon SelonarchRatelonCountelonr participantsFelontchFailurelon;
+  privatelon SelonarchRatelonCountelonr elonmptyCorelon;
+  privatelon SelonarchRatelonCountelonr elonmptyParticipants;
+  privatelon SelonarchRatelonCountelonr elonmptySpacelonTitlelon;
+  privatelon SelonarchRatelonCountelonr elonmptySpacelonAdmins;
+  privatelon SelonarchRatelonCountelonr parallelonlFelontchAttelonmpts;
+  privatelon SelonarchRatelonCountelonr parallelonlFelontchFailurelon;
 
 
-  @Override
-  protected void doInnerPreprocess() {
-    innerSetup();
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() {
+    innelonrSelontup();
   }
 
-  @Override
-  protected void innerSetup() {
-    coreFetcher = wireModule.getAudioSpaceCoreFetcher();
-    participantsFetcher = wireModule.getAudioSpaceParticipantsFetcher();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() {
+    corelonFelontchelonr = wirelonModulelon.gelontAudioSpacelonCorelonFelontchelonr();
+    participantsFelontchelonr = wirelonModulelon.gelontAudioSpacelonParticipantsFelontchelonr();
 
-    tweetsWithSpaceAdmins = getStageStat("tweets_with_audio_space_admins");
-    tweetsWithSpaceTitle = getStageStat("tweets_with_audio_space_title");
-    coreFetchSuccess = getStageStat("core_fetch_success");
-    coreFetchFailure = getStageStat("core_fetch_failure");
-    participantsFetchSuccess = getStageStat("participants_fetch_success");
-    participantsFetchFailure = getStageStat("participants_fetch_failure");
-    emptyCore = getStageStat("empty_core");
-    emptyParticipants = getStageStat("empty_participants");
-    emptySpaceTitle = getStageStat("empty_space_title");
-    emptySpaceAdmins = getStageStat("empty_space_admins");
-    parallelFetchAttempts = getStageStat("parallel_fetch_attempts");
-    parallelFetchFailure = getStageStat("parallel_fetch_failure");
+    twelonelontsWithSpacelonAdmins = gelontStagelonStat("twelonelonts_with_audio_spacelon_admins");
+    twelonelontsWithSpacelonTitlelon = gelontStagelonStat("twelonelonts_with_audio_spacelon_titlelon");
+    corelonFelontchSuccelonss = gelontStagelonStat("corelon_felontch_succelonss");
+    corelonFelontchFailurelon = gelontStagelonStat("corelon_felontch_failurelon");
+    participantsFelontchSuccelonss = gelontStagelonStat("participants_felontch_succelonss");
+    participantsFelontchFailurelon = gelontStagelonStat("participants_felontch_failurelon");
+    elonmptyCorelon = gelontStagelonStat("elonmpty_corelon");
+    elonmptyParticipants = gelontStagelonStat("elonmpty_participants");
+    elonmptySpacelonTitlelon = gelontStagelonStat("elonmpty_spacelon_titlelon");
+    elonmptySpacelonAdmins = gelontStagelonStat("elonmpty_spacelon_admins");
+    parallelonlFelontchAttelonmpts = gelontStagelonStat("parallelonl_felontch_attelonmpts");
+    parallelonlFelontchFailurelon = gelontStagelonStat("parallelonl_felontch_failurelon");
   }
 
-  private SearchRateCounter getStageStat(String statSuffix) {
-    return SearchRateCounter.export(getStageNamePrefix() + "_" + statSuffix);
+  privatelon SelonarchRatelonCountelonr gelontStagelonStat(String statSuffix) {
+    relonturn SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_" + statSuffix);
   }
 
-  private Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
-  tryRetrieveSpaceAdminAndTitle(IngesterTwitterMessage twitterMessage) {
-    Set<String> spaceIds = twitterMessage.getSpaceIds();
+  privatelon Futurelon<Tuplelon2<Try<Felontch.Relonsult<AudioSpacelon>>, Try<Felontch.Relonsult<Participants>>>>
+  tryRelontrielonvelonSpacelonAdminAndTitlelon(IngelonstelonrTwittelonrMelonssagelon twittelonrMelonssagelon) {
+    Selont<String> spacelonIds = twittelonrMelonssagelon.gelontSpacelonIds();
 
-    if (spaceIds.isEmpty()) {
-      return null;
+    if (spacelonIds.iselonmpty()) {
+      relonturn null;
     }
 
-    if (!(DeciderUtil.isAvailableForRandomRecipient(decider,
-        RETRIEVE_SPACE_ADMINS_AND_TITLE_DECIDER_KEY))) {
-      return null;
+    if (!(DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr,
+        RelonTRIelonVelon_SPACelon_ADMINS_AND_TITLelon_DelonCIDelonR_KelonY))) {
+      relonturn null;
     }
 
-    String spaceId = spaceIds.iterator().next();
+    String spacelonId = spacelonIds.itelonrator().nelonxt();
 
-    // Query both columns in parallel.
-    parallelFetchAttempts.increment();
-    Future<Fetch.Result<AudioSpace>> core = coreFetcher.fetch(spaceId);
-    Future<Fetch.Result<Participants>> participants = participantsFetcher.fetch(spaceId);
+    // Quelonry both columns in parallelonl.
+    parallelonlFelontchAttelonmpts.increlonmelonnt();
+    Futurelon<Felontch.Relonsult<AudioSpacelon>> corelon = corelonFelontchelonr.felontch(spacelonId);
+    Futurelon<Felontch.Relonsult<Participants>> participants = participantsFelontchelonr.felontch(spacelonId);
 
-    return Futures.join(core.liftToTry(), participants.liftToTry());
+    relonturn Futurelons.join(corelon.liftToTry(), participants.liftToTry());
   }
 
-  @Override
-  protected CompletableFuture<IngesterTwitterMessage> innerRunStageV2(IngesterTwitterMessage
-                                                                            twitterMessage) {
-    Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
-        tryRetrieveSpaceAdminAndTitle = tryRetrieveSpaceAdminAndTitle(twitterMessage);
+  @Ovelonrridelon
+  protelonctelond ComplelontablelonFuturelon<IngelonstelonrTwittelonrMelonssagelon> innelonrRunStagelonV2(IngelonstelonrTwittelonrMelonssagelon
+                                                                            twittelonrMelonssagelon) {
+    Futurelon<Tuplelon2<Try<Felontch.Relonsult<AudioSpacelon>>, Try<Felontch.Relonsult<Participants>>>>
+        tryRelontrielonvelonSpacelonAdminAndTitlelon = tryRelontrielonvelonSpacelonAdminAndTitlelon(twittelonrMelonssagelon);
 
-    CompletableFuture<IngesterTwitterMessage> cf = new CompletableFuture<>();
+    ComplelontablelonFuturelon<IngelonstelonrTwittelonrMelonssagelon> cf = nelonw ComplelontablelonFuturelon<>();
 
-    if (tryRetrieveSpaceAdminAndTitle == null) {
-      cf.complete(twitterMessage);
-    } else {
-      tryRetrieveSpaceAdminAndTitle.onSuccess(Function.cons(tries -> {
-        handleFutureOnSuccess(tries, twitterMessage);
-        cf.complete(twitterMessage);
-      })).onFailure(Function.cons(throwable -> {
-        handleFutureOnFailure();
-        cf.complete(twitterMessage);
+    if (tryRelontrielonvelonSpacelonAdminAndTitlelon == null) {
+      cf.complelontelon(twittelonrMelonssagelon);
+    } elonlselon {
+      tryRelontrielonvelonSpacelonAdminAndTitlelon.onSuccelonss(Function.cons(trielons -> {
+        handlelonFuturelonOnSuccelonss(trielons, twittelonrMelonssagelon);
+        cf.complelontelon(twittelonrMelonssagelon);
+      })).onFailurelon(Function.cons(throwablelon -> {
+        handlelonFuturelonOnFailurelon();
+        cf.complelontelon(twittelonrMelonssagelon);
       }));
     }
 
-    return cf;
+    relonturn cf;
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage object: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not a IngelonstelonrTwittelonrMelonssagelon objelonct: " + obj);
     }
-    IngesterTwitterMessage twitterMessage = (IngesterTwitterMessage) obj;
-    Future<Tuple2<Try<Fetch.Result<AudioSpace>>, Try<Fetch.Result<Participants>>>>
-        tryRetrieveSpaceAdminAndTitle = tryRetrieveSpaceAdminAndTitle(twitterMessage);
+    IngelonstelonrTwittelonrMelonssagelon twittelonrMelonssagelon = (IngelonstelonrTwittelonrMelonssagelon) obj;
+    Futurelon<Tuplelon2<Try<Felontch.Relonsult<AudioSpacelon>>, Try<Felontch.Relonsult<Participants>>>>
+        tryRelontrielonvelonSpacelonAdminAndTitlelon = tryRelontrielonvelonSpacelonAdminAndTitlelon(twittelonrMelonssagelon);
 
-    if (tryRetrieveSpaceAdminAndTitle == null) {
-      emitAndCount(twitterMessage);
-      return;
+    if (tryRelontrielonvelonSpacelonAdminAndTitlelon == null) {
+      elonmitAndCount(twittelonrMelonssagelon);
+      relonturn;
     }
 
-    tryRetrieveSpaceAdminAndTitle.onSuccess(Function.cons(tries -> {
-            handleFutureOnSuccess(tries, twitterMessage);
-            emitAndCount(twitterMessage);
-          })).onFailure(Function.cons(throwable -> {
-            handleFutureOnFailure();
-            emitAndCount(twitterMessage);
+    tryRelontrielonvelonSpacelonAdminAndTitlelon.onSuccelonss(Function.cons(trielons -> {
+            handlelonFuturelonOnSuccelonss(trielons, twittelonrMelonssagelon);
+            elonmitAndCount(twittelonrMelonssagelon);
+          })).onFailurelon(Function.cons(throwablelon -> {
+            handlelonFuturelonOnFailurelon();
+            elonmitAndCount(twittelonrMelonssagelon);
           }));
   }
 
-  private void handleFutureOnSuccess(Tuple2<Try<Fetch.Result<AudioSpace>>,
-      Try<Fetch.Result<Participants>>> tries, IngesterTwitterMessage twitterMessage) {
-    handleCoreFetchTry(tries._1(), twitterMessage);
-    handleParticipantsFetchTry(tries._2(), twitterMessage);
+  privatelon void handlelonFuturelonOnSuccelonss(Tuplelon2<Try<Felontch.Relonsult<AudioSpacelon>>,
+      Try<Felontch.Relonsult<Participants>>> trielons, IngelonstelonrTwittelonrMelonssagelon twittelonrMelonssagelon) {
+    handlelonCorelonFelontchTry(trielons._1(), twittelonrMelonssagelon);
+    handlelonParticipantsFelontchTry(trielons._2(), twittelonrMelonssagelon);
   }
 
-  private void handleFutureOnFailure() {
-    parallelFetchFailure.increment();
+  privatelon void handlelonFuturelonOnFailurelon() {
+    parallelonlFelontchFailurelon.increlonmelonnt();
   }
 
-  private void handleCoreFetchTry(
-      Try<Fetch.Result<AudioSpace>> fetchTry,
-      IngesterTwitterMessage twitterMessage) {
+  privatelon void handlelonCorelonFelontchTry(
+      Try<Felontch.Relonsult<AudioSpacelon>> felontchTry,
+      IngelonstelonrTwittelonrMelonssagelon twittelonrMelonssagelon) {
 
-    if (fetchTry.isReturn()) {
-      coreFetchSuccess.increment();
-      addSpaceTitleToMessage(twitterMessage, fetchTry.get().v());
-    } else {
-      coreFetchFailure.increment();
+    if (felontchTry.isRelonturn()) {
+      corelonFelontchSuccelonss.increlonmelonnt();
+      addSpacelonTitlelonToMelonssagelon(twittelonrMelonssagelon, felontchTry.gelont().v());
+    } elonlselon {
+      corelonFelontchFailurelon.increlonmelonnt();
     }
   }
 
-  private void handleParticipantsFetchTry(
-      Try<Fetch.Result<Participants>> fetchTry,
-      IngesterTwitterMessage twitterMessage) {
+  privatelon void handlelonParticipantsFelontchTry(
+      Try<Felontch.Relonsult<Participants>> felontchTry,
+      IngelonstelonrTwittelonrMelonssagelon twittelonrMelonssagelon) {
 
-    if (fetchTry.isReturn()) {
-      participantsFetchSuccess.increment();
-      addSpaceAdminsToMessage(twitterMessage, fetchTry.get().v());
-    } else {
-      participantsFetchFailure.increment();
+    if (felontchTry.isRelonturn()) {
+      participantsFelontchSuccelonss.increlonmelonnt();
+      addSpacelonAdminsToMelonssagelon(twittelonrMelonssagelon, felontchTry.gelont().v());
+    } elonlselon {
+      participantsFelontchFailurelon.increlonmelonnt();
     }
   }
 
-  private void addSpaceTitleToMessage(
-      IngesterTwitterMessage twitterMessage,
-      Option<AudioSpace> audioSpace) {
+  privatelon void addSpacelonTitlelonToMelonssagelon(
+      IngelonstelonrTwittelonrMelonssagelon twittelonrMelonssagelon,
+      Option<AudioSpacelon> audioSpacelon) {
 
-    if (audioSpace.isDefined()) {
-      String audioSpaceTitle = audioSpace.get().getTitle();
-      if (StringUtils.isNotEmpty(audioSpaceTitle)) {
-        twitterMessage.setSpaceTitle(audioSpaceTitle);
-        tweetsWithSpaceTitle.increment();
-      } else {
-        emptySpaceTitle.increment();
+    if (audioSpacelon.isDelonfinelond()) {
+      String audioSpacelonTitlelon = audioSpacelon.gelont().gelontTitlelon();
+      if (StringUtils.isNotelonmpty(audioSpacelonTitlelon)) {
+        twittelonrMelonssagelon.selontSpacelonTitlelon(audioSpacelonTitlelon);
+        twelonelontsWithSpacelonTitlelon.increlonmelonnt();
+      } elonlselon {
+        elonmptySpacelonTitlelon.increlonmelonnt();
       }
-    } else {
-      emptyCore.increment();
+    } elonlselon {
+      elonmptyCorelon.increlonmelonnt();
     }
   }
 
-  private void addSpaceAdminsToMessage(
-      IngesterTwitterMessage twitterMessage,
+  privatelon void addSpacelonAdminsToMelonssagelon(
+      IngelonstelonrTwittelonrMelonssagelon twittelonrMelonssagelon,
       Option<Participants> participants) {
 
-    if (participants.isDefined()) {
-      List<ParticipantUser> admins = getAdminsFromParticipants(participants.get());
-      if (!admins.isEmpty()) {
-        for (ParticipantUser admin : admins) {
-          addSpaceAdminToMessage(twitterMessage, admin);
+    if (participants.isDelonfinelond()) {
+      List<ParticipantUselonr> admins = gelontAdminsFromParticipants(participants.gelont());
+      if (!admins.iselonmpty()) {
+        for (ParticipantUselonr admin : admins) {
+          addSpacelonAdminToMelonssagelon(twittelonrMelonssagelon, admin);
         }
-        tweetsWithSpaceAdmins.increment();
-      } else {
-        emptySpaceAdmins.increment();
+        twelonelontsWithSpacelonAdmins.increlonmelonnt();
+      } elonlselon {
+        elonmptySpacelonAdmins.increlonmelonnt();
       }
-    } else {
-      emptyParticipants.increment();
+    } elonlselon {
+      elonmptyParticipants.increlonmelonnt();
     }
   }
 
-  private List<ParticipantUser> getAdminsFromParticipants(Participants participants) {
-    if (!participants.isSetAdmins()) {
-      return Lists.newArrayList();
+  privatelon List<ParticipantUselonr> gelontAdminsFromParticipants(Participants participants) {
+    if (!participants.isSelontAdmins()) {
+      relonturn Lists.nelonwArrayList();
     }
-    return participants.getAdmins();
+    relonturn participants.gelontAdmins();
   }
 
-  private void addSpaceAdminToMessage(IngesterTwitterMessage twitterMessage,
-                                      ParticipantUser admin) {
-    TwitterMessageUser.Builder userBuilder = new TwitterMessageUser.Builder();
-    if (admin.isSetTwitter_screen_name()
-        && StringUtils.isNotEmpty(admin.getTwitter_screen_name())) {
-      userBuilder.withScreenName(Optional.of(admin.getTwitter_screen_name()));
+  privatelon void addSpacelonAdminToMelonssagelon(IngelonstelonrTwittelonrMelonssagelon twittelonrMelonssagelon,
+                                      ParticipantUselonr admin) {
+    TwittelonrMelonssagelonUselonr.Buildelonr uselonrBuildelonr = nelonw TwittelonrMelonssagelonUselonr.Buildelonr();
+    if (admin.isSelontTwittelonr_screlonelonn_namelon()
+        && StringUtils.isNotelonmpty(admin.gelontTwittelonr_screlonelonn_namelon())) {
+      uselonrBuildelonr.withScrelonelonnNamelon(Optional.of(admin.gelontTwittelonr_screlonelonn_namelon()));
     }
-    if (admin.isSetDisplay_name() && StringUtils.isNotEmpty(admin.getDisplay_name())) {
-      userBuilder.withDisplayName(Optional.of(admin.getDisplay_name()));
+    if (admin.isSelontDisplay_namelon() && StringUtils.isNotelonmpty(admin.gelontDisplay_namelon())) {
+      uselonrBuildelonr.withDisplayNamelon(Optional.of(admin.gelontDisplay_namelon()));
     }
-    twitterMessage.addSpaceAdmin(userBuilder.build());
+    twittelonrMelonssagelon.addSpacelonAdmin(uselonrBuildelonr.build());
   }
 }

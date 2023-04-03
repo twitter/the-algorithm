@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
 
 /**
- * A transformer for transforming a candidate pipeline's source result type into the parent's
- * mixer ore recommendation pipeline's type.
- * @tparam SourceResult The type of the result of the candidate source being used.
- * @tparam PipelineResult The type of the parent pipeline's expected
+ * A transformelonr for transforming a candidatelon pipelonlinelon's sourcelon relonsult typelon into thelon parelonnt's
+ * mixelonr orelon reloncommelonndation pipelonlinelon's typelon.
+ * @tparam SourcelonRelonsult Thelon typelon of thelon relonsult of thelon candidatelon sourcelon beloning uselond.
+ * @tparam PipelonlinelonRelonsult Thelon typelon of thelon parelonnt pipelonlinelon's elonxpelonctelond
  */
-trait CandidatePipelineResultsTransformer[SourceResult, PipelineResult <: UniversalNoun[Any]]
-    extends Transformer[SourceResult, PipelineResult] {
+trait CandidatelonPipelonlinelonRelonsultsTransformelonr[SourcelonRelonsult, PipelonlinelonRelonsult <: UnivelonrsalNoun[Any]]
+    elonxtelonnds Transformelonr[SourcelonRelonsult, PipelonlinelonRelonsult] {
 
-  override val identifier: TransformerIdentifier =
-    CandidatePipelineResultsTransformer.DefaultTransformerId
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr =
+    CandidatelonPipelonlinelonRelonsultsTransformelonr.DelonfaultTransformelonrId
 }
 
-object CandidatePipelineResultsTransformer {
-  private[core] val DefaultTransformerId: TransformerIdentifier =
-    TransformerIdentifier(ComponentIdentifier.BasedOnParentComponent)
-  private[core] val TransformerIdSuffix = "Results"
+objelonct CandidatelonPipelonlinelonRelonsultsTransformelonr {
+  privatelon[corelon] val DelonfaultTransformelonrId: TransformelonrIdelonntifielonr =
+    TransformelonrIdelonntifielonr(ComponelonntIdelonntifielonr.BaselondOnParelonntComponelonnt)
+  privatelon[corelon] val TransformelonrIdSuffix = "Relonsults"
 
   /**
-   * For use when building a [[CandidatePipelineResultsTransformer]] in a [[com.twitter.product_mixer.core.pipeline.PipelineBuilder]]
-   * to ensure that the identifier is updated with the parent [[com.twitter.product_mixer.core.pipeline.Pipeline.identifier]]
+   * For uselon whelonn building a [[CandidatelonPipelonlinelonRelonsultsTransformelonr]] in a [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonBuildelonr]]
+   * to elonnsurelon that thelon idelonntifielonr is updatelond with thelon parelonnt [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon.idelonntifielonr]]
    */
-  private[core] def copyWithUpdatedIdentifier[SourceResult, PipelineResult <: UniversalNoun[Any]](
-    resultTransformer: CandidatePipelineResultsTransformer[SourceResult, PipelineResult],
-    parentIdentifier: ComponentIdentifier
-  ): CandidatePipelineResultsTransformer[SourceResult, PipelineResult] = {
-    if (resultTransformer.identifier == DefaultTransformerId) {
-      new CandidatePipelineResultsTransformer[SourceResult, PipelineResult] {
-        override val identifier: TransformerIdentifier = TransformerIdentifier(
-          s"${parentIdentifier.name}$TransformerIdSuffix")
+  privatelon[corelon] delonf copyWithUpdatelondIdelonntifielonr[SourcelonRelonsult, PipelonlinelonRelonsult <: UnivelonrsalNoun[Any]](
+    relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[SourcelonRelonsult, PipelonlinelonRelonsult],
+    parelonntIdelonntifielonr: ComponelonntIdelonntifielonr
+  ): CandidatelonPipelonlinelonRelonsultsTransformelonr[SourcelonRelonsult, PipelonlinelonRelonsult] = {
+    if (relonsultTransformelonr.idelonntifielonr == DelonfaultTransformelonrId) {
+      nelonw CandidatelonPipelonlinelonRelonsultsTransformelonr[SourcelonRelonsult, PipelonlinelonRelonsult] {
+        ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr = TransformelonrIdelonntifielonr(
+          s"${parelonntIdelonntifielonr.namelon}$TransformelonrIdSuffix")
 
-        override def transform(input: SourceResult): PipelineResult =
-          resultTransformer.transform(input)
+        ovelonrridelon delonf transform(input: SourcelonRelonsult): PipelonlinelonRelonsult =
+          relonsultTransformelonr.transform(input)
       }
-    } else {
-      resultTransformer
+    } elonlselon {
+      relonsultTransformelonr
     }
   }
 }

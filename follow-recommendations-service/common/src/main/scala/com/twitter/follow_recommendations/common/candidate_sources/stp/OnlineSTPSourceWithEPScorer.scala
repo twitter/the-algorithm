@@ -1,58 +1,58 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.stp.OnlineSTPSourceParams.SetPredictionDetails
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.onboarding.relevance.features.strongtie.{
-  StrongTieFeatures => StrongTieFeaturesWrapper
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp.OnlinelonSTPSourcelonParams.SelontPrelondictionDelontails
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FollowProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.onboarding.relonlelonvancelon.felonaturelons.strongtielon.{
+  StrongTielonFelonaturelons => StrongTielonFelonaturelonsWrappelonr
 }
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.logging.Logging
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.STPReloncord
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class OnlineSTPSourceWithEPScorer @Inject() (
-  epStpScorer: EpStpScorer,
-  stpGraphBuilder: STPGraphBuilder,
-  baseStatReceiver: StatsReceiver)
-    extends BaseOnlineSTPSource(stpGraphBuilder, baseStatReceiver)
+@Singlelonton
+class OnlinelonSTPSourcelonWithelonPScorelonr @Injelonct() (
+  elonpStpScorelonr: elonpStpScorelonr,
+  stpGraphBuildelonr: STPGraphBuildelonr,
+  baselonStatReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BaselonOnlinelonSTPSourcelon(stpGraphBuildelonr, baselonStatReloncelonivelonr)
     with Logging {
-  private val epScorerUsedCounter = statsReceiver.counter("ep_scorer_used")
+  privatelon val elonpScorelonrUselondCountelonr = statsReloncelonivelonr.countelonr("elonp_scorelonr_uselond")
 
-  override def getCandidates(
-    records: Seq[STPRecord],
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds,
-  ): Stitch[Seq[CandidateUser]] = {
-    epScorerUsedCounter.incr()
+  ovelonrridelon delonf gelontCandidatelons(
+    reloncords: Selonq[STPReloncord],
+    relonquelonst: HasClielonntContelonxt with HasParams with HasReloncelonntFollowelondUselonrIds,
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    elonpScorelonrUselondCountelonr.incr()
 
-    val possibleCandidates: Seq[Stitch[Option[CandidateUser]]] = records.map { trainingRecord =>
-      val scoredResponse =
-        epStpScorer.getScoredResponse(trainingRecord.record, request.params(SetPredictionDetails))
-      scoredResponse.map(_.map { response: ScoredResponse =>
-        logger.debug(response)
-        CandidateUser(
-          id = trainingRecord.destinationId,
-          score = Some(response.score),
-          reason = Some(
-            Reason(
-              Some(
+    val possiblelonCandidatelons: Selonq[Stitch[Option[CandidatelonUselonr]]] = reloncords.map { trainingReloncord =>
+      val scorelondRelonsponselon =
+        elonpStpScorelonr.gelontScorelondRelonsponselon(trainingReloncord.reloncord, relonquelonst.params(SelontPrelondictionDelontails))
+      scorelondRelonsponselon.map(_.map { relonsponselon: ScorelondRelonsponselon =>
+        loggelonr.delonbug(relonsponselon)
+        CandidatelonUselonr(
+          id = trainingReloncord.delonstinationId,
+          scorelon = Somelon(relonsponselon.scorelon),
+          relonason = Somelon(
+            Relonason(
+              Somelon(
                 AccountProof(followProof =
-                  Some(FollowProof(trainingRecord.socialProof, trainingRecord.socialProof.size)))
+                  Somelon(FollowProof(trainingReloncord.socialProof, trainingReloncord.socialProof.sizelon)))
               )))
-        ).withCandidateSourceAndFeatures(
-          identifier,
-          Seq(StrongTieFeaturesWrapper(trainingRecord.features)))
+        ).withCandidatelonSourcelonAndFelonaturelons(
+          idelonntifielonr,
+          Selonq(StrongTielonFelonaturelonsWrappelonr(trainingReloncord.felonaturelons)))
       })
     }
 
-    Stitch.collect(possibleCandidates).map { _.flatten.sortBy(-_.score.getOrElse(0.0)) }
+    Stitch.collelonct(possiblelonCandidatelons).map { _.flattelonn.sortBy(-_.scorelon.gelontOrelonlselon(0.0)) }
   }
 }

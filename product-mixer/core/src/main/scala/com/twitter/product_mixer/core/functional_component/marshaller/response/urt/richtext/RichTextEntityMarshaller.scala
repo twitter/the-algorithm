@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtelonntity
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RichTextEntityMarshaller @Inject() (
-  referenceObjectMarshaller: ReferenceObjectMarshaller,
-  richTextFormatMarshaller: RichTextFormatMarshaller) {
+@Singlelonton
+class RichTelonxtelonntityMarshallelonr @Injelonct() (
+  relonfelonrelonncelonObjelonctMarshallelonr: RelonfelonrelonncelonObjelonctMarshallelonr,
+  richTelonxtFormatMarshallelonr: RichTelonxtFormatMarshallelonr) {
 
-  def apply(entity: RichTextEntity): urt.RichTextEntity = urt.RichTextEntity(
-    fromIndex = entity.fromIndex,
-    toIndex = entity.toIndex,
-    ref = entity.ref.map(referenceObjectMarshaller(_)),
-    format = entity.format.map(richTextFormatMarshaller(_))
+  delonf apply(elonntity: RichTelonxtelonntity): urt.RichTelonxtelonntity = urt.RichTelonxtelonntity(
+    fromIndelonx = elonntity.fromIndelonx,
+    toIndelonx = elonntity.toIndelonx,
+    relonf = elonntity.relonf.map(relonfelonrelonncelonObjelonctMarshallelonr(_)),
+    format = elonntity.format.map(richTelonxtFormatMarshallelonr(_))
   )
 }

@@ -1,44 +1,44 @@
-package com.twitter.product_mixer.core.service.domain_marshaller_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.domain_marshallelonr_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor.Inputs
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor.Result
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.domain_marshallelonr_elonxeloncutor.DomainMarshallelonrelonxeloncutor.Inputs
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.domain_marshallelonr_elonxeloncutor.DomainMarshallelonrelonxeloncutor.Relonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Executes a [[DomainMarshaller]].
+ * elonxeloncutelons a [[DomainMarshallelonr]].
  *
- * @note This is a synchronous transform, so we don't observe it directly. Failures and such
- *       can be observed at the parent pipeline.
+ * @notelon This is a synchronous transform, so welon don't obselonrvelon it direlonctly. Failurelons and such
+ *       can belon obselonrvelond at thelon parelonnt pipelonlinelon.
  */
-@Singleton
-class DomainMarshallerExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
-  def arrow[Query <: PipelineQuery, DomainResponseType <: HasMarshalling](
-    marshaller: DomainMarshaller[Query, DomainResponseType],
-    context: Executor.Context
-  ): Arrow[Inputs[Query], Result[DomainResponseType]] = {
+@Singlelonton
+class DomainMarshallelonrelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor {
+  delonf arrow[Quelonry <: PipelonlinelonQuelonry, DomainRelonsponselonTypelon <: HasMarshalling](
+    marshallelonr: DomainMarshallelonr[Quelonry, DomainRelonsponselonTypelon],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Inputs[Quelonry], Relonsult[DomainRelonsponselonTypelon]] = {
     val arrow = Arrow
-      .map[Inputs[Query], DomainMarshallerExecutor.Result[DomainResponseType]] {
-        case Inputs(query, candidates) =>
-          DomainMarshallerExecutor.Result(marshaller(query, candidates))
+      .map[Inputs[Quelonry], DomainMarshallelonrelonxeloncutor.Relonsult[DomainRelonsponselonTypelon]] {
+        caselon Inputs(quelonry, candidatelons) =>
+          DomainMarshallelonrelonxeloncutor.Relonsult(marshallelonr(quelonry, candidatelons))
       }
 
-    wrapComponentWithExecutorBookkeeping(context, marshaller.identifier)(arrow)
+    wrapComponelonntWithelonxeloncutorBookkelonelonping(contelonxt, marshallelonr.idelonntifielonr)(arrow)
   }
 }
 
-object DomainMarshallerExecutor {
-  case class Inputs[Query <: PipelineQuery](
-    query: Query,
-    candidatesWithDetails: Seq[CandidateWithDetails])
-  case class Result[+DomainResponseType](result: DomainResponseType) extends ExecutorResult
+objelonct DomainMarshallelonrelonxeloncutor {
+  caselon class Inputs[Quelonry <: PipelonlinelonQuelonry](
+    quelonry: Quelonry,
+    candidatelonsWithDelontails: Selonq[CandidatelonWithDelontails])
+  caselon class Relonsult[+DomainRelonsponselonTypelon](relonsult: DomainRelonsponselonTypelon) elonxtelonnds elonxeloncutorRelonsult
 }

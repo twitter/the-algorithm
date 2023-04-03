@@ -1,53 +1,53 @@
-package com.twitter.simclusters_v2.candidate_source
+packagelon com.twittelonr.simclustelonrs_v2.candidatelon_sourcelon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.CandidateSource
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.LookbackMediaTweetConfig
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.baselon.CandidatelonSourcelon
+import com.twittelonr.simclustelonrs_v2.candidatelon_sourcelon.SimClustelonrsANNCandidatelonSourcelon.LookbackMelondiaTwelonelontConfig
+import com.twittelonr.simclustelonrs_v2.candidatelon_sourcelon.SimClustelonrsANNCandidatelonSourcelon.SimClustelonrsTwelonelontCandidatelon
+import com.twittelonr.util.Futurelon
 
 /**
- * An abstraction layer that implements a lambda structure for ANNCandidate source.
- * Allows us to call an online store as well as an offline store from a single query.
+ * An abstraction layelonr that implelonmelonnts a lambda structurelon for ANNCandidatelon sourcelon.
+ * Allows us to call an onlinelon storelon as welonll as an offlinelon storelon from a singlelon quelonry.
  */
-case class SimClustersANNWrapperCandidateSource(
-  onlineANNSource: CandidateSource[SimClustersANNCandidateSource.Query, SimClustersTweetCandidate],
-  lookbackANNSource: CandidateSource[
-    SimClustersANNCandidateSource.Query,
-    SimClustersTweetCandidate
+caselon class SimClustelonrsANNWrappelonrCandidatelonSourcelon(
+  onlinelonANNSourcelon: CandidatelonSourcelon[SimClustelonrsANNCandidatelonSourcelon.Quelonry, SimClustelonrsTwelonelontCandidatelon],
+  lookbackANNSourcelon: CandidatelonSourcelon[
+    SimClustelonrsANNCandidatelonSourcelon.Quelonry,
+    SimClustelonrsTwelonelontCandidatelon
   ],
 )(
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[SimClustersANNCandidateSource.Query, SimClustersTweetCandidate] {
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[SimClustelonrsANNCandidatelonSourcelon.Quelonry, SimClustelonrsTwelonelontCandidatelon] {
 
-  override def get(
-    query: SimClustersANNCandidateSource.Query
-  ): Future[Option[Seq[SimClustersTweetCandidate]]] = {
+  ovelonrridelon delonf gelont(
+    quelonry: SimClustelonrsANNCandidatelonSourcelon.Quelonry
+  ): Futurelon[Option[Selonq[SimClustelonrsTwelonelontCandidatelon]]] = {
 
-    val enableLookbackSource =
-      query.overrideConfig.exists(_.enableLookbackSource.getOrElse(false))
+    val elonnablelonLookbackSourcelon =
+      quelonry.ovelonrridelonConfig.elonxists(_.elonnablelonLookbackSourcelon.gelontOrelonlselon(falselon))
 
-    val embeddingType = query.sourceEmbeddingId.embeddingType
-    val lookbackCandidatesFut =
-      if (enableLookbackSource &&
-        LookbackMediaTweetConfig.contains(embeddingType)) {
-        statsReceiver
-          .counter("lookback_source", embeddingType.toString, "enable").incr()
-        statsReceiver.counter("lookback_source", "enable").incr()
-        lookbackANNSource.get(query)
-      } else {
-        statsReceiver
-          .counter("lookback_source", embeddingType.toString, "disable").incr()
-        Future.None
+    val elonmbelonddingTypelon = quelonry.sourcelonelonmbelonddingId.elonmbelonddingTypelon
+    val lookbackCandidatelonsFut =
+      if (elonnablelonLookbackSourcelon &&
+        LookbackMelondiaTwelonelontConfig.contains(elonmbelonddingTypelon)) {
+        statsReloncelonivelonr
+          .countelonr("lookback_sourcelon", elonmbelonddingTypelon.toString, "elonnablelon").incr()
+        statsReloncelonivelonr.countelonr("lookback_sourcelon", "elonnablelon").incr()
+        lookbackANNSourcelon.gelont(quelonry)
+      } elonlselon {
+        statsReloncelonivelonr
+          .countelonr("lookback_sourcelon", elonmbelonddingTypelon.toString, "disablelon").incr()
+        Futurelon.Nonelon
       }
 
-    Future.join(onlineANNSource.get(query), lookbackCandidatesFut).map {
-      case (onlineCandidates, lookbackCandidates) =>
-        Some(
-          onlineCandidates.getOrElse(Nil) ++ lookbackCandidates.getOrElse(Nil)
+    Futurelon.join(onlinelonANNSourcelon.gelont(quelonry), lookbackCandidatelonsFut).map {
+      caselon (onlinelonCandidatelons, lookbackCandidatelons) =>
+        Somelon(
+          onlinelonCandidatelons.gelontOrelonlselon(Nil) ++ lookbackCandidatelons.gelontOrelonlselon(Nil)
         )
     }
   }
 
-  override def name: String = this.getClass.getCanonicalName
+  ovelonrridelon delonf namelon: String = this.gelontClass.gelontCanonicalNamelon
 }

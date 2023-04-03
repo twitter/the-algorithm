@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-case class Preroll(
-  prerollId: Option[String],
-  dynamicPrerollType: Option[DynamicPrerollType],
-  mediaInfo: Option[MediaInfo])
+caselon class Prelonroll(
+  prelonrollId: Option[String],
+  dynamicPrelonrollTypelon: Option[DynamicPrelonrollTypelon],
+  melondiaInfo: Option[MelondiaInfo])

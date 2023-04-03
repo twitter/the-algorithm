@@ -1,8 +1,8 @@
-package com.twitter.visibility.rules.providers
+packagelon com.twittelonr.visibility.rulelons.providelonrs
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.VisibilityPolicy
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.rulelons.VisibilityPolicy
 
-trait PolicyProvider {
-  def policyForSurface(safetyLevel: SafetyLevel): VisibilityPolicy
+trait PolicyProvidelonr {
+  delonf policyForSurfacelon(safelontyLelonvelonl: SafelontyLelonvelonl): VisibilityPolicy
 }

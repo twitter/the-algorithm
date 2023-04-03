@@ -1,13 +1,13 @@
-package com.twitter.recos.user_user_graph
+packagelon com.twittelonr.reloncos.uselonr_uselonr_graph
 
 /**
- * The class holds all the config parameters for kafka queue.
+ * Thelon class holds all thelon config paramelontelonrs for kafka quelonuelon.
  */
-object KafkaConfig {
-  // The size of the RecosHoseMessage array that is written to the concurrently linked queue
-  // Buffersize of 64 to keep throughput around 64 / (2K edgesPerSec / 150 kafka threads) = 6 seconds, which is lower
-  // than young gen gc cycle, 20 seconds. So that all the incoming messages will be gced in young gen instead of old gen.
-  val bufferSize = 64
+objelonct KafkaConfig {
+  // Thelon sizelon of thelon ReloncosHoselonMelonssagelon array that is writtelonn to thelon concurrelonntly linkelond quelonuelon
+  // Buffelonrsizelon of 64 to kelonelonp throughput around 64 / (2K elondgelonsPelonrSelonc / 150 kafka threlonads) = 6 selonconds, which is lowelonr
+  // than young gelonn gc cyclelon, 20 selonconds. So that all thelon incoming melonssagelons will belon gcelond in young gelonn instelonad of old gelonn.
+  val buffelonrSizelon = 64
 
-  println("KafkaConfig -                 bufferSize " + bufferSize)
+  println("KafkaConfig -                 buffelonrSizelon " + buffelonrSizelon)
 }

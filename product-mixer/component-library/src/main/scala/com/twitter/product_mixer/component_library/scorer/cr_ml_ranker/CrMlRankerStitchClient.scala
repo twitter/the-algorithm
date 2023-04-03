@@ -1,75 +1,75 @@
-package com.twitter.product_mixer.component_library.scorer.cr_ml_ranker
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.cr_ml_rankelonr
 
-import com.twitter.cr_ml_ranker.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.stitch.SeqGroup
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Try
+import com.twittelonr.cr_ml_rankelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.stitch.SelonqGroup
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Try
 
-case class CrMlRankerResult(
-  tweetId: Long,
-  score: Double)
+caselon class CrMlRankelonrRelonsult(
+  twelonelontId: Long,
+  scorelon: Doublelon)
 
-class CrMlRankerScoreStitchClient(
-  crMLRanker: t.CrMLRanker.MethodPerEndpoint,
-  maxBatchSize: Int) {
+class CrMlRankelonrScorelonStitchClielonnt(
+  crMLRankelonr: t.CrMLRankelonr.MelonthodPelonrelonndpoint,
+  maxBatchSizelon: Int) {
 
-  def getScore(
-    userId: Long,
-    tweetCandidate: BaseTweetCandidate,
+  delonf gelontScorelon(
+    uselonrId: Long,
+    twelonelontCandidatelon: BaselonTwelonelontCandidatelon,
     rankingConfig: t.RankingConfig,
-    commonFeatures: t.CommonFeatures
-  ): Stitch[CrMlRankerResult] = {
+    commonFelonaturelons: t.CommonFelonaturelons
+  ): Stitch[CrMlRankelonrRelonsult] = {
     Stitch.call(
-      tweetCandidate,
-      CrMlRankerGroup(
-        userId = userId,
+      twelonelontCandidatelon,
+      CrMlRankelonrGroup(
+        uselonrId = uselonrId,
         rankingConfig = rankingConfig,
-        commonFeatures = commonFeatures
+        commonFelonaturelons = commonFelonaturelons
       )
     )
   }
 
-  private case class CrMlRankerGroup(
-    userId: Long,
+  privatelon caselon class CrMlRankelonrGroup(
+    uselonrId: Long,
     rankingConfig: t.RankingConfig,
-    commonFeatures: t.CommonFeatures)
-      extends SeqGroup[BaseTweetCandidate, CrMlRankerResult] {
+    commonFelonaturelons: t.CommonFelonaturelons)
+      elonxtelonnds SelonqGroup[BaselonTwelonelontCandidatelon, CrMlRankelonrRelonsult] {
 
-    override val maxSize: Int = maxBatchSize
+    ovelonrridelon val maxSizelon: Int = maxBatchSizelon
 
-    override protected def run(
-      tweetCandidates: Seq[BaseTweetCandidate]
-    ): Future[Seq[Try[CrMlRankerResult]]] = {
-      val crMlRankerCandidates =
-        tweetCandidates.map { tweetCandidate =>
-          t.RankingCandidate(
-            tweetId = tweetCandidate.id,
-            hydrationContext = Some(
-              t.FeatureHydrationContext.HomeHydrationContext(t
-                .HomeFeatureHydrationContext(tweetAuthor = None)))
+    ovelonrridelon protelonctelond delonf run(
+      twelonelontCandidatelons: Selonq[BaselonTwelonelontCandidatelon]
+    ): Futurelon[Selonq[Try[CrMlRankelonrRelonsult]]] = {
+      val crMlRankelonrCandidatelons =
+        twelonelontCandidatelons.map { twelonelontCandidatelon =>
+          t.RankingCandidatelon(
+            twelonelontId = twelonelontCandidatelon.id,
+            hydrationContelonxt = Somelon(
+              t.FelonaturelonHydrationContelonxt.HomelonHydrationContelonxt(t
+                .HomelonFelonaturelonHydrationContelonxt(twelonelontAuthor = Nonelon)))
           )
         }
 
-      val thriftResults = crMLRanker.getRankedResults(
-        t.RankingRequest(
-          requestContext = t.RankingRequestContext(
-            userId = userId,
+      val thriftRelonsults = crMLRankelonr.gelontRankelondRelonsults(
+        t.RankingRelonquelonst(
+          relonquelonstContelonxt = t.RankingRelonquelonstContelonxt(
+            uselonrId = uselonrId,
             config = rankingConfig
           ),
-          candidates = crMlRankerCandidates,
-          commonFeatures = commonFeatures.commonFeatures
+          candidatelons = crMlRankelonrCandidatelons,
+          commonFelonaturelons = commonFelonaturelons.commonFelonaturelons
         )
       )
 
-      thriftResults.map { response =>
-        response.scoredTweets.map { scoredTweet =>
-          Return(
-            CrMlRankerResult(
-              tweetId = scoredTweet.tweetId,
-              score = scoredTweet.score
+      thriftRelonsults.map { relonsponselon =>
+        relonsponselon.scorelondTwelonelonts.map { scorelondTwelonelont =>
+          Relonturn(
+            CrMlRankelonrRelonsult(
+              twelonelontId = scorelondTwelonelont.twelonelontId,
+              scorelon = scorelondTwelonelont.scorelon
             )
           )
         }

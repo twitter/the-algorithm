@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.audio_spacelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
 
-object AudioSpaceItem {
-  val SpaceEntryNamespace = EntryNamespace("audiospace")
+objelonct AudioSpacelonItelonm {
+  val SpacelonelonntryNamelonspacelon = elonntryNamelonspacelon("audiospacelon")
 }
 
-case class AudioSpaceItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = AudioSpaceItem.SpaceEntryNamespace
+caselon class AudioSpacelonItelonm(
+  ovelonrridelon val id: String,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo])
+    elonxtelonnds TimelonlinelonItelonm {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = AudioSpacelonItelonm.SpacelonelonntryNamelonspacelon
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

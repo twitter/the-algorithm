@@ -1,16 +1,16 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.timelines.configapi.Config
-import com.twitter.cr_mixer.param.CrMixerParamConfig
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.timelonlinelons.configapi.Config
+import com.twittelonr.cr_mixelonr.param.CrMixelonrParamConfig
+import com.twittelonr.injelonct.TwittelonrModulelon
+import javax.injelonct.Singlelonton
 
-object CrMixerParamConfigModule extends TwitterModule {
+objelonct CrMixelonrParamConfigModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  def provideConfig(): Config = {
-    CrMixerParamConfig.config
+  @Providelons
+  @Singlelonton
+  delonf providelonConfig(): Config = {
+    CrMixelonrParamConfig.config
   }
 }

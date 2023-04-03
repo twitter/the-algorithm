@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineOperation
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonOpelonration
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelineEntryContentMarshaller @Inject() (
-  timelineItemMarshaller: TimelineItemMarshaller,
-  timelineModuleMarshaller: TimelineModuleMarshaller,
-  timelineOperationMarshaller: TimelineOperationMarshaller) {
+@Singlelonton
+class TimelonlinelonelonntryContelonntMarshallelonr @Injelonct() (
+  timelonlinelonItelonmMarshallelonr: TimelonlinelonItelonmMarshallelonr,
+  timelonlinelonModulelonMarshallelonr: TimelonlinelonModulelonMarshallelonr,
+  timelonlinelonOpelonrationMarshallelonr: TimelonlinelonOpelonrationMarshallelonr) {
 
-  def apply(entry: TimelineEntry): urt.TimelineEntryContent = entry match {
-    case item: TimelineItem =>
-      urt.TimelineEntryContent.Item(timelineItemMarshaller(item))
-    case module: TimelineModule =>
-      urt.TimelineEntryContent.TimelineModule(timelineModuleMarshaller(module))
-    case operation: TimelineOperation =>
-      urt.TimelineEntryContent.Operation(timelineOperationMarshaller(operation))
+  delonf apply(elonntry: Timelonlinelonelonntry): urt.TimelonlinelonelonntryContelonnt = elonntry match {
+    caselon itelonm: TimelonlinelonItelonm =>
+      urt.TimelonlinelonelonntryContelonnt.Itelonm(timelonlinelonItelonmMarshallelonr(itelonm))
+    caselon modulelon: TimelonlinelonModulelon =>
+      urt.TimelonlinelonelonntryContelonnt.TimelonlinelonModulelon(timelonlinelonModulelonMarshallelonr(modulelon))
+    caselon opelonration: TimelonlinelonOpelonration =>
+      urt.TimelonlinelonelonntryContelonnt.Opelonration(timelonlinelonOpelonrationMarshallelonr(opelonration))
   }
 }

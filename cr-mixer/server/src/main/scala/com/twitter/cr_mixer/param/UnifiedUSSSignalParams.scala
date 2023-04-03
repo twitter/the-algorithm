@@ -1,121 +1,121 @@
-package com.twitter.cr_mixer.param
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
-import com.twitter.usersignalservice.thriftscala.SignalType
-import scala.language.implicitConversions
+packagelon com.twittelonr.cr_mixelonr.param
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.SignalTypelon
+import scala.languagelon.implicitConvelonrsions
 
-object UnifiedUSSSignalParams {
+objelonct UnifielondUSSSignalParams {
 
-  object TweetAggregationTypeParam extends Enumeration {
-    protected case class SignalTypeValue(signalType: SignalType) extends super.Val
+  objelonct TwelonelontAggrelongationTypelonParam elonxtelonnds elonnumelonration {
+    protelonctelond caselon class SignalTypelonValuelon(signalTypelon: SignalTypelon) elonxtelonnds supelonr.Val
 
-    implicit def valueToSignalTypeValue(x: Value): SignalTypeValue =
-      x.asInstanceOf[SignalTypeValue]
+    implicit delonf valuelonToSignalTypelonValuelon(x: Valuelon): SignalTypelonValuelon =
+      x.asInstancelonOf[SignalTypelonValuelon]
 
-    val UniformAggregation = SignalTypeValue(SignalType.TweetBasedUnifiedUniformSignal)
-    val EngagementAggregation = SignalTypeValue(
-      SignalType.TweetBasedUnifiedEngagementWeightedSignal)
+    val UniformAggrelongation = SignalTypelonValuelon(SignalTypelon.TwelonelontBaselondUnifielondUniformSignal)
+    val elonngagelonmelonntAggrelongation = SignalTypelonValuelon(
+      SignalTypelon.TwelonelontBaselondUnifielondelonngagelonmelonntWelonightelondSignal)
   }
 
-  object ProducerAggregationTypeParam extends Enumeration {
-    protected case class SignalTypeValue(signalType: SignalType) extends super.Val
+  objelonct ProducelonrAggrelongationTypelonParam elonxtelonnds elonnumelonration {
+    protelonctelond caselon class SignalTypelonValuelon(signalTypelon: SignalTypelon) elonxtelonnds supelonr.Val
 
-    import scala.language.implicitConversions
+    import scala.languagelon.implicitConvelonrsions
 
-    implicit def valueToSignalTypeValue(x: Value): SignalTypeValue =
-      x.asInstanceOf[SignalTypeValue]
+    implicit delonf valuelonToSignalTypelonValuelon(x: Valuelon): SignalTypelonValuelon =
+      x.asInstancelonOf[SignalTypelonValuelon]
 
-    val UniformAggregation = SignalTypeValue(SignalType.ProducerBasedUnifiedUniformSignal)
-    val EngagementAggregation = SignalTypeValue(
-      SignalType.ProducerBasedUnifiedEngagementWeightedSignal)
+    val UniformAggrelongation = SignalTypelonValuelon(SignalTypelon.ProducelonrBaselondUnifielondUniformSignal)
+    val elonngagelonmelonntAggrelongation = SignalTypelonValuelon(
+      SignalTypelon.ProducelonrBaselondUnifielondelonngagelonmelonntWelonightelondSignal)
 
   }
 
-  object ReplaceIndividualUSSSourcesParam
-      extends FSParam[Boolean](
-        name = "twistly_agg_replace_enable_source",
-        default = false
+  objelonct RelonplacelonIndividualUSSSourcelonsParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "twistly_agg_relonplacelon_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  object EnableTweetAggSourceParam
-      extends FSParam[Boolean](
-        name = "twistly_agg_tweet_agg_enable_source",
-        default = false
+  objelonct elonnablelonTwelonelontAggSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "twistly_agg_twelonelont_agg_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  object TweetAggTypeParam
-      extends FSEnumParam[TweetAggregationTypeParam.type](
-        name = "twistly_agg_tweet_agg_type_id",
-        default = TweetAggregationTypeParam.EngagementAggregation,
-        enum = TweetAggregationTypeParam
+  objelonct TwelonelontAggTypelonParam
+      elonxtelonnds FSelonnumParam[TwelonelontAggrelongationTypelonParam.typelon](
+        namelon = "twistly_agg_twelonelont_agg_typelon_id",
+        delonfault = TwelonelontAggrelongationTypelonParam.elonngagelonmelonntAggrelongation,
+        elonnum = TwelonelontAggrelongationTypelonParam
       )
 
-  object UnifiedTweetSourceNumberParam
-      extends FSBoundedParam[Int](
-        name = "twistly_agg_tweet_agg_source_number",
-        default = 0,
+  objelonct UnifielondTwelonelontSourcelonNumbelonrParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "twistly_agg_twelonelont_agg_sourcelon_numbelonr",
+        delonfault = 0,
         min = 0,
         max = 100,
       )
 
-  object EnableProducerAggSourceParam
-      extends FSParam[Boolean](
-        name = "twistly_agg_producer_agg_enable_source",
-        default = false
+  objelonct elonnablelonProducelonrAggSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "twistly_agg_producelonr_agg_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  object ProducerAggTypeParam
-      extends FSEnumParam[ProducerAggregationTypeParam.type](
-        name = "twistly_agg_producer_agg_type_id",
-        default = ProducerAggregationTypeParam.EngagementAggregation,
-        enum = ProducerAggregationTypeParam
+  objelonct ProducelonrAggTypelonParam
+      elonxtelonnds FSelonnumParam[ProducelonrAggrelongationTypelonParam.typelon](
+        namelon = "twistly_agg_producelonr_agg_typelon_id",
+        delonfault = ProducelonrAggrelongationTypelonParam.elonngagelonmelonntAggrelongation,
+        elonnum = ProducelonrAggrelongationTypelonParam
       )
 
-  object UnifiedProducerSourceNumberParam
-      extends FSBoundedParam[Int](
-        name = "twistly_agg_producer_agg_source_number",
-        default = 0,
+  objelonct UnifielondProducelonrSourcelonNumbelonrParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "twistly_agg_producelonr_agg_sourcelon_numbelonr",
+        delonfault = 0,
         min = 0,
         max = 100,
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableTweetAggSourceParam,
-    EnableProducerAggSourceParam,
-    TweetAggTypeParam,
-    ProducerAggTypeParam,
-    UnifiedTweetSourceNumberParam,
-    UnifiedProducerSourceNumberParam,
-    ReplaceIndividualUSSSourcesParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonTwelonelontAggSourcelonParam,
+    elonnablelonProducelonrAggSourcelonParam,
+    TwelonelontAggTypelonParam,
+    ProducelonrAggTypelonParam,
+    UnifielondTwelonelontSourcelonNumbelonrParam,
+    UnifielondProducelonrSourcelonNumbelonrParam,
+    RelonplacelonIndividualUSSSourcelonsParam
   )
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableTweetAggSourceParam,
-      EnableProducerAggSourceParam,
-      ReplaceIndividualUSSSourcesParam,
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonTwelonelontAggSourcelonParam,
+      elonnablelonProducelonrAggSourcelonParam,
+      RelonplacelonIndividualUSSSourcelonsParam,
     )
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      UnifiedProducerSourceNumberParam,
-      UnifiedTweetSourceNumberParam)
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
-      Logger(getClass),
-      TweetAggTypeParam,
-      ProducerAggTypeParam
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+      UnifielondProducelonrSourcelonNumbelonrParam,
+      UnifielondTwelonelontSourcelonNumbelonrParam)
+    val elonnumOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(
+      NullStatsReloncelonivelonr,
+      Loggelonr(gelontClass),
+      TwelonelontAggTypelonParam,
+      ProducelonrAggTypelonParam
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(intOverrides: _*)
-      .set(enumOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(intOvelonrridelons: _*)
+      .selont(elonnumOvelonrridelons: _*)
       .build()
   }
 }

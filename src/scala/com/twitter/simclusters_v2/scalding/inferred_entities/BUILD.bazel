@@ -1,74 +1,74 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-only",
     ],
-    dependencies = [
-        "src/scala/com/twitter/onboarding/relevance/source:utt_account_recommendations-scala",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/simclusters_v2/scalding",
-        "src/scala/com/twitter/wtf/entity_real_graph/common",
+    delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/onboarding/relonlelonvancelon/sourcelon:utt_account_reloncommelonndations-scala",
+        "src/scala/com/twittelonr/scalding_intelonrnal/dalv2",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding",
+        "src/scala/com/twittelonr/wtf/elonntity_relonal_graph/common",
     ],
 )
 
 hadoop_binary(
-    name = "inferred_entities_from_known_for-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredKnownForSemanticCoreEntitiesAdhocApp",
+    namelon = "infelonrrelond_elonntitielons_from_known_for-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.infelonrrelond_elonntitielons.InfelonrrelondKnownForSelonmanticCorelonelonntitielonsAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":inferred_entities",
+    delonpelonndelonncielons = [
+        ":infelonrrelond_elonntitielons",
     ],
 )
 
 hadoop_binary(
-    name = "inferred_entities_from_known_for",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredKnownForSemanticCoreEntitiesBatchApp",
+    namelon = "infelonrrelond_elonntitielons_from_known_for",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.infelonrrelond_elonntitielons.InfelonrrelondKnownForSelonmanticCorelonelonntitielonsBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":inferred_entities",
+    delonpelonndelonncielons = [
+        ":infelonrrelond_elonntitielons",
     ],
 )
 
 hadoop_binary(
-    name = "inferred_entities_from_interested_in-adhoc",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesAdhocApp",
+    namelon = "infelonrrelond_elonntitielons_from_intelonrelonstelond_in-adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.infelonrrelond_elonntitielons.InfelonrrelondIntelonrelonstelondInSelonmanticCorelonelonntitielonsAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":inferred_entities",
+    delonpelonndelonncielons = [
+        ":infelonrrelond_elonntitielons",
     ],
 )
 
 hadoop_binary(
-    name = "inferred_entities_from_interested_in",
-    main = "com.twitter.simclusters_v2.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesBatchApp",
+    namelon = "infelonrrelond_elonntitielons_from_intelonrelonstelond_in",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.infelonrrelond_elonntitielons.InfelonrrelondIntelonrelonstelondInSelonmanticCorelonelonntitielonsBatchApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":inferred_entities",
+    delonpelonndelonncielons = [
+        ":infelonrrelond_elonntitielons",
     ],
 )

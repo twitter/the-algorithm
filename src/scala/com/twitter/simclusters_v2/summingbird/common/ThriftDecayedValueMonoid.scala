@@ -1,57 +1,57 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.algebird.DecayedValue
-import com.twitter.algebird.DecayedValueMonoid
-import com.twitter.algebird.Monoid
-import com.twitter.algebird_internal.injection.DecayedValueImplicits
-import com.twitter.algebird_internal.thriftscala.{DecayedValue => ThriftDecayedValue}
+import com.twittelonr.algelonbird.DeloncayelondValuelon
+import com.twittelonr.algelonbird.DeloncayelondValuelonMonoid
+import com.twittelonr.algelonbird.Monoid
+import com.twittelonr.algelonbird_intelonrnal.injelonction.DeloncayelondValuelonImplicits
+import com.twittelonr.algelonbird_intelonrnal.thriftscala.{DeloncayelondValuelon => ThriftDeloncayelondValuelon}
 
 /**
- * Monoid for ThriftDecayedValue
+ * Monoid for ThriftDeloncayelondValuelon
  */
-class ThriftDecayedValueMonoid(halfLifeInMs: Long)(implicit decayedValueMonoid: DecayedValueMonoid)
-    extends Monoid[ThriftDecayedValue] {
+class ThriftDeloncayelondValuelonMonoid(halfLifelonInMs: Long)(implicit deloncayelondValuelonMonoid: DeloncayelondValuelonMonoid)
+    elonxtelonnds Monoid[ThriftDeloncayelondValuelon] {
 
-  override val zero: ThriftDecayedValue = DecayedValueImplicits.toThrift(decayedValueMonoid.zero)
+  ovelonrridelon val zelonro: ThriftDeloncayelondValuelon = DeloncayelondValuelonImplicits.toThrift(deloncayelondValuelonMonoid.zelonro)
 
-  override def plus(x: ThriftDecayedValue, y: ThriftDecayedValue): ThriftDecayedValue = {
-    DecayedValueImplicits.toThrift(
-      decayedValueMonoid
-        .plus(DecayedValueImplicits.toThrift.invert(x), DecayedValueImplicits.toThrift.invert(y))
+  ovelonrridelon delonf plus(x: ThriftDeloncayelondValuelon, y: ThriftDeloncayelondValuelon): ThriftDeloncayelondValuelon = {
+    DeloncayelondValuelonImplicits.toThrift(
+      deloncayelondValuelonMonoid
+        .plus(DeloncayelondValuelonImplicits.toThrift.invelonrt(x), DeloncayelondValuelonImplicits.toThrift.invelonrt(y))
     )
   }
 
-  def build(value: Double, timeInMs: Double): ThriftDecayedValue = {
-    DecayedValueImplicits.toThrift(
-      DecayedValue.build(value, timeInMs, halfLifeInMs)
+  delonf build(valuelon: Doublelon, timelonInMs: Doublelon): ThriftDeloncayelondValuelon = {
+    DeloncayelondValuelonImplicits.toThrift(
+      DeloncayelondValuelon.build(valuelon, timelonInMs, halfLifelonInMs)
     )
   }
 
   /**
-   * decay to a timestamp; note that timestamp should be in Ms, and do not use scaledTime!
+   * deloncay to a timelonstamp; notelon that timelonstamp should belon in Ms, and do not uselon scalelondTimelon!
    */
-  def decayToTimestamp(
-    thriftDecayedValue: ThriftDecayedValue,
-    timestampInMs: Double
-  ): ThriftDecayedValue = {
-    this.plus(thriftDecayedValue, this.build(0.0, timestampInMs))
+  delonf deloncayToTimelonstamp(
+    thriftDeloncayelondValuelon: ThriftDeloncayelondValuelon,
+    timelonstampInMs: Doublelon
+  ): ThriftDeloncayelondValuelon = {
+    this.plus(thriftDeloncayelondValuelon, this.build(0.0, timelonstampInMs))
   }
 }
 
-object ThriftDecayedValueMonoid {
-  // add the implicit class so that a decayed value can direct call .plus, .decayedValueOfTime and
+objelonct ThriftDeloncayelondValuelonMonoid {
+  // add thelon implicit class so that a deloncayelond valuelon can direlonct call .plus, .deloncayelondValuelonOfTimelon and
   // so on.
-  implicit class EnrichedThriftDecayedValue(
-    thriftDecayedValue: ThriftDecayedValue
+  implicit class elonnrichelondThriftDeloncayelondValuelon(
+    thriftDeloncayelondValuelon: ThriftDeloncayelondValuelon
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid) {
-    def plus(other: ThriftDecayedValue): ThriftDecayedValue = {
-      thriftDecayedValueMonoid.plus(thriftDecayedValue, other)
+    implicit thriftDeloncayelondValuelonMonoid: ThriftDeloncayelondValuelonMonoid) {
+    delonf plus(othelonr: ThriftDeloncayelondValuelon): ThriftDeloncayelondValuelon = {
+      thriftDeloncayelondValuelonMonoid.plus(thriftDeloncayelondValuelon, othelonr)
     }
 
-    // decay to a timestamp; note that timestamp should be in Ms
-    def decayToTimestamp(timeInMs: Double): ThriftDecayedValue = {
-      thriftDecayedValueMonoid.decayToTimestamp(thriftDecayedValue, timeInMs)
+    // deloncay to a timelonstamp; notelon that timelonstamp should belon in Ms
+    delonf deloncayToTimelonstamp(timelonInMs: Doublelon): ThriftDeloncayelondValuelon = {
+      thriftDeloncayelondValuelonMonoid.deloncayToTimelonstamp(thriftDeloncayelondValuelon, timelonInMs)
     }
   }
 }

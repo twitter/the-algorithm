@@ -1,638 +1,638 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.ProducerBasedCandidateGenerationParams
-import com.twitter.cr_mixer.param.UnifiedSETweetCombinationMethod
-import com.twitter.cr_mixer.param.RelatedTweetProducerBasedParams
-import com.twitter.cr_mixer.param.SimClustersANNParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.util.InterleaveUtil
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.mutable.ArrayBuffer
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.SimilarityelonnginelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithCandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.param.GlobalParams
+import com.twittelonr.cr_mixelonr.param.ProducelonrBaselondCandidatelonGelonnelonrationParams
+import com.twittelonr.cr_mixelonr.param.UnifielondSelonTwelonelontCombinationMelonthod
+import com.twittelonr.cr_mixelonr.param.RelonlatelondTwelonelontProducelonrBaselondParams
+import com.twittelonr.cr_mixelonr.param.SimClustelonrsANNParams
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.cr_mixelonr.util.IntelonrlelonavelonUtil
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
+import scala.collelonction.mutablelon.ArrayBuffelonr
 
 /**
- * This store looks for similar tweets from UserTweetGraph for a Source ProducerId
- * For a query producerId,User Tweet Graph (UTG),
- * lets us find out which tweets the query producer's followers co-engaged
+ * This storelon looks for similar twelonelonts from UselonrTwelonelontGraph for a Sourcelon ProducelonrId
+ * For a quelonry producelonrId,Uselonr Twelonelont Graph (UTG),
+ * lelonts us find out which twelonelonts thelon quelonry producelonr's followelonrs co-elonngagelond
  */
-@Singleton
-case class ProducerBasedUnifiedSimilarityEngine(
-  @Named(ModuleNames.ProducerBasedUserTweetGraphSimilarityEngine)
-  producerBasedUserTweetGraphSimilarityEngine: StandardSimilarityEngine[
-    ProducerBasedUserTweetGraphSimilarityEngine.Query,
-    TweetWithScore
+@Singlelonton
+caselon class ProducelonrBaselondUnifielondSimilarityelonnginelon(
+  @Namelond(ModulelonNamelons.ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon)
+  producelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelon
   ],
-  simClustersANNSimilarityEngine: StandardSimilarityEngine[
-    SimClustersANNSimilarityEngine.Query,
-    TweetWithScore
+  simClustelonrsANNSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    SimClustelonrsANNSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelon
   ],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[ProducerBasedUnifiedSimilarityEngine.Query, Seq[
-      TweetWithCandidateGenerationInfo
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonadablelonStorelon[ProducelonrBaselondUnifielondSimilarityelonnginelon.Quelonry, Selonq[
+      TwelonelontWithCandidatelonGelonnelonrationInfo
     ]] {
 
-  import ProducerBasedUnifiedSimilarityEngine._
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
+  import ProducelonrBaselondUnifielondSimilarityelonnginelon._
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val felontchCandidatelonsStat = stats.scopelon("felontchCandidatelons")
 
-  override def get(
-    query: Query
-  ): Future[Option[Seq[TweetWithCandidateGenerationInfo]]] = {
-    query.sourceInfo.internalId match {
-      case _: InternalId.UserId =>
-        StatsUtil.trackOptionItemsStats(fetchCandidatesStat) {
-          val sannCandidatesFut = if (query.enableSimClustersANN) {
-            simClustersANNSimilarityEngine.getCandidates(query.simClustersANNQuery)
-          } else Future.None
+  ovelonrridelon delonf gelont(
+    quelonry: Quelonry
+  ): Futurelon[Option[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]]] = {
+    quelonry.sourcelonInfo.intelonrnalId match {
+      caselon _: IntelonrnalId.UselonrId =>
+        StatsUtil.trackOptionItelonmsStats(felontchCandidatelonsStat) {
+          val sannCandidatelonsFut = if (quelonry.elonnablelonSimClustelonrsANN) {
+            simClustelonrsANNSimilarityelonnginelon.gelontCandidatelons(quelonry.simClustelonrsANNQuelonry)
+          } elonlselon Futurelon.Nonelon
 
-          val sann1CandidatesFut =
-            if (query.enableSimClustersANN1) {
-              simClustersANNSimilarityEngine.getCandidates(query.simClustersANN1Query)
-            } else Future.None
+          val sann1CandidatelonsFut =
+            if (quelonry.elonnablelonSimClustelonrsANN1) {
+              simClustelonrsANNSimilarityelonnginelon.gelontCandidatelons(quelonry.simClustelonrsANN1Quelonry)
+            } elonlselon Futurelon.Nonelon
 
-          val sann2CandidatesFut =
-            if (query.enableSimClustersANN2) {
-              simClustersANNSimilarityEngine.getCandidates(query.simClustersANN2Query)
-            } else Future.None
+          val sann2CandidatelonsFut =
+            if (quelonry.elonnablelonSimClustelonrsANN2) {
+              simClustelonrsANNSimilarityelonnginelon.gelontCandidatelons(quelonry.simClustelonrsANN2Quelonry)
+            } elonlselon Futurelon.Nonelon
 
-          val sann3CandidatesFut =
-            if (query.enableSimClustersANN3) {
-              simClustersANNSimilarityEngine.getCandidates(query.simClustersANN3Query)
-            } else Future.None
+          val sann3CandidatelonsFut =
+            if (quelonry.elonnablelonSimClustelonrsANN3) {
+              simClustelonrsANNSimilarityelonnginelon.gelontCandidatelons(quelonry.simClustelonrsANN3Quelonry)
+            } elonlselon Futurelon.Nonelon
 
-          val sann4CandidatesFut =
-            if (query.enableSimClustersANN4) {
-              simClustersANNSimilarityEngine.getCandidates(query.simClustersANN4Query)
-            } else Future.None
+          val sann4CandidatelonsFut =
+            if (quelonry.elonnablelonSimClustelonrsANN4) {
+              simClustelonrsANNSimilarityelonnginelon.gelontCandidatelons(quelonry.simClustelonrsANN4Quelonry)
+            } elonlselon Futurelon.Nonelon
 
-          val sann5CandidatesFut =
-            if (query.enableSimClustersANN5) {
-              simClustersANNSimilarityEngine.getCandidates(query.simClustersANN5Query)
-            } else Future.None
+          val sann5CandidatelonsFut =
+            if (quelonry.elonnablelonSimClustelonrsANN5) {
+              simClustelonrsANNSimilarityelonnginelon.gelontCandidatelons(quelonry.simClustelonrsANN5Quelonry)
+            } elonlselon Futurelon.Nonelon
 
-          val experimentalSANNCandidatesFut =
-            if (query.enableExperimentalSimClustersANN) {
-              simClustersANNSimilarityEngine.getCandidates(query.experimentalSimClustersANNQuery)
-            } else Future.None
+          val elonxpelonrimelonntalSANNCandidatelonsFut =
+            if (quelonry.elonnablelonelonxpelonrimelonntalSimClustelonrsANN) {
+              simClustelonrsANNSimilarityelonnginelon.gelontCandidatelons(quelonry.elonxpelonrimelonntalSimClustelonrsANNQuelonry)
+            } elonlselon Futurelon.Nonelon
 
-          val utgCandidatesFut = if (query.enableUtg) {
-            producerBasedUserTweetGraphSimilarityEngine.getCandidates(query.utgQuery)
-          } else Future.None
+          val utgCandidatelonsFut = if (quelonry.elonnablelonUtg) {
+            producelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon.gelontCandidatelons(quelonry.utgQuelonry)
+          } elonlselon Futurelon.Nonelon
 
-          Future
+          Futurelon
             .join(
-              sannCandidatesFut,
-              sann1CandidatesFut,
-              sann2CandidatesFut,
-              sann3CandidatesFut,
-              sann4CandidatesFut,
-              sann5CandidatesFut,
-              experimentalSANNCandidatesFut,
-              utgCandidatesFut
+              sannCandidatelonsFut,
+              sann1CandidatelonsFut,
+              sann2CandidatelonsFut,
+              sann3CandidatelonsFut,
+              sann4CandidatelonsFut,
+              sann5CandidatelonsFut,
+              elonxpelonrimelonntalSANNCandidatelonsFut,
+              utgCandidatelonsFut
             ).map {
-              case (
-                    simClustersAnnCandidates,
-                    simClustersAnn1Candidates,
-                    simClustersAnn2Candidates,
-                    simClustersAnn3Candidates,
-                    simClustersAnn4Candidates,
-                    simClustersAnn5Candidates,
-                    experimentalSANNCandidates,
-                    userTweetGraphCandidates) =>
-                val filteredSANNTweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnnCandidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANNQuery.storeQuery.simClustersANNConfigId)
+              caselon (
+                    simClustelonrsAnnCandidatelons,
+                    simClustelonrsAnn1Candidatelons,
+                    simClustelonrsAnn2Candidatelons,
+                    simClustelonrsAnn3Candidatelons,
+                    simClustelonrsAnn4Candidatelons,
+                    simClustelonrsAnn5Candidatelons,
+                    elonxpelonrimelonntalSANNCandidatelons,
+                    uselonrTwelonelontGraphCandidatelons) =>
+                val filtelonrelondSANNTwelonelonts = simClustelonrsCandidatelonMinScorelonFiltelonr(
+                  simClustelonrsAnnCandidatelons.toSelonq.flattelonn,
+                  quelonry.simClustelonrsMinScorelon,
+                  quelonry.simClustelonrsANNQuelonry.storelonQuelonry.simClustelonrsANNConfigId)
 
-                val filteredExperimentalSANNTweets = simClustersCandidateMinScoreFilter(
-                  experimentalSANNCandidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.experimentalSimClustersANNQuery.storeQuery.simClustersANNConfigId)
+                val filtelonrelondelonxpelonrimelonntalSANNTwelonelonts = simClustelonrsCandidatelonMinScorelonFiltelonr(
+                  elonxpelonrimelonntalSANNCandidatelons.toSelonq.flattelonn,
+                  quelonry.simClustelonrsMinScorelon,
+                  quelonry.elonxpelonrimelonntalSimClustelonrsANNQuelonry.storelonQuelonry.simClustelonrsANNConfigId)
 
-                val filteredSANN1Tweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnn1Candidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANN1Query.storeQuery.simClustersANNConfigId)
+                val filtelonrelondSANN1Twelonelonts = simClustelonrsCandidatelonMinScorelonFiltelonr(
+                  simClustelonrsAnn1Candidatelons.toSelonq.flattelonn,
+                  quelonry.simClustelonrsMinScorelon,
+                  quelonry.simClustelonrsANN1Quelonry.storelonQuelonry.simClustelonrsANNConfigId)
 
-                val filteredSANN2Tweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnn2Candidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANN2Query.storeQuery.simClustersANNConfigId)
+                val filtelonrelondSANN2Twelonelonts = simClustelonrsCandidatelonMinScorelonFiltelonr(
+                  simClustelonrsAnn2Candidatelons.toSelonq.flattelonn,
+                  quelonry.simClustelonrsMinScorelon,
+                  quelonry.simClustelonrsANN2Quelonry.storelonQuelonry.simClustelonrsANNConfigId)
 
-                val filteredSANN3Tweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnn3Candidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANN3Query.storeQuery.simClustersANNConfigId)
+                val filtelonrelondSANN3Twelonelonts = simClustelonrsCandidatelonMinScorelonFiltelonr(
+                  simClustelonrsAnn3Candidatelons.toSelonq.flattelonn,
+                  quelonry.simClustelonrsMinScorelon,
+                  quelonry.simClustelonrsANN3Quelonry.storelonQuelonry.simClustelonrsANNConfigId)
 
-                val filteredSANN4Tweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnn4Candidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANN4Query.storeQuery.simClustersANNConfigId)
+                val filtelonrelondSANN4Twelonelonts = simClustelonrsCandidatelonMinScorelonFiltelonr(
+                  simClustelonrsAnn4Candidatelons.toSelonq.flattelonn,
+                  quelonry.simClustelonrsMinScorelon,
+                  quelonry.simClustelonrsANN4Quelonry.storelonQuelonry.simClustelonrsANNConfigId)
 
-                val filteredSANN5Tweets = simClustersCandidateMinScoreFilter(
-                  simClustersAnn5Candidates.toSeq.flatten,
-                  query.simClustersMinScore,
-                  query.simClustersANN5Query.storeQuery.simClustersANNConfigId)
+                val filtelonrelondSANN5Twelonelonts = simClustelonrsCandidatelonMinScorelonFiltelonr(
+                  simClustelonrsAnn5Candidatelons.toSelonq.flattelonn,
+                  quelonry.simClustelonrsMinScorelon,
+                  quelonry.simClustelonrsANN5Quelonry.storelonQuelonry.simClustelonrsANNConfigId)
 
-                val filteredUTGTweets =
-                  userTweetGraphFilter(userTweetGraphCandidates.toSeq.flatten)
+                val filtelonrelondUTGTwelonelonts =
+                  uselonrTwelonelontGraphFiltelonr(uselonrTwelonelontGraphCandidatelons.toSelonq.flattelonn)
 
-                val sannTweetsWithCGInfo = filteredSANNTweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANNQuery, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                val sannTwelonelontsWithCGInfo = filtelonrelondSANNTwelonelonts.map { twelonelontWithScorelon =>
+                  val similarityelonnginelonInfo = SimClustelonrsANNSimilarityelonnginelon
+                    .toSimilarityelonnginelonInfo(quelonry.simClustelonrsANNQuelonry, twelonelontWithScorelon.scorelon)
+                  TwelonelontWithCandidatelonGelonnelonrationInfo(
+                    twelonelontWithScorelon.twelonelontId,
+                    CandidatelonGelonnelonrationInfo(
+                      Somelon(quelonry.sourcelonInfo),
+                      similarityelonnginelonInfo,
+                      Selonq(similarityelonnginelonInfo)
                     ))
                 }
-                val sann1TweetsWithCGInfo = filteredSANN1Tweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANN1Query, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                val sann1TwelonelontsWithCGInfo = filtelonrelondSANN1Twelonelonts.map { twelonelontWithScorelon =>
+                  val similarityelonnginelonInfo = SimClustelonrsANNSimilarityelonnginelon
+                    .toSimilarityelonnginelonInfo(quelonry.simClustelonrsANN1Quelonry, twelonelontWithScorelon.scorelon)
+                  TwelonelontWithCandidatelonGelonnelonrationInfo(
+                    twelonelontWithScorelon.twelonelontId,
+                    CandidatelonGelonnelonrationInfo(
+                      Somelon(quelonry.sourcelonInfo),
+                      similarityelonnginelonInfo,
+                      Selonq(similarityelonnginelonInfo)
                     ))
                 }
-                val sann2TweetsWithCGInfo = filteredSANN2Tweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANN2Query, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
-                    ))
-                }
-
-                val sann3TweetsWithCGInfo = filteredSANN3Tweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANN3Query, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                val sann2TwelonelontsWithCGInfo = filtelonrelondSANN2Twelonelonts.map { twelonelontWithScorelon =>
+                  val similarityelonnginelonInfo = SimClustelonrsANNSimilarityelonnginelon
+                    .toSimilarityelonnginelonInfo(quelonry.simClustelonrsANN2Quelonry, twelonelontWithScorelon.scorelon)
+                  TwelonelontWithCandidatelonGelonnelonrationInfo(
+                    twelonelontWithScorelon.twelonelontId,
+                    CandidatelonGelonnelonrationInfo(
+                      Somelon(quelonry.sourcelonInfo),
+                      similarityelonnginelonInfo,
+                      Selonq(similarityelonnginelonInfo)
                     ))
                 }
 
-                val sann4TweetsWithCGInfo = filteredSANN4Tweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANN4Query, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                val sann3TwelonelontsWithCGInfo = filtelonrelondSANN3Twelonelonts.map { twelonelontWithScorelon =>
+                  val similarityelonnginelonInfo = SimClustelonrsANNSimilarityelonnginelon
+                    .toSimilarityelonnginelonInfo(quelonry.simClustelonrsANN3Quelonry, twelonelontWithScorelon.scorelon)
+                  TwelonelontWithCandidatelonGelonnelonrationInfo(
+                    twelonelontWithScorelon.twelonelontId,
+                    CandidatelonGelonnelonrationInfo(
+                      Somelon(quelonry.sourcelonInfo),
+                      similarityelonnginelonInfo,
+                      Selonq(similarityelonnginelonInfo)
                     ))
                 }
 
-                val sann5TweetsWithCGInfo = filteredSANN5Tweets.map { tweetWithScore =>
-                  val similarityEngineInfo = SimClustersANNSimilarityEngine
-                    .toSimilarityEngineInfo(query.simClustersANN5Query, tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                val sann4TwelonelontsWithCGInfo = filtelonrelondSANN4Twelonelonts.map { twelonelontWithScorelon =>
+                  val similarityelonnginelonInfo = SimClustelonrsANNSimilarityelonnginelon
+                    .toSimilarityelonnginelonInfo(quelonry.simClustelonrsANN4Quelonry, twelonelontWithScorelon.scorelon)
+                  TwelonelontWithCandidatelonGelonnelonrationInfo(
+                    twelonelontWithScorelon.twelonelontId,
+                    CandidatelonGelonnelonrationInfo(
+                      Somelon(quelonry.sourcelonInfo),
+                      similarityelonnginelonInfo,
+                      Selonq(similarityelonnginelonInfo)
                     ))
                 }
 
-                val experimentalSANNTweetsWithCGInfo = filteredExperimentalSANNTweets.map {
-                  tweetWithScore =>
-                    val similarityEngineInfo = SimClustersANNSimilarityEngine
-                      .toSimilarityEngineInfo(
-                        query.experimentalSimClustersANNQuery,
-                        tweetWithScore.score)
-                    TweetWithCandidateGenerationInfo(
-                      tweetWithScore.tweetId,
-                      CandidateGenerationInfo(
-                        Some(query.sourceInfo),
-                        similarityEngineInfo,
-                        Seq(similarityEngineInfo)
+                val sann5TwelonelontsWithCGInfo = filtelonrelondSANN5Twelonelonts.map { twelonelontWithScorelon =>
+                  val similarityelonnginelonInfo = SimClustelonrsANNSimilarityelonnginelon
+                    .toSimilarityelonnginelonInfo(quelonry.simClustelonrsANN5Quelonry, twelonelontWithScorelon.scorelon)
+                  TwelonelontWithCandidatelonGelonnelonrationInfo(
+                    twelonelontWithScorelon.twelonelontId,
+                    CandidatelonGelonnelonrationInfo(
+                      Somelon(quelonry.sourcelonInfo),
+                      similarityelonnginelonInfo,
+                      Selonq(similarityelonnginelonInfo)
+                    ))
+                }
+
+                val elonxpelonrimelonntalSANNTwelonelontsWithCGInfo = filtelonrelondelonxpelonrimelonntalSANNTwelonelonts.map {
+                  twelonelontWithScorelon =>
+                    val similarityelonnginelonInfo = SimClustelonrsANNSimilarityelonnginelon
+                      .toSimilarityelonnginelonInfo(
+                        quelonry.elonxpelonrimelonntalSimClustelonrsANNQuelonry,
+                        twelonelontWithScorelon.scorelon)
+                    TwelonelontWithCandidatelonGelonnelonrationInfo(
+                      twelonelontWithScorelon.twelonelontId,
+                      CandidatelonGelonnelonrationInfo(
+                        Somelon(quelonry.sourcelonInfo),
+                        similarityelonnginelonInfo,
+                        Selonq(similarityelonnginelonInfo)
                       ))
                 }
-                val utgTweetsWithCGInfo = filteredUTGTweets.map { tweetWithScore =>
-                  val similarityEngineInfo =
-                    ProducerBasedUserTweetGraphSimilarityEngine
-                      .toSimilarityEngineInfo(tweetWithScore.score)
-                  TweetWithCandidateGenerationInfo(
-                    tweetWithScore.tweetId,
-                    CandidateGenerationInfo(
-                      Some(query.sourceInfo),
-                      similarityEngineInfo,
-                      Seq(similarityEngineInfo)
+                val utgTwelonelontsWithCGInfo = filtelonrelondUTGTwelonelonts.map { twelonelontWithScorelon =>
+                  val similarityelonnginelonInfo =
+                    ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon
+                      .toSimilarityelonnginelonInfo(twelonelontWithScorelon.scorelon)
+                  TwelonelontWithCandidatelonGelonnelonrationInfo(
+                    twelonelontWithScorelon.twelonelontId,
+                    CandidatelonGelonnelonrationInfo(
+                      Somelon(quelonry.sourcelonInfo),
+                      similarityelonnginelonInfo,
+                      Selonq(similarityelonnginelonInfo)
                     ))
                 }
 
-                val candidateSourcesToBeInterleaved =
-                  ArrayBuffer[Seq[TweetWithCandidateGenerationInfo]](
-                    sannTweetsWithCGInfo,
-                    sann1TweetsWithCGInfo,
-                    sann2TweetsWithCGInfo,
-                    sann3TweetsWithCGInfo,
-                    sann4TweetsWithCGInfo,
-                    sann5TweetsWithCGInfo,
-                    experimentalSANNTweetsWithCGInfo,
+                val candidatelonSourcelonsToBelonIntelonrlelonavelond =
+                  ArrayBuffelonr[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]](
+                    sannTwelonelontsWithCGInfo,
+                    sann1TwelonelontsWithCGInfo,
+                    sann2TwelonelontsWithCGInfo,
+                    sann3TwelonelontsWithCGInfo,
+                    sann4TwelonelontsWithCGInfo,
+                    sann5TwelonelontsWithCGInfo,
+                    elonxpelonrimelonntalSANNTwelonelontsWithCGInfo,
                   )
 
-                if (query.utgCombinationMethod == UnifiedSETweetCombinationMethod.Interleave) {
-                  candidateSourcesToBeInterleaved += utgTweetsWithCGInfo
+                if (quelonry.utgCombinationMelonthod == UnifielondSelonTwelonelontCombinationMelonthod.Intelonrlelonavelon) {
+                  candidatelonSourcelonsToBelonIntelonrlelonavelond += utgTwelonelontsWithCGInfo
                 }
 
-                val interleavedCandidates =
-                  InterleaveUtil.interleave(candidateSourcesToBeInterleaved)
+                val intelonrlelonavelondCandidatelons =
+                  IntelonrlelonavelonUtil.intelonrlelonavelon(candidatelonSourcelonsToBelonIntelonrlelonavelond)
 
-                val candidateSourcesToBeOrdered =
-                  ArrayBuffer[Seq[TweetWithCandidateGenerationInfo]](interleavedCandidates)
+                val candidatelonSourcelonsToBelonOrdelonrelond =
+                  ArrayBuffelonr[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]](intelonrlelonavelondCandidatelons)
 
-                if (query.utgCombinationMethod == UnifiedSETweetCombinationMethod.Frontload)
-                  candidateSourcesToBeOrdered.prepend(utgTweetsWithCGInfo)
+                if (quelonry.utgCombinationMelonthod == UnifielondSelonTwelonelontCombinationMelonthod.Frontload)
+                  candidatelonSourcelonsToBelonOrdelonrelond.prelonpelonnd(utgTwelonelontsWithCGInfo)
 
-                val candidatesFromGivenOrderCombination =
-                  SimilaritySourceOrderingUtil.keepGivenOrder(candidateSourcesToBeOrdered)
+                val candidatelonsFromGivelonnOrdelonrCombination =
+                  SimilaritySourcelonOrdelonringUtil.kelonelonpGivelonnOrdelonr(candidatelonSourcelonsToBelonOrdelonrelond)
 
-                val unifiedCandidatesWithUnifiedCGInfo = candidatesFromGivenOrderCombination.map {
-                  candidate =>
+                val unifielondCandidatelonsWithUnifielondCGInfo = candidatelonsFromGivelonnOrdelonrCombination.map {
+                  candidatelon =>
                     /***
-                     * when a candidate was made by interleave/keepGivenOrder,
-                     * then we apply getProducerBasedUnifiedCGInfo() to override with the unified CGInfo
+                     * whelonn a candidatelon was madelon by intelonrlelonavelon/kelonelonpGivelonnOrdelonr,
+                     * thelonn welon apply gelontProducelonrBaselondUnifielondCGInfo() to ovelonrridelon with thelon unifielond CGInfo
                      *
-                     * in contributingSE list for interleave. We only have the chosen SE available.
-                     * This is hard to add for interleave, and we plan to add it later after abstraction improvement.
+                     * in contributingSelon list for intelonrlelonavelon. Welon only havelon thelon choselonn Selon availablelon.
+                     * This is hard to add for intelonrlelonavelon, and welon plan to add it latelonr aftelonr abstraction improvelonmelonnt.
                      */
-                    TweetWithCandidateGenerationInfo(
-                      tweetId = candidate.tweetId,
-                      candidateGenerationInfo = getProducerBasedUnifiedCGInfo(
-                        candidate.candidateGenerationInfo.sourceInfoOpt,
-                        candidate.getSimilarityScore,
-                        candidate.candidateGenerationInfo.contributingSimilarityEngines
-                      ) // getSimilarityScore comes from either unifiedScore or single score
+                    TwelonelontWithCandidatelonGelonnelonrationInfo(
+                      twelonelontId = candidatelon.twelonelontId,
+                      candidatelonGelonnelonrationInfo = gelontProducelonrBaselondUnifielondCGInfo(
+                        candidatelon.candidatelonGelonnelonrationInfo.sourcelonInfoOpt,
+                        candidatelon.gelontSimilarityScorelon,
+                        candidatelon.candidatelonGelonnelonrationInfo.contributingSimilarityelonnginelons
+                      ) // gelontSimilarityScorelon comelons from elonithelonr unifielondScorelon or singlelon scorelon
                     )
                 }
-                stats.stat("unified_candidate_size").add(unifiedCandidatesWithUnifiedCGInfo.size)
-                val truncatedCandidates =
-                  unifiedCandidatesWithUnifiedCGInfo.take(query.maxCandidateNumPerSourceKey)
-                stats.stat("truncatedCandidates_size").add(truncatedCandidates.size)
+                stats.stat("unifielond_candidatelon_sizelon").add(unifielondCandidatelonsWithUnifielondCGInfo.sizelon)
+                val truncatelondCandidatelons =
+                  unifielondCandidatelonsWithUnifielondCGInfo.takelon(quelonry.maxCandidatelonNumPelonrSourcelonKelony)
+                stats.stat("truncatelondCandidatelons_sizelon").add(truncatelondCandidatelons.sizelon)
 
-                Some(truncatedCandidates)
+                Somelon(truncatelondCandidatelons)
 
             }
         }
 
-      case _ =>
-        stats.counter("sourceId_is_not_userId_cnt").incr()
-        Future.None
+      caselon _ =>
+        stats.countelonr("sourcelonId_is_not_uselonrId_cnt").incr()
+        Futurelon.Nonelon
     }
   }
 
-  private def simClustersCandidateMinScoreFilter(
-    simClustersAnnCandidates: Seq[TweetWithScore],
-    simClustersMinScore: Double,
-    simClustersANNConfigId: String
-  ): Seq[TweetWithScore] = {
-    val filteredCandidates = simClustersAnnCandidates
-      .filter { candidate =>
-        candidate.score > simClustersMinScore
+  privatelon delonf simClustelonrsCandidatelonMinScorelonFiltelonr(
+    simClustelonrsAnnCandidatelons: Selonq[TwelonelontWithScorelon],
+    simClustelonrsMinScorelon: Doublelon,
+    simClustelonrsANNConfigId: String
+  ): Selonq[TwelonelontWithScorelon] = {
+    val filtelonrelondCandidatelons = simClustelonrsAnnCandidatelons
+      .filtelonr { candidatelon =>
+        candidatelon.scorelon > simClustelonrsMinScorelon
       }
 
-    stats.stat(simClustersANNConfigId, "simClustersAnnCandidates_size").add(filteredCandidates.size)
-    stats.counter(simClustersANNConfigId, "simClustersAnnRequests").incr()
-    if (filteredCandidates.isEmpty)
-      stats.counter(simClustersANNConfigId, "emptyFilteredSimClustersAnnCandidates").incr()
+    stats.stat(simClustelonrsANNConfigId, "simClustelonrsAnnCandidatelons_sizelon").add(filtelonrelondCandidatelons.sizelon)
+    stats.countelonr(simClustelonrsANNConfigId, "simClustelonrsAnnRelonquelonsts").incr()
+    if (filtelonrelondCandidatelons.iselonmpty)
+      stats.countelonr(simClustelonrsANNConfigId, "elonmptyFiltelonrelondSimClustelonrsAnnCandidatelons").incr()
 
-    filteredCandidates.map { candidate =>
-      TweetWithScore(candidate.tweetId, candidate.score)
+    filtelonrelondCandidatelons.map { candidatelon =>
+      TwelonelontWithScorelon(candidatelon.twelonelontId, candidatelon.scorelon)
     }
   }
 
-  /** A no-op filter as UTG filter already happened at UTG service side */
-  private def userTweetGraphFilter(
-    userTweetGraphCandidates: Seq[TweetWithScore]
-  ): Seq[TweetWithScore] = {
-    val filteredCandidates = userTweetGraphCandidates
+  /** A no-op filtelonr as UTG filtelonr alrelonady happelonnelond at UTG selonrvicelon sidelon */
+  privatelon delonf uselonrTwelonelontGraphFiltelonr(
+    uselonrTwelonelontGraphCandidatelons: Selonq[TwelonelontWithScorelon]
+  ): Selonq[TwelonelontWithScorelon] = {
+    val filtelonrelondCandidatelons = uselonrTwelonelontGraphCandidatelons
 
-    stats.stat("userTweetGraphCandidates_size").add(userTweetGraphCandidates.size)
-    if (filteredCandidates.isEmpty) stats.counter("emptyFilteredUserTweetGraphCandidates").incr()
+    stats.stat("uselonrTwelonelontGraphCandidatelons_sizelon").add(uselonrTwelonelontGraphCandidatelons.sizelon)
+    if (filtelonrelondCandidatelons.iselonmpty) stats.countelonr("elonmptyFiltelonrelondUselonrTwelonelontGraphCandidatelons").incr()
 
-    filteredCandidates.map { candidate =>
-      TweetWithScore(candidate.tweetId, candidate.score)
+    filtelonrelondCandidatelons.map { candidatelon =>
+      TwelonelontWithScorelon(candidatelon.twelonelontId, candidatelon.scorelon)
     }
   }
 
 }
-object ProducerBasedUnifiedSimilarityEngine {
+objelonct ProducelonrBaselondUnifielondSimilarityelonnginelon {
 
   /***
-   * Every candidate will have the CG Info with ProducerBasedUnifiedSimilarityEngine
-   * as they are generated by a composite of Similarity Engines.
-   * Additionally, we store the contributing SEs (eg., SANN, UTG).
+   * elonvelonry candidatelon will havelon thelon CG Info with ProducelonrBaselondUnifielondSimilarityelonnginelon
+   * as thelony arelon gelonnelonratelond by a compositelon of Similarity elonnginelons.
+   * Additionally, welon storelon thelon contributing Selons (elong., SANN, UTG).
    */
-  private def getProducerBasedUnifiedCGInfo(
-    sourceInfoOpt: Option[SourceInfo],
-    unifiedScore: Double,
-    contributingSimilarityEngines: Seq[SimilarityEngineInfo]
-  ): CandidateGenerationInfo = {
-    CandidateGenerationInfo(
-      sourceInfoOpt,
-      SimilarityEngineInfo(
-        similarityEngineType = SimilarityEngineType.ProducerBasedUnifiedSimilarityEngine,
-        modelId = None, // We do not assign modelId for a unified similarity engine
-        score = Some(unifiedScore)
+  privatelon delonf gelontProducelonrBaselondUnifielondCGInfo(
+    sourcelonInfoOpt: Option[SourcelonInfo],
+    unifielondScorelon: Doublelon,
+    contributingSimilarityelonnginelons: Selonq[SimilarityelonnginelonInfo]
+  ): CandidatelonGelonnelonrationInfo = {
+    CandidatelonGelonnelonrationInfo(
+      sourcelonInfoOpt,
+      SimilarityelonnginelonInfo(
+        similarityelonnginelonTypelon = SimilarityelonnginelonTypelon.ProducelonrBaselondUnifielondSimilarityelonnginelon,
+        modelonlId = Nonelon, // Welon do not assign modelonlId for a unifielond similarity elonnginelon
+        scorelon = Somelon(unifielondScorelon)
       ),
-      contributingSimilarityEngines
+      contributingSimilarityelonnginelons
     )
   }
 
-  case class Query(
-    sourceInfo: SourceInfo,
-    maxCandidateNumPerSourceKey: Int,
-    maxTweetAgeHours: Duration,
-    // SimClusters
-    enableSimClustersANN: Boolean,
-    simClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableExperimentalSimClustersANN: Boolean,
-    experimentalSimClustersANNQuery: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableSimClustersANN1: Boolean,
-    simClustersANN1Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableSimClustersANN2: Boolean,
-    simClustersANN2Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableSimClustersANN4: Boolean,
-    simClustersANN4Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableSimClustersANN3: Boolean,
-    simClustersANN3Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    enableSimClustersANN5: Boolean,
-    simClustersANN5Query: EngineQuery[SimClustersANNSimilarityEngine.Query],
-    simClustersMinScore: Double,
+  caselon class Quelonry(
+    sourcelonInfo: SourcelonInfo,
+    maxCandidatelonNumPelonrSourcelonKelony: Int,
+    maxTwelonelontAgelonHours: Duration,
+    // SimClustelonrs
+    elonnablelonSimClustelonrsANN: Boolelonan,
+    simClustelonrsANNQuelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    elonnablelonelonxpelonrimelonntalSimClustelonrsANN: Boolelonan,
+    elonxpelonrimelonntalSimClustelonrsANNQuelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    elonnablelonSimClustelonrsANN1: Boolelonan,
+    simClustelonrsANN1Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    elonnablelonSimClustelonrsANN2: Boolelonan,
+    simClustelonrsANN2Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    elonnablelonSimClustelonrsANN4: Boolelonan,
+    simClustelonrsANN4Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    elonnablelonSimClustelonrsANN3: Boolelonan,
+    simClustelonrsANN3Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    elonnablelonSimClustelonrsANN5: Boolelonan,
+    simClustelonrsANN5Quelonry: elonnginelonQuelonry[SimClustelonrsANNSimilarityelonnginelon.Quelonry],
+    simClustelonrsMinScorelon: Doublelon,
     // UTG
-    enableUtg: Boolean,
-    utgCombinationMethod: UnifiedSETweetCombinationMethod.Value,
-    utgQuery: EngineQuery[ProducerBasedUserTweetGraphSimilarityEngine.Query])
+    elonnablelonUtg: Boolelonan,
+    utgCombinationMelonthod: UnifielondSelonTwelonelontCombinationMelonthod.Valuelon,
+    utgQuelonry: elonnginelonQuelonry[ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon.Quelonry])
 
-  def fromParams(
-    sourceInfo: SourceInfo,
+  delonf fromParams(
+    sourcelonInfo: SourcelonInfo,
     params: configapi.Params,
-  ): EngineQuery[Query] = {
-    val maxCandidateNumPerSourceKey = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-    val maxTweetAgeHours = params(GlobalParams.MaxTweetAgeHoursParam)
-    // SimClusters
-    val enableSimClustersANN = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANNParam)
-    val simClustersModelVersion =
-      ModelVersions.Enum.enumToSimClustersModelVersionMap(params(GlobalParams.ModelVersionParam))
-    val simClustersANNConfigId = params(SimClustersANNParams.SimClustersANNConfigId)
-    // SimClusters - Experimental SANN Similarity Engine
-    val enableExperimentalSimClustersANN = params(
-      ProducerBasedCandidateGenerationParams.EnableExperimentalSimClustersANNParam)
-    val experimentalSimClustersANNConfigId = params(
-      SimClustersANNParams.ExperimentalSimClustersANNConfigId)
-    // SimClusters - SANN cluster 1 Similarity Engine
-    val enableSimClustersANN1 = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANN1Param)
-    val simClustersANN1ConfigId = params(SimClustersANNParams.SimClustersANN1ConfigId)
-    // SimClusters - SANN cluster 2 Similarity Engine
-    val enableSimClustersANN2 = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANN2Param)
-    val simClustersANN2ConfigId = params(SimClustersANNParams.SimClustersANN2ConfigId)
-    // SimClusters - SANN cluster 3 Similarity Engine
-    val enableSimClustersANN3 = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANN3Param)
-    val simClustersANN3ConfigId = params(SimClustersANNParams.SimClustersANN3ConfigId)
-    // SimClusters - SANN cluster 5 Similarity Engine
-    val enableSimClustersANN5 = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANN5Param)
-    val simClustersANN5ConfigId = params(SimClustersANNParams.SimClustersANN5ConfigId)
-    val enableSimClustersANN4 = params(
-      ProducerBasedCandidateGenerationParams.EnableSimClustersANN4Param)
-    val simClustersANN4ConfigId = params(SimClustersANNParams.SimClustersANN4ConfigId)
+  ): elonnginelonQuelonry[Quelonry] = {
+    val maxCandidatelonNumPelonrSourcelonKelony = params(GlobalParams.MaxCandidatelonNumPelonrSourcelonKelonyParam)
+    val maxTwelonelontAgelonHours = params(GlobalParams.MaxTwelonelontAgelonHoursParam)
+    // SimClustelonrs
+    val elonnablelonSimClustelonrsANN = params(
+      ProducelonrBaselondCandidatelonGelonnelonrationParams.elonnablelonSimClustelonrsANNParam)
+    val simClustelonrsModelonlVelonrsion =
+      ModelonlVelonrsions.elonnum.elonnumToSimClustelonrsModelonlVelonrsionMap(params(GlobalParams.ModelonlVelonrsionParam))
+    val simClustelonrsANNConfigId = params(SimClustelonrsANNParams.SimClustelonrsANNConfigId)
+    // SimClustelonrs - elonxpelonrimelonntal SANN Similarity elonnginelon
+    val elonnablelonelonxpelonrimelonntalSimClustelonrsANN = params(
+      ProducelonrBaselondCandidatelonGelonnelonrationParams.elonnablelonelonxpelonrimelonntalSimClustelonrsANNParam)
+    val elonxpelonrimelonntalSimClustelonrsANNConfigId = params(
+      SimClustelonrsANNParams.elonxpelonrimelonntalSimClustelonrsANNConfigId)
+    // SimClustelonrs - SANN clustelonr 1 Similarity elonnginelon
+    val elonnablelonSimClustelonrsANN1 = params(
+      ProducelonrBaselondCandidatelonGelonnelonrationParams.elonnablelonSimClustelonrsANN1Param)
+    val simClustelonrsANN1ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN1ConfigId)
+    // SimClustelonrs - SANN clustelonr 2 Similarity elonnginelon
+    val elonnablelonSimClustelonrsANN2 = params(
+      ProducelonrBaselondCandidatelonGelonnelonrationParams.elonnablelonSimClustelonrsANN2Param)
+    val simClustelonrsANN2ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN2ConfigId)
+    // SimClustelonrs - SANN clustelonr 3 Similarity elonnginelon
+    val elonnablelonSimClustelonrsANN3 = params(
+      ProducelonrBaselondCandidatelonGelonnelonrationParams.elonnablelonSimClustelonrsANN3Param)
+    val simClustelonrsANN3ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN3ConfigId)
+    // SimClustelonrs - SANN clustelonr 5 Similarity elonnginelon
+    val elonnablelonSimClustelonrsANN5 = params(
+      ProducelonrBaselondCandidatelonGelonnelonrationParams.elonnablelonSimClustelonrsANN5Param)
+    val simClustelonrsANN5ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN5ConfigId)
+    val elonnablelonSimClustelonrsANN4 = params(
+      ProducelonrBaselondCandidatelonGelonnelonrationParams.elonnablelonSimClustelonrsANN4Param)
+    val simClustelonrsANN4ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN4ConfigId)
 
-    val simClustersMinScore = params(
-      ProducerBasedCandidateGenerationParams.SimClustersMinScoreParam)
+    val simClustelonrsMinScorelon = params(
+      ProducelonrBaselondCandidatelonGelonnelonrationParams.SimClustelonrsMinScorelonParam)
 
-    // SimClusters ANN Query
-    val simClustersANNQuery = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANNConfigId,
+    // SimClustelonrs ANN Quelonry
+    val simClustelonrsANNQuelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      sourcelonInfo.intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANNConfigId,
       params
     )
-    val experimentalSimClustersANNQuery = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      experimentalSimClustersANNConfigId,
+    val elonxpelonrimelonntalSimClustelonrsANNQuelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      sourcelonInfo.intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      elonxpelonrimelonntalSimClustelonrsANNConfigId,
       params
     )
-    val simClustersANN1Query = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN1ConfigId,
+    val simClustelonrsANN1Quelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      sourcelonInfo.intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANN1ConfigId,
       params
     )
-    val simClustersANN2Query = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN2ConfigId,
+    val simClustelonrsANN2Quelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      sourcelonInfo.intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANN2ConfigId,
       params
     )
-    val simClustersANN3Query = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN3ConfigId,
+    val simClustelonrsANN3Quelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      sourcelonInfo.intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANN3ConfigId,
       params
     )
-    val simClustersANN5Query = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN5ConfigId,
+    val simClustelonrsANN5Quelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      sourcelonInfo.intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANN5ConfigId,
       params
     )
-    val simClustersANN4Query = SimClustersANNSimilarityEngine.fromParams(
-      sourceInfo.internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN4ConfigId,
+    val simClustelonrsANN4Quelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      sourcelonInfo.intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANN4ConfigId,
       params
     )
     // UTG
-    val enableUtg = params(ProducerBasedCandidateGenerationParams.EnableUTGParam)
-    val utgCombinationMethod = params(
-      ProducerBasedCandidateGenerationParams.UtgCombinationMethodParam)
+    val elonnablelonUtg = params(ProducelonrBaselondCandidatelonGelonnelonrationParams.elonnablelonUTGParam)
+    val utgCombinationMelonthod = params(
+      ProducelonrBaselondCandidatelonGelonnelonrationParams.UtgCombinationMelonthodParam)
 
-    EngineQuery(
-      Query(
-        sourceInfo = sourceInfo,
-        maxCandidateNumPerSourceKey = maxCandidateNumPerSourceKey,
-        maxTweetAgeHours = maxTweetAgeHours,
-        enableSimClustersANN = enableSimClustersANN,
-        simClustersANNQuery = simClustersANNQuery,
-        enableExperimentalSimClustersANN = enableExperimentalSimClustersANN,
-        experimentalSimClustersANNQuery = experimentalSimClustersANNQuery,
-        enableSimClustersANN1 = enableSimClustersANN1,
-        simClustersANN1Query = simClustersANN1Query,
-        enableSimClustersANN2 = enableSimClustersANN2,
-        simClustersANN2Query = simClustersANN2Query,
-        enableSimClustersANN3 = enableSimClustersANN3,
-        simClustersANN3Query = simClustersANN3Query,
-        enableSimClustersANN5 = enableSimClustersANN5,
-        simClustersANN5Query = simClustersANN5Query,
-        enableSimClustersANN4 = enableSimClustersANN4,
-        simClustersANN4Query = simClustersANN4Query,
-        simClustersMinScore = simClustersMinScore,
-        enableUtg = enableUtg,
-        utgCombinationMethod = utgCombinationMethod,
-        utgQuery = ProducerBasedUserTweetGraphSimilarityEngine
-          .fromParams(sourceInfo.internalId, params)
+    elonnginelonQuelonry(
+      Quelonry(
+        sourcelonInfo = sourcelonInfo,
+        maxCandidatelonNumPelonrSourcelonKelony = maxCandidatelonNumPelonrSourcelonKelony,
+        maxTwelonelontAgelonHours = maxTwelonelontAgelonHours,
+        elonnablelonSimClustelonrsANN = elonnablelonSimClustelonrsANN,
+        simClustelonrsANNQuelonry = simClustelonrsANNQuelonry,
+        elonnablelonelonxpelonrimelonntalSimClustelonrsANN = elonnablelonelonxpelonrimelonntalSimClustelonrsANN,
+        elonxpelonrimelonntalSimClustelonrsANNQuelonry = elonxpelonrimelonntalSimClustelonrsANNQuelonry,
+        elonnablelonSimClustelonrsANN1 = elonnablelonSimClustelonrsANN1,
+        simClustelonrsANN1Quelonry = simClustelonrsANN1Quelonry,
+        elonnablelonSimClustelonrsANN2 = elonnablelonSimClustelonrsANN2,
+        simClustelonrsANN2Quelonry = simClustelonrsANN2Quelonry,
+        elonnablelonSimClustelonrsANN3 = elonnablelonSimClustelonrsANN3,
+        simClustelonrsANN3Quelonry = simClustelonrsANN3Quelonry,
+        elonnablelonSimClustelonrsANN5 = elonnablelonSimClustelonrsANN5,
+        simClustelonrsANN5Quelonry = simClustelonrsANN5Quelonry,
+        elonnablelonSimClustelonrsANN4 = elonnablelonSimClustelonrsANN4,
+        simClustelonrsANN4Quelonry = simClustelonrsANN4Quelonry,
+        simClustelonrsMinScorelon = simClustelonrsMinScorelon,
+        elonnablelonUtg = elonnablelonUtg,
+        utgCombinationMelonthod = utgCombinationMelonthod,
+        utgQuelonry = ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon
+          .fromParams(sourcelonInfo.intelonrnalId, params)
       ),
       params
     )
   }
 
-  def fromParamsForRelatedTweet(
-    internalId: InternalId,
+  delonf fromParamsForRelonlatelondTwelonelont(
+    intelonrnalId: IntelonrnalId,
     params: configapi.Params
-  ): EngineQuery[Query] = {
-    val maxCandidateNumPerSourceKey = params(GlobalParams.MaxCandidateNumPerSourceKeyParam)
-    val maxTweetAgeHours = params(GlobalParams.MaxTweetAgeHoursParam)
-    // SimClusters
-    val enableSimClustersANN = params(RelatedTweetProducerBasedParams.EnableSimClustersANNParam)
-    val simClustersModelVersion =
-      ModelVersions.Enum.enumToSimClustersModelVersionMap(params(GlobalParams.ModelVersionParam))
-    val simClustersANNConfigId = params(SimClustersANNParams.SimClustersANNConfigId)
-    val simClustersMinScore =
-      params(RelatedTweetProducerBasedParams.SimClustersMinScoreParam)
-    // SimClusters - Experimental SANN Similarity Engine
-    val enableExperimentalSimClustersANN = params(
-      RelatedTweetProducerBasedParams.EnableExperimentalSimClustersANNParam)
-    val experimentalSimClustersANNConfigId = params(
-      SimClustersANNParams.ExperimentalSimClustersANNConfigId)
-    // SimClusters - SANN cluster 1 Similarity Engine
-    val enableSimClustersANN1 = params(RelatedTweetProducerBasedParams.EnableSimClustersANN1Param)
-    val simClustersANN1ConfigId = params(SimClustersANNParams.SimClustersANN1ConfigId)
-    // SimClusters - SANN cluster 2 Similarity Engine
-    val enableSimClustersANN2 = params(RelatedTweetProducerBasedParams.EnableSimClustersANN2Param)
-    val simClustersANN2ConfigId = params(SimClustersANNParams.SimClustersANN2ConfigId)
-    // SimClusters - SANN cluster 3 Similarity Engine
-    val enableSimClustersANN3 = params(RelatedTweetProducerBasedParams.EnableSimClustersANN3Param)
-    val simClustersANN3ConfigId = params(SimClustersANNParams.SimClustersANN3ConfigId)
-    // SimClusters - SANN cluster 5 Similarity Engine
-    val enableSimClustersANN5 = params(RelatedTweetProducerBasedParams.EnableSimClustersANN5Param)
-    val simClustersANN5ConfigId = params(SimClustersANNParams.SimClustersANN5ConfigId)
+  ): elonnginelonQuelonry[Quelonry] = {
+    val maxCandidatelonNumPelonrSourcelonKelony = params(GlobalParams.MaxCandidatelonNumPelonrSourcelonKelonyParam)
+    val maxTwelonelontAgelonHours = params(GlobalParams.MaxTwelonelontAgelonHoursParam)
+    // SimClustelonrs
+    val elonnablelonSimClustelonrsANN = params(RelonlatelondTwelonelontProducelonrBaselondParams.elonnablelonSimClustelonrsANNParam)
+    val simClustelonrsModelonlVelonrsion =
+      ModelonlVelonrsions.elonnum.elonnumToSimClustelonrsModelonlVelonrsionMap(params(GlobalParams.ModelonlVelonrsionParam))
+    val simClustelonrsANNConfigId = params(SimClustelonrsANNParams.SimClustelonrsANNConfigId)
+    val simClustelonrsMinScorelon =
+      params(RelonlatelondTwelonelontProducelonrBaselondParams.SimClustelonrsMinScorelonParam)
+    // SimClustelonrs - elonxpelonrimelonntal SANN Similarity elonnginelon
+    val elonnablelonelonxpelonrimelonntalSimClustelonrsANN = params(
+      RelonlatelondTwelonelontProducelonrBaselondParams.elonnablelonelonxpelonrimelonntalSimClustelonrsANNParam)
+    val elonxpelonrimelonntalSimClustelonrsANNConfigId = params(
+      SimClustelonrsANNParams.elonxpelonrimelonntalSimClustelonrsANNConfigId)
+    // SimClustelonrs - SANN clustelonr 1 Similarity elonnginelon
+    val elonnablelonSimClustelonrsANN1 = params(RelonlatelondTwelonelontProducelonrBaselondParams.elonnablelonSimClustelonrsANN1Param)
+    val simClustelonrsANN1ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN1ConfigId)
+    // SimClustelonrs - SANN clustelonr 2 Similarity elonnginelon
+    val elonnablelonSimClustelonrsANN2 = params(RelonlatelondTwelonelontProducelonrBaselondParams.elonnablelonSimClustelonrsANN2Param)
+    val simClustelonrsANN2ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN2ConfigId)
+    // SimClustelonrs - SANN clustelonr 3 Similarity elonnginelon
+    val elonnablelonSimClustelonrsANN3 = params(RelonlatelondTwelonelontProducelonrBaselondParams.elonnablelonSimClustelonrsANN3Param)
+    val simClustelonrsANN3ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN3ConfigId)
+    // SimClustelonrs - SANN clustelonr 5 Similarity elonnginelon
+    val elonnablelonSimClustelonrsANN5 = params(RelonlatelondTwelonelontProducelonrBaselondParams.elonnablelonSimClustelonrsANN5Param)
+    val simClustelonrsANN5ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN5ConfigId)
 
-    val enableSimClustersANN4 = params(RelatedTweetProducerBasedParams.EnableSimClustersANN4Param)
-    val simClustersANN4ConfigId = params(SimClustersANNParams.SimClustersANN4ConfigId)
-    // Build SANN Query
-    val simClustersANNQuery = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANNConfigId,
+    val elonnablelonSimClustelonrsANN4 = params(RelonlatelondTwelonelontProducelonrBaselondParams.elonnablelonSimClustelonrsANN4Param)
+    val simClustelonrsANN4ConfigId = params(SimClustelonrsANNParams.SimClustelonrsANN4ConfigId)
+    // Build SANN Quelonry
+    val simClustelonrsANNQuelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANNConfigId,
       params
     )
-    val experimentalSimClustersANNQuery = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      experimentalSimClustersANNConfigId,
+    val elonxpelonrimelonntalSimClustelonrsANNQuelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      elonxpelonrimelonntalSimClustelonrsANNConfigId,
       params
     )
-    val simClustersANN1Query = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN1ConfigId,
+    val simClustelonrsANN1Quelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANN1ConfigId,
       params
     )
-    val simClustersANN2Query = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN2ConfigId,
+    val simClustelonrsANN2Quelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANN2ConfigId,
       params
     )
-    val simClustersANN3Query = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN3ConfigId,
+    val simClustelonrsANN3Quelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANN3ConfigId,
       params
     )
-    val simClustersANN5Query = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN5ConfigId,
+    val simClustelonrsANN5Quelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANN5ConfigId,
       params
     )
-    val simClustersANN4Query = SimClustersANNSimilarityEngine.fromParams(
-      internalId,
-      EmbeddingType.FavBasedProducer,
-      simClustersModelVersion,
-      simClustersANN4ConfigId,
+    val simClustelonrsANN4Quelonry = SimClustelonrsANNSimilarityelonnginelon.fromParams(
+      intelonrnalId,
+      elonmbelonddingTypelon.FavBaselondProducelonr,
+      simClustelonrsModelonlVelonrsion,
+      simClustelonrsANN4ConfigId,
       params
     )
     // UTG
-    val enableUtg = params(RelatedTweetProducerBasedParams.EnableUTGParam)
-    val utgCombinationMethod = params(
-      ProducerBasedCandidateGenerationParams.UtgCombinationMethodParam)
+    val elonnablelonUtg = params(RelonlatelondTwelonelontProducelonrBaselondParams.elonnablelonUTGParam)
+    val utgCombinationMelonthod = params(
+      ProducelonrBaselondCandidatelonGelonnelonrationParams.UtgCombinationMelonthodParam)
 
-    // SourceType.RequestUserId is a placeholder.
-    val sourceInfo = SourceInfo(SourceType.RequestUserId, internalId, None)
+    // SourcelonTypelon.RelonquelonstUselonrId is a placelonholdelonr.
+    val sourcelonInfo = SourcelonInfo(SourcelonTypelon.RelonquelonstUselonrId, intelonrnalId, Nonelon)
 
-    EngineQuery(
-      Query(
-        sourceInfo = sourceInfo,
-        maxCandidateNumPerSourceKey = maxCandidateNumPerSourceKey,
-        maxTweetAgeHours = maxTweetAgeHours,
-        enableSimClustersANN = enableSimClustersANN,
-        simClustersANNQuery = simClustersANNQuery,
-        enableExperimentalSimClustersANN = enableExperimentalSimClustersANN,
-        experimentalSimClustersANNQuery = experimentalSimClustersANNQuery,
-        enableSimClustersANN1 = enableSimClustersANN1,
-        simClustersANN1Query = simClustersANN1Query,
-        enableSimClustersANN2 = enableSimClustersANN2,
-        simClustersANN2Query = simClustersANN2Query,
-        enableSimClustersANN3 = enableSimClustersANN3,
-        simClustersANN3Query = simClustersANN3Query,
-        enableSimClustersANN5 = enableSimClustersANN5,
-        simClustersANN5Query = simClustersANN5Query,
-        enableSimClustersANN4 = enableSimClustersANN4,
-        simClustersANN4Query = simClustersANN4Query,
-        simClustersMinScore = simClustersMinScore,
-        enableUtg = enableUtg,
-        utgQuery = ProducerBasedUserTweetGraphSimilarityEngine.fromParams(internalId, params),
-        utgCombinationMethod = utgCombinationMethod
+    elonnginelonQuelonry(
+      Quelonry(
+        sourcelonInfo = sourcelonInfo,
+        maxCandidatelonNumPelonrSourcelonKelony = maxCandidatelonNumPelonrSourcelonKelony,
+        maxTwelonelontAgelonHours = maxTwelonelontAgelonHours,
+        elonnablelonSimClustelonrsANN = elonnablelonSimClustelonrsANN,
+        simClustelonrsANNQuelonry = simClustelonrsANNQuelonry,
+        elonnablelonelonxpelonrimelonntalSimClustelonrsANN = elonnablelonelonxpelonrimelonntalSimClustelonrsANN,
+        elonxpelonrimelonntalSimClustelonrsANNQuelonry = elonxpelonrimelonntalSimClustelonrsANNQuelonry,
+        elonnablelonSimClustelonrsANN1 = elonnablelonSimClustelonrsANN1,
+        simClustelonrsANN1Quelonry = simClustelonrsANN1Quelonry,
+        elonnablelonSimClustelonrsANN2 = elonnablelonSimClustelonrsANN2,
+        simClustelonrsANN2Quelonry = simClustelonrsANN2Quelonry,
+        elonnablelonSimClustelonrsANN3 = elonnablelonSimClustelonrsANN3,
+        simClustelonrsANN3Quelonry = simClustelonrsANN3Quelonry,
+        elonnablelonSimClustelonrsANN5 = elonnablelonSimClustelonrsANN5,
+        simClustelonrsANN5Quelonry = simClustelonrsANN5Quelonry,
+        elonnablelonSimClustelonrsANN4 = elonnablelonSimClustelonrsANN4,
+        simClustelonrsANN4Quelonry = simClustelonrsANN4Quelonry,
+        simClustelonrsMinScorelon = simClustelonrsMinScorelon,
+        elonnablelonUtg = elonnablelonUtg,
+        utgQuelonry = ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon.fromParams(intelonrnalId, params),
+        utgCombinationMelonthod = utgCombinationMelonthod
       ),
       params
     )

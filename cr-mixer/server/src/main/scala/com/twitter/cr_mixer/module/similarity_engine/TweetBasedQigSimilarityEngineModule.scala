@@ -1,63 +1,63 @@
-package com.twitter.cr_mixer.module.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.modulelon.similarity_elonnginelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine._
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.keyHasher
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.DeciderConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.GatingConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedQigSimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.qig_ranker.thriftscala.QigRanker
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.CrMixelonrDeloncidelonr
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.DeloncidelonrConstants
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon._
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.kelonyHashelonr
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.DeloncidelonrConfig
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.GatingConfig
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.SimilarityelonnginelonConfig
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.StandardSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.TwelonelontBaselondQigSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.melonmcachelond.{Clielonnt => MelonmcachelondClielonnt}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.qig_rankelonr.thriftscala.QigRankelonr
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object TweetBasedQigSimilarityEngineModule extends TwitterModule {
+objelonct TwelonelontBaselondQigSimilarityelonnginelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.TweetBasedQigSimilarityEngine)
-  def providesTweetBasedQigSimilarTweetsCandidateSource(
-    qigRanker: QigRanker.MethodPerEndpoint,
-    @Named(ModuleNames.UnifiedCache) crMixerUnifiedCacheClient: MemcachedClient,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-    decider: CrMixerDecider
-  ): StandardSimilarityEngine[
-    TweetBasedQigSimilarityEngine.Query,
-    TweetWithScore
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.TwelonelontBaselondQigSimilarityelonnginelon)
+  delonf providelonsTwelonelontBaselondQigSimilarTwelonelontsCandidatelonSourcelon(
+    qigRankelonr: QigRankelonr.MelonthodPelonrelonndpoint,
+    @Namelond(ModulelonNamelons.UnifielondCachelon) crMixelonrUnifielondCachelonClielonnt: MelonmcachelondClielonnt,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    deloncidelonr: CrMixelonrDeloncidelonr
+  ): StandardSimilarityelonnginelon[
+    TwelonelontBaselondQigSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelon
   ] = {
-    new StandardSimilarityEngine[
-      TweetBasedQigSimilarityEngine.Query,
-      TweetWithScore
+    nelonw StandardSimilarityelonnginelon[
+      TwelonelontBaselondQigSimilarityelonnginelon.Quelonry,
+      TwelonelontWithScorelon
     ](
-      implementingStore = TweetBasedQigSimilarityEngine(qigRanker, statsReceiver),
-      identifier = SimilarityEngineType.Qig,
-      globalStats = statsReceiver,
-      engineConfig = SimilarityEngineConfig(
-        timeout = timeoutConfig.similarityEngineTimeout,
+      implelonmelonntingStorelon = TwelonelontBaselondQigSimilarityelonnginelon(qigRankelonr, statsReloncelonivelonr),
+      idelonntifielonr = SimilarityelonnginelonTypelon.Qig,
+      globalStats = statsReloncelonivelonr,
+      elonnginelonConfig = SimilarityelonnginelonConfig(
+        timelonout = timelonoutConfig.similarityelonnginelonTimelonout,
         gatingConfig = GatingConfig(
-          deciderConfig =
-            Some(DeciderConfig(decider, DeciderConstants.enableQigSimilarTweetsTrafficDeciderKey)),
-          enableFeatureSwitch = None
+          deloncidelonrConfig =
+            Somelon(DeloncidelonrConfig(deloncidelonr, DeloncidelonrConstants.elonnablelonQigSimilarTwelonelontsTrafficDeloncidelonrKelony)),
+          elonnablelonFelonaturelonSwitch = Nonelon
         )
       ),
-      memCacheConfig = Some(
-        MemCacheConfig(
-          cacheClient = crMixerUnifiedCacheClient,
-          ttl = 10.minutes,
-          keyToString = { k =>
-            f"TweetBasedQIGRanker:${keyHasher.hashKey(k.sourceId.toString.getBytes)}%X"
+      melonmCachelonConfig = Somelon(
+        MelonmCachelonConfig(
+          cachelonClielonnt = crMixelonrUnifielondCachelonClielonnt,
+          ttl = 10.minutelons,
+          kelonyToString = { k =>
+            f"TwelonelontBaselondQIGRankelonr:${kelonyHashelonr.hashKelony(k.sourcelonId.toString.gelontBytelons)}%X"
           }
         )
       )

@@ -1,253 +1,253 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+packagelon com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity
 
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Execution
-import com.twitter.scalding._
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.tweet_similarity.TweetSimilarityFeatures
-import java.util.TimeZone
+import com.twittelonr.ml.api.DailySuffixFelonaturelonSourcelon
+import com.twittelonr.ml.api.DataSelontPipelon
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.twelonelont_similarity.TwelonelontSimilarityFelonaturelons
+import java.util.TimelonZonelon
 
-object DatasetTopKAnalysisJob {
+objelonct DataselontTopKAnalysisJob {
 
-  case class TweetPairWithStats(
-    queryTweet: TweetId,
-    candidateTweet: TweetId,
-    cooccurrenceCount: Double,
-    coengagementCount: Double,
-    coengagementRate: Double)
+  caselon class TwelonelontPairWithStats(
+    quelonryTwelonelont: TwelonelontId,
+    candidatelonTwelonelont: TwelonelontId,
+    cooccurrelonncelonCount: Doublelon,
+    coelonngagelonmelonntCount: Doublelon,
+    coelonngagelonmelonntRatelon: Doublelon)
 
-  def getCoocurrenceTweetPairs(dataset: DataSetPipe): TypedPipe[TweetPairWithStats] = {
-    val featureContext = dataset.featureContext
+  delonf gelontCoocurrelonncelonTwelonelontPairs(dataselont: DataSelontPipelon): TypelondPipelon[TwelonelontPairWithStats] = {
+    val felonaturelonContelonxt = dataselont.felonaturelonContelonxt
 
-    dataset.records
-      .map { record =>
-        val richDataRecord = new RichDataRecord(record, featureContext)
-        val coengaged =
-          if (richDataRecord
-              .getFeatureValue(TweetSimilarityFeatures.Label)
-              .booleanValue) 1
-          else 0
+    dataselont.reloncords
+      .map { reloncord =>
+        val richDataReloncord = nelonw RichDataReloncord(reloncord, felonaturelonContelonxt)
+        val coelonngagelond =
+          if (richDataReloncord
+              .gelontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.Labelonl)
+              .boolelonanValuelon) 1
+          elonlselon 0
         (
           (
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.QueryTweetId).toLong,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.CandidateTweetId).toLong),
-          (1, coengaged)
+            richDataReloncord.gelontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.QuelonryTwelonelontId).toLong,
+            richDataReloncord.gelontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.CandidatelonTwelonelontId).toLong),
+          (1, coelonngagelond)
         )
-      }.sumByKey
+      }.sumByKelony
       .map {
-        case ((queryTweet, candidateTweet), (coocurrenceCount, coengagementCount)) =>
-          TweetPairWithStats(
-            queryTweet,
-            candidateTweet,
-            coocurrenceCount.toDouble,
-            coengagementCount.toDouble,
-            coengagementCount.toDouble / coocurrenceCount.toDouble
+        caselon ((quelonryTwelonelont, candidatelonTwelonelont), (coocurrelonncelonCount, coelonngagelonmelonntCount)) =>
+          TwelonelontPairWithStats(
+            quelonryTwelonelont,
+            candidatelonTwelonelont,
+            coocurrelonncelonCount.toDoublelon,
+            coelonngagelonmelonntCount.toDoublelon,
+            coelonngagelonmelonntCount.toDoublelon / coocurrelonncelonCount.toDoublelon
           )
       }
   }
 
-  def getQueryTweetToCounts(dataset: DataSetPipe): TypedPipe[(Long, (Int, Int))] = {
-    val featureContext = dataset.featureContext
-    dataset.records.map { record =>
-      val richDataRecord = new RichDataRecord(record, featureContext)
-      val coengaged =
-        if (richDataRecord
-            .getFeatureValue(TweetSimilarityFeatures.Label)
-            .booleanValue) 1
-        else 0
+  delonf gelontQuelonryTwelonelontToCounts(dataselont: DataSelontPipelon): TypelondPipelon[(Long, (Int, Int))] = {
+    val felonaturelonContelonxt = dataselont.felonaturelonContelonxt
+    dataselont.reloncords.map { reloncord =>
+      val richDataReloncord = nelonw RichDataReloncord(reloncord, felonaturelonContelonxt)
+      val coelonngagelond =
+        if (richDataReloncord
+            .gelontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.Labelonl)
+            .boolelonanValuelon) 1
+        elonlselon 0
       (
-        richDataRecord.getFeatureValue(TweetSimilarityFeatures.QueryTweetId).toLong,
-        (1, coengaged)
+        richDataReloncord.gelontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.QuelonryTwelonelontId).toLong,
+        (1, coelonngagelond)
       )
-    }.sumByKey
+    }.sumByKelony
   }
 
-  def printGlobalTopKTweetPairsBy(
-    tweetPairs: TypedPipe[TweetPairWithStats],
+  delonf printGlobalTopKTwelonelontPairsBy(
+    twelonelontPairs: TypelondPipelon[TwelonelontPairWithStats],
     k: Int,
-    orderByFnt: TweetPairWithStats => Double
-  ): Execution[Unit] = {
-    val topKTweetPairs =
-      tweetPairs.groupAll
-        .sortedReverseTake(k)(Ordering.by(orderByFnt))
-        .values
-    topKTweetPairs.toIterableExecution.map { s =>
-      println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
+    ordelonrByFnt: TwelonelontPairWithStats => Doublelon
+  ): elonxeloncution[Unit] = {
+    val topKTwelonelontPairs =
+      twelonelontPairs.groupAll
+        .sortelondRelonvelonrselonTakelon(k)(Ordelonring.by(ordelonrByFnt))
+        .valuelons
+    topKTwelonelontPairs.toItelonrablelonelonxeloncution.map { s =>
+      println(s.map(Util.prelonttyJsonMappelonr.writelonValuelonAsString).mkString("\n"))
     }
   }
 
-  def printTweetTopKTweetsBy(
-    groupedBy: Grouped[TweetId, TweetPairWithStats],
+  delonf printTwelonelontTopKTwelonelontsBy(
+    groupelondBy: Groupelond[TwelonelontId, TwelonelontPairWithStats],
     k: Int,
-    orderByFnt: TweetPairWithStats => Double,
-    descending: Boolean = true
-  ): Execution[Unit] = {
-    if (descending) {
-      println("TweetTopKTweets (descending order)")
-      groupedBy
-        .sortedReverseTake(k)(Ordering.by(orderByFnt))
-        .toIterableExecution
-        .map { record => println(record.toString()) }
-    } else {
-      println("TweetTopKTweets (ascending order)")
-      groupedBy
-        .sortedTake(k)(Ordering.by(orderByFnt))
-        .toIterableExecution
-        .map { record => println(record.toString()) }
+    ordelonrByFnt: TwelonelontPairWithStats => Doublelon,
+    delonscelonnding: Boolelonan = truelon
+  ): elonxeloncution[Unit] = {
+    if (delonscelonnding) {
+      println("TwelonelontTopKTwelonelonts (delonscelonnding ordelonr)")
+      groupelondBy
+        .sortelondRelonvelonrselonTakelon(k)(Ordelonring.by(ordelonrByFnt))
+        .toItelonrablelonelonxeloncution
+        .map { reloncord => println(reloncord.toString()) }
+    } elonlselon {
+      println("TwelonelontTopKTwelonelonts (ascelonnding ordelonr)")
+      groupelondBy
+        .sortelondTakelon(k)(Ordelonring.by(ordelonrByFnt))
+        .toItelonrablelonelonxeloncution
+        .map { reloncord => println(reloncord.toString()) }
     }
   }
 
-  def printTweetPairStatsExec(
-    tweetPairs: TypedPipe[TweetPairWithStats],
+  delonf printTwelonelontPairStatselonxelonc(
+    twelonelontPairs: TypelondPipelon[TwelonelontPairWithStats],
     k: Int
-  ): Execution[Unit] = {
-    Execution
-      .sequence(
-        Seq(
-          Util.printSummaryOfNumericColumn(
-            tweetPairs.map(_.cooccurrenceCount),
-            Some("Tweet-pair Coocurrence Count")),
-          printGlobalTopKTweetPairsBy(
-            tweetPairs,
+  ): elonxeloncution[Unit] = {
+    elonxeloncution
+      .selonquelonncelon(
+        Selonq(
+          Util.printSummaryOfNumelonricColumn(
+            twelonelontPairs.map(_.cooccurrelonncelonCount),
+            Somelon("Twelonelont-pair Coocurrelonncelon Count")),
+          printGlobalTopKTwelonelontPairsBy(
+            twelonelontPairs,
             k,
-            { tweetPairs => tweetPairs.cooccurrenceCount }),
-          Util.printSummaryOfNumericColumn(
-            tweetPairs.map(_.coengagementCount),
-            Some("Tweet-pair Coengagement Count")),
-          printGlobalTopKTweetPairsBy(
-            tweetPairs,
+            { twelonelontPairs => twelonelontPairs.cooccurrelonncelonCount }),
+          Util.printSummaryOfNumelonricColumn(
+            twelonelontPairs.map(_.coelonngagelonmelonntCount),
+            Somelon("Twelonelont-pair Coelonngagelonmelonnt Count")),
+          printGlobalTopKTwelonelontPairsBy(
+            twelonelontPairs,
             k,
-            { tweetPairs => tweetPairs.coengagementCount }),
-          Util.printSummaryOfNumericColumn(
-            tweetPairs.map(_.coengagementRate),
-            Some("Tweet-pair Coengagement Rate")),
-          printGlobalTopKTweetPairsBy(tweetPairs, k, { tweetPairs => tweetPairs.coengagementRate })
+            { twelonelontPairs => twelonelontPairs.coelonngagelonmelonntCount }),
+          Util.printSummaryOfNumelonricColumn(
+            twelonelontPairs.map(_.coelonngagelonmelonntRatelon),
+            Somelon("Twelonelont-pair Coelonngagelonmelonnt Ratelon")),
+          printGlobalTopKTwelonelontPairsBy(twelonelontPairs, k, { twelonelontPairs => twelonelontPairs.coelonngagelonmelonntRatelon })
         )
       ).unit
   }
 
-  def printPerQueryStatsExec(dataset: DataSetPipe, k: Int): Execution[Unit] = {
-    val queryToCounts = getQueryTweetToCounts(dataset)
+  delonf printPelonrQuelonryStatselonxelonc(dataselont: DataSelontPipelon, k: Int): elonxeloncution[Unit] = {
+    val quelonryToCounts = gelontQuelonryTwelonelontToCounts(dataselont)
 
-    val topKQueryTweetsByOccurrence =
-      queryToCounts.groupAll
-        .sortedReverseTake(k)(Ordering.by { case (_, (cooccurrenceCount, _)) => cooccurrenceCount })
-        .values
+    val topKQuelonryTwelonelontsByOccurrelonncelon =
+      quelonryToCounts.groupAll
+        .sortelondRelonvelonrselonTakelon(k)(Ordelonring.by { caselon (_, (cooccurrelonncelonCount, _)) => cooccurrelonncelonCount })
+        .valuelons
 
-    val topKQueryTweetsByEngagement =
-      queryToCounts.groupAll
-        .sortedReverseTake(k)(Ordering.by { case (_, (_, coengagementCount)) => coengagementCount })
-        .values
+    val topKQuelonryTwelonelontsByelonngagelonmelonnt =
+      quelonryToCounts.groupAll
+        .sortelondRelonvelonrselonTakelon(k)(Ordelonring.by { caselon (_, (_, coelonngagelonmelonntCount)) => coelonngagelonmelonntCount })
+        .valuelons
 
-    Execution
-      .sequence(
-        Seq(
-          Util.printSummaryOfNumericColumn(
-            queryToCounts.map(_._2._1),
-            Some("Per-query Total Cooccurrence Count")),
-          topKQueryTweetsByOccurrence.toIterableExecution.map { s =>
-            println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
+    elonxeloncution
+      .selonquelonncelon(
+        Selonq(
+          Util.printSummaryOfNumelonricColumn(
+            quelonryToCounts.map(_._2._1),
+            Somelon("Pelonr-quelonry Total Cooccurrelonncelon Count")),
+          topKQuelonryTwelonelontsByOccurrelonncelon.toItelonrablelonelonxeloncution.map { s =>
+            println(s.map(Util.prelonttyJsonMappelonr.writelonValuelonAsString).mkString("\n"))
           },
-          Util.printSummaryOfNumericColumn(
-            queryToCounts.map(_._2._2),
-            Some("Per-query Total Coengagement Count")),
-          topKQueryTweetsByEngagement.toIterableExecution.map { s =>
-            println(s.map(Util.prettyJsonMapper.writeValueAsString).mkString("\n"))
+          Util.printSummaryOfNumelonricColumn(
+            quelonryToCounts.map(_._2._2),
+            Somelon("Pelonr-quelonry Total Coelonngagelonmelonnt Count")),
+          topKQuelonryTwelonelontsByelonngagelonmelonnt.toItelonrablelonelonxeloncution.map { s =>
+            println(s.map(Util.prelonttyJsonMappelonr.writelonValuelonAsString).mkString("\n"))
           }
         )
       ).unit
   }
 
-  def runTweetTopKTweetsOutputExecs(
-    tweetPairs: TypedPipe[TweetPairWithStats],
+  delonf runTwelonelontTopKTwelonelontsOutputelonxeloncs(
+    twelonelontPairs: TypelondPipelon[TwelonelontPairWithStats],
     k: Int,
     outputPath: String
-  ): Execution[Unit] = {
-    tweetPairs
-      .groupBy(_.queryTweet)
-      .sortedReverseTake(k)(Ordering.by(_.coengagementRate))
-      .writeExecution(TypedTsv(outputPath + "/topK_by_coengagement_rate"))
+  ): elonxeloncution[Unit] = {
+    twelonelontPairs
+      .groupBy(_.quelonryTwelonelont)
+      .sortelondRelonvelonrselonTakelon(k)(Ordelonring.by(_.coelonngagelonmelonntRatelon))
+      .writelonelonxeloncution(TypelondTsv(outputPath + "/topK_by_coelonngagelonmelonnt_ratelon"))
   }
 }
 
 /** To run:
-  scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:dataset_topk_analysis-adhoc \
-  --user cassowary \
-  --submitter hadoopnest2.atla.twitter.com \
-  --main-class com.twitter.simclusters_v2.scalding.tweet_similarity.DatasetTopKAnalysisAdhocApp -- \
-  --date 2020-02-19 \
-  --dataset_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/train \
-  --output_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/train/analysis
+  scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/twelonelont_similarity:dataselont_topk_analysis-adhoc \
+  --uselonr cassowary \
+  --submittelonr hadoopnelonst2.atla.twittelonr.com \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.DataselontTopKAnalysisAdhocApp -- \
+  --datelon 2020-02-19 \
+  --dataselont_path /uselonr/cassowary/adhoc/training_data/2020-02-19_class_balancelond/train \
+  --output_path /uselonr/cassowary/adhoc/training_data/2020-02-19_class_balancelond/train/analysis
  * */
-object DatasetTopKAnalysisAdhocApp extends TwitterExecutionApp {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+objelonct DataselontTopKAnalysisAdhocApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val timelonZonelon: TimelonZonelon = DatelonOps.UTC
+  implicit val datelonParselonr: DatelonParselonr = DatelonParselonr.delonfault
 
-  def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.withArgs { args: Args =>
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-      val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
+  delonf job: elonxeloncution[Unit] = elonxeloncution.withId { implicit uniquelonId =>
+    elonxeloncution.withArgs { args: Args =>
+      implicit val datelonRangelon: DatelonRangelon = DatelonRangelon.parselon(args.list("datelon"))
+      val dataselont: DataSelontPipelon = DailySuffixFelonaturelonSourcelon(args("dataselont_path")).relonad
       val outputPath: String = args("output_path")
-      val topK: Int = args.int("top_K", default = 10)
+      val topK: Int = args.int("top_K", delonfault = 10)
 
-      val tweetPairs = DatasetTopKAnalysisJob.getCoocurrenceTweetPairs(dataset)
+      val twelonelontPairs = DataselontTopKAnalysisJob.gelontCoocurrelonncelonTwelonelontPairs(dataselont)
 
-      Execution
+      elonxeloncution
         .zip(
-          DatasetTopKAnalysisJob.printTweetPairStatsExec(tweetPairs, topK),
-          DatasetTopKAnalysisJob.runTweetTopKTweetsOutputExecs(tweetPairs, topK, outputPath),
-          DatasetTopKAnalysisJob.printPerQueryStatsExec(dataset, topK)
+          DataselontTopKAnalysisJob.printTwelonelontPairStatselonxelonc(twelonelontPairs, topK),
+          DataselontTopKAnalysisJob.runTwelonelontTopKTwelonelontsOutputelonxeloncs(twelonelontPairs, topK, outputPath),
+          DataselontTopKAnalysisJob.printPelonrQuelonryStatselonxelonc(dataselont, topK)
         ).unit
     }
   }
 }
 
 /** To run:
-  scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:dataset_topk_analysis-dump \
-  --user cassowary \
-  --submitter hadoopnest2.atla.twitter.com \
-  --main-class com.twitter.simclusters_v2.scalding.tweet_similarity.DatasetTopKAnalysisDumpApp -- \
-  --date 2020-02-01 \
-  --dataset_path /user/cassowary/adhoc/training_data/2020-02-01/train \
-  --tweets 1223105606757695490 \
+  scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/twelonelont_similarity:dataselont_topk_analysis-dump \
+  --uselonr cassowary \
+  --submittelonr hadoopnelonst2.atla.twittelonr.com \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.DataselontTopKAnalysisDumpApp -- \
+  --datelon 2020-02-01 \
+  --dataselont_path /uselonr/cassowary/adhoc/training_data/2020-02-01/train \
+  --twelonelonts 1223105606757695490 \
   --top_K 100
  * */
-object DatasetTopKAnalysisDumpApp extends TwitterExecutionApp {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+objelonct DataselontTopKAnalysisDumpApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val timelonZonelon: TimelonZonelon = DatelonOps.UTC
+  implicit val datelonParselonr: DatelonParselonr = DatelonParselonr.delonfault
 
-  def job: Execution[Unit] = Execution.withId { implicit uniqueId =>
-    Execution.withArgs { args: Args =>
-      implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-      val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
-      val tweets = args.list("tweets").map(_.toLong).toSet
-      val topK: Int = args.int("top_K", default = 100)
+  delonf job: elonxeloncution[Unit] = elonxeloncution.withId { implicit uniquelonId =>
+    elonxeloncution.withArgs { args: Args =>
+      implicit val datelonRangelon: DatelonRangelon = DatelonRangelon.parselon(args.list("datelon"))
+      val dataselont: DataSelontPipelon = DailySuffixFelonaturelonSourcelon(args("dataselont_path")).relonad
+      val twelonelonts = args.list("twelonelonts").map(_.toLong).toSelont
+      val topK: Int = args.int("top_K", delonfault = 100)
 
-      val tweetPairs = DatasetTopKAnalysisJob.getCoocurrenceTweetPairs(dataset)
+      val twelonelontPairs = DataselontTopKAnalysisJob.gelontCoocurrelonncelonTwelonelontPairs(dataselont)
 
-      if (tweets.isEmpty) {
-        Execution.from(println("Empty query tweets"))
-      } else {
-        val filteredGroupby = tweetPairs
-          .filter { record => tweets.contains(record.queryTweet) }
-          .groupBy(_.queryTweet)
+      if (twelonelonts.iselonmpty) {
+        elonxeloncution.from(println("elonmpty quelonry twelonelonts"))
+      } elonlselon {
+        val filtelonrelondGroupby = twelonelontPairs
+          .filtelonr { reloncord => twelonelonts.contains(reloncord.quelonryTwelonelont) }
+          .groupBy(_.quelonryTwelonelont)
 
-        Execution
+        elonxeloncution
           .zip(
             //Top K
-            DatasetTopKAnalysisJob
-              .printTweetTopKTweetsBy(filteredGroupby, topK, pair => pair.coengagementCount),
+            DataselontTopKAnalysisJob
+              .printTwelonelontTopKTwelonelontsBy(filtelonrelondGroupby, topK, pair => pair.coelonngagelonmelonntCount),
             //Bottom K
-            DatasetTopKAnalysisJob.printTweetTopKTweetsBy(
-              filteredGroupby,
+            DataselontTopKAnalysisJob.printTwelonelontTopKTwelonelontsBy(
+              filtelonrelondGroupby,
               topK,
-              pair => pair.coengagementCount,
-              descending = false)
+              pair => pair.coelonngagelonmelonntCount,
+              delonscelonnding = falselon)
           ).unit
       }
     }

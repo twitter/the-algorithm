@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ModulelonItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ModuleItemMarshaller @Inject() (
-  timelineItemMarshaller: TimelineItemMarshaller,
-  moduleItemTreeDisplayMarshaller: ModuleItemTreeDisplayMarshaller) {
+@Singlelonton
+class ModulelonItelonmMarshallelonr @Injelonct() (
+  timelonlinelonItelonmMarshallelonr: TimelonlinelonItelonmMarshallelonr,
+  modulelonItelonmTrelonelonDisplayMarshallelonr: ModulelonItelonmTrelonelonDisplayMarshallelonr) {
 
-  def apply(moduleItem: ModuleItem, moduleEntryId: String): urt.ModuleItem = urt.ModuleItem(
-    /* Module items have an identifier comprising both the module entry id and the module item id.
-    Some URT clients will deduplicate globally across different modules.
-    Using the entry id as a prefix ensures that deduplication only happens within a single module,
-    which we believe better aligns with engineers' intentions. */
-    entryId = moduleEntryId + "-" + moduleItem.item.entryIdentifier,
-    item = timelineItemMarshaller(moduleItem.item),
-    dispensable = moduleItem.dispensable,
-    treeDisplay = moduleItem.treeDisplay.map(moduleItemTreeDisplayMarshaller.apply)
+  delonf apply(modulelonItelonm: ModulelonItelonm, modulelonelonntryId: String): urt.ModulelonItelonm = urt.ModulelonItelonm(
+    /* Modulelon itelonms havelon an idelonntifielonr comprising both thelon modulelon elonntry id and thelon modulelon itelonm id.
+    Somelon URT clielonnts will delonduplicatelon globally across diffelonrelonnt modulelons.
+    Using thelon elonntry id as a prelonfix elonnsurelons that delonduplication only happelonns within a singlelon modulelon,
+    which welon belonlielonvelon belonttelonr aligns with elonnginelonelonrs' intelonntions. */
+    elonntryId = modulelonelonntryId + "-" + modulelonItelonm.itelonm.elonntryIdelonntifielonr,
+    itelonm = timelonlinelonItelonmMarshallelonr(modulelonItelonm.itelonm),
+    dispelonnsablelon = modulelonItelonm.dispelonnsablelon,
+    trelonelonDisplay = modulelonItelonm.trelonelonDisplay.map(modulelonItelonmTrelonelonDisplayMarshallelonr.apply)
   )
 }

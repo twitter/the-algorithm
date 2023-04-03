@@ -1,114 +1,114 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Collelonction;
+import java.util.Collelonctions;
 import java.util.Comparator;
 import java.util.List;
-import java.util.NavigableMap;
+import java.util.NavigablelonMap;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Singlelonton;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSortedMap;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.ImmutablelonSortelondMap;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.earlybird.config.TierInfo;
-import com.twitter.search.earlybird.config.TierInfoSource;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.snowflake.id.SnowflakeId;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrInfo;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrInfoSourcelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.snowflakelon.id.SnowflakelonId;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.FuturelonelonvelonntListelonnelonr;
 
 /**
- * A filter to count the tier to which the oldest tweet in the results belong.
+ * A filtelonr to count thelon tielonr to which thelon oldelonst twelonelont in thelon relonsults belonlong.
  */
-@Singleton
-public class ResultTierCountFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+@Singlelonton
+public class RelonsultTielonrCountFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  private static final String COUNTER_PREFIX = "result_tier_count";
-  private final long firstTweetTimeSinceEpochSec;
-  private final NavigableMap<Long, SearchCounter> tierBuckets;
-  private final SearchCounter allCounter = SearchCounter.export(COUNTER_PREFIX + "_all");
-  private final SearchCounter noResultsCounter =
-      SearchCounter.export(COUNTER_PREFIX + "_no_results");
+  privatelon static final String COUNTelonR_PRelonFIX = "relonsult_tielonr_count";
+  privatelon final long firstTwelonelontTimelonSincelonelonpochSelonc;
+  privatelon final NavigablelonMap<Long, SelonarchCountelonr> tielonrBuckelonts;
+  privatelon final SelonarchCountelonr allCountelonr = SelonarchCountelonr.elonxport(COUNTelonR_PRelonFIX + "_all");
+  privatelon final SelonarchCountelonr noRelonsultsCountelonr =
+      SelonarchCountelonr.elonxport(COUNTelonR_PRelonFIX + "_no_relonsults");
 
-  @Inject
-  @SuppressWarnings("unused")
-  ResultTierCountFilter(TierInfoSource tierInfoSource) {
-    List<TierInfo> tierInfos = tierInfoSource.getTierInformation();
-    tierInfos.sort(Comparator.comparing(TierInfo::getDataStartDate));
+  @Injelonct
+  @SupprelonssWarnings("unuselond")
+  RelonsultTielonrCountFiltelonr(TielonrInfoSourcelon tielonrInfoSourcelon) {
+    List<TielonrInfo> tielonrInfos = tielonrInfoSourcelon.gelontTielonrInformation();
+    tielonrInfos.sort(Comparator.comparing(TielonrInfo::gelontDataStartDatelon));
 
-    firstTweetTimeSinceEpochSec = tierInfos.get(0).getServingRangeSinceTimeSecondsFromEpoch();
+    firstTwelonelontTimelonSincelonelonpochSelonc = tielonrInfos.gelont(0).gelontSelonrvingRangelonSincelonTimelonSeloncondsFromelonpoch();
 
-    ImmutableSortedMap.Builder<Long, SearchCounter> builder = ImmutableSortedMap.naturalOrder();
-    Collections.reverse(tierInfos);
+    ImmutablelonSortelondMap.Buildelonr<Long, SelonarchCountelonr> buildelonr = ImmutablelonSortelondMap.naturalOrdelonr();
+    Collelonctions.relonvelonrselon(tielonrInfos);
 
-    for (TierInfo tierInfo : tierInfos) {
-      SearchCounter searchCounter = SearchCounter.export(
-          String.format("%s_%s", COUNTER_PREFIX, tierInfo.getTierName()));
-      builder.put(tierInfo.getServingRangeSinceTimeSecondsFromEpoch(), searchCounter);
+    for (TielonrInfo tielonrInfo : tielonrInfos) {
+      SelonarchCountelonr selonarchCountelonr = SelonarchCountelonr.elonxport(
+          String.format("%s_%s", COUNTelonR_PRelonFIX, tielonrInfo.gelontTielonrNamelon()));
+      buildelonr.put(tielonrInfo.gelontSelonrvingRangelonSincelonTimelonSeloncondsFromelonpoch(), selonarchCountelonr);
 
-      // export cumulative metrics to sum from the latest to a lower tier
-      Collection<SearchCounter> counters = builder.build().values();
-      SearchCustomGauge.export(
-          String.format("%s_down_to_%s", COUNTER_PREFIX, tierInfo.getTierName()),
-          () -> counters.stream()
-              .mapToLong(SearchCounter::get)
+      // elonxport cumulativelon melontrics to sum from thelon latelonst to a lowelonr tielonr
+      Collelonction<SelonarchCountelonr> countelonrs = buildelonr.build().valuelons();
+      SelonarchCustomGaugelon.elonxport(
+          String.format("%s_down_to_%s", COUNTelonR_PRelonFIX, tielonrInfo.gelontTielonrNamelon()),
+          () -> countelonrs.strelonam()
+              .mapToLong(SelonarchCountelonr::gelont)
               .sum());
     }
 
-    tierBuckets = builder.build();
+    tielonrBuckelonts = buildelonr.build();
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext context,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(context).addEventListener(
-        new FutureEventListener<EarlybirdResponse>() {
-          @Override
-          public void onFailure(Throwable cause) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt contelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    relonturn selonrvicelon.apply(contelonxt).addelonvelonntListelonnelonr(
+        nelonw FuturelonelonvelonntListelonnelonr<elonarlybirdRelonsponselon>() {
+          @Ovelonrridelon
+          public void onFailurelon(Throwablelon causelon) {
             // do nothing
           }
 
-          @Override
-          public void onSuccess(EarlybirdResponse response) {
-            record(response);
+          @Ovelonrridelon
+          public void onSuccelonss(elonarlybirdRelonsponselon relonsponselon) {
+            reloncord(relonsponselon);
           }
         });
   }
 
-  @VisibleForTesting
-  void record(EarlybirdResponse response) {
-    if (response.isSetSearchResults()) {
-      long minResultsStatusId = response.getSearchResults().getResults().stream()
-          .mapToLong(ThriftSearchResult::getId)
+  @VisiblelonForTelonsting
+  void reloncord(elonarlybirdRelonsponselon relonsponselon) {
+    if (relonsponselon.isSelontSelonarchRelonsults()) {
+      long minRelonsultsStatusId = relonsponselon.gelontSelonarchRelonsults().gelontRelonsults().strelonam()
+          .mapToLong(ThriftSelonarchRelonsult::gelontId)
           .min()
-          .orElse(-1);
-      getBucket(minResultsStatusId).increment();
+          .orelonlselon(-1);
+      gelontBuckelont(minRelonsultsStatusId).increlonmelonnt();
     }
-    allCounter.increment();
+    allCountelonr.increlonmelonnt();
   }
 
-  private SearchCounter getBucket(long statusId) {
+  privatelon SelonarchCountelonr gelontBuckelont(long statusId) {
     if (statusId < 0) {
-      return noResultsCounter;
+      relonturn noRelonsultsCountelonr;
     }
 
-    // If non-negative statusId is not a SnowflakeId, the tweet must have been created before
-    // Twepoch (2010-11-04T01:42:54Z) and thus belongs to full1.
-    long timeSinceEpochSec = firstTweetTimeSinceEpochSec;
-    if (SnowflakeId.isSnowflakeId(statusId)) {
-      timeSinceEpochSec = SnowflakeId.timeFromId(statusId).inSeconds();
+    // If non-nelongativelon statusId is not a SnowflakelonId, thelon twelonelont must havelon belonelonn crelonatelond belonforelon
+    // Twelonpoch (2010-11-04T01:42:54Z) and thus belonlongs to full1.
+    long timelonSincelonelonpochSelonc = firstTwelonelontTimelonSincelonelonpochSelonc;
+    if (SnowflakelonId.isSnowflakelonId(statusId)) {
+      timelonSincelonelonpochSelonc = SnowflakelonId.timelonFromId(statusId).inSelonconds();
     }
 
-    return tierBuckets.floorEntry(timeSinceEpochSec).getValue();
+    relonturn tielonrBuckelonts.floorelonntry(timelonSincelonelonpochSelonc).gelontValuelon();
   }
 }

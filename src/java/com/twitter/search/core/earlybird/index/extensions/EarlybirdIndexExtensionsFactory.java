@@ -1,19 +1,19 @@
-package com.twitter.search.core.earlybird.index.extensions;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions;
 
 /**
- * Base class to implement factories that create realtime and Lucene index extensions.
+ * Baselon class to implelonmelonnt factorielons that crelonatelon relonaltimelon and Lucelonnelon indelonx elonxtelonnsions.
  *
- * The factory needs to be able to create instances for new segments, as well as load
- * index extensions of existing segments from disk.
+ * Thelon factory nelonelonds to belon ablelon to crelonatelon instancelons for nelonw selongmelonnts, as welonll as load
+ * indelonx elonxtelonnsions of elonxisting selongmelonnts from disk.
  */
-public abstract class EarlybirdIndexExtensionsFactory {
+public abstract class elonarlybirdIndelonxelonxtelonnsionsFactory {
   /**
-   * Returns the {@link EarlybirdRealtimeIndexExtensionsData} instance to be used for a new segment.
+   * Relonturns thelon {@link elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData} instancelon to belon uselond for a nelonw selongmelonnt.
    */
-  public abstract EarlybirdRealtimeIndexExtensionsData newRealtimeIndexExtensionsData();
+  public abstract elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData nelonwRelonaltimelonIndelonxelonxtelonnsionsData();
 
   /**
-   * Returns the {@link EarlybirdIndexExtensionsData} instance to be used for a new Lucene segment.
+   * Relonturns thelon {@link elonarlybirdIndelonxelonxtelonnsionsData} instancelon to belon uselond for a nelonw Lucelonnelon selongmelonnt.
    */
-  public abstract EarlybirdIndexExtensionsData newLuceneIndexExtensionsData();
+  public abstract elonarlybirdIndelonxelonxtelonnsionsData nelonwLucelonnelonIndelonxelonxtelonnsionsData();
 }

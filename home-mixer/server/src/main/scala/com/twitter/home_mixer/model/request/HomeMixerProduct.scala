@@ -1,35 +1,35 @@
-package com.twitter.home_mixer.model.request
+packagelon com.twittelonr.homelon_mixelonr.modelonl.relonquelonst
 
-import com.twitter.product_mixer.core.model.common.identifier.ProductIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
 
 /**
- * Identifier names on products can be used to create Feature Switch rules by product,
- * which useful if bucketing occurs in a component shared by multiple products.
- * @see [[Product.identifier]]
+ * Idelonntifielonr namelons on products can belon uselond to crelonatelon Felonaturelon Switch rulelons by product,
+ * which uselonful if buckelonting occurs in a componelonnt sharelond by multiplelon products.
+ * @selonelon [[Product.idelonntifielonr]]
  */
 
-case object FollowingProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("Following")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+caselon objelonct FollowingProduct elonxtelonnds Product {
+  ovelonrridelon val idelonntifielonr: ProductIdelonntifielonr = ProductIdelonntifielonr("Following")
+  ovelonrridelon val stringCelonntelonrProjelonct: Option[String] = Somelon("timelonlinelonmixelonr")
 }
 
-case object ForYouProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ForYou")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+caselon objelonct ForYouProduct elonxtelonnds Product {
+  ovelonrridelon val idelonntifielonr: ProductIdelonntifielonr = ProductIdelonntifielonr("ForYou")
+  ovelonrridelon val stringCelonntelonrProjelonct: Option[String] = Somelon("timelonlinelonmixelonr")
 }
 
-case object ScoredTweetsProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ScoredTweets")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+caselon objelonct ScorelondTwelonelontsProduct elonxtelonnds Product {
+  ovelonrridelon val idelonntifielonr: ProductIdelonntifielonr = ProductIdelonntifielonr("ScorelondTwelonelonts")
+  ovelonrridelon val stringCelonntelonrProjelonct: Option[String] = Somelon("timelonlinelonmixelonr")
 }
 
-case object ListTweetsProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ListTweets")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+caselon objelonct ListTwelonelontsProduct elonxtelonnds Product {
+  ovelonrridelon val idelonntifielonr: ProductIdelonntifielonr = ProductIdelonntifielonr("ListTwelonelonts")
+  ovelonrridelon val stringCelonntelonrProjelonct: Option[String] = Somelon("timelonlinelonmixelonr")
 }
 
-case object ListRecommendedUsersProduct extends Product {
-  override val identifier: ProductIdentifier = ProductIdentifier("ListRecommendedUsers")
-  override val stringCenterProject: Option[String] = Some("timelinemixer")
+caselon objelonct ListReloncommelonndelondUselonrsProduct elonxtelonnds Product {
+  ovelonrridelon val idelonntifielonr: ProductIdelonntifielonr = ProductIdelonntifielonr("ListReloncommelonndelondUselonrs")
+  ovelonrridelon val stringCelonntelonrProjelonct: Option[String] = Somelon("timelonlinelonmixelonr")
 }

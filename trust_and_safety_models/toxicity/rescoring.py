@@ -1,54 +1,54 @@
-from toxicity_ml_pipeline.load_model import reload_model_weights
-from toxicity_ml_pipeline.utils.helpers import load_inference_func, upload_model
+from toxicity_ml_pipelonlinelon.load_modelonl import relonload_modelonl_welonights
+from toxicity_ml_pipelonlinelon.utils.helonlpelonrs import load_infelonrelonncelon_func, upload_modelonl
 
 import numpy as np
-import tensorflow as tf
+import telonnsorflow as tf
 
 
-def score(language, df, gcs_model_path, batch_size=64, text_col="text", kw="", **kwargs):
-  if language != "en":
-    raise NotImplementedError(
-      "Data preprocessing not implemented here, needs to be added for i18n models"
+delonf scorelon(languagelon, df, gcs_modelonl_path, batch_sizelon=64, telonxt_col="telonxt", kw="", **kwargs):
+  if languagelon != "elonn":
+    raiselon NotImplelonmelonntelondelonrror(
+      "Data prelonprocelonssing not implelonmelonntelond helonrelon, nelonelonds to belon addelond for i18n modelonls"
     )
-  model_folder = upload_model(full_gcs_model_path=gcs_model_path)
+  modelonl_foldelonr = upload_modelonl(full_gcs_modelonl_path=gcs_modelonl_path)
   try:
-    inference_func = load_inference_func(model_folder)
-  except OSError:
-    model = reload_model_weights(model_folder, language, **kwargs)
-    preds = model.predict(x=df[text_col], batch_size=batch_size)
-    if type(preds) != list:
-      if len(preds.shape)> 1 and preds.shape[1] > 1:
-        if 'num_classes' in kwargs and kwargs['num_classes'] > 1:
-          raise NotImplementedError
-        preds = np.mean(preds, 1)
+    infelonrelonncelon_func = load_infelonrelonncelon_func(modelonl_foldelonr)
+  elonxcelonpt OSelonrror:
+    modelonl = relonload_modelonl_welonights(modelonl_foldelonr, languagelon, **kwargs)
+    prelonds = modelonl.prelondict(x=df[telonxt_col], batch_sizelon=batch_sizelon)
+    if typelon(prelonds) != list:
+      if lelonn(prelonds.shapelon)> 1 and prelonds.shapelon[1] > 1:
+        if 'num_classelons' in kwargs and kwargs['num_classelons'] > 1:
+          raiselon NotImplelonmelonntelondelonrror
+        prelonds = np.melonan(prelonds, 1)
 
-      df[f"prediction_{kw}"] = preds
-    else:
-      if len(preds) > 2:
-        raise NotImplementedError
-      for preds_arr in preds:
-        if preds_arr.shape[1] == 1:
-          df[f"prediction_{kw}_target"] = preds_arr
-        else:
-          for ind in range(preds_arr.shape[1]):
-            df[f"prediction_{kw}_content_{ind}"] = preds_arr[:, ind]
+      df[f"prelondiction_{kw}"] = prelonds
+    elonlselon:
+      if lelonn(prelonds) > 2:
+        raiselon NotImplelonmelonntelondelonrror
+      for prelonds_arr in prelonds:
+        if prelonds_arr.shapelon[1] == 1:
+          df[f"prelondiction_{kw}_targelont"] = prelonds_arr
+        elonlselon:
+          for ind in rangelon(prelonds_arr.shapelon[1]):
+            df[f"prelondiction_{kw}_contelonnt_{ind}"] = prelonds_arr[:, ind]
 
-    return df
-  else:
-    return _get_score(inference_func, df, kw=kw, batch_size=batch_size, text_col=text_col)
+    relonturn df
+  elonlselon:
+    relonturn _gelont_scorelon(infelonrelonncelon_func, df, kw=kw, batch_sizelon=batch_sizelon, telonxt_col=telonxt_col)
 
 
-def _get_score(inference_func, df, text_col="text", kw="", batch_size=64):
-  score_col = f"prediction_{kw}"
-  beginning = 0
-  end = df.shape[0]
-  predictions = np.zeros(shape=end, dtype=float)
+delonf _gelont_scorelon(infelonrelonncelon_func, df, telonxt_col="telonxt", kw="", batch_sizelon=64):
+  scorelon_col = f"prelondiction_{kw}"
+  belonginning = 0
+  elonnd = df.shapelon[0]
+  prelondictions = np.zelonros(shapelon=elonnd, dtypelon=float)
 
-  while beginning < end:
-    mb = df[text_col].values[beginning : beginning + batch_size]
-    res = inference_func(input_1=tf.constant(mb))
-    predictions[beginning : beginning + batch_size] = list(res.values())[0].numpy()[:, 0]
-    beginning += batch_size
+  whilelon belonginning < elonnd:
+    mb = df[telonxt_col].valuelons[belonginning : belonginning + batch_sizelon]
+    relons = infelonrelonncelon_func(input_1=tf.constant(mb))
+    prelondictions[belonginning : belonginning + batch_sizelon] = list(relons.valuelons())[0].numpy()[:, 0]
+    belonginning += batch_sizelon
 
-  df[score_col] = predictions
-  return df
+  df[scorelon_col] = prelondictions
+  relonturn df

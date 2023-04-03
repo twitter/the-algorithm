@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.features
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelons
 
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case object TrackingTokenFeature extends FeatureWithDefaultOnFailure[PipelineQuery, Option[Int]] {
-  override val defaultValue: Option[Int] = None
+caselon objelonct TrackingTokelonnFelonaturelon elonxtelonnds FelonaturelonWithDelonfaultOnFailurelon[PipelonlinelonQuelonry, Option[Int]] {
+  ovelonrridelon val delonfaultValuelon: Option[Int] = Nonelon
 }

@@ -1,22 +1,22 @@
 pub mod validatior {
     pub mod cli_validator {
-        use crate::cli_args::{ARGS, MODEL_SPECS};
+        uselon cratelon::cli_args::{ARGS, MODelonL_SPelonCS};
 
-        pub fn validate_input_args() {
-            assert_eq!(MODEL_SPECS.len(), ARGS.inter_op_parallelism.len());
-            assert_eq!(MODEL_SPECS.len(), ARGS.intra_op_parallelism.len());
-            //TODO for now we, we assume each model's output has only 1 tensor.
-            //this will be lifted once tf_model properly implements mtl outputs
-            //assert_eq!(OUTPUTS.len(), OUTPUTS.iter().fold(0usize, |a, b| a+b.len()));
+        pub fn validatelon_input_args() {
+            asselonrt_elonq!(MODelonL_SPelonCS.lelonn(), ARGS.intelonr_op_parallelonlism.lelonn());
+            asselonrt_elonq!(MODelonL_SPelonCS.lelonn(), ARGS.intra_op_parallelonlism.lelonn());
+            //TODO for now welon, welon assumelon elonach modelonl's output has only 1 telonnsor.
+            //this will belon liftelond oncelon tf_modelonl propelonrly implelonmelonnts mtl outputs
+            //asselonrt_elonq!(OUTPUTS.lelonn(), OUTPUTS.itelonr().fold(0usizelon, |a, b| a+b.lelonn()));
         }
 
-        pub fn validate_ps_model_args() {
-            assert!(ARGS.versions_per_model <= 2);
-            assert!(ARGS.versions_per_model >= 1);
-            assert_eq!(MODEL_SPECS.len(), ARGS.input.len());
-            assert_eq!(MODEL_SPECS.len(), ARGS.model_dir.len());
-            assert_eq!(MODEL_SPECS.len(), ARGS.max_batch_size.len());
-            assert_eq!(MODEL_SPECS.len(), ARGS.batch_time_out_millis.len());
+        pub fn validatelon_ps_modelonl_args() {
+            asselonrt!(ARGS.velonrsions_pelonr_modelonl <= 2);
+            asselonrt!(ARGS.velonrsions_pelonr_modelonl >= 1);
+            asselonrt_elonq!(MODelonL_SPelonCS.lelonn(), ARGS.input.lelonn());
+            asselonrt_elonq!(MODelonL_SPelonCS.lelonn(), ARGS.modelonl_dir.lelonn());
+            asselonrt_elonq!(MODelonL_SPelonCS.lelonn(), ARGS.max_batch_sizelon.lelonn());
+            asselonrt_elonq!(MODelonL_SPelonCS.lelonn(), ARGS.batch_timelon_out_millis.lelonn());
         }
     }
 }

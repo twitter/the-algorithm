@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.param
+packagelon com.twittelonr.homelon_mixelonr.param
 
-object HomeMixerFlagName {
-  final val ScribeClientEventsFlag = "scribe.client_events"
-  final val ScribeServedEntriesFlag = "scribe.served_entries"
-  final val ScribeServedCommonFeaturesAndCandidateFeaturesFlag =
-    "scribe.served_common_features_and_candidate_features"
-  final val DataRecordMetadataStoreConfigsYmlFlag = "data.record.metadata.store.configs.yml"
-  final val DarkTrafficFilterDeciderKey = "thrift.dark.traffic.filter.decider_key"
-  final val TargetFetchLatency = "target.fetch.latency"
-  final val TargetScoringLatency = "target.scoring.latency"
+objelonct HomelonMixelonrFlagNamelon {
+  final val ScribelonClielonntelonvelonntsFlag = "scribelon.clielonnt_elonvelonnts"
+  final val ScribelonSelonrvelondelonntrielonsFlag = "scribelon.selonrvelond_elonntrielons"
+  final val ScribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsFlag =
+    "scribelon.selonrvelond_common_felonaturelons_and_candidatelon_felonaturelons"
+  final val DataReloncordMelontadataStorelonConfigsYmlFlag = "data.reloncord.melontadata.storelon.configs.yml"
+  final val DarkTrafficFiltelonrDeloncidelonrKelony = "thrift.dark.traffic.filtelonr.deloncidelonr_kelony"
+  final val TargelontFelontchLatelonncy = "targelont.felontch.latelonncy"
+  final val TargelontScoringLatelonncy = "targelont.scoring.latelonncy"
 }

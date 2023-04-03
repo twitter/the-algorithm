@@ -1,58 +1,58 @@
-package com.twitter.graph_feature_service.worker
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr
 
-import com.google.inject.Module
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.gizmoduck.modules.TimerModule
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters.{
-  LoggingMDCFilter,
-  StatsFilter,
-  ThriftMDCFilter,
-  TraceIdMDCFilter
+import com.googlelon.injelonct.Modulelon
+import com.twittelonr.finatra.deloncidelonr.modulelons.DeloncidelonrModulelon
+import com.twittelonr.finatra.gizmoduck.modulelons.TimelonrModulelon
+import com.twittelonr.finatra.mtls.thriftmux.Mtls
+import com.twittelonr.finatra.thrift.ThriftSelonrvelonr
+import com.twittelonr.finatra.thrift.filtelonrs.{
+  LoggingMDCFiltelonr,
+  StatsFiltelonr,
+  ThriftMDCFiltelonr,
+  TracelonIdMDCFiltelonr
 }
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.graph_feature_service.worker.controllers.WorkerController
-import com.twitter.graph_feature_service.worker.handlers.WorkerWarmupHandler
-import com.twitter.graph_feature_service.worker.modules.{
-  GraphContainerProviderModule,
-  WorkerFlagModule
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsThriftWelonbFormsModulelon
+import com.twittelonr.finatra.thrift.routing.ThriftRoutelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.controllelonrs.WorkelonrControllelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.handlelonrs.WorkelonrWarmupHandlelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.modulelons.{
+  GraphContainelonrProvidelonrModulelon,
+  WorkelonrFlagModulelon
 }
-import com.twitter.graph_feature_service.worker.util.GraphContainer
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
-import com.twitter.util.Await
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util.GraphContainelonr
+import com.twittelonr.injelonct.thrift.modulelons.ThriftClielonntIdModulelon
+import com.twittelonr.util.Await
 
-object Main extends WorkerMain
+objelonct Main elonxtelonnds WorkelonrMain
 
-class WorkerMain extends ThriftServer with Mtls {
+class WorkelonrMain elonxtelonnds ThriftSelonrvelonr with Mtls {
 
-  override val name = "graph_feature_service-worker"
+  ovelonrridelon val namelon = "graph_felonaturelon_selonrvicelon-workelonr"
 
-  override val modules: Seq[Module] = {
-    Seq(
-      WorkerFlagModule,
-      DeciderModule,
-      TimerModule,
-      ThriftClientIdModule,
-      GraphContainerProviderModule,
-      new MtlsThriftWebFormsModule[thriftscala.Worker.MethodPerEndpoint](this)
+  ovelonrridelon val modulelons: Selonq[Modulelon] = {
+    Selonq(
+      WorkelonrFlagModulelon,
+      DeloncidelonrModulelon,
+      TimelonrModulelon,
+      ThriftClielonntIdModulelon,
+      GraphContainelonrProvidelonrModulelon,
+      nelonw MtlsThriftWelonbFormsModulelon[thriftscala.Workelonr.MelonthodPelonrelonndpoint](this)
     )
   }
 
-  override def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[StatsFilter]
-      .add[WorkerController]
+  ovelonrridelon delonf configurelonThrift(routelonr: ThriftRoutelonr): Unit = {
+    routelonr
+      .filtelonr[LoggingMDCFiltelonr]
+      .filtelonr[TracelonIdMDCFiltelonr]
+      .filtelonr[ThriftMDCFiltelonr]
+      .filtelonr[StatsFiltelonr]
+      .add[WorkelonrControllelonr]
   }
 
-  override protected def warmup(): Unit = {
-    val graphContainer = injector.instance[GraphContainer]
-    Await.result(graphContainer.warmup)
-    handle[WorkerWarmupHandler]()
+  ovelonrridelon protelonctelond delonf warmup(): Unit = {
+    val graphContainelonr = injelonctor.instancelon[GraphContainelonr]
+    Await.relonsult(graphContainelonr.warmup)
+    handlelon[WorkelonrWarmupHandlelonr]()
   }
 }

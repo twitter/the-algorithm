@@ -1,229 +1,229 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
+import java.util.PriorityQuelonuelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.ranking.thriftjava.ThriftFacetEarlybirdSortingMode;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.facets.DummyFacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetAccumulator;
-import com.twitter.search.core.earlybird.facets.FacetCountIterator;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.LanguageHistogram;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher.FacetSearchResults;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftFacelontelonarlybirdSortingModelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.DummyFacelontAccumulator;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontAccumulator;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap.FacelontFielonld;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.LanguagelonHistogram;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AbstractRelonsultsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AntiGamingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.elonarlybirdLucelonnelonSelonarchelonr.FacelontSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontCount;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontFielonldRelonsults;
 
-public class FacetResultsCollector extends
-    AbstractResultsCollector<FacetSearchRequestInfo, FacetSearchResults> {
+public class FacelontRelonsultsCollelonctor elonxtelonnds
+    AbstractRelonsultsCollelonctor<FacelontSelonarchRelonquelonstInfo, FacelontSelonarchRelonsults> {
 
-  private final FacetScorer facetScorer;
-  private final ThriftFacetEarlybirdSortingMode sortingMode;
+  privatelon final FacelontScorelonr facelontScorelonr;
+  privatelon final ThriftFacelontelonarlybirdSortingModelon sortingModelon;
 
   static class Accumulator {
-    protected final FacetAccumulator<ThriftFacetFieldResults>[] accumulators;
-    protected final FacetCountIterator accessor;
-    protected final FacetIDMap facetIDMap;
+    protelonctelond final FacelontAccumulator<ThriftFacelontFielonldRelonsults>[] accumulators;
+    protelonctelond final FacelontCountItelonrator accelonssor;
+    protelonctelond final FacelontIDMap facelontIDMap;
 
-    Accumulator(FacetAccumulator<ThriftFacetFieldResults>[] accumulators,
-                FacetCountIterator accessor,
-                FacetIDMap facetIDMap) {
+    Accumulator(FacelontAccumulator<ThriftFacelontFielonldRelonsults>[] accumulators,
+                FacelontCountItelonrator accelonssor,
+                FacelontIDMap facelontIDMap) {
       this.accumulators = accumulators;
-      this.accessor = accessor;
-      this.facetIDMap = facetIDMap;
+      this.accelonssor = accelonssor;
+      this.facelontIDMap = facelontIDMap;
     }
 
-    FacetAccumulator<ThriftFacetFieldResults> getFacetAccumulator(String facetName) {
-      FacetField facet = facetIDMap.getFacetFieldByFacetName(facetName);
-      return accumulators[facet.getFacetId()];
+    FacelontAccumulator<ThriftFacelontFielonldRelonsults> gelontFacelontAccumulator(String facelontNamelon) {
+      FacelontFielonld facelont = facelontIDMap.gelontFacelontFielonldByFacelontNamelon(facelontNamelon);
+      relonturn accumulators[facelont.gelontFacelontId()];
     }
   }
 
-  private Accumulator currentAccumulator;
-  private List<Accumulator> segAccumulators;
-  private final HashingAndPruningFacetAccumulator.FacetComparator facetComparator;
+  privatelon Accumulator currelonntAccumulator;
+  privatelon List<Accumulator> selongAccumulators;
+  privatelon final HashingAndPruningFacelontAccumulator.FacelontComparator facelontComparator;
 
   /**
-   * Creates a new FacetResultsCollector for the given facet search request.
+   * Crelonatelons a nelonw FacelontRelonsultsCollelonctor for thelon givelonn facelont selonarch relonquelonst.
    */
-  public FacetResultsCollector(
-      ImmutableSchemaInterface schema,
-      FacetSearchRequestInfo searchRequestInfo,
-      AntiGamingFilter antiGamingFilter,
-      EarlybirdSearcherStats searcherStats,
+  public FacelontRelonsultsCollelonctor(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      FacelontSelonarchRelonquelonstInfo selonarchRelonquelonstInfo,
+      AntiGamingFiltelonr antiGamingFiltelonr,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
       Clock clock,
-      int requestDebugInfo) {
-    super(schema, searchRequestInfo, clock, searcherStats, requestDebugInfo);
+      int relonquelonstDelonbugInfo) {
+    supelonr(schelonma, selonarchRelonquelonstInfo, clock, selonarchelonrStats, relonquelonstDelonbugInfo);
 
-    if (searchRequestInfo.rankingOptions != null
-        && searchRequestInfo.rankingOptions.isSetSortingMode()) {
-      this.sortingMode = searchRequestInfo.rankingOptions.getSortingMode();
-    } else {
-      this.sortingMode = ThriftFacetEarlybirdSortingMode.SORT_BY_WEIGHTED_COUNT;
+    if (selonarchRelonquelonstInfo.rankingOptions != null
+        && selonarchRelonquelonstInfo.rankingOptions.isSelontSortingModelon()) {
+      this.sortingModelon = selonarchRelonquelonstInfo.rankingOptions.gelontSortingModelon();
+    } elonlselon {
+      this.sortingModelon = ThriftFacelontelonarlybirdSortingModelon.SORT_BY_WelonIGHTelonD_COUNT;
     }
 
-    this.facetComparator = HashingAndPruningFacetAccumulator.getComparator(sortingMode);
-    this.facetScorer = createScorer(antiGamingFilter);
-    this.segAccumulators = new ArrayList<>();
+    this.facelontComparator = HashingAndPruningFacelontAccumulator.gelontComparator(sortingModelon);
+    this.facelontScorelonr = crelonatelonScorelonr(antiGamingFiltelonr);
+    this.selongAccumulators = nelonw ArrayList<>();
   }
 
-  @Override
-  public void startSegment() {
-    currentAccumulator = null;
+  @Ovelonrridelon
+  public void startSelongmelonnt() {
+    currelonntAccumulator = null;
   }
 
-  @Override
-  public void doCollect(long tweetID) throws IOException {
-    if (currentAccumulator == null) {
-      // Lazily create accumulators.  Most segment / query / facet combinations have no hits.
-      currentAccumulator = newPerSegmentAccumulator(currTwitterReader);
-      segAccumulators.add(currentAccumulator);
-      facetScorer.startSegment(currTwitterReader);
+  @Ovelonrridelon
+  public void doCollelonct(long twelonelontID) throws IOelonxcelonption {
+    if (currelonntAccumulator == null) {
+      // Lazily crelonatelon accumulators.  Most selongmelonnt / quelonry / facelont combinations havelon no hits.
+      currelonntAccumulator = nelonwPelonrSelongmelonntAccumulator(currTwittelonrRelonadelonr);
+      selongAccumulators.add(currelonntAccumulator);
+      facelontScorelonr.startSelongmelonnt(currTwittelonrRelonadelonr);
     }
-    facetScorer.incrementCounts(currentAccumulator, curDocId);
+    facelontScorelonr.increlonmelonntCounts(currelonntAccumulator, curDocId);
   }
 
-  @Override
-  public FacetSearchResults doGetResults() {
-    return new FacetSearchResults(this);
+  @Ovelonrridelon
+  public FacelontSelonarchRelonsults doGelontRelonsults() {
+    relonturn nelonw FacelontSelonarchRelonsults(this);
   }
 
   /**
-   * Returns the top-k facet results for the requested facetName.
+   * Relonturns thelon top-k facelont relonsults for thelon relonquelonstelond facelontNamelon.
    */
-  public ThriftFacetFieldResults getFacetResults(String facetName, int topK) {
+  public ThriftFacelontFielonldRelonsults gelontFacelontRelonsults(String facelontNamelon, int topK) {
     int totalCount = 0;
-    final Map<String, ThriftFacetCount> map = new HashMap<>();
+    final Map<String, ThriftFacelontCount> map = nelonw HashMap<>();
 
-    LanguageHistogram languageHistogram = new LanguageHistogram();
+    LanguagelonHistogram languagelonHistogram = nelonw LanguagelonHistogram();
 
-    for (Accumulator segAccumulator : segAccumulators) {
-      FacetAccumulator<ThriftFacetFieldResults> accumulator =
-          segAccumulator.getFacetAccumulator(facetName);
-      Preconditions.checkNotNull(accumulator);
+    for (Accumulator selongAccumulator : selongAccumulators) {
+      FacelontAccumulator<ThriftFacelontFielonldRelonsults> accumulator =
+          selongAccumulator.gelontFacelontAccumulator(facelontNamelon);
+      Prelonconditions.chelonckNotNull(accumulator);
 
-      ThriftFacetFieldResults results = accumulator.getAllFacets();
-      if (results == null) {
-        continue;
+      ThriftFacelontFielonldRelonsults relonsults = accumulator.gelontAllFacelonts();
+      if (relonsults == null) {
+        continuelon;
       }
 
-      totalCount += results.totalCount;
+      totalCount += relonsults.totalCount;
 
-      // merge language histograms from different segments
-      languageHistogram.addAll(accumulator.getLanguageHistogram());
+      // melonrgelon languagelon histograms from diffelonrelonnt selongmelonnts
+      languagelonHistogram.addAll(accumulator.gelontLanguagelonHistogram());
 
-      for (ThriftFacetCount facetCount : results.getTopFacets()) {
-        String label = facetCount.getFacetLabel();
-        ThriftFacetCount oldCount = map.get(label);
+      for (ThriftFacelontCount facelontCount : relonsults.gelontTopFacelonts()) {
+        String labelonl = facelontCount.gelontFacelontLabelonl();
+        ThriftFacelontCount oldCount = map.gelont(labelonl);
         if (oldCount != null) {
-          oldCount.setSimpleCount(oldCount.getSimpleCount() + facetCount.getSimpleCount());
-          oldCount.setWeightedCount(oldCount.getWeightedCount() + facetCount.getWeightedCount());
+          oldCount.selontSimplelonCount(oldCount.gelontSimplelonCount() + facelontCount.gelontSimplelonCount());
+          oldCount.selontWelonightelondCount(oldCount.gelontWelonightelondCount() + facelontCount.gelontWelonightelondCount());
 
-          oldCount.setFacetCount(oldCount.getFacetCount() + facetCount.getFacetCount());
-          oldCount.setPenaltyCount(oldCount.getPenaltyCount() + facetCount.getPenaltyCount());
-        } else {
-          map.put(label, facetCount);
+          oldCount.selontFacelontCount(oldCount.gelontFacelontCount() + facelontCount.gelontFacelontCount());
+          oldCount.selontPelonnaltyCount(oldCount.gelontPelonnaltyCount() + facelontCount.gelontPelonnaltyCount());
+        } elonlselon {
+          map.put(labelonl, facelontCount);
         }
       }
     }
 
-    if (map.size() == 0 || totalCount == 0) {
-      // No results.
-      return null;
+    if (map.sizelon() == 0 || totalCount == 0) {
+      // No relonsults.
+      relonturn null;
     }
 
-    // sort table wrt percentage
-    PriorityQueue<ThriftFacetCount> pq =
-        new PriorityQueue<>(map.size(), facetComparator.getThriftComparator(true));
-    pq.addAll(map.values());
+    // sort tablelon wrt pelonrcelonntagelon
+    PriorityQuelonuelon<ThriftFacelontCount> pq =
+        nelonw PriorityQuelonuelon<>(map.sizelon(), facelontComparator.gelontThriftComparator(truelon));
+    pq.addAll(map.valuelons());
 
-    ThriftFacetFieldResults results = new ThriftFacetFieldResults();
-    results.setTopFacets(new ArrayList<>());
-    results.setTotalCount(totalCount);
+    ThriftFacelontFielonldRelonsults relonsults = nelonw ThriftFacelontFielonldRelonsults();
+    relonsults.selontTopFacelonts(nelonw ArrayList<>());
+    relonsults.selontTotalCount(totalCount);
 
-    // Store merged language histogram into thrift object
-    for (Map.Entry<ThriftLanguage, Integer> entry
-        : languageHistogram.getLanguageHistogramAsMap().entrySet()) {
-      results.putToLanguageHistogram(entry.getKey(), entry.getValue());
+    // Storelon melonrgelond languagelon histogram into thrift objelonct
+    for (Map.elonntry<ThriftLanguagelon, Intelongelonr> elonntry
+        : languagelonHistogram.gelontLanguagelonHistogramAsMap().elonntrySelont()) {
+      relonsults.putToLanguagelonHistogram(elonntry.gelontKelony(), elonntry.gelontValuelon());
     }
 
-    // Get top facets.
-    for (int i = 0; i < topK && i < map.size(); i++) {
-      ThriftFacetCount facetCount = pq.poll();
-      if (facetCount != null) {
-        results.addToTopFacets(facetCount);
+    // Gelont top facelonts.
+    for (int i = 0; i < topK && i < map.sizelon(); i++) {
+      ThriftFacelontCount facelontCount = pq.poll();
+      if (facelontCount != null) {
+        relonsults.addToTopFacelonts(facelontCount);
       }
     }
-    return results;
+    relonturn relonsults;
   }
 
-  protected FacetScorer createScorer(AntiGamingFilter antiGamingFilter) {
-    if (searchRequestInfo.rankingOptions != null) {
-      return new DefaultFacetScorer(searchRequestInfo.getSearchQuery(),
-                                    searchRequestInfo.rankingOptions,
-                                    antiGamingFilter,
-                                    sortingMode);
-    } else {
-      return new FacetScorer() {
-        @Override
-        protected void startSegment(EarlybirdIndexSegmentAtomicReader reader) {
+  protelonctelond FacelontScorelonr crelonatelonScorelonr(AntiGamingFiltelonr antiGamingFiltelonr) {
+    if (selonarchRelonquelonstInfo.rankingOptions != null) {
+      relonturn nelonw DelonfaultFacelontScorelonr(selonarchRelonquelonstInfo.gelontSelonarchQuelonry(),
+                                    selonarchRelonquelonstInfo.rankingOptions,
+                                    antiGamingFiltelonr,
+                                    sortingModelon);
+    } elonlselon {
+      relonturn nelonw FacelontScorelonr() {
+        @Ovelonrridelon
+        protelonctelond void startSelongmelonnt(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr) {
         }
 
-        @Override
-        public void incrementCounts(Accumulator accumulator, int internalDocID) throws IOException {
-          accumulator.accessor.incrementData.accumulators = accumulator.accumulators;
-          accumulator.accessor.incrementData.weightedCountIncrement = 1;
-          accumulator.accessor.incrementData.penaltyIncrement = 0;
-          accumulator.accessor.incrementData.languageId = ThriftLanguage.UNKNOWN.getValue();
-          accumulator.accessor.collect(internalDocID);
+        @Ovelonrridelon
+        public void increlonmelonntCounts(Accumulator accumulator, int intelonrnalDocID) throws IOelonxcelonption {
+          accumulator.accelonssor.increlonmelonntData.accumulators = accumulator.accumulators;
+          accumulator.accelonssor.increlonmelonntData.welonightelondCountIncrelonmelonnt = 1;
+          accumulator.accelonssor.increlonmelonntData.pelonnaltyIncrelonmelonnt = 0;
+          accumulator.accelonssor.increlonmelonntData.languagelonId = ThriftLanguagelon.UNKNOWN.gelontValuelon();
+          accumulator.accelonssor.collelonct(intelonrnalDocID);
         }
 
-        @Override
-        public FacetAccumulator getFacetAccumulator(FacetLabelProvider labelProvider) {
-          return new HashingAndPruningFacetAccumulator(labelProvider, facetComparator);
+        @Ovelonrridelon
+        public FacelontAccumulator gelontFacelontAccumulator(FacelontLabelonlProvidelonr labelonlProvidelonr) {
+          relonturn nelonw HashingAndPruningFacelontAccumulator(labelonlProvidelonr, facelontComparator);
         }
       };
     }
   }
 
-  protected Accumulator newPerSegmentAccumulator(EarlybirdIndexSegmentAtomicReader indexReader) {
-    final FacetIDMap facetIDMap = indexReader.getFacetIDMap();
-    final FacetCountIterator accessor =
-        indexReader.getFacetCountingArray().getIterator(
-            indexReader,
-            getSearchRequestInfo().getFacetCountState(),
-            TweetSearchFacetCountIteratorFactory.FACTORY);
+  protelonctelond Accumulator nelonwPelonrSelongmelonntAccumulator(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr indelonxRelonadelonr) {
+    final FacelontIDMap facelontIDMap = indelonxRelonadelonr.gelontFacelontIDMap();
+    final FacelontCountItelonrator accelonssor =
+        indelonxRelonadelonr.gelontFacelontCountingArray().gelontItelonrator(
+            indelonxRelonadelonr,
+            gelontSelonarchRelonquelonstInfo().gelontFacelontCountStatelon(),
+            TwelonelontSelonarchFacelontCountItelonratorFactory.FACTORY);
 
-    final FacetAccumulator<ThriftFacetFieldResults>[] accumulators =
-        (FacetAccumulator<ThriftFacetFieldResults>[])
-            new FacetAccumulator[facetIDMap.getNumberOfFacetFields()];
+    final FacelontAccumulator<ThriftFacelontFielonldRelonsults>[] accumulators =
+        (FacelontAccumulator<ThriftFacelontFielonldRelonsults>[])
+            nelonw FacelontAccumulator[facelontIDMap.gelontNumbelonrOfFacelontFielonlds()];
 
-    Map<String, FacetLabelProvider> labelProviders = indexReader.getFacetLabelProviders();
-    for (FacetField f : facetIDMap.getFacetFields()) {
-      int id = f.getFacetId();
-      if (getSearchRequestInfo().getFacetCountState().isCountField(f.getFieldInfo())) {
-        accumulators[id] = (FacetAccumulator<ThriftFacetFieldResults>) facetScorer
-                .getFacetAccumulator(labelProviders.get(f.getFacetName()));
-      } else {
-        // Dummmy accumulator does nothing.
-        accumulators[id] = new DummyFacetAccumulator();
+    Map<String, FacelontLabelonlProvidelonr> labelonlProvidelonrs = indelonxRelonadelonr.gelontFacelontLabelonlProvidelonrs();
+    for (FacelontFielonld f : facelontIDMap.gelontFacelontFielonlds()) {
+      int id = f.gelontFacelontId();
+      if (gelontSelonarchRelonquelonstInfo().gelontFacelontCountStatelon().isCountFielonld(f.gelontFielonldInfo())) {
+        accumulators[id] = (FacelontAccumulator<ThriftFacelontFielonldRelonsults>) facelontScorelonr
+                .gelontFacelontAccumulator(labelonlProvidelonrs.gelont(f.gelontFacelontNamelon()));
+      } elonlselon {
+        // Dummmy accumulator doelons nothing.
+        accumulators[id] = nelonw DummyFacelontAccumulator();
       }
     }
 
-    return new Accumulator(accumulators, accessor, facetIDMap);
+    relonturn nelonw Accumulator(accumulators, accelonssor, facelontIDMap);
   }
 }

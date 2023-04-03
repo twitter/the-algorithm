@@ -1,131 +1,131 @@
-package com.twitter.simclustersann.candidate_source
+packagelon com.twittelonr.simclustelonrsann.candidatelon_sourcelon
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
-import com.twitter.simclustersann.thriftscala.SimClustersANNConfig
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.google.common.collect.Comparators
-import com.twitter.simclusters_v2.common.ClusterId
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.simclustelonrsann.thriftscala.ScoringAlgorithm
+import com.twittelonr.simclustelonrsann.thriftscala.SimClustelonrsANNConfig
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
+import com.googlelon.common.collelonct.Comparators
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
 
 /**
- * A modified version of OptimizedApproximateCosineSimilarity which uses more java streams to avoid
- * materializing intermediate collections. Its performance is still under investigation.
+ * A modifielond velonrsion of OptimizelondApproximatelonCosinelonSimilarity which uselons morelon java strelonams to avoid
+ * matelonrializing intelonrmelondiatelon collelonctions. Its pelonrformancelon is still undelonr invelonstigation.
  */
-object ExperimentalApproximateCosineSimilarity extends ApproximateCosineSimilarity {
+objelonct elonxpelonrimelonntalApproximatelonCosinelonSimilarity elonxtelonnds ApproximatelonCosinelonSimilarity {
 
-  final val InitialCandidateMapSize = 16384
-  val MaxNumResultsUpperBound = 1000
-  final val MaxTweetCandidateAgeUpperBound = 175200
+  final val InitialCandidatelonMapSizelon = 16384
+  val MaxNumRelonsultsUppelonrBound = 1000
+  final val MaxTwelonelontCandidatelonAgelonUppelonrBound = 175200
 
-  private def parseTweetId(embeddingId: SimClustersEmbeddingId): Option[TweetId] = {
-    embeddingId.internalId match {
-      case InternalId.TweetId(tweetId) =>
-        Some(tweetId)
-      case _ =>
-        None
+  privatelon delonf parselonTwelonelontId(elonmbelonddingId: SimClustelonrselonmbelonddingId): Option[TwelonelontId] = {
+    elonmbelonddingId.intelonrnalId match {
+      caselon IntelonrnalId.TwelonelontId(twelonelontId) =>
+        Somelon(twelonelontId)
+      caselon _ =>
+        Nonelon
     }
   }
-  private val CompareByScore: java.util.Comparator[(Long, Double)] =
-    new java.util.Comparator[(Long, Double)] {
-      override def compare(o1: (Long, Double), o2: (Long, Double)): Int = {
-        java.lang.Double.compare(o1._2, o2._2)
+  privatelon val ComparelonByScorelon: java.util.Comparator[(Long, Doublelon)] =
+    nelonw java.util.Comparator[(Long, Doublelon)] {
+      ovelonrridelon delonf comparelon(o1: (Long, Doublelon), o2: (Long, Doublelon)): Int = {
+        java.lang.Doublelon.comparelon(o1._2, o2._2)
       }
     }
-  class Scores(var score: Double, var norm: Double)
+  class Scorelons(var scorelon: Doublelon, var norm: Doublelon)
 
-  override def apply(
-    sourceEmbedding: SimClustersEmbedding,
-    sourceEmbeddingId: SimClustersEmbeddingId,
-    config: SimClustersANNConfig,
-    candidateScoresStat: Int => Unit,
-    clusterTweetsMap: Map[ClusterId, Option[Seq[(TweetId, Double)]]] = Map.empty,
-    clusterTweetsMapArray: Map[ClusterId, Option[Array[(TweetId, Double)]]] = Map.empty
-  ): Seq[ScoredTweet] = {
-    val now = Time.now
-    val earliestTweetId =
-      if (config.maxTweetCandidateAgeHours >= MaxTweetCandidateAgeUpperBound)
-        0L // Disable max tweet age filter
-      else
-        SnowflakeId.firstIdFor(now - Duration.fromHours(config.maxTweetCandidateAgeHours))
-    val latestTweetId =
-      SnowflakeId.firstIdFor(now - Duration.fromHours(config.minTweetCandidateAgeHours))
+  ovelonrridelon delonf apply(
+    sourcelonelonmbelondding: SimClustelonrselonmbelondding,
+    sourcelonelonmbelonddingId: SimClustelonrselonmbelonddingId,
+    config: SimClustelonrsANNConfig,
+    candidatelonScorelonsStat: Int => Unit,
+    clustelonrTwelonelontsMap: Map[ClustelonrId, Option[Selonq[(TwelonelontId, Doublelon)]]] = Map.elonmpty,
+    clustelonrTwelonelontsMapArray: Map[ClustelonrId, Option[Array[(TwelonelontId, Doublelon)]]] = Map.elonmpty
+  ): Selonq[ScorelondTwelonelont] = {
+    val now = Timelon.now
+    val elonarlielonstTwelonelontId =
+      if (config.maxTwelonelontCandidatelonAgelonHours >= MaxTwelonelontCandidatelonAgelonUppelonrBound)
+        0L // Disablelon max twelonelont agelon filtelonr
+      elonlselon
+        SnowflakelonId.firstIdFor(now - Duration.fromHours(config.maxTwelonelontCandidatelonAgelonHours))
+    val latelonstTwelonelontId =
+      SnowflakelonId.firstIdFor(now - Duration.fromHours(config.minTwelonelontCandidatelonAgelonHours))
 
-    val candidateScoresMap = new java.util.HashMap[Long, Scores](InitialCandidateMapSize)
-    val sourceTweetId = parseTweetId(sourceEmbeddingId).getOrElse(0L)
+    val candidatelonScorelonsMap = nelonw java.util.HashMap[Long, Scorelons](InitialCandidatelonMapSizelon)
+    val sourcelonTwelonelontId = parselonTwelonelontId(sourcelonelonmbelonddingId).gelontOrelonlselon(0L)
 
-    clusterTweetsMap.foreach {
-      case (clusterId, Some(tweetScores)) =>
-        val sourceClusterScore = sourceEmbedding.getOrElse(clusterId)
+    clustelonrTwelonelontsMap.forelonach {
+      caselon (clustelonrId, Somelon(twelonelontScorelons)) =>
+        val sourcelonClustelonrScorelon = sourcelonelonmbelondding.gelontOrelonlselon(clustelonrId)
 
-        for (i <- 0 until Math.min(tweetScores.size, config.maxTopTweetsPerCluster)) {
-          val (tweetId, score) = tweetScores(i)
+        for (i <- 0 until Math.min(twelonelontScorelons.sizelon, config.maxTopTwelonelontsPelonrClustelonr)) {
+          val (twelonelontId, scorelon) = twelonelontScorelons(i)
 
-          if (tweetId >= earliestTweetId &&
-            tweetId <= latestTweetId &&
-            tweetId != sourceTweetId) {
+          if (twelonelontId >= elonarlielonstTwelonelontId &&
+            twelonelontId <= latelonstTwelonelontId &&
+            twelonelontId != sourcelonTwelonelontId) {
 
-            val scores = candidateScoresMap.get(tweetId)
-            if (scores == null) {
-              val scorePair = new Scores(
-                score = score * sourceClusterScore,
-                norm = score * score
+            val scorelons = candidatelonScorelonsMap.gelont(twelonelontId)
+            if (scorelons == null) {
+              val scorelonPair = nelonw Scorelons(
+                scorelon = scorelon * sourcelonClustelonrScorelon,
+                norm = scorelon * scorelon
               )
-              candidateScoresMap.put(tweetId, scorePair)
-            } else {
-              scores.score = scores.score + (score * sourceClusterScore)
-              scores.norm = scores.norm + (score * score)
+              candidatelonScorelonsMap.put(twelonelontId, scorelonPair)
+            } elonlselon {
+              scorelons.scorelon = scorelons.scorelon + (scorelon * sourcelonClustelonrScorelon)
+              scorelons.norm = scorelons.norm + (scorelon * scorelon)
             }
           }
         }
-      case _ => ()
+      caselon _ => ()
     }
 
-    candidateScoresStat(candidateScoresMap.size)
+    candidatelonScorelonsStat(candidatelonScorelonsMap.sizelon)
 
-    val normFn: (Long, Scores) => (Long, Double) = config.annAlgorithm match {
-      case ScoringAlgorithm.LogCosineSimilarity =>
-        (candidateId: Long, score: Scores) =>
+    val normFn: (Long, Scorelons) => (Long, Doublelon) = config.annAlgorithm match {
+      caselon ScoringAlgorithm.LogCosinelonSimilarity =>
+        (candidatelonId: Long, scorelon: Scorelons) =>
           (
-            candidateId,
-            score.score / sourceEmbedding.logNorm / math.log(1 + score.norm)
+            candidatelonId,
+            scorelon.scorelon / sourcelonelonmbelondding.logNorm / math.log(1 + scorelon.norm)
           )
-      case ScoringAlgorithm.CosineSimilarity =>
-        (candidateId: Long, score: Scores) =>
+      caselon ScoringAlgorithm.CosinelonSimilarity =>
+        (candidatelonId: Long, scorelon: Scorelons) =>
           (
-            candidateId,
-            score.score / sourceEmbedding.l2norm / math.sqrt(score.norm)
+            candidatelonId,
+            scorelon.scorelon / sourcelonelonmbelondding.l2norm / math.sqrt(scorelon.norm)
           )
-      case ScoringAlgorithm.CosineSimilarityNoSourceEmbeddingNormalization =>
-        (candidateId: Long, score: Scores) =>
+      caselon ScoringAlgorithm.CosinelonSimilarityNoSourcelonelonmbelonddingNormalization =>
+        (candidatelonId: Long, scorelon: Scorelons) =>
           (
-            candidateId,
-            score.score / math.sqrt(score.norm)
+            candidatelonId,
+            scorelon.scorelon / math.sqrt(scorelon.norm)
           )
-      case ScoringAlgorithm.DotProduct =>
-        (candidateId: Long, score: Scores) =>
+      caselon ScoringAlgorithm.DotProduct =>
+        (candidatelonId: Long, scorelon: Scorelons) =>
           (
-            candidateId,
-            score.score
+            candidatelonId,
+            scorelon.scorelon
           )
     }
 
-    import scala.collection.JavaConverters._
+    import scala.collelonction.JavaConvelonrtelonrs._
 
-    val topKCollector = Comparators.greatest(
-      Math.min(config.maxNumResults, MaxNumResultsUpperBound),
-      CompareByScore
+    val topKCollelonctor = Comparators.grelonatelonst(
+      Math.min(config.maxNumRelonsults, MaxNumRelonsultsUppelonrBound),
+      ComparelonByScorelon
     )
 
-    candidateScoresMap
-      .entrySet().stream()
-      .map[(Long, Double)]((e: java.util.Map.Entry[Long, Scores]) => normFn(e.getKey, e.getValue))
-      .filter((s: (Long, Double)) => s._2 >= config.minScore)
-      .collect(topKCollector)
+    candidatelonScorelonsMap
+      .elonntrySelont().strelonam()
+      .map[(Long, Doublelon)]((elon: java.util.Map.elonntry[Long, Scorelons]) => normFn(elon.gelontKelony, elon.gelontValuelon))
+      .filtelonr((s: (Long, Doublelon)) => s._2 >= config.minScorelon)
+      .collelonct(topKCollelonctor)
       .asScala
   }
 }

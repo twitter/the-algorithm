@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-import com.twitter.common.zookeeper.ServerSet;
+import com.twittelonr.common.zookelonelonpelonr.SelonrvelonrSelont;
 
 /**
- * Used when trying to join a server set when this earlybird is already in a server set.
+ * Uselond whelonn trying to join a selonrvelonr selont whelonn this elonarlybird is alrelonady in a selonrvelonr selont.
  */
-public class AlreadyInServerSetUpdateException extends ServerSet.UpdateException {
-  public AlreadyInServerSetUpdateException(String message) {
-    super(message);
+public class AlrelonadyInSelonrvelonrSelontUpdatelonelonxcelonption elonxtelonnds SelonrvelonrSelont.Updatelonelonxcelonption {
+  public AlrelonadyInSelonrvelonrSelontUpdatelonelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

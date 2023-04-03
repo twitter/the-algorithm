@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteUser
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScrelonelonnNamelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.HomelonMixelonrelonxtelonrnalStrings
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.icon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ChildFelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichBelonhavior
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorTogglelonMutelonUselonr
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class MuteUserChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@Singlelonton
+caselon class MutelonUselonrChildFelonelondbackActionBuildelonr @Injelonct() (
+  @ProductScopelond stringCelonntelonr: StringCelonntelonr,
+  elonxtelonrnalStrings: HomelonMixelonrelonxtelonrnalStrings) {
 
-  def apply(
-    candidateFeatures: FeatureMap
-  ): Option[ChildFeedbackAction] = {
-    val userIdOpt =
-      if (candidateFeatures.getOrElse(IsRetweetFeature, false))
-        candidateFeatures.getOrElse(SourceUserIdFeature, None)
-      else candidateFeatures.getOrElse(AuthorIdFeature, None)
+  delonf apply(
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[ChildFelonelondbackAction] = {
+    val uselonrIdOpt =
+      if (candidatelonFelonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon))
+        candidatelonFelonaturelons.gelontOrelonlselon(SourcelonUselonrIdFelonaturelon, Nonelon)
+      elonlselon candidatelonFelonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon)
 
-    userIdOpt.flatMap { userId =>
-      val screenNamesMap = candidateFeatures.getOrElse(ScreenNamesFeature, Map.empty[Long, String])
-      val userScreenNameOpt = screenNamesMap.get(userId)
-      userScreenNameOpt.map { userScreenName =>
-        val prompt = stringCenter.prepare(
-          externalStrings.muteUserString,
-          Map("username" -> userScreenName)
+    uselonrIdOpt.flatMap { uselonrId =>
+      val screlonelonnNamelonsMap = candidatelonFelonaturelons.gelontOrelonlselon(ScrelonelonnNamelonsFelonaturelon, Map.elonmpty[Long, String])
+      val uselonrScrelonelonnNamelonOpt = screlonelonnNamelonsMap.gelont(uselonrId)
+      uselonrScrelonelonnNamelonOpt.map { uselonrScrelonelonnNamelon =>
+        val prompt = stringCelonntelonr.prelonparelon(
+          elonxtelonrnalStrings.mutelonUselonrString,
+          Map("uselonrnamelon" -> uselonrScrelonelonnNamelon)
         )
-        ChildFeedbackAction(
-          feedbackType = RichBehavior,
-          prompt = Some(prompt),
-          confirmation = None,
-          feedbackUrl = None,
-          hasUndoAction = Some(true),
-          confirmationDisplayType = None,
-          clientEventInfo = None,
-          icon = Some(icon.SpeakerOff),
-          richBehavior = Some(RichFeedbackBehaviorToggleMuteUser(userId)),
-          subprompt = None
+        ChildFelonelondbackAction(
+          felonelondbackTypelon = RichBelonhavior,
+          prompt = Somelon(prompt),
+          confirmation = Nonelon,
+          felonelondbackUrl = Nonelon,
+          hasUndoAction = Somelon(truelon),
+          confirmationDisplayTypelon = Nonelon,
+          clielonntelonvelonntInfo = Nonelon,
+          icon = Somelon(icon.SpelonakelonrOff),
+          richBelonhavior = Somelon(RichFelonelondbackBelonhaviorTogglelonMutelonUselonr(uselonrId)),
+          subprompt = Nonelon
         )
       }
     }

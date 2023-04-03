@@ -1,37 +1,37 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import org.apache.lucene.search.Explanation;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
 
 /*
- * A sample scorer, doesn't really do anything, returns the same score for every document.
+ * A samplelon scorelonr, doelonsn't relonally do anything, relonturns thelon samelon scorelon for elonvelonry documelonnt.
  */
-public class DefaultScoringFunction extends ScoringFunction {
-  private float score;
+public class DelonfaultScoringFunction elonxtelonnds ScoringFunction {
+  privatelon float scorelon;
 
-  public DefaultScoringFunction(ImmutableSchemaInterface schema) {
-    super(schema);
+  public DelonfaultScoringFunction(ImmutablelonSchelonmaIntelonrfacelon schelonma) {
+    supelonr(schelonma);
   }
 
-  @Override
-  protected float score(float luceneQueryScore) {
-    score = luceneQueryScore;
-    return luceneQueryScore;
+  @Ovelonrridelon
+  protelonctelond float scorelon(float lucelonnelonQuelonryScorelon) {
+    scorelon = lucelonnelonQuelonryScorelon;
+    relonturn lucelonnelonQuelonryScorelon;
   }
 
-  @Override
-  protected Explanation doExplain(float luceneScore) {
-    // just an example - this scoring function will go away soon
-    return Explanation.match(luceneScore, "luceneScore=" + luceneScore);
+  @Ovelonrridelon
+  protelonctelond elonxplanation doelonxplain(float lucelonnelonScorelon) {
+    // just an elonxamplelon - this scoring function will go away soon
+    relonturn elonxplanation.match(lucelonnelonScorelon, "lucelonnelonScorelon=" + lucelonnelonScorelon);
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
-    relevanceStats.setNumScored(relevanceStats.getNumScored() + 1);
-    if (score == ScoringFunction.SKIP_HIT) {
-      relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 1);
+  @Ovelonrridelon
+  public void updatelonRelonlelonvancelonStats(ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats) {
+    relonlelonvancelonStats.selontNumScorelond(relonlelonvancelonStats.gelontNumScorelond() + 1);
+    if (scorelon == ScoringFunction.SKIP_HIT) {
+      relonlelonvancelonStats.selontNumSkippelond(relonlelonvancelonStats.gelontNumSkippelond() + 1);
     }
   }
 }

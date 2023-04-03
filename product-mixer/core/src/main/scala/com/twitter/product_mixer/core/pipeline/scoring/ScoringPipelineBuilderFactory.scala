@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.pipeline.scoring
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_felonaturelon_hydrator_elonxeloncutor.CandidatelonFelonaturelonHydratorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.Gatelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor.Selonlelonctorelonxeloncutor
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ScoringPipelineBuilderFactory @Inject() (
-  gateExecutor: GateExecutor,
-  selectorExecutor: SelectorExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  statsReceiver: StatsReceiver) {
+@Singlelonton
+class ScoringPipelonlinelonBuildelonrFactory @Injelonct() (
+  gatelonelonxeloncutor: Gatelonelonxeloncutor,
+  selonlelonctorelonxeloncutor: Selonlelonctorelonxeloncutor,
+  candidatelonFelonaturelonHydratorelonxeloncutor: CandidatelonFelonaturelonHydratorelonxeloncutor,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  def get[
-    Query <: PipelineQuery,
-    Candidate <: UniversalNoun[Any]
-  ]: ScoringPipelineBuilder[Query, Candidate] = {
-    new ScoringPipelineBuilder[Query, Candidate](
-      gateExecutor,
-      selectorExecutor,
-      candidateFeatureHydratorExecutor,
-      statsReceiver
+  delonf gelont[
+    Quelonry <: PipelonlinelonQuelonry,
+    Candidatelon <: UnivelonrsalNoun[Any]
+  ]: ScoringPipelonlinelonBuildelonr[Quelonry, Candidatelon] = {
+    nelonw ScoringPipelonlinelonBuildelonr[Quelonry, Candidatelon](
+      gatelonelonxeloncutor,
+      selonlelonctorelonxeloncutor,
+      candidatelonFelonaturelonHydratorelonxeloncutor,
+      statsReloncelonivelonr
     )
   }
 }

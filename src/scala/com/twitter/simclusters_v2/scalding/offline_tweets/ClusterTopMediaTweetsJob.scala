@@ -1,265 +1,265 @@
-package com.twitter.simclusters_v2.scalding.offline_tweets
+packagelon com.twittelonr.simclustelonrs_v2.scalding.offlinelon_twelonelonts
 
-import com.twitter.algebird.Aggregator.size
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Hours
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Timestamp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.hdfs_sources.DataPaths
-import com.twitter.simclusters_v2.hdfs_sources.OfflineClusterTopMediaTweets20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhExportSource
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.DayPartitionedClusterId
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.TweetWithScore
-import com.twitter.simclusters_v2.thriftscala.TweetsWithScore
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.tweetsource.common.thriftscala.MediaType
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import java.text.SimpleDateFormat
+import com.twittelonr.algelonbird.Aggrelongator.sizelon
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding.Args
+import com.twittelonr.scalding.DatelonOps
+import com.twittelonr.scalding.DatelonParselonr
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.Duration
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.Hours
+import com.twittelonr.scalding.RichDatelon
+import com.twittelonr.scalding.TypelondTsv
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.D
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.Writelonelonxtelonnsion
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.Timelonstamp
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.DataPaths
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.OfflinelonClustelonrTopMelondiaTwelonelonts20M145K2020ScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.common.LogFavBaselondPelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonxtelonrnalDataSourcelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.DayPartitionelondClustelonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelonntSimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.thriftscala.TwelonelontWithScorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.TwelonelontsWithScorelon
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.twelonelontsourcelon.common.thriftscala.MelondiaTypelon
+import com.twittelonr.twelonelontsourcelon.common.thriftscala.UnhydratelondFlatTwelonelont
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
+import java.telonxt.SimplelonDatelonFormat
 
-object ClusterTopTweetsJob {
+objelonct ClustelonrTopTwelonelontsJob {
 
-  def serviceIdentifier(zone: String, env: String): ServiceIdentifier = ServiceIdentifier(
-    role = "cassowary",
-    service = "offline_cluster_top_media_tweets_20M_145K_2020",
-    environment = env,
-    zone = zone
+  delonf selonrvicelonIdelonntifielonr(zonelon: String, elonnv: String): SelonrvicelonIdelonntifielonr = SelonrvicelonIdelonntifielonr(
+    rolelon = "cassowary",
+    selonrvicelon = "offlinelon_clustelonr_top_melondia_twelonelonts_20M_145K_2020",
+    elonnvironmelonnt = elonnv,
+    zonelon = zonelon
   )
 
-  private def isMediaTweet(tweet: UnhydratedFlatTweet): Boolean = {
-    tweet.media.exists { mediaSeq =>
-      mediaSeq.exists { e =>
-        e.mediaType.contains(MediaType.Video)
+  privatelon delonf isMelondiaTwelonelont(twelonelont: UnhydratelondFlatTwelonelont): Boolelonan = {
+    twelonelont.melondia.elonxists { melondiaSelonq =>
+      melondiaSelonq.elonxists { elon =>
+        elon.melondiaTypelon.contains(MelondiaTypelon.Videlono)
       }
     }
   }
 
-  private val dateFormatter = new SimpleDateFormat("yyyy-MM-dd")
+  privatelon val datelonFormattelonr = nelonw SimplelonDatelonFormat("yyyy-MM-dd")
 
-  def getClusterTopMediaTweets(
-    persistentEmbeddingPipe: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)],
-    tweetSourcePipe: TypedPipe[UnhydratedFlatTweet],
-    maxTweetsPerClusterPerPartition: Int
-  ): TypedPipe[(DayPartitionedClusterId, Seq[(TweetId, Double)])] = {
-    val mediaTweetsPipe = tweetSourcePipe.collect {
-      case tweet if isMediaTweet(tweet) => (tweet.tweetId, ())
+  delonf gelontClustelonrTopMelondiaTwelonelonts(
+    pelonrsistelonntelonmbelonddingPipelon: TypelondPipelon[((TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding)],
+    twelonelontSourcelonPipelon: TypelondPipelon[UnhydratelondFlatTwelonelont],
+    maxTwelonelontsPelonrClustelonrPelonrPartition: Int
+  ): TypelondPipelon[(DayPartitionelondClustelonrId, Selonq[(TwelonelontId, Doublelon)])] = {
+    val melondiaTwelonelontsPipelon = twelonelontSourcelonPipelon.collelonct {
+      caselon twelonelont if isMelondiaTwelonelont(twelonelont) => (twelonelont.twelonelontId, ())
     }
 
-    val tweetEmbeddingsPipe: TypedPipe[(TweetId, (Int, Double))] = {
-      persistentEmbeddingPipe.collect {
-        case ((tweetId, timestamp), persistentEmbedding)
-            if timestamp == 1L => // 1L is the longest L2 embedding
+    val twelonelontelonmbelonddingsPipelon: TypelondPipelon[(TwelonelontId, (Int, Doublelon))] = {
+      pelonrsistelonntelonmbelonddingPipelon.collelonct {
+        caselon ((twelonelontId, timelonstamp), pelonrsistelonntelonmbelondding)
+            if timelonstamp == 1L => // 1L is thelon longelonst L2 elonmbelondding
 
-          persistentEmbedding.embedding.embedding.map { clusterWithScore =>
-            (tweetId, (clusterWithScore.clusterId, clusterWithScore.score))
+          pelonrsistelonntelonmbelondding.elonmbelondding.elonmbelondding.map { clustelonrWithScorelon =>
+            (twelonelontId, (clustelonrWithScorelon.clustelonrId, clustelonrWithScorelon.scorelon))
           }
-      }.flatten
+      }.flattelonn
     }
 
-    mediaTweetsPipe
-      .join(tweetEmbeddingsPipe)
-      .withReducers(2000)
+    melondiaTwelonelontsPipelon
+      .join(twelonelontelonmbelonddingsPipelon)
+      .withRelonducelonrs(2000)
       .map {
-        case (tweetId, ((), (clusterId, score))) =>
-          val dayPartition = dateFormatter.format(SnowflakeId(tweetId).time.inMilliseconds)
-          ((clusterId, dayPartition), Seq((tweetId, score)))
+        caselon (twelonelontId, ((), (clustelonrId, scorelon))) =>
+          val dayPartition = datelonFormattelonr.format(SnowflakelonId(twelonelontId).timelon.inMilliselonconds)
+          ((clustelonrId, dayPartition), Selonq((twelonelontId, scorelon)))
       }
-      .sumByKey
-      .mapValues(_.sortBy(-_._2).take(maxTweetsPerClusterPerPartition))
-      .map { case ((cid, partition), values) => (DayPartitionedClusterId(cid, partition), values) }
+      .sumByKelony
+      .mapValuelons(_.sortBy(-_._2).takelon(maxTwelonelontsPelonrClustelonrPelonrPartition))
+      .map { caselon ((cid, partition), valuelons) => (DayPartitionelondClustelonrId(cid, partition), valuelons) }
   }
 
-  // Convert to Manhattan compatible format
-  def toKeyVal(
-    clusterTopTweets: TypedPipe[(DayPartitionedClusterId, Seq[(TweetId, Double)])],
-  ): TypedPipe[KeyVal[DayPartitionedClusterId, TweetsWithScore]] = {
-    clusterTopTweets.map {
-      case (key, tweetsWithScores) =>
-        val thrift = tweetsWithScores.map { t => TweetWithScore(t._1, t._2) }
-        KeyVal(key, TweetsWithScore(thrift))
+  // Convelonrt to Manhattan compatiblelon format
+  delonf toKelonyVal(
+    clustelonrTopTwelonelonts: TypelondPipelon[(DayPartitionelondClustelonrId, Selonq[(TwelonelontId, Doublelon)])],
+  ): TypelondPipelon[KelonyVal[DayPartitionelondClustelonrId, TwelonelontsWithScorelon]] = {
+    clustelonrTopTwelonelonts.map {
+      caselon (kelony, twelonelontsWithScorelons) =>
+        val thrift = twelonelontsWithScorelons.map { t => TwelonelontWithScorelon(t._1, t._2) }
+        KelonyVal(kelony, TwelonelontsWithScorelon(thrift))
     }
   }
 }
 
 /**
- * Scheduled job. Runs every couple of hours (check the .yaml for exact cron schedule).
- * Reads 21 days of tweets, and the most recent persistent tweet embeddings from a Manhattan dump.
- * It outputs a clusterId-> List[tweetId] index.
+ * Schelondulelond job. Runs elonvelonry couplelon of hours (chelonck thelon .yaml for elonxact cron schelondulelon).
+ * Relonads 21 days of twelonelonts, and thelon most reloncelonnt pelonrsistelonnt twelonelont elonmbelonddings from a Manhattan dump.
+ * It outputs a clustelonrId-> List[twelonelontId] indelonx.
 
-capesospy-v2 update --build_locally --start_cron \
-offline_cluster_top_media_tweets_20M_145K_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+offlinelon_clustelonr_top_melondia_twelonelonts_20M_145K_2020 src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object ClusterTopMediaTweets20M145K2020BatchJob extends ScheduledExecutionApp {
-  override def firstTime: RichDate = RichDate("2021-08-29")
+objelonct ClustelonrTopMelondiaTwelonelonts20M145K2020BatchJob elonxtelonnds SchelondulelondelonxeloncutionApp {
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2021-08-29")
 
-  override def batchIncrement: Duration = Hours(3)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Hours(3)
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    // max public tweet has 21 days. read 1 day fewer go give some buffer
-    val lookbackDateRange = dateRange.prepend(Days(21))
+    // max public twelonelont has 21 days. relonad 1 day felonwelonr go givelon somelon buffelonr
+    val lookbackDatelonRangelon = datelonRangelon.prelonpelonnd(Days(21))
 
-    val tweetSource: TypedPipe[UnhydratedFlatTweet] =
-      ExternalDataSources.flatTweetsSource(lookbackDateRange)
+    val twelonelontSourcelon: TypelondPipelon[UnhydratelondFlatTwelonelont] =
+      elonxtelonrnalDataSourcelons.flatTwelonelontsSourcelon(lookbackDatelonRangelon)
 
-    val persistentEmbeddingPipe: TypedPipe[
-      ((TweetId, Timestamp), PersistentSimClustersEmbedding)
+    val pelonrsistelonntelonmbelonddingPipelon: TypelondPipelon[
+      ((TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding)
     ] =
-      TypedPipe.from(
-        new LogFavBasedPersistentTweetEmbeddingMhExportSource(
-          range = lookbackDateRange,
-          serviceIdentifier = ClusterTopTweetsJob.serviceIdentifier(args("zone"), args("env"))
+      TypelondPipelon.from(
+        nelonw LogFavBaselondPelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon(
+          rangelon = lookbackDatelonRangelon,
+          selonrvicelonIdelonntifielonr = ClustelonrTopTwelonelontsJob.selonrvicelonIdelonntifielonr(args("zonelon"), args("elonnv"))
         ))
 
-    val maxTweetsPerClusterPerPartition = 1200
+    val maxTwelonelontsPelonrClustelonrPelonrPartition = 1200
 
-    val dailyClusterTopTweets = ClusterTopTweetsJob.getClusterTopMediaTweets(
-      persistentEmbeddingPipe,
-      tweetSource,
-      maxTweetsPerClusterPerPartition
+    val dailyClustelonrTopTwelonelonts = ClustelonrTopTwelonelontsJob.gelontClustelonrTopMelondiaTwelonelonts(
+      pelonrsistelonntelonmbelonddingPipelon,
+      twelonelontSourcelon,
+      maxTwelonelontsPelonrClustelonrPelonrPartition
     )
 
-    val keyValPipe: TypedPipe[KeyVal[DayPartitionedClusterId, TweetsWithScore]] =
-      ClusterTopTweetsJob.toKeyVal(dailyClusterTopTweets)
+    val kelonyValPipelon: TypelondPipelon[KelonyVal[DayPartitionelondClustelonrId, TwelonelontsWithScorelon]] =
+      ClustelonrTopTwelonelontsJob.toKelonyVal(dailyClustelonrTopTwelonelonts)
 
-    keyValPipe
-      .writeDALVersionedKeyValExecution(
-        OfflineClusterTopMediaTweets20M145K2020ScalaDataset,
-        D.Suffix(DataPaths.OfflineClusterTopMediaTweets2020DatasetPath)
+    kelonyValPipelon
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        OfflinelonClustelonrTopMelondiaTwelonelonts20M145K2020ScalaDataselont,
+        D.Suffix(DataPaths.OfflinelonClustelonrTopMelondiaTwelonelonts2020DataselontPath)
       )
   }
 }
 
 /**
-Adhoc debugging job. Uses Entity Embeddings dataset to infer user interests
+Adhoc delonbugging job. Uselons elonntity elonmbelonddings dataselont to infelonr uselonr intelonrelonsts
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/offline_tweets/ &&\
-scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.offline_tweets.AdhocClusterTopMediaTweetsJob \
-  --target src/scala/com/twitter/simclusters_v2/scalding/offline_tweets/:offline_cluster_top_media_tweets_20M_145K_2020-adhoc \
-  --user cassowary \
-  -- --output_dir /scratch_user/cassowary/your_ldap --date 2021-08-30 --zone atla --env prod --email your_ldap@twitter.com
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/offlinelon_twelonelonts/ &&\
+scalding relonmotelon run \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.offlinelon_twelonelonts.AdhocClustelonrTopMelondiaTwelonelontsJob \
+  --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/offlinelon_twelonelonts/:offlinelon_clustelonr_top_melondia_twelonelonts_20M_145K_2020-adhoc \
+  --uselonr cassowary \
+  -- --output_dir /scratch_uselonr/cassowary/your_ldap --datelon 2021-08-30 --zonelon atla --elonnv prod --elonmail your_ldap@twittelonr.com
  */
-object AdhocClusterTopMediaTweetsJob extends AdhocExecutionApp {
+objelonct AdhocClustelonrTopMelondiaTwelonelontsJob elonxtelonnds AdhocelonxeloncutionApp {
 
   /**
-   * Run some stat analysis on the results, such as the number of tweets in a cluster, tweet score
-   * distributions, etc.
+   * Run somelon stat analysis on thelon relonsults, such as thelon numbelonr of twelonelonts in a clustelonr, twelonelont scorelon
+   * distributions, elontc.
    *
-   * Ideally works on 1 day data only. If multiple days data are passed in, it'll aggregate over
-   * multiple days anyway
+   * Idelonally works on 1 day data only. If multiplelon days data arelon passelond in, it'll aggrelongatelon ovelonr
+   * multiplelon days anyway
    */
-  def analyzeClusterResults(
-    clusterTopTweets: TypedPipe[(DayPartitionedClusterId, Seq[(TweetId, Double)])]
-  ): Execution[String] = {
+  delonf analyzelonClustelonrRelonsults(
+    clustelonrTopTwelonelonts: TypelondPipelon[(DayPartitionelondClustelonrId, Selonq[(TwelonelontId, Doublelon)])]
+  ): elonxeloncution[String] = {
 
-    val tweetSizeExec = Util.printSummaryOfNumericColumn(
-      clusterTopTweets.map { case (_, tweets) => tweets.size },
-      columnName = Some("Tweet size distribution of clusters")
+    val twelonelontSizelonelonxelonc = Util.printSummaryOfNumelonricColumn(
+      clustelonrTopTwelonelonts.map { caselon (_, twelonelonts) => twelonelonts.sizelon },
+      columnNamelon = Somelon("Twelonelont sizelon distribution of clustelonrs")
     )
 
-    val scoreDistExec = Util.printSummaryOfNumericColumn(
-      clusterTopTweets.flatMap(_._2.map(_._2)),
-      columnName = Some("Score distribution of the tweets")
+    val scorelonDistelonxelonc = Util.printSummaryOfNumelonricColumn(
+      clustelonrTopTwelonelonts.flatMap(_._2.map(_._2)),
+      columnNamelon = Somelon("Scorelon distribution of thelon twelonelonts")
     )
 
-    val numClustersExec =
-      clusterTopTweets.map(_._1._1).distinct.aggregate(size).getOrElseExecution(0L)
+    val numClustelonrselonxelonc =
+      clustelonrTopTwelonelonts.map(_._1._1).distinct.aggrelongatelon(sizelon).gelontOrelonlselonelonxeloncution(0L)
 
-    val numTweetsExec =
-      clusterTopTweets.flatMap(_._2.map(_._1)).distinct.aggregate(size).getOrElseExecution(0L)
+    val numTwelonelontselonxelonc =
+      clustelonrTopTwelonelonts.flatMap(_._2.map(_._1)).distinct.aggrelongatelon(sizelon).gelontOrelonlselonelonxeloncution(0L)
 
-    Execution.zip(tweetSizeExec, scoreDistExec, numClustersExec, numTweetsExec).map {
-      case (tweetSizeDist, scoreDist, numClusters, numTweets) =>
+    elonxeloncution.zip(twelonelontSizelonelonxelonc, scorelonDistelonxelonc, numClustelonrselonxelonc, numTwelonelontselonxelonc).map {
+      caselon (twelonelontSizelonDist, scorelonDist, numClustelonrs, numTwelonelonts) =>
         s""" 
-          |Number of unique tweets = $numTweets
-          |Number of clusters = $numClusters
+          |Numbelonr of uniquelon twelonelonts = $numTwelonelonts
+          |Numbelonr of clustelonrs = $numClustelonrs
           |------------------------
-          |$tweetSizeDist
+          |$twelonelontSizelonDist
           |------------------------
-          |$scoreDist
+          |$scorelonDist
           |""".stripMargin
     }
   }
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val startTime = System.currentTimeMillis()
-    Execution.withArgs { args =>
-      Execution.getMode.flatMap { implicit mode =>
-        implicit val dateRange: DateRange =
-          DateRange.parse(args.list("date"))(DateOps.UTC, DateParser.default)
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val startTimelon = Systelonm.currelonntTimelonMillis()
+    elonxeloncution.withArgs { args =>
+      elonxeloncution.gelontModelon.flatMap { implicit modelon =>
+        implicit val datelonRangelon: DatelonRangelon =
+          DatelonRangelon.parselon(args.list("datelon"))(DatelonOps.UTC, DatelonParselonr.delonfault)
 
         val outputDir = args("output_dir")
 
-        val maxTweetsPerCluster = 100
+        val maxTwelonelontsPelonrClustelonr = 100
 
-        // max public tweet has 21 days. read 1 day fewer go give some buffer
-        val lookbackDateRange = dateRange.prepend(Days(21))
+        // max public twelonelont has 21 days. relonad 1 day felonwelonr go givelon somelon buffelonr
+        val lookbackDatelonRangelon = datelonRangelon.prelonpelonnd(Days(21))
 
-        val tweetSource: TypedPipe[UnhydratedFlatTweet] =
-          ExternalDataSources.flatTweetsSource(lookbackDateRange)
+        val twelonelontSourcelon: TypelondPipelon[UnhydratelondFlatTwelonelont] =
+          elonxtelonrnalDataSourcelons.flatTwelonelontsSourcelon(lookbackDatelonRangelon)
 
-        val persistentEmbeddingPipe: TypedPipe[
-          ((TweetId, Timestamp), PersistentSimClustersEmbedding)
+        val pelonrsistelonntelonmbelonddingPipelon: TypelondPipelon[
+          ((TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding)
         ] =
-          TypedPipe.from(
-            new LogFavBasedPersistentTweetEmbeddingMhExportSource(
-              range = lookbackDateRange,
-              serviceIdentifier = ClusterTopTweetsJob.serviceIdentifier(args("zone"), args("env"))
+          TypelondPipelon.from(
+            nelonw LogFavBaselondPelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon(
+              rangelon = lookbackDatelonRangelon,
+              selonrvicelonIdelonntifielonr = ClustelonrTopTwelonelontsJob.selonrvicelonIdelonntifielonr(args("zonelon"), args("elonnv"))
             ))
 
-        val results = ClusterTopTweetsJob.getClusterTopMediaTweets(
-          persistentEmbeddingPipe,
-          tweetSource,
-          maxTweetsPerCluster
+        val relonsults = ClustelonrTopTwelonelontsJob.gelontClustelonrTopMelondiaTwelonelonts(
+          pelonrsistelonntelonmbelonddingPipelon,
+          twelonelontSourcelon,
+          maxTwelonelontsPelonrClustelonr
         )
-        analyzeClusterResults(TypedPipe.empty)
+        analyzelonClustelonrRelonsults(TypelondPipelon.elonmpty)
           .flatMap { distributions =>
-            val timeTakenMin = (System.currentTimeMillis() - startTime) / 60000
-            val text =
+            val timelonTakelonnMin = (Systelonm.currelonntTimelonMillis() - startTimelon) / 60000
+            val telonxt =
               s"""
-                 | AdhocClusterTopMediaTweetsJob finished on: $dateRange.
-                 | Time taken: $timeTakenMin minutes.
-                 | maxTweetsPerCluster: $maxTweetsPerCluster.
+                 | AdhocClustelonrTopMelondiaTwelonelontsJob finishelond on: $datelonRangelon.
+                 | Timelon takelonn: $timelonTakelonnMin minutelons.
+                 | maxTwelonelontsPelonrClustelonr: $maxTwelonelontsPelonrClustelonr.
                  | output_dir: $outputDir
                  | 
                  | $distributions
               """.stripMargin
-            Util.sendEmail(text, "AdhocClusterTopMediaTweetsJob finished.", args("email"))
+            Util.selonndelonmail(telonxt, "AdhocClustelonrTopMelondiaTwelonelontsJob finishelond.", args("elonmail"))
 
-            results
-              .writeExecution(TypedTsv(outputDir))
+            relonsults
+              .writelonelonxeloncution(TypelondTsv(outputDir))
           }
       }
     }

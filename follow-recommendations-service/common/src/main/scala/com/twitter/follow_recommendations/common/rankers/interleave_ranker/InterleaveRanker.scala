@@ -1,203 +1,203 @@
-package com.twitter.follow_recommendations.common.rankers.interleave_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.intelonrlelonavelon_rankelonr
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.utils.Utils
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Rankelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.StatsUtil
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.RankelonrId
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.utils.Utils
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
-@Singleton
-class InterleaveRanker[Target <: HasParams] @Inject() (
-  statsReceiver: StatsReceiver)
-    extends Ranker[Target, CandidateUser] {
+@Singlelonton
+class IntelonrlelonavelonRankelonr[Targelont <: HasParams] @Injelonct() (
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Rankelonr[Targelont, CandidatelonUselonr] {
 
-  val name: String = this.getClass.getSimpleName
-  private val stats = statsReceiver.scope("interleave_ranker")
-  private val inputStats = stats.scope("input")
-  private val interleavingStats = stats.scope("interleave")
+  val namelon: String = this.gelontClass.gelontSimplelonNamelon
+  privatelon val stats = statsReloncelonivelonr.scopelon("intelonrlelonavelon_rankelonr")
+  privatelon val inputStats = stats.scopelon("input")
+  privatelon val intelonrlelonavingStats = stats.scopelon("intelonrlelonavelon")
 
-  override def rank(
-    target: Target, 
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
-    StatsUtil.profileStitch(
-      Stitch.value(rankCandidates(target, candidates)),
-      stats.scope("rank")
+  ovelonrridelon delonf rank(
+    targelont: Targelont,
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    StatsUtil.profilelonStitch(
+      Stitch.valuelon(rankCandidatelons(targelont, candidatelons)),
+      stats.scopelon("rank")
     )
   }
 
-  private def rankCandidates(
-    target: Target,
-    candidates: Seq[CandidateUser]
-  ): Seq[CandidateUser] = {
+  privatelon delonf rankCandidatelons(
+    targelont: Targelont,
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Selonq[CandidatelonUselonr] = {
 
     /**
-     * By this stage, all valid candidates should have:
-     *   1. Their Scores field populated.
-     *   2. Their selectedRankerId set.
-     *   3. Have a score associated to their selectedRankerId.
-     * If there is any candidate that doesn't meet the conditions above, there is a problem in one
-     * of the previous rankers. Since no new scoring is done in this ranker, we simply remove them.
+     * By this stagelon, all valid candidatelons should havelon:
+     *   1. Thelonir Scorelons fielonld populatelond.
+     *   2. Thelonir selonlelonctelondRankelonrId selont.
+     *   3. Havelon a scorelon associatelond to thelonir selonlelonctelondRankelonrId.
+     * If thelonrelon is any candidatelon that doelonsn't melonelont thelon conditions abovelon, thelonrelon is a problelonm in onelon
+     * of thelon prelonvious rankelonrs. Sincelon no nelonw scoring is donelon in this rankelonr, welon simply relonmovelon thelonm.
      */
-    val validCandidates =
-      candidates.filter { c =>
-        c.scores.isDefined &&
-        c.scores.exists(_.selectedRankerId.isDefined) &&
-        getCandidateScoreByRankerId(c, c.scores.flatMap(_.selectedRankerId)).isDefined
+    val validCandidatelons =
+      candidatelons.filtelonr { c =>
+        c.scorelons.isDelonfinelond &&
+        c.scorelons.elonxists(_.selonlelonctelondRankelonrId.isDelonfinelond) &&
+        gelontCandidatelonScorelonByRankelonrId(c, c.scorelons.flatMap(_.selonlelonctelondRankelonrId)).isDelonfinelond
       }
 
-    // To monitor the percentage of valid candidates, as defined above, we track the following:
-    inputStats.counter("candidates_with_no_scores").incr(candidates.count(_.scores.isEmpty))
+    // To monitor thelon pelonrcelonntagelon of valid candidatelons, as delonfinelond abovelon, welon track thelon following:
+    inputStats.countelonr("candidatelons_with_no_scorelons").incr(candidatelons.count(_.scorelons.iselonmpty))
     inputStats
-      .counter("candidates_with_no_selected_ranker").incr(candidates.count { c =>
-        c.scores.isEmpty || c.scores.exists(_.selectedRankerId.isEmpty)
+      .countelonr("candidatelons_with_no_selonlelonctelond_rankelonr").incr(candidatelons.count { c =>
+        c.scorelons.iselonmpty || c.scorelons.elonxists(_.selonlelonctelondRankelonrId.iselonmpty)
       })
     inputStats
-      .counter("candidates_with_no_score_for_selected_ranker").incr(candidates.count { c =>
-        c.scores.isEmpty ||
-        c.scores.exists(_.selectedRankerId.isEmpty) ||
-        getCandidateScoreByRankerId(c, c.scores.flatMap(_.selectedRankerId)).isEmpty
+      .countelonr("candidatelons_with_no_scorelon_for_selonlelonctelond_rankelonr").incr(candidatelons.count { c =>
+        c.scorelons.iselonmpty ||
+        c.scorelons.elonxists(_.selonlelonctelondRankelonrId.iselonmpty) ||
+        gelontCandidatelonScorelonByRankelonrId(c, c.scorelons.flatMap(_.selonlelonctelondRankelonrId)).iselonmpty
       })
-    inputStats.counter("total_num_candidates").incr(candidates.length)
-    inputStats.counter("total_valid_candidates").incr(validCandidates.length)
+    inputStats.countelonr("total_num_candidatelons").incr(candidatelons.lelonngth)
+    inputStats.countelonr("total_valid_candidatelons").incr(validCandidatelons.lelonngth)
 
-    // We only count rankerIds from those candidates who are valid to exclude those candidates with
-    // a valid selectedRankerId that don't have an associated score for it.
-    val rankerIds = validCandidates.flatMap(_.scores.flatMap(_.selectedRankerId)).sorted.distinct
-    rankerIds.foreach { rankerId =>
+    // Welon only count rankelonrIds from thoselon candidatelons who arelon valid to elonxcludelon thoselon candidatelons with
+    // a valid selonlelonctelondRankelonrId that don't havelon an associatelond scorelon for it.
+    val rankelonrIds = validCandidatelons.flatMap(_.scorelons.flatMap(_.selonlelonctelondRankelonrId)).sortelond.distinct
+    rankelonrIds.forelonach { rankelonrId =>
       inputStats
-        .counter(s"valid_scores_for_${rankerId.toString}").incr(
-          candidates.count(getCandidateScoreByRankerId(_, Some(rankerId)).isDefined))
-      inputStats.counter(s"total_candidates_for_${rankerId.toString}").incr(candidates.length)
+        .countelonr(s"valid_scorelons_for_${rankelonrId.toString}").incr(
+          candidatelons.count(gelontCandidatelonScorelonByRankelonrId(_, Somelon(rankelonrId)).isDelonfinelond))
+      inputStats.countelonr(s"total_candidatelons_for_${rankelonrId.toString}").incr(candidatelons.lelonngth)
     }
-    inputStats.counter(s"num_ranker_ids=${rankerIds.length}").incr()
-    val scribeRankingInfo: Boolean =
-      target.params(InterleaveRankerParams.ScribeRankingInfoInInterleaveRanker)
-    if (rankerIds.length <= 1)
-      // In the case of "Number of RankerIds = 0", we pass on the candidates even though there is
-      // a problem in a previous ranker that provided the scores.
-      if (scribeRankingInfo) Utils.addRankingInfo(candidates, name) else candidates
-    else      
-      if (scribeRankingInfo)
-        Utils.addRankingInfo(interleaveCandidates(validCandidates, rankerIds), name)
-      else interleaveCandidates(validCandidates, rankerIds)
+    inputStats.countelonr(s"num_rankelonr_ids=${rankelonrIds.lelonngth}").incr()
+    val scribelonRankingInfo: Boolelonan =
+      targelont.params(IntelonrlelonavelonRankelonrParams.ScribelonRankingInfoInIntelonrlelonavelonRankelonr)
+    if (rankelonrIds.lelonngth <= 1)
+      // In thelon caselon of "Numbelonr of RankelonrIds = 0", welon pass on thelon candidatelons elonvelonn though thelonrelon is
+      // a problelonm in a prelonvious rankelonr that providelond thelon scorelons.
+      if (scribelonRankingInfo) Utils.addRankingInfo(candidatelons, namelon) elonlselon candidatelons
+    elonlselon
+      if (scribelonRankingInfo)
+        Utils.addRankingInfo(intelonrlelonavelonCandidatelons(validCandidatelons, rankelonrIds), namelon)
+      elonlselon intelonrlelonavelonCandidatelons(validCandidatelons, rankelonrIds)
   }
 
-  @VisibleForTesting
-  private[interleave_ranker] def interleaveCandidates(
-    candidates: Seq[CandidateUser],
-    rankerIds: Seq[RankerId.RankerId]
-  ): Seq[CandidateUser] = {
-    val candidatesWithRank = rankerIds
-      .flatMap { ranker =>
-        candidates
-        // We first sort all candidates using this ranker.
-          .sortBy(-getCandidateScoreByRankerId(_, Some(ranker)).getOrElse(Double.MinValue))
-          .zipWithIndex.filter(
-            // but only hold those candidates whose selected ranker is this ranker.
-            // These ranks will be forced in the final ordering.
-            _._1.scores.flatMap(_.selectedRankerId).contains(ranker))
+  @VisiblelonForTelonsting
+  privatelon[intelonrlelonavelon_rankelonr] delonf intelonrlelonavelonCandidatelons(
+    candidatelons: Selonq[CandidatelonUselonr],
+    rankelonrIds: Selonq[RankelonrId.RankelonrId]
+  ): Selonq[CandidatelonUselonr] = {
+    val candidatelonsWithRank = rankelonrIds
+      .flatMap { rankelonr =>
+        candidatelons
+        // Welon first sort all candidatelons using this rankelonr.
+          .sortBy(-gelontCandidatelonScorelonByRankelonrId(_, Somelon(rankelonr)).gelontOrelonlselon(Doublelon.MinValuelon))
+          .zipWithIndelonx.filtelonr(
+            // but only hold thoselon candidatelons whoselon selonlelonctelond rankelonr is this rankelonr.
+            // Thelonselon ranks will belon forcelond in thelon final ordelonring.
+            _._1.scorelons.flatMap(_.selonlelonctelondRankelonrId).contains(rankelonr))
       }
 
-    // Only candidates who have isInProducerScoringExperiment set to true will have their position enforced. We
-    // separate candidates into two groups: (1) Production and (2) Experiment.
-    val (expCandidates, prodCandidates) =
-      candidatesWithRank.partition(_._1.scores.exists(_.isInProducerScoringExperiment))
+    // Only candidatelons who havelon isInProducelonrScoringelonxpelonrimelonnt selont to truelon will havelon thelonir position elonnforcelond. Welon
+    // selonparatelon candidatelons into two groups: (1) Production and (2) elonxpelonrimelonnt.
+    val (elonxpCandidatelons, prodCandidatelons) =
+      candidatelonsWithRank.partition(_._1.scorelons.elonxists(_.isInProducelonrScoringelonxpelonrimelonnt))
 
-    // We resolve (potential) conflicts between the enforced ranks of experimental models.
-    val expCandidatesFinalPos = resolveConflicts(expCandidates)
+    // Welon relonsolvelon (potelonntial) conflicts belontwelonelonn thelon elonnforcelond ranks of elonxpelonrimelonntal modelonls.
+    val elonxpCandidatelonsFinalPos = relonsolvelonConflicts(elonxpCandidatelons)
 
-    // Retrieve non-occupied positions and assign them to candidates who use production ranker.
-    val occupiedPos = expCandidatesFinalPos.map(_._2).toSet
-    val prodCandidatesFinalPos =
-      prodCandidates
+    // Relontrielonvelon non-occupielond positions and assign thelonm to candidatelons who uselon production rankelonr.
+    val occupielondPos = elonxpCandidatelonsFinalPos.map(_._2).toSelont
+    val prodCandidatelonsFinalPos =
+      prodCandidatelons
         .map(_._1).zip(
-          candidates.indices.filterNot(occupiedPos.contains).sorted.take(prodCandidates.length))
+          candidatelons.indicelons.filtelonrNot(occupielondPos.contains).sortelond.takelon(prodCandidatelons.lelonngth))
 
-    // Merge the two groups and sort them by their corresponding positions.
-    val finalCandidates = (prodCandidatesFinalPos ++ expCandidatesFinalPos).sortBy(_._2).map(_._1)
+    // Melonrgelon thelon two groups and sort thelonm by thelonir correlonsponding positions.
+    val finalCandidatelons = (prodCandidatelonsFinalPos ++ elonxpCandidatelonsFinalPos).sortBy(_._2).map(_._1)
 
-    // We count the presence of each ranker in the top-3 final positions.
-    finalCandidates.zip(0 until 3).foreach {
-      case (c, r) =>
-        // We only do so for candidates that are in a producer-side experiment.
-        if (c.scores.exists(_.isInProducerScoringExperiment))
-          c.scores.flatMap(_.selectedRankerId).map(_.toString).foreach { rankerName =>
-            interleavingStats
-              .counter(s"num_final_position_${r}_$rankerName")
+    // Welon count thelon prelonselonncelon of elonach rankelonr in thelon top-3 final positions.
+    finalCandidatelons.zip(0 until 3).forelonach {
+      caselon (c, r) =>
+        // Welon only do so for candidatelons that arelon in a producelonr-sidelon elonxpelonrimelonnt.
+        if (c.scorelons.elonxists(_.isInProducelonrScoringelonxpelonrimelonnt))
+          c.scorelons.flatMap(_.selonlelonctelondRankelonrId).map(_.toString).forelonach { rankelonrNamelon =>
+            intelonrlelonavingStats
+              .countelonr(s"num_final_position_${r}_$rankelonrNamelon")
               .incr()
           }
     }
 
-    finalCandidates
+    finalCandidatelons
   }
 
-  @VisibleForTesting
-  private[interleave_ranker] def resolveConflicts(
-    candidatesWithRank: Seq[(CandidateUser, Int)]
-  ): Seq[(CandidateUser, Int)] = {
-    // The following two metrics will allow us to calculate the rate of conflicts occurring.
-    // Example: If overall there are 10 producers in different bucketing experiments, and 3 of them
-    // are assigned to the same position. The rate would be 3/10, 30%.
-    val numCandidatesWithConflicts = interleavingStats.counter("candidates_with_conflict")
-    val numCandidatesNoConflicts = interleavingStats.counter("candidates_without_conflict")
-    val candidatesGroupedByRank = candidatesWithRank.groupBy(_._2).toSeq.sortBy(_._1).map {
-      case (rank, candidatesWithRank) => (rank, candidatesWithRank.map(_._1))
+  @VisiblelonForTelonsting
+  privatelon[intelonrlelonavelon_rankelonr] delonf relonsolvelonConflicts(
+    candidatelonsWithRank: Selonq[(CandidatelonUselonr, Int)]
+  ): Selonq[(CandidatelonUselonr, Int)] = {
+    // Thelon following two melontrics will allow us to calculatelon thelon ratelon of conflicts occurring.
+    // elonxamplelon: If ovelonrall thelonrelon arelon 10 producelonrs in diffelonrelonnt buckelonting elonxpelonrimelonnts, and 3 of thelonm
+    // arelon assignelond to thelon samelon position. Thelon ratelon would belon 3/10, 30%.
+    val numCandidatelonsWithConflicts = intelonrlelonavingStats.countelonr("candidatelons_with_conflict")
+    val numCandidatelonsNoConflicts = intelonrlelonavingStats.countelonr("candidatelons_without_conflict")
+    val candidatelonsGroupelondByRank = candidatelonsWithRank.groupBy(_._2).toSelonq.sortBy(_._1).map {
+      caselon (rank, candidatelonsWithRank) => (rank, candidatelonsWithRank.map(_._1))
     }
 
-    candidatesGroupedByRank.foldLeft(Seq[(CandidateUser, Int)]()) { (upToHere, nextGroup) =>
-      val (rank, candidates) = nextGroup
-      if (candidates.length > 1)
-        numCandidatesWithConflicts.incr(candidates.length)
-      else
-        numCandidatesNoConflicts.incr()
+    candidatelonsGroupelondByRank.foldLelonft(Selonq[(CandidatelonUselonr, Int)]()) { (upToHelonrelon, nelonxtGroup) =>
+      val (rank, candidatelons) = nelonxtGroup
+      if (candidatelons.lelonngth > 1)
+        numCandidatelonsWithConflicts.incr(candidatelons.lelonngth)
+      elonlselon
+        numCandidatelonsNoConflicts.incr()
 
-      // We use the position after the last-assigned candidate as a starting point, or 0 otherwise.
-      // If candidates' position is after this "starting point", we enforce that position instead.
-      val minAvailableIndex = scala.math.max(upToHere.lastOption.map(_._2).getOrElse(-1) + 1, rank)
-      val enforcedPos =
-        (minAvailableIndex until minAvailableIndex + candidates.length).toList
-      val shuffledEnforcedPos =
-        if (candidates.length > 1) scala.util.Random.shuffle(enforcedPos) else enforcedPos
-      if (shuffledEnforcedPos.length > 1) {
-        candidates.zip(shuffledEnforcedPos).sortBy(_._2).map(_._1).zipWithIndex.foreach {
-          case (c, r) =>
-            c.scores.flatMap(_.selectedRankerId).map(_.toString).foreach { rankerName =>
-              // For each ranker, we count the total number of times it has been in a conflict.
-              interleavingStats
-                .counter(s"num_${shuffledEnforcedPos.length}-way_conflicts_$rankerName")
+      // Welon uselon thelon position aftelonr thelon last-assignelond candidatelon as a starting point, or 0 othelonrwiselon.
+      // If candidatelons' position is aftelonr this "starting point", welon elonnforcelon that position instelonad.
+      val minAvailablelonIndelonx = scala.math.max(upToHelonrelon.lastOption.map(_._2).gelontOrelonlselon(-1) + 1, rank)
+      val elonnforcelondPos =
+        (minAvailablelonIndelonx until minAvailablelonIndelonx + candidatelons.lelonngth).toList
+      val shufflelondelonnforcelondPos =
+        if (candidatelons.lelonngth > 1) scala.util.Random.shufflelon(elonnforcelondPos) elonlselon elonnforcelondPos
+      if (shufflelondelonnforcelondPos.lelonngth > 1) {
+        candidatelons.zip(shufflelondelonnforcelondPos).sortBy(_._2).map(_._1).zipWithIndelonx.forelonach {
+          caselon (c, r) =>
+            c.scorelons.flatMap(_.selonlelonctelondRankelonrId).map(_.toString).forelonach { rankelonrNamelon =>
+              // For elonach rankelonr, welon count thelon total numbelonr of timelons it has belonelonn in a conflict.
+              intelonrlelonavingStats
+                .countelonr(s"num_${shufflelondelonnforcelondPos.lelonngth}-way_conflicts_$rankelonrNamelon")
                 .incr()
-              // We also count the positions each of the rankers have fallen randomly into. In any
-              // experiment this should converge to uniform distribution given enough occurrences.
-              // Note that the position here is relative to the other candidates in the conflict and
-              // not the overall position of each candidate.
-              interleavingStats
-                .counter(
-                  s"num_position_${r}_after_${shuffledEnforcedPos.length}-way_conflict_$rankerName")
+              // Welon also count thelon positions elonach of thelon rankelonrs havelon fallelonn randomly into. In any
+              // elonxpelonrimelonnt this should convelonrgelon to uniform distribution givelonn elonnough occurrelonncelons.
+              // Notelon that thelon position helonrelon is relonlativelon to thelon othelonr candidatelons in thelon conflict and
+              // not thelon ovelonrall position of elonach candidatelon.
+              intelonrlelonavingStats
+                .countelonr(
+                  s"num_position_${r}_aftelonr_${shufflelondelonnforcelondPos.lelonngth}-way_conflict_$rankelonrNamelon")
                 .incr()
             }
         }
       }
-      upToHere ++ candidates.zip(shuffledEnforcedPos).sortBy(_._2)
+      upToHelonrelon ++ candidatelons.zip(shufflelondelonnforcelondPos).sortBy(_._2)
     }
   }
 
-  @VisibleForTesting
-  private[interleave_ranker] def getCandidateScoreByRankerId(
-    candidate: CandidateUser,
-    rankerIdOpt: Option[RankerId.RankerId]
-  ): Option[Double] = {
-    rankerIdOpt match {
-      case None => None
-      case Some(rankerId) =>
-        candidate.scores.flatMap {
-          _.scores.find(_.rankerId.contains(rankerId)).map(_.value)
+  @VisiblelonForTelonsting
+  privatelon[intelonrlelonavelon_rankelonr] delonf gelontCandidatelonScorelonByRankelonrId(
+    candidatelon: CandidatelonUselonr,
+    rankelonrIdOpt: Option[RankelonrId.RankelonrId]
+  ): Option[Doublelon] = {
+    rankelonrIdOpt match {
+      caselon Nonelon => Nonelon
+      caselon Somelon(rankelonrId) =>
+        candidatelon.scorelons.flatMap {
+          _.scorelons.find(_.rankelonrId.contains(rankelonrId)).map(_.valuelon)
         }
     }
   }

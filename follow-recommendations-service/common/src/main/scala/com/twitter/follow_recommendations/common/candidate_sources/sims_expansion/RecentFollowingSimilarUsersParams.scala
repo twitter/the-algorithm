@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object RecentFollowingSimilarUsersParams {
-  case object MaxFirstDegreeNodes
-      extends FSBoundedParam[Int](
-        name = "sims_expansion_recent_following_max_first_degree_nodes",
-        default = 10,
+objelonct ReloncelonntFollowingSimilarUselonrsParams {
+  caselon objelonct MaxFirstDelongrelonelonNodelons
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "sims_elonxpansion_reloncelonnt_following_max_first_delongrelonelon_nodelons",
+        delonfault = 10,
         min = 0,
         max = 200)
-  case object MaxSecondaryDegreeExpansionPerNode
-      extends FSBoundedParam[Int](
-        name = "sims_expansion_recent_following_max_secondary_degree_nodes",
-        default = 40,
+  caselon objelonct MaxSeloncondaryDelongrelonelonelonxpansionPelonrNodelon
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "sims_elonxpansion_reloncelonnt_following_max_seloncondary_delongrelonelon_nodelons",
+        delonfault = 40,
         min = 0,
         max = 200)
-  case object MaxResults
-      extends FSBoundedParam[Int](
-        name = "sims_expansion_recent_following_max_results",
-        default = 200,
+  caselon objelonct MaxRelonsults
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "sims_elonxpansion_reloncelonnt_following_max_relonsults",
+        delonfault = 200,
         min = 0,
         max = 200)
-  case object TimestampIntegrated
-      extends FSParam[Boolean](
-        name = "sims_expansion_recent_following_integ_timestamp",
-        default = false)
+  caselon objelonct TimelonstampIntelongratelond
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "sims_elonxpansion_reloncelonnt_following_intelong_timelonstamp",
+        delonfault = falselon)
 }

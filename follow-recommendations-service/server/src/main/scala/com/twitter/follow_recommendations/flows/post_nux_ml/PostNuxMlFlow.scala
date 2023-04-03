@@ -1,304 +1,304 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+packagelon com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource._
-import com.twitter.follow_recommendations.common.base._
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.predicates.dismiss.DismissedCandidatePredicate
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate
-import com.twitter.follow_recommendations.common.transforms.ranker_id.RandomRankerIdTransform
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidTargetCandidateRelationshipTypesPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.RecentFollowingPredicate
-import com.twitter.follow_recommendations.common.predicates.CandidateParamPredicate
-import com.twitter.follow_recommendations.common.predicates.CandidateSourceParamPredicate
-import com.twitter.follow_recommendations.common.predicates.CuratedCompetitorListPredicate
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
-import com.twitter.follow_recommendations.common.predicates.InactivePredicate
-import com.twitter.follow_recommendations.common.predicates.PreviouslyRecommendedUserIdsPredicate
-import com.twitter.follow_recommendations.common.predicates.user_activity.NonNearZeroUserActivityPredicate
-import com.twitter.follow_recommendations.common.transforms.dedup.DedupTransform
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProofTransform
-import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
-import com.twitter.follow_recommendations.common.transforms.weighted_sampling.SamplingTransform
-import com.twitter.follow_recommendations.configapi.candidates.CandidateUserParamsFactory
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.follow_recommendations.configapi.params.GlobalParams.EnableGFSSocialProofTransform
-import com.twitter.follow_recommendations.utils.CandidateSourceHoldbackUtil
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.elonnrichelondCandidatelonSourcelon._
+import com.twittelonr.follow_reloncommelonndations.common.baselon._
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.dismiss.DismisselondCandidatelonPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.gizmoduck.GizmoduckPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.transforms.rankelonr_id.RandomRankelonrIdTransform
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs.InvalidTargelontCandidatelonRelonlationshipTypelonsPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs.ReloncelonntFollowingPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.CandidatelonParamPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.CandidatelonSourcelonParamPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.CuratelondCompelontitorListPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.elonxcludelondUselonrIdPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.InactivelonPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.PrelonviouslyReloncommelonndelondUselonrIdsPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.uselonr_activity.NonNelonarZelonroUselonrActivityPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.transforms.delondup.DelondupTransform
+import com.twittelonr.follow_reloncommelonndations.common.transforms.modify_social_proof.ModifySocialProofTransform
+import com.twittelonr.follow_reloncommelonndations.common.transforms.tracking_tokelonn.TrackingTokelonnTransform
+import com.twittelonr.follow_reloncommelonndations.common.transforms.welonightelond_sampling.SamplingTransform
+import com.twittelonr.follow_reloncommelonndations.configapi.candidatelons.CandidatelonUselonrParamsFactory
+import com.twittelonr.follow_reloncommelonndations.configapi.params.GlobalParams
+import com.twittelonr.follow_reloncommelonndations.configapi.params.GlobalParams.elonnablelonGFSSocialProofTransform
+import com.twittelonr.follow_reloncommelonndations.utils.CandidatelonSourcelonHoldbackUtil
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.util.Duration
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.predicates.hss.HssPredicate
-import com.twitter.follow_recommendations.common.predicates.sgs.InvalidRelationshipPredicate
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.RemoveAccountProofTransform
-import com.twitter.follow_recommendations.logging.FrsLogger
-import com.twitter.follow_recommendations.models.RecommendationFlowData
-import com.twitter.follow_recommendations.utils.RecommendationFlowBaseSideEffectsUtil
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.quality_factor.BoundsWithDefault
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactor
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorConfig
-import com.twitter.product_mixer.core.quality_factor.LinearLatencyQualityFactorObserver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph.SocialGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.hss.HssPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs.InvalidRelonlationshipPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.transforms.modify_social_proof.RelonmovelonAccountProofTransform
+import com.twittelonr.follow_reloncommelonndations.logging.FrsLoggelonr
+import com.twittelonr.follow_reloncommelonndations.modelonls.ReloncommelonndationFlowData
+import com.twittelonr.follow_reloncommelonndations.utils.ReloncommelonndationFlowBaselonSidelonelonffelonctsUtil
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ReloncommelonndationPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.quality_factor.BoundsWithDelonfault
+import com.twittelonr.product_mixelonr.corelon.quality_factor.LinelonarLatelonncyQualityFactor
+import com.twittelonr.product_mixelonr.corelon.quality_factor.LinelonarLatelonncyQualityFactorConfig
+import com.twittelonr.product_mixelonr.corelon.quality_factor.LinelonarLatelonncyQualityFactorObselonrvelonr
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
+import com.twittelonr.stitch.Stitch
 
 /**
- * We use this flow for all post-nux display locations that would use a machine-learning-based-ranker
- * eg HTL, Sidebar, etc
- * Note that the RankedPostNuxFlow is used primarily for scribing/data collection, and doesn't
- * incorporate all of the other components in a flow (candidate source generation, predicates etc)
+ * Welon uselon this flow for all post-nux display locations that would uselon a machinelon-lelonarning-baselond-rankelonr
+ * elong HTL, Sidelonbar, elontc
+ * Notelon that thelon RankelondPostNuxFlow is uselond primarily for scribing/data collelonction, and doelonsn't
+ * incorporatelon all of thelon othelonr componelonnts in a flow (candidatelon sourcelon gelonnelonration, prelondicatelons elontc)
  */
-@Singleton
-class PostNuxMlFlow @Inject() (
-  postNuxMlCandidateSourceRegistry: PostNuxMlCandidateSourceRegistry,
-  postNuxMlCombinedRankerBuilder: PostNuxMlCombinedRankerBuilder[PostNuxMlRequest],
-  curatedCompetitorListPredicate: CuratedCompetitorListPredicate,
-  gizmoduckPredicate: GizmoduckPredicate,
-  sgsPredicate: InvalidTargetCandidateRelationshipTypesPredicate,
-  hssPredicate: HssPredicate,
-  invalidRelationshipPredicate: InvalidRelationshipPredicate,
-  recentFollowingPredicate: RecentFollowingPredicate,
-  nonNearZeroUserActivityPredicate: NonNearZeroUserActivityPredicate,
-  inactivePredicate: InactivePredicate,
-  dismissedCandidatePredicate: DismissedCandidatePredicate,
-  previouslyRecommendedUserIdsPredicate: PreviouslyRecommendedUserIdsPredicate,
+@Singlelonton
+class PostNuxMlFlow @Injelonct() (
+  postNuxMlCandidatelonSourcelonRelongistry: PostNuxMlCandidatelonSourcelonRelongistry,
+  postNuxMlCombinelondRankelonrBuildelonr: PostNuxMlCombinelondRankelonrBuildelonr[PostNuxMlRelonquelonst],
+  curatelondCompelontitorListPrelondicatelon: CuratelondCompelontitorListPrelondicatelon,
+  gizmoduckPrelondicatelon: GizmoduckPrelondicatelon,
+  sgsPrelondicatelon: InvalidTargelontCandidatelonRelonlationshipTypelonsPrelondicatelon,
+  hssPrelondicatelon: HssPrelondicatelon,
+  invalidRelonlationshipPrelondicatelon: InvalidRelonlationshipPrelondicatelon,
+  reloncelonntFollowingPrelondicatelon: ReloncelonntFollowingPrelondicatelon,
+  nonNelonarZelonroUselonrActivityPrelondicatelon: NonNelonarZelonroUselonrActivityPrelondicatelon,
+  inactivelonPrelondicatelon: InactivelonPrelondicatelon,
+  dismisselondCandidatelonPrelondicatelon: DismisselondCandidatelonPrelondicatelon,
+  prelonviouslyReloncommelonndelondUselonrIdsPrelondicatelon: PrelonviouslyReloncommelonndelondUselonrIdsPrelondicatelon,
   modifySocialProofTransform: ModifySocialProofTransform,
-  removeAccountProofTransform: RemoveAccountProofTransform,
-  trackingTokenTransform: TrackingTokenTransform,
-  randomRankerIdTransform: RandomRankerIdTransform,
-  candidateParamsFactory: CandidateUserParamsFactory[PostNuxMlRequest],
+  relonmovelonAccountProofTransform: RelonmovelonAccountProofTransform,
+  trackingTokelonnTransform: TrackingTokelonnTransform,
+  randomRankelonrIdTransform: RandomRankelonrIdTransform,
+  candidatelonParamsFactory: CandidatelonUselonrParamsFactory[PostNuxMlRelonquelonst],
   samplingTransform: SamplingTransform,
-  frsLogger: FrsLogger,
-  baseStatsReceiver: StatsReceiver)
-    extends RecommendationFlow[PostNuxMlRequest, CandidateUser]
-    with RecommendationFlowBaseSideEffectsUtil[PostNuxMlRequest, CandidateUser]
-    with CandidateSourceHoldbackUtil {
-  override protected val targetEligibility: Predicate[PostNuxMlRequest] =
-    new ParamPredicate[PostNuxMlRequest](PostNuxMlParams.TargetEligibility)
+  frsLoggelonr: FrsLoggelonr,
+  baselonStatsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds ReloncommelonndationFlow[PostNuxMlRelonquelonst, CandidatelonUselonr]
+    with ReloncommelonndationFlowBaselonSidelonelonffelonctsUtil[PostNuxMlRelonquelonst, CandidatelonUselonr]
+    with CandidatelonSourcelonHoldbackUtil {
+  ovelonrridelon protelonctelond val targelontelonligibility: Prelondicatelon[PostNuxMlRelonquelonst] =
+    nelonw ParamPrelondicatelon[PostNuxMlRelonquelonst](PostNuxMlParams.Targelontelonligibility)
 
-  override val statsReceiver: StatsReceiver = baseStatsReceiver.scope("post_nux_ml_flow")
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr = baselonStatsReloncelonivelonr.scopelon("post_nux_ml_flow")
 
-  override val qualityFactorObserver: Option[QualityFactorObserver] = {
-    val config = LinearLatencyQualityFactorConfig(
+  ovelonrridelon val qualityFactorObselonrvelonr: Option[QualityFactorObselonrvelonr] = {
+    val config = LinelonarLatelonncyQualityFactorConfig(
       qualityFactorBounds =
-        BoundsWithDefault(minInclusive = 0.1, maxInclusive = 1.0, default = 1.0),
-      initialDelay = 60.seconds,
-      targetLatency = 700.milliseconds,
-      targetLatencyPercentile = 95.0,
-      delta = 0.001
+        BoundsWithDelonfault(minInclusivelon = 0.1, maxInclusivelon = 1.0, delonfault = 1.0),
+      initialDelonlay = 60.selonconds,
+      targelontLatelonncy = 700.milliselonconds,
+      targelontLatelonncyPelonrcelonntilelon = 95.0,
+      delonlta = 0.001
     )
-    val qualityFactor = LinearLatencyQualityFactor(config)
-    val observer = LinearLatencyQualityFactorObserver(qualityFactor)
-    statsReceiver.provideGauge("quality_factor")(qualityFactor.currentValue.toFloat)
-    Some(observer)
+    val qualityFactor = LinelonarLatelonncyQualityFactor(config)
+    val obselonrvelonr = LinelonarLatelonncyQualityFactorObselonrvelonr(qualityFactor)
+    statsReloncelonivelonr.providelonGaugelon("quality_factor")(qualityFactor.currelonntValuelon.toFloat)
+    Somelon(obselonrvelonr)
   }
 
-  override protected def updateTarget(request: PostNuxMlRequest): Stitch[PostNuxMlRequest] = {
-    Stitch.value(
-      request.copy(qualityFactor = qualityFactorObserver.map(_.qualityFactor.currentValue))
+  ovelonrridelon protelonctelond delonf updatelonTargelont(relonquelonst: PostNuxMlRelonquelonst): Stitch[PostNuxMlRelonquelonst] = {
+    Stitch.valuelon(
+      relonquelonst.copy(qualityFactor = qualityFactorObselonrvelonr.map(_.qualityFactor.currelonntValuelon))
     )
   }
 
-  private[post_nux_ml] def getCandidateSourceIdentifiers(
+  privatelon[post_nux_ml] delonf gelontCandidatelonSourcelonIdelonntifielonrs(
     params: Params
-  ): Set[CandidateSourceIdentifier] = {
-    PostNuxMlFlowCandidateSourceWeights.getWeights(params).keySet
+  ): Selont[CandidatelonSourcelonIdelonntifielonr] = {
+    PostNuxMlFlowCandidatelonSourcelonWelonights.gelontWelonights(params).kelonySelont
   }
 
-  override protected def candidateSources(
-    request: PostNuxMlRequest
-  ): Seq[CandidateSource[PostNuxMlRequest, CandidateUser]] = {
-    val identifiers = getCandidateSourceIdentifiers(request.params)
-    val selected: Set[CandidateSource[PostNuxMlRequest, CandidateUser]] =
-      postNuxMlCandidateSourceRegistry.select(identifiers)
-    val budget: Duration = request.params(PostNuxMlParams.FetchCandidateSourceBudget)
-    filterCandidateSources(
-      request,
-      selected.map(c => c.failOpenWithin(budget, statsReceiver)).toSeq)
+  ovelonrridelon protelonctelond delonf candidatelonSourcelons(
+    relonquelonst: PostNuxMlRelonquelonst
+  ): Selonq[CandidatelonSourcelon[PostNuxMlRelonquelonst, CandidatelonUselonr]] = {
+    val idelonntifielonrs = gelontCandidatelonSourcelonIdelonntifielonrs(relonquelonst.params)
+    val selonlelonctelond: Selont[CandidatelonSourcelon[PostNuxMlRelonquelonst, CandidatelonUselonr]] =
+      postNuxMlCandidatelonSourcelonRelongistry.selonlelonct(idelonntifielonrs)
+    val budgelont: Duration = relonquelonst.params(PostNuxMlParams.FelontchCandidatelonSourcelonBudgelont)
+    filtelonrCandidatelonSourcelons(
+      relonquelonst,
+      selonlelonctelond.map(c => c.failOpelonnWithin(budgelont, statsReloncelonivelonr)).toSelonq)
   }
 
-  override protected val preRankerCandidateFilter: Predicate[(PostNuxMlRequest, CandidateUser)] = {
-    val stats = statsReceiver.scope("pre_ranker")
+  ovelonrridelon protelonctelond val prelonRankelonrCandidatelonFiltelonr: Prelondicatelon[(PostNuxMlRelonquelonst, CandidatelonUselonr)] = {
+    val stats = statsReloncelonivelonr.scopelon("prelon_rankelonr")
 
-    object excludeNearZeroUserPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          nonNearZeroUserActivityPredicate,
-          stats.scope("exclude_near_zero_predicate")
+    objelonct elonxcludelonNelonarZelonroUselonrPrelondicatelon
+        elonxtelonnds GatelondPrelondicatelonBaselon[(PostNuxMlRelonquelonst, CandidatelonUselonr)](
+          nonNelonarZelonroUselonrActivityPrelondicatelon,
+          stats.scopelon("elonxcludelon_nelonar_zelonro_prelondicatelon")
         ) {
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.ExcludeNearZeroCandidates)
+      ovelonrridelon delonf gatelon(itelonm: (PostNuxMlRelonquelonst, CandidatelonUselonr)): Boolelonan =
+        itelonm._1.params(PostNuxMlParams.elonxcludelonNelonarZelonroCandidatelons)
     }
 
-    object invalidRelationshipGatedPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          invalidRelationshipPredicate,
-          stats.scope("invalid_relationship_predicate")
+    objelonct invalidRelonlationshipGatelondPrelondicatelon
+        elonxtelonnds GatelondPrelondicatelonBaselon[(PostNuxMlRelonquelonst, CandidatelonUselonr)](
+          invalidRelonlationshipPrelondicatelon,
+          stats.scopelon("invalid_relonlationship_prelondicatelon")
         ) {
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.EnableInvalidRelationshipPredicate)
+      ovelonrridelon delonf gatelon(itelonm: (PostNuxMlRelonquelonst, CandidatelonUselonr)): Boolelonan =
+        itelonm._1.params(PostNuxMlParams.elonnablelonInvalidRelonlationshipPrelondicatelon)
     }
 
-    ExcludedUserIdPredicate
-      .observe(stats.scope("exclude_user_id_predicate"))
-      .andThen(
-        recentFollowingPredicate.observe(stats.scope("recent_following_predicate"))
+    elonxcludelondUselonrIdPrelondicatelon
+      .obselonrvelon(stats.scopelon("elonxcludelon_uselonr_id_prelondicatelon"))
+      .andThelonn(
+        reloncelonntFollowingPrelondicatelon.obselonrvelon(stats.scopelon("reloncelonnt_following_prelondicatelon"))
       )
-      .andThen(
-        dismissedCandidatePredicate.observe(stats.scope("dismissed_candidate_predicate"))
+      .andThelonn(
+        dismisselondCandidatelonPrelondicatelon.obselonrvelon(stats.scopelon("dismisselond_candidatelon_prelondicatelon"))
       )
-      .andThen(
-        previouslyRecommendedUserIdsPredicate.observe(
-          stats.scope("previously_recommended_user_ids_predicate"))
+      .andThelonn(
+        prelonviouslyReloncommelonndelondUselonrIdsPrelondicatelon.obselonrvelon(
+          stats.scopelon("prelonviously_reloncommelonndelond_uselonr_ids_prelondicatelon"))
       )
-      .andThen(
-        invalidRelationshipGatedPredicate.observe(stats.scope("invalid_relationship_predicate"))
+      .andThelonn(
+        invalidRelonlationshipGatelondPrelondicatelon.obselonrvelon(stats.scopelon("invalid_relonlationship_prelondicatelon"))
       )
-      .andThen(
-        excludeNearZeroUserPredicate.observe(stats.scope("exclude_near_zero_user_state"))
+      .andThelonn(
+        elonxcludelonNelonarZelonroUselonrPrelondicatelon.obselonrvelon(stats.scopelon("elonxcludelon_nelonar_zelonro_uselonr_statelon"))
       )
-      .observe(stats.scope("overall_pre_ranker_candidate_filter"))
+      .obselonrvelon(stats.scopelon("ovelonrall_prelon_rankelonr_candidatelon_filtelonr"))
   }
 
-  override protected def selectRanker(
-    request: PostNuxMlRequest
-  ): Ranker[PostNuxMlRequest, CandidateUser] = {
-    postNuxMlCombinedRankerBuilder.build(
-      request,
-      PostNuxMlFlowCandidateSourceWeights.getWeights(request.params))
+  ovelonrridelon protelonctelond delonf selonlelonctRankelonr(
+    relonquelonst: PostNuxMlRelonquelonst
+  ): Rankelonr[PostNuxMlRelonquelonst, CandidatelonUselonr] = {
+    postNuxMlCombinelondRankelonrBuildelonr.build(
+      relonquelonst,
+      PostNuxMlFlowCandidatelonSourcelonWelonights.gelontWelonights(relonquelonst.params))
   }
 
-  override protected val postRankerTransform: Transform[PostNuxMlRequest, CandidateUser] = {
-    new DedupTransform[PostNuxMlRequest, CandidateUser]
-      .observe(statsReceiver.scope("dedupping"))
-      .andThen(
+  ovelonrridelon protelonctelond val postRankelonrTransform: Transform[PostNuxMlRelonquelonst, CandidatelonUselonr] = {
+    nelonw DelondupTransform[PostNuxMlRelonquelonst, CandidatelonUselonr]
+      .obselonrvelon(statsReloncelonivelonr.scopelon("delondupping"))
+      .andThelonn(
         samplingTransform
-          .gated(PostNuxMlParams.SamplingTransformEnabled)
-          .observe(statsReceiver.scope("samplingtransform")))
+          .gatelond(PostNuxMlParams.SamplingTransformelonnablelond)
+          .obselonrvelon(statsReloncelonivelonr.scopelon("samplingtransform")))
   }
 
-  override protected val validateCandidates: Predicate[(PostNuxMlRequest, CandidateUser)] = {
-    val stats = statsReceiver.scope("validate_candidates")
-    val competitorPredicate =
-      curatedCompetitorListPredicate.map[(PostNuxMlRequest, CandidateUser)](_._2)
+  ovelonrridelon protelonctelond val validatelonCandidatelons: Prelondicatelon[(PostNuxMlRelonquelonst, CandidatelonUselonr)] = {
+    val stats = statsReloncelonivelonr.scopelon("validatelon_candidatelons")
+    val compelontitorPrelondicatelon =
+      curatelondCompelontitorListPrelondicatelon.map[(PostNuxMlRelonquelonst, CandidatelonUselonr)](_._2)
 
-    val producerHoldbackPredicate = new CandidateParamPredicate[CandidateUser](
-      GlobalParams.KeepUserCandidate,
-      FilterReason.CandidateSideHoldback
-    ).map[(PostNuxMlRequest, CandidateUser)] {
-      case (request, user) => candidateParamsFactory(user, request)
+    val producelonrHoldbackPrelondicatelon = nelonw CandidatelonParamPrelondicatelon[CandidatelonUselonr](
+      GlobalParams.KelonelonpUselonrCandidatelon,
+      FiltelonrRelonason.CandidatelonSidelonHoldback
+    ).map[(PostNuxMlRelonquelonst, CandidatelonUselonr)] {
+      caselon (relonquelonst, uselonr) => candidatelonParamsFactory(uselonr, relonquelonst)
     }
-    val pymkProducerHoldbackPredicate = new CandidateSourceParamPredicate(
-      GlobalParams.KeepSocialUserCandidate,
-      FilterReason.CandidateSideHoldback,
-      CandidateSourceHoldbackUtil.SocialCandidateSourceIds
-    ).map[(PostNuxMlRequest, CandidateUser)] {
-      case (request, user) => candidateParamsFactory(user, request)
+    val pymkProducelonrHoldbackPrelondicatelon = nelonw CandidatelonSourcelonParamPrelondicatelon(
+      GlobalParams.KelonelonpSocialUselonrCandidatelon,
+      FiltelonrRelonason.CandidatelonSidelonHoldback,
+      CandidatelonSourcelonHoldbackUtil.SocialCandidatelonSourcelonIds
+    ).map[(PostNuxMlRelonquelonst, CandidatelonUselonr)] {
+      caselon (relonquelonst, uselonr) => candidatelonParamsFactory(uselonr, relonquelonst)
     }
-    val sgsPredicateStats = stats.scope("sgs_predicate")
-    object sgsGatedPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          sgsPredicate.observe(sgsPredicateStats),
-          sgsPredicateStats
+    val sgsPrelondicatelonStats = stats.scopelon("sgs_prelondicatelon")
+    objelonct sgsGatelondPrelondicatelon
+        elonxtelonnds GatelondPrelondicatelonBaselon[(PostNuxMlRelonquelonst, CandidatelonUselonr)](
+          sgsPrelondicatelon.obselonrvelon(sgsPrelondicatelonStats),
+          sgsPrelondicatelonStats
         ) {
 
       /**
-       * When SGS predicate is turned off, only query SGS exists API for (user, candidate, relationship)
-       * when the user's number of invalid relationships exceeds the threshold during request
-       * building step. This is to minimize load to SGS and underlying Flock DB.
+       * Whelonn SGS prelondicatelon is turnelond off, only quelonry SGS elonxists API for (uselonr, candidatelon, relonlationship)
+       * whelonn thelon uselonr's numbelonr of invalid relonlationships elonxcelonelonds thelon threlonshold during relonquelonst
+       * building stelonp. This is to minimizelon load to SGS and undelonrlying Flock DB.
        */
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.EnableSGSPredicate) ||
-          SocialGraphClient.enablePostRankerSgsPredicate(
-            item._1.invalidRelationshipUserIds.getOrElse(Set.empty).size)
+      ovelonrridelon delonf gatelon(itelonm: (PostNuxMlRelonquelonst, CandidatelonUselonr)): Boolelonan =
+        itelonm._1.params(PostNuxMlParams.elonnablelonSGSPrelondicatelon) ||
+          SocialGraphClielonnt.elonnablelonPostRankelonrSgsPrelondicatelon(
+            itelonm._1.invalidRelonlationshipUselonrIds.gelontOrelonlselon(Selont.elonmpty).sizelon)
     }
 
-    val hssPredicateStats = stats.scope("hss_predicate")
-    object hssGatedPredicate
-        extends GatedPredicateBase[(PostNuxMlRequest, CandidateUser)](
-          hssPredicate.observe(hssPredicateStats),
-          hssPredicateStats
+    val hssPrelondicatelonStats = stats.scopelon("hss_prelondicatelon")
+    objelonct hssGatelondPrelondicatelon
+        elonxtelonnds GatelondPrelondicatelonBaselon[(PostNuxMlRelonquelonst, CandidatelonUselonr)](
+          hssPrelondicatelon.obselonrvelon(hssPrelondicatelonStats),
+          hssPrelondicatelonStats
         ) {
-      override def gate(item: (PostNuxMlRequest, CandidateUser)): Boolean =
-        item._1.params(PostNuxMlParams.EnableHssPredicate)
+      ovelonrridelon delonf gatelon(itelonm: (PostNuxMlRelonquelonst, CandidatelonUselonr)): Boolelonan =
+        itelonm._1.params(PostNuxMlParams.elonnablelonHssPrelondicatelon)
     }
 
-    Predicate
-      .andConcurrently[(PostNuxMlRequest, CandidateUser)](
-        Seq(
-          competitorPredicate.observe(stats.scope("curated_competitor_predicate")),
-          gizmoduckPredicate.observe(stats.scope("gizmoduck_predicate")),
-          sgsGatedPredicate,
-          hssGatedPredicate,
-          inactivePredicate.observe(stats.scope("inactive_predicate")),
+    Prelondicatelon
+      .andConcurrelonntly[(PostNuxMlRelonquelonst, CandidatelonUselonr)](
+        Selonq(
+          compelontitorPrelondicatelon.obselonrvelon(stats.scopelon("curatelond_compelontitor_prelondicatelon")),
+          gizmoduckPrelondicatelon.obselonrvelon(stats.scopelon("gizmoduck_prelondicatelon")),
+          sgsGatelondPrelondicatelon,
+          hssGatelondPrelondicatelon,
+          inactivelonPrelondicatelon.obselonrvelon(stats.scopelon("inactivelon_prelondicatelon")),
         )
       )
-      // to avoid dilutions, we need to apply the receiver holdback predicates at the very last step
-      .andThen(pymkProducerHoldbackPredicate.observe(stats.scope("pymk_receiver_side_holdback")))
-      .andThen(producerHoldbackPredicate.observe(stats.scope("receiver_side_holdback")))
-      .observe(stats.scope("overall_validate_candidates"))
+      // to avoid dilutions, welon nelonelond to apply thelon reloncelonivelonr holdback prelondicatelons at thelon velonry last stelonp
+      .andThelonn(pymkProducelonrHoldbackPrelondicatelon.obselonrvelon(stats.scopelon("pymk_reloncelonivelonr_sidelon_holdback")))
+      .andThelonn(producelonrHoldbackPrelondicatelon.obselonrvelon(stats.scopelon("reloncelonivelonr_sidelon_holdback")))
+      .obselonrvelon(stats.scopelon("ovelonrall_validatelon_candidatelons"))
   }
 
-  override protected val transformResults: Transform[PostNuxMlRequest, CandidateUser] = {
+  ovelonrridelon protelonctelond val transformRelonsults: Transform[PostNuxMlRelonquelonst, CandidatelonUselonr] = {
     modifySocialProofTransform
-      .gated(EnableGFSSocialProofTransform)
-      .andThen(trackingTokenTransform)
-      .andThen(randomRankerIdTransform.gated(PostNuxMlParams.LogRandomRankerId))
-      .andThen(removeAccountProofTransform.gated(PostNuxMlParams.EnableRemoveAccountProofTransform))
+      .gatelond(elonnablelonGFSSocialProofTransform)
+      .andThelonn(trackingTokelonnTransform)
+      .andThelonn(randomRankelonrIdTransform.gatelond(PostNuxMlParams.LogRandomRankelonrId))
+      .andThelonn(relonmovelonAccountProofTransform.gatelond(PostNuxMlParams.elonnablelonRelonmovelonAccountProofTransform))
   }
 
-  override protected def resultsConfig(request: PostNuxMlRequest): RecommendationResultsConfig = {
-    RecommendationResultsConfig(
-      request.maxResults.getOrElse(request.params(PostNuxMlParams.ResultSizeParam)),
-      request.params(PostNuxMlParams.BatchSizeParam)
+  ovelonrridelon protelonctelond delonf relonsultsConfig(relonquelonst: PostNuxMlRelonquelonst): ReloncommelonndationRelonsultsConfig = {
+    ReloncommelonndationRelonsultsConfig(
+      relonquelonst.maxRelonsults.gelontOrelonlselon(relonquelonst.params(PostNuxMlParams.RelonsultSizelonParam)),
+      relonquelonst.params(PostNuxMlParams.BatchSizelonParam)
     )
   }
 
-  override def applySideEffects(
-    target: PostNuxMlRequest,
-    candidateSources: Seq[CandidateSource[PostNuxMlRequest, CandidateUser]],
-    candidatesFromCandidateSources: Seq[CandidateUser],
-    mergedCandidates: Seq[CandidateUser],
-    filteredCandidates: Seq[CandidateUser],
-    rankedCandidates: Seq[CandidateUser],
-    transformedCandidates: Seq[CandidateUser],
-    truncatedCandidates: Seq[CandidateUser],
-    results: Seq[CandidateUser]
+  ovelonrridelon delonf applySidelonelonffeloncts(
+    targelont: PostNuxMlRelonquelonst,
+    candidatelonSourcelons: Selonq[CandidatelonSourcelon[PostNuxMlRelonquelonst, CandidatelonUselonr]],
+    candidatelonsFromCandidatelonSourcelons: Selonq[CandidatelonUselonr],
+    melonrgelondCandidatelons: Selonq[CandidatelonUselonr],
+    filtelonrelondCandidatelons: Selonq[CandidatelonUselonr],
+    rankelondCandidatelons: Selonq[CandidatelonUselonr],
+    transformelondCandidatelons: Selonq[CandidatelonUselonr],
+    truncatelondCandidatelons: Selonq[CandidatelonUselonr],
+    relonsults: Selonq[CandidatelonUselonr]
   ): Stitch[Unit] = {
-    frsLogger.logRecommendationFlowData[PostNuxMlRequest](
-      target,
-      RecommendationFlowData[PostNuxMlRequest](
-        target,
-        PostNuxMlFlow.identifier,
-        candidateSources,
-        candidatesFromCandidateSources,
-        mergedCandidates,
-        filteredCandidates,
-        rankedCandidates,
-        transformedCandidates,
-        truncatedCandidates,
-        results
+    frsLoggelonr.logReloncommelonndationFlowData[PostNuxMlRelonquelonst](
+      targelont,
+      ReloncommelonndationFlowData[PostNuxMlRelonquelonst](
+        targelont,
+        PostNuxMlFlow.idelonntifielonr,
+        candidatelonSourcelons,
+        candidatelonsFromCandidatelonSourcelons,
+        melonrgelondCandidatelons,
+        filtelonrelondCandidatelons,
+        rankelondCandidatelons,
+        transformelondCandidatelons,
+        truncatelondCandidatelons,
+        relonsults
       )
     )
-    super.applySideEffects(
-      target,
-      candidateSources,
-      candidatesFromCandidateSources,
-      mergedCandidates,
-      filteredCandidates,
-      rankedCandidates,
-      transformedCandidates,
-      truncatedCandidates,
-      results
+    supelonr.applySidelonelonffeloncts(
+      targelont,
+      candidatelonSourcelons,
+      candidatelonsFromCandidatelonSourcelons,
+      melonrgelondCandidatelons,
+      filtelonrelondCandidatelons,
+      rankelondCandidatelons,
+      transformelondCandidatelons,
+      truncatelondCandidatelons,
+      relonsults
     )
   }
 }
 
-object PostNuxMlFlow {
-  val identifier = RecommendationPipelineIdentifier("PostNuxMlFlow")
+objelonct PostNuxMlFlow {
+  val idelonntifielonr = ReloncommelonndationPipelonlinelonIdelonntifielonr("PostNuxMlFlow")
 }

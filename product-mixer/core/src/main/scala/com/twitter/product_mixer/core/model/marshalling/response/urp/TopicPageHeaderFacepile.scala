@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
 
-case class TopicPageHeaderFacepile(
-  userIds: Seq[Long],
-  facepileUrl: Option[Url] = None)
+caselon class TopicPagelonHelonadelonrFacelonpilelon(
+  uselonrIds: Selonq[Long],
+  facelonpilelonUrl: Option[Url] = Nonelon)

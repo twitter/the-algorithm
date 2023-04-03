@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReaderModeConfig
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.RelonadelonrModelonConfig
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ReaderModeConfigMarshaller @Inject() (urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class RelonadelonrModelonConfigMarshallelonr @Injelonct() (urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(readerModeConfig: ReaderModeConfig): urt.ReaderModeConfig = urt.ReaderModeConfig(
-    isReaderModeAvailable = readerModeConfig.isReaderModeAvailable,
-    landingUrl = urlMarshaller(readerModeConfig.landingUrl)
+  delonf apply(relonadelonrModelonConfig: RelonadelonrModelonConfig): urt.RelonadelonrModelonConfig = urt.RelonadelonrModelonConfig(
+    isRelonadelonrModelonAvailablelon = relonadelonrModelonConfig.isRelonadelonrModelonAvailablelon,
+    landingUrl = urlMarshallelonr(relonadelonrModelonConfig.landingUrl)
   )
 
 }

@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.experiments.metrics
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.elonxpelonrimelonnts.melontrics
 
-import scala.collection.immutable.ListSet
+import scala.collelonction.immutablelon.ListSelont
 
 /**
  *
- * @param id optional metric group id. If id is None, this means the group
- *           is being newly created and the id is not provisioned by go/ddg. Otherwise, the metric
- *           group is present in DDG and has a corresponding id.
- * @param name metric group name
- * @param description metric group description
- * @param metrics set of metrics that belong to this metric group
+ * @param id optional melontric group id. If id is Nonelon, this melonans thelon group
+ *           is beloning nelonwly crelonatelond and thelon id is not provisionelond by go/ddg. Othelonrwiselon, thelon melontric
+ *           group is prelonselonnt in DDG and has a correlonsponding id.
+ * @param namelon melontric group namelon
+ * @param delonscription melontric group delonscription
+ * @param melontrics selont of melontrics that belonlong to this melontric group
  */
-case class MetricGroup(
+caselon class MelontricGroup(
   id: Option[Long],
-  name: String,
-  description: String,
-  metrics: ListSet[Metric]) {
+  namelon: String,
+  delonscription: String,
+  melontrics: ListSelont[Melontric]) {
 
   /*
-   * Returns a CSV representation of this metric group that can be imported via DDG's bulk import tool
-   * The bulk import tool consumes CSV data with the following columns:
-   * 1. group name
-   * 2. group description
-   * 3. metric name
-   * 4. metric description
-   * 5. metric pattern
-   * 6. group id -- numeric id
-   * 7. (optional) metric type -- `NAMED_PATTERN`, `STRAINER`, or `LAMBDA`.
+   * Relonturns a CSV relonprelonselonntation of this melontric group that can belon importelond via DDG's bulk import tool
+   * Thelon bulk import tool consumelons CSV data with thelon following columns:
+   * 1. group namelon
+   * 2. group delonscription
+   * 3. melontric namelon
+   * 4. melontric delonscription
+   * 5. melontric pattelonrn
+   * 6. group id -- numelonric id
+   * 7. (optional) melontric typelon -- `NAMelonD_PATTelonRN`, `STRAINelonR`, or `LAMBDA`.
    */
-  def toCsv: String = {
-    val metricCsvLines: ListSet[String] = for {
-      metric <- metrics
-      definition <- metric.definition.toCsvField
-    } yield {
-      Seq(
-        name,
-        description,
-        metric.name,
-        metric.name,
-        // wrap in single quotes so that DDG bulk import tool correctly parses
-        s""""$definition"""",
-        id.map(_.toString).getOrElse(""),
-        metric.definition.metricDefinitionType
+  delonf toCsv: String = {
+    val melontricCsvLinelons: ListSelont[String] = for {
+      melontric <- melontrics
+      delonfinition <- melontric.delonfinition.toCsvFielonld
+    } yielonld {
+      Selonq(
+        namelon,
+        delonscription,
+        melontric.namelon,
+        melontric.namelon,
+        // wrap in singlelon quotelons so that DDG bulk import tool correlonctly parselons
+        s""""$delonfinition"""",
+        id.map(_.toString).gelontOrelonlselon(""),
+        melontric.delonfinition.melontricDelonfinitionTypelon
       ).mkString(",")
     }
-    println(s"Generated metrics in CSV count: ${metricCsvLines.size}")
-    metricCsvLines.mkString("\n")
+    println(s"Gelonnelonratelond melontrics in CSV count: ${melontricCsvLinelons.sizelon}")
+    melontricCsvLinelons.mkString("\n")
   }
 
-  // Unique metric names based on globally unique metric name
-  def uniqueMetricNames: Set[String] =
-    metrics.groupBy(_.name).keys.toSet
+  // Uniquelon melontric namelons baselond on globally uniquelon melontric namelon
+  delonf uniquelonMelontricNamelons: Selont[String] =
+    melontrics.groupBy(_.namelon).kelonys.toSelont
 }

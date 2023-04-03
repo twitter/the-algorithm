@@ -1,1777 +1,1777 @@
-# pylint: disable=too-many-lines
+# pylint: disablelon=too-many-linelons
 """
-``twml.trainers.Trainer`` is a wrapper around `tf.estimator.Estimator
-<https://www.tensorflow.org/versions/master/api_docs/python/tf/estimator/Estimator>`_
-to expose an easier to use API by
-hiding rarely used config knobs and supplying default values.
+``twml.trainelonrs.Trainelonr`` is a wrappelonr around `tf.elonstimator.elonstimator
+<https://www.telonnsorflow.org/velonrsions/mastelonr/api_docs/python/tf/elonstimator/elonstimator>`_
+to elonxposelon an elonasielonr to uselon API by
+hiding rarelonly uselond config knobs and supplying delonfault valuelons.
 
-The `Trainer` facilitates multi-phase training commonly used at Twitter: e.g.
+Thelon `Trainelonr` facilitatelons multi-phaselon training commonly uselond at Twittelonr: elon.g.
 MDL calibration -> MLP training -> Isotonic calibration.
-The `Trainer` also facilitates hyperparameters tuning,
-with its simple `add_parser_arguments()` method.
+Thelon `Trainelonr` also facilitatelons hypelonrparamelontelonrs tuning,
+with its simplelon `add_parselonr_argumelonnts()` melonthod.
 
-Learning rate decay functions
+Lelonarning ratelon deloncay functions
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Please note that we have four learning rate decay functions to choose from.
-Additionally, each trainer can only take one learning rate decay function and its parameters.
-If that is not the case, it will throw an error.
-Also, please note that the learning rate decay is a positional argument and should be placed as
-the last argument to the trainer, as you can see in the example above.
-The four learning decays options are:
+Plelonaselon notelon that welon havelon four lelonarning ratelon deloncay functions to chooselon from.
+Additionally, elonach trainelonr can only takelon onelon lelonarning ratelon deloncay function and its paramelontelonrs.
+If that is not thelon caselon, it will throw an elonrror.
+Also, plelonaselon notelon that thelon lelonarning ratelon deloncay is a positional argumelonnt and should belon placelond as
+thelon last argumelonnt to thelon trainelonr, as you can selonelon in thelon elonxamplelon abovelon.
+Thelon four lelonarning deloncays options arelon:
 
-1. inverse_learning_rate_decay:
+1. invelonrselon_lelonarning_ratelon_deloncay:
 
-  The function returns the decayed learning rate. It is computed as:
-
-  ::
-
-    decayed_learning_rate = learning_rate / (1 + decay_rate * global_step /decay_step)
-    final_decayed_learning_rate = max(decayed_learning_rate, min_learning_rate)
-
-
-2. polynomial_learning_rate_decay:
-
-  The function returns the decayed learning rate. It is computed as:
+  Thelon function relonturns thelon deloncayelond lelonarning ratelon. It is computelond as:
 
   ::
 
-    global_step = min(global_step, decay_steps)
-    decayed_learning_rate = (learning_rate - end_learning_rate) *
-                            (1 - global_step / decay_steps) ^ (power) +
-                            end_learning_rate
+    deloncayelond_lelonarning_ratelon = lelonarning_ratelon / (1 + deloncay_ratelon * global_stelonp /deloncay_stelonp)
+    final_deloncayelond_lelonarning_ratelon = max(deloncayelond_lelonarning_ratelon, min_lelonarning_ratelon)
 
 
-3. piecewise_constant_learning_rate_decay:
+2. polynomial_lelonarning_ratelon_deloncay:
 
-  Piecewise constant from boundaries and interval values.
-
-  Example: use a learning rate that's 1.0 for the first 100001 steps, 0.5 for
-  the next 10000 steps, and 0.1 for any additional steps.
+  Thelon function relonturns thelon deloncayelond lelonarning ratelon. It is computelond as:
 
   ::
 
-    global_step = tf.Variable(0, trainable=False)
-    boundaries = [100000, 110000]
-    values = [1.0, 0.5, 0.1]
-    learning_rate = tf.train.piecewise_constant(global_step, boundaries, values)
+    global_stelonp = min(global_stelonp, deloncay_stelonps)
+    deloncayelond_lelonarning_ratelon = (lelonarning_ratelon - elonnd_lelonarning_ratelon) *
+                            (1 - global_stelonp / deloncay_stelonps) ^ (powelonr) +
+                            elonnd_lelonarning_ratelon
 
-4. exponential_learning_rate_decay:
 
-  The function returns the decayed learning rate. It is computed as:
+3. pieloncelonwiselon_constant_lelonarning_ratelon_deloncay:
+
+  Pieloncelonwiselon constant from boundarielons and intelonrval valuelons.
+
+  elonxamplelon: uselon a lelonarning ratelon that's 1.0 for thelon first 100001 stelonps, 0.5 for
+  thelon nelonxt 10000 stelonps, and 0.1 for any additional stelonps.
 
   ::
 
-    decayed_learning_rate = learning_rate * decay_rate ^ (global_step / decay_steps)
+    global_stelonp = tf.Variablelon(0, trainablelon=Falselon)
+    boundarielons = [100000, 110000]
+    valuelons = [1.0, 0.5, 0.1]
+    lelonarning_ratelon = tf.train.pieloncelonwiselon_constant(global_stelonp, boundarielons, valuelons)
+
+4. elonxponelonntial_lelonarning_ratelon_deloncay:
+
+  Thelon function relonturns thelon deloncayelond lelonarning ratelon. It is computelond as:
+
+  ::
+
+    deloncayelond_lelonarning_ratelon = lelonarning_ratelon * deloncay_ratelon ^ (global_stelonp / deloncay_stelonps)
 
 """
 
-import datetime
+import datelontimelon
 import functools
 import math
-from operator import itemgetter
+from opelonrator import itelonmgelonttelonr
 import os
 import pprint as pp
 import random
-from string import Template
-import subprocess
+from string import Telonmplatelon
+import subprocelonss
 import sys
-import time
-from threading import Thread
+import timelon
+from threlonading import Threlonad
 
-from twitter.common.metrics import AtomicGauge
-from twitter.deepbird.stats_server import utils as stats_server_utils
-from twitter.deepbird.stats_server.stats_exporter import StatsExporter
-from twitter.ml.common import metrics
-from twitter.ml.common.kubernetes import kubectl_delete_by_name, Resource
-from twitter.ml.twml.status import get_distributed_training_job_status, TrainingJobStatus
+from twittelonr.common.melontrics import AtomicGaugelon
+from twittelonr.delonelonpbird.stats_selonrvelonr import utils as stats_selonrvelonr_utils
+from twittelonr.delonelonpbird.stats_selonrvelonr.stats_elonxportelonr import Statselonxportelonr
+from twittelonr.ml.common import melontrics
+from twittelonr.ml.common.kubelonrnelontelons import kubelonctl_delonlelontelon_by_namelon, Relonsourcelon
+from twittelonr.ml.twml.status import gelont_distributelond_training_job_status, TrainingJobStatus
 
 from absl import logging
-from twml.optimizers import LazyAdamOptimizer, optimize_loss, OPTIMIZER_SUMMARIES
-from twml.contrib.optimizers import DeepGradientCompressionOptimizer
-from twml.tracking import ExperimentTracker
-from twml.util import (delete_file_or_dir,
-                       get_distributed_training_job_path,
-                       sanitize_hdfs_path)
+from twml.optimizelonrs import LazyAdamOptimizelonr, optimizelon_loss, OPTIMIZelonR_SUMMARIelonS
+from twml.contrib.optimizelonrs import DelonelonpGradielonntComprelonssionOptimizelonr
+from twml.tracking import elonxpelonrimelonntTrackelonr
+from twml.util import (delonlelontelon_filelon_or_dir,
+                       gelont_distributelond_training_job_path,
+                       sanitizelon_hdfs_path)
 try:
-  from urllib import quote as encode_url
-except ImportError:
-  from urllib.parse import quote as encode_url
-import tensorflow.compat.v1 as tf
-import tensorflow
-import tensorflow_hub as hub
+  from urllib import quotelon as elonncodelon_url
+elonxcelonpt Importelonrror:
+  from urllib.parselon import quotelon as elonncodelon_url
+import telonnsorflow.compat.v1 as tf
+import telonnsorflow
+import telonnsorflow_hub as hub
 
-import twitter.ml.twml.kubernetes.status as k8s_status
+import twittelonr.ml.twml.kubelonrnelontelons.status as k8s_status
 import twml
-import twml.export_output_fns
-import twml.learning_rate_decay
-import twml.metrics
+import twml.elonxport_output_fns
+import twml.lelonarning_ratelon_deloncay
+import twml.melontrics
 
 
-_CLUSTER_TEMPLATE = Template('''{
-  "cluster": {
+_CLUSTelonR_TelonMPLATelon = Telonmplatelon('''{
+  "clustelonr": {
     "ps": [$PS],
-    "chief": [$CHIEF],
-    "worker": [$WORKER]
+    "chielonf": [$CHIelonF],
+    "workelonr": [$WORKelonR]
   },
-  "task": {"type": "$TYPE", "index": $INDEX}
+  "task": {"typelon": "$TYPelon", "indelonx": $INDelonX}
 }
 ''')
 
 
-def init_from_checkpoint(init_dir, init_map):
+delonf init_from_chelonckpoint(init_dir, init_map):
   """
-  Wrapper around tf.train.init_from_checkpoint
+  Wrappelonr around tf.train.init_from_chelonckpoint
   """
   if init_dir:
-    init_dir = sanitize_hdfs_path(init_dir)
-    tf.train.init_from_checkpoint(init_dir, init_map)
+    init_dir = sanitizelon_hdfs_path(init_dir)
+    tf.train.init_from_chelonckpoint(init_dir, init_map)
 
 
-class Trainer(object):
+class Trainelonr(objelonct):
   """
-  This class wraps ``tf.estimator.Estimator`` to make construction, saving, and loading easier.
-  Supports multi-phase training (for example, use a Trainer for MDL calibration, then
-  another for training the rest of the model, then another for isotonic calibration).
-  The Trainer also implements a training and evaluation loop via the ``learn()`` method.
-  Each Trainer is associated to a fixed set of hyper parameters (params), and a single model
-  specified by ``build_graph``. Given these constraints, a single Trainer can be called
-  multiple times for training and evaluation over multiple epochs.
+  This class wraps ``tf.elonstimator.elonstimator`` to makelon construction, saving, and loading elonasielonr.
+  Supports multi-phaselon training (for elonxamplelon, uselon a Trainelonr for MDL calibration, thelonn
+  anothelonr for training thelon relonst of thelon modelonl, thelonn anothelonr for isotonic calibration).
+  Thelon Trainelonr also implelonmelonnts a training and elonvaluation loop via thelon ``lelonarn()`` melonthod.
+  elonach Trainelonr is associatelond to a fixelond selont of hypelonr paramelontelonrs (params), and a singlelon modelonl
+  speloncifielond by ``build_graph``. Givelonn thelonselon constraints, a singlelon Trainelonr can belon callelond
+  multiplelon timelons for training and elonvaluation ovelonr multiplelon elonpochs.
 
-  However, if you intend to try different sets of hyper-parameters, we recommend you instantiate
-  a different Trainer for each such experiment. That way, each experiment can be tracked
-  in a different ``save_dir``. Indeed, after calling ``learn``, a Trainer's save_dir will contain
-  checkpoints of the model (its graph, and variables), and the history of metrics (for example,
-  evaluation accuracy at each epoch), and other store observations like the average time per step.
-  The latter metrics can be viewed by pointing
-  TensorBoard to the save_dir and accessing TensorBoard via your browser.
+  Howelonvelonr, if you intelonnd to try diffelonrelonnt selonts of hypelonr-paramelontelonrs, welon reloncommelonnd you instantiatelon
+  a diffelonrelonnt Trainelonr for elonach such elonxpelonrimelonnt. That way, elonach elonxpelonrimelonnt can belon trackelond
+  in a diffelonrelonnt ``savelon_dir``. Indelonelond, aftelonr calling ``lelonarn``, a Trainelonr's savelon_dir will contain
+  chelonckpoints of thelon modelonl (its graph, and variablelons), and thelon history of melontrics (for elonxamplelon,
+  elonvaluation accuracy at elonach elonpoch), and othelonr storelon obselonrvations likelon thelon avelonragelon timelon pelonr stelonp.
+  Thelon lattelonr melontrics can belon vielonwelond by pointing
+  TelonnsorBoard to thelon savelon_dir and accelonssing TelonnsorBoard via your browselonr.
   """
 
-  def __init__(self, name, params, build_graph_fn,
-               metric_fn=None,
-               optimize_loss_fn=None,
-               run_config=None,
-               save_dir=None,
-               init_from_dir=None,
-               init_map=None,
-               warm_start_from=None,
-               profiler_steps=None,
+  delonf __init__(selonlf, namelon, params, build_graph_fn,
+               melontric_fn=Nonelon,
+               optimizelon_loss_fn=Nonelon,
+               run_config=Nonelon,
+               savelon_dir=Nonelon,
+               init_from_dir=Nonelon,
+               init_map=Nonelon,
+               warm_start_from=Nonelon,
+               profilelonr_stelonps=Nonelon,
                **kwargs):
     """
 
     Args:
-      name (String):
-        string name of this estimator; used as scope names for variables and tensors.
-      params (HParams, Namespace, or Dict):
-        hyper-parameters to be passed to Estimator constructor.
-        Must include params.train_batch_size and params.eval_batch_size.
-        Note that params is passed to twml.util.convert_to_hparams() to produce an HParams.
+      namelon (String):
+        string namelon of this elonstimator; uselond as scopelon namelons for variablelons and telonnsors.
+      params (HParams, Namelonspacelon, or Dict):
+        hypelonr-paramelontelonrs to belon passelond to elonstimator constructor.
+        Must includelon params.train_batch_sizelon and params.elonval_batch_sizelon.
+        Notelon that params is passelond to twml.util.convelonrt_to_hparams() to producelon an HParams.
       build_graph_fn:
-        A function for building tensorflow graphs.
-        This matches TensorFlow Estimator's model_fn signature.
-        For example,
+        A function for building telonnsorflow graphs.
+        This matchelons TelonnsorFlow elonstimator's modelonl_fn signaturelon.
+        For elonxamplelon,
 
-        .. code-block:: python
+        .. codelon-block:: python
 
-          def build_graph(features, label, mode, params, config=None):
-            # Implements a simple binary logistic regression model
-            sparse_tf = twml.util.convert_to_sparse(features, params.input_size_bits)
+          delonf build_graph(felonaturelons, labelonl, modelon, params, config=Nonelon):
+            # Implelonmelonnts a simplelon binary logistic relongrelonssion modelonl
+            sparselon_tf = twml.util.convelonrt_to_sparselon(felonaturelons, params.input_sizelon_bits)
 
-            logits = twml.layers.full_sparse(sparse_tf, 1 << params.input_size_bits, 1)
+            logits = twml.layelonrs.full_sparselon(sparselon_tf, 1 << params.input_sizelon_bits, 1)
 
-            if mode == 'infer':
-              loss = None
-            else:
-              loss = tf.nn.sigmoid_cross_entropy_with_logits(labels=label, logits=logits)
-              loss = twml.util.weighted_average(loss, features['weights'])
+            if modelon == 'infelonr':
+              loss = Nonelon
+            elonlselon:
+              loss = tf.nn.sigmoid_cross_elonntropy_with_logits(labelonls=labelonl, logits=logits)
+              loss = twml.util.welonightelond_avelonragelon(loss, felonaturelons['welonights'])
 
             output = tf.nn.sigmoid(logits)
 
-            return {'output': output, 'loss': loss}
+            relonturn {'output': output, 'loss': loss}
 
         Args:
-          features (dict of Tensor keyed by a string name):
-            input tensors.
-          mode (tf.estimator.ModeKeys / String):
-            one of 'train', 'eval', 'infer'.
-          label (Tensor):
-            if in ``mode == 'train'`` mode, these contain the corresponding labels for input.
+          felonaturelons (dict of Telonnsor kelonyelond by a string namelon):
+            input telonnsors.
+          modelon (tf.elonstimator.ModelonKelonys / String):
+            onelon of 'train', 'elonval', 'infelonr'.
+          labelonl (Telonnsor):
+            if in ``modelon == 'train'`` modelon, thelonselon contain thelon correlonsponding labelonls for input.
           params (HParams):
-            hyper parameters that control how to build a graph.
+            hypelonr paramelontelonrs that control how to build a graph.
           config:
-            the RunConfig object passed to Estimator constructor.
+            thelon RunConfig objelonct passelond to elonstimator constructor.
 
-        This function is expected to return a dictionary containing the following keys:
+        This function is elonxpelonctelond to relonturn a dictionary containing thelon following kelonys:
 
-        * 'output': a node representing model output; required.
-        * 'loss': (required) a loss node used for optimization; required for training and
-          evaluation.
-        * 'train_op': (optional) an operation that minimizes the loss (as output by
-          `tf.train.Optimizer.minimize`). If train_op is specified, train_op is used
-          for optimization as opposed to loss. Loss is always logged to tensorboard.
+        * 'output': a nodelon relonprelonselonnting modelonl output; relonquirelond.
+        * 'loss': (relonquirelond) a loss nodelon uselond for optimization; relonquirelond for training and
+          elonvaluation.
+        * 'train_op': (optional) an opelonration that minimizelons thelon loss (as output by
+          `tf.train.Optimizelonr.minimizelon`). If train_op is speloncifielond, train_op is uselond
+          for optimization as opposelond to loss. Loss is always loggelond to telonnsorboard.
 
-        Notes:
+        Notelons:
 
-        * any tf.summary written inside build graph are logged to tensorboard during training.
-        * the ``build_graph_fn`` is called once or twice per epoch (once per training,
-          once per evaluation). All data loading (and preprocessing) logic not required
-          for serving should be in the ``input_fn`` passed to ``learn``, ``train``,
-          ``evalulate``, etc.
+        * any tf.summary writtelonn insidelon build graph arelon loggelond to telonnsorboard during training.
+        * thelon ``build_graph_fn`` is callelond oncelon or twicelon pelonr elonpoch (oncelon pelonr training,
+          oncelon pelonr elonvaluation). All data loading (and prelonprocelonssing) logic not relonquirelond
+          for selonrving should belon in thelon ``input_fn`` passelond to ``lelonarn``, ``train``,
+          ``elonvalulatelon``, elontc.
 
-      optimize_loss_fn:
-        Defaults to Trainer.get_train_op. A function that takes params and loss as arguments
-        and returns a training op. The training op is used to update parameters (that is, to learn).
-      metric_fn:
-        A function that returns the eval_metric_ops dict given graph_output, labels and weights.
-        Defaults to None.
-        Use ``twml.metrics.get_binary_class_metric_fn()`` to return a ``metric_fn``
-        which implements many binary classification metrics.
+      optimizelon_loss_fn:
+        Delonfaults to Trainelonr.gelont_train_op. A function that takelons params and loss as argumelonnts
+        and relonturns a training op. Thelon training op is uselond to updatelon paramelontelonrs (that is, to lelonarn).
+      melontric_fn:
+        A function that relonturns thelon elonval_melontric_ops dict givelonn graph_output, labelonls and welonights.
+        Delonfaults to Nonelon.
+        Uselon ``twml.melontrics.gelont_binary_class_melontric_fn()`` to relonturn a ``melontric_fn``
+        which implelonmelonnts many binary classification melontrics.
       run_config (RunConfig):
-        optional configuration to be passed to Estimator constructor. Defaults to None.
-      save_dir (String):
-        optional directory where to save model checkpoints,
-        tensorboard event files and trained parameters.
-        Overwrites and defaults to run_config.model_dir.
+        optional configuration to belon passelond to elonstimator constructor. Delonfaults to Nonelon.
+      savelon_dir (String):
+        optional direlonctory whelonrelon to savelon modelonl chelonckpoints,
+        telonnsorboard elonvelonnt filelons and trainelond paramelontelonrs.
+        Ovelonrwritelons and delonfaults to run_config.modelonl_dir.
       init_from_dir (String):
-        optional directory to load weights from.
-        if set to None (the default), do not init from any directory.
+        optional direlonctory to load welonights from.
+        if selont to Nonelon (thelon delonfault), do not init from any direlonctory.
       init_map (map from String to String):
-        Must be specified if init_from_dir is specified.
-        Defines which scopes and variables to load.
-        Keys are the variables and scopes to load from the directory.
-        Values are the destinations (in the current graph) to load into.
-        See tf.init_from_checkpoint for more information.
-        Note that the the trainer prepends name_scope of the form `name`/model/ to the name_scope
-        of any variable defined inside `build_graph_fn` and this should be taken into account when
-        defining the values.
+        Must belon speloncifielond if init_from_dir is speloncifielond.
+        Delonfinelons which scopelons and variablelons to load.
+        Kelonys arelon thelon variablelons and scopelons to load from thelon direlonctory.
+        Valuelons arelon thelon delonstinations (in thelon currelonnt graph) to load into.
+        Selonelon tf.init_from_chelonckpoint for morelon information.
+        Notelon that thelon thelon trainelonr prelonpelonnds namelon_scopelon of thelon form `namelon`/modelonl/ to thelon namelon_scopelon
+        of any variablelon delonfinelond insidelon `build_graph_fn` and this should belon takelonn into account whelonn
+        delonfining thelon valuelons.
       warm_start_from:
-        Optional string filepath to a checkpoint to warm-start from,
-        or a tf.estimator.WarmStartSettings object to fully configure warm-starting.
-        If the string filepath is provided instead of a WarmStartSettings,
-        then all variables are warm-started, and it is assumed that
-        vocabularies and Tensor names are unchanged.
-      profiler_steps (Integer):
-        Defaults to None. If set defines the number of steps in the
-        `tf.train.ProfileHook <https://www.tensorflow.org/api_docs/python/tf/train/ProfilerHook>`_.
-        Captures CPU/GPU profiling information every ``profiler_steps`` steps or seconds.
-        When executing ``learn``, ``train`` or ``predict`` methods,
-        with ``profiler_steps`` set to a number,
-        a ``timeline_X.json`` file is created in the save_dir. This file contains profiling data
-        storedin Chrome trace format. To view stored data, use the Chrome browser to follow
-        these steps:
+        Optional string filelonpath to a chelonckpoint to warm-start from,
+        or a tf.elonstimator.WarmStartSelonttings objelonct to fully configurelon warm-starting.
+        If thelon string filelonpath is providelond instelonad of a WarmStartSelonttings,
+        thelonn all variablelons arelon warm-startelond, and it is assumelond that
+        vocabularielons and Telonnsor namelons arelon unchangelond.
+      profilelonr_stelonps (Intelongelonr):
+        Delonfaults to Nonelon. If selont delonfinelons thelon numbelonr of stelonps in thelon
+        `tf.train.ProfilelonHook <https://www.telonnsorflow.org/api_docs/python/tf/train/ProfilelonrHook>`_.
+        Capturelons CPU/GPU profiling information elonvelonry ``profilelonr_stelonps`` stelonps or selonconds.
+        Whelonn elonxeloncuting ``lelonarn``, ``train`` or ``prelondict`` melonthods,
+        with ``profilelonr_stelonps`` selont to a numbelonr,
+        a ``timelonlinelon_X.json`` filelon is crelonatelond in thelon savelon_dir. This filelon contains profiling data
+        storelondin Chromelon tracelon format. To vielonw storelond data, uselon thelon Chromelon browselonr to follow
+        thelonselon stelonps:
 
-        1) Go to the page chrome://tracing.
-        2) In the upper left corner, you will find Load button.
-        3) Press it and load our JSON file, which can be found in the ``save_dir``
+        1) Go to thelon pagelon chromelon://tracing.
+        2) In thelon uppelonr lelonft cornelonr, you will find Load button.
+        3) Prelonss it and load our JSON filelon, which can belon found in thelon ``savelon_dir``
 
-        *Warning*: This could create too many these json files which can be a potential problem,
-        e.g. for  HDFS there is normally quota forfile count, so use with caution.
+        *Warning*: This could crelonatelon too many thelonselon json filelons which can belon a potelonntial problelonm,
+        elon.g. for  HDFS thelonrelon is normally quota forfilelon count, so uselon with caution.
 
-        Note: this argument is ignored when a non-None ``hooks`` argument is pasesd to
-        ``train``, ``learn``, or ``predict`` methods. The hook can be added manually by passing
-        ``trainer.train(..., hooks=myhooks.extend(trainer.get_train_hooks()))``, for example.
+        Notelon: this argumelonnt is ignorelond whelonn a non-Nonelon ``hooks`` argumelonnt is paselonsd to
+        ``train``, ``lelonarn``, or ``prelondict`` melonthods. Thelon hook can belon addelond manually by passing
+        ``trainelonr.train(..., hooks=myhooks.elonxtelonnd(trainelonr.gelont_train_hooks()))``, for elonxamplelon.
     """
 
-    if tensorflow.__version__ >= "2.0":
-      RuntimeError("Trainer not yet supported for Tensorflow >= 2.0")
+    if telonnsorflow.__velonrsion__ >= "2.0":
+      Runtimelonelonrror("Trainelonr not yelont supportelond for Telonnsorflow >= 2.0")
 
-    self._name = name
-    self._build_graph_fn = build_graph_fn
-    self._metric_fn = metric_fn
-    self._tensorboard_handle = None
-    self._current_estimator_spec = None  # holds the current estimator spec
-    self._profiler_steps = profiler_steps
-    self._export_output_fn = None
-    self._is_early_stopping = False
+    selonlf._namelon = namelon
+    selonlf._build_graph_fn = build_graph_fn
+    selonlf._melontric_fn = melontric_fn
+    selonlf._telonnsorboard_handlelon = Nonelon
+    selonlf._currelonnt_elonstimator_spelonc = Nonelon  # holds thelon currelonnt elonstimator spelonc
+    selonlf._profilelonr_stelonps = profilelonr_stelonps
+    selonlf._elonxport_output_fn = Nonelon
+    selonlf._is_elonarly_stopping = Falselon
 
-    # NOTE: Sanitize all HDFS paths first.
-    save_dir = sanitize_hdfs_path(save_dir)
-    init_from_dir = sanitize_hdfs_path(init_from_dir)
+    # NOTelon: Sanitizelon all HDFS paths first.
+    savelon_dir = sanitizelon_hdfs_path(savelon_dir)
+    init_from_dir = sanitizelon_hdfs_path(init_from_dir)
 
-    # warm_start_from can be of type tf.estimator.WarmStartSettings.
-    if isinstance(warm_start_from, str):
-      warm_start_from = sanitize_hdfs_path(warm_start_from)
+    # warm_start_from can belon of typelon tf.elonstimator.WarmStartSelonttings.
+    if isinstancelon(warm_start_from, str):
+      warm_start_from = sanitizelon_hdfs_path(warm_start_from)
 
-    # convert to twitter.deepbird.hparam.hparam.HParams object
-    params = twml.util.convert_to_hparams(params)
+    # convelonrt to twittelonr.delonelonpbird.hparam.hparam.HParams objelonct
+    params = twml.util.convelonrt_to_hparams(params)
 
-    # keep a copy of the params because calling self._estimator.params creates a deepcopy
-    self._params = params
-    self.check_params()
+    # kelonelonp a copy of thelon params beloncauselon calling selonlf._elonstimator.params crelonatelons a delonelonpcopy
+    selonlf._params = params
+    selonlf.chelonck_params()
 
-    self._using_hogwild = True if os.environ.get('TWML_HOGWILD_PORTS') else False
-    # configure Hogwild (needs to be called before RunConfig is created)
-    self._hogwild_setup()
+    selonlf._using_hogwild = Truelon if os.elonnviron.gelont('TWML_HOGWILD_PORTS') elonlselon Falselon
+    # configurelon Hogwild (nelonelonds to belon callelond belonforelon RunConfig is crelonatelond)
+    selonlf._hogwild_selontup()
 
     if not run_config:
-      session_config = tf.ConfigProto()
-      # By default each process tries to allocate (almost) all of the memory.
-      # This option ensures the gpu memory grows dynamically instead.
-      session_config.gpu_options.allow_growth = True  # pylint: disable=no-member
+      selonssion_config = tf.ConfigProto()
+      # By delonfault elonach procelonss trielons to allocatelon (almost) all of thelon melonmory.
+      # This option elonnsurelons thelon gpu melonmory grows dynamically instelonad.
+      selonssion_config.gpu_options.allow_growth = Truelon  # pylint: disablelon=no-melonmbelonr
 
-      if 'TWML_NUM_CPUS' in os.environ:
-        num_available_cpus = int(os.environ.get("TWML_MESOS_CPU", "8"))
-        if params.num_mkl_threads > 1:
-          os.environ["OMP_NUM_THREADS"] = str(params.num_mkl_threads)
-          os.environ["MKL_NUM_THREADS"] = str(params.num_mkl_threads)
-          session_config.inter_op_parallelism_threads = num_available_cpus // params.num_mkl_threads
-          session_config.intra_op_parallelism_threads = params.num_mkl_threads
+      if 'TWML_NUM_CPUS' in os.elonnviron:
+        num_availablelon_cpus = int(os.elonnviron.gelont("TWML_MelonSOS_CPU", "8"))
+        if params.num_mkl_threlonads > 1:
+          os.elonnviron["OMP_NUM_THRelonADS"] = str(params.num_mkl_threlonads)
+          os.elonnviron["MKL_NUM_THRelonADS"] = str(params.num_mkl_threlonads)
+          selonssion_config.intelonr_op_parallelonlism_threlonads = num_availablelon_cpus // params.num_mkl_threlonads
+          selonssion_config.intra_op_parallelonlism_threlonads = params.num_mkl_threlonads
 
-      run_config = tf.estimator.RunConfig(
-        session_config=session_config,
-        keep_checkpoint_max=self._params.get('keep_checkpoint_max', 20),
-        log_step_count_steps=10000,
-        save_checkpoints_secs=self._params.get('save_checkpoints_secs', 600),
-        tf_random_seed=self._tf_random_seed())
-    elif not isinstance(run_config, tf.estimator.RunConfig):
-      raise ValueError("Expecting run_config argument of type None or tf.estimator.RunConfig"
-        "Got %s instead." % type(run_config).__name__)
-    elif os.environ.get('TWML_HOGWILD_PORTS'):
-      raise ValueError("Custom RunConfig not supported with Hogwild")
+      run_config = tf.elonstimator.RunConfig(
+        selonssion_config=selonssion_config,
+        kelonelonp_chelonckpoint_max=selonlf._params.gelont('kelonelonp_chelonckpoint_max', 20),
+        log_stelonp_count_stelonps=10000,
+        savelon_chelonckpoints_seloncs=selonlf._params.gelont('savelon_chelonckpoints_seloncs', 600),
+        tf_random_selonelond=selonlf._tf_random_selonelond())
+    elonlif not isinstancelon(run_config, tf.elonstimator.RunConfig):
+      raiselon Valuelonelonrror("elonxpeloncting run_config argumelonnt of typelon Nonelon or tf.elonstimator.RunConfig"
+        "Got %s instelonad." % typelon(run_config).__namelon__)
+    elonlif os.elonnviron.gelont('TWML_HOGWILD_PORTS'):
+      raiselon Valuelonelonrror("Custom RunConfig not supportelond with Hogwild")
 
-    if run_config.model_dir is None and save_dir is None:
-      raise ValueError(
-          "Expecting either save_dir or run_config.model_dir to be specified. Got None for each.")
-    elif run_config.model_dir is None:
-      run_config = run_config.replace(model_dir=save_dir)
-    elif save_dir is None:
-      save_dir = run_config.model_dir
+    if run_config.modelonl_dir is Nonelon and savelon_dir is Nonelon:
+      raiselon Valuelonelonrror(
+          "elonxpeloncting elonithelonr savelon_dir or run_config.modelonl_dir to belon speloncifielond. Got Nonelon for elonach.")
+    elonlif run_config.modelonl_dir is Nonelon:
+      run_config = run_config.relonplacelon(modelonl_dir=savelon_dir)
+    elonlif savelon_dir is Nonelon:
+      savelon_dir = run_config.modelonl_dir
 
-    self._save_dir = save_dir
-    self.experiment_tracker = ExperimentTracker(self._params, run_config, self._save_dir)
+    selonlf._savelon_dir = savelon_dir
+    selonlf.elonxpelonrimelonnt_trackelonr = elonxpelonrimelonntTrackelonr(selonlf._params, run_config, selonlf._savelon_dir)
 
-    # Check if should delete the tsd running this training job. In certain use case when 
-    # there are other tf operations following trainer.train_and_evaluate (or trainer.learn),
-    # additional state files need to be specified to ensure those steps are executed after job restart.
-    kwargs['gke_state_files'] = kwargs.get('gke_state_files', ['_SUCCESS'])
-    self._maybe_del_tsd_exit(kwargs['gke_state_files'])
-    logging.info("Checkpoint and event files will be saved at save_dir=%s", save_dir)
-    self._optimize_loss_fn = self.get_train_op if optimize_loss_fn is None else optimize_loss_fn
+    # Chelonck if should delonlelontelon thelon tsd running this training job. In celonrtain uselon caselon whelonn
+    # thelonrelon arelon othelonr tf opelonrations following trainelonr.train_and_elonvaluatelon (or trainelonr.lelonarn),
+    # additional statelon filelons nelonelond to belon speloncifielond to elonnsurelon thoselon stelonps arelon elonxeloncutelond aftelonr job relonstart.
+    kwargs['gkelon_statelon_filelons'] = kwargs.gelont('gkelon_statelon_filelons', ['_SUCCelonSS'])
+    selonlf._maybelon_delonl_tsd_elonxit(kwargs['gkelon_statelon_filelons'])
+    logging.info("Chelonckpoint and elonvelonnt filelons will belon savelond at savelon_dir=%s", savelon_dir)
+    selonlf._optimizelon_loss_fn = selonlf.gelont_train_op if optimizelon_loss_fn is Nonelon elonlselon optimizelon_loss_fn
 
-    # overwrite the current save_dir
-    if self._params.get('overwrite_save_dir') and tf.io.gfile.exists(self._save_dir):
-      logging.info("Trainer overwriting existing save directory: %s (params.overwrite_save_dir)"
-                   % self._save_dir)
-      # if distributed or hogwild:
-      if self._params.get('distributed', False):
-        # sleep for 30 seconds to allow each worker to get to this point.
-        time.sleep(30)
-        if run_config.is_chief:
-          logging.info("Chief deleting the save_dir now")
-          delete_file_or_dir(self._save_dir)
-        # sleep for 30 seconds to allow each worker to get to this point.
-        time.sleep(30)
-      else:
-        delete_file_or_dir(self._save_dir)
+    # ovelonrwritelon thelon currelonnt savelon_dir
+    if selonlf._params.gelont('ovelonrwritelon_savelon_dir') and tf.io.gfilelon.elonxists(selonlf._savelon_dir):
+      logging.info("Trainelonr ovelonrwriting elonxisting savelon direlonctory: %s (params.ovelonrwritelon_savelon_dir)"
+                   % selonlf._savelon_dir)
+      # if distributelond or hogwild:
+      if selonlf._params.gelont('distributelond', Falselon):
+        # slelonelonp for 30 selonconds to allow elonach workelonr to gelont to this point.
+        timelon.slelonelonp(30)
+        if run_config.is_chielonf:
+          logging.info("Chielonf delonlelonting thelon savelon_dir now")
+          delonlelontelon_filelon_or_dir(selonlf._savelon_dir)
+        # slelonelonp for 30 selonconds to allow elonach workelonr to gelont to this point.
+        timelon.slelonelonp(30)
+      elonlselon:
+        delonlelontelon_filelon_or_dir(selonlf._savelon_dir)
 
-    # Exposing stats to a /vars.json endpoint that will be collected
-    # by the absorber
-    if self._params.get('stats_port'):
+    # elonxposing stats to a /vars.json elonndpoint that will belon collelonctelond
+    # by thelon absorbelonr
+    if selonlf._params.gelont('stats_port'):
       try:
-        stats_server_utils.start_stats_server(self._params.get('stats_port'), self._save_dir)
-      except Exception as err:
-        logging.error('Failed to start the stats server. Error: %s', str(err))
+        stats_selonrvelonr_utils.start_stats_selonrvelonr(selonlf._params.gelont('stats_port'), selonlf._savelon_dir)
+      elonxcelonpt elonxcelonption as elonrr:
+        logging.elonrror('Failelond to start thelon stats selonrvelonr. elonrror: %s', str(elonrr))
 
-    checkpoint = os.path.join(self._save_dir, 'checkpoint')
-    if tf.io.gfile.exists(checkpoint):
-      logging.info("The provided save_dir directory %s already exists."
-                   " Training will be resumed."
-                   % checkpoint)
+    chelonckpoint = os.path.join(selonlf._savelon_dir, 'chelonckpoint')
+    if tf.io.gfilelon.elonxists(chelonckpoint):
+      logging.info("Thelon providelond savelon_dir direlonctory %s alrelonady elonxists."
+                   " Training will belon relonsumelond."
+                   % chelonckpoint)
 
-    self._maybe_restore_checkpoint = lambda: init_from_checkpoint(init_from_dir, init_map)
+    selonlf._maybelon_relonstorelon_chelonckpoint = lambda: init_from_chelonckpoint(init_from_dir, init_map)
 
-    if init_from_dir is not None and init_map is None:
-      raise ValueError("Need to provide init_map when init_from_dir is provided.")
+    if init_from_dir is not Nonelon and init_map is Nonelon:
+      raiselon Valuelonelonrror("Nelonelond to providelon init_map whelonn init_from_dir is providelond.")
 
-    if not tf.io.gfile.exists(self._save_dir):
-      # so tensorboard can point to a directory that exists
-      tf.io.gfile.mkdir(self._save_dir)
+    if not tf.io.gfilelon.elonxists(selonlf._savelon_dir):
+      # so telonnsorboard can point to a direlonctory that elonxists
+      tf.io.gfilelon.mkdir(selonlf._savelon_dir)
 
-    self._estimator = tf.estimator.Estimator(
-      model_fn=self._model_fn,
-      params=self._params,  # HParams
+    selonlf._elonstimator = tf.elonstimator.elonstimator(
+      modelonl_fn=selonlf._modelonl_fn,
+      params=selonlf._params,  # HParams
       config=run_config,  # RunConfig
       warm_start_from=warm_start_from,
-      model_dir=self._save_dir,  # By this point it is same as run_config.model_dir
+      modelonl_dir=selonlf._savelon_dir,  # By this point it is samelon as run_config.modelonl_dir
     )
 
-    # Log parameters that are used to construct trainer. This allows people to see default values.
-    logging.info("Trainer constructed using the following parameters: ")
-    pp_params = pp.pformat(self._params.values())
+    # Log paramelontelonrs that arelon uselond to construct trainelonr. This allows pelonoplelon to selonelon delonfault valuelons.
+    logging.info("Trainelonr constructelond using thelon following paramelontelonrs: ")
+    pp_params = pp.pformat(selonlf._params.valuelons())
     logging.info(pp_params)
 
-    # Start TensorBoard
-    if self._params.get('disable_tensorboard', False):
-      logging.info("Skipping launching TensorBoard [--disable_tensorboard is set]")
-    elif "tensorboard_port" in self._params.values() and self._params.tensorboard_port is not None:
-      self.start_tensorboard(self._params.tensorboard_port)
+    # Start TelonnsorBoard
+    if selonlf._params.gelont('disablelon_telonnsorboard', Falselon):
+      logging.info("Skipping launching TelonnsorBoard [--disablelon_telonnsorboard is selont]")
+    elonlif "telonnsorboard_port" in selonlf._params.valuelons() and selonlf._params.telonnsorboard_port is not Nonelon:
+      selonlf.start_telonnsorboard(selonlf._params.telonnsorboard_port)
 
-    # Export gauge that will track whether a model was exported
-    self.stats_exporter = StatsExporter("twml.trainer")
-    self.export_gauge = AtomicGauge('export_model')
-    self.stats_exporter.register_metrics(self.export_gauge)
+    # elonxport gaugelon that will track whelonthelonr a modelonl was elonxportelond
+    selonlf.stats_elonxportelonr = Statselonxportelonr("twml.trainelonr")
+    selonlf.elonxport_gaugelon = AtomicGaugelon('elonxport_modelonl')
+    selonlf.stats_elonxportelonr.relongistelonr_melontrics(selonlf.elonxport_gaugelon)
 
-  def _hogwild_setup(self):
+  delonf _hogwild_selontup(selonlf):
     """
-    Setup the parameters required for hogwild.
+    Selontup thelon paramelontelonrs relonquirelond for hogwild.
     """
-    self._num_workers = self._params.get('num_workers') or 1
-    logging.info("NUM_WORKERS: %d", self._num_workers)
-    if self._num_workers <= 1:
-      self._ports = None
-      return
+    selonlf._num_workelonrs = selonlf._params.gelont('num_workelonrs') or 1
+    logging.info("NUM_WORKelonRS: %d", selonlf._num_workelonrs)
+    if selonlf._num_workelonrs <= 1:
+      selonlf._ports = Nonelon
+      relonturn
 
-    # a hogwild job is considered distributed
-    if 'distributed' in self._params:
-      self._params.set_hparam('distributed', True)
-    else:
-      self._params.add_hparam('distributed', True)
+    # a hogwild job is considelonrelond distributelond
+    if 'distributelond' in selonlf._params:
+      selonlf._params.selont_hparam('distributelond', Truelon)
+    elonlselon:
+      selonlf._params.add_hparam('distributelond', Truelon)
 
-    ports = os.environ.get('TWML_HOGWILD_PORTS')
+    ports = os.elonnviron.gelont('TWML_HOGWILD_PORTS')
     if ports:
-      self._ports = [int(port) for port in ports.strip().split(",")]
-      if (self._num_workers + 1!= len(self._ports)):
-        raise ValueError("Number of (workers + PS) and ports need to match")
-    else:
-      if self._num_workers > 1:
-        raise ValueError("TWML_HOGWILD_PORTS needs to be set to use hogwild training")
+      selonlf._ports = [int(port) for port in ports.strip().split(",")]
+      if (selonlf._num_workelonrs + 1!= lelonn(selonlf._ports)):
+        raiselon Valuelonelonrror("Numbelonr of (workelonrs + PS) and ports nelonelond to match")
+    elonlselon:
+      if selonlf._num_workelonrs > 1:
+        raiselon Valuelonelonrror("TWML_HOGWILD_PORTS nelonelonds to belon selont to uselon hogwild training")
 
-    # Split the number of data threads across multiple workers
-    num_threads = self._params.get('num_threads')
-    num_threads_per_worker = int(math.ceil(float(num_threads) / self._num_workers))
-    self._params.set_hparam('num_threads', num_threads_per_worker)
+    # Split thelon numbelonr of data threlonads across multiplelon workelonrs
+    num_threlonads = selonlf._params.gelont('num_threlonads')
+    num_threlonads_pelonr_workelonr = int(math.celonil(float(num_threlonads) / selonlf._num_workelonrs))
+    selonlf._params.selont_hparam('num_threlonads', num_threlonads_pelonr_workelonr)
 
-    hogwild_task_type = os.environ.get('TWML_HOGWILD_TASK_TYPE')
-    hogwild_task_id = int(os.environ.get('TWML_HOGWILD_TASK_ID'))
-    os.environ['TF_CONFIG'] = self._get_cluster_config(hogwild_task_type, hogwild_task_id)
+    hogwild_task_typelon = os.elonnviron.gelont('TWML_HOGWILD_TASK_TYPelon')
+    hogwild_task_id = int(os.elonnviron.gelont('TWML_HOGWILD_TASK_ID'))
+    os.elonnviron['TF_CONFIG'] = selonlf._gelont_clustelonr_config(hogwild_task_typelon, hogwild_task_id)
 
-  def _tf_random_seed(self):
-    """ Returns user set seed and deal with Hogwild multiple seeds """
-    tf_random_seed = self._params.get('tf_random_seed', None)
-    if tf_random_seed is None:
-      return None
-    elif self.using_hogwild and os.environ.get('TWML_HOGWILD_TASK_TYPE') == 'worker':
-      # chief (tf_random_seed), worker_0 (tf_random_seed + 1), worker_1 (tf_random_seed + 2)...
-      return tf_random_seed + 1 + int(os.environ.get('TWML_HOGWILD_TASK_ID'))
-    else:
-      return tf_random_seed
+  delonf _tf_random_selonelond(selonlf):
+    """ Relonturns uselonr selont selonelond and delonal with Hogwild multiplelon selonelonds """
+    tf_random_selonelond = selonlf._params.gelont('tf_random_selonelond', Nonelon)
+    if tf_random_selonelond is Nonelon:
+      relonturn Nonelon
+    elonlif selonlf.using_hogwild and os.elonnviron.gelont('TWML_HOGWILD_TASK_TYPelon') == 'workelonr':
+      # chielonf (tf_random_selonelond), workelonr_0 (tf_random_selonelond + 1), workelonr_1 (tf_random_selonelond + 2)...
+      relonturn tf_random_selonelond + 1 + int(os.elonnviron.gelont('TWML_HOGWILD_TASK_ID'))
+    elonlselon:
+      relonturn tf_random_selonelond
 
-  def check_params(self):
-    """ Verify that params has the correct key,values """
-    param_values = self._params.values()
+  delonf chelonck_params(selonlf):
+    """ Velonrify that params has thelon correlonct kelony,valuelons """
+    param_valuelons = selonlf._params.valuelons()
 
-    if 'train_batch_size' in param_values:
-      if not isinstance(self._params.train_batch_size, int):
-        raise ValueError("Expecting params.train_batch_size to be an integer.")
-      if self._params.train_batch_size <= 0:
-        raise ValueError("train_batch_size needs to be positive")
-    else:
-      raise ValueError("train_batch_size needs to be present in params")
+    if 'train_batch_sizelon' in param_valuelons:
+      if not isinstancelon(selonlf._params.train_batch_sizelon, int):
+        raiselon Valuelonelonrror("elonxpeloncting params.train_batch_sizelon to belon an intelongelonr.")
+      if selonlf._params.train_batch_sizelon <= 0:
+        raiselon Valuelonelonrror("train_batch_sizelon nelonelonds to belon positivelon")
+    elonlselon:
+      raiselon Valuelonelonrror("train_batch_sizelon nelonelonds to belon prelonselonnt in params")
 
-    if 'eval_batch_size' in param_values:
-      if not isinstance(self._params.eval_batch_size, int):
-        raise ValueError("Expecting params.eval_batch_size to be an integer.")
-      if self._params.eval_batch_size <= 0:
-        raise ValueError("eval_batch_size needs to be positive.")
-    else:
-      self._params.add_hparam('eval_batch_size', self._params.train_batch_size)
+    if 'elonval_batch_sizelon' in param_valuelons:
+      if not isinstancelon(selonlf._params.elonval_batch_sizelon, int):
+        raiselon Valuelonelonrror("elonxpeloncting params.elonval_batch_sizelon to belon an intelongelonr.")
+      if selonlf._params.elonval_batch_sizelon <= 0:
+        raiselon Valuelonelonrror("elonval_batch_sizelon nelonelonds to belon positivelon.")
+    elonlselon:
+      selonlf._params.add_hparam('elonval_batch_sizelon', selonlf._params.train_batch_sizelon)
 
-    if (self._params.get('distributed_training_cleanup') and
-      not self._params.get('distributed')):
-      # we only need to support training discontinuation for distributed training
-      # bc we are still using TSDs on GKE for distributed training
-      raise ValueError(
-        "Expecting params.distributed to be set if "
-        "params.distributed_training_cleanup is set."
+    if (selonlf._params.gelont('distributelond_training_clelonanup') and
+      not selonlf._params.gelont('distributelond')):
+      # welon only nelonelond to support training discontinuation for distributelond training
+      # bc welon arelon still using TSDs on GKelon for distributelond training
+      raiselon Valuelonelonrror(
+        "elonxpeloncting params.distributelond to belon selont if "
+        "params.distributelond_training_clelonanup is selont."
       )
 
-  def _get_cluster_config(self, name, index):
-    """Create a tensorflow cluster config from ports, name and index"""
+  delonf _gelont_clustelonr_config(selonlf, namelon, indelonx):
+    """Crelonatelon a telonnsorflow clustelonr config from ports, namelon and indelonx"""
     host = '"localhost:%d"'
-    ps = host % self._ports[0]
-    chief = host % self._ports[1]
-    workers = ", ".join([host % port for port in self._ports[2:]])
-    config = _CLUSTER_TEMPLATE.substitute(
+    ps = host % selonlf._ports[0]
+    chielonf = host % selonlf._ports[1]
+    workelonrs = ", ".join([host % port for port in selonlf._ports[2:]])
+    config = _CLUSTelonR_TelonMPLATelon.substitutelon(
       PS=ps,
-      CHIEF=chief,
-      WORKER=workers,
-      TYPE=name,
-      INDEX=index,
+      CHIelonF=chielonf,
+      WORKelonR=workelonrs,
+      TYPelon=namelon,
+      INDelonX=indelonx,
     )
-    return config
+    relonturn config
 
-  @property
-  def current_estimator_spec(self):
+  @propelonrty
+  delonf currelonnt_elonstimator_spelonc(selonlf):
     """
-    returns the current estimator (warning: often reset)
+    relonturns thelon currelonnt elonstimator (warning: oftelonn relonselont)
     """
-    return self._current_estimator_spec
+    relonturn selonlf._currelonnt_elonstimator_spelonc
 
-  @property
-  def estimator(self):
-    """ returns estimator encapsulated by Trainer """
-    return self._estimator
+  @propelonrty
+  delonf elonstimator(selonlf):
+    """ relonturns elonstimator elonncapsulatelond by Trainelonr """
+    relonturn selonlf._elonstimator
 
-  @property
-  def num_workers(self):
-    """ returns number of workers """
-    return self._estimator.config.num_worker_replicas
+  @propelonrty
+  delonf num_workelonrs(selonlf):
+    """ relonturns numbelonr of workelonrs """
+    relonturn selonlf._elonstimator.config.num_workelonr_relonplicas
 
-  @property
-  def worker_index(self):
+  @propelonrty
+  delonf workelonr_indelonx(selonlf):
     """
-    returns index of worker in the cluster
-    chief has index 0
-    non-chief workers have indices 1 through (num_workers - 1)
+    relonturns indelonx of workelonr in thelon clustelonr
+    chielonf has indelonx 0
+    non-chielonf workelonrs havelon indicelons 1 through (num_workelonrs - 1)
     """
-    return self._estimator.config.global_id_in_cluster
+    relonturn selonlf._elonstimator.config.global_id_in_clustelonr
 
-  @property
-  def using_hogwild(self):
-    """ returns a bool indicating whether hogwild is being used """
-    return self._using_hogwild
+  @propelonrty
+  delonf using_hogwild(selonlf):
+    """ relonturns a bool indicating whelonthelonr hogwild is beloning uselond """
+    relonturn selonlf._using_hogwild
 
-  def set_estimator(self, estimator):
-    """ sets the estimator used internally by Trainer """
-    if not isinstance(estimator, tf.estimator.Estimator):
-      raise ValueError("Expecting tf.estimator.Estimator")
-    self._estimator = estimator
-    self._params = self.estimator.params
+  delonf selont_elonstimator(selonlf, elonstimator):
+    """ selonts thelon elonstimator uselond intelonrnally by Trainelonr """
+    if not isinstancelon(elonstimator, tf.elonstimator.elonstimator):
+      raiselon Valuelonelonrror("elonxpeloncting tf.elonstimator.elonstimator")
+    selonlf._elonstimator = elonstimator
+    selonlf._params = selonlf.elonstimator.params
 
-  @property
-  def params(self):
+  @propelonrty
+  delonf params(selonlf):
     """
-    returns the hyper-parameters passed to the constructor.
+    relonturns thelon hypelonr-paramelontelonrs passelond to thelon constructor.
     """
-    return self._params
+    relonturn selonlf._params
 
-  @staticmethod
-  def add_parser_arguments():
+  @staticmelonthod
+  delonf add_parselonr_argumelonnts():
     """
-    Add common commandline args to parse for the Trainer class.
-    Typically, the user calls this function and then parses cmd-line arguments
-    into an argparse.Namespace object which is then passed to the Trainer constructor
-    via the params argument.
+    Add common commandlinelon args to parselon for thelon Trainelonr class.
+    Typically, thelon uselonr calls this function and thelonn parselons cmd-linelon argumelonnts
+    into an argparselon.Namelonspacelon objelonct which is thelonn passelond to thelon Trainelonr constructor
+    via thelon params argumelonnt.
 
-    See the `code <_modules/twml/argument_parser.html#get_trainer_parser>`_
-    for a list and description of all cmd-line arguments.
+    Selonelon thelon `codelon <_modulelons/twml/argumelonnt_parselonr.html#gelont_trainelonr_parselonr>`_
+    for a list and delonscription of all cmd-linelon argumelonnts.
 
-    Returns:
-      argparse.ArgumentParser instance with some useful args already added.
+    Relonturns:
+      argparselon.ArgumelonntParselonr instancelon with somelon uselonful args alrelonady addelond.
     """
-    return twml.argument_parser.get_trainer_parser()
+    relonturn twml.argumelonnt_parselonr.gelont_trainelonr_parselonr()
 
-  @staticmethod
-  def get_train_op(params, loss):
+  @staticmelonthod
+  delonf gelont_train_op(params, loss):
     """
-    Return a training Op, that is, a `twml.optimizers.optimize_loss
-    <https://www.tensorflow.org/api_docs/python/tf/contrib/layers/optimize_loss>`_
-    instance given params and loss.
-    This method can be overwritten by passing the optimize_loss_fn to the Trainer
+    Relonturn a training Op, that is, a `twml.optimizelonrs.optimizelon_loss
+    <https://www.telonnsorflow.org/api_docs/python/tf/contrib/layelonrs/optimizelon_loss>`_
+    instancelon givelonn params and loss.
+    This melonthod can belon ovelonrwrittelonn by passing thelon optimizelon_loss_fn to thelon Trainelonr
     constructor.
 
     Args:
       params:
-        tensorflow.contrib.training.HParams instance. Recognizes the optimizer, optimizer_summaries,
-        gradient_noise_scale, clip_gradients and learning_rate_decay (including
-        other learning rate decay arguments).
+        telonnsorflow.contrib.training.HParams instancelon. Reloncognizelons thelon optimizelonr, optimizelonr_summarielons,
+        gradielonnt_noiselon_scalelon, clip_gradielonnts and lelonarning_ratelon_deloncay (including
+        othelonr lelonarning ratelon deloncay argumelonnts).
       loss:
-        scalar Op returned by the build_graph that specifies the training loss to
-        be minimized.
+        scalar Op relonturnelond by thelon build_graph that speloncifielons thelon training loss to
+        belon minimizelond.
     """
-    optimizer = params.get('optimizer')
+    optimizelonr = params.gelont('optimizelonr')
 
-    if not optimizer:
-      optimizer = 'SGD'
+    if not optimizelonr:
+      optimizelonr = 'SGD'
 
-    if optimizer == 'LazyAdam':
-      optimizer = LazyAdamOptimizer
+    if optimizelonr == 'LazyAdam':
+      optimizelonr = LazyAdamOptimizelonr
 
-    if optimizer == 'DGC':
-      optimizer = DeepGradientCompressionOptimizer(
-          learning_rate=params.learning_rate,
-          use_locking=False,
-          name="Sparse",
-          density=params.get('dgc_density'),
-          density_decay=params.get('dgc_density_decay'),
-          density_decay_steps=params.get('dgc_density_decay_steps'),
-          density_decay_rate=params.get('dgc_density_decay_rate'),
-          min_density=params.get('dgc_min_density'),
-          accumulation=params.get('dgc_accumulation')
+    if optimizelonr == 'DGC':
+      optimizelonr = DelonelonpGradielonntComprelonssionOptimizelonr(
+          lelonarning_ratelon=params.lelonarning_ratelon,
+          uselon_locking=Falselon,
+          namelon="Sparselon",
+          delonnsity=params.gelont('dgc_delonnsity'),
+          delonnsity_deloncay=params.gelont('dgc_delonnsity_deloncay'),
+          delonnsity_deloncay_stelonps=params.gelont('dgc_delonnsity_deloncay_stelonps'),
+          delonnsity_deloncay_ratelon=params.gelont('dgc_delonnsity_deloncay_ratelon'),
+          min_delonnsity=params.gelont('dgc_min_delonnsity'),
+          accumulation=params.gelont('dgc_accumulation')
       )
 
-    summaries = ['loss']
-    if params.get('show_optimizer_summaries'):
-      summaries = OPTIMIZER_SUMMARIES
+    summarielons = ['loss']
+    if params.gelont('show_optimizelonr_summarielons'):
+      summarielons = OPTIMIZelonR_SUMMARIelonS
 
-    train_op = optimize_loss(
+    train_op = optimizelon_loss(
       loss=loss,
-      global_step=tf.train.get_global_step(),
-      optimizer=optimizer,
-      learning_rate=params.learning_rate,
-      summaries=summaries,
-      colocate_gradients_with_ops=True,
-      gradient_noise_scale=params.get('gradient_noise_scale'),
-      clip_gradients=params.get('clip_gradients'),
-      learning_rate_decay_fn=twml.learning_rate_decay.get_learning_rate_decay_fn(params)
+      global_stelonp=tf.train.gelont_global_stelonp(),
+      optimizelonr=optimizelonr,
+      lelonarning_ratelon=params.lelonarning_ratelon,
+      summarielons=summarielons,
+      colocatelon_gradielonnts_with_ops=Truelon,
+      gradielonnt_noiselon_scalelon=params.gelont('gradielonnt_noiselon_scalelon'),
+      clip_gradielonnts=params.gelont('clip_gradielonnts'),
+      lelonarning_ratelon_deloncay_fn=twml.lelonarning_ratelon_deloncay.gelont_lelonarning_ratelon_deloncay_fn(params)
     )
-    return train_op
+    relonturn train_op
 
-  def export_model_effects(self, export_path, feature_spec=None, log_features=True):
+  delonf elonxport_modelonl_elonffeloncts(selonlf, elonxport_path, felonaturelon_spelonc=Nonelon, log_felonaturelons=Truelon):
 
-    # DO NOT CHANGE THE ORDER.
-    # This needs to be done before registering the model.
-    if feature_spec:
-      if log_features:
-        features = feature_spec['features']
-        feature_names = ['.'.join(features[fid]['featureName'].split('.')[1:]) for fid in features.keys()]
-        features_to_log = ','.join(feature_names)
+    # DO NOT CHANGelon THelon ORDelonR.
+    # This nelonelonds to belon donelon belonforelon relongistelonring thelon modelonl.
+    if felonaturelon_spelonc:
+      if log_felonaturelons:
+        felonaturelons = felonaturelon_spelonc['felonaturelons']
+        felonaturelon_namelons = ['.'.join(felonaturelons[fid]['felonaturelonNamelon'].split('.')[1:]) for fid in felonaturelons.kelonys()]
+        felonaturelons_to_log = ','.join(felonaturelon_namelons)
         try:
-          model_hash = self.experiment_tracker.compute_model_hash(export_path)
-          metrics.log_usage('dbv2', 'export_model_effects', 'v1', custom_attrs=[model_hash, "feature config present", features_to_log])
-        except:  # noqa: T803
-          logging.info("Failed to log Feature Config features")
+          modelonl_hash = selonlf.elonxpelonrimelonnt_trackelonr.computelon_modelonl_hash(elonxport_path)
+          melontrics.log_usagelon('dbv2', 'elonxport_modelonl_elonffeloncts', 'v1', custom_attrs=[modelonl_hash, "felonaturelon config prelonselonnt", felonaturelons_to_log])
+        elonxcelonpt:  # noqa: T803
+          logging.info("Failelond to log Felonaturelon Config felonaturelons")
 
-      twml.contrib.export.export_fn.export_feature_spec(export_path, feature_spec)
-      export_start_time = time.time()
-      self.experiment_tracker.export_feature_spec(feature_spec)
-      logging.info("Exported feature spec to ML Metastore in %s seconds.", time.time() - export_start_time)
+      twml.contrib.elonxport.elonxport_fn.elonxport_felonaturelon_spelonc(elonxport_path, felonaturelon_spelonc)
+      elonxport_start_timelon = timelon.timelon()
+      selonlf.elonxpelonrimelonnt_trackelonr.elonxport_felonaturelon_spelonc(felonaturelon_spelonc)
+      logging.info("elonxportelond felonaturelon spelonc to ML Melontastorelon in %s selonconds.", timelon.timelon() - elonxport_start_timelon)
 
-    self.experiment_tracker.register_model(str(export_path))
-    self.export_gauge.increment()
+    selonlf.elonxpelonrimelonnt_trackelonr.relongistelonr_modelonl(str(elonxport_path))
+    selonlf.elonxport_gaugelon.increlonmelonnt()
 
-  @property
-  def best_or_latest_checkpoint(self):
-    if self._is_early_stopping:
-      best_checkpoint_path = os.path.join(self._save_dir, "best_checkpoint")
-      checkpoint_path = tf.train.latest_checkpoint(best_checkpoint_path)
-      # Return best checkpoint if necessary
-      if checkpoint_path:
-        return checkpoint_path
-      else:
-        raise ValueError("Best checkpoint not found at %s." % best_checkpoint_path)
-    else:  # Fallback to latest checkpoint from save directory
-      return self.latest_checkpoint
+  @propelonrty
+  delonf belonst_or_latelonst_chelonckpoint(selonlf):
+    if selonlf._is_elonarly_stopping:
+      belonst_chelonckpoint_path = os.path.join(selonlf._savelon_dir, "belonst_chelonckpoint")
+      chelonckpoint_path = tf.train.latelonst_chelonckpoint(belonst_chelonckpoint_path)
+      # Relonturn belonst chelonckpoint if neloncelonssary
+      if chelonckpoint_path:
+        relonturn chelonckpoint_path
+      elonlselon:
+        raiselon Valuelonelonrror("Belonst chelonckpoint not found at %s." % belonst_chelonckpoint_path)
+    elonlselon:  # Fallback to latelonst chelonckpoint from savelon direlonctory
+      relonturn selonlf.latelonst_chelonckpoint
 
-  @property
-  def latest_checkpoint(self):
-    return self.estimator.latest_checkpoint()
+  @propelonrty
+  delonf latelonst_chelonckpoint(selonlf):
+    relonturn selonlf.elonstimator.latelonst_chelonckpoint()
 
-  def export_model(self, serving_input_receiver_fn,
-                   export_output_fn=None,
-                   export_dir=None, checkpoint_path=None,
-                   feature_spec=None,
-                   log_features=True):
+  delonf elonxport_modelonl(selonlf, selonrving_input_reloncelonivelonr_fn,
+                   elonxport_output_fn=Nonelon,
+                   elonxport_dir=Nonelon, chelonckpoint_path=Nonelon,
+                   felonaturelon_spelonc=Nonelon,
+                   log_felonaturelons=Truelon):
     """
-    Export the model for prediction. Typically, the exported model
-    will later be run in production servers. This method is called
-    by the user to export the PREDICTgraph to disk.
+    elonxport thelon modelonl for prelondiction. Typically, thelon elonxportelond modelonl
+    will latelonr belon run in production selonrvelonrs. This melonthod is callelond
+    by thelon uselonr to elonxport thelon PRelonDICTgraph to disk.
 
-    Internally, this method calls `tf.estimator.Estimator.export_savedmodel
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#export_savedmodel>`_.
+    Intelonrnally, this melonthod calls `tf.elonstimator.elonstimator.elonxport_savelondmodelonl
+    <https://www.telonnsorflow.org/api_docs/python/tf/elonstimator/elonstimator#elonxport_savelondmodelonl>`_.
 
-    Note that a valid self._export_output_fn is required.
-    If export_ouput_fn is provided, it is used to set the self._export_output_fn.
+    Notelon that a valid selonlf._elonxport_output_fn is relonquirelond.
+    If elonxport_ouput_fn is providelond, it is uselond to selont thelon selonlf._elonxport_output_fn.
 
     Args:
-      serving_input_receiver_fn:
-        function preparing the model for inference requests.
-        This funtion returns the ``features`` dict passed to ``build_graph``.
-      export_dir:
-        directory to export a SavedModel for prediction servers.
-        Defaults to ``[save_dir]/exported_models``.
-      checkpoint_path:
-        the checkpoint path to export. If None (the default), the most recent checkpoint
-        found within the model directory is chosen.
-      export_output_fn:
-        Function to export the graph_output (output of build_graph) for
-        prediction. Takes a graph_output dict as sole argument and returns
-        the export_output_fns dict.
-        Defaults to `twml.export_output_fns.default_output_fn`.
+      selonrving_input_reloncelonivelonr_fn:
+        function prelonparing thelon modelonl for infelonrelonncelon relonquelonsts.
+        This funtion relonturns thelon ``felonaturelons`` dict passelond to ``build_graph``.
+      elonxport_dir:
+        direlonctory to elonxport a SavelondModelonl for prelondiction selonrvelonrs.
+        Delonfaults to ``[savelon_dir]/elonxportelond_modelonls``.
+      chelonckpoint_path:
+        thelon chelonckpoint path to elonxport. If Nonelon (thelon delonfault), thelon most reloncelonnt chelonckpoint
+        found within thelon modelonl direlonctory is choselonn.
+      elonxport_output_fn:
+        Function to elonxport thelon graph_output (output of build_graph) for
+        prelondiction. Takelons a graph_output dict as solelon argumelonnt and relonturns
+        thelon elonxport_output_fns dict.
+        Delonfaults to `twml.elonxport_output_fns.delonfault_output_fn`.
 
-    Return:
-      returns a string path to exported directory.
+    Relonturn:
+      relonturns a string path to elonxportelond direlonctory.
 
-    # set the export output function
+    # selont thelon elonxport output function
     """
-    if not self.is_chief():
-      logging.info("Trainer.export_model ignored due to the process not being chief.")
-      return
+    if not selonlf.is_chielonf():
+      logging.info("Trainelonr.elonxport_modelonl ignorelond duelon to thelon procelonss not beloning chielonf.")
+      relonturn
 
-    self._export_output_fn = export_output_fn or twml.export_output_fns.default_output_fn
+    selonlf._elonxport_output_fn = elonxport_output_fn or twml.elonxport_output_fns.delonfault_output_fn
 
-    if not callable(self._export_output_fn):
-      raise RuntimeError(
-        "Expecting export_output_fn function. Got %s."
-        % type(self._export_output_fn).__name__)
+    if not callablelon(selonlf._elonxport_output_fn):
+      raiselon Runtimelonelonrror(
+        "elonxpeloncting elonxport_output_fn function. Got %s."
+        % typelon(selonlf._elonxport_output_fn).__namelon__)
 
-    if export_dir:
-      export_dir = sanitize_hdfs_path(export_dir)
+    if elonxport_dir:
+      elonxport_dir = sanitizelon_hdfs_path(elonxport_dir)
 
-    if checkpoint_path:
-      checkpoint_path = sanitize_hdfs_path(checkpoint_path)
-    else:
-      checkpoint_path = self.best_or_latest_checkpoint
+    if chelonckpoint_path:
+      chelonckpoint_path = sanitizelon_hdfs_path(chelonckpoint_path)
+    elonlselon:
+      chelonckpoint_path = selonlf.belonst_or_latelonst_chelonckpoint
 
-    # actually export the model using the Estimator API
-    export_path = self._estimator.export_savedmodel(
-      export_dir_base=export_dir or os.path.join(self._save_dir, 'exported_models'),
-      serving_input_receiver_fn=serving_input_receiver_fn,
-      checkpoint_path=checkpoint_path)
+    # actually elonxport thelon modelonl using thelon elonstimator API
+    elonxport_path = selonlf._elonstimator.elonxport_savelondmodelonl(
+      elonxport_dir_baselon=elonxport_dir or os.path.join(selonlf._savelon_dir, 'elonxportelond_modelonls'),
+      selonrving_input_reloncelonivelonr_fn=selonrving_input_reloncelonivelonr_fn,
+      chelonckpoint_path=chelonckpoint_path)
 
-    # export_path is bytes, need to convert to string for python3 to work.
-    logging.info("The exported model path is: " + str(export_path))
+    # elonxport_path is bytelons, nelonelond to convelonrt to string for python3 to work.
+    logging.info("Thelon elonxportelond modelonl path is: " + str(elonxport_path))
 
-    self.export_model_effects(export_path, feature_spec, log_features)
+    selonlf.elonxport_modelonl_elonffeloncts(elonxport_path, felonaturelon_spelonc, log_felonaturelons)
 
-    return export_path
+    relonturn elonxport_path
 
-  def _model_fn(self, features, labels, mode, params, config=None):
+  delonf _modelonl_fn(selonlf, felonaturelons, labelonls, modelon, params, config=Nonelon):
     """
-    returns tf.estimator.EstimatorSpec that can be used with tf.estimator.Estimators.
-    You would probably never need to modify this method.
-    Instead, you should override build_graph, which this method calls.
+    relonturns tf.elonstimator.elonstimatorSpelonc that can belon uselond with tf.elonstimator.elonstimators.
+    You would probably nelonvelonr nelonelond to modify this melonthod.
+    Instelonad, you should ovelonrridelon build_graph, which this melonthod calls.
 
     Args:
-      features:
-        Dict of input tensors.
-      labels:
-        Tensor of target labels.
-      mode:
-        an instance of tf.estimator.ModeKeys.
-        Typically used to toggle TRAINing or EVALuation.
+      felonaturelons:
+        Dict of input telonnsors.
+      labelonls:
+        Telonnsor of targelont labelonls.
+      modelon:
+        an instancelon of tf.elonstimator.ModelonKelonys.
+        Typically uselond to togglelon TRAINing or elonVALuation.
       params:
-        HParams object containing hyper-parameters.
+        HParams objelonct containing hypelonr-paramelontelonrs.
     """
-    # pylint: disable=too-many-branches
-    if isinstance(features, dict):
-      weights = features.get('weights', None)
-    else:
-      weights = None
+    # pylint: disablelon=too-many-branchelons
+    if isinstancelon(felonaturelons, dict):
+      welonights = felonaturelons.gelont('welonights', Nonelon)
+    elonlselon:
+      welonights = Nonelon
 
-    with tf.variable_scope(self._name + '/model'):
-      graph_output = self._build_graph_fn(features, labels, mode, params, config)
-      loss = graph_output['loss'] if 'loss' in graph_output else None
+    with tf.variablelon_scopelon(selonlf._namelon + '/modelonl'):
+      graph_output = selonlf._build_graph_fn(felonaturelons, labelonls, modelon, params, config)
+      loss = graph_output['loss'] if 'loss' in graph_output elonlselon Nonelon
 
-    self._maybe_restore_checkpoint()
+    selonlf._maybelon_relonstorelon_chelonckpoint()
 
-    with tf.variable_scope(self._name + '/optim'):
-      train_op = None
-      if mode == tf.estimator.ModeKeys.TRAIN:
+    with tf.variablelon_scopelon(selonlf._namelon + '/optim'):
+      train_op = Nonelon
+      if modelon == tf.elonstimator.ModelonKelonys.TRAIN:
         if 'train_op' in graph_output:
           train_op = graph_output['train_op']
-          graph_output['train_op'] = None  # remove from preds to prevent error
-        elif loss is not None:
-          train_op = self._optimize_loss_fn(params, loss)
+          graph_output['train_op'] = Nonelon  # relonmovelon from prelonds to prelonvelonnt elonrror
+        elonlif loss is not Nonelon:
+          train_op = selonlf._optimizelon_loss_fn(params, loss)
 
-        if params.get('train_log_metrics') and self._metric_fn:
-          metric_ops = self._metric_fn(graph_output=graph_output, labels=labels, weights=weights)
-          for metric_name in metric_ops:
+        if params.gelont('train_log_melontrics') and selonlf._melontric_fn:
+          melontric_ops = selonlf._melontric_fn(graph_output=graph_output, labelonls=labelonls, welonights=welonights)
+          for melontric_namelon in melontric_ops:
             tf.summary.scalar(
-              name="training_metric_" + metric_name,
-              tensor=metric_ops[metric_name][1])  # index 0 contains value_op, 1 contains update_op
+              namelon="training_melontric_" + melontric_namelon,
+              telonnsor=melontric_ops[melontric_namelon][1])  # indelonx 0 contains valuelon_op, 1 contains updatelon_op
 
-    if mode == tf.estimator.ModeKeys.PREDICT and self._export_output_fn is not None:
-      # note that this is ignored by the predict method.
-      # Estimator only uses export_output_fn for export_model.
-      export_outputs = self._export_output_fn(graph_output)
-    else:
-      export_outputs = None
+    if modelon == tf.elonstimator.ModelonKelonys.PRelonDICT and selonlf._elonxport_output_fn is not Nonelon:
+      # notelon that this is ignorelond by thelon prelondict melonthod.
+      # elonstimator only uselons elonxport_output_fn for elonxport_modelonl.
+      elonxport_outputs = selonlf._elonxport_output_fn(graph_output)
+    elonlselon:
+      elonxport_outputs = Nonelon
 
-    if mode == tf.estimator.ModeKeys.EVAL and self._metric_fn:
-      eval_metric_ops = self._metric_fn(graph_output=graph_output, labels=labels, weights=weights)
-    else:
-      eval_metric_ops = None
+    if modelon == tf.elonstimator.ModelonKelonys.elonVAL and selonlf._melontric_fn:
+      elonval_melontric_ops = selonlf._melontric_fn(graph_output=graph_output, labelonls=labelonls, welonights=welonights)
+    elonlselon:
+      elonval_melontric_ops = Nonelon
 
-    # None and loss (scalar, not sliceable by TFMA) should be removed from the graph_output
-    preds = {key: graph_output[key] for key in graph_output if (graph_output[key] is not None) and (key is not 'loss')}
+    # Nonelon and loss (scalar, not slicelonablelon by TFMA) should belon relonmovelond from thelon graph_output
+    prelonds = {kelony: graph_output[kelony] for kelony in graph_output if (graph_output[kelony] is not Nonelon) and (kelony is not 'loss')}
 
-    init_feed_dict = twml.contrib.initializers.get_init_feed_dict()
-    scaffold = tf.train.Scaffold(init_feed_dict=init_feed_dict)
+    init_felonelond_dict = twml.contrib.initializelonrs.gelont_init_felonelond_dict()
+    scaffold = tf.train.Scaffold(init_felonelond_dict=init_felonelond_dict)
 
-    # Clear the init feed collection to avoid serializing the initializers.
-    twml.contrib.initializers.clear_init_feed_collection()
+    # Clelonar thelon init felonelond collelonction to avoid selonrializing thelon initializelonrs.
+    twml.contrib.initializelonrs.clelonar_init_felonelond_collelonction()
 
-    # save estimator for use by later methods and hooks (warning: often reset)
-    self._current_estimator_spec = tf.estimator.EstimatorSpec(
-      mode=mode,
-      predictions=preds,
-      export_outputs=export_outputs,
+    # savelon elonstimator for uselon by latelonr melonthods and hooks (warning: oftelonn relonselont)
+    selonlf._currelonnt_elonstimator_spelonc = tf.elonstimator.elonstimatorSpelonc(
+      modelon=modelon,
+      prelondictions=prelonds,
+      elonxport_outputs=elonxport_outputs,
       loss=loss,
       train_op=train_op,
-      eval_metric_ops=eval_metric_ops,
+      elonval_melontric_ops=elonval_melontric_ops,
       scaffold=scaffold,
     )
 
-    return self._current_estimator_spec
+    relonturn selonlf._currelonnt_elonstimator_spelonc
 
-  def get_train_hooks(self):
-    """Return SessionRunHooks used during training.
+  delonf gelont_train_hooks(selonlf):
+    """Relonturn SelonssionRunHooks uselond during training.
 
-    By default training uses one hooks `tf.train.StepCounterHook` for monitoring step speed.
+    By delonfault training uselons onelon hooks `tf.train.StelonpCountelonrHook` for monitoring stelonp spelonelond.
 
-    If self._profiler_steps is set then we also use the ProfilerHook `tf.train.ProfilerHook`
-    for monitoring the profile.
+    If selonlf._profilelonr_stelonps is selont thelonn welon also uselon thelon ProfilelonrHook `tf.train.ProfilelonrHook`
+    for monitoring thelon profilelon.
 
     """
-    # Instead of having every_n_steps be a constant number,
-    # change it dynamically based on batch size.
-    # Ideally we should be using every_n_secs, but that seems buggy as of 1.7.
-    # The every_n_steps = 20K / batch_size
-    every_n_steps = ((2048 * 100) // self._params.train_batch_size)
-    step_counter = tf.train.StepCounterHook(
-      every_n_steps=every_n_steps, output_dir=self._save_dir
+    # Instelonad of having elonvelonry_n_stelonps belon a constant numbelonr,
+    # changelon it dynamically baselond on batch sizelon.
+    # Idelonally welon should belon using elonvelonry_n_seloncs, but that selonelonms buggy as of 1.7.
+    # Thelon elonvelonry_n_stelonps = 20K / batch_sizelon
+    elonvelonry_n_stelonps = ((2048 * 100) // selonlf._params.train_batch_sizelon)
+    stelonp_countelonr = tf.train.StelonpCountelonrHook(
+      elonvelonry_n_stelonps=elonvelonry_n_stelonps, output_dir=selonlf._savelon_dir
     )
-    train_hooks = [step_counter]
+    train_hooks = [stelonp_countelonr]
 
-    if self._profiler_steps is not None:
-      if not self._params.get('distributed') or self._estimator.config.is_chief:
-        profiler = tf.train.ProfilerHook(
-          save_steps=self._profiler_steps,
-          output_dir=self._save_dir
+    if selonlf._profilelonr_stelonps is not Nonelon:
+      if not selonlf._params.gelont('distributelond') or selonlf._elonstimator.config.is_chielonf:
+        profilelonr = tf.train.ProfilelonrHook(
+          savelon_stelonps=selonlf._profilelonr_stelonps,
+          output_dir=selonlf._savelon_dir
         )
-        train_hooks.append(profiler)
+        train_hooks.appelonnd(profilelonr)
 
-    return train_hooks
+    relonturn train_hooks
 
-  def is_task_type(self, name):
+  delonf is_task_typelon(selonlf, namelon):
     """
-    Helper function to specify if the current process is of the given worker type.
-    Note: This an only be called *after* self._hogwild_setup() is called in __init__()
+    Helonlpelonr function to speloncify if thelon currelonnt procelonss is of thelon givelonn workelonr typelon.
+    Notelon: This an only belon callelond *aftelonr* selonlf._hogwild_selontup() is callelond in __init__()
     """
-    if os.environ.get('TF_CONFIG'):
-      if self._estimator.config.task_type == name:
-        return True
-      else:
-        return False
-    return True
+    if os.elonnviron.gelont('TF_CONFIG'):
+      if selonlf._elonstimator.config.task_typelon == namelon:
+        relonturn Truelon
+      elonlselon:
+        relonturn Falselon
+    relonturn Truelon
 
-  def is_evaluator(self):
+  delonf is_elonvaluator(selonlf):
     """
-    Helper function to let you know if the worker is evaluator.
-    Note: This an only be called *after* self._hogwild_setup() is called in __init__()
+    Helonlpelonr function to lelont you know if thelon workelonr is elonvaluator.
+    Notelon: This an only belon callelond *aftelonr* selonlf._hogwild_selontup() is callelond in __init__()
     """
-    return self.is_task_type("evaluator")
+    relonturn selonlf.is_task_typelon("elonvaluator")
 
-  def is_chief(self):
+  delonf is_chielonf(selonlf):
     """
-    Helper function to let you know if the worker is chief.
-    Note: This an only be called *after* self._hogwild_setup() is called in __init__()
+    Helonlpelonr function to lelont you know if thelon workelonr is chielonf.
+    Notelon: This an only belon callelond *aftelonr* selonlf._hogwild_selontup() is callelond in __init__()
     """
-    return self.is_task_type("chief") or self.is_task_type("master")
+    relonturn selonlf.is_task_typelon("chielonf") or selonlf.is_task_typelon("mastelonr")
 
-  def is_ps(self):
+  delonf is_ps(selonlf):
     """
-    Helper function to let you know if the task is parameter server.
+    Helonlpelonr function to lelont you know if thelon task is paramelontelonr selonrvelonr.
     """
-    if os.environ.get('TF_CONFIG') and self._estimator.config.task_type == 'ps':
-      return True
-    return False
+    if os.elonnviron.gelont('TF_CONFIG') and selonlf._elonstimator.config.task_typelon == 'ps':
+      relonturn Truelon
+    relonturn Falselon
 
-  def _exit_ps_after_training_complete(self):
+  delonf _elonxit_ps_aftelonr_training_complelontelon(selonlf):
     """
-    Helper function to shutdown parameter server after training job complete (either succeed or failed).
+    Helonlpelonr function to shutdown paramelontelonr selonrvelonr aftelonr training job complelontelon (elonithelonr succelonelond or failelond).
     """
-    if not self.is_ps():
-      return
+    if not selonlf.is_ps():
+      relonturn
 
-    # No need to exit ps if on the same machine
-    if os.environ.get('TWML_HOGWILD_PORTS'):
-      return
+    # No nelonelond to elonxit ps if on thelon samelon machinelon
+    if os.elonnviron.gelont('TWML_HOGWILD_PORTS'):
+      relonturn
 
-    if self._params.get('disable_auto_ps_shutdown', False):
-      logging.info("Skip shutting down parameter server after training complete [--disable_auto_ps_shutdown is set]")
-      return
+    if selonlf._params.gelont('disablelon_auto_ps_shutdown', Falselon):
+      logging.info("Skip shutting down paramelontelonr selonrvelonr aftelonr training complelontelon [--disablelon_auto_ps_shutdown is selont]")
+      relonturn
 
-    # checking job status is different on gke vs aurora
-    if self._is_on_gke():
-      get_job_status = functools.partial(
-        k8s_status.get_training_job_status,
-        cluster=None,
-        namespace=os.environ['TWML_JOB_ROLE'],
-        environment=os.environ['TWML_JOB_ENV'],
-        job_name=os.environ['TWML_JOB_NAME'],
-        using_tsd=True)
-    else:
-      get_job_status = functools.partial(
-        get_distributed_training_job_path,
-        base_job_path=get_distributed_training_job_path()
+    # cheloncking job status is diffelonrelonnt on gkelon vs aurora
+    if selonlf._is_on_gkelon():
+      gelont_job_status = functools.partial(
+        k8s_status.gelont_training_job_status,
+        clustelonr=Nonelon,
+        namelonspacelon=os.elonnviron['TWML_JOB_ROLelon'],
+        elonnvironmelonnt=os.elonnviron['TWML_JOB_elonNV'],
+        job_namelon=os.elonnviron['TWML_JOB_NAMelon'],
+        using_tsd=Truelon)
+    elonlselon:
+      gelont_job_status = functools.partial(
+        gelont_distributelond_training_job_path,
+        baselon_job_path=gelont_distributelond_training_job_path()
       )
 
-    def wait_complete_then_exit():
-      retry_max = 60
-      retry = 0
-      while True:
+    delonf wait_complelontelon_thelonn_elonxit():
+      relontry_max = 60
+      relontry = 0
+      whilelon Truelon:
         try:
-          training_status = get_job_status()
-          if training_status == TrainingJobStatus.FINISHED:
-            logging.info("Distributed training job succeed, shutting down parameter server.")
-            os._exit(0)
-          elif training_status == TrainingJobStatus.FAILED:
-            logging.info("Distributed training job failed, shutting down parameter server.")
-            os._exit(0)
-          elif training_status == TrainingJobStatus.NOT_FOUND:
-            raise Exception("Distributed training job status not found.")
-          else:
-            poke_interval = random.randrange(60, 90)  # prevent spike QPS to aurora endpoint
-            time.sleep(poke_interval)
-            retry = 0
-        except Exception as e:
-          if retry >= retry_max:
-            raise e  # only exception in this thread, won't fail parameter server thread
-          retry += 1
-          poke_interval = random.randrange(60, 90) + retry * 10
-          logging.warn("Error getting distributed training job status, will retry after %s seconds." % poke_interval)
-          time.sleep(poke_interval)
-    Thread(target=wait_complete_then_exit).start()
+          training_status = gelont_job_status()
+          if training_status == TrainingJobStatus.FINISHelonD:
+            logging.info("Distributelond training job succelonelond, shutting down paramelontelonr selonrvelonr.")
+            os._elonxit(0)
+          elonlif training_status == TrainingJobStatus.FAILelonD:
+            logging.info("Distributelond training job failelond, shutting down paramelontelonr selonrvelonr.")
+            os._elonxit(0)
+          elonlif training_status == TrainingJobStatus.NOT_FOUND:
+            raiselon elonxcelonption("Distributelond training job status not found.")
+          elonlselon:
+            pokelon_intelonrval = random.randrangelon(60, 90)  # prelonvelonnt spikelon QPS to aurora elonndpoint
+            timelon.slelonelonp(pokelon_intelonrval)
+            relontry = 0
+        elonxcelonpt elonxcelonption as elon:
+          if relontry >= relontry_max:
+            raiselon elon  # only elonxcelonption in this threlonad, won't fail paramelontelonr selonrvelonr threlonad
+          relontry += 1
+          pokelon_intelonrval = random.randrangelon(60, 90) + relontry * 10
+          logging.warn("elonrror gelontting distributelond training job status, will relontry aftelonr %s selonconds." % pokelon_intelonrval)
+          timelon.slelonelonp(pokelon_intelonrval)
+    Threlonad(targelont=wait_complelontelon_thelonn_elonxit).start()
 
-  def get_eval_hooks(self):  # pylint: disable=no-self-use
-    """ Return SessionRunHooks used during evaluation."""
-    return None
+  delonf gelont_elonval_hooks(selonlf):  # pylint: disablelon=no-selonlf-uselon
+    """ Relonturn SelonssionRunHooks uselond during elonvaluation."""
+    relonturn Nonelon
 
-  def get_predict_hooks(self):
-    """ Return hooks used during prediction.
-    If profiler_steps is set in the constructor to the Trainer,
-    we pass a tf.Train.ProfilerHook to the estimator's predict function.
+  delonf gelont_prelondict_hooks(selonlf):
+    """ Relonturn hooks uselond during prelondiction.
+    If profilelonr_stelonps is selont in thelon constructor to thelon Trainelonr,
+    welon pass a tf.Train.ProfilelonrHook to thelon elonstimator's prelondict function.
     """
     hooks = []
-    if self._profiler_steps is not None:
-      profiler = tf.train.ProfilerHook(
-        save_steps=self._profiler_steps,
-        output_dir=self._save_dir
+    if selonlf._profilelonr_stelonps is not Nonelon:
+      profilelonr = tf.train.ProfilelonrHook(
+        savelon_stelonps=selonlf._profilelonr_stelonps,
+        output_dir=selonlf._savelon_dir
       )
-      hooks.append(profiler)
-    return hooks
+      hooks.appelonnd(profilelonr)
+    relonturn hooks
 
-  def learn(self, train_input_fn=None, eval_input_fn=None,
-            train_max_steps=None,
-            train_steps=None, eval_steps=None,
-            train_hooks=None, eval_hooks=None,
-            early_stop_metric=None, early_stop_patience=-1,
-            early_stop_minimize=True, early_stop_tolerance=0, start_epoch=0,
-            exporters=None, export_output_fn=None, max_duration=None):
+  delonf lelonarn(selonlf, train_input_fn=Nonelon, elonval_input_fn=Nonelon,
+            train_max_stelonps=Nonelon,
+            train_stelonps=Nonelon, elonval_stelonps=Nonelon,
+            train_hooks=Nonelon, elonval_hooks=Nonelon,
+            elonarly_stop_melontric=Nonelon, elonarly_stop_patielonncelon=-1,
+            elonarly_stop_minimizelon=Truelon, elonarly_stop_tolelonrancelon=0, start_elonpoch=0,
+            elonxportelonrs=Nonelon, elonxport_output_fn=Nonelon, max_duration=Nonelon):
     """
-    Train and evaluate the estimator for ``train_max_steps`` steps.
-    Each epoch involves ``train_steps`` training steps followed
-    by ``eval_steps`` evaluation steps. Note that each step
-    is a ``session.run()``, that is, each batch is a step.
+    Train and elonvaluatelon thelon elonstimator for ``train_max_stelonps`` stelonps.
+    elonach elonpoch involvelons ``train_stelonps`` training stelonps followelond
+    by ``elonval_stelonps`` elonvaluation stelonps. Notelon that elonach stelonp
+    is a ``selonssion.run()``, that is, elonach batch is a stelonp.
 
     Args:
-      train_max_steps:
-        maximum number of global steps of training to run.
-        Defaults to params.train_max_steps.
-        None-values cause learn() to terminate after *one* call to train() and evaluate(),
-        which is usually useful when using train_steps=-1
-        Non-positive values trains indefinitely in a loop (use with caution),
-        which is usually useful when used with early stopping.
-      train_steps:
-        number of training steps per epoch. For example, 100 means each
-        training epoch will end after processing 100 batches.
-        Defaults to params.train_steps.
-        Non-positive values and None-values go through the entire training set each epoch.
-      eval_steps:
-        number of evaluation steps per epoch.
-        Defaults to params.eval_steps.
-        Non-positive values and None-values go through the entire evaluation set each epoch.
+      train_max_stelonps:
+        maximum numbelonr of global stelonps of training to run.
+        Delonfaults to params.train_max_stelonps.
+        Nonelon-valuelons causelon lelonarn() to telonrminatelon aftelonr *onelon* call to train() and elonvaluatelon(),
+        which is usually uselonful whelonn using train_stelonps=-1
+        Non-positivelon valuelons trains indelonfinitelonly in a loop (uselon with caution),
+        which is usually uselonful whelonn uselond with elonarly stopping.
+      train_stelonps:
+        numbelonr of training stelonps pelonr elonpoch. For elonxamplelon, 100 melonans elonach
+        training elonpoch will elonnd aftelonr procelonssing 100 batchelons.
+        Delonfaults to params.train_stelonps.
+        Non-positivelon valuelons and Nonelon-valuelons go through thelon elonntirelon training selont elonach elonpoch.
+      elonval_stelonps:
+        numbelonr of elonvaluation stelonps pelonr elonpoch.
+        Delonfaults to params.elonval_stelonps.
+        Non-positivelon valuelons and Nonelon-valuelons go through thelon elonntirelon elonvaluation selont elonach elonpoch.
       train_input_fn:
-        Function to iterate through training set. It is passed to estimator.train.
-      eval_input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.evaluate.
+        Function to itelonratelon through training selont. It is passelond to elonstimator.train.
+      elonval_input_fn:
+        Function to itelonratelon through elonvaluation selont. It is passelond to elonstimator.elonvaluatelon.
       train_hooks:
-        List of SessionRunHooks uses for training. Defaults to self.get_train_hooks().
-      eval_hooks:
-        List of SessionRunHooks uses for evaluation. Defaults to self.get_eval_hooks()
-      start_epoch:
-        The epoch from which to start learn. If you want to do training and evaluation
-        for N epochs, you can call ``learn()`` in a loop as follows:
-      exporters:
-        List of exporters called at the end of each evaluation run.
-        Defaults to none.
-      export_output_fn:
-        The output format to use for exported models.
-        Only used if exporters is not None.
+        List of SelonssionRunHooks uselons for training. Delonfaults to selonlf.gelont_train_hooks().
+      elonval_hooks:
+        List of SelonssionRunHooks uselons for elonvaluation. Delonfaults to selonlf.gelont_elonval_hooks()
+      start_elonpoch:
+        Thelon elonpoch from which to start lelonarn. If you want to do training and elonvaluation
+        for N elonpochs, you can call ``lelonarn()`` in a loop as follows:
+      elonxportelonrs:
+        List of elonxportelonrs callelond at thelon elonnd of elonach elonvaluation run.
+        Delonfaults to nonelon.
+      elonxport_output_fn:
+        Thelon output format to uselon for elonxportelond modelonls.
+        Only uselond if elonxportelonrs is not Nonelon.
 
-        .. code-block:: python
+        .. codelon-block:: python
 
-          for epoch in range(1,max_epoch):
-            trainer.learn(start_epoch=epoch)
+          for elonpoch in rangelon(1,max_elonpoch):
+            trainelonr.lelonarn(start_elonpoch=elonpoch)
 
-    Early-stopping arguments:
-      early_stop_metric:
-        String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
-        the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
-        the string is one of those. For multi-class (that is, multi-metric)
-        metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
-        of the ``multi_metric_names`` (one per class).
-      early_stop_patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
-        training will have 10 epochs to improve the metric before it is killed.
-        Whenever the metric is improved before running out of patience,
-        patience is reset to ``early_stop_patience``.
-        Defaults to -1 (that is, no early-stopping).
-      early_stop_minimize:
-        Set this to True (the default) for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
-        should set this to False.
-      early_stop_tolerance:
-        A non-negative tolerance for comparing early_stop_metric.
-        E.g. when maximizing the condition is current_metric > best_metric + tolerance.
-        Defaults to 0.
+    elonarly-stopping argumelonnts:
+      elonarly_stop_melontric:
+        String speloncifying thelon melontric to elonarly-stop on. Relonquirelond with positivelon
+        ``elonarly_stop_patielonncelon``. For elonxamplelon, 'accuracy', 'accuracy_0', 'loss', elontc.
+        Thelon string is uselond to elonxtract thelon relonlelonvant telonnsor Op from thelon dict relonturnelond by
+        thelon gelont_elonval_melontric_ops melonthod. For ``melontrics`` pass to thelon constructor,
+        thelon string is onelon of thoselon. For multi-class (that is, multi-melontric)
+        melontrics, thelon string may belon appelonndelond with a ``_0``, ``_1``, elontc. or onelon
+        of thelon ``multi_melontric_namelons`` (onelon pelonr class).
+      elonarly_stop_patielonncelon:
+        Maximum numbelonr of elonpochs to wait for an improvelonmelonnt in thelon elonarly_stop_melontric
+        belonforelon brelonaking off training. For elonxamplelon, a patielonncelon of 10 melonans that
+        training will havelon 10 elonpochs to improvelon thelon melontric belonforelon it is killelond.
+        Whelonnelonvelonr thelon melontric is improvelond belonforelon running out of patielonncelon,
+        patielonncelon is relonselont to ``elonarly_stop_patielonncelon``.
+        Delonfaults to -1 (that is, no elonarly-stopping).
+      elonarly_stop_minimizelon:
+        Selont this to Truelon (thelon delonfault) for melontrics that nelonelond to belon minimizelond
+        (likelon ``loss``). Melontrics likelon ``accuracy`` that nelonelond to belon maximizelond
+        should selont this to Falselon.
+      elonarly_stop_tolelonrancelon:
+        A non-nelongativelon tolelonrancelon for comparing elonarly_stop_melontric.
+        elon.g. whelonn maximizing thelon condition is currelonnt_melontric > belonst_melontric + tolelonrancelon.
+        Delonfaults to 0.
       max_duration:
-        A float. When this argument is defined, the job will automatically terminate after
-        `max_duration` seconds if it has not already compeleted. 
+        A float. Whelonn this argumelonnt is delonfinelond, thelon job will automatically telonrminatelon aftelonr
+        `max_duration` selonconds if it has not alrelonady compelonlelontelond. 
 
-    Returns:
-      The directory where the checkpoints were saved.
-      That is, save_dir.
-      You can point TensorBoard to this directory to get metrics,
-      or pass it to another Trainer via ``init_from_dir`` when doing
-      multi-phase training.
+    Relonturns:
+      Thelon direlonctory whelonrelon thelon chelonckpoints welonrelon savelond.
+      That is, savelon_dir.
+      You can point TelonnsorBoard to this direlonctory to gelont melontrics,
+      or pass it to anothelonr Trainelonr via ``init_from_dir`` whelonn doing
+      multi-phaselon training.
     """
-    # pylint: disable=too-many-branches
+    # pylint: disablelon=too-many-branchelons
 
-    if not callable(train_input_fn):
-      raise ValueError("Expecting callable train_input_fn function")
-    if not callable(eval_input_fn):
-      raise ValueError("Expecting callable eval_input_fn function")
+    if not callablelon(train_input_fn):
+      raiselon Valuelonelonrror("elonxpeloncting callablelon train_input_fn function")
+    if not callablelon(elonval_input_fn):
+      raiselon Valuelonelonrror("elonxpeloncting callablelon elonval_input_fn function")
 
-    if os.environ.get('TF_CONFIG'):
-      raise ValueError("trainer.learn() can not be used with distributed / hogwild setups")
+    if os.elonnviron.gelont('TF_CONFIG'):
+      raiselon Valuelonelonrror("trainelonr.lelonarn() can not belon uselond with distributelond / hogwild selontups")
 
-    if exporters and export_output_fn:
-      self._export_output_fn = export_output_fn
+    if elonxportelonrs and elonxport_output_fn:
+      selonlf._elonxport_output_fn = elonxport_output_fn
 
-    train_hooks = self.get_train_hooks() if train_hooks is None else train_hooks
-    eval_hooks = self.get_eval_hooks() if eval_hooks is None else eval_hooks
-    eval_hooks = [] if eval_hooks is None else eval_hooks
+    train_hooks = selonlf.gelont_train_hooks() if train_hooks is Nonelon elonlselon train_hooks
+    elonval_hooks = selonlf.gelont_elonval_hooks() if elonval_hooks is Nonelon elonlselon elonval_hooks
+    elonval_hooks = [] if elonval_hooks is Nonelon elonlselon elonval_hooks
 
-    if train_max_steps is None:
-      train_max_steps = self.params.get('train_max_steps')
+    if train_max_stelonps is Nonelon:
+      train_max_stelonps = selonlf.params.gelont('train_max_stelonps')
 
-    if train_steps is None:
-      train_steps = self.params.train_steps
-    if train_steps <= 0:
-      train_steps = None
+    if train_stelonps is Nonelon:
+      train_stelonps = selonlf.params.train_stelonps
+    if train_stelonps <= 0:
+      train_stelonps = Nonelon
 
-    if eval_steps is None:
-      eval_steps = self.params.eval_steps
-    if eval_steps <= 0:
-      eval_steps = None
+    if elonval_stelonps is Nonelon:
+      elonval_stelonps = selonlf.params.elonval_stelonps
+    if elonval_stelonps <= 0:
+      elonval_stelonps = Nonelon
 
-    if early_stop_patience > 0:
-      assert train_max_steps is not None, "Early stopping and max_steps=None are not compatible."
-      # prepare early stopping hook (which also handles logic here)
-      self._is_early_stopping = True
-      early_stop_hook = twml.hooks.EarlyStopHook(
-        metric=early_stop_metric,
-        checkpoint_dir=self._save_dir,
-        patience=early_stop_patience,
-        minimize=early_stop_minimize,
-        tolerance=early_stop_tolerance,
-        get_estimator_spec_fn=lambda: self.current_estimator_spec,
-        start_epoch=start_epoch)
-      # add early stop hook to eval hooks
-      eval_hooks.append(early_stop_hook)
+    if elonarly_stop_patielonncelon > 0:
+      asselonrt train_max_stelonps is not Nonelon, "elonarly stopping and max_stelonps=Nonelon arelon not compatiblelon."
+      # prelonparelon elonarly stopping hook (which also handlelons logic helonrelon)
+      selonlf._is_elonarly_stopping = Truelon
+      elonarly_stop_hook = twml.hooks.elonarlyStopHook(
+        melontric=elonarly_stop_melontric,
+        chelonckpoint_dir=selonlf._savelon_dir,
+        patielonncelon=elonarly_stop_patielonncelon,
+        minimizelon=elonarly_stop_minimizelon,
+        tolelonrancelon=elonarly_stop_tolelonrancelon,
+        gelont_elonstimator_spelonc_fn=lambda: selonlf.currelonnt_elonstimator_spelonc,
+        start_elonpoch=start_elonpoch)
+      # add elonarly stop hook to elonval hooks
+      elonval_hooks.appelonnd(elonarly_stop_hook)
 
-    if max_duration is not None:
-      train_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
+    if max_duration is not Nonelon:
+      train_elonarly_stop_duration_hook = twml.hooks.elonarlyStopDuration(
         max_duration=max_duration,
-        exit_on_end=False,
-        save_dir=self._save_dir,
-        overwrite=True,
+        elonxit_on_elonnd=Falselon,
+        savelon_dir=selonlf._savelon_dir,
+        ovelonrwritelon=Truelon,
       )
-      train_hooks.append(train_early_stop_duration_hook)
+      train_hooks.appelonnd(train_elonarly_stop_duration_hook)
 
-      eval_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
+      elonval_elonarly_stop_duration_hook = twml.hooks.elonarlyStopDuration(
         max_duration=max_duration,
-        exit_on_end=False,
-        save_dir=self._save_dir,
-        overwrite=True,
+        elonxit_on_elonnd=Falselon,
+        savelon_dir=selonlf._savelon_dir,
+        ovelonrwritelon=Truelon,
       )
-      eval_hooks.append(eval_early_stop_duration_hook)
+      elonval_hooks.appelonnd(elonval_elonarly_stop_duration_hook)
 
-    if not self._is_early_stopping:
-      if (train_max_steps is not None) and (train_max_steps <= 0):
-        if ((max_duration is not None) and (max_duration < 0)) or (max_duration is None):
-          logging.warn("train.max_steps is non-positive, and no early or duration stopping is configured. "
-                      "Training job will loop forever.")
+    if not selonlf._is_elonarly_stopping:
+      if (train_max_stelonps is not Nonelon) and (train_max_stelonps <= 0):
+        if ((max_duration is not Nonelon) and (max_duration < 0)) or (max_duration is Nonelon):
+          logging.warn("train.max_stelonps is non-positivelon, and no elonarly or duration stopping is configurelond. "
+                      "Training job will loop forelonvelonr.")
 
-    if train_max_steps is not None and train_max_steps > 0:
-      # we can't pass max_steps AND steps to estimator.train.
-      # so we pass steps to estimator.train and max_steps to this hook instead...
-      stop_at_step_hook = twml.hooks.StopAtStepHook(last_step=train_max_steps)
-      train_hooks.append(stop_at_step_hook)
+    if train_max_stelonps is not Nonelon and train_max_stelonps > 0:
+      # welon can't pass max_stelonps AND stelonps to elonstimator.train.
+      # so welon pass stelonps to elonstimator.train and max_stelonps to this hook instelonad...
+      stop_at_stelonp_hook = twml.hooks.StopAtStelonpHook(last_stelonp=train_max_stelonps)
+      train_hooks.appelonnd(stop_at_stelonp_hook)
 
-    with self.experiment_tracker.track_experiment(eval_hooks,
-                                                  lambda: self.current_estimator_spec):
-      # alternate training and evaluation epochs
-      epoch = start_epoch
-      while True:
-        logging.info("Training epoch %d", epoch)
-        self._estimator.train(train_input_fn, steps=train_steps, hooks=train_hooks)
+    with selonlf.elonxpelonrimelonnt_trackelonr.track_elonxpelonrimelonnt(elonval_hooks,
+                                                  lambda: selonlf.currelonnt_elonstimator_spelonc):
+      # altelonrnatelon training and elonvaluation elonpochs
+      elonpoch = start_elonpoch
+      whilelon Truelon:
+        logging.info("Training elonpoch %d", elonpoch)
+        selonlf._elonstimator.train(train_input_fn, stelonps=train_stelonps, hooks=train_hooks)
 
-        logging.info("Evaluating epoch %d", epoch)
-        eval_result = self._estimator.evaluate(
-          eval_input_fn, steps=eval_steps, hooks=eval_hooks)
+        logging.info("elonvaluating elonpoch %d", elonpoch)
+        elonval_relonsult = selonlf._elonstimator.elonvaluatelon(
+          elonval_input_fn, stelonps=elonval_stelonps, hooks=elonval_hooks)
 
-        if exporters:
-          checkpoint_path = self.estimator.latest_checkpoint()
-          for exporter in exporters:
-            export_path = os.path.join(self._save_dir, "export", exporter.name)
-            exporter.export(
-              estimator=self.estimator, export_path=export_path,
-              checkpoint_path=checkpoint_path, eval_result=eval_result,
-              is_the_final_export=False)
+        if elonxportelonrs:
+          chelonckpoint_path = selonlf.elonstimator.latelonst_chelonckpoint()
+          for elonxportelonr in elonxportelonrs:
+            elonxport_path = os.path.join(selonlf._savelon_dir, "elonxport", elonxportelonr.namelon)
+            elonxportelonr.elonxport(
+              elonstimator=selonlf.elonstimator, elonxport_path=elonxport_path,
+              chelonckpoint_path=chelonckpoint_path, elonval_relonsult=elonval_relonsult,
+              is_thelon_final_elonxport=Falselon)
 
-        # If train_max_step is none. Terminate after one loop.
-        if train_max_steps is None:
-          break
+        # If train_max_stelonp is nonelon. Telonrminatelon aftelonr onelon loop.
+        if train_max_stelonps is Nonelon:
+          brelonak
 
-        # If stop_at_step_hook requested a stop, break
-        if train_max_steps > 0 and stop_at_step_hook.stop_requested:
-          break
+        # If stop_at_stelonp_hook relonquelonstelond a stop, brelonak
+        if train_max_stelonps > 0 and stop_at_stelonp_hook.stop_relonquelonstelond:
+          brelonak
 
-        # early-stopping logic is handled internally by the hook
-        if early_stop_patience > 0 and early_stop_hook.should_stop:
-          # but we still need to break here
-          break
-        epoch += 1
+        # elonarly-stopping logic is handlelond intelonrnally by thelon hook
+        if elonarly_stop_patielonncelon > 0 and elonarly_stop_hook.should_stop:
+          # but welon still nelonelond to brelonak helonrelon
+          brelonak
+        elonpoch += 1
 
-      self.write_state_to_disk(save_dir=self._save_dir, filename='_SUCCESS')
+      selonlf.writelon_statelon_to_disk(savelon_dir=selonlf._savelon_dir, filelonnamelon='_SUCCelonSS')
 
-    return self._save_dir
+    relonturn selonlf._savelon_dir
 
-  def get_train_spec(self, input_fn, max_steps=None, hooks=None):
-    """Get the TrainSpec used by ``tf.train.train_and_evaluate``."""
-    if not callable(input_fn):
-      raise ValueError("Expecting callable train_input_fn")
+  delonf gelont_train_spelonc(selonlf, input_fn, max_stelonps=Nonelon, hooks=Nonelon):
+    """Gelont thelon TrainSpelonc uselond by ``tf.train.train_and_elonvaluatelon``."""
+    if not callablelon(input_fn):
+      raiselon Valuelonelonrror("elonxpeloncting callablelon train_input_fn")
 
-    if max_steps is None:
-      max_steps = self.params.train_max_steps
+    if max_stelonps is Nonelon:
+      max_stelonps = selonlf.params.train_max_stelonps
 
-    if max_steps is not None and max_steps <= 0:
-      max_steps = None
+    if max_stelonps is not Nonelon and max_stelonps <= 0:
+      max_stelonps = Nonelon
 
-    hooks = self.get_train_hooks() if hooks is None else hooks
+    hooks = selonlf.gelont_train_hooks() if hooks is Nonelon elonlselon hooks
 
-    return tf.estimator.TrainSpec(input_fn=input_fn,
-                                  max_steps=max_steps,
+    relonturn tf.elonstimator.TrainSpelonc(input_fn=input_fn,
+                                  max_stelonps=max_stelonps,
                                   hooks=hooks)
 
-  def get_eval_spec(self, input_fn, steps=None, delay=None, period=None,
-                    hooks=None, exporters=None):
-    """Get the EvalSpec used by ``tf.train.train_and_evaluate``."""
-    if not callable(input_fn):
-      raise ValueError("Expecting callable eval_input_fn")
+  delonf gelont_elonval_spelonc(selonlf, input_fn, stelonps=Nonelon, delonlay=Nonelon, pelonriod=Nonelon,
+                    hooks=Nonelon, elonxportelonrs=Nonelon):
+    """Gelont thelon elonvalSpelonc uselond by ``tf.train.train_and_elonvaluatelon``."""
+    if not callablelon(input_fn):
+      raiselon Valuelonelonrror("elonxpeloncting callablelon elonval_input_fn")
 
-    if steps is None:
-      steps = self.params.eval_steps
+    if stelonps is Nonelon:
+      stelonps = selonlf.params.elonval_stelonps
 
-    if steps <= 0:
-      steps = None
+    if stelonps <= 0:
+      stelonps = Nonelon
 
-    if delay is None:
-      delay = self.params.eval_delay
+    if delonlay is Nonelon:
+      delonlay = selonlf.params.elonval_delonlay
 
-    if period is None:
-      period = self.params.eval_period
+    if pelonriod is Nonelon:
+      pelonriod = selonlf.params.elonval_pelonriod
 
-    hooks = self.get_eval_hooks() if hooks is None else hooks
+    hooks = selonlf.gelont_elonval_hooks() if hooks is Nonelon elonlselon hooks
 
-    eval_name = self.params.get("eval_name", None)
+    elonval_namelon = selonlf.params.gelont("elonval_namelon", Nonelon)
 
-    return tf.estimator.EvalSpec(input_fn=input_fn,
-                                 steps=steps,
-                                 name=eval_name,
-                                 start_delay_secs=delay,
-                                 throttle_secs=period,
+    relonturn tf.elonstimator.elonvalSpelonc(input_fn=input_fn,
+                                 stelonps=stelonps,
+                                 namelon=elonval_namelon,
+                                 start_delonlay_seloncs=delonlay,
+                                 throttlelon_seloncs=pelonriod,
                                  hooks=hooks,
-                                 exporters=exporters)
+                                 elonxportelonrs=elonxportelonrs)
 
-  def train_and_evaluate(self, train_input_fn=None, eval_input_fn=None,
-                         train_max_steps=None, eval_steps=None,
-                         eval_delay=None, eval_period=None,
-                         train_hooks=None, eval_hooks=None,
-                         early_stop_metric=None, early_stop_patience=-1,
-                         early_stop_minimize=True, early_stop_tolerance=0, exporters=None,
-                         export_output_fn=None, max_duration=None):
+  delonf train_and_elonvaluatelon(selonlf, train_input_fn=Nonelon, elonval_input_fn=Nonelon,
+                         train_max_stelonps=Nonelon, elonval_stelonps=Nonelon,
+                         elonval_delonlay=Nonelon, elonval_pelonriod=Nonelon,
+                         train_hooks=Nonelon, elonval_hooks=Nonelon,
+                         elonarly_stop_melontric=Nonelon, elonarly_stop_patielonncelon=-1,
+                         elonarly_stop_minimizelon=Truelon, elonarly_stop_tolelonrancelon=0, elonxportelonrs=Nonelon,
+                         elonxport_output_fn=Nonelon, max_duration=Nonelon):
     """
-    Train and evaluate the estimator for ``train_max_steps``
-    using ``tf.estimator.train_and_evaluate``.
-    With a cluster configuration provided in the ``TF_CONFIG`` environment variable, this method
-    can be used for distributed training (multi-node or multi-process).
-    Unlike the ``learn`` method, training is continuous with ``train_max_steps``.
-    For distributed use case, evaluation happens periodically.
-    That is, after ``eval_delay`` seconds, an evaluation epoch of ``eval_step`` steps
-    occurs every ``eval_period`` seconds. Evaluation happens on the most recent checkpoint.
-    TF defaults to saving checkpoints every 10 mins.
-    For local use case, training occurs for train_max_steps epochs followed by a
-    single evaluation. For local use case we therefore recommend using learn() instead
-    as it provides early-stopping and multiple evaluations.
+    Train and elonvaluatelon thelon elonstimator for ``train_max_stelonps``
+    using ``tf.elonstimator.train_and_elonvaluatelon``.
+    With a clustelonr configuration providelond in thelon ``TF_CONFIG`` elonnvironmelonnt variablelon, this melonthod
+    can belon uselond for distributelond training (multi-nodelon or multi-procelonss).
+    Unlikelon thelon ``lelonarn`` melonthod, training is continuous with ``train_max_stelonps``.
+    For distributelond uselon caselon, elonvaluation happelonns pelonriodically.
+    That is, aftelonr ``elonval_delonlay`` selonconds, an elonvaluation elonpoch of ``elonval_stelonp`` stelonps
+    occurs elonvelonry ``elonval_pelonriod`` selonconds. elonvaluation happelonns on thelon most reloncelonnt chelonckpoint.
+    TF delonfaults to saving chelonckpoints elonvelonry 10 mins.
+    For local uselon caselon, training occurs for train_max_stelonps elonpochs followelond by a
+    singlelon elonvaluation. For local uselon caselon welon thelonrelonforelon reloncommelonnd using lelonarn() instelonad
+    as it providelons elonarly-stopping and multiplelon elonvaluations.
 
-    ``train_and_evaluate`` will evaluate for ``eval_steps`` every ``eval_period`` seconds.
-    It will stop after ``train_steps`` is reached.
+    ``train_and_elonvaluatelon`` will elonvaluatelon for ``elonval_stelonps`` elonvelonry ``elonval_pelonriod`` selonconds.
+    It will stop aftelonr ``train_stelonps`` is relonachelond.
 
-    You must ensure that all workers/servers are assigned the same `save_dir`.
+    You must elonnsurelon that all workelonrs/selonrvelonrs arelon assignelond thelon samelon `savelon_dir`.
 
-    .. Note::
+    .. Notelon::
 
-      If the TF_CONFIG environment variable is set, this function assumes its running a distribute job.
+      If thelon TF_CONFIG elonnvironmelonnt variablelon is selont, this function assumelons its running a distributelon job.
 
     Args:
       train_input_fn:
-        Function to iterate through training set. It is passed to estimator.train_and_evalute
-      eval_input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.train_and_evalute.
-      train_max_steps:
-        maximum number of global steps of training to run.
-        Defaults to params.train_max_steps.
-        Non-positive values and None-values train indefinitely (use with caution).
-      eval_steps:
-        number of steps per evaluation.
-        Defaults to params.eval_steps.
-        Non-positive values and None-values go through
-        the entire evaluation set for each evaluation.
-        Note that the number of eval_steps should be high enough to minimize noise.
-        This is especially true for early-stopping.
-      eval_delay:
-        Start the first evaluation after eval_delay. Defaults to params.eval_delay or 2*60s.
-      eval_period:
-        Run an evaluation every eval_period seconds. Defaults to params.eval_period or 10*60s.
-      exporters:
-        List of exporters called at the end of each evaluation run.
-        Defaults to none.
-      export_output_fn:
-        The output format to use for exported models.
-        Only used if exporters is not None.
+        Function to itelonratelon through training selont. It is passelond to elonstimator.train_and_elonvalutelon
+      elonval_input_fn:
+        Function to itelonratelon through elonvaluation selont. It is passelond to elonstimator.train_and_elonvalutelon.
+      train_max_stelonps:
+        maximum numbelonr of global stelonps of training to run.
+        Delonfaults to params.train_max_stelonps.
+        Non-positivelon valuelons and Nonelon-valuelons train indelonfinitelonly (uselon with caution).
+      elonval_stelonps:
+        numbelonr of stelonps pelonr elonvaluation.
+        Delonfaults to params.elonval_stelonps.
+        Non-positivelon valuelons and Nonelon-valuelons go through
+        thelon elonntirelon elonvaluation selont for elonach elonvaluation.
+        Notelon that thelon numbelonr of elonval_stelonps should belon high elonnough to minimizelon noiselon.
+        This is elonspeloncially truelon for elonarly-stopping.
+      elonval_delonlay:
+        Start thelon first elonvaluation aftelonr elonval_delonlay. Delonfaults to params.elonval_delonlay or 2*60s.
+      elonval_pelonriod:
+        Run an elonvaluation elonvelonry elonval_pelonriod selonconds. Delonfaults to params.elonval_pelonriod or 10*60s.
+      elonxportelonrs:
+        List of elonxportelonrs callelond at thelon elonnd of elonach elonvaluation run.
+        Delonfaults to nonelon.
+      elonxport_output_fn:
+        Thelon output format to uselon for elonxportelond modelonls.
+        Only uselond if elonxportelonrs is not Nonelon.
 
-    Early-stopping arguments:
-      early_stop_metric:
-        String specifying the metric to early-stop on. Required with positive
-        ``early_stop_patience``. For example, 'accuracy', 'accuracy_0', 'loss', etc.
-        The string is used to extract the relevant tensor Op from the dict returned by
-        the get_eval_metric_ops method. For ``metrics`` pass to the constructor,
-        the string is one of those. For multi-class (that is, multi-metric)
-        metrics, the string may be appended with a ``_0``, ``_1``, etc. or one
-        of the ``multi_metric_names`` (one per class).
-      early_stop_patience:
-        Maximum number of epochs to wait for an improvement in the early_stop_metric
-        before breaking off training. For example, a patience of 10 means that
-        training will have 10 epochs to improve the metric before it is killed.
-        Whenever the metric is improved before running out of patience,
-        patience is reset to ``early_stop_patience``.
-        Defaults to -1 (that is, no early-stopping).
-      early_stop_minimize:
-        Set this to True (the default) for metrics that need to be minimized
-        (like ``loss``). Metrics like ``accuracy`` that need to be maximized
-        should set this to False.
-      early_stop_tolerance:
-        A non-negative tolerance for comparing early_stop_metric.
-        E.g. when maximizing the condition is current_metric > best_metric + tolerance.
-        Defaults to 0.
+    elonarly-stopping argumelonnts:
+      elonarly_stop_melontric:
+        String speloncifying thelon melontric to elonarly-stop on. Relonquirelond with positivelon
+        ``elonarly_stop_patielonncelon``. For elonxamplelon, 'accuracy', 'accuracy_0', 'loss', elontc.
+        Thelon string is uselond to elonxtract thelon relonlelonvant telonnsor Op from thelon dict relonturnelond by
+        thelon gelont_elonval_melontric_ops melonthod. For ``melontrics`` pass to thelon constructor,
+        thelon string is onelon of thoselon. For multi-class (that is, multi-melontric)
+        melontrics, thelon string may belon appelonndelond with a ``_0``, ``_1``, elontc. or onelon
+        of thelon ``multi_melontric_namelons`` (onelon pelonr class).
+      elonarly_stop_patielonncelon:
+        Maximum numbelonr of elonpochs to wait for an improvelonmelonnt in thelon elonarly_stop_melontric
+        belonforelon brelonaking off training. For elonxamplelon, a patielonncelon of 10 melonans that
+        training will havelon 10 elonpochs to improvelon thelon melontric belonforelon it is killelond.
+        Whelonnelonvelonr thelon melontric is improvelond belonforelon running out of patielonncelon,
+        patielonncelon is relonselont to ``elonarly_stop_patielonncelon``.
+        Delonfaults to -1 (that is, no elonarly-stopping).
+      elonarly_stop_minimizelon:
+        Selont this to Truelon (thelon delonfault) for melontrics that nelonelond to belon minimizelond
+        (likelon ``loss``). Melontrics likelon ``accuracy`` that nelonelond to belon maximizelond
+        should selont this to Falselon.
+      elonarly_stop_tolelonrancelon:
+        A non-nelongativelon tolelonrancelon for comparing elonarly_stop_melontric.
+        elon.g. whelonn maximizing thelon condition is currelonnt_melontric > belonst_melontric + tolelonrancelon.
+        Delonfaults to 0.
       max_duration:
-        A float. When this argument is defined, the job will automatically terminate after
-        `max_duration` seconds if it has not already compeleted. 
+        A float. Whelonn this argumelonnt is delonfinelond, thelon job will automatically telonrminatelon aftelonr
+        `max_duration` selonconds if it has not alrelonady compelonlelontelond. 
 
-    Returns:
-      The directory where the checkpoints were saved.
+    Relonturns:
+      Thelon direlonctory whelonrelon thelon chelonckpoints welonrelon savelond.
     """
 
-    logging.info("WARNING: Trainer.train_and_evaluate is an EXPERIMENTAL API.")
-    logging.info("Trainer.train_and_evaluate may change or be removed in future versions.")
+    logging.info("WARNING: Trainelonr.train_and_elonvaluatelon is an elonXPelonRIMelonNTAL API.")
+    logging.info("Trainelonr.train_and_elonvaluatelon may changelon or belon relonmovelond in futurelon velonrsions.")
 
-    if not callable(train_input_fn):
-      raise ValueError("Expecting callable train_input_fn function")
-    if not callable(eval_input_fn):
-      raise ValueError("Expecting callable eval_input_fn function")
+    if not callablelon(train_input_fn):
+      raiselon Valuelonelonrror("elonxpeloncting callablelon train_input_fn function")
+    if not callablelon(elonval_input_fn):
+      raiselon Valuelonelonrror("elonxpeloncting callablelon elonval_input_fn function")
 
-    self._exit_ps_after_training_complete()
+    selonlf._elonxit_ps_aftelonr_training_complelontelon()
 
-    # Maybe export in eval processes.
-    if self.is_evaluator():
-      if self.params.get("eval_name") is not None:
-        # Do not export if running special eval.
-        exporters = None
-        export_output_fn = None
-      elif exporters and export_output_fn:
-        self._export_output_fn = export_output_fn
-      else:
-        # Default option.
-        self._export_output_fn = None
+    # Maybelon elonxport in elonval procelonsselons.
+    if selonlf.is_elonvaluator():
+      if selonlf.params.gelont("elonval_namelon") is not Nonelon:
+        # Do not elonxport if running speloncial elonval.
+        elonxportelonrs = Nonelon
+        elonxport_output_fn = Nonelon
+      elonlif elonxportelonrs and elonxport_output_fn:
+        selonlf._elonxport_output_fn = elonxport_output_fn
+      elonlselon:
+        # Delonfault option.
+        selonlf._elonxport_output_fn = Nonelon
 
-    train_hooks = self.get_train_hooks() if train_hooks is None else train_hooks
-    train_hooks = [] if train_hooks is None else train_hooks
+    train_hooks = selonlf.gelont_train_hooks() if train_hooks is Nonelon elonlselon train_hooks
+    train_hooks = [] if train_hooks is Nonelon elonlselon train_hooks
 
-    eval_hooks = self.get_eval_hooks() if eval_hooks is None else eval_hooks
-    eval_hooks = [] if eval_hooks is None else eval_hooks
+    elonval_hooks = selonlf.gelont_elonval_hooks() if elonval_hooks is Nonelon elonlselon elonval_hooks
+    elonval_hooks = [] if elonval_hooks is Nonelon elonlselon elonval_hooks
 
-    if train_max_steps is None:
-      train_max_steps = self.params.get('train_max_steps')
+    if train_max_stelonps is Nonelon:
+      train_max_stelonps = selonlf.params.gelont('train_max_stelonps')
 
-    if eval_steps is None:
-      eval_steps = self.params.eval_steps
-    if eval_steps <= 0:
-      eval_steps = None
+    if elonval_stelonps is Nonelon:
+      elonval_stelonps = selonlf.params.elonval_stelonps
+    if elonval_stelonps <= 0:
+      elonval_stelonps = Nonelon
 
-    if eval_delay is None:
-      eval_delay = self.params.eval_delay
-    if eval_period is None:
-      eval_period = self.params.eval_period
+    if elonval_delonlay is Nonelon:
+      elonval_delonlay = selonlf.params.elonval_delonlay
+    if elonval_pelonriod is Nonelon:
+      elonval_pelonriod = selonlf.params.elonval_pelonriod
 
-    if early_stop_patience > 0:
-      # when training hooks detect this file, they request a stop to training
-      early_stop_path = os.path.join(self._save_dir, 'earlystop_now.txt')
-      # prepare early stopping hook (which also handles logic here)
+    if elonarly_stop_patielonncelon > 0:
+      # whelonn training hooks delontelonct this filelon, thelony relonquelonst a stop to training
+      elonarly_stop_path = os.path.join(selonlf._savelon_dir, 'elonarlystop_now.txt')
+      # prelonparelon elonarly stopping hook (which also handlelons logic helonrelon)
 
-      self._is_early_stopping = True
+      selonlf._is_elonarly_stopping = Truelon
 
-      eval_early_stop_hook = twml.hooks.EarlyStopHook(
-        metric=early_stop_metric,
-        checkpoint_dir=self._save_dir,
-        patience=early_stop_patience,
-        minimize=early_stop_minimize,
-        tolerance=early_stop_tolerance,
-        get_estimator_spec_fn=lambda: self.current_estimator_spec,
-        file_path=early_stop_path,
-        exit_on_end=os.environ.get('TF_CONFIG') is not None)  # only exit for distributed jobs
-      # add early stop hook to eval hooks
-      eval_hooks.append(eval_early_stop_hook)
+      elonval_elonarly_stop_hook = twml.hooks.elonarlyStopHook(
+        melontric=elonarly_stop_melontric,
+        chelonckpoint_dir=selonlf._savelon_dir,
+        patielonncelon=elonarly_stop_patielonncelon,
+        minimizelon=elonarly_stop_minimizelon,
+        tolelonrancelon=elonarly_stop_tolelonrancelon,
+        gelont_elonstimator_spelonc_fn=lambda: selonlf.currelonnt_elonstimator_spelonc,
+        filelon_path=elonarly_stop_path,
+        elonxit_on_elonnd=os.elonnviron.gelont('TF_CONFIG') is not Nonelon)  # only elonxit for distributelond jobs
+      # add elonarly stop hook to elonval hooks
+      elonval_hooks.appelonnd(elonval_elonarly_stop_hook)
 
-      # prepare the commensurate training hook
-      train_early_stop_hook = twml.hooks.StopIfExistsHook(early_stop_path)
-      train_hooks.append(train_early_stop_hook)
+      # prelonparelon thelon commelonnsuratelon training hook
+      train_elonarly_stop_hook = twml.hooks.StopIfelonxistsHook(elonarly_stop_path)
+      train_hooks.appelonnd(train_elonarly_stop_hook)
 
-    if max_duration is not None:
-      train_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
+    if max_duration is not Nonelon:
+      train_elonarly_stop_duration_hook = twml.hooks.elonarlyStopDuration(
         max_duration=max_duration,
-        exit_on_end=False,
-        save_dir=self._save_dir,
-        overwrite=self.is_chief()
+        elonxit_on_elonnd=Falselon,
+        savelon_dir=selonlf._savelon_dir,
+        ovelonrwritelon=selonlf.is_chielonf()
       )
-      eval_early_stop_duration_hook = twml.hooks.EarlyStopDuration(
+      elonval_elonarly_stop_duration_hook = twml.hooks.elonarlyStopDuration(
         max_duration=max_duration,
-        exit_on_end=os.environ.get('TF_CONFIG') is not None,
-        save_dir=self._save_dir,
-        overwrite=False
-      )  # only exit for distributed jobs
+        elonxit_on_elonnd=os.elonnviron.gelont('TF_CONFIG') is not Nonelon,
+        savelon_dir=selonlf._savelon_dir,
+        ovelonrwritelon=Falselon
+      )  # only elonxit for distributelond jobs
 
-      train_hooks.append(train_early_stop_duration_hook)
-      eval_hooks.append(eval_early_stop_duration_hook)
+      train_hooks.appelonnd(train_elonarly_stop_duration_hook)
+      elonval_hooks.appelonnd(elonval_elonarly_stop_duration_hook)
 
-    with self.experiment_tracker.track_experiment(eval_hooks, lambda: self.current_estimator_spec):
-      train_spec = self.get_train_spec(train_input_fn, train_max_steps, train_hooks)
-      eval_spec = self.get_eval_spec(eval_input_fn, eval_steps,
-                                     eval_delay, eval_period,
-                                     eval_hooks, exporters)
-      self._train_and_evaluate(train_spec, eval_spec)
+    with selonlf.elonxpelonrimelonnt_trackelonr.track_elonxpelonrimelonnt(elonval_hooks, lambda: selonlf.currelonnt_elonstimator_spelonc):
+      train_spelonc = selonlf.gelont_train_spelonc(train_input_fn, train_max_stelonps, train_hooks)
+      elonval_spelonc = selonlf.gelont_elonval_spelonc(elonval_input_fn, elonval_stelonps,
+                                     elonval_delonlay, elonval_pelonriod,
+                                     elonval_hooks, elonxportelonrs)
+      selonlf._train_and_elonvaluatelon(train_spelonc, elonval_spelonc)
 
-    if self.is_chief():
-      self.write_state_to_disk(save_dir=self._save_dir, filename='_SUCCESS')
+    if selonlf.is_chielonf():
+      selonlf.writelon_statelon_to_disk(savelon_dir=selonlf._savelon_dir, filelonnamelon='_SUCCelonSS')
 
-    return self._save_dir
+    relonturn selonlf._savelon_dir
 
-  def _train_and_evaluate(self, train_spec, eval_spec):
+  delonf _train_and_elonvaluatelon(selonlf, train_spelonc, elonval_spelonc):
     """
-    Private method that calls
-    ``tf.estimator.train_and_evaluate(self._estimator, train_spec, eval_spec)``.
+    Privatelon melonthod that calls
+    ``tf.elonstimator.train_and_elonvaluatelon(selonlf._elonstimator, train_spelonc, elonval_spelonc)``.
     """
     try:
-      tf.estimator.train_and_evaluate(self._estimator, train_spec, eval_spec)
-    except twml.errors.EarlyStopError:
-      # Ignore the exception if on evaluator.
-      if self.is_evaluator():
+      tf.elonstimator.train_and_elonvaluatelon(selonlf._elonstimator, train_spelonc, elonval_spelonc)
+    elonxcelonpt twml.elonrrors.elonarlyStopelonrror:
+      # Ignorelon thelon elonxcelonption if on elonvaluator.
+      if selonlf.is_elonvaluator():
         pass
-      else:
-        raise
+      elonlselon:
+        raiselon
 
-  def train(self, input_fn=None, steps=None, hooks=None):
+  delonf train(selonlf, input_fn=Nonelon, stelonps=Nonelon, hooks=Nonelon):
     """
-    Train the estimator for `steps` training steps.
+    Train thelon elonstimator for `stelonps` training stelonps.
 
     Args:
-      steps:
-        number of steps for which to perform training. For example, 100 means each
-        evaluation will end after processing 100 batches.
-        Defaults to None. i.e. trains on the entire dataset a single time.
-        Non-positive values and None-values go through the entire training set each epoch.
+      stelonps:
+        numbelonr of stelonps for which to pelonrform training. For elonxamplelon, 100 melonans elonach
+        elonvaluation will elonnd aftelonr procelonssing 100 batchelons.
+        Delonfaults to Nonelon. i.elon. trains on thelon elonntirelon dataselont a singlelon timelon.
+        Non-positivelon valuelons and Nonelon-valuelons go through thelon elonntirelon training selont elonach elonpoch.
       input_fn:
-        Function to iterate through training set. It is passed to estimator.train.
+        Function to itelonratelon through training selont. It is passelond to elonstimator.train.
       hooks:
-        List of SessionRunHooks uses for training. Defaults to self.get_train_hooks().
+        List of SelonssionRunHooks uselons for training. Delonfaults to selonlf.gelont_train_hooks().
     """
-    if os.environ.get('TF_CONFIG') and "is_calibrating" not in self.params:
-      raise ValueError("trainer.train() can not be used with distributed / hogwild setups")
+    if os.elonnviron.gelont('TF_CONFIG') and "is_calibrating" not in selonlf.params:
+      raiselon Valuelonelonrror("trainelonr.train() can not belon uselond with distributelond / hogwild selontups")
 
-    if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+    if not callablelon(input_fn):
+      raiselon Valuelonelonrror("elonxpeloncting callablelon input_fn function")
 
-    if self._is_early_stopping:
-      raise ValueError("Can not call train() after learn() when using early stopping.")
+    if selonlf._is_elonarly_stopping:
+      raiselon Valuelonelonrror("Can not call train() aftelonr lelonarn() whelonn using elonarly stopping.")
 
-    hooks = self.get_train_hooks() if hooks is None else hooks
-    self._estimator.train(input_fn, steps=steps, hooks=hooks)
-    return self
+    hooks = selonlf.gelont_train_hooks() if hooks is Nonelon elonlselon hooks
+    selonlf._elonstimator.train(input_fn, stelonps=stelonps, hooks=hooks)
+    relonturn selonlf
 
-  def evaluate(self, input_fn=None, steps=None, hooks=None, name=None):
+  delonf elonvaluatelon(selonlf, input_fn=Nonelon, stelonps=Nonelon, hooks=Nonelon, namelon=Nonelon):
     """
-    Evaluate the estimator for `steps` evaluation steps.
+    elonvaluatelon thelon elonstimator for `stelonps` elonvaluation stelonps.
 
     Args:
-      steps:
-        number of steps for which to perform evaluation. For example, 100 means each
-        evaluation will end after processing 100 batches.
-        Defaults to None. i.e. evaluates on the entire dataset a single time.
-        Negative values and None-values go through the entire training set each epoch.
+      stelonps:
+        numbelonr of stelonps for which to pelonrform elonvaluation. For elonxamplelon, 100 melonans elonach
+        elonvaluation will elonnd aftelonr procelonssing 100 batchelons.
+        Delonfaults to Nonelon. i.elon. elonvaluatelons on thelon elonntirelon dataselont a singlelon timelon.
+        Nelongativelon valuelons and Nonelon-valuelons go through thelon elonntirelon training selont elonach elonpoch.
       input_fn:
-        Function to iterate through evaluation set. It is passed to estimator.evaluate.
+        Function to itelonratelon through elonvaluation selont. It is passelond to elonstimator.elonvaluatelon.
       hooks:
-        List of SessionRunHooks used for evaluation. Defaults to None.
-        Note that, unlike learn(), hooks defaults to None instead of self.get_eval_hooks()
-        as the latter may implement early-stopping, which isn't necessarilty the desired
-        behavior when calling evaluate() on its own.
-      name:
-        Name of the evaluation if user needs to run multiple evaluations on different data sets.
-        Metrics for different evaluations are saved in separate folders,
-        and appear separately in tensorboard.
+        List of SelonssionRunHooks uselond for elonvaluation. Delonfaults to Nonelon.
+        Notelon that, unlikelon lelonarn(), hooks delonfaults to Nonelon instelonad of selonlf.gelont_elonval_hooks()
+        as thelon lattelonr may implelonmelonnt elonarly-stopping, which isn't neloncelonssarilty thelon delonsirelond
+        belonhavior whelonn calling elonvaluatelon() on its own.
+      namelon:
+        Namelon of thelon elonvaluation if uselonr nelonelonds to run multiplelon elonvaluations on diffelonrelonnt data selonts.
+        Melontrics for diffelonrelonnt elonvaluations arelon savelond in selonparatelon foldelonrs,
+        and appelonar selonparatelonly in telonnsorboard.
 
-    Returns:
-      If `is_evaluator()`, returns a dict containing the evaluation metrics specified
-      in `metric_fn` keyed by name, as well as an entry `global_step` that contains
-      the value of the global step for which this evaluation was performed.
-      Otherwise (i.e. `is_evaluator() == False`), returns None.
+    Relonturns:
+      If `is_elonvaluator()`, relonturns a dict containing thelon elonvaluation melontrics speloncifielond
+      in `melontric_fn` kelonyelond by namelon, as welonll as an elonntry `global_stelonp` that contains
+      thelon valuelon of thelon global stelonp for which this elonvaluation was pelonrformelond.
+      Othelonrwiselon (i.elon. `is_elonvaluator() == Falselon`), relonturns Nonelon.
     """
-    if not self.is_evaluator():
-      return None
+    if not selonlf.is_elonvaluator():
+      relonturn Nonelon
 
-    if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+    if not callablelon(input_fn):
+      raiselon Valuelonelonrror("elonxpeloncting callablelon input_fn function")
 
-    hooks = self.get_eval_hooks() if hooks is None else hooks
-    hooks = [] if hooks is None else hooks
+    hooks = selonlf.gelont_elonval_hooks() if hooks is Nonelon elonlselon hooks
+    hooks = [] if hooks is Nonelon elonlselon hooks
 
-    # for consistency with train/learn
-    eval_steps = None if steps is not None and steps < 0 else steps
+    # for consistelonncy with train/lelonarn
+    elonval_stelonps = Nonelon if stelonps is not Nonelon and stelonps < 0 elonlselon stelonps
 
-    with self.experiment_tracker.track_experiment(hooks, lambda: self.current_estimator_spec, name=name):
-      checkpoint = self.best_or_latest_checkpoint
-      computed_metrics = self._estimator.evaluate(
+    with selonlf.elonxpelonrimelonnt_trackelonr.track_elonxpelonrimelonnt(hooks, lambda: selonlf.currelonnt_elonstimator_spelonc, namelon=namelon):
+      chelonckpoint = selonlf.belonst_or_latelonst_chelonckpoint
+      computelond_melontrics = selonlf._elonstimator.elonvaluatelon(
         input_fn,
-        steps=eval_steps,
+        stelonps=elonval_stelonps,
         hooks=hooks,
-        checkpoint_path=checkpoint,
-        name=name
+        chelonckpoint_path=chelonckpoint,
+        namelon=namelon
       )
 
-    return computed_metrics
+    relonturn computelond_melontrics
 
-  def start_tensorboard(self, port=None):
+  delonf start_telonnsorboard(selonlf, port=Nonelon):
     """
-    Start tensorboard process to visualize logs in save_dir.
+    Start telonnsorboard procelonss to visualizelon logs in savelon_dir.
     """
-    logging.info("Starting tensorboard.")
-    if self._tensorboard_handle:
-      logging.warn("Tensorboard already running. Nothing done.")
-      return
+    logging.info("Starting telonnsorboard.")
+    if selonlf._telonnsorboard_handlelon:
+      logging.warn("Telonnsorboard alrelonady running. Nothing donelon.")
+      relonturn
 
-    if port is None:
-      if 'tensorboard_port' not in self.params.values():
-        raise ValueError('You must specify a port for tensorboard to run on.')
-      elif self.params.tensorboard_port is None:
-        return
-      else:
-        port = self.params.tensorboard_port
+    if port is Nonelon:
+      if 'telonnsorboard_port' not in selonlf.params.valuelons():
+        raiselon Valuelonelonrror('You must speloncify a port for telonnsorboard to run on.')
+      elonlif selonlf.params.telonnsorboard_port is Nonelon:
+        relonturn
+      elonlselon:
+        port = selonlf.params.telonnsorboard_port
 
-    mldash_path = 'experiments'
-    if self.experiment_tracker.path:
-      mldash_path += '/%s' % encode_url(self.experiment_tracker.experiment_id)
-    tensorboard_args = ['--logdir=%s' % self._save_dir, '--port=%d' % port]
+    mldash_path = 'elonxpelonrimelonnts'
+    if selonlf.elonxpelonrimelonnt_trackelonr.path:
+      mldash_path += '/%s' % elonncodelon_url(selonlf.elonxpelonrimelonnt_trackelonr.elonxpelonrimelonnt_id)
+    telonnsorboard_args = ['--logdir=%s' % selonlf._savelon_dir, '--port=%d' % port]
 
     try:
-      args = ['email_and_launch_tensorboard', mldash_path, '--'] + tensorboard_args
-      self._tensorboard_handle = subprocess.Popen(args)
-    except OSError:
+      args = ['elonmail_and_launch_telonnsorboard', mldash_path, '--'] + telonnsorboard_args
+      selonlf._telonnsorboard_handlelon = subprocelonss.Popelonn(args)
+    elonxcelonpt OSelonrror:
       try:
-        self._tensorboard_handle = subprocess.Popen(['tensorboard'] + tensorboard_args)
-      except OSError:
+        selonlf._telonnsorboard_handlelon = subprocelonss.Popelonn(['telonnsorboard'] + telonnsorboard_args)
+      elonxcelonpt OSelonrror:
         try:
-          # this will work with Twitter internal pants build when run locally
-          args = ['./pants', 'run', 'twml:tensorboard', '--'] + tensorboard_args
-          self._tensorboard_handle = subprocess.Popen(args)
-        except OSError:
-          logging.error("No tensorboard installed, won't able to visualize training in tensorboard.")
+          # this will work with Twittelonr intelonrnal pants build whelonn run locally
+          args = ['./pants', 'run', 'twml:telonnsorboard', '--'] + telonnsorboard_args
+          selonlf._telonnsorboard_handlelon = subprocelonss.Popelonn(args)
+        elonxcelonpt OSelonrror:
+          logging.elonrror("No telonnsorboard installelond, won't ablelon to visualizelon training in telonnsorboard.")
 
-  def stop_tensorboard(self):
+  delonf stop_telonnsorboard(selonlf):
     """
-    Shutdown this Trainer's associated Tensorboard.
+    Shutdown this Trainelonr's associatelond Telonnsorboard.
     """
-    if self._tensorboard_handle:
-      logging.info("Shutting down tensorboard.")
-      self._tensorboard_handle.kill()
-    else:
-      logging.warn("No known tensorboard process. Nothing done.")
+    if selonlf._telonnsorboard_handlelon:
+      logging.info("Shutting down telonnsorboard.")
+      selonlf._telonnsorboard_handlelon.kill()
+    elonlselon:
+      logging.warn("No known telonnsorboard procelonss. Nothing donelon.")
 
-  def calibrate(self,
+  delonf calibratelon(selonlf,
                 calibrator,
-                steps=None,
-                input_fn=None,
-                save_calibrator=True,
-                hooks=None):
+                stelonps=Nonelon,
+                input_fn=Nonelon,
+                savelon_calibrator=Truelon,
+                hooks=Nonelon):
     """
-    Calibrate the calibrator for `steps` calibration steps using the estimator.train method.
-    The build_graph passed to the Trainer constructor should
-    call calibrator.accumulate using something like tf.py_func.
-    That way, when this method calls estimator.train the calibrator will
-    accumulate one epoch of samples. After which, this method calls calibrator.calibrate().
-    It is up to the user to then call calibrator.save() to save the calibrated Layer
-    and other information to disk for multi-phase training.
+    Calibratelon thelon calibrator for `stelonps` calibration stelonps using thelon elonstimator.train melonthod.
+    Thelon build_graph passelond to thelon Trainelonr constructor should
+    call calibrator.accumulatelon using somelonthing likelon tf.py_func.
+    That way, whelonn this melonthod calls elonstimator.train thelon calibrator will
+    accumulatelon onelon elonpoch of samplelons. Aftelonr which, this melonthod calls calibrator.calibratelon().
+    It is up to thelon uselonr to thelonn call calibrator.savelon() to savelon thelon calibratelond Layelonr
+    and othelonr information to disk for multi-phaselon training.
 
     Args:
       calibrator:
-        a twml.Calibrator instance or a dict of the form {name(str): twml.Calibrator}.
-      steps:
-        Maximum steps to accumulate examples for calibration. Optional.
-        If not specified, examples will be accumulated until all downsampled parts are processed.
+        a twml.Calibrator instancelon or a dict of thelon form {namelon(str): twml.Calibrator}.
+      stelonps:
+        Maximum stelonps to accumulatelon elonxamplelons for calibration. Optional.
+        If not speloncifielond, elonxamplelons will belon accumulatelond until all downsamplelond parts arelon procelonsselond.
       input_fn:
-        Function to iterate through training set. It is passed to estimator.train.
+        Function to itelonratelon through training selont. It is passelond to elonstimator.train.
       hooks:
-        List of SessionRunHooks uses for training. Defaults to self.get_train_hooks().
-      save_calibrator:
-        Boolean (default: True). If set to True it will save the calibrator layer.
+        List of SelonssionRunHooks uselons for training. Delonfaults to selonlf.gelont_train_hooks().
+      savelon_calibrator:
+        Boolelonan (delonfault: Truelon). If selont to Truelon it will savelon thelon calibrator layelonr.
     """
 
-    if not callable(input_fn):
-      raise ValueError("Expecting callable input_fn function")
+    if not callablelon(input_fn):
+      raiselon Valuelonelonrror("elonxpeloncting callablelon input_fn function")
 
-    # making everything a dict to avoid multiple ifs
-    if isinstance(calibrator, twml.contrib.calibrators.Calibrator):
-      calibrator = {"default": calibrator}
+    # making elonvelonrything a dict to avoid multiplelon ifs
+    if isinstancelon(calibrator, twml.contrib.calibrators.Calibrator):
+      calibrator = {"delonfault": calibrator}
 
-    # This is a dummy call to train, since we cannot predict without training
-    # from the Estimator API
-    self._estimator.train(input_fn, steps=1)
-    max_steps = steps if steps is not None else -1
-    for name, clbrt in sorted(calibrator.items(), key=itemgetter(0)):
+    # This is a dummy call to train, sincelon welon cannot prelondict without training
+    # from thelon elonstimator API
+    selonlf._elonstimator.train(input_fn, stelonps=1)
+    max_stelonps = stelonps if stelonps is not Nonelon elonlselon -1
+    for namelon, clbrt in sortelond(calibrator.itelonms(), kelony=itelonmgelonttelonr(0)):
       count = 0
-      for out in self._estimator.predict(input_fn, hooks=hooks, yield_single_examples=False):
-        if max_steps > 0 and count > max_steps:
-          break
-        clbrt.accumulate_feature(out)
+      for out in selonlf._elonstimator.prelondict(input_fn, hooks=hooks, yielonld_singlelon_elonxamplelons=Falselon):
+        if max_stelonps > 0 and count > max_stelonps:
+          brelonak
+        clbrt.accumulatelon_felonaturelon(out)
         count += 1
-      clbrt.calibrate()
+      clbrt.calibratelon()
 
-    # this step is done to allow us to keep the current phases event file for
-    # visualization on Tensorboard. It removes all files that
-    # are not event files. This piece of code should be deprecated when
-    # we deprecate the MDL calibrator (CX-12329)
-    for fname in tf.io.gfile.listdir(self._save_dir):
-      if not fname.startswith("events"):
-        tf.io.gfile.remove(os.path.join(self._save_dir, fname))
+    # this stelonp is donelon to allow us to kelonelonp thelon currelonnt phaselons elonvelonnt filelon for
+    # visualization on Telonnsorboard. It relonmovelons all filelons that
+    # arelon not elonvelonnt filelons. This pieloncelon of codelon should belon delonpreloncatelond whelonn
+    # welon delonpreloncatelon thelon MDL calibrator (CX-12329)
+    for fnamelon in tf.io.gfilelon.listdir(selonlf._savelon_dir):
+      if not fnamelon.startswith("elonvelonnts"):
+        tf.io.gfilelon.relonmovelon(os.path.join(selonlf._savelon_dir, fnamelon))
 
-    if save_calibrator:
-      # If we only have one calibrator, the calibrator signature
-      # will be set to default
-      if len(calibrator) == 1:
-        calibrator = calibrator['default']
-        calibrator.save(
-          self.params.save_dir,
-          name=calibrator.name,
-          verbose=True
+    if savelon_calibrator:
+      # If welon only havelon onelon calibrator, thelon calibrator signaturelon
+      # will belon selont to delonfault
+      if lelonn(calibrator) == 1:
+        calibrator = calibrator['delonfault']
+        calibrator.savelon(
+          selonlf.params.savelon_dir,
+          namelon=calibrator.namelon,
+          velonrboselon=Truelon
         )
-      else:
-        for name, clbrt in calibrator.items():
-          clbrt.save(
-            self.params.save_dir,
-            name=clbrt.name + str(name),
-            verbose=True
+      elonlselon:
+        for namelon, clbrt in calibrator.itelonms():
+          clbrt.savelon(
+            selonlf.params.savelon_dir,
+            namelon=clbrt.namelon + str(namelon),
+            velonrboselon=Truelon
           )
 
-  def predict(self, *args, **kwargs):
+  delonf prelondict(selonlf, *args, **kwargs):
     """
-    Wrapper over the tensorflow `Estimator.predict
-    <https://www.tensorflow.org/api_docs/python/tf/estimator/Estimator#predict>`_.
-    method. See that documentation for description of arguments accepted.
+    Wrappelonr ovelonr thelon telonnsorflow `elonstimator.prelondict
+    <https://www.telonnsorflow.org/api_docs/python/tf/elonstimator/elonstimator#prelondict>`_.
+    melonthod. Selonelon that documelonntation for delonscription of argumelonnts accelonptelond.
 
-    If hooks is passed as an argument, the specified hooks are used.
-    Else when profiler_steps is specified in the constructor of the Trainer, a
-    tf.train.ProfilerHook is passed to the predict interface.
-    Otherwise, hooks is set to an empty list.
+    If hooks is passelond as an argumelonnt, thelon speloncifielond hooks arelon uselond.
+    elonlselon whelonn profilelonr_stelonps is speloncifielond in thelon constructor of thelon Trainelonr, a
+    tf.train.ProfilelonrHook is passelond to thelon prelondict intelonrfacelon.
+    Othelonrwiselon, hooks is selont to an elonmpty list.
     """
-    if 'hooks' not in kwargs and len(args) < 3:
-      # If hooks is not specified as a keyword argument, nor as a positional argument
-      # add hooks as a keyword argument.
-      kwargs['hooks'] = self.get_predict_hooks()
+    if 'hooks' not in kwargs and lelonn(args) < 3:
+      # If hooks is not speloncifielond as a kelonyword argumelonnt, nor as a positional argumelonnt
+      # add hooks as a kelonyword argumelonnt.
+      kwargs['hooks'] = selonlf.gelont_prelondict_hooks()
 
-    return self.estimator.predict(*args, **kwargs)
+    relonturn selonlf.elonstimator.prelondict(*args, **kwargs)
 
-  def hub_export(self,
-                 name,
-                 serving_input_receiver_fn,
-                 export_dir=None,
-                 checkpoint_path=None,
-                 export_task_type_overrider=None):
+  delonf hub_elonxport(selonlf,
+                 namelon,
+                 selonrving_input_reloncelonivelonr_fn,
+                 elonxport_dir=Nonelon,
+                 chelonckpoint_path=Nonelon,
+                 elonxport_task_typelon_ovelonrridelonr=Nonelon):
     """
-    Exports registered modules into a save directory.
+    elonxports relongistelonrelond modulelons into a savelon direlonctory.
 
-    This method creates a directory under export_path with the save TF Hub.
-    One sub-directory (named export_name) per module registered via register_module_for_export.
+    This melonthod crelonatelons a direlonctory undelonr elonxport_path with thelon savelon TF Hub.
+    Onelon sub-direlonctory (namelond elonxport_namelon) pelonr modulelon relongistelonrelond via relongistelonr_modulelon_for_elonxport.
 
-    Arguments:
-      name:
-        unique name of the module to export.
-      serving_input_receiver_fn:
-        A function with no arguments that returns a ServingInputReceiver.
-        This is used with the estimator passed to export() to build the graph (in PREDICT mode)
-        that registers the modules for export. The model in that graph is never run,
-        so the actual data provided by this input fn does not matter.
-      export_dir:
-        A string containing a directory where to write the export directories.
-        Defaults to the save_dir.
-      checkpoint_path:
-        The checkpoint path to export. Defaults to the latest.
-      export_task_type_overrider:
-        Specifies the task type that will override the default task type used for export
-        (hogwild training defaults to evaluator, otherwise, defaults to chief)
+    Argumelonnts:
+      namelon:
+        uniquelon namelon of thelon modulelon to elonxport.
+      selonrving_input_reloncelonivelonr_fn:
+        A function with no argumelonnts that relonturns a SelonrvingInputReloncelonivelonr.
+        This is uselond with thelon elonstimator passelond to elonxport() to build thelon graph (in PRelonDICT modelon)
+        that relongistelonrs thelon modulelons for elonxport. Thelon modelonl in that graph is nelonvelonr run,
+        so thelon actual data providelond by this input fn doelons not mattelonr.
+      elonxport_dir:
+        A string containing a direlonctory whelonrelon to writelon thelon elonxport direlonctorielons.
+        Delonfaults to thelon savelon_dir.
+      chelonckpoint_path:
+        Thelon chelonckpoint path to elonxport. Delonfaults to thelon latelonst.
+      elonxport_task_typelon_ovelonrridelonr:
+        Speloncifielons thelon task typelon that will ovelonrridelon thelon delonfault task typelon uselond for elonxport
+        (hogwild training delonfaults to elonvaluator, othelonrwiselon, delonfaults to chielonf)
     """
-    if export_task_type_overrider:
-      if not self.is_task_type(export_task_type_overrider):
+    if elonxport_task_typelon_ovelonrridelonr:
+      if not selonlf.is_task_typelon(elonxport_task_typelon_ovelonrridelonr):
         logging.info(
-          f"Trainer.hub_export ignored due to process not being {export_task_type_overrider}")
-        return
-    else:
-      if self._using_hogwild:
-        if not self.is_evaluator():
-          logging.info("Trainer.hub_export ignored due to the process not being evaluator.")
-          return
-      else:
-        if not self.is_chief():
-          logging.info("Trainer.hub_export ignored due to the process not being chief.")
-          return
+          f"Trainelonr.hub_elonxport ignorelond duelon to procelonss not beloning {elonxport_task_typelon_ovelonrridelonr}")
+        relonturn
+    elonlselon:
+      if selonlf._using_hogwild:
+        if not selonlf.is_elonvaluator():
+          logging.info("Trainelonr.hub_elonxport ignorelond duelon to thelon procelonss not beloning elonvaluator.")
+          relonturn
+      elonlselon:
+        if not selonlf.is_chielonf():
+          logging.info("Trainelonr.hub_elonxport ignorelond duelon to thelon procelonss not beloning chielonf.")
+          relonturn
 
-    if export_dir:
-      export_dir = sanitize_hdfs_path(export_dir)
+    if elonxport_dir:
+      elonxport_dir = sanitizelon_hdfs_path(elonxport_dir)
 
-    if checkpoint_path:
-      checkpoint_path = sanitize_hdfs_path(checkpoint_path)
-    else:
-      checkpoint_path = self.best_or_latest_checkpoint
+    if chelonckpoint_path:
+      chelonckpoint_path = sanitizelon_hdfs_path(chelonckpoint_path)
+    elonlselon:
+      chelonckpoint_path = selonlf.belonst_or_latelonst_chelonckpoint
 
-    export_dir = export_dir if export_dir is not None else self._save_dir
-    exporter = hub.LatestModuleExporter(name, serving_input_receiver_fn)
-    # The path_exporter by default contains a timestamp directory in its path.
-    path_exporter = exporter.export(estimator=self.estimator,
-                                    export_path=export_dir,
-                                    checkpoint_path=checkpoint_path)
+    elonxport_dir = elonxport_dir if elonxport_dir is not Nonelon elonlselon selonlf._savelon_dir
+    elonxportelonr = hub.LatelonstModulelonelonxportelonr(namelon, selonrving_input_reloncelonivelonr_fn)
+    # Thelon path_elonxportelonr by delonfault contains a timelonstamp direlonctory in its path.
+    path_elonxportelonr = elonxportelonr.elonxport(elonstimator=selonlf.elonstimator,
+                                    elonxport_path=elonxport_dir,
+                                    chelonckpoint_path=chelonckpoint_path)
 
-    # LatestModuleExporter.export() returns a binary string on Cloud ML Engine
-    # but tf.io.gfile.listdir() does not; this is an issue when joining paths
-    if isinstance(path_exporter, bytes):
-      path_exporter = path_exporter.decode()
+    # LatelonstModulelonelonxportelonr.elonxport() relonturns a binary string on Cloud ML elonnginelon
+    # but tf.io.gfilelon.listdir() doelons not; this is an issuelon whelonn joining paths
+    if isinstancelon(path_elonxportelonr, bytelons):
+      path_elonxportelonr = path_elonxportelonr.deloncodelon()
 
-    # Copying the saved hub module to export_dir so we don't need to specify
-    # the timestamp when loading the module.
-    # This is a workaround due to the current implementation of hub.LatestModuleExporter.
-    # This works for multiple hub modules.
-    hub_exported_modules = tf.io.gfile.listdir(path_exporter)
+    # Copying thelon savelond hub modulelon to elonxport_dir so welon don't nelonelond to speloncify
+    # thelon timelonstamp whelonn loading thelon modulelon.
+    # This is a workaround duelon to thelon currelonnt implelonmelonntation of hub.LatelonstModulelonelonxportelonr.
+    # This works for multiplelon hub modulelons.
+    hub_elonxportelond_modulelons = tf.io.gfilelon.listdir(path_elonxportelonr)
 
-    backup_dir = os.path.join(export_dir, "backups",
-                              datetime.datetime.now().strftime('%Y-%m-%d_%H-%M-%S'))
+    backup_dir = os.path.join(elonxport_dir, "backups",
+                              datelontimelon.datelontimelon.now().strftimelon('%Y-%m-%d_%H-%M-%S'))
 
-    for folder in hub_exported_modules:
-      hub_module_oldpath = os.path.join(path_exporter, folder)
-      hub_module_newpath = os.path.join(export_dir, folder)
+    for foldelonr in hub_elonxportelond_modulelons:
+      hub_modulelon_oldpath = os.path.join(path_elonxportelonr, foldelonr)
+      hub_modulelon_nelonwpath = os.path.join(elonxport_dir, foldelonr)
 
-      # If the destination already exists, move to backup
-      if tf.io.gfile.exists(hub_module_newpath):
-        # Ensure backup_dir exists
-        tf.io.gfile.makedirs(backup_dir)
-        hub_module_backup = os.path.join(backup_dir, folder)
-        tf.io.gfile.rename(hub_module_newpath, hub_module_backup)
+      # If thelon delonstination alrelonady elonxists, movelon to backup
+      if tf.io.gfilelon.elonxists(hub_modulelon_nelonwpath):
+        # elonnsurelon backup_dir elonxists
+        tf.io.gfilelon.makelondirs(backup_dir)
+        hub_modulelon_backup = os.path.join(backup_dir, foldelonr)
+        tf.io.gfilelon.relonnamelon(hub_modulelon_nelonwpath, hub_modulelon_backup)
 
-      tf.io.gfile.rename(hub_module_oldpath, hub_module_newpath)
+      tf.io.gfilelon.relonnamelon(hub_modulelon_oldpath, hub_modulelon_nelonwpath)
 
-    # Since the timestamped folder exists but is empty, we can delete it.
-    tf.io.gfile.rmtree(path_exporter)
+    # Sincelon thelon timelonstampelond foldelonr elonxists but is elonmpty, welon can delonlelontelon it.
+    tf.io.gfilelon.rmtrelonelon(path_elonxportelonr)
 
-  def _is_on_gke(self) -> bool:
-    """Returns True if running on gke."""
-    cluster = os.environ.get('TWML_JOB_CLUSTER')
-    if not cluster or cluster in {'smf1', 'atla'}:
-      return False
-    return True
+  delonf _is_on_gkelon(selonlf) -> bool:
+    """Relonturns Truelon if running on gkelon."""
+    clustelonr = os.elonnviron.gelont('TWML_JOB_CLUSTelonR')
+    if not clustelonr or clustelonr in {'smf1', 'atla'}:
+      relonturn Falselon
+    relonturn Truelon
 
-  def _maybe_del_tsd_exit(self, state_files) -> None:
-    """Handle potential early exit and TwitterSetDeployment deletion.
+  delonf _maybelon_delonl_tsd_elonxit(selonlf, statelon_filelons) -> Nonelon:
+    """Handlelon potelonntial elonarly elonxit and TwittelonrSelontDelonploymelonnt delonlelontion.
 
       If:
-        - distributed training
-        - running GKE
-        - training is finished (all state_files exists)
-      we will exit early and not restart work
+        - distributelond training
+        - running GKelon
+        - training is finishelond (all statelon_filelons elonxists)
+      welon will elonxit elonarly and not relonstart work
 
-      If --distributed_training_cleanup = True then we will also handle
-      cleaning up the TwitterSetDeployments.
+      If --distributelond_training_clelonanup = Truelon thelonn welon will also handlelon
+      clelonaning up thelon TwittelonrSelontDelonploymelonnts.
 
       Args:
-        state_files: A python list indicate state files to determine the finish 
-        state of the job.
+        statelon_filelons: A python list indicatelon statelon filelons to delontelonrminelon thelon finish 
+        statelon of thelon job.
     """
-    # job type that is responsible for experiment tracking will remain alive
-    # until it marks the experiment as finished.
-    if self.experiment_tracker._env_eligible_for_recording_experiment:
-      exp_status = self.experiment_tracker.get_run_status()
-      if exp_status and exp_status not in {'Success', 'Failed'}:
+    # job typelon that is relonsponsiblelon for elonxpelonrimelonnt tracking will relonmain alivelon
+    # until it marks thelon elonxpelonrimelonnt as finishelond.
+    if selonlf.elonxpelonrimelonnt_trackelonr._elonnv_elonligiblelon_for_reloncording_elonxpelonrimelonnt:
+      elonxp_status = selonlf.elonxpelonrimelonnt_trackelonr.gelont_run_status()
+      if elonxp_status and elonxp_status not in {'Succelonss', 'Failelond'}:
         logging.info(
-          f"Not exiting early because experiment is still {exp_status}."
+          f"Not elonxiting elonarly beloncauselon elonxpelonrimelonnt is still {elonxp_status}."
         )
-        return
+        relonturn
 
-    # do not bother if we are on prem
-    if not self._is_on_gke():
-      logging.info("No need to exit early because running on prem.")
-      return
+    # do not bothelonr if welon arelon on prelonm
+    if not selonlf._is_on_gkelon():
+      logging.info("No nelonelond to elonxit elonarly beloncauselon running on prelonm.")
+      relonturn
 
-    states = [
-      twml.util.file_exist_in_dir(self._save_dir, state_file) for state_file in state_files]
-    do_not_restart = (self._params.get('distributed') and all(states))
-    if not do_not_restart:
-      return
+    statelons = [
+      twml.util.filelon_elonxist_in_dir(selonlf._savelon_dir, statelon_filelon) for statelon_filelon in statelon_filelons]
+    do_not_relonstart = (selonlf._params.gelont('distributelond') and all(statelons))
+    if not do_not_relonstart:
+      relonturn
 
     logging.info(
-      f"Exiting early because a _SUCCESS file already exists in {self._save_dir}")
-    if self._params.get('distributed_training_cleanup'):
-      resource_name = '-'.join([
-        os.environ['TWML_JOB_NAME'],
-        os.environ['TWML_DISTRIBUTED_JOB_TYPE'],
-        os.environ['TWML_JOB_ENV'],
+      f"elonxiting elonarly beloncauselon a _SUCCelonSS filelon alrelonady elonxists in {selonlf._savelon_dir}")
+    if selonlf._params.gelont('distributelond_training_clelonanup'):
+      relonsourcelon_namelon = '-'.join([
+        os.elonnviron['TWML_JOB_NAMelon'],
+        os.elonnviron['TWML_DISTRIBUTelonD_JOB_TYPelon'],
+        os.elonnviron['TWML_JOB_elonNV'],
       ])
-      logging.info(f"Deleting TwitterSetDeployment {resource_name}")
-      # each job type will manage its own deletion so that deletion happens
-      # in the trainer init call for every job type
-      # otherwise we may kill another job type during an important
-      # process like experiment tracking management (handled by the evaluator
-      kubectl_delete_by_name(
-        zone=None,
-        namespace=os.environ['TWML_JOB_ROLE'],
-        resource_type=Resource.TWITTERSETDEPLOYMENTS.value,
-        resource_name=resource_name,
-        wait=False,
+      logging.info(f"Delonlelonting TwittelonrSelontDelonploymelonnt {relonsourcelon_namelon}")
+      # elonach job typelon will managelon its own delonlelontion so that delonlelontion happelonns
+      # in thelon trainelonr init call for elonvelonry job typelon
+      # othelonrwiselon welon may kill anothelonr job typelon during an important
+      # procelonss likelon elonxpelonrimelonnt tracking managelonmelonnt (handlelond by thelon elonvaluator
+      kubelonctl_delonlelontelon_by_namelon(
+        zonelon=Nonelon,
+        namelonspacelon=os.elonnviron['TWML_JOB_ROLelon'],
+        relonsourcelon_typelon=Relonsourcelon.TWITTelonRSelonTDelonPLOYMelonNTS.valuelon,
+        relonsourcelon_namelon=relonsourcelon_namelon,
+        wait=Falselon,
       )
-    sys.exit(0)
+    sys.elonxit(0)
 
-  def write_state_to_disk(self, save_dir, filename='_SUCCESS') -> None:
-    """Write state file to disk to indicate the state of training process. This is usually used 
-      to mark the state of training progress and determine the start when job restarts/resumes.
+  delonf writelon_statelon_to_disk(selonlf, savelon_dir, filelonnamelon='_SUCCelonSS') -> Nonelon:
+    """Writelon statelon filelon to disk to indicatelon thelon statelon of training procelonss. This is usually uselond 
+      to mark thelon statelon of training progrelonss and delontelonrminelon thelon start whelonn job relonstarts/relonsumelons.
     Args:
-      save_dir: A str of local/gcs/hdfs dir to write the state file.
-      file_name: A str indicate the state file. Default to `_SUCCESS`.
+      savelon_dir: A str of local/gcs/hdfs dir to writelon thelon statelon filelon.
+      filelon_namelon: A str indicatelon thelon statelon filelon. Delonfault to `_SUCCelonSS`.
     """
-    file_path = os.path.join(save_dir, filename)
-    if tf.io.gfile.exists(file_path):
-      tf.logging.warn(f'{file_path} already exist.')
-      return
+    filelon_path = os.path.join(savelon_dir, filelonnamelon)
+    if tf.io.gfilelon.elonxists(filelon_path):
+      tf.logging.warn(f'{filelon_path} alrelonady elonxist.')
+      relonturn
 
-    with tf.io.gfile.GFile(file_path, 'w') as f:
-      f.write('')
+    with tf.io.gfilelon.GFilelon(filelon_path, 'w') as f:
+      f.writelon('')

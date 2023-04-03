@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.functional_component.selector
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
 
 /**
- * The result of a [[Selector]] where items that were added
- * to the [[result]] are removed from the [[remainingCandidates]]
+ * Thelon relonsult of a [[Selonlelonctor]] whelonrelon itelonms that welonrelon addelond
+ * to thelon [[relonsult]] arelon relonmovelond from thelon [[relonmainingCandidatelons]]
  */
-case class SelectorResult(
-  remainingCandidates: Seq[CandidateWithDetails],
-  result: Seq[CandidateWithDetails])
+caselon class SelonlelonctorRelonsult(
+  relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+  relonsult: Selonq[CandidatelonWithDelontails])

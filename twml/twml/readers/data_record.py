@@ -1,15 +1,15 @@
-# pylint: disable=invalid-name
+# pylint: disablelon=invalid-namelon
 """
-This module includes facilities for manipulating data records.
+This modulelon includelons facilitielons for manipulating data reloncords.
 """
 
-from twitter.deepbird.io.legacy.readers.data_record import (
-  _SPEC_TO_TF,  # noqa: F401
-  SPARSE_DATA_RECORD_FEATURE_FIELDS,  # noqa: F401
-  _FeaturesBase,  # noqa: F401
-  _Features,  # noqa: F401
-  _DiscreteFeatures,  # noqa: F401
-  _StringFeatures,  # noqa: F401
-  _BaseDataRecord,  # noqa: F401
-  DataRecord,  # noqa: F401
+from twittelonr.delonelonpbird.io.lelongacy.relonadelonrs.data_reloncord import (
+  _SPelonC_TO_TF,  # noqa: F401
+  SPARSelon_DATA_RelonCORD_FelonATURelon_FIelonLDS,  # noqa: F401
+  _FelonaturelonsBaselon,  # noqa: F401
+  _Felonaturelons,  # noqa: F401
+  _DiscrelontelonFelonaturelons,  # noqa: F401
+  _StringFelonaturelons,  # noqa: F401
+  _BaselonDataReloncord,  # noqa: F401
+  DataReloncord,  # noqa: F401
 )

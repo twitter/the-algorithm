@@ -1,151 +1,151 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Optional;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.lucene.search.Explanation;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
 
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.util.ml.prediction_engine.LightweightLinearModel;
-import com.twitter.search.common.util.ml.prediction_engine.SchemaBasedScoreAccumulator;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.ClientException;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchRelonsultFelonaturelons;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftRankingParams;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon.LightwelonightLinelonarModelonl;
+import com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon.SchelonmaBaselondScorelonAccumulator;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.Clielonntelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.ml.ScoringModelonlsManagelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AntiGamingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.LinelonarScoringData;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultTypelon;
 
 /**
- * Scoring function that uses the scoring models specified from the request.
+ * Scoring function that uselons thelon scoring modelonls speloncifielond from thelon relonquelonst.
  */
-public class ModelBasedScoringFunction extends FeatureBasedScoringFunction {
-  private final SelectedModel[] selectedModels;
-  private final boolean useLogitScore;
-  private final boolean isSchemaBased;
+public class ModelonlBaselondScoringFunction elonxtelonnds FelonaturelonBaselondScoringFunction {
+  privatelon final SelonlelonctelondModelonl[] selonlelonctelondModelonls;
+  privatelon final boolelonan uselonLogitScorelon;
+  privatelon final boolelonan isSchelonmaBaselond;
 
-  private static final SearchCounter NUM_LEGACY_MODELS =
-      SearchCounter.export("scoring_function_num_legacy_models");
-  private static final SearchCounter NUM_SCHEMA_BASED_MODELS =
-      SearchCounter.export("scoring_function_num_schema_based_models");
-  private static final SearchCounter MIXED_MODEL_TYPES =
-      SearchCounter.export("scoring_function_mixed_model_types");
+  privatelon static final SelonarchCountelonr NUM_LelonGACY_MODelonLS =
+      SelonarchCountelonr.elonxport("scoring_function_num_lelongacy_modelonls");
+  privatelon static final SelonarchCountelonr NUM_SCHelonMA_BASelonD_MODelonLS =
+      SelonarchCountelonr.elonxport("scoring_function_num_schelonma_baselond_modelonls");
+  privatelon static final SelonarchCountelonr MIXelonD_MODelonL_TYPelonS =
+      SelonarchCountelonr.elonxport("scoring_function_mixelond_modelonl_typelons");
 
-  public ModelBasedScoringFunction(
-      ImmutableSchemaInterface schema,
-      ThriftSearchQuery searchQuery,
-      AntiGamingFilter antiGamingFilter,
-      ThriftSearchResultType searchResultType,
-      UserTable userTable,
-      ScoringModelsManager scoringModelsManager
-  ) throws IOException, ClientException {
+  public ModelonlBaselondScoringFunction(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      ThriftSelonarchQuelonry selonarchQuelonry,
+      AntiGamingFiltelonr antiGamingFiltelonr,
+      ThriftSelonarchRelonsultTypelon selonarchRelonsultTypelon,
+      UselonrTablelon uselonrTablelon,
+      ScoringModelonlsManagelonr scoringModelonlsManagelonr
+  ) throws IOelonxcelonption, Clielonntelonxcelonption {
 
-    super("ModelBasedScoringFunction", schema, searchQuery, antiGamingFilter, searchResultType,
-        userTable);
+    supelonr("ModelonlBaselondScoringFunction", schelonma, selonarchQuelonry, antiGamingFiltelonr, selonarchRelonsultTypelon,
+        uselonrTablelon);
 
-    ThriftRankingParams rankingParams = searchQuery.getRelevanceOptions().getRankingParams();
-    Preconditions.checkNotNull(rankingParams);
+    ThriftRankingParams rankingParams = selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontRankingParams();
+    Prelonconditions.chelonckNotNull(rankingParams);
 
-    if (rankingParams.getSelectedModelsSize() <= 0) {
-      throw new ClientException("Scoring type is MODEL_BASED but no models were selected");
+    if (rankingParams.gelontSelonlelonctelondModelonlsSizelon() <= 0) {
+      throw nelonw Clielonntelonxcelonption("Scoring typelon is MODelonL_BASelonD but no modelonls welonrelon selonlelonctelond");
     }
 
-    Map<String, Double> models = rankingParams.getSelectedModels();
+    Map<String, Doublelon> modelonls = rankingParams.gelontSelonlelonctelondModelonls();
 
-    selectedModels = new SelectedModel[models.size()];
-    int numSchemaBased = 0;
+    selonlelonctelondModelonls = nelonw SelonlelonctelondModelonl[modelonls.sizelon()];
+    int numSchelonmaBaselond = 0;
     int i = 0;
-    for (Map.Entry<String, Double> nameAndWeight : models.entrySet()) {
-      Optional<LightweightLinearModel> model =
-          scoringModelsManager.getModel(nameAndWeight.getKey());
-      if (!model.isPresent()) {
-          throw new ClientException(String.format(
-              "Scoring function is MODEL_BASED. Selected model '%s' not found",
-              nameAndWeight.getKey()));
+    for (Map.elonntry<String, Doublelon> namelonAndWelonight : modelonls.elonntrySelont()) {
+      Optional<LightwelonightLinelonarModelonl> modelonl =
+          scoringModelonlsManagelonr.gelontModelonl(namelonAndWelonight.gelontKelony());
+      if (!modelonl.isPrelonselonnt()) {
+          throw nelonw Clielonntelonxcelonption(String.format(
+              "Scoring function is MODelonL_BASelonD. Selonlelonctelond modelonl '%s' not found",
+              namelonAndWelonight.gelontKelony()));
       }
-      selectedModels[i] =
-          new SelectedModel(nameAndWeight.getKey(), nameAndWeight.getValue(), model.get());
+      selonlelonctelondModelonls[i] =
+          nelonw SelonlelonctelondModelonl(namelonAndWelonight.gelontKelony(), namelonAndWelonight.gelontValuelon(), modelonl.gelont());
 
-      if (selectedModels[i].model.isSchemaBased()) {
-        ++numSchemaBased;
-        NUM_SCHEMA_BASED_MODELS.increment();
-      } else {
-        NUM_LEGACY_MODELS.increment();
+      if (selonlelonctelondModelonls[i].modelonl.isSchelonmaBaselond()) {
+        ++numSchelonmaBaselond;
+        NUM_SCHelonMA_BASelonD_MODelonLS.increlonmelonnt();
+      } elonlselon {
+        NUM_LelonGACY_MODelonLS.increlonmelonnt();
       }
       ++i;
     }
 
-    // We should either see all models schema-based, or none of them so, if this is not the case,
-    // we log an error message and fall back to use just the first model, whatever it is.
-    if (numSchemaBased > 0 && numSchemaBased != selectedModels.length) {
-      MIXED_MODEL_TYPES.increment();
-      throw new ClientException(
-          "You cannot mix schema-based and non-schema-based models in the same request, "
-          + "models are: " + models.keySet());
+    // Welon should elonithelonr selonelon all modelonls schelonma-baselond, or nonelon of thelonm so, if this is not thelon caselon,
+    // welon log an elonrror melonssagelon and fall back to uselon just thelon first modelonl, whatelonvelonr it is.
+    if (numSchelonmaBaselond > 0 && numSchelonmaBaselond != selonlelonctelondModelonls.lelonngth) {
+      MIXelonD_MODelonL_TYPelonS.increlonmelonnt();
+      throw nelonw Clielonntelonxcelonption(
+          "You cannot mix schelonma-baselond and non-schelonma-baselond modelonls in thelon samelon relonquelonst, "
+          + "modelonls arelon: " + modelonls.kelonySelont());
     }
 
-    isSchemaBased = selectedModels[0].model.isSchemaBased();
-    useLogitScore = rankingParams.isUseLogitScore();
+    isSchelonmaBaselond = selonlelonctelondModelonls[0].modelonl.isSchelonmaBaselond();
+    uselonLogitScorelon = rankingParams.isUselonLogitScorelon();
   }
 
-  @Override
-  protected double computeScore(LinearScoringData data, boolean forExplanation) throws IOException {
-    ThriftSearchResultFeatures features =
-        isSchemaBased ? createFeaturesForDocument(data, false).getFeatures() : null;
+  @Ovelonrridelon
+  protelonctelond doublelon computelonScorelon(LinelonarScoringData data, boolelonan forelonxplanation) throws IOelonxcelonption {
+    ThriftSelonarchRelonsultFelonaturelons felonaturelons =
+        isSchelonmaBaselond ? crelonatelonFelonaturelonsForDocumelonnt(data, falselon).gelontFelonaturelons() : null;
 
-    double score = 0;
-    for (SelectedModel selectedModel : selectedModels) {
-      double modelScore = isSchemaBased
-          ? new SchemaBasedScoreAccumulator(selectedModel.model).scoreWith(features, useLogitScore)
-          : new LegacyScoreAccumulator(selectedModel.model).scoreWith(data, useLogitScore);
-      score += selectedModel.weight * modelScore;
+    doublelon scorelon = 0;
+    for (SelonlelonctelondModelonl selonlelonctelondModelonl : selonlelonctelondModelonls) {
+      doublelon modelonlScorelon = isSchelonmaBaselond
+          ? nelonw SchelonmaBaselondScorelonAccumulator(selonlelonctelondModelonl.modelonl).scorelonWith(felonaturelons, uselonLogitScorelon)
+          : nelonw LelongacyScorelonAccumulator(selonlelonctelondModelonl.modelonl).scorelonWith(data, uselonLogitScorelon);
+      scorelon += selonlelonctelondModelonl.welonight * modelonlScorelon;
     }
 
-    return score;
+    relonturn scorelon;
   }
 
-  @Override
-  protected void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException {
-    boolean schemaBased = selectedModels[0].model.isSchemaBased();
-    ThriftSearchResultFeatures features =
-        schemaBased ? createFeaturesForDocument(scoringData, false).getFeatures() : null;
+  @Ovelonrridelon
+  protelonctelond void gelonnelonratelonelonxplanationForScoring(
+      LinelonarScoringData scoringData, boolelonan isHit, List<elonxplanation> delontails) throws IOelonxcelonption {
+    boolelonan schelonmaBaselond = selonlelonctelondModelonls[0].modelonl.isSchelonmaBaselond();
+    ThriftSelonarchRelonsultFelonaturelons felonaturelons =
+        schelonmaBaselond ? crelonatelonFelonaturelonsForDocumelonnt(scoringData, falselon).gelontFelonaturelons() : null;
 
-    // 1. Model-based score
-    final List<Explanation> modelExplanations = Lists.newArrayList();
-    float finalScore = 0;
-    for (SelectedModel selectedModel : selectedModels) {
-      double modelScore = schemaBased
-          ? new SchemaBasedScoreAccumulator(selectedModel.model).scoreWith(features, useLogitScore)
-          : new LegacyScoreAccumulator(selectedModel.model).scoreWith(scoringData, useLogitScore);
-      float weightedScore = (float) (selectedModel.weight * modelScore);
-      details.add(Explanation.match(
-          weightedScore, String.format("model=%s score=%.6f weight=%.3f useLogitScore=%s",
-          selectedModel.name, modelScore, selectedModel.weight, useLogitScore)));
-      finalScore += weightedScore;
+    // 1. Modelonl-baselond scorelon
+    final List<elonxplanation> modelonlelonxplanations = Lists.nelonwArrayList();
+    float finalScorelon = 0;
+    for (SelonlelonctelondModelonl selonlelonctelondModelonl : selonlelonctelondModelonls) {
+      doublelon modelonlScorelon = schelonmaBaselond
+          ? nelonw SchelonmaBaselondScorelonAccumulator(selonlelonctelondModelonl.modelonl).scorelonWith(felonaturelons, uselonLogitScorelon)
+          : nelonw LelongacyScorelonAccumulator(selonlelonctelondModelonl.modelonl).scorelonWith(scoringData, uselonLogitScorelon);
+      float welonightelondScorelon = (float) (selonlelonctelondModelonl.welonight * modelonlScorelon);
+      delontails.add(elonxplanation.match(
+          welonightelondScorelon, String.format("modelonl=%s scorelon=%.6f welonight=%.3f uselonLogitScorelon=%s",
+          selonlelonctelondModelonl.namelon, modelonlScorelon, selonlelonctelondModelonl.welonight, uselonLogitScorelon)));
+      finalScorelon += welonightelondScorelon;
     }
 
-    details.add(Explanation.match(
-        finalScore, String.format("Total model-based score (hit=%s)", isHit), modelExplanations));
+    delontails.add(elonxplanation.match(
+        finalScorelon, String.format("Total modelonl-baselond scorelon (hit=%s)", isHit), modelonlelonxplanations));
   }
 
-  private static final class SelectedModel {
-    public final String name;
-    public final double weight;
-    public final LightweightLinearModel model;
+  privatelon static final class SelonlelonctelondModelonl {
+    public final String namelon;
+    public final doublelon welonight;
+    public final LightwelonightLinelonarModelonl modelonl;
 
-    private SelectedModel(String name, double weight, LightweightLinearModel model) {
-      this.name = name;
-      this.weight = weight;
-      this.model = model;
+    privatelon SelonlelonctelondModelonl(String namelon, doublelon welonight, LightwelonightLinelonarModelonl modelonl) {
+      this.namelon = namelon;
+      this.welonight = welonight;
+      this.modelonl = modelonl;
     }
   }
 }

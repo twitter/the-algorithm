@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_ranker
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.timelonlinelon_rankelonr
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelonWithelonxtractelondFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonsWithSourcelonFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Map of tweetId -> sourceTweet of retweets present in Timeline Ranker candidates list.
- * These tweets are used only for further ranking. They are not returned to the end user.
+ * Map of twelonelontId -> sourcelonTwelonelont of relontwelonelonts prelonselonnt in Timelonlinelon Rankelonr candidatelons list.
+ * Thelonselon twelonelonts arelon uselond only for furthelonr ranking. Thelony arelon not relonturnelond to thelon elonnd uselonr.
  */
-object TimelineRankerInNetworkSourceTweetsByTweetIdMapFeature
-    extends Feature[PipelineQuery, Map[Long, t.CandidateTweet]]
+objelonct TimelonlinelonRankelonrInNelontworkSourcelonTwelonelontsByTwelonelontIdMapFelonaturelon
+    elonxtelonnds Felonaturelon[PipelonlinelonQuelonry, Map[Long, t.CandidatelonTwelonelont]]
 
-@Singleton
-class TimelineRankerInNetworkCandidateSource @Inject() (
-  timelineRankerClient: t.TimelineRanker.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[t.RecapQuery, t.CandidateTweet] {
+@Singlelonton
+class TimelonlinelonRankelonrInNelontworkCandidatelonSourcelon @Injelonct() (
+  timelonlinelonRankelonrClielonnt: t.TimelonlinelonRankelonr.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelonWithelonxtractelondFelonaturelons[t.ReloncapQuelonry, t.CandidatelonTwelonelont] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineRankerInNetwork")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr("TimelonlinelonRankelonrInNelontwork")
 
-  override def apply(
-    request: t.RecapQuery
-  ): Stitch[CandidatesWithSourceFeatures[t.CandidateTweet]] = {
+  ovelonrridelon delonf apply(
+    relonquelonst: t.ReloncapQuelonry
+  ): Stitch[CandidatelonsWithSourcelonFelonaturelons[t.CandidatelonTwelonelont]] = {
     Stitch
-      .callFuture(timelineRankerClient.getRecycledTweetCandidates(Seq(request)))
-      .map { response: Seq[t.GetCandidateTweetsResponse] =>
-        val candidates =
-          response.headOption.flatMap(_.candidates).getOrElse(Seq.empty).filter(_.tweet.nonEmpty)
-        val sourceTweetsByTweetId =
-          response.headOption
-            .flatMap(_.sourceTweets).getOrElse(Seq.empty).filter(_.tweet.nonEmpty)
-            .map { candidate =>
-              (candidate.tweet.get.id, candidate)
+      .callFuturelon(timelonlinelonRankelonrClielonnt.gelontReloncyclelondTwelonelontCandidatelons(Selonq(relonquelonst)))
+      .map { relonsponselon: Selonq[t.GelontCandidatelonTwelonelontsRelonsponselon] =>
+        val candidatelons =
+          relonsponselon.helonadOption.flatMap(_.candidatelons).gelontOrelonlselon(Selonq.elonmpty).filtelonr(_.twelonelont.nonelonmpty)
+        val sourcelonTwelonelontsByTwelonelontId =
+          relonsponselon.helonadOption
+            .flatMap(_.sourcelonTwelonelonts).gelontOrelonlselon(Selonq.elonmpty).filtelonr(_.twelonelont.nonelonmpty)
+            .map { candidatelon =>
+              (candidatelon.twelonelont.gelont.id, candidatelon)
             }.toMap
-        val sourceTweetsByTweetIdMapFeature = FeatureMapBuilder()
-          .add(TimelineRankerInNetworkSourceTweetsByTweetIdMapFeature, sourceTweetsByTweetId)
+        val sourcelonTwelonelontsByTwelonelontIdMapFelonaturelon = FelonaturelonMapBuildelonr()
+          .add(TimelonlinelonRankelonrInNelontworkSourcelonTwelonelontsByTwelonelontIdMapFelonaturelon, sourcelonTwelonelontsByTwelonelontId)
           .build()
-        CandidatesWithSourceFeatures(
-          candidates = candidates,
-          features = sourceTweetsByTweetIdMapFeature)
+        CandidatelonsWithSourcelonFelonaturelons(
+          candidatelons = candidatelons,
+          felonaturelons = sourcelonTwelonelontsByTwelonelontIdMapFelonaturelon)
       }
   }
 }

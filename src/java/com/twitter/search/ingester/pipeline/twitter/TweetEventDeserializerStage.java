@@ -1,137 +1,137 @@
-package com.twitter.search.ingester.pipeline.twitter;
-import com.google.common.annotations.VisibleForTesting;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.apache.thrift.TDeserializer;
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.model.KafkaRawRecord;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelondTypelons;
+import org.apachelon.thrift.TDelonselonrializelonr;
+import org.apachelon.thrift.Telonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import com.twittelonr.selonarch.common.delonbug.DelonbugelonvelonntUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwelonelontelonvelonnt;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.KafkaRawReloncord;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonRuntimelonelonxcelonption;
 
 /**
- * Deserializes {@link KafkaRawRecord} into IngesterTweetEvent and emits those.
+ * Delonselonrializelons {@link KafkaRawReloncord} into IngelonstelonrTwelonelontelonvelonnt and elonmits thoselon.
  */
-@ConsumedTypes(KafkaRawRecord.class)
-@ProducedTypes(IngesterTweetEvent.class)
-public class TweetEventDeserializerStage extends TwitterBaseStage
-    <KafkaRawRecord, IngesterTweetEvent> {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetEventDeserializerStage.class);
+@ConsumelondTypelons(KafkaRawReloncord.class)
+@ProducelondTypelons(IngelonstelonrTwelonelontelonvelonnt.class)
+public class TwelonelontelonvelonntDelonselonrializelonrStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <KafkaRawReloncord, IngelonstelonrTwelonelontelonvelonnt> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwelonelontelonvelonntDelonselonrializelonrStagelon.class);
 
-  // Limit how much the logs get polluted
-  private static final int MAX_OOM_SERIALIZED_BYTES_LOGGED = 5000;
-  private static final char[] HEX_ARRAY = "0123456789ABCDEF".toCharArray();
+  // Limit how much thelon logs gelont pollutelond
+  privatelon static final int MAX_OOM_SelonRIALIZelonD_BYTelonS_LOGGelonD = 5000;
+  privatelon static final char[] HelonX_ARRAY = "0123456789ABCDelonF".toCharArray();
 
-  private final TDeserializer deserializer = new TDeserializer();
+  privatelon final TDelonselonrializelonr delonselonrializelonr = nelonw TDelonselonrializelonr();
 
-  private SearchCounter outOfMemoryErrors;
-  private SearchCounter outOfMemoryErrors2;
-  private SearchCounter totalEventsCount;
-  private SearchCounter validEventsCount;
-  private SearchCounter deserializationErrorsCount;
+  privatelon SelonarchCountelonr outOfMelonmoryelonrrors;
+  privatelon SelonarchCountelonr outOfMelonmoryelonrrors2;
+  privatelon SelonarchCountelonr totalelonvelonntsCount;
+  privatelon SelonarchCountelonr validelonvelonntsCount;
+  privatelon SelonarchCountelonr delonselonrializationelonrrorsCount;
 
-  @Override
+  @Ovelonrridelon
   public void initStats() {
-    super.initStats();
-    innerSetupStats();
+    supelonr.initStats();
+    innelonrSelontupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    outOfMemoryErrors = SearchCounter.export(getStageNamePrefix() + "_out_of_memory_errors");
-    outOfMemoryErrors2 = SearchCounter.export(getStageNamePrefix() + "_out_of_memory_errors_2");
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
-    validEventsCount = SearchCounter.export(getStageNamePrefix() + "_valid_events_count");
-    deserializationErrorsCount =
-        SearchCounter.export(getStageNamePrefix() + "_deserialization_errors_count");
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    outOfMelonmoryelonrrors = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_out_of_melonmory_elonrrors");
+    outOfMelonmoryelonrrors2 = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_out_of_melonmory_elonrrors_2");
+    totalelonvelonntsCount = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_total_elonvelonnts_count");
+    validelonvelonntsCount = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_valid_elonvelonnts_count");
+    delonselonrializationelonrrorsCount =
+        SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_delonselonrialization_elonrrors_count");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof KafkaRawRecord)) {
-      throw new StageException(this, "Object is not a KafkaRawRecord: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof KafkaRawReloncord)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not a KafkaRawReloncord: " + obj);
     }
 
-    KafkaRawRecord kafkaRecord = (KafkaRawRecord) obj;
-    IngesterTweetEvent tweetEvent = tryDeserializeRecord(kafkaRecord);
+    KafkaRawReloncord kafkaReloncord = (KafkaRawReloncord) obj;
+    IngelonstelonrTwelonelontelonvelonnt twelonelontelonvelonnt = tryDelonselonrializelonReloncord(kafkaReloncord);
 
-    if (tweetEvent != null) {
-      emitAndCount(tweetEvent);
+    if (twelonelontelonvelonnt != null) {
+      elonmitAndCount(twelonelontelonvelonnt);
     }
   }
 
-  @Override
-  protected IngesterTweetEvent innerRunStageV2(KafkaRawRecord kafkaRawRecord) {
-    IngesterTweetEvent ingesterTweetEvent = tryDeserializeRecord(kafkaRawRecord);
-    if (ingesterTweetEvent == null) {
-      throw new PipelineStageRuntimeException("failed to deserialize KafkaRawRecord : "
-          + kafkaRawRecord);
+  @Ovelonrridelon
+  protelonctelond IngelonstelonrTwelonelontelonvelonnt innelonrRunStagelonV2(KafkaRawReloncord kafkaRawReloncord) {
+    IngelonstelonrTwelonelontelonvelonnt ingelonstelonrTwelonelontelonvelonnt = tryDelonselonrializelonReloncord(kafkaRawReloncord);
+    if (ingelonstelonrTwelonelontelonvelonnt == null) {
+      throw nelonw PipelonlinelonStagelonRuntimelonelonxcelonption("failelond to delonselonrializelon KafkaRawReloncord : "
+          + kafkaRawReloncord);
     }
-    return ingesterTweetEvent;
+    relonturn ingelonstelonrTwelonelontelonvelonnt;
   }
 
-  private IngesterTweetEvent tryDeserializeRecord(KafkaRawRecord kafkaRecord) {
+  privatelon IngelonstelonrTwelonelontelonvelonnt tryDelonselonrializelonReloncord(KafkaRawReloncord kafkaReloncord) {
     try {
-      totalEventsCount.increment();
-      IngesterTweetEvent tweetEvent = deserialize(kafkaRecord);
-      validEventsCount.increment();
-      return tweetEvent;
-    } catch (OutOfMemoryError e) {
+      totalelonvelonntsCount.increlonmelonnt();
+      IngelonstelonrTwelonelontelonvelonnt twelonelontelonvelonnt = delonselonrializelon(kafkaReloncord);
+      validelonvelonntsCount.increlonmelonnt();
+      relonturn twelonelontelonvelonnt;
+    } catch (OutOfMelonmoryelonrror elon) {
       try {
-        outOfMemoryErrors.increment();
-        byte[] bytes = kafkaRecord.getData();
-        int limit = Math.min(bytes.length, MAX_OOM_SERIALIZED_BYTES_LOGGED);
-        StringBuilder sb = new StringBuilder(2 * limit + 100)
-            .append("OutOfMemoryError deserializing ").append(bytes.length).append(" bytes: ");
-        appendBytesAsHex(sb, bytes, MAX_OOM_SERIALIZED_BYTES_LOGGED);
-        LOG.error(sb.toString(), e);
-      } catch (OutOfMemoryError e2) {
-        outOfMemoryErrors2.increment();
+        outOfMelonmoryelonrrors.increlonmelonnt();
+        bytelon[] bytelons = kafkaReloncord.gelontData();
+        int limit = Math.min(bytelons.lelonngth, MAX_OOM_SelonRIALIZelonD_BYTelonS_LOGGelonD);
+        StringBuildelonr sb = nelonw StringBuildelonr(2 * limit + 100)
+            .appelonnd("OutOfMelonmoryelonrror delonselonrializing ").appelonnd(bytelons.lelonngth).appelonnd(" bytelons: ");
+        appelonndBytelonsAsHelonx(sb, bytelons, MAX_OOM_SelonRIALIZelonD_BYTelonS_LOGGelonD);
+        LOG.elonrror(sb.toString(), elon);
+      } catch (OutOfMelonmoryelonrror elon2) {
+        outOfMelonmoryelonrrors2.increlonmelonnt();
       }
     }
 
-    return null;
+    relonturn null;
 
   }
 
-  private IngesterTweetEvent deserialize(KafkaRawRecord kafkaRecord) {
+  privatelon IngelonstelonrTwelonelontelonvelonnt delonselonrializelon(KafkaRawReloncord kafkaReloncord) {
     try {
-      IngesterTweetEvent ingesterTweetEvent = new IngesterTweetEvent();
-      synchronized (this) {
-        deserializer.deserialize(ingesterTweetEvent, kafkaRecord.getData());
+      IngelonstelonrTwelonelontelonvelonnt ingelonstelonrTwelonelontelonvelonnt = nelonw IngelonstelonrTwelonelontelonvelonnt();
+      synchronizelond (this) {
+        delonselonrializelonr.delonselonrializelon(ingelonstelonrTwelonelontelonvelonnt, kafkaReloncord.gelontData());
       }
-      // Record the created_at time and then we first saw this tweet in the ingester for tracking
-      // down the ingestion pipeline.
-      addDebugEventsToIncomingTweet(ingesterTweetEvent, kafkaRecord.getReadAtTimestampMs());
-      return ingesterTweetEvent;
-    } catch (TException e) {
-      LOG.error("Unable to deserialize TweetEventData", e);
-      deserializationErrorsCount.increment();
+      // Reloncord thelon crelonatelond_at timelon and thelonn welon first saw this twelonelont in thelon ingelonstelonr for tracking
+      // down thelon ingelonstion pipelonlinelon.
+      addDelonbugelonvelonntsToIncomingTwelonelont(ingelonstelonrTwelonelontelonvelonnt, kafkaReloncord.gelontRelonadAtTimelonstampMs());
+      relonturn ingelonstelonrTwelonelontelonvelonnt;
+    } catch (Telonxcelonption elon) {
+      LOG.elonrror("Unablelon to delonselonrializelon TwelonelontelonvelonntData", elon);
+      delonselonrializationelonrrorsCount.increlonmelonnt();
     }
-    return null;
+    relonturn null;
   }
 
-  private void addDebugEventsToIncomingTweet(
-      IngesterTweetEvent ingesterTweetEvent, long readAtTimestampMs) {
-    DebugEventUtil.setCreatedAtDebugEvent(
-        ingesterTweetEvent, ingesterTweetEvent.getFlags().getTimestamp_ms());
-    DebugEventUtil.setProcessingStartedAtDebugEvent(ingesterTweetEvent, readAtTimestampMs);
+  privatelon void addDelonbugelonvelonntsToIncomingTwelonelont(
+      IngelonstelonrTwelonelontelonvelonnt ingelonstelonrTwelonelontelonvelonnt, long relonadAtTimelonstampMs) {
+    DelonbugelonvelonntUtil.selontCrelonatelondAtDelonbugelonvelonnt(
+        ingelonstelonrTwelonelontelonvelonnt, ingelonstelonrTwelonelontelonvelonnt.gelontFlags().gelontTimelonstamp_ms());
+    DelonbugelonvelonntUtil.selontProcelonssingStartelondAtDelonbugelonvelonnt(ingelonstelonrTwelonelontelonvelonnt, relonadAtTimelonstampMs);
 
-    // The TweetEventDeserializerStage takes in a byte[] representation of a tweet, so debug events
-    // are not automatically appended by TwitterBaseStage. We do that explicitly here.
-    DebugEventUtil.addDebugEvent(ingesterTweetEvent, getFullStageName(), clock.nowMillis());
+    // Thelon TwelonelontelonvelonntDelonselonrializelonrStagelon takelons in a bytelon[] relonprelonselonntation of a twelonelont, so delonbug elonvelonnts
+    // arelon not automatically appelonndelond by TwittelonrBaselonStagelon. Welon do that elonxplicitly helonrelon.
+    DelonbugelonvelonntUtil.addDelonbugelonvelonnt(ingelonstelonrTwelonelontelonvelonnt, gelontFullStagelonNamelon(), clock.nowMillis());
   }
 
-  @VisibleForTesting
-  static void appendBytesAsHex(StringBuilder sb, byte[] bytes, int maxLength) {
-    int limit = Math.min(bytes.length, maxLength);
+  @VisiblelonForTelonsting
+  static void appelonndBytelonsAsHelonx(StringBuildelonr sb, bytelon[] bytelons, int maxLelonngth) {
+    int limit = Math.min(bytelons.lelonngth, maxLelonngth);
     for (int j = 0; j < limit; j++) {
-      sb.append(HEX_ARRAY[(bytes[j] >>> 4) & 0x0F]);
-      sb.append(HEX_ARRAY[bytes[j] & 0x0F]);
+      sb.appelonnd(HelonX_ARRAY[(bytelons[j] >>> 4) & 0x0F]);
+      sb.appelonnd(HelonX_ARRAY[bytelons[j] & 0x0F]);
     }
   }
 }

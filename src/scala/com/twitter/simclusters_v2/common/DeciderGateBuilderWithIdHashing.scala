@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.common
+packagelon com.twittelonr.simclustelonrs_v2.common
 
-import com.twitter.decider.Decider
-import com.twitter.servo.decider.{DeciderGateBuilder, DeciderKeyName}
-import com.twitter.servo.util.Gate
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.selonrvo.deloncidelonr.{DeloncidelonrGatelonBuildelonr, DeloncidelonrKelonyNamelon}
+import com.twittelonr.selonrvo.util.Gatelon
 
-class DeciderGateBuilderWithIdHashing(decider: Decider) extends DeciderGateBuilder(decider) {
+class DeloncidelonrGatelonBuildelonrWithIdHashing(deloncidelonr: Deloncidelonr) elonxtelonnds DeloncidelonrGatelonBuildelonr(deloncidelonr) {
 
-  def idGateWithHashing[T](key: DeciderKeyName): Gate[T] = {
-    val feature = keyToFeature(key)
-    // Only if the decider is neither fully on / off is the object hashed
-    // This does require an additional call to get the decider availability but that is comparatively cheaper
-    val convertToHash: T => Long = (obj: T) => {
-      val availability = feature.availability.getOrElse(0)
+  delonf idGatelonWithHashing[T](kelony: DeloncidelonrKelonyNamelon): Gatelon[T] = {
+    val felonaturelon = kelonyToFelonaturelon(kelony)
+    // Only if thelon deloncidelonr is nelonithelonr fully on / off is thelon objelonct hashelond
+    // This doelons relonquirelon an additional call to gelont thelon deloncidelonr availability but that is comparativelonly chelonapelonr
+    val convelonrtToHash: T => Long = (obj: T) => {
+      val availability = felonaturelon.availability.gelontOrelonlselon(0)
       if (availability == 10000 || availability == 0) availability
-      else obj.hashCode
+      elonlselon obj.hashCodelon
     }
-    idGate(key).contramap[T](convertToHash)
+    idGatelon(kelony).contramap[T](convelonrtToHash)
   }
 
 }

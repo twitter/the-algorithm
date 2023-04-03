@@ -1,177 +1,177 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.functional_component.decorator.HomeQueryTypePredicates
-import com.twitter.home_mixer.functional_component.decorator.HomeTweetTypePredicates
-import com.twitter.home_mixer.model.HomeFeatures.AccountAgeFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.VideoDurationMsFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect.ClientEvent
-import com.twitter.product_mixer.component_library.side_effect.ScribeClientEventSideEffect.EventNamespace
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.HomelonQuelonryTypelonPrelondicatelons
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.HomelonTwelonelontTypelonPrelondicatelons
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AccountAgelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SuggelonstTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.VidelonoDurationMsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ForYouProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListTwelonelontsProduct
+import com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct.ScribelonClielonntelonvelonntSidelonelonffelonct.Clielonntelonvelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct.ScribelonClielonntelonvelonntSidelonelonffelonct.elonvelonntNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.injelonction.scribelon.InjelonctionScribelonUtil
 
-private[side_effect] sealed trait ClientEventsBuilder {
-  private val FollowingSection = Some("home_latest")
-  private val ForYouSection = Some("home")
-  private val ListTweetsSection = Some("list")
+privatelon[sidelon_elonffelonct] selonalelond trait ClielonntelonvelonntsBuildelonr {
+  privatelon val FollowingSelonction = Somelon("homelon_latelonst")
+  privatelon val ForYouSelonction = Somelon("homelon")
+  privatelon val ListTwelonelontsSelonction = Somelon("list")
 
-  protected def section(query: PipelineQuery): Option[String] = {
-    query.product match {
-      case FollowingProduct => FollowingSection
-      case ForYouProduct => ForYouSection
-      case ListTweetsProduct => ListTweetsSection
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  protelonctelond delonf selonction(quelonry: PipelonlinelonQuelonry): Option[String] = {
+    quelonry.product match {
+      caselon FollowingProduct => FollowingSelonction
+      caselon ForYouProduct => ForYouSelonction
+      caselon ListTwelonelontsProduct => ListTwelonelontsSelonction
+      caselon othelonr => throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $othelonr")
     }
   }
 
-  protected def count(
-    candidates: Seq[CandidateWithDetails],
-    predicate: FeatureMap => Boolean = _ => true,
-    queryFeatures: FeatureMap = FeatureMap.empty
-  ): Option[Long] = Some(candidates.view.count(item => predicate(item.features ++ queryFeatures)))
+  protelonctelond delonf count(
+    candidatelons: Selonq[CandidatelonWithDelontails],
+    prelondicatelon: FelonaturelonMap => Boolelonan = _ => truelon,
+    quelonryFelonaturelons: FelonaturelonMap = FelonaturelonMap.elonmpty
+  ): Option[Long] = Somelon(candidatelons.vielonw.count(itelonm => prelondicatelon(itelonm.felonaturelons ++ quelonryFelonaturelons)))
 
-  protected def sum(
-    candidates: Seq[CandidateWithDetails],
-    predicate: FeatureMap => Option[Int],
-    queryFeatures: FeatureMap = FeatureMap.empty
+  protelonctelond delonf sum(
+    candidatelons: Selonq[CandidatelonWithDelontails],
+    prelondicatelon: FelonaturelonMap => Option[Int],
+    quelonryFelonaturelons: FelonaturelonMap = FelonaturelonMap.elonmpty
   ): Option[Long] =
-    Some(candidates.view.flatMap(item => predicate(item.features ++ queryFeatures)).sum)
+    Somelon(candidatelons.vielonw.flatMap(itelonm => prelondicatelon(itelonm.felonaturelons ++ quelonryFelonaturelons)).sum)
 }
 
-private[side_effect] object ServedEventsBuilder extends ClientEventsBuilder {
+privatelon[sidelon_elonffelonct] objelonct SelonrvelondelonvelonntsBuildelonr elonxtelonnds ClielonntelonvelonntsBuildelonr {
 
-  private val ServedTweetsAction = Some("served_tweets")
-  private val ServedUsersAction = Some("served_users")
-  private val InjectedComponent = Some("injected")
-  private val PromotedComponent = Some("promoted")
-  private val WhoToFollowComponent = Some("who_to_follow")
-  private val WithVideoDurationComponent = Some("with_video_duration")
-  private val VideoDurationSumElement = Some("video_duration_sum")
-  private val NumVideosElement = Some("num_videos")
+  privatelon val SelonrvelondTwelonelontsAction = Somelon("selonrvelond_twelonelonts")
+  privatelon val SelonrvelondUselonrsAction = Somelon("selonrvelond_uselonrs")
+  privatelon val InjelonctelondComponelonnt = Somelon("injelonctelond")
+  privatelon val PromotelondComponelonnt = Somelon("promotelond")
+  privatelon val WhoToFollowComponelonnt = Somelon("who_to_follow")
+  privatelon val WithVidelonoDurationComponelonnt = Somelon("with_videlono_duration")
+  privatelon val VidelonoDurationSumelonlelonmelonnt = Somelon("videlono_duration_sum")
+  privatelon val NumVidelonoselonlelonmelonnt = Somelon("num_videlonos")
 
-  def build(
-    query: PipelineQuery,
-    injectedTweets: Seq[ItemCandidateWithDetails],
-    promotedTweets: Seq[ItemCandidateWithDetails],
-    whoToFollowUsers: Seq[ItemCandidateWithDetails]
-  ): Seq[ClientEvent] = {
-    val baseEventNamespace = EventNamespace(
-      section = section(query),
-      action = ServedTweetsAction
+  delonf build(
+    quelonry: PipelonlinelonQuelonry,
+    injelonctelondTwelonelonts: Selonq[ItelonmCandidatelonWithDelontails],
+    promotelondTwelonelonts: Selonq[ItelonmCandidatelonWithDelontails],
+    whoToFollowUselonrs: Selonq[ItelonmCandidatelonWithDelontails]
+  ): Selonq[Clielonntelonvelonnt] = {
+    val baselonelonvelonntNamelonspacelon = elonvelonntNamelonspacelon(
+      selonction = selonction(quelonry),
+      action = SelonrvelondTwelonelontsAction
     )
-    val overallServedEvents = Seq(
-      ClientEvent(baseEventNamespace, eventValue = count(injectedTweets ++ promotedTweets)),
-      ClientEvent(
-        baseEventNamespace.copy(component = InjectedComponent),
-        eventValue = count(injectedTweets)),
-      ClientEvent(
-        baseEventNamespace.copy(component = PromotedComponent),
-        eventValue = count(promotedTweets)),
-      ClientEvent(
-        baseEventNamespace.copy(component = WhoToFollowComponent, action = ServedUsersAction),
-        eventValue = count(whoToFollowUsers)),
+    val ovelonrallSelonrvelondelonvelonnts = Selonq(
+      Clielonntelonvelonnt(baselonelonvelonntNamelonspacelon, elonvelonntValuelon = count(injelonctelondTwelonelonts ++ promotelondTwelonelonts)),
+      Clielonntelonvelonnt(
+        baselonelonvelonntNamelonspacelon.copy(componelonnt = InjelonctelondComponelonnt),
+        elonvelonntValuelon = count(injelonctelondTwelonelonts)),
+      Clielonntelonvelonnt(
+        baselonelonvelonntNamelonspacelon.copy(componelonnt = PromotelondComponelonnt),
+        elonvelonntValuelon = count(promotelondTwelonelonts)),
+      Clielonntelonvelonnt(
+        baselonelonvelonntNamelonspacelon.copy(componelonnt = WhoToFollowComponelonnt, action = SelonrvelondUselonrsAction),
+        elonvelonntValuelon = count(whoToFollowUselonrs)),
     )
 
-    val tweetTypeServedEvents = HomeTweetTypePredicates.PredicateMap.map {
-      case (tweetType, predicate) =>
-        ClientEvent(
-          baseEventNamespace.copy(component = InjectedComponent, element = Some(tweetType)),
-          eventValue = count(injectedTweets, predicate, query.features.getOrElse(FeatureMap.empty))
+    val twelonelontTypelonSelonrvelondelonvelonnts = HomelonTwelonelontTypelonPrelondicatelons.PrelondicatelonMap.map {
+      caselon (twelonelontTypelon, prelondicatelon) =>
+        Clielonntelonvelonnt(
+          baselonelonvelonntNamelonspacelon.copy(componelonnt = InjelonctelondComponelonnt, elonlelonmelonnt = Somelon(twelonelontTypelon)),
+          elonvelonntValuelon = count(injelonctelondTwelonelonts, prelondicatelon, quelonry.felonaturelons.gelontOrelonlselon(FelonaturelonMap.elonmpty))
         )
-    }.toSeq
+    }.toSelonq
 
-    val suggestTypeServedEvents = injectedTweets
-      .flatMap(_.features.getOrElse(SuggestTypeFeature, None))
+    val suggelonstTypelonSelonrvelondelonvelonnts = injelonctelondTwelonelonts
+      .flatMap(_.felonaturelons.gelontOrelonlselon(SuggelonstTypelonFelonaturelon, Nonelon))
       .map {
-        InjectionScribeUtil.scribeComponent
+        InjelonctionScribelonUtil.scribelonComponelonnt
       }
-      .groupBy(identity).map {
-        case (suggestType, group) =>
-          ClientEvent(
-            baseEventNamespace.copy(component = suggestType),
-            eventValue = Some(group.size.toLong))
-      }.toSeq
+      .groupBy(idelonntity).map {
+        caselon (suggelonstTypelon, group) =>
+          Clielonntelonvelonnt(
+            baselonelonvelonntNamelonspacelon.copy(componelonnt = suggelonstTypelon),
+            elonvelonntValuelon = Somelon(group.sizelon.toLong))
+      }.toSelonq
 
-    // Video duration events
-    val numVideosEvent = ClientEvent(
-      baseEventNamespace.copy(component = WithVideoDurationComponent, element = NumVideosElement),
-      eventValue = count(injectedTweets, _.getOrElse(VideoDurationMsFeature, None).nonEmpty)
+    // Videlono duration elonvelonnts
+    val numVidelonoselonvelonnt = Clielonntelonvelonnt(
+      baselonelonvelonntNamelonspacelon.copy(componelonnt = WithVidelonoDurationComponelonnt, elonlelonmelonnt = NumVidelonoselonlelonmelonnt),
+      elonvelonntValuelon = count(injelonctelondTwelonelonts, _.gelontOrelonlselon(VidelonoDurationMsFelonaturelon, Nonelon).nonelonmpty)
     )
-    val videoDurationSumEvent = ClientEvent(
-      baseEventNamespace
-        .copy(component = WithVideoDurationComponent, element = VideoDurationSumElement),
-      eventValue = sum(injectedTweets, _.getOrElse(VideoDurationMsFeature, None))
+    val videlonoDurationSumelonvelonnt = Clielonntelonvelonnt(
+      baselonelonvelonntNamelonspacelon
+        .copy(componelonnt = WithVidelonoDurationComponelonnt, elonlelonmelonnt = VidelonoDurationSumelonlelonmelonnt),
+      elonvelonntValuelon = sum(injelonctelondTwelonelonts, _.gelontOrelonlselon(VidelonoDurationMsFelonaturelon, Nonelon))
     )
-    val videoEvents = Seq(numVideosEvent, videoDurationSumEvent)
+    val videlonoelonvelonnts = Selonq(numVidelonoselonvelonnt, videlonoDurationSumelonvelonnt)
 
-    overallServedEvents ++ tweetTypeServedEvents ++ suggestTypeServedEvents ++ videoEvents
+    ovelonrallSelonrvelondelonvelonnts ++ twelonelontTypelonSelonrvelondelonvelonnts ++ suggelonstTypelonSelonrvelondelonvelonnts ++ videlonoelonvelonnts
   }
 }
 
-private[side_effect] object EmptyTimelineEventsBuilder extends ClientEventsBuilder {
-  private val EmptyAction = Some("empty")
-  private val AccountAgeLessThan30MinutesComponent = Some("account_age_less_than_30_minutes")
-  private val ServedNonPromotedTweetElement = Some("served_non_promoted_tweet")
+privatelon[sidelon_elonffelonct] objelonct elonmptyTimelonlinelonelonvelonntsBuildelonr elonxtelonnds ClielonntelonvelonntsBuildelonr {
+  privatelon val elonmptyAction = Somelon("elonmpty")
+  privatelon val AccountAgelonLelonssThan30MinutelonsComponelonnt = Somelon("account_agelon_lelonss_than_30_minutelons")
+  privatelon val SelonrvelondNonPromotelondTwelonelontelonlelonmelonnt = Somelon("selonrvelond_non_promotelond_twelonelont")
 
-  def build(
-    query: PipelineQuery,
-    injectedTweets: Seq[ItemCandidateWithDetails]
-  ): Seq[ClientEvent] = {
-    val baseEventNamespace = EventNamespace(
-      section = section(query),
-      action = EmptyAction
+  delonf build(
+    quelonry: PipelonlinelonQuelonry,
+    injelonctelondTwelonelonts: Selonq[ItelonmCandidatelonWithDelontails]
+  ): Selonq[Clielonntelonvelonnt] = {
+    val baselonelonvelonntNamelonspacelon = elonvelonntNamelonspacelon(
+      selonction = selonction(quelonry),
+      action = elonmptyAction
     )
 
-    // Empty timeline events
-    val accountAgeLessThan30Minutes = query.features
-      .flatMap(_.getOrElse(AccountAgeFeature, None))
-      .exists(_.untilNow < 30.minutes)
-    val isEmptyTimeline = count(injectedTweets).contains(0L)
-    val predicates = Seq(
-      None -> isEmptyTimeline,
-      AccountAgeLessThan30MinutesComponent -> (isEmptyTimeline && accountAgeLessThan30Minutes)
+    // elonmpty timelonlinelon elonvelonnts
+    val accountAgelonLelonssThan30Minutelons = quelonry.felonaturelons
+      .flatMap(_.gelontOrelonlselon(AccountAgelonFelonaturelon, Nonelon))
+      .elonxists(_.untilNow < 30.minutelons)
+    val iselonmptyTimelonlinelon = count(injelonctelondTwelonelonts).contains(0L)
+    val prelondicatelons = Selonq(
+      Nonelon -> iselonmptyTimelonlinelon,
+      AccountAgelonLelonssThan30MinutelonsComponelonnt -> (iselonmptyTimelonlinelon && accountAgelonLelonssThan30Minutelons)
     )
     for {
-      (component, predicate) <- predicates
-      if predicate
-    } yield ClientEvent(
-      baseEventNamespace.copy(component = component, element = ServedNonPromotedTweetElement))
+      (componelonnt, prelondicatelon) <- prelondicatelons
+      if prelondicatelon
+    } yielonld Clielonntelonvelonnt(
+      baselonelonvelonntNamelonspacelon.copy(componelonnt = componelonnt, elonlelonmelonnt = SelonrvelondNonPromotelondTwelonelontelonlelonmelonnt))
   }
 }
 
-private[side_effect] object QueryEventsBuilder extends ClientEventsBuilder {
+privatelon[sidelon_elonffelonct] objelonct QuelonryelonvelonntsBuildelonr elonxtelonnds ClielonntelonvelonntsBuildelonr {
 
-  private val ServedSizePredicateMap: Map[String, Int => Boolean] = Map(
-    ("size_is_empty", _ <= 0),
-    ("size_at_most_5", _ <= 5),
-    ("size_at_most_10", _ <= 10),
-    ("size_at_most_35", _ <= 35)
+  privatelon val SelonrvelondSizelonPrelondicatelonMap: Map[String, Int => Boolelonan] = Map(
+    ("sizelon_is_elonmpty", _ <= 0),
+    ("sizelon_at_most_5", _ <= 5),
+    ("sizelon_at_most_10", _ <= 10),
+    ("sizelon_at_most_35", _ <= 35)
   )
 
-  def build(
-    query: PipelineQuery,
-    injectedTweets: Seq[ItemCandidateWithDetails]
-  ): Seq[ClientEvent] = {
-    val baseEventNamespace = EventNamespace(
-      section = section(query)
+  delonf build(
+    quelonry: PipelonlinelonQuelonry,
+    injelonctelondTwelonelonts: Selonq[ItelonmCandidatelonWithDelontails]
+  ): Selonq[Clielonntelonvelonnt] = {
+    val baselonelonvelonntNamelonspacelon = elonvelonntNamelonspacelon(
+      selonction = selonction(quelonry)
     )
-    val queryFeatureMap = query.features.getOrElse(FeatureMap.empty)
-    val servedSizeQueryEvents =
+    val quelonryFelonaturelonMap = quelonry.felonaturelons.gelontOrelonlselon(FelonaturelonMap.elonmpty)
+    val selonrvelondSizelonQuelonryelonvelonnts =
       for {
-        (queryPredicateName, queryPredicate) <- HomeQueryTypePredicates.PredicateMap
-        if queryPredicate(queryFeatureMap)
-        (servedSizePredicateName, servedSizePredicate) <- ServedSizePredicateMap
-        if servedSizePredicate(injectedTweets.size)
-      } yield ClientEvent(
-        baseEventNamespace
-          .copy(component = Some(servedSizePredicateName), action = Some(queryPredicateName)))
-    servedSizeQueryEvents.toSeq
+        (quelonryPrelondicatelonNamelon, quelonryPrelondicatelon) <- HomelonQuelonryTypelonPrelondicatelons.PrelondicatelonMap
+        if quelonryPrelondicatelon(quelonryFelonaturelonMap)
+        (selonrvelondSizelonPrelondicatelonNamelon, selonrvelondSizelonPrelondicatelon) <- SelonrvelondSizelonPrelondicatelonMap
+        if selonrvelondSizelonPrelondicatelon(injelonctelondTwelonelonts.sizelon)
+      } yielonld Clielonntelonvelonnt(
+        baselonelonvelonntNamelonspacelon
+          .copy(componelonnt = Somelon(selonrvelondSizelonPrelondicatelonNamelon), action = Somelon(quelonryPrelondicatelonNamelon)))
+    selonrvelondSizelonQuelonryelonvelonnts.toSelonq
   }
 }

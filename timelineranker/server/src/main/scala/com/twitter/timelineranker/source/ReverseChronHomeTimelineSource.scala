@@ -1,142 +1,142 @@
-package com.twitter.timelineranker.source
+packagelon com.twittelonr.timelonlinelonrankelonr.sourcelon
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelineranker.core.FollowGraphData
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContext
-import com.twitter.timelineranker.util.TweetFiltersBasedOnSearchMetadata
-import com.twitter.timelineranker.util.TweetsPostFilterBasedOnSearchMetadata
-import com.twitter.timelineranker.util.SearchResultWithVisibilityActors
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.util.stats.RequestStats
-import com.twitter.timelines.util.stats.RequestStatsReceiver
-import com.twitter.timelines.visibility.VisibilityEnforcer
-import com.twitter.timelineservice.model.TimelineId
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.util.Future
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.timelonlinelonrankelonr.corelon.FollowGraphData
+import com.twittelonr.timelonlinelonrankelonr.modelonl._
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.relonvchron.RelonvelonrselonChronTimelonlinelonQuelonryContelonxt
+import com.twittelonr.timelonlinelonrankelonr.util.TwelonelontFiltelonrsBaselondOnSelonarchMelontadata
+import com.twittelonr.timelonlinelonrankelonr.util.TwelonelontsPostFiltelonrBaselondOnSelonarchMelontadata
+import com.twittelonr.timelonlinelonrankelonr.util.SelonarchRelonsultWithVisibilityActors
+import com.twittelonr.timelonlinelonrankelonr.visibility.FollowGraphDataProvidelonr
+import com.twittelonr.timelonlinelons.clielonnts.relonlelonvancelon_selonarch.SelonarchClielonnt
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstStats
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstStatsReloncelonivelonr
+import com.twittelonr.timelonlinelons.visibility.Visibilityelonnforcelonr
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TimelonlinelonId
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.corelon.TimelonlinelonKind
+import com.twittelonr.util.Futurelon
 
-object ReverseChronHomeTimelineSource {
+objelonct RelonvelonrselonChronHomelonTimelonlinelonSourcelon {
 
-  // Post search filters applied to tweets using metadata included in search results.
-  val FiltersBasedOnSearchMetadata: TweetFiltersBasedOnSearchMetadata.ValueSet =
-    TweetFiltersBasedOnSearchMetadata.ValueSet(
-      TweetFiltersBasedOnSearchMetadata.DuplicateRetweets,
-      TweetFiltersBasedOnSearchMetadata.DuplicateTweets
+  // Post selonarch filtelonrs applielond to twelonelonts using melontadata includelond in selonarch relonsults.
+  val FiltelonrsBaselondOnSelonarchMelontadata: TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.ValuelonSelont =
+    TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.ValuelonSelont(
+      TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.DuplicatelonRelontwelonelonts,
+      TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.DuplicatelonTwelonelonts
     )
 
-  object GetTweetsResult {
-    val Empty: GetTweetsResult = GetTweetsResult(0, 0L, Nil)
-    val EmptyFuture: Future[GetTweetsResult] = Future.value(Empty)
+  objelonct GelontTwelonelontsRelonsult {
+    val elonmpty: GelontTwelonelontsRelonsult = GelontTwelonelontsRelonsult(0, 0L, Nil)
+    val elonmptyFuturelon: Futurelon[GelontTwelonelontsRelonsult] = Futurelon.valuelon(elonmpty)
   }
 
-  case class GetTweetsResult(
-    // numSearchResults is the result count before filtering so may not match tweets.size
-    numSearchResults: Int,
-    minTweetIdFromSearch: TweetId,
-    tweets: Seq[Tweet])
+  caselon class GelontTwelonelontsRelonsult(
+    // numSelonarchRelonsults is thelon relonsult count belonforelon filtelonring so may not match twelonelonts.sizelon
+    numSelonarchRelonsults: Int,
+    minTwelonelontIdFromSelonarch: TwelonelontId,
+    twelonelonts: Selonq[Twelonelont])
 }
 
 /**
- * Timeline source that enables materializing reverse chron timelines
- * using search infrastructure.
+ * Timelonlinelon sourcelon that elonnablelons matelonrializing relonvelonrselon chron timelonlinelons
+ * using selonarch infrastructurelon.
  */
-class ReverseChronHomeTimelineSource(
-  searchClient: SearchClient,
-  followGraphDataProvider: FollowGraphDataProvider,
-  visibilityEnforcer: VisibilityEnforcer,
-  statsReceiver: StatsReceiver)
-    extends RequestStats {
+class RelonvelonrselonChronHomelonTimelonlinelonSourcelon(
+  selonarchClielonnt: SelonarchClielonnt,
+  followGraphDataProvidelonr: FollowGraphDataProvidelonr,
+  visibilityelonnforcelonr: Visibilityelonnforcelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstStats {
 
-  import ReverseChronHomeTimelineSource._
+  import RelonvelonrselonChronHomelonTimelonlinelonSourcelon._
 
-  private[this] val logger = Logger.get("ReverseChronHomeTimelineSource")
-  private[this] val scope = statsReceiver.scope("reverseChronSource")
-  private[this] val stats = RequestStatsReceiver(scope)
-  private[this] val emptyTimelineReturnedCounter =
-    scope.counter("emptyTimelineReturnedDueToMaxFollows")
-  private[this] val maxCountStat = scope.stat("maxCount")
-  private[this] val numTweetsStat = scope.stat("numTweets")
-  private[this] val requestedAdditionalTweetsAfterFilter =
-    scope.counter("requestedAdditionalTweetsAfterFilter")
-  private[this] val emptyTimelines = scope.counter("emptyTimelines")
-  private[this] val emptyTimelinesWithSignificantFollowing =
-    scope.counter("emptyTimelinesWithSignificantFollowing")
+  privatelon[this] val loggelonr = Loggelonr.gelont("RelonvelonrselonChronHomelonTimelonlinelonSourcelon")
+  privatelon[this] val scopelon = statsReloncelonivelonr.scopelon("relonvelonrselonChronSourcelon")
+  privatelon[this] val stats = RelonquelonstStatsReloncelonivelonr(scopelon)
+  privatelon[this] val elonmptyTimelonlinelonRelonturnelondCountelonr =
+    scopelon.countelonr("elonmptyTimelonlinelonRelonturnelondDuelonToMaxFollows")
+  privatelon[this] val maxCountStat = scopelon.stat("maxCount")
+  privatelon[this] val numTwelonelontsStat = scopelon.stat("numTwelonelonts")
+  privatelon[this] val relonquelonstelondAdditionalTwelonelontsAftelonrFiltelonr =
+    scopelon.countelonr("relonquelonstelondAdditionalTwelonelontsAftelonrFiltelonr")
+  privatelon[this] val elonmptyTimelonlinelons = scopelon.countelonr("elonmptyTimelonlinelons")
+  privatelon[this] val elonmptyTimelonlinelonsWithSignificantFollowing =
+    scopelon.countelonr("elonmptyTimelonlinelonsWithSignificantFollowing")
 
-  // Threshold to use to determine if a user has a significant followings list size
-  private[this] val SignificantFollowingThreshold = 20
+  // Threlonshold to uselon to delontelonrminelon if a uselonr has a significant followings list sizelon
+  privatelon[this] val SignificantFollowingThrelonshold = 20
 
-  def get(contexts: Seq[ReverseChronTimelineQueryContext]): Seq[Future[Timeline]] = {
-    contexts.map(get)
+  delonf gelont(contelonxts: Selonq[RelonvelonrselonChronTimelonlinelonQuelonryContelonxt]): Selonq[Futurelon[Timelonlinelon]] = {
+    contelonxts.map(gelont)
   }
 
-  def get(context: ReverseChronTimelineQueryContext): Future[Timeline] = {
-    stats.addEventStats {
-      val query: ReverseChronTimelineQuery = context.query
+  delonf gelont(contelonxt: RelonvelonrselonChronTimelonlinelonQuelonryContelonxt): Futurelon[Timelonlinelon] = {
+    stats.addelonvelonntStats {
+      val quelonry: RelonvelonrselonChronTimelonlinelonQuelonry = contelonxt.quelonry
 
-      // We only support Tweet ID range at present.
-      val tweetIdRange =
-        query.range.map(TweetIdRange.fromTimelineRange).getOrElse(TweetIdRange.default)
+      // Welon only support Twelonelont ID rangelon at prelonselonnt.
+      val twelonelontIdRangelon =
+        quelonry.rangelon.map(TwelonelontIdRangelon.fromTimelonlinelonRangelon).gelontOrelonlselon(TwelonelontIdRangelon.delonfault)
 
-      val userId = query.userId
-      val timelineId = TimelineId(userId, TimelineKind.home)
-      val maxFollowingCount = context.maxFollowedUsers()
+      val uselonrId = quelonry.uselonrId
+      val timelonlinelonId = TimelonlinelonId(uselonrId, TimelonlinelonKind.homelon)
+      val maxFollowingCount = contelonxt.maxFollowelondUselonrs()
 
-      followGraphDataProvider
-        .get(
-          userId,
+      followGraphDataProvidelonr
+        .gelont(
+          uselonrId,
           maxFollowingCount
         )
         .flatMap { followGraphData =>
-          // We return an empty timeline if a given user follows more than the limit
-          // on the number of users. This is because, such a user's timeline will quickly
-          // fill up displacing materialized tweets wasting the materialation work.
-          // This behavior can be disabled via featureswitches to support non-materialization
-          // use cases when we should always return a timeline.
-          if (followGraphData.filteredFollowedUserIds.isEmpty ||
-            (followGraphData.followedUserIds.size >= maxFollowingCount && context
-              .returnEmptyWhenOverMaxFollows())) {
-            if (followGraphData.followedUserIds.size >= maxFollowingCount) {
-              emptyTimelineReturnedCounter.incr()
+          // Welon relonturn an elonmpty timelonlinelon if a givelonn uselonr follows morelon than thelon limit
+          // on thelon numbelonr of uselonrs. This is beloncauselon, such a uselonr's timelonlinelon will quickly
+          // fill up displacing matelonrializelond twelonelonts wasting thelon matelonrialation work.
+          // This belonhavior can belon disablelond via felonaturelonswitchelons to support non-matelonrialization
+          // uselon caselons whelonn welon should always relonturn a timelonlinelon.
+          if (followGraphData.filtelonrelondFollowelondUselonrIds.iselonmpty ||
+            (followGraphData.followelondUselonrIds.sizelon >= maxFollowingCount && contelonxt
+              .relonturnelonmptyWhelonnOvelonrMaxFollows())) {
+            if (followGraphData.followelondUselonrIds.sizelon >= maxFollowingCount) {
+              elonmptyTimelonlinelonRelonturnelondCountelonr.incr()
             }
-            Future.value(Timeline.empty(timelineId))
-          } else {
-            val maxCount = getMaxCount(context)
-            val numEntriesToRequest = (maxCount * context.maxCountMultiplier()).toInt
-            maxCountStat.add(numEntriesToRequest)
+            Futurelon.valuelon(Timelonlinelon.elonmpty(timelonlinelonId))
+          } elonlselon {
+            val maxCount = gelontMaxCount(contelonxt)
+            val numelonntrielonsToRelonquelonst = (maxCount * contelonxt.maxCountMultiplielonr()).toInt
+            maxCountStat.add(numelonntrielonsToRelonquelonst)
 
-            val allUserIds = followGraphData.followedUserIds :+ userId
-            getTweets(
-              userId,
-              allUserIds,
+            val allUselonrIds = followGraphData.followelondUselonrIds :+ uselonrId
+            gelontTwelonelonts(
+              uselonrId,
+              allUselonrIds,
               followGraphData,
-              numEntriesToRequest,
-              tweetIdRange,
-              context
-            ).map { tweets =>
-              if (tweets.isEmpty) {
-                emptyTimelines.incr()
-                if (followGraphData.followedUserIds.size >= SignificantFollowingThreshold) {
-                  emptyTimelinesWithSignificantFollowing.incr()
-                  logger.debug(
-                    "Search returned empty home timeline for user %s (follow count %s), query: %s",
-                    userId,
-                    followGraphData.followedUserIds.size,
-                    query)
+              numelonntrielonsToRelonquelonst,
+              twelonelontIdRangelon,
+              contelonxt
+            ).map { twelonelonts =>
+              if (twelonelonts.iselonmpty) {
+                elonmptyTimelonlinelons.incr()
+                if (followGraphData.followelondUselonrIds.sizelon >= SignificantFollowingThrelonshold) {
+                  elonmptyTimelonlinelonsWithSignificantFollowing.incr()
+                  loggelonr.delonbug(
+                    "Selonarch relonturnelond elonmpty homelon timelonlinelon for uselonr %s (follow count %s), quelonry: %s",
+                    uselonrId,
+                    followGraphData.followelondUselonrIds.sizelon,
+                    quelonry)
                 }
               }
-              // If we had requested more entries than maxCount (due to multiplier being > 1.0)
-              // then we need to trim it back to maxCount.
-              val truncatedTweets = tweets.take(maxCount)
-              numTweetsStat.add(truncatedTweets.size)
-              Timeline(
-                timelineId,
-                truncatedTweets.map(tweet => TimelineEntryEnvelope(tweet))
+              // If welon had relonquelonstelond morelon elonntrielons than maxCount (duelon to multiplielonr beloning > 1.0)
+              // thelonn welon nelonelond to trim it back to maxCount.
+              val truncatelondTwelonelonts = twelonelonts.takelon(maxCount)
+              numTwelonelontsStat.add(truncatelondTwelonelonts.sizelon)
+              Timelonlinelon(
+                timelonlinelonId,
+                truncatelondTwelonelonts.map(twelonelont => Timelonlinelonelonntryelonnvelonlopelon(twelonelont))
               )
             }
           }
@@ -145,183 +145,183 @@ class ReverseChronHomeTimelineSource(
   }
 
   /**
-   * Gets tweets from search and performs post-filtering.
+   * Gelonts twelonelonts from selonarch and pelonrforms post-filtelonring.
    *
-   * If we do not end up with sufficient tweets after post-filtering,
-   * we issue a second call to search to get more tweets if:
-   * -- such behavior is enabled by setting backfillFilteredEntries to true.
-   * -- the original call to search returned requested number of tweets.
-   * -- after post-filtering, the percentage of filtered out tweets
-   *    exceeds the value of tweetsFilteringLossageThresholdPercent.
+   * If welon do not elonnd up with sufficielonnt twelonelonts aftelonr post-filtelonring,
+   * welon issuelon a seloncond call to selonarch to gelont morelon twelonelonts if:
+   * -- such belonhavior is elonnablelond by selontting backfillFiltelonrelondelonntrielons to truelon.
+   * -- thelon original call to selonarch relonturnelond relonquelonstelond numbelonr of twelonelonts.
+   * -- aftelonr post-filtelonring, thelon pelonrcelonntagelon of filtelonrelond out twelonelonts
+   *    elonxcelonelonds thelon valuelon of twelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt.
    */
-  private def getTweets(
-    userId: UserId,
-    allUserIds: Seq[UserId],
+  privatelon delonf gelontTwelonelonts(
+    uselonrId: UselonrId,
+    allUselonrIds: Selonq[UselonrId],
     followGraphData: FollowGraphData,
-    numEntriesToRequest: Int,
-    tweetIdRange: TweetIdRange,
-    context: ReverseChronTimelineQueryContext
-  ): Future[Seq[Tweet]] = {
-    getTweetsHelper(
-      userId,
-      allUserIds,
+    numelonntrielonsToRelonquelonst: Int,
+    twelonelontIdRangelon: TwelonelontIdRangelon,
+    contelonxt: RelonvelonrselonChronTimelonlinelonQuelonryContelonxt
+  ): Futurelon[Selonq[Twelonelont]] = {
+    gelontTwelonelontsHelonlpelonr(
+      uselonrId,
+      allUselonrIds,
       followGraphData,
-      numEntriesToRequest,
-      tweetIdRange,
-      context.directedAtNarrowcastingViaSearch(),
-      context.postFilteringBasedOnSearchMetadataEnabled(),
-      context.getTweetsFromArchiveIndex()
-    ).flatMap { result =>
-      val numAdditionalTweetsToRequest = getNumAdditionalTweetsToRequest(
-        numEntriesToRequest,
-        result.numSearchResults,
-        result.numSearchResults - result.tweets.size,
-        context
+      numelonntrielonsToRelonquelonst,
+      twelonelontIdRangelon,
+      contelonxt.direlonctelondAtNarrowcastingViaSelonarch(),
+      contelonxt.postFiltelonringBaselondOnSelonarchMelontadataelonnablelond(),
+      contelonxt.gelontTwelonelontsFromArchivelonIndelonx()
+    ).flatMap { relonsult =>
+      val numAdditionalTwelonelontsToRelonquelonst = gelontNumAdditionalTwelonelontsToRelonquelonst(
+        numelonntrielonsToRelonquelonst,
+        relonsult.numSelonarchRelonsults,
+        relonsult.numSelonarchRelonsults - relonsult.twelonelonts.sizelon,
+        contelonxt
       )
 
-      if (numAdditionalTweetsToRequest > 0) {
-        requestedAdditionalTweetsAfterFilter.incr()
-        val updatedRange = tweetIdRange.copy(toId = Some(result.minTweetIdFromSearch))
-        getTweetsHelper(
-          userId,
-          allUserIds,
+      if (numAdditionalTwelonelontsToRelonquelonst > 0) {
+        relonquelonstelondAdditionalTwelonelontsAftelonrFiltelonr.incr()
+        val updatelondRangelon = twelonelontIdRangelon.copy(toId = Somelon(relonsult.minTwelonelontIdFromSelonarch))
+        gelontTwelonelontsHelonlpelonr(
+          uselonrId,
+          allUselonrIds,
           followGraphData,
-          numAdditionalTweetsToRequest,
-          updatedRange,
-          context.directedAtNarrowcastingViaSearch(),
-          context.postFilteringBasedOnSearchMetadataEnabled(),
-          context.getTweetsFromArchiveIndex()
-        ).map { result2 => result.tweets ++ result2.tweets }
-      } else {
-        Future.value(result.tweets)
+          numAdditionalTwelonelontsToRelonquelonst,
+          updatelondRangelon,
+          contelonxt.direlonctelondAtNarrowcastingViaSelonarch(),
+          contelonxt.postFiltelonringBaselondOnSelonarchMelontadataelonnablelond(),
+          contelonxt.gelontTwelonelontsFromArchivelonIndelonx()
+        ).map { relonsult2 => relonsult.twelonelonts ++ relonsult2.twelonelonts }
+      } elonlselon {
+        Futurelon.valuelon(relonsult.twelonelonts)
       }
     }
   }
 
-  private[source] def getNumAdditionalTweetsToRequest(
-    numTweetsRequested: Int,
-    numTweetsFoundBySearch: Int,
-    numTweetsFilteredOut: Int,
-    context: ReverseChronTimelineQueryContext
+  privatelon[sourcelon] delonf gelontNumAdditionalTwelonelontsToRelonquelonst(
+    numTwelonelontsRelonquelonstelond: Int,
+    numTwelonelontsFoundBySelonarch: Int,
+    numTwelonelontsFiltelonrelondOut: Int,
+    contelonxt: RelonvelonrselonChronTimelonlinelonQuelonryContelonxt
   ): Int = {
-    require(numTweetsFoundBySearch <= numTweetsRequested)
+    relonquirelon(numTwelonelontsFoundBySelonarch <= numTwelonelontsRelonquelonstelond)
 
-    if (!context.backfillFilteredEntries() || (numTweetsFoundBySearch < numTweetsRequested)) {
-      // If multiple calls are not enabled or if search did not find enough tweets,
-      // there is no point in making another call to get more.
+    if (!contelonxt.backfillFiltelonrelondelonntrielons() || (numTwelonelontsFoundBySelonarch < numTwelonelontsRelonquelonstelond)) {
+      // If multiplelon calls arelon not elonnablelond or if selonarch did not find elonnough twelonelonts,
+      // thelonrelon is no point in making anothelonr call to gelont morelon.
       0
-    } else {
-      val numTweetsFilteredOutPercent = numTweetsFilteredOut * 100.0 / numTweetsFoundBySearch
-      if (numTweetsFilteredOutPercent > context.tweetsFilteringLossageThresholdPercent()) {
+    } elonlselon {
+      val numTwelonelontsFiltelonrelondOutPelonrcelonnt = numTwelonelontsFiltelonrelondOut * 100.0 / numTwelonelontsFoundBySelonarch
+      if (numTwelonelontsFiltelonrelondOutPelonrcelonnt > contelonxt.twelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt()) {
 
-        // We assume that the next call will also have lossage percentage similar to the first call.
-        // Therefore, we proactively request proportionately more tweets so that we do not
-        // end up needing a third call.
-        // In any case, regardless of what we get in the second call, we do not make any subsequent calls.
-        val adjustedFilteredOutPercent =
-          math.min(numTweetsFilteredOutPercent, context.tweetsFilteringLossageLimitPercent())
-        val numTweetsToRequestMultiplier = 100 / (100 - adjustedFilteredOutPercent)
-        val numTweetsToRequest = (numTweetsFilteredOut * numTweetsToRequestMultiplier).toInt
+        // Welon assumelon that thelon nelonxt call will also havelon lossagelon pelonrcelonntagelon similar to thelon first call.
+        // Thelonrelonforelon, welon proactivelonly relonquelonst proportionatelonly morelon twelonelonts so that welon do not
+        // elonnd up nelonelonding a third call.
+        // In any caselon, relongardlelonss of what welon gelont in thelon seloncond call, welon do not makelon any subselonquelonnt calls.
+        val adjustelondFiltelonrelondOutPelonrcelonnt =
+          math.min(numTwelonelontsFiltelonrelondOutPelonrcelonnt, contelonxt.twelonelontsFiltelonringLossagelonLimitPelonrcelonnt())
+        val numTwelonelontsToRelonquelonstMultiplielonr = 100 / (100 - adjustelondFiltelonrelondOutPelonrcelonnt)
+        val numTwelonelontsToRelonquelonst = (numTwelonelontsFiltelonrelondOut * numTwelonelontsToRelonquelonstMultiplielonr).toInt
 
-        numTweetsToRequest
-      } else {
-        // Did not have sufficient lossage to warrant an extra call.
+        numTwelonelontsToRelonquelonst
+      } elonlselon {
+        // Did not havelon sufficielonnt lossagelon to warrant an elonxtra call.
         0
       }
     }
   }
 
-  private def getClientId(subClientId: String): String = {
-    // Hacky: Extract the environment from the existing clientId set by TimelineRepositoryBuilder
-    val env = searchClient.clientId.split('.').last
+  privatelon delonf gelontClielonntId(subClielonntId: String): String = {
+    // Hacky: elonxtract thelon elonnvironmelonnt from thelon elonxisting clielonntId selont by TimelonlinelonRelonpositoryBuildelonr
+    val elonnv = selonarchClielonnt.clielonntId.split('.').last
 
-    s"timelineranker.$subClientId.$env"
+    s"timelonlinelonrankelonr.$subClielonntId.$elonnv"
   }
 
-  private def getTweetsHelper(
-    userId: UserId,
-    allUserIds: Seq[UserId],
+  privatelon delonf gelontTwelonelontsHelonlpelonr(
+    uselonrId: UselonrId,
+    allUselonrIds: Selonq[UselonrId],
     followGraphData: FollowGraphData,
     maxCount: Int,
-    tweetIdRange: TweetIdRange,
-    withDirectedAtNarrowcasting: Boolean,
-    postFilteringBasedOnSearchMetadataEnabled: Boolean,
-    getTweetsFromArchiveIndex: Boolean
-  ): Future[GetTweetsResult] = {
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
-    val searchClientId: Option[String] = if (!getTweetsFromArchiveIndex) {
-      // Set a custom clientId which has different QPS quota and access.
-      // Used for notify we are fetching from realtime only.
-      // see: SEARCH-42651
-      Some(getClientId("home_materialization_realtime_only"))
-    } else {
-      // Let the searchClient derive its clientId for the regular case of fetching from archive
-      None
+    twelonelontIdRangelon: TwelonelontIdRangelon,
+    withDirelonctelondAtNarrowcasting: Boolelonan,
+    postFiltelonringBaselondOnSelonarchMelontadataelonnablelond: Boolelonan,
+    gelontTwelonelontsFromArchivelonIndelonx: Boolelonan
+  ): Futurelon[GelontTwelonelontsRelonsult] = {
+    val belonforelonTwelonelontIdelonxclusivelon = twelonelontIdRangelon.toId
+    val aftelonrTwelonelontIdelonxclusivelon = twelonelontIdRangelon.fromId
+    val selonarchClielonntId: Option[String] = if (!gelontTwelonelontsFromArchivelonIndelonx) {
+      // Selont a custom clielonntId which has diffelonrelonnt QPS quota and accelonss.
+      // Uselond for notify welon arelon felontching from relonaltimelon only.
+      // selonelon: SelonARCH-42651
+      Somelon(gelontClielonntId("homelon_matelonrialization_relonaltimelon_only"))
+    } elonlselon {
+      // Lelont thelon selonarchClielonnt delonrivelon its clielonntId for thelon relongular caselon of felontching from archivelon
+      Nonelon
     }
 
-    searchClient
-      .getUsersTweetsReverseChron(
-        userId = userId,
-        followedUserIds = allUserIds.toSet,
-        retweetsMutedUserIds = followGraphData.retweetsMutedUserIds,
+    selonarchClielonnt
+      .gelontUselonrsTwelonelontsRelonvelonrselonChron(
+        uselonrId = uselonrId,
+        followelondUselonrIds = allUselonrIds.toSelont,
+        relontwelonelontsMutelondUselonrIds = followGraphData.relontwelonelontsMutelondUselonrIds,
         maxCount = maxCount,
-        beforeTweetIdExclusive = beforeTweetIdExclusive,
-        afterTweetIdExclusive = afterTweetIdExclusive,
-        withDirectedAtNarrowcasting = withDirectedAtNarrowcasting,
-        postFilteringBasedOnSearchMetadataEnabled = postFilteringBasedOnSearchMetadataEnabled,
-        getTweetsFromArchiveIndex = getTweetsFromArchiveIndex,
-        searchClientId = searchClientId
+        belonforelonTwelonelontIdelonxclusivelon = belonforelonTwelonelontIdelonxclusivelon,
+        aftelonrTwelonelontIdelonxclusivelon = aftelonrTwelonelontIdelonxclusivelon,
+        withDirelonctelondAtNarrowcasting = withDirelonctelondAtNarrowcasting,
+        postFiltelonringBaselondOnSelonarchMelontadataelonnablelond = postFiltelonringBaselondOnSelonarchMelontadataelonnablelond,
+        gelontTwelonelontsFromArchivelonIndelonx = gelontTwelonelontsFromArchivelonIndelonx,
+        selonarchClielonntId = selonarchClielonntId
       )
-      .flatMap { searchResults =>
-        if (searchResults.nonEmpty) {
-          val minTweetId = searchResults.last.id
-          val filteredTweetsFuture = filterTweets(
-            userId,
-            followGraphData.inNetworkUserIds,
-            searchResults,
-            FiltersBasedOnSearchMetadata,
-            postFilteringBasedOnSearchMetadataEnabled = postFilteringBasedOnSearchMetadataEnabled,
-            visibilityEnforcer
+      .flatMap { selonarchRelonsults =>
+        if (selonarchRelonsults.nonelonmpty) {
+          val minTwelonelontId = selonarchRelonsults.last.id
+          val filtelonrelondTwelonelontsFuturelon = filtelonrTwelonelonts(
+            uselonrId,
+            followGraphData.inNelontworkUselonrIds,
+            selonarchRelonsults,
+            FiltelonrsBaselondOnSelonarchMelontadata,
+            postFiltelonringBaselondOnSelonarchMelontadataelonnablelond = postFiltelonringBaselondOnSelonarchMelontadataelonnablelond,
+            visibilityelonnforcelonr
           )
-          filteredTweetsFuture.map(tweets =>
-            GetTweetsResult(searchResults.size, minTweetId, tweets))
-        } else {
-          GetTweetsResult.EmptyFuture
+          filtelonrelondTwelonelontsFuturelon.map(twelonelonts =>
+            GelontTwelonelontsRelonsult(selonarchRelonsults.sizelon, minTwelonelontId, twelonelonts))
+        } elonlselon {
+          GelontTwelonelontsRelonsult.elonmptyFuturelon
         }
       }
   }
 
-  def filterTweets(
-    userId: UserId,
-    inNetworkUserIds: Seq[UserId],
-    searchResults: Seq[ThriftSearchResult],
-    filtersBasedOnSearchMetadata: TweetFiltersBasedOnSearchMetadata.ValueSet,
-    postFilteringBasedOnSearchMetadataEnabled: Boolean = true,
-    visibilityEnforcer: VisibilityEnforcer
-  ): Future[Seq[Tweet]] = {
-    val filteredTweets = if (postFilteringBasedOnSearchMetadataEnabled) {
-      val tweetsPostFilterBasedOnSearchMetadata =
-        new TweetsPostFilterBasedOnSearchMetadata(filtersBasedOnSearchMetadata, logger, scope)
-      tweetsPostFilterBasedOnSearchMetadata.apply(userId, inNetworkUserIds, searchResults)
-    } else {
-      searchResults
+  delonf filtelonrTwelonelonts(
+    uselonrId: UselonrId,
+    inNelontworkUselonrIds: Selonq[UselonrId],
+    selonarchRelonsults: Selonq[ThriftSelonarchRelonsult],
+    filtelonrsBaselondOnSelonarchMelontadata: TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.ValuelonSelont,
+    postFiltelonringBaselondOnSelonarchMelontadataelonnablelond: Boolelonan = truelon,
+    visibilityelonnforcelonr: Visibilityelonnforcelonr
+  ): Futurelon[Selonq[Twelonelont]] = {
+    val filtelonrelondTwelonelonts = if (postFiltelonringBaselondOnSelonarchMelontadataelonnablelond) {
+      val twelonelontsPostFiltelonrBaselondOnSelonarchMelontadata =
+        nelonw TwelonelontsPostFiltelonrBaselondOnSelonarchMelontadata(filtelonrsBaselondOnSelonarchMelontadata, loggelonr, scopelon)
+      twelonelontsPostFiltelonrBaselondOnSelonarchMelontadata.apply(uselonrId, inNelontworkUselonrIds, selonarchRelonsults)
+    } elonlselon {
+      selonarchRelonsults
     }
-    visibilityEnforcer
-      .apply(Some(userId), filteredTweets.map(SearchResultWithVisibilityActors(_, scope)))
-      .map(_.map { searchResult =>
-        new Tweet(
-          id = searchResult.tweetId,
-          userId = Some(searchResult.userId),
-          sourceTweetId = searchResult.sourceTweetId,
-          sourceUserId = searchResult.sourceUserId)
+    visibilityelonnforcelonr
+      .apply(Somelon(uselonrId), filtelonrelondTwelonelonts.map(SelonarchRelonsultWithVisibilityActors(_, scopelon)))
+      .map(_.map { selonarchRelonsult =>
+        nelonw Twelonelont(
+          id = selonarchRelonsult.twelonelontId,
+          uselonrId = Somelon(selonarchRelonsult.uselonrId),
+          sourcelonTwelonelontId = selonarchRelonsult.sourcelonTwelonelontId,
+          sourcelonUselonrId = selonarchRelonsult.sourcelonUselonrId)
       })
   }
 
-  @VisibleForTesting
-  private[source] def getMaxCount(context: ReverseChronTimelineQueryContext): Int = {
-    val maxCountFromQuery = ReverseChronTimelineQueryContext.MaxCount(context.query.maxCount)
-    val maxCountFromContext = context.maxCount()
-    math.min(maxCountFromQuery, maxCountFromContext)
+  @VisiblelonForTelonsting
+  privatelon[sourcelon] delonf gelontMaxCount(contelonxt: RelonvelonrselonChronTimelonlinelonQuelonryContelonxt): Int = {
+    val maxCountFromQuelonry = RelonvelonrselonChronTimelonlinelonQuelonryContelonxt.MaxCount(contelonxt.quelonry.maxCount)
+    val maxCountFromContelonxt = contelonxt.maxCount()
+    math.min(maxCountFromQuelonry, maxCountFromContelonxt)
   }
 }

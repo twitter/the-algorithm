@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.core.pipeline.step.domain_marshaller
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.domain_marshallelonr
 
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasCandidatelonsWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.domain_marshallelonr_elonxeloncutor.DomainMarshallelonrelonxeloncutor
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A domain marshaller step, it takes the input list of candidates and the given
- * domain marshaller and executes its to return a marshalled result. The [[State]] object is
- * responsible for keeping a reference of the built Response.
+ * A domain marshallelonr stelonp, it takelons thelon input list of candidatelons and thelon givelonn
+ * domain marshallelonr and elonxeloncutelons its to relonturn a marshallelond relonsult. Thelon [[Statelon]] objelonct is
+ * relonsponsiblelon for kelonelonping a relonfelonrelonncelon of thelon built Relonsponselon.
  *
- * @param domainMarshallerExecutor Domain Marshaller executor.
- * @tparam Query Type of PipelineQuery domain model
- * @tparam ResponseType the domain marshalling type expected to be returned.
- * @tparam State The pipeline state domain model.
+ * @param domainMarshallelonrelonxeloncutor Domain Marshallelonr elonxeloncutor.
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam RelonsponselonTypelon thelon domain marshalling typelon elonxpelonctelond to belon relonturnelond.
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class DomainMarshallerStep[
-  Query <: PipelineQuery,
-  ResponseType <: HasMarshalling,
-  State <: HasQuery[Query, State] with HasCandidatesWithDetails[State]] @Inject() (
-  domainMarshallerExecutor: DomainMarshallerExecutor)
-    extends Step[State, DomainMarshaller[Query, ResponseType], DomainMarshallerExecutor.Inputs[
-      Query
-    ], DomainMarshallerExecutor.Result[ResponseType]] {
+caselon class DomainMarshallelonrStelonp[
+  Quelonry <: PipelonlinelonQuelonry,
+  RelonsponselonTypelon <: HasMarshalling,
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HasCandidatelonsWithDelontails[Statelon]] @Injelonct() (
+  domainMarshallelonrelonxeloncutor: DomainMarshallelonrelonxeloncutor)
+    elonxtelonnds Stelonp[Statelon, DomainMarshallelonr[Quelonry, RelonsponselonTypelon], DomainMarshallelonrelonxeloncutor.Inputs[
+      Quelonry
+    ], DomainMarshallelonrelonxeloncutor.Relonsult[RelonsponselonTypelon]] {
 
-  override def isEmpty(config: DomainMarshaller[Query, ResponseType]): Boolean = false
+  ovelonrridelon delonf iselonmpty(config: DomainMarshallelonr[Quelonry, RelonsponselonTypelon]): Boolelonan = falselon
 
-  override def adaptInput(
-    state: State,
-    config: DomainMarshaller[Query, ResponseType]
-  ): DomainMarshallerExecutor.Inputs[Query] =
-    DomainMarshallerExecutor.Inputs(state.query, state.candidatesWithDetails)
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: DomainMarshallelonr[Quelonry, RelonsponselonTypelon]
+  ): DomainMarshallelonrelonxeloncutor.Inputs[Quelonry] =
+    DomainMarshallelonrelonxeloncutor.Inputs(statelon.quelonry, statelon.candidatelonsWithDelontails)
 
-  override def arrow(
-    config: DomainMarshaller[Query, ResponseType],
-    context: Executor.Context
-  ): Arrow[DomainMarshallerExecutor.Inputs[Query], DomainMarshallerExecutor.Result[ResponseType]] =
-    domainMarshallerExecutor.arrow(config, context)
+  ovelonrridelon delonf arrow(
+    config: DomainMarshallelonr[Quelonry, RelonsponselonTypelon],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[DomainMarshallelonrelonxeloncutor.Inputs[Quelonry], DomainMarshallelonrelonxeloncutor.Relonsult[RelonsponselonTypelon]] =
+    domainMarshallelonrelonxeloncutor.arrow(config, contelonxt)
 
-  // Noop since the pipeline updates the executor results for us
-  override def updateState(
-    state: State,
-    executorResult: DomainMarshallerExecutor.Result[ResponseType],
-    config: DomainMarshaller[Query, ResponseType]
-  ): State = state
+  // Noop sincelon thelon pipelonlinelon updatelons thelon elonxeloncutor relonsults for us
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: DomainMarshallelonrelonxeloncutor.Relonsult[RelonsponselonTypelon],
+    config: DomainMarshallelonr[Quelonry, RelonsponselonTypelon]
+  ): Statelon = statelon
 
 }

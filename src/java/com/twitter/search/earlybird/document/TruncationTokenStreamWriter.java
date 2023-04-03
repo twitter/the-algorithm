@@ -1,86 +1,86 @@
-package com.twitter.search.earlybird.document;
+packagelon com.twittelonr.selonarch.elonarlybird.documelonnt;
 
-import com.twitter.common.text.token.TokenProcessor;
-import com.twitter.common.text.token.TwitterTokenStream;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.schema.SchemaDocumentFactory;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+import com.twittelonr.common.telonxt.tokelonn.TokelonnProcelonssor;
+import com.twittelonr.common.telonxt.tokelonn.TwittelonrTokelonnStrelonam;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.schelonma.SchelonmaDocumelonntFactory;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
 
-public class TruncationTokenStreamWriter implements SchemaDocumentFactory.TokenStreamRewriter {
-  private static final int NEVER_TRUNCATE_CHARS_BELOW_POSITION = 140;
-  private static final String TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFIX =
-      "truncate_long_tweets_in_";
-  private static final String NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFIX =
-      "num_tweet_characters_supported_in_";
+public class TruncationTokelonnStrelonamWritelonr implelonmelonnts SchelonmaDocumelonntFactory.TokelonnStrelonamRelonwritelonr {
+  privatelon static final int NelonVelonR_TRUNCATelon_CHARS_BelonLOW_POSITION = 140;
+  privatelon static final String TRUNCATelon_LONG_TWelonelonTS_DelonCIDelonR_KelonY_PRelonFIX =
+      "truncatelon_long_twelonelonts_in_";
+  privatelon static final String NUM_TWelonelonT_CHARACTelonRS_SUPPORTelonD_DelonCIDelonR_KelonY_PRelonFIX =
+      "num_twelonelont_charactelonrs_supportelond_in_";
 
-  private static final SearchCounter NUM_TWEETS_TRUNCATED =
-      SearchCounter.export("num_tweets_truncated");
-  private static final SearchLongGauge NUM_TWEET_CHARACTERS_SUPPORTED =
-      SearchLongGauge.export("num_tweet_characters_supported");
+  privatelon static final SelonarchCountelonr NUM_TWelonelonTS_TRUNCATelonD =
+      SelonarchCountelonr.elonxport("num_twelonelonts_truncatelond");
+  privatelon static final SelonarchLongGaugelon NUM_TWelonelonT_CHARACTelonRS_SUPPORTelonD =
+      SelonarchLongGaugelon.elonxport("num_twelonelont_charactelonrs_supportelond");
 
-  private final Decider decider;
-  private final String truncateLongTweetsDeciderKey;
-  private final String numCharsSupportedDeciderKey;
+  privatelon final Deloncidelonr deloncidelonr;
+  privatelon final String truncatelonLongTwelonelontsDeloncidelonrKelony;
+  privatelon final String numCharsSupportelondDeloncidelonrKelony;
 
   /**
-   * Creates a TruncationTokenStreamWriter
+   * Crelonatelons a TruncationTokelonnStrelonamWritelonr
    */
-  public TruncationTokenStreamWriter(EarlybirdCluster cluster, Decider decider) {
-    this.decider = decider;
+  public TruncationTokelonnStrelonamWritelonr(elonarlybirdClustelonr clustelonr, Deloncidelonr deloncidelonr) {
+    this.deloncidelonr = deloncidelonr;
 
-    this.truncateLongTweetsDeciderKey =
-        TRUNCATE_LONG_TWEETS_DECIDER_KEY_PREFIX + cluster.name().toLowerCase();
-    this.numCharsSupportedDeciderKey =
-        NUM_TWEET_CHARACTERS_SUPPORTED_DECIDER_KEY_PREFIX + cluster.name().toLowerCase();
+    this.truncatelonLongTwelonelontsDeloncidelonrKelony =
+        TRUNCATelon_LONG_TWelonelonTS_DelonCIDelonR_KelonY_PRelonFIX + clustelonr.namelon().toLowelonrCaselon();
+    this.numCharsSupportelondDeloncidelonrKelony =
+        NUM_TWelonelonT_CHARACTelonRS_SUPPORTelonD_DelonCIDelonR_KelonY_PRelonFIX + clustelonr.namelon().toLowelonrCaselon();
   }
 
-  @Override
-  public TwitterTokenStream rewrite(Schema.FieldInfo fieldInfo, TwitterTokenStream stream) {
-    if (EarlybirdFieldConstant.TEXT_FIELD.getFieldName().equals(fieldInfo.getName())) {
-      final int maxPosition = getTruncatePosition();
-      NUM_TWEET_CHARACTERS_SUPPORTED.set(maxPosition);
-      if (maxPosition >= NEVER_TRUNCATE_CHARS_BELOW_POSITION) {
-        return new TokenProcessor(stream) {
-          @Override
-          public final boolean incrementToken() {
-            if (incrementInputStream()) {
-              if (offset() < maxPosition) {
-                return true;
+  @Ovelonrridelon
+  public TwittelonrTokelonnStrelonam relonwritelon(Schelonma.FielonldInfo fielonldInfo, TwittelonrTokelonnStrelonam strelonam) {
+    if (elonarlybirdFielonldConstant.TelonXT_FIelonLD.gelontFielonldNamelon().elonquals(fielonldInfo.gelontNamelon())) {
+      final int maxPosition = gelontTruncatelonPosition();
+      NUM_TWelonelonT_CHARACTelonRS_SUPPORTelonD.selont(maxPosition);
+      if (maxPosition >= NelonVelonR_TRUNCATelon_CHARS_BelonLOW_POSITION) {
+        relonturn nelonw TokelonnProcelonssor(strelonam) {
+          @Ovelonrridelon
+          public final boolelonan increlonmelonntTokelonn() {
+            if (increlonmelonntInputStrelonam()) {
+              if (offselont() < maxPosition) {
+                relonturn truelon;
               }
-              NUM_TWEETS_TRUNCATED.increment();
+              NUM_TWelonelonTS_TRUNCATelonD.increlonmelonnt();
             }
 
-            return false;
+            relonturn falselon;
           }
         };
       }
     }
 
-    return stream;
+    relonturn strelonam;
   }
 
   /**
-   * Get the truncation position.
+   * Gelont thelon truncation position.
    *
-   * @return the truncation position or -1 if truncation is disabled.
+   * @relonturn thelon truncation position or -1 if truncation is disablelond.
    */
-  private int getTruncatePosition() {
+  privatelon int gelontTruncatelonPosition() {
     int maxPosition;
-    if (!DeciderUtil.isAvailableForRandomRecipient(decider, truncateLongTweetsDeciderKey)) {
-      return -1;
+    if (!DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, truncatelonLongTwelonelontsDeloncidelonrKelony)) {
+      relonturn -1;
     }
-    maxPosition = DeciderUtil.getAvailability(decider, numCharsSupportedDeciderKey);
+    maxPosition = DeloncidelonrUtil.gelontAvailability(deloncidelonr, numCharsSupportelondDeloncidelonrKelony);
 
-    if (maxPosition < NEVER_TRUNCATE_CHARS_BELOW_POSITION) {
-      // Never truncate below NEVER_TRUNCATE_CHARS_BELOW_POSITION chars
-      maxPosition = NEVER_TRUNCATE_CHARS_BELOW_POSITION;
+    if (maxPosition < NelonVelonR_TRUNCATelon_CHARS_BelonLOW_POSITION) {
+      // Nelonvelonr truncatelon belonlow NelonVelonR_TRUNCATelon_CHARS_BelonLOW_POSITION chars
+      maxPosition = NelonVelonR_TRUNCATelon_CHARS_BelonLOW_POSITION;
     }
 
-    return maxPosition;
+    relonturn maxPosition;
   }
 }

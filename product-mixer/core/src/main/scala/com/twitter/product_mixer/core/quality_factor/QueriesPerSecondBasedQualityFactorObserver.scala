@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.quality_factor
+packagelon com.twittelonr.product_mixelonr.corelon.quality_factor
 
-import com.twitter.util.Duration
-import com.twitter.util.Try
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Try
 
-case class QueriesPerSecondBasedQualityFactorObserver(
-  override val qualityFactor: QueriesPerSecondBasedQualityFactor)
-    extends QualityFactorObserver {
-  override def apply(
-    result: Try[_],
-    latency: Duration
+caselon class QuelonrielonsPelonrSeloncondBaselondQualityFactorObselonrvelonr(
+  ovelonrridelon val qualityFactor: QuelonrielonsPelonrSeloncondBaselondQualityFactor)
+    elonxtelonnds QualityFactorObselonrvelonr {
+  ovelonrridelon delonf apply(
+    relonsult: Try[_],
+    latelonncy: Duration
   ): Unit = {
-    result
-      .onSuccess(_ => qualityFactor.update())
-      .onFailure {
-        case t if qualityFactor.config.ignorableFailures.isDefinedAt(t) => ()
-        // Degrade qf as a proactive mitigation for any non ignorable failures.
-        case _ => qualityFactor.update(Int.MaxValue)
+    relonsult
+      .onSuccelonss(_ => qualityFactor.updatelon())
+      .onFailurelon {
+        caselon t if qualityFactor.config.ignorablelonFailurelons.isDelonfinelondAt(t) => ()
+        // Delongradelon qf as a proactivelon mitigation for any non ignorablelon failurelons.
+        caselon _ => qualityFactor.updatelon(Int.MaxValuelon)
       }
   }
 }

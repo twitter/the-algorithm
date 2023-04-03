@@ -1,111 +1,111 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.thrift.Telonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.ValidationBehavior;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.root.ValidationBelonhavior;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdDelonbugInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
 
-public class EarlybirdServiceValidationBehavior
-    extends ValidationBehavior.DefaultValidationBehavior<EarlybirdRequest, EarlybirdResponse> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdServiceValidationBehavior.class);
+public class elonarlybirdSelonrvicelonValidationBelonhavior
+    elonxtelonnds ValidationBelonhavior.DelonfaultValidationBelonhavior<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(elonarlybirdSelonrvicelonValidationBelonhavior.class);
 
-  private static final EarlybirdDebugInfo EARLYBIRD_DEBUG_INFO =
-          new EarlybirdDebugInfo().setHost("earlybird_root");
+  privatelon static final elonarlybirdDelonbugInfo elonARLYBIRD_DelonBUG_INFO =
+          nelonw elonarlybirdDelonbugInfo().selontHost("elonarlybird_root");
 
-  private static final SearchCounter INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_LOW =
-      SearchCounter.export("invalid_success_response_threshold_too_low");
-  private static final SearchCounter INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_HIGH =
-      SearchCounter.export("invalid_success_response_threshold_too_high");
+  privatelon static final SelonarchCountelonr INVALID_SUCCelonSS_RelonSPONSelon_THRelonSHOLD_TOO_LOW =
+      SelonarchCountelonr.elonxport("invalid_succelonss_relonsponselon_threlonshold_too_low");
+  privatelon static final SelonarchCountelonr INVALID_SUCCelonSS_RelonSPONSelon_THRelonSHOLD_TOO_HIGH =
+      SelonarchCountelonr.elonxport("invalid_succelonss_relonsponselon_threlonshold_too_high");
 
-  protected EarlybirdResponse createErrorResponse(String errorMsg) {
-    EarlybirdResponse response = new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
+  protelonctelond elonarlybirdRelonsponselon crelonatelonelonrrorRelonsponselon(String elonrrorMsg) {
+    elonarlybirdRelonsponselon relonsponselon = nelonw elonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.CLIelonNT_elonRROR, 0);
 
-    // We're changing some ERROR logs to WARN on our side, so we want to ensure
-    // that the response contains the debug information the client needs to
-    // resolve the problem.
-    response.setDebugInfo(EARLYBIRD_DEBUG_INFO);
-    response.setDebugString(errorMsg);
+    // Welon'relon changing somelon elonRROR logs to WARN on our sidelon, so welon want to elonnsurelon
+    // that thelon relonsponselon contains thelon delonbug information thelon clielonnt nelonelonds to
+    // relonsolvelon thelon problelonm.
+    relonsponselon.selontDelonbugInfo(elonARLYBIRD_DelonBUG_INFO);
+    relonsponselon.selontDelonbugString(elonrrorMsg);
 
-    return response;
+    relonturn relonsponselon;
   }
 
-  @Override
-  public EarlybirdResponse getResponseIfInvalidRequest(EarlybirdRequest request) {
-    // First, fix up the query.
-    EarlybirdRequestUtil.checkAndSetCollectorParams(request);
-    EarlybirdRequestUtil.logAndFixExcessiveValues(request);
+  @Ovelonrridelon
+  public elonarlybirdRelonsponselon gelontRelonsponselonIfInvalidRelonquelonst(elonarlybirdRelonquelonst relonquelonst) {
+    // First, fix up thelon quelonry.
+    elonarlybirdRelonquelonstUtil.chelonckAndSelontCollelonctorParams(relonquelonst);
+    elonarlybirdRelonquelonstUtil.logAndFixelonxcelonssivelonValuelons(relonquelonst);
 
     try {
-      request.validate();
-    } catch (TException e) {
-      String errorMsg = "Invalid EarlybirdRequest. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+      relonquelonst.validatelon();
+    } catch (Telonxcelonption elon) {
+      String elonrrorMsg = "Invalid elonarlybirdRelonquelonst. " + relonquelonst;
+      LOG.warn(elonrrorMsg);
+      relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
     }
 
-    if (request.isSetSearchSegmentId() && request.getSearchSegmentId() <= 0) {
-      String errorMsg = "Bad time slice ID: " + request.getSearchSegmentId();
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    if (relonquelonst.isSelontSelonarchSelongmelonntId() && relonquelonst.gelontSelonarchSelongmelonntId() <= 0) {
+      String elonrrorMsg = "Bad timelon slicelon ID: " + relonquelonst.gelontSelonarchSelongmelonntId();
+      LOG.warn(elonrrorMsg);
+      relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
     }
 
-    if (request.isSetTermStatisticsRequest()
-        && request.getTermStatisticsRequest().isSetHistogramSettings()
-        && request.getTermStatisticsRequest().getHistogramSettings().getNumBins() == 0) {
+    if (relonquelonst.isSelontTelonrmStatisticsRelonquelonst()
+        && relonquelonst.gelontTelonrmStatisticsRelonquelonst().isSelontHistogramSelonttings()
+        && relonquelonst.gelontTelonrmStatisticsRelonquelonst().gelontHistogramSelonttings().gelontNumBins() == 0) {
 
-      String errorMsg = "numBins for term statistics histograms request cannot be zero: " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+      String elonrrorMsg = "numBins for telonrm statistics histograms relonquelonst cannot belon zelonro: " + relonquelonst;
+      LOG.warn(elonrrorMsg);
+      relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
     }
 
-    if (!request.isSetSearchQuery()
-        || request.getSearchQuery() == null) {
-      String errorMsg = "Invalid EarlybirdRequest, no ThriftSearchQuery specified. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    if (!relonquelonst.isSelontSelonarchQuelonry()
+        || relonquelonst.gelontSelonarchQuelonry() == null) {
+      String elonrrorMsg = "Invalid elonarlybirdRelonquelonst, no ThriftSelonarchQuelonry speloncifielond. " + relonquelonst;
+      LOG.warn(elonrrorMsg);
+      relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
     }
 
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
 
-    if (!searchQuery.getCollectorParams().isSetNumResultsToReturn()) {
-      String errorMsg = "ThriftSearchQuery.numResultsToReturn not set. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    if (!selonarchQuelonry.gelontCollelonctorParams().isSelontNumRelonsultsToRelonturn()) {
+      String elonrrorMsg = "ThriftSelonarchQuelonry.numRelonsultsToRelonturn not selont. " + relonquelonst;
+      LOG.warn(elonrrorMsg);
+      relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
     }
 
-    if (searchQuery.getCollectorParams().getNumResultsToReturn() < 0) {
-      String errorMsg = "Invalid ThriftSearchQuery.collectorParams.numResultsToReturn: "
-          + searchQuery.getCollectorParams().getNumResultsToReturn() + ". " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    if (selonarchQuelonry.gelontCollelonctorParams().gelontNumRelonsultsToRelonturn() < 0) {
+      String elonrrorMsg = "Invalid ThriftSelonarchQuelonry.collelonctorParams.numRelonsultsToRelonturn: "
+          + selonarchQuelonry.gelontCollelonctorParams().gelontNumRelonsultsToRelonturn() + ". " + relonquelonst;
+      LOG.warn(elonrrorMsg);
+      relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
     }
 
-    if (request.isSetSuccessfulResponseThreshold()) {
-      double successfulResponseThreshold = request.getSuccessfulResponseThreshold();
-      if (successfulResponseThreshold <= 0) {
-        String errorMsg = "Success response threshold is below or equal to 0: "
-            + successfulResponseThreshold + " request: " + request;
-        LOG.warn(errorMsg);
-        INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_LOW.increment();
-        return createErrorResponse(errorMsg);
-      } else if (successfulResponseThreshold > 1) {
-        String errorMsg = "Success response threshold is above 1: " + successfulResponseThreshold
-            + " request: " + request;
-        LOG.warn(errorMsg);
-        INVALID_SUCCESS_RESPONSE_THRESHOLD_TOO_HIGH.increment();
-        return createErrorResponse(errorMsg);
+    if (relonquelonst.isSelontSuccelonssfulRelonsponselonThrelonshold()) {
+      doublelon succelonssfulRelonsponselonThrelonshold = relonquelonst.gelontSuccelonssfulRelonsponselonThrelonshold();
+      if (succelonssfulRelonsponselonThrelonshold <= 0) {
+        String elonrrorMsg = "Succelonss relonsponselon threlonshold is belonlow or elonqual to 0: "
+            + succelonssfulRelonsponselonThrelonshold + " relonquelonst: " + relonquelonst;
+        LOG.warn(elonrrorMsg);
+        INVALID_SUCCelonSS_RelonSPONSelon_THRelonSHOLD_TOO_LOW.increlonmelonnt();
+        relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
+      } elonlselon if (succelonssfulRelonsponselonThrelonshold > 1) {
+        String elonrrorMsg = "Succelonss relonsponselon threlonshold is abovelon 1: " + succelonssfulRelonsponselonThrelonshold
+            + " relonquelonst: " + relonquelonst;
+        LOG.warn(elonrrorMsg);
+        INVALID_SUCCelonSS_RelonSPONSelon_THRelonSHOLD_TOO_HIGH.increlonmelonnt();
+        relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
       }
     }
 
-    return null;
+    relonturn null;
   }
 }

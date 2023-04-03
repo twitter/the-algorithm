@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ContainsFeedbackActionInfos
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasFeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.PinnableEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ReplaceableEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.MarkUnreadableEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleFooter
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehavior
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ContainsFelonelondbackActionInfos
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.HasClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.HasFelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Pinnablelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Relonplacelonablelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.MarkUnrelonadablelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonFootelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonHelonadelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonShowMorelonBelonhavior
 
-sealed trait TimelineEntry
-    extends HasEntryIdentifier
-    with HasSortIndex
-    with HasExpirationTime
-    with PinnableEntry
-    with ReplaceableEntry
-    with MarkUnreadableEntry
+selonalelond trait Timelonlinelonelonntry
+    elonxtelonnds HaselonntryIdelonntifielonr
+    with HasSortIndelonx
+    with HaselonxpirationTimelon
+    with Pinnablelonelonntry
+    with Relonplacelonablelonelonntry
+    with MarkUnrelonadablelonelonntry
 
-trait TimelineItem extends TimelineEntry with HasClientEventInfo with HasFeedbackActionInfo
+trait TimelonlinelonItelonm elonxtelonnds Timelonlinelonelonntry with HasClielonntelonvelonntInfo with HasFelonelondbackActionInfo
 
-case class ModuleItem(
-  item: TimelineItem,
-  dispensable: Option[Boolean],
-  treeDisplay: Option[ModuleItemTreeDisplay])
+caselon class ModulelonItelonm(
+  itelonm: TimelonlinelonItelonm,
+  dispelonnsablelon: Option[Boolelonan],
+  trelonelonDisplay: Option[ModulelonItelonmTrelonelonDisplay])
 
-case class TimelineModule(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val entryNamespace: EntryNamespace,
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isPinned: Option[Boolean],
-  items: Seq[ModuleItem],
-  displayType: ModuleDisplayType,
-  header: Option[ModuleHeader],
-  footer: Option[ModuleFooter],
-  metadata: Option[ModuleMetadata],
-  showMoreBehavior: Option[ModuleShowMoreBehavior])
-    extends TimelineEntry
-    with HasClientEventInfo
-    with HasFeedbackActionInfo
-    with ContainsFeedbackActionInfos {
-  override def feedbackActionInfos: Seq[Option[FeedbackActionInfo]] = {
-    items.map(_.item.feedbackActionInfo) :+ feedbackActionInfo
+caselon class TimelonlinelonModulelon(
+  ovelonrridelon val id: Long,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon,
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo],
+  ovelonrridelon val isPinnelond: Option[Boolelonan],
+  itelonms: Selonq[ModulelonItelonm],
+  displayTypelon: ModulelonDisplayTypelon,
+  helonadelonr: Option[ModulelonHelonadelonr],
+  footelonr: Option[ModulelonFootelonr],
+  melontadata: Option[ModulelonMelontadata],
+  showMorelonBelonhavior: Option[ModulelonShowMorelonBelonhavior])
+    elonxtelonnds Timelonlinelonelonntry
+    with HasClielonntelonvelonntInfo
+    with HasFelonelondbackActionInfo
+    with ContainsFelonelondbackActionInfos {
+  ovelonrridelon delonf felonelondbackActionInfos: Selonq[Option[FelonelondbackActionInfo]] = {
+    itelonms.map(_.itelonm.felonelondbackActionInfo) :+ felonelondbackActionInfo
   }
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }
 
-trait TimelineOperation extends TimelineEntry
+trait TimelonlinelonOpelonration elonxtelonnds Timelonlinelonelonntry

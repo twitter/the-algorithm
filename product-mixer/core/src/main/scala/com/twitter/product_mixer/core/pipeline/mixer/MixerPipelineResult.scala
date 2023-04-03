@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.core.pipeline.mixer
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr
 
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutorResults
-import com.twitter.product_mixer.core.service.candidate_pipeline_executor.CandidatePipelineExecutorResult
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutorResult
-import com.twitter.product_mixer.core.service.pipeline_result_side_effect_executor.PipelineResultSideEffectExecutor
-import com.twitter.product_mixer.core.service.quality_factor_executor.QualityFactorExecutorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.asyncfelonaturelonmap.AsyncFelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.async_felonaturelon_map_elonxeloncutor.AsyncFelonaturelonMapelonxeloncutorRelonsults
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_pipelonlinelon_elonxeloncutor.CandidatelonPipelonlinelonelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.domain_marshallelonr_elonxeloncutor.DomainMarshallelonrelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.GatelonelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_relonsult_sidelon_elonffelonct_elonxeloncutor.PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quality_factor_elonxeloncutor.QualityFactorelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor.SelonlelonctorelonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.transport_marshallelonr_elonxeloncutor.TransportMarshallelonrelonxeloncutor
 
 /**
- * A [[MixerPipelineResult]] includes both the user-visible [[PipelineResult]] and all the
- * Execution details possible - intermediate results, what components did, etc.
+ * A [[MixelonrPipelonlinelonRelonsult]] includelons both thelon uselonr-visiblelon [[PipelonlinelonRelonsult]] and all thelon
+ * elonxeloncution delontails possiblelon - intelonrmelondiatelon relonsults, what componelonnts did, elontc.
  */
-case class MixerPipelineResult[Result](
-  qualityFactorResult: Option[QualityFactorExecutorResult],
-  gateResult: Option[GateExecutorResult],
-  queryFeatures: Option[QueryFeatureHydratorExecutor.Result],
-  queryFeaturesPhase2: Option[QueryFeatureHydratorExecutor.Result],
-  mergedAsyncQueryFeatures: Option[AsyncFeatureMap],
-  candidatePipelineResults: Option[CandidatePipelineExecutorResult],
-  dependentCandidatePipelineResults: Option[CandidatePipelineExecutorResult],
-  resultSelectorResults: Option[SelectorExecutorResult],
-  domainMarshallerResults: Option[DomainMarshallerExecutor.Result[HasMarshalling]],
-  resultSideEffectResults: Option[PipelineResultSideEffectExecutor.Result],
-  asyncFeatureHydrationResults: Option[AsyncFeatureMapExecutorResults],
-  transportMarshallerResults: Option[TransportMarshallerExecutor.Result[Result]],
-  failure: Option[PipelineFailure],
-  result: Option[Result])
-    extends PipelineResult[Result] {
+caselon class MixelonrPipelonlinelonRelonsult[Relonsult](
+  qualityFactorRelonsult: Option[QualityFactorelonxeloncutorRelonsult],
+  gatelonRelonsult: Option[GatelonelonxeloncutorRelonsult],
+  quelonryFelonaturelons: Option[QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult],
+  quelonryFelonaturelonsPhaselon2: Option[QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult],
+  melonrgelondAsyncQuelonryFelonaturelons: Option[AsyncFelonaturelonMap],
+  candidatelonPipelonlinelonRelonsults: Option[CandidatelonPipelonlinelonelonxeloncutorRelonsult],
+  delonpelonndelonntCandidatelonPipelonlinelonRelonsults: Option[CandidatelonPipelonlinelonelonxeloncutorRelonsult],
+  relonsultSelonlelonctorRelonsults: Option[SelonlelonctorelonxeloncutorRelonsult],
+  domainMarshallelonrRelonsults: Option[DomainMarshallelonrelonxeloncutor.Relonsult[HasMarshalling]],
+  relonsultSidelonelonffelonctRelonsults: Option[PipelonlinelonRelonsultSidelonelonffelonctelonxeloncutor.Relonsult],
+  asyncFelonaturelonHydrationRelonsults: Option[AsyncFelonaturelonMapelonxeloncutorRelonsults],
+  transportMarshallelonrRelonsults: Option[TransportMarshallelonrelonxeloncutor.Relonsult[Relonsult]],
+  failurelon: Option[PipelonlinelonFailurelon],
+  relonsult: Option[Relonsult])
+    elonxtelonnds PipelonlinelonRelonsult[Relonsult] {
 
-  override def withFailure(failure: PipelineFailure): PipelineResult[Result] =
-    copy(failure = Some(failure))
+  ovelonrridelon delonf withFailurelon(failurelon: PipelonlinelonFailurelon): PipelonlinelonRelonsult[Relonsult] =
+    copy(failurelon = Somelon(failurelon))
 
-  override def withResult(result: Result): PipelineResult[Result] = copy(result = Some(result))
+  ovelonrridelon delonf withRelonsult(relonsult: Relonsult): PipelonlinelonRelonsult[Relonsult] = copy(relonsult = Somelon(relonsult))
 
   /**
-   * resultSize is calculated based on the selector results rather than the marshalled results. The
-   * structure of the marshalled format is unknown, making operating on selector results more
-   * convenient. This will implicitly excluded cursors built during marshalling but cursors don't
-   * contribute to the result size anyway.
+   * relonsultSizelon is calculatelond baselond on thelon selonlelonctor relonsults rathelonr than thelon marshallelond relonsults. Thelon
+   * structurelon of thelon marshallelond format is unknown, making opelonrating on selonlelonctor relonsults morelon
+   * convelonnielonnt. This will implicitly elonxcludelond cursors built during marshalling but cursors don't
+   * contributelon to thelon relonsult sizelon anyway.
    */
-  override val resultSize: Int =
-    resultSelectorResults.map(_.selectedCandidates).map(PipelineResult.resultSize).getOrElse(0)
+  ovelonrridelon val relonsultSizelon: Int =
+    relonsultSelonlelonctorRelonsults.map(_.selonlelonctelondCandidatelons).map(PipelonlinelonRelonsult.relonsultSizelon).gelontOrelonlselon(0)
 }
 
-object MixerPipelineResult {
-  def empty[A]: MixerPipelineResult[A] = MixerPipelineResult(
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None
+objelonct MixelonrPipelonlinelonRelonsult {
+  delonf elonmpty[A]: MixelonrPipelonlinelonRelonsult[A] = MixelonrPipelonlinelonRelonsult(
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon
   )
 }

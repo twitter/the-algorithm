@@ -1,19 +1,19 @@
-package com.twitter.search.ingester.model;
+packagelon com.twittelonr.selonarch.ingelonstelonr.modelonl;
 
-import com.twitter.search.common.debug.DebugEventAccumulator;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.tweetypie.thriftjava.TweetEvent;
+import com.twittelonr.selonarch.common.delonbug.DelonbugelonvelonntAccumulator;
+import com.twittelonr.selonarch.common.delonbug.thriftjava.Delonbugelonvelonnts;
+import com.twittelonr.twelonelontypielon.thriftjava.Twelonelontelonvelonnt;
 
-public class IngesterTweetEvent extends TweetEvent implements DebugEventAccumulator {
-  // Used for propagating DebugEvents through the ingester stages.
-  private final DebugEvents debugEvents;
+public class IngelonstelonrTwelonelontelonvelonnt elonxtelonnds Twelonelontelonvelonnt implelonmelonnts DelonbugelonvelonntAccumulator {
+  // Uselond for propagating Delonbugelonvelonnts through thelon ingelonstelonr stagelons.
+  privatelon final Delonbugelonvelonnts delonbugelonvelonnts;
 
-  public IngesterTweetEvent() {
-    this.debugEvents = new DebugEvents();
+  public IngelonstelonrTwelonelontelonvelonnt() {
+    this.delonbugelonvelonnts = nelonw Delonbugelonvelonnts();
   }
 
-  @Override
-  public DebugEvents getDebugEvents() {
-    return debugEvents;
+  @Ovelonrridelon
+  public Delonbugelonvelonnts gelontDelonbugelonvelonnts() {
+    relonturn delonbugelonvelonnts;
   }
 }

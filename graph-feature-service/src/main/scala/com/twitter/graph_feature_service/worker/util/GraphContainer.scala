@@ -1,19 +1,19 @@
-package com.twitter.graph_feature_service.worker.util
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.util.Future
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.elondgelonTypelon
+import com.twittelonr.util.Futurelon
 
-case class GraphContainer(
-  graphs: Map[GraphKey, AutoUpdatingGraph]) {
+caselon class GraphContainelonr(
+  graphs: Map[GraphKelony, AutoUpdatingGraph]) {
 
-  final val toPartialMap: Map[EdgeType, AutoUpdatingGraph] =
-    graphs.collect {
-      case (partialValueGraph: PartialValueGraph, graph) =>
-        partialValueGraph.edgeType -> graph
+  final val toPartialMap: Map[elondgelonTypelon, AutoUpdatingGraph] =
+    graphs.collelonct {
+      caselon (partialValuelonGraph: PartialValuelonGraph, graph) =>
+        partialValuelonGraph.elondgelonTypelon -> graph
     }
 
-  // load all the graphs from constantDB format to memory
-  def warmup: Future[Unit] = {
-    Future.collect(graphs.mapValues(_.warmup())).unit
+  // load all thelon graphs from constantDB format to melonmory
+  delonf warmup: Futurelon[Unit] = {
+    Futurelon.collelonct(graphs.mapValuelons(_.warmup())).unit
   }
 }

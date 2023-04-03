@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.repository
+packagelon com.twittelonr.timelonlinelonrankelonr.relonpository
 
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.parameters.ConfigBuilder
+import com.twittelonr.timelonlinelonrankelonr.config.RuntimelonConfiguration
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.ConfigBuildelonr
 
-object RoutingTimelineRepositoryBuilder {
-  def apply(
-    config: RuntimeConfiguration,
-    configBuilder: ConfigBuilder
-  ): RoutingTimelineRepository = {
+objelonct RoutingTimelonlinelonRelonpositoryBuildelonr {
+  delonf apply(
+    config: RuntimelonConfiguration,
+    configBuildelonr: ConfigBuildelonr
+  ): RoutingTimelonlinelonRelonpository = {
 
-    val reverseChronTimelineRepository =
-      new ReverseChronHomeTimelineRepositoryBuilder(config, configBuilder).apply
-    val rankedTimelineRepository = new RankedHomeTimelineRepository
+    val relonvelonrselonChronTimelonlinelonRelonpository =
+      nelonw RelonvelonrselonChronHomelonTimelonlinelonRelonpositoryBuildelonr(config, configBuildelonr).apply
+    val rankelondTimelonlinelonRelonpository = nelonw RankelondHomelonTimelonlinelonRelonpository
 
-    new RoutingTimelineRepository(reverseChronTimelineRepository, rankedTimelineRepository)
+    nelonw RoutingTimelonlinelonRelonpository(relonvelonrselonChronTimelonlinelonRelonpository, rankelondTimelonlinelonRelonpository)
   }
 }

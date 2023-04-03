@@ -1,31 +1,31 @@
-package com.twitter.simclusters_v2.common
+packagelon com.twittelonr.simclustelonrs_v2.common
 
-import com.twitter.simclusters_v2.common.SimClustersMultiEmbeddingId._
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding.{Ids, Values}
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersMultiEmbedding,
-  SimClustersEmbeddingId,
-  SimClustersMultiEmbeddingId
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrsMultielonmbelonddingId._
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelondding.{Ids, Valuelons}
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  SimClustelonrsMultielonmbelondding,
+  SimClustelonrselonmbelonddingId,
+  SimClustelonrsMultielonmbelonddingId
 }
 
 /**
- * Helper methods for SimClustersMultiEmbedding
+ * Helonlpelonr melonthods for SimClustelonrsMultielonmbelondding
  */
-object SimClustersMultiEmbedding {
+objelonct SimClustelonrsMultielonmbelondding {
 
-  // Convert a multiEmbedding to a list of (embeddingId, score)
-  def toSimClustersEmbeddingIdWithScores(
-    simClustersMultiEmbeddingId: SimClustersMultiEmbeddingId,
-    simClustersMultiEmbedding: SimClustersMultiEmbedding
-  ): Seq[(SimClustersEmbeddingId, Double)] = {
-    simClustersMultiEmbedding match {
-      case Values(values) =>
-        values.embeddings.zipWithIndex.map {
-          case (embeddingWithScore, i) =>
-            (toEmbeddingId(simClustersMultiEmbeddingId, i), embeddingWithScore.score)
+  // Convelonrt a multielonmbelondding to a list of (elonmbelonddingId, scorelon)
+  delonf toSimClustelonrselonmbelonddingIdWithScorelons(
+    simClustelonrsMultielonmbelonddingId: SimClustelonrsMultielonmbelonddingId,
+    simClustelonrsMultielonmbelondding: SimClustelonrsMultielonmbelondding
+  ): Selonq[(SimClustelonrselonmbelonddingId, Doublelon)] = {
+    simClustelonrsMultielonmbelondding match {
+      caselon Valuelons(valuelons) =>
+        valuelons.elonmbelonddings.zipWithIndelonx.map {
+          caselon (elonmbelonddingWithScorelon, i) =>
+            (toelonmbelonddingId(simClustelonrsMultielonmbelonddingId, i), elonmbelonddingWithScorelon.scorelon)
         }
-      case Ids(ids) =>
-        ids.ids.map(_.toTuple)
+      caselon Ids(ids) =>
+        ids.ids.map(_.toTuplelon)
     }
   }
 

@@ -1,82 +1,82 @@
-package com.twitter.recosinjector.edges
+packagelon com.twittelonr.reloncosinjelonctor.elondgelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats.track
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.baselon.Stats.track
+import com.twittelonr.util.Futurelon
 
 /**
- * This is the generic interface that converts incoming Events (ex. TweetEvent, FavEvent, etc)
- * into Edge for a specific output graph. It applies the following flow:
+ * This is thelon gelonnelonric intelonrfacelon that convelonrts incoming elonvelonnts (elonx. Twelonelontelonvelonnt, Favelonvelonnt, elontc)
+ * into elondgelon for a speloncific output graph. It applielons thelon following flow:
  *
- * event -> update event stats -> build edges -> filter edges
+ * elonvelonnt -> updatelon elonvelonnt stats -> build elondgelons -> filtelonr elondgelons
  *
- * Top-level statistics are provided for each step, such as latency and number of events
+ * Top-lelonvelonl statistics arelon providelond for elonach stelonp, such as latelonncy and numbelonr of elonvelonnts
  */
-trait EventToMessageBuilder[Event, E <: Edge] {
-  implicit val statsReceiver: StatsReceiver
+trait elonvelonntToMelonssagelonBuildelonr[elonvelonnt, elon <: elondgelon] {
+  implicit val statsReloncelonivelonr: StatsReloncelonivelonr
 
-  private lazy val processEventStats = statsReceiver.scope("process_event")
-  private lazy val numEventsStats = statsReceiver.counter("num_process_event")
-  private lazy val rejectEventStats = statsReceiver.counter("num_reject_event")
-  private lazy val buildEdgesStats = statsReceiver.scope("build")
-  private lazy val numAllEdgesStats = buildEdgesStats.counter("num_all_edges")
-  private lazy val filterEdgesStats = statsReceiver.scope("filter")
-  private lazy val numValidEdgesStats = statsReceiver.counter("num_valid_edges")
-  private lazy val numRecosHoseMessageStats = statsReceiver.counter("num_RecosHoseMessage")
+  privatelon lazy val procelonsselonvelonntStats = statsReloncelonivelonr.scopelon("procelonss_elonvelonnt")
+  privatelon lazy val numelonvelonntsStats = statsReloncelonivelonr.countelonr("num_procelonss_elonvelonnt")
+  privatelon lazy val relonjelonctelonvelonntStats = statsReloncelonivelonr.countelonr("num_relonjelonct_elonvelonnt")
+  privatelon lazy val buildelondgelonsStats = statsReloncelonivelonr.scopelon("build")
+  privatelon lazy val numAllelondgelonsStats = buildelondgelonsStats.countelonr("num_all_elondgelons")
+  privatelon lazy val filtelonrelondgelonsStats = statsReloncelonivelonr.scopelon("filtelonr")
+  privatelon lazy val numValidelondgelonsStats = statsReloncelonivelonr.countelonr("num_valid_elondgelons")
+  privatelon lazy val numReloncosHoselonMelonssagelonStats = statsReloncelonivelonr.countelonr("num_ReloncosHoselonMelonssagelon")
 
   /**
-   * Given an incoming event, process and convert it into a sequence of RecosHoseMessages
-   * @param event
-   * @return
+   * Givelonn an incoming elonvelonnt, procelonss and convelonrt it into a selonquelonncelon of ReloncosHoselonMelonssagelons
+   * @param elonvelonnt
+   * @relonturn
    */
-  def processEvent(event: Event): Future[Seq[Edge]] = {
-    track(processEventStats) {
-      shouldProcessEvent(event).flatMap {
-        case true =>
-          numEventsStats.incr()
-          updateEventStatus(event)
+  delonf procelonsselonvelonnt(elonvelonnt: elonvelonnt): Futurelon[Selonq[elondgelon]] = {
+    track(procelonsselonvelonntStats) {
+      shouldProcelonsselonvelonnt(elonvelonnt).flatMap {
+        caselon truelon =>
+          numelonvelonntsStats.incr()
+          updatelonelonvelonntStatus(elonvelonnt)
           for {
-            allEdges <- track(buildEdgesStats)(buildEdges(event))
-            filteredEdges <- track(filterEdgesStats)(filterEdges(event, allEdges))
-          } yield {
-            numAllEdgesStats.incr(allEdges.size)
-            numValidEdgesStats.incr(filteredEdges.size)
-            numRecosHoseMessageStats.incr(filteredEdges.size)
-            filteredEdges
+            allelondgelons <- track(buildelondgelonsStats)(buildelondgelons(elonvelonnt))
+            filtelonrelondelondgelons <- track(filtelonrelondgelonsStats)(filtelonrelondgelons(elonvelonnt, allelondgelons))
+          } yielonld {
+            numAllelondgelonsStats.incr(allelondgelons.sizelon)
+            numValidelondgelonsStats.incr(filtelonrelondelondgelons.sizelon)
+            numReloncosHoselonMelonssagelonStats.incr(filtelonrelondelondgelons.sizelon)
+            filtelonrelondelondgelons
           }
-        case false =>
-          rejectEventStats.incr()
-          Future.Nil
+        caselon falselon =>
+          relonjelonctelonvelonntStats.incr()
+          Futurelon.Nil
       }
     }
   }
 
   /**
-   * Pre-process filter that determines whether the given event should be used to build edges.
-   * @param event
-   * @return
+   * Prelon-procelonss filtelonr that delontelonrminelons whelonthelonr thelon givelonn elonvelonnt should belon uselond to build elondgelons.
+   * @param elonvelonnt
+   * @relonturn
    */
-  def shouldProcessEvent(event: Event): Future[Boolean]
+  delonf shouldProcelonsselonvelonnt(elonvelonnt: elonvelonnt): Futurelon[Boolelonan]
 
   /**
-   * Update cache/event logging related to the specific event.
-   * By default, no action will be taken. Override when necessary
-   * @param event
+   * Updatelon cachelon/elonvelonnt logging relonlatelond to thelon speloncific elonvelonnt.
+   * By delonfault, no action will belon takelonn. Ovelonrridelon whelonn neloncelonssary
+   * @param elonvelonnt
    */
-  def updateEventStatus(event: Event): Unit = {}
+  delonf updatelonelonvelonntStatus(elonvelonnt: elonvelonnt): Unit = {}
 
   /**
-   * Given an event, extract info and build a sequence of edges
-   * @param event
-   * @return
+   * Givelonn an elonvelonnt, elonxtract info and build a selonquelonncelon of elondgelons
+   * @param elonvelonnt
+   * @relonturn
    */
-  def buildEdges(event: Event): Future[Seq[E]]
+  delonf buildelondgelons(elonvelonnt: elonvelonnt): Futurelon[Selonq[elon]]
 
   /**
-   * Given a sequence of edges, filter and return the valid edges
-   * @param event
-   * @param edges
-   * @return
+   * Givelonn a selonquelonncelon of elondgelons, filtelonr and relonturn thelon valid elondgelons
+   * @param elonvelonnt
+   * @param elondgelons
+   * @relonturn
    */
-  def filterEdges(event: Event, edges: Seq[E]): Future[Seq[E]]
+  delonf filtelonrelondgelons(elonvelonnt: elonvelonnt, elondgelons: Selonq[elon]): Futurelon[Selonq[elon]]
 }

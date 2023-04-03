@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntDelontailsBuildelonr
 
 /**
- * Sets the [[ClientEventInfo]] with the `component` field set to [[component]]
- * @see  [[http://go/client-events]]
+ * Selonts thelon [[ClielonntelonvelonntInfo]] with thelon `componelonnt` fielonld selont to [[componelonnt]]
+ * @selonelon  [[http://go/clielonnt-elonvelonnts]]
  */
-case class ClientEventInfoBuilder[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  component: String,
-  detailsBuilder: Option[BaseClientEventDetailsBuilder[Query, Candidate]] = None)
-    extends BaseClientEventInfoBuilder[Query, Candidate] {
+caselon class ClielonntelonvelonntInfoBuildelonr[-Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+  componelonnt: String,
+  delontailsBuildelonr: Option[BaselonClielonntelonvelonntDelontailsBuildelonr[Quelonry, Candidatelon]] = Nonelon)
+    elonxtelonnds BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, Candidatelon] {
 
-  override def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap,
-    element: Option[String]
-  ): Option[ClientEventInfo] =
-    Some(
-      ClientEventInfo(
-        component = Some(component),
-        element = element,
-        details = detailsBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-        action = None,
-        entityToken = None)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap,
+    elonlelonmelonnt: Option[String]
+  ): Option[ClielonntelonvelonntInfo] =
+    Somelon(
+      ClielonntelonvelonntInfo(
+        componelonnt = Somelon(componelonnt),
+        elonlelonmelonnt = elonlelonmelonnt,
+        delontails = delontailsBuildelonr.flatMap(_.apply(quelonry, candidatelon, candidatelonFelonaturelons)),
+        action = Nonelon,
+        elonntityTokelonn = Nonelon)
     )
 }
 
 /**
- * In rare cases you might not want to send client event info. For
- * example, this might be set already on the client for some legacy
- * timelines.
+ * In rarelon caselons you might not want to selonnd clielonnt elonvelonnt info. For
+ * elonxamplelon, this might belon selont alrelonady on thelon clielonnt for somelon lelongacy
+ * timelonlinelons.
  */
-object EmptyClientEventInfoBuilder
-    extends BaseClientEventInfoBuilder[PipelineQuery, UniversalNoun[Any]] {
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap,
-    element: Option[String]
-  ): Option[ClientEventInfo] = None
+objelonct elonmptyClielonntelonvelonntInfoBuildelonr
+    elonxtelonnds BaselonClielonntelonvelonntInfoBuildelonr[PipelonlinelonQuelonry, UnivelonrsalNoun[Any]] {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: UnivelonrsalNoun[Any],
+    candidatelonFelonaturelons: FelonaturelonMap,
+    elonlelonmelonnt: Option[String]
+  ): Option[ClielonntelonvelonntInfo] = Nonelon
 }

@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.feature_hydration.common
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasSimilarToContelonxt
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
-trait FeatureSource {
-  def id: FeatureSourceId
-  def featureContext: FeatureContext
-  def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
+trait FelonaturelonSourcelon {
+  delonf id: FelonaturelonSourcelonId
+  delonf felonaturelonContelonxt: FelonaturelonContelonxt
+  delonf hydratelonFelonaturelons(
+    targelont: HasClielonntContelonxt
+      with HasPrelonFelontchelondFelonaturelon
       with HasParams
-      with HasSimilarToContext
+      with HasSimilarToContelonxt
       with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]]
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Stitch[Map[CandidatelonUselonr, DataReloncord]]
 }

@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
-public class PipelineV2CreationException extends Exception {
-  public PipelineV2CreationException(String message) {
-    super(message);
+public class PipelonlinelonV2Crelonationelonxcelonption elonxtelonnds elonxcelonption {
+  public PipelonlinelonV2Crelonationelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

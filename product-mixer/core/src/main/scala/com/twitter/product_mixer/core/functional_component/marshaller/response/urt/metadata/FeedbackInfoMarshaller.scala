@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FeedbackInfoMarshaller @Inject() (
-  feedbackActionMarshaller: FeedbackActionMarshaller,
-  feedbackDisplayContextMarshaller: FeedbackDisplayContextMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+@Singlelonton
+class FelonelondbackInfoMarshallelonr @Injelonct() (
+  felonelondbackActionMarshallelonr: FelonelondbackActionMarshallelonr,
+  felonelondbackDisplayContelonxtMarshallelonr: FelonelondbackDisplayContelonxtMarshallelonr,
+  clielonntelonvelonntInfoMarshallelonr: ClielonntelonvelonntInfoMarshallelonr) {
 
-  def apply(feedbackActionInfo: FeedbackActionInfo): urt.FeedbackInfo = urt.FeedbackInfo(
-    // Generate key from the hashcode of the marshalled feedback action URT
-    feedbackKeys = feedbackActionInfo.feedbackActions
-      .map(feedbackActionMarshaller(_)).map(FeedbackActionMarshaller.generateKey),
-    feedbackMetadata = feedbackActionInfo.feedbackMetadata,
-    displayContext = feedbackActionInfo.displayContext.map(feedbackDisplayContextMarshaller(_)),
-    clientEventInfo = feedbackActionInfo.clientEventInfo.map(clientEventInfoMarshaller(_)),
+  delonf apply(felonelondbackActionInfo: FelonelondbackActionInfo): urt.FelonelondbackInfo = urt.FelonelondbackInfo(
+    // Gelonnelonratelon kelony from thelon hashcodelon of thelon marshallelond felonelondback action URT
+    felonelondbackKelonys = felonelondbackActionInfo.felonelondbackActions
+      .map(felonelondbackActionMarshallelonr(_)).map(FelonelondbackActionMarshallelonr.gelonnelonratelonKelony),
+    felonelondbackMelontadata = felonelondbackActionInfo.felonelondbackMelontadata,
+    displayContelonxt = felonelondbackActionInfo.displayContelonxt.map(felonelondbackDisplayContelonxtMarshallelonr(_)),
+    clielonntelonvelonntInfo = felonelondbackActionInfo.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_)),
   )
 }

@@ -1,37 +1,37 @@
-package com.twitter.simclusters_v2.tweet_similarity
+packagelon com.twittelonr.simclustelonrs_v2.twelonelont_similarity
 
-import com.twitter.ml.api.{DataRecord, DataRecordMerger}
-import com.twitter.simclusters_v2.common.ml.{
-  SimClustersEmbeddingAdapter,
-  NormalizedSimClustersEmbeddingAdapter
+import com.twittelonr.ml.api.{DataReloncord, DataReloncordMelonrgelonr}
+import com.twittelonr.simclustelonrs_v2.common.ml.{
+  SimClustelonrselonmbelonddingAdaptelonr,
+  NormalizelondSimClustelonrselonmbelonddingAdaptelonr
 }
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
 
-object ModelBasedTweetSimilaritySimClustersEmbeddingAdapter {
-  val QueryEmbAdapter = new SimClustersEmbeddingAdapter(TweetSimilarityFeatures.QueryTweetEmbedding)
-  val CandidateEmbAdapter = new SimClustersEmbeddingAdapter(
-    TweetSimilarityFeatures.CandidateTweetEmbedding)
+objelonct ModelonlBaselondTwelonelontSimilaritySimClustelonrselonmbelonddingAdaptelonr {
+  val QuelonryelonmbAdaptelonr = nelonw SimClustelonrselonmbelonddingAdaptelonr(TwelonelontSimilarityFelonaturelons.QuelonryTwelonelontelonmbelondding)
+  val CandidatelonelonmbAdaptelonr = nelonw SimClustelonrselonmbelonddingAdaptelonr(
+    TwelonelontSimilarityFelonaturelons.CandidatelonTwelonelontelonmbelondding)
 
-  val NormalizedQueryEmbAdapter = new NormalizedSimClustersEmbeddingAdapter(
-    TweetSimilarityFeatures.QueryTweetEmbedding,
-    TweetSimilarityFeatures.QueryTweetEmbeddingNorm)
-  val NormalizedCandidateEmbAdapter = new NormalizedSimClustersEmbeddingAdapter(
-    TweetSimilarityFeatures.CandidateTweetEmbedding,
-    TweetSimilarityFeatures.CandidateTweetEmbeddingNorm)
+  val NormalizelondQuelonryelonmbAdaptelonr = nelonw NormalizelondSimClustelonrselonmbelonddingAdaptelonr(
+    TwelonelontSimilarityFelonaturelons.QuelonryTwelonelontelonmbelondding,
+    TwelonelontSimilarityFelonaturelons.QuelonryTwelonelontelonmbelonddingNorm)
+  val NormalizelondCandidatelonelonmbAdaptelonr = nelonw NormalizelondSimClustelonrselonmbelonddingAdaptelonr(
+    TwelonelontSimilarityFelonaturelons.CandidatelonTwelonelontelonmbelondding,
+    TwelonelontSimilarityFelonaturelons.CandidatelonTwelonelontelonmbelonddingNorm)
 
-  def adaptEmbeddingPairToDataRecord(
-    queryEmbedding: SimClustersEmbedding,
-    candidateEmbedding: SimClustersEmbedding,
-    normalized: Boolean
-  ): DataRecord = {
-    val DataRecordMerger = new DataRecordMerger()
-    val queryAdapter = if (normalized) NormalizedQueryEmbAdapter else QueryEmbAdapter
-    val candidateAdapter = if (normalized) NormalizedCandidateEmbAdapter else CandidateEmbAdapter
+  delonf adaptelonmbelonddingPairToDataReloncord(
+    quelonryelonmbelondding: SimClustelonrselonmbelondding,
+    candidatelonelonmbelondding: SimClustelonrselonmbelondding,
+    normalizelond: Boolelonan
+  ): DataReloncord = {
+    val DataReloncordMelonrgelonr = nelonw DataReloncordMelonrgelonr()
+    val quelonryAdaptelonr = if (normalizelond) NormalizelondQuelonryelonmbAdaptelonr elonlselon QuelonryelonmbAdaptelonr
+    val candidatelonAdaptelonr = if (normalizelond) NormalizelondCandidatelonelonmbAdaptelonr elonlselon CandidatelonelonmbAdaptelonr
 
-    val featureDataRecord = queryAdapter.adaptToDataRecord(queryEmbedding)
-    DataRecordMerger.merge(
-      featureDataRecord,
-      candidateAdapter.adaptToDataRecord(candidateEmbedding))
-    featureDataRecord
+    val felonaturelonDataReloncord = quelonryAdaptelonr.adaptToDataReloncord(quelonryelonmbelondding)
+    DataReloncordMelonrgelonr.melonrgelon(
+      felonaturelonDataReloncord,
+      candidatelonAdaptelonr.adaptToDataReloncord(candidatelonelonmbelondding))
+    felonaturelonDataReloncord
   }
 }

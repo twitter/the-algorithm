@@ -1,6 +1,6 @@
-resources(
-    name = "resources",
-    sources = [
+relonsourcelons(
+    namelon = "relonsourcelons",
+    sourcelons = [
         "*.dylib",
         "*.so",
         "*.so.0",
@@ -10,8 +10,8 @@ resources(
         "*.so.6",
     ],
     tags = [
-        "bazel-compatible",
-        "bazel-only",
-        "visibility://visibility:private",
+        "bazelonl-compatiblelon",
+        "bazelonl-only",
+        "visibility://visibility:privatelon",
     ],
 )

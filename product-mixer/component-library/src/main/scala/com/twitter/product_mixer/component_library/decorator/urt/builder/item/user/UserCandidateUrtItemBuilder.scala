@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.user
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.uselonr
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder.UserClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.component_library.model.candidate.IsMarkUnreadFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.user.BaseUserReactiveTriggersBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.User
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.uselonr.UselonrCandidatelonUrtItelonmBuildelonr.UselonrClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonUselonrCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.IsMarkUnrelonadFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.uselonr.BaselonUselonrRelonactivelonTriggelonrsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.promotelond.BaselonPromotelondMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.Uselonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.UselonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.UselonrItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object UserCandidateUrtItemBuilder {
-  val UserClientEventInfoElement: String = "user"
+objelonct UselonrCandidatelonUrtItelonmBuildelonr {
+  val UselonrClielonntelonvelonntInfoelonlelonmelonnt: String = "uselonr"
 }
 
-case class UserCandidateUrtItemBuilder[Query <: PipelineQuery, UserCandidate <: BaseUserCandidate](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UserCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, UserCandidate]
-  ] = None,
-  displayType: UserDisplayType = User,
-  promotedMetadataBuilder: Option[BasePromotedMetadataBuilder[Query, UserCandidate]] = None,
-  socialContextBuilder: Option[BaseSocialContextBuilder[Query, UserCandidate]] = None,
-  reactiveTriggersBuilder: Option[BaseUserReactiveTriggersBuilder[Query, UserCandidate]] = None,
-  enableReactiveBlending: Option[Boolean] = None)
-    extends CandidateUrtEntryBuilder[Query, UserCandidate, UserItem] {
+caselon class UselonrCandidatelonUrtItelonmBuildelonr[Quelonry <: PipelonlinelonQuelonry, UselonrCandidatelon <: BaselonUselonrCandidatelon](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, UselonrCandidatelon],
+  felonelondbackActionInfoBuildelonr: Option[
+    BaselonFelonelondbackActionInfoBuildelonr[Quelonry, UselonrCandidatelon]
+  ] = Nonelon,
+  displayTypelon: UselonrDisplayTypelon = Uselonr,
+  promotelondMelontadataBuildelonr: Option[BaselonPromotelondMelontadataBuildelonr[Quelonry, UselonrCandidatelon]] = Nonelon,
+  socialContelonxtBuildelonr: Option[BaselonSocialContelonxtBuildelonr[Quelonry, UselonrCandidatelon]] = Nonelon,
+  relonactivelonTriggelonrsBuildelonr: Option[BaselonUselonrRelonactivelonTriggelonrsBuildelonr[Quelonry, UselonrCandidatelon]] = Nonelon,
+  elonnablelonRelonactivelonBlelonnding: Option[Boolelonan] = Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, UselonrCandidatelon, UselonrItelonm] {
 
-  override def apply(
-    query: Query,
-    userCandidate: UserCandidate,
-    candidateFeatures: FeatureMap
-  ): UserItem = {
-    val isMarkUnread = candidateFeatures.getTry(IsMarkUnreadFeature).toOption
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    uselonrCandidatelon: UselonrCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): UselonrItelonm = {
+    val isMarkUnrelonad = candidatelonFelonaturelons.gelontTry(IsMarkUnrelonadFelonaturelon).toOption
 
-    UserItem(
-      id = userCandidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        userCandidate,
-        candidateFeatures,
-        Some(UserClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      isMarkUnread = isMarkUnread,
-      displayType = displayType,
-      promotedMetadata =
-        promotedMetadataBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      socialContext =
-        socialContextBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      reactiveTriggers =
-        reactiveTriggersBuilder.flatMap(_.apply(query, userCandidate, candidateFeatures)),
-      enableReactiveBlending = enableReactiveBlending
+    UselonrItelonm(
+      id = uselonrCandidatelon.id,
+      sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+      clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+        quelonry,
+        uselonrCandidatelon,
+        candidatelonFelonaturelons,
+        Somelon(UselonrClielonntelonvelonntInfoelonlelonmelonnt)),
+      felonelondbackActionInfo =
+        felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, uselonrCandidatelon, candidatelonFelonaturelons)),
+      isMarkUnrelonad = isMarkUnrelonad,
+      displayTypelon = displayTypelon,
+      promotelondMelontadata =
+        promotelondMelontadataBuildelonr.flatMap(_.apply(quelonry, uselonrCandidatelon, candidatelonFelonaturelons)),
+      socialContelonxt =
+        socialContelonxtBuildelonr.flatMap(_.apply(quelonry, uselonrCandidatelon, candidatelonFelonaturelons)),
+      relonactivelonTriggelonrs =
+        relonactivelonTriggelonrsBuildelonr.flatMap(_.apply(quelonry, uselonrCandidatelon, candidatelonFelonaturelons)),
+      elonnablelonRelonactivelonBlelonnding = elonnablelonRelonactivelonBlelonnding
     )
   }
 }

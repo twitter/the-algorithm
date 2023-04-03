@@ -1,168 +1,168 @@
-package com.twitter.visibility.builder
+packagelon com.twittelonr.visibility.buildelonr
 
-import com.twitter.datatools.entityservice.entities.thriftscala.FleetInterstitial
-import com.twitter.decider.Decider
-import com.twitter.decider.Decider.NullDecider
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.logpipeline.client.EventPublisherManager
-import com.twitter.logpipeline.client.serializers.EventLogMsgThriftStructSerializer
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.visibility.builder.VerdictLogger.FailureCounterName
-import com.twitter.visibility.builder.VerdictLogger.SuccessCounterName
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.logging.thriftscala.ActionSource
-import com.twitter.visibility.logging.thriftscala.EntityId
-import com.twitter.visibility.logging.thriftscala.EntityIdType
-import com.twitter.visibility.logging.thriftscala.EntityIdValue
-import com.twitter.visibility.logging.thriftscala.HealthActionType
-import com.twitter.visibility.logging.thriftscala.MisinfoPolicyCategory
-import com.twitter.visibility.logging.thriftscala.VFLibType
-import com.twitter.visibility.logging.thriftscala.VFVerdictLogEntry
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.rules._
+import com.twittelonr.datatools.elonntityselonrvicelon.elonntitielons.thriftscala.FlelonelontIntelonrstitial
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.Deloncidelonr.NullDeloncidelonr
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logpipelonlinelon.clielonnt.common.elonvelonntPublishelonr
+import com.twittelonr.logpipelonlinelon.clielonnt.elonvelonntPublishelonrManagelonr
+import com.twittelonr.logpipelonlinelon.clielonnt.selonrializelonrs.elonvelonntLogMsgThriftStructSelonrializelonr
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLelonvelonl
+import com.twittelonr.visibility.buildelonr.VelonrdictLoggelonr.FailurelonCountelonrNamelon
+import com.twittelonr.visibility.buildelonr.VelonrdictLoggelonr.SuccelonssCountelonrNamelon
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.logging.thriftscala.ActionSourcelon
+import com.twittelonr.visibility.logging.thriftscala.elonntityId
+import com.twittelonr.visibility.logging.thriftscala.elonntityIdTypelon
+import com.twittelonr.visibility.logging.thriftscala.elonntityIdValuelon
+import com.twittelonr.visibility.logging.thriftscala.HelonalthActionTypelon
+import com.twittelonr.visibility.logging.thriftscala.MisinfoPolicyCatelongory
+import com.twittelonr.visibility.logging.thriftscala.VFLibTypelon
+import com.twittelonr.visibility.logging.thriftscala.VFVelonrdictLogelonntry
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.rulelons._
 
-object VerdictLogger {
+objelonct VelonrdictLoggelonr {
 
-  private val BaseStatsNamespace = "vf_verdict_logger"
-  private val FailureCounterName = "failures"
-  private val SuccessCounterName = "successes"
-  val LogCategoryName: String = "visibility_filtering_verdicts"
+  privatelon val BaselonStatsNamelonspacelon = "vf_velonrdict_loggelonr"
+  privatelon val FailurelonCountelonrNamelon = "failurelons"
+  privatelon val SuccelonssCountelonrNamelon = "succelonsselons"
+  val LogCatelongoryNamelon: String = "visibility_filtelonring_velonrdicts"
 
-  val Empty: VerdictLogger = new VerdictLogger(NullStatsReceiver, NullDecider, None)
+  val elonmpty: VelonrdictLoggelonr = nelonw VelonrdictLoggelonr(NullStatsReloncelonivelonr, NullDeloncidelonr, Nonelon)
 
-  def apply(
-    statsReceiver: StatsReceiver,
-    decider: Decider
-  ): VerdictLogger = {
-    val eventPublisher: EventPublisher[VFVerdictLogEntry] =
-      EventPublisherManager
-        .newScribePublisherBuilder(
-          LogCategoryName,
-          EventLogMsgThriftStructSerializer.getNewSerializer[VFVerdictLogEntry]()).build()
-    new VerdictLogger(statsReceiver.scope(BaseStatsNamespace), decider, Some(eventPublisher))
+  delonf apply(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    deloncidelonr: Deloncidelonr
+  ): VelonrdictLoggelonr = {
+    val elonvelonntPublishelonr: elonvelonntPublishelonr[VFVelonrdictLogelonntry] =
+      elonvelonntPublishelonrManagelonr
+        .nelonwScribelonPublishelonrBuildelonr(
+          LogCatelongoryNamelon,
+          elonvelonntLogMsgThriftStructSelonrializelonr.gelontNelonwSelonrializelonr[VFVelonrdictLogelonntry]()).build()
+    nelonw VelonrdictLoggelonr(statsReloncelonivelonr.scopelon(BaselonStatsNamelonspacelon), deloncidelonr, Somelon(elonvelonntPublishelonr))
   }
 }
 
-class VerdictLogger(
-  statsReceiver: StatsReceiver,
-  decider: Decider,
-  publisherOpt: Option[EventPublisher[VFVerdictLogEntry]]) {
+class VelonrdictLoggelonr(
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  deloncidelonr: Deloncidelonr,
+  publishelonrOpt: Option[elonvelonntPublishelonr[VFVelonrdictLogelonntry]]) {
 
-  def log(
-    verdictLogEntry: VFVerdictLogEntry,
-    publisher: EventPublisher[VFVerdictLogEntry]
+  delonf log(
+    velonrdictLogelonntry: VFVelonrdictLogelonntry,
+    publishelonr: elonvelonntPublishelonr[VFVelonrdictLogelonntry]
   ): Unit = {
-    publisher
-      .publish(verdictLogEntry)
-      .onSuccess(_ => statsReceiver.counter(SuccessCounterName).incr())
-      .onFailure { e =>
-        statsReceiver.counter(FailureCounterName).incr()
-        statsReceiver.scope(FailureCounterName).counter(e.getClass.getName).incr()
+    publishelonr
+      .publish(velonrdictLogelonntry)
+      .onSuccelonss(_ => statsReloncelonivelonr.countelonr(SuccelonssCountelonrNamelon).incr())
+      .onFailurelon { elon =>
+        statsReloncelonivelonr.countelonr(FailurelonCountelonrNamelon).incr()
+        statsReloncelonivelonr.scopelon(FailurelonCountelonrNamelon).countelonr(elon.gelontClass.gelontNamelon).incr()
       }
   }
 
-  private def toEntityId(contentId: ContentId): Option[EntityId] = {
-    contentId match {
-      case ContentId.TweetId(id) => Some(EntityId(EntityIdType.TweetId, EntityIdValue.EntityId(id)))
-      case ContentId.UserId(id) => Some(EntityId(EntityIdType.UserId, EntityIdValue.EntityId(id)))
-      case ContentId.QuotedTweetRelationship(outerTweetId, _) =>
-        Some(EntityId(EntityIdType.TweetId, EntityIdValue.EntityId(outerTweetId)))
-      case ContentId.NotificationId(Some(id)) =>
-        Some(EntityId(EntityIdType.NotificationId, EntityIdValue.EntityId(id)))
-      case ContentId.DmId(id) => Some(EntityId(EntityIdType.DmId, EntityIdValue.EntityId(id)))
-      case ContentId.BlenderTweetId(id) =>
-        Some(EntityId(EntityIdType.TweetId, EntityIdValue.EntityId(id)))
-      case ContentId.SpacePlusUserId(_) =>
+  privatelon delonf toelonntityId(contelonntId: ContelonntId): Option[elonntityId] = {
+    contelonntId match {
+      caselon ContelonntId.TwelonelontId(id) => Somelon(elonntityId(elonntityIdTypelon.TwelonelontId, elonntityIdValuelon.elonntityId(id)))
+      caselon ContelonntId.UselonrId(id) => Somelon(elonntityId(elonntityIdTypelon.UselonrId, elonntityIdValuelon.elonntityId(id)))
+      caselon ContelonntId.QuotelondTwelonelontRelonlationship(outelonrTwelonelontId, _) =>
+        Somelon(elonntityId(elonntityIdTypelon.TwelonelontId, elonntityIdValuelon.elonntityId(outelonrTwelonelontId)))
+      caselon ContelonntId.NotificationId(Somelon(id)) =>
+        Somelon(elonntityId(elonntityIdTypelon.NotificationId, elonntityIdValuelon.elonntityId(id)))
+      caselon ContelonntId.DmId(id) => Somelon(elonntityId(elonntityIdTypelon.DmId, elonntityIdValuelon.elonntityId(id)))
+      caselon ContelonntId.BlelonndelonrTwelonelontId(id) =>
+        Somelon(elonntityId(elonntityIdTypelon.TwelonelontId, elonntityIdValuelon.elonntityId(id)))
+      caselon ContelonntId.SpacelonPlusUselonrId(_) =>
     }
   }
 
-  private def getLogEntryData(
-    actingRule: Option[Rule],
-    secondaryActingRules: Seq[Rule],
-    verdict: Action,
-    secondaryVerdicts: Seq[Action],
-    resolvedFeatureMap: Map[Feature[_], Any]
-  ): (Seq[String], Seq[ActionSource], Seq[HealthActionType], Option[FleetInterstitial]) = {
-    actingRule
-      .filter {
-        case decideredRule: DoesLogVerdictDecidered =>
-          decider.isAvailable(decideredRule.verdictLogDeciderKey.toString)
-        case rule: DoesLogVerdict => true
-        case _ => false
+  privatelon delonf gelontLogelonntryData(
+    actingRulelon: Option[Rulelon],
+    seloncondaryActingRulelons: Selonq[Rulelon],
+    velonrdict: Action,
+    seloncondaryVelonrdicts: Selonq[Action],
+    relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any]
+  ): (Selonq[String], Selonq[ActionSourcelon], Selonq[HelonalthActionTypelon], Option[FlelonelontIntelonrstitial]) = {
+    actingRulelon
+      .filtelonr {
+        caselon deloncidelonrelondRulelon: DoelonsLogVelonrdictDeloncidelonrelond =>
+          deloncidelonr.isAvailablelon(deloncidelonrelondRulelon.velonrdictLogDeloncidelonrKelony.toString)
+        caselon rulelon: DoelonsLogVelonrdict => truelon
+        caselon _ => falselon
       }
-      .map { primaryRule =>
-        val secondaryRulesAndVerdicts = secondaryActingRules zip secondaryVerdicts
-        var actingRules: Seq[Rule] = Seq(primaryRule)
-        var actingRuleNames: Seq[String] = Seq(primaryRule.name)
-        var actionSources: Seq[ActionSource] = Seq()
-        var healthActionTypes: Seq[HealthActionType] = Seq(verdict.toHealthActionTypeThrift.get)
+      .map { primaryRulelon =>
+        val seloncondaryRulelonsAndVelonrdicts = seloncondaryActingRulelons zip seloncondaryVelonrdicts
+        var actingRulelons: Selonq[Rulelon] = Selonq(primaryRulelon)
+        var actingRulelonNamelons: Selonq[String] = Selonq(primaryRulelon.namelon)
+        var actionSourcelons: Selonq[ActionSourcelon] = Selonq()
+        var helonalthActionTypelons: Selonq[HelonalthActionTypelon] = Selonq(velonrdict.toHelonalthActionTypelonThrift.gelont)
 
-        val misinfoPolicyCategory: Option[FleetInterstitial] = {
-          verdict match {
-            case softIntervention: SoftIntervention =>
-              softIntervention.fleetInterstitial
-            case tweetInterstitial: TweetInterstitial =>
-              tweetInterstitial.softIntervention.flatMap(_.fleetInterstitial)
-            case _ => None
+        val misinfoPolicyCatelongory: Option[FlelonelontIntelonrstitial] = {
+          velonrdict match {
+            caselon softIntelonrvelonntion: SoftIntelonrvelonntion =>
+              softIntelonrvelonntion.flelonelontIntelonrstitial
+            caselon twelonelontIntelonrstitial: TwelonelontIntelonrstitial =>
+              twelonelontIntelonrstitial.softIntelonrvelonntion.flatMap(_.flelonelontIntelonrstitial)
+            caselon _ => Nonelon
           }
         }
 
-        secondaryRulesAndVerdicts.foreach(ruleAndVerdict => {
-          if (ruleAndVerdict._1.isInstanceOf[DoesLogVerdict]) {
-            actingRules = actingRules :+ ruleAndVerdict._1
-            actingRuleNames = actingRuleNames :+ ruleAndVerdict._1.name
-            healthActionTypes = healthActionTypes :+ ruleAndVerdict._2.toHealthActionTypeThrift.get
+        seloncondaryRulelonsAndVelonrdicts.forelonach(rulelonAndVelonrdict => {
+          if (rulelonAndVelonrdict._1.isInstancelonOf[DoelonsLogVelonrdict]) {
+            actingRulelons = actingRulelons :+ rulelonAndVelonrdict._1
+            actingRulelonNamelons = actingRulelonNamelons :+ rulelonAndVelonrdict._1.namelon
+            helonalthActionTypelons = helonalthActionTypelons :+ rulelonAndVelonrdict._2.toHelonalthActionTypelonThrift.gelont
           }
         })
 
-        actingRules.foreach(rule => {
-          rule.actionSourceBuilder
-            .flatMap(_.build(resolvedFeatureMap, verdict))
-            .map(actionSource => {
-              actionSources = actionSources :+ actionSource
+        actingRulelons.forelonach(rulelon => {
+          rulelon.actionSourcelonBuildelonr
+            .flatMap(_.build(relonsolvelondFelonaturelonMap, velonrdict))
+            .map(actionSourcelon => {
+              actionSourcelons = actionSourcelons :+ actionSourcelon
             })
         })
-        (actingRuleNames, actionSources, healthActionTypes, misinfoPolicyCategory)
+        (actingRulelonNamelons, actionSourcelons, helonalthActionTypelons, misinfoPolicyCatelongory)
       }
-      .getOrElse((Seq.empty[String], Seq.empty[ActionSource], Seq.empty[HealthActionType], None))
+      .gelontOrelonlselon((Selonq.elonmpty[String], Selonq.elonmpty[ActionSourcelon], Selonq.elonmpty[HelonalthActionTypelon], Nonelon))
   }
 
-  def scribeVerdict(
-    visibilityResult: VisibilityResult,
-    safetyLevel: SafetyLevel,
-    vfLibType: VFLibType,
-    viewerId: Option[Long] = None
+  delonf scribelonVelonrdict(
+    visibilityRelonsult: VisibilityRelonsult,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    vfLibTypelon: VFLibTypelon,
+    vielonwelonrId: Option[Long] = Nonelon
   ): Unit = {
-    publisherOpt.foreach { publisher =>
-      toEntityId(visibilityResult.contentId).foreach { entityId =>
-        visibilityResult.verdict.toHealthActionTypeThrift.foreach { healthActionType =>
-          val (actioningRules, actionSources, healthActionTypes, misinfoPolicyCategory) =
-            getLogEntryData(
-              actingRule = visibilityResult.actingRule,
-              secondaryActingRules = visibilityResult.secondaryActingRules,
-              verdict = visibilityResult.verdict,
-              secondaryVerdicts = visibilityResult.secondaryVerdicts,
-              resolvedFeatureMap = visibilityResult.resolvedFeatureMap
+    publishelonrOpt.forelonach { publishelonr =>
+      toelonntityId(visibilityRelonsult.contelonntId).forelonach { elonntityId =>
+        visibilityRelonsult.velonrdict.toHelonalthActionTypelonThrift.forelonach { helonalthActionTypelon =>
+          val (actioningRulelons, actionSourcelons, helonalthActionTypelons, misinfoPolicyCatelongory) =
+            gelontLogelonntryData(
+              actingRulelon = visibilityRelonsult.actingRulelon,
+              seloncondaryActingRulelons = visibilityRelonsult.seloncondaryActingRulelons,
+              velonrdict = visibilityRelonsult.velonrdict,
+              seloncondaryVelonrdicts = visibilityRelonsult.seloncondaryVelonrdicts,
+              relonsolvelondFelonaturelonMap = visibilityRelonsult.relonsolvelondFelonaturelonMap
             )
 
-          if (actioningRules.nonEmpty) {
+          if (actioningRulelons.nonelonmpty) {
             log(
-              VFVerdictLogEntry(
-                entityId = entityId,
-                viewerId = viewerId,
-                timestampMsec = System.currentTimeMillis(),
-                vfLibType = vfLibType,
-                healthActionType = healthActionType,
-                safetyLevel = safetyLevel,
-                actioningRules = actioningRules,
-                actionSources = actionSources,
-                healthActionTypes = healthActionTypes,
-                misinfoPolicyCategory =
-                  fleetInterstitialToMisinfoPolicyCategory(misinfoPolicyCategory)
+              VFVelonrdictLogelonntry(
+                elonntityId = elonntityId,
+                vielonwelonrId = vielonwelonrId,
+                timelonstampMselonc = Systelonm.currelonntTimelonMillis(),
+                vfLibTypelon = vfLibTypelon,
+                helonalthActionTypelon = helonalthActionTypelon,
+                safelontyLelonvelonl = safelontyLelonvelonl,
+                actioningRulelons = actioningRulelons,
+                actionSourcelons = actionSourcelons,
+                helonalthActionTypelons = helonalthActionTypelons,
+                misinfoPolicyCatelongory =
+                  flelonelontIntelonrstitialToMisinfoPolicyCatelongory(misinfoPolicyCatelongory)
               ),
-              publisher
+              publishelonr
             )
           }
         }
@@ -170,17 +170,17 @@ class VerdictLogger(
     }
   }
 
-  def fleetInterstitialToMisinfoPolicyCategory(
-    fleetInterstitialOption: Option[FleetInterstitial]
-  ): Option[MisinfoPolicyCategory] = {
-    fleetInterstitialOption.map {
-      case FleetInterstitial.Generic =>
-        MisinfoPolicyCategory.Generic
-      case FleetInterstitial.Samm =>
-        MisinfoPolicyCategory.Samm
-      case FleetInterstitial.CivicIntegrity =>
-        MisinfoPolicyCategory.CivicIntegrity
-      case _ => MisinfoPolicyCategory.Unknown
+  delonf flelonelontIntelonrstitialToMisinfoPolicyCatelongory(
+    flelonelontIntelonrstitialOption: Option[FlelonelontIntelonrstitial]
+  ): Option[MisinfoPolicyCatelongory] = {
+    flelonelontIntelonrstitialOption.map {
+      caselon FlelonelontIntelonrstitial.Gelonnelonric =>
+        MisinfoPolicyCatelongory.Gelonnelonric
+      caselon FlelonelontIntelonrstitial.Samm =>
+        MisinfoPolicyCatelongory.Samm
+      caselon FlelonelontIntelonrstitial.CivicIntelongrity =>
+        MisinfoPolicyCatelongory.CivicIntelongrity
+      caselon _ => MisinfoPolicyCatelongory.Unknown
     }
   }
 

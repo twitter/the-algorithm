@@ -1,13 +1,13 @@
 """
-Error classes for twml
+elonrror classelons for twml
 """
 
 
-class EarlyStopError(Exception):
-  """Exception used to indicate evaluator needs to early stop."""
+class elonarlyStopelonrror(elonxcelonption):
+  """elonxcelonption uselond to indicatelon elonvaluator nelonelonds to elonarly stop."""
   pass
 
 
-class CheckpointNotFoundError(Exception):
-  """Exception used to indicate a checkpoint hasnt been found."""
+class ChelonckpointNotFoundelonrror(elonxcelonption):
+  """elonxcelonption uselond to indicatelon a chelonckpoint hasnt belonelonn found."""
   pass

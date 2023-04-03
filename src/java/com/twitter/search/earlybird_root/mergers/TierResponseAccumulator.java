@@ -1,97 +1,97 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.TierResponse;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.TielonrRelonsponselon;
 
-public final class TierResponseAccumulator extends ResponseAccumulator {
-  private static final String TARGET_TYPE_TIER = "tier";
+public final class TielonrRelonsponselonAccumulator elonxtelonnds RelonsponselonAccumulator {
+  privatelon static final String TARGelonT_TYPelon_TIelonR = "tielonr";
 
-  private final List<TierResponse> tierResponses = new ArrayList<>();
-  // Total number of partitions the request was sent to, across all tiers.
-  private int totalPartitionsQueriedInAllTiers = 0;
-  // Among the above partitions, the number of them that returned successful responses.
-  private int totalSuccessfulPartitionsInAllTiers = 0;
+  privatelon final List<TielonrRelonsponselon> tielonrRelonsponselons = nelonw ArrayList<>();
+  // Total numbelonr of partitions thelon relonquelonst was selonnt to, across all tielonrs.
+  privatelon int totalPartitionsQuelonrielondInAllTielonrs = 0;
+  // Among thelon abovelon partitions, thelon numbelonr of thelonm that relonturnelond succelonssful relonsponselons.
+  privatelon int totalSuccelonssfulPartitionsInAllTielonrs = 0;
 
-  @Override
-  public String getNameForLogging(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_TIER + (numTotalResponses - responseIndex);
+  @Ovelonrridelon
+  public String gelontNamelonForLogging(int relonsponselonIndelonx, int numTotalRelonsponselons) {
+    relonturn TARGelonT_TYPelon_TIelonR + (numTotalRelonsponselons - relonsponselonIndelonx);
   }
 
-  @Override
-  public String getNameForEarlybirdResponseCodeStats(int responseIndex, int numTotalResponses) {
-    return TARGET_TYPE_TIER + (numTotalResponses - responseIndex);
+  @Ovelonrridelon
+  public String gelontNamelonForelonarlybirdRelonsponselonCodelonStats(int relonsponselonIndelonx, int numTotalRelonsponselons) {
+    relonturn TARGelonT_TYPelon_TIelonR + (numTotalRelonsponselons - relonsponselonIndelonx);
   }
 
-  @Override
-  protected boolean isMergingAcrossTiers() {
-    return true;
+  @Ovelonrridelon
+  protelonctelond boolelonan isMelonrgingAcrossTielonrs() {
+    relonturn truelon;
   }
 
-  @Override
-  public boolean shouldEarlyTerminateMerge(EarlyTerminateTierMergePredicate merger) {
-    if (foundError()) {
-      return true;
+  @Ovelonrridelon
+  public boolelonan shouldelonarlyTelonrminatelonMelonrgelon(elonarlyTelonrminatelonTielonrMelonrgelonPrelondicatelon melonrgelonr) {
+    if (foundelonrror()) {
+      relonturn truelon;
     }
 
-    int numResults = 0;
-    for (EarlybirdResponse resp : getSuccessResponses()) {
-      if (resp.isSetSearchResults()) {
-        numResults += resp.getSearchResults().getResultsSize();
+    int numRelonsults = 0;
+    for (elonarlybirdRelonsponselon relonsp : gelontSuccelonssRelonsponselons()) {
+      if (relonsp.isSelontSelonarchRelonsults()) {
+        numRelonsults += relonsp.gelontSelonarchRelonsults().gelontRelonsultsSizelon();
       }
     }
 
-    return merger.shouldEarlyTerminateTierMerge(numResults, foundEarlyTermination());
+    relonturn melonrgelonr.shouldelonarlyTelonrminatelonTielonrMelonrgelon(numRelonsults, foundelonarlyTelonrmination());
   }
 
-  @Override
-  public void handleSkippedResponse(EarlybirdResponseCode responseCode) {
-    tierResponses.add(new TierResponse()
-        .setNumPartitions(0)
-        .setNumSuccessfulPartitions(0)
-        .setTierResponseCode(responseCode));
+  @Ovelonrridelon
+  public void handlelonSkippelondRelonsponselon(elonarlybirdRelonsponselonCodelon relonsponselonCodelon) {
+    tielonrRelonsponselons.add(nelonw TielonrRelonsponselon()
+        .selontNumPartitions(0)
+        .selontNumSuccelonssfulPartitions(0)
+        .selontTielonrRelonsponselonCodelon(relonsponselonCodelon));
   }
 
-  @Override
-  public void handleErrorResponse(EarlybirdResponse response) {
-    // TierResponse, which is only returned if merging results from different tiers.
-    TierResponse tr = new TierResponse();
-    if (response != null) {
-      if (response.isSetResponseCode()) {
-        tr.setTierResponseCode(response.getResponseCode());
-      } else {
-        tr.setTierResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR);
+  @Ovelonrridelon
+  public void handlelonelonrrorRelonsponselon(elonarlybirdRelonsponselon relonsponselon) {
+    // TielonrRelonsponselon, which is only relonturnelond if melonrging relonsults from diffelonrelonnt tielonrs.
+    TielonrRelonsponselon tr = nelonw TielonrRelonsponselon();
+    if (relonsponselon != null) {
+      if (relonsponselon.isSelontRelonsponselonCodelon()) {
+        tr.selontTielonrRelonsponselonCodelon(relonsponselon.gelontRelonsponselonCodelon());
+      } elonlselon {
+        tr.selontTielonrRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.TRANSIelonNT_elonRROR);
       }
-      tr.setNumPartitions(response.getNumPartitions());
-      tr.setNumSuccessfulPartitions(0);
-      totalPartitionsQueriedInAllTiers += response.getNumPartitions();
-    } else {
-      tr.setTierResponseCode(EarlybirdResponseCode.TRANSIENT_ERROR)
-          .setNumPartitions(0)
-          .setNumSuccessfulPartitions(0);
+      tr.selontNumPartitions(relonsponselon.gelontNumPartitions());
+      tr.selontNumSuccelonssfulPartitions(0);
+      totalPartitionsQuelonrielondInAllTielonrs += relonsponselon.gelontNumPartitions();
+    } elonlselon {
+      tr.selontTielonrRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.TRANSIelonNT_elonRROR)
+          .selontNumPartitions(0)
+          .selontNumSuccelonssfulPartitions(0);
     }
 
-    tierResponses.add(tr);
+    tielonrRelonsponselons.add(tr);
   }
 
-  @Override
-  public AccumulatedResponses.PartitionCounts getPartitionCounts() {
-    return new AccumulatedResponses.PartitionCounts(totalPartitionsQueriedInAllTiers,
-        totalSuccessfulPartitionsInAllTiers, tierResponses);
+  @Ovelonrridelon
+  public AccumulatelondRelonsponselons.PartitionCounts gelontPartitionCounts() {
+    relonturn nelonw AccumulatelondRelonsponselons.PartitionCounts(totalPartitionsQuelonrielondInAllTielonrs,
+        totalSuccelonssfulPartitionsInAllTielonrs, tielonrRelonsponselons);
   }
 
-  @Override
-  public void extraSuccessfulResponseHandler(EarlybirdResponse response) {
-    // Record tier stats.
-    totalPartitionsQueriedInAllTiers += response.getNumPartitions();
-    totalSuccessfulPartitionsInAllTiers += response.getNumSuccessfulPartitions();
+  @Ovelonrridelon
+  public void elonxtraSuccelonssfulRelonsponselonHandlelonr(elonarlybirdRelonsponselon relonsponselon) {
+    // Reloncord tielonr stats.
+    totalPartitionsQuelonrielondInAllTielonrs += relonsponselon.gelontNumPartitions();
+    totalSuccelonssfulPartitionsInAllTielonrs += relonsponselon.gelontNumSuccelonssfulPartitions();
 
-    tierResponses.add(new TierResponse()
-        .setNumPartitions(response.getNumPartitions())
-        .setNumSuccessfulPartitions(response.getNumSuccessfulPartitions())
-        .setTierResponseCode(EarlybirdResponseCode.SUCCESS));
+    tielonrRelonsponselons.add(nelonw TielonrRelonsponselon()
+        .selontNumPartitions(relonsponselon.gelontNumPartitions())
+        .selontNumSuccelonssfulPartitions(relonsponselon.gelontNumSuccelonssfulPartitions())
+        .selontTielonrRelonsponselonCodelon(elonarlybirdRelonsponselonCodelon.SUCCelonSS));
   }
 }

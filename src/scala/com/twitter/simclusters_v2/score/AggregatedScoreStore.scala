@@ -1,24 +1,24 @@
-package com.twitter.simclusters_v2.score
+packagelon com.twittelonr.simclustelonrs_v2.scorelon
 
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId, Score => ThriftScore}
-import com.twitter.storehaus.ReadableStore
+import com.twittelonr.simclustelonrs_v2.thriftscala.{ScorelonId => ThriftScorelonId, Scorelon => ThriftScorelon}
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
 
 /**
- * A wrapper class, used to aggregate the scores calculated by other score stores. It relies on the
- * results of other ScoreStores registered in the ScoreFacadeStore.
+ * A wrappelonr class, uselond to aggrelongatelon thelon scorelons calculatelond by othelonr scorelon storelons. It relonlielons on thelon
+ * relonsults of othelonr ScorelonStorelons relongistelonrelond in thelon ScorelonFacadelonStorelon.
  */
-trait AggregatedScoreStore extends ReadableStore[ThriftScoreId, ThriftScore] {
+trait AggrelongatelondScorelonStorelon elonxtelonnds RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon] {
 
-  // The underlyingScoreStore relies on [[ScoreFacadeStore]] to finish the dependency injection.
-  protected var scoreFacadeStore: ReadableStore[ThriftScoreId, ThriftScore] = ReadableStore.empty
+  // Thelon undelonrlyingScorelonStorelon relonlielons on [[ScorelonFacadelonStorelon]] to finish thelon delonpelonndelonncy injelonction.
+  protelonctelond var scorelonFacadelonStorelon: RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon] = RelonadablelonStorelon.elonmpty
 
   /**
-   * When registering this store in a ScoreFacadeStore, the facade store calls this function to
-   * provide references to other score stores.
+   * Whelonn relongistelonring this storelon in a ScorelonFacadelonStorelon, thelon facadelon storelon calls this function to
+   * providelon relonfelonrelonncelons to othelonr scorelon storelons.
    */
-  private[score] def set(facadeStore: ReadableStore[ThriftScoreId, ThriftScore]): Unit = {
-    this.synchronized {
-      scoreFacadeStore = facadeStore
+  privatelon[scorelon] delonf selont(facadelonStorelon: RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon]): Unit = {
+    this.synchronizelond {
+      scorelonFacadelonStorelon = facadelonStorelon
     }
   }
 }

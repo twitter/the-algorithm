@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarouselMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.GridCarouselonlMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonMelontadata
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object TopicsToFollowModuleMetadataBuilder {
+objelonct TopicsToFollowModulelonMelontadataBuildelonr {
 
-  val TopicsPerRow = 7
+  val TopicsPelonrRow = 7
 
   /*
-   * rows = min(MAX_NUM_ROWS, # topics / TOPICS_PER_ROW)
-   * where TOPICS_PER_ROW = 7
+   * rows = min(MAX_NUM_ROWS, # topics / TOPICS_PelonR_ROW)
+   * whelonrelon TOPICS_PelonR_ROW = 7
    */
-  def getCarouselRowCount(topicsCount: Int, maxCarouselRows: Int): Int =
-    Math.min(maxCarouselRows, (topicsCount / TopicsPerRow) + 1)
+  delonf gelontCarouselonlRowCount(topicsCount: Int, maxCarouselonlRows: Int): Int =
+    Math.min(maxCarouselonlRows, (topicsCount / TopicsPelonrRow) + 1)
 }
 
-case class TopicsToFollowModuleMetadataBuilder(maxCarouselRowsParam: Param[Int])
-    extends BaseModuleMetadataBuilder[PipelineQuery, UniversalNoun[Any]] {
+caselon class TopicsToFollowModulelonMelontadataBuildelonr(maxCarouselonlRowsParam: Param[Int])
+    elonxtelonnds BaselonModulelonMelontadataBuildelonr[PipelonlinelonQuelonry, UnivelonrsalNoun[Any]] {
 
-  import TopicsToFollowModuleMetadataBuilder._
+  import TopicsToFollowModulelonMelontadataBuildelonr._
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleMetadata = {
-    val rowCount = getCarouselRowCount(candidates.size, query.params(maxCarouselRowsParam))
-    ModuleMetadata(
-      adsMetadata = None,
-      conversationMetadata = None,
-      gridCarouselMetadata = Some(GridCarouselMetadata(numRows = Some(rowCount)))
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[UnivelonrsalNoun[Any]]]
+  ): ModulelonMelontadata = {
+    val rowCount = gelontCarouselonlRowCount(candidatelons.sizelon, quelonry.params(maxCarouselonlRowsParam))
+    ModulelonMelontadata(
+      adsMelontadata = Nonelon,
+      convelonrsationMelontadata = Nonelon,
+      gridCarouselonlMelontadata = Somelon(GridCarouselonlMelontadata(numRows = Somelon(rowCount)))
     )
   }
 }

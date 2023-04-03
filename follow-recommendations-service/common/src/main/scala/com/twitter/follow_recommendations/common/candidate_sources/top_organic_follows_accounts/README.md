@@ -1,2 +1,2 @@
 # Top Organic Follows Accounts
-Provides the most organically followed (i.e. not followed through the Who-To-Follow module) accounts for a given country.
+Providelons thelon most organically followelond (i.elon. not followelond through thelon Who-To-Follow modulelon) accounts for a givelonn country.

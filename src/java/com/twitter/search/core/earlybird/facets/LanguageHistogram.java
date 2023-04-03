@@ -1,104 +1,104 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
+import com.googlelon.common.collelonct.ImmutablelonMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
 
 /**
- * A util class to build a language histogram
+ * A util class to build a languagelon histogram
  */
-public class LanguageHistogram {
-  private static final Logger LOG = LoggerFactory.getLogger(LanguageHistogram.class);
+public class LanguagelonHistogram {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(LanguagelonHistogram.class);
 
-  public static final LanguageHistogram EMPTY_HISTOGRAM = new LanguageHistogram() {
-    // Let's make this immutable for safety.
-    @Override public void clear() {
-      throw new UnsupportedOperationException();
+  public static final LanguagelonHistogram elonMPTY_HISTOGRAM = nelonw LanguagelonHistogram() {
+    // Lelont's makelon this immutablelon for safelonty.
+    @Ovelonrridelon public void clelonar() {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption();
     }
 
-    @Override public void increment(int languageID) {
-      throw new UnsupportedOperationException();
+    @Ovelonrridelon public void increlonmelonnt(int languagelonID) {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption();
     }
 
-    @Override public void add(int languageID, int value) {
-      throw new UnsupportedOperationException();
+    @Ovelonrridelon public void add(int languagelonID, int valuelon) {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption();
     }
 
-    @Override public void addAll(LanguageHistogram histogram) {
-      throw new UnsupportedOperationException();
+    @Ovelonrridelon public void addAll(LanguagelonHistogram histogram) {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption();
     }
   };
 
-  private final int[] languageHistogram = new int[ThriftLanguage.values().length];
+  privatelon final int[] languagelonHistogram = nelonw int[ThriftLanguagelon.valuelons().lelonngth];
 
-  public int[] getLanguageHistogram() {
-    return languageHistogram;
+  public int[] gelontLanguagelonHistogram() {
+    relonturn languagelonHistogram;
   }
 
   /**
-   * Returns this histogram represented as a language->count map.
+   * Relonturns this histogram relonprelonselonntelond as a languagelon->count map.
    */
-  public Map<ThriftLanguage, Integer> getLanguageHistogramAsMap() {
-    ImmutableMap.Builder<ThriftLanguage, Integer> builder = ImmutableMap.builder();
-    for (int i = 0; i < languageHistogram.length; i++) {
-      // ThriftLanguage.findByValue() might return null, which should fall back to UNKNOWN.
-      ThriftLanguage lang = ThriftLanguage.findByValue(i);
-      lang = lang == null ? ThriftLanguage.UNKNOWN : lang;
-      builder.put(lang, languageHistogram[i]);
+  public Map<ThriftLanguagelon, Intelongelonr> gelontLanguagelonHistogramAsMap() {
+    ImmutablelonMap.Buildelonr<ThriftLanguagelon, Intelongelonr> buildelonr = ImmutablelonMap.buildelonr();
+    for (int i = 0; i < languagelonHistogram.lelonngth; i++) {
+      // ThriftLanguagelon.findByValuelon() might relonturn null, which should fall back to UNKNOWN.
+      ThriftLanguagelon lang = ThriftLanguagelon.findByValuelon(i);
+      lang = lang == null ? ThriftLanguagelon.UNKNOWN : lang;
+      buildelonr.put(lang, languagelonHistogram[i]);
     }
-    return builder.build();
+    relonturn buildelonr.build();
   }
 
-  public void clear() {
-    Arrays.fill(languageHistogram, 0);
+  public void clelonar() {
+    Arrays.fill(languagelonHistogram, 0);
   }
 
-  public void increment(int languageId) {
-    if (isValidLanguageId(languageId)) {
-      languageHistogram[languageId]++;
-    }
-  }
-
-  public void increment(ThriftLanguage language) {
-    increment(language.getValue());
-  }
-
-  public void add(int languageId, int value) {
-    if (isValidLanguageId(languageId)) {
-      languageHistogram[languageId] += value;
+  public void increlonmelonnt(int languagelonId) {
+    if (isValidLanguagelonId(languagelonId)) {
+      languagelonHistogram[languagelonId]++;
     }
   }
 
-  public void add(ThriftLanguage language, int value) {
-    add(language.getValue(), value);
+  public void increlonmelonnt(ThriftLanguagelon languagelon) {
+    increlonmelonnt(languagelon.gelontValuelon());
+  }
+
+  public void add(int languagelonId, int valuelon) {
+    if (isValidLanguagelonId(languagelonId)) {
+      languagelonHistogram[languagelonId] += valuelon;
+    }
+  }
+
+  public void add(ThriftLanguagelon languagelon, int valuelon) {
+    add(languagelon.gelontValuelon(), valuelon);
   }
 
   /**
-   * Adds all entries from the provided histogram to this histogram.
+   * Adds all elonntrielons from thelon providelond histogram to this histogram.
    */
-  public void addAll(LanguageHistogram histogram) {
-    if (histogram == EMPTY_HISTOGRAM) {
-      return;
+  public void addAll(LanguagelonHistogram histogram) {
+    if (histogram == elonMPTY_HISTOGRAM) {
+      relonturn;
     }
-    for (int i = 0; i < languageHistogram.length; i++) {
-      languageHistogram[i] += histogram.languageHistogram[i];
+    for (int i = 0; i < languagelonHistogram.lelonngth; i++) {
+      languagelonHistogram[i] += histogram.languagelonHistogram[i];
     }
   }
 
-  // Check for out of bound languages.  If a language is out of bounds, we don't want it
-  // to cause the entire search to fail.
-  private boolean isValidLanguageId(int languageId) {
-    if (languageId < languageHistogram.length) {
-      return true;
-    } else {
-      LOG.error("Language id " + languageId + " out of range");
-      return false;
+  // Chelonck for out of bound languagelons.  If a languagelon is out of bounds, welon don't want it
+  // to causelon thelon elonntirelon selonarch to fail.
+  privatelon boolelonan isValidLanguagelonId(int languagelonId) {
+    if (languagelonId < languagelonHistogram.lelonngth) {
+      relonturn truelon;
+    } elonlselon {
+      LOG.elonrror("Languagelon id " + languagelonId + " out of rangelon");
+      relonturn falselon;
     }
   }
 }

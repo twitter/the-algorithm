@@ -1,4 +1,4 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato
 
-/** Represents a Strato column's Key and View arguments */
-case class StratoKeyView[StratoKey, StratoView](key: StratoKey, view: StratoView)
+/** Relonprelonselonnts a Strato column's Kelony and Vielonw argumelonnts */
+caselon class StratoKelonyVielonw[StratoKelony, StratoVielonw](kelony: StratoKelony, vielonw: StratoVielonw)

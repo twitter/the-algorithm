@@ -1,33 +1,33 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.twitter.finagle.Filter;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Filtelonr;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
 /**
- * A filter for transforming a RequestContext to an EarlybirdRequest.
+ * A filtelonr for transforming a RelonquelonstContelonxt to an elonarlybirdRelonquelonst.
  */
-public class RequestContextToEarlybirdRequestFilter extends
-    Filter<EarlybirdRequestContext, EarlybirdResponse, EarlybirdRequest, EarlybirdResponse> {
+public class RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr elonxtelonnds
+    Filtelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon, elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
 
-  private static final SearchTimerStats REQUEST_CONTEXT_TRIP_TIME =
-      SearchTimerStats.export("request_context_trip_time", TimeUnit.MILLISECONDS, false,
-          true);
+  privatelon static final SelonarchTimelonrStats RelonQUelonST_CONTelonXT_TRIP_TIMelon =
+      SelonarchTimelonrStats.elonxport("relonquelonst_contelonxt_trip_timelon", TimelonUnit.MILLISelonCONDS, falselon,
+          truelon);
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequest, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    long tripTime = System.currentTimeMillis() - requestContext.getCreatedTimeMillis();
-    REQUEST_CONTEXT_TRIP_TIME.timerIncrement(tripTime);
+    long tripTimelon = Systelonm.currelonntTimelonMillis() - relonquelonstContelonxt.gelontCrelonatelondTimelonMillis();
+    RelonQUelonST_CONTelonXT_TRIP_TIMelon.timelonrIncrelonmelonnt(tripTimelon);
 
-    return service.apply(requestContext.getRequest());
+    relonturn selonrvicelon.apply(relonquelonstContelonxt.gelontRelonquelonst());
   }
 }

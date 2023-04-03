@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.core.functional_component.filter
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter.SupportsConditionally
-import com.twitter.product_mixer.core.model.common
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr.SupportsConditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Takes a sequence of candidates and can filter some out
+ * Takelons a selonquelonncelon of candidatelons and can filtelonr somelon out
  *
- * @note if you want to conditionally run a [[Filter]] you can use the mixin [[Filter.Conditionally]]
- *       or to gate on a [[com.twitter.timelines.configapi.Param]] you can use [[com.twitter.product_mixer.component_library.filter.ParamGatedFilter]]
+ * @notelon if you want to conditionally run a [[Filtelonr]] you can uselon thelon mixin [[Filtelonr.Conditionally]]
+ *       or to gatelon on a [[com.twittelonr.timelonlinelons.configapi.Param]] you can uselon [[com.twittelonr.product_mixelonr.componelonnt_library.filtelonr.ParamGatelondFiltelonr]]
  *
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam Candidatelon Thelon typelon of thelon candidatelons
  */
-trait Filter[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-    extends Component
-    with SupportsConditionally[Query, Candidate] {
+trait Filtelonr[-Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]]
+    elonxtelonnds Componelonnt
+    with SupportsConditionally[Quelonry, Candidatelon] {
 
-  /** @see [[FilterIdentifier]] */
-  override val identifier: FilterIdentifier
+  /** @selonelon [[FiltelonrIdelonntifielonr]] */
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr
 
   /**
-   * Filter the list of candidates
+   * Filtelonr thelon list of candidatelons
    *
-   * @return a FilterResult including both the list of kept candidate and the list of removed candidates
+   * @relonturn a FiltelonrRelonsult including both thelon list of kelonpt candidatelon and thelon list of relonmovelond candidatelons
    */
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]]
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]]
 }
 
-object Filter {
+objelonct Filtelonr {
 
   /**
-   * Mixin for when you want to conditionally run a [[Filter]]
+   * Mixin for whelonn you want to conditionally run a [[Filtelonr]]
    *
-   * This is a thin wrapper around [[common.Conditionally]] exposing a nicer API for the [[Filter]] specific use-case.
+   * This is a thin wrappelonr around [[common.Conditionally]] elonxposing a nicelonr API for thelon [[Filtelonr]] speloncific uselon-caselon.
    */
-  trait Conditionally[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]]
-      extends common.Conditionally[Input[Query, Candidate]] { _: Filter[Query, Candidate] =>
+  trait Conditionally[-Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]]
+      elonxtelonnds common.Conditionally[Input[Quelonry, Candidatelon]] { _: Filtelonr[Quelonry, Candidatelon] =>
 
-    /** @see [[common.Conditionally.onlyIf]] */
-    def onlyIf(
-      query: Query,
-      candidates: Seq[CandidateWithFeatures[Candidate]]
-    ): Boolean
+    /** @selonelon [[common.Conditionally.onlyIf]] */
+    delonf onlyIf(
+      quelonry: Quelonry,
+      candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+    ): Boolelonan
 
-    override final def onlyIf(input: Input[Query, Candidate]): Boolean =
-      onlyIf(input.query, input.candidates)
+    ovelonrridelon final delonf onlyIf(input: Input[Quelonry, Candidatelon]): Boolelonan =
+      onlyIf(input.quelonry, input.candidatelons)
   }
 
-  /** Type alias to obscure [[Filter.Input]] from customers */
-  type SupportsConditionally[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]] =
-    common.SupportsConditionally[Input[Query, Candidate]]
+  /** Typelon alias to obscurelon [[Filtelonr.Input]] from customelonrs */
+  typelon SupportsConditionally[-Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]] =
+    common.SupportsConditionally[Input[Quelonry, Candidatelon]]
 
-  /** A case class representing the input arguments to a [[Filter]], mostly for internal use */
-  case class Input[+Query <: PipelineQuery, +Candidate <: UniversalNoun[Any]](
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]])
+  /** A caselon class relonprelonselonnting thelon input argumelonnts to a [[Filtelonr]], mostly for intelonrnal uselon */
+  caselon class Input[+Quelonry <: PipelonlinelonQuelonry, +Candidatelon <: UnivelonrsalNoun[Any]](
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]])
 }

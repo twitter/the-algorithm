@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.GelonnelonralContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SocialContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TopicContelonxt
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SocialContextMarshaller @Inject() (
-  generalContextMarshaller: GeneralContextMarshaller,
-  topicContextMarshaller: TopicContextMarshaller) {
+@Singlelonton
+class SocialContelonxtMarshallelonr @Injelonct() (
+  gelonnelonralContelonxtMarshallelonr: GelonnelonralContelonxtMarshallelonr,
+  topicContelonxtMarshallelonr: TopicContelonxtMarshallelonr) {
 
-  def apply(socialContext: SocialContext): urt.SocialContext =
-    socialContext match {
-      case generalContextBanner: GeneralContext =>
-        generalContextMarshaller(generalContextBanner)
-      case topicContextBanner: TopicContext =>
-        topicContextMarshaller(topicContextBanner)
+  delonf apply(socialContelonxt: SocialContelonxt): urt.SocialContelonxt =
+    socialContelonxt match {
+      caselon gelonnelonralContelonxtBannelonr: GelonnelonralContelonxt =>
+        gelonnelonralContelonxtMarshallelonr(gelonnelonralContelonxtBannelonr)
+      caselon topicContelonxtBannelonr: TopicContelonxt =>
+        topicContelonxtMarshallelonr(topicContelonxtBannelonr)
     }
 }

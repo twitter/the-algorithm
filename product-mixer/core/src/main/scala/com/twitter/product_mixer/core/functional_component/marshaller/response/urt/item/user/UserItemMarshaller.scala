@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.uselonr
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.SocialContelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond.PromotelondMelontadataMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.UselonrItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UserItemMarshaller @Inject() (
-  userDisplayTypeMarshaller: UserDisplayTypeMarshaller,
-  promotedMetadataMarshaller: PromotedMetadataMarshaller,
-  socialContextMarshaller: SocialContextMarshaller,
-  userReactiveTriggersMarshaller: UserReactiveTriggersMarshaller) {
+@Singlelonton
+class UselonrItelonmMarshallelonr @Injelonct() (
+  uselonrDisplayTypelonMarshallelonr: UselonrDisplayTypelonMarshallelonr,
+  promotelondMelontadataMarshallelonr: PromotelondMelontadataMarshallelonr,
+  socialContelonxtMarshallelonr: SocialContelonxtMarshallelonr,
+  uselonrRelonactivelonTriggelonrsMarshallelonr: UselonrRelonactivelonTriggelonrsMarshallelonr) {
 
-  def apply(userItem: UserItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.User(
-      urt.User(
-        id = userItem.id,
-        displayType = userDisplayTypeMarshaller(userItem.displayType),
-        promotedMetadata = userItem.promotedMetadata.map(promotedMetadataMarshaller(_)),
-        socialContext = userItem.socialContext.map(socialContextMarshaller(_)),
-        enableReactiveBlending = userItem.enableReactiveBlending,
-        reactiveTriggers = userItem.reactiveTriggers.map(userReactiveTriggersMarshaller(_))
+  delonf apply(uselonrItelonm: UselonrItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.Uselonr(
+      urt.Uselonr(
+        id = uselonrItelonm.id,
+        displayTypelon = uselonrDisplayTypelonMarshallelonr(uselonrItelonm.displayTypelon),
+        promotelondMelontadata = uselonrItelonm.promotelondMelontadata.map(promotelondMelontadataMarshallelonr(_)),
+        socialContelonxt = uselonrItelonm.socialContelonxt.map(socialContelonxtMarshallelonr(_)),
+        elonnablelonRelonactivelonBlelonnding = uselonrItelonm.elonnablelonRelonactivelonBlelonnding,
+        relonactivelonTriggelonrs = uselonrItelonm.relonactivelonTriggelonrs.map(uselonrRelonactivelonTriggelonrsMarshallelonr(_))
       )
     )
 }

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.candidate_source.ann
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.ann
 
-import com.twitter.ann.common._
+import com.twittelonr.ann.common._
 
 /**
- * A [[AnnIdQuery]] is a query class which defines the ann entities with runtime params and number of neighbors requested
+ * A [[AnnIdQuelonry]] is a quelonry class which delonfinelons thelon ann elonntitielons with runtimelon params and numbelonr of nelonighbors relonquelonstelond
  *
- * @param ids Sequence of queries
- * @param numOfNeighbors Number of neighbors requested
- * @param runtimeParams ANN Runtime Params
- * @param batchSize Batch size to the stitch client
- * @tparam T type of  query.
- * @tparam P  runtime parameters supported by the index.
+ * @param ids Selonquelonncelon of quelonrielons
+ * @param numOfNelonighbors Numbelonr of nelonighbors relonquelonstelond
+ * @param runtimelonParams ANN Runtimelon Params
+ * @param batchSizelon Batch sizelon to thelon stitch clielonnt
+ * @tparam T typelon of  quelonry.
+ * @tparam P  runtimelon paramelontelonrs supportelond by thelon indelonx.
  */
-case class AnnIdQuery[T, P <: RuntimeParams](
-  ids: Seq[T],
-  numOfNeighbors: Int,
-  runtimeParams: P)
+caselon class AnnIdQuelonry[T, P <: RuntimelonParams](
+  ids: Selonq[T],
+  numOfNelonighbors: Int,
+  runtimelonParams: P)

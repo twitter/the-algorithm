@@ -1,137 +1,137 @@
-package com.twitter.cr_mixer.candidate_generation
+packagelon com.twittelonr.cr_mixelonr.candidatelon_gelonnelonration
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.filter.PreRankFilterRunner
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.TweetWithCandidateGenerationInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.TweetBasedUnifiedSimilarityEngine
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.contelonntreloncommelonndelonr.thriftscala.TwelonelontInfo
+import com.twittelonr.cr_mixelonr.filtelonr.PrelonRankFiltelonrRunnelonr
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithCandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.StandardSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.TwelonelontBaselondUnifielondSimilarityelonnginelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RelatedVideoTweetCandidateGenerator @Inject() (
-  @Named(ModuleNames.TweetBasedUnifiedSimilarityEngine) tweetBasedUnifiedSimilarityEngine: StandardSimilarityEngine[
-    TweetBasedUnifiedSimilarityEngine.Query,
-    TweetWithCandidateGenerationInfo
+@Singlelonton
+class RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonrator @Injelonct() (
+  @Namelond(ModulelonNamelons.TwelonelontBaselondUnifielondSimilarityelonnginelon) twelonelontBaselondUnifielondSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    TwelonelontBaselondUnifielondSimilarityelonnginelon.Quelonry,
+    TwelonelontWithCandidatelonGelonnelonrationInfo
   ],
-  preRankFilterRunner: PreRankFilterRunner,
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  globalStats: StatsReceiver) {
+  prelonRankFiltelonrRunnelonr: PrelonRankFiltelonrRunnelonr,
+  twelonelontInfoStorelon: RelonadablelonStorelon[TwelonelontId, TwelonelontInfo],
+  globalStats: StatsReloncelonivelonr) {
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val preRankFilterStats = stats.scope("preRankFilter")
+  privatelon val stats: StatsReloncelonivelonr = globalStats.scopelon(this.gelontClass.gelontCanonicalNamelon)
+  privatelon val felontchCandidatelonsStats = stats.scopelon("felontchCandidatelons")
+  privatelon val prelonRankFiltelonrStats = stats.scopelon("prelonRankFiltelonr")
 
-  def get(
-    query: RelatedVideoTweetCandidateGeneratorQuery
-  ): Future[Seq[InitialCandidate]] = {
+  delonf gelont(
+    quelonry: RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonratorQuelonry
+  ): Futurelon[Selonq[InitialCandidatelon]] = {
 
-    val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", query.product.toString)
-    StatsUtil.trackItemsStats(allStats) {
-      StatsUtil.trackItemsStats(perProductStats) {
+    val allStats = stats.scopelon("all")
+    val pelonrProductStats = stats.scopelon("pelonrProduct", quelonry.product.toString)
+    StatsUtil.trackItelonmsStats(allStats) {
+      StatsUtil.trackItelonmsStats(pelonrProductStats) {
         for {
-          initialCandidates <- StatsUtil.trackBlockStats(fetchCandidatesStats) {
-            fetchCandidates(query)
+          initialCandidatelons <- StatsUtil.trackBlockStats(felontchCandidatelonsStats) {
+            felontchCandidatelons(quelonry)
           }
-          filteredCandidates <- StatsUtil.trackBlockStats(preRankFilterStats) {
-            preRankFilter(query, initialCandidates)
+          filtelonrelondCandidatelons <- StatsUtil.trackBlockStats(prelonRankFiltelonrStats) {
+            prelonRankFiltelonr(quelonry, initialCandidatelons)
           }
-        } yield {
-          filteredCandidates.headOption
-            .getOrElse(
-              throw new UnsupportedOperationException(
-                "RelatedVideoTweetCandidateGenerator results invalid")
-            ).take(query.maxNumResults)
+        } yielonld {
+          filtelonrelondCandidatelons.helonadOption
+            .gelontOrelonlselon(
+              throw nelonw UnsupportelondOpelonrationelonxcelonption(
+                "RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonrator relonsults invalid")
+            ).takelon(quelonry.maxNumRelonsults)
         }
       }
     }
   }
 
-  def fetchCandidates(
-    query: RelatedVideoTweetCandidateGeneratorQuery
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    query.internalId match {
-      case InternalId.TweetId(_) =>
-        getCandidatesFromSimilarityEngine(
-          query,
-          TweetBasedUnifiedSimilarityEngine.fromParamsForRelatedVideoTweet,
-          tweetBasedUnifiedSimilarityEngine.getCandidates)
-      case _ =>
-        throw new UnsupportedOperationException(
-          "RelatedVideoTweetCandidateGenerator gets invalid InternalId")
+  delonf felontchCandidatelons(
+    quelonry: RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonratorQuelonry
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    quelonry.intelonrnalId match {
+      caselon IntelonrnalId.TwelonelontId(_) =>
+        gelontCandidatelonsFromSimilarityelonnginelon(
+          quelonry,
+          TwelonelontBaselondUnifielondSimilarityelonnginelon.fromParamsForRelonlatelondVidelonoTwelonelont,
+          twelonelontBaselondUnifielondSimilarityelonnginelon.gelontCandidatelons)
+      caselon _ =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(
+          "RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonrator gelonts invalid IntelonrnalId")
     }
   }
 
   /***
-   * fetch Candidates from TweetBased/ProducerBased Unified Similarity Engine,
-   * and apply VF filter based on TweetInfoStore
-   * To align with the downstream processing (filter, rank), we tend to return a Seq[Seq[InitialCandidate]]
-   * instead of a Seq[Candidate] even though we only have a Seq in it.
+   * felontch Candidatelons from TwelonelontBaselond/ProducelonrBaselond Unifielond Similarity elonnginelon,
+   * and apply VF filtelonr baselond on TwelonelontInfoStorelon
+   * To align with thelon downstrelonam procelonssing (filtelonr, rank), welon telonnd to relonturn a Selonq[Selonq[InitialCandidatelon]]
+   * instelonad of a Selonq[Candidatelon] elonvelonn though welon only havelon a Selonq in it.
    */
-  private def getCandidatesFromSimilarityEngine[QueryType](
-    query: RelatedVideoTweetCandidateGeneratorQuery,
-    fromParamsForRelatedVideoTweet: (InternalId, configapi.Params) => QueryType,
-    getFunc: QueryType => Future[Option[Seq[TweetWithCandidateGenerationInfo]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
+  privatelon delonf gelontCandidatelonsFromSimilarityelonnginelon[QuelonryTypelon](
+    quelonry: RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonratorQuelonry,
+    fromParamsForRelonlatelondVidelonoTwelonelont: (IntelonrnalId, configapi.Params) => QuelonryTypelon,
+    gelontFunc: QuelonryTypelon => Futurelon[Option[Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo]]]
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
 
     /***
-     * We wrap the query to be a Seq of queries for the Sim Engine to ensure evolvability of candidate generation
-     * and as a result, it will return Seq[Seq[InitialCandidate]]
+     * Welon wrap thelon quelonry to belon a Selonq of quelonrielons for thelon Sim elonnginelon to elonnsurelon elonvolvability of candidatelon gelonnelonration
+     * and as a relonsult, it will relonturn Selonq[Selonq[InitialCandidatelon]]
      */
-    val engineQueries =
-      Seq(fromParamsForRelatedVideoTweet(query.internalId, query.params))
+    val elonnginelonQuelonrielons =
+      Selonq(fromParamsForRelonlatelondVidelonoTwelonelont(quelonry.intelonrnalId, quelonry.params))
 
-    Future
-      .collect {
-        engineQueries.map { query =>
+    Futurelon
+      .collelonct {
+        elonnginelonQuelonrielons.map { quelonry =>
           for {
-            candidates <- getFunc(query)
-            prefilterCandidates <- convertToInitialCandidates(
-              candidates.toSeq.flatten
+            candidatelons <- gelontFunc(quelonry)
+            prelonfiltelonrCandidatelons <- convelonrtToInitialCandidatelons(
+              candidatelons.toSelonq.flattelonn
             )
-          } yield prefilterCandidates
+          } yielonld prelonfiltelonrCandidatelons
         }
       }
   }
 
-  private def preRankFilter(
-    query: RelatedVideoTweetCandidateGeneratorQuery,
-    candidates: Seq[Seq[InitialCandidate]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    preRankFilterRunner
-      .runSequentialFilters(query, candidates)
+  privatelon delonf prelonRankFiltelonr(
+    quelonry: RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonratorQuelonry,
+    candidatelons: Selonq[Selonq[InitialCandidatelon]]
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    prelonRankFiltelonrRunnelonr
+      .runSelonquelonntialFiltelonrs(quelonry, candidatelons)
   }
 
-  private[candidate_generation] def convertToInitialCandidates(
-    candidates: Seq[TweetWithCandidateGenerationInfo],
-  ): Future[Seq[InitialCandidate]] = {
-    val tweetIds = candidates.map(_.tweetId).toSet
-    Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  privatelon[candidatelon_gelonnelonration] delonf convelonrtToInitialCandidatelons(
+    candidatelons: Selonq[TwelonelontWithCandidatelonGelonnelonrationInfo],
+  ): Futurelon[Selonq[InitialCandidatelon]] = {
+    val twelonelontIds = candidatelons.map(_.twelonelontId).toSelont
+    Futurelon.collelonct(twelonelontInfoStorelon.multiGelont(twelonelontIds)).map { twelonelontInfos =>
       /***
-       * If tweetInfo does not exist, we will filter out this tweet candidate.
-       * This tweetInfo filter also acts as the VF filter
+       * If twelonelontInfo doelons not elonxist, welon will filtelonr out this twelonelont candidatelon.
+       * This twelonelontInfo filtelonr also acts as thelon VF filtelonr
        */
-      candidates.collect {
-        case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>
-          val tweetInfo = tweetInfos(candidate.tweetId)
-            .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+      candidatelons.collelonct {
+        caselon candidatelon if twelonelontInfos.gelontOrelonlselon(candidatelon.twelonelontId, Nonelon).isDelonfinelond =>
+          val twelonelontInfo = twelonelontInfos(candidatelon.twelonelontId)
+            .gelontOrelonlselon(throw nelonw IllelongalStatelonelonxcelonption("Chelonck prelonvious linelon's condition"))
 
-          InitialCandidate(
-            tweetId = candidate.tweetId,
-            tweetInfo = tweetInfo,
-            candidate.candidateGenerationInfo
+          InitialCandidatelon(
+            twelonelontId = candidatelon.twelonelontId,
+            twelonelontInfo = twelonelontInfo,
+            candidatelon.candidatelonGelonnelonrationInfo
           )
       }
     }

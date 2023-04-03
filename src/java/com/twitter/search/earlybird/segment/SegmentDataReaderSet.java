@@ -1,79 +1,79 @@
-package com.twitter.search.earlybird.segment;
+packagelon com.twittelonr.selonarch.elonarlybird.selongmelonnt;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Optional;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.SegmentInfo;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
 
 /**
- * SegmentDataReaderSet provides an interface to create and manage the various
- * RecordReaders used to index Earlybird segments.
+ * SelongmelonntDataRelonadelonrSelont providelons an intelonrfacelon to crelonatelon and managelon thelon various
+ * ReloncordRelonadelonrs uselond to indelonx elonarlybird selongmelonnts.
  */
-public interface SegmentDataReaderSet {
+public intelonrfacelon SelongmelonntDataRelonadelonrSelont {
   /**
-   * Instruct the document RecordReaders (i.e. document, geo, ... as appropriate) to read from this
-   * segment.
+   * Instruct thelon documelonnt ReloncordRelonadelonrs (i.elon. documelonnt, gelono, ... as appropriatelon) to relonad from this
+   * selongmelonnt.
    */
-  void attachDocumentReaders(SegmentInfo segmentInfo) throws IOException;
+  void attachDocumelonntRelonadelonrs(SelongmelonntInfo selongmelonntInfo) throws IOelonxcelonption;
 
   /**
-   * Instruct the reader set to add segment to non-document RecordReaders (deletes, features, etc.)
+   * Instruct thelon relonadelonr selont to add selongmelonnt to non-documelonnt ReloncordRelonadelonrs (delonlelontelons, felonaturelons, elontc.)
    */
-  void attachUpdateReaders(SegmentInfo segmentInfo) throws IOException;
+  void attachUpdatelonRelonadelonrs(SelongmelonntInfo selongmelonntInfo) throws IOelonxcelonption;
 
   /**
-   * Mark a segment as "complete", denoting that we are done reading document records from it.
+   * Mark a selongmelonnt as "complelontelon", delonnoting that welon arelon donelon relonading documelonnt reloncords from it.
    *
-   * This instructs the reader set to stop reading documents from the segment (if it hasn't
-   * already), although for now geo-document  records can still be read.  Updates RecordReaders
-   * (deletes, etc.) may continue to read entries for the segment.
+   * This instructs thelon relonadelonr selont to stop relonading documelonnts from thelon selongmelonnt (if it hasn't
+   * alrelonady), although for now gelono-documelonnt  reloncords can still belon relonad.  Updatelons ReloncordRelonadelonrs
+   * (delonlelontelons, elontc.) may continuelon to relonad elonntrielons for thelon selongmelonnt.
    */
-  void completeSegmentDocs(SegmentInfo segmentInfo);
+  void complelontelonSelongmelonntDocs(SelongmelonntInfo selongmelonntInfo);
 
   /**
-   * This instructs the reader set to stop reading updates for the Segment.  It
-   * should remove the segment from all non-document RecordReaders (deletes, etc.)
+   * This instructs thelon relonadelonr selont to stop relonading updatelons for thelon Selongmelonnt.  It
+   * should relonmovelon thelon selongmelonnt from all non-documelonnt ReloncordRelonadelonrs (delonlelontelons, elontc.)
    */
-  void stopSegmentUpdates(SegmentInfo segmentInfo);
+  void stopSelongmelonntUpdatelons(SelongmelonntInfo selongmelonntInfo);
 
   /**
-   * Stops all RecordReaders and closes all resources.
+   * Stops all ReloncordRelonadelonrs and closelons all relonsourcelons.
    */
   void stopAll();
 
   /**
-   * Returns true if all RecordReaders are 'caught up' with the data sources they
-   * are reading from.  This might mean that the end of a file has been reached,
-   * or that we are waiting/polling for new records from an append-only database.
+   * Relonturns truelon if all ReloncordRelonadelonrs arelon 'caught up' with thelon data sourcelons thelony
+   * arelon relonading from.  This might melonan that thelon elonnd of a filelon has belonelonn relonachelond,
+   * or that welon arelon waiting/polling for nelonw reloncords from an appelonnd-only databaselon.
    */
-  boolean allCaughtUp();
+  boolelonan allCaughtUp();
 
   /**
-   * Create a new DocumentReader for the given segment that is not managed by this set.
+   * Crelonatelon a nelonw DocumelonntRelonadelonr for thelon givelonn selongmelonnt that is not managelond by this selont.
    */
-  RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo) throws Exception;
+  ReloncordRelonadelonr<TwelonelontDocumelonnt> nelonwDocumelonntRelonadelonr(SelongmelonntInfo selongmelonntInfo) throws elonxcelonption;
 
   /**
-   * Returns the document reader for the current segment.
+   * Relonturns thelon documelonnt relonadelonr for thelon currelonnt selongmelonnt.
    */
-  RecordReader<TweetDocument> getDocumentReader();
+  ReloncordRelonadelonr<TwelonelontDocumelonnt> gelontDocumelonntRelonadelonr();
 
   /**
-   * Returns a combined update events reader for all segments.
+   * Relonturns a combinelond updatelon elonvelonnts relonadelonr for all selongmelonnts.
    */
-  RecordReader<ThriftVersionedEvents> getUpdateEventsReader();
+  ReloncordRelonadelonr<ThriftVelonrsionelondelonvelonnts> gelontUpdatelonelonvelonntsRelonadelonr();
 
   /**
-   * Returns the update events reader for the given segment.
+   * Relonturns thelon updatelon elonvelonnts relonadelonr for thelon givelonn selongmelonnt.
    */
-  RecordReader<ThriftVersionedEvents> getUpdateEventsReaderForSegment(SegmentInfo segmentInfo);
+  ReloncordRelonadelonr<ThriftVelonrsionelondelonvelonnts> gelontUpdatelonelonvelonntsRelonadelonrForSelongmelonnt(SelongmelonntInfo selongmelonntInfo);
 
   /**
-   * Returns the offset in the update events stream for the given segment that this earlybird should
-   * start indexing from.
+   * Relonturns thelon offselont in thelon updatelon elonvelonnts strelonam for thelon givelonn selongmelonnt that this elonarlybird should
+   * start indelonxing from.
    */
-  Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo);
+  Optional<Long> gelontUpdatelonelonvelonntsStrelonamOffselontForSelongmelonnt(SelongmelonntInfo selongmelonntInfo);
 }

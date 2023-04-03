@@ -1,59 +1,59 @@
-package com.twitter.visibility.interfaces.tweets
+packagelon com.twittelonr.visibility.intelonrfacelons.twelonelonts
 
-import com.twitter.decider.Decider
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.features.TweetDeleteReason
-import com.twitter.visibility.features.TweetIsInnerQuotedTweet
-import com.twitter.visibility.features.TweetIsRetweet
-import com.twitter.visibility.generators.TombstoneGenerator
-import com.twitter.visibility.models.ContentId.DeleteTweetId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.TweetDeleteReason.TweetDeleteReason
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.felonaturelons.TwelonelontDelonlelontelonRelonason
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsInnelonrQuotelondTwelonelont
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsRelontwelonelont
+import com.twittelonr.visibility.gelonnelonrators.TombstonelonGelonnelonrator
+import com.twittelonr.visibility.modelonls.ContelonntId.DelonlelontelonTwelonelontId
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.TwelonelontDelonlelontelonRelonason.TwelonelontDelonlelontelonRelonason
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-object DeletedTweetVisibilityLibrary {
-  type Type = DeletedTweetVisibilityLibrary.Request => Stitch[VisibilityResult]
+objelonct DelonlelontelondTwelonelontVisibilityLibrary {
+  typelon Typelon = DelonlelontelondTwelonelontVisibilityLibrary.Relonquelonst => Stitch[VisibilityRelonsult]
 
-  case class Request(
-    tweetId: Long,
-    safetyLevel: SafetyLevel,
-    viewerContext: ViewerContext,
-    tweetDeleteReason: TweetDeleteReason,
-    isRetweet: Boolean,
-    isInnerQuotedTweet: Boolean,
+  caselon class Relonquelonst(
+    twelonelontId: Long,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    vielonwelonrContelonxt: VielonwelonrContelonxt,
+    twelonelontDelonlelontelonRelonason: TwelonelontDelonlelontelonRelonason,
+    isRelontwelonelont: Boolelonan,
+    isInnelonrQuotelondTwelonelont: Boolelonan,
   )
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    decider: Decider,
-    tombstoneGenerator: TombstoneGenerator,
-  ): Type = {
-    val vfEngineCounter = visibilityLibrary.statsReceiver.counter("vf_engine_requests")
+    deloncidelonr: Deloncidelonr,
+    tombstonelonGelonnelonrator: TombstonelonGelonnelonrator,
+  ): Typelon = {
+    val vfelonnginelonCountelonr = visibilityLibrary.statsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
 
-    (request: Request) => {
-      vfEngineCounter.incr()
-      val contentId = DeleteTweetId(request.tweetId)
-      val language = request.viewerContext.requestLanguageCode.getOrElse("en")
+    (relonquelonst: Relonquelonst) => {
+      vfelonnginelonCountelonr.incr()
+      val contelonntId = DelonlelontelonTwelonelontId(relonquelonst.twelonelontId)
+      val languagelon = relonquelonst.vielonwelonrContelonxt.relonquelonstLanguagelonCodelon.gelontOrelonlselon("elonn")
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            _.withConstantFeature(TweetIsInnerQuotedTweet, request.isInnerQuotedTweet),
-            _.withConstantFeature(TweetIsRetweet, request.isRetweet),
-            _.withConstantFeature(TweetDeleteReason, request.tweetDeleteReason)
+      val felonaturelonMap =
+        visibilityLibrary.felonaturelonMapBuildelonr(
+          Selonq(
+            _.withConstantFelonaturelon(TwelonelontIsInnelonrQuotelondTwelonelont, relonquelonst.isInnelonrQuotelondTwelonelont),
+            _.withConstantFelonaturelon(TwelonelontIsRelontwelonelont, relonquelonst.isRelontwelonelont),
+            _.withConstantFelonaturelon(TwelonelontDelonlelontelonRelonason, relonquelonst.twelonelontDelonlelontelonRelonason)
           )
         )
 
       visibilityLibrary
-        .runRuleEngine(
-          contentId,
-          featureMap,
-          request.viewerContext,
-          request.safetyLevel
+        .runRulelonelonnginelon(
+          contelonntId,
+          felonaturelonMap,
+          relonquelonst.vielonwelonrContelonxt,
+          relonquelonst.safelontyLelonvelonl
         )
-        .map(tombstoneGenerator(_, language))
+        .map(tombstonelonGelonnelonrator(_, languagelon))
     }
   }
 }

@@ -1,77 +1,77 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
 /**
- * Query implementation adds attribute collection support for an underlying query.
+ * Quelonry implelonmelonntation adds attributelon collelonction support for an undelonrlying quelonry.
  */
-public class IdentifiableQuery extends Query {
-  protected final Query inner;
-  private final FieldRankHitInfo queryId;
-  private final HitAttributeCollector attrCollector;
+public class IdelonntifiablelonQuelonry elonxtelonnds Quelonry {
+  protelonctelond final Quelonry innelonr;
+  privatelon final FielonldRankHitInfo quelonryId;
+  privatelon final HitAttributelonCollelonctor attrCollelonctor;
 
-  public IdentifiableQuery(Query inner, FieldRankHitInfo queryId,
-                           HitAttributeCollector attrCollector) {
-    this.inner = Preconditions.checkNotNull(inner);
-    this.queryId = queryId;
-    this.attrCollector = Preconditions.checkNotNull(attrCollector);
+  public IdelonntifiablelonQuelonry(Quelonry innelonr, FielonldRankHitInfo quelonryId,
+                           HitAttributelonCollelonctor attrCollelonctor) {
+    this.innelonr = Prelonconditions.chelonckNotNull(innelonr);
+    this.quelonryId = quelonryId;
+    this.attrCollelonctor = Prelonconditions.chelonckNotNull(attrCollelonctor);
   }
 
-  @Override
-  public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-    Weight innerWeight = inner.createWeight(searcher, scoreMode, boost);
-    return new IdentifiableQueryWeight(this, innerWeight, queryId, attrCollector);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(
+      IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) throws IOelonxcelonption {
+    Welonight innelonrWelonight = innelonr.crelonatelonWelonight(selonarchelonr, scorelonModelon, boost);
+    relonturn nelonw IdelonntifiablelonQuelonryWelonight(this, innelonrWelonight, quelonryId, attrCollelonctor);
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = inner.rewrite(reader);
-    if (rewritten != inner) {
-      return new IdentifiableQuery(rewritten, queryId, attrCollector);
+  @Ovelonrridelon
+  public Quelonry relonwritelon(IndelonxRelonadelonr relonadelonr) throws IOelonxcelonption {
+    Quelonry relonwrittelonn = innelonr.relonwritelon(relonadelonr);
+    if (relonwrittelonn != innelonr) {
+      relonturn nelonw IdelonntifiablelonQuelonry(relonwrittelonn, quelonryId, attrCollelonctor);
     }
-    return this;
+    relonturn this;
   }
 
-  @Override
-  public int hashCode() {
-    return inner.hashCode() * 13 + (queryId == null ? 0 : queryId.hashCode());
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn innelonr.hashCodelon() * 13 + (quelonryId == null ? 0 : quelonryId.hashCodelon());
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof IdentifiableQuery)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof IdelonntifiablelonQuelonry)) {
+      relonturn falselon;
     }
 
-    IdentifiableQuery identifiableQuery = IdentifiableQuery.class.cast(obj);
-    return inner.equals(identifiableQuery.inner)
-        && (queryId == null
-            ? identifiableQuery.queryId == null
-            : queryId.equals(identifiableQuery.queryId));
+    IdelonntifiablelonQuelonry idelonntifiablelonQuelonry = IdelonntifiablelonQuelonry.class.cast(obj);
+    relonturn innelonr.elonquals(idelonntifiablelonQuelonry.innelonr)
+        && (quelonryId == null
+            ? idelonntifiablelonQuelonry.quelonryId == null
+            : quelonryId.elonquals(idelonntifiablelonQuelonry.quelonryId));
   }
 
-  @Override
-  public String toString(String field) {
-    return inner.toString(field);
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn innelonr.toString(fielonld);
   }
 
-  @VisibleForTesting
-  public Query getQueryForTest() {
-    return inner;
+  @VisiblelonForTelonsting
+  public Quelonry gelontQuelonryForTelonst() {
+    relonturn innelonr;
   }
 
-  @VisibleForTesting
-  public FieldRankHitInfo getQueryIdForTest() {
-    return queryId;
+  @VisiblelonForTelonsting
+  public FielonldRankHitInfo gelontQuelonryIdForTelonst() {
+    relonturn quelonryId;
   }
 }

@@ -1,251 +1,251 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "google/protobuf/any.proto";
-import "tensorflow/core/framework/tensor_shape.proto";
-import "tensorflow/core/framework/types.proto";
-import "tensorflow/core/framework/variable.proto";
-import "tensorflow/core/framework/versions.proto";
-import "tensorflow/core/protobuf/struct.proto";
-import "tensorflow/core/protobuf/trackable_object_graph.proto";
+import "googlelon/protobuf/any.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor_shapelon.proto";
+import "telonnsorflow/corelon/framelonwork/typelons.proto";
+import "telonnsorflow/corelon/framelonwork/variablelon.proto";
+import "telonnsorflow/corelon/framelonwork/velonrsions.proto";
+import "telonnsorflow/corelon/protobuf/struct.proto";
+import "telonnsorflow/corelon/protobuf/trackablelon_objelonct_graph.proto";
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// A SavedObjectGraph is part of object-based SavedModels in TF 2.0. It
-// describes the directed graph of Python objects (or equivalent in other
-// languages) that make up a model, with nodes[0] at the root.
+// A SavelondObjelonctGraph is part of objelonct-baselond SavelondModelonls in TF 2.0. It
+// delonscribelons thelon direlonctelond graph of Python objeloncts (or elonquivalelonnt in othelonr
+// languagelons) that makelon up a modelonl, with nodelons[0] at thelon root.
 
-// SavedObjectGraph shares some structure with TrackableObjectGraph, but
-// SavedObjectGraph belongs to the MetaGraph and contains pointers to functions
-// and type information, while TrackableObjectGraph lives in the checkpoint
-// and contains pointers only to variable values.
+// SavelondObjelonctGraph sharelons somelon structurelon with TrackablelonObjelonctGraph, but
+// SavelondObjelonctGraph belonlongs to thelon MelontaGraph and contains pointelonrs to functions
+// and typelon information, whilelon TrackablelonObjelonctGraph livelons in thelon chelonckpoint
+// and contains pointelonrs only to variablelon valuelons.
 
-message SavedObjectGraph {
-  // Flattened list of objects in the object graph.
+melonssagelon SavelondObjelonctGraph {
+  // Flattelonnelond list of objeloncts in thelon objelonct graph.
   //
-  // The position of the object in this list indicates its id.
-  // Nodes[0] is considered the root node.
-  repeated SavedObject nodes = 1;
+  // Thelon position of thelon objelonct in this list indicatelons its id.
+  // Nodelons[0] is considelonrelond thelon root nodelon.
+  relonpelonatelond SavelondObjelonct nodelons = 1;
 
-  // Information about captures and output structures in concrete functions.
-  // Referenced from SavedBareConcreteFunction and SavedFunction.
-  map<string, SavedConcreteFunction> concrete_functions = 2;
+  // Information about capturelons and output structurelons in concrelontelon functions.
+  // Relonfelonrelonncelond from SavelondBarelonConcrelontelonFunction and SavelondFunction.
+  map<string, SavelondConcrelontelonFunction> concrelontelon_functions = 2;
 }
 
-message SavedObject {
-  // Objects which this object depends on: named edges in the dependency
+melonssagelon SavelondObjelonct {
+  // Objeloncts which this objelonct delonpelonnds on: namelond elondgelons in thelon delonpelonndelonncy
   // graph.
   //
-  // Note: All kinds of SavedObject may have children, except
-  // "constant" and "captured_tensor".
-  repeated TrackableObjectGraph.TrackableObject.ObjectReference children = 1;
+  // Notelon: All kinds of SavelondObjelonct may havelon childrelonn, elonxcelonpt
+  // "constant" and "capturelond_telonnsor".
+  relonpelonatelond TrackablelonObjelonctGraph.TrackablelonObjelonct.ObjelonctRelonfelonrelonncelon childrelonn = 1;
 
-  // Ordered list of dependencies that must be loaded before this object.
-  // SavedModel loads with the bottom-up approach, by first creating all objects
-  // (in the order defined by the dependencies), then connecting the edges.
-  repeated TrackableObjectGraph.TrackableObject.ObjectReference dependencies =
+  // Ordelonrelond list of delonpelonndelonncielons that must belon loadelond belonforelon this objelonct.
+  // SavelondModelonl loads with thelon bottom-up approach, by first crelonating all objeloncts
+  // (in thelon ordelonr delonfinelond by thelon delonpelonndelonncielons), thelonn conneloncting thelon elondgelons.
+  relonpelonatelond TrackablelonObjelonctGraph.TrackablelonObjelonct.ObjelonctRelonfelonrelonncelon delonpelonndelonncielons =
       15;
 
-  // Removed when forking SavedObject from TrackableObjectGraph.
-  reserved "attributes";
-  reserved 2;
+  // Relonmovelond whelonn forking SavelondObjelonct from TrackablelonObjelonctGraph.
+  relonselonrvelond "attributelons";
+  relonselonrvelond 2;
 
-  // Slot variables owned by this object. This describes the three-way
-  // (optimizer, variable, slot variable) relationship; none of the three
-  // depend on the others directly.
+  // Slot variablelons ownelond by this objelonct. This delonscribelons thelon threlonelon-way
+  // (optimizelonr, variablelon, slot variablelon) relonlationship; nonelon of thelon threlonelon
+  // delonpelonnd on thelon othelonrs direlonctly.
   //
-  // Note: currently only valid if kind == "user_object".
-  repeated TrackableObjectGraph.TrackableObject.SlotVariableReference
-      slot_variables = 3;
+  // Notelon: currelonntly only valid if kind == "uselonr_objelonct".
+  relonpelonatelond TrackablelonObjelonctGraph.TrackablelonObjelonct.SlotVariablelonRelonfelonrelonncelon
+      slot_variablelons = 3;
 
-  oneof kind {
-    SavedUserObject user_object = 4;
-    SavedAsset asset = 5;
-    SavedFunction function = 6;
-    SavedVariable variable = 7;
-    SavedBareConcreteFunction bare_concrete_function = 8;
-    SavedConstant constant = 9;
-    SavedResource resource = 10;
-    CapturedTensor captured_tensor = 12;
+  onelonof kind {
+    SavelondUselonrObjelonct uselonr_objelonct = 4;
+    SavelondAsselont asselont = 5;
+    SavelondFunction function = 6;
+    SavelondVariablelon variablelon = 7;
+    SavelondBarelonConcrelontelonFunction barelon_concrelontelon_function = 8;
+    SavelondConstant constant = 9;
+    SavelondRelonsourcelon relonsourcelon = 10;
+    CapturelondTelonnsor capturelond_telonnsor = 12;
   }
 
-  // Stores the functions used to save and restore this object. At most one of
-  // `saveable_objects` or `registered_saver` is defined for each SavedObject.
-  // See the comment below for the difference between SaveableObject and
-  // registered savers.
-  map<string, SaveableObject> saveable_objects = 11;
+  // Storelons thelon functions uselond to savelon and relonstorelon this objelonct. At most onelon of
+  // `savelonablelon_objeloncts` or `relongistelonrelond_savelonr` is delonfinelond for elonach SavelondObjelonct.
+  // Selonelon thelon commelonnt belonlow for thelon diffelonrelonncelon belontwelonelonn SavelonablelonObjelonct and
+  // relongistelonrelond savelonrs.
+  map<string, SavelonablelonObjelonct> savelonablelon_objeloncts = 11;
 
-  // The fields below are filled when the user serializes a registered Trackable
-  // class or an object with a registered saver function.
+  // Thelon fielonlds belonlow arelon fillelond whelonn thelon uselonr selonrializelons a relongistelonrelond Trackablelon
+  // class or an objelonct with a relongistelonrelond savelonr function.
   //
-  // Registered classes may save additional metadata and supersede the
-  // default loading process where nodes are recreated from the proto.
-  // If the registered class cannot be found, then the object will load as one
-  // one of the default trackable objects: Autotrackable (a class similar to
-  // tf.Module), tf.function, or tf.Variable.
+  // Relongistelonrelond classelons may savelon additional melontadata and supelonrselondelon thelon
+  // delonfault loading procelonss whelonrelon nodelons arelon reloncrelonatelond from thelon proto.
+  // If thelon relongistelonrelond class cannot belon found, thelonn thelon objelonct will load as onelon
+  // onelon of thelon delonfault trackablelon objeloncts: Autotrackablelon (a class similar to
+  // tf.Modulelon), tf.function, or tf.Variablelon.
   //
-  // Unlike SaveableObjects, which store the functions for saving and restoring
-  // from tensors, registered savers allow Trackables to write checkpoint shards
-  // directly (e.g. for performance or coordination reasons).
-  // *All registered savers must be available when loading the SavedModel.*
+  // Unlikelon SavelonablelonObjeloncts, which storelon thelon functions for saving and relonstoring
+  // from telonnsors, relongistelonrelond savelonrs allow Trackablelons to writelon chelonckpoint shards
+  // direlonctly (elon.g. for pelonrformancelon or coordination relonasons).
+  // *All relongistelonrelond savelonrs must belon availablelon whelonn loading thelon SavelondModelonl.*
 
-  // The name of the registered class of the form "{package}.{class_name}".
-  // This field is used to search for the registered class at loading time.
-  string registered_name = 13;
-  // The user-generated proto storing metadata for this object, to be passed to
-  // the registered classes's _deserialize_from_proto method when this object is
-  // loaded from the SavedModel.
-  google.protobuf.Any serialized_user_proto = 14;
+  // Thelon namelon of thelon relongistelonrelond class of thelon form "{packagelon}.{class_namelon}".
+  // This fielonld is uselond to selonarch for thelon relongistelonrelond class at loading timelon.
+  string relongistelonrelond_namelon = 13;
+  // Thelon uselonr-gelonnelonratelond proto storing melontadata for this objelonct, to belon passelond to
+  // thelon relongistelonrelond classelons's _delonselonrializelon_from_proto melonthod whelonn this objelonct is
+  // loadelond from thelon SavelondModelonl.
+  googlelon.protobuf.Any selonrializelond_uselonr_proto = 14;
 
-  // String name of the registered saver. At most one of `saveable_objects` or
-  // `registered_saver` is defined for each SavedObject.
-  string registered_saver = 16;
+  // String namelon of thelon relongistelonrelond savelonr. At most onelon of `savelonablelon_objeloncts` or
+  // `relongistelonrelond_savelonr` is delonfinelond for elonach SavelondObjelonct.
+  string relongistelonrelond_savelonr = 16;
 }
 
-// A SavedUserObject is an object (in the object-oriented language of the
-// TensorFlow program) of some user- or framework-defined class other than
-// those handled specifically by the other kinds of SavedObjects.
+// A SavelondUselonrObjelonct is an objelonct (in thelon objelonct-orielonntelond languagelon of thelon
+// TelonnsorFlow program) of somelon uselonr- or framelonwork-delonfinelond class othelonr than
+// thoselon handlelond speloncifically by thelon othelonr kinds of SavelondObjeloncts.
 //
-// This object cannot be evaluated as a tensor, and therefore cannot be bound
+// This objelonct cannot belon elonvaluatelond as a telonnsor, and thelonrelonforelon cannot belon bound
 // to an input of a function.
-message SavedUserObject {
-  // Corresponds to a registration of the type to use in the loading program.
-  string identifier = 1;
-  // Version information from the producer of this SavedUserObject.
-  VersionDef version = 2;
-  // Metadata for deserializing this object.
+melonssagelon SavelondUselonrObjelonct {
+  // Correlonsponds to a relongistration of thelon typelon to uselon in thelon loading program.
+  string idelonntifielonr = 1;
+  // Velonrsion information from thelon producelonr of this SavelondUselonrObjelonct.
+  VelonrsionDelonf velonrsion = 2;
+  // Melontadata for delonselonrializing this objelonct.
   //
-  // Deprecated! At the time of deprecation, Keras was the only user of this
-  // field, and its saving and loading code will be updated shortly.
-  // Please save your application-specific metadata to a separate file.
-  string metadata = 3 [deprecated = true];
+  // Delonpreloncatelond! At thelon timelon of delonpreloncation, Kelonras was thelon only uselonr of this
+  // fielonld, and its saving and loading codelon will belon updatelond shortly.
+  // Plelonaselon savelon your application-speloncific melontadata to a selonparatelon filelon.
+  string melontadata = 3 [delonpreloncatelond = truelon];
 }
 
-// A SavedAsset points to an asset in the MetaGraph.
+// A SavelondAsselont points to an asselont in thelon MelontaGraph.
 //
-// When bound to a function this object evaluates to a tensor with the absolute
-// filename. Users should not depend on a particular part of the filename to
-// remain stable (e.g. basename could be changed).
-message SavedAsset {
-  // Index into `MetaGraphDef.asset_file_def[]` that describes the Asset.
+// Whelonn bound to a function this objelonct elonvaluatelons to a telonnsor with thelon absolutelon
+// filelonnamelon. Uselonrs should not delonpelonnd on a particular part of thelon filelonnamelon to
+// relonmain stablelon (elon.g. baselonnamelon could belon changelond).
+melonssagelon SavelondAsselont {
+  // Indelonx into `MelontaGraphDelonf.asselont_filelon_delonf[]` that delonscribelons thelon Asselont.
   //
-  // Only the field `AssetFileDef.filename` is used. Other fields, such as
-  // `AssetFileDef.tensor_info`, MUST be ignored.
-  int32 asset_file_def_index = 1;
+  // Only thelon fielonld `AsselontFilelonDelonf.filelonnamelon` is uselond. Othelonr fielonlds, such as
+  // `AsselontFilelonDelonf.telonnsor_info`, MUST belon ignorelond.
+  int32 asselont_filelon_delonf_indelonx = 1;
 }
 
-// A function with multiple signatures, possibly with non-Tensor arguments.
-message SavedFunction {
-  repeated string concrete_functions = 1;
-  FunctionSpec function_spec = 2;
+// A function with multiplelon signaturelons, possibly with non-Telonnsor argumelonnts.
+melonssagelon SavelondFunction {
+  relonpelonatelond string concrelontelon_functions = 1;
+  FunctionSpelonc function_spelonc = 2;
 }
 
-message CapturedTensor {
-  // Name of captured tensor
-  string name = 1;
+melonssagelon CapturelondTelonnsor {
+  // Namelon of capturelond telonnsor
+  string namelon = 1;
 
-  // Name of concrete function which contains the computed graph tensor.
-  string concrete_function = 2;
+  // Namelon of concrelontelon function which contains thelon computelond graph telonnsor.
+  string concrelontelon_function = 2;
 }
 
-// Stores low-level information about a concrete function. Referenced in either
-// a SavedFunction or a SavedBareConcreteFunction.
-message SavedConcreteFunction {
-  repeated int32 bound_inputs = 2;
+// Storelons low-lelonvelonl information about a concrelontelon function. Relonfelonrelonncelond in elonithelonr
+// a SavelondFunction or a SavelondBarelonConcrelontelonFunction.
+melonssagelon SavelondConcrelontelonFunction {
+  relonpelonatelond int32 bound_inputs = 2;
 
-  // Input in canonicalized form that was received to create this concrete
+  // Input in canonicalizelond form that was reloncelonivelond to crelonatelon this concrelontelon
   // function.
-  StructuredValue canonicalized_input_signature = 3;
-  // Output that was the return value of this function after replacing all
-  // Tensors with TensorSpecs. This can be an arbitrary nested function and will
-  // be used to reconstruct the full structure from pure tensors.
-  StructuredValue output_signature = 4;
+  StructurelondValuelon canonicalizelond_input_signaturelon = 3;
+  // Output that was thelon relonturn valuelon of this function aftelonr relonplacing all
+  // Telonnsors with TelonnsorSpeloncs. This can belon an arbitrary nelonstelond function and will
+  // belon uselond to relonconstruct thelon full structurelon from purelon telonnsors.
+  StructurelondValuelon output_signaturelon = 4;
 }
 
-message SavedBareConcreteFunction {
-  // Identifies a SavedConcreteFunction.
-  string concrete_function_name = 1;
+melonssagelon SavelondBarelonConcrelontelonFunction {
+  // Idelonntifielons a SavelondConcrelontelonFunction.
+  string concrelontelon_function_namelon = 1;
 
-  // A sequence of unique strings, one per Tensor argument.
-  repeated string argument_keywords = 2;
-  // The prefix of `argument_keywords` which may be identified by position.
-  int64 allowed_positional_arguments = 3;
-  // The spec of the function that this ConcreteFunction is traced from. This
-  // allows the ConcreteFunction to be called with nest structure inputs. This
-  // field may not be populated. If this field is absent, the concrete function
-  // can only be called with flat inputs.
-  // TODO: support calling saved ConcreteFunction with structured
-  // inputs in C++ SavedModel API.
-  FunctionSpec function_spec = 4;
+  // A selonquelonncelon of uniquelon strings, onelon pelonr Telonnsor argumelonnt.
+  relonpelonatelond string argumelonnt_kelonywords = 2;
+  // Thelon prelonfix of `argumelonnt_kelonywords` which may belon idelonntifielond by position.
+  int64 allowelond_positional_argumelonnts = 3;
+  // Thelon spelonc of thelon function that this ConcrelontelonFunction is tracelond from. This
+  // allows thelon ConcrelontelonFunction to belon callelond with nelonst structurelon inputs. This
+  // fielonld may not belon populatelond. If this fielonld is abselonnt, thelon concrelontelon function
+  // can only belon callelond with flat inputs.
+  // TODO: support calling savelond ConcrelontelonFunction with structurelond
+  // inputs in C++ SavelondModelonl API.
+  FunctionSpelonc function_spelonc = 4;
 }
 
-message SavedConstant {
-  // An Operation name for a ConstantOp in this SavedObjectGraph's MetaGraph.
-  string operation = 1;
+melonssagelon SavelondConstant {
+  // An Opelonration namelon for a ConstantOp in this SavelondObjelonctGraph's MelontaGraph.
+  string opelonration = 1;
 }
 
-// Represents a Variable that is initialized by loading the contents from the
-// checkpoint.
-message SavedVariable {
-  DataType dtype = 1;
-  TensorShapeProto shape = 2;
-  bool trainable = 3;
-  VariableSynchronization synchronization = 4;
-  VariableAggregation aggregation = 5;
-  string name = 6;
-  string device = 7;
-  // List of component variables for a distributed variable.
+// Relonprelonselonnts a Variablelon that is initializelond by loading thelon contelonnts from thelon
+// chelonckpoint.
+melonssagelon SavelondVariablelon {
+  DataTypelon dtypelon = 1;
+  TelonnsorShapelonProto shapelon = 2;
+  bool trainablelon = 3;
+  VariablelonSynchronization synchronization = 4;
+  VariablelonAggrelongation aggrelongation = 5;
+  string namelon = 6;
+  string delonvicelon = 7;
+  // List of componelonnt variablelons for a distributelond variablelon.
   //
-  // When this field is non-empty, the SavedVariable will be assumed
-  // to be a distributed variable defined by the components listed here.
+  // Whelonn this fielonld is non-elonmpty, thelon SavelondVariablelon will belon assumelond
+  // to belon a distributelond variablelon delonfinelond by thelon componelonnts listelond helonrelon.
   //
-  // This is only supported by experimental loaders at the moment.
-  repeated SavedVariable experimental_distributed_variable_components = 8;
+  // This is only supportelond by elonxpelonrimelonntal loadelonrs at thelon momelonnt.
+  relonpelonatelond SavelondVariablelon elonxpelonrimelonntal_distributelond_variablelon_componelonnts = 8;
 }
 
-// Represents `FunctionSpec` used in `Function`. This represents a
-// function that has been wrapped as a TensorFlow `Function`.
-message FunctionSpec {
-  // Full arg spec from inspect.getfullargspec().
-  StructuredValue fullargspec = 1;
-  // Whether this represents a class method.
-  bool is_method = 2;
-  // The input signature, if specified.
-  StructuredValue input_signature = 5;
+// Relonprelonselonnts `FunctionSpelonc` uselond in `Function`. This relonprelonselonnts a
+// function that has belonelonn wrappelond as a TelonnsorFlow `Function`.
+melonssagelon FunctionSpelonc {
+  // Full arg spelonc from inspelonct.gelontfullargspelonc().
+  StructurelondValuelon fullargspelonc = 1;
+  // Whelonthelonr this relonprelonselonnts a class melonthod.
+  bool is_melonthod = 2;
+  // Thelon input signaturelon, if speloncifielond.
+  StructurelondValuelon input_signaturelon = 5;
 
-  // Whether the function should be compiled by XLA.
+  // Whelonthelonr thelon function should belon compilelond by XLA.
   //
-  // The public interface to `tf.function` uses an optional boolean to
-  // represent three distinct states for this field.  Unfortunately, proto3
-  // removes the ability to explicitly check for the presence or absence of a
-  // field, so we instead map to an enum.
+  // Thelon public intelonrfacelon to `tf.function` uselons an optional boolelonan to
+  // relonprelonselonnt threlonelon distinct statelons for this fielonld.  Unfortunatelonly, proto3
+  // relonmovelons thelon ability to elonxplicitly chelonck for thelon prelonselonncelon or abselonncelon of a
+  // fielonld, so welon instelonad map to an elonnum.
   //
-  // See `tf.function` for details.
-  enum JitCompile {
-    DEFAULT = 0;
+  // Selonelon `tf.function` for delontails.
+  elonnum JitCompilelon {
+    DelonFAULT = 0;
     ON = 1;
     OFF = 2;
   }
-  JitCompile jit_compile = 6;
+  JitCompilelon jit_compilelon = 6;
 
-  reserved 3, 4;
+  relonselonrvelond 3, 4;
 }
 
-// A SavedResource represents a TF object that holds state during its lifetime.
-// An object of this type can have a reference to a:
-// create_resource() and an initialize() function.
-message SavedResource {
-  // A device specification indicating a required placement for the resource
-  // creation function, e.g. "CPU". An empty string allows the user to select a
-  // device.
-  string device = 1;
+// A SavelondRelonsourcelon relonprelonselonnts a TF objelonct that holds statelon during its lifelontimelon.
+// An objelonct of this typelon can havelon a relonfelonrelonncelon to a:
+// crelonatelon_relonsourcelon() and an initializelon() function.
+melonssagelon SavelondRelonsourcelon {
+  // A delonvicelon speloncification indicating a relonquirelond placelonmelonnt for thelon relonsourcelon
+  // crelonation function, elon.g. "CPU". An elonmpty string allows thelon uselonr to selonlelonct a
+  // delonvicelon.
+  string delonvicelon = 1;
 }
 
-message SaveableObject {
-  // Node ids of concrete functions for saving and loading from a checkpoint.
-  // These functions save and restore directly from tensors.
-  int32 save_function = 2;
-  int32 restore_function = 3;
+melonssagelon SavelonablelonObjelonct {
+  // Nodelon ids of concrelontelon functions for saving and loading from a chelonckpoint.
+  // Thelonselon functions savelon and relonstorelon direlonctly from telonnsors.
+  int32 savelon_function = 2;
+  int32 relonstorelon_function = 3;
 }

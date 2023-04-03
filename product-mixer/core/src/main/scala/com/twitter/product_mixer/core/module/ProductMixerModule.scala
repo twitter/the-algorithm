@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.module
+packagelon com.twittelonr.product_mixelonr.corelon.modulelon
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule
-import com.twitter.finatra.decider.modules.DeciderModule
-import com.twitter.finatra.international.modules.LanguagesModule
-import com.twitter.product_mixer.core.product.guice.ProductScopeModule
-import com.twitter.finatra.jackson.modules.ScalaObjectMapperModule
-import com.twitter.inject.thrift.modules.ThriftClientIdModule
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon
+import com.twittelonr.finatra.deloncidelonr.modulelons.DeloncidelonrModulelon
+import com.twittelonr.finatra.intelonrnational.modulelons.LanguagelonsModulelon
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.ProductScopelonModulelon
+import com.twittelonr.finatra.jackson.modulelons.ScalaObjelonctMappelonrModulelon
+import com.twittelonr.injelonct.thrift.modulelons.ThriftClielonntIdModulelon
 
 /**
- * ProductMixerModule provides modules required by all Product Mixer services.
+ * ProductMixelonrModulelon providelons modulelons relonquirelond by all Product Mixelonr selonrvicelons.
  *
- * @note if your service calls Strato you will need to add the [[StratoClientModule]] yourself.
+ * @notelon if your selonrvicelon calls Strato you will nelonelond to add thelon [[StratoClielonntModulelon]] yourselonlf.
  */
-object ProductMixerModule extends TwitterModule {
+objelonct ProductMixelonrModulelon elonxtelonnds TwittelonrModulelon {
 
-  override val modules = Seq(
-    ABDeciderModule,
-    ConfigApiModule,
-    DeciderModule,
-    FeatureSwitchesModule,
-    LanguagesModule,
-    PipelineExecutionLoggerModule,
-    ProductMixerFlagModule,
-    new ProductScopeModule(),
-    ScalaObjectMapperModule,
-    ThriftClientIdModule,
+  ovelonrridelon val modulelons = Selonq(
+    ABDeloncidelonrModulelon,
+    ConfigApiModulelon,
+    DeloncidelonrModulelon,
+    FelonaturelonSwitchelonsModulelon,
+    LanguagelonsModulelon,
+    PipelonlinelonelonxeloncutionLoggelonrModulelon,
+    ProductMixelonrFlagModulelon,
+    nelonw ProductScopelonModulelon(),
+    ScalaObjelonctMappelonrModulelon,
+    ThriftClielonntIdModulelon,
   )
 }

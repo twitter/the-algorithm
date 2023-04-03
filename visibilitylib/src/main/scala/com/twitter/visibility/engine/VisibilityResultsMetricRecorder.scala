@@ -1,179 +1,179 @@
-package com.twitter.visibility.engine
+packagelon com.twittelonr.visibility.elonnginelon
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.stats.Verbosity
-import com.twitter.servo.util.Gate
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.NotEvaluated
-import com.twitter.visibility.rules.RuleResult
-import com.twitter.visibility.rules.State
-import com.twitter.visibility.rules.State.Disabled
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.State.RuleFailed
-import com.twitter.visibility.rules.Action
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.Velonrbosity
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.selonrvo.util.MelonmoizingStatsReloncelonivelonr
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.rulelons.Notelonvaluatelond
+import com.twittelonr.visibility.rulelons.RulelonRelonsult
+import com.twittelonr.visibility.rulelons.Statelon
+import com.twittelonr.visibility.rulelons.Statelon.Disablelond
+import com.twittelonr.visibility.rulelons.Statelon.FelonaturelonFailelond
+import com.twittelonr.visibility.rulelons.Statelon.MissingFelonaturelon
+import com.twittelonr.visibility.rulelons.Statelon.RulelonFailelond
+import com.twittelonr.visibility.rulelons.Action
 
 
-case class VisibilityResultsMetricRecorder(
-  statsReceiver: StatsReceiver,
-  captureDebugStats: Gate[Unit]) {
+caselon class VisibilityRelonsultsMelontricReloncordelonr(
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  capturelonDelonbugStats: Gatelon[Unit]) {
 
-  private val scopedStatsReceiver = new MemoizingStatsReceiver(
-    statsReceiver.scope("visibility_rule_engine")
+  privatelon val scopelondStatsReloncelonivelonr = nelonw MelonmoizingStatsReloncelonivelonr(
+    statsReloncelonivelonr.scopelon("visibility_rulelon_elonnginelon")
   )
-  private val actionStats: StatsReceiver = scopedStatsReceiver.scope("by_action")
-  private val featureFailureReceiver: StatsReceiver =
-    scopedStatsReceiver.scope("feature_failed")
-  private val safetyLevelStatsReceiver: StatsReceiver =
-    scopedStatsReceiver.scope("from_safety_level")
-  private val ruleStatsReceiver: StatsReceiver = scopedStatsReceiver.scope("for_rule")
-  private val ruleFailureReceiver: StatsReceiver =
-    scopedStatsReceiver.scope("rule_failures")
-  private val failClosedReceiver: StatsReceiver =
-    scopedStatsReceiver.scope("fail_closed")
-  private val ruleStatsBySafetyLevelReceiver: StatsReceiver =
-    scopedStatsReceiver.scope("for_rule_by_safety_level")
+  privatelon val actionStats: StatsReloncelonivelonr = scopelondStatsReloncelonivelonr.scopelon("by_action")
+  privatelon val felonaturelonFailurelonReloncelonivelonr: StatsReloncelonivelonr =
+    scopelondStatsReloncelonivelonr.scopelon("felonaturelon_failelond")
+  privatelon val safelontyLelonvelonlStatsReloncelonivelonr: StatsReloncelonivelonr =
+    scopelondStatsReloncelonivelonr.scopelon("from_safelonty_lelonvelonl")
+  privatelon val rulelonStatsReloncelonivelonr: StatsReloncelonivelonr = scopelondStatsReloncelonivelonr.scopelon("for_rulelon")
+  privatelon val rulelonFailurelonReloncelonivelonr: StatsReloncelonivelonr =
+    scopelondStatsReloncelonivelonr.scopelon("rulelon_failurelons")
+  privatelon val failCloselondReloncelonivelonr: StatsReloncelonivelonr =
+    scopelondStatsReloncelonivelonr.scopelon("fail_closelond")
+  privatelon val rulelonStatsBySafelontyLelonvelonlReloncelonivelonr: StatsReloncelonivelonr =
+    scopelondStatsReloncelonivelonr.scopelon("for_rulelon_by_safelonty_lelonvelonl")
 
-  def recordSuccess(
-    safetyLevel: SafetyLevel,
-    result: VisibilityResult
+  delonf reloncordSuccelonss(
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    relonsult: VisibilityRelonsult
   ): Unit = {
-    recordAction(safetyLevel, result.verdict.fullName)
+    reloncordAction(safelontyLelonvelonl, relonsult.velonrdict.fullNamelon)
 
-    val isFeatureFailure = result.ruleResultMap.values
-      .collectFirst {
-        case RuleResult(_, FeatureFailed(_)) =>
-          ruleFailureReceiver.counter("feature_failed").incr()
-          true
-      }.getOrElse(false)
+    val isFelonaturelonFailurelon = relonsult.rulelonRelonsultMap.valuelons
+      .collelonctFirst {
+        caselon RulelonRelonsult(_, FelonaturelonFailelond(_)) =>
+          rulelonFailurelonReloncelonivelonr.countelonr("felonaturelon_failelond").incr()
+          truelon
+      }.gelontOrelonlselon(falselon)
 
-    val isMissingFeature = result.ruleResultMap.values
-      .collectFirst {
-        case RuleResult(_, MissingFeature(_)) =>
-          ruleFailureReceiver.counter("missing_feature").incr()
-          true
-      }.getOrElse(false)
+    val isMissingFelonaturelon = relonsult.rulelonRelonsultMap.valuelons
+      .collelonctFirst {
+        caselon RulelonRelonsult(_, MissingFelonaturelon(_)) =>
+          rulelonFailurelonReloncelonivelonr.countelonr("missing_felonaturelon").incr()
+          truelon
+      }.gelontOrelonlselon(falselon)
 
-    val isRuleFailed = result.ruleResultMap.values
-      .collectFirst {
-        case RuleResult(_, RuleFailed(_)) =>
-          ruleFailureReceiver.counter("rule_failed").incr()
-          true
-      }.getOrElse(false)
+    val isRulelonFailelond = relonsult.rulelonRelonsultMap.valuelons
+      .collelonctFirst {
+        caselon RulelonRelonsult(_, RulelonFailelond(_)) =>
+          rulelonFailurelonReloncelonivelonr.countelonr("rulelon_failelond").incr()
+          truelon
+      }.gelontOrelonlselon(falselon)
 
-    if (isFeatureFailure || isMissingFeature || isRuleFailed) {
-      ruleFailureReceiver.counter().incr()
+    if (isFelonaturelonFailurelon || isMissingFelonaturelon || isRulelonFailelond) {
+      rulelonFailurelonReloncelonivelonr.countelonr().incr()
     }
 
-    if (captureDebugStats()) {
-      val ruleBySafetyLevelStat =
-        ruleStatsBySafetyLevelReceiver.scope(safetyLevel.name)
-      result.ruleResultMap.foreach {
-        case (rule, ruleResult) => {
-          ruleBySafetyLevelStat
-            .scope(rule.name)
-            .scope("action")
-            .counter(Verbosity.Debug, ruleResult.action.fullName).incr()
-          ruleBySafetyLevelStat
-            .scope(rule.name)
-            .scope("state")
-            .counter(Verbosity.Debug, ruleResult.state.name).incr()
+    if (capturelonDelonbugStats()) {
+      val rulelonBySafelontyLelonvelonlStat =
+        rulelonStatsBySafelontyLelonvelonlReloncelonivelonr.scopelon(safelontyLelonvelonl.namelon)
+      relonsult.rulelonRelonsultMap.forelonach {
+        caselon (rulelon, rulelonRelonsult) => {
+          rulelonBySafelontyLelonvelonlStat
+            .scopelon(rulelon.namelon)
+            .scopelon("action")
+            .countelonr(Velonrbosity.Delonbug, rulelonRelonsult.action.fullNamelon).incr()
+          rulelonBySafelontyLelonvelonlStat
+            .scopelon(rulelon.namelon)
+            .scopelon("statelon")
+            .countelonr(Velonrbosity.Delonbug, rulelonRelonsult.statelon.namelon).incr()
         }
       }
     }
   }
 
-  def recordFailedFeature(
-    failedFeature: Feature[_],
-    exception: Throwable
+  delonf reloncordFailelondFelonaturelon(
+    failelondFelonaturelon: Felonaturelon[_],
+    elonxcelonption: Throwablelon
   ): Unit = {
-    featureFailureReceiver.counter().incr()
+    felonaturelonFailurelonReloncelonivelonr.countelonr().incr()
 
-    val featureStat = featureFailureReceiver.scope(failedFeature.name)
-    featureStat.counter().incr()
-    featureStat.counter(exception.getClass.getName).incr()
+    val felonaturelonStat = felonaturelonFailurelonReloncelonivelonr.scopelon(failelondFelonaturelon.namelon)
+    felonaturelonStat.countelonr().incr()
+    felonaturelonStat.countelonr(elonxcelonption.gelontClass.gelontNamelon).incr()
   }
 
-  def recordAction(
-    safetyLevel: SafetyLevel,
+  delonf reloncordAction(
+    safelontyLelonvelonl: SafelontyLelonvelonl,
     action: String
   ): Unit = {
-    safetyLevelStatsReceiver.scope(safetyLevel.name).counter(action).incr()
-    actionStats.counter(action).incr()
+    safelontyLelonvelonlStatsReloncelonivelonr.scopelon(safelontyLelonvelonl.namelon).countelonr(action).incr()
+    actionStats.countelonr(action).incr()
   }
 
-  def recordUnknownSafetyLevel(
-    safetyLevel: SafetyLevel
+  delonf reloncordUnknownSafelontyLelonvelonl(
+    safelontyLelonvelonl: SafelontyLelonvelonl
   ): Unit = {
-    safetyLevelStatsReceiver
-      .scope("unknown_safety_level")
-      .counter(safetyLevel.name.toLowerCase).incr()
+    safelontyLelonvelonlStatsReloncelonivelonr
+      .scopelon("unknown_safelonty_lelonvelonl")
+      .countelonr(safelontyLelonvelonl.namelon.toLowelonrCaselon).incr()
   }
 
-  def recordRuleMissingFeatures(
-    ruleName: String,
-    missingFeatures: Set[Feature[_]]
+  delonf reloncordRulelonMissingFelonaturelons(
+    rulelonNamelon: String,
+    missingFelonaturelons: Selont[Felonaturelon[_]]
   ): Unit = {
-    val ruleStat = ruleStatsReceiver.scope(ruleName)
-    missingFeatures.foreach { featureId =>
-      ruleStat.scope("missing_feature").counter(featureId.name).incr()
+    val rulelonStat = rulelonStatsReloncelonivelonr.scopelon(rulelonNamelon)
+    missingFelonaturelons.forelonach { felonaturelonId =>
+      rulelonStat.scopelon("missing_felonaturelon").countelonr(felonaturelonId.namelon).incr()
     }
-    ruleStat.scope("action").counter(NotEvaluated.fullName).incr()
-    ruleStat.scope("state").counter(MissingFeature(missingFeatures).name).incr()
+    rulelonStat.scopelon("action").countelonr(Notelonvaluatelond.fullNamelon).incr()
+    rulelonStat.scopelon("statelon").countelonr(MissingFelonaturelon(missingFelonaturelons).namelon).incr()
   }
 
-  def recordRuleFailedFeatures(
-    ruleName: String,
-    failedFeatures: Map[Feature[_], Throwable]
+  delonf reloncordRulelonFailelondFelonaturelons(
+    rulelonNamelon: String,
+    failelondFelonaturelons: Map[Felonaturelon[_], Throwablelon]
   ): Unit = {
-    val ruleStat = ruleStatsReceiver.scope(ruleName)
+    val rulelonStat = rulelonStatsReloncelonivelonr.scopelon(rulelonNamelon)
 
-    ruleStat.scope("action").counter(NotEvaluated.fullName).incr()
-    ruleStat.scope("state").counter(FeatureFailed(failedFeatures).name).incr()
+    rulelonStat.scopelon("action").countelonr(Notelonvaluatelond.fullNamelon).incr()
+    rulelonStat.scopelon("statelon").countelonr(FelonaturelonFailelond(failelondFelonaturelons).namelon).incr()
   }
 
-  def recordFailClosed(rule: String, state: State) {
-    failClosedReceiver.scope(state.name).counter(rule).incr();
+  delonf reloncordFailCloselond(rulelon: String, statelon: Statelon) {
+    failCloselondReloncelonivelonr.scopelon(statelon.namelon).countelonr(rulelon).incr();
   }
 
-  def recordRuleEvaluation(
-    ruleName: String,
+  delonf reloncordRulelonelonvaluation(
+    rulelonNamelon: String,
     action: Action,
-    state: State
+    statelon: Statelon
   ): Unit = {
-    val ruleStat = ruleStatsReceiver.scope(ruleName)
-    ruleStat.scope("action").counter(action.fullName).incr()
-    ruleStat.scope("state").counter(state.name).incr()
+    val rulelonStat = rulelonStatsReloncelonivelonr.scopelon(rulelonNamelon)
+    rulelonStat.scopelon("action").countelonr(action.fullNamelon).incr()
+    rulelonStat.scopelon("statelon").countelonr(statelon.namelon).incr()
   }
 
 
-  def recordRuleFallbackAction(
-    ruleName: String
+  delonf reloncordRulelonFallbackAction(
+    rulelonNamelon: String
   ): Unit = {
-    val ruleStat = ruleStatsReceiver.scope(ruleName)
-    ruleStat.counter("fallback_action").incr()
+    val rulelonStat = rulelonStatsReloncelonivelonr.scopelon(rulelonNamelon)
+    rulelonStat.countelonr("fallback_action").incr()
   }
 
-  def recordRuleHoldBack(
-    ruleName: String
+  delonf reloncordRulelonHoldBack(
+    rulelonNamelon: String
   ): Unit = {
-    ruleStatsReceiver.scope(ruleName).counter("heldback").incr()
+    rulelonStatsReloncelonivelonr.scopelon(rulelonNamelon).countelonr("helonldback").incr()
   }
 
-  def recordRuleFailed(
-    ruleName: String
+  delonf reloncordRulelonFailelond(
+    rulelonNamelon: String
   ): Unit = {
-    ruleStatsReceiver.scope(ruleName).counter("failed").incr()
+    rulelonStatsReloncelonivelonr.scopelon(rulelonNamelon).countelonr("failelond").incr()
   }
 
-  def recordDisabledRule(
-    ruleName: String
-  ): Unit = recordRuleEvaluation(ruleName, NotEvaluated, Disabled)
+  delonf reloncordDisablelondRulelon(
+    rulelonNamelon: String
+  ): Unit = reloncordRulelonelonvaluation(rulelonNamelon, Notelonvaluatelond, Disablelond)
 }
 
-object NullVisibilityResultsMetricsRecorder
-    extends VisibilityResultsMetricRecorder(NullStatsReceiver, Gate.False)
+objelonct NullVisibilityRelonsultsMelontricsReloncordelonr
+    elonxtelonnds VisibilityRelonsultsMelontricReloncordelonr(NullStatsReloncelonivelonr, Gatelon.Falselon)

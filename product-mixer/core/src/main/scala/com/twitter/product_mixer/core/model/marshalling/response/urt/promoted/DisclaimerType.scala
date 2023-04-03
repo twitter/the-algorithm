@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-sealed trait DisclaimerType
+selonalelond trait DisclaimelonrTypelon
 
-object DisclaimerPolitical extends DisclaimerType
-object DisclaimerIssue extends DisclaimerType
+objelonct DisclaimelonrPolitical elonxtelonnds DisclaimelonrTypelon
+objelonct DisclaimelonrIssuelon elonxtelonnds DisclaimelonrTypelon

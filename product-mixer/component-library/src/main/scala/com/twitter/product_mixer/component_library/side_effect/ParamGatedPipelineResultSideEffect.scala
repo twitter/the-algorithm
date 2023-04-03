@@ -1,76 +1,76 @@
-package com.twitter.product_mixer.component_library.side_effect
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct
 
-import com.twitter.product_mixer.component_library.side_effect.ParamGatedPipelineResultSideEffect.IdentifierPrefix
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.side_effect.ExecuteSynchronously
-import com.twitter.product_mixer.core.functional_component.side_effect.FailOpen
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct.ParamGatelondPipelonlinelonRelonsultSidelonelonffelonct.IdelonntifielonrPrelonfix
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.elonxeloncutelonSynchronously
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.FailOpelonn
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * A [[PipelineResultSideEffect]] with [[Conditionally]] based on a [[Param]]
+ * A [[PipelonlinelonRelonsultSidelonelonffelonct]] with [[Conditionally]] baselond on a [[Param]]
  *
- * @param enabledParam the param to turn this filter on and off
- * @param sideEffect the underlying side effect to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
+ * @param elonnablelondParam thelon param to turn this filtelonr on and off
+ * @param sidelonelonffelonct thelon undelonrlying sidelon elonffelonct to run whelonn `elonnablelondParam` is truelon
+ * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
  */
-sealed case class ParamGatedPipelineResultSideEffect[
-  -Query <: PipelineQuery,
-  ResultType <: HasMarshalling
-] private (
-  enabledParam: Param[Boolean],
-  sideEffect: PipelineResultSideEffect[Query, ResultType])
-    extends PipelineResultSideEffect[Query, ResultType]
-    with PipelineResultSideEffect.Conditionally[Query, ResultType] {
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier(
-    IdentifierPrefix + sideEffect.identifier.name)
-  override val alerts: Seq[Alert] = sideEffect.alerts
-  override def onlyIf(
-    query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ResultType
-  ): Boolean =
+selonalelond caselon class ParamGatelondPipelonlinelonRelonsultSidelonelonffelonct[
+  -Quelonry <: PipelonlinelonQuelonry,
+  RelonsultTypelon <: HasMarshalling
+] privatelon (
+  elonnablelondParam: Param[Boolelonan],
+  sidelonelonffelonct: PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, RelonsultTypelon])
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, RelonsultTypelon]
+    with PipelonlinelonRelonsultSidelonelonffelonct.Conditionally[Quelonry, RelonsultTypelon] {
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr = SidelonelonffelonctIdelonntifielonr(
+    IdelonntifielonrPrelonfix + sidelonelonffelonct.idelonntifielonr.namelon)
+  ovelonrridelon val alelonrts: Selonq[Alelonrt] = sidelonelonffelonct.alelonrts
+  ovelonrridelon delonf onlyIf(
+    quelonry: Quelonry,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: RelonsultTypelon
+  ): Boolelonan =
     Conditionally.and(
-      PipelineResultSideEffect
-        .Inputs(query, selectedCandidates, remainingCandidates, droppedCandidates, response),
-      sideEffect,
-      query.params(enabledParam))
-  override def apply(inputs: PipelineResultSideEffect.Inputs[Query, ResultType]): Stitch[Unit] =
-    sideEffect.apply(inputs)
+      PipelonlinelonRelonsultSidelonelonffelonct
+        .Inputs(quelonry, selonlelonctelondCandidatelons, relonmainingCandidatelons, droppelondCandidatelons, relonsponselon),
+      sidelonelonffelonct,
+      quelonry.params(elonnablelondParam))
+  ovelonrridelon delonf apply(inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[Quelonry, RelonsultTypelon]): Stitch[Unit] =
+    sidelonelonffelonct.apply(inputs)
 }
 
-object ParamGatedPipelineResultSideEffect {
+objelonct ParamGatelondPipelonlinelonRelonsultSidelonelonffelonct {
 
-  val IdentifierPrefix = "ParamGated"
+  val IdelonntifielonrPrelonfix = "ParamGatelond"
 
   /**
-   * A [[PipelineResultSideEffect]] with [[Conditionally]] based on a [[Param]]
+   * A [[PipelonlinelonRelonsultSidelonelonffelonct]] with [[Conditionally]] baselond on a [[Param]]
    *
-   * @param enabledParam the param to turn this filter on and off
-   * @param sideEffect the underlying side effect to run when `enabledParam` is true
-   * @tparam Query The domain model for the query or request
+   * @param elonnablelondParam thelon param to turn this filtelonr on and off
+   * @param sidelonelonffelonct thelon undelonrlying sidelon elonffelonct to run whelonn `elonnablelondParam` is truelon
+   * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
    */
-  def apply[Query <: PipelineQuery, ResultType <: HasMarshalling](
-    enabledParam: Param[Boolean],
-    sideEffect: PipelineResultSideEffect[Query, ResultType]
-  ): ParamGatedPipelineResultSideEffect[Query, ResultType] = {
-    sideEffect match {
-      case _: FailOpen =>
-        new ParamGatedPipelineResultSideEffect(enabledParam, sideEffect)
-          with ExecuteSynchronously
-          with FailOpen
-      case _: ExecuteSynchronously =>
-        new ParamGatedPipelineResultSideEffect(enabledParam, sideEffect) with ExecuteSynchronously
-      case _ =>
-        new ParamGatedPipelineResultSideEffect(enabledParam, sideEffect)
+  delonf apply[Quelonry <: PipelonlinelonQuelonry, RelonsultTypelon <: HasMarshalling](
+    elonnablelondParam: Param[Boolelonan],
+    sidelonelonffelonct: PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, RelonsultTypelon]
+  ): ParamGatelondPipelonlinelonRelonsultSidelonelonffelonct[Quelonry, RelonsultTypelon] = {
+    sidelonelonffelonct match {
+      caselon _: FailOpelonn =>
+        nelonw ParamGatelondPipelonlinelonRelonsultSidelonelonffelonct(elonnablelondParam, sidelonelonffelonct)
+          with elonxeloncutelonSynchronously
+          with FailOpelonn
+      caselon _: elonxeloncutelonSynchronously =>
+        nelonw ParamGatelondPipelonlinelonRelonsultSidelonelonffelonct(elonnablelondParam, sidelonelonffelonct) with elonxeloncutelonSynchronously
+      caselon _ =>
+        nelonw ParamGatelondPipelonlinelonRelonsultSidelonelonffelonct(elonnablelondParam, sidelonelonffelonct)
     }
   }
 }

@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.twitter_list
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.twittelonr_list
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.twitter_list.TwitterListCandidateUrtItemBuilder.ListClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.twittelonr_list.TwittelonrListCandidatelonUrtItelonmBuildelonr.ListClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwittelonrListCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twittelonr_list.TwittelonrListDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twittelonr_list.TwittelonrListItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object TwitterListCandidateUrtItemBuilder {
-  val ListClientEventInfoElement: String = "list"
+objelonct TwittelonrListCandidatelonUrtItelonmBuildelonr {
+  val ListClielonntelonvelonntInfoelonlelonmelonnt: String = "list"
 }
 
-case class TwitterListCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, TwitterListCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, TwitterListCandidate]
-  ] = None,
-  displayType: Option[TwitterListDisplayType] = None)
-    extends CandidateUrtEntryBuilder[Query, TwitterListCandidate, TwitterListItem] {
+caselon class TwittelonrListCandidatelonUrtItelonmBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, TwittelonrListCandidatelon],
+  felonelondbackActionInfoBuildelonr: Option[
+    BaselonFelonelondbackActionInfoBuildelonr[Quelonry, TwittelonrListCandidatelon]
+  ] = Nonelon,
+  displayTypelon: Option[TwittelonrListDisplayTypelon] = Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, TwittelonrListCandidatelon, TwittelonrListItelonm] {
 
-  override def apply(
-    query: Query,
-    twitterListCandidate: TwitterListCandidate,
-    candidateFeatures: FeatureMap
-  ): TwitterListItem = TwitterListItem(
-    id = twitterListCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      twitterListCandidate,
-      candidateFeatures,
-      Some(ListClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, twitterListCandidate, candidateFeatures)),
-    displayType = displayType
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    twittelonrListCandidatelon: TwittelonrListCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): TwittelonrListItelonm = TwittelonrListItelonm(
+    id = twittelonrListCandidatelon.id,
+    sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+    clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+      quelonry,
+      twittelonrListCandidatelon,
+      candidatelonFelonaturelons,
+      Somelon(ListClielonntelonvelonntInfoelonlelonmelonnt)),
+    felonelondbackActionInfo =
+      felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, twittelonrListCandidatelon, candidatelonFelonaturelons)),
+    displayTypelon = displayTypelon
   )
 }

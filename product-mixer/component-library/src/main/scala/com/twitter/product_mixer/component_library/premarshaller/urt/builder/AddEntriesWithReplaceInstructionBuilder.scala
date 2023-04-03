@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddelonntrielonsTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Build the AddEntries instruction with special handling for replaceable entries.
+ * Build thelon Addelonntrielons instruction with speloncial handling for relonplacelonablelon elonntrielons.
  *
- * Entries (though almost always a single entry) with a non-empty entryIdToReplace field should be
- * collected and transformed into ReplaceEntry instructions. These should be filtered out of the
- * AddEntries instruction. We avoid doing this as part of the regular AddEntriesInstructionBuilder
- * because replacement is rare and detecting replaceable entries takes linear time.
+ * elonntrielons (though almost always a singlelon elonntry) with a non-elonmpty elonntryIdToRelonplacelon fielonld should belon
+ * collelonctelond and transformelond into Relonplacelonelonntry instructions. Thelonselon should belon filtelonrelond out of thelon
+ * Addelonntrielons instruction. Welon avoid doing this as part of thelon relongular AddelonntrielonsInstructionBuildelonr
+ * beloncauselon relonplacelonmelonnt is rarelon and delonteloncting relonplacelonablelon elonntrielons takelons linelonar timelon.
  */
-case class AddEntriesWithReplaceInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+caselon class AddelonntrielonsWithRelonplacelonInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon)
+    elonxtelonnds UrtInstructionBuildelonr[Quelonry, AddelonntrielonsTimelonlinelonInstruction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries.filter(_.entryIdToReplace.isEmpty)
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd))
-      else Seq.empty
-    } else {
-      Seq.empty
+  ovelonrridelon delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Selonq[AddelonntrielonsTimelonlinelonInstruction] = {
+    if (includelonInstruction(quelonry, elonntrielons)) {
+      val elonntrielonsToAdd = elonntrielons.filtelonr(_.elonntryIdToRelonplacelon.iselonmpty)
+      if (elonntrielonsToAdd.nonelonmpty) Selonq(AddelonntrielonsTimelonlinelonInstruction(elonntrielonsToAdd))
+      elonlselon Selonq.elonmpty
+    } elonlselon {
+      Selonq.elonmpty
     }
   }
 }

@@ -1,46 +1,46 @@
-package com.twitter.simclusters_v2.summingbird.stores
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
 
-import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
+import com.twittelonr.frigatelon.common.storelon.strato.StratoStorelon
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions._
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopicId
+import com.twittelonr.simclustelonrs_v2.thriftscala.{SimClustelonrselonmbelondding => ThriftSimClustelonrselonmbelondding}
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
 
 /**
- * TopicId -> List< cluster>
+ * TopicId -> List< clustelonr>
  */
-object TfgTopicEmbeddingsStore {
+objelonct TfgTopicelonmbelonddingsStorelon {
 
-  private val favBasedColumn20M145K2020 =
-    "recommendations/simclusters_v2/embeddings/favBasedTFGTopic20M145K2020"
+  privatelon val favBaselondColumn20M145K2020 =
+    "reloncommelonndations/simclustelonrs_v2/elonmbelonddings/favBaselondTFGTopic20M145K2020"
 
-  private def getStore(
-    stratoClient: Client,
+  privatelon delonf gelontStorelon(
+    stratoClielonnt: Clielonnt,
     column: String
-  ): ReadableStore[SimClustersEmbeddingId, ThriftSimClustersEmbedding] = {
-    StratoStore
-      .withUnitView[SimClustersEmbeddingId, ThriftSimClustersEmbedding](stratoClient, column)
+  ): RelonadablelonStorelon[SimClustelonrselonmbelonddingId, ThriftSimClustelonrselonmbelondding] = {
+    StratoStorelon
+      .withUnitVielonw[SimClustelonrselonmbelonddingId, ThriftSimClustelonrselonmbelondding](stratoClielonnt, column)
   }
 
-  def getFavBasedLocaleEntityEmbedding2020Store(
-    stratoClient: Client,
-  ): ReadableStore[TopicId, SimClustersEmbedding] = {
+  delonf gelontFavBaselondLocalelonelonntityelonmbelondding2020Storelon(
+    stratoClielonnt: Clielonnt,
+  ): RelonadablelonStorelon[TopicId, SimClustelonrselonmbelondding] = {
 
-    getStore(stratoClient, favBasedColumn20M145K2020)
-      .composeKeyMapping[TopicId] { topicId =>
-        SimClustersEmbeddingId(
-          EmbeddingType.FavTfgTopic,
-          ModelVersions.Model20M145K2020,
-          InternalId.TopicId(topicId)
+    gelontStorelon(stratoClielonnt, favBaselondColumn20M145K2020)
+      .composelonKelonyMapping[TopicId] { topicId =>
+        SimClustelonrselonmbelonddingId(
+          elonmbelonddingTypelon.FavTfgTopic,
+          ModelonlVelonrsions.Modelonl20M145K2020,
+          IntelonrnalId.TopicId(topicId)
         )
       }
-      .mapValues(SimClustersEmbedding(_))
+      .mapValuelons(SimClustelonrselonmbelondding(_))
   }
 }

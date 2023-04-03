@@ -1,91 +1,91 @@
-package com.twitter.follow_recommendations.common.feature_hydration.adapters
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.adaptelonrs
 
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.util.Time
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.HasPrelonFelontchelondFelonaturelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.ml.api.Felonaturelon.Continuous
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.IReloncordOnelonToOnelonAdaptelonr
+import com.twittelonr.util.Timelon
 
 /**
- * This adapter mimics UserRecentWTFImpressionsAndFollowsAdapter (for user) and
- * RecentWTFImpressionsFeatureAdapter (for candidate) for extracting recent impression
- * and follow features. This adapter extracts user, candidate, and pair-wise features.
+ * This adaptelonr mimics UselonrReloncelonntWTFImprelonssionsAndFollowsAdaptelonr (for uselonr) and
+ * ReloncelonntWTFImprelonssionsFelonaturelonAdaptelonr (for candidatelon) for elonxtracting reloncelonnt imprelonssion
+ * and follow felonaturelons. This adaptelonr elonxtracts uselonr, candidatelon, and pair-wiselon felonaturelons.
  */
-object PreFetchedFeatureAdapter
-    extends IRecordOneToOneAdapter[
-      (HasPreFetchedFeature, CandidateUser)
+objelonct PrelonFelontchelondFelonaturelonAdaptelonr
+    elonxtelonnds IReloncordOnelonToOnelonAdaptelonr[
+      (HasPrelonFelontchelondFelonaturelon, CandidatelonUselonr)
     ] {
 
-  // impression features
-  val USER_NUM_RECENT_IMPRESSIONS: Continuous = new Continuous(
-    "user.prefetch.num_recent_impressions"
+  // imprelonssion felonaturelons
+  val USelonR_NUM_RelonCelonNT_IMPRelonSSIONS: Continuous = nelonw Continuous(
+    "uselonr.prelonfelontch.num_reloncelonnt_imprelonssions"
   )
-  val USER_LAST_IMPRESSION_DURATION: Continuous = new Continuous(
-    "user.prefetch.last_impression_duration"
+  val USelonR_LAST_IMPRelonSSION_DURATION: Continuous = nelonw Continuous(
+    "uselonr.prelonfelontch.last_imprelonssion_duration"
   )
-  val CANDIDATE_NUM_RECENT_IMPRESSIONS: Continuous = new Continuous(
-    "user-candidate.prefetch.num_recent_impressions"
+  val CANDIDATelon_NUM_RelonCelonNT_IMPRelonSSIONS: Continuous = nelonw Continuous(
+    "uselonr-candidatelon.prelonfelontch.num_reloncelonnt_imprelonssions"
   )
-  val CANDIDATE_LAST_IMPRESSION_DURATION: Continuous = new Continuous(
-    "user-candidate.prefetch.last_impression_duration"
+  val CANDIDATelon_LAST_IMPRelonSSION_DURATION: Continuous = nelonw Continuous(
+    "uselonr-candidatelon.prelonfelontch.last_imprelonssion_duration"
   )
-  // follow features
-  val USER_NUM_RECENT_FOLLOWERS: Continuous = new Continuous(
-    "user.prefetch.num_recent_followers"
+  // follow felonaturelons
+  val USelonR_NUM_RelonCelonNT_FOLLOWelonRS: Continuous = nelonw Continuous(
+    "uselonr.prelonfelontch.num_reloncelonnt_followelonrs"
   )
-  val USER_NUM_RECENT_FOLLOWED_BY: Continuous = new Continuous(
-    "user.prefetch.num_recent_followed_by"
+  val USelonR_NUM_RelonCelonNT_FOLLOWelonD_BY: Continuous = nelonw Continuous(
+    "uselonr.prelonfelontch.num_reloncelonnt_followelond_by"
   )
-  val USER_NUM_RECENT_MUTUAL_FOLLOWS: Continuous = new Continuous(
-    "user.prefetch.num_recent_mutual_follows"
+  val USelonR_NUM_RelonCelonNT_MUTUAL_FOLLOWS: Continuous = nelonw Continuous(
+    "uselonr.prelonfelontch.num_reloncelonnt_mutual_follows"
   )
-  // impression + follow features
-  val USER_NUM_RECENT_FOLLOWED_IMPRESSIONS: Continuous = new Continuous(
-    "user.prefetch.num_recent_followed_impression"
+  // imprelonssion + follow felonaturelons
+  val USelonR_NUM_RelonCelonNT_FOLLOWelonD_IMPRelonSSIONS: Continuous = nelonw Continuous(
+    "uselonr.prelonfelontch.num_reloncelonnt_followelond_imprelonssion"
   )
-  val USER_LAST_FOLLOWED_IMPRESSION_DURATION: Continuous = new Continuous(
-    "user.prefetch.last_followed_impression_duration"
+  val USelonR_LAST_FOLLOWelonD_IMPRelonSSION_DURATION: Continuous = nelonw Continuous(
+    "uselonr.prelonfelontch.last_followelond_imprelonssion_duration"
   )
 
-  override def adaptToDataRecord(
-    record: (HasPreFetchedFeature, CandidateUser)
-  ): DataRecord = {
-    val (target, candidate) = record
-    val dr = new DataRecord()
-    val t = Time.now
-    // set impression features for user, optionally for candidate
-    dr.setFeatureValue(USER_NUM_RECENT_IMPRESSIONS, target.numWtfImpressions.toDouble)
-    dr.setFeatureValue(
-      USER_LAST_IMPRESSION_DURATION,
-      (t - target.latestImpressionTime).inMillis.toDouble)
-    target.getCandidateImpressionCounts(candidate.id).foreach { counts =>
-      dr.setFeatureValue(CANDIDATE_NUM_RECENT_IMPRESSIONS, counts.toDouble)
+  ovelonrridelon delonf adaptToDataReloncord(
+    reloncord: (HasPrelonFelontchelondFelonaturelon, CandidatelonUselonr)
+  ): DataReloncord = {
+    val (targelont, candidatelon) = reloncord
+    val dr = nelonw DataReloncord()
+    val t = Timelon.now
+    // selont imprelonssion felonaturelons for uselonr, optionally for candidatelon
+    dr.selontFelonaturelonValuelon(USelonR_NUM_RelonCelonNT_IMPRelonSSIONS, targelont.numWtfImprelonssions.toDoublelon)
+    dr.selontFelonaturelonValuelon(
+      USelonR_LAST_IMPRelonSSION_DURATION,
+      (t - targelont.latelonstImprelonssionTimelon).inMillis.toDoublelon)
+    targelont.gelontCandidatelonImprelonssionCounts(candidatelon.id).forelonach { counts =>
+      dr.selontFelonaturelonValuelon(CANDIDATelon_NUM_RelonCelonNT_IMPRelonSSIONS, counts.toDoublelon)
     }
-    target.getCandidateLatestTime(candidate.id).foreach { latestTime: Time =>
-      dr.setFeatureValue(CANDIDATE_LAST_IMPRESSION_DURATION, (t - latestTime).inMillis.toDouble)
+    targelont.gelontCandidatelonLatelonstTimelon(candidatelon.id).forelonach { latelonstTimelon: Timelon =>
+      dr.selontFelonaturelonValuelon(CANDIDATelon_LAST_IMPRelonSSION_DURATION, (t - latelonstTimelon).inMillis.toDoublelon)
     }
-    // set recent follow features for user
-    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWERS, target.numRecentFollowedUserIds.toDouble)
-    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWED_BY, target.numRecentFollowedByUserIds.toDouble)
-    dr.setFeatureValue(USER_NUM_RECENT_MUTUAL_FOLLOWS, target.numRecentMutualFollows.toDouble)
-    dr.setFeatureValue(USER_NUM_RECENT_FOLLOWED_IMPRESSIONS, target.numFollowedImpressions.toDouble)
-    dr.setFeatureValue(
-      USER_LAST_FOLLOWED_IMPRESSION_DURATION,
-      target.lastFollowedImpressionDurationMs.getOrElse(Long.MaxValue).toDouble)
+    // selont reloncelonnt follow felonaturelons for uselonr
+    dr.selontFelonaturelonValuelon(USelonR_NUM_RelonCelonNT_FOLLOWelonRS, targelont.numReloncelonntFollowelondUselonrIds.toDoublelon)
+    dr.selontFelonaturelonValuelon(USelonR_NUM_RelonCelonNT_FOLLOWelonD_BY, targelont.numReloncelonntFollowelondByUselonrIds.toDoublelon)
+    dr.selontFelonaturelonValuelon(USelonR_NUM_RelonCelonNT_MUTUAL_FOLLOWS, targelont.numReloncelonntMutualFollows.toDoublelon)
+    dr.selontFelonaturelonValuelon(USelonR_NUM_RelonCelonNT_FOLLOWelonD_IMPRelonSSIONS, targelont.numFollowelondImprelonssions.toDoublelon)
+    dr.selontFelonaturelonValuelon(
+      USelonR_LAST_FOLLOWelonD_IMPRelonSSION_DURATION,
+      targelont.lastFollowelondImprelonssionDurationMs.gelontOrelonlselon(Long.MaxValuelon).toDoublelon)
     dr
   }
-  override def getFeatureContext: FeatureContext = new FeatureContext(
-    USER_NUM_RECENT_IMPRESSIONS,
-    USER_LAST_IMPRESSION_DURATION,
-    CANDIDATE_NUM_RECENT_IMPRESSIONS,
-    CANDIDATE_LAST_IMPRESSION_DURATION,
-    USER_NUM_RECENT_FOLLOWERS,
-    USER_NUM_RECENT_FOLLOWED_BY,
-    USER_NUM_RECENT_MUTUAL_FOLLOWS,
-    USER_NUM_RECENT_FOLLOWED_IMPRESSIONS,
-    USER_LAST_FOLLOWED_IMPRESSION_DURATION,
+  ovelonrridelon delonf gelontFelonaturelonContelonxt: FelonaturelonContelonxt = nelonw FelonaturelonContelonxt(
+    USelonR_NUM_RelonCelonNT_IMPRelonSSIONS,
+    USelonR_LAST_IMPRelonSSION_DURATION,
+    CANDIDATelon_NUM_RelonCelonNT_IMPRelonSSIONS,
+    CANDIDATelon_LAST_IMPRelonSSION_DURATION,
+    USelonR_NUM_RelonCelonNT_FOLLOWelonRS,
+    USelonR_NUM_RelonCelonNT_FOLLOWelonD_BY,
+    USelonR_NUM_RelonCelonNT_MUTUAL_FOLLOWS,
+    USelonR_NUM_RelonCelonNT_FOLLOWelonD_IMPRelonSSIONS,
+    USelonR_LAST_FOLLOWelonD_IMPRelonSSION_DURATION,
   )
 }

@@ -1,35 +1,35 @@
-package com.twitter.search.ingester.pipeline.util;
-import java.util.concurrent.TimeUnit;
-import com.twitter.common.base.MorePreconditions;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import org.apache.commons.pipeline.stage.StageTimer;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
+import java.util.concurrelonnt.TimelonUnit;
+import com.twittelonr.common.baselon.MorelonPrelonconditions;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import org.apachelon.commons.pipelonlinelon.stagelon.StagelonTimelonr;
 /**
- * Adds science stats export to StageTimer
+ * Adds scielonncelon stats elonxport to StagelonTimelonr
  */
-public class IngesterStageTimer extends StageTimer {
-  private final String name;
-  private final SearchTimerStats timer;
+public class IngelonstelonrStagelonTimelonr elonxtelonnds StagelonTimelonr {
+  privatelon final String namelon;
+  privatelon final SelonarchTimelonrStats timelonr;
 
-  public IngesterStageTimer(String statName) {
-    name = MorePreconditions.checkNotBlank(statName);
-    timer = SearchTimerStats.export(name, TimeUnit.NANOSECONDS, true);
+  public IngelonstelonrStagelonTimelonr(String statNamelon) {
+    namelon = MorelonPrelonconditions.chelonckNotBlank(statNamelon);
+    timelonr = SelonarchTimelonrStats.elonxport(namelon, TimelonUnit.NANOSelonCONDS, truelon);
   }
 
-  public String getName() {
-    return name;
+  public String gelontNamelon() {
+    relonturn namelon;
   }
 
-  @Override
+  @Ovelonrridelon
   public void start() {
-    // This override is not necessary; it is added for code readability.
-    // super.start puts the current time in startTime
-    super.start();
+    // This ovelonrridelon is not neloncelonssary; it is addelond for codelon relonadability.
+    // supelonr.start puts thelon currelonnt timelon in startTimelon
+    supelonr.start();
   }
 
-  @Override
+  @Ovelonrridelon
   public void stop() {
-    super.stop();
-    long runTime = System.nanoTime() - startTime.get();
-    timer.timerIncrement(runTime);
+    supelonr.stop();
+    long runTimelon = Systelonm.nanoTimelon() - startTimelon.gelont();
+    timelonr.timelonrIncrelonmelonnt(runTimelon);
   }
 }

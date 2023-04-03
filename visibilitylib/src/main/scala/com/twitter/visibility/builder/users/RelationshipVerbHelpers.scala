@@ -1,79 +1,79 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.gizmoduck.thriftscala.Perspective
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.common.UserId
+import com.twittelonr.finaglelon.stats.Countelonr
+import com.twittelonr.gizmoduck.thriftscala.Pelonrspelonctivelon
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.common.UselonrId
 
-case object ViewerVerbsAuthor {
-  def apply(
-    authorId: UserId,
-    viewerIdOpt: Option[UserId],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    relationshipCounter.incr()
+caselon objelonct VielonwelonrVelonrbsAuthor {
+  delonf apply(
+    authorId: UselonrId,
+    vielonwelonrIdOpt: Option[UselonrId],
+    relonlationship: (UselonrId, UselonrId) => Stitch[Boolelonan],
+    relonlationshipCountelonr: Countelonr
+  ): Stitch[Boolelonan] = {
+    relonlationshipCountelonr.incr()
 
-    viewerIdOpt match {
-      case Some(viewerId) => relationship(viewerId, authorId)
-      case _ => Stitch.False
+    vielonwelonrIdOpt match {
+      caselon Somelon(vielonwelonrId) => relonlationship(vielonwelonrId, authorId)
+      caselon _ => Stitch.Falselon
     }
   }
 
-  def apply(
-    author: User,
-    viewerId: Option[UserId],
-    checkPerspective: Perspective => Option[Boolean],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    author.perspective match {
-      case Some(perspective) =>
-        checkPerspective(perspective) match {
-          case Some(status) =>
-            relationshipCounter.incr()
-            Stitch.value(status)
-          case None =>
-            ViewerVerbsAuthor(author.id, viewerId, relationship, relationshipCounter)
+  delonf apply(
+    author: Uselonr,
+    vielonwelonrId: Option[UselonrId],
+    chelonckPelonrspelonctivelon: Pelonrspelonctivelon => Option[Boolelonan],
+    relonlationship: (UselonrId, UselonrId) => Stitch[Boolelonan],
+    relonlationshipCountelonr: Countelonr
+  ): Stitch[Boolelonan] = {
+    author.pelonrspelonctivelon match {
+      caselon Somelon(pelonrspelonctivelon) =>
+        chelonckPelonrspelonctivelon(pelonrspelonctivelon) match {
+          caselon Somelon(status) =>
+            relonlationshipCountelonr.incr()
+            Stitch.valuelon(status)
+          caselon Nonelon =>
+            VielonwelonrVelonrbsAuthor(author.id, vielonwelonrId, relonlationship, relonlationshipCountelonr)
         }
-      case None => ViewerVerbsAuthor(author.id, viewerId, relationship, relationshipCounter)
+      caselon Nonelon => VielonwelonrVelonrbsAuthor(author.id, vielonwelonrId, relonlationship, relonlationshipCountelonr)
     }
   }
 }
 
-case object AuthorVerbsViewer {
+caselon objelonct AuthorVelonrbsVielonwelonr {
 
-  def apply(
-    authorId: UserId,
-    viewerIdOpt: Option[UserId],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    relationshipCounter.incr()
+  delonf apply(
+    authorId: UselonrId,
+    vielonwelonrIdOpt: Option[UselonrId],
+    relonlationship: (UselonrId, UselonrId) => Stitch[Boolelonan],
+    relonlationshipCountelonr: Countelonr
+  ): Stitch[Boolelonan] = {
+    relonlationshipCountelonr.incr()
 
-    viewerIdOpt match {
-      case Some(viewerId) => relationship(authorId, viewerId)
-      case _ => Stitch.False
+    vielonwelonrIdOpt match {
+      caselon Somelon(vielonwelonrId) => relonlationship(authorId, vielonwelonrId)
+      caselon _ => Stitch.Falselon
     }
   }
-  def apply(
-    author: User,
-    viewerId: Option[UserId],
-    checkPerspective: Perspective => Option[Boolean],
-    relationship: (UserId, UserId) => Stitch[Boolean],
-    relationshipCounter: Counter
-  ): Stitch[Boolean] = {
-    author.perspective match {
-      case Some(perspective) =>
-        checkPerspective(perspective) match {
-          case Some(status) =>
-            relationshipCounter.incr()
-            Stitch.value(status)
-          case None =>
-            AuthorVerbsViewer(author.id, viewerId, relationship, relationshipCounter)
+  delonf apply(
+    author: Uselonr,
+    vielonwelonrId: Option[UselonrId],
+    chelonckPelonrspelonctivelon: Pelonrspelonctivelon => Option[Boolelonan],
+    relonlationship: (UselonrId, UselonrId) => Stitch[Boolelonan],
+    relonlationshipCountelonr: Countelonr
+  ): Stitch[Boolelonan] = {
+    author.pelonrspelonctivelon match {
+      caselon Somelon(pelonrspelonctivelon) =>
+        chelonckPelonrspelonctivelon(pelonrspelonctivelon) match {
+          caselon Somelon(status) =>
+            relonlationshipCountelonr.incr()
+            Stitch.valuelon(status)
+          caselon Nonelon =>
+            AuthorVelonrbsVielonwelonr(author.id, vielonwelonrId, relonlationship, relonlationshipCountelonr)
         }
-      case None => AuthorVerbsViewer(author.id, viewerId, relationship, relationshipCounter)
+      caselon Nonelon => AuthorVelonrbsVielonwelonr(author.id, vielonwelonrId, relonlationship, relonlationshipCountelonr)
     }
   }
 }

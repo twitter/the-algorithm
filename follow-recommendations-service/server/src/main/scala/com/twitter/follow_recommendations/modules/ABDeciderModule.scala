@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.modules
+packagelon com.twittelonr.follow_reloncommelonndations.modulelons
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.inject.TwitterModule
-import com.twitter.logging.LoggerFactory
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.abdeloncidelonr.ABDeloncidelonrFactory
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.logging.LoggelonrFactory
+import javax.injelonct.Singlelonton
 
-object ABDeciderModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def provideABDecider(
-    stats: StatsReceiver,
-    @Named(GuiceNamedConstants.CLIENT_EVENT_LOGGER) factory: LoggerFactory
-  ): LoggingABDecider = {
+objelonct ABDeloncidelonrModulelon elonxtelonnds TwittelonrModulelon {
+  @Providelons
+  @Singlelonton
+  delonf providelonABDeloncidelonr(
+    stats: StatsReloncelonivelonr,
+    @Namelond(GuicelonNamelondConstants.CLIelonNT_elonVelonNT_LOGGelonR) factory: LoggelonrFactory
+  ): LoggingABDeloncidelonr = {
 
-    val ymlPath = "/usr/local/config/abdecider/abdecider.yml"
+    val ymlPath = "/usr/local/config/abdeloncidelonr/abdeloncidelonr.yml"
 
-    val abDeciderFactory = ABDeciderFactory(
-      abDeciderYmlPath = ymlPath,
-      scribeLogger = Some(factory()),
-      environment = Some("production")
+    val abDeloncidelonrFactory = ABDeloncidelonrFactory(
+      abDeloncidelonrYmlPath = ymlPath,
+      scribelonLoggelonr = Somelon(factory()),
+      elonnvironmelonnt = Somelon("production")
     )
 
-    abDeciderFactory.buildWithLogging()
+    abDeloncidelonrFactory.buildWithLogging()
   }
 }

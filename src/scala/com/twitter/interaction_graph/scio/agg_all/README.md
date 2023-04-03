@@ -1,38 +1,38 @@
-## InteractionGraphAggregationJob Dataflow Job
+## IntelonractionGraphAggrelongationJob Dataflow Job
 
-This job aggregates the previous day's history with today's activities, and outputs an updated
-history. This history is joined with the explicit scores from real graph's BQML pipeline, and
-exported as features for timelines (which is why we're using their thrift).
+This job aggrelongatelons thelon prelonvious day's history with today's activitielons, and outputs an updatelond
+history. This history is joinelond with thelon elonxplicit scorelons from relonal graph's BQML pipelonlinelon, and
+elonxportelond as felonaturelons for timelonlinelons (which is why welon'relon using thelonir thrift).
 
-#### IntelliJ
+#### IntelonlliJ
 ```
-fastpass create --name rg_agg_all --intellij src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
+fastpass crelonatelon --namelon rg_agg_all --intelonllij src/scala/com/twittelonr/intelonraction_graph/scio/agg_all:intelonraction_graph_aggrelongation_job_scio
 ```
 
-#### Compile
+#### Compilelon
 ```
-bazel build src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
+bazelonl build src/scala/com/twittelonr/intelonraction_graph/scio/agg_all:intelonraction_graph_aggrelongation_job_scio
 ```
 
 #### Build Jar
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/agg_all:interaction_graph_aggregation_job_scio
+bazelonl bundlelon src/scala/com/twittelonr/intelonraction_graph/scio/agg_all:intelonraction_graph_aggrelongation_job_scio
 ```
 
-#### Run Scheduled Job
+#### Run Schelondulelond Job
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-aggregation-dataflow
+elonxport PROJelonCTID=twttr-reloncos-ml-prod
+elonxport RelonGION=us-celonntral1
+elonxport JOB_NAMelon=intelonraction-graph-aggrelongation-dataflow
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/agg_all/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-11-08 \
-  --bind=profile.output_path=processed/interaction_graph_aggregation_dataflow
+bin/d6w schelondulelon \
+  ${PROJelonCTID}/${RelonGION}/${JOB_NAMelon} \
+  src/scala/com/twittelonr/intelonraction_graph/scio/agg_all/config.d6w \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.projelonct=${PROJelonCTID} \
+  --bind=profilelon.relongion=${RelonGION} \
+  --bind=profilelon.job_namelon=${JOB_NAMelon} \
+  --bind=profilelon.elonnvironmelonnt=prod \
+  --bind=profilelon.datelon=2022-11-08 \
+  --bind=profilelon.output_path=procelonsselond/intelonraction_graph_aggrelongation_dataflow
 ```

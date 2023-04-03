@@ -1,5 +1,5 @@
-package com.twitter.home_mixer.util
+packagelon com.twittelonr.homelon_mixelonr.util
 
-object MissingKeyException extends Exception("Missing key") {
-  override def toString: String = getMessage
+objelonct MissingKelonyelonxcelonption elonxtelonnds elonxcelonption("Missing kelony") {
+  ovelonrridelon delonf toString: String = gelontMelonssagelon
 }

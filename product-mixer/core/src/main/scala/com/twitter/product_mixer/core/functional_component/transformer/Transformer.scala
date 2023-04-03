@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
 
 /**
- * A transformer is a synchronous transformation that takes the provided [[Input]] and returns some
- * defined [[Output]]. For example, extracting a score from from a scored candidates.
+ * A transformelonr is a synchronous transformation that takelons thelon providelond [[Input]] and relonturns somelon
+ * delonfinelond [[Output]]. For elonxamplelon, elonxtracting a scorelon from from a scorelond candidatelons.
  */
-trait Transformer[-Inputs, +Output] extends Component {
-  override val identifier: TransformerIdentifier
+trait Transformelonr[-Inputs, +Output] elonxtelonnds Componelonnt {
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr
 
-  /** Takes [[Inputs]] and transformers them into some [[Output]] of your choosing. */
-  def transform(input: Inputs): Output
+  /** Takelons [[Inputs]] and transformelonrs thelonm into somelon [[Output]] of your choosing. */
+  delonf transform(input: Inputs): Output
 }

@@ -1,14 +1,14 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
-        "src/thrift/com/twitter/tweetypie:tweet-scala",
-        "timelineranker/common:model",
-        "timelines/src/main/scala/com/twitter/timelines/clientconfig",
-        "timelines/src/main/scala/com/twitter/timelines/model/tweet",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "configapi/configapi-corelon",
+        "src/thrift/com/twittelonr/timelonlinelonselonrvicelon/selonrvelonr/intelonrnal:thrift-scala",
+        "src/thrift/com/twittelonr/twelonelontypielon:twelonelont-scala",
+        "timelonlinelonrankelonr/common:modelonl",
+        "timelonlinelons/src/main/scala/com/twittelonr/timelonlinelons/clielonntconfig",
+        "timelonlinelons/src/main/scala/com/twittelonr/timelonlinelons/modelonl/twelonelont",
     ],
 )

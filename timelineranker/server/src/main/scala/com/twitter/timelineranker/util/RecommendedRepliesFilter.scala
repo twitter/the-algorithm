@@ -1,28 +1,28 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.tweet.HydratedTweet
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
 
-object RecommendedRepliesFilter {
-  private[util] def isRecommendedReply(
-    tweet: HydratedTweet,
-    followedUserIds: Seq[UserId]
-  ): Boolean = {
-    tweet.hasReply && tweet.inReplyToTweetId.nonEmpty &&
-    (!followedUserIds.contains(tweet.userId))
+objelonct ReloncommelonndelondRelonplielonsFiltelonr {
+  privatelon[util] delonf isReloncommelonndelondRelonply(
+    twelonelont: HydratelondTwelonelont,
+    followelondUselonrIds: Selonq[UselonrId]
+  ): Boolelonan = {
+    twelonelont.hasRelonply && twelonelont.inRelonplyToTwelonelontId.nonelonmpty &&
+    (!followelondUselonrIds.contains(twelonelont.uselonrId))
   }
 
-  private[util] def isRecommendedReplyToNotFollowedUser(
-    tweet: HydratedTweet,
-    viewingUserId: UserId,
-    followedUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId]
-  ): Boolean = {
-    val isValidRecommendedReply =
-      !tweet.isRetweet &&
-        tweet.inReplyToUserId.exists(followedUserIds.contains(_)) &&
-        !mutedUserIds.contains(tweet.userId)
+  privatelon[util] delonf isReloncommelonndelondRelonplyToNotFollowelondUselonr(
+    twelonelont: HydratelondTwelonelont,
+    vielonwingUselonrId: UselonrId,
+    followelondUselonrIds: Selonq[UselonrId],
+    mutelondUselonrIds: Selont[UselonrId]
+  ): Boolelonan = {
+    val isValidReloncommelonndelondRelonply =
+      !twelonelont.isRelontwelonelont &&
+        twelonelont.inRelonplyToUselonrId.elonxists(followelondUselonrIds.contains(_)) &&
+        !mutelondUselonrIds.contains(twelonelont.uselonrId)
 
-    isRecommendedReply(tweet, followedUserIds) && !isValidRecommendedReply
+    isReloncommelonndelondRelonply(twelonelont, followelondUselonrIds) && !isValidReloncommelonndelondRelonply
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.message
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageTextAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepile
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepileDisplayType
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonActionTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonTelonxtAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.UselonrFacelonpilelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.UselonrFacelonpilelonDisplayTypelon
 
-case class UserFacePileBuilder(
-  userIds: Seq[Long],
-  featuredUserIds: Seq[Long],
-  action: Option[MessageTextAction],
-  actionType: Option[MessageActionType],
-  displaysFeaturingText: Option[Boolean],
-  displayType: Option[UserFacepileDisplayType]) {
+caselon class UselonrFacelonPilelonBuildelonr(
+  uselonrIds: Selonq[Long],
+  felonaturelondUselonrIds: Selonq[Long],
+  action: Option[MelonssagelonTelonxtAction],
+  actionTypelon: Option[MelonssagelonActionTypelon],
+  displaysFelonaturingTelonxt: Option[Boolelonan],
+  displayTypelon: Option[UselonrFacelonpilelonDisplayTypelon]) {
 
-  def apply(): UserFacepile = UserFacepile(
-    userIds = userIds,
-    featuredUserIds = featuredUserIds,
+  delonf apply(): UselonrFacelonpilelon = UselonrFacelonpilelon(
+    uselonrIds = uselonrIds,
+    felonaturelondUselonrIds = felonaturelondUselonrIds,
     action = action,
-    actionType = actionType,
-    displaysFeaturingText = displaysFeaturingText,
-    displayType = displayType
+    actionTypelon = actionTypelon,
+    displaysFelonaturingTelonxt = displaysFelonaturingTelonxt,
+    displayTypelon = displayTypelon
   )
 }

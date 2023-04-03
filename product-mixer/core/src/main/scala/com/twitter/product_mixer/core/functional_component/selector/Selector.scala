@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.selector
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-/** Selects some `remainingCandidates` and add them to the `result` */
-trait Selector[-Query <: PipelineQuery] {
+/** Selonleloncts somelon `relonmainingCandidatelons` and add thelonm to thelon `relonsult` */
+trait Selonlelonctor[-Quelonry <: PipelonlinelonQuelonry] {
 
   /**
-   * Specifies which [[com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails.source]]s
-   * this [[Selector]] will apply to.
+   * Speloncifielons which [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails.sourcelon]]s
+   * this [[Selonlelonctor]] will apply to.
    *
-   * @note it is up to each [[Selector]] implementation to correctly handle this behavior
+   * @notelon it is up to elonach [[Selonlelonctor]] implelonmelonntation to correlonctly handlelon this belonhavior
    */
-  def pipelineScope: CandidateScope
+  delonf pipelonlinelonScopelon: CandidatelonScopelon
 
-  /** Selects some `remainingCandidates` and add them to the `result` */
-  def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult
+  /** Selonleloncts somelon `relonmainingCandidatelons` and add thelonm to thelon `relonsult` */
+  delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult
 }

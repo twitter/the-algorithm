@@ -1,41 +1,41 @@
-package com.twitter.visibility.interfaces.blender
+packagelon com.twittelonr.visibility.intelonrfacelons.blelonndelonr
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContext
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
+import com.twittelonr.visibility.intelonrfacelons.common.blelonndelonr.BlelonndelonrVFRelonquelonstContelonxt
 
-case class BlenderVisibilityRequest(
-  tweet: Tweet,
-  quotedTweet: Option[Tweet],
-  retweetSourceTweet: Option[Tweet] = None,
-  isRetweet: Boolean,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext,
-  blenderVFRequestContext: BlenderVFRequestContext) {
+caselon class BlelonndelonrVisibilityRelonquelonst(
+  twelonelont: Twelonelont,
+  quotelondTwelonelont: Option[Twelonelont],
+  relontwelonelontSourcelonTwelonelont: Option[Twelonelont] = Nonelon,
+  isRelontwelonelont: Boolelonan,
+  safelontyLelonvelonl: SafelontyLelonvelonl,
+  vielonwelonrContelonxt: VielonwelonrContelonxt,
+  blelonndelonrVFRelonquelonstContelonxt: BlelonndelonrVFRelonquelonstContelonxt) {
 
-  def getTweetID: Long = tweet.id
+  delonf gelontTwelonelontID: Long = twelonelont.id
 
-  def hasQuotedTweet: Boolean = {
-    quotedTweet.nonEmpty
+  delonf hasQuotelondTwelonelont: Boolelonan = {
+    quotelondTwelonelont.nonelonmpty
   }
-  def hasSourceTweet: Boolean = {
-    retweetSourceTweet.nonEmpty
+  delonf hasSourcelonTwelonelont: Boolelonan = {
+    relontwelonelontSourcelonTwelonelont.nonelonmpty
   }
 
-  def getQuotedTweetId: Long = {
-    quotedTweet match {
-      case Some(qTweet) =>
-        qTweet.id
-      case None =>
+  delonf gelontQuotelondTwelonelontId: Long = {
+    quotelondTwelonelont match {
+      caselon Somelon(qTwelonelont) =>
+        qTwelonelont.id
+      caselon Nonelon =>
         -1
     }
   }
-  def getSourceTweetId: Long = {
-    retweetSourceTweet match {
-      case Some(sourceTweet) =>
-        sourceTweet.id
-      case None =>
+  delonf gelontSourcelonTwelonelontId: Long = {
+    relontwelonelontSourcelonTwelonelont match {
+      caselon Somelon(sourcelonTwelonelont) =>
+        sourcelonTwelonelont.id
+      caselon Nonelon =>
         -1
     }
   }

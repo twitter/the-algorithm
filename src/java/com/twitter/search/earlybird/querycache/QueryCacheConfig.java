@@ -1,101 +1,101 @@
-package com.twitter.search.earlybird.querycache;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonrycachelon;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.Filelon;
+import java.io.FilelonNotFoundelonxcelonption;
+import java.io.FilelonRelonadelonr;
+import java.io.Relonadelonr;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.TypeDescription;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.constructor.Constructor;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import org.yaml.snakelonyaml.TypelonDelonscription;
+import org.yaml.snakelonyaml.Yaml;
+import org.yaml.snakelonyaml.constructor.Constructor;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
 
-// QueryCacheConfig is not thread safe. *Do not* attempt to create multiple QueryCacheConfig
-// in different threads
-public class QueryCacheConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(QueryCacheConfig.class);
-  private static final String DEFAULT_CONFIG_FILE = "querycache.yml";
-  private final SearchStatsReceiver statsReceiver;
+// QuelonryCachelonConfig is not threlonad safelon. *Do not* attelonmpt to crelonatelon multiplelon QuelonryCachelonConfig
+// in diffelonrelonnt threlonads
+public class QuelonryCachelonConfig {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(QuelonryCachelonConfig.class);
+  privatelon static final String DelonFAULT_CONFIG_FILelon = "quelonrycachelon.yml";
+  privatelon final SelonarchStatsReloncelonivelonr statsReloncelonivelonr;
 
-  private List<QueryCacheFilter> filters;
+  privatelon List<QuelonryCachelonFiltelonr> filtelonrs;
 
-  public QueryCacheConfig(SearchStatsReceiver statsReceiver) {
-    this(locateConfigFile(EarlybirdConfig.getString("query_cache_config_file_name",
-                                                    DEFAULT_CONFIG_FILE)), statsReceiver);
+  public QuelonryCachelonConfig(SelonarchStatsReloncelonivelonr statsReloncelonivelonr) {
+    this(locatelonConfigFilelon(elonarlybirdConfig.gelontString("quelonry_cachelon_config_filelon_namelon",
+                                                    DelonFAULT_CONFIG_FILelon)), statsReloncelonivelonr);
   }
 
-  // package protected constructor for unit test only
-  QueryCacheConfig(Reader reader, SearchStatsReceiver statsReceiver) {
-    this.statsReceiver = statsReceiver;
-    if (reader == null) {
-      throw new RuntimeException("Query cache config not loaded");
+  // packagelon protelonctelond constructor for unit telonst only
+  QuelonryCachelonConfig(Relonadelonr relonadelonr, SelonarchStatsReloncelonivelonr statsReloncelonivelonr) {
+    this.statsReloncelonivelonr = statsReloncelonivelonr;
+    if (relonadelonr == null) {
+      throw nelonw Runtimelonelonxcelonption("Quelonry cachelon config not loadelond");
     }
-    loadConfig(reader);
+    loadConfig(relonadelonr);
   }
 
-  public List<QueryCacheFilter> filters() {
-    return filters;
+  public List<QuelonryCachelonFiltelonr> filtelonrs() {
+    relonturn filtelonrs;
   }
 
-  int getFilterSize() {
-    return filters.size();
+  int gelontFiltelonrSizelon() {
+    relonturn filtelonrs.sizelon();
   }
 
-  private static FileReader locateConfigFile(String configFileName) {
-    File configFile = null;
-    String dir = Config.locateSearchConfigDir(EarlybirdConfig.EARLYBIRD_CONFIG_DIR, configFileName);
+  privatelon static FilelonRelonadelonr locatelonConfigFilelon(String configFilelonNamelon) {
+    Filelon configFilelon = null;
+    String dir = Config.locatelonSelonarchConfigDir(elonarlybirdConfig.elonARLYBIRD_CONFIG_DIR, configFilelonNamelon);
     if (dir != null) {
-      configFile = openConfigFile(dir + "/" + configFileName);
+      configFilelon = opelonnConfigFilelon(dir + "/" + configFilelonNamelon);
     }
-    if (configFile != null) {
+    if (configFilelon != null) {
       try {
-        return new FileReader(configFile);
-      } catch (FileNotFoundException e) {
-        // This should not happen as the caller should make sure that the file exists before
+        relonturn nelonw FilelonRelonadelonr(configFilelon);
+      } catch (FilelonNotFoundelonxcelonption elon) {
+        // This should not happelonn as thelon callelonr should makelon surelon that thelon filelon elonxists belonforelon
         // calling this function.
-        LOG.error("Unexpected exception", e);
-        throw new RuntimeException("Query cache config file not loaded!", e);
+        LOG.elonrror("Unelonxpelonctelond elonxcelonption", elon);
+        throw nelonw Runtimelonelonxcelonption("Quelonry cachelon config filelon not loadelond!", elon);
       }
     }
-    return null;
+    relonturn null;
   }
 
-  private static File openConfigFile(String configFilePath) {
-    File configFile = new File(configFilePath);
-    if (!configFile.exists()) {
-      LOG.warn("QueryCache config file [" + configFile + "] not found");
-      configFile = null;
-    } else {
-      LOG.info("Opened QueryCacheFilter config file [" + configFile + "]");
+  privatelon static Filelon opelonnConfigFilelon(String configFilelonPath) {
+    Filelon configFilelon = nelonw Filelon(configFilelonPath);
+    if (!configFilelon.elonxists()) {
+      LOG.warn("QuelonryCachelon config filelon [" + configFilelon + "] not found");
+      configFilelon = null;
+    } elonlselon {
+      LOG.info("Opelonnelond QuelonryCachelonFiltelonr config filelon [" + configFilelon + "]");
     }
-    return configFile;
+    relonturn configFilelon;
   }
 
-  private void loadConfig(Reader reader) {
-    TypeDescription qcEntryDescription = new TypeDescription(QueryCacheFilter.class);
-    Constructor constructor = new Constructor(qcEntryDescription);
-    Yaml yaml = new Yaml(constructor);
+  privatelon void loadConfig(Relonadelonr relonadelonr) {
+    TypelonDelonscription qcelonntryDelonscription = nelonw TypelonDelonscription(QuelonryCachelonFiltelonr.class);
+    Constructor constructor = nelonw Constructor(qcelonntryDelonscription);
+    Yaml yaml = nelonw Yaml(constructor);
 
-    filters = new ArrayList<>();
+    filtelonrs = nelonw ArrayList<>();
 
-    for (Object data : yaml.loadAll(reader)) {
-      QueryCacheFilter cacheFilter = (QueryCacheFilter) data;
+    for (Objelonct data : yaml.loadAll(relonadelonr)) {
+      QuelonryCachelonFiltelonr cachelonFiltelonr = (QuelonryCachelonFiltelonr) data;
       try {
-        cacheFilter.sanityCheck();
-      } catch (QueryCacheFilter.InvalidEntryException e) {
-        throw new RuntimeException(e);
+        cachelonFiltelonr.sanityChelonck();
+      } catch (QuelonryCachelonFiltelonr.Invalidelonntryelonxcelonption elon) {
+        throw nelonw Runtimelonelonxcelonption(elon);
       }
-      cacheFilter.createQueryCounter(statsReceiver);
-      filters.add(cacheFilter);
-      LOG.info("Loaded filter from config {}", cacheFilter.toString());
+      cachelonFiltelonr.crelonatelonQuelonryCountelonr(statsReloncelonivelonr);
+      filtelonrs.add(cachelonFiltelonr);
+      LOG.info("Loadelond filtelonr from config {}", cachelonFiltelonr.toString());
     }
-    LOG.info("Total filters loaded: {}", filters.size());
+    LOG.info("Total filtelonrs loadelond: {}", filtelonrs.sizelon());
   }
 }

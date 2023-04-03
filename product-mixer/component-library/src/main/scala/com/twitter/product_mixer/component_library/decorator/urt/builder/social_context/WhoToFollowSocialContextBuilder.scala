@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.social_context
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.social_contelonxt
 
-import com.twitter.hermit.{thriftscala => h}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FollowGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.GeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.LocationGeneralContextType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NewUserGeneralContextType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.helonrmit.{thriftscala => h}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FollowGelonnelonralContelonxtTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.GelonnelonralContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.GelonnelonralContelonxtTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.LocationGelonnelonralContelonxtTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.NelonwUselonrGelonnelonralContelonxtTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class WhoToFollowSocialContextBuilder(
-  socialTextFeature: Feature[_, Option[String]],
-  contextTypeFeature: Feature[_, Option[h.ContextType]])
-    extends BaseSocialContextBuilder[PipelineQuery, UserCandidate] {
+caselon class WhoToFollowSocialContelonxtBuildelonr(
+  socialTelonxtFelonaturelon: Felonaturelon[_, Option[String]],
+  contelonxtTypelonFelonaturelon: Felonaturelon[_, Option[h.ContelonxtTypelon]])
+    elonxtelonnds BaselonSocialContelonxtBuildelonr[PipelonlinelonQuelonry, UselonrCandidatelon] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: UserCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[GeneralContext] = {
-    val socialTextOpt = candidateFeatures.getOrElse(socialTextFeature, None)
-    val contextTypeOpt = convertContextType(candidateFeatures.getOrElse(contextTypeFeature, None))
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: UselonrCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[GelonnelonralContelonxt] = {
+    val socialTelonxtOpt = candidatelonFelonaturelons.gelontOrelonlselon(socialTelonxtFelonaturelon, Nonelon)
+    val contelonxtTypelonOpt = convelonrtContelonxtTypelon(candidatelonFelonaturelons.gelontOrelonlselon(contelonxtTypelonFelonaturelon, Nonelon))
 
-    (socialTextOpt, contextTypeOpt) match {
-      case (Some(socialText), Some(contextType)) if socialText.nonEmpty =>
-        Some(
-          GeneralContext(
-            text = socialText,
-            contextType = contextType,
-            url = None,
-            contextImageUrls = None,
-            landingUrl = None))
-      case _ => None
+    (socialTelonxtOpt, contelonxtTypelonOpt) match {
+      caselon (Somelon(socialTelonxt), Somelon(contelonxtTypelon)) if socialTelonxt.nonelonmpty =>
+        Somelon(
+          GelonnelonralContelonxt(
+            telonxt = socialTelonxt,
+            contelonxtTypelon = contelonxtTypelon,
+            url = Nonelon,
+            contelonxtImagelonUrls = Nonelon,
+            landingUrl = Nonelon))
+      caselon _ => Nonelon
     }
   }
 
-  private def convertContextType(contextType: Option[h.ContextType]): Option[GeneralContextType] =
-    contextType match {
-      case Some(h.ContextType.Geo) => Some(LocationGeneralContextType)
-      case Some(h.ContextType.Social) => Some(FollowGeneralContextType)
-      case Some(h.ContextType.NewUser) => Some(NewUserGeneralContextType)
-      case _ => None
+  privatelon delonf convelonrtContelonxtTypelon(contelonxtTypelon: Option[h.ContelonxtTypelon]): Option[GelonnelonralContelonxtTypelon] =
+    contelonxtTypelon match {
+      caselon Somelon(h.ContelonxtTypelon.Gelono) => Somelon(LocationGelonnelonralContelonxtTypelon)
+      caselon Somelon(h.ContelonxtTypelon.Social) => Somelon(FollowGelonnelonralContelonxtTypelon)
+      caselon Somelon(h.ContelonxtTypelon.NelonwUselonr) => Somelon(NelonwUselonrGelonnelonralContelonxtTypelon)
+      caselon _ => Nonelon
     }
 }

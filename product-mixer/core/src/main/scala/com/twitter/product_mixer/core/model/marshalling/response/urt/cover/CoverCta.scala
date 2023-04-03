@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.ButtonStylelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.icon.HorizonIcon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Callback
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
 
-case class CoverCta(
-  text: String,
-  ctaBehavior: CoverCtaBehavior,
+caselon class CovelonrCta(
+  telonxt: String,
+  ctaBelonhavior: CovelonrCtaBelonhavior,
   callbacks: Option[List[Callback]],
-  clientEventInfo: Option[ClientEventInfo],
+  clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
   icon: Option[HorizonIcon],
-  buttonStyle: Option[ButtonStyle])
+  buttonStylelon: Option[ButtonStylelon])

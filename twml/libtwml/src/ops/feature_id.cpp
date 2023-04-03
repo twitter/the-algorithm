@@ -1,58 +1,58 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("FeatureId")
-.Attr("feature_names: list(string)")
+RelonGISTelonR_OP("FelonaturelonId")
+.Attr("felonaturelon_namelons: list(string)")
 .Output("output: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP that hashes a list of strings into int64. This is used for feature name hashing.
+A telonnsorflow OP that hashelons a list of strings into int64. This is uselond for felonaturelon namelon hashing.
 
 Attr
-  feature_names: a list of string feature names (list(string)).
+  felonaturelon_namelons: a list of string felonaturelon namelons (list(string)).
 
 Outputs
-  ouput: hashes corresponding to the string feature names (int64).
+  ouput: hashelons correlonsponding to thelon string felonaturelon namelons (int64).
 )doc");
 
 
-class FeatureId : public OpKernel {
- private:
-    std::vector<string> input_vector;
+class FelonaturelonId : public OpKelonrnelonl {
+ privatelon:
+    std::velonctor<string> input_velonctor;
 
  public:
-  explicit FeatureId(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_names", &input_vector));
+  elonxplicit FelonaturelonId(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("felonaturelon_namelons", &input_velonctor));
   }
 
-  void Compute(OpKernelContext* context) override {
-    // Get size of the input_vector and create TensorShape shape
-    const int total_size = static_cast<int>(input_vector.size());
-    TensorShape shape = {total_size};
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    // Gelont sizelon of thelon input_velonctor and crelonatelon TelonnsorShapelon shapelon
+    const int total_sizelon = static_cast<int>(input_velonctor.sizelon());
+    TelonnsorShapelon shapelon = {total_sizelon};
 
-    // Create an output tensor
-    Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, shape,
-                             &output_tensor));
-    auto output_flat = output_tensor->flat<int64>();
+    // Crelonatelon an output telonnsor
+    Telonnsor* output_telonnsor = nullptr;
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, shapelon,
+                             &output_telonnsor));
+    auto output_flat = output_telonnsor->flat<int64>();
 
-    // Transform the input tensor into a int64
-    for (int i = 0; i < total_size; i++) {
-      output_flat(i) = twml::featureId(input_vector[i]);
+    // Transform thelon input telonnsor into a int64
+    for (int i = 0; i < total_sizelon; i++) {
+      output_flat(i) = twml::felonaturelonId(input_velonctor[i]);
     }
   }
 };
 
 
-REGISTER_KERNEL_BUILDER(
-  Name("FeatureId")
-  .Device(DEVICE_CPU),
-  FeatureId);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("FelonaturelonId")
+  .Delonvicelon(DelonVICelon_CPU),
+  FelonaturelonId);

@@ -1,21 +1,21 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = ["*.thrift"],
+crelonatelon_thrift_librarielons(
+    baselon_namelon = "thrift",
+    sourcelons = ["*.thrift"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "finatra-internal/thrift/src/main/thrift",
-        "follow-recommendations-service/thrift/src/main/thrift/logging:thrift",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift",
-        "src/thrift/com/twitter/ads/adserver:adserver_common",
-        "src/thrift/com/twitter/ml/api:data",
-        "src/thrift/com/twitter/suggests/controller_data",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncy_roots = [
+        "finatra-intelonrnal/thrift/src/main/thrift",
+        "follow-reloncommelonndations-selonrvicelon/thrift/src/main/thrift/logging:thrift",
+        "product-mixelonr/corelon/src/main/thrift/com/twittelonr/product_mixelonr/corelon:thrift",
+        "src/thrift/com/twittelonr/ads/adselonrvelonr:adselonrvelonr_common",
+        "src/thrift/com/twittelonr/ml/api:data",
+        "src/thrift/com/twittelonr/suggelonsts/controllelonr_data",
     ],
-    generate_languages = [
+    gelonnelonratelon_languagelons = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "follow-recommendations-java",
-    provides_scala_name = "follow-recommendations-scala",
+    providelons_java_namelon = "follow-reloncommelonndations-java",
+    providelons_scala_namelon = "follow-reloncommelonndations-scala",
 )

@@ -1,54 +1,54 @@
-package com.twitter.home_mixer.product
+packagelon com.twittelonr.homelon_mixelonr.product
 
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.product.following.FollowingProductPipelineConfig
-import com.twitter.home_mixer.product.for_you.ForYouProductPipelineConfig
-import com.twitter.home_mixer.product.list_recommended_users.ListRecommendedUsersProductPipelineConfig
-import com.twitter.home_mixer.product.scored_tweets.ScoredTweetsProductPipelineConfig
-import com.twitter.home_mixer.product.list_tweets.ListTweetsProductPipelineConfig
-import com.twitter.inject.Injector
-import com.twitter.product_mixer.core.product.guice.ProductScope
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistryConfig
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ForYouProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListReloncommelonndelondUselonrsProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListTwelonelontsProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ScorelondTwelonelontsProduct
+import com.twittelonr.homelon_mixelonr.product.following.FollowingProductPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.for_you.ForYouProductPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.ListReloncommelonndelondUselonrsProductPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.ScorelondTwelonelontsProductPipelonlinelonConfig
+import com.twittelonr.homelon_mixelonr.product.list_twelonelonts.ListTwelonelontsProductPipelonlinelonConfig
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.ProductScopelon
+import com.twittelonr.product_mixelonr.corelon.product.relongistry.ProductPipelonlinelonRelongistryConfig
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HomeProductPipelineRegistryConfig @Inject() (
-  injector: Injector,
-  productScope: ProductScope)
-    extends ProductPipelineRegistryConfig {
+@Singlelonton
+class HomelonProductPipelonlinelonRelongistryConfig @Injelonct() (
+  injelonctor: Injelonctor,
+  productScopelon: ProductScopelon)
+    elonxtelonnds ProductPipelonlinelonRelongistryConfig {
 
-  private val followingProductPipelineConfig = productScope.let(FollowingProduct) {
-    injector.instance[FollowingProductPipelineConfig]
+  privatelon val followingProductPipelonlinelonConfig = productScopelon.lelont(FollowingProduct) {
+    injelonctor.instancelon[FollowingProductPipelonlinelonConfig]
   }
 
-  private val forYouProductPipelineConfig = productScope.let(ForYouProduct) {
-    injector.instance[ForYouProductPipelineConfig]
+  privatelon val forYouProductPipelonlinelonConfig = productScopelon.lelont(ForYouProduct) {
+    injelonctor.instancelon[ForYouProductPipelonlinelonConfig]
   }
 
-  private val scoredTweetsProductPipelineConfig = productScope.let(ScoredTweetsProduct) {
-    injector.instance[ScoredTweetsProductPipelineConfig]
+  privatelon val scorelondTwelonelontsProductPipelonlinelonConfig = productScopelon.lelont(ScorelondTwelonelontsProduct) {
+    injelonctor.instancelon[ScorelondTwelonelontsProductPipelonlinelonConfig]
   }
 
-  private val listTweetsProductPipelineConfig = productScope.let(ListTweetsProduct) {
-    injector.instance[ListTweetsProductPipelineConfig]
+  privatelon val listTwelonelontsProductPipelonlinelonConfig = productScopelon.lelont(ListTwelonelontsProduct) {
+    injelonctor.instancelon[ListTwelonelontsProductPipelonlinelonConfig]
   }
 
-  private val listRecommendedUsersProductPipelineConfig =
-    productScope.let(ListRecommendedUsersProduct) {
-      injector.instance[ListRecommendedUsersProductPipelineConfig]
+  privatelon val listReloncommelonndelondUselonrsProductPipelonlinelonConfig =
+    productScopelon.lelont(ListReloncommelonndelondUselonrsProduct) {
+      injelonctor.instancelon[ListReloncommelonndelondUselonrsProductPipelonlinelonConfig]
     }
 
-  override val productPipelineConfigs = Seq(
-    followingProductPipelineConfig,
-    forYouProductPipelineConfig,
-    scoredTweetsProductPipelineConfig,
-    listTweetsProductPipelineConfig,
-    listRecommendedUsersProductPipelineConfig
+  ovelonrridelon val productPipelonlinelonConfigs = Selonq(
+    followingProductPipelonlinelonConfig,
+    forYouProductPipelonlinelonConfig,
+    scorelondTwelonelontsProductPipelonlinelonConfig,
+    listTwelonelontsProductPipelonlinelonConfig,
+    listReloncommelonndelondUselonrsProductPipelonlinelonConfig
   )
 }

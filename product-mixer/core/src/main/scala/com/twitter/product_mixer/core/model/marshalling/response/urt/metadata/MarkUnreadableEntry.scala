@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-// Track unread entries for the MarkUnread URT instruction.
-trait MarkUnreadableEntry {
-  def isMarkUnread: Option[Boolean] = None
+// Track unrelonad elonntrielons for thelon MarkUnrelonad URT instruction.
+trait MarkUnrelonadablelonelonntry {
+  delonf isMarkUnrelonad: Option[Boolelonan] = Nonelon
 }

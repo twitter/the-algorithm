@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.first_n_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.first_n_rankelonr
 
-object FirstNRankerFeatureSwitchKeys {
-  val CandidatePoolSize = "first_n_ranker_candidate_pool_size"
-  val ScribeRankingInfo = "first_n_ranker_scribe_ranking_info"
-  val MinNumCandidatesScoredScaleDownFactor =
-    "first_n_ranker_min_scale_down_factor"
+objelonct FirstNRankelonrFelonaturelonSwitchKelonys {
+  val CandidatelonPoolSizelon = "first_n_rankelonr_candidatelon_pool_sizelon"
+  val ScribelonRankingInfo = "first_n_rankelonr_scribelon_ranking_info"
+  val MinNumCandidatelonsScorelondScalelonDownFactor =
+    "first_n_rankelonr_min_scalelon_down_factor"
 }

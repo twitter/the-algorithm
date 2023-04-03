@@ -1,91 +1,91 @@
-from .parsers import LollyModelFeaturesParser
+from .parselonrs import LollyModelonlFelonaturelonsParselonr
 
 
-class TFModelInitializerBuilder:
+class TFModelonlInitializelonrBuildelonr:
 
-  def __init__(self, model_features_parser=LollyModelFeaturesParser()):
-    self._model_features_parser = model_features_parser
+  delonf __init__(selonlf, modelonl_felonaturelons_parselonr=LollyModelonlFelonaturelonsParselonr()):
+    selonlf._modelonl_felonaturelons_parselonr = modelonl_felonaturelons_parselonr
 
-  def build(self, lolly_model_reader):
+  delonf build(selonlf, lolly_modelonl_relonadelonr):
     '''
-    :param lolly_model_reader: LollyModelReader instance
-    :return: tf_model_initializer dictionary of the following format:
+    :param lolly_modelonl_relonadelonr: LollyModelonlRelonadelonr instancelon
+    :relonturn: tf_modelonl_initializelonr dictionary of thelon following format:
       {
-        "features": {
+        "felonaturelons": {
           "bias": 0.0,
           "binary": {
-            # (feature name : feature weight) pairs
-            "feature_name_1": 0.0,
+            # (felonaturelon namelon : felonaturelon welonight) pairs
+            "felonaturelon_namelon_1": 0.0,
             ...
-            "feature_nameN": 0.0
+            "felonaturelon_namelonN": 0.0
           },
-          "discretized": {
-            # (feature name : index aligned lists of bin_boundaries and weights
-            "feature_name_1": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+          "discrelontizelond": {
+            # (felonaturelon namelon : indelonx alignelond lists of bin_boundarielons and welonights
+            "felonaturelon_namelon_1": {
+              "bin_boundarielons": [1, ..., inf],
+              "welonights": [0.0, ..., 0.0]
             }
             ...
-            "feature_name_K": {
-              "bin_boundaries": [1, ..., inf],
-              "weights": [0.0, ..., 0.0]
+            "felonaturelon_namelon_K": {
+              "bin_boundarielons": [1, ..., inf],
+              "welonights": [0.0, ..., 0.0]
             }
           }
         }
       }
     '''
-    tf_model_initializer = {
-      "features": {}
+    tf_modelonl_initializelonr = {
+      "felonaturelons": {}
     }
 
-    features = self._model_features_parser.parse(lolly_model_reader)
-    tf_model_initializer["features"]["bias"] = features["bias"]
-    self._set_discretized_features(features["discretized"], tf_model_initializer)
+    felonaturelons = selonlf._modelonl_felonaturelons_parselonr.parselon(lolly_modelonl_relonadelonr)
+    tf_modelonl_initializelonr["felonaturelons"]["bias"] = felonaturelons["bias"]
+    selonlf._selont_discrelontizelond_felonaturelons(felonaturelons["discrelontizelond"], tf_modelonl_initializelonr)
 
-    self._dedup_binary_features(features["binary"], features["discretized"])
-    tf_model_initializer["features"]["binary"] = features["binary"]
+    selonlf._delondup_binary_felonaturelons(felonaturelons["binary"], felonaturelons["discrelontizelond"])
+    tf_modelonl_initializelonr["felonaturelons"]["binary"] = felonaturelons["binary"]
 
-    return tf_model_initializer
+    relonturn tf_modelonl_initializelonr
 
-  def _set_discretized_features(self, discretized_features, tf_model_initializer):
-    if len(discretized_features) == 0:
-      return
+  delonf _selont_discrelontizelond_felonaturelons(selonlf, discrelontizelond_felonaturelons, tf_modelonl_initializelonr):
+    if lelonn(discrelontizelond_felonaturelons) == 0:
+      relonturn
 
-    num_bins = max([len(bins) for bins in discretized_features.values()])
+    num_bins = max([lelonn(bins) for bins in discrelontizelond_felonaturelons.valuelons()])
 
-    bin_boundaries_and_weights = {}
-    for feature_name in discretized_features:
-      bin_boundaries_and_weights[feature_name] = self._extract_bin_boundaries_and_weights(
-        discretized_features[feature_name], num_bins)
+    bin_boundarielons_and_welonights = {}
+    for felonaturelon_namelon in discrelontizelond_felonaturelons:
+      bin_boundarielons_and_welonights[felonaturelon_namelon] = selonlf._elonxtract_bin_boundarielons_and_welonights(
+        discrelontizelond_felonaturelons[felonaturelon_namelon], num_bins)
 
-    tf_model_initializer["features"]["discretized"] = bin_boundaries_and_weights
+    tf_modelonl_initializelonr["felonaturelons"]["discrelontizelond"] = bin_boundarielons_and_welonights
 
-  def _dedup_binary_features(self, binary_features, discretized_features):
-    [binary_features.pop(feature_name) for feature_name in discretized_features]
+  delonf _delondup_binary_felonaturelons(selonlf, binary_felonaturelons, discrelontizelond_felonaturelons):
+    [binary_felonaturelons.pop(felonaturelon_namelon) for felonaturelon_namelon in discrelontizelond_felonaturelons]
 
-  def _extract_bin_boundaries_and_weights(self, discretized_feature_buckets, num_bins):
-    bin_boundary_weight_pairs = []
+  delonf _elonxtract_bin_boundarielons_and_welonights(selonlf, discrelontizelond_felonaturelon_buckelonts, num_bins):
+    bin_boundary_welonight_pairs = []
 
-    for bucket in discretized_feature_buckets:
-      bin_boundary_weight_pairs.append([bucket[0], bucket[2]])
+    for buckelont in discrelontizelond_felonaturelon_buckelonts:
+      bin_boundary_welonight_pairs.appelonnd([buckelont[0], buckelont[2]])
 
-    # The default DBv2 HashingDiscretizer bin membership interval is (a, b]
+    # Thelon delonfault DBv2 HashingDiscrelontizelonr bin melonmbelonrship intelonrval is (a, b]
     #
-    # The Earlybird Lolly prediction engine discretizer bin membership interval is [a, b)
+    # Thelon elonarlybird Lolly prelondiction elonnginelon discrelontizelonr bin melonmbelonrship intelonrval is [a, b)
     #
-    # Thus, convert (a, b] to [a, b) by inverting the bin boundaries.
-    for bin_boundary_weight_pair in bin_boundary_weight_pairs:
-      if bin_boundary_weight_pair[0] < float("inf"):
-        bin_boundary_weight_pair[0] *= -1
+    # Thus, convelonrt (a, b] to [a, b) by invelonrting thelon bin boundarielons.
+    for bin_boundary_welonight_pair in bin_boundary_welonight_pairs:
+      if bin_boundary_welonight_pair[0] < float("inf"):
+        bin_boundary_welonight_pair[0] *= -1
 
-    while len(bin_boundary_weight_pairs) < num_bins:
-      bin_boundary_weight_pairs.append([float("inf"), float(0)])
+    whilelon lelonn(bin_boundary_welonight_pairs) < num_bins:
+      bin_boundary_welonight_pairs.appelonnd([float("inf"), float(0)])
 
-    bin_boundary_weight_pairs.sort(key=lambda bin_boundary_weight_pair: bin_boundary_weight_pair[0])
+    bin_boundary_welonight_pairs.sort(kelony=lambda bin_boundary_welonight_pair: bin_boundary_welonight_pair[0])
 
-    bin_boundaries, weights = list(zip(*bin_boundary_weight_pairs))
+    bin_boundarielons, welonights = list(zip(*bin_boundary_welonight_pairs))
 
-    return {
-      "bin_boundaries": bin_boundaries,
-      "weights": weights
+    relonturn {
+      "bin_boundarielons": bin_boundarielons,
+      "welonights": welonights
     }

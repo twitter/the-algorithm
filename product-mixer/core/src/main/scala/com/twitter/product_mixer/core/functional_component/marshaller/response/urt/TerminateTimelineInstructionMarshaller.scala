@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.BottomTermination
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TerminateTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TopTermination
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TopAndBottomTermination
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.BottomTelonrmination
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TelonrminatelonTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TopTelonrmination
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TopAndBottomTelonrmination
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TerminateTimelineInstructionMarshaller @Inject() () {
+@Singlelonton
+class TelonrminatelonTimelonlinelonInstructionMarshallelonr @Injelonct() () {
 
-  def apply(instruction: TerminateTimelineInstruction): urt.TerminateTimeline =
-    urt.TerminateTimeline(
-      direction = instruction.terminateTimelineDirection match {
-        case TopTermination => urt.TimelineTerminationDirection.Top
-        case BottomTermination => urt.TimelineTerminationDirection.Bottom
-        case TopAndBottomTermination => urt.TimelineTerminationDirection.TopAndBottom
+  delonf apply(instruction: TelonrminatelonTimelonlinelonInstruction): urt.TelonrminatelonTimelonlinelon =
+    urt.TelonrminatelonTimelonlinelon(
+      direlonction = instruction.telonrminatelonTimelonlinelonDirelonction match {
+        caselon TopTelonrmination => urt.TimelonlinelonTelonrminationDirelonction.Top
+        caselon BottomTelonrmination => urt.TimelonlinelonTelonrminationDirelonction.Bottom
+        caselon TopAndBottomTelonrmination => urt.TimelonlinelonTelonrminationDirelonction.TopAndBottom
       }
     )
 }

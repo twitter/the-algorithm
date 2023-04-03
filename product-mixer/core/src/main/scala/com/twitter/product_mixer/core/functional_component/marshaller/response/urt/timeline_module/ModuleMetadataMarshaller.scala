@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonMelontadata
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ModuleMetadataMarshaller @Inject() (
-  adsMetadataMarshaller: AdsMetadataMarshaller,
-  moduleConversationMetadataMarshaller: ModuleConversationMetadataMarshaller,
-  gridCarouselMetadataMarshaller: GridCarouselMetadataMarshaller) {
+@Singlelonton
+class ModulelonMelontadataMarshallelonr @Injelonct() (
+  adsMelontadataMarshallelonr: AdsMelontadataMarshallelonr,
+  modulelonConvelonrsationMelontadataMarshallelonr: ModulelonConvelonrsationMelontadataMarshallelonr,
+  gridCarouselonlMelontadataMarshallelonr: GridCarouselonlMelontadataMarshallelonr) {
 
-  def apply(moduleMetadata: ModuleMetadata): urt.ModuleMetadata = urt.ModuleMetadata(
-    adsMetadata = moduleMetadata.adsMetadata.map(adsMetadataMarshaller(_)),
-    conversationMetadata =
-      moduleMetadata.conversationMetadata.map(moduleConversationMetadataMarshaller(_)),
-    gridCarouselMetadata =
-      moduleMetadata.gridCarouselMetadata.map(gridCarouselMetadataMarshaller(_))
+  delonf apply(modulelonMelontadata: ModulelonMelontadata): urt.ModulelonMelontadata = urt.ModulelonMelontadata(
+    adsMelontadata = modulelonMelontadata.adsMelontadata.map(adsMelontadataMarshallelonr(_)),
+    convelonrsationMelontadata =
+      modulelonMelontadata.convelonrsationMelontadata.map(modulelonConvelonrsationMelontadataMarshallelonr(_)),
+    gridCarouselonlMelontadata =
+      modulelonMelontadata.gridCarouselonlMelontadata.map(gridCarouselonlMelontadataMarshallelonr(_))
   )
 }

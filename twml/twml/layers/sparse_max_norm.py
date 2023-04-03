@@ -1,221 +1,221 @@
-# pylint: disable=no-member, attribute-defined-outside-init, duplicate-code
+# pylint: disablelon=no-melonmbelonr, attributelon-delonfinelond-outsidelon-init, duplicatelon-codelon
 """
-Contains the twml.layers.SparseMaxNorm layer.
+Contains thelon twml.layelonrs.SparselonMaxNorm layelonr.
 """
-from .layer import Layer
+from .layelonr import Layelonr
 
 from libtwml import OPLIB
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 import twml
 
 
-class SparseMaxNorm(Layer):
+class SparselonMaxNorm(Layelonr):
   """
-  Computes a max-normalization and adds bias to the sparse_input,
-  forwards that through a sparse affine transform followed
-  by an non-linear activation on the resulting dense representation.
+  Computelons a max-normalization and adds bias to thelon sparselon_input,
+  forwards that through a sparselon affinelon transform followelond
+  by an non-linelonar activation on thelon relonsulting delonnselon relonprelonselonntation.
 
-  This layer has two parameters, one of which learns through gradient descent:
+  This layelonr has two paramelontelonrs, onelon of which lelonarns through gradielonnt delonscelonnt:
     bias_x (optional):
-      vector of shape [input_size]. Learned through gradient descent.
+      velonctor of shapelon [input_sizelon]. Lelonarnelond through gradielonnt delonscelonnt.
     max_x:
-      vector of shape [input_size]. Holds the maximas of input ``x`` for normalization.
-      Either calibrated through SparseMaxNorm calibrator, or calibrated online, or both.
+      velonctor of shapelon [input_sizelon]. Holds thelon maximas of input ``x`` for normalization.
+      elonithelonr calibratelond through SparselonMaxNorm calibrator, or calibratelond onlinelon, or both.
 
-  The pseudo-code for this layer looks like:
+  Thelon pselonudo-codelon for this layelonr looks likelon:
 
-  .. code-block:: python
+  .. codelon-block:: python
 
     abs_x = abs(x)
-    normed_x = clip_by_value(x / max_x, -1, 1)
-    biased_x = normed_x + bias_x
-    return biased
+    normelond_x = clip_by_valuelon(x / max_x, -1, 1)
+    biaselond_x = normelond_x + bias_x
+    relonturn biaselond
 
 
   Args:
-    max_x_initializer:
-      initializer vector of shape [input_size] used by variable `max_x`
-    bias_x_initializer:
-      initializer vector of shape [input_size] used by parameter `bias_x`
+    max_x_initializelonr:
+      initializelonr velonctor of shapelon [input_sizelon] uselond by variablelon `max_x`
+    bias_x_initializelonr:
+      initializelonr velonctor of shapelon [input_sizelon] uselond by paramelontelonr `bias_x`
     is_training:
-      Are we training the layer to learn the normalization maximas.
-      If set to True, max_x will be able to learn. This is independent of bias_x
-    epsilon:
-      The minimum value used for max_x. Defaults to 1E-5.
-    use_bias:
-      Default True. Set to False to not use a bias term.
+      Arelon welon training thelon layelonr to lelonarn thelon normalization maximas.
+      If selont to Truelon, max_x will belon ablelon to lelonarn. This is indelonpelonndelonnt of bias_x
+    elonpsilon:
+      Thelon minimum valuelon uselond for max_x. Delonfaults to 1elon-5.
+    uselon_bias:
+      Delonfault Truelon. Selont to Falselon to not uselon a bias telonrm.
 
-  Returns:
-    A layer representing the output of the sparse_max_norm transformation.
+  Relonturns:
+    A layelonr relonprelonselonnting thelon output of thelon sparselon_max_norm transformation.
    """
 
-  def __init__(
-          self,
-          input_size=None,
-          max_x_initializer=None,
-          bias_x_initializer=None,
-          is_training=True,
-          epsilon=1E-5,
-          use_bias=True,
+  delonf __init__(
+          selonlf,
+          input_sizelon=Nonelon,
+          max_x_initializelonr=Nonelon,
+          bias_x_initializelonr=Nonelon,
+          is_training=Truelon,
+          elonpsilon=1elon-5,
+          uselon_bias=Truelon,
           **kwargs):
 
-    super(SparseMaxNorm, self).__init__(**kwargs)
-    if input_size:
-      raise ValueError('input_size is deprecated - it is now automatically \
-                       inferred from your input.')
-    if max_x_initializer is None:
-      max_x_initializer = tf.zeros_initializer()
-    self.max_x_initializer = max_x_initializer
+    supelonr(SparselonMaxNorm, selonlf).__init__(**kwargs)
+    if input_sizelon:
+      raiselon Valuelonelonrror('input_sizelon is delonpreloncatelond - it is now automatically \
+                       infelonrrelond from your input.')
+    if max_x_initializelonr is Nonelon:
+      max_x_initializelonr = tf.zelonros_initializelonr()
+    selonlf.max_x_initializelonr = max_x_initializelonr
 
-    self._use_bias = use_bias
-    if use_bias:
-      if bias_x_initializer is None:
-        bias_x_initializer = tf.zeros_initializer()
-      self.bias_x_initializer = bias_x_initializer
+    selonlf._uselon_bias = uselon_bias
+    if uselon_bias:
+      if bias_x_initializelonr is Nonelon:
+        bias_x_initializelonr = tf.zelonros_initializelonr()
+      selonlf.bias_x_initializelonr = bias_x_initializelonr
 
-    self.epsilon = epsilon
-    self.is_training = is_training
+    selonlf.elonpsilon = elonpsilon
+    selonlf.is_training = is_training
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
-    """Creates the max_x and bias_x tf.Variables of the layer."""
+  delonf build(selonlf, input_shapelon):  # pylint: disablelon=unuselond-argumelonnt
+    """Crelonatelons thelon max_x and bias_x tf.Variablelons of thelon layelonr."""
 
-    self.max_x = self.add_variable(
+    selonlf.max_x = selonlf.add_variablelon(
       'max_x',
-      initializer=self.max_x_initializer,
-      shape=[input_shape[1]],
-      dtype=tf.float32,
-      trainable=False)
+      initializelonr=selonlf.max_x_initializelonr,
+      shapelon=[input_shapelon[1]],
+      dtypelon=tf.float32,
+      trainablelon=Falselon)
 
-    if self._use_bias:
-      self.bias_x = self.add_variable(
+    if selonlf._uselon_bias:
+      selonlf.bias_x = selonlf.add_variablelon(
         'bias_x',
-        initializer=self.bias_x_initializer,
-        shape=[input_shape[1]],
-        dtype=tf.float32,
-        trainable=True)
+        initializelonr=selonlf.bias_x_initializelonr,
+        shapelon=[input_shapelon[1]],
+        dtypelon=tf.float32,
+        trainablelon=Truelon)
 
-    self.built = True
+    selonlf.built = Truelon
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    """Computelons thelon output shapelon of thelon layelonr givelonn thelon input shapelon.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+      input_shapelon: A (possibly nelonstelond tuplelon of) `TelonnsorShapelon`.  It nelonelond not
+        belon fully delonfinelond (elon.g. thelon batch sizelon may belon unknown).
 
-    Raises NotImplementedError.
+    Raiselons NotImplelonmelonntelondelonrror.
 
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror
 
-  def _call(self, inputs, **kwargs):  # pylint: disable=unused-argument
+  delonf _call(selonlf, inputs, **kwargs):  # pylint: disablelon=unuselond-argumelonnt
     """
-    The forward propagation logic of the layer lives here.
+    Thelon forward propagation logic of thelon layelonr livelons helonrelon.
 
-    Arguments:
-      sparse_input:
-        A 2D ``tf.SparseTensor`` of dense_shape ``[batch_size, input_size]``
-    Returns:
-       A ``tf.SparseTensor`` representing the output of the max_norm transformation, this can
-       be fed into twml.layers.FullSparse in order to be transformed into a ``tf.Tensor``.
+    Argumelonnts:
+      sparselon_input:
+        A 2D ``tf.SparselonTelonnsor`` of delonnselon_shapelon ``[batch_sizelon, input_sizelon]``
+    Relonturns:
+       A ``tf.SparselonTelonnsor`` relonprelonselonnting thelon output of thelon max_norm transformation, this can
+       belon felond into twml.layelonrs.FullSparselon in ordelonr to belon transformelond into a ``tf.Telonnsor``.
     """
 
-    if isinstance(inputs, twml.SparseTensor):
+    if isinstancelon(inputs, twml.SparselonTelonnsor):
       inputs = inputs.to_tf()
-    elif not isinstance(inputs, tf.SparseTensor):
-      raise TypeError("The inputs must be of type tf.SparseTensor or twml.SparseTensor")
+    elonlif not isinstancelon(inputs, tf.SparselonTelonnsor):
+      raiselon Typelonelonrror("Thelon inputs must belon of typelon tf.SparselonTelonnsor or twml.SparselonTelonnsor")
 
-    indices_x = inputs.indices[:, 1]
-    values_x = inputs.values
+    indicelons_x = inputs.indicelons[:, 1]
+    valuelons_x = inputs.valuelons
 
-    if self.is_training is False:
-      normalized_x = OPLIB.sparse_max_norm_inference(self.max_x,
-                                                     indices_x,
-                                                     values_x,
-                                                     self.epsilon)
+    if selonlf.is_training is Falselon:
+      normalizelond_x = OPLIB.sparselon_max_norm_infelonrelonncelon(selonlf.max_x,
+                                                     indicelons_x,
+                                                     valuelons_x,
+                                                     selonlf.elonpsilon)
 
-      update_op = tf.no_op()
-    else:
-      max_x, normalized_x = OPLIB.sparse_max_norm_training(self.max_x,
-                                                           indices_x,
-                                                           values_x,
-                                                           self.epsilon)
+      updatelon_op = tf.no_op()
+    elonlselon:
+      max_x, normalizelond_x = OPLIB.sparselon_max_norm_training(selonlf.max_x,
+                                                           indicelons_x,
+                                                           valuelons_x,
+                                                           selonlf.elonpsilon)
 
-      update_op = tf.assign(self.max_x, max_x)
+      updatelon_op = tf.assign(selonlf.max_x, max_x)
 
-    with tf.control_dependencies([update_op]):
-      normalized_x = tf.stop_gradient(normalized_x)
+    with tf.control_delonpelonndelonncielons([updatelon_op]):
+      normalizelond_x = tf.stop_gradielonnt(normalizelond_x)
 
     # add input bias
-    if self._use_bias:
-      normalized_x = normalized_x + tf.gather(self.bias_x, indices_x)
+    if selonlf._uselon_bias:
+      normalizelond_x = normalizelond_x + tf.gathelonr(selonlf.bias_x, indicelons_x)
 
-    # convert back to sparse tensor
-    return tf.SparseTensor(inputs.indices, normalized_x, inputs.dense_shape)
+    # convelonrt back to sparselon telonnsor
+    relonturn tf.SparselonTelonnsor(inputs.indicelons, normalizelond_x, inputs.delonnselon_shapelon)
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
+  delonf call(selonlf, inputs, **kwargs):  # pylint: disablelon=unuselond-argumelonnt
     """
-    The forward propagation logic of the layer lives here.
+    Thelon forward propagation logic of thelon layelonr livelons helonrelon.
 
-    Arguments:
-      sparse_input:
-        A 2D ``tf.SparseTensor`` of dense_shape ``[batch_size, input_size]``
-    Returns:
-       A ``tf.SparseTensor`` representing the output of the max_norm transformation, this can
-       be fed into twml.layers.FullSparse in order to be transformed into a ``tf.Tensor``.
+    Argumelonnts:
+      sparselon_input:
+        A 2D ``tf.SparselonTelonnsor`` of delonnselon_shapelon ``[batch_sizelon, input_sizelon]``
+    Relonturns:
+       A ``tf.SparselonTelonnsor`` relonprelonselonnting thelon output of thelon max_norm transformation, this can
+       belon felond into twml.layelonrs.FullSparselon in ordelonr to belon transformelond into a ``tf.Telonnsor``.
     """
-    with tf.device(self.max_x.device):
-      return self._call(inputs, **kwargs)
+    with tf.delonvicelon(selonlf.max_x.delonvicelon):
+      relonturn selonlf._call(inputs, **kwargs)
 
-# For backwards compatiblity and also because I don't want to change all the tests.
-MaxNorm = SparseMaxNorm
+# For backwards compatiblity and also beloncauselon I don't want to changelon all thelon telonsts.
+MaxNorm = SparselonMaxNorm
 
 
-def sparse_max_norm(inputs,
-                    input_size=None,
-                    max_x_initializer=None,
-                    bias_x_initializer=None,
-                    is_training=True,
-                    epsilon=1E-5,
-                    use_bias=True,
-                    name=None,
-                    reuse=None):
+delonf sparselon_max_norm(inputs,
+                    input_sizelon=Nonelon,
+                    max_x_initializelonr=Nonelon,
+                    bias_x_initializelonr=Nonelon,
+                    is_training=Truelon,
+                    elonpsilon=1elon-5,
+                    uselon_bias=Truelon,
+                    namelon=Nonelon,
+                    relonuselon=Nonelon):
   """
-  Functional inteface to SparseMaxNorm.
+  Functional intelonfacelon to SparselonMaxNorm.
 
   Args:
     inputs:
-      A sparse tensor (can be twml.SparseTensor or tf.SparseTensor)
-    input_size:
-      number of input units
-    max_x_initializer:
-      initializer vector of shape [input_size] used by variable `max_x`
-    bias_x_initializer:
-      initializer vector of shape [input_size] used by parameter `bias_x`
+      A sparselon telonnsor (can belon twml.SparselonTelonnsor or tf.SparselonTelonnsor)
+    input_sizelon:
+      numbelonr of input units
+    max_x_initializelonr:
+      initializelonr velonctor of shapelon [input_sizelon] uselond by variablelon `max_x`
+    bias_x_initializelonr:
+      initializelonr velonctor of shapelon [input_sizelon] uselond by paramelontelonr `bias_x`
     is_training:
-      Are we training the layer to learn the normalization maximas.
-      If set to True, max_x will be able to learn. This is independent of bias_x
-    epsilon:
-      The minimum value used for max_x. Defaults to 1E-5.
-    use_bias:
-      Default True. Set to False to not use a bias term.
+      Arelon welon training thelon layelonr to lelonarn thelon normalization maximas.
+      If selont to Truelon, max_x will belon ablelon to lelonarn. This is indelonpelonndelonnt of bias_x
+    elonpsilon:
+      Thelon minimum valuelon uselond for max_x. Delonfaults to 1elon-5.
+    uselon_bias:
+      Delonfault Truelon. Selont to Falselon to not uselon a bias telonrm.
 
-  Returns:
-    Output after normalizing with the max value.
+  Relonturns:
+    Output aftelonr normalizing with thelon max valuelon.
    """
-  if input_size:
-    raise ValueError('input_size is deprecated - it is now automatically \
-                     inferred from your input.')
+  if input_sizelon:
+    raiselon Valuelonelonrror('input_sizelon is delonpreloncatelond - it is now automatically \
+                     infelonrrelond from your input.')
 
-  if isinstance(inputs, twml.SparseTensor):
+  if isinstancelon(inputs, twml.SparselonTelonnsor):
     inputs = inputs.to_tf()
 
-  layer = SparseMaxNorm(max_x_initializer=max_x_initializer,
-                        bias_x_initializer=bias_x_initializer,
+  layelonr = SparselonMaxNorm(max_x_initializelonr=max_x_initializelonr,
+                        bias_x_initializelonr=bias_x_initializelonr,
                         is_training=is_training,
-                        epsilon=epsilon,
-                        use_bias=use_bias,
-                        name=name,
-                        _scope=name,
-                        _reuse=reuse)
-  return layer(inputs)
+                        elonpsilon=elonpsilon,
+                        uselon_bias=uselon_bias,
+                        namelon=namelon,
+                        _scopelon=namelon,
+                        _relonuselon=relonuselon)
+  relonturn layelonr(inputs)

@@ -1,17 +1,17 @@
-target(
-    name = "adapter",
-    dependencies = ["timelineranker/common/src/main/scala/com/twitter/timelineranker/adapter"],
+targelont(
+    namelon = "adaptelonr",
+    delonpelonndelonncielons = ["timelonlinelonrankelonr/common/src/main/scala/com/twittelonr/timelonlinelonrankelonr/adaptelonr"],
 )
 
-target(
-    name = "model",
-    dependencies = ["timelineranker/common/src/main/scala/com/twitter/timelineranker/model"],
+targelont(
+    namelon = "modelonl",
+    delonpelonndelonncielons = ["timelonlinelonrankelonr/common/src/main/scala/com/twittelonr/timelonlinelonrankelonr/modelonl"],
 )
 
-target(
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":adapter",
-        ":model",
+targelont(
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":adaptelonr",
+        ":modelonl",
     ],
 )

@@ -1,1360 +1,1360 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import java.io.IOException;
-import java.util.EnumSet;
+import java.io.IOelonxcelonption;
+import java.util.elonnumSelont;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+import java.util.Selont;
+import java.util.concurrelonnt.TimelonUnit;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.primitives.Ints;
-import com.google.common.primitives.Longs;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
+import com.googlelon.common.collelonct.Itelonrablelons;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.common.primitivelons.Ints;
+import com.googlelon.common.primitivelons.Longs;
 
-import org.apache.lucene.search.Explanation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common_internal.bloomfilter.BloomFilter;
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.features.ExternalTweetFeature;
-import com.twitter.search.common.features.FeatureHandler;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureType;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.query.QueryCommonFieldHitsVisitor;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.relevance.features.AgeDecay;
-import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.common.relevance.text.VisibleTokenRatioNormalizer;
-import com.twitter.search.common.results.thriftjava.FieldHitList;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.LongIntConverter;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData.SkipReason;
-import com.twitter.search.earlybird.search.relevance.LinearScoringParams;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
-import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
+import com.twittelonr.common_intelonrnal.bloomfiltelonr.BloomFiltelonr;
+import com.twittelonr.selonarch.common.constants.SelonarchCardTypelon;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
+import com.twittelonr.selonarch.common.databaselon.DatabaselonConfig;
+import com.twittelonr.selonarch.common.felonaturelons.elonxtelonrnalTwelonelontFelonaturelon;
+import com.twittelonr.selonarch.common.felonaturelons.FelonaturelonHandlelonr;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonmaelonntry;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonTypelon;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchRelonsultFelonaturelons;
+import com.twittelonr.selonarch.common.quelonry.QuelonryCommonFielonldHitsVisitor;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftRankingParams;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.AgelonDeloncay;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.RelonlelonvancelonSignalConstants;
+import com.twittelonr.selonarch.common.relonlelonvancelon.telonxt.VisiblelonTokelonnRatioNormalizelonr;
+import com.twittelonr.selonarch.common.relonsults.thriftjava.FielonldHitList;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.util.LongIntConvelonrtelonr;
+import com.twittelonr.selonarch.common.util.lang.ThriftLanguagelonUtil;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AntiGamingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.LinelonarScoringData;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.LinelonarScoringData.SkipRelonason;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.LinelonarScoringParams;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultelonxtraMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadataOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultTypelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSocialFiltelonrTypelon;
 
 /**
- * Base class for scoring functions that rely on the extracted features stored in LinearScoringData.
+ * Baselon class for scoring functions that relonly on thelon elonxtractelond felonaturelons storelond in LinelonarScoringData.
  *
- * Extensions of this class must implement 2 methods:
+ * elonxtelonnsions of this class must implelonmelonnt 2 melonthods:
  *
- * - computeScore
- * - generateExplanationForScoring
+ * - computelonScorelon
+ * - gelonnelonratelonelonxplanationForScoring
  *
- * They are called for scoring and generating the debug information of the document that it's
- * currently being evaluated. The field 'data' holds the features of the document.
+ * Thelony arelon callelond for scoring and gelonnelonrating thelon delonbug information of thelon documelonnt that it's
+ * currelonntly beloning elonvaluatelond. Thelon fielonld 'data' holds thelon felonaturelons of thelon documelonnt.
  */
-public abstract class FeatureBasedScoringFunction extends ScoringFunction {
-  private static final Logger LOG = LoggerFactory.getLogger(FeatureBasedScoringFunction.class);
+public abstract class FelonaturelonBaselondScoringFunction elonxtelonnds ScoringFunction {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(FelonaturelonBaselondScoringFunction.class);
 
-  // A multiplier that's applied to all scores to avoid scores too low.
-  public static final float SCORE_ADJUSTER = 100.0f;
+  // A multiplielonr that's applielond to all scorelons to avoid scorelons too low.
+  public static final float SCORelon_ADJUSTelonR = 100.0f;
 
-  private static final VisibleTokenRatioNormalizer VISIBLE_TOKEN_RATIO_NORMALIZER =
-      VisibleTokenRatioNormalizer.createInstance();
+  privatelon static final VisiblelonTokelonnRatioNormalizelonr VISIBLelon_TOKelonN_RATIO_NORMALIZelonR =
+      VisiblelonTokelonnRatioNormalizelonr.crelonatelonInstancelon();
 
-  // Allow default values only for numeric types.
-  private static final Set<ThriftSearchFeatureType> ALLOWED_TYPES_FOR_DEFAULT_FEATURE_VALUES =
-      EnumSet.of(ThriftSearchFeatureType.INT32_VALUE,
-                 ThriftSearchFeatureType.LONG_VALUE,
-                 ThriftSearchFeatureType.DOUBLE_VALUE);
+  // Allow delonfault valuelons only for numelonric typelons.
+  privatelon static final Selont<ThriftSelonarchFelonaturelonTypelon> ALLOWelonD_TYPelonS_FOR_DelonFAULT_FelonATURelon_VALUelonS =
+      elonnumSelont.of(ThriftSelonarchFelonaturelonTypelon.INT32_VALUelon,
+                 ThriftSelonarchFelonaturelonTypelon.LONG_VALUelon,
+                 ThriftSelonarchFelonaturelonTypelon.DOUBLelon_VALUelon);
 
-  private static final Set<Integer> NUMERIC_FEATURES_FOR_WHICH_DEFAULTS_SHOULD_NOT_BE_SET =
-      ImmutableSet.of(EarlybirdFieldConstant.TWEET_SIGNATURE.getFieldId(),
-                      EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT.getFieldId(),
-                      EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT.getFieldId());
+  privatelon static final Selont<Intelongelonr> NUMelonRIC_FelonATURelonS_FOR_WHICH_DelonFAULTS_SHOULD_NOT_Belon_SelonT =
+      ImmutablelonSelont.of(elonarlybirdFielonldConstant.TWelonelonT_SIGNATURelon.gelontFielonldId(),
+                      elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_LelonAST_SIGNIFICANT_INT.gelontFielonldId(),
+                      elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_MOST_SIGNIFICANT_INT.gelontFielonldId());
 
-  // Name of the scoring function. Used for generating explanations.
-  private final String functionName;
+  // Namelon of thelon scoring function. Uselond for gelonnelonrating elonxplanations.
+  privatelon final String functionNamelon;
 
-  private final BloomFilter trustedFilter;
-  private final BloomFilter followFilter;
+  privatelon final BloomFiltelonr trustelondFiltelonr;
+  privatelon final BloomFiltelonr followFiltelonr;
 
-  // Current timestamp in seconds. Overridable by unit test or by timestamp set in search query.
-  private int now;
+  // Currelonnt timelonstamp in selonconds. Ovelonrridablelon by unit telonst or by timelonstamp selont in selonarch quelonry.
+  privatelon int now;
 
-  private final AntiGamingFilter antiGamingFilter;
+  privatelon final AntiGamingFiltelonr antiGamingFiltelonr;
 
-  @Nullable
-  private final AgeDecay ageDecay;
+  @Nullablelon
+  privatelon final AgelonDeloncay agelonDeloncay;
 
-  protected final LinearScoringParams params;  // Parameters and query-dependent values.
+  protelonctelond final LinelonarScoringParams params;  // Paramelontelonrs and quelonry-delonpelonndelonnt valuelons.
 
-  // In order for the API calls to retrieve the correct `LinearScoringData`
-  // for the passed `docId`, we need to maintain a map of `docId` -> `LinearScoringData`
-  // NOTE: THIS CAN ONLY BE REFERENCED AT HIT COLLECTION TIME, SINCE DOC IDS ARE NOT UNIQUE
-  // ACROSS SEGMENTS. IT'S NOT USABLE DURING BATCH SCORING.
-  private final Map<Integer, LinearScoringData> docIdToScoringData;
+  // In ordelonr for thelon API calls to relontrielonvelon thelon correlonct `LinelonarScoringData`
+  // for thelon passelond `docId`, welon nelonelond to maintain a map of `docId` -> `LinelonarScoringData`
+  // NOTelon: THIS CAN ONLY Belon RelonFelonRelonNCelonD AT HIT COLLelonCTION TIMelon, SINCelon DOC IDS ARelon NOT UNIQUelon
+  // ACROSS SelonGMelonNTS. IT'S NOT USABLelon DURING BATCH SCORING.
+  privatelon final Map<Intelongelonr, LinelonarScoringData> docIdToScoringData;
 
-  private final ThriftSearchResultType searchResultType;
+  privatelon final ThriftSelonarchRelonsultTypelon selonarchRelonsultTypelon;
 
-  private final UserTable userTable;
+  privatelon final UselonrTablelon uselonrTablelon;
 
-  @VisibleForTesting
-  void setNow(int fakeNow) {
-    now = fakeNow;
+  @VisiblelonForTelonsting
+  void selontNow(int fakelonNow) {
+    now = fakelonNow;
   }
 
-  public FeatureBasedScoringFunction(
-      String functionName,
-      ImmutableSchemaInterface schema,
-      ThriftSearchQuery searchQuery,
-      AntiGamingFilter antiGamingFilter,
-      ThriftSearchResultType searchResultType,
-      UserTable userTable) throws IOException {
-    super(schema);
+  public FelonaturelonBaselondScoringFunction(
+      String functionNamelon,
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      ThriftSelonarchQuelonry selonarchQuelonry,
+      AntiGamingFiltelonr antiGamingFiltelonr,
+      ThriftSelonarchRelonsultTypelon selonarchRelonsultTypelon,
+      UselonrTablelon uselonrTablelon) throws IOelonxcelonption {
+    supelonr(schelonma);
 
-    this.functionName = functionName;
-    this.searchResultType = searchResultType;
-    this.userTable = userTable;
+    this.functionNamelon = functionNamelon;
+    this.selonarchRelonsultTypelon = selonarchRelonsultTypelon;
+    this.uselonrTablelon = uselonrTablelon;
 
-    Preconditions.checkNotNull(searchQuery.getRelevanceOptions());
-    ThriftRankingParams rankingParams = searchQuery.getRelevanceOptions().getRankingParams();
-    Preconditions.checkNotNull(rankingParams);
+    Prelonconditions.chelonckNotNull(selonarchQuelonry.gelontRelonlelonvancelonOptions());
+    ThriftRankingParams rankingParams = selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontRankingParams();
+    Prelonconditions.chelonckNotNull(rankingParams);
 
-    params = new LinearScoringParams(searchQuery, rankingParams);
-    docIdToScoringData = new HashMap<>();
+    params = nelonw LinelonarScoringParams(selonarchQuelonry, rankingParams);
+    docIdToScoringData = nelonw HashMap<>();
 
-    long timestamp = searchQuery.isSetTimestampMsecs() && searchQuery.getTimestampMsecs() > 0
-        ? searchQuery.getTimestampMsecs() : System.currentTimeMillis();
-    now = Ints.checkedCast(TimeUnit.MILLISECONDS.toSeconds(timestamp));
+    long timelonstamp = selonarchQuelonry.isSelontTimelonstampMseloncs() && selonarchQuelonry.gelontTimelonstampMseloncs() > 0
+        ? selonarchQuelonry.gelontTimelonstampMseloncs() : Systelonm.currelonntTimelonMillis();
+    now = Ints.chelonckelondCast(TimelonUnit.MILLISelonCONDS.toSelonconds(timelonstamp));
 
-    this.antiGamingFilter = antiGamingFilter;
+    this.antiGamingFiltelonr = antiGamingFiltelonr;
 
-    this.ageDecay = params.useAgeDecay
-        ? new AgeDecay(params.ageDecayBase, params.ageDecayHalflife, params.ageDecaySlope)
+    this.agelonDeloncay = params.uselonAgelonDeloncay
+        ? nelonw AgelonDeloncay(params.agelonDeloncayBaselon, params.agelonDeloncayHalflifelon, params.agelonDeloncaySlopelon)
         : null;
 
-    if (searchQuery.isSetTrustedFilter()) {
-      trustedFilter = new BloomFilter(searchQuery.getTrustedFilter());
-    } else {
-      trustedFilter = null;
+    if (selonarchQuelonry.isSelontTrustelondFiltelonr()) {
+      trustelondFiltelonr = nelonw BloomFiltelonr(selonarchQuelonry.gelontTrustelondFiltelonr());
+    } elonlselon {
+      trustelondFiltelonr = null;
     }
 
-    if (searchQuery.isSetDirectFollowFilter()) {
-      followFilter = new BloomFilter(searchQuery.getDirectFollowFilter());
-    } else {
-      followFilter = null;
+    if (selonarchQuelonry.isSelontDirelonctFollowFiltelonr()) {
+      followFiltelonr = nelonw BloomFiltelonr(selonarchQuelonry.gelontDirelonctFollowFiltelonr());
+    } elonlselon {
+      followFiltelonr = null;
     }
   }
 
-  @VisibleForTesting
-  final LinearScoringParams getScoringParams() {
-    return params;
+  @VisiblelonForTelonsting
+  final LinelonarScoringParams gelontScoringParams() {
+    relonturn params;
   }
 
   /**
-   * Returns the LinearScoringData instance associated with the current doc ID. If it doesn't exist,
-   * an empty LinearScoringData is created.
+   * Relonturns thelon LinelonarScoringData instancelon associatelond with thelon currelonnt doc ID. If it doelonsn't elonxist,
+   * an elonmpty LinelonarScoringData is crelonatelond.
    */
-  @Override
-  public LinearScoringData getScoringDataForCurrentDocument() {
-    LinearScoringData data = docIdToScoringData.get(getCurrentDocID());
+  @Ovelonrridelon
+  public LinelonarScoringData gelontScoringDataForCurrelonntDocumelonnt() {
+    LinelonarScoringData data = docIdToScoringData.gelont(gelontCurrelonntDocID());
     if (data == null) {
-      data = new LinearScoringData();
-      docIdToScoringData.put(getCurrentDocID(), data);
+      data = nelonw LinelonarScoringData();
+      docIdToScoringData.put(gelontCurrelonntDocID(), data);
     }
-    return data;
+    relonturn data;
   }
 
-  @Override
-  public void setDebugMode(int debugMode) {
-    super.setDebugMode(debugMode);
+  @Ovelonrridelon
+  public void selontDelonbugModelon(int delonbugModelon) {
+    supelonr.selontDelonbugModelon(delonbugModelon);
   }
 
   /**
-   * Normal the lucene score, which was unbounded, to a range of [1.0, maxLuceneScoreBoost].
-   * The normalized value increases almost linearly in the lucene score range 2.0 ~ 7.0, where
-   * most queries fall in. For rare long tail queries, like some hashtags, they have high idf and
-   * thus high lucene score, the normalized value won't have much difference between tweets.
-   * The normalization function is:
-   *   ls = luceneScore
+   * Normal thelon lucelonnelon scorelon, which was unboundelond, to a rangelon of [1.0, maxLucelonnelonScorelonBoost].
+   * Thelon normalizelond valuelon increlonaselons almost linelonarly in thelon lucelonnelon scorelon rangelon 2.0 ~ 7.0, whelonrelon
+   * most quelonrielons fall in. For rarelon long tail quelonrielons, likelon somelon hashtags, thelony havelon high idf and
+   * thus high lucelonnelon scorelon, thelon normalizelond valuelon won't havelon much diffelonrelonncelon belontwelonelonn twelonelonts.
+   * Thelon normalization function is:
+   *   ls = lucelonnelonScorelon
    *   norm = min(max, 1 + (max - 1.0) / 2.4 * ln(1 + ls)
    */
-  static float normalizeLuceneScore(float luceneScore, float maxBoost) {
-    return (float) Math.min(maxBoost, 1.0 + (maxBoost - 1.0) / 2.4 * Math.log1p(luceneScore));
+  static float normalizelonLucelonnelonScorelon(float lucelonnelonScorelon, float maxBoost) {
+    relonturn (float) Math.min(maxBoost, 1.0 + (maxBoost - 1.0) / 2.4 * Math.log1p(lucelonnelonScorelon));
   }
 
-  @Override
-  protected float score(float luceneQueryScore) throws IOException {
-    return scoreInternal(luceneQueryScore, null);
+  @Ovelonrridelon
+  protelonctelond float scorelon(float lucelonnelonQuelonryScorelon) throws IOelonxcelonption {
+    relonturn scorelonIntelonrnal(lucelonnelonQuelonryScorelon, null);
   }
 
-  protected LinearScoringData updateLinearScoringData(float luceneQueryScore) throws IOException {
-    // Reset the data for each tweet!!!
-    LinearScoringData data = new LinearScoringData();
-    docIdToScoringData.put(getCurrentDocID(), data);
+  protelonctelond LinelonarScoringData updatelonLinelonarScoringData(float lucelonnelonQuelonryScorelon) throws IOelonxcelonption {
+    // Relonselont thelon data for elonach twelonelont!!!
+    LinelonarScoringData data = nelonw LinelonarScoringData();
+    docIdToScoringData.put(gelontCurrelonntDocID(), data);
 
-    // Set proper version for engagement counters for this request.
-    data.skipReason = SkipReason.NOT_SKIPPED;
-    data.luceneScore = luceneQueryScore;
-    data.userRep = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.USER_REPUTATION);
+    // Selont propelonr velonrsion for elonngagelonmelonnt countelonrs for this relonquelonst.
+    data.skipRelonason = SkipRelonason.NOT_SKIPPelonD;
+    data.lucelonnelonScorelon = lucelonnelonQuelonryScorelon;
+    data.uselonrRelonp = (bytelon) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.USelonR_RelonPUTATION);
 
-    if (antiGamingFilter != null && !antiGamingFilter.accept(getCurrentDocID())) {
-      data.skipReason = SkipReason.ANTIGAMING;
-      return data;
+    if (antiGamingFiltelonr != null && !antiGamingFiltelonr.accelonpt(gelontCurrelonntDocID())) {
+      data.skipRelonason = SkipRelonason.ANTIGAMING;
+      relonturn data;
     }
 
-    data.textScore = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.TEXT_SCORE);
-    data.tokenAt140DividedByNumTokensBucket = VISIBLE_TOKEN_RATIO_NORMALIZER.denormalize(
-        (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.VISIBLE_TOKEN_RATIO));
-    data.fromUserId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
-    data.isFollow = followFilter != null
-        && followFilter.contains(Longs.toByteArray(data.fromUserId));
-    data.isTrusted = trustedFilter != null
-        && trustedFilter.contains(Longs.toByteArray(data.fromUserId));
-    data.isFromVerifiedAccount = documentFeatures.isFlagSet(
-        EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG);
-    data.isFromBlueVerifiedAccount = documentFeatures.isFlagSet(
-        EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG);
-    data.isSelfTweet = data.fromUserId == params.searcherId;
-    // v1 engagement counters, note that the first three values are post-log2 version
-    // of the original unnormalized values.
-    data.retweetCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.RETWEET_COUNT);
-    data.replyCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.REPLY_COUNT);
-    data.favCountPostLog2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.FAVORITE_COUNT);
-    data.embedsImpressionCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT);
-    data.embedsUrlCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_URL_COUNT);
-    data.videoViewCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.VIDEO_VIEW_COUNT);
-    // v2 engagement counters
-    data.retweetCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.RETWEET_COUNT_V2);
-    data.replyCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.REPLY_COUNT_V2);
-    data.favCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.FAVORITE_COUNT_V2);
-    // other v2 engagement counters
-    data.embedsImpressionCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_IMPRESSION_COUNT_V2);
-    data.embedsUrlCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EMBEDS_URL_COUNT_V2);
-    data.videoViewCountV2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.VIDEO_VIEW_COUNT_V2);
-    // pure v2 engagement counters without v1 counterpart
-    data.quotedCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.QUOTE_COUNT);
-    data.weightedRetweetCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_RETWEET_COUNT);
-    data.weightedReplyCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_REPLY_COUNT);
-    data.weightedFavCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_FAVORITE_COUNT);
-    data.weightedQuoteCount = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.WEIGHTED_QUOTE_COUNT);
+    data.telonxtScorelon = (bytelon) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.TelonXT_SCORelon);
+    data.tokelonnAt140DividelondByNumTokelonnsBuckelont = VISIBLelon_TOKelonN_RATIO_NORMALIZelonR.delonnormalizelon(
+        (bytelon) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.VISIBLelon_TOKelonN_RATIO));
+    data.fromUselonrId = documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF);
+    data.isFollow = followFiltelonr != null
+        && followFiltelonr.contains(Longs.toBytelonArray(data.fromUselonrId));
+    data.isTrustelond = trustelondFiltelonr != null
+        && trustelondFiltelonr.contains(Longs.toBytelonArray(data.fromUselonrId));
+    data.isFromVelonrifielondAccount = documelonntFelonaturelons.isFlagSelont(
+        elonarlybirdFielonldConstant.FROM_VelonRIFIelonD_ACCOUNT_FLAG);
+    data.isFromBluelonVelonrifielondAccount = documelonntFelonaturelons.isFlagSelont(
+        elonarlybirdFielonldConstant.FROM_BLUelon_VelonRIFIelonD_ACCOUNT_FLAG);
+    data.isSelonlfTwelonelont = data.fromUselonrId == params.selonarchelonrId;
+    // v1 elonngagelonmelonnt countelonrs, notelon that thelon first threlonelon valuelons arelon post-log2 velonrsion
+    // of thelon original unnormalizelond valuelons.
+    data.relontwelonelontCountPostLog2 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.RelonTWelonelonT_COUNT);
+    data.relonplyCountPostLog2 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.RelonPLY_COUNT);
+    data.favCountPostLog2 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.FAVORITelon_COUNT);
+    data.elonmbelondsImprelonssionCount = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.elonMBelonDS_IMPRelonSSION_COUNT);
+    data.elonmbelondsUrlCount = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.elonMBelonDS_URL_COUNT);
+    data.videlonoVielonwCount = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.VIDelonO_VIelonW_COUNT);
+    // v2 elonngagelonmelonnt countelonrs
+    data.relontwelonelontCountV2 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.RelonTWelonelonT_COUNT_V2);
+    data.relonplyCountV2 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.RelonPLY_COUNT_V2);
+    data.favCountV2 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.FAVORITelon_COUNT_V2);
+    // othelonr v2 elonngagelonmelonnt countelonrs
+    data.elonmbelondsImprelonssionCountV2 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.elonMBelonDS_IMPRelonSSION_COUNT_V2);
+    data.elonmbelondsUrlCountV2 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.elonMBelonDS_URL_COUNT_V2);
+    data.videlonoVielonwCountV2 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.VIDelonO_VIelonW_COUNT_V2);
+    // purelon v2 elonngagelonmelonnt countelonrs without v1 countelonrpart
+    data.quotelondCount = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.QUOTelon_COUNT);
+    data.welonightelondRelontwelonelontCount = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.WelonIGHTelonD_RelonTWelonelonT_COUNT);
+    data.welonightelondRelonplyCount = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.WelonIGHTelonD_RelonPLY_COUNT);
+    data.welonightelondFavCount = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.WelonIGHTelonD_FAVORITelon_COUNT);
+    data.welonightelondQuotelonCount = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.WelonIGHTelonD_QUOTelon_COUNT);
 
-    Double querySpecificScoreAdjustment = params.querySpecificScoreAdjustments == null ? null
-        : params.querySpecificScoreAdjustments.get(tweetIDMapper.getTweetID(getCurrentDocID()));
-    data.querySpecificScore =
-        querySpecificScoreAdjustment == null ? 0.0 : querySpecificScoreAdjustment;
+    Doublelon quelonrySpeloncificScorelonAdjustmelonnt = params.quelonrySpeloncificScorelonAdjustmelonnts == null ? null
+        : params.quelonrySpeloncificScorelonAdjustmelonnts.gelont(twelonelontIDMappelonr.gelontTwelonelontID(gelontCurrelonntDocID()));
+    data.quelonrySpeloncificScorelon =
+        quelonrySpeloncificScorelonAdjustmelonnt == null ? 0.0 : quelonrySpeloncificScorelonAdjustmelonnt;
 
-    data.authorSpecificScore = params.authorSpecificScoreAdjustments == null
+    data.authorSpeloncificScorelon = params.authorSpeloncificScorelonAdjustmelonnts == null
         ? 0.0
-        : params.authorSpecificScoreAdjustments.getOrDefault(data.fromUserId, 0.0);
+        : params.authorSpeloncificScorelonAdjustmelonnts.gelontOrDelonfault(data.fromUselonrId, 0.0);
 
-    // respect social filter type
-    if (params.socialFilterType != null && !data.isSelfTweet) {
-      if ((params.socialFilterType == ThriftSocialFilterType.ALL
-              && !data.isFollow && !data.isTrusted)
-          || (params.socialFilterType == ThriftSocialFilterType.TRUSTED && !data.isTrusted)
-          || (params.socialFilterType == ThriftSocialFilterType.FOLLOWS && !data.isFollow)) {
-        // we can skip this hit as we only want social results in this mode.
-        data.skipReason = SkipReason.SOCIAL_FILTER;
-        return data;
+    // relonspelonct social filtelonr typelon
+    if (params.socialFiltelonrTypelon != null && !data.isSelonlfTwelonelont) {
+      if ((params.socialFiltelonrTypelon == ThriftSocialFiltelonrTypelon.ALL
+              && !data.isFollow && !data.isTrustelond)
+          || (params.socialFiltelonrTypelon == ThriftSocialFiltelonrTypelon.TRUSTelonD && !data.isTrustelond)
+          || (params.socialFiltelonrTypelon == ThriftSocialFiltelonrTypelon.FOLLOWS && !data.isFollow)) {
+        // welon can skip this hit as welon only want social relonsults in this modelon.
+        data.skipRelonason = SkipRelonason.SOCIAL_FILTelonR;
+        relonturn data;
       }
     }
 
-    // 1. first apply all the filters to only non-follow tweets and non-verified accounts,
-    //    but be tender to sentinel values
-    // unless you specifically asked to apply filters regardless
-    if (params.applyFiltersAlways
-            || (!data.isSelfTweet && !data.isFollow && !data.isFromVerifiedAccount
-                && !data.isFromBlueVerifiedAccount)) {
-      if (data.userRep < params.reputationMinVal
-          // don't filter unset userreps, we give them the benefit of doubt and let it
-          // continue to scoring. userrep is unset when either user just signed up or
-          // during ingestion time we had trouble getting userrep from reputation service.
-          && data.userRep != RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {
-        data.skipReason = SkipReason.LOW_REPUTATION;
-        return data;
-      } else if (data.textScore < params.textScoreMinVal
-                 // don't filter unset text scores, use goodwill value
-                 && data.textScore != RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL) {
-        data.skipReason = SkipReason.LOW_TEXT_SCORE;
-        return data;
-      } else if (data.retweetCountPostLog2 != LinearScoringData.UNSET_SIGNAL_VALUE
-                 && data.retweetCountPostLog2 < params.retweetMinVal) {
-        data.skipReason = SkipReason.LOW_RETWEET_COUNT;
-        return data;
-      } else if (data.favCountPostLog2 != LinearScoringData.UNSET_SIGNAL_VALUE
+    // 1. first apply all thelon filtelonrs to only non-follow twelonelonts and non-velonrifielond accounts,
+    //    but belon telonndelonr to selonntinelonl valuelons
+    // unlelonss you speloncifically askelond to apply filtelonrs relongardlelonss
+    if (params.applyFiltelonrsAlways
+            || (!data.isSelonlfTwelonelont && !data.isFollow && !data.isFromVelonrifielondAccount
+                && !data.isFromBluelonVelonrifielondAccount)) {
+      if (data.uselonrRelonp < params.relonputationMinVal
+          // don't filtelonr unselont uselonrrelonps, welon givelon thelonm thelon belonnelonfit of doubt and lelont it
+          // continuelon to scoring. uselonrrelonp is unselont whelonn elonithelonr uselonr just signelond up or
+          // during ingelonstion timelon welon had troublelon gelontting uselonrrelonp from relonputation selonrvicelon.
+          && data.uselonrRelonp != RelonlelonvancelonSignalConstants.UNSelonT_RelonPUTATION_SelonNTINelonL) {
+        data.skipRelonason = SkipRelonason.LOW_RelonPUTATION;
+        relonturn data;
+      } elonlselon if (data.telonxtScorelon < params.telonxtScorelonMinVal
+                 // don't filtelonr unselont telonxt scorelons, uselon goodwill valuelon
+                 && data.telonxtScorelon != RelonlelonvancelonSignalConstants.UNSelonT_TelonXT_SCORelon_SelonNTINelonL) {
+        data.skipRelonason = SkipRelonason.LOW_TelonXT_SCORelon;
+        relonturn data;
+      } elonlselon if (data.relontwelonelontCountPostLog2 != LinelonarScoringData.UNSelonT_SIGNAL_VALUelon
+                 && data.relontwelonelontCountPostLog2 < params.relontwelonelontMinVal) {
+        data.skipRelonason = SkipRelonason.LOW_RelonTWelonelonT_COUNT;
+        relonturn data;
+      } elonlselon if (data.favCountPostLog2 != LinelonarScoringData.UNSelonT_SIGNAL_VALUelon
                  && data.favCountPostLog2 < params.favMinVal) {
-        data.skipReason = SkipReason.LOW_FAV_COUNT;
-        return data;
+        data.skipRelonason = SkipRelonason.LOW_FAV_COUNT;
+        relonturn data;
       }
     }
 
-    // if sentinel value is set, assume goodwill score and let scoring continue.
-    if (data.textScore == RelevanceSignalConstants.UNSET_TEXT_SCORE_SENTINEL) {
-      data.textScore = RelevanceSignalConstants.GOODWILL_TEXT_SCORE;
+    // if selonntinelonl valuelon is selont, assumelon goodwill scorelon and lelont scoring continuelon.
+    if (data.telonxtScorelon == RelonlelonvancelonSignalConstants.UNSelonT_TelonXT_SCORelon_SelonNTINelonL) {
+      data.telonxtScorelon = RelonlelonvancelonSignalConstants.GOODWILL_TelonXT_SCORelon;
     }
-    if (data.userRep == RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL) {
-      data.userRep = RelevanceSignalConstants.GOODWILL_REPUTATION;
-    }
-
-    data.tweetAgeInSeconds = now - timeMapper.getTime(getCurrentDocID());
-    if (data.tweetAgeInSeconds < 0) {
-      data.tweetAgeInSeconds = 0; // Age cannot be negative
+    if (data.uselonrRelonp == RelonlelonvancelonSignalConstants.UNSelonT_RelonPUTATION_SelonNTINelonL) {
+      data.uselonrRelonp = RelonlelonvancelonSignalConstants.GOODWILL_RelonPUTATION;
     }
 
-    // The PARUS_SCORE feature should be read as is.
-    data.parusScore = documentFeatures.getFeatureValue(EarlybirdFieldConstant.PARUS_SCORE);
+    data.twelonelontAgelonInSelonconds = now - timelonMappelonr.gelontTimelon(gelontCurrelonntDocID());
+    if (data.twelonelontAgelonInSelonconds < 0) {
+      data.twelonelontAgelonInSelonconds = 0; // Agelon cannot belon nelongativelon
+    }
 
-    data.isNullcast = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_NULLCAST_FLAG);
-    data.hasUrl =  documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_LINK_FLAG);
-    data.hasImageUrl = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-    data.hasVideoUrl = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG);
-    data.hasNewsUrl = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_NEWS_URL_FLAG);
-    data.isReply =  documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_REPLY_FLAG);
-    data.isRetweet = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_RETWEET_FLAG);
-    data.isOffensive = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
-    data.hasTrend = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_TREND_FLAG);
-    data.hasMultipleHashtagsOrTrends =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG);
-    data.isUserSpam = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_SPAM_FLAG);
-    data.isUserNSFW = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_NSFW_FLAG)
-        || userTable.isSet(data.fromUserId, UserTable.NSFW_BIT);
-    data.isUserAntiSocial =
-        userTable.isSet(data.fromUserId, UserTable.ANTISOCIAL_BIT);
-    data.isUserBot = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_BOT_FLAG);
-    data.hasCard = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_CARD_FLAG);
-    data.cardType = SearchCardType.UNKNOWN.getByteValue();
+    // Thelon PARUS_SCORelon felonaturelon should belon relonad as is.
+    data.parusScorelon = documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.PARUS_SCORelon);
+
+    data.isNullcast = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_NULLCAST_FLAG);
+    data.hasUrl =  documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_LINK_FLAG);
+    data.hasImagelonUrl = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_IMAGelon_URL_FLAG);
+    data.hasVidelonoUrl = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_VIDelonO_URL_FLAG);
+    data.hasNelonwsUrl = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_NelonWS_URL_FLAG);
+    data.isRelonply =  documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_RelonPLY_FLAG);
+    data.isRelontwelonelont = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_RelonTWelonelonT_FLAG);
+    data.isOffelonnsivelon = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_OFFelonNSIVelon_FLAG);
+    data.hasTrelonnd = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_TRelonND_FLAG);
+    data.hasMultiplelonHashtagsOrTrelonnds =
+        documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_MULTIPLelon_HASHTAGS_OR_TRelonNDS_FLAG);
+    data.isUselonrSpam = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_USelonR_SPAM_FLAG);
+    data.isUselonrNSFW = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_USelonR_NSFW_FLAG)
+        || uselonrTablelon.isSelont(data.fromUselonrId, UselonrTablelon.NSFW_BIT);
+    data.isUselonrAntiSocial =
+        uselonrTablelon.isSelont(data.fromUselonrId, UselonrTablelon.ANTISOCIAL_BIT);
+    data.isUselonrBot = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_USelonR_BOT_FLAG);
+    data.hasCard = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_CARD_FLAG);
+    data.cardTypelon = SelonarchCardTypelon.UNKNOWN.gelontBytelonValuelon();
     if (data.hasCard) {
-      data.cardType =
-          (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD);
+      data.cardTypelon =
+          (bytelon) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.CARD_TYPelon_CSF_FIelonLD);
     }
-    data.hasVisibleLink = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG);
+    data.hasVisiblelonLink = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_VISIBLelon_LINK_FLAG);
 
-    data.hasConsumerVideo =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_CONSUMER_VIDEO_FLAG);
-    data.hasProVideo = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_PRO_VIDEO_FLAG);
-    data.hasVine = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_VINE_FLAG);
-    data.hasPeriscope = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_PERISCOPE_FLAG);
-    data.hasNativeImage = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG);
-    data.hasQuote = documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_QUOTE_FLAG);
-    data.isComposerSourceCamera =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.COMPOSER_SOURCE_IS_CAMERA_FLAG);
+    data.hasConsumelonrVidelono =
+        documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_CONSUMelonR_VIDelonO_FLAG);
+    data.hasProVidelono = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_PRO_VIDelonO_FLAG);
+    data.hasVinelon = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_VINelon_FLAG);
+    data.hasPelonriscopelon = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_PelonRISCOPelon_FLAG);
+    data.hasNativelonImagelon = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_NATIVelon_IMAGelon_FLAG);
+    data.hasQuotelon = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_QUOTelon_FLAG);
+    data.isComposelonrSourcelonCamelonra =
+        documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.COMPOSelonR_SOURCelon_IS_CAMelonRA_FLAG);
 
-    // Only read the shared status if the isRetweet or isReply bit is true (minor optimization).
-    if (data.isRetweet || (params.getInReplyToStatusId && data.isReply)) {
-      data.sharedStatusId =
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF);
+    // Only relonad thelon sharelond status if thelon isRelontwelonelont or isRelonply bit is truelon (minor optimization).
+    if (data.isRelontwelonelont || (params.gelontInRelonplyToStatusId && data.isRelonply)) {
+      data.sharelondStatusId =
+          documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.SHARelonD_STATUS_ID_CSF);
     }
 
-    // Only read the reference tweet author ID if the isRetweet or isReply bit
-    // is true (minor optimization).
-    if (data.isRetweet || data.isReply) {
-      // the REFERENCE_AUTHOR_ID_CSF stores the source tweet author id for all retweets
-      long referenceAuthorId =
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF);
-      if (referenceAuthorId > 0) {
-        data.referenceAuthorId = referenceAuthorId;
-      } else {
-        // we also store the reference author id for retweets, directed at tweets, and self threaded
-        // tweets separately on Realtime/Protected Earlybirds. This data will be moved to the
-        // REFERENCE_AUTHOR_ID_CSF and these fields will be deprecated in SEARCH-34958.
-        referenceAuthorId = LongIntConverter.convertTwoIntToOneLong(
-            (int) documentFeatures.getFeatureValue(
-                EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT),
-            (int) documentFeatures.getFeatureValue(
-                EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT));
-        if (referenceAuthorId > 0) {
-          data.referenceAuthorId = referenceAuthorId;
+    // Only relonad thelon relonfelonrelonncelon twelonelont author ID if thelon isRelontwelonelont or isRelonply bit
+    // is truelon (minor optimization).
+    if (data.isRelontwelonelont || data.isRelonply) {
+      // thelon RelonFelonRelonNCelon_AUTHOR_ID_CSF storelons thelon sourcelon twelonelont author id for all relontwelonelonts
+      long relonfelonrelonncelonAuthorId =
+          documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_CSF);
+      if (relonfelonrelonncelonAuthorId > 0) {
+        data.relonfelonrelonncelonAuthorId = relonfelonrelonncelonAuthorId;
+      } elonlselon {
+        // welon also storelon thelon relonfelonrelonncelon author id for relontwelonelonts, direlonctelond at twelonelonts, and selonlf threlonadelond
+        // twelonelonts selonparatelonly on Relonaltimelon/Protelonctelond elonarlybirds. This data will belon movelond to thelon
+        // RelonFelonRelonNCelon_AUTHOR_ID_CSF and thelonselon fielonlds will belon delonpreloncatelond in SelonARCH-34958.
+        relonfelonrelonncelonAuthorId = LongIntConvelonrtelonr.convelonrtTwoIntToOnelonLong(
+            (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(
+                elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_MOST_SIGNIFICANT_INT),
+            (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(
+                elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_LelonAST_SIGNIFICANT_INT));
+        if (relonfelonrelonncelonAuthorId > 0) {
+          data.relonfelonrelonncelonAuthorId = relonfelonrelonncelonAuthorId;
         }
       }
     }
 
-    // Convert language to a thrift language and then back to an int in order to
-    // ensure a value compatible with our current ThriftLanguage definition.
-    ThriftLanguage tweetLang = ThriftLanguageUtil.safeFindByValue(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LANGUAGE));
-    data.tweetLangId = tweetLang.getValue();
-    // Set the language-related features here so that they can be later used in promotion/demotion
-    // and also be transferred to ThriftSearchResultMetadata
-    data.userLangMult = computeUserLangMultiplier(data, params);
-    data.hasDifferentLang = params.uiLangId != ThriftLanguage.UNKNOWN.getValue()
-        && params.uiLangId != data.tweetLangId;
-    data.hasEnglishTweetAndDifferentUILang = data.hasDifferentLang
-        && data.tweetLangId == ThriftLanguage.ENGLISH.getValue();
-    data.hasEnglishUIAndDifferentTweetLang = data.hasDifferentLang
-        && params.uiLangId == ThriftLanguage.ENGLISH.getValue();
+    // Convelonrt languagelon to a thrift languagelon and thelonn back to an int in ordelonr to
+    // elonnsurelon a valuelon compatiblelon with our currelonnt ThriftLanguagelon delonfinition.
+    ThriftLanguagelon twelonelontLang = ThriftLanguagelonUtil.safelonFindByValuelon(
+        (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.LANGUAGelon));
+    data.twelonelontLangId = twelonelontLang.gelontValuelon();
+    // Selont thelon languagelon-relonlatelond felonaturelons helonrelon so that thelony can belon latelonr uselond in promotion/delonmotion
+    // and also belon transfelonrrelond to ThriftSelonarchRelonsultMelontadata
+    data.uselonrLangMult = computelonUselonrLangMultiplielonr(data, params);
+    data.hasDiffelonrelonntLang = params.uiLangId != ThriftLanguagelon.UNKNOWN.gelontValuelon()
+        && params.uiLangId != data.twelonelontLangId;
+    data.haselonnglishTwelonelontAndDiffelonrelonntUILang = data.hasDiffelonrelonntLang
+        && data.twelonelontLangId == ThriftLanguagelon.elonNGLISH.gelontValuelon();
+    data.haselonnglishUIAndDiffelonrelonntTwelonelontLang = data.hasDiffelonrelonntLang
+        && params.uiLangId == ThriftLanguagelon.elonNGLISH.gelontValuelon();
 
-    // Exposed all these features for the clients.
-    data.isSensitiveContent =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_SENSITIVE_CONTENT);
-    data.hasMultipleMediaFlag =
-        documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_MULTIPLE_MEDIA_FLAG);
-    data.profileIsEggFlag = documentFeatures.isFlagSet(EarlybirdFieldConstant.PROFILE_IS_EGG_FLAG);
-    data.isUserNewFlag = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_USER_NEW_FLAG);
-    data.numMentions = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.NUM_MENTIONS);
-    data.numHashtags = (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.NUM_HASHTAGS);
-    data.linkLanguage =
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LINK_LANGUAGE);
-    data.prevUserTweetEngagement =
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.PREV_USER_TWEET_ENGAGEMENT);
+    // elonxposelond all thelonselon felonaturelons for thelon clielonnts.
+    data.isSelonnsitivelonContelonnt =
+        documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_SelonNSITIVelon_CONTelonNT);
+    data.hasMultiplelonMelondiaFlag =
+        documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_MULTIPLelon_MelonDIA_FLAG);
+    data.profilelonIselonggFlag = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.PROFILelon_IS_elonGG_FLAG);
+    data.isUselonrNelonwFlag = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_USelonR_NelonW_FLAG);
+    data.numMelonntions = (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.NUM_MelonNTIONS);
+    data.numHashtags = (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.NUM_HASHTAGS);
+    data.linkLanguagelon =
+        (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.LINK_LANGUAGelon);
+    data.prelonvUselonrTwelonelontelonngagelonmelonnt =
+        (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.PRelonV_USelonR_TWelonelonT_elonNGAGelonMelonNT);
 
-    // health model scores by HML
-    data.toxicityScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.TOXICITY_SCORE);
-    data.pBlockScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.PBLOCK_SCORE);
-    data.pSpammyTweetScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.P_SPAMMY_TWEET_SCORE);
-    data.pReportedTweetScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.P_REPORTED_TWEET_SCORE);
-    data.spammyTweetContentScore = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.SPAMMY_TWEET_CONTENT_SCORE
+    // helonalth modelonl scorelons by HML
+    data.toxicityScorelon = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.TOXICITY_SCORelon);
+    data.pBlockScorelon = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.PBLOCK_SCORelon);
+    data.pSpammyTwelonelontScorelon = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.P_SPAMMY_TWelonelonT_SCORelon);
+    data.pRelonportelondTwelonelontScorelon = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.P_RelonPORTelonD_TWelonelonT_SCORelon);
+    data.spammyTwelonelontContelonntScorelon = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.SPAMMY_TWelonelonT_CONTelonNT_SCORelon
     );
-    data.experimentalHealthModelScore1 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_1);
-    data.experimentalHealthModelScore2 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_2);
-    data.experimentalHealthModelScore3 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_3);
-    data.experimentalHealthModelScore4 = documentFeatures.getUnnormalizedFeatureValue(
-        EarlybirdFieldConstant.EXPERIMENTAL_HEALTH_MODEL_SCORE_4);
+    data.elonxpelonrimelonntalHelonalthModelonlScorelon1 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_1);
+    data.elonxpelonrimelonntalHelonalthModelonlScorelon2 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_2);
+    data.elonxpelonrimelonntalHelonalthModelonlScorelon3 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_3);
+    data.elonxpelonrimelonntalHelonalthModelonlScorelon4 = documelonntFelonaturelons.gelontUnnormalizelondFelonaturelonValuelon(
+        elonarlybirdFielonldConstant.elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_4);
 
-    return data;
+    relonturn data;
   }
 
-  protected float scoreInternal(
-      float luceneQueryScore, ExplanationWrapper explanation) throws IOException {
-    LinearScoringData data = updateLinearScoringData(luceneQueryScore);
-    if (data.skipReason != null && data.skipReason != SkipReason.NOT_SKIPPED) {
-      return finalizeScore(data, explanation, SKIP_HIT);
+  protelonctelond float scorelonIntelonrnal(
+      float lucelonnelonQuelonryScorelon, elonxplanationWrappelonr elonxplanation) throws IOelonxcelonption {
+    LinelonarScoringData data = updatelonLinelonarScoringData(lucelonnelonQuelonryScorelon);
+    if (data.skipRelonason != null && data.skipRelonason != SkipRelonason.NOT_SKIPPelonD) {
+      relonturn finalizelonScorelon(data, elonxplanation, SKIP_HIT);
     }
 
-    double score = computeScore(data, explanation != null);
-    return postScoreComputation(data, score, true, explanation);
+    doublelon scorelon = computelonScorelon(data, elonxplanation != null);
+    relonturn postScorelonComputation(data, scorelon, truelon, elonxplanation);
   }
 
-  protected float postScoreComputation(
-      LinearScoringData data,
-      double score,
-      boolean boostScoreWithHitAttribution,
-      ExplanationWrapper explanation) throws IOException {
-    double modifiedScore = score;
-    data.scoreBeforeBoost = modifiedScore;
+  protelonctelond float postScorelonComputation(
+      LinelonarScoringData data,
+      doublelon scorelon,
+      boolelonan boostScorelonWithHitAttribution,
+      elonxplanationWrappelonr elonxplanation) throws IOelonxcelonption {
+    doublelon modifielondScorelon = scorelon;
+    data.scorelonBelonforelonBoost = modifielondScorelon;
     if (params.applyBoosts) {
-      modifiedScore =
-          applyBoosts(data, modifiedScore, boostScoreWithHitAttribution, explanation != null);
+      modifielondScorelon =
+          applyBoosts(data, modifielondScorelon, boostScorelonWithHitAttribution, elonxplanation != null);
     }
-    // Final adjustment to avoid too-low scores.
-    modifiedScore *= SCORE_ADJUSTER;
-    data.scoreAfterBoost = modifiedScore;
+    // Final adjustmelonnt to avoid too-low scorelons.
+    modifielondScorelon *= SCORelon_ADJUSTelonR;
+    data.scorelonAftelonrBoost = modifielondScorelon;
 
-    // 3. final score filter
-    data.scoreFinal = modifiedScore;
-    if ((params.applyFiltersAlways || (!data.isSelfTweet && !data.isFollow))
-        && modifiedScore < params.minScore) {
-      data.skipReason = SkipReason.LOW_FINAL_SCORE;
-      modifiedScore = SKIP_HIT;
+    // 3. final scorelon filtelonr
+    data.scorelonFinal = modifielondScorelon;
+    if ((params.applyFiltelonrsAlways || (!data.isSelonlfTwelonelont && !data.isFollow))
+        && modifielondScorelon < params.minScorelon) {
+      data.skipRelonason = SkipRelonason.LOW_FINAL_SCORelon;
+      modifielondScorelon = SKIP_HIT;
     }
 
-    // clear field hits
-    this.fieldHitAttribution = null;
-    return finalizeScore(data, explanation, modifiedScore);
+    // clelonar fielonld hits
+    this.fielonldHitAttribution = null;
+    relonturn finalizelonScorelon(data, elonxplanation, modifielondScorelon);
   }
 
   /**
-   * Applying promotion/demotion to the scores generated by feature-based scoring functions
+   * Applying promotion/delonmotion to thelon scorelons gelonnelonratelond by felonaturelon-baselond scoring functions
    *
-   * @param data Original LinearScoringData (to be modified with boosts here)
-   * @param score Score generated by the feature-based scoring function
-   * @param withHitAttribution Determines if hit attribution data should be included.
-   * @param forExplanation Indicates if the score will be computed for generating the explanation.
-   * @return Score after applying promotion/demotion
+   * @param data Original LinelonarScoringData (to belon modifielond with boosts helonrelon)
+   * @param scorelon Scorelon gelonnelonratelond by thelon felonaturelon-baselond scoring function
+   * @param withHitAttribution Delontelonrminelons if hit attribution data should belon includelond.
+   * @param forelonxplanation Indicatelons if thelon scorelon will belon computelond for gelonnelonrating thelon elonxplanation.
+   * @relonturn Scorelon aftelonr applying promotion/delonmotion
    */
-  private double applyBoosts(
-      LinearScoringData data,
-      double score,
-      boolean withHitAttribution,
-      boolean forExplanation) {
-    double boostedScore = score;
+  privatelon doublelon applyBoosts(
+      LinelonarScoringData data,
+      doublelon scorelon,
+      boolelonan withHitAttribution,
+      boolelonan forelonxplanation) {
+    doublelon boostelondScorelon = scorelon;
 
-    if (params.useLuceneScoreAsBoost) {
-      data.normalizedLuceneScore = normalizeLuceneScore(
-          (float) data.luceneScore, (float) params.maxLuceneScoreBoost);
-      boostedScore *= data.normalizedLuceneScore;
+    if (params.uselonLucelonnelonScorelonAsBoost) {
+      data.normalizelondLucelonnelonScorelon = normalizelonLucelonnelonScorelon(
+          (float) data.lucelonnelonScorelon, (float) params.maxLucelonnelonScorelonBoost);
+      boostelondScorelon *= data.normalizelondLucelonnelonScorelon;
     }
-    if (data.isOffensive) {
-      boostedScore *= params.offensiveDamping;
+    if (data.isOffelonnsivelon) {
+      boostelondScorelon *= params.offelonnsivelonDamping;
     }
-    if (data.isUserSpam && params.spamUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.spamUserDampApplied = true;
-      boostedScore *= params.spamUserDamping;
+    if (data.isUselonrSpam && params.spamUselonrDamping != LinelonarScoringData.NO_BOOST_VALUelon) {
+      data.spamUselonrDampApplielond = truelon;
+      boostelondScorelon *= params.spamUselonrDamping;
     }
-    if (data.isUserNSFW && params.nsfwUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.nsfwUserDampApplied = true;
-      boostedScore *= params.nsfwUserDamping;
+    if (data.isUselonrNSFW && params.nsfwUselonrDamping != LinelonarScoringData.NO_BOOST_VALUelon) {
+      data.nsfwUselonrDampApplielond = truelon;
+      boostelondScorelon *= params.nsfwUselonrDamping;
     }
-    if (data.isUserBot && params.botUserDamping != LinearScoringData.NO_BOOST_VALUE) {
-      data.botUserDampApplied = true;
-      boostedScore *= params.botUserDamping;
+    if (data.isUselonrBot && params.botUselonrDamping != LinelonarScoringData.NO_BOOST_VALUelon) {
+      data.botUselonrDampApplielond = truelon;
+      boostelondScorelon *= params.botUselonrDamping;
     }
 
     // cards
-    if (data.hasCard && params.hasCardBoosts[data.cardType] != LinearScoringData.NO_BOOST_VALUE) {
-      boostedScore *= params.hasCardBoosts[data.cardType];
-      data.hasCardBoostApplied = true;
+    if (data.hasCard && params.hasCardBoosts[data.cardTypelon] != LinelonarScoringData.NO_BOOST_VALUelon) {
+      boostelondScorelon *= params.hasCardBoosts[data.cardTypelon];
+      data.hasCardBoostApplielond = truelon;
     }
 
-    // trends
-    if (data.hasMultipleHashtagsOrTrends) {
-      boostedScore *= params.multipleHashtagsOrTrendsDamping;
-    } else if (data.hasTrend) {
-      data.tweetHasTrendsBoostApplied = true;
-      boostedScore *= params.tweetHasTrendBoost;
+    // trelonnds
+    if (data.hasMultiplelonHashtagsOrTrelonnds) {
+      boostelondScorelon *= params.multiplelonHashtagsOrTrelonndsDamping;
+    } elonlselon if (data.hasTrelonnd) {
+      data.twelonelontHasTrelonndsBoostApplielond = truelon;
+      boostelondScorelon *= params.twelonelontHasTrelonndBoost;
     }
 
-    // Media/News url boosts.
-    if (data.hasImageUrl || data.hasVideoUrl) {
-      data.hasMedialUrlBoostApplied = true;
-      boostedScore *= params.tweetHasMediaUrlBoost;
+    // Melondia/Nelonws url boosts.
+    if (data.hasImagelonUrl || data.hasVidelonoUrl) {
+      data.hasMelondialUrlBoostApplielond = truelon;
+      boostelondScorelon *= params.twelonelontHasMelondiaUrlBoost;
     }
-    if (data.hasNewsUrl) {
-      data.hasNewsUrlBoostApplied = true;
-      boostedScore *= params.tweetHasNewsUrlBoost;
-    }
-
-    if (data.isFromVerifiedAccount) {
-      data.tweetFromVerifiedAccountBoostApplied = true;
-      boostedScore *= params.tweetFromVerifiedAccountBoost;
+    if (data.hasNelonwsUrl) {
+      data.hasNelonwsUrlBoostApplielond = truelon;
+      boostelondScorelon *= params.twelonelontHasNelonwsUrlBoost;
     }
 
-    if (data.isFromBlueVerifiedAccount) {
-      data.tweetFromBlueVerifiedAccountBoostApplied = true;
-      boostedScore *= params.tweetFromBlueVerifiedAccountBoost;
+    if (data.isFromVelonrifielondAccount) {
+      data.twelonelontFromVelonrifielondAccountBoostApplielond = truelon;
+      boostelondScorelon *= params.twelonelontFromVelonrifielondAccountBoost;
+    }
+
+    if (data.isFromBluelonVelonrifielondAccount) {
+      data.twelonelontFromBluelonVelonrifielondAccountBoostApplielond = truelon;
+      boostelondScorelon *= params.twelonelontFromBluelonVelonrifielondAccountBoost;
     }
 
     if (data.isFollow) {
-      // direct follow, so boost both replies and non-replies.
-      data.directFollowBoostApplied = true;
-      boostedScore *= params.directFollowBoost;
-    } else if (data.isTrusted) {
-      // trusted circle
-      if (!data.isReply) {
-        // non-at-reply, in trusted network
-        data.trustedCircleBoostApplied = true;
-        boostedScore *= params.trustedCircleBoost;
+      // direlonct follow, so boost both relonplielons and non-relonplielons.
+      data.direlonctFollowBoostApplielond = truelon;
+      boostelondScorelon *= params.direlonctFollowBoost;
+    } elonlselon if (data.isTrustelond) {
+      // trustelond circlelon
+      if (!data.isRelonply) {
+        // non-at-relonply, in trustelond nelontwork
+        data.trustelondCirclelonBoostApplielond = truelon;
+        boostelondScorelon *= params.trustelondCirclelonBoost;
       }
-    } else if (data.isReply) {
-      // at-reply out of my network
-      data.outOfNetworkReplyPenaltyApplied = true;
-      boostedScore -= params.outOfNetworkReplyPenalty;
+    } elonlselon if (data.isRelonply) {
+      // at-relonply out of my nelontwork
+      data.outOfNelontworkRelonplyPelonnaltyApplielond = truelon;
+      boostelondScorelon -= params.outOfNelontworkRelonplyPelonnalty;
     }
 
-    if (data.isSelfTweet) {
-      data.selfTweetBoostApplied = true;
-      data.selfTweetMult = params.selfTweetBoost;
-      boostedScore *= params.selfTweetBoost;
+    if (data.isSelonlfTwelonelont) {
+      data.selonlfTwelonelontBoostApplielond = truelon;
+      data.selonlfTwelonelontMult = params.selonlfTwelonelontBoost;
+      boostelondScorelon *= params.selonlfTwelonelontBoost;
     }
 
-    // Language Demotion
-    // User language based demotion
-    // The data.userLangMult is set in scoreInternal(), and this setting step is always before
-    // the applying boosts step
-    if (params.useUserLanguageInfo) {
-      boostedScore *= data.userLangMult;
+    // Languagelon Delonmotion
+    // Uselonr languagelon baselond delonmotion
+    // Thelon data.uselonrLangMult is selont in scorelonIntelonrnal(), and this selontting stelonp is always belonforelon
+    // thelon applying boosts stelonp
+    if (params.uselonUselonrLanguagelonInfo) {
+      boostelondScorelon *= data.uselonrLangMult;
     }
-    // UI language based demotion
-    if (params.uiLangId != ThriftLanguage.UNKNOWN.getValue()
-        && params.uiLangId != data.tweetLangId) {
-      if (data.tweetLangId == ThriftLanguage.ENGLISH.getValue()) {
-        data.uiLangMult = params.langEnglishTweetDemote;
-      } else if (params.uiLangId == ThriftLanguage.ENGLISH.getValue()) {
-        data.uiLangMult = params.langEnglishUIDemote;
-      } else {
-        data.uiLangMult = params.langDefaultDemote;
+    // UI languagelon baselond delonmotion
+    if (params.uiLangId != ThriftLanguagelon.UNKNOWN.gelontValuelon()
+        && params.uiLangId != data.twelonelontLangId) {
+      if (data.twelonelontLangId == ThriftLanguagelon.elonNGLISH.gelontValuelon()) {
+        data.uiLangMult = params.langelonnglishTwelonelontDelonmotelon;
+      } elonlselon if (params.uiLangId == ThriftLanguagelon.elonNGLISH.gelontValuelon()) {
+        data.uiLangMult = params.langelonnglishUIDelonmotelon;
+      } elonlselon {
+        data.uiLangMult = params.langDelonfaultDelonmotelon;
       }
-    } else {
-      data.uiLangMult = LinearScoringData.NO_BOOST_VALUE;
+    } elonlselon {
+      data.uiLangMult = LinelonarScoringData.NO_BOOST_VALUelon;
     }
-    boostedScore *= data.uiLangMult;
+    boostelondScorelon *= data.uiLangMult;
 
-    if (params.useAgeDecay) {
-      // shallow sigmoid with an inflection point at ageDecayHalflife
-      data.ageDecayMult = ageDecay.getAgeDecayMultiplier(data.tweetAgeInSeconds);
-      boostedScore *= data.ageDecayMult;
+    if (params.uselonAgelonDeloncay) {
+      // shallow sigmoid with an inflelonction point at agelonDeloncayHalflifelon
+      data.agelonDeloncayMult = agelonDeloncay.gelontAgelonDeloncayMultiplielonr(data.twelonelontAgelonInSelonconds);
+      boostelondScorelon *= data.agelonDeloncayMult;
     }
 
-    // Hit Attribute Demotion
-    // Scoring is currently based on tokenized user name, text, and url in the tweet
-    // If hit attribute collection is enabled, we demote score based on these fields
-    if (hitAttributeHelper != null && params.enableHitDemotion) {
+    // Hit Attributelon Delonmotion
+    // Scoring is currelonntly baselond on tokelonnizelond uselonr namelon, telonxt, and url in thelon twelonelont
+    // If hit attributelon collelonction is elonnablelond, welon delonmotelon scorelon baselond on thelonselon fielonlds
+    if (hitAttributelonHelonlpelonr != null && params.elonnablelonHitDelonmotion) {
 
-      Map<Integer, List<String>> hitMap;
-      if (forExplanation && fieldHitAttribution != null) {
-        // if this scoring call is for generating an explanation,
-        // we'll use the fieldHitAttribution found in the search result's metadata because
-        // collectors are not called during the debug workflow
-        hitMap = Maps.transformValues(fieldHitAttribution.getHitMap(), FieldHitList::getHitFields);
-      } else if (withHitAttribution) {
-        hitMap = hitAttributeHelper.getHitAttribution(getCurrentDocID());
-      } else {
-        hitMap = Maps.newHashMap();
+      Map<Intelongelonr, List<String>> hitMap;
+      if (forelonxplanation && fielonldHitAttribution != null) {
+        // if this scoring call is for gelonnelonrating an elonxplanation,
+        // welon'll uselon thelon fielonldHitAttribution found in thelon selonarch relonsult's melontadata beloncauselon
+        // collelonctors arelon not callelond during thelon delonbug workflow
+        hitMap = Maps.transformValuelons(fielonldHitAttribution.gelontHitMap(), FielonldHitList::gelontHitFielonlds);
+      } elonlselon if (withHitAttribution) {
+        hitMap = hitAttributelonHelonlpelonr.gelontHitAttribution(gelontCurrelonntDocID());
+      } elonlselon {
+        hitMap = Maps.nelonwHashMap();
       }
-      Set<String> uniqueFieldHits = ImmutableSet.copyOf(Iterables.concat(hitMap.values()));
+      Selont<String> uniquelonFielonldHits = ImmutablelonSelont.copyOf(Itelonrablelons.concat(hitMap.valuelons()));
 
-      data.hitFields.addAll(uniqueFieldHits);
-      // there should always be fields that are hit
-      // if there aren't, we assume this is a call from 'explain' in debug mode
-      // do not override hit attribute data if in debug mode
-      if (!uniqueFieldHits.isEmpty()) {
-        // demotions based strictly on field hits
-        if (uniqueFieldHits.size() == 1) {
-          if (uniqueFieldHits.contains(
-                  EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
-            // if url was the only field that was hit, demote
-            data.hasUrlOnlyHitDemotionApplied = true;
-            boostedScore *= params.urlOnlyHitDemotion;
-          } else if (uniqueFieldHits.contains(
-                         EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName())) {
-            // if name was the only field that was hit, demote
-            data.hasNameOnlyHitDemotionApplied = true;
-            boostedScore *= params.nameOnlyHitDemotion;
+      data.hitFielonlds.addAll(uniquelonFielonldHits);
+      // thelonrelon should always belon fielonlds that arelon hit
+      // if thelonrelon arelonn't, welon assumelon this is a call from 'elonxplain' in delonbug modelon
+      // do not ovelonrridelon hit attributelon data if in delonbug modelon
+      if (!uniquelonFielonldHits.iselonmpty()) {
+        // delonmotions baselond strictly on fielonld hits
+        if (uniquelonFielonldHits.sizelon() == 1) {
+          if (uniquelonFielonldHits.contains(
+                  elonarlybirdFielonldConstant.RelonSOLVelonD_LINKS_TelonXT_FIelonLD.gelontFielonldNamelon())) {
+            // if url was thelon only fielonld that was hit, delonmotelon
+            data.hasUrlOnlyHitDelonmotionApplielond = truelon;
+            boostelondScorelon *= params.urlOnlyHitDelonmotion;
+          } elonlselon if (uniquelonFielonldHits.contains(
+                         elonarlybirdFielonldConstant.TOKelonNIZelonD_FROM_USelonR_FIelonLD.gelontFielonldNamelon())) {
+            // if namelon was thelon only fielonld that was hit, delonmotelon
+            data.hasNamelonOnlyHitDelonmotionApplielond = truelon;
+            boostelondScorelon *= params.namelonOnlyHitDelonmotion;
           }
-        } else if (!uniqueFieldHits.contains(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())
-            && !uniqueFieldHits.contains(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName())
-            && !uniqueFieldHits.contains(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName())
-            && !uniqueFieldHits.contains(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName())) {
-          // if text or special text was never hit, demote
-          data.hasNoTextHitDemotionApplied = true;
-          boostedScore *= params.noTextHitDemotion;
-        } else if (uniqueFieldHits.size() == 2) {
-          // demotions based on field hit combinations
-          // want to demote if we only hit two of the fields (one being text)
-          // but with separate terms
-          Set<String> fieldIntersections = QueryCommonFieldHitsVisitor.findIntersection(
-              hitAttributeHelper.getNodeToRankMap(),
+        } elonlselon if (!uniquelonFielonldHits.contains(elonarlybirdFielonldConstant.TelonXT_FIelonLD.gelontFielonldNamelon())
+            && !uniquelonFielonldHits.contains(elonarlybirdFielonldConstant.MelonNTIONS_FIelonLD.gelontFielonldNamelon())
+            && !uniquelonFielonldHits.contains(elonarlybirdFielonldConstant.HASHTAGS_FIelonLD.gelontFielonldNamelon())
+            && !uniquelonFielonldHits.contains(elonarlybirdFielonldConstant.STOCKS_FIelonLD.gelontFielonldNamelon())) {
+          // if telonxt or speloncial telonxt was nelonvelonr hit, delonmotelon
+          data.hasNoTelonxtHitDelonmotionApplielond = truelon;
+          boostelondScorelon *= params.noTelonxtHitDelonmotion;
+        } elonlselon if (uniquelonFielonldHits.sizelon() == 2) {
+          // delonmotions baselond on fielonld hit combinations
+          // want to delonmotelon if welon only hit two of thelon fielonlds (onelon beloning telonxt)
+          // but with selonparatelon telonrms
+          Selont<String> fielonldIntelonrselonctions = QuelonryCommonFielonldHitsVisitor.findIntelonrselonction(
+              hitAttributelonHelonlpelonr.gelontNodelonToRankMap(),
               hitMap,
-              query);
+              quelonry);
 
-          if (fieldIntersections.isEmpty()) {
-            if (uniqueFieldHits.contains(
-                    EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName())) {
-              // if name is hit but has no hits in common with text, demote
-              // want to demote cases where we hit part of the person's name
-              // and tweet text separately
-              data.hasSeparateTextAndNameHitDemotionApplied = true;
-              boostedScore *= params.separateTextAndNameHitDemotion;
-            } else if (uniqueFieldHits.contains(
-                           EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName())) {
-              // if url is hit but has no hits in common with text, demote
-              // want to demote cases where we hit a potential domain keyword
-              // and tweet text separately
-              data.hasSeparateTextAndUrlHitDemotionApplied = true;
-              boostedScore *= params.separateTextAndUrlHitDemotion;
+          if (fielonldIntelonrselonctions.iselonmpty()) {
+            if (uniquelonFielonldHits.contains(
+                    elonarlybirdFielonldConstant.TOKelonNIZelonD_FROM_USelonR_FIelonLD.gelontFielonldNamelon())) {
+              // if namelon is hit but has no hits in common with telonxt, delonmotelon
+              // want to delonmotelon caselons whelonrelon welon hit part of thelon pelonrson's namelon
+              // and twelonelont telonxt selonparatelonly
+              data.hasSelonparatelonTelonxtAndNamelonHitDelonmotionApplielond = truelon;
+              boostelondScorelon *= params.selonparatelonTelonxtAndNamelonHitDelonmotion;
+            } elonlselon if (uniquelonFielonldHits.contains(
+                           elonarlybirdFielonldConstant.RelonSOLVelonD_LINKS_TelonXT_FIelonLD.gelontFielonldNamelon())) {
+              // if url is hit but has no hits in common with telonxt, delonmotelon
+              // want to delonmotelon caselons whelonrelon welon hit a potelonntial domain kelonyword
+              // and twelonelont telonxt selonparatelonly
+              data.hasSelonparatelonTelonxtAndUrlHitDelonmotionApplielond = truelon;
+              boostelondScorelon *= params.selonparatelonTelonxtAndUrlHitDelonmotion;
             }
           }
         }
       }
     }
 
-    return boostedScore;
+    relonturn boostelondScorelon;
   }
 
   /**
-   * Compute the user language based demotion multiplier
+   * Computelon thelon uselonr languagelon baselond delonmotion multiplielonr
    */
-  private static double computeUserLangMultiplier(
-      LinearScoringData data, LinearScoringParams params) {
-    if (data.tweetLangId == params.uiLangId
-        && data.tweetLangId != ThriftLanguage.UNKNOWN.getValue()) {
-      // Effectively the uiLang is considered a language that user knows with 1.0 confidence.
-      return LinearScoringData.NO_BOOST_VALUE;
+  privatelon static doublelon computelonUselonrLangMultiplielonr(
+      LinelonarScoringData data, LinelonarScoringParams params) {
+    if (data.twelonelontLangId == params.uiLangId
+        && data.twelonelontLangId != ThriftLanguagelon.UNKNOWN.gelontValuelon()) {
+      // elonffelonctivelonly thelon uiLang is considelonrelond a languagelon that uselonr knows with 1.0 confidelonncelon.
+      relonturn LinelonarScoringData.NO_BOOST_VALUelon;
     }
 
-    if (params.userLangs[data.tweetLangId] > 0.0) {
-      return params.userLangs[data.tweetLangId];
+    if (params.uselonrLangs[data.twelonelontLangId] > 0.0) {
+      relonturn params.uselonrLangs[data.twelonelontLangId];
     }
 
-    return params.unknownLanguageBoost;
+    relonturn params.unknownLanguagelonBoost;
   }
 
   /**
-   * Computes the score of the document that it's currently being evaluated.
+   * Computelons thelon scorelon of thelon documelonnt that it's currelonntly beloning elonvaluatelond.
    *
-   * The extracted features from the document are available in the field 'data'.
+   * Thelon elonxtractelond felonaturelons from thelon documelonnt arelon availablelon in thelon fielonld 'data'.
    *
-   * @param data The LinearScoringData instance that will store the document features.
-   * @param forExplanation Indicates if the score will be computed for generating the explanation.
+   * @param data Thelon LinelonarScoringData instancelon that will storelon thelon documelonnt felonaturelons.
+   * @param forelonxplanation Indicatelons if thelon scorelon will belon computelond for gelonnelonrating thelon elonxplanation.
    */
-  protected abstract double computeScore(
-      LinearScoringData data, boolean forExplanation) throws IOException;
+  protelonctelond abstract doublelon computelonScorelon(
+      LinelonarScoringData data, boolelonan forelonxplanation) throws IOelonxcelonption;
 
-  private float finalizeScore(
-      LinearScoringData scoringData,
-      ExplanationWrapper explanation,
-      double score) throws IOException {
-    scoringData.scoreReturned = score;
-    if (explanation != null) {
-      explanation.explanation = generateExplanation(scoringData);
+  privatelon float finalizelonScorelon(
+      LinelonarScoringData scoringData,
+      elonxplanationWrappelonr elonxplanation,
+      doublelon scorelon) throws IOelonxcelonption {
+    scoringData.scorelonRelonturnelond = scorelon;
+    if (elonxplanation != null) {
+      elonxplanation.elonxplanation = gelonnelonratelonelonxplanation(scoringData);
     }
-    return (float) score;
+    relonturn (float) scorelon;
   }
 
-  @Override
-  protected void initializeNextSegment(EarlybirdIndexSegmentAtomicReader reader)
-      throws IOException {
-    if (antiGamingFilter != null) {
-      antiGamingFilter.startSegment(reader);
+  @Ovelonrridelon
+  protelonctelond void initializelonNelonxtSelongmelonnt(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr)
+      throws IOelonxcelonption {
+    if (antiGamingFiltelonr != null) {
+      antiGamingFiltelonr.startSelongmelonnt(relonadelonr);
     }
   }
 
   /*
-   * Generate the scoring explanation for debug.
+   * Gelonnelonratelon thelon scoring elonxplanation for delonbug.
    */
-  private Explanation generateExplanation(LinearScoringData scoringData) throws IOException {
-    final List<Explanation> details = Lists.newArrayList();
+  privatelon elonxplanation gelonnelonratelonelonxplanation(LinelonarScoringData scoringData) throws IOelonxcelonption {
+    final List<elonxplanation> delontails = Lists.nelonwArrayList();
 
-    details.add(Explanation.match(0.0f, "[PROPERTIES] "
-        + scoringData.getPropertyExplanation()));
+    delontails.add(elonxplanation.match(0.0f, "[PROPelonRTIelonS] "
+        + scoringData.gelontPropelonrtyelonxplanation()));
 
-    // 1. Filters
-    boolean isHit = scoringData.skipReason == SkipReason.NOT_SKIPPED;
-    if (scoringData.skipReason == SkipReason.ANTIGAMING) {
-      details.add(Explanation.noMatch("SKIPPED for antigaming"));
+    // 1. Filtelonrs
+    boolelonan isHit = scoringData.skipRelonason == SkipRelonason.NOT_SKIPPelonD;
+    if (scoringData.skipRelonason == SkipRelonason.ANTIGAMING) {
+      delontails.add(elonxplanation.noMatch("SKIPPelonD for antigaming"));
     }
-    if (scoringData.skipReason == SkipReason.LOW_REPUTATION) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low reputation: %.3f < %.3f",
-              scoringData.userRep, params.reputationMinVal)));
+    if (scoringData.skipRelonason == SkipRelonason.LOW_RelonPUTATION) {
+      delontails.add(elonxplanation.noMatch(
+          String.format("SKIPPelonD for low relonputation: %.3f < %.3f",
+              scoringData.uselonrRelonp, params.relonputationMinVal)));
     }
-    if (scoringData.skipReason == SkipReason.LOW_TEXT_SCORE) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low text score: %.3f < %.3f",
-              scoringData.textScore, params.textScoreMinVal)));
+    if (scoringData.skipRelonason == SkipRelonason.LOW_TelonXT_SCORelon) {
+      delontails.add(elonxplanation.noMatch(
+          String.format("SKIPPelonD for low telonxt scorelon: %.3f < %.3f",
+              scoringData.telonxtScorelon, params.telonxtScorelonMinVal)));
     }
-    if (scoringData.skipReason == SkipReason.LOW_RETWEET_COUNT) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low retweet count: %.3f < %.3f",
-              scoringData.retweetCountPostLog2, params.retweetMinVal)));
+    if (scoringData.skipRelonason == SkipRelonason.LOW_RelonTWelonelonT_COUNT) {
+      delontails.add(elonxplanation.noMatch(
+          String.format("SKIPPelonD for low relontwelonelont count: %.3f < %.3f",
+              scoringData.relontwelonelontCountPostLog2, params.relontwelonelontMinVal)));
     }
-    if (scoringData.skipReason == SkipReason.LOW_FAV_COUNT) {
-      details.add(Explanation.noMatch(
-          String.format("SKIPPED for low fav count: %.3f < %.3f",
+    if (scoringData.skipRelonason == SkipRelonason.LOW_FAV_COUNT) {
+      delontails.add(elonxplanation.noMatch(
+          String.format("SKIPPelonD for low fav count: %.3f < %.3f",
               scoringData.favCountPostLog2, params.favMinVal)));
     }
-    if (scoringData.skipReason == SkipReason.SOCIAL_FILTER) {
-      details.add(Explanation.noMatch("SKIPPED for not in the right social circle"));
+    if (scoringData.skipRelonason == SkipRelonason.SOCIAL_FILTelonR) {
+      delontails.add(elonxplanation.noMatch("SKIPPelonD for not in thelon right social circlelon"));
     }
 
-    // 2. Explanation depending on the scoring type
-    generateExplanationForScoring(scoringData, isHit, details);
+    // 2. elonxplanation delonpelonnding on thelon scoring typelon
+    gelonnelonratelonelonxplanationForScoring(scoringData, isHit, delontails);
 
-    // 3. Explanation depending on boosts
+    // 3. elonxplanation delonpelonnding on boosts
     if (params.applyBoosts) {
-      generateExplanationForBoosts(scoringData, isHit, details);
+      gelonnelonratelonelonxplanationForBoosts(scoringData, isHit, delontails);
     }
 
-    // 4. Final score filter.
-    if (scoringData.skipReason == SkipReason.LOW_FINAL_SCORE) {
-      details.add(Explanation.noMatch("SKIPPED for low final score: " + scoringData.scoreFinal));
-      isHit = false;
+    // 4. Final scorelon filtelonr.
+    if (scoringData.skipRelonason == SkipRelonason.LOW_FINAL_SCORelon) {
+      delontails.add(elonxplanation.noMatch("SKIPPelonD for low final scorelon: " + scoringData.scorelonFinal));
+      isHit = falselon;
     }
 
-    String hostAndSegment = String.format("%s host = %s  segment = %s",
-        functionName, DatabaseConfig.getLocalHostname(), DatabaseConfig.getDatabase());
+    String hostAndSelongmelonnt = String.format("%s host = %s  selongmelonnt = %s",
+        functionNamelon, DatabaselonConfig.gelontLocalHostnamelon(), DatabaselonConfig.gelontDatabaselon());
     if (isHit) {
-      return Explanation.match((float) scoringData.scoreFinal, hostAndSegment, details);
-    } else {
-      return Explanation.noMatch(hostAndSegment, details);
+      relonturn elonxplanation.match((float) scoringData.scorelonFinal, hostAndSelongmelonnt, delontails);
+    } elonlselon {
+      relonturn elonxplanation.noMatch(hostAndSelongmelonnt, delontails);
     }
   }
 
   /**
-   * Generates the explanation for the document that is currently being evaluated.
+   * Gelonnelonratelons thelon elonxplanation for thelon documelonnt that is currelonntly beloning elonvaluatelond.
    *
-   * Implementations of this method must use the 'details' parameter to collect its output.
+   * Implelonmelonntations of this melonthod must uselon thelon 'delontails' paramelontelonr to collelonct its output.
    *
-   * @param scoringData Scoring components for the document
-   * @param isHit Indicates whether the document is not skipped
-   * @param details Details of the explanation. Used to collect the output.
+   * @param scoringData Scoring componelonnts for thelon documelonnt
+   * @param isHit Indicatelons whelonthelonr thelon documelonnt is not skippelond
+   * @param delontails Delontails of thelon elonxplanation. Uselond to collelonct thelon output.
    */
-  protected abstract void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException;
+  protelonctelond abstract void gelonnelonratelonelonxplanationForScoring(
+      LinelonarScoringData scoringData, boolelonan isHit, List<elonxplanation> delontails) throws IOelonxcelonption;
 
   /**
-   * Generates the boosts part of the explanation for the document that is currently
-   * being evaluated.
+   * Gelonnelonratelons thelon boosts part of thelon elonxplanation for thelon documelonnt that is currelonntly
+   * beloning elonvaluatelond.
    */
-  private void generateExplanationForBoosts(
-      LinearScoringData scoringData,
-      boolean isHit,
-      List<Explanation> details) {
-    List<Explanation> boostDetails = Lists.newArrayList();
+  privatelon void gelonnelonratelonelonxplanationForBoosts(
+      LinelonarScoringData scoringData,
+      boolelonan isHit,
+      List<elonxplanation> delontails) {
+    List<elonxplanation> boostDelontails = Lists.nelonwArrayList();
 
-    boostDetails.add(Explanation.match((float) scoringData.scoreBeforeBoost, "Score before boost"));
+    boostDelontails.add(elonxplanation.match((float) scoringData.scorelonBelonforelonBoost, "Scorelon belonforelon boost"));
 
 
-    // Lucene score boost
-    if (params.useLuceneScoreAsBoost) {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.normalizedLuceneScore,
-          String.format("[x] Lucene score boost, luceneScore=%.3f",
-              scoringData.luceneScore)));
+    // Lucelonnelon scorelon boost
+    if (params.uselonLucelonnelonScorelonAsBoost) {
+      boostDelontails.add(elonxplanation.match(
+          (float) scoringData.normalizelondLucelonnelonScorelon,
+          String.format("[x] Lucelonnelon scorelon boost, lucelonnelonScorelon=%.3f",
+              scoringData.lucelonnelonScorelon)));
     }
 
     // card boost
-    if (scoringData.hasCardBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.hasCardBoosts[scoringData.cardType],
-          "[x] card boost for type " + SearchCardType.cardTypeFromByteValue(scoringData.cardType)));
+    if (scoringData.hasCardBoostApplielond) {
+      boostDelontails.add(elonxplanation.match((float) params.hasCardBoosts[scoringData.cardTypelon],
+          "[x] card boost for typelon " + SelonarchCardTypelon.cardTypelonFromBytelonValuelon(scoringData.cardTypelon)));
     }
 
-    // Offensive
-    if (scoringData.isOffensive) {
-      boostDetails.add(Explanation.match((float) params.offensiveDamping, "[x] Offensive damping"));
-    } else {
-      boostDetails.add(Explanation.match(LinearScoringData.NO_BOOST_VALUE,
-          String.format("Not Offensive, damping=%.3f", params.offensiveDamping)));
+    // Offelonnsivelon
+    if (scoringData.isOffelonnsivelon) {
+      boostDelontails.add(elonxplanation.match((float) params.offelonnsivelonDamping, "[x] Offelonnsivelon damping"));
+    } elonlselon {
+      boostDelontails.add(elonxplanation.match(LinelonarScoringData.NO_BOOST_VALUelon,
+          String.format("Not Offelonnsivelon, damping=%.3f", params.offelonnsivelonDamping)));
     }
 
     // Spam
-    if (scoringData.spamUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.spamUserDamping, "[x] Spam"));
+    if (scoringData.spamUselonrDampApplielond) {
+      boostDelontails.add(elonxplanation.match((float) params.spamUselonrDamping, "[x] Spam"));
     }
     // NSFW
-    if (scoringData.nsfwUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.nsfwUserDamping, "[X] NSFW"));
+    if (scoringData.nsfwUselonrDampApplielond) {
+      boostDelontails.add(elonxplanation.match((float) params.nsfwUselonrDamping, "[X] NSFW"));
     }
     // Bot
-    if (scoringData.botUserDampApplied) {
-      boostDetails.add(Explanation.match((float) params.botUserDamping, "[X] Bot"));
+    if (scoringData.botUselonrDampApplielond) {
+      boostDelontails.add(elonxplanation.match((float) params.botUselonrDamping, "[X] Bot"));
     }
 
-    // Multiple hashtags or trends
-    if (scoringData.hasMultipleHashtagsOrTrends) {
-      boostDetails.add(Explanation.match((float) params.multipleHashtagsOrTrendsDamping,
-          "[x] Multiple hashtags or trends boost"));
-    } else {
-      boostDetails.add(Explanation.match(LinearScoringData.NO_BOOST_VALUE,
-          String.format("No multiple hashtags or trends, damping=%.3f",
-              params.multipleHashtagsOrTrendsDamping)));
+    // Multiplelon hashtags or trelonnds
+    if (scoringData.hasMultiplelonHashtagsOrTrelonnds) {
+      boostDelontails.add(elonxplanation.match((float) params.multiplelonHashtagsOrTrelonndsDamping,
+          "[x] Multiplelon hashtags or trelonnds boost"));
+    } elonlselon {
+      boostDelontails.add(elonxplanation.match(LinelonarScoringData.NO_BOOST_VALUelon,
+          String.format("No multiplelon hashtags or trelonnds, damping=%.3f",
+              params.multiplelonHashtagsOrTrelonndsDamping)));
     }
 
-    if (scoringData.tweetHasTrendsBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasTrendBoost, "[x] Tweet has trend boost"));
+    if (scoringData.twelonelontHasTrelonndsBoostApplielond) {
+      boostDelontails.add(elonxplanation.match(
+          (float) params.twelonelontHasTrelonndBoost, "[x] Twelonelont has trelonnd boost"));
     }
 
-    if (scoringData.hasMedialUrlBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasMediaUrlBoost, "[x] Media url boost"));
+    if (scoringData.hasMelondialUrlBoostApplielond) {
+      boostDelontails.add(elonxplanation.match(
+          (float) params.twelonelontHasMelondiaUrlBoost, "[x] Melondia url boost"));
     }
 
-    if (scoringData.hasNewsUrlBoostApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.tweetHasNewsUrlBoost, "[x] News url boost"));
+    if (scoringData.hasNelonwsUrlBoostApplielond) {
+      boostDelontails.add(elonxplanation.match(
+          (float) params.twelonelontHasNelonwsUrlBoost, "[x] Nelonws url boost"));
     }
 
-    boostDetails.add(Explanation.match(0.0f, "[FIELDS HIT] " + scoringData.hitFields));
+    boostDelontails.add(elonxplanation.match(0.0f, "[FIelonLDS HIT] " + scoringData.hitFielonlds));
 
-    if (scoringData.hasNoTextHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.noTextHitDemotion, "[x] No text hit demotion"));
+    if (scoringData.hasNoTelonxtHitDelonmotionApplielond) {
+      boostDelontails.add(elonxplanation.match(
+          (float) params.noTelonxtHitDelonmotion, "[x] No telonxt hit delonmotion"));
     }
 
-    if (scoringData.hasUrlOnlyHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.urlOnlyHitDemotion, "[x] URL only hit demotion"));
+    if (scoringData.hasUrlOnlyHitDelonmotionApplielond) {
+      boostDelontails.add(elonxplanation.match(
+          (float) params.urlOnlyHitDelonmotion, "[x] URL only hit delonmotion"));
     }
 
-    if (scoringData.hasNameOnlyHitDemotionApplied) {
-      boostDetails.add(Explanation.match(
-          (float) params.nameOnlyHitDemotion, "[x] Name only hit demotion"));
+    if (scoringData.hasNamelonOnlyHitDelonmotionApplielond) {
+      boostDelontails.add(elonxplanation.match(
+          (float) params.namelonOnlyHitDelonmotion, "[x] Namelon only hit delonmotion"));
     }
 
-    if (scoringData.hasSeparateTextAndNameHitDemotionApplied) {
-      boostDetails.add(Explanation.match((float) params.separateTextAndNameHitDemotion,
-          "[x] Separate text/name demotion"));
+    if (scoringData.hasSelonparatelonTelonxtAndNamelonHitDelonmotionApplielond) {
+      boostDelontails.add(elonxplanation.match((float) params.selonparatelonTelonxtAndNamelonHitDelonmotion,
+          "[x] Selonparatelon telonxt/namelon delonmotion"));
     }
 
-    if (scoringData.hasSeparateTextAndUrlHitDemotionApplied) {
-      boostDetails.add(Explanation.match((float) params.separateTextAndUrlHitDemotion,
-          "[x] Separate text/url demotion"));
+    if (scoringData.hasSelonparatelonTelonxtAndUrlHitDelonmotionApplielond) {
+      boostDelontails.add(elonxplanation.match((float) params.selonparatelonTelonxtAndUrlHitDelonmotion,
+          "[x] Selonparatelon telonxt/url delonmotion"));
     }
 
-    if (scoringData.tweetFromVerifiedAccountBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.tweetFromVerifiedAccountBoost,
-          "[x] Verified account boost"));
+    if (scoringData.twelonelontFromVelonrifielondAccountBoostApplielond) {
+      boostDelontails.add(elonxplanation.match((float) params.twelonelontFromVelonrifielondAccountBoost,
+          "[x] Velonrifielond account boost"));
     }
 
-    if (scoringData.tweetFromBlueVerifiedAccountBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.tweetFromBlueVerifiedAccountBoost,
-          "[x] Blue-verified account boost"));
+    if (scoringData.twelonelontFromBluelonVelonrifielondAccountBoostApplielond) {
+      boostDelontails.add(elonxplanation.match((float) params.twelonelontFromBluelonVelonrifielondAccountBoost,
+          "[x] Bluelon-velonrifielond account boost"));
     }
 
-    if (scoringData.selfTweetBoostApplied) {
-      boostDetails.add(Explanation.match((float) params.selfTweetBoost,
-          "[x] Self tweet boost"));
+    if (scoringData.selonlfTwelonelontBoostApplielond) {
+      boostDelontails.add(elonxplanation.match((float) params.selonlfTwelonelontBoost,
+          "[x] Selonlf twelonelont boost"));
     }
 
-    if (scoringData.skipReason == LinearScoringData.SkipReason.SOCIAL_FILTER) {
-      boostDetails.add(Explanation.noMatch("SKIPPED for social filter"));
-    } else {
-      if (scoringData.directFollowBoostApplied) {
-        boostDetails.add(Explanation.match((float) params.directFollowBoost,
-            "[x] Direct follow boost"));
+    if (scoringData.skipRelonason == LinelonarScoringData.SkipRelonason.SOCIAL_FILTelonR) {
+      boostDelontails.add(elonxplanation.noMatch("SKIPPelonD for social filtelonr"));
+    } elonlselon {
+      if (scoringData.direlonctFollowBoostApplielond) {
+        boostDelontails.add(elonxplanation.match((float) params.direlonctFollowBoost,
+            "[x] Direlonct follow boost"));
       }
-      if (scoringData.trustedCircleBoostApplied) {
-        boostDetails.add(Explanation.match((float) params.trustedCircleBoost,
-            "[x] Trusted circle boost"));
+      if (scoringData.trustelondCirclelonBoostApplielond) {
+        boostDelontails.add(elonxplanation.match((float) params.trustelondCirclelonBoost,
+            "[x] Trustelond circlelon boost"));
       }
-      if (scoringData.outOfNetworkReplyPenaltyApplied) {
-        boostDetails.add(Explanation.match((float) params.outOfNetworkReplyPenalty,
-            "[-] Out of network reply penalty"));
+      if (scoringData.outOfNelontworkRelonplyPelonnaltyApplielond) {
+        boostDelontails.add(elonxplanation.match((float) params.outOfNelontworkRelonplyPelonnalty,
+            "[-] Out of nelontwork relonply pelonnalty"));
       }
     }
 
-    // Language demotions
-    String langDetails = String.format(
-        "tweetLang=[%s] uiLang=[%s]",
-        ThriftLanguageUtil.getLocaleOf(
-            ThriftLanguage.findByValue(scoringData.tweetLangId)).getLanguage(),
-        ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(params.uiLangId)).getLanguage());
+    // Languagelon delonmotions
+    String langDelontails = String.format(
+        "twelonelontLang=[%s] uiLang=[%s]",
+        ThriftLanguagelonUtil.gelontLocalelonOf(
+            ThriftLanguagelon.findByValuelon(scoringData.twelonelontLangId)).gelontLanguagelon(),
+        ThriftLanguagelonUtil.gelontLocalelonOf(ThriftLanguagelon.findByValuelon(params.uiLangId)).gelontLanguagelon());
     if (scoringData.uiLangMult == 1.0) {
-      boostDetails.add(Explanation.match(
-          LinearScoringData.NO_BOOST_VALUE, "No UI Language demotion: " + langDetails));
-    } else {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.uiLangMult, "[x] UI LangMult: " + langDetails));
+      boostDelontails.add(elonxplanation.match(
+          LinelonarScoringData.NO_BOOST_VALUelon, "No UI Languagelon delonmotion: " + langDelontails));
+    } elonlselon {
+      boostDelontails.add(elonxplanation.match(
+          (float) scoringData.uiLangMult, "[x] UI LangMult: " + langDelontails));
     }
-    StringBuilder userLangDetails = new StringBuilder();
-    userLangDetails.append("userLang=[");
-    for (int i = 0; i < params.userLangs.length; i++) {
-      if (params.userLangs[i] > 0.0) {
-        String lang = ThriftLanguageUtil.getLocaleOf(ThriftLanguage.findByValue(i)).getLanguage();
-        userLangDetails.append(String.format("%s:%.3f,", lang, params.userLangs[i]));
+    StringBuildelonr uselonrLangDelontails = nelonw StringBuildelonr();
+    uselonrLangDelontails.appelonnd("uselonrLang=[");
+    for (int i = 0; i < params.uselonrLangs.lelonngth; i++) {
+      if (params.uselonrLangs[i] > 0.0) {
+        String lang = ThriftLanguagelonUtil.gelontLocalelonOf(ThriftLanguagelon.findByValuelon(i)).gelontLanguagelon();
+        uselonrLangDelontails.appelonnd(String.format("%s:%.3f,", lang, params.uselonrLangs[i]));
       }
     }
-    userLangDetails.append("]");
-    if (!params.useUserLanguageInfo) {
-      boostDetails.add(Explanation.noMatch(
-          "No User Language Demotion: " + userLangDetails.toString()));
-    } else {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.userLangMult,
-          "[x] User LangMult: " + userLangDetails.toString()));
+    uselonrLangDelontails.appelonnd("]");
+    if (!params.uselonUselonrLanguagelonInfo) {
+      boostDelontails.add(elonxplanation.noMatch(
+          "No Uselonr Languagelon Delonmotion: " + uselonrLangDelontails.toString()));
+    } elonlselon {
+      boostDelontails.add(elonxplanation.match(
+          (float) scoringData.uselonrLangMult,
+          "[x] Uselonr LangMult: " + uselonrLangDelontails.toString()));
     }
 
-    // Age decay
-    String ageDecayDetails = String.format(
-        "age=%d seconds, slope=%.3f, base=%.1f, half-life=%.0f",
-        scoringData.tweetAgeInSeconds, params.ageDecaySlope,
-        params.ageDecayBase, params.ageDecayHalflife);
-    if (params.useAgeDecay) {
-      boostDetails.add(Explanation.match(
-          (float) scoringData.ageDecayMult, "[x] AgeDecay: " + ageDecayDetails));
-    } else {
-      boostDetails.add(Explanation.match(1.0f, "Age decay disabled: " + ageDecayDetails));
+    // Agelon deloncay
+    String agelonDeloncayDelontails = String.format(
+        "agelon=%d selonconds, slopelon=%.3f, baselon=%.1f, half-lifelon=%.0f",
+        scoringData.twelonelontAgelonInSelonconds, params.agelonDeloncaySlopelon,
+        params.agelonDeloncayBaselon, params.agelonDeloncayHalflifelon);
+    if (params.uselonAgelonDeloncay) {
+      boostDelontails.add(elonxplanation.match(
+          (float) scoringData.agelonDeloncayMult, "[x] AgelonDeloncay: " + agelonDeloncayDelontails));
+    } elonlselon {
+      boostDelontails.add(elonxplanation.match(1.0f, "Agelon deloncay disablelond: " + agelonDeloncayDelontails));
     }
 
-    // Score adjuster
-    boostDetails.add(Explanation.match(SCORE_ADJUSTER, "[x] score adjuster"));
+    // Scorelon adjustelonr
+    boostDelontails.add(elonxplanation.match(SCORelon_ADJUSTelonR, "[x] scorelon adjustelonr"));
 
-    Explanation boostCombo = isHit
-        ? Explanation.match((float) scoringData.scoreAfterBoost,
-          "(MATCH) After Boosts and Demotions:", boostDetails)
-        : Explanation.noMatch("After Boosts and Demotions:", boostDetails);
+    elonxplanation boostCombo = isHit
+        ? elonxplanation.match((float) scoringData.scorelonAftelonrBoost,
+          "(MATCH) Aftelonr Boosts and Delonmotions:", boostDelontails)
+        : elonxplanation.noMatch("Aftelonr Boosts and Delonmotions:", boostDelontails);
 
-    details.add(boostCombo);
+    delontails.add(boostCombo);
   }
 
-  @Override
-  protected Explanation doExplain(float luceneQueryScore) throws IOException {
-    // Run the scorer again and get the explanation.
-    ExplanationWrapper explanation = new ExplanationWrapper();
-    scoreInternal(luceneQueryScore, explanation);
-    return explanation.explanation;
+  @Ovelonrridelon
+  protelonctelond elonxplanation doelonxplain(float lucelonnelonQuelonryScorelon) throws IOelonxcelonption {
+    // Run thelon scorelonr again and gelont thelon elonxplanation.
+    elonxplanationWrappelonr elonxplanation = nelonw elonxplanationWrappelonr();
+    scorelonIntelonrnal(lucelonnelonQuelonryScorelon, elonxplanation);
+    relonturn elonxplanation.elonxplanation;
   }
 
-  @Override
-  public void populateResultMetadataBasedOnScoringData(
-      ThriftSearchResultMetadataOptions options,
-      ThriftSearchResultMetadata metadata,
-      LinearScoringData data) throws IOException {
-    metadata.setResultType(searchResultType);
-    metadata.setScore(data.scoreReturned);
-    metadata.setFromUserId(data.fromUserId);
+  @Ovelonrridelon
+  public void populatelonRelonsultMelontadataBaselondOnScoringData(
+      ThriftSelonarchRelonsultMelontadataOptions options,
+      ThriftSelonarchRelonsultMelontadata melontadata,
+      LinelonarScoringData data) throws IOelonxcelonption {
+    melontadata.selontRelonsultTypelon(selonarchRelonsultTypelon);
+    melontadata.selontScorelon(data.scorelonRelonturnelond);
+    melontadata.selontFromUselonrId(data.fromUselonrId);
 
-    if (data.isTrusted) {
-      metadata.setIsTrusted(true);
+    if (data.isTrustelond) {
+      melontadata.selontIsTrustelond(truelon);
     }
     if (data.isFollow) {
-      metadata.setIsFollow(true);
+      melontadata.selontIsFollow(truelon);
     }
-    if (data.skipReason != SkipReason.NOT_SKIPPED) {
-      metadata.setSkipped(true);
+    if (data.skipRelonason != SkipRelonason.NOT_SKIPPelonD) {
+      melontadata.selontSkippelond(truelon);
     }
-    if ((data.isRetweet || (params.getInReplyToStatusId && data.isReply))
-        && data.sharedStatusId != LinearScoringData.UNSET_SIGNAL_VALUE) {
-      metadata.setSharedStatusId(data.sharedStatusId);
+    if ((data.isRelontwelonelont || (params.gelontInRelonplyToStatusId && data.isRelonply))
+        && data.sharelondStatusId != LinelonarScoringData.UNSelonT_SIGNAL_VALUelon) {
+      melontadata.selontSharelondStatusId(data.sharelondStatusId);
     }
     if (data.hasCard) {
-      metadata.setCardType(data.cardType);
+      melontadata.selontCardTypelon(data.cardTypelon);
     }
 
-    // Optional features.  Note: other optional metadata is populated by
-    // AbstractRelevanceCollector, not the scoring function.
+    // Optional felonaturelons.  Notelon: othelonr optional melontadata is populatelond by
+    // AbstractRelonlelonvancelonCollelonctor, not thelon scoring function.
 
-    if (options.isGetLuceneScore()) {
-      metadata.setLuceneScore(data.luceneScore);
+    if (options.isGelontLucelonnelonScorelon()) {
+      melontadata.selontLucelonnelonScorelon(data.lucelonnelonScorelon);
     }
-    if (options.isGetReferencedTweetAuthorId()
-        && data.referenceAuthorId != LinearScoringData.UNSET_SIGNAL_VALUE) {
-      metadata.setReferencedTweetAuthorId(data.referenceAuthorId);
-    }
-
-    if (options.isGetMediaBits()) {
-      metadata.setHasConsumerVideo(data.hasConsumerVideo);
-      metadata.setHasProVideo(data.hasProVideo);
-      metadata.setHasVine(data.hasVine);
-      metadata.setHasPeriscope(data.hasPeriscope);
-      boolean hasNativeVideo =
-          data.hasConsumerVideo || data.hasProVideo || data.hasVine || data.hasPeriscope;
-      metadata.setHasNativeVideo(hasNativeVideo);
-      metadata.setHasNativeImage(data.hasNativeImage);
+    if (options.isGelontRelonfelonrelonncelondTwelonelontAuthorId()
+        && data.relonfelonrelonncelonAuthorId != LinelonarScoringData.UNSelonT_SIGNAL_VALUelon) {
+      melontadata.selontRelonfelonrelonncelondTwelonelontAuthorId(data.relonfelonrelonncelonAuthorId);
     }
 
-    metadata
-        .setIsOffensive(data.isOffensive)
-        .setIsReply(data.isReply)
-        .setIsRetweet(data.isRetweet)
-        .setHasLink(data.hasUrl)
-        .setHasTrend(data.hasTrend)
-        .setHasMultipleHashtagsOrTrends(data.hasMultipleHashtagsOrTrends)
-        .setRetweetCount((int) data.retweetCountPostLog2)
-        .setFavCount((int) data.favCountPostLog2)
-        .setReplyCount((int) data.replyCountPostLog2)
-        .setEmbedsImpressionCount((int) data.embedsImpressionCount)
-        .setEmbedsUrlCount((int) data.embedsUrlCount)
-        .setVideoViewCount((int) data.videoViewCount)
-        .setResultType(searchResultType)
-        .setFromVerifiedAccount(data.isFromVerifiedAccount)
-        .setIsUserSpam(data.isUserSpam)
-        .setIsUserNSFW(data.isUserNSFW)
-        .setIsUserBot(data.isUserBot)
-        .setHasImage(data.hasImageUrl)
-        .setHasVideo(data.hasVideoUrl)
-        .setHasNews(data.hasNewsUrl)
-        .setHasCard(data.hasCard)
-        .setHasVisibleLink(data.hasVisibleLink)
-        .setParusScore(data.parusScore)
-        .setTextScore(data.textScore)
-        .setUserRep(data.userRep)
-        .setTokenAt140DividedByNumTokensBucket(data.tokenAt140DividedByNumTokensBucket);
-
-    if (!metadata.isSetExtraMetadata()) {
-      metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
-    }
-    ThriftSearchResultExtraMetadata extraMetadata = metadata.getExtraMetadata();
-
-    // Promotion/Demotion features
-    extraMetadata.setUserLangScore(data.userLangMult)
-        .setHasDifferentLang(data.hasDifferentLang)
-        .setHasEnglishTweetAndDifferentUILang(data.hasEnglishTweetAndDifferentUILang)
-        .setHasEnglishUIAndDifferentTweetLang(data.hasEnglishUIAndDifferentTweetLang)
-        .setHasQuote(data.hasQuote)
-        .setQuotedCount((int) data.quotedCount)
-        .setWeightedRetweetCount((int) data.weightedRetweetCount)
-        .setWeightedReplyCount((int) data.weightedReplyCount)
-        .setWeightedFavCount((int) data.weightedFavCount)
-        .setWeightedQuoteCount((int) data.weightedQuoteCount)
-        .setQuerySpecificScore(data.querySpecificScore)
-        .setAuthorSpecificScore(data.authorSpecificScore)
-        .setRetweetCountV2((int) data.retweetCountV2)
-        .setFavCountV2((int) data.favCountV2)
-        .setReplyCountV2((int) data.replyCountV2)
-        .setIsComposerSourceCamera(data.isComposerSourceCamera)
-        .setFromBlueVerifiedAccount(data.isFromBlueVerifiedAccount);
-
-    // Health model scores features
-    extraMetadata
-        .setToxicityScore(data.toxicityScore)
-        .setPBlockScore(data.pBlockScore)
-        .setPSpammyTweetScore(data.pSpammyTweetScore)
-        .setPReportedTweetScore(data.pReportedTweetScore)
-        .setSpammyTweetContentScore(data.spammyTweetContentScore)
-        .setExperimentalHealthModelScore1(data.experimentalHealthModelScore1)
-        .setExperimentalHealthModelScore2(data.experimentalHealthModelScore2)
-        .setExperimentalHealthModelScore3(data.experimentalHealthModelScore3)
-        .setExperimentalHealthModelScore4(data.experimentalHealthModelScore4);
-
-    // Return all extra features for clients to consume.
-    if (options.isGetAllFeatures()) {
-      extraMetadata.setIsSensitiveContent(data.isSensitiveContent)
-          .setHasMultipleMediaFlag(data.hasMultipleMediaFlag)
-          .setProfileIsEggFlag(data.profileIsEggFlag)
-          .setIsUserNewFlag(data.isUserNewFlag)
-          .setNumMentions(data.numMentions)
-          .setNumHashtags(data.numHashtags)
-          .setLinkLanguage(data.linkLanguage)
-          .setPrevUserTweetEngagement(data.prevUserTweetEngagement);
+    if (options.isGelontMelondiaBits()) {
+      melontadata.selontHasConsumelonrVidelono(data.hasConsumelonrVidelono);
+      melontadata.selontHasProVidelono(data.hasProVidelono);
+      melontadata.selontHasVinelon(data.hasVinelon);
+      melontadata.selontHasPelonriscopelon(data.hasPelonriscopelon);
+      boolelonan hasNativelonVidelono =
+          data.hasConsumelonrVidelono || data.hasProVidelono || data.hasVinelon || data.hasPelonriscopelon;
+      melontadata.selontHasNativelonVidelono(hasNativelonVidelono);
+      melontadata.selontHasNativelonImagelon(data.hasNativelonImagelon);
     }
 
-    // Set features in new Feature Access API format, in the future this will be the only part
-    // needed in this method, we don't need to set any other metadata fields any more.
-    if (options.isReturnSearchResultFeatures()) {
-      // If the features are unset, and they were requested, then we can retrieve them. If they are
-      // already set, then we don't need to re-read the document features, and the reader
-      // is probably positioned over the wrong document so it will return incorrect results.
-      if (!extraMetadata.isSetFeatures()) {
-        // We ignore all features with default values when returning them in the response,
-        // because it saves a lot of network bandwidth.
-        ThriftSearchResultFeatures features = createFeaturesForDocument(data, true).getFeatures();
-        extraMetadata.setFeatures(features);
+    melontadata
+        .selontIsOffelonnsivelon(data.isOffelonnsivelon)
+        .selontIsRelonply(data.isRelonply)
+        .selontIsRelontwelonelont(data.isRelontwelonelont)
+        .selontHasLink(data.hasUrl)
+        .selontHasTrelonnd(data.hasTrelonnd)
+        .selontHasMultiplelonHashtagsOrTrelonnds(data.hasMultiplelonHashtagsOrTrelonnds)
+        .selontRelontwelonelontCount((int) data.relontwelonelontCountPostLog2)
+        .selontFavCount((int) data.favCountPostLog2)
+        .selontRelonplyCount((int) data.relonplyCountPostLog2)
+        .selontelonmbelondsImprelonssionCount((int) data.elonmbelondsImprelonssionCount)
+        .selontelonmbelondsUrlCount((int) data.elonmbelondsUrlCount)
+        .selontVidelonoVielonwCount((int) data.videlonoVielonwCount)
+        .selontRelonsultTypelon(selonarchRelonsultTypelon)
+        .selontFromVelonrifielondAccount(data.isFromVelonrifielondAccount)
+        .selontIsUselonrSpam(data.isUselonrSpam)
+        .selontIsUselonrNSFW(data.isUselonrNSFW)
+        .selontIsUselonrBot(data.isUselonrBot)
+        .selontHasImagelon(data.hasImagelonUrl)
+        .selontHasVidelono(data.hasVidelonoUrl)
+        .selontHasNelonws(data.hasNelonwsUrl)
+        .selontHasCard(data.hasCard)
+        .selontHasVisiblelonLink(data.hasVisiblelonLink)
+        .selontParusScorelon(data.parusScorelon)
+        .selontTelonxtScorelon(data.telonxtScorelon)
+        .selontUselonrRelonp(data.uselonrRelonp)
+        .selontTokelonnAt140DividelondByNumTokelonnsBuckelont(data.tokelonnAt140DividelondByNumTokelonnsBuckelont);
+
+    if (!melontadata.isSelontelonxtraMelontadata()) {
+      melontadata.selontelonxtraMelontadata(nelonw ThriftSelonarchRelonsultelonxtraMelontadata());
+    }
+    ThriftSelonarchRelonsultelonxtraMelontadata elonxtraMelontadata = melontadata.gelontelonxtraMelontadata();
+
+    // Promotion/Delonmotion felonaturelons
+    elonxtraMelontadata.selontUselonrLangScorelon(data.uselonrLangMult)
+        .selontHasDiffelonrelonntLang(data.hasDiffelonrelonntLang)
+        .selontHaselonnglishTwelonelontAndDiffelonrelonntUILang(data.haselonnglishTwelonelontAndDiffelonrelonntUILang)
+        .selontHaselonnglishUIAndDiffelonrelonntTwelonelontLang(data.haselonnglishUIAndDiffelonrelonntTwelonelontLang)
+        .selontHasQuotelon(data.hasQuotelon)
+        .selontQuotelondCount((int) data.quotelondCount)
+        .selontWelonightelondRelontwelonelontCount((int) data.welonightelondRelontwelonelontCount)
+        .selontWelonightelondRelonplyCount((int) data.welonightelondRelonplyCount)
+        .selontWelonightelondFavCount((int) data.welonightelondFavCount)
+        .selontWelonightelondQuotelonCount((int) data.welonightelondQuotelonCount)
+        .selontQuelonrySpeloncificScorelon(data.quelonrySpeloncificScorelon)
+        .selontAuthorSpeloncificScorelon(data.authorSpeloncificScorelon)
+        .selontRelontwelonelontCountV2((int) data.relontwelonelontCountV2)
+        .selontFavCountV2((int) data.favCountV2)
+        .selontRelonplyCountV2((int) data.relonplyCountV2)
+        .selontIsComposelonrSourcelonCamelonra(data.isComposelonrSourcelonCamelonra)
+        .selontFromBluelonVelonrifielondAccount(data.isFromBluelonVelonrifielondAccount);
+
+    // Helonalth modelonl scorelons felonaturelons
+    elonxtraMelontadata
+        .selontToxicityScorelon(data.toxicityScorelon)
+        .selontPBlockScorelon(data.pBlockScorelon)
+        .selontPSpammyTwelonelontScorelon(data.pSpammyTwelonelontScorelon)
+        .selontPRelonportelondTwelonelontScorelon(data.pRelonportelondTwelonelontScorelon)
+        .selontSpammyTwelonelontContelonntScorelon(data.spammyTwelonelontContelonntScorelon)
+        .selontelonxpelonrimelonntalHelonalthModelonlScorelon1(data.elonxpelonrimelonntalHelonalthModelonlScorelon1)
+        .selontelonxpelonrimelonntalHelonalthModelonlScorelon2(data.elonxpelonrimelonntalHelonalthModelonlScorelon2)
+        .selontelonxpelonrimelonntalHelonalthModelonlScorelon3(data.elonxpelonrimelonntalHelonalthModelonlScorelon3)
+        .selontelonxpelonrimelonntalHelonalthModelonlScorelon4(data.elonxpelonrimelonntalHelonalthModelonlScorelon4);
+
+    // Relonturn all elonxtra felonaturelons for clielonnts to consumelon.
+    if (options.isGelontAllFelonaturelons()) {
+      elonxtraMelontadata.selontIsSelonnsitivelonContelonnt(data.isSelonnsitivelonContelonnt)
+          .selontHasMultiplelonMelondiaFlag(data.hasMultiplelonMelondiaFlag)
+          .selontProfilelonIselonggFlag(data.profilelonIselonggFlag)
+          .selontIsUselonrNelonwFlag(data.isUselonrNelonwFlag)
+          .selontNumMelonntions(data.numMelonntions)
+          .selontNumHashtags(data.numHashtags)
+          .selontLinkLanguagelon(data.linkLanguagelon)
+          .selontPrelonvUselonrTwelonelontelonngagelonmelonnt(data.prelonvUselonrTwelonelontelonngagelonmelonnt);
+    }
+
+    // Selont felonaturelons in nelonw Felonaturelon Accelonss API format, in thelon futurelon this will belon thelon only part
+    // nelonelondelond in this melonthod, welon don't nelonelond to selont any othelonr melontadata fielonlds any morelon.
+    if (options.isRelonturnSelonarchRelonsultFelonaturelons()) {
+      // If thelon felonaturelons arelon unselont, and thelony welonrelon relonquelonstelond, thelonn welon can relontrielonvelon thelonm. If thelony arelon
+      // alrelonady selont, thelonn welon don't nelonelond to relon-relonad thelon documelonnt felonaturelons, and thelon relonadelonr
+      // is probably positionelond ovelonr thelon wrong documelonnt so it will relonturn incorrelonct relonsults.
+      if (!elonxtraMelontadata.isSelontFelonaturelons()) {
+        // Welon ignorelon all felonaturelons with delonfault valuelons whelonn relonturning thelonm in thelon relonsponselon,
+        // beloncauselon it savelons a lot of nelontwork bandwidth.
+        ThriftSelonarchRelonsultFelonaturelons felonaturelons = crelonatelonFelonaturelonsForDocumelonnt(data, truelon).gelontFelonaturelons();
+        elonxtraMelontadata.selontFelonaturelons(felonaturelons);
       }
 
-      // The raw score may have changed since we created the features, so we should update it.
-      extraMetadata.getFeatures().getDoubleValues()
-          .put(ExternalTweetFeature.RAW_EARLYBIRD_SCORE.getId(), data.scoreFinal);
+      // Thelon raw scorelon may havelon changelond sincelon welon crelonatelond thelon felonaturelons, so welon should updatelon it.
+      elonxtraMelontadata.gelontFelonaturelons().gelontDoublelonValuelons()
+          .put(elonxtelonrnalTwelonelontFelonaturelon.RAW_elonARLYBIRD_SCORelon.gelontId(), data.scorelonFinal);
     }
 
-    metadata
-        .setIsSelfTweet(data.isSelfTweet)
-        .setIsUserAntiSocial(data.isUserAntiSocial);
+    melontadata
+        .selontIsSelonlfTwelonelont(data.isSelonlfTwelonelont)
+        .selontIsUselonrAntiSocial(data.isUselonrAntiSocial);
   }
 
   /**
-   * Create earlybird basic features and dervied features for current document.
-   * @return a FeatureHandler object where you can keep adding extra feature values, or you can
-   * call .getFeatures() on it to get a Thrift object to return.
+   * Crelonatelon elonarlybird basic felonaturelons and delonrvielond felonaturelons for currelonnt documelonnt.
+   * @relonturn a FelonaturelonHandlelonr objelonct whelonrelon you can kelonelonp adding elonxtra felonaturelon valuelons, or you can
+   * call .gelontFelonaturelons() on it to gelont a Thrift objelonct to relonturn.
    */
-  protected FeatureHandler createFeaturesForDocument(
-      LinearScoringData data, boolean ignoreDefaultValues) throws IOException {
-    ThriftSearchResultFeatures features = documentFeatures.getSearchResultFeatures(getSchema());
-    if (!ignoreDefaultValues) {
-      setDefaultFeatureValues(features);
+  protelonctelond FelonaturelonHandlelonr crelonatelonFelonaturelonsForDocumelonnt(
+      LinelonarScoringData data, boolelonan ignorelonDelonfaultValuelons) throws IOelonxcelonption {
+    ThriftSelonarchRelonsultFelonaturelons felonaturelons = documelonntFelonaturelons.gelontSelonarchRelonsultFelonaturelons(gelontSchelonma());
+    if (!ignorelonDelonfaultValuelons) {
+      selontDelonfaultFelonaturelonValuelons(felonaturelons);
     }
 
-    // add derived features
-    return new FeatureHandler(features, ignoreDefaultValues)
-        .addDouble(ExternalTweetFeature.LUCENE_SCORE, data.luceneScore)
-        .addInt(ExternalTweetFeature.TWEET_AGE_IN_SECS, data.tweetAgeInSeconds)
-        .addBoolean(ExternalTweetFeature.IS_SELF_TWEET, data.isSelfTweet)
-        .addBoolean(ExternalTweetFeature.IS_FOLLOW_RETWEET, data.isFollow && data.isRetweet)
-        .addBoolean(ExternalTweetFeature.IS_TRUSTED_RETWEET, data.isTrusted && data.isRetweet)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_FOLLOW, data.isFollow)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_TRUSTED, data.isTrusted)
-        .addBoolean(ExternalTweetFeature.AUTHOR_IS_ANTISOCIAL, data.isUserAntiSocial)
-        .addBoolean(ExternalTweetFeature.HAS_DIFF_LANG, data.hasDifferentLang)
-        .addBoolean(ExternalTweetFeature.HAS_ENGLISH_TWEET_DIFF_UI_LANG,
-            data.hasEnglishTweetAndDifferentUILang)
-        .addBoolean(ExternalTweetFeature.HAS_ENGLISH_UI_DIFF_TWEET_LANG,
-            data.hasEnglishUIAndDifferentTweetLang)
-        .addDouble(ExternalTweetFeature.SEARCHER_LANG_SCORE, data.userLangMult)
-        .addDouble(ExternalTweetFeature.QUERY_SPECIFIC_SCORE, data.querySpecificScore)
-        .addDouble(ExternalTweetFeature.AUTHOR_SPECIFIC_SCORE, data.authorSpecificScore);
+    // add delonrivelond felonaturelons
+    relonturn nelonw FelonaturelonHandlelonr(felonaturelons, ignorelonDelonfaultValuelons)
+        .addDoublelon(elonxtelonrnalTwelonelontFelonaturelon.LUCelonNelon_SCORelon, data.lucelonnelonScorelon)
+        .addInt(elonxtelonrnalTwelonelontFelonaturelon.TWelonelonT_AGelon_IN_SelonCS, data.twelonelontAgelonInSelonconds)
+        .addBoolelonan(elonxtelonrnalTwelonelontFelonaturelon.IS_SelonLF_TWelonelonT, data.isSelonlfTwelonelont)
+        .addBoolelonan(elonxtelonrnalTwelonelontFelonaturelon.IS_FOLLOW_RelonTWelonelonT, data.isFollow && data.isRelontwelonelont)
+        .addBoolelonan(elonxtelonrnalTwelonelontFelonaturelon.IS_TRUSTelonD_RelonTWelonelonT, data.isTrustelond && data.isRelontwelonelont)
+        .addBoolelonan(elonxtelonrnalTwelonelontFelonaturelon.AUTHOR_IS_FOLLOW, data.isFollow)
+        .addBoolelonan(elonxtelonrnalTwelonelontFelonaturelon.AUTHOR_IS_TRUSTelonD, data.isTrustelond)
+        .addBoolelonan(elonxtelonrnalTwelonelontFelonaturelon.AUTHOR_IS_ANTISOCIAL, data.isUselonrAntiSocial)
+        .addBoolelonan(elonxtelonrnalTwelonelontFelonaturelon.HAS_DIFF_LANG, data.hasDiffelonrelonntLang)
+        .addBoolelonan(elonxtelonrnalTwelonelontFelonaturelon.HAS_elonNGLISH_TWelonelonT_DIFF_UI_LANG,
+            data.haselonnglishTwelonelontAndDiffelonrelonntUILang)
+        .addBoolelonan(elonxtelonrnalTwelonelontFelonaturelon.HAS_elonNGLISH_UI_DIFF_TWelonelonT_LANG,
+            data.haselonnglishUIAndDiffelonrelonntTwelonelontLang)
+        .addDoublelon(elonxtelonrnalTwelonelontFelonaturelon.SelonARCHelonR_LANG_SCORelon, data.uselonrLangMult)
+        .addDoublelon(elonxtelonrnalTwelonelontFelonaturelon.QUelonRY_SPelonCIFIC_SCORelon, data.quelonrySpeloncificScorelon)
+        .addDoublelon(elonxtelonrnalTwelonelontFelonaturelon.AUTHOR_SPelonCIFIC_SCORelon, data.authorSpeloncificScorelon);
   }
 
   /**
-   * Adds default values for most numeric features that do not have a value set yet in the given
-   * ThriftSearchResultFeatures instance.
+   * Adds delonfault valuelons for most numelonric felonaturelons that do not havelon a valuelon selont yelont in thelon givelonn
+   * ThriftSelonarchRelonsultFelonaturelons instancelon.
    *
-   * This method is needed because some models do not work properly with missing features. Instead,
-   * they expect all features to be present even if they are unset (their values are 0).
+   * This melonthod is nelonelondelond beloncauselon somelon modelonls do not work propelonrly with missing felonaturelons. Instelonad,
+   * thelony elonxpelonct all felonaturelons to belon prelonselonnt elonvelonn if thelony arelon unselont (thelonir valuelons arelon 0).
    */
-  protected void setDefaultFeatureValues(ThriftSearchResultFeatures features) {
-    for (Map.Entry<Integer, ThriftSearchFeatureSchemaEntry> entry
-             : getSchema().getSearchFeatureSchema().getEntries().entrySet()) {
-      int featureId = entry.getKey();
-      ThriftSearchFeatureSchemaEntry schemaEntry = entry.getValue();
-      if (shouldSetDefaultValueForFeature(schemaEntry.getFeatureType(), featureId)) {
-        switch (schemaEntry.getFeatureType()) {
-          case INT32_VALUE:
-            features.getIntValues().putIfAbsent(featureId, 0);
-            break;
-          case LONG_VALUE:
-            features.getLongValues().putIfAbsent(featureId, 0L);
-            break;
-          case DOUBLE_VALUE:
-            features.getDoubleValues().putIfAbsent(featureId, 0.0);
-            break;
-          default:
-            throw new IllegalArgumentException(
-                "Should set default values only for integer, long or double features. Instead, "
-                + "found feature " + featureId + " of type " + schemaEntry.getFeatureType());
+  protelonctelond void selontDelonfaultFelonaturelonValuelons(ThriftSelonarchRelonsultFelonaturelons felonaturelons) {
+    for (Map.elonntry<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> elonntry
+             : gelontSchelonma().gelontSelonarchFelonaturelonSchelonma().gelontelonntrielons().elonntrySelont()) {
+      int felonaturelonId = elonntry.gelontKelony();
+      ThriftSelonarchFelonaturelonSchelonmaelonntry schelonmaelonntry = elonntry.gelontValuelon();
+      if (shouldSelontDelonfaultValuelonForFelonaturelon(schelonmaelonntry.gelontFelonaturelonTypelon(), felonaturelonId)) {
+        switch (schelonmaelonntry.gelontFelonaturelonTypelon()) {
+          caselon INT32_VALUelon:
+            felonaturelons.gelontIntValuelons().putIfAbselonnt(felonaturelonId, 0);
+            brelonak;
+          caselon LONG_VALUelon:
+            felonaturelons.gelontLongValuelons().putIfAbselonnt(felonaturelonId, 0L);
+            brelonak;
+          caselon DOUBLelon_VALUelon:
+            felonaturelons.gelontDoublelonValuelons().putIfAbselonnt(felonaturelonId, 0.0);
+            brelonak;
+          delonfault:
+            throw nelonw IllelongalArgumelonntelonxcelonption(
+                "Should selont delonfault valuelons only for intelongelonr, long or doublelon felonaturelons. Instelonad, "
+                + "found felonaturelon " + felonaturelonId + " of typelon " + schelonmaelonntry.gelontFelonaturelonTypelon());
         }
       }
     }
   }
 
-  protected void overrideFeatureValues(ThriftSearchResultFeatures features,
-                                       ThriftSearchResultFeatures overrideFeatures) {
-    LOG.info("Features before override {}", features);
-    if (overrideFeatures.isSetIntValues()) {
-      overrideFeatures.getIntValues().forEach(features::putToIntValues);
+  protelonctelond void ovelonrridelonFelonaturelonValuelons(ThriftSelonarchRelonsultFelonaturelons felonaturelons,
+                                       ThriftSelonarchRelonsultFelonaturelons ovelonrridelonFelonaturelons) {
+    LOG.info("Felonaturelons belonforelon ovelonrridelon {}", felonaturelons);
+    if (ovelonrridelonFelonaturelons.isSelontIntValuelons()) {
+      ovelonrridelonFelonaturelons.gelontIntValuelons().forelonach(felonaturelons::putToIntValuelons);
     }
-    if (overrideFeatures.isSetLongValues()) {
-      overrideFeatures.getLongValues().forEach(features::putToLongValues);
+    if (ovelonrridelonFelonaturelons.isSelontLongValuelons()) {
+      ovelonrridelonFelonaturelons.gelontLongValuelons().forelonach(felonaturelons::putToLongValuelons);
     }
-    if (overrideFeatures.isSetDoubleValues()) {
-      overrideFeatures.getDoubleValues().forEach(features::putToDoubleValues);
+    if (ovelonrridelonFelonaturelons.isSelontDoublelonValuelons()) {
+      ovelonrridelonFelonaturelons.gelontDoublelonValuelons().forelonach(felonaturelons::putToDoublelonValuelons);
     }
-    if (overrideFeatures.isSetBoolValues()) {
-      overrideFeatures.getBoolValues().forEach(features::putToBoolValues);
+    if (ovelonrridelonFelonaturelons.isSelontBoolValuelons()) {
+      ovelonrridelonFelonaturelons.gelontBoolValuelons().forelonach(felonaturelons::putToBoolValuelons);
     }
-    if (overrideFeatures.isSetStringValues()) {
-      overrideFeatures.getStringValues().forEach(features::putToStringValues);
+    if (ovelonrridelonFelonaturelons.isSelontStringValuelons()) {
+      ovelonrridelonFelonaturelons.gelontStringValuelons().forelonach(felonaturelons::putToStringValuelons);
     }
-    if (overrideFeatures.isSetBytesValues()) {
-      overrideFeatures.getBytesValues().forEach(features::putToBytesValues);
+    if (ovelonrridelonFelonaturelons.isSelontBytelonsValuelons()) {
+      ovelonrridelonFelonaturelons.gelontBytelonsValuelons().forelonach(felonaturelons::putToBytelonsValuelons);
     }
-    if (overrideFeatures.isSetFeatureStoreDiscreteValues()) {
-      overrideFeatures.getFeatureStoreDiscreteValues().forEach(
-          features::putToFeatureStoreDiscreteValues);
+    if (ovelonrridelonFelonaturelons.isSelontFelonaturelonStorelonDiscrelontelonValuelons()) {
+      ovelonrridelonFelonaturelons.gelontFelonaturelonStorelonDiscrelontelonValuelons().forelonach(
+          felonaturelons::putToFelonaturelonStorelonDiscrelontelonValuelons);
     }
-    if (overrideFeatures.isSetSparseBinaryValues()) {
-      overrideFeatures.getSparseBinaryValues().forEach(features::putToSparseBinaryValues);
+    if (ovelonrridelonFelonaturelons.isSelontSparselonBinaryValuelons()) {
+      ovelonrridelonFelonaturelons.gelontSparselonBinaryValuelons().forelonach(felonaturelons::putToSparselonBinaryValuelons);
     }
-    if (overrideFeatures.isSetSparseContinuousValues()) {
-      overrideFeatures.getSparseContinuousValues().forEach(features::putToSparseContinuousValues);
+    if (ovelonrridelonFelonaturelons.isSelontSparselonContinuousValuelons()) {
+      ovelonrridelonFelonaturelons.gelontSparselonContinuousValuelons().forelonach(felonaturelons::putToSparselonContinuousValuelons);
     }
-    if (overrideFeatures.isSetGeneralTensorValues()) {
-      overrideFeatures.getGeneralTensorValues().forEach(features::putToGeneralTensorValues);
+    if (ovelonrridelonFelonaturelons.isSelontGelonnelonralTelonnsorValuelons()) {
+      ovelonrridelonFelonaturelons.gelontGelonnelonralTelonnsorValuelons().forelonach(felonaturelons::putToGelonnelonralTelonnsorValuelons);
     }
-    if (overrideFeatures.isSetStringTensorValues()) {
-      overrideFeatures.getStringTensorValues().forEach(features::putToStringTensorValues);
+    if (ovelonrridelonFelonaturelons.isSelontStringTelonnsorValuelons()) {
+      ovelonrridelonFelonaturelons.gelontStringTelonnsorValuelons().forelonach(felonaturelons::putToStringTelonnsorValuelons);
     }
-    LOG.info("Features after override {}", features);
+    LOG.info("Felonaturelons aftelonr ovelonrridelon {}", felonaturelons);
   }
 
   /**
-   * Check if a feature is eligible to have its default value automatically set when absent.
-   * We have a similar logic for building data record.
+   * Chelonck if a felonaturelon is elonligiblelon to havelon its delonfault valuelon automatically selont whelonn abselonnt.
+   * Welon havelon a similar logic for building data reloncord.
    */
-  private static boolean shouldSetDefaultValueForFeature(
-      ThriftSearchFeatureType type, int featureId) {
-    return ALLOWED_TYPES_FOR_DEFAULT_FEATURE_VALUES.contains(type)
-        && !NUMERIC_FEATURES_FOR_WHICH_DEFAULTS_SHOULD_NOT_BE_SET.contains(featureId)
-        && (ExternalTweetFeature.EARLYBIRD_INDEXED_FEATURE_IDS.contains(featureId)
-            || ExternalTweetFeature.EARLYBIRD_DERIVED_FEATURE_IDS.contains(featureId));
+  privatelon static boolelonan shouldSelontDelonfaultValuelonForFelonaturelon(
+      ThriftSelonarchFelonaturelonTypelon typelon, int felonaturelonId) {
+    relonturn ALLOWelonD_TYPelonS_FOR_DelonFAULT_FelonATURelon_VALUelonS.contains(typelon)
+        && !NUMelonRIC_FelonATURelonS_FOR_WHICH_DelonFAULTS_SHOULD_NOT_Belon_SelonT.contains(felonaturelonId)
+        && (elonxtelonrnalTwelonelontFelonaturelon.elonARLYBIRD_INDelonXelonD_FelonATURelon_IDS.contains(felonaturelonId)
+            || elonxtelonrnalTwelonelontFelonaturelon.elonARLYBIRD_DelonRIVelonD_FelonATURelon_IDS.contains(felonaturelonId));
   }
 
-  @Override
-  public void updateRelevanceStats(ThriftSearchResultsRelevanceStats relevanceStats) {
-    if (relevanceStats == null) {
-      return;
+  @Ovelonrridelon
+  public void updatelonRelonlelonvancelonStats(ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats) {
+    if (relonlelonvancelonStats == null) {
+      relonturn;
     }
 
-    LinearScoringData data = getScoringDataForCurrentDocument();
+    LinelonarScoringData data = gelontScoringDataForCurrelonntDocumelonnt();
 
-    if (data.tweetAgeInSeconds > relevanceStats.getOldestScoredTweetAgeInSeconds()) {
-      relevanceStats.setOldestScoredTweetAgeInSeconds(data.tweetAgeInSeconds);
+    if (data.twelonelontAgelonInSelonconds > relonlelonvancelonStats.gelontOldelonstScorelondTwelonelontAgelonInSelonconds()) {
+      relonlelonvancelonStats.selontOldelonstScorelondTwelonelontAgelonInSelonconds(data.twelonelontAgelonInSelonconds);
     }
-    relevanceStats.setNumScored(relevanceStats.getNumScored() + 1);
-    if (data.scoreReturned == SKIP_HIT) {
-      relevanceStats.setNumSkipped(relevanceStats.getNumSkipped() + 1);
-      switch(data.skipReason) {
-        case ANTIGAMING:
-          relevanceStats.setNumSkippedForAntiGaming(
-              relevanceStats.getNumSkippedForAntiGaming() + 1);
-          break;
-        case LOW_REPUTATION:
-          relevanceStats.setNumSkippedForLowReputation(
-              relevanceStats.getNumSkippedForLowReputation() + 1);
-          break;
-        case LOW_TEXT_SCORE:
-          relevanceStats.setNumSkippedForLowTextScore(
-              relevanceStats.getNumSkippedForLowTextScore() + 1);
-          break;
-        case SOCIAL_FILTER:
-          relevanceStats.setNumSkippedForSocialFilter(
-              relevanceStats.getNumSkippedForSocialFilter() + 1);
-          break;
-        case LOW_FINAL_SCORE:
-          relevanceStats.setNumSkippedForLowFinalScore(
-              relevanceStats.getNumSkippedForLowFinalScore() + 1);
-          break;
-        case LOW_RETWEET_COUNT:
-          break;
-        default:
-          LOG.warn("Unknown SkipReason: " + data.skipReason);
+    relonlelonvancelonStats.selontNumScorelond(relonlelonvancelonStats.gelontNumScorelond() + 1);
+    if (data.scorelonRelonturnelond == SKIP_HIT) {
+      relonlelonvancelonStats.selontNumSkippelond(relonlelonvancelonStats.gelontNumSkippelond() + 1);
+      switch(data.skipRelonason) {
+        caselon ANTIGAMING:
+          relonlelonvancelonStats.selontNumSkippelondForAntiGaming(
+              relonlelonvancelonStats.gelontNumSkippelondForAntiGaming() + 1);
+          brelonak;
+        caselon LOW_RelonPUTATION:
+          relonlelonvancelonStats.selontNumSkippelondForLowRelonputation(
+              relonlelonvancelonStats.gelontNumSkippelondForLowRelonputation() + 1);
+          brelonak;
+        caselon LOW_TelonXT_SCORelon:
+          relonlelonvancelonStats.selontNumSkippelondForLowTelonxtScorelon(
+              relonlelonvancelonStats.gelontNumSkippelondForLowTelonxtScorelon() + 1);
+          brelonak;
+        caselon SOCIAL_FILTelonR:
+          relonlelonvancelonStats.selontNumSkippelondForSocialFiltelonr(
+              relonlelonvancelonStats.gelontNumSkippelondForSocialFiltelonr() + 1);
+          brelonak;
+        caselon LOW_FINAL_SCORelon:
+          relonlelonvancelonStats.selontNumSkippelondForLowFinalScorelon(
+              relonlelonvancelonStats.gelontNumSkippelondForLowFinalScorelon() + 1);
+          brelonak;
+        caselon LOW_RelonTWelonelonT_COUNT:
+          brelonak;
+        delonfault:
+          LOG.warn("Unknown SkipRelonason: " + data.skipRelonason);
       }
     }
 
     if (data.isFollow) {
-      relevanceStats.setNumFromDirectFollows(relevanceStats.getNumFromDirectFollows() + 1);
+      relonlelonvancelonStats.selontNumFromDirelonctFollows(relonlelonvancelonStats.gelontNumFromDirelonctFollows() + 1);
     }
-    if (data.isTrusted) {
-      relevanceStats.setNumFromTrustedCircle(relevanceStats.getNumFromTrustedCircle() + 1);
+    if (data.isTrustelond) {
+      relonlelonvancelonStats.selontNumFromTrustelondCirclelon(relonlelonvancelonStats.gelontNumFromTrustelondCirclelon() + 1);
     }
-    if (data.isReply) {
-      relevanceStats.setNumReplies(relevanceStats.getNumReplies() + 1);
-      if (data.isTrusted) {
-        relevanceStats.setNumRepliesTrusted(relevanceStats.getNumRepliesTrusted() + 1);
-      } else if (!data.isFollow) {
-        relevanceStats.setNumRepliesOutOfNetwork(relevanceStats.getNumRepliesOutOfNetwork() + 1);
+    if (data.isRelonply) {
+      relonlelonvancelonStats.selontNumRelonplielons(relonlelonvancelonStats.gelontNumRelonplielons() + 1);
+      if (data.isTrustelond) {
+        relonlelonvancelonStats.selontNumRelonplielonsTrustelond(relonlelonvancelonStats.gelontNumRelonplielonsTrustelond() + 1);
+      } elonlselon if (!data.isFollow) {
+        relonlelonvancelonStats.selontNumRelonplielonsOutOfNelontwork(relonlelonvancelonStats.gelontNumRelonplielonsOutOfNelontwork() + 1);
       }
     }
-    if (data.isSelfTweet) {
-      relevanceStats.setNumSelfTweets(relevanceStats.getNumSelfTweets() + 1);
+    if (data.isSelonlfTwelonelont) {
+      relonlelonvancelonStats.selontNumSelonlfTwelonelonts(relonlelonvancelonStats.gelontNumSelonlfTwelonelonts() + 1);
     }
-    if (data.hasImageUrl || data.hasVideoUrl) {
-      relevanceStats.setNumWithMedia(relevanceStats.getNumWithMedia() + 1);
+    if (data.hasImagelonUrl || data.hasVidelonoUrl) {
+      relonlelonvancelonStats.selontNumWithMelondia(relonlelonvancelonStats.gelontNumWithMelondia() + 1);
     }
-    if (data.hasNewsUrl) {
-      relevanceStats.setNumWithNews(relevanceStats.getNumWithNews() + 1);
+    if (data.hasNelonwsUrl) {
+      relonlelonvancelonStats.selontNumWithNelonws(relonlelonvancelonStats.gelontNumWithNelonws() + 1);
     }
-    if (data.isUserSpam) {
-      relevanceStats.setNumSpamUser(relevanceStats.getNumSpamUser() + 1);
+    if (data.isUselonrSpam) {
+      relonlelonvancelonStats.selontNumSpamUselonr(relonlelonvancelonStats.gelontNumSpamUselonr() + 1);
     }
-    if (data.isUserNSFW) {
-      relevanceStats.setNumOffensive(relevanceStats.getNumOffensive() + 1);
+    if (data.isUselonrNSFW) {
+      relonlelonvancelonStats.selontNumOffelonnsivelon(relonlelonvancelonStats.gelontNumOffelonnsivelon() + 1);
     }
-    if (data.isUserBot) {
-      relevanceStats.setNumBot(relevanceStats.getNumBot() + 1);
+    if (data.isUselonrBot) {
+      relonlelonvancelonStats.selontNumBot(relonlelonvancelonStats.gelontNumBot() + 1);
     }
   }
 
-  @VisibleForTesting
-  static final class ExplanationWrapper {
-    private Explanation explanation;
+  @VisiblelonForTelonsting
+  static final class elonxplanationWrappelonr {
+    privatelon elonxplanation elonxplanation;
 
-    public Explanation getExplanation() {
-      return explanation;
+    public elonxplanation gelontelonxplanation() {
+      relonturn elonxplanation;
     }
 
-    @Override
+    @Ovelonrridelon
     public String toString() {
-      return explanation.toString();
+      relonturn elonxplanation.toString();
     }
   }
 }

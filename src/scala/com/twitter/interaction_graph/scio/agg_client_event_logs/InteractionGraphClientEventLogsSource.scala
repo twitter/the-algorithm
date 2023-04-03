@@ -1,40 +1,40 @@
-package com.twitter.interaction_graph.scio.agg_client_event_logs
+packagelon com.twittelonr.intelonraction_graph.scio.agg_clielonnt_elonvelonnt_logs
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
-import com.twitter.util.Duration
-import com.twitter.cde.scio.dal_read.SourceUtil
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.UserInteraction
-import com.twitter.wtf.scalding.jobs.client_event_processing.UserInteractionScalaDataset
-import org.joda.time.Interval
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.belonam.job.SelonrvicelonIdelonntifielonrOptions
+import com.twittelonr.twadoop.uselonr.gelonn.thriftscala.CombinelondUselonr
+import com.twittelonr.uselonrsourcelon.snapshot.combinelond.UselonrsourcelonScalaDataselont
+import com.twittelonr.util.Duration
+import com.twittelonr.cdelon.scio.dal_relonad.SourcelonUtil
+import com.twittelonr.wtf.scalding.clielonnt_elonvelonnt_procelonssing.thriftscala.UselonrIntelonraction
+import com.twittelonr.wtf.scalding.jobs.clielonnt_elonvelonnt_procelonssing.UselonrIntelonractionScalaDataselont
+import org.joda.timelon.Intelonrval
 
-case class InteractionGraphClientEventLogsSource(
-  pipelineOptions: InteractionGraphClientEventLogsOption
+caselon class IntelonractionGraphClielonntelonvelonntLogsSourcelon(
+  pipelonlinelonOptions: IntelonractionGraphClielonntelonvelonntLogsOption
 )(
-  implicit sc: ScioContext) {
+  implicit sc: ScioContelonxt) {
 
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  val dalelonnvironmelonnt: String = pipelonlinelonOptions
+    .as(classOf[SelonrvicelonIdelonntifielonrOptions])
+    .gelontelonnvironmelonnt()
 
-  def readUserInteractions(dateInterval: Interval): SCollection[UserInteraction] = {
+  delonf relonadUselonrIntelonractions(datelonIntelonrval: Intelonrval): SCollelonction[UselonrIntelonraction] = {
 
-    SourceUtil.readDALDataset[UserInteraction](
-      dataset = UserInteractionScalaDataset,
-      interval = dateInterval,
-      dalEnvironment = dalEnvironment)
+    SourcelonUtil.relonadDALDataselont[UselonrIntelonraction](
+      dataselont = UselonrIntelonractionScalaDataselont,
+      intelonrval = datelonIntelonrval,
+      dalelonnvironmelonnt = dalelonnvironmelonnt)
 
   }
 
-  def readCombinedUsers(): SCollection[CombinedUser] = {
+  delonf relonadCombinelondUselonrs(): SCollelonction[CombinelondUselonr] = {
 
-    SourceUtil.readMostRecentSnapshotNoOlderThanDALDataset[CombinedUser](
-      dataset = UsersourceScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment
+    SourcelonUtil.relonadMostReloncelonntSnapshotNoOldelonrThanDALDataselont[CombinelondUselonr](
+      dataselont = UselonrsourcelonScalaDataselont,
+      noOldelonrThan = Duration.fromDays(5),
+      dalelonnvironmelonnt = dalelonnvironmelonnt
     )
   }
 }

@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.score
+packagelon com.twittelonr.simclustelonrs_v2.scorelon
 
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore, ScoreId => ThriftScoreId}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.twittelonr.simclustelonrs_v2.thriftscala.{Scorelon => ThriftScorelon, ScorelonId => ThriftScorelonId}
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
 
 /**
- * A Score Store is a readableStore with ScoreId as Key and Score as the Value.
- * It also needs to include the algorithm type.
- * A algorithm type should only be used by one Score Store in the application.
+ * A Scorelon Storelon is a relonadablelonStorelon with ScorelonId as Kelony and Scorelon as thelon Valuelon.
+ * It also nelonelonds to includelon thelon algorithm typelon.
+ * A algorithm typelon should only belon uselond by onelon Scorelon Storelon in thelon application.
  */
-trait ScoreStore[K <: ScoreId] extends ReadableStore[K, Score] {
+trait ScorelonStorelon[K <: ScorelonId] elonxtelonnds RelonadablelonStorelon[K, Scorelon] {
 
-  def fromThriftScoreId: ThriftScoreId => K
+  delonf fromThriftScorelonId: ThriftScorelonId => K
 
-  // Convert to a Thrift version.
-  def toThriftStore: ReadableStore[ThriftScoreId, ThriftScore] = {
+  // Convelonrt to a Thrift velonrsion.
+  delonf toThriftStorelon: RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon] = {
     this
-      .composeKeyMapping[ThriftScoreId](fromThriftScoreId)
-      .mapValues(_.toThrift)
+      .composelonKelonyMapping[ThriftScorelonId](fromThriftScorelonId)
+      .mapValuelons(_.toThrift)
   }
 }
 
 /**
- * A generic Pairwise Score store.
- * Requires provide both left and right side feature hydration.
+ * A gelonnelonric Pairwiselon Scorelon storelon.
+ * Relonquirelons providelon both lelonft and right sidelon felonaturelon hydration.
  */
-trait PairScoreStore[K <: PairScoreId, K1, K2, V1, V2] extends ScoreStore[K] {
+trait PairScorelonStorelon[K <: PairScorelonId, K1, K2, V1, V2] elonxtelonnds ScorelonStorelon[K] {
 
-  def compositeKey1: K => K1
-  def compositeKey2: K => K2
+  delonf compositelonKelony1: K => K1
+  delonf compositelonKelony2: K => K2
 
-  // Left side feature hydration
-  def underlyingStore1: ReadableStore[K1, V1]
+  // Lelonft sidelon felonaturelon hydration
+  delonf undelonrlyingStorelon1: RelonadablelonStorelon[K1, V1]
 
-  // Right side feature hydration
-  def underlyingStore2: ReadableStore[K2, V2]
+  // Right sidelon felonaturelon hydration
+  delonf undelonrlyingStorelon2: RelonadablelonStorelon[K2, V2]
 
-  def score: (V1, V2) => Future[Option[Double]]
+  delonf scorelon: (V1, V2) => Futurelon[Option[Doublelon]]
 
-  override def get(k: K): Future[Option[Score]] = {
+  ovelonrridelon delonf gelont(k: K): Futurelon[Option[Scorelon]] = {
     for {
       vs <-
-        Future.join(underlyingStore1.get(compositeKey1(k)), underlyingStore2.get(compositeKey2(k)))
+        Futurelon.join(undelonrlyingStorelon1.gelont(compositelonKelony1(k)), undelonrlyingStorelon2.gelont(compositelonKelony2(k)))
       v <- vs match {
-        case (Some(v1), Some(v2)) =>
-          score(v1, v2)
-        case _ =>
-          Future.None
+        caselon (Somelon(v1), Somelon(v2)) =>
+          scorelon(v1, v2)
+        caselon _ =>
+          Futurelon.Nonelon
       }
-    } yield {
-      v.map(buildScore)
+    } yielonld {
+      v.map(buildScorelon)
     }
   }
 
-  override def multiGet[KK <: K](ks: Set[KK]): Map[KK, Future[Option[Score]]] = {
+  ovelonrridelon delonf multiGelont[KK <: K](ks: Selont[KK]): Map[KK, Futurelon[Option[Scorelon]]] = {
 
-    val v1Map = underlyingStore1.multiGet(ks.map { k => compositeKey1(k) })
-    val v2Map = underlyingStore2.multiGet(ks.map { k => compositeKey2(k) })
+    val v1Map = undelonrlyingStorelon1.multiGelont(ks.map { k => compositelonKelony1(k) })
+    val v2Map = undelonrlyingStorelon2.multiGelont(ks.map { k => compositelonKelony2(k) })
 
     ks.map { k =>
-      k -> Future.join(v1Map(compositeKey1(k)), v2Map(compositeKey2(k))).flatMap {
-        case (Some(v1), Some(v2)) =>
-          score(v1, v2).map(_.map(buildScore))
-        case _ =>
-          Future.value(None)
+      k -> Futurelon.join(v1Map(compositelonKelony1(k)), v2Map(compositelonKelony2(k))).flatMap {
+        caselon (Somelon(v1), Somelon(v2)) =>
+          scorelon(v1, v2).map(_.map(buildScorelon))
+        caselon _ =>
+          Futurelon.valuelon(Nonelon)
       }
     }.toMap
   }
 
-  private def buildScore(v: Double): Score = Score(v)
+  privatelon delonf buildScorelon(v: Doublelon): Scorelon = Scorelon(v)
 }

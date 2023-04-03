@@ -1,209 +1,209 @@
-package com.twitter.cr_mixer.source_signal
+packagelon com.twittelonr.cr_mixelonr.sourcelon_signal
 
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.param.GoodProfileClickParams
-import com.twitter.cr_mixer.param.GoodTweetClickParams
-import com.twitter.cr_mixer.param.RealGraphOonParams
-import com.twitter.cr_mixer.param.RecentFollowsParams
-import com.twitter.cr_mixer.param.RecentNegativeSignalParams
-import com.twitter.cr_mixer.param.RecentNotificationsParams
-import com.twitter.cr_mixer.param.RecentOriginalTweetsParams
-import com.twitter.cr_mixer.param.RecentReplyTweetsParams
-import com.twitter.cr_mixer.param.RecentRetweetsParams
-import com.twitter.cr_mixer.param.RecentTweetFavoritesParams
-import com.twitter.cr_mixer.param.RepeatedProfileVisitsParams
-import com.twitter.cr_mixer.param.TweetSharesParams
-import com.twitter.cr_mixer.param.UnifiedUSSSignalParams
-import com.twitter.cr_mixer.param.VideoViewTweetsParams
-import com.twitter.cr_mixer.source_signal.UssStore.Query
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.usersignalservice.thriftscala.{Signal => UssSignal}
-import com.twitter.usersignalservice.thriftscala.SignalType
-import javax.inject.Singleton
-import com.twitter.timelines.configapi
-import com.twitter.timelines.configapi.Params
-import com.twitter.usersignalservice.thriftscala.BatchSignalRequest
-import com.twitter.usersignalservice.thriftscala.BatchSignalResponse
-import com.twitter.usersignalservice.thriftscala.SignalRequest
-import com.twitter.util.Future
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.usersignalservice.thriftscala.ClientIdentifier
+import com.twittelonr.cr_mixelonr.param.GlobalParams
+import com.twittelonr.cr_mixelonr.param.GoodProfilelonClickParams
+import com.twittelonr.cr_mixelonr.param.GoodTwelonelontClickParams
+import com.twittelonr.cr_mixelonr.param.RelonalGraphOonParams
+import com.twittelonr.cr_mixelonr.param.ReloncelonntFollowsParams
+import com.twittelonr.cr_mixelonr.param.ReloncelonntNelongativelonSignalParams
+import com.twittelonr.cr_mixelonr.param.ReloncelonntNotificationsParams
+import com.twittelonr.cr_mixelonr.param.ReloncelonntOriginalTwelonelontsParams
+import com.twittelonr.cr_mixelonr.param.ReloncelonntRelonplyTwelonelontsParams
+import com.twittelonr.cr_mixelonr.param.ReloncelonntRelontwelonelontsParams
+import com.twittelonr.cr_mixelonr.param.ReloncelonntTwelonelontFavoritelonsParams
+import com.twittelonr.cr_mixelonr.param.RelonpelonatelondProfilelonVisitsParams
+import com.twittelonr.cr_mixelonr.param.TwelonelontSharelonsParams
+import com.twittelonr.cr_mixelonr.param.UnifielondUSSSignalParams
+import com.twittelonr.cr_mixelonr.param.VidelonoVielonwTwelonelontsParams
+import com.twittelonr.cr_mixelonr.sourcelon_signal.UssStorelon.Quelonry
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.{Signal => UssSignal}
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.SignalTypelon
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.BatchSignalRelonquelonst
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.BatchSignalRelonsponselon
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.SignalRelonquelonst
+import com.twittelonr.util.Futurelon
+import com.twittelonr.cr_mixelonr.thriftscala.Product
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.ClielonntIdelonntifielonr
 
-@Singleton
-case class UssStore(
-  stratoStore: ReadableStore[BatchSignalRequest, BatchSignalResponse],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[Query, Seq[(SignalType, Seq[UssSignal])]] {
+@Singlelonton
+caselon class UssStorelon(
+  stratoStorelon: RelonadablelonStorelon[BatchSignalRelonquelonst, BatchSignalRelonsponselon],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonadablelonStorelon[Quelonry, Selonq[(SignalTypelon, Selonq[UssSignal])]] {
 
-  import com.twitter.cr_mixer.source_signal.UssStore._
+  import com.twittelonr.cr_mixelonr.sourcelon_signal.UssStorelon._
 
-  override def get(query: Query): Future[Option[Seq[(SignalType, Seq[UssSignal])]]] = {
-    val ussClientIdentifier = query.product match {
-      case Product.Home =>
-        ClientIdentifier.CrMixerHome
-      case Product.Notifications =>
-        ClientIdentifier.CrMixerNotifications
-      case Product.Email =>
-        ClientIdentifier.CrMixerEmail
-      case _ =>
-        ClientIdentifier.Unknown
+  ovelonrridelon delonf gelont(quelonry: Quelonry): Futurelon[Option[Selonq[(SignalTypelon, Selonq[UssSignal])]]] = {
+    val ussClielonntIdelonntifielonr = quelonry.product match {
+      caselon Product.Homelon =>
+        ClielonntIdelonntifielonr.CrMixelonrHomelon
+      caselon Product.Notifications =>
+        ClielonntIdelonntifielonr.CrMixelonrNotifications
+      caselon Product.elonmail =>
+        ClielonntIdelonntifielonr.CrMixelonrelonmail
+      caselon _ =>
+        ClielonntIdelonntifielonr.Unknown
     }
-    val batchSignalRequest =
-      BatchSignalRequest(
-        query.userId,
-        buildUserSignalServiceRequests(query.params),
-        Some(ussClientIdentifier))
+    val batchSignalRelonquelonst =
+      BatchSignalRelonquelonst(
+        quelonry.uselonrId,
+        buildUselonrSignalSelonrvicelonRelonquelonsts(quelonry.params),
+        Somelon(ussClielonntIdelonntifielonr))
 
-    stratoStore
-      .get(batchSignalRequest)
+    stratoStorelon
+      .gelont(batchSignalRelonquelonst)
       .map {
-        _.map { batchSignalResponse =>
-          batchSignalResponse.signalResponse.toSeq.map {
-            case (signalType, ussSignals) =>
-              (signalType, ussSignals)
+        _.map { batchSignalRelonsponselon =>
+          batchSignalRelonsponselon.signalRelonsponselon.toSelonq.map {
+            caselon (signalTypelon, ussSignals) =>
+              (signalTypelon, ussSignals)
           }
         }
       }
   }
 
-  private def buildUserSignalServiceRequests(
+  privatelon delonf buildUselonrSignalSelonrvicelonRelonquelonsts(
     param: Params,
-  ): Seq[SignalRequest] = {
-    val unifiedMaxSourceKeyNum = param(GlobalParams.UnifiedMaxSourceKeyNum)
-    val goodTweetClickMaxSignalNum = param(GoodTweetClickParams.MaxSignalNumParam)
-    val aggrTweetMaxSourceKeyNum = param(UnifiedUSSSignalParams.UnifiedTweetSourceNumberParam)
-    val aggrProducerMaxSourceKeyNum = param(UnifiedUSSSignalParams.UnifiedProducerSourceNumberParam)
+  ): Selonq[SignalRelonquelonst] = {
+    val unifielondMaxSourcelonKelonyNum = param(GlobalParams.UnifielondMaxSourcelonKelonyNum)
+    val goodTwelonelontClickMaxSignalNum = param(GoodTwelonelontClickParams.MaxSignalNumParam)
+    val aggrTwelonelontMaxSourcelonKelonyNum = param(UnifielondUSSSignalParams.UnifielondTwelonelontSourcelonNumbelonrParam)
+    val aggrProducelonrMaxSourcelonKelonyNum = param(UnifielondUSSSignalParams.UnifielondProducelonrSourcelonNumbelonrParam)
 
-    val maybeRecentTweetFavorite =
-      if (param(RecentTweetFavoritesParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.TweetFavorite))
-      else None
-    val maybeRecentRetweet =
-      if (param(RecentRetweetsParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.Retweet))
-      else None
-    val maybeRecentReply =
-      if (param(RecentReplyTweetsParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.Reply))
-      else None
-    val maybeRecentOriginalTweet =
-      if (param(RecentOriginalTweetsParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.OriginalTweet))
-      else None
-    val maybeRecentFollow =
-      if (param(RecentFollowsParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.AccountFollow))
-      else None
-    val maybeRepeatedProfileVisits =
-      if (param(RepeatedProfileVisitsParams.EnableSourceParam))
-        Some(
-          SignalRequest(
-            Some(unifiedMaxSourceKeyNum),
-            param(RepeatedProfileVisitsParams.ProfileMinVisitType).signalType))
-      else None
-    val maybeRecentNotifications =
-      if (param(RecentNotificationsParams.EnableSourceParam))
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.NotificationOpenAndClickV1))
-      else None
-    val maybeTweetShares =
-      if (param(TweetSharesParams.EnableSourceParam)) {
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.TweetShareV1))
-      } else None
-    val maybeRealGraphOon =
-      if (param(RealGraphOonParams.EnableSourceParam)) {
-        Some(SignalRequest(Some(unifiedMaxSourceKeyNum), SignalType.RealGraphOon))
-      } else None
+    val maybelonReloncelonntTwelonelontFavoritelon =
+      if (param(ReloncelonntTwelonelontFavoritelonsParams.elonnablelonSourcelonParam))
+        Somelon(SignalRelonquelonst(Somelon(unifielondMaxSourcelonKelonyNum), SignalTypelon.TwelonelontFavoritelon))
+      elonlselon Nonelon
+    val maybelonReloncelonntRelontwelonelont =
+      if (param(ReloncelonntRelontwelonelontsParams.elonnablelonSourcelonParam))
+        Somelon(SignalRelonquelonst(Somelon(unifielondMaxSourcelonKelonyNum), SignalTypelon.Relontwelonelont))
+      elonlselon Nonelon
+    val maybelonReloncelonntRelonply =
+      if (param(ReloncelonntRelonplyTwelonelontsParams.elonnablelonSourcelonParam))
+        Somelon(SignalRelonquelonst(Somelon(unifielondMaxSourcelonKelonyNum), SignalTypelon.Relonply))
+      elonlselon Nonelon
+    val maybelonReloncelonntOriginalTwelonelont =
+      if (param(ReloncelonntOriginalTwelonelontsParams.elonnablelonSourcelonParam))
+        Somelon(SignalRelonquelonst(Somelon(unifielondMaxSourcelonKelonyNum), SignalTypelon.OriginalTwelonelont))
+      elonlselon Nonelon
+    val maybelonReloncelonntFollow =
+      if (param(ReloncelonntFollowsParams.elonnablelonSourcelonParam))
+        Somelon(SignalRelonquelonst(Somelon(unifielondMaxSourcelonKelonyNum), SignalTypelon.AccountFollow))
+      elonlselon Nonelon
+    val maybelonRelonpelonatelondProfilelonVisits =
+      if (param(RelonpelonatelondProfilelonVisitsParams.elonnablelonSourcelonParam))
+        Somelon(
+          SignalRelonquelonst(
+            Somelon(unifielondMaxSourcelonKelonyNum),
+            param(RelonpelonatelondProfilelonVisitsParams.ProfilelonMinVisitTypelon).signalTypelon))
+      elonlselon Nonelon
+    val maybelonReloncelonntNotifications =
+      if (param(ReloncelonntNotificationsParams.elonnablelonSourcelonParam))
+        Somelon(SignalRelonquelonst(Somelon(unifielondMaxSourcelonKelonyNum), SignalTypelon.NotificationOpelonnAndClickV1))
+      elonlselon Nonelon
+    val maybelonTwelonelontSharelons =
+      if (param(TwelonelontSharelonsParams.elonnablelonSourcelonParam)) {
+        Somelon(SignalRelonquelonst(Somelon(unifielondMaxSourcelonKelonyNum), SignalTypelon.TwelonelontSharelonV1))
+      } elonlselon Nonelon
+    val maybelonRelonalGraphOon =
+      if (param(RelonalGraphOonParams.elonnablelonSourcelonParam)) {
+        Somelon(SignalRelonquelonst(Somelon(unifielondMaxSourcelonKelonyNum), SignalTypelon.RelonalGraphOon))
+      } elonlselon Nonelon
 
-    val maybeGoodTweetClick =
-      if (param(GoodTweetClickParams.EnableSourceParam))
-        Some(
-          SignalRequest(
-            Some(goodTweetClickMaxSignalNum),
-            param(GoodTweetClickParams.ClickMinDwellTimeType).signalType))
-      else None
-    val maybeVideoViewTweets =
-      if (param(VideoViewTweetsParams.EnableSourceParam)) {
-        Some(
-          SignalRequest(
-            Some(unifiedMaxSourceKeyNum),
-            param(VideoViewTweetsParams.VideoViewTweetTypeParam).signalType))
-      } else None
-    val maybeGoodProfileClick =
-      if (param(GoodProfileClickParams.EnableSourceParam))
-        Some(
-          SignalRequest(
-            Some(unifiedMaxSourceKeyNum),
-            param(GoodProfileClickParams.ClickMinDwellTimeType).signalType))
-      else None
-    val maybeAggTweetSignal =
-      if (param(UnifiedUSSSignalParams.EnableTweetAggSourceParam))
-        Some(
-          SignalRequest(
-            Some(aggrTweetMaxSourceKeyNum),
-            param(UnifiedUSSSignalParams.TweetAggTypeParam).signalType
+    val maybelonGoodTwelonelontClick =
+      if (param(GoodTwelonelontClickParams.elonnablelonSourcelonParam))
+        Somelon(
+          SignalRelonquelonst(
+            Somelon(goodTwelonelontClickMaxSignalNum),
+            param(GoodTwelonelontClickParams.ClickMinDwelonllTimelonTypelon).signalTypelon))
+      elonlselon Nonelon
+    val maybelonVidelonoVielonwTwelonelonts =
+      if (param(VidelonoVielonwTwelonelontsParams.elonnablelonSourcelonParam)) {
+        Somelon(
+          SignalRelonquelonst(
+            Somelon(unifielondMaxSourcelonKelonyNum),
+            param(VidelonoVielonwTwelonelontsParams.VidelonoVielonwTwelonelontTypelonParam).signalTypelon))
+      } elonlselon Nonelon
+    val maybelonGoodProfilelonClick =
+      if (param(GoodProfilelonClickParams.elonnablelonSourcelonParam))
+        Somelon(
+          SignalRelonquelonst(
+            Somelon(unifielondMaxSourcelonKelonyNum),
+            param(GoodProfilelonClickParams.ClickMinDwelonllTimelonTypelon).signalTypelon))
+      elonlselon Nonelon
+    val maybelonAggTwelonelontSignal =
+      if (param(UnifielondUSSSignalParams.elonnablelonTwelonelontAggSourcelonParam))
+        Somelon(
+          SignalRelonquelonst(
+            Somelon(aggrTwelonelontMaxSourcelonKelonyNum),
+            param(UnifielondUSSSignalParams.TwelonelontAggTypelonParam).signalTypelon
           )
         )
-      else None
-    val maybeAggProducerSignal =
-      if (param(UnifiedUSSSignalParams.EnableProducerAggSourceParam))
-        Some(
-          SignalRequest(
-            Some(aggrProducerMaxSourceKeyNum),
-            param(UnifiedUSSSignalParams.ProducerAggTypeParam).signalType
+      elonlselon Nonelon
+    val maybelonAggProducelonrSignal =
+      if (param(UnifielondUSSSignalParams.elonnablelonProducelonrAggSourcelonParam))
+        Somelon(
+          SignalRelonquelonst(
+            Somelon(aggrProducelonrMaxSourcelonKelonyNum),
+            param(UnifielondUSSSignalParams.ProducelonrAggTypelonParam).signalTypelon
           )
         )
-      else None
+      elonlselon Nonelon
 
-    // negative signals
-    val maybeNegativeSignals = if (param(RecentNegativeSignalParams.EnableSourceParam)) {
-      EnabledNegativeSignalTypes
-        .map(negativeSignal => SignalRequest(Some(unifiedMaxSourceKeyNum), negativeSignal)).toSeq
-    } else Seq.empty
+    // nelongativelon signals
+    val maybelonNelongativelonSignals = if (param(ReloncelonntNelongativelonSignalParams.elonnablelonSourcelonParam)) {
+      elonnablelondNelongativelonSignalTypelons
+        .map(nelongativelonSignal => SignalRelonquelonst(Somelon(unifielondMaxSourcelonKelonyNum), nelongativelonSignal)).toSelonq
+    } elonlselon Selonq.elonmpty
 
-    val allPositiveSignals =
-      if (param(UnifiedUSSSignalParams.ReplaceIndividualUSSSourcesParam))
-        Seq(
-          maybeRecentOriginalTweet,
-          maybeRecentNotifications,
-          maybeRealGraphOon,
-          maybeGoodTweetClick,
-          maybeGoodProfileClick,
-          maybeAggProducerSignal,
-          maybeAggTweetSignal,
+    val allPositivelonSignals =
+      if (param(UnifielondUSSSignalParams.RelonplacelonIndividualUSSSourcelonsParam))
+        Selonq(
+          maybelonReloncelonntOriginalTwelonelont,
+          maybelonReloncelonntNotifications,
+          maybelonRelonalGraphOon,
+          maybelonGoodTwelonelontClick,
+          maybelonGoodProfilelonClick,
+          maybelonAggProducelonrSignal,
+          maybelonAggTwelonelontSignal,
         )
-      else
-        Seq(
-          maybeRecentTweetFavorite,
-          maybeRecentRetweet,
-          maybeRecentReply,
-          maybeRecentOriginalTweet,
-          maybeRecentFollow,
-          maybeRepeatedProfileVisits,
-          maybeRecentNotifications,
-          maybeTweetShares,
-          maybeRealGraphOon,
-          maybeGoodTweetClick,
-          maybeVideoViewTweets,
-          maybeGoodProfileClick,
-          maybeAggProducerSignal,
-          maybeAggTweetSignal,
+      elonlselon
+        Selonq(
+          maybelonReloncelonntTwelonelontFavoritelon,
+          maybelonReloncelonntRelontwelonelont,
+          maybelonReloncelonntRelonply,
+          maybelonReloncelonntOriginalTwelonelont,
+          maybelonReloncelonntFollow,
+          maybelonRelonpelonatelondProfilelonVisits,
+          maybelonReloncelonntNotifications,
+          maybelonTwelonelontSharelons,
+          maybelonRelonalGraphOon,
+          maybelonGoodTwelonelontClick,
+          maybelonVidelonoVielonwTwelonelonts,
+          maybelonGoodProfilelonClick,
+          maybelonAggProducelonrSignal,
+          maybelonAggTwelonelontSignal,
         )
-    allPositiveSignals.flatten ++ maybeNegativeSignals
+    allPositivelonSignals.flattelonn ++ maybelonNelongativelonSignals
   }
 
 }
 
-object UssStore {
-  case class Query(
-    userId: UserId,
+objelonct UssStorelon {
+  caselon class Quelonry(
+    uselonrId: UselonrId,
     params: configapi.Params,
     product: Product)
 
-  val EnabledNegativeSourceTypes: Set[SourceType] =
-    Set(SourceType.AccountBlock, SourceType.AccountMute)
-  private val EnabledNegativeSignalTypes: Set[SignalType] =
-    Set(SignalType.AccountBlock, SignalType.AccountMute)
+  val elonnablelondNelongativelonSourcelonTypelons: Selont[SourcelonTypelon] =
+    Selont(SourcelonTypelon.AccountBlock, SourcelonTypelon.AccountMutelon)
+  privatelon val elonnablelondNelongativelonSignalTypelons: Selont[SignalTypelon] =
+    Selont(SignalTypelon.AccountBlock, SignalTypelon.AccountMutelon)
 }

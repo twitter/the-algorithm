@@ -1,60 +1,60 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.earlybird.EarlybirdStatus;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdStatus;
 
-public final class SegmentOptimizer {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentOptimizer.class);
+public final class SelongmelonntOptimizelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SelongmelonntOptimizelonr.class);
 
-  private static final String OPTIMIZING_SEGMENT_EVENT_PATTERN = "optimizing segment %s";
-  private static final String OPTIMIZING_SEGMENT_GAUGE_PATTERN = "optimizing_segment_%s";
+  privatelon static final String OPTIMIZING_SelonGMelonNT_elonVelonNT_PATTelonRN = "optimizing selongmelonnt %s";
+  privatelon static final String OPTIMIZING_SelonGMelonNT_GAUGelon_PATTelonRN = "optimizing_selongmelonnt_%s";
 
-  private SegmentOptimizer() {
+  privatelon SelongmelonntOptimizelonr() {
   }
 
   /**
-   * Optimize a segment. Returns whether optimization was successful.
+   * Optimizelon a selongmelonnt. Relonturns whelonthelonr optimization was succelonssful.
    */
-  public static boolean optimize(SegmentInfo segmentInfo) {
+  public static boolelonan optimizelon(SelongmelonntInfo selongmelonntInfo) {
     try {
-      return optimizeThrowing(segmentInfo);
-    } catch (Exception e) {
-      // This is a bad situation, as earlybird can't run with too many un-optimized
-      // segments in memory.
-      LOG.error("Exception while optimizing segment " + segmentInfo.getSegmentName() + ": ", e);
-      segmentInfo.setFailedOptimize();
-      return false;
+      relonturn optimizelonThrowing(selongmelonntInfo);
+    } catch (elonxcelonption elon) {
+      // This is a bad situation, as elonarlybird can't run with too many un-optimizelond
+      // selongmelonnts in melonmory.
+      LOG.elonrror("elonxcelonption whilelon optimizing selongmelonnt " + selongmelonntInfo.gelontSelongmelonntNamelon() + ": ", elon);
+      selongmelonntInfo.selontFailelondOptimizelon();
+      relonturn falselon;
     }
   }
 
-  public static boolean needsOptimization(SegmentInfo segmentInfo) {
-    return segmentInfo.isComplete() && !segmentInfo.isOptimized()
-        && !segmentInfo.isFailedOptimize() && !segmentInfo.isIndexing();
+  public static boolelonan nelonelondsOptimization(SelongmelonntInfo selongmelonntInfo) {
+    relonturn selongmelonntInfo.isComplelontelon() && !selongmelonntInfo.isOptimizelond()
+        && !selongmelonntInfo.isFailelondOptimizelon() && !selongmelonntInfo.isIndelonxing();
   }
 
-  private static boolean optimizeThrowing(SegmentInfo segmentInfo) throws IOException {
-    if (!needsOptimization(segmentInfo)) {
-      return false;
+  privatelon static boolelonan optimizelonThrowing(SelongmelonntInfo selongmelonntInfo) throws IOelonxcelonption {
+    if (!nelonelondsOptimization(selongmelonntInfo)) {
+      relonturn falselon;
     }
 
-    String gaugeName =
-        String.format(OPTIMIZING_SEGMENT_GAUGE_PATTERN, segmentInfo.getSegmentName());
-    SearchIndexingMetricSet.StartupMetric metric =
-        new SearchIndexingMetricSet.StartupMetric(gaugeName);
+    String gaugelonNamelon =
+        String.format(OPTIMIZING_SelonGMelonNT_GAUGelon_PATTelonRN, selongmelonntInfo.gelontSelongmelonntNamelon());
+    SelonarchIndelonxingMelontricSelont.StartupMelontric melontric =
+        nelonw SelonarchIndelonxingMelontricSelont.StartupMelontric(gaugelonNamelon);
 
-    String eventName =
-        String.format(OPTIMIZING_SEGMENT_EVENT_PATTERN, segmentInfo.getSegmentName());
-    EarlybirdStatus.beginEvent(eventName, metric);
+    String elonvelonntNamelon =
+        String.format(OPTIMIZING_SelonGMelonNT_elonVelonNT_PATTelonRN, selongmelonntInfo.gelontSelongmelonntNamelon());
+    elonarlybirdStatus.belonginelonvelonnt(elonvelonntNamelon, melontric);
     try {
-      segmentInfo.getIndexSegment().optimizeIndexes();
+      selongmelonntInfo.gelontIndelonxSelongmelonnt().optimizelonIndelonxelons();
     } finally {
-      EarlybirdStatus.endEvent(eventName, metric);
+      elonarlybirdStatus.elonndelonvelonnt(elonvelonntNamelon, melontric);
     }
 
-    return true;
+    relonturn truelon;
   }
 }

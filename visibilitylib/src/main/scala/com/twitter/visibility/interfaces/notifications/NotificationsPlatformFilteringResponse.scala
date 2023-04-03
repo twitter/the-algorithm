@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.notifications
+packagelon com.twittelonr.visibility.intelonrfacelons.notifications
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.rules.Action
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.rulelons.Action
 
-trait NotificationsPlatformFilteringResponse
+trait NotificationsPlatformFiltelonringRelonsponselon
 
-case object AllowVerdict extends NotificationsPlatformFilteringResponse
+caselon objelonct AllowVelonrdict elonxtelonnds NotificationsPlatformFiltelonringRelonsponselon
 
-case class FilteredVerdict(action: Action) extends NotificationsPlatformFilteringResponse
+caselon class FiltelonrelondVelonrdict(action: Action) elonxtelonnds NotificationsPlatformFiltelonringRelonsponselon
 
-case class FailedVerdict(featuresMap: Map[Feature[_], String])
-    extends NotificationsPlatformFilteringResponse
+caselon class FailelondVelonrdict(felonaturelonsMap: Map[Felonaturelon[_], String])
+    elonxtelonnds NotificationsPlatformFiltelonringRelonsponselon

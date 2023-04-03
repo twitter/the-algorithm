@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.ads
 
-import com.twitter.adserver.{thriftscala => ad}
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.twittelonr.adselonrvelonr.{thriftscala => ad}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads.AdsQuelonry
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object AdvertiserBrandSafetySettingsFeature
-    extends FeatureWithDefaultOnFailure[AdsCandidate, Option[ad.AdvertiserBrandSafetySettings]] {
-  override val defaultValue = None
+objelonct AdvelonrtiselonrBrandSafelontySelonttingsFelonaturelon
+    elonxtelonnds FelonaturelonWithDelonfaultOnFailurelon[AdsCandidatelon, Option[ad.AdvelonrtiselonrBrandSafelontySelonttings]] {
+  ovelonrridelon val delonfaultValuelon = Nonelon
 }
 
-@Singleton
-case class AdvertiserBrandSafetySettingsFeatureHydrator[
-  Query <: PipelineQuery with AdsQuery,
-  Candidate <: AdsCandidate] @Inject() (
-  advertiserBrandSafetySettingsStore: ReadableStore[Long, ad.AdvertiserBrandSafetySettings])
-    extends CandidateFeatureHydrator[Query, Candidate] {
+@Singlelonton
+caselon class AdvelonrtiselonrBrandSafelontySelonttingsFelonaturelonHydrator[
+  Quelonry <: PipelonlinelonQuelonry with AdsQuelonry,
+  Candidatelon <: AdsCandidatelon] @Injelonct() (
+  advelonrtiselonrBrandSafelontySelonttingsStorelon: RelonadablelonStorelon[Long, ad.AdvelonrtiselonrBrandSafelontySelonttings])
+    elonxtelonnds CandidatelonFelonaturelonHydrator[Quelonry, Candidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "AdvertiserBrandSafetySettings")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr(
+    "AdvelonrtiselonrBrandSafelontySelonttings")
 
-  override val features: Set[Feature[_, _]] = Set(AdvertiserBrandSafetySettingsFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(AdvelonrtiselonrBrandSafelontySelonttingsFelonaturelon)
 
-  override def apply(
-    query: Query,
-    candidate: Candidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Candidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): Stitch[FelonaturelonMap] = {
 
-    val featureMapFuture: Future[FeatureMap] = advertiserBrandSafetySettingsStore
-      .get(candidate.adImpression.advertiserId)
-      .map { advertiserBrandSafetySettingsOpt =>
-        FeatureMapBuilder()
-          .add(AdvertiserBrandSafetySettingsFeature, advertiserBrandSafetySettingsOpt).build()
+    val felonaturelonMapFuturelon: Futurelon[FelonaturelonMap] = advelonrtiselonrBrandSafelontySelonttingsStorelon
+      .gelont(candidatelon.adImprelonssion.advelonrtiselonrId)
+      .map { advelonrtiselonrBrandSafelontySelonttingsOpt =>
+        FelonaturelonMapBuildelonr()
+          .add(AdvelonrtiselonrBrandSafelontySelonttingsFelonaturelon, advelonrtiselonrBrandSafelontySelonttingsOpt).build()
       }
 
-    Stitch.callFuture(featureMapFuture)
+    Stitch.callFuturelon(felonaturelonMapFuturelon)
   }
 }

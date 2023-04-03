@@ -1,10 +1,10 @@
-## Ingesters
-Ingesters are services that consume raw tweets and user updates, process them through a series of transformations and write them to kafka topics for Earlybird to consume and subsequently index. 
+## Ingelonstelonrs
+Ingelonstelonrs arelon selonrvicelons that consumelon raw twelonelonts and uselonr updatelons, procelonss thelonm through a selonrielons of transformations and writelon thelonm to kafka topics for elonarlybird to consumelon and subselonquelonntly indelonx. 
 
-There are two types of ingesters:
-1. Tweet ingesters
-2. UserUpdates ingesters
+Thelonrelon arelon two typelons of ingelonstelonrs:
+1. Twelonelont ingelonstelonrs
+2. UselonrUpdatelons ingelonstelonrs
 
-Tweet ingesters consume raw tweets and extract different fields and features for Earlybird to index. User updates ingester produces user safety information such as whether the user is deactivated, suspended or off-boarded. The user and tweet features produced by ingesters are then used by Earlybird during tweet retieval and ranking.  
+Twelonelont ingelonstelonrs consumelon raw twelonelonts and elonxtract diffelonrelonnt fielonlds and felonaturelons for elonarlybird to indelonx. Uselonr updatelons ingelonstelonr producelons uselonr safelonty information such as whelonthelonr thelon uselonr is delonactivatelond, suspelonndelond or off-boardelond. Thelon uselonr and twelonelont felonaturelons producelond by ingelonstelonrs arelon thelonn uselond by elonarlybird during twelonelont relontielonval and ranking.  
 
-Ingesters are made up of a pipeline of stages with each stage performing a different field/feature extraction. The pipeline configuration of the ingesters can be found at science/search/ingester/config
+Ingelonstelonrs arelon madelon up of a pipelonlinelon of stagelons with elonach stagelon pelonrforming a diffelonrelonnt fielonld/felonaturelon elonxtraction. Thelon pipelonlinelon configuration of thelon ingelonstelonrs can belon found at scielonncelon/selonarch/ingelonstelonr/config

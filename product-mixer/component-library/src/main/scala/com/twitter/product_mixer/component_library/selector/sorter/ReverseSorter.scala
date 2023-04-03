@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
 
 /**
- * Reverse candidates.
+ * Relonvelonrselon candidatelons.
  *
- * @example `UpdateSortResults(ReverseSorter())`
+ * @elonxamplelon `UpdatelonSortRelonsults(RelonvelonrselonSortelonr())`
  */
-object ReverseSorter extends SorterProvider with Sorter {
+objelonct RelonvelonrselonSortelonr elonxtelonnds SortelonrProvidelonr with Sortelonr {
 
-  override def sort[Candidate <: CandidateWithDetails](candidates: Seq[Candidate]): Seq[Candidate] =
-    candidates.reverse
+  ovelonrridelon delonf sort[Candidatelon <: CandidatelonWithDelontails](candidatelons: Selonq[Candidatelon]): Selonq[Candidatelon] =
+    candidatelons.relonvelonrselon
 }

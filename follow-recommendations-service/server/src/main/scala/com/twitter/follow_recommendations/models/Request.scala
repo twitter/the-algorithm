@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.models
+packagelon com.twittelonr.follow_reloncommelonndations.modelonls
 
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
-import com.twitter.product_mixer.core.model.marshalling.request.{Request => ProductMixerRequest}
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ProductContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.{Relonquelonst => ProductMixelonrRelonquelonst}
 
-case class Request(
-  override val maxResults: Option[Int],
-  override val debugParams: Option[request.DebugParams],
-  override val productContext: Option[ProductContext],
-  override val product: request.Product,
-  override val clientContext: ClientContext,
-  override val serializedRequestCursor: Option[String],
-  override val frsDebugParams: Option[DebugParams],
+caselon class Relonquelonst(
+  ovelonrridelon val maxRelonsults: Option[Int],
+  ovelonrridelon val delonbugParams: Option[relonquelonst.DelonbugParams],
+  ovelonrridelon val productContelonxt: Option[ProductContelonxt],
+  ovelonrridelon val product: relonquelonst.Product,
+  ovelonrridelon val clielonntContelonxt: ClielonntContelonxt,
+  ovelonrridelon val selonrializelondRelonquelonstCursor: Option[String],
+  ovelonrridelon val frsDelonbugParams: Option[DelonbugParams],
   displayLocation: DisplayLocation,
-  excludedIds: Option[Seq[Long]],
-  fetchPromotedContent: Option[Boolean],
-  userLocationState: Option[String] = None)
-    extends ProductMixerRequest
-    with HasFrsDebugParams {}
+  elonxcludelondIds: Option[Selonq[Long]],
+  felontchPromotelondContelonnt: Option[Boolelonan],
+  uselonrLocationStatelon: Option[String] = Nonelon)
+    elonxtelonnds ProductMixelonrRelonquelonst
+    with HasFrsDelonbugParams {}

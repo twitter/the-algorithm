@@ -1,25 +1,25 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/framework/tensor.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "NamedTensorProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "NamelondTelonnsorProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// A pair of tensor name and tensor values.
-message NamedTensorProto {
-  // Name of the tensor.
-  string name = 1;
+// A pair of telonnsor namelon and telonnsor valuelons.
+melonssagelon NamelondTelonnsorProto {
+  // Namelon of thelon telonnsor.
+  string namelon = 1;
 
-  // The client can populate a TensorProto using a tensorflow::Tensor`, or
-  // directly using the protobuf field accessors.
+  // Thelon clielonnt can populatelon a TelonnsorProto using a telonnsorflow::Telonnsor`, or
+  // direlonctly using thelon protobuf fielonld accelonssors.
   //
-  // The client specifies whether the returned tensor values should be
-  // filled tensor fields (float_val, int_val, etc.) or encoded in a
-  // compact form in tensor.tensor_content.
-  TensorProto tensor = 2;
+  // Thelon clielonnt speloncifielons whelonthelonr thelon relonturnelond telonnsor valuelons should belon
+  // fillelond telonnsor fielonlds (float_val, int_val, elontc.) or elonncodelond in a
+  // compact form in telonnsor.telonnsor_contelonnt.
+  TelonnsorProto telonnsor = 2;
 }

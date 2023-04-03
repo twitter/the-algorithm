@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Plain
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextFormat
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Strong
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Plain
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtFormat
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Strong
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RichTextFormatMarshaller @Inject() () {
+@Singlelonton
+class RichTelonxtFormatMarshallelonr @Injelonct() () {
 
-  def apply(format: RichTextFormat): urt.RichTextFormat = format match {
-    case Plain => urt.RichTextFormat.Plain
-    case Strong => urt.RichTextFormat.Strong
+  delonf apply(format: RichTelonxtFormat): urt.RichTelonxtFormat = format match {
+    caselon Plain => urt.RichTelonxtFormat.Plain
+    caselon Strong => urt.RichTelonxtFormat.Strong
   }
 }

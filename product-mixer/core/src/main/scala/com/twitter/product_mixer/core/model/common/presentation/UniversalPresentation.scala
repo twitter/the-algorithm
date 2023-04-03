@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.model.common.presentation
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation
 
 /**
- * Encapsulates information about how to present a Candidate
+ * elonncapsulatelons information about how to prelonselonnt a Candidatelon
  *
- * Implementations of a [[UniversalPresentation]] contain information about how to present the Candidate.
- * This extra information can be in fields in the implementations or in their types.
+ * Implelonmelonntations of a [[UnivelonrsalPrelonselonntation]] contain information about how to prelonselonnt thelon Candidatelon.
+ * This elonxtra information can belon in fielonlds in thelon implelonmelonntations or in thelonir typelons.
  *
- * For instance, a Tweet candidate that will be displayed as a URT Tweet Item will be decorated with a
- * [[UniversalPresentation]] implementation that reflects the presentation such as
- * [[com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation]]
+ * For instancelon, a Twelonelont candidatelon that will belon displayelond as a URT Twelonelont Itelonm will belon deloncoratelond with a
+ * [[UnivelonrsalPrelonselonntation]] implelonmelonntation that relonfleloncts thelon prelonselonntation such as
+ * [[com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtItelonmPrelonselonntation]]
  *
- * @see [[com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator]] for associating a
- *      [[UniversalPresentation]] with a Candidate.
+ * @selonelon [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator]] for associating a
+ *      [[UnivelonrsalPrelonselonntation]] with a Candidatelon.
  */
-trait UniversalPresentation
+trait UnivelonrsalPrelonselonntation

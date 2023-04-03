@@ -1,21 +1,21 @@
-# pylint: disable=wildcard-import
+# pylint: disablelon=wildcard-import
 """
-This module contains the ``tf.layers.Layer`` subclasses implemented in twml.
-Layers are used to instantiate common subgraphs.
-Typically, these layers are used when defining a ``build_graph_fn``
-for the ``twml.trainers.Trainer``.
+This modulelon contains thelon ``tf.layelonrs.Layelonr`` subclasselons implelonmelonntelond in twml.
+Layelonrs arelon uselond to instantiatelon common subgraphs.
+Typically, thelonselon layelonrs arelon uselond whelonn delonfining a ``build_graph_fn``
+for thelon ``twml.trainelonrs.Trainelonr``.
 """
 
-from .batch_prediction_tensor_writer import BatchPredictionTensorWriter  # noqa: F401
-from .batch_prediction_writer import BatchPredictionWriter  # noqa: F401
-from .data_record_tensor_writer import DataRecordTensorWriter  # noqa: F401
-from .full_dense import full_dense, FullDense  # noqa: F401
-from .full_sparse import full_sparse, FullSparse  # noqa: F401
+from .batch_prelondiction_telonnsor_writelonr import BatchPrelondictionTelonnsorWritelonr  # noqa: F401
+from .batch_prelondiction_writelonr import BatchPrelondictionWritelonr  # noqa: F401
+from .data_reloncord_telonnsor_writelonr import DataReloncordTelonnsorWritelonr  # noqa: F401
+from .full_delonnselon import full_delonnselon, FullDelonnselon  # noqa: F401
+from .full_sparselon import full_sparselon, FullSparselon  # noqa: F401
 from .isotonic import Isotonic  # noqa: F401
-from .layer import Layer  # noqa: F401
+from .layelonr import Layelonr  # noqa: F401
 from .mdl import MDL  # noqa: F401
 from .partition import Partition  # noqa: F401
-from .percentile_discretizer import PercentileDiscretizer  # noqa: F401
-from .sequential import Sequential  # noqa: F401
-from .sparse_max_norm import MaxNorm, sparse_max_norm, SparseMaxNorm  # noqa: F401
+from .pelonrcelonntilelon_discrelontizelonr import PelonrcelonntilelonDiscrelontizelonr  # noqa: F401
+from .selonquelonntial import Selonquelonntial  # noqa: F401
+from .sparselon_max_norm import MaxNorm, sparselon_max_norm, SparselonMaxNorm  # noqa: F401
 from .stitch import Stitch  # noqa: F401

@@ -1,59 +1,59 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object RankerParams {
+objelonct RankelonrParams {
 
-  object MaxCandidatesToRank
-      extends FSBoundedParam[Int](
-        name = "twistly_core_max_candidates_to_rank",
-        default = 2000,
+  objelonct MaxCandidatelonsToRank
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "twistly_corelon_max_candidatelons_to_rank",
+        delonfault = 2000,
         min = 0,
         max = 9999
       )
 
-  object EnableBlueVerifiedTopK
-      extends FSParam[Boolean](
-        name = "twistly_core_blue_verified_top_k",
-        default = true
+  objelonct elonnablelonBluelonVelonrifielondTopK
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "twistly_corelon_bluelon_velonrifielond_top_k",
+        delonfault = truelon
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    MaxCandidatesToRank,
-    EnableBlueVerifiedTopK
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    MaxCandidatelonsToRank,
+    elonnablelonBluelonVelonrifielondTopK
   )
 
-  lazy val config: BaseConfig = {
+  lazy val config: BaselonConfig = {
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(EnableBlueVerifiedTopK)
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(elonnablelonBluelonVelonrifielondTopK)
 
-    val boundedDurationFSOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDurationFSOverrides()
+    val boundelondDurationFSOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDurationFSOvelonrridelons()
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      MaxCandidatesToRank
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+      MaxCandidatelonsToRank
     )
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
-      Logger(getClass),
+    val elonnumOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(
+      NullStatsReloncelonivelonr,
+      Loggelonr(gelontClass),
     )
-    val stringFSOverrides = FeatureSwitchOverrideUtil.getStringFSOverrides()
+    val stringFSOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontStringFSOvelonrridelons()
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(boundedDurationFSOverrides: _*)
-      .set(intOverrides: _*)
-      .set(enumOverrides: _*)
-      .set(stringFSOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(boundelondDurationFSOvelonrridelons: _*)
+      .selont(intOvelonrridelons: _*)
+      .selont(elonnumOvelonrridelons: _*)
+      .selont(stringFSOvelonrridelons: _*)
       .build()
   }
 }

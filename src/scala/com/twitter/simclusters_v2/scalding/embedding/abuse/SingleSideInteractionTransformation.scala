@@ -1,154 +1,154 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.scalding._
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.thriftscala.AdhocSingleSideClusterScores
-import com.twitter.simclusters_v2.thriftscala.SimClusterWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.twittelonr.scalding._
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.SparselonMatrix
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.AdhocSinglelonSidelonClustelonrScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrWithScorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding
 
 /**
- * Logic for building a SimCluster represenation of interaction signals. The purpose of this job is
- * to model negative behavior (like abuse and blocks).
+ * Logic for building a SimClustelonr relonprelonselonnation of intelonraction signals. Thelon purposelon of this job is
+ * to modelonl nelongativelon belonhavior (likelon abuselon and blocks).
  *
- * This is a "SingleSide", because we are only considering one side of the interaction graph to
- * build these features. So for instance we would keep track of which simclusters are most likely to
- * get reported for abuse regardless of who reported it. Another job will be responsible for
- * building the simcluster to simcluster interaction matrix as described in the doc.
+ * This is a "SinglelonSidelon", beloncauselon welon arelon only considelonring onelon sidelon of thelon intelonraction graph to
+ * build thelonselon felonaturelons. So for instancelon welon would kelonelonp track of which simclustelonrs arelon most likelonly to
+ * gelont relonportelond for abuselon relongardlelonss of who relonportelond it. Anothelonr job will belon relonsponsiblelon for
+ * building thelon simclustelonr to simclustelonr intelonraction matrix as delonscribelond in thelon doc.
  */
-object SingleSideInteractionTransformation {
+objelonct SinglelonSidelonIntelonractionTransformation {
 
   /**
-   * Compute a score for every SimCluster. The SimCluster score is a count of the number of
-   * interactions for each SimCluster. For a user that has many SimClusters, we distribute each of
-   * their interactions across all of these SimClusters.
+   * Computelon a scorelon for elonvelonry SimClustelonr. Thelon SimClustelonr scorelon is a count of thelon numbelonr of
+   * intelonractions for elonach SimClustelonr. For a uselonr that has many SimClustelonrs, welon distributelon elonach of
+   * thelonir intelonractions across all of thelonselon SimClustelonrs.
    *
-   * @param normalizedUserSimClusters Sparse matrix of User-SimCluster scores. Users are rows and
-   *                                  SimClusters are columns. This should already by L2normalized.
-   *                                  It is important that we normalize so that each interaction
-   *                                  only adds 1 to the counts.
-   * @param interactionGraph Graph of interactions. Rows are the users, columns are not used.
-   *                   All values in this graph are assumed to be positive; they are the number of
-   *                   interactions.
+   * @param normalizelondUselonrSimClustelonrs Sparselon matrix of Uselonr-SimClustelonr scorelons. Uselonrs arelon rows and
+   *                                  SimClustelonrs arelon columns. This should alrelonady by L2normalizelond.
+   *                                  It is important that welon normalizelon so that elonach intelonraction
+   *                                  only adds 1 to thelon counts.
+   * @param intelonractionGraph Graph of intelonractions. Rows arelon thelon uselonrs, columns arelon not uselond.
+   *                   All valuelons in this graph arelon assumelond to belon positivelon; thelony arelon thelon numbelonr of
+   *                   intelonractions.
    *
-   * @return SingleSideClusterFeatures for each SimCluster that has user with an interaction.
+   * @relonturn SinglelonSidelonClustelonrFelonaturelons for elonach SimClustelonr that has uselonr with an intelonraction.
    */
-  def computeClusterFeatures(
-    normalizedUserSimClusters: SparseMatrix[UserId, ClusterId, Double],
-    interactionGraph: SparseMatrix[UserId, _, Double]
-  ): TypedPipe[SimClusterWithScore] = {
+  delonf computelonClustelonrFelonaturelons(
+    normalizelondUselonrSimClustelonrs: SparselonMatrix[UselonrId, ClustelonrId, Doublelon],
+    intelonractionGraph: SparselonMatrix[UselonrId, _, Doublelon]
+  ): TypelondPipelon[SimClustelonrWithScorelon] = {
 
-    val numReportsForUserEntries = interactionGraph.rowL1Norms.map {
-      // turn into a vector where we use 1 as the column key for every entry.
-      case (user, count) => (user, 1, count)
+    val numRelonportsForUselonrelonntrielons = intelonractionGraph.rowL1Norms.map {
+      // turn into a velonctor whelonrelon welon uselon 1 as thelon column kelony for elonvelonry elonntry.
+      caselon (uselonr, count) => (uselonr, 1, count)
     }
 
-    val numReportsForUser = SparseMatrix[UserId, Int, Double](numReportsForUserEntries)
+    val numRelonportsForUselonr = SparselonMatrix[UselonrId, Int, Doublelon](numRelonportsForUselonrelonntrielons)
 
-    normalizedUserSimClusters.transpose
-      .multiplySparseMatrix(numReportsForUser)
-      .toTypedPipe
+    normalizelondUselonrSimClustelonrs.transposelon
+      .multiplySparselonMatrix(numRelonportsForUselonr)
+      .toTypelondPipelon
       .map {
-        case (clusterId, _, clusterScore: Double) =>
-          SimClusterWithScore(clusterId, clusterScore)
+        caselon (clustelonrId, _, clustelonrScorelon: Doublelon) =>
+          SimClustelonrWithScorelon(clustelonrId, clustelonrScorelon)
       }
   }
 
   /**
-   * Given that we have the score for each SimCluster and the user's SimClusters, create a
-   * representation of the user so that the new SimCluster scores are an estimate of the
-   * interactions for this user.
+   * Givelonn that welon havelon thelon scorelon for elonach SimClustelonr and thelon uselonr's SimClustelonrs, crelonatelon a
+   * relonprelonselonntation of thelon uselonr so that thelon nelonw SimClustelonr scorelons arelon an elonstimatelon of thelon
+   * intelonractions for this uselonr.
    *
-   * @param normalizedUserSimClusters sparse matrix of User-SimCluster scores. Users are rows and
-   *                                  SimClusters are columns. This should already be L2 normalized.
-   * @param simClusterFeatures For each SimCluster, a score associated with this interaction type.
+   * @param normalizelondUselonrSimClustelonrs sparselon matrix of Uselonr-SimClustelonr scorelons. Uselonrs arelon rows and
+   *                                  SimClustelonrs arelon columns. This should alrelonady belon L2 normalizelond.
+   * @param simClustelonrFelonaturelons For elonach SimClustelonr, a scorelon associatelond with this intelonraction typelon.
    *
-   * @return SingleSideAbuseFeatures for each user the SimClusters and scores for this
+   * @relonturn SinglelonSidelonAbuselonFelonaturelons for elonach uselonr thelon SimClustelonrs and scorelons for this
    */
-  @VisibleForTesting
-  private[abuse] def computeUserFeaturesFromClusters(
-    normalizedUserSimClusters: SparseMatrix[UserId, ClusterId, Double],
-    simClusterFeatures: TypedPipe[SimClusterWithScore]
-  ): TypedPipe[(UserId, SimClustersEmbedding)] = {
+  @VisiblelonForTelonsting
+  privatelon[abuselon] delonf computelonUselonrFelonaturelonsFromClustelonrs(
+    normalizelondUselonrSimClustelonrs: SparselonMatrix[UselonrId, ClustelonrId, Doublelon],
+    simClustelonrFelonaturelons: TypelondPipelon[SimClustelonrWithScorelon]
+  ): TypelondPipelon[(UselonrId, SimClustelonrselonmbelondding)] = {
 
-    normalizedUserSimClusters.toTypedPipe
+    normalizelondUselonrSimClustelonrs.toTypelondPipelon
       .map {
-        case (userId, clusterId, score) =>
-          (clusterId, (userId, score))
+        caselon (uselonrId, clustelonrId, scorelon) =>
+          (clustelonrId, (uselonrId, scorelon))
       }
       .group
-      // There are at most 140k SimClusters. They should fit in memory
-      .hashJoin(simClusterFeatures.groupBy(_.clusterId))
+      // Thelonrelon arelon at most 140k SimClustelonrs. Thelony should fit in melonmory
+      .hashJoin(simClustelonrFelonaturelons.groupBy(_.clustelonrId))
       .map {
-        case (_, ((userId, score), singleSideClusterFeatures)) =>
+        caselon (_, ((uselonrId, scorelon), singlelonSidelonClustelonrFelonaturelons)) =>
           (
-            userId,
+            uselonrId,
             List(
-              SimClusterWithScore(
-                singleSideClusterFeatures.clusterId,
-                singleSideClusterFeatures.score * score))
+              SimClustelonrWithScorelon(
+                singlelonSidelonClustelonrFelonaturelons.clustelonrId,
+                singlelonSidelonClustelonrFelonaturelons.scorelon * scorelon))
           )
       }
-      .sumByKey
-      .mapValues(SimClustersEmbedding.apply)
+      .sumByKelony
+      .mapValuelons(SimClustelonrselonmbelondding.apply)
   }
 
   /**
-   * Combines all the different SimClustersEmbedding for a user into one
-   * AdhocSingleSideClusterScores.
+   * Combinelons all thelon diffelonrelonnt SimClustelonrselonmbelondding for a uselonr into onelon
+   * AdhocSinglelonSidelonClustelonrScorelons.
    *
-   * @param interactionMap The key is an identifier for the embedding type. The typed pipe will have
-   *                       embeddings of only for that type of embedding.
-   * @return Typed pipe with one AdhocSingleSideClusterScores per user.
+   * @param intelonractionMap Thelon kelony is an idelonntifielonr for thelon elonmbelondding typelon. Thelon typelond pipelon will havelon
+   *                       elonmbelonddings of only for that typelon of elonmbelondding.
+   * @relonturn Typelond pipelon with onelon AdhocSinglelonSidelonClustelonrScorelons pelonr uselonr.
    */
-  def pairScores(
-    interactionMap: Map[String, TypedPipe[(UserId, SimClustersEmbedding)]]
-  ): TypedPipe[AdhocSingleSideClusterScores] = {
+  delonf pairScorelons(
+    intelonractionMap: Map[String, TypelondPipelon[(UselonrId, SimClustelonrselonmbelondding)]]
+  ): TypelondPipelon[AdhocSinglelonSidelonClustelonrScorelons] = {
 
-    val combinedInteractions = interactionMap
+    val combinelondIntelonractions = intelonractionMap
       .map {
-        case (interactionTypeName, userInteractionFeatures) =>
-          userInteractionFeatures.map {
-            case (userId, simClustersEmbedding) =>
-              (userId, List((interactionTypeName, simClustersEmbedding)))
+        caselon (intelonractionTypelonNamelon, uselonrIntelonractionFelonaturelons) =>
+          uselonrIntelonractionFelonaturelons.map {
+            caselon (uselonrId, simClustelonrselonmbelondding) =>
+              (uselonrId, List((intelonractionTypelonNamelon, simClustelonrselonmbelondding)))
           }
       }
-      .reduce[TypedPipe[(UserId, List[(String, SimClustersEmbedding)])]] {
-        case (list1, list2) =>
+      .relonducelon[TypelondPipelon[(UselonrId, List[(String, SimClustelonrselonmbelondding)])]] {
+        caselon (list1, list2) =>
           list1 ++ list2
       }
       .group
-      .sumByKey
+      .sumByKelony
 
-    combinedInteractions.toTypedPipe
+    combinelondIntelonractions.toTypelondPipelon
       .map {
-        case (userId, interactionFeatureList) =>
-          AdhocSingleSideClusterScores(
-            userId,
-            interactionFeatureList.toMap
+        caselon (uselonrId, intelonractionFelonaturelonList) =>
+          AdhocSinglelonSidelonClustelonrScorelons(
+            uselonrId,
+            intelonractionFelonaturelonList.toMap
           )
       }
   }
 
   /**
-   * Given the SimCluster and interaction graph get the user representation for this interaction.
-   * See the documentation of the underlying methods for more details
+   * Givelonn thelon SimClustelonr and intelonraction graph gelont thelon uselonr relonprelonselonntation for this intelonraction.
+   * Selonelon thelon documelonntation of thelon undelonrlying melonthods for morelon delontails
    *
-   * @param normalizedUserSimClusters sparse matrix of User-SimCluster scores. Users are rows and
-   *                                  SimClusters are columns. This should already by L2normalized.
-   * @param interactionGraph Graph of interactions. Rows are the users, columns are not used.
-   *                   All values in this graph are assumed to be positive; they are the number of
-   *                   interactions.
+   * @param normalizelondUselonrSimClustelonrs sparselon matrix of Uselonr-SimClustelonr scorelons. Uselonrs arelon rows and
+   *                                  SimClustelonrs arelon columns. This should alrelonady by L2normalizelond.
+   * @param intelonractionGraph Graph of intelonractions. Rows arelon thelon uselonrs, columns arelon not uselond.
+   *                   All valuelons in this graph arelon assumelond to belon positivelon; thelony arelon thelon numbelonr of
+   *                   intelonractions.
    *
-   * @return SimClustersEmbedding for all users in the give SimCluster graphs
+   * @relonturn SimClustelonrselonmbelondding for all uselonrs in thelon givelon SimClustelonr graphs
    */
-  def clusterScoresFromGraphs(
-    normalizedUserSimClusters: SparseMatrix[UserId, ClusterId, Double],
-    interactionGraph: SparseMatrix[UserId, _, Double]
-  ): TypedPipe[(UserId, SimClustersEmbedding)] = {
-    val clusterFeatures = computeClusterFeatures(normalizedUserSimClusters, interactionGraph)
-    computeUserFeaturesFromClusters(normalizedUserSimClusters, clusterFeatures)
+  delonf clustelonrScorelonsFromGraphs(
+    normalizelondUselonrSimClustelonrs: SparselonMatrix[UselonrId, ClustelonrId, Doublelon],
+    intelonractionGraph: SparselonMatrix[UselonrId, _, Doublelon]
+  ): TypelondPipelon[(UselonrId, SimClustelonrselonmbelondding)] = {
+    val clustelonrFelonaturelons = computelonClustelonrFelonaturelons(normalizelondUselonrSimClustelonrs, intelonractionGraph)
+    computelonUselonrFelonaturelonsFromClustelonrs(normalizelondUselonrSimClustelonrs, clustelonrFelonaturelons)
   }
 }

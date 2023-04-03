@@ -1,81 +1,81 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("IsotonicCalibration")
-.Attr("T: {float, double}")
+RelonGISTelonR_OP("IsotonicCalibration")
+.Attr("T: {float, doublelon}")
 .Input("input: T")
 .Input("xs: T")
 .Input("ys: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-  // output shape should be the same as input shape.
-  c->set_output(0, c->input(0));
-  return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+  // output shapelon should belon thelon samelon as input shapelon.
+  c->selont_output(0, c->input(0));
+  relonturn Status::OK();
 }).Doc(R"doc(
 
-This operation calibrates probabilities by fitting to a piece-wise non-decreasing function.
+This opelonration calibratelons probabilitielons by fitting to a pieloncelon-wiselon non-deloncrelonasing function.
 
 Input
-  input: A tensor containing uncalibrated probabilities.
-  xs: A tensor containing the boundaries of the bins.
-  ys: A tensor contianing calibrated values for the corresponding bins.
+  input: A telonnsor containing uncalibratelond probabilitielons.
+  xs: A telonnsor containing thelon boundarielons of thelon bins.
+  ys: A telonnsor contianing calibratelond valuelons for thelon correlonsponding bins.
 
-Expected Sizes:
-  input: [batch_size, num_labels].
-  xs, ys: [num_labels, num_bins].
+elonxpelonctelond Sizelons:
+  input: [batch_sizelon, num_labelonls].
+  xs, ys: [num_labelonls, num_bins].
 
-Expected Types:
-  input: float or double.
-  xs, ys: same as input.
+elonxpelonctelond Typelons:
+  input: float or doublelon.
+  xs, ys: samelon as input.
 
 Outputs
-  output: A tensor containing calibrated probabilities with same shape and size as input.
+  output: A telonnsor containing calibratelond probabilitielons with samelon shapelon and sizelon as input.
 
 )doc");
 
-template<typename T>
-class IsotonicCalibration : public OpKernel {
+telonmplatelon<typelonnamelon T>
+class IsotonicCalibration : public OpKelonrnelonl {
  public:
-  explicit IsotonicCalibration(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  elonxplicit IsotonicCalibration(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {}
 
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& input = context->input(0);
-    const Tensor& xs = context->input(1);
-    const Tensor& ys = context->input(2);
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    const Telonnsor& input = contelonxt->input(0);
+    const Telonnsor& xs = contelonxt->input(1);
+    const Telonnsor& ys = contelonxt->input(2);
 
-    Tensor* output = nullptr;
-    OP_REQUIRES_OK(
-      context,
-      context->allocate_output(0, input.shape(), &output));
+    Telonnsor* output = nullptr;
+    OP_RelonQUIRelonS_OK(
+      contelonxt,
+      contelonxt->allocatelon_output(0, input.shapelon(), &output));
 
     try {
-      const twml::Tensor twml_input = TFTensor_to_twml_tensor(input);
-      const twml::Tensor twml_xs = TFTensor_to_twml_tensor(xs);
-      const twml::Tensor twml_ys = TFTensor_to_twml_tensor(ys);
-      twml::Tensor twml_output = TFTensor_to_twml_tensor(*output);
+      const twml::Telonnsor twml_input = TFTelonnsor_to_twml_telonnsor(input);
+      const twml::Telonnsor twml_xs = TFTelonnsor_to_twml_telonnsor(xs);
+      const twml::Telonnsor twml_ys = TFTelonnsor_to_twml_telonnsor(ys);
+      twml::Telonnsor twml_output = TFTelonnsor_to_twml_telonnsor(*output);
 
-      twml::linearInterpolation(twml_output, twml_input, twml_xs, twml_ys);
-    }  catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      twml::linelonarIntelonrpolation(twml_output, twml_input, twml_xs, twml_ys);
+    }  catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-#define REGISTER(Type)                \
+#delonfinelon RelonGISTelonR(Typelon)                \
                                       \
-  REGISTER_KERNEL_BUILDER(            \
-    Name("IsotonicCalibration")       \
-    .Device(DEVICE_CPU)               \
-    .TypeConstraint<Type>("T"),       \
-    IsotonicCalibration<Type>);       \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(            \
+    Namelon("IsotonicCalibration")       \
+    .Delonvicelon(DelonVICelon_CPU)               \
+    .TypelonConstraint<Typelon>("T"),       \
+    IsotonicCalibration<Typelon>);       \
 
-REGISTER(float);
-REGISTER(double);
+RelonGISTelonR(float);
+RelonGISTelonR(doublelon);

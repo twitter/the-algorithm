@@ -1,103 +1,103 @@
-package com.twitter.simclusters_v2.score
+packagelon com.twittelonr.simclustelonrs_v2.scorelon
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.BroadcastStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ScoringAlgorithm
+import com.twittelonr.simclustelonrs_v2.thriftscala.{ScorelonId => ThriftScorelonId}
+import com.twittelonr.simclustelonrs_v2.thriftscala.{Scorelon => ThriftScorelon}
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
 
 /**
- * Provide a uniform access layer for all kind of Score.
- * @param readableStores readable stores indexed by the ScoringAlgorithm they implement
+ * Providelon a uniform accelonss layelonr for all kind of Scorelon.
+ * @param relonadablelonStorelons relonadablelon storelons indelonxelond by thelon ScoringAlgorithm thelony implelonmelonnt
  */
-class ScoreFacadeStore private (
-  stores: Map[ScoringAlgorithm, ReadableStore[ThriftScoreId, ThriftScore]])
-    extends ReadableStore[ThriftScoreId, ThriftScore] {
+class ScorelonFacadelonStorelon privatelon (
+  storelons: Map[ScoringAlgorithm, RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon]])
+    elonxtelonnds RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon] {
 
-  override def get(k: ThriftScoreId): Future[Option[ThriftScore]] = {
-    findStore(k).get(k)
+  ovelonrridelon delonf gelont(k: ThriftScorelonId): Futurelon[Option[ThriftScorelon]] = {
+    findStorelon(k).gelont(k)
   }
 
-  // Override the multiGet for better batch performance.
-  override def multiGet[K1 <: ThriftScoreId](ks: Set[K1]): Map[K1, Future[Option[ThriftScore]]] = {
-    if (ks.isEmpty) {
-      Map.empty
-    } else {
-      val head = ks.head
-      val notSameType = ks.exists(k => k.algorithm != head.algorithm)
-      if (!notSameType) {
-        findStore(head).multiGet(ks)
-      } else {
-        // Generate a large amount temp objects.
-        // For better performance, avoid querying the multiGet with more than one kind of embedding
+  // Ovelonrridelon thelon multiGelont for belonttelonr batch pelonrformancelon.
+  ovelonrridelon delonf multiGelont[K1 <: ThriftScorelonId](ks: Selont[K1]): Map[K1, Futurelon[Option[ThriftScorelon]]] = {
+    if (ks.iselonmpty) {
+      Map.elonmpty
+    } elonlselon {
+      val helonad = ks.helonad
+      val notSamelonTypelon = ks.elonxists(k => k.algorithm != helonad.algorithm)
+      if (!notSamelonTypelon) {
+        findStorelon(helonad).multiGelont(ks)
+      } elonlselon {
+        // Gelonnelonratelon a largelon amount telonmp objeloncts.
+        // For belonttelonr pelonrformancelon, avoid quelonrying thelon multiGelont with morelon than onelon kind of elonmbelondding
         ks.groupBy(id => id.algorithm).flatMap {
-          case (_, ks) =>
-            findStore(ks.head).multiGet(ks)
+          caselon (_, ks) =>
+            findStorelon(ks.helonad).multiGelont(ks)
         }
       }
     }
   }
 
-  // If not store mapping, fast return a IllegalArgumentException.
-  private def findStore(id: ThriftScoreId): ReadableStore[ThriftScoreId, ThriftScore] = {
-    stores.get(id.algorithm) match {
-      case Some(store) => store
-      case None =>
-        throw new IllegalArgumentException(s"The Scoring Algorithm ${id.algorithm} doesn't exist.")
+  // If not storelon mapping, fast relonturn a IllelongalArgumelonntelonxcelonption.
+  privatelon delonf findStorelon(id: ThriftScorelonId): RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon] = {
+    storelons.gelont(id.algorithm) match {
+      caselon Somelon(storelon) => storelon
+      caselon Nonelon =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(s"Thelon Scoring Algorithm ${id.algorithm} doelonsn't elonxist.")
     }
   }
 
 }
 
-object ScoreFacadeStore {
+objelonct ScorelonFacadelonStorelon {
   /*
-  Build a ScoreFacadeStore which exposes stats for all requests (under "all") and per scoring algorithm:
+  Build a ScorelonFacadelonStorelon which elonxposelons stats for all relonquelonsts (undelonr "all") and pelonr scoring algorithm:
 
-    score_facade_store/all/<observed readable store metrics for all requests>
-    score_facade_store/<scoring algorithm>/<observed readable store metrics for this algorithm's requests>
+    scorelon_facadelon_storelon/all/<obselonrvelond relonadablelon storelon melontrics for all relonquelonsts>
+    scorelon_facadelon_storelon/<scoring algorithm>/<obselonrvelond relonadablelon storelon melontrics for this algorithm's relonquelonsts>
 
-  Stores in aggregatedStores may reference stores in readableStores. An instance of ScoreFacadeStore
-  is passed to them after instantiation.
+  Storelons in aggrelongatelondStorelons may relonfelonrelonncelon storelons in relonadablelonStorelons. An instancelon of ScorelonFacadelonStorelon
+  is passelond to thelonm aftelonr instantiation.
    */
-  def buildWithMetrics(
-    readableStores: Map[ScoringAlgorithm, ReadableStore[ThriftScoreId, ThriftScore]],
-    aggregatedStores: Map[ScoringAlgorithm, AggregatedScoreStore],
-    statsReceiver: StatsReceiver
+  delonf buildWithMelontrics(
+    relonadablelonStorelons: Map[ScoringAlgorithm, RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon]],
+    aggrelongatelondStorelons: Map[ScoringAlgorithm, AggrelongatelondScorelonStorelon],
+    statsReloncelonivelonr: StatsReloncelonivelonr
   ) = {
-    val scopedStatsReceiver = statsReceiver.scope("score_facade_store")
+    val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("scorelon_facadelon_storelon")
 
-    def wrapStore(
+    delonf wrapStorelon(
       scoringAlgorithm: ScoringAlgorithm,
-      store: ReadableStore[ThriftScoreId, ThriftScore]
-    ): ReadableStore[ThriftScoreId, ThriftScore] = {
-      val sr = BroadcastStatsReceiver(
-        Seq(
-          scopedStatsReceiver.scope("all"),
-          scopedStatsReceiver.scope(scoringAlgorithm.name)
+      storelon: RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon]
+    ): RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon] = {
+      val sr = BroadcastStatsReloncelonivelonr(
+        Selonq(
+          scopelondStatsReloncelonivelonr.scopelon("all"),
+          scopelondStatsReloncelonivelonr.scopelon(scoringAlgorithm.namelon)
         ))
-      ObservedReadableStore(store)(sr)
+      ObselonrvelondRelonadablelonStorelon(storelon)(sr)
     }
 
-    val stores = (readableStores ++ aggregatedStores).map {
-      case (algo, store) => algo -> wrapStore(algo, store)
+    val storelons = (relonadablelonStorelons ++ aggrelongatelondStorelons).map {
+      caselon (algo, storelon) => algo -> wrapStorelon(algo, storelon)
     }
-    val store = new ScoreFacadeStore(stores = stores)
+    val storelon = nelonw ScorelonFacadelonStorelon(storelons = storelons)
 
     /*
-    AggregatedScores aggregate scores from multiple non-aggregated stores. They access these via the
-    ScoreFacadeStore itself, and therefore must be passed an instance of it after it has been
-    constructed.
+    AggrelongatelondScorelons aggrelongatelon scorelons from multiplelon non-aggrelongatelond storelons. Thelony accelonss thelonselon via thelon
+    ScorelonFacadelonStorelon itselonlf, and thelonrelonforelon must belon passelond an instancelon of it aftelonr it has belonelonn
+    constructelond.
      */
-    assert(
-      readableStores.keySet.forall(algorithm => !aggregatedStores.keySet.contains(algorithm)),
-      "Keys for stores are disjoint")
+    asselonrt(
+      relonadablelonStorelons.kelonySelont.forall(algorithm => !aggrelongatelondStorelons.kelonySelont.contains(algorithm)),
+      "Kelonys for storelons arelon disjoint")
 
-    aggregatedStores.values.foreach(_.set(store))
+    aggrelongatelondStorelons.valuelons.forelonach(_.selont(storelon))
 
-    store
+    storelon
   }
 
 }

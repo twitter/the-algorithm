@@ -1,9 +1,9 @@
-package com.twitter.home_mixer.model.request
+packagelon com.twittelonr.homelon_mixelonr.modelonl.relonquelonst
 
 /**
- * [[HasSeenTweetIds]] enables shared components to access the list of impressed tweet IDs
- * sent by clients across different Home Mixer query types (e.g. FollowingQuery, ForYouQuery)
+ * [[HasSelonelonnTwelonelontIds]] elonnablelons sharelond componelonnts to accelonss thelon list of imprelonsselond twelonelont IDs
+ * selonnt by clielonnts across diffelonrelonnt Homelon Mixelonr quelonry typelons (elon.g. FollowingQuelonry, ForYouQuelonry)
  */
-trait HasSeenTweetIds {
-  def seenTweetIds: Option[Seq[Long]]
+trait HasSelonelonnTwelonelontIds {
+  delonf selonelonnTwelonelontIds: Option[Selonq[Long]]
 }

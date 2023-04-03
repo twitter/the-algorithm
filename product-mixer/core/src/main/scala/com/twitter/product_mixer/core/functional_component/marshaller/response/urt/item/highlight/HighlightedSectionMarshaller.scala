@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.highlight
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.highlight
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight.HighlightedSection
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.highlight.HighlightelondSelonction
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HighlightedSectionMarshaller @Inject() () {
+@Singlelonton
+class HighlightelondSelonctionMarshallelonr @Injelonct() () {
 
-  def apply(highlightedSection: HighlightedSection): urt.HighlightedSection =
-    urt.HighlightedSection(
-      startIndex = highlightedSection.startIndex,
-      endIndex = highlightedSection.endIndex
+  delonf apply(highlightelondSelonction: HighlightelondSelonction): urt.HighlightelondSelonction =
+    urt.HighlightelondSelonction(
+      startIndelonx = highlightelondSelonction.startIndelonx,
+      elonndIndelonx = highlightelondSelonction.elonndIndelonx
     )
 }

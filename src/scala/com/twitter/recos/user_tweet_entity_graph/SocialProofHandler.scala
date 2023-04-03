@@ -1,141 +1,141 @@
-package com.twitter.recos.user_tweet_entity_graph
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms.{
-  RecommendationInfo,
-  RecommendationType => JavaRecommendationType
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graphjelont.algorithms.{
+  ReloncommelonndationInfo,
+  ReloncommelonndationTypelon => JavaReloncommelonndationTypelon
 }
-import com.twitter.graphjet.algorithms.socialproof.{
-  NodeMetadataSocialProofResult => EntitySocialProofJavaResult,
-  SocialProofResult => SocialProofJavaResult
+import com.twittelonr.graphjelont.algorithms.socialproof.{
+  NodelonMelontadataSocialProofRelonsult => elonntitySocialProofJavaRelonsult,
+  SocialProofRelonsult => SocialProofJavaRelonsult
 }
-import com.twitter.recos.decider.UserTweetEntityGraphDecider
-import com.twitter.recos.util.Stats
-import com.twitter.recos.util.Stats._
-import com.twitter.recos.recos_common.thriftscala.{SocialProofType => SocialProofThriftType}
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  HashtagRecommendation,
-  TweetRecommendation,
-  UrlRecommendation,
-  UserTweetEntityRecommendationUnion,
-  RecommendationSocialProofRequest => SocialProofThriftRequest,
-  RecommendationSocialProofResponse => SocialProofThriftResponse,
-  RecommendationType => ThriftRecommendationType
+import com.twittelonr.reloncos.deloncidelonr.UselonrTwelonelontelonntityGraphDeloncidelonr
+import com.twittelonr.reloncos.util.Stats
+import com.twittelonr.reloncos.util.Stats._
+import com.twittelonr.reloncos.reloncos_common.thriftscala.{SocialProofTypelon => SocialProofThriftTypelon}
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.{
+  HashtagReloncommelonndation,
+  TwelonelontReloncommelonndation,
+  UrlReloncommelonndation,
+  UselonrTwelonelontelonntityReloncommelonndationUnion,
+  ReloncommelonndationSocialProofRelonquelonst => SocialProofThriftRelonquelonst,
+  ReloncommelonndationSocialProofRelonsponselon => SocialProofThriftRelonsponselon,
+  ReloncommelonndationTypelon => ThriftReloncommelonndationTypelon
 }
-import com.twitter.servo.request.RequestHandler
-import com.twitter.util.{Future, Try}
-import scala.collection.JavaConverters._
+import com.twittelonr.selonrvo.relonquelonst.RelonquelonstHandlelonr
+import com.twittelonr.util.{Futurelon, Try}
+import scala.collelonction.JavaConvelonrtelonrs._
 
-class SocialProofHandler(
-  tweetSocialProofRunner: TweetSocialProofRunner,
-  entitySocialProofRunner: EntitySocialProofRunner,
-  decider: UserTweetEntityGraphDecider,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[SocialProofThriftRequest, SocialProofThriftResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+class SocialProofHandlelonr(
+  twelonelontSocialProofRunnelonr: TwelonelontSocialProofRunnelonr,
+  elonntitySocialProofRunnelonr: elonntitySocialProofRunnelonr,
+  deloncidelonr: UselonrTwelonelontelonntityGraphDeloncidelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstHandlelonr[SocialProofThriftRelonquelonst, SocialProofThriftRelonsponselon] {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  private def getThriftSocialProof(
-    entitySocialProof: EntitySocialProofJavaResult
-  ): Map[SocialProofThriftType, Map[Long, Seq[Long]]] = {
-    val socialProofAttempt = Try(entitySocialProof.getSocialProof)
-      .onFailure { e =>
-        stats.counter(e.getClass.getSimpleName).incr()
+  privatelon delonf gelontThriftSocialProof(
+    elonntitySocialProof: elonntitySocialProofJavaRelonsult
+  ): Map[SocialProofThriftTypelon, Map[Long, Selonq[Long]]] = {
+    val socialProofAttelonmpt = Try(elonntitySocialProof.gelontSocialProof)
+      .onFailurelon { elon =>
+        stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
       }
 
-    socialProofAttempt.toOption match {
-      case Some(socialProof) if socialProof.isEmpty =>
-        stats.counter(Stats.EmptyResult).incr()
-        Map.empty[SocialProofThriftType, Map[Long, Seq[Long]]]
-      case Some(socialProof) if !socialProof.isEmpty =>
+    socialProofAttelonmpt.toOption match {
+      caselon Somelon(socialProof) if socialProof.iselonmpty =>
+        stats.countelonr(Stats.elonmptyRelonsult).incr()
+        Map.elonmpty[SocialProofThriftTypelon, Map[Long, Selonq[Long]]]
+      caselon Somelon(socialProof) if !socialProof.iselonmpty =>
         socialProof.asScala.map {
-          case (socialProofType, socialProofUserToTweetsMap) =>
-            val userToTweetsSocialProof = socialProofUserToTweetsMap.asScala.map {
-              case (socialProofUser, connectingTweets) =>
-                (socialProofUser.toLong, connectingTweets.asScala.map(Long2long).toSeq)
+          caselon (socialProofTypelon, socialProofUselonrToTwelonelontsMap) =>
+            val uselonrToTwelonelontsSocialProof = socialProofUselonrToTwelonelontsMap.asScala.map {
+              caselon (socialProofUselonr, connelonctingTwelonelonts) =>
+                (socialProofUselonr.toLong, connelonctingTwelonelonts.asScala.map(Long2long).toSelonq)
             }.toMap
-            (SocialProofThriftType(socialProofType.toInt), userToTweetsSocialProof)
+            (SocialProofThriftTypelon(socialProofTypelon.toInt), uselonrToTwelonelontsSocialProof)
         }.toMap
-      case _ =>
-        Map.empty[SocialProofThriftType, Map[Long, Seq[Long]]]
+      caselon _ =>
+        Map.elonmpty[SocialProofThriftTypelon, Map[Long, Selonq[Long]]]
     }
   }
 
-  private def getThriftSocialProof(
-    tweetSocialProof: SocialProofJavaResult
-  ): Map[SocialProofThriftType, Seq[Long]] = {
-    val socialProofAttempt = Try(tweetSocialProof.getSocialProof)
-      .onFailure { e =>
-        stats.counter(e.getClass.getSimpleName).incr()
+  privatelon delonf gelontThriftSocialProof(
+    twelonelontSocialProof: SocialProofJavaRelonsult
+  ): Map[SocialProofThriftTypelon, Selonq[Long]] = {
+    val socialProofAttelonmpt = Try(twelonelontSocialProof.gelontSocialProof)
+      .onFailurelon { elon =>
+        stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
       }
 
-    socialProofAttempt.toOption match {
-      case Some(socialProof) if socialProof.isEmpty =>
-        stats.counter(Stats.EmptyResult).incr()
-        Map.empty[SocialProofThriftType, Seq[Long]]
-      case Some(socialProof) if !socialProof.isEmpty =>
+    socialProofAttelonmpt.toOption match {
+      caselon Somelon(socialProof) if socialProof.iselonmpty =>
+        stats.countelonr(Stats.elonmptyRelonsult).incr()
+        Map.elonmpty[SocialProofThriftTypelon, Selonq[Long]]
+      caselon Somelon(socialProof) if !socialProof.iselonmpty =>
         socialProof.asScala.map {
-          case (socialProofType, connectingUsers) =>
+          caselon (socialProofTypelon, connelonctingUselonrs) =>
             (
-              SocialProofThriftType(socialProofType.toInt),
-              connectingUsers.asScala.map { Long2long }.toSeq)
+              SocialProofThriftTypelon(socialProofTypelon.toInt),
+              connelonctingUselonrs.asScala.map { Long2long }.toSelonq)
         }.toMap
-      case _ =>
-        Map.empty[SocialProofThriftType, Seq[Long]]
+      caselon _ =>
+        Map.elonmpty[SocialProofThriftTypelon, Selonq[Long]]
     }
   }
 
-  private def getEntitySocialProof(
-    request: SocialProofThriftRequest
-  ): Future[Seq[UserTweetEntityRecommendationUnion]] = {
-    val socialProofsFuture = entitySocialProofRunner(request)
+  privatelon delonf gelontelonntitySocialProof(
+    relonquelonst: SocialProofThriftRelonquelonst
+  ): Futurelon[Selonq[UselonrTwelonelontelonntityReloncommelonndationUnion]] = {
+    val socialProofsFuturelon = elonntitySocialProofRunnelonr(relonquelonst)
 
-    socialProofsFuture.map { socialProofs: Seq[RecommendationInfo] =>
-      stats.counter(Stats.Served).incr(socialProofs.size)
-      socialProofs.flatMap { entitySocialProof: RecommendationInfo =>
-        val entitySocialProofJavaResult =
-          entitySocialProof.asInstanceOf[EntitySocialProofJavaResult]
-        if (entitySocialProofJavaResult.getRecommendationType == JavaRecommendationType.URL) {
-          Some(
-            UserTweetEntityRecommendationUnion.UrlRec(
-              UrlRecommendation(
-                entitySocialProofJavaResult.getNodeMetadataId,
-                entitySocialProofJavaResult.getWeight,
-                getThriftSocialProof(entitySocialProofJavaResult)
+    socialProofsFuturelon.map { socialProofs: Selonq[ReloncommelonndationInfo] =>
+      stats.countelonr(Stats.Selonrvelond).incr(socialProofs.sizelon)
+      socialProofs.flatMap { elonntitySocialProof: ReloncommelonndationInfo =>
+        val elonntitySocialProofJavaRelonsult =
+          elonntitySocialProof.asInstancelonOf[elonntitySocialProofJavaRelonsult]
+        if (elonntitySocialProofJavaRelonsult.gelontReloncommelonndationTypelon == JavaReloncommelonndationTypelon.URL) {
+          Somelon(
+            UselonrTwelonelontelonntityReloncommelonndationUnion.UrlRelonc(
+              UrlReloncommelonndation(
+                elonntitySocialProofJavaRelonsult.gelontNodelonMelontadataId,
+                elonntitySocialProofJavaRelonsult.gelontWelonight,
+                gelontThriftSocialProof(elonntitySocialProofJavaRelonsult)
               )
             )
           )
-        } else if (entitySocialProofJavaResult.getRecommendationType == JavaRecommendationType.HASHTAG) {
-          Some(
-            UserTweetEntityRecommendationUnion.HashtagRec(
-              HashtagRecommendation(
-                entitySocialProofJavaResult.getNodeMetadataId,
-                entitySocialProofJavaResult.getWeight,
-                getThriftSocialProof(entitySocialProofJavaResult)
+        } elonlselon if (elonntitySocialProofJavaRelonsult.gelontReloncommelonndationTypelon == JavaReloncommelonndationTypelon.HASHTAG) {
+          Somelon(
+            UselonrTwelonelontelonntityReloncommelonndationUnion.HashtagRelonc(
+              HashtagReloncommelonndation(
+                elonntitySocialProofJavaRelonsult.gelontNodelonMelontadataId,
+                elonntitySocialProofJavaRelonsult.gelontWelonight,
+                gelontThriftSocialProof(elonntitySocialProofJavaRelonsult)
               )
             )
           )
-        } else {
-          None
+        } elonlselon {
+          Nonelon
         }
       }
     }
   }
 
-  private def getTweetSocialProof(
-    request: SocialProofThriftRequest
-  ): Future[Seq[UserTweetEntityRecommendationUnion]] = {
-    val socialProofsFuture = tweetSocialProofRunner(request)
+  privatelon delonf gelontTwelonelontSocialProof(
+    relonquelonst: SocialProofThriftRelonquelonst
+  ): Futurelon[Selonq[UselonrTwelonelontelonntityReloncommelonndationUnion]] = {
+    val socialProofsFuturelon = twelonelontSocialProofRunnelonr(relonquelonst)
 
-    socialProofsFuture.map { socialProofs: Seq[RecommendationInfo] =>
-      stats.counter(Stats.Served).incr(socialProofs.size)
-      socialProofs.flatMap { tweetSocialProof: RecommendationInfo =>
-        val tweetSocialProofJavaResult = tweetSocialProof.asInstanceOf[SocialProofJavaResult]
-        Some(
-          UserTweetEntityRecommendationUnion.TweetRec(
-            TweetRecommendation(
-              tweetSocialProofJavaResult.getNode,
-              tweetSocialProofJavaResult.getWeight,
-              getThriftSocialProof(tweetSocialProofJavaResult)
+    socialProofsFuturelon.map { socialProofs: Selonq[ReloncommelonndationInfo] =>
+      stats.countelonr(Stats.Selonrvelond).incr(socialProofs.sizelon)
+      socialProofs.flatMap { twelonelontSocialProof: ReloncommelonndationInfo =>
+        val twelonelontSocialProofJavaRelonsult = twelonelontSocialProof.asInstancelonOf[SocialProofJavaRelonsult]
+        Somelon(
+          UselonrTwelonelontelonntityReloncommelonndationUnion.TwelonelontRelonc(
+            TwelonelontReloncommelonndation(
+              twelonelontSocialProofJavaRelonsult.gelontNodelon,
+              twelonelontSocialProofJavaRelonsult.gelontWelonight,
+              gelontThriftSocialProof(twelonelontSocialProofJavaRelonsult)
             )
           )
         )
@@ -143,22 +143,22 @@ class SocialProofHandler(
     }
   }
 
-  def apply(request: SocialProofThriftRequest): Future[SocialProofThriftResponse] = {
-    trackFutureBlockStats(stats) {
-      val recommendationsWithSocialProofFut = Future
-        .collect {
-          request.recommendationIdsForSocialProof.keys.map {
-            case ThriftRecommendationType.Tweet if decider.tweetSocialProof =>
-              getTweetSocialProof(request)
-            case (ThriftRecommendationType.Url | ThriftRecommendationType.Hashtag)
-                if decider.entitySocialProof =>
-              getEntitySocialProof(request)
-            case _ =>
-              Future.Nil
-          }.toSeq
-        }.map(_.flatten)
-      recommendationsWithSocialProofFut.map { recommendationsWithSocialProof =>
-        SocialProofThriftResponse(recommendationsWithSocialProof)
+  delonf apply(relonquelonst: SocialProofThriftRelonquelonst): Futurelon[SocialProofThriftRelonsponselon] = {
+    trackFuturelonBlockStats(stats) {
+      val reloncommelonndationsWithSocialProofFut = Futurelon
+        .collelonct {
+          relonquelonst.reloncommelonndationIdsForSocialProof.kelonys.map {
+            caselon ThriftReloncommelonndationTypelon.Twelonelont if deloncidelonr.twelonelontSocialProof =>
+              gelontTwelonelontSocialProof(relonquelonst)
+            caselon (ThriftReloncommelonndationTypelon.Url | ThriftReloncommelonndationTypelon.Hashtag)
+                if deloncidelonr.elonntitySocialProof =>
+              gelontelonntitySocialProof(relonquelonst)
+            caselon _ =>
+              Futurelon.Nil
+          }.toSelonq
+        }.map(_.flattelonn)
+      reloncommelonndationsWithSocialProofFut.map { reloncommelonndationsWithSocialProof =>
+        SocialProofThriftRelonsponselon(reloncommelonndationsWithSocialProof)
       }
     }
   }

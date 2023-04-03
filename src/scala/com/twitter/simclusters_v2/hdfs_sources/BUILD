@@ -1,2216 +1,2216 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":data_sources",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "src/scala/com/twitter/scalding_internal/dalv2",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/scalding_internal/source/lzo_scrooge",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/hermit/candidate:hermit-candidate-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-        "src/thrift/com/twitter/wtf/entity_real_graph:entity_real_graph-thrift-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":data_sourcelons",
+        "3rdparty/src/jvm/com/twittelonr/scalding:corelon",
+        "src/scala/com/twittelonr/scalding_intelonrnal/dalv2",
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/scalding_intelonrnal/sourcelon/lzo_scroogelon",
+        "src/scala/com/twittelonr/simclustelonrs_v2/common",
+        "src/thrift/com/twittelonr/helonrmit/candidatelon:helonrmit-candidatelon-scala",
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
+        "src/thrift/com/twittelonr/wtf/elonntity_relonal_graph:elonntity_relonal_graph-thrift-scala",
     ],
 )
 
 scala_library(
-    name = "data_sources",
-    sources = [],
-    description = "DAL datasets we wish to expose externally",
+    namelon = "data_sourcelons",
+    sourcelons = [],
+    delonscription = "DAL dataselonts welon wish to elonxposelon elonxtelonrnally",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":ads_fav_based_simclusters_cluster_to_tweet_index-scala",
-        ":ads_fav_click_based_simclusters_cluster_to_tweet_index-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_fav_score-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_fav_score_2020-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_fav_score_2020_thrift-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_fav_score_thrift-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_follow_score_2020-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_follow_score_2020_thrift-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_log_fav_score-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_2020-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_2020_thrift-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_relaxed_fav_engagement_threshold_2020-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_relaxed_fav_engagement_threshold_2020_thrift-scala",
-        ":aggregatable_producer_simclusters_embeddings_by_log_fav_score_thrift-scala",
-        ":clusters_members_connected_components_ape_similarity-scala",
-        ":clusters_members_largest_dim_ape_similarity-scala",
-        ":clusters_members_largest_dim_ape_similarity_2_day_update-scala",
-        ":clusters_members_louvain_ape_similarity-scala",
-        ":co_engagement_top_k_similar_tweets-scala",
-        ":explore_mbcg_user_embeddings_kv-scala",
-        ":fav_based_evergreen_content_simclusters_cluster_to_tweet_index-scala",
-        ":fav_based_simclusters_cluster_to_tweet_index-scala",
-        ":fav_based_video_simclusters_cluster_to_tweet_index-scala",
-        ":fav_inferred_language_tfg_topic_embeddings-scala",
-        ":fav_tfg_topic_embeddings-scala",
-        ":fav_tfg_topic_embeddings_2020-scala",
-        ":fav_tfg_topic_embeddings_2020_parquet-scala",
-        ":fav_tfg_topic_embeddings_parquet-scala",
-        ":full_multi_type_graph-scala",
-        ":geopopular_top_tweet_impressed_topics-scala",
-        ":hashtag_simclusters_embeddings_updated-scala",
-        ":interested_in_twice_by_largest_dim-scala",
-        ":interested_in_twice_by_largest_dim_2_day_update-scala",
-        ":interested_in_twice_by_largest_dim_fav_score-scala",
-        ":interested_in_twice_connected_components-scala",
-        ":interested_in_twice_louvain-scala",
-        ":log_fav_reverse_index_semantic_core_per_language_simclusters_embeddings-scala",
-        ":log_fav_semantic_core_per_language_simclusters_embeddings-scala",
-        ":log_fav_tfg_topic_embeddings-scala",
-        ":log_fav_tfg_topic_embeddings_parquet-scala",
-        ":multi_type_graph_for_top_k_right_nodes_thrift_50_m_scio-scala",
-        ":multi_type_graph_for_top_k_right_nodes_thrift_scio-scala",
-        ":multi_type_simclusters_right_node_to_clusters_thrift_50_m-scala",
-        ":multi_type_simclusters_right_node_to_clusters_thrift_fav_90_p_20_m-scala",
-        ":offline_cluster_top_media_tweets_20M_145K_2020-scala",
-        ":offline_tweet_recommendations_from_interested_in_20M_145K_2020-scala",
-        ":offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_0_EL_15-scala",
-        ":offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_15-scala",
-        ":offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_50-scala",
-        ":offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50-scala",
-        ":offline_tweet_recommendations_from_mts_consumer_embeddings-scala",
-        ":producer_norms_and_counts-scala",
-        ":producer_top_k_simcluster_embeddings_by_fav_score-scala",
-        ":producer_top_k_simcluster_embeddings_by_fav_score_2020-scala",
-        ":producer_top_k_simcluster_embeddings_by_fav_score_updated-scala",
-        ":producer_top_k_simcluster_embeddings_by_follow_score-scala",
-        ":producer_top_k_simcluster_embeddings_by_follow_score_2020-scala",
-        ":producer_top_k_simcluster_embeddings_by_follow_score_updated-scala",
-        ":push_open_based_simclusters_cluster_to_tweet_index-scala",
-        ":reply_based_simclusters_cluster_to_tweet_index-scala",
-        ":retweet_based_simclusters_cluster_to_tweet_index-scala",
-        ":reverse_index_hashtag_simclusters_embeddings_updated-scala",
-        ":reverse_index_semantic_core_per_language_simclusters_embeddings-scala",
-        ":reverse_index_semantic_core_simclusters_embeddings-scala",
-        ":reverse_index_semantic_core_simclusters_embeddings_2020-scala",
-        ":reverse_index_semantic_core_simclusters_embeddings_updated-scala",
-        ":right_node_cosine_similarity_scio-scala",
-        ":right_node_sim_hash_scio-scala",
-        ":rux_faved_top_k_tweets-scala",
-        ":semantic_core_embeddings_from_producer-scala",
-        ":semantic_core_per_language_simclusters_embeddings-scala",
-        ":semantic_core_simclusters_embeddings-scala",
-        ":semantic_core_simclusters_embeddings_2020-scala",
-        ":semantic_core_simclusters_embeddings_updated-scala",
-        ":simcluster_embedding_top_k_producers_by_fav_score-scala",
-        ":simcluster_embedding_top_k_producers_by_fav_score_2020-scala",
-        ":simcluster_embedding_top_k_producers_by_fav_score_updated-scala",
-        ":simcluster_embedding_top_k_producers_by_follow_score-scala",
-        ":simcluster_embedding_top_k_producers_by_follow_score_2020-scala",
-        ":simcluster_embedding_top_k_producers_by_follow_score_updated-scala",
-        ":simclusters_inferred_entities_from_interested_in-scala",
-        ":simclusters_inferred_entities_from_interested_in_keyed_by_cluster-scala",
-        ":simclusters_inferred_entities_from_known_for-scala",
-        ":simclusters_offline_cluster_top_k_tweets-scala",
-        ":simclusters_offline_tweet_cluster_scores-scala",
-        ":simclusters_offline_tweet_top_k_clusters-scala",
-        ":simclusters_v2_cluster_details-scala",
-        ":simclusters_v2_cluster_details_20m_145k_2020-scala",
-        ":simclusters_v2_cluster_details_20m_145k_updated-scala",
-        ":simclusters_v2_cluster_details_lite-scala",
-        ":simclusters_v2_cluster_details_lite_20m_145k_2020-scala",
-        ":simclusters_v2_cluster_details_lite_20m_145k_updated-scala",
-        ":simclusters_v2_embeddings_lite-scala",
-        ":simclusters_v2_global_language_embedding-scala",
-        ":simclusters_v2_global_language_embedding_thrift-scala",
-        ":simclusters_v2_interested_in-scala",
-        ":simclusters_v2_interested_in_20M_145K_2020-scala",
-        ":simclusters_v2_interested_in_20M_145K_updated-scala",
-        ":simclusters_v2_interested_in_from_aggregatable_producer_embeddings_20M_145K_2020-scala",
-        ":simclusters_v2_interested_in_from_producer_embeddings_20M_145K_updated-scala",
-        ":simclusters_v2_interested_in_lite_20M_145K_2020-scala",
-        ":simclusters_v2_known_for_20M_145K_2020-scala",
-        ":simclusters_v2_known_for_20M_145K_2020_thrift-scala",
-        ":simclusters_v2_known_for_20M_145K_dec11-scala",
-        ":simclusters_v2_known_for_20M_145K_updated-scala",
-        ":simclusters_v2_known_for_20M_145K_updated_thrift-scala",
-        ":simclusters_v2_raw_interested_in_20M_145K_2020-scala",
-        ":simclusters_v2_raw_interested_in_20M_145K_dec11-scala",
-        ":simclusters_v2_raw_interested_in_20M_145K_updated-scala",
-        ":simclusters_v2_raw_interested_in_lite_20M_145K_2020-scala",
-        ":simclusters_v2_raw_known_for_20M_145K_2020-scala",
-        ":simclusters_v2_raw_known_for_20M_145K_dec11-scala",
-        ":simclusters_v2_raw_known_for_20M_145K_updated-scala",
-        ":simclusters_v2_user_to_interested_in_20M_145K_2020-scala",
-        ":simclusters_v2_user_to_interested_in_20M_145K_dec11-scala",
-        ":simclusters_v2_user_to_interested_in_20M_145K_updated-scala",
-        ":simclusters_v2_user_to_interested_in_from_aggregatable_producer_embeddings_20M_145K_2020-scala",
-        ":simclusters_v2_user_to_interested_in_lite_20M_145K_2020-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":ads_fav_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx-scala",
+        ":ads_fav_click_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_fav_scorelon-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_fav_scorelon_2020-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_fav_scorelon_2020_thrift-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_fav_scorelon_thrift-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_follow_scorelon_2020-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_follow_scorelon_2020_thrift-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon_2020-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon_2020_thrift-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon_relonlaxelond_fav_elonngagelonmelonnt_threlonshold_2020-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon_relonlaxelond_fav_elonngagelonmelonnt_threlonshold_2020_thrift-scala",
+        ":aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon_thrift-scala",
+        ":clustelonrs_melonmbelonrs_connelonctelond_componelonnts_apelon_similarity-scala",
+        ":clustelonrs_melonmbelonrs_largelonst_dim_apelon_similarity-scala",
+        ":clustelonrs_melonmbelonrs_largelonst_dim_apelon_similarity_2_day_updatelon-scala",
+        ":clustelonrs_melonmbelonrs_louvain_apelon_similarity-scala",
+        ":co_elonngagelonmelonnt_top_k_similar_twelonelonts-scala",
+        ":elonxplorelon_mbcg_uselonr_elonmbelonddings_kv-scala",
+        ":fav_baselond_elonvelonrgrelonelonn_contelonnt_simclustelonrs_clustelonr_to_twelonelont_indelonx-scala",
+        ":fav_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx-scala",
+        ":fav_baselond_videlono_simclustelonrs_clustelonr_to_twelonelont_indelonx-scala",
+        ":fav_infelonrrelond_languagelon_tfg_topic_elonmbelonddings-scala",
+        ":fav_tfg_topic_elonmbelonddings-scala",
+        ":fav_tfg_topic_elonmbelonddings_2020-scala",
+        ":fav_tfg_topic_elonmbelonddings_2020_parquelont-scala",
+        ":fav_tfg_topic_elonmbelonddings_parquelont-scala",
+        ":full_multi_typelon_graph-scala",
+        ":gelonopopular_top_twelonelont_imprelonsselond_topics-scala",
+        ":hashtag_simclustelonrs_elonmbelonddings_updatelond-scala",
+        ":intelonrelonstelond_in_twicelon_by_largelonst_dim-scala",
+        ":intelonrelonstelond_in_twicelon_by_largelonst_dim_2_day_updatelon-scala",
+        ":intelonrelonstelond_in_twicelon_by_largelonst_dim_fav_scorelon-scala",
+        ":intelonrelonstelond_in_twicelon_connelonctelond_componelonnts-scala",
+        ":intelonrelonstelond_in_twicelon_louvain-scala",
+        ":log_fav_relonvelonrselon_indelonx_selonmantic_corelon_pelonr_languagelon_simclustelonrs_elonmbelonddings-scala",
+        ":log_fav_selonmantic_corelon_pelonr_languagelon_simclustelonrs_elonmbelonddings-scala",
+        ":log_fav_tfg_topic_elonmbelonddings-scala",
+        ":log_fav_tfg_topic_elonmbelonddings_parquelont-scala",
+        ":multi_typelon_graph_for_top_k_right_nodelons_thrift_50_m_scio-scala",
+        ":multi_typelon_graph_for_top_k_right_nodelons_thrift_scio-scala",
+        ":multi_typelon_simclustelonrs_right_nodelon_to_clustelonrs_thrift_50_m-scala",
+        ":multi_typelon_simclustelonrs_right_nodelon_to_clustelonrs_thrift_fav_90_p_20_m-scala",
+        ":offlinelon_clustelonr_top_melondia_twelonelonts_20M_145K_2020-scala",
+        ":offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020-scala",
+        ":offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_0_elonL_15-scala",
+        ":offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_2_elonL_15-scala",
+        ":offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_2_elonL_50-scala",
+        ":offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_8_elonL_50-scala",
+        ":offlinelon_twelonelont_reloncommelonndations_from_mts_consumelonr_elonmbelonddings-scala",
+        ":producelonr_norms_and_counts-scala",
+        ":producelonr_top_k_simclustelonr_elonmbelonddings_by_fav_scorelon-scala",
+        ":producelonr_top_k_simclustelonr_elonmbelonddings_by_fav_scorelon_2020-scala",
+        ":producelonr_top_k_simclustelonr_elonmbelonddings_by_fav_scorelon_updatelond-scala",
+        ":producelonr_top_k_simclustelonr_elonmbelonddings_by_follow_scorelon-scala",
+        ":producelonr_top_k_simclustelonr_elonmbelonddings_by_follow_scorelon_2020-scala",
+        ":producelonr_top_k_simclustelonr_elonmbelonddings_by_follow_scorelon_updatelond-scala",
+        ":push_opelonn_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx-scala",
+        ":relonply_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx-scala",
+        ":relontwelonelont_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx-scala",
+        ":relonvelonrselon_indelonx_hashtag_simclustelonrs_elonmbelonddings_updatelond-scala",
+        ":relonvelonrselon_indelonx_selonmantic_corelon_pelonr_languagelon_simclustelonrs_elonmbelonddings-scala",
+        ":relonvelonrselon_indelonx_selonmantic_corelon_simclustelonrs_elonmbelonddings-scala",
+        ":relonvelonrselon_indelonx_selonmantic_corelon_simclustelonrs_elonmbelonddings_2020-scala",
+        ":relonvelonrselon_indelonx_selonmantic_corelon_simclustelonrs_elonmbelonddings_updatelond-scala",
+        ":right_nodelon_cosinelon_similarity_scio-scala",
+        ":right_nodelon_sim_hash_scio-scala",
+        ":rux_favelond_top_k_twelonelonts-scala",
+        ":selonmantic_corelon_elonmbelonddings_from_producelonr-scala",
+        ":selonmantic_corelon_pelonr_languagelon_simclustelonrs_elonmbelonddings-scala",
+        ":selonmantic_corelon_simclustelonrs_elonmbelonddings-scala",
+        ":selonmantic_corelon_simclustelonrs_elonmbelonddings_2020-scala",
+        ":selonmantic_corelon_simclustelonrs_elonmbelonddings_updatelond-scala",
+        ":simclustelonr_elonmbelondding_top_k_producelonrs_by_fav_scorelon-scala",
+        ":simclustelonr_elonmbelondding_top_k_producelonrs_by_fav_scorelon_2020-scala",
+        ":simclustelonr_elonmbelondding_top_k_producelonrs_by_fav_scorelon_updatelond-scala",
+        ":simclustelonr_elonmbelondding_top_k_producelonrs_by_follow_scorelon-scala",
+        ":simclustelonr_elonmbelondding_top_k_producelonrs_by_follow_scorelon_2020-scala",
+        ":simclustelonr_elonmbelondding_top_k_producelonrs_by_follow_scorelon_updatelond-scala",
+        ":simclustelonrs_infelonrrelond_elonntitielons_from_intelonrelonstelond_in-scala",
+        ":simclustelonrs_infelonrrelond_elonntitielons_from_intelonrelonstelond_in_kelonyelond_by_clustelonr-scala",
+        ":simclustelonrs_infelonrrelond_elonntitielons_from_known_for-scala",
+        ":simclustelonrs_offlinelon_clustelonr_top_k_twelonelonts-scala",
+        ":simclustelonrs_offlinelon_twelonelont_clustelonr_scorelons-scala",
+        ":simclustelonrs_offlinelon_twelonelont_top_k_clustelonrs-scala",
+        ":simclustelonrs_v2_clustelonr_delontails-scala",
+        ":simclustelonrs_v2_clustelonr_delontails_20m_145k_2020-scala",
+        ":simclustelonrs_v2_clustelonr_delontails_20m_145k_updatelond-scala",
+        ":simclustelonrs_v2_clustelonr_delontails_litelon-scala",
+        ":simclustelonrs_v2_clustelonr_delontails_litelon_20m_145k_2020-scala",
+        ":simclustelonrs_v2_clustelonr_delontails_litelon_20m_145k_updatelond-scala",
+        ":simclustelonrs_v2_elonmbelonddings_litelon-scala",
+        ":simclustelonrs_v2_global_languagelon_elonmbelondding-scala",
+        ":simclustelonrs_v2_global_languagelon_elonmbelondding_thrift-scala",
+        ":simclustelonrs_v2_intelonrelonstelond_in-scala",
+        ":simclustelonrs_v2_intelonrelonstelond_in_20M_145K_2020-scala",
+        ":simclustelonrs_v2_intelonrelonstelond_in_20M_145K_updatelond-scala",
+        ":simclustelonrs_v2_intelonrelonstelond_in_from_aggrelongatablelon_producelonr_elonmbelonddings_20M_145K_2020-scala",
+        ":simclustelonrs_v2_intelonrelonstelond_in_from_producelonr_elonmbelonddings_20M_145K_updatelond-scala",
+        ":simclustelonrs_v2_intelonrelonstelond_in_litelon_20M_145K_2020-scala",
+        ":simclustelonrs_v2_known_for_20M_145K_2020-scala",
+        ":simclustelonrs_v2_known_for_20M_145K_2020_thrift-scala",
+        ":simclustelonrs_v2_known_for_20M_145K_delonc11-scala",
+        ":simclustelonrs_v2_known_for_20M_145K_updatelond-scala",
+        ":simclustelonrs_v2_known_for_20M_145K_updatelond_thrift-scala",
+        ":simclustelonrs_v2_raw_intelonrelonstelond_in_20M_145K_2020-scala",
+        ":simclustelonrs_v2_raw_intelonrelonstelond_in_20M_145K_delonc11-scala",
+        ":simclustelonrs_v2_raw_intelonrelonstelond_in_20M_145K_updatelond-scala",
+        ":simclustelonrs_v2_raw_intelonrelonstelond_in_litelon_20M_145K_2020-scala",
+        ":simclustelonrs_v2_raw_known_for_20M_145K_2020-scala",
+        ":simclustelonrs_v2_raw_known_for_20M_145K_delonc11-scala",
+        ":simclustelonrs_v2_raw_known_for_20M_145K_updatelond-scala",
+        ":simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_20M_145K_2020-scala",
+        ":simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_20M_145K_delonc11-scala",
+        ":simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_20M_145K_updatelond-scala",
+        ":simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_from_aggrelongatablelon_producelonr_elonmbelonddings_20M_145K_2020-scala",
+        ":simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_litelon_20M_145K_2020-scala",
         ":similar_topics_from_topic_follow_graph-scala",
-        ":similar_users_by_fav_based_producer_embedding-scala",
-        ":similar_users_by_follow_based_producer_embedding-scala",
+        ":similar_uselonrs_by_fav_baselond_producelonr_elonmbelondding-scala",
+        ":similar_uselonrs_by_follow_baselond_producelonr_elonmbelondding-scala",
         ":top_k_right_nouns-scala",
         ":top_k_right_nouns_scio-scala",
-        ":top_locale_topics_for_producer_from_em-scala",
-        ":top_producers_for_locale_topics_from_topic_follow_graph-scala",
-        ":topic_top_producers_em-scala",
-        ":truncated_multi_type_graph-scala",
-        ":truncated_multi_type_graph_scio-scala",
-        ":tweet_evaluation_timelines_reference_set-scala",
-        ":user_topic_weighted_embedding-scala",
-        ":user_topic_weighted_embedding_parquet-scala",
-        ":user_user_fav_graph-scala",
-        ":user_user_graph-scala",
-        ":user_user_normalized_graph-scala",
-        ":video_view_based_simclusters_cluster_to_tweet_index-scala",
-        "src/scala/com/twitter/simclusters_v2/common",
+        ":top_localelon_topics_for_producelonr_from_elonm-scala",
+        ":top_producelonrs_for_localelon_topics_from_topic_follow_graph-scala",
+        ":topic_top_producelonrs_elonm-scala",
+        ":truncatelond_multi_typelon_graph-scala",
+        ":truncatelond_multi_typelon_graph_scio-scala",
+        ":twelonelont_elonvaluation_timelonlinelons_relonfelonrelonncelon_selont-scala",
+        ":uselonr_topic_welonightelond_elonmbelondding-scala",
+        ":uselonr_topic_welonightelond_elonmbelondding_parquelont-scala",
+        ":uselonr_uselonr_fav_graph-scala",
+        ":uselonr_uselonr_graph-scala",
+        ":uselonr_uselonr_normalizelond_graph-scala",
+        ":videlono_vielonw_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx-scala",
+        "src/scala/com/twittelonr/simclustelonrs_v2/common",
     ],
 )
 
-create_datasets(
-    base_name = "user_user_fav_graph",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.EdgeWithDecayedWeights",
+crelonatelon_dataselonts(
+    baselon_namelon = "uselonr_uselonr_fav_graph",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.elondgelonWithDeloncayelondWelonights",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.elondgelonWithDeloncayelondWelonights",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "producer_norms_and_counts",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.NormsAndCounts",
+crelonatelon_dataselonts(
+    baselon_namelon = "producelonr_norms_and_counts",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.NormsAndCounts",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.NormsAndCounts",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.NormsAndCounts",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "user_user_normalized_graph",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.UserAndNeighbors",
+crelonatelon_dataselonts(
+    baselon_namelon = "uselonr_uselonr_normalizelond_graph",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.UselonrAndNelonighbors",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.UserAndNeighbors",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.UselonrAndNelonighbors",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "multi_type_simclusters_right_node_to_clusters_thrift_fav_90_p_20_m",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.RightNodeWithClusters",
+crelonatelon_dataselonts(
+    baselon_namelon = "multi_typelon_simclustelonrs_right_nodelon_to_clustelonrs_thrift_fav_90_p_20_m",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.RightNodelonWithClustelonrs",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.RightNodeWithClusters",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonWithClustelonrs",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "multi_type_simclusters_right_node_to_clusters_thrift_50_m",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.RightNodeWithClusters",
+crelonatelon_dataselonts(
+    baselon_namelon = "multi_typelon_simclustelonrs_right_nodelon_to_clustelonrs_thrift_50_m",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.RightNodelonWithClustelonrs",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.RightNodeWithClusters",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonWithClustelonrs",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "user_user_graph",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.UserAndNeighbors",
+crelonatelon_dataselonts(
+    baselon_namelon = "uselonr_uselonr_graph",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.UselonrAndNelonighbors",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.UserAndNeighbors",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.UselonrAndNelonighbors",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-# InterestedIn
-create_datasets(
-    base_name = "simclusters_v2_raw_interested_in_20M_145K_dec11",
-    key_type = "Long",
+# IntelonrelonstelondIn
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_raw_intelonrelonstelond_in_20M_145K_delonc11",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_raw_interested_in_20M_145K_updated",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_raw_intelonrelonstelond_in_20M_145K_updatelond",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_raw_interested_in_20M_145K_2020",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_raw_intelonrelonstelond_in_20M_145K_2020",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_raw_interested_in_lite_20M_145K_2020",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_raw_intelonrelonstelond_in_litelon_20M_145K_2020",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "multi_type_graph_for_top_k_right_nodes_thrift_fav_90_p_20_m_scio",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.MultiTypeGraphEdge",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+crelonatelon_dataselonts(
+    baselon_namelon = "multi_typelon_graph_for_top_k_right_nodelons_thrift_fav_90_p_20_m_scio",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.MultiTypelonGraphelondgelon",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.MultiTypelonGraphelondgelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "multi_type_graph_for_top_k_right_nodes_thrift_50_m_scio",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.MultiTypeGraphEdge",
+crelonatelon_dataselonts(
+    baselon_namelon = "multi_typelon_graph_for_top_k_right_nodelons_thrift_50_m_scio",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.MultiTypelonGraphelondgelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.MultiTypelonGraphelondgelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
-    ],
-)
-
-create_datasets(
-    base_name = "simclusters_v2_interested_in",
-    key_type = "Long",
-    platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_interested_in_20M_145K_updated",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_intelonrelonstelond_in",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_interested_in_20M_145K_2020",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_intelonrelonstelond_in_20M_145K_updatelond",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_interested_in_lite_20M_145K_2020",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_intelonrelonstelond_in_20M_145K_2020",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_user_to_interested_in_20M_145K_dec11",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.UserToInterestedInClusters",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_intelonrelonstelond_in_litelon_20M_145K_2020",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusters",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
-    ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_user_to_interested_in_20M_145K_updated",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.UserToInterestedInClusters",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_20M_145K_delonc11",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.UselonrToIntelonrelonstelondInClustelonrs",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusters",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToIntelonrelonstelondInClustelonrs",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_user_to_interested_in_20M_145K_2020",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.UserToInterestedInClusters",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_20M_145K_updatelond",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.UselonrToIntelonrelonstelondInClustelonrs",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusters",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToIntelonrelonstelondInClustelonrs",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_user_to_interested_in_lite_20M_145K_2020",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.UserToInterestedInClusters",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_20M_145K_2020",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.UselonrToIntelonrelonstelondInClustelonrs",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusters",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToIntelonrelonstelondInClustelonrs",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_user_to_interested_in_from_aggregatable_producer_embeddings_20M_145K_2020",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.UserToInterestedInClusters",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_litelon_20M_145K_2020",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.UselonrToIntelonrelonstelondInClustelonrs",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusters",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToIntelonrelonstelondInClustelonrs",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
-# end of InterestedIn
+
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_uselonr_to_intelonrelonstelond_in_from_aggrelongatablelon_producelonr_elonmbelonddings_20M_145K_2020",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.UselonrToIntelonrelonstelondInClustelonrs",
+    platform = "java8",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToIntelonrelonstelondInClustelonrs",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
+    ],
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
+    ],
+)
+# elonnd of IntelonrelonstelondIn
 
 # KnownFor
-create_datasets(
-    base_name = "simclusters_v2_raw_known_for_20M_145K_dec11",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_raw_known_for_20M_145K_delonc11",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.KnownForInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.KnownForInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsKnownFor",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_raw_known_for_20M_145K_updated",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_raw_known_for_20M_145K_updatelond",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.KnownForInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.KnownForInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsKnownFor",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_raw_known_for_20M_145K_2020",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_raw_known_for_20M_145K_2020",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.KnownForInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.KnownForInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsKnownFor",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_known_for_20M_145K_dec11",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_known_for_20M_145K_delonc11",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.KnownForInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.KnownForInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsKnownFor",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_known_for_20M_145K_updated",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_known_for_20M_145K_updatelond",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.KnownForInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.KnownForInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsKnownFor",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_known_for_20M_145K_updated_thrift",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.UserToKnownForClusters",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_known_for_20M_145K_updatelond_thrift",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.UselonrToKnownForClustelonrs",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.UserToKnownForClusters",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToKnownForClustelonrs",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_known_for_20M_145K_2020",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_known_for_20M_145K_2020",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.KnownForInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsKnownFor",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.KnownForInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsKnownFor",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_known_for_20M_145K_2020_thrift",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.UserToKnownForClusters",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_known_for_20M_145K_2020_thrift",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.UselonrToKnownForClustelonrs",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.UserToKnownForClusters",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToKnownForClustelonrs",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-# end of KnownFor
+# elonnd of KnownFor
 
-create_datasets(
-    base_name = "simclusters_v2_cluster_details",
-    key_type = "scala.Tuple2[String, Int]",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_clustelonr_delontails",
+    kelony_typelon = "scala.Tuplelon2[String, Int]",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterDetailsInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClusterDetails",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrDelontailsInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrDelontails",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_cluster_details_lite",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.ClusterDetailsLite",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_clustelonr_delontails_litelon",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.ClustelonrDelontailsLitelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.ClusterDetailsLite",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrDelontailsLitelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_embeddings_lite",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_elonmbelonddings_litelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.EmbeddingsLite",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingsLitelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_cluster_details_20m_145k_updated",
-    key_type = "scala.Tuple2[String, Int]",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_clustelonr_delontails_20m_145k_updatelond",
+    kelony_typelon = "scala.Tuplelon2[String, Int]",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterDetailsInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClusterDetails",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrDelontailsInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrDelontails",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_cluster_details_lite_20m_145k_updated",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.ClusterDetailsLite",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_clustelonr_delontails_litelon_20m_145k_updatelond",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.ClustelonrDelontailsLitelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.ClusterDetailsLite",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrDelontailsLitelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_cluster_details_20m_145k_2020",
-    key_type = "scala.Tuple2[String, Int]",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_clustelonr_delontails_20m_145k_2020",
+    kelony_typelon = "scala.Tuplelon2[String, Int]",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterDetailsInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClusterDetails",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrDelontailsInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrDelontails",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_cluster_details_lite_20m_145k_2020",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.ClusterDetailsLite",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_clustelonr_delontails_litelon_20m_145k_2020",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.ClustelonrDelontailsLitelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.ClusterDetailsLite",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrDelontailsLitelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "tweet_evaluation_timelines_reference_set",
-    description = "A Tweet dataset that contains impressed tweets with engagement labels, parsed from Timelines",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.ReferenceTweets",
+crelonatelon_dataselonts(
+    baselon_namelon = "twelonelont_elonvaluation_timelonlinelons_relonfelonrelonncelon_selont",
+    delonscription = "A Twelonelont dataselont that contains imprelonsselond twelonelonts with elonngagelonmelonnt labelonls, parselond from Timelonlinelons",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.RelonfelonrelonncelonTwelonelonts",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.ReferenceTweets",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.RelonfelonrelonncelonTwelonelonts",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "semantic_core_simclusters_embeddings",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "selonmantic_corelon_simclustelonrs_elonmbelonddings",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "semantic_core_simclusters_embeddings_updated",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "selonmantic_corelon_simclustelonrs_elonmbelonddings_updatelond",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "semantic_core_simclusters_embeddings_2020",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "selonmantic_corelon_simclustelonrs_elonmbelonddings_2020",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "semantic_core_per_language_simclusters_embeddings",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "selonmantic_corelon_pelonr_languagelon_simclustelonrs_elonmbelonddings",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "log_fav_semantic_core_per_language_simclusters_embeddings",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "log_fav_selonmantic_corelon_pelonr_languagelon_simclustelonrs_elonmbelonddings",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "reverse_index_semantic_core_simclusters_embeddings",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "relonvelonrselon_indelonx_selonmantic_corelon_simclustelonrs_elonmbelonddings",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.InternalIdEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.InternalIdEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.IntelonrnalIdelonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalIdelonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "reverse_index_semantic_core_simclusters_embeddings_updated",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "relonvelonrselon_indelonx_selonmantic_corelon_simclustelonrs_elonmbelonddings_updatelond",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.InternalIdEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.InternalIdEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.IntelonrnalIdelonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalIdelonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "reverse_index_semantic_core_simclusters_embeddings_2020",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "relonvelonrselon_indelonx_selonmantic_corelon_simclustelonrs_elonmbelonddings_2020",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.InternalIdEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.InternalIdEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.IntelonrnalIdelonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalIdelonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "reverse_index_semantic_core_per_language_simclusters_embeddings",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "relonvelonrselon_indelonx_selonmantic_corelon_pelonr_languagelon_simclustelonrs_elonmbelonddings",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.InternalIdEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.InternalIdEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.IntelonrnalIdelonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalIdelonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "log_fav_reverse_index_semantic_core_per_language_simclusters_embeddings",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "log_fav_relonvelonrselon_indelonx_selonmantic_corelon_pelonr_languagelon_simclustelonrs_elonmbelonddings",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.InternalIdEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.InternalIdEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.IntelonrnalIdelonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalIdelonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "hashtag_simclusters_embeddings_updated",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "hashtag_simclustelonrs_elonmbelonddings_updatelond",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "fav_tfg_topic_embeddings",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "fav_tfg_topic_elonmbelonddings",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "fav_tfg_topic_embeddings_2020",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "fav_tfg_topic_elonmbelonddings_2020",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "fav_tfg_topic_embeddings_parquet",
+crelonatelon_dataselonts(
+    baselon_namelon = "fav_tfg_topic_elonmbelonddings_parquelont",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.TfgTopicEmbeddings",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.TfgTopicelonmbelonddings",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "fav_tfg_topic_embeddings_2020_parquet",
+crelonatelon_dataselonts(
+    baselon_namelon = "fav_tfg_topic_elonmbelonddings_2020_parquelont",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.TfgTopicEmbeddings",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.TfgTopicelonmbelonddings",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "fav_inferred_language_tfg_topic_embeddings",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "fav_infelonrrelond_languagelon_tfg_topic_elonmbelonddings",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "log_fav_tfg_topic_embeddings",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "log_fav_tfg_topic_elonmbelonddings",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "log_fav_tfg_topic_embeddings_parquet",
+crelonatelon_dataselonts(
+    baselon_namelon = "log_fav_tfg_topic_elonmbelonddings_parquelont",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.TfgTopicEmbeddings",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.TfgTopicelonmbelonddings",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "reverse_index_hashtag_simclusters_embeddings_updated",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "relonvelonrselon_indelonx_hashtag_simclustelonrs_elonmbelonddings_updatelond",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.InternalIdEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.InternalIdEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.IntelonrnalIdelonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalIdelonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simcluster_embedding_top_k_producers_by_fav_score",
-    key_type = "com.twitter.simclusters_v2.thriftscala.PersistedFullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonr_elonmbelondding_top_k_producelonrs_by_fav_scorelon",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelondFullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.SimClusterEmbeddingTopKProducersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopProducersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.SimClustelonrelonmbelonddingTopKProducelonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopProducelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simcluster_embedding_top_k_producers_by_fav_score_updated",
-    key_type = "com.twitter.simclusters_v2.thriftscala.PersistedFullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonr_elonmbelondding_top_k_producelonrs_by_fav_scorelon_updatelond",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelondFullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.SimClusterEmbeddingTopKProducersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopProducersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.SimClustelonrelonmbelonddingTopKProducelonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopProducelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simcluster_embedding_top_k_producers_by_fav_score_2020",
-    key_type = "com.twitter.simclusters_v2.thriftscala.PersistedFullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonr_elonmbelondding_top_k_producelonrs_by_fav_scorelon_2020",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelondFullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.SimClusterEmbeddingTopKProducersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopProducersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.SimClustelonrelonmbelonddingTopKProducelonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopProducelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "producer_top_k_simcluster_embeddings_by_fav_score",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "producelonr_top_k_simclustelonr_elonmbelonddings_by_fav_scorelon",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerTopKSimClusterEmbeddingsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrTopKSimClustelonrelonmbelonddingsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopSimClustelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "producer_top_k_simcluster_embeddings_by_fav_score_updated",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "producelonr_top_k_simclustelonr_elonmbelonddings_by_fav_scorelon_updatelond",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerTopKSimClusterEmbeddingsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrTopKSimClustelonrelonmbelonddingsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopSimClustelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "producer_top_k_simcluster_embeddings_by_fav_score_2020",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "producelonr_top_k_simclustelonr_elonmbelonddings_by_fav_scorelon_2020",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerTopKSimClusterEmbeddingsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrTopKSimClustelonrelonmbelonddingsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopSimClustelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simcluster_embedding_top_k_producers_by_follow_score",
-    key_type = "com.twitter.simclusters_v2.thriftscala.PersistedFullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonr_elonmbelondding_top_k_producelonrs_by_follow_scorelon",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelondFullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.SimClusterEmbeddingTopKProducersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopProducersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.SimClustelonrelonmbelonddingTopKProducelonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopProducelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simcluster_embedding_top_k_producers_by_follow_score_updated",
-    key_type = "com.twitter.simclusters_v2.thriftscala.PersistedFullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonr_elonmbelondding_top_k_producelonrs_by_follow_scorelon_updatelond",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelondFullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.SimClusterEmbeddingTopKProducersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopProducersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.SimClustelonrelonmbelonddingTopKProducelonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopProducelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simcluster_embedding_top_k_producers_by_follow_score_2020",
-    key_type = "com.twitter.simclusters_v2.thriftscala.PersistedFullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonr_elonmbelondding_top_k_producelonrs_by_follow_scorelon_2020",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelondFullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.SimClusterEmbeddingTopKProducersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopProducersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.SimClustelonrelonmbelonddingTopKProducelonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopProducelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "producer_top_k_simcluster_embeddings_by_follow_score",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "producelonr_top_k_simclustelonr_elonmbelonddings_by_follow_scorelon",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerTopKSimClusterEmbeddingsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrTopKSimClustelonrelonmbelonddingsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopSimClustelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "producer_top_k_simcluster_embeddings_by_follow_score_updated",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "producelonr_top_k_simclustelonr_elonmbelonddings_by_follow_scorelon_updatelond",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerTopKSimClusterEmbeddingsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrTopKSimClustelonrelonmbelonddingsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopSimClustelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "producer_top_k_simcluster_embeddings_by_follow_score_2020",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "producelonr_top_k_simclustelonr_elonmbelonddings_by_follow_scorelon_2020",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerTopKSimClusterEmbeddingsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopSimClustersWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrTopKSimClustelonrelonmbelonddingsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopSimClustelonrsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "similar_users_by_fav_based_producer_embedding",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "similar_uselonrs_by_fav_baselond_producelonr_elonmbelondding",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.SimilarUsersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.hermit.candidate.thriftscala.Candidates",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.SimilarUselonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "similar_users_by_follow_based_producer_embedding",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "similar_uselonrs_by_follow_baselond_producelonr_elonmbelondding",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.SimilarUsersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.hermit.candidate.thriftscala.Candidates",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.SimilarUselonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_log_fav_score",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerSimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrSimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_log_fav_score_2020",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon_2020",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerSimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrSimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_follow_score_2020",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_follow_scorelon_2020",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerSimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrSimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_log_fav_score_relaxed_fav_engagement_threshold_2020",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon_relonlaxelond_fav_elonngagelonmelonnt_threlonshold_2020",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerSimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrSimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_fav_score",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_fav_scorelon",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerSimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrSimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_fav_score_2020",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_fav_scorelon_2020",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ProducerEmbeddingsInjections.ProducerSimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ProducelonrelonmbelonddingsInjelonctions.ProducelonrSimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_log_fav_score_thrift",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.SimClustersEmbeddingWithId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon_thrift",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.SimClustelonrselonmbelonddingWithId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingWithId",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingWithId",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_log_fav_score_2020_thrift",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.SimClustersEmbeddingWithId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon_2020_thrift",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.SimClustelonrselonmbelonddingWithId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingWithId",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingWithId",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_follow_score_2020_thrift",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.SimClustersEmbeddingWithId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_follow_scorelon_2020_thrift",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.SimClustelonrselonmbelonddingWithId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingWithId",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingWithId",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_fav_score_thrift",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.SimClustersEmbeddingWithId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_fav_scorelon_thrift",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.SimClustelonrselonmbelonddingWithId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingWithId",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingWithId",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_fav_score_2020_thrift",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.SimClustersEmbeddingWithId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_fav_scorelon_2020_thrift",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.SimClustelonrselonmbelonddingWithId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingWithId",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingWithId",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "aggregatable_producer_simclusters_embeddings_by_log_fav_score_relaxed_fav_engagement_threshold_2020_thrift",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.SimClustersEmbeddingWithId",
+crelonatelon_dataselonts(
+    baselon_namelon = "aggrelongatablelon_producelonr_simclustelonrs_elonmbelonddings_by_log_fav_scorelon_relonlaxelond_fav_elonngagelonmelonnt_threlonshold_2020_thrift",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.SimClustelonrselonmbelonddingWithId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingWithId",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingWithId",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-# TWICE & Clustering datasets
-create_datasets(
-    base_name = "interested_in_twice_by_largest_dim",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingId",
+# TWICelon & Clustelonring dataselonts
+crelonatelon_dataselonts(
+    baselon_namelon = "intelonrelonstelond_in_twicelon_by_largelonst_dim",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersMultiEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrsMultielonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "interested_in_twice_by_largest_dim_fav_score",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "intelonrelonstelond_in_twicelon_by_largelonst_dim_fav_scorelon",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersMultiEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrsMultielonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "interested_in_twice_by_largest_dim_2_day_update",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "intelonrelonstelond_in_twicelon_by_largelonst_dim_2_day_updatelon",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersMultiEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrsMultielonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "interested_in_twice_louvain",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "intelonrelonstelond_in_twicelon_louvain",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersMultiEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrsMultielonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "interested_in_twice_connected_components",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "intelonrelonstelond_in_twicelon_connelonctelond_componelonnts",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersMultiEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrsMultielonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "clusters_members_largest_dim_ape_similarity",
-    key_type = "com.twitter.simclusters_v2.common.UserId",
+crelonatelon_dataselonts(
+    baselon_namelon = "clustelonrs_melonmbelonrs_largelonst_dim_apelon_similarity",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.common.UselonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusteringInjections.OrderedClustersAndMembersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.OrderedClustersAndMembers",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonringInjelonctions.OrdelonrelondClustelonrsAndMelonmbelonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.OrdelonrelondClustelonrsAndMelonmbelonrs",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "clusters_members_largest_dim_ape_similarity_2_day_update",
-    key_type = "com.twitter.simclusters_v2.common.UserId",
+crelonatelon_dataselonts(
+    baselon_namelon = "clustelonrs_melonmbelonrs_largelonst_dim_apelon_similarity_2_day_updatelon",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.common.UselonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusteringInjections.OrderedClustersAndMembersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.OrderedClustersAndMembers",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonringInjelonctions.OrdelonrelondClustelonrsAndMelonmbelonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.OrdelonrelondClustelonrsAndMelonmbelonrs",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "clusters_members_louvain_ape_similarity",
-    key_type = "com.twitter.simclusters_v2.common.UserId",
+crelonatelon_dataselonts(
+    baselon_namelon = "clustelonrs_melonmbelonrs_louvain_apelon_similarity",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.common.UselonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusteringInjections.OrderedClustersAndMembersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.OrderedClustersAndMembers",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonringInjelonctions.OrdelonrelondClustelonrsAndMelonmbelonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.OrdelonrelondClustelonrsAndMelonmbelonrs",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "clusters_members_connected_components_ape_similarity",
-    key_type = "com.twitter.simclusters_v2.common.UserId",
+crelonatelon_dataselonts(
+    baselon_namelon = "clustelonrs_melonmbelonrs_connelonctelond_componelonnts_apelon_similarity",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.common.UselonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusteringInjections.OrderedClustersAndMembersInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.OrderedClustersAndMembers",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonringInjelonctions.OrdelonrelondClustelonrsAndMelonmbelonrsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.OrdelonrelondClustelonrsAndMelonmbelonrs",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-# End of TWICE & Clustering datasets
+# elonnd of TWICelon & Clustelonring dataselonts
 
-create_datasets(
-    base_name = "simclusters_offline_tweet_cluster_scores",
-    description = "A dataset that contains the scores for tweet and cluster pairs",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.TweetAndClusterScores",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_offlinelon_twelonelont_clustelonr_scorelons",
+    delonscription = "A dataselont that contains thelon scorelons for twelonelont and clustelonr pairs",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.TwelonelontAndClustelonrScorelons",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.TweetAndClusterScores",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.TwelonelontAndClustelonrScorelons",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_offline_tweet_top_k_clusters",
-    description = "A dataset that contains the top clusters for each tweet",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.TweetTopKClustersWithScores",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_offlinelon_twelonelont_top_k_clustelonrs",
+    delonscription = "A dataselont that contains thelon top clustelonrs for elonach twelonelont",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.TwelonelontTopKClustelonrsWithScorelons",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.TweetTopKClustersWithScores",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.TwelonelontTopKClustelonrsWithScorelons",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_offline_cluster_top_k_tweets",
-    description = "A dataset that contains the top tweets for each cluster",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.ClusterTopKTweetsWithScores",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_offlinelon_clustelonr_top_k_twelonelonts",
+    delonscription = "A dataselont that contains thelon top twelonelonts for elonach clustelonr",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.ClustelonrTopKTwelonelontsWithScorelons",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.ClusterTopKTweetsWithScores",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrTopKTwelonelontsWithScorelons",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_inferred_entities_from_known_for",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_infelonrrelond_elonntitielons_from_known_for",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InferredEntitiesInjections.InferredEntityInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.InfelonrrelondelonntitielonsInjelonctions.InfelonrrelondelonntityInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsInfelonrrelondelonntitielons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_inferred_entities_from_interested_in",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_infelonrrelond_elonntitielons_from_intelonrelonstelond_in",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InferredEntitiesInjections.InferredEntityInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.InfelonrrelondelonntitielonsInjelonctions.InfelonrrelondelonntityInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsInfelonrrelondelonntitielons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_inferred_entities_from_interested_in_keyed_by_cluster",
-    key_type = "Int",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_infelonrrelond_elonntitielons_from_intelonrelonstelond_in_kelonyelond_by_clustelonr",
+    kelony_typelon = "Int",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InferredEntitiesInjections.InferredEntityKeyedByClusterInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.InfelonrrelondelonntitielonsInjelonctions.InfelonrrelondelonntityKelonyelondByClustelonrInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsInfelonrrelondelonntitielons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "co_engagement_top_k_similar_tweets",
-    description = "A dataset that contains the top similar tweets based on co-engagement",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.TweetTopKTweetsWithScore",
+crelonatelon_dataselonts(
+    baselon_namelon = "co_elonngagelonmelonnt_top_k_similar_twelonelonts",
+    delonscription = "A dataselont that contains thelon top similar twelonelonts baselond on co-elonngagelonmelonnt",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.TwelonelontTopKTwelonelontsWithScorelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.TweetTopKTweetsWithScore",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.TwelonelontTopKTwelonelontsWithScorelon",
+    selongmelonnt_typelon = "partitionelond",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "rux_faved_top_k_tweets",
-    description = "A dataset that contains the top similar tweets based on rux fav-to-impression ratio",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.TweetTopKTweetsWithScore",
+crelonatelon_dataselonts(
+    baselon_namelon = "rux_favelond_top_k_twelonelonts",
+    delonscription = "A dataselont that contains thelon top similar twelonelonts baselond on rux fav-to-imprelonssion ratio",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.TwelonelontTopKTwelonelontsWithScorelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.TweetTopKTweetsWithScore",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.TwelonelontTopKTwelonelontsWithScorelon",
+    selongmelonnt_typelon = "partitionelond",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "semantic_core_embeddings_from_producer",
-    key_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId",
+crelonatelon_dataselonts(
+    baselon_namelon = "selonmantic_corelon_elonmbelonddings_from_producelonr",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.EntitySimClustersEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.elonntitySimClustelonrselonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_interested_in_from_producer_embeddings_20M_145K_updated",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_intelonrelonstelond_in_from_producelonr_elonmbelonddings_20M_145K_updatelond",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_interested_in_from_aggregatable_producer_embeddings_20M_145K_2020",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_intelonrelonstelond_in_from_aggrelongatablelon_producelonr_elonmbelonddings_20M_145K_2020",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "geopopular_top_tweet_impressed_topics",
-    key_type = "String",
+crelonatelon_dataselonts(
+    baselon_namelon = "gelonopopular_top_twelonelont_imprelonsselond_topics",
+    kelony_typelon = "String",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.SemanticCoreEntitiesInjections.StringToSemanticCoreEntityScoreListInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.recos.entities.thriftscala.SemanticCoreEntityScoreList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.SelonmanticCorelonelonntitielonsInjelonctions.StringToSelonmanticCorelonelonntityScorelonListInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticCorelonelonntityScorelonList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "similar_topics_from_topic_follow_graph",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "similar_topics_from_topic_follow_graph",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.SemanticCoreEntitiesInjections.LongToSemanticCoreEntityScoreListInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.recos.entities.thriftscala.SemanticCoreEntityScoreList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.SelonmanticCorelonelonntitielonsInjelonctions.LongToSelonmanticCorelonelonntityScorelonListInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticCorelonelonntityScorelonList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "top_locale_topics_for_producer_from_em",
-    key_type = "com.twitter.recos.entities.thriftscala.UserIdWithLocale",
+crelonatelon_dataselonts(
+    baselon_namelon = "top_localelon_topics_for_producelonr_from_elonm",
+    kelony_typelon = "com.twittelonr.reloncos.elonntitielons.thriftscala.UselonrIdWithLocalelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.SemanticCoreEntitiesInjections.UserWithLocaleToSemanticCoreEntityScoreListInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.recos.entities.thriftscala.SemanticCoreEntityScoreList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.SelonmanticCorelonelonntitielonsInjelonctions.UselonrWithLocalelonToSelonmanticCorelonelonntityScorelonListInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticCorelonelonntityScorelonList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "top_producers_for_locale_topics_from_topic_follow_graph",
-    key_type = "com.twitter.recos.entities.thriftscala.SemanticCoreEntityWithLocale",
+crelonatelon_dataselonts(
+    baselon_namelon = "top_producelonrs_for_localelon_topics_from_topic_follow_graph",
+    kelony_typelon = "com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticCorelonelonntityWithLocalelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.SemanticCoreEntitiesInjections.SemanticCoreEntityWithLocaleToUsersScoreListInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.recos.entities.thriftscala.UserScoreList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.SelonmanticCorelonelonntitielonsInjelonctions.SelonmanticCorelonelonntityWithLocalelonToUselonrsScorelonListInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.reloncos.elonntitielons.thriftscala.UselonrScorelonList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "topic_top_producers_em",
-    key_type = "com.twitter.recos.entities.thriftscala.SemanticCoreEntityWithLocale",
+crelonatelon_dataselonts(
+    baselon_namelon = "topic_top_producelonrs_elonm",
+    kelony_typelon = "com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticCorelonelonntityWithLocalelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.SemanticCoreEntitiesInjections.SemanticCoreEntityWithLocaleToUsersScoreListInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.recos.entities.thriftscala.UserScoreList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.SelonmanticCorelonelonntitielonsInjelonctions.SelonmanticCorelonelonntityWithLocalelonToUselonrsScorelonListInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.reloncos.elonntitielons.thriftscala.UselonrScorelonList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "adhoc_abuse_simcluster_features",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.AdhocSingleSideClusterScores",
+crelonatelon_dataselonts(
+    baselon_namelon = "adhoc_abuselon_simclustelonr_felonaturelons",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.AdhocSinglelonSidelonClustelonrScorelons",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.AdhocSingleSideClusterScores",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.AdhocSinglelonSidelonClustelonrScorelons",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "search_abuse_simcluster_features_manhattan",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "selonarch_abuselon_simclustelonr_felonaturelons_manhattan",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.SingleSideUserScoresInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SingleSideUserScores",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.SinglelonSidelonUselonrScorelonsInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SinglelonSidelonUselonrScorelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "adhoc_cross_simcluster_block_interaction_features",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.AdhocCrossSimClusterInteractionScores",
+crelonatelon_dataselonts(
+    baselon_namelon = "adhoc_cross_simclustelonr_block_intelonraction_felonaturelons",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.AdhocCrossSimClustelonrIntelonractionScorelons",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.AdhocCrossSimClusterInteractionScores",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.AdhocCrossSimClustelonrIntelonractionScorelons",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "adhoc_cross_simcluster_fav_interaction_features",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.AdhocCrossSimClusterInteractionScores",
+crelonatelon_dataselonts(
+    baselon_namelon = "adhoc_cross_simclustelonr_fav_intelonraction_felonaturelons",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.AdhocCrossSimClustelonrIntelonractionScorelons",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.AdhocCrossSimClusterInteractionScores",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.AdhocCrossSimClustelonrIntelonractionScorelons",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "top_k_right_nouns",
-    key_type = "com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct",
+crelonatelon_dataselonts(
+    baselon_namelon = "top_k_right_nouns",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonTypelonStruct",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.topKRightNounListInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.topKRightNounListInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.NounWithFrelonquelonncyList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "top_k_right_nouns_scio",
-    key_type = "com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct",
+crelonatelon_dataselonts(
+    baselon_namelon = "top_k_right_nouns_scio",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonTypelonStruct",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.topKRightNounListInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.topKRightNounListInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.NounWithFrelonquelonncyList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "offline_cluster_top_media_tweets_20M_145K_2020",
-    key_type = "com.twitter.simclusters_v2.thriftscala.DayPartitionedClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "offlinelon_clustelonr_top_melondia_twelonelonts_20M_145K_2020",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.DayPartitionelondClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterTopMediaTweetsInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TweetsWithScore",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrTopMelondiaTwelonelontsInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TwelonelontsWithScorelon",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "truncated_multi_type_graph",
-    key_type = "com.twitter.simclusters_v2.thriftscala.LeftNode",
+crelonatelon_dataselonts(
+    baselon_namelon = "truncatelond_multi_typelon_graph",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.LelonftNodelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.truncatedMultiTypeGraphInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.truncatelondMultiTypelonGraphInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonWithelondgelonWelonightList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "truncated_multi_type_graph_scio",
-    key_type = "com.twitter.simclusters_v2.thriftscala.LeftNode",
+crelonatelon_dataselonts(
+    baselon_namelon = "truncatelond_multi_typelon_graph_scio",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.LelonftNodelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.truncatedMultiTypeGraphInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.truncatelondMultiTypelonGraphInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonWithelondgelonWelonightList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "multi_type_graph_for_top_k_right_nodes_thrift_scio",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.MultiTypeGraphEdge",
+crelonatelon_dataselonts(
+    baselon_namelon = "multi_typelon_graph_for_top_k_right_nodelons_thrift_scio",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.MultiTypelonGraphelondgelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.MultiTypelonGraphelondgelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "full_multi_type_graph",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.MultiTypeGraphEdge",
+crelonatelon_dataselonts(
+    baselon_namelon = "full_multi_typelon_graph",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.MultiTypelonGraphelondgelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.MultiTypelonGraphelondgelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "right_node_sim_hash_scio",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.RightNodeSimHashSketch",
+crelonatelon_dataselonts(
+    baselon_namelon = "right_nodelon_sim_hash_scio",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.RightNodelonSimHashSkelontch",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.RightNodeSimHashSketch",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonSimHashSkelontch",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "right_node_cosine_similarity_scio",
-    key_type = "com.twitter.simclusters_v2.thriftscala.RightNode",
+crelonatelon_dataselonts(
+    baselon_namelon = "right_nodelon_cosinelon_similarity_scio",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.similarRightNodesInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.SimilarRightNodes",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.similarRightNodelonsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.SimilarRightNodelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "user_topic_weighted_embedding",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "uselonr_topic_welonightelond_elonmbelondding",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.injection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.injelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "user_topic_weighted_embedding_parquet",
+crelonatelon_dataselonts(
+    baselon_namelon = "uselonr_topic_welonightelond_elonmbelondding_parquelont",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.UserTopicWeightedEmbedding",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.UselonrTopicWelonightelondelonmbelondding",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "explore_mbcg_user_embeddings_kv",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "elonxplorelon_mbcg_uselonr_elonmbelonddings_kv",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.EntityEmbeddingsInjections.UserMbcgEmbeddingInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.ml.api.thriftscala.Embedding",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.elonntityelonmbelonddingsInjelonctions.UselonrMbcgelonmbelonddingInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.ml.api.thriftscala.elonmbelondding",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "offline_tweet_recommendations_from_interested_in_20M_145K_2020",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.tweetRecommendationsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.CandidateTweetsList",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.twelonelontReloncommelonndationsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_0_EL_15",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_0_elonL_15",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.tweetRecommendationsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.CandidateTweetsList",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.twelonelontReloncommelonndationsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_15",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_2_elonL_15",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.tweetRecommendationsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.CandidateTweetsList",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.twelonelontReloncommelonndationsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_50",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_2_elonL_50",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.tweetRecommendationsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.CandidateTweetsList",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.twelonelontReloncommelonndationsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_8_elonL_50",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.tweetRecommendationsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.CandidateTweetsList",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.twelonelontReloncommelonndationsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "offline_tweet_recommendations_from_mts_consumer_embeddings",
-    key_type = "Long",
+crelonatelon_dataselonts(
+    baselon_namelon = "offlinelon_twelonelont_reloncommelonndations_from_mts_consumelonr_elonmbelonddings",
+    kelony_typelon = "Long",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.tweetRecommendationsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.CandidateTweetsList",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.twelonelontReloncommelonndationsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "fav_based_simclusters_cluster_to_tweet_index",
-    key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "fav_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterTopTweetsInjection.clusterIdToTopKTweetsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrTopTwelonelontsInjelonction.clustelonrIdToTopKTwelonelontsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "video_view_based_simclusters_cluster_to_tweet_index",
-    key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "videlono_vielonw_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterTopTweetsInjection.clusterIdToTopKTweetsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrTopTwelonelontsInjelonction.clustelonrIdToTopKTwelonelontsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "retweet_based_simclusters_cluster_to_tweet_index",
-    key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "relontwelonelont_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterTopTweetsInjection.clusterIdToTopKTweetsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrTopTwelonelontsInjelonction.clustelonrIdToTopKTwelonelontsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "reply_based_simclusters_cluster_to_tweet_index",
-    key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "relonply_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterTopTweetsInjection.clusterIdToTopKTweetsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrTopTwelonelontsInjelonction.clustelonrIdToTopKTwelonelontsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "push_open_based_simclusters_cluster_to_tweet_index",
-    key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "push_opelonn_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterTopTweetsInjection.clusterIdToTopKTweetsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrTopTwelonelontsInjelonction.clustelonrIdToTopKTwelonelontsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "ads_fav_based_simclusters_cluster_to_tweet_index",
-    key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "ads_fav_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterTopTweetsInjection.clusterIdToTopKTweetsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrTopTwelonelontsInjelonction.clustelonrIdToTopKTwelonelontsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "ads_fav_click_based_simclusters_cluster_to_tweet_index",
-    key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "ads_fav_click_baselond_simclustelonrs_clustelonr_to_twelonelont_indelonx",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterTopTweetsInjection.clusterIdToTopKTweetsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrTopTwelonelontsInjelonction.clustelonrIdToTopKTwelonelontsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "fav_based_evergreen_content_simclusters_cluster_to_tweet_index",
-    key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "fav_baselond_elonvelonrgrelonelonn_contelonnt_simclustelonrs_clustelonr_to_twelonelont_indelonx",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterTopTweetsInjection.clusterIdToTopKTweetsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrTopTwelonelontsInjelonction.clustelonrIdToTopKTwelonelontsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "fav_based_video_simclusters_cluster_to_tweet_index",
-    key_type = "com.twitter.simclusters_v2.thriftscala.FullClusterId",
+crelonatelon_dataselonts(
+    baselon_namelon = "fav_baselond_videlono_simclustelonrs_clustelonr_to_twelonelont_indelonx",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrId",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.ClusterTopTweetsInjection.clusterIdToTopKTweetsInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.TopKTweetsWithScores",
-    scala_dependencies = [
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.ClustelonrTopTwelonelontsInjelonction.clustelonrIdToTopKTwelonelontsInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.TopKTwelonelontsWithScorelons",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_global_language_embedding",
-    key_type = "String",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_global_languagelon_elonmbelondding",
+    kelony_typelon = "String",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.InterestedInInjection.languageInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.IntelonrelonstelondInInjelonction.languagelonInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )
 
-create_datasets(
-    base_name = "simclusters_v2_global_language_embedding_thrift",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.LanguageToClusters",
+crelonatelon_dataselonts(
+    baselon_namelon = "simclustelonrs_v2_global_languagelon_elonmbelondding_thrift",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.LanguagelonToClustelonrs",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.LanguageToClusters",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.LanguagelonToClustelonrs",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )

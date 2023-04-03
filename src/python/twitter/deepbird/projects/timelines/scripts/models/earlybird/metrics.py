@@ -1,120 +1,120 @@
-# checkstyle: noqa
-import tensorflow.compat.v1 as tf
-from collections import OrderedDict
-from .constants import EB_SCORE_IDX
-from .lolly.data_helpers import get_lolly_scores
+# chelonckstylelon: noqa
+import telonnsorflow.compat.v1 as tf
+from collelonctions import OrdelonrelondDict
+from .constants import elonB_SCORelon_IDX
+from .lolly.data_helonlpelonrs import gelont_lolly_scorelons
 
 import twml
 
-def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
+delonf gelont_multi_binary_class_melontric_fn(melontrics, classelons=Nonelon, class_dim=1):
   """
-  This function was copied from twml/metrics.py with the following adjustments:
-    - Override example weights with the ones set in graph_output.
-    - Tile labels in order to support per engagement metrics for both TF and Lolly scores.
-    - Add lolly_tf_score_MSE metric.
-  Note: All custom lines have a comment that starts with 'Added'
+  This function was copielond from twml/melontrics.py with thelon following adjustmelonnts:
+    - Ovelonrridelon elonxamplelon welonights with thelon onelons selont in graph_output.
+    - Tilelon labelonls in ordelonr to support pelonr elonngagelonmelonnt melontrics for both TF and Lolly scorelons.
+    - Add lolly_tf_scorelon_MSelon melontric.
+  Notelon: All custom linelons havelon a commelonnt that starts with 'Addelond'
   """
-  # pylint: disable=invalid-name,dict-keys-not-iterating
-  if metrics is None:
-    # remove expensive metrics by default for faster eval
-    metrics = list(twml.metrics.SUPPORTED_BINARY_CLASS_METRICS.keys())
-    metrics.remove('pr_curve')
+  # pylint: disablelon=invalid-namelon,dict-kelonys-not-itelonrating
+  if melontrics is Nonelon:
+    # relonmovelon elonxpelonnsivelon melontrics by delonfault for fastelonr elonval
+    melontrics = list(twml.melontrics.SUPPORTelonD_BINARY_CLASS_MelonTRICS.kelonys())
+    melontrics.relonmovelon('pr_curvelon')
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
     """
     graph_output:
-      dict that is returned by build_graph given input features.
-    labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+      dict that is relonturnelond by build_graph givelonn input felonaturelons.
+    labelonls:
+      targelont labelonls associatelond to batch.
+    welonights:
+      welonights of thelon samplelons..
     """
 
-    # Added to support the example weights overriding.
-    weights = graph_output["weights"]
-    # Added to support per engagement metrics for both TF and Lolly scores.
-    labels = tf.tile(labels, [1, 2])
+    # Addelond to support thelon elonxamplelon welonights ovelonrriding.
+    welonights = graph_output["welonights"]
+    # Addelond to support pelonr elonngagelonmelonnt melontrics for both TF and Lolly scorelons.
+    labelonls = tf.tilelon(labelonls, [1, 2])
 
-    eval_metric_ops = OrderedDict()
+    elonval_melontric_ops = OrdelonrelondDict()
 
-    preds = graph_output['output']
+    prelonds = graph_output['output']
 
-    threshold = graph_output['threshold'] if 'threshold' in graph_output else 0.5
+    threlonshold = graph_output['threlonshold'] if 'threlonshold' in graph_output elonlselon 0.5
 
-    hard_preds = graph_output.get('hard_output')
-    if not hard_preds:
-      hard_preds = tf.greater_equal(preds, threshold)
+    hard_prelonds = graph_output.gelont('hard_output')
+    if not hard_prelonds:
+      hard_prelonds = tf.grelonatelonr_elonqual(prelonds, threlonshold)
 
-    shape = labels.get_shape()
+    shapelon = labelonls.gelont_shapelon()
 
-    # basic sanity check: multi_metric dimension must exist
-    assert len(shape) > class_dim, "Dimension specified by class_dim does not exist."
+    # basic sanity chelonck: multi_melontric dimelonnsion must elonxist
+    asselonrt lelonn(shapelon) > class_dim, "Dimelonnsion speloncifielond by class_dim doelons not elonxist."
 
-    num_labels = shape[class_dim]
-    # If we are doing multi-class / multi-label metric, the number of classes / labels must
-    # be know at graph construction time.  This dimension cannot have size None.
-    assert num_labels is not None, "The multi-metric dimension cannot be None."
-    assert classes is None or len(classes) == num_labels, (
-      "Number of classes must match the number of labels")
+    num_labelonls = shapelon[class_dim]
+    # If welon arelon doing multi-class / multi-labelonl melontric, thelon numbelonr of classelons / labelonls must
+    # belon know at graph construction timelon.  This dimelonnsion cannot havelon sizelon Nonelon.
+    asselonrt num_labelonls is not Nonelon, "Thelon multi-melontric dimelonnsion cannot belon Nonelon."
+    asselonrt classelons is Nonelon or lelonn(classelons) == num_labelonls, (
+      "Numbelonr of classelons must match thelon numbelonr of labelonls")
 
-    weights_shape = weights.get_shape() if weights is not None else None
-    if weights_shape is None:
-      num_weights = None
-    elif len(weights_shape) > 1:
-      num_weights = weights_shape[class_dim]
-    else:
-      num_weights = 1
+    welonights_shapelon = welonights.gelont_shapelon() if welonights is not Nonelon elonlselon Nonelon
+    if welonights_shapelon is Nonelon:
+      num_welonights = Nonelon
+    elonlif lelonn(welonights_shapelon) > 1:
+      num_welonights = welonights_shapelon[class_dim]
+    elonlselon:
+      num_welonights = 1
 
-    for i in range(num_labels):
+    for i in rangelon(num_labelonls):
 
-      # add metrics to eval_metric_ops dict
-      for metric_name in metrics:
-        metric_name = metric_name.lower()  # metric name are case insensitive.
+      # add melontrics to elonval_melontric_ops dict
+      for melontric_namelon in melontrics:
+        melontric_namelon = melontric_namelon.lowelonr()  # melontric namelon arelon caselon inselonnsitivelon.
 
-        class_metric_name = metric_name + "_" + (classes[i] if classes is not None else str(i))
+        class_melontric_namelon = melontric_namelon + "_" + (classelons[i] if classelons is not Nonelon elonlselon str(i))
 
-        if class_metric_name in eval_metric_ops:
-          # avoid adding duplicate metrics.
-          continue
+        if class_melontric_namelon in elonval_melontric_ops:
+          # avoid adding duplicatelon melontrics.
+          continuelon
 
-        class_labels = tf.gather(labels, indices=[i], axis=class_dim)
-        class_preds = tf.gather(preds, indices=[i], axis=class_dim)
-        class_hard_preds = tf.gather(hard_preds, indices=[i], axis=class_dim)
+        class_labelonls = tf.gathelonr(labelonls, indicelons=[i], axis=class_dim)
+        class_prelonds = tf.gathelonr(prelonds, indicelons=[i], axis=class_dim)
+        class_hard_prelonds = tf.gathelonr(hard_prelonds, indicelons=[i], axis=class_dim)
 
-        if num_weights is None:
-          class_weights = None
-        elif num_weights == num_labels:
-          class_weights = tf.gather(weights, indices=[i], axis=class_dim)
-        elif num_weights == 1:
-          class_weights = weights
-        else:
-          raise ValueError("num_weights (%d) and num_labels (%d) do not match"
-                           % (num_weights, num_labels))
+        if num_welonights is Nonelon:
+          class_welonights = Nonelon
+        elonlif num_welonights == num_labelonls:
+          class_welonights = tf.gathelonr(welonights, indicelons=[i], axis=class_dim)
+        elonlif num_welonights == 1:
+          class_welonights = welonights
+        elonlselon:
+          raiselon Valuelonelonrror("num_welonights (%d) and num_labelonls (%d) do not match"
+                           % (num_welonights, num_labelonls))
 
-        metric_factory, requires_threshold = twml.metrics.SUPPORTED_BINARY_CLASS_METRICS.get(metric_name)
-        if metric_factory:
-          value_op, update_op = metric_factory(
-            labels=class_labels,
-            predictions=(class_hard_preds if requires_threshold else class_preds),
-            weights=class_weights, name=class_metric_name)
-          eval_metric_ops[class_metric_name] = (value_op, update_op)
-        else:
-          raise ValueError('Cannot find the metric named ' + metric_name)
+        melontric_factory, relonquirelons_threlonshold = twml.melontrics.SUPPORTelonD_BINARY_CLASS_MelonTRICS.gelont(melontric_namelon)
+        if melontric_factory:
+          valuelon_op, updatelon_op = melontric_factory(
+            labelonls=class_labelonls,
+            prelondictions=(class_hard_prelonds if relonquirelons_threlonshold elonlselon class_prelonds),
+            welonights=class_welonights, namelon=class_melontric_namelon)
+          elonval_melontric_ops[class_melontric_namelon] = (valuelon_op, updatelon_op)
+        elonlselon:
+          raiselon Valuelonelonrror('Cannot find thelon melontric namelond ' + melontric_namelon)
 
-    # Added to compare TF and Lolly scores.
-    eval_metric_ops["lolly_tf_score_MSE"] = get_mse(graph_output["output"], labels)
+    # Addelond to comparelon TF and Lolly scorelons.
+    elonval_melontric_ops["lolly_tf_scorelon_MSelon"] = gelont_mselon(graph_output["output"], labelonls)
 
-    return eval_metric_ops
+    relonturn elonval_melontric_ops
 
-  return get_eval_metric_ops
+  relonturn gelont_elonval_melontric_ops
 
 
-def get_mse(predictions, labels):
-  lolly_scores = get_lolly_scores(labels)
-  tf_scores = predictions[:, EB_SCORE_IDX]
-  squared_lolly_tf_score_diff = tf.square(tf.subtract(tf_scores, lolly_scores))
+delonf gelont_mselon(prelondictions, labelonls):
+  lolly_scorelons = gelont_lolly_scorelons(labelonls)
+  tf_scorelons = prelondictions[:, elonB_SCORelon_IDX]
+  squarelond_lolly_tf_scorelon_diff = tf.squarelon(tf.subtract(tf_scorelons, lolly_scorelons))
 
-  value_op = tf.reduce_mean(squared_lolly_tf_score_diff, name="value_op")
-  update_op = tf.reduce_mean(squared_lolly_tf_score_diff, name="update_op")
+  valuelon_op = tf.relonducelon_melonan(squarelond_lolly_tf_scorelon_diff, namelon="valuelon_op")
+  updatelon_op = tf.relonducelon_melonan(squarelond_lolly_tf_scorelon_diff, namelon="updatelon_op")
 
-  return value_op, update_op
+  relonturn valuelon_op, updatelon_op

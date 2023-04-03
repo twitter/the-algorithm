@@ -1,16 +1,16 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.logging.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.logging.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations.logging
 
-struct OfflineFlowRecommendation {
-  1: required i64 userId(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonFlowReloncommelonndation {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon='UselonrId')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineRecommendationStep {
-  1: required list<OfflineFlowRecommendation> recommendations
-  2: required set<i64> followedUserIds(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonReloncommelonndationStelonp {
+  1: relonquirelond list<OfflinelonFlowReloncommelonndation> reloncommelonndations
+  2: relonquirelond selont<i64> followelondUselonrIds(pelonrsonalDataTypelon='UselonrId')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineFlowContext {
-  1: required list<OfflineRecommendationStep> steps
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonFlowContelonxt {
+  1: relonquirelond list<OfflinelonReloncommelonndationStelonp> stelonps
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')

@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.scorer.cortex
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.cortelonx
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.component_library.scorer.common.MLModelInferenceClient
-import com.twitter.product_mixer.component_library.scorer.tensorbuilder.ModelInferRequestBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.common.MLModelonlInfelonrelonncelonClielonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.telonnsorbuildelonr.ModelonlInfelonrRelonquelonstBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CortexManagedInferenceServiceTensorScorerBuilder @Inject() (
-  statsReceiver: StatsReceiver) {
+@Singlelonton
+class CortelonxManagelondInfelonrelonncelonSelonrvicelonTelonnsorScorelonrBuildelonr @Injelonct() (
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
   /**
-   * Builds a configurable Scorer to call into your desired Cortex Managed ML Model Service.
+   * Builds a configurablelon Scorelonr to call into your delonsirelond Cortelonx Managelond ML Modelonl Selonrvicelon.
    *
-   * If your service does not bind an Http.Client implementation, add
-   * [[com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule]]
-   * to your server module list
+   * If your selonrvicelon doelons not bind an Http.Clielonnt implelonmelonntation, add
+   * [[com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon]]
+   * to your selonrvelonr modulelon list
    *
-   * @param scorerIdentifier        Unique identifier for the scorer
-   * @param resultFeatureExtractors The result features an their tensor extractors for each candidate.
-   * @tparam Query Type of pipeline query.
-   * @tparam Candidate Type of candidates to score.
-   * @tparam QueryFeatures type of the query level features consumed by the scorer.
-   * @tparam CandidateFeatures type of the candidate level features consumed by the scorer.
+   * @param scorelonrIdelonntifielonr        Uniquelon idelonntifielonr for thelon scorelonr
+   * @param relonsultFelonaturelonelonxtractors Thelon relonsult felonaturelons an thelonir telonnsor elonxtractors for elonach candidatelon.
+   * @tparam Quelonry Typelon of pipelonlinelon quelonry.
+   * @tparam Candidatelon Typelon of candidatelons to scorelon.
+   * @tparam QuelonryFelonaturelons typelon of thelon quelonry lelonvelonl felonaturelons consumelond by thelon scorelonr.
+   * @tparam CandidatelonFelonaturelons typelon of thelon candidatelon lelonvelonl felonaturelons consumelond by thelon scorelonr.
    */
-  def build[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    scorerIdentifier: ScorerIdentifier,
-    modelInferRequestBuilder: ModelInferRequestBuilder[
-      Query,
-      Candidate
+  delonf build[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+    scorelonrIdelonntifielonr: ScorelonrIdelonntifielonr,
+    modelonlInfelonrRelonquelonstBuildelonr: ModelonlInfelonrRelonquelonstBuildelonr[
+      Quelonry,
+      Candidatelon
     ],
-    resultFeatureExtractors: Seq[FeatureWithExtractor[Query, Candidate, _]],
-    client: MLModelInferenceClient
-  ): Scorer[Query, Candidate] =
-    new CortexManagedInferenceServiceTensorScorer(
-      scorerIdentifier,
-      modelInferRequestBuilder,
-      resultFeatureExtractors,
-      client,
-      statsReceiver.scope(scorerIdentifier.name)
+    relonsultFelonaturelonelonxtractors: Selonq[FelonaturelonWithelonxtractor[Quelonry, Candidatelon, _]],
+    clielonnt: MLModelonlInfelonrelonncelonClielonnt
+  ): Scorelonr[Quelonry, Candidatelon] =
+    nelonw CortelonxManagelondInfelonrelonncelonSelonrvicelonTelonnsorScorelonr(
+      scorelonrIdelonntifielonr,
+      modelonlInfelonrRelonquelonstBuildelonr,
+      relonsultFelonaturelonelonxtractors,
+      clielonnt,
+      statsReloncelonivelonr.scopelon(scorelonrIdelonntifielonr.namelon)
     )
 }

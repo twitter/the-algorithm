@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTwelonelontSourcelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
-public class MarkTweetSourceFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private final SearchCounter searchResultsNotSet;
+public class MarkTwelonelontSourcelonFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
+  privatelon final SelonarchCountelonr selonarchRelonsultsNotSelont;
 
-  private final ThriftTweetSource tweetSource;
+  privatelon final ThriftTwelonelontSourcelon twelonelontSourcelon;
 
-  public MarkTweetSourceFilter(ThriftTweetSource tweetSource) {
-    this.tweetSource = tweetSource;
-    searchResultsNotSet = SearchCounter.export(
-        tweetSource.name().toLowerCase() + "_mark_tweet_source_filter_search_results_not_set");
+  public MarkTwelonelontSourcelonFiltelonr(ThriftTwelonelontSourcelon twelonelontSourcelon) {
+    this.twelonelontSourcelon = twelonelontSourcelon;
+    selonarchRelonsultsNotSelont = SelonarchCountelonr.elonxport(
+        twelonelontSourcelon.namelon().toLowelonrCaselon() + "_mark_twelonelont_sourcelon_filtelonr_selonarch_relonsults_not_selont");
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      final EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(requestContext).map(new Function<EarlybirdResponse, EarlybirdResponse>() {
-        @Override
-        public EarlybirdResponse apply(EarlybirdResponse response) {
-          if (response.getResponseCode() == EarlybirdResponseCode.SUCCESS
-              && requestContext.getEarlybirdRequestType() != EarlybirdRequestType.TERM_STATS) {
-            if (!response.isSetSearchResults()) {
-              searchResultsNotSet.increment();
-            } else {
-              for (ThriftSearchResult searchResult : response.getSearchResults().getResults()) {
-                searchResult.setTweetSource(tweetSource);
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      final elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    relonturn selonrvicelon.apply(relonquelonstContelonxt).map(nelonw Function<elonarlybirdRelonsponselon, elonarlybirdRelonsponselon>() {
+        @Ovelonrridelon
+        public elonarlybirdRelonsponselon apply(elonarlybirdRelonsponselon relonsponselon) {
+          if (relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.SUCCelonSS
+              && relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon() != elonarlybirdRelonquelonstTypelon.TelonRM_STATS) {
+            if (!relonsponselon.isSelontSelonarchRelonsults()) {
+              selonarchRelonsultsNotSelont.increlonmelonnt();
+            } elonlselon {
+              for (ThriftSelonarchRelonsult selonarchRelonsult : relonsponselon.gelontSelonarchRelonsults().gelontRelonsults()) {
+                selonarchRelonsult.selontTwelonelontSourcelon(twelonelontSourcelon);
               }
             }
           }
-          return response;
+          relonturn relonsponselon;
         }
       }
     );

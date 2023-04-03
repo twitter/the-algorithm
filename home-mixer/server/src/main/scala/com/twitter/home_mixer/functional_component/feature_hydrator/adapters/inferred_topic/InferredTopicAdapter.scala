@@ -1,25 +1,25 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.inferred_topic
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.infelonrrelond_topic
 
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import scala.collection.JavaConverters._
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.timelonlinelons.prelondiction.common.adaptelonrs.TimelonlinelonsMutatingAdaptelonrBaselon
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.common.TimelonlinelonsSharelondFelonaturelons
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object InferredTopicAdapter extends TimelinesMutatingAdapterBase[Map[Long, Double]] {
+objelonct InfelonrrelondTopicAdaptelonr elonxtelonnds TimelonlinelonsMutatingAdaptelonrBaselon[Map[Long, Doublelon]] {
 
-  override val getFeatureContext: FeatureContext = new FeatureContext(
-    TimelinesSharedFeatures.INFERRED_TOPIC_IDS)
+  ovelonrridelon val gelontFelonaturelonContelonxt: FelonaturelonContelonxt = nelonw FelonaturelonContelonxt(
+    TimelonlinelonsSharelondFelonaturelons.INFelonRRelonD_TOPIC_IDS)
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  ovelonrridelon val commonFelonaturelons: Selont[Felonaturelon[_]] = Selont.elonmpty
 
-  override def setFeatures(
-    inferredTopicFeatures: Map[Long, Double],
-    richDataRecord: RichDataRecord
+  ovelonrridelon delonf selontFelonaturelons(
+    infelonrrelondTopicFelonaturelons: Map[Long, Doublelon],
+    richDataReloncord: RichDataReloncord
   ): Unit = {
-    richDataRecord.setFeatureValue(
-      TimelinesSharedFeatures.INFERRED_TOPIC_IDS,
-      inferredTopicFeatures.keys.map(_.toString).toSet.asJava)
+    richDataReloncord.selontFelonaturelonValuelon(
+      TimelonlinelonsSharelondFelonaturelons.INFelonRRelonD_TOPIC_IDS,
+      infelonrrelondTopicFelonaturelons.kelonys.map(_.toString).toSelont.asJava)
   }
 }

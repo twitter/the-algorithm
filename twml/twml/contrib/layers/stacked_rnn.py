@@ -1,189 +1,189 @@
 
-from twitter.deepbird.compat.v1.rnn import stack_bidirectional_dynamic_rnn
+from twittelonr.delonelonpbird.compat.v1.rnn import stack_bidirelonctional_dynamic_rnn
 
-import tensorflow.compat.v1 as tf
-import tensorflow
+import telonnsorflow.compat.v1 as tf
+import telonnsorflow
 import twml
 
 
-def _get_rnn_cell_creator(cell_type):
-  if cell_type == "LSTM":
-    Cell = tf.nn.rnn_cell.LSTMCell
-  elif cell_type == "GRU":
-    Cell = tf.nn.rnn_cell.GRUCell
-  else:
-    raise ValueError("cell_type: %s is not supported."
-                     "It should be one of 'LSTM' or 'GRU'." % cell_type)
-  return Cell
+delonf _gelont_rnn_celonll_crelonator(celonll_typelon):
+  if celonll_typelon == "LSTM":
+    Celonll = tf.nn.rnn_celonll.LSTMCelonll
+  elonlif celonll_typelon == "GRU":
+    Celonll = tf.nn.rnn_celonll.GRUCelonll
+  elonlselon:
+    raiselon Valuelonelonrror("celonll_typelon: %s is not supportelond."
+                     "It should belon onelon of 'LSTM' or 'GRU'." % celonll_typelon)
+  relonturn Celonll
 
 
-def _apply_dropout_wrapper(rnn_cells, dropout):
-  """ Apply dropout wrapper around each cell if necessary """
-  if rnn_cells is None:
-    return None
+delonf _apply_dropout_wrappelonr(rnn_celonlls, dropout):
+  """ Apply dropout wrappelonr around elonach celonll if neloncelonssary """
+  if rnn_celonlls is Nonelon:
+    relonturn Nonelon
 
-  cells = []
-  for i, dropout_rate in enumerate(dropout):
-    cell = rnn_cells[i]
-    if dropout_rate > 0:
-      cell = tf.nn.rnn_cell.DropoutWrapper(cell, input_keep_prob=(1.0 - dropout_rate))
-    cells.append(cell)
-  return cells
-
-
-def _create_bidirectional_rnn_cell(num_units, dropout, cell_type):
-  scope_name = "lstm" if cell_type else "gru"
-  with tf.variable_scope(scope_name):
-    Cell = _get_rnn_cell_creator(cell_type)
-    cells_forward = [Cell(output_size) for output_size in num_units]
-    cells_backward = [Cell(output_size) for output_size in num_units]
-    cells_forward = _apply_dropout_wrapper(cells_forward, dropout)
-    cells_backward = _apply_dropout_wrapper(cells_backward, dropout)
-
-  def stacked_rnn_cell(inputs, sequence_lengths):
-    with tf.variable_scope(scope_name):
-      outputs, final_states, _ = stack_bidirectional_dynamic_rnn(
-        cells_fw=cells_forward, cells_bw=cells_backward, inputs=inputs,
-        sequence_length=sequence_lengths, dtype=inputs.dtype)
-      return final_states[-1][-1]
-
-  return stacked_rnn_cell
+  celonlls = []
+  for i, dropout_ratelon in elonnumelonratelon(dropout):
+    celonll = rnn_celonlls[i]
+    if dropout_ratelon > 0:
+      celonll = tf.nn.rnn_celonll.DropoutWrappelonr(celonll, input_kelonelonp_prob=(1.0 - dropout_ratelon))
+    celonlls.appelonnd(celonll)
+  relonturn celonlls
 
 
-def _create_unidirectional_rnn_cell(num_units, dropout, cell_type):
-  scope_name = "lstm" if cell_type else "gru"
-  with tf.variable_scope(scope_name):
-    Cell = _get_rnn_cell_creator(cell_type)
-    cells = [Cell(output_size) for output_size in num_units]
-    cells = _apply_dropout_wrapper(cells, dropout)
-    multi_cell = tf.nn.rnn_cell.MultiRNNCell(cells)
+delonf _crelonatelon_bidirelonctional_rnn_celonll(num_units, dropout, celonll_typelon):
+  scopelon_namelon = "lstm" if celonll_typelon elonlselon "gru"
+  with tf.variablelon_scopelon(scopelon_namelon):
+    Celonll = _gelont_rnn_celonll_crelonator(celonll_typelon)
+    celonlls_forward = [Celonll(output_sizelon) for output_sizelon in num_units]
+    celonlls_backward = [Celonll(output_sizelon) for output_sizelon in num_units]
+    celonlls_forward = _apply_dropout_wrappelonr(celonlls_forward, dropout)
+    celonlls_backward = _apply_dropout_wrappelonr(celonlls_backward, dropout)
 
-  def stacked_rnn_cell(inputs, sequence_lengths):
-    with tf.variable_scope(scope_name):
-      outputs, final_states = tf.nn.static_rnn(
-        multi_cell,
+  delonf stackelond_rnn_celonll(inputs, selonquelonncelon_lelonngths):
+    with tf.variablelon_scopelon(scopelon_namelon):
+      outputs, final_statelons, _ = stack_bidirelonctional_dynamic_rnn(
+        celonlls_fw=celonlls_forward, celonlls_bw=celonlls_backward, inputs=inputs,
+        selonquelonncelon_lelonngth=selonquelonncelon_lelonngths, dtypelon=inputs.dtypelon)
+      relonturn final_statelons[-1][-1]
+
+  relonturn stackelond_rnn_celonll
+
+
+delonf _crelonatelon_unidirelonctional_rnn_celonll(num_units, dropout, celonll_typelon):
+  scopelon_namelon = "lstm" if celonll_typelon elonlselon "gru"
+  with tf.variablelon_scopelon(scopelon_namelon):
+    Celonll = _gelont_rnn_celonll_crelonator(celonll_typelon)
+    celonlls = [Celonll(output_sizelon) for output_sizelon in num_units]
+    celonlls = _apply_dropout_wrappelonr(celonlls, dropout)
+    multi_celonll = tf.nn.rnn_celonll.MultiRNNCelonll(celonlls)
+
+  delonf stackelond_rnn_celonll(inputs, selonquelonncelon_lelonngths):
+    with tf.variablelon_scopelon(scopelon_namelon):
+      outputs, final_statelons = tf.nn.static_rnn(
+        multi_celonll,
         tf.unstack(inputs, axis=1),
-        dtype=inputs.dtype,
-        sequence_length=sequence_lengths)
-      return final_states[-1].h
+        dtypelon=inputs.dtypelon,
+        selonquelonncelon_lelonngth=selonquelonncelon_lelonngths)
+      relonturn final_statelons[-1].h
 
-  return stacked_rnn_cell
-
-
-def _create_regular_rnn_cell(num_units, dropout, cell_type, is_bidirectional):
-  if is_bidirectional:
-    return _create_bidirectional_rnn_cell(num_units, dropout, cell_type)
-  else:
-    return _create_unidirectional_rnn_cell(num_units, dropout, cell_type)
+  relonturn stackelond_rnn_celonll
 
 
-class StackedRNN(twml.layers.Layer):
+delonf _crelonatelon_relongular_rnn_celonll(num_units, dropout, celonll_typelon, is_bidirelonctional):
+  if is_bidirelonctional:
+    relonturn _crelonatelon_bidirelonctional_rnn_celonll(num_units, dropout, celonll_typelon)
+  elonlselon:
+    relonturn _crelonatelon_unidirelonctional_rnn_celonll(num_units, dropout, celonll_typelon)
+
+
+class StackelondRNN(twml.layelonrs.Layelonr):
   """
-  Layer for stacking RNN modules.
-  This layer provides a unified interface for RNN modules that perform well on CPUs and GPUs.
+  Layelonr for stacking RNN modulelons.
+  This layelonr providelons a unifielond intelonrfacelon for RNN modulelons that pelonrform welonll on CPUs and GPUs.
 
-  Arguments:
+  Argumelonnts:
     num_units:
-      A list specifying the number of units per layer.
+      A list speloncifying thelon numbelonr of units pelonr layelonr.
     dropout:
-      Dropout applied to the input of each cell.
-      If list, has to dropout used for each layer.
-      If number, the same amount of dropout is used everywhere.
-      Defaults to 0.
+      Dropout applielond to thelon input of elonach celonll.
+      If list, has to dropout uselond for elonach layelonr.
+      If numbelonr, thelon samelon amount of dropout is uselond elonvelonrywhelonrelon.
+      Delonfaults to 0.
     is_training:
-      Flag to specify if the layer is used in training mode or not.
-    cell_type:
-      Sepcifies the type of RNN. Can be "LSTM". "GRU" is not yet implemented.
-    is_bidirectional:
-      Specifies if the stacked RNN layer is bidirectional.
-      This is for forward compatibility, this is not yet implemented.
-      Defaults to False.
+      Flag to speloncify if thelon layelonr is uselond in training modelon or not.
+    celonll_typelon:
+      Selonpcifielons thelon typelon of RNN. Can belon "LSTM". "GRU" is not yelont implelonmelonntelond.
+    is_bidirelonctional:
+      Speloncifielons if thelon stackelond RNN layelonr is bidirelonctional.
+      This is for forward compatibility, this is not yelont implelonmelonntelond.
+      Delonfaults to Falselon.
   """
 
-  def __init__(self,
+  delonf __init__(selonlf,
                num_units,
                dropout=0,
-               is_training=True,
-               cell_type="LSTM",
-               is_bidirectional=False,
-               name="stacked_rnn"):
+               is_training=Truelon,
+               celonll_typelon="LSTM",
+               is_bidirelonctional=Falselon,
+               namelon="stackelond_rnn"):
 
-    super(StackedRNN, self).__init__(name=name)
+    supelonr(StackelondRNN, selonlf).__init__(namelon=namelon)
 
-    if (is_bidirectional):
-      raise NotImplementedError("Bidirectional RNN is not yet implemented")
+    if (is_bidirelonctional):
+      raiselon NotImplelonmelonntelondelonrror("Bidirelonctional RNN is not yelont implelonmelonntelond")
 
-    if (cell_type != "LSTM"):
-      raise NotImplementedError("Only LSTMs are supported")
+    if (celonll_typelon != "LSTM"):
+      raiselon NotImplelonmelonntelondelonrror("Only LSTMs arelon supportelond")
 
-    if not isinstance(num_units, (list, tuple)):
+    if not isinstancelon(num_units, (list, tuplelon)):
       num_units = [num_units]
-    else:
+    elonlselon:
       num_units = num_units
 
-    self.num_layers = len(num_units)
-    if not isinstance(dropout, (tuple, list)):
-      dropout = [dropout] * self.num_layers
-    else:
+    selonlf.num_layelonrs = lelonn(num_units)
+    if not isinstancelon(dropout, (tuplelon, list)):
+      dropout = [dropout] * selonlf.num_layelonrs
+    elonlselon:
       dropout = dropout
 
-    self.is_training = is_training
+    selonlf.is_training = is_training
 
-    is_gpu_available = twml.contrib.utils.is_gpu_available()
-    same_unit_size = all(size == num_units[0] for size in num_units)
-    same_dropout_rate = any(val == dropout[0] for val in dropout)
+    is_gpu_availablelon = twml.contrib.utils.is_gpu_availablelon()
+    samelon_unit_sizelon = all(sizelon == num_units[0] for sizelon in num_units)
+    samelon_dropout_ratelon = any(val == dropout[0] for val in dropout)
 
-    self.stacked_rnn_cell = None
-    self.num_units = num_units
-    self.dropout = dropout
-    self.cell_type = cell_type
-    self.is_bidirectional = is_bidirectional
+    selonlf.stackelond_rnn_celonll = Nonelon
+    selonlf.num_units = num_units
+    selonlf.dropout = dropout
+    selonlf.celonll_typelon = celonll_typelon
+    selonlf.is_bidirelonctional = is_bidirelonctional
 
-  def build(self, input_shape):
-    self.stacked_rnn_cell = _create_regular_rnn_cell(self.num_units,
-                                                     self.dropout,
-                                                     self.cell_type,
-                                                     self.is_bidirectional)
+  delonf build(selonlf, input_shapelon):
+    selonlf.stackelond_rnn_celonll = _crelonatelon_relongular_rnn_celonll(selonlf.num_units,
+                                                     selonlf.dropout,
+                                                     selonlf.celonll_typelon,
+                                                     selonlf.is_bidirelonctional)
 
-  def call(self, inputs, sequence_lengths):
+  delonf call(selonlf, inputs, selonquelonncelon_lelonngths):
     """
-    Arguments:
+    Argumelonnts:
       inputs:
-        A tensor of size [batch_size, max_sequence_length, embedding_size].
-      sequence_lengths:
-        The length of each input sequence in the batch. Should be of size [batch_size].
-    Returns:
+        A telonnsor of sizelon [batch_sizelon, max_selonquelonncelon_lelonngth, elonmbelondding_sizelon].
+      selonquelonncelon_lelonngths:
+        Thelon lelonngth of elonach input selonquelonncelon in thelon batch. Should belon of sizelon [batch_sizelon].
+    Relonturns:
       final_output
-        The output of at the end of sequence_length.
+        Thelon output of at thelon elonnd of selonquelonncelon_lelonngth.
     """
-    return self.stacked_rnn_cell(inputs, sequence_lengths)
+    relonturn selonlf.stackelond_rnn_celonll(inputs, selonquelonncelon_lelonngths)
 
 
-def stacked_rnn(inputs, sequence_lengths, num_units,
-                dropout=0, is_training=True,
-                cell_type="LSTM", is_bidirectional=False, name="stacked_rnn"):
-  """Functional interface for StackedRNN
-  Arguments:
+delonf stackelond_rnn(inputs, selonquelonncelon_lelonngths, num_units,
+                dropout=0, is_training=Truelon,
+                celonll_typelon="LSTM", is_bidirelonctional=Falselon, namelon="stackelond_rnn"):
+  """Functional intelonrfacelon for StackelondRNN
+  Argumelonnts:
     inputs:
-      A tensor of size [batch_size, max_sequence_length, embedding_size].
-    sequence_lengths:
-      The length of each input sequence in the batch. Should be of size [batch_size].
+      A telonnsor of sizelon [batch_sizelon, max_selonquelonncelon_lelonngth, elonmbelondding_sizelon].
+    selonquelonncelon_lelonngths:
+      Thelon lelonngth of elonach input selonquelonncelon in thelon batch. Should belon of sizelon [batch_sizelon].
     num_units:
-      A list specifying the number of units per layer.
+      A list speloncifying thelon numbelonr of units pelonr layelonr.
     dropout:
-      Dropout applied to the input of each cell.
-      If list, has to dropout used for each layer.
-      If number, the same amount of dropout is used everywhere.
-      Defaults to 0.
+      Dropout applielond to thelon input of elonach celonll.
+      If list, has to dropout uselond for elonach layelonr.
+      If numbelonr, thelon samelon amount of dropout is uselond elonvelonrywhelonrelon.
+      Delonfaults to 0.
     is_training:
-      Flag to specify if the layer is used in training mode or not.
-    cell_type:
-      Sepcifies the type of RNN. Can be "LSTM" or "GRU".
-    is_bidirectional:
-      Specifies if the stacked RNN layer is bidirectional.
-      Defaults to False.
-  Returns
-    outputs, state.
+      Flag to speloncify if thelon layelonr is uselond in training modelon or not.
+    celonll_typelon:
+      Selonpcifielons thelon typelon of RNN. Can belon "LSTM" or "GRU".
+    is_bidirelonctional:
+      Speloncifielons if thelon stackelond RNN layelonr is bidirelonctional.
+      Delonfaults to Falselon.
+  Relonturns
+    outputs, statelon.
   """
-  rnn = StackedRNN(num_units, dropout, is_training, cell_type, is_bidirectional, name)
-  return rnn(inputs, sequence_lengths)
+  rnn = StackelondRNN(num_units, dropout, is_training, celonll_typelon, is_bidirelonctional, namelon)
+  relonturn rnn(inputs, selonquelonncelon_lelonngths)

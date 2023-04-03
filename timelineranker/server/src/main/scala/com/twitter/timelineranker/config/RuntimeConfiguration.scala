@@ -1,133 +1,133 @@
-package com.twitter.timelineranker.config
+packagelon com.twittelonr.timelonlinelonrankelonr.config
 
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.Value
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.util.Effect
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelines.authorization.TimelinesClientRequestAuthorizer
-import com.twitter.timelines.config._
-import com.twitter.timelines.config.configapi._
-import com.twitter.timelines.features._
-import com.twitter.timelines.util.ImpressionCountingABDecider
-import com.twitter.timelines.util.logging.Scribe
-import com.twitter.util.Await
-import com.twitter.servo.util.Gate
-import com.twitter.timelines.model.UserId
+import com.twittelonr.abdeloncidelonr.ABDeloncidelonrFactory
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.felonaturelonswitchelons.Valuelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.selonrvo.util.elonffelonct
+import com.twittelonr.timelonlinelonrankelonr.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.timelonlinelons.authorization.TimelonlinelonsClielonntRelonquelonstAuthorizelonr
+import com.twittelonr.timelonlinelons.config._
+import com.twittelonr.timelonlinelons.config.configapi._
+import com.twittelonr.timelonlinelons.felonaturelons._
+import com.twittelonr.timelonlinelons.util.ImprelonssionCountingABDeloncidelonr
+import com.twittelonr.timelonlinelons.util.logging.Scribelon
+import com.twittelonr.util.Await
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
 
-trait ClientProvider {
-  def clientWrappers: ClientWrappers
-  def underlyingClients: UnderlyingClientConfiguration
+trait ClielonntProvidelonr {
+  delonf clielonntWrappelonrs: ClielonntWrappelonrs
+  delonf undelonrlyingClielonnts: UndelonrlyingClielonntConfiguration
 }
 
-trait UtilityProvider {
-  def abdecider: LoggingABDecider
-  def clientRequestAuthorizer: TimelinesClientRequestAuthorizer
-  def configStore: ConfigStore
-  def decider: Decider
-  def deciderGateBuilder: DeciderGateBuilder
-  def employeeGate: UserRolesGate.EmployeeGate
-  def configApiConfiguration: ConfigApiConfiguration
-  def statsReceiver: StatsReceiver
-  def whitelist: UserList
+trait UtilityProvidelonr {
+  delonf abdeloncidelonr: LoggingABDeloncidelonr
+  delonf clielonntRelonquelonstAuthorizelonr: TimelonlinelonsClielonntRelonquelonstAuthorizelonr
+  delonf configStorelon: ConfigStorelon
+  delonf deloncidelonr: Deloncidelonr
+  delonf deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr
+  delonf elonmployelonelonGatelon: UselonrRolelonsGatelon.elonmployelonelonGatelon
+  delonf configApiConfiguration: ConfigApiConfiguration
+  delonf statsReloncelonivelonr: StatsReloncelonivelonr
+  delonf whitelonlist: UselonrList
 }
 
-trait RuntimeConfiguration extends ClientProvider with UtilityProvider with ConfigUtils {
-  def isProd: Boolean
-  def maxConcurrency: Int
-  def clientEventScribe: Effect[String]
-  def clientWrapperFactories: ClientWrapperFactories
+trait RuntimelonConfiguration elonxtelonnds ClielonntProvidelonr with UtilityProvidelonr with ConfigUtils {
+  delonf isProd: Boolelonan
+  delonf maxConcurrelonncy: Int
+  delonf clielonntelonvelonntScribelon: elonffelonct[String]
+  delonf clielonntWrappelonrFactorielons: ClielonntWrappelonrFactorielons
 }
 
-class RuntimeConfigurationImpl(
-  flags: TimelineRankerFlags,
-  configStoreFactory: DynamicConfigStoreFactory,
-  val decider: Decider,
-  val forcedFeatureValues: Map[String, Value] = Map.empty[String, Value],
-  val statsReceiver: StatsReceiver)
-    extends RuntimeConfiguration {
+class RuntimelonConfigurationImpl(
+  flags: TimelonlinelonRankelonrFlags,
+  configStorelonFactory: DynamicConfigStorelonFactory,
+  val deloncidelonr: Deloncidelonr,
+  val forcelondFelonaturelonValuelons: Map[String, Valuelon] = Map.elonmpty[String, Valuelon],
+  val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RuntimelonConfiguration {
 
-  // Creates and initialize config store as early as possible so other parts could have a dependency on it for settings.
-  override val configStore: DynamicConfigStore =
-    configStoreFactory.createDcEnvAwareFileBasedConfigStore(
-      relativeConfigFilePath = "timelines/timelineranker/service_settings.yml",
-      dc = flags.getDatacenter,
-      env = flags.getEnv,
+  // Crelonatelons and initializelon config storelon as elonarly as possiblelon so othelonr parts could havelon a delonpelonndelonncy on it for selonttings.
+  ovelonrridelon val configStorelon: DynamicConfigStorelon =
+    configStorelonFactory.crelonatelonDcelonnvAwarelonFilelonBaselondConfigStorelon(
+      relonlativelonConfigFilelonPath = "timelonlinelons/timelonlinelonrankelonr/selonrvicelon_selonttings.yml",
+      dc = flags.gelontDatacelonntelonr,
+      elonnv = flags.gelontelonnv,
       configBusConfig = ConfigBusProdConfig,
-      onUpdate = ConfigStore.NullOnUpdateCallback,
-      statsReceiver = statsReceiver
+      onUpdatelon = ConfigStorelon.NullOnUpdatelonCallback,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
-  Await.result(configStore.init)
+  Await.relonsult(configStorelon.init)
 
-  val environment: Env.Value = flags.getEnv
-  override val isProd: Boolean = isProdEnv(environment)
-  val datacenter: Datacenter.Value = flags.getDatacenter
-  val abDeciderPath = "/usr/local/config/abdecider/abdecider.yml"
-  override val maxConcurrency: Int = flags.maxConcurrency()
+  val elonnvironmelonnt: elonnv.Valuelon = flags.gelontelonnv
+  ovelonrridelon val isProd: Boolelonan = isProdelonnv(elonnvironmelonnt)
+  val datacelonntelonr: Datacelonntelonr.Valuelon = flags.gelontDatacelonntelonr
+  val abDeloncidelonrPath = "/usr/local/config/abdeloncidelonr/abdeloncidelonr.yml"
+  ovelonrridelon val maxConcurrelonncy: Int = flags.maxConcurrelonncy()
 
-  val deciderGateBuilder: DeciderGateBuilder = new DeciderGateBuilder(decider)
+  val deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr = nelonw DeloncidelonrGatelonBuildelonr(deloncidelonr)
 
-  val clientRequestAuthorizer: TimelinesClientRequestAuthorizer =
-    new TimelinesClientRequestAuthorizer(
-      deciderGateBuilder = deciderGateBuilder,
-      clientDetails = ClientAccessPermissions.All,
-      unknownClientDetails = ClientAccessPermissions.unknown,
-      clientAuthorizationGate =
-        deciderGateBuilder.linearGate(DeciderKey.ClientRequestAuthorization),
-      clientWriteWhitelistGate = deciderGateBuilder.linearGate(DeciderKey.ClientWriteWhitelist),
-      globalCapacityQPS = flags.requestRateLimit(),
-      statsReceiver = statsReceiver
+  val clielonntRelonquelonstAuthorizelonr: TimelonlinelonsClielonntRelonquelonstAuthorizelonr =
+    nelonw TimelonlinelonsClielonntRelonquelonstAuthorizelonr(
+      deloncidelonrGatelonBuildelonr = deloncidelonrGatelonBuildelonr,
+      clielonntDelontails = ClielonntAccelonssPelonrmissions.All,
+      unknownClielonntDelontails = ClielonntAccelonssPelonrmissions.unknown,
+      clielonntAuthorizationGatelon =
+        deloncidelonrGatelonBuildelonr.linelonarGatelon(DeloncidelonrKelony.ClielonntRelonquelonstAuthorization),
+      clielonntWritelonWhitelonlistGatelon = deloncidelonrGatelonBuildelonr.linelonarGatelon(DeloncidelonrKelony.ClielonntWritelonWhitelonlist),
+      globalCapacityQPS = flags.relonquelonstRatelonLimit(),
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
-  override val clientEventScribe = Scribe.clientEvent(isProd, statsReceiver)
-  val abdecider: LoggingABDecider = new ImpressionCountingABDecider(
-    abdecider = ABDeciderFactory.withScribeEffect(
-      abDeciderYmlPath = abDeciderPath,
-      scribeEffect = clientEventScribe,
-      decider = None,
-      environment = Some("production"),
+  ovelonrridelon val clielonntelonvelonntScribelon = Scribelon.clielonntelonvelonnt(isProd, statsReloncelonivelonr)
+  val abdeloncidelonr: LoggingABDeloncidelonr = nelonw ImprelonssionCountingABDeloncidelonr(
+    abdeloncidelonr = ABDeloncidelonrFactory.withScribelonelonffelonct(
+      abDeloncidelonrYmlPath = abDeloncidelonrPath,
+      scribelonelonffelonct = clielonntelonvelonntScribelon,
+      deloncidelonr = Nonelon,
+      elonnvironmelonnt = Somelon("production"),
     ).buildWithLogging(),
-    statsReceiver = statsReceiver
+    statsReloncelonivelonr = statsReloncelonivelonr
   )
 
-  val underlyingClients: UnderlyingClientConfiguration = buildUnderlyingClientConfiguration
+  val undelonrlyingClielonnts: UndelonrlyingClielonntConfiguration = buildUndelonrlyingClielonntConfiguration
 
-  val clientWrappers: ClientWrappers = new ClientWrappers(this)
-  override val clientWrapperFactories: ClientWrapperFactories = new ClientWrapperFactories(this)
+  val clielonntWrappelonrs: ClielonntWrappelonrs = nelonw ClielonntWrappelonrs(this)
+  ovelonrridelon val clielonntWrappelonrFactorielons: ClielonntWrappelonrFactorielons = nelonw ClielonntWrappelonrFactorielons(this)
 
-  private[this] val userRolesCacheFactory = new UserRolesCacheFactory(
-    userRolesService = underlyingClients.userRolesServiceClient,
-    statsReceiver = statsReceiver
+  privatelon[this] val uselonrRolelonsCachelonFactory = nelonw UselonrRolelonsCachelonFactory(
+    uselonrRolelonsSelonrvicelon = undelonrlyingClielonnts.uselonrRolelonsSelonrvicelonClielonnt,
+    statsReloncelonivelonr = statsReloncelonivelonr
   )
-  override val whitelist: Whitelist = Whitelist(
-    configStoreFactory = configStoreFactory,
-    userRolesCacheFactory = userRolesCacheFactory,
-    statsReceiver = statsReceiver
-  )
-
-  override val employeeGate: Gate[UserId] = UserRolesGate(
-    userRolesCacheFactory.create(UserRoles.EmployeesRoleName)
+  ovelonrridelon val whitelonlist: Whitelonlist = Whitelonlist(
+    configStorelonFactory = configStorelonFactory,
+    uselonrRolelonsCachelonFactory = uselonrRolelonsCachelonFactory,
+    statsReloncelonivelonr = statsReloncelonivelonr
   )
 
-  private[this] val featureRecipientFactory =
-    new UserRolesCachingFeatureRecipientFactory(userRolesCacheFactory, statsReceiver)
+  ovelonrridelon val elonmployelonelonGatelon: Gatelon[UselonrId] = UselonrRolelonsGatelon(
+    uselonrRolelonsCachelonFactory.crelonatelon(UselonrRolelons.elonmployelonelonsRolelonNamelon)
+  )
 
-  override val configApiConfiguration: FeatureSwitchesV2ConfigApiConfiguration =
-    FeatureSwitchesV2ConfigApiConfiguration(
-      datacenter = flags.getDatacenter,
-      serviceName = ServiceName.TimelineRanker,
-      abdecider = abdecider,
-      featureRecipientFactory = featureRecipientFactory,
-      forcedValues = forcedFeatureValues,
-      statsReceiver = statsReceiver
+  privatelon[this] val felonaturelonReloncipielonntFactory =
+    nelonw UselonrRolelonsCachingFelonaturelonReloncipielonntFactory(uselonrRolelonsCachelonFactory, statsReloncelonivelonr)
+
+  ovelonrridelon val configApiConfiguration: FelonaturelonSwitchelonsV2ConfigApiConfiguration =
+    FelonaturelonSwitchelonsV2ConfigApiConfiguration(
+      datacelonntelonr = flags.gelontDatacelonntelonr,
+      selonrvicelonNamelon = SelonrvicelonNamelon.TimelonlinelonRankelonr,
+      abdeloncidelonr = abdeloncidelonr,
+      felonaturelonReloncipielonntFactory = felonaturelonReloncipielonntFactory,
+      forcelondValuelons = forcelondFelonaturelonValuelons,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-  private[this] def buildUnderlyingClientConfiguration: UnderlyingClientConfiguration = {
-    environment match {
-      case Env.prod => new DefaultUnderlyingClientConfiguration(flags, statsReceiver)
-      case _ => new StagingUnderlyingClientConfiguration(flags, statsReceiver)
+  privatelon[this] delonf buildUndelonrlyingClielonntConfiguration: UndelonrlyingClielonntConfiguration = {
+    elonnvironmelonnt match {
+      caselon elonnv.prod => nelonw DelonfaultUndelonrlyingClielonntConfiguration(flags, statsReloncelonivelonr)
+      caselon _ => nelonw StagingUndelonrlyingClielonntConfiguration(flags, statsReloncelonivelonr)
     }
   }
 }

@@ -1,51 +1,51 @@
-package com.twitter.follow_recommendations.controllers
+packagelon com.twittelonr.follow_reloncommelonndations.controllelonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.DebugOptions
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.models.DebugParams
-import com.twitter.follow_recommendations.models.ScoringUserRequest
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.stitch.Stitch
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.ClielonntContelonxtConvelonrtelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DelonbugOptions
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.modelonls.DelonbugParams
+import com.twittelonr.follow_reloncommelonndations.modelonls.ScoringUselonrRelonquelonst
+import com.twittelonr.timelonlinelons.configapi.Params
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
+import com.twittelonr.gizmoduck.thriftscala.UselonrTypelon
+import com.twittelonr.stitch.Stitch
 
-@Singleton
-class ScoringUserRequestBuilder @Inject() (
-  requestBuilderUserFetcher: RequestBuilderUserFetcher,
-  candidateUserDebugParamsBuilder: CandidateUserDebugParamsBuilder,
-  statsReceiver: StatsReceiver) {
-  private val scopedStats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val isSoftUserCounter = scopedStats.counter("is_soft_user")
+@Singlelonton
+class ScoringUselonrRelonquelonstBuildelonr @Injelonct() (
+  relonquelonstBuildelonrUselonrFelontchelonr: RelonquelonstBuildelonrUselonrFelontchelonr,
+  candidatelonUselonrDelonbugParamsBuildelonr: CandidatelonUselonrDelonbugParamsBuildelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val scopelondStats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val isSoftUselonrCountelonr = scopelondStats.countelonr("is_soft_uselonr")
 
-  def fromThrift(req: t.ScoringUserRequest): Stitch[ScoringUserRequest] = {
-    requestBuilderUserFetcher.fetchUser(req.clientContext.userId).map { userOpt =>
-      val isSoftUser = userOpt.exists(_.userType == UserType.Soft)
-      if (isSoftUser) isSoftUserCounter.incr()
+  delonf fromThrift(relonq: t.ScoringUselonrRelonquelonst): Stitch[ScoringUselonrRelonquelonst] = {
+    relonquelonstBuildelonrUselonrFelontchelonr.felontchUselonr(relonq.clielonntContelonxt.uselonrId).map { uselonrOpt =>
+      val isSoftUselonr = uselonrOpt.elonxists(_.uselonrTypelon == UselonrTypelon.Soft)
+      if (isSoftUselonr) isSoftUselonrCountelonr.incr()
 
-      val candidateUsersParamsMap = candidateUserDebugParamsBuilder.fromThrift(req)
-      val candidates = req.candidates.map { candidate =>
-        CandidateUser
-          .fromUserRecommendation(candidate).copy(params =
-            candidateUsersParamsMap.paramsMap.getOrElse(candidate.userId, Params.Invalid))
+      val candidatelonUselonrsParamsMap = candidatelonUselonrDelonbugParamsBuildelonr.fromThrift(relonq)
+      val candidatelons = relonq.candidatelons.map { candidatelon =>
+        CandidatelonUselonr
+          .fromUselonrReloncommelonndation(candidatelon).copy(params =
+            candidatelonUselonrsParamsMap.paramsMap.gelontOrelonlselon(candidatelon.uselonrId, Params.Invalid))
       }
 
-      ScoringUserRequest(
-        clientContext = ClientContextConverter.fromThrift(req.clientContext),
-        displayLocation = DisplayLocation.fromThrift(req.displayLocation),
-        params = Params.Empty,
-        debugOptions = req.debugParams.map(DebugOptions.fromDebugParamsThrift),
-        recentFollowedUserIds = None,
-        recentFollowedByUserIds = None,
-        wtfImpressions = None,
-        similarToUserIds = Nil,
-        candidates = candidates,
-        debugParams = req.debugParams.map(DebugParams.fromThrift),
-        isSoftUser = isSoftUser
+      ScoringUselonrRelonquelonst(
+        clielonntContelonxt = ClielonntContelonxtConvelonrtelonr.fromThrift(relonq.clielonntContelonxt),
+        displayLocation = DisplayLocation.fromThrift(relonq.displayLocation),
+        params = Params.elonmpty,
+        delonbugOptions = relonq.delonbugParams.map(DelonbugOptions.fromDelonbugParamsThrift),
+        reloncelonntFollowelondUselonrIds = Nonelon,
+        reloncelonntFollowelondByUselonrIds = Nonelon,
+        wtfImprelonssions = Nonelon,
+        similarToUselonrIds = Nil,
+        candidatelons = candidatelons,
+        delonbugParams = relonq.delonbugParams.map(DelonbugParams.fromThrift),
+        isSoftUselonr = isSoftUselonr
       )
     }
   }

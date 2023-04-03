@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.predicates
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.HasPreviousRecommendationsContext
-import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasPrelonviousReloncommelonndationsContelonxt
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PreviouslyRecommendedUserIdsPredicate
-    extends Predicate[(HasPreviousRecommendationsContext, CandidateUser)] {
-  override def apply(
-    pair: (HasPreviousRecommendationsContext, CandidateUser)
-  ): Stitch[PredicateResult] = {
+@Singlelonton
+class PrelonviouslyReloncommelonndelondUselonrIdsPrelondicatelon
+    elonxtelonnds Prelondicatelon[(HasPrelonviousReloncommelonndationsContelonxt, CandidatelonUselonr)] {
+  ovelonrridelon delonf apply(
+    pair: (HasPrelonviousReloncommelonndationsContelonxt, CandidatelonUselonr)
+  ): Stitch[PrelondicatelonRelonsult] = {
 
-    val (targetUser, candidate) = pair
+    val (targelontUselonr, candidatelon) = pair
 
-    val previouslyRecommendedUserIDs = targetUser.previouslyRecommendedUserIDs
+    val prelonviouslyReloncommelonndelondUselonrIDs = targelontUselonr.prelonviouslyReloncommelonndelondUselonrIDs
 
-    if (!previouslyRecommendedUserIDs.contains(candidate.id)) {
-      PreviouslyRecommendedUserIdsPredicate.ValidStitch
-    } else {
-      PreviouslyRecommendedUserIdsPredicate.AlreadyRecommendedStitch
+    if (!prelonviouslyReloncommelonndelondUselonrIDs.contains(candidatelon.id)) {
+      PrelonviouslyReloncommelonndelondUselonrIdsPrelondicatelon.ValidStitch
+    } elonlselon {
+      PrelonviouslyReloncommelonndelondUselonrIdsPrelondicatelon.AlrelonadyReloncommelonndelondStitch
     }
   }
 }
 
-object PreviouslyRecommendedUserIdsPredicate {
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val AlreadyRecommendedStitch: Stitch[PredicateResult.Invalid] =
-    Stitch.value(PredicateResult.Invalid(Set(FilterReason.AlreadyRecommended)))
+objelonct PrelonviouslyReloncommelonndelondUselonrIdsPrelondicatelon {
+  val ValidStitch: Stitch[PrelondicatelonRelonsult.Valid.typelon] = Stitch.valuelon(PrelondicatelonRelonsult.Valid)
+  val AlrelonadyReloncommelonndelondStitch: Stitch[PrelondicatelonRelonsult.Invalid] =
+    Stitch.valuelon(PrelondicatelonRelonsult.Invalid(Selont(FiltelonrRelonason.AlrelonadyReloncommelonndelond)))
 }

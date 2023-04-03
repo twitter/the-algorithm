@@ -1,195 +1,195 @@
-package com.twitter.product_mixer.core.feature.featuremap
+packagelon com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.FeatureStoreV1Response
-import com.twitter.product_mixer.core.feature.featurestorev1.featurevalue.{
-  FeatureStoreV1ResponseFeature => FSv1Feature
+import com.fastelonrxml.jackson.databind.annotation.JsonSelonrializelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.felonaturelonvaluelon.FelonaturelonStorelonV1Relonsponselon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.felonaturelonvaluelon.{
+  FelonaturelonStorelonV1RelonsponselonFelonaturelon => FSv1Felonaturelon
 }
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
 
 /**
- * A set of features and their values. Associated with a specific instance of an Entity, though
- * that association is maintained by the framework.
+ * A selont of felonaturelons and thelonir valuelons. Associatelond with a speloncific instancelon of an elonntity, though
+ * that association is maintainelond by thelon framelonwork.
  *
- * [[FeatureMapBuilder]] is used to build new FeatureMap instances
+ * [[FelonaturelonMapBuildelonr]] is uselond to build nelonw FelonaturelonMap instancelons
  */
-@JsonSerialize(using = classOf[FeatureMapSerializer])
-case class FeatureMap private[feature] (
-  private[core] val underlyingMap: Map[Feature[_, _], Try[_]]) {
+@JsonSelonrializelon(using = classOf[FelonaturelonMapSelonrializelonr])
+caselon class FelonaturelonMap privatelon[felonaturelon] (
+  privatelon[corelon] val undelonrlyingMap: Map[Felonaturelon[_, _], Try[_]]) {
 
   /**
-   * Returns the [[Value]] associated with the Feature
+   * Relonturns thelon [[Valuelon]] associatelond with thelon Felonaturelon
    *
-   * If the Feature is missing from the feature map, it throws a [[MissingFeatureException]].
-   * If the Feature failed and isn't a [[FeatureWithDefaultOnFailure]] this will throw the underlying exception
-   * that the feature failed with during hydration.
+   * If thelon Felonaturelon is missing from thelon felonaturelon map, it throws a [[MissingFelonaturelonelonxcelonption]].
+   * If thelon Felonaturelon failelond and isn't a [[FelonaturelonWithDelonfaultOnFailurelon]] this will throw thelon undelonrlying elonxcelonption
+   * that thelon felonaturelon failelond with during hydration.
    */
-  def get[Value](feature: Feature[_, Value]): Value =
-    getOrElse(feature, throw MissingFeatureException(feature), None)
+  delonf gelont[Valuelon](felonaturelon: Felonaturelon[_, Valuelon]): Valuelon =
+    gelontOrelonlselon(felonaturelon, throw MissingFelonaturelonelonxcelonption(felonaturelon), Nonelon)
 
   /**
-   * Returns the [[Value]] associated with the Feature with the same semantics as
-   * [[FeatureMap.get()]], but the underlying [[Try]] is returned to allow for checking the success
-   * or error state of a feature hydration. This is helpful for implementing fall-back behavior in
-   * case the feature is missing or hydration failed without a [[FeatureWithDefaultOnFailure]] set.
+   * Relonturns thelon [[Valuelon]] associatelond with thelon Felonaturelon with thelon samelon selonmantics as
+   * [[FelonaturelonMap.gelont()]], but thelon undelonrlying [[Try]] is relonturnelond to allow for cheloncking thelon succelonss
+   * or elonrror statelon of a felonaturelon hydration. This is helonlpful for implelonmelonnting fall-back belonhavior in
+   * caselon thelon felonaturelon is missing or hydration failelond without a [[FelonaturelonWithDelonfaultOnFailurelon]] selont.
    *
-   * @note The [[FeatureMap.getOrElse()]] logic is duplicated here to avoid unpacking and repacking
-   *       the [[Try]] that is already available in the [[underlyingMap]]
+   * @notelon Thelon [[FelonaturelonMap.gelontOrelonlselon()]] logic is duplicatelond helonrelon to avoid unpacking and relonpacking
+   *       thelon [[Try]] that is alrelonady availablelon in thelon [[undelonrlyingMap]]
    */
-  def getTry[Value](feature: Feature[_, Value]): Try[Value] =
-    underlyingMap.get(feature) match {
-      case None => Throw(MissingFeatureException(feature))
-      case Some(value @ Return(_)) => value.asInstanceOf[Return[Value]]
-      case Some(value @ Throw(_)) =>
-        feature match {
-          case f: FeatureWithDefaultOnFailure[_, Value] @unchecked => Return(f.defaultValue)
-          case _ => value.asInstanceOf[Throw[Value]]
+  delonf gelontTry[Valuelon](felonaturelon: Felonaturelon[_, Valuelon]): Try[Valuelon] =
+    undelonrlyingMap.gelont(felonaturelon) match {
+      caselon Nonelon => Throw(MissingFelonaturelonelonxcelonption(felonaturelon))
+      caselon Somelon(valuelon @ Relonturn(_)) => valuelon.asInstancelonOf[Relonturn[Valuelon]]
+      caselon Somelon(valuelon @ Throw(_)) =>
+        felonaturelon match {
+          caselon f: FelonaturelonWithDelonfaultOnFailurelon[_, Valuelon] @unchelonckelond => Relonturn(f.delonfaultValuelon)
+          caselon _ => valuelon.asInstancelonOf[Throw[Valuelon]]
         }
     }
 
   /**
-   * Returns the [[Value]] associated with the feature or a default if the key is not contained in the map
-   * `default` can also be used to throw an exception.
+   * Relonturns thelon [[Valuelon]] associatelond with thelon felonaturelon or a delonfault if thelon kelony is not containelond in thelon map
+   * `delonfault` can also belon uselond to throw an elonxcelonption.
    *
-   *  e.g. `.getOrElse(feature, throw new MyCustomException())`
+   *  elon.g. `.gelontOrelonlselon(felonaturelon, throw nelonw MyCustomelonxcelonption())`
    *
-   * @note for [[FeatureWithDefaultOnFailure]], the [[FeatureWithDefaultOnFailure.defaultValue]]
-   *       will be returned if the [[Feature]] failed, but if it is missing/never hydrated,
-   *       then the `default` provided here will be used.
+   * @notelon for [[FelonaturelonWithDelonfaultOnFailurelon]], thelon [[FelonaturelonWithDelonfaultOnFailurelon.delonfaultValuelon]]
+   *       will belon relonturnelond if thelon [[Felonaturelon]] failelond, but if it is missing/nelonvelonr hydratelond,
+   *       thelonn thelon `delonfault` providelond helonrelon will belon uselond.
    */
-  def getOrElse[Value](feature: Feature[_, Value], default: => Value): Value = {
-    getOrElse(feature, default, Some(default))
+  delonf gelontOrelonlselon[Valuelon](felonaturelon: Felonaturelon[_, Valuelon], delonfault: => Valuelon): Valuelon = {
+    gelontOrelonlselon(felonaturelon, delonfault, Somelon(delonfault))
   }
 
   /**
-   * Private helper for getting features from the feature map, allowing us to define a default
-   * when the feature is missing from the feature map, vs when its in the feature map but failed.
-   * In the case of failed features, if the feature is a [FeatureWithDefaultOnFailure], it will
-   * prioritize that default.
-   * @param feature The feature to retrieve
-   * @param missingDefault The default value to use when the feature is missing from the map.
-   * @param failureDefault The default value to use when the feature is present but failed.
-   * @tparam Value The value type of the feature.
-   * @return The value stored in the map.
+   * Privatelon helonlpelonr for gelontting felonaturelons from thelon felonaturelon map, allowing us to delonfinelon a delonfault
+   * whelonn thelon felonaturelon is missing from thelon felonaturelon map, vs whelonn its in thelon felonaturelon map but failelond.
+   * In thelon caselon of failelond felonaturelons, if thelon felonaturelon is a [FelonaturelonWithDelonfaultOnFailurelon], it will
+   * prioritizelon that delonfault.
+   * @param felonaturelon Thelon felonaturelon to relontrielonvelon
+   * @param missingDelonfault Thelon delonfault valuelon to uselon whelonn thelon felonaturelon is missing from thelon map.
+   * @param failurelonDelonfault Thelon delonfault valuelon to uselon whelonn thelon felonaturelon is prelonselonnt but failelond.
+   * @tparam Valuelon Thelon valuelon typelon of thelon felonaturelon.
+   * @relonturn Thelon valuelon storelond in thelon map.
    */
-  private def getOrElse[Value](
-    feature: Feature[_, Value],
-    missingDefault: => Value,
-    failureDefault: => Option[Value]
-  ): Value =
-    underlyingMap.get(feature) match {
-      case None => missingDefault
-      case Some(Return(value)) => value.asInstanceOf[Value]
-      case Some(Throw(err)) =>
-        feature match {
-          case f: FeatureWithDefaultOnFailure[_, Value] @unchecked => f.defaultValue
-          case _ => failureDefault.getOrElse(throw err)
+  privatelon delonf gelontOrelonlselon[Valuelon](
+    felonaturelon: Felonaturelon[_, Valuelon],
+    missingDelonfault: => Valuelon,
+    failurelonDelonfault: => Option[Valuelon]
+  ): Valuelon =
+    undelonrlyingMap.gelont(felonaturelon) match {
+      caselon Nonelon => missingDelonfault
+      caselon Somelon(Relonturn(valuelon)) => valuelon.asInstancelonOf[Valuelon]
+      caselon Somelon(Throw(elonrr)) =>
+        felonaturelon match {
+          caselon f: FelonaturelonWithDelonfaultOnFailurelon[_, Valuelon] @unchelonckelond => f.delonfaultValuelon
+          caselon _ => failurelonDelonfault.gelontOrelonlselon(throw elonrr)
         }
     }
 
   /**
-   * returns a new FeatureMap with
-   * - the new Feature and Value pair if the Feature was not present
-   * - overriding the previous Value if that Feature was previously present
+   * relonturns a nelonw FelonaturelonMap with
+   * - thelon nelonw Felonaturelon and Valuelon pair if thelon Felonaturelon was not prelonselonnt
+   * - ovelonrriding thelon prelonvious Valuelon if that Felonaturelon was prelonviously prelonselonnt
    */
-  def +[V](key: Feature[_, V], value: V): FeatureMap =
-    new FeatureMap(underlyingMap + (key -> Return(value)))
+  delonf +[V](kelony: Felonaturelon[_, V], valuelon: V): FelonaturelonMap =
+    nelonw FelonaturelonMap(undelonrlyingMap + (kelony -> Relonturn(valuelon)))
 
   /**
-   * returns a new FeatureMap with all the elements of current FeatureMap and `other`.
+   * relonturns a nelonw FelonaturelonMap with all thelon elonlelonmelonnts of currelonnt FelonaturelonMap and `othelonr`.
    *
-   * @note if a [[Feature]] exists in both maps, the Value from `other` takes precedence
+   * @notelon if a [[Felonaturelon]] elonxists in both maps, thelon Valuelon from `othelonr` takelons preloncelondelonncelon
    */
-  def ++(other: FeatureMap): FeatureMap = {
-    if (other.isEmpty) {
+  delonf ++(othelonr: FelonaturelonMap): FelonaturelonMap = {
+    if (othelonr.iselonmpty) {
       this
-    } else if (isEmpty) {
-      other
-    } else if (this.getFeatures.contains(FSv1Feature) && other.getFeatures.contains(FSv1Feature)) {
-      val mergedResponse =
-        FeatureStoreV1Response.merge(this.get(FSv1Feature), other.get(FSv1Feature))
-      val mergedResponseFeatureMap = FeatureMapBuilder().add(FSv1Feature, mergedResponse).build()
-      new FeatureMap(underlyingMap ++ other.underlyingMap ++ mergedResponseFeatureMap.underlyingMap)
-    } else {
-      new FeatureMap(underlyingMap ++ other.underlyingMap)
+    } elonlselon if (iselonmpty) {
+      othelonr
+    } elonlselon if (this.gelontFelonaturelons.contains(FSv1Felonaturelon) && othelonr.gelontFelonaturelons.contains(FSv1Felonaturelon)) {
+      val melonrgelondRelonsponselon =
+        FelonaturelonStorelonV1Relonsponselon.melonrgelon(this.gelont(FSv1Felonaturelon), othelonr.gelont(FSv1Felonaturelon))
+      val melonrgelondRelonsponselonFelonaturelonMap = FelonaturelonMapBuildelonr().add(FSv1Felonaturelon, melonrgelondRelonsponselon).build()
+      nelonw FelonaturelonMap(undelonrlyingMap ++ othelonr.undelonrlyingMap ++ melonrgelondRelonsponselonFelonaturelonMap.undelonrlyingMap)
+    } elonlselon {
+      nelonw FelonaturelonMap(undelonrlyingMap ++ othelonr.undelonrlyingMap)
     }
   }
 
-  /** returns the keySet of Features in the map */
-  def getFeatures: Set[Feature[_, _]] = underlyingMap.keySet
+  /** relonturns thelon kelonySelont of Felonaturelons in thelon map */
+  delonf gelontFelonaturelons: Selont[Felonaturelon[_, _]] = undelonrlyingMap.kelonySelont
 
   /**
-   * The Set of Features in the FeatureMap that have a successfully returned value. Failed features
-   * will obviously not be here.
+   * Thelon Selont of Felonaturelons in thelon FelonaturelonMap that havelon a succelonssfully relonturnelond valuelon. Failelond felonaturelons
+   * will obviously not belon helonrelon.
    */
-  def getSuccessfulFeatures: Set[Feature[_, _]] = underlyingMap.collect {
-    case (feature, Return(_)) => feature
-  }.toSet
+  delonf gelontSuccelonssfulFelonaturelons: Selont[Felonaturelon[_, _]] = undelonrlyingMap.collelonct {
+    caselon (felonaturelon, Relonturn(_)) => felonaturelon
+  }.toSelont
 
-  def isEmpty: Boolean = underlyingMap.isEmpty
+  delonf iselonmpty: Boolelonan = undelonrlyingMap.iselonmpty
 
-  override def toString: String = s"FeatureMap(${underlyingMap.toString})"
+  ovelonrridelon delonf toString: String = s"FelonaturelonMap(${undelonrlyingMap.toString})"
 }
 
-object FeatureMap {
-  // Restrict access to the apply method.
-  // This shouldn't be required after scala 2.13.2 (https://github.com/scala/scala/pull/7702)
-  private[feature] def apply(underlyingMap: Map[Feature[_, _], Try[_]]): FeatureMap =
-    FeatureMap(underlyingMap)
+objelonct FelonaturelonMap {
+  // Relonstrict accelonss to thelon apply melonthod.
+  // This shouldn't belon relonquirelond aftelonr scala 2.13.2 (https://github.com/scala/scala/pull/7702)
+  privatelon[felonaturelon] delonf apply(undelonrlyingMap: Map[Felonaturelon[_, _], Try[_]]): FelonaturelonMap =
+    FelonaturelonMap(undelonrlyingMap)
 
-  /** Merges an arbitrary number of [[FeatureMap]]s from left-to-right */
-  def merge(featureMaps: TraversableOnce[FeatureMap]): FeatureMap = {
-    val builder = FeatureMapBuilder()
+  /** Melonrgelons an arbitrary numbelonr of [[FelonaturelonMap]]s from lelonft-to-right */
+  delonf melonrgelon(felonaturelonMaps: TravelonrsablelonOncelon[FelonaturelonMap]): FelonaturelonMap = {
+    val buildelonr = FelonaturelonMapBuildelonr()
 
     /**
-     * merge the current [[FSv1Feature]] with the existing accumulated one
-     * and add the rest of the [[FeatureMap]]'s [[Feature]]s to the `builder`
+     * melonrgelon thelon currelonnt [[FSv1Felonaturelon]] with thelon elonxisting accumulatelond onelon
+     * and add thelon relonst of thelon [[FelonaturelonMap]]'s [[Felonaturelon]]s to thelon `buildelonr`
      */
-    def mergeInternal(
-      featureMap: FeatureMap,
-      accumulatedFsV1Response: Option[FeatureStoreV1Response]
-    ): Option[FeatureStoreV1Response] = {
-      if (featureMap.isEmpty) {
-        accumulatedFsV1Response
-      } else {
+    delonf melonrgelonIntelonrnal(
+      felonaturelonMap: FelonaturelonMap,
+      accumulatelondFsV1Relonsponselon: Option[FelonaturelonStorelonV1Relonsponselon]
+    ): Option[FelonaturelonStorelonV1Relonsponselon] = {
+      if (felonaturelonMap.iselonmpty) {
+        accumulatelondFsV1Relonsponselon
+      } elonlselon {
 
-        val currentFsV1Response =
-          if (featureMap.getFeatures.contains(FSv1Feature))
-            Some(featureMap.get(FSv1Feature))
-          else
-            None
+        val currelonntFsV1Relonsponselon =
+          if (felonaturelonMap.gelontFelonaturelons.contains(FSv1Felonaturelon))
+            Somelon(felonaturelonMap.gelont(FSv1Felonaturelon))
+          elonlselon
+            Nonelon
 
-        val mergedFsV1Response = (accumulatedFsV1Response, currentFsV1Response) match {
-          case (Some(merged), Some(current)) =>
-            // both present so merge them
-            Some(FeatureStoreV1Response.merge(merged, current))
-          case (merged, current) =>
-            // one or both are missing so use whichever is available
-            merged.orElse(current)
+        val melonrgelondFsV1Relonsponselon = (accumulatelondFsV1Relonsponselon, currelonntFsV1Relonsponselon) match {
+          caselon (Somelon(melonrgelond), Somelon(currelonnt)) =>
+            // both prelonselonnt so melonrgelon thelonm
+            Somelon(FelonaturelonStorelonV1Relonsponselon.melonrgelon(melonrgelond, currelonnt))
+          caselon (melonrgelond, currelonnt) =>
+            // onelon or both arelon missing so uselon whichelonvelonr is availablelon
+            melonrgelond.orelonlselon(currelonnt)
         }
 
-        featureMap.underlyingMap.foreach {
-          case (FSv1Feature, _) => // FSv1Feature is only added once at the very end
-          case (feature, value) => builder.addWithoutValidation(feature, value)
+        felonaturelonMap.undelonrlyingMap.forelonach {
+          caselon (FSv1Felonaturelon, _) => // FSv1Felonaturelon is only addelond oncelon at thelon velonry elonnd
+          caselon (felonaturelon, valuelon) => buildelonr.addWithoutValidation(felonaturelon, valuelon)
         }
-        mergedFsV1Response
+        melonrgelondFsV1Relonsponselon
       }
     }
 
-    featureMaps
-      .foldLeft[Option[FeatureStoreV1Response]](None) {
-        case (fsV1Response, featureMap) => mergeInternal(featureMap, fsV1Response)
-      }.foreach(
-        // add merged `FSv1Feature` to the `builder` at the end
-        builder.add(FSv1Feature, _)
+    felonaturelonMaps
+      .foldLelonft[Option[FelonaturelonStorelonV1Relonsponselon]](Nonelon) {
+        caselon (fsV1Relonsponselon, felonaturelonMap) => melonrgelonIntelonrnal(felonaturelonMap, fsV1Relonsponselon)
+      }.forelonach(
+        // add melonrgelond `FSv1Felonaturelon` to thelon `buildelonr` at thelon elonnd
+        buildelonr.add(FSv1Felonaturelon, _)
       )
 
-    builder.build()
+    buildelonr.build()
   }
 
-  val empty = new FeatureMap(Map.empty)
+  val elonmpty = nelonw FelonaturelonMap(Map.elonmpty)
 }

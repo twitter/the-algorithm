@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.clients.email_storage_service
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.elonmail_storagelon_selonrvicelon
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.emailstorage.api.thriftscala.EmailStorageService
-import com.twitter.emailstorage.api.thriftscala.GetUsersEmailsRequest
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.cds.contact_conselonnt_statelon.thriftscala.PurposelonOfProcelonssing
+import com.twittelonr.elonmailstoragelon.api.thriftscala.elonmailStoragelonSelonrvicelon
+import com.twittelonr.elonmailstoragelon.api.thriftscala.GelontUselonrselonmailsRelonquelonst
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class EmailStorageServiceClient @Inject() (
-  val emailStorageService: EmailStorageService.MethodPerEndpoint) {
+@Singlelonton
+class elonmailStoragelonSelonrvicelonClielonnt @Injelonct() (
+  val elonmailStoragelonSelonrvicelon: elonmailStoragelonSelonrvicelon.MelonthodPelonrelonndpoint) {
 
-  def getVerifiedEmail(
-    userId: Long,
-    purposeOfProcessing: PurposeOfProcessing
+  delonf gelontVelonrifielondelonmail(
+    uselonrId: Long,
+    purposelonOfProcelonssing: PurposelonOfProcelonssing
   ): Stitch[Option[String]] = {
-    val req = GetUsersEmailsRequest(
-      userIds = Seq(userId),
-      clientIdentifier = Some("follow-recommendations-service"),
-      purposesOfProcessing = Some(Seq(purposeOfProcessing))
+    val relonq = GelontUselonrselonmailsRelonquelonst(
+      uselonrIds = Selonq(uselonrId),
+      clielonntIdelonntifielonr = Somelon("follow-reloncommelonndations-selonrvicelon"),
+      purposelonsOfProcelonssing = Somelon(Selonq(purposelonOfProcelonssing))
     )
 
-    Stitch.callFuture(emailStorageService.getUsersEmails(req)) map {
-      _.usersEmails.map(_.confirmedEmail.map(_.email)).head
+    Stitch.callFuturelon(elonmailStoragelonSelonrvicelon.gelontUselonrselonmails(relonq)) map {
+      _.uselonrselonmails.map(_.confirmelondelonmail.map(_.elonmail)).helonad
     }
   }
 }

@@ -1,152 +1,152 @@
-package com.twitter.search.common.relevance;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
-import java.util.Locale;
+import java.util.Localelon;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import java.util.Selont;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.ImmutableList;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.cachelon.CachelonBuildelonr;
+import com.googlelon.common.collelonct.ImmutablelonList;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.penguin.search.filter.StringMatchFilter;
-import com.twitter.util.Duration;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.pelonnguin.selonarch.filtelonr.StringMatchFiltelonr;
+import com.twittelonr.util.Duration;
 
 /**
- * the Cache for Trends
+ * thelon Cachelon for Trelonnds
  */
-public class NGramCache {
-  private static final int DEFAULT_MAX_CACHE_SIZE = 5000;
-  private static final long DEFAULT_CACHE_ITEM_TTL_SEC = 24 * 3600; // 1 day
+public class NGramCachelon {
+  privatelon static final int DelonFAULT_MAX_CACHelon_SIZelon = 5000;
+  privatelon static final long DelonFAULT_CACHelon_ITelonM_TTL_SelonC = 24 * 3600; // 1 day
 
-  private final PenguinVersion penguinVersion;
+  privatelon final PelonnguinVelonrsion pelonnguinVelonrsion;
 
-  // Keys are trends. Values are empty strings.
-  private final Map<String, String> trendsCache;
+  // Kelonys arelon trelonnds. Valuelons arelon elonmpty strings.
+  privatelon final Map<String, String> trelonndsCachelon;
 
-  private volatile StringMatchFilter trendsMatcher = null;
+  privatelon volatilelon StringMatchFiltelonr trelonndsMatchelonr = null;
 
   /**
-   * Extract Trends from a list of normalized tokens
+   * elonxtract Trelonnds from a list of normalizelond tokelonns
    */
-  public List<String> extractTrendsFromNormalized(List<String> tokens) {
-    if (trendsMatcher == null) {
-      return Collections.emptyList();
+  public List<String> elonxtractTrelonndsFromNormalizelond(List<String> tokelonns) {
+    if (trelonndsMatchelonr == null) {
+      relonturn Collelonctions.elonmptyList();
     }
 
-    ImmutableList.Builder<String> trends = ImmutableList.builder();
-    for (String trend : trendsMatcher.extractNormalized(tokens)) {
-      if (trendsCache.containsKey(trend)) {
-        trends.add(trend);
+    ImmutablelonList.Buildelonr<String> trelonnds = ImmutablelonList.buildelonr();
+    for (String trelonnd : trelonndsMatchelonr.elonxtractNormalizelond(tokelonns)) {
+      if (trelonndsCachelon.containsKelony(trelonnd)) {
+        trelonnds.add(trelonnd);
       }
     }
 
-    return trends.build();
+    relonturn trelonnds.build();
   }
 
   /**
-   * Extract Trends from a list of tokens
+   * elonxtract Trelonnds from a list of tokelonns
    */
-  public List<String> extractTrendsFrom(List<String> tokens, Locale language) {
-    if (trendsMatcher == null) {
-      return Collections.emptyList();
+  public List<String> elonxtractTrelonndsFrom(List<String> tokelonns, Localelon languagelon) {
+    if (trelonndsMatchelonr == null) {
+      relonturn Collelonctions.elonmptyList();
     }
-    return trendsMatcher.extract(language, tokens);
+    relonturn trelonndsMatchelonr.elonxtract(languagelon, tokelonns);
   }
 
   /**
-   * Extract Trends from a given CharSequence
+   * elonxtract Trelonnds from a givelonn CharSelonquelonncelon
    */
-  public List<String> extractTrendsFrom(CharSequence text, Locale language) {
-    if (trendsMatcher == null) {
-      return Collections.emptyList();
+  public List<String> elonxtractTrelonndsFrom(CharSelonquelonncelon telonxt, Localelon languagelon) {
+    if (trelonndsMatchelonr == null) {
+      relonturn Collelonctions.elonmptyList();
     }
 
-    ImmutableList.Builder<String> trends = ImmutableList.builder();
-    for (String trend : trendsMatcher.extract(language, text)) {
-      if (trendsCache.containsKey(trend)) {
-        trends.add(trend);
+    ImmutablelonList.Buildelonr<String> trelonnds = ImmutablelonList.buildelonr();
+    for (String trelonnd : trelonndsMatchelonr.elonxtract(languagelon, telonxt)) {
+      if (trelonndsCachelon.containsKelony(trelonnd)) {
+        trelonnds.add(trelonnd);
       }
     }
 
-    return trends.build();
+    relonturn trelonnds.build();
   }
 
-  public long numTrendingTerms() {
-    return trendsCache.size();
+  public long numTrelonndingTelonrms() {
+    relonturn trelonndsCachelon.sizelon();
   }
 
-  public Set<String> getTrends() {
-    return trendsCache.keySet();
+  public Selont<String> gelontTrelonnds() {
+    relonturn trelonndsCachelon.kelonySelont();
   }
 
-  public void clear() {
-    trendsCache.clear();
-    trendsMatcher = null;
+  public void clelonar() {
+    trelonndsCachelon.clelonar();
+    trelonndsMatchelonr = null;
   }
 
-  /** Adds all trends to this NGramCache. */
-  public void addAll(Iterable<String> trends) {
-    for (String trend : trends) {
-      trendsCache.put(trend, "");
+  /** Adds all trelonnds to this NGramCachelon. */
+  public void addAll(Itelonrablelon<String> trelonnds) {
+    for (String trelonnd : trelonnds) {
+      trelonndsCachelon.put(trelonnd, "");
     }
 
-    trendsMatcher = new StringMatchFilter(trendsCache.keySet(), penguinVersion);
+    trelonndsMatchelonr = nelonw StringMatchFiltelonr(trelonndsCachelon.kelonySelont(), pelonnguinVelonrsion);
   }
 
-  public static Builder builder() {
-    return new Builder();
+  public static Buildelonr buildelonr() {
+    relonturn nelonw Buildelonr();
   }
 
-  public static class Builder {
-    private int maxCacheSize = DEFAULT_MAX_CACHE_SIZE;
-    private long cacheItemTTLSecs = DEFAULT_CACHE_ITEM_TTL_SEC; // 1 day
-    private PenguinVersion penguinVersion = PenguinVersion.PENGUIN_4;
+  public static class Buildelonr {
+    privatelon int maxCachelonSizelon = DelonFAULT_MAX_CACHelon_SIZelon;
+    privatelon long cachelonItelonmTTLSeloncs = DelonFAULT_CACHelon_ITelonM_TTL_SelonC; // 1 day
+    privatelon PelonnguinVelonrsion pelonnguinVelonrsion = PelonnguinVelonrsion.PelonNGUIN_4;
 
-    public Builder maxCacheSize(int cacheSize) {
-      this.maxCacheSize = cacheSize;
-      return this;
+    public Buildelonr maxCachelonSizelon(int cachelonSizelon) {
+      this.maxCachelonSizelon = cachelonSizelon;
+      relonturn this;
     }
 
-    public Builder cacheItemTTL(long cacheItemTTL) {
-      this.cacheItemTTLSecs = cacheItemTTL;
-      return this;
+    public Buildelonr cachelonItelonmTTL(long cachelonItelonmTTL) {
+      this.cachelonItelonmTTLSeloncs = cachelonItelonmTTL;
+      relonturn this;
     }
 
-    public Builder penguinVersion(PenguinVersion newPenguinVersion) {
-      this.penguinVersion = Preconditions.checkNotNull(newPenguinVersion);
-      return this;
+    public Buildelonr pelonnguinVelonrsion(PelonnguinVelonrsion nelonwPelonnguinVelonrsion) {
+      this.pelonnguinVelonrsion = Prelonconditions.chelonckNotNull(nelonwPelonnguinVelonrsion);
+      relonturn this;
     }
 
-    /** Builds an NGramCache instance. */
-    public NGramCache build() {
-      return new NGramCache(
-          maxCacheSize,
-          Duration.apply(cacheItemTTLSecs, TimeUnit.SECONDS),
-          penguinVersion);
+    /** Builds an NGramCachelon instancelon. */
+    public NGramCachelon build() {
+      relonturn nelonw NGramCachelon(
+          maxCachelonSizelon,
+          Duration.apply(cachelonItelonmTTLSeloncs, TimelonUnit.SelonCONDS),
+          pelonnguinVelonrsion);
     }
   }
 
-  // Should be used only in tests that want to mock out this class.
-  @VisibleForTesting
-  public NGramCache() {
-    this(DEFAULT_MAX_CACHE_SIZE,
-         Duration.apply(DEFAULT_CACHE_ITEM_TTL_SEC, TimeUnit.SECONDS),
-         PenguinVersion.PENGUIN_4);
+  // Should belon uselond only in telonsts that want to mock out this class.
+  @VisiblelonForTelonsting
+  public NGramCachelon() {
+    this(DelonFAULT_MAX_CACHelon_SIZelon,
+         Duration.apply(DelonFAULT_CACHelon_ITelonM_TTL_SelonC, TimelonUnit.SelonCONDS),
+         PelonnguinVelonrsion.PelonNGUIN_4);
   }
 
-  private NGramCache(int maxCacheSize, Duration cacheItemTTL, PenguinVersion penguinVersion) {
-    // we only have 1 refresher thread that writes to the cache
-    this.trendsCache = CacheBuilder.newBuilder()
-        .concurrencyLevel(1)
-        .expireAfterWrite(cacheItemTTL.inSeconds(), TimeUnit.SECONDS)
-        .maximumSize(maxCacheSize)
+  privatelon NGramCachelon(int maxCachelonSizelon, Duration cachelonItelonmTTL, PelonnguinVelonrsion pelonnguinVelonrsion) {
+    // welon only havelon 1 relonfrelonshelonr threlonad that writelons to thelon cachelon
+    this.trelonndsCachelon = CachelonBuildelonr.nelonwBuildelonr()
+        .concurrelonncyLelonvelonl(1)
+        .elonxpirelonAftelonrWritelon(cachelonItelonmTTL.inSelonconds(), TimelonUnit.SelonCONDS)
+        .maximumSizelon(maxCachelonSizelon)
         .<String, String>build()
         .asMap();
-    this.penguinVersion = penguinVersion;
+    this.pelonnguinVelonrsion = pelonnguinVelonrsion;
   }
 }

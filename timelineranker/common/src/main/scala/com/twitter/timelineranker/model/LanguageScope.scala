@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
 
 /**
- * Represents what this language is associated with.
- * For example, "user" is one of the scopes and "event"
- * could be another scope.
+ * Relonprelonselonnts what this languagelon is associatelond with.
+ * For elonxamplelon, "uselonr" is onelon of thelon scopelons and "elonvelonnt"
+ * could belon anothelonr scopelon.
  */
-object LanguageScope extends Enumeration {
+objelonct LanguagelonScopelon elonxtelonnds elonnumelonration {
 
-  // User scope means that the language is the user's language.
-  val User: Value = Value(thrift.LanguageScope.User.value)
+  // Uselonr scopelon melonans that thelon languagelon is thelon uselonr's languagelon.
+  val Uselonr: Valuelon = Valuelon(thrift.LanguagelonScopelon.Uselonr.valuelon)
 
-  // Event scope means that the language is the event's language.
-  val Event: Value = Value(thrift.LanguageScope.Event.value)
+  // elonvelonnt scopelon melonans that thelon languagelon is thelon elonvelonnt's languagelon.
+  val elonvelonnt: Valuelon = Valuelon(thrift.LanguagelonScopelon.elonvelonnt.valuelon)
 
-  // list of all LanguageScope values
-  val All: ValueSet = LanguageScope.ValueSet(User, Event)
+  // list of all LanguagelonScopelon valuelons
+  val All: ValuelonSelont = LanguagelonScopelon.ValuelonSelont(Uselonr, elonvelonnt)
 
-  def apply(scope: thrift.LanguageScope): LanguageScope.Value = {
-    scope match {
-      case thrift.LanguageScope.User =>
-        User
-      case thrift.LanguageScope.Event =>
-        Event
-      case _ =>
-        throw new IllegalArgumentException(s"Unsupported language scope: $scope")
+  delonf apply(scopelon: thrift.LanguagelonScopelon): LanguagelonScopelon.Valuelon = {
+    scopelon match {
+      caselon thrift.LanguagelonScopelon.Uselonr =>
+        Uselonr
+      caselon thrift.LanguagelonScopelon.elonvelonnt =>
+        elonvelonnt
+      caselon _ =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(s"Unsupportelond languagelon scopelon: $scopelon")
     }
   }
 
-  def fromThrift(scope: thrift.LanguageScope): LanguageScope.Value = {
-    apply(scope)
+  delonf fromThrift(scopelon: thrift.LanguagelonScopelon): LanguagelonScopelon.Valuelon = {
+    apply(scopelon)
   }
 
-  def toThrift(scope: LanguageScope.Value): thrift.LanguageScope = {
-    scope match {
-      case LanguageScope.User =>
-        thrift.LanguageScope.User
-      case LanguageScope.Event =>
-        thrift.LanguageScope.Event
-      case _ =>
-        throw new IllegalArgumentException(s"Unsupported language scope: $scope")
+  delonf toThrift(scopelon: LanguagelonScopelon.Valuelon): thrift.LanguagelonScopelon = {
+    scopelon match {
+      caselon LanguagelonScopelon.Uselonr =>
+        thrift.LanguagelonScopelon.Uselonr
+      caselon LanguagelonScopelon.elonvelonnt =>
+        thrift.LanguagelonScopelon.elonvelonnt
+      caselon _ =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(s"Unsupportelond languagelon scopelon: $scopelon")
     }
   }
 }

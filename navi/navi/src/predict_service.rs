@@ -1,313 +1,313 @@
-use anyhow::{anyhow, Result};
-use arrayvec::ArrayVec;
-use itertools::Itertools;
-use log::{error, info, warn};
-use std::fmt::{Debug, Display};
-use std::string::String;
-use std::sync::Arc;
-use std::time::Duration;
-use tokio::process::Command;
-use tokio::sync::mpsc::error::TryRecvError;
-use tokio::sync::mpsc::{Receiver, Sender};
-use tokio::sync::{mpsc, oneshot};
-use tokio::time::{Instant, sleep};
-use warp::Filter;
+uselon anyhow::{anyhow, Relonsult};
+uselon arrayvelonc::ArrayVelonc;
+uselon itelonrtools::Itelonrtools;
+uselon log::{elonrror, info, warn};
+uselon std::fmt::{Delonbug, Display};
+uselon std::string::String;
+uselon std::sync::Arc;
+uselon std::timelon::Duration;
+uselon tokio::procelonss::Command;
+uselon tokio::sync::mpsc::elonrror::TryReloncvelonrror;
+uselon tokio::sync::mpsc::{Reloncelonivelonr, Selonndelonr};
+uselon tokio::sync::{mpsc, onelonshot};
+uselon tokio::timelon::{Instant, slelonelonp};
+uselon warp::Filtelonr;
 
-use crate::batch::BatchPredictor;
-use crate::bootstrap::TensorInput;
-use crate::{MAX_NUM_MODELS, MAX_VERSIONS_PER_MODEL, META_INFO, metrics, ModelFactory, PredictMessage, PredictResult, TensorReturnEnum, utils};
+uselon cratelon::batch::BatchPrelondictor;
+uselon cratelon::bootstrap::TelonnsorInput;
+uselon cratelon::{MAX_NUM_MODelonLS, MAX_VelonRSIONS_PelonR_MODelonL, MelonTA_INFO, melontrics, ModelonlFactory, PrelondictMelonssagelon, PrelondictRelonsult, TelonnsorRelonturnelonnum, utils};
 
-use crate::cli_args::{ARGS, MODEL_SPECS};
-use crate::cores::validator::validatior::cli_validator;
-use crate::metrics::MPSC_CHANNEL_SIZE;
-use serde_json::{self, Value};
+uselon cratelon::cli_args::{ARGS, MODelonL_SPelonCS};
+uselon cratelon::corelons::validator::validatior::cli_validator;
+uselon cratelon::melontrics::MPSC_CHANNelonL_SIZelon;
+uselon selonrdelon_json::{selonlf, Valuelon};
 
-pub trait Model: Send + Sync + Display + Debug + 'static {
-    fn warmup(&self) -> Result<()>;
-    //TODO: refactor this to return Vec<Vec<TensorScores>>, i.e.
-    //we have the underlying runtime impl to split the response to each client.
-    //It will eliminate some inefficient memory copy in onnx_model.rs as well as simplify code
-    fn do_predict(
-        &self,
-        input_tensors: Vec<Vec<TensorInput>>,
-        total_len: u64,
-    ) -> (Vec<TensorReturnEnum>, Vec<Vec<usize>>);
-    fn model_idx(&self) -> usize;
-    fn version(&self) -> i64;
+pub trait Modelonl: Selonnd + Sync + Display + Delonbug + 'static {
+    fn warmup(&selonlf) -> Relonsult<()>;
+    //TODO: relonfactor this to relonturn Velonc<Velonc<TelonnsorScorelons>>, i.elon.
+    //welon havelon thelon undelonrlying runtimelon impl to split thelon relonsponselon to elonach clielonnt.
+    //It will elonliminatelon somelon inelonfficielonnt melonmory copy in onnx_modelonl.rs as welonll as simplify codelon
+    fn do_prelondict(
+        &selonlf,
+        input_telonnsors: Velonc<Velonc<TelonnsorInput>>,
+        total_lelonn: u64,
+    ) -> (Velonc<TelonnsorRelonturnelonnum>, Velonc<Velonc<usizelon>>);
+    fn modelonl_idx(&selonlf) -> usizelon;
+    fn velonrsion(&selonlf) -> i64;
 }
 
-#[derive(Debug)]
-pub struct PredictService<T: Model> {
-    tx: Sender<PredictMessage<T>>,
+#[delonrivelon(Delonbug)]
+pub struct PrelondictSelonrvicelon<T: Modelonl> {
+    tx: Selonndelonr<PrelondictMelonssagelon<T>>,
 }
-impl<T: Model> PredictService<T> {
-    pub async fn init(model_factory: ModelFactory<T>) -> Self {
-        cli_validator::validate_ps_model_args();
-        let (tx, rx) = mpsc::channel(32_000);
-        tokio::spawn(PredictService::tf_queue_manager(rx));
-        tokio::spawn(PredictService::model_watcher_latest(
-            model_factory,
-            tx.clone(),
+impl<T: Modelonl> PrelondictSelonrvicelon<T> {
+    pub async fn init(modelonl_factory: ModelonlFactory<T>) -> Selonlf {
+        cli_validator::validatelon_ps_modelonl_args();
+        lelont (tx, rx) = mpsc::channelonl(32_000);
+        tokio::spawn(PrelondictSelonrvicelon::tf_quelonuelon_managelonr(rx));
+        tokio::spawn(PrelondictSelonrvicelon::modelonl_watchelonr_latelonst(
+            modelonl_factory,
+            tx.clonelon(),
         ));
-        let metrics_route = warp::path!("metrics").and_then(metrics::metrics_handler);
-        let metric_server = warp::serve(metrics_route).run(([0, 0, 0, 0], ARGS.prometheus_port));
-        tokio::spawn(metric_server);
-        PredictService { tx }
+        lelont melontrics_routelon = warp::path!("melontrics").and_thelonn(melontrics::melontrics_handlelonr);
+        lelont melontric_selonrvelonr = warp::selonrvelon(melontrics_routelon).run(([0, 0, 0, 0], ARGS.promelonthelonus_port));
+        tokio::spawn(melontric_selonrvelonr);
+        PrelondictSelonrvicelon { tx }
     }
-    #[inline(always)]
-    pub async fn predict(
-        &self,
-        idx: usize,
-        version: Option<i64>,
-        val: Vec<TensorInput>,
+    #[inlinelon(always)]
+    pub async fn prelondict(
+        &selonlf,
+        idx: usizelon,
+        velonrsion: Option<i64>,
+        val: Velonc<TelonnsorInput>,
         ts: Instant,
-    ) -> Result<PredictResult> {
-        let (tx, rx) = oneshot::channel();
-        if let Err(e) = self
+    ) -> Relonsult<PrelondictRelonsult> {
+        lelont (tx, rx) = onelonshot::channelonl();
+        if lelont elonrr(elon) = selonlf
             .tx
-            .clone()
-            .send(PredictMessage::Predict(idx, version, val, tx, ts))
+            .clonelon()
+            .selonnd(PrelondictMelonssagelon::Prelondict(idx, velonrsion, val, tx, ts))
             .await
         {
-            error!("mpsc send error:{}", e);
-            Err(anyhow!(e))
-        } else {
-            MPSC_CHANNEL_SIZE.inc();
-            rx.await.map_err(anyhow::Error::msg)
+            elonrror!("mpsc selonnd elonrror:{}", elon);
+            elonrr(anyhow!(elon))
+        } elonlselon {
+            MPSC_CHANNelonL_SIZelon.inc();
+            rx.await.map_elonrr(anyhow::elonrror::msg)
         }
     }
 
-    async fn load_latest_model_from_model_dir(
-        model_factory: ModelFactory<T>,
-        model_config: &Value,
-        tx: Sender<PredictMessage<T>>,
-        idx: usize,
-        max_version: String,
-        latest_version: &mut String,
+    async fn load_latelonst_modelonl_from_modelonl_dir(
+        modelonl_factory: ModelonlFactory<T>,
+        modelonl_config: &Valuelon,
+        tx: Selonndelonr<PrelondictMelonssagelon<T>>,
+        idx: usizelon,
+        max_velonrsion: String,
+        latelonst_velonrsion: &mut String,
     ) {
-        match model_factory(idx, max_version.clone(), model_config) {
-            Ok(tf_model) => tx
-                .send(PredictMessage::UpsertModel(tf_model))
+        match modelonl_factory(idx, max_velonrsion.clonelon(), modelonl_config) {
+            Ok(tf_modelonl) => tx
+                .selonnd(PrelondictMelonssagelon::UpselonrtModelonl(tf_modelonl))
                 .await
-                .map_or_else(
-                    |e| error!("send UpsertModel error: {}", e),
-                    |_| *latest_version = max_version,
+                .map_or_elonlselon(
+                    |elon| elonrror!("selonnd UpselonrtModelonl elonrror: {}", elon),
+                    |_| *latelonst_velonrsion = max_velonrsion,
                 ),
-            Err(e) => {
-                error!("skip loading model due to failure: {:?}", e);
+            elonrr(elon) => {
+                elonrror!("skip loading modelonl duelon to failurelon: {:?}", elon);
             }
         }
     }
 
-    async fn scan_load_latest_model_from_model_dir(
-        model_factory: ModelFactory<T>,
-        model_config: &Value,
-        tx: Sender<PredictMessage<T>>,
-        model_idx: usize,
-        cur_version: &mut String,
-    ) -> Result<()> {
-        let model_dir = &ARGS.model_dir[model_idx];
-        let next_version = utils::get_config_or_else(model_config, "version", || {
-            info!("no version found, hence use max version");
-            std::fs::read_dir(model_dir)
-                .map_err(|e| format!("read dir error:{}", e))
-                .and_then(|paths| {
+    async fn scan_load_latelonst_modelonl_from_modelonl_dir(
+        modelonl_factory: ModelonlFactory<T>,
+        modelonl_config: &Valuelon,
+        tx: Selonndelonr<PrelondictMelonssagelon<T>>,
+        modelonl_idx: usizelon,
+        cur_velonrsion: &mut String,
+    ) -> Relonsult<()> {
+        lelont modelonl_dir = &ARGS.modelonl_dir[modelonl_idx];
+        lelont nelonxt_velonrsion = utils::gelont_config_or_elonlselon(modelonl_config, "velonrsion", || {
+            info!("no velonrsion found, helonncelon uselon max velonrsion");
+            std::fs::relonad_dir(modelonl_dir)
+                .map_elonrr(|elon| format!("relonad dir elonrror:{}", elon))
+                .and_thelonn(|paths| {
                     paths
-                        .into_iter()
+                        .into_itelonr()
                         .flat_map(|p| {
-                            p.map_err(|e| error!("dir entry error: {}", e))
-                                .and_then(|dir| {
-                                    dir.file_name()
+                            p.map_elonrr(|elon| elonrror!("dir elonntry elonrror: {}", elon))
+                                .and_thelonn(|dir| {
+                                    dir.filelon_namelon()
                                         .into_string()
-                                        .map_err(|e| error!("osstring error: {:?}", e))
+                                        .map_elonrr(|elon| elonrror!("osstring elonrror: {:?}", elon))
                                 })
                                 .ok()
                         })
-                        .filter(|f| !f.to_lowercase().contains(&META_INFO.to_lowercase()))
+                        .filtelonr(|f| !f.to_lowelonrcaselon().contains(&MelonTA_INFO.to_lowelonrcaselon()))
                         .max()
-                        .ok_or_else(|| "no dir found hence no max".to_owned())
+                        .ok_or_elonlselon(|| "no dir found helonncelon no max".to_ownelond())
                 })
-                .unwrap_or_else(|e| {
-                    error!(
-                        "can't get the max version hence return cur_version, error is: {}",
-                        e
+                .unwrap_or_elonlselon(|elon| {
+                    elonrror!(
+                        "can't gelont thelon max velonrsion helonncelon relonturn cur_velonrsion, elonrror is: {}",
+                        elon
                     );
-                    cur_version.to_string()
+                    cur_velonrsion.to_string()
                 })
         });
-        //as long as next version doesn't match cur version maintained we reload
-        if next_version.ne(cur_version) {
-            info!("reload the version: {}->{}", cur_version, next_version);
-            PredictService::load_latest_model_from_model_dir(
-                model_factory,
-                model_config,
+        //as long as nelonxt velonrsion doelonsn't match cur velonrsion maintainelond welon relonload
+        if nelonxt_velonrsion.nelon(cur_velonrsion) {
+            info!("relonload thelon velonrsion: {}->{}", cur_velonrsion, nelonxt_velonrsion);
+            PrelondictSelonrvicelon::load_latelonst_modelonl_from_modelonl_dir(
+                modelonl_factory,
+                modelonl_config,
                 tx,
-                model_idx,
-                next_version,
-                cur_version,
+                modelonl_idx,
+                nelonxt_velonrsion,
+                cur_velonrsion,
             )
             .await;
         }
         Ok(())
     }
 
-    async fn model_watcher_latest(model_factory: ModelFactory<T>, tx: Sender<PredictMessage<T>>) {
-        async fn call_external_modelsync(cli: &str, cur_versions: &Vec<String>) -> Result<()> {
-            let mut args = cli.split_whitespace();
+    async fn modelonl_watchelonr_latelonst(modelonl_factory: ModelonlFactory<T>, tx: Selonndelonr<PrelondictMelonssagelon<T>>) {
+        async fn call_elonxtelonrnal_modelonlsync(cli: &str, cur_velonrsions: &Velonc<String>) -> Relonsult<()> {
+            lelont mut args = cli.split_whitelonspacelon();
 
-            let mut cmd = Command::new(args.next().ok_or(anyhow!("model sync cli empty"))?);
-            let extr_args = MODEL_SPECS
-                .iter()
-                .zip(cur_versions)
-                .flat_map(|(spec, version)| vec!["--model-spec", spec, "--cur-version", version])
-                .collect_vec();
-            info!("run model sync: {} with extra args: {:?}", cli, extr_args);
-            let output = cmd.args(args).args(extr_args).output().await?;
-            info!("model sync stdout:{}", String::from_utf8(output.stdout)?);
-            info!("model sync stderr:{}", String::from_utf8(output.stderr)?);
-            if output.status.success() {
+            lelont mut cmd = Command::nelonw(args.nelonxt().ok_or(anyhow!("modelonl sync cli elonmpty"))?);
+            lelont elonxtr_args = MODelonL_SPelonCS
+                .itelonr()
+                .zip(cur_velonrsions)
+                .flat_map(|(spelonc, velonrsion)| velonc!["--modelonl-spelonc", spelonc, "--cur-velonrsion", velonrsion])
+                .collelonct_velonc();
+            info!("run modelonl sync: {} with elonxtra args: {:?}", cli, elonxtr_args);
+            lelont output = cmd.args(args).args(elonxtr_args).output().await?;
+            info!("modelonl sync stdout:{}", String::from_utf8(output.stdout)?);
+            info!("modelonl sync stdelonrr:{}", String::from_utf8(output.stdelonrr)?);
+            if output.status.succelonss() {
                 Ok(())
-            } else {
-                Err(anyhow!(
-                    "model sync failed with status: {:?}!",
+            } elonlselon {
+                elonrr(anyhow!(
+                    "modelonl sync failelond with status: {:?}!",
                     output.status
                 ))
             }
         }
-        let meta_dir = utils::get_meta_dir();
-        let meta_file = format!("{}{}", meta_dir, META_INFO);
-        //initialize the latest version array
-        let mut cur_versions = vec!["".to_owned(); MODEL_SPECS.len()];
+        lelont melonta_dir = utils::gelont_melonta_dir();
+        lelont melonta_filelon = format!("{}{}", melonta_dir, MelonTA_INFO);
+        //initializelon thelon latelonst velonrsion array
+        lelont mut cur_velonrsions = velonc!["".to_ownelond(); MODelonL_SPelonCS.lelonn()];
         loop {
-            let config = utils::read_config(&meta_file).unwrap_or_else(|e| {
-                warn!("config file {} not found due to: {}", meta_file, e);
-                Value::Null
+            lelont config = utils::relonad_config(&melonta_filelon).unwrap_or_elonlselon(|elon| {
+                warn!("config filelon {} not found duelon to: {}", melonta_filelon, elon);
+                Valuelon::Null
             });
-            info!("***polling for models***"); //nice deliminter
+            info!("***polling for modelonls***"); //nicelon delonlimintelonr
             info!("config:{}", config);
-            if let Some(ref cli) = ARGS.modelsync_cli {
-                if let Err(e) = call_external_modelsync(cli, &cur_versions).await {
-                    error!("model sync cli running error:{}", e)
+            if lelont Somelon(relonf cli) = ARGS.modelonlsync_cli {
+                if lelont elonrr(elon) = call_elonxtelonrnal_modelonlsync(cli, &cur_velonrsions).await {
+                    elonrror!("modelonl sync cli running elonrror:{}", elon)
                 }
             }
-            for (idx, cur_version) in cur_versions.iter_mut().enumerate() {
-                let model_dir = &ARGS.model_dir[idx];
-                PredictService::scan_load_latest_model_from_model_dir(
-                    model_factory,
-                    &config[&MODEL_SPECS[idx]],
-                    tx.clone(),
+            for (idx, cur_velonrsion) in cur_velonrsions.itelonr_mut().elonnumelonratelon() {
+                lelont modelonl_dir = &ARGS.modelonl_dir[idx];
+                PrelondictSelonrvicelon::scan_load_latelonst_modelonl_from_modelonl_dir(
+                    modelonl_factory,
+                    &config[&MODelonL_SPelonCS[idx]],
+                    tx.clonelon(),
                     idx,
-                    cur_version,
+                    cur_velonrsion,
                 )
                 .await
-                .map_or_else(
-                    |e| error!("scanned {}, error {:?}", model_dir, e),
-                    |_| info!("scanned {}, latest_version: {}", model_dir, cur_version),
+                .map_or_elonlselon(
+                    |elon| elonrror!("scannelond {}, elonrror {:?}", modelonl_dir, elon),
+                    |_| info!("scannelond {}, latelonst_velonrsion: {}", modelonl_dir, cur_velonrsion),
                 );
             }
-            sleep(Duration::from_secs(ARGS.model_check_interval_secs)).await;
+            slelonelonp(Duration::from_seloncs(ARGS.modelonl_chelonck_intelonrval_seloncs)).await;
         }
     }
-    async fn tf_queue_manager(mut rx: Receiver<PredictMessage<T>>) {
-        // Start receiving messages
-        info!("setting up queue manager");
-        let max_batch_size = ARGS
-            .max_batch_size
-            .iter()
-            .map(|b| b.parse().unwrap())
-            .collect::<Vec<usize>>();
-        let batch_time_out_millis = ARGS
-            .batch_time_out_millis
-            .iter()
-            .map(|b| b.parse().unwrap())
-            .collect::<Vec<u64>>();
-        let no_msg_wait_millis = *batch_time_out_millis.iter().min().unwrap();
-        let mut all_model_predictors =
-            ArrayVec::<ArrayVec<BatchPredictor<T>, MAX_VERSIONS_PER_MODEL>, MAX_NUM_MODELS>::new();
+    async fn tf_quelonuelon_managelonr(mut rx: Reloncelonivelonr<PrelondictMelonssagelon<T>>) {
+        // Start relonceloniving melonssagelons
+        info!("selontting up quelonuelon managelonr");
+        lelont max_batch_sizelon = ARGS
+            .max_batch_sizelon
+            .itelonr()
+            .map(|b| b.parselon().unwrap())
+            .collelonct::<Velonc<usizelon>>();
+        lelont batch_timelon_out_millis = ARGS
+            .batch_timelon_out_millis
+            .itelonr()
+            .map(|b| b.parselon().unwrap())
+            .collelonct::<Velonc<u64>>();
+        lelont no_msg_wait_millis = *batch_timelon_out_millis.itelonr().min().unwrap();
+        lelont mut all_modelonl_prelondictors =
+            ArrayVelonc::<ArrayVelonc<BatchPrelondictor<T>, MAX_VelonRSIONS_PelonR_MODelonL>, MAX_NUM_MODelonLS>::nelonw();
         loop {
-            let msg = rx.try_recv();
-            let no_more_msg = match msg {
-                Ok(PredictMessage::Predict(model_spec_at, version, val, resp, ts)) => {
-                    if let Some(model_predictors) = all_model_predictors.get_mut(model_spec_at) {
-                        match version {
-                            None => model_predictors[0].push(val, resp, ts),
-                            Some(the_version) => match model_predictors
-                                .iter_mut()
-                                .find(|x| x.model.version() == the_version)
+            lelont msg = rx.try_reloncv();
+            lelont no_morelon_msg = match msg {
+                Ok(PrelondictMelonssagelon::Prelondict(modelonl_spelonc_at, velonrsion, val, relonsp, ts)) => {
+                    if lelont Somelon(modelonl_prelondictors) = all_modelonl_prelondictors.gelont_mut(modelonl_spelonc_at) {
+                        match velonrsion {
+                            Nonelon => modelonl_prelondictors[0].push(val, relonsp, ts),
+                            Somelon(thelon_velonrsion) => match modelonl_prelondictors
+                                .itelonr_mut()
+                                .find(|x| x.modelonl.velonrsion() == thelon_velonrsion)
                             {
-                                None => resp
-                                    .send(PredictResult::ModelVersionNotFound(
-                                        model_spec_at,
-                                        the_version,
+                                Nonelon => relonsp
+                                    .selonnd(PrelondictRelonsult::ModelonlVelonrsionNotFound(
+                                        modelonl_spelonc_at,
+                                        thelon_velonrsion,
                                     ))
-                                    .unwrap_or_else(|e| {
-                                        error!("cannot send back version error: {:?}", e)
+                                    .unwrap_or_elonlselon(|elon| {
+                                        elonrror!("cannot selonnd back velonrsion elonrror: {:?}", elon)
                                     }),
-                                Some(predictor) => predictor.push(val, resp, ts),
+                                Somelon(prelondictor) => prelondictor.push(val, relonsp, ts),
                             },
                         }
-                    } else {
-                        resp.send(PredictResult::ModelNotFound(model_spec_at))
-                            .unwrap_or_else(|e| error!("cannot send back model error: {:?}", e))
+                    } elonlselon {
+                        relonsp.selonnd(PrelondictRelonsult::ModelonlNotFound(modelonl_spelonc_at))
+                            .unwrap_or_elonlselon(|elon| elonrror!("cannot selonnd back modelonl elonrror: {:?}", elon))
                     }
-                    MPSC_CHANNEL_SIZE.dec();
-                    false
+                    MPSC_CHANNelonL_SIZelon.delonc();
+                    falselon
                 }
-                Ok(PredictMessage::UpsertModel(tf_model)) => {
-                    let idx = tf_model.model_idx();
-                    let predictor = BatchPredictor {
-                        model: Arc::new(tf_model),
-                        input_tensors: Vec::with_capacity(max_batch_size[idx]),
-                        callbacks: Vec::with_capacity(max_batch_size[idx]),
-                        cur_batch_size: 0,
-                        max_batch_size: max_batch_size[idx],
-                        batch_time_out_millis: batch_time_out_millis[idx],
-                        //initialize to be current time
-                        queue_reset_ts: Instant::now(),
-                        queue_earliest_rq_ts: Instant::now(),
+                Ok(PrelondictMelonssagelon::UpselonrtModelonl(tf_modelonl)) => {
+                    lelont idx = tf_modelonl.modelonl_idx();
+                    lelont prelondictor = BatchPrelondictor {
+                        modelonl: Arc::nelonw(tf_modelonl),
+                        input_telonnsors: Velonc::with_capacity(max_batch_sizelon[idx]),
+                        callbacks: Velonc::with_capacity(max_batch_sizelon[idx]),
+                        cur_batch_sizelon: 0,
+                        max_batch_sizelon: max_batch_sizelon[idx],
+                        batch_timelon_out_millis: batch_timelon_out_millis[idx],
+                        //initializelon to belon currelonnt timelon
+                        quelonuelon_relonselont_ts: Instant::now(),
+                        quelonuelon_elonarlielonst_rq_ts: Instant::now(),
                     };
-                    if idx < all_model_predictors.len() {
-                        metrics::NEW_MODEL_SNAPSHOT
-                            .with_label_values(&[&MODEL_SPECS[idx]])
+                    if idx < all_modelonl_prelondictors.lelonn() {
+                        melontrics::NelonW_MODelonL_SNAPSHOT
+                            .with_labelonl_valuelons(&[&MODelonL_SPelonCS[idx]])
                             .inc();
 
-                        info!("now we serve updated model: {}", predictor.model);
-                        //we can do this since the vector is small
-                        let predictors = &mut all_model_predictors[idx];
-                        if predictors.len() == ARGS.versions_per_model {
-                            predictors.remove(predictors.len() - 1);
+                        info!("now welon selonrvelon updatelond modelonl: {}", prelondictor.modelonl);
+                        //welon can do this sincelon thelon velonctor is small
+                        lelont prelondictors = &mut all_modelonl_prelondictors[idx];
+                        if prelondictors.lelonn() == ARGS.velonrsions_pelonr_modelonl {
+                            prelondictors.relonmovelon(prelondictors.lelonn() - 1);
                         }
-                        predictors.insert(0, predictor);
-                    } else {
-                        info!("now we serve new model: {:}", predictor.model);
-                        let mut predictors =
-                            ArrayVec::<BatchPredictor<T>, MAX_VERSIONS_PER_MODEL>::new();
-                        predictors.push(predictor);
-                        all_model_predictors.push(predictors);
-                        //check the invariant that we always push the last model to the end
-                        assert_eq!(all_model_predictors.len(), idx + 1)
+                        prelondictors.inselonrt(0, prelondictor);
+                    } elonlselon {
+                        info!("now welon selonrvelon nelonw modelonl: {:}", prelondictor.modelonl);
+                        lelont mut prelondictors =
+                            ArrayVelonc::<BatchPrelondictor<T>, MAX_VelonRSIONS_PelonR_MODelonL>::nelonw();
+                        prelondictors.push(prelondictor);
+                        all_modelonl_prelondictors.push(prelondictors);
+                        //chelonck thelon invariant that welon always push thelon last modelonl to thelon elonnd
+                        asselonrt_elonq!(all_modelonl_prelondictors.lelonn(), idx + 1)
                     }
-                    false
+                    falselon
                 }
-                Err(TryRecvError::Empty) => true,
-                Err(TryRecvError::Disconnected) => true,
+                elonrr(TryReloncvelonrror::elonmpty) => truelon,
+                elonrr(TryReloncvelonrror::Disconnelonctelond) => truelon,
             };
-            for predictor in all_model_predictors.iter_mut().flatten() {
-                //if predictor batch queue not empty and times out or no more msg in the queue, flush
-                if (!predictor.input_tensors.is_empty() && (predictor.duration_past(predictor.batch_time_out_millis) || no_more_msg))
-                    //if batch queue reaches limit, flush
-                    || predictor.cur_batch_size >= predictor.max_batch_size
+            for prelondictor in all_modelonl_prelondictors.itelonr_mut().flattelonn() {
+                //if prelondictor batch quelonuelon not elonmpty and timelons out or no morelon msg in thelon quelonuelon, flush
+                if (!prelondictor.input_telonnsors.is_elonmpty() && (prelondictor.duration_past(prelondictor.batch_timelon_out_millis) || no_morelon_msg))
+                    //if batch quelonuelon relonachelons limit, flush
+                    || prelondictor.cur_batch_sizelon >= prelondictor.max_batch_sizelon
                 {
-                    predictor.batch_predict();
+                    prelondictor.batch_prelondict();
                 }
             }
-            if no_more_msg {
-                sleep(Duration::from_millis(no_msg_wait_millis)).await;
+            if no_morelon_msg {
+                slelonelonp(Duration::from_millis(no_msg_wait_millis)).await;
             }
         }
     }
-    #[inline(always)]
-    pub fn get_model_index(model_spec: &str) -> Option<usize> {
-        MODEL_SPECS.iter().position(|m| m == model_spec)
+    #[inlinelon(always)]
+    pub fn gelont_modelonl_indelonx(modelonl_spelonc: &str) -> Option<usizelon> {
+        MODelonL_SPelonCS.itelonr().position(|m| m == modelonl_spelonc)
     }
 }

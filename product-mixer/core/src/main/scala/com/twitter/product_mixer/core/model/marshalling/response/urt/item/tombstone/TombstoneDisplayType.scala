@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon
 
-sealed trait TombstoneDisplayType
+selonalelond trait TombstonelonDisplayTypelon
 
-case object TweetUnavailable extends TombstoneDisplayType
-case object DisconnectedRepliesAncestor extends TombstoneDisplayType
-case object DisconnectedRepliesDescendant extends TombstoneDisplayType
-case object Inline extends TombstoneDisplayType
-case object NonCompliant extends TombstoneDisplayType
+caselon objelonct TwelonelontUnavailablelon elonxtelonnds TombstonelonDisplayTypelon
+caselon objelonct DisconnelonctelondRelonplielonsAncelonstor elonxtelonnds TombstonelonDisplayTypelon
+caselon objelonct DisconnelonctelondRelonplielonsDelonscelonndant elonxtelonnds TombstonelonDisplayTypelon
+caselon objelonct Inlinelon elonxtelonnds TombstonelonDisplayTypelon
+caselon objelonct NonCompliant elonxtelonnds TombstonelonDisplayTypelon

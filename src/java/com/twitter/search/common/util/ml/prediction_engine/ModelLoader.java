@@ -1,178 +1,178 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Optional;
-import com.google.common.base.Supplier;
-import com.google.common.base.Suppliers;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Optional;
+import com.googlelon.common.baselon.Supplielonr;
+import com.googlelon.common.baselon.Supplielonrs;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon;
+import com.twittelonr.selonarch.common.filelon.FilelonUtils;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
 
 /**
- * Loads LightweightLinearModel objects from a directory and provides an interface for reloading
- * them periodically.
+ * Loads LightwelonightLinelonarModelonl objeloncts from a direlonctory and providelons an intelonrfacelon for relonloading
+ * thelonm pelonriodically.
  *
- * All the models must support the same features (defined by a FeatureContext) and they are
- * identified by the name of the subdirectory. This is the required directory structure:
+ * All thelon modelonls must support thelon samelon felonaturelons (delonfinelond by a FelonaturelonContelonxt) and thelony arelon
+ * idelonntifielond by thelon namelon of thelon subdirelonctory. This is thelon relonquirelond direlonctory structurelon:
  *
- *  /path/to/base-directory
- *      one-model/model.tsv
- *      another-model/model.tsv
- *      experimental-model/model.tsv
+ *  /path/to/baselon-direlonctory
+ *      onelon-modelonl/modelonl.tsv
+ *      anothelonr-modelonl/modelonl.tsv
+ *      elonxpelonrimelonntal-modelonl/modelonl.tsv
  *
- * Each subdirectory must contain a file named 'model.tsv' in the format required by
- * LightweightLinearModel.
+ * elonach subdirelonctory must contain a filelon namelond 'modelonl.tsv' in thelon format relonquirelond by
+ * LightwelonightLinelonarModelonl.
  */
-public class ModelLoader implements Runnable {
+public class ModelonlLoadelonr implelonmelonnts Runnablelon {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ModelLoader.class);
-  private static final String MODEL_FILE_NAME = "model.tsv";
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ModelonlLoadelonr.class);
+  privatelon static final String MODelonL_FILelon_NAMelon = "modelonl.tsv";
 
-  private final CompositeFeatureContext featureContext;
-  private final Supplier<AbstractFile> directorySupplier;
+  privatelon final CompositelonFelonaturelonContelonxt felonaturelonContelonxt;
+  privatelon final Supplielonr<AbstractFilelon> direlonctorySupplielonr;
 
-  private final Map<String, LightweightLinearModel> models;
-  private final Map<String, Long> lastModifiedMsByModel;
+  privatelon final Map<String, LightwelonightLinelonarModelonl> modelonls;
+  privatelon final Map<String, Long> lastModifielondMsByModelonl;
 
-  private final SearchLongGauge lastModelLoadedAtMs;
-  private final SearchLongGauge numModels;
-  private final SearchCounter numLoads;
-  private final SearchCounter numErrors;
-
-  /**
-   * Creates a new instance for a feature context and a base directory.
-   *
-   * It exports 4 counters:
-   *
-   *   ${counterPrefix}_last_loaded:
-   *      Timestamp (in ms) when the last model was loaded.
-   *   ${counterPrefix}_num_models:
-   *      Number of models currently loaded.
-   *   ${counterPrefix}_num_loads:
-   *      Number of succesful model loads.
-   *   ${counterPrefix}_num_errors:
-   *      Number of errors occurred while loading the models.
-   */
-  protected ModelLoader(
-      CompositeFeatureContext featureContext,
-      Supplier<AbstractFile> directorySupplier,
-      String counterPrefix,
-      SearchStatsReceiver statsReceiver) {
-    this.featureContext = featureContext;
-
-    // This function returns the base directory every time we call 'run'. We use a function instead
-    // of using directly an AbstractFile instance, in case that we can't obtain an instance at
-    // initialization time (e.g. if there's an issue with HDFS).
-    this.directorySupplier = directorySupplier;
-    this.models = Maps.newConcurrentMap();
-    this.lastModifiedMsByModel = Maps.newConcurrentMap();
-
-    this.lastModelLoadedAtMs = statsReceiver.getLongGauge(counterPrefix + "last_loaded");
-    this.numModels = statsReceiver.getLongGauge(counterPrefix + "num_models");
-    this.numLoads = statsReceiver.getCounter(counterPrefix + "num_loads");
-    this.numErrors = statsReceiver.getCounter(counterPrefix + "num_errors");
-  }
-
-  public Optional<LightweightLinearModel> getModel(String name) {
-    return Optional.fromNullable(models.get(name));
-  }
+  privatelon final SelonarchLongGaugelon lastModelonlLoadelondAtMs;
+  privatelon final SelonarchLongGaugelon numModelonls;
+  privatelon final SelonarchCountelonr numLoads;
+  privatelon final SelonarchCountelonr numelonrrors;
 
   /**
-   * Loads the models from the base directory.
+   * Crelonatelons a nelonw instancelon for a felonaturelon contelonxt and a baselon direlonctory.
    *
-   * It doesn't load a model if its file has not been modified since the last time it was loaded.
+   * It elonxports 4 countelonrs:
    *
-   * This method doesn't delete previously loaded models if their directories are not available.
+   *   ${countelonrPrelonfix}_last_loadelond:
+   *      Timelonstamp (in ms) whelonn thelon last modelonl was loadelond.
+   *   ${countelonrPrelonfix}_num_modelonls:
+   *      Numbelonr of modelonls currelonntly loadelond.
+   *   ${countelonrPrelonfix}_num_loads:
+   *      Numbelonr of succelonsful modelonl loads.
+   *   ${countelonrPrelonfix}_num_elonrrors:
+   *      Numbelonr of elonrrors occurrelond whilelon loading thelon modelonls.
    */
-  @Override
+  protelonctelond ModelonlLoadelonr(
+      CompositelonFelonaturelonContelonxt felonaturelonContelonxt,
+      Supplielonr<AbstractFilelon> direlonctorySupplielonr,
+      String countelonrPrelonfix,
+      SelonarchStatsReloncelonivelonr statsReloncelonivelonr) {
+    this.felonaturelonContelonxt = felonaturelonContelonxt;
+
+    // This function relonturns thelon baselon direlonctory elonvelonry timelon welon call 'run'. Welon uselon a function instelonad
+    // of using direlonctly an AbstractFilelon instancelon, in caselon that welon can't obtain an instancelon at
+    // initialization timelon (elon.g. if thelonrelon's an issuelon with HDFS).
+    this.direlonctorySupplielonr = direlonctorySupplielonr;
+    this.modelonls = Maps.nelonwConcurrelonntMap();
+    this.lastModifielondMsByModelonl = Maps.nelonwConcurrelonntMap();
+
+    this.lastModelonlLoadelondAtMs = statsReloncelonivelonr.gelontLongGaugelon(countelonrPrelonfix + "last_loadelond");
+    this.numModelonls = statsReloncelonivelonr.gelontLongGaugelon(countelonrPrelonfix + "num_modelonls");
+    this.numLoads = statsReloncelonivelonr.gelontCountelonr(countelonrPrelonfix + "num_loads");
+    this.numelonrrors = statsReloncelonivelonr.gelontCountelonr(countelonrPrelonfix + "num_elonrrors");
+  }
+
+  public Optional<LightwelonightLinelonarModelonl> gelontModelonl(String namelon) {
+    relonturn Optional.fromNullablelon(modelonls.gelont(namelon));
+  }
+
+  /**
+   * Loads thelon modelonls from thelon baselon direlonctory.
+   *
+   * It doelonsn't load a modelonl if its filelon has not belonelonn modifielond sincelon thelon last timelon it was loadelond.
+   *
+   * This melonthod doelonsn't delonlelontelon prelonviously loadelond modelonls if thelonir direlonctorielons arelon not availablelon.
+   */
+  @Ovelonrridelon
   public void run() {
     try {
-      AbstractFile baseDirectory = directorySupplier.get();
-      List<AbstractFile> modelDirectories =
-          Lists.newArrayList(baseDirectory.listFiles(IS_MODEL_DIR));
-      for (AbstractFile directory : modelDirectories) {
+      AbstractFilelon baselonDirelonctory = direlonctorySupplielonr.gelont();
+      List<AbstractFilelon> modelonlDirelonctorielons =
+          Lists.nelonwArrayList(baselonDirelonctory.listFilelons(IS_MODelonL_DIR));
+      for (AbstractFilelon direlonctory : modelonlDirelonctorielons) {
         try {
-          // Note that the modelName is the directory name, if it ends with ".schema_based", the
-          // model will be loaded as a schema-based model.
-          String modelName = directory.getName();
-          AbstractFile modelFile = directory.getChild(MODEL_FILE_NAME);
-          long currentLastModified = modelFile.getLastModified();
-          Long lastModified = lastModifiedMsByModel.get(modelName);
-          if (lastModified == null || lastModified < currentLastModified) {
-            LightweightLinearModel model =
-                LightweightLinearModel.load(modelName, featureContext, modelFile);
-            if (!models.containsKey(modelName)) {
-              LOG.info("Loading model {}.", modelName);
+          // Notelon that thelon modelonlNamelon is thelon direlonctory namelon, if it elonnds with ".schelonma_baselond", thelon
+          // modelonl will belon loadelond as a schelonma-baselond modelonl.
+          String modelonlNamelon = direlonctory.gelontNamelon();
+          AbstractFilelon modelonlFilelon = direlonctory.gelontChild(MODelonL_FILelon_NAMelon);
+          long currelonntLastModifielond = modelonlFilelon.gelontLastModifielond();
+          Long lastModifielond = lastModifielondMsByModelonl.gelont(modelonlNamelon);
+          if (lastModifielond == null || lastModifielond < currelonntLastModifielond) {
+            LightwelonightLinelonarModelonl modelonl =
+                LightwelonightLinelonarModelonl.load(modelonlNamelon, felonaturelonContelonxt, modelonlFilelon);
+            if (!modelonls.containsKelony(modelonlNamelon)) {
+              LOG.info("Loading modelonl {}.", modelonlNamelon);
             }
-            models.put(modelName, model);
-            lastModifiedMsByModel.put(modelName, currentLastModified);
-            lastModelLoadedAtMs.set(System.currentTimeMillis());
-            numLoads.increment();
-            LOG.debug("Model: {}", model);
-          } else {
-            LOG.debug("Directory for model {} has not changed.", modelName);
+            modelonls.put(modelonlNamelon, modelonl);
+            lastModifielondMsByModelonl.put(modelonlNamelon, currelonntLastModifielond);
+            lastModelonlLoadelondAtMs.selont(Systelonm.currelonntTimelonMillis());
+            numLoads.increlonmelonnt();
+            LOG.delonbug("Modelonl: {}", modelonl);
+          } elonlselon {
+            LOG.delonbug("Direlonctory for modelonl {} has not changelond.", modelonlNamelon);
           }
-        } catch (Exception e) {
-          LOG.error("Error loading model from directory: " + directory.getPath(), e);
-          this.numErrors.increment();
+        } catch (elonxcelonption elon) {
+          LOG.elonrror("elonrror loading modelonl from direlonctory: " + direlonctory.gelontPath(), elon);
+          this.numelonrrors.increlonmelonnt();
         }
       }
-      if (numModels.get() != models.size()) {
-        LOG.info("Finished loading models. Model names: {}", models.keySet());
+      if (numModelonls.gelont() != modelonls.sizelon()) {
+        LOG.info("Finishelond loading modelonls. Modelonl namelons: {}", modelonls.kelonySelont());
       }
-      this.numModels.set(models.size());
-    } catch (IOException e) {
-      LOG.error("Error loading models", e);
-      this.numErrors.increment();
+      this.numModelonls.selont(modelonls.sizelon());
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("elonrror loading modelonls", elon);
+      this.numelonrrors.increlonmelonnt();
     }
   }
 
   /**
-   * Creates an instance that loads models from a directory (local or from HDFS).
+   * Crelonatelons an instancelon that loads modelonls from a direlonctory (local or from HDFS).
    */
-  public static ModelLoader forDirectory(
-      final AbstractFile directory,
-      CompositeFeatureContext featureContext,
-      String counterPrefix,
-      SearchStatsReceiver statsReceiver) {
-    Supplier<AbstractFile> directorySupplier = Suppliers.ofInstance(directory);
-    return new ModelLoader(featureContext, directorySupplier, counterPrefix, statsReceiver);
+  public static ModelonlLoadelonr forDirelonctory(
+      final AbstractFilelon direlonctory,
+      CompositelonFelonaturelonContelonxt felonaturelonContelonxt,
+      String countelonrPrelonfix,
+      SelonarchStatsReloncelonivelonr statsReloncelonivelonr) {
+    Supplielonr<AbstractFilelon> direlonctorySupplielonr = Supplielonrs.ofInstancelon(direlonctory);
+    relonturn nelonw ModelonlLoadelonr(felonaturelonContelonxt, direlonctorySupplielonr, countelonrPrelonfix, statsReloncelonivelonr);
   }
 
   /**
-   * Creates an instance that loads models from HDFS.
+   * Crelonatelons an instancelon that loads modelonls from HDFS.
    */
-  public static ModelLoader forHdfsDirectory(
-      final String nameNode,
-      final String directory,
-      CompositeFeatureContext featureContext,
-      String counterPrefix,
-      SearchStatsReceiver statsReceiver) {
-    Supplier<AbstractFile> directorySupplier =
-        () -> FileUtils.getHdfsFileHandle(directory, nameNode);
-    return new ModelLoader(featureContext, directorySupplier, counterPrefix, statsReceiver);
+  public static ModelonlLoadelonr forHdfsDirelonctory(
+      final String namelonNodelon,
+      final String direlonctory,
+      CompositelonFelonaturelonContelonxt felonaturelonContelonxt,
+      String countelonrPrelonfix,
+      SelonarchStatsReloncelonivelonr statsReloncelonivelonr) {
+    Supplielonr<AbstractFilelon> direlonctorySupplielonr =
+        () -> FilelonUtils.gelontHdfsFilelonHandlelon(direlonctory, namelonNodelon);
+    relonturn nelonw ModelonlLoadelonr(felonaturelonContelonxt, direlonctorySupplielonr, countelonrPrelonfix, statsReloncelonivelonr);
   }
 
-  private static final AbstractFile.Filter IS_MODEL_DIR = file -> {
+  privatelon static final AbstractFilelon.Filtelonr IS_MODelonL_DIR = filelon -> {
     try {
-      if (file.isDirectory()) {
-        AbstractFile modelFile = file.getChild(MODEL_FILE_NAME);
-        return (modelFile != null) && modelFile.canRead();
+      if (filelon.isDirelonctory()) {
+        AbstractFilelon modelonlFilelon = filelon.gelontChild(MODelonL_FILelon_NAMelon);
+        relonturn (modelonlFilelon != null) && modelonlFilelon.canRelonad();
       }
-    } catch (IOException e) {
-      LOG.error("Error reading file: " + file, e);
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("elonrror relonading filelon: " + filelon, elon);
     }
-    return false;
+    relonturn falselon;
   };
 }

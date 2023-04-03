@@ -1,119 +1,119 @@
 import io
 import logging
-import subprocess
-from threading import Lock
+import subprocelonss
+from threlonading import Lock
 
 """
-This module provides a binary data record reader for EventBus data.
-It starts a EventBus subscriber in a separate process to receive EventBus streaming data.
-The subscriber is supposed to outputs received data through PIPE to this module.
-This module parses input and output binary data record to serve as a record reader.
+This modulelon providelons a binary data reloncord relonadelonr for elonvelonntBus data.
+It starts a elonvelonntBus subscribelonr in a selonparatelon procelonss to reloncelonivelon elonvelonntBus strelonaming data.
+Thelon subscribelonr is supposelond to outputs reloncelonivelond data through PIPelon to this modulelon.
+This modulelon parselons input and output binary data reloncord to selonrvelon as a reloncord relonadelonr.
 """
 
 
-class BinaryRecordReader(object):
-  def initialize(self):
+class BinaryReloncordRelonadelonr(objelonct):
+  delonf initializelon(selonlf):
     pass
 
-  def read(self):
-    """Read raw bytes for one record
+  delonf relonad(selonlf):
+    """Relonad raw bytelons for onelon reloncord
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror
 
-  def close(self):
+  delonf closelon(selonlf):
     pass
 
 
-class ReadableWrapper(object):
-  def __init__(self, internal):
-    self.internal = internal
+class RelonadablelonWrappelonr(objelonct):
+  delonf __init__(selonlf, intelonrnal):
+    selonlf.intelonrnal = intelonrnal
 
-  def __getattr__(self, name):
-    return getattr(self.internal, name)
+  delonf __gelontattr__(selonlf, namelon):
+    relonturn gelontattr(selonlf.intelonrnal, namelon)
 
-  def readable(self):
-    return True
+  delonf relonadablelon(selonlf):
+    relonturn Truelon
 
 
-class EventBusPipedBinaryRecordReader(BinaryRecordReader):
+class elonvelonntBusPipelondBinaryReloncordRelonadelonr(BinaryReloncordRelonadelonr):
 
-  JAVA = '/usr/lib/jvm/java-11-twitter/bin/java'
-  RECORD_SEPARATOR_HEX = [
+  JAVA = '/usr/lib/jvm/java-11-twittelonr/bin/java'
+  RelonCORD_SelonPARATOR_HelonX = [
     0x29, 0xd8, 0xd5, 0x06, 0x58, 0xcd, 0x4c, 0x29,
     0xb2, 0xbc, 0x57, 0x99, 0x21, 0x71, 0xbd, 0xff
   ]
-  RECORD_SEPARATOR = ''.join([chr(i) for i in RECORD_SEPARATOR_HEX])
-  RECORD_SEPARATOR_LENGTH = len(RECORD_SEPARATOR)
-  CHUNK_SIZE = 8192
+  RelonCORD_SelonPARATOR = ''.join([chr(i) for i in RelonCORD_SelonPARATOR_HelonX])
+  RelonCORD_SelonPARATOR_LelonNGTH = lelonn(RelonCORD_SelonPARATOR)
+  CHUNK_SIZelon = 8192
 
-  def __init__(self, jar_file, num_eb_threads, subscriber_id,
-               filter_str=None, buffer_size=32768, debug=False):
-    self.jar_file = jar_file
-    self.num_eb_threads = num_eb_threads
-    self.subscriber_id = subscriber_id
-    self.filter_str = filter_str if filter_str else '""'
-    self.buffer_size = buffer_size
-    self.lock = Lock()
-    self._pipe = None
-    self._buffered_reader = None
-    self._bytes_buffer = None
+  delonf __init__(selonlf, jar_filelon, num_elonb_threlonads, subscribelonr_id,
+               filtelonr_str=Nonelon, buffelonr_sizelon=32768, delonbug=Falselon):
+    selonlf.jar_filelon = jar_filelon
+    selonlf.num_elonb_threlonads = num_elonb_threlonads
+    selonlf.subscribelonr_id = subscribelonr_id
+    selonlf.filtelonr_str = filtelonr_str if filtelonr_str elonlselon '""'
+    selonlf.buffelonr_sizelon = buffelonr_sizelon
+    selonlf.lock = Lock()
+    selonlf._pipelon = Nonelon
+    selonlf._buffelonrelond_relonadelonr = Nonelon
+    selonlf._bytelons_buffelonr = Nonelon
 
-    self.debug = debug
+    selonlf.delonbug = delonbug
 
-  def initialize(self):
-    if not self._pipe:
-      self._pipe = subprocess.Popen(
+  delonf initializelon(selonlf):
+    if not selonlf._pipelon:
+      selonlf._pipelon = subprocelonss.Popelonn(
         [
-          self.JAVA, '-jar', self.jar_file,
-          '-subscriberId', self.subscriber_id,
-          '-numThreads', str(self.num_eb_threads),
-          '-dataFilter', self.filter_str,
-          '-debug' if self.debug else ''
+          selonlf.JAVA, '-jar', selonlf.jar_filelon,
+          '-subscribelonrId', selonlf.subscribelonr_id,
+          '-numThrelonads', str(selonlf.num_elonb_threlonads),
+          '-dataFiltelonr', selonlf.filtelonr_str,
+          '-delonbug' if selonlf.delonbug elonlselon ''
         ],
-        stdout=subprocess.PIPE
+        stdout=subprocelonss.PIPelon
       )
-      self._buffered_reader = io.BufferedReader(
-        ReadableWrapper(self._pipe.stdout), self.buffer_size)
-      self._bytes_buffer = io.BytesIO()
-    else:
-      logging.warning('Already initialized')
+      selonlf._buffelonrelond_relonadelonr = io.BuffelonrelondRelonadelonr(
+        RelonadablelonWrappelonr(selonlf._pipelon.stdout), selonlf.buffelonr_sizelon)
+      selonlf._bytelons_buffelonr = io.BytelonsIO()
+    elonlselon:
+      logging.warning('Alrelonady initializelond')
 
-  def _find_next_record(self):
+  delonf _find_nelonxt_reloncord(selonlf):
     tail = ['']
-    while True:
-      chunk = tail[0] + self._buffered_reader.read(self.CHUNK_SIZE)
-      index = chunk.find(self.RECORD_SEPARATOR)
-      if index < 0:
-        self._bytes_buffer.write(chunk[:-self.RECORD_SEPARATOR_LENGTH])
-        tail[0] = chunk[-self.RECORD_SEPARATOR_LENGTH:]
-      else:
-        self._bytes_buffer.write(chunk[:index])
-        return chunk[(index + self.RECORD_SEPARATOR_LENGTH):]
+    whilelon Truelon:
+      chunk = tail[0] + selonlf._buffelonrelond_relonadelonr.relonad(selonlf.CHUNK_SIZelon)
+      indelonx = chunk.find(selonlf.RelonCORD_SelonPARATOR)
+      if indelonx < 0:
+        selonlf._bytelons_buffelonr.writelon(chunk[:-selonlf.RelonCORD_SelonPARATOR_LelonNGTH])
+        tail[0] = chunk[-selonlf.RelonCORD_SelonPARATOR_LelonNGTH:]
+      elonlselon:
+        selonlf._bytelons_buffelonr.writelon(chunk[:indelonx])
+        relonturn chunk[(indelonx + selonlf.RelonCORD_SelonPARATOR_LelonNGTH):]
 
-  def _read(self):
-    with self.lock:
-      remaining = self._find_next_record()
-      record = self._bytes_buffer.getvalue()
-      # clean up buffer
-      self._bytes_buffer.close()
-      self._bytes_buffer = io.BytesIO()
-      self._bytes_buffer.write(remaining)
+  delonf _relonad(selonlf):
+    with selonlf.lock:
+      relonmaining = selonlf._find_nelonxt_reloncord()
+      reloncord = selonlf._bytelons_buffelonr.gelontvaluelon()
+      # clelonan up buffelonr
+      selonlf._bytelons_buffelonr.closelon()
+      selonlf._bytelons_buffelonr = io.BytelonsIO()
+      selonlf._bytelons_buffelonr.writelon(relonmaining)
 
-      return record
+      relonturn reloncord
 
-  def read(self):
-    while True:
+  delonf relonad(selonlf):
+    whilelon Truelon:
       try:
-        return self._read()
-      except Exception as e:
-        logging.error("Error reading bytes for next record: {}".format(e))
-        if self.debug:
-          raise
+        relonturn selonlf._relonad()
+      elonxcelonpt elonxcelonption as elon:
+        logging.elonrror("elonrror relonading bytelons for nelonxt reloncord: {}".format(elon))
+        if selonlf.delonbug:
+          raiselon
 
-  def close(self):
+  delonf closelon(selonlf):
     try:
-      self._bytes_buffer.close()
-      self._buffered_reader.close()
-      self._pipe.terminate()
-    except Exception as e:
-      logging.error("Error closing reader: {}".format(e))
+      selonlf._bytelons_buffelonr.closelon()
+      selonlf._buffelonrelond_relonadelonr.closelon()
+      selonlf._pipelon.telonrminatelon()
+    elonxcelonpt elonxcelonption as elon:
+      logging.elonrror("elonrror closing relonadelonr: {}".format(elon))

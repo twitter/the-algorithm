@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SocialContelonxt
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait BaseModuleSocialContextBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+trait BaselonModulelonSocialContelonxtBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]] {
 
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[SocialContext]
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Option[SocialContelonxt]
 }

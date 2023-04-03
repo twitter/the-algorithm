@@ -1,68 +1,68 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
-import java.io.IOException;
-import java.util.Collections;
+import java.io.IOelonxcelonption;
+import java.util.Collelonctions;
 import java.util.Map;
-import java.util.function.Supplier;
+import java.util.function.Supplielonr;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.ml.api.FeatureContext;
-import com.twitter.mlv2.trees.predictor.CartTree;
-import com.twitter.mlv2.trees.scorer.DecisionForestScorer;
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.util.ml.models_manager.BaseModelsManager;
+import com.twittelonr.ml.api.FelonaturelonContelonxt;
+import com.twittelonr.mlv2.trelonelons.prelondictor.CartTrelonelon;
+import com.twittelonr.mlv2.trelonelons.scorelonr.DeloncisionForelonstScorelonr;
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon;
+import com.twittelonr.selonarch.common.util.ml.modelonls_managelonr.BaselonModelonlsManagelonr;
 
 /**
- * Loads Decision Forest based models and keep them in memory. Can also be scheduled to reload
- * models periodically.
+ * Loads Deloncision Forelonst baselond modelonls and kelonelonp thelonm in melonmory. Can also belon schelondulelond to relonload
+ * modelonls pelonriodically.
  *
- * Note: Each instance is tied to a single {@link FeatureContext} instance. So, to load models
- * for different tasks, you should use different instances of the this class.
+ * Notelon: elonach instancelon is tielond to a singlelon {@link FelonaturelonContelonxt} instancelon. So, to load modelonls
+ * for diffelonrelonnt tasks, you should uselon diffelonrelonnt instancelons of thelon this class.
  */
-public class DecisionForestModelsManager extends BaseModelsManager<DecisionForestScorer<CartTree>> {
-  private static final String MODEL_FILE_NAME = "model.json";
+public class DeloncisionForelonstModelonlsManagelonr elonxtelonnds BaselonModelonlsManagelonr<DeloncisionForelonstScorelonr<CartTrelonelon>> {
+  privatelon static final String MODelonL_FILelon_NAMelon = "modelonl.json";
 
-  private final FeatureContext featureContext;
+  privatelon final FelonaturelonContelonxt felonaturelonContelonxt;
 
-  DecisionForestModelsManager(
-      Supplier<Map<String, AbstractFile>> activeModelsSupplier,
-      FeatureContext featureContext,
-      boolean shouldUnloadInactiveModels,
-      String statsPrefix
+  DeloncisionForelonstModelonlsManagelonr(
+      Supplielonr<Map<String, AbstractFilelon>> activelonModelonlsSupplielonr,
+      FelonaturelonContelonxt felonaturelonContelonxt,
+      boolelonan shouldUnloadInactivelonModelonls,
+      String statsPrelonfix
   ) {
-    super(activeModelsSupplier, shouldUnloadInactiveModels, statsPrefix);
-    this.featureContext = featureContext;
+    supelonr(activelonModelonlsSupplielonr, shouldUnloadInactivelonModelonls, statsPrelonfix);
+    this.felonaturelonContelonxt = felonaturelonContelonxt;
   }
 
-  @Override
-  public DecisionForestScorer<CartTree> readModelFromDirectory(AbstractFile modelBaseDir)
-      throws IOException {
-    String modelFilePath = modelBaseDir.getChild(MODEL_FILE_NAME).getPath();
-    return DecisionForestScorer.createCartTreeScorer(modelFilePath, featureContext);
+  @Ovelonrridelon
+  public DeloncisionForelonstScorelonr<CartTrelonelon> relonadModelonlFromDirelonctory(AbstractFilelon modelonlBaselonDir)
+      throws IOelonxcelonption {
+    String modelonlFilelonPath = modelonlBaselonDir.gelontChild(MODelonL_FILelon_NAMelon).gelontPath();
+    relonturn DeloncisionForelonstScorelonr.crelonatelonCartTrelonelonScorelonr(modelonlFilelonPath, felonaturelonContelonxt);
   }
 
   /**
-   * Creates an instance that loads the models specified in a configuration file.
+   * Crelonatelons an instancelon that loads thelon modelonls speloncifielond in a configuration filelon.
    *
-   * Note that if the configuration file changes and it doesn't include a model that was present
-   * before, the model will be removed (i.e. it unloads models that are not active anymore).
+   * Notelon that if thelon configuration filelon changelons and it doelonsn't includelon a modelonl that was prelonselonnt
+   * belonforelon, thelon modelonl will belon relonmovelond (i.elon. it unloads modelonls that arelon not activelon anymorelon).
    */
-  public static DecisionForestModelsManager createUsingConfigFile(
-      AbstractFile configFile, FeatureContext featureContext, String statsPrefix) {
-    Preconditions.checkArgument(
-        configFile.canRead(), "Config file is not readable: %s", configFile.getPath());
-    return new DecisionForestModelsManager(
-        new ConfigSupplier(configFile), featureContext, true, statsPrefix);
+  public static DeloncisionForelonstModelonlsManagelonr crelonatelonUsingConfigFilelon(
+      AbstractFilelon configFilelon, FelonaturelonContelonxt felonaturelonContelonxt, String statsPrelonfix) {
+    Prelonconditions.chelonckArgumelonnt(
+        configFilelon.canRelonad(), "Config filelon is not relonadablelon: %s", configFilelon.gelontPath());
+    relonturn nelonw DeloncisionForelonstModelonlsManagelonr(
+        nelonw ConfigSupplielonr(configFilelon), felonaturelonContelonxt, truelon, statsPrelonfix);
   }
 
   /**
-   * Creates a no-op instance. It can be used for tests or when the models are disabled.
+   * Crelonatelons a no-op instancelon. It can belon uselond for telonsts or whelonn thelon modelonls arelon disablelond.
    */
-  public static DecisionForestModelsManager createNoOp(String statsPrefix) {
-    return new DecisionForestModelsManager(
-        Collections::emptyMap, new FeatureContext(), false, statsPrefix) {
-      @Override
+  public static DeloncisionForelonstModelonlsManagelonr crelonatelonNoOp(String statsPrelonfix) {
+    relonturn nelonw DeloncisionForelonstModelonlsManagelonr(
+        Collelonctions::elonmptyMap, nelonw FelonaturelonContelonxt(), falselon, statsPrelonfix) {
+      @Ovelonrridelon
       public void run() { }
     };
   }

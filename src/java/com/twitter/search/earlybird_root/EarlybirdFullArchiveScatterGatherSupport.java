@@ -1,21 +1,21 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.twitter.search.common.partitioning.base.PartitionMappingManager;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
+import com.twittelonr.selonarch.common.partitioning.baselon.PartitionMappingManagelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
 
 /**
- * The EarlybirdServiceScatterGatherSupport implementation used to fan out requests to the earlybird
- * partitions in the full archive tiers.
+ * Thelon elonarlybirdSelonrvicelonScattelonrGathelonrSupport implelonmelonntation uselond to fan out relonquelonsts to thelon elonarlybird
+ * partitions in thelon full archivelon tielonrs.
  */
-public class EarlybirdFullArchiveScatterGatherSupport extends EarlybirdServiceScatterGatherSupport {
-  /** Creates a new EarlybirdFullArchiveScatterGatherSupport instance. */
-  @Inject
-  EarlybirdFullArchiveScatterGatherSupport(
-      PartitionMappingManager partitionMappingManager,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    super(partitionMappingManager, EarlybirdCluster.FULL_ARCHIVE, featureSchemaMerger);
+public class elonarlybirdFullArchivelonScattelonrGathelonrSupport elonxtelonnds elonarlybirdSelonrvicelonScattelonrGathelonrSupport {
+  /** Crelonatelons a nelonw elonarlybirdFullArchivelonScattelonrGathelonrSupport instancelon. */
+  @Injelonct
+  elonarlybirdFullArchivelonScattelonrGathelonrSupport(
+      PartitionMappingManagelonr partitionMappingManagelonr,
+      elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr) {
+    supelonr(partitionMappingManagelonr, elonarlybirdClustelonr.FULL_ARCHIVelon, felonaturelonSchelonmaMelonrgelonr);
   }
 }

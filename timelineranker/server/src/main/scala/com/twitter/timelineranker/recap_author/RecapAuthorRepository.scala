@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.recap_author
+packagelon com.twittelonr.timelonlinelonrankelonr.reloncap_author
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.parameters.recap_author.RecapAuthorParams
+import com.twittelonr.timelonlinelonrankelonr.modelonl.CandidatelonTwelonelontsRelonsult
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.util.Futurelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap_author.ReloncapAuthorParams
 
 /**
- * A repository of recap author results.
+ * A relonpository of reloncap author relonsults.
  *
- * For now, it does not cache any results therefore forwards all calls to the underlying source.
+ * For now, it doelons not cachelon any relonsults thelonrelonforelon forwards all calls to thelon undelonrlying sourcelon.
  */
-class RecapAuthorRepository(source: RecapAuthorSource, realtimeCGSource: RecapAuthorSource) {
-  private[this] val enableRealtimeCGProvider =
-    DependencyProvider.from(RecapAuthorParams.EnableEarlybirdRealtimeCgMigrationParam)
+class ReloncapAuthorRelonpository(sourcelon: ReloncapAuthorSourcelon, relonaltimelonCGSourcelon: ReloncapAuthorSourcelon) {
+  privatelon[this] val elonnablelonRelonaltimelonCGProvidelonr =
+    DelonpelonndelonncyProvidelonr.from(ReloncapAuthorParams.elonnablelonelonarlybirdRelonaltimelonCgMigrationParam)
 
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    if (enableRealtimeCGProvider(query)) {
-      realtimeCGSource.get(query)
-    } else {
-      source.get(query)
+  delonf gelont(quelonry: ReloncapQuelonry): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    if (elonnablelonRelonaltimelonCGProvidelonr(quelonry)) {
+      relonaltimelonCGSourcelon.gelont(quelonry)
+    } elonlselon {
+      sourcelon.gelont(quelonry)
     }
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    Future.collect(queries.map(query => get(query)))
+  delonf gelont(quelonrielons: Selonq[ReloncapQuelonry]): Futurelon[Selonq[CandidatelonTwelonelontsRelonsult]] = {
+    Futurelon.collelonct(quelonrielons.map(quelonry => gelont(quelonry)))
   }
 }

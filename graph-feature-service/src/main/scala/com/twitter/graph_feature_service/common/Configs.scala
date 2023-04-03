@@ -1,73 +1,73 @@
-package com.twitter.graph_feature_service.common
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import java.nio.ByteBuffer
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
+import java.nio.BytelonBuffelonr
 import scala.util.hashing.MurmurHash3
 
-object Configs {
+objelonct Configs {
 
-  // NOTE: notify #recos-platform slack room, if you want to change this.
-  // This SHOULD be updated together with NUM_SHARDS in worker.aurora
+  // NOTelon: notify #reloncos-platform slack room, if you want to changelon this.
+  // This SHOULD belon updatelond togelonthelonr with NUM_SHARDS in workelonr.aurora
   final val NumGraphShards: Int = 40
 
-  final val TopKRealGraph: Int = 512
+  final val TopKRelonalGraph: Int = 512
 
-  final val BaseHdfsPath: String = "/user/cassowary/processed/gfs/constant_db/"
+  final val BaselonHdfsPath: String = "/uselonr/cassowary/procelonsselond/gfs/constant_db/"
 
-  // whether or not to write in_value and out_value graphs. Used in the scalding job.
-  final val EnableValueGraphs: Boolean = true
-  // whether or not to write in_key and out_key graphs. Used in the scalding job.
-  final val EnableKeyGraphs: Boolean = false
+  // whelonthelonr or not to writelon in_valuelon and out_valuelon graphs. Uselond in thelon scalding job.
+  final val elonnablelonValuelonGraphs: Boolelonan = truelon
+  // whelonthelonr or not to writelon in_kelony and out_kelony graphs. Uselond in thelon scalding job.
+  final val elonnablelonKelonyGraphs: Boolelonan = falselon
 
   final val FollowOutValPath: String = "follow_out_val/"
-  final val FollowOutKeyPath: String = "follow_out_key/"
+  final val FollowOutKelonyPath: String = "follow_out_kelony/"
   final val FollowInValPath: String = "follow_in_val/"
-  final val FollowInKeyPath: String = "follow_in_key/"
+  final val FollowInKelonyPath: String = "follow_in_kelony/"
 
   final val MutualFollowValPath: String = "mutual_follow_val/"
-  final val MutualFollowKeyPath: String = "mutual_follow_key/"
+  final val MutualFollowKelonyPath: String = "mutual_follow_kelony/"
 
-  final val FavoriteOutValPath: String = "favorite_out_val/"
-  final val FavoriteInValPath: String = "favorite_in_val/"
-  final val FavoriteOutKeyPath: String = "favorite_out_key/"
-  final val FavoriteInKeyPath: String = "favorite_in_key/"
+  final val FavoritelonOutValPath: String = "favoritelon_out_val/"
+  final val FavoritelonInValPath: String = "favoritelon_in_val/"
+  final val FavoritelonOutKelonyPath: String = "favoritelon_out_kelony/"
+  final val FavoritelonInKelonyPath: String = "favoritelon_in_kelony/"
 
-  final val RetweetOutValPath: String = "retweet_out_val/"
-  final val RetweetInValPath: String = "retweet_in_val/"
-  final val RetweetOutKeyPath: String = "retweet_out_key/"
-  final val RetweetInKeyPath: String = "retweet_in_key/"
+  final val RelontwelonelontOutValPath: String = "relontwelonelont_out_val/"
+  final val RelontwelonelontInValPath: String = "relontwelonelont_in_val/"
+  final val RelontwelonelontOutKelonyPath: String = "relontwelonelont_out_kelony/"
+  final val RelontwelonelontInKelonyPath: String = "relontwelonelont_in_kelony/"
 
-  final val MentionOutValPath: String = "mention_out_val/"
-  final val MentionInValPath: String = "mention_in_val/"
-  final val MentionOutKeyPath: String = "mention_out_key/"
-  final val MentionInKeyPath: String = "mention_in_key/"
+  final val MelonntionOutValPath: String = "melonntion_out_val/"
+  final val MelonntionInValPath: String = "melonntion_in_val/"
+  final val MelonntionOutKelonyPath: String = "melonntion_out_kelony/"
+  final val MelonntionInKelonyPath: String = "melonntion_in_kelony/"
 
-  final val MemCacheTTL: Duration = 8.hours
+  final val MelonmCachelonTTL: Duration = 8.hours
 
-  final val RandomSeed: Int = 39582942
+  final val RandomSelonelond: Int = 39582942
 
-  def getTimedHdfsShardPath(shardId: Int, path: String, time: Time): String = {
-    val timeStr = time.format("yyyy/MM/dd")
-    s"$path/$timeStr/shard_$shardId"
+  delonf gelontTimelondHdfsShardPath(shardId: Int, path: String, timelon: Timelon): String = {
+    val timelonStr = timelon.format("yyyy/MM/dd")
+    s"$path/$timelonStr/shard_$shardId"
   }
 
-  def getHdfsPath(path: String, overrideBaseHdfsPath: Option[String] = None): String = {
-    val basePath = overrideBaseHdfsPath.getOrElse(BaseHdfsPath)
-    s"$basePath$path"
+  delonf gelontHdfsPath(path: String, ovelonrridelonBaselonHdfsPath: Option[String] = Nonelon): String = {
+    val baselonPath = ovelonrridelonBaselonHdfsPath.gelontOrelonlselon(BaselonHdfsPath)
+    s"$baselonPath$path"
   }
 
-  private def hash(kArr: Array[Byte], seed: Int): Int = {
-    MurmurHash3.bytesHash(kArr, seed) & 0x7fffffff // keep positive
+  privatelon delonf hash(kArr: Array[Bytelon], selonelond: Int): Int = {
+    MurmurHash3.bytelonsHash(kArr, selonelond) & 0x7fffffff // kelonelonp positivelon
   }
 
-  private def hashLong(l: Long, seed: Int): Int = {
-    hash(ByteBuffer.allocate(8).putLong(l).array(), seed)
+  privatelon delonf hashLong(l: Long, selonelond: Int): Int = {
+    hash(BytelonBuffelonr.allocatelon(8).putLong(l).array(), selonelond)
   }
 
-  def shardForUser(userId: Long): Int = {
-    hashLong(userId, RandomSeed) % NumGraphShards
+  delonf shardForUselonr(uselonrId: Long): Int = {
+    hashLong(uselonrId, RandomSelonelond) % NumGraphShards
   }
 
 }

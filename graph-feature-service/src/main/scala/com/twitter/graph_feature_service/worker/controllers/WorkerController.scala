@@ -1,38 +1,38 @@
-package com.twitter.graph_feature_service.worker.controllers
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.controllelonrs
 
-import com.twitter.discovery.common.stats.DiscoveryStatsFilter
-import com.twitter.finagle.Service
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.thrift.Controller
-import com.twitter.graph_feature_service.thriftscala
-import com.twitter.graph_feature_service.thriftscala.Worker.GetIntersection
-import com.twitter.graph_feature_service.thriftscala._
-import com.twitter.graph_feature_service.worker.handlers._
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.discovelonry.common.stats.DiscovelonryStatsFiltelonr
+import com.twittelonr.finaglelon.Selonrvicelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finatra.thrift.Controllelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.Workelonr.GelontIntelonrselonction
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala._
+import com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.handlelonrs._
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class WorkerController @Inject() (
-  workerGetIntersectionHandler: WorkerGetIntersectionHandler
+@Singlelonton
+class WorkelonrControllelonr @Injelonct() (
+  workelonrGelontIntelonrselonctionHandlelonr: WorkelonrGelontIntelonrselonctionHandlelonr
 )(
-  implicit statsReceiver: StatsReceiver)
-    extends Controller(thriftscala.Worker) {
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Controllelonr(thriftscala.Workelonr) {
 
-  // use DiscoveryStatsFilter to filter out exceptions out of our control
-  private val getIntersectionService: Service[
-    WorkerIntersectionRequest,
-    WorkerIntersectionResponse
+  // uselon DiscovelonryStatsFiltelonr to filtelonr out elonxcelonptions out of our control
+  privatelon val gelontIntelonrselonctionSelonrvicelon: Selonrvicelon[
+    WorkelonrIntelonrselonctionRelonquelonst,
+    WorkelonrIntelonrselonctionRelonsponselon
   ] =
-    new DiscoveryStatsFilter[WorkerIntersectionRequest, WorkerIntersectionResponse](
-      statsReceiver.scope("srv").scope("get_intersection")
-    ).andThen(Service.mk(workerGetIntersectionHandler))
+    nelonw DiscovelonryStatsFiltelonr[WorkelonrIntelonrselonctionRelonquelonst, WorkelonrIntelonrselonctionRelonsponselon](
+      statsReloncelonivelonr.scopelon("srv").scopelon("gelont_intelonrselonction")
+    ).andThelonn(Selonrvicelon.mk(workelonrGelontIntelonrselonctionHandlelonr))
 
-  val getIntersection: Service[GetIntersection.Args, WorkerIntersectionResponse] = { args =>
-    getIntersectionService(args.request).onFailure { throwable =>
-      logger.error(s"Failure to get intersection for request $args.", throwable)
+  val gelontIntelonrselonction: Selonrvicelon[GelontIntelonrselonction.Args, WorkelonrIntelonrselonctionRelonsponselon] = { args =>
+    gelontIntelonrselonctionSelonrvicelon(args.relonquelonst).onFailurelon { throwablelon =>
+      loggelonr.elonrror(s"Failurelon to gelont intelonrselonction for relonquelonst $args.", throwablelon)
     }
   }
 
-  handle(GetIntersection) { getIntersection }
+  handlelon(GelontIntelonrselonction) { gelontIntelonrselonction }
 
 }

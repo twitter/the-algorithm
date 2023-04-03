@@ -1,27 +1,27 @@
-CREATE OR REPLACE MODEL `twttr-recos-ml-prod.realgraph.prod$table_suffix$`
-OPTIONS(MODEL_TYPE='BOOSTED_TREE_CLASSIFIER',
-        BOOSTER_TYPE = 'GBTREE',
-        NUM_PARALLEL_TREE = 1,
-        MAX_ITERATIONS = 20,
-        TREE_METHOD = 'HIST',
-        EARLY_STOP = TRUE,
-        SUBSAMPLE = 0.01,
-        INPUT_LABEL_COLS = ['label'],
-        DATA_SPLIT_METHOD = 'CUSTOM',
-        DATA_SPLIT_COL = 'if_eval')
-AS SELECT 
-  label,
-  source_id,
-  destination_id,
+CRelonATelon OR RelonPLACelon MODelonL `twttr-reloncos-ml-prod.relonalgraph.prod$tablelon_suffix$`
+OPTIONS(MODelonL_TYPelon='BOOSTelonD_TRelonelon_CLASSIFIelonR',
+        BOOSTelonR_TYPelon = 'GBTRelonelon',
+        NUM_PARALLelonL_TRelonelon = 1,
+        MAX_ITelonRATIONS = 20,
+        TRelonelon_MelonTHOD = 'HIST',
+        elonARLY_STOP = TRUelon,
+        SUBSAMPLelon = 0.01,
+        INPUT_LABelonL_COLS = ['labelonl'],
+        DATA_SPLIT_MelonTHOD = 'CUSTOM',
+        DATA_SPLIT_COL = 'if_elonval')
+AS SelonLelonCT
+  labelonl,
+  sourcelon_id,
+  delonstination_id,
   num_days,
-  num_tweets,
+  num_twelonelonts,
   num_follows,
-  num_favorites,
-  num_tweet_clicks,
-  num_profile_views,
-  days_since_last_interaction,
-  label_types,
-  -- partition train/test by source_id's
-  IF(MOD(ABS(FARM_FINGERPRINT(CAST(source_id AS STRING))), 10) = 0, true, false) AS if_eval,
-FROM `twttr-recos-ml-prod.realgraph.train$table_suffix$`
+  num_favoritelons,
+  num_twelonelont_clicks,
+  num_profilelon_vielonws,
+  days_sincelon_last_intelonraction,
+  labelonl_typelons,
+  -- partition train/telonst by sourcelon_id's
+  IF(MOD(ABS(FARM_FINGelonRPRINT(CAST(sourcelon_id AS STRING))), 10) = 0, truelon, falselon) AS if_elonval,
+FROM `twttr-reloncos-ml-prod.relonalgraph.train$tablelon_suffix$`
 ;

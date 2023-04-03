@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait BaseFeedbackActionInfoBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+trait BaselonFelonelondbackActionInfoBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]] {
 
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo]
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[FelonelondbackActionInfo]
 }

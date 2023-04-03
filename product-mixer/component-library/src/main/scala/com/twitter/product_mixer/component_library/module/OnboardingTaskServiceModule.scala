@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.onboarding.task.service.thriftscala.TaskService
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.onboarding.task.selonrvicelon.thriftscala.TaskSelonrvicelon
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
 
-object OnboardingTaskServiceModule
-    extends ThriftMethodBuilderClientModule[
-      TaskService.ServicePerEndpoint,
-      TaskService.MethodPerEndpoint
+objelonct OnboardingTaskSelonrvicelonModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      TaskSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      TaskSelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
-  override val label: String = "onboarding-task-service"
-  override val dest: String = "/s/onboarding-task-service/onboarding-task-service"
+    with MtlsClielonnt {
+  ovelonrridelon val labelonl: String = "onboarding-task-selonrvicelon"
+  ovelonrridelon val delonst: String = "/s/onboarding-task-selonrvicelon/onboarding-task-selonrvicelon"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(500.millis)
-      .withTimeoutTotal(1000.millis)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = {
+    melonthodBuildelonr
+      .withTimelonoutPelonrRelonquelonst(500.millis)
+      .withTimelonoutTotal(1000.millis)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 500.milliselonconds
 }

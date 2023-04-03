@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TitleNavBar
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.pagelons.relonndelonr.{thriftscala => urp}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ClielonntelonvelonntInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TitlelonNavBar
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TitleNavBarMarshaller @Inject() (
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+@Singlelonton
+class TitlelonNavBarMarshallelonr @Injelonct() (
+  clielonntelonvelonntInfoMarshallelonr: ClielonntelonvelonntInfoMarshallelonr) {
 
-  def apply(titleNavBar: TitleNavBar): urp.TitleNavBar =
-    urp.TitleNavBar(
-      title = titleNavBar.title,
-      subtitle = titleNavBar.subtitle,
-      clientEventInfo = titleNavBar.clientEventInfo.map(clientEventInfoMarshaller(_))
+  delonf apply(titlelonNavBar: TitlelonNavBar): urp.TitlelonNavBar =
+    urp.TitlelonNavBar(
+      titlelon = titlelonNavBar.titlelon,
+      subtitlelon = titlelonNavBar.subtitlelon,
+      clielonntelonvelonntInfo = titlelonNavBar.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_))
     )
 }

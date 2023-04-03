@@ -1,56 +1,56 @@
-package com.twitter.product_mixer.core.pipeline.candidate
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.async_feature_map_executor.AsyncFeatureMapExecutor
-import com.twitter.product_mixer.core.service.candidate_decorator_executor.CandidateDecoratorExecutor
-import com.twitter.product_mixer.core.service.candidate_feature_hydrator_executor.CandidateFeatureHydratorExecutor
-import com.twitter.product_mixer.core.service.candidate_source_executor.CandidateSourceExecutor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutor
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.async_felonaturelon_map_elonxeloncutor.AsyncFelonaturelonMapelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_deloncorator_elonxeloncutor.CandidatelonDeloncoratorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_felonaturelon_hydrator_elonxeloncutor.CandidatelonFelonaturelonHydratorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_sourcelon_elonxeloncutor.CandidatelonSourcelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.filtelonr_elonxeloncutor.Filtelonrelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.Gatelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.group_relonsults_elonxeloncutor.GroupRelonsultselonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CandidatePipelineBuilderFactory @Inject() (
-  queryFeatureHydratorExecutor: QueryFeatureHydratorExecutor,
-  asyncFeatureMapExecutor: AsyncFeatureMapExecutor,
-  candidateDecoratorExecutor: CandidateDecoratorExecutor,
-  candidateFeatureHydratorExecutor: CandidateFeatureHydratorExecutor,
-  candidateSourceExecutor: CandidateSourceExecutor,
-  groupResultsExecutor: GroupResultsExecutor,
-  filterExecutor: FilterExecutor,
-  gateExecutor: GateExecutor,
-  statsReceiver: StatsReceiver) {
-  def get[
-    Query <: PipelineQuery,
-    CandidateSourceQuery,
-    CandidateSourceResult,
-    Result <: UniversalNoun[Any]
-  ]: CandidatePipelineBuilder[
-    Query,
-    CandidateSourceQuery,
-    CandidateSourceResult,
-    Result
+@Singlelonton
+class CandidatelonPipelonlinelonBuildelonrFactory @Injelonct() (
+  quelonryFelonaturelonHydratorelonxeloncutor: QuelonryFelonaturelonHydratorelonxeloncutor,
+  asyncFelonaturelonMapelonxeloncutor: AsyncFelonaturelonMapelonxeloncutor,
+  candidatelonDeloncoratorelonxeloncutor: CandidatelonDeloncoratorelonxeloncutor,
+  candidatelonFelonaturelonHydratorelonxeloncutor: CandidatelonFelonaturelonHydratorelonxeloncutor,
+  candidatelonSourcelonelonxeloncutor: CandidatelonSourcelonelonxeloncutor,
+  groupRelonsultselonxeloncutor: GroupRelonsultselonxeloncutor,
+  filtelonrelonxeloncutor: Filtelonrelonxeloncutor,
+  gatelonelonxeloncutor: Gatelonelonxeloncutor,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  delonf gelont[
+    Quelonry <: PipelonlinelonQuelonry,
+    CandidatelonSourcelonQuelonry,
+    CandidatelonSourcelonRelonsult,
+    Relonsult <: UnivelonrsalNoun[Any]
+  ]: CandidatelonPipelonlinelonBuildelonr[
+    Quelonry,
+    CandidatelonSourcelonQuelonry,
+    CandidatelonSourcelonRelonsult,
+    Relonsult
   ] = {
-    new CandidatePipelineBuilder[
-      Query,
-      CandidateSourceQuery,
-      CandidateSourceResult,
-      Result
+    nelonw CandidatelonPipelonlinelonBuildelonr[
+      Quelonry,
+      CandidatelonSourcelonQuelonry,
+      CandidatelonSourcelonRelonsult,
+      Relonsult
     ](
-      queryFeatureHydratorExecutor,
-      asyncFeatureMapExecutor,
-      candidateDecoratorExecutor,
-      candidateFeatureHydratorExecutor,
-      candidateSourceExecutor,
-      groupResultsExecutor,
-      filterExecutor,
-      gateExecutor,
-      statsReceiver
+      quelonryFelonaturelonHydratorelonxeloncutor,
+      asyncFelonaturelonMapelonxeloncutor,
+      candidatelonDeloncoratorelonxeloncutor,
+      candidatelonFelonaturelonHydratorelonxeloncutor,
+      candidatelonSourcelonelonxeloncutor,
+      groupRelonsultselonxeloncutor,
+      filtelonrelonxeloncutor,
+      gatelonelonxeloncutor,
+      statsReloncelonivelonr
     )
   }
 }

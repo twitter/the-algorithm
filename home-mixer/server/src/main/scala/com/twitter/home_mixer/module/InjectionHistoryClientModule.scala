@@ -1,88 +1,88 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.builder.ClientBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.manhattan.v2.thriftscala.{ManhattanCoordinator => ManhattanV2}
-import com.twitter.timelinemixer.clients.manhattan.InjectionHistoryClient
-import com.twitter.timelinemixer.clients.manhattan.ManhattanDatasetConfig
-import com.twitter.timelines.clients.manhattan.Dataset
-import com.twitter.timelines.clients.manhattan.ManhattanClient
-import com.twitter.timelines.util.stats.RequestScope
-import javax.inject.Singleton
-import org.apache.thrift.protocol.TBinaryProtocol
-import com.twitter.timelines.config.TimelinesUnderlyingClientConfiguration.ConnectTimeout
-import com.twitter.timelines.config.TimelinesUnderlyingClientConfiguration.TCPConnectTimeout
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.buildelonr.ClielonntBuildelonr
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt._
+import com.twittelonr.finaglelon.selonrvicelon.RelontryPolicy
+import com.twittelonr.finaglelon.ssl.OpportunisticTls
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.manhattan.v2.thriftscala.{ManhattanCoordinator => ManhattanV2}
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.manhattan.InjelonctionHistoryClielonnt
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.manhattan.ManhattanDataselontConfig
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.Dataselont
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.ManhattanClielonnt
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstScopelon
+import javax.injelonct.Singlelonton
+import org.apachelon.thrift.protocol.TBinaryProtocol
+import com.twittelonr.timelonlinelons.config.TimelonlinelonsUndelonrlyingClielonntConfiguration.ConnelonctTimelonout
+import com.twittelonr.timelonlinelons.config.TimelonlinelonsUndelonrlyingClielonntConfiguration.TCPConnelonctTimelonout
 
-object InjectionHistoryClientModule extends TwitterModule {
-  private val ProdDataset = "suggestion_history"
-  private val StagingDataset = "suggestion_history_nonprod"
-  private val AppId = "twitter_suggests"
-  private val ServiceName = "manhattan.omega"
-  private val OmegaManhattanDest = "/s/manhattan/omega.native-thrift"
-  private val InjectionRequestScope = RequestScope("injectionHistoryClient")
-  private val RequestTimeout = 75.millis
-  private val Timeout = 150.millis
+objelonct InjelonctionHistoryClielonntModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon val ProdDataselont = "suggelonstion_history"
+  privatelon val StagingDataselont = "suggelonstion_history_nonprod"
+  privatelon val AppId = "twittelonr_suggelonsts"
+  privatelon val SelonrvicelonNamelon = "manhattan.omelonga"
+  privatelon val OmelongaManhattanDelonst = "/s/manhattan/omelonga.nativelon-thrift"
+  privatelon val InjelonctionRelonquelonstScopelon = RelonquelonstScopelon("injelonctionHistoryClielonnt")
+  privatelon val RelonquelonstTimelonout = 75.millis
+  privatelon val Timelonout = 150.millis
 
-  val retryPolicy = RetryPolicy.tries(
+  val relontryPolicy = RelontryPolicy.trielons(
     2,
-    RetryPolicy.TimeoutAndWriteExceptionsOnly
-      .orElse(RetryPolicy.ChannelClosedExceptionsOnly))
+    RelontryPolicy.TimelonoutAndWritelonelonxcelonptionsOnly
+      .orelonlselon(RelontryPolicy.ChannelonlCloselondelonxcelonptionsOnly))
 
-  @Provides
-  @Singleton
-  def providesInjectionHistoryClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @Providelons
+  @Singlelonton
+  delonf providelonsInjelonctionHistoryClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
   ) = {
-    val dataset = serviceIdentifier.environment.toLowerCase match {
-      case "prod" => ProdDataset
-      case _ => StagingDataset
+    val dataselont = selonrvicelonIdelonntifielonr.elonnvironmelonnt.toLowelonrCaselon match {
+      caselon "prod" => ProdDataselont
+      caselon _ => StagingDataselont
     }
 
-    val thriftMuxClient = ClientBuilder()
-      .name(ServiceName)
-      .daemon(daemonize = true)
-      .failFast(enabled = true)
-      .retryPolicy(retryPolicy)
-      .tcpConnectTimeout(TCPConnectTimeout)
-      .connectTimeout(ConnectTimeout)
-      .dest(OmegaManhattanDest)
-      .requestTimeout(RequestTimeout)
-      .timeout(Timeout)
-      .stack(ThriftMux.client
-        .withMutualTls(serviceIdentifier)
-        .withOpportunisticTls(OpportunisticTls.Required))
+    val thriftMuxClielonnt = ClielonntBuildelonr()
+      .namelon(SelonrvicelonNamelon)
+      .daelonmon(daelonmonizelon = truelon)
+      .failFast(elonnablelond = truelon)
+      .relontryPolicy(relontryPolicy)
+      .tcpConnelonctTimelonout(TCPConnelonctTimelonout)
+      .connelonctTimelonout(ConnelonctTimelonout)
+      .delonst(OmelongaManhattanDelonst)
+      .relonquelonstTimelonout(RelonquelonstTimelonout)
+      .timelonout(Timelonout)
+      .stack(ThriftMux.clielonnt
+        .withMutualTls(selonrvicelonIdelonntifielonr)
+        .withOpportunisticTls(OpportunisticTls.Relonquirelond))
       .build()
 
-    val manhattanOmegaClient = new ManhattanV2.FinagledClient(
-      service = thriftMuxClient,
-      protocolFactory = new TBinaryProtocol.Factory(),
-      serviceName = ServiceName,
+    val manhattanOmelongaClielonnt = nelonw ManhattanV2.FinaglelondClielonnt(
+      selonrvicelon = thriftMuxClielonnt,
+      protocolFactory = nelonw TBinaryProtocol.Factory(),
+      selonrvicelonNamelon = SelonrvicelonNamelon,
     )
 
-    val readOnlyMhClient = new ManhattanClient(
+    val relonadOnlyMhClielonnt = nelonw ManhattanClielonnt(
       appId = AppId,
-      manhattan = manhattanOmegaClient,
-      requestScope = InjectionRequestScope,
-      serviceName = ServiceName,
-      statsReceiver = statsReceiver
-    ).readOnly
+      manhattan = manhattanOmelongaClielonnt,
+      relonquelonstScopelon = InjelonctionRelonquelonstScopelon,
+      selonrvicelonNamelon = SelonrvicelonNamelon,
+      statsReloncelonivelonr = statsReloncelonivelonr
+    ).relonadOnly
 
-    val mhDatasetConfig = new ManhattanDatasetConfig {
-      override val SuggestionHistoryDataset = Dataset(dataset)
+    val mhDataselontConfig = nelonw ManhattanDataselontConfig {
+      ovelonrridelon val SuggelonstionHistoryDataselont = Dataselont(dataselont)
     }
 
-    new InjectionHistoryClient(
-      readOnlyMhClient,
-      mhDatasetConfig
+    nelonw InjelonctionHistoryClielonnt(
+      relonadOnlyMhClielonnt,
+      mhDataselontConfig
     )
   }
 }

@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
 
-trait BaseUrlBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+trait BaselonUrlBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]] {
 
-  def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): Url
+  delonf apply(quelonry: Quelonry, candidatelon: Candidatelon, candidatelonFelonaturelons: FelonaturelonMap): Url
 }

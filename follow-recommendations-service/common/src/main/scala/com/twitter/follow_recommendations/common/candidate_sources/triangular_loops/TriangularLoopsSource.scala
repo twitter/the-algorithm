@@ -1,91 +1,91 @@
-package com.twitter.follow_recommendations.common.candidate_sources.triangular_loops
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.triangular_loops
 
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedByUserIds
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.TriangularLoopsV2OnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.wtf.triangular_loop.thriftscala.Candidates
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FollowProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondByUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.TriangularLoopsV2OnUselonrClielonntColumn
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.wtf.triangular_loop.thriftscala.Candidatelons
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TriangularLoopsSource @Inject() (
-  triangularLoopsV2Column: TriangularLoopsV2OnUserClientColumn)
-    extends CandidateSource[
-      HasParams with HasClientContext with HasRecentFollowedByUserIds,
-      CandidateUser
+@Singlelonton
+class TriangularLoopsSourcelon @Injelonct() (
+  triangularLoopsV2Column: TriangularLoopsV2OnUselonrClielonntColumn)
+    elonxtelonnds CandidatelonSourcelon[
+      HasParams with HasClielonntContelonxt with HasReloncelonntFollowelondByUselonrIds,
+      CandidatelonUselonr
     ] {
 
-  override val identifier: CandidateSourceIdentifier = TriangularLoopsSource.Identifier
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = TriangularLoopsSourcelon.Idelonntifielonr
 
-  override def apply(
-    target: HasParams with HasClientContext with HasRecentFollowedByUserIds
-  ): Stitch[Seq[CandidateUser]] = {
-    val candidates = target.getOptionalUserId
-      .map { userId =>
-        val fetcher = triangularLoopsV2Column.fetcher
-        fetcher
-          .fetch(userId)
-          .map { result =>
-            result.v
-              .map(TriangularLoopsSource.mapCandidatesToCandidateUsers)
-              .getOrElse(Nil)
+  ovelonrridelon delonf apply(
+    targelont: HasParams with HasClielonntContelonxt with HasReloncelonntFollowelondByUselonrIds
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    val candidatelons = targelont.gelontOptionalUselonrId
+      .map { uselonrId =>
+        val felontchelonr = triangularLoopsV2Column.felontchelonr
+        felontchelonr
+          .felontch(uselonrId)
+          .map { relonsult =>
+            relonsult.v
+              .map(TriangularLoopsSourcelon.mapCandidatelonsToCandidatelonUselonrs)
+              .gelontOrelonlselon(Nil)
           }
-      }.getOrElse(Stitch.Nil)
-    // Make sure recentFollowedByUserIds is populated within the RequestBuilder before enable it
-    if (target.params(TriangularLoopsParams.KeepOnlyCandidatesWhoFollowTargetUser))
-      filterOutCandidatesNotFollowingTargetUser(candidates, target.recentFollowedByUserIds)
-    else
-      candidates
+      }.gelontOrelonlselon(Stitch.Nil)
+    // Makelon surelon reloncelonntFollowelondByUselonrIds is populatelond within thelon RelonquelonstBuildelonr belonforelon elonnablelon it
+    if (targelont.params(TriangularLoopsParams.KelonelonpOnlyCandidatelonsWhoFollowTargelontUselonr))
+      filtelonrOutCandidatelonsNotFollowingTargelontUselonr(candidatelons, targelont.reloncelonntFollowelondByUselonrIds)
+    elonlselon
+      candidatelons
   }
 
-  def filterOutCandidatesNotFollowingTargetUser(
-    candidatesStitch: Stitch[Seq[CandidateUser]],
-    recentFollowings: Option[Seq[Long]]
-  ): Stitch[Seq[CandidateUser]] = {
-    candidatesStitch.map { candidates =>
-      val recentFollowingIdsSet = recentFollowings.getOrElse(Nil).toSet
-      candidates.filter(candidate => recentFollowingIdsSet.contains(candidate.id))
+  delonf filtelonrOutCandidatelonsNotFollowingTargelontUselonr(
+    candidatelonsStitch: Stitch[Selonq[CandidatelonUselonr]],
+    reloncelonntFollowings: Option[Selonq[Long]]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    candidatelonsStitch.map { candidatelons =>
+      val reloncelonntFollowingIdsSelont = reloncelonntFollowings.gelontOrelonlselon(Nil).toSelont
+      candidatelons.filtelonr(candidatelon => reloncelonntFollowingIdsSelont.contains(candidatelon.id))
     }
   }
 }
 
-object TriangularLoopsSource {
+objelonct TriangularLoopsSourcelon {
 
-  val Identifier = CandidateSourceIdentifier(Algorithm.TriangularLoop.toString)
-  val NumResults = 100
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.TriangularLoop.toString)
+  val NumRelonsults = 100
 
-  def mapCandidatesToCandidateUsers(candidates: Candidates): Seq[CandidateUser] = {
-    candidates.candidates
-      .map { candidate =>
-        CandidateUser(
-          id = candidate.incomingUserId,
-          score = Some(1.0 / math
-            .max(1, candidate.numFollowers.getOrElse(0) + candidate.numFollowings.getOrElse(0))),
-          reason = Some(
-            Reason(
-              Some(
+  delonf mapCandidatelonsToCandidatelonUselonrs(candidatelons: Candidatelons): Selonq[CandidatelonUselonr] = {
+    candidatelons.candidatelons
+      .map { candidatelon =>
+        CandidatelonUselonr(
+          id = candidatelon.incomingUselonrId,
+          scorelon = Somelon(1.0 / math
+            .max(1, candidatelon.numFollowelonrs.gelontOrelonlselon(0) + candidatelon.numFollowings.gelontOrelonlselon(0))),
+          relonason = Somelon(
+            Relonason(
+              Somelon(
                 AccountProof(
                   followProof =
-                    if (candidate.socialProofUserIds.isEmpty) None
-                    else
-                      Some(
+                    if (candidatelon.socialProofUselonrIds.iselonmpty) Nonelon
+                    elonlselon
+                      Somelon(
                         FollowProof(
-                          candidate.socialProofUserIds,
-                          candidate.numSocialProof.getOrElse(candidate.socialProofUserIds.size)))
+                          candidatelon.socialProofUselonrIds,
+                          candidatelon.numSocialProof.gelontOrelonlselon(candidatelon.socialProofUselonrIds.sizelon)))
                 )
               )
             )
           )
-        ).withCandidateSource(Identifier)
-      }.sortBy(-_.score.getOrElse(0.0)).take(NumResults)
+        ).withCandidatelonSourcelon(Idelonntifielonr)
+      }.sortBy(-_.scorelon.gelontOrelonlselon(0.0)).takelon(NumRelonsults)
   }
 }

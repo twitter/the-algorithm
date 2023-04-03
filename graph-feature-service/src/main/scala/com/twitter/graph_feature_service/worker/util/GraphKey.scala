@@ -1,32 +1,32 @@
-package com.twitter.graph_feature_service.worker.util
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType
-import com.twitter.graph_feature_service.thriftscala.EdgeType._
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.elondgelonTypelon
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.elondgelonTypelon._
 
-sealed trait GraphKey {
+selonalelond trait GraphKelony {
 
-  def edgeType: EdgeType
+  delonf elondgelonTypelon: elondgelonTypelon
 }
 
-sealed trait PartialValueGraph extends GraphKey
+selonalelond trait PartialValuelonGraph elonxtelonnds GraphKelony
 
 /**
  * Follow Graphs
  */
-object FollowingPartialValueGraph extends PartialValueGraph {
+objelonct FollowingPartialValuelonGraph elonxtelonnds PartialValuelonGraph {
 
-  override def edgeType: EdgeType = Following
+  ovelonrridelon delonf elondgelonTypelon: elondgelonTypelon = Following
 }
 
-object FollowedByPartialValueGraph extends PartialValueGraph {
+objelonct FollowelondByPartialValuelonGraph elonxtelonnds PartialValuelonGraph {
 
-  override def edgeType: EdgeType = FollowedBy
+  ovelonrridelon delonf elondgelonTypelon: elondgelonTypelon = FollowelondBy
 }
 
 /**
  * Mutual Follow Graphs
  */
-object MutualFollowPartialValueGraph extends PartialValueGraph {
+objelonct MutualFollowPartialValuelonGraph elonxtelonnds PartialValuelonGraph {
 
-  override def edgeType: EdgeType = MutualFollow
+  ovelonrridelon delonf elondgelonTypelon: elondgelonTypelon = MutualFollow
 }

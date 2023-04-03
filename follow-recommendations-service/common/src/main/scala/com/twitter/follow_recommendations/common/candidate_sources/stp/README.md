@@ -1,47 +1,47 @@
-# Strong Tie Prediction (STP) Candidate Source
-Provides accounts with a high probability of potential mutual follows between the target user and the candidates.
+# Strong Tielon Prelondiction (STP) Candidatelon Sourcelon
+Providelons accounts with a high probability of potelonntial mutual follows belontwelonelonn thelon targelont uselonr and thelon candidatelons.
 
-## STP: Strong Tie Prediction
-STP refers to the prediction of p(MutualFollow) for a given pair of users, which powers the concept of People You May Know (PYMK).
+## STP: Strong Tielon Prelondiction
+STP relonfelonrs to thelon prelondiction of p(MutualFollow) for a givelonn pair of uselonrs, which powelonrs thelon concelonpt of Pelonoplelon You May Know (PYMK).
 
-For training, positives are existing mutual follows and negatives are mutual follows of your follows. Features help distinguish between friends and friends-of-friends.
+For training, positivelons arelon elonxisting mutual follows and nelongativelons arelon mutual follows of your follows. Felonaturelons helonlp distinguish belontwelonelonn frielonnds and frielonnds-of-frielonnds.
 
-For inference, candidates are the topK mutuals of your follows. These are rescored, and we only send the topN to the product or next re-ranker.
+For infelonrelonncelon, candidatelons arelon thelon topK mutuals of your follows. Thelonselon arelon relonscorelond, and welon only selonnd thelon topN to thelon product or nelonxt relon-rankelonr.
 
 
-### Online STP
-Online STP generates a pool of candidates who are then ranked via a lightweight ranker.
-It does this through a two-hop expansion of the mutual follow graph of users, where the first-degree neighbor is another user who has a link with the target user from following types:
+### Onlinelon STP
+Onlinelon STP gelonnelonratelons a pool of candidatelons who arelon thelonn rankelond via a lightwelonight rankelonr.
+It doelons this through a two-hop elonxpansion of thelon mutual follow graph of uselonrs, whelonrelon thelon first-delongrelonelon nelonighbor is anothelonr uselonr who has a link with thelon targelont uselonr from following typelons:
 * Mutual Follow
-* Outbound phone contacts
-* Outbound email contacts
-* Inbound phone contacts
-* Inbound email contacts
+* Outbound phonelon contacts
+* Outbound elonmail contacts
+* Inbound phonelon contacts
+* Inbound elonmail contacts
 
-The second-degree neighbor can only be a mutual follow link.
+Thelon seloncond-delongrelonelon nelonighbor can only belon a mutual follow link.
 
-Currently, online STP can only perform the two-hop expansions on new users (<= 30 days since signup) due to compute resource constraints.
+Currelonntly, onlinelon STP can only pelonrform thelon two-hop elonxpansions on nelonw uselonrs (<= 30 days sincelon signup) duelon to computelon relonsourcelon constraints.
 
-Features used for the lightweight ranker:
-* realGraphWeight: real graph weight between user and first degree nodes
-* isForwardEmail: whether the candidate is in the user's email book
-* isReverseEmail: whether the user is in the candidate's email book
-* isForwardPhonebook: whether the candidate is in the user's phone book
-* isReversePhonebook: whether the user is in the candidate's phone book
-* numMutualFollowPath: number of mutual follow path between the user and the candidate
-* numLowTweepcredFollowPath: number of mutual low TweepCred path between the user and the candidate
-  * Tweepcred is a social network analysis tool that calculates the influence of Twitter users based on their interactions with other users. The tool uses the PageRank algorithm to rank users based on their influence.
-* hasForwardEmailPath: is there a third user x in the user's email book that connect user -> x -> candidate?
-* hasReverseEmailPath: is there a third user x in the user's reverse email book that connect user -> x -> candidate?
-* hasForwardPhonebookPath: is there a third user x in the user's phonebook that connect user -> x -> candidate?
-* hasReversePhonebookPath: is there a third user x in the user's reverse phonebook that connect user -> x -> candidate?
+Felonaturelons uselond for thelon lightwelonight rankelonr:
+* relonalGraphWelonight: relonal graph welonight belontwelonelonn uselonr and first delongrelonelon nodelons
+* isForwardelonmail: whelonthelonr thelon candidatelon is in thelon uselonr's elonmail book
+* isRelonvelonrselonelonmail: whelonthelonr thelon uselonr is in thelon candidatelon's elonmail book
+* isForwardPhonelonbook: whelonthelonr thelon candidatelon is in thelon uselonr's phonelon book
+* isRelonvelonrselonPhonelonbook: whelonthelonr thelon uselonr is in thelon candidatelon's phonelon book
+* numMutualFollowPath: numbelonr of mutual follow path belontwelonelonn thelon uselonr and thelon candidatelon
+* numLowTwelonelonpcrelondFollowPath: numbelonr of mutual low TwelonelonpCrelond path belontwelonelonn thelon uselonr and thelon candidatelon
+  * Twelonelonpcrelond is a social nelontwork analysis tool that calculatelons thelon influelonncelon of Twittelonr uselonrs baselond on thelonir intelonractions with othelonr uselonrs. Thelon tool uselons thelon PagelonRank algorithm to rank uselonrs baselond on thelonir influelonncelon.
+* hasForwardelonmailPath: is thelonrelon a third uselonr x in thelon uselonr's elonmail book that connelonct uselonr -> x -> candidatelon?
+* hasRelonvelonrselonelonmailPath: is thelonrelon a third uselonr x in thelon uselonr's relonvelonrselon elonmail book that connelonct uselonr -> x -> candidatelon?
+* hasForwardPhonelonbookPath: is thelonrelon a third uselonr x in thelon uselonr's phonelonbook that connelonct uselonr -> x -> candidatelon?
+* hasRelonvelonrselonPhonelonbookPath: is thelonrelon a third uselonr x in thelon uselonr's relonvelonrselon phonelonbook that connelonct uselonr -> x -> candidatelon?
 
-### Offline STP
-Offline STP  is powered by Pointwise Mutual Information, which measures the association between two users based on Twitter's mutual follow graph.
-An offline job generates candidates based on the overlap between their Mutual and Addressbook Follows and that of the target user. Candidates are then made available online.
-Candidates in OfflineSTP are "accounts that have a high overlap of mutually-followed accounts with an account in your follow graph."
-This can potentially mean that OfflineSTP has a bigger reach than OnlineSTP.
-For example, in the provided diagram, B and C have a high overlap of mutual follows, so it would be considered a candidate for A that is three hops away.
+### Offlinelon STP
+Offlinelon STP  is powelonrelond by Pointwiselon Mutual Information, which melonasurelons thelon association belontwelonelonn two uselonrs baselond on Twittelonr's mutual follow graph.
+An offlinelon job gelonnelonratelons candidatelons baselond on thelon ovelonrlap belontwelonelonn thelonir Mutual and Addrelonssbook Follows and that of thelon targelont uselonr. Candidatelons arelon thelonn madelon availablelon onlinelon.
+Candidatelons in OfflinelonSTP arelon "accounts that havelon a high ovelonrlap of mutually-followelond accounts with an account in your follow graph."
+This can potelonntially melonan that OfflinelonSTP has a biggelonr relonach than OnlinelonSTP.
+For elonxamplelon, in thelon providelond diagram, B and C havelon a high ovelonrlap of mutual follows, so it would belon considelonrelond a candidatelon for A that is threlonelon hops away.
 ![img.png](img.png)
 
-Overall, STP is a useful candidate source for generating potential follow recommendations based on strong ties between users, but it should be used in conjunction with other candidate sources and re-rankers to provide a well-rounded set of recommendations for the target user.
+Ovelonrall, STP is a uselonful candidatelon sourcelon for gelonnelonrating potelonntial follow reloncommelonndations baselond on strong tielons belontwelonelonn uselonrs, but it should belon uselond in conjunction with othelonr candidatelon sourcelons and relon-rankelonrs to providelon a welonll-roundelond selont of reloncommelonndations for thelon targelont uselonr.

@@ -1,51 +1,51 @@
-package com.twitter.home_mixer.functional_component.decorator.urt.builder
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.urt.buildelonr
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.WhoToFollowFeedbackActionInfoBuilder
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import com.twitter.stringcenter.client.StringCenter
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.service.{thriftscala => tl}
-import com.twitter.timelines.util.FeedbackRequestSerializer
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import com.twitter.timelineservice.thriftscala.FeedbackType
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata.WhoToFollowFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.elonxtelonrnalStringRelongistry
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Providelonr
+import javax.injelonct.Singlelonton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.selonrvicelon.{thriftscala => tl}
+import com.twittelonr.timelonlinelons.util.FelonelondbackRelonquelonstSelonrializelonr
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.thriftscala.SuggelonstTypelon
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.FelonelondbackTypelon
 
-object HomeWhoToFollowFeedbackActionInfoBuilder {
-  private val FeedbackMetadata = tl.FeedbackMetadata(
-    injectionType = Some(SuggestType.WhoToFollow),
-    engagementType = None,
-    entityIds = Seq.empty,
-    ttlMs = None
+objelonct HomelonWhoToFollowFelonelondbackActionInfoBuildelonr {
+  privatelon val FelonelondbackMelontadata = tl.FelonelondbackMelontadata(
+    injelonctionTypelon = Somelon(SuggelonstTypelon.WhoToFollow),
+    elonngagelonmelonntTypelon = Nonelon,
+    elonntityIds = Selonq.elonmpty,
+    ttlMs = Nonelon
   )
-  private val FeedbackRequest =
-    tl.DefaultFeedbackRequest2(FeedbackType.SeeFewer, FeedbackMetadata)
-  private val EncodedFeedbackRequest =
-    FeedbackRequestSerializer.serialize(tl.FeedbackRequest.DefaultFeedbackRequest2(FeedbackRequest))
+  privatelon val FelonelondbackRelonquelonst =
+    tl.DelonfaultFelonelondbackRelonquelonst2(FelonelondbackTypelon.SelonelonFelonwelonr, FelonelondbackMelontadata)
+  privatelon val elonncodelondFelonelondbackRelonquelonst =
+    FelonelondbackRelonquelonstSelonrializelonr.selonrializelon(tl.FelonelondbackRelonquelonst.DelonfaultFelonelondbackRelonquelonst2(FelonelondbackRelonquelonst))
 }
 
-@Singleton
-case class HomeWhoToFollowFeedbackActionInfoBuilder @Inject() (
-  @ProductScoped externalStringRegistryProvider: Provider[ExternalStringRegistry],
-  @ProductScoped stringCenterProvider: Provider[StringCenter])
-    extends BaseFeedbackActionInfoBuilder[PipelineQuery, UserCandidate] {
+@Singlelonton
+caselon class HomelonWhoToFollowFelonelondbackActionInfoBuildelonr @Injelonct() (
+  @ProductScopelond elonxtelonrnalStringRelongistryProvidelonr: Providelonr[elonxtelonrnalStringRelongistry],
+  @ProductScopelond stringCelonntelonrProvidelonr: Providelonr[StringCelonntelonr])
+    elonxtelonnds BaselonFelonelondbackActionInfoBuildelonr[PipelonlinelonQuelonry, UselonrCandidatelon] {
 
-  private val whoToFollowFeedbackActionInfoBuilder = WhoToFollowFeedbackActionInfoBuilder(
-    externalStringRegistry = externalStringRegistryProvider.get(),
-    stringCenter = stringCenterProvider.get(),
-    encodedFeedbackRequest = Some(HomeWhoToFollowFeedbackActionInfoBuilder.EncodedFeedbackRequest)
+  privatelon val whoToFollowFelonelondbackActionInfoBuildelonr = WhoToFollowFelonelondbackActionInfoBuildelonr(
+    elonxtelonrnalStringRelongistry = elonxtelonrnalStringRelongistryProvidelonr.gelont(),
+    stringCelonntelonr = stringCelonntelonrProvidelonr.gelont(),
+    elonncodelondFelonelondbackRelonquelonst = Somelon(HomelonWhoToFollowFelonelondbackActionInfoBuildelonr.elonncodelondFelonelondbackRelonquelonst)
   )
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UserCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[FeedbackActionInfo] =
-    whoToFollowFeedbackActionInfoBuilder.apply(query, candidate, candidateFeatures)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: UselonrCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[FelonelondbackActionInfo] =
+    whoToFollowFelonelondbackActionInfoBuildelonr.apply(quelonry, candidatelon, candidatelonFelonaturelons)
 }

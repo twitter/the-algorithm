@@ -1,349 +1,349 @@
-package com.twitter.cr_mixer.candidate_generation
+packagelon com.twittelonr.cr_mixelonr.candidatelon_gelonnelonration
 
-import com.twitter.cr_mixer.blender.SwitchBlender
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.filter.PostRankFilterRunner
-import com.twitter.cr_mixer.filter.PreRankFilterRunner
-import com.twitter.cr_mixer.logging.CrMixerScribeLogger
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.param.RankerParams
-import com.twitter.cr_mixer.param.RecentNegativeSignalParams
-import com.twitter.cr_mixer.ranker.SwitchRanker
-import com.twitter.cr_mixer.source_signal.SourceInfoRouter
-import com.twitter.cr_mixer.source_signal.UssStore.EnabledNegativeSourceTypes
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Timer
+import com.twittelonr.cr_mixelonr.blelonndelonr.SwitchBlelonndelonr
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.filtelonr.PostRankFiltelonrRunnelonr
+import com.twittelonr.cr_mixelonr.filtelonr.PrelonRankFiltelonrRunnelonr
+import com.twittelonr.cr_mixelonr.logging.CrMixelonrScribelonLoggelonr
+import com.twittelonr.cr_mixelonr.modelonl.BlelonndelondCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.CrCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.GraphSourcelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.RankelondCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.param.RankelonrParams
+import com.twittelonr.cr_mixelonr.param.ReloncelonntNelongativelonSignalParams
+import com.twittelonr.cr_mixelonr.rankelonr.SwitchRankelonr
+import com.twittelonr.cr_mixelonr.sourcelon_signal.SourcelonInfoRoutelonr
+import com.twittelonr.cr_mixelonr.sourcelon_signal.UssStorelon.elonnablelondNelongativelonSourcelonTypelons
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.JavaTimelonr
+import com.twittelonr.util.Timelonr
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * For now it performs the main steps as follows:
- * 1. Source signal (via USS, FRS) fetch
- * 2. Candidate generation
- * 3. Filtering
- * 4. Interleave blender
- * 5. Ranker
- * 6. Post-ranker filter
+ * For now it pelonrforms thelon main stelonps as follows:
+ * 1. Sourcelon signal (via USS, FRS) felontch
+ * 2. Candidatelon gelonnelonration
+ * 3. Filtelonring
+ * 4. Intelonrlelonavelon blelonndelonr
+ * 5. Rankelonr
+ * 6. Post-rankelonr filtelonr
  * 7. Truncation
  */
-@Singleton
-class CrCandidateGenerator @Inject() (
-  sourceInfoRouter: SourceInfoRouter,
-  candidateSourceRouter: CandidateSourcesRouter,
-  switchBlender: SwitchBlender,
-  preRankFilterRunner: PreRankFilterRunner,
-  postRankFilterRunner: PostRankFilterRunner,
-  switchRanker: SwitchRanker,
-  crMixerScribeLogger: CrMixerScribeLogger,
-  timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver) {
-  private val timer: Timer = new JavaTimer(true)
+@Singlelonton
+class CrCandidatelonGelonnelonrator @Injelonct() (
+  sourcelonInfoRoutelonr: SourcelonInfoRoutelonr,
+  candidatelonSourcelonRoutelonr: CandidatelonSourcelonsRoutelonr,
+  switchBlelonndelonr: SwitchBlelonndelonr,
+  prelonRankFiltelonrRunnelonr: PrelonRankFiltelonrRunnelonr,
+  postRankFiltelonrRunnelonr: PostRankFiltelonrRunnelonr,
+  switchRankelonr: SwitchRankelonr,
+  crMixelonrScribelonLoggelonr: CrMixelonrScribelonLoggelonr,
+  timelonoutConfig: TimelonoutConfig,
+  globalStats: StatsReloncelonivelonr) {
+  privatelon val timelonr: Timelonr = nelonw JavaTimelonr(truelon)
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
+  privatelon val stats: StatsReloncelonivelonr = globalStats.scopelon(this.gelontClass.gelontCanonicalNamelon)
 
-  private val fetchSourcesStats = stats.scope("fetchSources")
-  private val fetchPositiveSourcesStats = stats.scope("fetchPositiveSources")
-  private val fetchNegativeSourcesStats = stats.scope("fetchNegativeSources")
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val fetchCandidatesAfterFilterStats = stats.scope("fetchCandidatesAfterFilter")
-  private val preRankFilterStats = stats.scope("preRankFilter")
-  private val interleaveStats = stats.scope("interleave")
-  private val rankStats = stats.scope("rank")
-  private val postRankFilterStats = stats.scope("postRankFilter")
-  private val blueVerifiedTweetStats = stats.scope("blueVerifiedTweetStats")
-  private val blueVerifiedTweetStatsPerSimilarityEngine =
-    stats.scope("blueVerifiedTweetStatsPerSimilarityEngine")
+  privatelon val felontchSourcelonsStats = stats.scopelon("felontchSourcelons")
+  privatelon val felontchPositivelonSourcelonsStats = stats.scopelon("felontchPositivelonSourcelons")
+  privatelon val felontchNelongativelonSourcelonsStats = stats.scopelon("felontchNelongativelonSourcelons")
+  privatelon val felontchCandidatelonsStats = stats.scopelon("felontchCandidatelons")
+  privatelon val felontchCandidatelonsAftelonrFiltelonrStats = stats.scopelon("felontchCandidatelonsAftelonrFiltelonr")
+  privatelon val prelonRankFiltelonrStats = stats.scopelon("prelonRankFiltelonr")
+  privatelon val intelonrlelonavelonStats = stats.scopelon("intelonrlelonavelon")
+  privatelon val rankStats = stats.scopelon("rank")
+  privatelon val postRankFiltelonrStats = stats.scopelon("postRankFiltelonr")
+  privatelon val bluelonVelonrifielondTwelonelontStats = stats.scopelon("bluelonVelonrifielondTwelonelontStats")
+  privatelon val bluelonVelonrifielondTwelonelontStatsPelonrSimilarityelonnginelon =
+    stats.scopelon("bluelonVelonrifielondTwelonelontStatsPelonrSimilarityelonnginelon")
 
-  def get(query: CrCandidateGeneratorQuery): Future[Seq[RankedCandidate]] = {
-    val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", query.product.toString)
-    val perProductBlueVerifiedStats =
-      blueVerifiedTweetStats.scope("perProduct", query.product.toString)
+  delonf gelont(quelonry: CrCandidatelonGelonnelonratorQuelonry): Futurelon[Selonq[RankelondCandidatelon]] = {
+    val allStats = stats.scopelon("all")
+    val pelonrProductStats = stats.scopelon("pelonrProduct", quelonry.product.toString)
+    val pelonrProductBluelonVelonrifielondStats =
+      bluelonVelonrifielondTwelonelontStats.scopelon("pelonrProduct", quelonry.product.toString)
 
-    StatsUtil.trackItemsStats(allStats) {
-      trackResultStats(perProductStats) {
-        StatsUtil.trackItemsStats(perProductStats) {
-          val result = for {
-            (sourceSignals, sourceGraphsMap) <- StatsUtil.trackBlockStats(fetchSourcesStats) {
-              fetchSources(query)
+    StatsUtil.trackItelonmsStats(allStats) {
+      trackRelonsultStats(pelonrProductStats) {
+        StatsUtil.trackItelonmsStats(pelonrProductStats) {
+          val relonsult = for {
+            (sourcelonSignals, sourcelonGraphsMap) <- StatsUtil.trackBlockStats(felontchSourcelonsStats) {
+              felontchSourcelons(quelonry)
             }
-            initialCandidates <- StatsUtil.trackBlockStats(fetchCandidatesAfterFilterStats) {
-              // find the positive and negative signals
-              val (positiveSignals, negativeSignals) = sourceSignals.partition { signal =>
-                !EnabledNegativeSourceTypes.contains(signal.sourceType)
+            initialCandidatelons <- StatsUtil.trackBlockStats(felontchCandidatelonsAftelonrFiltelonrStats) {
+              // find thelon positivelon and nelongativelon signals
+              val (positivelonSignals, nelongativelonSignals) = sourcelonSignals.partition { signal =>
+                !elonnablelondNelongativelonSourcelonTypelons.contains(signal.sourcelonTypelon)
               }
-              fetchPositiveSourcesStats.stat("size").add(positiveSignals.size)
-              fetchNegativeSourcesStats.stat("size").add(negativeSignals.size)
+              felontchPositivelonSourcelonsStats.stat("sizelon").add(positivelonSignals.sizelon)
+              felontchNelongativelonSourcelonsStats.stat("sizelon").add(nelongativelonSignals.sizelon)
 
-              // find the positive signals to keep, removing block and muted users
-              val filteredSourceInfo =
-                if (negativeSignals.nonEmpty && query.params(
-                    RecentNegativeSignalParams.EnableSourceParam)) {
-                  filterSourceInfo(positiveSignals, negativeSignals)
-                } else {
-                  positiveSignals
+              // find thelon positivelon signals to kelonelonp, relonmoving block and mutelond uselonrs
+              val filtelonrelondSourcelonInfo =
+                if (nelongativelonSignals.nonelonmpty && quelonry.params(
+                    ReloncelonntNelongativelonSignalParams.elonnablelonSourcelonParam)) {
+                  filtelonrSourcelonInfo(positivelonSignals, nelongativelonSignals)
+                } elonlselon {
+                  positivelonSignals
                 }
 
-              // fetch candidates from the positive signals
-              StatsUtil.trackBlockStats(fetchCandidatesStats) {
-                fetchCandidates(query, filteredSourceInfo, sourceGraphsMap)
+              // felontch candidatelons from thelon positivelon signals
+              StatsUtil.trackBlockStats(felontchCandidatelonsStats) {
+                felontchCandidatelons(quelonry, filtelonrelondSourcelonInfo, sourcelonGraphsMap)
               }
             }
-            filteredCandidates <- StatsUtil.trackBlockStats(preRankFilterStats) {
-              preRankFilter(query, initialCandidates)
+            filtelonrelondCandidatelons <- StatsUtil.trackBlockStats(prelonRankFiltelonrStats) {
+              prelonRankFiltelonr(quelonry, initialCandidatelons)
             }
-            interleavedCandidates <- StatsUtil.trackItemsStats(interleaveStats) {
-              interleave(query, filteredCandidates)
+            intelonrlelonavelondCandidatelons <- StatsUtil.trackItelonmsStats(intelonrlelonavelonStats) {
+              intelonrlelonavelon(quelonry, filtelonrelondCandidatelons)
             }
-            rankedCandidates <- StatsUtil.trackItemsStats(rankStats) {
-              val candidatesToRank =
-                interleavedCandidates.take(query.params(RankerParams.MaxCandidatesToRank))
-              rank(query, candidatesToRank)
+            rankelondCandidatelons <- StatsUtil.trackItelonmsStats(rankStats) {
+              val candidatelonsToRank =
+                intelonrlelonavelondCandidatelons.takelon(quelonry.params(RankelonrParams.MaxCandidatelonsToRank))
+              rank(quelonry, candidatelonsToRank)
             }
-            postRankFilterCandidates <- StatsUtil.trackItemsStats(postRankFilterStats) {
-              postRankFilter(query, rankedCandidates)
+            postRankFiltelonrCandidatelons <- StatsUtil.trackItelonmsStats(postRankFiltelonrStats) {
+              postRankFiltelonr(quelonry, rankelondCandidatelons)
             }
-          } yield {
+          } yielonld {
             trackTopKStats(
               800,
-              postRankFilterCandidates,
-              isQueryK = false,
-              perProductBlueVerifiedStats)
+              postRankFiltelonrCandidatelons,
+              isQuelonryK = falselon,
+              pelonrProductBluelonVelonrifielondStats)
             trackTopKStats(
               400,
-              postRankFilterCandidates,
-              isQueryK = false,
-              perProductBlueVerifiedStats)
+              postRankFiltelonrCandidatelons,
+              isQuelonryK = falselon,
+              pelonrProductBluelonVelonrifielondStats)
             trackTopKStats(
-              query.maxNumResults,
-              postRankFilterCandidates,
-              isQueryK = true,
-              perProductBlueVerifiedStats)
+              quelonry.maxNumRelonsults,
+              postRankFiltelonrCandidatelons,
+              isQuelonryK = truelon,
+              pelonrProductBluelonVelonrifielondStats)
 
-            val (blueVerifiedTweets, remainingTweets) =
-              postRankFilterCandidates.partition(
-                _.tweetInfo.hasBlueVerifiedAnnotation.contains(true))
-            val topKBlueVerified = blueVerifiedTweets.take(query.maxNumResults)
-            val topKRemaining = remainingTweets.take(query.maxNumResults - topKBlueVerified.size)
+            val (bluelonVelonrifielondTwelonelonts, relonmainingTwelonelonts) =
+              postRankFiltelonrCandidatelons.partition(
+                _.twelonelontInfo.hasBluelonVelonrifielondAnnotation.contains(truelon))
+            val topKBluelonVelonrifielond = bluelonVelonrifielondTwelonelonts.takelon(quelonry.maxNumRelonsults)
+            val topKRelonmaining = relonmainingTwelonelonts.takelon(quelonry.maxNumRelonsults - topKBluelonVelonrifielond.sizelon)
 
-            trackBlueVerifiedTweetStats(topKBlueVerified, perProductBlueVerifiedStats)
+            trackBluelonVelonrifielondTwelonelontStats(topKBluelonVelonrifielond, pelonrProductBluelonVelonrifielondStats)
 
-            if (topKBlueVerified.nonEmpty && query.params(RankerParams.EnableBlueVerifiedTopK)) {
-              topKBlueVerified ++ topKRemaining
-            } else {
-              postRankFilterCandidates
+            if (topKBluelonVelonrifielond.nonelonmpty && quelonry.params(RankelonrParams.elonnablelonBluelonVelonrifielondTopK)) {
+              topKBluelonVelonrifielond ++ topKRelonmaining
+            } elonlselon {
+              postRankFiltelonrCandidatelons
             }
           }
-          result.raiseWithin(timeoutConfig.serviceTimeout)(timer)
+          relonsult.raiselonWithin(timelonoutConfig.selonrvicelonTimelonout)(timelonr)
         }
       }
     }
   }
 
-  private def fetchSources(
-    query: CrCandidateGeneratorQuery
-  ): Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])] = {
-    crMixerScribeLogger.scribeSignalSources(
-      query,
-      sourceInfoRouter
-        .get(query.userId, query.product, query.userState, query.params))
+  privatelon delonf felontchSourcelons(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry
+  ): Futurelon[(Selont[SourcelonInfo], Map[String, Option[GraphSourcelonInfo]])] = {
+    crMixelonrScribelonLoggelonr.scribelonSignalSourcelons(
+      quelonry,
+      sourcelonInfoRoutelonr
+        .gelont(quelonry.uselonrId, quelonry.product, quelonry.uselonrStatelon, quelonry.params))
   }
 
-  private def filterSourceInfo(
-    positiveSignals: Set[SourceInfo],
-    negativeSignals: Set[SourceInfo]
-  ): Set[SourceInfo] = {
-    val filterUsers: Set[Long] = negativeSignals.flatMap {
-      case SourceInfo(_, InternalId.UserId(userId), _) => Some(userId)
-      case _ => None
+  privatelon delonf filtelonrSourcelonInfo(
+    positivelonSignals: Selont[SourcelonInfo],
+    nelongativelonSignals: Selont[SourcelonInfo]
+  ): Selont[SourcelonInfo] = {
+    val filtelonrUselonrs: Selont[Long] = nelongativelonSignals.flatMap {
+      caselon SourcelonInfo(_, IntelonrnalId.UselonrId(uselonrId), _) => Somelon(uselonrId)
+      caselon _ => Nonelon
     }
 
-    positiveSignals.filter {
-      case SourceInfo(_, InternalId.UserId(userId), _) => !filterUsers.contains(userId)
-      case _ => true
+    positivelonSignals.filtelonr {
+      caselon SourcelonInfo(_, IntelonrnalId.UselonrId(uselonrId), _) => !filtelonrUselonrs.contains(uselonrId)
+      caselon _ => truelon
     }
   }
 
-  def fetchCandidates(
-    query: CrCandidateGeneratorQuery,
-    sourceSignals: Set[SourceInfo],
-    sourceGraphs: Map[String, Option[GraphSourceInfo]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    val initialCandidates = candidateSourceRouter
-      .fetchCandidates(
-        query.userId,
-        sourceSignals,
-        sourceGraphs,
-        query.params
+  delonf felontchCandidatelons(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry,
+    sourcelonSignals: Selont[SourcelonInfo],
+    sourcelonGraphs: Map[String, Option[GraphSourcelonInfo]]
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    val initialCandidatelons = candidatelonSourcelonRoutelonr
+      .felontchCandidatelons(
+        quelonry.uselonrId,
+        sourcelonSignals,
+        sourcelonGraphs,
+        quelonry.params
       )
 
-    initialCandidates.map(_.flatten.map { candidate =>
-      if (candidate.tweetInfo.hasBlueVerifiedAnnotation.contains(true)) {
-        blueVerifiedTweetStatsPerSimilarityEngine
-          .scope(query.product.toString).scope(
-            candidate.candidateGenerationInfo.contributingSimilarityEngines.head.similarityEngineType.toString).counter(
-            candidate.tweetInfo.authorId.toString).incr()
+    initialCandidatelons.map(_.flattelonn.map { candidatelon =>
+      if (candidatelon.twelonelontInfo.hasBluelonVelonrifielondAnnotation.contains(truelon)) {
+        bluelonVelonrifielondTwelonelontStatsPelonrSimilarityelonnginelon
+          .scopelon(quelonry.product.toString).scopelon(
+            candidatelon.candidatelonGelonnelonrationInfo.contributingSimilarityelonnginelons.helonad.similarityelonnginelonTypelon.toString).countelonr(
+            candidatelon.twelonelontInfo.authorId.toString).incr()
       }
     })
 
-    crMixerScribeLogger.scribeInitialCandidates(
-      query,
-      initialCandidates
+    crMixelonrScribelonLoggelonr.scribelonInitialCandidatelons(
+      quelonry,
+      initialCandidatelons
     )
   }
 
-  private def preRankFilter(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[Seq[InitialCandidate]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    crMixerScribeLogger.scribePreRankFilterCandidates(
-      query,
-      preRankFilterRunner
-        .runSequentialFilters(query, candidates))
+  privatelon delonf prelonRankFiltelonr(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry,
+    candidatelons: Selonq[Selonq[InitialCandidatelon]]
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    crMixelonrScribelonLoggelonr.scribelonPrelonRankFiltelonrCandidatelons(
+      quelonry,
+      prelonRankFiltelonrRunnelonr
+        .runSelonquelonntialFiltelonrs(quelonry, candidatelons))
   }
 
-  private def postRankFilter(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[RankedCandidate]
-  ): Future[Seq[RankedCandidate]] = {
-    postRankFilterRunner.run(query, candidates)
+  privatelon delonf postRankFiltelonr(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry,
+    candidatelons: Selonq[RankelondCandidatelon]
+  ): Futurelon[Selonq[RankelondCandidatelon]] = {
+    postRankFiltelonrRunnelonr.run(quelonry, candidatelons)
   }
 
-  private def interleave(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[Seq[InitialCandidate]]
-  ): Future[Seq[BlendedCandidate]] = {
-    crMixerScribeLogger.scribeInterleaveCandidates(
-      query,
-      switchBlender
-        .blend(query.params, query.userState, candidates))
+  privatelon delonf intelonrlelonavelon(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry,
+    candidatelons: Selonq[Selonq[InitialCandidatelon]]
+  ): Futurelon[Selonq[BlelonndelondCandidatelon]] = {
+    crMixelonrScribelonLoggelonr.scribelonIntelonrlelonavelonCandidatelons(
+      quelonry,
+      switchBlelonndelonr
+        .blelonnd(quelonry.params, quelonry.uselonrStatelon, candidatelons))
   }
 
-  private def rank(
-    query: CrCandidateGeneratorQuery,
-    candidates: Seq[BlendedCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    crMixerScribeLogger.scribeRankedCandidates(
-      query,
-      switchRanker.rank(query, candidates)
+  privatelon delonf rank(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry,
+    candidatelons: Selonq[BlelonndelondCandidatelon],
+  ): Futurelon[Selonq[RankelondCandidatelon]] = {
+    crMixelonrScribelonLoggelonr.scribelonRankelondCandidatelons(
+      quelonry,
+      switchRankelonr.rank(quelonry, candidatelons)
     )
   }
 
-  private def trackResultStats(
-    stats: StatsReceiver
+  privatelon delonf trackRelonsultStats(
+    stats: StatsReloncelonivelonr
   )(
-    fn: => Future[Seq[RankedCandidate]]
-  ): Future[Seq[RankedCandidate]] = {
-    fn.onSuccess { candidates =>
-      trackReasonChosenSourceTypeStats(candidates, stats)
-      trackReasonChosenSimilarityEngineStats(candidates, stats)
-      trackPotentialReasonsSourceTypeStats(candidates, stats)
-      trackPotentialReasonsSimilarityEngineStats(candidates, stats)
+    fn: => Futurelon[Selonq[RankelondCandidatelon]]
+  ): Futurelon[Selonq[RankelondCandidatelon]] = {
+    fn.onSuccelonss { candidatelons =>
+      trackRelonasonChoselonnSourcelonTypelonStats(candidatelons, stats)
+      trackRelonasonChoselonnSimilarityelonnginelonStats(candidatelons, stats)
+      trackPotelonntialRelonasonsSourcelonTypelonStats(candidatelons, stats)
+      trackPotelonntialRelonasonsSimilarityelonnginelonStats(candidatelons, stats)
     }
   }
 
-  private def trackReasonChosenSourceTypeStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
+  privatelon delonf trackRelonasonChoselonnSourcelonTypelonStats(
+    candidatelons: Selonq[RankelondCandidatelon],
+    stats: StatsReloncelonivelonr
   ): Unit = {
-    candidates
-      .groupBy(_.reasonChosen.sourceInfoOpt.map(_.sourceType))
-      .foreach {
-        case (sourceTypeOpt, rankedCands) =>
-          val sourceType = sourceTypeOpt.map(_.toString).getOrElse("RequesterId") // default
-          stats.stat("reasonChosen", "sourceType", sourceType, "size").add(rankedCands.size)
+    candidatelons
+      .groupBy(_.relonasonChoselonn.sourcelonInfoOpt.map(_.sourcelonTypelon))
+      .forelonach {
+        caselon (sourcelonTypelonOpt, rankelondCands) =>
+          val sourcelonTypelon = sourcelonTypelonOpt.map(_.toString).gelontOrelonlselon("RelonquelonstelonrId") // delonfault
+          stats.stat("relonasonChoselonn", "sourcelonTypelon", sourcelonTypelon, "sizelon").add(rankelondCands.sizelon)
       }
   }
 
-  private def trackReasonChosenSimilarityEngineStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
+  privatelon delonf trackRelonasonChoselonnSimilarityelonnginelonStats(
+    candidatelons: Selonq[RankelondCandidatelon],
+    stats: StatsReloncelonivelonr
   ): Unit = {
-    candidates
-      .groupBy(_.reasonChosen.similarityEngineInfo.similarityEngineType)
-      .foreach {
-        case (seInfoType, rankedCands) =>
+    candidatelons
+      .groupBy(_.relonasonChoselonn.similarityelonnginelonInfo.similarityelonnginelonTypelon)
+      .forelonach {
+        caselon (selonInfoTypelon, rankelondCands) =>
           stats
-            .stat("reasonChosen", "similarityEngine", seInfoType.toString, "size").add(
-              rankedCands.size)
+            .stat("relonasonChoselonn", "similarityelonnginelon", selonInfoTypelon.toString, "sizelon").add(
+              rankelondCands.sizelon)
       }
   }
 
-  private def trackPotentialReasonsSourceTypeStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
+  privatelon delonf trackPotelonntialRelonasonsSourcelonTypelonStats(
+    candidatelons: Selonq[RankelondCandidatelon],
+    stats: StatsReloncelonivelonr
   ): Unit = {
-    candidates
-      .flatMap(_.potentialReasons.map(_.sourceInfoOpt.map(_.sourceType)))
-      .groupBy(source => source)
-      .foreach {
-        case (sourceInfoOpt, seq) =>
-          val sourceType = sourceInfoOpt.map(_.toString).getOrElse("RequesterId") // default
-          stats.stat("potentialReasons", "sourceType", sourceType, "size").add(seq.size)
+    candidatelons
+      .flatMap(_.potelonntialRelonasons.map(_.sourcelonInfoOpt.map(_.sourcelonTypelon)))
+      .groupBy(sourcelon => sourcelon)
+      .forelonach {
+        caselon (sourcelonInfoOpt, selonq) =>
+          val sourcelonTypelon = sourcelonInfoOpt.map(_.toString).gelontOrelonlselon("RelonquelonstelonrId") // delonfault
+          stats.stat("potelonntialRelonasons", "sourcelonTypelon", sourcelonTypelon, "sizelon").add(selonq.sizelon)
       }
   }
 
-  private def trackPotentialReasonsSimilarityEngineStats(
-    candidates: Seq[RankedCandidate],
-    stats: StatsReceiver
+  privatelon delonf trackPotelonntialRelonasonsSimilarityelonnginelonStats(
+    candidatelons: Selonq[RankelondCandidatelon],
+    stats: StatsReloncelonivelonr
   ): Unit = {
-    candidates
-      .flatMap(_.potentialReasons.map(_.similarityEngineInfo.similarityEngineType))
-      .groupBy(se => se)
-      .foreach {
-        case (seType, seq) =>
-          stats.stat("potentialReasons", "similarityEngine", seType.toString, "size").add(seq.size)
+    candidatelons
+      .flatMap(_.potelonntialRelonasons.map(_.similarityelonnginelonInfo.similarityelonnginelonTypelon))
+      .groupBy(selon => selon)
+      .forelonach {
+        caselon (selonTypelon, selonq) =>
+          stats.stat("potelonntialRelonasons", "similarityelonnginelon", selonTypelon.toString, "sizelon").add(selonq.sizelon)
       }
   }
 
-  private def trackBlueVerifiedTweetStats(
-    candidates: Seq[RankedCandidate],
-    statsReceiver: StatsReceiver
+  privatelon delonf trackBluelonVelonrifielondTwelonelontStats(
+    candidatelons: Selonq[RankelondCandidatelon],
+    statsReloncelonivelonr: StatsReloncelonivelonr
   ): Unit = {
-    candidates.foreach { candidate =>
-      if (candidate.tweetInfo.hasBlueVerifiedAnnotation.contains(true)) {
-        statsReceiver.counter(candidate.tweetInfo.authorId.toString).incr()
-        statsReceiver
-          .scope(candidate.tweetInfo.authorId.toString).counter(candidate.tweetId.toString).incr()
+    candidatelons.forelonach { candidatelon =>
+      if (candidatelon.twelonelontInfo.hasBluelonVelonrifielondAnnotation.contains(truelon)) {
+        statsReloncelonivelonr.countelonr(candidatelon.twelonelontInfo.authorId.toString).incr()
+        statsReloncelonivelonr
+          .scopelon(candidatelon.twelonelontInfo.authorId.toString).countelonr(candidatelon.twelonelontId.toString).incr()
       }
     }
   }
 
-  private def trackTopKStats(
+  privatelon delonf trackTopKStats(
     k: Int,
-    tweetCandidates: Seq[RankedCandidate],
-    isQueryK: Boolean,
-    statsReceiver: StatsReceiver
+    twelonelontCandidatelons: Selonq[RankelondCandidatelon],
+    isQuelonryK: Boolelonan,
+    statsReloncelonivelonr: StatsReloncelonivelonr
   ): Unit = {
-    val (topK, beyondK) = tweetCandidates.splitAt(k)
+    val (topK, belonyondK) = twelonelontCandidatelons.splitAt(k)
 
-    val blueVerifiedIds = tweetCandidates.collect {
-      case candidate if candidate.tweetInfo.hasBlueVerifiedAnnotation.contains(true) =>
-        candidate.tweetInfo.authorId
-    }.toSet
+    val bluelonVelonrifielondIds = twelonelontCandidatelons.collelonct {
+      caselon candidatelon if candidatelon.twelonelontInfo.hasBluelonVelonrifielondAnnotation.contains(truelon) =>
+        candidatelon.twelonelontInfo.authorId
+    }.toSelont
 
-    blueVerifiedIds.foreach { blueVerifiedId =>
-      val numTweetsTopK = topK.count(_.tweetInfo.authorId == blueVerifiedId)
-      val numTweetsBeyondK = beyondK.count(_.tweetInfo.authorId == blueVerifiedId)
+    bluelonVelonrifielondIds.forelonach { bluelonVelonrifielondId =>
+      val numTwelonelontsTopK = topK.count(_.twelonelontInfo.authorId == bluelonVelonrifielondId)
+      val numTwelonelontsBelonyondK = belonyondK.count(_.twelonelontInfo.authorId == bluelonVelonrifielondId)
 
-      if (isQueryK) {
-        statsReceiver.scope(blueVerifiedId.toString).stat(s"topK").add(numTweetsTopK)
-        statsReceiver
-          .scope(blueVerifiedId.toString).stat(s"beyondK").add(numTweetsBeyondK)
-      } else {
-        statsReceiver.scope(blueVerifiedId.toString).stat(s"top$k").add(numTweetsTopK)
-        statsReceiver
-          .scope(blueVerifiedId.toString).stat(s"beyond$k").add(numTweetsBeyondK)
+      if (isQuelonryK) {
+        statsReloncelonivelonr.scopelon(bluelonVelonrifielondId.toString).stat(s"topK").add(numTwelonelontsTopK)
+        statsReloncelonivelonr
+          .scopelon(bluelonVelonrifielondId.toString).stat(s"belonyondK").add(numTwelonelontsBelonyondK)
+      } elonlselon {
+        statsReloncelonivelonr.scopelon(bluelonVelonrifielondId.toString).stat(s"top$k").add(numTwelonelontsTopK)
+        statsReloncelonivelonr
+          .scopelon(bluelonVelonrifielondId.toString).stat(s"belonyond$k").add(numTwelonelontsBelonyondK)
       }
     }
   }

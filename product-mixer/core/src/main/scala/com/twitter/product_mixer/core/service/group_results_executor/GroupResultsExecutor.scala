@@ -1,122 +1,122 @@
-package com.twitter.product_mixer.core.service.group_results_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.group_relonsults_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PlatformIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidatePipelines
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSourcePosition
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSources
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemPresentation
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModulePresentation
-import com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.ListSet
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PlatformIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonSourcelonPosition
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonSourcelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.UnivelonrsalPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.immutablelon.ListSelont
 
-// Most executors are in the core.service package, but this one is pipeline specific
-@Singleton
-class GroupResultsExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
+// Most elonxeloncutors arelon in thelon corelon.selonrvicelon packagelon, but this onelon is pipelonlinelon speloncific
+@Singlelonton
+class GroupRelonsultselonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr) elonxtelonnds elonxeloncutor {
 
-  val identifier: ComponentIdentifier = PlatformIdentifier("GroupResults")
+  val idelonntifielonr: ComponelonntIdelonntifielonr = PlatformIdelonntifielonr("GroupRelonsults")
 
-  def arrow[Candidate <: UniversalNoun[Any]](
-    pipelineIdentifier: CandidatePipelineIdentifier,
-    sourceIdentifier: CandidateSourceIdentifier,
-    context: Executor.Context
-  ): Arrow[GroupResultsExecutorInput[Candidate], GroupResultsExecutorResult] = {
+  delonf arrow[Candidatelon <: UnivelonrsalNoun[Any]](
+    pipelonlinelonIdelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr,
+    sourcelonIdelonntifielonr: CandidatelonSourcelonIdelonntifielonr,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[GroupRelonsultselonxeloncutorInput[Candidatelon], GroupRelonsultselonxeloncutorRelonsult] = {
 
-    val groupArrow = Arrow.map { input: GroupResultsExecutorInput[Candidate] =>
-      val modules: Map[Option[ModulePresentation], Seq[CandidateWithFeatures[Candidate]]] =
-        input.candidates
-          .map { candidate: CandidateWithFeatures[Candidate] =>
-            val modulePresentationOpt: Option[ModulePresentation] =
-              input.decorations.get(candidate.candidate).collect {
-                case itemPresentation: ItemPresentation
-                    if itemPresentation.modulePresentation.isDefined =>
-                  itemPresentation.modulePresentation.get
+    val groupArrow = Arrow.map { input: GroupRelonsultselonxeloncutorInput[Candidatelon] =>
+      val modulelons: Map[Option[ModulelonPrelonselonntation], Selonq[CandidatelonWithFelonaturelons[Candidatelon]]] =
+        input.candidatelons
+          .map { candidatelon: CandidatelonWithFelonaturelons[Candidatelon] =>
+            val modulelonPrelonselonntationOpt: Option[ModulelonPrelonselonntation] =
+              input.deloncorations.gelont(candidatelon.candidatelon).collelonct {
+                caselon itelonmPrelonselonntation: ItelonmPrelonselonntation
+                    if itelonmPrelonselonntation.modulelonPrelonselonntation.isDelonfinelond =>
+                  itelonmPrelonselonntation.modulelonPrelonselonntation.gelont
               }
 
-            (candidate, modulePresentationOpt)
+            (candidatelon, modulelonPrelonselonntationOpt)
           }.groupBy {
-            case (_, modulePresentationOpt) => modulePresentationOpt
-          }.mapValues {
-            resultModuleOptTuples: Seq[
-              (CandidateWithFeatures[Candidate], Option[ModulePresentation])
+            caselon (_, modulelonPrelonselonntationOpt) => modulelonPrelonselonntationOpt
+          }.mapValuelons {
+            relonsultModulelonOptTuplelons: Selonq[
+              (CandidatelonWithFelonaturelons[Candidatelon], Option[ModulelonPrelonselonntation])
             ] =>
-              resultModuleOptTuples.map {
-                case (result, _) => result
+              relonsultModulelonOptTuplelons.map {
+                caselon (relonsult, _) => relonsult
               }
           }
 
-      // Modules should be in their original order, but the groupBy above isn't stable.
-      // Sort them by the sourcePosition, using the sourcePosition of their first contained
-      // candidate.
-      val sortedModules: Seq[(Option[ModulePresentation], Seq[CandidateWithFeatures[Candidate]])] =
-        modules.toSeq
+      // Modulelons should belon in thelonir original ordelonr, but thelon groupBy abovelon isn't stablelon.
+      // Sort thelonm by thelon sourcelonPosition, using thelon sourcelonPosition of thelonir first containelond
+      // candidatelon.
+      val sortelondModulelons: Selonq[(Option[ModulelonPrelonselonntation], Selonq[CandidatelonWithFelonaturelons[Candidatelon]])] =
+        modulelons.toSelonq
           .sortBy {
-            case (_, results) =>
-              results.headOption.map(_.features.get(CandidateSourcePosition))
+            caselon (_, relonsults) =>
+              relonsults.helonadOption.map(_.felonaturelons.gelont(CandidatelonSourcelonPosition))
           }
 
-      val candidatesWithDetails: Seq[CandidateWithDetails] = sortedModules.flatMap {
-        case (modulePresentationOpt, resultsSeq) =>
-          val itemsWithDetails = resultsSeq.map { result =>
-            val presentationOpt = input.decorations.get(result.candidate) match {
-              case itemPresentation @ Some(_: ItemPresentation) => itemPresentation
-              case _ => None
+      val candidatelonsWithDelontails: Selonq[CandidatelonWithDelontails] = sortelondModulelons.flatMap {
+        caselon (modulelonPrelonselonntationOpt, relonsultsSelonq) =>
+          val itelonmsWithDelontails = relonsultsSelonq.map { relonsult =>
+            val prelonselonntationOpt = input.deloncorations.gelont(relonsult.candidatelon) match {
+              caselon itelonmPrelonselonntation @ Somelon(_: ItelonmPrelonselonntation) => itelonmPrelonselonntation
+              caselon _ => Nonelon
             }
 
-            val baseFeatureMap = FeatureMapBuilder()
-              .add(CandidatePipelines, ListSet.empty + pipelineIdentifier)
+            val baselonFelonaturelonMap = FelonaturelonMapBuildelonr()
+              .add(CandidatelonPipelonlinelons, ListSelont.elonmpty + pipelonlinelonIdelonntifielonr)
               .build()
 
-            ItemCandidateWithDetails(
-              candidate = result.candidate,
-              presentation = presentationOpt,
-              features = baseFeatureMap ++ result.features
+            ItelonmCandidatelonWithDelontails(
+              candidatelon = relonsult.candidatelon,
+              prelonselonntation = prelonselonntationOpt,
+              felonaturelons = baselonFelonaturelonMap ++ relonsult.felonaturelons
             )
           }
 
-          modulePresentationOpt
-            .map { modulePresentation =>
-              val moduleSourcePosition =
-                resultsSeq.head.features.get(CandidateSourcePosition)
-              val baseFeatureMap = FeatureMapBuilder()
-                .add(CandidatePipelines, ListSet.empty + pipelineIdentifier)
-                .add(CandidateSourcePosition, moduleSourcePosition)
-                .add(CandidateSources, ListSet.empty + sourceIdentifier)
+          modulelonPrelonselonntationOpt
+            .map { modulelonPrelonselonntation =>
+              val modulelonSourcelonPosition =
+                relonsultsSelonq.helonad.felonaturelons.gelont(CandidatelonSourcelonPosition)
+              val baselonFelonaturelonMap = FelonaturelonMapBuildelonr()
+                .add(CandidatelonPipelonlinelons, ListSelont.elonmpty + pipelonlinelonIdelonntifielonr)
+                .add(CandidatelonSourcelonPosition, modulelonSourcelonPosition)
+                .add(CandidatelonSourcelons, ListSelont.elonmpty + sourcelonIdelonntifielonr)
                 .build()
 
-              Seq(
-                ModuleCandidateWithDetails(
-                  candidates = itemsWithDetails,
-                  presentation = Some(modulePresentation),
-                  features = baseFeatureMap
+              Selonq(
+                ModulelonCandidatelonWithDelontails(
+                  candidatelons = itelonmsWithDelontails,
+                  prelonselonntation = Somelon(modulelonPrelonselonntation),
+                  felonaturelons = baselonFelonaturelonMap
                 ))
-            }.getOrElse(itemsWithDetails)
+            }.gelontOrelonlselon(itelonmsWithDelontails)
       }
 
-      GroupResultsExecutorResult(candidatesWithDetails)
+      GroupRelonsultselonxeloncutorRelonsult(candidatelonsWithDelontails)
     }
 
-    wrapWithErrorHandling(context, identifier)(groupArrow)
+    wrapWithelonrrorHandling(contelonxt, idelonntifielonr)(groupArrow)
   }
 }
 
-case class GroupResultsExecutorInput[Candidate <: UniversalNoun[Any]](
-  candidates: Seq[CandidateWithFeatures[Candidate]],
-  decorations: Map[UniversalNoun[Any], UniversalPresentation])
+caselon class GroupRelonsultselonxeloncutorInput[Candidatelon <: UnivelonrsalNoun[Any]](
+  candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]],
+  deloncorations: Map[UnivelonrsalNoun[Any], UnivelonrsalPrelonselonntation])
 
-case class GroupResultsExecutorResult(candidatesWithDetails: Seq[CandidateWithDetails])
-    extends ExecutorResult
+caselon class GroupRelonsultselonxeloncutorRelonsult(candidatelonsWithDelontails: Selonq[CandidatelonWithDelontails])
+    elonxtelonnds elonxeloncutorRelonsult

@@ -1,33 +1,33 @@
-package com.twitter.ann.service.query_server.common
+packagelon com.twittelonr.ann.selonrvicelon.quelonry_selonrvelonr.common
 
-import com.twitter.logging.Logger
-import com.twitter.search.common.file.AbstractFile
-import scala.collection.JavaConverters._
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object QueryServerUtil {
+objelonct QuelonrySelonrvelonrUtil {
 
-  private val log = Logger.get("QueryServerUtil")
+  privatelon val log = Loggelonr.gelont("QuelonrySelonrvelonrUtil")
 
   /**
-   * Validate if the abstract file (directory) size is within the defined limits.
-   * @param dir Hdfs/Local directory
-   * @param minIndexSizeBytes minimum size of file in bytes (Exclusive)
-   * @param maxIndexSizeBytes minimum size of file in bytes (Exclusive)
-   * @return true if file size within minIndexSizeBytes and maxIndexSizeBytes else false
+   * Validatelon if thelon abstract filelon (direlonctory) sizelon is within thelon delonfinelond limits.
+   * @param dir Hdfs/Local direlonctory
+   * @param minIndelonxSizelonBytelons minimum sizelon of filelon in bytelons (elonxclusivelon)
+   * @param maxIndelonxSizelonBytelons minimum sizelon of filelon in bytelons (elonxclusivelon)
+   * @relonturn truelon if filelon sizelon within minIndelonxSizelonBytelons and maxIndelonxSizelonBytelons elonlselon falselon
    */
-  def isValidIndexDirSize(
-    dir: AbstractFile,
-    minIndexSizeBytes: Long,
-    maxIndexSizeBytes: Long
-  ): Boolean = {
-    val recursive = true
-    val dirSize = dir.listFiles(recursive).asScala.map(_.getSizeInBytes).sum
+  delonf isValidIndelonxDirSizelon(
+    dir: AbstractFilelon,
+    minIndelonxSizelonBytelons: Long,
+    maxIndelonxSizelonBytelons: Long
+  ): Boolelonan = {
+    val reloncursivelon = truelon
+    val dirSizelon = dir.listFilelons(reloncursivelon).asScala.map(_.gelontSizelonInBytelons).sum
 
-    log.debug(s"Ann index directory ${dir.getPath} size in bytes $dirSize")
+    log.delonbug(s"Ann indelonx direlonctory ${dir.gelontPath} sizelon in bytelons $dirSizelon")
 
-    val isValid = (dirSize > minIndexSizeBytes) && (dirSize < maxIndexSizeBytes)
+    val isValid = (dirSizelon > minIndelonxSizelonBytelons) && (dirSizelon < maxIndelonxSizelonBytelons)
     if (!isValid) {
-      log.info(s"Ann index directory is invalid ${dir.getPath} size in bytes $dirSize")
+      log.info(s"Ann indelonx direlonctory is invalid ${dir.gelontPath} sizelon in bytelons $dirSizelon")
     }
     isValid
   }

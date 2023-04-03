@@ -1,46 +1,46 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import java.io.IOException;
-import java.util.Collection;
+import java.io.IOelonxcelonption;
+import java.util.Collelonction;
 import java.util.List;
 
-import com.twitter.common.collections.Pair;
+import com.twittelonr.common.collelonctions.Pair;
 
 /**
- * Calls multiple FacetCountIterators. Currently this is used for calling the
- * default FacetCountingArray iterator and the CSF and retweet iterators
+ * Calls multiplelon FacelontCountItelonrators. Currelonntly this is uselond for calling thelon
+ * delonfault FacelontCountingArray itelonrator and thelon CSF and relontwelonelont itelonrators
  */
-public class CompositeFacetCountIterator extends FacetCountIterator {
-  private final Collection<FacetCountIterator> iterators;
+public class CompositelonFacelontCountItelonrator elonxtelonnds FacelontCountItelonrator {
+  privatelon final Collelonction<FacelontCountItelonrator> itelonrators;
 
   /**
-   * Creates a new composite iterator on the provided collection of iterators.
+   * Crelonatelons a nelonw compositelon itelonrator on thelon providelond collelonction of itelonrators.
    */
-  public CompositeFacetCountIterator(Collection<FacetCountIterator> iterators) {
-    this.iterators = iterators;
-    for (FacetCountIterator iterator : iterators) {
-      iterator.setIncrementData(this.incrementData);
+  public CompositelonFacelontCountItelonrator(Collelonction<FacelontCountItelonrator> itelonrators) {
+    this.itelonrators = itelonrators;
+    for (FacelontCountItelonrator itelonrator : itelonrators) {
+      itelonrator.selontIncrelonmelonntData(this.increlonmelonntData);
     }
   }
 
-  @Override
-  public void collect(int docID) throws IOException {
-    for (FacetCountIterator iterator : iterators) {
-      iterator.collect(docID);
+  @Ovelonrridelon
+  public void collelonct(int docID) throws IOelonxcelonption {
+    for (FacelontCountItelonrator itelonrator : itelonrators) {
+      itelonrator.collelonct(docID);
     }
   }
 
-  @Override
-  protected void addProof(int docID, long termID, int fieldID) {
-    for (FacetCountIterator iterator : iterators) {
-      iterator.addProof(docID, termID, fieldID);
+  @Ovelonrridelon
+  protelonctelond void addProof(int docID, long telonrmID, int fielonldID) {
+    for (FacelontCountItelonrator itelonrator : itelonrators) {
+      itelonrator.addProof(docID, telonrmID, fielonldID);
     }
   }
 
-  @Override
-  public void setProofs(List<Pair<Integer, Long>> proof) {
-    for (FacetCountIterator iterator : iterators) {
-      iterator.setProofs(proof);
+  @Ovelonrridelon
+  public void selontProofs(List<Pair<Intelongelonr, Long>> proof) {
+    for (FacelontCountItelonrator itelonrator : itelonrators) {
+      itelonrator.selontProofs(proof);
     }
   }
 }

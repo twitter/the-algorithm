@@ -1,54 +1,54 @@
-package com.twitter.cr_mixer.source_signal
+packagelon com.twittelonr.cr_mixelonr.sourcelon_signal
 
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.param.RealGraphOonParams
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.modelonl.GraphSourcelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.param.RelonalGraphOonParams
+import com.twittelonr.cr_mixelonr.sourcelon_signal.SourcelonFelontchelonr.FelontchelonrQuelonry
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
 /**
- * This store fetch user recommendations from RealGraphOON (go/realgraph) for a given userId
+ * This storelon felontch uselonr reloncommelonndations from RelonalGraphOON (go/relonalgraph) for a givelonn uselonrId
  */
-@Singleton
-case class RealGraphOonSourceGraphFetcher @Inject() (
-  @Named(ModuleNames.RealGraphOonStore) realGraphOonStore: ReadableStore[UserId, CandidateSeq],
-  override val timeoutConfig: TimeoutConfig,
-  globalStats: StatsReceiver)
-    extends SourceGraphFetcher {
+@Singlelonton
+caselon class RelonalGraphOonSourcelonGraphFelontchelonr @Injelonct() (
+  @Namelond(ModulelonNamelons.RelonalGraphOonStorelon) relonalGraphOonStorelon: RelonadablelonStorelon[UselonrId, CandidatelonSelonq],
+  ovelonrridelon val timelonoutConfig: TimelonoutConfig,
+  globalStats: StatsReloncelonivelonr)
+    elonxtelonnds SourcelonGraphFelontchelonr {
 
-  override protected val stats: StatsReceiver = globalStats.scope(identifier)
-  override protected val graphSourceType: SourceType = SourceType.RealGraphOon
+  ovelonrridelon protelonctelond val stats: StatsReloncelonivelonr = globalStats.scopelon(idelonntifielonr)
+  ovelonrridelon protelonctelond val graphSourcelonTypelon: SourcelonTypelon = SourcelonTypelon.RelonalGraphOon
 
-  override def isEnabled(query: FetcherQuery): Boolean = {
-    query.params(RealGraphOonParams.EnableSourceGraphParam)
+  ovelonrridelon delonf iselonnablelond(quelonry: FelontchelonrQuelonry): Boolelonan = {
+    quelonry.params(RelonalGraphOonParams.elonnablelonSourcelonGraphParam)
   }
 
-  override def fetchAndProcess(
-    query: FetcherQuery,
-  ): Future[Option[GraphSourceInfo]] = {
-    val rawSignals = trackPerItemStats(query)(
-      realGraphOonStore.get(query.userId).map {
-        _.map { candidateSeq =>
-          candidateSeq.candidates
-            .map { candidate =>
-              // Bundle the userId with its score
-              (candidate.userId, candidate.score)
-            }.take(query.params(RealGraphOonParams.MaxConsumerSeedsNumParam))
+  ovelonrridelon delonf felontchAndProcelonss(
+    quelonry: FelontchelonrQuelonry,
+  ): Futurelon[Option[GraphSourcelonInfo]] = {
+    val rawSignals = trackPelonrItelonmStats(quelonry)(
+      relonalGraphOonStorelon.gelont(quelonry.uselonrId).map {
+        _.map { candidatelonSelonq =>
+          candidatelonSelonq.candidatelons
+            .map { candidatelon =>
+              // Bundlelon thelon uselonrId with its scorelon
+              (candidatelon.uselonrId, candidatelon.scorelon)
+            }.takelon(quelonry.params(RelonalGraphOonParams.MaxConsumelonrSelonelondsNumParam))
         }
       }
     )
     rawSignals.map {
-      _.map { userWithScores =>
-        convertGraphSourceInfo(userWithScores)
+      _.map { uselonrWithScorelons =>
+        convelonrtGraphSourcelonInfo(uselonrWithScorelons)
       }
     }
   }

@@ -1,96 +1,96 @@
 import uuid
 
-from tensorflow.compat.v1 import logging
+from telonnsorflow.compat.v1 import logging
 import twml
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
 
-def write_list_to_hdfs_gfile(list_to_write, output_path):
-  """Use tensorflow gfile to write a list to a location on hdfs"""
-  locname = "/tmp/{}".format(str(uuid.uuid4()))
-  with open(locname, "w") as f:
-    for row in list_to_write:
-      f.write("%s\n" % row)
-  tf.io.gfile.copy(locname, output_path, overwrite=False)
+delonf writelon_list_to_hdfs_gfilelon(list_to_writelon, output_path):
+  """Uselon telonnsorflow gfilelon to writelon a list to a location on hdfs"""
+  locnamelon = "/tmp/{}".format(str(uuid.uuid4()))
+  with opelonn(locnamelon, "w") as f:
+    for row in list_to_writelon:
+      f.writelon("%s\n" % row)
+  tf.io.gfilelon.copy(locnamelon, output_path, ovelonrwritelon=Falselon)
 
 
-def decode_str_or_unicode(str_or_unicode):
-  return str_or_unicode.decode() if hasattr(str_or_unicode, 'decode') else str_or_unicode
+delonf deloncodelon_str_or_unicodelon(str_or_unicodelon):
+  relonturn str_or_unicodelon.deloncodelon() if hasattr(str_or_unicodelon, 'deloncodelon') elonlselon str_or_unicodelon
 
 
-def longest_common_prefix(strings, split_character):
+delonf longelonst_common_prelonfix(strings, split_charactelonr):
   """
   Args:
-    string (list<str>): The list of strings to find the longest common prefix of
-    split_character (str): If not None, require that the return string end in this character or
-      be the length of the entire string
-  Returns:
-    The string corresponding to the longest common prefix
+    string (list<str>): Thelon list of strings to find thelon longelonst common prelonfix of
+    split_charactelonr (str): If not Nonelon, relonquirelon that thelon relonturn string elonnd in this charactelonr or
+      belon thelon lelonngth of thelon elonntirelon string
+  Relonturns:
+    Thelon string correlonsponding to thelon longelonst common prelonfix
   """
-  sorted_strings = sorted(strings)
-  s1, s2 = sorted_strings[0], sorted_strings[-1]
+  sortelond_strings = sortelond(strings)
+  s1, s2 = sortelond_strings[0], sortelond_strings[-1]
   if s1 == s2:
-    # If the strings are the same, just return the full string
+    # If thelon strings arelon thelon samelon, just relonturn thelon full string
     out = s1
-  else:
-    # If the strings are not the same, return the longest common prefix optionally ending in split_character
+  elonlselon:
+    # If thelon strings arelon not thelon samelon, relonturn thelon longelonst common prelonfix optionally elonnding in split_charactelonr
     ix = 0
-    for i in range(min(len(s1), len(s2))):
+    for i in rangelon(min(lelonn(s1), lelonn(s2))):
       if s1[i] != s2[i]:
-        break
-      if split_character is None or s1[i] == split_character:
+        brelonak
+      if split_charactelonr is Nonelon or s1[i] == split_charactelonr:
         ix = i + 1
     out = s1[:ix]
-  return out
+  relonturn out
 
 
-def _expand_prefix(fname, prefix, split_character):
-  if len(fname) == len(prefix):
-    # If the prefix is already the full feature, just take the feature name
-    out = fname
-  elif split_character is None:
-    # Advance the prefix by one character
-    out = fname[:len(prefix) + 1]
-  else:
-    # Advance the prefix to the next instance of split_character or the end of the string
-    for ix in range(len(prefix), len(fname)):
-      if fname[ix] == split_character:
-        break
-    out = fname[:ix + 1]
-  return out
+delonf _elonxpand_prelonfix(fnamelon, prelonfix, split_charactelonr):
+  if lelonn(fnamelon) == lelonn(prelonfix):
+    # If thelon prelonfix is alrelonady thelon full felonaturelon, just takelon thelon felonaturelon namelon
+    out = fnamelon
+  elonlif split_charactelonr is Nonelon:
+    # Advancelon thelon prelonfix by onelon charactelonr
+    out = fnamelon[:lelonn(prelonfix) + 1]
+  elonlselon:
+    # Advancelon thelon prelonfix to thelon nelonxt instancelon of split_charactelonr or thelon elonnd of thelon string
+    for ix in rangelon(lelonn(prelonfix), lelonn(fnamelon)):
+      if fnamelon[ix] == split_charactelonr:
+        brelonak
+    out = fnamelon[:ix + 1]
+  relonturn out
 
 
-def _get_feature_types_from_records(records, fnames):
-  # This method gets the types of the features in fnames by looking at the datarecords themselves.
-  #   The reason why we do this rather than extract the feature types from the feature_config is
-  #   that the feature naming conventions in the feature_config are different from those in the
-  #   datarecords.
-  fids = [twml.feature_id(fname)[0] for fname in fnames]
-  feature_to_type = {}
-  for record in records:
-    for feature_type, values in record.__dict__.items():
-      if values is not None:
-        included_ids = set(values)
-        for fname, fid in zip(fnames, fids):
-          if fid in included_ids:
-            feature_to_type[fname] = feature_type
-  return feature_to_type
+delonf _gelont_felonaturelon_typelons_from_reloncords(reloncords, fnamelons):
+  # This melonthod gelonts thelon typelons of thelon felonaturelons in fnamelons by looking at thelon datareloncords thelonmselonlvelons.
+  #   Thelon relonason why welon do this rathelonr than elonxtract thelon felonaturelon typelons from thelon felonaturelon_config is
+  #   that thelon felonaturelon naming convelonntions in thelon felonaturelon_config arelon diffelonrelonnt from thoselon in thelon
+  #   datareloncords.
+  fids = [twml.felonaturelon_id(fnamelon)[0] for fnamelon in fnamelons]
+  felonaturelon_to_typelon = {}
+  for reloncord in reloncords:
+    for felonaturelon_typelon, valuelons in reloncord.__dict__.itelonms():
+      if valuelons is not Nonelon:
+        includelond_ids = selont(valuelons)
+        for fnamelon, fid in zip(fnamelons, fids):
+          if fid in includelond_ids:
+            felonaturelon_to_typelon[fnamelon] = felonaturelon_typelon
+  relonturn felonaturelon_to_typelon
 
 
-def _get_metrics_hook(trainer):
-  def get_metrics_fn(trainer=trainer):
-    return {k: v[0]for k, v in trainer.current_estimator_spec.eval_metric_ops.items()}
-  return twml.hooks.GetMetricsHook(get_metrics_fn=get_metrics_fn)
+delonf _gelont_melontrics_hook(trainelonr):
+  delonf gelont_melontrics_fn(trainelonr=trainelonr):
+    relonturn {k: v[0]for k, v in trainelonr.currelonnt_elonstimator_spelonc.elonval_melontric_ops.itelonms()}
+  relonturn twml.hooks.GelontMelontricsHook(gelont_melontrics_fn=gelont_melontrics_fn)
 
 
-def _get_feature_name_from_config(feature_config):
-  """Extract the names of the features on a feature config object
+delonf _gelont_felonaturelon_namelon_from_config(felonaturelon_config):
+  """elonxtract thelon namelons of thelon felonaturelons on a felonaturelon config objelonct
   """
-  decoded_feature_names = []
-  for f in feature_config.get_feature_spec()['features'].values():
+  deloncodelond_felonaturelon_namelons = []
+  for f in felonaturelon_config.gelont_felonaturelon_spelonc()['felonaturelons'].valuelons():
     try:
-      fname = decode_str_or_unicode(f['featureName'])
-    except UnicodeEncodeError as e:
-      logging.error("Encountered decoding exception when decoding %s: %s" % (f, e))
-    decoded_feature_names.append(fname)
-  return decoded_feature_names
+      fnamelon = deloncodelon_str_or_unicodelon(f['felonaturelonNamelon'])
+    elonxcelonpt Unicodelonelonncodelonelonrror as elon:
+      logging.elonrror("elonncountelonrelond deloncoding elonxcelonption whelonn deloncoding %s: %s" % (f, elon))
+    deloncodelond_felonaturelon_namelons.appelonnd(fnamelon)
+  relonturn deloncodelond_felonaturelon_namelons

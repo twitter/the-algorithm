@@ -1,39 +1,39 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelines.service.{thriftscala => t}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScrelonelonnNamelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SuggelonstTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.HomelonMixelonrelonxtelonrnalStrings
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ChildFelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import com.twittelonr.timelonlinelons.selonrvicelon.{thriftscala => t}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class RetweeterChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@Singlelonton
+caselon class RelontwelonelontelonrChildFelonelondbackActionBuildelonr @Injelonct() (
+  @ProductScopelond stringCelonntelonr: StringCelonntelonr,
+  elonxtelonrnalStrings: HomelonMixelonrelonxtelonrnalStrings) {
 
-  def apply(candidateFeatures: FeatureMap): Option[ChildFeedbackAction] = {
-    val isRetweet = candidateFeatures.getOrElse(IsRetweetFeature, false)
+  delonf apply(candidatelonFelonaturelons: FelonaturelonMap): Option[ChildFelonelondbackAction] = {
+    val isRelontwelonelont = candidatelonFelonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)
 
-    if (isRetweet) {
-      candidateFeatures.getOrElse(AuthorIdFeature, None).flatMap { retweeterId =>
-        FeedbackUtil.buildUserSeeFewerChildFeedbackAction(
-          userId = retweeterId,
-          namesByUserId = candidateFeatures.getOrElse(ScreenNamesFeature, Map.empty[Long, String]),
-          promptExternalString = externalStrings.showFewerRetweetsString,
-          confirmationExternalString = externalStrings.showFewerRetweetsConfirmationString,
-          engagementType = t.FeedbackEngagementType.Retweet,
-          stringCenter = stringCenter,
-          injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)
+    if (isRelontwelonelont) {
+      candidatelonFelonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon).flatMap { relontwelonelontelonrId =>
+        FelonelondbackUtil.buildUselonrSelonelonFelonwelonrChildFelonelondbackAction(
+          uselonrId = relontwelonelontelonrId,
+          namelonsByUselonrId = candidatelonFelonaturelons.gelontOrelonlselon(ScrelonelonnNamelonsFelonaturelon, Map.elonmpty[Long, String]),
+          promptelonxtelonrnalString = elonxtelonrnalStrings.showFelonwelonrRelontwelonelontsString,
+          confirmationelonxtelonrnalString = elonxtelonrnalStrings.showFelonwelonrRelontwelonelontsConfirmationString,
+          elonngagelonmelonntTypelon = t.FelonelondbackelonngagelonmelonntTypelon.Relontwelonelont,
+          stringCelonntelonr = stringCelonntelonr,
+          injelonctionTypelon = candidatelonFelonaturelons.gelontOrelonlselon(SuggelonstTypelonFelonaturelon, Nonelon)
         )
       }
-    } else None
+    } elonlselon Nonelon
   }
 }

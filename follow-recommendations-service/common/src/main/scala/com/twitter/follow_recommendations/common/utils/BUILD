@@ -1,13 +1,13 @@
 scala_library(
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/marshaller",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/marshaller/request",
-        "stitch/stitch-core",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "finatra/injelonct/injelonct-corelon/src/main/scala",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/baselon",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/modelonls",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/marshallelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/marshallelonr/relonquelonst",
+        "stitch/stitch-corelon",
         "util/util-slf4j-api/src/main/scala",
     ],
 )

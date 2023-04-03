@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.clients.real_time_real_graph
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.relonal_timelon_relonal_graph
 
-sealed trait EngagementType
+selonalelond trait elonngagelonmelonntTypelon
 
-// We do not include SoftFollow since it's deprecated
-object EngagementType {
-  object Click extends EngagementType
-  object Like extends EngagementType
-  object Mention extends EngagementType
-  object Retweet extends EngagementType
-  object ProfileView extends EngagementType
+// Welon do not includelon SoftFollow sincelon it's delonpreloncatelond
+objelonct elonngagelonmelonntTypelon {
+  objelonct Click elonxtelonnds elonngagelonmelonntTypelon
+  objelonct Likelon elonxtelonnds elonngagelonmelonntTypelon
+  objelonct Melonntion elonxtelonnds elonngagelonmelonntTypelon
+  objelonct Relontwelonelont elonxtelonnds elonngagelonmelonntTypelon
+  objelonct ProfilelonVielonw elonxtelonnds elonngagelonmelonntTypelon
 }
 
-case class Engagement(engagementType: EngagementType, timestamp: Long)
+caselon class elonngagelonmelonnt(elonngagelonmelonntTypelon: elonngagelonmelonntTypelon, timelonstamp: Long)

@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.{TweetsWithScore, DayPartitionedClusterId}
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.ScalaCompactThrift
+import com.twittelonr.simclustelonrs_v2.thriftscala.{TwelonelontsWithScorelon, DayPartitionelondClustelonrId}
 
-object ClusterTopMediaTweetsInjection {
+objelonct ClustelonrTopMelondiaTwelonelontsInjelonction {
 
-  val injection = KeyValInjection[DayPartitionedClusterId, TweetsWithScore](
-    ScalaCompactThrift(DayPartitionedClusterId),
-    ScalaCompactThrift(TweetsWithScore)
+  val injelonction = KelonyValInjelonction[DayPartitionelondClustelonrId, TwelonelontsWithScorelon](
+    ScalaCompactThrift(DayPartitionelondClustelonrId),
+    ScalaCompactThrift(TwelonelontsWithScorelon)
   )
 }

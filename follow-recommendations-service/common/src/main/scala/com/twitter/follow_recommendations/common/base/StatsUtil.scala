@@ -1,272 +1,272 @@
-package com.twitter.follow_recommendations.common.base
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.util.Stopwatch
-import java.util.concurrent.TimeUnit
+packagelon com.twittelonr.follow_reloncommelonndations.common.baselon
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Stopwatch
+import java.util.concurrelonnt.TimelonUnit
 import scala.util.control.NonFatal
 
-object StatsUtil {
-  val LatencyName = "latency_ms"
-  val RequestName = "requests"
-  val SuccessName = "success"
-  val FailureName = "failures"
-  val ResultsName = "results"
-  val ResultsStat = "results_stat"
-  val EmptyResultsName = "empty"
-  val NonEmptyResultsName = "non_empty"
+objelonct StatsUtil {
+  val LatelonncyNamelon = "latelonncy_ms"
+  val RelonquelonstNamelon = "relonquelonsts"
+  val SuccelonssNamelon = "succelonss"
+  val FailurelonNamelon = "failurelons"
+  val RelonsultsNamelon = "relonsults"
+  val RelonsultsStat = "relonsults_stat"
+  val elonmptyRelonsultsNamelon = "elonmpty"
+  val NonelonmptyRelonsultsNamelon = "non_elonmpty"
   val ValidCount = "valid"
   val InvalidCount = "invalid"
-  val InvalidHasReasons = "has_reasons"
-  val Reasons = "reasons"
+  val InvalidHasRelonasons = "has_relonasons"
+  val Relonasons = "relonasons"
   val QualityFactorStat = "quality_factor_stat"
   val QualityFactorCounts = "quality_factor_counts"
 
   /**
-   * Helper function for timing a stitch, returning the original stitch.
+   * Helonlpelonr function for timing a stitch, relonturning thelon original stitch.
    */
-  def profileStitch[T](stitch: Stitch[T], stat: StatsReceiver): Stitch[T] = {
+  delonf profilelonStitch[T](stitch: Stitch[T], stat: StatsReloncelonivelonr): Stitch[T] = {
 
     Stitch
-      .time(stitch)
+      .timelon(stitch)
       .map {
-        case (response, stitchRunDuration) =>
-          stat.counter(RequestName).incr()
-          stat.stat(LatencyName).add(stitchRunDuration.inMilliseconds)
-          response
-            .onSuccess { _ => stat.counter(SuccessName).incr() }
-            .onFailure { e =>
-              stat.counter(FailureName).incr()
-              stat.scope(FailureName).counter(getCleanClassName(e)).incr()
+        caselon (relonsponselon, stitchRunDuration) =>
+          stat.countelonr(RelonquelonstNamelon).incr()
+          stat.stat(LatelonncyNamelon).add(stitchRunDuration.inMilliselonconds)
+          relonsponselon
+            .onSuccelonss { _ => stat.countelonr(SuccelonssNamelon).incr() }
+            .onFailurelon { elon =>
+              stat.countelonr(FailurelonNamelon).incr()
+              stat.scopelon(FailurelonNamelon).countelonr(gelontClelonanClassNamelon(elon)).incr()
             }
       }
-      .lowerFromTry
+      .lowelonrFromTry
   }
 
   /**
-   * Helper function for timing an arrow, returning the original arrow.
+   * Helonlpelonr function for timing an arrow, relonturning thelon original arrow.
    */
-  def profileArrow[T, U](arrow: Arrow[T, U], stat: StatsReceiver): Arrow[T, U] = {
+  delonf profilelonArrow[T, U](arrow: Arrow[T, U], stat: StatsReloncelonivelonr): Arrow[T, U] = {
 
     Arrow
-      .time(arrow)
+      .timelon(arrow)
       .map {
-        case (response, stitchRunDuration) =>
-          stat.counter(RequestName).incr()
-          stat.stat(LatencyName).add(stitchRunDuration.inMilliseconds)
-          response
-            .onSuccess { _ => stat.counter(SuccessName).incr() }
-            .onFailure { e =>
-              stat.counter(FailureName).incr()
-              stat.scope(FailureName).counter(getCleanClassName(e)).incr()
+        caselon (relonsponselon, stitchRunDuration) =>
+          stat.countelonr(RelonquelonstNamelon).incr()
+          stat.stat(LatelonncyNamelon).add(stitchRunDuration.inMilliselonconds)
+          relonsponselon
+            .onSuccelonss { _ => stat.countelonr(SuccelonssNamelon).incr() }
+            .onFailurelon { elon =>
+              stat.countelonr(FailurelonNamelon).incr()
+              stat.scopelon(FailurelonNamelon).countelonr(gelontClelonanClassNamelon(elon)).incr()
             }
       }
-      .lowerFromTry
+      .lowelonrFromTry
   }
 
   /**
-   * Helper function to count and track the distribution of results
+   * Helonlpelonr function to count and track thelon distribution of relonsults
    */
-  def profileResults[T](results: T, stat: StatsReceiver, size: T => Int): T = {
-    val numResults = size(results)
-    stat.counter(ResultsName).incr(numResults)
-    if (numResults == 0) {
-      stat.counter(EmptyResultsName).incr()
-      results
-    } else {
-      stat.stat(ResultsStat).add(numResults)
-      stat.counter(NonEmptyResultsName).incr()
-      results
+  delonf profilelonRelonsults[T](relonsults: T, stat: StatsReloncelonivelonr, sizelon: T => Int): T = {
+    val numRelonsults = sizelon(relonsults)
+    stat.countelonr(RelonsultsNamelon).incr(numRelonsults)
+    if (numRelonsults == 0) {
+      stat.countelonr(elonmptyRelonsultsNamelon).incr()
+      relonsults
+    } elonlselon {
+      stat.stat(RelonsultsStat).add(numRelonsults)
+      stat.countelonr(NonelonmptyRelonsultsNamelon).incr()
+      relonsults
     }
   }
 
   /**
-   * Helper function to count and track the distribution of a list of results
+   * Helonlpelonr function to count and track thelon distribution of a list of relonsults
    */
-  def profileSeqResults[T](results: Seq[T], stat: StatsReceiver): Seq[T] = {
-    profileResults[Seq[T]](results, stat, _.size)
+  delonf profilelonSelonqRelonsults[T](relonsults: Selonq[T], stat: StatsReloncelonivelonr): Selonq[T] = {
+    profilelonRelonsults[Selonq[T]](relonsults, stat, _.sizelon)
   }
 
   /**
-   * Helper function for timing a stitch and count the number of results, returning the original stitch.
+   * Helonlpelonr function for timing a stitch and count thelon numbelonr of relonsults, relonturning thelon original stitch.
    */
-  def profileStitchResults[T](stitch: Stitch[T], stat: StatsReceiver, size: T => Int): Stitch[T] = {
-    profileStitch(stitch, stat).onSuccess { results => profileResults(results, stat, size) }
+  delonf profilelonStitchRelonsults[T](stitch: Stitch[T], stat: StatsReloncelonivelonr, sizelon: T => Int): Stitch[T] = {
+    profilelonStitch(stitch, stat).onSuccelonss { relonsults => profilelonRelonsults(relonsults, stat, sizelon) }
   }
 
   /**
-   * Helper function for timing an arrow and count the number of results, returning the original arrow.
+   * Helonlpelonr function for timing an arrow and count thelon numbelonr of relonsults, relonturning thelon original arrow.
    */
-  def profileArrowResults[T, U](
+  delonf profilelonArrowRelonsults[T, U](
     arrow: Arrow[T, U],
-    stat: StatsReceiver,
-    size: U => Int
+    stat: StatsReloncelonivelonr,
+    sizelon: U => Int
   ): Arrow[T, U] = {
-    profileArrow(arrow, stat).onSuccess { results => profileResults(results, stat, size) }
+    profilelonArrow(arrow, stat).onSuccelonss { relonsults => profilelonRelonsults(relonsults, stat, sizelon) }
   }
 
   /**
-   * Helper function for timing a stitch and count a seq of results, returning the original stitch.
+   * Helonlpelonr function for timing a stitch and count a selonq of relonsults, relonturning thelon original stitch.
    */
-  def profileStitchSeqResults[T](stitch: Stitch[Seq[T]], stat: StatsReceiver): Stitch[Seq[T]] = {
-    profileStitchResults[Seq[T]](stitch, stat, _.size)
+  delonf profilelonStitchSelonqRelonsults[T](stitch: Stitch[Selonq[T]], stat: StatsReloncelonivelonr): Stitch[Selonq[T]] = {
+    profilelonStitchRelonsults[Selonq[T]](stitch, stat, _.sizelon)
   }
 
   /**
-   * Helper function for timing a stitch and count optional results, returning the original stitch.
+   * Helonlpelonr function for timing a stitch and count optional relonsults, relonturning thelon original stitch.
    */
-  def profileStitchOptionalResults[T](
+  delonf profilelonStitchOptionalRelonsults[T](
     stitch: Stitch[Option[T]],
-    stat: StatsReceiver
+    stat: StatsReloncelonivelonr
   ): Stitch[Option[T]] = {
-    profileStitchResults[Option[T]](stitch, stat, _.size)
+    profilelonStitchRelonsults[Option[T]](stitch, stat, _.sizelon)
   }
 
   /**
-   * Helper function for timing a stitch and count a map of results, returning the original stitch.
+   * Helonlpelonr function for timing a stitch and count a map of relonsults, relonturning thelon original stitch.
    */
-  def profileStitchMapResults[K, V](
+  delonf profilelonStitchMapRelonsults[K, V](
     stitch: Stitch[Map[K, V]],
-    stat: StatsReceiver
+    stat: StatsReloncelonivelonr
   ): Stitch[Map[K, V]] = {
-    profileStitchResults[Map[K, V]](stitch, stat, _.size)
+    profilelonStitchRelonsults[Map[K, V]](stitch, stat, _.sizelon)
   }
 
-  def getCleanClassName(obj: Object): String =
-    obj.getClass.getSimpleName.stripSuffix("$")
+  delonf gelontClelonanClassNamelon(obj: Objelonct): String =
+    obj.gelontClass.gelontSimplelonNamelon.stripSuffix("$")
 
   /**
-   * Helper function for timing a stitch and count a list of PredicateResult
+   * Helonlpelonr function for timing a stitch and count a list of PrelondicatelonRelonsult
    */
-  def profilePredicateResults(
-    predicateResult: Stitch[Seq[PredicateResult]],
-    statsReceiver: StatsReceiver
-  ): Stitch[Seq[PredicateResult]] = {
-    profileStitch[Seq[PredicateResult]](
-      predicateResult,
-      statsReceiver
-    ).onSuccess {
+  delonf profilelonPrelondicatelonRelonsults(
+    prelondicatelonRelonsult: Stitch[Selonq[PrelondicatelonRelonsult]],
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Stitch[Selonq[PrelondicatelonRelonsult]] = {
+    profilelonStitch[Selonq[PrelondicatelonRelonsult]](
+      prelondicatelonRelonsult,
+      statsReloncelonivelonr
+    ).onSuccelonss {
       _.map {
-        case PredicateResult.Valid =>
-          statsReceiver.counter(ValidCount).incr()
-        case PredicateResult.Invalid(reasons) =>
-          statsReceiver.counter(InvalidCount).incr()
-          reasons.map { filterReason =>
-            statsReceiver.counter(InvalidHasReasons).incr()
-            statsReceiver.scope(Reasons).counter(filterReason.reason).incr()
+        caselon PrelondicatelonRelonsult.Valid =>
+          statsReloncelonivelonr.countelonr(ValidCount).incr()
+        caselon PrelondicatelonRelonsult.Invalid(relonasons) =>
+          statsReloncelonivelonr.countelonr(InvalidCount).incr()
+          relonasons.map { filtelonrRelonason =>
+            statsReloncelonivelonr.countelonr(InvalidHasRelonasons).incr()
+            statsReloncelonivelonr.scopelon(Relonasons).countelonr(filtelonrRelonason.relonason).incr()
           }
       }
     }
   }
 
   /**
-   * Helper function for timing a stitch and count individual PredicateResult
+   * Helonlpelonr function for timing a stitch and count individual PrelondicatelonRelonsult
    */
-  def profilePredicateResult(
-    predicateResult: Stitch[PredicateResult],
-    statsReceiver: StatsReceiver
-  ): Stitch[PredicateResult] = {
-    profilePredicateResults(
-      predicateResult.map(Seq(_)),
-      statsReceiver
-    ).map(_.head)
+  delonf profilelonPrelondicatelonRelonsult(
+    prelondicatelonRelonsult: Stitch[PrelondicatelonRelonsult],
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Stitch[PrelondicatelonRelonsult] = {
+    profilelonPrelondicatelonRelonsults(
+      prelondicatelonRelonsult.map(Selonq(_)),
+      statsReloncelonivelonr
+    ).map(_.helonad)
   }
 
   /**
-   * Helper function for timing an arrow and count a list of PredicateResult
+   * Helonlpelonr function for timing an arrow and count a list of PrelondicatelonRelonsult
    */
-  def profilePredicateResults[Q](
-    predicateResult: Arrow[Q, Seq[PredicateResult]],
-    statsReceiver: StatsReceiver
-  ): Arrow[Q, Seq[PredicateResult]] = {
-    profileArrow[Q, Seq[PredicateResult]](
-      predicateResult,
-      statsReceiver
-    ).onSuccess {
+  delonf profilelonPrelondicatelonRelonsults[Q](
+    prelondicatelonRelonsult: Arrow[Q, Selonq[PrelondicatelonRelonsult]],
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Arrow[Q, Selonq[PrelondicatelonRelonsult]] = {
+    profilelonArrow[Q, Selonq[PrelondicatelonRelonsult]](
+      prelondicatelonRelonsult,
+      statsReloncelonivelonr
+    ).onSuccelonss {
       _.map {
-        case PredicateResult.Valid =>
-          statsReceiver.counter(ValidCount).incr()
-        case PredicateResult.Invalid(reasons) =>
-          statsReceiver.counter(InvalidCount).incr()
-          reasons.map { filterReason =>
-            statsReceiver.counter(InvalidHasReasons).incr()
-            statsReceiver.scope(Reasons).counter(filterReason.reason).incr()
+        caselon PrelondicatelonRelonsult.Valid =>
+          statsReloncelonivelonr.countelonr(ValidCount).incr()
+        caselon PrelondicatelonRelonsult.Invalid(relonasons) =>
+          statsReloncelonivelonr.countelonr(InvalidCount).incr()
+          relonasons.map { filtelonrRelonason =>
+            statsReloncelonivelonr.countelonr(InvalidHasRelonasons).incr()
+            statsReloncelonivelonr.scopelon(Relonasons).countelonr(filtelonrRelonason.relonason).incr()
           }
       }
     }
   }
 
   /**
-   * Helper function for timing an arrow and count individual PredicateResult
+   * Helonlpelonr function for timing an arrow and count individual PrelondicatelonRelonsult
    */
-  def profilePredicateResult[Q](
-    predicateResult: Arrow[Q, PredicateResult],
-    statsReceiver: StatsReceiver
-  ): Arrow[Q, PredicateResult] = {
-    profilePredicateResults(
-      predicateResult.map(Seq(_)),
-      statsReceiver
-    ).map(_.head)
+  delonf profilelonPrelondicatelonRelonsult[Q](
+    prelondicatelonRelonsult: Arrow[Q, PrelondicatelonRelonsult],
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Arrow[Q, PrelondicatelonRelonsult] = {
+    profilelonPrelondicatelonRelonsults(
+      prelondicatelonRelonsult.map(Selonq(_)),
+      statsReloncelonivelonr
+    ).map(_.helonad)
   }
 
   /**
-   * Helper function for timing a stitch code block
+   * Helonlpelonr function for timing a stitch codelon block
    */
-  def profileStitchSeqResults[T](
-    stats: StatsReceiver
+  delonf profilelonStitchSelonqRelonsults[T](
+    stats: StatsReloncelonivelonr
   )(
-    block: => Stitch[Seq[T]]
-  ): Stitch[Seq[T]] = {
-    stats.counter(RequestName).incr()
-    profileStitch(stats.stat(LatencyName), TimeUnit.MILLISECONDS) {
-      block onSuccess { r =>
-        if (r.isEmpty) stats.counter(EmptyResultsName).incr()
-        stats.stat(ResultsStat).add(r.size)
-      } onFailure { e =>
+    block: => Stitch[Selonq[T]]
+  ): Stitch[Selonq[T]] = {
+    stats.countelonr(RelonquelonstNamelon).incr()
+    profilelonStitch(stats.stat(LatelonncyNamelon), TimelonUnit.MILLISelonCONDS) {
+      block onSuccelonss { r =>
+        if (r.iselonmpty) stats.countelonr(elonmptyRelonsultsNamelon).incr()
+        stats.stat(RelonsultsStat).add(r.sizelon)
+      } onFailurelon { elon =>
         {
-          stats.counter(FailureName).incr()
-          stats.scope(FailureName).counter(e.getClass.getName).incr()
+          stats.countelonr(FailurelonNamelon).incr()
+          stats.scopelon(FailurelonNamelon).countelonr(elon.gelontClass.gelontNamelon).incr()
         }
       }
     }
   }
 
   /**
-   * Time a given asynchronous `f` using the given `unit`.
+   * Timelon a givelonn asynchronous `f` using thelon givelonn `unit`.
    */
-  def profileStitch[A](stat: Stat, unit: TimeUnit)(f: => Stitch[A]): Stitch[A] = {
-    val start = Stopwatch.timeNanos()
+  delonf profilelonStitch[A](stat: Stat, unit: TimelonUnit)(f: => Stitch[A]): Stitch[A] = {
+    val start = Stopwatch.timelonNanos()
     try {
-      f.respond { _ => stat.add(unit.convert(Stopwatch.timeNanos() - start, TimeUnit.NANOSECONDS)) }
+      f.relonspond { _ => stat.add(unit.convelonrt(Stopwatch.timelonNanos() - start, TimelonUnit.NANOSelonCONDS)) }
     } catch {
-      case NonFatal(e) =>
-        stat.add(unit.convert(Stopwatch.timeNanos() - start, TimeUnit.NANOSECONDS))
-        Stitch.exception(e)
+      caselon NonFatal(elon) =>
+        stat.add(unit.convelonrt(Stopwatch.timelonNanos() - start, TimelonUnit.NANOSelonCONDS))
+        Stitch.elonxcelonption(elon)
     }
   }
 
-  def observeStitchQualityFactor[T](
+  delonf obselonrvelonStitchQualityFactor[T](
     stitch: Stitch[T],
-    qualityFactorObserverOption: Option[QualityFactorObserver],
-    statsReceiver: StatsReceiver
+    qualityFactorObselonrvelonrOption: Option[QualityFactorObselonrvelonr],
+    statsReloncelonivelonr: StatsReloncelonivelonr
   ): Stitch[T] = {
-    qualityFactorObserverOption
-      .map { observer =>
+    qualityFactorObselonrvelonrOption
+      .map { obselonrvelonr =>
         Stitch
-          .time(stitch)
+          .timelon(stitch)
           .map {
-            case (response, stitchRunDuration) =>
-              observer(response, stitchRunDuration)
-              val qfVal = observer.qualityFactor.currentValue.floatValue() * 10000
-              statsReceiver.counter(QualityFactorCounts).incr()
-              statsReceiver
+            caselon (relonsponselon, stitchRunDuration) =>
+              obselonrvelonr(relonsponselon, stitchRunDuration)
+              val qfVal = obselonrvelonr.qualityFactor.currelonntValuelon.floatValuelon() * 10000
+              statsReloncelonivelonr.countelonr(QualityFactorCounts).incr()
+              statsReloncelonivelonr
                 .stat(QualityFactorStat)
                 .add(qfVal)
-              response
+              relonsponselon
           }
-          .lowerFromTry
-      }.getOrElse(stitch)
+          .lowelonrFromTry
+      }.gelontOrelonlselon(stitch)
   }
 }

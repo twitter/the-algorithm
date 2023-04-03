@@ -1,35 +1,35 @@
-package com.twitter.follow_recommendations.configapi.candidates
+packagelon com.twittelonr.follow_reloncommelonndations.configapi.candidatelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.configapi.params.GlobalParams
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.configapi.params.GlobalParams
+import com.twittelonr.selonrvo.util.MelonmoizingStatsReloncelonivelonr
+import com.twittelonr.timelonlinelons.configapi.Config
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Params
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * CandidateParamsFactory is primarily used for "producer side" experiments, don't use it on consumer side experiments
+ * CandidatelonParamsFactory is primarily uselond for "producelonr sidelon" elonxpelonrimelonnts, don't uselon it on consumelonr sidelon elonxpelonrimelonnts
  */
-@Singleton
-class CandidateUserParamsFactory[T <: HasParams with HasDisplayLocation] @Inject() (
+@Singlelonton
+class CandidatelonUselonrParamsFactory[T <: HasParams with HasDisplayLocation] @Injelonct() (
   config: Config,
-  candidateContextFactory: CandidateUserContextFactory,
-  statsReceiver: StatsReceiver) {
-  private val stats = new MemoizingStatsReceiver(statsReceiver.scope("configapi_candidate_params"))
-  def apply(candidateContext: CandidateUser, request: T): CandidateUser = {
-    if (candidateContext.params == Params.Invalid) {
-      if (request.params(GlobalParams.EnableCandidateParamHydrations)) {
-        candidateContext.copy(params =
-          config(candidateContextFactory(candidateContext, request.displayLocation), stats))
-      } else {
-        candidateContext.copy(params = Params.Empty)
+  candidatelonContelonxtFactory: CandidatelonUselonrContelonxtFactory,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val stats = nelonw MelonmoizingStatsReloncelonivelonr(statsReloncelonivelonr.scopelon("configapi_candidatelon_params"))
+  delonf apply(candidatelonContelonxt: CandidatelonUselonr, relonquelonst: T): CandidatelonUselonr = {
+    if (candidatelonContelonxt.params == Params.Invalid) {
+      if (relonquelonst.params(GlobalParams.elonnablelonCandidatelonParamHydrations)) {
+        candidatelonContelonxt.copy(params =
+          config(candidatelonContelonxtFactory(candidatelonContelonxt, relonquelonst.displayLocation), stats))
+      } elonlselon {
+        candidatelonContelonxt.copy(params = Params.elonmpty)
       }
-    } else {
-      candidateContext
+    } elonlselon {
+      candidatelonContelonxt
     }
   }
 }

@@ -1,17 +1,17 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.param.ConsumerEmbeddingBasedTwoTowerParams
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.timelines.configapi
+import com.twittelonr.cr_mixelonr.param.ConsumelonrelonmbelonddingBaselondTwoTowelonrParams
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.timelonlinelons.configapi
 
-object ConsumerEmbeddingBasedTwoTowerSimilarityEngine {
-  def fromParams(
-    sourceId: InternalId,
+objelonct ConsumelonrelonmbelonddingBaselondTwoTowelonrSimilarityelonnginelon {
+  delonf fromParams(
+    sourcelonId: IntelonrnalId,
     params: configapi.Params,
-  ): HnswANNEngineQuery = {
-    HnswANNEngineQuery(
-      sourceId = sourceId,
-      modelId = params(ConsumerEmbeddingBasedTwoTowerParams.ModelIdParam),
+  ): HnswANNelonnginelonQuelonry = {
+    HnswANNelonnginelonQuelonry(
+      sourcelonId = sourcelonId,
+      modelonlId = params(ConsumelonrelonmbelonddingBaselondTwoTowelonrParams.ModelonlIdParam),
       params = params
     )
   }

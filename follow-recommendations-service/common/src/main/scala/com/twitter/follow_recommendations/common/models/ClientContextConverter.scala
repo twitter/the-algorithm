@@ -1,53 +1,53 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => frs}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => frs}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
 
-object ClientContextConverter {
-  def toFRSOfflineClientContextThrift(
-    productMixerClientContext: ClientContext
-  ): offline.OfflineClientContext =
-    offline.OfflineClientContext(
-      productMixerClientContext.userId,
-      productMixerClientContext.guestId,
-      productMixerClientContext.appId,
-      productMixerClientContext.countryCode,
-      productMixerClientContext.languageCode,
-      productMixerClientContext.guestIdAds,
-      productMixerClientContext.guestIdMarketing
+objelonct ClielonntContelonxtConvelonrtelonr {
+  delonf toFRSOfflinelonClielonntContelonxtThrift(
+    productMixelonrClielonntContelonxt: ClielonntContelonxt
+  ): offlinelon.OfflinelonClielonntContelonxt =
+    offlinelon.OfflinelonClielonntContelonxt(
+      productMixelonrClielonntContelonxt.uselonrId,
+      productMixelonrClielonntContelonxt.guelonstId,
+      productMixelonrClielonntContelonxt.appId,
+      productMixelonrClielonntContelonxt.countryCodelon,
+      productMixelonrClielonntContelonxt.languagelonCodelon,
+      productMixelonrClielonntContelonxt.guelonstIdAds,
+      productMixelonrClielonntContelonxt.guelonstIdMarkelonting
     )
 
-  def fromThrift(clientContext: frs.ClientContext): ClientContext = ClientContext(
-    userId = clientContext.userId,
-    guestId = clientContext.guestId,
-    appId = clientContext.appId,
-    ipAddress = clientContext.ipAddress,
-    userAgent = clientContext.userAgent,
-    countryCode = clientContext.countryCode,
-    languageCode = clientContext.languageCode,
-    isTwoffice = clientContext.isTwoffice,
-    userRoles = clientContext.userRoles.map(_.toSet),
-    deviceId = clientContext.deviceId,
-    guestIdAds = clientContext.guestIdAds,
-    guestIdMarketing = clientContext.guestIdMarketing,
-    mobileDeviceId = None,
-    mobileDeviceAdId = None,
-    limitAdTracking = None
+  delonf fromThrift(clielonntContelonxt: frs.ClielonntContelonxt): ClielonntContelonxt = ClielonntContelonxt(
+    uselonrId = clielonntContelonxt.uselonrId,
+    guelonstId = clielonntContelonxt.guelonstId,
+    appId = clielonntContelonxt.appId,
+    ipAddrelonss = clielonntContelonxt.ipAddrelonss,
+    uselonrAgelonnt = clielonntContelonxt.uselonrAgelonnt,
+    countryCodelon = clielonntContelonxt.countryCodelon,
+    languagelonCodelon = clielonntContelonxt.languagelonCodelon,
+    isTwofficelon = clielonntContelonxt.isTwofficelon,
+    uselonrRolelons = clielonntContelonxt.uselonrRolelons.map(_.toSelont),
+    delonvicelonId = clielonntContelonxt.delonvicelonId,
+    guelonstIdAds = clielonntContelonxt.guelonstIdAds,
+    guelonstIdMarkelonting = clielonntContelonxt.guelonstIdMarkelonting,
+    mobilelonDelonvicelonId = Nonelon,
+    mobilelonDelonvicelonAdId = Nonelon,
+    limitAdTracking = Nonelon
   )
 
-  def toThrift(clientContext: ClientContext): frs.ClientContext = frs.ClientContext(
-    userId = clientContext.userId,
-    guestId = clientContext.guestIdAds,
-    appId = clientContext.appId,
-    ipAddress = clientContext.ipAddress,
-    userAgent = clientContext.userAgent,
-    countryCode = clientContext.countryCode,
-    languageCode = clientContext.languageCode,
-    isTwoffice = clientContext.isTwoffice,
-    userRoles = clientContext.userRoles,
-    deviceId = clientContext.deviceId,
-    guestIdAds = clientContext.guestIdAds,
-    guestIdMarketing = clientContext.guestIdMarketing
+  delonf toThrift(clielonntContelonxt: ClielonntContelonxt): frs.ClielonntContelonxt = frs.ClielonntContelonxt(
+    uselonrId = clielonntContelonxt.uselonrId,
+    guelonstId = clielonntContelonxt.guelonstIdAds,
+    appId = clielonntContelonxt.appId,
+    ipAddrelonss = clielonntContelonxt.ipAddrelonss,
+    uselonrAgelonnt = clielonntContelonxt.uselonrAgelonnt,
+    countryCodelon = clielonntContelonxt.countryCodelon,
+    languagelonCodelon = clielonntContelonxt.languagelonCodelon,
+    isTwofficelon = clielonntContelonxt.isTwofficelon,
+    uselonrRolelons = clielonntContelonxt.uselonrRolelons,
+    delonvicelonId = clielonntContelonxt.delonvicelonId,
+    guelonstIdAds = clielonntContelonxt.guelonstIdAds,
+    guelonstIdMarkelonting = clielonntContelonxt.guelonstIdMarkelonting
   )
 }

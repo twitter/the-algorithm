@@ -1,26 +1,26 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphInNetworkScores
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealGraphManhattanEndpoint
-import com.twitter.home_mixer.store.RealGraphInNetworkScoresStore
-import com.twitter.inject.TwitterModule
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.util.CommonTypes.ViewerId
-import com.twitter.wtf.candidate.thriftscala.Candidate
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.RelonalGraphInNelontworkScorelons
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.RelonalGraphManhattanelonndpoint
+import com.twittelonr.homelon_mixelonr.storelon.RelonalGraphInNelontworkScorelonsStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVelonndpoint
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.util.CommonTypelons.VielonwelonrId
+import com.twittelonr.wtf.candidatelon.thriftscala.Candidatelon
 
-import javax.inject.Singleton
+import javax.injelonct.Singlelonton
 
-object RealGraphInNetworkScoresModule extends TwitterModule {
+objelonct RelonalGraphInNelontworkScorelonsModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  @Named(RealGraphInNetworkScores)
-  def providesRealGraphInNetworkScoresFeaturesStore(
-    @Named(RealGraphManhattanEndpoint) realGraphInNetworkScoresManhattanKVEndpoint: ManhattanKVEndpoint
-  ): ReadableStore[ViewerId, Seq[Candidate]] = {
-    new RealGraphInNetworkScoresStore(realGraphInNetworkScoresManhattanKVEndpoint)
+  @Providelons
+  @Singlelonton
+  @Namelond(RelonalGraphInNelontworkScorelons)
+  delonf providelonsRelonalGraphInNelontworkScorelonsFelonaturelonsStorelon(
+    @Namelond(RelonalGraphManhattanelonndpoint) relonalGraphInNelontworkScorelonsManhattanKVelonndpoint: ManhattanKVelonndpoint
+  ): RelonadablelonStorelon[VielonwelonrId, Selonq[Candidatelon]] = {
+    nelonw RelonalGraphInNelontworkScorelonsStorelon(relonalGraphInNelontworkScorelonsManhattanKVelonndpoint)
   }
 }

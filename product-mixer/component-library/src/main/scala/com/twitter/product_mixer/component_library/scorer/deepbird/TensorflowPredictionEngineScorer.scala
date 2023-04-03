@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.scorer.deepbird
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.delonelonpbird
 
-import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngine
-import com.twitter.cortex.deepbird.thriftjava.ModelSelector
-import com.twitter.ml.prediction_service.BatchPredictionRequest
-import com.twitter.ml.prediction_service.BatchPredictionResponse
-import com.twitter.product_mixer.core.feature.datarecord.BaseDataRecordFeature
-import com.twitter.product_mixer.core.feature.featuremap.datarecord.FeaturesScope
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.util.Future
+import com.twittelonr.cortelonx.delonelonpbird.runtimelon.prelondiction_elonnginelon.TelonnsorflowPrelondictionelonnginelon
+import com.twittelonr.cortelonx.delonelonpbird.thriftjava.ModelonlSelonlelonctor
+import com.twittelonr.ml.prelondiction_selonrvicelon.BatchPrelondictionRelonquelonst
+import com.twittelonr.ml.prelondiction_selonrvicelon.BatchPrelondictionRelonsponselon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.BaselonDataReloncordFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.datareloncord.FelonaturelonsScopelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.util.Futurelon
 
 /**
- * Configurable Scorer that calls a TensorflowPredictionEngine.
- * @param identifier Unique identifier for the scorer
- * @param tensorflowPredictionEngine The TensorFlow Prediction Engine
- * @param queryFeatures The Query Features to convert and pass to the deepbird model.
- * @param candidateFeatures The Candidate Features to convert and pass to the deepbird model.
- * @param resultFeatures The Candidate features returned by the model.
- * @tparam Query Type of pipeline query.
- * @tparam Candidate Type of candidates to score.
- * @tparam QueryFeatures type of the query level features consumed by the scorer.
- * @tparam CandidateFeatures type of the candidate level features consumed by the scorer.
- * @tparam ResultFeatures type of the candidate level features returned by the scorer.
+ * Configurablelon Scorelonr that calls a TelonnsorflowPrelondictionelonnginelon.
+ * @param idelonntifielonr Uniquelon idelonntifielonr for thelon scorelonr
+ * @param telonnsorflowPrelondictionelonnginelon Thelon TelonnsorFlow Prelondiction elonnginelon
+ * @param quelonryFelonaturelons Thelon Quelonry Felonaturelons to convelonrt and pass to thelon delonelonpbird modelonl.
+ * @param candidatelonFelonaturelons Thelon Candidatelon Felonaturelons to convelonrt and pass to thelon delonelonpbird modelonl.
+ * @param relonsultFelonaturelons Thelon Candidatelon felonaturelons relonturnelond by thelon modelonl.
+ * @tparam Quelonry Typelon of pipelonlinelon quelonry.
+ * @tparam Candidatelon Typelon of candidatelons to scorelon.
+ * @tparam QuelonryFelonaturelons typelon of thelon quelonry lelonvelonl felonaturelons consumelond by thelon scorelonr.
+ * @tparam CandidatelonFelonaturelons typelon of thelon candidatelon lelonvelonl felonaturelons consumelond by thelon scorelonr.
+ * @tparam RelonsultFelonaturelons typelon of thelon candidatelon lelonvelonl felonaturelons relonturnelond by thelon scorelonr.
  */
-class TensorflowPredictionEngineScorer[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  QueryFeatures <: BaseDataRecordFeature[Query, _],
-  CandidateFeatures <: BaseDataRecordFeature[Candidate, _],
-  ResultFeatures <: BaseDataRecordFeature[Candidate, _]
+class TelonnsorflowPrelondictionelonnginelonScorelonr[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any],
+  QuelonryFelonaturelons <: BaselonDataReloncordFelonaturelon[Quelonry, _],
+  CandidatelonFelonaturelons <: BaselonDataReloncordFelonaturelon[Candidatelon, _],
+  RelonsultFelonaturelons <: BaselonDataReloncordFelonaturelon[Candidatelon, _]
 ](
-  override val identifier: ScorerIdentifier,
-  tensorflowPredictionEngine: TensorflowPredictionEngine,
-  queryFeatures: FeaturesScope[QueryFeatures],
-  candidateFeatures: FeaturesScope[CandidateFeatures],
-  resultFeatures: Set[ResultFeatures])
-    extends BaseDeepbirdV2Scorer[
-      Query,
-      Candidate,
-      QueryFeatures,
-      CandidateFeatures,
-      ResultFeatures
+  ovelonrridelon val idelonntifielonr: ScorelonrIdelonntifielonr,
+  telonnsorflowPrelondictionelonnginelon: TelonnsorflowPrelondictionelonnginelon,
+  quelonryFelonaturelons: FelonaturelonsScopelon[QuelonryFelonaturelons],
+  candidatelonFelonaturelons: FelonaturelonsScopelon[CandidatelonFelonaturelons],
+  relonsultFelonaturelons: Selont[RelonsultFelonaturelons])
+    elonxtelonnds BaselonDelonelonpbirdV2Scorelonr[
+      Quelonry,
+      Candidatelon,
+      QuelonryFelonaturelons,
+      CandidatelonFelonaturelons,
+      RelonsultFelonaturelons
     ](
-      identifier,
-      { _: Query =>
-        None
+      idelonntifielonr,
+      { _: Quelonry =>
+        Nonelon
       },
-      queryFeatures,
-      candidateFeatures,
-      resultFeatures) {
+      quelonryFelonaturelons,
+      candidatelonFelonaturelons,
+      relonsultFelonaturelons) {
 
-  override def getBatchPredictions(
-    request: BatchPredictionRequest,
-    modelSelector: ModelSelector
-  ): Future[BatchPredictionResponse] = tensorflowPredictionEngine.getBatchPrediction(request)
+  ovelonrridelon delonf gelontBatchPrelondictions(
+    relonquelonst: BatchPrelondictionRelonquelonst,
+    modelonlSelonlelonctor: ModelonlSelonlelonctor
+  ): Futurelon[BatchPrelondictionRelonsponselon] = telonnsorflowPrelondictionelonnginelon.gelontBatchPrelondiction(relonquelonst)
 }

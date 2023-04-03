@@ -1,101 +1,101 @@
-package com.twitter.product_mixer.core.util
+packagelon com.twittelonr.product_mixelonr.corelon.util
 
-import com.twitter.concurrent.NamedPoolThreadFactory
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.Duration
-import com.twitter.util.FuturePool
+import com.twittelonr.concurrelonnt.NamelondPoolThrelonadFactory
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.util.Duration
+import com.twittelonr.util.FuturelonPool
 
-import java.util.concurrent.ArrayBlockingQueue
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
+import java.util.concurrelonnt.ArrayBlockingQuelonuelon
+import java.util.concurrelonnt.BlockingQuelonuelon
+import java.util.concurrelonnt.LinkelondBlockingQuelonuelon
+import java.util.concurrelonnt.ThrelonadPoolelonxeloncutor
+import java.util.concurrelonnt.TimelonUnit
 
 /**
- * Utility for making [[FuturePool]] with finite thread counts and different work queue options
- * while also monitoring the size of the work queue that's used.
+ * Utility for making [[FuturelonPool]] with finitelon threlonad counts and diffelonrelonnt work quelonuelon options
+ * whilelon also monitoring thelon sizelon of thelon work quelonuelon that's uselond.
  *
- * This only handles the cases where the number of threads are bounded.
- * For unbounded numbers of threads in a [[FuturePool]] use [[FuturePool.interruptibleUnboundedPool]] instead.
+ * This only handlelons thelon caselons whelonrelon thelon numbelonr of threlonads arelon boundelond.
+ * For unboundelond numbelonrs of threlonads in a [[FuturelonPool]] uselon [[FuturelonPool.intelonrruptiblelonUnboundelondPool]] instelonad.
  */
-object FuturePools {
+objelonct FuturelonPools {
 
   /**
-   * Makes a [[FuturePool]] with a fixed number of threads and a work queue
-   * with a maximum size of `maxWorkQueueSize`.
+   * Makelons a [[FuturelonPool]] with a fixelond numbelonr of threlonads and a work quelonuelon
+   * with a maximum sizelon of `maxWorkQuelonuelonSizelon`.
    *
-   * @note the [[FuturePool]] returns a failed [[com.twitter.util.Future]]s containing
-   *       [[java.util.concurrent.RejectedExecutionException]] when trying to enqueue
-   *       work when the work queue is full.
+   * @notelon thelon [[FuturelonPool]] relonturns a failelond [[com.twittelonr.util.Futurelon]]s containing
+   *       [[java.util.concurrelonnt.Relonjelonctelondelonxeloncutionelonxcelonption]] whelonn trying to elonnquelonuelon
+   *       work whelonn thelon work quelonuelon is full.
    */
-  def boundedFixedThreadPool(
-    name: String,
-    fixedThreadCount: Int,
-    workQueueSize: Int,
-    statsReceiver: StatsReceiver
-  ): FuturePool =
-    futurePool(
-      name = name,
-      minThreads = fixedThreadCount,
-      maxThreads = fixedThreadCount,
-      keepIdleThreadsAlive = Duration.Zero,
-      workQueue = new ArrayBlockingQueue[Runnable](workQueueSize),
-      statsReceiver = statsReceiver
+  delonf boundelondFixelondThrelonadPool(
+    namelon: String,
+    fixelondThrelonadCount: Int,
+    workQuelonuelonSizelon: Int,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): FuturelonPool =
+    futurelonPool(
+      namelon = namelon,
+      minThrelonads = fixelondThrelonadCount,
+      maxThrelonads = fixelondThrelonadCount,
+      kelonelonpIdlelonThrelonadsAlivelon = Duration.Zelonro,
+      workQuelonuelon = nelonw ArrayBlockingQuelonuelon[Runnablelon](workQuelonuelonSizelon),
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
   /**
-   * Makes a [[FuturePool]] with a fix number of threads and an unbounded work queue
+   * Makelons a [[FuturelonPool]] with a fix numbelonr of threlonads and an unboundelond work quelonuelon
    *
-   * @note Since the work queue is unbounded, this will fill up memory if the available worker threads can't keep up
+   * @notelon Sincelon thelon work quelonuelon is unboundelond, this will fill up melonmory if thelon availablelon workelonr threlonads can't kelonelonp up
    */
-  def unboundedFixedThreadPool(
-    name: String,
-    fixedThreadCount: Int,
-    statsReceiver: StatsReceiver
-  ): FuturePool =
-    futurePool(
-      name = name,
-      minThreads = fixedThreadCount,
-      maxThreads = fixedThreadCount,
-      keepIdleThreadsAlive = Duration.Zero,
-      workQueue = new LinkedBlockingQueue[Runnable],
-      statsReceiver = statsReceiver
+  delonf unboundelondFixelondThrelonadPool(
+    namelon: String,
+    fixelondThrelonadCount: Int,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): FuturelonPool =
+    futurelonPool(
+      namelon = namelon,
+      minThrelonads = fixelondThrelonadCount,
+      maxThrelonads = fixelondThrelonadCount,
+      kelonelonpIdlelonThrelonadsAlivelon = Duration.Zelonro,
+      workQuelonuelon = nelonw LinkelondBlockingQuelonuelon[Runnablelon],
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
   /**
-   * Makes a [[FuturePool]] with the provided thread configuration and
-   * who's `workQueue` is monitored by a [[com.twitter.finagle.stats.Gauge]]
+   * Makelons a [[FuturelonPool]] with thelon providelond threlonad configuration and
+   * who's `workQuelonuelon` is monitorelond by a [[com.twittelonr.finaglelon.stats.Gaugelon]]
    *
-   * @note if `minThreads` == `maxThreads` then the threadpool has a fixed size
+   * @notelon if `minThrelonads` == `maxThrelonads` thelonn thelon threlonadpool has a fixelond sizelon
    *
-   * @param name name of the threadpool
-   * @param minThreads minimum number of threads in the pool
-   * @param maxThreads maximum number of threads in the pool
-   * @param keepIdleThreadsAlive threads that are idle for this long will be removed from
-   *                             the pool if there are more than `minThreads` in the pool.
-   *                             If the pool size is fixed this is ignored.
+   * @param namelon namelon of thelon threlonadpool
+   * @param minThrelonads minimum numbelonr of threlonads in thelon pool
+   * @param maxThrelonads maximum numbelonr of threlonads in thelon pool
+   * @param kelonelonpIdlelonThrelonadsAlivelon threlonads that arelon idlelon for this long will belon relonmovelond from
+   *                             thelon pool if thelonrelon arelon morelon than `minThrelonads` in thelon pool.
+   *                             If thelon pool sizelon is fixelond this is ignorelond.
    */
-  private def futurePool(
-    name: String,
-    minThreads: Int,
-    maxThreads: Int,
-    keepIdleThreadsAlive: Duration,
-    workQueue: BlockingQueue[Runnable],
-    statsReceiver: StatsReceiver
-  ): FuturePool = {
-    val gaugeReference = statsReceiver.addGauge("workQueueSize")(workQueue.size())
+  privatelon delonf futurelonPool(
+    namelon: String,
+    minThrelonads: Int,
+    maxThrelonads: Int,
+    kelonelonpIdlelonThrelonadsAlivelon: Duration,
+    workQuelonuelon: BlockingQuelonuelon[Runnablelon],
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): FuturelonPool = {
+    val gaugelonRelonfelonrelonncelon = statsReloncelonivelonr.addGaugelon("workQuelonuelonSizelon")(workQuelonuelon.sizelon())
 
-    val threadFactory = new NamedPoolThreadFactory(name, makeDaemons = true)
+    val threlonadFactory = nelonw NamelondPoolThrelonadFactory(namelon, makelonDaelonmons = truelon)
 
-    val executorService =
-      new ThreadPoolExecutor(
-        minThreads,
-        maxThreads, // ignored by ThreadPoolExecutor when an unbounded queue is provided
-        keepIdleThreadsAlive.inMillis,
-        TimeUnit.MILLISECONDS,
-        workQueue,
-        threadFactory)
+    val elonxeloncutorSelonrvicelon =
+      nelonw ThrelonadPoolelonxeloncutor(
+        minThrelonads,
+        maxThrelonads, // ignorelond by ThrelonadPoolelonxeloncutor whelonn an unboundelond quelonuelon is providelond
+        kelonelonpIdlelonThrelonadsAlivelon.inMillis,
+        TimelonUnit.MILLISelonCONDS,
+        workQuelonuelon,
+        threlonadFactory)
 
-    FuturePool.interruptible(executorService)
+    FuturelonPool.intelonrruptiblelon(elonxeloncutorSelonrvicelon)
   }
 }

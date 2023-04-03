@@ -1,9 +1,9 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
 /**
- * An enum to hold different types of query-specific features (these are not indexed in Earlybird)
+ * An elonnum to hold diffelonrelonnt typelons of quelonry-speloncific felonaturelons (thelonselon arelon not indelonxelond in elonarlybird)
  */
-public enum QueryFeatureType {
-  SOCIAL_ENGAGEMENTS,
+public elonnum QuelonryFelonaturelonTypelon {
+  SOCIAL_elonNGAGelonMelonNTS,
   CLICKS
 }

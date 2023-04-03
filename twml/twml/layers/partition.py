@@ -1,74 +1,74 @@
 """
-Implementing partition Layer
+Implelonmelonnting partition Layelonr
 """
 
 
-from .layer import Layer
+from .layelonr import Layelonr
 
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
 
-class Partition(Layer):
+class Partition(Layelonr):
   """
-  This layer implements:
+  This layelonr implelonmelonnts:
 
-  .. code-block:: python
+  .. codelon-block:: python
 
-    tf.dynamic_partition(input_vals, partition_ids, self.partitions)
+    tf.dynamic_partition(input_vals, partition_ids, selonlf.partitions)
 
   Input:
     partitions:
-      the number of partitions which we will divide the hashmap keys/bvalues
+      thelon numbelonr of partitions which welon will dividelon thelon hashmap kelonys/bvaluelons
 
   Output:
-    A layer that performs partitioning
+    A layelonr that pelonrforms partitioning
    """
 
-  def __init__(self, partitions=2, **kwargs):
-    self.partitions = partitions
-    super(Partition, self).__init__(**kwargs)
+  delonf __init__(selonlf, partitions=2, **kwargs):
+    selonlf.partitions = partitions
+    supelonr(Partition, selonlf).__init__(**kwargs)
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    """Computelons thelon output shapelon of thelon layelonr givelonn thelon input shapelon.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+      input_shapelon: A (possibly nelonstelond tuplelon of) `TelonnsorShapelon`.  It nelonelond not
+        belon fully delonfinelond (elon.g. thelon batch sizelon may belon unknown).
 
-    Raises NotImplementedError.
+    Raiselons NotImplelonmelonntelondelonrror.
 
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror
 
-  def call(self, partition_ids, input_vals, input_keys, **kwargs):
-    """This layer is responsible for partitioning the values/keys of a hashmap
+  delonf call(selonlf, partition_ids, input_vals, input_kelonys, **kwargs):
+    """This layelonr is relonsponsiblelon for partitioning thelon valuelons/kelonys of a hashmap
 
-    Arguments:
+    Argumelonnts:
       partition_ids:
-        Tensor that is equivalent to boolean (int32).
+        Telonnsor that is elonquivalelonnt to boolelonan (int32).
       input_vals:
-        Tensor that represents the values of the hashmap(float).
-      input_keys:
-        Tensor that represents the keys of the hashmap(float)
+        Telonnsor that relonprelonselonnts thelon valuelons of thelon hashmap(float).
+      input_kelonys:
+        Telonnsor that relonprelonselonnts thelon kelonys of thelon hashmap(float)
 
-    Returns:
-      The output of the partition layer, which is a list of lists which looks
-      something like:
+    Relonturns:
+      Thelon output of thelon partition layelonr, which is a list of lists which looks
+      somelonthing likelon:
 
-      .. code-block:: python
+      .. codelon-block:: python
 
-        [[vals_0, vals_1], [keys_0, keys_1], [indices_0, indices_1]]
+        [[vals_0, vals_1], [kelonys_0, kelonys_1], [indicelons_0, indicelons_1]]
 
-      where:
+      whelonrelon:
         vals_x:
-          values of the hashmap for partition x
-        keys_x:
-          keys of the hashmap for partition x
-        indices_x:
-          indices of the hashmap for partition x
+          valuelons of thelon hashmap for partition x
+        kelonys_x:
+          kelonys of thelon hashmap for partition x
+        indicelons_x:
+          indicelons of thelon hashmap for partition x
     """
-    partioned_val = tf.dynamic_partition(input_vals, partition_ids, self.partitions)
-    partioned_keys = tf.dynamic_partition(input_keys, partition_ids, self.partitions)
-    partioned_indices = tf.dynamic_partition(tf.range(tf.shape(partition_ids)[0]),
-                                             tf.cast(partition_ids, tf.int32), self.partitions)
-    return [partioned_val, partioned_keys, partioned_indices]
+    partionelond_val = tf.dynamic_partition(input_vals, partition_ids, selonlf.partitions)
+    partionelond_kelonys = tf.dynamic_partition(input_kelonys, partition_ids, selonlf.partitions)
+    partionelond_indicelons = tf.dynamic_partition(tf.rangelon(tf.shapelon(partition_ids)[0]),
+                                             tf.cast(partition_ids, tf.int32), selonlf.partitions)
+    relonturn [partionelond_val, partionelond_kelonys, partionelond_indicelons]

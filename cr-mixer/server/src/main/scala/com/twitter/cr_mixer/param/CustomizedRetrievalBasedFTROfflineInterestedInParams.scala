@@ -1,31 +1,31 @@
-package com.twitter.cr_mixer.param
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+packagelon com.twittelonr.cr_mixelonr.param
+import com.twittelonr.cr_mixelonr.modelonl.ModelonlConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object CustomizedRetrievalBasedFTROfflineInterestedInParams {
-  object CustomizedRetrievalBasedFTROfflineInterestedInSource
-      extends FSParam[String](
-        name = "customized_retrieval_based_ftr_offline_interestedin_model_id",
-        default = ModelConfig.OfflineFavDecayedSum
+objelonct CustomizelondRelontrielonvalBaselondFTROfflinelonIntelonrelonstelondInParams {
+  objelonct CustomizelondRelontrielonvalBaselondFTROfflinelonIntelonrelonstelondInSourcelon
+      elonxtelonnds FSParam[String](
+        namelon = "customizelond_relontrielonval_baselond_ftr_offlinelon_intelonrelonstelondin_modelonl_id",
+        delonfault = ModelonlConfig.OfflinelonFavDeloncayelondSum
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    CustomizedRetrievalBasedFTROfflineInterestedInSource)
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    CustomizelondRelontrielonvalBaselondFTROfflinelonIntelonrelonstelondInSourcelon)
 
-  lazy val config: BaseConfig = {
+  lazy val config: BaselonConfig = {
 
-    val stringFSOverrides =
-      FeatureSwitchOverrideUtil.getStringFSOverrides(
-        CustomizedRetrievalBasedFTROfflineInterestedInSource
+    val stringFSOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontStringFSOvelonrridelons(
+        CustomizelondRelontrielonvalBaselondFTROfflinelonIntelonrelonstelondInSourcelon
       )
 
-    BaseConfigBuilder()
-      .set(stringFSOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(stringFSOvelonrridelons: _*)
       .build()
   }
 }

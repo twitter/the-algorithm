@@ -1,44 +1,44 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namelonspacelon java com.twittelonr.cr_mixelonr.thriftjava
+#@namelonspacelon scala com.twittelonr.cr_mixelonr.thriftscala
+#@namelonspacelon strato com.twittelonr.cr_mixelonr
 
 
-// NOTE: DO NOT depend on MetricTags for important ML Features or business logic.
-// MetricTags are meant for stats tracking & debugging purposes ONLY.
-// cr-mixer may change its definitions & how each candidate is tagged without public notice.
-// NOTE: TSPS needs the caller (Home) to specify which signal it uses to make Personalized Topics
-enum MetricTag {
-  // Source Signal Tags
-  TweetFavorite         = 0
-  Retweet               = 1
+// NOTelon: DO NOT delonpelonnd on MelontricTags for important ML Felonaturelons or businelonss logic.
+// MelontricTags arelon melonant for stats tracking & delonbugging purposelons ONLY.
+// cr-mixelonr may changelon its delonfinitions & how elonach candidatelon is taggelond without public noticelon.
+// NOTelon: TSPS nelonelonds thelon callelonr (Homelon) to speloncify which signal it uselons to makelon Pelonrsonalizelond Topics
+elonnum MelontricTag {
+  // Sourcelon Signal Tags
+  TwelonelontFavoritelon         = 0
+  Relontwelonelont               = 1
   TrafficAttribution    = 2
-  OriginalTweet         = 3
-  Reply                 = 4
-  TweetShare            = 5
+  OriginalTwelonelont         = 3
+  Relonply                 = 4
+  TwelonelontSharelon            = 5
 
-  UserFollow            = 101
-  UserRepeatedProfileVisit = 102
+  UselonrFollow            = 101
+  UselonrRelonpelonatelondProfilelonVisit = 102
 
-  PushOpenOrNtabClick   = 201
+  PushOpelonnOrNtabClick   = 201
 
-  HomeTweetClick        = 301
-  HomeVideoView         = 302
+  HomelonTwelonelontClick        = 301
+  HomelonVidelonoVielonw         = 302
 
-  // sim engine types
-  SimClustersANN        = 401
-  TweetBasedUserTweetGraph    = 402
-  TweetBasedTwHINANN          = 403
-  ConsumerEmbeddingBasedTwHINANN = 404
+  // sim elonnginelon typelons
+  SimClustelonrsANN        = 401
+  TwelonelontBaselondUselonrTwelonelontGraph    = 402
+  TwelonelontBaselondTwHINANN          = 403
+  ConsumelonrelonmbelonddingBaselondTwHINANN = 404
 
 
-  // combined engine types
-  UserInterestedIn      = 501 // Will deprecate soon
-  LookalikeUTG          = 502
-  TwhinCollabFilter     = 503
+  // combinelond elonnginelon typelons
+  UselonrIntelonrelonstelondIn      = 501 // Will delonpreloncatelon soon
+  LookalikelonUTG          = 502
+  TwhinCollabFiltelonr     = 503
 
-  // Offline Twice
-  TwiceUserId           = 601
+  // Offlinelon Twicelon
+  TwicelonUselonrId           = 601
 
-  // Other Metric Tags
-  RequestHealthFilterPushOpenBasedTweetEmbedding = 701
-} (persisted='true', hasPersonalData='true')
+  // Othelonr Melontric Tags
+  RelonquelonstHelonalthFiltelonrPushOpelonnBaselondTwelonelontelonmbelondding = 701
+} (pelonrsistelond='truelon', hasPelonrsonalData='truelon')

@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.thriftscala.{
-  ClustersUserIsInterestedIn,
-  ClustersWithScores,
-  Scores
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  ClustelonrsUselonrIsIntelonrelonstelondIn,
+  ClustelonrsWithScorelons,
+  Scorelons
 }
 
-object SimClustersInterestedInUtil {
+objelonct SimClustelonrsIntelonrelonstelondInUtil {
 
-  private final val EmptyClustersWithScores = ClustersWithScores()
+  privatelon final val elonmptyClustelonrsWithScorelons = ClustelonrsWithScorelons()
 
-  case class InterestedInScores(
-    favScore: Double,
-    clusterNormalizedFavScore: Double,
-    clusterNormalizedFollowScore: Double,
-    clusterNormalizedLogFavScore: Double)
+  caselon class IntelonrelonstelondInScorelons(
+    favScorelon: Doublelon,
+    clustelonrNormalizelondFavScorelon: Doublelon,
+    clustelonrNormalizelondFollowScorelon: Doublelon,
+    clustelonrNormalizelondLogFavScorelon: Doublelon)
 
-  def topClustersWithScores(
-    userInterests: ClustersUserIsInterestedIn
-  ): Seq[(ClusterId, InterestedInScores)] = {
-    userInterests.clusterIdToScores.toSeq.map {
-      case (clusterId, scores) =>
-        val favScore = scores.favScore.getOrElse(0.0)
-        val normalizedFavScore = scores.favScoreClusterNormalizedOnly.getOrElse(0.0)
-        val normalizedFollowScore = scores.followScoreClusterNormalizedOnly.getOrElse(0.0)
-        val normalizedLogFavScore = scores.logFavScoreClusterNormalizedOnly.getOrElse(0.0)
+  delonf topClustelonrsWithScorelons(
+    uselonrIntelonrelonsts: ClustelonrsUselonrIsIntelonrelonstelondIn
+  ): Selonq[(ClustelonrId, IntelonrelonstelondInScorelons)] = {
+    uselonrIntelonrelonsts.clustelonrIdToScorelons.toSelonq.map {
+      caselon (clustelonrId, scorelons) =>
+        val favScorelon = scorelons.favScorelon.gelontOrelonlselon(0.0)
+        val normalizelondFavScorelon = scorelons.favScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0)
+        val normalizelondFollowScorelon = scorelons.followScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0)
+        val normalizelondLogFavScorelon = scorelons.logFavScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0)
 
         (
-          clusterId,
-          InterestedInScores(
-            favScore,
-            normalizedFavScore,
-            normalizedFollowScore,
-            normalizedLogFavScore))
+          clustelonrId,
+          IntelonrelonstelondInScorelons(
+            favScorelon,
+            normalizelondFavScorelon,
+            normalizelondFollowScorelon,
+            normalizelondLogFavScorelon))
     }
   }
 
-  def buildClusterWithScores(
-    clusterScores: Seq[(ClusterId, InterestedInScores)],
-    timeInMs: Double,
-    favScoreThresholdForUserInterest: Double
+  delonf buildClustelonrWithScorelons(
+    clustelonrScorelons: Selonq[(ClustelonrId, IntelonrelonstelondInScorelons)],
+    timelonInMs: Doublelon,
+    favScorelonThrelonsholdForUselonrIntelonrelonst: Doublelon
   )(
-    implicit thriftDecayedValueMonoid: ThriftDecayedValueMonoid
-  ): ClustersWithScores = {
-    val scoresMap = clusterScores.collect {
-      case (
-            clusterId,
-            InterestedInScores(
-              favScore,
+    implicit thriftDeloncayelondValuelonMonoid: ThriftDeloncayelondValuelonMonoid
+  ): ClustelonrsWithScorelons = {
+    val scorelonsMap = clustelonrScorelons.collelonct {
+      caselon (
+            clustelonrId,
+            IntelonrelonstelondInScorelons(
+              favScorelon,
               _,
               _,
-              clusterNormalizedLogFavScore))
-          // NOTE: the threshold is on favScore, and the computation is on normalizedFavScore
-          // This threshold reduces the number of unique keys in the cache by 80%,
-          // based on offline analysis
-          if favScore >= favScoreThresholdForUserInterest =>
+              clustelonrNormalizelondLogFavScorelon))
+          // NOTelon: thelon threlonshold is on favScorelon, and thelon computation is on normalizelondFavScorelon
+          // This threlonshold relonducelons thelon numbelonr of uniquelon kelonys in thelon cachelon by 80%,
+          // baselond on offlinelon analysis
+          if favScorelon >= favScorelonThrelonsholdForUselonrIntelonrelonst =>
 
-        val favClusterNormalized8HrHalfLifeScoreOpt =
-            Some(thriftDecayedValueMonoid.build(clusterNormalizedLogFavScore, timeInMs))
+        val favClustelonrNormalizelond8HrHalfLifelonScorelonOpt =
+            Somelon(thriftDeloncayelondValuelonMonoid.build(clustelonrNormalizelondLogFavScorelon, timelonInMs))
 
-        clusterId -> Scores(favClusterNormalized8HrHalfLifeScore = favClusterNormalized8HrHalfLifeScoreOpt)
+        clustelonrId -> Scorelons(favClustelonrNormalizelond8HrHalfLifelonScorelon = favClustelonrNormalizelond8HrHalfLifelonScorelonOpt)
     }.toMap
 
-    if (scoresMap.nonEmpty) {
-      ClustersWithScores(Some(scoresMap))
-    } else {
-      EmptyClustersWithScores
+    if (scorelonsMap.nonelonmpty) {
+      ClustelonrsWithScorelons(Somelon(scorelonsMap))
+    } elonlselon {
+      elonmptyClustelonrsWithScorelons
     }
   }
 }

@@ -1,221 +1,221 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.Labels
-import com.twitter.gizmoduck.thriftscala.Profile
-import com.twitter.gizmoduck.thriftscala.Safety
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.Labelonl
+import com.twittelonr.gizmoduck.thriftscala.Labelonls
+import com.twittelonr.gizmoduck.thriftscala.Profilelon
+import com.twittelonr.gizmoduck.thriftscala.Safelonty
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.stitch.NotFound
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.tselonng.withholding.thriftscala.TakelondownRelonason
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.felonaturelons._
 
-class AuthorFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("author_features")
+class AuthorFelonaturelons(uselonrSourcelon: UselonrSourcelon, statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("author_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val authorUserLabels =
-    scopedStatsReceiver.scope(AuthorUserLabels.name).counter("requests")
-  private[this] val authorIsSuspended =
-    scopedStatsReceiver.scope(AuthorIsSuspended.name).counter("requests")
-  private[this] val authorIsProtected =
-    scopedStatsReceiver.scope(AuthorIsProtected.name).counter("requests")
-  private[this] val authorIsDeactivated =
-    scopedStatsReceiver.scope(AuthorIsDeactivated.name).counter("requests")
-  private[this] val authorIsErased =
-    scopedStatsReceiver.scope(AuthorIsErased.name).counter("requests")
-  private[this] val authorIsOffboarded =
-    scopedStatsReceiver.scope(AuthorIsOffboarded.name).counter("requests")
-  private[this] val authorIsNsfwUser =
-    scopedStatsReceiver.scope(AuthorIsNsfwUser.name).counter("requests")
-  private[this] val authorIsNsfwAdmin =
-    scopedStatsReceiver.scope(AuthorIsNsfwAdmin.name).counter("requests")
-  private[this] val authorTakedownReasons =
-    scopedStatsReceiver.scope(AuthorTakedownReasons.name).counter("requests")
-  private[this] val authorHasDefaultProfileImage =
-    scopedStatsReceiver.scope(AuthorHasDefaultProfileImage.name).counter("requests")
-  private[this] val authorAccountAge =
-    scopedStatsReceiver.scope(AuthorAccountAge.name).counter("requests")
-  private[this] val authorIsVerified =
-    scopedStatsReceiver.scope(AuthorIsVerified.name).counter("requests")
-  private[this] val authorScreenName =
-    scopedStatsReceiver.scope(AuthorScreenName.name).counter("requests")
-  private[this] val authorIsBlueVerified =
-    scopedStatsReceiver.scope(AuthorIsBlueVerified.name).counter("requests")
+  privatelon[this] val authorUselonrLabelonls =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorUselonrLabelonls.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorIsSuspelonndelond =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorIsSuspelonndelond.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorIsProtelonctelond =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorIsProtelonctelond.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorIsDelonactivatelond =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorIsDelonactivatelond.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorIselonraselond =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorIselonraselond.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorIsOffboardelond =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorIsOffboardelond.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorIsNsfwUselonr =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorIsNsfwUselonr.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorIsNsfwAdmin =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorIsNsfwAdmin.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorTakelondownRelonasons =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorTakelondownRelonasons.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorHasDelonfaultProfilelonImagelon =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorHasDelonfaultProfilelonImagelon.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorAccountAgelon =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorAccountAgelon.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorIsVelonrifielond =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorIsVelonrifielond.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorScrelonelonnNamelon =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorScrelonelonnNamelon.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorIsBluelonVelonrifielond =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorIsBluelonVelonrifielond.namelon).countelonr("relonquelonsts")
 
-  def forAuthor(author: User): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  delonf forAuthor(author: Uselonr): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
 
-    _.withConstantFeature(AuthorId, Set(author.id))
-      .withConstantFeature(AuthorUserLabels, authorUserLabels(author))
-      .withConstantFeature(AuthorIsProtected, authorIsProtected(author))
-      .withConstantFeature(AuthorIsSuspended, authorIsSuspended(author))
-      .withConstantFeature(AuthorIsDeactivated, authorIsDeactivated(author))
-      .withConstantFeature(AuthorIsErased, authorIsErased(author))
-      .withConstantFeature(AuthorIsOffboarded, authorIsOffboarded(author))
-      .withConstantFeature(AuthorTakedownReasons, authorTakedownReasons(author))
-      .withConstantFeature(AuthorHasDefaultProfileImage, authorHasDefaultProfileImage(author))
-      .withConstantFeature(AuthorAccountAge, authorAccountAge(author))
-      .withConstantFeature(AuthorIsNsfwUser, authorIsNsfwUser(author))
-      .withConstantFeature(AuthorIsNsfwAdmin, authorIsNsfwAdmin(author))
-      .withConstantFeature(AuthorIsVerified, authorIsVerified(author))
-      .withConstantFeature(AuthorScreenName, authorScreenName(author))
-      .withConstantFeature(AuthorIsBlueVerified, authorIsBlueVerified(author))
+    _.withConstantFelonaturelon(AuthorId, Selont(author.id))
+      .withConstantFelonaturelon(AuthorUselonrLabelonls, authorUselonrLabelonls(author))
+      .withConstantFelonaturelon(AuthorIsProtelonctelond, authorIsProtelonctelond(author))
+      .withConstantFelonaturelon(AuthorIsSuspelonndelond, authorIsSuspelonndelond(author))
+      .withConstantFelonaturelon(AuthorIsDelonactivatelond, authorIsDelonactivatelond(author))
+      .withConstantFelonaturelon(AuthorIselonraselond, authorIselonraselond(author))
+      .withConstantFelonaturelon(AuthorIsOffboardelond, authorIsOffboardelond(author))
+      .withConstantFelonaturelon(AuthorTakelondownRelonasons, authorTakelondownRelonasons(author))
+      .withConstantFelonaturelon(AuthorHasDelonfaultProfilelonImagelon, authorHasDelonfaultProfilelonImagelon(author))
+      .withConstantFelonaturelon(AuthorAccountAgelon, authorAccountAgelon(author))
+      .withConstantFelonaturelon(AuthorIsNsfwUselonr, authorIsNsfwUselonr(author))
+      .withConstantFelonaturelon(AuthorIsNsfwAdmin, authorIsNsfwAdmin(author))
+      .withConstantFelonaturelon(AuthorIsVelonrifielond, authorIsVelonrifielond(author))
+      .withConstantFelonaturelon(AuthorScrelonelonnNamelon, authorScrelonelonnNamelon(author))
+      .withConstantFelonaturelon(AuthorIsBluelonVelonrifielond, authorIsBluelonVelonrifielond(author))
   }
 
-  def forAuthorNoDefaults(author: User): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  delonf forAuthorNoDelonfaults(author: Uselonr): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
 
-    _.withConstantFeature(AuthorId, Set(author.id))
-      .withConstantFeature(AuthorUserLabels, authorUserLabelsOpt(author))
-      .withConstantFeature(AuthorIsProtected, authorIsProtectedOpt(author))
-      .withConstantFeature(AuthorIsSuspended, authorIsSuspendedOpt(author))
-      .withConstantFeature(AuthorIsDeactivated, authorIsDeactivatedOpt(author))
-      .withConstantFeature(AuthorIsErased, authorIsErasedOpt(author))
-      .withConstantFeature(AuthorIsOffboarded, authorIsOffboarded(author))
-      .withConstantFeature(AuthorTakedownReasons, authorTakedownReasons(author))
-      .withConstantFeature(AuthorHasDefaultProfileImage, authorHasDefaultProfileImage(author))
-      .withConstantFeature(AuthorAccountAge, authorAccountAge(author))
-      .withConstantFeature(AuthorIsNsfwUser, authorIsNsfwUserOpt(author))
-      .withConstantFeature(AuthorIsNsfwAdmin, authorIsNsfwAdminOpt(author))
-      .withConstantFeature(AuthorIsVerified, authorIsVerifiedOpt(author))
-      .withConstantFeature(AuthorScreenName, authorScreenName(author))
-      .withConstantFeature(AuthorIsBlueVerified, authorIsBlueVerified(author))
+    _.withConstantFelonaturelon(AuthorId, Selont(author.id))
+      .withConstantFelonaturelon(AuthorUselonrLabelonls, authorUselonrLabelonlsOpt(author))
+      .withConstantFelonaturelon(AuthorIsProtelonctelond, authorIsProtelonctelondOpt(author))
+      .withConstantFelonaturelon(AuthorIsSuspelonndelond, authorIsSuspelonndelondOpt(author))
+      .withConstantFelonaturelon(AuthorIsDelonactivatelond, authorIsDelonactivatelondOpt(author))
+      .withConstantFelonaturelon(AuthorIselonraselond, authorIselonraselondOpt(author))
+      .withConstantFelonaturelon(AuthorIsOffboardelond, authorIsOffboardelond(author))
+      .withConstantFelonaturelon(AuthorTakelondownRelonasons, authorTakelondownRelonasons(author))
+      .withConstantFelonaturelon(AuthorHasDelonfaultProfilelonImagelon, authorHasDelonfaultProfilelonImagelon(author))
+      .withConstantFelonaturelon(AuthorAccountAgelon, authorAccountAgelon(author))
+      .withConstantFelonaturelon(AuthorIsNsfwUselonr, authorIsNsfwUselonrOpt(author))
+      .withConstantFelonaturelon(AuthorIsNsfwAdmin, authorIsNsfwAdminOpt(author))
+      .withConstantFelonaturelon(AuthorIsVelonrifielond, authorIsVelonrifielondOpt(author))
+      .withConstantFelonaturelon(AuthorScrelonelonnNamelon, authorScrelonelonnNamelon(author))
+      .withConstantFelonaturelon(AuthorIsBluelonVelonrifielond, authorIsBluelonVelonrifielond(author))
   }
 
-  def forAuthorId(authorId: Long): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  delonf forAuthorId(authorId: Long): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
 
-    _.withConstantFeature(AuthorId, Set(authorId))
-      .withFeature(AuthorUserLabels, authorUserLabels(authorId))
-      .withFeature(AuthorIsProtected, authorIsProtected(authorId))
-      .withFeature(AuthorIsSuspended, authorIsSuspended(authorId))
-      .withFeature(AuthorIsDeactivated, authorIsDeactivated(authorId))
-      .withFeature(AuthorIsErased, authorIsErased(authorId))
-      .withFeature(AuthorIsOffboarded, authorIsOffboarded(authorId))
-      .withFeature(AuthorTakedownReasons, authorTakedownReasons(authorId))
-      .withFeature(AuthorHasDefaultProfileImage, authorHasDefaultProfileImage(authorId))
-      .withFeature(AuthorAccountAge, authorAccountAge(authorId))
-      .withFeature(AuthorIsNsfwUser, authorIsNsfwUser(authorId))
-      .withFeature(AuthorIsNsfwAdmin, authorIsNsfwAdmin(authorId))
-      .withFeature(AuthorIsVerified, authorIsVerified(authorId))
-      .withFeature(AuthorScreenName, authorScreenName(authorId))
-      .withFeature(AuthorIsBlueVerified, authorIsBlueVerified(authorId))
+    _.withConstantFelonaturelon(AuthorId, Selont(authorId))
+      .withFelonaturelon(AuthorUselonrLabelonls, authorUselonrLabelonls(authorId))
+      .withFelonaturelon(AuthorIsProtelonctelond, authorIsProtelonctelond(authorId))
+      .withFelonaturelon(AuthorIsSuspelonndelond, authorIsSuspelonndelond(authorId))
+      .withFelonaturelon(AuthorIsDelonactivatelond, authorIsDelonactivatelond(authorId))
+      .withFelonaturelon(AuthorIselonraselond, authorIselonraselond(authorId))
+      .withFelonaturelon(AuthorIsOffboardelond, authorIsOffboardelond(authorId))
+      .withFelonaturelon(AuthorTakelondownRelonasons, authorTakelondownRelonasons(authorId))
+      .withFelonaturelon(AuthorHasDelonfaultProfilelonImagelon, authorHasDelonfaultProfilelonImagelon(authorId))
+      .withFelonaturelon(AuthorAccountAgelon, authorAccountAgelon(authorId))
+      .withFelonaturelon(AuthorIsNsfwUselonr, authorIsNsfwUselonr(authorId))
+      .withFelonaturelon(AuthorIsNsfwAdmin, authorIsNsfwAdmin(authorId))
+      .withFelonaturelon(AuthorIsVelonrifielond, authorIsVelonrifielond(authorId))
+      .withFelonaturelon(AuthorScrelonelonnNamelon, authorScrelonelonnNamelon(authorId))
+      .withFelonaturelon(AuthorIsBluelonVelonrifielond, authorIsBluelonVelonrifielond(authorId))
   }
 
-  def forNoAuthor(): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(AuthorId, Set.empty[Long])
-      .withConstantFeature(AuthorUserLabels, Seq.empty)
-      .withConstantFeature(AuthorIsProtected, false)
-      .withConstantFeature(AuthorIsSuspended, false)
-      .withConstantFeature(AuthorIsDeactivated, false)
-      .withConstantFeature(AuthorIsErased, false)
-      .withConstantFeature(AuthorIsOffboarded, false)
-      .withConstantFeature(AuthorTakedownReasons, Seq.empty)
-      .withConstantFeature(AuthorHasDefaultProfileImage, false)
-      .withConstantFeature(AuthorAccountAge, Duration.Zero)
-      .withConstantFeature(AuthorIsNsfwUser, false)
-      .withConstantFeature(AuthorIsNsfwAdmin, false)
-      .withConstantFeature(AuthorIsVerified, false)
-      .withConstantFeature(AuthorIsBlueVerified, false)
+  delonf forNoAuthor(): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    _.withConstantFelonaturelon(AuthorId, Selont.elonmpty[Long])
+      .withConstantFelonaturelon(AuthorUselonrLabelonls, Selonq.elonmpty)
+      .withConstantFelonaturelon(AuthorIsProtelonctelond, falselon)
+      .withConstantFelonaturelon(AuthorIsSuspelonndelond, falselon)
+      .withConstantFelonaturelon(AuthorIsDelonactivatelond, falselon)
+      .withConstantFelonaturelon(AuthorIselonraselond, falselon)
+      .withConstantFelonaturelon(AuthorIsOffboardelond, falselon)
+      .withConstantFelonaturelon(AuthorTakelondownRelonasons, Selonq.elonmpty)
+      .withConstantFelonaturelon(AuthorHasDelonfaultProfilelonImagelon, falselon)
+      .withConstantFelonaturelon(AuthorAccountAgelon, Duration.Zelonro)
+      .withConstantFelonaturelon(AuthorIsNsfwUselonr, falselon)
+      .withConstantFelonaturelon(AuthorIsNsfwAdmin, falselon)
+      .withConstantFelonaturelon(AuthorIsVelonrifielond, falselon)
+      .withConstantFelonaturelon(AuthorIsBluelonVelonrifielond, falselon)
   }
 
-  def authorUserLabels(author: User): Seq[Label] =
-    authorUserLabels(author.labels)
+  delonf authorUselonrLabelonls(author: Uselonr): Selonq[Labelonl] =
+    authorUselonrLabelonls(author.labelonls)
 
-  def authorIsSuspended(authorId: Long): Stitch[Boolean] =
-    userSource.getSafety(authorId).map(safety => authorIsSuspended(Some(safety)))
+  delonf authorIsSuspelonndelond(authorId: Long): Stitch[Boolelonan] =
+    uselonrSourcelon.gelontSafelonty(authorId).map(safelonty => authorIsSuspelonndelond(Somelon(safelonty)))
 
-  def authorIsSuspendedOpt(author: User): Option[Boolean] = {
-    authorIsSuspended.incr()
-    author.safety.map(_.suspended)
+  delonf authorIsSuspelonndelondOpt(author: Uselonr): Option[Boolelonan] = {
+    authorIsSuspelonndelond.incr()
+    author.safelonty.map(_.suspelonndelond)
   }
 
-  private def authorIsSuspended(safety: Option[Safety]): Boolean = {
-    authorIsSuspended.incr()
-    safety.exists(_.suspended)
+  privatelon delonf authorIsSuspelonndelond(safelonty: Option[Safelonty]): Boolelonan = {
+    authorIsSuspelonndelond.incr()
+    safelonty.elonxists(_.suspelonndelond)
   }
 
-  def authorIsProtected(author: User): Boolean =
-    authorIsProtected(author.safety)
+  delonf authorIsProtelonctelond(author: Uselonr): Boolelonan =
+    authorIsProtelonctelond(author.safelonty)
 
-  def authorIsDeactivated(authorId: Long): Stitch[Boolean] =
-    userSource.getSafety(authorId).map(safety => authorIsDeactivated(Some(safety)))
+  delonf authorIsDelonactivatelond(authorId: Long): Stitch[Boolelonan] =
+    uselonrSourcelon.gelontSafelonty(authorId).map(safelonty => authorIsDelonactivatelond(Somelon(safelonty)))
 
-  def authorIsDeactivatedOpt(author: User): Option[Boolean] = {
-    authorIsDeactivated.incr()
-    author.safety.map(_.deactivated)
+  delonf authorIsDelonactivatelondOpt(author: Uselonr): Option[Boolelonan] = {
+    authorIsDelonactivatelond.incr()
+    author.safelonty.map(_.delonactivatelond)
   }
 
-  private def authorIsDeactivated(safety: Option[Safety]): Boolean = {
-    authorIsDeactivated.incr()
-    safety.exists(_.deactivated)
+  privatelon delonf authorIsDelonactivatelond(safelonty: Option[Safelonty]): Boolelonan = {
+    authorIsDelonactivatelond.incr()
+    safelonty.elonxists(_.delonactivatelond)
   }
 
-  def authorIsErased(author: User): Boolean = {
-    authorIsErased.incr()
-    author.safety.exists(_.erased)
+  delonf authorIselonraselond(author: Uselonr): Boolelonan = {
+    authorIselonraselond.incr()
+    author.safelonty.elonxists(_.elonraselond)
   }
 
-  def authorIsOffboarded(authorId: Long): Stitch[Boolean] = {
-    userSource.getSafety(authorId).map(safety => authorIsOffboarded(Some(safety)))
+  delonf authorIsOffboardelond(authorId: Long): Stitch[Boolelonan] = {
+    uselonrSourcelon.gelontSafelonty(authorId).map(safelonty => authorIsOffboardelond(Somelon(safelonty)))
   }
 
-  def authorIsNsfwUser(author: User): Boolean = {
-    authorIsNsfwUser(author.safety)
+  delonf authorIsNsfwUselonr(author: Uselonr): Boolelonan = {
+    authorIsNsfwUselonr(author.safelonty)
   }
 
-  def authorIsNsfwUser(authorId: Long): Stitch[Boolean] = {
-    userSource.getSafety(authorId).map(safety => authorIsNsfwUser(Some(safety)))
+  delonf authorIsNsfwUselonr(authorId: Long): Stitch[Boolelonan] = {
+    uselonrSourcelon.gelontSafelonty(authorId).map(safelonty => authorIsNsfwUselonr(Somelon(safelonty)))
   }
 
-  def authorIsNsfwUser(safety: Option[Safety]): Boolean = {
-    authorIsNsfwUser.incr()
-    safety.exists(_.nsfwUser)
+  delonf authorIsNsfwUselonr(safelonty: Option[Safelonty]): Boolelonan = {
+    authorIsNsfwUselonr.incr()
+    safelonty.elonxists(_.nsfwUselonr)
   }
 
-  def authorIsNsfwAdminOpt(author: User): Option[Boolean] = {
+  delonf authorIsNsfwAdminOpt(author: Uselonr): Option[Boolelonan] = {
     authorIsNsfwAdmin.incr()
-    author.safety.map(_.nsfwAdmin)
+    author.safelonty.map(_.nsfwAdmin)
   }
 
-  def authorTakedownReasons(authorId: Long): Stitch[Seq[TakedownReason]] = {
-    authorTakedownReasons.incr()
-    userSource.getTakedownReasons(authorId)
+  delonf authorTakelondownRelonasons(authorId: Long): Stitch[Selonq[TakelondownRelonason]] = {
+    authorTakelondownRelonasons.incr()
+    uselonrSourcelon.gelontTakelondownRelonasons(authorId)
   }
 
-  def authorHasDefaultProfileImage(authorId: Long): Stitch[Boolean] =
-    userSource.getProfile(authorId).map(profile => authorHasDefaultProfileImage(Some(profile)))
+  delonf authorHasDelonfaultProfilelonImagelon(authorId: Long): Stitch[Boolelonan] =
+    uselonrSourcelon.gelontProfilelon(authorId).map(profilelon => authorHasDelonfaultProfilelonImagelon(Somelon(profilelon)))
 
-  def authorAccountAge(authorId: Long): Stitch[Duration] =
-    userSource.getCreatedAtMsec(authorId).map(authorAccountAgeFromTimestamp)
+  delonf authorAccountAgelon(authorId: Long): Stitch[Duration] =
+    uselonrSourcelon.gelontCrelonatelondAtMselonc(authorId).map(authorAccountAgelonFromTimelonstamp)
 
-  def authorIsVerified(authorId: Long): Stitch[Boolean] =
-    userSource.getSafety(authorId).map(safety => authorIsVerified(Some(safety)))
+  delonf authorIsVelonrifielond(authorId: Long): Stitch[Boolelonan] =
+    uselonrSourcelon.gelontSafelonty(authorId).map(safelonty => authorIsVelonrifielond(Somelon(safelonty)))
 
-  def authorIsVerifiedOpt(author: User): Option[Boolean] = {
-    authorIsVerified.incr()
-    author.safety.map(_.verified)
+  delonf authorIsVelonrifielondOpt(author: Uselonr): Option[Boolelonan] = {
+    authorIsVelonrifielond.incr()
+    author.safelonty.map(_.velonrifielond)
   }
 
-  private def authorIsVerified(safety: Option[Safety]): Boolean = {
-    authorIsVerified.incr()
-    safety.exists(_.verified)
+  privatelon delonf authorIsVelonrifielond(safelonty: Option[Safelonty]): Boolelonan = {
+    authorIsVelonrifielond.incr()
+    safelonty.elonxists(_.velonrifielond)
   }
 
-  def authorScreenName(author: User): Option[String] = {
-    authorScreenName.incr()
-    author.profile.map(_.screenName)
+  delonf authorScrelonelonnNamelon(author: Uselonr): Option[String] = {
+    authorScrelonelonnNamelon.incr()
+    author.profilelon.map(_.screlonelonnNamelon)
   }
 
-  def authorScreenName(authorId: Long): Stitch[String] = {
-    authorScreenName.incr()
-    userSource.getProfile(authorId).map(profile => profile.screenName)
+  delonf authorScrelonelonnNamelon(authorId: Long): Stitch[String] = {
+    authorScrelonelonnNamelon.incr()
+    uselonrSourcelon.gelontProfilelon(authorId).map(profilelon => profilelon.screlonelonnNamelon)
   }
 }

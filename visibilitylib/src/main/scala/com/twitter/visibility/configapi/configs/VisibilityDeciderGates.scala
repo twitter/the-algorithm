@@ -1,73 +1,73 @@
-package com.twitter.visibility.configapi.configs
+packagelon com.twittelonr.visibility.configapi.configs
 
-import com.twitter.decider.Decider
-import com.twitter.servo.gate.DeciderGate
-import com.twitter.servo.util.Gate
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.selonrvo.gatelon.DeloncidelonrGatelon
+import com.twittelonr.selonrvo.util.Gatelon
 
-case class VisibilityDeciderGates(decider: Decider) {
-  import DeciderKey._
+caselon class VisibilityDeloncidelonrGatelons(deloncidelonr: Deloncidelonr) {
+  import DeloncidelonrKelony._
 
-  private[this] def feature(deciderKey: Value) = decider.feature(deciderKey.toString)
+  privatelon[this] delonf felonaturelon(deloncidelonrKelony: Valuelon) = deloncidelonr.felonaturelon(deloncidelonrKelony.toString)
 
-  val enableFetchTweetReportedPerspective: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableFetchTweetReportedPerspective))
-  val enableFetchTweetMediaMetadata: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableFetchTweetMediaMetadata))
-  val enableFollowCheckInMutedKeyword: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.VisibilityLibraryEnableFollowCheckInMutedKeyword))
-  val enableMediaInterstitialComposition: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.VisibilityLibraryEnableMediaInterstitialComposition))
-  val enableExperimentalRuleEngine: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableExperimentalRuleEngine))
+  val elonnablelonFelontchTwelonelontRelonportelondPelonrspelonctivelon: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonFelontchTwelonelontRelonportelondPelonrspelonctivelon))
+  val elonnablelonFelontchTwelonelontMelondiaMelontadata: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonFelontchTwelonelontMelondiaMelontadata))
+  val elonnablelonFollowChelonckInMutelondKelonyword: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.VisibilityLibraryelonnablelonFollowChelonckInMutelondKelonyword))
+  val elonnablelonMelondiaIntelonrstitialComposition: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.VisibilityLibraryelonnablelonMelondiaIntelonrstitialComposition))
+  val elonnablelonelonxpelonrimelonntalRulelonelonnginelon: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonelonxpelonrimelonntalRulelonelonnginelon))
 
-  val enableLocalizedInterstitialGenerator: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableLocalizedInterstitialGenerator))
+  val elonnablelonLocalizelondIntelonrstitialGelonnelonrator: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonLocalizelondIntelonrstitialGelonnelonrator))
 
-  val enableShortCircuitingTVL: Gate[Unit] =
-    DeciderGate.linear(feature(EnableShortCircuitingFromTweetVisibilityLibrary))
-  val enableVerdictLoggerTVL = DeciderGate.linear(
-    feature(DeciderKey.EnableVerdictLoggerEventPublisherInstantiationFromTweetVisibilityLibrary))
-  val enableVerdictScribingTVL =
-    DeciderGate.linear(feature(DeciderKey.EnableVerdictScribingFromTweetVisibilityLibrary))
-  val enableBackendLimitedActions =
-    DeciderGate.linear(feature(DeciderKey.EnableBackendLimitedActions))
-  val enableMemoizeSafetyLevelParams: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableMemoizeSafetyLevelParams))
+  val elonnablelonShortCircuitingTVL: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(elonnablelonShortCircuitingFromTwelonelontVisibilityLibrary))
+  val elonnablelonVelonrdictLoggelonrTVL = DeloncidelonrGatelon.linelonar(
+    felonaturelon(DeloncidelonrKelony.elonnablelonVelonrdictLoggelonrelonvelonntPublishelonrInstantiationFromTwelonelontVisibilityLibrary))
+  val elonnablelonVelonrdictScribingTVL =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonVelonrdictScribingFromTwelonelontVisibilityLibrary))
+  val elonnablelonBackelonndLimitelondActions =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonBackelonndLimitelondActions))
+  val elonnablelonMelonmoizelonSafelontyLelonvelonlParams: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonMelonmoizelonSafelontyLelonvelonlParams))
 
-  val enableShortCircuitingBVL: Gate[Unit] =
-    DeciderGate.linear(feature(EnableShortCircuitingFromBlenderVisibilityLibrary))
-  val enableVerdictLoggerBVL = DeciderGate.linear(
-    feature(DeciderKey.EnableVerdictLoggerEventPublisherInstantiationFromBlenderVisibilityLibrary))
-  val enableVerdictScribingBVL =
-    DeciderGate.linear(feature(DeciderKey.EnableVerdictScribingFromBlenderVisibilityLibrary))
+  val elonnablelonShortCircuitingBVL: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(elonnablelonShortCircuitingFromBlelonndelonrVisibilityLibrary))
+  val elonnablelonVelonrdictLoggelonrBVL = DeloncidelonrGatelon.linelonar(
+    felonaturelon(DeloncidelonrKelony.elonnablelonVelonrdictLoggelonrelonvelonntPublishelonrInstantiationFromBlelonndelonrVisibilityLibrary))
+  val elonnablelonVelonrdictScribingBVL =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonVelonrdictScribingFromBlelonndelonrVisibilityLibrary))
 
-  val enableShortCircuitingSVL: Gate[Unit] =
-    DeciderGate.linear(feature(EnableShortCircuitingFromSearchVisibilityLibrary))
-  val enableVerdictLoggerSVL = DeciderGate.linear(
-    feature(DeciderKey.EnableVerdictLoggerEventPublisherInstantiationFromSearchVisibilityLibrary))
-  val enableVerdictScribingSVL =
-    DeciderGate.linear(feature(DeciderKey.EnableVerdictScribingFromSearchVisibilityLibrary))
+  val elonnablelonShortCircuitingSVL: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(elonnablelonShortCircuitingFromSelonarchVisibilityLibrary))
+  val elonnablelonVelonrdictLoggelonrSVL = DeloncidelonrGatelon.linelonar(
+    felonaturelon(DeloncidelonrKelony.elonnablelonVelonrdictLoggelonrelonvelonntPublishelonrInstantiationFromSelonarchVisibilityLibrary))
+  val elonnablelonVelonrdictScribingSVL =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonVelonrdictScribingFromSelonarchVisibilityLibrary))
 
-  val enableShortCircuitingTCVL: Gate[Unit] =
-    DeciderGate.linear(feature(EnableShortCircuitingFromTimelineConversationsVisibilityLibrary))
-  val enableVerdictLoggerTCVL = DeciderGate.linear(feature(
-    DeciderKey.EnableVerdictLoggerEventPublisherInstantiationFromTimelineConversationsVisibilityLibrary))
-  val enableVerdictScribingTCVL =
-    DeciderGate.linear(
-      feature(DeciderKey.EnableVerdictScribingFromTimelineConversationsVisibilityLibrary))
+  val elonnablelonShortCircuitingTCVL: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(elonnablelonShortCircuitingFromTimelonlinelonConvelonrsationsVisibilityLibrary))
+  val elonnablelonVelonrdictLoggelonrTCVL = DeloncidelonrGatelon.linelonar(felonaturelon(
+    DeloncidelonrKelony.elonnablelonVelonrdictLoggelonrelonvelonntPublishelonrInstantiationFromTimelonlinelonConvelonrsationsVisibilityLibrary))
+  val elonnablelonVelonrdictScribingTCVL =
+    DeloncidelonrGatelon.linelonar(
+      felonaturelon(DeloncidelonrKelony.elonnablelonVelonrdictScribingFromTimelonlinelonConvelonrsationsVisibilityLibrary))
 
-  val enableCardVisibilityLibraryCardUriParsing =
-    DeciderGate.linear(feature(DeciderKey.EnableCardVisibilityLibraryCardUriParsing))
+  val elonnablelonCardVisibilityLibraryCardUriParsing =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonCardVisibilityLibraryCardUriParsing))
 
-  val enableConvosLocalizedInterstitial: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableConvosLocalizedInterstitial))
+  val elonnablelonConvosLocalizelondIntelonrstitial: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonConvosLocalizelondIntelonrstitial))
 
-  val enableConvosLegacyInterstitial: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableConvosLegacyInterstitial))
+  val elonnablelonConvosLelongacyIntelonrstitial: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonConvosLelongacyIntelonrstitial))
 
-  val disableLegacyInterstitialFilteredReason: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.DisableLegacyInterstitialFilteredReason))
+  val disablelonLelongacyIntelonrstitialFiltelonrelondRelonason: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.DisablelonLelongacyIntelonrstitialFiltelonrelondRelonason))
 
-  val enableLocalizedInterstitialInUserStateLibrary: Gate[Unit] =
-    DeciderGate.linear(feature(DeciderKey.EnableLocalizedInterstitialInUserStateLib))
+  val elonnablelonLocalizelondIntelonrstitialInUselonrStatelonLibrary: Gatelon[Unit] =
+    DeloncidelonrGatelon.linelonar(felonaturelon(DeloncidelonrKelony.elonnablelonLocalizelondIntelonrstitialInUselonrStatelonLib))
 }

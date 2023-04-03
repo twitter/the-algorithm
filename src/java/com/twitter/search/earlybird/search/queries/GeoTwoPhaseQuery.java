@@ -1,255 +1,255 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.Selont;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.TwoPhaseIterator;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonQuelonry;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonScorelonr;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.TwoPhaselonItelonrator;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
 
 
-public class GeoTwoPhaseQuery extends Query {
-  private static final boolean ENABLE_GEO_EARLY_TERMINATION =
-          EarlybirdConfig.getBool("early_terminate_geo_searches", true);
+public class GelonoTwoPhaselonQuelonry elonxtelonnds Quelonry {
+  privatelon static final boolelonan elonNABLelon_GelonO_elonARLY_TelonRMINATION =
+          elonarlybirdConfig.gelontBool("elonarly_telonrminatelon_gelono_selonarchelons", truelon);
 
-  private static final int GEO_TIMEOUT_OVERRIDE =
-          EarlybirdConfig.getInt("early_terminate_geo_searches_timeout_override", -1);
+  privatelon static final int GelonO_TIMelonOUT_OVelonRRIDelon =
+          elonarlybirdConfig.gelontInt("elonarly_telonrminatelon_gelono_selonarchelons_timelonout_ovelonrridelon", -1);
 
-  // How many geo searches are early terminated due to timeout.
-  private static final SearchCounter GEO_SEARCH_TIMEOUT_COUNT =
-      SearchCounter.export("geo_search_timeout_count");
+  // How many gelono selonarchelons arelon elonarly telonrminatelond duelon to timelonout.
+  privatelon static final SelonarchCountelonr GelonO_SelonARCH_TIMelonOUT_COUNT =
+      SelonarchCountelonr.elonxport("gelono_selonarch_timelonout_count");
 
-  private final SecondPhaseDocAccepter accepter;
-  private final TerminationTracker terminationTracker;
-  private final ConstantScoreQuery query;
+  privatelon final SeloncondPhaselonDocAccelonptelonr accelonptelonr;
+  privatelon final TelonrminationTrackelonr telonrminationTrackelonr;
+  privatelon final ConstantScorelonQuelonry quelonry;
 
-  public GeoTwoPhaseQuery(
-      Query query, SecondPhaseDocAccepter accepter, TerminationTracker terminationTracker) {
-    this.accepter = accepter;
-    this.terminationTracker = terminationTracker;
+  public GelonoTwoPhaselonQuelonry(
+      Quelonry quelonry, SeloncondPhaselonDocAccelonptelonr accelonptelonr, TelonrminationTrackelonr telonrminationTrackelonr) {
+    this.accelonptelonr = accelonptelonr;
+    this.telonrminationTrackelonr = telonrminationTrackelonr;
 
-    this.query = new ConstantScoreQuery(query);
+    this.quelonry = nelonw ConstantScorelonQuelonry(quelonry);
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = query.getQuery().rewrite(reader);
-    if (rewritten != query.getQuery()) {
-      return new GeoTwoPhaseQuery(rewritten, accepter, terminationTracker);
+  @Ovelonrridelon
+  public Quelonry relonwritelon(IndelonxRelonadelonr relonadelonr) throws IOelonxcelonption {
+    Quelonry relonwrittelonn = quelonry.gelontQuelonry().relonwritelon(relonadelonr);
+    if (relonwrittelonn != quelonry.gelontQuelonry()) {
+      relonturn nelonw GelonoTwoPhaselonQuelonry(relonwrittelonn, accelonptelonr, telonrminationTrackelonr);
     }
 
-    return this;
+    relonturn this;
   }
 
-  @Override
-  public int hashCode() {
-    return query.hashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn quelonry.hashCodelon();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof GeoTwoPhaseQuery)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof GelonoTwoPhaselonQuelonry)) {
+      relonturn falselon;
     }
-    GeoTwoPhaseQuery that = (GeoTwoPhaseQuery) obj;
-    return query.equals(that.query)
-        && accepter.equals(that.accepter)
-        && terminationTracker.equals(that.terminationTracker);
+    GelonoTwoPhaselonQuelonry that = (GelonoTwoPhaselonQuelonry) obj;
+    relonturn quelonry.elonquals(that.quelonry)
+        && accelonptelonr.elonquals(that.accelonptelonr)
+        && telonrminationTrackelonr.elonquals(that.telonrminationTrackelonr);
   }
 
-  @Override
-  public String toString(String field) {
-    return new StringBuilder("GeoTwoPhaseQuery(")
-      .append("Accepter(")
-      .append(accepter.toString())
-      .append(") Geohashes(")
-      .append(query.getQuery().toString(field))
-      .append("))")
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn nelonw StringBuildelonr("GelonoTwoPhaselonQuelonry(")
+      .appelonnd("Accelonptelonr(")
+      .appelonnd(accelonptelonr.toString())
+      .appelonnd(") Gelonohashelons(")
+      .appelonnd(quelonry.gelontQuelonry().toString(fielonld))
+      .appelonnd("))")
       .toString();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    Weight innerWeight = query.createWeight(searcher, scoreMode, boost);
-    return new GeoTwoPhaseWeight(this, innerWeight, accepter, terminationTracker);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost)
+      throws IOelonxcelonption {
+    Welonight innelonrWelonight = quelonry.crelonatelonWelonight(selonarchelonr, scorelonModelon, boost);
+    relonturn nelonw GelonoTwoPhaselonWelonight(this, innelonrWelonight, accelonptelonr, telonrminationTrackelonr);
   }
 
-  private static final class GeoTwoPhaseWeight extends Weight {
-    private final Weight innerWeight;
-    private final SecondPhaseDocAccepter accepter;
-    private final TerminationTracker terminationTracker;
+  privatelon static final class GelonoTwoPhaselonWelonight elonxtelonnds Welonight {
+    privatelon final Welonight innelonrWelonight;
+    privatelon final SeloncondPhaselonDocAccelonptelonr accelonptelonr;
+    privatelon final TelonrminationTrackelonr telonrminationTrackelonr;
 
-    private GeoTwoPhaseWeight(
-        Query query,
-        Weight innerWeight,
-        SecondPhaseDocAccepter accepter,
-        TerminationTracker terminationTracker) {
-      super(query);
-      this.innerWeight = innerWeight;
-      this.accepter = accepter;
-      this.terminationTracker = terminationTracker;
+    privatelon GelonoTwoPhaselonWelonight(
+        Quelonry quelonry,
+        Welonight innelonrWelonight,
+        SeloncondPhaselonDocAccelonptelonr accelonptelonr,
+        TelonrminationTrackelonr telonrminationTrackelonr) {
+      supelonr(quelonry);
+      this.innelonrWelonight = innelonrWelonight;
+      this.accelonptelonr = accelonptelonr;
+      this.telonrminationTrackelonr = telonrminationTrackelonr;
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      innerWeight.extractTerms(terms);
+    @Ovelonrridelon
+    public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
+      innelonrWelonight.elonxtractTelonrms(telonrms);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return innerWeight.explain(context, doc);
+    @Ovelonrridelon
+    public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc) throws IOelonxcelonption {
+      relonturn innelonrWelonight.elonxplain(contelonxt, doc);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Scorer innerScorer = innerWeight.scorer(context);
-      if (innerScorer == null) {
-        return null;
+    @Ovelonrridelon
+    public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+      Scorelonr innelonrScorelonr = innelonrWelonight.scorelonr(contelonxt);
+      if (innelonrScorelonr == null) {
+        relonturn null;
       }
-      if (ENABLE_GEO_EARLY_TERMINATION
-          && (terminationTracker == null || !terminationTracker.useLastSearchedDocIdOnTimeout())) {
-        innerScorer = new ConstantScoreScorer(
+      if (elonNABLelon_GelonO_elonARLY_TelonRMINATION
+          && (telonrminationTrackelonr == null || !telonrminationTrackelonr.uselonLastSelonarchelondDocIdOnTimelonout())) {
+        innelonrScorelonr = nelonw ConstantScorelonScorelonr(
             this,
             0.0f,
-            ScoreMode.COMPLETE_NO_SCORES,
-            new TimedDocIdSetIterator(innerScorer.iterator(),
-                                      terminationTracker,
-                                      GEO_TIMEOUT_OVERRIDE,
-                                      GEO_SEARCH_TIMEOUT_COUNT));
+            ScorelonModelon.COMPLelonTelon_NO_SCORelonS,
+            nelonw TimelondDocIdSelontItelonrator(innelonrScorelonr.itelonrator(),
+                                      telonrminationTrackelonr,
+                                      GelonO_TIMelonOUT_OVelonRRIDelon,
+                                      GelonO_SelonARCH_TIMelonOUT_COUNT));
       }
 
-      accepter.initialize(context);
-      return new GeoTwoPhaseScorer(this, innerScorer, accepter);
+      accelonptelonr.initializelon(contelonxt);
+      relonturn nelonw GelonoTwoPhaselonScorelonr(this, innelonrScorelonr, accelonptelonr);
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return innerWeight.isCacheable(ctx);
+    @Ovelonrridelon
+    public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+      relonturn innelonrWelonight.isCachelonablelon(ctx);
     }
   }
 
-  private static final class GeoTwoPhaseScorer extends Scorer {
-    private final Scorer innerScorer;
-    private final SecondPhaseDocAccepter accepter;
+  privatelon static final class GelonoTwoPhaselonScorelonr elonxtelonnds Scorelonr {
+    privatelon final Scorelonr innelonrScorelonr;
+    privatelon final SeloncondPhaselonDocAccelonptelonr accelonptelonr;
 
-    private GeoTwoPhaseScorer(Weight weight, Scorer innerScorer, SecondPhaseDocAccepter accepter) {
-      super(weight);
-      this.innerScorer = innerScorer;
-      this.accepter = accepter;
+    privatelon GelonoTwoPhaselonScorelonr(Welonight welonight, Scorelonr innelonrScorelonr, SeloncondPhaselonDocAccelonptelonr accelonptelonr) {
+      supelonr(welonight);
+      this.innelonrScorelonr = innelonrScorelonr;
+      this.accelonptelonr = accelonptelonr;
     }
 
-    @Override
-    public TwoPhaseIterator twoPhaseIterator() {
-      return new TwoPhaseIterator(innerScorer.iterator()) {
-        @Override
-        public boolean matches() throws IOException {
-          return checkDocExpensive(innerScorer.docID());
+    @Ovelonrridelon
+    public TwoPhaselonItelonrator twoPhaselonItelonrator() {
+      relonturn nelonw TwoPhaselonItelonrator(innelonrScorelonr.itelonrator()) {
+        @Ovelonrridelon
+        public boolelonan matchelons() throws IOelonxcelonption {
+          relonturn chelonckDocelonxpelonnsivelon(innelonrScorelonr.docID());
         }
 
-        @Override
+        @Ovelonrridelon
         public float matchCost() {
-          return 0.0f;
+          relonturn 0.0f;
         }
       };
     }
 
-    @Override
+    @Ovelonrridelon
     public int docID() {
-      return iterator().docID();
+      relonturn itelonrator().docID();
     }
 
-    @Override
-    public float score() throws IOException {
-      return innerScorer.score();
+    @Ovelonrridelon
+    public float scorelon() throws IOelonxcelonption {
+      relonturn innelonrScorelonr.scorelon();
     }
 
-    @Override
-    public DocIdSetIterator iterator() {
-      return new DocIdSetIterator() {
-        private int doNext(int startingDocId) throws IOException {
+    @Ovelonrridelon
+    public DocIdSelontItelonrator itelonrator() {
+      relonturn nelonw DocIdSelontItelonrator() {
+        privatelon int doNelonxt(int startingDocId) throws IOelonxcelonption {
           int docId = startingDocId;
-          while ((docId != NO_MORE_DOCS) && !checkDocExpensive(docId)) {
-            docId = innerScorer.iterator().nextDoc();
+          whilelon ((docId != NO_MORelon_DOCS) && !chelonckDocelonxpelonnsivelon(docId)) {
+            docId = innelonrScorelonr.itelonrator().nelonxtDoc();
           }
-          return docId;
+          relonturn docId;
         }
 
-        @Override
+        @Ovelonrridelon
         public int docID() {
-          return innerScorer.iterator().docID();
+          relonturn innelonrScorelonr.itelonrator().docID();
         }
 
-        @Override
-        public int nextDoc() throws IOException {
-          return doNext(innerScorer.iterator().nextDoc());
+        @Ovelonrridelon
+        public int nelonxtDoc() throws IOelonxcelonption {
+          relonturn doNelonxt(innelonrScorelonr.itelonrator().nelonxtDoc());
         }
 
-        @Override
-        public int advance(int target) throws IOException {
-          return doNext(innerScorer.iterator().advance(target));
+        @Ovelonrridelon
+        public int advancelon(int targelont) throws IOelonxcelonption {
+          relonturn doNelonxt(innelonrScorelonr.itelonrator().advancelon(targelont));
         }
 
-        @Override
+        @Ovelonrridelon
         public long cost() {
-          return 2 * innerScorer.iterator().cost();
+          relonturn 2 * innelonrScorelonr.itelonrator().cost();
         }
       };
     }
 
-    @Override
-    public float getMaxScore(int upTo) throws IOException {
-      return innerScorer.getMaxScore(upTo);
+    @Ovelonrridelon
+    public float gelontMaxScorelon(int upTo) throws IOelonxcelonption {
+      relonturn innelonrScorelonr.gelontMaxScorelon(upTo);
     }
 
-    private boolean checkDocExpensive(int doc) throws IOException {
-      return accepter.accept(doc);
+    privatelon boolelonan chelonckDocelonxpelonnsivelon(int doc) throws IOelonxcelonption {
+      relonturn accelonptelonr.accelonpt(doc);
     }
   }
 
-  public abstract static class SecondPhaseDocAccepter {
+  public abstract static class SeloncondPhaselonDocAccelonptelonr {
     /**
-     * Initializes this accepter with the given reader context.
+     * Initializelons this accelonptelonr with thelon givelonn relonadelonr contelonxt.
      */
-    public abstract void initialize(LeafReaderContext context) throws IOException;
+    public abstract void initializelon(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption;
 
     /**
-     * Determines if the given doc ID is accepted by this accepter.
+     * Delontelonrminelons if thelon givelonn doc ID is accelonptelond by this accelonptelonr.
      */
-    public abstract boolean accept(int doc) throws IOException;
+    public abstract boolelonan accelonpt(int doc) throws IOelonxcelonption;
 
     /**
-     * Returns a string description for this SecondPhaseDocAccepter instance.
+     * Relonturns a string delonscription for this SeloncondPhaselonDocAccelonptelonr instancelon.
      */
     public abstract String toString();
   }
 
-  public static final SecondPhaseDocAccepter ALL_DOCS_ACCEPTER = new SecondPhaseDocAccepter() {
-    @Override
-    public void initialize(LeafReaderContext context) { }
+  public static final SeloncondPhaselonDocAccelonptelonr ALL_DOCS_ACCelonPTelonR = nelonw SeloncondPhaselonDocAccelonptelonr() {
+    @Ovelonrridelon
+    public void initializelon(LelonafRelonadelonrContelonxt contelonxt) { }
 
-    @Override
-    public boolean accept(int doc) {
-      return true;
+    @Ovelonrridelon
+    public boolelonan accelonpt(int doc) {
+      relonturn truelon;
     }
 
-    @Override
+    @Ovelonrridelon
     public String toString() {
-      return "AllDocsAccepter";
+      relonturn "AllDocsAccelonptelonr";
     }
   };
 }

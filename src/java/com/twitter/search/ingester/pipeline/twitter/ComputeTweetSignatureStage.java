@@ -1,38 +1,38 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
 
-import com.twitter.search.common.relevance.classifiers.TweetQualityFeatureExtractor;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
+import com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs.TwelonelontQualityFelonaturelonelonxtractor;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class ComputeTweetSignatureStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private final TweetQualityFeatureExtractor tweetSignatureExtractor =
-      new TweetQualityFeatureExtractor();
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class ComputelonTwelonelontSignaturelonStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> {
+  privatelon final TwelonelontQualityFelonaturelonelonxtractor twelonelontSignaturelonelonxtractor =
+      nelonw TwelonelontQualityFelonaturelonelonxtractor();
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a TwitterMessage instance: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not a TwittelonrMelonssagelon instancelon: " + obj);
     }
 
-    IngesterTwitterMessage message = IngesterTwitterMessage.class.cast(obj);
-    extract(message);
-    emitAndCount(message);
+    IngelonstelonrTwittelonrMelonssagelon melonssagelon = IngelonstelonrTwittelonrMelonssagelon.class.cast(obj);
+    elonxtract(melonssagelon);
+    elonmitAndCount(melonssagelon);
   }
 
-  private void extract(IngesterTwitterMessage message) {
-    tweetSignatureExtractor.extractTweetTextFeatures(message);
+  privatelon void elonxtract(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    twelonelontSignaturelonelonxtractor.elonxtractTwelonelontTelonxtFelonaturelons(melonssagelon);
   }
 
-  @Override
-  protected IngesterTwitterMessage innerRunStageV2(IngesterTwitterMessage message) {
-    extract(message);
-    return message;
+  @Ovelonrridelon
+  protelonctelond IngelonstelonrTwittelonrMelonssagelon innelonrRunStagelonV2(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    elonxtract(melonssagelon);
+    relonturn melonssagelon;
   }
 }
 

@@ -1,253 +1,253 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.thrift.ThriftCodec
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.EngagementsReceivedByAuthorCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TopicCountryEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TopicEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetCountryEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwitterListEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserAuthorEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserEngagementCache
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserTopicEngagementForNewUserCache
-import com.twitter.home_mixer.util.InjectionTransformerImplicits._
-import com.twitter.inject.TwitterModule
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.{api => ml}
-import com.twitter.servo.cache.KeyValueTransformingReadCache
-import com.twitter.servo.cache.Memcache
-import com.twitter.servo.cache.ReadCache
-import com.twitter.servo.util.Transformer
-import com.twitter.storehaus_internal.memcache.MemcacheHelper
-import com.twitter.summingbird.batch.Batcher
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKey
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregationKeyInjection
-import com.twitter.wtf.real_time_interaction_graph.{thriftscala => ig}
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.bijelonction.thrift.ThriftCodelonc
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.elonngagelonmelonntsReloncelonivelondByAuthorCachelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.RelonalTimelonIntelonractionGraphUselonrVelonrtelonxCachelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.RelonalTimelonIntelonractionGraphUselonrVelonrtelonxClielonnt
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TopicCountryelonngagelonmelonntCachelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TopicelonngagelonmelonntCachelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TwelonelontCountryelonngagelonmelonntCachelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TwelonelontelonngagelonmelonntCachelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TwittelonrListelonngagelonmelonntCachelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.UselonrAuthorelonngagelonmelonntCachelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.UselonrelonngagelonmelonntCachelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.UselonrTopicelonngagelonmelonntForNelonwUselonrCachelon
+import com.twittelonr.homelon_mixelonr.util.InjelonctionTransformelonrImplicits._
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.{api => ml}
+import com.twittelonr.selonrvo.cachelon.KelonyValuelonTransformingRelonadCachelon
+import com.twittelonr.selonrvo.cachelon.Melonmcachelon
+import com.twittelonr.selonrvo.cachelon.RelonadCachelon
+import com.twittelonr.selonrvo.util.Transformelonr
+import com.twittelonr.storelonhaus_intelonrnal.melonmcachelon.MelonmcachelonHelonlpelonr
+import com.twittelonr.summingbird.batch.Batchelonr
+import com.twittelonr.summingbird_intelonrnal.bijelonction.BatchPairImplicits
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongationKelony
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongationKelonyInjelonction
+import com.twittelonr.wtf.relonal_timelon_intelonraction_graph.{thriftscala => ig}
 
-import javax.inject.Singleton
+import javax.injelonct.Singlelonton
 
-object RealtimeAggregateFeatureRepositoryModule
-    extends TwitterModule
-    with RealtimeAggregateHelpers {
+objelonct RelonaltimelonAggrelongatelonFelonaturelonRelonpositoryModulelon
+    elonxtelonnds TwittelonrModulelon
+    with RelonaltimelonAggrelongatelonHelonlpelonrs {
 
-  private val authorIdFeature = new Feature.Discrete("entities.source_author_id")
-  private val countryCodeFeature = new Feature.Text("geo.user_location.country_code")
-  private val listIdFeature = new Feature.Discrete("list.id")
-  private val userIdFeature = new Feature.Discrete("meta.user_id")
-  private val topicIdFeature = new Feature.Discrete("entities.topic_id")
-  private val tweetIdFeature = new Feature.Discrete("entities.source_tweet_id")
+  privatelon val authorIdFelonaturelon = nelonw Felonaturelon.Discrelontelon("elonntitielons.sourcelon_author_id")
+  privatelon val countryCodelonFelonaturelon = nelonw Felonaturelon.Telonxt("gelono.uselonr_location.country_codelon")
+  privatelon val listIdFelonaturelon = nelonw Felonaturelon.Discrelontelon("list.id")
+  privatelon val uselonrIdFelonaturelon = nelonw Felonaturelon.Discrelontelon("melonta.uselonr_id")
+  privatelon val topicIdFelonaturelon = nelonw Felonaturelon.Discrelontelon("elonntitielons.topic_id")
+  privatelon val twelonelontIdFelonaturelon = nelonw Felonaturelon.Discrelontelon("elonntitielons.sourcelon_twelonelont_id")
 
-  @Provides
-  @Singleton
-  @Named(UserTopicEngagementForNewUserCache)
-  def providesUserTopicEngagementForNewUserCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[(Long, Long), ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD2(userIdFeature, topicIdFeature)
+  @Providelons
+  @Singlelonton
+  @Namelond(UselonrTopicelonngagelonmelonntForNelonwUselonrCachelon)
+  delonf providelonsUselonrTopicelonngagelonmelonntForNelonwUselonrCachelon(
+    @Namelond(TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt) clielonnt: Melonmcachelon
+  ): RelonadCachelon[(Long, Long), ml.DataReloncord] = {
+    nelonw KelonyValuelonTransformingRelonadCachelon(
+      clielonnt,
+      dataReloncordValuelonTransformelonr,
+      kelonyTransformD2(uselonrIdFelonaturelon, topicIdFelonaturelon)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TwitterListEngagementCache)
-  def providesTwitterListEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[Long, ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1(listIdFeature)
+  @Providelons
+  @Singlelonton
+  @Namelond(TwittelonrListelonngagelonmelonntCachelon)
+  delonf providelonsTwittelonrListelonngagelonmelonntCachelon(
+    @Namelond(TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt) clielonnt: Melonmcachelon
+  ): RelonadCachelon[Long, ml.DataReloncord] = {
+    nelonw KelonyValuelonTransformingRelonadCachelon(
+      clielonnt,
+      dataReloncordValuelonTransformelonr,
+      kelonyTransformD1(listIdFelonaturelon)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TopicEngagementCache)
-  def providesTopicEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[Long, ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1(topicIdFeature)
+  @Providelons
+  @Singlelonton
+  @Namelond(TopicelonngagelonmelonntCachelon)
+  delonf providelonsTopicelonngagelonmelonntCachelon(
+    @Namelond(TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt) clielonnt: Melonmcachelon
+  ): RelonadCachelon[Long, ml.DataReloncord] = {
+    nelonw KelonyValuelonTransformingRelonadCachelon(
+      clielonnt,
+      dataReloncordValuelonTransformelonr,
+      kelonyTransformD1(topicIdFelonaturelon)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(UserAuthorEngagementCache)
-  def providesUserAuthorEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[(Long, Long), ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD2(userIdFeature, authorIdFeature)
+  @Providelons
+  @Singlelonton
+  @Namelond(UselonrAuthorelonngagelonmelonntCachelon)
+  delonf providelonsUselonrAuthorelonngagelonmelonntCachelon(
+    @Namelond(TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt) clielonnt: Melonmcachelon
+  ): RelonadCachelon[(Long, Long), ml.DataReloncord] = {
+    nelonw KelonyValuelonTransformingRelonadCachelon(
+      clielonnt,
+      dataReloncordValuelonTransformelonr,
+      kelonyTransformD2(uselonrIdFelonaturelon, authorIdFelonaturelon)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(UserEngagementCache)
-  def providesUserEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[Long, ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1(userIdFeature)
+  @Providelons
+  @Singlelonton
+  @Namelond(UselonrelonngagelonmelonntCachelon)
+  delonf providelonsUselonrelonngagelonmelonntCachelon(
+    @Namelond(TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt) clielonnt: Melonmcachelon
+  ): RelonadCachelon[Long, ml.DataReloncord] = {
+    nelonw KelonyValuelonTransformingRelonadCachelon(
+      clielonnt,
+      dataReloncordValuelonTransformelonr,
+      kelonyTransformD1(uselonrIdFelonaturelon)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TweetCountryEngagementCache)
-  def providesTweetCountryEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[(Long, String), ml.DataRecord] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(TwelonelontCountryelonngagelonmelonntCachelon)
+  delonf providelonsTwelonelontCountryelonngagelonmelonntCachelon(
+    @Namelond(TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt) clielonnt: Melonmcachelon
+  ): RelonadCachelon[(Long, String), ml.DataReloncord] = {
 
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1T1(tweetIdFeature, countryCodeFeature)
+    nelonw KelonyValuelonTransformingRelonadCachelon(
+      clielonnt,
+      dataReloncordValuelonTransformelonr,
+      kelonyTransformD1T1(twelonelontIdFelonaturelon, countryCodelonFelonaturelon)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TweetEngagementCache)
-  def providesTweetEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[Long, ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1(tweetIdFeature)
+  @Providelons
+  @Singlelonton
+  @Namelond(TwelonelontelonngagelonmelonntCachelon)
+  delonf providelonsTwelonelontelonngagelonmelonntCachelon(
+    @Namelond(TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt) clielonnt: Melonmcachelon
+  ): RelonadCachelon[Long, ml.DataReloncord] = {
+    nelonw KelonyValuelonTransformingRelonadCachelon(
+      clielonnt,
+      dataReloncordValuelonTransformelonr,
+      kelonyTransformD1(twelonelontIdFelonaturelon)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(EngagementsReceivedByAuthorCache)
-  def providesEngagementsReceivedByAuthorCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[Long, ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1(authorIdFeature)
+  @Providelons
+  @Singlelonton
+  @Namelond(elonngagelonmelonntsReloncelonivelondByAuthorCachelon)
+  delonf providelonselonngagelonmelonntsReloncelonivelondByAuthorCachelon(
+    @Namelond(TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt) clielonnt: Melonmcachelon
+  ): RelonadCachelon[Long, ml.DataReloncord] = {
+    nelonw KelonyValuelonTransformingRelonadCachelon(
+      clielonnt,
+      dataReloncordValuelonTransformelonr,
+      kelonyTransformD1(authorIdFelonaturelon)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TopicCountryEngagementCache)
-  def providesTopicCountryEngagementCache(
-    @Named(TimelinesRealTimeAggregateClient) client: Memcache
-  ): ReadCache[(Long, String), ml.DataRecord] = {
-    new KeyValueTransformingReadCache(
-      client,
-      dataRecordValueTransformer,
-      keyTransformD1T1(topicIdFeature, countryCodeFeature)
+  @Providelons
+  @Singlelonton
+  @Namelond(TopicCountryelonngagelonmelonntCachelon)
+  delonf providelonsTopicCountryelonngagelonmelonntCachelon(
+    @Namelond(TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt) clielonnt: Melonmcachelon
+  ): RelonadCachelon[(Long, String), ml.DataReloncord] = {
+    nelonw KelonyValuelonTransformingRelonadCachelon(
+      clielonnt,
+      dataReloncordValuelonTransformelonr,
+      kelonyTransformD1T1(topicIdFelonaturelon, countryCodelonFelonaturelon)
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(RealTimeInteractionGraphUserVertexCache)
-  def providesRealTimeInteractionGraphUserVertexCache(
-    @Named(RealTimeInteractionGraphUserVertexClient) client: Memcache
-  ): ReadCache[Long, ig.UserVertex] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(RelonalTimelonIntelonractionGraphUselonrVelonrtelonxCachelon)
+  delonf providelonsRelonalTimelonIntelonractionGraphUselonrVelonrtelonxCachelon(
+    @Namelond(RelonalTimelonIntelonractionGraphUselonrVelonrtelonxClielonnt) clielonnt: Melonmcachelon
+  ): RelonadCachelon[Long, ig.UselonrVelonrtelonx] = {
 
-    val valueTransformer = BinaryScalaCodec(ig.UserVertex).toByteArrayTransformer()
+    val valuelonTransformelonr = BinaryScalaCodelonc(ig.UselonrVelonrtelonx).toBytelonArrayTransformelonr()
 
-    val underlyingKey: Long => String = {
-      val cacheKeyPrefix = "user_vertex"
-      val defaultBatchID = Batcher.unit.currentBatch
-      val batchPairInjection = BatchPairImplicits.keyInjection(Injection.connect[Long, Array[Byte]])
-      MemcacheHelper
-        .keyEncoder(cacheKeyPrefix)(batchPairInjection)
-        .compose((k: Long) => (k, defaultBatchID))
+    val undelonrlyingKelony: Long => String = {
+      val cachelonKelonyPrelonfix = "uselonr_velonrtelonx"
+      val delonfaultBatchID = Batchelonr.unit.currelonntBatch
+      val batchPairInjelonction = BatchPairImplicits.kelonyInjelonction(Injelonction.connelonct[Long, Array[Bytelon]])
+      MelonmcachelonHelonlpelonr
+        .kelonyelonncodelonr(cachelonKelonyPrelonfix)(batchPairInjelonction)
+        .composelon((k: Long) => (k, delonfaultBatchID))
     }
 
-    new KeyValueTransformingReadCache(
-      client,
-      valueTransformer,
-      underlyingKey
+    nelonw KelonyValuelonTransformingRelonadCachelon(
+      clielonnt,
+      valuelonTransformelonr,
+      undelonrlyingKelony
     )
   }
 }
 
-trait RealtimeAggregateHelpers {
+trait RelonaltimelonAggrelongatelonHelonlpelonrs {
 
-  private def customKeyBuilder[K](prefix: String, f: K => Array[Byte]): K => String = {
-    // intentionally not implementing injection inverse because it is never used
-    def g(arr: Array[Byte]) = ???
+  privatelon delonf customKelonyBuildelonr[K](prelonfix: String, f: K => Array[Bytelon]): K => String = {
+    // intelonntionally not implelonmelonnting injelonction invelonrselon beloncauselon it is nelonvelonr uselond
+    delonf g(arr: Array[Bytelon]) = ???
 
-    MemcacheHelper.keyEncoder(prefix)(Injection.build(f)(g))
+    MelonmcachelonHelonlpelonr.kelonyelonncodelonr(prelonfix)(Injelonction.build(f)(g))
   }
 
-  private val keyEncoder: AggregationKey => String = {
-    val cacheKeyPrefix = ""
-    val defaultBatchID = Batcher.unit.currentBatch
+  privatelon val kelonyelonncodelonr: AggrelongationKelony => String = {
+    val cachelonKelonyPrelonfix = ""
+    val delonfaultBatchID = Batchelonr.unit.currelonntBatch
 
-    val batchPairInjection = BatchPairImplicits.keyInjection(AggregationKeyInjection)
-    customKeyBuilder(cacheKeyPrefix, batchPairInjection)
-      .compose((k: AggregationKey) => (k, defaultBatchID))
+    val batchPairInjelonction = BatchPairImplicits.kelonyInjelonction(AggrelongationKelonyInjelonction)
+    customKelonyBuildelonr(cachelonKelonyPrelonfix, batchPairInjelonction)
+      .composelon((k: AggrelongationKelony) => (k, delonfaultBatchID))
   }
 
-  protected def keyTransformD1(f1: Feature.Discrete)(key: Long): String = {
-    val aggregationKey = AggregationKey(
-      Map(f1.getFeatureId -> key),
-      Map.empty
+  protelonctelond delonf kelonyTransformD1(f1: Felonaturelon.Discrelontelon)(kelony: Long): String = {
+    val aggrelongationKelony = AggrelongationKelony(
+      Map(f1.gelontFelonaturelonId -> kelony),
+      Map.elonmpty
     )
 
-    keyEncoder(aggregationKey)
+    kelonyelonncodelonr(aggrelongationKelony)
   }
 
-  protected def keyTransformD2(
-    f1: Feature.Discrete,
-    f2: Feature.Discrete
+  protelonctelond delonf kelonyTransformD2(
+    f1: Felonaturelon.Discrelontelon,
+    f2: Felonaturelon.Discrelontelon
   )(
-    keys: (Long, Long)
+    kelonys: (Long, Long)
   ): String = {
-    val (k1, k2) = keys
-    val aggregationKey = AggregationKey(
-      Map(f1.getFeatureId -> k1, f2.getFeatureId -> k2),
-      Map.empty
+    val (k1, k2) = kelonys
+    val aggrelongationKelony = AggrelongationKelony(
+      Map(f1.gelontFelonaturelonId -> k1, f2.gelontFelonaturelonId -> k2),
+      Map.elonmpty
     )
 
-    keyEncoder(aggregationKey)
+    kelonyelonncodelonr(aggrelongationKelony)
   }
 
-  protected def keyTransformD1T1(
-    f1: Feature.Discrete,
-    f2: Feature.Text
+  protelonctelond delonf kelonyTransformD1T1(
+    f1: Felonaturelon.Discrelontelon,
+    f2: Felonaturelon.Telonxt
   )(
-    keys: (Long, String)
+    kelonys: (Long, String)
   ): String = {
-    val (k1, k2) = keys
-    val aggregationKey = AggregationKey(
-      Map(f1.getFeatureId -> k1),
-      Map(f2.getFeatureId -> k2)
+    val (k1, k2) = kelonys
+    val aggrelongationKelony = AggrelongationKelony(
+      Map(f1.gelontFelonaturelonId -> k1),
+      Map(f2.gelontFelonaturelonId -> k2)
     )
 
-    keyEncoder(aggregationKey)
+    kelonyelonncodelonr(aggrelongationKelony)
   }
 
-  protected val dataRecordValueTransformer: Transformer[DataRecord, Array[Byte]] = ThriftCodec
-    .toCompact[ml.DataRecord]
-    .toByteArrayTransformer()
+  protelonctelond val dataReloncordValuelonTransformelonr: Transformelonr[DataReloncord, Array[Bytelon]] = ThriftCodelonc
+    .toCompact[ml.DataReloncord]
+    .toBytelonArrayTransformelonr()
 }

@@ -1,168 +1,168 @@
-package com.twitter.simclusters_v2.scalding.embedding.producer
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.producelonr
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.hdfs_sources.{DataSources, InterestedInSources}
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.ProducerEmbeddingsFromInterestedIn
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{
-  ClusterId,
-  ProducerId,
-  UserId
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scalding_intelonrnal.sourcelon.lzo_scroogelon.FixelondPathLzoScroogelon
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.{DataSourcelons, IntelonrelonstelondInSourcelons}
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.{SparselonMatrix, SparselonRowMatrix}
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.ProducelonrelonmbelonddingsFromIntelonrelonstelondIn
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.{
+  ClustelonrId,
+  ProducelonrId,
+  UselonrId
 }
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingBaseJob
-import com.twitter.simclusters_v2.thriftscala.{EmbeddingType, _}
-import java.util.TimeZone
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.SimClustelonrselonmbelonddingBaselonJob
+import com.twittelonr.simclustelonrs_v2.thriftscala.{elonmbelonddingTypelon, _}
+import java.util.TimelonZonelon
 
 /**
- * This file implements a new Producer SimClusters Embeddings.
- * The differences with existing producer embeddings are:
+ * This filelon implelonmelonnts a nelonw Producelonr SimClustelonrs elonmbelonddings.
+ * Thelon diffelonrelonncelons with elonxisting producelonr elonmbelonddings arelon:
  *
- * 1) the embedding scores are not normalized, so that one can aggregate multiple producer embeddings by adding them.
- * 2) we use log-fav scores in the user-producer graph and user-simclusters graph.
- * LogFav scores are smoother than fav scores we previously used and they are less sensitive to outliers
+ * 1) thelon elonmbelondding scorelons arelon not normalizelond, so that onelon can aggrelongatelon multiplelon producelonr elonmbelonddings by adding thelonm.
+ * 2) welon uselon log-fav scorelons in thelon uselonr-producelonr graph and uselonr-simclustelonrs graph.
+ * LogFav scorelons arelon smoothelonr than fav scorelons welon prelonviously uselond and thelony arelon lelonss selonnsitivelon to outlielonrs
  *
  *
  *
- *  The main difference with other normalized embeddings is the `convertEmbeddingToAggregatableEmbeddings` function
- *  where we multiply the normalized embedding with producer's norms. The resulted embeddings are then
- *  unnormalized and aggregatable.
+ *  Thelon main diffelonrelonncelon with othelonr normalizelond elonmbelonddings is thelon `convelonrtelonmbelonddingToAggrelongatablelonelonmbelonddings` function
+ *  whelonrelon welon multiply thelon normalizelond elonmbelondding with producelonr's norms. Thelon relonsultelond elonmbelonddings arelon thelonn
+ *  unnormalizelond and aggrelongatablelon.
  *
  */
-trait AggregatableProducerEmbeddingsBaseApp extends SimClustersEmbeddingBaseJob[ProducerId] {
+trait AggrelongatablelonProducelonrelonmbelonddingsBaselonApp elonxtelonnds SimClustelonrselonmbelonddingBaselonJob[ProducelonrId] {
 
-  val userToProducerScoringFn: NeighborWithWeights => Double
-  val userToClusterScoringFn: UserToInterestedInClusterScores => Double
-  val modelVersion: ModelVersion
+  val uselonrToProducelonrScoringFn: NelonighborWithWelonights => Doublelon
+  val uselonrToClustelonrScoringFn: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon
+  val modelonlVelonrsion: ModelonlVelonrsion
 
-  // Minimum engagement threshold
-  val minNumFavers: Int = ProducerEmbeddingsFromInterestedIn.minNumFaversForProducer
+  // Minimum elonngagelonmelonnt threlonshold
+  val minNumFavelonrs: Int = ProducelonrelonmbelonddingsFromIntelonrelonstelondIn.minNumFavelonrsForProducelonr
 
-  override def numClustersPerNoun: Int = 60
+  ovelonrridelon delonf numClustelonrsPelonrNoun: Int = 60
 
-  override def numNounsPerClusters: Int = 500 // this is not used for now
+  ovelonrridelon delonf numNounsPelonrClustelonrs: Int = 500 // this is not uselond for now
 
-  override def thresholdForEmbeddingScores: Double = 0.01
+  ovelonrridelon delonf threlonsholdForelonmbelonddingScorelons: Doublelon = 0.01
 
-  override def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[ProducerId, UserId, Double] = {
+  ovelonrridelon delonf prelonparelonNounToUselonrMatrix(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): SparselonMatrix[ProducelonrId, UselonrId, Doublelon] = {
 
-    SparseMatrix(
-      ProducerEmbeddingsFromInterestedIn
-        .getFilteredUserUserNormalizedGraph(
-          DataSources.userUserNormalizedGraphSource,
-          DataSources.userNormsAndCounts,
-          userToProducerScoringFn,
-          _.faverCount.exists(
-            _ > minNumFavers
+    SparselonMatrix(
+      ProducelonrelonmbelonddingsFromIntelonrelonstelondIn
+        .gelontFiltelonrelondUselonrUselonrNormalizelondGraph(
+          DataSourcelons.uselonrUselonrNormalizelondGraphSourcelon,
+          DataSourcelons.uselonrNormsAndCounts,
+          uselonrToProducelonrScoringFn,
+          _.favelonrCount.elonxists(
+            _ > minNumFavelonrs
           )
         )
         .map {
-          case (userId, (producerId, score)) =>
-            (producerId, userId, score)
+          caselon (uselonrId, (producelonrId, scorelon)) =>
+            (producelonrId, uselonrId, scorelon)
         })
   }
 
-  override def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] = {
-    SparseRowMatrix(
-      ProducerEmbeddingsFromInterestedIn
-        .getUserSimClustersMatrix(
-          InterestedInSources
-            .simClustersInterestedInSource(modelVersion, dateRange.embiggen(Days(5)), timeZone),
-          userToClusterScoringFn,
-          modelVersion
+  ovelonrridelon delonf prelonparelonUselonrToClustelonrMatrix(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): SparselonRowMatrix[UselonrId, ClustelonrId, Doublelon] = {
+    SparselonRowMatrix(
+      ProducelonrelonmbelonddingsFromIntelonrelonstelondIn
+        .gelontUselonrSimClustelonrsMatrix(
+          IntelonrelonstelondInSourcelons
+            .simClustelonrsIntelonrelonstelondInSourcelon(modelonlVelonrsion, datelonRangelon.elonmbiggelonn(Days(5)), timelonZonelon),
+          uselonrToClustelonrScoringFn,
+          modelonlVelonrsion
         )
-        .mapValues(_.toMap),
-      isSkinnyMatrix = true
+        .mapValuelons(_.toMap),
+      isSkinnyMatrix = truelon
     )
   }
 
-  // in order to make the embeddings aggregatable, we need to revert the normalization
-  // (multiply the norms) we did when computing embeddings in the base job.
-  def convertEmbeddingToAggregatableEmbeddings(
-    embeddings: TypedPipe[(ProducerId, Seq[(ClusterId, Double)])]
+  // in ordelonr to makelon thelon elonmbelonddings aggrelongatablelon, welon nelonelond to relonvelonrt thelon normalization
+  // (multiply thelon norms) welon did whelonn computing elonmbelonddings in thelon baselon job.
+  delonf convelonrtelonmbelonddingToAggrelongatablelonelonmbelonddings(
+    elonmbelonddings: TypelondPipelon[(ProducelonrId, Selonq[(ClustelonrId, Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(ProducerId, Seq[(ClusterId, Double)])] = {
-    embeddings.join(prepareNounToUserMatrix.rowL2Norms).map {
-      case (producerId, (embeddingVec, norm)) =>
-        producerId -> embeddingVec.map {
-          case (id, score) => (id, score * norm)
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[(ProducelonrId, Selonq[(ClustelonrId, Doublelon)])] = {
+    elonmbelonddings.join(prelonparelonNounToUselonrMatrix.rowL2Norms).map {
+      caselon (producelonrId, (elonmbelonddingVelonc, norm)) =>
+        producelonrId -> elonmbelonddingVelonc.map {
+          caselon (id, scorelon) => (id, scorelon * norm)
         }
     }
   }
 
-  override final def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[(ProducerId, Double)])]
+  ovelonrridelon final delonf writelonClustelonrToNounsIndelonx(
+    output: TypelondPipelon[(ClustelonrId, Selonq[(ProducelonrId, Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = { Execution.unit } // we do not need this for now
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = { elonxeloncution.unit } // welon do not nelonelond this for now
 
   /**
-   * Override this method to write the manhattan dataset.
+   * Ovelonrridelon this melonthod to writelon thelon manhattan dataselont.
    */
-  def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  delonf writelonToManhattan(
+    output: TypelondPipelon[KelonyVal[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit]
 
   /**
-   * Override this method to writethrough the thrift dataset.
+   * Ovelonrridelon this melonthod to writelonthrough thelon thrift dataselont.
    */
-  def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  delonf writelonToThrift(
+    output: TypelondPipelon[SimClustelonrselonmbelonddingWithId]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit]
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit]
 
-  val embeddingType: EmbeddingType
+  val elonmbelonddingTypelon: elonmbelonddingTypelon
 
-  override final def writeNounToClustersIndex(
-    output: TypedPipe[(ProducerId, Seq[(ClusterId, Double)])]
+  ovelonrridelon final delonf writelonNounToClustelonrsIndelonx(
+    output: TypelondPipelon[(ProducelonrId, Selonq[(ClustelonrId, Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val convertedEmbeddings = convertEmbeddingToAggregatableEmbeddings(output)
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val convelonrtelondelonmbelonddings = convelonrtelonmbelonddingToAggrelongatablelonelonmbelonddings(output)
       .map {
-        case (producerId, topSimClustersWithScore) =>
-          val id = SimClustersEmbeddingId(
-            embeddingType = embeddingType,
-            modelVersion = modelVersion,
-            internalId = InternalId.UserId(producerId))
+        caselon (producelonrId, topSimClustelonrsWithScorelon) =>
+          val id = SimClustelonrselonmbelonddingId(
+            elonmbelonddingTypelon = elonmbelonddingTypelon,
+            modelonlVelonrsion = modelonlVelonrsion,
+            intelonrnalId = IntelonrnalId.UselonrId(producelonrId))
 
-          val embeddings = SimClustersEmbedding(topSimClustersWithScore.map {
-            case (clusterId, score) => SimClusterWithScore(clusterId, score)
+          val elonmbelonddings = SimClustelonrselonmbelondding(topSimClustelonrsWithScorelon.map {
+            caselon (clustelonrId, scorelon) => SimClustelonrWithScorelon(clustelonrId, scorelon)
           })
 
-          SimClustersEmbeddingWithId(id, embeddings)
+          SimClustelonrselonmbelonddingWithId(id, elonmbelonddings)
       }
 
-    val keyValuePairs = convertedEmbeddings.map { simClustersEmbeddingWithId =>
-      KeyVal(simClustersEmbeddingWithId.embeddingId, simClustersEmbeddingWithId.embedding)
+    val kelonyValuelonPairs = convelonrtelondelonmbelonddings.map { simClustelonrselonmbelonddingWithId =>
+      KelonyVal(simClustelonrselonmbelonddingWithId.elonmbelonddingId, simClustelonrselonmbelonddingWithId.elonmbelondding)
     }
-    val manhattanExecution = writeToManhattan(keyValuePairs)
+    val manhattanelonxeloncution = writelonToManhattan(kelonyValuelonPairs)
 
-    val thriftExecution = writeToThrift(convertedEmbeddings)
+    val thriftelonxeloncution = writelonToThrift(convelonrtelondelonmbelonddings)
 
-    Execution.zip(manhattanExecution, thriftExecution).unit
+    elonxeloncution.zip(manhattanelonxeloncution, thriftelonxeloncution).unit
   }
 }

@@ -1,62 +1,62 @@
-# Common thrift types
+# Common thrift typelons
 
-GFS uses several thrift datastructures which are common to multiple queries. They are listed below.
+GFS uselons selonvelonral thrift datastructurelons which arelon common to multiplelon quelonrielons. Thelony arelon listelond belonlow.
 
-## EdgeType
+## elondgelonTypelon
 
-`EdgeType` is a thrift enum which specifies which edge types to query for the graph.
+`elondgelonTypelon` is a thrift elonnum which speloncifielons which elondgelon typelons to quelonry for thelon graph.
 
 ```thrift
-enum EdgeType {
+elonnum elondgelonTypelon {
   FOLLOWING,
-  FOLLOWED_BY,
-  FAVORITE,
-  FAVORITED_BY,
-  RETWEET,
-  RETWEETED_BY,
-  REPLY,
-  REPLYED_BY,
-  MENTION,
-  MENTIONED_BY,
+  FOLLOWelonD_BY,
+  FAVORITelon,
+  FAVORITelonD_BY,
+  RelonTWelonelonT,
+  RelonTWelonelonTelonD_BY,
+  RelonPLY,
+  RelonPLYelonD_BY,
+  MelonNTION,
+  MelonNTIONelonD_BY,
   MUTUAL_FOLLOW,
-  SIMILAR_TO, // more edge types (like block, report, etc.) can be supported later.
-  RESERVED_12,
-  RESERVED_13,
-  RESERVED_14,
-  RESERVED_15,
-  RESERVED_16,
-  RESERVED_17,
-  RESERVED_18,
-  RESERVED_19,
-  RESERVED_20
+  SIMILAR_TO, // morelon elondgelon typelons (likelon block, relonport, elontc.) can belon supportelond latelonr.
+  RelonSelonRVelonD_12,
+  RelonSelonRVelonD_13,
+  RelonSelonRVelonD_14,
+  RelonSelonRVelonD_15,
+  RelonSelonRVelonD_16,
+  RelonSelonRVelonD_17,
+  RelonSelonRVelonD_18,
+  RelonSelonRVelonD_19,
+  RelonSelonRVelonD_20
 }
 ```
 
-For an example of how this is used, consider the `GetNeighbors` query. If we set the `edgeType` field
-of the `GfsNeighborsRequest`, the response will contain all the users that the specified user follows.
-If, on the other hand, we set `edgeType` to be `FollowedBy` it will return all the users who are
-followed by the specified user.
+For an elonxamplelon of how this is uselond, considelonr thelon `GelontNelonighbors` quelonry. If welon selont thelon `elondgelonTypelon` fielonld
+of thelon `GfsNelonighborsRelonquelonst`, thelon relonsponselon will contain all thelon uselonrs that thelon speloncifielond uselonr follows.
+If, on thelon othelonr hand, welon selont `elondgelonTypelon` to belon `FollowelondBy` it will relonturn all thelon uselonrs who arelon
+followelond by thelon speloncifielond uselonr.
 
-## FeatureType
+## FelonaturelonTypelon
 
-`FeatureType` is a thrift struct which is used in queries which require two edge types.
+`FelonaturelonTypelon` is a thrift struct which is uselond in quelonrielons which relonquirelon two elondgelon typelons.
 
 ```thrift
-struct FeatureType {
-  1: required EdgeType leftEdgeType // edge type from source user
-  2: required EdgeType rightEdgeType // edge type from candidate user
-}(persisted="true")
+struct FelonaturelonTypelon {
+  1: relonquirelond elondgelonTypelon lelonftelondgelonTypelon // elondgelon typelon from sourcelon uselonr
+  2: relonquirelond elondgelonTypelon rightelondgelonTypelon // elondgelon typelon from candidatelon uselonr
+}(pelonrsistelond="truelon")
 ```
 
-## UserWithScore
+## UselonrWithScorelon
 
-The candidate generation queries return lists of candidates together with a computed score for the
-relevant feature. `UserWithScore` is a thrift struct which bundles together a candidate's ID with
-the score.
+Thelon candidatelon gelonnelonration quelonrielons relonturn lists of candidatelons togelonthelonr with a computelond scorelon for thelon
+relonlelonvant felonaturelon. `UselonrWithScorelon` is a thrift struct which bundlelons togelonthelonr a candidatelon's ID with
+thelon scorelon.
 
 ```thrift
-struct UserWithScore {
-  1: required i64 userId
-  2: required double score
+struct UselonrWithScorelon {
+  1: relonquirelond i64 uselonrId
+  2: relonquirelond doublelon scorelon
 }
 ```

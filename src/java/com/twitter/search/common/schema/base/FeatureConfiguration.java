@@ -1,314 +1,314 @@
-package com.twitter.search.common.schema.base;
+packagelon com.twittelonr.selonarch.common.schelonma.baselon;
 
-import java.util.Set;
+import java.util.Selont;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Sets;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.common.base.MorePreconditions;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
+import com.twittelonr.common.baselon.MorelonPrelonconditions;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFTypelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFelonaturelonNormalizationTypelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFelonaturelonUpdatelonConstraint;
 
-// FeatureConfiguration is defined for all the column stride view fields.
-public final class FeatureConfiguration {
-  private final String name;
-  private final int intIndex;
-  // Start position in the given int (0-31)
-  private final int bitStartPos;
-  // Length in bits of the feature
-  private final int bitLength;
-  // precomputed for reuse
-  private final int bitMask;
-  private final int inverseBitMask;
-  private final int maxValue;
+// FelonaturelonConfiguration is delonfinelond for all thelon column stridelon vielonw fielonlds.
+public final class FelonaturelonConfiguration {
+  privatelon final String namelon;
+  privatelon final int intIndelonx;
+  // Start position in thelon givelonn int (0-31)
+  privatelon final int bitStartPos;
+  // Lelonngth in bits of thelon felonaturelon
+  privatelon final int bitLelonngth;
+  // preloncomputelond for relonuselon
+  privatelon final int bitMask;
+  privatelon final int invelonrselonBitMask;
+  privatelon final int maxValuelon;
 
-  private final ThriftCSFType type;
+  privatelon final ThriftCSFTypelon typelon;
 
-  // This is the client seen feature type: if this is null, this field is unused.
-  @Nullable
-  private final ThriftCSFType outputType;
+  // This is thelon clielonnt selonelonn felonaturelon typelon: if this is null, this fielonld is unuselond.
+  @Nullablelon
+  privatelon final ThriftCSFTypelon outputTypelon;
 
-  private final String baseField;
+  privatelon final String baselonFielonld;
 
-  private final Set<FeatureConstraint> featureUpdateConstraints;
+  privatelon final Selont<FelonaturelonConstraint> felonaturelonUpdatelonConstraints;
 
-  private final ThriftFeatureNormalizationType featureNormalizationType;
+  privatelon final ThriftFelonaturelonNormalizationTypelon felonaturelonNormalizationTypelon;
 
   /**
-   * Creates a new FeatureConfiguration with a base field.
+   * Crelonatelons a nelonw FelonaturelonConfiguration with a baselon fielonld.
    *
-   * @param intIndex which integer is the feature in (0 based).
-   * @param bitStartPos at which bit does the feature start (0-31).
-   * @param bitLength length in bits of the feature
-   * @param baseField the CSF this feature is stored within.
+   * @param intIndelonx which intelongelonr is thelon felonaturelon in (0 baselond).
+   * @param bitStartPos at which bit doelons thelon felonaturelon start (0-31).
+   * @param bitLelonngth lelonngth in bits of thelon felonaturelon
+   * @param baselonFielonld thelon CSF this felonaturelon is storelond within.
    */
-  private FeatureConfiguration(
-          String name,
-          ThriftCSFType type,
-          ThriftCSFType outputType,
-          int intIndex,
+  privatelon FelonaturelonConfiguration(
+          String namelon,
+          ThriftCSFTypelon typelon,
+          ThriftCSFTypelon outputTypelon,
+          int intIndelonx,
           int bitStartPos,
-          int bitLength,
-          String baseField,
-          Set<FeatureConstraint> featureUpdateConstraints,
-          ThriftFeatureNormalizationType featureNormalizationType) {
-    Preconditions.checkState(bitStartPos + bitLength <= Integer.SIZE,
-            "Feature must not cross int boundary.");
-    this.name = MorePreconditions.checkNotBlank(name);
-    this.type = Preconditions.checkNotNull(type);
-    this.outputType = outputType;
-    this.intIndex = intIndex;
+          int bitLelonngth,
+          String baselonFielonld,
+          Selont<FelonaturelonConstraint> felonaturelonUpdatelonConstraints,
+          ThriftFelonaturelonNormalizationTypelon felonaturelonNormalizationTypelon) {
+    Prelonconditions.chelonckStatelon(bitStartPos + bitLelonngth <= Intelongelonr.SIZelon,
+            "Felonaturelon must not cross int boundary.");
+    this.namelon = MorelonPrelonconditions.chelonckNotBlank(namelon);
+    this.typelon = Prelonconditions.chelonckNotNull(typelon);
+    this.outputTypelon = outputTypelon;
+    this.intIndelonx = intIndelonx;
     this.bitStartPos = bitStartPos;
-    this.bitLength = bitLength;
-    // Technically, int-sized features can use all 32 bits to store a positive value greater than
-    // Integer.MAX_VALUE. But in practice, we will convert the values of those features to Java ints
-    // on the read side, so the max value for those features will still be Integer.MAX_VALUE.
-    this.maxValue = (1 << Math.min(bitLength, Integer.SIZE - 1)) - 1;
-    this.bitMask = (int) (((1L << bitLength) - 1) << bitStartPos);
-    this.inverseBitMask = ~bitMask;
-    this.baseField = baseField;
-    this.featureUpdateConstraints = featureUpdateConstraints;
-    this.featureNormalizationType = Preconditions.checkNotNull(featureNormalizationType);
+    this.bitLelonngth = bitLelonngth;
+    // Telonchnically, int-sizelond felonaturelons can uselon all 32 bits to storelon a positivelon valuelon grelonatelonr than
+    // Intelongelonr.MAX_VALUelon. But in practicelon, welon will convelonrt thelon valuelons of thoselon felonaturelons to Java ints
+    // on thelon relonad sidelon, so thelon max valuelon for thoselon felonaturelons will still belon Intelongelonr.MAX_VALUelon.
+    this.maxValuelon = (1 << Math.min(bitLelonngth, Intelongelonr.SIZelon - 1)) - 1;
+    this.bitMask = (int) (((1L << bitLelonngth) - 1) << bitStartPos);
+    this.invelonrselonBitMask = ~bitMask;
+    this.baselonFielonld = baselonFielonld;
+    this.felonaturelonUpdatelonConstraints = felonaturelonUpdatelonConstraints;
+    this.felonaturelonNormalizationTypelon = Prelonconditions.chelonckNotNull(felonaturelonNormalizationTypelon);
   }
 
-  public String getName() {
-    return name;
+  public String gelontNamelon() {
+    relonturn namelon;
   }
 
-  public int getMaxValue() {
-    return maxValue;
+  public int gelontMaxValuelon() {
+    relonturn maxValuelon;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return new StringBuilder().append(name)
-            .append(" (").append(intIndex).append(", ")
-            .append(bitStartPos).append(", ")
-            .append(bitLength).append(") ").toString();
+    relonturn nelonw StringBuildelonr().appelonnd(namelon)
+            .appelonnd(" (").appelonnd(intIndelonx).appelonnd(", ")
+            .appelonnd(bitStartPos).appelonnd(", ")
+            .appelonnd(bitLelonngth).appelonnd(") ").toString();
   }
 
-  public int getValueIndex() {
-    return intIndex;
+  public int gelontValuelonIndelonx() {
+    relonturn intIndelonx;
   }
 
-  public int getBitStartPosition() {
-    return bitStartPos;
+  public int gelontBitStartPosition() {
+    relonturn bitStartPos;
   }
 
-  public int getBitLength() {
-    return bitLength;
+  public int gelontBitLelonngth() {
+    relonturn bitLelonngth;
   }
 
-  public int getBitMask() {
-    return bitMask;
+  public int gelontBitMask() {
+    relonturn bitMask;
   }
 
-  public int getInverseBitMask() {
-    return inverseBitMask;
+  public int gelontInvelonrselonBitMask() {
+    relonturn invelonrselonBitMask;
   }
 
-  public String getBaseField() {
-    return baseField;
+  public String gelontBaselonFielonld() {
+    relonturn baselonFielonld;
   }
 
-  public ThriftCSFType getType() {
-    return type;
+  public ThriftCSFTypelon gelontTypelon() {
+    relonturn typelon;
   }
 
-  @Nullable
-  public ThriftCSFType getOutputType() {
-    return outputType;
+  @Nullablelon
+  public ThriftCSFTypelon gelontOutputTypelon() {
+    relonturn outputTypelon;
   }
 
-  public ThriftFeatureNormalizationType getFeatureNormalizationType() {
-    return featureNormalizationType;
-  }
-
-  /**
-   * Returns the update constraint for the feature.
-   */
-  public Set<ThriftFeatureUpdateConstraint> getUpdateConstraints() {
-    if (featureUpdateConstraints == null) {
-      return null;
-    }
-    Set<ThriftFeatureUpdateConstraint> constraintSet = Sets.newHashSet();
-    for (FeatureConstraint constraint : featureUpdateConstraints) {
-      constraintSet.add(constraint.getType());
-    }
-    return constraintSet;
+  public ThriftFelonaturelonNormalizationTypelon gelontFelonaturelonNormalizationTypelon() {
+    relonturn felonaturelonNormalizationTypelon;
   }
 
   /**
-   * Returns true if the given update satisfies all feature update constraints.
+   * Relonturns thelon updatelon constraint for thelon felonaturelon.
    */
-  public boolean validateFeatureUpdate(final Number oldValue, final Number newValue) {
-    if (featureUpdateConstraints != null) {
-      for (FeatureConstraint contraint : featureUpdateConstraints) {
-        if (!contraint.apply(oldValue, newValue)) {
-          return false;
+  public Selont<ThriftFelonaturelonUpdatelonConstraint> gelontUpdatelonConstraints() {
+    if (felonaturelonUpdatelonConstraints == null) {
+      relonturn null;
+    }
+    Selont<ThriftFelonaturelonUpdatelonConstraint> constraintSelont = Selonts.nelonwHashSelont();
+    for (FelonaturelonConstraint constraint : felonaturelonUpdatelonConstraints) {
+      constraintSelont.add(constraint.gelontTypelon());
+    }
+    relonturn constraintSelont;
+  }
+
+  /**
+   * Relonturns truelon if thelon givelonn updatelon satisfielons all felonaturelon updatelon constraints.
+   */
+  public boolelonan validatelonFelonaturelonUpdatelon(final Numbelonr oldValuelon, final Numbelonr nelonwValuelon) {
+    if (felonaturelonUpdatelonConstraints != null) {
+      for (FelonaturelonConstraint contraint : felonaturelonUpdatelonConstraints) {
+        if (!contraint.apply(oldValuelon, nelonwValuelon)) {
+          relonturn falselon;
         }
       }
     }
 
-    return true;
+    relonturn truelon;
   }
 
-  @Override
-  public int hashCode() {
-    return (name == null ? 0 : name.hashCode())
-        + intIndex * 7
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn (namelon == null ? 0 : namelon.hashCodelon())
+        + intIndelonx * 7
         + bitStartPos * 13
-        + bitLength * 23
+        + bitLelonngth * 23
         + bitMask * 31
-        + inverseBitMask * 43
-        + (int) maxValue * 53
-        + (type == null ? 0 : type.hashCode()) * 61
-        + (outputType == null ? 0 : outputType.hashCode()) * 71
-        + (baseField == null ? 0 : baseField.hashCode()) * 83
-        + (featureUpdateConstraints == null ? 0 : featureUpdateConstraints.hashCode()) * 87
-        + (featureNormalizationType == null ? 0 : featureNormalizationType.hashCode()) * 97;
+        + invelonrselonBitMask * 43
+        + (int) maxValuelon * 53
+        + (typelon == null ? 0 : typelon.hashCodelon()) * 61
+        + (outputTypelon == null ? 0 : outputTypelon.hashCodelon()) * 71
+        + (baselonFielonld == null ? 0 : baselonFielonld.hashCodelon()) * 83
+        + (felonaturelonUpdatelonConstraints == null ? 0 : felonaturelonUpdatelonConstraints.hashCodelon()) * 87
+        + (felonaturelonNormalizationTypelon == null ? 0 : felonaturelonNormalizationTypelon.hashCodelon()) * 97;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof FeatureConfiguration)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof FelonaturelonConfiguration)) {
+      relonturn falselon;
     }
 
-    FeatureConfiguration featureConfiguration = FeatureConfiguration.class.cast(obj);
-    return (name == featureConfiguration.name)
-        && (bitStartPos == featureConfiguration.bitStartPos)
-        && (bitLength == featureConfiguration.bitLength)
-        && (bitMask == featureConfiguration.bitMask)
-        && (inverseBitMask == featureConfiguration.inverseBitMask)
-        && (maxValue == featureConfiguration.maxValue)
-        && (type == featureConfiguration.type)
-        && (outputType == featureConfiguration.outputType)
-        && (baseField == featureConfiguration.baseField)
-        && (featureUpdateConstraints == null
-            ? featureConfiguration.featureUpdateConstraints == null
-            : featureUpdateConstraints.equals(featureConfiguration.featureUpdateConstraints))
-        && (featureNormalizationType == null
-            ? featureConfiguration.featureNormalizationType == null
-            : featureNormalizationType.equals(featureConfiguration.featureNormalizationType));
+    FelonaturelonConfiguration felonaturelonConfiguration = FelonaturelonConfiguration.class.cast(obj);
+    relonturn (namelon == felonaturelonConfiguration.namelon)
+        && (bitStartPos == felonaturelonConfiguration.bitStartPos)
+        && (bitLelonngth == felonaturelonConfiguration.bitLelonngth)
+        && (bitMask == felonaturelonConfiguration.bitMask)
+        && (invelonrselonBitMask == felonaturelonConfiguration.invelonrselonBitMask)
+        && (maxValuelon == felonaturelonConfiguration.maxValuelon)
+        && (typelon == felonaturelonConfiguration.typelon)
+        && (outputTypelon == felonaturelonConfiguration.outputTypelon)
+        && (baselonFielonld == felonaturelonConfiguration.baselonFielonld)
+        && (felonaturelonUpdatelonConstraints == null
+            ? felonaturelonConfiguration.felonaturelonUpdatelonConstraints == null
+            : felonaturelonUpdatelonConstraints.elonquals(felonaturelonConfiguration.felonaturelonUpdatelonConstraints))
+        && (felonaturelonNormalizationTypelon == null
+            ? felonaturelonConfiguration.felonaturelonNormalizationTypelon == null
+            : felonaturelonNormalizationTypelon.elonquals(felonaturelonConfiguration.felonaturelonNormalizationTypelon));
   }
 
-  private interface FeatureConstraint {
-    boolean apply(Number oldValue, Number newValue);
-    ThriftFeatureUpdateConstraint getType();
+  privatelon intelonrfacelon FelonaturelonConstraint {
+    boolelonan apply(Numbelonr oldValuelon, Numbelonr nelonwValuelon);
+    ThriftFelonaturelonUpdatelonConstraint gelontTypelon();
   }
 
-  public static Builder builder() {
-    return new Builder();
+  public static Buildelonr buildelonr() {
+    relonturn nelonw Buildelonr();
   }
 
-  public static final class Builder {
-    private String name;
-    private ThriftCSFType type;
-    private ThriftCSFType outputType;
-    private int intIndex;
-    // Start position in the given int (0-31)
-    private int bitStartPos;
-    // Length in bits of the feature
-    private int bitLength;
+  public static final class Buildelonr {
+    privatelon String namelon;
+    privatelon ThriftCSFTypelon typelon;
+    privatelon ThriftCSFTypelon outputTypelon;
+    privatelon int intIndelonx;
+    // Start position in thelon givelonn int (0-31)
+    privatelon int bitStartPos;
+    // Lelonngth in bits of thelon felonaturelon
+    privatelon int bitLelonngth;
 
-    private String baseField;
+    privatelon String baselonFielonld;
 
-    private Set<FeatureConstraint> featureUpdateConstraints;
+    privatelon Selont<FelonaturelonConstraint> felonaturelonUpdatelonConstraints;
 
-    private ThriftFeatureNormalizationType featureNormalizationType =
-        ThriftFeatureNormalizationType.NONE;
+    privatelon ThriftFelonaturelonNormalizationTypelon felonaturelonNormalizationTypelon =
+        ThriftFelonaturelonNormalizationTypelon.NONelon;
 
-    public FeatureConfiguration build() {
-      return new FeatureConfiguration(name, type, outputType, intIndex, bitStartPos, bitLength,
-              baseField, featureUpdateConstraints, featureNormalizationType);
+    public FelonaturelonConfiguration build() {
+      relonturn nelonw FelonaturelonConfiguration(namelon, typelon, outputTypelon, intIndelonx, bitStartPos, bitLelonngth,
+              baselonFielonld, felonaturelonUpdatelonConstraints, felonaturelonNormalizationTypelon);
     }
 
-    public Builder withName(String n) {
-      this.name = n;
-      return this;
+    public Buildelonr withNamelon(String n) {
+      this.namelon = n;
+      relonturn this;
     }
 
-    public Builder withType(ThriftCSFType featureType) {
-      this.type = featureType;
-      return this;
+    public Buildelonr withTypelon(ThriftCSFTypelon felonaturelonTypelon) {
+      this.typelon = felonaturelonTypelon;
+      relonturn this;
     }
 
-    public Builder withOutputType(ThriftCSFType featureFeatureType) {
-      this.outputType = featureFeatureType;
-      return this;
+    public Buildelonr withOutputTypelon(ThriftCSFTypelon felonaturelonFelonaturelonTypelon) {
+      this.outputTypelon = felonaturelonFelonaturelonTypelon;
+      relonturn this;
     }
 
-    public Builder withFeatureNormalizationType(
-        ThriftFeatureNormalizationType normalizationType) {
-      this.featureNormalizationType = Preconditions.checkNotNull(normalizationType);
-      return this;
+    public Buildelonr withFelonaturelonNormalizationTypelon(
+        ThriftFelonaturelonNormalizationTypelon normalizationTypelon) {
+      this.felonaturelonNormalizationTypelon = Prelonconditions.chelonckNotNull(normalizationTypelon);
+      relonturn this;
     }
 
     /**
-     * Sets the bit range at the given intIndex, startPos and length.
+     * Selonts thelon bit rangelon at thelon givelonn intIndelonx, startPos and lelonngth.
      */
-    public Builder withBitRange(int index, int startPos, int length) {
-      this.intIndex = index;
+    public Buildelonr withBitRangelon(int indelonx, int startPos, int lelonngth) {
+      this.intIndelonx = indelonx;
       this.bitStartPos = startPos;
-      this.bitLength = length;
-      return this;
+      this.bitLelonngth = lelonngth;
+      relonturn this;
     }
 
-    public Builder withBaseField(String baseFieldName) {
-      this.baseField = baseFieldName;
-      return this;
+    public Buildelonr withBaselonFielonld(String baselonFielonldNamelon) {
+      this.baselonFielonld = baselonFielonldNamelon;
+      relonturn this;
     }
 
     /**
-     * Adds a feature update constraint.
+     * Adds a felonaturelon updatelon constraint.
      */
-    public Builder withFeatureUpdateConstraint(final ThriftFeatureUpdateConstraint constraint) {
-      if (featureUpdateConstraints == null) {
-        featureUpdateConstraints = Sets.newHashSet();
+    public Buildelonr withFelonaturelonUpdatelonConstraint(final ThriftFelonaturelonUpdatelonConstraint constraint) {
+      if (felonaturelonUpdatelonConstraints == null) {
+        felonaturelonUpdatelonConstraints = Selonts.nelonwHashSelont();
       }
 
       switch (constraint) {
-        case IMMUTABLE:
-          featureUpdateConstraints.add(new FeatureConstraint() {
-            @Override public boolean apply(Number oldValue, Number newValue) {
-              return false;
+        caselon IMMUTABLelon:
+          felonaturelonUpdatelonConstraints.add(nelonw FelonaturelonConstraint() {
+            @Ovelonrridelon public boolelonan apply(Numbelonr oldValuelon, Numbelonr nelonwValuelon) {
+              relonturn falselon;
             }
-            @Override public ThriftFeatureUpdateConstraint getType() {
-              return ThriftFeatureUpdateConstraint.IMMUTABLE;
-            }
-          });
-          break;
-        case INC_ONLY:
-          featureUpdateConstraints.add(new FeatureConstraint() {
-            @Override  public boolean apply(Number oldValue, Number newValue) {
-              return newValue.intValue() > oldValue.intValue();
-            }
-            @Override public ThriftFeatureUpdateConstraint getType() {
-              return ThriftFeatureUpdateConstraint.INC_ONLY;
+            @Ovelonrridelon public ThriftFelonaturelonUpdatelonConstraint gelontTypelon() {
+              relonturn ThriftFelonaturelonUpdatelonConstraint.IMMUTABLelon;
             }
           });
-          break;
-        case POSITIVE:
-          featureUpdateConstraints.add(new FeatureConstraint() {
-            @Override  public boolean apply(Number oldValue, Number newValue) {
-              return newValue.intValue() >= 0;
+          brelonak;
+        caselon INC_ONLY:
+          felonaturelonUpdatelonConstraints.add(nelonw FelonaturelonConstraint() {
+            @Ovelonrridelon  public boolelonan apply(Numbelonr oldValuelon, Numbelonr nelonwValuelon) {
+              relonturn nelonwValuelon.intValuelon() > oldValuelon.intValuelon();
             }
-            @Override public ThriftFeatureUpdateConstraint getType() {
-              return ThriftFeatureUpdateConstraint.POSITIVE;
+            @Ovelonrridelon public ThriftFelonaturelonUpdatelonConstraint gelontTypelon() {
+              relonturn ThriftFelonaturelonUpdatelonConstraint.INC_ONLY;
             }
           });
-          break;
-        default:
+          brelonak;
+        caselon POSITIVelon:
+          felonaturelonUpdatelonConstraints.add(nelonw FelonaturelonConstraint() {
+            @Ovelonrridelon  public boolelonan apply(Numbelonr oldValuelon, Numbelonr nelonwValuelon) {
+              relonturn nelonwValuelon.intValuelon() >= 0;
+            }
+            @Ovelonrridelon public ThriftFelonaturelonUpdatelonConstraint gelontTypelon() {
+              relonturn ThriftFelonaturelonUpdatelonConstraint.POSITIVelon;
+            }
+          });
+          brelonak;
+        delonfault:
       }
 
-      return this;
+      relonturn this;
     }
 
-    private Builder() {
+    privatelon Buildelonr() {
 
     }
   }

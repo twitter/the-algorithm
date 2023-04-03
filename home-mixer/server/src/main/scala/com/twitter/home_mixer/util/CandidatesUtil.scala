@@ -1,105 +1,105 @@
-package com.twitter.home_mixer.util
+packagelon com.twittelonr.homelon_mixelonr.util
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasImageFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.MediaUnderstandingAnnotationIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.RepliedByEngagerIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.RetweetedByEngagerIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FavoritelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.HasImagelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.MelondiaUndelonrstandingAnnotationIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.RelonplielondByelonngagelonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.RelontwelonelontelondByelonngagelonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScorelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonUselonrIdFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.UnelonxpelonctelondCandidatelonRelonsult
 
-import scala.reflect.ClassTag
+import scala.relonflelonct.ClassTag
 
-object CandidatesUtil {
-  def getItemCandidates(candidates: Seq[CandidateWithDetails]): Seq[ItemCandidateWithDetails] = {
-    candidates.collect {
-      case item: ItemCandidateWithDetails if !item.isCandidateType[CursorCandidate] => Seq(item)
-      case module: ModuleCandidateWithDetails => module.candidates
-    }.flatten
+objelonct CandidatelonsUtil {
+  delonf gelontItelonmCandidatelons(candidatelons: Selonq[CandidatelonWithDelontails]): Selonq[ItelonmCandidatelonWithDelontails] = {
+    candidatelons.collelonct {
+      caselon itelonm: ItelonmCandidatelonWithDelontails if !itelonm.isCandidatelonTypelon[CursorCandidatelon] => Selonq(itelonm)
+      caselon modulelon: ModulelonCandidatelonWithDelontails => modulelon.candidatelons
+    }.flattelonn
   }
 
-  def getItemCandidatesWithOnlyModuleLast(
-    candidates: Seq[CandidateWithDetails]
-  ): Seq[ItemCandidateWithDetails] = {
-    candidates.collect {
-      case item: ItemCandidateWithDetails if !item.isCandidateType[CursorCandidate] => item
-      case module: ModuleCandidateWithDetails => module.candidates.last
+  delonf gelontItelonmCandidatelonsWithOnlyModulelonLast(
+    candidatelons: Selonq[CandidatelonWithDelontails]
+  ): Selonq[ItelonmCandidatelonWithDelontails] = {
+    candidatelons.collelonct {
+      caselon itelonm: ItelonmCandidatelonWithDelontails if !itelonm.isCandidatelonTypelon[CursorCandidatelon] => itelonm
+      caselon modulelon: ModulelonCandidatelonWithDelontails => modulelon.candidatelons.last
     }
   }
 
-  def containsType[CandidateType <: UniversalNoun[_]](
-    candidates: Seq[CandidateWithDetails]
+  delonf containsTypelon[CandidatelonTypelon <: UnivelonrsalNoun[_]](
+    candidatelons: Selonq[CandidatelonWithDelontails]
   )(
-    implicit tag: ClassTag[CandidateType]
-  ): Boolean = candidates.exists {
-    case ItemCandidateWithDetails(_: CandidateType, _, _) => true
-    case module: ModuleCandidateWithDetails =>
-      module.candidates.head.isCandidateType[CandidateType]()
-    case _ => false
+    implicit tag: ClassTag[CandidatelonTypelon]
+  ): Boolelonan = candidatelons.elonxists {
+    caselon ItelonmCandidatelonWithDelontails(_: CandidatelonTypelon, _, _) => truelon
+    caselon modulelon: ModulelonCandidatelonWithDelontails =>
+      modulelon.candidatelons.helonad.isCandidatelonTypelon[CandidatelonTypelon]()
+    caselon _ => falselon
   }
 
-  def getOriginalAuthorId(candidateFeatures: FeatureMap): Option[Long] =
-    if (candidateFeatures.getOrElse(IsRetweetFeature, false))
-      candidateFeatures.getOrElse(SourceUserIdFeature, None)
-    else candidateFeatures.getOrElse(AuthorIdFeature, None)
+  delonf gelontOriginalAuthorId(candidatelonFelonaturelons: FelonaturelonMap): Option[Long] =
+    if (candidatelonFelonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon))
+      candidatelonFelonaturelons.gelontOrelonlselon(SourcelonUselonrIdFelonaturelon, Nonelon)
+    elonlselon candidatelonFelonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon)
 
-  def getEngagerUserIds(
-    candidateFeatures: FeatureMap
-  ): Seq[Long] = {
-    candidateFeatures.getOrElse(FavoritedByUserIdsFeature, Seq.empty) ++
-      candidateFeatures.getOrElse(RetweetedByEngagerIdsFeature, Seq.empty) ++
-      candidateFeatures.getOrElse(RepliedByEngagerIdsFeature, Seq.empty)
+  delonf gelontelonngagelonrUselonrIds(
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Selonq[Long] = {
+    candidatelonFelonaturelons.gelontOrelonlselon(FavoritelondByUselonrIdsFelonaturelon, Selonq.elonmpty) ++
+      candidatelonFelonaturelons.gelontOrelonlselon(RelontwelonelontelondByelonngagelonrIdsFelonaturelon, Selonq.elonmpty) ++
+      candidatelonFelonaturelons.gelontOrelonlselon(RelonplielondByelonngagelonrIdsFelonaturelon, Selonq.elonmpty)
   }
 
-  def getMediaUnderstandingAnnotationIds(
-    candidateFeatures: FeatureMap
-  ): Seq[Long] = {
-    if (candidateFeatures.get(HasImageFeature))
-      candidateFeatures.getOrElse(MediaUnderstandingAnnotationIdsFeature, Seq.empty)
-    else Seq.empty
+  delonf gelontMelondiaUndelonrstandingAnnotationIds(
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Selonq[Long] = {
+    if (candidatelonFelonaturelons.gelont(HasImagelonFelonaturelon))
+      candidatelonFelonaturelons.gelontOrelonlselon(MelondiaUndelonrstandingAnnotationIdsFelonaturelon, Selonq.elonmpty)
+    elonlselon Selonq.elonmpty
   }
 
-  def getTweetIdAndSourceId(candidate: CandidateWithFeatures[TweetCandidate]): Seq[Long] =
-    Seq(candidate.candidate.id) ++ candidate.features.getOrElse(SourceTweetIdFeature, None)
+  delonf gelontTwelonelontIdAndSourcelonId(candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon]): Selonq[Long] =
+    Selonq(candidatelon.candidatelon.id) ++ candidatelon.felonaturelons.gelontOrelonlselon(SourcelonTwelonelontIdFelonaturelon, Nonelon)
 
-  def isAuthoredByViewer(query: PipelineQuery, candidateFeatures: FeatureMap): Boolean =
-    candidateFeatures.getOrElse(AuthorIdFeature, None).contains(query.getRequiredUserId) ||
-      (candidateFeatures.getOrElse(IsRetweetFeature, false) &&
-        candidateFeatures.getOrElse(SourceUserIdFeature, None).contains(query.getRequiredUserId))
+  delonf isAuthorelondByVielonwelonr(quelonry: PipelonlinelonQuelonry, candidatelonFelonaturelons: FelonaturelonMap): Boolelonan =
+    candidatelonFelonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon).contains(quelonry.gelontRelonquirelondUselonrId) ||
+      (candidatelonFelonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon) &&
+        candidatelonFelonaturelons.gelontOrelonlselon(SourcelonUselonrIdFelonaturelon, Nonelon).contains(quelonry.gelontRelonquirelondUselonrId))
 
-  val reverseChronTweetsOrdering: Ordering[CandidateWithDetails] =
-    Ordering.by[CandidateWithDetails, Long] {
-      case ItemCandidateWithDetails(candidate: TweetCandidate, _, _) => -candidate.id
-      case ModuleCandidateWithDetails(candidates, _, _) if candidates.nonEmpty =>
-        -candidates.last.candidateIdLong
-      case _ => throw PipelineFailure(UnexpectedCandidateResult, "Invalid candidate type")
+  val relonvelonrselonChronTwelonelontsOrdelonring: Ordelonring[CandidatelonWithDelontails] =
+    Ordelonring.by[CandidatelonWithDelontails, Long] {
+      caselon ItelonmCandidatelonWithDelontails(candidatelon: TwelonelontCandidatelon, _, _) => -candidatelon.id
+      caselon ModulelonCandidatelonWithDelontails(candidatelons, _, _) if candidatelons.nonelonmpty =>
+        -candidatelons.last.candidatelonIdLong
+      caselon _ => throw PipelonlinelonFailurelon(UnelonxpelonctelondCandidatelonRelonsult, "Invalid candidatelon typelon")
     }
 
-  val scoreOrdering: Ordering[CandidateWithDetails] = Ordering.by[CandidateWithDetails, Double] {
-    case ItemCandidateWithDetails(_, _, features) =>
-      -features.getOrElse(ScoreFeature, None).getOrElse(0.0)
-    case ModuleCandidateWithDetails(candidates, _, _) =>
-      -candidates.last.features.getOrElse(ScoreFeature, None).getOrElse(0.0)
-    case _ => throw PipelineFailure(UnexpectedCandidateResult, "Invalid candidate type")
+  val scorelonOrdelonring: Ordelonring[CandidatelonWithDelontails] = Ordelonring.by[CandidatelonWithDelontails, Doublelon] {
+    caselon ItelonmCandidatelonWithDelontails(_, _, felonaturelons) =>
+      -felonaturelons.gelontOrelonlselon(ScorelonFelonaturelon, Nonelon).gelontOrelonlselon(0.0)
+    caselon ModulelonCandidatelonWithDelontails(candidatelons, _, _) =>
+      -candidatelons.last.felonaturelons.gelontOrelonlselon(ScorelonFelonaturelon, Nonelon).gelontOrelonlselon(0.0)
+    caselon _ => throw PipelonlinelonFailurelon(UnelonxpelonctelondCandidatelonRelonsult, "Invalid candidatelon typelon")
   }
 
-  val conversationModuleTweetsOrdering: Ordering[CandidateWithDetails] =
-    Ordering.by[CandidateWithDetails, Long] {
-      case ItemCandidateWithDetails(candidate: TweetCandidate, _, _) => candidate.id
-      case _ => throw PipelineFailure(UnexpectedCandidateResult, "Only Item candidate expected")
+  val convelonrsationModulelonTwelonelontsOrdelonring: Ordelonring[CandidatelonWithDelontails] =
+    Ordelonring.by[CandidatelonWithDelontails, Long] {
+      caselon ItelonmCandidatelonWithDelontails(candidatelon: TwelonelontCandidatelon, _, _) => candidatelon.id
+      caselon _ => throw PipelonlinelonFailurelon(UnelonxpelonctelondCandidatelonRelonsult, "Only Itelonm candidatelon elonxpelonctelond")
     }
 }

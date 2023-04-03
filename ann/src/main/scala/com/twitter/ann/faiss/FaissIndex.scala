@@ -1,42 +1,42 @@
-package com.twitter.ann.faiss
+packagelon com.twittelonr.ann.faiss
 
-import com.twitter.ann.common.Queryable
-import com.twitter.ann.common._
-import com.twitter.search.common.file.AbstractFile
-import com.twitter.util.logging.Logging
+import com.twittelonr.ann.common.Quelonryablelon
+import com.twittelonr.ann.common._
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon
+import com.twittelonr.util.logging.Logging
 
-case class FaissParams(
-  nprobe: Option[Int],
-  quantizerEf: Option[Int],
-  quantizerKFactorRF: Option[Int],
-  quantizerNprobe: Option[Int],
+caselon class FaissParams(
+  nprobelon: Option[Int],
+  quantizelonrelonf: Option[Int],
+  quantizelonrKFactorRF: Option[Int],
+  quantizelonrNprobelon: Option[Int],
   ht: Option[Int])
-    extends RuntimeParams {
-  override def toString: String = s"FaissParams(${toLibraryString})"
+    elonxtelonnds RuntimelonParams {
+  ovelonrridelon delonf toString: String = s"FaissParams(${toLibraryString})"
 
-  def toLibraryString: String =
-    Seq(
-      nprobe.map { n => s"nprobe=${n}" },
-      quantizerEf.map { ef => s"quantizer_efSearch=${ef}" },
-      quantizerKFactorRF.map { k => s"quantizer_k_factor_rf=${k}" },
-      quantizerNprobe.map { n => s"quantizer_nprobe=${n}" },
+  delonf toLibraryString: String =
+    Selonq(
+      nprobelon.map { n => s"nprobelon=${n}" },
+      quantizelonrelonf.map { elonf => s"quantizelonr_elonfSelonarch=${elonf}" },
+      quantizelonrKFactorRF.map { k => s"quantizelonr_k_factor_rf=${k}" },
+      quantizelonrNprobelon.map { n => s"quantizelonr_nprobelon=${n}" },
       ht.map { ht => s"ht=${ht}" },
-    ).flatten.mkString(",")
+    ).flattelonn.mkString(",")
 }
 
-object FaissIndex {
-  def loadIndex[T, D <: Distance[D]](
-    outerDimension: Int,
-    outerMetric: Metric[D],
-    directory: AbstractFile
-  ): Queryable[T, FaissParams, D] = {
-    new QueryableIndexAdapter[T, D] with Logging {
-      protected val metric: Metric[D] = outerMetric
-      protected val dimension: Int = outerDimension
-      protected val index: Index = {
-        info(s"Loading faiss with ${swigfaiss.get_compile_options()}")
+objelonct FaissIndelonx {
+  delonf loadIndelonx[T, D <: Distancelon[D]](
+    outelonrDimelonnsion: Int,
+    outelonrMelontric: Melontric[D],
+    direlonctory: AbstractFilelon
+  ): Quelonryablelon[T, FaissParams, D] = {
+    nelonw QuelonryablelonIndelonxAdaptelonr[T, D] with Logging {
+      protelonctelond val melontric: Melontric[D] = outelonrMelontric
+      protelonctelond val dimelonnsion: Int = outelonrDimelonnsion
+      protelonctelond val indelonx: Indelonx = {
+        info(s"Loading faiss with ${swigfaiss.gelont_compilelon_options()}")
 
-        QueryableIndexAdapter.loadJavaIndex(directory)
+        QuelonryablelonIndelonxAdaptelonr.loadJavaIndelonx(direlonctory)
       }
     }
   }

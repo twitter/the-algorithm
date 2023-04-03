@@ -1,122 +1,122 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon
 
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.thriftscala.{SimClusterWithScore, SimClustersEmbedding}
-import com.twitter.util.Try
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.{SimClustelonrWithScorelon, SimClustelonrselonmbelondding}
+import com.twittelonr.util.Try
 
-object ClusterPair {
-  def apply(
-    clusterId: ClusterId,
-    healthyScore: Double,
-    unhealthyScore: Double
-  ): Option[ClusterPair] = {
-    if (healthyScore + unhealthyScore == 0.0) {
-      None
-    } else {
-      Some(new ClusterPair(clusterId, healthyScore, unhealthyScore))
+objelonct ClustelonrPair {
+  delonf apply(
+    clustelonrId: ClustelonrId,
+    helonalthyScorelon: Doublelon,
+    unhelonalthyScorelon: Doublelon
+  ): Option[ClustelonrPair] = {
+    if (helonalthyScorelon + unhelonalthyScorelon == 0.0) {
+      Nonelon
+    } elonlselon {
+      Somelon(nelonw ClustelonrPair(clustelonrId, helonalthyScorelon, unhelonalthyScorelon))
     }
   }
 }
 
-case class ClusterPair private (
-  clusterId: ClusterId,
-  healthyScore: Double,
-  unhealthyScore: Double) {
+caselon class ClustelonrPair privatelon (
+  clustelonrId: ClustelonrId,
+  helonalthyScorelon: Doublelon,
+  unhelonalthyScorelon: Doublelon) {
 
-  def totalScores: Double = healthyScore + unhealthyScore
+  delonf totalScorelons: Doublelon = helonalthyScorelon + unhelonalthyScorelon
 
-  def healthRatio: Double = unhealthyScore / (unhealthyScore + healthyScore)
+  delonf helonalthRatio: Doublelon = unhelonalthyScorelon / (unhelonalthyScorelon + helonalthyScorelon)
 }
 
-object PairedInteractionFeatures {
-  def smoothedHealthRatio(
-    unhealthySum: Double,
-    healthySum: Double,
-    smoothingFactor: Double,
-    prior: Double
-  ): Double =
-    (unhealthySum + smoothingFactor * prior) / (unhealthySum + healthySum + smoothingFactor)
+objelonct PairelondIntelonractionFelonaturelons {
+  delonf smoothelondHelonalthRatio(
+    unhelonalthySum: Doublelon,
+    helonalthySum: Doublelon,
+    smoothingFactor: Doublelon,
+    prior: Doublelon
+  ): Doublelon =
+    (unhelonalthySum + smoothingFactor * prior) / (unhelonalthySum + helonalthySum + smoothingFactor)
 }
 
 /**
- * Class used to derive features for abuse models. We pair a healthy embedding with an unhealthy
- * embedding. All the public methods on this class are derived features of these embeddings.
+ * Class uselond to delonrivelon felonaturelons for abuselon modelonls. Welon pair a helonalthy elonmbelondding with an unhelonalthy
+ * elonmbelondding. All thelon public melonthods on this class arelon delonrivelond felonaturelons of thelonselon elonmbelonddings.
  *
- * @param healthyInteractionSimClusterEmbedding SimCluster embedding of healthy interactions (for
- *                                              instance favs or impressions)
- * @param unhealthyInteractionSimClusterEmbedding SimCluster embedding of unhealthy interactions
- *                                                (for instance blocks or abuse reports)
+ * @param helonalthyIntelonractionSimClustelonrelonmbelondding SimClustelonr elonmbelondding of helonalthy intelonractions (for
+ *                                              instancelon favs or imprelonssions)
+ * @param unhelonalthyIntelonractionSimClustelonrelonmbelondding SimClustelonr elonmbelondding of unhelonalthy intelonractions
+ *                                                (for instancelon blocks or abuselon relonports)
  */
-case class PairedInteractionFeatures(
-  healthyInteractionSimClusterEmbedding: SimClustersEmbedding,
-  unhealthyInteractionSimClusterEmbedding: SimClustersEmbedding) {
+caselon class PairelondIntelonractionFelonaturelons(
+  helonalthyIntelonractionSimClustelonrelonmbelondding: SimClustelonrselonmbelondding,
+  unhelonalthyIntelonractionSimClustelonrelonmbelondding: SimClustelonrselonmbelondding) {
 
-  private[this] val scorePairs: Seq[ClusterPair] = {
-    val clusterToScoreMap = healthyInteractionSimClusterEmbedding.embedding.map {
-      simClusterWithScore =>
-        simClusterWithScore.clusterId -> simClusterWithScore.score
+  privatelon[this] val scorelonPairs: Selonq[ClustelonrPair] = {
+    val clustelonrToScorelonMap = helonalthyIntelonractionSimClustelonrelonmbelondding.elonmbelondding.map {
+      simClustelonrWithScorelon =>
+        simClustelonrWithScorelon.clustelonrId -> simClustelonrWithScorelon.scorelon
     }.toMap
 
-    unhealthyInteractionSimClusterEmbedding.embedding.flatMap { simClusterWithScore =>
-      val clusterId = simClusterWithScore.clusterId
-      val postiveScoreOption = clusterToScoreMap.get(clusterId)
-      postiveScoreOption.flatMap { postiveScore =>
-        ClusterPair(clusterId, postiveScore, simClusterWithScore.score)
+    unhelonalthyIntelonractionSimClustelonrelonmbelondding.elonmbelondding.flatMap { simClustelonrWithScorelon =>
+      val clustelonrId = simClustelonrWithScorelon.clustelonrId
+      val postivelonScorelonOption = clustelonrToScorelonMap.gelont(clustelonrId)
+      postivelonScorelonOption.flatMap { postivelonScorelon =>
+        ClustelonrPair(clustelonrId, postivelonScorelon, simClustelonrWithScorelon.scorelon)
       }
     }
   }
 
   /**
-   * Get the pair of clusters with the most total interactions.
+   * Gelont thelon pair of clustelonrs with thelon most total intelonractions.
    */
-  val highestScoreClusterPair: Option[ClusterPair] =
-    Try(scorePairs.maxBy(_.totalScores)).toOption
+  val highelonstScorelonClustelonrPair: Option[ClustelonrPair] =
+    Try(scorelonPairs.maxBy(_.totalScorelons)).toOption
 
   /**
-   * Get the pair of clusters with the highest unhealthy to healthy ratio.
+   * Gelont thelon pair of clustelonrs with thelon highelonst unhelonalthy to helonalthy ratio.
    */
-  val highestHealthRatioClusterPair: Option[ClusterPair] =
-    Try(scorePairs.maxBy(_.healthRatio)).toOption
+  val highelonstHelonalthRatioClustelonrPair: Option[ClustelonrPair] =
+    Try(scorelonPairs.maxBy(_.helonalthRatio)).toOption
 
   /**
-   * Get the pair of clusters with the lowest unhealthy to healthy ratio.
+   * Gelont thelon pair of clustelonrs with thelon lowelonst unhelonalthy to helonalthy ratio.
    */
-  val lowestHealthRatioClusterPair: Option[ClusterPair] =
-    Try(scorePairs.minBy(_.healthRatio)).toOption
+  val lowelonstHelonalthRatioClustelonrPair: Option[ClustelonrPair] =
+    Try(scorelonPairs.minBy(_.helonalthRatio)).toOption
 
   /**
-   * Get an embedding whose values are the ratio of unhealthy to healthy for that simcluster.
+   * Gelont an elonmbelondding whoselon valuelons arelon thelon ratio of unhelonalthy to helonalthy for that simclustelonr.
    */
-  val healthRatioEmbedding: SimClustersEmbedding = {
-    val scores = scorePairs.map { pair =>
-      SimClusterWithScore(pair.clusterId, pair.healthRatio)
+  val helonalthRatioelonmbelondding: SimClustelonrselonmbelondding = {
+    val scorelons = scorelonPairs.map { pair =>
+      SimClustelonrWithScorelon(pair.clustelonrId, pair.helonalthRatio)
     }
-    SimClustersEmbedding(scores)
+    SimClustelonrselonmbelondding(scorelons)
   }
 
   /**
-   * Sum of the healthy scores for all the simclusters
+   * Sum of thelon helonalthy scorelons for all thelon simclustelonrs
    */
-  val healthySum: Double = healthyInteractionSimClusterEmbedding.embedding.map(_.score).sum
+  val helonalthySum: Doublelon = helonalthyIntelonractionSimClustelonrelonmbelondding.elonmbelondding.map(_.scorelon).sum
 
   /**
-   * Sum of the unhealthy scores for all the simclusters
+   * Sum of thelon unhelonalthy scorelons for all thelon simclustelonrs
    */
-  val unhealthySum: Double = unhealthyInteractionSimClusterEmbedding.embedding.map(_.score).sum
+  val unhelonalthySum: Doublelon = unhelonalthyIntelonractionSimClustelonrelonmbelondding.elonmbelondding.map(_.scorelon).sum
 
   /**
-   * ratio of unhealthy to healthy for all simclusters
+   * ratio of unhelonalthy to helonalthy for all simclustelonrs
    */
-  val healthRatio: Double = unhealthySum / (unhealthySum + healthySum)
+  val helonalthRatio: Doublelon = unhelonalthySum / (unhelonalthySum + helonalthySum)
 
   /**
-   * Ratio of unhealthy to healthy for all simclusters that is smoothed toward the prior with when
-   * we have fewer observations.
+   * Ratio of unhelonalthy to helonalthy for all simclustelonrs that is smoothelond toward thelon prior with whelonn
+   * welon havelon felonwelonr obselonrvations.
    *
-   * @param smoothingFactor The higher this value the more interactions we need to move the returned
+   * @param smoothingFactor Thelon highelonr this valuelon thelon morelon intelonractions welon nelonelond to movelon thelon relonturnelond
    *                        ratio
-   * @param prior The unhealthy to healthy for all interactions.
+   * @param prior Thelon unhelonalthy to helonalthy for all intelonractions.
    */
-  def smoothedHealthRatio(smoothingFactor: Double, prior: Double): Double =
-    PairedInteractionFeatures.smoothedHealthRatio(unhealthySum, healthySum, smoothingFactor, prior)
+  delonf smoothelondHelonalthRatio(smoothingFactor: Doublelon, prior: Doublelon): Doublelon =
+    PairelondIntelonractionFelonaturelons.smoothelondHelonalthRatio(unhelonalthySum, helonalthySum, smoothingFactor, prior)
 }

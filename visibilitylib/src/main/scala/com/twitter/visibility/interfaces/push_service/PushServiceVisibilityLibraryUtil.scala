@@ -1,57 +1,57 @@
-package com.twitter.visibility.interfaces.push_service
+packagelon com.twittelonr.visibility.intelonrfacelons.push_selonrvicelon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.rules.Rule
-import com.twitter.visibility.rules.RuleResult
-import com.twitter.visibility.rules.State
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.rulelons.Rulelon
+import com.twittelonr.visibility.rulelons.RulelonRelonsult
+import com.twittelonr.visibility.rulelons.Statelon
 
-object PushServiceVisibilityLibraryUtil {
-  def ruleEnabled(ruleResult: RuleResult): Boolean = {
-    ruleResult.state match {
-      case State.Disabled => false
-      case State.ShortCircuited => false
-      case _ => true
+objelonct PushSelonrvicelonVisibilityLibraryUtil {
+  delonf rulelonelonnablelond(rulelonRelonsult: RulelonRelonsult): Boolelonan = {
+    rulelonRelonsult.statelon match {
+      caselon Statelon.Disablelond => falselon
+      caselon Statelon.ShortCircuitelond => falselon
+      caselon _ => truelon
     }
   }
-  def getMissingFeatures(ruleResult: RuleResult): Set[String] = {
-    ruleResult.state match {
-      case State.MissingFeature(features) => features.map(f => f.name)
-      case _ => Set.empty
+  delonf gelontMissingFelonaturelons(rulelonRelonsult: RulelonRelonsult): Selont[String] = {
+    rulelonRelonsult.statelon match {
+      caselon Statelon.MissingFelonaturelon(felonaturelons) => felonaturelons.map(f => f.namelon)
+      caselon _ => Selont.elonmpty
     }
   }
-  def getMissingFeatureCounts(results: Seq[VisibilityResult]): Map[String, Int] = {
-    results
-      .flatMap(_.ruleResultMap.values.toList)
-      .flatMap(getMissingFeatures(_).toList).groupBy(identity).mapValues(_.length)
+  delonf gelontMissingFelonaturelonCounts(relonsults: Selonq[VisibilityRelonsult]): Map[String, Int] = {
+    relonsults
+      .flatMap(_.rulelonRelonsultMap.valuelons.toList)
+      .flatMap(gelontMissingFelonaturelons(_).toList).groupBy(idelonntity).mapValuelons(_.lelonngth)
   }
 
-  def logAllStats(
-    response: PushServiceVisibilityResponse
+  delonf logAllStats(
+    relonsponselon: PushSelonrvicelonVisibilityRelonsponselon
   )(
-    implicit statsReceiver: StatsReceiver
+    implicit statsReloncelonivelonr: StatsReloncelonivelonr
   ) = {
-    val rulesStatsReceiver = statsReceiver.scope("rules")
-    logStats(response.tweetVisibilityResult, rulesStatsReceiver.scope("tweet"))
-    logStats(response.authorVisibilityResult, rulesStatsReceiver.scope("author"))
+    val rulelonsStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("rulelons")
+    logStats(relonsponselon.twelonelontVisibilityRelonsult, rulelonsStatsReloncelonivelonr.scopelon("twelonelont"))
+    logStats(relonsponselon.authorVisibilityRelonsult, rulelonsStatsReloncelonivelonr.scopelon("author"))
   }
 
-  def logStats(result: VisibilityResult, statsReceiver: StatsReceiver) = {
-    result.ruleResultMap.toList
-      .filter { case (_, ruleResult) => ruleEnabled(ruleResult) }
-      .flatMap { case (rule, ruleResult) => getCounters(rule, ruleResult) }
-      .foreach(statsReceiver.counter(_).incr())
+  delonf logStats(relonsult: VisibilityRelonsult, statsReloncelonivelonr: StatsReloncelonivelonr) = {
+    relonsult.rulelonRelonsultMap.toList
+      .filtelonr { caselon (_, rulelonRelonsult) => rulelonelonnablelond(rulelonRelonsult) }
+      .flatMap { caselon (rulelon, rulelonRelonsult) => gelontCountelonrs(rulelon, rulelonRelonsult) }
+      .forelonach(statsReloncelonivelonr.countelonr(_).incr())
   }
 
-  def getCounters(rule: Rule, ruleResult: RuleResult): List[String] = {
-    val missingFeatures = getMissingFeatures(ruleResult)
-    List(s"${rule.name}/${ruleResult.action.name}") ++
-      missingFeatures.map(feat => s"${rule.name}/${feat}") ++
-      missingFeatures
+  delonf gelontCountelonrs(rulelon: Rulelon, rulelonRelonsult: RulelonRelonsult): List[String] = {
+    val missingFelonaturelons = gelontMissingFelonaturelons(rulelonRelonsult)
+    List(s"${rulelon.namelon}/${rulelonRelonsult.action.namelon}") ++
+      missingFelonaturelons.map(felonat => s"${rulelon.namelon}/${felonat}") ++
+      missingFelonaturelons
   }
 
-  def getAuthorId(tweet: Tweet): Option[Long] = tweet.coreData.map(_.userId)
-  def isRetweet(tweet: Tweet): Boolean = tweet.coreData.flatMap(_.share).isDefined
-  def isQuotedTweet(tweet: Tweet): Boolean = tweet.quotedTweet.isDefined
+  delonf gelontAuthorId(twelonelont: Twelonelont): Option[Long] = twelonelont.corelonData.map(_.uselonrId)
+  delonf isRelontwelonelont(twelonelont: Twelonelont): Boolelonan = twelonelont.corelonData.flatMap(_.sharelon).isDelonfinelond
+  delonf isQuotelondTwelonelont(twelonelont: Twelonelont): Boolelonan = twelonelont.quotelondTwelonelont.isDelonfinelond
 }

@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.twitter.common.base.Supplier;
-import com.twitter.search.common.decider.SearchDecider;
+import com.twittelonr.common.baselon.Supplielonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
 
 /**
- * A cache miss decider backed by a decider key.
+ * A cachelon miss deloncidelonr backelond by a deloncidelonr kelony.
  */
-public class DefaultForcedCacheMissDecider implements Supplier<Boolean> {
-  private static final String DECIDER_KEY = "default_forced_cache_miss_rate";
-  private final SearchDecider decider;
+public class DelonfaultForcelondCachelonMissDeloncidelonr implelonmelonnts Supplielonr<Boolelonan> {
+  privatelon static final String DelonCIDelonR_KelonY = "delonfault_forcelond_cachelon_miss_ratelon";
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
 
-  @Inject
-  public DefaultForcedCacheMissDecider(SearchDecider decider) {
-    this.decider = decider;
+  @Injelonct
+  public DelonfaultForcelondCachelonMissDeloncidelonr(SelonarchDeloncidelonr deloncidelonr) {
+    this.deloncidelonr = deloncidelonr;
   }
 
-  @Override
-  public Boolean get() {
-    return decider.isAvailable(DECIDER_KEY);
+  @Ovelonrridelon
+  public Boolelonan gelont() {
+    relonturn deloncidelonr.isAvailablelon(DelonCIDelonR_KelonY);
   }
 }

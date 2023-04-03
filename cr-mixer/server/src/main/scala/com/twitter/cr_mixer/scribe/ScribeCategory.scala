@@ -1,64 +1,64 @@
-package com.twitter.cr_mixer.scribe
+packagelon com.twittelonr.cr_mixelonr.scribelon
 
 /**
- * Categories define scribe categories used in cr-mixer service.
+ * Catelongorielons delonfinelon scribelon catelongorielons uselond in cr-mixelonr selonrvicelon.
  */
-object ScribeCategories {
-  lazy val AllCategories =
-    List(AbDecider, TopLevelApiDdgMetrics, TweetsRecs)
+objelonct ScribelonCatelongorielons {
+  lazy val AllCatelongorielons =
+    List(AbDeloncidelonr, TopLelonvelonlApiDdgMelontrics, TwelonelontsReloncs)
 
   /**
-   * AbDecider represents scribe logs for experiments
+   * AbDeloncidelonr relonprelonselonnts scribelon logs for elonxpelonrimelonnts
    */
-  lazy val AbDecider: ScribeCategory = ScribeCategory(
-    "abdecider_scribe",
-    "client_event"
+  lazy val AbDeloncidelonr: ScribelonCatelongory = ScribelonCatelongory(
+    "abdeloncidelonr_scribelon",
+    "clielonnt_elonvelonnt"
   )
 
   /**
-   * Top-Level Client event scribe logs, to record changes in system metrics (e.g. latency,
-   * candidates returned, empty rate ) per experiment bucket, and store them in DDG metric group
+   * Top-Lelonvelonl Clielonnt elonvelonnt scribelon logs, to reloncord changelons in systelonm melontrics (elon.g. latelonncy,
+   * candidatelons relonturnelond, elonmpty ratelon ) pelonr elonxpelonrimelonnt buckelont, and storelon thelonm in DDG melontric group
    */
-  lazy val TopLevelApiDdgMetrics: ScribeCategory = ScribeCategory(
-    "top_level_api_ddg_metrics_scribe",
-    "client_event"
+  lazy val TopLelonvelonlApiDdgMelontrics: ScribelonCatelongory = ScribelonCatelongory(
+    "top_lelonvelonl_api_ddg_melontrics_scribelon",
+    "clielonnt_elonvelonnt"
   )
 
-  lazy val TweetsRecs: ScribeCategory = ScribeCategory(
-    "get_tweets_recommendations_scribe",
-    "cr_mixer_get_tweets_recommendations"
+  lazy val TwelonelontsReloncs: ScribelonCatelongory = ScribelonCatelongory(
+    "gelont_twelonelonts_reloncommelonndations_scribelon",
+    "cr_mixelonr_gelont_twelonelonts_reloncommelonndations"
   )
 
-  lazy val VITTweetsRecs: ScribeCategory = ScribeCategory(
-    "get_vit_tweets_recommendations_scribe",
-    "cr_mixer_get_vit_tweets_recommendations"
+  lazy val VITTwelonelontsReloncs: ScribelonCatelongory = ScribelonCatelongory(
+    "gelont_vit_twelonelonts_reloncommelonndations_scribelon",
+    "cr_mixelonr_gelont_vit_twelonelonts_reloncommelonndations"
   )
 
-  lazy val RelatedTweets: ScribeCategory = ScribeCategory(
-    "get_related_tweets_scribe",
-    "cr_mixer_get_related_tweets"
+  lazy val RelonlatelondTwelonelonts: ScribelonCatelongory = ScribelonCatelongory(
+    "gelont_relonlatelond_twelonelonts_scribelon",
+    "cr_mixelonr_gelont_relonlatelond_twelonelonts"
   )
 
-  lazy val UtegTweets: ScribeCategory = ScribeCategory(
-    "get_uteg_tweets_scribe",
-    "cr_mixer_get_uteg_tweets"
+  lazy val UtelongTwelonelonts: ScribelonCatelongory = ScribelonCatelongory(
+    "gelont_utelong_twelonelonts_scribelon",
+    "cr_mixelonr_gelont_utelong_twelonelonts"
   )
 
-  lazy val AdsRecommendations: ScribeCategory = ScribeCategory(
-    "get_ads_recommendations_scribe",
-    "cr_mixer_get_ads_recommendations"
+  lazy val AdsReloncommelonndations: ScribelonCatelongory = ScribelonCatelongory(
+    "gelont_ads_reloncommelonndations_scribelon",
+    "cr_mixelonr_gelont_ads_reloncommelonndations"
   )
 }
 
 /**
- * Category represents each scribe log data.
+ * Catelongory relonprelonselonnts elonach scribelon log data.
  *
- * @param loggerFactoryNode loggerFactory node name in cr-mixer associated with this scribe category
- * @param scribeCategory    scribe category name (globally unique at Twitter)
+ * @param loggelonrFactoryNodelon loggelonrFactory nodelon namelon in cr-mixelonr associatelond with this scribelon catelongory
+ * @param scribelonCatelongory    scribelon catelongory namelon (globally uniquelon at Twittelonr)
  */
-case class ScribeCategory(
-  loggerFactoryNode: String,
-  scribeCategory: String) {
-  def getProdLoggerFactoryNode: String = loggerFactoryNode
-  def getStagingLoggerFactoryNode: String = "staging_" + loggerFactoryNode
+caselon class ScribelonCatelongory(
+  loggelonrFactoryNodelon: String,
+  scribelonCatelongory: String) {
+  delonf gelontProdLoggelonrFactoryNodelon: String = loggelonrFactoryNodelon
+  delonf gelontStagingLoggelonrFactoryNodelon: String = "staging_" + loggelonrFactoryNodelon
 }

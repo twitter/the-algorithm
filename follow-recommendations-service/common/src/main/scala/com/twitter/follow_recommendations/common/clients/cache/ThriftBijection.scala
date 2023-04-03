@@ -1,81 +1,81 @@
-package com.twitter.follow_recommendations.common.clients.cache
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.cachelon
 
-import com.twitter.bijection.Bijection
-import com.twitter.io.Buf
-import com.twitter.scrooge.CompactThriftSerializer
-import com.twitter.scrooge.ThriftEnum
-import com.twitter.scrooge.ThriftStruct
-import java.nio.ByteBuffer
+import com.twittelonr.bijelonction.Bijelonction
+import com.twittelonr.io.Buf
+import com.twittelonr.scroogelon.CompactThriftSelonrializelonr
+import com.twittelonr.scroogelon.Thriftelonnum
+import com.twittelonr.scroogelon.ThriftStruct
+import java.nio.BytelonBuffelonr
 
-abstract class ThriftBijection[T <: ThriftStruct] extends Bijection[Buf, T] {
-  val serializer: CompactThriftSerializer[T]
+abstract class ThriftBijelonction[T <: ThriftStruct] elonxtelonnds Bijelonction[Buf, T] {
+  val selonrializelonr: CompactThriftSelonrializelonr[T]
 
-  override def apply(b: Buf): T = {
-    val byteArray = Buf.ByteArray.Owned.extract(b)
-    serializer.fromBytes(byteArray)
+  ovelonrridelon delonf apply(b: Buf): T = {
+    val bytelonArray = Buf.BytelonArray.Ownelond.elonxtract(b)
+    selonrializelonr.fromBytelons(bytelonArray)
   }
 
-  override def invert(a: T): Buf = {
-    val byteArray = serializer.toBytes(a)
-    Buf.ByteArray.Owned(byteArray)
+  ovelonrridelon delonf invelonrt(a: T): Buf = {
+    val bytelonArray = selonrializelonr.toBytelons(a)
+    Buf.BytelonArray.Ownelond(bytelonArray)
   }
 }
 
-abstract class ThriftOptionBijection[T <: ThriftStruct] extends Bijection[Buf, Option[T]] {
-  val serializer: CompactThriftSerializer[T]
+abstract class ThriftOptionBijelonction[T <: ThriftStruct] elonxtelonnds Bijelonction[Buf, Option[T]] {
+  val selonrializelonr: CompactThriftSelonrializelonr[T]
 
-  override def apply(b: Buf): Option[T] = {
-    if (b.isEmpty) {
-      None
-    } else {
-      val byteArray = Buf.ByteArray.Owned.extract(b)
-      Some(serializer.fromBytes(byteArray))
+  ovelonrridelon delonf apply(b: Buf): Option[T] = {
+    if (b.iselonmpty) {
+      Nonelon
+    } elonlselon {
+      val bytelonArray = Buf.BytelonArray.Ownelond.elonxtract(b)
+      Somelon(selonrializelonr.fromBytelons(bytelonArray))
     }
   }
 
-  override def invert(a: Option[T]): Buf = {
+  ovelonrridelon delonf invelonrt(a: Option[T]): Buf = {
     a match {
-      case Some(t) =>
-        val byteArray = serializer.toBytes(t)
-        Buf.ByteArray.Owned(byteArray)
-      case None => Buf.Empty
+      caselon Somelon(t) =>
+        val bytelonArray = selonrializelonr.toBytelons(t)
+        Buf.BytelonArray.Ownelond(bytelonArray)
+      caselon Nonelon => Buf.elonmpty
     }
   }
 }
 
-class ThriftEnumBijection[T <: ThriftEnum](constructor: Int => T) extends Bijection[Buf, T] {
-  override def apply(b: Buf): T = {    
-    val byteArray = Buf.ByteArray.Owned.extract(b)
-    val byteBuffer = ByteBuffer.wrap(byteArray)
-    constructor(byteBuffer.getInt())
+class ThriftelonnumBijelonction[T <: Thriftelonnum](constructor: Int => T) elonxtelonnds Bijelonction[Buf, T] {
+  ovelonrridelon delonf apply(b: Buf): T = {
+    val bytelonArray = Buf.BytelonArray.Ownelond.elonxtract(b)
+    val bytelonBuffelonr = BytelonBuffelonr.wrap(bytelonArray)
+    constructor(bytelonBuffelonr.gelontInt())
   }
 
-  override def invert(a: T): Buf = {      
-    val byteBuffer: ByteBuffer = ByteBuffer.allocate(4)
-    byteBuffer.putInt(a.getValue)
-    Buf.ByteArray.Owned(byteBuffer.array())
+  ovelonrridelon delonf invelonrt(a: T): Buf = {
+    val bytelonBuffelonr: BytelonBuffelonr = BytelonBuffelonr.allocatelon(4)
+    bytelonBuffelonr.putInt(a.gelontValuelon)
+    Buf.BytelonArray.Ownelond(bytelonBuffelonr.array())
   }
 }
 
-class ThriftEnumOptionBijection[T <: ThriftEnum](constructor: Int => T) extends Bijection[Buf, Option[T]] {
-  override def apply(b: Buf): Option[T] = {      
-    if (b.isEmpty) {
-      None
-    } else {
-      val byteArray = Buf.ByteArray.Owned.extract(b)
-      val byteBuffer = ByteBuffer.wrap(byteArray)
-      Some(constructor(byteBuffer.getInt()))
+class ThriftelonnumOptionBijelonction[T <: Thriftelonnum](constructor: Int => T) elonxtelonnds Bijelonction[Buf, Option[T]] {
+  ovelonrridelon delonf apply(b: Buf): Option[T] = {
+    if (b.iselonmpty) {
+      Nonelon
+    } elonlselon {
+      val bytelonArray = Buf.BytelonArray.Ownelond.elonxtract(b)
+      val bytelonBuffelonr = BytelonBuffelonr.wrap(bytelonArray)
+      Somelon(constructor(bytelonBuffelonr.gelontInt()))
     }
   }
 
-  override def invert(a: Option[T]): Buf = {
+  ovelonrridelon delonf invelonrt(a: Option[T]): Buf = {
     a match {
-      case Some(obj) => {
-        val byteBuffer: ByteBuffer = ByteBuffer.allocate(4)
-        byteBuffer.putInt(obj.getValue)
-        Buf.ByteArray.Owned(byteBuffer.array())
+      caselon Somelon(obj) => {
+        val bytelonBuffelonr: BytelonBuffelonr = BytelonBuffelonr.allocatelon(4)
+        bytelonBuffelonr.putInt(obj.gelontValuelon)
+        Buf.BytelonArray.Ownelond(bytelonBuffelonr.array())
       }
-      case None => Buf.Empty
+      caselon Nonelon => Buf.elonmpty
     }
   }
 }

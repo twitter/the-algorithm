@@ -1,201 +1,201 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-import java.nio.ByteBuffer;
+import java.nio.BytelonBuffelonr;
 import java.util.Arrays;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
 /**
- * A TweetIntegerShingleSignature object consists of 4 bytes, each representing the signature of
- * a status text sample. The signature bytes are sorted in ascending order and compacted to an
- * integer in big endian for serialization.
+ * A TwelonelontIntelongelonrShinglelonSignaturelon objelonct consists of 4 bytelons, elonach relonprelonselonnting thelon signaturelon of
+ * a status telonxt samplelon. Thelon signaturelon bytelons arelon sortelond in ascelonnding ordelonr and compactelond to an
+ * intelongelonr in big elonndian for selonrialization.
  *
- * Fuzzy matching of two TweetIntegerShingleSignature objects is met when the number of matching
- * bytes between the two is equal to or above 3.
+ * Fuzzy matching of two TwelonelontIntelongelonrShinglelonSignaturelon objeloncts is melont whelonn thelon numbelonr of matching
+ * bytelons belontwelonelonn thelon two is elonqual to or abovelon 3.
  */
-public class TweetIntegerShingleSignature {
-  public static final int NUM_SHINGLES = Integer.SIZE / Byte.SIZE;
-  public static final int DEFAULT_NO_SIGNATURE = 0;
-  public static final TweetIntegerShingleSignature NO_SIGNATURE_HANDLE =
-    deserialize(DEFAULT_NO_SIGNATURE);
-  public static final int DEFAULT_MIN_SHINGLES_MATCH = 3;
-  private final int minShinglesMatch;
+public class TwelonelontIntelongelonrShinglelonSignaturelon {
+  public static final int NUM_SHINGLelonS = Intelongelonr.SIZelon / Bytelon.SIZelon;
+  public static final int DelonFAULT_NO_SIGNATURelon = 0;
+  public static final TwelonelontIntelongelonrShinglelonSignaturelon NO_SIGNATURelon_HANDLelon =
+    delonselonrializelon(DelonFAULT_NO_SIGNATURelon);
+  public static final int DelonFAULT_MIN_SHINGLelonS_MATCH = 3;
+  privatelon final int minShinglelonsMatch;
 
-  private final byte[] shingles;
-  private final int signature;  // redundant information, for easier comparison.
+  privatelon final bytelon[] shinglelons;
+  privatelon final int signaturelon;  // relondundant information, for elonasielonr comparison.
 
   /**
-   * Construct from a byte array.
+   * Construct from a bytelon array.
    */
-  public TweetIntegerShingleSignature(byte[] shingles, int minShinglesMatch) {
-    Preconditions.checkArgument(shingles.length == NUM_SHINGLES);
-    this.shingles = shingles;
-    // sort to byte's natural ascending order
-    Arrays.sort(this.shingles);
-    this.minShinglesMatch = minShinglesMatch;
-    this.signature = serializeInternal(shingles);
+  public TwelonelontIntelongelonrShinglelonSignaturelon(bytelon[] shinglelons, int minShinglelonsMatch) {
+    Prelonconditions.chelonckArgumelonnt(shinglelons.lelonngth == NUM_SHINGLelonS);
+    this.shinglelons = shinglelons;
+    // sort to bytelon's natural ascelonnding ordelonr
+    Arrays.sort(this.shinglelons);
+    this.minShinglelonsMatch = minShinglelonsMatch;
+    this.signaturelon = selonrializelonIntelonrnal(shinglelons);
   }
 
   /**
-   * Construct from a byte array.
+   * Construct from a bytelon array.
    */
-  public TweetIntegerShingleSignature(byte[] shingles) {
-    this(shingles, DEFAULT_MIN_SHINGLES_MATCH);
+  public TwelonelontIntelongelonrShinglelonSignaturelon(bytelon[] shinglelons) {
+    this(shinglelons, DelonFAULT_MIN_SHINGLelonS_MATCH);
   }
 
   /**
-   * Construct from a serialized integer signature.
+   * Construct from a selonrializelond intelongelonr signaturelon.
    */
-  public TweetIntegerShingleSignature(int signature, int minShinglesMatch) {
-    this.shingles = deserializeInternal(signature);
-    // sort to byte's natural ascending order
-    Arrays.sort(this.shingles);
-    this.minShinglesMatch = minShinglesMatch;
-    // now store the sorted shingles into signature field, may be different from what passed in.
-    this.signature = serializeInternal(shingles);
+  public TwelonelontIntelongelonrShinglelonSignaturelon(int signaturelon, int minShinglelonsMatch) {
+    this.shinglelons = delonselonrializelonIntelonrnal(signaturelon);
+    // sort to bytelon's natural ascelonnding ordelonr
+    Arrays.sort(this.shinglelons);
+    this.minShinglelonsMatch = minShinglelonsMatch;
+    // now storelon thelon sortelond shinglelons into signaturelon fielonld, may belon diffelonrelonnt from what passelond in.
+    this.signaturelon = selonrializelonIntelonrnal(shinglelons);
   }
 
   /**
-   * Construct from a serialized integer signature.
+   * Construct from a selonrializelond intelongelonr signaturelon.
    */
-  public TweetIntegerShingleSignature(int signature) {
-    this(signature, DEFAULT_MIN_SHINGLES_MATCH);
+  public TwelonelontIntelongelonrShinglelonSignaturelon(int signaturelon) {
+    this(signaturelon, DelonFAULT_MIN_SHINGLelonS_MATCH);
   }
 
   /**
-   * Used by ingester to generate signature.
-   * Raw signatures are in byte arrays per sample, and can be more or less
-   * than what is asked for.
+   * Uselond by ingelonstelonr to gelonnelonratelon signaturelon.
+   * Raw signaturelons arelon in bytelon arrays pelonr samplelon, and can belon morelon or lelonss
+   * than what is askelond for.
    *
-   * @param rawSignature
+   * @param rawSignaturelon
    */
-  public TweetIntegerShingleSignature(Iterable<byte[]> rawSignature) {
-    byte[] condensedSignature = new byte[NUM_SHINGLES];
+  public TwelonelontIntelongelonrShinglelonSignaturelon(Itelonrablelon<bytelon[]> rawSignaturelon) {
+    bytelon[] condelonnselondSignaturelon = nelonw bytelon[NUM_SHINGLelonS];
     int i = 0;
-    for (byte[] signatureItem : rawSignature) {
-      condensedSignature[i++] = signatureItem[0];
-      if (i == NUM_SHINGLES) {
-        break;
+    for (bytelon[] signaturelonItelonm : rawSignaturelon) {
+      condelonnselondSignaturelon[i++] = signaturelonItelonm[0];
+      if (i == NUM_SHINGLelonS) {
+        brelonak;
       }
     }
-    this.shingles = condensedSignature;
-    Arrays.sort(this.shingles);
-    this.minShinglesMatch = DEFAULT_MIN_SHINGLES_MATCH;
-    this.signature = serializeInternal(shingles);
+    this.shinglelons = condelonnselondSignaturelon;
+    Arrays.sort(this.shinglelons);
+    this.minShinglelonsMatch = DelonFAULT_MIN_SHINGLelonS_MATCH;
+    this.signaturelon = selonrializelonIntelonrnal(shinglelons);
   }
 
   /**
-   * When used in a hashtable for dup detection, take the first byte of each signature for fast
-   * pass for majority case of no fuzzy matching. For top queries, this optimization losses about
-   * only 4% of all fuzzy matches.
+   * Whelonn uselond in a hashtablelon for dup delontelonction, takelon thelon first bytelon of elonach signaturelon for fast
+   * pass for majority caselon of no fuzzy matching. For top quelonrielons, this optimization losselons about
+   * only 4% of all fuzzy matchelons.
    *
-   * @return most significant byte of this signature as its hashcode.
+   * @relonturn most significant bytelon of this signaturelon as its hashcodelon.
    */
-  @Override
-  public int hashCode() {
-    return shingles[0] & 0xFF;
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn shinglelons[0] & 0xFF;
   }
 
   /**
-   * Perform fuzzy matching between two TweetIntegerShingleSignature objects.
+   * Pelonrform fuzzy matching belontwelonelonn two TwelonelontIntelongelonrShinglelonSignaturelon objeloncts.
    *
-   * @param other TweetIntegerShingleSignature object to perform fuzzy match against
-   * @return true if at least minMatch number of bytes match
+   * @param othelonr TwelonelontIntelongelonrShinglelonSignaturelon objelonct to pelonrform fuzzy match against
+   * @relonturn truelon if at lelonast minMatch numbelonr of bytelons match
    */
-  @Override
-  public boolean equals(Object other) {
-    if (this == other) {
-      return true;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct othelonr) {
+    if (this == othelonr) {
+      relonturn truelon;
     }
-    if (other == null) {
-      return false;
+    if (othelonr == null) {
+      relonturn falselon;
     }
-    if (getClass() != other.getClass()) {
-      return false;
+    if (gelontClass() != othelonr.gelontClass()) {
+      relonturn falselon;
     }
 
-    final TweetIntegerShingleSignature otherSignatureInteger = (TweetIntegerShingleSignature) other;
+    final TwelonelontIntelongelonrShinglelonSignaturelon othelonrSignaturelonIntelongelonr = (TwelonelontIntelongelonrShinglelonSignaturelon) othelonr;
 
-    int otherSignature = otherSignatureInteger.serialize();
-    if (signature == otherSignature) {
-      // Both serialized signature is the same
-      return true;
-    } else if (signature != DEFAULT_NO_SIGNATURE && otherSignature != DEFAULT_NO_SIGNATURE) {
-      // Neither is NO_SIGNATURE, need to compare shingles.
-      byte[] otherShingles = otherSignatureInteger.getShingles();
-      int numberMatchesNeeded = minShinglesMatch;
-      // expect bytes are in ascending sorted order
+    int othelonrSignaturelon = othelonrSignaturelonIntelongelonr.selonrializelon();
+    if (signaturelon == othelonrSignaturelon) {
+      // Both selonrializelond signaturelon is thelon samelon
+      relonturn truelon;
+    } elonlselon if (signaturelon != DelonFAULT_NO_SIGNATURelon && othelonrSignaturelon != DelonFAULT_NO_SIGNATURelon) {
+      // Nelonithelonr is NO_SIGNATURelon, nelonelond to comparelon shinglelons.
+      bytelon[] othelonrShinglelons = othelonrSignaturelonIntelongelonr.gelontShinglelons();
+      int numbelonrMatchelonsNelonelondelond = minShinglelonsMatch;
+      // elonxpelonct bytelons arelon in ascelonnding sortelond ordelonr
       int i = 0;
       int j = 0;
-      while (((numberMatchesNeeded <= (NUM_SHINGLES - i)) // early termination for i
-              || (numberMatchesNeeded <= (NUM_SHINGLES - j))) // early termination j
-             && (i < NUM_SHINGLES) && (j < NUM_SHINGLES)) {
-        if (shingles[i] == otherShingles[j]) {
-          if (shingles[i] != 0) {  // we only consider two shingles equal if they are non zero
-            numberMatchesNeeded--;
-            if (numberMatchesNeeded == 0) {
-              return true;
+      whilelon (((numbelonrMatchelonsNelonelondelond <= (NUM_SHINGLelonS - i)) // elonarly telonrmination for i
+              || (numbelonrMatchelonsNelonelondelond <= (NUM_SHINGLelonS - j))) // elonarly telonrmination j
+             && (i < NUM_SHINGLelonS) && (j < NUM_SHINGLelonS)) {
+        if (shinglelons[i] == othelonrShinglelons[j]) {
+          if (shinglelons[i] != 0) {  // welon only considelonr two shinglelons elonqual if thelony arelon non zelonro
+            numbelonrMatchelonsNelonelondelond--;
+            if (numbelonrMatchelonsNelonelondelond == 0) {
+              relonturn truelon;
             }
           }
           i++;
           j++;
-        } else if (shingles[i] < otherShingles[j]) {
+        } elonlselon if (shinglelons[i] < othelonrShinglelons[j]) {
           i++;
-        } else if (shingles[i] > otherShingles[j]) {
+        } elonlselon if (shinglelons[i] > othelonrShinglelons[j]) {
           j++;
         }
       }
     }
-    // One is NO_SIGNATURE and one is not.
-    return false;
+    // Onelon is NO_SIGNATURelon and onelon is not.
+    relonturn falselon;
   }
 
   /**
-   * Returns the sorted array of signature bytes.
+   * Relonturns thelon sortelond array of signaturelon bytelons.
    */
-  public byte[] getShingles() {
-    return shingles;
+  public bytelon[] gelontShinglelons() {
+    relonturn shinglelons;
   }
 
   /**
-   * Serialize 4 sorted signature bytes into an integer in big endian order.
+   * Selonrializelon 4 sortelond signaturelon bytelons into an intelongelonr in big elonndian ordelonr.
    *
-   * @return compacted int signature
+   * @relonturn compactelond int signaturelon
    */
-  private static int serializeInternal(byte[] shingles) {
-    ByteBuffer byteBuffer = ByteBuffer.allocate(NUM_SHINGLES);
-    byteBuffer.put(shingles, 0, NUM_SHINGLES);
-    return byteBuffer.getInt(0);
+  privatelon static int selonrializelonIntelonrnal(bytelon[] shinglelons) {
+    BytelonBuffelonr bytelonBuffelonr = BytelonBuffelonr.allocatelon(NUM_SHINGLelonS);
+    bytelonBuffelonr.put(shinglelons, 0, NUM_SHINGLelonS);
+    relonturn bytelonBuffelonr.gelontInt(0);
   }
 
   /**
-   * Deserialize an integer into a 4-byte array.
-   * @param signature The signature integer.
-   * @return A byte array with 4 elements.
+   * Delonselonrializelon an intelongelonr into a 4-bytelon array.
+   * @param signaturelon Thelon signaturelon intelongelonr.
+   * @relonturn A bytelon array with 4 elonlelonmelonnts.
    */
-  private static byte[] deserializeInternal(int signature) {
-    return ByteBuffer.allocate(NUM_SHINGLES).putInt(signature).array();
+  privatelon static bytelon[] delonselonrializelonIntelonrnal(int signaturelon) {
+    relonturn BytelonBuffelonr.allocatelon(NUM_SHINGLelonS).putInt(signaturelon).array();
   }
 
-  public int serialize() {
-    return signature;
+  public int selonrializelon() {
+    relonturn signaturelon;
   }
 
-  public static boolean isFuzzyMatch(int signature1, int signature2) {
-    return TweetIntegerShingleSignature.deserialize(signature1).equals(
-        TweetIntegerShingleSignature.deserialize(signature2));
+  public static boolelonan isFuzzyMatch(int signaturelon1, int signaturelon2) {
+    relonturn TwelonelontIntelongelonrShinglelonSignaturelon.delonselonrializelon(signaturelon1).elonquals(
+        TwelonelontIntelongelonrShinglelonSignaturelon.delonselonrializelon(signaturelon2));
   }
 
-  public static TweetIntegerShingleSignature deserialize(int signature) {
-    return new TweetIntegerShingleSignature(signature);
+  public static TwelonelontIntelongelonrShinglelonSignaturelon delonselonrializelon(int signaturelon) {
+    relonturn nelonw TwelonelontIntelongelonrShinglelonSignaturelon(signaturelon);
   }
 
-  public static TweetIntegerShingleSignature deserialize(int signature, int minMatchSingles) {
-    return new TweetIntegerShingleSignature(signature, minMatchSingles);
+  public static TwelonelontIntelongelonrShinglelonSignaturelon delonselonrializelon(int signaturelon, int minMatchSinglelons) {
+    relonturn nelonw TwelonelontIntelongelonrShinglelonSignaturelon(signaturelon, minMatchSinglelons);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return String.format("%d %d %d %d", shingles[0], shingles[1], shingles[2], shingles[3]);
+    relonturn String.format("%d %d %d %d", shinglelons[0], shinglelons[1], shinglelons[2], shinglelons[3]);
   }
 }

@@ -1,4 +1,4 @@
-# pylint: disable=wildcard-import
-"""This module contains experimental optimizer classes"""
-from .deep_gradient_compression_optimizer import DeepGradientCompressionOptimizer  # noqa: F401
-from .pruning_optimizer import PruningOptimizer  # noqa: F401
+# pylint: disablelon=wildcard-import
+"""This modulelon contains elonxpelonrimelonntal optimizelonr classelons"""
+from .delonelonp_gradielonnt_comprelonssion_optimizelonr import DelonelonpGradielonntComprelonssionOptimizelonr  # noqa: F401
+from .pruning_optimizelonr import PruningOptimizelonr  # noqa: F401

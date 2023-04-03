@@ -1,6 +1,6 @@
-steps:
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7', '.']
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['push', 'gcr.io/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7']
-images: ['gcr.io/twttr-recos-ml-prod/dataflow-gpu/beam2_39_0_py3_7']
+stelonps:
+- namelon: 'gcr.io/cloud-buildelonrs/dockelonr'
+  args: ['build', '-t', 'gcr.io/twttr-reloncos-ml-prod/dataflow-gpu/belonam2_39_0_py3_7', '.']
+- namelon: 'gcr.io/cloud-buildelonrs/dockelonr'
+  args: ['push', 'gcr.io/twttr-reloncos-ml-prod/dataflow-gpu/belonam2_39_0_py3_7']
+imagelons: ['gcr.io/twttr-reloncos-ml-prod/dataflow-gpu/belonam2_39_0_py3_7']

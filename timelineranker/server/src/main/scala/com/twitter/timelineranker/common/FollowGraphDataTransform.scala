@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.util.Future
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.visibility.FollowGraphDataProvidelonr
+import com.twittelonr.util.Futurelon
 
 class FollowGraphDataTransform(
-  followGraphDataProvider: FollowGraphDataProvider,
-  maxFollowedUsersProvider: DependencyProvider[Int])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+  followGraphDataProvidelonr: FollowGraphDataProvidelonr,
+  maxFollowelondUselonrsProvidelonr: DelonpelonndelonncyProvidelonr[Int])
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
 
-    val followGraphData = followGraphDataProvider.getAsync(
-      envelope.query.userId,
-      maxFollowedUsersProvider(envelope.query)
+    val followGraphData = followGraphDataProvidelonr.gelontAsync(
+      elonnvelonlopelon.quelonry.uselonrId,
+      maxFollowelondUselonrsProvidelonr(elonnvelonlopelon.quelonry)
     )
 
-    Future.value(envelope.copy(followGraphData = followGraphData))
+    Futurelon.valuelon(elonnvelonlopelon.copy(followGraphData = followGraphData))
   }
 }

@@ -1,577 +1,577 @@
-# pylint: disable=arguments-differ,no-member,too-many-statements
-''' Contains PercentileDiscretizerFeature and PercentileDiscretizerCalibrator used \
-    for PercentileDiscretizer calibration '''
+# pylint: disablelon=argumelonnts-diffelonr,no-melonmbelonr,too-many-statelonmelonnts
+''' Contains PelonrcelonntilelonDiscrelontizelonrFelonaturelon and PelonrcelonntilelonDiscrelontizelonrCalibrator uselond \
+    for PelonrcelonntilelonDiscrelontizelonr calibration '''
 
 
 
-from .calibrator import CalibrationFeature, Calibrator
+from .calibrator import CalibrationFelonaturelon, Calibrator
 
 import os
 import numpy as np
-import tensorflow.compat.v1 as tf
-import tensorflow_hub as hub
+import telonnsorflow.compat.v1 as tf
+import telonnsorflow_hub as hub
 import twml
-import twml.layers
+import twml.layelonrs
 
 
-DEFAULT_SAMPLE_WEIGHT = 1
+DelonFAULT_SAMPLelon_WelonIGHT = 1
 
 
-class PercentileDiscretizerFeature(CalibrationFeature):
-  ''' Accumulates and calibrates a single sparse PercentileDiscretizer feature. '''
+class PelonrcelonntilelonDiscrelontizelonrFelonaturelon(CalibrationFelonaturelon):
+  ''' Accumulatelons and calibratelons a singlelon sparselon PelonrcelonntilelonDiscrelontizelonr felonaturelon. '''
 
-  @staticmethod
-  def _gather_debug_info(values, indices, bin_vals, bin_counts_buffer):
+  @staticmelonthod
+  delonf _gathelonr_delonbug_info(valuelons, indicelons, bin_vals, bin_counts_buffelonr):
     '''
-    Determine how many training values fell into a given bin during calibration.
-    This is calculated by finding the index of the first appearance of each bin
-    boundary in values (values may repeat, so that isn't trivially in indices.)
-    Subtracting each bin boundary index from the next tells you how many values fall in
+    Delontelonrminelon how many training valuelons felonll into a givelonn bin during calibration.
+    This is calculatelond by finding thelon indelonx of thelon first appelonarancelon of elonach bin
+    boundary in valuelons (valuelons may relonpelonat, so that isn't trivially in indicelons.)
+    Subtracting elonach bin boundary indelonx from thelon nelonxt telonlls you how many valuelons fall in
     that bin.
-    To get this to calculate the last bin correctly, len(values) is appended to the
-    list of bound indices.
+    To gelont this to calculatelon thelon last bin correlonctly, lelonn(valuelons) is appelonndelond to thelon
+    list of bound indicelons.
 
-    This assumes that ``bin_vals`` excludes np.inf bin boundaries when
-    PercentileDiscretizer was calibrated
-    with fewer values than bins.
+    This assumelons that ``bin_vals`` elonxcludelons np.inf bin boundarielons whelonn
+    PelonrcelonntilelonDiscrelontizelonr was calibratelond
+    with felonwelonr valuelons than bins.
 
-    Arguments:
-      values:
-        1D ndarray of the PercentileDiscretizerFeature's accumulated values, sorted ascending
-      indices:
-        1D int32 ndarray of the indices (in values) of the bin boundaries
+    Argumelonnts:
+      valuelons:
+        1D ndarray of thelon PelonrcelonntilelonDiscrelontizelonrFelonaturelon's accumulatelond valuelons, sortelond ascelonnding
+      indicelons:
+        1D int32 ndarray of thelon indicelons (in valuelons) of thelon bin boundarielons
       bin_vals:
-        1D ndarray containing the bin boundaries
-      bin_counts_buffer:
-        ndarray buffer for returning the PercentileDiscretizer histogram
+        1D ndarray containing thelon bin boundarielons
+      bin_counts_buffelonr:
+        ndarray buffelonr for relonturning thelon PelonrcelonntilelonDiscrelontizelonr histogram
     '''
-    # np.flatnonzero(np.diff(x)) gives you the indices i in x s.t. x[i] != x[i+1]
-    # append index of the last bin since that cannot be empty with how
-    # PercentileDiscretizer is implemented
-    nonempty_bins = np.append(np.flatnonzero(np.diff(bin_vals)), len(bin_vals) - 1)
-    bin_start_indices = indices.take(nonempty_bins)
+    # np.flatnonzelonro(np.diff(x)) givelons you thelon indicelons i in x s.t. x[i] != x[i+1]
+    # appelonnd indelonx of thelon last bin sincelon that cannot belon elonmpty with how
+    # PelonrcelonntilelonDiscrelontizelonr is implelonmelonntelond
+    nonelonmpty_bins = np.appelonnd(np.flatnonzelonro(np.diff(bin_vals)), lelonn(bin_vals) - 1)
+    bin_start_indicelons = indicelons.takelon(nonelonmpty_bins)
 
-    # if multiples of a bin's lower bound value exist, find the first one
-    for (i, idx) in enumerate(bin_start_indices):
+    # if multiplelons of a bin's lowelonr bound valuelon elonxist, find thelon first onelon
+    for (i, idx) in elonnumelonratelon(bin_start_indicelons):
       cur_idx = idx
-      while cur_idx > 0 and values[cur_idx] == values[cur_idx - 1]:
-        bin_start_indices[i] = cur_idx = cur_idx - 1
+      whilelon cur_idx > 0 and valuelons[cur_idx] == valuelons[cur_idx - 1]:
+        bin_start_indicelons[i] = cur_idx = cur_idx - 1
 
-    # the end of each bin is the start of the next bin,
-    # until the last, which is the end of the array
-    # broadcast the counts to the nonempty bins, 0 otherwise
-    bin_counts_buffer[:] = 0
-    bin_counts_buffer[nonempty_bins] = np.diff(np.append(bin_start_indices, values.size))
+    # thelon elonnd of elonach bin is thelon start of thelon nelonxt bin,
+    # until thelon last, which is thelon elonnd of thelon array
+    # broadcast thelon counts to thelon nonelonmpty bins, 0 othelonrwiselon
+    bin_counts_buffelonr[:] = 0
+    bin_counts_buffelonr[nonelonmpty_bins] = np.diff(np.appelonnd(bin_start_indicelons, valuelons.sizelon))
 
-  def calibrate(
-          self,
-          bin_vals, percentiles, percentile_indices,
-          bin_counts_buffer=None):
-    '''Calibrates the PercentileDiscretizerFeature into bin values for
-    use in PercentileDiscretizerCalibrator.
-    Note that this method can only be called once.
+  delonf calibratelon(
+          selonlf,
+          bin_vals, pelonrcelonntilelons, pelonrcelonntilelon_indicelons,
+          bin_counts_buffelonr=Nonelon):
+    '''Calibratelons thelon PelonrcelonntilelonDiscrelontizelonrFelonaturelon into bin valuelons for
+    uselon in PelonrcelonntilelonDiscrelontizelonrCalibrator.
+    Notelon that this melonthod can only belon callelond oncelon.
 
-    Arguments:
+    Argumelonnts:
       bin_vals:
-        Row in the PercentileDiscretizerCalibrator.bin_vals matrix corresponding to this feature.
-        Will be updated with the results of the calibration.
+        Row in thelon PelonrcelonntilelonDiscrelontizelonrCalibrator.bin_vals matrix correlonsponding to this felonaturelon.
+        Will belon updatelond with thelon relonsults of thelon calibration.
         A 1D ndarray.
-      percentiles:
-        1D array of size n_bin with values ranging from 0 to 1.
-        For example, ``percentiles = np.linspace(0, 1, num=self._n_bin+1, dtype=np.float32)``
-      percentile_indices:
-        Empty 1D array of size n_bin used to store intermediate results when
-        calling twml.twml_optim_nearest_interpolation().
-        For example, np.empty(self._n_bin + 1, dtype=np.float32).
-      bin_counts_buffer:
-        optional ndarray buffer used for retaining count of values per PercentileDiscretizer
-        bucket (for debug and feature exploration purposes)
+      pelonrcelonntilelons:
+        1D array of sizelon n_bin with valuelons ranging from 0 to 1.
+        For elonxamplelon, ``pelonrcelonntilelons = np.linspacelon(0, 1, num=selonlf._n_bin+1, dtypelon=np.float32)``
+      pelonrcelonntilelon_indicelons:
+        elonmpty 1D array of sizelon n_bin uselond to storelon intelonrmelondiatelon relonsults whelonn
+        calling twml.twml_optim_nelonarelonst_intelonrpolation().
+        For elonxamplelon, np.elonmpty(selonlf._n_bin + 1, dtypelon=np.float32).
+      bin_counts_buffelonr:
+        optional ndarray buffelonr uselond for relontaining count of valuelons pelonr PelonrcelonntilelonDiscrelontizelonr
+        buckelont (for delonbug and felonaturelon elonxploration purposelons)
 
-    Returns:
-      calibrated bin_vals for use by ``PercentileDiscretizerCalibrator``
+    Relonturns:
+      calibratelond bin_vals for uselon by ``PelonrcelonntilelonDiscrelontizelonrCalibrator``
     '''
-    if self._calibrated:
-      raise RuntimeError("Can only calibrate once")
+    if selonlf._calibratelond:
+      raiselon Runtimelonelonrror("Can only calibratelon oncelon")
     if bin_vals.ndim != 1:
-      raise RuntimeError("Expecting bin_vals row")
+      raiselon Runtimelonelonrror("elonxpeloncting bin_vals row")
 
-    # # concatenate values and weights buffers
-    self._concat_arrays()
-    feature_values = self._features_dict['values']
-    feature_weights = self._features_dict['weights']
+    # # concatelonnatelon valuelons and welonights buffelonrs
+    selonlf._concat_arrays()
+    felonaturelon_valuelons = selonlf._felonaturelons_dict['valuelons']
+    felonaturelon_welonights = selonlf._felonaturelons_dict['welonights']
 
-    # get features ready for the bins, order array indices by feature values.
-    indices = np.argsort(feature_values)
+    # gelont felonaturelons relonady for thelon bins, ordelonr array indicelons by felonaturelon valuelons.
+    indicelons = np.argsort(felonaturelon_valuelons)
 
-    # get ordered values and weights using array indices
-    values = feature_values.take(indices)
-    weights = feature_weights.take(indices)
+    # gelont ordelonrelond valuelons and welonights using array indicelons
+    valuelons = felonaturelon_valuelons.takelon(indicelons)
+    welonights = felonaturelon_welonights.takelon(indicelons)
 
-    # Normalizes the sum of weights to be between 0 and 1
-    weights = np.cumsum(weights, out=feature_weights)
-    weights -= weights[0]
-    if weights[-1] > 0:  # prevent zero-division
-      weights /= weights[-1]
+    # Normalizelons thelon sum of welonights to belon belontwelonelonn 0 and 1
+    welonights = np.cumsum(welonights, out=felonaturelon_welonights)
+    welonights -= welonights[0]
+    if welonights[-1] > 0:  # prelonvelonnt zelonro-division
+      welonights /= welonights[-1]
 
-    # Check if we have less values than bin_vals
-    if values.size < bin_vals.size:
-      # Fills all the bins with a value that won't ever be reached
+    # Chelonck if welon havelon lelonss valuelons than bin_vals
+    if valuelons.sizelon < bin_vals.sizelon:
+      # Fills all thelon bins with a valuelon that won't elonvelonr belon relonachelond
       bin_vals.fill(np.inf)
-      # Forces the first to be -inf
+      # Forcelons thelon first to belon -inf
       bin_vals[0] = -np.inf
-      # Copies the values as boundaries
-      bin_vals[1:values.size + 1] = values
+      # Copielons thelon valuelons as boundarielons
+      bin_vals[1:valuelons.sizelon + 1] = valuelons
 
-      if bin_counts_buffer is not None:
-        # slice out bins with +/-np.inf boundary -- their count will be zero anyway
-        # we can't just assume all other bins will have 1 value since there can be dups
-        short_indices = np.arange(values.size, dtype=np.int32)
-        bin_counts_buffer.fill(0)
-        self._gather_debug_info(
-          values, short_indices, bin_vals[1:values.size + 1],
-          bin_counts_buffer[1:values.size + 1])
+      if bin_counts_buffelonr is not Nonelon:
+        # slicelon out bins with +/-np.inf boundary -- thelonir count will belon zelonro anyway
+        # welon can't just assumelon all othelonr bins will havelon 1 valuelon sincelon thelonrelon can belon dups
+        short_indicelons = np.arangelon(valuelons.sizelon, dtypelon=np.int32)
+        bin_counts_buffelonr.fill(0)
+        selonlf._gathelonr_delonbug_info(
+          valuelons, short_indicelons, bin_vals[1:valuelons.sizelon + 1],
+          bin_counts_buffelonr[1:valuelons.sizelon + 1])
 
-    else:
-      # Gets the indices for the values that define the boundary for the bins
-      indices_float = np.arange(0, weights.size, dtype=np.float32)
+    elonlselon:
+      # Gelonts thelon indicelons for thelon valuelons that delonfinelon thelon boundary for thelon bins
+      indicelons_float = np.arangelon(0, welonights.sizelon, dtypelon=np.float32)
 
-      # Gets things in the correct shape for the linear interpolation
-      weights = weights.reshape(1, weights.size)
-      indices_float = indices_float.reshape(1, weights.size)
+      # Gelonts things in thelon correlonct shapelon for thelon linelonar intelonrpolation
+      welonights = welonights.relonshapelon(1, welonights.sizelon)
+      indicelons_float = indicelons_float.relonshapelon(1, welonights.sizelon)
 
       # wrap ndarrays into twml.Array
-      percentiles_tarray = twml.Array(percentiles.reshape(percentiles.size, 1))
-      weights_tarray = twml.Array(weights)
-      indices_float_tarray = twml.Array(indices_float)
-      percentile_indices_tarray = twml.Array(percentile_indices.reshape(percentiles.size, 1))
+      pelonrcelonntilelons_tarray = twml.Array(pelonrcelonntilelons.relonshapelon(pelonrcelonntilelons.sizelon, 1))
+      welonights_tarray = twml.Array(welonights)
+      indicelons_float_tarray = twml.Array(indicelons_float)
+      pelonrcelonntilelon_indicelons_tarray = twml.Array(pelonrcelonntilelon_indicelons.relonshapelon(pelonrcelonntilelons.sizelon, 1))
 
-      # Performs the binary search to find the indices corresponding to the percentiles
-      err = twml.CLIB.twml_optim_nearest_interpolation(
-        percentile_indices_tarray.handle, percentiles_tarray.handle,  # output, input
-        weights_tarray.handle, indices_float_tarray.handle  # xs, ys
+      # Pelonrforms thelon binary selonarch to find thelon indicelons correlonsponding to thelon pelonrcelonntilelons
+      elonrr = twml.CLIB.twml_optim_nelonarelonst_intelonrpolation(
+        pelonrcelonntilelon_indicelons_tarray.handlelon, pelonrcelonntilelons_tarray.handlelon,  # output, input
+        welonights_tarray.handlelon, indicelons_float_tarray.handlelon  # xs, ys
       )
-      if err != 1000:
-        raise ValueError("""twml.CLIB.twml_optim_nearest_interpolation
-          caught an error (see previous stdout). Error code: """ % err)
+      if elonrr != 1000:
+        raiselon Valuelonelonrror("""twml.CLIB.twml_optim_nelonarelonst_intelonrpolation
+          caught an elonrror (selonelon prelonvious stdout). elonrror codelon: """ % elonrr)
 
-      indices = indices[:bin_vals.size]
-      indices[:] = percentile_indices
-      indices[0] = 0
-      indices[-1] = weights.size - 1
+      indicelons = indicelons[:bin_vals.sizelon]
+      indicelons[:] = pelonrcelonntilelon_indicelons
+      indicelons[0] = 0
+      indicelons[-1] = welonights.sizelon - 1
 
-      # Gets the values at those indices and copies them into bin_vals
-      values.take(indices, out=bin_vals)
+      # Gelonts thelon valuelons at thoselon indicelons and copielons thelonm into bin_vals
+      valuelons.takelon(indicelons, out=bin_vals)
 
-      # get # of values per bucket
-      if bin_counts_buffer is not None:
-        self._gather_debug_info(values, indices, bin_vals, bin_counts_buffer)
+      # gelont # of valuelons pelonr buckelont
+      if bin_counts_buffelonr is not Nonelon:
+        selonlf._gathelonr_delonbug_info(valuelons, indicelons, bin_vals, bin_counts_buffelonr)
 
-    self._calibrated = True
+    selonlf._calibratelond = Truelon
 
 
-class PercentileDiscretizerCalibrator(Calibrator):
-  ''' Accumulates features and their respective values for PercentileDiscretizer calibration.
-  Internally, each feature's values is accumulated via its own
-  ``PercentileDiscretizerFeature`` object.
-  The steps for calibration are typically as follows:
+class PelonrcelonntilelonDiscrelontizelonrCalibrator(Calibrator):
+  ''' Accumulatelons felonaturelons and thelonir relonspelonctivelon valuelons for PelonrcelonntilelonDiscrelontizelonr calibration.
+  Intelonrnally, elonach felonaturelon's valuelons is accumulatelond via its own
+  ``PelonrcelonntilelonDiscrelontizelonrFelonaturelon`` objelonct.
+  Thelon stelonps for calibration arelon typically as follows:
 
-   1. accumulate feature values from batches by calling ``accumulate()``;
-   2. calibrate all feature into PercentileDiscretizer bin_vals by calling ``calibrate()``; and
-   3. convert to a twml.layers.PercentileDiscretizer layer by calling ``to_layer()``.
+   1. accumulatelon felonaturelon valuelons from batchelons by calling ``accumulatelon()``;
+   2. calibratelon all felonaturelon into PelonrcelonntilelonDiscrelontizelonr bin_vals by calling ``calibratelon()``; and
+   3. convelonrt to a twml.layelonrs.PelonrcelonntilelonDiscrelontizelonr layelonr by calling ``to_layelonr()``.
 
   '''
 
-  def __init__(self, n_bin, out_bits, bin_histogram=True,
-               allow_empty_calibration=False, **kwargs):
-    ''' Constructs an PercentileDiscretizerCalibrator instance.
+  delonf __init__(selonlf, n_bin, out_bits, bin_histogram=Truelon,
+               allow_elonmpty_calibration=Falselon, **kwargs):
+    ''' Constructs an PelonrcelonntilelonDiscrelontizelonrCalibrator instancelon.
 
-    Arguments:
+    Argumelonnts:
       n_bin:
-        the number of bins per feature to use for PercentileDiscretizer.
-        Note that each feature actually maps to n_bin+1 output IDs.
+        thelon numbelonr of bins pelonr felonaturelon to uselon for PelonrcelonntilelonDiscrelontizelonr.
+        Notelon that elonach felonaturelon actually maps to n_bin+1 output IDs.
       out_bits:
-        The maximum number of bits to use for the output IDs.
-        2**out_bits must be greater than bin_ids.size or an error is raised.
+        Thelon maximum numbelonr of bits to uselon for thelon output IDs.
+        2**out_bits must belon grelonatelonr than bin_ids.sizelon or an elonrror is raiselond.
       bin_histogram:
-        When True (the default), gathers information during calibration
+        Whelonn Truelon (thelon delonfault), gathelonrs information during calibration
         to build a bin_histogram.
-      allow_empty_calibration:
-        allows operation where we might not calibrate any features.
-        Default False to error out if no features were calibrated.
-        Typically, values of uncalibrated features pass through discretizers
-        untouched (though the feature ids will be truncated to obey out_bits).
+      allow_elonmpty_calibration:
+        allows opelonration whelonrelon welon might not calibratelon any felonaturelons.
+        Delonfault Falselon to elonrror out if no felonaturelons welonrelon calibratelond.
+        Typically, valuelons of uncalibratelond felonaturelons pass through discrelontizelonrs
+        untouchelond (though thelon felonaturelon ids will belon truncatelond to obelony out_bits).
     '''
-    super(PercentileDiscretizerCalibrator, self).__init__(**kwargs)
-    self._n_bin = n_bin
-    self._out_bits = out_bits
+    supelonr(PelonrcelonntilelonDiscrelontizelonrCalibrator, selonlf).__init__(**kwargs)
+    selonlf._n_bin = n_bin
+    selonlf._out_bits = out_bits
 
-    self._bin_ids = None
-    self._bin_vals = np.empty(0, dtype=np.float32)  # Note changed from 64 (v1) to 32 (v2)
+    selonlf._bin_ids = Nonelon
+    selonlf._bin_vals = np.elonmpty(0, dtypelon=np.float32)  # Notelon changelond from 64 (v1) to 32 (v2)
 
-    self._bin_histogram = bin_histogram
-    self._bin_histogram_dict = None
+    selonlf._bin_histogram = bin_histogram
+    selonlf._bin_histogram_dict = Nonelon
 
-    self._hash_map_counter = 0
-    self._hash_map = {}
+    selonlf._hash_map_countelonr = 0
+    selonlf._hash_map = {}
 
-    self._discretizer_feature_dict = {}
-    self._allow_empty_calibration = allow_empty_calibration
+    selonlf._discrelontizelonr_felonaturelon_dict = {}
+    selonlf._allow_elonmpty_calibration = allow_elonmpty_calibration
 
-  @property
-  def bin_ids(self):
+  @propelonrty
+  delonf bin_ids(selonlf):
     '''
-    Gets bin_ids
+    Gelonts bin_ids
     '''
-    return self._bin_ids
+    relonturn selonlf._bin_ids
 
-  @property
-  def bin_vals(self):
+  @propelonrty
+  delonf bin_vals(selonlf):
     '''
-    Gets bin_vals
+    Gelonts bin_vals
     '''
-    return self._bin_vals
+    relonturn selonlf._bin_vals
 
-  @property
-  def hash_map(self):
+  @propelonrty
+  delonf hash_map(selonlf):
     '''
-    Gets hash_map
+    Gelonts hash_map
     '''
-    return self._hash_map
+    relonturn selonlf._hash_map
 
-  @property
-  def discretizer_feature_dict(self):
+  @propelonrty
+  delonf discrelontizelonr_felonaturelon_dict(selonlf):
     '''
-    Gets feature_dict
+    Gelonts felonaturelon_dict
     '''
-    return self._discretizer_feature_dict
+    relonturn selonlf._discrelontizelonr_felonaturelon_dict
 
-  def accumulate_features(self, inputs, name):
+  delonf accumulatelon_felonaturelons(selonlf, inputs, namelon):
     '''
-    Wrapper around accumulate for PercentileDiscretizer.
-    Arguments:
+    Wrappelonr around accumulatelon for PelonrcelonntilelonDiscrelontizelonr.
+    Argumelonnts:
       inputs:
-        batch that will be accumulated
-      name:
-        name of the tensor that will be accumulated
+        batch that will belon accumulatelond
+      namelon:
+        namelon of thelon telonnsor that will belon accumulatelond
 
     '''
-    sparse_tf = inputs[name]
-    indices = sparse_tf.indices[:, 1]
-    ids = sparse_tf.indices[:, 0]
-    weights = np.take(inputs["weights"], ids)
-    return self.accumulate(indices, sparse_tf.values, weights)
+    sparselon_tf = inputs[namelon]
+    indicelons = sparselon_tf.indicelons[:, 1]
+    ids = sparselon_tf.indicelons[:, 0]
+    welonights = np.takelon(inputs["welonights"], ids)
+    relonturn selonlf.accumulatelon(indicelons, sparselon_tf.valuelons, welonights)
 
-  def accumulate_feature(self, output):
+  delonf accumulatelon_felonaturelon(selonlf, output):
     '''
-    Wrapper around accumulate for trainer API.
-    Arguments:
+    Wrappelonr around accumulatelon for trainelonr API.
+    Argumelonnts:
       output:
-        output of prediction of build_graph for calibrator
+        output of prelondiction of build_graph for calibrator
     '''
-    return self.accumulate(output['feature_ids'], output['feature_values'], output['weights'])
+    relonturn selonlf.accumulatelon(output['felonaturelon_ids'], output['felonaturelon_valuelons'], output['welonights'])
 
-  def accumulate(self, feature_keys, feature_vals, weights=None):
-    '''Accumulate a single batch of feature keys, values and weights.
+  delonf accumulatelon(selonlf, felonaturelon_kelonys, felonaturelon_vals, welonights=Nonelon):
+    '''Accumulatelon a singlelon batch of felonaturelon kelonys, valuelons and welonights.
 
-    These are accumulate until ``calibrate()`` is called.
+    Thelonselon arelon accumulatelon until ``calibratelon()`` is callelond.
 
-    Arguments:
-      feature_keys:
-        1D int64 array of feature keys.
-      feature_vals:
-        1D float array of feature values. Each element of this array
-        maps to the commensurate element in ``feature_keys``.
-      weights:
-        Defaults to weights of 1.
-        1D array containing the weights of each feature key, value pair.
-        Typically, this is the weight of each sample (but you still need
-        to provide one weight per key,value pair).
-        Each element of this array maps to the commensurate element in feature_keys.
+    Argumelonnts:
+      felonaturelon_kelonys:
+        1D int64 array of felonaturelon kelonys.
+      felonaturelon_vals:
+        1D float array of felonaturelon valuelons. elonach elonlelonmelonnt of this array
+        maps to thelon commelonnsuratelon elonlelonmelonnt in ``felonaturelon_kelonys``.
+      welonights:
+        Delonfaults to welonights of 1.
+        1D array containing thelon welonights of elonach felonaturelon kelony, valuelon pair.
+        Typically, this is thelon welonight of elonach samplelon (but you still nelonelond
+        to providelon onelon welonight pelonr kelony,valuelon pair).
+        elonach elonlelonmelonnt of this array maps to thelon commelonnsuratelon elonlelonmelonnt in felonaturelon_kelonys.
     '''
-    if feature_keys.ndim != 1:
-      raise ValueError('Expecting 1D feature_keys, got %dD' % feature_keys.ndim)
-    if feature_vals.ndim != 1:
-      raise ValueError('Expecting 1D feature_values, got %dD' % feature_vals.ndim)
-    if feature_vals.size != feature_keys.size:
-      raise ValueError(
-        'Expecting feature_keys.size == feature_values.size, got %d != %d' %
-        (feature_keys.size, feature_vals.size))
-    if weights is not None:
-      weights = np.squeeze(weights)
-      if weights.ndim != 1:
-        raise ValueError('Expecting 1D weights, got %dD' % weights.ndim)
-      elif weights.size != feature_keys.size:
-        raise ValueError(
-          'Expecting feature_keys.size == weights.size, got %d != %d' %
-          (feature_keys.size, weights.size))
-    if weights is None:
-      weights = np.full(feature_vals.size, fill_value=DEFAULT_SAMPLE_WEIGHT)
-    unique_keys = np.unique(feature_keys)
-    for feature_id in unique_keys:
-      idx = np.where(feature_keys == feature_id)
-      if feature_id not in self._discretizer_feature_dict:
-        self._hash_map[feature_id] = self._hash_map_counter
-        # unlike v1, the hash_map_counter is incremented AFTER assignment.
-        # This makes the hash_map features zero-indexed: 0, 1, 2 instead of 1, 2, 3
-        self._hash_map_counter += 1
-        # creates a new cache if we never saw the feature before
-        discretizer_feature = PercentileDiscretizerFeature(feature_id)
-        self._discretizer_feature_dict[feature_id] = discretizer_feature
-      else:
-        discretizer_feature = self._discretizer_feature_dict[feature_id]
-      discretizer_feature.add_values({'values': feature_vals[idx], 'weights': weights[idx]})
+    if felonaturelon_kelonys.ndim != 1:
+      raiselon Valuelonelonrror('elonxpeloncting 1D felonaturelon_kelonys, got %dD' % felonaturelon_kelonys.ndim)
+    if felonaturelon_vals.ndim != 1:
+      raiselon Valuelonelonrror('elonxpeloncting 1D felonaturelon_valuelons, got %dD' % felonaturelon_vals.ndim)
+    if felonaturelon_vals.sizelon != felonaturelon_kelonys.sizelon:
+      raiselon Valuelonelonrror(
+        'elonxpeloncting felonaturelon_kelonys.sizelon == felonaturelon_valuelons.sizelon, got %d != %d' %
+        (felonaturelon_kelonys.sizelon, felonaturelon_vals.sizelon))
+    if welonights is not Nonelon:
+      welonights = np.squelonelonzelon(welonights)
+      if welonights.ndim != 1:
+        raiselon Valuelonelonrror('elonxpeloncting 1D welonights, got %dD' % welonights.ndim)
+      elonlif welonights.sizelon != felonaturelon_kelonys.sizelon:
+        raiselon Valuelonelonrror(
+          'elonxpeloncting felonaturelon_kelonys.sizelon == welonights.sizelon, got %d != %d' %
+          (felonaturelon_kelonys.sizelon, welonights.sizelon))
+    if welonights is Nonelon:
+      welonights = np.full(felonaturelon_vals.sizelon, fill_valuelon=DelonFAULT_SAMPLelon_WelonIGHT)
+    uniquelon_kelonys = np.uniquelon(felonaturelon_kelonys)
+    for felonaturelon_id in uniquelon_kelonys:
+      idx = np.whelonrelon(felonaturelon_kelonys == felonaturelon_id)
+      if felonaturelon_id not in selonlf._discrelontizelonr_felonaturelon_dict:
+        selonlf._hash_map[felonaturelon_id] = selonlf._hash_map_countelonr
+        # unlikelon v1, thelon hash_map_countelonr is increlonmelonntelond AFTelonR assignmelonnt.
+        # This makelons thelon hash_map felonaturelons zelonro-indelonxelond: 0, 1, 2 instelonad of 1, 2, 3
+        selonlf._hash_map_countelonr += 1
+        # crelonatelons a nelonw cachelon if welon nelonvelonr saw thelon felonaturelon belonforelon
+        discrelontizelonr_felonaturelon = PelonrcelonntilelonDiscrelontizelonrFelonaturelon(felonaturelon_id)
+        selonlf._discrelontizelonr_felonaturelon_dict[felonaturelon_id] = discrelontizelonr_felonaturelon
+      elonlselon:
+        discrelontizelonr_felonaturelon = selonlf._discrelontizelonr_felonaturelon_dict[felonaturelon_id]
+      discrelontizelonr_felonaturelon.add_valuelons({'valuelons': felonaturelon_vals[idx], 'welonights': welonights[idx]})
 
-  def calibrate(self, debug=False):
+  delonf calibratelon(selonlf, delonbug=Falselon):
     '''
-    Calibrates each PercentileDiscretizer feature after accumulation is complete.
+    Calibratelons elonach PelonrcelonntilelonDiscrelontizelonr felonaturelon aftelonr accumulation is complelontelon.
 
-    Arguments:
-      debug:
-        Boolean to request debug info be returned by the method.
-        (see Returns section below)
+    Argumelonnts:
+      delonbug:
+        Boolelonan to relonquelonst delonbug info belon relonturnelond by thelon melonthod.
+        (selonelon Relonturns selonction belonlow)
 
-    The calibration results are stored in two matrices:
+    Thelon calibration relonsults arelon storelond in two matricelons:
       bin_ids:
-        2D array of size number of accumulate ``features x n_bin+1``.
-        Contains the new IDs generated by PercentileDiscretizer. Each row maps to a feature.
-        Each row maps to different value bins. The IDs
-        are in the range ``1 -> bin_ids.size+1``
+        2D array of sizelon numbelonr of accumulatelon ``felonaturelons x n_bin+1``.
+        Contains thelon nelonw IDs gelonnelonratelond by PelonrcelonntilelonDiscrelontizelonr. elonach row maps to a felonaturelon.
+        elonach row maps to diffelonrelonnt valuelon bins. Thelon IDs
+        arelon in thelon rangelon ``1 -> bin_ids.sizelon+1``
       bin_vals:
-        2D array of the same size as bin_ids.
-        Each row maps to a feature. Each row contains the bin boundaries.
-        These boundaries represent feature values.
+        2D array of thelon samelon sizelon as bin_ids.
+        elonach row maps to a felonaturelon. elonach row contains thelon bin boundarielons.
+        Thelonselon boundarielons relonprelonselonnt felonaturelon valuelons.
 
-    Returns:
-      if debug is True, the method returns
+    Relonturns:
+      if delonbug is Truelon, thelon melonthod relonturns
 
-        - 1D int64 array of feature_ids
-        - 2D float32 array copy of bin_vals (the bin boundaries) for each feature
-        - 2D int64 array of bin counts corresponding to the bin boundaries
+        - 1D int64 array of felonaturelon_ids
+        - 2D float32 array copy of bin_vals (thelon bin boundarielons) for elonach felonaturelon
+        - 2D int64 array of bin counts correlonsponding to thelon bin boundarielons
 
     '''
-    n_feature = len(self._discretizer_feature_dict)
-    if n_feature == 0 and not self._allow_empty_calibration:
-      raise RuntimeError("Need to accumulate some features for calibration\n"
-                         "Likely, the calibration data is empty. This can\n"
-                         "happen if the dataset is small, or if the following\n"
-                         "cli args are set too low:\n"
-                         "  --discretizer_keep_rate (default=0.0008)\n"
-                         "  --discretizer_parts_downsampling_rate (default=0.2)\n"
-                         "Consider increasing the values of these args.\n"
-                         "To allow empty calibration data (and degenerate discretizer),\n"
-                         "use the allow_empty_calibration input of the constructor.")
+    n_felonaturelon = lelonn(selonlf._discrelontizelonr_felonaturelon_dict)
+    if n_felonaturelon == 0 and not selonlf._allow_elonmpty_calibration:
+      raiselon Runtimelonelonrror("Nelonelond to accumulatelon somelon felonaturelons for calibration\n"
+                         "Likelonly, thelon calibration data is elonmpty. This can\n"
+                         "happelonn if thelon dataselont is small, or if thelon following\n"
+                         "cli args arelon selont too low:\n"
+                         "  --discrelontizelonr_kelonelonp_ratelon (delonfault=0.0008)\n"
+                         "  --discrelontizelonr_parts_downsampling_ratelon (delonfault=0.2)\n"
+                         "Considelonr increlonasing thelon valuelons of thelonselon args.\n"
+                         "To allow elonmpty calibration data (and delongelonnelonratelon discrelontizelonr),\n"
+                         "uselon thelon allow_elonmpty_calibration input of thelon constructor.")
 
-    self._bin_ids = np.arange(1, n_feature * (self._n_bin + 1) + 1)
-    self._bin_ids = self._bin_ids.reshape(n_feature, self._n_bin + 1)
+    selonlf._bin_ids = np.arangelon(1, n_felonaturelon * (selonlf._n_bin + 1) + 1)
+    selonlf._bin_ids = selonlf._bin_ids.relonshapelon(n_felonaturelon, selonlf._n_bin + 1)
 
-    self._bin_vals.resize(n_feature, self._n_bin + 1)
+    selonlf._bin_vals.relonsizelon(n_felonaturelon, selonlf._n_bin + 1)
 
-    # buffers shared by PercentileDiscretizerFeature.calibrate()
-    percentile_indices = np.empty(self._n_bin + 1, dtype=np.float32)
+    # buffelonrs sharelond by PelonrcelonntilelonDiscrelontizelonrFelonaturelon.calibratelon()
+    pelonrcelonntilelon_indicelons = np.elonmpty(selonlf._n_bin + 1, dtypelon=np.float32)
 
-    # Tensor from 0 to 1 in the number of steps provided
-    percentiles = np.linspace(0, 1, num=self._n_bin + 1, dtype=np.float32)
+    # Telonnsor from 0 to 1 in thelon numbelonr of stelonps providelond
+    pelonrcelonntilelons = np.linspacelon(0, 1, num=selonlf._n_bin + 1, dtypelon=np.float32)
 
-    if debug or self._bin_histogram:
-      debug_feature_ids = np.empty(n_feature, dtype=np.int64)
-      bin_counts = np.empty((n_feature, self._n_bin + 1), dtype=np.int64)
+    if delonbug or selonlf._bin_histogram:
+      delonbug_felonaturelon_ids = np.elonmpty(n_felonaturelon, dtypelon=np.int64)
+      bin_counts = np.elonmpty((n_felonaturelon, selonlf._n_bin + 1), dtypelon=np.int64)
 
-    # progress bar for calibration phase
-    progress_bar = tf.keras.utils.Progbar(n_feature)
+    # progrelonss bar for calibration phaselon
+    progrelonss_bar = tf.kelonras.utils.Progbar(n_felonaturelon)
 
-    discretizer_features_dict = self._discretizer_feature_dict
-    for i, feature_id in enumerate(discretizer_features_dict):
-      if debug or self._bin_histogram:
-        debug_feature_ids[self._hash_map[feature_id]] = feature_id
-        bin_counts_buffer = bin_counts[self._hash_map[feature_id]]
-      else:
-        bin_counts_buffer = None
+    discrelontizelonr_felonaturelons_dict = selonlf._discrelontizelonr_felonaturelon_dict
+    for i, felonaturelon_id in elonnumelonratelon(discrelontizelonr_felonaturelons_dict):
+      if delonbug or selonlf._bin_histogram:
+        delonbug_felonaturelon_ids[selonlf._hash_map[felonaturelon_id]] = felonaturelon_id
+        bin_counts_buffelonr = bin_counts[selonlf._hash_map[felonaturelon_id]]
+      elonlselon:
+        bin_counts_buffelonr = Nonelon
 
-      # calibrate each PercentileDiscretizer feature (puts results in bin_vals)
-      discretizer_features_dict[feature_id].calibrate(
-        self._bin_vals[self._hash_map[feature_id]],  # Gets feature-values
-        percentiles, percentile_indices,
-        bin_counts_buffer=bin_counts_buffer
+      # calibratelon elonach PelonrcelonntilelonDiscrelontizelonr felonaturelon (puts relonsults in bin_vals)
+      discrelontizelonr_felonaturelons_dict[felonaturelon_id].calibratelon(
+        selonlf._bin_vals[selonlf._hash_map[felonaturelon_id]],  # Gelonts felonaturelon-valuelons
+        pelonrcelonntilelons, pelonrcelonntilelon_indicelons,
+        bin_counts_buffelonr=bin_counts_buffelonr
       )
 
-      # update progress bar 20 times
-      if (i % max(1.0, round(n_feature / 20)) == 0) or (i == n_feature - 1):
-        progress_bar.update(i + 1)
+      # updatelon progrelonss bar 20 timelons
+      if (i % max(1.0, round(n_felonaturelon / 20)) == 0) or (i == n_felonaturelon - 1):
+        progrelonss_bar.updatelon(i + 1)
 
-    super(PercentileDiscretizerCalibrator, self).calibrate()
+    supelonr(PelonrcelonntilelonDiscrelontizelonrCalibrator, selonlf).calibratelon()
 
-    if self._bin_histogram:
-      # save bin histogram data for later
-      self._bin_histogram_dict = {
-        'feature_ids': debug_feature_ids,
+    if selonlf._bin_histogram:
+      # savelon bin histogram data for latelonr
+      selonlf._bin_histogram_dict = {
+        'felonaturelon_ids': delonbug_felonaturelon_ids,
         'bin_counts': bin_counts,
-        'bin_vals': self._bin_vals,
-        'out_bits': self._out_bits,
+        'bin_vals': selonlf._bin_vals,
+        'out_bits': selonlf._out_bits,
       }
 
-    if debug:
-      return debug_feature_ids, self._bin_vals.copy(), bin_counts
+    if delonbug:
+      relonturn delonbug_felonaturelon_ids, selonlf._bin_vals.copy(), bin_counts
 
-    return None
+    relonturn Nonelon
 
-  def _create_discretizer_layer(self, n_feature, hash_map_keys, hash_map_values,
-                                feature_offsets, name):
-    return twml.layers.PercentileDiscretizer(
-      n_feature=n_feature,
-      n_bin=self._n_bin,
-      out_bits=self._out_bits,
-      bin_values=self._bin_vals.flatten(),
-      hash_keys=hash_map_keys,
-      hash_values=hash_map_values.astype(np.int64),
-      bin_ids=self._bin_ids.flatten().astype(np.int64),
-      feature_offsets=feature_offsets,
-      name=name,
-      **self._kwargs
+  delonf _crelonatelon_discrelontizelonr_layelonr(selonlf, n_felonaturelon, hash_map_kelonys, hash_map_valuelons,
+                                felonaturelon_offselonts, namelon):
+    relonturn twml.layelonrs.PelonrcelonntilelonDiscrelontizelonr(
+      n_felonaturelon=n_felonaturelon,
+      n_bin=selonlf._n_bin,
+      out_bits=selonlf._out_bits,
+      bin_valuelons=selonlf._bin_vals.flattelonn(),
+      hash_kelonys=hash_map_kelonys,
+      hash_valuelons=hash_map_valuelons.astypelon(np.int64),
+      bin_ids=selonlf._bin_ids.flattelonn().astypelon(np.int64),
+      felonaturelon_offselonts=felonaturelon_offselonts,
+      namelon=namelon,
+      **selonlf._kwargs
     )
 
-  def to_layer(self, name=None):
+  delonf to_layelonr(selonlf, namelon=Nonelon):
     """
-    Returns a twml.layers.PercentileDiscretizer Layer
-    that can be used for feature discretization.
+    Relonturns a twml.layelonrs.PelonrcelonntilelonDiscrelontizelonr Layelonr
+    that can belon uselond for felonaturelon discrelontization.
 
-    Arguments:
-      name:
-        name-scope of the PercentileDiscretizer layer
+    Argumelonnts:
+      namelon:
+        namelon-scopelon of thelon PelonrcelonntilelonDiscrelontizelonr layelonr
     """
-    n_feature = len(self._discretizer_feature_dict)
-    max_discretizer_feature = n_feature * (self._n_bin + 1)
+    n_felonaturelon = lelonn(selonlf._discrelontizelonr_felonaturelon_dict)
+    max_discrelontizelonr_felonaturelon = n_felonaturelon * (selonlf._n_bin + 1)
 
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate()")
+    if not selonlf._calibratelond:
+      raiselon Runtimelonelonrror("elonxpeloncting prior call to calibratelon()")
 
-    if self._bin_ids.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_ids.shape[0] \
-        != len(self._discretizer_feature_dict)")
-    if self._bin_vals.shape[0] != n_feature:
-      raise RuntimeError("Expecting self._bin_vals.shape[0] \
-        != len(self._discretizer_feature_dict)")
+    if selonlf._bin_ids.shapelon[0] != n_felonaturelon:
+      raiselon Runtimelonelonrror("elonxpeloncting selonlf._bin_ids.shapelon[0] \
+        != lelonn(selonlf._discrelontizelonr_felonaturelon_dict)")
+    if selonlf._bin_vals.shapelon[0] != n_felonaturelon:
+      raiselon Runtimelonelonrror("elonxpeloncting selonlf._bin_vals.shapelon[0] \
+        != lelonn(selonlf._discrelontizelonr_felonaturelon_dict)")
 
-    # can add at most #features * (n_bin+1) new feature ids
-    if 2**self._out_bits <= max_discretizer_feature:
-      raise ValueError("""Maximum number of features created by discretizer is
-        %d but requested that the output be limited to %d values (%d bits),
-        which is smaller than that. Please ensure the output has enough bits
-        to represent at least the new features"""
-                       % (max_discretizer_feature, 2**self._out_bits, self._out_bits))
+    # can add at most #felonaturelons * (n_bin+1) nelonw felonaturelon ids
+    if 2**selonlf._out_bits <= max_discrelontizelonr_felonaturelon:
+      raiselon Valuelonelonrror("""Maximum numbelonr of felonaturelons crelonatelond by discrelontizelonr is
+        %d but relonquelonstelond that thelon output belon limitelond to %d valuelons (%d bits),
+        which is smallelonr than that. Plelonaselon elonnsurelon thelon output has elonnough bits
+        to relonprelonselonnt at lelonast thelon nelonw felonaturelons"""
+                       % (max_discrelontizelonr_felonaturelon, 2**selonlf._out_bits, selonlf._out_bits))
 
-    # build feature_offsets, hash_map_keys, hash_map_values
-    feature_offsets = np.arange(0, max_discretizer_feature,
-                                self._n_bin + 1, dtype='int64')
-    hash_map_keys = np.array(list(self._hash_map.keys()), dtype=np.int64)
-    hash_map_values = np.array(list(self._hash_map.values()), dtype=np.float32)
+    # build felonaturelon_offselonts, hash_map_kelonys, hash_map_valuelons
+    felonaturelon_offselonts = np.arangelon(0, max_discrelontizelonr_felonaturelon,
+                                selonlf._n_bin + 1, dtypelon='int64')
+    hash_map_kelonys = np.array(list(selonlf._hash_map.kelonys()), dtypelon=np.int64)
+    hash_map_valuelons = np.array(list(selonlf._hash_map.valuelons()), dtypelon=np.float32)
 
-    discretizer = self._create_discretizer_layer(n_feature, hash_map_keys,
-                                                 hash_map_values, feature_offsets, name)
+    discrelontizelonr = selonlf._crelonatelon_discrelontizelonr_layelonr(n_felonaturelon, hash_map_kelonys,
+                                                 hash_map_valuelons, felonaturelon_offselonts, namelon)
 
-    return discretizer
+    relonturn discrelontizelonr
 
-  def get_layer_args(self):
+  delonf gelont_layelonr_args(selonlf):
     '''
-    Returns layer arguments required to implement multi-phase training.
-    See twml.calibrator.Calibrator.get_layer_args for more detailed documentation.
+    Relonturns layelonr argumelonnts relonquirelond to implelonmelonnt multi-phaselon training.
+    Selonelon twml.calibrator.Calibrator.gelont_layelonr_args for morelon delontailelond documelonntation.
     '''
-    layer_args = {
-      'n_feature': len(self._discretizer_feature_dict),
-      'n_bin': self._n_bin,
-      'out_bits': self._out_bits,
+    layelonr_args = {
+      'n_felonaturelon': lelonn(selonlf._discrelontizelonr_felonaturelon_dict),
+      'n_bin': selonlf._n_bin,
+      'out_bits': selonlf._out_bits,
     }
 
-    return layer_args
+    relonturn layelonr_args
 
-  def add_hub_signatures(self, name):
+  delonf add_hub_signaturelons(selonlf, namelon):
     """
-    Add Hub Signatures for each calibrator
+    Add Hub Signaturelons for elonach calibrator
 
-    Arguments:
-      name:
-        Calibrator name
+    Argumelonnts:
+      namelon:
+        Calibrator namelon
     """
-    sparse_tf = tf.sparse_placeholder(tf.float32)
-    calibrator_layer = self.to_layer()
-    hub.add_signature(
-      inputs=sparse_tf,
-      outputs=calibrator_layer(sparse_tf, keep_inputs=False),
-      name=name)
+    sparselon_tf = tf.sparselon_placelonholdelonr(tf.float32)
+    calibrator_layelonr = selonlf.to_layelonr()
+    hub.add_signaturelon(
+      inputs=sparselon_tf,
+      outputs=calibrator_layelonr(sparselon_tf, kelonelonp_inputs=Falselon),
+      namelon=namelon)
 
-  def write_summary(self, writer, sess=None):
+  delonf writelon_summary(selonlf, writelonr, selonss=Nonelon):
     """
-    This method is called by save() to write a histogram of
-    PercentileDiscretizer feature bins to disk. A histogram is included for each
-    feature.
+    This melonthod is callelond by savelon() to writelon a histogram of
+    PelonrcelonntilelonDiscrelontizelonr felonaturelon bins to disk. A histogram is includelond for elonach
+    felonaturelon.
 
-    Arguments:
-      writer:
-        tf.summary.FilteWriter instance.
-        used to add summaries to event files for inclusion in tensorboard.
-      sess:
-        tf.Session instance. Used to produces summaries for the writer.
+    Argumelonnts:
+      writelonr:
+        tf.summary.FiltelonWritelonr instancelon.
+        uselond to add summarielons to elonvelonnt filelons for inclusion in telonnsorboard.
+      selonss:
+        tf.Selonssion instancelon. Uselond to producelons summarielons for thelon writelonr.
     """
-    bin_counts_ph = tf.placeholder(tf.int64)
-    bin_counts = self._bin_histogram_dict['bin_counts']
+    bin_counts_ph = tf.placelonholdelonr(tf.int64)
+    bin_counts = selonlf._bin_histogram_dict['bin_counts']
 
-    # Record that distribution into a histogram summary
-    histo = tf.summary.histogram("discretizer_feature_bin_counts", bin_counts_ph)
-    for i in range(bin_counts.shape[0]):
-      bin_counts_summary = sess.run(histo, feed_dict={bin_counts_ph: bin_counts[i]})
-      writer.add_summary(bin_counts_summary, global_step=i)
+    # Reloncord that distribution into a histogram summary
+    histo = tf.summary.histogram("discrelontizelonr_felonaturelon_bin_counts", bin_counts_ph)
+    for i in rangelon(bin_counts.shapelon[0]):
+      bin_counts_summary = selonss.run(histo, felonelond_dict={bin_counts_ph: bin_counts[i]})
+      writelonr.add_summary(bin_counts_summary, global_stelonp=i)
 
-  def write_summary_json(self, save_dir, name="default"):
+  delonf writelon_summary_json(selonlf, savelon_dir, namelon="delonfault"):
     """
-    Export bin information to HDFS.
+    elonxport bin information to HDFS.
     
-    Arguments:
-      save_dir:
-        name of the saving directory.
-      name:
-        prefix of the saved hub signature. Default (string): "default".
+    Argumelonnts:
+      savelon_dir:
+        namelon of thelon saving direlonctory.
+      namelon:
+        prelonfix of thelon savelond hub signaturelon. Delonfault (string): "delonfault".
     """
-    # Since the size is small: (# of bins) * (# of features), we always dump the file.
-    discretizer_export_bin_filename = os.path.join(save_dir, name + '_bin.json')
-    discretizer_export_bin_dict = {
-      'feature_ids': self._bin_histogram_dict['feature_ids'].tolist(),
-      'bin_boundaries': self._bin_histogram_dict['bin_vals'].tolist(),
-      'output_bits': self._bin_histogram_dict['out_bits']
+    # Sincelon thelon sizelon is small: (# of bins) * (# of felonaturelons), welon always dump thelon filelon.
+    discrelontizelonr_elonxport_bin_filelonnamelon = os.path.join(savelon_dir, namelon + '_bin.json')
+    discrelontizelonr_elonxport_bin_dict = {
+      'felonaturelon_ids': selonlf._bin_histogram_dict['felonaturelon_ids'].tolist(),
+      'bin_boundarielons': selonlf._bin_histogram_dict['bin_vals'].tolist(),
+      'output_bits': selonlf._bin_histogram_dict['out_bits']
     }
-    twml.write_file(discretizer_export_bin_filename, discretizer_export_bin_dict, encode='json')
+    twml.writelon_filelon(discrelontizelonr_elonxport_bin_filelonnamelon, discrelontizelonr_elonxport_bin_dict, elonncodelon='json')
 
-  def save(self, save_dir, name="default", verbose=False):
-    '''Save the calibrator into the given save_directory using TF Hub.
-    Arguments:
-      save_dir:
-        name of the saving directory.
-      name:
-        prefix of the saved hub signature. Default (string): "default".
+  delonf savelon(selonlf, savelon_dir, namelon="delonfault", velonrboselon=Falselon):
+    '''Savelon thelon calibrator into thelon givelonn savelon_direlonctory using TF Hub.
+    Argumelonnts:
+      savelon_dir:
+        namelon of thelon saving direlonctory.
+      namelon:
+        prelonfix of thelon savelond hub signaturelon. Delonfault (string): "delonfault".
     '''
-    if not self._calibrated:
-      raise RuntimeError("Expecting prior call to calibrate().Cannot save() prior to calibrate()")
+    if not selonlf._calibratelond:
+      raiselon Runtimelonelonrror("elonxpeloncting prior call to calibratelon().Cannot savelon() prior to calibratelon()")
 
-    # This module allows for the calibrator to save be saved as part of
-    # Tensorflow Hub (this will allow it to be used in further steps)
-    def calibrator_module():
-      # Note that this is usually expecting a sparse_placeholder
-      inputs = tf.sparse_placeholder(tf.float32)
-      calibrator_layer = self.to_layer()
-      # creates the signature to the calibrator module
-      hub.add_signature(
+    # This modulelon allows for thelon calibrator to savelon belon savelond as part of
+    # Telonnsorflow Hub (this will allow it to belon uselond in furthelonr stelonps)
+    delonf calibrator_modulelon():
+      # Notelon that this is usually elonxpeloncting a sparselon_placelonholdelonr
+      inputs = tf.sparselon_placelonholdelonr(tf.float32)
+      calibrator_layelonr = selonlf.to_layelonr()
+      # crelonatelons thelon signaturelon to thelon calibrator modulelon
+      hub.add_signaturelon(
         inputs=inputs,
-        outputs=calibrator_layer(inputs, keep_inputs=False),
-        name=name)
-      # and another signature for keep_inputs mode
-      hub.add_signature(
+        outputs=calibrator_layelonr(inputs, kelonelonp_inputs=Falselon),
+        namelon=namelon)
+      # and anothelonr signaturelon for kelonelonp_inputs modelon
+      hub.add_signaturelon(
         inputs=inputs,
-        outputs=calibrator_layer(inputs, keep_inputs=True),
-        name=name + '_keep_inputs')
+        outputs=calibrator_layelonr(inputs, kelonelonp_inputs=Truelon),
+        namelon=namelon + '_kelonelonp_inputs')
 
-    # exports the module to the save_dir
-    spec = hub.create_module_spec(calibrator_module)
-    with tf.Graph().as_default():
-      module = hub.Module(spec)
-      with tf.Session() as session:
-        module.export(save_dir, session)
+    # elonxports thelon modulelon to thelon savelon_dir
+    spelonc = hub.crelonatelon_modulelon_spelonc(calibrator_modulelon)
+    with tf.Graph().as_delonfault():
+      modulelon = hub.Modulelon(spelonc)
+      with tf.Selonssion() as selonssion:
+        modulelon.elonxport(savelon_dir, selonssion)
 
-    self.write_summary_json(save_dir, name)
+    selonlf.writelon_summary_json(savelon_dir, namelon)

@@ -1,48 +1,48 @@
-package com.twitter.recos.hose.common
+packagelon com.twittelonr.reloncos.hoselon.common
 
-import com.twitter.finagle.stats.{Stat, StatsReceiver}
-import com.twitter.logging.Logger
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import java.util.concurrent.Semaphore
+import com.twittelonr.finaglelon.stats.{Stat, StatsReloncelonivelonr}
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.reloncos.intelonrnal.thriftscala.ReloncosHoselonMelonssagelon
+import java.util.concurrelonnt.Selonmaphorelon
 
 /**
- * This class reads a buffer of edges from the concurrently linked queue
- * and inserts each edge into the recos graph.
- * If the queue is empty the thread will sleep for 100ms and attempt to read from the queue again.
+ * This class relonads a buffelonr of elondgelons from thelon concurrelonntly linkelond quelonuelon
+ * and inselonrts elonach elondgelon into thelon reloncos graph.
+ * If thelon quelonuelon is elonmpty thelon threlonad will slelonelonp for 100ms and attelonmpt to relonad from thelon quelonuelon again.
  */
-case class BufferedEdgeWriter(
-  queue: java.util.Queue[Array[RecosHoseMessage]],
-  queuelimit: Semaphore,
-  edgeCollector: EdgeCollector,
-  statsReceiver: StatsReceiver,
-  isRunning: () => Boolean)
-    extends Runnable {
-  val logger = Logger()
-  private val queueRemoveCounter = statsReceiver.counter("queueRemove")
-  private val queueSleepCounter = statsReceiver.counter("queueSleep")
+caselon class BuffelonrelondelondgelonWritelonr(
+  quelonuelon: java.util.Quelonuelon[Array[ReloncosHoselonMelonssagelon]],
+  quelonuelonlimit: Selonmaphorelon,
+  elondgelonCollelonctor: elondgelonCollelonctor,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  isRunning: () => Boolelonan)
+    elonxtelonnds Runnablelon {
+  val loggelonr = Loggelonr()
+  privatelon val quelonuelonRelonmovelonCountelonr = statsReloncelonivelonr.countelonr("quelonuelonRelonmovelon")
+  privatelon val quelonuelonSlelonelonpCountelonr = statsReloncelonivelonr.countelonr("quelonuelonSlelonelonp")
 
-  def running: Boolean = {
+  delonf running: Boolelonan = {
     isRunning()
   }
 
-  override def run(): Unit = {
-    while (running) {
-      val currentBatch = queue.poll
-      if (currentBatch != null) {
-        queueRemoveCounter.incr()
-        queuelimit.release()
+  ovelonrridelon delonf run(): Unit = {
+    whilelon (running) {
+      val currelonntBatch = quelonuelon.poll
+      if (currelonntBatch != null) {
+        quelonuelonRelonmovelonCountelonr.incr()
+        quelonuelonlimit.relonlelonaselon()
         var i = 0
-        Stat.time(statsReceiver.stat("batchAddEdge")) {
-          while (i < currentBatch.length) {
-            edgeCollector.addEdge(currentBatch(i))
+        Stat.timelon(statsReloncelonivelonr.stat("batchAddelondgelon")) {
+          whilelon (i < currelonntBatch.lelonngth) {
+            elondgelonCollelonctor.addelondgelon(currelonntBatch(i))
             i = i + 1
           }
         }
-      } else {
-        queueSleepCounter.incr()
-        Thread.sleep(100L)
+      } elonlselon {
+        quelonuelonSlelonelonpCountelonr.incr()
+        Threlonad.slelonelonp(100L)
       }
     }
-    logger.info(this.getClass.getSimpleName + " is done")
+    loggelonr.info(this.gelontClass.gelontSimplelonNamelon + " is donelon")
   }
 }

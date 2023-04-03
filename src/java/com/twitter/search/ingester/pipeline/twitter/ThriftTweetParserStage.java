@@ -1,178 +1,178 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-import javax.naming.NamingException;
+import javax.annotation.Nullablelon;
+import javax.naming.Namingelonxcelonption;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelondTypelons;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.twitter.thriftparse.ThriftTweetParsingException;
-import com.twitter.search.ingester.pipeline.twitter.thriftparse.TweetEventParseHelper;
-import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
-import com.twitter.tweetypie.thriftjava.TweetDeleteEvent;
-import com.twitter.tweetypie.thriftjava.TweetEventData;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.delonbug.thriftjava.Delonbugelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwelonelontelonvelonnt;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.thriftparselon.ThriftTwelonelontParsingelonxcelonption;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.thriftparselon.TwelonelontelonvelonntParselonHelonlpelonr;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontCrelonatelonelonvelonnt;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontDelonlelontelonelonvelonnt;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontelonvelonntData;
 
-@ConsumedTypes(IngesterTweetEvent.class)
-@ProducedTypes(IngesterTwitterMessage.class)
-public class ThriftTweetParserStage extends TwitterBaseStage<IngesterTweetEvent, TwitterMessage> {
-  private static final Logger LOG = LoggerFactory.getLogger(ThriftTweetParserStage.class);
+@ConsumelondTypelons(IngelonstelonrTwelonelontelonvelonnt.class)
+@ProducelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+public class ThriftTwelonelontParselonrStagelon elonxtelonnds TwittelonrBaselonStagelon<IngelonstelonrTwelonelontelonvelonnt, TwittelonrMelonssagelon> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ThriftTwelonelontParselonrStagelon.class);
 
-  // TweetEventData is a union of all possible tweet event types. TweetEventData._Fields is an enum
-  // that corresponds to the fields in that union. So essentially, TweetEventData._Fields tells us
-  // which tweet event we're getting inside TweetEventData. We want to keep track of how many tweet
-  // events of each type we're getting.
-  private final Map<TweetEventData._Fields, SearchCounter> tweetEventCounters =
-      Maps.newEnumMap(TweetEventData._Fields.class);
+  // TwelonelontelonvelonntData is a union of all possiblelon twelonelont elonvelonnt typelons. TwelonelontelonvelonntData._Fielonlds is an elonnum
+  // that correlonsponds to thelon fielonlds in that union. So elonsselonntially, TwelonelontelonvelonntData._Fielonlds telonlls us
+  // which twelonelont elonvelonnt welon'relon gelontting insidelon TwelonelontelonvelonntData. Welon want to kelonelonp track of how many twelonelont
+  // elonvelonnts of elonach typelon welon'relon gelontting.
+  privatelon final Map<TwelonelontelonvelonntData._Fielonlds, SelonarchCountelonr> twelonelontelonvelonntCountelonrs =
+      Maps.nelonwelonnumMap(TwelonelontelonvelonntData._Fielonlds.class);
 
-  private final List<String> tweetCreateEventBranches = Lists.newArrayList();
-  private final List<String> tweetDeleteEventBranches = Lists.newArrayList();
+  privatelon final List<String> twelonelontCrelonatelonelonvelonntBranchelons = Lists.nelonwArrayList();
+  privatelon final List<String> twelonelontDelonlelontelonelonvelonntBranchelons = Lists.nelonwArrayList();
 
-  private boolean shouldIndexProtectedTweets;
-  private SearchCounter totalEventsCount;
-  private SearchCounter thriftParsingErrorsCount;
+  privatelon boolelonan shouldIndelonxProtelonctelondTwelonelonts;
+  privatelon SelonarchCountelonr totalelonvelonntsCount;
+  privatelon SelonarchCountelonr thriftParsingelonrrorsCount;
 
-  private List<PenguinVersion> supportedPenguinVersions;
+  privatelon List<PelonnguinVelonrsion> supportelondPelonnguinVelonrsions;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
 
-    for (TweetEventData._Fields field : TweetEventData._Fields.values()) {
-      tweetEventCounters.put(
-          field,
-          this.makeStageCounter(field.name().toLowerCase() + "_count"));
+    for (TwelonelontelonvelonntData._Fielonlds fielonld : TwelonelontelonvelonntData._Fielonlds.valuelons()) {
+      twelonelontelonvelonntCountelonrs.put(
+          fielonld,
+          this.makelonStagelonCountelonr(fielonld.namelon().toLowelonrCaselon() + "_count"));
     }
-    totalEventsCount = this.makeStageCounter("total_events_count");
-    thriftParsingErrorsCount = this.makeStageCounter("thrift_parsing_errors_count");
+    totalelonvelonntsCount = this.makelonStagelonCountelonr("total_elonvelonnts_count");
+    thriftParsingelonrrorsCount = this.makelonStagelonCountelonr("thrift_parsing_elonrrors_count");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    supportedPenguinVersions = wireModule.getPenguinVersions();
-    LOG.info("Supported penguin versions: {}", supportedPenguinVersions);
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    supportelondPelonnguinVelonrsions = wirelonModulelon.gelontPelonnguinVelonrsions();
+    LOG.info("Supportelond pelonnguin velonrsions: {}", supportelondPelonnguinVelonrsions);
 
-    shouldIndexProtectedTweets = earlybirdCluster == EarlybirdCluster.PROTECTED
-        || earlybirdCluster == EarlybirdCluster.REALTIME_CG;
+    shouldIndelonxProtelonctelondTwelonelonts = elonarlybirdClustelonr == elonarlybirdClustelonr.PROTelonCTelonD
+        || elonarlybirdClustelonr == elonarlybirdClustelonr.RelonALTIMelon_CG;
 
-    Preconditions.checkState(!tweetDeleteEventBranches.isEmpty(),
-                             "At least one delete branch must be specified.");
+    Prelonconditions.chelonckStatelon(!twelonelontDelonlelontelonelonvelonntBranchelons.iselonmpty(),
+                             "At lelonast onelon delonlelontelon branch must belon speloncifielond.");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof TweetEventData || obj instanceof IngesterTweetEvent)) {
-      LOG.error("Object is not a TweetEventData or IngesterTweetEvent: {}", obj);
-      throw new StageException(this, "Object is not a TweetEventData or IngesterTweetEvent");
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof TwelonelontelonvelonntData || obj instancelonof IngelonstelonrTwelonelontelonvelonnt)) {
+      LOG.elonrror("Objelonct is not a TwelonelontelonvelonntData or IngelonstelonrTwelonelontelonvelonnt: {}", obj);
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not a TwelonelontelonvelonntData or IngelonstelonrTwelonelontelonvelonnt");
     }
 
-    supportedPenguinVersions = wireModule.getCurrentlyEnabledPenguinVersions();
+    supportelondPelonnguinVelonrsions = wirelonModulelon.gelontCurrelonntlyelonnablelondPelonnguinVelonrsions();
 
     try {
-      IngesterTweetEvent ingesterTweetEvent = (IngesterTweetEvent) obj;
-      TweetEventData tweetEventData = ingesterTweetEvent.getData();
-      DebugEvents debugEvents = ingesterTweetEvent.getDebugEvents();
+      IngelonstelonrTwelonelontelonvelonnt ingelonstelonrTwelonelontelonvelonnt = (IngelonstelonrTwelonelontelonvelonnt) obj;
+      TwelonelontelonvelonntData twelonelontelonvelonntData = ingelonstelonrTwelonelontelonvelonnt.gelontData();
+      Delonbugelonvelonnts delonbugelonvelonnts = ingelonstelonrTwelonelontelonvelonnt.gelontDelonbugelonvelonnts();
 
-      // Determine if the message is a tweet delete event before the next stages mutate it.
-      IngesterTwitterMessage message = getTwitterMessage(tweetEventData, debugEvents);
-      boolean shouldEmitMessage = message != null
-          && message.isIndexable(shouldIndexProtectedTweets);
+      // Delontelonrminelon if thelon melonssagelon is a twelonelont delonlelontelon elonvelonnt belonforelon thelon nelonxt stagelons mutatelon it.
+      IngelonstelonrTwittelonrMelonssagelon melonssagelon = gelontTwittelonrMelonssagelon(twelonelontelonvelonntData, delonbugelonvelonnts);
+      boolelonan shouldelonmitMelonssagelon = melonssagelon != null
+          && melonssagelon.isIndelonxablelon(shouldIndelonxProtelonctelondTwelonelonts);
 
-      if (shouldEmitMessage) {
-        if (!message.isDeleted()) {
-          emitAndCount(message);
+      if (shouldelonmitMelonssagelon) {
+        if (!melonssagelon.isDelonlelontelond()) {
+          elonmitAndCount(melonssagelon);
 
-          for (String tweetCreateEventBranch : tweetCreateEventBranches) {
-            // If we need to send the message to another branch, we need to make a copy.
-            // Otherwise, we'll have multiple stages mutating the same object in parallel.
-            IngesterTwitterMessage tweetCreateEventBranchMessage =
-                getTwitterMessage(tweetEventData, debugEvents);
-            emitToBranchAndCount(tweetCreateEventBranch, tweetCreateEventBranchMessage);
+          for (String twelonelontCrelonatelonelonvelonntBranch : twelonelontCrelonatelonelonvelonntBranchelons) {
+            // If welon nelonelond to selonnd thelon melonssagelon to anothelonr branch, welon nelonelond to makelon a copy.
+            // Othelonrwiselon, welon'll havelon multiplelon stagelons mutating thelon samelon objelonct in parallelonl.
+            IngelonstelonrTwittelonrMelonssagelon twelonelontCrelonatelonelonvelonntBranchMelonssagelon =
+                gelontTwittelonrMelonssagelon(twelonelontelonvelonntData, delonbugelonvelonnts);
+            elonmitToBranchAndCount(twelonelontCrelonatelonelonvelonntBranch, twelonelontCrelonatelonelonvelonntBranchMelonssagelon);
           }
-        } else {
-          for (String tweetDeleteEventBranch : tweetDeleteEventBranches) {
-            // If we need to send the message to another branch, we need to make a copy.
-            // Otherwise, we'll have multiple stages mutating the same object in parallel.
-            IngesterTwitterMessage tweetDeleteEventBranchMessage =
-                getTwitterMessage(tweetEventData, debugEvents);
-            emitToBranchAndCount(tweetDeleteEventBranch, tweetDeleteEventBranchMessage);
+        } elonlselon {
+          for (String twelonelontDelonlelontelonelonvelonntBranch : twelonelontDelonlelontelonelonvelonntBranchelons) {
+            // If welon nelonelond to selonnd thelon melonssagelon to anothelonr branch, welon nelonelond to makelon a copy.
+            // Othelonrwiselon, welon'll havelon multiplelon stagelons mutating thelon samelon objelonct in parallelonl.
+            IngelonstelonrTwittelonrMelonssagelon twelonelontDelonlelontelonelonvelonntBranchMelonssagelon =
+                gelontTwittelonrMelonssagelon(twelonelontelonvelonntData, delonbugelonvelonnts);
+            elonmitToBranchAndCount(twelonelontDelonlelontelonelonvelonntBranch, twelonelontDelonlelontelonelonvelonntBranchMelonssagelon);
           }
         }
       }
-    } catch (ThriftTweetParsingException e) {
-      thriftParsingErrorsCount.increment();
-      LOG.error("Failed to parse Thrift tweet event: " + obj, e);
-      throw new StageException(this, e);
+    } catch (ThriftTwelonelontParsingelonxcelonption elon) {
+      thriftParsingelonrrorsCount.increlonmelonnt();
+      LOG.elonrror("Failelond to parselon Thrift twelonelont elonvelonnt: " + obj, elon);
+      throw nelonw Stagelonelonxcelonption(this, elon);
     }
   }
 
-  @Nullable
-  private IngesterTwitterMessage getTwitterMessage(
-      @Nonnull TweetEventData tweetEventData,
-      @Nullable DebugEvents debugEvents)
-      throws ThriftTweetParsingException {
-    totalEventsCount.increment();
+  @Nullablelon
+  privatelon IngelonstelonrTwittelonrMelonssagelon gelontTwittelonrMelonssagelon(
+      @Nonnull TwelonelontelonvelonntData twelonelontelonvelonntData,
+      @Nullablelon Delonbugelonvelonnts delonbugelonvelonnts)
+      throws ThriftTwelonelontParsingelonxcelonption {
+    totalelonvelonntsCount.increlonmelonnt();
 
-    // TweetEventData is a union of all possible tweet event types. TweetEventData._Fields is an
-    // enum that corresponds to all TweetEventData fields. By calling TweetEventData.getSetField(),
-    // we can determine which field is set.
-    TweetEventData._Fields tweetEventDataField = tweetEventData.getSetField();
-    Preconditions.checkNotNull(tweetEventDataField);
-    tweetEventCounters.get(tweetEventDataField).increment();
+    // TwelonelontelonvelonntData is a union of all possiblelon twelonelont elonvelonnt typelons. TwelonelontelonvelonntData._Fielonlds is an
+    // elonnum that correlonsponds to all TwelonelontelonvelonntData fielonlds. By calling TwelonelontelonvelonntData.gelontSelontFielonld(),
+    // welon can delontelonrminelon which fielonld is selont.
+    TwelonelontelonvelonntData._Fielonlds twelonelontelonvelonntDataFielonld = twelonelontelonvelonntData.gelontSelontFielonld();
+    Prelonconditions.chelonckNotNull(twelonelontelonvelonntDataFielonld);
+    twelonelontelonvelonntCountelonrs.gelont(twelonelontelonvelonntDataFielonld).increlonmelonnt();
 
-    if (tweetEventDataField == TweetEventData._Fields.TWEET_CREATE_EVENT) {
-      TweetCreateEvent tweetCreateEvent = tweetEventData.getTweet_create_event();
-      return TweetEventParseHelper.getTwitterMessageFromCreationEvent(
-          tweetCreateEvent, supportedPenguinVersions, debugEvents);
+    if (twelonelontelonvelonntDataFielonld == TwelonelontelonvelonntData._Fielonlds.TWelonelonT_CRelonATelon_elonVelonNT) {
+      TwelonelontCrelonatelonelonvelonnt twelonelontCrelonatelonelonvelonnt = twelonelontelonvelonntData.gelontTwelonelont_crelonatelon_elonvelonnt();
+      relonturn TwelonelontelonvelonntParselonHelonlpelonr.gelontTwittelonrMelonssagelonFromCrelonationelonvelonnt(
+          twelonelontCrelonatelonelonvelonnt, supportelondPelonnguinVelonrsions, delonbugelonvelonnts);
     }
-    if (tweetEventDataField == TweetEventData._Fields.TWEET_DELETE_EVENT) {
-      TweetDeleteEvent tweetDeleteEvent = tweetEventData.getTweet_delete_event();
-      return TweetEventParseHelper.getTwitterMessageFromDeletionEvent(
-          tweetDeleteEvent, supportedPenguinVersions, debugEvents);
+    if (twelonelontelonvelonntDataFielonld == TwelonelontelonvelonntData._Fielonlds.TWelonelonT_DelonLelonTelon_elonVelonNT) {
+      TwelonelontDelonlelontelonelonvelonnt twelonelontDelonlelontelonelonvelonnt = twelonelontelonvelonntData.gelontTwelonelont_delonlelontelon_elonvelonnt();
+      relonturn TwelonelontelonvelonntParselonHelonlpelonr.gelontTwittelonrMelonssagelonFromDelonlelontionelonvelonnt(
+          twelonelontDelonlelontelonelonvelonnt, supportelondPelonnguinVelonrsions, delonbugelonvelonnts);
     }
-    return null;
+    relonturn null;
   }
 
   /**
-   * Sets the branches to which all TweetDeleteEvents should be emitted.
+   * Selonts thelon branchelons to which all TwelonelontDelonlelontelonelonvelonnts should belon elonmittelond.
    *
-   * @param tweetDeleteEventBranchNames A comma-separated list of branches.
+   * @param twelonelontDelonlelontelonelonvelonntBranchNamelons A comma-selonparatelond list of branchelons.
    */
-  public void setTweetDeleteEventBranchNames(String tweetDeleteEventBranchNames) {
-    parseBranches(tweetDeleteEventBranchNames, tweetDeleteEventBranches);
+  public void selontTwelonelontDelonlelontelonelonvelonntBranchNamelons(String twelonelontDelonlelontelonelonvelonntBranchNamelons) {
+    parselonBranchelons(twelonelontDelonlelontelonelonvelonntBranchNamelons, twelonelontDelonlelontelonelonvelonntBranchelons);
   }
 
   /**
-   * Sets the additional branches to which all TweetCreateEvents should be emitted.
+   * Selonts thelon additional branchelons to which all TwelonelontCrelonatelonelonvelonnts should belon elonmittelond.
    *
-   * @param tweetCreateEventBranchNames A comma-separated list of branches.
+   * @param twelonelontCrelonatelonelonvelonntBranchNamelons A comma-selonparatelond list of branchelons.
    */
-  public void setTweetCreateEventBranchNames(String tweetCreateEventBranchNames) {
-    parseBranches(tweetCreateEventBranchNames, tweetCreateEventBranches);
+  public void selontTwelonelontCrelonatelonelonvelonntBranchNamelons(String twelonelontCrelonatelonelonvelonntBranchNamelons) {
+    parselonBranchelons(twelonelontCrelonatelonelonvelonntBranchNamelons, twelonelontCrelonatelonelonvelonntBranchelons);
   }
 
-  private void parseBranches(String branchNames, List<String> branches) {
-    branches.clear();
-    for (String branch : branchNames.split(",")) {
-      String trimmedBranch = branch.trim();
-      Preconditions.checkState(!trimmedBranch.isEmpty(), "Branches cannot be empty strings.");
-      branches.add(trimmedBranch);
+  privatelon void parselonBranchelons(String branchNamelons, List<String> branchelons) {
+    branchelons.clelonar();
+    for (String branch : branchNamelons.split(",")) {
+      String trimmelondBranch = branch.trim();
+      Prelonconditions.chelonckStatelon(!trimmelondBranch.iselonmpty(), "Branchelons cannot belon elonmpty strings.");
+      branchelons.add(trimmelondBranch);
     }
   }
 }

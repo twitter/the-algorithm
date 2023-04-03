@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.adserver.thriftscala.AdRequestParams
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.ad.AdsCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.decider.DeciderParam
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.adselonrvelonr.thriftscala.AdImprelonssion
+import com.twittelonr.adselonrvelonr.thriftscala.AdRelonquelonstParams
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.UrtItelonmCandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.ad.AdsCandidatelonUrtItelonmBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads.AdsQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.BaselonGatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrParam
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class AdsDependentCandidatePipelineConfigBuilder @Inject() () {
+@Singlelonton
+class AdsDelonpelonndelonntCandidatelonPipelonlinelonConfigBuildelonr @Injelonct() () {
 
   /**
-   * Build a AdsDependentCandidatePipelineConfig
+   * Build a AdsDelonpelonndelonntCandidatelonPipelonlinelonConfig
    */
-  def build[Query <: PipelineQuery with AdsQuery](
-    adsCandidateSource: CandidateSource[AdRequestParams, AdImpression],
-    identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("Ads"),
-    adsDisplayLocationBuilder: AdsDisplayLocationBuilder[Query],
-    getOrganicItemIds: GetOrganicItemIds = EmptyOrganicItemIds,
-    countNumOrganicItems: CountNumOrganicItems[Query] = CountAllCandidates,
-    enabledDeciderParam: Option[DeciderParam[Boolean]] = None,
-    supportedClientParam: Option[FSParam[Boolean]] = None,
-    gates: Seq[BaseGate[Query]] = Seq.empty,
-    filters: Seq[Filter[Query, AdsCandidate]] = Seq.empty,
-    postFilterFeatureHydration: Seq[BaseCandidateFeatureHydrator[Query, AdsCandidate, _]] =
-      Seq.empty,
-    decorator: Option[CandidateDecorator[Query, AdsCandidate]] =
-      Some(UrtItemCandidateDecorator(AdsCandidateUrtItemBuilder())),
-    alerts: Seq[Alert] = Seq.empty,
-    urtRequest: Option[Boolean] = None,
-  ): AdsDependentCandidatePipelineConfig[Query] = new AdsDependentCandidatePipelineConfig[Query](
-    identifier = identifier,
-    enabledDeciderParam = enabledDeciderParam,
-    supportedClientParam = supportedClientParam,
-    gates = gates,
-    candidateSource = adsCandidateSource,
-    filters = filters,
-    postFilterFeatureHydration = postFilterFeatureHydration,
-    decorator = decorator,
-    alerts = alerts,
-    adsDisplayLocationBuilder = adsDisplayLocationBuilder,
-    getOrganicItemIds = getOrganicItemIds,
-    countNumOrganicItems = countNumOrganicItems,
-    urtRequest = urtRequest)
+  delonf build[Quelonry <: PipelonlinelonQuelonry with AdsQuelonry](
+    adsCandidatelonSourcelon: CandidatelonSourcelon[AdRelonquelonstParams, AdImprelonssion],
+    idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr = CandidatelonPipelonlinelonIdelonntifielonr("Ads"),
+    adsDisplayLocationBuildelonr: AdsDisplayLocationBuildelonr[Quelonry],
+    gelontOrganicItelonmIds: GelontOrganicItelonmIds = elonmptyOrganicItelonmIds,
+    countNumOrganicItelonms: CountNumOrganicItelonms[Quelonry] = CountAllCandidatelons,
+    elonnablelondDeloncidelonrParam: Option[DeloncidelonrParam[Boolelonan]] = Nonelon,
+    supportelondClielonntParam: Option[FSParam[Boolelonan]] = Nonelon,
+    gatelons: Selonq[BaselonGatelon[Quelonry]] = Selonq.elonmpty,
+    filtelonrs: Selonq[Filtelonr[Quelonry, AdsCandidatelon]] = Selonq.elonmpty,
+    postFiltelonrFelonaturelonHydration: Selonq[BaselonCandidatelonFelonaturelonHydrator[Quelonry, AdsCandidatelon, _]] =
+      Selonq.elonmpty,
+    deloncorator: Option[CandidatelonDeloncorator[Quelonry, AdsCandidatelon]] =
+      Somelon(UrtItelonmCandidatelonDeloncorator(AdsCandidatelonUrtItelonmBuildelonr())),
+    alelonrts: Selonq[Alelonrt] = Selonq.elonmpty,
+    urtRelonquelonst: Option[Boolelonan] = Nonelon,
+  ): AdsDelonpelonndelonntCandidatelonPipelonlinelonConfig[Quelonry] = nelonw AdsDelonpelonndelonntCandidatelonPipelonlinelonConfig[Quelonry](
+    idelonntifielonr = idelonntifielonr,
+    elonnablelondDeloncidelonrParam = elonnablelondDeloncidelonrParam,
+    supportelondClielonntParam = supportelondClielonntParam,
+    gatelons = gatelons,
+    candidatelonSourcelon = adsCandidatelonSourcelon,
+    filtelonrs = filtelonrs,
+    postFiltelonrFelonaturelonHydration = postFiltelonrFelonaturelonHydration,
+    deloncorator = deloncorator,
+    alelonrts = alelonrts,
+    adsDisplayLocationBuildelonr = adsDisplayLocationBuildelonr,
+    gelontOrganicItelonmIds = gelontOrganicItelonmIds,
+    countNumOrganicItelonms = countNumOrganicItelonms,
+    urtRelonquelonst = urtRelonquelonst)
 }

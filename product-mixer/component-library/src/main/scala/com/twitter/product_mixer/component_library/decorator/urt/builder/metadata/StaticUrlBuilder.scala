@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrlType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonUrlBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.UrlTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class StaticUrlBuilder(url: String, urlType: UrlType)
-    extends BaseUrlBuilder[PipelineQuery, UniversalNoun[Any]] {
+caselon class StaticUrlBuildelonr(url: String, urlTypelon: UrlTypelon)
+    elonxtelonnds BaselonUrlBuildelonr[PipelonlinelonQuelonry, UnivelonrsalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Url = Url(url = url, urlType = urlType)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: UnivelonrsalNoun[Any],
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Url = Url(url = url, urlTypelon = urlTypelon)
 }

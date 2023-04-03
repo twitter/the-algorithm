@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.functional_component.filter
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr
 
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.home_mixer.util.TweetImpressionsHelper
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.homelon_mixelonr.util.TwelonelontImprelonssionsHelonlpelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Filter out users' previously seen tweets from 2 sources:
- * 1. Heron Topology Impression Store in Memcache;
- * 2. Manhattan Impression Store;
+ * Filtelonr out uselonrs' prelonviously selonelonn twelonelonts from 2 sourcelons:
+ * 1. Helonron Topology Imprelonssion Storelon in Melonmcachelon;
+ * 2. Manhattan Imprelonssion Storelon;
  */
-object PreviouslySeenTweetsFilter extends Filter[PipelineQuery, TweetCandidate] {
+objelonct PrelonviouslySelonelonnTwelonelontsFiltelonr elonxtelonnds Filtelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("PreviouslySeenTweets")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("PrelonviouslySelonelonnTwelonelonts")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[TwelonelontCandidatelon]] = {
 
-    val seenTweetIds =
-      query.features.map(TweetImpressionsHelper.tweetImpressions).getOrElse(Set.empty)
+    val selonelonnTwelonelontIds =
+      quelonry.felonaturelons.map(TwelonelontImprelonssionsHelonlpelonr.twelonelontImprelonssions).gelontOrelonlselon(Selont.elonmpty)
 
-    val (removed, kept) = candidates.partition { candidate =>
-      val tweetIdAndSourceId = CandidatesUtil.getTweetIdAndSourceId(candidate)
-      tweetIdAndSourceId.exists(seenTweetIds.contains)
+    val (relonmovelond, kelonpt) = candidatelons.partition { candidatelon =>
+      val twelonelontIdAndSourcelonId = CandidatelonsUtil.gelontTwelonelontIdAndSourcelonId(candidatelon)
+      twelonelontIdAndSourcelonId.elonxists(selonelonnTwelonelontIds.contains)
     }
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonpt.map(_.candidatelon), relonmovelond = relonmovelond.map(_.candidatelon)))
   }
 }

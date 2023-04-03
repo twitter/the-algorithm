@@ -1,700 +1,700 @@
-package com.twitter.product_mixer.core.service
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon
 
-import com.twitter.finagle.stats.BroadcastStatsReceiver
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.DefaultStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Annotation
-import com.twitter.finagle.tracing.Record
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.tracing.TraceId
-import com.twitter.finagle.tracing.TraceServiceName
-import com.twitter.finagle.tracing.Tracing.LocalBeginAnnotation
-import com.twitter.finagle.tracing.Tracing.LocalEndAnnotation
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.FeatureHydrationFailed
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MisconfiguredFeatureMapFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UncategorizedServerFailure
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor.AlwaysFailOpenIncludingProgrammerErrors
-import com.twitter.product_mixer.core.service.Executor.Context
-import com.twitter.product_mixer.core.service.Executor.TracingConfig
-import com.twitter.product_mixer.core.service.Executor.toPipelineFailureWithComponentIdentifierStack
-import com.twitter.servo.util.CancelledExceptionExtractor
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.Stitch.Letter
-import com.twitter.util.Duration
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
-import com.twitter.util.Try
+import com.twittelonr.finaglelon.stats.BroadcastStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.Countelonr
+import com.twittelonr.finaglelon.stats.DelonfaultStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.tracing.Annotation
+import com.twittelonr.finaglelon.tracing.Reloncord
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.finaglelon.tracing.TracelonId
+import com.twittelonr.finaglelon.tracing.TracelonSelonrvicelonNamelon
+import com.twittelonr.finaglelon.tracing.Tracing.LocalBelonginAnnotation
+import com.twittelonr.finaglelon.tracing.Tracing.LocalelonndAnnotation
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonrStack
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.FailOpelonnPolicy
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.FelonaturelonHydrationFailelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.MisconfigurelondFelonaturelonMapFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonClassifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.UncatelongorizelondSelonrvelonrFailurelon
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor.AlwaysFailOpelonnIncludingProgrammelonrelonrrors
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor.Contelonxt
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor.TracingConfig
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor.toPipelonlinelonFailurelonWithComponelonntIdelonntifielonrStack
+import com.twittelonr.selonrvo.util.Cancelonllelondelonxcelonptionelonxtractor
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.Stitch.Lelonttelonr
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Timelon
+import com.twittelonr.util.Try
 
 /**
- * Base trait that all executors implement
+ * Baselon trait that all elonxeloncutors implelonmelonnt
  *
- * All executors should:
- *   - implement a `def arrow` or `def apply` with the relevant types for their use case
- *     and take in an implicit [[PipelineFailureClassifier]] and [[ComponentIdentifierStack]].
- *   - add a `@singleton` annotation to the class and `@inject` annotation to the argument list
- *   - take in a [[StatsReceiver]]
+ * All elonxeloncutors should:
+ *   - implelonmelonnt a `delonf arrow` or `delonf apply` with thelon relonlelonvant typelons for thelonir uselon caselon
+ *     and takelon in an implicit [[PipelonlinelonFailurelonClassifielonr]] and [[ComponelonntIdelonntifielonrStack]].
+ *   - add a `@singlelonton` annotation to thelon class and `@injelonct` annotation to thelon argumelonnt list
+ *   - takelon in a [[StatsReloncelonivelonr]]
  *
- * @example {{{
- *   @Singleton class MyExecutor @Inject() (
- *     override val statsReceiver: StatsReceiver
- *   ) extends Executor {
- *     def arrow(
+ * @elonxamplelon {{{
+ *   @Singlelonton class Myelonxeloncutor @Injelonct() (
+ *     ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr
+ *   ) elonxtelonnds elonxeloncutor {
+ *     delonf arrow(
  *       arg: MyArg,
  *       ...,
- *       context: Context
+ *       contelonxt: Contelonxt
  *     ): Arrow[In,Out] = ???
  *   }
  * }}}
  */
-private[core] trait Executor {
-  val statsReceiver: StatsReceiver
+privatelon[corelon] trait elonxeloncutor {
+  val statsReloncelonivelonr: StatsReloncelonivelonr
 
   /**
-   * Applies the `pipelineFailureClassifier` to the output of the `arrow`
-   * and adds the `componentStack` to the [[PipelineFailure]]
+   * Applielons thelon `pipelonlinelonFailurelonClassifielonr` to thelon output of thelon `arrow`
+   * and adds thelon `componelonntStack` to thelon [[PipelonlinelonFailurelon]]
    */
-  def wrapWithErrorHandling[In, Out](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+  delonf wrapWithelonrrorHandling[In, Out](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr
   )(
     arrow: Arrow[In, Out]
   ): Arrow[In, Out] = {
-    arrow.mapFailure(
-      toPipelineFailureWithComponentIdentifierStack(context, currentComponentIdentifier))
+    arrow.mapFailurelon(
+      toPipelonlinelonFailurelonWithComponelonntIdelonntifielonrStack(contelonxt, currelonntComponelonntIdelonntifielonr))
   }
 
   /**
-   * Chain a `Seq` of [[Arrow.Iso]], only passing successful results to the next [[Arrow.Iso]]
+   * Chain a `Selonq` of [[Arrow.Iso]], only passing succelonssful relonsults to thelon nelonxt [[Arrow.Iso]]
    *
-   * @note the resulting [[Arrow]] runs the passed in [[Arrow]]s one after the other,
-   *       as an ordered execution, this means that each [[Arrow]] is dependent
-   *       on all previous [[Arrow]]s in the `Seq` so no `Stitch` batching can occur
-   *       between them.
+   * @notelon thelon relonsulting [[Arrow]] runs thelon passelond in [[Arrow]]s onelon aftelonr thelon othelonr,
+   *       as an ordelonrelond elonxeloncution, this melonans that elonach [[Arrow]] is delonpelonndelonnt
+   *       on all prelonvious [[Arrow]]s in thelon `Selonq` so no `Stitch` batching can occur
+   *       belontwelonelonn thelonm.
    */
-  def isoArrowsSequentially[T](arrows: Seq[Arrow.Iso[T]]): Arrow.Iso[T] = {
-    // avoid excess Arrow complexity when there is only a single Arrow
+  delonf isoArrowsSelonquelonntially[T](arrows: Selonq[Arrow.Iso[T]]): Arrow.Iso[T] = {
+    // avoid elonxcelonss Arrow complelonxity whelonn thelonrelon is only a singlelon Arrow
     arrows match {
-      case Seq() => Arrow.identity
-      case Seq(onlyOneArrow) => onlyOneArrow
-      case Seq(head, tail @ _*) =>
-        tail.foldLeft(head) {
-          case (combinedArrow, nextArrow) => combinedArrow.flatMapArrow(nextArrow)
+      caselon Selonq() => Arrow.idelonntity
+      caselon Selonq(onlyOnelonArrow) => onlyOnelonArrow
+      caselon Selonq(helonad, tail @ _*) =>
+        tail.foldLelonft(helonad) {
+          caselon (combinelondArrow, nelonxtArrow) => combinelondArrow.flatMapArrow(nelonxtArrow)
         }
     }
   }
 
   /**
-   * Start running the [[Arrow]] in the background returning a [[Stitch.Ref]] which will complete
-   * when the background task is finished
+   * Start running thelon [[Arrow]] in thelon background relonturning a [[Stitch.Relonf]] which will complelontelon
+   * whelonn thelon background task is finishelond
    */
-  def startArrowAsync[In, Out](arrow: Arrow[In, Out]): Arrow[In, Stitch[Out]] = {
+  delonf startArrowAsync[In, Out](arrow: Arrow[In, Out]): Arrow[In, Stitch[Out]] = {
     Arrow
       .map { arg: In =>
-        // wrap in a `ref` so we only compute it's value once
-        Stitch.ref(arrow(arg))
+        // wrap in a `relonf` so welon only computelon it's valuelon oncelon
+        Stitch.relonf(arrow(arg))
       }
-      .andThen(
+      .andThelonn(
         Arrow.zipWithArg(
-          // satisfy the `ref` async
-          Arrow.async(Arrow.flatMap[Stitch[Out], Out](identity))))
-      .map { case (ref, _) => ref }
+          // satisfy thelon `relonf` async
+          Arrow.async(Arrow.flatMap[Stitch[Out], Out](idelonntity))))
+      .map { caselon (relonf, _) => relonf }
   }
 
   /**
-   * for [[com.twitter.product_mixer.core.model.common.Component]]s which
-   * are executed per-candidate or which we don't want to record stats for.
-   * This performs Tracing but does not record Stats
+   * for [[com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt]]s which
+   * arelon elonxeloncutelond pelonr-candidatelon or which welon don't want to reloncord stats for.
+   * This pelonrforms Tracing but doelons not reloncord Stats
    *
-   * @note This should be used around the computation that includes the execution of the
-   *       underlying Component over all the Candidates, not around each execution
-   *        of the component around each candidate for per-candidate Components.
+   * @notelon This should belon uselond around thelon computation that includelons thelon elonxeloncution of thelon
+   *       undelonrlying Componelonnt ovelonr all thelon Candidatelons, not around elonach elonxeloncution
+   *        of thelon componelonnt around elonach candidatelon for pelonr-candidatelon Componelonnts.
    *
-   * @note when using this you should only use [[wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing]]
+   * @notelon whelonn using this you should only uselon [[wrapPelonrCandidatelonComponelonntWithelonxeloncutorBookkelonelonpingWithoutTracing]]
    *       for handling Stats.
    */
-  def wrapComponentsWithTracingOnly[In, Out](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+  delonf wrapComponelonntsWithTracingOnly[In, Out](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr
   )(
     arrow: Arrow[In, Out]
   ): Arrow[In, Out] = {
-    Executor.wrapArrowWithLocalTracingSpan(
+    elonxeloncutor.wrapArrowWithLocalTracingSpan(
       Arrow
-        .time(arrow)
+        .timelon(arrow)
         .map {
-          case (result, latency) =>
-            Executor.recordTraceData(
-              componentStack = context.componentStack,
-              componentIdentifier = currentComponentIdentifier,
-              result = result,
-              latency = latency,
-              size = None)
-            result
-        }.lowerFromTry)
+          caselon (relonsult, latelonncy) =>
+            elonxeloncutor.reloncordTracelonData(
+              componelonntStack = contelonxt.componelonntStack,
+              componelonntIdelonntifielonr = currelonntComponelonntIdelonntifielonr,
+              relonsult = relonsult,
+              latelonncy = latelonncy,
+              sizelon = Nonelon)
+            relonsult
+        }.lowelonrFromTry)
   }
 
   /**
-   * for [[com.twitter.product_mixer.core.model.common.Component]]s which
-   * are executed per-candidate. Records Stats but does not do Tracing.
+   * for [[com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt]]s which
+   * arelon elonxeloncutelond pelonr-candidatelon. Reloncords Stats but doelons not do Tracing.
    *
-   * @note when using this you should only use [[wrapPerCandidateComponentsWithTracingOnly]]
+   * @notelon whelonn using this you should only uselon [[wrapPelonrCandidatelonComponelonntsWithTracingOnly]]
    *       for handling Tracing
    */
-  def wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing[In, Out](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+  delonf wrapPelonrCandidatelonComponelonntWithelonxeloncutorBookkelonelonpingWithoutTracing[In, Out](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr
   )(
     arrow: Arrow[In, Out]
   ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    val obselonrvelonrSidelonelonffelonct =
+      elonxeloncutorObselonrvelonr.elonxeloncutorObselonrvelonr[Out](contelonxt, currelonntComponelonntIdelonntifielonr, statsReloncelonivelonr)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
-      context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = Return(_),
+    elonxeloncutor.wrapWithelonxeloncutorBookkelonelonping[In, Out, Out](
+      contelonxt = contelonxt,
+      currelonntComponelonntIdelonntifielonr = currelonntComponelonntIdelonntifielonr,
+      elonxeloncutorRelonsultSidelonelonffelonct = obselonrvelonrSidelonelonffelonct,
+      transformelonr = Relonturn(_),
       tracingConfig = TracingConfig.NoTracing
     )(arrow)
   }
 
-  /** for [[com.twitter.product_mixer.core.model.common.Component]]s */
-  def wrapComponentWithExecutorBookkeeping[In, Out](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
+  /** for [[com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt]]s */
+  delonf wrapComponelonntWithelonxeloncutorBookkelonelonping[In, Out](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr
   )(
     arrow: Arrow[In, Out]
   ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    val obselonrvelonrSidelonelonffelonct =
+      elonxeloncutorObselonrvelonr.elonxeloncutorObselonrvelonr[Out](contelonxt, currelonntComponelonntIdelonntifielonr, statsReloncelonivelonr)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
-      context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = Return(_)
+    elonxeloncutor.wrapWithelonxeloncutorBookkelonelonping[In, Out, Out](
+      contelonxt = contelonxt,
+      currelonntComponelonntIdelonntifielonr = currelonntComponelonntIdelonntifielonr,
+      elonxeloncutorRelonsultSidelonelonffelonct = obselonrvelonrSidelonelonffelonct,
+      transformelonr = Relonturn(_)
     )(arrow)
   }
 
   /**
-   * for [[com.twitter.product_mixer.core.model.common.Component]]s which an `onSuccess`
-   * to add custom stats or logging of results
+   * for [[com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt]]s which an `onSuccelonss`
+   * to add custom stats or logging of relonsults
    */
-  def wrapComponentWithExecutorBookkeeping[In, Out](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    onSuccess: Out => Unit
+  delonf wrapComponelonntWithelonxeloncutorBookkelonelonping[In, Out](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr,
+    onSuccelonss: Out => Unit
   )(
     arrow: Arrow[In, Out]
   ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    val obselonrvelonrSidelonelonffelonct =
+      elonxeloncutorObselonrvelonr.elonxeloncutorObselonrvelonr[Out](contelonxt, currelonntComponelonntIdelonntifielonr, statsReloncelonivelonr)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
-      context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = Return(_),
-      onComplete = (transformed: Try[Out]) => transformed.onSuccess(onSuccess)
+    elonxeloncutor.wrapWithelonxeloncutorBookkelonelonping[In, Out, Out](
+      contelonxt = contelonxt,
+      currelonntComponelonntIdelonntifielonr = currelonntComponelonntIdelonntifielonr,
+      elonxeloncutorRelonsultSidelonelonffelonct = obselonrvelonrSidelonelonffelonct,
+      transformelonr = Relonturn(_),
+      onComplelontelon = (transformelond: Try[Out]) => transformelond.onSuccelonss(onSuccelonss)
     )(arrow)
   }
 
-  /** for [[com.twitter.product_mixer.core.pipeline.Pipeline]]s */
-  def wrapPipelineWithExecutorBookkeeping[In, Out <: PipelineResult[_]](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    qualityFactorObserver: Option[QualityFactorObserver],
-    failOpenPolicy: FailOpenPolicy = FailOpenPolicy.Never
+  /** for [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon]]s */
+  delonf wrapPipelonlinelonWithelonxeloncutorBookkelonelonping[In, Out <: PipelonlinelonRelonsult[_]](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr,
+    qualityFactorObselonrvelonr: Option[QualityFactorObselonrvelonr],
+    failOpelonnPolicy: FailOpelonnPolicy = FailOpelonnPolicy.Nelonvelonr
   )(
     arrow: Arrow[In, Out]
   ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver
-        .pipelineExecutorObserver[Out](context, currentComponentIdentifier, statsReceiver)
+    val obselonrvelonrSidelonelonffelonct =
+      elonxeloncutorObselonrvelonr
+        .pipelonlinelonelonxeloncutorObselonrvelonr[Out](contelonxt, currelonntComponelonntIdelonntifielonr, statsReloncelonivelonr)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
-      context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = (result: Out) => result.toTry,
-      size = Some(_.resultSize()),
-      failOpenPolicy = failOpenPolicy,
-      qualityFactorObserver = qualityFactorObserver
+    elonxeloncutor.wrapWithelonxeloncutorBookkelonelonping[In, Out, Out](
+      contelonxt = contelonxt,
+      currelonntComponelonntIdelonntifielonr = currelonntComponelonntIdelonntifielonr,
+      elonxeloncutorRelonsultSidelonelonffelonct = obselonrvelonrSidelonelonffelonct,
+      transformelonr = (relonsult: Out) => relonsult.toTry,
+      sizelon = Somelon(_.relonsultSizelon()),
+      failOpelonnPolicy = failOpelonnPolicy,
+      qualityFactorObselonrvelonr = qualityFactorObselonrvelonr
     )(arrow)
   }
 
-  /** for [[com.twitter.product_mixer.core.pipeline.product.ProductPipeline]]s */
-  def wrapProductPipelineWithExecutorBookkeeping[In, Out <: PipelineResult[_]](
-    context: Context,
-    currentComponentIdentifier: ProductPipelineIdentifier
+  /** for [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelon]]s */
+  delonf wrapProductPipelonlinelonWithelonxeloncutorBookkelonelonping[In, Out <: PipelonlinelonRelonsult[_]](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ProductPipelonlinelonIdelonntifielonr
   )(
     arrow: Arrow[In, Out]
   ): Arrow[In, Out] = {
 
-    val observerSideEffect =
-      ExecutorObserver
-        .productPipelineExecutorObserver[Out](currentComponentIdentifier, statsReceiver)
+    val obselonrvelonrSidelonelonffelonct =
+      elonxeloncutorObselonrvelonr
+        .productPipelonlinelonelonxeloncutorObselonrvelonr[Out](currelonntComponelonntIdelonntifielonr, statsReloncelonivelonr)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Out](
-      context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = _.toTry,
-      size = Some(_.resultSize()),
-      failOpenPolicy =
-        // always save Failures in the Result object instead of failing the request
-        AlwaysFailOpenIncludingProgrammerErrors
+    elonxeloncutor.wrapWithelonxeloncutorBookkelonelonping[In, Out, Out](
+      contelonxt = contelonxt,
+      currelonntComponelonntIdelonntifielonr = currelonntComponelonntIdelonntifielonr,
+      elonxeloncutorRelonsultSidelonelonffelonct = obselonrvelonrSidelonelonffelonct,
+      transformelonr = _.toTry,
+      sizelon = Somelon(_.relonsultSizelon()),
+      failOpelonnPolicy =
+        // always savelon Failurelons in thelon Relonsult objelonct instelonad of failing thelon relonquelonst
+        AlwaysFailOpelonnIncludingProgrammelonrelonrrors
     )(arrow)
   }
 
-  /** for [[com.twitter.product_mixer.core.model.common.Component]]s which need a result size stat */
-  def wrapComponentWithExecutorBookkeepingWithSize[In, Out](
-    context: Context,
-    currentComponentIdentifier: CandidateSourceIdentifier,
-    size: Out => Int
+  /** for [[com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt]]s which nelonelond a relonsult sizelon stat */
+  delonf wrapComponelonntWithelonxeloncutorBookkelonelonpingWithSizelon[In, Out](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: CandidatelonSourcelonIdelonntifielonr,
+    sizelon: Out => Int
   )(
     arrow: Arrow[In, Out]
   ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.executorObserverWithSize(context, currentComponentIdentifier, statsReceiver)
+    val obselonrvelonrSidelonelonffelonct =
+      elonxeloncutorObselonrvelonr.elonxeloncutorObselonrvelonrWithSizelon(contelonxt, currelonntComponelonntIdelonntifielonr, statsReloncelonivelonr)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Int](
-      context = context,
-      currentComponentIdentifier = currentComponentIdentifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = (out: Out) => Try(size(out)),
-      size = Some(identity)
+    elonxeloncutor.wrapWithelonxeloncutorBookkelonelonping[In, Out, Int](
+      contelonxt = contelonxt,
+      currelonntComponelonntIdelonntifielonr = currelonntComponelonntIdelonntifielonr,
+      elonxeloncutorRelonsultSidelonelonffelonct = obselonrvelonrSidelonelonffelonct,
+      transformelonr = (out: Out) => Try(sizelon(out)),
+      sizelon = Somelon(idelonntity)
     )(arrow)
   }
 
-  /** for [[com.twitter.product_mixer.core.pipeline.PipelineBuilder.Step]]s */
-  def wrapStepWithExecutorBookkeeping[In, Out](
-    context: Context,
-    identifier: PipelineStepIdentifier,
+  /** for [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonBuildelonr.Stelonp]]s */
+  delonf wrapStelonpWithelonxeloncutorBookkelonelonping[In, Out](
+    contelonxt: Contelonxt,
+    idelonntifielonr: PipelonlinelonStelonpIdelonntifielonr,
     arrow: Arrow[In, Out],
-    transformer: Out => Try[Unit]
+    transformelonr: Out => Try[Unit]
   ): Arrow[In, Out] = {
-    val observerSideEffect =
-      ExecutorObserver.stepExecutorObserver(context, identifier, statsReceiver)
+    val obselonrvelonrSidelonelonffelonct =
+      elonxeloncutorObselonrvelonr.stelonpelonxeloncutorObselonrvelonr(contelonxt, idelonntifielonr, statsReloncelonivelonr)
 
-    Executor.wrapWithExecutorBookkeeping[In, Out, Unit](
-      context = context,
-      currentComponentIdentifier = identifier,
-      executorResultSideEffect = observerSideEffect,
-      transformer = transformer,
-      failOpenPolicy = AlwaysFailOpenIncludingProgrammerErrors
+    elonxeloncutor.wrapWithelonxeloncutorBookkelonelonping[In, Out, Unit](
+      contelonxt = contelonxt,
+      currelonntComponelonntIdelonntifielonr = idelonntifielonr,
+      elonxeloncutorRelonsultSidelonelonffelonct = obselonrvelonrSidelonelonffelonct,
+      transformelonr = transformelonr,
+      failOpelonnPolicy = AlwaysFailOpelonnIncludingProgrammelonrelonrrors
     )(arrow)
   }
 }
 
-private[core] object Executor {
+privatelon[corelon] objelonct elonxeloncutor {
 
-  private[service] object TracingConfig {
+  privatelon[selonrvicelon] objelonct TracingConfig {
 
-    /** Used to specify whether a wrapped Arrow should be Traced in [[wrapWithExecutorBookkeeping]] */
-    sealed trait TracingConfig
-    case object NoTracing extends TracingConfig
-    case object WrapWithSpanAndTracingData extends TracingConfig
+    /** Uselond to speloncify whelonthelonr a wrappelond Arrow should belon Tracelond in [[wrapWithelonxeloncutorBookkelonelonping]] */
+    selonalelond trait TracingConfig
+    caselon objelonct NoTracing elonxtelonnds TracingConfig
+    caselon objelonct WrapWithSpanAndTracingData elonxtelonnds TracingConfig
   }
 
   /**
-   * Always fail-open and return the [[com.twitter.product_mixer.core.pipeline.product.ProductPipelineResult]]
-   * containing the exception, this differs from [[FailOpenPolicy.Always]] in that this will still
-   * fail-open and return the overall result object even if the underlying failure is the result
-   * of programmer error.
+   * Always fail-opelonn and relonturn thelon [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonRelonsult]]
+   * containing thelon elonxcelonption, this diffelonrs from [[FailOpelonnPolicy.Always]] in that this will still
+   * fail-opelonn and relonturn thelon ovelonrall relonsult objelonct elonvelonn if thelon undelonrlying failurelon is thelon relonsult
+   * of programmelonr elonrror.
    */
-  private val AlwaysFailOpenIncludingProgrammerErrors: FailOpenPolicy = _ => true
+  privatelon val AlwaysFailOpelonnIncludingProgrammelonrelonrrors: FailOpelonnPolicy = _ => truelon
 
   /**
-   * Wraps an [[Arrow]] so that bookkeeping around the execution occurs uniformly.
+   * Wraps an [[Arrow]] so that bookkelonelonping around thelon elonxeloncution occurs uniformly.
    *
-   * @note should __never__ be called directly!
+   * @notelon should __nelonvelonr__ belon callelond direlonctly!
    *
-   *   - For successful results, apply the `transformer`
-   *   - convert any exceptions to PipelineFailures
-   *   - record stats and update [[QualityFactorObserver]]
-   *   - wraps the execution in a Trace span and record Trace data (can be turned off by [[TracingConfig]])
-   *   - applies a trace span and records metadata to the provided `arrow`
-   *   - determine whether to fail-open based on `result.flatMap(transformer)`
-   *     - if failing-open, always return the original result
-   *     - if failing-closed and successful, return the original result
-   *     - otherwise, return the failure (from `result.flatMap(transformer)`)
+   *   - For succelonssful relonsults, apply thelon `transformelonr`
+   *   - convelonrt any elonxcelonptions to PipelonlinelonFailurelons
+   *   - reloncord stats and updatelon [[QualityFactorObselonrvelonr]]
+   *   - wraps thelon elonxeloncution in a Tracelon span and reloncord Tracelon data (can belon turnelond off by [[TracingConfig]])
+   *   - applielons a tracelon span and reloncords melontadata to thelon providelond `arrow`
+   *   - delontelonrminelon whelonthelonr to fail-opelonn baselond on `relonsult.flatMap(transformelonr)`
+   *     - if failing-opelonn, always relonturn thelon original relonsult
+   *     - if failing-closelond and succelonssful, relonturn thelon original relonsult
+   *     - othelonrwiselon, relonturn thelon failurelon (from `relonsult.flatMap(transformelonr)`)
    *
-   * @param context                    the [[Executor.Context]]
-   * @param currentComponentIdentifier the current component's [[ComponentIdentifier]]
-   * @param executorResultSideEffect   the [[ExecutorObserver]] used to record stats
-   * @param transformer                function to convert a successful result into possibly a failed result
-   * @param failOpenPolicy             [[FailOpenPolicy]] to apply to the results of `result.flatMap(transformer)`
-   * @param qualityFactorObserver      [[QualityFactorObserver]] to update based on the results of `result.flatMap(transformer)`
-   * @param tracingConfig              indicates whether the [[Arrow]] should be wrapped with Tracing
-   * @param onComplete                 runs the function for its side effects with the result of `result.flatMap(transformer)`
-   * @param arrow                      an input [[Arrow]] to wrap so that after it's execution, we perform all these operations
+   * @param contelonxt                    thelon [[elonxeloncutor.Contelonxt]]
+   * @param currelonntComponelonntIdelonntifielonr thelon currelonnt componelonnt's [[ComponelonntIdelonntifielonr]]
+   * @param elonxeloncutorRelonsultSidelonelonffelonct   thelon [[elonxeloncutorObselonrvelonr]] uselond to reloncord stats
+   * @param transformelonr                function to convelonrt a succelonssful relonsult into possibly a failelond relonsult
+   * @param failOpelonnPolicy             [[FailOpelonnPolicy]] to apply to thelon relonsults of `relonsult.flatMap(transformelonr)`
+   * @param qualityFactorObselonrvelonr      [[QualityFactorObselonrvelonr]] to updatelon baselond on thelon relonsults of `relonsult.flatMap(transformelonr)`
+   * @param tracingConfig              indicatelons whelonthelonr thelon [[Arrow]] should belon wrappelond with Tracing
+   * @param onComplelontelon                 runs thelon function for its sidelon elonffeloncts with thelon relonsult of `relonsult.flatMap(transformelonr)`
+   * @param arrow                      an input [[Arrow]] to wrap so that aftelonr it's elonxeloncution, welon pelonrform all thelonselon opelonrations
    *
-   * @return the wrapped [[Arrow]]
+   * @relonturn thelon wrappelond [[Arrow]]
    */
-  private[service] def wrapWithExecutorBookkeeping[In, Out, Transformed](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    executorResultSideEffect: ExecutorObserver[Transformed],
-    transformer: Out => Try[Transformed],
-    size: Option[Transformed => Int] = None,
-    failOpenPolicy: FailOpenPolicy = FailOpenPolicy.Never,
-    qualityFactorObserver: Option[QualityFactorObserver] = None,
+  privatelon[selonrvicelon] delonf wrapWithelonxeloncutorBookkelonelonping[In, Out, Transformelond](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr,
+    elonxeloncutorRelonsultSidelonelonffelonct: elonxeloncutorObselonrvelonr[Transformelond],
+    transformelonr: Out => Try[Transformelond],
+    sizelon: Option[Transformelond => Int] = Nonelon,
+    failOpelonnPolicy: FailOpelonnPolicy = FailOpelonnPolicy.Nelonvelonr,
+    qualityFactorObselonrvelonr: Option[QualityFactorObselonrvelonr] = Nonelon,
     tracingConfig: TracingConfig.TracingConfig = TracingConfig.WrapWithSpanAndTracingData,
-    onComplete: Try[Transformed] => Unit = { _: Try[Transformed] => () }
+    onComplelontelon: Try[Transformelond] => Unit = { _: Try[Transformelond] => () }
   )(
     arrow: Arrow[In, Out]
   ): Arrow[In, Out] = {
 
-    val failureClassifier =
-      toPipelineFailureWithComponentIdentifierStack(context, currentComponentIdentifier)
+    val failurelonClassifielonr =
+      toPipelonlinelonFailurelonWithComponelonntIdelonntifielonrStack(contelonxt, currelonntComponelonntIdelonntifielonr)
 
-    /** transform the results, mapping all exceptions to [[PipelineFailure]]s, and tuple with original result */
-    val transformResultAndClassifyFailures: Arrow[Out, (Out, Try[Transformed])] =
+    /** transform thelon relonsults, mapping all elonxcelonptions to [[PipelonlinelonFailurelon]]s, and tuplelon with original relonsult */
+    val transformRelonsultAndClassifyFailurelons: Arrow[Out, (Out, Try[Transformelond])] =
       Arrow.join(
-        Arrow.mapFailure(failureClassifier),
+        Arrow.mapFailurelon(failurelonClassifielonr),
         Arrow
-          .transformTry[Out, Transformed](result =>
-            result
-              .flatMap(transformer)
-              .rescue { case t => Throw(failureClassifier(t)) })
+          .transformTry[Out, Transformelond](relonsult =>
+            relonsult
+              .flatMap(transformelonr)
+              .relonscuelon { caselon t => Throw(failurelonClassifielonr(t)) })
           .liftToTry
       )
 
-    /** Only record tracing data if [[TracingConfig.WrapWithSpanAndTracingData]] */
-    val maybeRecordTracingData: (Try[Transformed], Duration) => Unit = tracingConfig match {
-      case TracingConfig.NoTracing => (_, _) => ()
-      case TracingConfig.WrapWithSpanAndTracingData =>
-        (transformedAndClassifiedResult, latency) =>
-          recordTraceData(
-            context.componentStack,
-            currentComponentIdentifier,
-            transformedAndClassifiedResult,
-            latency,
-            transformedAndClassifiedResult.toOption.flatMap(result => size.map(_.apply(result)))
+    /** Only reloncord tracing data if [[TracingConfig.WrapWithSpanAndTracingData]] */
+    val maybelonReloncordTracingData: (Try[Transformelond], Duration) => Unit = tracingConfig match {
+      caselon TracingConfig.NoTracing => (_, _) => ()
+      caselon TracingConfig.WrapWithSpanAndTracingData =>
+        (transformelondAndClassifielondRelonsult, latelonncy) =>
+          reloncordTracelonData(
+            contelonxt.componelonntStack,
+            currelonntComponelonntIdelonntifielonr,
+            transformelondAndClassifielondRelonsult,
+            latelonncy,
+            transformelondAndClassifielondRelonsult.toOption.flatMap(relonsult => sizelon.map(_.apply(relonsult)))
           )
     }
 
-    /** Will never be in a failed state so we can do a simple [[Arrow.map]] */
-    val recordStatsAndUpdateQualityFactor =
+    /** Will nelonvelonr belon in a failelond statelon so welon can do a simplelon [[Arrow.map]] */
+    val reloncordStatsAndUpdatelonQualityFactor =
       Arrow
-        .map[(Try[(Out, Try[Transformed])], Duration), Unit] {
-          case (tryResultAndTryTransformed, latency) =>
-            val transformedAndClassifiedResult = tryResultAndTryTransformed.flatMap {
-              case (_, transformed) => transformed
+        .map[(Try[(Out, Try[Transformelond])], Duration), Unit] {
+          caselon (tryRelonsultAndTryTransformelond, latelonncy) =>
+            val transformelondAndClassifielondRelonsult = tryRelonsultAndTryTransformelond.flatMap {
+              caselon (_, transformelond) => transformelond
             }
-            executorResultSideEffect(transformedAndClassifiedResult, latency)
-            qualityFactorObserver.foreach(_.apply(transformedAndClassifiedResult, latency))
-            onComplete(transformedAndClassifiedResult)
-            maybeRecordTracingData(transformedAndClassifiedResult, latency)
+            elonxeloncutorRelonsultSidelonelonffelonct(transformelondAndClassifielondRelonsult, latelonncy)
+            qualityFactorObselonrvelonr.forelonach(_.apply(transformelondAndClassifielondRelonsult, latelonncy))
+            onComplelontelon(transformelondAndClassifielondRelonsult)
+            maybelonReloncordTracingData(transformelondAndClassifielondRelonsult, latelonncy)
         }.unit
 
     /**
-     * Applies the provided [[FailOpenPolicy]] based on the [[transformer]]'s results,
-     * returning the original result or an exception
+     * Applielons thelon providelond [[FailOpelonnPolicy]] baselond on thelon [[transformelonr]]'s relonsults,
+     * relonturning thelon original relonsult or an elonxcelonption
      */
-    val applyFailOpenPolicyBasedOnTransformedResult: Arrow[
-      (Try[(Out, Try[Transformed])], Duration),
+    val applyFailOpelonnPolicyBaselondOnTransformelondRelonsult: Arrow[
+      (Try[(Out, Try[Transformelond])], Duration),
       Out
     ] =
       Arrow
-        .map[(Try[(Out, Try[Transformed])], Duration), Try[(Out, Try[Transformed])]] {
-          case (tryResultAndTryTransformed, _) => tryResultAndTryTransformed
+        .map[(Try[(Out, Try[Transformelond])], Duration), Try[(Out, Try[Transformelond])]] {
+          caselon (tryRelonsultAndTryTransformelond, _) => tryRelonsultAndTryTransformelond
         }
-        .lowerFromTry
+        .lowelonrFromTry
         .map {
-          case (result, Throw(pipelineFailure: PipelineFailure))
-              if failOpenPolicy(pipelineFailure.category) =>
-            Return(result)
-          case (_, t: Throw[_]) => t.asInstanceOf[Throw[Out]]
-          case (result, _) => Return(result)
-        }.lowerFromTry
+          caselon (relonsult, Throw(pipelonlinelonFailurelon: PipelonlinelonFailurelon))
+              if failOpelonnPolicy(pipelonlinelonFailurelon.catelongory) =>
+            Relonturn(relonsult)
+          caselon (_, t: Throw[_]) => t.asInstancelonOf[Throw[Out]]
+          caselon (relonsult, _) => Relonturn(relonsult)
+        }.lowelonrFromTry
 
-    /** The complete Arrow minus a Local span wrapping */
-    val arrowWithTimingExecutorSideEffects = Arrow
-      .time(arrow.andThen(transformResultAndClassifyFailures))
-      .applyEffect(recordStatsAndUpdateQualityFactor)
-      .andThen(applyFailOpenPolicyBasedOnTransformedResult)
+    /** Thelon complelontelon Arrow minus a Local span wrapping */
+    val arrowWithTimingelonxeloncutorSidelonelonffeloncts = Arrow
+      .timelon(arrow.andThelonn(transformRelonsultAndClassifyFailurelons))
+      .applyelonffelonct(reloncordStatsAndUpdatelonQualityFactor)
+      .andThelonn(applyFailOpelonnPolicyBaselondOnTransformelondRelonsult)
 
-    /** Dont wrap with a span if we are not tracing */
+    /** Dont wrap with a span if welon arelon not tracing */
     tracingConfig match {
-      case TracingConfig.WrapWithSpanAndTracingData =>
-        wrapArrowWithLocalTracingSpan(arrowWithTimingExecutorSideEffects)
-      case TracingConfig.NoTracing =>
-        arrowWithTimingExecutorSideEffects
+      caselon TracingConfig.WrapWithSpanAndTracingData =>
+        wrapArrowWithLocalTracingSpan(arrowWithTimingelonxeloncutorSidelonelonffeloncts)
+      caselon TracingConfig.NoTracing =>
+        arrowWithTimingelonxeloncutorSidelonelonffeloncts
     }
   }
 
-  /** Let-scopes a [[TraceId]] around a computation */
-  private[this] object TracingLetter extends Letter[TraceId] {
-    override def let[S](traceId: TraceId)(s: => S): S = Trace.letId(traceId)(s)
+  /** Lelont-scopelons a [[TracelonId]] around a computation */
+  privatelon[this] objelonct TracingLelonttelonr elonxtelonnds Lelonttelonr[TracelonId] {
+    ovelonrridelon delonf lelont[S](tracelonId: TracelonId)(s: => S): S = Tracelon.lelontId(tracelonId)(s)
   }
 
   /**
-   * Wraps the Arrow's execution in a new trace span as a child of the current parent span
+   * Wraps thelon Arrow's elonxeloncution in a nelonw tracelon span as a child of thelon currelonnt parelonnt span
    *
-   * @note Should __never__ be called directly!
+   * @notelon Should __nelonvelonr__ belon callelond direlonctly!
    *
-   * It's expected that the contained `arrow` will invoke [[recordTraceData]] exactly ONCE
-   * during it's execution.
+   * It's elonxpelonctelond that thelon containelond `arrow` will invokelon [[reloncordTracelonData]] elonxactly ONCelon
+   * during it's elonxeloncution.
    *
-   * @note this does not record any data about the trace, it only sets the [[Trace]] Span
-   *       for the execution of `arrow`
+   * @notelon this doelons not reloncord any data about thelon tracelon, it only selonts thelon [[Tracelon]] Span
+   *       for thelon elonxeloncution of `arrow`
    */
-  private[service] def wrapArrowWithLocalTracingSpan[In, Out](
+  privatelon[selonrvicelon] delonf wrapArrowWithLocalTracingSpan[In, Out](
     arrow: Arrow[In, Out]
   ): Arrow[In, Out] =
-    Arrow.ifelse(
-      _ => Trace.isActivelyTracing,
-      Arrow.let(TracingLetter)(Trace.nextId)(arrow),
+    Arrow.ifelonlselon(
+      _ => Tracelon.isActivelonlyTracing,
+      Arrow.lelont(TracingLelonttelonr)(Tracelon.nelonxtId)(arrow),
       arrow
     )
 
-  private[this] object Tracing {
+  privatelon[this] objelonct Tracing {
 
     /**
-     * Duplicate of [[com.twitter.finagle.tracing.Tracing]]'s `localSpans` which
-     * uses an un-scoped [[StatsReceiver]]
+     * Duplicatelon of [[com.twittelonr.finaglelon.tracing.Tracing]]'s `localSpans` which
+     * uselons an un-scopelond [[StatsReloncelonivelonr]]
      *
-     * Since we needed to roll-our-own latency measurement we are unable to increment the
-     * `local_spans` metric automatically, this is important in the event a service is
-     * unexpectedly not recording spans or unexpectedly recording too many, so we manually
-     * increment it
+     * Sincelon welon nelonelondelond to roll-our-own latelonncy melonasurelonmelonnt welon arelon unablelon to increlonmelonnt thelon
+     * `local_spans` melontric automatically, this is important in thelon elonvelonnt a selonrvicelon is
+     * unelonxpelonctelondly not reloncording spans or unelonxpelonctelondly reloncording too many, so welon manually
+     * increlonmelonnt it
      */
-    val localSpans: Counter = DefaultStatsReceiver.counter("tracing", "local_spans")
+    val localSpans: Countelonr = DelonfaultStatsReloncelonivelonr.countelonr("tracing", "local_spans")
 
-    /** Local Component field of a span in the UI */
-    val localComponentTag = "lc"
-    val sizeTag = "product_mixer.result.size"
-    val successTag = "product_mixer.result.success"
-    val successValue = "success"
-    val cancelledTag = "product_mixer.result.cancelled"
-    val failureTag = "product_mixer.result.failure"
+    /** Local Componelonnt fielonld of a span in thelon UI */
+    val localComponelonntTag = "lc"
+    val sizelonTag = "product_mixelonr.relonsult.sizelon"
+    val succelonssTag = "product_mixelonr.relonsult.succelonss"
+    val succelonssValuelon = "succelonss"
+    val cancelonllelondTag = "product_mixelonr.relonsult.cancelonllelond"
+    val failurelonTag = "product_mixelonr.relonsult.failurelon"
   }
 
   /**
-   * Records metadata onto the current [[Trace]] Span
+   * Reloncords melontadata onto thelon currelonnt [[Tracelon]] Span
    *
-   * @note Should __never__ be called directly!
+   * @notelon Should __nelonvelonr__ belon callelond direlonctly!
    *
-   * This should be called exactly ONCE in the Arrow passed into [[wrapArrowWithLocalTracingSpan]]
-   * to record data for the Span.
+   * This should belon callelond elonxactly ONCelon in thelon Arrow passelond into [[wrapArrowWithLocalTracingSpan]]
+   * to reloncord data for thelon Span.
    */
-  private[service] def recordTraceData[T](
-    componentStack: ComponentIdentifierStack,
-    componentIdentifier: ComponentIdentifier,
-    result: Try[T],
-    latency: Duration,
-    size: Option[Int] = None
+  privatelon[selonrvicelon] delonf reloncordTracelonData[T](
+    componelonntStack: ComponelonntIdelonntifielonrStack,
+    componelonntIdelonntifielonr: ComponelonntIdelonntifielonr,
+    relonsult: Try[T],
+    latelonncy: Duration,
+    sizelon: Option[Int] = Nonelon
   ): Unit = {
-    if (Trace.isActivelyTracing) {
+    if (Tracelon.isActivelonlyTracing) {
       Tracing.localSpans.incr()
-      val traceId = Trace.id
-      val endTime = Time.nowNanoPrecision
+      val tracelonId = Tracelon.id
+      val elonndTimelon = Timelon.nowNanoPreloncision
 
-      // These annotations are needed for the Zipkin UI to display the span properly
-      TraceServiceName().foreach(Trace.recordServiceName)
-      Trace.recordRpc(componentIdentifier.snakeCase) // name of the span in the UI
-      Trace.recordBinary(
-        Tracing.localComponentTag,
-        componentStack.peek.toString + "/" + componentIdentifier.toString)
-      Trace.record(Record(traceId, endTime - latency, Annotation.Message(LocalBeginAnnotation)))
-      Trace.record(Record(traceId, endTime, Annotation.Message(LocalEndAnnotation)))
+      // Thelonselon annotations arelon nelonelondelond for thelon Zipkin UI to display thelon span propelonrly
+      TracelonSelonrvicelonNamelon().forelonach(Tracelon.reloncordSelonrvicelonNamelon)
+      Tracelon.reloncordRpc(componelonntIdelonntifielonr.snakelonCaselon) // namelon of thelon span in thelon UI
+      Tracelon.reloncordBinary(
+        Tracing.localComponelonntTag,
+        componelonntStack.pelonelonk.toString + "/" + componelonntIdelonntifielonr.toString)
+      Tracelon.reloncord(Reloncord(tracelonId, elonndTimelon - latelonncy, Annotation.Melonssagelon(LocalBelonginAnnotation)))
+      Tracelon.reloncord(Reloncord(tracelonId, elonndTimelon, Annotation.Melonssagelon(LocalelonndAnnotation)))
 
-      // product mixer specific zipkin data
-      size.foreach(size => Trace.recordBinary(Tracing.sizeTag, size))
-      result match {
-        case Return(_) =>
-          Trace.recordBinary(Tracing.successTag, Tracing.successValue)
-        case Throw(CancelledExceptionExtractor(e)) =>
-          Trace.recordBinary(Tracing.cancelledTag, e)
-        case Throw(e) =>
-          Trace.recordBinary(Tracing.failureTag, e)
+      // product mixelonr speloncific zipkin data
+      sizelon.forelonach(sizelon => Tracelon.reloncordBinary(Tracing.sizelonTag, sizelon))
+      relonsult match {
+        caselon Relonturn(_) =>
+          Tracelon.reloncordBinary(Tracing.succelonssTag, Tracing.succelonssValuelon)
+        caselon Throw(Cancelonllelondelonxcelonptionelonxtractor(elon)) =>
+          Tracelon.reloncordBinary(Tracing.cancelonllelondTag, elon)
+        caselon Throw(elon) =>
+          Tracelon.reloncordBinary(Tracing.failurelonTag, elon)
       }
     }
   }
 
   /**
-   * Returns a tuple of the stats scopes for the current component and the relative scope for
-   * the parent component and the current component together
+   * Relonturns a tuplelon of thelon stats scopelons for thelon currelonnt componelonnt and thelon relonlativelon scopelon for
+   * thelon parelonnt componelonnt and thelon currelonnt componelonnt togelonthelonr
    *
-   * This is useful when recording stats for a component by itself as well as stats for calls to that component from it's parent.
+   * This is uselonful whelonn reloncording stats for a componelonnt by itselonlf as welonll as stats for calls to that componelonnt from it's parelonnt.
    *
-   * @example if the current component has a scope of "currentComponent" and the parent component has a scope of "parentComponent"
-   *          then this will return `(Seq("currentComponent"), Seq("parentComponent", "currentComponent"))`
+   * @elonxamplelon if thelon currelonnt componelonnt has a scopelon of "currelonntComponelonnt" and thelon parelonnt componelonnt has a scopelon of "parelonntComponelonnt"
+   *          thelonn this will relonturn `(Selonq("currelonntComponelonnt"), Selonq("parelonntComponelonnt", "currelonntComponelonnt"))`
    */
-  def buildScopes(
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
-  ): Executor.Scopes = {
-    val parentScopes = context.componentStack.peek.toScopes
-    val componentScopes = currentComponentIdentifier.toScopes
-    val relativeScopes = parentScopes ++ componentScopes
-    Executor.Scopes(componentScopes, relativeScopes)
+  delonf buildScopelons(
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr
+  ): elonxeloncutor.Scopelons = {
+    val parelonntScopelons = contelonxt.componelonntStack.pelonelonk.toScopelons
+    val componelonntScopelons = currelonntComponelonntIdelonntifielonr.toScopelons
+    val relonlativelonScopelons = parelonntScopelons ++ componelonntScopelons
+    elonxeloncutor.Scopelons(componelonntScopelons, relonlativelonScopelons)
   }
 
   /**
-   * Makes a [[BroadcastStatsReceiver]] that will broadcast stats to the correct
-   * current component's scope and to the scope relative to the parent.
+   * Makelons a [[BroadcastStatsReloncelonivelonr]] that will broadcast stats to thelon correlonct
+   * currelonnt componelonnt's scopelon and to thelon scopelon relonlativelon to thelon parelonnt.
    */
-  def broadcastStatsReceiver(
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    statsReceiver: StatsReceiver
-  ): StatsReceiver = {
-    val Executor.Scopes(componentScopes, relativeScopes) =
-      Executor.buildScopes(context, currentComponentIdentifier)
+  delonf broadcastStatsReloncelonivelonr(
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): StatsReloncelonivelonr = {
+    val elonxeloncutor.Scopelons(componelonntScopelons, relonlativelonScopelons) =
+      elonxeloncutor.buildScopelons(contelonxt, currelonntComponelonntIdelonntifielonr)
 
-    BroadcastStatsReceiver(
-      Seq(statsReceiver.scope(relativeScopes: _*), statsReceiver.scope(componentScopes: _*)))
+    BroadcastStatsReloncelonivelonr(
+      Selonq(statsReloncelonivelonr.scopelon(relonlativelonScopelons: _*), statsReloncelonivelonr.scopelon(componelonntScopelons: _*)))
   }
 
   /**
-   * Returns a feature map containing all the [[com.twitter.product_mixer.core.feature.Feature]]s
-   * stored as failures using the exception provided with as the reason wrapped in a PipelineFailure.
-   * e.g, for features A & B that threw an ExampleException b, this will return:
-   * { A -> Throw(PipelineFailure(...)), B -> Throw(PipelineFailure(...)) }
+   * Relonturns a felonaturelon map containing all thelon [[com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon]]s
+   * storelond as failurelons using thelon elonxcelonption providelond with as thelon relonason wrappelond in a PipelonlinelonFailurelon.
+   * elon.g, for felonaturelons A & B that threlonw an elonxamplelonelonxcelonption b, this will relonturn:
+   * { A -> Throw(PipelonlinelonFailurelon(...)), B -> Throw(PipelonlinelonFailurelon(...)) }
    */
-  def featureMapWithFailuresForFeatures(
-    features: Set[Feature[_, _]],
-    error: Throwable,
-    context: Executor.Context
-  ): FeatureMap = {
-    val builder = FeatureMapBuilder()
-    features.foreach { feature =>
-      val pipelineFailure = PipelineFailure(
-        FeatureHydrationFailed,
-        s"Feature hydration failed for ${feature.toString}",
-        Some(error),
-        Some(context.componentStack))
-      builder.addFailure(feature, pipelineFailure)
+  delonf felonaturelonMapWithFailurelonsForFelonaturelons(
+    felonaturelons: Selont[Felonaturelon[_, _]],
+    elonrror: Throwablelon,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): FelonaturelonMap = {
+    val buildelonr = FelonaturelonMapBuildelonr()
+    felonaturelons.forelonach { felonaturelon =>
+      val pipelonlinelonFailurelon = PipelonlinelonFailurelon(
+        FelonaturelonHydrationFailelond,
+        s"Felonaturelon hydration failelond for ${felonaturelon.toString}",
+        Somelon(elonrror),
+        Somelon(contelonxt.componelonntStack))
+      buildelonr.addFailurelon(felonaturelon, pipelonlinelonFailurelon)
     }
-    builder.build()
+    buildelonr.build()
   }
 
   /**
-   * Validates and returns back the passed feature map if it passes validation. A feature map
-   * is considered valid if it contains only the passed `registeredFeatures` features in it,
-   * nothing else and nothing missing.
+   * Validatelons and relonturns back thelon passelond felonaturelon map if it passelons validation. A felonaturelon map
+   * is considelonrelond valid if it contains only thelon passelond `relongistelonrelondFelonaturelons` felonaturelons in it,
+   * nothing elonlselon and nothing missing.
    */
-  @throws(classOf[PipelineFailure])
-  def validateFeatureMap(
-    registeredFeatures: Set[Feature[_, _]],
-    featureMap: FeatureMap,
-    context: Executor.Context
-  ): FeatureMap = {
-    val hydratedFeatures = featureMap.getFeatures
-    if (hydratedFeatures == registeredFeatures) {
-      featureMap
-    } else {
-      val missingFeatures = registeredFeatures -- hydratedFeatures
-      val unregisteredFeatures = hydratedFeatures -- registeredFeatures
-      throw PipelineFailure(
-        MisconfiguredFeatureMapFailure,
-        s"Unregistered features $unregisteredFeatures and missing features $missingFeatures",
-        None,
-        Some(context.componentStack)
+  @throws(classOf[PipelonlinelonFailurelon])
+  delonf validatelonFelonaturelonMap(
+    relongistelonrelondFelonaturelons: Selont[Felonaturelon[_, _]],
+    felonaturelonMap: FelonaturelonMap,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): FelonaturelonMap = {
+    val hydratelondFelonaturelons = felonaturelonMap.gelontFelonaturelons
+    if (hydratelondFelonaturelons == relongistelonrelondFelonaturelons) {
+      felonaturelonMap
+    } elonlselon {
+      val missingFelonaturelons = relongistelonrelondFelonaturelons -- hydratelondFelonaturelons
+      val unrelongistelonrelondFelonaturelons = hydratelondFelonaturelons -- relongistelonrelondFelonaturelons
+      throw PipelonlinelonFailurelon(
+        MisconfigurelondFelonaturelonMapFailurelon,
+        s"Unrelongistelonrelond felonaturelons $unrelongistelonrelondFelonaturelons and missing felonaturelons $missingFelonaturelons",
+        Nonelon,
+        Somelon(contelonxt.componelonntStack)
       )
     }
   }
 
-  object NotAMisconfiguredFeatureMapFailure {
+  objelonct NotAMisconfigurelondFelonaturelonMapFailurelon {
 
     /**
-     * Will return any exception that isn't a [[MisconfiguredFeatureMapFailure]] [[PipelineFailure]]
-     * Allows for easy [[Arrow.handle]]ing all exceptions that aren't [[MisconfiguredFeatureMapFailure]]s
+     * Will relonturn any elonxcelonption that isn't a [[MisconfigurelondFelonaturelonMapFailurelon]] [[PipelonlinelonFailurelon]]
+     * Allows for elonasy [[Arrow.handlelon]]ing all elonxcelonptions that arelonn't [[MisconfigurelondFelonaturelonMapFailurelon]]s
      */
-    def unapply(e: Throwable): Option[Throwable] = e match {
-      case pipelineFailure: PipelineFailure
-          if pipelineFailure.category == MisconfiguredFeatureMapFailure =>
-        None
-      case e => Some(e)
+    delonf unapply(elon: Throwablelon): Option[Throwablelon] = elon match {
+      caselon pipelonlinelonFailurelon: PipelonlinelonFailurelon
+          if pipelonlinelonFailurelon.catelongory == MisconfigurelondFelonaturelonMapFailurelon =>
+        Nonelon
+      caselon elon => Somelon(elon)
     }
   }
 
   /**
-   * contains the scopes for recording metrics for the component by itself and
-   * the relative scope of that component within it's parent component scope
+   * contains thelon scopelons for reloncording melontrics for thelon componelonnt by itselonlf and
+   * thelon relonlativelon scopelon of that componelonnt within it's parelonnt componelonnt scopelon
    *
-   * @see [[Executor.buildScopes]]
+   * @selonelon [[elonxeloncutor.buildScopelons]]
    */
-  case class Scopes(componentScopes: Seq[String], relativeScope: Seq[String])
+  caselon class Scopelons(componelonntScopelons: Selonq[String], relonlativelonScopelon: Selonq[String])
 
   /**
-   * Wrap the [[Throwable]] in a [[UncategorizedServerFailure]] [[PipelineFailure]] with the original
-   * [[Throwable]] as the cause, even if it's already a [[PipelineFailure]].
+   * Wrap thelon [[Throwablelon]] in a [[UncatelongorizelondSelonrvelonrFailurelon]] [[PipelonlinelonFailurelon]] with thelon original
+   * [[Throwablelon]] as thelon causelon, elonvelonn if it's alrelonady a [[PipelonlinelonFailurelon]].
    *
-   * This ensures that any access to the stored feature will result in a meaningful [[UncategorizedServerFailure]]
-   * [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory]] in stats which is more useful
-   * for customers components which access a failed [[Feature]] than the original [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory]].
+   * This elonnsurelons that any accelonss to thelon storelond felonaturelon will relonsult in a melonaningful [[UncatelongorizelondSelonrvelonrFailurelon]]
+   * [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonCatelongory]] in stats which is morelon uselonful
+   * for customelonrs componelonnts which accelonss a failelond [[Felonaturelon]] than thelon original [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonCatelongory]].
    */
-  def uncategorizedServerFailure(
-    componentStack: ComponentIdentifierStack,
-    throwable: Throwable
-  ): PipelineFailure = {
-    PipelineFailure(
-      UncategorizedServerFailure,
-      reason = "Unclassified Failure in Pipeline",
-      Some(throwable),
-      Some(componentStack)
+  delonf uncatelongorizelondSelonrvelonrFailurelon(
+    componelonntStack: ComponelonntIdelonntifielonrStack,
+    throwablelon: Throwablelon
+  ): PipelonlinelonFailurelon = {
+    PipelonlinelonFailurelon(
+      UncatelongorizelondSelonrvelonrFailurelon,
+      relonason = "Unclassifielond Failurelon in Pipelonlinelon",
+      Somelon(throwablelon),
+      Somelon(componelonntStack)
     )
   }
 
   /**
-   * [[PartialFunction]] that converts any [[Throwable]] into a
-   * [[PipelineFailure]] based on the provided `failureClassifier`
+   * [[PartialFunction]] that convelonrts any [[Throwablelon]] into a
+   * [[PipelonlinelonFailurelon]] baselond on thelon providelond `failurelonClassifielonr`
    */
-  def toPipelineFailureWithComponentIdentifierStack(
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier
-  ): PipelineFailureClassifier = {
-    // if given a `currentComponentIdentifier` then ensure we correctly handle `BasedOnParentComponent` identifier types
-    val contextWithCurrentComponentIdentifier =
-      context.pushToComponentStack(currentComponentIdentifier)
-    PipelineFailureClassifier(
-      contextWithCurrentComponentIdentifier.pipelineFailureClassifier
-        .orElse[Throwable, PipelineFailure] {
-          case CancelledExceptionExtractor(throwable) => throw throwable
-          case pipelineFailure: PipelineFailure => pipelineFailure
-          case throwable =>
-            uncategorizedServerFailure(
-              contextWithCurrentComponentIdentifier.componentStack,
-              throwable)
-        }.andThen { pipelineFailure =>
-          pipelineFailure.componentStack match {
-            case _: Some[_] => pipelineFailure
-            case None =>
-              pipelineFailure.copy(componentStack =
-                Some(contextWithCurrentComponentIdentifier.componentStack))
+  delonf toPipelonlinelonFailurelonWithComponelonntIdelonntifielonrStack(
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr
+  ): PipelonlinelonFailurelonClassifielonr = {
+    // if givelonn a `currelonntComponelonntIdelonntifielonr` thelonn elonnsurelon welon correlonctly handlelon `BaselondOnParelonntComponelonnt` idelonntifielonr typelons
+    val contelonxtWithCurrelonntComponelonntIdelonntifielonr =
+      contelonxt.pushToComponelonntStack(currelonntComponelonntIdelonntifielonr)
+    PipelonlinelonFailurelonClassifielonr(
+      contelonxtWithCurrelonntComponelonntIdelonntifielonr.pipelonlinelonFailurelonClassifielonr
+        .orelonlselon[Throwablelon, PipelonlinelonFailurelon] {
+          caselon Cancelonllelondelonxcelonptionelonxtractor(throwablelon) => throw throwablelon
+          caselon pipelonlinelonFailurelon: PipelonlinelonFailurelon => pipelonlinelonFailurelon
+          caselon throwablelon =>
+            uncatelongorizelondSelonrvelonrFailurelon(
+              contelonxtWithCurrelonntComponelonntIdelonntifielonr.componelonntStack,
+              throwablelon)
+        }.andThelonn { pipelonlinelonFailurelon =>
+          pipelonlinelonFailurelon.componelonntStack match {
+            caselon _: Somelon[_] => pipelonlinelonFailurelon
+            caselon Nonelon =>
+              pipelonlinelonFailurelon.copy(componelonntStack =
+                Somelon(contelonxtWithCurrelonntComponelonntIdelonntifielonr.componelonntStack))
           }
         }
     )
   }
 
   /**
-   * information used by an [[Executor]] that provides context around execution
+   * information uselond by an [[elonxeloncutor]] that providelons contelonxt around elonxeloncution
    */
-  case class Context(
-    pipelineFailureClassifier: PipelineFailureClassifier,
-    componentStack: ComponentIdentifierStack) {
+  caselon class Contelonxt(
+    pipelonlinelonFailurelonClassifielonr: PipelonlinelonFailurelonClassifielonr,
+    componelonntStack: ComponelonntIdelonntifielonrStack) {
 
-    def pushToComponentStack(newComponentIdentifier: ComponentIdentifier): Context =
-      copy(componentStack = componentStack.push(newComponentIdentifier))
+    delonf pushToComponelonntStack(nelonwComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr): Contelonxt =
+      copy(componelonntStack = componelonntStack.push(nelonwComponelonntIdelonntifielonr))
   }
 }

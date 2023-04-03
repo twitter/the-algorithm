@@ -1,22 +1,22 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-sealed trait ContentId
+selonalelond trait ContelonntId
 
-object ContentId {
-  case class TweetId(id: Long) extends ContentId
-  case class UserId(id: Long) extends ContentId
-  case class CardId(url: String) extends ContentId
-  case class QuotedTweetRelationship(outer: Long, inner: Long) extends ContentId
-  case class NotificationId(tweetId: Option[Long]) extends ContentId
-  case class DmId(id: Long) extends ContentId
-  case class BlenderTweetId(id: Long) extends ContentId
-  case class SpaceId(id: String) extends ContentId
-  case class SpacePlusUserId(id: String) extends ContentId
-  case class DmConversationId(id: String) extends ContentId
-  case class DmEventId(id: Long) extends ContentId
-  case class UserUnavailableState(tweetId: Long) extends ContentId
-  case class TwitterArticleId(id: Long) extends ContentId
-  case class DeleteTweetId(tweetId: Long) extends ContentId
-  case class MediaId(id: String) extends ContentId
-  case class CommunityId(communityId: Long) extends ContentId
+objelonct ContelonntId {
+  caselon class TwelonelontId(id: Long) elonxtelonnds ContelonntId
+  caselon class UselonrId(id: Long) elonxtelonnds ContelonntId
+  caselon class CardId(url: String) elonxtelonnds ContelonntId
+  caselon class QuotelondTwelonelontRelonlationship(outelonr: Long, innelonr: Long) elonxtelonnds ContelonntId
+  caselon class NotificationId(twelonelontId: Option[Long]) elonxtelonnds ContelonntId
+  caselon class DmId(id: Long) elonxtelonnds ContelonntId
+  caselon class BlelonndelonrTwelonelontId(id: Long) elonxtelonnds ContelonntId
+  caselon class SpacelonId(id: String) elonxtelonnds ContelonntId
+  caselon class SpacelonPlusUselonrId(id: String) elonxtelonnds ContelonntId
+  caselon class DmConvelonrsationId(id: String) elonxtelonnds ContelonntId
+  caselon class DmelonvelonntId(id: Long) elonxtelonnds ContelonntId
+  caselon class UselonrUnavailablelonStatelon(twelonelontId: Long) elonxtelonnds ContelonntId
+  caselon class TwittelonrArticlelonId(id: Long) elonxtelonnds ContelonntId
+  caselon class DelonlelontelonTwelonelontId(twelonelontId: Long) elonxtelonnds ContelonntId
+  caselon class MelondiaId(id: String) elonxtelonnds ContelonntId
+  caselon class CommunityId(communityId: Long) elonxtelonnds ContelonntId
 }

@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddelonntrielonsTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Build the AddEntries instruction with special handling for AddToModule entries.
+ * Build thelon Addelonntrielons instruction with speloncial handling for AddToModulelon elonntrielons.
  *
- * Entries which are going to be added to a module are going to be added via
- * AddToModuleInstructionBuilder, for other entries in the same response (like cursor entries) we
- * still need an AddEntriesTimelineInstruction which is going to be created by this builder.
+ * elonntrielons which arelon going to belon addelond to a modulelon arelon going to belon addelond via
+ * AddToModulelonInstructionBuildelonr, for othelonr elonntrielons in thelon samelon relonsponselon (likelon cursor elonntrielons) welon
+ * still nelonelond an AddelonntrielonsTimelonlinelonInstruction which is going to belon crelonatelond by this buildelonr.
  */
-case class AddEntriesWithAddToModuleInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
+caselon class AddelonntrielonsWithAddToModulelonInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon)
+    elonxtelonnds UrtInstructionBuildelonr[Quelonry, AddelonntrielonsTimelonlinelonInstruction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries.filter {
-        case _: TimelineModule => false
-        case _ => true
+  ovelonrridelon delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Selonq[AddelonntrielonsTimelonlinelonInstruction] = {
+    if (includelonInstruction(quelonry, elonntrielons)) {
+      val elonntrielonsToAdd = elonntrielons.filtelonr {
+        caselon _: TimelonlinelonModulelon => falselon
+        caselon _ => truelon
       }
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd))
-      else Seq.empty
-    } else
-      Seq.empty
+      if (elonntrielonsToAdd.nonelonmpty) Selonq(AddelonntrielonsTimelonlinelonInstruction(elonntrielonsToAdd))
+      elonlselon Selonq.elonmpty
+    } elonlselon
+      Selonq.elonmpty
   }
 }

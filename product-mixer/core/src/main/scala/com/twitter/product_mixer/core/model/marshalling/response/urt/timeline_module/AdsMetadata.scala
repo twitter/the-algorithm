@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon
 
-case class AdsMetadata(carouselId: Option[Long])
+caselon class AdsMelontadata(carouselonlId: Option[Long])

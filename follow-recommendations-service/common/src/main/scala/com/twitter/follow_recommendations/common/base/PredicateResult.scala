@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.baselon
 
-import com.twitter.follow_recommendations.common.models.FilterReason
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
 
-sealed trait PredicateResult {
-  def value: Boolean
+selonalelond trait PrelondicatelonRelonsult {
+  delonf valuelon: Boolelonan
 }
 
-object PredicateResult {
+objelonct PrelondicatelonRelonsult {
 
-  case object Valid extends PredicateResult {
-    override val value = true
+  caselon objelonct Valid elonxtelonnds PrelondicatelonRelonsult {
+    ovelonrridelon val valuelon = truelon
   }
 
-  case class Invalid(reasons: Set[FilterReason] = Set.empty[FilterReason]) extends PredicateResult {
-    override val value = false
+  caselon class Invalid(relonasons: Selont[FiltelonrRelonason] = Selont.elonmpty[FiltelonrRelonason]) elonxtelonnds PrelondicatelonRelonsult {
+    ovelonrridelon val valuelon = falselon
   }
 }

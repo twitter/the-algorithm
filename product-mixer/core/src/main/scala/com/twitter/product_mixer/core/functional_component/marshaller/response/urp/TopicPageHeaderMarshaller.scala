@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageHeader
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.pagelons.relonndelonr.{thriftscala => urp}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ClielonntelonvelonntInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TopicPagelonHelonadelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TopicPageHeaderMarshaller @Inject() (
-  topicPageHeaderFacepileMarshaller: TopicPageHeaderFacepileMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  topicPageHeaderDisplayTypeMarshaller: TopicPageHeaderDisplayTypeMarshaller) {
+@Singlelonton
+class TopicPagelonHelonadelonrMarshallelonr @Injelonct() (
+  topicPagelonHelonadelonrFacelonpilelonMarshallelonr: TopicPagelonHelonadelonrFacelonpilelonMarshallelonr,
+  clielonntelonvelonntInfoMarshallelonr: ClielonntelonvelonntInfoMarshallelonr,
+  topicPagelonHelonadelonrDisplayTypelonMarshallelonr: TopicPagelonHelonadelonrDisplayTypelonMarshallelonr) {
 
-  def apply(topicPageHeader: TopicPageHeader): urp.TopicPageHeader =
-    urp.TopicPageHeader(
-      topicId = topicPageHeader.topicId,
-      facepile = topicPageHeader.facepile.map(topicPageHeaderFacepileMarshaller(_)),
-      clientEventInfo = topicPageHeader.clientEventInfo.map(clientEventInfoMarshaller(_)),
-      landingContext = topicPageHeader.landingContext,
-      displayType = topicPageHeader.displayType
-        .map(topicPageHeaderDisplayTypeMarshaller(_)).getOrElse(
-          urp.TopicPageHeaderDisplayType.Basic)
+  delonf apply(topicPagelonHelonadelonr: TopicPagelonHelonadelonr): urp.TopicPagelonHelonadelonr =
+    urp.TopicPagelonHelonadelonr(
+      topicId = topicPagelonHelonadelonr.topicId,
+      facelonpilelon = topicPagelonHelonadelonr.facelonpilelon.map(topicPagelonHelonadelonrFacelonpilelonMarshallelonr(_)),
+      clielonntelonvelonntInfo = topicPagelonHelonadelonr.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_)),
+      landingContelonxt = topicPagelonHelonadelonr.landingContelonxt,
+      displayTypelon = topicPagelonHelonadelonr.displayTypelon
+        .map(topicPagelonHelonadelonrDisplayTypelonMarshallelonr(_)).gelontOrelonlselon(
+          urp.TopicPagelonHelonadelonrDisplayTypelon.Basic)
     )
 }

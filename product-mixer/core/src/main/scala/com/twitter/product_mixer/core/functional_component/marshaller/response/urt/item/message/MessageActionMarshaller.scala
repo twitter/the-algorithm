@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.CallbackMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ClielonntelonvelonntInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonAction
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class MessageActionMarshaller @Inject() (
-  callbackMarshaller: CallbackMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+@Singlelonton
+class MelonssagelonActionMarshallelonr @Injelonct() (
+  callbackMarshallelonr: CallbackMarshallelonr,
+  clielonntelonvelonntInfoMarshallelonr: ClielonntelonvelonntInfoMarshallelonr) {
 
-  def apply(messageAction: MessageAction): urt.MessageAction = {
+  delonf apply(melonssagelonAction: MelonssagelonAction): urt.MelonssagelonAction = {
 
-    urt.MessageAction(
-      dismissOnClick = messageAction.dismissOnClick,
-      url = messageAction.url,
-      clientEventInfo = messageAction.clientEventInfo.map(clientEventInfoMarshaller(_)),
+    urt.MelonssagelonAction(
+      dismissOnClick = melonssagelonAction.dismissOnClick,
+      url = melonssagelonAction.url,
+      clielonntelonvelonntInfo = melonssagelonAction.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_)),
       onClickCallbacks =
-        messageAction.onClickCallbacks.map(callbackList => callbackList.map(callbackMarshaller(_)))
+        melonssagelonAction.onClickCallbacks.map(callbackList => callbackList.map(callbackMarshallelonr(_)))
     )
   }
 }

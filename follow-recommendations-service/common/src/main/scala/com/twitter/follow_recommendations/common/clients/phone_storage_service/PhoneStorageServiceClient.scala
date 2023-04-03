@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.clients.phone_storage_service
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.phonelon_storagelon_selonrvicelon
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.phonestorage.api.thriftscala.GetUserPhonesByUsersRequest
-import com.twitter.phonestorage.api.thriftscala.PhoneStorageService
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.cds.contact_conselonnt_statelon.thriftscala.PurposelonOfProcelonssing
+import com.twittelonr.phonelonstoragelon.api.thriftscala.GelontUselonrPhonelonsByUselonrsRelonquelonst
+import com.twittelonr.phonelonstoragelon.api.thriftscala.PhonelonStoragelonSelonrvicelon
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PhoneStorageServiceClient @Inject() (
-  val phoneStorageService: PhoneStorageService.MethodPerEndpoint) {
+@Singlelonton
+class PhonelonStoragelonSelonrvicelonClielonnt @Injelonct() (
+  val phonelonStoragelonSelonrvicelon: PhonelonStoragelonSelonrvicelon.MelonthodPelonrelonndpoint) {
 
   /**
-   * PSS can potentially return multiple phone records.
-   * The current implementation of getUserPhonesByUsers returns only a single phone for a single user_id but
-   * we can trivially support handling multiple in case that changes in the future.
+   * PSS can potelonntially relonturn multiplelon phonelon reloncords.
+   * Thelon currelonnt implelonmelonntation of gelontUselonrPhonelonsByUselonrs relonturns only a singlelon phonelon for a singlelon uselonr_id but
+   * welon can trivially support handling multiplelon in caselon that changelons in thelon futurelon.
    */
-  def getPhoneNumbers(
-    userId: Long,
-    purposeOfProcessing: PurposeOfProcessing,
-    forceCarrierLookup: Option[Boolean] = None
-  ): Stitch[Seq[String]] = {
-    val req = GetUserPhonesByUsersRequest(
-      userIds = Seq(userId),
-      forceCarrierLookup = forceCarrierLookup,
-      purposesOfProcessing = Some(Seq(purposeOfProcessing))
+  delonf gelontPhonelonNumbelonrs(
+    uselonrId: Long,
+    purposelonOfProcelonssing: PurposelonOfProcelonssing,
+    forcelonCarrielonrLookup: Option[Boolelonan] = Nonelon
+  ): Stitch[Selonq[String]] = {
+    val relonq = GelontUselonrPhonelonsByUselonrsRelonquelonst(
+      uselonrIds = Selonq(uselonrId),
+      forcelonCarrielonrLookup = forcelonCarrielonrLookup,
+      purposelonsOfProcelonssing = Somelon(Selonq(purposelonOfProcelonssing))
     )
 
-    Stitch.callFuture(phoneStorageService.getUserPhonesByUsers(req)) map {
-      _.userPhones.map(_.phoneNumber)
+    Stitch.callFuturelon(phonelonStoragelonSelonrvicelon.gelontUselonrPhonelonsByUselonrs(relonq)) map {
+      _.uselonrPhonelons.map(_.phonelonNumbelonr)
     }
   }
 }

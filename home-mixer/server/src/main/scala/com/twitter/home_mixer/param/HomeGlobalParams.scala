@@ -1,110 +1,110 @@
-package com.twitter.home_mixer.param
+packagelon com.twittelonr.homelon_mixelonr.param
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
 /**
- * Instantiate Params that do not relate to a specific product.
+ * Instantiatelon Params that do not relonlatelon to a speloncific product.
  *
- * @see [[com.twitter.product_mixer.core.product.ProductParamConfig.supportedClientFSName]]
+ * @selonelon [[com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig.supportelondClielonntFSNamelon]]
  */
-object HomeGlobalParams {
+objelonct HomelonGlobalParams {
 
   /**
-   * This param is used to disable ads injection for timelines served by home-mixer.
-   * It is currently used to maintain user-role based no-ads lists for automation accounts,
-   * and should NOT be used for other purposes.
+   * This param is uselond to disablelon ads injelonction for timelonlinelons selonrvelond by homelon-mixelonr.
+   * It is currelonntly uselond to maintain uselonr-rolelon baselond no-ads lists for automation accounts,
+   * and should NOT belon uselond for othelonr purposelons.
    */
-  object AdsDisableInjectionBasedOnUserRoleParam
-      extends FSParam("home_mixer_ads_disable_injection_based_on_user_role", false)
+  objelonct AdsDisablelonInjelonctionBaselondOnUselonrRolelonParam
+      elonxtelonnds FSParam("homelon_mixelonr_ads_disablelon_injelonction_baselond_on_uselonr_rolelon", falselon)
 
-  object EnableSendScoresToClient
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_send_scores_to_client",
-        default = false
+  objelonct elonnablelonSelonndScorelonsToClielonnt
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "homelon_mixelonr_elonnablelon_selonnd_scorelons_to_clielonnt",
+        delonfault = falselon
       )
 
-  object EnableNahFeedbackInfoParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_nah_feedback_info",
-        default = false
+  objelonct elonnablelonNahFelonelondbackInfoParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "homelon_mixelonr_elonnablelon_nah_felonelondback_info",
+        delonfault = falselon
       )
 
-  object MaxNumberReplaceInstructionsParam
-      extends FSBoundedParam[Int](
-        name = "home_mixer_max_number_replace_instructions",
-        default = 100,
+  objelonct MaxNumbelonrRelonplacelonInstructionsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "homelon_mixelonr_max_numbelonr_relonplacelon_instructions",
+        delonfault = 100,
         min = 0,
         max = 200
       )
 
-  object TimelinesPersistenceStoreMaxEntriesPerClient
-      extends FSBoundedParam[Int](
-        name = "home_mixer_timelines_persistence_store_max_entries_per_client",
-        default = 1800,
+  objelonct TimelonlinelonsPelonrsistelonncelonStorelonMaxelonntrielonsPelonrClielonnt
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "homelon_mixelonr_timelonlinelons_pelonrsistelonncelon_storelon_max_elonntrielons_pelonr_clielonnt",
+        delonfault = 1800,
         min = 500,
         max = 5000
       )
 
-  object EnableNewTweetsPillAvatarsParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_new_tweets_pill_avatars",
-        default = true
+  objelonct elonnablelonNelonwTwelonelontsPillAvatarsParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "homelon_mixelonr_elonnablelon_nelonw_twelonelonts_pill_avatars",
+        delonfault = truelon
       )
 
-  object EnableServedCandidateKafkaPublishingParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_served_candidate_kafka_publishing",
-        default = true
+  objelonct elonnablelonSelonrvelondCandidatelonKafkaPublishingParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "homelon_mixelonr_elonnablelon_selonrvelond_candidatelon_kafka_publishing",
+        delonfault = truelon
       )
 
   /**
-   * This author ID list is used purely for realtime metrics collection around how often we
-   * are serving Tweets from these authors and which candidate sources they are coming from.
+   * This author ID list is uselond purelonly for relonaltimelon melontrics collelonction around how oftelonn welon
+   * arelon selonrving Twelonelonts from thelonselon authors and which candidatelon sourcelons thelony arelon coming from.
    */
-  object AuthorListForStatsParam
-      extends FSParam[Set[Long]](
-        name = "home_mixer_author_list_for_stats",
-        default = Set.empty
+  objelonct AuthorListForStatsParam
+      elonxtelonnds FSParam[Selont[Long]](
+        namelon = "homelon_mixelonr_author_list_for_stats",
+        delonfault = Selont.elonmpty
       )
 
-  object EnableSocialContextParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_social_context",
-        default = false
+  objelonct elonnablelonSocialContelonxtParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "homelon_mixelonr_elonnablelon_social_contelonxt",
+        delonfault = falselon
       )
 
-  object EnableGizmoduckAuthorSafetyFeatureHydratorParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_gizmoduck_author_safety_feature_hydrator",
-        default = true
+  objelonct elonnablelonGizmoduckAuthorSafelontyFelonaturelonHydratorParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "homelon_mixelonr_elonnablelon_gizmoduck_author_safelonty_felonaturelon_hydrator",
+        delonfault = truelon
       )
 
-  object EnableFeedbackFatigueParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_feedback_fatigue",
-        default = true
+  objelonct elonnablelonFelonelondbackFatiguelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "homelon_mixelonr_elonnablelon_felonelondback_fatiguelon",
+        delonfault = truelon
       )
 
-  object BlueVerifiedAuthorInNetworkMultiplierParam
-      extends FSBoundedParam[Double](
-        name = "home_mixer_blue_verified_author_in_network_multiplier",
-        default = 4.0,
+  objelonct BluelonVelonrifielondAuthorInNelontworkMultiplielonrParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "homelon_mixelonr_bluelon_velonrifielond_author_in_nelontwork_multiplielonr",
+        delonfault = 4.0,
         min = 0.0,
         max = 100.0
       )
 
-  object BlueVerifiedAuthorOutOfNetworkMultiplierParam
-      extends FSBoundedParam[Double](
-        name = "home_mixer_blue_verified_author_out_of_network_multiplier",
-        default = 2.0,
+  objelonct BluelonVelonrifielondAuthorOutOfNelontworkMultiplielonrParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "homelon_mixelonr_bluelon_velonrifielond_author_out_of_nelontwork_multiplielonr",
+        delonfault = 2.0,
         min = 0.0,
         max = 100.0
       )
 
-  object EnableAdvertiserBrandSafetySettingsFeatureHydratorParam
-      extends FSParam[Boolean](
-        name = "home_mixer_enable_advertiser_brand_safety_settings_feature_hydrator",
-        default = true
+  objelonct elonnablelonAdvelonrtiselonrBrandSafelontySelonttingsFelonaturelonHydratorParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "homelon_mixelonr_elonnablelon_advelonrtiselonr_brand_safelonty_selonttings_felonaturelon_hydrator",
+        delonfault = truelon
       )
 }

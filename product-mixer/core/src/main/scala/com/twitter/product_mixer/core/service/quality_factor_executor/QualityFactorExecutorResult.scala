@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.service.quality_factor_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.quality_factor_elonxeloncutor
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
 
-case class QualityFactorExecutorResult(
-  pipelineQualityFactors: Map[ComponentIdentifier, Double])
+caselon class QualityFactorelonxeloncutorRelonsult(
+  pipelonlinelonQualityFactors: Map[ComponelonntIdelonntifielonr, Doublelon])
 
-object QualityFactorExecutorResult {
-  val empty: QualityFactorExecutorResult = QualityFactorExecutorResult(Map.empty)
+objelonct QualityFactorelonxeloncutorRelonsult {
+  val elonmpty: QualityFactorelonxeloncutorRelonsult = QualityFactorelonxeloncutorRelonsult(Map.elonmpty)
 }

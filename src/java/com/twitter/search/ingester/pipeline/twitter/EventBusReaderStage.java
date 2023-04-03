@@ -1,185 +1,185 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import javax.naming.NamingException;
+import javax.naming.Namingelonxcelonption;
 
-import scala.runtime.BoxedUnit;
+import scala.runtimelon.BoxelondUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.StageDriver;
-import org.apache.thrift.TBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.pipelonlinelon.Pipelonlinelon;
+import org.apachelon.commons.pipelonlinelon.StagelonDrivelonr;
+import org.apachelon.thrift.TBaselon;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.eventbus.client.EventBusSubscriber;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.ingester.model.PromiseContainer;
-import com.twitter.search.ingester.pipeline.util.PipelineUtil;
-import com.twitter.util.Await;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
-import com.twitter.util.Promise;
+import com.twittelonr.elonvelonntbus.clielonnt.elonvelonntBusSubscribelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.PromiselonContainelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonUtil;
+import com.twittelonr.util.Await;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Promiselon;
 
-public abstract class EventBusReaderStage<T extends TBase<?, ?>> extends TwitterBaseStage
+public abstract class elonvelonntBusRelonadelonrStagelon<T elonxtelonnds TBaselon<?, ?>> elonxtelonnds TwittelonrBaselonStagelon
     <Void, Void> {
-  private static final Logger LOG = LoggerFactory.getLogger(EventBusReaderStage.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonvelonntBusRelonadelonrStagelon.class);
 
-  private static final int DECIDER_POLL_INTERVAL_IN_SECS = 5;
+  privatelon static final int DelonCIDelonR_POLL_INTelonRVAL_IN_SelonCS = 5;
 
-  private SearchCounter totalEventsCount;
+  privatelon SelonarchCountelonr totalelonvelonntsCount;
 
-  private String environment = null;
-  private String eventBusReaderEnabledDeciderKey;
+  privatelon String elonnvironmelonnt = null;
+  privatelon String elonvelonntBusRelonadelonrelonnablelondDeloncidelonrKelony;
 
-  private StageDriver stageDriver;
+  privatelon StagelonDrivelonr stagelonDrivelonr;
 
-  private EventBusSubscriber<T> eventBusSubscriber = null;
+  privatelon elonvelonntBusSubscribelonr<T> elonvelonntBusSubscribelonr = null;
 
   // XML configuration options
-  private String eventBusSubscriberId;
-  private int maxConcurrentEvents;
-  private SearchDecider searchDecider;
+  privatelon String elonvelonntBusSubscribelonrId;
+  privatelon int maxConcurrelonntelonvelonnts;
+  privatelon SelonarchDeloncidelonr selonarchDeloncidelonr;
 
-  protected EventBusReaderStage() {
+  protelonctelond elonvelonntBusRelonadelonrStagelon() {
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
+    totalelonvelonntsCount = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_total_elonvelonnts_count");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws NamingException {
-    searchDecider = new SearchDecider(decider);
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Namingelonxcelonption {
+    selonarchDeloncidelonr = nelonw SelonarchDeloncidelonr(deloncidelonr);
 
-    if (stageDriver == null) {
-      stageDriver = ((Pipeline) stageContext).getStageDriver(this);
+    if (stagelonDrivelonr == null) {
+      stagelonDrivelonr = ((Pipelonlinelon) stagelonContelonxt).gelontStagelonDrivelonr(this);
     }
 
-    eventBusReaderEnabledDeciderKey = String.format(
-        getDeciderKeyTemplate(),
-        earlybirdCluster.getNameForStats(),
-        environment);
+    elonvelonntBusRelonadelonrelonnablelondDeloncidelonrKelony = String.format(
+        gelontDeloncidelonrKelonyTelonmplatelon(),
+        elonarlybirdClustelonr.gelontNamelonForStats(),
+        elonnvironmelonnt);
 
-    PipelineUtil.feedStartObjectToStage(this);
+    PipelonlinelonUtil.felonelondStartObjelonctToStagelon(this);
   }
 
-  protected abstract PromiseContainer<BoxedUnit, T> eventAndPromiseToContainer(
-      T incomingEvent,
-      Promise<BoxedUnit> p);
+  protelonctelond abstract PromiselonContainelonr<BoxelondUnit, T> elonvelonntAndPromiselonToContainelonr(
+      T incomingelonvelonnt,
+      Promiselon<BoxelondUnit> p);
 
-  private Future<BoxedUnit> processEvent(T incomingEvent) {
-    Promise<BoxedUnit> p = new Promise<>();
-    PromiseContainer<BoxedUnit, T> promiseContainer = eventAndPromiseToContainer(incomingEvent, p);
-    totalEventsCount.increment();
-    emitAndCount(promiseContainer);
-    return p;
+  privatelon Futurelon<BoxelondUnit> procelonsselonvelonnt(T incomingelonvelonnt) {
+    Promiselon<BoxelondUnit> p = nelonw Promiselon<>();
+    PromiselonContainelonr<BoxelondUnit, T> promiselonContainelonr = elonvelonntAndPromiselonToContainelonr(incomingelonvelonnt, p);
+    totalelonvelonntsCount.increlonmelonnt();
+    elonmitAndCount(promiselonContainelonr);
+    relonturn p;
   }
 
-  private void closeEventBusSubscriber() throws Exception {
-    if (eventBusSubscriber != null) {
-      Await.result(eventBusSubscriber.close());
-      eventBusSubscriber = null;
+  privatelon void closelonelonvelonntBusSubscribelonr() throws elonxcelonption {
+    if (elonvelonntBusSubscribelonr != null) {
+      Await.relonsult(elonvelonntBusSubscribelonr.closelon());
+      elonvelonntBusSubscribelonr = null;
     }
   }
 
-  protected abstract Class<T> getThriftClass();
+  protelonctelond abstract Class<T> gelontThriftClass();
 
-  protected abstract String getDeciderKeyTemplate();
+  protelonctelond abstract String gelontDeloncidelonrKelonyTelonmplatelon();
 
-  private void startUpEventBusSubscriber() {
-    // Start reading from eventbus if it is null
-    if (eventBusSubscriber == null) {
-      //noinspection unchecked
-      eventBusSubscriber = wireModule.createEventBusSubscriber(
-          Function.func(this::processEvent),
-          getThriftClass(),
-          eventBusSubscriberId,
-          maxConcurrentEvents);
+  privatelon void startUpelonvelonntBusSubscribelonr() {
+    // Start relonading from elonvelonntbus if it is null
+    if (elonvelonntBusSubscribelonr == null) {
+      //noinspelonction unchelonckelond
+      elonvelonntBusSubscribelonr = wirelonModulelon.crelonatelonelonvelonntBusSubscribelonr(
+          Function.func(this::procelonsselonvelonnt),
+          gelontThriftClass(),
+          elonvelonntBusSubscribelonrId,
+          maxConcurrelonntelonvelonnts);
 
     }
-    Preconditions.checkNotNull(eventBusSubscriber);
+    Prelonconditions.chelonckNotNull(elonvelonntBusSubscribelonr);
   }
 
   /**
-   * This is only kicked off once with a start object which is ignored. Then we loop
-   * checking the decider. If it turns off then we close the eventbus reader,
-   * and if it turns on, then we create a new eventbus reader.
+   * This is only kickelond off oncelon with a start objelonct which is ignorelond. Thelonn welon loop
+   * cheloncking thelon deloncidelonr. If it turns off thelonn welon closelon thelon elonvelonntbus relonadelonr,
+   * and if it turns on, thelonn welon crelonatelon a nelonw elonvelonntbus relonadelonr.
    *
-   * @param obj ignored
+   * @param obj ignorelond
    */
-  @Override
-  public void innerProcess(Object obj) {
-    boolean interrupted = false;
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) {
+    boolelonan intelonrruptelond = falselon;
 
-    Preconditions.checkNotNull("The environment is not set.", environment);
+    Prelonconditions.chelonckNotNull("Thelon elonnvironmelonnt is not selont.", elonnvironmelonnt);
 
-    int previousEventBusReaderEnabledAvailability = 0;
-    while (stageDriver.getState() == StageDriver.State.RUNNING) {
-      int eventBusReaderEnabledAvailability =
-          searchDecider.getAvailability(eventBusReaderEnabledDeciderKey);
-      if (previousEventBusReaderEnabledAvailability != eventBusReaderEnabledAvailability) {
-        LOG.info("EventBusReaderStage availability decider changed from {} to {}.",
-                 previousEventBusReaderEnabledAvailability, eventBusReaderEnabledAvailability);
+    int prelonviouselonvelonntBusRelonadelonrelonnablelondAvailability = 0;
+    whilelon (stagelonDrivelonr.gelontStatelon() == StagelonDrivelonr.Statelon.RUNNING) {
+      int elonvelonntBusRelonadelonrelonnablelondAvailability =
+          selonarchDeloncidelonr.gelontAvailability(elonvelonntBusRelonadelonrelonnablelondDeloncidelonrKelony);
+      if (prelonviouselonvelonntBusRelonadelonrelonnablelondAvailability != elonvelonntBusRelonadelonrelonnablelondAvailability) {
+        LOG.info("elonvelonntBusRelonadelonrStagelon availability deloncidelonr changelond from {} to {}.",
+                 prelonviouselonvelonntBusRelonadelonrelonnablelondAvailability, elonvelonntBusRelonadelonrelonnablelondAvailability);
 
-        // If the availability is 0 then disable the reader, otherwise read from EventBus.
-        if (eventBusReaderEnabledAvailability == 0) {
+        // If thelon availability is 0 thelonn disablelon thelon relonadelonr, othelonrwiselon relonad from elonvelonntBus.
+        if (elonvelonntBusRelonadelonrelonnablelondAvailability == 0) {
           try {
-            closeEventBusSubscriber();
-          } catch (Exception e) {
-            LOG.warn("Exception while closing eventbus subscriber", e);
+            closelonelonvelonntBusSubscribelonr();
+          } catch (elonxcelonption elon) {
+            LOG.warn("elonxcelonption whilelon closing elonvelonntbus subscribelonr", elon);
           }
-        } else {
-          startUpEventBusSubscriber();
+        } elonlselon {
+          startUpelonvelonntBusSubscribelonr();
         }
       }
-      previousEventBusReaderEnabledAvailability = eventBusReaderEnabledAvailability;
+      prelonviouselonvelonntBusRelonadelonrelonnablelondAvailability = elonvelonntBusRelonadelonrelonnablelondAvailability;
 
       try {
-        clock.waitFor(TimeUnit.SECONDS.toMillis(DECIDER_POLL_INTERVAL_IN_SECS));
-      } catch (InterruptedException e) {
-        interrupted = true;
+        clock.waitFor(TimelonUnit.SelonCONDS.toMillis(DelonCIDelonR_POLL_INTelonRVAL_IN_SelonCS));
+      } catch (Intelonrruptelondelonxcelonption elon) {
+        intelonrruptelond = truelon;
       }
     }
-    LOG.info("StageDriver is not RUNNING anymore, closing EventBus subscriber");
+    LOG.info("StagelonDrivelonr is not RUNNING anymorelon, closing elonvelonntBus subscribelonr");
     try {
-      closeEventBusSubscriber();
-    } catch (InterruptedException e) {
-      interrupted = true;
-    } catch (Exception e) {
-      LOG.warn("Exception while closing eventbus subscriber", e);
+      closelonelonvelonntBusSubscribelonr();
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      intelonrruptelond = truelon;
+    } catch (elonxcelonption elon) {
+      LOG.warn("elonxcelonption whilelon closing elonvelonntbus subscribelonr", elon);
     } finally {
-      if (interrupted) {
-        Thread.currentThread().interrupt();
+      if (intelonrruptelond) {
+        Threlonad.currelonntThrelonad().intelonrrupt();
       }
     }
   }
 
-  // This is needed to set the value from XML config.
-  public void setEventBusSubscriberId(String eventBusSubscriberId) {
-    this.eventBusSubscriberId = eventBusSubscriberId;
-    LOG.info("EventBusReaderStage with eventBusSubscriberId: {}", eventBusSubscriberId);
+  // This is nelonelondelond to selont thelon valuelon from XML config.
+  public void selontelonvelonntBusSubscribelonrId(String elonvelonntBusSubscribelonrId) {
+    this.elonvelonntBusSubscribelonrId = elonvelonntBusSubscribelonrId;
+    LOG.info("elonvelonntBusRelonadelonrStagelon with elonvelonntBusSubscribelonrId: {}", elonvelonntBusSubscribelonrId);
   }
 
-  // This is needed to set the value from XML config.
-  public void setEnvironment(String environment) {
-    this.environment = environment;
-    LOG.info("Ingester is running in {}", environment);
+  // This is nelonelondelond to selont thelon valuelon from XML config.
+  public void selontelonnvironmelonnt(String elonnvironmelonnt) {
+    this.elonnvironmelonnt = elonnvironmelonnt;
+    LOG.info("Ingelonstelonr is running in {}", elonnvironmelonnt);
   }
 
-  // This is needed to set the value from XML config.
-  public void setMaxConcurrentEvents(int maxConcurrentEvents) {
-    this.maxConcurrentEvents = maxConcurrentEvents;
+  // This is nelonelondelond to selont thelon valuelon from XML config.
+  public void selontMaxConcurrelonntelonvelonnts(int maxConcurrelonntelonvelonnts) {
+    this.maxConcurrelonntelonvelonnts = maxConcurrelonntelonvelonnts;
   }
 
-  @VisibleForTesting
-  public void setStageDriver(StageDriver stageDriver) {
-    this.stageDriver = stageDriver;
+  @VisiblelonForTelonsting
+  public void selontStagelonDrivelonr(StagelonDrivelonr stagelonDrivelonr) {
+    this.stagelonDrivelonr = stagelonDrivelonr;
   }
 }

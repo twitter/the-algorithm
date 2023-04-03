@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.product.list_tweets.param
+packagelon com.twittelonr.homelon_mixelonr.product.list_twelonelonts.param
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.EnableAdsCandidatePipelineParam
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.SupportedClientFSName
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.param.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.homelon_mixelonr.product.list_twelonelonts.param.ListTwelonelontsParam.elonnablelonAdsCandidatelonPipelonlinelonParam
+import com.twittelonr.homelon_mixelonr.product.list_twelonelonts.param.ListTwelonelontsParam.SelonrvelonrMaxRelonsultsParam
+import com.twittelonr.homelon_mixelonr.product.list_twelonelonts.param.ListTwelonelontsParam.SupportelondClielonntFSNamelon
+import com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyNamelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ListTweetsParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableListTweetsProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@Singlelonton
+class ListTwelonelontsParamConfig @Injelonct() () elonxtelonnds ProductParamConfig {
+  ovelonrridelon val elonnablelondDeloncidelonrKelony: DeloncidelonrKelonyNamelon = DeloncidelonrKelony.elonnablelonListTwelonelontsProduct
+  ovelonrridelon val supportelondClielonntFSNamelon: String = SupportelondClielonntFSNamelon
 
-  override val booleanFSOverrides =
-    Seq(EnableAdsCandidatePipelineParam)
+  ovelonrridelon val boolelonanFSOvelonrridelons =
+    Selonq(elonnablelonAdsCandidatelonPipelonlinelonParam)
 
-  override val boundedIntFSOverrides = Seq(
-    ServerMaxResultsParam
+  ovelonrridelon val boundelondIntFSOvelonrridelons = Selonq(
+    SelonrvelonrMaxRelonsultsParam
   )
 }

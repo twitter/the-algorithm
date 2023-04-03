@@ -1,54 +1,54 @@
-package com.twitter.home_mixer.marshaller.request
+packagelon com.twittelonr.homelon_mixelonr.marshallelonr.relonquelonst
 
-import com.twitter.home_mixer.model.request.FollowingProductContext
-import com.twitter.home_mixer.model.request.ForYouProductContext
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProductContext
-import com.twitter.home_mixer.model.request.ListTweetsProductContext
-import com.twitter.home_mixer.model.request.ScoredTweetsProductContext
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProductContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ForYouProductContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListReloncommelonndelondUselonrsProductContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListTwelonelontsProductContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ScorelondTwelonelontsProductContelonxt
+import com.twittelonr.homelon_mixelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ProductContelonxt
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HomeMixerProductContextUnmarshaller @Inject() (
-  deviceContextUnmarshaller: DeviceContextUnmarshaller) {
+@Singlelonton
+class HomelonMixelonrProductContelonxtUnmarshallelonr @Injelonct() (
+  delonvicelonContelonxtUnmarshallelonr: DelonvicelonContelonxtUnmarshallelonr) {
 
-  def apply(productContext: t.ProductContext): ProductContext = productContext match {
-    case t.ProductContext.Following(p) =>
-      FollowingProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
-        dspClientContext = p.dspClientContext
+  delonf apply(productContelonxt: t.ProductContelonxt): ProductContelonxt = productContelonxt match {
+    caselon t.ProductContelonxt.Following(p) =>
+      FollowingProductContelonxt(
+        delonvicelonContelonxt = p.delonvicelonContelonxt.map(delonvicelonContelonxtUnmarshallelonr(_)),
+        selonelonnTwelonelontIds = p.selonelonnTwelonelontIds,
+        dspClielonntContelonxt = p.dspClielonntContelonxt
       )
-    case t.ProductContext.ForYou(p) =>
-      ForYouProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
-        dspClientContext = p.dspClientContext
+    caselon t.ProductContelonxt.ForYou(p) =>
+      ForYouProductContelonxt(
+        delonvicelonContelonxt = p.delonvicelonContelonxt.map(delonvicelonContelonxtUnmarshallelonr(_)),
+        selonelonnTwelonelontIds = p.selonelonnTwelonelontIds,
+        dspClielonntContelonxt = p.dspClielonntContelonxt
       )
-    case t.ProductContext.Realtime(p) =>
-      throw new UnsupportedOperationException(s"This product is no longer used")
-    case t.ProductContext.ScoredTweets(p) =>
-      ScoredTweetsProductContext(
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        seenTweetIds = p.seenTweetIds,
-        servedTweetIds = p.servedTweetIds
+    caselon t.ProductContelonxt.Relonaltimelon(p) =>
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(s"This product is no longelonr uselond")
+    caselon t.ProductContelonxt.ScorelondTwelonelonts(p) =>
+      ScorelondTwelonelontsProductContelonxt(
+        delonvicelonContelonxt = p.delonvicelonContelonxt.map(delonvicelonContelonxtUnmarshallelonr(_)),
+        selonelonnTwelonelontIds = p.selonelonnTwelonelontIds,
+        selonrvelondTwelonelontIds = p.selonrvelondTwelonelontIds
       )
-    case t.ProductContext.ListTweets(p) =>
-      ListTweetsProductContext(
+    caselon t.ProductContelonxt.ListTwelonelonts(p) =>
+      ListTwelonelontsProductContelonxt(
         listId = p.listId,
-        deviceContext = p.deviceContext.map(deviceContextUnmarshaller(_)),
-        dspClientContext = p.dspClientContext
+        delonvicelonContelonxt = p.delonvicelonContelonxt.map(delonvicelonContelonxtUnmarshallelonr(_)),
+        dspClielonntContelonxt = p.dspClielonntContelonxt
       )
-    case t.ProductContext.ListRecommendedUsers(p) =>
-      ListRecommendedUsersProductContext(
+    caselon t.ProductContelonxt.ListReloncommelonndelondUselonrs(p) =>
+      ListReloncommelonndelondUselonrsProductContelonxt(
         listId = p.listId,
-        selectedUserIds = p.selectedUserIds,
-        excludedUserIds = p.excludedUserIds
+        selonlelonctelondUselonrIds = p.selonlelonctelondUselonrIds,
+        elonxcludelondUselonrIds = p.elonxcludelondUselonrIds
       )
-    case t.ProductContext.UnknownUnionField(field) =>
-      throw new UnsupportedOperationException(s"Unknown display context: ${field.field.name}")
+    caselon t.ProductContelonxt.UnknownUnionFielonld(fielonld) =>
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown display contelonxt: ${fielonld.fielonld.namelon}")
   }
 }

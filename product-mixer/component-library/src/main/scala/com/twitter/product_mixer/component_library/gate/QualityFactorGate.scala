@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.gate
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.gatelon
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.quality_factor.HasQualityFactorStatus
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.quality_factor.HasQualityFactorStatus
+import com.twittelonr.stitch.Stitch
 
 /**
- * A Gate that only continues if the quality factor value of the pipeline is above the given
- * threshold. This is useful for disabling an expensive function when the pipeline is under pressure
+ * A Gatelon that only continuelons if thelon quality factor valuelon of thelon pipelonlinelon is abovelon thelon givelonn
+ * threlonshold. This is uselonful for disabling an elonxpelonnsivelon function whelonn thelon pipelonlinelon is undelonr prelonssurelon
  * (quality factor is low).
  */
-case class QualityFactorGate(pipelineIdentifier: ComponentIdentifier, threshold: Double)
-    extends Gate[PipelineQuery with HasQualityFactorStatus] {
+caselon class QualityFactorGatelon(pipelonlinelonIdelonntifielonr: ComponelonntIdelonntifielonr, threlonshold: Doublelon)
+    elonxtelonnds Gatelon[PipelonlinelonQuelonry with HasQualityFactorStatus] {
 
-  override val identifier: GateIdentifier = GateIdentifier(
-    s"${pipelineIdentifier.name}QualityFactor")
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr(
+    s"${pipelonlinelonIdelonntifielonr.namelon}QualityFactor")
 
-  override def shouldContinue(
-    query: PipelineQuery with HasQualityFactorStatus
-  ): Stitch[Boolean] =
-    Stitch.value(query.getQualityFactorCurrentValue(pipelineIdentifier) >= threshold)
+  ovelonrridelon delonf shouldContinuelon(
+    quelonry: PipelonlinelonQuelonry with HasQualityFactorStatus
+  ): Stitch[Boolelonan] =
+    Stitch.valuelon(quelonry.gelontQualityFactorCurrelonntValuelon(pipelonlinelonIdelonntifielonr) >= threlonshold)
 }

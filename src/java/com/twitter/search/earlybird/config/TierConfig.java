@@ -1,175 +1,175 @@
-package com.twitter.search.earlybird.config;
+packagelon com.twittelonr.selonarch.elonarlybird.config;
 
-import java.util.Date;
+import java.util.Datelon;
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.config.ConfigFile;
-import com.twitter.search.common.config.ConfigurationException;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.util.date.DateUtil;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.config.ConfigFilelon;
+import com.twittelonr.selonarch.common.config.Configurationelonxcelonption;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.util.datelon.DatelonUtil;
 
 /**
- * This class provides APIs to access the tier configurations for a cluster.
- * Each tier has tier name, number of partitions, tier start time and end time.
+ * This class providelons APIs to accelonss thelon tielonr configurations for a clustelonr.
+ * elonach tielonr has tielonr namelon, numbelonr of partitions, tielonr start timelon and elonnd timelon.
  */
-public final class TierConfig {
-  private static final org.slf4j.Logger LOG = org.slf4j.LoggerFactory.getLogger(TierConfig.class);
+public final class TielonrConfig {
+  privatelon static final org.slf4j.Loggelonr LOG = org.slf4j.LoggelonrFactory.gelontLoggelonr(TielonrConfig.class);
 
-  private static final String DEFAULT_CONFIG_DIR = "common/config";
-  public static final String DEFAULT_TIER_FILE = "earlybird-tiers.yml";
+  privatelon static final String DelonFAULT_CONFIG_DIR = "common/config";
+  public static final String DelonFAULT_TIelonR_FILelon = "elonarlybird-tielonrs.yml";
 
-  public static final Date DEFAULT_TIER_START_DATE = DateUtil.toDate(2006, 3, 21);
-  // It's convenient for DEFAULT_TIER_END_DATE to be before ~2100, because then the output of
-  // FieldTermCounter.getHourValue(DEFAULT_TIER_END_END_DATE) can still fit into an integer.
-  public static final Date DEFAULT_TIER_END_DATE = DateUtil.toDate(2099, 1, 1);
+  public static final Datelon DelonFAULT_TIelonR_START_DATelon = DatelonUtil.toDatelon(2006, 3, 21);
+  // It's convelonnielonnt for DelonFAULT_TIelonR_elonND_DATelon to belon belonforelon ~2100, beloncauselon thelonn thelon output of
+  // FielonldTelonrmCountelonr.gelontHourValuelon(DelonFAULT_TIelonR_elonND_elonND_DATelon) can still fit into an intelongelonr.
+  public static final Datelon DelonFAULT_TIelonR_elonND_DATelon = DatelonUtil.toDatelon(2099, 1, 1);
 
-  public static final String DEFAULT_TIER_NAME = "all";
-  public static final boolean DEFAULT_ENABLED = true;
-  public static final TierInfo.RequestReadType DEFAULT_READ_TYPE = TierInfo.RequestReadType.LIGHT;
+  public static final String DelonFAULT_TIelonR_NAMelon = "all";
+  public static final boolelonan DelonFAULT_elonNABLelonD = truelon;
+  public static final TielonrInfo.RelonquelonstRelonadTypelon DelonFAULT_RelonAD_TYPelon = TielonrInfo.RelonquelonstRelonadTypelon.LIGHT;
 
-  private static ConfigFile tierConfigFile = null;
-  private static ConfigSource tierConfigSource = null;
+  privatelon static ConfigFilelon tielonrConfigFilelon = null;
+  privatelon static ConfigSourcelon tielonrConfigSourcelon = null;
 
-  public enum ConfigSource {
+  public elonnum ConfigSourcelon {
     LOCAL,
-    ZOOKEEPER
+    ZOOKelonelonPelonR
   }
 
-  private TierConfig() { }
+  privatelon TielonrConfig() { }
 
-  private static synchronized void init() {
-    if (tierConfigFile == null) {
-      tierConfigFile = new ConfigFile(DEFAULT_CONFIG_DIR, DEFAULT_TIER_FILE);
-      tierConfigSource = ConfigSource.LOCAL;
-      SearchLongGauge.export("tier_config_source_" + tierConfigSource.name()).set(1);
-      LOG.info("Tier config file " + DEFAULT_TIER_FILE + " is successfully loaded from bundle.");
+  privatelon static synchronizelond void init() {
+    if (tielonrConfigFilelon == null) {
+      tielonrConfigFilelon = nelonw ConfigFilelon(DelonFAULT_CONFIG_DIR, DelonFAULT_TIelonR_FILelon);
+      tielonrConfigSourcelon = ConfigSourcelon.LOCAL;
+      SelonarchLongGaugelon.elonxport("tielonr_config_sourcelon_" + tielonrConfigSourcelon.namelon()).selont(1);
+      LOG.info("Tielonr config filelon " + DelonFAULT_TIelonR_FILelon + " is succelonssfully loadelond from bundlelon.");
     }
   }
 
-  public static ConfigFile getConfigFile() {
+  public static ConfigFilelon gelontConfigFilelon() {
     init();
-    return tierConfigFile;
+    relonturn tielonrConfigFilelon;
   }
 
-  public static String getConfigFileName() {
-    return getConfigFile().getConfigFileName();
-  }
-
-  /**
-   * Return all the tier names specified in the config file.
-   */
-  public static Set<String> getTierNames() {
-    return Config.getConfig().getMapCopy(getConfigFileName()).keySet();
+  public static String gelontConfigFilelonNamelon() {
+    relonturn gelontConfigFilelon().gelontConfigFilelonNamelon();
   }
 
   /**
-   * Sets the value of the given tier config property to the given value.
+   * Relonturn all thelon tielonr namelons speloncifielond in thelon config filelon.
    */
-  public static void setForTests(String property, Object value) {
-    Config.getConfig().setForTests(DEFAULT_TIER_FILE, property, value);
+  public static Selont<String> gelontTielonrNamelons() {
+    relonturn Config.gelontConfig().gelontMapCopy(gelontConfigFilelonNamelon()).kelonySelont();
   }
 
   /**
-   * Returns the config info for the specified tier.
+   * Selonts thelon valuelon of thelon givelonn tielonr config propelonrty to thelon givelonn valuelon.
    */
-  public static TierInfo getTierInfo(String tierName) {
-    return getTierInfo(tierName, null /* use current environment */);
+  public static void selontForTelonsts(String propelonrty, Objelonct valuelon) {
+    Config.gelontConfig().selontForTelonsts(DelonFAULT_TIelonR_FILelon, propelonrty, valuelon);
   }
 
   /**
-   * Returns the config info for the specified tier and environment.
+   * Relonturns thelon config info for thelon speloncifielond tielonr.
    */
-  public static TierInfo getTierInfo(String tierName, @Nullable String environment) {
-    String tierConfigFileType = getConfigFileName();
-    Map<String, Object> tierInfo;
+  public static TielonrInfo gelontTielonrInfo(String tielonrNamelon) {
+    relonturn gelontTielonrInfo(tielonrNamelon, null /* uselon currelonnt elonnvironmelonnt */);
+  }
+
+  /**
+   * Relonturns thelon config info for thelon speloncifielond tielonr and elonnvironmelonnt.
+   */
+  public static TielonrInfo gelontTielonrInfo(String tielonrNamelon, @Nullablelon String elonnvironmelonnt) {
+    String tielonrConfigFilelonTypelon = gelontConfigFilelonNamelon();
+    Map<String, Objelonct> tielonrInfo;
     try {
-      tierInfo = (Map<String, Object>) Config.getConfig()
-          .getFromEnvironment(environment, tierConfigFileType, tierName);
-    } catch (ConfigurationException e) {
-      throw new RuntimeException(e);
+      tielonrInfo = (Map<String, Objelonct>) Config.gelontConfig()
+          .gelontFromelonnvironmelonnt(elonnvironmelonnt, tielonrConfigFilelonTypelon, tielonrNamelon);
+    } catch (Configurationelonxcelonption elon) {
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
-    if (tierInfo == null) {
-      LOG.error("Cannot find tier config for "
-          + tierName + "in config file: " + tierConfigFileType);
-      throw new RuntimeException("Configuration error: " + tierConfigFileType);
+    if (tielonrInfo == null) {
+      LOG.elonrror("Cannot find tielonr config for "
+          + tielonrNamelon + "in config filelon: " + tielonrConfigFilelonTypelon);
+      throw nelonw Runtimelonelonxcelonption("Configuration elonrror: " + tielonrConfigFilelonTypelon);
     }
 
-    Long partitions = (Long) tierInfo.get("number_of_partitions");
+    Long partitions = (Long) tielonrInfo.gelont("numbelonr_of_partitions");
     if (partitions == null) {
-      LOG.error("No number of partition is specified for tier "
-          + tierName + " in tier config file " + tierConfigFileType);
-      throw new RuntimeException("Configuration error: " + tierConfigFileType);
+      LOG.elonrror("No numbelonr of partition is speloncifielond for tielonr "
+          + tielonrNamelon + " in tielonr config filelon " + tielonrConfigFilelonTypelon);
+      throw nelonw Runtimelonelonxcelonption("Configuration elonrror: " + tielonrConfigFilelonTypelon);
     }
 
-    Long numTimeslices = (Long) tierInfo.get("serving_timeslices");
-    if (numTimeslices == null) {
-      LOG.info("No max timeslices is specified for tier "
-          + tierName + " in tier config file " + tierConfigFileType
-          + ", not setting a cap on number of serving timeslices");
-      // NOTE: we use max int32 here because it will ultimately be cast to an int, but the config
-      // map expects Longs for all integral types.  Using Long.MAX_VALUE leads to max serving
-      // timeslices being set to -1 when it is truncated to an int.
-      numTimeslices = (long) Integer.MAX_VALUE;
+    Long numTimelonslicelons = (Long) tielonrInfo.gelont("selonrving_timelonslicelons");
+    if (numTimelonslicelons == null) {
+      LOG.info("No max timelonslicelons is speloncifielond for tielonr "
+          + tielonrNamelon + " in tielonr config filelon " + tielonrConfigFilelonTypelon
+          + ", not selontting a cap on numbelonr of selonrving timelonslicelons");
+      // NOTelon: welon uselon max int32 helonrelon beloncauselon it will ultimatelonly belon cast to an int, but thelon config
+      // map elonxpeloncts Longs for all intelongral typelons.  Using Long.MAX_VALUelon lelonads to max selonrving
+      // timelonslicelons beloning selont to -1 whelonn it is truncatelond to an int.
+      numTimelonslicelons = (long) Intelongelonr.MAX_VALUelon;
     }
 
-    Date tierStartDate = (Date) tierInfo.get("data_range_start_date_inclusive");
-    if (tierStartDate == null) {
-      tierStartDate = DEFAULT_TIER_START_DATE;
+    Datelon tielonrStartDatelon = (Datelon) tielonrInfo.gelont("data_rangelon_start_datelon_inclusivelon");
+    if (tielonrStartDatelon == null) {
+      tielonrStartDatelon = DelonFAULT_TIelonR_START_DATelon;
     }
-    Date tierEndDate = (Date) tierInfo.get("data_range_end_date_exclusive");
-    if (tierEndDate == null) {
-      tierEndDate = DEFAULT_TIER_END_DATE;
-    }
-
-    Boolean tierEnabled = (Boolean) tierInfo.get("tier_enabled");
-    if (tierEnabled == null) {
-      tierEnabled = DEFAULT_ENABLED;
+    Datelon tielonrelonndDatelon = (Datelon) tielonrInfo.gelont("data_rangelon_elonnd_datelon_elonxclusivelon");
+    if (tielonrelonndDatelon == null) {
+      tielonrelonndDatelon = DelonFAULT_TIelonR_elonND_DATelon;
     }
 
-    TierInfo.RequestReadType readType =
-      getRequestReadType((String) tierInfo.get("tier_read_type"), DEFAULT_READ_TYPE);
-    TierInfo.RequestReadType readTypeOverride =
-      getRequestReadType((String) tierInfo.get("tier_read_type_override"), readType);
+    Boolelonan tielonrelonnablelond = (Boolelonan) tielonrInfo.gelont("tielonr_elonnablelond");
+    if (tielonrelonnablelond == null) {
+      tielonrelonnablelond = DelonFAULT_elonNABLelonD;
+    }
 
-    return new TierInfo(
-        tierName,
-        tierStartDate,
-        tierEndDate,
-        partitions.intValue(),
-        numTimeslices.intValue(),
-        tierEnabled,
-        (String) tierInfo.get("serving_range_since_id_exclusive"),
-        (String) tierInfo.get("serving_range_max_id_inclusive"),
-        (Date) tierInfo.get("serving_range_start_date_inclusive_override"),
-        (Date) tierInfo.get("serving_range_end_date_exclusive_override"),
-        readType,
-        readTypeOverride,
-        Clock.SYSTEM_CLOCK);
+    TielonrInfo.RelonquelonstRelonadTypelon relonadTypelon =
+      gelontRelonquelonstRelonadTypelon((String) tielonrInfo.gelont("tielonr_relonad_typelon"), DelonFAULT_RelonAD_TYPelon);
+    TielonrInfo.RelonquelonstRelonadTypelon relonadTypelonOvelonrridelon =
+      gelontRelonquelonstRelonadTypelon((String) tielonrInfo.gelont("tielonr_relonad_typelon_ovelonrridelon"), relonadTypelon);
+
+    relonturn nelonw TielonrInfo(
+        tielonrNamelon,
+        tielonrStartDatelon,
+        tielonrelonndDatelon,
+        partitions.intValuelon(),
+        numTimelonslicelons.intValuelon(),
+        tielonrelonnablelond,
+        (String) tielonrInfo.gelont("selonrving_rangelon_sincelon_id_elonxclusivelon"),
+        (String) tielonrInfo.gelont("selonrving_rangelon_max_id_inclusivelon"),
+        (Datelon) tielonrInfo.gelont("selonrving_rangelon_start_datelon_inclusivelon_ovelonrridelon"),
+        (Datelon) tielonrInfo.gelont("selonrving_rangelon_elonnd_datelon_elonxclusivelon_ovelonrridelon"),
+        relonadTypelon,
+        relonadTypelonOvelonrridelon,
+        Clock.SYSTelonM_CLOCK);
   }
 
-  public static synchronized void clear() {
-    tierConfigFile = null;
-    tierConfigSource = null;
+  public static synchronizelond void clelonar() {
+    tielonrConfigFilelon = null;
+    tielonrConfigSourcelon = null;
   }
 
-  protected static synchronized ConfigSource getTierConfigSource() {
-    return tierConfigSource;
+  protelonctelond static synchronizelond ConfigSourcelon gelontTielonrConfigSourcelon() {
+    relonturn tielonrConfigSourcelon;
   }
 
-  private static TierInfo.RequestReadType getRequestReadType(
-      String readTypeEnumName, TierInfo.RequestReadType defaultReadType) {
-    TierInfo.RequestReadType readType = defaultReadType;
-    if (readTypeEnumName != null) {
-      readType = TierInfo.RequestReadType.valueOf(readTypeEnumName.trim().toUpperCase());
-      Preconditions.checkState(readType != null);
+  privatelon static TielonrInfo.RelonquelonstRelonadTypelon gelontRelonquelonstRelonadTypelon(
+      String relonadTypelonelonnumNamelon, TielonrInfo.RelonquelonstRelonadTypelon delonfaultRelonadTypelon) {
+    TielonrInfo.RelonquelonstRelonadTypelon relonadTypelon = delonfaultRelonadTypelon;
+    if (relonadTypelonelonnumNamelon != null) {
+      relonadTypelon = TielonrInfo.RelonquelonstRelonadTypelon.valuelonOf(relonadTypelonelonnumNamelon.trim().toUppelonrCaselon());
+      Prelonconditions.chelonckStatelon(relonadTypelon != null);
     }
-    return readType;
+    relonturn relonadTypelon;
   }
 }

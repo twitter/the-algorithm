@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasExcludedIds
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HaselonxcludelondIds
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-case class ExcludedIdsFilter[
-  Query <: PipelineQuery with HasExcludedIds,
-  Candidate <: UniversalNoun[Long]
-]() extends Filter[Query, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("ExcludedIds")
+caselon class elonxcludelondIdsFiltelonr[
+  Quelonry <: PipelonlinelonQuelonry with HaselonxcludelondIds,
+  Candidatelon <: UnivelonrsalNoun[Long]
+]() elonxtelonnds Filtelonr[Quelonry, Candidatelon] {
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("elonxcludelondIds")
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val (kept, removed) =
-      candidates.map(_.candidate).partition(candidate => !query.excludedIds.contains(candidate.id))
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
+    val (kelonpt, relonmovelond) =
+      candidatelons.map(_.candidatelon).partition(candidatelon => !quelonry.elonxcludelondIds.contains(candidatelon.id))
 
-    val filterResult = FilterResult(kept = kept, removed = removed)
-    Stitch.value(filterResult)
+    val filtelonrRelonsult = FiltelonrRelonsult(kelonpt = kelonpt, relonmovelond = relonmovelond)
+    Stitch.valuelon(filtelonrRelonsult)
   }
 }

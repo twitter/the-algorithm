@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowCoverInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ShowCovelonrInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Covelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class ShowCoverInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, ShowCoverInstruction] {
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[ShowCoverInstruction] = {
-    if (includeInstruction(query, entries)) {
-      // Currently only one cover is supported per response
-      entries.collectFirst {
-        case coverEntry: Cover => ShowCoverInstruction(coverEntry)
-      }.toSeq
-    } else {
-      Seq.empty
+caselon class ShowCovelonrInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon)
+    elonxtelonnds UrtInstructionBuildelonr[Quelonry, ShowCovelonrInstruction] {
+  ovelonrridelon delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Selonq[ShowCovelonrInstruction] = {
+    if (includelonInstruction(quelonry, elonntrielons)) {
+      // Currelonntly only onelon covelonr is supportelond pelonr relonsponselon
+      elonntrielons.collelonctFirst {
+        caselon covelonrelonntry: Covelonr => ShowCovelonrInstruction(covelonrelonntry)
+      }.toSelonq
+    } elonlselon {
+      Selonq.elonmpty
     }
   }
 }

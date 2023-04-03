@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
 
-case class TombstoneInfo(
-  text: String,
-  richText: Option[RichText],
-  richRevealText: Option[RichText])
+caselon class TombstonelonInfo(
+  telonxt: String,
+  richTelonxt: Option[RichTelonxt],
+  richRelonvelonalTelonxt: Option[RichTelonxt])

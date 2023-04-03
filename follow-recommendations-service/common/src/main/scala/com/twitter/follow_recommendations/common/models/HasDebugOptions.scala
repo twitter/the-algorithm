@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.thriftscala.DebugParams
+import com.twittelonr.follow_reloncommelonndations.thriftscala.DelonbugParams
 
-case class DebugOptions(
-  randomizationSeed: Option[Long] = None,
-  fetchDebugInfo: Boolean = false,
-  doNotLog: Boolean = false)
+caselon class DelonbugOptions(
+  randomizationSelonelond: Option[Long] = Nonelon,
+  felontchDelonbugInfo: Boolelonan = falselon,
+  doNotLog: Boolelonan = falselon)
 
-object DebugOptions {
-  def fromDebugParamsThrift(debugParams: DebugParams): DebugOptions = {
-    DebugOptions(
-      debugParams.randomizationSeed,
-      debugParams.includeDebugInfoInResults.getOrElse(false),
-      debugParams.doNotLog.getOrElse(false)
+objelonct DelonbugOptions {
+  delonf fromDelonbugParamsThrift(delonbugParams: DelonbugParams): DelonbugOptions = {
+    DelonbugOptions(
+      delonbugParams.randomizationSelonelond,
+      delonbugParams.includelonDelonbugInfoInRelonsults.gelontOrelonlselon(falselon),
+      delonbugParams.doNotLog.gelontOrelonlselon(falselon)
     )
   }
 }
 
-trait HasDebugOptions {
-  def debugOptions: Option[DebugOptions]
+trait HasDelonbugOptions {
+  delonf delonbugOptions: Option[DelonbugOptions]
 
-  def getRandomizationSeed: Option[Long] = debugOptions.flatMap(_.randomizationSeed)
+  delonf gelontRandomizationSelonelond: Option[Long] = delonbugOptions.flatMap(_.randomizationSelonelond)
 
-  def fetchDebugInfo: Option[Boolean] = debugOptions.map(_.fetchDebugInfo)
+  delonf felontchDelonbugInfo: Option[Boolelonan] = delonbugOptions.map(_.felontchDelonbugInfo)
 }
 
-trait HasFrsDebugOptions {
-  def frsDebugOptions: Option[DebugOptions]
+trait HasFrsDelonbugOptions {
+  delonf frsDelonbugOptions: Option[DelonbugOptions]
 }

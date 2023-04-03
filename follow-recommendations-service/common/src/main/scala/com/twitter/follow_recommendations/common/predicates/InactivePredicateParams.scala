@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.common.predicates
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object InactivePredicateParams {
-  case object DefaultInactivityThreshold
-      extends FSBoundedParam[Int](
-        name = "inactive_predicate_default_inactivity_threshold",
-        default = 60,
+objelonct InactivelonPrelondicatelonParams {
+  caselon objelonct DelonfaultInactivityThrelonshold
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "inactivelon_prelondicatelon_delonfault_inactivity_threlonshold",
+        delonfault = 60,
         min = 1,
         max = 500
       )
-  case object UseEggFilter extends Param[Boolean](true)
-  case object MightBeDisabled extends FSParam[Boolean]("inactive_predicate_might_be_disabled", true)
-  case object OnlyDisableForNewUserStateCandidates
-      extends FSParam[Boolean](
-        "inactive_predicate_only_disable_for_new_user_state_candidates",
-        false)
+  caselon objelonct UselonelonggFiltelonr elonxtelonnds Param[Boolelonan](truelon)
+  caselon objelonct MightBelonDisablelond elonxtelonnds FSParam[Boolelonan]("inactivelon_prelondicatelon_might_belon_disablelond", truelon)
+  caselon objelonct OnlyDisablelonForNelonwUselonrStatelonCandidatelons
+      elonxtelonnds FSParam[Boolelonan](
+        "inactivelon_prelondicatelon_only_disablelon_for_nelonw_uselonr_statelon_candidatelons",
+        falselon)
 }

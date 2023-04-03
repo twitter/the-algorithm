@@ -1,6 +1,6 @@
-resources(
-    sources = [
-        "com/twitter/visibility/*.csv",
-        "com/twitter/visibility/*.yml",
+relonsourcelons(
+    sourcelons = [
+        "com/twittelonr/visibility/*.csv",
+        "com/twittelonr/visibility/*.yml",
     ],
 )

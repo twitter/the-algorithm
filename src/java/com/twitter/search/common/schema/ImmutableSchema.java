@@ -1,904 +1,904 @@
-package com.twitter.search.common.schema;
+packagelon com.twittelonr.selonarch.common.schelonma;
 
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.util.Collection;
+import java.io.IOelonxcelonption;
+import java.io.ObjelonctOutputStrelonam;
+import java.util.Collelonction;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.SortedMap;
-import java.util.TreeMap;
-import java.util.concurrent.atomic.AtomicLong;
-import javax.annotation.Nullable;
-import javax.annotation.concurrent.Immutable;
-import javax.annotation.concurrent.ThreadSafe;
+import java.util.Selont;
+import java.util.SortelondMap;
+import java.util.TrelonelonMap;
+import java.util.concurrelonnt.atomic.AtomicLong;
+import javax.annotation.Nullablelon;
+import javax.annotation.concurrelonnt.Immutablelon;
+import javax.annotation.concurrelonnt.ThrelonadSafelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.ImmutableCollection;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSortedMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Prelondicatelon;
+import com.googlelon.common.collelonct.ImmutablelonCollelonction;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
+import com.googlelon.common.collelonct.ImmutablelonSortelondMap;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.IndexOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.analysis.Analyzelonr;
+import org.apachelon.lucelonnelon.facelont.FacelontsConfig;
+import org.apachelon.lucelonnelon.indelonx.DocValuelonsTypelon;
+import org.apachelon.lucelonnelon.indelonx.FielonldInfos;
+import org.apachelon.lucelonnelon.indelonx.IndelonxOptions;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.features.ExternalTweetFeature;
-import com.twitter.search.common.features.SearchResultFeature;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaEntry;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaSpecifier;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureType;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftAnalyzer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFacetFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexedFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftSchema;
-import com.twitter.search.common.schema.thriftjava.ThriftSearchFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftTokenStreamSerializer;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.common.telonxt.util.TokelonnStrelonamSelonrializelonr;
+import com.twittelonr.selonarch.common.felonaturelons.elonxtelonrnalTwelonelontFelonaturelon;
+import com.twittelonr.selonarch.common.felonaturelons.SelonarchRelonsultFelonaturelon;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonma;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonmaelonntry;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonTypelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldWelonightDelonfault;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.IndelonxelondNumelonricFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftAnalyzelonr;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFTypelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFVielonwSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFacelontFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldConfiguration;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxelondFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftSchelonma;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftSelonarchFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftTokelonnStrelonamSelonrializelonr;
 
 /**
- * A schema instance that does not change at run time.
+ * A schelonma instancelon that doelons not changelon at run timelon.
  */
-@Immutable @ThreadSafe
-public class ImmutableSchema implements ImmutableSchemaInterface {
-  private static final Logger LOG = LoggerFactory.getLogger(ImmutableSchema.class);
-  private static final ImmutableSet<ThriftCSFType> CAN_FACET_ON_CSF_TYPES =
-      ImmutableSet.<ThriftCSFType>builder()
-          .add(ThriftCSFType.BYTE)
-          .add(ThriftCSFType.INT)
-          .add(ThriftCSFType.LONG)
+@Immutablelon @ThrelonadSafelon
+public class ImmutablelonSchelonma implelonmelonnts ImmutablelonSchelonmaIntelonrfacelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ImmutablelonSchelonma.class);
+  privatelon static final ImmutablelonSelont<ThriftCSFTypelon> CAN_FACelonT_ON_CSF_TYPelonS =
+      ImmutablelonSelont.<ThriftCSFTypelon>buildelonr()
+          .add(ThriftCSFTypelon.BYTelon)
+          .add(ThriftCSFTypelon.INT)
+          .add(ThriftCSFTypelon.LONG)
           .build();
 
-  private static final SearchCounter FEATURES_EXISTED_IN_OLD_SCHEMA =
-      SearchCounter.export("features_existed_in_old_schema");
+  privatelon static final SelonarchCountelonr FelonATURelonS_elonXISTelonD_IN_OLD_SCHelonMA =
+      SelonarchCountelonr.elonxport("felonaturelons_elonxistelond_in_old_schelonma");
 
-  // Currently our index uses 4 bits to store the facet field id.
-  public static final int MAX_FACET_FIELD_ID = 15;
+  // Currelonntly our indelonx uselons 4 bits to storelon thelon facelont fielonld id.
+  public static final int MAX_FACelonT_FIelonLD_ID = 15;
 
-  public static final String HF_TERM_PAIRS_FIELD = "hf_term_pairs";
-  public static final String HF_PHRASE_PAIRS_FIELD = "hf_phrase_pairs";
+  public static final String HF_TelonRM_PAIRS_FIelonLD = "hf_telonrm_pairs";
+  public static final String HF_PHRASelon_PAIRS_FIelonLD = "hf_phraselon_pairs";
 
-  private final ImmutableMap<Integer, FieldInfo> fieldSettingsMapById;
-  private final ImmutableMap<String, FieldInfo> fieldSettingsMapByName;
-  private final ImmutableMap<String, FeatureConfiguration> featureConfigMapByName;
-  private final ImmutableMap<Integer, FeatureConfiguration> featureConfigMapById;
+  privatelon final ImmutablelonMap<Intelongelonr, FielonldInfo> fielonldSelonttingsMapById;
+  privatelon final ImmutablelonMap<String, FielonldInfo> fielonldSelonttingsMapByNamelon;
+  privatelon final ImmutablelonMap<String, FelonaturelonConfiguration> felonaturelonConfigMapByNamelon;
+  privatelon final ImmutablelonMap<Intelongelonr, FelonaturelonConfiguration> felonaturelonConfigMapById;
 
-  @Nullable
-  private final ThriftAnalyzer defaultAnalyzer;
-  private final AnalyzerFactory analyzerFactory;
+  @Nullablelon
+  privatelon final ThriftAnalyzelonr delonfaultAnalyzelonr;
+  privatelon final AnalyzelonrFactory analyzelonrFactory;
 
-  private final ImmutableMap<String, FieldWeightDefault> fieldWeightMap;
-  private final Map<String, FieldInfo> facetNameToFieldMap = Maps.newHashMap();
-  private final int numFacetFields;
-  private final ImmutableSet<FieldInfo> csfFacetFields;
+  privatelon final ImmutablelonMap<String, FielonldWelonightDelonfault> fielonldWelonightMap;
+  privatelon final Map<String, FielonldInfo> facelontNamelonToFielonldMap = Maps.nelonwHashMap();
+  privatelon final int numFacelontFielonlds;
+  privatelon final ImmutablelonSelont<FielonldInfo> csfFacelontFielonlds;
 
-  // This is the search result feature schema - it has the definition for all the column stride
-  // view fields.
-  private final ThriftSearchFeatureSchema searchFeatureSchema;
+  // This is thelon selonarch relonsult felonaturelon schelonma - it has thelon delonfinition for all thelon column stridelon
+  // vielonw fielonlds.
+  privatelon final ThriftSelonarchFelonaturelonSchelonma selonarchFelonaturelonSchelonma;
 
-  private final int majorVersionNumber;
-  private final int minorVersionNumber;
-  private final String versionDesc;
-  private final boolean isVersionOfficial;
-
-  /**
-   * Construct a Schema instance with the given ThriftSchema and AnalyzerFactory.
-   */
-  public ImmutableSchema(ThriftSchema thriftSchema,
-                         AnalyzerFactory analyzerFactory,
-                         String featureSchemaVersionPrefix) throws SchemaValidationException {
-    Pair<Integer, String> versionPair = parseVersionString(thriftSchema.getVersion());
-    this.majorVersionNumber = thriftSchema.getMajorVersionNumber();
-    this.minorVersionNumber = thriftSchema.getMinorVersionNumber();
-    this.versionDesc = versionPair.getSecond();
-    this.isVersionOfficial = thriftSchema.isVersionIsOfficial();
-
-    this.analyzerFactory = analyzerFactory;
-
-    Map<Integer, FieldInfo> tmpMap = Maps.newLinkedHashMap();
-    Set<FieldInfo> tmpSet = Sets.newHashSet();
-
-    if (thriftSchema.isSetDefaultAnalyzer()) {
-      this.defaultAnalyzer = thriftSchema.getDefaultAnalyzer().deepCopy();
-    } else {
-      this.defaultAnalyzer = null;
-    }
-
-    Map<Integer, ThriftFieldConfiguration> configs = thriftSchema.getFieldConfigs();
-
-    // Collect all the CSF Views, so that we can later verify that they are appropriately
-    // configured once we've processed all the other field settings.
-    Map<Integer, ThriftFieldConfiguration> csfViewFields = Maps.newHashMap();
-    boolean requiresHfPairFields = false;
-    boolean hasHfTermPairField = false;
-    boolean hasHfPhrasePairField = false;
-    int numFacets = 0;
-    for (Map.Entry<Integer, ThriftFieldConfiguration> entry : configs.entrySet()) {
-      int fieldId = entry.getKey();
-
-      if (tmpMap.containsKey(fieldId)) {
-        throw new SchemaValidationException("Duplicate field id " + fieldId);
-      }
-
-      ThriftFieldConfiguration config = entry.getValue();
-      FieldInfo fieldInfo = parseThriftFieldSettings(fieldId, config, csfViewFields);
-      validate(fieldInfo);
-      if (fieldInfo.getFieldType().isFacetField()) {
-        if (numFacets > MAX_FACET_FIELD_ID) {
-          throw new SchemaValidationException(
-              "Maximum supported facet field ID is:  " + MAX_FACET_FIELD_ID);
-        }
-        numFacets++;
-        facetNameToFieldMap.put(fieldInfo.getFieldType().getFacetName(), fieldInfo);
-
-        if (fieldInfo.getFieldType().isUseCSFForFacetCounting()) {
-          tmpSet.add(fieldInfo);
-        }
-      }
-
-      tmpMap.put(fieldId, fieldInfo);
-
-      if (fieldInfo.getFieldType().isIndexHFTermPairs()) {
-        requiresHfPairFields = true;
-      }
-      if (fieldInfo.getName().equals(HF_TERM_PAIRS_FIELD)) {
-        hasHfTermPairField = true;
-      }
-      if (fieldInfo.getName().equals(HF_PHRASE_PAIRS_FIELD)) {
-        hasHfPhrasePairField = true;
-      }
-    }
-
-    this.numFacetFields = numFacets;
-    this.csfFacetFields = ImmutableSet.copyOf(tmpSet);
-
-    // If any field requires high frequency term/phrase pair fields, make sure they exist
-    if (requiresHfPairFields) {
-      if (!hasHfTermPairField || !hasHfPhrasePairField) {
-        throw new SchemaValidationException(
-            "High frequency term/phrase pair fields do not exist in the schema.");
-      }
-    }
-
-    this.fieldSettingsMapById = ImmutableMap.copyOf(tmpMap);
-
-    Pair<ImmutableMap<String, FeatureConfiguration>, ImmutableMap<Integer, FeatureConfiguration>>
-        featureConfigMapPair = buildFeatureMaps(csfViewFields);
-    this.featureConfigMapByName = featureConfigMapPair.getFirst();
-    this.featureConfigMapById = featureConfigMapPair.getSecond();
-
-    for (ThriftFieldConfiguration csfViewField : csfViewFields.values()) {
-      SchemaBuilder.verifyCSFViewSettings(configs, csfViewField);
-    }
-
-    ImmutableMap.Builder<String, FieldInfo> builder = ImmutableMap.builder();
-
-    for (FieldInfo info : fieldSettingsMapById.values()) {
-      info.getFieldType().freeze();
-      builder.put(info.getName(), info);
-    }
-    this.fieldSettingsMapByName = builder.build();
-
-    ImmutableMap.Builder<String, FieldWeightDefault> fieldWeightMapBuilder = ImmutableMap.builder();
-
-    for (FieldInfo fi : getFieldInfos()) {
-      // CSF fields are not searchable. All other fields are.
-      if (fi.getFieldType().isIndexedField()) {
-        fieldWeightMapBuilder.put(
-            fi.getName(),
-            new FieldWeightDefault(
-                fi.getFieldType().isTextSearchableByDefault(),
-                fi.getFieldType().getTextSearchableFieldWeight()));
-      }
-    }
-
-    this.fieldWeightMap = fieldWeightMapBuilder.build();
-    // Create features with extra Earlybird derived fields, extra fields won't change the version
-    // but they do change the checksum.
-    this.searchFeatureSchema = createSearchResultFeatureSchema(
-        featureSchemaVersionPrefix, fieldSettingsMapByName, featureConfigMapByName);
-  }
+  privatelon final int majorVelonrsionNumbelonr;
+  privatelon final int minorVelonrsionNumbelonr;
+  privatelon final String velonrsionDelonsc;
+  privatelon final boolelonan isVelonrsionOfficial;
 
   /**
-   * Add a set of features to a schema if they don't exist yet, and update the schema checksum.
-   * if there's conflict, RuntimeException will be thrown.
-   * Old map won't be touched, a new map will be returned will old and new data combined.
+   * Construct a Schelonma instancelon with thelon givelonn ThriftSchelonma and AnalyzelonrFactory.
    */
-  public static Map<Integer, ThriftSearchFeatureSchemaEntry> appendToFeatureSchema(
-      Map<Integer, ThriftSearchFeatureSchemaEntry> oldEntryMap,
-      Set<? extends SearchResultFeature> features) throws SchemaValidationException {
-    if (oldEntryMap == null) {
-      throw new SchemaValidationException(
-          "Cannot append features to schema, the entryMap is null");
-    }
-    // make a copy of the existing map
-    ImmutableMap.Builder<Integer, ThriftSearchFeatureSchemaEntry> builder =
-        ImmutableSortedMap.<Integer, ThriftSearchFeatureSchemaEntry>naturalOrder()
-            .putAll(oldEntryMap);
+  public ImmutablelonSchelonma(ThriftSchelonma thriftSchelonma,
+                         AnalyzelonrFactory analyzelonrFactory,
+                         String felonaturelonSchelonmaVelonrsionPrelonfix) throws SchelonmaValidationelonxcelonption {
+    Pair<Intelongelonr, String> velonrsionPair = parselonVelonrsionString(thriftSchelonma.gelontVelonrsion());
+    this.majorVelonrsionNumbelonr = thriftSchelonma.gelontMajorVelonrsionNumbelonr();
+    this.minorVelonrsionNumbelonr = thriftSchelonma.gelontMinorVelonrsionNumbelonr();
+    this.velonrsionDelonsc = velonrsionPair.gelontSeloncond();
+    this.isVelonrsionOfficial = thriftSchelonma.isVelonrsionIsOfficial();
 
-    for (SearchResultFeature feature : features) {
-      if (oldEntryMap.containsKey(feature.getId())) {
-        FEATURES_EXISTED_IN_OLD_SCHEMA.increment();
-      } else {
-        builder.put(feature.getId(), new ThriftSearchFeatureSchemaEntry()
-            .setFeatureName(feature.getName())
-            .setFeatureType(feature.getType()));
+    this.analyzelonrFactory = analyzelonrFactory;
+
+    Map<Intelongelonr, FielonldInfo> tmpMap = Maps.nelonwLinkelondHashMap();
+    Selont<FielonldInfo> tmpSelont = Selonts.nelonwHashSelont();
+
+    if (thriftSchelonma.isSelontDelonfaultAnalyzelonr()) {
+      this.delonfaultAnalyzelonr = thriftSchelonma.gelontDelonfaultAnalyzelonr().delonelonpCopy();
+    } elonlselon {
+      this.delonfaultAnalyzelonr = null;
+    }
+
+    Map<Intelongelonr, ThriftFielonldConfiguration> configs = thriftSchelonma.gelontFielonldConfigs();
+
+    // Collelonct all thelon CSF Vielonws, so that welon can latelonr velonrify that thelony arelon appropriatelonly
+    // configurelond oncelon welon'velon procelonsselond all thelon othelonr fielonld selonttings.
+    Map<Intelongelonr, ThriftFielonldConfiguration> csfVielonwFielonlds = Maps.nelonwHashMap();
+    boolelonan relonquirelonsHfPairFielonlds = falselon;
+    boolelonan hasHfTelonrmPairFielonld = falselon;
+    boolelonan hasHfPhraselonPairFielonld = falselon;
+    int numFacelonts = 0;
+    for (Map.elonntry<Intelongelonr, ThriftFielonldConfiguration> elonntry : configs.elonntrySelont()) {
+      int fielonldId = elonntry.gelontKelony();
+
+      if (tmpMap.containsKelony(fielonldId)) {
+        throw nelonw SchelonmaValidationelonxcelonption("Duplicatelon fielonld id " + fielonldId);
+      }
+
+      ThriftFielonldConfiguration config = elonntry.gelontValuelon();
+      FielonldInfo fielonldInfo = parselonThriftFielonldSelonttings(fielonldId, config, csfVielonwFielonlds);
+      validatelon(fielonldInfo);
+      if (fielonldInfo.gelontFielonldTypelon().isFacelontFielonld()) {
+        if (numFacelonts > MAX_FACelonT_FIelonLD_ID) {
+          throw nelonw SchelonmaValidationelonxcelonption(
+              "Maximum supportelond facelont fielonld ID is:  " + MAX_FACelonT_FIelonLD_ID);
+        }
+        numFacelonts++;
+        facelontNamelonToFielonldMap.put(fielonldInfo.gelontFielonldTypelon().gelontFacelontNamelon(), fielonldInfo);
+
+        if (fielonldInfo.gelontFielonldTypelon().isUselonCSFForFacelontCounting()) {
+          tmpSelont.add(fielonldInfo);
+        }
+      }
+
+      tmpMap.put(fielonldId, fielonldInfo);
+
+      if (fielonldInfo.gelontFielonldTypelon().isIndelonxHFTelonrmPairs()) {
+        relonquirelonsHfPairFielonlds = truelon;
+      }
+      if (fielonldInfo.gelontNamelon().elonquals(HF_TelonRM_PAIRS_FIelonLD)) {
+        hasHfTelonrmPairFielonld = truelon;
+      }
+      if (fielonldInfo.gelontNamelon().elonquals(HF_PHRASelon_PAIRS_FIelonLD)) {
+        hasHfPhraselonPairFielonld = truelon;
       }
     }
-    return builder.build();
+
+    this.numFacelontFielonlds = numFacelonts;
+    this.csfFacelontFielonlds = ImmutablelonSelont.copyOf(tmpSelont);
+
+    // If any fielonld relonquirelons high frelonquelonncy telonrm/phraselon pair fielonlds, makelon surelon thelony elonxist
+    if (relonquirelonsHfPairFielonlds) {
+      if (!hasHfTelonrmPairFielonld || !hasHfPhraselonPairFielonld) {
+        throw nelonw SchelonmaValidationelonxcelonption(
+            "High frelonquelonncy telonrm/phraselon pair fielonlds do not elonxist in thelon schelonma.");
+      }
+    }
+
+    this.fielonldSelonttingsMapById = ImmutablelonMap.copyOf(tmpMap);
+
+    Pair<ImmutablelonMap<String, FelonaturelonConfiguration>, ImmutablelonMap<Intelongelonr, FelonaturelonConfiguration>>
+        felonaturelonConfigMapPair = buildFelonaturelonMaps(csfVielonwFielonlds);
+    this.felonaturelonConfigMapByNamelon = felonaturelonConfigMapPair.gelontFirst();
+    this.felonaturelonConfigMapById = felonaturelonConfigMapPair.gelontSeloncond();
+
+    for (ThriftFielonldConfiguration csfVielonwFielonld : csfVielonwFielonlds.valuelons()) {
+      SchelonmaBuildelonr.velonrifyCSFVielonwSelonttings(configs, csfVielonwFielonld);
+    }
+
+    ImmutablelonMap.Buildelonr<String, FielonldInfo> buildelonr = ImmutablelonMap.buildelonr();
+
+    for (FielonldInfo info : fielonldSelonttingsMapById.valuelons()) {
+      info.gelontFielonldTypelon().frelonelonzelon();
+      buildelonr.put(info.gelontNamelon(), info);
+    }
+    this.fielonldSelonttingsMapByNamelon = buildelonr.build();
+
+    ImmutablelonMap.Buildelonr<String, FielonldWelonightDelonfault> fielonldWelonightMapBuildelonr = ImmutablelonMap.buildelonr();
+
+    for (FielonldInfo fi : gelontFielonldInfos()) {
+      // CSF fielonlds arelon not selonarchablelon. All othelonr fielonlds arelon.
+      if (fi.gelontFielonldTypelon().isIndelonxelondFielonld()) {
+        fielonldWelonightMapBuildelonr.put(
+            fi.gelontNamelon(),
+            nelonw FielonldWelonightDelonfault(
+                fi.gelontFielonldTypelon().isTelonxtSelonarchablelonByDelonfault(),
+                fi.gelontFielonldTypelon().gelontTelonxtSelonarchablelonFielonldWelonight()));
+      }
+    }
+
+    this.fielonldWelonightMap = fielonldWelonightMapBuildelonr.build();
+    // Crelonatelon felonaturelons with elonxtra elonarlybird delonrivelond fielonlds, elonxtra fielonlds won't changelon thelon velonrsion
+    // but thelony do changelon thelon cheloncksum.
+    this.selonarchFelonaturelonSchelonma = crelonatelonSelonarchRelonsultFelonaturelonSchelonma(
+        felonaturelonSchelonmaVelonrsionPrelonfix, fielonldSelonttingsMapByNamelon, felonaturelonConfigMapByNamelon);
   }
 
   /**
-   * Append external features to create a new schema.
-   * @param oldSchema The old schema to build on top of
-   * @param features a list of features to be appended to the schema
-   * @param versionSuffix the version suffix, if not-null, it will be attached to the end of
-   * original schema's version.
-   * @return A new schema object with the appended fields
-   * @throws SchemaValidationException thrown when the checksum cannot be computed
+   * Add a selont of felonaturelons to a schelonma if thelony don't elonxist yelont, and updatelon thelon schelonma cheloncksum.
+   * if thelonrelon's conflict, Runtimelonelonxcelonption will belon thrown.
+   * Old map won't belon touchelond, a nelonw map will belon relonturnelond will old and nelonw data combinelond.
    */
-  public static ThriftSearchFeatureSchema appendToCreateNewFeatureSchema(
-      ThriftSearchFeatureSchema oldSchema,
-      Set<ExternalTweetFeature> features,
-      @Nullable String versionSuffix) throws SchemaValidationException {
+  public static Map<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> appelonndToFelonaturelonSchelonma(
+      Map<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> oldelonntryMap,
+      Selont<? elonxtelonnds SelonarchRelonsultFelonaturelon> felonaturelons) throws SchelonmaValidationelonxcelonption {
+    if (oldelonntryMap == null) {
+      throw nelonw SchelonmaValidationelonxcelonption(
+          "Cannot appelonnd felonaturelons to schelonma, thelon elonntryMap is null");
+    }
+    // makelon a copy of thelon elonxisting map
+    ImmutablelonMap.Buildelonr<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> buildelonr =
+        ImmutablelonSortelondMap.<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry>naturalOrdelonr()
+            .putAll(oldelonntryMap);
 
-    ThriftSearchFeatureSchema newSchema = new ThriftSearchFeatureSchema();
-    // copy over all the entries plus the new ones
-    newSchema.setEntries(appendToFeatureSchema(oldSchema.getEntries(), features));
-
-    ThriftSearchFeatureSchemaSpecifier spec = new ThriftSearchFeatureSchemaSpecifier();
-    // the version is directly inherited or with a suffix
-    Preconditions.checkArgument(versionSuffix == null || !versionSuffix.isEmpty());
-    spec.setVersion(versionSuffix == null
-        ? oldSchema.getSchemaSpecifier().getVersion()
-        : oldSchema.getSchemaSpecifier().getVersion() + versionSuffix);
-    spec.setChecksum(getChecksum(newSchema.getEntries()));
-    newSchema.setSchemaSpecifier(spec);
-    return newSchema;
+    for (SelonarchRelonsultFelonaturelon felonaturelon : felonaturelons) {
+      if (oldelonntryMap.containsKelony(felonaturelon.gelontId())) {
+        FelonATURelonS_elonXISTelonD_IN_OLD_SCHelonMA.increlonmelonnt();
+      } elonlselon {
+        buildelonr.put(felonaturelon.gelontId(), nelonw ThriftSelonarchFelonaturelonSchelonmaelonntry()
+            .selontFelonaturelonNamelon(felonaturelon.gelontNamelon())
+            .selontFelonaturelonTypelon(felonaturelon.gelontTypelon()));
+      }
+    }
+    relonturn buildelonr.build();
   }
 
-  @Override
-  public FieldInfos getLuceneFieldInfos(Predicate<String> acceptedFields) {
-    List<org.apache.lucene.index.FieldInfo> acceptedFieldInfos = Lists.newArrayList();
-    for (FieldInfo fi : getFieldInfos()) {
-      if (acceptedFields == null || acceptedFields.apply(fi.getName())) {
-        acceptedFieldInfos.add(convert(fi.getName(), fi.getFieldId(), fi.getFieldType()));
-      }
-    }
-    return new FieldInfos(acceptedFieldInfos.toArray(
-        new org.apache.lucene.index.FieldInfo[acceptedFieldInfos.size()]));
+  /**
+   * Appelonnd elonxtelonrnal felonaturelons to crelonatelon a nelonw schelonma.
+   * @param oldSchelonma Thelon old schelonma to build on top of
+   * @param felonaturelons a list of felonaturelons to belon appelonndelond to thelon schelonma
+   * @param velonrsionSuffix thelon velonrsion suffix, if not-null, it will belon attachelond to thelon elonnd of
+   * original schelonma's velonrsion.
+   * @relonturn A nelonw schelonma objelonct with thelon appelonndelond fielonlds
+   * @throws SchelonmaValidationelonxcelonption thrown whelonn thelon cheloncksum cannot belon computelond
+   */
+  public static ThriftSelonarchFelonaturelonSchelonma appelonndToCrelonatelonNelonwFelonaturelonSchelonma(
+      ThriftSelonarchFelonaturelonSchelonma oldSchelonma,
+      Selont<elonxtelonrnalTwelonelontFelonaturelon> felonaturelons,
+      @Nullablelon String velonrsionSuffix) throws SchelonmaValidationelonxcelonption {
+
+    ThriftSelonarchFelonaturelonSchelonma nelonwSchelonma = nelonw ThriftSelonarchFelonaturelonSchelonma();
+    // copy ovelonr all thelon elonntrielons plus thelon nelonw onelons
+    nelonwSchelonma.selontelonntrielons(appelonndToFelonaturelonSchelonma(oldSchelonma.gelontelonntrielons(), felonaturelons));
+
+    ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr spelonc = nelonw ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr();
+    // thelon velonrsion is direlonctly inhelonritelond or with a suffix
+    Prelonconditions.chelonckArgumelonnt(velonrsionSuffix == null || !velonrsionSuffix.iselonmpty());
+    spelonc.selontVelonrsion(velonrsionSuffix == null
+        ? oldSchelonma.gelontSchelonmaSpeloncifielonr().gelontVelonrsion()
+        : oldSchelonma.gelontSchelonmaSpeloncifielonr().gelontVelonrsion() + velonrsionSuffix);
+    spelonc.selontCheloncksum(gelontCheloncksum(nelonwSchelonma.gelontelonntrielons()));
+    nelonwSchelonma.selontSchelonmaSpeloncifielonr(spelonc);
+    relonturn nelonwSchelonma;
   }
 
-  private FieldInfo parseThriftFieldSettings(int fieldId, ThriftFieldConfiguration fieldConfig,
-                                             Map<Integer, ThriftFieldConfiguration> csfViewFields)
-      throws SchemaValidationException {
-    FieldInfo fieldInfo
-        = new FieldInfo(fieldId, fieldConfig.getFieldName(), new EarlybirdFieldType());
-    ThriftFieldSettings fieldSettings = fieldConfig.getSettings();
-
-
-    boolean settingFound = false;
-
-    if (fieldSettings.isSetIndexedFieldSettings()) {
-      if (fieldSettings.isSetCsfFieldSettings() || fieldSettings.isSetCsfViewSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
+  @Ovelonrridelon
+  public FielonldInfos gelontLucelonnelonFielonldInfos(Prelondicatelon<String> accelonptelondFielonlds) {
+    List<org.apachelon.lucelonnelon.indelonx.FielonldInfo> accelonptelondFielonldInfos = Lists.nelonwArrayList();
+    for (FielonldInfo fi : gelontFielonldInfos()) {
+      if (accelonptelondFielonlds == null || accelonptelondFielonlds.apply(fi.gelontNamelon())) {
+        accelonptelondFielonldInfos.add(convelonrt(fi.gelontNamelon(), fi.gelontFielonldId(), fi.gelontFielonldTypelon()));
       }
-
-      applyIndexedFieldSettings(fieldInfo, fieldSettings.getIndexedFieldSettings());
-      settingFound = true;
     }
-
-    if (fieldSettings.isSetCsfFieldSettings()) {
-      if (fieldSettings.isSetIndexedFieldSettings() || fieldSettings.isSetCsfViewSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
-      }
-
-      applyCsfFieldSettings(fieldInfo, fieldSettings.getCsfFieldSettings());
-      settingFound = true;
-    }
-
-    if (fieldSettings.isSetFacetFieldSettings()) {
-      if (!fieldSettings.isSetIndexedFieldSettings() && !(fieldSettings.isSetCsfFieldSettings()
-          && fieldSettings.getFacetFieldSettings().isUseCSFForFacetCounting()
-          && CAN_FACET_ON_CSF_TYPES.contains(fieldSettings.getCsfFieldSettings().getCsfType()))) {
-        throw new SchemaValidationException("ThriftFieldSettings: 'facetFieldSettings' can only be "
-            + "used in combination with 'indexedFieldSettings' or with 'csfFieldSettings' "
-            + "where 'isUseCSFForFacetCounting' was set to true and ThriftCSFType is a type that "
-            + "can be faceted on.");
-      }
-
-      applyFacetFieldSettings(fieldInfo, fieldSettings.getFacetFieldSettings());
-      settingFound = true;
-    }
-
-    if (fieldSettings.isSetCsfViewSettings()) {
-      if (fieldSettings.isSetIndexedFieldSettings() || fieldSettings.isSetCsfFieldSettings()) {
-        throw new SchemaValidationException("ThriftFieldSettings: Only one of "
-            + "'indexedFieldSettings', 'csfFieldSettings', 'csfViewSettings' can be set.");
-      }
-
-      // add this field now, but apply settings later to make sure the base field was added properly
-      // before
-      csfViewFields.put(fieldId, fieldConfig);
-      settingFound = true;
-    }
-
-    if (!settingFound) {
-      throw new SchemaValidationException("ThriftFieldSettings: One of 'indexedFieldSettings', "
-          + "'csfFieldSettings' or 'facetFieldSettings' must be set.");
-    }
-
-    // search field settings are optional
-    if (fieldSettings.isSetSearchFieldSettings()) {
-      if (!fieldSettings.isSetIndexedFieldSettings()) {
-        throw new SchemaValidationException(
-            "ThriftFieldSettings: 'searchFieldSettings' can only be "
-                + "used in combination with 'indexedFieldSettings'");
-      }
-
-      applySearchFieldSettings(fieldInfo, fieldSettings.getSearchFieldSettings());
-    }
-
-    return fieldInfo;
+    relonturn nelonw FielonldInfos(accelonptelondFielonldInfos.toArray(
+        nelonw org.apachelon.lucelonnelon.indelonx.FielonldInfo[accelonptelondFielonldInfos.sizelon()]));
   }
 
-  private void applyCsfFieldSettings(FieldInfo fieldInfo, ThriftCSFFieldSettings settings)
-      throws SchemaValidationException {
-    // csfType is required - no need to check if it's set
-    fieldInfo.getFieldType().setDocValuesType(DocValuesType.NUMERIC);
-    fieldInfo.getFieldType().setCsfType(settings.getCsfType());
+  privatelon FielonldInfo parselonThriftFielonldSelonttings(int fielonldId, ThriftFielonldConfiguration fielonldConfig,
+                                             Map<Intelongelonr, ThriftFielonldConfiguration> csfVielonwFielonlds)
+      throws SchelonmaValidationelonxcelonption {
+    FielonldInfo fielonldInfo
+        = nelonw FielonldInfo(fielonldId, fielonldConfig.gelontFielonldNamelon(), nelonw elonarlybirdFielonldTypelon());
+    ThriftFielonldSelonttings fielonldSelonttings = fielonldConfig.gelontSelonttings();
 
-    if (settings.isVariableLength()) {
-      fieldInfo.getFieldType().setDocValuesType(DocValuesType.BINARY);
-      fieldInfo.getFieldType().setCsfVariableLength();
-    } else {
-      if (settings.isSetFixedLengthSettings()) {
-        fieldInfo.getFieldType().setCsfFixedLengthSettings(
-            settings.getFixedLengthSettings().getNumValuesPerDoc(),
-            settings.getFixedLengthSettings().isUpdateable());
-        if (settings.getFixedLengthSettings().getNumValuesPerDoc() > 1) {
-          fieldInfo.getFieldType().setDocValuesType(DocValuesType.BINARY);
+
+    boolelonan selonttingFound = falselon;
+
+    if (fielonldSelonttings.isSelontIndelonxelondFielonldSelonttings()) {
+      if (fielonldSelonttings.isSelontCsfFielonldSelonttings() || fielonldSelonttings.isSelontCsfVielonwSelonttings()) {
+        throw nelonw SchelonmaValidationelonxcelonption("ThriftFielonldSelonttings: Only onelon of "
+            + "'indelonxelondFielonldSelonttings', 'csfFielonldSelonttings', 'csfVielonwSelonttings' can belon selont.");
+      }
+
+      applyIndelonxelondFielonldSelonttings(fielonldInfo, fielonldSelonttings.gelontIndelonxelondFielonldSelonttings());
+      selonttingFound = truelon;
+    }
+
+    if (fielonldSelonttings.isSelontCsfFielonldSelonttings()) {
+      if (fielonldSelonttings.isSelontIndelonxelondFielonldSelonttings() || fielonldSelonttings.isSelontCsfVielonwSelonttings()) {
+        throw nelonw SchelonmaValidationelonxcelonption("ThriftFielonldSelonttings: Only onelon of "
+            + "'indelonxelondFielonldSelonttings', 'csfFielonldSelonttings', 'csfVielonwSelonttings' can belon selont.");
+      }
+
+      applyCsfFielonldSelonttings(fielonldInfo, fielonldSelonttings.gelontCsfFielonldSelonttings());
+      selonttingFound = truelon;
+    }
+
+    if (fielonldSelonttings.isSelontFacelontFielonldSelonttings()) {
+      if (!fielonldSelonttings.isSelontIndelonxelondFielonldSelonttings() && !(fielonldSelonttings.isSelontCsfFielonldSelonttings()
+          && fielonldSelonttings.gelontFacelontFielonldSelonttings().isUselonCSFForFacelontCounting()
+          && CAN_FACelonT_ON_CSF_TYPelonS.contains(fielonldSelonttings.gelontCsfFielonldSelonttings().gelontCsfTypelon()))) {
+        throw nelonw SchelonmaValidationelonxcelonption("ThriftFielonldSelonttings: 'facelontFielonldSelonttings' can only belon "
+            + "uselond in combination with 'indelonxelondFielonldSelonttings' or with 'csfFielonldSelonttings' "
+            + "whelonrelon 'isUselonCSFForFacelontCounting' was selont to truelon and ThriftCSFTypelon is a typelon that "
+            + "can belon facelontelond on.");
+      }
+
+      applyFacelontFielonldSelonttings(fielonldInfo, fielonldSelonttings.gelontFacelontFielonldSelonttings());
+      selonttingFound = truelon;
+    }
+
+    if (fielonldSelonttings.isSelontCsfVielonwSelonttings()) {
+      if (fielonldSelonttings.isSelontIndelonxelondFielonldSelonttings() || fielonldSelonttings.isSelontCsfFielonldSelonttings()) {
+        throw nelonw SchelonmaValidationelonxcelonption("ThriftFielonldSelonttings: Only onelon of "
+            + "'indelonxelondFielonldSelonttings', 'csfFielonldSelonttings', 'csfVielonwSelonttings' can belon selont.");
+      }
+
+      // add this fielonld now, but apply selonttings latelonr to makelon surelon thelon baselon fielonld was addelond propelonrly
+      // belonforelon
+      csfVielonwFielonlds.put(fielonldId, fielonldConfig);
+      selonttingFound = truelon;
+    }
+
+    if (!selonttingFound) {
+      throw nelonw SchelonmaValidationelonxcelonption("ThriftFielonldSelonttings: Onelon of 'indelonxelondFielonldSelonttings', "
+          + "'csfFielonldSelonttings' or 'facelontFielonldSelonttings' must belon selont.");
+    }
+
+    // selonarch fielonld selonttings arelon optional
+    if (fielonldSelonttings.isSelontSelonarchFielonldSelonttings()) {
+      if (!fielonldSelonttings.isSelontIndelonxelondFielonldSelonttings()) {
+        throw nelonw SchelonmaValidationelonxcelonption(
+            "ThriftFielonldSelonttings: 'selonarchFielonldSelonttings' can only belon "
+                + "uselond in combination with 'indelonxelondFielonldSelonttings'");
+      }
+
+      applySelonarchFielonldSelonttings(fielonldInfo, fielonldSelonttings.gelontSelonarchFielonldSelonttings());
+    }
+
+    relonturn fielonldInfo;
+  }
+
+  privatelon void applyCsfFielonldSelonttings(FielonldInfo fielonldInfo, ThriftCSFFielonldSelonttings selonttings)
+      throws SchelonmaValidationelonxcelonption {
+    // csfTypelon is relonquirelond - no nelonelond to chelonck if it's selont
+    fielonldInfo.gelontFielonldTypelon().selontDocValuelonsTypelon(DocValuelonsTypelon.NUMelonRIC);
+    fielonldInfo.gelontFielonldTypelon().selontCsfTypelon(selonttings.gelontCsfTypelon());
+
+    if (selonttings.isVariablelonLelonngth()) {
+      fielonldInfo.gelontFielonldTypelon().selontDocValuelonsTypelon(DocValuelonsTypelon.BINARY);
+      fielonldInfo.gelontFielonldTypelon().selontCsfVariablelonLelonngth();
+    } elonlselon {
+      if (selonttings.isSelontFixelondLelonngthSelonttings()) {
+        fielonldInfo.gelontFielonldTypelon().selontCsfFixelondLelonngthSelonttings(
+            selonttings.gelontFixelondLelonngthSelonttings().gelontNumValuelonsPelonrDoc(),
+            selonttings.gelontFixelondLelonngthSelonttings().isUpdatelonablelon());
+        if (selonttings.gelontFixelondLelonngthSelonttings().gelontNumValuelonsPelonrDoc() > 1) {
+          fielonldInfo.gelontFielonldTypelon().selontDocValuelonsTypelon(DocValuelonsTypelon.BINARY);
         }
-      } else {
-        throw new SchemaValidationException(
-            "ThriftCSFFieldSettings: Either variableLength should be set to 'true', "
-                + "or fixedLengthSettings should be set.");
+      } elonlselon {
+        throw nelonw SchelonmaValidationelonxcelonption(
+            "ThriftCSFFielonldSelonttings: elonithelonr variablelonLelonngth should belon selont to 'truelon', "
+                + "or fixelondLelonngthSelonttings should belon selont.");
       }
     }
 
-    fieldInfo.getFieldType().setCsfLoadIntoRam(settings.isLoadIntoRAM());
-    if (settings.isSetDefaultValue()) {
-      fieldInfo.getFieldType().setCsfDefaultValue(settings.getDefaultValue());
+    fielonldInfo.gelontFielonldTypelon().selontCsfLoadIntoRam(selonttings.isLoadIntoRAM());
+    if (selonttings.isSelontDelonfaultValuelon()) {
+      fielonldInfo.gelontFielonldTypelon().selontCsfDelonfaultValuelon(selonttings.gelontDelonfaultValuelon());
     }
   }
 
-  private void applyCsfViewFieldSettings(FieldInfo fieldInfo, FieldInfo baseField,
-                                         ThriftCSFViewSettings settings)
-      throws SchemaValidationException {
-    // csfType is required - no need to check if it's set
-    fieldInfo.getFieldType().setDocValuesType(DocValuesType.NUMERIC);
-    fieldInfo.getFieldType().setCsfType(settings.getCsfType());
+  privatelon void applyCsfVielonwFielonldSelonttings(FielonldInfo fielonldInfo, FielonldInfo baselonFielonld,
+                                         ThriftCSFVielonwSelonttings selonttings)
+      throws SchelonmaValidationelonxcelonption {
+    // csfTypelon is relonquirelond - no nelonelond to chelonck if it's selont
+    fielonldInfo.gelontFielonldTypelon().selontDocValuelonsTypelon(DocValuelonsTypelon.NUMelonRIC);
+    fielonldInfo.gelontFielonldTypelon().selontCsfTypelon(selonttings.gelontCsfTypelon());
 
-    fieldInfo.getFieldType().setCsfFixedLengthSettings(1 /* numValuesPerDoc*/,
-        false /* updateable*/);
+    fielonldInfo.gelontFielonldTypelon().selontCsfFixelondLelonngthSelonttings(1 /* numValuelonsPelonrDoc*/,
+        falselon /* updatelonablelon*/);
 
-    fieldInfo.getFieldType().setCsfViewSettings(fieldInfo.getName(), settings, baseField);
+    fielonldInfo.gelontFielonldTypelon().selontCsfVielonwSelonttings(fielonldInfo.gelontNamelon(), selonttings, baselonFielonld);
   }
 
-  private void applyFacetFieldSettings(FieldInfo fieldInfo, ThriftFacetFieldSettings settings) {
-    if (settings.isSetFacetName()) {
-      fieldInfo.getFieldType().setFacetName(settings.getFacetName());
-    } else {
-      // fall back to field name if no facet name is explicitly provided
-      fieldInfo.getFieldType().setFacetName(fieldInfo.getName());
+  privatelon void applyFacelontFielonldSelonttings(FielonldInfo fielonldInfo, ThriftFacelontFielonldSelonttings selonttings) {
+    if (selonttings.isSelontFacelontNamelon()) {
+      fielonldInfo.gelontFielonldTypelon().selontFacelontNamelon(selonttings.gelontFacelontNamelon());
+    } elonlselon {
+      // fall back to fielonld namelon if no facelont namelon is elonxplicitly providelond
+      fielonldInfo.gelontFielonldTypelon().selontFacelontNamelon(fielonldInfo.gelontNamelon());
     }
-    fieldInfo.getFieldType().setStoreFacetSkiplist(settings.isStoreSkiplist());
-    fieldInfo.getFieldType().setStoreFacetOffensiveCounters(settings.isStoreOffensiveCounters());
-    fieldInfo.getFieldType().setUseCSFForFacetCounting(settings.isUseCSFForFacetCounting());
+    fielonldInfo.gelontFielonldTypelon().selontStorelonFacelontSkiplist(selonttings.isStorelonSkiplist());
+    fielonldInfo.gelontFielonldTypelon().selontStorelonFacelontOffelonnsivelonCountelonrs(selonttings.isStorelonOffelonnsivelonCountelonrs());
+    fielonldInfo.gelontFielonldTypelon().selontUselonCSFForFacelontCounting(selonttings.isUselonCSFForFacelontCounting());
   }
 
-  private void applyIndexedFieldSettings(FieldInfo fieldInfo, ThriftIndexedFieldSettings settings)
-      throws SchemaValidationException {
-    fieldInfo.getFieldType().setIndexedField(true);
-    fieldInfo.getFieldType().setStored(settings.isStored());
-    fieldInfo.getFieldType().setTokenized(settings.isTokenized());
-    fieldInfo.getFieldType().setStoreTermVectors(settings.isStoreTermVectors());
-    fieldInfo.getFieldType().setStoreTermVectorOffsets(settings.isStoreTermVectorOffsets());
-    fieldInfo.getFieldType().setStoreTermVectorPositions(settings.isStoreTermVectorPositions());
-    fieldInfo.getFieldType().setStoreTermVectorPayloads(settings.isStoreTermVectorPayloads());
-    fieldInfo.getFieldType().setOmitNorms(settings.isOmitNorms());
-    fieldInfo.getFieldType().setIndexHFTermPairs(settings.isIndexHighFreqTermPairs());
-    fieldInfo.getFieldType().setUseTweetSpecificNormalization(
-        settings.deprecated_performTweetSpecificNormalizations);
+  privatelon void applyIndelonxelondFielonldSelonttings(FielonldInfo fielonldInfo, ThriftIndelonxelondFielonldSelonttings selonttings)
+      throws SchelonmaValidationelonxcelonption {
+    fielonldInfo.gelontFielonldTypelon().selontIndelonxelondFielonld(truelon);
+    fielonldInfo.gelontFielonldTypelon().selontStorelond(selonttings.isStorelond());
+    fielonldInfo.gelontFielonldTypelon().selontTokelonnizelond(selonttings.isTokelonnizelond());
+    fielonldInfo.gelontFielonldTypelon().selontStorelonTelonrmVelonctors(selonttings.isStorelonTelonrmVelonctors());
+    fielonldInfo.gelontFielonldTypelon().selontStorelonTelonrmVelonctorOffselonts(selonttings.isStorelonTelonrmVelonctorOffselonts());
+    fielonldInfo.gelontFielonldTypelon().selontStorelonTelonrmVelonctorPositions(selonttings.isStorelonTelonrmVelonctorPositions());
+    fielonldInfo.gelontFielonldTypelon().selontStorelonTelonrmVelonctorPayloads(selonttings.isStorelonTelonrmVelonctorPayloads());
+    fielonldInfo.gelontFielonldTypelon().selontOmitNorms(selonttings.isOmitNorms());
+    fielonldInfo.gelontFielonldTypelon().selontIndelonxHFTelonrmPairs(selonttings.isIndelonxHighFrelonqTelonrmPairs());
+    fielonldInfo.gelontFielonldTypelon().selontUselonTwelonelontSpeloncificNormalization(
+        selonttings.delonpreloncatelond_pelonrformTwelonelontSpeloncificNormalizations);
 
-    if (settings.isSetIndexOptions()) {
-      switch (settings.getIndexOptions()) {
-        case DOCS_ONLY :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS);
-          break;
-        case DOCS_AND_FREQS :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS);
-          break;
-        case DOCS_AND_FREQS_AND_POSITIONS :
-          fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
-          break;
-        case DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS :
-          fieldInfo.getFieldType().setIndexOptions(
-              IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS);
-          break;
-        default:
-          throw new SchemaValidationException("Unknown value for IndexOptions: "
-              + settings.getIndexOptions());
+    if (selonttings.isSelontIndelonxOptions()) {
+      switch (selonttings.gelontIndelonxOptions()) {
+        caselon DOCS_ONLY :
+          fielonldInfo.gelontFielonldTypelon().selontIndelonxOptions(IndelonxOptions.DOCS);
+          brelonak;
+        caselon DOCS_AND_FRelonQS :
+          fielonldInfo.gelontFielonldTypelon().selontIndelonxOptions(IndelonxOptions.DOCS_AND_FRelonQS);
+          brelonak;
+        caselon DOCS_AND_FRelonQS_AND_POSITIONS :
+          fielonldInfo.gelontFielonldTypelon().selontIndelonxOptions(IndelonxOptions.DOCS_AND_FRelonQS_AND_POSITIONS);
+          brelonak;
+        caselon DOCS_AND_FRelonQS_AND_POSITIONS_AND_OFFSelonTS :
+          fielonldInfo.gelontFielonldTypelon().selontIndelonxOptions(
+              IndelonxOptions.DOCS_AND_FRelonQS_AND_POSITIONS_AND_OFFSelonTS);
+          brelonak;
+        delonfault:
+          throw nelonw SchelonmaValidationelonxcelonption("Unknown valuelon for IndelonxOptions: "
+              + selonttings.gelontIndelonxOptions());
       }
-    } else if (settings.isIndexed()) {
-      // default for backward-compatibility
-      fieldInfo.getFieldType().setIndexOptions(IndexOptions.DOCS_AND_FREQS_AND_POSITIONS);
+    } elonlselon if (selonttings.isIndelonxelond()) {
+      // delonfault for backward-compatibility
+      fielonldInfo.gelontFielonldTypelon().selontIndelonxOptions(IndelonxOptions.DOCS_AND_FRelonQS_AND_POSITIONS);
     }
 
-    fieldInfo.getFieldType().setStorePerPositionPayloads(settings.isStorePerPositionPayloads());
-    fieldInfo.getFieldType().setDefaultPayloadLength(
-        settings.getDefaultPerPositionPayloadLength());
-    fieldInfo.getFieldType().setBecomesImmutable(!settings.isSupportOutOfOrderAppends());
-    fieldInfo.getFieldType().setSupportOrderedTerms(settings.isSupportOrderedTerms());
-    fieldInfo.getFieldType().setSupportTermTextLookup(settings.isSupportTermTextLookup());
+    fielonldInfo.gelontFielonldTypelon().selontStorelonPelonrPositionPayloads(selonttings.isStorelonPelonrPositionPayloads());
+    fielonldInfo.gelontFielonldTypelon().selontDelonfaultPayloadLelonngth(
+        selonttings.gelontDelonfaultPelonrPositionPayloadLelonngth());
+    fielonldInfo.gelontFielonldTypelon().selontBeloncomelonsImmutablelon(!selonttings.isSupportOutOfOrdelonrAppelonnds());
+    fielonldInfo.gelontFielonldTypelon().selontSupportOrdelonrelondTelonrms(selonttings.isSupportOrdelonrelondTelonrms());
+    fielonldInfo.gelontFielonldTypelon().selontSupportTelonrmTelonxtLookup(selonttings.isSupportTelonrmTelonxtLookup());
 
-    if (settings.isSetNumericFieldSettings()) {
-      fieldInfo.getFieldType().setNumericFieldSettings(
-          new IndexedNumericFieldSettings(settings.getNumericFieldSettings()));
+    if (selonttings.isSelontNumelonricFielonldSelonttings()) {
+      fielonldInfo.gelontFielonldTypelon().selontNumelonricFielonldSelonttings(
+          nelonw IndelonxelondNumelonricFielonldSelonttings(selonttings.gelontNumelonricFielonldSelonttings()));
     }
 
-    if (settings.isSetTokenStreamSerializer()) {
-      fieldInfo.getFieldType().setTokenStreamSerializerBuilder(
-          buildTokenStreamSerializerProvider(settings.getTokenStreamSerializer()));
+    if (selonttings.isSelontTokelonnStrelonamSelonrializelonr()) {
+      fielonldInfo.gelontFielonldTypelon().selontTokelonnStrelonamSelonrializelonrBuildelonr(
+          buildTokelonnStrelonamSelonrializelonrProvidelonr(selonttings.gelontTokelonnStrelonamSelonrializelonr()));
     }
   }
 
-  private void applySearchFieldSettings(FieldInfo fieldInfo, ThriftSearchFieldSettings settings)
-      throws SchemaValidationException {
-    fieldInfo.getFieldType().setTextSearchableFieldWeight(
-        (float) settings.getTextSearchableFieldWeight());
-    fieldInfo.getFieldType().setTextSearchableByDefault(settings.isTextDefaultSearchable());
+  privatelon void applySelonarchFielonldSelonttings(FielonldInfo fielonldInfo, ThriftSelonarchFielonldSelonttings selonttings)
+      throws SchelonmaValidationelonxcelonption {
+    fielonldInfo.gelontFielonldTypelon().selontTelonxtSelonarchablelonFielonldWelonight(
+        (float) selonttings.gelontTelonxtSelonarchablelonFielonldWelonight());
+    fielonldInfo.gelontFielonldTypelon().selontTelonxtSelonarchablelonByDelonfault(selonttings.isTelonxtDelonfaultSelonarchablelon());
   }
 
-  private void validate(FieldInfo fieldInfo) throws SchemaValidationException {
+  privatelon void validatelon(FielonldInfo fielonldInfo) throws SchelonmaValidationelonxcelonption {
   }
 
-  private TokenStreamSerializer.Builder buildTokenStreamSerializerProvider(
-      final ThriftTokenStreamSerializer settings) {
-    TokenStreamSerializer.Builder builder = TokenStreamSerializer.builder();
-    for (String serializerName : settings.getAttributeSerializerClassNames()) {
+  privatelon TokelonnStrelonamSelonrializelonr.Buildelonr buildTokelonnStrelonamSelonrializelonrProvidelonr(
+      final ThriftTokelonnStrelonamSelonrializelonr selonttings) {
+    TokelonnStrelonamSelonrializelonr.Buildelonr buildelonr = TokelonnStrelonamSelonrializelonr.buildelonr();
+    for (String selonrializelonrNamelon : selonttings.gelontAttributelonSelonrializelonrClassNamelons()) {
       try {
-        builder.add((TokenStreamSerializer.AttributeSerializer) Class.forName(serializerName)
-            .newInstance());
-      } catch (InstantiationException e) {
-        throw new RuntimeException(
-            "Unable to instantiate AttributeSerializer for name " + serializerName);
-      } catch (IllegalAccessException e) {
-        throw new RuntimeException(
-            "Unable to instantiate AttributeSerializer for name " + serializerName);
-      } catch (ClassNotFoundException e) {
-        throw new RuntimeException(
-            "Unable to instantiate AttributeSerializer for name " + serializerName);
+        buildelonr.add((TokelonnStrelonamSelonrializelonr.AttributelonSelonrializelonr) Class.forNamelon(selonrializelonrNamelon)
+            .nelonwInstancelon());
+      } catch (Instantiationelonxcelonption elon) {
+        throw nelonw Runtimelonelonxcelonption(
+            "Unablelon to instantiatelon AttributelonSelonrializelonr for namelon " + selonrializelonrNamelon);
+      } catch (IllelongalAccelonsselonxcelonption elon) {
+        throw nelonw Runtimelonelonxcelonption(
+            "Unablelon to instantiatelon AttributelonSelonrializelonr for namelon " + selonrializelonrNamelon);
+      } catch (ClassNotFoundelonxcelonption elon) {
+        throw nelonw Runtimelonelonxcelonption(
+            "Unablelon to instantiatelon AttributelonSelonrializelonr for namelon " + selonrializelonrNamelon);
       }
     }
-    return builder;
+    relonturn buildelonr;
   }
 
-  @Override
-  public FacetsConfig getFacetsConfig() {
-    FacetsConfig facetsConfig = new FacetsConfig();
+  @Ovelonrridelon
+  public FacelontsConfig gelontFacelontsConfig() {
+    FacelontsConfig facelontsConfig = nelonw FacelontsConfig();
 
-    for (String facetName : facetNameToFieldMap.keySet()) {
-      // set multiValued = true as default, since we're using SortedSetDocValues facet, in which,
-      // there is no difference between multiValued true or false for the real facet, but only the
-      // checking of the values.
-      facetsConfig.setMultiValued(facetName, true);
+    for (String facelontNamelon : facelontNamelonToFielonldMap.kelonySelont()) {
+      // selont multiValuelond = truelon as delonfault, sincelon welon'relon using SortelondSelontDocValuelons facelont, in which,
+      // thelonrelon is no diffelonrelonncelon belontwelonelonn multiValuelond truelon or falselon for thelon relonal facelont, but only thelon
+      // cheloncking of thelon valuelons.
+      facelontsConfig.selontMultiValuelond(facelontNamelon, truelon);
     }
 
-    return facetsConfig;
+    relonturn facelontsConfig;
   }
 
-  @Override
-  public Analyzer getDefaultAnalyzer(ThriftAnalyzer override) {
-    if (override != null) {
-      return analyzerFactory.getAnalyzer(override);
+  @Ovelonrridelon
+  public Analyzelonr gelontDelonfaultAnalyzelonr(ThriftAnalyzelonr ovelonrridelon) {
+    if (ovelonrridelon != null) {
+      relonturn analyzelonrFactory.gelontAnalyzelonr(ovelonrridelon);
     }
 
-    if (defaultAnalyzer != null) {
-      return analyzerFactory.getAnalyzer(defaultAnalyzer);
+    if (delonfaultAnalyzelonr != null) {
+      relonturn analyzelonrFactory.gelontAnalyzelonr(delonfaultAnalyzelonr);
     }
 
-    return new SearchWhitespaceAnalyzer();
+    relonturn nelonw SelonarchWhitelonspacelonAnalyzelonr();
   }
 
-  @Override
-  public ImmutableCollection<FieldInfo> getFieldInfos() {
-    return fieldSettingsMapById.values();
+  @Ovelonrridelon
+  public ImmutablelonCollelonction<FielonldInfo> gelontFielonldInfos() {
+    relonturn fielonldSelonttingsMapById.valuelons();
   }
 
   /**
-   * This is the preferred method to check whether a field configuration is in schema.
-   * One can also use getFieldInfo and do null checks, but should be careful about excessive
-   * warning logging resulting from looking up fields not in schema.
+   * This is thelon prelonfelonrrelond melonthod to chelonck whelonthelonr a fielonld configuration is in schelonma.
+   * Onelon can also uselon gelontFielonldInfo and do null cheloncks, but should belon carelonful about elonxcelonssivelon
+   * warning logging relonsulting from looking up fielonlds not in schelonma.
    */
-  @Override
-  public boolean hasField(int fieldConfigId) {
-    return fieldSettingsMapById.containsKey(fieldConfigId);
+  @Ovelonrridelon
+  public boolelonan hasFielonld(int fielonldConfigId) {
+    relonturn fielonldSelonttingsMapById.containsKelony(fielonldConfigId);
   }
 
   /**
-   * This is the preferred method to check whether a field configuration is in schema.
-   * One can also use getFieldInfo and do null checks, but should be careful about excessive
-   * warning logging resulting from looking up fields not in schema.
+   * This is thelon prelonfelonrrelond melonthod to chelonck whelonthelonr a fielonld configuration is in schelonma.
+   * Onelon can also uselon gelontFielonldInfo and do null cheloncks, but should belon carelonful about elonxcelonssivelon
+   * warning logging relonsulting from looking up fielonlds not in schelonma.
    */
-  @Override
-  public boolean hasField(String fieldName) {
-    return fieldSettingsMapByName.containsKey(fieldName);
+  @Ovelonrridelon
+  public boolelonan hasFielonld(String fielonldNamelon) {
+    relonturn fielonldSelonttingsMapByNamelon.containsKelony(fielonldNamelon);
   }
 
   /**
-   * Get FieldInfo for the given field id.
-   * If the goal is to check whether a field is in the schema, use {@link #hasField(int)} instead.
-   * This method logs a warning whenever it returns null.
+   * Gelont FielonldInfo for thelon givelonn fielonld id.
+   * If thelon goal is to chelonck whelonthelonr a fielonld is in thelon schelonma, uselon {@link #hasFielonld(int)} instelonad.
+   * This melonthod logs a warning whelonnelonvelonr it relonturns null.
    */
-  @Override
-  @Nullable
-  public FieldInfo getFieldInfo(int fieldConfigId) {
-    return getFieldInfo(fieldConfigId, null);
+  @Ovelonrridelon
+  @Nullablelon
+  public FielonldInfo gelontFielonldInfo(int fielonldConfigId) {
+    relonturn gelontFielonldInfo(fielonldConfigId, null);
   }
 
-  private org.apache.lucene.index.FieldInfo convert(String fieldName,
-                                                    int index,
-                                                    EarlybirdFieldType type) {
-    return new org.apache.lucene.index.FieldInfo(
-        fieldName,                          // String name
-        index,                              // int number
-        type.storeTermVectors(),            // boolean storeTermVector
-        type.omitNorms(),                   // boolean omitNorms
-        type.isStorePerPositionPayloads(),  // boolean storePayloads
-        type.indexOptions(),                // IndexOptions indexOptions
-        type.docValuesType(),               // DocValuesType docValues
-        -1,                                 // long dvGen
-        Maps.<String, String>newHashMap(),  // Map<String, String> attributes
-        0,                                  // int pointDataDimensionCount
-        0,                                  // int pointIndexDimensionCount
-        0,                                  // int pointNumBytes
-        false);                             // boolean softDeletesField
+  privatelon org.apachelon.lucelonnelon.indelonx.FielonldInfo convelonrt(String fielonldNamelon,
+                                                    int indelonx,
+                                                    elonarlybirdFielonldTypelon typelon) {
+    relonturn nelonw org.apachelon.lucelonnelon.indelonx.FielonldInfo(
+        fielonldNamelon,                          // String namelon
+        indelonx,                              // int numbelonr
+        typelon.storelonTelonrmVelonctors(),            // boolelonan storelonTelonrmVelonctor
+        typelon.omitNorms(),                   // boolelonan omitNorms
+        typelon.isStorelonPelonrPositionPayloads(),  // boolelonan storelonPayloads
+        typelon.indelonxOptions(),                // IndelonxOptions indelonxOptions
+        typelon.docValuelonsTypelon(),               // DocValuelonsTypelon docValuelons
+        -1,                                 // long dvGelonn
+        Maps.<String, String>nelonwHashMap(),  // Map<String, String> attributelons
+        0,                                  // int pointDataDimelonnsionCount
+        0,                                  // int pointIndelonxDimelonnsionCount
+        0,                                  // int pointNumBytelons
+        falselon);                             // boolelonan softDelonlelontelonsFielonld
   }
 
   /**
-   * Get FieldInfo for the given field name, or null if the field does not exist.
+   * Gelont FielonldInfo for thelon givelonn fielonld namelon, or null if thelon fielonld doelons not elonxist.
    */
-  @Override
-  @Nullable
-  public FieldInfo getFieldInfo(String fieldName) {
-    return fieldSettingsMapByName.get(fieldName);
+  @Ovelonrridelon
+  @Nullablelon
+  public FielonldInfo gelontFielonldInfo(String fielonldNamelon) {
+    relonturn fielonldSelonttingsMapByNamelon.gelont(fielonldNamelon);
   }
 
-  @Override
-  public String getFieldName(int fieldConfigId) {
-    FieldInfo fieldInfo = fieldSettingsMapById.get(fieldConfigId);
-    return fieldInfo != null ? fieldInfo.getName() : null;
+  @Ovelonrridelon
+  public String gelontFielonldNamelon(int fielonldConfigId) {
+    FielonldInfo fielonldInfo = fielonldSelonttingsMapById.gelont(fielonldConfigId);
+    relonturn fielonldInfo != null ? fielonldInfo.gelontNamelon() : null;
   }
 
-  @Override
-  public FieldInfo getFieldInfo(int fieldConfigId, ThriftFieldConfiguration override) {
-    FieldInfo fieldInfo = fieldSettingsMapById.get(fieldConfigId);
-    if (fieldInfo == null) {
-      // This method is used to check the availability of fields by IDs,
-      // so no warning is logged here (would be too verbose otherwise).
-      return null;
+  @Ovelonrridelon
+  public FielonldInfo gelontFielonldInfo(int fielonldConfigId, ThriftFielonldConfiguration ovelonrridelon) {
+    FielonldInfo fielonldInfo = fielonldSelonttingsMapById.gelont(fielonldConfigId);
+    if (fielonldInfo == null) {
+      // This melonthod is uselond to chelonck thelon availability of fielonlds by IDs,
+      // so no warning is loggelond helonrelon (would belon too velonrboselon othelonrwiselon).
+      relonturn null;
     }
 
-    if (override != null) {
+    if (ovelonrridelon != null) {
       try {
-        return merge(fieldConfigId, fieldInfo, override);
-      } catch (SchemaValidationException e) {
-        throw new RuntimeException(e);
+        relonturn melonrgelon(fielonldConfigId, fielonldInfo, ovelonrridelon);
+      } catch (SchelonmaValidationelonxcelonption elon) {
+        throw nelonw Runtimelonelonxcelonption(elon);
       }
     }
 
-    return fieldInfo;
+    relonturn fielonldInfo;
   }
 
-  @Override
-  public int getNumFacetFields() {
-    return numFacetFields;
+  @Ovelonrridelon
+  public int gelontNumFacelontFielonlds() {
+    relonturn numFacelontFielonlds;
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFacetName(String facetName) {
-    return facetNameToFieldMap.get(facetName);
+  @Ovelonrridelon
+  public FielonldInfo gelontFacelontFielonldByFacelontNamelon(String facelontNamelon) {
+    relonturn facelontNamelonToFielonldMap.gelont(facelontNamelon);
   }
 
-  @Override
-  public FieldInfo getFacetFieldByFieldName(String fieldName) {
-    FieldInfo fieldInfo = getFieldInfo(fieldName);
-    return fieldInfo != null && fieldInfo.getFieldType().isFacetField() ? fieldInfo : null;
+  @Ovelonrridelon
+  public FielonldInfo gelontFacelontFielonldByFielonldNamelon(String fielonldNamelon) {
+    FielonldInfo fielonldInfo = gelontFielonldInfo(fielonldNamelon);
+    relonturn fielonldInfo != null && fielonldInfo.gelontFielonldTypelon().isFacelontFielonld() ? fielonldInfo : null;
   }
 
-  @Override
-  public Collection<FieldInfo> getFacetFields() {
-    return facetNameToFieldMap.values();
+  @Ovelonrridelon
+  public Collelonction<FielonldInfo> gelontFacelontFielonlds() {
+    relonturn facelontNamelonToFielonldMap.valuelons();
   }
 
-  @Override
-  public Collection<FieldInfo> getCsfFacetFields() {
-    return csfFacetFields;
+  @Ovelonrridelon
+  public Collelonction<FielonldInfo> gelontCsfFacelontFielonlds() {
+    relonturn csfFacelontFielonlds;
   }
 
-  @Override
-  public String getVersionDescription() {
-    return versionDesc;
+  @Ovelonrridelon
+  public String gelontVelonrsionDelonscription() {
+    relonturn velonrsionDelonsc;
   }
 
-  @Override
-  public int getMajorVersionNumber() {
-    return majorVersionNumber;
+  @Ovelonrridelon
+  public int gelontMajorVelonrsionNumbelonr() {
+    relonturn majorVelonrsionNumbelonr;
   }
 
-  @Override
-  public int getMinorVersionNumber() {
-    return minorVersionNumber;
+  @Ovelonrridelon
+  public int gelontMinorVelonrsionNumbelonr() {
+    relonturn minorVelonrsionNumbelonr;
   }
 
-  @Override
-  public boolean isVersionOfficial() {
-    return isVersionOfficial;
+  @Ovelonrridelon
+  public boolelonan isVelonrsionOfficial() {
+    relonturn isVelonrsionOfficial;
   }
 
   /**
-   * Parses a version string like "16: renamed field x into y" into a version number and
-   * a string description.
-   * @return a Pair of the version number and the description
+   * Parselons a velonrsion string likelon "16: relonnamelond fielonld x into y" into a velonrsion numbelonr and
+   * a string delonscription.
+   * @relonturn a Pair of thelon velonrsion numbelonr and thelon delonscription
    */
-  private static Pair<Integer, String> parseVersionString(String version)
-      throws SchemaValidationException {
-    Preconditions.checkNotNull(version, "Schema must have a version number and description.");
-    int colonIndex = version.indexOf(':');
-    if (colonIndex == -1) {
-      throw new SchemaValidationException("Malformed version string: " + version);
+  privatelon static Pair<Intelongelonr, String> parselonVelonrsionString(String velonrsion)
+      throws SchelonmaValidationelonxcelonption {
+    Prelonconditions.chelonckNotNull(velonrsion, "Schelonma must havelon a velonrsion numbelonr and delonscription.");
+    int colonIndelonx = velonrsion.indelonxOf(':');
+    if (colonIndelonx == -1) {
+      throw nelonw SchelonmaValidationelonxcelonption("Malformelond velonrsion string: " + velonrsion);
     }
     try {
-      int versionNumber = Integer.parseInt(version.substring(0, colonIndex));
-      String versionDesc = version.substring(colonIndex + 1);
-      return Pair.of(versionNumber, versionDesc);
-    } catch (Exception e) {
-      throw new SchemaValidationException("Malformed version string: " + version, e);
+      int velonrsionNumbelonr = Intelongelonr.parselonInt(velonrsion.substring(0, colonIndelonx));
+      String velonrsionDelonsc = velonrsion.substring(colonIndelonx + 1);
+      relonturn Pair.of(velonrsionNumbelonr, velonrsionDelonsc);
+    } catch (elonxcelonption elon) {
+      throw nelonw SchelonmaValidationelonxcelonption("Malformelond velonrsion string: " + velonrsion, elon);
     }
   }
 
-  @Override
-  public Map<String, FieldWeightDefault> getFieldWeightMap() {
-    return fieldWeightMap;
+  @Ovelonrridelon
+  public Map<String, FielonldWelonightDelonfault> gelontFielonldWelonightMap() {
+    relonturn fielonldWelonightMap;
   }
 
   /**
-   * Build the feature maps so that we can use feature name to get the feature configuration.
-   * @return: an immutable map keyed on fieldName.
+   * Build thelon felonaturelon maps so that welon can uselon felonaturelon namelon to gelont thelon felonaturelon configuration.
+   * @relonturn: an immutablelon map kelonyelond on fielonldNamelon.
    */
-  private Pair<ImmutableMap<String, FeatureConfiguration>,
-      ImmutableMap<Integer, FeatureConfiguration>> buildFeatureMaps(
-      final Map<Integer, ThriftFieldConfiguration> csvViewFields)
-      throws SchemaValidationException {
+  privatelon Pair<ImmutablelonMap<String, FelonaturelonConfiguration>,
+      ImmutablelonMap<Intelongelonr, FelonaturelonConfiguration>> buildFelonaturelonMaps(
+      final Map<Intelongelonr, ThriftFielonldConfiguration> csvVielonwFielonlds)
+      throws SchelonmaValidationelonxcelonption {
 
-    final ImmutableMap.Builder<String, FeatureConfiguration> featureConfigMapByNameBuilder =
-        ImmutableMap.builder();
-    final ImmutableMap.Builder<Integer, FeatureConfiguration> featureConfigMapByIdBuilder =
-        ImmutableMap.builder();
+    final ImmutablelonMap.Buildelonr<String, FelonaturelonConfiguration> felonaturelonConfigMapByNamelonBuildelonr =
+        ImmutablelonMap.buildelonr();
+    final ImmutablelonMap.Buildelonr<Intelongelonr, FelonaturelonConfiguration> felonaturelonConfigMapByIdBuildelonr =
+        ImmutablelonMap.buildelonr();
 
-    for (final Map.Entry<Integer, ThriftFieldConfiguration> entry : csvViewFields.entrySet()) {
-      ThriftFieldSettings fieldSettings = entry.getValue().getSettings();
-      FieldInfo fieldInfo = getFieldInfo(entry.getKey());
-      FieldInfo baseFieldInfo =
-          getFieldInfo(fieldSettings.getCsfViewSettings().getBaseFieldConfigId());
-      if (baseFieldInfo == null) {
-        throw new SchemaValidationException("Base field (id="
-            + fieldSettings.getCsfViewSettings().getBaseFieldConfigId() + ") not found.");
+    for (final Map.elonntry<Intelongelonr, ThriftFielonldConfiguration> elonntry : csvVielonwFielonlds.elonntrySelont()) {
+      ThriftFielonldSelonttings fielonldSelonttings = elonntry.gelontValuelon().gelontSelonttings();
+      FielonldInfo fielonldInfo = gelontFielonldInfo(elonntry.gelontKelony());
+      FielonldInfo baselonFielonldInfo =
+          gelontFielonldInfo(fielonldSelonttings.gelontCsfVielonwSelonttings().gelontBaselonFielonldConfigId());
+      if (baselonFielonldInfo == null) {
+        throw nelonw SchelonmaValidationelonxcelonption("Baselon fielonld (id="
+            + fielonldSelonttings.gelontCsfVielonwSelonttings().gelontBaselonFielonldConfigId() + ") not found.");
       }
-      applyCsfViewFieldSettings(fieldInfo, baseFieldInfo, fieldSettings.getCsfViewSettings());
+      applyCsfVielonwFielonldSelonttings(fielonldInfo, baselonFielonldInfo, fielonldSelonttings.gelontCsfVielonwSelonttings());
 
-      FeatureConfiguration featureConfig = fieldInfo.getFieldType()
-          .getCsfViewFeatureConfiguration();
-      if (featureConfig != null) {
-        featureConfigMapByNameBuilder.put(fieldInfo.getName(), featureConfig);
-        featureConfigMapByIdBuilder.put(fieldInfo.getFieldId(), featureConfig);
-      }
-    }
-
-    return Pair.of(featureConfigMapByNameBuilder.build(), featureConfigMapByIdBuilder.build());
-  }
-
-  @Override
-  public FeatureConfiguration getFeatureConfigurationByName(String featureName) {
-    return featureConfigMapByName.get(featureName);
-  }
-
-  @Override
-  public FeatureConfiguration getFeatureConfigurationById(int featureFieldId) {
-    return Preconditions.checkNotNull(featureConfigMapById.get(featureFieldId),
-        "Field ID: " + featureFieldId);
-  }
-
-  @Override
-  @Nullable
-  public ThriftCSFType getCSFFieldType(String fieldName) {
-    FieldInfo fieldInfo = getFieldInfo(fieldName);
-    if (fieldInfo == null) {
-      return null;
-    }
-
-    EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    if (fieldType.docValuesType() != org.apache.lucene.index.DocValuesType.NUMERIC) {
-      return null;
-    }
-
-    return fieldType.getCsfType();
-  }
-
-  @Override
-  public ImmutableSchemaInterface getSchemaSnapshot() {
-    return this;
-  }
-
-  private FieldInfo merge(int fieldConfigId,
-                          FieldInfo fieldInfo,
-                          ThriftFieldConfiguration overrideConfig)
-      throws SchemaValidationException {
-
-    throw new UnsupportedOperationException("Field override config not supported");
-  }
-
-  @Override
-  public ThriftSearchFeatureSchema getSearchFeatureSchema() {
-    return searchFeatureSchema;
-  }
-
-  @Override
-  public ImmutableMap<Integer, FeatureConfiguration> getFeatureIdToFeatureConfig() {
-    return featureConfigMapById;
-  }
-
-  @Override
-  public ImmutableMap<String, FeatureConfiguration> getFeatureNameToFeatureConfig() {
-    return featureConfigMapByName;
-  }
-
-  private ThriftSearchFeatureSchema createSearchResultFeatureSchema(
-      String featureSchemaVersionPrefix,
-      Map<String, FieldInfo> allFieldSettings,
-      Map<String, FeatureConfiguration> featureConfigurations) throws SchemaValidationException {
-    final ImmutableMap.Builder<Integer, ThriftSearchFeatureSchemaEntry> builder =
-        new ImmutableMap.Builder<>();
-
-    for (Map.Entry<String, FieldInfo> field : allFieldSettings.entrySet()) {
-      FeatureConfiguration featureConfig = featureConfigurations.get(field.getKey());
-      if (featureConfig == null) {
-        // This is either a not csf related field or a csf field.
-        continue;
-      }
-
-      // This is a csfView field.
-      if (featureConfig.getOutputType() == null) {
-        LOG.info("Skip unused fieldschemas: {} for search feature schema.", field.getKey());
-        continue;
-      }
-
-      ThriftSearchFeatureType featureType = getResultFeatureType(featureConfig.getOutputType());
-      if (featureType != null) {
-        builder.put(
-            field.getValue().getFieldId(),
-            new ThriftSearchFeatureSchemaEntry(field.getKey(), featureType));
-      } else {
-        LOG.error("Invalid CSFType encountered for csf field: {}", field.getKey());
+      FelonaturelonConfiguration felonaturelonConfig = fielonldInfo.gelontFielonldTypelon()
+          .gelontCsfVielonwFelonaturelonConfiguration();
+      if (felonaturelonConfig != null) {
+        felonaturelonConfigMapByNamelonBuildelonr.put(fielonldInfo.gelontNamelon(), felonaturelonConfig);
+        felonaturelonConfigMapByIdBuildelonr.put(fielonldInfo.gelontFielonldId(), felonaturelonConfig);
       }
     }
-    Map<Integer, ThriftSearchFeatureSchemaEntry> indexOnlySchemaEntries = builder.build();
 
-    // Add earlybird derived features, they are defined in ExternalTweetFeatures and used in the
-    // scoring function. They are no different from those auto-generated index-based features
-    // viewed from outside Earlybird.
-    Map<Integer, ThriftSearchFeatureSchemaEntry> entriesWithEBFeatures =
-        appendToFeatureSchema(
-            indexOnlySchemaEntries, ExternalTweetFeature.EARLYBIRD_DERIVED_FEATURES);
-
-    // Add other features needed for tweet ranking from EarlybirdRankingDerivedFeature.
-    Map<Integer, ThriftSearchFeatureSchemaEntry> allSchemaEntries = appendToFeatureSchema(
-        entriesWithEBFeatures, ExternalTweetFeature.EARLYBIRD_RANKING_DERIVED_FEATURES);
-
-    long schemaEntriesChecksum = getChecksum(allSchemaEntries);
-    SearchLongGauge.export("feature_schema_checksum", new AtomicLong(schemaEntriesChecksum));
-
-    String schemaVersion = String.format(
-        "%s.%d.%d", featureSchemaVersionPrefix, majorVersionNumber, minorVersionNumber);
-    ThriftSearchFeatureSchemaSpecifier schemaSpecifier =
-        new ThriftSearchFeatureSchemaSpecifier(schemaVersion, schemaEntriesChecksum);
-
-    ThriftSearchFeatureSchema schema = new ThriftSearchFeatureSchema();
-    schema.setSchemaSpecifier(schemaSpecifier);
-    schema.setEntries(allSchemaEntries);
-
-    return schema;
+    relonturn Pair.of(felonaturelonConfigMapByNamelonBuildelonr.build(), felonaturelonConfigMapByIdBuildelonr.build());
   }
 
-  // Serializes schemaEntries to a byte array, and computes a CRC32 checksum of the array.
-  // The serialization needs to be stable: if schemaEntries1.equals(schemaEntries2), we want
-  // this method to produce the same checksum for schemaEntrie1 and schemaEntrie2, even if
-  // the checksums are computed in different JVMs, etc.
-  private static long getChecksum(Map<Integer, ThriftSearchFeatureSchemaEntry> schemaEntries)
-      throws SchemaValidationException {
-    SortedMap<Integer, ThriftSearchFeatureSchemaEntry> sortedSchemaEntries =
-        new TreeMap<Integer, ThriftSearchFeatureSchemaEntry>(schemaEntries);
+  @Ovelonrridelon
+  public FelonaturelonConfiguration gelontFelonaturelonConfigurationByNamelon(String felonaturelonNamelon) {
+    relonturn felonaturelonConfigMapByNamelon.gelont(felonaturelonNamelon);
+  }
 
-    CRC32OutputStream crc32OutputStream = new CRC32OutputStream();
-    ObjectOutputStream objectOutputStream = null;
+  @Ovelonrridelon
+  public FelonaturelonConfiguration gelontFelonaturelonConfigurationById(int felonaturelonFielonldId) {
+    relonturn Prelonconditions.chelonckNotNull(felonaturelonConfigMapById.gelont(felonaturelonFielonldId),
+        "Fielonld ID: " + felonaturelonFielonldId);
+  }
+
+  @Ovelonrridelon
+  @Nullablelon
+  public ThriftCSFTypelon gelontCSFFielonldTypelon(String fielonldNamelon) {
+    FielonldInfo fielonldInfo = gelontFielonldInfo(fielonldNamelon);
+    if (fielonldInfo == null) {
+      relonturn null;
+    }
+
+    elonarlybirdFielonldTypelon fielonldTypelon = fielonldInfo.gelontFielonldTypelon();
+    if (fielonldTypelon.docValuelonsTypelon() != org.apachelon.lucelonnelon.indelonx.DocValuelonsTypelon.NUMelonRIC) {
+      relonturn null;
+    }
+
+    relonturn fielonldTypelon.gelontCsfTypelon();
+  }
+
+  @Ovelonrridelon
+  public ImmutablelonSchelonmaIntelonrfacelon gelontSchelonmaSnapshot() {
+    relonturn this;
+  }
+
+  privatelon FielonldInfo melonrgelon(int fielonldConfigId,
+                          FielonldInfo fielonldInfo,
+                          ThriftFielonldConfiguration ovelonrridelonConfig)
+      throws SchelonmaValidationelonxcelonption {
+
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("Fielonld ovelonrridelon config not supportelond");
+  }
+
+  @Ovelonrridelon
+  public ThriftSelonarchFelonaturelonSchelonma gelontSelonarchFelonaturelonSchelonma() {
+    relonturn selonarchFelonaturelonSchelonma;
+  }
+
+  @Ovelonrridelon
+  public ImmutablelonMap<Intelongelonr, FelonaturelonConfiguration> gelontFelonaturelonIdToFelonaturelonConfig() {
+    relonturn felonaturelonConfigMapById;
+  }
+
+  @Ovelonrridelon
+  public ImmutablelonMap<String, FelonaturelonConfiguration> gelontFelonaturelonNamelonToFelonaturelonConfig() {
+    relonturn felonaturelonConfigMapByNamelon;
+  }
+
+  privatelon ThriftSelonarchFelonaturelonSchelonma crelonatelonSelonarchRelonsultFelonaturelonSchelonma(
+      String felonaturelonSchelonmaVelonrsionPrelonfix,
+      Map<String, FielonldInfo> allFielonldSelonttings,
+      Map<String, FelonaturelonConfiguration> felonaturelonConfigurations) throws SchelonmaValidationelonxcelonption {
+    final ImmutablelonMap.Buildelonr<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> buildelonr =
+        nelonw ImmutablelonMap.Buildelonr<>();
+
+    for (Map.elonntry<String, FielonldInfo> fielonld : allFielonldSelonttings.elonntrySelont()) {
+      FelonaturelonConfiguration felonaturelonConfig = felonaturelonConfigurations.gelont(fielonld.gelontKelony());
+      if (felonaturelonConfig == null) {
+        // This is elonithelonr a not csf relonlatelond fielonld or a csf fielonld.
+        continuelon;
+      }
+
+      // This is a csfVielonw fielonld.
+      if (felonaturelonConfig.gelontOutputTypelon() == null) {
+        LOG.info("Skip unuselond fielonldschelonmas: {} for selonarch felonaturelon schelonma.", fielonld.gelontKelony());
+        continuelon;
+      }
+
+      ThriftSelonarchFelonaturelonTypelon felonaturelonTypelon = gelontRelonsultFelonaturelonTypelon(felonaturelonConfig.gelontOutputTypelon());
+      if (felonaturelonTypelon != null) {
+        buildelonr.put(
+            fielonld.gelontValuelon().gelontFielonldId(),
+            nelonw ThriftSelonarchFelonaturelonSchelonmaelonntry(fielonld.gelontKelony(), felonaturelonTypelon));
+      } elonlselon {
+        LOG.elonrror("Invalid CSFTypelon elonncountelonrelond for csf fielonld: {}", fielonld.gelontKelony());
+      }
+    }
+    Map<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> indelonxOnlySchelonmaelonntrielons = buildelonr.build();
+
+    // Add elonarlybird delonrivelond felonaturelons, thelony arelon delonfinelond in elonxtelonrnalTwelonelontFelonaturelons and uselond in thelon
+    // scoring function. Thelony arelon no diffelonrelonnt from thoselon auto-gelonnelonratelond indelonx-baselond felonaturelons
+    // vielonwelond from outsidelon elonarlybird.
+    Map<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> elonntrielonsWithelonBFelonaturelons =
+        appelonndToFelonaturelonSchelonma(
+            indelonxOnlySchelonmaelonntrielons, elonxtelonrnalTwelonelontFelonaturelon.elonARLYBIRD_DelonRIVelonD_FelonATURelonS);
+
+    // Add othelonr felonaturelons nelonelondelond for twelonelont ranking from elonarlybirdRankingDelonrivelondFelonaturelon.
+    Map<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> allSchelonmaelonntrielons = appelonndToFelonaturelonSchelonma(
+        elonntrielonsWithelonBFelonaturelons, elonxtelonrnalTwelonelontFelonaturelon.elonARLYBIRD_RANKING_DelonRIVelonD_FelonATURelonS);
+
+    long schelonmaelonntrielonsCheloncksum = gelontCheloncksum(allSchelonmaelonntrielons);
+    SelonarchLongGaugelon.elonxport("felonaturelon_schelonma_cheloncksum", nelonw AtomicLong(schelonmaelonntrielonsCheloncksum));
+
+    String schelonmaVelonrsion = String.format(
+        "%s.%d.%d", felonaturelonSchelonmaVelonrsionPrelonfix, majorVelonrsionNumbelonr, minorVelonrsionNumbelonr);
+    ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr schelonmaSpeloncifielonr =
+        nelonw ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr(schelonmaVelonrsion, schelonmaelonntrielonsCheloncksum);
+
+    ThriftSelonarchFelonaturelonSchelonma schelonma = nelonw ThriftSelonarchFelonaturelonSchelonma();
+    schelonma.selontSchelonmaSpeloncifielonr(schelonmaSpeloncifielonr);
+    schelonma.selontelonntrielons(allSchelonmaelonntrielons);
+
+    relonturn schelonma;
+  }
+
+  // Selonrializelons schelonmaelonntrielons to a bytelon array, and computelons a CRC32 cheloncksum of thelon array.
+  // Thelon selonrialization nelonelonds to belon stablelon: if schelonmaelonntrielons1.elonquals(schelonmaelonntrielons2), welon want
+  // this melonthod to producelon thelon samelon cheloncksum for schelonmaelonntrielon1 and schelonmaelonntrielon2, elonvelonn if
+  // thelon cheloncksums arelon computelond in diffelonrelonnt JVMs, elontc.
+  privatelon static long gelontCheloncksum(Map<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> schelonmaelonntrielons)
+      throws SchelonmaValidationelonxcelonption {
+    SortelondMap<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry> sortelondSchelonmaelonntrielons =
+        nelonw TrelonelonMap<Intelongelonr, ThriftSelonarchFelonaturelonSchelonmaelonntry>(schelonmaelonntrielons);
+
+    CRC32OutputStrelonam crc32OutputStrelonam = nelonw CRC32OutputStrelonam();
+    ObjelonctOutputStrelonam objelonctOutputStrelonam = null;
     try {
-      objectOutputStream = new ObjectOutputStream(crc32OutputStream);
-      for (Integer fieldId : sortedSchemaEntries.keySet()) {
-        objectOutputStream.writeObject(fieldId);
-        ThriftSearchFeatureSchemaEntry schemaEntry = sortedSchemaEntries.get(fieldId);
-        objectOutputStream.writeObject(schemaEntry.getFeatureName());
-        objectOutputStream.writeObject(schemaEntry.getFeatureType());
+      objelonctOutputStrelonam = nelonw ObjelonctOutputStrelonam(crc32OutputStrelonam);
+      for (Intelongelonr fielonldId : sortelondSchelonmaelonntrielons.kelonySelont()) {
+        objelonctOutputStrelonam.writelonObjelonct(fielonldId);
+        ThriftSelonarchFelonaturelonSchelonmaelonntry schelonmaelonntry = sortelondSchelonmaelonntrielons.gelont(fielonldId);
+        objelonctOutputStrelonam.writelonObjelonct(schelonmaelonntry.gelontFelonaturelonNamelon());
+        objelonctOutputStrelonam.writelonObjelonct(schelonmaelonntry.gelontFelonaturelonTypelon());
       }
-      objectOutputStream.flush();
-      return crc32OutputStream.getValue();
-    } catch (IOException e) {
-      throw new SchemaValidationException("Could not serialize feature schema entries.", e);
+      objelonctOutputStrelonam.flush();
+      relonturn crc32OutputStrelonam.gelontValuelon();
+    } catch (IOelonxcelonption elon) {
+      throw nelonw SchelonmaValidationelonxcelonption("Could not selonrializelon felonaturelon schelonma elonntrielons.", elon);
     } finally {
-      Preconditions.checkNotNull(objectOutputStream);
+      Prelonconditions.chelonckNotNull(objelonctOutputStrelonam);
       try {
-        objectOutputStream.close();
-      } catch (IOException e) {
-        throw new SchemaValidationException("Could not close ObjectOutputStream.", e);
+        objelonctOutputStrelonam.closelon();
+      } catch (IOelonxcelonption elon) {
+        throw nelonw SchelonmaValidationelonxcelonption("Could not closelon ObjelonctOutputStrelonam.", elon);
       }
     }
   }
 
   /**
-   * Get the search feature type based on the csf type.
-   * @param csfType the column stride field type for the data
-   * @return the corresponding search feature type
+   * Gelont thelon selonarch felonaturelon typelon baselond on thelon csf typelon.
+   * @param csfTypelon thelon column stridelon fielonld typelon for thelon data
+   * @relonturn thelon correlonsponding selonarch felonaturelon typelon
    */
-  @VisibleForTesting
-  public static ThriftSearchFeatureType getResultFeatureType(ThriftCSFType csfType) {
-    switch (csfType) {
-      case INT:
-      case BYTE:
-        return ThriftSearchFeatureType.INT32_VALUE;
-      case BOOLEAN:
-        return ThriftSearchFeatureType.BOOLEAN_VALUE;
-      case FLOAT:
-      case DOUBLE:
-        return ThriftSearchFeatureType.DOUBLE_VALUE;
-      case LONG:
-        return ThriftSearchFeatureType.LONG_VALUE;
-      default:
-        return null;
+  @VisiblelonForTelonsting
+  public static ThriftSelonarchFelonaturelonTypelon gelontRelonsultFelonaturelonTypelon(ThriftCSFTypelon csfTypelon) {
+    switch (csfTypelon) {
+      caselon INT:
+      caselon BYTelon:
+        relonturn ThriftSelonarchFelonaturelonTypelon.INT32_VALUelon;
+      caselon BOOLelonAN:
+        relonturn ThriftSelonarchFelonaturelonTypelon.BOOLelonAN_VALUelon;
+      caselon FLOAT:
+      caselon DOUBLelon:
+        relonturn ThriftSelonarchFelonaturelonTypelon.DOUBLelon_VALUelon;
+      caselon LONG:
+        relonturn ThriftSelonarchFelonaturelonTypelon.LONG_VALUelon;
+      delonfault:
+        relonturn null;
     }
   }
 }

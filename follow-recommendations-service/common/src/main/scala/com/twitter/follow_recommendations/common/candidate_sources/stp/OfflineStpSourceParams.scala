@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object OfflineStpSourceParams {
-  // If enabled, we use the new, denser version of PMI matrix to generate OfflineSTP candidates.
-  case object UseDenserPmiMatrix
-      extends FSParam[Boolean]("offline_stp_source_use_denser_pmi_matrix", default = false)
+objelonct OfflinelonStpSourcelonParams {
+  // If elonnablelond, welon uselon thelon nelonw, delonnselonr velonrsion of PMI matrix to gelonnelonratelon OfflinelonSTP candidatelons.
+  caselon objelonct UselonDelonnselonrPmiMatrix
+      elonxtelonnds FSParam[Boolelonan]("offlinelon_stp_sourcelon_uselon_delonnselonr_pmi_matrix", delonfault = falselon)
 }

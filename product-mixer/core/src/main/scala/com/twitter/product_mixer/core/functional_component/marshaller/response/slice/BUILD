@@ -1,16 +1,16 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/component-library/src/main/thrift/com/twitter/product_mixer/component_library:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/marshaller",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/response/slice",
-        "strato/config/src/thrift/com/twitter/strato/graphql:api-media-graphql-scala",
-        "strato/config/src/thrift/com/twitter/strato/graphql:graphql-scala",
-        "strato/config/src/thrift/com/twitter/strato/graphql:topics-graphql-scala",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/javax/injelonct:javax.injelonct",
+        "product-mixelonr/componelonnt-library/src/main/thrift/com/twittelonr/product_mixelonr/componelonnt_library:thrift-scala",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/marshallelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/marshalling/relonsponselon/slicelon",
+        "strato/config/src/thrift/com/twittelonr/strato/graphql:api-melondia-graphql-scala",
+        "strato/config/src/thrift/com/twittelonr/strato/graphql:graphql-scala",
+        "strato/config/src/thrift/com/twittelonr/strato/graphql:topics-graphql-scala",
     ],
 )

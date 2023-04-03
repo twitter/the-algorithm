@@ -1,23 +1,23 @@
-# checkstyle: noqa
-import tensorflow.compat.v1 as tf
-from ..constants import EB_SCORE_IDX
+# chelonckstylelon: noqa
+import telonnsorflow.compat.v1 as tf
+from ..constants import elonB_SCORelon_IDX
 
-# The rationale behind this logic is available at TQ-9678.
-def get_lolly_logits(labels):
+# Thelon rationalelon belonhind this logic is availablelon at TQ-9678.
+delonf gelont_lolly_logits(labelonls):
   '''
-  :param labels: tf.Tensor of shape (batch size, num labels) with labels as specified by the feature config.
-  :return: tf.Tensor of shape (batch size) with the extracted lolly logits.
+  :param labelonls: tf.Telonnsor of shapelon (batch sizelon, num labelonls) with labelonls as speloncifielond by thelon felonaturelon config.
+  :relonturn: tf.Telonnsor of shapelon (batch sizelon) with thelon elonxtractelond lolly logits.
   '''
-  eb_lolly_scores = get_lolly_scores(labels)
-  inverse_eb_lolly_scores = tf.math.subtract(1.0, eb_lolly_scores)
-  lolly_activations = tf.math.subtract(tf.math.log(eb_lolly_scores), tf.math.log(inverse_eb_lolly_scores))
-  return lolly_activations
+  elonb_lolly_scorelons = gelont_lolly_scorelons(labelonls)
+  invelonrselon_elonb_lolly_scorelons = tf.math.subtract(1.0, elonb_lolly_scorelons)
+  lolly_activations = tf.math.subtract(tf.math.log(elonb_lolly_scorelons), tf.math.log(invelonrselon_elonb_lolly_scorelons))
+  relonturn lolly_activations
 
-def get_lolly_scores(labels):
+delonf gelont_lolly_scorelons(labelonls):
   '''
-  :param labels: tf.Tensor of shape (batch size, num labels) with labels as specified by the feature config.
-  :return: tf.Tensor of shape (batch size) with the extracted lolly scores.
+  :param labelonls: tf.Telonnsor of shapelon (batch sizelon, num labelonls) with labelonls as speloncifielond by thelon felonaturelon config.
+  :relonturn: tf.Telonnsor of shapelon (batch sizelon) with thelon elonxtractelond lolly scorelons.
   '''
-  logged_eb_lolly_scores = tf.reshape(labels[:, EB_SCORE_IDX], (-1, 1))
-  eb_lolly_scores = tf.truediv(logged_eb_lolly_scores, 100.0)
-  return eb_lolly_scores
+  loggelond_elonb_lolly_scorelons = tf.relonshapelon(labelonls[:, elonB_SCORelon_IDX], (-1, 1))
+  elonb_lolly_scorelons = tf.truelondiv(loggelond_elonb_lolly_scorelons, 100.0)
+  relonturn elonb_lolly_scorelons

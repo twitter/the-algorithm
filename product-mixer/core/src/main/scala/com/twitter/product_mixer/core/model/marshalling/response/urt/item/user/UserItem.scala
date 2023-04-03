@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.user
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SocialContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PromotelondMelontadata
 
-object UserItem {
-  val UserEntryNamespace: EntryNamespace = EntryNamespace("user")
+objelonct UselonrItelonm {
+  val UselonrelonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("uselonr")
 }
 
-case class UserItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isMarkUnread: Option[Boolean],
-  displayType: UserDisplayType,
-  promotedMetadata: Option[PromotedMetadata],
-  socialContext: Option[SocialContext],
-  reactiveTriggers: Option[UserReactiveTriggers],
-  enableReactiveBlending: Option[Boolean])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = UserItem.UserEntryNamespace
+caselon class UselonrItelonm(
+  ovelonrridelon val id: Long,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo],
+  ovelonrridelon val isMarkUnrelonad: Option[Boolelonan],
+  displayTypelon: UselonrDisplayTypelon,
+  promotelondMelontadata: Option[PromotelondMelontadata],
+  socialContelonxt: Option[SocialContelonxt],
+  relonactivelonTriggelonrs: Option[UselonrRelonactivelonTriggelonrs],
+  elonnablelonRelonactivelonBlelonnding: Option[Boolelonan])
+    elonxtelonnds TimelonlinelonItelonm {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = UselonrItelonm.UselonrelonntryNamelonspacelon
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

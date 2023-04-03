@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.offline_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.offlinelon_aggrelongatelons
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.IRecordOneToOneAdapter
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.IReloncordOnelonToOnelonAdaptelonr
 
-object PassThroughAdapter extends IRecordOneToOneAdapter[Seq[DataRecord]] {
-  override def adaptToDataRecord(record: Seq[DataRecord]): DataRecord =
-    record.headOption.getOrElse(new DataRecord)
+objelonct PassThroughAdaptelonr elonxtelonnds IReloncordOnelonToOnelonAdaptelonr[Selonq[DataReloncord]] {
+  ovelonrridelon delonf adaptToDataReloncord(reloncord: Selonq[DataReloncord]): DataReloncord =
+    reloncord.helonadOption.gelontOrelonlselon(nelonw DataReloncord)
 
-  // This is not necessary and should not be used.
-  override def getFeatureContext = ???
+  // This is not neloncelonssary and should not belon uselond.
+  ovelonrridelon delonf gelontFelonaturelonContelonxt = ???
 }

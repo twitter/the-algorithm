@@ -1,71 +1,71 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.product_pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.product_pipelonlinelon
 
-import com.google.inject.Provider
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.configapi.ParamsBuilder
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.stitch.Stitch
-import scala.reflect.runtime.universe._
+import com.googlelon.injelonct.Providelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.ParamsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.product.relongistry.ProductPipelonlinelonRelongistry
+import com.twittelonr.stitch.Stitch
+import scala.relonflelonct.runtimelon.univelonrselon._
 
 /**
- * A [[CandidateSource]] for getting candidates from a different
- * [[com.twitter.product_mixer.core.model.marshalling.request.Product]] within the same Product
- * Mixer-based service. This is useful when calling a RecommendationPipeline-based Product from a
- * MixerPipeline-based Product. In this scenario, the two Products can remain
- * independent and encapsulated within the Product Mixer service, which provides future optionality
- * for migrating one of the two products into a new Product Mixer-based service based on the
- * scaling needs.
+ * A [[CandidatelonSourcelon]] for gelontting candidatelons from a diffelonrelonnt
+ * [[com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product]] within thelon samelon Product
+ * Mixelonr-baselond selonrvicelon. This is uselonful whelonn calling a ReloncommelonndationPipelonlinelon-baselond Product from a
+ * MixelonrPipelonlinelon-baselond Product. In this scelonnario, thelon two Products can relonmain
+ * indelonpelonndelonnt and elonncapsulatelond within thelon Product Mixelonr selonrvicelon, which providelons futurelon optionality
+ * for migrating onelon of thelon two products into a nelonw Product Mixelonr-baselond selonrvicelon baselond on thelon
+ * scaling nelonelonds.
  *
- * @tparam Query [[PipelineQuery]] from the originating Product
- * @tparam MixerRequest the [[Request]] domain model for the Product Mixer service. Adds a Context
- *                      bound (syntactic sugar) to add TypeTag to implicit scope for
- *                      [[ProductPipelineRegistry.getProductPipeline()]]. Note that `trait` does not
- *                      support context bounds, so this abstraction is expressed as an
+ * @tparam Quelonry [[PipelonlinelonQuelonry]] from thelon originating Product
+ * @tparam MixelonrRelonquelonst thelon [[Relonquelonst]] domain modelonl for thelon Product Mixelonr selonrvicelon. Adds a Contelonxt
+ *                      bound (syntactic sugar) to add TypelonTag to implicit scopelon for
+ *                      [[ProductPipelonlinelonRelongistry.gelontProductPipelonlinelon()]]. Notelon that `trait` doelons not
+ *                      support contelonxt bounds, so this abstraction is elonxprelonsselond as an
  *                      `abstract class`.
- * @tparam ProductPipelineResult the return type of the candidate source Product. Adds a Context
- *                               bound (syntactic sugar) to add TypeTag to implicit scope for
- *                               [[ProductPipelineRegistry.getProductPipeline()]]
- * @tparam Candidate the type of candidate returned by this candidate source, which is typically
- *                   extracted from within the ProductPipelineResult type
+ * @tparam ProductPipelonlinelonRelonsult thelon relonturn typelon of thelon candidatelon sourcelon Product. Adds a Contelonxt
+ *                               bound (syntactic sugar) to add TypelonTag to implicit scopelon for
+ *                               [[ProductPipelonlinelonRelongistry.gelontProductPipelonlinelon()]]
+ * @tparam Candidatelon thelon typelon of candidatelon relonturnelond by this candidatelon sourcelon, which is typically
+ *                   elonxtractelond from within thelon ProductPipelonlinelonRelonsult typelon
  */
-abstract class ProductPipelineCandidateSource[
-  -Query <: PipelineQuery,
-  MixerRequest <: Request: TypeTag,
-  ProductPipelineResult: TypeTag,
-  +Candidate]
-    extends CandidateSource[Query, Candidate] {
+abstract class ProductPipelonlinelonCandidatelonSourcelon[
+  -Quelonry <: PipelonlinelonQuelonry,
+  MixelonrRelonquelonst <: Relonquelonst: TypelonTag,
+  ProductPipelonlinelonRelonsult: TypelonTag,
+  +Candidatelon]
+    elonxtelonnds CandidatelonSourcelon[Quelonry, Candidatelon] {
 
   /**
-   * @note Define as a Guice [[Provider]] in order to break the circular injection dependency
+   * @notelon Delonfinelon as a Guicelon [[Providelonr]] in ordelonr to brelonak thelon circular injelonction delonpelonndelonncy
    */
-  val productPipelineRegistry: Provider[ProductPipelineRegistry]
+  val productPipelonlinelonRelongistry: Providelonr[ProductPipelonlinelonRelongistry]
 
   /**
-   * @note Define as a Guice [[Provider]] in order to break the circular injection dependency
+   * @notelon Delonfinelon as a Guicelon [[Providelonr]] in ordelonr to brelonak thelon circular injelonction delonpelonndelonncy
    */
-  val paramsBuilder: Provider[ParamsBuilder]
+  val paramsBuildelonr: Providelonr[ParamsBuildelonr]
 
-  def pipelineRequestTransformer(currentPipelineQuery: Query): MixerRequest
+  delonf pipelonlinelonRelonquelonstTransformelonr(currelonntPipelonlinelonQuelonry: Quelonry): MixelonrRelonquelonst
 
-  def productPipelineResultTransformer(productPipelineResult: ProductPipelineResult): Seq[Candidate]
+  delonf productPipelonlinelonRelonsultTransformelonr(productPipelonlinelonRelonsult: ProductPipelonlinelonRelonsult): Selonq[Candidatelon]
 
-  override def apply(query: Query): Stitch[Seq[Candidate]] = {
-    val request = pipelineRequestTransformer(query)
+  ovelonrridelon delonf apply(quelonry: Quelonry): Stitch[Selonq[Candidatelon]] = {
+    val relonquelonst = pipelonlinelonRelonquelonstTransformelonr(quelonry)
 
-    val params = paramsBuilder
-      .get().build(
-        clientContext = request.clientContext,
-        product = request.product,
-        featureOverrides = request.debugParams.flatMap(_.featureOverrides).getOrElse(Map.empty)
+    val params = paramsBuildelonr
+      .gelont().build(
+        clielonntContelonxt = relonquelonst.clielonntContelonxt,
+        product = relonquelonst.product,
+        felonaturelonOvelonrridelons = relonquelonst.delonbugParams.flatMap(_.felonaturelonOvelonrridelons).gelontOrelonlselon(Map.elonmpty)
       )
 
-    productPipelineRegistry
-      .get()
-      .getProductPipeline[MixerRequest, ProductPipelineResult](request.product)
-      .process(ProductPipelineRequest(request, params))
-      .map(productPipelineResultTransformer)
+    productPipelonlinelonRelongistry
+      .gelont()
+      .gelontProductPipelonlinelon[MixelonrRelonquelonst, ProductPipelonlinelonRelonsult](relonquelonst.product)
+      .procelonss(ProductPipelonlinelonRelonquelonst(relonquelonst, params))
+      .map(productPipelonlinelonRelonsultTransformelonr)
   }
 }

@@ -1,99 +1,99 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Selont;
+import java.util.relongelonx.Matchelonr;
+import java.util.relongelonx.Pattelonrn;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+import org.apachelon.commons.lang.StringUtils;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
 
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftelonxpandelondUrl;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
 
-@ConsumedTypes(TwitterMessage.class)
-@ProducesConsumed
-public class RetrieveSpaceIdsStage extends TwitterBaseStage
-    <TwitterMessage, TwitterMessage> {
+@ConsumelondTypelons(TwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class RelontrielonvelonSpacelonIdsStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <TwittelonrMelonssagelon, TwittelonrMelonssagelon> {
 
-  @VisibleForTesting
-  protected static final Pattern SPACES_URL_REGEX =
-      Pattern.compile("^https://twitter\\.com/i/spaces/([a-zA-Z0-9]+)\\S*$");
+  @VisiblelonForTelonsting
+  protelonctelond static final Pattelonrn SPACelonS_URL_RelonGelonX =
+      Pattelonrn.compilelon("^https://twittelonr\\.com/i/spacelons/([a-zA-Z0-9]+)\\S*$");
 
-  @VisibleForTesting
-  protected static final String PARSE_SPACE_ID_DECIDER_KEY = "ingester_all_parse_space_id_from_url";
+  @VisiblelonForTelonsting
+  protelonctelond static final String PARSelon_SPACelon_ID_DelonCIDelonR_KelonY = "ingelonstelonr_all_parselon_spacelon_id_from_url";
 
-  private static SearchRateCounter numTweetsWithSpaceIds;
-  private static SearchRateCounter numTweetsWithMultipleSpaceIds;
+  privatelon static SelonarchRatelonCountelonr numTwelonelontsWithSpacelonIds;
+  privatelon static SelonarchRatelonCountelonr numTwelonelontsWithMultiplelonSpacelonIds;
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
+    innelonrSelontupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    numTweetsWithSpaceIds = SearchRateCounter.export(
-        getStageNamePrefix() + "_tweets_with_space_ids");
-    numTweetsWithMultipleSpaceIds = SearchRateCounter.export(
-        getStageNamePrefix() + "_tweets_with_multiple_space_ids");
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    numTwelonelontsWithSpacelonIds = SelonarchRatelonCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_twelonelonts_with_spacelon_ids");
+    numTwelonelontsWithMultiplelonSpacelonIds = SelonarchRatelonCountelonr.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_twelonelonts_with_multiplelon_spacelon_ids");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    TwitterMessage message = (TwitterMessage) obj;
-    tryToRetrieveSpaceId(message);
-    emitAndCount(message);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    TwittelonrMelonssagelon melonssagelon = (TwittelonrMelonssagelon) obj;
+    tryToRelontrielonvelonSpacelonId(melonssagelon);
+    elonmitAndCount(melonssagelon);
   }
 
-  private void tryToRetrieveSpaceId(TwitterMessage message) {
-    if (DeciderUtil.isAvailableForRandomRecipient(decider, PARSE_SPACE_ID_DECIDER_KEY)) {
-      Set<String> spaceIds = parseSpaceIdsFromMessage(message);
-      int spaceIdCount = spaceIds.size();
-      if (spaceIdCount > 0) {
-        numTweetsWithSpaceIds.increment();
-        if (spaceIdCount > 1) {
-          numTweetsWithMultipleSpaceIds.increment();
+  privatelon void tryToRelontrielonvelonSpacelonId(TwittelonrMelonssagelon melonssagelon) {
+    if (DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, PARSelon_SPACelon_ID_DelonCIDelonR_KelonY)) {
+      Selont<String> spacelonIds = parselonSpacelonIdsFromMelonssagelon(melonssagelon);
+      int spacelonIdCount = spacelonIds.sizelon();
+      if (spacelonIdCount > 0) {
+        numTwelonelontsWithSpacelonIds.increlonmelonnt();
+        if (spacelonIdCount > 1) {
+          numTwelonelontsWithMultiplelonSpacelonIds.increlonmelonnt();
         }
-        message.setSpaceIds(spaceIds);
+        melonssagelon.selontSpacelonIds(spacelonIds);
       }
     }
   }
 
-  @Override
-  protected TwitterMessage innerRunStageV2(TwitterMessage message) {
-    tryToRetrieveSpaceId(message);
-    return message;
+  @Ovelonrridelon
+  protelonctelond TwittelonrMelonssagelon innelonrRunStagelonV2(TwittelonrMelonssagelon melonssagelon) {
+    tryToRelontrielonvelonSpacelonId(melonssagelon);
+    relonturn melonssagelon;
   }
 
-  private String parseSpaceIdsFromUrl(String url) {
-    String spaceId = null;
+  privatelon String parselonSpacelonIdsFromUrl(String url) {
+    String spacelonId = null;
 
-    if (StringUtils.isNotEmpty(url)) {
-      Matcher matcher = SPACES_URL_REGEX.matcher(url);
-      if (matcher.matches()) {
-        spaceId = matcher.group(1);
+    if (StringUtils.isNotelonmpty(url)) {
+      Matchelonr matchelonr = SPACelonS_URL_RelonGelonX.matchelonr(url);
+      if (matchelonr.matchelons()) {
+        spacelonId = matchelonr.group(1);
       }
     }
-    return spaceId;
+    relonturn spacelonId;
   }
 
-  private Set<String> parseSpaceIdsFromMessage(TwitterMessage message) {
-    Set<String> spaceIds = Sets.newHashSet();
+  privatelon Selont<String> parselonSpacelonIdsFromMelonssagelon(TwittelonrMelonssagelon melonssagelon) {
+    Selont<String> spacelonIds = Selonts.nelonwHashSelont();
 
-    for (ThriftExpandedUrl expandedUrl : message.getExpandedUrls()) {
-      String spaceId = parseSpaceIdsFromUrl(expandedUrl.getExpandedUrl());
-      if (StringUtils.isNotEmpty(spaceId)) {
-        spaceIds.add(spaceId);
+    for (ThriftelonxpandelondUrl elonxpandelondUrl : melonssagelon.gelontelonxpandelondUrls()) {
+      String spacelonId = parselonSpacelonIdsFromUrl(elonxpandelondUrl.gelontelonxpandelondUrl());
+      if (StringUtils.isNotelonmpty(spacelonId)) {
+        spacelonIds.add(spacelonId);
       }
     }
-    return spaceIds;
+    relonturn spacelonIds;
   }
 }

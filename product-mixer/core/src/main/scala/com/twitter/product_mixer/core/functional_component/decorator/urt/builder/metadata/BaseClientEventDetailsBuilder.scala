@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait BaseClientEventDetailsBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+trait BaselonClielonntelonvelonntDelontailsBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]] {
 
   /**
-   * @return a [[ClientEventDetails]] for the provided [[Candidate]]
-   * @see [[ClientEventDetails]]
+   * @relonturn a [[ClielonntelonvelonntDelontails]] for thelon providelond [[Candidatelon]]
+   * @selonelon [[ClielonntelonvelonntDelontails]]
    */
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails]
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[ClielonntelonvelonntDelontails]
 }

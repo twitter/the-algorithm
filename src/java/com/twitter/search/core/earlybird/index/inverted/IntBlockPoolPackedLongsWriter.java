@@ -1,166 +1,166 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
 /**
- * A packed ints writer writing packed values (int/long) into {@link IntBlockPool}.
- * @see IntBlockPoolPackedLongsReader
+ * A packelond ints writelonr writing packelond valuelons (int/long) into {@link IntBlockPool}.
+ * @selonelon IntBlockPoolPackelondLongsRelonadelonr
  *
- * A standard useage would be:
- * - set writer at an int block pool pointer and number of bits per packed value:
+ * A standard uselonagelon would belon:
+ * - selont writelonr at an int block pool pointelonr and numbelonr of bits pelonr packelond valuelon:
  *   {@link #jumpToInt(int, int)}
- * - write: {@link #writePackedInt(int)} or {@link #writePackedLong(long)}
+ * - writelon: {@link #writelonPackelondInt(int)} or {@link #writelonPackelondLong(long)}
  *
- * Example usage:
- * @see HighDFPackedIntsPostingLists
+ * elonxamplelon usagelon:
+ * @selonelon HighDFPackelondIntsPostingLists
  */
-public final class IntBlockPoolPackedLongsWriter {
+public final class IntBlockPoolPackelondLongsWritelonr {
   /**
-   * Mask used to convert an int to a long. We cannot just cast because it will fill in the higher
-   * 32 bits with the sign bit, but we need the higher 32 bits to be 0 instead.
+   * Mask uselond to convelonrt an int to a long. Welon cannot just cast beloncauselon it will fill in thelon highelonr
+   * 32 bits with thelon sign bit, but welon nelonelond thelon highelonr 32 bits to belon 0 instelonad.
    */
-  private static final long LONG_MASK = 0xFFFFFFFFL;
+  privatelon static final long LONG_MASK = 0xFFFFFFFFL;
 
-  /** The int block pool into which packed ints will be written. */
-  private final IntBlockPool intBlockPool;
+  /** Thelon int block pool into which packelond ints will belon writtelonn. */
+  privatelon final IntBlockPool intBlockPool;
 
-  /** The value in the current position in the int block pool. */
-  private int currentIntValue = 0;
+  /** Thelon valuelon in thelon currelonnt position in thelon int block pool. */
+  privatelon int currelonntIntValuelon = 0;
 
-  /** Starting bit index of unused bits in {@link #currentIntValue}. */
-  private int currentIntBitIndex = 0;
+  /** Starting bit indelonx of unuselond bits in {@link #currelonntIntValuelon}. */
+  privatelon int currelonntIntBitIndelonx = 0;
 
-  /** Pointer of {@link #currentIntValue} in {@link #intBlockPool}. */
-  private int currentIntPointer = -1;
+  /** Pointelonr of {@link #currelonntIntValuelon} in {@link #intBlockPool}. */
+  privatelon int currelonntIntPointelonr = -1;
 
   /**
-   * Number of bits per packed value that will be written with
-   * {@link #writePackedInt(int)} or {@link #writePackedLong(long)}.
+   * Numbelonr of bits pelonr packelond valuelon that will belon writtelonn with
+   * {@link #writelonPackelondInt(int)} or {@link #writelonPackelondLong(long)}.
    */
-  private int numBitsPerPackedValue = -1;
+  privatelon int numBitsPelonrPackelondValuelon = -1;
 
   /**
-   * Mask used to extract the lower {@link #numBitsPerPackedValue} in a given value.
+   * Mask uselond to elonxtract thelon lowelonr {@link #numBitsPelonrPackelondValuelon} in a givelonn valuelon.
    */
-  private long packedValueBitsMask = 0;
+  privatelon long packelondValuelonBitsMask = 0;
 
   /**
-   * Sole constructor.
+   * Solelon constructor.
    *
-   * @param intBlockPool into which packed ints will be written
+   * @param intBlockPool into which packelond ints will belon writtelonn
    */
-  public IntBlockPoolPackedLongsWriter(IntBlockPool intBlockPool) {
+  public IntBlockPoolPackelondLongsWritelonr(IntBlockPool intBlockPool) {
     this.intBlockPool = intBlockPool;
   }
 
   /**
-   * 1. Set this writer to start writing at the given int block pool pointer.
-   * 2. Set number of bits per packed value that will be write.
-   * 3. Re-set {@link #currentIntValue} and {@link #currentIntBitIndex} to 0.
+   * 1. Selont this writelonr to start writing at thelon givelonn int block pool pointelonr.
+   * 2. Selont numbelonr of bits pelonr packelond valuelon that will belon writelon.
+   * 3. Relon-selont {@link #currelonntIntValuelon} and {@link #currelonntIntBitIndelonx} to 0.
    *
-   * @param intBlockPoolPointer the position this writer should start writing packed values. This
-   *                            pointer must be less then or equal to he length of the block pool.
-   *                            Subsequent writes will {@link IntBlockPool#add(int)} to the
-   *                            end of the int block pool if the given pointer equals to the length.
-   * @param bitsPerPackedValue must be non-negative.
+   * @param intBlockPoolPointelonr thelon position this writelonr should start writing packelond valuelons. This
+   *                            pointelonr must belon lelonss thelonn or elonqual to helon lelonngth of thelon block pool.
+   *                            Subselonquelonnt writelons will {@link IntBlockPool#add(int)} to thelon
+   *                            elonnd of thelon int block pool if thelon givelonn pointelonr elonquals to thelon lelonngth.
+   * @param bitsPelonrPackelondValuelon must belon non-nelongativelon.
    */
-  public void jumpToInt(int intBlockPoolPointer, int bitsPerPackedValue) {
-    assert intBlockPoolPointer <= intBlockPool.length();
-    assert bitsPerPackedValue >= 0;
+  public void jumpToInt(int intBlockPoolPointelonr, int bitsPelonrPackelondValuelon) {
+    asselonrt intBlockPoolPointelonr <= intBlockPool.lelonngth();
+    asselonrt bitsPelonrPackelondValuelon >= 0;
 
-    // Set the writer to start writing at the given int block pool pointer.
-    this.currentIntPointer = intBlockPoolPointer;
+    // Selont thelon writelonr to start writing at thelon givelonn int block pool pointelonr.
+    this.currelonntIntPointelonr = intBlockPoolPointelonr;
 
-    // Set number of bits that will be write per packed value.
-    this.numBitsPerPackedValue = bitsPerPackedValue;
+    // Selont numbelonr of bits that will belon writelon pelonr packelond valuelon.
+    this.numBitsPelonrPackelondValuelon = bitsPelonrPackelondValuelon;
 
-    // Compute the mask used to extract lower number of bitsPerPackedValue.
-    this.packedValueBitsMask =
-        bitsPerPackedValue == Long.SIZE ? -1L : (1L << bitsPerPackedValue) - 1;
+    // Computelon thelon mask uselond to elonxtract lowelonr numbelonr of bitsPelonrPackelondValuelon.
+    this.packelondValuelonBitsMask =
+        bitsPelonrPackelondValuelon == Long.SIZelon ? -1L : (1L << bitsPelonrPackelondValuelon) - 1;
 
-    // Reset current int data to 0.
-    this.currentIntValue = 0;
-    this.currentIntBitIndex = 0;
+    // Relonselont currelonnt int data to 0.
+    this.currelonntIntValuelon = 0;
+    this.currelonntIntBitIndelonx = 0;
   }
 
   /**
-   * The given int value will be ZERO extended to a long and written using
-   * {@link #writePackedValueInternal(long)} (long)}.
+   * Thelon givelonn int valuelon will belon ZelonRO elonxtelonndelond to a long and writtelonn using
+   * {@link #writelonPackelondValuelonIntelonrnal(long)} (long)}.
    *
-   * @see #LONG_MASK
+   * @selonelon #LONG_MASK
    */
-  public void writePackedInt(final int value) {
-    assert numBitsPerPackedValue <= Integer.SIZE;
-    writePackedValueInternal(LONG_MASK & value);
+  public void writelonPackelondInt(final int valuelon) {
+    asselonrt numBitsPelonrPackelondValuelon <= Intelongelonr.SIZelon;
+    writelonPackelondValuelonIntelonrnal(LONG_MASK & valuelon);
   }
 
   /**
-   * Write a long value.
-   * The given long value must bu UNABLE to fit in an int.
+   * Writelon a long valuelon.
+   * Thelon givelonn long valuelon must bu UNABLelon to fit in an int.
    */
-  public void writePackedLong(final long value) {
-    assert numBitsPerPackedValue <= Long.SIZE;
-    writePackedValueInternal(value);
+  public void writelonPackelondLong(final long valuelon) {
+    asselonrt numBitsPelonrPackelondValuelon <= Long.SIZelon;
+    writelonPackelondValuelonIntelonrnal(valuelon);
   }
 
   /*************************
-   * Private Helper Method *
+   * Privatelon Helonlpelonr Melonthod *
    *************************/
 
   /**
-   * Write the given number of bits of the given value into this int pool as a packed int.
+   * Writelon thelon givelonn numbelonr of bits of thelon givelonn valuelon into this int pool as a packelond int.
    *
-   * @param value value will be written
+   * @param valuelon valuelon will belon writtelonn
    */
-  private void writePackedValueInternal(final long value) {
-    // Extract lower 'numBitsPerPackedValue' from the given value.
-    long val = value & packedValueBitsMask;
+  privatelon void writelonPackelondValuelonIntelonrnal(final long valuelon) {
+    // elonxtract lowelonr 'numBitsPelonrPackelondValuelon' from thelon givelonn valuelon.
+    long val = valuelon & packelondValuelonBitsMask;
 
-    assert val == value : String.format(
-        "given value %d needs more bits than specified %d", value, numBitsPerPackedValue);
+    asselonrt val == valuelon : String.format(
+        "givelonn valuelon %d nelonelonds morelon bits than speloncifielond %d", valuelon, numBitsPelonrPackelondValuelon);
 
-    int numBitsWrittenCurIter;
-    int numBitsRemaining = numBitsPerPackedValue;
+    int numBitsWrittelonnCurItelonr;
+    int numBitsRelonmaining = numBitsPelonrPackelondValuelon;
 
-    // Each iteration of this while loop is writing part of the given value.
-    while (numBitsRemaining > 0) {
-      // Write into 'currentIntValue' int.
-      currentIntValue |= val << currentIntBitIndex;
+    // elonach itelonration of this whilelon loop is writing part of thelon givelonn valuelon.
+    whilelon (numBitsRelonmaining > 0) {
+      // Writelon into 'currelonntIntValuelon' int.
+      currelonntIntValuelon |= val << currelonntIntBitIndelonx;
 
-      // Calculate number of bits have been written in this iteration,
-      // we either used up all the remaining bits in 'currentIntValue' or
-      // finished up writing the value, whichever is smaller.
-      numBitsWrittenCurIter = Math.min(Integer.SIZE - currentIntBitIndex, numBitsRemaining);
+      // Calculatelon numbelonr of bits havelon belonelonn writtelonn in this itelonration,
+      // welon elonithelonr uselond up all thelon relonmaining bits in 'currelonntIntValuelon' or
+      // finishelond up writing thelon valuelon, whichelonvelonr is smallelonr.
+      numBitsWrittelonnCurItelonr = Math.min(Intelongelonr.SIZelon - currelonntIntBitIndelonx, numBitsRelonmaining);
 
-      // Number of bits remaining should be decremented.
-      numBitsRemaining -= numBitsWrittenCurIter;
+      // Numbelonr of bits relonmaining should belon deloncrelonmelonntelond.
+      numBitsRelonmaining -= numBitsWrittelonnCurItelonr;
 
-      // Right shift the value to remove the bits have been written.
-      val >>>= numBitsWrittenCurIter;
+      // Right shift thelon valuelon to relonmovelon thelon bits havelon belonelonn writtelonn.
+      val >>>= numBitsWrittelonnCurItelonr;
 
-      // Update bit index in current int.
-      currentIntBitIndex += numBitsWrittenCurIter;
-      assert currentIntBitIndex <= Integer.SIZE;
+      // Updatelon bit indelonx in currelonnt int.
+      currelonntIntBitIndelonx += numBitsWrittelonnCurItelonr;
+      asselonrt currelonntIntBitIndelonx <= Intelongelonr.SIZelon;
 
       flush();
 
-      // if 'currentIntValue' int is used up.
-      if (currentIntBitIndex == Integer.SIZE) {
-        currentIntPointer++;
+      // if 'currelonntIntValuelon' int is uselond up.
+      if (currelonntIntBitIndelonx == Intelongelonr.SIZelon) {
+        currelonntIntPointelonr++;
 
-        currentIntValue = 0;
-        currentIntBitIndex = 0;
+        currelonntIntValuelon = 0;
+        currelonntIntBitIndelonx = 0;
       }
     }
   }
 
   /**
-   * Flush the {@link #currentIntValue} int into the int pool if the any bits of the int are used.
+   * Flush thelon {@link #currelonntIntValuelon} int into thelon int pool if thelon any bits of thelon int arelon uselond.
    */
-  private void flush() {
-    if (currentIntPointer == intBlockPool.length()) {
-      intBlockPool.add(currentIntValue);
-      assert currentIntPointer + 1 == intBlockPool.length();
-    } else {
-      intBlockPool.set(currentIntPointer, currentIntValue);
+  privatelon void flush() {
+    if (currelonntIntPointelonr == intBlockPool.lelonngth()) {
+      intBlockPool.add(currelonntIntValuelon);
+      asselonrt currelonntIntPointelonr + 1 == intBlockPool.lelonngth();
+    } elonlselon {
+      intBlockPool.selont(currelonntIntPointelonr, currelonntIntValuelon);
     }
   }
 }

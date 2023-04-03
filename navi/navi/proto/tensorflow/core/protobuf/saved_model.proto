@@ -1,23 +1,23 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/protobuf/meta_graph.proto";
+import "telonnsorflow/corelon/protobuf/melonta_graph.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "SavedModelProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "SavelondModelonlProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// SavedModel is the high level serialization format for TensorFlow Models.
-// See [todo: doc links, similar to session_bundle] for more information.
-message SavedModel {
-  // The schema version of the SavedModel instance. Used for versioning when
-  // making future changes to the specification/implementation. Initial value
-  // at release will be 1.
-  int64 saved_model_schema_version = 1;
+// SavelondModelonl is thelon high lelonvelonl selonrialization format for TelonnsorFlow Modelonls.
+// Selonelon [todo: doc links, similar to selonssion_bundlelon] for morelon information.
+melonssagelon SavelondModelonl {
+  // Thelon schelonma velonrsion of thelon SavelondModelonl instancelon. Uselond for velonrsioning whelonn
+  // making futurelon changelons to thelon speloncification/implelonmelonntation. Initial valuelon
+  // at relonlelonaselon will belon 1.
+  int64 savelond_modelonl_schelonma_velonrsion = 1;
 
-  // One or more MetaGraphs.
-  repeated MetaGraphDef meta_graphs = 2;
+  // Onelon or morelon MelontaGraphs.
+  relonpelonatelond MelontaGraphDelonf melonta_graphs = 2;
 }

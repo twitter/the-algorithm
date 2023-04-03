@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.clients.adserver
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.adselonrvelonr
 
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
+import com.twittelonr.adselonrvelonr.thriftscala.NelonwAdSelonrvelonr
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.common.BaselonClielonntModulelon
 
-object AdserverModule extends BaseClientModule[NewAdServer.MethodPerEndpoint] with MtlsClient {
-  override val label = "adserver"
-  override val dest = "/s/ads/adserver"
+objelonct AdselonrvelonrModulelon elonxtelonnds BaselonClielonntModulelon[NelonwAdSelonrvelonr.MelonthodPelonrelonndpoint] with MtlsClielonnt {
+  ovelonrridelon val labelonl = "adselonrvelonr"
+  ovelonrridelon val delonst = "/s/ads/adselonrvelonr"
 
-  override def configureThriftMuxClient(client: ThriftMux.Client): ThriftMux.Client =
-    client.withRequestTimeout(500.millis)
+  ovelonrridelon delonf configurelonThriftMuxClielonnt(clielonnt: ThriftMux.Clielonnt): ThriftMux.Clielonnt =
+    clielonnt.withRelonquelonstTimelonout(500.millis)
 }

@@ -1,56 +1,56 @@
-package com.twitter.simclusters_v2.candidate_source
+packagelon com.twittelonr.simclustelonrs_v2.candidatelon_sourcelon
 
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
+import com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToIntelonrelonstelondInClustelonrScorelons
 
-object ClusterRanker extends Enumeration {
-  val RankByNormalizedFavScore: ClusterRanker.Value = Value
-  val RankByFavScore: ClusterRanker.Value = Value
-  val RankByFollowScore: ClusterRanker.Value = Value
-  val RankByLogFavScore: ClusterRanker.Value = Value
-  val RankByNormalizedLogFavScore: ClusterRanker.Value = Value
+objelonct ClustelonrRankelonr elonxtelonnds elonnumelonration {
+  val RankByNormalizelondFavScorelon: ClustelonrRankelonr.Valuelon = Valuelon
+  val RankByFavScorelon: ClustelonrRankelonr.Valuelon = Valuelon
+  val RankByFollowScorelon: ClustelonrRankelonr.Valuelon = Valuelon
+  val RankByLogFavScorelon: ClustelonrRankelonr.Valuelon = Valuelon
+  val RankByNormalizelondLogFavScorelon: ClustelonrRankelonr.Valuelon = Valuelon
 
   /**
-   * Given a map of clusters, sort out the top scoring clusters by a ranking scheme
-   * provided by the caller
+   * Givelonn a map of clustelonrs, sort out thelon top scoring clustelonrs by a ranking schelonmelon
+   * providelond by thelon callelonr
    */
-  def getTopKClustersByScore(
-    clustersWithScores: Map[Int, UserToInterestedInClusterScores],
-    rankByScore: ClusterRanker.Value,
+  delonf gelontTopKClustelonrsByScorelon(
+    clustelonrsWithScorelons: Map[Int, UselonrToIntelonrelonstelondInClustelonrScorelons],
+    rankByScorelon: ClustelonrRankelonr.Valuelon,
     topK: Int
-  ): Map[Int, Double] = {
-    val rankedClustersWithScores = clustersWithScores.map {
-      case (clusterId, score) =>
-        rankByScore match {
-          case ClusterRanker.RankByFavScore =>
-            (clusterId, (score.favScore.getOrElse(0.0), score.followScore.getOrElse(0.0)))
-          case ClusterRanker.RankByFollowScore =>
-            (clusterId, (score.followScore.getOrElse(0.0), score.favScore.getOrElse(0.0)))
-          case ClusterRanker.RankByLogFavScore =>
-            (clusterId, (score.logFavScore.getOrElse(0.0), score.followScore.getOrElse(0.0)))
-          case ClusterRanker.RankByNormalizedLogFavScore =>
+  ): Map[Int, Doublelon] = {
+    val rankelondClustelonrsWithScorelons = clustelonrsWithScorelons.map {
+      caselon (clustelonrId, scorelon) =>
+        rankByScorelon match {
+          caselon ClustelonrRankelonr.RankByFavScorelon =>
+            (clustelonrId, (scorelon.favScorelon.gelontOrelonlselon(0.0), scorelon.followScorelon.gelontOrelonlselon(0.0)))
+          caselon ClustelonrRankelonr.RankByFollowScorelon =>
+            (clustelonrId, (scorelon.followScorelon.gelontOrelonlselon(0.0), scorelon.favScorelon.gelontOrelonlselon(0.0)))
+          caselon ClustelonrRankelonr.RankByLogFavScorelon =>
+            (clustelonrId, (scorelon.logFavScorelon.gelontOrelonlselon(0.0), scorelon.followScorelon.gelontOrelonlselon(0.0)))
+          caselon ClustelonrRankelonr.RankByNormalizelondLogFavScorelon =>
             (
-              clusterId,
+              clustelonrId,
               (
-                score.logFavScoreClusterNormalizedOnly.getOrElse(0.0),
-                score.followScore.getOrElse(0.0)))
-          case ClusterRanker.RankByNormalizedFavScore =>
+                scorelon.logFavScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0),
+                scorelon.followScorelon.gelontOrelonlselon(0.0)))
+          caselon ClustelonrRankelonr.RankByNormalizelondFavScorelon =>
             (
-              clusterId,
+              clustelonrId,
               (
-                score.favScoreProducerNormalizedOnly.getOrElse(0.0),
-                score.followScore.getOrElse(0.0)))
-          case _ =>
+                scorelon.favScorelonProducelonrNormalizelondOnly.gelontOrelonlselon(0.0),
+                scorelon.followScorelon.gelontOrelonlselon(0.0)))
+          caselon _ =>
             (
-              clusterId,
+              clustelonrId,
               (
-                score.favScoreProducerNormalizedOnly.getOrElse(0.0),
-                score.followScore.getOrElse(0.0)))
+                scorelon.favScorelonProducelonrNormalizelondOnly.gelontOrelonlselon(0.0),
+                scorelon.followScorelon.gelontOrelonlselon(0.0)))
         }
     }
-    rankedClustersWithScores.toSeq
-      .sortBy(_._2) // sort in ascending order
-      .takeRight(topK)
-      .map { case (clusterId, scores) => clusterId -> math.max(scores._1, 1e-4) }
+    rankelondClustelonrsWithScorelons.toSelonq
+      .sortBy(_._2) // sort in ascelonnding ordelonr
+      .takelonRight(topK)
+      .map { caselon (clustelonrId, scorelons) => clustelonrId -> math.max(scorelons._1, 1elon-4) }
       .toMap
   }
 }

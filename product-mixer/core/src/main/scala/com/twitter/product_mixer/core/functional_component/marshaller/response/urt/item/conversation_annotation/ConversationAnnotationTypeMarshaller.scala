@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.convelonrsation_annotation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotationType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.Large
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.Political
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.convelonrsation_annotation.ConvelonrsationAnnotationTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.convelonrsation_annotation.Largelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.convelonrsation_annotation.Political
 
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ConversationAnnotationTypeMarshaller @Inject() () {
+@Singlelonton
+class ConvelonrsationAnnotationTypelonMarshallelonr @Injelonct() () {
 
-  def apply(
-    conversationAnnotationType: ConversationAnnotationType
-  ): urt.ConversationAnnotationType = conversationAnnotationType match {
-    case Large => urt.ConversationAnnotationType.Large
-    case Political => urt.ConversationAnnotationType.Political
+  delonf apply(
+    convelonrsationAnnotationTypelon: ConvelonrsationAnnotationTypelon
+  ): urt.ConvelonrsationAnnotationTypelon = convelonrsationAnnotationTypelon match {
+    caselon Largelon => urt.ConvelonrsationAnnotationTypelon.Largelon
+    caselon Political => urt.ConvelonrsationAnnotationTypelon.Political
   }
 }

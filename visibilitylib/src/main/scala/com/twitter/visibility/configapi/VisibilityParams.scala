@@ -1,61 +1,61 @@
-package com.twitter.visibility.configapi
+packagelon com.twittelonr.visibility.configapi
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.util.MemoizingStatsReceiver
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UnitOfDiversion
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.selonrvo.util.MelonmoizingStatsReloncelonivelonr
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.UnitOfDivelonrsion
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-object VisibilityParams {
-  def apply(
-    log: Logger,
-    statsReceiver: StatsReceiver,
-    decider: Decider,
-    abDecider: LoggingABDecider,
-    featureSwitches: FeatureSwitches
+objelonct VisibilityParams {
+  delonf apply(
+    log: Loggelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    deloncidelonr: Deloncidelonr,
+    abDeloncidelonr: LoggingABDeloncidelonr,
+    felonaturelonSwitchelons: FelonaturelonSwitchelons
   ): VisibilityParams =
-    new VisibilityParams(log, statsReceiver, decider, abDecider, featureSwitches)
+    nelonw VisibilityParams(log, statsReloncelonivelonr, deloncidelonr, abDeloncidelonr, felonaturelonSwitchelons)
 }
 
 class VisibilityParams(
-  log: Logger,
-  statsReceiver: StatsReceiver,
-  decider: Decider,
-  abDecider: LoggingABDecider,
-  featureSwitches: FeatureSwitches) {
+  log: Loggelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  deloncidelonr: Deloncidelonr,
+  abDeloncidelonr: LoggingABDeloncidelonr,
+  felonaturelonSwitchelons: FelonaturelonSwitchelons) {
 
-  private[this] val contextFactory = new VisibilityRequestContextFactory(
-    abDecider,
-    featureSwitches
+  privatelon[this] val contelonxtFactory = nelonw VisibilityRelonquelonstContelonxtFactory(
+    abDeloncidelonr,
+    felonaturelonSwitchelons
   )
 
-  private[this] val configBuilder = ConfigBuilder(statsReceiver.scope("config"), decider, log)
+  privatelon[this] val configBuildelonr = ConfigBuildelonr(statsReloncelonivelonr.scopelon("config"), deloncidelonr, log)
 
-  private[this] val paramStats: MemoizingStatsReceiver = new MemoizingStatsReceiver(
-    statsReceiver.scope("configapi_params"))
+  privatelon[this] val paramStats: MelonmoizingStatsReloncelonivelonr = nelonw MelonmoizingStatsReloncelonivelonr(
+    statsReloncelonivelonr.scopelon("configapi_params"))
 
-  def apply(
-    viewerContext: ViewerContext,
-    safetyLevel: SafetyLevel,
-    unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty
+  delonf apply(
+    vielonwelonrContelonxt: VielonwelonrContelonxt,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    unitsOfDivelonrsion: Selonq[UnitOfDivelonrsion] = Selonq.elonmpty
   ): Params = {
-    val config = configBuilder.build(safetyLevel)
-    val requestContext = contextFactory(viewerContext, safetyLevel, unitsOfDiversion)
-    config.apply(requestContext, paramStats)
+    val config = configBuildelonr.build(safelontyLelonvelonl)
+    val relonquelonstContelonxt = contelonxtFactory(vielonwelonrContelonxt, safelontyLelonvelonl, unitsOfDivelonrsion)
+    config.apply(relonquelonstContelonxt, paramStats)
   }
 
-  def memoized(
-    viewerContext: ViewerContext,
-    safetyLevel: SafetyLevel,
-    unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty
+  delonf melonmoizelond(
+    vielonwelonrContelonxt: VielonwelonrContelonxt,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    unitsOfDivelonrsion: Selonq[UnitOfDivelonrsion] = Selonq.elonmpty
   ): Params = {
-    val config = configBuilder.buildMemoized(safetyLevel)
-    val requestContext = contextFactory(viewerContext, safetyLevel, unitsOfDiversion)
-    config.apply(requestContext, paramStats)
+    val config = configBuildelonr.buildMelonmoizelond(safelontyLelonvelonl)
+    val relonquelonstContelonxt = contelonxtFactory(vielonwelonrContelonxt, safelontyLelonvelonl, unitsOfDivelonrsion)
+    config.apply(relonquelonstContelonxt, paramStats)
   }
 }

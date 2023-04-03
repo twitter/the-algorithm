@@ -1,68 +1,68 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * Limit the number of results (for 1 or more modules) from a certain candidate
- * source to PipelineQuery.requestedMaxResults.
+ * Limit thelon numbelonr of relonsults (for 1 or morelon modulelons) from a celonrtain candidatelon
+ * sourcelon to PipelonlinelonQuelonry.relonquelonstelondMaxRelonsults.
  *
- * PipelineQuery.requestedMaxResults is optionally set in the pipelineQuery.
- * If it is not set, then the default value of DefaultRequestedMaxModuleItemsParam is used.
+ * PipelonlinelonQuelonry.relonquelonstelondMaxRelonsults is optionally selont in thelon pipelonlinelonQuelonry.
+ * If it is not selont, thelonn thelon delonfault valuelon of DelonfaultRelonquelonstelondMaxModulelonItelonmsParam is uselond.
  *
- * For example, if PipelineQuery.requestedMaxResults is 3, and a candidatePipeline returned 1 module
- * containing 10 items in the candidate pool, then these module items will be reduced to the first 3
- * module items. Note that to update the ordering of the candidates, an
- * UpdateModuleItemsCandidateOrderingSelector may be used prior to using this selector.
+ * For elonxamplelon, if PipelonlinelonQuelonry.relonquelonstelondMaxRelonsults is 3, and a candidatelonPipelonlinelon relonturnelond 1 modulelon
+ * containing 10 itelonms in thelon candidatelon pool, thelonn thelonselon modulelon itelonms will belon relonducelond to thelon first 3
+ * modulelon itelonms. Notelon that to updatelon thelon ordelonring of thelon candidatelons, an
+ * UpdatelonModulelonItelonmsCandidatelonOrdelonringSelonlelonctor may belon uselond prior to using this selonlelonctor.
  *
- * Another example, if PipelineQuery.requestedMaxResults is 3, and a candidatePipeline returned 5
- * modules each containing 10 items in the candidate pool, then the module items in each of the 5
- * modules will be reduced to the first 3 module items.
+ * Anothelonr elonxamplelon, if PipelonlinelonQuelonry.relonquelonstelondMaxRelonsults is 3, and a candidatelonPipelonlinelon relonturnelond 5
+ * modulelons elonach containing 10 itelonms in thelon candidatelon pool, thelonn thelon modulelon itelonms in elonach of thelon 5
+ * modulelons will belon relonducelond to thelon first 3 modulelon itelonms.
  *
- * @note this updates the module in the `remainingCandidates`
+ * @notelon this updatelons thelon modulelon in thelon `relonmainingCandidatelons`
  */
-case class DropRequestedMaxModuleItemCandidates(
-  override val pipelineScope: CandidateScope,
-  defaultRequestedMaxModuleItemResultsParam: Param[Int])
-    extends Selector[PipelineQuery] {
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
+caselon class DropRelonquelonstelondMaxModulelonItelonmCandidatelons(
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
+  delonfaultRelonquelonstelondMaxModulelonItelonmRelonsultsParam: Param[Int])
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
 
-    val requestedMaxModuleItemSelections =
-      query.maxResults(defaultRequestedMaxModuleItemResultsParam)
-    assert(
-      requestedMaxModuleItemSelections > 0,
-      "Requested Max module item selections must be greater than zero")
+    val relonquelonstelondMaxModulelonItelonmSelonlelonctions =
+      quelonry.maxRelonsults(delonfaultRelonquelonstelondMaxModulelonItelonmRelonsultsParam)
+    asselonrt(
+      relonquelonstelondMaxModulelonItelonmSelonlelonctions > 0,
+      "Relonquelonstelond Max modulelon itelonm selonlelonctions must belon grelonatelonr than zelonro")
 
-    val resultUpdated = result.map {
-      case module: ModuleCandidateWithDetails if pipelineScope.contains(module) =>
-        // this applies to all candidates in a module, even if they are from a different
-        // candidate source which can happen if items are added to a module during selection
-        module.copy(candidates =
-          DropSelector.takeUntil(requestedMaxModuleItemSelections, module.candidates))
-      case candidate => candidate
+    val relonsultUpdatelond = relonsult.map {
+      caselon modulelon: ModulelonCandidatelonWithDelontails if pipelonlinelonScopelon.contains(modulelon) =>
+        // this applielons to all candidatelons in a modulelon, elonvelonn if thelony arelon from a diffelonrelonnt
+        // candidatelon sourcelon which can happelonn if itelonms arelon addelond to a modulelon during selonlelonction
+        modulelon.copy(candidatelons =
+          DropSelonlelonctor.takelonUntil(relonquelonstelondMaxModulelonItelonmSelonlelonctions, modulelon.candidatelons))
+      caselon candidatelon => candidatelon
     }
 
-    SelectorResult(remainingCandidates = remainingCandidates, result = resultUpdated)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = relonmainingCandidatelons, relonsult = relonsultUpdatelond)
   }
 }
 
-object DropRequestedMaxModuleItemCandidates {
-  def apply(
-    candidatePipeline: CandidatePipelineIdentifier,
-    defaultRequestedMaxModuleItemResultsParam: Param[Int]
+objelonct DropRelonquelonstelondMaxModulelonItelonmCandidatelons {
+  delonf apply(
+    candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    delonfaultRelonquelonstelondMaxModulelonItelonmRelonsultsParam: Param[Int]
   ) =
-    new DropRequestedMaxModuleItemCandidates(
-      SpecificPipeline(candidatePipeline),
-      defaultRequestedMaxModuleItemResultsParam)
+    nelonw DropRelonquelonstelondMaxModulelonItelonmCandidatelons(
+      SpeloncificPipelonlinelon(candidatelonPipelonlinelon),
+      delonfaultRelonquelonstelondMaxModulelonItelonmRelonsultsParam)
 }

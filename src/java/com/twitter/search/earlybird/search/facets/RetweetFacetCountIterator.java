@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.NumericDocValues;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.CSFFacetCountIterator;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.CSFFacelontCountItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * And iterator for counting retweets. Reads from shared_status_id CSF but doesn't count
- * replies.
+ * And itelonrator for counting relontwelonelonts. Relonads from sharelond_status_id CSF but doelonsn't count
+ * relonplielons.
  */
-public class RetweetFacetCountIterator extends CSFFacetCountIterator {
-  private final NumericDocValues featureReaderIsRetweetFlag;
+public class RelontwelonelontFacelontCountItelonrator elonxtelonnds CSFFacelontCountItelonrator {
+  privatelon final NumelonricDocValuelons felonaturelonRelonadelonrIsRelontwelonelontFlag;
 
-  public RetweetFacetCountIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      Schema.FieldInfo facetFieldInfo) throws IOException {
-    super(reader, facetFieldInfo);
-    featureReaderIsRetweetFlag =
-        reader.getNumericDocValues(EarlybirdFieldConstant.IS_RETWEET_FLAG.getFieldName());
+  public RelontwelonelontFacelontCountItelonrator(
+      elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr,
+      Schelonma.FielonldInfo facelontFielonldInfo) throws IOelonxcelonption {
+    supelonr(relonadelonr, facelontFielonldInfo);
+    felonaturelonRelonadelonrIsRelontwelonelontFlag =
+        relonadelonr.gelontNumelonricDocValuelons(elonarlybirdFielonldConstant.IS_RelonTWelonelonT_FLAG.gelontFielonldNamelon());
   }
 
-  @Override
-  protected boolean shouldCollect(int internalDocID, long termID) throws IOException {
-    // termID == 0 means that we didn't set shared_status_csf, so don't collect
-    // (tweet IDs are all positive)
-    // Also only collect if this doc is a retweet, not a reply
-    return termID > 0
-        && featureReaderIsRetweetFlag.advanceExact(internalDocID)
-        && (featureReaderIsRetweetFlag.longValue() != 0);
+  @Ovelonrridelon
+  protelonctelond boolelonan shouldCollelonct(int intelonrnalDocID, long telonrmID) throws IOelonxcelonption {
+    // telonrmID == 0 melonans that welon didn't selont sharelond_status_csf, so don't collelonct
+    // (twelonelont IDs arelon all positivelon)
+    // Also only collelonct if this doc is a relontwelonelont, not a relonply
+    relonturn telonrmID > 0
+        && felonaturelonRelonadelonrIsRelontwelonelontFlag.advancelonelonxact(intelonrnalDocID)
+        && (felonaturelonRelonadelonrIsRelontwelonelontFlag.longValuelon() != 0);
   }
 }

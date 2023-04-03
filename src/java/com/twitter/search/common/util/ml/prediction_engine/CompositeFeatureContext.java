@@ -1,35 +1,35 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
-import java.util.function.Supplier;
-import javax.annotation.Nullable;
+import java.util.function.Supplielonr;
+import javax.annotation.Nullablelon;
 
-import com.twitter.ml.api.FeatureContext;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
+import com.twittelonr.ml.api.FelonaturelonContelonxt;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonma;
 
 /**
- * An object to store feature context information to build models with.
+ * An objelonct to storelon felonaturelon contelonxt information to build modelonls with.
  */
-public class CompositeFeatureContext {
-  // legacy static feature context
-  private final FeatureContext legacyContext;
-  // a supplier for the context (well the schema itself) of the schema-based features
-  private final Supplier<ThriftSearchFeatureSchema> schemaSupplier;
+public class CompositelonFelonaturelonContelonxt {
+  // lelongacy static felonaturelon contelonxt
+  privatelon final FelonaturelonContelonxt lelongacyContelonxt;
+  // a supplielonr for thelon contelonxt (welonll thelon schelonma itselonlf) of thelon schelonma-baselond felonaturelons
+  privatelon final Supplielonr<ThriftSelonarchFelonaturelonSchelonma> schelonmaSupplielonr;
 
-  public CompositeFeatureContext(
-      FeatureContext legacyContext,
-      @Nullable Supplier<ThriftSearchFeatureSchema> schemaSupplier) {
-    this.legacyContext = legacyContext;
-    this.schemaSupplier = schemaSupplier;
+  public CompositelonFelonaturelonContelonxt(
+      FelonaturelonContelonxt lelongacyContelonxt,
+      @Nullablelon Supplielonr<ThriftSelonarchFelonaturelonSchelonma> schelonmaSupplielonr) {
+    this.lelongacyContelonxt = lelongacyContelonxt;
+    this.schelonmaSupplielonr = schelonmaSupplielonr;
   }
 
-  FeatureContext getLegacyContext() {
-    return legacyContext;
+  FelonaturelonContelonxt gelontLelongacyContelonxt() {
+    relonturn lelongacyContelonxt;
   }
 
-  ThriftSearchFeatureSchema getFeatureSchema() {
-    if (schemaSupplier == null) {
-      throw new UnsupportedOperationException("Feature schema was not initialized");
+  ThriftSelonarchFelonaturelonSchelonma gelontFelonaturelonSchelonma() {
+    if (schelonmaSupplielonr == null) {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption("Felonaturelon schelonma was not initializelond");
     }
-    return schemaSupplier.get();
+    relonturn schelonmaSupplielonr.gelont();
   }
 }

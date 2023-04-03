@@ -1,243 +1,243 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowCandidateDecorator
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ShowCoverInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.EntryWithItemIds
-import com.twitter.timelinemixer.clients.persistence.ItemIds
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelines.persistence.thriftscala.TweetScoreV1
-import com.twitter.timelines.persistence.{thriftscala => persistence}
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.TimelineQueryOptions
-import com.twitter.timelineservice.model.TweetScore
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
-import com.twitter.{timelineservice => tls}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ForYouProduct
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon.WhoToFollowCandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddelonntrielonsTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.RelonplacelonelonntryTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ShowCovelonrInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.elonntryWithItelonmIds
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.ItelonmIds
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonRelonsponselonBatchelonsClielonnt
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonRelonsponselonV3
+import com.twittelonr.timelonlinelons.pelonrsistelonncelon.thriftscala.TwelonelontScorelonV1
+import com.twittelonr.timelonlinelons.pelonrsistelonncelon.{thriftscala => pelonrsistelonncelon}
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TimelonlinelonQuelonry
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TimelonlinelonQuelonryOptions
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TwelonelontScorelon
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.corelon.TimelonlinelonKind
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.rich.elonntityIdTypelon
+import com.twittelonr.util.Timelon
+import com.twittelonr.{timelonlinelonselonrvicelon => tls}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object UpdateTimelinesPersistenceStoreSideEffect {
-  val EmptyItemIds = ItemIds(
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None)
+objelonct UpdatelonTimelonlinelonsPelonrsistelonncelonStorelonSidelonelonffelonct {
+  val elonmptyItelonmIds = ItelonmIds(
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon)
 }
 
 /**
- * Side effect that updates the Timelines Persistence Store (Manhattan) with the entries being returned.
+ * Sidelon elonffelonct that updatelons thelon Timelonlinelons Pelonrsistelonncelon Storelon (Manhattan) with thelon elonntrielons beloning relonturnelond.
  */
-@Singleton
-class UpdateTimelinesPersistenceStoreSideEffect @Inject() (
-  timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3])
-    extends PipelineResultSideEffect[PipelineQuery, Timeline] {
+@Singlelonton
+class UpdatelonTimelonlinelonsPelonrsistelonncelonStorelonSidelonelonffelonct @Injelonct() (
+  timelonlinelonRelonsponselonBatchelonsClielonnt: TimelonlinelonRelonsponselonBatchelonsClielonnt[TimelonlinelonRelonsponselonV3])
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[PipelonlinelonQuelonry, Timelonlinelon] {
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("UpdateTimelinesPersistenceStore")
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr =
+    SidelonelonffelonctIdelonntifielonr("UpdatelonTimelonlinelonsPelonrsistelonncelonStorelon")
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery, Timeline]
+  final ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[PipelonlinelonQuelonry, Timelonlinelon]
   ): Stitch[Unit] = {
-    if (inputs.response.instructions.nonEmpty) {
-      val timelineKind = inputs.query.product match {
-        case FollowingProduct => TimelineKind.homeLatest
-        case ForYouProduct => TimelineKind.home
-        case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+    if (inputs.relonsponselon.instructions.nonelonmpty) {
+      val timelonlinelonKind = inputs.quelonry.product match {
+        caselon FollowingProduct => TimelonlinelonKind.homelonLatelonst
+        caselon ForYouProduct => TimelonlinelonKind.homelon
+        caselon othelonr => throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $othelonr")
       }
-      val timelineQuery = TimelineQuery(
-        id = inputs.query.getRequiredUserId,
-        kind = timelineKind,
-        options = TimelineQueryOptions(
-          contextualUserId = inputs.query.getOptionalUserId,
-          deviceContext = tls.DeviceContext.empty.copy(
-            userAgent = inputs.query.clientContext.userAgent,
-            clientAppId = inputs.query.clientContext.appId)
+      val timelonlinelonQuelonry = TimelonlinelonQuelonry(
+        id = inputs.quelonry.gelontRelonquirelondUselonrId,
+        kind = timelonlinelonKind,
+        options = TimelonlinelonQuelonryOptions(
+          contelonxtualUselonrId = inputs.quelonry.gelontOptionalUselonrId,
+          delonvicelonContelonxt = tls.DelonvicelonContelonxt.elonmpty.copy(
+            uselonrAgelonnt = inputs.quelonry.clielonntContelonxt.uselonrAgelonnt,
+            clielonntAppId = inputs.quelonry.clielonntContelonxt.appId)
         )
       )
 
-      val tweetIdToItemCandidateMap: Map[Long, ItemCandidateWithDetails] =
-        inputs.selectedCandidates.flatMap {
-          case item: ItemCandidateWithDetails if item.candidate.id.isInstanceOf[Long] =>
-            Seq((item.candidateIdLong, item))
-          case module: ModuleCandidateWithDetails
-              if module.candidates.headOption.exists(_.candidate.id.isInstanceOf[Long]) =>
-            module.candidates.map(item => (item.candidateIdLong, item))
-          case _ => Seq.empty
+      val twelonelontIdToItelonmCandidatelonMap: Map[Long, ItelonmCandidatelonWithDelontails] =
+        inputs.selonlelonctelondCandidatelons.flatMap {
+          caselon itelonm: ItelonmCandidatelonWithDelontails if itelonm.candidatelon.id.isInstancelonOf[Long] =>
+            Selonq((itelonm.candidatelonIdLong, itelonm))
+          caselon modulelon: ModulelonCandidatelonWithDelontails
+              if modulelon.candidatelons.helonadOption.elonxists(_.candidatelon.id.isInstancelonOf[Long]) =>
+            modulelon.candidatelons.map(itelonm => (itelonm.candidatelonIdLong, itelonm))
+          caselon _ => Selonq.elonmpty
         }.toMap
 
-      val entries = inputs.response.instructions.collect {
-        case AddEntriesTimelineInstruction(entries) =>
-          entries.collect {
-            // includes both tweets and promoted tweets
-            case entry: TweetItem if entry.sortIndex.isDefined =>
-              Seq(
-                buildTweetEntryWithItemIds(
-                  tweetIdToItemCandidateMap(entry.id),
-                  entry.sortIndex.get))
-            // tweet conversation modules are flattened to individual tweets in the persistence store
-            case module: TimelineModule
-                if module.sortIndex.isDefined && module.items.headOption.exists(
-                  _.item.isInstanceOf[TweetItem]) =>
-              module.items.map { item =>
-                buildTweetEntryWithItemIds(
-                  tweetIdToItemCandidateMap(item.item.id.asInstanceOf[Long]),
-                  module.sortIndex.get)
+      val elonntrielons = inputs.relonsponselon.instructions.collelonct {
+        caselon AddelonntrielonsTimelonlinelonInstruction(elonntrielons) =>
+          elonntrielons.collelonct {
+            // includelons both twelonelonts and promotelond twelonelonts
+            caselon elonntry: TwelonelontItelonm if elonntry.sortIndelonx.isDelonfinelond =>
+              Selonq(
+                buildTwelonelontelonntryWithItelonmIds(
+                  twelonelontIdToItelonmCandidatelonMap(elonntry.id),
+                  elonntry.sortIndelonx.gelont))
+            // twelonelont convelonrsation modulelons arelon flattelonnelond to individual twelonelonts in thelon pelonrsistelonncelon storelon
+            caselon modulelon: TimelonlinelonModulelon
+                if modulelon.sortIndelonx.isDelonfinelond && modulelon.itelonms.helonadOption.elonxists(
+                  _.itelonm.isInstancelonOf[TwelonelontItelonm]) =>
+              modulelon.itelonms.map { itelonm =>
+                buildTwelonelontelonntryWithItelonmIds(
+                  twelonelontIdToItelonmCandidatelonMap(itelonm.itelonm.id.asInstancelonOf[Long]),
+                  modulelon.sortIndelonx.gelont)
               }
-            case module: TimelineModule
-                if module.sortIndex.isDefined && module.entryNamespace.toString == WhoToFollowCandidateDecorator.EntryNamespaceString =>
-              val userIds = module.items
-                .map(item =>
-                  UpdateTimelinesPersistenceStoreSideEffect.EmptyItemIds.copy(userId =
-                    Some(item.item.id.asInstanceOf[Long])))
-              Seq(
-                EntryWithItemIds(
-                  entityIdType = EntityIdType.WhoToFollow,
-                  sortIndex = module.sortIndex.get,
-                  size = module.items.size.toShort,
-                  itemIds = Some(userIds)
+            caselon modulelon: TimelonlinelonModulelon
+                if modulelon.sortIndelonx.isDelonfinelond && modulelon.elonntryNamelonspacelon.toString == WhoToFollowCandidatelonDeloncorator.elonntryNamelonspacelonString =>
+              val uselonrIds = modulelon.itelonms
+                .map(itelonm =>
+                  UpdatelonTimelonlinelonsPelonrsistelonncelonStorelonSidelonelonffelonct.elonmptyItelonmIds.copy(uselonrId =
+                    Somelon(itelonm.itelonm.id.asInstancelonOf[Long])))
+              Selonq(
+                elonntryWithItelonmIds(
+                  elonntityIdTypelon = elonntityIdTypelon.WhoToFollow,
+                  sortIndelonx = modulelon.sortIndelonx.gelont,
+                  sizelon = modulelon.itelonms.sizelon.toShort,
+                  itelonmIds = Somelon(uselonrIds)
                 ))
-          }.flatten
-        case ShowCoverInstruction(cover) =>
-          Seq(
-            EntryWithItemIds(
-              entityIdType = EntityIdType.Prompt,
-              sortIndex = cover.sortIndex.get,
-              size = 1,
-              itemIds = None
+          }.flattelonn
+        caselon ShowCovelonrInstruction(covelonr) =>
+          Selonq(
+            elonntryWithItelonmIds(
+              elonntityIdTypelon = elonntityIdTypelon.Prompt,
+              sortIndelonx = covelonr.sortIndelonx.gelont,
+              sizelon = 1,
+              itelonmIds = Nonelon
             )
           )
-        case ReplaceEntryTimelineInstruction(entry) =>
-          val namespaceLength = TweetItem.TweetEntryNamespace.toString.length
-          Seq(
-            EntryWithItemIds(
-              entityIdType = EntityIdType.Tweet,
-              sortIndex = entry.sortIndex.get,
-              size = 1,
-              itemIds = Some(
-                Seq(
-                  ItemIds(
-                    tweetId =
-                      entry.entryIdToReplace.map(e => e.substring(namespaceLength + 1).toLong),
-                    sourceTweetId = None,
-                    quoteTweetId = None,
-                    sourceAuthorId = None,
-                    quoteAuthorId = None,
-                    inReplyToTweetId = None,
-                    inReplyToAuthorId = None,
-                    semanticCoreId = None,
-                    articleId = None,
-                    hasRelevancePrompt = None,
-                    promptData = None,
-                    tweetScore = None,
-                    entryIdToReplace = entry.entryIdToReplace,
-                    tweetReactiveData = None,
-                    userId = None
+        caselon RelonplacelonelonntryTimelonlinelonInstruction(elonntry) =>
+          val namelonspacelonLelonngth = TwelonelontItelonm.TwelonelontelonntryNamelonspacelon.toString.lelonngth
+          Selonq(
+            elonntryWithItelonmIds(
+              elonntityIdTypelon = elonntityIdTypelon.Twelonelont,
+              sortIndelonx = elonntry.sortIndelonx.gelont,
+              sizelon = 1,
+              itelonmIds = Somelon(
+                Selonq(
+                  ItelonmIds(
+                    twelonelontId =
+                      elonntry.elonntryIdToRelonplacelon.map(elon => elon.substring(namelonspacelonLelonngth + 1).toLong),
+                    sourcelonTwelonelontId = Nonelon,
+                    quotelonTwelonelontId = Nonelon,
+                    sourcelonAuthorId = Nonelon,
+                    quotelonAuthorId = Nonelon,
+                    inRelonplyToTwelonelontId = Nonelon,
+                    inRelonplyToAuthorId = Nonelon,
+                    selonmanticCorelonId = Nonelon,
+                    articlelonId = Nonelon,
+                    hasRelonlelonvancelonPrompt = Nonelon,
+                    promptData = Nonelon,
+                    twelonelontScorelon = Nonelon,
+                    elonntryIdToRelonplacelon = elonntry.elonntryIdToRelonplacelon,
+                    twelonelontRelonactivelonData = Nonelon,
+                    uselonrId = Nonelon
                   )
                 ))
             )
           )
 
-      }.flatten
+      }.flattelonn
 
-      val response = TimelineResponseV3(
-        clientPlatform = timelineQuery.clientPlatform,
-        servedTime = Time.now,
-        requestType = requestTypeFromQuery(inputs.query),
-        entries = entries)
+      val relonsponselon = TimelonlinelonRelonsponselonV3(
+        clielonntPlatform = timelonlinelonQuelonry.clielonntPlatform,
+        selonrvelondTimelon = Timelon.now,
+        relonquelonstTypelon = relonquelonstTypelonFromQuelonry(inputs.quelonry),
+        elonntrielons = elonntrielons)
 
-      Stitch.callFuture(timelineResponseBatchesClient.insertResponse(timelineQuery, response))
-    } else Stitch.Unit
+      Stitch.callFuturelon(timelonlinelonRelonsponselonBatchelonsClielonnt.inselonrtRelonsponselon(timelonlinelonQuelonry, relonsponselon))
+    } elonlselon Stitch.Unit
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.8)
   )
 
-  private def buildTweetEntryWithItemIds(
-    candidate: ItemCandidateWithDetails,
-    sortIndex: Long
-  ): EntryWithItemIds = {
-    val features = candidate.features
-    val sourceAuthorId =
-      if (features.getOrElse(IsRetweetFeature, false)) features.getOrElse(SourceUserIdFeature, None)
-      else features.getOrElse(AuthorIdFeature, None)
-    val quoteAuthorId =
-      if (features.getOrElse(QuotedTweetIdFeature, None).nonEmpty)
-        features.getOrElse(SourceUserIdFeature, None)
-      else None
-    val tweetScore = features.getOrElse(ScoreFeature, None).map { score =>
-      TweetScore.fromThrift(persistence.TweetScore.TweetScoreV1(TweetScoreV1(score)))
+  privatelon delonf buildTwelonelontelonntryWithItelonmIds(
+    candidatelon: ItelonmCandidatelonWithDelontails,
+    sortIndelonx: Long
+  ): elonntryWithItelonmIds = {
+    val felonaturelons = candidatelon.felonaturelons
+    val sourcelonAuthorId =
+      if (felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)) felonaturelons.gelontOrelonlselon(SourcelonUselonrIdFelonaturelon, Nonelon)
+      elonlselon felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon)
+    val quotelonAuthorId =
+      if (felonaturelons.gelontOrelonlselon(QuotelondTwelonelontIdFelonaturelon, Nonelon).nonelonmpty)
+        felonaturelons.gelontOrelonlselon(SourcelonUselonrIdFelonaturelon, Nonelon)
+      elonlselon Nonelon
+    val twelonelontScorelon = felonaturelons.gelontOrelonlselon(ScorelonFelonaturelon, Nonelon).map { scorelon =>
+      TwelonelontScorelon.fromThrift(pelonrsistelonncelon.TwelonelontScorelon.TwelonelontScorelonV1(TwelonelontScorelonV1(scorelon)))
     }
 
-    val itemIds = ItemIds(
-      tweetId = Some(candidate.candidateIdLong),
-      sourceTweetId = features.getOrElse(SourceTweetIdFeature, None),
-      quoteTweetId = features.getOrElse(QuotedTweetIdFeature, None),
-      sourceAuthorId = sourceAuthorId,
-      quoteAuthorId = quoteAuthorId,
-      inReplyToTweetId = features.getOrElse(InReplyToTweetIdFeature, None),
-      inReplyToAuthorId = features.getOrElse(DirectedAtUserIdFeature, None),
-      semanticCoreId = features.getOrElse(SemanticCoreIdFeature, None),
-      articleId = None,
-      hasRelevancePrompt = None,
-      promptData = None,
-      tweetScore = tweetScore,
-      entryIdToReplace = None,
-      tweetReactiveData = None,
-      userId = None
+    val itelonmIds = ItelonmIds(
+      twelonelontId = Somelon(candidatelon.candidatelonIdLong),
+      sourcelonTwelonelontId = felonaturelons.gelontOrelonlselon(SourcelonTwelonelontIdFelonaturelon, Nonelon),
+      quotelonTwelonelontId = felonaturelons.gelontOrelonlselon(QuotelondTwelonelontIdFelonaturelon, Nonelon),
+      sourcelonAuthorId = sourcelonAuthorId,
+      quotelonAuthorId = quotelonAuthorId,
+      inRelonplyToTwelonelontId = felonaturelons.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon),
+      inRelonplyToAuthorId = felonaturelons.gelontOrelonlselon(DirelonctelondAtUselonrIdFelonaturelon, Nonelon),
+      selonmanticCorelonId = felonaturelons.gelontOrelonlselon(SelonmanticCorelonIdFelonaturelon, Nonelon),
+      articlelonId = Nonelon,
+      hasRelonlelonvancelonPrompt = Nonelon,
+      promptData = Nonelon,
+      twelonelontScorelon = twelonelontScorelon,
+      elonntryIdToRelonplacelon = Nonelon,
+      twelonelontRelonactivelonData = Nonelon,
+      uselonrId = Nonelon
     )
 
-    EntryWithItemIds(
-      entityIdType = EntityIdType.Tweet,
-      sortIndex = sortIndex,
-      size = 1.toShort,
-      itemIds = Some(Seq(itemIds))
+    elonntryWithItelonmIds(
+      elonntityIdTypelon = elonntityIdTypelon.Twelonelont,
+      sortIndelonx = sortIndelonx,
+      sizelon = 1.toShort,
+      itelonmIds = Somelon(Selonq(itelonmIds))
     )
   }
 
-  private def requestTypeFromQuery(query: PipelineQuery): persistence.RequestType = {
-    val features = query.features.getOrElse(FeatureMap.empty)
+  privatelon delonf relonquelonstTypelonFromQuelonry(quelonry: PipelonlinelonQuelonry): pelonrsistelonncelon.RelonquelonstTypelon = {
+    val felonaturelons = quelonry.felonaturelons.gelontOrelonlselon(FelonaturelonMap.elonmpty)
 
-    val featureToRequestType = Seq(
-      (PollingFeature, persistence.RequestType.Polling),
-      (GetInitialFeature, persistence.RequestType.Initial),
-      (GetNewerFeature, persistence.RequestType.Newer),
-      (GetMiddleFeature, persistence.RequestType.Middle),
-      (GetOlderFeature, persistence.RequestType.Older)
+    val felonaturelonToRelonquelonstTypelon = Selonq(
+      (PollingFelonaturelon, pelonrsistelonncelon.RelonquelonstTypelon.Polling),
+      (GelontInitialFelonaturelon, pelonrsistelonncelon.RelonquelonstTypelon.Initial),
+      (GelontNelonwelonrFelonaturelon, pelonrsistelonncelon.RelonquelonstTypelon.Nelonwelonr),
+      (GelontMiddlelonFelonaturelon, pelonrsistelonncelon.RelonquelonstTypelon.Middlelon),
+      (GelontOldelonrFelonaturelon, pelonrsistelonncelon.RelonquelonstTypelon.Oldelonr)
     )
 
-    featureToRequestType
-      .collectFirst {
-        case (feature, requestType) if features.getOrElse(feature, false) => requestType
-      }.getOrElse(persistence.RequestType.Other)
+    felonaturelonToRelonquelonstTypelon
+      .collelonctFirst {
+        caselon (felonaturelon, relonquelonstTypelon) if felonaturelons.gelontOrelonlselon(felonaturelon, falselon) => relonquelonstTypelon
+      }.gelontOrelonlselon(pelonrsistelonncelon.RelonquelonstTypelon.Othelonr)
   }
 }

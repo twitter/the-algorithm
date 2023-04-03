@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.elonvelonnt_summary
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.event_summary.EventCandidateUrtItemBuilder.EventClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventDisplayType
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventImage
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventTimeString
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventTitleFeature
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.EventUrl
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedEventCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.elonvelonnt_summary.elonvelonntCandidatelonUrtItelonmBuildelonr.elonvelonntClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.elonvelonntDisplayTypelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.elonvelonntImagelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.elonvelonntTimelonString
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.elonvelonntTitlelonFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.elonvelonntUrl
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.UnifielondelonvelonntCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.elonvelonnt.elonvelonntSummaryItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object EventCandidateUrtItemBuilder {
-  val EventClientEventInfoElement = "event"
+objelonct elonvelonntCandidatelonUrtItelonmBuildelonr {
+  val elonvelonntClielonntelonvelonntInfoelonlelonmelonnt = "elonvelonnt"
 }
 
-case class EventCandidateUrtItemBuilder[Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UnifiedEventCandidate],
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, UnifiedEventCandidate]] =
-    None)
-    extends CandidateUrtEntryBuilder[Query, UnifiedEventCandidate, TimelineItem] {
+caselon class elonvelonntCandidatelonUrtItelonmBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, UnifielondelonvelonntCandidatelon],
+  felonelondbackActionInfoBuildelonr: Option[BaselonFelonelondbackActionInfoBuildelonr[Quelonry, UnifielondelonvelonntCandidatelon]] =
+    Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, UnifielondelonvelonntCandidatelon, TimelonlinelonItelonm] {
 
-  override def apply(
-    query: Query,
-    candidate: UnifiedEventCandidate,
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    EventSummaryItem(
-      id = candidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query = query,
-        candidate = candidate,
-        candidateFeatures = candidateFeatures,
-        element = Some(EventClientEventInfoElement)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: UnifielondelonvelonntCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): TimelonlinelonItelonm = {
+    elonvelonntSummaryItelonm(
+      id = candidatelon.id,
+      sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+      clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+        quelonry = quelonry,
+        candidatelon = candidatelon,
+        candidatelonFelonaturelons = candidatelonFelonaturelons,
+        elonlelonmelonnt = Somelon(elonvelonntClielonntelonvelonntInfoelonlelonmelonnt)
       ),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-      title = candidateFeatures.get(EventTitleFeature),
-      displayType = candidateFeatures.get(EventDisplayType),
-      url = candidateFeatures.get(EventUrl),
-      image = candidateFeatures.getOrElse(EventImage, None),
-      timeString = candidateFeatures.getOrElse(EventTimeString, None)
+      felonelondbackActionInfo =
+        felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, candidatelon, candidatelonFelonaturelons)),
+      titlelon = candidatelonFelonaturelons.gelont(elonvelonntTitlelonFelonaturelon),
+      displayTypelon = candidatelonFelonaturelons.gelont(elonvelonntDisplayTypelon),
+      url = candidatelonFelonaturelons.gelont(elonvelonntUrl),
+      imagelon = candidatelonFelonaturelons.gelontOrelonlselon(elonvelonntImagelon, Nonelon),
+      timelonString = candidatelonFelonaturelons.gelontOrelonlselon(elonvelonntTimelonString, Nonelon)
     )
   }
 }

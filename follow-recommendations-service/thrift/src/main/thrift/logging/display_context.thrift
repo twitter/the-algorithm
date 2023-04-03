@@ -1,66 +1,66 @@
-include "logging/flows.thrift"
-include "logging/recently_engaged_user_id.thrift"
+includelon "logging/flows.thrift"
+includelon "logging/reloncelonntly_elonngagelond_uselonr_id.thrift"
 
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.logging.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.logging.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations.logging
 
-// Offline equal of Profile DisplayContext
-struct OfflineProfile {
-    1: required i64 profileId(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+// Offlinelon elonqual of Profilelon DisplayContelonxt
+struct OfflinelonProfilelon {
+    1: relonquirelond i64 profilelonId(pelonrsonalDataTypelon='UselonrId')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-// Offline equal of Search DisplayContext
-struct OfflineSearch {
-    1: required string searchQuery(personalDataType='SearchQuery')
-}(persisted='true', hasPersonalData='true')
+// Offlinelon elonqual of Selonarch DisplayContelonxt
+struct OfflinelonSelonarch {
+    1: relonquirelond string selonarchQuelonry(pelonrsonalDataTypelon='SelonarchQuelonry')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-// Offline equal of Rux Landing Page DisplayContext
-struct OfflineRux {
-  1: required i64 focalAuthorId(personalDataType="UserId")
-}(persisted='true', hasPersonalData='true')
+// Offlinelon elonqual of Rux Landing Pagelon DisplayContelonxt
+struct OfflinelonRux {
+  1: relonquirelond i64 focalAuthorId(pelonrsonalDataTypelon="UselonrId")
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-// Offline equal of Topic DisplayContext
-struct OfflineTopic {
-  1: required i64 topicId(personalDataType = 'TopicFollow')
-}(persisted='true', hasPersonalData='true')
+// Offlinelon elonqual of Topic DisplayContelonxt
+struct OfflinelonTopic {
+  1: relonquirelond i64 topicId(pelonrsonalDataTypelon = 'TopicFollow')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineReactiveFollow {
-    1: required list<i64> followedUserIds(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonRelonactivelonFollow {
+    1: relonquirelond list<i64> followelondUselonrIds(pelonrsonalDataTypelon='UselonrId')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineNuxInterests {
-    1: optional flows.OfflineFlowContext flowContext // set for recommendation inside an interactive flow
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonNuxIntelonrelonsts {
+    1: optional flows.OfflinelonFlowContelonxt flowContelonxt // selont for reloncommelonndation insidelon an intelonractivelon flow
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineAdCampaignTarget {
-    1: required list<i64> similarToUserIds(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonAdCampaignTargelont {
+    1: relonquirelond list<i64> similarToUselonrIds(pelonrsonalDataTypelon='UselonrId')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineConnectTab {
-    1: required list<i64> byfSeedUserIds(personalDataType='UserId')
-    2: required list<i64> similarToUserIds(personalDataType='UserId')
-    3: required list<recently_engaged_user_id.RecentlyEngagedUserId> recentlyEngagedUserIds
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonConnelonctTab {
+    1: relonquirelond list<i64> byfSelonelondUselonrIds(pelonrsonalDataTypelon='UselonrId')
+    2: relonquirelond list<i64> similarToUselonrIds(pelonrsonalDataTypelon='UselonrId')
+    3: relonquirelond list<reloncelonntly_elonngagelond_uselonr_id.ReloncelonntlyelonngagelondUselonrId> reloncelonntlyelonngagelondUselonrIds
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineSimilarToUser {
-    1: required i64 similarToUserId(personalDataType='UserId')
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonSimilarToUselonr {
+    1: relonquirelond i64 similarToUselonrId(pelonrsonalDataTypelon='UselonrId')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflinePostNuxFollowTask {
-    1: optional flows.OfflineFlowContext flowContext // set for recommendation inside an interactive flow
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonPostNuxFollowTask {
+    1: optional flows.OfflinelonFlowContelonxt flowContelonxt // selont for reloncommelonndation insidelon an intelonractivelon flow
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-// Offline equal of DisplayContext
-union OfflineDisplayContext {
-    1: OfflineProfile profile
-    2: OfflineSearch search
-    3: OfflineRux rux
-    4: OfflineTopic topic
-    5: OfflineReactiveFollow reactiveFollow
-    6: OfflineNuxInterests nuxInterests
-    7: OfflineAdCampaignTarget adCampaignTarget
-    8: OfflineConnectTab connectTab
-    9: OfflineSimilarToUser similarToUser
-    10: OfflinePostNuxFollowTask postNuxFollowTask
-}(persisted='true', hasPersonalData='true')
+// Offlinelon elonqual of DisplayContelonxt
+union OfflinelonDisplayContelonxt {
+    1: OfflinelonProfilelon profilelon
+    2: OfflinelonSelonarch selonarch
+    3: OfflinelonRux rux
+    4: OfflinelonTopic topic
+    5: OfflinelonRelonactivelonFollow relonactivelonFollow
+    6: OfflinelonNuxIntelonrelonsts nuxIntelonrelonsts
+    7: OfflinelonAdCampaignTargelont adCampaignTargelont
+    8: OfflinelonConnelonctTab connelonctTab
+    9: OfflinelonSimilarToUselonr similarToUselonr
+    10: OfflinelonPostNuxFollowTask postNuxFollowTask
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')

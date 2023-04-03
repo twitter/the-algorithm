@@ -1,53 +1,53 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
-include "embedding.thrift"
-include "simclusters_presto.thrift"
+includelon "elonmbelondding.thrift"
+includelon "simclustelonrs_prelonsto.thrift"
 
 /**
- * Struct that associates a user with simcluster scores for different
- * interaction types. This is meant to be used as a feature to predict abuse.
+ * Struct that associatelons a uselonr with simclustelonr scorelons for diffelonrelonnt
+ * intelonraction typelons. This is melonant to belon uselond as a felonaturelon to prelondict abuselon.
  *
- * This thrift struct is meant for exploration purposes. It does not have any
- * assumptions about what type of interactions we use or what types of scores
- * we are keeping track of.
+ * This thrift struct is melonant for elonxploration purposelons. It doelons not havelon any
+ * assumptions about what typelon of intelonractions welon uselon or what typelons of scorelons
+ * welon arelon kelonelonping track of.
  **/ 
-struct AdhocSingleSideClusterScores {
-  1: required i64 userId(personalDataType = 'UserId')
-  // We can make the interaction types have arbitrary names. In the production
-  // version of this dataset. We should have a different field per interaction
-  // type so that API of what is included is more clear.
-  2: required map<string, embedding.SimClustersEmbedding> interactionScores
-}(persisted="true", hasPersonalData = 'true')
+struct AdhocSinglelonSidelonClustelonrScorelons {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  // Welon can makelon thelon intelonraction typelons havelon arbitrary namelons. In thelon production
+  // velonrsion of this dataselont. Welon should havelon a diffelonrelonnt fielonld pelonr intelonraction
+  // typelon so that API of what is includelond is morelon clelonar.
+  2: relonquirelond map<string, elonmbelondding.SimClustelonrselonmbelondding> intelonractionScorelons
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
 /**
-* This is a prod version of the single side features. It is meant to be used as a value in a key
-* value store. The pair of healthy and unhealthy scores will be different depending on the use case.
-* We will use different stores for different user cases. For instance, the first instance that
-* we implement will use search abuse reports and impressions. We can build stores for new values
-* in the future.
+* This is a prod velonrsion of thelon singlelon sidelon felonaturelons. It is melonant to belon uselond as a valuelon in a kelony
+* valuelon storelon. Thelon pair of helonalthy and unhelonalthy scorelons will belon diffelonrelonnt delonpelonnding on thelon uselon caselon.
+* Welon will uselon diffelonrelonnt storelons for diffelonrelonnt uselonr caselons. For instancelon, thelon first instancelon that
+* welon implelonmelonnt will uselon selonarch abuselon relonports and imprelonssions. Welon can build storelons for nelonw valuelons
+* in thelon futurelon.
 *
-* The consumer creates the interactions which the author recieves.  For instance, the consumer
-* creates an abuse report for an author. The consumer scores are related to the interation creation
-* behavior of the consumer. The author scores are related to the whether the author receives these
-* interactions.
+* Thelon consumelonr crelonatelons thelon intelonractions which thelon author reloncielonvelons.  For instancelon, thelon consumelonr
+* crelonatelons an abuselon relonport for an author. Thelon consumelonr scorelons arelon relonlatelond to thelon intelonration crelonation
+* belonhavior of thelon consumelonr. Thelon author scorelons arelon relonlatelond to thelon whelonthelonr thelon author reloncelonivelons thelonselon
+* intelonractions.
 *
 **/
-struct SingleSideUserScores {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required double consumerUnhealthyScore(personalDataType = 'EngagementScore')
-  3: required double consumerHealthyScore(personalDataType = 'EngagementScore')
-  4: required double authorUnhealthyScore(personalDataType = 'EngagementScore')
-  5: required double authorHealthyScore(personalDataType = 'EngagementScore')
-}(persisted="true", hasPersonalData = 'true')
+struct SinglelonSidelonUselonrScorelons {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond doublelon consumelonrUnhelonalthyScorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+  3: relonquirelond doublelon consumelonrHelonalthyScorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+  4: relonquirelond doublelon authorUnhelonalthyScorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+  5: relonquirelond doublelon authorHelonalthyScorelon(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
 /**
-* Struct that associates a cluster-cluster interaction scores for different
-* interaction types.
+* Struct that associatelons a clustelonr-clustelonr intelonraction scorelons for diffelonrelonnt
+* intelonraction typelons.
 **/
-struct AdhocCrossSimClusterInteractionScores {
-  1: required i64 clusterId
-  2: required list<simclusters_presto.ClustersScore> clusterScores
-}(persisted="true")
+struct AdhocCrossSimClustelonrIntelonractionScorelons {
+  1: relonquirelond i64 clustelonrId
+  2: relonquirelond list<simclustelonrs_prelonsto.ClustelonrsScorelon> clustelonrScorelons
+}(pelonrsistelond="truelon")

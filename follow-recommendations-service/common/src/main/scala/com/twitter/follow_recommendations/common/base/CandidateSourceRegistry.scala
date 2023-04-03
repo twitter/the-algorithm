@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.baselon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource.toEnriched
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.elonnrichelondCandidatelonSourcelon.toelonnrichelond
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
 
-// a helper structure to register and select candidate sources based on identifiers
-trait CandidateSourceRegistry[Target, Candidate] {
+// a helonlpelonr structurelon to relongistelonr and selonlelonct candidatelon sourcelons baselond on idelonntifielonrs
+trait CandidatelonSourcelonRelongistry[Targelont, Candidatelon] {
 
-  val statsReceiver: StatsReceiver
+  val statsReloncelonivelonr: StatsReloncelonivelonr
 
-  def sources: Set[CandidateSource[Target, Candidate]]
+  delonf sourcelons: Selont[CandidatelonSourcelon[Targelont, Candidatelon]]
 
-  final lazy val candidateSources: Map[
-    CandidateSourceIdentifier,
-    CandidateSource[Target, Candidate]
+  final lazy val candidatelonSourcelons: Map[
+    CandidatelonSourcelonIdelonntifielonr,
+    CandidatelonSourcelon[Targelont, Candidatelon]
   ] = {
-    val map = sources.map { c =>
-      c.identifier -> c.observe(statsReceiver)
+    val map = sourcelons.map { c =>
+      c.idelonntifielonr -> c.obselonrvelon(statsReloncelonivelonr)
     }.toMap
 
-    if (map.size != sources.size) {
-      throw new IllegalArgumentException("Duplicate Candidate Source Identifiers")
+    if (map.sizelon != sourcelons.sizelon) {
+      throw nelonw IllelongalArgumelonntelonxcelonption("Duplicatelon Candidatelon Sourcelon Idelonntifielonrs")
     }
 
     map
   }
 
-  def select(
-    identifiers: Set[CandidateSourceIdentifier]
-  ): Set[CandidateSource[Target, Candidate]] = {
-    // fails loud if the candidate source is not registered
-    identifiers.map(candidateSources(_))
+  delonf selonlelonct(
+    idelonntifielonrs: Selont[CandidatelonSourcelonIdelonntifielonr]
+  ): Selont[CandidatelonSourcelon[Targelont, Candidatelon]] = {
+    // fails loud if thelon candidatelon sourcelon is not relongistelonrelond
+    idelonntifielonrs.map(candidatelonSourcelons(_))
   }
 }

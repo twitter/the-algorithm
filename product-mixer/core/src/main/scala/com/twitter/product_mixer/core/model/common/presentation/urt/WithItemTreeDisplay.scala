@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.common.presentation.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemTreeDisplay
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ModulelonItelonmTrelonelonDisplay
 
 /*
- * Tree state declaring item’s parent relationship with any other items in
- * the module, any display indentation information, and/or collapsed display state.
+ * Trelonelon statelon delonclaring itelonm’s parelonnt relonlationship with any othelonr itelonms in
+ * thelon modulelon, any display indelonntation information, and/or collapselond display statelon.
  */
-trait WithItemTreeDisplay { self: BaseUrtItemPresentation =>
-  def treeDisplay: Option[ModuleItemTreeDisplay]
+trait WithItelonmTrelonelonDisplay { selonlf: BaselonUrtItelonmPrelonselonntation =>
+  delonf trelonelonDisplay: Option[ModulelonItelonmTrelonelonDisplay]
 }

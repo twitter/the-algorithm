@@ -1,76 +1,76 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object SimClustersANNParams {
+objelonct SimClustelonrsANNParams {
 
-  // Different SimClusters ANN cluster has its own config id (model slot)
-  object SimClustersANNConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_config_id",
-        default = "Default"
+  // Diffelonrelonnt SimClustelonrs ANN clustelonr has its own config id (modelonl slot)
+  objelonct SimClustelonrsANNConfigId
+      elonxtelonnds FSParam[String](
+        namelon = "similarity_simclustelonrs_ann_simclustelonrs_ann_config_id",
+        delonfault = "Delonfault"
       )
 
-  object SimClustersANN1ConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_1_config_id",
-        default = "20220810"
+  objelonct SimClustelonrsANN1ConfigId
+      elonxtelonnds FSParam[String](
+        namelon = "similarity_simclustelonrs_ann_simclustelonrs_ann_1_config_id",
+        delonfault = "20220810"
       )
 
-  object SimClustersANN2ConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_2_config_id",
-        default = "20220818"
+  objelonct SimClustelonrsANN2ConfigId
+      elonxtelonnds FSParam[String](
+        namelon = "similarity_simclustelonrs_ann_simclustelonrs_ann_2_config_id",
+        delonfault = "20220818"
       )
 
-  object SimClustersANN3ConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_3_config_id",
-        default = "20220819"
+  objelonct SimClustelonrsANN3ConfigId
+      elonxtelonnds FSParam[String](
+        namelon = "similarity_simclustelonrs_ann_simclustelonrs_ann_3_config_id",
+        delonfault = "20220819"
       )
 
-  object SimClustersANN5ConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_5_config_id",
-        default = "20221221"
+  objelonct SimClustelonrsANN5ConfigId
+      elonxtelonnds FSParam[String](
+        namelon = "similarity_simclustelonrs_ann_simclustelonrs_ann_5_config_id",
+        delonfault = "20221221"
       )
-  object SimClustersANN4ConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_simclusters_ann_4_config_id",
-        default = "20221220"
+  objelonct SimClustelonrsANN4ConfigId
+      elonxtelonnds FSParam[String](
+        namelon = "similarity_simclustelonrs_ann_simclustelonrs_ann_4_config_id",
+        delonfault = "20221220"
       )
-  object ExperimentalSimClustersANNConfigId
-      extends FSParam[String](
-        name = "similarity_simclusters_ann_experimental_simclusters_ann_config_id",
-        default = "20220801"
+  objelonct elonxpelonrimelonntalSimClustelonrsANNConfigId
+      elonxtelonnds FSParam[String](
+        namelon = "similarity_simclustelonrs_ann_elonxpelonrimelonntal_simclustelonrs_ann_config_id",
+        delonfault = "20220801"
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    SimClustersANNConfigId,
-    SimClustersANN1ConfigId,
-    SimClustersANN2ConfigId,
-    SimClustersANN3ConfigId,
-    SimClustersANN5ConfigId,
-    ExperimentalSimClustersANNConfigId
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    SimClustelonrsANNConfigId,
+    SimClustelonrsANN1ConfigId,
+    SimClustelonrsANN2ConfigId,
+    SimClustelonrsANN3ConfigId,
+    SimClustelonrsANN5ConfigId,
+    elonxpelonrimelonntalSimClustelonrsANNConfigId
   )
 
-  lazy val config: BaseConfig = {
-    val stringOverrides = FeatureSwitchOverrideUtil.getStringFSOverrides(
-      SimClustersANNConfigId,
-      SimClustersANN1ConfigId,
-      SimClustersANN2ConfigId,
-      SimClustersANN3ConfigId,
-      SimClustersANN5ConfigId,
-      ExperimentalSimClustersANNConfigId
+  lazy val config: BaselonConfig = {
+    val stringOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontStringFSOvelonrridelons(
+      SimClustelonrsANNConfigId,
+      SimClustelonrsANN1ConfigId,
+      SimClustelonrsANN2ConfigId,
+      SimClustelonrsANN3ConfigId,
+      SimClustelonrsANN5ConfigId,
+      elonxpelonrimelonntalSimClustelonrsANNConfigId
     )
 
-    BaseConfigBuilder()
-      .set(stringOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(stringOvelonrridelons: _*)
       .build()
   }
 }

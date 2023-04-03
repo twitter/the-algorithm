@@ -1,77 +1,77 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook
 
-import com.twitter.cds.contact_consent_state.thriftscala.PurposeOfProcessing
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.addressbook.AddressbookClient
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.follow_recommendations.common.clients.phone_storage_service.PhoneStorageServiceClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.ReversePhoneContactsClientColumn
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.cds.contact_conselonnt_statelon.thriftscala.PurposelonOfProcelonssing
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.AddrelonssbookClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.modelonls.elondgelonTypelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.modelonls.ReloncordIdelonntifielonr
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.phonelon_storagelon_selonrvicelon.PhonelonStoragelonSelonrvicelonClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.utils.RelonscuelonWithStatsUtils.relonscuelonWithStats
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.RelonvelonrselonPhonelonContactsClielonntColumn
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ReversePhoneBookSource @Inject() (
-  reversePhoneContactsClientColumn: ReversePhoneContactsClientColumn,
-  pssClient: PhoneStorageServiceClient,
-  addressBookClient: AddressbookClient,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+@Singlelonton
+class RelonvelonrselonPhonelonBookSourcelon @Injelonct() (
+  relonvelonrselonPhonelonContactsClielonntColumn: RelonvelonrselonPhonelonContactsClielonntColumn,
+  pssClielonnt: PhonelonStoragelonSelonrvicelonClielonnt,
+  addrelonssBookClielonnt: AddrelonssbookClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr = NullStatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[HasParams with HasClielonntContelonxt, CandidatelonUselonr] {
 
-  override val identifier: CandidateSourceIdentifier = ReversePhoneBookSource.Identifier
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = RelonvelonrselonPhonelonBookSourcelon.Idelonntifielonr
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
   /**
-   * Generate a list of candidates for the target
+   * Gelonnelonratelon a list of candidatelons for thelon targelont
    */
-  override def apply(target: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    val reverseCandidatesFromPhones: Stitch[Seq[Long]] = target.getOptionalUserId
-      .map { userId =>
-        pssClient
-          .getPhoneNumbers(userId, PurposeOfProcessing.ContentRecommendations)
-          .flatMap { phoneNumbers =>
-            rescueWithStats(
-              addressBookClient.getUsers(
-                userId = userId,
-                identifiers = phoneNumbers.map(phoneNumber =>
-                  RecordIdentifier(userId = None, email = None, phoneNumber = Some(phoneNumber))),
-                batchSize = ReversePhoneBookSource.NumPhoneBookEntries,
-                edgeType = ReversePhoneBookSource.DefaultEdgeType,
-                fetcherOption =
-                  if (target.params(AddressBookParams.ReadFromABV2Only)) None
-                  else Some(reversePhoneContactsClientColumn.fetcher),
-                queryOption = AddressbookClient.createQueryOption(
-                  edgeType = ReversePhoneBookSource.DefaultEdgeType,
-                  isPhone = ReversePhoneBookSource.IsPhone)
+  ovelonrridelon delonf apply(targelont: HasParams with HasClielonntContelonxt): Stitch[Selonq[CandidatelonUselonr]] = {
+    val relonvelonrselonCandidatelonsFromPhonelons: Stitch[Selonq[Long]] = targelont.gelontOptionalUselonrId
+      .map { uselonrId =>
+        pssClielonnt
+          .gelontPhonelonNumbelonrs(uselonrId, PurposelonOfProcelonssing.ContelonntReloncommelonndations)
+          .flatMap { phonelonNumbelonrs =>
+            relonscuelonWithStats(
+              addrelonssBookClielonnt.gelontUselonrs(
+                uselonrId = uselonrId,
+                idelonntifielonrs = phonelonNumbelonrs.map(phonelonNumbelonr =>
+                  ReloncordIdelonntifielonr(uselonrId = Nonelon, elonmail = Nonelon, phonelonNumbelonr = Somelon(phonelonNumbelonr))),
+                batchSizelon = RelonvelonrselonPhonelonBookSourcelon.NumPhonelonBookelonntrielons,
+                elondgelonTypelon = RelonvelonrselonPhonelonBookSourcelon.DelonfaultelondgelonTypelon,
+                felontchelonrOption =
+                  if (targelont.params(AddrelonssBookParams.RelonadFromABV2Only)) Nonelon
+                  elonlselon Somelon(relonvelonrselonPhonelonContactsClielonntColumn.felontchelonr),
+                quelonryOption = AddrelonssbookClielonnt.crelonatelonQuelonryOption(
+                  elondgelonTypelon = RelonvelonrselonPhonelonBookSourcelon.DelonfaultelondgelonTypelon,
+                  isPhonelon = RelonvelonrselonPhonelonBookSourcelon.IsPhonelon)
               ),
               stats,
-              "AddressBookClient"
+              "AddrelonssBookClielonnt"
             )
           }
-      }.getOrElse(Stitch.Nil)
+      }.gelontOrelonlselon(Stitch.Nil)
 
-    reverseCandidatesFromPhones.map(
-      _.take(ReversePhoneBookSource.NumPhoneBookEntries)
+    relonvelonrselonCandidatelonsFromPhonelons.map(
+      _.takelon(RelonvelonrselonPhonelonBookSourcelon.NumPhonelonBookelonntrielons)
         .map(
-          CandidateUser(_, score = Some(CandidateUser.DefaultCandidateScore))
-            .withCandidateSource(identifier))
+          CandidatelonUselonr(_, scorelon = Somelon(CandidatelonUselonr.DelonfaultCandidatelonScorelon))
+            .withCandidatelonSourcelon(idelonntifielonr))
     )
   }
 }
 
-object ReversePhoneBookSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.ReversePhoneBook.toString)
-  val NumPhoneBookEntries: Int = 500
-  val IsPhone = true
-  val DefaultEdgeType: EdgeType = EdgeType.Reverse
+objelonct RelonvelonrselonPhonelonBookSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.RelonvelonrselonPhonelonBook.toString)
+  val NumPhonelonBookelonntrielons: Int = 500
+  val IsPhonelon = truelon
+  val DelonfaultelondgelonTypelon: elondgelonTypelon = elondgelonTypelon.Relonvelonrselon
 }

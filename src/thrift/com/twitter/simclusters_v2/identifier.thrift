@@ -1,205 +1,205 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.identifier
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.idelonntifielonr
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
-include "com/twitter/simclusters_v2/online_store.thrift"
+includelon "com/twittelonr/simclustelonrs_v2/onlinelon_storelon.thrift"
 
 /**
-  * The uniform type for a SimClusters Embeddings.
-  * Each embeddings have the uniform underlying storage.
-  * Warning: Every EmbeddingType should map to one and only one InternalId.
+  * Thelon uniform typelon for a SimClustelonrs elonmbelonddings.
+  * elonach elonmbelonddings havelon thelon uniform undelonrlying storagelon.
+  * Warning: elonvelonry elonmbelonddingTypelon should map to onelon and only onelon IntelonrnalId.
   **/
-enum EmbeddingType {
-  // Reserve 001 - 99 for Tweet embeddings
-	FavBasedTweet = 1, // Deprecated
-	FollowBasedTweet = 2, // Deprecated
-	LogFavBasedTweet = 3, // Production Version
-	FavBasedTwistlyTweet = 10, // Deprecated
-	LogFavBasedTwistlyTweet = 11, // Deprecated
-	LogFavLongestL2EmbeddingTweet = 12, // Production Version
+elonnum elonmbelonddingTypelon {
+  // Relonselonrvelon 001 - 99 for Twelonelont elonmbelonddings
+	FavBaselondTwelonelont = 1, // Delonpreloncatelond
+	FollowBaselondTwelonelont = 2, // Delonpreloncatelond
+	LogFavBaselondTwelonelont = 3, // Production Velonrsion
+	FavBaselondTwistlyTwelonelont = 10, // Delonpreloncatelond
+	LogFavBaselondTwistlyTwelonelont = 11, // Delonpreloncatelond
+	LogFavLongelonstL2elonmbelonddingTwelonelont = 12, // Production Velonrsion
 
-  // Tweet embeddings generated from non-fav events
-  // Naming convention: {Event}{Score}BasedTweet
-  // {Event}: The interaction event we use to build the tweet embeddings
-  // {Score}: The score from user InterestedIn embeddings
-  VideoPlayBack50LogFavBasedTweet = 21,
-  RetweetLogFavBasedTweet = 22,
-  ReplyLogFavBasedTweet = 23,
-  PushOpenLogFavBasedTweet = 24,
+  // Twelonelont elonmbelonddings gelonnelonratelond from non-fav elonvelonnts
+  // Naming convelonntion: {elonvelonnt}{Scorelon}BaselondTwelonelont
+  // {elonvelonnt}: Thelon intelonraction elonvelonnt welon uselon to build thelon twelonelont elonmbelonddings
+  // {Scorelon}: Thelon scorelon from uselonr IntelonrelonstelondIn elonmbelonddings
+  VidelonoPlayBack50LogFavBaselondTwelonelont = 21,
+  RelontwelonelontLogFavBaselondTwelonelont = 22,
+  RelonplyLogFavBaselondTwelonelont = 23,
+  PushOpelonnLogFavBaselondTwelonelont = 24,
 
-  // [Experimental] Offline generated FavThroughRate-based Tweet Embedding
-  Pop1000RankDecay11Tweet = 30,
-  Pop10000RankDecay11Tweet = 31,
-  OonPop1000RankDecayTweet = 32,
+  // [elonxpelonrimelonntal] Offlinelon gelonnelonratelond FavThroughRatelon-baselond Twelonelont elonmbelondding
+  Pop1000RankDeloncay11Twelonelont = 30,
+  Pop10000RankDeloncay11Twelonelont = 31,
+  OonPop1000RankDeloncayTwelonelont = 32,
 
-  // [Experimental] Offline generated produciton-like LogFavScore-based Tweet Embedding
-  OfflineGeneratedLogFavBasedTweet = 40,
+  // [elonxpelonrimelonntal] Offlinelon gelonnelonratelond produciton-likelon LogFavScorelon-baselond Twelonelont elonmbelondding
+  OfflinelonGelonnelonratelondLogFavBaselondTwelonelont = 40,
 
-  // Reserve 51-59 for Ads Embedding
-  LogFavBasedAdsTweet = 51, // Experimenal embedding for ads tweet candidate
-  LogFavClickBasedAdsTweet = 52, // Experimenal embedding for ads tweet candidate
+  // Relonselonrvelon 51-59 for Ads elonmbelondding
+  LogFavBaselondAdsTwelonelont = 51, // elonxpelonrimelonnal elonmbelondding for ads twelonelont candidatelon
+  LogFavClickBaselondAdsTwelonelont = 52, // elonxpelonrimelonnal elonmbelondding for ads twelonelont candidatelon
 
-  // Reserve 60-69 for Evergreen content
-  LogFavBasedEvergreenTweet = 60,
-  LogFavBasedRealTimeTweet = 65,
+  // Relonselonrvelon 60-69 for elonvelonrgrelonelonn contelonnt
+  LogFavBaselondelonvelonrgrelonelonnTwelonelont = 60,
+  LogFavBaselondRelonalTimelonTwelonelont = 65,
 
-	// Reserve 101 to 149 for Semantic Core Entity embeddings
-  FavBasedSematicCoreEntity = 101, // Deprecated
-  FollowBasedSematicCoreEntity = 102, // Deprecated
-  FavBasedHashtagEntity = 103, // Deprecated
-  FollowBasedHashtagEntity = 104, // Deprecated
-  ProducerFavBasedSemanticCoreEntity = 105, // Deprecated
-  ProducerFollowBasedSemanticCoreEntity = 106,// Deprecated
-  FavBasedLocaleSemanticCoreEntity = 107, // Deprecated
-  FollowBasedLocaleSemanticCoreEntity = 108, // Deprecated
-  LogFavBasedLocaleSemanticCoreEntity = 109, // Deprecated
-  LanguageFilteredProducerFavBasedSemanticCoreEntity = 110, // Deprecated
-  LanguageFilteredFavBasedLocaleSemanticCoreEntity = 111, // Deprecated
-  FavTfgTopic = 112, // TFG topic embedding built from fav-based user interestedIn
-  LogFavTfgTopic = 113, // TFG topic embedding built from logfav-based user interestedIn
-  FavInferredLanguageTfgTopic = 114, // TFG topic embedding built using inferred consumed languages
-  FavBasedKgoApeTopic = 115, // topic embedding using fav-based aggregatable producer embedding of KGO seed accounts.
-  LogFavBasedKgoApeTopic = 116, // topic embedding using log fav-based aggregatable producer embedding of KGO seed accounts.
-  FavBasedOnboardingApeTopic = 117, // topic embedding using fav-based aggregatable producer embedding of onboarding seed accounts.
-  LogFavBasedOnboardingApeTopic = 118, // topic embedding using log fav-based aggregatable producer embedding of onboarding seed accounts.
-  LogFavApeBasedMuseTopic = 119, // Deprecated
-  LogFavApeBasedMuseTopicExperiment = 120 // Deprecated
+	// Relonselonrvelon 101 to 149 for Selonmantic Corelon elonntity elonmbelonddings
+  FavBaselondSelonmaticCorelonelonntity = 101, // Delonpreloncatelond
+  FollowBaselondSelonmaticCorelonelonntity = 102, // Delonpreloncatelond
+  FavBaselondHashtagelonntity = 103, // Delonpreloncatelond
+  FollowBaselondHashtagelonntity = 104, // Delonpreloncatelond
+  ProducelonrFavBaselondSelonmanticCorelonelonntity = 105, // Delonpreloncatelond
+  ProducelonrFollowBaselondSelonmanticCorelonelonntity = 106,// Delonpreloncatelond
+  FavBaselondLocalelonSelonmanticCorelonelonntity = 107, // Delonpreloncatelond
+  FollowBaselondLocalelonSelonmanticCorelonelonntity = 108, // Delonpreloncatelond
+  LogFavBaselondLocalelonSelonmanticCorelonelonntity = 109, // Delonpreloncatelond
+  LanguagelonFiltelonrelondProducelonrFavBaselondSelonmanticCorelonelonntity = 110, // Delonpreloncatelond
+  LanguagelonFiltelonrelondFavBaselondLocalelonSelonmanticCorelonelonntity = 111, // Delonpreloncatelond
+  FavTfgTopic = 112, // TFG topic elonmbelondding built from fav-baselond uselonr intelonrelonstelondIn
+  LogFavTfgTopic = 113, // TFG topic elonmbelondding built from logfav-baselond uselonr intelonrelonstelondIn
+  FavInfelonrrelondLanguagelonTfgTopic = 114, // TFG topic elonmbelondding built using infelonrrelond consumelond languagelons
+  FavBaselondKgoApelonTopic = 115, // topic elonmbelondding using fav-baselond aggrelongatablelon producelonr elonmbelondding of KGO selonelond accounts.
+  LogFavBaselondKgoApelonTopic = 116, // topic elonmbelondding using log fav-baselond aggrelongatablelon producelonr elonmbelondding of KGO selonelond accounts.
+  FavBaselondOnboardingApelonTopic = 117, // topic elonmbelondding using fav-baselond aggrelongatablelon producelonr elonmbelondding of onboarding selonelond accounts.
+  LogFavBaselondOnboardingApelonTopic = 118, // topic elonmbelondding using log fav-baselond aggrelongatablelon producelonr elonmbelondding of onboarding selonelond accounts.
+  LogFavApelonBaselondMuselonTopic = 119, // Delonpreloncatelond
+  LogFavApelonBaselondMuselonTopicelonxpelonrimelonnt = 120 // Delonpreloncatelond
 
-  // Reserved 201 - 299 for Producer embeddings (KnownFor)
-  FavBasedProducer = 201
-  FollowBasedProducer = 202
-  AggregatableFavBasedProducer = 203 // fav-based aggregatable producer embedding.
-  AggregatableLogFavBasedProducer = 204 // logfav-based aggregatable producer embedding.
-  RelaxedAggregatableLogFavBasedProducer = 205 // logfav-based aggregatable producer embedding.
-  AggregatableFollowBasedProducer = 206 // follow-based aggregatable producer embedding.
+  // Relonselonrvelond 201 - 299 for Producelonr elonmbelonddings (KnownFor)
+  FavBaselondProducelonr = 201
+  FollowBaselondProducelonr = 202
+  AggrelongatablelonFavBaselondProducelonr = 203 // fav-baselond aggrelongatablelon producelonr elonmbelondding.
+  AggrelongatablelonLogFavBaselondProducelonr = 204 // logfav-baselond aggrelongatablelon producelonr elonmbelondding.
+  RelonlaxelondAggrelongatablelonLogFavBaselondProducelonr = 205 // logfav-baselond aggrelongatablelon producelonr elonmbelondding.
+  AggrelongatablelonFollowBaselondProducelonr = 206 // follow-baselond aggrelongatablelon producelonr elonmbelondding.
   KnownFor = 300
 
-  // Reserved 301 - 399 for User InterestedIn embeddings
-  FavBasedUserInterestedIn = 301
-  FollowBasedUserInterestedIn = 302
-  LogFavBasedUserInterestedIn = 303
-  RecentFollowBasedUserInterestedIn = 304 // interested-in embedding based on aggregating producer embeddings of recent follows
-  FilteredUserInterestedIn = 305 // interested-in embedding used by twistly read path
-  LogFavBasedUserInterestedInFromAPE = 306
-  FollowBasedUserInterestedInFromAPE = 307
-  TwiceUserInterestedIn = 308 // interested-in multi-embedding based on clustering producer embeddings of neighbors
-  UnfilteredUserInterestedIn = 309
-  UserNextInterestedIn = 310 // next interested-in embedding generated from BeT
+  // Relonselonrvelond 301 - 399 for Uselonr IntelonrelonstelondIn elonmbelonddings
+  FavBaselondUselonrIntelonrelonstelondIn = 301
+  FollowBaselondUselonrIntelonrelonstelondIn = 302
+  LogFavBaselondUselonrIntelonrelonstelondIn = 303
+  ReloncelonntFollowBaselondUselonrIntelonrelonstelondIn = 304 // intelonrelonstelond-in elonmbelondding baselond on aggrelongating producelonr elonmbelonddings of reloncelonnt follows
+  FiltelonrelondUselonrIntelonrelonstelondIn = 305 // intelonrelonstelond-in elonmbelondding uselond by twistly relonad path
+  LogFavBaselondUselonrIntelonrelonstelondInFromAPelon = 306
+  FollowBaselondUselonrIntelonrelonstelondInFromAPelon = 307
+  TwicelonUselonrIntelonrelonstelondIn = 308 // intelonrelonstelond-in multi-elonmbelondding baselond on clustelonring producelonr elonmbelonddings of nelonighbors
+  UnfiltelonrelondUselonrIntelonrelonstelondIn = 309
+  UselonrNelonxtIntelonrelonstelondIn = 310 // nelonxt intelonrelonstelond-in elonmbelondding gelonnelonratelond from BelonT
 
-  // Denser User InterestedIn, generated by Producer embeddings.
-  FavBasedUserInterestedInFromPE = 311
-  FollowBasedUserInterestedInFromPE = 312
-  LogFavBasedUserInterestedInFromPE = 313
-  FilteredUserInterestedInFromPE = 314 // interested-in embedding used by twistly read path
+  // Delonnselonr Uselonr IntelonrelonstelondIn, gelonnelonratelond by Producelonr elonmbelonddings.
+  FavBaselondUselonrIntelonrelonstelondInFromPelon = 311
+  FollowBaselondUselonrIntelonrelonstelondInFromPelon = 312
+  LogFavBaselondUselonrIntelonrelonstelondInFromPelon = 313
+  FiltelonrelondUselonrIntelonrelonstelondInFromPelon = 314 // intelonrelonstelond-in elonmbelondding uselond by twistly relonad path
 
-  // [Experimental] Denser User InterestedIn, generated by aggregating IIAPE embedding from AddressBook
-  LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE = 320
-  LogFavBasedUserInterestedAverageAddressBookFromIIAPE = 321
-  LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE = 322
-  LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE = 323
-  LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE = 324
-  LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE = 325
+  // [elonxpelonrimelonntal] Delonnselonr Uselonr IntelonrelonstelondIn, gelonnelonratelond by aggrelongating IIAPelon elonmbelondding from AddrelonssBook
+  LogFavBaselondUselonrIntelonrelonstelondMaxpoolingAddrelonssBookFromIIAPelon = 320
+  LogFavBaselondUselonrIntelonrelonstelondAvelonragelonAddrelonssBookFromIIAPelon = 321
+  LogFavBaselondUselonrIntelonrelonstelondBooktypelonMaxpoolingAddrelonssBookFromIIAPelon = 322
+  LogFavBaselondUselonrIntelonrelonstelondLargelonstDimMaxpoolingAddrelonssBookFromIIAPelon = 323
+  LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon = 324
+  LogFavBaselondUselonrIntelonrelonstelondConnelonctelondMaxpoolingAddrelonssBookFromIIAPelon = 325
 
-  //Reserved 401 - 500 for Space embedding
-  FavBasedApeSpace = 401 // DEPRECATED
-  LogFavBasedListenerSpace = 402 // DEPRECATED
-  LogFavBasedAPESpeakerSpace = 403 // DEPRCATED
-  LogFavBasedUserInterestedInListenerSpace = 404 // DEPRECATED
+  //Relonselonrvelond 401 - 500 for Spacelon elonmbelondding
+  FavBaselondApelonSpacelon = 401 // DelonPRelonCATelonD
+  LogFavBaselondListelonnelonrSpacelon = 402 // DelonPRelonCATelonD
+  LogFavBaselondAPelonSpelonakelonrSpacelon = 403 // DelonPRCATelonD
+  LogFavBaselondUselonrIntelonrelonstelondInListelonnelonrSpacelon = 404 // DelonPRelonCATelonD
 
-  // Experimental, internal-only IDs
-  ExperimentalThirtyDayRecentFollowBasedUserInterestedIn = 10000 // Like RecentFollowBasedUserInterestedIn, except limited to last 30 days
-	ExperimentalLogFavLongestL2EmbeddingTweet = 10001 // DEPRECATED
-}(persisted = 'true', hasPersonalData = 'false')
+  // elonxpelonrimelonntal, intelonrnal-only IDs
+  elonxpelonrimelonntalThirtyDayReloncelonntFollowBaselondUselonrIntelonrelonstelondIn = 10000 // Likelon ReloncelonntFollowBaselondUselonrIntelonrelonstelondIn, elonxcelonpt limitelond to last 30 days
+	elonxpelonrimelonntalLogFavLongelonstL2elonmbelonddingTwelonelont = 10001 // DelonPRelonCATelonD
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
 /**
-  * The uniform type for a SimClusters MultiEmbeddings.
-  * Warning: Every MultiEmbeddingType should map to one and only one InternalId.
+  * Thelon uniform typelon for a SimClustelonrs Multielonmbelonddings.
+  * Warning: elonvelonry MultielonmbelonddingTypelon should map to onelon and only onelon IntelonrnalId.
   **/
-enum MultiEmbeddingType {
-  // Reserved 0-99 for Tweet based MultiEmbedding
+elonnum MultielonmbelonddingTypelon {
+  // Relonselonrvelond 0-99 for Twelonelont baselond Multielonmbelondding
 
-  // Reserved 100 - 199 for Topic based MultiEmbedding
-  LogFavApeBasedMuseTopic = 100 // Deprecated
-  LogFavApeBasedMuseTopicExperiment = 101 // Deprecated
+  // Relonselonrvelond 100 - 199 for Topic baselond Multielonmbelondding
+  LogFavApelonBaselondMuselonTopic = 100 // Delonpreloncatelond
+  LogFavApelonBaselondMuselonTopicelonxpelonrimelonnt = 101 // Delonpreloncatelond
 
-  // Reserved 301 - 399 for User InterestedIn embeddings
-  TwiceUserInterestedIn = 301 // interested-in multi-embedding based on clustering producer embeddings of neighbors
-}(persisted = 'true', hasPersonalData = 'true')
+  // Relonselonrvelond 301 - 399 for Uselonr IntelonrelonstelondIn elonmbelonddings
+  TwicelonUselonrIntelonrelonstelondIn = 301 // intelonrelonstelond-in multi-elonmbelondding baselond on clustelonring producelonr elonmbelonddings of nelonighbors
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-// Deprecated. Please use TopicId for future cases.
-struct LocaleEntityId {
-  1: i64 entityId
-  2: string language
-}(persisted = 'true', hasPersonalData = 'false')
+// Delonpreloncatelond. Plelonaselon uselon TopicId for futurelon caselons.
+struct LocalelonelonntityId {
+  1: i64 elonntityId
+  2: string languagelon
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-enum EngagementType {
-  Favorite = 1,
-  Retweet = 2,
+elonnum elonngagelonmelonntTypelon {
+  Favoritelon = 1,
+  Relontwelonelont = 2,
 }
 
-struct UserEngagedTweetId {
-  1: i64 tweetId(personalDataType = 'TweetId')
-  2: i64 userId(personalDataType = 'UserId')
-  3: EngagementType engagementType(personalDataType = 'EventType')
-}(persisted = 'true', hasPersonalData = 'true')
+struct UselonrelonngagelondTwelonelontId {
+  1: i64 twelonelontId(pelonrsonalDataTypelon = 'TwelonelontId')
+  2: i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  3: elonngagelonmelonntTypelon elonngagelonmelonntTypelon(pelonrsonalDataTypelon = 'elonvelonntTypelon')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
 struct TopicId {
-  1: i64 entityId (personalDataType = 'SemanticcoreClassification')
-  // 2-letter ISO 639-1 language code
-  2: optional string language
-  // 2-letter ISO 3166-1 alpha-2 country code
+  1: i64 elonntityId (pelonrsonalDataTypelon = 'SelonmanticcorelonClassification')
+  // 2-lelonttelonr ISO 639-1 languagelon codelon
+  2: optional string languagelon
+  // 2-lelonttelonr ISO 3166-1 alpha-2 country codelon
   3: optional string country
-}(persisted = 'true', hasPersonalData = 'false')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
 struct TopicSubId {
-  1: i64 entityId (personalDataType = 'SemanticcoreClassification')
-  // 2-letter ISO 639-1 language code
-  2: optional string language
-  // 2-letter ISO 3166-1 alpha-2 country code
+  1: i64 elonntityId (pelonrsonalDataTypelon = 'SelonmanticcorelonClassification')
+  // 2-lelonttelonr ISO 639-1 languagelon codelon
+  2: optional string languagelon
+  // 2-lelonttelonr ISO 3166-1 alpha-2 country codelon
   3: optional string country
   4: i32 subId
-}(persisted = 'true', hasPersonalData = 'true')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-// Will be used for testing purposes in DDG 15536, 15534
-struct UserWithLanguageId {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: optional string langCode(personalDataType = 'InferredLanguage')
-}(persisted = 'true', hasPersonalData = 'true')
+// Will belon uselond for telonsting purposelons in DDG 15536, 15534
+struct UselonrWithLanguagelonId {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: optional string langCodelon(pelonrsonalDataTypelon = 'InfelonrrelondLanguagelon')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
 /**
-  * The internal identifier type.
-  * Need to add ordering in [[com.twitter.simclusters_v2.common.SimClustersEmbeddingId]]
-  * when adding a new type.
+  * Thelon intelonrnal idelonntifielonr typelon.
+  * Nelonelond to add ordelonring in [[com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelonddingId]]
+  * whelonn adding a nelonw typelon.
   **/
-union InternalId {
-  1: i64 tweetId(personalDataType = 'TweetId')
-  2: i64 userId(personalDataType = 'UserId')
-  3: i64 entityId(personalDataType = 'SemanticcoreClassification')
-  4: string hashtag(personalDataType = 'PublicTweetEntitiesAndMetadata')
-  5: i32 clusterId
-  6: LocaleEntityId localeEntityId(personalDataType = 'SemanticcoreClassification')
-  7: UserEngagedTweetId userEngagedTweetId
+union IntelonrnalId {
+  1: i64 twelonelontId(pelonrsonalDataTypelon = 'TwelonelontId')
+  2: i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  3: i64 elonntityId(pelonrsonalDataTypelon = 'SelonmanticcorelonClassification')
+  4: string hashtag(pelonrsonalDataTypelon = 'PublicTwelonelontelonntitielonsAndMelontadata')
+  5: i32 clustelonrId
+  6: LocalelonelonntityId localelonelonntityId(pelonrsonalDataTypelon = 'SelonmanticcorelonClassification')
+  7: UselonrelonngagelondTwelonelontId uselonrelonngagelondTwelonelontId
   8: TopicId topicId
   9: TopicSubId topicSubId
-  10: string spaceId
-  11: UserWithLanguageId userWithLanguageId
-}(persisted = 'true', hasPersonalData = 'true')
+  10: string spacelonId
+  11: UselonrWithLanguagelonId uselonrWithLanguagelonId
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
 /**
-  * A uniform identifier type for all kinds of SimClusters based embeddings.
+  * A uniform idelonntifielonr typelon for all kinds of SimClustelonrs baselond elonmbelonddings.
   **/
-struct SimClustersEmbeddingId {
-  1: required EmbeddingType embeddingType
-  2: required online_store.ModelVersion modelVersion
-  3: required InternalId internalId
-}(persisted = 'true', hasPersonalData = 'true')
+struct SimClustelonrselonmbelonddingId {
+  1: relonquirelond elonmbelonddingTypelon elonmbelonddingTypelon
+  2: relonquirelond onlinelon_storelon.ModelonlVelonrsion modelonlVelonrsion
+  3: relonquirelond IntelonrnalId intelonrnalId
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
 /**
-  * A uniform identifier type for multiple SimClusters embeddings
+  * A uniform idelonntifielonr typelon for multiplelon SimClustelonrs elonmbelonddings
   **/
-struct SimClustersMultiEmbeddingId {
-  1: required MultiEmbeddingType embeddingType
-  2: required online_store.ModelVersion modelVersion
-  3: required InternalId internalId
-}(persisted = 'true', hasPersonalData = 'true')
+struct SimClustelonrsMultielonmbelonddingId {
+  1: relonquirelond MultielonmbelonddingTypelon elonmbelonddingTypelon
+  2: relonquirelond onlinelon_storelon.ModelonlVelonrsion modelonlVelonrsion
+  3: relonquirelond IntelonrnalId intelonrnalId
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')

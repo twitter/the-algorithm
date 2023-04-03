@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.google.inject.Singleton
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionClientColumn
-import javax.inject.Inject
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.StrongTielonPrelondictionClielonntColumn
+import javax.injelonct.Injelonct
 
 /**
- * Main source for strong-tie-prediction candidates generated offline.
+ * Main sourcelon for strong-tielon-prelondiction candidatelons gelonnelonratelond offlinelon.
  */
-@Singleton
-class OfflineStpSourceWithLegacyPmiMatrix @Inject() (
-  stpColumn: StrongTiePredictionClientColumn)
-    extends OfflineStrongTiePredictionBaseSource(stpColumn.fetcher) {
-  override val identifier: CandidateSourceIdentifier =
-    OfflineStpSourceWithLegacyPmiMatrix.Identifier
+@Singlelonton
+class OfflinelonStpSourcelonWithLelongacyPmiMatrix @Injelonct() (
+  stpColumn: StrongTielonPrelondictionClielonntColumn)
+    elonxtelonnds OfflinelonStrongTielonPrelondictionBaselonSourcelon(stpColumn.felontchelonr) {
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    OfflinelonStpSourcelonWithLelongacyPmiMatrix.Idelonntifielonr
 }
 
-object OfflineStpSourceWithLegacyPmiMatrix {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.StrongTiePredictionRec.toString)
+objelonct OfflinelonStpSourcelonWithLelongacyPmiMatrix {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr(Algorithm.StrongTielonPrelondictionRelonc.toString)
 }

@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.repository
+packagelon com.twittelonr.timelonlinelonrankelonr.relonpository
 
-import com.twitter.timelineranker.model.ReverseChronTimelineQuery
-import com.twitter.timelineranker.model.Timeline
-import com.twitter.timelineranker.parameters.revchron.ReverseChronTimelineQueryContextBuilder
-import com.twitter.timelineranker.source.ReverseChronHomeTimelineSource
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelonrankelonr.modelonl.RelonvelonrselonChronTimelonlinelonQuelonry
+import com.twittelonr.timelonlinelonrankelonr.modelonl.Timelonlinelon
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.relonvchron.RelonvelonrselonChronTimelonlinelonQuelonryContelonxtBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.sourcelon.RelonvelonrselonChronHomelonTimelonlinelonSourcelon
+import com.twittelonr.util.Futurelon
 
 /**
- * A repository of reverse-chron home timelines.
+ * A relonpository of relonvelonrselon-chron homelon timelonlinelons.
  *
- * It does not cache any results therefore forwards all calls to the underlying source.
+ * It doelons not cachelon any relonsults thelonrelonforelon forwards all calls to thelon undelonrlying sourcelon.
  */
-class ReverseChronHomeTimelineRepository(
-  source: ReverseChronHomeTimelineSource,
-  contextBuilder: ReverseChronTimelineQueryContextBuilder) {
-  def get(query: ReverseChronTimelineQuery): Future[Timeline] = {
-    contextBuilder(query).flatMap(source.get)
+class RelonvelonrselonChronHomelonTimelonlinelonRelonpository(
+  sourcelon: RelonvelonrselonChronHomelonTimelonlinelonSourcelon,
+  contelonxtBuildelonr: RelonvelonrselonChronTimelonlinelonQuelonryContelonxtBuildelonr) {
+  delonf gelont(quelonry: RelonvelonrselonChronTimelonlinelonQuelonry): Futurelon[Timelonlinelon] = {
+    contelonxtBuildelonr(quelonry).flatMap(sourcelon.gelont)
   }
 }

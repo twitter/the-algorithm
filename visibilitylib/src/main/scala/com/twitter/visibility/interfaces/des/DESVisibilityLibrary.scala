@@ -1,70 +1,70 @@
-package com.twitter.visibility.interfaces.des
+packagelon com.twittelonr.visibility.intelonrfacelons.delons
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.StratoTweetLabelMaps
-import com.twitter.visibility.builder.tweets.TweetFeatures
-import com.twitter.visibility.common.SafetyLabelMapSource
-import com.twitter.visibility.features.AuthorId
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.interfaces.common.tweets.SafetyLabelMapFetcherType
-import com.twitter.visibility.models.ContentId.TweetId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.twelonelonts.StratoTwelonelontLabelonlMaps
+import com.twittelonr.visibility.buildelonr.twelonelonts.TwelonelontFelonaturelons
+import com.twittelonr.visibility.common.SafelontyLabelonlMapSourcelon
+import com.twittelonr.visibility.felonaturelons.AuthorId
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.intelonrfacelons.common.twelonelonts.SafelontyLabelonlMapFelontchelonrTypelon
+import com.twittelonr.visibility.modelonls.ContelonntId.TwelonelontId
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class DESVisibilityRequest(
-  tweet: Tweet,
-  visibilitySurface: SafetyLevel,
-  viewerContext: ViewerContext)
+caselon class DelonSVisibilityRelonquelonst(
+  twelonelont: Twelonelont,
+  visibilitySurfacelon: SafelontyLelonvelonl,
+  vielonwelonrContelonxt: VielonwelonrContelonxt)
 
-object DESVisibilityLibrary {
-  type Type = DESVisibilityRequest => Stitch[VisibilityResult]
+objelonct DelonSVisibilityLibrary {
+  typelon Typelon = DelonSVisibilityRelonquelonst => Stitch[VisibilityRelonsult]
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    getLabelMap: SafetyLabelMapFetcherType,
-    enableShimFeatureHydration: Any => Boolean = _ => false
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    gelontLabelonlMap: SafelontyLabelonlMapFelontchelonrTypelon,
+    elonnablelonShimFelonaturelonHydration: Any => Boolelonan = _ => falselon
+  ): Typelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr
+    val vfelonnginelonCountelonr = libraryStatsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
 
-    val tweetLabelMap = new StratoTweetLabelMaps(
-      SafetyLabelMapSource.fromSafetyLabelMapFetcher(getLabelMap))
-    val tweetFeatures = new TweetFeatures(tweetLabelMap, libraryStatsReceiver)
+    val twelonelontLabelonlMap = nelonw StratoTwelonelontLabelonlMaps(
+      SafelontyLabelonlMapSourcelon.fromSafelontyLabelonlMapFelontchelonr(gelontLabelonlMap))
+    val twelonelontFelonaturelons = nelonw TwelonelontFelonaturelons(twelonelontLabelonlMap, libraryStatsReloncelonivelonr)
 
-    { request: DESVisibilityRequest =>
-      vfEngineCounter.incr()
+    { relonquelonst: DelonSVisibilityRelonquelonst =>
+      vfelonnginelonCountelonr.incr()
 
-      val contentId = TweetId(request.tweet.id)
-      val authorId = coreData.userId
+      val contelonntId = TwelonelontId(relonquelonst.twelonelont.id)
+      val authorId = corelonData.uselonrId
 
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            tweetFeatures.forTweet(request.tweet),
-            _.withConstantFeature(AuthorId, Set(authorId))
+      val felonaturelonMap =
+        visibilityLibrary.felonaturelonMapBuildelonr(
+          Selonq(
+            twelonelontFelonaturelons.forTwelonelont(relonquelonst.twelonelont),
+            _.withConstantFelonaturelon(AuthorId, Selont(authorId))
           )
         )
 
-      val isShimFeatureHydrationEnabled = enableShimFeatureHydration()
+      val isShimFelonaturelonHydrationelonnablelond = elonnablelonShimFelonaturelonHydration()
 
-      if (isShimFeatureHydrationEnabled) {
-        FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-          visibilityLibrary.runRuleEngine(
-            contentId,
-            resolvedFeatureMap,
-            request.viewerContext,
-            request.visibilitySurface
+      if (isShimFelonaturelonHydrationelonnablelond) {
+        FelonaturelonMap.relonsolvelon(felonaturelonMap, libraryStatsReloncelonivelonr).flatMap { relonsolvelondFelonaturelonMap =>
+          visibilityLibrary.runRulelonelonnginelon(
+            contelonntId,
+            relonsolvelondFelonaturelonMap,
+            relonquelonst.vielonwelonrContelonxt,
+            relonquelonst.visibilitySurfacelon
           )
         }
-      } else {
-        visibilityLibrary.runRuleEngine(
-          contentId,
-          featureMap,
-          request.viewerContext,
-          request.visibilitySurface
+      } elonlselon {
+        visibilityLibrary.runRulelonelonnginelon(
+          contelonntId,
+          felonaturelonMap,
+          relonquelonst.vielonwelonrContelonxt,
+          relonquelonst.visibilitySurfacelon
         )
       }
     }

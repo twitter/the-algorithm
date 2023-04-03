@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-// intersection of recent followers and followed by
-trait HasMutualFollowedUserIds extends HasRecentFollowedUserIds with HasRecentFollowedByUserIds {
+// intelonrselonction of reloncelonnt followelonrs and followelond by
+trait HasMutualFollowelondUselonrIds elonxtelonnds HasReloncelonntFollowelondUselonrIds with HasReloncelonntFollowelondByUselonrIds {
 
-  lazy val recentMutualFollows: Seq[Long] =
-    recentFollowedUserIds.getOrElse(Nil).intersect(recentFollowedByUserIds.getOrElse(Nil))
+  lazy val reloncelonntMutualFollows: Selonq[Long] =
+    reloncelonntFollowelondUselonrIds.gelontOrelonlselon(Nil).intelonrselonct(reloncelonntFollowelondByUselonrIds.gelontOrelonlselon(Nil))
 
-  lazy val numRecentMutualFollows: Int = recentMutualFollows.size
+  lazy val numReloncelonntMutualFollows: Int = reloncelonntMutualFollows.sizelon
 }

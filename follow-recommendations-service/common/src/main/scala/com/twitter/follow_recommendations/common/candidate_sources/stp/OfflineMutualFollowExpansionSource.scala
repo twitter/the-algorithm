@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.google.inject.Singleton
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.onboarding.userrecs.MutualFollowExpansionClientColumn
-import javax.inject.Inject
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.MutualFollowelonxpansionClielonntColumn
+import javax.injelonct.Injelonct
 
 /**
- * A source that finds the mutual follows of one's mutual follows that one isn't following already.
+ * A sourcelon that finds thelon mutual follows of onelon's mutual follows that onelon isn't following alrelonady.
  */
-@Singleton
-class OfflineMutualFollowExpansionSource @Inject() (
-  column: MutualFollowExpansionClientColumn)
-    extends OfflineStrongTiePredictionBaseSource(column.fetcher) {
-  override val identifier: CandidateSourceIdentifier =
-    OfflineMutualFollowExpansionSource.Identifier
+@Singlelonton
+class OfflinelonMutualFollowelonxpansionSourcelon @Injelonct() (
+  column: MutualFollowelonxpansionClielonntColumn)
+    elonxtelonnds OfflinelonStrongTielonPrelondictionBaselonSourcelon(column.felontchelonr) {
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    OfflinelonMutualFollowelonxpansionSourcelon.Idelonntifielonr
 }
 
-object OfflineMutualFollowExpansionSource {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.MutualFollowExpansion.toString)
+objelonct OfflinelonMutualFollowelonxpansionSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr(Algorithm.MutualFollowelonxpansion.toString)
 }

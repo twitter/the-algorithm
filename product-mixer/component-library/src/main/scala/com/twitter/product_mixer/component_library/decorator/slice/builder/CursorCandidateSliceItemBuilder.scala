@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.decorator.slice.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.slicelon.buildelonr
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.component_library.model.candidate.{
-  NextCursor => CursorCandidateNextCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.{
+  NelonxtCursor => CursorCandidatelonNelonxtCursor
 }
-import com.twitter.product_mixer.component_library.model.candidate.{
-  PreviousCursor => CursorCandidatePreviousCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.{
+  PrelonviousCursor => CursorCandidatelonPrelonviousCursor
 }
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.slice.NextCursor
-import com.twitter.product_mixer.core.model.marshalling.response.slice.PreviousCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.slice.builder.CandidateSliceItemBuilder
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.CursorItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.NelonxtCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.PrelonviousCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.slicelon.buildelonr.CandidatelonSlicelonItelonmBuildelonr
 
-case class CursorCandidateSliceItemBuilder()
-    extends CandidateSliceItemBuilder[PipelineQuery, CursorCandidate, CursorItem] {
+caselon class CursorCandidatelonSlicelonItelonmBuildelonr()
+    elonxtelonnds CandidatelonSlicelonItelonmBuildelonr[PipelonlinelonQuelonry, CursorCandidatelon, CursorItelonm] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: CursorCandidate,
-    featureMap: FeatureMap
-  ): CursorItem =
-    candidate.cursorType match {
-      case CursorCandidateNextCursor => CursorItem(candidate.value, NextCursor)
-      case CursorCandidatePreviousCursor => CursorItem(candidate.value, PreviousCursor)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: CursorCandidatelon,
+    felonaturelonMap: FelonaturelonMap
+  ): CursorItelonm =
+    candidatelon.cursorTypelon match {
+      caselon CursorCandidatelonNelonxtCursor => CursorItelonm(candidatelon.valuelon, NelonxtCursor)
+      caselon CursorCandidatelonPrelonviousCursor => CursorItelonm(candidatelon.valuelon, PrelonviousCursor)
     }
 }

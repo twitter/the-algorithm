@@ -1,8 +1,8 @@
-package com.twitter.timelineranker.config
+packagelon com.twittelonr.timelonlinelonrankelonr.config
 
-object TimelineRankerConstants {
-  val ClientPrefix = "timelineranker."
-  val ManhattanStarbuckAppId = "timelineranker"
-  val WarmupClientName = "timelineranker.warmup"
-  val ForwardedClientName = "timelineranker.forwarded"
+objelonct TimelonlinelonRankelonrConstants {
+  val ClielonntPrelonfix = "timelonlinelonrankelonr."
+  val ManhattanStarbuckAppId = "timelonlinelonrankelonr"
+  val WarmupClielonntNamelon = "timelonlinelonrankelonr.warmup"
+  val ForwardelondClielonntNamelon = "timelonlinelonrankelonr.forwardelond"
 }

@@ -1,13 +1,13 @@
 scala_library(
-    sources = [
+    sourcelons = [
         "*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/io/dal",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/runnelonr/dataflow",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding",
     ],
 )

@@ -1,96 +1,96 @@
-package com.twitter.search.common.schema.earlybird;
+packagelon com.twittelonr.selonarch.common.schelonma.elonarlybird;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.SchemaBuilder;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldConfiguration;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftTokenStreamSerializer;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.TermPayloadAttributeSerializer;
+import com.twittelonr.common.telonxt.util.TokelonnStrelonamSelonrializelonr;
+import com.twittelonr.selonarch.common.schelonma.SchelonmaBuildelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldNamelonToIdMapping;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldConfiguration;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftTokelonnStrelonamSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.CharTelonrmAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.TelonrmPayloadAttributelonSelonrializelonr;
 
 /**
- * Build class used to build a ThriftSchema
+ * Build class uselond to build a ThriftSchelonma
  */
-public class EarlybirdSchemaBuilder extends SchemaBuilder {
-  private final EarlybirdCluster cluster;
+public class elonarlybirdSchelonmaBuildelonr elonxtelonnds SchelonmaBuildelonr {
+  privatelon final elonarlybirdClustelonr clustelonr;
 
-  public EarlybirdSchemaBuilder(FieldNameToIdMapping idMapping,
-                                EarlybirdCluster cluster,
-                                TokenStreamSerializer.Version tokenStreamSerializerVersion) {
-    super(idMapping, tokenStreamSerializerVersion);
-    this.cluster = cluster;
+  public elonarlybirdSchelonmaBuildelonr(FielonldNamelonToIdMapping idMapping,
+                                elonarlybirdClustelonr clustelonr,
+                                TokelonnStrelonamSelonrializelonr.Velonrsion tokelonnStrelonamSelonrializelonrVelonrsion) {
+    supelonr(idMapping, tokelonnStrelonamSelonrializelonrVelonrsion);
+    this.clustelonr = clustelonr;
   }
 
   /**
-   * Configure the specified field to be Out-of-order.
-   * In the realtime cluster, this causes Earlybird to used the skip list posting format.
+   * Configurelon thelon speloncifielond fielonld to belon Out-of-ordelonr.
+   * In thelon relonaltimelon clustelonr, this causelons elonarlybird to uselond thelon skip list posting format.
    */
-  public final EarlybirdSchemaBuilder withOutOfOrderEnabledForField(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final elonarlybirdSchelonmaBuildelonr withOutOfOrdelonrelonnablelondForFielonld(String fielonldNamelon) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
-    Preconditions.checkState(settings.isSetIndexedFieldSettings(),
-                             "Out of order field must be indexed");
-    settings.getIndexedFieldSettings().setSupportOutOfOrderAppends(true);
-    return this;
+    ThriftFielonldSelonttings selonttings =
+        schelonma.gelontFielonldConfigs().gelont(idMapping.gelontFielonldID(fielonldNamelon)).gelontSelonttings();
+    Prelonconditions.chelonckStatelon(selonttings.isSelontIndelonxelondFielonldSelonttings(),
+                             "Out of ordelonr fielonld must belon indelonxelond");
+    selonttings.gelontIndelonxelondFielonldSelonttings().selontSupportOutOfOrdelonrAppelonnds(truelon);
+    relonturn this;
   }
 
   /**
-   * This turns on tweet specific normalizations. This turns on the following two token processors:
-   * {@link com.twitter.search.common.util.text.splitter.HashtagMentionPunctuationSplitter}
-   * {@link com.twitter.search.common.util.text.filter.NormalizedTokenFilter}
+   * This turns on twelonelont speloncific normalizations. This turns on thelon following two tokelonn procelonssors:
+   * {@link com.twittelonr.selonarch.common.util.telonxt.splittelonr.HashtagMelonntionPunctuationSplittelonr}
+   * {@link com.twittelonr.selonarch.common.util.telonxt.filtelonr.NormalizelondTokelonnFiltelonr}
    * <p/>
-   * HashtagMentionPunctuationSplitter would break a mention or hashtag like @ab_cd or #ab_cd into
-   * tokens {ab, cd}.
-   * NormalizedTokenFilter strips out the # @ $ from the tokens.
+   * HashtagMelonntionPunctuationSplittelonr would brelonak a melonntion or hashtag likelon @ab_cd or #ab_cd into
+   * tokelonns {ab, cd}.
+   * NormalizelondTokelonnFiltelonr strips out thelon # @ $ from thelon tokelonns.
    */
-  public final EarlybirdSchemaBuilder withTweetSpecificNormalization(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final elonarlybirdSchelonmaBuildelonr withTwelonelontSpeloncificNormalization(String fielonldNamelon) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldSettings settings =
-        schema.getFieldConfigs().get(idMapping.getFieldID(fieldName)).getSettings();
-    Preconditions.checkState(settings.isSetIndexedFieldSettings(),
-                             "Tweet text field must be indexed.");
-    settings.getIndexedFieldSettings().setDeprecated_performTweetSpecificNormalizations(true);
-    return this;
+    ThriftFielonldSelonttings selonttings =
+        schelonma.gelontFielonldConfigs().gelont(idMapping.gelontFielonldID(fielonldNamelon)).gelontSelonttings();
+    Prelonconditions.chelonckStatelon(selonttings.isSelontIndelonxelondFielonldSelonttings(),
+                             "Twelonelont telonxt fielonld must belon indelonxelond.");
+    selonttings.gelontIndelonxelondFielonldSelonttings().selontDelonpreloncatelond_pelonrformTwelonelontSpeloncificNormalizations(truelon);
+    relonturn this;
   }
 
   /**
-   * Add a twitter photo facet field.
+   * Add a twittelonr photo facelont fielonld.
    */
-  public final EarlybirdSchemaBuilder withPhotoUrlFacetField(String fieldName) {
-    if (!shouldIncludeField(fieldName)) {
-      return this;
+  public final elonarlybirdSchelonmaBuildelonr withPhotoUrlFacelontFielonld(String fielonldNamelon) {
+    if (!shouldIncludelonFielonld(fielonldNamelon)) {
+      relonturn this;
     }
-    ThriftFieldSettings photoFieldSettings = getNoPositionNoFreqSettings();
-    ThriftTokenStreamSerializer tokenStreamSerializer =
-        new ThriftTokenStreamSerializer(tokenStreamSerializerVersion);
-    tokenStreamSerializer.setAttributeSerializerClassNames(
-        ImmutableList.<String>of(
-            CharTermAttributeSerializer.class.getName(),
-            TermPayloadAttributeSerializer.class.getName()));
-    photoFieldSettings
-        .getIndexedFieldSettings()
-        .setTokenStreamSerializer(tokenStreamSerializer)
-        .setTokenized(true);
-    putIntoFieldConfigs(idMapping.getFieldID(fieldName),
-                        new ThriftFieldConfiguration(fieldName).setSettings(photoFieldSettings));
-    return this;
+    ThriftFielonldSelonttings photoFielonldSelonttings = gelontNoPositionNoFrelonqSelonttings();
+    ThriftTokelonnStrelonamSelonrializelonr tokelonnStrelonamSelonrializelonr =
+        nelonw ThriftTokelonnStrelonamSelonrializelonr(tokelonnStrelonamSelonrializelonrVelonrsion);
+    tokelonnStrelonamSelonrializelonr.selontAttributelonSelonrializelonrClassNamelons(
+        ImmutablelonList.<String>of(
+            CharTelonrmAttributelonSelonrializelonr.class.gelontNamelon(),
+            TelonrmPayloadAttributelonSelonrializelonr.class.gelontNamelon()));
+    photoFielonldSelonttings
+        .gelontIndelonxelondFielonldSelonttings()
+        .selontTokelonnStrelonamSelonrializelonr(tokelonnStrelonamSelonrializelonr)
+        .selontTokelonnizelond(truelon);
+    putIntoFielonldConfigs(idMapping.gelontFielonldID(fielonldNamelon),
+                        nelonw ThriftFielonldConfiguration(fielonldNamelon).selontSelonttings(photoFielonldSelonttings));
+    relonturn this;
   }
 
   /**
-   * Returns whether the given field should be included or dropped.
+   * Relonturns whelonthelonr thelon givelonn fielonld should belon includelond or droppelond.
    */
-  @Override
-  protected boolean shouldIncludeField(String fieldName) {
-    return EarlybirdFieldConstants.getFieldConstant(fieldName).isValidFieldInCluster(cluster);
+  @Ovelonrridelon
+  protelonctelond boolelonan shouldIncludelonFielonld(String fielonldNamelon) {
+    relonturn elonarlybirdFielonldConstants.gelontFielonldConstant(fielonldNamelon).isValidFielonldInClustelonr(clustelonr);
   }
 }
 

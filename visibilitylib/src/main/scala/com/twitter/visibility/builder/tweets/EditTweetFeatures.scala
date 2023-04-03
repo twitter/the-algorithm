@@ -1,71 +1,71 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.tweetypie.thriftscala.EditControl
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.TweetIsEditTweet
-import com.twitter.visibility.features.TweetIsInitialTweet
-import com.twitter.visibility.features.TweetIsLatestTweet
-import com.twitter.visibility.features.TweetIsStaleTweet
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.twelonelontypielon.thriftscala.elonditControl
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.felonaturelons.TwelonelontIselonditTwelonelont
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsInitialTwelonelont
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsLatelonstTwelonelont
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsStalelonTwelonelont
 
-class EditTweetFeatures(
-  statsReceiver: StatsReceiver) {
+class elonditTwelonelontFelonaturelons(
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("edit_tweet_features")
-  private[this] val tweetIsEditTweet =
-    scopedStatsReceiver.scope(TweetIsEditTweet.name).counter("requests")
-  private[this] val tweetIsStaleTweet =
-    scopedStatsReceiver.scope(TweetIsStaleTweet.name).counter("requests")
-  private[this] val tweetIsLatestTweet =
-    scopedStatsReceiver.scope(TweetIsLatestTweet.name).counter("requests")
-  private[this] val tweetIsInitialTweet =
-    scopedStatsReceiver.scope(TweetIsInitialTweet.name).counter("requests")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("elondit_twelonelont_felonaturelons")
+  privatelon[this] val twelonelontIselonditTwelonelont =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontIselonditTwelonelont.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontIsStalelonTwelonelont =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontIsStalelonTwelonelont.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontIsLatelonstTwelonelont =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontIsLatelonstTwelonelont.namelon).countelonr("relonquelonsts")
+  privatelon[this] val twelonelontIsInitialTwelonelont =
+    scopelondStatsReloncelonivelonr.scopelon(TwelonelontIsInitialTwelonelont.namelon).countelonr("relonquelonsts")
 
-  def forTweet(
-    tweet: Tweet
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(TweetIsEditTweet, tweetIsEditTweet(tweet))
-      .withConstantFeature(TweetIsStaleTweet, tweetIsStaleTweet(tweet))
-      .withConstantFeature(TweetIsLatestTweet, tweetIsLatestTweet(tweet))
-      .withConstantFeature(TweetIsInitialTweet, tweetIsInitialTweet(tweet))
+  delonf forTwelonelont(
+    twelonelont: Twelonelont
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    _.withConstantFelonaturelon(TwelonelontIselonditTwelonelont, twelonelontIselonditTwelonelont(twelonelont))
+      .withConstantFelonaturelon(TwelonelontIsStalelonTwelonelont, twelonelontIsStalelonTwelonelont(twelonelont))
+      .withConstantFelonaturelon(TwelonelontIsLatelonstTwelonelont, twelonelontIsLatelonstTwelonelont(twelonelont))
+      .withConstantFelonaturelon(TwelonelontIsInitialTwelonelont, twelonelontIsInitialTwelonelont(twelonelont))
   }
 
-  def tweetIsStaleTweet(tweet: Tweet, incrementMetric: Boolean = true): Boolean = {
-    if (incrementMetric) tweetIsStaleTweet.incr()
+  delonf twelonelontIsStalelonTwelonelont(twelonelont: Twelonelont, increlonmelonntMelontric: Boolelonan = truelon): Boolelonan = {
+    if (increlonmelonntMelontric) twelonelontIsStalelonTwelonelont.incr()
 
-    tweet.editControl match {
-      case None => false
-      case Some(ec) =>
-        ec match {
-          case eci: EditControl.Initial => eci.initial.editTweetIds.last != tweet.id
-          case ece: EditControl.Edit =>
-            ece.edit.editControlInitial.exists(_.editTweetIds.last != tweet.id)
-          case _ => false
+    twelonelont.elonditControl match {
+      caselon Nonelon => falselon
+      caselon Somelon(elonc) =>
+        elonc match {
+          caselon elonci: elonditControl.Initial => elonci.initial.elonditTwelonelontIds.last != twelonelont.id
+          caselon eloncelon: elonditControl.elondit =>
+            eloncelon.elondit.elonditControlInitial.elonxists(_.elonditTwelonelontIds.last != twelonelont.id)
+          caselon _ => falselon
         }
     }
   }
 
-  def tweetIsEditTweet(tweet: Tweet, incrementMetric: Boolean = true): Boolean = {
-    if (incrementMetric) tweetIsEditTweet.incr()
+  delonf twelonelontIselonditTwelonelont(twelonelont: Twelonelont, increlonmelonntMelontric: Boolelonan = truelon): Boolelonan = {
+    if (increlonmelonntMelontric) twelonelontIselonditTwelonelont.incr()
 
-    tweet.editControl match {
-      case None => false
-      case Some(ec) =>
-        ec match {
-          case _: EditControl.Initial => false
-          case _ => true
+    twelonelont.elonditControl match {
+      caselon Nonelon => falselon
+      caselon Somelon(elonc) =>
+        elonc match {
+          caselon _: elonditControl.Initial => falselon
+          caselon _ => truelon
         }
     }
   }
 
-  def tweetIsLatestTweet(tweet: Tweet): Boolean = {
-    tweetIsLatestTweet.incr()
-    !tweetIsStaleTweet(tweet = tweet, incrementMetric = false)
+  delonf twelonelontIsLatelonstTwelonelont(twelonelont: Twelonelont): Boolelonan = {
+    twelonelontIsLatelonstTwelonelont.incr()
+    !twelonelontIsStalelonTwelonelont(twelonelont = twelonelont, increlonmelonntMelontric = falselon)
   }
 
-  def tweetIsInitialTweet(tweet: Tweet): Boolean = {
-    tweetIsInitialTweet.incr()
-    !tweetIsEditTweet(tweet = tweet, incrementMetric = false)
+  delonf twelonelontIsInitialTwelonelont(twelonelont: Twelonelont): Boolelonan = {
+    twelonelontIsInitialTwelonelont.incr()
+    !twelonelontIselonditTwelonelont(twelonelont = twelonelont, increlonmelonntMelontric = falselon)
   }
 }

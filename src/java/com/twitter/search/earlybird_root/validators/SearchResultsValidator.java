@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird_root.validators;
+packagelon com.twittelonr.selonarch.elonarlybird_root.validators;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
 
-public class SearchResultsValidator
-    implements ServiceResponseValidator<EarlybirdResponse> {
+public class SelonarchRelonsultsValidator
+    implelonmelonnts SelonrvicelonRelonsponselonValidator<elonarlybirdRelonsponselon> {
 
-  private final EarlybirdCluster cluster;
+  privatelon final elonarlybirdClustelonr clustelonr;
 
-  public SearchResultsValidator(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  public SelonarchRelonsultsValidator(elonarlybirdClustelonr clustelonr) {
+    this.clustelonr = clustelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    if (!response.isSetSearchResults()
-        || !response.getSearchResults().isSetResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set search results"));
-    } else if (!response.getSearchResults().isSetMaxSearchedStatusID()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set max searched status id"));
-    } else {
-      boolean isEarlyTerminated = response.isSetEarlyTerminationInfo()
-          && response.getEarlyTerminationInfo().isEarlyTerminated();
-      if (!isEarlyTerminated && !response.getSearchResults().isSetMinSearchedStatusID()) {
-        return Future.exception(
-            new IllegalStateException(
-                cluster + " neither early terminated nor set min searched status id"));
-      } else {
-        return Future.value(response);
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> validatelon(elonarlybirdRelonsponselon relonsponselon) {
+    if (!relonsponselon.isSelontSelonarchRelonsults()
+        || !relonsponselon.gelontSelonarchRelonsults().isSelontRelonsults()) {
+      relonturn Futurelon.elonxcelonption(
+          nelonw IllelongalStatelonelonxcelonption(clustelonr + " didn't selont selonarch relonsults"));
+    } elonlselon if (!relonsponselon.gelontSelonarchRelonsults().isSelontMaxSelonarchelondStatusID()) {
+      relonturn Futurelon.elonxcelonption(
+          nelonw IllelongalStatelonelonxcelonption(clustelonr + " didn't selont max selonarchelond status id"));
+    } elonlselon {
+      boolelonan iselonarlyTelonrminatelond = relonsponselon.isSelontelonarlyTelonrminationInfo()
+          && relonsponselon.gelontelonarlyTelonrminationInfo().iselonarlyTelonrminatelond();
+      if (!iselonarlyTelonrminatelond && !relonsponselon.gelontSelonarchRelonsults().isSelontMinSelonarchelondStatusID()) {
+        relonturn Futurelon.elonxcelonption(
+            nelonw IllelongalStatelonelonxcelonption(
+                clustelonr + " nelonithelonr elonarly telonrminatelond nor selont min selonarchelond status id"));
+      } elonlselon {
+        relonturn Futurelon.valuelon(relonsponselon);
       }
     }
   }

@@ -1,15 +1,15 @@
-package com.twitter.recos.user_video_graph.util
+packagelon com.twittelonr.reloncos.uselonr_videlono_graph.util
 
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
 
-object FilterUtil {
-  def tweetAgeFilter(tweetId: TweetId, maxAge: Duration): Boolean = {
-    SnowflakeId
-      .timeFromIdOpt(tweetId)
-      .map { tweetTime => tweetTime > Time.now - maxAge }.getOrElse(false)
-    // If there's no snowflake timestamp, we have no idea when this tweet happened.
+objelonct FiltelonrUtil {
+  delonf twelonelontAgelonFiltelonr(twelonelontId: TwelonelontId, maxAgelon: Duration): Boolelonan = {
+    SnowflakelonId
+      .timelonFromIdOpt(twelonelontId)
+      .map { twelonelontTimelon => twelonelontTimelon > Timelon.now - maxAgelon }.gelontOrelonlselon(falselon)
+    // If thelonrelon's no snowflakelon timelonstamp, welon havelon no idelona whelonn this twelonelont happelonnelond.
   }
 }

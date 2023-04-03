@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.functional_component.gate
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon
 
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.DelonvicelonContelonxt.RelonquelonstContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Gate that fetches the request context from the device context and
- * continues if the request context does not match any of the specified ones.
+ * Gatelon that felontchelons thelon relonquelonst contelonxt from thelon delonvicelon contelonxt and
+ * continuelons if thelon relonquelonst contelonxt doelons not match any of thelon speloncifielond onelons.
  *
- * If no input request context is specified, the gate continues
+ * If no input relonquelonst contelonxt is speloncifielond, thelon gatelon continuelons
  */
-case class RequestContextNotGate(requestContexts: Seq[RequestContext.Value])
-    extends Gate[PipelineQuery with HasDeviceContext] {
+caselon class RelonquelonstContelonxtNotGatelon(relonquelonstContelonxts: Selonq[RelonquelonstContelonxt.Valuelon])
+    elonxtelonnds Gatelon[PipelonlinelonQuelonry with HasDelonvicelonContelonxt] {
 
-  override val identifier: GateIdentifier = GateIdentifier("RequestContextNot")
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr("RelonquelonstContelonxtNot")
 
-  override def shouldContinue(query: PipelineQuery with HasDeviceContext): Stitch[Boolean] =
-    Stitch.value(
-      !requestContexts.exists(query.deviceContext.flatMap(_.requestContextValue).contains))
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry with HasDelonvicelonContelonxt): Stitch[Boolelonan] =
+    Stitch.valuelon(
+      !relonquelonstContelonxts.elonxists(quelonry.delonvicelonContelonxt.flatMap(_.relonquelonstContelonxtValuelon).contains))
 }

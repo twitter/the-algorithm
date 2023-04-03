@@ -1,95 +1,95 @@
-package com.twitter.visibility.interfaces.tweets.enrichments
+packagelon com.twittelonr.visibility.intelonrfacelons.twelonelonts.elonnrichmelonnts
 
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.TweetVisibilityNudgeSourceWrapper
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.SemanticCoreMisinformationLabelReason
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.LocalizedNudge
-import com.twitter.visibility.rules.SoftIntervention
-import com.twitter.visibility.rules.TweetVisibilityNudge
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.twelonelonts.TwelonelontVisibilityNudgelonSourcelonWrappelonr
+import com.twittelonr.visibility.common.actions.TwelonelontVisibilityNudgelonRelonason.SelonmanticCorelonMisinformationLabelonlRelonason
+import com.twittelonr.visibility.rulelons.Action
+import com.twittelonr.visibility.rulelons.LocalizelondNudgelon
+import com.twittelonr.visibility.rulelons.SoftIntelonrvelonntion
+import com.twittelonr.visibility.rulelons.TwelonelontVisibilityNudgelon
 
-object TweetVisibilityNudgeEnrichment {
+objelonct TwelonelontVisibilityNudgelonelonnrichmelonnt {
 
-  def apply(
-    result: VisibilityResult,
-    tweetVisibilityNudgeSourceWrapper: TweetVisibilityNudgeSourceWrapper,
-    languageCode: String,
-    countryCode: Option[String]
-  ): VisibilityResult = {
+  delonf apply(
+    relonsult: VisibilityRelonsult,
+    twelonelontVisibilityNudgelonSourcelonWrappelonr: TwelonelontVisibilityNudgelonSourcelonWrappelonr,
+    languagelonCodelon: String,
+    countryCodelon: Option[String]
+  ): VisibilityRelonsult = {
 
-    val softIntervention = extractSoftIntervention(result.verdict, result.secondaryVerdicts)
+    val softIntelonrvelonntion = elonxtractSoftIntelonrvelonntion(relonsult.velonrdict, relonsult.seloncondaryVelonrdicts)
 
-    val enrichedPrimaryVerdict = enrichAction(
-      result.verdict,
-      tweetVisibilityNudgeSourceWrapper,
-      softIntervention,
-      languageCode,
-      countryCode)
+    val elonnrichelondPrimaryVelonrdict = elonnrichAction(
+      relonsult.velonrdict,
+      twelonelontVisibilityNudgelonSourcelonWrappelonr,
+      softIntelonrvelonntion,
+      languagelonCodelon,
+      countryCodelon)
 
-    val enrichedSecondaryVerdicts: Seq[Action] =
-      result.secondaryVerdicts.map(sv =>
-        enrichAction(
+    val elonnrichelondSeloncondaryVelonrdicts: Selonq[Action] =
+      relonsult.seloncondaryVelonrdicts.map(sv =>
+        elonnrichAction(
           sv,
-          tweetVisibilityNudgeSourceWrapper,
-          softIntervention,
-          languageCode,
-          countryCode))
+          twelonelontVisibilityNudgelonSourcelonWrappelonr,
+          softIntelonrvelonntion,
+          languagelonCodelon,
+          countryCodelon))
 
-    result.copy(verdict = enrichedPrimaryVerdict, secondaryVerdicts = enrichedSecondaryVerdicts)
+    relonsult.copy(velonrdict = elonnrichelondPrimaryVelonrdict, seloncondaryVelonrdicts = elonnrichelondSeloncondaryVelonrdicts)
   }
 
-  private def extractSoftIntervention(
+  privatelon delonf elonxtractSoftIntelonrvelonntion(
     primary: Action,
-    secondaries: Seq[Action]
-  ): Option[SoftIntervention] = {
+    seloncondarielons: Selonq[Action]
+  ): Option[SoftIntelonrvelonntion] = {
     primary match {
-      case si: SoftIntervention => Some(si)
-      case _ =>
-        secondaries.collectFirst {
-          case sv: SoftIntervention => sv
+      caselon si: SoftIntelonrvelonntion => Somelon(si)
+      caselon _ =>
+        seloncondarielons.collelonctFirst {
+          caselon sv: SoftIntelonrvelonntion => sv
         }
     }
   }
 
-  private def enrichAction(
+  privatelon delonf elonnrichAction(
     action: Action,
-    tweetVisibilityNudgeSourceWrapper: TweetVisibilityNudgeSourceWrapper,
-    softIntervention: Option[SoftIntervention],
-    languageCode: String,
-    countryCode: Option[String]
+    twelonelontVisibilityNudgelonSourcelonWrappelonr: TwelonelontVisibilityNudgelonSourcelonWrappelonr,
+    softIntelonrvelonntion: Option[SoftIntelonrvelonntion],
+    languagelonCodelon: String,
+    countryCodelon: Option[String]
   ): Action = {
     action match {
-      case TweetVisibilityNudge(reason, None) =>
-        val localizedNudge =
-          tweetVisibilityNudgeSourceWrapper.getLocalizedNudge(reason, languageCode, countryCode)
-        if (reason == SemanticCoreMisinformationLabelReason)
-          TweetVisibilityNudge(
-            reason,
-            enrichLocalizedMisInfoNudge(localizedNudge, softIntervention))
-        else
-          TweetVisibilityNudge(reason, localizedNudge)
-      case _ => action
+      caselon TwelonelontVisibilityNudgelon(relonason, Nonelon) =>
+        val localizelondNudgelon =
+          twelonelontVisibilityNudgelonSourcelonWrappelonr.gelontLocalizelondNudgelon(relonason, languagelonCodelon, countryCodelon)
+        if (relonason == SelonmanticCorelonMisinformationLabelonlRelonason)
+          TwelonelontVisibilityNudgelon(
+            relonason,
+            elonnrichLocalizelondMisInfoNudgelon(localizelondNudgelon, softIntelonrvelonntion))
+        elonlselon
+          TwelonelontVisibilityNudgelon(relonason, localizelondNudgelon)
+      caselon _ => action
     }
   }
 
-  private def enrichLocalizedMisInfoNudge(
-    localizedNudge: Option[LocalizedNudge],
-    softIntervention: Option[SoftIntervention]
-  ): Option[LocalizedNudge] = {
-    softIntervention match {
-      case Some(si) => {
-        val enrichedLocalizedNudge = localizedNudge.map { ln =>
-          val enrichedLocalizedNudgeActions = ln.localizedNudgeActions.map { na =>
-            val enrichedPayload = na.nudgeActionPayload.map { payload =>
-              payload.copy(ctaUrl = si.detailsUrl, heading = si.warning)
+  privatelon delonf elonnrichLocalizelondMisInfoNudgelon(
+    localizelondNudgelon: Option[LocalizelondNudgelon],
+    softIntelonrvelonntion: Option[SoftIntelonrvelonntion]
+  ): Option[LocalizelondNudgelon] = {
+    softIntelonrvelonntion match {
+      caselon Somelon(si) => {
+        val elonnrichelondLocalizelondNudgelon = localizelondNudgelon.map { ln =>
+          val elonnrichelondLocalizelondNudgelonActions = ln.localizelondNudgelonActions.map { na =>
+            val elonnrichelondPayload = na.nudgelonActionPayload.map { payload =>
+              payload.copy(ctaUrl = si.delontailsUrl, helonading = si.warning)
             }
-            na.copy(nudgeActionPayload = enrichedPayload)
+            na.copy(nudgelonActionPayload = elonnrichelondPayload)
           }
-          ln.copy(localizedNudgeActions = enrichedLocalizedNudgeActions)
+          ln.copy(localizelondNudgelonActions = elonnrichelondLocalizelondNudgelonActions)
         }
-        enrichedLocalizedNudge
+        elonnrichelondLocalizelondNudgelon
       }
-      case None => localizedNudge
+      caselon Nonelon => localizelondNudgelon
     }
   }
 

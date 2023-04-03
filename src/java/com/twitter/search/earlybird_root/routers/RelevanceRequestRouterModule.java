@@ -1,74 +1,74 @@
-package com.twitter.search.earlybird_root.routers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.routelonrs;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
-import com.google.inject.Provides;
+import com.googlelon.injelonct.Providelons;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.FullArchiveServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.RealtimeServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.elonarlybirdTimelonRangelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.FullArchivelonSelonrvingRangelonProvidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.RelonaltimelonSelonrvingRangelonProvidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.SelonrvingRangelonProvidelonr;
 
-public class RelevanceRequestRouterModule extends TwitterModule {
-  public static final String FULL_ARCHIVE_TIME_RANGE_FILTER =
-      "relevance_full_archive_time_range_filter";
-  public static final String REALTIME_TIME_RANGE_FILTER =
-      "relevance_realtime_time_range_filter";
-  public static final String PROTECTED_TIME_RANGE_FILTER =
-      "relevance_protected_time_range_filter";
+public class RelonlelonvancelonRelonquelonstRoutelonrModulelon elonxtelonnds TwittelonrModulelon {
+  public static final String FULL_ARCHIVelon_TIMelon_RANGelon_FILTelonR =
+      "relonlelonvancelon_full_archivelon_timelon_rangelon_filtelonr";
+  public static final String RelonALTIMelon_TIMelon_RANGelon_FILTelonR =
+      "relonlelonvancelon_relonaltimelon_timelon_rangelon_filtelonr";
+  public static final String PROTelonCTelonD_TIMelon_RANGelon_FILTelonR =
+      "relonlelonvancelon_protelonctelond_timelon_rangelon_filtelonr";
 
-  public static final String REALTIME_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_relevance_realtime_serving_range_boundary_hours_ago";
-  public static final String FULL_ARCHIVE_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_relevance_full_archive_serving_range_boundary_hours_ago";
-  public static final String PROTECTED_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_relevance_protected_serving_range_boundary_hours_ago";
+  public static final String RelonALTIMelon_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY =
+      "supelonrroot_relonlelonvancelon_relonaltimelon_selonrving_rangelon_boundary_hours_ago";
+  public static final String FULL_ARCHIVelon_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY =
+      "supelonrroot_relonlelonvancelon_full_archivelon_selonrving_rangelon_boundary_hours_ago";
+  public static final String PROTelonCTelonD_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY =
+      "supelonrroot_relonlelonvancelon_protelonctelond_selonrving_rangelon_boundary_hours_ago";
 
-  private ServingRangeProvider getFullArchiveServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new FullArchiveServingRangeProvider(
-        decider, FULL_ARCHIVE_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  privatelon SelonrvingRangelonProvidelonr gelontFullArchivelonSelonrvingRangelonProvidelonr(final SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn nelonw FullArchivelonSelonrvingRangelonProvidelonr(
+        deloncidelonr, FULL_ARCHIVelon_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY);
   }
 
-  private ServingRangeProvider getRealtimeServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(
-        decider, REALTIME_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  privatelon SelonrvingRangelonProvidelonr gelontRelonaltimelonSelonrvingRangelonProvidelonr(final SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn nelonw RelonaltimelonSelonrvingRangelonProvidelonr(
+        deloncidelonr, RelonALTIMelon_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY);
   }
 
-  private ServingRangeProvider getProtectedServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(
-        decider, PROTECTED_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  privatelon SelonrvingRangelonProvidelonr gelontProtelonctelondSelonrvingRangelonProvidelonr(final SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn nelonw RelonaltimelonSelonrvingRangelonProvidelonr(
+        deloncidelonr, PROTelonCTelonD_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY);
   }
 
-  @Provides
-  @Singleton
-  @Named(FULL_ARCHIVE_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesFullArchiveTimeRangeFilter(SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getFullArchiveServingRangeProvider(decider));
+  @Providelons
+  @Singlelonton
+  @Namelond(FULL_ARCHIVelon_TIMelon_RANGelon_FILTelonR)
+  privatelon elonarlybirdTimelonRangelonFiltelonr providelonsFullArchivelonTimelonRangelonFiltelonr(SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn elonarlybirdTimelonRangelonFiltelonr.nelonwTimelonRangelonFiltelonrWithoutQuelonryRelonwritelonr(
+        gelontFullArchivelonSelonrvingRangelonProvidelonr(deloncidelonr));
   }
 
-  @Provides
-  @Singleton
-  @Named(REALTIME_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesRealtimeTimeRangeFilter(SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getRealtimeServingRangeProvider(decider));
+  @Providelons
+  @Singlelonton
+  @Namelond(RelonALTIMelon_TIMelon_RANGelon_FILTelonR)
+  privatelon elonarlybirdTimelonRangelonFiltelonr providelonsRelonaltimelonTimelonRangelonFiltelonr(SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn elonarlybirdTimelonRangelonFiltelonr.nelonwTimelonRangelonFiltelonrWithoutQuelonryRelonwritelonr(
+        gelontRelonaltimelonSelonrvingRangelonProvidelonr(deloncidelonr));
   }
 
-  @Provides
-  @Singleton
-  @Named(PROTECTED_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesProtectedTimeRangeFilter(SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getProtectedServingRangeProvider(decider));
+  @Providelons
+  @Singlelonton
+  @Namelond(PROTelonCTelonD_TIMelon_RANGelon_FILTelonR)
+  privatelon elonarlybirdTimelonRangelonFiltelonr providelonsProtelonctelondTimelonRangelonFiltelonr(SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn elonarlybirdTimelonRangelonFiltelonr.nelonwTimelonRangelonFiltelonrWithoutQuelonryRelonwritelonr(
+        gelontProtelonctelondSelonrvingRangelonProvidelonr(deloncidelonr));
   }
 }

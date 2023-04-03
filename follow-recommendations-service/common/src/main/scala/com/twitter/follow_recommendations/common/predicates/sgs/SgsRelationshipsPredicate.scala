@@ -1,146 +1,146 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasProfileId
-import com.twitter.follow_recommendations.common.models.FilterReason.FailOpen
-import com.twitter.follow_recommendations.common.models.FilterReason.InvalidRelationshipTypes
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.socialgraph.thriftscala.ExistsRequest
-import com.twitter.socialgraph.thriftscala.ExistsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.Relationship
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.TimeoutException
-import com.twitter.util.logging.Logging
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasProfilelonId
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason.FailOpelonn
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason.InvalidRelonlationshipTypelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.socialgraph.thriftscala.elonxistsRelonquelonst
+import com.twittelonr.socialgraph.thriftscala.elonxistsRelonsult
+import com.twittelonr.socialgraph.thriftscala.LookupContelonxt
+import com.twittelonr.socialgraph.thriftscala.Relonlationship
+import com.twittelonr.socialgraph.thriftscala.RelonlationshipTypelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.socialgraph.SocialGraph
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.Timelonoutelonxcelonption
+import com.twittelonr.util.logging.Logging
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-case class RelationshipMapping(
-  relationshipType: RelationshipType,
-  includeBasedOnRelationship: Boolean)
+caselon class RelonlationshipMapping(
+  relonlationshipTypelon: RelonlationshipTypelon,
+  includelonBaselondOnRelonlationship: Boolelonan)
 
-class SgsRelationshipsPredicate(
+class SgsRelonlationshipsPrelondicatelon(
   socialGraph: SocialGraph,
-  relationshipMappings: Seq[RelationshipMapping],
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
+  relonlationshipMappings: Selonq[RelonlationshipMapping],
+  statsReloncelonivelonr: StatsReloncelonivelonr = NullStatsReloncelonivelonr)
+    elonxtelonnds Prelondicatelon[(HasClielonntContelonxt with HasParams, CandidatelonUselonr)]
     with Logging {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (target, candidate) = pair
-    val timeout = target.params(SgsPredicateParams.SgsRelationshipsPredicateTimeout)
-    SgsRelationshipsPredicate
-      .extractUserId(target)
+  ovelonrridelon delonf apply(
+    pair: (HasClielonntContelonxt with HasParams, CandidatelonUselonr)
+  ): Stitch[PrelondicatelonRelonsult] = {
+    val (targelont, candidatelon) = pair
+    val timelonout = targelont.params(SgsPrelondicatelonParams.SgsRelonlationshipsPrelondicatelonTimelonout)
+    SgsRelonlationshipsPrelondicatelon
+      .elonxtractUselonrId(targelont)
       .map { id =>
-        val relationships = relationshipMappings.map { relationshipMapping: RelationshipMapping =>
-          Relationship(
-            relationshipMapping.relationshipType,
-            relationshipMapping.includeBasedOnRelationship)
+        val relonlationships = relonlationshipMappings.map { relonlationshipMapping: RelonlationshipMapping =>
+          Relonlationship(
+            relonlationshipMapping.relonlationshipTypelon,
+            relonlationshipMapping.includelonBaselondOnRelonlationship)
         }
-        val existsRequest = ExistsRequest(
+        val elonxistsRelonquelonst = elonxistsRelonquelonst(
           id,
-          candidate.id,
-          relationships = relationships,
-          context = SgsRelationshipsPredicate.UnionLookupContext
+          candidatelon.id,
+          relonlationships = relonlationships,
+          contelonxt = SgsRelonlationshipsPrelondicatelon.UnionLookupContelonxt
         )
         socialGraph
-          .exists(existsRequest).map { existsResult: ExistsResult =>
-            if (existsResult.exists) {
-              PredicateResult.Invalid(Set(InvalidRelationshipTypes(relationshipMappings
-                .map { relationshipMapping: RelationshipMapping =>
-                  relationshipMapping.relationshipType
+          .elonxists(elonxistsRelonquelonst).map { elonxistsRelonsult: elonxistsRelonsult =>
+            if (elonxistsRelonsult.elonxists) {
+              PrelondicatelonRelonsult.Invalid(Selont(InvalidRelonlationshipTypelons(relonlationshipMappings
+                .map { relonlationshipMapping: RelonlationshipMapping =>
+                  relonlationshipMapping.relonlationshipTypelon
                 }.mkString(", "))))
-            } else {
-              PredicateResult.Valid
+            } elonlselon {
+              PrelondicatelonRelonsult.Valid
             }
           }
-          .within(timeout)(com.twitter.finagle.util.DefaultTimer)
+          .within(timelonout)(com.twittelonr.finaglelon.util.DelonfaultTimelonr)
       }
-      // if no user id is present, return true by default
-      .getOrElse(Stitch.value(PredicateResult.Valid))
-      .rescue {
-        case e: TimeoutException =>
-          stats.counter("timeout").incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
+      // if no uselonr id is prelonselonnt, relonturn truelon by delonfault
+      .gelontOrelonlselon(Stitch.valuelon(PrelondicatelonRelonsult.Valid))
+      .relonscuelon {
+        caselon elon: Timelonoutelonxcelonption =>
+          stats.countelonr("timelonout").incr()
+          Stitch(PrelondicatelonRelonsult.Invalid(Selont(FailOpelonn)))
+        caselon elon: elonxcelonption =>
+          stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          Stitch(PrelondicatelonRelonsult.Invalid(Selont(FailOpelonn)))
       }
 
   }
 }
 
-object SgsRelationshipsPredicate {
-  // OR Operation
-  @VisibleForTesting
-  private[follow_recommendations] val UnionLookupContext = Some(
-    LookupContext(performUnion = Some(true)))
+objelonct SgsRelonlationshipsPrelondicatelon {
+  // OR Opelonration
+  @VisiblelonForTelonsting
+  privatelon[follow_reloncommelonndations] val UnionLookupContelonxt = Somelon(
+    LookupContelonxt(pelonrformUnion = Somelon(truelon)))
 
-  private def extractUserId(target: HasClientContext with HasParams): Option[Long] = target match {
-    case profRequest: HasProfileId => Some(profRequest.profileId)
-    case userRequest: HasClientContext with HasParams => userRequest.getOptionalUserId
-    case _ => None
+  privatelon delonf elonxtractUselonrId(targelont: HasClielonntContelonxt with HasParams): Option[Long] = targelont match {
+    caselon profRelonquelonst: HasProfilelonId => Somelon(profRelonquelonst.profilelonId)
+    caselon uselonrRelonquelonst: HasClielonntContelonxt with HasParams => uselonrRelonquelonst.gelontOptionalUselonrId
+    caselon _ => Nonelon
   }
 }
 
-@Singleton
-class InvalidTargetCandidateRelationshipTypesPredicate @Inject() (
+@Singlelonton
+class InvalidTargelontCandidatelonRelonlationshipTypelonsPrelondicatelon @Injelonct() (
   socialGraph: SocialGraph)
-    extends SgsRelationshipsPredicate(
+    elonxtelonnds SgsRelonlationshipsPrelondicatelon(
       socialGraph,
-      InvalidRelationshipTypesPredicate.InvalidRelationshipTypes) {}
+      InvalidRelonlationshipTypelonsPrelondicatelon.InvalidRelonlationshipTypelons) {}
 
-@Singleton
-class NoteworthyAccountsSgsPredicate @Inject() (
+@Singlelonton
+class NotelonworthyAccountsSgsPrelondicatelon @Injelonct() (
   socialGraph: SocialGraph)
-    extends SgsRelationshipsPredicate(
+    elonxtelonnds SgsRelonlationshipsPrelondicatelon(
       socialGraph,
-      InvalidRelationshipTypesPredicate.NoteworthyAccountsInvalidRelationshipTypes)
+      InvalidRelonlationshipTypelonsPrelondicatelon.NotelonworthyAccountsInvalidRelonlationshipTypelons)
 
-object InvalidRelationshipTypesPredicate {
+objelonct InvalidRelonlationshipTypelonsPrelondicatelon {
 
-  val InvalidRelationshipTypesExcludeFollowing: Seq[RelationshipMapping] = Seq(
-    RelationshipMapping(RelationshipType.HideRecommendations, true),
-    RelationshipMapping(RelationshipType.Blocking, true),
-    RelationshipMapping(RelationshipType.BlockedBy, true),
-    RelationshipMapping(RelationshipType.Muting, true),
-    RelationshipMapping(RelationshipType.MutedBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpam, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpamBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuse, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuseBy, true)
+  val InvalidRelonlationshipTypelonselonxcludelonFollowing: Selonq[RelonlationshipMapping] = Selonq(
+    RelonlationshipMapping(RelonlationshipTypelon.HidelonReloncommelonndations, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.Blocking, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.BlockelondBy, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.Muting, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.MutelondBy, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.RelonportelondAsSpam, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.RelonportelondAsSpamBy, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.RelonportelondAsAbuselon, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.RelonportelondAsAbuselonBy, truelon)
   )
 
-  val InvalidRelationshipTypes: Seq[RelationshipMapping] = Seq(
-    RelationshipMapping(RelationshipType.FollowRequestOutgoing, true),
-    RelationshipMapping(RelationshipType.Following, true),
-    RelationshipMapping(
-      RelationshipType.UsedToFollow,
-      true
-    ) // this data is accessible for 90 days.
-  ) ++ InvalidRelationshipTypesExcludeFollowing
+  val InvalidRelonlationshipTypelons: Selonq[RelonlationshipMapping] = Selonq(
+    RelonlationshipMapping(RelonlationshipTypelon.FollowRelonquelonstOutgoing, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.Following, truelon),
+    RelonlationshipMapping(
+      RelonlationshipTypelon.UselondToFollow,
+      truelon
+    ) // this data is accelonssiblelon for 90 days.
+  ) ++ InvalidRelonlationshipTypelonselonxcludelonFollowing
 
-  val NoteworthyAccountsInvalidRelationshipTypes: Seq[RelationshipMapping] = Seq(
-    RelationshipMapping(RelationshipType.Blocking, true),
-    RelationshipMapping(RelationshipType.BlockedBy, true),
-    RelationshipMapping(RelationshipType.Muting, true),
-    RelationshipMapping(RelationshipType.MutedBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpam, true),
-    RelationshipMapping(RelationshipType.ReportedAsSpamBy, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuse, true),
-    RelationshipMapping(RelationshipType.ReportedAsAbuseBy, true)
+  val NotelonworthyAccountsInvalidRelonlationshipTypelons: Selonq[RelonlationshipMapping] = Selonq(
+    RelonlationshipMapping(RelonlationshipTypelon.Blocking, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.BlockelondBy, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.Muting, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.MutelondBy, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.RelonportelondAsSpam, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.RelonportelondAsSpamBy, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.RelonportelondAsAbuselon, truelon),
+    RelonlationshipMapping(RelonlationshipTypelon.RelonportelondAsAbuselonBy, truelon)
   )
 }

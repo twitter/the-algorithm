@@ -1,73 +1,73 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons
 
-import com.google.inject.Inject
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.CandidateAlgorithmAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.adaptelonrs.CandidatelonAlgorithmAdaptelonr
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.FelonaturelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.FelonaturelonSourcelonId
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.HasPrelonFelontchelondFelonaturelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasSimilarToContelonxt
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
 /**
- * This source only takes features from the candidate's source,
- * which is all the information we have about the candidate pre-feature-hydration
+ * This sourcelon only takelons felonaturelons from thelon candidatelon's sourcelon,
+ * which is all thelon information welon havelon about thelon candidatelon prelon-felonaturelon-hydration
  */
 
-@Provides
-@Singleton
-class CandidateAlgorithmSource @Inject() (stats: StatsReceiver) extends FeatureSource {
+@Providelons
+@Singlelonton
+class CandidatelonAlgorithmSourcelon @Injelonct() (stats: StatsReloncelonivelonr) elonxtelonnds FelonaturelonSourcelon {
 
-  override val id: FeatureSourceId = FeatureSourceId.CandidateAlgorithmSourceId
+  ovelonrridelon val id: FelonaturelonSourcelonId = FelonaturelonSourcelonId.CandidatelonAlgorithmSourcelonId
 
-  override val featureContext: FeatureContext = CandidateAlgorithmAdapter.getFeatureContext
+  ovelonrridelon val felonaturelonContelonxt: FelonaturelonContelonxt = CandidatelonAlgorithmAdaptelonr.gelontFelonaturelonContelonxt
 
-  override def hydrateFeatures(
-    t: HasClientContext
-      with HasPreFetchedFeature
+  ovelonrridelon delonf hydratelonFelonaturelons(
+    t: HasClielonntContelonxt
+      with HasPrelonFelontchelondFelonaturelon
       with HasParams
-      with HasSimilarToContext
-      with HasDisplayLocation, // we don't use the target here
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    val featureHydrationStats = stats.scope("candidate_alg_source")
-    val hasSourceDetailsStat = featureHydrationStats.counter("has_source_details")
-    val noSourceDetailsStat = featureHydrationStats.counter("no_source_details")
-    val noSourceRankStat = featureHydrationStats.counter("no_source_rank")
-    val hasSourceRankStat = featureHydrationStats.counter("has_source_rank")
-    val noSourceScoreStat = featureHydrationStats.counter("no_source_score")
-    val hasSourceScoreStat = featureHydrationStats.counter("has_source_score")
+      with HasSimilarToContelonxt
+      with HasDisplayLocation, // welon don't uselon thelon targelont helonrelon
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Stitch[Map[CandidatelonUselonr, DataReloncord]] = {
+    val felonaturelonHydrationStats = stats.scopelon("candidatelon_alg_sourcelon")
+    val hasSourcelonDelontailsStat = felonaturelonHydrationStats.countelonr("has_sourcelon_delontails")
+    val noSourcelonDelontailsStat = felonaturelonHydrationStats.countelonr("no_sourcelon_delontails")
+    val noSourcelonRankStat = felonaturelonHydrationStats.countelonr("no_sourcelon_rank")
+    val hasSourcelonRankStat = felonaturelonHydrationStats.countelonr("has_sourcelon_rank")
+    val noSourcelonScorelonStat = felonaturelonHydrationStats.countelonr("no_sourcelon_scorelon")
+    val hasSourcelonScorelonStat = felonaturelonHydrationStats.countelonr("has_sourcelon_scorelon")
 
-    val candidatesToAlgoMap = for {
-      candidate <- candidates
-    } yield {
-      if (candidate.userCandidateSourceDetails.nonEmpty) {
-        hasSourceDetailsStat.incr()
-        candidate.userCandidateSourceDetails.foreach { details =>
-          if (details.candidateSourceRanks.isEmpty) {
-            noSourceRankStat.incr()
-          } else {
-            hasSourceRankStat.incr()
+    val candidatelonsToAlgoMap = for {
+      candidatelon <- candidatelons
+    } yielonld {
+      if (candidatelon.uselonrCandidatelonSourcelonDelontails.nonelonmpty) {
+        hasSourcelonDelontailsStat.incr()
+        candidatelon.uselonrCandidatelonSourcelonDelontails.forelonach { delontails =>
+          if (delontails.candidatelonSourcelonRanks.iselonmpty) {
+            noSourcelonRankStat.incr()
+          } elonlselon {
+            hasSourcelonRankStat.incr()
           }
-          if (details.candidateSourceScores.isEmpty) {
-            noSourceScoreStat.incr()
-          } else {
-            hasSourceScoreStat.incr()
+          if (delontails.candidatelonSourcelonScorelons.iselonmpty) {
+            noSourcelonScorelonStat.incr()
+          } elonlselon {
+            hasSourcelonScorelonStat.incr()
           }
         }
-      } else {
-        noSourceDetailsStat.incr()
+      } elonlselon {
+        noSourcelonDelontailsStat.incr()
       }
-      candidate -> CandidateAlgorithmAdapter.adaptToDataRecord(candidate.userCandidateSourceDetails)
+      candidatelon -> CandidatelonAlgorithmAdaptelonr.adaptToDataReloncord(candidatelon.uselonrCandidatelonSourcelonDelontails)
     }
-    Stitch.value(candidatesToAlgoMap.toMap)
+    Stitch.valuelon(candidatelonsToAlgoMap.toMap)
   }
 }

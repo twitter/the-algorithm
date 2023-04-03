@@ -1,17 +1,17 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator/slice/builder",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/deloncorator/slicelon/buildelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon",
     ],
-    exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/decorator/slice/builder",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline",
+    elonxports = [
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/deloncorator/slicelon/buildelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon",
     ],
 )

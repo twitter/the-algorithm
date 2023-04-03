@@ -1,99 +1,99 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
 import java.util.Map;
 
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.search.earlybird.search.queries.SinceMaxIDFilter;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.SincelonMaxIDFiltelonr;
 
-public class SearchResultsInfo {
-  public static final long NO_ID = SinceMaxIDFilter.NO_FILTER;
-  public static final int NO_TIME = -1;
+public class SelonarchRelonsultsInfo {
+  public static final long NO_ID = SincelonMaxIDFiltelonr.NO_FILTelonR;
+  public static final int NO_TIMelon = -1;
 
-  private int numHitsProcessed = 0;
-  private int numSearchedSegments = 0;
+  privatelon int numHitsProcelonsselond = 0;
+  privatelon int numSelonarchelondSelongmelonnts = 0;
 
-  private boolean earlyTerminated = false;
-  private String earlyTerminationReason = null;
+  privatelon boolelonan elonarlyTelonrminatelond = falselon;
+  privatelon String elonarlyTelonrminationRelonason = null;
 
-  private long maxSearchedStatusID = NO_ID;
-  private long minSearchedStatusID = NO_ID;
+  privatelon long maxSelonarchelondStatusID = NO_ID;
+  privatelon long minSelonarchelondStatusID = NO_ID;
 
-  private int maxSearchedTime = NO_TIME;
-  private int minSearchedTime = NO_TIME;
+  privatelon int maxSelonarchelondTimelon = NO_TIMelon;
+  privatelon int minSelonarchelondTimelon = NO_TIMelon;
 
-  // Map from time thresholds (in milliseconds) to number of results more recent than this period.
-  protected final Map<Long, Integer> hitCounts = Maps.newHashMap();
+  // Map from timelon threlonsholds (in milliselonconds) to numbelonr of relonsults morelon reloncelonnt than this pelonriod.
+  protelonctelond final Map<Long, Intelongelonr> hitCounts = Maps.nelonwHashMap();
 
-  public final int getNumHitsProcessed() {
-    return numHitsProcessed;
+  public final int gelontNumHitsProcelonsselond() {
+    relonturn numHitsProcelonsselond;
   }
 
-  public final void setNumHitsProcessed(int numHitsProcessed) {
-    this.numHitsProcessed = numHitsProcessed;
+  public final void selontNumHitsProcelonsselond(int numHitsProcelonsselond) {
+    this.numHitsProcelonsselond = numHitsProcelonsselond;
   }
 
-  public final int getNumSearchedSegments() {
-    return numSearchedSegments;
+  public final int gelontNumSelonarchelondSelongmelonnts() {
+    relonturn numSelonarchelondSelongmelonnts;
   }
 
-  public final void setNumSearchedSegments(int numSearchedSegments) {
-    this.numSearchedSegments = numSearchedSegments;
+  public final void selontNumSelonarchelondSelongmelonnts(int numSelonarchelondSelongmelonnts) {
+    this.numSelonarchelondSelongmelonnts = numSelonarchelondSelongmelonnts;
   }
 
-  public final long getMaxSearchedStatusID() {
-    return maxSearchedStatusID;
+  public final long gelontMaxSelonarchelondStatusID() {
+    relonturn maxSelonarchelondStatusID;
   }
 
-  public final long getMinSearchedStatusID() {
-    return minSearchedStatusID;
+  public final long gelontMinSelonarchelondStatusID() {
+    relonturn minSelonarchelondStatusID;
   }
 
-  public final int getMaxSearchedTime() {
-    return maxSearchedTime;
+  public final int gelontMaxSelonarchelondTimelon() {
+    relonturn maxSelonarchelondTimelon;
   }
 
-  public final int getMinSearchedTime() {
-    return minSearchedTime;
+  public final int gelontMinSelonarchelondTimelon() {
+    relonturn minSelonarchelondTimelon;
   }
 
-  public boolean isSetSearchedStatusIDs() {
-    return maxSearchedStatusID != NO_ID && minSearchedStatusID != NO_ID;
+  public boolelonan isSelontSelonarchelondStatusIDs() {
+    relonturn maxSelonarchelondStatusID != NO_ID && minSelonarchelondStatusID != NO_ID;
   }
 
-  public boolean isSetSearchedTimes() {
-    return maxSearchedTime != NO_TIME && minSearchedTime != NO_TIME;
+  public boolelonan isSelontSelonarchelondTimelons() {
+    relonturn maxSelonarchelondTimelon != NO_TIMelon && minSelonarchelondTimelon != NO_TIMelon;
   }
 
-  public void setMaxSearchedStatusID(long maxSearchedStatusID) {
-    this.maxSearchedStatusID = maxSearchedStatusID;
+  public void selontMaxSelonarchelondStatusID(long maxSelonarchelondStatusID) {
+    this.maxSelonarchelondStatusID = maxSelonarchelondStatusID;
   }
 
-  public void setMinSearchedStatusID(long minSearchedStatusID) {
-    this.minSearchedStatusID = minSearchedStatusID;
+  public void selontMinSelonarchelondStatusID(long minSelonarchelondStatusID) {
+    this.minSelonarchelondStatusID = minSelonarchelondStatusID;
   }
 
-  public void setMaxSearchedTime(int maxSearchedTime) {
-    this.maxSearchedTime = maxSearchedTime;
+  public void selontMaxSelonarchelondTimelon(int maxSelonarchelondTimelon) {
+    this.maxSelonarchelondTimelon = maxSelonarchelondTimelon;
   }
 
-  public void setMinSearchedTime(int minSearchedTime) {
-    this.minSearchedTime = minSearchedTime;
+  public void selontMinSelonarchelondTimelon(int minSelonarchelondTimelon) {
+    this.minSelonarchelondTimelon = minSelonarchelondTimelon;
   }
 
-  public void setEarlyTerminated(boolean earlyTerminated) {
-    this.earlyTerminated = earlyTerminated;
+  public void selontelonarlyTelonrminatelond(boolelonan elonarlyTelonrminatelond) {
+    this.elonarlyTelonrminatelond = elonarlyTelonrminatelond;
   }
 
-  public boolean isEarlyTerminated() {
-    return earlyTerminated;
+  public boolelonan iselonarlyTelonrminatelond() {
+    relonturn elonarlyTelonrminatelond;
   }
 
-  public String getEarlyTerminationReason() {
-    return earlyTerminationReason;
+  public String gelontelonarlyTelonrminationRelonason() {
+    relonturn elonarlyTelonrminationRelonason;
   }
 
-  public void setEarlyTerminationReason(String earlyTerminationReason) {
-    this.earlyTerminationReason = earlyTerminationReason;
+  public void selontelonarlyTelonrminationRelonason(String elonarlyTelonrminationRelonason) {
+    this.elonarlyTelonrminationRelonason = elonarlyTelonrminationRelonason;
   }
 }

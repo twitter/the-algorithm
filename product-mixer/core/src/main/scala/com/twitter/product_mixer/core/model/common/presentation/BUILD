@@ -1,19 +1,19 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/pipeline_failure",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/scorelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/common",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon/pipelonlinelon_failurelon",
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/scorer",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/pipeline_failure",
+    elonxports = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/scorelonr",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/common",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon/pipelonlinelon_failurelon",
     ],
 )

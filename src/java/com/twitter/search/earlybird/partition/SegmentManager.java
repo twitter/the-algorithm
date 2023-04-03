@@ -1,822 +1,822 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Collelonction;
+import java.util.Collelonctions;
 import java.util.Comparator;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.HashSelont;
+import java.util.Itelonrator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentSkipListMap;
-import java.util.stream.Collectors;
-import javax.annotation.Nullable;
+import java.util.Selont;
+import java.util.concurrelonnt.ConcurrelonntSkipListMap;
+import java.util.strelonam.Collelonctors;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Prelondicatelon;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.partitioning.base.TimeSlice;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserUpdate;
-import com.twitter.search.earlybird.common.userupdates.UserUpdatesChecker;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.search.EarlybirdMultiSegmentSearcher;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.tweetypie.thriftjava.UserScrubGeoEvent;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.common.partitioning.baselon.TimelonSlicelon;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.common.CaughtUpMonitor;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrScrubGelonoMap;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrUpdatelon;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrUpdatelonsChelonckelonr;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSinglelonSelongmelonntSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.elonarlybirdLucelonnelonSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.elonarlybirdMultiSelongmelonntSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.twelonelontypielon.thriftjava.UselonrScrubGelonoelonvelonnt;
 
-public class SegmentManager {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentManager.class);
-  private final Clock clock;
-  private static final String STATS_PREFIX = "segment_manager_";
-  private static final SearchLongGauge SEGMENT_COUNT_STATS =
-          SearchLongGauge.export(STATS_PREFIX + "total_segments");
-  private static final SearchCounter OPTIMIZED_SEGMENTS =
-          SearchCounter.export(STATS_PREFIX + "optimized_segments");
-  private static final SearchCounter UNOPTIMIZED_SEGMENTS =
-          SearchCounter.export(STATS_PREFIX + "unoptimized_segments");
+public class SelongmelonntManagelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SelongmelonntManagelonr.class);
+  privatelon final Clock clock;
+  privatelon static final String STATS_PRelonFIX = "selongmelonnt_managelonr_";
+  privatelon static final SelonarchLongGaugelon SelonGMelonNT_COUNT_STATS =
+          SelonarchLongGaugelon.elonxport(STATS_PRelonFIX + "total_selongmelonnts");
+  privatelon static final SelonarchCountelonr OPTIMIZelonD_SelonGMelonNTS =
+          SelonarchCountelonr.elonxport(STATS_PRelonFIX + "optimizelond_selongmelonnts");
+  privatelon static final SelonarchCountelonr UNOPTIMIZelonD_SelonGMelonNTS =
+          SelonarchCountelonr.elonxport(STATS_PRelonFIX + "unoptimizelond_selongmelonnts");
 
-  public enum Filter {
-    All(info -> true),
-    Enabled(SegmentInfo::isEnabled),
-    NeedsIndexing(SegmentInfo::needsIndexing),
-    Complete(SegmentInfo::isComplete);
+  public elonnum Filtelonr {
+    All(info -> truelon),
+    elonnablelond(SelongmelonntInfo::iselonnablelond),
+    NelonelondsIndelonxing(SelongmelonntInfo::nelonelondsIndelonxing),
+    Complelontelon(SelongmelonntInfo::isComplelontelon);
 
-    private final Predicate<SegmentInfo> predicate;
+    privatelon final Prelondicatelon<SelongmelonntInfo> prelondicatelon;
 
-    Filter(Predicate<SegmentInfo> predicate) {
-      this.predicate = predicate;
+    Filtelonr(Prelondicatelon<SelongmelonntInfo> prelondicatelon) {
+      this.prelondicatelon = prelondicatelon;
     }
 
-    private static final Map<String, Filter> NAME_INDEX =
-        Maps.newHashMapWithExpectedSize(Filter.values().length);
+    privatelon static final Map<String, Filtelonr> NAMelon_INDelonX =
+        Maps.nelonwHashMapWithelonxpelonctelondSizelon(Filtelonr.valuelons().lelonngth);
 
     static {
-      for (Filter filter : Filter.values()) {
-        NAME_INDEX.put(filter.name().toLowerCase(), filter);
+      for (Filtelonr filtelonr : Filtelonr.valuelons()) {
+        NAMelon_INDelonX.put(filtelonr.namelon().toLowelonrCaselon(), filtelonr);
       }
     }
 
     /**
-     * Parses the filter from the given string, based on the filter name.
+     * Parselons thelon filtelonr from thelon givelonn string, baselond on thelon filtelonr namelon.
      */
-    public static Filter fromStringIgnoreCase(String str) {
+    public static Filtelonr fromStringIgnorelonCaselon(String str) {
       if (str == null) {
-        return null;
+        relonturn null;
       }
 
-      return NAME_INDEX.get(str.toLowerCase());
+      relonturn NAMelon_INDelonX.gelont(str.toLowelonrCaselon());
     }
   }
 
-  public enum Order {
-    OLD_TO_NEW,
-    NEW_TO_OLD,
+  public elonnum Ordelonr {
+    OLD_TO_NelonW,
+    NelonW_TO_OLD,
   }
 
   /**
-   * A listener that gets notified when the list of segments changes.
+   * A listelonnelonr that gelonts notifielond whelonn thelon list of selongmelonnts changelons.
    */
-  public interface SegmentUpdateListener {
+  public intelonrfacelon SelongmelonntUpdatelonListelonnelonr {
     /**
-     * Called with the new list of segments when it changes.
+     * Callelond with thelon nelonw list of selongmelonnts whelonn it changelons.
      *
-     * @param segments The new list of segments.
+     * @param selongmelonnts Thelon nelonw list of selongmelonnts.
      */
-    void update(Collection<SegmentInfo> segments, String message);
+    void updatelon(Collelonction<SelongmelonntInfo> selongmelonnts, String melonssagelon);
   }
 
-  private final List<SegmentUpdateListener> updateListeners =
-          Collections.synchronizedList(Lists.newLinkedList());
+  privatelon final List<SelongmelonntUpdatelonListelonnelonr> updatelonListelonnelonrs =
+          Collelonctions.synchronizelondList(Lists.nelonwLinkelondList());
 
-  private final ConcurrentSkipListMap<Long, ISegmentWriter> segmentWriters =
-      new ConcurrentSkipListMap<>();
+  privatelon final ConcurrelonntSkipListMap<Long, ISelongmelonntWritelonr> selongmelonntWritelonrs =
+      nelonw ConcurrelonntSkipListMap<>();
 
-  private final Set<Long> badTimesliceIds = new HashSet<>();
+  privatelon final Selont<Long> badTimelonslicelonIds = nelonw HashSelont<>();
 
-  private final int maxEnabledSegments;
-  private final int maxSegmentSize;
-  private final EarlybirdSegmentFactory earlybirdSegmentFactory;
-  private final UserTable userTable;
-  private final UserScrubGeoMap userScrubGeoMap;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final DynamicPartitionConfig dynamicPartitionConfig;
-  private final UserUpdatesChecker userUpdatesChecker;
-  private final SegmentSyncConfig segmentSyncConfig;
-  private final EarlybirdSearcherStats searcherStats;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  privatelon final int maxelonnablelondSelongmelonnts;
+  privatelon final int maxSelongmelonntSizelon;
+  privatelon final elonarlybirdSelongmelonntFactory elonarlybirdSelongmelonntFactory;
+  privatelon final UselonrTablelon uselonrTablelon;
+  privatelon final UselonrScrubGelonoMap uselonrScrubGelonoMap;
+  privatelon final elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig;
+  privatelon final DynamicPartitionConfig dynamicPartitionConfig;
+  privatelon final UselonrUpdatelonsChelonckelonr uselonrUpdatelonsChelonckelonr;
+  privatelon final SelongmelonntSyncConfig selongmelonntSyncConfig;
+  privatelon final elonarlybirdSelonarchelonrStats selonarchelonrStats;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
+  privatelon final CaughtUpMonitor indelonxCaughtUpMonitor;
 
-  public SegmentManager(
+  public SelongmelonntManagelonr(
       DynamicPartitionConfig dynamicPartitionConfig,
-      EarlybirdIndexConfig earlybirdIndexConfig,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      EarlybirdSearcherStats searcherStats,
-      SearchStatsReceiver earlybirdStatsReceiver,
-      UserUpdatesChecker userUpdatesChecker,
-      SegmentSyncConfig segmentSyncConfig,
-      UserTable userTable,
-      UserScrubGeoMap userScrubGeoMap,
+      elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
+      SelonarchStatsReloncelonivelonr elonarlybirdStatsReloncelonivelonr,
+      UselonrUpdatelonsChelonckelonr uselonrUpdatelonsChelonckelonr,
+      SelongmelonntSyncConfig selongmelonntSyncConfig,
+      UselonrTablelon uselonrTablelon,
+      UselonrScrubGelonoMap uselonrScrubGelonoMap,
       Clock clock,
-      int maxSegmentSize,
-      CriticalExceptionHandler criticalExceptionHandler,
-      CaughtUpMonitor indexCaughtUpMonitor) {
+      int maxSelongmelonntSizelon,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
+      CaughtUpMonitor indelonxCaughtUpMonitor) {
 
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+    PartitionConfig curPartitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
 
-    this.userTable = userTable;
-    this.userScrubGeoMap = userScrubGeoMap;
+    this.uselonrTablelon = uselonrTablelon;
+    this.uselonrScrubGelonoMap = uselonrScrubGelonoMap;
 
-    this.earlybirdSegmentFactory = new EarlybirdSegmentFactory(
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
+    this.elonarlybirdSelongmelonntFactory = nelonw elonarlybirdSelongmelonntFactory(
+        elonarlybirdIndelonxConfig,
+        selonarchIndelonxingMelontricSelont,
+        selonarchelonrStats,
         clock);
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.maxEnabledSegments = curPartitionConfig.getMaxEnabledLocalSegments();
+    this.elonarlybirdIndelonxConfig = elonarlybirdIndelonxConfig;
+    this.maxelonnablelondSelongmelonnts = curPartitionConfig.gelontMaxelonnablelondLocalSelongmelonnts();
     this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.userUpdatesChecker = userUpdatesChecker;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.searcherStats = searcherStats;
+    this.uselonrUpdatelonsChelonckelonr = uselonrUpdatelonsChelonckelonr;
+    this.selongmelonntSyncConfig = selongmelonntSyncConfig;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
+    this.selonarchelonrStats = selonarchelonrStats;
     this.clock = clock;
-    this.maxSegmentSize = maxSegmentSize;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.indexCaughtUpMonitor = indexCaughtUpMonitor;
+    this.maxSelongmelonntSizelon = maxSelongmelonntSizelon;
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
+    this.indelonxCaughtUpMonitor = indelonxCaughtUpMonitor;
 
-    earlybirdStatsReceiver.getCustomGauge("total_loaded_segments",
-        segmentWriters::size);
-    earlybirdStatsReceiver.getCustomGauge("total_indexed_documents",
-        this::getNumIndexedDocuments);
-    earlybirdStatsReceiver.getCustomGauge("total_segment_size_bytes",
-        this::getTotalSegmentSizeOnDisk);
-    earlybirdStatsReceiver.getCustomGauge("earlybird_index_depth_millis",
-        this::getIndexDepthMillis);
+    elonarlybirdStatsReloncelonivelonr.gelontCustomGaugelon("total_loadelond_selongmelonnts",
+        selongmelonntWritelonrs::sizelon);
+    elonarlybirdStatsReloncelonivelonr.gelontCustomGaugelon("total_indelonxelond_documelonnts",
+        this::gelontNumIndelonxelondDocumelonnts);
+    elonarlybirdStatsReloncelonivelonr.gelontCustomGaugelon("total_selongmelonnt_sizelon_bytelons",
+        this::gelontTotalSelongmelonntSizelonOnDisk);
+    elonarlybirdStatsReloncelonivelonr.gelontCustomGaugelon("elonarlybird_indelonx_delonpth_millis",
+        this::gelontIndelonxDelonpthMillis);
   }
 
   /**
-   * Logs the current state of this segment manager.
+   * Logs thelon currelonnt statelon of this selongmelonnt managelonr.
    *
-   * @param label A label that should identify the segment manager.
+   * @param labelonl A labelonl that should idelonntify thelon selongmelonnt managelonr.
    */
-  public void logState(String label) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("State of SegmentManager (" + label + "):\n");
-    sb.append("Number of segments: " + segmentWriters.size());
-    boolean hasSegments = false;
-    for (Map.Entry<Long, ISegmentWriter> entry : this.segmentWriters.entrySet()) {
-      SegmentInfo segmentInfo = entry.getValue().getSegmentInfo();
-      hasSegments = true;
+  public void logStatelon(String labelonl) {
+    StringBuildelonr sb = nelonw StringBuildelonr();
+    sb.appelonnd("Statelon of SelongmelonntManagelonr (" + labelonl + "):\n");
+    sb.appelonnd("Numbelonr of selongmelonnts: " + selongmelonntWritelonrs.sizelon());
+    boolelonan hasSelongmelonnts = falselon;
+    for (Map.elonntry<Long, ISelongmelonntWritelonr> elonntry : this.selongmelonntWritelonrs.elonntrySelont()) {
+      SelongmelonntInfo selongmelonntInfo = elonntry.gelontValuelon().gelontSelongmelonntInfo();
+      hasSelongmelonnts = truelon;
 
-      sb.append(String.format("\nSegment (%s): isClosed: %5s, isComplete: %5s, "
-              + "isEnabled: %5s, isIndexing: %5s, isOptimized: %5s, wasIndexed: %5s",
-          segmentInfo.getSegmentName(),
-          segmentInfo.isClosed(),
-          segmentInfo.isComplete(),
-          segmentInfo.isEnabled(),
-          segmentInfo.isIndexing(),
-          segmentInfo.isOptimized(),
-          segmentInfo.wasIndexed()
+      sb.appelonnd(String.format("\nSelongmelonnt (%s): isCloselond: %5s, isComplelontelon: %5s, "
+              + "iselonnablelond: %5s, isIndelonxing: %5s, isOptimizelond: %5s, wasIndelonxelond: %5s",
+          selongmelonntInfo.gelontSelongmelonntNamelon(),
+          selongmelonntInfo.isCloselond(),
+          selongmelonntInfo.isComplelontelon(),
+          selongmelonntInfo.iselonnablelond(),
+          selongmelonntInfo.isIndelonxing(),
+          selongmelonntInfo.isOptimizelond(),
+          selongmelonntInfo.wasIndelonxelond()
       ));
 
-      sb.append(String.format(" | Index stats: %s", segmentInfo.getIndexStats().toString()));
+      sb.appelonnd(String.format(" | Indelonx stats: %s", selongmelonntInfo.gelontIndelonxStats().toString()));
     }
-    if (!hasSegments) {
-      sb.append(" No segments.");
+    if (!hasSelongmelonnts) {
+      sb.appelonnd(" No selongmelonnts.");
     }
     LOG.info(sb.toString());
   }
 
 
-  public PartitionConfig getPartitionConfig() {
-    return dynamicPartitionConfig.getCurrentPartitionConfig();
+  public PartitionConfig gelontPartitionConfig() {
+    relonturn dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
   }
 
-  public int getMaxEnabledSegments() {
-    return maxEnabledSegments;
+  public int gelontMaxelonnablelondSelongmelonnts() {
+    relonturn maxelonnablelondSelongmelonnts;
   }
 
-  public EarlybirdSegmentFactory getEarlybirdSegmentFactory() {
-    return earlybirdSegmentFactory;
+  public elonarlybirdSelongmelonntFactory gelontelonarlybirdSelongmelonntFactory() {
+    relonturn elonarlybirdSelongmelonntFactory;
   }
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  public elonarlybirdIndelonxConfig gelontelonarlybirdIndelonxConfig() {
+    relonturn elonarlybirdIndelonxConfig;
   }
 
-  public UserTable getUserTable() {
-    return userTable;
+  public UselonrTablelon gelontUselonrTablelon() {
+    relonturn uselonrTablelon;
   }
 
-  public UserScrubGeoMap getUserScrubGeoMap() {
-    return userScrubGeoMap;
+  public UselonrScrubGelonoMap gelontUselonrScrubGelonoMap() {
+    relonturn uselonrScrubGelonoMap;
   }
 
-  @VisibleForTesting
-  public void reset() {
-    segmentWriters.clear();
+  @VisiblelonForTelonsting
+  public void relonselont() {
+    selongmelonntWritelonrs.clelonar();
   }
 
   /**
-   * Returns the list of all segments that match the given filter, in the given order.
+   * Relonturns thelon list of all selongmelonnts that match thelon givelonn filtelonr, in thelon givelonn ordelonr.
    */
-  public Iterable<SegmentInfo> getSegmentInfos(Filter filter, Order order) {
-    Comparator<SegmentInfo> comparator;
+  public Itelonrablelon<SelongmelonntInfo> gelontSelongmelonntInfos(Filtelonr filtelonr, Ordelonr ordelonr) {
+    Comparator<SelongmelonntInfo> comparator;
 
-    if (order == Order.OLD_TO_NEW) {
-      comparator = Comparator.naturalOrder();
-    } else {
-      comparator = Comparator.reverseOrder();
+    if (ordelonr == Ordelonr.OLD_TO_NelonW) {
+      comparator = Comparator.naturalOrdelonr();
+    } elonlselon {
+      comparator = Comparator.relonvelonrselonOrdelonr();
     }
 
-    return () -> segmentWriters.values().stream()
-        .map(ISegmentWriter::getSegmentInfo)
-        .filter(filter.predicate::apply)
-        .sorted(comparator)
-        .iterator();
+    relonturn () -> selongmelonntWritelonrs.valuelons().strelonam()
+        .map(ISelongmelonntWritelonr::gelontSelongmelonntInfo)
+        .filtelonr(filtelonr.prelondicatelon::apply)
+        .sortelond(comparator)
+        .itelonrator();
   }
 
-  private void createAndPutSegmentInfo(Segment segment) throws IOException {
-    LOG.info("Creating new SegmentInfo for segment " + segment.getSegmentName());
-    putSegmentInfo(new SegmentInfo(segment, earlybirdSegmentFactory, segmentSyncConfig));
+  privatelon void crelonatelonAndPutSelongmelonntInfo(Selongmelonnt selongmelonnt) throws IOelonxcelonption {
+    LOG.info("Crelonating nelonw SelongmelonntInfo for selongmelonnt " + selongmelonnt.gelontSelongmelonntNamelon());
+    putSelongmelonntInfo(nelonw SelongmelonntInfo(selongmelonnt, elonarlybirdSelongmelonntFactory, selongmelonntSyncConfig));
   }
 
   /**
-   * Updates the list of segments managed by this manager, based on the given list.
+   * Updatelons thelon list of selongmelonnts managelond by this managelonr, baselond on thelon givelonn list.
    */
-  public void updateSegments(List<Segment> segmentsList) throws IOException {
-    // Truncate to the amount of segments we want to keep enabled.
-    List<Segment> truncatedSegmentList =
-        SegmentManager.truncateSegmentList(segmentsList, maxEnabledSegments);
+  public void updatelonSelongmelonnts(List<Selongmelonnt> selongmelonntsList) throws IOelonxcelonption {
+    // Truncatelon to thelon amount of selongmelonnts welon want to kelonelonp elonnablelond.
+    List<Selongmelonnt> truncatelondSelongmelonntList =
+        SelongmelonntManagelonr.truncatelonSelongmelonntList(selongmelonntsList, maxelonnablelondSelongmelonnts);
 
-    final long newestTimeSliceID = getNewestTimeSliceID();
-    final Set<Long> segmentsToDisable = new HashSet<>(segmentWriters.keySet());
+    final long nelonwelonstTimelonSlicelonID = gelontNelonwelonstTimelonSlicelonID();
+    final Selont<Long> selongmelonntsToDisablelon = nelonw HashSelont<>(selongmelonntWritelonrs.kelonySelont());
 
-    for (Segment segment : truncatedSegmentList) {
-      final long timeSliceID = segment.getTimeSliceID();
-      segmentsToDisable.remove(timeSliceID);
+    for (Selongmelonnt selongmelonnt : truncatelondSelongmelonntList) {
+      final long timelonSlicelonID = selongmelonnt.gelontTimelonSlicelonID();
+      selongmelonntsToDisablelon.relonmovelon(timelonSlicelonID);
 
-      // On the first loop iteration of the first call to updateSegments(), newestTimeSliceID should
-      // be set to -1, so the condition should be false. After that, all segments should either be
-      // newer than the latest process segment, or if we're replacing an old segment, it should have
-      // a SegmentInfo instance associated with it.
-      if (timeSliceID <= newestTimeSliceID) {
-        ISegmentWriter segmentWriter = segmentWriters.get(timeSliceID);
-        // Old time slice ID. It should have a SegmentInfo instance associated with it.
-        if (segmentWriter == null) {
-          if (!badTimesliceIds.contains(timeSliceID)) {
-            // We're dealing with a bad timeslice. Log an error, but do it only once per timeslice.
-            LOG.error("The SegmentInfo instance associated with an old timeSliceID should never be "
-                      + "null. TimeSliceID: {}", timeSliceID);
-            badTimesliceIds.add(timeSliceID);
+      // On thelon first loop itelonration of thelon first call to updatelonSelongmelonnts(), nelonwelonstTimelonSlicelonID should
+      // belon selont to -1, so thelon condition should belon falselon. Aftelonr that, all selongmelonnts should elonithelonr belon
+      // nelonwelonr than thelon latelonst procelonss selongmelonnt, or if welon'relon relonplacing an old selongmelonnt, it should havelon
+      // a SelongmelonntInfo instancelon associatelond with it.
+      if (timelonSlicelonID <= nelonwelonstTimelonSlicelonID) {
+        ISelongmelonntWritelonr selongmelonntWritelonr = selongmelonntWritelonrs.gelont(timelonSlicelonID);
+        // Old timelon slicelon ID. It should havelon a SelongmelonntInfo instancelon associatelond with it.
+        if (selongmelonntWritelonr == null) {
+          if (!badTimelonslicelonIds.contains(timelonSlicelonID)) {
+            // Welon'relon delonaling with a bad timelonslicelon. Log an elonrror, but do it only oncelon pelonr timelonslicelon.
+            LOG.elonrror("Thelon SelongmelonntInfo instancelon associatelond with an old timelonSlicelonID should nelonvelonr belon "
+                      + "null. TimelonSlicelonID: {}", timelonSlicelonID);
+            badTimelonslicelonIds.add(timelonSlicelonID);
           }
-        } else if (segmentWriter.getSegmentInfo().isClosed()) {
-          // If the SegmentInfo was closed, create a new one.
-          LOG.info("SegmentInfo for segment {} is closed.", segment.getSegmentName());
-          createAndPutSegmentInfo(segment);
+        } elonlselon if (selongmelonntWritelonr.gelontSelongmelonntInfo().isCloselond()) {
+          // If thelon SelongmelonntInfo was closelond, crelonatelon a nelonw onelon.
+          LOG.info("SelongmelonntInfo for selongmelonnt {} is closelond.", selongmelonnt.gelontSelongmelonntNamelon());
+          crelonatelonAndPutSelongmelonntInfo(selongmelonnt);
         }
-      } else {
-        // New time slice ID: create a SegmentInfo instance for it.
-        createAndPutSegmentInfo(segment);
+      } elonlselon {
+        // Nelonw timelon slicelon ID: crelonatelon a SelongmelonntInfo instancelon for it.
+        crelonatelonAndPutSelongmelonntInfo(selongmelonnt);
       }
     }
 
-    // Anything we didn't see locally can be disabled.
-    for (Long segmentID : segmentsToDisable) {
-      disableSegment(segmentID);
+    // Anything welon didn't selonelon locally can belon disablelond.
+    for (Long selongmelonntID : selongmelonntsToDisablelon) {
+      disablelonSelongmelonnt(selongmelonntID);
     }
 
-    // Update segment stats and other exported variables.
-    updateStats();
+    // Updatelon selongmelonnt stats and othelonr elonxportelond variablelons.
+    updatelonStats();
   }
 
   /**
-   * Re-export stats after a segment has changed, or the set of segments has changed.
+   * Relon-elonxport stats aftelonr a selongmelonnt has changelond, or thelon selont of selongmelonnts has changelond.
    */
-  public void updateStats() {
-    // Update the partition count stats.
-    SEGMENT_COUNT_STATS.set(segmentWriters.size());
+  public void updatelonStats() {
+    // Updatelon thelon partition count stats.
+    SelonGMelonNT_COUNT_STATS.selont(selongmelonntWritelonrs.sizelon());
 
-    OPTIMIZED_SEGMENTS.reset();
-    UNOPTIMIZED_SEGMENTS.reset();
-    for (ISegmentWriter writer : segmentWriters.values()) {
-      if (writer.getSegmentInfo().isOptimized()) {
-        OPTIMIZED_SEGMENTS.increment();
-      } else {
-        UNOPTIMIZED_SEGMENTS.increment();
+    OPTIMIZelonD_SelonGMelonNTS.relonselont();
+    UNOPTIMIZelonD_SelonGMelonNTS.relonselont();
+    for (ISelongmelonntWritelonr writelonr : selongmelonntWritelonrs.valuelons()) {
+      if (writelonr.gelontSelongmelonntInfo().isOptimizelond()) {
+        OPTIMIZelonD_SelonGMelonNTS.increlonmelonnt();
+      } elonlselon {
+        UNOPTIMIZelonD_SelonGMelonNTS.increlonmelonnt();
       }
     }
   }
 
-  private long getIndexDepthMillis() {
-    long oldestTimeSliceID = getOldestEnabledTimeSliceID();
-    if (oldestTimeSliceID == SegmentInfo.INVALID_ID) {
-      return 0;
-    } else {
-      // Compute timestamp from timesliceId, which is also a snowflake tweetId
-      long timestamp = SnowflakeIdParser.getTimestampFromTweetId(oldestTimeSliceID);
-      // Set current index depth in milliseconds
-      long indexDepthInMillis = System.currentTimeMillis() - timestamp;
-      // Index depth should never be negative.
-      if (indexDepthInMillis < 0) {
-        LOG.warn("Negative index depth. Large time skew on this Earlybird?");
-        return 0;
-      } else {
-        return indexDepthInMillis;
+  privatelon long gelontIndelonxDelonpthMillis() {
+    long oldelonstTimelonSlicelonID = gelontOldelonstelonnablelondTimelonSlicelonID();
+    if (oldelonstTimelonSlicelonID == SelongmelonntInfo.INVALID_ID) {
+      relonturn 0;
+    } elonlselon {
+      // Computelon timelonstamp from timelonslicelonId, which is also a snowflakelon twelonelontId
+      long timelonstamp = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(oldelonstTimelonSlicelonID);
+      // Selont currelonnt indelonx delonpth in milliselonconds
+      long indelonxDelonpthInMillis = Systelonm.currelonntTimelonMillis() - timelonstamp;
+      // Indelonx delonpth should nelonvelonr belon nelongativelon.
+      if (indelonxDelonpthInMillis < 0) {
+        LOG.warn("Nelongativelon indelonx delonpth. Largelon timelon skelonw on this elonarlybird?");
+        relonturn 0;
+      } elonlselon {
+        relonturn indelonxDelonpthInMillis;
       }
     }
   }
 
-  private void updateExportedSegmentStats() {
-    int index = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.NEW_TO_OLD)) {
-      SegmentIndexStatsExporter.export(segmentInfo, index++);
+  privatelon void updatelonelonxportelondSelongmelonntStats() {
+    int indelonx = 0;
+    for (SelongmelonntInfo selongmelonntInfo : gelontSelongmelonntInfos(Filtelonr.elonnablelond, Ordelonr.NelonW_TO_OLD)) {
+      SelongmelonntIndelonxStatselonxportelonr.elonxport(selongmelonntInfo, indelonx++);
     }
   }
 
-  // Marks the SegmentInfo object matching this time slice as disabled.
-  private void disableSegment(long timeSliceID) {
-    SegmentInfo info = getSegmentInfo(timeSliceID);
+  // Marks thelon SelongmelonntInfo objelonct matching this timelon slicelon as disablelond.
+  privatelon void disablelonSelongmelonnt(long timelonSlicelonID) {
+    SelongmelonntInfo info = gelontSelongmelonntInfo(timelonSlicelonID);
     if (info == null) {
-      LOG.warn("Tried to disable missing segment " + timeSliceID);
-      return;
+      LOG.warn("Trielond to disablelon missing selongmelonnt " + timelonSlicelonID);
+      relonturn;
     }
-    info.setIsEnabled(false);
-    LOG.info("Disabled segment " + info);
+    info.selontIselonnablelond(falselon);
+    LOG.info("Disablelond selongmelonnt " + info);
   }
 
-  public long getNewestTimeSliceID() {
-    final Iterator<SegmentInfo> segments = getSegmentInfos(Filter.All, Order.NEW_TO_OLD).iterator();
-    return segments.hasNext() ? segments.next().getTimeSliceID() : SegmentInfo.INVALID_ID;
+  public long gelontNelonwelonstTimelonSlicelonID() {
+    final Itelonrator<SelongmelonntInfo> selongmelonnts = gelontSelongmelonntInfos(Filtelonr.All, Ordelonr.NelonW_TO_OLD).itelonrator();
+    relonturn selongmelonnts.hasNelonxt() ? selongmelonnts.nelonxt().gelontTimelonSlicelonID() : SelongmelonntInfo.INVALID_ID;
   }
 
   /**
-   * Returns the timeslice ID of the oldest enabled segment.
+   * Relonturns thelon timelonslicelon ID of thelon oldelonst elonnablelond selongmelonnt.
    */
-  public long getOldestEnabledTimeSliceID() {
-    if (segmentWriters.size() == 0) {
-      return SegmentInfo.INVALID_ID;
+  public long gelontOldelonstelonnablelondTimelonSlicelonID() {
+    if (selongmelonntWritelonrs.sizelon() == 0) {
+      relonturn SelongmelonntInfo.INVALID_ID;
     }
-    ISegmentWriter segmentWriter = segmentWriters.firstEntry().getValue();
-    return segmentWriter.getSegmentInfo().getTimeSliceID();
+    ISelongmelonntWritelonr selongmelonntWritelonr = selongmelonntWritelonrs.firstelonntry().gelontValuelon();
+    relonturn selongmelonntWritelonr.gelontSelongmelonntInfo().gelontTimelonSlicelonID();
   }
 
   /**
-   * Returns the SegmentInfo for the given timeSliceID.
+   * Relonturns thelon SelongmelonntInfo for thelon givelonn timelonSlicelonID.
    */
-  public final SegmentInfo getSegmentInfo(long timeSliceID) {
-    ISegmentWriter segmentWriter = segmentWriters.get(timeSliceID);
-    return segmentWriter == null ? null : segmentWriter.getSegmentInfo();
+  public final SelongmelonntInfo gelontSelongmelonntInfo(long timelonSlicelonID) {
+    ISelongmelonntWritelonr selongmelonntWritelonr = selongmelonntWritelonrs.gelont(timelonSlicelonID);
+    relonturn selongmelonntWritelonr == null ? null : selongmelonntWritelonr.gelontSelongmelonntInfo();
   }
 
   /**
-   * Returns the segment info for the segment that should contain the given tweet ID.
+   * Relonturns thelon selongmelonnt info for thelon selongmelonnt that should contain thelon givelonn twelonelont ID.
    */
-  public final SegmentInfo getSegmentInfoFromStatusID(long tweetID) {
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.All, Order.NEW_TO_OLD)) {
-      if (tweetID >= segmentInfo.getTimeSliceID()) {
-        return segmentInfo;
+  public final SelongmelonntInfo gelontSelongmelonntInfoFromStatusID(long twelonelontID) {
+    for (SelongmelonntInfo selongmelonntInfo : gelontSelongmelonntInfos(Filtelonr.All, Ordelonr.NelonW_TO_OLD)) {
+      if (twelonelontID >= selongmelonntInfo.gelontTimelonSlicelonID()) {
+        relonturn selongmelonntInfo;
       }
     }
 
-    return null;
+    relonturn null;
   }
 
   /**
-   * Removes the segment associated with the given timeslice ID from the segment manager. This will
-   * also take care of all required clean up related to the segment being removed, such as closing
-   * its writer.
+   * Relonmovelons thelon selongmelonnt associatelond with thelon givelonn timelonslicelon ID from thelon selongmelonnt managelonr. This will
+   * also takelon carelon of all relonquirelond clelonan up relonlatelond to thelon selongmelonnt beloning relonmovelond, such as closing
+   * its writelonr.
    */
-  public boolean removeSegmentInfo(long timeSliceID) {
-    if (timeSliceID == getNewestTimeSliceID()) {
-      throw new RuntimeException("Cannot drop segment of current time-slice " + timeSliceID);
+  public boolelonan relonmovelonSelongmelonntInfo(long timelonSlicelonID) {
+    if (timelonSlicelonID == gelontNelonwelonstTimelonSlicelonID()) {
+      throw nelonw Runtimelonelonxcelonption("Cannot drop selongmelonnt of currelonnt timelon-slicelon " + timelonSlicelonID);
     }
 
-    ISegmentWriter removed = segmentWriters.get(timeSliceID);
-    if (removed == null) {
-      return false;
+    ISelongmelonntWritelonr relonmovelond = selongmelonntWritelonrs.gelont(timelonSlicelonID);
+    if (relonmovelond == null) {
+      relonturn falselon;
     }
 
-    LOG.info("Removing segment {}", removed.getSegmentInfo());
-    Preconditions.checkState(!removed.getSegmentInfo().isEnabled());
-    removed.getSegmentInfo().getIndexSegment().close();
-    segmentWriters.remove(timeSliceID);
+    LOG.info("Relonmoving selongmelonnt {}", relonmovelond.gelontSelongmelonntInfo());
+    Prelonconditions.chelonckStatelon(!relonmovelond.gelontSelongmelonntInfo().iselonnablelond());
+    relonmovelond.gelontSelongmelonntInfo().gelontIndelonxSelongmelonnt().closelon();
+    selongmelonntWritelonrs.relonmovelon(timelonSlicelonID);
 
-    String segmentName = removed.getSegmentInfo().getSegmentName();
-    updateAllListeners("Removed segment " + segmentName);
-    LOG.info("Removed segment " + segmentName);
-    updateExportedSegmentStats();
-    updateStats();
-    return true;
+    String selongmelonntNamelon = relonmovelond.gelontSelongmelonntInfo().gelontSelongmelonntNamelon();
+    updatelonAllListelonnelonrs("Relonmovelond selongmelonnt " + selongmelonntNamelon);
+    LOG.info("Relonmovelond selongmelonnt " + selongmelonntNamelon);
+    updatelonelonxportelondSelongmelonntStats();
+    updatelonStats();
+    relonturn truelon;
   }
 
   /**
-   * Add the given SegmentWriter into the segmentWriters map.
-   * If a segment with the same timesliceID already exists in the map, the old one is replaced
-   * with the new one; this should only happen in the archive.
+   * Add thelon givelonn SelongmelonntWritelonr into thelon selongmelonntWritelonrs map.
+   * If a selongmelonnt with thelon samelon timelonslicelonID alrelonady elonxists in thelon map, thelon old onelon is relonplacelond
+   * with thelon nelonw onelon; this should only happelonn in thelon archivelon.
    *
-   * The replaced segment is destroyed after a delay to allow in-flight requests to finish.
+   * Thelon relonplacelond selongmelonnt is delonstroyelond aftelonr a delonlay to allow in-flight relonquelonsts to finish.
    */
-  public ISegmentWriter putSegmentInfo(SegmentInfo info) {
-    ISegmentWriter usedSegmentWriter;
+  public ISelongmelonntWritelonr putSelongmelonntInfo(SelongmelonntInfo info) {
+    ISelongmelonntWritelonr uselondSelongmelonntWritelonr;
 
-    SegmentWriter segmentWriter
-        = new SegmentWriter(info, searchIndexingMetricSet.updateFreshness);
+    SelongmelonntWritelonr selongmelonntWritelonr
+        = nelonw SelongmelonntWritelonr(info, selonarchIndelonxingMelontricSelont.updatelonFrelonshnelonss);
 
-    if (!info.isOptimized()) {
-      LOG.info("Inserting an optimizing segment writer for segment: {}",
-          info.getSegmentName());
+    if (!info.isOptimizelond()) {
+      LOG.info("Inselonrting an optimizing selongmelonnt writelonr for selongmelonnt: {}",
+          info.gelontSelongmelonntNamelon());
 
-      usedSegmentWriter = new OptimizingSegmentWriter(
-          segmentWriter,
-          criticalExceptionHandler,
-          searchIndexingMetricSet,
-          indexCaughtUpMonitor);
-    } else {
-      usedSegmentWriter = segmentWriter;
+      uselondSelongmelonntWritelonr = nelonw OptimizingSelongmelonntWritelonr(
+          selongmelonntWritelonr,
+          criticalelonxcelonptionHandlelonr,
+          selonarchIndelonxingMelontricSelont,
+          indelonxCaughtUpMonitor);
+    } elonlselon {
+      uselondSelongmelonntWritelonr = selongmelonntWritelonr;
     }
 
-    putSegmentWriter(usedSegmentWriter);
-    return usedSegmentWriter;
+    putSelongmelonntWritelonr(uselondSelongmelonntWritelonr);
+    relonturn uselondSelongmelonntWritelonr;
   }
 
-  private void putSegmentWriter(ISegmentWriter segmentWriter) {
-    SegmentInfo newSegmentInfo = segmentWriter.getSegmentInfo();
-    SegmentInfo oldSegmentInfo = getSegmentInfo(newSegmentInfo.getTimeSliceID());
+  privatelon void putSelongmelonntWritelonr(ISelongmelonntWritelonr selongmelonntWritelonr) {
+    SelongmelonntInfo nelonwSelongmelonntInfo = selongmelonntWritelonr.gelontSelongmelonntInfo();
+    SelongmelonntInfo oldSelongmelonntInfo = gelontSelongmelonntInfo(nelonwSelongmelonntInfo.gelontTimelonSlicelonID());
 
-    // Some sanity checks.
-    if (oldSegmentInfo != null) {
-      // This map is thread safe, so this put can be considered atomic.
-      segmentWriters.put(newSegmentInfo.getTimeSliceID(), segmentWriter);
-      LOG.info("Replaced SegmentInfo with a new one in segmentWriters map. "
-          + "Old SegmentInfo: {} New SegmentInfo: {}", oldSegmentInfo, newSegmentInfo);
+    // Somelon sanity cheloncks.
+    if (oldSelongmelonntInfo != null) {
+      // This map is threlonad safelon, so this put can belon considelonrelond atomic.
+      selongmelonntWritelonrs.put(nelonwSelongmelonntInfo.gelontTimelonSlicelonID(), selongmelonntWritelonr);
+      LOG.info("Relonplacelond SelongmelonntInfo with a nelonw onelon in selongmelonntWritelonrs map. "
+          + "Old SelongmelonntInfo: {} Nelonw SelongmelonntInfo: {}", oldSelongmelonntInfo, nelonwSelongmelonntInfo);
 
-      if (!oldSegmentInfo.isClosed()) {
-        oldSegmentInfo.deleteIndexSegmentDirectoryAfterDelay();
+      if (!oldSelongmelonntInfo.isCloselond()) {
+        oldSelongmelonntInfo.delonlelontelonIndelonxSelongmelonntDirelonctoryAftelonrDelonlay();
       }
-    } else {
-      long newestTimeSliceID = getNewestTimeSliceID();
-      if (newestTimeSliceID != SegmentInfo.INVALID_ID
-          && newestTimeSliceID > newSegmentInfo.getTimeSliceID()) {
-        LOG.error("Not adding out-of-order segment " + newSegmentInfo);
-        return;
+    } elonlselon {
+      long nelonwelonstTimelonSlicelonID = gelontNelonwelonstTimelonSlicelonID();
+      if (nelonwelonstTimelonSlicelonID != SelongmelonntInfo.INVALID_ID
+          && nelonwelonstTimelonSlicelonID > nelonwSelongmelonntInfo.gelontTimelonSlicelonID()) {
+        LOG.elonrror("Not adding out-of-ordelonr selongmelonnt " + nelonwSelongmelonntInfo);
+        relonturn;
       }
 
-      segmentWriters.put(newSegmentInfo.getTimeSliceID(), segmentWriter);
-      LOG.info("Added segment " + newSegmentInfo);
+      selongmelonntWritelonrs.put(nelonwSelongmelonntInfo.gelontTimelonSlicelonID(), selongmelonntWritelonr);
+      LOG.info("Addelond selongmelonnt " + nelonwSelongmelonntInfo);
     }
 
-    updateAllListeners("Added segment " + newSegmentInfo.getTimeSliceID());
-    updateExportedSegmentStats();
-    updateStats();
+    updatelonAllListelonnelonrs("Addelond selongmelonnt " + nelonwSelongmelonntInfo.gelontTimelonSlicelonID());
+    updatelonelonxportelondSelongmelonntStats();
+    updatelonStats();
   }
 
-  private SegmentInfo createSegmentInfo(long timesliceID) throws IOException {
-    PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+  privatelon SelongmelonntInfo crelonatelonSelongmelonntInfo(long timelonslicelonID) throws IOelonxcelonption {
+    PartitionConfig partitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
 
-    TimeSlice timeSlice = new TimeSlice(
-        timesliceID,
-        maxSegmentSize,
-        partitionConfig.getIndexingHashPartitionID(),
-        partitionConfig.getNumPartitions());
+    TimelonSlicelon timelonSlicelon = nelonw TimelonSlicelon(
+        timelonslicelonID,
+        maxSelongmelonntSizelon,
+        partitionConfig.gelontIndelonxingHashPartitionID(),
+        partitionConfig.gelontNumPartitions());
 
-    SegmentInfo segmentInfo =
-        new SegmentInfo(timeSlice.getSegment(), earlybirdSegmentFactory, segmentSyncConfig);
+    SelongmelonntInfo selongmelonntInfo =
+        nelonw SelongmelonntInfo(timelonSlicelon.gelontSelongmelonnt(), elonarlybirdSelongmelonntFactory, selongmelonntSyncConfig);
 
-    return segmentInfo;
+    relonturn selongmelonntInfo;
   }
 
   /**
-   * Create a new optimizing segment writer and add it to the map.
+   * Crelonatelon a nelonw optimizing selongmelonnt writelonr and add it to thelon map.
    */
-  public OptimizingSegmentWriter createAndPutOptimizingSegmentWriter(
-      long timesliceID) throws IOException {
-    SegmentInfo segmentInfo = createSegmentInfo(timesliceID);
+  public OptimizingSelongmelonntWritelonr crelonatelonAndPutOptimizingSelongmelonntWritelonr(
+      long timelonslicelonID) throws IOelonxcelonption {
+    SelongmelonntInfo selongmelonntInfo = crelonatelonSelongmelonntInfo(timelonslicelonID);
 
-    OptimizingSegmentWriter writer = new OptimizingSegmentWriter(
-        new SegmentWriter(segmentInfo, searchIndexingMetricSet.updateFreshness),
-        criticalExceptionHandler,
-        searchIndexingMetricSet,
-        indexCaughtUpMonitor);
+    OptimizingSelongmelonntWritelonr writelonr = nelonw OptimizingSelongmelonntWritelonr(
+        nelonw SelongmelonntWritelonr(selongmelonntInfo, selonarchIndelonxingMelontricSelont.updatelonFrelonshnelonss),
+        criticalelonxcelonptionHandlelonr,
+        selonarchIndelonxingMelontricSelont,
+        indelonxCaughtUpMonitor);
 
-    putSegmentWriter(writer);
-    return writer;
+    putSelongmelonntWritelonr(writelonr);
+    relonturn writelonr;
   }
 
   /**
-   * Create a new segment writer.
+   * Crelonatelon a nelonw selongmelonnt writelonr.
    */
-  public SegmentWriter createSegmentWriter(long timesliceID) throws IOException {
-    SegmentInfo segmentInfo = createSegmentInfo(timesliceID);
+  public SelongmelonntWritelonr crelonatelonSelongmelonntWritelonr(long timelonslicelonID) throws IOelonxcelonption {
+    SelongmelonntInfo selongmelonntInfo = crelonatelonSelongmelonntInfo(timelonslicelonID);
 
-    SegmentWriter writer = new SegmentWriter(
-        segmentInfo, searchIndexingMetricSet.updateFreshness);
+    SelongmelonntWritelonr writelonr = nelonw SelongmelonntWritelonr(
+        selongmelonntInfo, selonarchIndelonxingMelontricSelont.updatelonFrelonshnelonss);
 
-    return writer;
+    relonturn writelonr;
   }
 
-  private void updateAllListeners(String message) {
-    List<SegmentInfo> segmentInfos = segmentWriters.values().stream()
-        .map(ISegmentWriter::getSegmentInfo)
-        .collect(Collectors.toList());
-    for (SegmentUpdateListener listener : updateListeners) {
+  privatelon void updatelonAllListelonnelonrs(String melonssagelon) {
+    List<SelongmelonntInfo> selongmelonntInfos = selongmelonntWritelonrs.valuelons().strelonam()
+        .map(ISelongmelonntWritelonr::gelontSelongmelonntInfo)
+        .collelonct(Collelonctors.toList());
+    for (SelongmelonntUpdatelonListelonnelonr listelonnelonr : updatelonListelonnelonrs) {
       try {
-        listener.update(segmentInfos, message);
-      } catch (Exception e) {
-        LOG.warn("SegmentManager: Unable to call update() on listener.", e);
+        listelonnelonr.updatelon(selongmelonntInfos, melonssagelon);
+      } catch (elonxcelonption elon) {
+        LOG.warn("SelongmelonntManagelonr: Unablelon to call updatelon() on listelonnelonr.", elon);
       }
     }
   }
 
-  // Returns true if the map contains a SegmentInfo matching the given time slice.
-  public final boolean hasSegmentInfo(long timeSliceID) {
-    return segmentWriters.containsKey(timeSliceID);
+  // Relonturns truelon if thelon map contains a SelongmelonntInfo matching thelon givelonn timelon slicelon.
+  public final boolelonan hasSelongmelonntInfo(long timelonSlicelonID) {
+    relonturn selongmelonntWritelonrs.containsKelony(timelonSlicelonID);
   }
 
-  public void addUpdateListener(SegmentUpdateListener listener) {
-    updateListeners.add(listener);
-  }
-
-  /**
-   * Look up the segment containing the given status id.
-   * If found, its timeslice id is returned.
-   * If none found, -1 is returned.
-   */
-  public long lookupTimeSliceID(long statusID) throws IOException {
-    SegmentInfo segmentInfo = getSegmentInfoForID(statusID);
-    if (segmentInfo == null) {
-      return -1;
-    }
-    if (!segmentInfo.getIndexSegment().hasDocument(statusID)) {
-        return -1;
-    }
-
-    return segmentInfo.getTimeSliceID();
+  public void addUpdatelonListelonnelonr(SelongmelonntUpdatelonListelonnelonr listelonnelonr) {
+    updatelonListelonnelonrs.add(listelonnelonr);
   }
 
   /**
-   * Truncates the given segment list to the specified number of segments, by keeping the newest
-   * segments.
+   * Look up thelon selongmelonnt containing thelon givelonn status id.
+   * If found, its timelonslicelon id is relonturnelond.
+   * If nonelon found, -1 is relonturnelond.
    */
-  @VisibleForTesting
-  public static List<Segment> truncateSegmentList(List<Segment> segmentList, int maxNumSegments) {
-    // Maybe cut-off the beginning of the sorted list of IDs.
-    if (maxNumSegments > 0 && maxNumSegments < segmentList.size()) {
-      return segmentList.subList(segmentList.size() - maxNumSegments, segmentList.size());
-    } else {
-      return segmentList;
+  public long lookupTimelonSlicelonID(long statusID) throws IOelonxcelonption {
+    SelongmelonntInfo selongmelonntInfo = gelontSelongmelonntInfoForID(statusID);
+    if (selongmelonntInfo == null) {
+      relonturn -1;
     }
-  }
+    if (!selongmelonntInfo.gelontIndelonxSelongmelonnt().hasDocumelonnt(statusID)) {
+        relonturn -1;
+    }
 
-  @VisibleForTesting
-  public void setOffensive(long userID, boolean offensive) {
-    userTable.setOffensive(userID, offensive);
-  }
-
-  @VisibleForTesting
-  public void setAntisocial(long userID, boolean antisocial) {
-    userTable.setAntisocial(userID, antisocial);
+    relonturn selongmelonntInfo.gelontTimelonSlicelonID();
   }
 
   /**
-   * Returns a searcher for all segments.
+   * Truncatelons thelon givelonn selongmelonnt list to thelon speloncifielond numbelonr of selongmelonnts, by kelonelonping thelon nelonwelonst
+   * selongmelonnts.
    */
-  public EarlybirdMultiSegmentSearcher getMultiSearcher(ImmutableSchemaInterface schemaSnapshot)
-      throws IOException {
-    return new EarlybirdMultiSegmentSearcher(
-        schemaSnapshot,
-        getSearchers(schemaSnapshot, Filter.All, Order.NEW_TO_OLD),
-        searcherStats,
+  @VisiblelonForTelonsting
+  public static List<Selongmelonnt> truncatelonSelongmelonntList(List<Selongmelonnt> selongmelonntList, int maxNumSelongmelonnts) {
+    // Maybelon cut-off thelon belonginning of thelon sortelond list of IDs.
+    if (maxNumSelongmelonnts > 0 && maxNumSelongmelonnts < selongmelonntList.sizelon()) {
+      relonturn selongmelonntList.subList(selongmelonntList.sizelon() - maxNumSelongmelonnts, selongmelonntList.sizelon());
+    } elonlselon {
+      relonturn selongmelonntList;
+    }
+  }
+
+  @VisiblelonForTelonsting
+  public void selontOffelonnsivelon(long uselonrID, boolelonan offelonnsivelon) {
+    uselonrTablelon.selontOffelonnsivelon(uselonrID, offelonnsivelon);
+  }
+
+  @VisiblelonForTelonsting
+  public void selontAntisocial(long uselonrID, boolelonan antisocial) {
+    uselonrTablelon.selontAntisocial(uselonrID, antisocial);
+  }
+
+  /**
+   * Relonturns a selonarchelonr for all selongmelonnts.
+   */
+  public elonarlybirdMultiSelongmelonntSelonarchelonr gelontMultiSelonarchelonr(ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot)
+      throws IOelonxcelonption {
+    relonturn nelonw elonarlybirdMultiSelongmelonntSelonarchelonr(
+        schelonmaSnapshot,
+        gelontSelonarchelonrs(schelonmaSnapshot, Filtelonr.All, Ordelonr.NelonW_TO_OLD),
+        selonarchelonrStats,
         clock);
   }
 
   /**
-   * Returns a new searcher for the given segment.
+   * Relonturns a nelonw selonarchelonr for thelon givelonn selongmelonnt.
    */
-  @Nullable
-  public EarlybirdLuceneSearcher getSearcher(
-      Segment segment,
-      ImmutableSchemaInterface schemaSnapshot) throws IOException {
-    return getSearcher(segment.getTimeSliceID(), schemaSnapshot);
+  @Nullablelon
+  public elonarlybirdLucelonnelonSelonarchelonr gelontSelonarchelonr(
+      Selongmelonnt selongmelonnt,
+      ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot) throws IOelonxcelonption {
+    relonturn gelontSelonarchelonr(selongmelonnt.gelontTimelonSlicelonID(), schelonmaSnapshot);
   }
 
   /**
-   * Get max tweet id across all enabled segments.
-   * @return max tweet id or -1 if none found
+   * Gelont max twelonelont id across all elonnablelond selongmelonnts.
+   * @relonturn max twelonelont id or -1 if nonelon found
    */
-  public long getMaxTweetIdFromEnabledSegments() {
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.NEW_TO_OLD)) {
-      long maxTweetId = segmentInfo.getIndexSegment().getMaxTweetId();
-      if (maxTweetId != -1) {
-        return maxTweetId;
+  public long gelontMaxTwelonelontIdFromelonnablelondSelongmelonnts() {
+    for (SelongmelonntInfo selongmelonntInfo : gelontSelongmelonntInfos(Filtelonr.elonnablelond, Ordelonr.NelonW_TO_OLD)) {
+      long maxTwelonelontId = selongmelonntInfo.gelontIndelonxSelongmelonnt().gelontMaxTwelonelontId();
+      if (maxTwelonelontId != -1) {
+        relonturn maxTwelonelontId;
       }
     }
 
-    return -1;
+    relonturn -1;
   }
 
   /**
-   * Create a tweet index searcher on the segment represented by the timeslice id.  For production
-   * search session, the schema snapshot should be always passed in to make sure that the schema
-   * usage inside scoring is consistent.
+   * Crelonatelon a twelonelont indelonx selonarchelonr on thelon selongmelonnt relonprelonselonntelond by thelon timelonslicelon id.  For production
+   * selonarch selonssion, thelon schelonma snapshot should belon always passelond in to makelon surelon that thelon schelonma
+   * usagelon insidelon scoring is consistelonnt.
    *
-   * For non-production usage, like one-off debugging search, you can use the function call without
-   * the schema snapshot.
+   * For non-production usagelon, likelon onelon-off delonbugging selonarch, you can uselon thelon function call without
+   * thelon schelonma snapshot.
    *
-   * @param timeSliceID the timeslice id, which represents the index segment
-   * @param schemaSnapshot the schema snapshot
-   * @return the tweet index searcher
+   * @param timelonSlicelonID thelon timelonslicelon id, which relonprelonselonnts thelon indelonx selongmelonnt
+   * @param schelonmaSnapshot thelon schelonma snapshot
+   * @relonturn thelon twelonelont indelonx selonarchelonr
    */
-  @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(
-      long timeSliceID,
-      ImmutableSchemaInterface schemaSnapshot) throws IOException {
-    SegmentInfo segmentInfo = getSegmentInfo(timeSliceID);
-    if (segmentInfo == null) {
-      return null;
+  @Nullablelon
+  public elonarlybirdSinglelonSelongmelonntSelonarchelonr gelontSelonarchelonr(
+      long timelonSlicelonID,
+      ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot) throws IOelonxcelonption {
+    SelongmelonntInfo selongmelonntInfo = gelontSelongmelonntInfo(timelonSlicelonID);
+    if (selongmelonntInfo == null) {
+      relonturn null;
     }
-    return segmentInfo.getIndexSegment().getSearcher(userTable, schemaSnapshot);
+    relonturn selongmelonntInfo.gelontIndelonxSelongmelonnt().gelontSelonarchelonr(uselonrTablelon, schelonmaSnapshot);
   }
 
   /**
-   * Returns a new searcher for the segment with the given timeslice ID. If the given timeslice ID
-   * does not correspond to any active segment, {@code null} is returned.
+   * Relonturns a nelonw selonarchelonr for thelon selongmelonnt with thelon givelonn timelonslicelon ID. If thelon givelonn timelonslicelon ID
+   * doelons not correlonspond to any activelon selongmelonnt, {@codelon null} is relonturnelond.
    *
-   * @param timeSliceID The segment's timeslice ID.
-   * @return A new searcher for the segment with the given timeslice ID.
+   * @param timelonSlicelonID Thelon selongmelonnt's timelonslicelon ID.
+   * @relonturn A nelonw selonarchelonr for thelon selongmelonnt with thelon givelonn timelonslicelon ID.
    */
-  @Nullable
-  public EarlybirdSingleSegmentSearcher getSearcher(long timeSliceID) throws IOException {
-    SegmentInfo segmentInfo = getSegmentInfo(timeSliceID);
-    if (segmentInfo == null) {
-      return null;
+  @Nullablelon
+  public elonarlybirdSinglelonSelongmelonntSelonarchelonr gelontSelonarchelonr(long timelonSlicelonID) throws IOelonxcelonption {
+    SelongmelonntInfo selongmelonntInfo = gelontSelongmelonntInfo(timelonSlicelonID);
+    if (selongmelonntInfo == null) {
+      relonturn null;
     }
-    return segmentInfo.getIndexSegment().getSearcher(userTable);
+    relonturn selongmelonntInfo.gelontIndelonxSelongmelonnt().gelontSelonarchelonr(uselonrTablelon);
   }
 
-  @Nullable
-  public EarlybirdResponseCode checkSegment(Segment segment) {
-    return checkSegmentInternal(getSegmentInfo(segment.getTimeSliceID()));
+  @Nullablelon
+  public elonarlybirdRelonsponselonCodelon chelonckSelongmelonnt(Selongmelonnt selongmelonnt) {
+    relonturn chelonckSelongmelonntIntelonrnal(gelontSelongmelonntInfo(selongmelonnt.gelontTimelonSlicelonID()));
   }
 
-  private static EarlybirdResponseCode checkSegmentInternal(SegmentInfo info) {
+  privatelon static elonarlybirdRelonsponselonCodelon chelonckSelongmelonntIntelonrnal(SelongmelonntInfo info) {
     if (info == null) {
-      return EarlybirdResponseCode.PARTITION_NOT_FOUND;
-    } else if (info.isEnabled()) {
-      return EarlybirdResponseCode.SUCCESS;
-    } else {
-      return EarlybirdResponseCode.PARTITION_DISABLED;
+      relonturn elonarlybirdRelonsponselonCodelon.PARTITION_NOT_FOUND;
+    } elonlselon if (info.iselonnablelond()) {
+      relonturn elonarlybirdRelonsponselonCodelon.SUCCelonSS;
+    } elonlselon {
+      relonturn elonarlybirdRelonsponselonCodelon.PARTITION_DISABLelonD;
     }
   }
 
-  private List<EarlybirdSingleSegmentSearcher> getSearchers(
-      ImmutableSchemaInterface schemaSnapshot,
-      Filter filter,
-      Order order) throws IOException {
-    List<EarlybirdSingleSegmentSearcher> searchers = Lists.newArrayList();
-    for (SegmentInfo segmentInfo : getSegmentInfos(filter, order)) {
-      EarlybirdSingleSegmentSearcher searcher =
-          segmentInfo.getIndexSegment().getSearcher(userTable, schemaSnapshot);
-      if (searcher != null) {
-        searchers.add(searcher);
+  privatelon List<elonarlybirdSinglelonSelongmelonntSelonarchelonr> gelontSelonarchelonrs(
+      ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot,
+      Filtelonr filtelonr,
+      Ordelonr ordelonr) throws IOelonxcelonption {
+    List<elonarlybirdSinglelonSelongmelonntSelonarchelonr> selonarchelonrs = Lists.nelonwArrayList();
+    for (SelongmelonntInfo selongmelonntInfo : gelontSelongmelonntInfos(filtelonr, ordelonr)) {
+      elonarlybirdSinglelonSelongmelonntSelonarchelonr selonarchelonr =
+          selongmelonntInfo.gelontIndelonxSelongmelonnt().gelontSelonarchelonr(uselonrTablelon, schelonmaSnapshot);
+      if (selonarchelonr != null) {
+        selonarchelonrs.add(selonarchelonr);
       }
     }
-    return searchers;
+    relonturn selonarchelonrs;
   }
 
   /**
-   * Gets metadata for segments for debugging purposes.
+   * Gelonts melontadata for selongmelonnts for delonbugging purposelons.
    */
-  public List<String> getSegmentMetadata() {
-    List<String> segmentMetadata = new ArrayList<>();
-    for (SegmentInfo segment : getSegmentInfos(Filter.All, Order.OLD_TO_NEW)) {
-      segmentMetadata.add(segment.getSegmentMetadata());
+  public List<String> gelontSelongmelonntMelontadata() {
+    List<String> selongmelonntMelontadata = nelonw ArrayList<>();
+    for (SelongmelonntInfo selongmelonnt : gelontSelongmelonntInfos(Filtelonr.All, Ordelonr.OLD_TO_NelonW)) {
+      selongmelonntMelontadata.add(selongmelonnt.gelontSelongmelonntMelontadata());
     }
-    return segmentMetadata;
+    relonturn selongmelonntMelontadata;
   }
 
   /**
-   * Gets info for query caches to be displayed in an admin page.
+   * Gelonts info for quelonry cachelons to belon displayelond in an admin pagelon.
    */
-  public String getQueryCachesData() {
-    StringBuilder output = new StringBuilder();
-    for (SegmentInfo segment : getSegmentInfos(Filter.All, Order.OLD_TO_NEW)) {
-      output.append(segment.getQueryCachesData() + "\n");
+  public String gelontQuelonryCachelonsData() {
+    StringBuildelonr output = nelonw StringBuildelonr();
+    for (SelongmelonntInfo selongmelonnt : gelontSelongmelonntInfos(Filtelonr.All, Ordelonr.OLD_TO_NelonW)) {
+      output.appelonnd(selongmelonnt.gelontQuelonryCachelonsData() + "\n");
     }
-    return output.toString();
+    relonturn output.toString();
   }
 
   /**
-   * Index the given user update. Returns false if the given update is skipped.
+   * Indelonx thelon givelonn uselonr updatelon. Relonturns falselon if thelon givelonn updatelon is skippelond.
    */
-  public boolean indexUserUpdate(UserUpdate userUpdate) {
-    return userTable.indexUserUpdate(userUpdatesChecker, userUpdate);
+  public boolelonan indelonxUselonrUpdatelon(UselonrUpdatelon uselonrUpdatelon) {
+    relonturn uselonrTablelon.indelonxUselonrUpdatelon(uselonrUpdatelonsChelonckelonr, uselonrUpdatelon);
   }
 
   /**
-   * Index the given UserScrubGeoEvent.
-   * @param userScrubGeoEvent
+   * Indelonx thelon givelonn UselonrScrubGelonoelonvelonnt.
+   * @param uselonrScrubGelonoelonvelonnt
    */
-  public void indexUserScrubGeoEvent(UserScrubGeoEvent userScrubGeoEvent) {
-    userScrubGeoMap.indexUserScrubGeoEvent(userScrubGeoEvent);
+  public void indelonxUselonrScrubGelonoelonvelonnt(UselonrScrubGelonoelonvelonnt uselonrScrubGelonoelonvelonnt) {
+    uselonrScrubGelonoMap.indelonxUselonrScrubGelonoelonvelonnt(uselonrScrubGelonoelonvelonnt);
   }
 
   /**
-   * Return how many documents this segment manager has indexed in all of its enabled segments.
+   * Relonturn how many documelonnts this selongmelonnt managelonr has indelonxelond in all of its elonnablelond selongmelonnts.
    */
-  public long getNumIndexedDocuments() {
-    // Order here doesn't matter, we just want all enabled segments, and allocate
-    // as little as needed.
-    long indexedDocs = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      indexedDocs += segmentInfo.getIndexSegment().getIndexStats().getStatusCount();
+  public long gelontNumIndelonxelondDocumelonnts() {
+    // Ordelonr helonrelon doelonsn't mattelonr, welon just want all elonnablelond selongmelonnts, and allocatelon
+    // as littlelon as nelonelondelond.
+    long indelonxelondDocs = 0;
+    for (SelongmelonntInfo selongmelonntInfo : gelontSelongmelonntInfos(Filtelonr.elonnablelond, Ordelonr.OLD_TO_NelonW)) {
+      indelonxelondDocs += selongmelonntInfo.gelontIndelonxSelongmelonnt().gelontIndelonxStats().gelontStatusCount();
     }
-    return indexedDocs;
+    relonturn indelonxelondDocs;
   }
 
   /**
-   * Return how many partial updates this segment manager has applied
-   * in all of its enabled segments.
+   * Relonturn how many partial updatelons this selongmelonnt managelonr has applielond
+   * in all of its elonnablelond selongmelonnts.
    */
-  public long getNumPartialUpdates() {
-    long partialUpdates = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      partialUpdates += segmentInfo.getIndexSegment().getIndexStats().getPartialUpdateCount();
+  public long gelontNumPartialUpdatelons() {
+    long partialUpdatelons = 0;
+    for (SelongmelonntInfo selongmelonntInfo : gelontSelongmelonntInfos(Filtelonr.elonnablelond, Ordelonr.OLD_TO_NelonW)) {
+      partialUpdatelons += selongmelonntInfo.gelontIndelonxSelongmelonnt().gelontIndelonxStats().gelontPartialUpdatelonCount();
     }
-    return partialUpdates;
+    relonturn partialUpdatelons;
   }
 
   /**
-   * Returns the segment info for the segment containing the given tweet ID.
+   * Relonturns thelon selongmelonnt info for thelon selongmelonnt containing thelon givelonn twelonelont ID.
    */
-  public SegmentInfo getSegmentInfoForID(long tweetID) {
-    ISegmentWriter segmentWriter = getSegmentWriterForID(tweetID);
-    return segmentWriter == null ? null : segmentWriter.getSegmentInfo();
+  public SelongmelonntInfo gelontSelongmelonntInfoForID(long twelonelontID) {
+    ISelongmelonntWritelonr selongmelonntWritelonr = gelontSelongmelonntWritelonrForID(twelonelontID);
+    relonturn selongmelonntWritelonr == null ? null : selongmelonntWritelonr.gelontSelongmelonntInfo();
   }
 
   /**
-   * Returns the segment writer for the segment containing the given tweet ID.
+   * Relonturns thelon selongmelonnt writelonr for thelon selongmelonnt containing thelon givelonn twelonelont ID.
    */
-  @Nullable
-  public ISegmentWriter getSegmentWriterForID(long tweetID) {
-    Map.Entry<Long, ISegmentWriter> entry = segmentWriters.floorEntry(tweetID);
-    return entry == null ? null : entry.getValue();
+  @Nullablelon
+  public ISelongmelonntWritelonr gelontSelongmelonntWritelonrForID(long twelonelontID) {
+    Map.elonntry<Long, ISelongmelonntWritelonr> elonntry = selongmelonntWritelonrs.floorelonntry(twelonelontID);
+    relonturn elonntry == null ? null : elonntry.gelontValuelon();
   }
 
   /**
-   * Remove old segments until we have less than or equal to the number of max enabled segments.
+   * Relonmovelon old selongmelonnts until welon havelon lelonss than or elonqual to thelon numbelonr of max elonnablelond selongmelonnts.
    */
-  public void removeExcessSegments() {
-    int removedSegmentCount = 0;
-    while (segmentWriters.size() > getMaxEnabledSegments()) {
-      long timesliceID = getOldestEnabledTimeSliceID();
-      disableSegment(timesliceID);
-      removeSegmentInfo(timesliceID);
-      removedSegmentCount += 1;
+  public void relonmovelonelonxcelonssSelongmelonnts() {
+    int relonmovelondSelongmelonntCount = 0;
+    whilelon (selongmelonntWritelonrs.sizelon() > gelontMaxelonnablelondSelongmelonnts()) {
+      long timelonslicelonID = gelontOldelonstelonnablelondTimelonSlicelonID();
+      disablelonSelongmelonnt(timelonslicelonID);
+      relonmovelonSelongmelonntInfo(timelonslicelonID);
+      relonmovelondSelongmelonntCount += 1;
     }
-    LOG.info("Segment manager removed {} excess segments", removedSegmentCount);
+    LOG.info("Selongmelonnt managelonr relonmovelond {} elonxcelonss selongmelonnts", relonmovelondSelongmelonntCount);
   }
 
   /**
-   * Returns total index size on disk across all enabled segments in this segment manager.
+   * Relonturns total indelonx sizelon on disk across all elonnablelond selongmelonnts in this selongmelonnt managelonr.
    */
-  private long getTotalSegmentSizeOnDisk() {
-    long totalIndexSize = 0;
-    for (SegmentInfo segmentInfo : getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW)) {
-      totalIndexSize += segmentInfo.getIndexSegment().getIndexStats().getIndexSizeOnDiskInBytes();
+  privatelon long gelontTotalSelongmelonntSizelonOnDisk() {
+    long totalIndelonxSizelon = 0;
+    for (SelongmelonntInfo selongmelonntInfo : gelontSelongmelonntInfos(Filtelonr.elonnablelond, Ordelonr.OLD_TO_NelonW)) {
+      totalIndelonxSizelon += selongmelonntInfo.gelontIndelonxSelongmelonnt().gelontIndelonxStats().gelontIndelonxSizelonOnDiskInBytelons();
     }
-    return totalIndexSize;
+    relonturn totalIndelonxSizelon;
   }
 
-  @VisibleForTesting
-  ISegmentWriter getSegmentWriterWithoutCreationForTests(long timesliceID) {
-    return segmentWriters.get(timesliceID);
+  @VisiblelonForTelonsting
+  ISelongmelonntWritelonr gelontSelongmelonntWritelonrWithoutCrelonationForTelonsts(long timelonslicelonID) {
+    relonturn selongmelonntWritelonrs.gelont(timelonslicelonID);
   }
 
-  @VisibleForTesting
-  ArrayList<Long> getTimeSliceIdsForTests() {
-    return new ArrayList<Long>(segmentWriters.keySet());
+  @VisiblelonForTelonsting
+  ArrayList<Long> gelontTimelonSlicelonIdsForTelonsts() {
+    relonturn nelonw ArrayList<Long>(selongmelonntWritelonrs.kelonySelont());
   }
 }

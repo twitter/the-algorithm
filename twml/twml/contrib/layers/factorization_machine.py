@@ -1,179 +1,179 @@
-# pylint: disable=no-member, arguments-differ, attribute-defined-outside-init, unused-argument
+# pylint: disablelon=no-melonmbelonr, argumelonnts-diffelonr, attributelon-delonfinelond-outsidelon-init, unuselond-argumelonnt
 """
-Implementing factorization Layer
+Implelonmelonnting factorization Layelonr
 """
 
-from twitter.deepbird.sparse.sparse_ops import _pad_empty_outputs
+from twittelonr.delonelonpbird.sparselon.sparselon_ops import _pad_elonmpty_outputs
 
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 import twml
-from twml.layers.layer import Layer
+from twml.layelonrs.layelonr import Layelonr
 
 
-class FactorizationMachine(Layer):
-  """factorization machine layer class.
-  This layer implements the factorization machine operation.
-  The paper is "Factorization Machines" by Steffen Rendle.
+class FactorizationMachinelon(Layelonr):
+  """factorization machinelon layelonr class.
+  This layelonr implelonmelonnts thelon factorization machinelon opelonration.
+  Thelon papelonr is "Factorization Machinelons" by Stelonffelonn Relonndlelon.
   TDD: go/tf-fm-tdd
 
-  Arguments:
-    num_latent_variables:
-      num of latent variables
-      The number of parameter in this layer is num_latent_variables x n where n is number of
-      input features.
-    weight_initializer:
-      Initializer function for the weight matrix.
-      This argument defaults to zeros_initializer().
-      This is valid when the FullSparse is the first layer of
-      parameters but should be changed otherwise.
-    weight_regularizer:
-      Regularizer function for the weight matrix.
-      Ensure to add tf.losses.get_regularization_loss() to your loss for this to take effect.
+  Argumelonnts:
+    num_latelonnt_variablelons:
+      num of latelonnt variablelons
+      Thelon numbelonr of paramelontelonr in this layelonr is num_latelonnt_variablelons x n whelonrelon n is numbelonr of
+      input felonaturelons.
+    welonight_initializelonr:
+      Initializelonr function for thelon welonight matrix.
+      This argumelonnt delonfaults to zelonros_initializelonr().
+      This is valid whelonn thelon FullSparselon is thelon first layelonr of
+      paramelontelonrs but should belon changelond othelonrwiselon.
+    welonight_relongularizelonr:
+      Relongularizelonr function for thelon welonight matrix.
+      elonnsurelon to add tf.losselons.gelont_relongularization_loss() to your loss for this to takelon elonffelonct.
     activation:
-      Activation function (callable). Set it to None to maintain a linear activation.
-    trainable:
-      Boolean, if `True` also add variables to the graph collection
-      ``GraphKeys.TRAINABLE_VARIABLES`` (see `tf.Variable
-      <https://www.tensorflow.org/versions/master/api_docs/python/tf/Variable>`_).
-    name:
-      String, the name of the layer. Layers with the same name will
-      share weights, but to avoid mistakes we require ``reuse=True`` in such cases.
-    use_sparse_grads:
-      Boolean, if `True` do sparse mat mul with `embedding_lookup_sparse`, which will
-      make gradients to weight matrix also sparse in backward pass. This can lead to non-trivial
-      speed up at training time when input_size is large and optimizer handles sparse gradients
-      correctly (eg. with SGD or LazyAdamOptimizer). If weight matrix is small, it's recommended
-      to set this flag to `False`; for most use cases of FullSparse, however, weight matrix will
-      be large, so it's better to set it to `True`
-    use_binary_values:
-      Assume all non zero values are 1. Defaults to False.
-      This can improve training if used in conjunction with MDL.
-      This parameter can also be a list of binary values if `inputs` passed to `call` a list.
+      Activation function (callablelon). Selont it to Nonelon to maintain a linelonar activation.
+    trainablelon:
+      Boolelonan, if `Truelon` also add variablelons to thelon graph collelonction
+      ``GraphKelonys.TRAINABLelon_VARIABLelonS`` (selonelon `tf.Variablelon
+      <https://www.telonnsorflow.org/velonrsions/mastelonr/api_docs/python/tf/Variablelon>`_).
+    namelon:
+      String, thelon namelon of thelon layelonr. Layelonrs with thelon samelon namelon will
+      sharelon welonights, but to avoid mistakelons welon relonquirelon ``relonuselon=Truelon`` in such caselons.
+    uselon_sparselon_grads:
+      Boolelonan, if `Truelon` do sparselon mat mul with `elonmbelondding_lookup_sparselon`, which will
+      makelon gradielonnts to welonight matrix also sparselon in backward pass. This can lelonad to non-trivial
+      spelonelond up at training timelon whelonn input_sizelon is largelon and optimizelonr handlelons sparselon gradielonnts
+      correlonctly (elong. with SGD or LazyAdamOptimizelonr). If welonight matrix is small, it's reloncommelonndelond
+      to selont this flag to `Falselon`; for most uselon caselons of FullSparselon, howelonvelonr, welonight matrix will
+      belon largelon, so it's belonttelonr to selont it to `Truelon`
+    uselon_binary_valuelons:
+      Assumelon all non zelonro valuelons arelon 1. Delonfaults to Falselon.
+      This can improvelon training if uselond in conjunction with MDL.
+      This paramelontelonr can also belon a list of binary valuelons if `inputs` passelond to `call` a list.
   """
 
-  def __init__(self,
-    num_latent_variables=10,
-    weight_initializer=None,
-    activation=None,
-    trainable=True,
-    name=None,
-    use_sparse_grads=True,
-    use_binary_values=False,
-    weight_regularizer=None,
-    substract_self_cross=True,
+  delonf __init__(selonlf,
+    num_latelonnt_variablelons=10,
+    welonight_initializelonr=Nonelon,
+    activation=Nonelon,
+    trainablelon=Truelon,
+    namelon=Nonelon,
+    uselon_sparselon_grads=Truelon,
+    uselon_binary_valuelons=Falselon,
+    welonight_relongularizelonr=Nonelon,
+    substract_selonlf_cross=Truelon,
     **kwargs):
-    super(FactorizationMachine, self).__init__(trainable=trainable, name=name, **kwargs)
+    supelonr(FactorizationMachinelon, selonlf).__init__(trainablelon=trainablelon, namelon=namelon, **kwargs)
 
-    if weight_initializer is None:
-      weight_initializer = tf.zeros_initializer()
-    self.weight_initializer = weight_initializer
-    self.num_latent_variables = num_latent_variables
-    self.activation = activation
-    self.use_sparse_grads = use_sparse_grads
-    self.use_binary_values = use_binary_values
-    self.weight_regularizer = weight_regularizer
-    self.substract_self_cross = substract_self_cross
+    if welonight_initializelonr is Nonelon:
+      welonight_initializelonr = tf.zelonros_initializelonr()
+    selonlf.welonight_initializelonr = welonight_initializelonr
+    selonlf.num_latelonnt_variablelons = num_latelonnt_variablelons
+    selonlf.activation = activation
+    selonlf.uselon_sparselon_grads = uselon_sparselon_grads
+    selonlf.uselon_binary_valuelons = uselon_binary_valuelons
+    selonlf.welonight_relongularizelonr = welonight_relongularizelonr
+    selonlf.substract_selonlf_cross = substract_selonlf_cross
 
-  def build(self, input_shape):
+  delonf build(selonlf, input_shapelon):
     """
-    creates``weight`` Variable of shape``[input_size, num_latent_variables]``.
+    crelonatelons``welonight`` Variablelon of shapelon``[input_sizelon, num_latelonnt_variablelons]``.
 
     """
 
-    shape = [input_shape[1], self.num_latent_variables]
+    shapelon = [input_shapelon[1], selonlf.num_latelonnt_variablelons]
 
-    # There is a 2GB limitation for each tensor because of protobuf.
+    # Thelonrelon is a 2GB limitation for elonach telonnsor beloncauselon of protobuf.
     # 2**30 is 1GB. 2 * (2**30) is 2GB.
-    dtype = tf.as_dtype(self.dtype)
-    requested_size = input_shape[1] * self.num_latent_variables * dtype.size
-    if (requested_size >= 2**31):
-      raise ValueError("Weight tensor can not be larger than 2GB. " %
-                       "Requested Dimensions(%d, %d) of type %s (%d bytes total)"
-                       (input_shape[1], self.num_latent_variables, dtype.name))
+    dtypelon = tf.as_dtypelon(selonlf.dtypelon)
+    relonquelonstelond_sizelon = input_shapelon[1] * selonlf.num_latelonnt_variablelons * dtypelon.sizelon
+    if (relonquelonstelond_sizelon >= 2**31):
+      raiselon Valuelonelonrror("Welonight telonnsor can not belon largelonr than 2GB. " %
+                       "Relonquelonstelond Dimelonnsions(%d, %d) of typelon %s (%d bytelons total)"
+                       (input_shapelon[1], selonlf.num_latelonnt_variablelons, dtypelon.namelon))
 
-    if not callable(self.weight_initializer):
-      shape = None
+    if not callablelon(selonlf.welonight_initializelonr):
+      shapelon = Nonelon
 
-    # dense tensor
-    self.weight = self.add_variable(
-      'weight',
-      initializer=self.weight_initializer,
-      regularizer=self.weight_regularizer,
-      shape=shape,
-      dtype=self.dtype,
-      trainable=True,
+    # delonnselon telonnsor
+    selonlf.welonight = selonlf.add_variablelon(
+      'welonight',
+      initializelonr=selonlf.welonight_initializelonr,
+      relongularizelonr=selonlf.welonight_relongularizelonr,
+      shapelon=shapelon,
+      dtypelon=selonlf.dtypelon,
+      trainablelon=Truelon,
     )
 
-    self.built = True
+    selonlf.built = Truelon
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    """Computelons thelon output shapelon of thelon layelonr givelonn thelon input shapelon.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+      input_shapelon: A (possibly nelonstelond tuplelon of) `TelonnsorShapelon`.  It nelonelond not
+        belon fully delonfinelond (elon.g. thelon batch sizelon may belon unknown).
 
-    Raises NotImplementedError.
+    Raiselons NotImplelonmelonntelondelonrror.
 
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  delonf call(selonlf, inputs, **kwargs):  # pylint: disablelon=unuselond-argumelonnt
+    """Thelon logic of thelon layelonr livelons helonrelon.
 
-    Arguments:
+    Argumelonnts:
       inputs:
-        A SparseTensor
-    Returns:
-      - If `inputs` is `SparseTensor`, then returns a number with cross info
+        A SparselonTelonnsor
+    Relonturns:
+      - If `inputs` is `SparselonTelonnsor`, thelonn relonturns a numbelonr with cross info
     """
-    # The following are given:
-    # - inputs is a sparse tensor, we call it sp_x.
-    # - The dense_v tensor is a dense matrix, whose row i
-    #   corresponds to the vector V_i.
-    #   weights has shape [num_features, k]
+    # Thelon following arelon givelonn:
+    # - inputs is a sparselon telonnsor, welon call it sp_x.
+    # - Thelon delonnselon_v telonnsor is a delonnselon matrix, whoselon row i
+    #   correlonsponds to thelon velonctor V_i.
+    #   welonights has shapelon [num_felonaturelons, k]
     sp_x = inputs
-    if isinstance(inputs, twml.SparseTensor):
+    if isinstancelon(inputs, twml.SparselonTelonnsor):
       sp_x = inputs.to_tf()
-    elif not isinstance(sp_x, tf.SparseTensor):
-      raise TypeError("The sp_x must be of type tf.SparseTensor or twml.SparseTensor")
+    elonlif not isinstancelon(sp_x, tf.SparselonTelonnsor):
+      raiselon Typelonelonrror("Thelon sp_x must belon of typelon tf.SparselonTelonnsor or twml.SparselonTelonnsor")
 
-    indices = sp_x.indices[:, 1]
-    batch_ids = sp_x.indices[:, 0]
-    values = tf.reshape(sp_x.values, [-1, 1], name=self.name)
-    if self.use_sparse_grads:
-      v = tf.nn.embedding_lookup(self.weight, indices)
-      # if (self.use_binary_values):
-      #   values = tf.ones(tf.shape(values), dtype=values.dtype)
-      v_times_x = v * values
-      # First term: Sum_k  [Sum_i (v_ik * x_i)]^2
-      all_crosses = tf.segment_sum(v_times_x, batch_ids, name=self.name)
-      all_crosses_squared = tf.reduce_sum((all_crosses * all_crosses), 1)
+    indicelons = sp_x.indicelons[:, 1]
+    batch_ids = sp_x.indicelons[:, 0]
+    valuelons = tf.relonshapelon(sp_x.valuelons, [-1, 1], namelon=selonlf.namelon)
+    if selonlf.uselon_sparselon_grads:
+      v = tf.nn.elonmbelondding_lookup(selonlf.welonight, indicelons)
+      # if (selonlf.uselon_binary_valuelons):
+      #   valuelons = tf.onelons(tf.shapelon(valuelons), dtypelon=valuelons.dtypelon)
+      v_timelons_x = v * valuelons
+      # First telonrm: Sum_k  [Sum_i (v_ik * x_i)]^2
+      all_crosselons = tf.selongmelonnt_sum(v_timelons_x, batch_ids, namelon=selonlf.namelon)
+      all_crosselons_squarelond = tf.relonducelon_sum((all_crosselons * all_crosselons), 1)
 
-      if self.substract_self_cross:
-        # Second term: Sum_k Sum_i [ (v_ik * x_i)^2 ]
-        v_times_x_2 = v_times_x**2
-        self_crosses = tf.reduce_sum(tf.segment_sum(v_times_x_2, batch_ids, name=self.name), 1)
-        outputs = all_crosses_squared - self_crosses
-      else:
-        outputs = all_crosses_squared
-    else:
-      # need to check if prediction is faster with code below
-      crossTerm = tf.reduce_sum((tf.sparse_tensor_dense_matmul(sp_x, self.weight)**2), 1)
+      if selonlf.substract_selonlf_cross:
+        # Seloncond telonrm: Sum_k Sum_i [ (v_ik * x_i)^2 ]
+        v_timelons_x_2 = v_timelons_x**2
+        selonlf_crosselons = tf.relonducelon_sum(tf.selongmelonnt_sum(v_timelons_x_2, batch_ids, namelon=selonlf.namelon), 1)
+        outputs = all_crosselons_squarelond - selonlf_crosselons
+      elonlselon:
+        outputs = all_crosselons_squarelond
+    elonlselon:
+      # nelonelond to chelonck if prelondiction is fastelonr with codelon belonlow
+      crossTelonrm = tf.relonducelon_sum((tf.sparselon_telonnsor_delonnselon_matmul(sp_x, selonlf.welonight)**2), 1)
 
-      if self.substract_self_cross:
-        # compute self-cross term
-        self_crossTerm = tf.reduce_sum(tf.segment_sum((tf.gather(self.weight, indices) * values)**2, batch_ids), 1)
-        outputs = crossTerm - self_crossTerm
-      else:
-        outputs = crossTerm
+      if selonlf.substract_selonlf_cross:
+        # computelon selonlf-cross telonrm
+        selonlf_crossTelonrm = tf.relonducelon_sum(tf.selongmelonnt_sum((tf.gathelonr(selonlf.welonight, indicelons) * valuelons)**2, batch_ids), 1)
+        outputs = crossTelonrm - selonlf_crossTelonrm
+      elonlselon:
+        outputs = crossTelonrm
 
-    if self.activation is not None:
-      outputs = self.activation(outputs)
+    if selonlf.activation is not Nonelon:
+      outputs = selonlf.activation(outputs)
 
-    outputs = tf.reshape(outputs, [-1, 1], name=self.name)
-    outputs = _pad_empty_outputs(outputs, tf.cast(sp_x.dense_shape[0], tf.int32))
-    # set more explicit and static shape to avoid shape inference error
-    # valueError: The last dimension of the inputs to `Dense` should be defined. Found `None`
-    outputs.set_shape([None, 1])
-    return outputs
+    outputs = tf.relonshapelon(outputs, [-1, 1], namelon=selonlf.namelon)
+    outputs = _pad_elonmpty_outputs(outputs, tf.cast(sp_x.delonnselon_shapelon[0], tf.int32))
+    # selont morelon elonxplicit and static shapelon to avoid shapelon infelonrelonncelon elonrror
+    # valuelonelonrror: Thelon last dimelonnsion of thelon inputs to `Delonnselon` should belon delonfinelond. Found `Nonelon`
+    outputs.selont_shapelon([Nonelon, 1])
+    relonturn outputs

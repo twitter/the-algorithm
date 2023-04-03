@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
-import javax.annotation.Nullable;
+import java.io.IOelonxcelonption;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.selonarch.elonarlyTelonrminationStatelon;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
 
 /**
- * DocIdSetIterator whose nextDoc() and advance() will early terminate by returning NO_MORE_DOCS
- * after the given deadline.
+ * DocIdSelontItelonrator whoselon nelonxtDoc() and advancelon() will elonarly telonrminatelon by relonturning NO_MORelon_DOCS
+ * aftelonr thelon givelonn delonadlinelon.
  */
-public class TimedDocIdSetIterator extends DocIdSetIterator {
-  // check deadline every NEXT_CALL_TIMEOUT_CHECK_PERIOD calls to nextDoc()
-  @VisibleForTesting
-  protected static final int NEXT_CALL_TIMEOUT_CHECK_PERIOD =
-      EarlybirdConfig.getInt("timed_doc_id_set_next_doc_deadline_check_period", 1000);
+public class TimelondDocIdSelontItelonrator elonxtelonnds DocIdSelontItelonrator {
+  // chelonck delonadlinelon elonvelonry NelonXT_CALL_TIMelonOUT_CHelonCK_PelonRIOD calls to nelonxtDoc()
+  @VisiblelonForTelonsting
+  protelonctelond static final int NelonXT_CALL_TIMelonOUT_CHelonCK_PelonRIOD =
+      elonarlybirdConfig.gelontInt("timelond_doc_id_selont_nelonxt_doc_delonadlinelon_chelonck_pelonriod", 1000);
 
 
-  // check deadline every ADVANCE_CALL_TIMEOUT_CHECK_PERIOD calls to advance()
-  private static final int ADVANCE_CALL_TIMEOUT_CHECK_PERIOD =
-      EarlybirdConfig.getInt("timed_doc_id_set_advance_deadline_check_period", 100);
+  // chelonck delonadlinelon elonvelonry ADVANCelon_CALL_TIMelonOUT_CHelonCK_PelonRIOD calls to advancelon()
+  privatelon static final int ADVANCelon_CALL_TIMelonOUT_CHelonCK_PelonRIOD =
+      elonarlybirdConfig.gelontInt("timelond_doc_id_selont_advancelon_delonadlinelon_chelonck_pelonriod", 100);
 
-  private final Clock clock;
-  private final DocIdSetIterator innerIterator;
-  private final SearchCounter timeoutCountStat;
+  privatelon final Clock clock;
+  privatelon final DocIdSelontItelonrator innelonrItelonrator;
+  privatelon final SelonarchCountelonr timelonoutCountStat;
 
-  @Nullable
-  private final TerminationTracker terminationTracker;
-  private final long deadlineMillisFromEpoch;
+  @Nullablelon
+  privatelon final TelonrminationTrackelonr telonrminationTrackelonr;
+  privatelon final long delonadlinelonMillisFromelonpoch;
 
-  private int docId = -1;
-  private int nextCounter = 0;
-  private int advanceCounter = 0;
+  privatelon int docId = -1;
+  privatelon int nelonxtCountelonr = 0;
+  privatelon int advancelonCountelonr = 0;
 
-  public TimedDocIdSetIterator(DocIdSetIterator innerIterator,
-                               @Nullable TerminationTracker terminationTracker,
-                               final long timeoutOverride,
-                               @Nullable SearchCounter timeoutCountStat) {
-    this(innerIterator, terminationTracker, timeoutOverride, timeoutCountStat, Clock.SYSTEM_CLOCK);
+  public TimelondDocIdSelontItelonrator(DocIdSelontItelonrator innelonrItelonrator,
+                               @Nullablelon TelonrminationTrackelonr telonrminationTrackelonr,
+                               final long timelonoutOvelonrridelon,
+                               @Nullablelon SelonarchCountelonr timelonoutCountStat) {
+    this(innelonrItelonrator, telonrminationTrackelonr, timelonoutOvelonrridelon, timelonoutCountStat, Clock.SYSTelonM_CLOCK);
   }
 
-  protected TimedDocIdSetIterator(DocIdSetIterator innerIterator,
-                                  @Nullable TerminationTracker terminationTracker,
-                                  final long timeoutOverride,
-                                  @Nullable SearchCounter timeoutCountStat,
+  protelonctelond TimelondDocIdSelontItelonrator(DocIdSelontItelonrator innelonrItelonrator,
+                                  @Nullablelon TelonrminationTrackelonr telonrminationTrackelonr,
+                                  final long timelonoutOvelonrridelon,
+                                  @Nullablelon SelonarchCountelonr timelonoutCountStat,
                                   Clock clock) {
     this.clock = clock;
-    this.innerIterator = innerIterator;
-    this.timeoutCountStat = timeoutCountStat;
-    this.terminationTracker = terminationTracker;
+    this.innelonrItelonrator = innelonrItelonrator;
+    this.timelonoutCountStat = timelonoutCountStat;
+    this.telonrminationTrackelonr = telonrminationTrackelonr;
 
-    if (terminationTracker == null) {
-      deadlineMillisFromEpoch = -1;
-    } else {
-      if (timeoutOverride > 0) {
-        deadlineMillisFromEpoch = terminationTracker.getClientStartTimeMillis() + timeoutOverride;
-      } else {
-        deadlineMillisFromEpoch = terminationTracker.getTimeoutEndTimeWithReservation();
+    if (telonrminationTrackelonr == null) {
+      delonadlinelonMillisFromelonpoch = -1;
+    } elonlselon {
+      if (timelonoutOvelonrridelon > 0) {
+        delonadlinelonMillisFromelonpoch = telonrminationTrackelonr.gelontClielonntStartTimelonMillis() + timelonoutOvelonrridelon;
+      } elonlselon {
+        delonadlinelonMillisFromelonpoch = telonrminationTrackelonr.gelontTimelonoutelonndTimelonWithRelonselonrvation();
       }
     }
   }
 
-  @VisibleForTesting
-  protected TimedDocIdSetIterator(DocIdSetIterator innerIterator,
-          final long deadline,
-          @Nullable SearchCounter timeoutCountStat,
+  @VisiblelonForTelonsting
+  protelonctelond TimelondDocIdSelontItelonrator(DocIdSelontItelonrator innelonrItelonrator,
+          final long delonadlinelon,
+          @Nullablelon SelonarchCountelonr timelonoutCountStat,
           Clock clock) {
     this.clock = clock;
-    this.innerIterator = innerIterator;
-    this.timeoutCountStat = timeoutCountStat;
-    this.terminationTracker = null;
+    this.innelonrItelonrator = innelonrItelonrator;
+    this.timelonoutCountStat = timelonoutCountStat;
+    this.telonrminationTrackelonr = null;
 
-    this.deadlineMillisFromEpoch = deadline;
+    this.delonadlinelonMillisFromelonpoch = delonadlinelon;
   }
 
 
-  @Override
+  @Ovelonrridelon
   public int docID() {
-    return docId;
+    relonturn docId;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    if (++nextCounter % NEXT_CALL_TIMEOUT_CHECK_PERIOD == 0
-        && clock.nowMillis() > deadlineMillisFromEpoch) {
-      if (timeoutCountStat != null) {
-        timeoutCountStat.increment();
+  @Ovelonrridelon
+  public int nelonxtDoc() throws IOelonxcelonption {
+    if (++nelonxtCountelonr % NelonXT_CALL_TIMelonOUT_CHelonCK_PelonRIOD == 0
+        && clock.nowMillis() > delonadlinelonMillisFromelonpoch) {
+      if (timelonoutCountStat != null) {
+        timelonoutCountStat.increlonmelonnt();
       }
-      if (terminationTracker != null) {
-        terminationTracker.setEarlyTerminationState(
-            EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+      if (telonrminationTrackelonr != null) {
+        telonrminationTrackelonr.selontelonarlyTelonrminationStatelon(
+            elonarlyTelonrminationStatelon.TelonRMINATelonD_TIMelon_OUT_elonXCelonelonDelonD);
       }
 
-      return docId = NO_MORE_DOCS;
+      relonturn docId = NO_MORelon_DOCS;
     }
-    return docId = innerIterator.nextDoc();
+    relonturn docId = innelonrItelonrator.nelonxtDoc();
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    if (++advanceCounter % ADVANCE_CALL_TIMEOUT_CHECK_PERIOD == 0
-        && clock.nowMillis() > deadlineMillisFromEpoch) {
-      if (timeoutCountStat != null) {
-        timeoutCountStat.increment();
+  @Ovelonrridelon
+  public int advancelon(int targelont) throws IOelonxcelonption {
+    if (++advancelonCountelonr % ADVANCelon_CALL_TIMelonOUT_CHelonCK_PelonRIOD == 0
+        && clock.nowMillis() > delonadlinelonMillisFromelonpoch) {
+      if (timelonoutCountStat != null) {
+        timelonoutCountStat.increlonmelonnt();
       }
-      if (terminationTracker != null) {
-        terminationTracker.setEarlyTerminationState(
-            EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
+      if (telonrminationTrackelonr != null) {
+        telonrminationTrackelonr.selontelonarlyTelonrminationStatelon(
+            elonarlyTelonrminationStatelon.TelonRMINATelonD_TIMelon_OUT_elonXCelonelonDelonD);
       }
-      return docId = NO_MORE_DOCS;
+      relonturn docId = NO_MORelon_DOCS;
     }
 
-    return docId = innerIterator.advance(target);
+    relonturn docId = innelonrItelonrator.advancelon(targelont);
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    return innerIterator.cost();
+    relonturn innelonrItelonrator.cost();
   }
 }

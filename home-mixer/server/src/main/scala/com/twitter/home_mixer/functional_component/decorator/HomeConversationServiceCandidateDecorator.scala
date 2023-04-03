@@ -1,49 +1,49 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.functional_component.decorator.builder.HomeConversationModuleMetadataBuilder
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.UrtMultipleModulesDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.StaticModuleDisplayTypeBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.TimelineModuleBuilder
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
-import com.twitter.timelineservice.suggests.{thriftscala => st}
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.buildelonr.HomelonConvelonrsationModulelonMelontadataBuildelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.UrtItelonmCandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.UrtMultiplelonModulelonsDeloncorator
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.twelonelont.TwelonelontCandidatelonUrtItelonmBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata.ClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.StaticModulelonDisplayTypelonBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.TimelonlinelonModulelonBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.VelonrticalConvelonrsation
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.injelonction.scribelon.InjelonctionScribelonUtil
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.{thriftscala => st}
 
-object HomeConversationServiceCandidateDecorator {
+objelonct HomelonConvelonrsationSelonrvicelonCandidatelonDeloncorator {
 
-  private val ConversationModuleNamespace = EntryNamespace("home-conversation")
+  privatelon val ConvelonrsationModulelonNamelonspacelon = elonntryNamelonspacelon("homelon-convelonrsation")
 
-  def apply(
-    homeFeedbackActionInfoBuilder: HomeFeedbackActionInfoBuilder
-  ): Some[UrtMultipleModulesDecorator[PipelineQuery, TweetCandidate, Long]] = {
-    val suggestType = st.SuggestType.RankedOrganicTweet
-    val component = InjectionScribeUtil.scribeComponent(suggestType).get
-    val clientEventInfoBuilder = ClientEventInfoBuilder(component)
-    val tweetItemBuilder = TweetCandidateUrtItemBuilder(
-      clientEventInfoBuilder = clientEventInfoBuilder,
-      timelinesScoreInfoBuilder = Some(HomeTimelinesScoreInfoBuilder),
-      feedbackActionInfoBuilder = Some(homeFeedbackActionInfoBuilder)
+  delonf apply(
+    homelonFelonelondbackActionInfoBuildelonr: HomelonFelonelondbackActionInfoBuildelonr
+  ): Somelon[UrtMultiplelonModulelonsDeloncorator[PipelonlinelonQuelonry, TwelonelontCandidatelon, Long]] = {
+    val suggelonstTypelon = st.SuggelonstTypelon.RankelondOrganicTwelonelont
+    val componelonnt = InjelonctionScribelonUtil.scribelonComponelonnt(suggelonstTypelon).gelont
+    val clielonntelonvelonntInfoBuildelonr = ClielonntelonvelonntInfoBuildelonr(componelonnt)
+    val twelonelontItelonmBuildelonr = TwelonelontCandidatelonUrtItelonmBuildelonr(
+      clielonntelonvelonntInfoBuildelonr = clielonntelonvelonntInfoBuildelonr,
+      timelonlinelonsScorelonInfoBuildelonr = Somelon(HomelonTimelonlinelonsScorelonInfoBuildelonr),
+      felonelondbackActionInfoBuildelonr = Somelon(homelonFelonelondbackActionInfoBuildelonr)
     )
 
-    val moduleBuilder = TimelineModuleBuilder(
-      entryNamespace = ConversationModuleNamespace,
-      clientEventInfoBuilder = clientEventInfoBuilder,
-      displayTypeBuilder = StaticModuleDisplayTypeBuilder(VerticalConversation),
-      metadataBuilder = Some(HomeConversationModuleMetadataBuilder())
+    val modulelonBuildelonr = TimelonlinelonModulelonBuildelonr(
+      elonntryNamelonspacelon = ConvelonrsationModulelonNamelonspacelon,
+      clielonntelonvelonntInfoBuildelonr = clielonntelonvelonntInfoBuildelonr,
+      displayTypelonBuildelonr = StaticModulelonDisplayTypelonBuildelonr(VelonrticalConvelonrsation),
+      melontadataBuildelonr = Somelon(HomelonConvelonrsationModulelonMelontadataBuildelonr())
     )
 
-    Some(
-      UrtMultipleModulesDecorator(
-        urtItemCandidateDecorator = UrtItemCandidateDecorator(tweetItemBuilder),
-        moduleBuilder = moduleBuilder,
-        groupByKey = (_, _, candidateFeatures) =>
-          candidateFeatures.getOrElse(ConversationModuleFocalTweetIdFeature, None)
+    Somelon(
+      UrtMultiplelonModulelonsDeloncorator(
+        urtItelonmCandidatelonDeloncorator = UrtItelonmCandidatelonDeloncorator(twelonelontItelonmBuildelonr),
+        modulelonBuildelonr = modulelonBuildelonr,
+        groupByKelony = (_, _, candidatelonFelonaturelons) =>
+          candidatelonFelonaturelons.gelontOrelonlselon(ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon, Nonelon)
       ))
   }
 }

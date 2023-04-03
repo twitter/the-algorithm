@@ -1,916 +1,916 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.datatools.entityservice.entities.thriftscala.FleetInterstitial
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.visibility.common.actions.LocalizedMessage
-import com.twitter.visibility.common.actions._
-import com.twitter.visibility.common.actions.converter.scala.AppealableReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.AvoidReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.ComplianceTweetNoticeEventTypeConverter
-import com.twitter.visibility.common.actions.converter.scala.DownrankHomeTimelineReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.DropReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.InterstitialReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.LimitedActionsPolicyConverter
-import com.twitter.visibility.common.actions.converter.scala.LimitedEngagementReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.LocalizedMessageConverter
-import com.twitter.visibility.common.actions.converter.scala.SoftInterventionDisplayTypeConverter
-import com.twitter.visibility.common.actions.converter.scala.SoftInterventionReasonConverter
-import com.twitter.visibility.common.actions.converter.scala.TombstoneReasonConverter
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.logging.thriftscala.HealthActionType
-import com.twitter.visibility.models.ViolationLevel
-import com.twitter.visibility.strato.thriftscala.NudgeActionType.EnumUnknownNudgeActionType
-import com.twitter.visibility.strato.thriftscala.{Nudge => StratoNudge}
-import com.twitter.visibility.strato.thriftscala.{NudgeAction => StratoNudgeAction}
-import com.twitter.visibility.strato.thriftscala.{NudgeActionType => StratoNudgeActionType}
-import com.twitter.visibility.strato.thriftscala.{NudgeActionPayload => StratoNudgeActionPayload}
-import com.twitter.visibility.thriftscala
-import com.twitter.visibility.util.NamingUtils
+import com.twittelonr.datatools.elonntityselonrvicelon.elonntitielons.thriftscala.FlelonelontIntelonrstitial
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.visibility.common.actions.LocalizelondMelonssagelon
+import com.twittelonr.visibility.common.actions._
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.AppelonalablelonRelonasonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.AvoidRelonasonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.CompliancelonTwelonelontNoticelonelonvelonntTypelonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.DownrankHomelonTimelonlinelonRelonasonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.DropRelonasonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.IntelonrstitialRelonasonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.LimitelondActionsPolicyConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.LimitelondelonngagelonmelonntRelonasonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.LocalizelondMelonssagelonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.SoftIntelonrvelonntionDisplayTypelonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.SoftIntelonrvelonntionRelonasonConvelonrtelonr
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.TombstonelonRelonasonConvelonrtelonr
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.logging.thriftscala.HelonalthActionTypelon
+import com.twittelonr.visibility.modelonls.ViolationLelonvelonl
+import com.twittelonr.visibility.strato.thriftscala.NudgelonActionTypelon.elonnumUnknownNudgelonActionTypelon
+import com.twittelonr.visibility.strato.thriftscala.{Nudgelon => StratoNudgelon}
+import com.twittelonr.visibility.strato.thriftscala.{NudgelonAction => StratoNudgelonAction}
+import com.twittelonr.visibility.strato.thriftscala.{NudgelonActionTypelon => StratoNudgelonActionTypelon}
+import com.twittelonr.visibility.strato.thriftscala.{NudgelonActionPayload => StratoNudgelonActionPayload}
+import com.twittelonr.visibility.thriftscala
+import com.twittelonr.visibility.util.NamingUtils
 
-sealed trait Action {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
-  lazy val fullName: String = NamingUtils.getFriendlyName(this)
+selonalelond trait Action {
+  lazy val namelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
+  lazy val fullNamelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
 
-  val severity: Int
-  def toActionThrift(): thriftscala.Action
+  val selonvelonrity: Int
+  delonf toActionThrift(): thriftscala.Action
 
-  def isComposable: Boolean = false
+  delonf isComposablelon: Boolelonan = falselon
 
-  def toHealthActionTypeThrift: Option[HealthActionType]
+  delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon]
 }
 
-sealed trait Reason {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+selonalelond trait Relonason {
+  lazy val namelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
 }
 
-sealed abstract class ActionWithReason(reason: Reason) extends Action {
-  override lazy val fullName: String = s"${this.name}/${reason.name}"
+selonalelond abstract class ActionWithRelonason(relonason: Relonason) elonxtelonnds Action {
+  ovelonrridelon lazy val fullNamelon: String = s"${this.namelon}/${relonason.namelon}"
 }
 
-object Reason {
+objelonct Relonason {
 
-  case object Bounce extends Reason
+  caselon objelonct Bouncelon elonxtelonnds Relonason
 
-  case object ViewerReportedAuthor extends Reason
-  case object ViewerReportedTweet extends Reason
+  caselon objelonct VielonwelonrRelonportelondAuthor elonxtelonnds Relonason
+  caselon objelonct VielonwelonrRelonportelondTwelonelont elonxtelonnds Relonason
 
-  case object DeactivatedAuthor extends Reason
-  case object OffboardedAuthor extends Reason
-  case object ErasedAuthor extends Reason
-  case object ProtectedAuthor extends Reason
-  case object SuspendedAuthor extends Reason
-  case object ViewerIsUnmentioned extends Reason
+  caselon objelonct DelonactivatelondAuthor elonxtelonnds Relonason
+  caselon objelonct OffboardelondAuthor elonxtelonnds Relonason
+  caselon objelonct elonraselondAuthor elonxtelonnds Relonason
+  caselon objelonct ProtelonctelondAuthor elonxtelonnds Relonason
+  caselon objelonct SuspelonndelondAuthor elonxtelonnds Relonason
+  caselon objelonct VielonwelonrIsUnmelonntionelond elonxtelonnds Relonason
 
-  case object Nsfw extends Reason
-  case object NsfwMedia extends Reason
-  case object NsfwViewerIsUnderage extends Reason
-  case object NsfwViewerHasNoStatedAge extends Reason
-  case object NsfwLoggedOut extends Reason
-  case object PossiblyUndesirable extends Reason
+  caselon objelonct Nsfw elonxtelonnds Relonason
+  caselon objelonct NsfwMelondia elonxtelonnds Relonason
+  caselon objelonct NsfwVielonwelonrIsUndelonragelon elonxtelonnds Relonason
+  caselon objelonct NsfwVielonwelonrHasNoStatelondAgelon elonxtelonnds Relonason
+  caselon objelonct NsfwLoggelondOut elonxtelonnds Relonason
+  caselon objelonct PossiblyUndelonsirablelon elonxtelonnds Relonason
 
-  case object AbuseEpisodic extends Reason
-  case object AbuseEpisodicEncourageSelfHarm extends Reason
-  case object AbuseEpisodicHatefulConduct extends Reason
-  case object AbuseGlorificationOfViolence extends Reason
-  case object AbuseGratuitousGore extends Reason
-  case object AbuseMobHarassment extends Reason
-  case object AbuseMomentOfDeathOrDeceasedUser extends Reason
-  case object AbusePrivateInformation extends Reason
-  case object AbuseRightToPrivacy extends Reason
-  case object AbuseThreatToExpose extends Reason
-  case object AbuseViolentSexualConduct extends Reason
-  case object AbuseViolentThreatHatefulConduct extends Reason
-  case object AbuseViolentThreatOrBounty extends Reason
+  caselon objelonct Abuselonelonpisodic elonxtelonnds Relonason
+  caselon objelonct AbuselonelonpisodicelonncouragelonSelonlfHarm elonxtelonnds Relonason
+  caselon objelonct AbuselonelonpisodicHatelonfulConduct elonxtelonnds Relonason
+  caselon objelonct AbuselonGlorificationOfViolelonncelon elonxtelonnds Relonason
+  caselon objelonct AbuselonGratuitousGorelon elonxtelonnds Relonason
+  caselon objelonct AbuselonMobHarassmelonnt elonxtelonnds Relonason
+  caselon objelonct AbuselonMomelonntOfDelonathOrDeloncelonaselondUselonr elonxtelonnds Relonason
+  caselon objelonct AbuselonPrivatelonInformation elonxtelonnds Relonason
+  caselon objelonct AbuselonRightToPrivacy elonxtelonnds Relonason
+  caselon objelonct AbuselonThrelonatToelonxposelon elonxtelonnds Relonason
+  caselon objelonct AbuselonViolelonntSelonxualConduct elonxtelonnds Relonason
+  caselon objelonct AbuselonViolelonntThrelonatHatelonfulConduct elonxtelonnds Relonason
+  caselon objelonct AbuselonViolelonntThrelonatOrBounty elonxtelonnds Relonason
 
-  case object MutedKeyword extends Reason
-  case object Unspecified extends Reason
+  caselon objelonct MutelondKelonyword elonxtelonnds Relonason
+  caselon objelonct Unspeloncifielond elonxtelonnds Relonason
 
-  case object UntrustedUrl extends Reason
+  caselon objelonct UntrustelondUrl elonxtelonnds Relonason
 
-  case object SpamReplyDownRank extends Reason
+  caselon objelonct SpamRelonplyDownRank elonxtelonnds Relonason
 
-  case object LowQualityTweet extends Reason
+  caselon objelonct LowQualityTwelonelont elonxtelonnds Relonason
 
-  case object LowQualityMention extends Reason
+  caselon objelonct LowQualityMelonntion elonxtelonnds Relonason
 
-  case object SpamHighRecallTweet extends Reason
+  caselon objelonct SpamHighReloncallTwelonelont elonxtelonnds Relonason
 
-  case object TweetLabelDuplicateContent extends Reason
+  caselon objelonct TwelonelontLabelonlDuplicatelonContelonnt elonxtelonnds Relonason
 
-  case object TweetLabelDuplicateMention extends Reason
+  caselon objelonct TwelonelontLabelonlDuplicatelonMelonntion elonxtelonnds Relonason
 
-  case object PdnaTweet extends Reason
+  caselon objelonct PdnaTwelonelont elonxtelonnds Relonason
 
-  case object TweetLabeledSpam extends Reason
+  caselon objelonct TwelonelontLabelonlelondSpam elonxtelonnds Relonason
 
-  case object OneOff extends Reason
-  case object VotingMisinformation extends Reason
-  case object HackedMaterials extends Reason
-  case object Scams extends Reason
-  case object PlatformManipulation extends Reason
+  caselon objelonct OnelonOff elonxtelonnds Relonason
+  caselon objelonct VotingMisinformation elonxtelonnds Relonason
+  caselon objelonct HackelondMatelonrials elonxtelonnds Relonason
+  caselon objelonct Scams elonxtelonnds Relonason
+  caselon objelonct PlatformManipulation elonxtelonnds Relonason
 
-  case object FirstPageSearchResult extends Reason
+  caselon objelonct FirstPagelonSelonarchRelonsult elonxtelonnds Relonason
 
-  case object MisinfoCivic extends Reason
-  case object MisinfoCrisis extends Reason
-  case object MisinfoGeneric extends Reason
-  case object MisinfoMedical extends Reason
-  case object Misleading extends Reason
-  case object ExclusiveTweet extends Reason
-  case object CommunityNotAMember extends Reason
-  case object CommunityTweetHidden extends Reason
-  case object CommunityTweetCommunityIsSuspended extends Reason
-  case object CommunityTweetAuthorRemoved extends Reason
-  case object InternalPromotedContent extends Reason
-  case object TrustedFriendsTweet extends Reason
-  case object Toxicity extends Reason
-  case object StaleTweet extends Reason
-  case object DmcaWithheld extends Reason
-  case object LegalDemandsWithheld extends Reason
-  case object LocalLawsWithheld extends Reason
-  case object HatefulConduct extends Reason
-  case object AbusiveBehavior extends Reason
+  caselon objelonct MisinfoCivic elonxtelonnds Relonason
+  caselon objelonct MisinfoCrisis elonxtelonnds Relonason
+  caselon objelonct MisinfoGelonnelonric elonxtelonnds Relonason
+  caselon objelonct MisinfoMelondical elonxtelonnds Relonason
+  caselon objelonct Mislelonading elonxtelonnds Relonason
+  caselon objelonct elonxclusivelonTwelonelont elonxtelonnds Relonason
+  caselon objelonct CommunityNotAMelonmbelonr elonxtelonnds Relonason
+  caselon objelonct CommunityTwelonelontHiddelonn elonxtelonnds Relonason
+  caselon objelonct CommunityTwelonelontCommunityIsSuspelonndelond elonxtelonnds Relonason
+  caselon objelonct CommunityTwelonelontAuthorRelonmovelond elonxtelonnds Relonason
+  caselon objelonct IntelonrnalPromotelondContelonnt elonxtelonnds Relonason
+  caselon objelonct TrustelondFrielonndsTwelonelont elonxtelonnds Relonason
+  caselon objelonct Toxicity elonxtelonnds Relonason
+  caselon objelonct StalelonTwelonelont elonxtelonnds Relonason
+  caselon objelonct DmcaWithhelonld elonxtelonnds Relonason
+  caselon objelonct LelongalDelonmandsWithhelonld elonxtelonnds Relonason
+  caselon objelonct LocalLawsWithhelonld elonxtelonnds Relonason
+  caselon objelonct HatelonfulConduct elonxtelonnds Relonason
+  caselon objelonct AbusivelonBelonhavior elonxtelonnds Relonason
 
-  case object NotSupportedOnDevice extends Reason
+  caselon objelonct NotSupportelondOnDelonvicelon elonxtelonnds Relonason
 
-  case object IpiDevelopmentOnly extends Reason
-  case object InterstitialDevelopmentOnly extends Reason
+  caselon objelonct IpiDelonvelonlopmelonntOnly elonxtelonnds Relonason
+  caselon objelonct IntelonrstitialDelonvelonlopmelonntOnly elonxtelonnds Relonason
 
-  case class FosnrReason(appealableReason: AppealableReason) extends Reason
+  caselon class FosnrRelonason(appelonalablelonRelonason: AppelonalablelonRelonason) elonxtelonnds Relonason
 
-  def toDropReason(reason: Reason): Option[DropReason] =
-    reason match {
-      case AuthorBlocksViewer => Some(DropReason.AuthorBlocksViewer)
-      case CommunityTweetHidden => Some(DropReason.CommunityTweetHidden)
-      case CommunityTweetCommunityIsSuspended => Some(DropReason.CommunityTweetCommunityIsSuspended)
-      case DmcaWithheld => Some(DropReason.DmcaWithheld)
-      case ExclusiveTweet => Some(DropReason.ExclusiveTweet)
-      case InternalPromotedContent => Some(DropReason.InternalPromotedContent)
-      case LegalDemandsWithheld => Some(DropReason.LegalDemandsWithheld)
-      case LocalLawsWithheld => Some(DropReason.LocalLawsWithheld)
-      case Nsfw => Some(DropReason.NsfwAuthor)
-      case NsfwLoggedOut => Some(DropReason.NsfwLoggedOut)
-      case NsfwViewerHasNoStatedAge => Some(DropReason.NsfwViewerHasNoStatedAge)
-      case NsfwViewerIsUnderage => Some(DropReason.NsfwViewerIsUnderage)
-      case ProtectedAuthor => Some(DropReason.ProtectedAuthor)
-      case StaleTweet => Some(DropReason.StaleTweet)
-      case SuspendedAuthor => Some(DropReason.SuspendedAuthor)
-      case Unspecified => Some(DropReason.Unspecified)
-      case ViewerBlocksAuthor => Some(DropReason.ViewerBlocksAuthor)
-      case ViewerHardMutedAuthor => Some(DropReason.ViewerMutesAuthor)
-      case ViewerMutesAuthor => Some(DropReason.ViewerMutesAuthor)
-      case TrustedFriendsTweet => Some(DropReason.TrustedFriendsTweet)
-      case _ => Some(DropReason.Unspecified)
+  delonf toDropRelonason(relonason: Relonason): Option[DropRelonason] =
+    relonason match {
+      caselon AuthorBlocksVielonwelonr => Somelon(DropRelonason.AuthorBlocksVielonwelonr)
+      caselon CommunityTwelonelontHiddelonn => Somelon(DropRelonason.CommunityTwelonelontHiddelonn)
+      caselon CommunityTwelonelontCommunityIsSuspelonndelond => Somelon(DropRelonason.CommunityTwelonelontCommunityIsSuspelonndelond)
+      caselon DmcaWithhelonld => Somelon(DropRelonason.DmcaWithhelonld)
+      caselon elonxclusivelonTwelonelont => Somelon(DropRelonason.elonxclusivelonTwelonelont)
+      caselon IntelonrnalPromotelondContelonnt => Somelon(DropRelonason.IntelonrnalPromotelondContelonnt)
+      caselon LelongalDelonmandsWithhelonld => Somelon(DropRelonason.LelongalDelonmandsWithhelonld)
+      caselon LocalLawsWithhelonld => Somelon(DropRelonason.LocalLawsWithhelonld)
+      caselon Nsfw => Somelon(DropRelonason.NsfwAuthor)
+      caselon NsfwLoggelondOut => Somelon(DropRelonason.NsfwLoggelondOut)
+      caselon NsfwVielonwelonrHasNoStatelondAgelon => Somelon(DropRelonason.NsfwVielonwelonrHasNoStatelondAgelon)
+      caselon NsfwVielonwelonrIsUndelonragelon => Somelon(DropRelonason.NsfwVielonwelonrIsUndelonragelon)
+      caselon ProtelonctelondAuthor => Somelon(DropRelonason.ProtelonctelondAuthor)
+      caselon StalelonTwelonelont => Somelon(DropRelonason.StalelonTwelonelont)
+      caselon SuspelonndelondAuthor => Somelon(DropRelonason.SuspelonndelondAuthor)
+      caselon Unspeloncifielond => Somelon(DropRelonason.Unspeloncifielond)
+      caselon VielonwelonrBlocksAuthor => Somelon(DropRelonason.VielonwelonrBlocksAuthor)
+      caselon VielonwelonrHardMutelondAuthor => Somelon(DropRelonason.VielonwelonrMutelonsAuthor)
+      caselon VielonwelonrMutelonsAuthor => Somelon(DropRelonason.VielonwelonrMutelonsAuthor)
+      caselon TrustelondFrielonndsTwelonelont => Somelon(DropRelonason.TrustelondFrielonndsTwelonelont)
+      caselon _ => Somelon(DropRelonason.Unspeloncifielond)
     }
 
-  def fromDropReason(dropReason: DropReason): Reason =
-    dropReason match {
-      case DropReason.AuthorBlocksViewer => AuthorBlocksViewer
-      case DropReason.CommunityTweetHidden => CommunityTweetHidden
-      case DropReason.CommunityTweetCommunityIsSuspended => CommunityTweetCommunityIsSuspended
-      case DropReason.DmcaWithheld => DmcaWithheld
-      case DropReason.ExclusiveTweet => ExclusiveTweet
-      case DropReason.InternalPromotedContent => InternalPromotedContent
-      case DropReason.LegalDemandsWithheld => LegalDemandsWithheld
-      case DropReason.LocalLawsWithheld => LocalLawsWithheld
-      case DropReason.NsfwAuthor => Nsfw
-      case DropReason.NsfwLoggedOut => NsfwLoggedOut
-      case DropReason.NsfwViewerHasNoStatedAge => NsfwViewerHasNoStatedAge
-      case DropReason.NsfwViewerIsUnderage => NsfwViewerIsUnderage
-      case DropReason.ProtectedAuthor => ProtectedAuthor
-      case DropReason.StaleTweet => StaleTweet
-      case DropReason.SuspendedAuthor => SuspendedAuthor
-      case DropReason.ViewerBlocksAuthor => ViewerBlocksAuthor
-      case DropReason.ViewerMutesAuthor => ViewerMutesAuthor
-      case DropReason.TrustedFriendsTweet => TrustedFriendsTweet
-      case DropReason.Unspecified => Unspecified
+  delonf fromDropRelonason(dropRelonason: DropRelonason): Relonason =
+    dropRelonason match {
+      caselon DropRelonason.AuthorBlocksVielonwelonr => AuthorBlocksVielonwelonr
+      caselon DropRelonason.CommunityTwelonelontHiddelonn => CommunityTwelonelontHiddelonn
+      caselon DropRelonason.CommunityTwelonelontCommunityIsSuspelonndelond => CommunityTwelonelontCommunityIsSuspelonndelond
+      caselon DropRelonason.DmcaWithhelonld => DmcaWithhelonld
+      caselon DropRelonason.elonxclusivelonTwelonelont => elonxclusivelonTwelonelont
+      caselon DropRelonason.IntelonrnalPromotelondContelonnt => IntelonrnalPromotelondContelonnt
+      caselon DropRelonason.LelongalDelonmandsWithhelonld => LelongalDelonmandsWithhelonld
+      caselon DropRelonason.LocalLawsWithhelonld => LocalLawsWithhelonld
+      caselon DropRelonason.NsfwAuthor => Nsfw
+      caselon DropRelonason.NsfwLoggelondOut => NsfwLoggelondOut
+      caselon DropRelonason.NsfwVielonwelonrHasNoStatelondAgelon => NsfwVielonwelonrHasNoStatelondAgelon
+      caselon DropRelonason.NsfwVielonwelonrIsUndelonragelon => NsfwVielonwelonrIsUndelonragelon
+      caselon DropRelonason.ProtelonctelondAuthor => ProtelonctelondAuthor
+      caselon DropRelonason.StalelonTwelonelont => StalelonTwelonelont
+      caselon DropRelonason.SuspelonndelondAuthor => SuspelonndelondAuthor
+      caselon DropRelonason.VielonwelonrBlocksAuthor => VielonwelonrBlocksAuthor
+      caselon DropRelonason.VielonwelonrMutelonsAuthor => VielonwelonrMutelonsAuthor
+      caselon DropRelonason.TrustelondFrielonndsTwelonelont => TrustelondFrielonndsTwelonelont
+      caselon DropRelonason.Unspeloncifielond => Unspeloncifielond
     }
 
-  def toAppealableReason(reason: Reason, violationLevel: ViolationLevel): Option[AppealableReason] =
-    reason match {
-      case HatefulConduct => Some(AppealableReason.HatefulConduct(violationLevel.level))
-      case AbusiveBehavior => Some(AppealableReason.AbusiveBehavior(violationLevel.level))
-      case _ => Some(AppealableReason.Unspecified(violationLevel.level))
+  delonf toAppelonalablelonRelonason(relonason: Relonason, violationLelonvelonl: ViolationLelonvelonl): Option[AppelonalablelonRelonason] =
+    relonason match {
+      caselon HatelonfulConduct => Somelon(AppelonalablelonRelonason.HatelonfulConduct(violationLelonvelonl.lelonvelonl))
+      caselon AbusivelonBelonhavior => Somelon(AppelonalablelonRelonason.AbusivelonBelonhavior(violationLelonvelonl.lelonvelonl))
+      caselon _ => Somelon(AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl))
     }
 
-  def fromAppealableReason(appealableReason: AppealableReason): Reason =
-    appealableReason match {
-      case AppealableReason.HatefulConduct(level) => HatefulConduct
-      case AppealableReason.AbusiveBehavior(level) => AbusiveBehavior
-      case AppealableReason.Unspecified(level) => Unspecified
+  delonf fromAppelonalablelonRelonason(appelonalablelonRelonason: AppelonalablelonRelonason): Relonason =
+    appelonalablelonRelonason match {
+      caselon AppelonalablelonRelonason.HatelonfulConduct(lelonvelonl) => HatelonfulConduct
+      caselon AppelonalablelonRelonason.AbusivelonBelonhavior(lelonvelonl) => AbusivelonBelonhavior
+      caselon AppelonalablelonRelonason.Unspeloncifielond(lelonvelonl) => Unspeloncifielond
     }
 
-  def toSoftInterventionReason(appealableReason: AppealableReason): SoftInterventionReason =
-    appealableReason match {
-      case AppealableReason.HatefulConduct(level) =>
-        SoftInterventionReason.FosnrReason(appealableReason)
-      case AppealableReason.AbusiveBehavior(level) =>
-        SoftInterventionReason.FosnrReason(appealableReason)
-      case AppealableReason.Unspecified(level) =>
-        SoftInterventionReason.FosnrReason(appealableReason)
+  delonf toSoftIntelonrvelonntionRelonason(appelonalablelonRelonason: AppelonalablelonRelonason): SoftIntelonrvelonntionRelonason =
+    appelonalablelonRelonason match {
+      caselon AppelonalablelonRelonason.HatelonfulConduct(lelonvelonl) =>
+        SoftIntelonrvelonntionRelonason.FosnrRelonason(appelonalablelonRelonason)
+      caselon AppelonalablelonRelonason.AbusivelonBelonhavior(lelonvelonl) =>
+        SoftIntelonrvelonntionRelonason.FosnrRelonason(appelonalablelonRelonason)
+      caselon AppelonalablelonRelonason.Unspeloncifielond(lelonvelonl) =>
+        SoftIntelonrvelonntionRelonason.FosnrRelonason(appelonalablelonRelonason)
     }
 
-  def toLimitedEngagementReason(appealableReason: AppealableReason): LimitedEngagementReason =
-    appealableReason match {
-      case AppealableReason.HatefulConduct(level) =>
-        LimitedEngagementReason.FosnrReason(appealableReason)
-      case AppealableReason.AbusiveBehavior(level) =>
-        LimitedEngagementReason.FosnrReason(appealableReason)
-      case AppealableReason.Unspecified(level) =>
-        LimitedEngagementReason.FosnrReason(appealableReason)
+  delonf toLimitelondelonngagelonmelonntRelonason(appelonalablelonRelonason: AppelonalablelonRelonason): LimitelondelonngagelonmelonntRelonason =
+    appelonalablelonRelonason match {
+      caselon AppelonalablelonRelonason.HatelonfulConduct(lelonvelonl) =>
+        LimitelondelonngagelonmelonntRelonason.FosnrRelonason(appelonalablelonRelonason)
+      caselon AppelonalablelonRelonason.AbusivelonBelonhavior(lelonvelonl) =>
+        LimitelondelonngagelonmelonntRelonason.FosnrRelonason(appelonalablelonRelonason)
+      caselon AppelonalablelonRelonason.Unspeloncifielond(lelonvelonl) =>
+        LimitelondelonngagelonmelonntRelonason.FosnrRelonason(appelonalablelonRelonason)
     }
 
-  val NSFW_MEDIA: Set[Reason] = Set(Nsfw, NsfwMedia)
+  val NSFW_MelonDIA: Selont[Relonason] = Selont(Nsfw, NsfwMelondia)
 
-  def toInterstitialReason(reason: Reason): Option[InterstitialReason] =
-    reason match {
-      case r if NSFW_MEDIA.contains(r) => Some(InterstitialReason.ContainsNsfwMedia)
-      case PossiblyUndesirable => Some(InterstitialReason.PossiblyUndesirable)
-      case MutedKeyword => Some(InterstitialReason.MatchesMutedKeyword(""))
-      case ViewerReportedAuthor => Some(InterstitialReason.ViewerReportedAuthor)
-      case ViewerReportedTweet => Some(InterstitialReason.ViewerReportedTweet)
-      case ViewerBlocksAuthor => Some(InterstitialReason.ViewerBlocksAuthor)
-      case ViewerMutesAuthor => Some(InterstitialReason.ViewerMutesAuthor)
-      case ViewerHardMutedAuthor => Some(InterstitialReason.ViewerMutesAuthor)
-      case InterstitialDevelopmentOnly => Some(InterstitialReason.DevelopmentOnly)
-      case DmcaWithheld => Some(InterstitialReason.DmcaWithheld)
-      case LegalDemandsWithheld => Some(InterstitialReason.LegalDemandsWithheld)
-      case LocalLawsWithheld => Some(InterstitialReason.LocalLawsWithheld)
-      case HatefulConduct => Some(InterstitialReason.HatefulConduct)
-      case AbusiveBehavior => Some(InterstitialReason.AbusiveBehavior)
-      case FosnrReason(appealableReason) => Some(InterstitialReason.FosnrReason(appealableReason))
-      case _ => None
+  delonf toIntelonrstitialRelonason(relonason: Relonason): Option[IntelonrstitialRelonason] =
+    relonason match {
+      caselon r if NSFW_MelonDIA.contains(r) => Somelon(IntelonrstitialRelonason.ContainsNsfwMelondia)
+      caselon PossiblyUndelonsirablelon => Somelon(IntelonrstitialRelonason.PossiblyUndelonsirablelon)
+      caselon MutelondKelonyword => Somelon(IntelonrstitialRelonason.MatchelonsMutelondKelonyword(""))
+      caselon VielonwelonrRelonportelondAuthor => Somelon(IntelonrstitialRelonason.VielonwelonrRelonportelondAuthor)
+      caselon VielonwelonrRelonportelondTwelonelont => Somelon(IntelonrstitialRelonason.VielonwelonrRelonportelondTwelonelont)
+      caselon VielonwelonrBlocksAuthor => Somelon(IntelonrstitialRelonason.VielonwelonrBlocksAuthor)
+      caselon VielonwelonrMutelonsAuthor => Somelon(IntelonrstitialRelonason.VielonwelonrMutelonsAuthor)
+      caselon VielonwelonrHardMutelondAuthor => Somelon(IntelonrstitialRelonason.VielonwelonrMutelonsAuthor)
+      caselon IntelonrstitialDelonvelonlopmelonntOnly => Somelon(IntelonrstitialRelonason.DelonvelonlopmelonntOnly)
+      caselon DmcaWithhelonld => Somelon(IntelonrstitialRelonason.DmcaWithhelonld)
+      caselon LelongalDelonmandsWithhelonld => Somelon(IntelonrstitialRelonason.LelongalDelonmandsWithhelonld)
+      caselon LocalLawsWithhelonld => Somelon(IntelonrstitialRelonason.LocalLawsWithhelonld)
+      caselon HatelonfulConduct => Somelon(IntelonrstitialRelonason.HatelonfulConduct)
+      caselon AbusivelonBelonhavior => Somelon(IntelonrstitialRelonason.AbusivelonBelonhavior)
+      caselon FosnrRelonason(appelonalablelonRelonason) => Somelon(IntelonrstitialRelonason.FosnrRelonason(appelonalablelonRelonason))
+      caselon _ => Nonelon
     }
 
-  def fromInterstitialReason(interstitialReason: InterstitialReason): Reason =
-    interstitialReason match {
-      case InterstitialReason.ContainsNsfwMedia => Reason.NsfwMedia
-      case InterstitialReason.PossiblyUndesirable => Reason.PossiblyUndesirable
-      case InterstitialReason.MatchesMutedKeyword(_) => Reason.MutedKeyword
-      case InterstitialReason.ViewerReportedAuthor => Reason.ViewerReportedAuthor
-      case InterstitialReason.ViewerReportedTweet => Reason.ViewerReportedTweet
-      case InterstitialReason.ViewerBlocksAuthor => Reason.ViewerBlocksAuthor
-      case InterstitialReason.ViewerMutesAuthor => Reason.ViewerMutesAuthor
-      case InterstitialReason.DevelopmentOnly => Reason.InterstitialDevelopmentOnly
-      case InterstitialReason.DmcaWithheld => Reason.DmcaWithheld
-      case InterstitialReason.LegalDemandsWithheld => Reason.LegalDemandsWithheld
-      case InterstitialReason.LocalLawsWithheld => Reason.LocalLawsWithheld
-      case InterstitialReason.HatefulConduct => Reason.HatefulConduct
-      case InterstitialReason.AbusiveBehavior => Reason.AbusiveBehavior
-      case InterstitialReason.FosnrReason(reason) => Reason.fromAppealableReason(reason)
+  delonf fromIntelonrstitialRelonason(intelonrstitialRelonason: IntelonrstitialRelonason): Relonason =
+    intelonrstitialRelonason match {
+      caselon IntelonrstitialRelonason.ContainsNsfwMelondia => Relonason.NsfwMelondia
+      caselon IntelonrstitialRelonason.PossiblyUndelonsirablelon => Relonason.PossiblyUndelonsirablelon
+      caselon IntelonrstitialRelonason.MatchelonsMutelondKelonyword(_) => Relonason.MutelondKelonyword
+      caselon IntelonrstitialRelonason.VielonwelonrRelonportelondAuthor => Relonason.VielonwelonrRelonportelondAuthor
+      caselon IntelonrstitialRelonason.VielonwelonrRelonportelondTwelonelont => Relonason.VielonwelonrRelonportelondTwelonelont
+      caselon IntelonrstitialRelonason.VielonwelonrBlocksAuthor => Relonason.VielonwelonrBlocksAuthor
+      caselon IntelonrstitialRelonason.VielonwelonrMutelonsAuthor => Relonason.VielonwelonrMutelonsAuthor
+      caselon IntelonrstitialRelonason.DelonvelonlopmelonntOnly => Relonason.IntelonrstitialDelonvelonlopmelonntOnly
+      caselon IntelonrstitialRelonason.DmcaWithhelonld => Relonason.DmcaWithhelonld
+      caselon IntelonrstitialRelonason.LelongalDelonmandsWithhelonld => Relonason.LelongalDelonmandsWithhelonld
+      caselon IntelonrstitialRelonason.LocalLawsWithhelonld => Relonason.LocalLawsWithhelonld
+      caselon IntelonrstitialRelonason.HatelonfulConduct => Relonason.HatelonfulConduct
+      caselon IntelonrstitialRelonason.AbusivelonBelonhavior => Relonason.AbusivelonBelonhavior
+      caselon IntelonrstitialRelonason.FosnrRelonason(relonason) => Relonason.fromAppelonalablelonRelonason(relonason)
     }
 
 }
 
-sealed trait Epitaph {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+selonalelond trait elonpitaph {
+  lazy val namelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
 }
 
-object Epitaph {
+objelonct elonpitaph {
 
-  case object Unavailable extends Epitaph
+  caselon objelonct Unavailablelon elonxtelonnds elonpitaph
 
-  case object Blocked extends Epitaph
-  case object BlockedBy extends Epitaph
-  case object Reported extends Epitaph
+  caselon objelonct Blockelond elonxtelonnds elonpitaph
+  caselon objelonct BlockelondBy elonxtelonnds elonpitaph
+  caselon objelonct Relonportelond elonxtelonnds elonpitaph
 
-  case object BounceDeleted extends Epitaph
-  case object Deleted extends Epitaph
-  case object NotFound extends Epitaph
-  case object PublicInterest extends Epitaph
+  caselon objelonct BouncelonDelonlelontelond elonxtelonnds elonpitaph
+  caselon objelonct Delonlelontelond elonxtelonnds elonpitaph
+  caselon objelonct NotFound elonxtelonnds elonpitaph
+  caselon objelonct PublicIntelonrelonst elonxtelonnds elonpitaph
 
-  case object Bounced extends Epitaph
-  case object Protected extends Epitaph
-  case object Suspended extends Epitaph
-  case object Offboarded extends Epitaph
-  case object Deactivated extends Epitaph
+  caselon objelonct Bouncelond elonxtelonnds elonpitaph
+  caselon objelonct Protelonctelond elonxtelonnds elonpitaph
+  caselon objelonct Suspelonndelond elonxtelonnds elonpitaph
+  caselon objelonct Offboardelond elonxtelonnds elonpitaph
+  caselon objelonct Delonactivatelond elonxtelonnds elonpitaph
 
-  case object MutedKeyword extends Epitaph
-  case object Underage extends Epitaph
-  case object NoStatedAge extends Epitaph
-  case object LoggedOutAge extends Epitaph
-  case object SuperFollowsContent extends Epitaph
+  caselon objelonct MutelondKelonyword elonxtelonnds elonpitaph
+  caselon objelonct Undelonragelon elonxtelonnds elonpitaph
+  caselon objelonct NoStatelondAgelon elonxtelonnds elonpitaph
+  caselon objelonct LoggelondOutAgelon elonxtelonnds elonpitaph
+  caselon objelonct SupelonrFollowsContelonnt elonxtelonnds elonpitaph
 
-  case object Moderated extends Epitaph
-  case object ForEmergencyUseOnly extends Epitaph
-  case object UnavailableWithoutLink extends Epitaph
-  case object CommunityTweetHidden extends Epitaph
-  case object CommunityTweetMemberRemoved extends Epitaph
-  case object CommunityTweetCommunityIsSuspended extends Epitaph
+  caselon objelonct Modelonratelond elonxtelonnds elonpitaph
+  caselon objelonct ForelonmelonrgelonncyUselonOnly elonxtelonnds elonpitaph
+  caselon objelonct UnavailablelonWithoutLink elonxtelonnds elonpitaph
+  caselon objelonct CommunityTwelonelontHiddelonn elonxtelonnds elonpitaph
+  caselon objelonct CommunityTwelonelontMelonmbelonrRelonmovelond elonxtelonnds elonpitaph
+  caselon objelonct CommunityTwelonelontCommunityIsSuspelonndelond elonxtelonnds elonpitaph
 
-  case object UserSuspended extends Epitaph
+  caselon objelonct UselonrSuspelonndelond elonxtelonnds elonpitaph
 
-  case object DevelopmentOnly extends Epitaph
+  caselon objelonct DelonvelonlopmelonntOnly elonxtelonnds elonpitaph
 
-  case object AdultMedia extends Epitaph
-  case object ViolentMedia extends Epitaph
-  case object OtherSensitiveMedia extends Epitaph
+  caselon objelonct AdultMelondia elonxtelonnds elonpitaph
+  caselon objelonct ViolelonntMelondia elonxtelonnds elonpitaph
+  caselon objelonct OthelonrSelonnsitivelonMelondia elonxtelonnds elonpitaph
 
-  case object DmcaWithheldMedia extends Epitaph
-  case object LegalDemandsWithheldMedia extends Epitaph
-  case object LocalLawsWithheldMedia extends Epitaph
+  caselon objelonct DmcaWithhelonldMelondia elonxtelonnds elonpitaph
+  caselon objelonct LelongalDelonmandsWithhelonldMelondia elonxtelonnds elonpitaph
+  caselon objelonct LocalLawsWithhelonldMelondia elonxtelonnds elonpitaph
 
-  case object ToxicReplyFiltered extends Epitaph
+  caselon objelonct ToxicRelonplyFiltelonrelond elonxtelonnds elonpitaph
 }
 
-sealed trait IsInterstitial {
-  def toInterstitialThriftWrapper(): thriftscala.AnyInterstitial
-  def toInterstitialThrift(): ThriftStruct
+selonalelond trait IsIntelonrstitial {
+  delonf toIntelonrstitialThriftWrappelonr(): thriftscala.AnyIntelonrstitial
+  delonf toIntelonrstitialThrift(): ThriftStruct
 }
 
-sealed trait IsAppealable {
-  def toAppealableThrift(): thriftscala.Appealable
+selonalelond trait IsAppelonalablelon {
+  delonf toAppelonalablelonThrift(): thriftscala.Appelonalablelon
 }
 
-sealed trait IsLimitedEngagements {
-  def policy: Option[LimitedActionsPolicy]
-  def getLimitedEngagementReason: LimitedEngagementReason
+selonalelond trait IsLimitelondelonngagelonmelonnts {
+  delonf policy: Option[LimitelondActionsPolicy]
+  delonf gelontLimitelondelonngagelonmelonntRelonason: LimitelondelonngagelonmelonntRelonason
 }
 
-object IsLimitedEngagements {
-  def unapply(
-    ile: IsLimitedEngagements
-  ): Option[(Option[LimitedActionsPolicy], LimitedEngagementReason)] = {
-    Some((ile.policy, ile.getLimitedEngagementReason))
+objelonct IsLimitelondelonngagelonmelonnts {
+  delonf unapply(
+    ilelon: IsLimitelondelonngagelonmelonnts
+  ): Option[(Option[LimitelondActionsPolicy], LimitelondelonngagelonmelonntRelonason)] = {
+    Somelon((ilelon.policy, ilelon.gelontLimitelondelonngagelonmelonntRelonason))
   }
 }
 
-sealed abstract class ActionWithEpitaph(epitaph: Epitaph) extends Action {
-  override lazy val fullName: String = s"${this.name}/${epitaph.name}"
+selonalelond abstract class ActionWithelonpitaph(elonpitaph: elonpitaph) elonxtelonnds Action {
+  ovelonrridelon lazy val fullNamelon: String = s"${this.namelon}/${elonpitaph.namelon}"
 }
 
-case class Appealable(
-  reason: Reason,
-  violationLevel: ViolationLevel,
-  localizedMessage: Option[LocalizedMessage] = None)
-    extends ActionWithReason(reason)
-    with IsAppealable {
+caselon class Appelonalablelon(
+  relonason: Relonason,
+  violationLelonvelonl: ViolationLelonvelonl,
+  localizelondMelonssagelon: Option[LocalizelondMelonssagelon] = Nonelon)
+    elonxtelonnds ActionWithRelonason(relonason)
+    with IsAppelonalablelon {
 
-  override val severity: Int = 17
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Appealable(toAppealableThrift())
+  ovelonrridelon val selonvelonrity: Int = 17
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.Appelonalablelon(toAppelonalablelonThrift())
 
-  override def toAppealableThrift(): thriftscala.Appealable =
-    thriftscala.Appealable(
-      Reason.toAppealableReason(reason, violationLevel).map(AppealableReasonConverter.toThrift),
-      localizedMessage.map(LocalizedMessageConverter.toThrift)
+  ovelonrridelon delonf toAppelonalablelonThrift(): thriftscala.Appelonalablelon =
+    thriftscala.Appelonalablelon(
+      Relonason.toAppelonalablelonRelonason(relonason, violationLelonvelonl).map(AppelonalablelonRelonasonConvelonrtelonr.toThrift),
+      localizelondMelonssagelon.map(LocalizelondMelonssagelonConvelonrtelonr.toThrift)
     )
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.Appealable)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(
+    HelonalthActionTypelon.Appelonalablelon)
 }
 
-case class Drop(reason: Reason, applicableCountries: Option[Seq[String]] = None)
-    extends ActionWithReason(reason) {
+caselon class Drop(relonason: Relonason, applicablelonCountrielons: Option[Selonq[String]] = Nonelon)
+    elonxtelonnds ActionWithRelonason(relonason) {
 
-  override val severity: Int = 16
-  override def toActionThrift(): thriftscala.Action =
+  ovelonrridelon val selonvelonrity: Int = 16
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
     thriftscala.Action.Drop(
       thriftscala.Drop(
-        Reason.toDropReason(reason).map(DropReasonConverter.toThrift),
-        applicableCountries
+        Relonason.toDropRelonason(relonason).map(DropRelonasonConvelonrtelonr.toThrift),
+        applicablelonCountrielons
       ))
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Drop)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(HelonalthActionTypelon.Drop)
 }
 
-case class Interstitial(
-  reason: Reason,
-  localizedMessage: Option[LocalizedMessage] = None,
-  applicableCountries: Option[Seq[String]] = None)
-    extends ActionWithReason(reason)
-    with IsInterstitial {
+caselon class Intelonrstitial(
+  relonason: Relonason,
+  localizelondMelonssagelon: Option[LocalizelondMelonssagelon] = Nonelon,
+  applicablelonCountrielons: Option[Selonq[String]] = Nonelon)
+    elonxtelonnds ActionWithRelonason(relonason)
+    with IsIntelonrstitial {
 
-  override val severity: Int = 10
-  override def toInterstitialThriftWrapper(): thriftscala.AnyInterstitial =
-    thriftscala.AnyInterstitial.Interstitial(
-      toInterstitialThrift()
+  ovelonrridelon val selonvelonrity: Int = 10
+  ovelonrridelon delonf toIntelonrstitialThriftWrappelonr(): thriftscala.AnyIntelonrstitial =
+    thriftscala.AnyIntelonrstitial.Intelonrstitial(
+      toIntelonrstitialThrift()
     )
 
-  override def toInterstitialThrift(): thriftscala.Interstitial =
-    thriftscala.Interstitial(
-      Reason.toInterstitialReason(reason).map(InterstitialReasonConverter.toThrift),
-      localizedMessage.map(LocalizedMessageConverter.toThrift)
+  ovelonrridelon delonf toIntelonrstitialThrift(): thriftscala.Intelonrstitial =
+    thriftscala.Intelonrstitial(
+      Relonason.toIntelonrstitialRelonason(relonason).map(IntelonrstitialRelonasonConvelonrtelonr.toThrift),
+      localizelondMelonssagelon.map(LocalizelondMelonssagelonConvelonrtelonr.toThrift)
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Interstitial(toInterstitialThrift())
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.Intelonrstitial(toIntelonrstitialThrift())
 
-  def toMediaActionThrift(): thriftscala.MediaAction =
-    thriftscala.MediaAction.Interstitial(toInterstitialThrift())
+  delonf toMelondiaActionThrift(): thriftscala.MelondiaAction =
+    thriftscala.MelondiaAction.Intelonrstitial(toIntelonrstitialThrift())
 
-  override def isComposable: Boolean = true
+  ovelonrridelon delonf isComposablelon: Boolelonan = truelon
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.TweetInterstitial)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(
+    HelonalthActionTypelon.TwelonelontIntelonrstitial)
 }
 
-case class InterstitialLimitedEngagements(
-  reason: Reason,
-  limitedEngagementReason: Option[LimitedEngagementReason],
-  localizedMessage: Option[LocalizedMessage] = None,
-  policy: Option[LimitedActionsPolicy] = None)
-    extends ActionWithReason(reason)
-    with IsInterstitial
-    with IsLimitedEngagements {
+caselon class IntelonrstitialLimitelondelonngagelonmelonnts(
+  relonason: Relonason,
+  limitelondelonngagelonmelonntRelonason: Option[LimitelondelonngagelonmelonntRelonason],
+  localizelondMelonssagelon: Option[LocalizelondMelonssagelon] = Nonelon,
+  policy: Option[LimitelondActionsPolicy] = Nonelon)
+    elonxtelonnds ActionWithRelonason(relonason)
+    with IsIntelonrstitial
+    with IsLimitelondelonngagelonmelonnts {
 
-  override val severity: Int = 11
-  override def toInterstitialThriftWrapper(): thriftscala.AnyInterstitial =
-    thriftscala.AnyInterstitial.InterstitialLimitedEngagements(
-      toInterstitialThrift()
+  ovelonrridelon val selonvelonrity: Int = 11
+  ovelonrridelon delonf toIntelonrstitialThriftWrappelonr(): thriftscala.AnyIntelonrstitial =
+    thriftscala.AnyIntelonrstitial.IntelonrstitialLimitelondelonngagelonmelonnts(
+      toIntelonrstitialThrift()
     )
 
-  override def toInterstitialThrift(): thriftscala.InterstitialLimitedEngagements =
-    thriftscala.InterstitialLimitedEngagements(
-      limitedEngagementReason.map(LimitedEngagementReasonConverter.toThrift),
-      localizedMessage.map(LocalizedMessageConverter.toThrift)
+  ovelonrridelon delonf toIntelonrstitialThrift(): thriftscala.IntelonrstitialLimitelondelonngagelonmelonnts =
+    thriftscala.IntelonrstitialLimitelondelonngagelonmelonnts(
+      limitelondelonngagelonmelonntRelonason.map(LimitelondelonngagelonmelonntRelonasonConvelonrtelonr.toThrift),
+      localizelondMelonssagelon.map(LocalizelondMelonssagelonConvelonrtelonr.toThrift)
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.InterstitialLimitedEngagements(toInterstitialThrift())
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.IntelonrstitialLimitelondelonngagelonmelonnts(toIntelonrstitialThrift())
 
-  override def isComposable: Boolean = true
+  ovelonrridelon delonf isComposablelon: Boolelonan = truelon
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.LimitedEngagements)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(
+    HelonalthActionTypelon.Limitelondelonngagelonmelonnts)
 
-  def getLimitedEngagementReason: LimitedEngagementReason = limitedEngagementReason.getOrElse(
-    LimitedEngagementReason.NonCompliant
+  delonf gelontLimitelondelonngagelonmelonntRelonason: LimitelondelonngagelonmelonntRelonason = limitelondelonngagelonmelonntRelonason.gelontOrelonlselon(
+    LimitelondelonngagelonmelonntRelonason.NonCompliant
   )
 }
 
-case object Allow extends Action {
+caselon objelonct Allow elonxtelonnds Action {
 
-  override val severity: Int = -1
-  override def toActionThrift(): thriftscala.Action =
+  ovelonrridelon val selonvelonrity: Int = -1
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
     thriftscala.Action.Allow(thriftscala.Allow())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = None
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Nonelon
 }
 
-case object NotEvaluated extends Action {
+caselon objelonct Notelonvaluatelond elonxtelonnds Action {
 
-  override val severity: Int = -1
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.NotEvaluated(thriftscala.NotEvaluated())
+  ovelonrridelon val selonvelonrity: Int = -1
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.Notelonvaluatelond(thriftscala.Notelonvaluatelond())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = None
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Nonelon
 }
 
-case class Tombstone(epitaph: Epitaph, applicableCountryCodes: Option[Seq[String]] = None)
-    extends ActionWithEpitaph(epitaph) {
+caselon class Tombstonelon(elonpitaph: elonpitaph, applicablelonCountryCodelons: Option[Selonq[String]] = Nonelon)
+    elonxtelonnds ActionWithelonpitaph(elonpitaph) {
 
-  override val severity: Int = 15
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Tombstone(thriftscala.Tombstone())
+  ovelonrridelon val selonvelonrity: Int = 15
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.Tombstonelon(thriftscala.Tombstonelon())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Tombstone)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(HelonalthActionTypelon.Tombstonelon)
 }
 
-case class LocalizedTombstone(reason: TombstoneReason, message: LocalizedMessage) extends Action {
-  override lazy val fullName: String = s"${this.name}/${NamingUtils.getFriendlyName(reason)}"
+caselon class LocalizelondTombstonelon(relonason: TombstonelonRelonason, melonssagelon: LocalizelondMelonssagelon) elonxtelonnds Action {
+  ovelonrridelon lazy val fullNamelon: String = s"${this.namelon}/${NamingUtils.gelontFrielonndlyNamelon(relonason)}"
 
-  override val severity: Int = 15
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.Tombstone(
-      thriftscala.Tombstone(
-        reason = TombstoneReasonConverter.toThrift(Some(reason)),
-        message = Some(LocalizedMessageConverter.toThrift(message))
+  ovelonrridelon val selonvelonrity: Int = 15
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.Tombstonelon(
+      thriftscala.Tombstonelon(
+        relonason = TombstonelonRelonasonConvelonrtelonr.toThrift(Somelon(relonason)),
+        melonssagelon = Somelon(LocalizelondMelonssagelonConvelonrtelonr.toThrift(melonssagelon))
       ))
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Tombstone)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(HelonalthActionTypelon.Tombstonelon)
 }
 
-case class DownrankHomeTimeline(reason: Option[DownrankHomeTimelineReason]) extends Action {
+caselon class DownrankHomelonTimelonlinelon(relonason: Option[DownrankHomelonTimelonlinelonRelonason]) elonxtelonnds Action {
 
-  override val severity: Int = 9
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.DownrankHomeTimeline(toDownrankThrift())
+  ovelonrridelon val selonvelonrity: Int = 9
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.DownrankHomelonTimelonlinelon(toDownrankThrift())
 
-  def toDownrankThrift(): thriftscala.DownrankHomeTimeline =
-    thriftscala.DownrankHomeTimeline(
-      reason.map(DownrankHomeTimelineReasonConverter.toThrift)
+  delonf toDownrankThrift(): thriftscala.DownrankHomelonTimelonlinelon =
+    thriftscala.DownrankHomelonTimelonlinelon(
+      relonason.map(DownrankHomelonTimelonlinelonRelonasonConvelonrtelonr.toThrift)
     )
 
-  override def isComposable: Boolean = true
+  ovelonrridelon delonf isComposablelon: Boolelonan = truelon
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Downrank)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(HelonalthActionTypelon.Downrank)
 }
 
-case class Avoid(avoidReason: Option[AvoidReason] = None) extends Action {
+caselon class Avoid(avoidRelonason: Option[AvoidRelonason] = Nonelon) elonxtelonnds Action {
 
-  override val severity: Int = 1
-  override def toActionThrift(): thriftscala.Action =
+  ovelonrridelon val selonvelonrity: Int = 1
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
     thriftscala.Action.Avoid(toAvoidThrift())
 
-  def toAvoidThrift(): thriftscala.Avoid =
+  delonf toAvoidThrift(): thriftscala.Avoid =
     thriftscala.Avoid(
-      avoidReason.map(AvoidReasonConverter.toThrift)
+      avoidRelonason.map(AvoidRelonasonConvelonrtelonr.toThrift)
     )
 
-  override def isComposable: Boolean = true
+  ovelonrridelon delonf isComposablelon: Boolelonan = truelon
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Avoid)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(HelonalthActionTypelon.Avoid)
 }
 
-case object Downrank extends Action {
+caselon objelonct Downrank elonxtelonnds Action {
 
-  override val severity: Int = 0
-  override def toActionThrift(): thriftscala.Action =
+  ovelonrridelon val selonvelonrity: Int = 0
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
     thriftscala.Action.Downrank(thriftscala.Downrank())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(HealthActionType.Downrank)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(HelonalthActionTypelon.Downrank)
 }
 
-case object ConversationSectionLowQuality extends Action {
+caselon objelonct ConvelonrsationSelonctionLowQuality elonxtelonnds Action {
 
-  override val severity: Int = 4
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.ConversationSectionLowQuality(thriftscala.ConversationSectionLowQuality())
+  ovelonrridelon val selonvelonrity: Int = 4
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.ConvelonrsationSelonctionLowQuality(thriftscala.ConvelonrsationSelonctionLowQuality())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.ConversationSectionLowQuality)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(
+    HelonalthActionTypelon.ConvelonrsationSelonctionLowQuality)
 }
 
-case object ConversationSectionAbusiveQuality extends Action {
+caselon objelonct ConvelonrsationSelonctionAbusivelonQuality elonxtelonnds Action {
 
-  override val severity: Int = 5
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.ConversationSectionAbusiveQuality(
-      thriftscala.ConversationSectionAbusiveQuality())
+  ovelonrridelon val selonvelonrity: Int = 5
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.ConvelonrsationSelonctionAbusivelonQuality(
+      thriftscala.ConvelonrsationSelonctionAbusivelonQuality())
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.ConversationSectionAbusiveQuality)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(
+    HelonalthActionTypelon.ConvelonrsationSelonctionAbusivelonQuality)
 
-  def toConversationSectionAbusiveQualityThrift(): thriftscala.ConversationSectionAbusiveQuality =
-    thriftscala.ConversationSectionAbusiveQuality()
+  delonf toConvelonrsationSelonctionAbusivelonQualityThrift(): thriftscala.ConvelonrsationSelonctionAbusivelonQuality =
+    thriftscala.ConvelonrsationSelonctionAbusivelonQuality()
 }
 
-case class LimitedEngagements(
-  reason: LimitedEngagementReason,
-  policy: Option[LimitedActionsPolicy] = None)
-    extends Action
-    with IsLimitedEngagements {
+caselon class Limitelondelonngagelonmelonnts(
+  relonason: LimitelondelonngagelonmelonntRelonason,
+  policy: Option[LimitelondActionsPolicy] = Nonelon)
+    elonxtelonnds Action
+    with IsLimitelondelonngagelonmelonnts {
 
-  override val severity: Int = 6
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.LimitedEngagements(toLimitedEngagementsThrift())
+  ovelonrridelon val selonvelonrity: Int = 6
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.Limitelondelonngagelonmelonnts(toLimitelondelonngagelonmelonntsThrift())
 
-  def toLimitedEngagementsThrift(): thriftscala.LimitedEngagements =
-    thriftscala.LimitedEngagements(
-      Some(LimitedEngagementReasonConverter.toThrift(reason)),
-      policy.map(LimitedActionsPolicyConverter.toThrift),
-      Some(reason.toLimitedActionsString)
+  delonf toLimitelondelonngagelonmelonntsThrift(): thriftscala.Limitelondelonngagelonmelonnts =
+    thriftscala.Limitelondelonngagelonmelonnts(
+      Somelon(LimitelondelonngagelonmelonntRelonasonConvelonrtelonr.toThrift(relonason)),
+      policy.map(LimitelondActionsPolicyConvelonrtelonr.toThrift),
+      Somelon(relonason.toLimitelondActionsString)
     )
 
-  override def isComposable: Boolean = true
+  ovelonrridelon delonf isComposablelon: Boolelonan = truelon
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.LimitedEngagements)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(
+    HelonalthActionTypelon.Limitelondelonngagelonmelonnts)
 
-  def getLimitedEngagementReason: LimitedEngagementReason = reason
+  delonf gelontLimitelondelonngagelonmelonntRelonason: LimitelondelonngagelonmelonntRelonason = relonason
 }
 
-case class EmergencyDynamicInterstitial(
+caselon class elonmelonrgelonncyDynamicIntelonrstitial(
   copy: String,
   linkOpt: Option[String],
-  localizedMessage: Option[LocalizedMessage] = None,
-  policy: Option[LimitedActionsPolicy] = None)
-    extends Action
-    with IsInterstitial
-    with IsLimitedEngagements {
+  localizelondMelonssagelon: Option[LocalizelondMelonssagelon] = Nonelon,
+  policy: Option[LimitelondActionsPolicy] = Nonelon)
+    elonxtelonnds Action
+    with IsIntelonrstitial
+    with IsLimitelondelonngagelonmelonnts {
 
-  override val severity: Int = 11
-  override def toInterstitialThriftWrapper(): thriftscala.AnyInterstitial =
-    thriftscala.AnyInterstitial.EmergencyDynamicInterstitial(
-      toInterstitialThrift()
+  ovelonrridelon val selonvelonrity: Int = 11
+  ovelonrridelon delonf toIntelonrstitialThriftWrappelonr(): thriftscala.AnyIntelonrstitial =
+    thriftscala.AnyIntelonrstitial.elonmelonrgelonncyDynamicIntelonrstitial(
+      toIntelonrstitialThrift()
     )
 
-  override def toInterstitialThrift(): thriftscala.EmergencyDynamicInterstitial =
-    thriftscala.EmergencyDynamicInterstitial(
+  ovelonrridelon delonf toIntelonrstitialThrift(): thriftscala.elonmelonrgelonncyDynamicIntelonrstitial =
+    thriftscala.elonmelonrgelonncyDynamicIntelonrstitial(
       copy,
       linkOpt,
-      localizedMessage.map(LocalizedMessageConverter.toThrift)
+      localizelondMelonssagelon.map(LocalizelondMelonssagelonConvelonrtelonr.toThrift)
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.EmergencyDynamicInterstitial(toInterstitialThrift())
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.elonmelonrgelonncyDynamicIntelonrstitial(toIntelonrstitialThrift())
 
-  override def isComposable: Boolean = true
+  ovelonrridelon delonf isComposablelon: Boolelonan = truelon
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.TweetInterstitial)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(
+    HelonalthActionTypelon.TwelonelontIntelonrstitial)
 
-  def getLimitedEngagementReason: LimitedEngagementReason = LimitedEngagementReason.NonCompliant
+  delonf gelontLimitelondelonngagelonmelonntRelonason: LimitelondelonngagelonmelonntRelonason = LimitelondelonngagelonmelonntRelonason.NonCompliant
 }
 
-case class SoftIntervention(
-  reason: SoftInterventionReason,
-  engagementNudge: Boolean,
-  suppressAutoplay: Boolean,
-  warning: Option[String] = None,
-  detailsUrl: Option[String] = None,
-  displayType: Option[SoftInterventionDisplayType] = None,
-  fleetInterstitial: Option[FleetInterstitial] = None)
-    extends Action {
+caselon class SoftIntelonrvelonntion(
+  relonason: SoftIntelonrvelonntionRelonason,
+  elonngagelonmelonntNudgelon: Boolelonan,
+  supprelonssAutoplay: Boolelonan,
+  warning: Option[String] = Nonelon,
+  delontailsUrl: Option[String] = Nonelon,
+  displayTypelon: Option[SoftIntelonrvelonntionDisplayTypelon] = Nonelon,
+  flelonelontIntelonrstitial: Option[FlelonelontIntelonrstitial] = Nonelon)
+    elonxtelonnds Action {
 
-  override val severity: Int = 7
-  def toSoftInterventionThrift(): thriftscala.SoftIntervention =
-    thriftscala.SoftIntervention(
-      Some(SoftInterventionReasonConverter.toThrift(reason)),
-      engagementNudge = Some(engagementNudge),
-      suppressAutoplay = Some(suppressAutoplay),
+  ovelonrridelon val selonvelonrity: Int = 7
+  delonf toSoftIntelonrvelonntionThrift(): thriftscala.SoftIntelonrvelonntion =
+    thriftscala.SoftIntelonrvelonntion(
+      Somelon(SoftIntelonrvelonntionRelonasonConvelonrtelonr.toThrift(relonason)),
+      elonngagelonmelonntNudgelon = Somelon(elonngagelonmelonntNudgelon),
+      supprelonssAutoplay = Somelon(supprelonssAutoplay),
       warning = warning,
-      detailsUrl = detailsUrl,
-      displayType = SoftInterventionDisplayTypeConverter.toThrift(displayType)
+      delontailsUrl = delontailsUrl,
+      displayTypelon = SoftIntelonrvelonntionDisplayTypelonConvelonrtelonr.toThrift(displayTypelon)
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.SoftIntervention(toSoftInterventionThrift())
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.SoftIntelonrvelonntion(toSoftIntelonrvelonntionThrift())
 
-  override def isComposable: Boolean = true
+  ovelonrridelon delonf isComposablelon: Boolelonan = truelon
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.SoftIntervention)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(
+    HelonalthActionTypelon.SoftIntelonrvelonntion)
 }
 
-case class TweetInterstitial(
-  interstitial: Option[IsInterstitial],
-  softIntervention: Option[SoftIntervention],
-  limitedEngagements: Option[LimitedEngagements],
-  downrank: Option[DownrankHomeTimeline],
+caselon class TwelonelontIntelonrstitial(
+  intelonrstitial: Option[IsIntelonrstitial],
+  softIntelonrvelonntion: Option[SoftIntelonrvelonntion],
+  limitelondelonngagelonmelonnts: Option[Limitelondelonngagelonmelonnts],
+  downrank: Option[DownrankHomelonTimelonlinelon],
   avoid: Option[Avoid],
-  mediaInterstitial: Option[Interstitial] = None,
-  tweetVisibilityNudge: Option[TweetVisibilityNudge] = None,
-  abusiveQuality: Option[ConversationSectionAbusiveQuality.type] = None,
-  appealable: Option[Appealable] = None)
-    extends Action {
+  melondiaIntelonrstitial: Option[Intelonrstitial] = Nonelon,
+  twelonelontVisibilityNudgelon: Option[TwelonelontVisibilityNudgelon] = Nonelon,
+  abusivelonQuality: Option[ConvelonrsationSelonctionAbusivelonQuality.typelon] = Nonelon,
+  appelonalablelon: Option[Appelonalablelon] = Nonelon)
+    elonxtelonnds Action {
 
-  override val severity: Int = 12
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.TweetInterstitial(
-      thriftscala.TweetInterstitial(
-        interstitial.map(_.toInterstitialThriftWrapper()),
-        softIntervention.map(_.toSoftInterventionThrift()),
-        limitedEngagements.map(_.toLimitedEngagementsThrift()),
+  ovelonrridelon val selonvelonrity: Int = 12
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.TwelonelontIntelonrstitial(
+      thriftscala.TwelonelontIntelonrstitial(
+        intelonrstitial.map(_.toIntelonrstitialThriftWrappelonr()),
+        softIntelonrvelonntion.map(_.toSoftIntelonrvelonntionThrift()),
+        limitelondelonngagelonmelonnts.map(_.toLimitelondelonngagelonmelonntsThrift()),
         downrank.map(_.toDownrankThrift()),
         avoid.map(_.toAvoidThrift()),
-        mediaInterstitial.map(_.toMediaActionThrift()),
-        tweetVisibilityNudge.map(_.toTweetVisbilityNudgeThrift()),
-        abusiveQuality.map(_.toConversationSectionAbusiveQualityThrift()),
-        appealable.map(_.toAppealableThrift())
+        melondiaIntelonrstitial.map(_.toMelondiaActionThrift()),
+        twelonelontVisibilityNudgelon.map(_.toTwelonelontVisbilityNudgelonThrift()),
+        abusivelonQuality.map(_.toConvelonrsationSelonctionAbusivelonQualityThrift()),
+        appelonalablelon.map(_.toAppelonalablelonThrift())
       )
     )
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = Some(
-    HealthActionType.TweetInterstitial)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Somelon(
+    HelonalthActionTypelon.TwelonelontIntelonrstitial)
 }
 
-sealed trait LocalizedNudgeActionType
-object LocalizedNudgeActionType {
-  case object Reply extends LocalizedNudgeActionType
-  case object Retweet extends LocalizedNudgeActionType
-  case object Like extends LocalizedNudgeActionType
-  case object Share extends LocalizedNudgeActionType
-  case object Unspecified extends LocalizedNudgeActionType
+selonalelond trait LocalizelondNudgelonActionTypelon
+objelonct LocalizelondNudgelonActionTypelon {
+  caselon objelonct Relonply elonxtelonnds LocalizelondNudgelonActionTypelon
+  caselon objelonct Relontwelonelont elonxtelonnds LocalizelondNudgelonActionTypelon
+  caselon objelonct Likelon elonxtelonnds LocalizelondNudgelonActionTypelon
+  caselon objelonct Sharelon elonxtelonnds LocalizelondNudgelonActionTypelon
+  caselon objelonct Unspeloncifielond elonxtelonnds LocalizelondNudgelonActionTypelon
 
-  def toThrift(
-    localizedNudgeActionType: LocalizedNudgeActionType
-  ): thriftscala.TweetVisibilityNudgeActionType =
-    localizedNudgeActionType match {
-      case Reply => thriftscala.TweetVisibilityNudgeActionType.Reply
-      case Retweet => thriftscala.TweetVisibilityNudgeActionType.Retweet
-      case Like => thriftscala.TweetVisibilityNudgeActionType.Like
-      case Share => thriftscala.TweetVisibilityNudgeActionType.Share
-      case Unspecified =>
-        thriftscala.TweetVisibilityNudgeActionType.EnumUnknownTweetVisibilityNudgeActionType(5)
+  delonf toThrift(
+    localizelondNudgelonActionTypelon: LocalizelondNudgelonActionTypelon
+  ): thriftscala.TwelonelontVisibilityNudgelonActionTypelon =
+    localizelondNudgelonActionTypelon match {
+      caselon Relonply => thriftscala.TwelonelontVisibilityNudgelonActionTypelon.Relonply
+      caselon Relontwelonelont => thriftscala.TwelonelontVisibilityNudgelonActionTypelon.Relontwelonelont
+      caselon Likelon => thriftscala.TwelonelontVisibilityNudgelonActionTypelon.Likelon
+      caselon Sharelon => thriftscala.TwelonelontVisibilityNudgelonActionTypelon.Sharelon
+      caselon Unspeloncifielond =>
+        thriftscala.TwelonelontVisibilityNudgelonActionTypelon.elonnumUnknownTwelonelontVisibilityNudgelonActionTypelon(5)
     }
 
-  def fromStratoThrift(stratoNudgeActionType: StratoNudgeActionType): LocalizedNudgeActionType =
-    stratoNudgeActionType match {
-      case StratoNudgeActionType.Reply => Reply
-      case StratoNudgeActionType.Retweet => Retweet
-      case StratoNudgeActionType.Like => Like
-      case StratoNudgeActionType.Share => Share
-      case EnumUnknownNudgeActionType(_) => Unspecified
+  delonf fromStratoThrift(stratoNudgelonActionTypelon: StratoNudgelonActionTypelon): LocalizelondNudgelonActionTypelon =
+    stratoNudgelonActionTypelon match {
+      caselon StratoNudgelonActionTypelon.Relonply => Relonply
+      caselon StratoNudgelonActionTypelon.Relontwelonelont => Relontwelonelont
+      caselon StratoNudgelonActionTypelon.Likelon => Likelon
+      caselon StratoNudgelonActionTypelon.Sharelon => Sharelon
+      caselon elonnumUnknownNudgelonActionTypelon(_) => Unspeloncifielond
     }
 }
 
-case class LocalizedNudgeActionPayload(
-  heading: Option[String],
-  subheading: Option[String],
-  iconName: Option[String],
-  ctaTitle: Option[String],
+caselon class LocalizelondNudgelonActionPayload(
+  helonading: Option[String],
+  subhelonading: Option[String],
+  iconNamelon: Option[String],
+  ctaTitlelon: Option[String],
   ctaUrl: Option[String],
-  postCtaText: Option[String]) {
+  postCtaTelonxt: Option[String]) {
 
-  def toThrift(): thriftscala.TweetVisibilityNudgeActionPayload = {
-    thriftscala.TweetVisibilityNudgeActionPayload(
-      heading = heading,
-      subheading = subheading,
-      iconName = iconName,
-      ctaTitle = ctaTitle,
+  delonf toThrift(): thriftscala.TwelonelontVisibilityNudgelonActionPayload = {
+    thriftscala.TwelonelontVisibilityNudgelonActionPayload(
+      helonading = helonading,
+      subhelonading = subhelonading,
+      iconNamelon = iconNamelon,
+      ctaTitlelon = ctaTitlelon,
       ctaUrl = ctaUrl,
-      postCtaText = postCtaText
+      postCtaTelonxt = postCtaTelonxt
     )
   }
 }
 
-object LocalizedNudgeActionPayload {
-  def fromStratoThrift(
-    stratoNudgeActionPayload: StratoNudgeActionPayload
-  ): LocalizedNudgeActionPayload =
-    LocalizedNudgeActionPayload(
-      heading = stratoNudgeActionPayload.heading,
-      subheading = stratoNudgeActionPayload.subheading,
-      iconName = stratoNudgeActionPayload.iconName,
-      ctaTitle = stratoNudgeActionPayload.ctaTitle,
-      ctaUrl = stratoNudgeActionPayload.ctaUrl,
-      postCtaText = stratoNudgeActionPayload.postCtaText
+objelonct LocalizelondNudgelonActionPayload {
+  delonf fromStratoThrift(
+    stratoNudgelonActionPayload: StratoNudgelonActionPayload
+  ): LocalizelondNudgelonActionPayload =
+    LocalizelondNudgelonActionPayload(
+      helonading = stratoNudgelonActionPayload.helonading,
+      subhelonading = stratoNudgelonActionPayload.subhelonading,
+      iconNamelon = stratoNudgelonActionPayload.iconNamelon,
+      ctaTitlelon = stratoNudgelonActionPayload.ctaTitlelon,
+      ctaUrl = stratoNudgelonActionPayload.ctaUrl,
+      postCtaTelonxt = stratoNudgelonActionPayload.postCtaTelonxt
     )
 }
 
-case class LocalizedNudgeAction(
-  nudgeActionType: LocalizedNudgeActionType,
-  nudgeActionPayload: Option[LocalizedNudgeActionPayload]) {
-  def toThrift(): thriftscala.TweetVisibilityNudgeAction = {
-    thriftscala.TweetVisibilityNudgeAction(
-      tweetVisibilitynudgeActionType = LocalizedNudgeActionType.toThrift(nudgeActionType),
-      tweetVisibilityNudgeActionPayload = nudgeActionPayload.map(_.toThrift)
+caselon class LocalizelondNudgelonAction(
+  nudgelonActionTypelon: LocalizelondNudgelonActionTypelon,
+  nudgelonActionPayload: Option[LocalizelondNudgelonActionPayload]) {
+  delonf toThrift(): thriftscala.TwelonelontVisibilityNudgelonAction = {
+    thriftscala.TwelonelontVisibilityNudgelonAction(
+      twelonelontVisibilitynudgelonActionTypelon = LocalizelondNudgelonActionTypelon.toThrift(nudgelonActionTypelon),
+      twelonelontVisibilityNudgelonActionPayload = nudgelonActionPayload.map(_.toThrift)
     )
   }
 }
 
-object LocalizedNudgeAction {
-  def fromStratoThrift(stratoNudgeAction: StratoNudgeAction): LocalizedNudgeAction =
-    LocalizedNudgeAction(
-      nudgeActionType =
-        LocalizedNudgeActionType.fromStratoThrift(stratoNudgeAction.nudgeActionType),
-      nudgeActionPayload =
-        stratoNudgeAction.nudgeActionPayload.map(LocalizedNudgeActionPayload.fromStratoThrift)
+objelonct LocalizelondNudgelonAction {
+  delonf fromStratoThrift(stratoNudgelonAction: StratoNudgelonAction): LocalizelondNudgelonAction =
+    LocalizelondNudgelonAction(
+      nudgelonActionTypelon =
+        LocalizelondNudgelonActionTypelon.fromStratoThrift(stratoNudgelonAction.nudgelonActionTypelon),
+      nudgelonActionPayload =
+        stratoNudgelonAction.nudgelonActionPayload.map(LocalizelondNudgelonActionPayload.fromStratoThrift)
     )
 }
 
-case class LocalizedNudge(localizedNudgeActions: Seq[LocalizedNudgeAction])
+caselon class LocalizelondNudgelon(localizelondNudgelonActions: Selonq[LocalizelondNudgelonAction])
 
-case object LocalizedNudge {
-  def fromStratoThrift(stratoNudge: StratoNudge): LocalizedNudge =
-    LocalizedNudge(localizedNudgeActions =
-      stratoNudge.nudgeActions.map(LocalizedNudgeAction.fromStratoThrift))
+caselon objelonct LocalizelondNudgelon {
+  delonf fromStratoThrift(stratoNudgelon: StratoNudgelon): LocalizelondNudgelon =
+    LocalizelondNudgelon(localizelondNudgelonActions =
+      stratoNudgelon.nudgelonActions.map(LocalizelondNudgelonAction.fromStratoThrift))
 }
 
-case class TweetVisibilityNudge(
-  reason: TweetVisibilityNudgeReason,
-  localizedNudge: Option[LocalizedNudge] = None)
-    extends Action {
+caselon class TwelonelontVisibilityNudgelon(
+  relonason: TwelonelontVisibilityNudgelonRelonason,
+  localizelondNudgelon: Option[LocalizelondNudgelon] = Nonelon)
+    elonxtelonnds Action {
 
-  override val severity: Int = 3
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.TweetVisibilityNudge(
-      localizedNudge match {
-        case Some(nudge) =>
-          thriftscala.TweetVisibilityNudge(
-            tweetVisibilityNudgeActions = Some(nudge.localizedNudgeActions.map(_.toThrift()))
+  ovelonrridelon val selonvelonrity: Int = 3
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.TwelonelontVisibilityNudgelon(
+      localizelondNudgelon match {
+        caselon Somelon(nudgelon) =>
+          thriftscala.TwelonelontVisibilityNudgelon(
+            twelonelontVisibilityNudgelonActions = Somelon(nudgelon.localizelondNudgelonActions.map(_.toThrift()))
           )
-        case _ => thriftscala.TweetVisibilityNudge(tweetVisibilityNudgeActions = None)
+        caselon _ => thriftscala.TwelonelontVisibilityNudgelon(twelonelontVisibilityNudgelonActions = Nonelon)
       }
     )
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] =
-    Some(HealthActionType.TweetVisibilityNudge)
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] =
+    Somelon(HelonalthActionTypelon.TwelonelontVisibilityNudgelon)
 
-  def toTweetVisbilityNudgeThrift(): thriftscala.TweetVisibilityNudge =
-    thriftscala.TweetVisibilityNudge(tweetVisibilityNudgeActions =
-      localizedNudge.map(_.localizedNudgeActions.map(_.toThrift())))
+  delonf toTwelonelontVisbilityNudgelonThrift(): thriftscala.TwelonelontVisibilityNudgelon =
+    thriftscala.TwelonelontVisibilityNudgelon(twelonelontVisibilityNudgelonActions =
+      localizelondNudgelon.map(_.localizelondNudgelonActions.map(_.toThrift())))
 }
 
-trait BaseComplianceTweetNotice {
-  val complianceTweetNoticeEventType: ComplianceTweetNoticeEventType
-  val details: Option[String]
-  val extendedDetailsUrl: Option[String]
+trait BaselonCompliancelonTwelonelontNoticelon {
+  val compliancelonTwelonelontNoticelonelonvelonntTypelon: CompliancelonTwelonelontNoticelonelonvelonntTypelon
+  val delontails: Option[String]
+  val elonxtelonndelondDelontailsUrl: Option[String]
 }
 
-case class ComplianceTweetNoticePreEnrichment(
-  reason: Reason,
-  complianceTweetNoticeEventType: ComplianceTweetNoticeEventType,
-  details: Option[String] = None,
-  extendedDetailsUrl: Option[String] = None)
-    extends Action
-    with BaseComplianceTweetNotice {
+caselon class CompliancelonTwelonelontNoticelonPrelonelonnrichmelonnt(
+  relonason: Relonason,
+  compliancelonTwelonelontNoticelonelonvelonntTypelon: CompliancelonTwelonelontNoticelonelonvelonntTypelon,
+  delontails: Option[String] = Nonelon,
+  elonxtelonndelondDelontailsUrl: Option[String] = Nonelon)
+    elonxtelonnds Action
+    with BaselonCompliancelonTwelonelontNoticelon {
 
-  override val severity: Int = 2
-  def toComplianceTweetNoticeThrift(): thriftscala.ComplianceTweetNotice =
-    thriftscala.ComplianceTweetNotice(
-      ComplianceTweetNoticeEventTypeConverter.toThrift(complianceTweetNoticeEventType),
-      ComplianceTweetNoticeEventTypeConverter.eventTypeToLabelTitle(complianceTweetNoticeEventType),
-      details,
-      extendedDetailsUrl
+  ovelonrridelon val selonvelonrity: Int = 2
+  delonf toCompliancelonTwelonelontNoticelonThrift(): thriftscala.CompliancelonTwelonelontNoticelon =
+    thriftscala.CompliancelonTwelonelontNoticelon(
+      CompliancelonTwelonelontNoticelonelonvelonntTypelonConvelonrtelonr.toThrift(compliancelonTwelonelontNoticelonelonvelonntTypelon),
+      CompliancelonTwelonelontNoticelonelonvelonntTypelonConvelonrtelonr.elonvelonntTypelonToLabelonlTitlelon(compliancelonTwelonelontNoticelonelonvelonntTypelon),
+      delontails,
+      elonxtelonndelondDelontailsUrl
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.ComplianceTweetNotice(
-      toComplianceTweetNoticeThrift()
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.CompliancelonTwelonelontNoticelon(
+      toCompliancelonTwelonelontNoticelonThrift()
     )
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = None
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Nonelon
 
-  def toComplianceTweetNotice(): ComplianceTweetNotice = {
-    ComplianceTweetNotice(
-      complianceTweetNoticeEventType = complianceTweetNoticeEventType,
-      labelTitle = ComplianceTweetNoticeEventTypeConverter.eventTypeToLabelTitle(
-        complianceTweetNoticeEventType),
-      details = details,
-      extendedDetailsUrl = extendedDetailsUrl
+  delonf toCompliancelonTwelonelontNoticelon(): CompliancelonTwelonelontNoticelon = {
+    CompliancelonTwelonelontNoticelon(
+      compliancelonTwelonelontNoticelonelonvelonntTypelon = compliancelonTwelonelontNoticelonelonvelonntTypelon,
+      labelonlTitlelon = CompliancelonTwelonelontNoticelonelonvelonntTypelonConvelonrtelonr.elonvelonntTypelonToLabelonlTitlelon(
+        compliancelonTwelonelontNoticelonelonvelonntTypelon),
+      delontails = delontails,
+      elonxtelonndelondDelontailsUrl = elonxtelonndelondDelontailsUrl
     )
   }
 }
 
-case class ComplianceTweetNotice(
-  complianceTweetNoticeEventType: ComplianceTweetNoticeEventType,
-  labelTitle: Option[String] = None,
-  details: Option[String] = None,
-  extendedDetailsUrl: Option[String] = None)
-    extends Action
-    with BaseComplianceTweetNotice {
+caselon class CompliancelonTwelonelontNoticelon(
+  compliancelonTwelonelontNoticelonelonvelonntTypelon: CompliancelonTwelonelontNoticelonelonvelonntTypelon,
+  labelonlTitlelon: Option[String] = Nonelon,
+  delontails: Option[String] = Nonelon,
+  elonxtelonndelondDelontailsUrl: Option[String] = Nonelon)
+    elonxtelonnds Action
+    with BaselonCompliancelonTwelonelontNoticelon {
 
-  override val severity: Int = 2
-  def toComplianceTweetNoticeThrift(): thriftscala.ComplianceTweetNotice =
-    thriftscala.ComplianceTweetNotice(
-      ComplianceTweetNoticeEventTypeConverter.toThrift(complianceTweetNoticeEventType),
-      labelTitle,
-      details,
-      extendedDetailsUrl
+  ovelonrridelon val selonvelonrity: Int = 2
+  delonf toCompliancelonTwelonelontNoticelonThrift(): thriftscala.CompliancelonTwelonelontNoticelon =
+    thriftscala.CompliancelonTwelonelontNoticelon(
+      CompliancelonTwelonelontNoticelonelonvelonntTypelonConvelonrtelonr.toThrift(compliancelonTwelonelontNoticelonelonvelonntTypelon),
+      labelonlTitlelon,
+      delontails,
+      elonxtelonndelondDelontailsUrl
     )
 
-  override def toActionThrift(): thriftscala.Action =
-    thriftscala.Action.ComplianceTweetNotice(
-      toComplianceTweetNoticeThrift()
+  ovelonrridelon delonf toActionThrift(): thriftscala.Action =
+    thriftscala.Action.CompliancelonTwelonelontNoticelon(
+      toCompliancelonTwelonelontNoticelonThrift()
     )
 
-  override def toHealthActionTypeThrift: Option[HealthActionType] = None
+  ovelonrridelon delonf toHelonalthActionTypelonThrift: Option[HelonalthActionTypelon] = Nonelon
 }
 
-object Action {
-  def toThrift[T <: Action](action: T): thriftscala.Action =
+objelonct Action {
+  delonf toThrift[T <: Action](action: T): thriftscala.Action =
     action.toActionThrift()
 
-  def getFirstInterstitial(actions: Action*): Option[IsInterstitial] =
-    actions.collectFirst {
-      case ile: InterstitialLimitedEngagements => ile
-      case edi: EmergencyDynamicInterstitial => edi
-      case i: Interstitial => i
+  delonf gelontFirstIntelonrstitial(actions: Action*): Option[IsIntelonrstitial] =
+    actions.collelonctFirst {
+      caselon ilelon: IntelonrstitialLimitelondelonngagelonmelonnts => ilelon
+      caselon elondi: elonmelonrgelonncyDynamicIntelonrstitial => elondi
+      caselon i: Intelonrstitial => i
     }
 
-  def getFirstSoftIntervention(actions: Action*): Option[SoftIntervention] =
-    actions.collectFirst {
-      case si: SoftIntervention => si
+  delonf gelontFirstSoftIntelonrvelonntion(actions: Action*): Option[SoftIntelonrvelonntion] =
+    actions.collelonctFirst {
+      caselon si: SoftIntelonrvelonntion => si
     }
 
-  def getFirstLimitedEngagements(actions: Action*): Option[LimitedEngagements] =
-    actions.collectFirst {
-      case le: LimitedEngagements => le
+  delonf gelontFirstLimitelondelonngagelonmelonnts(actions: Action*): Option[Limitelondelonngagelonmelonnts] =
+    actions.collelonctFirst {
+      caselon lelon: Limitelondelonngagelonmelonnts => lelon
     }
 
-  def getAllLimitedEngagements(actions: Action*): Seq[IsLimitedEngagements] =
-    actions.collect {
-      case ile: IsLimitedEngagements => ile
+  delonf gelontAllLimitelondelonngagelonmelonnts(actions: Action*): Selonq[IsLimitelondelonngagelonmelonnts] =
+    actions.collelonct {
+      caselon ilelon: IsLimitelondelonngagelonmelonnts => ilelon
     }
 
-  def getFirstDownrankHomeTimeline(actions: Action*): Option[DownrankHomeTimeline] =
-    actions.collectFirst {
-      case dr: DownrankHomeTimeline => dr
+  delonf gelontFirstDownrankHomelonTimelonlinelon(actions: Action*): Option[DownrankHomelonTimelonlinelon] =
+    actions.collelonctFirst {
+      caselon dr: DownrankHomelonTimelonlinelon => dr
     }
 
-  def getFirstAvoid(actions: Action*): Option[Avoid] =
-    actions.collectFirst {
-      case a: Avoid => a
+  delonf gelontFirstAvoid(actions: Action*): Option[Avoid] =
+    actions.collelonctFirst {
+      caselon a: Avoid => a
     }
 
-  def getFirstMediaInterstitial(actions: Action*): Option[Interstitial] =
-    actions.collectFirst {
-      case i: Interstitial if Reason.NSFW_MEDIA.contains(i.reason) => i
+  delonf gelontFirstMelondiaIntelonrstitial(actions: Action*): Option[Intelonrstitial] =
+    actions.collelonctFirst {
+      caselon i: Intelonrstitial if Relonason.NSFW_MelonDIA.contains(i.relonason) => i
     }
 
-  def getFirstTweetVisibilityNudge(actions: Action*): Option[TweetVisibilityNudge] =
-    actions.collectFirst {
-      case n: TweetVisibilityNudge => n
+  delonf gelontFirstTwelonelontVisibilityNudgelon(actions: Action*): Option[TwelonelontVisibilityNudgelon] =
+    actions.collelonctFirst {
+      caselon n: TwelonelontVisibilityNudgelon => n
     }
 }
 
-sealed trait State {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+selonalelond trait Statelon {
+  lazy val namelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
 }
 
-object State {
-  case object Pending extends State
-  case object Disabled extends State
-  final case class MissingFeature(features: Set[Feature[_]]) extends State
-  final case class FeatureFailed(features: Map[Feature[_], Throwable]) extends State
-  final case class RuleFailed(throwable: Throwable) extends State
-  case object Skipped extends State
-  case object ShortCircuited extends State
-  case object Heldback extends State
-  case object Evaluated extends State
+objelonct Statelon {
+  caselon objelonct Pelonnding elonxtelonnds Statelon
+  caselon objelonct Disablelond elonxtelonnds Statelon
+  final caselon class MissingFelonaturelon(felonaturelons: Selont[Felonaturelon[_]]) elonxtelonnds Statelon
+  final caselon class FelonaturelonFailelond(felonaturelons: Map[Felonaturelon[_], Throwablelon]) elonxtelonnds Statelon
+  final caselon class RulelonFailelond(throwablelon: Throwablelon) elonxtelonnds Statelon
+  caselon objelonct Skippelond elonxtelonnds Statelon
+  caselon objelonct ShortCircuitelond elonxtelonnds Statelon
+  caselon objelonct Helonldback elonxtelonnds Statelon
+  caselon objelonct elonvaluatelond elonxtelonnds Statelon
 }
 
-case class RuleResult(action: Action, state: State)
+caselon class RulelonRelonsult(action: Action, statelon: Statelon)

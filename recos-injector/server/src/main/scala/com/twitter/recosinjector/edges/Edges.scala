@@ -1,87 +1,87 @@
-package com.twitter.recosinjector.edges
+packagelon com.twittelonr.reloncosinjelonctor.elondgelons
 
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.recos_injector.thriftscala.{Features, UserTweetAuthorGraphMessage}
-import com.twitter.recos.util.Action.Action
-import com.twitter.recosinjector.util.TweetDetails
-import scala.collection.Map
+import com.twittelonr.reloncos.intelonrnal.thriftscala.ReloncosHoselonMelonssagelon
+import com.twittelonr.reloncos.reloncos_injelonctor.thriftscala.{Felonaturelons, UselonrTwelonelontAuthorGraphMelonssagelon}
+import com.twittelonr.reloncos.util.Action.Action
+import com.twittelonr.reloncosinjelonctor.util.TwelonelontDelontails
+import scala.collelonction.Map
 
-trait Edge {
-  // RecosHoseMessage is the thrift struct that the graphs consume.
-  def convertToRecosHoseMessage: RecosHoseMessage
+trait elondgelon {
+  // ReloncosHoselonMelonssagelon is thelon thrift struct that thelon graphs consumelon.
+  delonf convelonrtToReloncosHoselonMelonssagelon: ReloncosHoselonMelonssagelon
 
-  // UserTweetAuthorGraphMessage is the thrift struct that user_tweet_author_graph consumes.
-  def convertToUserTweetAuthorGraphMessage: UserTweetAuthorGraphMessage
+  // UselonrTwelonelontAuthorGraphMelonssagelon is thelon thrift struct that uselonr_twelonelont_author_graph consumelons.
+  delonf convelonrtToUselonrTwelonelontAuthorGraphMelonssagelon: UselonrTwelonelontAuthorGraphMelonssagelon
 }
 
 /**
- * Edge corresponding to UserTweetEntityEdge.
- * It captures user-tweet interactions: Create, Like, Retweet, Reply etc.
+ * elondgelon correlonsponding to UselonrTwelonelontelonntityelondgelon.
+ * It capturelons uselonr-twelonelont intelonractions: Crelonatelon, Likelon, Relontwelonelont, Relonply elontc.
  */
-case class UserTweetEntityEdge(
-  sourceUser: Long,
-  targetTweet: Long,
+caselon class UselonrTwelonelontelonntityelondgelon(
+  sourcelonUselonr: Long,
+  targelontTwelonelont: Long,
   action: Action,
-  cardInfo: Option[Byte],
-  metadata: Option[Long],
-  entitiesMap: Option[Map[Byte, Seq[Int]]],
-  tweetDetails: Option[TweetDetails])
-    extends Edge {
+  cardInfo: Option[Bytelon],
+  melontadata: Option[Long],
+  elonntitielonsMap: Option[Map[Bytelon, Selonq[Int]]],
+  twelonelontDelontails: Option[TwelonelontDelontails])
+    elonxtelonnds elondgelon {
 
-  override def convertToRecosHoseMessage: RecosHoseMessage = {
-    RecosHoseMessage(
-      leftId = sourceUser,
-      rightId = targetTweet,
-      action = action.id.toByte,
+  ovelonrridelon delonf convelonrtToReloncosHoselonMelonssagelon: ReloncosHoselonMelonssagelon = {
+    ReloncosHoselonMelonssagelon(
+      lelonftId = sourcelonUselonr,
+      rightId = targelontTwelonelont,
+      action = action.id.toBytelon,
       card = cardInfo,
-      entities = entitiesMap,
-      edgeMetadata = metadata
+      elonntitielons = elonntitielonsMap,
+      elondgelonMelontadata = melontadata
     )
   }
 
-  private def getFeatures(tweetDetails: TweetDetails): Features = {
-    Features(
-      hasPhoto = Some(tweetDetails.hasPhoto),
-      hasVideo = Some(tweetDetails.hasVideo),
-      hasUrl = Some(tweetDetails.hasUrl),
-      hasHashtag = Some(tweetDetails.hasHashtag)
+  privatelon delonf gelontFelonaturelons(twelonelontDelontails: TwelonelontDelontails): Felonaturelons = {
+    Felonaturelons(
+      hasPhoto = Somelon(twelonelontDelontails.hasPhoto),
+      hasVidelono = Somelon(twelonelontDelontails.hasVidelono),
+      hasUrl = Somelon(twelonelontDelontails.hasUrl),
+      hasHashtag = Somelon(twelonelontDelontails.hasHashtag)
     )
   }
 
-  override def convertToUserTweetAuthorGraphMessage: UserTweetAuthorGraphMessage = {
-    UserTweetAuthorGraphMessage(
-      leftId = sourceUser,
-      rightId = targetTweet,
-      action = action.id.toByte,
+  ovelonrridelon delonf convelonrtToUselonrTwelonelontAuthorGraphMelonssagelon: UselonrTwelonelontAuthorGraphMelonssagelon = {
+    UselonrTwelonelontAuthorGraphMelonssagelon(
+      lelonftId = sourcelonUselonr,
+      rightId = targelontTwelonelont,
+      action = action.id.toBytelon,
       card = cardInfo,
-      authorId = tweetDetails.flatMap(_.authorId),
-      features = tweetDetails.map(getFeatures)
+      authorId = twelonelontDelontails.flatMap(_.authorId),
+      felonaturelons = twelonelontDelontails.map(gelontFelonaturelons)
     )
   }
 }
 
 /**
- * Edge corresponding to UserUserGraph.
- * It captures user-user interactions: Follow, Mention, Mediatag.
+ * elondgelon correlonsponding to UselonrUselonrGraph.
+ * It capturelons uselonr-uselonr intelonractions: Follow, Melonntion, Melondiatag.
  */
-case class UserUserEdge(
-  sourceUser: Long,
-  targetUser: Long,
+caselon class UselonrUselonrelondgelon(
+  sourcelonUselonr: Long,
+  targelontUselonr: Long,
   action: Action,
-  metadata: Option[Long])
-    extends Edge {
-  override def convertToRecosHoseMessage: RecosHoseMessage = {
-    RecosHoseMessage(
-      leftId = sourceUser,
-      rightId = targetUser,
-      action = action.id.toByte,
-      edgeMetadata = metadata
+  melontadata: Option[Long])
+    elonxtelonnds elondgelon {
+  ovelonrridelon delonf convelonrtToReloncosHoselonMelonssagelon: ReloncosHoselonMelonssagelon = {
+    ReloncosHoselonMelonssagelon(
+      lelonftId = sourcelonUselonr,
+      rightId = targelontUselonr,
+      action = action.id.toBytelon,
+      elondgelonMelontadata = melontadata
     )
   }
 
-  override def convertToUserTweetAuthorGraphMessage: UserTweetAuthorGraphMessage = {
-    throw new RuntimeException(
-      "convertToUserTweetAuthorGraphMessage not implemented in UserUserEdge.")
+  ovelonrridelon delonf convelonrtToUselonrTwelonelontAuthorGraphMelonssagelon: UselonrTwelonelontAuthorGraphMelonssagelon = {
+    throw nelonw Runtimelonelonxcelonption(
+      "convelonrtToUselonrTwelonelontAuthorGraphMelonssagelon not implelonmelonntelond in UselonrUselonrelondgelon.")
   }
 
 }

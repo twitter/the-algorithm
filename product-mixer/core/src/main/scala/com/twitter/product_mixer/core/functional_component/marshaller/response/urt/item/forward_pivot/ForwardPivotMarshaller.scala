@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.forward_pivot
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.BadgeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivot
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.color.RoselonttaColorMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.BadgelonMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ImagelonVariantMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot.ForwardPivot
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ForwardPivotMarshaller @Inject() (
-  urlMarshaller: UrlMarshaller,
-  richTextMarshaller: RichTextMarshaller,
-  forwardPivotDisplayTypeMarshaller: ForwardPivotDisplayTypeMarshaller,
-  softInterventionDisplayTypeMarshaller: SoftInterventionDisplayTypeMarshaller,
-  imageVariantMarshaller: ImageVariantMarshaller,
-  badgeMarshaller: BadgeMarshaller,
-  rosettaColorMarshaller: RosettaColorMarshaller) {
+@Singlelonton
+class ForwardPivotMarshallelonr @Injelonct() (
+  urlMarshallelonr: UrlMarshallelonr,
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr,
+  forwardPivotDisplayTypelonMarshallelonr: ForwardPivotDisplayTypelonMarshallelonr,
+  softIntelonrvelonntionDisplayTypelonMarshallelonr: SoftIntelonrvelonntionDisplayTypelonMarshallelonr,
+  imagelonVariantMarshallelonr: ImagelonVariantMarshallelonr,
+  badgelonMarshallelonr: BadgelonMarshallelonr,
+  roselonttaColorMarshallelonr: RoselonttaColorMarshallelonr) {
 
-  def apply(forwardPivot: ForwardPivot): urt.ForwardPivot = urt.ForwardPivot(
-    text = richTextMarshaller(forwardPivot.text),
-    landingUrl = urlMarshaller(forwardPivot.landingUrl),
-    displayType = forwardPivotDisplayTypeMarshaller(forwardPivot.displayType),
-    iconImageVariant = forwardPivot.iconImageVariant.map(imageVariantMarshaller(_)),
-    stateBadge = forwardPivot.stateBadge.map(badgeMarshaller(_)),
-    subtext = forwardPivot.subtext.map(richTextMarshaller(_)),
-    backgroundColorName = forwardPivot.backgroundColorName.map(rosettaColorMarshaller(_)),
-    engagementNudge = forwardPivot.engagementNudge,
-    softInterventionDisplayType =
-      forwardPivot.softInterventionDisplayType.map(softInterventionDisplayTypeMarshaller(_)),
+  delonf apply(forwardPivot: ForwardPivot): urt.ForwardPivot = urt.ForwardPivot(
+    telonxt = richTelonxtMarshallelonr(forwardPivot.telonxt),
+    landingUrl = urlMarshallelonr(forwardPivot.landingUrl),
+    displayTypelon = forwardPivotDisplayTypelonMarshallelonr(forwardPivot.displayTypelon),
+    iconImagelonVariant = forwardPivot.iconImagelonVariant.map(imagelonVariantMarshallelonr(_)),
+    statelonBadgelon = forwardPivot.statelonBadgelon.map(badgelonMarshallelonr(_)),
+    subtelonxt = forwardPivot.subtelonxt.map(richTelonxtMarshallelonr(_)),
+    backgroundColorNamelon = forwardPivot.backgroundColorNamelon.map(roselonttaColorMarshallelonr(_)),
+    elonngagelonmelonntNudgelon = forwardPivot.elonngagelonmelonntNudgelon,
+    softIntelonrvelonntionDisplayTypelon =
+      forwardPivot.softIntelonrvelonntionDisplayTypelon.map(softIntelonrvelonntionDisplayTypelonMarshallelonr(_)),
   )
 }

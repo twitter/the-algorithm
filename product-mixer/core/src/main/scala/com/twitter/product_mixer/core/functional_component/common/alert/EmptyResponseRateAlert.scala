@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfAbove
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon.TriggelonrIfAbovelon
 
 /**
- * [[EmptyResponseRateAlert]] triggers when the percentage of requests with empty responses (defined
- * as the number of items returned excluding cursors) rises above the [[TriggerIfAbove]] threshold
- * for a configured amount of time.
+ * [[elonmptyRelonsponselonRatelonAlelonrt]] triggelonrs whelonn thelon pelonrcelonntagelon of relonquelonsts with elonmpty relonsponselons (delonfinelond
+ * as thelon numbelonr of itelonms relonturnelond elonxcluding cursors) riselons abovelon thelon [[TriggelonrIfAbovelon]] threlonshold
+ * for a configurelond amount of timelon.
  *
- * @note EmptyResponseRate thresholds must be between 0 and 100%
+ * @notelon elonmptyRelonsponselonRatelon threlonsholds must belon belontwelonelonn 0 and 100%
  */
-case class EmptyResponseRateAlert(
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: TriggerIfAbove,
-  override val criticalPredicate: TriggerIfAbove,
-  override val runbookLink: Option[String] = None)
-    extends Alert {
-  override val alertType: AlertType = EmptyResponseRate
-  require(
-    warnPredicate.threshold > 0 && warnPredicate.threshold <= 100,
-    s"EmptyResponseRateAlert predicates must be between 0 and 100 but got warnPredicate = ${warnPredicate.threshold}"
+caselon class elonmptyRelonsponselonRatelonAlelonrt(
+  ovelonrridelon val notificationGroup: NotificationGroup,
+  ovelonrridelon val warnPrelondicatelon: TriggelonrIfAbovelon,
+  ovelonrridelon val criticalPrelondicatelon: TriggelonrIfAbovelon,
+  ovelonrridelon val runbookLink: Option[String] = Nonelon)
+    elonxtelonnds Alelonrt {
+  ovelonrridelon val alelonrtTypelon: AlelonrtTypelon = elonmptyRelonsponselonRatelon
+  relonquirelon(
+    warnPrelondicatelon.threlonshold > 0 && warnPrelondicatelon.threlonshold <= 100,
+    s"elonmptyRelonsponselonRatelonAlelonrt prelondicatelons must belon belontwelonelonn 0 and 100 but got warnPrelondicatelon = ${warnPrelondicatelon.threlonshold}"
   )
-  require(
-    criticalPredicate.threshold > 0 && criticalPredicate.threshold <= 100,
-    s"EmptyResponseRateAlert predicates must be between 0 and 100 but got criticalPredicate = ${criticalPredicate.threshold}"
+  relonquirelon(
+    criticalPrelondicatelon.threlonshold > 0 && criticalPrelondicatelon.threlonshold <= 100,
+    s"elonmptyRelonsponselonRatelonAlelonrt prelondicatelons must belon belontwelonelonn 0 and 100 but got criticalPrelondicatelon = ${criticalPrelondicatelon.threlonshold}"
   )
 }

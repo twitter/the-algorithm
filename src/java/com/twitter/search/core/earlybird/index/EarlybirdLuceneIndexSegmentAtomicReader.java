@@ -1,336 +1,336 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.BinaryDocValues;
-import org.apache.lucene.index.FieldInfos;
-import org.apache.lucene.index.FilterLeafReader;
-import org.apache.lucene.index.LeafMetaData;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.index.PointValues;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SortedDocValues;
-import org.apache.lucene.index.SortedNumericDocValues;
-import org.apache.lucene.index.SortedSetDocValues;
-import org.apache.lucene.index.StoredFieldVisitor;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.BinaryDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.FielonldInfos;
+import org.apachelon.lucelonnelon.indelonx.FiltelonrLelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafMelontaData;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.PointValuelons;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.SortelondDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.SortelondNumelonricDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.SortelondSelontDocValuelons;
+import org.apachelon.lucelonnelon.indelonx.StorelondFielonldVisitor;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
+import org.apachelon.lucelonnelon.util.Bits;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.encoding.docvalues.CSFTypeUtil;
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.Schema.FieldInfo;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldDocValues;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
+import com.twittelonr.selonarch.common.elonncoding.docvaluelons.CSFTypelonUtil;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.IntelongelonrelonncodelondFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma.FielonldInfo;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.ColumnStridelonFielonldDocValuelons;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.ColumnStridelonFielonldIndelonx;
 
-public final class EarlybirdLuceneIndexSegmentAtomicReader
-    extends EarlybirdIndexSegmentAtomicReader {
-  private abstract static class DocIdSetIteratorWrapper extends NumericDocValues {
-    private final DocIdSetIterator delegate;
+public final class elonarlybirdLucelonnelonIndelonxSelongmelonntAtomicRelonadelonr
+    elonxtelonnds elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr {
+  privatelon abstract static class DocIdSelontItelonratorWrappelonr elonxtelonnds NumelonricDocValuelons {
+    privatelon final DocIdSelontItelonrator delonlelongatelon;
 
-    public DocIdSetIteratorWrapper(DocIdSetIterator delegate) {
-      this.delegate = Preconditions.checkNotNull(delegate);
+    public DocIdSelontItelonratorWrappelonr(DocIdSelontItelonrator delonlelongatelon) {
+      this.delonlelongatelon = Prelonconditions.chelonckNotNull(delonlelongatelon);
     }
 
-    @Override
+    @Ovelonrridelon
     public int docID() {
-      return delegate.docID();
+      relonturn delonlelongatelon.docID();
     }
 
-    @Override
-    public int nextDoc() throws IOException {
-      return delegate.nextDoc();
+    @Ovelonrridelon
+    public int nelonxtDoc() throws IOelonxcelonption {
+      relonturn delonlelongatelon.nelonxtDoc();
     }
 
-    @Override
-    public int advance(int target) throws IOException {
-      return delegate.advance(target);
+    @Ovelonrridelon
+    public int advancelon(int targelont) throws IOelonxcelonption {
+      relonturn delonlelongatelon.advancelon(targelont);
     }
 
-    @Override
+    @Ovelonrridelon
     public long cost() {
-      return delegate.cost();
+      relonturn delonlelongatelon.cost();
     }
   }
 
-  private static class BytesRefBasedIntegerEncodedFeatures extends IntegerEncodedFeatures {
-    private final BytesRef bytesRef;
-    private final int numInts;
+  privatelon static class BytelonsRelonfBaselondIntelongelonrelonncodelondFelonaturelons elonxtelonnds IntelongelonrelonncodelondFelonaturelons {
+    privatelon final BytelonsRelonf bytelonsRelonf;
+    privatelon final int numInts;
 
-    public BytesRefBasedIntegerEncodedFeatures(BytesRef bytesRef, int numInts) {
-      this.bytesRef = bytesRef;
+    public BytelonsRelonfBaselondIntelongelonrelonncodelondFelonaturelons(BytelonsRelonf bytelonsRelonf, int numInts) {
+      this.bytelonsRelonf = bytelonsRelonf;
       this.numInts = numInts;
     }
 
-    @Override
-    public int getInt(int pos) {
-      return CSFTypeUtil.convertFromBytes(bytesRef.bytes, bytesRef.offset, pos);
+    @Ovelonrridelon
+    public int gelontInt(int pos) {
+      relonturn CSFTypelonUtil.convelonrtFromBytelons(bytelonsRelonf.bytelons, bytelonsRelonf.offselont, pos);
     }
 
-    @Override
-    public void setInt(int pos, int value) {
-      throw new UnsupportedOperationException();
+    @Ovelonrridelon
+    public void selontInt(int pos, int valuelon) {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption();
     }
 
-    @Override
-    public int getNumInts() {
-      return numInts;
+    @Ovelonrridelon
+    public int gelontNumInts() {
+      relonturn numInts;
     }
   }
 
-  private static final int OLDEST_DOC_SKIP_INTERVAL = 256;
+  privatelon static final int OLDelonST_DOC_SKIP_INTelonRVAL = 256;
 
-  private final LeafReader delegate;
+  privatelon final LelonafRelonadelonr delonlelongatelon;
 
   /**
-   * Do not add public constructors to this class. EarlybirdLuceneIndexSegmentAtomicReader instances
-   * should be created only by calling EarlybirdLuceneIndexSegmentData.createAtomicReader(), to make
-   * sure everything is set up properly (such as CSF readers).
+   * Do not add public constructors to this class. elonarlybirdLucelonnelonIndelonxSelongmelonntAtomicRelonadelonr instancelons
+   * should belon crelonatelond only by calling elonarlybirdLucelonnelonIndelonxSelongmelonntData.crelonatelonAtomicRelonadelonr(), to makelon
+   * surelon elonvelonrything is selont up propelonrly (such as CSF relonadelonrs).
    */
-  EarlybirdLuceneIndexSegmentAtomicReader(
-      EarlybirdIndexSegmentData segmentData, Directory directory) throws IOException {
-    super(segmentData);
-    this.delegate = getDelegateReader(directory);
+  elonarlybirdLucelonnelonIndelonxSelongmelonntAtomicRelonadelonr(
+      elonarlybirdIndelonxSelongmelonntData selongmelonntData, Direlonctory direlonctory) throws IOelonxcelonption {
+    supelonr(selongmelonntData);
+    this.delonlelongatelon = gelontDelonlelongatelonRelonadelonr(direlonctory);
   }
 
-  private LeafReader getDelegateReader(Directory directory) throws IOException {
-    LeafReader directoryReader =
-        EarlybirdIndexSegmentData.getLeafReaderFromOptimizedDirectory(directory);
-    return new FilterLeafReader(directoryReader) {
-      @Override
-      public NumericDocValues getNumericDocValues(String field) throws IOException {
-        EarlybirdFieldType type = getSchema().getFieldInfo(field).getFieldType();
-        if ((type == null) || !type.isCsfViewField()) {
-          return in.getNumericDocValues(field);
+  privatelon LelonafRelonadelonr gelontDelonlelongatelonRelonadelonr(Direlonctory direlonctory) throws IOelonxcelonption {
+    LelonafRelonadelonr direlonctoryRelonadelonr =
+        elonarlybirdIndelonxSelongmelonntData.gelontLelonafRelonadelonrFromOptimizelondDirelonctory(direlonctory);
+    relonturn nelonw FiltelonrLelonafRelonadelonr(direlonctoryRelonadelonr) {
+      @Ovelonrridelon
+      public NumelonricDocValuelons gelontNumelonricDocValuelons(String fielonld) throws IOelonxcelonption {
+        elonarlybirdFielonldTypelon typelon = gelontSchelonma().gelontFielonldInfo(fielonld).gelontFielonldTypelon();
+        if ((typelon == null) || !typelon.isCsfVielonwFielonld()) {
+          relonturn in.gelontNumelonricDocValuelons(fielonld);
         }
 
-        // Compute as many things as possible once, outside the NumericDocValues.get() call.
-        String baseFieldName = getSchema().getFieldInfo(type.getCsfViewBaseFieldId()).getName();
-        FieldInfo baseFieldInfo =
-            Preconditions.checkNotNull(getSchema().getFieldInfo(baseFieldName));
-        EarlybirdFieldType baseFieldType = baseFieldInfo.getFieldType();
-        Preconditions.checkState(!baseFieldType.isCsfVariableLength());
-        int numInts = baseFieldType.getCsfFixedLengthNumValuesPerDoc();
-        FeatureConfiguration featureConfiguration =
-            Preconditions.checkNotNull(type.getCsfViewFeatureConfiguration());
-        Preconditions.checkArgument(featureConfiguration.getValueIndex() < numInts);
+        // Computelon as many things as possiblelon oncelon, outsidelon thelon NumelonricDocValuelons.gelont() call.
+        String baselonFielonldNamelon = gelontSchelonma().gelontFielonldInfo(typelon.gelontCsfVielonwBaselonFielonldId()).gelontNamelon();
+        FielonldInfo baselonFielonldInfo =
+            Prelonconditions.chelonckNotNull(gelontSchelonma().gelontFielonldInfo(baselonFielonldNamelon));
+        elonarlybirdFielonldTypelon baselonFielonldTypelon = baselonFielonldInfo.gelontFielonldTypelon();
+        Prelonconditions.chelonckStatelon(!baselonFielonldTypelon.isCsfVariablelonLelonngth());
+        int numInts = baselonFielonldTypelon.gelontCsfFixelondLelonngthNumValuelonsPelonrDoc();
+        FelonaturelonConfiguration felonaturelonConfiguration =
+            Prelonconditions.chelonckNotNull(typelon.gelontCsfVielonwFelonaturelonConfiguration());
+        Prelonconditions.chelonckArgumelonnt(felonaturelonConfiguration.gelontValuelonIndelonx() < numInts);
 
         if (numInts == 1) {
-          // All encoded tweet features are encoded in a single integer.
-          NumericDocValues numericDocValues = in.getNumericDocValues(baseFieldName);
-          return new DocIdSetIteratorWrapper(numericDocValues) {
-            @Override
-            public long longValue() throws IOException {
-              return (numericDocValues.longValue() & featureConfiguration.getBitMask())
-                  >> featureConfiguration.getBitStartPosition();
+          // All elonncodelond twelonelont felonaturelons arelon elonncodelond in a singlelon intelongelonr.
+          NumelonricDocValuelons numelonricDocValuelons = in.gelontNumelonricDocValuelons(baselonFielonldNamelon);
+          relonturn nelonw DocIdSelontItelonratorWrappelonr(numelonricDocValuelons) {
+            @Ovelonrridelon
+            public long longValuelon() throws IOelonxcelonption {
+              relonturn (numelonricDocValuelons.longValuelon() & felonaturelonConfiguration.gelontBitMask())
+                  >> felonaturelonConfiguration.gelontBitStartPosition();
             }
 
-            @Override
-            public boolean advanceExact(int target) throws IOException {
-              return numericDocValues.advanceExact(target);
+            @Ovelonrridelon
+            public boolelonan advancelonelonxact(int targelont) throws IOelonxcelonption {
+              relonturn numelonricDocValuelons.advancelonelonxact(targelont);
             }
           };
         }
 
-        BinaryDocValues binaryDocValues =
-            Preconditions.checkNotNull(in.getBinaryDocValues(baseFieldName));
-        return new DocIdSetIteratorWrapper(binaryDocValues) {
-          @Override
-          public long longValue() throws IOException {
-            BytesRef data = binaryDocValues.binaryValue();
-            IntegerEncodedFeatures encodedFeatures =
-                new BytesRefBasedIntegerEncodedFeatures(data, numInts);
-            return encodedFeatures.getFeatureValue(featureConfiguration);
+        BinaryDocValuelons binaryDocValuelons =
+            Prelonconditions.chelonckNotNull(in.gelontBinaryDocValuelons(baselonFielonldNamelon));
+        relonturn nelonw DocIdSelontItelonratorWrappelonr(binaryDocValuelons) {
+          @Ovelonrridelon
+          public long longValuelon() throws IOelonxcelonption {
+            BytelonsRelonf data = binaryDocValuelons.binaryValuelon();
+            IntelongelonrelonncodelondFelonaturelons elonncodelondFelonaturelons =
+                nelonw BytelonsRelonfBaselondIntelongelonrelonncodelondFelonaturelons(data, numInts);
+            relonturn elonncodelondFelonaturelons.gelontFelonaturelonValuelon(felonaturelonConfiguration);
           }
 
-          @Override
-          public boolean advanceExact(int target) throws IOException {
-            return binaryDocValues.advanceExact(target);
+          @Ovelonrridelon
+          public boolelonan advancelonelonxact(int targelont) throws IOelonxcelonption {
+            relonturn binaryDocValuelons.advancelonelonxact(targelont);
           }
         };
       }
 
-      @Override
-      public CacheHelper getCoreCacheHelper() {
-        return in.getCoreCacheHelper();
+      @Ovelonrridelon
+      public CachelonHelonlpelonr gelontCorelonCachelonHelonlpelonr() {
+        relonturn in.gelontCorelonCachelonHelonlpelonr();
       }
 
-      @Override
-      public CacheHelper getReaderCacheHelper() {
-        return in.getReaderCacheHelper();
+      @Ovelonrridelon
+      public CachelonHelonlpelonr gelontRelonadelonrCachelonHelonlpelonr() {
+        relonturn in.gelontRelonadelonrCachelonHelonlpelonr();
       }
     };
   }
 
-  private TermsEnum getTermsEnumAtTerm(Term term) throws IOException {
-    Terms terms = terms(term.field());
-    if (terms == null) {
-      return null;
+  privatelon Telonrmselonnum gelontTelonrmselonnumAtTelonrm(Telonrm telonrm) throws IOelonxcelonption {
+    Telonrms telonrms = telonrms(telonrm.fielonld());
+    if (telonrms == null) {
+      relonturn null;
     }
 
-    TermsEnum termsEnum = terms.iterator();
-    return termsEnum.seekExact(term.bytes()) ? termsEnum : null;
+    Telonrmselonnum telonrmselonnum = telonrms.itelonrator();
+    relonturn telonrmselonnum.selonelonkelonxact(telonrm.bytelons()) ? telonrmselonnum : null;
   }
 
-  @Override
-  public int getOldestDocID(Term term) throws IOException {
-    TermsEnum termsEnum = getTermsEnumAtTerm(term);
-    if (termsEnum == null) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+  @Ovelonrridelon
+  public int gelontOldelonstDocID(Telonrm telonrm) throws IOelonxcelonption {
+    Telonrmselonnum telonrmselonnum = gelontTelonrmselonnumAtTelonrm(telonrm);
+    if (telonrmselonnum == null) {
+      relonturn elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
     }
 
-    PostingsEnum td = termsEnum.postings(null);
-    int oldestDocID = td.nextDoc();
-    if (oldestDocID == DocIdSetIterator.NO_MORE_DOCS) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+    Postingselonnum td = telonrmselonnum.postings(null);
+    int oldelonstDocID = td.nelonxtDoc();
+    if (oldelonstDocID == DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      relonturn elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
     }
 
-    final int docFreq = termsEnum.docFreq();
-    if (docFreq > OLDEST_DOC_SKIP_INTERVAL * 16) {
-      final int skipSize = docFreq / OLDEST_DOC_SKIP_INTERVAL;
+    final int docFrelonq = telonrmselonnum.docFrelonq();
+    if (docFrelonq > OLDelonST_DOC_SKIP_INTelonRVAL * 16) {
+      final int skipSizelon = docFrelonq / OLDelonST_DOC_SKIP_INTelonRVAL;
       do {
-        oldestDocID = td.docID();
-      } while (td.advance(oldestDocID + skipSize) != DocIdSetIterator.NO_MORE_DOCS);
+        oldelonstDocID = td.docID();
+      } whilelon (td.advancelon(oldelonstDocID + skipSizelon) != DocIdSelontItelonrator.NO_MORelon_DOCS);
 
-      td = delegate.postings(term);
-      td.advance(oldestDocID);
+      td = delonlelongatelon.postings(telonrm);
+      td.advancelon(oldelonstDocID);
     }
 
     do {
-      oldestDocID = td.docID();
-    } while (td.nextDoc() != DocIdSetIterator.NO_MORE_DOCS);
+      oldelonstDocID = td.docID();
+    } whilelon (td.nelonxtDoc() != DocIdSelontItelonrator.NO_MORelon_DOCS);
 
-    return oldestDocID;
+    relonturn oldelonstDocID;
   }
 
-  @Override
-  public int getTermID(Term term) throws IOException {
-    TermsEnum termsEnum = getTermsEnumAtTerm(term);
-    return termsEnum != null
-        ? (int) termsEnum.ord()
-        : EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+  @Ovelonrridelon
+  public int gelontTelonrmID(Telonrm telonrm) throws IOelonxcelonption {
+    Telonrmselonnum telonrmselonnum = gelontTelonrmselonnumAtTelonrm(telonrm);
+    relonturn telonrmselonnum != null
+        ? (int) telonrmselonnum.ord()
+        : elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
   }
 
-  @Override
-  public Terms terms(String field) throws IOException {
-    return delegate.terms(field);
+  @Ovelonrridelon
+  public Telonrms telonrms(String fielonld) throws IOelonxcelonption {
+    relonturn delonlelongatelon.telonrms(fielonld);
   }
 
-  @Override
-  public FieldInfos getFieldInfos() {
-    return delegate.getFieldInfos();
+  @Ovelonrridelon
+  public FielonldInfos gelontFielonldInfos() {
+    relonturn delonlelongatelon.gelontFielonldInfos();
   }
 
-  @Override
-  public Bits getLiveDocs() {
-    return getDeletesView().getLiveDocs();
+  @Ovelonrridelon
+  public Bits gelontLivelonDocs() {
+    relonturn gelontDelonlelontelonsVielonw().gelontLivelonDocs();
   }
 
-  @Override
+  @Ovelonrridelon
   public int numDocs() {
-    return delegate.numDocs();
+    relonturn delonlelongatelon.numDocs();
   }
 
-  @Override
+  @Ovelonrridelon
   public int maxDoc() {
-    return delegate.maxDoc();
+    relonturn delonlelongatelon.maxDoc();
   }
 
-  @Override
-  public void document(int docID, StoredFieldVisitor visitor) throws IOException {
-    delegate.document(docID, visitor);
+  @Ovelonrridelon
+  public void documelonnt(int docID, StorelondFielonldVisitor visitor) throws IOelonxcelonption {
+    delonlelongatelon.documelonnt(docID, visitor);
   }
 
-  @Override
-  public boolean hasDeletions() {
-    return getDeletesView().hasDeletions();
+  @Ovelonrridelon
+  public boolelonan hasDelonlelontions() {
+    relonturn gelontDelonlelontelonsVielonw().hasDelonlelontions();
   }
 
-  @Override
-  protected void doClose() throws IOException {
-    delegate.close();
+  @Ovelonrridelon
+  protelonctelond void doCloselon() throws IOelonxcelonption {
+    delonlelongatelon.closelon();
   }
 
-  @Override
-  public NumericDocValues getNumericDocValues(String field) throws IOException {
-    FieldInfo fieldInfo = getSegmentData().getSchema().getFieldInfo(field);
-    if (fieldInfo == null) {
-      return null;
+  @Ovelonrridelon
+  public NumelonricDocValuelons gelontNumelonricDocValuelons(String fielonld) throws IOelonxcelonption {
+    FielonldInfo fielonldInfo = gelontSelongmelonntData().gelontSchelonma().gelontFielonldInfo(fielonld);
+    if (fielonldInfo == null) {
+      relonturn null;
     }
 
-    // If this field is a CSF view field or if it's not loaded in memory, get the NumericDocValues
-    // from the delegate.
-    EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-    if (fieldType.isCsfViewField() || !fieldInfo.getFieldType().isCsfLoadIntoRam()) {
-      NumericDocValues delegateVals = delegate.getNumericDocValues(field);
-      if (delegateVals != null) {
-        return delegateVals;
+    // If this fielonld is a CSF vielonw fielonld or if it's not loadelond in melonmory, gelont thelon NumelonricDocValuelons
+    // from thelon delonlelongatelon.
+    elonarlybirdFielonldTypelon fielonldTypelon = fielonldInfo.gelontFielonldTypelon();
+    if (fielonldTypelon.isCsfVielonwFielonld() || !fielonldInfo.gelontFielonldTypelon().isCsfLoadIntoRam()) {
+      NumelonricDocValuelons delonlelongatelonVals = delonlelongatelon.gelontNumelonricDocValuelons(fielonld);
+      if (delonlelongatelonVals != null) {
+        relonturn delonlelongatelonVals;
       }
     }
 
-    // The field is either loaded in memory, or the delegate doesn't have NumericDocValues for it.
-    // Return the NumericDocValues for this field stored in the DocValuesManager.
-    ColumnStrideFieldIndex csf =
-        getSegmentData().getDocValuesManager().getColumnStrideFieldIndex(field);
-    return csf != null ? new ColumnStrideFieldDocValues(csf, this) : null;
+    // Thelon fielonld is elonithelonr loadelond in melonmory, or thelon delonlelongatelon doelonsn't havelon NumelonricDocValuelons for it.
+    // Relonturn thelon NumelonricDocValuelons for this fielonld storelond in thelon DocValuelonsManagelonr.
+    ColumnStridelonFielonldIndelonx csf =
+        gelontSelongmelonntData().gelontDocValuelonsManagelonr().gelontColumnStridelonFielonldIndelonx(fielonld);
+    relonturn csf != null ? nelonw ColumnStridelonFielonldDocValuelons(csf, this) : null;
   }
 
-  @Override
-  public BinaryDocValues getBinaryDocValues(String field) throws IOException {
-    return delegate.getBinaryDocValues(field);
+  @Ovelonrridelon
+  public BinaryDocValuelons gelontBinaryDocValuelons(String fielonld) throws IOelonxcelonption {
+    relonturn delonlelongatelon.gelontBinaryDocValuelons(fielonld);
   }
 
-  @Override
-  public SortedDocValues getSortedDocValues(String field) throws IOException {
-    return delegate.getSortedDocValues(field);
+  @Ovelonrridelon
+  public SortelondDocValuelons gelontSortelondDocValuelons(String fielonld) throws IOelonxcelonption {
+    relonturn delonlelongatelon.gelontSortelondDocValuelons(fielonld);
   }
 
-  @Override
-  public SortedSetDocValues getSortedSetDocValues(String field) throws IOException {
-    return delegate.getSortedSetDocValues(field);
+  @Ovelonrridelon
+  public SortelondSelontDocValuelons gelontSortelondSelontDocValuelons(String fielonld) throws IOelonxcelonption {
+    relonturn delonlelongatelon.gelontSortelondSelontDocValuelons(fielonld);
   }
 
-  @Override
-  public NumericDocValues getNormValues(String field) throws IOException {
-    return delegate.getNormValues(field);
+  @Ovelonrridelon
+  public NumelonricDocValuelons gelontNormValuelons(String fielonld) throws IOelonxcelonption {
+    relonturn delonlelongatelon.gelontNormValuelons(fielonld);
   }
 
-  @Override
-  public SortedNumericDocValues getSortedNumericDocValues(String field) throws IOException {
-    return delegate.getSortedNumericDocValues(field);
+  @Ovelonrridelon
+  public SortelondNumelonricDocValuelons gelontSortelondNumelonricDocValuelons(String fielonld) throws IOelonxcelonption {
+    relonturn delonlelongatelon.gelontSortelondNumelonricDocValuelons(fielonld);
   }
 
-  @Override
-  public void checkIntegrity() throws IOException {
-    delegate.checkIntegrity();
+  @Ovelonrridelon
+  public void chelonckIntelongrity() throws IOelonxcelonption {
+    delonlelongatelon.chelonckIntelongrity();
   }
 
-  @Override
-  public PointValues getPointValues(String field) throws IOException {
-    return delegate.getPointValues(field);
+  @Ovelonrridelon
+  public PointValuelons gelontPointValuelons(String fielonld) throws IOelonxcelonption {
+    relonturn delonlelongatelon.gelontPointValuelons(fielonld);
   }
 
-  @Override
-  public LeafMetaData getMetaData() {
-    return delegate.getMetaData();
+  @Ovelonrridelon
+  public LelonafMelontaData gelontMelontaData() {
+    relonturn delonlelongatelon.gelontMelontaData();
   }
 
-  @Override
-  public CacheHelper getCoreCacheHelper() {
-    return delegate.getCoreCacheHelper();
+  @Ovelonrridelon
+  public CachelonHelonlpelonr gelontCorelonCachelonHelonlpelonr() {
+    relonturn delonlelongatelon.gelontCorelonCachelonHelonlpelonr();
   }
 
-  @Override
-  public CacheHelper getReaderCacheHelper() {
-    return delegate.getReaderCacheHelper();
+  @Ovelonrridelon
+  public CachelonHelonlpelonr gelontRelonadelonrCachelonHelonlpelonr() {
+    relonturn delonlelongatelon.gelontRelonadelonrCachelonHelonlpelonr();
   }
 }

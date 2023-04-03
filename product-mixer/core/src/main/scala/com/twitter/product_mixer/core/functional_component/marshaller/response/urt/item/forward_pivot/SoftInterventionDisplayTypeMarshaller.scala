@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.forward_pivot
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.GetTheLatest
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.GovernmentRequested
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.Misleading
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.SoftInterventionDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.StayInformed
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot.GelontThelonLatelonst
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot.GovelonrnmelonntRelonquelonstelond
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot.Mislelonading
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot.SoftIntelonrvelonntionDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot.StayInformelond
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SoftInterventionDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class SoftIntelonrvelonntionDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(
-    softInterventionDisplayType: SoftInterventionDisplayType
-  ): urt.SoftInterventionDisplayType =
-    softInterventionDisplayType match {
-      case GetTheLatest => urt.SoftInterventionDisplayType.GetTheLatest
-      case StayInformed => urt.SoftInterventionDisplayType.StayInformed
-      case Misleading => urt.SoftInterventionDisplayType.Misleading
-      case GovernmentRequested => urt.SoftInterventionDisplayType.GovernmentRequested
+  delonf apply(
+    softIntelonrvelonntionDisplayTypelon: SoftIntelonrvelonntionDisplayTypelon
+  ): urt.SoftIntelonrvelonntionDisplayTypelon =
+    softIntelonrvelonntionDisplayTypelon match {
+      caselon GelontThelonLatelonst => urt.SoftIntelonrvelonntionDisplayTypelon.GelontThelonLatelonst
+      caselon StayInformelond => urt.SoftIntelonrvelonntionDisplayTypelon.StayInformelond
+      caselon Mislelonading => urt.SoftIntelonrvelonntionDisplayTypelon.Mislelonading
+      caselon GovelonrnmelonntRelonquelonstelond => urt.SoftIntelonrvelonntionDisplayTypelon.GovelonrnmelonntRelonquelonstelond
     }
 }

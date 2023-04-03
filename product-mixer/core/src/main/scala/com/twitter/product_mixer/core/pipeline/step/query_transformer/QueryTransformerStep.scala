@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.pipeline.step.query_transformer
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.quelonry_transformelonr
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasParams
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.state.HasRequest
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasParams
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.timelonlinelons.configapi.Params
 
 /**
- * Query Transformation Step that takes an incoming thrift request model object and returns a
- * pipeline query. The pipeline state is responsible for keeping the updated query.
+ * Quelonry Transformation Stelonp that takelons an incoming thrift relonquelonst modelonl objelonct and relonturns a
+ * pipelonlinelon quelonry. Thelon pipelonlinelon statelon is relonsponsiblelon for kelonelonping thelon updatelond quelonry.
  *
- * @tparam TRequest Thrift request domain model
- * @tparam Query PipelineQuery type to transform to h
- * @tparam State The request domain model
+ * @tparam TRelonquelonst Thrift relonquelonst domain modelonl
+ * @tparam Quelonry PipelonlinelonQuelonry typelon to transform to h
+ * @tparam Statelon Thelon relonquelonst domain modelonl
  */
-case class QueryTransformerStep[
-  TRequest <: Request,
-  Query <: PipelineQuery,
-  State <: HasQuery[Query, State] with HasRequest[TRequest] with HasParams
-]() extends Step[State, (TRequest, Params) => Query, (TRequest, Params), QueryTransformerResult[
-      Query
+caselon class QuelonryTransformelonrStelonp[
+  TRelonquelonst <: Relonquelonst,
+  Quelonry <: PipelonlinelonQuelonry,
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HasRelonquelonst[TRelonquelonst] with HasParams
+]() elonxtelonnds Stelonp[Statelon, (TRelonquelonst, Params) => Quelonry, (TRelonquelonst, Params), QuelonryTransformelonrRelonsult[
+      Quelonry
     ]] {
 
-  override def isEmpty(config: (TRequest, Params) => Query): Boolean = false
+  ovelonrridelon delonf iselonmpty(config: (TRelonquelonst, Params) => Quelonry): Boolelonan = falselon
 
-  override def arrow(
-    config: (TRequest, Params) => Query,
-    context: Executor.Context
-  ): Arrow[(TRequest, Params), QueryTransformerResult[Query]] = Arrow.map {
-    case (request: TRequest @unchecked, params: Params) =>
-      QueryTransformerResult(config(request, params))
+  ovelonrridelon delonf arrow(
+    config: (TRelonquelonst, Params) => Quelonry,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[(TRelonquelonst, Params), QuelonryTransformelonrRelonsult[Quelonry]] = Arrow.map {
+    caselon (relonquelonst: TRelonquelonst @unchelonckelond, params: Params) =>
+      QuelonryTransformelonrRelonsult(config(relonquelonst, params))
   }
 
-  override def updateState(
-    state: State,
-    executorResult: QueryTransformerResult[Query],
-    config: (TRequest, Params) => Query
-  ): State = state.updateQuery(executorResult.query)
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: QuelonryTransformelonrRelonsult[Quelonry],
+    config: (TRelonquelonst, Params) => Quelonry
+  ): Statelon = statelon.updatelonQuelonry(elonxeloncutorRelonsult.quelonry)
 
-  override def adaptInput(
-    state: State,
-    config: (TRequest, Params) => Query
-  ): (TRequest, Params) = (state.request, state.params)
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: (TRelonquelonst, Params) => Quelonry
+  ): (TRelonquelonst, Params) = (statelon.relonquelonst, statelon.params)
 }
 
-case class QueryTransformerResult[Query <: PipelineQuery](query: Query) extends ExecutorResult
+caselon class QuelonryTransformelonrRelonsult[Quelonry <: PipelonlinelonQuelonry](quelonry: Quelonry) elonxtelonnds elonxeloncutorRelonsult

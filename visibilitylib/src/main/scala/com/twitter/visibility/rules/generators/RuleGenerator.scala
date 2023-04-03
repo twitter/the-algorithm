@@ -1,8 +1,8 @@
-package com.twitter.visibility.rules.generators
+packagelon com.twittelonr.visibility.rulelons.gelonnelonrators
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.Rule
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.rulelons.Rulelon
 
-trait RuleGenerator {
-  def rulesForSurface(safetyLevel: SafetyLevel): Seq[Rule]
+trait RulelonGelonnelonrator {
+  delonf rulelonsForSurfacelon(safelontyLelonvelonl: SafelontyLelonvelonl): Selonq[Rulelon]
 }

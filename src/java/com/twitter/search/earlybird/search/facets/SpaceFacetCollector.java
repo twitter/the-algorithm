@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.commons.lang.StringUtils;
+import org.apachelon.commons.lang.StringUtils;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.partition.AudioSpaceTable;
-import com.twitter.search.earlybird.thrift.AudioSpaceState;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultAudioSpace;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.elonarlybird.partition.AudioSpacelonTablelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.AudioSpacelonStatelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultAudioSpacelon;
 
-public class SpaceFacetCollector extends AbstractFacetTermCollector {
-  private final List<ThriftSearchResultAudioSpace> spaces = new ArrayList<>();
+public class SpacelonFacelontCollelonctor elonxtelonnds AbstractFacelontTelonrmCollelonctor {
+  privatelon final List<ThriftSelonarchRelonsultAudioSpacelon> spacelons = nelonw ArrayList<>();
 
-  private final AudioSpaceTable audioSpaceTable;
+  privatelon final AudioSpacelonTablelon audioSpacelonTablelon;
 
-  public SpaceFacetCollector(AudioSpaceTable audioSpaceTable) {
-    this.audioSpaceTable = audioSpaceTable;
+  public SpacelonFacelontCollelonctor(AudioSpacelonTablelon audioSpacelonTablelon) {
+    this.audioSpacelonTablelon = audioSpacelonTablelon;
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @Ovelonrridelon
+  public boolelonan collelonct(int docID, long telonrmID, int fielonldID) {
 
-    String spaceId = getTermFromFacet(termID, fieldID,
-        Sets.newHashSet(EarlybirdFieldConstant.SPACES_FACET));
-    if (StringUtils.isEmpty(spaceId)) {
-      return false;
+    String spacelonId = gelontTelonrmFromFacelont(telonrmID, fielonldID,
+        Selonts.nelonwHashSelont(elonarlybirdFielonldConstant.SPACelonS_FACelonT));
+    if (StringUtils.iselonmpty(spacelonId)) {
+      relonturn falselon;
     }
 
-    spaces.add(new ThriftSearchResultAudioSpace(spaceId,
-        audioSpaceTable.isRunning(spaceId) ? AudioSpaceState.RUNNING
-            : AudioSpaceState.ENDED));
+    spacelons.add(nelonw ThriftSelonarchRelonsultAudioSpacelon(spacelonId,
+        audioSpacelonTablelon.isRunning(spacelonId) ? AudioSpacelonStatelon.RUNNING
+            : AudioSpacelonStatelon.elonNDelonD));
 
-    return true;
+    relonturn truelon;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setSpaces(ImmutableList.copyOf(spaces));
-    spaces.clear();
+  @Ovelonrridelon
+  public void fillRelonsultAndClelonar(ThriftSelonarchRelonsult relonsult) {
+    gelontelonxtraMelontadata(relonsult).selontSpacelons(ImmutablelonList.copyOf(spacelons));
+    spacelons.clelonar();
   }
 }

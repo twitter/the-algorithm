@@ -1,71 +1,71 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.visitors.DropAllProtectedOperatorVisitor;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.DropAllProtelonctelondOpelonratorVisitor;
+import com.twittelonr.util.Futurelon;
 
-public class DropAllProtectedOperatorFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(DropAllProtectedOperatorFilter.class);
-  private static final SearchCounter QUERY_PARSER_FAILURE_COUNTER =
-      SearchCounter.export("protected_operator_filter_query_parser_failure_count");
-  @VisibleForTesting
-  static final SearchCounter TOTAL_REQUESTS_COUNTER =
-      SearchCounter.export("drop_all_protected_operator_filter_total");
-  @VisibleForTesting
-  static final SearchCounter OPERATOR_DROPPED_REQUESTS_COUNTER =
-      SearchCounter.export("drop_all_protected_operator_filter_operator_dropped");
+public class DropAllProtelonctelondOpelonratorFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(DropAllProtelonctelondOpelonratorFiltelonr.class);
+  privatelon static final SelonarchCountelonr QUelonRY_PARSelonR_FAILURelon_COUNTelonR =
+      SelonarchCountelonr.elonxport("protelonctelond_opelonrator_filtelonr_quelonry_parselonr_failurelon_count");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr TOTAL_RelonQUelonSTS_COUNTelonR =
+      SelonarchCountelonr.elonxport("drop_all_protelonctelond_opelonrator_filtelonr_total");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr OPelonRATOR_DROPPelonD_RelonQUelonSTS_COUNTelonR =
+      SelonarchCountelonr.elonxport("drop_all_protelonctelond_opelonrator_filtelonr_opelonrator_droppelond");
 
-  private final DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor;
+  privatelon final DropAllProtelonctelondOpelonratorVisitor dropProtelonctelondOpelonratorVisitor;
 
-  @Inject
-  public DropAllProtectedOperatorFilter(
-      DropAllProtectedOperatorVisitor dropProtectedOperatorVisitor
+  @Injelonct
+  public DropAllProtelonctelondOpelonratorFiltelonr(
+      DropAllProtelonctelondOpelonratorVisitor dropProtelonctelondOpelonratorVisitor
   ) {
-    this.dropProtectedOperatorVisitor = dropProtectedOperatorVisitor;
+    this.dropProtelonctelondOpelonratorVisitor = dropProtelonctelondOpelonratorVisitor;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    TOTAL_REQUESTS_COUNTER.increment();
-    Query query = requestContext.getParsedQuery();
-    if (query == null) {
-      return service.apply(requestContext);
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    TOTAL_RelonQUelonSTS_COUNTelonR.increlonmelonnt();
+    Quelonry quelonry = relonquelonstContelonxt.gelontParselondQuelonry();
+    if (quelonry == null) {
+      relonturn selonrvicelon.apply(relonquelonstContelonxt);
     }
 
-    Query processedQuery = query;
+    Quelonry procelonsselondQuelonry = quelonry;
     try {
-      processedQuery = query.accept(dropProtectedOperatorVisitor);
-    } catch (QueryParserException e) {
-      // this should not happen since we already have a parsed query
-      QUERY_PARSER_FAILURE_COUNTER.increment();
+      procelonsselondQuelonry = quelonry.accelonpt(dropProtelonctelondOpelonratorVisitor);
+    } catch (QuelonryParselonrelonxcelonption elon) {
+      // this should not happelonn sincelon welon alrelonady havelon a parselond quelonry
+      QUelonRY_PARSelonR_FAILURelon_COUNTelonR.increlonmelonnt();
       LOG.warn(
-          "Failed to drop protected operator for serialized query: " + query.serialize(), e);
+          "Failelond to drop protelonctelond opelonrator for selonrializelond quelonry: " + quelonry.selonrializelon(), elon);
     }
 
-    if (processedQuery == query) {
-      return service.apply(requestContext);
-    } else {
-      OPERATOR_DROPPED_REQUESTS_COUNTER.increment();
-      EarlybirdRequestContext clonedRequestContext =
-          EarlybirdRequestContext.copyRequestContext(requestContext, processedQuery);
-      return service.apply(clonedRequestContext);
+    if (procelonsselondQuelonry == quelonry) {
+      relonturn selonrvicelon.apply(relonquelonstContelonxt);
+    } elonlselon {
+      OPelonRATOR_DROPPelonD_RelonQUelonSTS_COUNTelonR.increlonmelonnt();
+      elonarlybirdRelonquelonstContelonxt clonelondRelonquelonstContelonxt =
+          elonarlybirdRelonquelonstContelonxt.copyRelonquelonstContelonxt(relonquelonstContelonxt, procelonsselondQuelonry);
+      relonturn selonrvicelon.apply(clonelondRelonquelonstContelonxt);
     }
   }
 }

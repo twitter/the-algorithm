@@ -1,34 +1,34 @@
-package com.twitter.recosinjector.filters
+packagelon com.twittelonr.reloncosinjelonctor.filtelonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncosinjelonctor.clielonnts.Twelonelontypielon
+import com.twittelonr.util.Futurelon
 
 /**
- * Filters tweets that are null cast, i.e. tweet is not delivered to a user's followers,
- * not shown in the user's timeline, and does not appear in search results.
- * They are mainly ads tweets.
+ * Filtelonrs twelonelonts that arelon null cast, i.elon. twelonelont is not delonlivelonrelond to a uselonr's followelonrs,
+ * not shown in thelon uselonr's timelonlinelon, and doelons not appelonar in selonarch relonsults.
+ * Thelony arelon mainly ads twelonelonts.
  */
-class NullCastTweetFilter(
-  tweetypie: Tweetypie
+class NullCastTwelonelontFiltelonr(
+  twelonelontypielon: Twelonelontypielon
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val requests = stats.counter("requests")
-  private val filtered = stats.counter("filtered")
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val relonquelonsts = stats.countelonr("relonquelonsts")
+  privatelon val filtelonrelond = stats.countelonr("filtelonrelond")
 
-  // Return Future(True) to keep the Tweet.
-  def filter(tweetId: Long): Future[Boolean] = {
-    requests.incr()
-    tweetypie
-      .getTweet(tweetId)
-      .map { tweetOpt =>
-        // If the null cast bit is Some(true), drop the tweet.
-        val isNullCastTweet = tweetOpt.flatMap(_.coreData).exists(_.nullcast)
-        if (isNullCastTweet) {
-          filtered.incr()
+  // Relonturn Futurelon(Truelon) to kelonelonp thelon Twelonelont.
+  delonf filtelonr(twelonelontId: Long): Futurelon[Boolelonan] = {
+    relonquelonsts.incr()
+    twelonelontypielon
+      .gelontTwelonelont(twelonelontId)
+      .map { twelonelontOpt =>
+        // If thelon null cast bit is Somelon(truelon), drop thelon twelonelont.
+        val isNullCastTwelonelont = twelonelontOpt.flatMap(_.corelonData).elonxists(_.nullcast)
+        if (isNullCastTwelonelont) {
+          filtelonrelond.incr()
         }
-        !isNullCastTweet
+        !isNullCastTwelonelont
       }
   }
 }

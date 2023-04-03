@@ -1,210 +1,210 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+import com.twittelonr.selonarch.common.quelonry.DelonfaultFiltelonrWelonight;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.AllDocsItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.RangelonFiltelonrDISI;
+import com.twittelonr.selonarch.elonarlybird.indelonx.TwelonelontIDMappelonr;
 
 /**
- * Filters tweet ids according to since_id and max_id parameter.
+ * Filtelonrs twelonelont ids according to sincelon_id and max_id paramelontelonr.
  *
- * Note that since_id is exclusive and max_id is inclusive.
+ * Notelon that sincelon_id is elonxclusivelon and max_id is inclusivelon.
  */
-public final class SinceMaxIDFilter extends Query {
-  public static final long NO_FILTER = -1;
+public final class SincelonMaxIDFiltelonr elonxtelonnds Quelonry {
+  public static final long NO_FILTelonR = -1;
 
-  private final long sinceIdExclusive;
-  private final long maxIdInclusive;
+  privatelon final long sincelonIdelonxclusivelon;
+  privatelon final long maxIdInclusivelon;
 
-  public static Query getSinceMaxIDQuery(long sinceIdExclusive, long maxIdInclusive) {
-    return new BooleanQuery.Builder()
-        .add(new SinceMaxIDFilter(sinceIdExclusive, maxIdInclusive), BooleanClause.Occur.FILTER)
+  public static Quelonry gelontSincelonMaxIDQuelonry(long sincelonIdelonxclusivelon, long maxIdInclusivelon) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw SincelonMaxIDFiltelonr(sincelonIdelonxclusivelon, maxIdInclusivelon), BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  public static Query getSinceIDQuery(long sinceIdExclusive) {
-    return new BooleanQuery.Builder()
-        .add(new SinceMaxIDFilter(sinceIdExclusive, NO_FILTER), BooleanClause.Occur.FILTER)
+  public static Quelonry gelontSincelonIDQuelonry(long sincelonIdelonxclusivelon) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw SincelonMaxIDFiltelonr(sincelonIdelonxclusivelon, NO_FILTelonR), BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  public static Query getMaxIDQuery(long maxIdInclusive) {
-    return new BooleanQuery.Builder()
-        .add(new SinceMaxIDFilter(NO_FILTER, maxIdInclusive), BooleanClause.Occur.FILTER)
+  public static Quelonry gelontMaxIDQuelonry(long maxIdInclusivelon) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw SincelonMaxIDFiltelonr(NO_FILTelonR, maxIdInclusivelon), BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  private SinceMaxIDFilter(long sinceIdExclusive, long maxIdInclusive) {
-    this.sinceIdExclusive = sinceIdExclusive;
-    this.maxIdInclusive = maxIdInclusive;
+  privatelon SincelonMaxIDFiltelonr(long sincelonIdelonxclusivelon, long maxIdInclusivelon) {
+    this.sincelonIdelonxclusivelon = sincelonIdelonxclusivelon;
+    this.maxIdInclusivelon = maxIdInclusivelon;
   }
 
-  @Override
-  public int hashCode() {
-    return (int) (sinceIdExclusive * 13 + maxIdInclusive);
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn (int) (sincelonIdelonxclusivelon * 13 + maxIdInclusivelon);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof SinceMaxIDFilter)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof SincelonMaxIDFiltelonr)) {
+      relonturn falselon;
     }
 
-    SinceMaxIDFilter filter = SinceMaxIDFilter.class.cast(obj);
-    return (sinceIdExclusive == filter.sinceIdExclusive)
-        && (maxIdInclusive == filter.maxIdInclusive);
+    SincelonMaxIDFiltelonr filtelonr = SincelonMaxIDFiltelonr.class.cast(obj);
+    relonturn (sincelonIdelonxclusivelon == filtelonr.sincelonIdelonxclusivelon)
+        && (maxIdInclusivelon == filtelonr.maxIdInclusivelon);
   }
 
-  @Override
-  public String toString(String field) {
-    if (sinceIdExclusive != NO_FILTER && maxIdInclusive != NO_FILTER) {
-      return "SinceIdFilter:" + sinceIdExclusive + ",MaxIdFilter:" + maxIdInclusive;
-    } else if (maxIdInclusive != NO_FILTER) {
-      return "MaxIdFilter:" + maxIdInclusive;
-    } else {
-      return "SinceIdFilter:" + sinceIdExclusive;
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    if (sincelonIdelonxclusivelon != NO_FILTelonR && maxIdInclusivelon != NO_FILTelonR) {
+      relonturn "SincelonIdFiltelonr:" + sincelonIdelonxclusivelon + ",MaxIdFiltelonr:" + maxIdInclusivelon;
+    } elonlselon if (maxIdInclusivelon != NO_FILTelonR) {
+      relonturn "MaxIdFiltelonr:" + maxIdInclusivelon;
+    } elonlselon {
+      relonturn "SincelonIdFiltelonr:" + sincelonIdelonxclusivelon;
     }
   }
 
   /**
-   * Determines if this segment is at least partially covered by the given tweet ID range.
+   * Delontelonrminelons if this selongmelonnt is at lelonast partially covelonrelond by thelon givelonn twelonelont ID rangelon.
    */
-  public static boolean sinceMaxIDsInRange(
-      TweetIDMapper tweetIdMapper, long sinceIdExclusive, long maxIdInclusive) {
-    // Check for since id out of range. Note that since this ID is exclusive,
-    // equality is out of range too.
-    if (sinceIdExclusive != NO_FILTER && sinceIdExclusive >= tweetIdMapper.getMaxTweetID()) {
-      return false;
+  public static boolelonan sincelonMaxIDsInRangelon(
+      TwelonelontIDMappelonr twelonelontIdMappelonr, long sincelonIdelonxclusivelon, long maxIdInclusivelon) {
+    // Chelonck for sincelon id out of rangelon. Notelon that sincelon this ID is elonxclusivelon,
+    // elonquality is out of rangelon too.
+    if (sincelonIdelonxclusivelon != NO_FILTelonR && sincelonIdelonxclusivelon >= twelonelontIdMappelonr.gelontMaxTwelonelontID()) {
+      relonturn falselon;
     }
 
-    // Check for max id in range.
-    return maxIdInclusive == NO_FILTER || maxIdInclusive >= tweetIdMapper.getMinTweetID();
+    // Chelonck for max id in rangelon.
+    relonturn maxIdInclusivelon == NO_FILTelonR || maxIdInclusivelon >= twelonelontIdMappelonr.gelontMinTwelonelontID();
   }
 
-  // Returns true if this segment is completely covered by these id filters.
-  private static boolean sinceMaxIdsCoverRange(
-      TweetIDMapper tweetIdMapper, long sinceIdExclusive, long maxIdInclusive) {
-    // Check for since_id specified AND since_id newer than than first tweet.
-    if (sinceIdExclusive != NO_FILTER && sinceIdExclusive >= tweetIdMapper.getMinTweetID()) {
-      return false;
+  // Relonturns truelon if this selongmelonnt is complelontelonly covelonrelond by thelonselon id filtelonrs.
+  privatelon static boolelonan sincelonMaxIdsCovelonrRangelon(
+      TwelonelontIDMappelonr twelonelontIdMappelonr, long sincelonIdelonxclusivelon, long maxIdInclusivelon) {
+    // Chelonck for sincelon_id speloncifielond AND sincelon_id nelonwelonr than than first twelonelont.
+    if (sincelonIdelonxclusivelon != NO_FILTelonR && sincelonIdelonxclusivelon >= twelonelontIdMappelonr.gelontMinTwelonelontID()) {
+      relonturn falselon;
     }
 
-    // Check for max id in range.
-    return maxIdInclusive == NO_FILTER || maxIdInclusive > tweetIdMapper.getMaxTweetID();
+    // Chelonck for max id in rangelon.
+    relonturn maxIdInclusivelon == NO_FILTelonR || maxIdInclusivelon > twelonelontIdMappelonr.gelontMaxTwelonelontID();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader reader = context.reader();
-        if (!(reader instanceof EarlybirdIndexSegmentAtomicReader)) {
-          return new AllDocsIterator(reader);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost)
+      throws IOelonxcelonption {
+    relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+      @Ovelonrridelon
+      protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        LelonafRelonadelonr relonadelonr = contelonxt.relonadelonr();
+        if (!(relonadelonr instancelonof elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr)) {
+          relonturn nelonw AllDocsItelonrator(relonadelonr);
         }
 
-        EarlybirdIndexSegmentAtomicReader twitterInMemoryIndexReader =
-            (EarlybirdIndexSegmentAtomicReader) reader;
-        TweetIDMapper tweetIdMapper =
-            (TweetIDMapper) twitterInMemoryIndexReader.getSegmentData().getDocIDToTweetIDMapper();
+        elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr twittelonrInMelonmoryIndelonxRelonadelonr =
+            (elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) relonadelonr;
+        TwelonelontIDMappelonr twelonelontIdMappelonr =
+            (TwelonelontIDMappelonr) twittelonrInMelonmoryIndelonxRelonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
 
-        // Important to return a null DocIdSetIterator here, so the Scorer will skip searching
-        // this segment completely.
-        if (!sinceMaxIDsInRange(tweetIdMapper, sinceIdExclusive, maxIdInclusive)) {
-          return null;
+        // Important to relonturn a null DocIdSelontItelonrator helonrelon, so thelon Scorelonr will skip selonarching
+        // this selongmelonnt complelontelonly.
+        if (!sincelonMaxIDsInRangelon(twelonelontIdMappelonr, sincelonIdelonxclusivelon, maxIdInclusivelon)) {
+          relonturn null;
         }
 
-        // Optimization: just return a match-all iterator when the whole segment is in range.
+        // Optimization: just relonturn a match-all itelonrator whelonn thelon wholelon selongmelonnt is in rangelon.
         // This avoids having to do so many status id lookups.
-        if (sinceMaxIdsCoverRange(tweetIdMapper, sinceIdExclusive, maxIdInclusive)) {
-          return new AllDocsIterator(reader);
+        if (sincelonMaxIdsCovelonrRangelon(twelonelontIdMappelonr, sincelonIdelonxclusivelon, maxIdInclusivelon)) {
+          relonturn nelonw AllDocsItelonrator(relonadelonr);
         }
 
-        return new SinceMaxIDDocIdSetIterator(
-            twitterInMemoryIndexReader, sinceIdExclusive, maxIdInclusive);
+        relonturn nelonw SincelonMaxIDDocIdSelontItelonrator(
+            twittelonrInMelonmoryIndelonxRelonadelonr, sincelonIdelonxclusivelon, maxIdInclusivelon);
       }
     };
   }
 
-  @VisibleForTesting
-  static class SinceMaxIDDocIdSetIterator extends RangeFilterDISI {
-    private final DocIDToTweetIDMapper docIdToTweetIdMapper;
-    private final long sinceIdExclusive;
-    private final long maxIdInclusive;
+  @VisiblelonForTelonsting
+  static class SincelonMaxIDDocIdSelontItelonrator elonxtelonnds RangelonFiltelonrDISI {
+    privatelon final DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr;
+    privatelon final long sincelonIdelonxclusivelon;
+    privatelon final long maxIdInclusivelon;
 
-    public SinceMaxIDDocIdSetIterator(EarlybirdIndexSegmentAtomicReader reader,
-                                      long sinceIdExclusive,
-                                      long maxIdInclusive) throws IOException {
-      super(reader,
-            findMaxIdDocID(reader, maxIdInclusive),
-            findSinceIdDocID(reader, sinceIdExclusive));
-      this.docIdToTweetIdMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
-      this.sinceIdExclusive = sinceIdExclusive;  // sinceStatusId == NO_FILTER is OK, it's exclusive
-      this.maxIdInclusive = maxIdInclusive != NO_FILTER ? maxIdInclusive : Long.MAX_VALUE;
+    public SincelonMaxIDDocIdSelontItelonrator(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr,
+                                      long sincelonIdelonxclusivelon,
+                                      long maxIdInclusivelon) throws IOelonxcelonption {
+      supelonr(relonadelonr,
+            findMaxIdDocID(relonadelonr, maxIdInclusivelon),
+            findSincelonIdDocID(relonadelonr, sincelonIdelonxclusivelon));
+      this.docIdToTwelonelontIdMappelonr = relonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
+      this.sincelonIdelonxclusivelon = sincelonIdelonxclusivelon;  // sincelonStatusId == NO_FILTelonR is OK, it's elonxclusivelon
+      this.maxIdInclusivelon = maxIdInclusivelon != NO_FILTelonR ? maxIdInclusivelon : Long.MAX_VALUelon;
     }
 
     /**
-     * This is a necessary check when we have out of order tweets in the archive.
-     * When tweets are out of order, this guarantees that no false positive results are returned.
-     * I.e. we can still miss some tweets in the specified range, but we never incorrectly return
-     * anything that's not in the range.
+     * This is a neloncelonssary chelonck whelonn welon havelon out of ordelonr twelonelonts in thelon archivelon.
+     * Whelonn twelonelonts arelon out of ordelonr, this guarantelonelons that no falselon positivelon relonsults arelon relonturnelond.
+     * I.elon. welon can still miss somelon twelonelonts in thelon speloncifielond rangelon, but welon nelonvelonr incorrelonctly relonturn
+     * anything that's not in thelon rangelon.
      */
-    @Override
-    protected boolean shouldReturnDoc() {
-      final long statusID = docIdToTweetIdMapper.getTweetID(docID());
-      return statusID > sinceIdExclusive && statusID <= maxIdInclusive;
+    @Ovelonrridelon
+    protelonctelond boolelonan shouldRelonturnDoc() {
+      final long statusID = docIdToTwelonelontIdMappelonr.gelontTwelonelontID(docID());
+      relonturn statusID > sincelonIdelonxclusivelon && statusID <= maxIdInclusivelon;
     }
 
-    private static int findSinceIdDocID(
-        EarlybirdIndexSegmentAtomicReader reader, long sinceIdExclusive) throws IOException {
-      TweetIDMapper tweetIdMapper =
-          (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
-      if (sinceIdExclusive != SinceMaxIDFilter.NO_FILTER) {
-        // We use this as an upper bound on the search, so we want to find the highest possible
-        // doc ID for this tweet ID.
-        boolean findMaxDocID = true;
-        return tweetIdMapper.findDocIdBound(
-            sinceIdExclusive,
+    privatelon static int findSincelonIdDocID(
+        elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr, long sincelonIdelonxclusivelon) throws IOelonxcelonption {
+      TwelonelontIDMappelonr twelonelontIdMappelonr =
+          (TwelonelontIDMappelonr) relonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
+      if (sincelonIdelonxclusivelon != SincelonMaxIDFiltelonr.NO_FILTelonR) {
+        // Welon uselon this as an uppelonr bound on thelon selonarch, so welon want to find thelon highelonst possiblelon
+        // doc ID for this twelonelont ID.
+        boolelonan findMaxDocID = truelon;
+        relonturn twelonelontIdMappelonr.findDocIdBound(
+            sincelonIdelonxclusivelon,
             findMaxDocID,
-            reader.getSmallestDocID(),
-            reader.maxDoc() - 1);
-      } else {
-        return DocIDToTweetIDMapper.ID_NOT_FOUND;
+            relonadelonr.gelontSmallelonstDocID(),
+            relonadelonr.maxDoc() - 1);
+      } elonlselon {
+        relonturn DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND;
       }
     }
 
-    private static int findMaxIdDocID(
-        EarlybirdIndexSegmentAtomicReader reader, long maxIdInclusive) throws IOException {
-      TweetIDMapper tweetIdMapper =
-          (TweetIDMapper) reader.getSegmentData().getDocIDToTweetIDMapper();
-      if (maxIdInclusive != SinceMaxIDFilter.NO_FILTER) {
-        // We use this as a lower bound on the search, so we want to find the lowest possible
-        // doc ID for this tweet ID.
-        boolean findMaxDocID = false;
-        return tweetIdMapper.findDocIdBound(
-            maxIdInclusive,
+    privatelon static int findMaxIdDocID(
+        elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr, long maxIdInclusivelon) throws IOelonxcelonption {
+      TwelonelontIDMappelonr twelonelontIdMappelonr =
+          (TwelonelontIDMappelonr) relonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
+      if (maxIdInclusivelon != SincelonMaxIDFiltelonr.NO_FILTelonR) {
+        // Welon uselon this as a lowelonr bound on thelon selonarch, so welon want to find thelon lowelonst possiblelon
+        // doc ID for this twelonelont ID.
+        boolelonan findMaxDocID = falselon;
+        relonturn twelonelontIdMappelonr.findDocIdBound(
+            maxIdInclusivelon,
             findMaxDocID,
-            reader.getSmallestDocID(),
-            reader.maxDoc() - 1);
-      } else {
-        return DocIDToTweetIDMapper.ID_NOT_FOUND;
+            relonadelonr.gelontSmallelonstDocID(),
+            relonadelonr.maxDoc() - 1);
+      } elonlselon {
+        relonturn DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND;
       }
     }
   }

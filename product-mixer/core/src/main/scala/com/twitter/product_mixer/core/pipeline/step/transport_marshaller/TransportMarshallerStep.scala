@@ -1,76 +1,76 @@
-package com.twitter.product_mixer.core.pipeline.step.transport_marshaller
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.transport_marshallelonr
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.domain_marshaller_executor.DomainMarshallerExecutor
-import com.twitter.product_mixer.core.service.transport_marshaller_executor.TransportMarshallerExecutor
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HaselonxeloncutorRelonsults
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.domain_marshallelonr_elonxeloncutor.DomainMarshallelonrelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.transport_marshallelonr_elonxeloncutor.TransportMarshallelonrelonxeloncutor
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A transport marshaller step, it takes domain marshalled result as input and returns trasnport
- * ready marshalled object.
- * The [[State]] object is responsible for keeping a reference of the built marshalled response.
+ * A transport marshallelonr stelonp, it takelons domain marshallelond relonsult as input and relonturns trasnport
+ * relonady marshallelond objelonct.
+ * Thelon [[Statelon]] objelonct is relonsponsiblelon for kelonelonping a relonfelonrelonncelon of thelon built marshallelond relonsponselon.
  *
- * @param transportMarshallerExecutor Domain Marshaller executor.
- * @tparam Query Type of PipelineQuery domain model
- * @tparam DomainResponseType the domain marshalling type used as input
- * @tparam TransportResponseType the expected returned transport type
- * @tparam State The pipeline state domain model.
+ * @param transportMarshallelonrelonxeloncutor Domain Marshallelonr elonxeloncutor.
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam DomainRelonsponselonTypelon thelon domain marshalling typelon uselond as input
+ * @tparam TransportRelonsponselonTypelon thelon elonxpelonctelond relonturnelond transport typelon
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class TransportMarshallerStep[
-  DomainResponseType <: HasMarshalling,
-  TransportResponseType,
-  State <: HasExecutorResults[State]] @Inject() (
-  transportMarshallerExecutor: TransportMarshallerExecutor)
-    extends Step[
-      State,
-      TransportMarshallerConfig[DomainResponseType, TransportResponseType],
-      TransportMarshallerExecutor.Inputs[DomainResponseType],
-      TransportMarshallerExecutor.Result[TransportResponseType]
+caselon class TransportMarshallelonrStelonp[
+  DomainRelonsponselonTypelon <: HasMarshalling,
+  TransportRelonsponselonTypelon,
+  Statelon <: HaselonxeloncutorRelonsults[Statelon]] @Injelonct() (
+  transportMarshallelonrelonxeloncutor: TransportMarshallelonrelonxeloncutor)
+    elonxtelonnds Stelonp[
+      Statelon,
+      TransportMarshallelonrConfig[DomainRelonsponselonTypelon, TransportRelonsponselonTypelon],
+      TransportMarshallelonrelonxeloncutor.Inputs[DomainRelonsponselonTypelon],
+      TransportMarshallelonrelonxeloncutor.Relonsult[TransportRelonsponselonTypelon]
     ] {
 
-  override def isEmpty(
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType]
-  ): Boolean = false
+  ovelonrridelon delonf iselonmpty(
+    config: TransportMarshallelonrConfig[DomainRelonsponselonTypelon, TransportRelonsponselonTypelon]
+  ): Boolelonan = falselon
 
-  override def adaptInput(
-    state: State,
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType]
-  ): TransportMarshallerExecutor.Inputs[DomainResponseType] = {
-    val domainMarshallerResult = state.executorResultsByPipelineStep
-      .getOrElse(
-        config.domainMarshallerStepIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Domain Marshaller in Transport Marshaller Step")).asInstanceOf[
-        DomainMarshallerExecutor.Result[DomainResponseType]]
-    TransportMarshallerExecutor.Inputs(domainMarshallerResult.result)
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: TransportMarshallelonrConfig[DomainRelonsponselonTypelon, TransportRelonsponselonTypelon]
+  ): TransportMarshallelonrelonxeloncutor.Inputs[DomainRelonsponselonTypelon] = {
+    val domainMarshallelonrRelonsult = statelon.elonxeloncutorRelonsultsByPipelonlinelonStelonp
+      .gelontOrelonlselon(
+        config.domainMarshallelonrStelonpIdelonntifielonr,
+        throw PipelonlinelonFailurelon(
+          IllelongalStatelonFailurelon,
+          "Missing Domain Marshallelonr in Transport Marshallelonr Stelonp")).asInstancelonOf[
+        DomainMarshallelonrelonxeloncutor.Relonsult[DomainRelonsponselonTypelon]]
+    TransportMarshallelonrelonxeloncutor.Inputs(domainMarshallelonrRelonsult.relonsult)
   }
 
-  // Noop as platform updates executor result
-  override def updateState(
-    state: State,
-    executorResult: TransportMarshallerExecutor.Result[TransportResponseType],
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType]
-  ): State = state
+  // Noop as platform updatelons elonxeloncutor relonsult
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: TransportMarshallelonrelonxeloncutor.Relonsult[TransportRelonsponselonTypelon],
+    config: TransportMarshallelonrConfig[DomainRelonsponselonTypelon, TransportRelonsponselonTypelon]
+  ): Statelon = statelon
 
-  override def arrow(
-    config: TransportMarshallerConfig[DomainResponseType, TransportResponseType],
-    context: Executor.Context
-  ): Arrow[TransportMarshallerExecutor.Inputs[
-    DomainResponseType
-  ], TransportMarshallerExecutor.Result[TransportResponseType]] =
-    transportMarshallerExecutor.arrow(config.transportMarshaller, context)
+  ovelonrridelon delonf arrow(
+    config: TransportMarshallelonrConfig[DomainRelonsponselonTypelon, TransportRelonsponselonTypelon],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[TransportMarshallelonrelonxeloncutor.Inputs[
+    DomainRelonsponselonTypelon
+  ], TransportMarshallelonrelonxeloncutor.Relonsult[TransportRelonsponselonTypelon]] =
+    transportMarshallelonrelonxeloncutor.arrow(config.transportMarshallelonr, contelonxt)
 
 }
 
-case class TransportMarshallerConfig[DomainResponseType <: HasMarshalling, TransportResponseType](
-  transportMarshaller: TransportMarshaller[DomainResponseType, TransportResponseType],
-  domainMarshallerStepIdentifier: PipelineStepIdentifier)
+caselon class TransportMarshallelonrConfig[DomainRelonsponselonTypelon <: HasMarshalling, TransportRelonsponselonTypelon](
+  transportMarshallelonr: TransportMarshallelonr[DomainRelonsponselonTypelon, TransportRelonsponselonTypelon],
+  domainMarshallelonrStelonpIdelonntifielonr: PipelonlinelonStelonpIdelonntifielonr)

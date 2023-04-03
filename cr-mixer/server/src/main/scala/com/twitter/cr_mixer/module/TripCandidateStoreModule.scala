@@ -1,34 +1,34 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweet
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripTweets
-import com.twitter.trends.trip_v1.trip_tweets.thriftscala.TripDomain
-import javax.inject.Named
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.trelonnds.trip_v1.trip_twelonelonts.thriftscala.TripTwelonelont
+import com.twittelonr.trelonnds.trip_v1.trip_twelonelonts.thriftscala.TripTwelonelonts
+import com.twittelonr.trelonnds.trip_v1.trip_twelonelonts.thriftscala.TripDomain
+import javax.injelonct.Namelond
 
-object TripCandidateStoreModule extends TwitterModule {
-  private val stratoColumn = "trends/trip/tripTweetsDataflowProd"
+objelonct TripCandidatelonStorelonModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon val stratoColumn = "trelonnds/trip/tripTwelonelontsDataflowProd"
 
-  @Provides
-  @Named(ModuleNames.TripCandidateStore)
-  def providesSimClustersTripCandidateStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient
-  ): ReadableStore[TripDomain, Seq[TripTweet]] = {
-    val tripCandidateStratoFetchableStore =
-      StratoFetchableStore
-        .withUnitView[TripDomain, TripTweets](stratoClient, stratoColumn)
-        .mapValues(_.tweets)
+  @Providelons
+  @Namelond(ModulelonNamelons.TripCandidatelonStorelon)
+  delonf providelonsSimClustelonrsTripCandidatelonStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    stratoClielonnt: StratoClielonnt
+  ): RelonadablelonStorelon[TripDomain, Selonq[TripTwelonelont]] = {
+    val tripCandidatelonStratoFelontchablelonStorelon =
+      StratoFelontchablelonStorelon
+        .withUnitVielonw[TripDomain, TripTwelonelonts](stratoClielonnt, stratoColumn)
+        .mapValuelons(_.twelonelonts)
 
-    ObservedReadableStore(
-      tripCandidateStratoFetchableStore
-    )(statsReceiver.scope("simclusters_trip_candidate_store"))
+    ObselonrvelondRelonadablelonStorelon(
+      tripCandidatelonStratoFelontchablelonStorelon
+    )(statsReloncelonivelonr.scopelon("simclustelonrs_trip_candidatelon_storelon"))
   }
 }

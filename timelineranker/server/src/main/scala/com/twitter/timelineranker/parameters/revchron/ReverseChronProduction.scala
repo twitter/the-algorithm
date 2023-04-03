@@ -1,28 +1,28 @@
-package com.twitter.timelineranker.parameters.revchron
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.relonvchron
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi._
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.timelonlinelons.configapi._
 
-object ReverseChronProduction {
-  val intFeatureSwitchParams = Seq(ReverseChronParams.MaxFollowedUsersParam)
-  val booleanFeatureSwitchParams = Seq(
-    ReverseChronParams.ReturnEmptyWhenOverMaxFollowsParam,
-    ReverseChronParams.DirectedAtNarrowcastingViaSearchParam,
-    ReverseChronParams.PostFilteringBasedOnSearchMetadataEnabledParam
+objelonct RelonvelonrselonChronProduction {
+  val intFelonaturelonSwitchParams = Selonq(RelonvelonrselonChronParams.MaxFollowelondUselonrsParam)
+  val boolelonanFelonaturelonSwitchParams = Selonq(
+    RelonvelonrselonChronParams.RelonturnelonmptyWhelonnOvelonrMaxFollowsParam,
+    RelonvelonrselonChronParams.DirelonctelondAtNarrowcastingViaSelonarchParam,
+    RelonvelonrselonChronParams.PostFiltelonringBaselondOnSelonarchMelontadataelonnablelondParam
   )
 }
 
-class ReverseChronProduction(deciderGateBuilder: DeciderGateBuilder) {
-  val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-    ReverseChronProduction.intFeatureSwitchParams: _*
+class RelonvelonrselonChronProduction(deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr) {
+  val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+    RelonvelonrselonChronProduction.intFelonaturelonSwitchParams: _*
   )
 
-  val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-    ReverseChronProduction.booleanFeatureSwitchParams: _*
+  val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+    RelonvelonrselonChronProduction.boolelonanFelonaturelonSwitchParams: _*
   )
 
-  val config: BaseConfig = new BaseConfigBuilder()
-    .set(intOverrides: _*)
-    .set(booleanOverrides: _*)
-    .build(ReverseChronProduction.getClass.getSimpleName)
+  val config: BaselonConfig = nelonw BaselonConfigBuildelonr()
+    .selont(intOvelonrridelons: _*)
+    .selont(boolelonanOvelonrridelons: _*)
+    .build(RelonvelonrselonChronProduction.gelontClass.gelontSimplelonNamelon)
 }

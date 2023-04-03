@@ -1,10 +1,10 @@
-package com.twitter.visibility.interfaces.search
+packagelon com.twittelonr.visibility.intelonrfacelons.selonarch
 
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.models.SafetyLevel
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
 
-case class TweetContext(
-  tweet: Tweet,
-  quotedTweet: Option[Tweet],
-  retweetSourceTweet: Option[Tweet] = None,
-  safetyLevel: SafetyLevel)
+caselon class TwelonelontContelonxt(
+  twelonelont: Twelonelont,
+  quotelondTwelonelont: Option[Twelonelont],
+  relontwelonelontSourcelonTwelonelont: Option[Twelonelont] = Nonelon,
+  safelontyLelonvelonl: SafelontyLelonvelonl)

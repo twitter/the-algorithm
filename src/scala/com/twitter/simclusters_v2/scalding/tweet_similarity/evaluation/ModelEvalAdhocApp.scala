@@ -1,91 +1,91 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity.evaluation
+packagelon com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.elonvaluation
 
-import com.twitter.ml.api.Feature.Continuous
-import com.twitter.ml.api.DailySuffixFeatureSource
-import com.twitter.ml.api.DataSetPipe
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.tweet_similarity.TweetSimilarityFeatures
-import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor
-import java.util.TimeZone
+import com.twittelonr.ml.api.Felonaturelon.Continuous
+import com.twittelonr.ml.api.DailySuffixFelonaturelonSourcelon
+import com.twittelonr.ml.api.DataSelontPipelon
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.simclustelonrs_v2.twelonelont_similarity.TwelonelontSimilarityFelonaturelons
+import com.twittelonr.twml.runtimelon.scalding.TelonnsorflowBatchPrelondictor
+import java.util.TimelonZonelon
 
 /**
- * Scalding execution app for scoring a Dataset against an exported Tensorflow model.
+ * Scalding elonxeloncution app for scoring a Dataselont against an elonxportelond Telonnsorflow modelonl.
 
-** Arguments:
- * dataset_path - Path for the dataset on hdfs
- * date - Date for the dataset paths, required if Daily dataset.
- * model_source - Path of the exported model on HDFS. Must start with hdfs:// scheme.
- * output_path - Path of the output result file
+** Argumelonnts:
+ * dataselont_path - Path for thelon dataselont on hdfs
+ * datelon - Datelon for thelon dataselont paths, relonquirelond if Daily dataselont.
+ * modelonl_sourcelon - Path of thelon elonxportelond modelonl on HDFS. Must start with hdfs:// schelonmelon.
+ * output_path - Path of thelon output relonsult filelon
 
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:model_eval-adhoc \
---user cassowary \
---submitter hadoopnest2.atla.twitter.com \
---main-class com.twitter.simclusters_v2.scalding.tweet_similarity.ModelEvalAdhocApp -- \
---date 2020-02-19 \
---dataset_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/test \
---model_path hdfs:///user/cassowary/tweet_similarity/2020-02-07-15-20-15/exported_models/1581253926 \
---output_path /user/cassowary/adhoc/training_data/2020-02-19_class_balanced/test/prediction_v1
+scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/twelonelont_similarity:modelonl_elonval-adhoc \
+--uselonr cassowary \
+--submittelonr hadoopnelonst2.atla.twittelonr.com \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.ModelonlelonvalAdhocApp -- \
+--datelon 2020-02-19 \
+--dataselont_path /uselonr/cassowary/adhoc/training_data/2020-02-19_class_balancelond/telonst \
+--modelonl_path hdfs:///uselonr/cassowary/twelonelont_similarity/2020-02-07-15-20-15/elonxportelond_modelonls/1581253926 \
+--output_path /uselonr/cassowary/adhoc/training_data/2020-02-19_class_balancelond/telonst/prelondiction_v1
  **/
-object ModelEvalAdhocApp extends TwitterExecutionApp {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+objelonct ModelonlelonvalAdhocApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val timelonZonelon: TimelonZonelon = DatelonOps.UTC
+  implicit val datelonParselonr: DatelonParselonr = DatelonParselonr.delonfault
 
   /**
-   * Get predictor for the given model path
-   * @param modelName name of the model
-   * @param modelSource path of the exported model on HDFS. Must start with hdfs:// scheme.
-   * @return
+   * Gelont prelondictor for thelon givelonn modelonl path
+   * @param modelonlNamelon namelon of thelon modelonl
+   * @param modelonlSourcelon path of thelon elonxportelond modelonl on HDFS. Must start with hdfs:// schelonmelon.
+   * @relonturn
    */
-  def getPredictor(modelName: String, modelSource: String): TensorflowBatchPredictor = {
-    val defaultInputNode = "request:0"
-    val defaultOutputNode = "response:0"
-    TensorflowBatchPredictor(modelName, modelSource, defaultInputNode, defaultOutputNode)
+  delonf gelontPrelondictor(modelonlNamelon: String, modelonlSourcelon: String): TelonnsorflowBatchPrelondictor = {
+    val delonfaultInputNodelon = "relonquelonst:0"
+    val delonfaultOutputNodelon = "relonsponselon:0"
+    TelonnsorflowBatchPrelondictor(modelonlNamelon, modelonlSourcelon, delonfaultInputNodelon, delonfaultOutputNodelon)
   }
 
   /**
-   * Given input pipe and predictor, return the predictions in TypedPipe
-   * @param dataset dataset for prediction
-   * @param batchPredictor predictor
-   * @return
+   * Givelonn input pipelon and prelondictor, relonturn thelon prelondictions in TypelondPipelon
+   * @param dataselont dataselont for prelondiction
+   * @param batchPrelondictor prelondictor
+   * @relonturn
    */
-  def getPrediction(
-    dataset: DataSetPipe,
-    batchPredictor: TensorflowBatchPredictor
-  ): TypedPipe[(Long, Long, Boolean, Double, Double)] = {
-    val featureContext = dataset.featureContext
-    val predictionFeature = new Continuous("output")
+  delonf gelontPrelondiction(
+    dataselont: DataSelontPipelon,
+    batchPrelondictor: TelonnsorflowBatchPrelondictor
+  ): TypelondPipelon[(Long, Long, Boolelonan, Doublelon, Doublelon)] = {
+    val felonaturelonContelonxt = dataselont.felonaturelonContelonxt
+    val prelondictionFelonaturelon = nelonw Continuous("output")
 
-    batchPredictor
-      .predict(dataset.records)
+    batchPrelondictor
+      .prelondict(dataselont.reloncords)
       .map {
-        case (originalDataRecord, predictedDataRecord) =>
-          val prediction = new RichDataRecord(predictedDataRecord, featureContext)
-            .getFeatureValue(predictionFeature).toDouble
-          val richDataRecord = new RichDataRecord(originalDataRecord, featureContext)
+        caselon (originalDataReloncord, prelondictelondDataReloncord) =>
+          val prelondiction = nelonw RichDataReloncord(prelondictelondDataReloncord, felonaturelonContelonxt)
+            .gelontFelonaturelonValuelon(prelondictionFelonaturelon).toDoublelon
+          val richDataReloncord = nelonw RichDataReloncord(originalDataReloncord, felonaturelonContelonxt)
           (
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.QueryTweetId).toLong,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.CandidateTweetId).toLong,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.Label).booleanValue,
-            richDataRecord.getFeatureValue(TweetSimilarityFeatures.CosineSimilarity).toDouble,
-            prediction
+            richDataReloncord.gelontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.QuelonryTwelonelontId).toLong,
+            richDataReloncord.gelontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.CandidatelonTwelonelontId).toLong,
+            richDataReloncord.gelontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.Labelonl).boolelonanValuelon,
+            richDataReloncord.gelontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.CosinelonSimilarity).toDoublelon,
+            prelondiction
           )
       }
   }
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
+  ovelonrridelon delonf job: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uniquelonId =>
+      elonxeloncution.withArgs { args: Args =>
+        implicit val datelonRangelon: DatelonRangelon = DatelonRangelon.parselon(args.list("datelon"))
         val outputPath: String = args("output_path")
-        val dataset: DataSetPipe = DailySuffixFeatureSource(args("dataset_path")).read
-        val modelSource: String = args("model_path")
-        val modelName: String = "tweet_similarity"
+        val dataselont: DataSelontPipelon = DailySuffixFelonaturelonSourcelon(args("dataselont_path")).relonad
+        val modelonlSourcelon: String = args("modelonl_path")
+        val modelonlNamelon: String = "twelonelont_similarity"
 
-        getPrediction(dataset, getPredictor(modelName, modelSource))
-          .writeExecution(TypedTsv[(Long, Long, Boolean, Double, Double)](outputPath))
+        gelontPrelondiction(dataselont, gelontPrelondictor(modelonlNamelon, modelonlSourcelon))
+          .writelonelonxeloncution(TypelondTsv[(Long, Long, Boolelonan, Doublelon, Doublelon)](outputPath))
       }
     }
 }

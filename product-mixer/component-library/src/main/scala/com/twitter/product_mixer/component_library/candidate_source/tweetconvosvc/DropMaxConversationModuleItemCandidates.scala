@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.twelonelontconvosvc
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Takes a conversation module item and truncates it to be at most the focal tweet, the focal tweet's
- * in reply to tweet and optionally, the root conversation tweet if desired.
- * @param pipelineScope What pipeline scopes to include in this.
- * @param includeRootTweet Whether to include the root tweet at the top of the conversation or not.
- * @tparam Query
+ * Takelons a convelonrsation modulelon itelonm and truncatelons it to belon at most thelon focal twelonelont, thelon focal twelonelont's
+ * in relonply to twelonelont and optionally, thelon root convelonrsation twelonelont if delonsirelond.
+ * @param pipelonlinelonScopelon What pipelonlinelon scopelons to includelon in this.
+ * @param includelonRootTwelonelont Whelonthelonr to includelon thelon root twelonelont at thelon top of thelon convelonrsation or not.
+ * @tparam Quelonry
  */
-case class DropMaxConversationModuleItemCandidates[-Query <: PipelineQuery](
-  override val pipelineScope: CandidateScope,
-  includeRootTweet: Boolean)
-    extends Selector[Query] {
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val updatedCandidates = remainingCandidates.collect {
-      case moduleCandidate: ModuleCandidateWithDetails if pipelineScope.contains(moduleCandidate) =>
-        updateConversationModule(moduleCandidate, includeRootTweet)
-      case candidates => candidates
+caselon class DropMaxConvelonrsationModulelonItelonmCandidatelons[-Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
+  includelonRootTwelonelont: Boolelonan)
+    elonxtelonnds Selonlelonctor[Quelonry] {
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val updatelondCandidatelons = relonmainingCandidatelons.collelonct {
+      caselon modulelonCandidatelon: ModulelonCandidatelonWithDelontails if pipelonlinelonScopelon.contains(modulelonCandidatelon) =>
+        updatelonConvelonrsationModulelon(modulelonCandidatelon, includelonRootTwelonelont)
+      caselon candidatelons => candidatelons
     }
-    SelectorResult(remainingCandidates = updatedCandidates, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = updatelondCandidatelons, relonsult = relonsult)
   }
 
-  private def updateConversationModule(
-    module: ModuleCandidateWithDetails,
-    includeRootTweet: Boolean
-  ): ModuleCandidateWithDetails = {
-    // If the thread is only the root tweet & a focal tweet replying to it, no truncation can be done.
-    if (module.candidates.length <= 2) {
-      module
-    } else {
-      // If a thread is more 3 or more tweets, we optionally keep the root tweet if desired, and take
-      // the focal tweet tweet and its direct ancestor (the one it would have replied to) and return
-      // those.
-      val tweetCandidates = module.candidates
-      val replyAndFocalTweet = tweetCandidates.takeRight(2)
-      val updatedConversation = if (includeRootTweet) {
-        tweetCandidates.headOption ++ replyAndFocalTweet
-      } else {
-        replyAndFocalTweet
+  privatelon delonf updatelonConvelonrsationModulelon(
+    modulelon: ModulelonCandidatelonWithDelontails,
+    includelonRootTwelonelont: Boolelonan
+  ): ModulelonCandidatelonWithDelontails = {
+    // If thelon threlonad is only thelon root twelonelont & a focal twelonelont relonplying to it, no truncation can belon donelon.
+    if (modulelon.candidatelons.lelonngth <= 2) {
+      modulelon
+    } elonlselon {
+      // If a threlonad is morelon 3 or morelon twelonelonts, welon optionally kelonelonp thelon root twelonelont if delonsirelond, and takelon
+      // thelon focal twelonelont twelonelont and its direlonct ancelonstor (thelon onelon it would havelon relonplielond to) and relonturn
+      // thoselon.
+      val twelonelontCandidatelons = modulelon.candidatelons
+      val relonplyAndFocalTwelonelont = twelonelontCandidatelons.takelonRight(2)
+      val updatelondConvelonrsation = if (includelonRootTwelonelont) {
+        twelonelontCandidatelons.helonadOption ++ relonplyAndFocalTwelonelont
+      } elonlselon {
+        relonplyAndFocalTwelonelont
       }
-      module.copy(candidates = updatedConversation.toSeq)
+      modulelon.copy(candidatelons = updatelondConvelonrsation.toSelonq)
     }
   }
 }

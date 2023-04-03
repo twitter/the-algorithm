@@ -1,82 +1,82 @@
 scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":candidate-algorithm-adapter",
-        ":client-context-adapter",
-        ":post-nux-algorithm-adapter",
-        ":pre-fetched-feature-adapter",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":candidatelon-algorithm-adaptelonr",
+        ":clielonnt-contelonxt-adaptelonr",
+        ":post-nux-algorithm-adaptelonr",
+        ":prelon-felontchelond-felonaturelon-adaptelonr",
     ],
 )
 
-target(
-    name = "common",
-    tags = ["bazel-compatible"],
-    dependencies = [
+targelont(
+    namelon = "common",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         "3rdparty/jvm/org/slf4j:slf4j-api",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/base",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/clients/strato",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/constants",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/feature_hydration/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/utils",
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/onboarding/relevance/util/metadata",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/baselon",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/clielonnts/strato",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/constants",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/felonaturelon_hydration/common",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/modelonls",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/utils",
+        "src/java/com/twittelonr/ml/api:api-baselon",
+        "src/scala/com/twittelonr/ml/api/util",
+        "src/scala/com/twittelonr/onboarding/relonlelonvancelon/util/melontadata",
         "util/util-slf4j-api/src/main/scala",
     ],
 )
 
 scala_library(
-    name = "candidate-algorithm-adapter",
-    sources = [
-        "CandidateAlgorithmAdapter.scala",
+    namelon = "candidatelon-algorithm-adaptelonr",
+    sourcelons = [
+        "CandidatelonAlgorithmAdaptelonr.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         ":common",
-        "hermit/hermit-core/src/main/scala/com/twitter/hermit/constants",
+        "helonrmit/helonrmit-corelon/src/main/scala/com/twittelonr/helonrmit/constants",
     ],
 )
 
 scala_library(
-    name = "client-context-adapter",
-    sources = [
-        "ClientContextAdapter.scala",
+    namelon = "clielonnt-contelonxt-adaptelonr",
+    sourcelons = [
+        "ClielonntContelonxtAdaptelonr.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         ":common",
-        "snowflake/src/main/scala/com/twitter/snowflake/id",
+        "snowflakelon/src/main/scala/com/twittelonr/snowflakelon/id",
     ],
 )
 
 scala_library(
-    name = "post-nux-algorithm-adapter",
-    sources = [
-        "PostNuxAlgorithmAdapter.scala",
+    namelon = "post-nux-algorithm-adaptelonr",
+    sourcelons = [
+        "PostNuxAlgorithmAdaptelonr.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         ":common",
-        "src/scala/com/twitter/ml/featurestore/catalog/features/customer_journey:post-nux-algorithm-aggregate",
+        "src/scala/com/twittelonr/ml/felonaturelonstorelon/catalog/felonaturelons/customelonr_journelony:post-nux-algorithm-aggrelongatelon",
     ],
 )
 
 scala_library(
-    name = "pre-fetched-feature-adapter",
-    sources = [
-        "PreFetchedFeatureAdapter.scala",
+    namelon = "prelon-felontchelond-felonaturelon-adaptelonr",
+    sourcelons = [
+        "PrelonFelontchelondFelonaturelonAdaptelonr.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         ":common",
     ],
 )

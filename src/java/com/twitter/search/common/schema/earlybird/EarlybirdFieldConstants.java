@@ -1,1132 +1,1132 @@
 
-package com.twitter.search.common.schema.earlybird;
+packagelon com.twittelonr.selonarch.common.schelonma.elonarlybird;
 
-import java.util.Collection;
-import java.util.EnumSet;
+import java.util.Collelonction;
+import java.util.elonnumSelont;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.schema.ImmutableSchema;
-import com.twitter.search.common.schema.SchemaBuilder;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationType;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftGelonoLocationSourcelon;
+import com.twittelonr.selonarch.common.schelonma.ImmutablelonSchelonma;
+import com.twittelonr.selonarch.common.schelonma.SchelonmaBuildelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldNamelonToIdMapping;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFelonaturelonNormalizationTypelon;
 
 /**
- * Field names, field IDs etc.
+ * Fielonld namelons, fielonld IDs elontc.
  */
-public class EarlybirdFieldConstants extends FieldNameToIdMapping {
-  @VisibleForTesting
-  public static final String ENCODED_TWEET_FEATURES_FIELD_NAME = "encoded_tweet_features";
+public class elonarlybirdFielonldConstants elonxtelonnds FielonldNamelonToIdMapping {
+  @VisiblelonForTelonsting
+  public static final String elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon = "elonncodelond_twelonelont_felonaturelons";
 
-  @VisibleForTesting
-  public static final String EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME =
-      "extended_encoded_tweet_features";
+  @VisiblelonForTelonsting
+  public static final String elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon =
+      "elonxtelonndelond_elonncodelond_twelonelont_felonaturelons";
 
-  private enum FlagFeatureFieldType {
-    NON_FLAG_FEATURE_FIELD,
-    FLAG_FEATURE_FIELD
+  privatelon elonnum FlagFelonaturelonFielonldTypelon {
+    NON_FLAG_FelonATURelon_FIelonLD,
+    FLAG_FelonATURelon_FIelonLD
   }
 
-  private enum UnusedFeatureFieldType {
-    USED_FEATURE_FIELD,
-    UNUSED_FEATURE_FIELD
+  privatelon elonnum UnuselondFelonaturelonFielonldTypelon {
+    USelonD_FelonATURelon_FIelonLD,
+    UNUSelonD_FelonATURelon_FIelonLD
   }
 
   /**
-   * CSF_NAME_TO_MIN_ENGAGEMENT_FIELD_MAP and MIN_ENGAGEMENT_FIELD_TO_CSF_NAME_MAP are used in
-   * EarlybirdLuceneQueryVisitor to map the CSFs REPLY_COUNT, RETWEET_COUNT, and FAVORITE_COUNT to
-   * their respective min engagement fields, and vice versa.
+   * CSF_NAMelon_TO_MIN_elonNGAGelonMelonNT_FIelonLD_MAP and MIN_elonNGAGelonMelonNT_FIelonLD_TO_CSF_NAMelon_MAP arelon uselond in
+   * elonarlybirdLucelonnelonQuelonryVisitor to map thelon CSFs RelonPLY_COUNT, RelonTWelonelonT_COUNT, and FAVORITelon_COUNT to
+   * thelonir relonspelonctivelon min elonngagelonmelonnt fielonlds, and vicelon velonrsa.
    */
-  public static final ImmutableMap<String, EarlybirdFieldConstant>
-      CSF_NAME_TO_MIN_ENGAGEMENT_FIELD_MAP = ImmutableMap.<String, EarlybirdFieldConstant>builder()
-          .put(EarlybirdFieldConstant.REPLY_COUNT.getFieldName(),
-              EarlybirdFieldConstant.NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD)
-          .put(EarlybirdFieldConstant.RETWEET_COUNT.getFieldName(),
-              EarlybirdFieldConstant.NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD)
-          .put(EarlybirdFieldConstant.FAVORITE_COUNT.getFieldName(),
-              EarlybirdFieldConstant.NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD)
+  public static final ImmutablelonMap<String, elonarlybirdFielonldConstant>
+      CSF_NAMelon_TO_MIN_elonNGAGelonMelonNT_FIelonLD_MAP = ImmutablelonMap.<String, elonarlybirdFielonldConstant>buildelonr()
+          .put(elonarlybirdFielonldConstant.RelonPLY_COUNT.gelontFielonldNamelon(),
+              elonarlybirdFielonldConstant.NORMALIZelonD_RelonPLY_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD)
+          .put(elonarlybirdFielonldConstant.RelonTWelonelonT_COUNT.gelontFielonldNamelon(),
+              elonarlybirdFielonldConstant.NORMALIZelonD_RelonTWelonelonT_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD)
+          .put(elonarlybirdFielonldConstant.FAVORITelon_COUNT.gelontFielonldNamelon(),
+              elonarlybirdFielonldConstant.NORMALIZelonD_FAVORITelon_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD)
           .build();
 
-  public static final ImmutableMap<String, EarlybirdFieldConstant>
-      MIN_ENGAGEMENT_FIELD_TO_CSF_NAME_MAP = ImmutableMap.<String, EarlybirdFieldConstant>builder()
-      .put(EarlybirdFieldConstant.NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD
-              .getFieldName(),
-          EarlybirdFieldConstant.REPLY_COUNT)
-      .put(EarlybirdFieldConstant.NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD
-              .getFieldName(),
-          EarlybirdFieldConstant.RETWEET_COUNT)
-      .put(EarlybirdFieldConstant.NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD
-              .getFieldName(),
-          EarlybirdFieldConstant.FAVORITE_COUNT)
+  public static final ImmutablelonMap<String, elonarlybirdFielonldConstant>
+      MIN_elonNGAGelonMelonNT_FIelonLD_TO_CSF_NAMelon_MAP = ImmutablelonMap.<String, elonarlybirdFielonldConstant>buildelonr()
+      .put(elonarlybirdFielonldConstant.NORMALIZelonD_RelonPLY_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD
+              .gelontFielonldNamelon(),
+          elonarlybirdFielonldConstant.RelonPLY_COUNT)
+      .put(elonarlybirdFielonldConstant.NORMALIZelonD_RelonTWelonelonT_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD
+              .gelontFielonldNamelon(),
+          elonarlybirdFielonldConstant.RelonTWelonelonT_COUNT)
+      .put(elonarlybirdFielonldConstant.NORMALIZelonD_FAVORITelon_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD
+              .gelontFielonldNamelon(),
+          elonarlybirdFielonldConstant.FAVORITelon_COUNT)
       .build();
 
   /**
-   * A list of Earlybird field names and field IDs, and the clusters that need them.
+   * A list of elonarlybird fielonld namelons and fielonld IDs, and thelon clustelonrs that nelonelond thelonm.
    */
-  public enum EarlybirdFieldConstant {
-    // These enums are grouped by category and sorted alphabetically.
-    // Next indexed field ID is 76
-    // Next CSF field ID is 115
-    // Next encoded_features CSF field ID is 185
-    // Next extended_encoded_features CSF field ID is 284
+  public elonnum elonarlybirdFielonldConstant {
+    // Thelonselon elonnums arelon groupelond by catelongory and sortelond alphabelontically.
+    // Nelonxt indelonxelond fielonld ID is 76
+    // Nelonxt CSF fielonld ID is 115
+    // Nelonxt elonncodelond_felonaturelons CSF fielonld ID is 185
+    // Nelonxt elonxtelonndelond_elonncodelond_felonaturelons CSF fielonld ID is 284
 
-    // Text searchable fields
-    // Provides slow ID Mapping from tweet ID to doc ID through TermsEnum.seekExact().
-    ID_FIELD("id", 0, EarlybirdCluster.ALL_CLUSTERS),
-    RESOLVED_LINKS_TEXT_FIELD("resolved_links_text", 1),
-    TEXT_FIELD("text", 2),
-    TOKENIZED_FROM_USER_FIELD("tokenized_from_user", 3),
+    // Telonxt selonarchablelon fielonlds
+    // Providelons slow ID Mapping from twelonelont ID to doc ID through Telonrmselonnum.selonelonkelonxact().
+    ID_FIelonLD("id", 0, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    RelonSOLVelonD_LINKS_TelonXT_FIelonLD("relonsolvelond_links_telonxt", 1),
+    TelonXT_FIelonLD("telonxt", 2),
+    TOKelonNIZelonD_FROM_USelonR_FIelonLD("tokelonnizelond_from_uselonr", 3),
 
-    // Other indexed fields
-    CARD_TITLE_FIELD("card_title", 4),
-    CARD_DESCRIPTION_FIELD("card_description", 5),
-    // We require the createdAt field to be set so we can properly filter tweets based on time.
-    CREATED_AT_FIELD("created_at", 6, EarlybirdCluster.ALL_CLUSTERS),
-    // 7 was formerly EVENT_IDS_FIELD("event_ids", 7, EarlybirdCluster.REALTIME)
-    ENTITY_ID_FIELD("entity_id", 40),
-    // The screen name of the user that created the tweet. Should be set to the normalized value in
-    // the com.twitter.gizmoduck.thriftjava.Profile.screen_name field.
-    FROM_USER_FIELD("from_user", 8),
-    // The numeric ID of the user that created the tweet.
-    FROM_USER_ID_FIELD("from_user_id", 9, EarlybirdCluster.ALL_CLUSTERS),
-    CARD_DOMAIN_FIELD("card_domain", 11),
-    CARD_NAME_FIELD("card_name", 12),
-    GEO_HASH_FIELD("geo_hash", 13),
-    HASHTAGS_FIELD("hashtags", 14),
-    HF_PHRASE_PAIRS_FIELD(ImmutableSchema.HF_PHRASE_PAIRS_FIELD, 15),
-    HF_TERM_PAIRS_FIELD(ImmutableSchema.HF_TERM_PAIRS_FIELD, 16),
-    IMAGE_LINKS_FIELD("image_links", 17),
-    IN_REPLY_TO_TWEET_ID_FIELD("in_reply_to_tweet_id", 59),
-    IN_REPLY_TO_USER_ID_FIELD("in_reply_to_user_id", 38),
-    // The internal field is used for many purposes:
-    // 1. to store facet skiplists
-    // 2. to power the filter operator, by storing posting list for terms like __filter_twimg
-    // 3. to store posting lists for positive and negative smileys
-    // 4. to store geo location types.
-    // etc.
-    INTERNAL_FIELD("internal", 18, EarlybirdCluster.ALL_CLUSTERS),
-    ISO_LANGUAGE_FIELD("iso_lang", 19),
-    LINK_CATEGORY_FIELD("link_category", 36),
-    LINKS_FIELD("links", 21),
-    MENTIONS_FIELD("mentions", 22),
-    // Field 23 used to be NAMED_ENTITIES_FIELD
-    NEWS_LINKS_FIELD("news_links", 24),
-    NORMALIZED_SOURCE_FIELD("norm_source", 25),
-    PLACE_FIELD("place", 26),
-    // Field 37 used to be PUBLICLY_INFERRED_USER_LOCATION_PLACE_ID_FIELD
-    // The ID of the source tweet. Set for retweets only.
-    RETWEET_SOURCE_TWEET_ID_FIELD("retweet_source_tweet_id", 60,
-        EarlybirdCluster.ALL_CLUSTERS),
-    // The ID of the source tweet's author. Set for retweets only.
-    RETWEET_SOURCE_USER_ID_FIELD("retweet_source_user_id", 39),
-    SOURCE_FIELD("source", 29),
-    STOCKS_FIELD("stocks", 30),
-    // The screen name of the user that a tweet was directed at.
-    TO_USER_FIELD("to_user", 32),
-    // Field 33 used to be TOPIC_IDS_FIELD and is now unused. It can be reused later.
-    TWIMG_LINKS_FIELD("twimg_links", 34),
-    VIDEO_LINKS_FIELD("video_links", 35),
-    CAMELCASE_USER_HANDLE_FIELD("camelcase_tokenized_from_user", 41),
-    // This field should be set to the the tokenized and normalized value in the
-    // com.twitter.gizmoduck.thriftjava.Profile.name field.
-    TOKENIZED_USER_NAME_FIELD("tokenized_from_user_display_name", 42),
-    CONVERSATION_ID_FIELD("conversation_id", 43),
-    PLACE_ID_FIELD("place_id", 44),
-    PLACE_FULL_NAME_FIELD("place_full_name", 45),
-    PLACE_COUNTRY_CODE_FIELD("place_country_code", 46),
-    PROFILE_GEO_COUNTRY_CODE_FIELD("profile_geo_country_code", 47),
-    PROFILE_GEO_REGION_FIELD("profile_geo_region", 48),
-    PROFILE_GEO_LOCALITY_FIELD("profile_geo_locality", 49),
-    LIKED_BY_USER_ID_FIELD("liked_by_user_id", 50, EarlybirdCluster.REALTIME),
-    NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD(
-        "normalized_reply_count_greater_than_or_equal_to", 51, EarlybirdCluster.FULL_ARCHIVE),
-    NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD(
-        "normalized_retweet_count_greater_than_or_equal_to", 52, EarlybirdCluster.FULL_ARCHIVE),
-    NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD(
-        "normalized_favorite_count_greater_than_or_equal_to", 53, EarlybirdCluster.FULL_ARCHIVE),
-    COMPOSER_SOURCE("composer_source", 54),
-    QUOTED_TWEET_ID_FIELD("quoted_tweet_id", 55),
-    QUOTED_USER_ID_FIELD("quoted_user_id", 56),
-    RETWEETED_BY_USER_ID("retweeted_by_user_id", 57, EarlybirdCluster.REALTIME),
-    REPLIED_TO_BY_USER_ID("replied_to_by_user_id", 58, EarlybirdCluster.REALTIME),
+    // Othelonr indelonxelond fielonlds
+    CARD_TITLelon_FIelonLD("card_titlelon", 4),
+    CARD_DelonSCRIPTION_FIelonLD("card_delonscription", 5),
+    // Welon relonquirelon thelon crelonatelondAt fielonld to belon selont so welon can propelonrly filtelonr twelonelonts baselond on timelon.
+    CRelonATelonD_AT_FIelonLD("crelonatelond_at", 6, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    // 7 was formelonrly elonVelonNT_IDS_FIelonLD("elonvelonnt_ids", 7, elonarlybirdClustelonr.RelonALTIMelon)
+    elonNTITY_ID_FIelonLD("elonntity_id", 40),
+    // Thelon screlonelonn namelon of thelon uselonr that crelonatelond thelon twelonelont. Should belon selont to thelon normalizelond valuelon in
+    // thelon com.twittelonr.gizmoduck.thriftjava.Profilelon.screlonelonn_namelon fielonld.
+    FROM_USelonR_FIelonLD("from_uselonr", 8),
+    // Thelon numelonric ID of thelon uselonr that crelonatelond thelon twelonelont.
+    FROM_USelonR_ID_FIelonLD("from_uselonr_id", 9, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    CARD_DOMAIN_FIelonLD("card_domain", 11),
+    CARD_NAMelon_FIelonLD("card_namelon", 12),
+    GelonO_HASH_FIelonLD("gelono_hash", 13),
+    HASHTAGS_FIelonLD("hashtags", 14),
+    HF_PHRASelon_PAIRS_FIelonLD(ImmutablelonSchelonma.HF_PHRASelon_PAIRS_FIelonLD, 15),
+    HF_TelonRM_PAIRS_FIelonLD(ImmutablelonSchelonma.HF_TelonRM_PAIRS_FIelonLD, 16),
+    IMAGelon_LINKS_FIelonLD("imagelon_links", 17),
+    IN_RelonPLY_TO_TWelonelonT_ID_FIelonLD("in_relonply_to_twelonelont_id", 59),
+    IN_RelonPLY_TO_USelonR_ID_FIelonLD("in_relonply_to_uselonr_id", 38),
+    // Thelon intelonrnal fielonld is uselond for many purposelons:
+    // 1. to storelon facelont skiplists
+    // 2. to powelonr thelon filtelonr opelonrator, by storing posting list for telonrms likelon __filtelonr_twimg
+    // 3. to storelon posting lists for positivelon and nelongativelon smilelonys
+    // 4. to storelon gelono location typelons.
+    // elontc.
+    INTelonRNAL_FIelonLD("intelonrnal", 18, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    ISO_LANGUAGelon_FIelonLD("iso_lang", 19),
+    LINK_CATelonGORY_FIelonLD("link_catelongory", 36),
+    LINKS_FIelonLD("links", 21),
+    MelonNTIONS_FIelonLD("melonntions", 22),
+    // Fielonld 23 uselond to belon NAMelonD_elonNTITIelonS_FIelonLD
+    NelonWS_LINKS_FIelonLD("nelonws_links", 24),
+    NORMALIZelonD_SOURCelon_FIelonLD("norm_sourcelon", 25),
+    PLACelon_FIelonLD("placelon", 26),
+    // Fielonld 37 uselond to belon PUBLICLY_INFelonRRelonD_USelonR_LOCATION_PLACelon_ID_FIelonLD
+    // Thelon ID of thelon sourcelon twelonelont. Selont for relontwelonelonts only.
+    RelonTWelonelonT_SOURCelon_TWelonelonT_ID_FIelonLD("relontwelonelont_sourcelon_twelonelont_id", 60,
+        elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    // Thelon ID of thelon sourcelon twelonelont's author. Selont for relontwelonelonts only.
+    RelonTWelonelonT_SOURCelon_USelonR_ID_FIelonLD("relontwelonelont_sourcelon_uselonr_id", 39),
+    SOURCelon_FIelonLD("sourcelon", 29),
+    STOCKS_FIelonLD("stocks", 30),
+    // Thelon screlonelonn namelon of thelon uselonr that a twelonelont was direlonctelond at.
+    TO_USelonR_FIelonLD("to_uselonr", 32),
+    // Fielonld 33 uselond to belon TOPIC_IDS_FIelonLD and is now unuselond. It can belon relonuselond latelonr.
+    TWIMG_LINKS_FIelonLD("twimg_links", 34),
+    VIDelonO_LINKS_FIelonLD("videlono_links", 35),
+    CAMelonLCASelon_USelonR_HANDLelon_FIelonLD("camelonlcaselon_tokelonnizelond_from_uselonr", 41),
+    // This fielonld should belon selont to thelon thelon tokelonnizelond and normalizelond valuelon in thelon
+    // com.twittelonr.gizmoduck.thriftjava.Profilelon.namelon fielonld.
+    TOKelonNIZelonD_USelonR_NAMelon_FIelonLD("tokelonnizelond_from_uselonr_display_namelon", 42),
+    CONVelonRSATION_ID_FIelonLD("convelonrsation_id", 43),
+    PLACelon_ID_FIelonLD("placelon_id", 44),
+    PLACelon_FULL_NAMelon_FIelonLD("placelon_full_namelon", 45),
+    PLACelon_COUNTRY_CODelon_FIelonLD("placelon_country_codelon", 46),
+    PROFILelon_GelonO_COUNTRY_CODelon_FIelonLD("profilelon_gelono_country_codelon", 47),
+    PROFILelon_GelonO_RelonGION_FIelonLD("profilelon_gelono_relongion", 48),
+    PROFILelon_GelonO_LOCALITY_FIelonLD("profilelon_gelono_locality", 49),
+    LIKelonD_BY_USelonR_ID_FIelonLD("likelond_by_uselonr_id", 50, elonarlybirdClustelonr.RelonALTIMelon),
+    NORMALIZelonD_RelonPLY_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD(
+        "normalizelond_relonply_count_grelonatelonr_than_or_elonqual_to", 51, elonarlybirdClustelonr.FULL_ARCHIVelon),
+    NORMALIZelonD_RelonTWelonelonT_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD(
+        "normalizelond_relontwelonelont_count_grelonatelonr_than_or_elonqual_to", 52, elonarlybirdClustelonr.FULL_ARCHIVelon),
+    NORMALIZelonD_FAVORITelon_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD(
+        "normalizelond_favoritelon_count_grelonatelonr_than_or_elonqual_to", 53, elonarlybirdClustelonr.FULL_ARCHIVelon),
+    COMPOSelonR_SOURCelon("composelonr_sourcelon", 54),
+    QUOTelonD_TWelonelonT_ID_FIelonLD("quotelond_twelonelont_id", 55),
+    QUOTelonD_USelonR_ID_FIelonLD("quotelond_uselonr_id", 56),
+    RelonTWelonelonTelonD_BY_USelonR_ID("relontwelonelontelond_by_uselonr_id", 57, elonarlybirdClustelonr.RelonALTIMelon),
+    RelonPLIelonD_TO_BY_USelonR_ID("relonplielond_to_by_uselonr_id", 58, elonarlybirdClustelonr.RelonALTIMelon),
     CARD_LANG("card_lang", 61),
-    // SEARCH-27823: Field ID 62 used to be named_entity, which was the combination of all
-    // named_entity* fields below. We need to leave 62 unused for backwards compatibility.
-    NAMED_ENTITY_FROM_URL_FIELD("named_entity_from_url", 63),
-    NAMED_ENTITY_FROM_TEXT_FIELD("named_entity_from_text", 64),
-    NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD("named_entity_with_type_from_url", 65),
-    NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD("named_entity_with_type_from_text", 66),
-    DIRECTED_AT_USER_ID_FIELD("directed_at_user_id", 67),
-    SPACE_ID_FIELD("space_id", 68,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
-    SPACE_TITLE_FIELD("space_title", 69,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
+    // SelonARCH-27823: Fielonld ID 62 uselond to belon namelond_elonntity, which was thelon combination of all
+    // namelond_elonntity* fielonlds belonlow. Welon nelonelond to lelonavelon 62 unuselond for backwards compatibility.
+    NAMelonD_elonNTITY_FROM_URL_FIelonLD("namelond_elonntity_from_url", 63),
+    NAMelonD_elonNTITY_FROM_TelonXT_FIelonLD("namelond_elonntity_from_telonxt", 64),
+    NAMelonD_elonNTITY_WITH_TYPelon_FROM_URL_FIelonLD("namelond_elonntity_with_typelon_from_url", 65),
+    NAMelonD_elonNTITY_WITH_TYPelon_FROM_TelonXT_FIelonLD("namelond_elonntity_with_typelon_from_telonxt", 66),
+    DIRelonCTelonD_AT_USelonR_ID_FIelonLD("direlonctelond_at_uselonr_id", 67),
+    SPACelon_ID_FIelonLD("spacelon_id", 68,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_GelonNelonRAL_PURPOSelon_CLUSTelonRS),
+    SPACelon_TITLelon_FIelonLD("spacelon_titlelon", 69,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_GelonNelonRAL_PURPOSelon_CLUSTelonRS),
 
-    // Detailed description of the space admin fields can be found at go/earlybirdfields.
-    SPACE_ADMIN_FIELD("space_admin", 70,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
-    TOKENIZED_SPACE_ADMIN_FIELD("tokenized_space_admin", 71,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
-    CAMELCASE_TOKENIZED_SPACE_ADMIN_FIELD("camelcase_tokenized_space_admin", 72,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
-    TOKENIZED_SPACE_ADMIN_DISPLAY_NAME_FIELD("tokenized_space_admin_display_name", 73,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS),
-    URL_DESCRIPTION_FIELD("url_description", 74),
-    URL_TITLE_FIELD("url_title", 75),
+    // Delontailelond delonscription of thelon spacelon admin fielonlds can belon found at go/elonarlybirdfielonlds.
+    SPACelon_ADMIN_FIelonLD("spacelon_admin", 70,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_GelonNelonRAL_PURPOSelon_CLUSTelonRS),
+    TOKelonNIZelonD_SPACelon_ADMIN_FIelonLD("tokelonnizelond_spacelon_admin", 71,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_GelonNelonRAL_PURPOSelon_CLUSTelonRS),
+    CAMelonLCASelon_TOKelonNIZelonD_SPACelon_ADMIN_FIelonLD("camelonlcaselon_tokelonnizelond_spacelon_admin", 72,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_GelonNelonRAL_PURPOSelon_CLUSTelonRS),
+    TOKelonNIZelonD_SPACelon_ADMIN_DISPLAY_NAMelon_FIelonLD("tokelonnizelond_spacelon_admin_display_namelon", 73,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_GelonNelonRAL_PURPOSelon_CLUSTelonRS),
+    URL_DelonSCRIPTION_FIelonLD("url_delonscription", 74),
+    URL_TITLelon_FIelonLD("url_titlelon", 75),
 
     // CSF
-    CARD_TYPE_CSF_FIELD("card_type_csf", 100),
-    ENCODED_TWEET_FEATURES_FIELD(ENCODED_TWEET_FEATURES_FIELD_NAME, 102,
-        EarlybirdCluster.ALL_CLUSTERS),
-    // Provides the doc ID -> original tweet ID mapping for retweets.
-    SHARED_STATUS_ID_CSF("shared_status_id_csf", 106, EarlybirdCluster.ALL_CLUSTERS),
-    // Provides the doc ID -> tweet author's user ID mapping.
-    FROM_USER_ID_CSF("from_user_id_csf", 103, EarlybirdCluster.ALL_CLUSTERS),
-    CREATED_AT_CSF_FIELD("created_at_csf", 101, EarlybirdCluster.ARCHIVE_CLUSTERS),
-    // Provides the doc ID -> tweet ID mapping.
-    ID_CSF_FIELD("id_csf", 104, EarlybirdCluster.ARCHIVE_CLUSTERS),
-    LAT_LON_CSF_FIELD("latlon_csf", 105),
-    CONVERSATION_ID_CSF("conversation_id_csf", 107, EarlybirdCluster.ALL_CLUSTERS),
-    QUOTED_TWEET_ID_CSF("quoted_tweet_id_csf", 108),
-    QUOTED_USER_ID_CSF("quoted_user_id_csf", 109),
+    CARD_TYPelon_CSF_FIelonLD("card_typelon_csf", 100),
+    elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, 102,
+        elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    // Providelons thelon doc ID -> original twelonelont ID mapping for relontwelonelonts.
+    SHARelonD_STATUS_ID_CSF("sharelond_status_id_csf", 106, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    // Providelons thelon doc ID -> twelonelont author's uselonr ID mapping.
+    FROM_USelonR_ID_CSF("from_uselonr_id_csf", 103, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    CRelonATelonD_AT_CSF_FIelonLD("crelonatelond_at_csf", 101, elonarlybirdClustelonr.ARCHIVelon_CLUSTelonRS),
+    // Providelons thelon doc ID -> twelonelont ID mapping.
+    ID_CSF_FIelonLD("id_csf", 104, elonarlybirdClustelonr.ARCHIVelon_CLUSTelonRS),
+    LAT_LON_CSF_FIelonLD("latlon_csf", 105),
+    CONVelonRSATION_ID_CSF("convelonrsation_id_csf", 107, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    QUOTelonD_TWelonelonT_ID_CSF("quotelond_twelonelont_id_csf", 108),
+    QUOTelonD_USelonR_ID_CSF("quotelond_uselonr_id_csf", 109),
     CARD_LANG_CSF("card_lang_csf", 110),
-    DIRECTED_AT_USER_ID_CSF("directed_at_user_id_csf", 111),
-    REFERENCE_AUTHOR_ID_CSF("reference_author_id_csf", 112),
-    EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF("exclusive_conversation_author_id_csf", 113),
+    DIRelonCTelonD_AT_USelonR_ID_CSF("direlonctelond_at_uselonr_id_csf", 111),
+    RelonFelonRelonNCelon_AUTHOR_ID_CSF("relonfelonrelonncelon_author_id_csf", 112),
+    elonXCLUSIVelon_CONVelonRSATION_AUTHOR_ID_CSF("elonxclusivelon_convelonrsation_author_id_csf", 113),
     CARD_URI_CSF("card_uri_csf", 114),
 
-    // CSF Views on top of ENCODED_TWEET_FEATURES_FIELD
-    IS_RETWEET_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "IS_RETWEET_FLAG", 150,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    IS_OFFENSIVE_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "IS_OFFENSIVE_FLAG", 151,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_LINK_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_LINK_FLAG", 152,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_TREND_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_TREND_FLAG", 153,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    IS_REPLY_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "IS_REPLY_FLAG", 154,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    IS_SENSITIVE_CONTENT(ENCODED_TWEET_FEATURES_FIELD_NAME, "IS_SENSITIVE_CONTENT", 155,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG", 156, FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.ALL_CLUSTERS),
-    FROM_VERIFIED_ACCOUNT_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "FROM_VERIFIED_ACCOUNT_FLAG",
+    // CSF Vielonws on top of elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD
+    IS_RelonTWelonelonT_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "IS_RelonTWelonelonT_FLAG", 150,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    IS_OFFelonNSIVelon_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "IS_OFFelonNSIVelon_FLAG", 151,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_LINK_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_LINK_FLAG", 152,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_TRelonND_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_TRelonND_FLAG", 153,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    IS_RelonPLY_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "IS_RelonPLY_FLAG", 154,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    IS_SelonNSITIVelon_CONTelonNT(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "IS_SelonNSITIVelon_CONTelonNT", 155,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_MULTIPLelon_HASHTAGS_OR_TRelonNDS_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "HAS_MULTIPLelon_HASHTAGS_OR_TRelonNDS_FLAG", 156, FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    FROM_VelonRIFIelonD_ACCOUNT_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "FROM_VelonRIFIelonD_ACCOUNT_FLAG",
         157,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    TEXT_SCORE(ENCODED_TWEET_FEATURES_FIELD_NAME, "TEXT_SCORE", 158,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    LANGUAGE(ENCODED_TWEET_FEATURES_FIELD_NAME, "LANGUAGE", 159,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    LINK_LANGUAGE(ENCODED_TWEET_FEATURES_FIELD_NAME, "LINK_LANGUAGE", 160,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_IMAGE_URL_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_IMAGE_URL_FLAG", 161,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_VIDEO_URL_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_VIDEO_URL_FLAG", 162,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_NEWS_URL_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_NEWS_URL_FLAG", 163,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_EXPANDO_CARD_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_EXPANDO_CARD_FLAG", 164,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_MULTIPLE_MEDIA_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_MULTIPLE_MEDIA_FLAG", 165,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    PROFILE_IS_EGG_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "PROFILE_IS_EGG_FLAG", 166,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    NUM_MENTIONS(ENCODED_TWEET_FEATURES_FIELD_NAME, "NUM_MENTIONS", 167,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    NUM_HASHTAGS(ENCODED_TWEET_FEATURES_FIELD_NAME, "NUM_HASHTAGS", 168,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_CARD_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_CARD_FLAG", 169,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_VISIBLE_LINK_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_VISIBLE_LINK_FLAG", 170,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    USER_REPUTATION(ENCODED_TWEET_FEATURES_FIELD_NAME, "USER_REPUTATION", 171,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    IS_USER_SPAM_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "IS_USER_SPAM_FLAG", 172,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    IS_USER_NSFW_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "IS_USER_NSFW_FLAG", 173,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    IS_USER_BOT_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "IS_USER_BOT_FLAG", 174,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    IS_USER_NEW_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "IS_USER_NEW_FLAG", 175,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    PREV_USER_TWEET_ENGAGEMENT(ENCODED_TWEET_FEATURES_FIELD_NAME, "PREV_USER_TWEET_ENGAGEMENT",
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    TelonXT_SCORelon(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "TelonXT_SCORelon", 158,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    LANGUAGelon(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "LANGUAGelon", 159,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    LINK_LANGUAGelon(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "LINK_LANGUAGelon", 160,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_IMAGelon_URL_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_IMAGelon_URL_FLAG", 161,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_VIDelonO_URL_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_VIDelonO_URL_FLAG", 162,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_NelonWS_URL_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_NelonWS_URL_FLAG", 163,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_elonXPANDO_CARD_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_elonXPANDO_CARD_FLAG", 164,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_MULTIPLelon_MelonDIA_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_MULTIPLelon_MelonDIA_FLAG", 165,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    PROFILelon_IS_elonGG_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "PROFILelon_IS_elonGG_FLAG", 166,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    NUM_MelonNTIONS(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "NUM_MelonNTIONS", 167,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    NUM_HASHTAGS(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "NUM_HASHTAGS", 168,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_CARD_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_CARD_FLAG", 169,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_VISIBLelon_LINK_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_VISIBLelon_LINK_FLAG", 170,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    USelonR_RelonPUTATION(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "USelonR_RelonPUTATION", 171,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    IS_USelonR_SPAM_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "IS_USelonR_SPAM_FLAG", 172,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    IS_USelonR_NSFW_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "IS_USelonR_NSFW_FLAG", 173,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    IS_USelonR_BOT_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "IS_USelonR_BOT_FLAG", 174,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    IS_USelonR_NelonW_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "IS_USelonR_NelonW_FLAG", 175,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    PRelonV_USelonR_TWelonelonT_elonNGAGelonMelonNT(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "PRelonV_USelonR_TWelonelonT_elonNGAGelonMelonNT",
         176,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    COMPOSER_SOURCE_IS_CAMERA_FLAG(
-        ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "COMPOSER_SOURCE_IS_CAMERA_FLAG",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    COMPOSelonR_SOURCelon_IS_CAMelonRA_FLAG(
+        elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "COMPOSelonR_SOURCelon_IS_CAMelonRA_FLAG",
         177,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.ALL_CLUSTERS),
-    RETWEET_COUNT(
-        ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "RETWEET_COUNT",
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    RelonTWelonelonT_COUNT(
+        elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "RelonTWelonelonT_COUNT",
         178,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.LEGACY_BYTE_NORMALIZER_WITH_LOG2),
-    FAVORITE_COUNT(
-        ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "FAVORITE_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.LelonGACY_BYTelon_NORMALIZelonR_WITH_LOG2),
+    FAVORITelon_COUNT(
+        elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "FAVORITelon_COUNT",
         179,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.LEGACY_BYTE_NORMALIZER_WITH_LOG2),
-    REPLY_COUNT(
-        ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "REPLY_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.LelonGACY_BYTelon_NORMALIZelonR_WITH_LOG2),
+    RelonPLY_COUNT(
+        elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "RelonPLY_COUNT",
         180,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.LEGACY_BYTE_NORMALIZER_WITH_LOG2),
-    PARUS_SCORE(ENCODED_TWEET_FEATURES_FIELD_NAME, "PARUS_SCORE", 181,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.LelonGACY_BYTelon_NORMALIZelonR_WITH_LOG2),
+    PARUS_SCORelon(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "PARUS_SCORelon", 181,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
 
     /**
-     * This is the rough percentage of the nth token at 140 divided by num tokens
-     * and is basically n / num tokens where n is the token starting before 140 characters
+     * This is thelon rough pelonrcelonntagelon of thelon nth tokelonn at 140 dividelond by num tokelonns
+     * and is basically n / num tokelonns whelonrelon n is thelon tokelonn starting belonforelon 140 charactelonrs
      */
-    VISIBLE_TOKEN_RATIO(ENCODED_TWEET_FEATURES_FIELD_NAME, "VISIBLE_TOKEN_RATIO", 182,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_QUOTE_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_QUOTE_FLAG", 183,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
+    VISIBLelon_TOKelonN_RATIO(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "VISIBLelon_TOKelonN_RATIO", 182,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_QUOTelon_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_QUOTelon_FLAG", 183,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
 
-    FROM_BLUE_VERIFIED_ACCOUNT_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "FROM_BLUE_VERIFIED_ACCOUNT_FLAG",
+    FROM_BLUelon_VelonRIFIelonD_ACCOUNT_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "FROM_BLUelon_VelonRIFIelonD_ACCOUNT_FLAG",
         184,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
 
-    TWEET_SIGNATURE(ENCODED_TWEET_FEATURES_FIELD_NAME, "TWEET_SIGNATURE", 188,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
+    TWelonelonT_SIGNATURelon(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "TWelonelonT_SIGNATURelon", 188,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
 
-    // MEDIA TYPES
-    HAS_CONSUMER_VIDEO_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_CONSUMER_VIDEO_FLAG", 189,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_PRO_VIDEO_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_PRO_VIDEO_FLAG", 190,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_VINE_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_VINE_FLAG", 191,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_PERISCOPE_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_PERISCOPE_FLAG", 192,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
-    HAS_NATIVE_IMAGE_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "HAS_NATIVE_IMAGE_FLAG", 193,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
+    // MelonDIA TYPelonS
+    HAS_CONSUMelonR_VIDelonO_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_CONSUMelonR_VIDelonO_FLAG", 189,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_PRO_VIDelonO_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_PRO_VIDelonO_FLAG", 190,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_VINelon_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_VINelon_FLAG", 191,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_PelonRISCOPelon_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_PelonRISCOPelon_FLAG", 192,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
+    HAS_NATIVelon_IMAGelon_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "HAS_NATIVelon_IMAGelon_FLAG", 193,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
 
-    // NOTE: if possible, please reserve field ID 194 to 196 for future media types (SEARCH-9131)
+    // NOTelon: if possiblelon, plelonaselon relonselonrvelon fielonld ID 194 to 196 for futurelon melondia typelons (SelonARCH-9131)
 
-    IS_NULLCAST_FLAG(ENCODED_TWEET_FEATURES_FIELD_NAME, "IS_NULLCAST_FLAG", 197,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD, EarlybirdCluster.ALL_CLUSTERS),
+    IS_NULLCAST_FLAG(elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, "IS_NULLCAST_FLAG", 197,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD, elonarlybirdClustelonr.ALL_CLUSTelonRS),
 
-    // EXTENDED ENCODED TWEET FEATURES that's not available on archive clusters
-    EXTENDED_ENCODED_TWEET_FEATURES_FIELD(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME, 200,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    // elonXTelonNDelonD elonNCODelonD TWelonelonT FelonATURelonS that's not availablelon on archivelon clustelonrs
+    elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon, 200,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    EMBEDS_IMPRESSION_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EMBEDS_IMPRESSION_COUNT",
+    elonMBelonDS_IMPRelonSSION_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "elonMBelonDS_IMPRelonSSION_COUNT",
         221,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.LEGACY_BYTE_NORMALIZER),
-    EMBEDS_URL_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EMBEDS_URL_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.LelonGACY_BYTelon_NORMALIZelonR),
+    elonMBelonDS_URL_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "elonMBelonDS_URL_COUNT",
         222,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.LEGACY_BYTE_NORMALIZER),
-    VIDEO_VIEW_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "VIDEO_VIEW_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.LelonGACY_BYTelon_NORMALIZelonR),
+    VIDelonO_VIelonW_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "VIDelonO_VIelonW_COUNT",
         223,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.LEGACY_BYTE_NORMALIZER),
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.LelonGACY_BYTelon_NORMALIZelonR),
 
-    // empty bits in integer 0 (starting bit 24, 8 bits)
-    EXTENDED_FEATURE_UNUSED_BITS_0_24_8(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS_0_24_8", 244,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    // elonmpty bits in intelongelonr 0 (starting bit 24, 8 bits)
+    elonXTelonNDelonD_FelonATURelon_UNUSelonD_BITS_0_24_8(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS_0_24_8", 244,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    // SEARCH-8564 - Reference Tweet Author ID
-    REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT", 202,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT", 203,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    // SelonARCH-8564 - Relonfelonrelonncelon Twelonelont Author ID
+    RelonFelonRelonNCelon_AUTHOR_ID_LelonAST_SIGNIFICANT_INT(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "RelonFelonRelonNCelon_AUTHOR_ID_LelonAST_SIGNIFICANT_INT", 202,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
+    RelonFelonRelonNCelon_AUTHOR_ID_MOST_SIGNIFICANT_INT(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "RelonFelonRelonNCelon_AUTHOR_ID_MOST_SIGNIFICANT_INT", 203,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    // SEARCHQUAL-8130: engagement counters v2
-    // Integer 3
-    RETWEET_COUNT_V2(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "RETWEET_COUNT_V2", 225,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    FAVORITE_COUNT_V2(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "FAVORITE_COUNT_V2", 226,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    REPLY_COUNT_V2(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "REPLY_COUNT_V2", 227,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    EMBEDS_IMPRESSION_COUNT_V2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EMBEDS_IMPRESSION_COUNT_V2",
+    // SelonARCHQUAL-8130: elonngagelonmelonnt countelonrs v2
+    // Intelongelonr 3
+    RelonTWelonelonT_COUNT_V2(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "RelonTWelonelonT_COUNT_V2", 225,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    FAVORITelon_COUNT_V2(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "FAVORITelon_COUNT_V2", 226,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    RelonPLY_COUNT_V2(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "RelonPLY_COUNT_V2", 227,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    elonMBelonDS_IMPRelonSSION_COUNT_V2(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "elonMBelonDS_IMPRelonSSION_COUNT_V2",
         228,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
 
-    // Integer 4
-    EMBEDS_URL_COUNT_V2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EMBEDS_URL_COUNT_V2",
+    // Intelongelonr 4
+    elonMBelonDS_URL_COUNT_V2(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "elonMBelonDS_URL_COUNT_V2",
         229,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    VIDEO_VIEW_COUNT_V2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "VIDEO_VIEW_COUNT_V2",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    VIDelonO_VIelonW_COUNT_V2(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "VIDelonO_VIelonW_COUNT_V2",
         230,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    QUOTE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "QUOTE_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    QUOTelon_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "QUOTelon_COUNT",
         231,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
 
-    // Tweet Safety Labels
-    LABEL_ABUSIVE_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LABEL_ABUSIVE_FLAG", 232,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    // Twelonelont Safelonty Labelonls
+    LABelonL_ABUSIVelon_FLAG(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LABelonL_ABUSIVelon_FLAG", 232,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    LABEL_ABUSIVE_HI_RCL_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LABEL_ABUSIVE_HI_RCL_FLAG", 233,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    LABelonL_ABUSIVelon_HI_RCL_FLAG(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LABelonL_ABUSIVelon_HI_RCL_FLAG", 233,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    LABEL_DUP_CONTENT_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LABEL_DUP_CONTENT_FLAG", 234,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    LABelonL_DUP_CONTelonNT_FLAG(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LABelonL_DUP_CONTelonNT_FLAG", 234,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    LABEL_NSFW_HI_PRC_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LABEL_NSFW_HI_PRC_FLAG", 235,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    LABelonL_NSFW_HI_PRC_FLAG(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LABelonL_NSFW_HI_PRC_FLAG", 235,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    LABEL_NSFW_HI_RCL_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LABEL_NSFW_HI_RCL_FLAG", 236,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    LABelonL_NSFW_HI_RCL_FLAG(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LABelonL_NSFW_HI_RCL_FLAG", 236,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    LABEL_SPAM_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LABEL_SPAM_FLAG", 237,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    LABelonL_SPAM_FLAG(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LABelonL_SPAM_FLAG", 237,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    LABEL_SPAM_HI_RCL_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LABEL_SPAM_HI_RCL_FLAG", 238,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    LABelonL_SPAM_HI_RCL_FLAG(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LABelonL_SPAM_HI_RCL_FLAG", 238,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    // please save this bit for other safety labels
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_4_31_1(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS_4_31_1", 239,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    // plelonaselon savelon this bit for othelonr safelonty labelonls
+    elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_4_31_1(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS_4_31_1", 239,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    // Integer 5
-    WEIGHTED_RETWEET_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "WEIGHTED_RETWEET_COUNT",
+    // Intelongelonr 5
+    WelonIGHTelonD_RelonTWelonelonT_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "WelonIGHTelonD_RelonTWelonelonT_COUNT",
         240,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    WEIGHTED_REPLY_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "WEIGHTED_REPLY_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    WelonIGHTelonD_RelonPLY_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "WelonIGHTelonD_RelonPLY_COUNT",
         241,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    WEIGHTED_FAVORITE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "WEIGHTED_FAVORITE_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    WelonIGHTelonD_FAVORITelon_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "WelonIGHTelonD_FAVORITelon_COUNT",
         242,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    WEIGHTED_QUOTE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "WEIGHTED_QUOTE_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    WelonIGHTelonD_QUOTelon_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "WelonIGHTelonD_QUOTelon_COUNT",
         243,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
 
-    // Integer 6
-    // Periscope features
-    PERISCOPE_EXISTS(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "PERISCOPE_EXISTS", 245,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    PERISCOPE_HAS_BEEN_FEATURED(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "PERISCOPE_HAS_BEEN_FEATURED", 246,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    PERISCOPE_IS_CURRENTLY_FEATURED(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "PERISCOPE_IS_CURRENTLY_FEATURED", 247,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    PERISCOPE_IS_FROM_QUALITY_SOURCE(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "PERISCOPE_IS_FROM_QUALITY_SOURCE", 248,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    PERISCOPE_IS_LIVE(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "PERISCOPE_IS_LIVE", 249,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-    IS_TRENDING_NOW_FLAG(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "IS_TRENDING_NOW_FLAG", 292,
-        FlagFeatureFieldType.FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    // Intelongelonr 6
+    // Pelonriscopelon felonaturelons
+    PelonRISCOPelon_elonXISTS(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "PelonRISCOPelon_elonXISTS", 245,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
+    PelonRISCOPelon_HAS_BelonelonN_FelonATURelonD(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "PelonRISCOPelon_HAS_BelonelonN_FelonATURelonD", 246,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
+    PelonRISCOPelon_IS_CURRelonNTLY_FelonATURelonD(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "PelonRISCOPelon_IS_CURRelonNTLY_FelonATURelonD", 247,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
+    PelonRISCOPelon_IS_FROM_QUALITY_SOURCelon(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "PelonRISCOPelon_IS_FROM_QUALITY_SOURCelon", 248,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
+    PelonRISCOPelon_IS_LIVelon(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "PelonRISCOPelon_IS_LIVelon", 249,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
+    IS_TRelonNDING_NOW_FLAG(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "IS_TRelonNDING_NOW_FLAG", 292,
+        FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    // remaining bits for integer 6 (starting bit 6, 26 remaining bits)
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_7_6_26(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS_7_6_26", 250,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    // relonmaining bits for intelongelonr 6 (starting bit 6, 26 relonmaining bits)
+    elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_7_6_26(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS_7_6_26", 250,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    // Decaying engagement counters
-    // Integer 7
-    DECAYED_RETWEET_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "DECAYED_RETWEET_COUNT",
+    // Deloncaying elonngagelonmelonnt countelonrs
+    // Intelongelonr 7
+    DelonCAYelonD_RelonTWelonelonT_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "DelonCAYelonD_RelonTWelonelonT_COUNT",
         251,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    DECAYED_REPLY_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "DECAYED_REPLY_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    DelonCAYelonD_RelonPLY_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "DelonCAYelonD_RelonPLY_COUNT",
         252,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    DECAYED_FAVORITE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "DECAYED_FAVORITE_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    DelonCAYelonD_FAVORITelon_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "DelonCAYelonD_FAVORITelon_COUNT",
         253,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    DECAYED_QUOTE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "DECAYED_QUOTE_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    DelonCAYelonD_QUOTelon_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "DelonCAYelonD_QUOTelon_COUNT",
         254,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
 
-    // Fake engagement counters. The fake here is in the sense of spam, not in the sense of testing.
-    // Refer to [JIRA SEARCHQUAL-10736 Remove Fake Engagements in Search] for more details.
-    // Integer 8
-    FAKE_RETWEET_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "FAKE_RETWEET_COUNT", 269,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    FAKE_REPLY_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "FAKE_REPLY_COUNT", 270,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    FAKE_FAVORITE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "FAKE_FAVORITE_COUNT", 271,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    FAKE_QUOTE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "FAKE_QUOTE_COUNT", 272,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
+    // Fakelon elonngagelonmelonnt countelonrs. Thelon fakelon helonrelon is in thelon selonnselon of spam, not in thelon selonnselon of telonsting.
+    // Relonfelonr to [JIRA SelonARCHQUAL-10736 Relonmovelon Fakelon elonngagelonmelonnts in Selonarch] for morelon delontails.
+    // Intelongelonr 8
+    FAKelon_RelonTWelonelonT_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "FAKelon_RelonTWelonelonT_COUNT", 269,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    FAKelon_RelonPLY_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "FAKelon_RelonPLY_COUNT", 270,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    FAKelon_FAVORITelon_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "FAKelon_FAVORITelon_COUNT", 271,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    FAKelon_QUOTelon_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "FAKelon_QUOTelon_COUNT", 272,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
 
-    // Last engagement timestamps. These features use the Tweet's creation time as base and
-    // are incremented every 1 hour
-    // Integer 9
-    LAST_RETWEET_SINCE_CREATION_HRS(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LAST_RETWEET_SINCE_CREATION_HRS",
+    // Last elonngagelonmelonnt timelonstamps. Thelonselon felonaturelons uselon thelon Twelonelont's crelonation timelon as baselon and
+    // arelon increlonmelonntelond elonvelonry 1 hour
+    // Intelongelonr 9
+    LAST_RelonTWelonelonT_SINCelon_CRelonATION_HRS(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LAST_RelonTWelonelonT_SINCelon_CRelonATION_HRS",
         273,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.NONE),
-    LAST_REPLY_SINCE_CREATION_HRS(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LAST_REPLY_SINCE_CREATION_HRS",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.NONelon),
+    LAST_RelonPLY_SINCelon_CRelonATION_HRS(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LAST_RelonPLY_SINCelon_CRelonATION_HRS",
         274,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.NONE),
-    LAST_FAVORITE_SINCE_CREATION_HRS(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LAST_FAVORITE_SINCE_CREATION_HRS",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.NONelon),
+    LAST_FAVORITelon_SINCelon_CRelonATION_HRS(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LAST_FAVORITelon_SINCelon_CRelonATION_HRS",
         275,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.NONE),
-    LAST_QUOTE_SINCE_CREATION_HRS(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "LAST_QUOTE_SINCE_CREATION_HRS",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.NONelon),
+    LAST_QUOTelon_SINCelon_CRelonATION_HRS(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "LAST_QUOTelon_SINCelon_CRelonATION_HRS",
         276,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.NONE),
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.NONelon),
 
-    // 4 bits hashtag count, mention count and stock count (SEARCH-24336)
-    // Integer 10
+    // 4 bits hashtag count, melonntion count and stock count (SelonARCH-24336)
+    // Intelongelonr 10
     NUM_HASHTAGS_V2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
         "NUM_HASHTAGS_V2",
         277,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.NONE
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.NONelon
     ),
-    NUM_MENTIONS_V2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "NUM_MENTIONS_V2",
+    NUM_MelonNTIONS_V2(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "NUM_MelonNTIONS_V2",
         278,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.NONE
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.NONelon
     ),
     NUM_STOCKS(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
         "NUM_STOCKS",
         279,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.NONE
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.NONelon
     ),
 
-    // Integer 11
-    // Blink engagement counters
-    BLINK_RETWEET_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "BLINK_RETWEET_COUNT",
+    // Intelongelonr 11
+    // Blink elonngagelonmelonnt countelonrs
+    BLINK_RelonTWelonelonT_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "BLINK_RelonTWelonelonT_COUNT",
         280,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    BLINK_REPLY_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "BLINK_REPLY_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    BLINK_RelonPLY_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "BLINK_RelonPLY_COUNT",
         281,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    BLINK_FAVORITE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "BLINK_FAVORITE_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    BLINK_FAVORITelon_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "BLINK_FAVORITelon_COUNT",
         282,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
-    BLINK_QUOTE_COUNT(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "BLINK_QUOTE_COUNT",
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
+    BLINK_QUOTelon_COUNT(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "BLINK_QUOTelon_COUNT",
         283,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.SMART_INTEGER_NORMALIZER),
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.SMART_INTelonGelonR_NORMALIZelonR),
 
-    // Integer 10 (remaining)
-    // Production Toxicity and PBlock score from HML (go/toxicity, go/pblock)
-    TOXICITY_SCORE(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "TOXICITY_SCORE", 284,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
+    // Intelongelonr 10 (relonmaining)
+    // Production Toxicity and PBlock scorelon from HML (go/toxicity, go/pblock)
+    TOXICITY_SCORelon(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "TOXICITY_SCORelon", 284,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.PRelonDICTION_SCORelon_NORMALIZelonR
     ),
-    PBLOCK_SCORE(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "PBLOCK_SCORE", 285,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
-    ),
-
-    // Integer 12
-    // Experimental health model scores from HML
-    EXPERIMENTAL_HEALTH_MODEL_SCORE_1(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EXPERIMENTAL_HEALTH_MODEL_SCORE_1", 286,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
-    ),
-    EXPERIMENTAL_HEALTH_MODEL_SCORE_2(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EXPERIMENTAL_HEALTH_MODEL_SCORE_2", 287,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
-    ),
-    EXPERIMENTAL_HEALTH_MODEL_SCORE_3(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EXPERIMENTAL_HEALTH_MODEL_SCORE_3", 288,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
-    ),
-    // remaining bits for index 12 (unused_bits_12)
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_12_30_2(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS_12_30_2", 289,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
-
-    // Integer 13
-    // Experimental health model scores from HML (cont.)
-    EXPERIMENTAL_HEALTH_MODEL_SCORE_4(
-        EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "EXPERIMENTAL_HEALTH_MODEL_SCORE_4", 290,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
-    ),
-    // Production pSpammyTweet score from HML (go/pspammytweet)
-    P_SPAMMY_TWEET_SCORE(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "P_SPAMMY_TWEET_SCORE", 291,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
-    ),
-    // Production pReportedTweet score from HML (go/preportedtweet)
-    P_REPORTED_TWEET_SCORE(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "P_REPORTED_TWEET_SCORE", 293,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
-    ),
-    // remaining bits for index 13 (unused_bits_13)
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_13_30_2(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS_13_30_2", 294,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS
+    PBLOCK_SCORelon(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "PBLOCK_SCORelon", 285,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.PRelonDICTION_SCORelon_NORMALIZelonR
     ),
 
-    // Integer 14
-    // Health model scores from HML (cont.)
-    // Prod Spammy Tweet Content model score from Platform Manipulation (go/spammy-tweet-content)
-    SPAMMY_TWEET_CONTENT_SCORE(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "SPAMMY_TWEET_CONTENT_SCORE", 295,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS,
-        ThriftFeatureNormalizationType.PREDICTION_SCORE_NORMALIZER
+    // Intelongelonr 12
+    // elonxpelonrimelonntal helonalth modelonl scorelons from HML
+    elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_1(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_1", 286,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.PRelonDICTION_SCORelon_NORMALIZelonR
     ),
-    // remaining bits for index 14 (unused_bits_14)
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_14_10_22(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS_14_10_22", 296,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS
+    elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_2(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_2", 287,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.PRelonDICTION_SCORelon_NORMALIZelonR
+    ),
+    elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_3(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_3", 288,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.PRelonDICTION_SCORelon_NORMALIZelonR
+    ),
+    // relonmaining bits for indelonx 12 (unuselond_bits_12)
+    elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_12_30_2(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS_12_30_2", 289,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
+
+    // Intelongelonr 13
+    // elonxpelonrimelonntal helonalth modelonl scorelons from HML (cont.)
+    elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_4(
+        elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "elonXPelonRIMelonNTAL_HelonALTH_MODelonL_SCORelon_4", 290,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.PRelonDICTION_SCORelon_NORMALIZelonR
+    ),
+    // Production pSpammyTwelonelont scorelon from HML (go/pspammytwelonelont)
+    P_SPAMMY_TWelonelonT_SCORelon(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "P_SPAMMY_TWelonelonT_SCORelon", 291,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.PRelonDICTION_SCORelon_NORMALIZelonR
+    ),
+    // Production pRelonportelondTwelonelont scorelon from HML (go/prelonportelondtwelonelont)
+    P_RelonPORTelonD_TWelonelonT_SCORelon(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "P_RelonPORTelonD_TWelonelonT_SCORelon", 293,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.PRelonDICTION_SCORelon_NORMALIZelonR
+    ),
+    // relonmaining bits for indelonx 13 (unuselond_bits_13)
+    elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_13_30_2(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS_13_30_2", 294,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS
     ),
 
-    // Note that the integer block index i in the names UNUSED_BITS{i}" below is 1-based, but the
-    // index j in UNUSED_BITS_{j}_x_y above is 0-based.
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_16(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS16", 216,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    // Intelongelonr 14
+    // Helonalth modelonl scorelons from HML (cont.)
+    // Prod Spammy Twelonelont Contelonnt modelonl scorelon from Platform Manipulation (go/spammy-twelonelont-contelonnt)
+    SPAMMY_TWelonelonT_CONTelonNT_SCORelon(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "SPAMMY_TWelonelonT_CONTelonNT_SCORelon", 295,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS,
+        ThriftFelonaturelonNormalizationTypelon.PRelonDICTION_SCORelon_NORMALIZelonR
+    ),
+    // relonmaining bits for indelonx 14 (unuselond_bits_14)
+    elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_14_10_22(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS_14_10_22", 296,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS
+    ),
 
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_17(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS17", 217,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    // Notelon that thelon intelongelonr block indelonx i in thelon namelons UNUSelonD_BITS{i}" belonlow is 1-baselond, but thelon
+    // indelonx j in UNUSelonD_BITS_{j}_x_y abovelon is 0-baselond.
+    elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_16(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS16", 216,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_18(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS18", 218,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_17(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS17", 217,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_19(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS19", 219,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS),
+    elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_18(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS18", 218,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    EXTENDED_TEST_FEATURE_UNUSED_BITS_20(EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME,
-        "UNUSED_BITS20", 220,
-        FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-        UnusedFeatureFieldType.UNUSED_FEATURE_FIELD,
-        EarlybirdCluster.TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS);
+    elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_19(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS19", 219,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS),
 
-    // Filter field terms. These end up as terms in the "internal" field (id=18). So for example
-    // you can have a doc with field(internal) = "__filter_nullcast", "__filter_vine" and that will
-    // be a nullcast tweet with a vine link in it.
-    public static final String NULLCAST_FILTER_TERM = "nullcast";
-    public static final String VERIFIED_FILTER_TERM = "verified";
-    public static final String BLUE_VERIFIED_FILTER_TERM = "blue_verified";
-    public static final String NATIVE_RETWEETS_FILTER_TERM = "nativeretweets";
-    public static final String QUOTE_FILTER_TERM = "quote";
-    public static final String REPLIES_FILTER_TERM = "replies";
-    public static final String CONSUMER_VIDEO_FILTER_TERM = "consumer_video";
-    public static final String PRO_VIDEO_FILTER_TERM = "pro_video";
-    public static final String VINE_FILTER_TERM = "vine";
-    public static final String PERISCOPE_FILTER_TERM = "periscope";
-    public static final String PROFILE_GEO_FILTER_TERM = "profile_geo";
-    public static final String SELF_THREAD_FILTER_TERM = "self_threads";
-    public static final String DIRECTED_AT_FILTER_TERM = "directed_at";
-    public static final String EXCLUSIVE_FILTER_TERM = "exclusive";
+    elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_20(elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon,
+        "UNUSelonD_BITS20", 220,
+        FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+        UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD,
+        elonarlybirdClustelonr.TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS);
 
-    // Reserved terms for the internal field.
-    public static final String HAS_POSITIVE_SMILEY = "__has_positive_smiley";
-    public static final String HAS_NEGATIVE_SMILEY = "__has_negative_smiley";
-    public static final String IS_OFFENSIVE = "__is_offensive";
+    // Filtelonr fielonld telonrms. Thelonselon elonnd up as telonrms in thelon "intelonrnal" fielonld (id=18). So for elonxamplelon
+    // you can havelon a doc with fielonld(intelonrnal) = "__filtelonr_nullcast", "__filtelonr_vinelon" and that will
+    // belon a nullcast twelonelont with a vinelon link in it.
+    public static final String NULLCAST_FILTelonR_TelonRM = "nullcast";
+    public static final String VelonRIFIelonD_FILTelonR_TelonRM = "velonrifielond";
+    public static final String BLUelon_VelonRIFIelonD_FILTelonR_TelonRM = "bluelon_velonrifielond";
+    public static final String NATIVelon_RelonTWelonelonTS_FILTelonR_TelonRM = "nativelonrelontwelonelonts";
+    public static final String QUOTelon_FILTelonR_TelonRM = "quotelon";
+    public static final String RelonPLIelonS_FILTelonR_TelonRM = "relonplielons";
+    public static final String CONSUMelonR_VIDelonO_FILTelonR_TelonRM = "consumelonr_videlono";
+    public static final String PRO_VIDelonO_FILTelonR_TelonRM = "pro_videlono";
+    public static final String VINelon_FILTelonR_TelonRM = "vinelon";
+    public static final String PelonRISCOPelon_FILTelonR_TelonRM = "pelonriscopelon";
+    public static final String PROFILelon_GelonO_FILTelonR_TelonRM = "profilelon_gelono";
+    public static final String SelonLF_THRelonAD_FILTelonR_TelonRM = "selonlf_threlonads";
+    public static final String DIRelonCTelonD_AT_FILTelonR_TelonRM = "direlonctelond_at";
+    public static final String elonXCLUSIVelon_FILTelonR_TelonRM = "elonxclusivelon";
 
-    // Facet fields
-    public static final String MENTIONS_FACET = "mentions";
-    public static final String HASHTAGS_FACET = "hashtags";
-    public static final String STOCKS_FACET = "stocks";
-    public static final String VIDEOS_FACET = "videos";
-    public static final String IMAGES_FACET = "images";
-    public static final String NEWS_FACET = "news";
-    public static final String LANGUAGES_FACET = "languages";
-    public static final String SOURCES_FACET = "sources";
-    public static final String TWIMG_FACET = "twimg";
-    public static final String FROM_USER_ID_FACET = "user_id";
-    public static final String RETWEETS_FACET = "retweets";
-    public static final String LINKS_FACET = "links";
-    public static final String SPACES_FACET = "spaces";
+    // Relonselonrvelond telonrms for thelon intelonrnal fielonld.
+    public static final String HAS_POSITIVelon_SMILelonY = "__has_positivelon_smilelony";
+    public static final String HAS_NelonGATIVelon_SMILelonY = "__has_nelongativelon_smilelony";
+    public static final String IS_OFFelonNSIVelon = "__is_offelonnsivelon";
+
+    // Facelont fielonlds
+    public static final String MelonNTIONS_FACelonT = "melonntions";
+    public static final String HASHTAGS_FACelonT = "hashtags";
+    public static final String STOCKS_FACelonT = "stocks";
+    public static final String VIDelonOS_FACelonT = "videlonos";
+    public static final String IMAGelonS_FACelonT = "imagelons";
+    public static final String NelonWS_FACelonT = "nelonws";
+    public static final String LANGUAGelonS_FACelonT = "languagelons";
+    public static final String SOURCelonS_FACelonT = "sourcelons";
+    public static final String TWIMG_FACelonT = "twimg";
+    public static final String FROM_USelonR_ID_FACelonT = "uselonr_id";
+    public static final String RelonTWelonelonTS_FACelonT = "relontwelonelonts";
+    public static final String LINKS_FACelonT = "links";
+    public static final String SPACelonS_FACelonT = "spacelons";
 
     /**
-     * Used by the query parser to check that the operator of a [filter X] query is valid.
-     * Also used by blender, though it probably shouldn't be.
+     * Uselond by thelon quelonry parselonr to chelonck that thelon opelonrator of a [filtelonr X] quelonry is valid.
+     * Also uselond by blelonndelonr, though it probably shouldn't belon.
      */
-    public static final ImmutableSet<String> FACETS = ImmutableSet.<String>builder()
-        .add(MENTIONS_FACET)
-        .add(HASHTAGS_FACET)
-        .add(STOCKS_FACET)
-        .add(VIDEOS_FACET)
-        .add(IMAGES_FACET)
-        .add(NEWS_FACET)
-        .add(LINKS_FACET)
-        .add(LANGUAGES_FACET)
-        .add(SOURCES_FACET)
-        .add(TWIMG_FACET)
-        .add(SPACES_FACET)
+    public static final ImmutablelonSelont<String> FACelonTS = ImmutablelonSelont.<String>buildelonr()
+        .add(MelonNTIONS_FACelonT)
+        .add(HASHTAGS_FACelonT)
+        .add(STOCKS_FACelonT)
+        .add(VIDelonOS_FACelonT)
+        .add(IMAGelonS_FACelonT)
+        .add(NelonWS_FACelonT)
+        .add(LINKS_FACelonT)
+        .add(LANGUAGelonS_FACelonT)
+        .add(SOURCelonS_FACelonT)
+        .add(TWIMG_FACelonT)
+        .add(SPACelonS_FACelonT)
         .build();
 
     /**
-     * Used by blender to convert facet names to field names. We should find a way to get the
-     * information we need in blender without needing this map.
+     * Uselond by blelonndelonr to convelonrt facelont namelons to fielonld namelons. Welon should find a way to gelont thelon
+     * information welon nelonelond in blelonndelonr without nelonelonding this map.
      */
-    public static final ImmutableMap<String, String> FACET_TO_FIELD_MAP =
-        ImmutableMap.<String, String>builder()
-            .put(MENTIONS_FACET, MENTIONS_FIELD.getFieldName())
-            .put(HASHTAGS_FACET, HASHTAGS_FIELD.getFieldName())
-            .put(STOCKS_FACET, STOCKS_FIELD.getFieldName())
-            .put(VIDEOS_FACET, VIDEO_LINKS_FIELD.getFieldName())
-            .put(IMAGES_FACET, IMAGE_LINKS_FIELD.getFieldName())
-            .put(NEWS_FACET, NEWS_LINKS_FIELD.getFieldName())
-            .put(LANGUAGES_FACET, ISO_LANGUAGE_FIELD.getFieldName())
-            .put(SOURCES_FACET, SOURCE_FIELD.getFieldName())
-            .put(TWIMG_FACET, TWIMG_LINKS_FIELD.getFieldName())
-            .put(LINKS_FACET, LINKS_FIELD.getFieldName())
-            .put(SPACES_FACET, SPACE_ID_FIELD.getFieldName())
+    public static final ImmutablelonMap<String, String> FACelonT_TO_FIelonLD_MAP =
+        ImmutablelonMap.<String, String>buildelonr()
+            .put(MelonNTIONS_FACelonT, MelonNTIONS_FIelonLD.gelontFielonldNamelon())
+            .put(HASHTAGS_FACelonT, HASHTAGS_FIelonLD.gelontFielonldNamelon())
+            .put(STOCKS_FACelonT, STOCKS_FIelonLD.gelontFielonldNamelon())
+            .put(VIDelonOS_FACelonT, VIDelonO_LINKS_FIelonLD.gelontFielonldNamelon())
+            .put(IMAGelonS_FACelonT, IMAGelon_LINKS_FIelonLD.gelontFielonldNamelon())
+            .put(NelonWS_FACelonT, NelonWS_LINKS_FIelonLD.gelontFielonldNamelon())
+            .put(LANGUAGelonS_FACelonT, ISO_LANGUAGelon_FIelonLD.gelontFielonldNamelon())
+            .put(SOURCelonS_FACelonT, SOURCelon_FIelonLD.gelontFielonldNamelon())
+            .put(TWIMG_FACelonT, TWIMG_LINKS_FIelonLD.gelontFielonldNamelon())
+            .put(LINKS_FACelonT, LINKS_FIelonLD.gelontFielonldNamelon())
+            .put(SPACelonS_FACelonT, SPACelon_ID_FIelonLD.gelontFielonldNamelon())
             .build();
 
-    public static String getFacetSkipFieldName(String fieldName) {
-      return "__has_" + fieldName;
+    public static String gelontFacelontSkipFielonldNamelon(String fielonldNamelon) {
+      relonturn "__has_" + fielonldNamelon;
     }
 
-    private final String fieldName;
-    private final int fieldId;
-    private final EnumSet<EarlybirdCluster> clusters;
-    private final FlagFeatureFieldType flagFeatureField;
+    privatelon final String fielonldNamelon;
+    privatelon final int fielonldId;
+    privatelon final elonnumSelont<elonarlybirdClustelonr> clustelonrs;
+    privatelon final FlagFelonaturelonFielonldTypelon flagFelonaturelonFielonld;
 
-    private final UnusedFeatureFieldType unusedField;
+    privatelon final UnuselondFelonaturelonFielonldTypelon unuselondFielonld;
 
-    // Only set for feature fields.
-    @Nullable
-    private final FeatureConfiguration featureConfiguration;
+    // Only selont for felonaturelon fielonlds.
+    @Nullablelon
+    privatelon final FelonaturelonConfiguration felonaturelonConfiguration;
 
-    // Only set for feature fields.
-    private final ThriftFeatureNormalizationType featureNormalizationType;
+    // Only selont for felonaturelon fielonlds.
+    privatelon final ThriftFelonaturelonNormalizationTypelon felonaturelonNormalizationTypelon;
 
-    // To simplify field configurations and reduce duplicate code, we give clusters a default value
-    EarlybirdFieldConstant(String fieldName, int fieldId) {
-      this(fieldName, fieldId, EarlybirdCluster.GENERAL_PURPOSE_CLUSTERS, null);
+    // To simplify fielonld configurations and relonducelon duplicatelon codelon, welon givelon clustelonrs a delonfault valuelon
+    elonarlybirdFielonldConstant(String fielonldNamelon, int fielonldId) {
+      this(fielonldNamelon, fielonldId, elonarlybirdClustelonr.GelonNelonRAL_PURPOSelon_CLUSTelonRS, null);
     }
 
-    EarlybirdFieldConstant(String fieldName, int fieldId, Set<EarlybirdCluster> clusters) {
-      this(fieldName, fieldId, clusters, null);
+    elonarlybirdFielonldConstant(String fielonldNamelon, int fielonldId, Selont<elonarlybirdClustelonr> clustelonrs) {
+      this(fielonldNamelon, fielonldId, clustelonrs, null);
     }
 
-    EarlybirdFieldConstant(String fieldName, int fieldId, EarlybirdCluster cluster) {
-      this(fieldName, fieldId, ImmutableSet.<EarlybirdCluster>of(cluster), null);
-    }
-
-    /**
-     * Base field name is needed here in order to construct the full
-     * name of the feature. Our convention is that a feature should be named
-     * as: baseFieldName.featureName.  For example: encoded_tweet_features.retweet_count.
-     */
-    EarlybirdFieldConstant(
-        String baseName,
-        String fieldName,
-        int fieldId,
-        FlagFeatureFieldType flagFeatureField,
-        Set<EarlybirdCluster> clusters) {
-      this((baseName + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR + fieldName).toLowerCase(),
-          fieldId, clusters, flagFeatureField, null);
-    }
-
-    EarlybirdFieldConstant(
-        String baseName,
-        String fieldName,
-        int fieldId,
-        FlagFeatureFieldType flagFeatureField,
-        UnusedFeatureFieldType unusedField,
-        Set<EarlybirdCluster> clusters) {
-      this((baseName + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR + fieldName).toLowerCase(),
-          fieldId, clusters, flagFeatureField, unusedField, null);
-    }
-
-    EarlybirdFieldConstant(
-        String baseName,
-        String fieldName,
-        int fieldId,
-        FlagFeatureFieldType flagFeatureField,
-        Set<EarlybirdCluster> clusters,
-        ThriftFeatureNormalizationType featureNormalizationType) {
-      this((baseName + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR + fieldName).toLowerCase(),
-          fieldId, clusters, flagFeatureField, UnusedFeatureFieldType.USED_FEATURE_FIELD,
-          featureNormalizationType, null);
+    elonarlybirdFielonldConstant(String fielonldNamelon, int fielonldId, elonarlybirdClustelonr clustelonr) {
+      this(fielonldNamelon, fielonldId, ImmutablelonSelont.<elonarlybirdClustelonr>of(clustelonr), null);
     }
 
     /**
-     * Constructor.
+     * Baselon fielonld namelon is nelonelondelond helonrelon in ordelonr to construct thelon full
+     * namelon of thelon felonaturelon. Our convelonntion is that a felonaturelon should belon namelond
+     * as: baselonFielonldNamelon.felonaturelonNamelon.  For elonxamplelon: elonncodelond_twelonelont_felonaturelons.relontwelonelont_count.
      */
-    EarlybirdFieldConstant(String fieldName, int fieldId, Set<EarlybirdCluster> clusters,
-                                   @Nullable FeatureConfiguration featureConfiguration) {
-      this(fieldName, fieldId, clusters, FlagFeatureFieldType.NON_FLAG_FEATURE_FIELD,
-          featureConfiguration);
+    elonarlybirdFielonldConstant(
+        String baselonNamelon,
+        String fielonldNamelon,
+        int fielonldId,
+        FlagFelonaturelonFielonldTypelon flagFelonaturelonFielonld,
+        Selont<elonarlybirdClustelonr> clustelonrs) {
+      this((baselonNamelon + SchelonmaBuildelonr.CSF_VIelonW_NAMelon_SelonPARATOR + fielonldNamelon).toLowelonrCaselon(),
+          fielonldId, clustelonrs, flagFelonaturelonFielonld, null);
+    }
+
+    elonarlybirdFielonldConstant(
+        String baselonNamelon,
+        String fielonldNamelon,
+        int fielonldId,
+        FlagFelonaturelonFielonldTypelon flagFelonaturelonFielonld,
+        UnuselondFelonaturelonFielonldTypelon unuselondFielonld,
+        Selont<elonarlybirdClustelonr> clustelonrs) {
+      this((baselonNamelon + SchelonmaBuildelonr.CSF_VIelonW_NAMelon_SelonPARATOR + fielonldNamelon).toLowelonrCaselon(),
+          fielonldId, clustelonrs, flagFelonaturelonFielonld, unuselondFielonld, null);
+    }
+
+    elonarlybirdFielonldConstant(
+        String baselonNamelon,
+        String fielonldNamelon,
+        int fielonldId,
+        FlagFelonaturelonFielonldTypelon flagFelonaturelonFielonld,
+        Selont<elonarlybirdClustelonr> clustelonrs,
+        ThriftFelonaturelonNormalizationTypelon felonaturelonNormalizationTypelon) {
+      this((baselonNamelon + SchelonmaBuildelonr.CSF_VIelonW_NAMelon_SelonPARATOR + fielonldNamelon).toLowelonrCaselon(),
+          fielonldId, clustelonrs, flagFelonaturelonFielonld, UnuselondFelonaturelonFielonldTypelon.USelonD_FelonATURelon_FIelonLD,
+          felonaturelonNormalizationTypelon, null);
     }
 
     /**
      * Constructor.
      */
-    EarlybirdFieldConstant(String fieldName,
-                           int fieldId,
-                           Set<EarlybirdCluster> clusters,
-                           FlagFeatureFieldType flagFeatureField,
-                           @Nullable FeatureConfiguration featureConfiguration) {
-      this(fieldName, fieldId, clusters, flagFeatureField,
-          UnusedFeatureFieldType.USED_FEATURE_FIELD, featureConfiguration);
+    elonarlybirdFielonldConstant(String fielonldNamelon, int fielonldId, Selont<elonarlybirdClustelonr> clustelonrs,
+                                   @Nullablelon FelonaturelonConfiguration felonaturelonConfiguration) {
+      this(fielonldNamelon, fielonldId, clustelonrs, FlagFelonaturelonFielonldTypelon.NON_FLAG_FelonATURelon_FIelonLD,
+          felonaturelonConfiguration);
     }
 
     /**
      * Constructor.
      */
-    EarlybirdFieldConstant(String fieldName,
-                           int fieldId,
-                           Set<EarlybirdCluster> clusters,
-                           FlagFeatureFieldType flagFeatureField,
-                           UnusedFeatureFieldType unusedField,
-                           @Nullable FeatureConfiguration featureConfiguration) {
-      this(fieldName, fieldId, clusters, flagFeatureField, unusedField, null, featureConfiguration);
+    elonarlybirdFielonldConstant(String fielonldNamelon,
+                           int fielonldId,
+                           Selont<elonarlybirdClustelonr> clustelonrs,
+                           FlagFelonaturelonFielonldTypelon flagFelonaturelonFielonld,
+                           @Nullablelon FelonaturelonConfiguration felonaturelonConfiguration) {
+      this(fielonldNamelon, fielonldId, clustelonrs, flagFelonaturelonFielonld,
+          UnuselondFelonaturelonFielonldTypelon.USelonD_FelonATURelon_FIelonLD, felonaturelonConfiguration);
     }
 
     /**
      * Constructor.
      */
-    EarlybirdFieldConstant(String fieldName,
-                           int fieldId,
-                           Set<EarlybirdCluster> clusters,
-                           FlagFeatureFieldType flagFeatureField,
-                           UnusedFeatureFieldType unusedField,
-                           @Nullable ThriftFeatureNormalizationType featureNormalizationType,
-                           @Nullable FeatureConfiguration featureConfiguration) {
-      this.fieldId = fieldId;
-      this.fieldName = fieldName;
-      this.clusters = EnumSet.copyOf(clusters);
-      this.flagFeatureField = flagFeatureField;
-      this.unusedField = unusedField;
-      this.featureNormalizationType = featureNormalizationType;
-      this.featureConfiguration = featureConfiguration;
+    elonarlybirdFielonldConstant(String fielonldNamelon,
+                           int fielonldId,
+                           Selont<elonarlybirdClustelonr> clustelonrs,
+                           FlagFelonaturelonFielonldTypelon flagFelonaturelonFielonld,
+                           UnuselondFelonaturelonFielonldTypelon unuselondFielonld,
+                           @Nullablelon FelonaturelonConfiguration felonaturelonConfiguration) {
+      this(fielonldNamelon, fielonldId, clustelonrs, flagFelonaturelonFielonld, unuselondFielonld, null, felonaturelonConfiguration);
     }
 
-    // Override toString to make replacing StatusConstant Easier.
-    @Override
+    /**
+     * Constructor.
+     */
+    elonarlybirdFielonldConstant(String fielonldNamelon,
+                           int fielonldId,
+                           Selont<elonarlybirdClustelonr> clustelonrs,
+                           FlagFelonaturelonFielonldTypelon flagFelonaturelonFielonld,
+                           UnuselondFelonaturelonFielonldTypelon unuselondFielonld,
+                           @Nullablelon ThriftFelonaturelonNormalizationTypelon felonaturelonNormalizationTypelon,
+                           @Nullablelon FelonaturelonConfiguration felonaturelonConfiguration) {
+      this.fielonldId = fielonldId;
+      this.fielonldNamelon = fielonldNamelon;
+      this.clustelonrs = elonnumSelont.copyOf(clustelonrs);
+      this.flagFelonaturelonFielonld = flagFelonaturelonFielonld;
+      this.unuselondFielonld = unuselondFielonld;
+      this.felonaturelonNormalizationTypelon = felonaturelonNormalizationTypelon;
+      this.felonaturelonConfiguration = felonaturelonConfiguration;
+    }
+
+    // Ovelonrridelon toString to makelon relonplacing StatusConstant elonasielonr.
+    @Ovelonrridelon
     public String toString() {
-      return fieldName;
+      relonturn fielonldNamelon;
     }
 
-    public boolean isValidFieldInCluster(EarlybirdCluster cluster) {
-      return clusters.contains(cluster);
+    public boolelonan isValidFielonldInClustelonr(elonarlybirdClustelonr clustelonr) {
+      relonturn clustelonrs.contains(clustelonr);
     }
 
-    public String getFieldName() {
-      return fieldName;
+    public String gelontFielonldNamelon() {
+      relonturn fielonldNamelon;
     }
 
-    public int getFieldId() {
-      return fieldId;
+    public int gelontFielonldId() {
+      relonturn fielonldId;
     }
 
-    public FlagFeatureFieldType getFlagFeatureField() {
-      return flagFeatureField;
+    public FlagFelonaturelonFielonldTypelon gelontFlagFelonaturelonFielonld() {
+      relonturn flagFelonaturelonFielonld;
     }
 
-    public boolean isFlagFeatureField() {
-      return flagFeatureField == FlagFeatureFieldType.FLAG_FEATURE_FIELD;
+    public boolelonan isFlagFelonaturelonFielonld() {
+      relonturn flagFelonaturelonFielonld == FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD;
     }
 
-    public boolean isUnusedField() {
-      return unusedField == UnusedFeatureFieldType.UNUSED_FEATURE_FIELD;
+    public boolelonan isUnuselondFielonld() {
+      relonturn unuselondFielonld == UnuselondFelonaturelonFielonldTypelon.UNUSelonD_FelonATURelon_FIelonLD;
     }
 
-    @Nullable
-    public FeatureConfiguration getFeatureConfiguration() {
-      return featureConfiguration;
+    @Nullablelon
+    public FelonaturelonConfiguration gelontFelonaturelonConfiguration() {
+      relonturn felonaturelonConfiguration;
     }
 
-    @Nullable
-    public ThriftFeatureNormalizationType getFeatureNormalizationType() {
-      return featureNormalizationType;
+    @Nullablelon
+    public ThriftFelonaturelonNormalizationTypelon gelontFelonaturelonNormalizationTypelon() {
+      relonturn felonaturelonNormalizationTypelon;
     }
   }
 
-  private static final Map<String, EarlybirdFieldConstant> NAME_TO_ID_MAP;
-  private static final Map<Integer, EarlybirdFieldConstant> ID_TO_FIELD_MAP;
+  privatelon static final Map<String, elonarlybirdFielonldConstant> NAMelon_TO_ID_MAP;
+  privatelon static final Map<Intelongelonr, elonarlybirdFielonldConstant> ID_TO_FIelonLD_MAP;
   static {
-    ImmutableMap.Builder<String, EarlybirdFieldConstant> nameToIdMapBuilder =
-        ImmutableMap.builder();
-    ImmutableMap.Builder<Integer, EarlybirdFieldConstant> idToFieldMapBuilder =
-        ImmutableMap.builder();
-    Set<String> fieldNameDupDetector = Sets.newHashSet();
-    Set<Integer> fieldIdDupDetector = Sets.newHashSet();
-    for (EarlybirdFieldConstant fc : EarlybirdFieldConstant.values()) {
-      if (fieldNameDupDetector.contains(fc.getFieldName())) {
-        throw new IllegalStateException("detected fields sharing field name: " + fc.getFieldName());
+    ImmutablelonMap.Buildelonr<String, elonarlybirdFielonldConstant> namelonToIdMapBuildelonr =
+        ImmutablelonMap.buildelonr();
+    ImmutablelonMap.Buildelonr<Intelongelonr, elonarlybirdFielonldConstant> idToFielonldMapBuildelonr =
+        ImmutablelonMap.buildelonr();
+    Selont<String> fielonldNamelonDupDelontelonctor = Selonts.nelonwHashSelont();
+    Selont<Intelongelonr> fielonldIdDupDelontelonctor = Selonts.nelonwHashSelont();
+    for (elonarlybirdFielonldConstant fc : elonarlybirdFielonldConstant.valuelons()) {
+      if (fielonldNamelonDupDelontelonctor.contains(fc.gelontFielonldNamelon())) {
+        throw nelonw IllelongalStatelonelonxcelonption("delontelonctelond fielonlds sharing fielonld namelon: " + fc.gelontFielonldNamelon());
       }
-      if (fieldIdDupDetector.contains(fc.getFieldId())) {
-        throw new IllegalStateException("detected fields sharing field id: " + fc.getFieldId());
+      if (fielonldIdDupDelontelonctor.contains(fc.gelontFielonldId())) {
+        throw nelonw IllelongalStatelonelonxcelonption("delontelonctelond fielonlds sharing fielonld id: " + fc.gelontFielonldId());
       }
 
-      fieldNameDupDetector.add(fc.getFieldName());
-      fieldIdDupDetector.add(fc.getFieldId());
-      nameToIdMapBuilder.put(fc.getFieldName(), fc);
-      idToFieldMapBuilder.put(fc.getFieldId(), fc);
+      fielonldNamelonDupDelontelonctor.add(fc.gelontFielonldNamelon());
+      fielonldIdDupDelontelonctor.add(fc.gelontFielonldId());
+      namelonToIdMapBuildelonr.put(fc.gelontFielonldNamelon(), fc);
+      idToFielonldMapBuildelonr.put(fc.gelontFielonldId(), fc);
     }
-    NAME_TO_ID_MAP = nameToIdMapBuilder.build();
-    ID_TO_FIELD_MAP = idToFieldMapBuilder.build();
+    NAMelon_TO_ID_MAP = namelonToIdMapBuildelonr.build();
+    ID_TO_FIelonLD_MAP = idToFielonldMapBuildelonr.build();
   }
 
-  // This define the list of boolean features, but the name does not have "flag" inside.  This
-  // definition is only for double checking purpose to prevent code change mistakes.  The setting
-  // of the flag feature is based on FlagFeatureFieldType.FLAG_FEATURE_FIELD.
-  public static final Set<EarlybirdFieldConstants.EarlybirdFieldConstant> EXTRA_FLAG_FIELDS =
-      Sets.newHashSet(EarlybirdFieldConstants.EarlybirdFieldConstant.IS_SENSITIVE_CONTENT);
+  // This delonfinelon thelon list of boolelonan felonaturelons, but thelon namelon doelons not havelon "flag" insidelon.  This
+  // delonfinition is only for doublelon cheloncking purposelon to prelonvelonnt codelon changelon mistakelons.  Thelon selontting
+  // of thelon flag felonaturelon is baselond on FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD.
+  public static final Selont<elonarlybirdFielonldConstants.elonarlybirdFielonldConstant> elonXTRA_FLAG_FIelonLDS =
+      Selonts.nelonwHashSelont(elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.IS_SelonNSITIVelon_CONTelonNT);
   public static final String FLAG_STRING = "flag";
 
-  private static final List<EarlybirdFieldConstant> FLAG_FEATURE_FIELDS;
+  privatelon static final List<elonarlybirdFielonldConstant> FLAG_FelonATURelon_FIelonLDS;
   static {
-    ImmutableList.Builder<EarlybirdFieldConstant> flagFieldBuilder = ImmutableList.builder();
-    for (EarlybirdFieldConstant fc : EarlybirdFieldConstant.values()) {
-      if (fc.getFlagFeatureField() == FlagFeatureFieldType.FLAG_FEATURE_FIELD
-          && !fc.isUnusedField()) {
-        flagFieldBuilder.add(fc);
+    ImmutablelonList.Buildelonr<elonarlybirdFielonldConstant> flagFielonldBuildelonr = ImmutablelonList.buildelonr();
+    for (elonarlybirdFielonldConstant fc : elonarlybirdFielonldConstant.valuelons()) {
+      if (fc.gelontFlagFelonaturelonFielonld() == FlagFelonaturelonFielonldTypelon.FLAG_FelonATURelon_FIelonLD
+          && !fc.isUnuselondFielonld()) {
+        flagFielonldBuildelonr.add(fc);
       }
     }
-    FLAG_FEATURE_FIELDS = flagFieldBuilder.build();
+    FLAG_FelonATURelon_FIelonLDS = flagFielonldBuildelonr.build();
   }
 
   /**
-   * Get all the flag features meaning that they are boolean features with only 1 bit in the packed
-   * feature encoding.
+   * Gelont all thelon flag felonaturelons melonaning that thelony arelon boolelonan felonaturelons with only 1 bit in thelon packelond
+   * felonaturelon elonncoding.
    */
-  public static Collection<EarlybirdFieldConstant> getFlagFeatureFields() {
-    return FLAG_FEATURE_FIELDS;
+  public static Collelonction<elonarlybirdFielonldConstant> gelontFlagFelonaturelonFielonlds() {
+    relonturn FLAG_FelonATURelon_FIelonLDS;
   }
 
   /**
-   * Get the EarlybirdFieldConstant for the specified field.
+   * Gelont thelon elonarlybirdFielonldConstant for thelon speloncifielond fielonld.
    */
-  public static EarlybirdFieldConstant getFieldConstant(String fieldName) {
-    EarlybirdFieldConstant field = NAME_TO_ID_MAP.get(fieldName);
-    if (field == null) {
-      throw new IllegalArgumentException("Unknown field: " + fieldName);
+  public static elonarlybirdFielonldConstant gelontFielonldConstant(String fielonldNamelon) {
+    elonarlybirdFielonldConstant fielonld = NAMelon_TO_ID_MAP.gelont(fielonldNamelon);
+    if (fielonld == null) {
+      throw nelonw IllelongalArgumelonntelonxcelonption("Unknown fielonld: " + fielonldNamelon);
     }
-    return field;
+    relonturn fielonld;
   }
 
   /**
-   * Get the EarlybirdFieldConstant for the specified field.
+   * Gelont thelon elonarlybirdFielonldConstant for thelon speloncifielond fielonld.
    */
-  public static EarlybirdFieldConstant getFieldConstant(int fieldId) {
-    EarlybirdFieldConstant field = ID_TO_FIELD_MAP.get(fieldId);
-    if (field == null) {
-      throw new IllegalArgumentException("Unknown field: " + fieldId);
+  public static elonarlybirdFielonldConstant gelontFielonldConstant(int fielonldId) {
+    elonarlybirdFielonldConstant fielonld = ID_TO_FIelonLD_MAP.gelont(fielonldId);
+    if (fielonld == null) {
+      throw nelonw IllelongalArgumelonntelonxcelonption("Unknown fielonld: " + fielonldId);
     }
-    return field;
+    relonturn fielonld;
   }
 
   /**
-   * Determines if there's a field with the given ID.
+   * Delontelonrminelons if thelonrelon's a fielonld with thelon givelonn ID.
    */
-  public static boolean hasFieldConstant(int fieldId) {
-    return ID_TO_FIELD_MAP.keySet().contains(fieldId);
+  public static boolelonan hasFielonldConstant(int fielonldId) {
+    relonturn ID_TO_FIelonLD_MAP.kelonySelont().contains(fielonldId);
   }
 
-  @Override
-  public final int getFieldID(String fieldName) {
-    return getFieldConstant(fieldName).getFieldId();
+  @Ovelonrridelon
+  public final int gelontFielonldID(String fielonldNamelon) {
+    relonturn gelontFielonldConstant(fielonldNamelon).gelontFielonldId();
   }
 
-  public static final String formatGeoType(ThriftGeoLocationSource source) {
-    return "__geo_location_type_" + source.name().toLowerCase();
+  public static final String formatGelonoTypelon(ThriftGelonoLocationSourcelon sourcelon) {
+    relonturn "__gelono_location_typelon_" + sourcelon.namelon().toLowelonrCaselon();
   }
 }

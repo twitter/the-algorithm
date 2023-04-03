@@ -1,170 +1,170 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.Filelon;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.slf4j.Marker;
-import org.slf4j.MarkerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import org.slf4j.Markelonr;
+import org.slf4j.MarkelonrFactory;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.store.LockObtainFailedException;
+import org.apachelon.lucelonnelon.documelonnt.Documelonnt;
+import org.apachelon.lucelonnelon.indelonx.IndelonxWritelonr;
+import org.apachelon.lucelonnelon.indelonx.IndelonxWritelonrConfig;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
+import org.apachelon.lucelonnelon.storelon.FSDirelonctory;
+import org.apachelon.lucelonnelon.storelon.LockObtainFailelondelonxcelonption;
 
 /**
- * EarlybirdIndexWriter implementation that's a wrapper around Lucene's {@link IndexWriter}
- * and writes Lucene segments into a {@link Directory}.
+ * elonarlybirdIndelonxWritelonr implelonmelonntation that's a wrappelonr around Lucelonnelon's {@link IndelonxWritelonr}
+ * and writelons Lucelonnelon selongmelonnts into a {@link Direlonctory}.
  */
-public class EarlybirdLuceneIndexSegmentWriter extends EarlybirdIndexSegmentWriter {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(EarlybirdLuceneIndexSegmentWriter.class);
-  private static final Marker FATAL = MarkerFactory.getMarker("FATAL");
+public class elonarlybirdLucelonnelonIndelonxSelongmelonntWritelonr elonxtelonnds elonarlybirdIndelonxSelongmelonntWritelonr {
+  privatelon static final Loggelonr LOG =
+    LoggelonrFactory.gelontLoggelonr(elonarlybirdLucelonnelonIndelonxSelongmelonntWritelonr.class);
+  privatelon static final Markelonr FATAL = MarkelonrFactory.gelontMarkelonr("FATAL");
 
-  private final EarlybirdLuceneIndexSegmentData segmentData;
-  private final IndexWriter indexWriter;
+  privatelon final elonarlybirdLucelonnelonIndelonxSelongmelonntData selongmelonntData;
+  privatelon final IndelonxWritelonr indelonxWritelonr;
 
-  @Override
-  public EarlybirdIndexSegmentData getSegmentData() {
-    return segmentData;
+  @Ovelonrridelon
+  public elonarlybirdIndelonxSelongmelonntData gelontSelongmelonntData() {
+    relonturn selongmelonntData;
   }
 
   /**
-   * Construct a lucene IndexWriter-based Earlybird segment writer.
-   * This will open a Lucene IndexWriter on segmentData.getLuceneDirectory().
-   * This constructor will throw LockObtainFailedException if it cannot obtain the "write.lock"
-   * inside the directory segmentData.getLuceneDirectory().
+   * Construct a lucelonnelon IndelonxWritelonr-baselond elonarlybird selongmelonnt writelonr.
+   * This will opelonn a Lucelonnelon IndelonxWritelonr on selongmelonntData.gelontLucelonnelonDirelonctory().
+   * This constructor will throw LockObtainFailelondelonxcelonption if it cannot obtain thelon "writelon.lock"
+   * insidelon thelon direlonctory selongmelonntData.gelontLucelonnelonDirelonctory().
    *
-   * Don't add public constructors to this class. EarlybirdLuceneIndexSegmentWriter instances should
-   * be created only by calling EarlybirdLuceneIndexSegmentData.createEarlybirdIndexSegmentWriter(),
-   * to make sure everything is set up properly (such as CSF readers).
+   * Don't add public constructors to this class. elonarlybirdLucelonnelonIndelonxSelongmelonntWritelonr instancelons should
+   * belon crelonatelond only by calling elonarlybirdLucelonnelonIndelonxSelongmelonntData.crelonatelonelonarlybirdIndelonxSelongmelonntWritelonr(),
+   * to makelon surelon elonvelonrything is selont up propelonrly (such as CSF relonadelonrs).
    */
-  EarlybirdLuceneIndexSegmentWriter(
-      EarlybirdLuceneIndexSegmentData segmentData,
-      IndexWriterConfig indexWriterConfig) throws IOException {
-    Preconditions.checkNotNull(segmentData);
-    this.segmentData = segmentData;
+  elonarlybirdLucelonnelonIndelonxSelongmelonntWritelonr(
+      elonarlybirdLucelonnelonIndelonxSelongmelonntData selongmelonntData,
+      IndelonxWritelonrConfig indelonxWritelonrConfig) throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(selongmelonntData);
+    this.selongmelonntData = selongmelonntData;
     try {
-      this.indexWriter = new IndexWriter(segmentData.getLuceneDirectory(), indexWriterConfig);
-    } catch (LockObtainFailedException e) {
-      logDebuggingInfoUponFailureToObtainLuceneWriteLock(segmentData, e);
-      // Rethrow the exception, and this Earlybird will trigger critical alerts
-      throw e;
+      this.indelonxWritelonr = nelonw IndelonxWritelonr(selongmelonntData.gelontLucelonnelonDirelonctory(), indelonxWritelonrConfig);
+    } catch (LockObtainFailelondelonxcelonption elon) {
+      logDelonbuggingInfoUponFailurelonToObtainLucelonnelonWritelonLock(selongmelonntData, elon);
+      // Relonthrow thelon elonxcelonption, and this elonarlybird will triggelonr critical alelonrts
+      throw elon;
     }
   }
 
-  private void logDebuggingInfoUponFailureToObtainLuceneWriteLock(
-      EarlybirdLuceneIndexSegmentData luceneIndexSegmentData,
-      LockObtainFailedException e) throws IOException {
-    // Every day, we create a new Lucene dir---we do not append into existing Lucene dirs.
-    // Supposedly, we should never fail to obtain the write lock from a fresh and empty
-    // Lucene directory.
-    // Adding debugging information for SEARCH-4454, where a timeslice roll failed because
-    // Earlybird failed to get the write lock for a new timeslice.
-    Directory dir = luceneIndexSegmentData.getLuceneDirectory();
-    LOG.error(
+  privatelon void logDelonbuggingInfoUponFailurelonToObtainLucelonnelonWritelonLock(
+      elonarlybirdLucelonnelonIndelonxSelongmelonntData lucelonnelonIndelonxSelongmelonntData,
+      LockObtainFailelondelonxcelonption elon) throws IOelonxcelonption {
+    // elonvelonry day, welon crelonatelon a nelonw Lucelonnelon dir---welon do not appelonnd into elonxisting Lucelonnelon dirs.
+    // Supposelondly, welon should nelonvelonr fail to obtain thelon writelon lock from a frelonsh and elonmpty
+    // Lucelonnelon direlonctory.
+    // Adding delonbugging information for SelonARCH-4454, whelonrelon a timelonslicelon roll failelond beloncauselon
+    // elonarlybird failelond to gelont thelon writelon lock for a nelonw timelonslicelon.
+    Direlonctory dir = lucelonnelonIndelonxSelongmelonntData.gelontLucelonnelonDirelonctory();
+    LOG.elonrror(
       FATAL,
-      "Unable to obtain write.lock for Lucene directory. The Lucene directory is: " + dir,
-      e);
+      "Unablelon to obtain writelon.lock for Lucelonnelon direlonctory. Thelon Lucelonnelon direlonctory is: " + dir,
+      elon);
 
-    if (dir instanceof FSDirectory) { // this check should always be true in our current setup.
-      FSDirectory fsDir = (FSDirectory) dir;
-      // Log if the underlying directory on disk does not exist.
-      File underlyingDir = fsDir.getDirectory().toFile();
-      if (underlyingDir.exists()) {
-        LOG.info("Lucene directory contains the following files: "
-            + Lists.newArrayList(fsDir.listAll()));
-      } else {
-        LOG.error(
+    if (dir instancelonof FSDirelonctory) { // this chelonck should always belon truelon in our currelonnt selontup.
+      FSDirelonctory fsDir = (FSDirelonctory) dir;
+      // Log if thelon undelonrlying direlonctory on disk doelons not elonxist.
+      Filelon undelonrlyingDir = fsDir.gelontDirelonctory().toFilelon();
+      if (undelonrlyingDir.elonxists()) {
+        LOG.info("Lucelonnelon direlonctory contains thelon following filelons: "
+            + Lists.nelonwArrayList(fsDir.listAll()));
+      } elonlselon {
+        LOG.elonrror(
           FATAL,
-          "Directory " + underlyingDir + " does not exist on disk.",
-          e);
+          "Direlonctory " + undelonrlyingDir + " doelons not elonxist on disk.",
+          elon);
       }
 
-      if (!underlyingDir.canWrite()) {
-        LOG.error(
+      if (!undelonrlyingDir.canWritelon()) {
+        LOG.elonrror(
           FATAL,
-          "Cannot write into directory " + underlyingDir,
-          e);
+          "Cannot writelon into direlonctory " + undelonrlyingDir,
+          elon);
       }
 
-      File writeLockFile = new File(underlyingDir, "write.lock");
-      if (writeLockFile.exists()) {
-        LOG.error(
+      Filelon writelonLockFilelon = nelonw Filelon(undelonrlyingDir, "writelon.lock");
+      if (writelonLockFilelon.elonxists()) {
+        LOG.elonrror(
           FATAL,
-          "Write lock file " + writeLockFile + " already exists.",
-          e);
+          "Writelon lock filelon " + writelonLockFilelon + " alrelonady elonxists.",
+          elon);
       }
 
-      if (!writeLockFile.canWrite()) {
-        LOG.error(
+      if (!writelonLockFilelon.canWritelon()) {
+        LOG.elonrror(
           FATAL,
-          "No write access to lock file: " + writeLockFile
-            + " Usable space: " + underlyingDir.getUsableSpace(),
-          e);
+          "No writelon accelonss to lock filelon: " + writelonLockFilelon
+            + " Usablelon spacelon: " + undelonrlyingDir.gelontUsablelonSpacelon(),
+          elon);
       }
 
-      // List all files in the segment directory
-      File segmentDir = underlyingDir.getParentFile();
-      LOG.warn("Segment directory contains the following files: "
-          + Lists.newArrayList(segmentDir.list()));
-    } else {
-      LOG.warn("Unable to log debugging info upon failing to acquire Lucene write lock."
-          + "The class of the directory is: " + dir.getClass().getName());
+      // List all filelons in thelon selongmelonnt direlonctory
+      Filelon selongmelonntDir = undelonrlyingDir.gelontParelonntFilelon();
+      LOG.warn("Selongmelonnt direlonctory contains thelon following filelons: "
+          + Lists.nelonwArrayList(selongmelonntDir.list()));
+    } elonlselon {
+      LOG.warn("Unablelon to log delonbugging info upon failing to acquirelon Lucelonnelon writelon lock."
+          + "Thelon class of thelon direlonctory is: " + dir.gelontClass().gelontNamelon());
     }
   }
 
-  @Override
-  public void addDocument(Document doc) throws IOException {
-    indexWriter.addDocument(doc);
+  @Ovelonrridelon
+  public void addDocumelonnt(Documelonnt doc) throws IOelonxcelonption {
+    indelonxWritelonr.addDocumelonnt(doc);
   }
 
-  @Override
-  public void addTweet(Document doc, long tweetId, boolean docIdOffensive) throws IOException {
-    indexWriter.addDocument(doc);
+  @Ovelonrridelon
+  public void addTwelonelont(Documelonnt doc, long twelonelontId, boolelonan docIdOffelonnsivelon) throws IOelonxcelonption {
+    indelonxWritelonr.addDocumelonnt(doc);
   }
 
-  @Override
-  protected void appendOutOfOrder(Document doc, int docId) throws IOException {
-    throw new UnsupportedOperationException("This Lucene-based IndexWriter does not support "
-            + "updates and out-of-order appends.");
+  @Ovelonrridelon
+  protelonctelond void appelonndOutOfOrdelonr(Documelonnt doc, int docId) throws IOelonxcelonption {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("This Lucelonnelon-baselond IndelonxWritelonr doelons not support "
+            + "updatelons and out-of-ordelonr appelonnds.");
   }
 
-  @Override
+  @Ovelonrridelon
   public int numDocs() {
-    return indexWriter.getDocStats().maxDoc;
+    relonturn indelonxWritelonr.gelontDocStats().maxDoc;
   }
 
-  @Override
-  public int numDocsNoDelete() throws IOException {
-    return numDocs();
+  @Ovelonrridelon
+  public int numDocsNoDelonlelontelon() throws IOelonxcelonption {
+    relonturn numDocs();
   }
 
-  @Override
-  public void deleteDocuments(Query query) throws IOException {
-    super.deleteDocuments(query);
-    indexWriter.deleteDocuments(query);
+  @Ovelonrridelon
+  public void delonlelontelonDocumelonnts(Quelonry quelonry) throws IOelonxcelonption {
+    supelonr.delonlelontelonDocumelonnts(quelonry);
+    indelonxWritelonr.delonlelontelonDocumelonnts(quelonry);
   }
 
-  @Override
-  public void addIndexes(Directory... dirs) throws IOException {
-    indexWriter.addIndexes(dirs);
+  @Ovelonrridelon
+  public void addIndelonxelons(Direlonctory... dirs) throws IOelonxcelonption {
+    indelonxWritelonr.addIndelonxelons(dirs);
   }
 
-  @Override
-  public void forceMerge() throws IOException {
-    indexWriter.forceMerge(1);
+  @Ovelonrridelon
+  public void forcelonMelonrgelon() throws IOelonxcelonption {
+    indelonxWritelonr.forcelonMelonrgelon(1);
   }
 
-  @Override
-  public void close() throws IOException {
-    indexWriter.close();
+  @Ovelonrridelon
+  public void closelon() throws IOelonxcelonption {
+    indelonxWritelonr.closelon();
   }
 }

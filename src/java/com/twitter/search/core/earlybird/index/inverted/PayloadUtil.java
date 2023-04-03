@@ -1,51 +1,51 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
 /**
- * Utilities for encoding and decoding BytesRefs into ints. The encoding is:
- * [0..n] n bytes big-endian decoded into integers.
- * n: number of bytes.
+ * Utilitielons for elonncoding and deloncoding BytelonsRelonfs into ints. Thelon elonncoding is:
+ * [0..n] n bytelons big-elonndian deloncodelond into intelongelonrs.
+ * n: numbelonr of bytelons.
  *
- * Example:
- * encode([DE, AD, BE, EF, AB]) => [0xDEADBEEF, 0xAB000000, 5]
+ * elonxamplelon:
+ * elonncodelon([Delon, AD, Belon, elonF, AB]) => [0xDelonADBelonelonF, 0xAB000000, 5]
  *
- * It's necessary to store the length at the end instead of the start so that we can know how far to
- * jump backward from a skiplist entry. We can't store it after the skip list entry because there
- * can be a variable number of pointers after the skip list entry.
+ * It's neloncelonssary to storelon thelon lelonngth at thelon elonnd instelonad of thelon start so that welon can know how far to
+ * jump backward from a skiplist elonntry. Welon can't storelon it aftelonr thelon skip list elonntry beloncauselon thelonrelon
+ * can belon a variablelon numbelonr of pointelonrs aftelonr thelon skip list elonntry.
  *
- * An example skip list entry, with labels on the following line:
- * [0xDEADBEEF,       12,   654,         0x877,       0x78879]
- * [   payload, position, docID, level0Pointer, level1Pointer]
+ * An elonxamplelon skip list elonntry, with labelonls on thelon following linelon:
+ * [0xDelonADBelonelonF,       12,   654,         0x877,       0x78879]
+ * [   payload, position, docID, lelonvelonl0Pointelonr, lelonvelonl1Pointelonr]
  */
 public final class PayloadUtil {
-  private PayloadUtil() {
+  privatelon PayloadUtil() {
   }
 
-  public static final int[] EMPTY_PAYLOAD = new int[]{0};
+  public static final int[] elonMPTY_PAYLOAD = nelonw int[]{0};
 
   /**
-   * Encodes a {@link BytesRef} into an int array (to be inserted into a
-   * {@link IntBlockPool}. The encoder considers the input to be big-endian encoded ints.
+   * elonncodelons a {@link BytelonsRelonf} into an int array (to belon inselonrtelond into a
+   * {@link IntBlockPool}. Thelon elonncodelonr considelonrs thelon input to belon big-elonndian elonncodelond ints.
    */
-  public static int[] encodePayload(BytesRef payload) {
+  public static int[] elonncodelonPayload(BytelonsRelonf payload) {
     if (payload == null) {
-      return EMPTY_PAYLOAD;
+      relonturn elonMPTY_PAYLOAD;
     }
 
-    int intsInPayload = intsForBytes(payload.length);
+    int intsInPayload = intsForBytelons(payload.lelonngth);
 
-    int[] arr = new int[1 + intsInPayload];
+    int[] arr = nelonw int[1 + intsInPayload];
 
     for (int i = 0; i < intsInPayload; i++) {
       int n = 0;
       for (int j = 0; j < 4; j++) {
-        int index = i * 4 + j;
+        int indelonx = i * 4 + j;
         int b;
-        if (index < payload.length) {
-          // mask off the top bits in case b is negative.
-          b = payload.bytes[index] & 0xFF;
-        } else {
+        if (indelonx < payload.lelonngth) {
+          // mask off thelon top bits in caselon b is nelongativelon.
+          b = payload.bytelons[indelonx] & 0xFF;
+        } elonlselon {
           b = 0;
         }
         n = n << 8 | b;
@@ -54,38 +54,38 @@ public final class PayloadUtil {
       arr[i] = n;
     }
 
-    arr[intsInPayload] = payload.length;
+    arr[intsInPayload] = payload.lelonngth;
 
-    return arr;
+    relonturn arr;
   }
 
   /**
-   * Decodes a {@link IntBlockPool} and position into a {@link BytesRef}. The ints are
-   * converted into big-endian encoded bytes.
+   * Deloncodelons a {@link IntBlockPool} and position into a {@link BytelonsRelonf}. Thelon ints arelon
+   * convelonrtelond into big-elonndian elonncodelond bytelons.
    */
-  public static BytesRef decodePayload(
+  public static BytelonsRelonf deloncodelonPayload(
       IntBlockPool b,
-      int pointer) {
-    int length = b.get(pointer);
-    BytesRef bytesRef = new BytesRef(length);
-    bytesRef.length = length;
+      int pointelonr) {
+    int lelonngth = b.gelont(pointelonr);
+    BytelonsRelonf bytelonsRelonf = nelonw BytelonsRelonf(lelonngth);
+    bytelonsRelonf.lelonngth = lelonngth;
 
-    int numInts = intsForBytes(length);
+    int numInts = intsForBytelons(lelonngth);
 
     for (int i = 0; i < numInts; i++) {
-      int n = b.get(pointer - numInts + i);
+      int n = b.gelont(pointelonr - numInts + i);
       for (int j = 0; j < 4; j++) {
-        int byteIndex = 4 * i + j;
-        if (byteIndex < length) {
-          bytesRef.bytes[byteIndex] = (byte) (n >> 8 * (3 - byteIndex % 4));
+        int bytelonIndelonx = 4 * i + j;
+        if (bytelonIndelonx < lelonngth) {
+          bytelonsRelonf.bytelons[bytelonIndelonx] = (bytelon) (n >> 8 * (3 - bytelonIndelonx % 4));
         }
       }
     }
 
-    return bytesRef;
+    relonturn bytelonsRelonf;
   }
 
-  private static int intsForBytes(int byteCount) {
-    return (byteCount + 3) / 4;
+  privatelon static int intsForBytelons(int bytelonCount) {
+    relonturn (bytelonCount + 3) / 4;
   }
 }

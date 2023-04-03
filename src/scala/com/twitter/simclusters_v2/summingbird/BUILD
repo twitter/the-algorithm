@@ -1,118 +1,118 @@
 scala_library(
-    name = "common",
+    namelon = "common",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/summingbird/common",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/summingbird/common",
     ],
 )
 
 scala_library(
-    name = "stores",
+    namelon = "storelons",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/summingbird/stores",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/summingbird/storelons",
     ],
 )
 
 scala_library(
-    name = "webservice",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/summingbird/webservice",
-        "twitter-server/slf4j-jdk14/src/main/scala/com/twitter/server/logging",
+    namelon = "welonbselonrvicelon",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/summingbird/welonbselonrvicelon",
+        "twittelonr-selonrvelonr/slf4j-jdk14/src/main/scala/com/twittelonr/selonrvelonr/logging",
     ],
 )
 
-heron_binary(
-    name = "tweet-simclusters-storm-binary",
-    main = "com.twitter.simclusters_v2.summingbird.storm.TweetJobRunner",
+helonron_binary(
+    namelon = "twelonelont-simclustelonrs-storm-binary",
+    main = "com.twittelonr.simclustelonrs_v2.summingbird.storm.TwelonelontJobRunnelonr",
     platform = "java8",
-    runtime_platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    runtimelon_platform = "java8",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         ":common",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        "src/scala/com/twittelonr/simclustelonrs_v2/summingbird/storm",
     ],
 )
 
 jvm_app(
-    name = "tweet-simclusters-storm-job",
-    binary = ":tweet-simclusters-storm-binary",
-    bundles = [
-        bundle(
-            fileset = ["config/jaas.conf"],
+    namelon = "twelonelont-simclustelonrs-storm-job",
+    binary = ":twelonelont-simclustelonrs-storm-binary",
+    bundlelons = [
+        bundlelon(
+            filelonselont = ["config/jaas.conf"],
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazelonl-compatiblelon"],
 )
 
-heron_binary(
-    name = "persistent-tweet-simclusters-storm-binary",
-    main = "com.twitter.simclusters_v2.summingbird.storm.PersistentTweetJobRunner",
+helonron_binary(
+    namelon = "pelonrsistelonnt-twelonelont-simclustelonrs-storm-binary",
+    main = "com.twittelonr.simclustelonrs_v2.summingbird.storm.PelonrsistelonntTwelonelontJobRunnelonr",
     platform = "java8",
-    runtime_platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    runtimelon_platform = "java8",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         ":common",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        "src/scala/com/twittelonr/simclustelonrs_v2/summingbird/storm",
     ],
 )
 
 jvm_app(
-    name = "persistent-tweet-simclusters-storm-job",
-    binary = ":persistent-tweet-simclusters-storm-binary",
-    bundles = [
-        bundle(
-            fileset = ["config/jaas.conf"],
+    namelon = "pelonrsistelonnt-twelonelont-simclustelonrs-storm-job",
+    binary = ":pelonrsistelonnt-twelonelont-simclustelonrs-storm-binary",
+    bundlelons = [
+        bundlelon(
+            filelonselont = ["config/jaas.conf"],
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazelonl-compatiblelon"],
 )
 
-heron_binary(
-    name = "multi-model-tweet-simclusters-storm-binary",
-    main = "com.twitter.simclusters_v2.summingbird.storm.MultiModelTweetJobRunner",
+helonron_binary(
+    namelon = "multi-modelonl-twelonelont-simclustelonrs-storm-binary",
+    main = "com.twittelonr.simclustelonrs_v2.summingbird.storm.MultiModelonlTwelonelontJobRunnelonr",
     platform = "java8",
-    runtime_platform = "java8",
-    dependencies = [
+    runtimelon_platform = "java8",
+    delonpelonndelonncielons = [
         ":common",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        "src/scala/com/twittelonr/simclustelonrs_v2/summingbird/storm",
     ],
 )
 
 jvm_app(
-    name = "multi-model-tweet-simclusters-storm-job",
-    binary = ":multi-model-tweet-simclusters-storm-binary",
-    bundles = [
-        bundle(
-            fileset = ["config/jaas.conf"],
+    namelon = "multi-modelonl-twelonelont-simclustelonrs-storm-job",
+    binary = ":multi-modelonl-twelonelont-simclustelonrs-storm-binary",
+    bundlelons = [
+        bundlelon(
+            filelonselont = ["config/jaas.conf"],
         ),
     ],
 )
 
 jvm_binary(
-    name = "repl",
-    basename = "repl-simclusters_v2",
-    main = "scala.tools.nsc.MainGenericRunner",
+    namelon = "relonpl",
+    baselonnamelon = "relonpl-simclustelonrs_v2",
+    main = "scala.tools.nsc.MainGelonnelonricRunnelonr",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         ":common",
-        "3rdparty/jvm/org/scala-lang:scala-compiler",
+        "3rdparty/jvm/org/scala-lang:scala-compilelonr",
     ],
 )
 
-target(
-    dependencies = [
+targelont(
+    delonpelonndelonncielons = [
         ":common",
-        ":repl",
-        ":stores",
-        ":webservice",
-        "src/scala/com/twitter/simclusters_v2/summingbird/storm",
+        ":relonpl",
+        ":storelons",
+        ":welonbselonrvicelon",
+        "src/scala/com/twittelonr/simclustelonrs_v2/summingbird/storm",
     ],
 )

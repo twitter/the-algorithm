@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReportTweet
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.HomelonMixelonrelonxtelonrnalStrings
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.icon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ChildFelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichBelonhavior
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorRelonportTwelonelont
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class ReportTweetChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@Singlelonton
+caselon class RelonportTwelonelontChildFelonelondbackActionBuildelonr @Injelonct() (
+  @ProductScopelond stringCelonntelonr: StringCelonntelonr,
+  elonxtelonrnalStrings: HomelonMixelonrelonxtelonrnalStrings) {
 
-  def apply(
-    candidate: TweetCandidate
-  ): Option[ChildFeedbackAction] = {
-    Some(
-      ChildFeedbackAction(
-        feedbackType = RichBehavior,
-        prompt = Some(stringCenter.prepare(externalStrings.reportTweetString)),
-        confirmation = None,
-        feedbackUrl = None,
-        hasUndoAction = Some(true),
-        confirmationDisplayType = None,
-        clientEventInfo = None,
-        icon = Some(icon.Flag),
-        richBehavior = Some(RichFeedbackBehaviorReportTweet(candidate.id)),
-        subprompt = None
+  delonf apply(
+    candidatelon: TwelonelontCandidatelon
+  ): Option[ChildFelonelondbackAction] = {
+    Somelon(
+      ChildFelonelondbackAction(
+        felonelondbackTypelon = RichBelonhavior,
+        prompt = Somelon(stringCelonntelonr.prelonparelon(elonxtelonrnalStrings.relonportTwelonelontString)),
+        confirmation = Nonelon,
+        felonelondbackUrl = Nonelon,
+        hasUndoAction = Somelon(truelon),
+        confirmationDisplayTypelon = Nonelon,
+        clielonntelonvelonntInfo = Nonelon,
+        icon = Somelon(icon.Flag),
+        richBelonhavior = Somelon(RichFelonelondbackBelonhaviorRelonportTwelonelont(candidatelon.id)),
+        subprompt = Nonelon
       )
     )
   }

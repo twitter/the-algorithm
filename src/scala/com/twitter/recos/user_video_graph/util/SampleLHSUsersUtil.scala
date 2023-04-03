@@ -1,35 +1,35 @@
-package com.twitter.recos.user_video_graph.util
+packagelon com.twittelonr.reloncos.uselonr_videlono_graph.util
 
-import com.twitter.graphjet.bipartite.MultiSegmentIterator
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment
+import com.twittelonr.graphjelont.bipartitelon.MultiSelongmelonntItelonrator
+import com.twittelonr.graphjelont.bipartitelon.api.BipartitelonGraph
+import com.twittelonr.graphjelont.bipartitelon.selongmelonnt.BipartitelonGraphSelongmelonnt
 import java.util.Random
-import scala.collection.mutable.ListBuffer
+import scala.collelonction.mutablelon.ListBuffelonr
 
-object SampleLHSUsersUtil {
-  // sample userId nodes
-  def sampleLHSUsers(
-    maskedTweetId: Long,
-    maxNumSamplesPerNeighbor: Int,
-    bipartiteGraph: BipartiteGraph
-  ): Seq[Long] = {
-    val sampledUserIdsIterator = bipartiteGraph
-      .getRandomRightNodeEdges(
-        maskedTweetId,
-        maxNumSamplesPerNeighbor,
-        new Random(System.currentTimeMillis)).asInstanceOf[MultiSegmentIterator[
-        BipartiteGraphSegment
+objelonct SamplelonLHSUselonrsUtil {
+  // samplelon uselonrId nodelons
+  delonf samplelonLHSUselonrs(
+    maskelondTwelonelontId: Long,
+    maxNumSamplelonsPelonrNelonighbor: Int,
+    bipartitelonGraph: BipartitelonGraph
+  ): Selonq[Long] = {
+    val samplelondUselonrIdsItelonrator = bipartitelonGraph
+      .gelontRandomRightNodelonelondgelons(
+        maskelondTwelonelontId,
+        maxNumSamplelonsPelonrNelonighbor,
+        nelonw Random(Systelonm.currelonntTimelonMillis)).asInstancelonOf[MultiSelongmelonntItelonrator[
+        BipartitelonGraphSelongmelonnt
       ]]
 
-    val userIds = new ListBuffer[Long]()
-    if (sampledUserIdsIterator != null) {
-      while (sampledUserIdsIterator.hasNext) {
-        val leftNode = sampledUserIdsIterator.nextLong()
-        // If a user likes too many things, we risk including spammy behavior.
-        if (bipartiteGraph.getLeftNodeDegree(leftNode) < 100)
-          userIds += leftNode
+    val uselonrIds = nelonw ListBuffelonr[Long]()
+    if (samplelondUselonrIdsItelonrator != null) {
+      whilelon (samplelondUselonrIdsItelonrator.hasNelonxt) {
+        val lelonftNodelon = samplelondUselonrIdsItelonrator.nelonxtLong()
+        // If a uselonr likelons too many things, welon risk including spammy belonhavior.
+        if (bipartitelonGraph.gelontLelonftNodelonDelongrelonelon(lelonftNodelon) < 100)
+          uselonrIds += lelonftNodelon
       }
     }
-    userIds
+    uselonrIds
   }
 }

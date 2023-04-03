@@ -1,209 +1,209 @@
-package com.twitter.simclusters_v2.scalding.offline_job.adhoc
+packagelon com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.adhoc
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.scalding._
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{ClusterId, TweetId, UserId}
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil
-import com.twitter.simclusters_v2.summingbird.common.{Configs, SimClustersInterestedInUtil}
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import java.util.TimeZone
+import com.twittelonr.bijelonction.{Buffelonrablelon, Injelonction}
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.commons.sourcelon.VelonrsionelondKelonyValSourcelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.{elonxplicitLocation, ProcAtla}
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.{ClustelonrId, TwelonelontId, UselonrId}
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SimclustelonrsV2IntelonrelonstelondIn20M145KUpdatelondScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.{SparselonMatrix, SparselonRowMatrix}
+import com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.SimClustelonrsOfflinelonJobUtil
+import com.twittelonr.simclustelonrs_v2.summingbird.common.{Configs, SimClustelonrsIntelonrelonstelondInUtil}
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * Adhoc job for computing Tweet SimClusters embeddings.
- * The output of this job includes two data sets: tweet -> top clusters (or Tweet Embedding), and cluster -> top tweets.
- * These data sets are supposed to be the snapshot of the two index at the end of the dataRange you run.
+ * Adhoc job for computing Twelonelont SimClustelonrs elonmbelonddings.
+ * Thelon output of this job includelons two data selonts: twelonelont -> top clustelonrs (or Twelonelont elonmbelondding), and clustelonr -> top twelonelonts.
+ * Thelonselon data selonts arelon supposelond to belon thelon snapshot of thelon two indelonx at thelon elonnd of thelon dataRangelon you run.
  *
- * Note that you can also use the output from SimClustersOfflineJobScheduledApp for analysis purpose.
- * The outputs from that job might be more close to the data we use in production.
- * The benefit of having this job is to keep the flexibility of experiment different ideas.
+ * Notelon that you can also uselon thelon output from SimClustelonrsOfflinelonJobSchelondulelondApp for analysis purposelon.
+ * Thelon outputs from that job might belon morelon closelon to thelon data welon uselon in production.
+ * Thelon belonnelonfit of having this job is to kelonelonp thelon flelonxibility of elonxpelonrimelonnt diffelonrelonnt idelonas.
  *
- * It is recommended to put at least 2 days in the --date (dataRange in the code) in order to make sure
- * we have enough engagement data for tweets have more engagements in the last 1+ days.
- *
- *
- * There are several parameters to tune in the job. They are explained in the inline comments.
+ * It is reloncommelonndelond to put at lelonast 2 days in thelon --datelon (dataRangelon in thelon codelon) in ordelonr to makelon surelon
+ * welon havelon elonnough elonngagelonmelonnt data for twelonelonts havelon morelon elonngagelonmelonnts in thelon last 1+ days.
  *
  *
- * To run the job:
-    scalding remote run \
-    --target src/scala/com/twitter/simclusters_v2/scalding/offline_job/adhoc:tweet_embedding-adhoc \
-    --user recos-platform \
-    --reducers 1000 \
-    --main-class com.twitter.simclusters_v2.scalding.offline_job.adhoc.SimClustersTweetEmbeddingAdhocApp -- \
-    --date 2021-01-27 2021-01-28 \
-    --score_type logFav \
-    --output_dir /user/recos-platform/adhoc/tweet_embedding_01_27_28_unnormalized_t9
+ * Thelonrelon arelon selonvelonral paramelontelonrs to tunelon in thelon job. Thelony arelon elonxplainelond in thelon inlinelon commelonnts.
+ *
+ *
+ * To run thelon job:
+    scalding relonmotelon run \
+    --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/offlinelon_job/adhoc:twelonelont_elonmbelondding-adhoc \
+    --uselonr reloncos-platform \
+    --relonducelonrs 1000 \
+    --main-class com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.adhoc.SimClustelonrsTwelonelontelonmbelonddingAdhocApp -- \
+    --datelon 2021-01-27 2021-01-28 \
+    --scorelon_typelon logFav \
+    --output_dir /uselonr/reloncos-platform/adhoc/twelonelont_elonmbelondding_01_27_28_unnormalizelond_t9
  */
-object SimClustersTweetEmbeddingAdhocApp extends AdhocExecutionApp {
+objelonct SimClustelonrsTwelonelontelonmbelonddingAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
 
-  import SimClustersOfflineJobUtil._
+  import SimClustelonrsOfflinelonJobUtil._
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
     val outputDir = args("output_dir")
 
-    // what interestedIn score to use. logFav is what we use in production
-    val scoringMethod = args.getOrElse("score_type", "logFav")
+    // what intelonrelonstelondIn scorelon to uselon. logFav is what welon uselon in production
+    val scoringMelonthod = args.gelontOrelonlselon("scorelon_typelon", "logFav")
 
-    // whether to use normalized score in the cluster -> top tweets.
-    // Currently, we do not do this in production. DONOT turn it on unless you know what you are doing.
-    // NOTE that for scalding args, "--run_normalized" will just set the arg to be true, and
-    // even you use "--run_normalized false", it will still be true.
-    val usingNormalizedScoringFunction = args.boolean("run_normalized")
+    // whelonthelonr to uselon normalizelond scorelon in thelon clustelonr -> top twelonelonts.
+    // Currelonntly, welon do not do this in production. DONOT turn it on unlelonss you know what you arelon doing.
+    // NOTelon that for scalding args, "--run_normalizelond" will just selont thelon arg to belon truelon, and
+    // elonvelonn you uselon "--run_normalizelond falselon", it will still belon truelon.
+    val usingNormalizelondScoringFunction = args.boolelonan("run_normalizelond")
 
-    // filter out tweets that has less than X favs in the dateRange.
-    val tweetFavThreshold = args.long("tweet_fav_threshold", 0L)
+    // filtelonr out twelonelonts that has lelonss than X favs in thelon datelonRangelon.
+    val twelonelontFavThrelonshold = args.long("twelonelont_fav_threlonshold", 0L)
 
-    // tweet -> top clusters will be saved in this subfolder
-    val tweetTopKClustersOutputPath: String = outputDir + "/tweet_top_k_clusters"
+    // twelonelont -> top clustelonrs will belon savelond in this subfoldelonr
+    val twelonelontTopKClustelonrsOutputPath: String = outputDir + "/twelonelont_top_k_clustelonrs"
 
-    // cluster -> top tweets will be saved in this subfolder
-    val clusterTopKTweetsOutputPath: String = outputDir + "/cluster_top_k_tweets"
+    // clustelonr -> top twelonelonts will belon savelond in this subfoldelonr
+    val clustelonrTopKTwelonelontsOutputPath: String = outputDir + "/clustelonr_top_k_twelonelonts"
 
-    val interestedInData: TypedPipe[(Long, ClustersUserIsInterestedIn)] =
+    val intelonrelonstelondInData: TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)] =
       DAL
-        .readMostRecentSnapshot(
-          SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
-          dateRange.embiggen(Days(14))
+        .relonadMostReloncelonntSnapshot(
+          SimclustelonrsV2IntelonrelonstelondIn20M145KUpdatelondScalaDataselont,
+          datelonRangelon.elonmbiggelonn(Days(14))
         )
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe
+        .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+        .toTypelondPipelon
         .map {
-          case KeyVal(key, value) => (key, value)
+          caselon KelonyVal(kelony, valuelon) => (kelony, valuelon)
         }
 
-    // read user-tweet fav data. set the weight to be a decayed value. they will be decayed to the dateRang.end
-    val userTweetFavData: SparseMatrix[UserId, TweetId, Double] =
-      SparseMatrix(readTimelineFavoriteData(dateRange)).tripleApply {
-        case (userId, tweetId, timestamp) =>
+    // relonad uselonr-twelonelont fav data. selont thelon welonight to belon a deloncayelond valuelon. thelony will belon deloncayelond to thelon datelonRang.elonnd
+    val uselonrTwelonelontFavData: SparselonMatrix[UselonrId, TwelonelontId, Doublelon] =
+      SparselonMatrix(relonadTimelonlinelonFavoritelonData(datelonRangelon)).triplelonApply {
+        caselon (uselonrId, twelonelontId, timelonstamp) =>
           (
-            userId,
-            tweetId,
-            thriftDecayedValueMonoid
+            uselonrId,
+            twelonelontId,
+            thriftDeloncayelondValuelonMonoid
               .plus(
-                thriftDecayedValueMonoid.build(1.0, timestamp),
-                thriftDecayedValueMonoid.build(0.0, dateRange.end.timestamp)
+                thriftDeloncayelondValuelonMonoid.build(1.0, timelonstamp),
+                thriftDeloncayelondValuelonMonoid.build(0.0, datelonRangelon.elonnd.timelonstamp)
               )
-              .value)
+              .valuelon)
       }
 
-    // filter out tweets without x favs
-    val tweetSubset =
-      userTweetFavData.colNnz.filter(
-        _._2 > tweetFavThreshold.toDouble
-      ) // keep tweets with at least x favs
+    // filtelonr out twelonelonts without x favs
+    val twelonelontSubselont =
+      uselonrTwelonelontFavData.colNnz.filtelonr(
+        _._2 > twelonelontFavThrelonshold.toDoublelon
+      ) // kelonelonp twelonelonts with at lelonast x favs
 
-    val userTweetFavDataSubset = userTweetFavData.filterCols(tweetSubset.keys)
+    val uselonrTwelonelontFavDataSubselont = uselonrTwelonelontFavData.filtelonrCols(twelonelontSubselont.kelonys)
 
-    // construct user-simclusters matrix
-    val userSimClustersInterestedInData: SparseRowMatrix[UserId, ClusterId, Double] =
-      SparseRowMatrix(
-        interestedInData.map {
-          case (userId, clusters) =>
-            val topClustersWithScores =
-              SimClustersInterestedInUtil
-                .topClustersWithScores(clusters)
-                .collect {
-                  case (clusterId, scores)
-                      if scores.favScore > Configs
-                        .favScoreThresholdForUserInterest(
-                          clusters.knownForModelVersion
-                        ) => // this is the same threshold used in the summingbird job
-                    scoringMethod match {
-                      case "fav" =>
-                        clusterId -> scores.clusterNormalizedFavScore
-                      case "follow" =>
-                        clusterId -> scores.clusterNormalizedFollowScore
-                      case "logFav" =>
-                        clusterId -> scores.clusterNormalizedLogFavScore
-                      case _ =>
-                        throw new IllegalArgumentException(
-                          "score_type can only be fav, follow or logFav")
+    // construct uselonr-simclustelonrs matrix
+    val uselonrSimClustelonrsIntelonrelonstelondInData: SparselonRowMatrix[UselonrId, ClustelonrId, Doublelon] =
+      SparselonRowMatrix(
+        intelonrelonstelondInData.map {
+          caselon (uselonrId, clustelonrs) =>
+            val topClustelonrsWithScorelons =
+              SimClustelonrsIntelonrelonstelondInUtil
+                .topClustelonrsWithScorelons(clustelonrs)
+                .collelonct {
+                  caselon (clustelonrId, scorelons)
+                      if scorelons.favScorelon > Configs
+                        .favScorelonThrelonsholdForUselonrIntelonrelonst(
+                          clustelonrs.knownForModelonlVelonrsion
+                        ) => // this is thelon samelon threlonshold uselond in thelon summingbird job
+                    scoringMelonthod match {
+                      caselon "fav" =>
+                        clustelonrId -> scorelons.clustelonrNormalizelondFavScorelon
+                      caselon "follow" =>
+                        clustelonrId -> scorelons.clustelonrNormalizelondFollowScorelon
+                      caselon "logFav" =>
+                        clustelonrId -> scorelons.clustelonrNormalizelondLogFavScorelon
+                      caselon _ =>
+                        throw nelonw IllelongalArgumelonntelonxcelonption(
+                          "scorelon_typelon can only belon fav, follow or logFav")
                     }
                 }
-                .filter(_._2 > 0.0)
+                .filtelonr(_._2 > 0.0)
                 .toMap
-            userId -> topClustersWithScores
+            uselonrId -> topClustelonrsWithScorelons
         },
-        isSkinnyMatrix = true
+        isSkinnyMatrix = truelon
       )
 
-    // multiply tweet -> user matrix with user -> cluster matrix to get tweet -> cluster matrix
-    val tweetClusterScoreMatrix = if (usingNormalizedScoringFunction) {
-      userTweetFavDataSubset.transpose.rowL2Normalize
-        .multiplySkinnySparseRowMatrix(userSimClustersInterestedInData)
-    } else {
-      userTweetFavDataSubset.transpose.multiplySkinnySparseRowMatrix(
-        userSimClustersInterestedInData)
+    // multiply twelonelont -> uselonr matrix with uselonr -> clustelonr matrix to gelont twelonelont -> clustelonr matrix
+    val twelonelontClustelonrScorelonMatrix = if (usingNormalizelondScoringFunction) {
+      uselonrTwelonelontFavDataSubselont.transposelon.rowL2Normalizelon
+        .multiplySkinnySparselonRowMatrix(uselonrSimClustelonrsIntelonrelonstelondInData)
+    } elonlselon {
+      uselonrTwelonelontFavDataSubselont.transposelon.multiplySkinnySparselonRowMatrix(
+        uselonrSimClustelonrsIntelonrelonstelondInData)
     }
 
-    // get the tweet -> top clusters by taking top K in each row
-    val tweetTopClusters = tweetClusterScoreMatrix
-      .sortWithTakePerRow(Configs.topKClustersPerTweet)(Ordering.by(-_._2))
+    // gelont thelon twelonelont -> top clustelonrs by taking top K in elonach row
+    val twelonelontTopClustelonrs = twelonelontClustelonrScorelonMatrix
+      .sortWithTakelonPelonrRow(Configs.topKClustelonrsPelonrTwelonelont)(Ordelonring.by(-_._2))
       .fork
 
-    // get the cluster -> top tweets by taking top K in each colum
-    val clusterTopTweets = tweetClusterScoreMatrix
-      .sortWithTakePerCol(Configs.topKTweetsPerCluster)(Ordering.by(-_._2))
+    // gelont thelon clustelonr -> top twelonelonts by taking top K in elonach colum
+    val clustelonrTopTwelonelonts = twelonelontClustelonrScorelonMatrix
+      .sortWithTakelonPelonrCol(Configs.topKTwelonelontsPelonrClustelonr)(Ordelonring.by(-_._2))
       .fork
 
-    // injections for saving a list
-    implicit val inj1: Injection[List[(Int, Double)], Array[Byte]] =
-      Bufferable.injectionOf[List[(Int, Double)]]
-    implicit val inj2: Injection[List[(Long, Double)], Array[Byte]] =
-      Bufferable.injectionOf[List[(Long, Double)]]
+    // injelonctions for saving a list
+    implicit val inj1: Injelonction[List[(Int, Doublelon)], Array[Bytelon]] =
+      Buffelonrablelon.injelonctionOf[List[(Int, Doublelon)]]
+    implicit val inj2: Injelonction[List[(Long, Doublelon)], Array[Bytelon]] =
+      Buffelonrablelon.injelonctionOf[List[(Long, Doublelon)]]
 
-    // save the data sets and also output to some tsv files for eyeballing the results
-    Execution
+    // savelon thelon data selonts and also output to somelon tsv filelons for elonyelonballing thelon relonsults
+    elonxeloncution
       .zip(
-        tweetTopClusters
-          .mapValues(_.toList)
-          .writeExecution(
-            VersionedKeyValSource[TweetId, List[(ClusterId, Double)]](tweetTopKClustersOutputPath)
+        twelonelontTopClustelonrs
+          .mapValuelons(_.toList)
+          .writelonelonxeloncution(
+            VelonrsionelondKelonyValSourcelon[TwelonelontId, List[(ClustelonrId, Doublelon)]](twelonelontTopKClustelonrsOutputPath)
           ),
-        tweetTopClusters
+        twelonelontTopClustelonrs
           .map {
-            case (tweetId, topKClusters) =>
-              tweetId -> topKClusters
+            caselon (twelonelontId, topKClustelonrs) =>
+              twelonelontId -> topKClustelonrs
                 .map {
-                  case (clusterId, score) =>
-                    s"$clusterId:" + "%.3g".format(score)
+                  caselon (clustelonrId, scorelon) =>
+                    s"$clustelonrId:" + "%.3g".format(scorelon)
                 }
                 .mkString(",")
           }
-          .writeExecution(
-            TypedTsv(tweetTopKClustersOutputPath + "_tsv")
+          .writelonelonxeloncution(
+            TypelondTsv(twelonelontTopKClustelonrsOutputPath + "_tsv")
           ),
-        tweetSubset.writeExecution(TypedTsv(tweetTopKClustersOutputPath + "_tweet_favs")),
-        clusterTopTweets
-          .mapValues(_.toList)
-          .writeExecution(
-            VersionedKeyValSource[ClusterId, List[(TweetId, Double)]](clusterTopKTweetsOutputPath)
+        twelonelontSubselont.writelonelonxeloncution(TypelondTsv(twelonelontTopKClustelonrsOutputPath + "_twelonelont_favs")),
+        clustelonrTopTwelonelonts
+          .mapValuelons(_.toList)
+          .writelonelonxeloncution(
+            VelonrsionelondKelonyValSourcelon[ClustelonrId, List[(TwelonelontId, Doublelon)]](clustelonrTopKTwelonelontsOutputPath)
           ),
-        clusterTopTweets
+        clustelonrTopTwelonelonts
           .map {
-            case (clusterId, topKTweets) =>
-              clusterId -> topKTweets
+            caselon (clustelonrId, topKTwelonelonts) =>
+              clustelonrId -> topKTwelonelonts
                 .map {
-                  case (tweetId, score) => s"$tweetId:" + "%.3g".format(score)
+                  caselon (twelonelontId, scorelon) => s"$twelonelontId:" + "%.3g".format(scorelon)
                 }
                 .mkString(",")
           }
-          .writeExecution(
-            TypedTsv(clusterTopKTweetsOutputPath + "_tsv")
+          .writelonelonxeloncution(
+            TypelondTsv(clustelonrTopKTwelonelontsOutputPath + "_tsv")
           )
       )
       .unit

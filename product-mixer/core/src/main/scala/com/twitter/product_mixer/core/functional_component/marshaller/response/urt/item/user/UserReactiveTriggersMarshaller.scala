@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.user
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.uselonr
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.reaction.TimelineReactionMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserReactiveTriggers
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.relonaction.TimelonlinelonRelonactionMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.UselonrRelonactivelonTriggelonrs
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UserReactiveTriggersMarshaller @Inject() (
-  timelineReactionMarshaller: TimelineReactionMarshaller) {
+@Singlelonton
+class UselonrRelonactivelonTriggelonrsMarshallelonr @Injelonct() (
+  timelonlinelonRelonactionMarshallelonr: TimelonlinelonRelonactionMarshallelonr) {
 
-  def apply(userReactiveTriggers: UserReactiveTriggers): urt.UserReactiveTriggers = {
-    urt.UserReactiveTriggers(
-      onFollow = userReactiveTriggers.onFollow.map(timelineReactionMarshaller(_)))
+  delonf apply(uselonrRelonactivelonTriggelonrs: UselonrRelonactivelonTriggelonrs): urt.UselonrRelonactivelonTriggelonrs = {
+    urt.UselonrRelonactivelonTriggelonrs(
+      onFollow = uselonrRelonactivelonTriggelonrs.onFollow.map(timelonlinelonRelonactionMarshallelonr(_)))
   }
 }

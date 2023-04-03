@@ -1,30 +1,30 @@
-package com.twitter.simclusters_v2.common.clustering
+packagelon com.twittelonr.simclustelonrs_v2.common.clustelonring
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.NelonighborWithWelonights
 
 /**
- * Select a cluster member as cluster representative.
+ * Selonlelonct a clustelonr melonmbelonr as clustelonr relonprelonselonntativelon.
  */
-trait ClusterRepresentativeSelectionMethod[T] {
+trait ClustelonrRelonprelonselonntativelonSelonlelonctionMelonthod[T] {
 
   /**
-   * The main external-facing method. Sub-classes should implement this method.
+   * Thelon main elonxtelonrnal-facing melonthod. Sub-classelons should implelonmelonnt this melonthod.
    *
-   * @param cluster A set of NeighborWithWeights.
-   * @param embeddings A map of producer ID -> embedding.
+   * @param clustelonr A selont of NelonighborWithWelonights.
+   * @param elonmbelonddings A map of producelonr ID -> elonmbelondding.
    *
-   * @return UserId of the member chosen as representative.
+   * @relonturn UselonrId of thelon melonmbelonr choselonn as relonprelonselonntativelon.
    */
-  def selectClusterRepresentative(
-    cluster: Set[NeighborWithWeights],
-    embeddings: Map[UserId, T]
-  ): UserId
+  delonf selonlelonctClustelonrRelonprelonselonntativelon(
+    clustelonr: Selont[NelonighborWithWelonights],
+    elonmbelonddings: Map[UselonrId, T]
+  ): UselonrId
 
 }
 
-object ClusterRepresentativeSelectionStatistics {
+objelonct ClustelonrRelonprelonselonntativelonSelonlelonctionStatistics {
 
-  // Statistics, to be imported where recorded.
-  val StatClusterRepresentativeSelectionTime = "cluster_representative_selection_total_time_ms"
+  // Statistics, to belon importelond whelonrelon reloncordelond.
+  val StatClustelonrRelonprelonselonntativelonSelonlelonctionTimelon = "clustelonr_relonprelonselonntativelon_selonlelonction_total_timelon_ms"
 }

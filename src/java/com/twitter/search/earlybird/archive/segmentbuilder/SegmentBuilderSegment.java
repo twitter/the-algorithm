@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon.selongmelonntbuildelonr;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.archive.ArchiveSegment;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+import com.twittelonr.common.quantity.Amount;
+import com.twittelonr.common.quantity.Timelon;
+import com.twittelonr.selonarch.common.databaselon.DatabaselonConfig;
+import com.twittelonr.selonarch.common.util.zktrylock.TryLock;
+import com.twittelonr.selonarch.common.util.zktrylock.ZooKelonelonpelonrTryLockFactory;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonSelongmelonnt;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncConfig;
 
-public abstract class SegmentBuilderSegment {
-  protected final SegmentInfo segmentInfo;
-  protected final SegmentConfig segmentConfig;
-  protected final EarlybirdSegmentFactory earlybirdSegmentFactory;
-  protected final int alreadyRetriedCount;
-  protected final SegmentSyncConfig sync;
+public abstract class SelongmelonntBuildelonrSelongmelonnt {
+  protelonctelond final SelongmelonntInfo selongmelonntInfo;
+  protelonctelond final SelongmelonntConfig selongmelonntConfig;
+  protelonctelond final elonarlybirdSelongmelonntFactory elonarlybirdSelongmelonntFactory;
+  protelonctelond final int alrelonadyRelontrielondCount;
+  protelonctelond final SelongmelonntSyncConfig sync;
 
-  public SegmentBuilderSegment(SegmentInfo segmentInfo,
-                               SegmentConfig segmentConfig,
-                               EarlybirdSegmentFactory earlybirdSegmentFactory,
-                               int alreadyRetriedCount,
-                               SegmentSyncConfig segmentSyncConfig) {
-    this.segmentConfig = segmentConfig;
-    this.earlybirdSegmentFactory = earlybirdSegmentFactory;
-    this.alreadyRetriedCount = alreadyRetriedCount;
-    this.sync = segmentSyncConfig;
-    Preconditions.checkState(segmentInfo.getSegment() instanceof ArchiveSegment);
-    this.segmentInfo = Preconditions.checkNotNull(segmentInfo);
+  public SelongmelonntBuildelonrSelongmelonnt(SelongmelonntInfo selongmelonntInfo,
+                               SelongmelonntConfig selongmelonntConfig,
+                               elonarlybirdSelongmelonntFactory elonarlybirdSelongmelonntFactory,
+                               int alrelonadyRelontrielondCount,
+                               SelongmelonntSyncConfig selongmelonntSyncConfig) {
+    this.selongmelonntConfig = selongmelonntConfig;
+    this.elonarlybirdSelongmelonntFactory = elonarlybirdSelongmelonntFactory;
+    this.alrelonadyRelontrielondCount = alrelonadyRelontrielondCount;
+    this.sync = selongmelonntSyncConfig;
+    Prelonconditions.chelonckStatelon(selongmelonntInfo.gelontSelongmelonnt() instancelonof ArchivelonSelongmelonnt);
+    this.selongmelonntInfo = Prelonconditions.chelonckNotNull(selongmelonntInfo);
   }
 
-  public SegmentInfo getSegmentInfo() {
-    return segmentInfo;
+  public SelongmelonntInfo gelontSelongmelonntInfo() {
+    relonturn selongmelonntInfo;
   }
 
-  public String getSegmentName() {
-    return segmentInfo.getSegmentName();
+  public String gelontSelongmelonntNamelon() {
+    relonturn selongmelonntInfo.gelontSelongmelonntNamelon();
   }
 
-  public int getAlreadyRetriedCount() {
-    return alreadyRetriedCount;
+  public int gelontAlrelonadyRelontrielondCount() {
+    relonturn alrelonadyRelontrielondCount;
   }
 
   /**
-   * Handle the segment, potentially transitioning to a new state.
-   * @return The state after handling.
+   * Handlelon thelon selongmelonnt, potelonntially transitioning to a nelonw statelon.
+   * @relonturn Thelon statelon aftelonr handling.
    */
-  public abstract SegmentBuilderSegment handle()
-      throws SegmentInfoConstructionException, SegmentUpdaterException;
+  public abstract SelongmelonntBuildelonrSelongmelonnt handlelon()
+      throws SelongmelonntInfoConstructionelonxcelonption, SelongmelonntUpdatelonrelonxcelonption;
 
-  public boolean isBuilt() {
-    return false;
+  public boolelonan isBuilt() {
+    relonturn falselon;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return "SegmentBuilderSegment{"
-        + "segmentInfo=" + segmentInfo
-        + ", state=" + this.getClass().getSimpleName()
-        + ", alreadyRetriedCount=" + alreadyRetriedCount + '}';
+    relonturn "SelongmelonntBuildelonrSelongmelonnt{"
+        + "selongmelonntInfo=" + selongmelonntInfo
+        + ", statelon=" + this.gelontClass().gelontSimplelonNamelon()
+        + ", alrelonadyRelontrielondCount=" + alrelonadyRelontrielondCount + '}';
   }
 
   /**
-   * Given a SegmentInfo, create a new one with the same time slice and partitionID but clean
-   * internal state.
+   * Givelonn a SelongmelonntInfo, crelonatelon a nelonw onelon with thelon samelon timelon slicelon and partitionID but clelonan
+   * intelonrnal statelon.
    */
-  protected SegmentInfo createNewSegmentInfo(SegmentInfo oldSegmentInfo)
-      throws SegmentInfoConstructionException {
-    Preconditions.checkArgument(oldSegmentInfo.getSegment() instanceof ArchiveSegment);
-    ArchiveSegment archiveSegment = (ArchiveSegment) oldSegmentInfo.getSegment();
+  protelonctelond SelongmelonntInfo crelonatelonNelonwSelongmelonntInfo(SelongmelonntInfo oldSelongmelonntInfo)
+      throws SelongmelonntInfoConstructionelonxcelonption {
+    Prelonconditions.chelonckArgumelonnt(oldSelongmelonntInfo.gelontSelongmelonnt() instancelonof ArchivelonSelongmelonnt);
+    ArchivelonSelongmelonnt archivelonSelongmelonnt = (ArchivelonSelongmelonnt) oldSelongmelonntInfo.gelontSelongmelonnt();
 
     try {
-      ArchiveSegment segment = new ArchiveSegment(archiveSegment.getArchiveTimeSlice(),
-          archiveSegment.getHashPartitionID(), EarlybirdConfig.getMaxSegmentSize());
+      ArchivelonSelongmelonnt selongmelonnt = nelonw ArchivelonSelongmelonnt(archivelonSelongmelonnt.gelontArchivelonTimelonSlicelon(),
+          archivelonSelongmelonnt.gelontHashPartitionID(), elonarlybirdConfig.gelontMaxSelongmelonntSizelon());
 
-      return new SegmentInfo(segment, earlybirdSegmentFactory, sync);
-    } catch (IOException e) {
-      throw new SegmentInfoConstructionException("Error creating new segments", e);
+      relonturn nelonw SelongmelonntInfo(selongmelonnt, elonarlybirdSelongmelonntFactory, sync);
+    } catch (IOelonxcelonption elon) {
+      throw nelonw SelongmelonntInfoConstructionelonxcelonption("elonrror crelonating nelonw selongmelonnts", elon);
     }
   }
 
-  protected TryLock getZooKeeperTryLock() {
-    ZooKeeperTryLockFactory tryLockFactory = segmentConfig.getTryLockFactory();
-    String zkRootPath = sync.getZooKeeperSyncFullPath();
-    String nodeName = segmentInfo.getZkNodeName();
-    Amount<Long, Time> expirationTime = segmentConfig.getSegmentZKLockExpirationTime();
+  protelonctelond TryLock gelontZooKelonelonpelonrTryLock() {
+    ZooKelonelonpelonrTryLockFactory tryLockFactory = selongmelonntConfig.gelontTryLockFactory();
+    String zkRootPath = sync.gelontZooKelonelonpelonrSyncFullPath();
+    String nodelonNamelon = selongmelonntInfo.gelontZkNodelonNamelon();
+    Amount<Long, Timelon> elonxpirationTimelon = selongmelonntConfig.gelontSelongmelonntZKLockelonxpirationTimelon();
 
-    return tryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
+    relonturn tryLockFactory.crelonatelonTryLock(
+        DatabaselonConfig.gelontLocalHostnamelon(),
         zkRootPath,
-        nodeName,
-        expirationTime);
+        nodelonNamelon,
+        elonxpirationTimelon);
   }
 }

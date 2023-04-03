@@ -1,232 +1,232 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
-import javax.annotation.Nullable;
+import java.io.IOelonxcelonption;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
 
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.HasPayloads;
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.HasPositions;
-import static com.twitter.search.core.earlybird.index.inverted.SkipListContainer.INVALID_POSITION;
-import static com.twitter.search.core.earlybird.index.inverted.TermsArray.INVALID;
+import static com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.SkipListContainelonr.HasPayloads;
+import static com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.SkipListContainelonr.HasPositions;
+import static com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.SkipListContainelonr.INVALID_POSITION;
+import static com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.TelonrmsArray.INVALID;
 
 /**
- * A skip list implementation of real time posting list. Supports out of order updates.
+ * A skip list implelonmelonntation of relonal timelon posting list. Supports out of ordelonr updatelons.
  */
-public class SkipListPostingList implements Flushable {
-  /** Underlying skip list. */
-  private final SkipListContainer<Key> skipListContainer;
+public class SkipListPostingList implelonmelonnts Flushablelon {
+  /** Undelonrlying skip list. */
+  privatelon final SkipListContainelonr<Kelony> skipListContainelonr;
 
-  /** Key used when inserting into the skip list. */
-  private final Key key = new Key();
+  /** Kelony uselond whelonn inselonrting into thelon skip list. */
+  privatelon final Kelony kelony = nelonw Kelony();
 
   public SkipListPostingList(
       HasPositions hasPositions,
       HasPayloads hasPayloads,
-      String field) {
-    this.skipListContainer = new SkipListContainer<>(
-        new DocIDComparator(),
+      String fielonld) {
+    this.skipListContainelonr = nelonw SkipListContainelonr<>(
+        nelonw DocIDComparator(),
         hasPositions,
         hasPayloads,
-        field);
+        fielonld);
   }
 
-  /** Used by {@link SkipListPostingList.FlushHandler} */
-  private SkipListPostingList(SkipListContainer<Key> skipListContainer) {
-    this.skipListContainer = skipListContainer;
+  /** Uselond by {@link SkipListPostingList.FlushHandlelonr} */
+  privatelon SkipListPostingList(SkipListContainelonr<Kelony> skipListContainelonr) {
+    this.skipListContainelonr = skipListContainelonr;
   }
 
   /**
-   * Appends a posting to the posting list for a term.
+   * Appelonnds a posting to thelon posting list for a telonrm.
    */
-  public void appendPosting(
-      int termID,
-      TermsArray termsArray,
+  public void appelonndPosting(
+      int telonrmID,
+      TelonrmsArray telonrmsArray,
       int docID,
       int position,
-      @Nullable BytesRef payload) {
-    termsArray.getLargestPostings()[termID] = Math.max(
-        termsArray.getLargestPostings()[termID],
+      @Nullablelon BytelonsRelonf payload) {
+    telonrmsArray.gelontLargelonstPostings()[telonrmID] = Math.max(
+        telonrmsArray.gelontLargelonstPostings()[telonrmID],
         docID);
 
-    // Append to an existing skip list.
-    // Notice, header tower index is stored at the last postings pointer spot.
-    int postingsPointer = termsArray.getPostingsPointer(termID);
-    if (postingsPointer == INVALID) {
-      // Create a new skip list and add the first posting.
-      postingsPointer = skipListContainer.newSkipList();
+    // Appelonnd to an elonxisting skip list.
+    // Noticelon, helonadelonr towelonr indelonx is storelond at thelon last postings pointelonr spot.
+    int postingsPointelonr = telonrmsArray.gelontPostingsPointelonr(telonrmID);
+    if (postingsPointelonr == INVALID) {
+      // Crelonatelon a nelonw skip list and add thelon first posting.
+      postingsPointelonr = skipListContainelonr.nelonwSkipList();
     }
 
-    boolean havePostingForThisDoc = insertPosting(docID, position, payload, postingsPointer);
+    boolelonan havelonPostingForThisDoc = inselonrtPosting(docID, position, payload, postingsPointelonr);
 
-    // If this is a new document ID, we need to update the document frequency for this term
-    if (!havePostingForThisDoc) {
-      termsArray.getDocumentFrequency()[termID]++;
+    // If this is a nelonw documelonnt ID, welon nelonelond to updatelon thelon documelonnt frelonquelonncy for this telonrm
+    if (!havelonPostingForThisDoc) {
+      telonrmsArray.gelontDocumelonntFrelonquelonncy()[telonrmID]++;
     }
 
-    termsArray.updatePostingsPointer(termID, postingsPointer);
+    telonrmsArray.updatelonPostingsPointelonr(telonrmID, postingsPointelonr);
   }
 
   /**
-   * Deletes the given doc ID from the posting list for the term.
+   * Delonlelontelons thelon givelonn doc ID from thelon posting list for thelon telonrm.
    */
-  public void deletePosting(int termID, TermsArray postingsArray, int docID) {
-    int docFreq = postingsArray.getDocumentFrequency()[termID];
-    if (docFreq == 0) {
-      return;
+  public void delonlelontelonPosting(int telonrmID, TelonrmsArray postingsArray, int docID) {
+    int docFrelonq = postingsArray.gelontDocumelonntFrelonquelonncy()[telonrmID];
+    if (docFrelonq == 0) {
+      relonturn;
     }
 
-    int postingsPointer = postingsArray.getPostingsPointer(termID);
-    // skipListContainer is not empty, try to delete docId from it.
-    int smallestDoc = deletePosting(docID, postingsPointer);
-    if (smallestDoc == SkipListContainer.INITIAL_VALUE) {
-      // Key does not exist.
-      return;
+    int postingsPointelonr = postingsArray.gelontPostingsPointelonr(telonrmID);
+    // skipListContainelonr is not elonmpty, try to delonlelontelon docId from it.
+    int smallelonstDoc = delonlelontelonPosting(docID, postingsPointelonr);
+    if (smallelonstDoc == SkipListContainelonr.INITIAL_VALUelon) {
+      // Kelony doelons not elonxist.
+      relonturn;
     }
 
-    postingsArray.getDocumentFrequency()[termID]--;
+    postingsArray.gelontDocumelonntFrelonquelonncy()[telonrmID]--;
   }
 
   /**
-   * Insert posting into an existing skip list.
+   * Inselonrt posting into an elonxisting skip list.
    *
-   * @param docID docID of the this posting.
-   * @param skipListHead header tower index of the skip list
-   *                         in which the posting will be inserted.
-   * @return whether we have already inserted this document ID into this term list.
+   * @param docID docID of thelon this posting.
+   * @param skipListHelonad helonadelonr towelonr indelonx of thelon skip list
+   *                         in which thelon posting will belon inselonrtelond.
+   * @relonturn whelonthelonr welon havelon alrelonady inselonrtelond this documelonnt ID into this telonrm list.
    */
-  private boolean insertPosting(int docID, int position, BytesRef termPayload, int skipListHead) {
-    int[] payload = PayloadUtil.encodePayload(termPayload);
-    return skipListContainer.insert(key.withDocAndPosition(docID, position), docID, position,
-        payload, skipListHead);
+  privatelon boolelonan inselonrtPosting(int docID, int position, BytelonsRelonf telonrmPayload, int skipListHelonad) {
+    int[] payload = PayloadUtil.elonncodelonPayload(telonrmPayload);
+    relonturn skipListContainelonr.inselonrt(kelony.withDocAndPosition(docID, position), docID, position,
+        payload, skipListHelonad);
   }
 
-  private int deletePosting(int docID, int skipListHead) {
-    return skipListContainer.delete(key.withDocAndPosition(docID, INVALID_POSITION), skipListHead);
+  privatelon int delonlelontelonPosting(int docID, int skipListHelonad) {
+    relonturn skipListContainelonr.delonlelontelon(kelony.withDocAndPosition(docID, INVALID_POSITION), skipListHelonad);
   }
 
-  /** Return a term docs enumerator with position flag on. */
-  public PostingsEnum postings(
-      int postingPointer,
-      int docFreq,
-      int maxPublishedPointer) {
-    return new SkipListPostingsEnum(
-        postingPointer, docFreq, maxPublishedPointer, skipListContainer);
+  /** Relonturn a telonrm docs elonnumelonrator with position flag on. */
+  public Postingselonnum postings(
+      int postingPointelonr,
+      int docFrelonq,
+      int maxPublishelondPointelonr) {
+    relonturn nelonw SkipListPostingselonnum(
+        postingPointelonr, docFrelonq, maxPublishelondPointelonr, skipListContainelonr);
   }
 
   /**
-   * Get the number of documents (AKA document frequency or DF) for the given term.
+   * Gelont thelon numbelonr of documelonnts (AKA documelonnt frelonquelonncy or DF) for thelon givelonn telonrm.
    */
-  public int getDF(int termID, TermsArray postingsArray) {
-    int[] documentFrequency = postingsArray.getDocumentFrequency();
-    Preconditions.checkArgument(termID < documentFrequency.length);
+  public int gelontDF(int telonrmID, TelonrmsArray postingsArray) {
+    int[] documelonntFrelonquelonncy = postingsArray.gelontDocumelonntFrelonquelonncy();
+    Prelonconditions.chelonckArgumelonnt(telonrmID < documelonntFrelonquelonncy.lelonngth);
 
-    return documentFrequency[termID];
+    relonturn documelonntFrelonquelonncy[telonrmID];
   }
 
-  public int getDocIDFromPosting(int posting) {
-    // Posting is simply the whole doc ID.
-    return posting;
+  public int gelontDocIDFromPosting(int posting) {
+    // Posting is simply thelon wholelon doc ID.
+    relonturn posting;
   }
 
-  public int getMaxPublishedPointer() {
-    return skipListContainer.getPoolSize();
+  public int gelontMaxPublishelondPointelonr() {
+    relonturn skipListContainelonr.gelontPoolSizelon();
   }
 
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SupprelonssWarnings("unchelonckelond")
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<SkipListPostingList> {
-    private static final String SKIP_LIST_PROP_NAME = "skipList";
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<SkipListPostingList> {
+    privatelon static final String SKIP_LIST_PROP_NAMelon = "skipList";
 
-    public FlushHandler(SkipListPostingList objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(SkipListPostingList objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    public FlushHandler() {
+    public FlushHandlelonr() {
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      SkipListPostingList objectToFlush = getObjectToFlush();
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      SkipListPostingList objelonctToFlush = gelontObjelonctToFlush();
 
-      objectToFlush.skipListContainer.getFlushHandler()
-          .flush(flushInfo.newSubProperties(SKIP_LIST_PROP_NAME), out);
+      objelonctToFlush.skipListContainelonr.gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons(SKIP_LIST_PROP_NAMelon), out);
     }
 
-    @Override
-    protected SkipListPostingList doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      SkipListComparator<Key> comparator = new DocIDComparator();
-      SkipListContainer.FlushHandler<Key> flushHandler =
-          new SkipListContainer.FlushHandler<>(comparator);
-      SkipListContainer<Key> skipList =
-          flushHandler.load(flushInfo.getSubProperties(SKIP_LIST_PROP_NAME), in);
-      return new SkipListPostingList(skipList);
+    @Ovelonrridelon
+    protelonctelond SkipListPostingList doLoad(
+        FlushInfo flushInfo, DataDelonselonrializelonr in) throws IOelonxcelonption {
+      SkipListComparator<Kelony> comparator = nelonw DocIDComparator();
+      SkipListContainelonr.FlushHandlelonr<Kelony> flushHandlelonr =
+          nelonw SkipListContainelonr.FlushHandlelonr<>(comparator);
+      SkipListContainelonr<Kelony> skipList =
+          flushHandlelonr.load(flushInfo.gelontSubPropelonrtielons(SKIP_LIST_PROP_NAMelon), in);
+      relonturn nelonw SkipListPostingList(skipList);
     }
   }
 
   /**
-   * Key used to in {@link SkipListContainer} by {@link SkipListPostingList}.
+   * Kelony uselond to in {@link SkipListContainelonr} by {@link SkipListPostingList}.
    */
-  public static class Key {
-    private int docID;
-    private int position;
+  public static class Kelony {
+    privatelon int docID;
+    privatelon int position;
 
-    public int getDocID() {
-      return docID;
+    public int gelontDocID() {
+      relonturn docID;
     }
 
-    public int getPosition() {
-      return position;
+    public int gelontPosition() {
+      relonturn position;
     }
 
-    public Key withDocAndPosition(int withDocID, int withPosition) {
+    public Kelony withDocAndPosition(int withDocID, int withPosition) {
       this.docID = withDocID;
       this.position = withPosition;
-      return this;
+      relonturn this;
     }
   }
 
   /**
    * Comparator for docID and position.
    */
-  public static class DocIDComparator implements SkipListComparator<Key> {
-    private static final int SENTINEL_VALUE = DocIdSetIterator.NO_MORE_DOCS;
+  public static class DocIDComparator implelonmelonnts SkipListComparator<Kelony> {
+    privatelon static final int SelonNTINelonL_VALUelon = DocIdSelontItelonrator.NO_MORelon_DOCS;
 
-    @Override
-    public int compareKeyWithValue(Key key, int targetDocID, int targetPosition) {
-      // No key could represent sentinel value and sentinel value is the largest.
-      int docCompare = key.getDocID() - targetDocID;
-      if (docCompare == 0 && targetPosition != INVALID_POSITION) {
-        return key.getPosition() - targetPosition;
-      } else {
-        return docCompare;
+    @Ovelonrridelon
+    public int comparelonKelonyWithValuelon(Kelony kelony, int targelontDocID, int targelontPosition) {
+      // No kelony could relonprelonselonnt selonntinelonl valuelon and selonntinelonl valuelon is thelon largelonst.
+      int docComparelon = kelony.gelontDocID() - targelontDocID;
+      if (docComparelon == 0 && targelontPosition != INVALID_POSITION) {
+        relonturn kelony.gelontPosition() - targelontPosition;
+      } elonlselon {
+        relonturn docComparelon;
       }
     }
 
-    @Override
-    public int compareValues(int docID1, int docID2) {
-      // Sentinel value is the largest.
-      return docID1 - docID2;
+    @Ovelonrridelon
+    public int comparelonValuelons(int docID1, int docID2) {
+      // Selonntinelonl valuelon is thelon largelonst.
+      relonturn docID1 - docID2;
     }
 
-    @Override
-    public int getSentinelValue() {
-      return SENTINEL_VALUE;
+    @Ovelonrridelon
+    public int gelontSelonntinelonlValuelon() {
+      relonturn SelonNTINelonL_VALUelon;
     }
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.models
+packagelon com.twittelonr.follow_reloncommelonndations.modelonls
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.timelines.configapi._
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
+import com.twittelonr.timelonlinelons.configapi._
 
-object FeatureValue {
-  def fromThrift(thriftFeatureValue: t.FeatureValue): FeatureValue = thriftFeatureValue match {
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.BoolValue(bool)) =>
-      BooleanFeatureValue(bool)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.StrValue(string)) =>
-      StringFeatureValue(string)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.IntValue(int)) =>
-      NumberFeatureValue(int)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.LongValue(long)) =>
-      NumberFeatureValue(long)
-    case t.FeatureValue.PrimitiveValue(t.PrimitiveFeatureValue.UnknownUnionField(field)) =>
-      throw new UnknownFeatureValueException(s"Primitive: ${field.field.name}")
-    case t.FeatureValue.UnknownUnionField(field) =>
-      throw new UnknownFeatureValueException(field.field.name)
+objelonct FelonaturelonValuelon {
+  delonf fromThrift(thriftFelonaturelonValuelon: t.FelonaturelonValuelon): FelonaturelonValuelon = thriftFelonaturelonValuelon match {
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.BoolValuelon(bool)) =>
+      BoolelonanFelonaturelonValuelon(bool)
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.StrValuelon(string)) =>
+      StringFelonaturelonValuelon(string)
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.IntValuelon(int)) =>
+      NumbelonrFelonaturelonValuelon(int)
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.LongValuelon(long)) =>
+      NumbelonrFelonaturelonValuelon(long)
+    caselon t.FelonaturelonValuelon.PrimitivelonValuelon(t.PrimitivelonFelonaturelonValuelon.UnknownUnionFielonld(fielonld)) =>
+      throw nelonw UnknownFelonaturelonValuelonelonxcelonption(s"Primitivelon: ${fielonld.fielonld.namelon}")
+    caselon t.FelonaturelonValuelon.UnknownUnionFielonld(fielonld) =>
+      throw nelonw UnknownFelonaturelonValuelonelonxcelonption(fielonld.fielonld.namelon)
   }
 }
 
-class UnknownFeatureValueException(fieldName: String)
-    extends Exception(s"Unknown FeatureValue name in thrift: ${fieldName}")
+class UnknownFelonaturelonValuelonelonxcelonption(fielonldNamelon: String)
+    elonxtelonnds elonxcelonption(s"Unknown FelonaturelonValuelon namelon in thrift: ${fielonldNamelon}")

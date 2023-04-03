@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdIndelonxelonxtelonnsionsData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdIndelonxelonxtelonnsionsFactory;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData;
 
-public class TweetSearchIndexExtensionsFactory extends EarlybirdIndexExtensionsFactory {
-  @Override
-  public EarlybirdRealtimeIndexExtensionsData newRealtimeIndexExtensionsData() {
-    return new TweetSearchRealtimeIndexExtensionsData();
+public class TwelonelontSelonarchIndelonxelonxtelonnsionsFactory elonxtelonnds elonarlybirdIndelonxelonxtelonnsionsFactory {
+  @Ovelonrridelon
+  public elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData nelonwRelonaltimelonIndelonxelonxtelonnsionsData() {
+    relonturn nelonw TwelonelontSelonarchRelonaltimelonIndelonxelonxtelonnsionsData();
   }
 
-  @Override
-  public EarlybirdIndexExtensionsData newLuceneIndexExtensionsData() {
-    return new TweetSearchLuceneIndexExtensionsData();
+  @Ovelonrridelon
+  public elonarlybirdIndelonxelonxtelonnsionsData nelonwLucelonnelonIndelonxelonxtelonnsionsData() {
+    relonturn nelonw TwelonelontSelonarchLucelonnelonIndelonxelonxtelonnsionsData();
   }
 }

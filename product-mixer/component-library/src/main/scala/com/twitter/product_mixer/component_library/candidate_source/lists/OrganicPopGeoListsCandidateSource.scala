@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.candidate_source.lists
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.lists
 
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.recommendations.interests_discovery.recommendations_mh.OrganicPopgeoListsClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwittelonrListCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyFelontchelonrSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.reloncommelonndations.intelonrelonsts_discovelonry.reloncommelonndations_mh.OrganicPopgelonoListsClielonntColumn
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class OrganicPopGeoListsCandidateSource @Inject() (
-  organicPopgeoListsClientColumn: OrganicPopgeoListsClientColumn)
-    extends StratoKeyFetcherSource[
-      OrganicPopgeoListsClientColumn.Key,
-      OrganicPopgeoListsClientColumn.Value,
-      TwitterListCandidate
+@Singlelonton
+class OrganicPopGelonoListsCandidatelonSourcelon @Injelonct() (
+  organicPopgelonoListsClielonntColumn: OrganicPopgelonoListsClielonntColumn)
+    elonxtelonnds StratoKelonyFelontchelonrSourcelon[
+      OrganicPopgelonoListsClielonntColumn.Kelony,
+      OrganicPopgelonoListsClielonntColumn.Valuelon,
+      TwittelonrListCandidatelon
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "OrganicPopGeoLists")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    "OrganicPopGelonoLists")
 
-  override val fetcher: Fetcher[
-    OrganicPopgeoListsClientColumn.Key,
+  ovelonrridelon val felontchelonr: Felontchelonr[
+    OrganicPopgelonoListsClielonntColumn.Kelony,
     Unit,
-    OrganicPopgeoListsClientColumn.Value
+    OrganicPopgelonoListsClielonntColumn.Valuelon
   ] =
-    organicPopgeoListsClientColumn.fetcher
+    organicPopgelonoListsClielonntColumn.felontchelonr
 
-  override def stratoResultTransformer(
-    stratoResult: OrganicPopgeoListsClientColumn.Value
-  ): Seq[TwitterListCandidate] = {
-    stratoResult.recommendedListsByAlgo.flatMap { topLists =>
+  ovelonrridelon delonf stratoRelonsultTransformelonr(
+    stratoRelonsult: OrganicPopgelonoListsClielonntColumn.Valuelon
+  ): Selonq[TwittelonrListCandidatelon] = {
+    stratoRelonsult.reloncommelonndelondListsByAlgo.flatMap { topLists =>
       topLists.lists.map { list =>
-        TwitterListCandidate(list.listId)
+        TwittelonrListCandidatelon(list.listId)
       }
     }
   }

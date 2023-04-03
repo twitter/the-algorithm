@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageNavBar
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.pagelons.relonndelonr.{thriftscala => urp}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ClielonntelonvelonntInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TopicPagelonNavBar
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TopicPageNavBarMarshaller @Inject() (
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+@Singlelonton
+class TopicPagelonNavBarMarshallelonr @Injelonct() (
+  clielonntelonvelonntInfoMarshallelonr: ClielonntelonvelonntInfoMarshallelonr) {
 
-  def apply(topicPageNavBar: TopicPageNavBar): urp.TopicPageNavBar =
-    urp.TopicPageNavBar(
-      topicId = topicPageNavBar.topicId,
-      clientEventInfo = topicPageNavBar.clientEventInfo.map(clientEventInfoMarshaller(_))
+  delonf apply(topicPagelonNavBar: TopicPagelonNavBar): urp.TopicPagelonNavBar =
+    urp.TopicPagelonNavBar(
+      topicId = topicPagelonNavBar.topicId,
+      clielonntelonvelonntInfo = topicPagelonNavBar.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_))
     )
 }

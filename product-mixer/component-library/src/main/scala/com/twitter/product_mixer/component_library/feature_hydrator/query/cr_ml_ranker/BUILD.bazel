@@ -1,19 +1,19 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "cr-ml-ranker/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/feature_hydrator",
-        "stitch/stitch-core",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/javax/injelonct:javax.injelonct",
+        "cr-ml-rankelonr/thrift/src/main/thrift:thrift-scala",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/felonaturelon_hydrator",
+        "stitch/stitch-corelon",
     ],
-    exports = [
-        "cr-ml-ranker/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/feature_hydrator",
-        "stitch/stitch-core",
+    elonxports = [
+        "cr-ml-rankelonr/thrift/src/main/thrift:thrift-scala",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/felonaturelon_hydrator",
+        "stitch/stitch-corelon",
     ],
 )

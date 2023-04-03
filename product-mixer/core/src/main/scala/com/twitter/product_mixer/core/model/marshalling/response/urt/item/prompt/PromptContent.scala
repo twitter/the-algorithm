@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-
-/**
- * Represents different types of URT Prompts supported such as the Relevance Prompt.
- *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/PromptContent.html
- */
-sealed trait PromptContent
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Callback
 
 /**
- * Relevance Prompt is a Yes-No style prompt that can be used for collecting feedback from a User
- * about a part of their timeline.
+ * Relonprelonselonnts diffelonrelonnt typelons of URT Prompts supportelond such as thelon Relonlelonvancelon Prompt.
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/RelevancePrompt.html
+ * URT API Relonfelonrelonncelon: https://docbird.twittelonr.biz/unifielond_rich_timelonlinelons_urt/gelonn/com/twittelonr/timelonlinelons/relonndelonr/thriftscala/PromptContelonnt.html
  */
-case class RelevancePromptContent(
-  title: String,
+selonalelond trait PromptContelonnt
+
+/**
+ * Relonlelonvancelon Prompt is a Yelons-No stylelon prompt that can belon uselond for colleloncting felonelondback from a Uselonr
+ * about a part of thelonir timelonlinelon.
+ *
+ * URT API Relonfelonrelonncelon: https://docbird.twittelonr.biz/unifielond_rich_timelonlinelons_urt/gelonn/com/twittelonr/timelonlinelons/relonndelonr/thriftscala/RelonlelonvancelonPrompt.html
+ */
+caselon class RelonlelonvancelonPromptContelonnt(
+  titlelon: String,
   confirmation: String,
-  isRelevantText: String,
-  notRelevantText: String,
-  isRelevantCallback: Callback,
-  notRelevantCallback: Callback,
-  displayType: RelevancePromptDisplayType,
-  isRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType],
-  notRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType])
-    extends PromptContent
+  isRelonlelonvantTelonxt: String,
+  notRelonlelonvantTelonxt: String,
+  isRelonlelonvantCallback: Callback,
+  notRelonlelonvantCallback: Callback,
+  displayTypelon: RelonlelonvancelonPromptDisplayTypelon,
+  isRelonlelonvantFollowUp: Option[RelonlelonvancelonPromptFollowUpFelonelondbackTypelon],
+  notRelonlelonvantFollowUp: Option[RelonlelonvancelonPromptFollowUpFelonelondbackTypelon])
+    elonxtelonnds PromptContelonnt

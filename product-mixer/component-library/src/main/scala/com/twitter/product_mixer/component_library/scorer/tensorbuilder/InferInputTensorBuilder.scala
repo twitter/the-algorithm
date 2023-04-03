@@ -1,151 +1,151 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.telonnsorbuildelonr
 
-import com.google.protobuf.ByteString
-import com.twitter.product_mixer.core.feature.Feature
-import inference.GrpcService.InferTensorContents
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+import com.googlelon.protobuf.BytelonString
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import infelonrelonncelon.GrpcSelonrvicelon.InfelonrTelonnsorContelonnts
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst.InfelonrInputTelonnsor
 
-// This class contains most of common versions at Twitter, but in the future we can add more:
-// https://github.com/kserve/kserve/blob/master/docs/predict-api/v2/required_api.md#tensor-data-1
+// This class contains most of common velonrsions at Twittelonr, but in thelon futurelon welon can add morelon:
+// https://github.com/kselonrvelon/kselonrvelon/blob/mastelonr/docs/prelondict-api/v2/relonquirelond_api.md#telonnsor-data-1
 
-trait InferInputTensorBuilder[Value] {
+trait InfelonrInputTelonnsorBuildelonr[Valuelon] {
 
-  def apply(
-    featureName: String,
-    featureValues: Seq[Value]
-  ): Seq[InferInputTensor]
+  delonf apply(
+    felonaturelonNamelon: String,
+    felonaturelonValuelons: Selonq[Valuelon]
+  ): Selonq[InfelonrInputTelonnsor]
 
 }
 
-object InferInputTensorBuilder {
+objelonct InfelonrInputTelonnsorBuildelonr {
 
-  def checkTensorShapeMatchesValueLength(
-    featureName: String,
-    featureValues: Seq[Any],
-    tensorShape: Seq[Int]
+  delonf chelonckTelonnsorShapelonMatchelonsValuelonLelonngth(
+    felonaturelonNamelon: String,
+    felonaturelonValuelons: Selonq[Any],
+    telonnsorShapelon: Selonq[Int]
   ): Unit = {
-    val featureValuesSize = featureValues.size
-    val tensorShapeSize = tensorShape.product
-    if (featureValuesSize != tensorShapeSize) {
-      throw new FeatureValuesAndShapeMismatchException(
-        featureName,
-        featureValuesSize,
-        tensorShapeSize)
+    val felonaturelonValuelonsSizelon = felonaturelonValuelons.sizelon
+    val telonnsorShapelonSizelon = telonnsorShapelon.product
+    if (felonaturelonValuelonsSizelon != telonnsorShapelonSizelon) {
+      throw nelonw FelonaturelonValuelonsAndShapelonMismatchelonxcelonption(
+        felonaturelonNamelon,
+        felonaturelonValuelonsSizelon,
+        telonnsorShapelonSizelon)
     }
   }
 
-  def buildBoolInferInputTensor(
-    featureName: String,
-    featureValues: Seq[Boolean],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+  delonf buildBoolInfelonrInputTelonnsor(
+    felonaturelonNamelon: String,
+    felonaturelonValuelons: Selonq[Boolelonan],
+    telonnsorShapelon: Selonq[Int]
+  ): Selonq[InfelonrInputTelonnsor] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    chelonckTelonnsorShapelonMatchelonsValuelonLelonngth(felonaturelonNamelon, felonaturelonValuelons, telonnsorShapelon)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
-    tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+    val inputTelonnsorBuildelonr = InfelonrInputTelonnsor.nelonwBuildelonr().selontNamelon(felonaturelonNamelon)
+    telonnsorShapelon.forelonach { shapelon =>
+      inputTelonnsorBuildelonr.addShapelon(shapelon)
     }
-    val inputTensor = inputTensorBuilder
-      .setDatatype("BOOL")
-      .setContents {
-        val contents = InferTensorContents.newBuilder()
-        featureValues.foreach { featureValue =>
-          contents.addBoolContents(featureValue)
+    val inputTelonnsor = inputTelonnsorBuildelonr
+      .selontDatatypelon("BOOL")
+      .selontContelonnts {
+        val contelonnts = InfelonrTelonnsorContelonnts.nelonwBuildelonr()
+        felonaturelonValuelons.forelonach { felonaturelonValuelon =>
+          contelonnts.addBoolContelonnts(felonaturelonValuelon)
         }
-        contents
+        contelonnts
       }
       .build()
-    Seq(inputTensor)
+    Selonq(inputTelonnsor)
   }
 
-  def buildBytesInferInputTensor(
-    featureName: String,
-    featureValues: Seq[String],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+  delonf buildBytelonsInfelonrInputTelonnsor(
+    felonaturelonNamelon: String,
+    felonaturelonValuelons: Selonq[String],
+    telonnsorShapelon: Selonq[Int]
+  ): Selonq[InfelonrInputTelonnsor] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    chelonckTelonnsorShapelonMatchelonsValuelonLelonngth(felonaturelonNamelon, felonaturelonValuelons, telonnsorShapelon)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
-    tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+    val inputTelonnsorBuildelonr = InfelonrInputTelonnsor.nelonwBuildelonr().selontNamelon(felonaturelonNamelon)
+    telonnsorShapelon.forelonach { shapelon =>
+      inputTelonnsorBuildelonr.addShapelon(shapelon)
     }
-    val inputTensor = inputTensorBuilder
-      .setDatatype("BYTES")
-      .setContents {
-        val contents = InferTensorContents.newBuilder()
-        featureValues.foreach { featureValue =>
-          val featureValueBytes = ByteString.copyFromUtf8(featureValue)
-          contents.addByteContents(featureValueBytes)
+    val inputTelonnsor = inputTelonnsorBuildelonr
+      .selontDatatypelon("BYTelonS")
+      .selontContelonnts {
+        val contelonnts = InfelonrTelonnsorContelonnts.nelonwBuildelonr()
+        felonaturelonValuelons.forelonach { felonaturelonValuelon =>
+          val felonaturelonValuelonBytelons = BytelonString.copyFromUtf8(felonaturelonValuelon)
+          contelonnts.addBytelonContelonnts(felonaturelonValuelonBytelons)
         }
-        contents
+        contelonnts
       }
       .build()
-    Seq(inputTensor)
+    Selonq(inputTelonnsor)
   }
 
-  def buildFloat32InferInputTensor(
-    featureName: String,
-    featureValues: Seq[Float],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+  delonf buildFloat32InfelonrInputTelonnsor(
+    felonaturelonNamelon: String,
+    felonaturelonValuelons: Selonq[Float],
+    telonnsorShapelon: Selonq[Int]
+  ): Selonq[InfelonrInputTelonnsor] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    chelonckTelonnsorShapelonMatchelonsValuelonLelonngth(felonaturelonNamelon, felonaturelonValuelons, telonnsorShapelon)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
-    tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+    val inputTelonnsorBuildelonr = InfelonrInputTelonnsor.nelonwBuildelonr().selontNamelon(felonaturelonNamelon)
+    telonnsorShapelon.forelonach { shapelon =>
+      inputTelonnsorBuildelonr.addShapelon(shapelon)
     }
-    val inputTensor = inputTensorBuilder
-      .setDatatype("FP32")
-      .setContents {
-        val contents = InferTensorContents.newBuilder()
-        featureValues.foreach { featureValue =>
-          contents.addFp32Contents(featureValue.floatValue)
+    val inputTelonnsor = inputTelonnsorBuildelonr
+      .selontDatatypelon("FP32")
+      .selontContelonnts {
+        val contelonnts = InfelonrTelonnsorContelonnts.nelonwBuildelonr()
+        felonaturelonValuelons.forelonach { felonaturelonValuelon =>
+          contelonnts.addFp32Contelonnts(felonaturelonValuelon.floatValuelon)
         }
-        contents
+        contelonnts
       }
       .build()
-    Seq(inputTensor)
+    Selonq(inputTelonnsor)
   }
 
-  def buildInt64InferInputTensor(
-    featureName: String,
-    featureValues: Seq[Long],
-    tensorShape: Seq[Int]
-  ): Seq[InferInputTensor] = {
+  delonf buildInt64InfelonrInputTelonnsor(
+    felonaturelonNamelon: String,
+    felonaturelonValuelons: Selonq[Long],
+    telonnsorShapelon: Selonq[Int]
+  ): Selonq[InfelonrInputTelonnsor] = {
 
-    checkTensorShapeMatchesValueLength(featureName, featureValues, tensorShape)
+    chelonckTelonnsorShapelonMatchelonsValuelonLelonngth(felonaturelonNamelon, felonaturelonValuelons, telonnsorShapelon)
 
-    val inputTensorBuilder = InferInputTensor.newBuilder().setName(featureName)
-    tensorShape.foreach { shape =>
-      inputTensorBuilder.addShape(shape)
+    val inputTelonnsorBuildelonr = InfelonrInputTelonnsor.nelonwBuildelonr().selontNamelon(felonaturelonNamelon)
+    telonnsorShapelon.forelonach { shapelon =>
+      inputTelonnsorBuildelonr.addShapelon(shapelon)
     }
-    val inputTensor = inputTensorBuilder
-      .setDatatype("INT64")
-      .setContents {
-        val contents = InferTensorContents.newBuilder()
-        featureValues.foreach { featureValue =>
-          contents.addInt64Contents(featureValue)
+    val inputTelonnsor = inputTelonnsorBuildelonr
+      .selontDatatypelon("INT64")
+      .selontContelonnts {
+        val contelonnts = InfelonrTelonnsorContelonnts.nelonwBuildelonr()
+        felonaturelonValuelons.forelonach { felonaturelonValuelon =>
+          contelonnts.addInt64Contelonnts(felonaturelonValuelon)
         }
-        contents
+        contelonnts
       }
       .build()
-    Seq(inputTensor)
+    Selonq(inputTelonnsor)
   }
 }
 
-class UnexpectedFeatureTypeException(feature: Feature[_, _])
-    extends UnsupportedOperationException(s"Unsupported Feature type passed in $feature")
+class UnelonxpelonctelondFelonaturelonTypelonelonxcelonption(felonaturelon: Felonaturelon[_, _])
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(s"Unsupportelond Felonaturelon typelon passelond in $felonaturelon")
 
-class FeatureValuesAndShapeMismatchException(
-  featureName: String,
-  featureValuesSize: Int,
-  tensorShapeSize: Int)
-    extends UnsupportedOperationException(
-      s"Feature $featureName has mismatching FeatureValues (size: $featureValuesSize) and TensorShape (size: $tensorShapeSize)!")
+class FelonaturelonValuelonsAndShapelonMismatchelonxcelonption(
+  felonaturelonNamelon: String,
+  felonaturelonValuelonsSizelon: Int,
+  telonnsorShapelonSizelon: Int)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Felonaturelon $felonaturelonNamelon has mismatching FelonaturelonValuelons (sizelon: $felonaturelonValuelonsSizelon) and TelonnsorShapelon (sizelon: $telonnsorShapelonSizelon)!")
 
-class UnexpectedDataTypeException[T](value: T, builder: InferInputTensorBuilder[_])
-    extends UnsupportedOperationException(
-      s"Unsupported data type ${value} passed in at ${builder.getClass.toString}")
+class UnelonxpelonctelondDataTypelonelonxcelonption[T](valuelon: T, buildelonr: InfelonrInputTelonnsorBuildelonr[_])
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Unsupportelond data typelon ${valuelon} passelond in at ${buildelonr.gelontClass.toString}")

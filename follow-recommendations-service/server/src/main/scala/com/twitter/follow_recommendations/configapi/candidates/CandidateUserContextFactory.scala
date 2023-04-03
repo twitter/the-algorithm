@@ -1,55 +1,55 @@
-package com.twitter.follow_recommendations.configapi.candidates
+packagelon com.twittelonr.follow_reloncommelonndations.configapi.candidatelons
 
-import com.google.common.annotations.VisibleForTesting
-import com.google.inject.Inject
-import com.twitter.decider.Decider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants.PRODUCER_SIDE_FEATURE_SWITCHES
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.googlelon.injelonct.Injelonct
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.felonaturelonswitchelons.{Reloncipielonnt => FelonaturelonSwitchReloncipielonnt}
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants.PRODUCelonR_SIDelon_FelonATURelon_SWITCHelonS
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.felonaturelonswitchelons.v2.FelonaturelonSwitchRelonsultsFelonaturelonContelonxt
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CandidateUserContextFactory @Inject() (
-  @Named(PRODUCER_SIDE_FEATURE_SWITCHES) featureSwitches: FeatureSwitches,
-  decider: Decider) {
-  def apply(
-    candidateUser: CandidateUser,
+@Singlelonton
+class CandidatelonUselonrContelonxtFactory @Injelonct() (
+  @Namelond(PRODUCelonR_SIDelon_FelonATURelon_SWITCHelonS) felonaturelonSwitchelons: FelonaturelonSwitchelons,
+  deloncidelonr: Deloncidelonr) {
+  delonf apply(
+    candidatelonUselonr: CandidatelonUselonr,
     displayLocation: DisplayLocation
-  ): CandidateUserContext = {
-    val featureContext = getFeatureContext(candidateUser, displayLocation)
+  ): CandidatelonUselonrContelonxt = {
+    val felonaturelonContelonxt = gelontFelonaturelonContelonxt(candidatelonUselonr, displayLocation)
 
-    CandidateUserContext(Some(candidateUser.id), featureContext)
+    CandidatelonUselonrContelonxt(Somelon(candidatelonUselonr.id), felonaturelonContelonxt)
   }
 
-  private[configapi] def getFeatureContext(
-    candidateUser: CandidateUser,
+  privatelon[configapi] delonf gelontFelonaturelonContelonxt(
+    candidatelonUselonr: CandidatelonUselonr,
     displayLocation: DisplayLocation
-  ): FeatureContext = {
+  ): FelonaturelonContelonxt = {
 
-    val recipient = getFeatureSwitchRecipient(candidateUser).withCustomFields(
-      "display_location" -> displayLocation.toFsName)
-    new FeatureSwitchResultsFeatureContext(featureSwitches.matchRecipient(recipient))
+    val reloncipielonnt = gelontFelonaturelonSwitchReloncipielonnt(candidatelonUselonr).withCustomFielonlds(
+      "display_location" -> displayLocation.toFsNamelon)
+    nelonw FelonaturelonSwitchRelonsultsFelonaturelonContelonxt(felonaturelonSwitchelons.matchReloncipielonnt(reloncipielonnt))
   }
 
-  @VisibleForTesting
-  private[configapi] def getFeatureSwitchRecipient(
-    candidateUser: CandidateUser
-  ): FeatureSwitchRecipient = {
-    FeatureSwitchRecipient(
-      userId = Some(candidateUser.id),
-      userRoles = None,
-      deviceId = None,
-      guestId = None,
-      languageCode = None,
-      countryCode = None,
-      isVerified = None,
-      clientApplicationId = None,
-      isTwoffice = None
+  @VisiblelonForTelonsting
+  privatelon[configapi] delonf gelontFelonaturelonSwitchReloncipielonnt(
+    candidatelonUselonr: CandidatelonUselonr
+  ): FelonaturelonSwitchReloncipielonnt = {
+    FelonaturelonSwitchReloncipielonnt(
+      uselonrId = Somelon(candidatelonUselonr.id),
+      uselonrRolelons = Nonelon,
+      delonvicelonId = Nonelon,
+      guelonstId = Nonelon,
+      languagelonCodelon = Nonelon,
+      countryCodelon = Nonelon,
+      isVelonrifielond = Nonelon,
+      clielonntApplicationId = Nonelon,
+      isTwofficelon = Nonelon
     )
   }
 }

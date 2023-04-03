@@ -1,449 +1,449 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations
+packagelon com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.modelonl_baselond_topic_reloncommelonndations
 
-import com.twitter.algebird.Monoid
-import com.twitter.bijection.Injection
-import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api._
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.dataset.DALWrite._
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.algelonbird.Monoid
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.dal.clielonnt.dataselont.SnapshotDALDataselontBaselon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api._
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.D
+import com.twittelonr.scalding_intelonrnal.dalv2.dataselont.DALWritelon._
+import com.twittelonr.simclustelonrs_v2.common.Country
+import com.twittelonr.simclustelonrs_v2.common.Languagelon
+import com.twittelonr.simclustelonrs_v2.common.TopicId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 import scala.util.Random
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.scalding.source.DailySuffixCsv
-import com.twitter.scalding.source.DailySuffixTypedTsv
-import com.twitter.simclusters_v2.hdfs_sources.FavTfgTopicEmbeddingsScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.scalding.sourcelon.DailySuffixCsv
+import com.twittelonr.scalding.sourcelon.DailySuffixTypelondTsv
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.FavTfgTopicelonmbelonddingsScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonxtelonrnalDataSourcelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
 
 /**
- This job is to obtain the training and test data for the model-based approach to topic recommendations:
+ This job is to obtain thelon training and telonst data for thelon modelonl-baselond approach to topic reloncommelonndations:
  Approach:
- 1. Read FavTfgTopicEmbeddingsScalaDataset - to get topic simclusters embeddings for the followed and not interested in topics
- 2. Read SimclustersV2InterestedIn20M145KUpdatedScalaDataset - to get user's interestedIn Simclusters embeddings
- 3. Read UsersourceScalaDataset - to get user's countryCode and language
- Use the datasets above to get the features for the model and generate DataRecords.
+ 1. Relonad FavTfgTopicelonmbelonddingsScalaDataselont - to gelont topic simclustelonrs elonmbelonddings for thelon followelond and not intelonrelonstelond in topics
+ 2. Relonad SimclustelonrsV2IntelonrelonstelondIn20M145KUpdatelondScalaDataselont - to gelont uselonr's intelonrelonstelondIn Simclustelonrs elonmbelonddings
+ 3. Relonad UselonrsourcelonScalaDataselont - to gelont uselonr's countryCodelon and languagelon
+ Uselon thelon dataselonts abovelon to gelont thelon felonaturelons for thelon modelonl and gelonnelonratelon DataReloncords.
  */
 
 /*
 To run:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations/model_based_topic_recommendations:training_data_for_topic_recommendations-adhoc \
---user cassowary \
---submitter atla-aor-08-sr1 \
---main-class com.twitter.simclusters_v2.scalding.topic_recommendations.model_based_topic_recommendations.UserTopicFeatureHydrationAdhocApp \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/topic_reloncommelonndations/modelonl_baselond_topic_reloncommelonndations:training_data_for_topic_reloncommelonndations-adhoc \
+--uselonr cassowary \
+--submittelonr atla-aor-08-sr1 \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.modelonl_baselond_topic_reloncommelonndations.UselonrTopicFelonaturelonHydrationAdhocApp \
+--submittelonr-melonmory 128192.melongabytelon --hadoop-propelonrtielons "maprelonducelon.map.melonmory.mb=8192 maprelonducelon.map.java.opts='-Xmx7618M' maprelonducelon.relonducelon.melonmory.mb=8192 maprelonducelon.relonducelon.java.opts='-Xmx7618M'" \
 -- \
---date 2020-10-14 \
---outputDir "/user/cassowary/adhoc/your_ldap/user_topic_features_popular_clusters_filtered_oct_16"
+--datelon 2020-10-14 \
+--outputDir "/uselonr/cassowary/adhoc/your_ldap/uselonr_topic_felonaturelons_popular_clustelonrs_filtelonrelond_oct_16"
  */
 
-object UserTopicFeatureHydrationAdhocApp extends AdhocExecutionApp {
+objelonct UselonrTopicFelonaturelonHydrationAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
 
-  import UserTopicModellingJobUtils._
+  import UselonrTopicModelonllingJobUtils._
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
     val outputDir = args("outputDir")
-    val numDataRecordsTraining = Stat("num_data_records_training")
-    val numDataRecordsTesting = Stat("num_data_records_testing")
-    val testingRatio = args.double("testingRatio", 0.2)
+    val numDataReloncordsTraining = Stat("num_data_reloncords_training")
+    val numDataReloncordsTelonsting = Stat("num_data_reloncords_telonsting")
+    val telonstingRatio = args.doublelon("telonstingRatio", 0.2)
 
-    val (trainingDataSamples, testDataSamples, sortedVocab) = UserTopicModellingJobUtils.run(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.notInterestedTopicsSource,
-      ExternalDataSources.userSource,
-      DataSources.getUserInterestedInData,
-      DataSources.getPerLanguageTopicEmbeddings,
-      testingRatio
+    val (trainingDataSamplelons, telonstDataSamplelons, sortelondVocab) = UselonrTopicModelonllingJobUtils.run(
+      elonxtelonrnalDataSourcelons.topicFollowGraphSourcelon,
+      elonxtelonrnalDataSourcelons.notIntelonrelonstelondTopicsSourcelon,
+      elonxtelonrnalDataSourcelons.uselonrSourcelon,
+      DataSourcelons.gelontUselonrIntelonrelonstelondInData,
+      DataSourcelons.gelontPelonrLanguagelonTopicelonmbelonddings,
+      telonstingRatio
     )
 
-    val userTopicAdapter = new UserTopicDataRecordAdapter()
-    Execution
+    val uselonrTopicAdaptelonr = nelonw UselonrTopicDataReloncordAdaptelonr()
+    elonxeloncution
       .zip(
-        convertTypedPipeToDataSetPipe(
-          trainingDataSamples.map { train =>
-            numDataRecordsTraining.inc()
+        convelonrtTypelondPipelonToDataSelontPipelon(
+          trainingDataSamplelons.map { train =>
+            numDataReloncordsTraining.inc()
             train
           },
-          userTopicAdapter)
-          .writeExecution(
-            DailySuffixFeatureSink(outputDir + "/training")
+          uselonrTopicAdaptelonr)
+          .writelonelonxeloncution(
+            DailySuffixFelonaturelonSink(outputDir + "/training")
           ),
-        convertTypedPipeToDataSetPipe(
-          testDataSamples.map { test =>
-            numDataRecordsTesting.inc()
-            test
+        convelonrtTypelondPipelonToDataSelontPipelon(
+          telonstDataSamplelons.map { telonst =>
+            numDataReloncordsTelonsting.inc()
+            telonst
           },
-          userTopicAdapter)
-          .writeExecution(
-            DailySuffixFeatureSink(outputDir + "/testing")
+          uselonrTopicAdaptelonr)
+          .writelonelonxeloncution(
+            DailySuffixFelonaturelonSink(outputDir + "/telonsting")
           ),
-        sortedVocab
-          .map { topicsWithSortedIndexes =>
-            topicsWithSortedIndexes.map(_._1)
-          }.flatten.writeExecution(DailySuffixTypedTsv(outputDir + "/vocab"))
+        sortelondVocab
+          .map { topicsWithSortelondIndelonxelons =>
+            topicsWithSortelondIndelonxelons.map(_._1)
+          }.flattelonn.writelonelonxeloncution(DailySuffixTypelondTsv(outputDir + "/vocab"))
       ).unit
   }
 }
 
 /**
-capesospy-v2 update --build_locally \
- --start_cron training_data_for_topic_recommendations \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally \
+ --start_cron training_data_for_topic_reloncommelonndations \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
 
-object UserTopicFeatureHydrationScheduledApp extends ScheduledExecutionApp {
+objelonct UselonrTopicFelonaturelonHydrationSchelondulelondApp elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  import UserTopicModellingJobUtils._
+  import UselonrTopicModelonllingJobUtils._
 
-  private val outputPath: String =
-    "/user/cassowary/processed/user_topic_modelling"
+  privatelon val outputPath: String =
+    "/uselonr/cassowary/procelonsselond/uselonr_topic_modelonlling"
 
-  override def batchIncrement: Duration = Days(1)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Days(1)
 
-  override def firstTime: RichDate = RichDate("2020-10-13")
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2020-10-13")
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val testingRatio = args.double("testingRatio", 0.2)
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val telonstingRatio = args.doublelon("telonstingRatio", 0.2)
 
-    val (trainingDataSamples, testDataSamples, sortedVocab) = UserTopicModellingJobUtils.run(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.notInterestedTopicsSource,
-      ExternalDataSources.userSource,
-      DataSources.getUserInterestedInData,
-      DataSources.getPerLanguageTopicEmbeddings,
-      testingRatio
+    val (trainingDataSamplelons, telonstDataSamplelons, sortelondVocab) = UselonrTopicModelonllingJobUtils.run(
+      elonxtelonrnalDataSourcelons.topicFollowGraphSourcelon,
+      elonxtelonrnalDataSourcelons.notIntelonrelonstelondTopicsSourcelon,
+      elonxtelonrnalDataSourcelons.uselonrSourcelon,
+      DataSourcelons.gelontUselonrIntelonrelonstelondInData,
+      DataSourcelons.gelontPelonrLanguagelonTopicelonmbelonddings,
+      telonstingRatio
     )
 
-    val userTopicAdapter = new UserTopicDataRecordAdapter()
-    Execution
+    val uselonrTopicAdaptelonr = nelonw UselonrTopicDataReloncordAdaptelonr()
+    elonxeloncution
       .zip(
-        getTrainTestExec(
-          trainingDataSamples,
-          testDataSamples,
-          TopicRecommendationsTrainDatarecordsJavaDataset,
-          TopicRecommendationsTestDatarecordsJavaDataset,
+        gelontTrainTelonstelonxelonc(
+          trainingDataSamplelons,
+          telonstDataSamplelons,
+          TopicReloncommelonndationsTrainDatareloncordsJavaDataselont,
+          TopicReloncommelonndationsTelonstDatareloncordsJavaDataselont,
           outputPath,
-          userTopicAdapter
+          uselonrTopicAdaptelonr
         ),
-        sortedVocab
-          .map { topicsWithSortedIndexes =>
-            topicsWithSortedIndexes.map(_._1)
-          }.flatten.writeExecution(DailySuffixTypedTsv(outputPath + "/vocab"))
+        sortelondVocab
+          .map { topicsWithSortelondIndelonxelons =>
+            topicsWithSortelondIndelonxelons.map(_._1)
+          }.flattelonn.writelonelonxeloncution(DailySuffixTypelondTsv(outputPath + "/vocab"))
       ).unit
 
   }
 }
 
-object UserTopicModellingJobUtils {
+objelonct UselonrTopicModelonllingJobUtils {
 
   /**
-   * The main function that produces training and the test data
+   * Thelon main function that producelons training and thelon telonst data
    *
-   * @param topicFollowGraphSource user with followed topics from TFG
-   * @param notInterestedTopicsSource  user with not interested in topics
-   * @param userSource user with country and language
-   * @param userInterestedInData user with interestedin simcluster embeddings
-   * @param topicPerLanguageEmbeddings topics with simcluster embeddings
+   * @param topicFollowGraphSourcelon uselonr with followelond topics from TFG
+   * @param notIntelonrelonstelondTopicsSourcelon  uselonr with not intelonrelonstelond in topics
+   * @param uselonrSourcelon uselonr with country and languagelon
+   * @param uselonrIntelonrelonstelondInData uselonr with intelonrelonstelondin simclustelonr elonmbelonddings
+   * @param topicPelonrLanguagelonelonmbelonddings topics with simclustelonr elonmbelonddings
    *
-   * @return Tuple (trainingDataSamples, testingDataSamples, sortedTopicsVocab)
+   * @relonturn Tuplelon (trainingDataSamplelons, telonstingDataSamplelons, sortelondTopicsVocab)
    */
-  def run(
-    topicFollowGraphSource: TypedPipe[(TopicId, UserId)],
-    notInterestedTopicsSource: TypedPipe[(TopicId, UserId)],
-    userSource: TypedPipe[(UserId, (Country, Language))],
-    userInterestedInData: TypedPipe[(UserId, Map[Int, Double])],
-    topicPerLanguageEmbeddings: TypedPipe[((TopicId, Language), Map[Int, Double])],
-    testingRatio: Double
+  delonf run(
+    topicFollowGraphSourcelon: TypelondPipelon[(TopicId, UselonrId)],
+    notIntelonrelonstelondTopicsSourcelon: TypelondPipelon[(TopicId, UselonrId)],
+    uselonrSourcelon: TypelondPipelon[(UselonrId, (Country, Languagelon))],
+    uselonrIntelonrelonstelondInData: TypelondPipelon[(UselonrId, Map[Int, Doublelon])],
+    topicPelonrLanguagelonelonmbelonddings: TypelondPipelon[((TopicId, Languagelon), Map[Int, Doublelon])],
+    telonstingRatio: Doublelon
   )(
-    implicit uniqueID: UniqueID,
-    dateRange: DateRange,
-    timeZone: TimeZone
+    implicit uniquelonID: UniquelonID,
+    datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
   ): (
-    TypedPipe[UserTopicTrainingSample],
-    TypedPipe[UserTopicTrainingSample],
-    TypedPipe[Seq[(TopicId, Int)]]
+    TypelondPipelon[UselonrTopicTrainingSamplelon],
+    TypelondPipelon[UselonrTopicTrainingSamplelon],
+    TypelondPipelon[Selonq[(TopicId, Int)]]
   ) = {
-    val allFollowableTopics: TypedPipe[TopicId] =
-      topicFollowGraphSource.map(_._1).distinct
+    val allFollowablelonTopics: TypelondPipelon[TopicId] =
+      topicFollowGraphSourcelon.map(_._1).distinct
 
-    val allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)] =
-      allFollowableTopics.groupAll.mapGroup {
-        case (_, topicIter) =>
-          topicIter.zipWithIndex.map {
-            case (topicId, mappedId) =>
-              (topicId, mappedId)
+    val allFollowablelonTopicsWithMappelondIds: TypelondPipelon[(TopicId, Int)] =
+      allFollowablelonTopics.groupAll.mapGroup {
+        caselon (_, topicItelonr) =>
+          topicItelonr.zipWithIndelonx.map {
+            caselon (topicId, mappelondId) =>
+              (topicId, mappelondId)
           }
-      }.values
+      }.valuelons
 
-    val sortedVocab: TypedPipe[Seq[(TopicId, Int)]] =
-      allFollowableTopicsWithMappedIds.map(Seq(_)).map(_.sortBy(_._2))
+    val sortelondVocab: TypelondPipelon[Selonq[(TopicId, Int)]] =
+      allFollowablelonTopicsWithMappelondIds.map(Selonq(_)).map(_.sortBy(_._2))
 
-    val dataTrainingSamples: TypedPipe[UserTopicTrainingSample] = getDataSamplesFromTrainingData(
-      topicFollowGraphSource,
-      notInterestedTopicsSource,
-      userSource,
-      userInterestedInData,
-      topicPerLanguageEmbeddings,
-      allFollowableTopicsWithMappedIds
+    val dataTrainingSamplelons: TypelondPipelon[UselonrTopicTrainingSamplelon] = gelontDataSamplelonsFromTrainingData(
+      topicFollowGraphSourcelon,
+      notIntelonrelonstelondTopicsSourcelon,
+      uselonrSourcelon,
+      uselonrIntelonrelonstelondInData,
+      topicPelonrLanguagelonelonmbelonddings,
+      allFollowablelonTopicsWithMappelondIds
     )
-    val (trainSplit, testSplit) = splitByUser(dataTrainingSamples, testingRatio)
+    val (trainSplit, telonstSplit) = splitByUselonr(dataTrainingSamplelons, telonstingRatio)
 
-    (trainSplit, testSplit, sortedVocab)
+    (trainSplit, telonstSplit, sortelondVocab)
   }
 
   /**
-   * Split the data samples based on user_id into train and test data. This ensures that the same
-   * user's data records are not part of both train and test data.
+   * Split thelon data samplelons baselond on uselonr_id into train and telonst data. This elonnsurelons that thelon samelon
+   * uselonr's data reloncords arelon not part of both train and telonst data.
    */
-  def splitByUser(
-    dataTrainingSamples: TypedPipe[UserTopicTrainingSample],
-    testingRatio: Double
-  ): (TypedPipe[UserTopicTrainingSample], TypedPipe[UserTopicTrainingSample]) = {
-    val (trainSplit, testSplit) = dataTrainingSamples
-      .map { currSmple => (currSmple.userId, currSmple) }.groupBy(_._1).partition(_ =>
-        Random.nextDouble() > testingRatio)
-    val trainingData = trainSplit.values.map(_._2)
-    val testingData = testSplit.values.map(_._2)
-    (trainingData, testingData)
+  delonf splitByUselonr(
+    dataTrainingSamplelons: TypelondPipelon[UselonrTopicTrainingSamplelon],
+    telonstingRatio: Doublelon
+  ): (TypelondPipelon[UselonrTopicTrainingSamplelon], TypelondPipelon[UselonrTopicTrainingSamplelon]) = {
+    val (trainSplit, telonstSplit) = dataTrainingSamplelons
+      .map { currSmplelon => (currSmplelon.uselonrId, currSmplelon) }.groupBy(_._1).partition(_ =>
+        Random.nelonxtDoublelon() > telonstingRatio)
+    val trainingData = trainSplit.valuelons.map(_._2)
+    val telonstingData = telonstSplit.valuelons.map(_._2)
+    (trainingData, telonstingData)
   }
 
   /**
-   * To get the target topic for each training data sample for a user from the TopicFollowGraph
+   * To gelont thelon targelont topic for elonach training data samplelon for a uselonr from thelon TopicFollowGraph
    *
-   * @param topicFollowSource
-   * @return (UserId, Set(allFollowedTopicsExceptTargetTopic), targetTopic)
+   * @param topicFollowSourcelon
+   * @relonturn (UselonrId, Selont(allFollowelondTopicselonxcelonptTargelontTopic), targelontTopic)
    */
-  def getTargetTopicsFromTFG(
-    topicFollowSource: TypedPipe[(TopicId, UserId)]
+  delonf gelontTargelontTopicsFromTFG(
+    topicFollowSourcelon: TypelondPipelon[(TopicId, UselonrId)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(UserId, Set[TopicId], TopicId)] = {
-    val numTrainingSamples = Stat("num_positive_training_samples")
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[(UselonrId, Selont[TopicId], TopicId)] = {
+    val numTrainingSamplelons = Stat("num_positivelon_training_samplelons")
 
-    val userFollowedTopics = topicFollowSource.swap
+    val uselonrFollowelondTopics = topicFollowSourcelon.swap
       .map {
-        case (userId, topicId) => (userId, Set(topicId))
-      }.sumByKey.toTypedPipe
+        caselon (uselonrId, topicId) => (uselonrId, Selont(topicId))
+      }.sumByKelony.toTypelondPipelon
 
-    userFollowedTopics.flatMap {
-      case (userID, followedTopicsSet) =>
-        followedTopicsSet.map { currFollowedTopic =>
-          numTrainingSamples.inc()
-          val remainingTopics = followedTopicsSet - currFollowedTopic
-          (userID, remainingTopics, currFollowedTopic)
+    uselonrFollowelondTopics.flatMap {
+      caselon (uselonrID, followelondTopicsSelont) =>
+        followelondTopicsSelont.map { currFollowelondTopic =>
+          numTrainingSamplelons.inc()
+          val relonmainingTopics = followelondTopicsSelont - currFollowelondTopic
+          (uselonrID, relonmainingTopics, currFollowelondTopic)
         }
     }
   }
 
   /**
-   * Helper function that does the intermediate join operation between a user's followed,
-   * not-interested, interestedIn, country and language typedpipe sources, read from different sources.
+   * Helonlpelonr function that doelons thelon intelonrmelondiatelon join opelonration belontwelonelonn a uselonr's followelond,
+   * not-intelonrelonstelond, intelonrelonstelondIn, country and languagelon typelondpipelon sourcelons, relonad from diffelonrelonnt sourcelons.
    */
 
-  def getFeaturesIntermediateJoin(
-    topicFollowGraphSource: TypedPipe[(TopicId, UserId)],
-    notInterestedTopicsSource: TypedPipe[(TopicId, UserId)],
-    allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)],
-    userCountryAndLanguage: TypedPipe[(UserId, (Country, Language))],
-    userInterestedInData: TypedPipe[(UserId, Map[Int, Double])]
+  delonf gelontFelonaturelonsIntelonrmelondiatelonJoin(
+    topicFollowGraphSourcelon: TypelondPipelon[(TopicId, UselonrId)],
+    notIntelonrelonstelondTopicsSourcelon: TypelondPipelon[(TopicId, UselonrId)],
+    allFollowablelonTopicsWithMappelondIds: TypelondPipelon[(TopicId, Int)],
+    uselonrCountryAndLanguagelon: TypelondPipelon[(UselonrId, (Country, Languagelon))],
+    uselonrIntelonrelonstelondInData: TypelondPipelon[(UselonrId, Map[Int, Doublelon])]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[
     (
-      UserId,
-      Set[TopicId],
-      Set[TopicId],
+      UselonrId,
+      Selont[TopicId],
+      Selont[TopicId],
       TopicId,
       Int,
       Country,
-      Language,
-      Map[Int, Double]
+      Languagelon,
+      Map[Int, Doublelon]
     )
   ] = {
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    implicit val l2b: Long => Array[Bytelon] = Injelonction.long2Bigelonndian
 
-    val userWithFollowedTargetTopics: TypedPipe[
-      (UserId, Set[TopicId], TopicId)
-    ] = getTargetTopicsFromTFG(topicFollowGraphSource)
+    val uselonrWithFollowelondTargelontTopics: TypelondPipelon[
+      (UselonrId, Selont[TopicId], TopicId)
+    ] = gelontTargelontTopicsFromTFG(topicFollowGraphSourcelon)
 
-    val userWithNotInterestedTopics: TypedPipe[(UserId, Set[TopicId])] =
-      notInterestedTopicsSource.swap.mapValues(Set(_)).sumByKey.toTypedPipe
+    val uselonrWithNotIntelonrelonstelondTopics: TypelondPipelon[(UselonrId, Selont[TopicId])] =
+      notIntelonrelonstelondTopicsSourcelon.swap.mapValuelons(Selont(_)).sumByKelony.toTypelondPipelon
 
-    userWithFollowedTargetTopics
-      .groupBy(_._1).leftJoin(userWithNotInterestedTopics).values.map {
-        case ((userId, followedTopics, targetFollowedTopic), notInterestedOpt) =>
+    uselonrWithFollowelondTargelontTopics
+      .groupBy(_._1).lelonftJoin(uselonrWithNotIntelonrelonstelondTopics).valuelons.map {
+        caselon ((uselonrId, followelondTopics, targelontFollowelondTopic), notIntelonrelonstelondOpt) =>
           (
-            userId,
-            followedTopics,
-            targetFollowedTopic,
-            notInterestedOpt.getOrElse(Set.empty[TopicId]))
+            uselonrId,
+            followelondTopics,
+            targelontFollowelondTopic,
+            notIntelonrelonstelondOpt.gelontOrelonlselon(Selont.elonmpty[TopicId]))
       }
       .map {
-        case (userId, followedTopics, targetFollowedTopic, notInterestedTopics) =>
-          (targetFollowedTopic, (userId, followedTopics, notInterestedTopics))
-      }.join(allFollowableTopicsWithMappedIds).map {
-        case (targetTopic, ((userId, followedTopics, notInterestedTopics), targetTopicIdx)) =>
-          (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdx)
+        caselon (uselonrId, followelondTopics, targelontFollowelondTopic, notIntelonrelonstelondTopics) =>
+          (targelontFollowelondTopic, (uselonrId, followelondTopics, notIntelonrelonstelondTopics))
+      }.join(allFollowablelonTopicsWithMappelondIds).map {
+        caselon (targelontTopic, ((uselonrId, followelondTopics, notIntelonrelonstelondTopics), targelontTopicIdx)) =>
+          (uselonrId, followelondTopics, notIntelonrelonstelondTopics, targelontTopic, targelontTopicIdx)
       }
-      .groupBy(_._1).sketch(4000)
-      .join(userCountryAndLanguage
-        .groupBy(_._1)).sketch(4000).leftJoin(userInterestedInData)
-      .values.map {
-        case (
+      .groupBy(_._1).skelontch(4000)
+      .join(uselonrCountryAndLanguagelon
+        .groupBy(_._1)).skelontch(4000).lelonftJoin(uselonrIntelonrelonstelondInData)
+      .valuelons.map {
+        caselon (
               (
-                (userId, followedTopics, notInterestedTopics, targetTopic, targetTopicIdx),
-                (_, (userCountry, userLanguage))
+                (uselonrId, followelondTopics, notIntelonrelonstelondTopics, targelontTopic, targelontTopicIdx),
+                (_, (uselonrCountry, uselonrLanguagelon))
               ),
-              userIntOpt) =>
+              uselonrIntOpt) =>
           (
-            userId,
-            followedTopics,
-            notInterestedTopics,
-            targetTopic,
-            targetTopicIdx,
-            userCountry,
-            userLanguage,
-            userIntOpt.getOrElse(Map.empty))
+            uselonrId,
+            followelondTopics,
+            notIntelonrelonstelondTopics,
+            targelontTopic,
+            targelontTopicIdx,
+            uselonrCountry,
+            uselonrLanguagelon,
+            uselonrIntOpt.gelontOrelonlselon(Map.elonmpty))
       }
   }
 
   /**
-   * Helper function that aggregates user's followed topics, not-interested topics,
-   * country, language with join operations and generates the UserTopicTrainingSample
-   * for each DataRecord
+   * Helonlpelonr function that aggrelongatelons uselonr's followelond topics, not-intelonrelonstelond topics,
+   * country, languagelon with join opelonrations and gelonnelonratelons thelon UselonrTopicTrainingSamplelon
+   * for elonach DataReloncord
    */
-  def getDataSamplesFromTrainingData(
-    topicFollowGraphSource: TypedPipe[(TopicId, UserId)],
-    notInterestedTopicsSource: TypedPipe[(TopicId, UserId)],
-    userCountryAndLanguage: TypedPipe[(UserId, (Country, Language))],
-    userInterestedInData: TypedPipe[(UserId, Map[Int, Double])],
-    topicPerLanguageEmbeddings: TypedPipe[((TopicId, Language), Map[Int, Double])],
-    allFollowableTopicsWithMappedIds: TypedPipe[(TopicId, Int)]
+  delonf gelontDataSamplelonsFromTrainingData(
+    topicFollowGraphSourcelon: TypelondPipelon[(TopicId, UselonrId)],
+    notIntelonrelonstelondTopicsSourcelon: TypelondPipelon[(TopicId, UselonrId)],
+    uselonrCountryAndLanguagelon: TypelondPipelon[(UselonrId, (Country, Languagelon))],
+    uselonrIntelonrelonstelondInData: TypelondPipelon[(UselonrId, Map[Int, Doublelon])],
+    topicPelonrLanguagelonelonmbelonddings: TypelondPipelon[((TopicId, Languagelon), Map[Int, Doublelon])],
+    allFollowablelonTopicsWithMappelondIds: TypelondPipelon[(TopicId, Int)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserTopicTrainingSample] = {
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[UselonrTopicTrainingSamplelon] = {
 
-    implicit val l2b: Long => Array[Byte] = Injection.long2BigEndian
+    implicit val l2b: Long => Array[Bytelon] = Injelonction.long2Bigelonndian
 
-    val allTopicEmbeddingsMap: ValuePipe[Map[(TopicId, Language), Map[Int, Double]]] =
-      topicPerLanguageEmbeddings.map {
-        case (topicWithLang, embedding) =>
-          Map(topicWithLang -> embedding)
+    val allTopicelonmbelonddingsMap: ValuelonPipelon[Map[(TopicId, Languagelon), Map[Int, Doublelon]]] =
+      topicPelonrLanguagelonelonmbelonddings.map {
+        caselon (topicWithLang, elonmbelondding) =>
+          Map(topicWithLang -> elonmbelondding)
       }.sum
 
-    val userWithFollowedAndNotInterestedTopics = getFeaturesIntermediateJoin(
-      topicFollowGraphSource,
-      notInterestedTopicsSource,
-      allFollowableTopicsWithMappedIds,
-      userCountryAndLanguage,
-      userInterestedInData)
+    val uselonrWithFollowelondAndNotIntelonrelonstelondTopics = gelontFelonaturelonsIntelonrmelondiatelonJoin(
+      topicFollowGraphSourcelon,
+      notIntelonrelonstelondTopicsSourcelon,
+      allFollowablelonTopicsWithMappelondIds,
+      uselonrCountryAndLanguagelon,
+      uselonrIntelonrelonstelondInData)
 
-    userWithFollowedAndNotInterestedTopics.flatMapWithValue(allTopicEmbeddingsMap) {
-      case (
+    uselonrWithFollowelondAndNotIntelonrelonstelondTopics.flatMapWithValuelon(allTopicelonmbelonddingsMap) {
+      caselon (
             (
-              userId,
-              followedTopics,
-              notInterestedTopics,
-              targetTopic,
-              targetTopicIdx,
-              userCountry,
-              userLanguage,
-              userInt),
-            Some(allTopicEmbeddings)) =>
-        val averageFollowedTopicsSimClusters = Monoid
-          .sum(followedTopics.toSeq.map { topicId =>
-            allTopicEmbeddings.getOrElse((topicId, userLanguage), Map.empty)
-          }).mapValues(v =>
-            v / followedTopics.size) // average simcluster embedding of the followed topics
+              uselonrId,
+              followelondTopics,
+              notIntelonrelonstelondTopics,
+              targelontTopic,
+              targelontTopicIdx,
+              uselonrCountry,
+              uselonrLanguagelon,
+              uselonrInt),
+            Somelon(allTopicelonmbelonddings)) =>
+        val avelonragelonFollowelondTopicsSimClustelonrs = Monoid
+          .sum(followelondTopics.toSelonq.map { topicId =>
+            allTopicelonmbelonddings.gelontOrelonlselon((topicId, uselonrLanguagelon), Map.elonmpty)
+          }).mapValuelons(v =>
+            v / followelondTopics.sizelon) // avelonragelon simclustelonr elonmbelondding of thelon followelond topics
 
-        val averageNotInterestedTopicsSimClusters = Monoid
-          .sum(notInterestedTopics.toSeq.map { topicId =>
-            allTopicEmbeddings.getOrElse((topicId, userLanguage), Map.empty)
-          }).mapValues(v =>
-            v / notInterestedTopics.size) // average simcluster embedding of the notInterested topics
+        val avelonragelonNotIntelonrelonstelondTopicsSimClustelonrs = Monoid
+          .sum(notIntelonrelonstelondTopics.toSelonq.map { topicId =>
+            allTopicelonmbelonddings.gelontOrelonlselon((topicId, uselonrLanguagelon), Map.elonmpty)
+          }).mapValuelons(v =>
+            v / notIntelonrelonstelondTopics.sizelon) // avelonragelon simclustelonr elonmbelondding of thelon notIntelonrelonstelond topics
 
-        Some(
-          UserTopicTrainingSample(
-            userId,
-            followedTopics,
-            notInterestedTopics,
-            userCountry,
-            userLanguage,
-            targetTopicIdx,
-            userInt,
-            averageFollowedTopicsSimClusters,
-            averageNotInterestedTopicsSimClusters
+        Somelon(
+          UselonrTopicTrainingSamplelon(
+            uselonrId,
+            followelondTopics,
+            notIntelonrelonstelondTopics,
+            uselonrCountry,
+            uselonrLanguagelon,
+            targelontTopicIdx,
+            uselonrInt,
+            avelonragelonFollowelondTopicsSimClustelonrs,
+            avelonragelonNotIntelonrelonstelondTopicsSimClustelonrs
           )
         )
 
-      case _ =>
-        None
+      caselon _ =>
+        Nonelon
     }
   }
 
   /**
-   * Write train and test data
+   * Writelon train and telonst data
    */
-  def getTrainTestExec(
-    trainingData: TypedPipe[UserTopicTrainingSample],
-    testingData: TypedPipe[UserTopicTrainingSample],
-    trainDataset: SnapshotDALDatasetBase[DataRecord],
-    testDataset: SnapshotDALDatasetBase[DataRecord],
+  delonf gelontTrainTelonstelonxelonc(
+    trainingData: TypelondPipelon[UselonrTopicTrainingSamplelon],
+    telonstingData: TypelondPipelon[UselonrTopicTrainingSamplelon],
+    trainDataselont: SnapshotDALDataselontBaselon[DataReloncord],
+    telonstDataselont: SnapshotDALDataselontBaselon[DataReloncord],
     outputPath: String,
-    adapter: IRecordOneToOneAdapter[UserTopicTrainingSample]
+    adaptelonr: IReloncordOnelonToOnelonAdaptelonr[UselonrTopicTrainingSamplelon]
   )(
-    implicit dateRange: DateRange
-  ): Execution[Unit] = {
-    val trainExec =
-      convertTypedPipeToDataSetPipe(trainingData, adapter)
-        .writeDALSnapshotExecution(
-          trainDataset,
+    implicit datelonRangelon: DatelonRangelon
+  ): elonxeloncution[Unit] = {
+    val trainelonxelonc =
+      convelonrtTypelondPipelonToDataSelontPipelon(trainingData, adaptelonr)
+        .writelonDALSnapshotelonxeloncution(
+          trainDataselont,
           D.Daily,
           D.Suffix(s"$outputPath/training"),
-          D.EBLzo(),
-          dateRange.end)
-    val testExec =
-      convertTypedPipeToDataSetPipe(testingData, adapter)
-        .writeDALSnapshotExecution(
-          testDataset,
+          D.elonBLzo(),
+          datelonRangelon.elonnd)
+    val telonstelonxelonc =
+      convelonrtTypelondPipelonToDataSelontPipelon(telonstingData, adaptelonr)
+        .writelonDALSnapshotelonxeloncution(
+          telonstDataselont,
           D.Daily,
-          D.Suffix(s"$outputPath/testing"),
-          D.EBLzo(),
-          dateRange.end)
-    Execution.zip(trainExec, testExec).unit
+          D.Suffix(s"$outputPath/telonsting"),
+          D.elonBLzo(),
+          datelonRangelon.elonnd)
+    elonxeloncution.zip(trainelonxelonc, telonstelonxelonc).unit
   }
 
   /**
-   * To get the datasetPipe containing datarecords hydrated by datarecordAdapter
-   * @param userTrainingSamples
-   * @param adapter
-   * @return DataSetPipe
+   * To gelont thelon dataselontPipelon containing datareloncords hydratelond by datareloncordAdaptelonr
+   * @param uselonrTrainingSamplelons
+   * @param adaptelonr
+   * @relonturn DataSelontPipelon
    */
-  def convertTypedPipeToDataSetPipe(
-    userTrainingSamples: TypedPipe[UserTopicTrainingSample],
-    adapter: IRecordOneToOneAdapter[UserTopicTrainingSample]
-  ): DataSetPipe = {
-    userTrainingSamples.toDataSetPipe(adapter)
+  delonf convelonrtTypelondPipelonToDataSelontPipelon(
+    uselonrTrainingSamplelons: TypelondPipelon[UselonrTopicTrainingSamplelon],
+    adaptelonr: IReloncordOnelonToOnelonAdaptelonr[UselonrTopicTrainingSamplelon]
+  ): DataSelontPipelon = {
+    uselonrTrainingSamplelons.toDataSelontPipelon(adaptelonr)
   }
 }

@@ -1,169 +1,169 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Level
-import com.twitter.logging.Logger
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.util.stats.RequestStats
-import scala.collection.mutable
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Lelonvelonl
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstStats
+import scala.collelonction.mutablelon
 
-object TweetFiltersBasedOnSearchMetadata extends Enumeration {
-  val DuplicateRetweets: Value = Value
-  val DuplicateTweets: Value = Value
+objelonct TwelonelontFiltelonrsBaselondOnSelonarchMelontadata elonxtelonnds elonnumelonration {
+  val DuplicatelonRelontwelonelonts: Valuelon = Valuelon
+  val DuplicatelonTwelonelonts: Valuelon = Valuelon
 
-  val None: TweetFiltersBasedOnSearchMetadata.ValueSet = ValueSet.empty
+  val Nonelon: TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.ValuelonSelont = ValuelonSelont.elonmpty
 
-  private[util] type FilterBasedOnSearchMetadataMethod =
-    (ThriftSearchResult, TweetsPostFilterBasedOnSearchMetadataParams, MutableState) => Boolean
+  privatelon[util] typelon FiltelonrBaselondOnSelonarchMelontadataMelonthod =
+    (ThriftSelonarchRelonsult, TwelonelontsPostFiltelonrBaselondOnSelonarchMelontadataParams, MutablelonStatelon) => Boolelonan
 
-  case class MutableState(
-    seenTweetIds: mutable.Map[TweetId, Int] = mutable.Map.empty[TweetId, Int].withDefaultValue(0)) {
-    def isSeen(tweetId: TweetId): Boolean = {
-      val seen = seenTweetIds(tweetId) >= 1
-      incrementIf0(tweetId)
-      seen
+  caselon class MutablelonStatelon(
+    selonelonnTwelonelontIds: mutablelon.Map[TwelonelontId, Int] = mutablelon.Map.elonmpty[TwelonelontId, Int].withDelonfaultValuelon(0)) {
+    delonf isSelonelonn(twelonelontId: TwelonelontId): Boolelonan = {
+      val selonelonn = selonelonnTwelonelontIds(twelonelontId) >= 1
+      increlonmelonntIf0(twelonelontId)
+      selonelonn
     }
 
-    def incrementIf0(key: TweetId): Unit = {
-      if (seenTweetIds(key) == 0) {
-        seenTweetIds(key) = 1
+    delonf increlonmelonntIf0(kelony: TwelonelontId): Unit = {
+      if (selonelonnTwelonelontIds(kelony) == 0) {
+        selonelonnTwelonelontIds(kelony) = 1
       }
     }
 
-    def incrementThenGetCount(key: TweetId): Int = {
-      seenTweetIds(key) += 1
-      seenTweetIds(key)
+    delonf increlonmelonntThelonnGelontCount(kelony: TwelonelontId): Int = {
+      selonelonnTwelonelontIds(kelony) += 1
+      selonelonnTwelonelontIds(kelony)
     }
   }
 }
 
-case class TweetsPostFilterBasedOnSearchMetadataParams(
-  userId: UserId,
-  inNetworkUserIds: Seq[UserId],
-  numRetweetsAllowed: Int,
-  loggingPrefix: String = "")
+caselon class TwelonelontsPostFiltelonrBaselondOnSelonarchMelontadataParams(
+  uselonrId: UselonrId,
+  inNelontworkUselonrIds: Selonq[UselonrId],
+  numRelontwelonelontsAllowelond: Int,
+  loggingPrelonfix: String = "")
 
 /**
- * Performs post-filtering on tweets obtained from search using metadata returned from search.
+ * Pelonrforms post-filtelonring on twelonelonts obtainelond from selonarch using melontadata relonturnelond from selonarch.
  *
- * Search currently does not perform certain steps while searching, so this class addresses those
- * shortcomings by post-processing search results using the returned metadata.
+ * Selonarch currelonntly doelons not pelonrform celonrtain stelonps whilelon selonarching, so this class addrelonsselons thoselon
+ * shortcomings by post-procelonssing selonarch relonsults using thelon relonturnelond melontadata.
  */
-class TweetsPostFilterBasedOnSearchMetadata(
-  filters: TweetFiltersBasedOnSearchMetadata.ValueSet,
-  logger: Logger,
-  statsReceiver: StatsReceiver)
-    extends RequestStats {
-  import TweetFiltersBasedOnSearchMetadata.FilterBasedOnSearchMetadataMethod
-  import TweetFiltersBasedOnSearchMetadata.MutableState
+class TwelonelontsPostFiltelonrBaselondOnSelonarchMelontadata(
+  filtelonrs: TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.ValuelonSelont,
+  loggelonr: Loggelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstStats {
+  import TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.FiltelonrBaselondOnSelonarchMelontadataMelonthod
+  import TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.MutablelonStatelon
 
-  private[this] val baseScope = statsReceiver.scope("filter_based_on_search_metadata")
-  private[this] val dupRetweetCounter = baseScope.counter("dupRetweet")
-  private[this] val dupTweetCounter = baseScope.counter("dupTweet")
+  privatelon[this] val baselonScopelon = statsReloncelonivelonr.scopelon("filtelonr_baselond_on_selonarch_melontadata")
+  privatelon[this] val dupRelontwelonelontCountelonr = baselonScopelon.countelonr("dupRelontwelonelont")
+  privatelon[this] val dupTwelonelontCountelonr = baselonScopelon.countelonr("dupTwelonelont")
 
-  private[this] val totalCounter = baseScope.counter(Total)
-  private[this] val resultCounter = baseScope.counter("result")
+  privatelon[this] val totalCountelonr = baselonScopelon.countelonr(Total)
+  privatelon[this] val relonsultCountelonr = baselonScopelon.countelonr("relonsult")
 
-  // Used for debugging. Its values should remain false for prod use.
-  private[this] val alwaysLog = false
+  // Uselond for delonbugging. Its valuelons should relonmain falselon for prod uselon.
+  privatelon[this] val alwaysLog = falselon
 
-  val applicableFilters: Seq[FilterBasedOnSearchMetadataMethod] =
-    FiltersBasedOnSearchMetadata.getApplicableFilters(filters)
+  val applicablelonFiltelonrs: Selonq[FiltelonrBaselondOnSelonarchMelontadataMelonthod] =
+    FiltelonrsBaselondOnSelonarchMelontadata.gelontApplicablelonFiltelonrs(filtelonrs)
 
-  def apply(
-    userId: UserId,
-    inNetworkUserIds: Seq[UserId],
-    tweets: Seq[ThriftSearchResult],
-    numRetweetsAllowed: Int = 1
-  ): Seq[ThriftSearchResult] = {
-    val loggingPrefix = s"userId: $userId"
-    val params = TweetsPostFilterBasedOnSearchMetadataParams(
-      userId = userId,
-      inNetworkUserIds = inNetworkUserIds,
-      numRetweetsAllowed = numRetweetsAllowed,
-      loggingPrefix = loggingPrefix,
+  delonf apply(
+    uselonrId: UselonrId,
+    inNelontworkUselonrIds: Selonq[UselonrId],
+    twelonelonts: Selonq[ThriftSelonarchRelonsult],
+    numRelontwelonelontsAllowelond: Int = 1
+  ): Selonq[ThriftSelonarchRelonsult] = {
+    val loggingPrelonfix = s"uselonrId: $uselonrId"
+    val params = TwelonelontsPostFiltelonrBaselondOnSelonarchMelontadataParams(
+      uselonrId = uselonrId,
+      inNelontworkUselonrIds = inNelontworkUselonrIds,
+      numRelontwelonelontsAllowelond = numRelontwelonelontsAllowelond,
+      loggingPrelonfix = loggingPrelonfix,
     )
-    filter(tweets, params)
+    filtelonr(twelonelonts, params)
   }
 
-  protected def filter(
-    tweets: Seq[ThriftSearchResult],
-    params: TweetsPostFilterBasedOnSearchMetadataParams
-  ): Seq[ThriftSearchResult] = {
-    val invocationState = MutableState()
-    val result = tweets.reverseIterator
-      .filterNot { tweet => applicableFilters.exists(_(tweet, params, invocationState)) }
-      .toSeq
-      .reverse
-    totalCounter.incr(tweets.size)
-    resultCounter.incr(result.size)
-    result
+  protelonctelond delonf filtelonr(
+    twelonelonts: Selonq[ThriftSelonarchRelonsult],
+    params: TwelonelontsPostFiltelonrBaselondOnSelonarchMelontadataParams
+  ): Selonq[ThriftSelonarchRelonsult] = {
+    val invocationStatelon = MutablelonStatelon()
+    val relonsult = twelonelonts.relonvelonrselonItelonrator
+      .filtelonrNot { twelonelont => applicablelonFiltelonrs.elonxists(_(twelonelont, params, invocationStatelon)) }
+      .toSelonq
+      .relonvelonrselon
+    totalCountelonr.incr(twelonelonts.sizelon)
+    relonsultCountelonr.incr(relonsult.sizelon)
+    relonsult
   }
 
-  object FiltersBasedOnSearchMetadata {
-    case class FilterData(
-      kind: TweetFiltersBasedOnSearchMetadata.Value,
-      method: FilterBasedOnSearchMetadataMethod)
-    private val allFilters = Seq[FilterData](
-      FilterData(TweetFiltersBasedOnSearchMetadata.DuplicateTweets, isDuplicateTweet),
-      FilterData(TweetFiltersBasedOnSearchMetadata.DuplicateRetweets, isDuplicateRetweet)
+  objelonct FiltelonrsBaselondOnSelonarchMelontadata {
+    caselon class FiltelonrData(
+      kind: TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.Valuelon,
+      melonthod: FiltelonrBaselondOnSelonarchMelontadataMelonthod)
+    privatelon val allFiltelonrs = Selonq[FiltelonrData](
+      FiltelonrData(TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.DuplicatelonTwelonelonts, isDuplicatelonTwelonelont),
+      FiltelonrData(TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.DuplicatelonRelontwelonelonts, isDuplicatelonRelontwelonelont)
     )
 
-    def getApplicableFilters(
-      filters: TweetFiltersBasedOnSearchMetadata.ValueSet
-    ): Seq[FilterBasedOnSearchMetadataMethod] = {
-      require(allFilters.map(_.kind).toSet == TweetFiltersBasedOnSearchMetadata.values)
-      allFilters.filter(data => filters.contains(data.kind)).map(_.method)
+    delonf gelontApplicablelonFiltelonrs(
+      filtelonrs: TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.ValuelonSelont
+    ): Selonq[FiltelonrBaselondOnSelonarchMelontadataMelonthod] = {
+      relonquirelon(allFiltelonrs.map(_.kind).toSelont == TwelonelontFiltelonrsBaselondOnSelonarchMelontadata.valuelons)
+      allFiltelonrs.filtelonr(data => filtelonrs.contains(data.kind)).map(_.melonthod)
     }
 
     /**
-     * Determines whether the given tweet has already been seen.
+     * Delontelonrminelons whelonthelonr thelon givelonn twelonelont has alrelonady belonelonn selonelonn.
      */
-    private def isDuplicateTweet(
-      tweet: ThriftSearchResult,
-      params: TweetsPostFilterBasedOnSearchMetadataParams,
-      invocationState: MutableState
-    ): Boolean = {
-      val shouldFilterOut = invocationState.isSeen(tweet.id)
-      if (shouldFilterOut) {
-        dupTweetCounter.incr()
-        log(Level.ERROR, () => s"${params.loggingPrefix}:: Duplicate tweet found: ${tweet.id}")
+    privatelon delonf isDuplicatelonTwelonelont(
+      twelonelont: ThriftSelonarchRelonsult,
+      params: TwelonelontsPostFiltelonrBaselondOnSelonarchMelontadataParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      val shouldFiltelonrOut = invocationStatelon.isSelonelonn(twelonelont.id)
+      if (shouldFiltelonrOut) {
+        dupTwelonelontCountelonr.incr()
+        log(Lelonvelonl.elonRROR, () => s"${params.loggingPrelonfix}:: Duplicatelon twelonelont found: ${twelonelont.id}")
       }
-      shouldFilterOut
+      shouldFiltelonrOut
     }
 
     /**
-     * If the given tweet is a retweet, determines whether the source tweet
-     * of that retweet has already been seen.
+     * If thelon givelonn twelonelont is a relontwelonelont, delontelonrminelons whelonthelonr thelon sourcelon twelonelont
+     * of that relontwelonelont has alrelonady belonelonn selonelonn.
      */
-    private def isDuplicateRetweet(
-      tweet: ThriftSearchResult,
-      params: TweetsPostFilterBasedOnSearchMetadataParams,
-      invocationState: MutableState
-    ): Boolean = {
-      invocationState.incrementIf0(tweet.id)
-      SearchResultUtil.getRetweetSourceTweetId(tweet).exists { sourceTweetId =>
-        val seenCount = invocationState.incrementThenGetCount(sourceTweetId)
-        val shouldFilterOut = seenCount > params.numRetweetsAllowed
-        if (shouldFilterOut) {
-          // We do not log here because search is known to not handle this case.
-          dupRetweetCounter.incr()
+    privatelon delonf isDuplicatelonRelontwelonelont(
+      twelonelont: ThriftSelonarchRelonsult,
+      params: TwelonelontsPostFiltelonrBaselondOnSelonarchMelontadataParams,
+      invocationStatelon: MutablelonStatelon
+    ): Boolelonan = {
+      invocationStatelon.increlonmelonntIf0(twelonelont.id)
+      SelonarchRelonsultUtil.gelontRelontwelonelontSourcelonTwelonelontId(twelonelont).elonxists { sourcelonTwelonelontId =>
+        val selonelonnCount = invocationStatelon.increlonmelonntThelonnGelontCount(sourcelonTwelonelontId)
+        val shouldFiltelonrOut = selonelonnCount > params.numRelontwelonelontsAllowelond
+        if (shouldFiltelonrOut) {
+          // Welon do not log helonrelon beloncauselon selonarch is known to not handlelon this caselon.
+          dupRelontwelonelontCountelonr.incr()
           log(
-            Level.OFF,
+            Lelonvelonl.OFF,
             () =>
-              s"${params.loggingPrefix}:: Found dup retweet: ${tweet.id} (source tweet: $sourceTweetId), count: $seenCount"
+              s"${params.loggingPrelonfix}:: Found dup relontwelonelont: ${twelonelont.id} (sourcelon twelonelont: $sourcelonTwelonelontId), count: $selonelonnCount"
           )
         }
-        shouldFilterOut
+        shouldFiltelonrOut
       }
     }
 
-    private def log(level: Level, message: () => String): Unit = {
-      if (alwaysLog || ((level != Level.OFF) && logger.isLoggable(level))) {
-        val updatedLevel = if (alwaysLog) Level.INFO else level
-        logger.log(updatedLevel, message())
+    privatelon delonf log(lelonvelonl: Lelonvelonl, melonssagelon: () => String): Unit = {
+      if (alwaysLog || ((lelonvelonl != Lelonvelonl.OFF) && loggelonr.isLoggablelon(lelonvelonl))) {
+        val updatelondLelonvelonl = if (alwaysLog) Lelonvelonl.INFO elonlselon lelonvelonl
+        loggelonr.log(updatelondLelonvelonl, melonssagelon())
       }
     }
   }

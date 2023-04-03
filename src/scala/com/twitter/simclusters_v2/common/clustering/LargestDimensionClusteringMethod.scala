@@ -1,33 +1,33 @@
-package com.twitter.simclusters_v2.common.clustering
+packagelon com.twittelonr.simclustelonrs_v2.common.clustelonring
 
 /**
- * Groups entities by a single embedding dimension with the largest score.
+ * Groups elonntitielons by a singlelon elonmbelondding dimelonnsion with thelon largelonst scorelon.
  */
-class LargestDimensionClusteringMethod extends ClusteringMethod {
+class LargelonstDimelonnsionClustelonringMelonthod elonxtelonnds ClustelonringMelonthod {
 
   /**
-   * @param embeddings   map of entity IDs and corresponding embeddings
-   * @param similarityFn function that outputs discrete value (0.0 or 1.0).
-   *                     1.0 if the dimensions of the highest score (weight) from two given embeddings match.
-   *                     0.0 otherwise.
-   *                     e.g.
-   *                        case 1: E1=[0.0, 0.1, 0.6, 0.2], E2=[0.1, 0.3, 0.8, 0.0]. similarityFn(E1, E2)=1.0
-   *                        case 2: E1=[0.0, 0.1, 0.6, 0.2], E2=[0.1, 0.4, 0.2, 0.0]. similarityFn(E1, E2)=0.0
-   * @tparam T embedding type. e.g. SimClustersEmbedding
+   * @param elonmbelonddings   map of elonntity IDs and correlonsponding elonmbelonddings
+   * @param similarityFn function that outputs discrelontelon valuelon (0.0 or 1.0).
+   *                     1.0 if thelon dimelonnsions of thelon highelonst scorelon (welonight) from two givelonn elonmbelonddings match.
+   *                     0.0 othelonrwiselon.
+   *                     elon.g.
+   *                        caselon 1: elon1=[0.0, 0.1, 0.6, 0.2], elon2=[0.1, 0.3, 0.8, 0.0]. similarityFn(elon1, elon2)=1.0
+   *                        caselon 2: elon1=[0.0, 0.1, 0.6, 0.2], elon2=[0.1, 0.4, 0.2, 0.0]. similarityFn(elon1, elon2)=0.0
+   * @tparam T elonmbelondding typelon. elon.g. SimClustelonrselonmbelondding
    *
-   * @return A set of sets of entity IDs, each set representing a distinct cluster.
+   * @relonturn A selont of selonts of elonntity IDs, elonach selont relonprelonselonnting a distinct clustelonr.
    */
-  override def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit
-  ): Set[Set[Long]] = {
+  ovelonrridelon delonf clustelonr[T](
+    elonmbelonddings: Map[Long, T],
+    similarityFn: (T, T) => Doublelon,
+    reloncordStatCallback: (String, Long) => Unit
+  ): Selont[Selont[Long]] = {
 
-    // rely on clustering by connected component.
-    // similarityThreshold=0.1 because it's larger than 0.0 (similarityFn returns 0.0 if two embeddings
-    // don't share the largest dimension.
-    new ConnectedComponentsClusteringMethod(similarityThreshold = 0.1)
-      .cluster(embeddings, similarityFn, recordStatCallback)
+    // relonly on clustelonring by connelonctelond componelonnt.
+    // similarityThrelonshold=0.1 beloncauselon it's largelonr than 0.0 (similarityFn relonturns 0.0 if two elonmbelonddings
+    // don't sharelon thelon largelonst dimelonnsion.
+    nelonw ConnelonctelondComponelonntsClustelonringMelonthod(similarityThrelonshold = 0.1)
+      .clustelonr(elonmbelonddings, similarityFn, reloncordStatCallback)
   }
 
 }

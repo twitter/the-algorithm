@@ -1,16 +1,16 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
 /**
- * A builder interface to build a LightweightLinearModel.
+ * A buildelonr intelonrfacelon to build a LightwelonightLinelonarModelonl.
  */
-public interface ModelBuilder {
+public intelonrfacelon ModelonlBuildelonr {
   /**
-   * parses a line of the model file and updates the build state
+   * parselons a linelon of thelon modelonl filelon and updatelons thelon build statelon
    */
-  ModelBuilder parseLine(String line);
+  ModelonlBuildelonr parselonLinelon(String linelon);
 
   /**
-   * builds the model
+   * builds thelon modelonl
    */
-  LightweightLinearModel build();
+  LightwelonightLinelonarModelonl build();
 }

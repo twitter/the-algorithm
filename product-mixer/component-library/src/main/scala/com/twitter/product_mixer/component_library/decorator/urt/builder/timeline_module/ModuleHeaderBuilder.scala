@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.icon.BaseHorizonIconBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseModuleSocialContextBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleHeaderDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.icon.BaselonHorizonIconBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonStr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonModulelonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonHelonadelonrBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonHelonadelonrDisplayTypelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.Classic
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonVariant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonHelonadelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class ModuleHeaderBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  textBuilder: BaseStr[Query, Candidate],
-  isSticky: Option[Boolean] = None,
-  moduleHeaderIconBuilder: Option[BaseHorizonIconBuilder[Query, Candidate]] = None,
-  customIcon: Option[ImageVariant] = None,
-  moduleSocialContextBuilder: Option[BaseModuleSocialContextBuilder[Query, Candidate]] = None,
-  moduleHeaderDisplayTypeBuilder: BaseModuleHeaderDisplayTypeBuilder[Query, Candidate] =
-    ModuleHeaderDisplayTypeBuilder(Classic))
-    extends BaseModuleHeaderBuilder[Query, Candidate] {
+caselon class ModulelonHelonadelonrBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+  telonxtBuildelonr: BaselonStr[Quelonry, Candidatelon],
+  isSticky: Option[Boolelonan] = Nonelon,
+  modulelonHelonadelonrIconBuildelonr: Option[BaselonHorizonIconBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  customIcon: Option[ImagelonVariant] = Nonelon,
+  modulelonSocialContelonxtBuildelonr: Option[BaselonModulelonSocialContelonxtBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  modulelonHelonadelonrDisplayTypelonBuildelonr: BaselonModulelonHelonadelonrDisplayTypelonBuildelonr[Quelonry, Candidatelon] =
+    ModulelonHelonadelonrDisplayTypelonBuildelonr(Classic))
+    elonxtelonnds BaselonModulelonHelonadelonrBuildelonr[Quelonry, Candidatelon] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Option[ModuleHeader] = {
-    val firstCandidate = candidates.head
-    Some(
-      ModuleHeader(
-        text = textBuilder(query, firstCandidate.candidate, firstCandidate.features),
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Option[ModulelonHelonadelonr] = {
+    val firstCandidatelon = candidatelons.helonad
+    Somelon(
+      ModulelonHelonadelonr(
+        telonxt = telonxtBuildelonr(quelonry, firstCandidatelon.candidatelon, firstCandidatelon.felonaturelons),
         sticky = isSticky,
         customIcon = customIcon,
-        socialContext = moduleSocialContextBuilder.flatMap(_.apply(query, candidates)),
-        icon = moduleHeaderIconBuilder.flatMap(_.apply(query, candidates)),
-        moduleHeaderDisplayType = moduleHeaderDisplayTypeBuilder(query, candidates),
+        socialContelonxt = modulelonSocialContelonxtBuildelonr.flatMap(_.apply(quelonry, candidatelons)),
+        icon = modulelonHelonadelonrIconBuildelonr.flatMap(_.apply(quelonry, candidatelons)),
+        modulelonHelonadelonrDisplayTypelon = modulelonHelonadelonrDisplayTypelonBuildelonr(quelonry, candidatelons),
       )
     )
   }

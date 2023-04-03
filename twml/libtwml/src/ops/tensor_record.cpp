@@ -1,692 +1,692 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
+#includelon "relonsourcelon_utils.h"
 
-#include <algorithm>
+#includelon <algorithm>
 using std::string;
 
-REGISTER_OP("GetStringTensorsFromDataRecord")
-.Attr("feature_id: int")
-.Input("data_record_handle: resource")
+RelonGISTelonR_OP("GelontStringTelonnsorsFromDataReloncord")
+.Attr("felonaturelon_id: int")
+.Input("data_reloncord_handlelon: relonsourcelon")
 .Output("ids: int64")
 .Output("strings: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns string tensors from the data record.
+A telonnsorflow OP that deloncodelons and relonturns string telonnsors from thelon data reloncord.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  felonaturelon_id: Thelon hashelond id of thelon felonaturelon namelon.
 
 Input
-  data_record_handle: Resource handle to DataRecord.
+  data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord.
 
 Outputs
-  ids: A 1D int64 tensor representing the input index in a given batch.
-  strings: A 1D string tensor representing the decoded strings from the batch.
+  ids: A 1D int64 telonnsor relonprelonselonnting thelon input indelonx in a givelonn batch.
+  strings: A 1D string telonnsor relonprelonselonnting thelon deloncodelond strings from thelon batch.
 )doc");
 
-REGISTER_OP("GetStringTensorsFromHashedDataRecord")
-.Attr("feature_id: int")
-.Input("hashed_data_record_handle: resource")
+RelonGISTelonR_OP("GelontStringTelonnsorsFromHashelondDataReloncord")
+.Attr("felonaturelon_id: int")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
 .Output("ids: int64")
 .Output("strings: string")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns string tensors from the hashed data record.
+A telonnsorflow OP that deloncodelons and relonturns string telonnsors from thelon hashelond data reloncord.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  felonaturelon_id: Thelon hashelond id of thelon felonaturelon namelon.
 
 Input
-  data_record_handle: Resource handle to DataRecord.
+  data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord.
 
 Outputs
-  ids: A 1D int64 tensor representing the input index in a given batch.
-  strings: A 1D string tensor representing the decoded strings from the batch.
+  ids: A 1D int64 telonnsor relonprelonselonnting thelon input indelonx in a givelonn batch.
+  strings: A 1D string telonnsor relonprelonselonnting thelon deloncodelond strings from thelon batch.
 )doc");
 
-template<typename Resource>
-class GetStringTensorsOp : public OpKernel {
- private:
-  int64 feature_id;
+telonmplatelon<typelonnamelon Relonsourcelon>
+class GelontStringTelonnsorsOp : public OpKelonrnelonl {
+ privatelon:
+  int64 felonaturelon_id;
 
  public:
-  explicit GetStringTensorsOp(OpKernelConstruction *context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+  elonxplicit GelontStringTelonnsorsOp(OpKelonrnelonlConstruction *contelonxt)
+      : OpKelonrnelonl(contelonxt) {
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("felonaturelon_id", &felonaturelon_id));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    const int64 batch_size = static_cast<int64>(handle->records.size());
-    const auto &records = handle->records;
+  void Computelon(OpKelonrnelonlContelonxt *contelonxt) ovelonrridelon {
+    auto handlelon = gelontHandlelon<Relonsourcelon>(contelonxt, 0);
+    const int64 batch_sizelon = static_cast<int64>(handlelon->reloncords.sizelon());
+    const auto &reloncords = handlelon->reloncords;
 
     try {
-      int64 total_size = 0;
-      for (const auto &record : records) {
+      int64 total_sizelon = 0;
+      for (const auto &reloncord : reloncords) {
         try {
-          const auto &tensor = record.getRawTensor(feature_id);
-          total_size += static_cast<int64>(tensor.getNumElements());
-        } catch(const std::out_of_range &err) {
-          LOG(WARNING) << "Ignoring missing string tensor with key: " << feature_id << std::endl;
-          continue;
+          const auto &telonnsor = reloncord.gelontRawTelonnsor(felonaturelon_id);
+          total_sizelon += static_cast<int64>(telonnsor.gelontNumelonlelonmelonnts());
+        } catch(const std::out_of_rangelon &elonrr) {
+          LOG(WARNING) << "Ignoring missing string telonnsor with kelony: " << felonaturelon_id << std::elonndl;
+          continuelon;
         }
       }
 
-      twml::ThriftReader reader(nullptr);
-      TensorShape shape = {total_size};
-      Tensor *strings_tensor = nullptr;
-      Tensor *ids_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids_tensor));
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape, &strings_tensor));
+      twml::ThriftRelonadelonr relonadelonr(nullptr);
+      TelonnsorShapelon shapelon = {total_sizelon};
+      Telonnsor *strings_telonnsor = nullptr;
+      Telonnsor *ids_telonnsor = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, shapelon, &ids_telonnsor));
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(1, shapelon, &strings_telonnsor));
 
-      auto strings_data = strings_tensor->flat<string>().data();
-      auto ids_data = ids_tensor->flat<int64>().data();
+      auto strings_data = strings_telonnsor->flat<string>().data();
+      auto ids_data = ids_telonnsor->flat<int64>().data();
 
-      for (int64 i = 0; i < batch_size; i++) {
-        const auto &record = records[i];
+      for (int64 i = 0; i < batch_sizelon; i++) {
+        const auto &reloncord = reloncords[i];
         try {
-          const twml::RawTensor &tensor = record.getRawTensor(feature_id);
-          const uint8_t *buffer = static_cast<const uint8_t *>(tensor.getData<void>());
-          const int64 num_strings = static_cast<int64>(tensor.getNumElements());
-          reader.setBuffer(buffer);
+          const twml::RawTelonnsor &telonnsor = reloncord.gelontRawTelonnsor(felonaturelon_id);
+          const uint8_t *buffelonr = static_cast<const uint8_t *>(telonnsor.gelontData<void>());
+          const int64 num_strings = static_cast<int64>(telonnsor.gelontNumelonlelonmelonnts());
+          relonadelonr.selontBuffelonr(buffelonr);
 
           for (int64 j = 0; j < num_strings; j++) {
-            const uint8_t *curr_begin = nullptr;
-            const auto curr_length = reader.getRawBuffer<uint8_t>(&curr_begin);
-            strings_data[j] = std::string(curr_begin, curr_begin + curr_length);
+            const uint8_t *curr_belongin = nullptr;
+            const auto curr_lelonngth = relonadelonr.gelontRawBuffelonr<uint8_t>(&curr_belongin);
+            strings_data[j] = std::string(curr_belongin, curr_belongin + curr_lelonngth);
             ids_data[j] = i;
           }
           ids_data += num_strings;
           strings_data += num_strings;
-        } catch(const std::out_of_range &err) {
-          continue;
+        } catch(const std::out_of_rangelon &elonrr) {
+          continuelon;
         }
       }
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+    } catch(const std::elonxcelonption &elonrr) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elonrr.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetStringTensorsFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetStringTensorsOp<DataRecordResource>);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("GelontStringTelonnsorsFromDataReloncord")
+  .Delonvicelon(DelonVICelon_CPU),
+  GelontStringTelonnsorsOp<DataReloncordRelonsourcelon>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetStringTensorsFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetStringTensorsOp<HashedDataRecordResource>);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("GelontStringTelonnsorsFromHashelondDataReloncord")
+  .Delonvicelon(DelonVICelon_CPU),
+  GelontStringTelonnsorsOp<HashelondDataReloncordRelonsourcelon>);
 
-REGISTER_OP("GetTensorsFromDataRecord")
-.Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Input("data_record_handle: resource")
+RelonGISTelonR_OP("GelontTelonnsorsFromDataReloncord")
+.Attr("asselonrt_shapelon: bool")
+.Attr("felonaturelon_id: int")
+.Input("data_reloncord_handlelon: relonsourcelon")
 .Output("output: string")
-.Output("out_shape: int64")
-.Output("out_type: string")
-.Output("out_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.Output("out_shapelon: int64")
+.Output("out_typelon: string")
+.Output("out_elonndian: uint8")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+A telonnsorflow OP that deloncodelons and relonturns telonnsors from thelon data reloncord.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  felonaturelon_id: Thelon hashelond id of thelon felonaturelon namelon.
 
 Input
-  data_record_handle: Resource handle to DataRecord.
+  data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord.
 
 Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_shape: A tensor containing [batch_size, thrift_shape].
-  out_type: Output type returned as a string tensor of size 1.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+  output: A 2D bytelon telonnsor relonprelonselonnting thelon relonquelonstelond felonaturelon.
+  out_shapelon: A telonnsor containing [batch_sizelon, thrift_shapelon].
+  out_typelon: Output typelon relonturnelond as a string telonnsor of sizelon 1.
+  out_elonndian: elonndiannelonss of thelon bytelons relonturnelond a telonnsor of sizelon 1. 0: littelon, 1: big.
 )doc");
 
-REGISTER_OP("GetTensorsFromHashedDataRecord")
-.Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Input("hashed_data_record_handle: resource")
+RelonGISTelonR_OP("GelontTelonnsorsFromHashelondDataReloncord")
+.Attr("asselonrt_shapelon: bool")
+.Attr("felonaturelon_id: int")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
 .Output("output: string")
-.Output("out_shape: int64")
-.Output("out_type: string")
-.Output("out_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.Output("out_shapelon: int64")
+.Output("out_typelon: string")
+.Output("out_elonndian: uint8")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns decodes and tensors from the hashed data record.
+A telonnsorflow OP that relonturns deloncodelons and telonnsors from thelon hashelond data reloncord.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  felonaturelon_id: Thelon hashelond id of thelon felonaturelon namelon.
 
 Input
-  data_record_handle: Resource handle to DataRecord.
+  data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord.
 
 Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_shape: A tensor containing [batch_size, thrift_shape].
-  out_type: Output type returned as a string tensor of size 1.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+  output: A 2D bytelon telonnsor relonprelonselonnting thelon relonquelonstelond felonaturelon.
+  out_shapelon: A telonnsor containing [batch_sizelon, thrift_shapelon].
+  out_typelon: Output typelon relonturnelond as a string telonnsor of sizelon 1.
+  out_elonndian: elonndiannelonss of thelon bytelons relonturnelond a telonnsor of sizelon 1. 0: littelon, 1: big.
 )doc");
 
-template<class Resource>
-class GetTensorsOp : public OpKernel {
- private:
-  bool assert_shape;
-  int64 feature_id;
+telonmplatelon<class Relonsourcelon>
+class GelontTelonnsorsOp : public OpKelonrnelonl {
+ privatelon:
+  bool asselonrt_shapelon;
+  int64 felonaturelon_id;
 
  public:
-  explicit GetTensorsOp(OpKernelConstruction *context)
-      : OpKernel(context), assert_shape(true) {
-    OP_REQUIRES_OK(context, context->GetAttr("assert_shape", &assert_shape));
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+  elonxplicit GelontTelonnsorsOp(OpKelonrnelonlConstruction *contelonxt)
+      : OpKelonrnelonl(contelonxt), asselonrt_shapelon(truelon) {
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("asselonrt_shapelon", &asselonrt_shapelon));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("felonaturelon_id", &felonaturelon_id));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    uint64 batch_size = handle->records.size();
-    const auto &records = handle->records;
+  void Computelon(OpKelonrnelonlContelonxt *contelonxt) ovelonrridelon {
+    auto handlelon = gelontHandlelon<Relonsourcelon>(contelonxt, 0);
+    uint64 batch_sizelon = handlelon->reloncords.sizelon();
+    const auto &reloncords = handlelon->reloncords;
 
     try {
-      TensorShape raw_shape = {static_cast<int64>(batch_size)};
-      Tensor* output_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(0, raw_shape, &output_tensor));
-      auto output_flat = output_tensor->flat<string>();
+      TelonnsorShapelon raw_shapelon = {static_cast<int64>(batch_sizelon)};
+      Telonnsor* output_telonnsor = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, raw_shapelon, &output_telonnsor));
+      auto output_flat = output_telonnsor->flat<string>();
       auto output_data = output_flat.data();
 
-      twml_type type = TWML_TYPE_UNKNOWN;
-      bool is_big_endian = false;
+      twml_typelon typelon = TWML_TYPelon_UNKNOWN;
+      bool is_big_elonndian = falselon;
 
-      std::vector<uint64> shape(1, batch_size);
-      uint64 length = 0;
+      std::velonctor<uint64> shapelon(1, batch_sizelon);
+      uint64 lelonngth = 0;
 
-      for (auto record : records) {
-        const twml::RawTensor tensor = record.getRawTensor(feature_id);
-        const auto &curr_dims = tensor.getDims();
-        const auto curr_type = tensor.getType();
-        const bool curr_is_big_endian = tensor.is_big_endian();
-        const uint64 curr_length = tensor.getRawLength();
+      for (auto reloncord : reloncords) {
+        const twml::RawTelonnsor telonnsor = reloncord.gelontRawTelonnsor(felonaturelon_id);
+        const auto &curr_dims = telonnsor.gelontDims();
+        const auto curr_typelon = telonnsor.gelontTypelon();
+        const bool curr_is_big_elonndian = telonnsor.is_big_elonndian();
+        const uint64 curr_lelonngth = telonnsor.gelontRawLelonngth();
 
-        // Create the output tensor based on first tensor
-        if (shape.size() == 1) {
-          // Push the shape of individual tensors into shape
-          shape.reserve(curr_dims.size() + 1);
-          shape.insert(shape.end(), curr_dims.begin(), curr_dims.end());
-          type = curr_type;
-          is_big_endian = curr_is_big_endian;
-          length = curr_length;
+        // Crelonatelon thelon output telonnsor baselond on first telonnsor
+        if (shapelon.sizelon() == 1) {
+          // Push thelon shapelon of individual telonnsors into shapelon
+          shapelon.relonselonrvelon(curr_dims.sizelon() + 1);
+          shapelon.inselonrt(shapelon.elonnd(), curr_dims.belongin(), curr_dims.elonnd());
+          typelon = curr_typelon;
+          is_big_elonndian = curr_is_big_elonndian;
+          lelonngth = curr_lelonngth;
 
-        } else {
-          if (assert_shape) {
-            // Assert shape of all tensors is the same.
-            bool is_same_shape = std::equal(shape.begin() + 1, shape.end(), curr_dims.begin());
+        } elonlselon {
+          if (asselonrt_shapelon) {
+            // Asselonrt shapelon of all telonnsors is thelon samelon.
+            bool is_samelon_shapelon = std::elonqual(shapelon.belongin() + 1, shapelon.elonnd(), curr_dims.belongin());
 
-            if (!is_same_shape || length != curr_length) {
-              throw std::runtime_error("TensorShape mismatch for feature_id: "
-                                       + std::to_string(feature_id));
+            if (!is_samelon_shapelon || lelonngth != curr_lelonngth) {
+              throw std::runtimelon_elonrror("TelonnsorShapelon mismatch for felonaturelon_id: "
+                                       + std::to_string(felonaturelon_id));
             }
           }
 
-          // Assert type and endianness of all tensors is the same.
-          if (type != curr_type || is_big_endian != curr_is_big_endian) {
-            throw std::runtime_error("Tensor type mismatch for feature_id: "
-                                     + std::to_string(feature_id));
+          // Asselonrt typelon and elonndiannelonss of all telonnsors is thelon samelon.
+          if (typelon != curr_typelon || is_big_elonndian != curr_is_big_elonndian) {
+            throw std::runtimelon_elonrror("Telonnsor typelon mismatch for felonaturelon_id: "
+                                     + std::to_string(felonaturelon_id));
           }
         }
 
-        // Copy from datarecord to output
-        const uint8 *tensor_data = reinterpret_cast<const uint8 *>(tensor.getData<void>());
-        *output_data = std::string(tensor_data, tensor_data + curr_length);
+        // Copy from datareloncord to output
+        const uint8 *telonnsor_data = relonintelonrprelont_cast<const uint8 *>(telonnsor.gelontData<void>());
+        *output_data = std::string(telonnsor_data, telonnsor_data + curr_lelonngth);
 
-        // Increment it for the next tensor in the batch.
+        // Increlonmelonnt it for thelon nelonxt telonnsor in thelon batch.
         output_data++;
       }
 
-      Tensor *shape_tensor = nullptr;
-      TensorShape shape_shape = {static_cast<int64>(shape.size())};
-      OP_REQUIRES_OK(context, context->allocate_output(1, shape_shape, &shape_tensor));
-      auto shape_flat = shape_tensor->flat<int64>();
-      for (int i = 0; i < static_cast<int>(shape.size()); i++) {
-        shape_flat(i) = shape[i];
+      Telonnsor *shapelon_telonnsor = nullptr;
+      TelonnsorShapelon shapelon_shapelon = {static_cast<int64>(shapelon.sizelon())};
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(1, shapelon_shapelon, &shapelon_telonnsor));
+      auto shapelon_flat = shapelon_telonnsor->flat<int64>();
+      for (int i = 0; i < static_cast<int>(shapelon.sizelon()); i++) {
+        shapelon_flat(i) = shapelon[i];
       }
 
-      Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, {}, &type_tensor));
-      type_tensor->scalar<string>()() = twml::getTypeName(type);
+      Telonnsor* typelon_telonnsor = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(2, {}, &typelon_telonnsor));
+      typelon_telonnsor->scalar<string>()() = twml::gelontTypelonNamelon(typelon);
 
-      Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(3, {}, &endian_tensor));
-      endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+      Telonnsor* elonndian_telonnsor = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(3, {}, &elonndian_telonnsor));
+      elonndian_telonnsor->scalar<uint8>()() = is_big_elonndian;
+    } catch(const std::elonxcelonption &elonrr) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elonrr.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsOp<DataRecordResource>);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("GelontTelonnsorsFromDataReloncord")
+  .Delonvicelon(DelonVICelon_CPU),
+  GelontTelonnsorsOp<DataReloncordRelonsourcelon>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsOp<HashedDataRecordResource>);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("GelontTelonnsorsFromHashelondDataReloncord")
+  .Delonvicelon(DelonVICelon_CPU),
+  GelontTelonnsorsOp<HashelondDataReloncordRelonsourcelon>);
 
-REGISTER_OP("GetTensorsWithMissingMaskFromDataRecord")
-.Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Attr("default_shape: list(int)")
-.Attr("dtype_size: int")
-.Input("data_record_handle: resource")
+RelonGISTelonR_OP("GelontTelonnsorsWithMissingMaskFromDataReloncord")
+.Attr("asselonrt_shapelon: bool")
+.Attr("felonaturelon_id: int")
+.Attr("delonfault_shapelon: list(int)")
+.Attr("dtypelon_sizelon: int")
+.Input("data_reloncord_handlelon: relonsourcelon")
 .Output("output: string")
-.Output("out_type: string")
-.Output("out_endian: uint8")
+.Output("out_typelon: string")
+.Output("out_elonndian: uint8")
 .Output("is_found: bool")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+A telonnsorflow OP that deloncodelons and relonturns telonnsors from thelon data reloncord.
 
 Attr
-  assert_shape: Specifies if the shape needs to be same across the batch.
-  feature_id: The hashed id of the feature name.
-  default_shape: Expected shape of output tensor.
-  dtype_size: expected size of each element.
+  asselonrt_shapelon: Speloncifielons if thelon shapelon nelonelonds to belon samelon across thelon batch.
+  felonaturelon_id: Thelon hashelond id of thelon felonaturelon namelon.
+  delonfault_shapelon: elonxpelonctelond shapelon of output telonnsor.
+  dtypelon_sizelon: elonxpelonctelond sizelon of elonach elonlelonmelonnt.
 
 Input
-  data_record_handle: Resource handle to DataRecord.
+  data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord.
 
 Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_type: A string tensor represnting the type.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
-  is_missing: A boolean tensor of length batch_size represnting if the tensor was found for an input.
+  output: A 2D bytelon telonnsor relonprelonselonnting thelon relonquelonstelond felonaturelon.
+  out_typelon: A string telonnsor relonprelonsnting thelon typelon.
+  out_elonndian: elonndiannelonss of thelon bytelons relonturnelond a telonnsor of sizelon 1. 0: littelon, 1: big.
+  is_missing: A boolelonan telonnsor of lelonngth batch_sizelon relonprelonsnting if thelon telonnsor was found for an input.
 )doc");
 
-REGISTER_OP("GetTensorsWithMissingMaskFromHashedDataRecord")
-.Attr("assert_shape: bool")
-.Attr("feature_id: int")
-.Attr("default_shape: list(int)")
-.Attr("dtype_size: int")
-.Input("hashed_data_record_handle: resource")
+RelonGISTelonR_OP("GelontTelonnsorsWithMissingMaskFromHashelondDataReloncord")
+.Attr("asselonrt_shapelon: bool")
+.Attr("felonaturelon_id: int")
+.Attr("delonfault_shapelon: list(int)")
+.Attr("dtypelon_sizelon: int")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
 .Output("output: string")
-.Output("out_type: string")
-.Output("out_endian: uint8")
+.Output("out_typelon: string")
+.Output("out_elonndian: uint8")
 .Output("is_found: bool")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+A telonnsorflow OP that deloncodelons and relonturns telonnsors from thelon data reloncord.
 
 Attr
-  assert_shape: Specifies if the shape needs to be same across the batch.
-  feature_id: The hashed id of the feature name.
-  default_shape: Expected shape of output tensor.
-  dtype_size: expected size of each element.
+  asselonrt_shapelon: Speloncifielons if thelon shapelon nelonelonds to belon samelon across thelon batch.
+  felonaturelon_id: Thelon hashelond id of thelon felonaturelon namelon.
+  delonfault_shapelon: elonxpelonctelond shapelon of output telonnsor.
+  dtypelon_sizelon: elonxpelonctelond sizelon of elonach elonlelonmelonnt.
 
 Input
-  hashed_data_record_handle: Resource handle to HashedDataRecord.
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to HashelondDataReloncord.
 
 Outputs
-  output: A 2D byte tensor representing the requested feature.
-  out_type: A string tensor represnting the type.
-  out_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
-  is_missing: A boolean tensor of length batch_size represnting if the tensor was found for an input.
+  output: A 2D bytelon telonnsor relonprelonselonnting thelon relonquelonstelond felonaturelon.
+  out_typelon: A string telonnsor relonprelonsnting thelon typelon.
+  out_elonndian: elonndiannelonss of thelon bytelons relonturnelond a telonnsor of sizelon 1. 0: littelon, 1: big.
+  is_missing: A boolelonan telonnsor of lelonngth batch_sizelon relonprelonsnting if thelon telonnsor was found for an input.
 )doc");
 
-template<class Resource>
-class GetTensorsWithMissingMaskOp : public OpKernel {
- private:
-  bool assert_shape;
-  int64 feature_id;
-  int64 dtype_size;
-  std::vector<int64> shape;
+telonmplatelon<class Relonsourcelon>
+class GelontTelonnsorsWithMissingMaskOp : public OpKelonrnelonl {
+ privatelon:
+  bool asselonrt_shapelon;
+  int64 felonaturelon_id;
+  int64 dtypelon_sizelon;
+  std::velonctor<int64> shapelon;
 
  public:
-  explicit GetTensorsWithMissingMaskOp(OpKernelConstruction *context)
-      : OpKernel(context), assert_shape(true) {
-    OP_REQUIRES_OK(context, context->GetAttr("assert_shape", &assert_shape));
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
-    OP_REQUIRES_OK(context, context->GetAttr("default_shape", &shape));
-    OP_REQUIRES_OK(context, context->GetAttr("dtype_size", &dtype_size));
+  elonxplicit GelontTelonnsorsWithMissingMaskOp(OpKelonrnelonlConstruction *contelonxt)
+      : OpKelonrnelonl(contelonxt), asselonrt_shapelon(truelon) {
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("asselonrt_shapelon", &asselonrt_shapelon));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("felonaturelon_id", &felonaturelon_id));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("delonfault_shapelon", &shapelon));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("dtypelon_sizelon", &dtypelon_sizelon));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    uint64 batch_size = handle->records.size();
-    const auto &records = handle->records;
+  void Computelon(OpKelonrnelonlContelonxt *contelonxt) ovelonrridelon {
+    auto handlelon = gelontHandlelon<Relonsourcelon>(contelonxt, 0);
+    uint64 batch_sizelon = handlelon->reloncords.sizelon();
+    const auto &reloncords = handlelon->reloncords;
 
     try {
-      TensorShape raw_shape = {static_cast<int64>(batch_size)};
-      Tensor* output_tensor = nullptr;
-      Tensor* is_found_tensor = nullptr;
+      TelonnsorShapelon raw_shapelon = {static_cast<int64>(batch_sizelon)};
+      Telonnsor* output_telonnsor = nullptr;
+      Telonnsor* is_found_telonnsor = nullptr;
 
-      OP_REQUIRES_OK(context, context->allocate_output(0, raw_shape, &output_tensor));
-      OP_REQUIRES_OK(context, context->allocate_output(3, raw_shape, &is_found_tensor));
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, raw_shapelon, &output_telonnsor));
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(3, raw_shapelon, &is_found_telonnsor));
 
-      auto output_flat = output_tensor->flat<string>();
+      auto output_flat = output_telonnsor->flat<string>();
       auto output_data = output_flat.data();
-      auto is_found_data = is_found_tensor->flat<bool>().data();
+      auto is_found_data = is_found_telonnsor->flat<bool>().data();
 
-      twml_type type = TWML_TYPE_UNKNOWN;
-      bool is_big_endian = false;
+      twml_typelon typelon = TWML_TYPelon_UNKNOWN;
+      bool is_big_elonndian = falselon;
 
-      uint64 length = std::accumulate(shape.begin(), shape.end(), dtype_size, std::multiplies<int64>());
-      for (auto record : records) {
+      uint64 lelonngth = std::accumulatelon(shapelon.belongin(), shapelon.elonnd(), dtypelon_sizelon, std::multiplielons<int64>());
+      for (auto reloncord : reloncords) {
         try {
-          const twml::RawTensor tensor = record.getRawTensor(feature_id);
-          const auto &curr_dims = tensor.getDims();
-          const auto curr_type = tensor.getType();
-          const bool curr_is_big_endian = tensor.is_big_endian();
-          const uint64 curr_length = tensor.getRawLength();
+          const twml::RawTelonnsor telonnsor = reloncord.gelontRawTelonnsor(felonaturelon_id);
+          const auto &curr_dims = telonnsor.gelontDims();
+          const auto curr_typelon = telonnsor.gelontTypelon();
+          const bool curr_is_big_elonndian = telonnsor.is_big_elonndian();
+          const uint64 curr_lelonngth = telonnsor.gelontRawLelonngth();
 
-          if (type == TWML_TYPE_UNKNOWN) {
-            type = curr_type;
-            is_big_endian = curr_is_big_endian;
-            // FloatTensors are stored as a list of doubles.
-            // If the requested dtype_size is 4, update the length.
-            // NOTE: All the missing tensors before this have wrong length, this is fixed at the end.
-            if (type == TWML_TYPE_DOUBLE && is_big_endian && dtype_size == 4) {
-              length = length * 2;
+          if (typelon == TWML_TYPelon_UNKNOWN) {
+            typelon = curr_typelon;
+            is_big_elonndian = curr_is_big_elonndian;
+            // FloatTelonnsors arelon storelond as a list of doublelons.
+            // If thelon relonquelonstelond dtypelon_sizelon is 4, updatelon thelon lelonngth.
+            // NOTelon: All thelon missing telonnsors belonforelon this havelon wrong lelonngth, this is fixelond at thelon elonnd.
+            if (typelon == TWML_TYPelon_DOUBLelon && is_big_elonndian && dtypelon_sizelon == 4) {
+              lelonngth = lelonngth * 2;
             }
-          } else {
-            // Assert type and endianness of all tensors is the same.
-            if (type != curr_type || is_big_endian != curr_is_big_endian) {
-              throw std::runtime_error("Tensor type mismatch for feature_id: "
-                                       + std::to_string(feature_id));
-            }
-          }
-
-          // Assert shape of all tensors is the same.
-          if (assert_shape && type != TWML_TYPE_UNKNOWN) {
-            // Assert shape of all tensors is the same.
-            bool is_same_shape = std::equal(shape.begin(), shape.end(), curr_dims.begin());
-
-            if (!is_same_shape || length != curr_length) {
-              throw std::runtime_error("TensorShape mismatch for feature_id: "
-                                       + std::to_string(feature_id));
+          } elonlselon {
+            // Asselonrt typelon and elonndiannelonss of all telonnsors is thelon samelon.
+            if (typelon != curr_typelon || is_big_elonndian != curr_is_big_elonndian) {
+              throw std::runtimelon_elonrror("Telonnsor typelon mismatch for felonaturelon_id: "
+                                       + std::to_string(felonaturelon_id));
             }
           }
 
-          // Copy from datarecord to output
-          const uint8 *tensor_data = reinterpret_cast<const uint8 *>(tensor.getData<void>());
-          *output_data = std::string(tensor_data, tensor_data + curr_length);
-          *is_found_data = true;
-        } catch(const std::out_of_range &err) {
+          // Asselonrt shapelon of all telonnsors is thelon samelon.
+          if (asselonrt_shapelon && typelon != TWML_TYPelon_UNKNOWN) {
+            // Asselonrt shapelon of all telonnsors is thelon samelon.
+            bool is_samelon_shapelon = std::elonqual(shapelon.belongin(), shapelon.elonnd(), curr_dims.belongin());
+
+            if (!is_samelon_shapelon || lelonngth != curr_lelonngth) {
+              throw std::runtimelon_elonrror("TelonnsorShapelon mismatch for felonaturelon_id: "
+                                       + std::to_string(felonaturelon_id));
+            }
+          }
+
+          // Copy from datareloncord to output
+          const uint8 *telonnsor_data = relonintelonrprelont_cast<const uint8 *>(telonnsor.gelontData<void>());
+          *output_data = std::string(telonnsor_data, telonnsor_data + curr_lelonngth);
+          *is_found_data = truelon;
+        } catch(const std::out_of_rangelon &elonrr) {
           *output_data = std::string();
-          output_data->resize(length);
-          *is_found_data = false;
+          output_data->relonsizelon(lelonngth);
+          *is_found_data = falselon;
         }
 
-        // Increment it for the next tensor in the batch.
+        // Increlonmelonnt it for thelon nelonxt telonnsor in thelon batch.
         output_data++;
         is_found_data++;
       }
 
-      // Reset pointers to the beginning
+      // Relonselont pointelonrs to thelon belonginning
       output_data = output_flat.data();
-      is_found_data = is_found_tensor->flat<bool>().data();
+      is_found_data = is_found_telonnsor->flat<bool>().data();
 
-      // Resize any missing tensors before type (and hence true length) was known.
-      if (type == TWML_TYPE_DOUBLE) {
-        for (int64 i = 0; i < static_cast<int64>(records.size()); i++) {
+      // Relonsizelon any missing telonnsors belonforelon typelon (and helonncelon truelon lelonngth) was known.
+      if (typelon == TWML_TYPelon_DOUBLelon) {
+        for (int64 i = 0; i < static_cast<int64>(reloncords.sizelon()); i++) {
           if (!is_found_data[i]) {
-            output_data[i].resize(length);
+            output_data[i].relonsizelon(lelonngth);
           }
         }
       }
 
-      Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, {}, &type_tensor));
-      type_tensor->scalar<string>()() = twml::getTypeName(type);
+      Telonnsor* typelon_telonnsor = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(1, {}, &typelon_telonnsor));
+      typelon_telonnsor->scalar<string>()() = twml::gelontTypelonNamelon(typelon);
 
-      Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, {}, &endian_tensor));
-      endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+      Telonnsor* elonndian_telonnsor = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(2, {}, &elonndian_telonnsor));
+      elonndian_telonnsor->scalar<uint8>()() = is_big_elonndian;
+    } catch(const std::elonxcelonption &elonrr) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elonrr.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsWithMissingMaskFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsWithMissingMaskOp<DataRecordResource>);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("GelontTelonnsorsWithMissingMaskFromDataReloncord")
+  .Delonvicelon(DelonVICelon_CPU),
+  GelontTelonnsorsWithMissingMaskOp<DataReloncordRelonsourcelon>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetTensorsWithMissingMaskFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetTensorsWithMissingMaskOp<HashedDataRecordResource>);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("GelontTelonnsorsWithMissingMaskFromHashelondDataReloncord")
+  .Delonvicelon(DelonVICelon_CPU),
+  GelontTelonnsorsWithMissingMaskOp<HashelondDataReloncordRelonsourcelon>);
 
-REGISTER_OP("GetSparseTensorsFromDataRecord")
-.Attr("feature_id: int")
-.Input("data_record_handle: resource")
+RelonGISTelonR_OP("GelontSparselonTelonnsorsFromDataReloncord")
+.Attr("felonaturelon_id: int")
+.Input("data_reloncord_handlelon: relonsourcelon")
 .Output("ids: int64")
-.Output("indices: string")
-.Output("values: string")
-.Output("dense_shape: int64")
-.Output("values_type: string")
-.Output("valueendian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.Output("indicelons: string")
+.Output("valuelons: string")
+.Output("delonnselon_shapelon: int64")
+.Output("valuelons_typelon: string")
+.Output("valuelonelonndian: uint8")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+A telonnsorflow OP that deloncodelons and relonturns telonnsors from thelon data reloncord.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  felonaturelon_id: Thelon hashelond id of thelon felonaturelon namelon.
 
 Input
-  data_record_handle: Resource handle to DataRecord.
+  data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord.
 
 Outputs
-  ids: A 1D tensor representing which input in the batch the value belongs to.
-  indices: An string tensor containing indices of the sparse tensor as bytes.
-  values: An string tensor containing values of the sparse tensor as bytes.
-  dense_shape: A tensor containing [batch_size, thrift_shape].
-  values_type: The data type of value tensor returned as a string tensor of size 1.
-  values_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+  ids: A 1D telonnsor relonprelonselonnting which input in thelon batch thelon valuelon belonlongs to.
+  indicelons: An string telonnsor containing indicelons of thelon sparselon telonnsor as bytelons.
+  valuelons: An string telonnsor containing valuelons of thelon sparselon telonnsor as bytelons.
+  delonnselon_shapelon: A telonnsor containing [batch_sizelon, thrift_shapelon].
+  valuelons_typelon: Thelon data typelon of valuelon telonnsor relonturnelond as a string telonnsor of sizelon 1.
+  valuelons_elonndian: elonndiannelonss of thelon bytelons relonturnelond a telonnsor of sizelon 1. 0: littelon, 1: big.
 )doc");
 
-REGISTER_OP("GetSparseTensorsFromHashedDataRecord")
-.Attr("feature_id: int")
-.Input("hashed_data_record_handle: resource")
+RelonGISTelonR_OP("GelontSparselonTelonnsorsFromHashelondDataReloncord")
+.Attr("felonaturelon_id: int")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
 .Output("ids: int64")
-.Output("indices: string")
-.Output("values: string")
-.Output("dense_shape: int64")
-.Output("values_type: string")
-.Output("values_endian: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.Output("indicelons: string")
+.Output("valuelons: string")
+.Output("delonnselon_shapelon: int64")
+.Output("valuelons_typelon: string")
+.Output("valuelons_elonndian: uint8")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that decodes and returns tensors from the data record.
+A telonnsorflow OP that deloncodelons and relonturns telonnsors from thelon data reloncord.
 
 Attr
-  feature_id: The hashed id of the feature name.
+  felonaturelon_id: Thelon hashelond id of thelon felonaturelon namelon.
 
 Input
-  data_record_handle: Resource handle to DataRecord.
+  data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord.
 
 Outputs
-  ids: A 1D tensor representing which input in the batch the value belongs to.
-  indices: An string tensor containing indices of the sparse tensor as bytes.
-  values: An string tensor containing values of the sparse tensor as bytes.
-  dense_shape: A tensor containing [batch_size, thrift_shape].
-  values_type: The data type of value tensor returned as a string tensor of size 1.
-  values_endian: Endianness of the bytes returned a tensor of size 1. 0: litte, 1: big.
+  ids: A 1D telonnsor relonprelonselonnting which input in thelon batch thelon valuelon belonlongs to.
+  indicelons: An string telonnsor containing indicelons of thelon sparselon telonnsor as bytelons.
+  valuelons: An string telonnsor containing valuelons of thelon sparselon telonnsor as bytelons.
+  delonnselon_shapelon: A telonnsor containing [batch_sizelon, thrift_shapelon].
+  valuelons_typelon: Thelon data typelon of valuelon telonnsor relonturnelond as a string telonnsor of sizelon 1.
+  valuelons_elonndian: elonndiannelonss of thelon bytelons relonturnelond a telonnsor of sizelon 1. 0: littelon, 1: big.
 )doc");
 
-template<typename Resource>
-class GetSparseTensorsOp : public OpKernel {
- private:
-  int64 feature_id;
+telonmplatelon<typelonnamelon Relonsourcelon>
+class GelontSparselonTelonnsorsOp : public OpKelonrnelonl {
+ privatelon:
+  int64 felonaturelon_id;
 
  public:
-  explicit GetSparseTensorsOp(OpKernelConstruction *context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("feature_id", &feature_id));
+  elonxplicit GelontSparselonTelonnsorsOp(OpKelonrnelonlConstruction *contelonxt)
+      : OpKelonrnelonl(contelonxt) {
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("felonaturelon_id", &felonaturelon_id));
   }
 
-  void Compute(OpKernelContext *context) override {
-    auto handle = getHandle<Resource>(context, 0);
-    const int64 batch_size = static_cast<int64>(handle->records.size());
-    const auto &records = handle->records;
+  void Computelon(OpKelonrnelonlContelonxt *contelonxt) ovelonrridelon {
+    auto handlelon = gelontHandlelon<Relonsourcelon>(contelonxt, 0);
+    const int64 batch_sizelon = static_cast<int64>(handlelon->reloncords.sizelon());
+    const auto &reloncords = handlelon->reloncords;
 
     try {
-      twml_type type = TWML_TYPE_UNKNOWN;
-      bool is_big_endian = false;
+      twml_typelon typelon = TWML_TYPelon_UNKNOWN;
+      bool is_big_elonndian = falselon;
 
-      std::vector<uint64> shape(1, batch_size);
+      std::velonctor<uint64> shapelon(1, batch_sizelon);
 
-      int64 total_length = 0;
-      std::vector<int64> lengths;
-      lengths.reserve(batch_size);
+      int64 total_lelonngth = 0;
+      std::velonctor<int64> lelonngths;
+      lelonngths.relonselonrvelon(batch_sizelon);
 
-      int64 total_indices_length = 0;
-      std::vector<int64> indices_raw_lengths;
-      std::vector<const uint8 *> indices_data_ptrs;
-      indices_raw_lengths.reserve(batch_size);
-      indices_data_ptrs.reserve(batch_size);
+      int64 total_indicelons_lelonngth = 0;
+      std::velonctor<int64> indicelons_raw_lelonngths;
+      std::velonctor<const uint8 *> indicelons_data_ptrs;
+      indicelons_raw_lelonngths.relonselonrvelon(batch_sizelon);
+      indicelons_data_ptrs.relonselonrvelon(batch_sizelon);
 
-      int64 total_values_length = 0;
-      std::vector<int64> values_raw_lengths;
-      std::vector<const uint8 *> values_data_ptrs;
-      values_raw_lengths.reserve(batch_size);
-      values_data_ptrs.reserve(batch_size);
+      int64 total_valuelons_lelonngth = 0;
+      std::velonctor<int64> valuelons_raw_lelonngths;
+      std::velonctor<const uint8 *> valuelons_data_ptrs;
+      valuelons_raw_lelonngths.relonselonrvelon(batch_sizelon);
+      valuelons_data_ptrs.relonselonrvelon(batch_sizelon);
 
-      for (auto record : records) {
-        const twml::RawSparseTensor sparse_tensor = record.getRawSparseTensor(feature_id);
-        const twml::RawTensor indices = sparse_tensor.indices();
-        const twml::RawTensor values = sparse_tensor.values();
-        const auto &dense_shape = sparse_tensor.denseShape();
-        const auto indices_type = indices.getType();
-        const auto indices_is_big_endian = indices.is_big_endian();
-        const auto values_type = values.getType();
-        const bool values_is_big_endian = values.is_big_endian();
+      for (auto reloncord : reloncords) {
+        const twml::RawSparselonTelonnsor sparselon_telonnsor = reloncord.gelontRawSparselonTelonnsor(felonaturelon_id);
+        const twml::RawTelonnsor indicelons = sparselon_telonnsor.indicelons();
+        const twml::RawTelonnsor valuelons = sparselon_telonnsor.valuelons();
+        const auto &delonnselon_shapelon = sparselon_telonnsor.delonnselonShapelon();
+        const auto indicelons_typelon = indicelons.gelontTypelon();
+        const auto indicelons_is_big_elonndian = indicelons.is_big_elonndian();
+        const auto valuelons_typelon = valuelons.gelontTypelon();
+        const bool valuelons_is_big_elonndian = valuelons.is_big_elonndian();
 
-        const uint64 indices_length = indices.getDims().back();
-        const uint64 values_length = values.getDims().back();
+        const uint64 indicelons_lelonngth = indicelons.gelontDims().back();
+        const uint64 valuelons_lelonngth = valuelons.gelontDims().back();
 
-        auto indices_raw_length = indices.getRawLength();
-        auto values_raw_length = values.getRawLength();
+        auto indicelons_raw_lelonngth = indicelons.gelontRawLelonngth();
+        auto valuelons_raw_lelonngth = valuelons.gelontRawLelonngth();
 
-        auto indices_data_ptr = reinterpret_cast<const uint8 *>(indices.getData<void>());
-        auto values_data_ptr = reinterpret_cast<const uint8 *>(values.getData<void>());
+        auto indicelons_data_ptr = relonintelonrprelont_cast<const uint8 *>(indicelons.gelontData<void>());
+        auto valuelons_data_ptr = relonintelonrprelont_cast<const uint8 *>(valuelons.gelontData<void>());
 
-        indices_raw_lengths.push_back(indices_raw_length);
-        values_raw_lengths.push_back(values_raw_length);
+        indicelons_raw_lelonngths.push_back(indicelons_raw_lelonngth);
+        valuelons_raw_lelonngths.push_back(valuelons_raw_lelonngth);
 
-        indices_data_ptrs.push_back(indices_data_ptr);
-        values_data_ptrs.push_back(values_data_ptr);
+        indicelons_data_ptrs.push_back(indicelons_data_ptr);
+        valuelons_data_ptrs.push_back(valuelons_data_ptr);
 
-        total_indices_length += indices_raw_length;
-        total_values_length += values_raw_length;
+        total_indicelons_lelonngth += indicelons_raw_lelonngth;
+        total_valuelons_lelonngth += valuelons_raw_lelonngth;
 
-        if (shape.size() == 1) {
-          shape.reserve(dense_shape.size() + 1);
-          shape.insert(shape.end(), dense_shape.begin(), dense_shape.end());
-          type = values_type;
-          is_big_endian = values_is_big_endian;
+        if (shapelon.sizelon() == 1) {
+          shapelon.relonselonrvelon(delonnselon_shapelon.sizelon() + 1);
+          shapelon.inselonrt(shapelon.elonnd(), delonnselon_shapelon.belongin(), delonnselon_shapelon.elonnd());
+          typelon = valuelons_typelon;
+          is_big_elonndian = valuelons_is_big_elonndian;
         }
 
-        // Assert shape of all tensors is the same.
-        if (!std::equal(shape.begin() + 1, shape.end(), dense_shape.begin())) {
-          throw std::runtime_error("dense_shape of sparse tensors doesn't match for feature_id: "
-                                   + std::to_string(feature_id));
+        // Asselonrt shapelon of all telonnsors is thelon samelon.
+        if (!std::elonqual(shapelon.belongin() + 1, shapelon.elonnd(), delonnselon_shapelon.belongin())) {
+          throw std::runtimelon_elonrror("delonnselon_shapelon of sparselon telonnsors doelonsn't match for felonaturelon_id: "
+                                   + std::to_string(felonaturelon_id));
         }
-        // Assert type of all values tensor is the same.
-        if (type != values_type || is_big_endian != values_is_big_endian) {
-          throw std::runtime_error("The type of values do not match for feature_id: "
-                                   + std::to_string(feature_id));
+        // Asselonrt typelon of all valuelons telonnsor is thelon samelon.
+        if (typelon != valuelons_typelon || is_big_elonndian != valuelons_is_big_elonndian) {
+          throw std::runtimelon_elonrror("Thelon typelon of valuelons do not match for felonaturelon_id: "
+                                   + std::to_string(felonaturelon_id));
         }
-        // Assert indices tensor is big endian and of type INT64.
-        if (indices_type != TWML_TYPE_INT64 || !indices_is_big_endian) {
-          throw std::runtime_error("Unexpected type for index tensor for feature_id: "
-                                   + std::to_string(feature_id));
-        }
-
-        if (indices_length != values_length) {
-          throw std::runtime_error("The length of values and indices does not match for : "
-                                   + std::to_string(feature_id));
+        // Asselonrt indicelons telonnsor is big elonndian and of typelon INT64.
+        if (indicelons_typelon != TWML_TYPelon_INT64 || !indicelons_is_big_elonndian) {
+          throw std::runtimelon_elonrror("Unelonxpelonctelond typelon for indelonx telonnsor for felonaturelon_id: "
+                                   + std::to_string(felonaturelon_id));
         }
 
-        lengths.push_back(indices_length);
-        total_length += indices_length;
+        if (indicelons_lelonngth != valuelons_lelonngth) {
+          throw std::runtimelon_elonrror("Thelon lelonngth of valuelons and indicelons doelons not match for : "
+                                   + std::to_string(felonaturelon_id));
+        }
+
+        lelonngths.push_back(indicelons_lelonngth);
+        total_lelonngth += indicelons_lelonngth;
       }
 
-      Tensor* ids_tensor = nullptr;
-      TensorShape ids_shape = {static_cast<int64>(total_length)};
-      OP_REQUIRES_OK(context, context->allocate_output(0, ids_shape, &ids_tensor));
-      auto ids_tensor_flat = ids_tensor->flat<int64>();
-      auto ids_tensor_data = ids_tensor_flat.data();
+      Telonnsor* ids_telonnsor = nullptr;
+      TelonnsorShapelon ids_shapelon = {static_cast<int64>(total_lelonngth)};
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, ids_shapelon, &ids_telonnsor));
+      auto ids_telonnsor_flat = ids_telonnsor->flat<int64>();
+      auto ids_telonnsor_data = ids_telonnsor_flat.data();
 
-      TensorShape raw_shape = {static_cast<int64>(1)};
+      TelonnsorShapelon raw_shapelon = {static_cast<int64>(1)};
 
-      Tensor* indices_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(1, raw_shape, &indices_tensor));
-      auto indices_tensor_flat = indices_tensor->flat<string>();
-      auto indices_tensor_string = indices_tensor_flat.data();
-      indices_tensor_string->resize(total_indices_length);
-      auto indices_tensor_iter = indices_tensor_string->begin();
+      Telonnsor* indicelons_telonnsor = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(1, raw_shapelon, &indicelons_telonnsor));
+      auto indicelons_telonnsor_flat = indicelons_telonnsor->flat<string>();
+      auto indicelons_telonnsor_string = indicelons_telonnsor_flat.data();
+      indicelons_telonnsor_string->relonsizelon(total_indicelons_lelonngth);
+      auto indicelons_telonnsor_itelonr = indicelons_telonnsor_string->belongin();
 
-      Tensor* values_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(2, raw_shape, &values_tensor));
-      auto values_tensor_flat = values_tensor->flat<string>();
-      auto values_tensor_string = values_tensor_flat.data();
-      values_tensor_string->resize(total_values_length);
-      auto values_tensor_iter = values_tensor_string->begin();
+      Telonnsor* valuelons_telonnsor = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(2, raw_shapelon, &valuelons_telonnsor));
+      auto valuelons_telonnsor_flat = valuelons_telonnsor->flat<string>();
+      auto valuelons_telonnsor_string = valuelons_telonnsor_flat.data();
+      valuelons_telonnsor_string->relonsizelon(total_valuelons_lelonngth);
+      auto valuelons_telonnsor_itelonr = valuelons_telonnsor_string->belongin();
 
-      for (int64 i = 0; i < batch_size; i++) {
-        // Fill in the data for id == i for all values in the current input.
-        std::fill(ids_tensor_data, ids_tensor_data + lengths[i], i);
-        ids_tensor_data += lengths[i];
+      for (int64 i = 0; i < batch_sizelon; i++) {
+        // Fill in thelon data for id == i for all valuelons in thelon currelonnt input.
+        std::fill(ids_telonnsor_data, ids_telonnsor_data + lelonngths[i], i);
+        ids_telonnsor_data += lelonngths[i];
 
-        indices_tensor_iter = std::copy(indices_data_ptrs[i],
-                                        indices_data_ptrs[i] + indices_raw_lengths[i],
-                                        indices_tensor_iter);
+        indicelons_telonnsor_itelonr = std::copy(indicelons_data_ptrs[i],
+                                        indicelons_data_ptrs[i] + indicelons_raw_lelonngths[i],
+                                        indicelons_telonnsor_itelonr);
 
-        values_tensor_iter = std::copy(values_data_ptrs[i],
-                                        values_data_ptrs[i] + values_raw_lengths[i],
-                                        values_tensor_iter);
+        valuelons_telonnsor_itelonr = std::copy(valuelons_data_ptrs[i],
+                                        valuelons_data_ptrs[i] + valuelons_raw_lelonngths[i],
+                                        valuelons_telonnsor_itelonr);
       }
 
-      Tensor *shape_tensor = nullptr;
-      TensorShape shape_shape = {static_cast<int64>(shape.size())};
-      OP_REQUIRES_OK(context, context->allocate_output(3, shape_shape, &shape_tensor));
-      auto shape_flat = shape_tensor->flat<int64>();
-      for (int i = 0; i < static_cast<int>(shape.size()); i++) {
-        shape_flat(i) = shape[i];
+      Telonnsor *shapelon_telonnsor = nullptr;
+      TelonnsorShapelon shapelon_shapelon = {static_cast<int64>(shapelon.sizelon())};
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(3, shapelon_shapelon, &shapelon_telonnsor));
+      auto shapelon_flat = shapelon_telonnsor->flat<int64>();
+      for (int i = 0; i < static_cast<int>(shapelon.sizelon()); i++) {
+        shapelon_flat(i) = shapelon[i];
       }
 
-      Tensor* type_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(4, {}, &type_tensor));
-      type_tensor->scalar<string>()() = twml::getTypeName(type);
+      Telonnsor* typelon_telonnsor = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(4, {}, &typelon_telonnsor));
+      typelon_telonnsor->scalar<string>()() = twml::gelontTypelonNamelon(typelon);
 
-      Tensor* endian_tensor = nullptr;
-      OP_REQUIRES_OK(context, context->allocate_output(5, {}, &endian_tensor));
-      endian_tensor->scalar<uint8>()() = is_big_endian;
-    } catch(const std::exception &err) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(err.what()));
+      Telonnsor* elonndian_telonnsor = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(5, {}, &elonndian_telonnsor));
+      elonndian_telonnsor->scalar<uint8>()() = is_big_elonndian;
+    } catch(const std::elonxcelonption &elonrr) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elonrr.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetSparseTensorsFromDataRecord")
-  .Device(DEVICE_CPU),
-  GetSparseTensorsOp<DataRecordResource>);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("GelontSparselonTelonnsorsFromDataReloncord")
+  .Delonvicelon(DelonVICelon_CPU),
+  GelontSparselonTelonnsorsOp<DataReloncordRelonsourcelon>);
 
-REGISTER_KERNEL_BUILDER(
-  Name("GetSparseTensorsFromHashedDataRecord")
-  .Device(DEVICE_CPU),
-  GetSparseTensorsOp<HashedDataRecordResource>);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+  Namelon("GelontSparselonTelonnsorsFromHashelondDataReloncord")
+  .Delonvicelon(DelonVICelon_CPU),
+  GelontSparselonTelonnsorsOp<HashelondDataReloncordRelonsourcelon>);

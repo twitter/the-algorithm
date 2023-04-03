@@ -1,107 +1,107 @@
-package com.twitter.product_mixer.core.service.gate_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.gate.GateResult
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import com.twitter.util.Return
-import com.twitter.util.Throw
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.BaselonGatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.GatelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Arrow.Iso
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.Queue
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.immutablelon.Quelonuelon
 
 /**
- * A GateExecutor takes a Seq[Gate], executes them all sequentially, and
- * determines a final Continue or Stop decision.
+ * A Gatelonelonxeloncutor takelons a Selonq[Gatelon], elonxeloncutelons thelonm all selonquelonntially, and
+ * delontelonrminelons a final Continuelon or Stop deloncision.
  */
-@Singleton
-class GateExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
+@Singlelonton
+class Gatelonelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr) elonxtelonnds elonxeloncutor {
 
-  private val Continue = "continue"
-  private val Skipped = "skipped"
-  private val Stop = "stop"
+  privatelon val Continuelon = "continuelon"
+  privatelon val Skippelond = "skippelond"
+  privatelon val Stop = "stop"
 
-  def arrow[Query <: PipelineQuery](
-    gates: Seq[BaseGate[Query]],
-    context: Executor.Context
-  ): Arrow[Query, GateExecutorResult] = {
+  delonf arrow[Quelonry <: PipelonlinelonQuelonry](
+    gatelons: Selonq[BaselonGatelon[Quelonry]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Quelonry, GatelonelonxeloncutorRelonsult] = {
 
-    val gateArrows = gates.map(getIsoArrowForGate(_, context))
-    val combinedArrow = isoArrowsSequentially(gateArrows)
+    val gatelonArrows = gatelons.map(gelontIsoArrowForGatelon(_, contelonxt))
+    val combinelondArrow = isoArrowsSelonquelonntially(gatelonArrows)
 
     Arrow
-      .map { query: Query => (query, GateExecutorResult(Queue.empty)) }
-      .andThen(combinedArrow)
+      .map { quelonry: Quelonry => (quelonry, GatelonelonxeloncutorRelonsult(Quelonuelon.elonmpty)) }
+      .andThelonn(combinelondArrow)
       .map {
-        case (_, gateExecutorResult) =>
-          // materialize the Queue into a List for faster future iterations
-          GateExecutorResult(gateExecutorResult.individualGateResults.toList)
+        caselon (_, gatelonelonxeloncutorRelonsult) =>
+          // matelonrializelon thelon Quelonuelon into a List for fastelonr futurelon itelonrations
+          GatelonelonxeloncutorRelonsult(gatelonelonxeloncutorRelonsult.individualGatelonRelonsults.toList)
       }
   }
 
   /**
-   * Each gate is transformed into a Iso Arrow over (Quest, List[GatewayResult]).
+   * elonach gatelon is transformelond into a Iso Arrow ovelonr (Quelonst, List[GatelonwayRelonsult]).
    *
    * This arrow:
-   * - Adapts the input and output types of the underlying Gate arrow (an [[Iso[(Query, QueryResult)]])
-   * - throws a [[StoppedGateException]] if [[GateResult.continue]] is false
-   * - if its not false, prepends the current results to the [[GateExecutorResult.individualGateResults]] list
+   * - Adapts thelon input and output typelons of thelon undelonrlying Gatelon arrow (an [[Iso[(Quelonry, QuelonryRelonsult)]])
+   * - throws a [[StoppelondGatelonelonxcelonption]] if [[GatelonRelonsult.continuelon]] is falselon
+   * - if its not falselon, prelonpelonnds thelon currelonnt relonsults to thelon [[GatelonelonxeloncutorRelonsult.individualGatelonRelonsults]] list
    */
-  private def getIsoArrowForGate[Query <: PipelineQuery](
-    gate: BaseGate[Query],
-    context: Executor.Context
-  ): Iso[(Query, GateExecutorResult)] = {
-    val broadcastStatsReceiver =
-      Executor.broadcastStatsReceiver(context, gate.identifier, statsReceiver)
+  privatelon delonf gelontIsoArrowForGatelon[Quelonry <: PipelonlinelonQuelonry](
+    gatelon: BaselonGatelon[Quelonry],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Iso[(Quelonry, GatelonelonxeloncutorRelonsult)] = {
+    val broadcastStatsReloncelonivelonr =
+      elonxeloncutor.broadcastStatsReloncelonivelonr(contelonxt, gatelon.idelonntifielonr, statsReloncelonivelonr)
 
-    val continueCounter = broadcastStatsReceiver.counter(Continue)
-    val skippedCounter = broadcastStatsReceiver.counter(Skipped)
-    val stopCounter = broadcastStatsReceiver.counter(Stop)
+    val continuelonCountelonr = broadcastStatsReloncelonivelonr.countelonr(Continuelon)
+    val skippelondCountelonr = broadcastStatsReloncelonivelonr.countelonr(Skippelond)
+    val stopCountelonr = broadcastStatsReloncelonivelonr.countelonr(Stop)
 
-    val observedArrow = wrapComponentWithExecutorBookkeeping(
-      context,
-      gate.identifier,
-      onSuccess = { gateResult: GateResult =>
-        gateResult match {
-          case GateResult.Continue => continueCounter.incr()
-          case GateResult.Skipped => skippedCounter.incr()
-          case GateResult.Stop => stopCounter.incr()
+    val obselonrvelondArrow = wrapComponelonntWithelonxeloncutorBookkelonelonping(
+      contelonxt,
+      gatelon.idelonntifielonr,
+      onSuccelonss = { gatelonRelonsult: GatelonRelonsult =>
+        gatelonRelonsult match {
+          caselon GatelonRelonsult.Continuelon => continuelonCountelonr.incr()
+          caselon GatelonRelonsult.Skippelond => skippelondCountelonr.incr()
+          caselon GatelonRelonsult.Stop => stopCountelonr.incr()
         }
       }
-    )(gate.arrow)
+    )(gatelon.arrow)
 
-    val inputAdapted: Arrow[(Query, GateExecutorResult), GateResult] =
+    val inputAdaptelond: Arrow[(Quelonry, GatelonelonxeloncutorRelonsult), GatelonRelonsult] =
       Arrow
-        .map[(Query, GateExecutorResult), Query] { case (query, _) => query }
-        .andThen(observedArrow)
+        .map[(Quelonry, GatelonelonxeloncutorRelonsult), Quelonry] { caselon (quelonry, _) => quelonry }
+        .andThelonn(obselonrvelondArrow)
 
-    val zipped = Arrow.zipWithArg(inputAdapted)
+    val zippelond = Arrow.zipWithArg(inputAdaptelond)
 
-    // at each step, the current `GateExecutorResult.continue` value is correct for all already run gates
-    val withStoppedGatesAsExceptions = zipped.map {
-      case ((query, previousResults), currentResult) if currentResult.continue =>
-        Return(
+    // at elonach stelonp, thelon currelonnt `GatelonelonxeloncutorRelonsult.continuelon` valuelon is correlonct for all alrelonady run gatelons
+    val withStoppelondGatelonsAselonxcelonptions = zippelond.map {
+      caselon ((quelonry, prelonviousRelonsults), currelonntRelonsult) if currelonntRelonsult.continuelon =>
+        Relonturn(
           (
-            query,
-            GateExecutorResult(
-              previousResults.individualGateResults :+ ExecutedGateResult(
-                gate.identifier,
-                currentResult))
+            quelonry,
+            GatelonelonxeloncutorRelonsult(
+              prelonviousRelonsults.individualGatelonRelonsults :+ elonxeloncutelondGatelonRelonsult(
+                gatelon.idelonntifielonr,
+                currelonntRelonsult))
           ))
-      case _ => Throw(StoppedGateException(gate.identifier))
-    }.lowerFromTry
+      caselon _ => Throw(StoppelondGatelonelonxcelonption(gatelon.idelonntifielonr))
+    }.lowelonrFromTry
 
     /**
-     * we gather stats before converting closed gates to exceptions because a closed gate
-     * isn't a failure for the gate, its a normal behavior
-     * but we do want to remap the the [[StoppedGateException]] created because the [[BaseGate]] is closed
-     * to the correct [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure]],
-     * so we remap with [[wrapWithErrorHandling]]
+     * welon gathelonr stats belonforelon convelonrting closelond gatelons to elonxcelonptions beloncauselon a closelond gatelon
+     * isn't a failurelon for thelon gatelon, its a normal belonhavior
+     * but welon do want to relonmap thelon thelon [[StoppelondGatelonelonxcelonption]] crelonatelond beloncauselon thelon [[BaselonGatelon]] is closelond
+     * to thelon correlonct [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon]],
+     * so welon relonmap with [[wrapWithelonrrorHandling]]
      */
-    wrapWithErrorHandling(context, gate.identifier)(withStoppedGatesAsExceptions)
+    wrapWithelonrrorHandling(contelonxt, gatelon.idelonntifielonr)(withStoppelondGatelonsAselonxcelonptions)
   }
 }

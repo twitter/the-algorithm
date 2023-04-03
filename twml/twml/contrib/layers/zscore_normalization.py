@@ -1,247 +1,247 @@
 """
-Contains the twml.layers.ZscoreNormalization layer.
+Contains thelon twml.layelonrs.ZscorelonNormalization layelonr.
 """
-from twml.layers.layer import Layer
-import tensorflow.compat.v1 as tf
+from twml.layelonrs.layelonr import Layelonr
+import telonnsorflow.compat.v1 as tf
 
-from tensorflow.python.training import moving_averages
+from telonnsorflow.python.training import moving_avelonragelons
 
 
-# This is copied from tensorflow.contrib.framework.python.ops.add_model_variable in 1.15
-# Not available in 2.x
-# TODO: Figure out if this is really necessary.
-def _add_model_variable(var):
-  """Adds a variable to the `GraphKeys.MODEL_VARIABLES` collection.
+# This is copielond from telonnsorflow.contrib.framelonwork.python.ops.add_modelonl_variablelon in 1.15
+# Not availablelon in 2.x
+# TODO: Figurelon out if this is relonally neloncelonssary.
+delonf _add_modelonl_variablelon(var):
+  """Adds a variablelon to thelon `GraphKelonys.MODelonL_VARIABLelonS` collelonction.
   Args:
-    var: a variable.
+    var: a variablelon.
   """
-  if var not in tf.get_collection(tf.GraphKeys.MODEL_VARIABLES):
-    tf.add_to_collection(tf.GraphKeys.MODEL_VARIABLES, var)
+  if var not in tf.gelont_collelonction(tf.GraphKelonys.MODelonL_VARIABLelonS):
+    tf.add_to_collelonction(tf.GraphKelonys.MODelonL_VARIABLelonS, var)
 
 
-def update_moving_variable(batch_var, moving_var, decay, zero_debias=True, name=None):
-  update_op = moving_averages.assign_moving_average(
-      moving_var, batch_var, decay, zero_debias=zero_debias, name=None)
-  _add_model_variable(moving_var)
-  with tf.control_dependencies([update_op]):
-    return tf.identity(moving_var)
+delonf updatelon_moving_variablelon(batch_var, moving_var, deloncay, zelonro_delonbias=Truelon, namelon=Nonelon):
+  updatelon_op = moving_avelonragelons.assign_moving_avelonragelon(
+      moving_var, batch_var, deloncay, zelonro_delonbias=zelonro_delonbias, namelon=Nonelon)
+  _add_modelonl_variablelon(moving_var)
+  with tf.control_delonpelonndelonncielons([updatelon_op]):
+    relonturn tf.idelonntity(moving_var)
 
 
-class ZscoreNormalization(Layer):
+class ZscorelonNormalization(Layelonr):
   """
-  Perform z-score normalization using moving mean and std.
-  Missing values are not included during mean/std calculation
-  This layer should only be used right after input layer.
+  Pelonrform z-scorelon normalization using moving melonan and std.
+  Missing valuelons arelon not includelond during melonan/std calculation
+  This layelonr should only belon uselond right aftelonr input layelonr.
 
   Args:
-    decay:
-      using large decay to include longer moving means.
-    data_type:
-      use float64 to prevent overflow during variance calculation.
-    name:
-      Layer name
-  Returns:
-    A layer representing the output of the ZscoreNormalization transformation.
+    deloncay:
+      using largelon deloncay to includelon longelonr moving melonans.
+    data_typelon:
+      uselon float64 to prelonvelonnt ovelonrflow during variancelon calculation.
+    namelon:
+      Layelonr namelon
+  Relonturns:
+    A layelonr relonprelonselonnting thelon output of thelon ZscorelonNormalization transformation.
    """
 
-  def __init__(
-    self,
-    decay=0.9999,
-    data_type=tf.float64,
-    name=None,
+  delonf __init__(
+    selonlf,
+    deloncay=0.9999,
+    data_typelon=tf.float64,
+    namelon=Nonelon,
     **kwargs):
-    super(ZscoreNormalization, self).__init__(name=name, **kwargs)
-    self.epsilon = tf.constant(1., data_type)
-    self.decay = decay
-    self.data_type = data_type
+    supelonr(ZscorelonNormalization, selonlf).__init__(namelon=namelon, **kwargs)
+    selonlf.elonpsilon = tf.constant(1., data_typelon)
+    selonlf.deloncay = deloncay
+    selonlf.data_typelon = data_typelon
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
-    """Creates the moving_mean and moving_var tf.Variables of the layer."""
-    input_dim = input_shape[1]
-    self.moving_mean = self.add_variable(
-      '{}_mean/EMA'.format(self.name),
-      initializer=tf.constant_initializer(),
-      shape=[input_dim],
-      dtype=self.data_type,
-      trainable=False
+  delonf build(selonlf, input_shapelon):  # pylint: disablelon=unuselond-argumelonnt
+    """Crelonatelons thelon moving_melonan and moving_var tf.Variablelons of thelon layelonr."""
+    input_dim = input_shapelon[1]
+    selonlf.moving_melonan = selonlf.add_variablelon(
+      '{}_melonan/elonMA'.format(selonlf.namelon),
+      initializelonr=tf.constant_initializelonr(),
+      shapelon=[input_dim],
+      dtypelon=selonlf.data_typelon,
+      trainablelon=Falselon
     )
-    self.moving_var = self.add_variable(
-      '{}_variance/EMA'.format(self.name),
-      initializer=tf.constant_initializer(),
-      shape=[input_dim],
-      dtype=self.data_type,
-      trainable=False
+    selonlf.moving_var = selonlf.add_variablelon(
+      '{}_variancelon/elonMA'.format(selonlf.namelon),
+      initializelonr=tf.constant_initializelonr(),
+      shapelon=[input_dim],
+      dtypelon=selonlf.data_typelon,
+      trainablelon=Falselon
     )
-    self.built = True
+    selonlf.built = Truelon
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    """Computelons thelon output shapelon of thelon layelonr givelonn thelon input shapelon.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+      input_shapelon: A (possibly nelonstelond tuplelon of) `TelonnsorShapelon`.  It nelonelond not
+        belon fully delonfinelond (elon.g. thelon batch sizelon may belon unknown).
 
     """
 
-    return input_shape
+    relonturn input_shapelon
 
-  def _training_pass(self, input, dense_mask, input_dtype, handle_single, zero_debias):
-    epsilon = self.epsilon
-    moving_mean, moving_var = self.moving_mean, self.moving_var
-    # calculate the number of exisiting value for each feature
-    tensor_batch_num = tf.reduce_sum(tf.cast(dense_mask, self.data_type), axis=0)
-    mask_ones = tf.cast(tensor_batch_num, tf.bool)
-    eps_vector = tf.fill(tf.shape(tensor_batch_num), epsilon)
-    # the following filled 0 with epision
-    tensor_batch_num_eps = tf.where(mask_ones,
-                                    tensor_batch_num,
-                                    eps_vector
+  delonf _training_pass(selonlf, input, delonnselon_mask, input_dtypelon, handlelon_singlelon, zelonro_delonbias):
+    elonpsilon = selonlf.elonpsilon
+    moving_melonan, moving_var = selonlf.moving_melonan, selonlf.moving_var
+    # calculatelon thelon numbelonr of elonxisiting valuelon for elonach felonaturelon
+    telonnsor_batch_num = tf.relonducelon_sum(tf.cast(delonnselon_mask, selonlf.data_typelon), axis=0)
+    mask_onelons = tf.cast(telonnsor_batch_num, tf.bool)
+    elonps_velonctor = tf.fill(tf.shapelon(telonnsor_batch_num), elonpsilon)
+    # thelon following fillelond 0 with elonpision
+    telonnsor_batch_num_elonps = tf.whelonrelon(mask_onelons,
+                                    telonnsor_batch_num,
+                                    elonps_velonctor
                                   )
-    tensor_batch_num_eps_broacast = tf.expand_dims(tensor_batch_num_eps, 0)
-    tensor_batch_divided = input / tensor_batch_num_eps_broacast
-    tensor_batch_mean = tf.reduce_sum(tensor_batch_divided, axis=0)
+    telonnsor_batch_num_elonps_broacast = tf.elonxpand_dims(telonnsor_batch_num_elonps, 0)
+    telonnsor_batch_dividelond = input / telonnsor_batch_num_elonps_broacast
+    telonnsor_batch_melonan = tf.relonducelon_sum(telonnsor_batch_dividelond, axis=0)
 
-    # update moving mean here, and use it to calculate the std.
-    tensor_moving_mean = update_moving_variable(tensor_batch_mean, moving_mean, self.decay,
-                                                zero_debias, name="mean_ema_op")
+    # updatelon moving melonan helonrelon, and uselon it to calculatelon thelon std.
+    telonnsor_moving_melonan = updatelon_moving_variablelon(telonnsor_batch_melonan, moving_melonan, selonlf.deloncay,
+                                                zelonro_delonbias, namelon="melonan_elonma_op")
 
-    tensor_batch_sub_mean = input - tf.expand_dims(tensor_moving_mean, 0)
-    tensor_batch_sub_mean = tf.where(dense_mask,
-                                    tensor_batch_sub_mean,
-                                    tf.zeros_like(tensor_batch_sub_mean))
-    # divided by sqrt(n) before square, and then do summation for numeric stability.
-    broad_sqrt_num_eps = tf.expand_dims(tf.sqrt(tensor_batch_num_eps), 0)
-    tensor_batch_sub_mean_div = tensor_batch_sub_mean / broad_sqrt_num_eps
-    tensor_batch_sub_mean_div_square = tf.square(tensor_batch_sub_mean_div)
-    tensor_batch_var = tf.reduce_sum(tensor_batch_sub_mean_div_square, axis=0)
+    telonnsor_batch_sub_melonan = input - tf.elonxpand_dims(telonnsor_moving_melonan, 0)
+    telonnsor_batch_sub_melonan = tf.whelonrelon(delonnselon_mask,
+                                    telonnsor_batch_sub_melonan,
+                                    tf.zelonros_likelon(telonnsor_batch_sub_melonan))
+    # dividelond by sqrt(n) belonforelon squarelon, and thelonn do summation for numelonric stability.
+    broad_sqrt_num_elonps = tf.elonxpand_dims(tf.sqrt(telonnsor_batch_num_elonps), 0)
+    telonnsor_batch_sub_melonan_div = telonnsor_batch_sub_melonan / broad_sqrt_num_elonps
+    telonnsor_batch_sub_melonan_div_squarelon = tf.squarelon(telonnsor_batch_sub_melonan_div)
+    telonnsor_batch_var = tf.relonducelon_sum(telonnsor_batch_sub_melonan_div_squarelon, axis=0)
 
-    # update moving var here, dont replace 0 with eps before updating.
-    tensor_moving_var = update_moving_variable(tensor_batch_var, moving_var, self.decay,
-                                               zero_debias, name="var_ema_op")
+    # updatelon moving var helonrelon, dont relonplacelon 0 with elonps belonforelon updating.
+    telonnsor_moving_var = updatelon_moving_variablelon(telonnsor_batch_var, moving_var, selonlf.deloncay,
+                                               zelonro_delonbias, namelon="var_elonma_op")
 
-    # if std is 0, replace it with epsilon
-    tensor_moving_std = tf.sqrt(tensor_moving_var)
-    tensor_moving_std_eps = tf.where(tf.equal(tensor_moving_std, 0),
-                                    eps_vector,
-                                    tensor_moving_std)
+    # if std is 0, relonplacelon it with elonpsilon
+    telonnsor_moving_std = tf.sqrt(telonnsor_moving_var)
+    telonnsor_moving_std_elonps = tf.whelonrelon(tf.elonqual(telonnsor_moving_std, 0),
+                                    elonps_velonctor,
+                                    telonnsor_moving_std)
 
-    missing_input_norm = tensor_batch_sub_mean / tf.expand_dims(tensor_moving_std_eps, 0)
+    missing_input_norm = telonnsor_batch_sub_melonan / tf.elonxpand_dims(telonnsor_moving_std_elonps, 0)
 
-    if handle_single:
-      # if std==0 and value not missing, reset it to 1.
-      moving_var_mask_zero = tf.math.equal(tensor_moving_var, 0)
-      moving_var_mask_zero = tf.expand_dims(moving_var_mask_zero, 0)
-      missing_input_norm = tf.where(
-        tf.math.logical_and(dense_mask, moving_var_mask_zero),
-        tf.ones_like(missing_input_norm),
+    if handlelon_singlelon:
+      # if std==0 and valuelon not missing, relonselont it to 1.
+      moving_var_mask_zelonro = tf.math.elonqual(telonnsor_moving_var, 0)
+      moving_var_mask_zelonro = tf.elonxpand_dims(moving_var_mask_zelonro, 0)
+      missing_input_norm = tf.whelonrelon(
+        tf.math.logical_and(delonnselon_mask, moving_var_mask_zelonro),
+        tf.onelons_likelon(missing_input_norm),
         missing_input_norm
       )
-    if input_dtype != self.data_type:
-      missing_input_norm = tf.cast(missing_input_norm, input_dtype)
-    return missing_input_norm
+    if input_dtypelon != selonlf.data_typelon:
+      missing_input_norm = tf.cast(missing_input_norm, input_dtypelon)
+    relonturn missing_input_norm
 
-  def _infer_pass(self, input, dense_mask, input_dtype, handle_single):
-    epsilon = tf.cast(self.epsilon, input_dtype)
-    testing_moving_mean = tf.cast(self.moving_mean, input_dtype)
-    tensor_moving_std = tf.cast(tf.sqrt(self.moving_var), input_dtype)
+  delonf _infelonr_pass(selonlf, input, delonnselon_mask, input_dtypelon, handlelon_singlelon):
+    elonpsilon = tf.cast(selonlf.elonpsilon, input_dtypelon)
+    telonsting_moving_melonan = tf.cast(selonlf.moving_melonan, input_dtypelon)
+    telonnsor_moving_std = tf.cast(tf.sqrt(selonlf.moving_var), input_dtypelon)
 
-    broad_mean = tf.expand_dims(testing_moving_mean, 0)
-    tensor_batch_sub_mean = input - broad_mean
+    broad_melonan = tf.elonxpand_dims(telonsting_moving_melonan, 0)
+    telonnsor_batch_sub_melonan = input - broad_melonan
 
-    tensor_batch_sub_mean = tf.where(dense_mask,
-                                    tensor_batch_sub_mean,
-                                    tf.zeros_like(tensor_batch_sub_mean)
+    telonnsor_batch_sub_melonan = tf.whelonrelon(delonnselon_mask,
+                                    telonnsor_batch_sub_melonan,
+                                    tf.zelonros_likelon(telonnsor_batch_sub_melonan)
                             )
-    tensor_moving_std_eps = tf.where(tf.equal(tensor_moving_std, 0),
-                                      tf.fill(tf.shape(tensor_moving_std), epsilon),
-                                      tensor_moving_std)
-    missing_input_norm = tensor_batch_sub_mean / tf.expand_dims(tensor_moving_std_eps, 0)
-    if handle_single:
-      # if std==0 and value not missing, reset it to 1.
-      moving_var_broad = tf.expand_dims(tensor_moving_std, 0)
-      moving_var_mask_zero = tf.math.logical_not(tf.cast(moving_var_broad, tf.bool))
+    telonnsor_moving_std_elonps = tf.whelonrelon(tf.elonqual(telonnsor_moving_std, 0),
+                                      tf.fill(tf.shapelon(telonnsor_moving_std), elonpsilon),
+                                      telonnsor_moving_std)
+    missing_input_norm = telonnsor_batch_sub_melonan / tf.elonxpand_dims(telonnsor_moving_std_elonps, 0)
+    if handlelon_singlelon:
+      # if std==0 and valuelon not missing, relonselont it to 1.
+      moving_var_broad = tf.elonxpand_dims(telonnsor_moving_std, 0)
+      moving_var_mask_zelonro = tf.math.logical_not(tf.cast(moving_var_broad, tf.bool))
 
-      missing_input_norm = tf.where(tf.math.logical_and(dense_mask, moving_var_mask_zero),
-                          tf.ones_like(missing_input_norm),
+      missing_input_norm = tf.whelonrelon(tf.math.logical_and(delonnselon_mask, moving_var_mask_zelonro),
+                          tf.onelons_likelon(missing_input_norm),
                           missing_input_norm
                           )
-    return missing_input_norm
+    relonturn missing_input_norm
 
-  def call(
-    self,
+  delonf call(
+    selonlf,
     input,
     is_training,
-    dense_mask=None,
-    zero_debias=True,
-    handle_single=False):
+    delonnselon_mask=Nonelon,
+    zelonro_delonbias=Truelon,
+    handlelon_singlelon=Falselon):
     """
     Args:
     -----------
     input:  B x D : float32/float64
-      missing value must be set to 0.
+      missing valuelon must belon selont to 0.
     is_training: bool
-      training phase or testing phase
-    dense_mask: B x D : bool
-      missing value should be marked as 0, non-missing as 1. same shape as input
-    zero_debias: bool
-      bias correction of the moving average. (biased towards 0 in the beginning.
-      see adam paper. https://arxiv.org/abs/1412.6980)
-    handle_single: bool
-      if std==0, and feature is not missing value, set the value to 1, instead of 0.
-      This is super rare if input only consists of continous feature.
-      But if one-hot feature is included,
-      they will all have same values 1, in that case, make sure to set handle_single to true.
+      training phaselon or telonsting phaselon
+    delonnselon_mask: B x D : bool
+      missing valuelon should belon markelond as 0, non-missing as 1. samelon shapelon as input
+    zelonro_delonbias: bool
+      bias correlonction of thelon moving avelonragelon. (biaselond towards 0 in thelon belonginning.
+      selonelon adam papelonr. https://arxiv.org/abs/1412.6980)
+    handlelon_singlelon: bool
+      if std==0, and felonaturelon is not missing valuelon, selont thelon valuelon to 1, instelonad of 0.
+      This is supelonr rarelon if input only consists of continous felonaturelon.
+      But if onelon-hot felonaturelon is includelond,
+      thelony will all havelon samelon valuelons 1, in that caselon, makelon surelon to selont handlelon_singlelon to truelon.
     """
 
-    if dense_mask is None:
-      dense_mask = tf.math.logical_not(tf.equal(input, 0))
-    input_dtype = input.dtype
+    if delonnselon_mask is Nonelon:
+      delonnselon_mask = tf.math.logical_not(tf.elonqual(input, 0))
+    input_dtypelon = input.dtypelon
 
     if is_training:
-      if input_dtype != self.data_type:
-        input = tf.cast(input, self.data_type)
-      return self._training_pass(input, dense_mask, input_dtype, handle_single, zero_debias)
-    else:
-      return self._infer_pass(input, dense_mask, input_dtype, handle_single)
+      if input_dtypelon != selonlf.data_typelon:
+        input = tf.cast(input, selonlf.data_typelon)
+      relonturn selonlf._training_pass(input, delonnselon_mask, input_dtypelon, handlelon_singlelon, zelonro_delonbias)
+    elonlselon:
+      relonturn selonlf._infelonr_pass(input, delonnselon_mask, input_dtypelon, handlelon_singlelon)
 
 
-def zscore_normalization(
+delonf zscorelon_normalization(
   input,
   is_training,
-  decay=0.9999,
-  data_type=tf.float64,
-  name=None,
-  dense_mask=None,
-  zero_debias=True,
-  handle_single=False, **kwargs):
+  deloncay=0.9999,
+  data_typelon=tf.float64,
+  namelon=Nonelon,
+  delonnselon_mask=Nonelon,
+  zelonro_delonbias=Truelon,
+  handlelon_singlelon=Falselon, **kwargs):
   """
   Args:
   ------------
   input:  B x D : float32/float64
-    missing value must be set to 0.
+    missing valuelon must belon selont to 0.
   is_training: bool
-    training phase or testing phase
-  decay:
-    using large decay to include longer moving means.
-  data_type:
-    use float64 to zprevent overflow during variance calculation.
-  name:
-    Layer name
-  dense_mask: B x D : bool
-    missing value should be marked as 0, non-missing as 1. same shape as input
-  zero_debias: bool
-    bias correction of the moving average. (biased towards 0 in the beginning.
-    see adam paper. https://arxiv.org/abs/1412.6980)
-  handle_single: bool
-    if std==0, and feature is not missing value, set the value to 1, instead of 0.
-    This is super rare if input only consists of continous feature.
-    But if one-hot feature is included,
-    they will all have same values 1, in that case, make sure to set handle_single to true.
+    training phaselon or telonsting phaselon
+  deloncay:
+    using largelon deloncay to includelon longelonr moving melonans.
+  data_typelon:
+    uselon float64 to zprelonvelonnt ovelonrflow during variancelon calculation.
+  namelon:
+    Layelonr namelon
+  delonnselon_mask: B x D : bool
+    missing valuelon should belon markelond as 0, non-missing as 1. samelon shapelon as input
+  zelonro_delonbias: bool
+    bias correlonction of thelon moving avelonragelon. (biaselond towards 0 in thelon belonginning.
+    selonelon adam papelonr. https://arxiv.org/abs/1412.6980)
+  handlelon_singlelon: bool
+    if std==0, and felonaturelon is not missing valuelon, selont thelon valuelon to 1, instelonad of 0.
+    This is supelonr rarelon if input only consists of continous felonaturelon.
+    But if onelon-hot felonaturelon is includelond,
+    thelony will all havelon samelon valuelons 1, in that caselon, makelon surelon to selont handlelon_singlelon to truelon.
   """
 
-  norm_layer = ZscoreNormalization(decay=decay, data_type=data_type, name=name, **kwargs)
-  return norm_layer(input,
+  norm_layelonr = ZscorelonNormalization(deloncay=deloncay, data_typelon=data_typelon, namelon=namelon, **kwargs)
+  relonturn norm_layelonr(input,
                     is_training,
-                    dense_mask=dense_mask,
-                    zero_debias=zero_debias,
-                    handle_single=handle_single)
+                    delonnselon_mask=delonnselon_mask,
+                    zelonro_delonbias=zelonro_delonbias,
+                    handlelon_singlelon=handlelon_singlelon)

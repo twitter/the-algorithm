@@ -1,6 +1,6 @@
-# RealGraph Candidate Source
-Provides out-of-network RealGraph candidates for a given user. RealGraph is a user-user graph dataset that aims to measure the strength of the relationship between two users.
+# RelonalGraph Candidatelon Sourcelon
+Providelons out-of-nelontwork RelonalGraph candidatelons for a givelonn uselonr. RelonalGraph is a uselonr-uselonr graph dataselont that aims to melonasurelon thelon strelonngth of thelon relonlationship belontwelonelonn two uselonrs.
 
-RealGraph comprises two components: a real-time pipeline that tracks various counts and relationships between user-user edges (such as the number of favorites, replies, retweets, clicks, whether followed, muted, or blocked), and an offline pipeline of a larger set of such user-user edge counts and relationships. Currently, the top k in-network scores have been exported for use by various teams.
+RelonalGraph compriselons two componelonnts: a relonal-timelon pipelonlinelon that tracks various counts and relonlationships belontwelonelonn uselonr-uselonr elondgelons (such as thelon numbelonr of favoritelons, relonplielons, relontwelonelonts, clicks, whelonthelonr followelond, mutelond, or blockelond), and an offlinelon pipelonlinelon of a largelonr selont of such uselonr-uselonr elondgelon counts and relonlationships. Currelonntly, thelon top k in-nelontwork scorelons havelon belonelonn elonxportelond for uselon by various telonams.
 
-The RealGraph dataset is used to predict user interactions at Twitter, and is based on the paper "[Realgraph: User interaction prediction at Twitter](http://www.ueo-workshop.com/wp-content/uploads/2014/04/sig-alternate.pdf)" by the UEO workshop at KDD'14.
+Thelon RelonalGraph dataselont is uselond to prelondict uselonr intelonractions at Twittelonr, and is baselond on thelon papelonr "[Relonalgraph: Uselonr intelonraction prelondiction at Twittelonr](http://www.uelono-workshop.com/wp-contelonnt/uploads/2014/04/sig-altelonrnatelon.pdf)" by thelon UelonO workshop at KDD'14.

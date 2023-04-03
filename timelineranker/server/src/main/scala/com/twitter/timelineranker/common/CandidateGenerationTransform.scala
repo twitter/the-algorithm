@@ -1,40 +1,40 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.CandidateTweet
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.CandidatelonTwelonelont
+import com.twittelonr.timelonlinelonrankelonr.modelonl.CandidatelonTwelonelontsRelonsult
+import com.twittelonr.util.Futurelon
 
-class CandidateGenerationTransform(statsReceiver: StatsReceiver)
-    extends FutureArrow[HydratedCandidatesAndFeaturesEnvelope, CandidateTweetsResult] {
-  private[this] val numCandidateTweetsStat = statsReceiver.stat("numCandidateTweets")
-  private[this] val numSourceTweetsStat = statsReceiver.stat("numSourceTweets")
+class CandidatelonGelonnelonrationTransform(statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds FuturelonArrow[HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon, CandidatelonTwelonelontsRelonsult] {
+  privatelon[this] val numCandidatelonTwelonelontsStat = statsReloncelonivelonr.stat("numCandidatelonTwelonelonts")
+  privatelon[this] val numSourcelonTwelonelontsStat = statsReloncelonivelonr.stat("numSourcelonTwelonelonts")
 
-  override def apply(
-    candidatesAndFeaturesEnvelope: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[CandidateTweetsResult] = {
-    val hydratedTweets = candidatesAndFeaturesEnvelope.candidateEnvelope.hydratedTweets.outerTweets
+  ovelonrridelon delonf apply(
+    candidatelonsAndFelonaturelonselonnvelonlopelon: HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+  ): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    val hydratelondTwelonelonts = candidatelonsAndFelonaturelonselonnvelonlopelon.candidatelonelonnvelonlopelon.hydratelondTwelonelonts.outelonrTwelonelonts
 
-    if (hydratedTweets.nonEmpty) {
-      val candidates = hydratedTweets.map { hydratedTweet =>
-        CandidateTweet(hydratedTweet, candidatesAndFeaturesEnvelope.features(hydratedTweet.tweetId))
+    if (hydratelondTwelonelonts.nonelonmpty) {
+      val candidatelons = hydratelondTwelonelonts.map { hydratelondTwelonelont =>
+        CandidatelonTwelonelont(hydratelondTwelonelont, candidatelonsAndFelonaturelonselonnvelonlopelon.felonaturelons(hydratelondTwelonelont.twelonelontId))
       }
-      numCandidateTweetsStat.add(candidates.size)
+      numCandidatelonTwelonelontsStat.add(candidatelons.sizelon)
 
-      val sourceTweets =
-        candidatesAndFeaturesEnvelope.candidateEnvelope.sourceHydratedTweets.outerTweets.map {
-          hydratedTweet =>
-            CandidateTweet(
-              hydratedTweet,
-              candidatesAndFeaturesEnvelope.features(hydratedTweet.tweetId))
+      val sourcelonTwelonelonts =
+        candidatelonsAndFelonaturelonselonnvelonlopelon.candidatelonelonnvelonlopelon.sourcelonHydratelondTwelonelonts.outelonrTwelonelonts.map {
+          hydratelondTwelonelont =>
+            CandidatelonTwelonelont(
+              hydratelondTwelonelont,
+              candidatelonsAndFelonaturelonselonnvelonlopelon.felonaturelons(hydratelondTwelonelont.twelonelontId))
         }
-      numSourceTweetsStat.add(sourceTweets.size)
+      numSourcelonTwelonelontsStat.add(sourcelonTwelonelonts.sizelon)
 
-      Future.value(CandidateTweetsResult(candidates, sourceTweets))
-    } else {
-      Future.value(CandidateTweetsResult.Empty)
+      Futurelon.valuelon(CandidatelonTwelonelontsRelonsult(candidatelons, sourcelonTwelonelonts))
+    } elonlselon {
+      Futurelon.valuelon(CandidatelonTwelonelontsRelonsult.elonmpty)
     }
   }
 }

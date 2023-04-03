@@ -1,200 +1,200 @@
-package com.twitter.simclusters_v2.score
+packagelon com.twittelonr.simclustelonrs_v2.scorelon
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbeddingId, ScoreId => ThriftScoreId}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.thriftscala.{SimClustelonrselonmbelonddingId, ScorelonId => ThriftScorelonId}
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
 
-object SimClustersEmbeddingPairScoreStore {
+objelonct SimClustelonrselonmbelonddingPairScorelonStorelon {
 
   /**
-   * Internal Instance of a SimClusters Embedding based Pair Score store.
+   * Intelonrnal Instancelon of a SimClustelonrs elonmbelondding baselond Pair Scorelon storelon.
    */
-  private case class SimClustersEmbeddingInternalPairScoreStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding],
-    score: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]])
-      extends PairScoreStore[
-        SimClustersEmbeddingPairScoreId,
-        SimClustersEmbeddingId,
-        SimClustersEmbeddingId,
-        SimClustersEmbedding,
-        SimClustersEmbedding
+  privatelon caselon class SimClustelonrselonmbelonddingIntelonrnalPairScorelonStorelon(
+    simClustelonrselonmbelonddingStorelon: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding],
+    scorelon: (SimClustelonrselonmbelondding, SimClustelonrselonmbelondding) => Futurelon[Option[Doublelon]])
+      elonxtelonnds PairScorelonStorelon[
+        SimClustelonrselonmbelonddingPairScorelonId,
+        SimClustelonrselonmbelonddingId,
+        SimClustelonrselonmbelonddingId,
+        SimClustelonrselonmbelondding,
+        SimClustelonrselonmbelondding
       ] {
 
-    override val compositeKey1: SimClustersEmbeddingPairScoreId => SimClustersEmbeddingId =
-      _.embeddingId1
-    override val compositeKey2: SimClustersEmbeddingPairScoreId => SimClustersEmbeddingId =
-      _.embeddingId2
+    ovelonrridelon val compositelonKelony1: SimClustelonrselonmbelonddingPairScorelonId => SimClustelonrselonmbelonddingId =
+      _.elonmbelonddingId1
+    ovelonrridelon val compositelonKelony2: SimClustelonrselonmbelonddingPairScorelonId => SimClustelonrselonmbelonddingId =
+      _.elonmbelonddingId2
 
-    override def underlyingStore1: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] =
-      simClustersEmbeddingStore
+    ovelonrridelon delonf undelonrlyingStorelon1: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding] =
+      simClustelonrselonmbelonddingStorelon
 
-    override def underlyingStore2: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] =
-      simClustersEmbeddingStore
+    ovelonrridelon delonf undelonrlyingStorelon2: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding] =
+      simClustelonrselonmbelonddingStorelon
 
-    override def fromThriftScoreId: ThriftScoreId => SimClustersEmbeddingPairScoreId =
-      SimClustersEmbeddingPairScoreId.fromThriftScoreId
+    ovelonrridelon delonf fromThriftScorelonId: ThriftScorelonId => SimClustelonrselonmbelonddingPairScorelonId =
+      SimClustelonrselonmbelonddingPairScorelonId.fromThriftScorelonId
   }
 
-  def buildDotProductStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  delonf buildDotProductStorelon(
+    simClustelonrselonmbelonddingStorelon: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
+  ): PairScorelonStorelon[
+    SimClustelonrselonmbelonddingPairScorelonId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelondding,
+    SimClustelonrselonmbelondding
   ] = {
 
-    def dotProduct: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.dotProduct(embedding2)))
+    delonf dotProduct: (SimClustelonrselonmbelondding, SimClustelonrselonmbelondding) => Futurelon[Option[Doublelon]] = {
+      caselon (elonmbelondding1, elonmbelondding2) =>
+        Futurelon.valuelon(Somelon(elonmbelondding1.dotProduct(elonmbelondding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
+    SimClustelonrselonmbelonddingIntelonrnalPairScorelonStorelon(
+      simClustelonrselonmbelonddingStorelon,
       dotProduct
     )
   }
 
-  def buildCosineSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  delonf buildCosinelonSimilarityStorelon(
+    simClustelonrselonmbelonddingStorelon: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
+  ): PairScorelonStorelon[
+    SimClustelonrselonmbelonddingPairScorelonId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelondding,
+    SimClustelonrselonmbelondding
   ] = {
 
-    def cosineSimilarity: (SimClustersEmbedding, SimClustersEmbedding) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.cosineSimilarity(embedding2)))
+    delonf cosinelonSimilarity: (SimClustelonrselonmbelondding, SimClustelonrselonmbelondding) => Futurelon[Option[Doublelon]] = {
+      caselon (elonmbelondding1, elonmbelondding2) =>
+        Futurelon.valuelon(Somelon(elonmbelondding1.cosinelonSimilarity(elonmbelondding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      cosineSimilarity
+    SimClustelonrselonmbelonddingIntelonrnalPairScorelonStorelon(
+      simClustelonrselonmbelonddingStorelon,
+      cosinelonSimilarity
     )
   }
 
-  def buildLogCosineSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  delonf buildLogCosinelonSimilarityStorelon(
+    simClustelonrselonmbelonddingStorelon: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
+  ): PairScorelonStorelon[
+    SimClustelonrselonmbelonddingPairScorelonId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelondding,
+    SimClustelonrselonmbelondding
   ] = {
 
-    def logNormCosineSimilarity: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.logNormCosineSimilarity(embedding2)))
+    delonf logNormCosinelonSimilarity: (
+      SimClustelonrselonmbelondding,
+      SimClustelonrselonmbelondding
+    ) => Futurelon[Option[Doublelon]] = {
+      caselon (elonmbelondding1, elonmbelondding2) =>
+        Futurelon.valuelon(Somelon(elonmbelondding1.logNormCosinelonSimilarity(elonmbelondding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      logNormCosineSimilarity
+    SimClustelonrselonmbelonddingIntelonrnalPairScorelonStorelon(
+      simClustelonrselonmbelonddingStorelon,
+      logNormCosinelonSimilarity
     )
   }
 
-  def buildExpScaledCosineSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  delonf buildelonxpScalelondCosinelonSimilarityStorelon(
+    simClustelonrselonmbelonddingStorelon: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
+  ): PairScorelonStorelon[
+    SimClustelonrselonmbelonddingPairScorelonId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelondding,
+    SimClustelonrselonmbelondding
   ] = {
 
-    def expScaledCosineSimilarity: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.expScaledCosineSimilarity(embedding2)))
+    delonf elonxpScalelondCosinelonSimilarity: (
+      SimClustelonrselonmbelondding,
+      SimClustelonrselonmbelondding
+    ) => Futurelon[Option[Doublelon]] = {
+      caselon (elonmbelondding1, elonmbelondding2) =>
+        Futurelon.valuelon(Somelon(elonmbelondding1.elonxpScalelondCosinelonSimilarity(elonmbelondding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      expScaledCosineSimilarity
+    SimClustelonrselonmbelonddingIntelonrnalPairScorelonStorelon(
+      simClustelonrselonmbelonddingStorelon,
+      elonxpScalelondCosinelonSimilarity
     )
   }
 
-  def buildJaccardSimilarityStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  delonf buildJaccardSimilarityStorelon(
+    simClustelonrselonmbelonddingStorelon: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
+  ): PairScorelonStorelon[
+    SimClustelonrselonmbelonddingPairScorelonId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelondding,
+    SimClustelonrselonmbelondding
   ] = {
 
-    def jaccardSimilarity: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.jaccardSimilarity(embedding2)))
+    delonf jaccardSimilarity: (
+      SimClustelonrselonmbelondding,
+      SimClustelonrselonmbelondding
+    ) => Futurelon[Option[Doublelon]] = {
+      caselon (elonmbelondding1, elonmbelondding2) =>
+        Futurelon.valuelon(Somelon(elonmbelondding1.jaccardSimilarity(elonmbelondding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
+    SimClustelonrselonmbelonddingIntelonrnalPairScorelonStorelon(
+      simClustelonrselonmbelonddingStorelon,
       jaccardSimilarity
     )
   }
 
-  def buildEuclideanDistanceStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  delonf buildelonuclidelonanDistancelonStorelon(
+    simClustelonrselonmbelonddingStorelon: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
+  ): PairScorelonStorelon[
+    SimClustelonrselonmbelonddingPairScorelonId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelondding,
+    SimClustelonrselonmbelondding
   ] = {
 
-    def euclideanDistance: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.euclideanDistance(embedding2)))
+    delonf elonuclidelonanDistancelon: (
+      SimClustelonrselonmbelondding,
+      SimClustelonrselonmbelondding
+    ) => Futurelon[Option[Doublelon]] = {
+      caselon (elonmbelondding1, elonmbelondding2) =>
+        Futurelon.valuelon(Somelon(elonmbelondding1.elonuclidelonanDistancelon(elonmbelondding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      euclideanDistance
+    SimClustelonrselonmbelonddingIntelonrnalPairScorelonStorelon(
+      simClustelonrselonmbelonddingStorelon,
+      elonuclidelonanDistancelon
     )
   }
 
-  def buildManhattanDistanceStore(
-    simClustersEmbeddingStore: ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding]
-  ): PairScoreStore[
-    SimClustersEmbeddingPairScoreId,
-    SimClustersEmbeddingId,
-    SimClustersEmbeddingId,
-    SimClustersEmbedding,
-    SimClustersEmbedding
+  delonf buildManhattanDistancelonStorelon(
+    simClustelonrselonmbelonddingStorelon: RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]
+  ): PairScorelonStorelon[
+    SimClustelonrselonmbelonddingPairScorelonId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelonddingId,
+    SimClustelonrselonmbelondding,
+    SimClustelonrselonmbelondding
   ] = {
 
-    def manhattanDistance: (
-      SimClustersEmbedding,
-      SimClustersEmbedding
-    ) => Future[Option[Double]] = {
-      case (embedding1, embedding2) =>
-        Future.value(Some(embedding1.manhattanDistance(embedding2)))
+    delonf manhattanDistancelon: (
+      SimClustelonrselonmbelondding,
+      SimClustelonrselonmbelondding
+    ) => Futurelon[Option[Doublelon]] = {
+      caselon (elonmbelondding1, elonmbelondding2) =>
+        Futurelon.valuelon(Somelon(elonmbelondding1.manhattanDistancelon(elonmbelondding2)))
     }
 
-    SimClustersEmbeddingInternalPairScoreStore(
-      simClustersEmbeddingStore,
-      manhattanDistance
+    SimClustelonrselonmbelonddingIntelonrnalPairScorelonStorelon(
+      simClustelonrselonmbelonddingStorelon,
+      manhattanDistancelon
     )
   }
 

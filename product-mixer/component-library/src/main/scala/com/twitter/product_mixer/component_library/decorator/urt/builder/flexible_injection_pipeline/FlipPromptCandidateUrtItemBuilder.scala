@@ -1,205 +1,205 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.flelonxiblelon_injelonction_pipelonlinelon
 
-import com.twitter.onboarding.injections.thriftscala.Injection
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.flexible_injection_pipeline.OnboardingInjectionConversions._
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptCarouselTileFeature
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptInjectionsFeature
-import com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer.FlipPromptOffsetInModuleFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverFullCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.CoverHalfCoverDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCoverContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.HeaderImagePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessagePromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.onboarding.injelonctions.thriftscala.Injelonction
+import com.twittelonr.onboarding.injelonctions.{thriftscala => onboardingthrift}
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.flelonxiblelon_injelonction_pipelonlinelon.OnboardingInjelonctionConvelonrsions._
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonPromptCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr.FlipPromptCarouselonlTilelonFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr.FlipPromptInjelonctionsFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr.FlipPromptOffselontInModulelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrFullCovelonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.CovelonrHalfCovelonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.FullCovelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.FullCovelonrContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.HalfCovelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.HalfCovelonrContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.HelonadelonrImagelonPromptMelonssagelonContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.InlinelonPromptMelonssagelonContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonPromptItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt.PromptItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TimelonlinelonsDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object FlipPromptCandidateUrtItemBuilder {
-  val FlipPromptClientEventInfoElement: String = "flip-prompt-message"
+objelonct FlipPromptCandidatelonUrtItelonmBuildelonr {
+  val FlipPromptClielonntelonvelonntInfoelonlelonmelonnt: String = "flip-prompt-melonssagelon"
 }
 
-case class FlipPromptCandidateUrtItemBuilder[-Query <: PipelineQuery]()
-    extends CandidateUrtEntryBuilder[Query, BasePromptCandidate[Any], TimelineItem] {
+caselon class FlipPromptCandidatelonUrtItelonmBuildelonr[-Quelonry <: PipelonlinelonQuelonry]()
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, BaselonPromptCandidatelon[Any], TimelonlinelonItelonm] {
 
-  override def apply(
-    query: Query,
-    promptCandidate: BasePromptCandidate[Any],
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    val injection = candidateFeatures.get(FlipPromptInjectionsFeature)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    promptCandidatelon: BaselonPromptCandidatelon[Any],
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): TimelonlinelonItelonm = {
+    val injelonction = candidatelonFelonaturelons.gelont(FlipPromptInjelonctionsFelonaturelon)
 
-    injection match {
-      case onboardingthrift.Injection.InlinePrompt(candidate) =>
-        MessagePromptItem(
-          id = promptCandidate.id.toString,
-          sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-          clientEventInfo = buildClientEventInfo(injection),
-          feedbackActionInfo = candidate.feedbackInfo.map(convertFeedbackInfo),
-          isPinned = Some(candidate.isPinnedEntry),
-          content = getInlinePromptMessageContent(candidate),
-          impressionCallbacks = candidate.impressionCallbacks.map(_.map(convertCallback).toList)
+    injelonction match {
+      caselon onboardingthrift.Injelonction.InlinelonPrompt(candidatelon) =>
+        MelonssagelonPromptItelonm(
+          id = promptCandidatelon.id.toString,
+          sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+          clielonntelonvelonntInfo = buildClielonntelonvelonntInfo(injelonction),
+          felonelondbackActionInfo = candidatelon.felonelondbackInfo.map(convelonrtFelonelondbackInfo),
+          isPinnelond = Somelon(candidatelon.isPinnelondelonntry),
+          contelonnt = gelontInlinelonPromptMelonssagelonContelonnt(candidatelon),
+          imprelonssionCallbacks = candidatelon.imprelonssionCallbacks.map(_.map(convelonrtCallback).toList)
         )
-      case onboardingthrift.Injection.FullCover(candidate) =>
-        FullCover(
-          id = promptCandidate.id.toString,
-          // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-          sortIndex = None,
-          clientEventInfo =
-            Some(OnboardingInjectionConversions.convertClientEventInfo(candidate.clientEventInfo)),
-          content = getFullCoverContent(candidate)
+      caselon onboardingthrift.Injelonction.FullCovelonr(candidatelon) =>
+        FullCovelonr(
+          id = promptCandidatelon.id.toString,
+          // Notelon that sort indelonx is not uselond for Covelonrs, as thelony arelon not Timelonlinelonelonntry and do not havelon elonntryId
+          sortIndelonx = Nonelon,
+          clielonntelonvelonntInfo =
+            Somelon(OnboardingInjelonctionConvelonrsions.convelonrtClielonntelonvelonntInfo(candidatelon.clielonntelonvelonntInfo)),
+          contelonnt = gelontFullCovelonrContelonnt(candidatelon)
         )
-      case onboardingthrift.Injection.HalfCover(candidate) =>
-        HalfCover(
-          id = promptCandidate.id.toString,
-          // Note that sort index is not used for Covers, as they are not TimelineEntry and do not have entryId
-          sortIndex = None,
-          clientEventInfo =
-            Some(OnboardingInjectionConversions.convertClientEventInfo(candidate.clientEventInfo)),
-          content = getHalfCoverContent(candidate)
+      caselon onboardingthrift.Injelonction.HalfCovelonr(candidatelon) =>
+        HalfCovelonr(
+          id = promptCandidatelon.id.toString,
+          // Notelon that sort indelonx is not uselond for Covelonrs, as thelony arelon not Timelonlinelonelonntry and do not havelon elonntryId
+          sortIndelonx = Nonelon,
+          clielonntelonvelonntInfo =
+            Somelon(OnboardingInjelonctionConvelonrsions.convelonrtClielonntelonvelonntInfo(candidatelon.clielonntelonvelonntInfo)),
+          contelonnt = gelontHalfCovelonrContelonnt(candidatelon)
         )
-      case Injection.TilesCarousel(_) =>
-        val offsetInModuleOption =
-          candidateFeatures.get(FlipPromptOffsetInModuleFeature)
-        val offsetInModule =
-          offsetInModuleOption.getOrElse(throw FlipPromptOffsetInModuleMissing)
-        val tileOption =
-          candidateFeatures.get(FlipPromptCarouselTileFeature)
-        val tile = tileOption.getOrElse(throw FlipPromptCarouselTileMissing)
-        TilesCarouselConversions.convertTile(tile, offsetInModule)
-      case onboardingthrift.Injection.RelevancePrompt(candidate) =>
-        PromptItem(
-          id = promptCandidate.id.toString,
-          sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-          clientEventInfo = buildClientEventInfo(injection),
-          content = RelevancePromptConversions.convertContent(candidate),
-          impressionCallbacks = Some(candidate.impressionCallbacks.map(convertCallback).toList)
+      caselon Injelonction.TilelonsCarouselonl(_) =>
+        val offselontInModulelonOption =
+          candidatelonFelonaturelons.gelont(FlipPromptOffselontInModulelonFelonaturelon)
+        val offselontInModulelon =
+          offselontInModulelonOption.gelontOrelonlselon(throw FlipPromptOffselontInModulelonMissing)
+        val tilelonOption =
+          candidatelonFelonaturelons.gelont(FlipPromptCarouselonlTilelonFelonaturelon)
+        val tilelon = tilelonOption.gelontOrelonlselon(throw FlipPromptCarouselonlTilelonMissing)
+        TilelonsCarouselonlConvelonrsions.convelonrtTilelon(tilelon, offselontInModulelon)
+      caselon onboardingthrift.Injelonction.RelonlelonvancelonPrompt(candidatelon) =>
+        PromptItelonm(
+          id = promptCandidatelon.id.toString,
+          sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+          clielonntelonvelonntInfo = buildClielonntelonvelonntInfo(injelonction),
+          contelonnt = RelonlelonvancelonPromptConvelonrsions.convelonrtContelonnt(candidatelon),
+          imprelonssionCallbacks = Somelon(candidatelon.imprelonssionCallbacks.map(convelonrtCallback).toList)
         )
-      case _ => throw new UnsupportedFlipPromptException(injection)
+      caselon _ => throw nelonw UnsupportelondFlipPromptelonxcelonption(injelonction)
     }
   }
 
-  private def getInlinePromptMessageContent(
-    candidate: onboardingthrift.InlinePrompt
-  ): MessageContent = {
-    candidate.image match {
-      case Some(image) =>
-        HeaderImagePromptMessageContent(
-          headerImage = convertImage(image),
-          headerText = Some(candidate.headerText.text),
-          bodyText = candidate.bodyText.map(_.text),
-          primaryButtonAction = candidate.primaryAction.map(convertButtonAction),
-          secondaryButtonAction = candidate.secondaryAction.map(convertButtonAction),
-          headerRichText = Some(convertRichText(candidate.headerText)),
-          bodyRichText = candidate.bodyText.map(convertRichText),
+  privatelon delonf gelontInlinelonPromptMelonssagelonContelonnt(
+    candidatelon: onboardingthrift.InlinelonPrompt
+  ): MelonssagelonContelonnt = {
+    candidatelon.imagelon match {
+      caselon Somelon(imagelon) =>
+        HelonadelonrImagelonPromptMelonssagelonContelonnt(
+          helonadelonrImagelon = convelonrtImagelon(imagelon),
+          helonadelonrTelonxt = Somelon(candidatelon.helonadelonrTelonxt.telonxt),
+          bodyTelonxt = candidatelon.bodyTelonxt.map(_.telonxt),
+          primaryButtonAction = candidatelon.primaryAction.map(convelonrtButtonAction),
+          seloncondaryButtonAction = candidatelon.seloncondaryAction.map(convelonrtButtonAction),
+          helonadelonrRichTelonxt = Somelon(convelonrtRichTelonxt(candidatelon.helonadelonrTelonxt)),
+          bodyRichTelonxt = candidatelon.bodyTelonxt.map(convelonrtRichTelonxt),
           action =
-            None
+            Nonelon
         )
-      case None =>
-        InlinePromptMessageContent(
-          headerText = candidate.headerText.text,
-          bodyText = candidate.bodyText.map(_.text),
-          primaryButtonAction = candidate.primaryAction.map(convertButtonAction),
-          secondaryButtonAction = candidate.secondaryAction.map(convertButtonAction),
-          headerRichText = Some(convertRichText(candidate.headerText)),
-          bodyRichText = candidate.bodyText.map(convertRichText),
-          socialContext = candidate.socialContext.map(convertSocialContext),
-          userFacepile = candidate.promptUserFacepile.map(convertUserFacePile)
+      caselon Nonelon =>
+        InlinelonPromptMelonssagelonContelonnt(
+          helonadelonrTelonxt = candidatelon.helonadelonrTelonxt.telonxt,
+          bodyTelonxt = candidatelon.bodyTelonxt.map(_.telonxt),
+          primaryButtonAction = candidatelon.primaryAction.map(convelonrtButtonAction),
+          seloncondaryButtonAction = candidatelon.seloncondaryAction.map(convelonrtButtonAction),
+          helonadelonrRichTelonxt = Somelon(convelonrtRichTelonxt(candidatelon.helonadelonrTelonxt)),
+          bodyRichTelonxt = candidatelon.bodyTelonxt.map(convelonrtRichTelonxt),
+          socialContelonxt = candidatelon.socialContelonxt.map(convelonrtSocialContelonxt),
+          uselonrFacelonpilelon = candidatelon.promptUselonrFacelonpilelon.map(convelonrtUselonrFacelonPilelon)
         )
     }
   }
 
-  private def getFullCoverContent(
-    candidate: onboardingthrift.FullCover
-  ): FullCoverContent =
-    FullCoverContent(
-      displayType = CoverFullCoverDisplayType,
-      primaryText = convertRichText(candidate.primaryText),
-      primaryCoverCta = convertCoverCta(candidate.primaryButtonAction),
-      secondaryCoverCta = candidate.secondaryButtonAction.map(convertCoverCta),
-      secondaryText = candidate.secondaryText.map(convertRichText),
-      imageVariant = candidate.image.map(img => convertImageVariant(img.image)),
-      details = candidate.detailText.map(convertRichText),
-      dismissInfo = candidate.dismissInfo.map(convertDismissInfo),
-      imageDisplayType = candidate.image.map(img => convertImageDisplayType(img.imageDisplayType)),
-      impressionCallbacks = candidate.impressionCallbacks.map(_.map(convertCallback).toList)
+  privatelon delonf gelontFullCovelonrContelonnt(
+    candidatelon: onboardingthrift.FullCovelonr
+  ): FullCovelonrContelonnt =
+    FullCovelonrContelonnt(
+      displayTypelon = CovelonrFullCovelonrDisplayTypelon,
+      primaryTelonxt = convelonrtRichTelonxt(candidatelon.primaryTelonxt),
+      primaryCovelonrCta = convelonrtCovelonrCta(candidatelon.primaryButtonAction),
+      seloncondaryCovelonrCta = candidatelon.seloncondaryButtonAction.map(convelonrtCovelonrCta),
+      seloncondaryTelonxt = candidatelon.seloncondaryTelonxt.map(convelonrtRichTelonxt),
+      imagelonVariant = candidatelon.imagelon.map(img => convelonrtImagelonVariant(img.imagelon)),
+      delontails = candidatelon.delontailTelonxt.map(convelonrtRichTelonxt),
+      dismissInfo = candidatelon.dismissInfo.map(convelonrtDismissInfo),
+      imagelonDisplayTypelon = candidatelon.imagelon.map(img => convelonrtImagelonDisplayTypelon(img.imagelonDisplayTypelon)),
+      imprelonssionCallbacks = candidatelon.imprelonssionCallbacks.map(_.map(convelonrtCallback).toList)
     )
 
-  private def getHalfCoverContent(
-    candidate: onboardingthrift.HalfCover
-  ): HalfCoverContent =
-    HalfCoverContent(
-      displayType =
-        candidate.displayType.map(convertHalfCoverDisplayType).getOrElse(CoverHalfCoverDisplayType),
-      primaryText = convertRichText(candidate.primaryText),
-      primaryCoverCta = convertCoverCta(candidate.primaryButtonAction),
-      secondaryCoverCta = candidate.secondaryButtonAction.map(convertCoverCta),
-      secondaryText = candidate.secondaryText.map(convertRichText),
-      coverImage = candidate.image.map(convertCoverImage),
-      dismissible = candidate.dismissible,
-      dismissInfo = candidate.dismissInfo.map(convertDismissInfo),
-      impressionCallbacks = candidate.impressionCallbacks.map(_.map(convertCallback).toList)
+  privatelon delonf gelontHalfCovelonrContelonnt(
+    candidatelon: onboardingthrift.HalfCovelonr
+  ): HalfCovelonrContelonnt =
+    HalfCovelonrContelonnt(
+      displayTypelon =
+        candidatelon.displayTypelon.map(convelonrtHalfCovelonrDisplayTypelon).gelontOrelonlselon(CovelonrHalfCovelonrDisplayTypelon),
+      primaryTelonxt = convelonrtRichTelonxt(candidatelon.primaryTelonxt),
+      primaryCovelonrCta = convelonrtCovelonrCta(candidatelon.primaryButtonAction),
+      seloncondaryCovelonrCta = candidatelon.seloncondaryButtonAction.map(convelonrtCovelonrCta),
+      seloncondaryTelonxt = candidatelon.seloncondaryTelonxt.map(convelonrtRichTelonxt),
+      covelonrImagelon = candidatelon.imagelon.map(convelonrtCovelonrImagelon),
+      dismissiblelon = candidatelon.dismissiblelon,
+      dismissInfo = candidatelon.dismissInfo.map(convelonrtDismissInfo),
+      imprelonssionCallbacks = candidatelon.imprelonssionCallbacks.map(_.map(convelonrtCallback).toList)
     )
 
-  private def buildClientEventInfo(
-    injection: Injection
-  ): Option[ClientEventInfo] = {
-    injection match {
-      //To keep parity between TimelineMixer and Product Mixer, inline prompt switches sets the prompt product identifier as the component and no element. Also includes clientEventDetails
-      case onboardingthrift.Injection.InlinePrompt(candidate) =>
-        val clientEventDetails: ClientEventDetails =
-          ClientEventDetails(
-            conversationDetails = None,
-            timelinesDetails = Some(TimelinesDetails(injectionType = Some("Message"), None, None)),
-            articleDetails = None,
-            liveEventDetails = None,
-            commerceDetails = None
+  privatelon delonf buildClielonntelonvelonntInfo(
+    injelonction: Injelonction
+  ): Option[ClielonntelonvelonntInfo] = {
+    injelonction match {
+      //To kelonelonp parity belontwelonelonn TimelonlinelonMixelonr and Product Mixelonr, inlinelon prompt switchelons selonts thelon prompt product idelonntifielonr as thelon componelonnt and no elonlelonmelonnt. Also includelons clielonntelonvelonntDelontails
+      caselon onboardingthrift.Injelonction.InlinelonPrompt(candidatelon) =>
+        val clielonntelonvelonntDelontails: ClielonntelonvelonntDelontails =
+          ClielonntelonvelonntDelontails(
+            convelonrsationDelontails = Nonelon,
+            timelonlinelonsDelontails = Somelon(TimelonlinelonsDelontails(injelonctionTypelon = Somelon("Melonssagelon"), Nonelon, Nonelon)),
+            articlelonDelontails = Nonelon,
+            livelonelonvelonntDelontails = Nonelon,
+            commelonrcelonDelontails = Nonelon
           )
-        Some(
-          ClientEventInfo(
-            component = candidate.injectionIdentifier,
-            element = None,
-            details = Some(clientEventDetails),
-            action = None,
-            entityToken = None))
-      // To keep parity between TLM and PM we swap component and elements.
-      case onboardingthrift.Injection.RelevancePrompt(candidate) =>
-        Some(
-          ClientEventInfo(
-            // Identifier is prefixed with onboarding per TLM
-            component = Some("onboarding_" + candidate.injectionIdentifier),
-            element = Some("relevance_prompt"),
-            details = None,
-            action = None,
-            entityToken = None
+        Somelon(
+          ClielonntelonvelonntInfo(
+            componelonnt = candidatelon.injelonctionIdelonntifielonr,
+            elonlelonmelonnt = Nonelon,
+            delontails = Somelon(clielonntelonvelonntDelontails),
+            action = Nonelon,
+            elonntityTokelonn = Nonelon))
+      // To kelonelonp parity belontwelonelonn TLM and PM welon swap componelonnt and elonlelonmelonnts.
+      caselon onboardingthrift.Injelonction.RelonlelonvancelonPrompt(candidatelon) =>
+        Somelon(
+          ClielonntelonvelonntInfo(
+            // Idelonntifielonr is prelonfixelond with onboarding pelonr TLM
+            componelonnt = Somelon("onboarding_" + candidatelon.injelonctionIdelonntifielonr),
+            elonlelonmelonnt = Somelon("relonlelonvancelon_prompt"),
+            delontails = Nonelon,
+            action = Nonelon,
+            elonntityTokelonn = Nonelon
           ))
 
-      case _ => None
+      caselon _ => Nonelon
     }
   }
 
 }
 
-class UnsupportedFlipPromptException(injection: onboardingthrift.Injection)
-    extends UnsupportedOperationException(
-      "Unsupported timeline item " + TransportMarshaller.getSimpleName(injection.getClass))
+class UnsupportelondFlipPromptelonxcelonption(injelonction: onboardingthrift.Injelonction)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      "Unsupportelond timelonlinelon itelonm " + TransportMarshallelonr.gelontSimplelonNamelon(injelonction.gelontClass))
 
-object FlipPromptOffsetInModuleMissing
-    extends NoSuchElementException(
-      "FlipPromptOffsetInModuleFeature must be set for the TilesCarousel FLIP injection in PromptCandidateSource")
+objelonct FlipPromptOffselontInModulelonMissing
+    elonxtelonnds NoSuchelonlelonmelonntelonxcelonption(
+      "FlipPromptOffselontInModulelonFelonaturelon must belon selont for thelon TilelonsCarouselonl FLIP injelonction in PromptCandidatelonSourcelon")
 
-object FlipPromptCarouselTileMissing
-    extends NoSuchElementException(
-      "FlipPromptCarouselTileFeature must be set for the TilesCarousel FLIP injection in PromptCandidateSource")
+objelonct FlipPromptCarouselonlTilelonMissing
+    elonxtelonnds NoSuchelonlelonmelonntelonxcelonption(
+      "FlipPromptCarouselonlTilelonFelonaturelon must belon selont for thelon TilelonsCarouselonl FLIP injelonction in PromptCandidatelonSourcelon")

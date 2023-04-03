@@ -1,101 +1,101 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon
 
-import com.twitter.data.proto.Flock
-import com.twitter.scalding.{DateOps, DateRange, Days, RichDate, UniqueID}
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{ClusterId, UserId}
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import graphstore.common.FlockBlocksJavaDataset
-import java.util.TimeZone
+import com.twittelonr.data.proto.Flock
+import com.twittelonr.scalding.{DatelonOps, DatelonRangelon, Days, RichDatelon, UniquelonID}
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.IntelonrelonstelondInSourcelons
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.SparselonMatrix
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.{ClustelonrId, UselonrId}
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonxtelonrnalDataSourcelons
+import graphstorelon.common.FlockBlocksJavaDataselont
+import java.util.TimelonZonelon
 
-object DataSources {
+objelonct DataSourcelons {
 
-  private val ValidEdgeStateId = 0
+  privatelon val ValidelondgelonStatelonId = 0
   val NumBlocksP95 = 49
 
   /**
-   * Helper function to return Sparse Matrix of user's interestedIn clusters and fav scores
-   * @param dateRange
-   * @return
+   * Helonlpelonr function to relonturn Sparselon Matrix of uselonr's intelonrelonstelondIn clustelonrs and fav scorelons
+   * @param datelonRangelon
+   * @relonturn
    */
-  def getUserInterestedInSparseMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): SparseMatrix[UserId, ClusterId, Double] = {
-    val simClusters = ExternalDataSources.simClustersInterestInSource
+  delonf gelontUselonrIntelonrelonstelondInSparselonMatrix(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): SparselonMatrix[UselonrId, ClustelonrId, Doublelon] = {
+    val simClustelonrs = elonxtelonrnalDataSourcelons.simClustelonrsIntelonrelonstInSourcelon
 
-    val simClusterMatrixEntries = simClusters
-      .flatMap { keyVal =>
-        keyVal.value.clusterIdToScores.flatMap {
-          case (clusterId, score) =>
-            score.favScore.map { favScore =>
-              (keyVal.key, clusterId, favScore)
+    val simClustelonrMatrixelonntrielons = simClustelonrs
+      .flatMap { kelonyVal =>
+        kelonyVal.valuelon.clustelonrIdToScorelons.flatMap {
+          caselon (clustelonrId, scorelon) =>
+            scorelon.favScorelon.map { favScorelon =>
+              (kelonyVal.kelony, clustelonrId, favScorelon)
             }
         }
       }
 
-    SparseMatrix.apply[UserId, ClusterId, Double](simClusterMatrixEntries)
+    SparselonMatrix.apply[UselonrId, ClustelonrId, Doublelon](simClustelonrMatrixelonntrielons)
   }
 
-  def getUserInterestedInTruncatedKMatrix(
+  delonf gelontUselonrIntelonrelonstelondInTruncatelondKMatrix(
     topK: Int
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[UserId, ClusterId, Double] = {
-    SparseMatrix(
-      InterestedInSources
-        .simClustersInterestedInUpdatedSource(dateRange, timeZone)
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): SparselonMatrix[UselonrId, ClustelonrId, Doublelon] = {
+    SparselonMatrix(
+      IntelonrelonstelondInSourcelons
+        .simClustelonrsIntelonrelonstelondInUpdatelondSourcelon(datelonRangelon, timelonZonelon)
         .flatMap {
-          case (userId, clustersUserIsInterestedIn) =>
-            val sortedAndTruncatedList = clustersUserIsInterestedIn.clusterIdToScores
-              .mapValues(_.favScore.getOrElse(0.0)).filter(_._2 > 0.0).toList.sortBy(-_._2).take(
+          caselon (uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+            val sortelondAndTruncatelondList = clustelonrsUselonrIsIntelonrelonstelondIn.clustelonrIdToScorelons
+              .mapValuelons(_.favScorelon.gelontOrelonlselon(0.0)).filtelonr(_._2 > 0.0).toList.sortBy(-_._2).takelon(
                 topK)
-            sortedAndTruncatedList.map {
-              case (clusterId, score) =>
-                (userId, clusterId, score)
+            sortelondAndTruncatelondList.map {
+              caselon (clustelonrId, scorelon) =>
+                (uselonrId, clustelonrId, scorelon)
             }
         }
     )
   }
 
   /**
-   * Helper function to return SparseMatrix of user block interactions from the FlockBlocks
-   * dataset. All users with greater than numBlocks are filtered out
-   * @param dateRange
-   * @return
+   * Helonlpelonr function to relonturn SparselonMatrix of uselonr block intelonractions from thelon FlockBlocks
+   * dataselont. All uselonrs with grelonatelonr than numBlocks arelon filtelonrelond out
+   * @param datelonRangelon
+   * @relonturn
    */
-  def getFlockBlocksSparseMatrix(
+  delonf gelontFlockBlocksSparselonMatrix(
     maxNumBlocks: Int,
-    rangeForData: DateRange
+    rangelonForData: DatelonRangelon
   )(
-    implicit dateRange: DateRange
-  ): SparseMatrix[UserId, UserId, Double] = {
-    implicit val tz: java.util.TimeZone = DateOps.UTC
-    val userGivingBlocks = SparseMatrix.apply[UserId, UserId, Double](
+    implicit datelonRangelon: DatelonRangelon
+  ): SparselonMatrix[UselonrId, UselonrId, Doublelon] = {
+    implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+    val uselonrGivingBlocks = SparselonMatrix.apply[UselonrId, UselonrId, Doublelon](
       DAL
-        .readMostRecentSnapshotNoOlderThan(FlockBlocksJavaDataset, Days(30))
-        .toTypedPipe
-        .flatMap { data: Flock.Edge =>
-          // Consider edges that are valid and have been updated in the past 1 year
-          if (data.getStateId == ValidEdgeStateId &&
-            rangeForData.contains(RichDate(data.getUpdatedAt * 1000L))) {
-            Some((data.getSourceId, data.getDestinationId, 1.0))
-          } else {
-            None
+        .relonadMostReloncelonntSnapshotNoOldelonrThan(FlockBlocksJavaDataselont, Days(30))
+        .toTypelondPipelon
+        .flatMap { data: Flock.elondgelon =>
+          // Considelonr elondgelons that arelon valid and havelon belonelonn updatelond in thelon past 1 yelonar
+          if (data.gelontStatelonId == ValidelondgelonStatelonId &&
+            rangelonForData.contains(RichDatelon(data.gelontUpdatelondAt * 1000L))) {
+            Somelon((data.gelontSourcelonId, data.gelontDelonstinationId, 1.0))
+          } elonlselon {
+            Nonelon
           }
         })
-    // Find all users who give less than numBlocksP95 blocks.
-    // This is to remove those who might be responsible for automatically blocking users
-    // on the twitter platform.
-    val usersWithLegitBlocks = userGivingBlocks.rowL1Norms.collect {
-      case (userId, l1Norm) if l1Norm <= maxNumBlocks =>
-        userId
+    // Find all uselonrs who givelon lelonss than numBlocksP95 blocks.
+    // This is to relonmovelon thoselon who might belon relonsponsiblelon for automatically blocking uselonrs
+    // on thelon twittelonr platform.
+    val uselonrsWithLelongitBlocks = uselonrGivingBlocks.rowL1Norms.collelonct {
+      caselon (uselonrId, l1Norm) if l1Norm <= maxNumBlocks =>
+        uselonrId
     }
-    // retain only those users who give legit blocks (i.e those users who give less than numBlocks95)
-    userGivingBlocks.filterRows(usersWithLegitBlocks)
+    // relontain only thoselon uselonrs who givelon lelongit blocks (i.elon thoselon uselonrs who givelon lelonss than numBlocks95)
+    uselonrGivingBlocks.filtelonrRows(uselonrsWithLelongitBlocks)
   }
 }

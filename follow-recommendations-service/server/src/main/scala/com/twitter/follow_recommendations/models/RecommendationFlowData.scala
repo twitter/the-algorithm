@@ -1,103 +1,103 @@
-package com.twitter.follow_recommendations.models
+packagelon com.twittelonr.follow_reloncommelonndations.modelonls
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.follow_recommendations.common.utils.UserSignupUtil
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.util.Time
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.ClielonntContelonxtConvelonrtelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasUselonrStatelon
+import com.twittelonr.follow_reloncommelonndations.common.utils.UselonrSignupUtil
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ReloncommelonndationPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.util.Timelon
 
-case class RecommendationFlowData[Target <: HasClientContext](
-  request: Target,
-  recommendationFlowIdentifier: RecommendationPipelineIdentifier,
-  candidateSources: Seq[CandidateSource[Target, CandidateUser]],
-  candidatesFromCandidateSources: Seq[CandidateUser],
-  mergedCandidates: Seq[CandidateUser],
-  filteredCandidates: Seq[CandidateUser],
-  rankedCandidates: Seq[CandidateUser],
-  transformedCandidates: Seq[CandidateUser],
-  truncatedCandidates: Seq[CandidateUser],
-  results: Seq[CandidateUser])
-    extends HasMarshalling {
+caselon class ReloncommelonndationFlowData[Targelont <: HasClielonntContelonxt](
+  relonquelonst: Targelont,
+  reloncommelonndationFlowIdelonntifielonr: ReloncommelonndationPipelonlinelonIdelonntifielonr,
+  candidatelonSourcelons: Selonq[CandidatelonSourcelon[Targelont, CandidatelonUselonr]],
+  candidatelonsFromCandidatelonSourcelons: Selonq[CandidatelonUselonr],
+  melonrgelondCandidatelons: Selonq[CandidatelonUselonr],
+  filtelonrelondCandidatelons: Selonq[CandidatelonUselonr],
+  rankelondCandidatelons: Selonq[CandidatelonUselonr],
+  transformelondCandidatelons: Selonq[CandidatelonUselonr],
+  truncatelondCandidatelons: Selonq[CandidatelonUselonr],
+  relonsults: Selonq[CandidatelonUselonr])
+    elonxtelonnds HasMarshalling {
 
-  import RecommendationFlowData._
+  import ReloncommelonndationFlowData._
 
-  lazy val toRecommendationFlowLogOfflineThrift: offline.RecommendationFlowLog = {
-    val userMetadata = userToOfflineRecommendationFlowUserMetadata(request)
-    val signals = userToOfflineRecommendationFlowSignals(request)
-    val filteredCandidateSourceCandidates =
-      candidatesToOfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSources,
-        filteredCandidates
+  lazy val toReloncommelonndationFlowLogOfflinelonThrift: offlinelon.ReloncommelonndationFlowLog = {
+    val uselonrMelontadata = uselonrToOfflinelonReloncommelonndationFlowUselonrMelontadata(relonquelonst)
+    val signals = uselonrToOfflinelonReloncommelonndationFlowSignals(relonquelonst)
+    val filtelonrelondCandidatelonSourcelonCandidatelons =
+      candidatelonsToOfflinelonReloncommelonndationFlowCandidatelonSourcelonCandidatelons(
+        candidatelonSourcelons,
+        filtelonrelondCandidatelons
       )
-    val rankedCandidateSourceCandidates =
-      candidatesToOfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSources,
-        rankedCandidates
+    val rankelondCandidatelonSourcelonCandidatelons =
+      candidatelonsToOfflinelonReloncommelonndationFlowCandidatelonSourcelonCandidatelons(
+        candidatelonSourcelons,
+        rankelondCandidatelons
       )
-    val truncatedCandidateSourceCandidates =
-      candidatesToOfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSources,
-        truncatedCandidates
+    val truncatelondCandidatelonSourcelonCandidatelons =
+      candidatelonsToOfflinelonReloncommelonndationFlowCandidatelonSourcelonCandidatelons(
+        candidatelonSourcelons,
+        truncatelondCandidatelons
       )
 
-    offline.RecommendationFlowLog(
-      ClientContextConverter.toFRSOfflineClientContextThrift(request.clientContext),
-      userMetadata,
+    offlinelon.ReloncommelonndationFlowLog(
+      ClielonntContelonxtConvelonrtelonr.toFRSOfflinelonClielonntContelonxtThrift(relonquelonst.clielonntContelonxt),
+      uselonrMelontadata,
       signals,
-      Time.now.inMillis,
-      recommendationFlowIdentifier.name,
-      Some(filteredCandidateSourceCandidates),
-      Some(rankedCandidateSourceCandidates),
-      Some(truncatedCandidateSourceCandidates)
+      Timelon.now.inMillis,
+      reloncommelonndationFlowIdelonntifielonr.namelon,
+      Somelon(filtelonrelondCandidatelonSourcelonCandidatelons),
+      Somelon(rankelondCandidatelonSourcelonCandidatelons),
+      Somelon(truncatelondCandidatelonSourcelonCandidatelons)
     )
   }
 }
 
-object RecommendationFlowData {
-  def userToOfflineRecommendationFlowUserMetadata[Target <: HasClientContext](
-    request: Target
-  ): Option[offline.OfflineRecommendationFlowUserMetadata] = {
-    val userSignupAge = UserSignupUtil.userSignupAge(request).map(_.inDays)
-    val userState = request match {
-      case req: HasUserState => req.userState.map(_.name)
-      case _ => None
+objelonct ReloncommelonndationFlowData {
+  delonf uselonrToOfflinelonReloncommelonndationFlowUselonrMelontadata[Targelont <: HasClielonntContelonxt](
+    relonquelonst: Targelont
+  ): Option[offlinelon.OfflinelonReloncommelonndationFlowUselonrMelontadata] = {
+    val uselonrSignupAgelon = UselonrSignupUtil.uselonrSignupAgelon(relonquelonst).map(_.inDays)
+    val uselonrStatelon = relonquelonst match {
+      caselon relonq: HasUselonrStatelon => relonq.uselonrStatelon.map(_.namelon)
+      caselon _ => Nonelon
     }
-    Some(offline.OfflineRecommendationFlowUserMetadata(userSignupAge, userState))
+    Somelon(offlinelon.OfflinelonReloncommelonndationFlowUselonrMelontadata(uselonrSignupAgelon, uselonrStatelon))
   }
 
-  def userToOfflineRecommendationFlowSignals[Target <: HasClientContext](
-    request: Target
-  ): Option[offline.OfflineRecommendationFlowSignals] = {
-    val countryCode = request.getCountryCode
-    Some(offline.OfflineRecommendationFlowSignals(countryCode))
+  delonf uselonrToOfflinelonReloncommelonndationFlowSignals[Targelont <: HasClielonntContelonxt](
+    relonquelonst: Targelont
+  ): Option[offlinelon.OfflinelonReloncommelonndationFlowSignals] = {
+    val countryCodelon = relonquelonst.gelontCountryCodelon
+    Somelon(offlinelon.OfflinelonReloncommelonndationFlowSignals(countryCodelon))
   }
 
-  def candidatesToOfflineRecommendationFlowCandidateSourceCandidates[Target <: HasClientContext](
-    candidateSources: Seq[CandidateSource[Target, CandidateUser]],
-    candidates: Seq[CandidateUser],
-  ): Seq[offline.OfflineRecommendationFlowCandidateSourceCandidates] = {
-    val candidatesGroupedByCandidateSources =
-      candidates.groupBy(
-        _.getPrimaryCandidateSource.getOrElse(CandidateSourceIdentifier("NoCandidateSource")))
+  delonf candidatelonsToOfflinelonReloncommelonndationFlowCandidatelonSourcelonCandidatelons[Targelont <: HasClielonntContelonxt](
+    candidatelonSourcelons: Selonq[CandidatelonSourcelon[Targelont, CandidatelonUselonr]],
+    candidatelons: Selonq[CandidatelonUselonr],
+  ): Selonq[offlinelon.OfflinelonReloncommelonndationFlowCandidatelonSourcelonCandidatelons] = {
+    val candidatelonsGroupelondByCandidatelonSourcelons =
+      candidatelons.groupBy(
+        _.gelontPrimaryCandidatelonSourcelon.gelontOrelonlselon(CandidatelonSourcelonIdelonntifielonr("NoCandidatelonSourcelon")))
 
-    candidateSources.map(candidateSource => {
-      val candidates =
-        candidatesGroupedByCandidateSources.get(candidateSource.identifier).toSeq.flatten
-      val candidateUserIds = candidates.map(_.id)
-      val candidateUserScores = candidates.map(_.score).exists(_.nonEmpty) match {
-        case true => Some(candidates.map(_.score.getOrElse(-1.0)))
-        case false => None
+    candidatelonSourcelons.map(candidatelonSourcelon => {
+      val candidatelons =
+        candidatelonsGroupelondByCandidatelonSourcelons.gelont(candidatelonSourcelon.idelonntifielonr).toSelonq.flattelonn
+      val candidatelonUselonrIds = candidatelons.map(_.id)
+      val candidatelonUselonrScorelons = candidatelons.map(_.scorelon).elonxists(_.nonelonmpty) match {
+        caselon truelon => Somelon(candidatelons.map(_.scorelon.gelontOrelonlselon(-1.0)))
+        caselon falselon => Nonelon
       }
-      offline.OfflineRecommendationFlowCandidateSourceCandidates(
-        candidateSource.identifier.name,
-        candidateUserIds,
-        candidateUserScores
+      offlinelon.OfflinelonReloncommelonndationFlowCandidatelonSourcelonCandidatelons(
+        candidatelonSourcelon.idelonntifielonr.namelon,
+        candidatelonUselonrIds,
+        candidatelonUselonrScorelons
       )
     })
   }

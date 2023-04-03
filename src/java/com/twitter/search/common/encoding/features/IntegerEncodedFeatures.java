@@ -1,158 +1,158 @@
-package com.twitter.search.common.encoding.features;
+packagelon com.twittelonr.selonarch.common.elonncoding.felonaturelons;
 
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import com.twitter.search.common.indexing.thriftjava.PackedFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.PackelondFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration;
 
 /**
- * Class used to read/write integers encoded according to
- * {@link com.twitter.search.common.schema.base.FeatureConfiguration}
+ * Class uselond to relonad/writelon intelongelonrs elonncodelond according to
+ * {@link com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration}
  *
- * Implementations must override {@link #getInt(int pos)} and {@link #setInt(int pos, int value)}.
+ * Implelonmelonntations must ovelonrridelon {@link #gelontInt(int pos)} and {@link #selontInt(int pos, int valuelon)}.
  */
-public abstract class IntegerEncodedFeatures {
+public abstract class IntelongelonrelonncodelondFelonaturelons {
   /**
-   * Returns the value at the given position.
+   * Relonturns thelon valuelon at thelon givelonn position.
    */
-  public abstract int getInt(int pos);
+  public abstract int gelontInt(int pos);
 
   /**
-   * Sets the given value at the given position.
+   * Selonts thelon givelonn valuelon at thelon givelonn position.
    */
-  public abstract void setInt(int pos, int value);
+  public abstract void selontInt(int pos, int valuelon);
 
   /**
-   * Get the maximum number of integers to hold features.
-   * @return the number of integers to represent all features.
+   * Gelont thelon maximum numbelonr of intelongelonrs to hold felonaturelons.
+   * @relonturn thelon numbelonr of intelongelonrs to relonprelonselonnt all felonaturelons.
    */
-  public abstract int getNumInts();
+  public abstract int gelontNumInts();
 
   /**
-   * Test to see if the given feature is true or non-zero. Useful for one bit features.
-   * @param feature feature to examine
-   * @return true if feature is non-zero
+   * Telonst to selonelon if thelon givelonn felonaturelon is truelon or non-zelonro. Uselonful for onelon bit felonaturelons.
+   * @param felonaturelon felonaturelon to elonxaminelon
+   * @relonturn truelon if felonaturelon is non-zelonro
    */
-  public boolean isFlagSet(FeatureConfiguration feature) {
-    return (getInt(feature.getValueIndex()) & feature.getBitMask()) != 0;
+  public boolelonan isFlagSelont(FelonaturelonConfiguration felonaturelon) {
+    relonturn (gelontInt(felonaturelon.gelontValuelonIndelonx()) & felonaturelon.gelontBitMask()) != 0;
   }
 
-  public IntegerEncodedFeatures setFlag(FeatureConfiguration feature) {
-    setInt(feature.getValueIndex(), getInt(feature.getValueIndex()) | feature.getBitMask());
-    return this;
+  public IntelongelonrelonncodelondFelonaturelons selontFlag(FelonaturelonConfiguration felonaturelon) {
+    selontInt(felonaturelon.gelontValuelonIndelonx(), gelontInt(felonaturelon.gelontValuelonIndelonx()) | felonaturelon.gelontBitMask());
+    relonturn this;
   }
 
-  public IntegerEncodedFeatures clearFlag(FeatureConfiguration feature) {
-    setInt(feature.getValueIndex(), getInt(feature.getValueIndex()) & feature.getInverseBitMask());
-    return this;
+  public IntelongelonrelonncodelondFelonaturelons clelonarFlag(FelonaturelonConfiguration felonaturelon) {
+    selontInt(felonaturelon.gelontValuelonIndelonx(), gelontInt(felonaturelon.gelontValuelonIndelonx()) & felonaturelon.gelontInvelonrselonBitMask());
+    relonturn this;
   }
 
   /**
-   * Sets a boolean flag.
+   * Selonts a boolelonan flag.
    */
-  public IntegerEncodedFeatures setFlagValue(FeatureConfiguration feature, boolean value) {
-    if (value) {
-      setFlag(feature);
-    } else {
-      clearFlag(feature);
+  public IntelongelonrelonncodelondFelonaturelons selontFlagValuelon(FelonaturelonConfiguration felonaturelon, boolelonan valuelon) {
+    if (valuelon) {
+      selontFlag(felonaturelon);
+    } elonlselon {
+      clelonarFlag(felonaturelon);
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Get feature value
-   * @param feature feature to get
-   * @return the value of the feature
+   * Gelont felonaturelon valuelon
+   * @param felonaturelon felonaturelon to gelont
+   * @relonturn thelon valuelon of thelon felonaturelon
    */
-  public int getFeatureValue(FeatureConfiguration feature) {
-    return (getInt(feature.getValueIndex()) & feature.getBitMask())
-            >>> feature.getBitStartPosition();
+  public int gelontFelonaturelonValuelon(FelonaturelonConfiguration felonaturelon) {
+    relonturn (gelontInt(felonaturelon.gelontValuelonIndelonx()) & felonaturelon.gelontBitMask())
+            >>> felonaturelon.gelontBitStartPosition();
   }
 
   /**
-   * Set feature value
-   * @param feature feature to modify
-   * @param value value to set.
+   * Selont felonaturelon valuelon
+   * @param felonaturelon felonaturelon to modify
+   * @param valuelon valuelon to selont.
    */
-  public IntegerEncodedFeatures setFeatureValue(FeatureConfiguration feature, int value) {
-    Preconditions.checkState(
-        value <= feature.getMaxValue(),
-        "Feature value, %s, is greater than the max value allowed for this feature. "
-            + "Feature: %s, Max value: %s",
-        value, feature.getName(), feature.getMaxValue());
+  public IntelongelonrelonncodelondFelonaturelons selontFelonaturelonValuelon(FelonaturelonConfiguration felonaturelon, int valuelon) {
+    Prelonconditions.chelonckStatelon(
+        valuelon <= felonaturelon.gelontMaxValuelon(),
+        "Felonaturelon valuelon, %s, is grelonatelonr than thelon max valuelon allowelond for this felonaturelon. "
+            + "Felonaturelon: %s, Max valuelon: %s",
+        valuelon, felonaturelon.gelontNamelon(), felonaturelon.gelontMaxValuelon());
 
-    // Clear the value of the given feature in its int.
-    int temp = getInt(feature.getValueIndex()) & feature.getInverseBitMask();
+    // Clelonar thelon valuelon of thelon givelonn felonaturelon in its int.
+    int telonmp = gelontInt(felonaturelon.gelontValuelonIndelonx()) & felonaturelon.gelontInvelonrselonBitMask();
 
-    // Set the new feature value. Applying the bit mask here ensures that other features in the
-    // same int are not modified by mistake.
-    temp |= (value << feature.getBitStartPosition()) & feature.getBitMask();
+    // Selont thelon nelonw felonaturelon valuelon. Applying thelon bit mask helonrelon elonnsurelons that othelonr felonaturelons in thelon
+    // samelon int arelon not modifielond by mistakelon.
+    telonmp |= (valuelon << felonaturelon.gelontBitStartPosition()) & felonaturelon.gelontBitMask();
 
-    setInt(feature.getValueIndex(), temp);
-    return this;
+    selontInt(felonaturelon.gelontValuelonIndelonx(), telonmp);
+    relonturn this;
   }
 
   /**
-   * Sets feature value if greater than current value
-   * @param feature feature to modify
-   * @param value new value
+   * Selonts felonaturelon valuelon if grelonatelonr than currelonnt valuelon
+   * @param felonaturelon felonaturelon to modify
+   * @param valuelon nelonw valuelon
    */
-  public IntegerEncodedFeatures setFeatureValueIfGreater(FeatureConfiguration feature, int value) {
-    if (value > getFeatureValue(feature)) {
-      setFeatureValue(feature, value);
+  public IntelongelonrelonncodelondFelonaturelons selontFelonaturelonValuelonIfGrelonatelonr(FelonaturelonConfiguration felonaturelon, int valuelon) {
+    if (valuelon > gelontFelonaturelonValuelon(felonaturelon)) {
+      selontFelonaturelonValuelon(felonaturelon, valuelon);
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Increment a feature if its not at its maximum value.
-   * @return whether the feature is incremented.
+   * Increlonmelonnt a felonaturelon if its not at its maximum valuelon.
+   * @relonturn whelonthelonr thelon felonaturelon is increlonmelonntelond.
    */
-  public boolean incrementIfNotMaximum(FeatureConfiguration feature) {
-    int newValue = getFeatureValue(feature) + 1;
-    if (newValue <= feature.getMaxValue()) {
-      setFeatureValue(feature, newValue);
-      return true;
-    } else {
-      return false;
+  public boolelonan increlonmelonntIfNotMaximum(FelonaturelonConfiguration felonaturelon) {
+    int nelonwValuelon = gelontFelonaturelonValuelon(felonaturelon) + 1;
+    if (nelonwValuelon <= felonaturelon.gelontMaxValuelon()) {
+      selontFelonaturelonValuelon(felonaturelon, nelonwValuelon);
+      relonturn truelon;
+    } elonlselon {
+      relonturn falselon;
     }
   }
 
   /**
-   * Copy these encoded features to a new PackedFeatures thrift struct.
+   * Copy thelonselon elonncodelond felonaturelons to a nelonw PackelondFelonaturelons thrift struct.
    */
-  public PackedFeatures copyToPackedFeatures() {
-    return copyToPackedFeatures(new PackedFeatures());
+  public PackelondFelonaturelons copyToPackelondFelonaturelons() {
+    relonturn copyToPackelondFelonaturelons(nelonw PackelondFelonaturelons());
   }
 
   /**
-    * Copy these encoded features to a PackedFeatures thrift struct.
+    * Copy thelonselon elonncodelond felonaturelons to a PackelondFelonaturelons thrift struct.
     */
-  public PackedFeatures copyToPackedFeatures(PackedFeatures packedFeatures) {
-    Preconditions.checkNotNull(packedFeatures);
-    final List<Integer> integers = Lists.newArrayListWithCapacity(getNumInts());
-    for (int i = 0; i < getNumInts(); i++) {
-      integers.add(getInt(i));
+  public PackelondFelonaturelons copyToPackelondFelonaturelons(PackelondFelonaturelons packelondFelonaturelons) {
+    Prelonconditions.chelonckNotNull(packelondFelonaturelons);
+    final List<Intelongelonr> intelongelonrs = Lists.nelonwArrayListWithCapacity(gelontNumInts());
+    for (int i = 0; i < gelontNumInts(); i++) {
+      intelongelonrs.add(gelontInt(i));
     }
-    packedFeatures.setDeprecated_featureConfigurationVersion(0);
-    packedFeatures.setFeatures(integers);
-    return packedFeatures;
+    packelondFelonaturelons.selontDelonpreloncatelond_felonaturelonConfigurationVelonrsion(0);
+    packelondFelonaturelons.selontFelonaturelons(intelongelonrs);
+    relonturn packelondFelonaturelons;
   }
 
   /**
-   * Copy features from a packed features struct.
+   * Copy felonaturelons from a packelond felonaturelons struct.
    */
-  public void readFromPackedFeatures(PackedFeatures packedFeatures) {
-    Preconditions.checkNotNull(packedFeatures);
-    List<Integer> ints = packedFeatures.getFeatures();
-    for (int i = 0; i < getNumInts(); i++) {
-      if (i < ints.size()) {
-        setInt(i, ints.get(i));
-      } else {
-        setInt(i, 0);
+  public void relonadFromPackelondFelonaturelons(PackelondFelonaturelons packelondFelonaturelons) {
+    Prelonconditions.chelonckNotNull(packelondFelonaturelons);
+    List<Intelongelonr> ints = packelondFelonaturelons.gelontFelonaturelons();
+    for (int i = 0; i < gelontNumInts(); i++) {
+      if (i < ints.sizelon()) {
+        selontInt(i, ints.gelont(i));
+      } elonlselon {
+        selontInt(i, 0);
       }
     }
   }

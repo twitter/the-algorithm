@@ -1,97 +1,97 @@
-package com.twitter.visibility.interfaces.users
+packagelon com.twittelonr.visibility.intelonrfacelons.uselonrs
 
-import com.twitter.decider.Decider
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Client
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerAdvancedFilteringFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.builder.users.ViewerSearchSafetyFeatures
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.users.SearchFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSearchSafetySource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.context.thriftscala.UserVisibilityFilteringContext
-import com.twitter.visibility.models.ContentId.UserId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.Allow
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.RuleBase
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.RelonlationshipFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrAdvancelondFiltelonringFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrSelonarchSafelontyFelonaturelons
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.uselonrs.SelonarchFelonaturelons
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.common.UselonrSelonarchSafelontySourcelon
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrGatelons
+import com.twittelonr.visibility.contelonxt.thriftscala.UselonrVisibilityFiltelonringContelonxt
+import com.twittelonr.visibility.modelonls.ContelonntId.UselonrId
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
+import com.twittelonr.visibility.rulelons.Relonason.Unspeloncifielond
+import com.twittelonr.visibility.rulelons.Allow
+import com.twittelonr.visibility.rulelons.Drop
+import com.twittelonr.visibility.rulelons.RulelonBaselon
 
-object UserVisibilityLibrary {
-  type Type =
-    (User, SafetyLevel, ViewerContext, UserVisibilityFilteringContext) => Stitch[VisibilityResult]
+objelonct UselonrVisibilityLibrary {
+  typelon Typelon =
+    (Uselonr, SafelontyLelonvelonl, VielonwelonrContelonxt, UselonrVisibilityFiltelonringContelonxt) => Stitch[VisibilityRelonsult]
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    userSource: UserSource = UserSource.empty,
-    userRelationshipSource: UserRelationshipSource = UserRelationshipSource.empty,
-    stratoClient: Client,
-    decider: Decider
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver.scope("user_library")
-    val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
+    uselonrSourcelon: UselonrSourcelon = UselonrSourcelon.elonmpty,
+    uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon = UselonrRelonlationshipSourcelon.elonmpty,
+    stratoClielonnt: Clielonnt,
+    deloncidelonr: Deloncidelonr
+  ): Typelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr.scopelon("uselonr_library")
+    val stratoClielonntStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr.scopelon("strato")
 
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
+    val visibilityDeloncidelonrGatelons = VisibilityDeloncidelonrGatelons(deloncidelonr)
 
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
-    val noUserRulesCounter = libraryStatsReceiver.counter("no_user_rules_requests")
-    val viewerIsAuthorCounter = libraryStatsReceiver.counter("viewer_is_author_requests")
+    val vfelonnginelonCountelonr = libraryStatsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
+    val noUselonrRulelonsCountelonr = libraryStatsReloncelonivelonr.countelonr("no_uselonr_rulelons_relonquelonsts")
+    val vielonwelonrIsAuthorCountelonr = libraryStatsReloncelonivelonr.countelonr("vielonwelonr_is_author_relonquelonsts")
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
-    val searchFeatures = new SearchFeatures(libraryStatsReceiver)
+    val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+    val vielonwelonrFelonaturelons = nelonw VielonwelonrFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+    val relonlationshipFelonaturelons =
+      nelonw RelonlationshipFelonaturelons(uselonrRelonlationshipSourcelon, libraryStatsReloncelonivelonr)
+    val selonarchFelonaturelons = nelonw SelonarchFelonaturelons(libraryStatsReloncelonivelonr)
 
-    val viewerSafeSearchFeatures = new ViewerSearchSafetyFeatures(
-      UserSearchSafetySource.fromStrato(stratoClient, stratoClientStatsReceiver),
-      libraryStatsReceiver)
+    val vielonwelonrSafelonSelonarchFelonaturelons = nelonw VielonwelonrSelonarchSafelontyFelonaturelons(
+      UselonrSelonarchSafelontySourcelon.fromStrato(stratoClielonnt, stratoClielonntStatsReloncelonivelonr),
+      libraryStatsReloncelonivelonr)
 
-    val deciderGateBuilder = new DeciderGateBuilder(decider)
-    val advancedFilteringFeatures =
-      new ViewerAdvancedFilteringFeatures(userSource, libraryStatsReceiver)
+    val deloncidelonrGatelonBuildelonr = nelonw DeloncidelonrGatelonBuildelonr(deloncidelonr)
+    val advancelondFiltelonringFelonaturelons =
+      nelonw VielonwelonrAdvancelondFiltelonringFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
 
-    (user, safetyLevel, viewerContext, userVisibilityFilteringContext) => {
-      val contentId = UserId(user.id)
-      val viewerId = viewerContext.userId
+    (uselonr, safelontyLelonvelonl, vielonwelonrContelonxt, uselonrVisibilityFiltelonringContelonxt) => {
+      val contelonntId = UselonrId(uselonr.id)
+      val vielonwelonrId = vielonwelonrContelonxt.uselonrId
 
-      if (!RuleBase.hasUserRules(safetyLevel)) {
-        noUserRulesCounter.incr()
-        Stitch.value(VisibilityResult(contentId = contentId, verdict = Allow))
-      } else {
-        if (viewerId.contains(user.id)) {
-          viewerIsAuthorCounter.incr()
+      if (!RulelonBaselon.hasUselonrRulelons(safelontyLelonvelonl)) {
+        noUselonrRulelonsCountelonr.incr()
+        Stitch.valuelon(VisibilityRelonsult(contelonntId = contelonntId, velonrdict = Allow))
+      } elonlselon {
+        if (vielonwelonrId.contains(uselonr.id)) {
+          vielonwelonrIsAuthorCountelonr.incr()
 
-          Stitch.value(VisibilityResult(contentId = contentId, verdict = Allow))
-        } else {
-          vfEngineCounter.incr()
+          Stitch.valuelon(VisibilityRelonsult(contelonntId = contelonntId, velonrdict = Allow))
+        } elonlselon {
+          vfelonnginelonCountelonr.incr()
 
-          val featureMap =
-            visibilityLibrary.featureMapBuilder(
-              Seq(
-                viewerFeatures.forViewerContext(viewerContext),
-                viewerSafeSearchFeatures.forViewerId(viewerId),
-                relationshipFeatures.forAuthor(user, viewerId),
-                authorFeatures.forAuthor(user),
-                advancedFilteringFeatures.forViewerId(viewerId),
-                searchFeatures.forSearchContext(userVisibilityFilteringContext.searchContext)
+          val felonaturelonMap =
+            visibilityLibrary.felonaturelonMapBuildelonr(
+              Selonq(
+                vielonwelonrFelonaturelons.forVielonwelonrContelonxt(vielonwelonrContelonxt),
+                vielonwelonrSafelonSelonarchFelonaturelons.forVielonwelonrId(vielonwelonrId),
+                relonlationshipFelonaturelons.forAuthor(uselonr, vielonwelonrId),
+                authorFelonaturelons.forAuthor(uselonr),
+                advancelondFiltelonringFelonaturelons.forVielonwelonrId(vielonwelonrId),
+                selonarchFelonaturelons.forSelonarchContelonxt(uselonrVisibilityFiltelonringContelonxt.selonarchContelonxt)
               )
             )
 
-          visibilityLibrary.runRuleEngine(
-            contentId,
-            featureMap,
-            viewerContext,
-            safetyLevel
+          visibilityLibrary.runRulelonelonnginelon(
+            contelonntId,
+            felonaturelonMap,
+            vielonwelonrContelonxt,
+            safelontyLelonvelonl
           )
 
         }
@@ -99,13 +99,13 @@ object UserVisibilityLibrary {
     }
   }
 
-  def Const(shouldDrop: Boolean): Type =
-    (user, _, _, _) =>
-      Stitch.value(
-        VisibilityResult(
-          contentId = UserId(user.id),
-          verdict = if (shouldDrop) Drop(Unspecified) else Allow,
-          finished = true
+  delonf Const(shouldDrop: Boolelonan): Typelon =
+    (uselonr, _, _, _) =>
+      Stitch.valuelon(
+        VisibilityRelonsult(
+          contelonntId = UselonrId(uselonr.id),
+          velonrdict = if (shouldDrop) Drop(Unspeloncifielond) elonlselon Allow,
+          finishelond = truelon
         )
       )
 }

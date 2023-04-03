@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.metadata
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.Base64String
-import com.twitter.bijection.{Injection => Serializer}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ConversationTweetClientEventDetailsBuilder.ControllerDataSerializer
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.suggests.controller_data.home_tweets.thriftscala.HomeTweetsControllerData
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.home_tweets.v1.thriftscala.{
-  HomeTweetsControllerData => HomeTweetsControllerDataV1
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.bijelonction.Baselon64String
+import com.twittelonr.bijelonction.{Injelonction => Selonrializelonr}
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata.ConvelonrsationTwelonelontClielonntelonvelonntDelontailsBuildelonr.ControllelonrDataSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntDelontailsBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TimelonlinelonsDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.suggelonsts.controllelonr_data.homelon_twelonelonts.thriftscala.HomelonTwelonelontsControllelonrData
+import com.twittelonr.suggelonsts.controllelonr_data.thriftscala.ControllelonrData
+import com.twittelonr.suggelonsts.controllelonr_data.homelon_twelonelonts.v1.thriftscala.{
+  HomelonTwelonelontsControllelonrData => HomelonTwelonelontsControllelonrDataV1
 }
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
+import com.twittelonr.suggelonsts.controllelonr_data.v2.thriftscala.{ControllelonrData => ControllelonrDataV2}
 
-object ConversationTweetClientEventDetailsBuilder {
-  implicit val ByteSerializer: Serializer[ControllerData, Array[Byte]] =
-    BinaryScalaCodec(ControllerData)
+objelonct ConvelonrsationTwelonelontClielonntelonvelonntDelontailsBuildelonr {
+  implicit val BytelonSelonrializelonr: Selonrializelonr[ControllelonrData, Array[Bytelon]] =
+    BinaryScalaCodelonc(ControllelonrData)
 
-  val ControllerDataSerializer: Serializer[ControllerData, String] =
-    Serializer.connect[ControllerData, Array[Byte], Base64String, String]
+  val ControllelonrDataSelonrializelonr: Selonrializelonr[ControllelonrData, String] =
+    Selonrializelonr.connelonct[ControllelonrData, Array[Bytelon], Baselon64String, String]
 }
 
-case class ConversationTweetClientEventDetailsBuilder[-Query <: PipelineQuery](
-  injectionType: Option[String])
-    extends BaseClientEventDetailsBuilder[Query, BaseTweetCandidate] {
+caselon class ConvelonrsationTwelonelontClielonntelonvelonntDelontailsBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  injelonctionTypelon: Option[String])
+    elonxtelonnds BaselonClielonntelonvelonntDelontailsBuildelonr[Quelonry, BaselonTwelonelontCandidatelon] {
 
-  override def apply(
-    query: Query,
-    tweetCandidate: BaseTweetCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] =
-    Some(
-      ClientEventDetails(
-        conversationDetails = None,
-        timelinesDetails = Some(
-          TimelinesDetails(
-            injectionType = injectionType,
-            controllerData = Some(buildControllerData(query.getUserOrGuestId)),
-            sourceData = None)),
-        articleDetails = None,
-        liveEventDetails = None,
-        commerceDetails = None
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    twelonelontCandidatelon: BaselonTwelonelontCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[ClielonntelonvelonntDelontails] =
+    Somelon(
+      ClielonntelonvelonntDelontails(
+        convelonrsationDelontails = Nonelon,
+        timelonlinelonsDelontails = Somelon(
+          TimelonlinelonsDelontails(
+            injelonctionTypelon = injelonctionTypelon,
+            controllelonrData = Somelon(buildControllelonrData(quelonry.gelontUselonrOrGuelonstId)),
+            sourcelonData = Nonelon)),
+        articlelonDelontails = Nonelon,
+        livelonelonvelonntDelontails = Nonelon,
+        commelonrcelonDelontails = Nonelon
       ))
 
-  private def buildControllerData(traceId: Option[Long]): String =
-    ControllerDataSerializer(
-      ControllerData.V2(
-        ControllerDataV2.HomeTweets(
-          HomeTweetsControllerData.V1(
-            HomeTweetsControllerDataV1(
-              tweetTypesBitmap = 0L,
-              traceId = traceId,
+  privatelon delonf buildControllelonrData(tracelonId: Option[Long]): String =
+    ControllelonrDataSelonrializelonr(
+      ControllelonrData.V2(
+        ControllelonrDataV2.HomelonTwelonelonts(
+          HomelonTwelonelontsControllelonrData.V1(
+            HomelonTwelonelontsControllelonrDataV1(
+              twelonelontTypelonsBitmap = 0L,
+              tracelonId = tracelonId,
             )
           )
         )

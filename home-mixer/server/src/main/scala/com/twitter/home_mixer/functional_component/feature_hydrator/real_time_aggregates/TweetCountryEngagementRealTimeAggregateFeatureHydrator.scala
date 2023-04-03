@@ -1,55 +1,55 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.relonal_timelon_aggrelongatelons
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetCountryEngagementCache
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.prediction.common.aggregates.real_time.TimelinesOnlineAggregationFeaturesOnlyConfig._
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TwelonelontCountryelonngagelonmelonntCachelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.cachelon.RelonadCachelon
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongatelonGroup
+import com.twittelonr.timelonlinelons.prelondiction.common.aggrelongatelons.relonal_timelon.TimelonlinelonsOnlinelonAggrelongationFelonaturelonsOnlyConfig._
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object TweetCountryEngagementRealTimeAggregateFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct TwelonelontCountryelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class TweetCountryEngagementRealTimeAggregateFeatureHydrator @Inject() (
-  @Named(TweetCountryEngagementCache) override val client: ReadCache[(Long, String), DataRecord],
-  override val statsReceiver: StatsReceiver)
-    extends BaseRealTimeAggregateBulkCandidateFeatureHydrator[(Long, String)] {
+@Singlelonton
+class TwelonelontCountryelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator @Injelonct() (
+  @Namelond(TwelonelontCountryelonngagelonmelonntCachelon) ovelonrridelon val clielonnt: RelonadCachelon[(Long, String), DataReloncord],
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BaselonRelonalTimelonAggrelongatelonBulkCandidatelonFelonaturelonHydrator[(Long, String)] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TweetCountryEngagementRealTimeAggregate")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("TwelonelontCountryelonngagelonmelonntRelonalTimelonAggrelongatelon")
 
-  override val outputFeature: DataRecordInAFeature[TweetCandidate] =
-    TweetCountryEngagementRealTimeAggregateFeature
+  ovelonrridelon val outputFelonaturelon: DataReloncordInAFelonaturelon[TwelonelontCandidatelon] =
+    TwelonelontCountryelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelon
 
-  override val aggregateGroups: Seq[AggregateGroup] = Seq(
-    tweetCountryRealTimeAggregates
+  ovelonrridelon val aggrelongatelonGroups: Selonq[AggrelongatelonGroup] = Selonq(
+    twelonelontCountryRelonalTimelonAggrelongatelons
   )
 
-  override val aggregateGroupToPrefix: Map[AggregateGroup, String] = Map(
-    tweetCountryRealTimeAggregates -> "tweet-country_code.timelines.tweet_country_engagement_real_time_aggregates."
+  ovelonrridelon val aggrelongatelonGroupToPrelonfix: Map[AggrelongatelonGroup, String] = Map(
+    twelonelontCountryRelonalTimelonAggrelongatelons -> "twelonelont-country_codelon.timelonlinelons.twelonelont_country_elonngagelonmelonnt_relonal_timelon_aggrelongatelons."
   )
 
-  override def keysFromQueryAndCandidates(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[(Long, String)]] = {
-    val countryCode = query.clientContext.countryCode
-    candidates.map { candidate =>
-      val tweetId = candidate.candidate.id
-      countryCode.map((tweetId, _))
+  ovelonrridelon delonf kelonysFromQuelonryAndCandidatelons(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Selonq[Option[(Long, String)]] = {
+    val countryCodelon = quelonry.clielonntContelonxt.countryCodelon
+    candidatelons.map { candidatelon =>
+      val twelonelontId = candidatelon.candidatelon.id
+      countryCodelon.map((twelonelontId, _))
     }
   }
 }

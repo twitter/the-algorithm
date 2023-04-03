@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.pipeline.mixer
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr
 
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Arrow
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.MixelonrPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Arrow
 
 /**
- * A Mixer Pipeline
+ * A Mixelonr Pipelonlinelon
  *
- * This is an abstract class, as we only construct these via the [[MixerPipelineBuilder]].
+ * This is an abstract class, as welon only construct thelonselon via thelon [[MixelonrPipelonlinelonBuildelonr]].
  *
- * A [[MixerPipeline]] is capable of processing requests (queries) and returning responses (results)
- * in the correct format to directly send to users.
+ * A [[MixelonrPipelonlinelon]] is capablelon of procelonssing relonquelonsts (quelonrielons) and relonturning relonsponselons (relonsults)
+ * in thelon correlonct format to direlonctly selonnd to uselonrs.
  *
- * @tparam Query the domain model for the query or request
- * @tparam Result the final marshalled result type
+ * @tparam Quelonry thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam Relonsult thelon final marshallelond relonsult typelon
  */
-abstract class MixerPipeline[Query <: PipelineQuery, Result] private[mixer]
-    extends Pipeline[Query, Result] {
-  override private[core] val config: MixerPipelineConfig[Query, _, Result]
-  override val arrow: Arrow[Query, MixerPipelineResult[Result]]
-  override val identifier: MixerPipelineIdentifier
+abstract class MixelonrPipelonlinelon[Quelonry <: PipelonlinelonQuelonry, Relonsult] privatelon[mixelonr]
+    elonxtelonnds Pipelonlinelon[Quelonry, Relonsult] {
+  ovelonrridelon privatelon[corelon] val config: MixelonrPipelonlinelonConfig[Quelonry, _, Relonsult]
+  ovelonrridelon val arrow: Arrow[Quelonry, MixelonrPipelonlinelonRelonsult[Relonsult]]
+  ovelonrridelon val idelonntifielonr: MixelonrPipelonlinelonIdelonntifielonr
 }

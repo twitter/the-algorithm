@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.telonnsorbuildelonr
 
-import com.twitter.product_mixer.component_library.scorer.common.ModelSelector
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import inference.GrpcService.InferParameter
-import inference.GrpcService.ModelInferRequest
-import scala.collection.JavaConverters._
+import com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.common.ModelonlSelonlelonctor
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import infelonrelonncelon.GrpcSelonrvicelon.InfelonrParamelontelonr
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst
+import scala.collelonction.JavaConvelonrtelonrs._
 
-class ModelInferRequestBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  queryInferInputTensorBuilders: Seq[QueryInferInputTensorBuilder[Query, Any]],
-  candidateInferInputTensorBuilders: Seq[
-    CandidateInferInputTensorBuilder[Candidate, Any]
+class ModelonlInfelonrRelonquelonstBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+  quelonryInfelonrInputTelonnsorBuildelonrs: Selonq[QuelonryInfelonrInputTelonnsorBuildelonr[Quelonry, Any]],
+  candidatelonInfelonrInputTelonnsorBuildelonrs: Selonq[
+    CandidatelonInfelonrInputTelonnsorBuildelonr[Candidatelon, Any]
   ],
-  modelSignatureName: String,
-  modelSelector: ModelSelector[Query]) {
+  modelonlSignaturelonNamelon: String,
+  modelonlSelonlelonctor: ModelonlSelonlelonctor[Quelonry]) {
 
-  private val modelSignature: InferParameter =
-    InferParameter.newBuilder().setStringParam(modelSignatureName).build()
+  privatelon val modelonlSignaturelon: InfelonrParamelontelonr =
+    InfelonrParamelontelonr.nelonwBuildelonr().selontStringParam(modelonlSignaturelonNamelon).build()
 
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]],
-  ): ModelInferRequest = {
-    val inferRequest = ModelInferRequest
-      .newBuilder()
-      .putParameters("signature_name", modelSignature)
-    modelSelector.apply(query).foreach { modelName =>
-      inferRequest.setModelName(modelName)
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]],
+  ): ModelonlInfelonrRelonquelonst = {
+    val infelonrRelonquelonst = ModelonlInfelonrRelonquelonst
+      .nelonwBuildelonr()
+      .putParamelontelonrs("signaturelon_namelon", modelonlSignaturelon)
+    modelonlSelonlelonctor.apply(quelonry).forelonach { modelonlNamelon =>
+      infelonrRelonquelonst.selontModelonlNamelon(modelonlNamelon)
     }
-    queryInferInputTensorBuilders.foreach { builder =>
-      inferRequest.addAllInputs(builder(query).asJava)
+    quelonryInfelonrInputTelonnsorBuildelonrs.forelonach { buildelonr =>
+      infelonrRelonquelonst.addAllInputs(buildelonr(quelonry).asJava)
     }
-    candidateInferInputTensorBuilders.foreach { builder =>
-      inferRequest.addAllInputs(builder(candidates).asJava)
+    candidatelonInfelonrInputTelonnsorBuildelonrs.forelonach { buildelonr =>
+      infelonrRelonquelonst.addAllInputs(buildelonr(candidatelons).asJava)
     }
-    inferRequest.build()
+    infelonrRelonquelonst.build()
   }
 }

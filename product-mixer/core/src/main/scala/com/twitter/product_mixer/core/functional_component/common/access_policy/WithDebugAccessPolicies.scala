@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.functional_component.common.access_policy
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy
 
-import com.twitter.product_mixer.core.model.common.Component
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
 
-private[core] trait WithDebugAccessPolicies { self: Component =>
+privatelon[corelon] trait WithDelonbugAccelonssPolicielons { selonlf: Componelonnt =>
 
-  /** The [[AccessPolicy]]s that will be used for this component in turntable & other debug tooling
-   * to execute arbitrary queries against the component */
-  val debugAccessPolicies: Set[AccessPolicy] = Set.empty
+  /** Thelon [[AccelonssPolicy]]s that will belon uselond for this componelonnt in turntablelon & othelonr delonbug tooling
+   * to elonxeloncutelon arbitrary quelonrielons against thelon componelonnt */
+  val delonbugAccelonssPolicielons: Selont[AccelonssPolicy] = Selont.elonmpty
 }

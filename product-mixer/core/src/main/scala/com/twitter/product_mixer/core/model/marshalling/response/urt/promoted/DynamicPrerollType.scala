@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-sealed trait DynamicPrerollType
+selonalelond trait DynamicPrelonrollTypelon
 
-object Amplify extends DynamicPrerollType
-object Marketplace extends DynamicPrerollType
-object LiveTvEvent extends DynamicPrerollType
+objelonct Amplify elonxtelonnds DynamicPrelonrollTypelon
+objelonct Markelontplacelon elonxtelonnds DynamicPrelonrollTypelon
+objelonct LivelonTvelonvelonnt elonxtelonnds DynamicPrelonrollTypelon

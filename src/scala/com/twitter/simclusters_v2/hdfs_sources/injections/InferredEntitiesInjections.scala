@@ -1,27 +1,27 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Int2BigEndian,
-  Long2BigEndian,
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.{
+  Int2Bigelonndian,
+  Long2Bigelonndian,
   ScalaCompactThrift
 }
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsInfelonrrelondelonntitielons
 
-object InferredEntitiesInjections {
+objelonct InfelonrrelondelonntitielonsInjelonctions {
 
-  final val InferredEntityInjection: KeyValInjection[Long, SimClustersInferredEntities] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(SimClustersInferredEntities)
+  final val InfelonrrelondelonntityInjelonction: KelonyValInjelonction[Long, SimClustelonrsInfelonrrelondelonntitielons] =
+    KelonyValInjelonction(
+      Long2Bigelonndian,
+      ScalaCompactThrift(SimClustelonrsInfelonrrelondelonntitielons)
     )
 
-  final val InferredEntityKeyedByClusterInjection: KeyValInjection[
+  final val InfelonrrelondelonntityKelonyelondByClustelonrInjelonction: KelonyValInjelonction[
     Int,
-    SimClustersInferredEntities
+    SimClustelonrsInfelonrrelondelonntitielons
   ] =
-    KeyValInjection(
-      Int2BigEndian,
-      ScalaCompactThrift(SimClustersInferredEntities)
+    KelonyValInjelonction(
+      Int2Bigelonndian,
+      ScalaCompactThrift(SimClustelonrsInfelonrrelondelonntitielons)
     )
 }

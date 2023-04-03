@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion
 
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object RecentEngagementSimilarUsersParams {
+objelonct ReloncelonntelonngagelonmelonntSimilarUselonrsParams {
 
-  case object FirstDegreeSortEnabled
-      extends FSParam[Boolean](
-        name = "sims_expansion_recent_engagement_first_degree_sort",
-        default = true)
-  case object Aggregator
-      extends FSEnumParam[SimsExpansionSourceAggregatorId.type](
-        name = "sims_expansion_recent_engagement_aggregator_id",
-        default = SimsExpansionSourceAggregatorId.Sum,
-        enum = SimsExpansionSourceAggregatorId)
+  caselon objelonct FirstDelongrelonelonSortelonnablelond
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "sims_elonxpansion_reloncelonnt_elonngagelonmelonnt_first_delongrelonelon_sort",
+        delonfault = truelon)
+  caselon objelonct Aggrelongator
+      elonxtelonnds FSelonnumParam[SimselonxpansionSourcelonAggrelongatorId.typelon](
+        namelon = "sims_elonxpansion_reloncelonnt_elonngagelonmelonnt_aggrelongator_id",
+        delonfault = SimselonxpansionSourcelonAggrelongatorId.Sum,
+        elonnum = SimselonxpansionSourcelonAggrelongatorId)
 }

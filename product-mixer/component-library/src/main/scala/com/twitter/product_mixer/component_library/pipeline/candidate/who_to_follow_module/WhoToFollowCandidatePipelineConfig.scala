@@ -1,77 +1,77 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon
 
-import com.twitter.peoplediscovery.api.{thriftscala => t}
-import com.twitter.product_mixer.component_library.candidate_source.people_discovery.PeopleDiscoveryCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.decider.DeciderParam
+import com.twittelonr.pelonoplelondiscovelonry.api.{thriftscala => t}
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.pelonoplelon_discovelonry.PelonoplelonDiscovelonryCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.BaselonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonDisplayTypelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrParam
 
-object WhoToFollowCandidatePipelineConfig {
-  val MinCandidatesSize = 3
-  val MaxCandidatesSize = 20
+objelonct WhoToFollowCandidatelonPipelonlinelonConfig {
+  val MinCandidatelonsSizelon = 3
+  val MaxCandidatelonsSizelon = 20
 
-  val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("WhoToFollow")
+  val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr = CandidatelonPipelonlinelonIdelonntifielonr("WhoToFollow")
 }
 
-class WhoToFollowCandidatePipelineConfig[Query <: PipelineQuery](
-  override val identifier: CandidatePipelineIdentifier,
-  override val enabledDeciderParam: Option[DeciderParam[Boolean]],
-  override val supportedClientParam: Option[FSParam[Boolean]],
-  override val alerts: Seq[Alert],
-  override val gates: Seq[Gate[Query]],
-  whoToFollowCandidateSource: PeopleDiscoveryCandidateSource,
-  override val filters: Seq[Filter[Query, UserCandidate]],
-  moduleDisplayTypeBuilder: BaseModuleDisplayTypeBuilder[Query, UserCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[PipelineQuery, UserCandidate]
+class WhoToFollowCandidatelonPipelonlinelonConfig[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr,
+  ovelonrridelon val elonnablelondDeloncidelonrParam: Option[DeloncidelonrParam[Boolelonan]],
+  ovelonrridelon val supportelondClielonntParam: Option[FSParam[Boolelonan]],
+  ovelonrridelon val alelonrts: Selonq[Alelonrt],
+  ovelonrridelon val gatelons: Selonq[Gatelon[Quelonry]],
+  whoToFollowCandidatelonSourcelon: PelonoplelonDiscovelonryCandidatelonSourcelon,
+  ovelonrridelon val filtelonrs: Selonq[Filtelonr[Quelonry, UselonrCandidatelon]],
+  modulelonDisplayTypelonBuildelonr: BaselonModulelonDisplayTypelonBuildelonr[Quelonry, UselonrCandidatelon],
+  felonelondbackActionInfoBuildelonr: Option[
+    BaselonFelonelondbackActionInfoBuildelonr[PipelonlinelonQuelonry, UselonrCandidatelon]
   ],
   displayLocationParam: Param[String],
-  supportedLayoutsParam: Param[Seq[String]],
-  layoutVersionParam: Param[Int],
-  excludedUserIdsFeature: Option[Feature[PipelineQuery, Seq[Long]]],
-) extends CandidatePipelineConfig[
-      Query,
-      t.GetModuleRequest,
-      t.RecommendedUser,
-      UserCandidate
+  supportelondLayoutsParam: Param[Selonq[String]],
+  layoutVelonrsionParam: Param[Int],
+  elonxcludelondUselonrIdsFelonaturelon: Option[Felonaturelon[PipelonlinelonQuelonry, Selonq[Long]]],
+) elonxtelonnds CandidatelonPipelonlinelonConfig[
+      Quelonry,
+      t.GelontModulelonRelonquelonst,
+      t.ReloncommelonndelondUselonr,
+      UselonrCandidatelon
     ] {
 
-  override val candidateSource: BaseCandidateSource[t.GetModuleRequest, t.RecommendedUser] =
-    whoToFollowCandidateSource
+  ovelonrridelon val candidatelonSourcelon: BaselonCandidatelonSourcelon[t.GelontModulelonRelonquelonst, t.ReloncommelonndelondUselonr] =
+    whoToFollowCandidatelonSourcelon
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    PipelineQuery,
-    t.GetModuleRequest
-  ] = WhoToFollowCandidatePipelineQueryTransformer(
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[
+    PipelonlinelonQuelonry,
+    t.GelontModulelonRelonquelonst
+  ] = WhoToFollowCandidatelonPipelonlinelonQuelonryTransformelonr(
     displayLocationParam,
-    supportedLayoutsParam,
-    layoutVersionParam,
-    excludedUserIdsFeature)
+    supportelondLayoutsParam,
+    layoutVelonrsionParam,
+    elonxcludelondUselonrIdsFelonaturelon)
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.RecommendedUser]
-  ] = Seq(WhoToFollowResponseFeatureTransformer)
+  ovelonrridelon val felonaturelonsFromCandidatelonSourcelonTransformelonrs: Selonq[
+    CandidatelonFelonaturelonTransformelonr[t.ReloncommelonndelondUselonr]
+  ] = Selonq(WhoToFollowRelonsponselonFelonaturelonTransformelonr)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.RecommendedUser,
-    UserCandidate
-  ] = { user => UserCandidate(user.userId) }
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[
+    t.ReloncommelonndelondUselonr,
+    UselonrCandidatelon
+  ] = { uselonr => UselonrCandidatelon(uselonr.uselonrId) }
 
-  override val decorator: Option[CandidateDecorator[Query, UserCandidate]] =
-    Some(WhoToFollowCandidateDecorator(moduleDisplayTypeBuilder, feedbackActionInfoBuilder))
+  ovelonrridelon val deloncorator: Option[CandidatelonDeloncorator[Quelonry, UselonrCandidatelon]] =
+    Somelon(WhoToFollowCandidatelonDeloncorator(modulelonDisplayTypelonBuildelonr, felonelondbackActionInfoBuildelonr))
 }

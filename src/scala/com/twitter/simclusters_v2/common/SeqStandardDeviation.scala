@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.common
+packagelon com.twittelonr.simclustelonrs_v2.common
 
-object SeqStandardDeviation {
+objelonct SelonqStandardDelonviation {
 
-  def apply[T](t: Seq[T])(implicit mapper: T => Double): Double = {
-    if (t.isEmpty) {
+  delonf apply[T](t: Selonq[T])(implicit mappelonr: T => Doublelon): Doublelon = {
+    if (t.iselonmpty) {
       0.0
-    } else {
-      val sum = t.foldLeft(0.0) {
-        case (temp, score) =>
-          temp + score
+    } elonlselon {
+      val sum = t.foldLelonft(0.0) {
+        caselon (telonmp, scorelon) =>
+          telonmp + scorelon
       }
-      val mean = sum / t.size
-      val variance = t.foldLeft(0.0) { (sum, score) =>
-        val v = score - mean
+      val melonan = sum / t.sizelon
+      val variancelon = t.foldLelonft(0.0) { (sum, scorelon) =>
+        val v = scorelon - melonan
         sum + v * v
-      } / t.size
-      math.sqrt(variance)
+      } / t.sizelon
+      math.sqrt(variancelon)
     }
   }
 

@@ -1,30 +1,30 @@
-package com.twitter.home_mixer.marshaller.request
+packagelon com.twittelonr.homelon_mixelonr.marshallelonr.relonquelonst
 
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.marshaller.request.ClientContextUnmarshaller
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HomelonMixelonrRelonquelonst
+import com.twittelonr.homelon_mixelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonquelonst.ClielonntContelonxtUnmarshallelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HomeMixerRequestUnmarshaller @Inject() (
-  clientContextUnmarshaller: ClientContextUnmarshaller,
-  homeProductUnmarshaller: HomeMixerProductUnmarshaller,
-  homeProductContextUnmarshaller: HomeMixerProductContextUnmarshaller,
-  homeDebugParamsUnmarshaller: HomeMixerDebugParamsUnmarshaller) {
+@Singlelonton
+class HomelonMixelonrRelonquelonstUnmarshallelonr @Injelonct() (
+  clielonntContelonxtUnmarshallelonr: ClielonntContelonxtUnmarshallelonr,
+  homelonProductUnmarshallelonr: HomelonMixelonrProductUnmarshallelonr,
+  homelonProductContelonxtUnmarshallelonr: HomelonMixelonrProductContelonxtUnmarshallelonr,
+  homelonDelonbugParamsUnmarshallelonr: HomelonMixelonrDelonbugParamsUnmarshallelonr) {
 
-  def apply(homeRequest: t.HomeMixerRequest): HomeMixerRequest = {
-    HomeMixerRequest(
-      clientContext = clientContextUnmarshaller(homeRequest.clientContext),
-      product = homeProductUnmarshaller(homeRequest.product),
-      productContext = homeRequest.productContext.map(homeProductContextUnmarshaller(_)),
-      // Avoid de-serializing cursors in the request unmarshaller. The unmarshaller should never
-      // fail, which is often a possibility when trying to de-serialize a cursor. Cursors can also
-      // be product-specific and more appropriately handled in individual product pipelines.
-      serializedRequestCursor = homeRequest.cursor,
-      maxResults = homeRequest.maxResults,
-      debugParams = homeRequest.debugParams.map(homeDebugParamsUnmarshaller(_)),
-      homeRequestParam = false
+  delonf apply(homelonRelonquelonst: t.HomelonMixelonrRelonquelonst): HomelonMixelonrRelonquelonst = {
+    HomelonMixelonrRelonquelonst(
+      clielonntContelonxt = clielonntContelonxtUnmarshallelonr(homelonRelonquelonst.clielonntContelonxt),
+      product = homelonProductUnmarshallelonr(homelonRelonquelonst.product),
+      productContelonxt = homelonRelonquelonst.productContelonxt.map(homelonProductContelonxtUnmarshallelonr(_)),
+      // Avoid delon-selonrializing cursors in thelon relonquelonst unmarshallelonr. Thelon unmarshallelonr should nelonvelonr
+      // fail, which is oftelonn a possibility whelonn trying to delon-selonrializelon a cursor. Cursors can also
+      // belon product-speloncific and morelon appropriatelonly handlelond in individual product pipelonlinelons.
+      selonrializelondRelonquelonstCursor = homelonRelonquelonst.cursor,
+      maxRelonsults = homelonRelonquelonst.maxRelonsults,
+      delonbugParams = homelonRelonquelonst.delonbugParams.map(homelonDelonbugParamsUnmarshallelonr(_)),
+      homelonRelonquelonstParam = falselon
     )
   }
 }

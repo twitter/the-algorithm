@@ -1,45 +1,45 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-object ComposableActions {
+objelonct ComposablelonActions {
 
-  object ComposableActionsWithConversationSectionAbusiveQuality {
-    def unapply(
-      composableActions: TweetInterstitial
-    ): Option[ConversationSectionAbusiveQuality.type] = {
-      composableActions.abusiveQuality
+  objelonct ComposablelonActionsWithConvelonrsationSelonctionAbusivelonQuality {
+    delonf unapply(
+      composablelonActions: TwelonelontIntelonrstitial
+    ): Option[ConvelonrsationSelonctionAbusivelonQuality.typelon] = {
+      composablelonActions.abusivelonQuality
     }
   }
 
-  object ComposableActionsWithSoftIntervention {
-    def unapply(composableActions: TweetInterstitial): Option[SoftIntervention] = {
-      composableActions.softIntervention match {
-        case Some(si: SoftIntervention) => Some(si)
-        case _ => None
+  objelonct ComposablelonActionsWithSoftIntelonrvelonntion {
+    delonf unapply(composablelonActions: TwelonelontIntelonrstitial): Option[SoftIntelonrvelonntion] = {
+      composablelonActions.softIntelonrvelonntion match {
+        caselon Somelon(si: SoftIntelonrvelonntion) => Somelon(si)
+        caselon _ => Nonelon
       }
     }
   }
 
-  object ComposableActionsWithInterstitialLimitedEngagements {
-    def unapply(composableActions: TweetInterstitial): Option[InterstitialLimitedEngagements] = {
-      composableActions.interstitial match {
-        case Some(ile: InterstitialLimitedEngagements) => Some(ile)
-        case _ => None
+  objelonct ComposablelonActionsWithIntelonrstitialLimitelondelonngagelonmelonnts {
+    delonf unapply(composablelonActions: TwelonelontIntelonrstitial): Option[IntelonrstitialLimitelondelonngagelonmelonnts] = {
+      composablelonActions.intelonrstitial match {
+        caselon Somelon(ilelon: IntelonrstitialLimitelondelonngagelonmelonnts) => Somelon(ilelon)
+        caselon _ => Nonelon
       }
     }
   }
 
-  object ComposableActionsWithInterstitial {
-    def unapply(composableActions: TweetInterstitial): Option[Interstitial] = {
-      composableActions.interstitial match {
-        case Some(i: Interstitial) => Some(i)
-        case _ => None
+  objelonct ComposablelonActionsWithIntelonrstitial {
+    delonf unapply(composablelonActions: TwelonelontIntelonrstitial): Option[Intelonrstitial] = {
+      composablelonActions.intelonrstitial match {
+        caselon Somelon(i: Intelonrstitial) => Somelon(i)
+        caselon _ => Nonelon
       }
     }
   }
 
-  object ComposableActionsWithAppealable {
-    def unapply(composableActions: TweetInterstitial): Option[Appealable] = {
-      composableActions.appealable
+  objelonct ComposablelonActionsWithAppelonalablelon {
+    delonf unapply(composablelonActions: TwelonelontIntelonrstitial): Option[Appelonalablelon] = {
+      composablelonActions.appelonalablelon
     }
   }
 }

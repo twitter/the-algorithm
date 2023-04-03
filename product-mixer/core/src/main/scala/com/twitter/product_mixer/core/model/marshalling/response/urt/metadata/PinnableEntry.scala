@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-trait PinnableEntry {
-  def isPinned: Option[Boolean] = None
+trait Pinnablelonelonntry {
+  delonf isPinnelond: Option[Boolelonan] = Nonelon
 }

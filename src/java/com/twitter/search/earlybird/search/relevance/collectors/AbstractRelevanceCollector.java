@@ -1,147 +1,147 @@
-package com.twitter.search.earlybird.search.relevance.collectors;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.collelonctors;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.LanguageHistogram;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.LanguagelonHistogram;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AbstractRelonsultsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonSelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunction;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadataOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
 
 /**
- * AbstractRelevanceCollector is a results collector that collects RelevanceHit results
- * which include more detailed information than a normal Hit.
+ * AbstractRelonlelonvancelonCollelonctor is a relonsults collelonctor that colleloncts RelonlelonvancelonHit relonsults
+ * which includelon morelon delontailelond information than a normal Hit.
  */
-public abstract class AbstractRelevanceCollector
-    extends AbstractResultsCollector<RelevanceSearchRequestInfo, RelevanceSearchResults> {
-  protected final ScoringFunction scoringFunction;
-  private final ThriftSearchResultsRelevanceStats relevanceStats;
-  private final EarlybirdCluster cluster;
-  private final UserTable userTable;
+public abstract class AbstractRelonlelonvancelonCollelonctor
+    elonxtelonnds AbstractRelonsultsCollelonctor<RelonlelonvancelonSelonarchRelonquelonstInfo, RelonlelonvancelonSelonarchRelonsults> {
+  protelonctelond final ScoringFunction scoringFunction;
+  privatelon final ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats;
+  privatelon final elonarlybirdClustelonr clustelonr;
+  privatelon final UselonrTablelon uselonrTablelon;
 
-  // Per-language result counts.
-  private final LanguageHistogram languageHistogram = new LanguageHistogram();
+  // Pelonr-languagelon relonsult counts.
+  privatelon final LanguagelonHistogram languagelonHistogram = nelonw LanguagelonHistogram();
 
-  // Accumulated time spend on relevance scoring across all collected hits, including batch scoring.
-  private long scoringTimeNanos = 0;
+  // Accumulatelond timelon spelonnd on relonlelonvancelon scoring across all collelonctelond hits, including batch scoring.
+  privatelon long scoringTimelonNanos = 0;
 
-  public AbstractRelevanceCollector(
-      ImmutableSchemaInterface schema,
-      RelevanceSearchRequestInfo searchRequestInfo,
+  public AbstractRelonlelonvancelonCollelonctor(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      RelonlelonvancelonSelonarchRelonquelonstInfo selonarchRelonquelonstInfo,
       ScoringFunction scoringFunction,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
-      UserTable userTable,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
+      elonarlybirdClustelonr clustelonr,
+      UselonrTablelon uselonrTablelon,
       Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, clock, searcherStats, requestDebugMode);
+      int relonquelonstDelonbugModelon) {
+    supelonr(schelonma, selonarchRelonquelonstInfo, clock, selonarchelonrStats, relonquelonstDelonbugModelon);
     this.scoringFunction = scoringFunction;
-    this.relevanceStats = new ThriftSearchResultsRelevanceStats();
-    this.cluster = cluster;
-    this.userTable = userTable;
+    this.relonlelonvancelonStats = nelonw ThriftSelonarchRelonsultsRelonlelonvancelonStats();
+    this.clustelonr = clustelonr;
+    this.uselonrTablelon = uselonrTablelon;
   }
 
   /**
-   * Subclasses must implement this method to actually collect a scored relevance hit.
+   * Subclasselons must implelonmelonnt this melonthod to actually collelonct a scorelond relonlelonvancelon hit.
    */
-  protected abstract void doCollectWithScore(long tweetID, float score) throws IOException;
+  protelonctelond abstract void doCollelonctWithScorelon(long twelonelontID, float scorelon) throws IOelonxcelonption;
 
-  @Override
-  public final void startSegment() throws IOException {
-    scoringFunction.setNextReader(currTwitterReader);
+  @Ovelonrridelon
+  public final void startSelongmelonnt() throws IOelonxcelonption {
+    scoringFunction.selontNelonxtRelonadelonr(currTwittelonrRelonadelonr);
 
-    ThriftSearchResultMetadataOptions options =
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions();
-    featuresRequested = options != null && options.isReturnSearchResultFeatures();
+    ThriftSelonarchRelonsultMelontadataOptions options =
+        selonarchRelonquelonstInfo.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions();
+    felonaturelonsRelonquelonstelond = options != null && options.isRelonturnSelonarchRelonsultFelonaturelons();
   }
 
-  @Override
-  protected final void doCollect(long tweetID) throws IOException {
-    final long scoringStartNanos = getClock().nowNanos();
-    float luceneSore = scorer.score();
-    final float score = scoringFunction.score(curDocId, luceneSore);
-    final long scoringEndNanos = getClock().nowNanos();
-    addToOverallScoringTimeNanos(scoringStartNanos, scoringEndNanos);
+  @Ovelonrridelon
+  protelonctelond final void doCollelonct(long twelonelontID) throws IOelonxcelonption {
+    final long scoringStartNanos = gelontClock().nowNanos();
+    float lucelonnelonSorelon = scorelonr.scorelon();
+    final float scorelon = scoringFunction.scorelon(curDocId, lucelonnelonSorelon);
+    final long scoringelonndNanos = gelontClock().nowNanos();
+    addToOvelonrallScoringTimelonNanos(scoringStartNanos, scoringelonndNanos);
 
-    scoringFunction.updateRelevanceStats(relevanceStats);
+    scoringFunction.updatelonRelonlelonvancelonStats(relonlelonvancelonStats);
 
-    updateHitCounts(tweetID);
+    updatelonHitCounts(twelonelontID);
 
-    doCollectWithScore(tweetID, score);
+    doCollelonctWithScorelon(twelonelontID, scorelon);
   }
 
-  protected final void addToOverallScoringTimeNanos(long scoringStartNanos, long scoringEndNanos) {
-    scoringTimeNanos += scoringEndNanos - scoringStartNanos;
+  protelonctelond final void addToOvelonrallScoringTimelonNanos(long scoringStartNanos, long scoringelonndNanos) {
+    scoringTimelonNanos += scoringelonndNanos - scoringStartNanos;
   }
 
-  protected final ThriftSearchResultMetadata collectMetadata() throws IOException {
-    ThriftSearchResultMetadataOptions options =
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions();
-    Preconditions.checkNotNull(options);
-    ThriftSearchResultMetadata metadata =
-        Preconditions.checkNotNull(scoringFunction.getResultMetadata(options));
-    if (metadata.isSetLanguage()) {
-      languageHistogram.increment(metadata.getLanguage().getValue());
+  protelonctelond final ThriftSelonarchRelonsultMelontadata collelonctMelontadata() throws IOelonxcelonption {
+    ThriftSelonarchRelonsultMelontadataOptions options =
+        selonarchRelonquelonstInfo.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions();
+    Prelonconditions.chelonckNotNull(options);
+    ThriftSelonarchRelonsultMelontadata melontadata =
+        Prelonconditions.chelonckNotNull(scoringFunction.gelontRelonsultMelontadata(options));
+    if (melontadata.isSelontLanguagelon()) {
+      languagelonHistogram.increlonmelonnt(melontadata.gelontLanguagelon().gelontValuelon());
     }
 
-    // Some additional metadata which is not provided by the scoring function, but
-    // by accessing the reader directly.
-    if (currTwitterReader != null) {
-      fillResultGeoLocation(metadata);
-      if (searchRequestInfo.isCollectConversationId()) {
-        long conversationId =
-            documentFeatures.getFeatureValue(EarlybirdFieldConstant.CONVERSATION_ID_CSF);
-        if (conversationId != 0) {
-          ensureExtraMetadataIsSet(metadata);
-          metadata.getExtraMetadata().setConversationId(conversationId);
+    // Somelon additional melontadata which is not providelond by thelon scoring function, but
+    // by accelonssing thelon relonadelonr direlonctly.
+    if (currTwittelonrRelonadelonr != null) {
+      fillRelonsultGelonoLocation(melontadata);
+      if (selonarchRelonquelonstInfo.isCollelonctConvelonrsationId()) {
+        long convelonrsationId =
+            documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.CONVelonRSATION_ID_CSF);
+        if (convelonrsationId != 0) {
+          elonnsurelonelonxtraMelontadataIsSelont(melontadata);
+          melontadata.gelontelonxtraMelontadata().selontConvelonrsationId(convelonrsationId);
         }
       }
     }
 
-    // Check and collect hit attribution data, if it's available.
-    fillHitAttributionMetadata(metadata);
+    // Chelonck and collelonct hit attribution data, if it's availablelon.
+    fillHitAttributionMelontadata(melontadata);
 
-    long fromUserId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
-    if (searchRequestInfo.isGetFromUserId()) {
-      metadata.setFromUserId(fromUserId);
+    long fromUselonrId = documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF);
+    if (selonarchRelonquelonstInfo.isGelontFromUselonrId()) {
+      melontadata.selontFromUselonrId(fromUselonrId);
     }
 
-    collectExclusiveConversationAuthorId(metadata);
-    collectFacets(metadata);
-    collectFeatures(metadata);
-    collectIsProtected(metadata, cluster, userTable);
+    collelonctelonxclusivelonConvelonrsationAuthorId(melontadata);
+    collelonctFacelonts(melontadata);
+    collelonctFelonaturelons(melontadata);
+    collelonctIsProtelonctelond(melontadata, clustelonr, uselonrTablelon);
 
-    return metadata;
+    relonturn melontadata;
   }
 
-  protected final ThriftSearchResultsRelevanceStats getRelevanceStats() {
-    return relevanceStats;
+  protelonctelond final ThriftSelonarchRelonsultsRelonlelonvancelonStats gelontRelonlelonvancelonStats() {
+    relonturn relonlelonvancelonStats;
   }
 
-  public final LanguageHistogram getLanguageHistogram() {
-    return languageHistogram;
+  public final LanguagelonHistogram gelontLanguagelonHistogram() {
+    relonturn languagelonHistogram;
   }
 
-  @Override
-  protected final RelevanceSearchResults doGetResults() throws IOException {
-    final RelevanceSearchResults results = doGetRelevanceResults();
-    results.setScoringTimeNanos(scoringTimeNanos);
-    return results;
+  @Ovelonrridelon
+  protelonctelond final RelonlelonvancelonSelonarchRelonsults doGelontRelonsults() throws IOelonxcelonption {
+    final RelonlelonvancelonSelonarchRelonsults relonsults = doGelontRelonlelonvancelonRelonsults();
+    relonsults.selontScoringTimelonNanos(scoringTimelonNanos);
+    relonturn relonsults;
   }
 
   /**
-   * For subclasses to process and aggregate collected hits.
+   * For subclasselons to procelonss and aggrelongatelon collelonctelond hits.
    */
-  protected abstract RelevanceSearchResults doGetRelevanceResults() throws IOException;
+  protelonctelond abstract RelonlelonvancelonSelonarchRelonsults doGelontRelonlelonvancelonRelonsults() throws IOelonxcelonption;
 }

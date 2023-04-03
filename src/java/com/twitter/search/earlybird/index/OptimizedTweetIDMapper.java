@@ -1,145 +1,145 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
 import it.unimi.dsi.fastutil.longs.Long2IntMap;
-import it.unimi.dsi.fastutil.longs.Long2IntOpenHashMap;
+import it.unimi.dsi.fastutil.longs.Long2IntOpelonnHashMap;
 import it.unimi.dsi.fastutil.longs.LongArrays;
 
 /**
- * After a segment is complete, we call {@link EarlybirdSegment#optimizeIndexes()} to compact the
- * doc IDs assigned to the tweets in this segment, so that we can do faster ceil and floor lookups.
+ * Aftelonr a selongmelonnt is complelontelon, welon call {@link elonarlybirdSelongmelonnt#optimizelonIndelonxelons()} to compact thelon
+ * doc IDs assignelond to thelon twelonelonts in this selongmelonnt, so that welon can do fastelonr celonil and floor lookups.
  */
-public class OptimizedTweetIDMapper extends TweetIDMapper {
-  // Maps doc IDs to tweet IDs. Therefore, it should be sorted in descending order of tweet IDs.
-  protected final long[] inverseMap;
-  private final Long2IntMap tweetIdToDocIdMap;
+public class OptimizelondTwelonelontIDMappelonr elonxtelonnds TwelonelontIDMappelonr {
+  // Maps doc IDs to twelonelont IDs. Thelonrelonforelon, it should belon sortelond in delonscelonnding ordelonr of twelonelont IDs.
+  protelonctelond final long[] invelonrselonMap;
+  privatelon final Long2IntMap twelonelontIdToDocIdMap;
 
-  private OptimizedTweetIDMapper(long[] inverseMap,
-                                 long minTweetID,
-                                 long maxTweetID,
+  privatelon OptimizelondTwelonelontIDMappelonr(long[] invelonrselonMap,
+                                 long minTwelonelontID,
+                                 long maxTwelonelontID,
                                  int minDocID,
                                  int maxDocID) {
-    super(minTweetID, maxTweetID, minDocID, maxDocID, inverseMap.length);
-    this.inverseMap = inverseMap;
-    this.tweetIdToDocIdMap = buildTweetIdToDocIdMap();
+    supelonr(minTwelonelontID, maxTwelonelontID, minDocID, maxDocID, invelonrselonMap.lelonngth);
+    this.invelonrselonMap = invelonrselonMap;
+    this.twelonelontIdToDocIdMap = buildTwelonelontIdToDocIdMap();
   }
 
-  public OptimizedTweetIDMapper(OutOfOrderRealtimeTweetIDMapper source) throws IOException {
-    super(source.getMinTweetID(),
-          source.getMaxTweetID(),
+  public OptimizelondTwelonelontIDMappelonr(OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr sourcelon) throws IOelonxcelonption {
+    supelonr(sourcelon.gelontMinTwelonelontID(),
+          sourcelon.gelontMaxTwelonelontID(),
           0,
-          source.getNumDocs() - 1,
-          source.getNumDocs());
-    inverseMap = source.sortTweetIds();
-    tweetIdToDocIdMap = buildTweetIdToDocIdMap();
+          sourcelon.gelontNumDocs() - 1,
+          sourcelon.gelontNumDocs());
+    invelonrselonMap = sourcelon.sortTwelonelontIds();
+    twelonelontIdToDocIdMap = buildTwelonelontIdToDocIdMap();
   }
 
-  private Long2IntMap buildTweetIdToDocIdMap() {
-    int[] values = new int[inverseMap.length];
-    for (int i = 0; i < values.length; i++) {
-      values[i] = i;
+  privatelon Long2IntMap buildTwelonelontIdToDocIdMap() {
+    int[] valuelons = nelonw int[invelonrselonMap.lelonngth];
+    for (int i = 0; i < valuelons.lelonngth; i++) {
+      valuelons[i] = i;
     }
 
-    Long2IntMap map = new Long2IntOpenHashMap(inverseMap, values);
-    map.defaultReturnValue(-1);
-    return map;
+    Long2IntMap map = nelonw Long2IntOpelonnHashMap(invelonrselonMap, valuelons);
+    map.delonfaultRelonturnValuelon(-1);
+    relonturn map;
   }
 
-  @Override
-  public int getDocID(long tweetID) {
-    return tweetIdToDocIdMap.getOrDefault(tweetID, ID_NOT_FOUND);
+  @Ovelonrridelon
+  public int gelontDocID(long twelonelontID) {
+    relonturn twelonelontIdToDocIdMap.gelontOrDelonfault(twelonelontID, ID_NOT_FOUND);
   }
 
-  @Override
-  protected int getNextDocIDInternal(int docID) {
-    // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID + 1;
+  @Ovelonrridelon
+  protelonctelond int gelontNelonxtDocIDIntelonrnal(int docID) {
+    // Thelon doc IDs arelon conseloncutivelon and TwelonelontIDMappelonr alrelonady chelonckelond thelon boundary conditions.
+    relonturn docID + 1;
   }
 
-  @Override
-  protected int getPreviousDocIDInternal(int docID) {
-    // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID - 1;
+  @Ovelonrridelon
+  protelonctelond int gelontPrelonviousDocIDIntelonrnal(int docID) {
+    // Thelon doc IDs arelon conseloncutivelon and TwelonelontIDMappelonr alrelonady chelonckelond thelon boundary conditions.
+    relonturn docID - 1;
   }
 
-  @Override
-  public long getTweetID(int internalID) {
-    return inverseMap[internalID];
+  @Ovelonrridelon
+  public long gelontTwelonelontID(int intelonrnalID) {
+    relonturn invelonrselonMap[intelonrnalID];
   }
 
-  @Override
-  protected int findDocIDBoundInternal(long tweetID, boolean findMaxDocID) {
-    int docId = tweetIdToDocIdMap.get(tweetID);
+  @Ovelonrridelon
+  protelonctelond int findDocIDBoundIntelonrnal(long twelonelontID, boolelonan findMaxDocID) {
+    int docId = twelonelontIdToDocIdMap.gelont(twelonelontID);
     if (docId >= 0) {
-      return docId;
+      relonturn docId;
     }
 
-    int binarySearchResult =
-        LongArrays.binarySearch(inverseMap, tweetID, (k1, k2) -> -Long.compare(k1, k2));
-    // Since the tweet ID is not present in this mapper, the binary search should return a negative
-    // value (-insertionPoint - 1). And since TweetIDMapper.findDocIdBound() already verified that
-    // tweetID is not smaller than all tweet IDs in this mapper, and not larger than all tweet IDs
-    // in this mapper, the insertionPoint should never be 0 or inverseMap.length.
-    int insertionPoint = -binarySearchResult - 1;
-    // The insertion point is the index in the tweet array of the upper bound of the search, so if
-    // we want the lower bound, because doc IDs are dense, we subtract one.
-    return findMaxDocID ? insertionPoint : insertionPoint - 1;
+    int binarySelonarchRelonsult =
+        LongArrays.binarySelonarch(invelonrselonMap, twelonelontID, (k1, k2) -> -Long.comparelon(k1, k2));
+    // Sincelon thelon twelonelont ID is not prelonselonnt in this mappelonr, thelon binary selonarch should relonturn a nelongativelon
+    // valuelon (-inselonrtionPoint - 1). And sincelon TwelonelontIDMappelonr.findDocIdBound() alrelonady velonrifielond that
+    // twelonelontID is not smallelonr than all twelonelont IDs in this mappelonr, and not largelonr than all twelonelont IDs
+    // in this mappelonr, thelon inselonrtionPoint should nelonvelonr belon 0 or invelonrselonMap.lelonngth.
+    int inselonrtionPoint = -binarySelonarchRelonsult - 1;
+    // Thelon inselonrtion point is thelon indelonx in thelon twelonelont array of thelon uppelonr bound of thelon selonarch, so if
+    // welon want thelon lowelonr bound, beloncauselon doc IDs arelon delonnselon, welon subtract onelon.
+    relonturn findMaxDocID ? inselonrtionPoint : inselonrtionPoint - 1;
   }
 
-  @Override
-  protected final int addMappingInternal(final long tweetID) {
-    throw new UnsupportedOperationException("The OptimizedTweetIDMapper is immutable.");
+  @Ovelonrridelon
+  protelonctelond final int addMappingIntelonrnal(final long twelonelontID) {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("Thelon OptimizelondTwelonelontIDMappelonr is immutablelon.");
   }
 
-  @Override
-  public DocIDToTweetIDMapper optimize() {
-    throw new UnsupportedOperationException("OptimizedTweetIDMapper is already optimized.");
+  @Ovelonrridelon
+  public DocIDToTwelonelontIDMappelonr optimizelon() {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("OptimizelondTwelonelontIDMappelonr is alrelonady optimizelond.");
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<OptimizedTweetIDMapper> {
-    private static final String MIN_TWEET_ID_PROP_NAME = "MinTweetID";
-    private static final String MAX_TWEET_ID_PROP_NAME = "MaxTweetID";
-    private static final String MIN_DOC_ID_PROP_NAME = "MinDocID";
-    private static final String MAX_DOC_ID_PROP_NAME = "MaxDocID";
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<OptimizelondTwelonelontIDMappelonr> {
+    privatelon static final String MIN_TWelonelonT_ID_PROP_NAMelon = "MinTwelonelontID";
+    privatelon static final String MAX_TWelonelonT_ID_PROP_NAMelon = "MaxTwelonelontID";
+    privatelon static final String MIN_DOC_ID_PROP_NAMelon = "MinDocID";
+    privatelon static final String MAX_DOC_ID_PROP_NAMelon = "MaxDocID";
 
-    public FlushHandler() {
-      super();
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    public FlushHandler(OptimizedTweetIDMapper objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(OptimizelondTwelonelontIDMappelonr objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedTweetIDMapper objectToFlush = getObjectToFlush();
-      flushInfo.addLongProperty(MIN_TWEET_ID_PROP_NAME, objectToFlush.getMinTweetID());
-      flushInfo.addLongProperty(MAX_TWEET_ID_PROP_NAME, objectToFlush.getMaxTweetID());
-      flushInfo.addIntProperty(MIN_DOC_ID_PROP_NAME, objectToFlush.getMinDocID());
-      flushInfo.addIntProperty(MAX_DOC_ID_PROP_NAME, objectToFlush.getMaxDocID());
-      out.writeLongArray(objectToFlush.inverseMap);
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      OptimizelondTwelonelontIDMappelonr objelonctToFlush = gelontObjelonctToFlush();
+      flushInfo.addLongPropelonrty(MIN_TWelonelonT_ID_PROP_NAMelon, objelonctToFlush.gelontMinTwelonelontID());
+      flushInfo.addLongPropelonrty(MAX_TWelonelonT_ID_PROP_NAMelon, objelonctToFlush.gelontMaxTwelonelontID());
+      flushInfo.addIntPropelonrty(MIN_DOC_ID_PROP_NAMelon, objelonctToFlush.gelontMinDocID());
+      flushInfo.addIntPropelonrty(MAX_DOC_ID_PROP_NAMelon, objelonctToFlush.gelontMaxDocID());
+      out.writelonLongArray(objelonctToFlush.invelonrselonMap);
     }
 
-    @Override
-    protected OptimizedTweetIDMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      return new OptimizedTweetIDMapper(in.readLongArray(),
-                                        flushInfo.getLongProperty(MIN_TWEET_ID_PROP_NAME),
-                                        flushInfo.getLongProperty(MAX_TWEET_ID_PROP_NAME),
-                                        flushInfo.getIntProperty(MIN_DOC_ID_PROP_NAME),
-                                        flushInfo.getIntProperty(MAX_DOC_ID_PROP_NAME));
+    @Ovelonrridelon
+    protelonctelond OptimizelondTwelonelontIDMappelonr doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
+      relonturn nelonw OptimizelondTwelonelontIDMappelonr(in.relonadLongArray(),
+                                        flushInfo.gelontLongPropelonrty(MIN_TWelonelonT_ID_PROP_NAMelon),
+                                        flushInfo.gelontLongPropelonrty(MAX_TWelonelonT_ID_PROP_NAMelon),
+                                        flushInfo.gelontIntPropelonrty(MIN_DOC_ID_PROP_NAMelon),
+                                        flushInfo.gelontIntPropelonrty(MAX_DOC_ID_PROP_NAMelon));
     }
   }
 }

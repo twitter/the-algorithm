@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.controllers
+packagelon com.twittelonr.product_mixelonr.corelon.controllelonrs
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.common.alert.NotificationGroup
-import com.twitter.product_mixer.core.functional_component.common.alert.Source
+import com.fastelonrxml.jackson.annotation.JsonIgnorelonPropelonrtielons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.NotificationGroup
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Sourcelon
 
 /**
- * Simple representation for an [[Alert]] used for Product Mixer's JSON API, which in turn is
- * consumed by our monitoring script generation job and Turntable.
+ * Simplelon relonprelonselonntation for an [[Alelonrt]] uselond for Product Mixelonr's JSON API, which in turn is
+ * consumelond by our monitoring script gelonnelonration job and Turntablelon.
  *
- * @note not all mixers will upgrade at the same time so new fields should be added with backwards
+ * @notelon not all mixelonrs will upgradelon at thelon samelon timelon so nelonw fielonlds should belon addelond with backwards
  *       compatibility in mind.
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-private[core] case class AlertConfig(
-  source: Source,
-  metricType: String,
+@JsonIgnorelonPropelonrtielons(ignorelonUnknown = truelon)
+privatelon[corelon] caselon class AlelonrtConfig(
+  sourcelon: Sourcelon,
+  melontricTypelon: String,
   notificationGroup: NotificationGroup,
-  warnPredicate: PredicateConfig,
-  criticalPredicate: PredicateConfig,
+  warnPrelondicatelon: PrelondicatelonConfig,
+  criticalPrelondicatelon: PrelondicatelonConfig,
   runbookLink: Option[String],
-  metricSuffix: Option[String])
+  melontricSuffix: Option[String])
 
-private[core] object AlertConfig {
+privatelon[corelon] objelonct AlelonrtConfig {
 
-  /** Represent this [[Alert]] as an [[AlertConfig]] case class */
-  private[core] def apply(alert: Alert): AlertConfig =
-    AlertConfig(
-      alert.source,
-      alert.alertType.metricType,
-      alert.notificationGroup,
-      PredicateConfig(alert.warnPredicate),
-      PredicateConfig(alert.criticalPredicate),
-      alert.runbookLink,
-      alert.metricSuffix
+  /** Relonprelonselonnt this [[Alelonrt]] as an [[AlelonrtConfig]] caselon class */
+  privatelon[corelon] delonf apply(alelonrt: Alelonrt): AlelonrtConfig =
+    AlelonrtConfig(
+      alelonrt.sourcelon,
+      alelonrt.alelonrtTypelon.melontricTypelon,
+      alelonrt.notificationGroup,
+      PrelondicatelonConfig(alelonrt.warnPrelondicatelon),
+      PrelondicatelonConfig(alelonrt.criticalPrelondicatelon),
+      alelonrt.runbookLink,
+      alelonrt.melontricSuffix
     )
 }

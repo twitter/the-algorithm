@@ -1,75 +1,75 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
 import java.util.Map;
 
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.IntelongelonrelonncodelondFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdelonncodelondFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
 
 /**
- * FeatureSink is used to write features based on feature configuration or feature name.  After
- * all feature is written, the class can return the base field integer array values.
+ * FelonaturelonSink is uselond to writelon felonaturelons baselond on felonaturelon configuration or felonaturelon namelon.  Aftelonr
+ * all felonaturelon is writtelonn, thelon class can relonturn thelon baselon fielonld intelongelonr array valuelons.
  *
- * This class is not thread-safe.
+ * This class is not threlonad-safelon.
  */
-public class FeatureSink {
-  private ImmutableSchemaInterface schema;
-  private final Map<String, IntegerEncodedFeatures> encodedFeatureMap;
+public class FelonaturelonSink {
+  privatelon ImmutablelonSchelonmaIntelonrfacelon schelonma;
+  privatelon final Map<String, IntelongelonrelonncodelondFelonaturelons> elonncodelondFelonaturelonMap;
 
-  /** Creates a new FeatureSink instance. */
-  public FeatureSink(ImmutableSchemaInterface schema) {
-    this.schema = schema;
-    this.encodedFeatureMap = Maps.newHashMap();
+  /** Crelonatelons a nelonw FelonaturelonSink instancelon. */
+  public FelonaturelonSink(ImmutablelonSchelonmaIntelonrfacelon schelonma) {
+    this.schelonma = schelonma;
+    this.elonncodelondFelonaturelonMap = Maps.nelonwHashMap();
   }
 
-  private IntegerEncodedFeatures getFeatures(String baseFieldName) {
-    IntegerEncodedFeatures features = encodedFeatureMap.get(baseFieldName);
-    if (features == null) {
-      features = EarlybirdEncodedFeatures.newEncodedTweetFeatures(schema, baseFieldName);
-      encodedFeatureMap.put(baseFieldName, features);
+  privatelon IntelongelonrelonncodelondFelonaturelons gelontFelonaturelons(String baselonFielonldNamelon) {
+    IntelongelonrelonncodelondFelonaturelons felonaturelons = elonncodelondFelonaturelonMap.gelont(baselonFielonldNamelon);
+    if (felonaturelons == null) {
+      felonaturelons = elonarlybirdelonncodelondFelonaturelons.nelonwelonncodelondTwelonelontFelonaturelons(schelonma, baselonFielonldNamelon);
+      elonncodelondFelonaturelonMap.put(baselonFielonldNamelon, felonaturelons);
     }
-    return features;
+    relonturn felonaturelons;
   }
 
-  /** Sets the given numeric value for the field. */
-  public FeatureSink setNumericValue(EarlybirdFieldConstant field, int value) {
-    return setNumericValue(field.getFieldName(), value);
+  /** Selonts thelon givelonn numelonric valuelon for thelon fielonld. */
+  public FelonaturelonSink selontNumelonricValuelon(elonarlybirdFielonldConstant fielonld, int valuelon) {
+    relonturn selontNumelonricValuelon(fielonld.gelontFielonldNamelon(), valuelon);
   }
 
-  /** Sets the given numeric value for the feature with the given name. */
-  public FeatureSink setNumericValue(String featureName, int value) {
-    final FeatureConfiguration featureConfig = schema.getFeatureConfigurationByName(featureName);
-    if (featureConfig != null) {
-      getFeatures(featureConfig.getBaseField()).setFeatureValue(featureConfig, value);
+  /** Selonts thelon givelonn numelonric valuelon for thelon felonaturelon with thelon givelonn namelon. */
+  public FelonaturelonSink selontNumelonricValuelon(String felonaturelonNamelon, int valuelon) {
+    final FelonaturelonConfiguration felonaturelonConfig = schelonma.gelontFelonaturelonConfigurationByNamelon(felonaturelonNamelon);
+    if (felonaturelonConfig != null) {
+      gelontFelonaturelons(felonaturelonConfig.gelontBaselonFielonld()).selontFelonaturelonValuelon(felonaturelonConfig, valuelon);
     }
-    return this;
+    relonturn this;
   }
 
-  /** Sets the given boolean value for the given field. */
-  public FeatureSink setBooleanValue(EarlybirdFieldConstant field, boolean value) {
-    return setBooleanValue(field.getFieldName(), value);
+  /** Selonts thelon givelonn boolelonan valuelon for thelon givelonn fielonld. */
+  public FelonaturelonSink selontBoolelonanValuelon(elonarlybirdFielonldConstant fielonld, boolelonan valuelon) {
+    relonturn selontBoolelonanValuelon(fielonld.gelontFielonldNamelon(), valuelon);
   }
 
-  /** Sets the given boolean value for the feature with the given name. */
-  public FeatureSink setBooleanValue(String featureName, boolean value) {
-    final FeatureConfiguration featureConfig = schema.getFeatureConfigurationByName(featureName);
-    if (featureConfig != null) {
-      getFeatures(featureConfig.getBaseField()).setFlagValue(featureConfig, value);
+  /** Selonts thelon givelonn boolelonan valuelon for thelon felonaturelon with thelon givelonn namelon. */
+  public FelonaturelonSink selontBoolelonanValuelon(String felonaturelonNamelon, boolelonan valuelon) {
+    final FelonaturelonConfiguration felonaturelonConfig = schelonma.gelontFelonaturelonConfigurationByNamelon(felonaturelonNamelon);
+    if (felonaturelonConfig != null) {
+      gelontFelonaturelons(felonaturelonConfig.gelontBaselonFielonld()).selontFlagValuelon(felonaturelonConfig, valuelon);
     }
-    return this;
+    relonturn this;
   }
 
-  /** Returns the features for the given base field. */
-  public IntegerEncodedFeatures getFeaturesForBaseField(EarlybirdFieldConstant baseField) {
-    return getFeaturesForBaseField(baseField.getFieldName());
+  /** Relonturns thelon felonaturelons for thelon givelonn baselon fielonld. */
+  public IntelongelonrelonncodelondFelonaturelons gelontFelonaturelonsForBaselonFielonld(elonarlybirdFielonldConstant baselonFielonld) {
+    relonturn gelontFelonaturelonsForBaselonFielonld(baselonFielonld.gelontFielonldNamelon());
   }
 
-  /** Returns the features for the given base field. */
-  public IntegerEncodedFeatures getFeaturesForBaseField(String baseFieldName) {
-    return encodedFeatureMap.get(baseFieldName);
+  /** Relonturns thelon felonaturelons for thelon givelonn baselon fielonld. */
+  public IntelongelonrelonncodelondFelonaturelons gelontFelonaturelonsForBaselonFielonld(String baselonFielonldNamelon) {
+    relonturn elonncodelondFelonaturelonMap.gelont(baselonFielonldNamelon);
   }
 }

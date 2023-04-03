@@ -1,361 +1,361 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.models.UserLabelValue._
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.visibility.configapi.configs.DeloncidelonrKelony
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams
+import com.twittelonr.visibility.configapi.params.RulelonParams._
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.modelonls.UselonrLabelonlValuelon
+import com.twittelonr.visibility.modelonls.UselonrLabelonlValuelon._
+import com.twittelonr.visibility.rulelons.Condition._
+import com.twittelonr.visibility.rulelons.Relonason._
+import com.twittelonr.visibility.rulelons.RulelonActionSourcelonBuildelonr.UselonrSafelontyLabelonlSourcelonBuildelonr
 
-object AbusiveRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      Abusive
+objelonct AbusivelonRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      Abusivelon
     )
 
-object DoNotAmplifyUserRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+objelonct DoNotAmplifyUselonrRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
       DoNotAmplify
     )
 
-object AbusiveHighRecallRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      AbusiveHighRecall
+objelonct AbusivelonHighReloncallRulelon
+    elonxtelonnds AuthorLabelonlAndNonFollowelonrVielonwelonrRulelon(
+      Drop(Unspeloncifielond),
+      AbusivelonHighReloncall
     )
 
-object CompromisedRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      Compromised
+objelonct CompromiselondRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      Compromiselond
     )
 
-object DuplicateContentRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DuplicateContent
+objelonct DuplicatelonContelonntRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      DuplicatelonContelonnt
     )
 
-object EngagementSpammerRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      EngagementSpammer
+objelonct elonngagelonmelonntSpammelonrRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      elonngagelonmelonntSpammelonr
     )
 
-object EngagementSpammerHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      EngagementSpammerHighRecall
+objelonct elonngagelonmelonntSpammelonrHighReloncallRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      elonngagelonmelonntSpammelonrHighReloncall
     )
 
-object LiveLowQualityRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      LiveLowQuality
+objelonct LivelonLowQualityRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      LivelonLowQuality
     )
 
-object LowQualityRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+objelonct LowQualityRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
       LowQuality
     )
 
-object LowQualityHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      LowQualityHighRecall
+objelonct LowQualityHighReloncallRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      LowQualityHighReloncall
     )
 
-object NotGraduatedRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NotGraduated
+objelonct NotGraduatelondRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      NotGraduatelond
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNotGraduatedDropRuleParam)
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonNotGraduatelondDropRulelonParam)
+  ovelonrridelon delonf holdbacks: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    NotGraduatelondUselonrLabelonlRulelonHoldbackelonxpelonrimelonntParam)
 
 }
 
-abstract class BaseNsfwHighPrecisionRule()
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      UserLabelValue.NsfwHighPrecision
+abstract class BaselonNsfwHighPreloncisionRulelon()
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      UselonrLabelonlValuelon.NsfwHighPreloncision
     )
-object NsfwHighPrecisionRule
-    extends BaseNsfwHighPrecisionRule()
+objelonct NsfwHighPreloncisionRulelon
+    elonxtelonnds BaselonNsfwHighPreloncisionRulelon()
 
-object NsfwHighRecallRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwHighRecall
-    )
-
-abstract class BaseNsfwNearPerfectAuthorRule()
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwNearPerfect
-    )
-object NsfwNearPerfectAuthorRule extends BaseNsfwNearPerfectAuthorRule()
-
-object NsfwAvatarImageRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwAvatarImage
+objelonct NsfwHighReloncallRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      NsfwHighReloncall
     )
 
-object NsfwBannerImageRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwBannerImage
+abstract class BaselonNsfwNelonarPelonrfelonctAuthorRulelon()
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      NsfwNelonarPelonrfelonct
+    )
+objelonct NsfwNelonarPelonrfelonctAuthorRulelon elonxtelonnds BaselonNsfwNelonarPelonrfelonctAuthorRulelon()
+
+objelonct NsfwAvatarImagelonRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      NsfwAvatarImagelon
     )
 
-object NsfwSensitiveRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwSensitive
+objelonct NsfwBannelonrImagelonRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      NsfwBannelonrImagelon
     )
 
-object ReadOnlyRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      ReadOnly
+objelonct NsfwSelonnsitivelonRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      NsfwSelonnsitivelon
     )
 
-object RecommendationsBlacklistRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      RecommendationsBlacklist
+objelonct RelonadOnlyRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      RelonadOnly
     )
 
-sealed abstract class BaseSpamHighRecallRule(val holdback: RuleParam[Boolean])
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      SpamHighRecall
+objelonct ReloncommelonndationsBlacklistRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      ReloncommelonndationsBlacklist
+    )
+
+selonalelond abstract class BaselonSpamHighReloncallRulelon(val holdback: RulelonParam[Boolelonan])
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      SpamHighReloncall
     ) {
-  override val holdbacks: Seq[RuleParam[Boolean]] = Seq(holdback)
+  ovelonrridelon val holdbacks: Selonq[RulelonParam[Boolelonan]] = Selonq(holdback)
 }
 
-object SpamHighRecallRule extends BaseSpamHighRecallRule(RuleParams.False)
+objelonct SpamHighReloncallRulelon elonxtelonnds BaselonSpamHighReloncallRulelon(RulelonParams.Falselon)
 
-object DeciderableSpamHighRecallRule extends BaseSpamHighRecallRule(RuleParams.False)
+objelonct DeloncidelonrablelonSpamHighReloncallRulelon elonxtelonnds BaselonSpamHighReloncallRulelon(RulelonParams.Falselon)
 
-object SearchBlacklistRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      SearchBlacklist
+objelonct SelonarchBlacklistRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      SelonarchBlacklist
     )
 
-object SearchNsfwTextRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwText
+objelonct SelonarchNsfwTelonxtRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      NsfwTelonxt
     ) {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonNsfwTelonxtSelonctioningRulelonParam)
 }
 
-object SpammyFollowerRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Unspecified),
+objelonct SpammyFollowelonrRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Unspeloncifielond),
       And(
         Or(
-          AuthorHasLabel(Compromised),
-          AuthorHasLabel(EngagementSpammer),
-          AuthorHasLabel(EngagementSpammerHighRecall),
-          AuthorHasLabel(LowQuality),
-          AuthorHasLabel(ReadOnly),
-          AuthorHasLabel(SpamHighRecall)
+          AuthorHasLabelonl(Compromiselond),
+          AuthorHasLabelonl(elonngagelonmelonntSpammelonr),
+          AuthorHasLabelonl(elonngagelonmelonntSpammelonrHighReloncall),
+          AuthorHasLabelonl(LowQuality),
+          AuthorHasLabelonl(RelonadOnly),
+          AuthorHasLabelonl(SpamHighReloncall)
         ),
         Or(
-          LoggedOutViewer,
+          LoggelondOutVielonwelonr,
           And(
-            NonAuthorViewer,
-            ViewerHasUqfEnabled,
+            NonAuthorVielonwelonr,
+            VielonwelonrHasUqfelonnablelond,
             Or(
               And(
-                ProtectedViewer,
-                LoggedOutOrViewerNotFollowingAuthor,
-                Not(AuthorDoesFollowViewer)
+                ProtelonctelondVielonwelonr,
+                LoggelondOutOrVielonwelonrNotFollowingAuthor,
+                Not(AuthorDoelonsFollowVielonwelonr)
               ),
-              And(Not(ProtectedViewer), LoggedOutOrViewerNotFollowingAuthor)
+              And(Not(ProtelonctelondVielonwelonr), LoggelondOutOrVielonwelonrNotFollowingAuthor)
             )
           )
         )
       )
     )
 
-abstract class NonFollowerWithUqfUserLabelDropRule(labelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(
-      Drop(Unspecified),
+abstract class NonFollowelonrWithUqfUselonrLabelonlDropRulelon(labelonlValuelon: UselonrLabelonlValuelon)
+    elonxtelonnds ConditionWithUselonrLabelonlRulelon(
+      Drop(Unspeloncifielond),
       And(
         Or(
-          LoggedOutViewer,
-          And(Not(ViewerDoesFollowAuthor), ViewerHasUqfEnabled)
+          LoggelondOutVielonwelonr,
+          And(Not(VielonwelonrDoelonsFollowAuthor), VielonwelonrHasUqfelonnablelond)
         )
       ),
-      labelValue
+      labelonlValuelon
     )
 
-object EngagementSpammerNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      EngagementSpammer
+objelonct elonngagelonmelonntSpammelonrNonFollowelonrWithUqfRulelon
+    elonxtelonnds NonFollowelonrWithUqfUselonrLabelonlDropRulelon(
+      elonngagelonmelonntSpammelonr
     )
 
-object EngagementSpammerHighRecallNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      EngagementSpammerHighRecall
+objelonct elonngagelonmelonntSpammelonrHighReloncallNonFollowelonrWithUqfRulelon
+    elonxtelonnds NonFollowelonrWithUqfUselonrLabelonlDropRulelon(
+      elonngagelonmelonntSpammelonrHighReloncall
     )
 
-object SpamHighRecallNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      SpamHighRecall
+objelonct SpamHighReloncallNonFollowelonrWithUqfRulelon
+    elonxtelonnds NonFollowelonrWithUqfUselonrLabelonlDropRulelon(
+      SpamHighReloncall
     )
 
-object CompromisedNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      Compromised
+objelonct CompromiselondNonFollowelonrWithUqfRulelon
+    elonxtelonnds NonFollowelonrWithUqfUselonrLabelonlDropRulelon(
+      Compromiselond
     )
 
-object ReadOnlyNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
-      ReadOnly
+objelonct RelonadOnlyNonFollowelonrWithUqfRulelon
+    elonxtelonnds NonFollowelonrWithUqfUselonrLabelonlDropRulelon(
+      RelonadOnly
     )
 
-object LowQualityNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(
+objelonct LowQualityNonFollowelonrWithUqfRulelon
+    elonxtelonnds NonFollowelonrWithUqfUselonrLabelonlDropRulelon(
       LowQuality
     )
 
-object TsViolationRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
+objelonct TsViolationRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
       TsViolation
     )
 
-object DownrankSpamReplyAllViewersRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DownrankSpamReply
+objelonct DownrankSpamRelonplyAllVielonwelonrsRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      DownrankSpamRelonply
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonDownrankSpamRelonplySelonctioningRulelonParam)
 }
 
-object DownrankSpamReplyNonAuthorRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DownrankSpamReply
+objelonct DownrankSpamRelonplyNonAuthorRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      DownrankSpamRelonply
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonDownrankSpamRelonplySelonctioningRulelonParam)
 }
 
-object DownrankSpamReplyNonFollowerWithUqfRule
-    extends NonFollowerWithUqfUserLabelDropRule(DownrankSpamReply) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+objelonct DownrankSpamRelonplyNonFollowelonrWithUqfRulelon
+    elonxtelonnds NonFollowelonrWithUqfUselonrLabelonlDropRulelon(DownrankSpamRelonply) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonDownrankSpamRelonplySelonctioningRulelonParam)
 }
 
-object NsfwTextAllUsersDropRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      NsfwText
+objelonct NsfwTelonxtAllUselonrsDropRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      NsfwTelonxt
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonNsfwTelonxtSelonctioningRulelonParam)
 }
 
-object NsfwTextNonAuthorDropRule
-    extends WhenAuthorUserLabelPresentRule(
-      Drop(Unspecified),
-      DownrankSpamReply
+objelonct NsfwTelonxtNonAuthorDropRulelon
+    elonxtelonnds WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(
+      Drop(Unspeloncifielond),
+      DownrankSpamRelonply
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNsfwTextSectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonNsfwTelonxtSelonctioningRulelonParam)
 }
 
-abstract class DeciderableSpamHighRecallAuthorLabelRule(action: Action)
-    extends RuleWithConstantAction(
+abstract class DeloncidelonrablelonSpamHighReloncallAuthorLabelonlRulelon(action: Action)
+    elonxtelonnds RulelonWithConstantAction(
       action,
       And(
-        NonAuthorViewer,
-        SelfReply,
-        AuthorHasLabel(SpamHighRecall, shortCircuitable = false)
+        NonAuthorVielonwelonr,
+        SelonlfRelonply,
+        AuthorHasLabelonl(SpamHighReloncall, shortCircuitablelon = falselon)
       )
     ) {
-  override def preFilter(
-    evaluationContext: EvaluationContext,
-    featureMap: Map[Feature[_], Any],
-    abDecider: LoggingABDecider
-  ): PreFilterResult = {
-    Filtered
+  ovelonrridelon delonf prelonFiltelonr(
+    elonvaluationContelonxt: elonvaluationContelonxt,
+    felonaturelonMap: Map[Felonaturelon[_], Any],
+    abDeloncidelonr: LoggingABDeloncidelonr
+  ): PrelonFiltelonrRelonsult = {
+    Filtelonrelond
   }
 }
 
-object DeciderableSpamHighRecallAuthorLabelDropRule
-    extends DeciderableSpamHighRecallAuthorLabelRule(Drop(Unspecified))
+objelonct DeloncidelonrablelonSpamHighReloncallAuthorLabelonlDropRulelon
+    elonxtelonnds DeloncidelonrablelonSpamHighReloncallAuthorLabelonlRulelon(Drop(Unspeloncifielond))
 
-object DeciderableSpamHighRecallAuthorLabelTombstoneRule
-    extends DeciderableSpamHighRecallAuthorLabelRule(Tombstone(Epitaph.Unavailable))
+objelonct DeloncidelonrablelonSpamHighReloncallAuthorLabelonlTombstonelonRulelon
+    elonxtelonnds DeloncidelonrablelonSpamHighReloncallAuthorLabelonlRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-object DoNotAmplifyNonFollowerRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
+objelonct DoNotAmplifyNonFollowelonrRulelon
+    elonxtelonnds AuthorLabelonlAndNonFollowelonrVielonwelonrRulelon(
+      Drop(Unspeloncifielond),
       DoNotAmplify
     )
 
-object NotGraduatedNonFollowerRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      NotGraduated
+objelonct NotGraduatelondNonFollowelonrRulelon
+    elonxtelonnds AuthorLabelonlAndNonFollowelonrVielonwelonrRulelon(
+      Drop(Unspeloncifielond),
+      NotGraduatelond
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNotGraduatedDropRuleParam)
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonNotGraduatelondDropRulelonParam)
+  ovelonrridelon delonf holdbacks: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    NotGraduatelondUselonrLabelonlRulelonHoldbackelonxpelonrimelonntParam)
 
 }
 
-object DoNotAmplifySectionUserRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
+objelonct DoNotAmplifySelonctionUselonrRulelon
+    elonxtelonnds AuthorLabelonlWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionAbusivelonQuality,
       DoNotAmplify)
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(DoNotAmplify))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    UselonrSafelontyLabelonlSourcelonBuildelonr(DoNotAmplify))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }
 
 
-object SpammyUserModelHighPrecisionDropTweetRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      SpammyUserModelHighPrecision,
+objelonct SpammyUselonrModelonlHighPreloncisionDropTwelonelontRulelon
+    elonxtelonnds AuthorLabelonlAndNonFollowelonrVielonwelonrRulelon(
+      Drop(Unspeloncifielond),
+      SpammyUselonrModelonlHighPreloncision,
     )
-    with DoesLogVerdictDecidered {
-  override def isEnabled(params: Params): Boolean =
-    params(EnableSpammyUserModelTweetDropRuleParam)
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf iselonnablelond(params: Params): Boolelonan =
+    params(elonnablelonSpammyUselonrModelonlTwelonelontDropRulelonParam)
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony: DeloncidelonrKelony.Valuelon =
+    DeloncidelonrKelony.elonnablelonSpammyTwelonelontRulelonVelonrdictLogging
 }
 
-object LikelyIvsLabelNonFollowerDropUserRule extends LikelyIvsLabelNonFollowerDropRule
+objelonct LikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon elonxtelonnds LikelonlyIvsLabelonlNonFollowelonrDropRulelon
 
-object SearchLikelyIvsLabelNonFollowerDropUserRule extends LikelyIvsLabelNonFollowerDropRule
+objelonct SelonarchLikelonlyIvsLabelonlNonFollowelonrDropUselonrRulelon elonxtelonnds LikelonlyIvsLabelonlNonFollowelonrDropRulelon
 
-object NsfwHighPrecisionUserLabelAvoidTweetRule
-    extends UserHasLabelRule(
+objelonct NsfwHighPreloncisionUselonrLabelonlAvoidTwelonelontRulelon
+    elonxtelonnds UselonrHasLabelonlRulelon(
       Avoid(),
-      UserLabelValue.NsfwHighPrecision
+      UselonrLabelonlValuelon.NsfwHighPreloncision
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    NsfwHighPreloncisionUselonrLabelonlAvoidTwelonelontRulelonelonnablelondParam)
 }

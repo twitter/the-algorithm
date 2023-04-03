@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.twelonelont
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref.ContextualTweetRefMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.conversation_annotation.ConversationAnnotationMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.forward_pivot.ForwardPivotMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone.TombstoneInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PrerollMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.BadgeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.graphql.contelonxtual_relonf.ContelonxtualTwelonelontRelonfMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.convelonrsation_annotation.ConvelonrsationAnnotationMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.forward_pivot.ForwardPivotMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.tombstonelon.TombstonelonInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.SocialContelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond.PrelonrollMelontadataMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond.PromotelondMelontadataMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.BadgelonMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TweetItemMarshaller @Inject() (
-  tweetDisplayTypeMarshaller: TweetDisplayTypeMarshaller,
-  socialContextMarshaller: SocialContextMarshaller,
-  tweetHighlightsMarshaller: TweetHighlightsMarshaller,
-  tombstoneInfoMarshaller: TombstoneInfoMarshaller,
-  timelinesScoreInfoMarshaller: TimelinesScoreInfoMarshaller,
-  forwardPivotMarshaller: ForwardPivotMarshaller,
-  promotedMetadataMarshaller: PromotedMetadataMarshaller,
-  conversationAnnotationMarshaller: ConversationAnnotationMarshaller,
-  contextualTweetRefMarshaller: ContextualTweetRefMarshaller,
-  prerollMetadataMarshaller: PrerollMetadataMarshaller,
-  badgeMarshaller: BadgeMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class TwelonelontItelonmMarshallelonr @Injelonct() (
+  twelonelontDisplayTypelonMarshallelonr: TwelonelontDisplayTypelonMarshallelonr,
+  socialContelonxtMarshallelonr: SocialContelonxtMarshallelonr,
+  twelonelontHighlightsMarshallelonr: TwelonelontHighlightsMarshallelonr,
+  tombstonelonInfoMarshallelonr: TombstonelonInfoMarshallelonr,
+  timelonlinelonsScorelonInfoMarshallelonr: TimelonlinelonsScorelonInfoMarshallelonr,
+  forwardPivotMarshallelonr: ForwardPivotMarshallelonr,
+  promotelondMelontadataMarshallelonr: PromotelondMelontadataMarshallelonr,
+  convelonrsationAnnotationMarshallelonr: ConvelonrsationAnnotationMarshallelonr,
+  contelonxtualTwelonelontRelonfMarshallelonr: ContelonxtualTwelonelontRelonfMarshallelonr,
+  prelonrollMelontadataMarshallelonr: PrelonrollMelontadataMarshallelonr,
+  badgelonMarshallelonr: BadgelonMarshallelonr,
+  urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(tweetItem: TweetItem): urt.TimelineItemContent.Tweet = urt.TimelineItemContent.Tweet(
-    urt.Tweet(
-      id = tweetItem.id,
-      displayType = tweetDisplayTypeMarshaller(tweetItem.displayType),
-      socialContext = tweetItem.socialContext.map(socialContextMarshaller(_)),
-      highlights = tweetItem.highlights.map(tweetHighlightsMarshaller(_)),
-      innerTombstoneInfo = tweetItem.innerTombstoneInfo.map(tombstoneInfoMarshaller(_)),
-      timelinesScoreInfo = tweetItem.timelinesScoreInfo.map(timelinesScoreInfoMarshaller(_)),
-      hasModeratedReplies = tweetItem.hasModeratedReplies,
-      forwardPivot = tweetItem.forwardPivot.map(forwardPivotMarshaller(_)),
-      innerForwardPivot = tweetItem.innerForwardPivot.map(forwardPivotMarshaller(_)),
-      promotedMetadata = tweetItem.promotedMetadata.map(promotedMetadataMarshaller(_)),
-      conversationAnnotation =
-        tweetItem.conversationAnnotation.map(conversationAnnotationMarshaller(_)),
-      contextualTweetRef = tweetItem.contextualTweetRef.map(contextualTweetRefMarshaller(_)),
-      prerollMetadata = tweetItem.prerollMetadata.map(prerollMetadataMarshaller(_)),
-      replyBadge = tweetItem.replyBadge.map(badgeMarshaller(_)),
-      destination = tweetItem.destination.map(urlMarshaller(_))
+  delonf apply(twelonelontItelonm: TwelonelontItelonm): urt.TimelonlinelonItelonmContelonnt.Twelonelont = urt.TimelonlinelonItelonmContelonnt.Twelonelont(
+    urt.Twelonelont(
+      id = twelonelontItelonm.id,
+      displayTypelon = twelonelontDisplayTypelonMarshallelonr(twelonelontItelonm.displayTypelon),
+      socialContelonxt = twelonelontItelonm.socialContelonxt.map(socialContelonxtMarshallelonr(_)),
+      highlights = twelonelontItelonm.highlights.map(twelonelontHighlightsMarshallelonr(_)),
+      innelonrTombstonelonInfo = twelonelontItelonm.innelonrTombstonelonInfo.map(tombstonelonInfoMarshallelonr(_)),
+      timelonlinelonsScorelonInfo = twelonelontItelonm.timelonlinelonsScorelonInfo.map(timelonlinelonsScorelonInfoMarshallelonr(_)),
+      hasModelonratelondRelonplielons = twelonelontItelonm.hasModelonratelondRelonplielons,
+      forwardPivot = twelonelontItelonm.forwardPivot.map(forwardPivotMarshallelonr(_)),
+      innelonrForwardPivot = twelonelontItelonm.innelonrForwardPivot.map(forwardPivotMarshallelonr(_)),
+      promotelondMelontadata = twelonelontItelonm.promotelondMelontadata.map(promotelondMelontadataMarshallelonr(_)),
+      convelonrsationAnnotation =
+        twelonelontItelonm.convelonrsationAnnotation.map(convelonrsationAnnotationMarshallelonr(_)),
+      contelonxtualTwelonelontRelonf = twelonelontItelonm.contelonxtualTwelonelontRelonf.map(contelonxtualTwelonelontRelonfMarshallelonr(_)),
+      prelonrollMelontadata = twelonelontItelonm.prelonrollMelontadata.map(prelonrollMelontadataMarshallelonr(_)),
+      relonplyBadgelon = twelonelontItelonm.relonplyBadgelon.map(badgelonMarshallelonr(_)),
+      delonstination = twelonelontItelonm.delonstination.map(urlMarshallelonr(_))
     )
   )
 }

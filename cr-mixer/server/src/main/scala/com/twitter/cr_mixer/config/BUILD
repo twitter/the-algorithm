@@ -1,13 +1,13 @@
 scala_library(
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "configapi/configapi-core",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/exception",
-        "cr-mixer/server/src/main/scala/com/twitter/cr_mixer/param",
-        "finatra/inject/inject-core/src/main/scala",
-        "simclusters-ann/thrift/src/main/thrift:thrift-scala",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    sourcelons = ["*.scala"],
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/javax/injelonct:javax.injelonct",
+        "configapi/configapi-corelon",
+        "cr-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/cr_mixelonr/elonxcelonption",
+        "cr-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/cr_mixelonr/param",
+        "finatra/injelonct/injelonct-corelon/src/main/scala",
+        "simclustelonrs-ann/thrift/src/main/thrift:thrift-scala",
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )

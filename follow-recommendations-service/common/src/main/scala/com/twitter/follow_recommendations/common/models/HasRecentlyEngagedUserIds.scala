@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasRecentlyEngagedUserIds {
-  val recentlyEngagedUserIds: Option[Seq[RecentlyEngagedUserId]]
+trait HasReloncelonntlyelonngagelondUselonrIds {
+  val reloncelonntlyelonngagelondUselonrIds: Option[Selonq[ReloncelonntlyelonngagelondUselonrId]]
 }

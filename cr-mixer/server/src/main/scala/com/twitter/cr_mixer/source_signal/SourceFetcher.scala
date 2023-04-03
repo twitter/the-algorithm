@@ -1,101 +1,101 @@
-package com.twitter.cr_mixer.source_signal
+packagelon com.twittelonr.cr_mixelonr.sourcelon_signal
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.timelines.configapi.Params
-import com.twitter.cr_mixer.thriftscala.{Product => TProduct}
-import com.twitter.finagle.GlobalRequestTimeoutException
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.mux.ServerApplicationError
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
-import org.apache.thrift.TApplicationException
-import com.twitter.util.logging.Logging
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.sourcelon_signal.SourcelonFelontchelonr.FelontchelonrQuelonry
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.cr_mixelonr.thriftscala.{Product => TProduct}
+import com.twittelonr.finaglelon.GlobalRelonquelonstTimelonoutelonxcelonption
+import com.twittelonr.finaglelon.mux.ClielonntDiscardelondRelonquelonstelonxcelonption
+import com.twittelonr.finaglelon.mux.SelonrvelonrApplicationelonrror
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelonoutelonxcelonption
+import org.apachelon.thrift.TApplicationelonxcelonption
+import com.twittelonr.util.logging.Logging
 
 /**
- * A SourceFetcher is a trait which, given a [[FetcherQuery]], returns [[ResultType]]
- * The main purposes of a SourceFetcher is to provide a consistent interface for source fetch
- * logic, and provides default functions, including:
- * - Identification
- * - Observability
- * - Timeout settings
- * - Exception Handling
+ * A SourcelonFelontchelonr is a trait which, givelonn a [[FelontchelonrQuelonry]], relonturns [[RelonsultTypelon]]
+ * Thelon main purposelons of a SourcelonFelontchelonr is to providelon a consistelonnt intelonrfacelon for sourcelon felontch
+ * logic, and providelons delonfault functions, including:
+ * - Idelonntification
+ * - Obselonrvability
+ * - Timelonout selonttings
+ * - elonxcelonption Handling
  */
-trait SourceFetcher[ResultType] extends ReadableStore[FetcherQuery, ResultType] with Logging {
+trait SourcelonFelontchelonr[RelonsultTypelon] elonxtelonnds RelonadablelonStorelon[FelontchelonrQuelonry, RelonsultTypelon] with Logging {
 
-  protected final val timer = com.twitter.finagle.util.DefaultTimer
-  protected final def identifier: String = this.getClass.getSimpleName
-  protected def stats: StatsReceiver
-  protected def timeoutConfig: TimeoutConfig
-
-  /***
-   * Use FeatureSwitch to decide if a specific source is enabled.
-   */
-  def isEnabled(query: FetcherQuery): Boolean
+  protelonctelond final val timelonr = com.twittelonr.finaglelon.util.DelonfaultTimelonr
+  protelonctelond final delonf idelonntifielonr: String = this.gelontClass.gelontSimplelonNamelon
+  protelonctelond delonf stats: StatsReloncelonivelonr
+  protelonctelond delonf timelonoutConfig: TimelonoutConfig
 
   /***
-   * This function fetches the raw sources and process them.
-   * Custom stats tracking can be added depending on the type of ResultType
+   * Uselon FelonaturelonSwitch to deloncidelon if a speloncific sourcelon is elonnablelond.
    */
-  def fetchAndProcess(
-    query: FetcherQuery,
-  ): Future[Option[ResultType]]
+  delonf iselonnablelond(quelonry: FelontchelonrQuelonry): Boolelonan
 
   /***
-   * Side-effect function to track stats for signal fetching and processing.
+   * This function felontchelons thelon raw sourcelons and procelonss thelonm.
+   * Custom stats tracking can belon addelond delonpelonnding on thelon typelon of RelonsultTypelon
    */
-  def trackStats(
-    query: FetcherQuery
+  delonf felontchAndProcelonss(
+    quelonry: FelontchelonrQuelonry,
+  ): Futurelon[Option[RelonsultTypelon]]
+
+  /***
+   * Sidelon-elonffelonct function to track stats for signal felontching and procelonssing.
+   */
+  delonf trackStats(
+    quelonry: FelontchelonrQuelonry
   )(
-    func: => Future[Option[ResultType]]
-  ): Future[Option[ResultType]]
+    func: => Futurelon[Option[RelonsultTypelon]]
+  ): Futurelon[Option[RelonsultTypelon]]
 
   /***
-   * This function is called by the top level class to fetch sources. It executes the pipeline to
-   * fetch raw data, process and transform the sources. Exceptions, Stats, and timeout control are
-   * handled here.
+   * This function is callelond by thelon top lelonvelonl class to felontch sourcelons. It elonxeloncutelons thelon pipelonlinelon to
+   * felontch raw data, procelonss and transform thelon sourcelons. elonxcelonptions, Stats, and timelonout control arelon
+   * handlelond helonrelon.
    */
-  override def get(
-    query: FetcherQuery
-  ): Future[Option[ResultType]] = {
-    val scopedStats = stats.scope(query.product.originalName)
-    if (isEnabled(query)) {
-      scopedStats.counter("gate_enabled").incr()
-      trackStats(query)(fetchAndProcess(query))
-        .raiseWithin(timeoutConfig.signalFetchTimeout)(timer)
-        .onFailure { e =>
-          scopedStats.scope("exceptions").counter(e.getClass.getSimpleName).incr()
+  ovelonrridelon delonf gelont(
+    quelonry: FelontchelonrQuelonry
+  ): Futurelon[Option[RelonsultTypelon]] = {
+    val scopelondStats = stats.scopelon(quelonry.product.originalNamelon)
+    if (iselonnablelond(quelonry)) {
+      scopelondStats.countelonr("gatelon_elonnablelond").incr()
+      trackStats(quelonry)(felontchAndProcelonss(quelonry))
+        .raiselonWithin(timelonoutConfig.signalFelontchTimelonout)(timelonr)
+        .onFailurelon { elon =>
+          scopelondStats.scopelon("elonxcelonptions").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
         }
-        .rescue {
-          case _: TimeoutException | _: GlobalRequestTimeoutException | _: TApplicationException |
-              _: ClientDiscardedRequestException |
-              _: ServerApplicationError // TApplicationException inside
+        .relonscuelon {
+          caselon _: Timelonoutelonxcelonption | _: GlobalRelonquelonstTimelonoutelonxcelonption | _: TApplicationelonxcelonption |
+              _: ClielonntDiscardelondRelonquelonstelonxcelonption |
+              _: SelonrvelonrApplicationelonrror // TApplicationelonxcelonption insidelon
               =>
-            Future.None
-          case e =>
-            logger.info(e)
-            Future.None
+            Futurelon.Nonelon
+          caselon elon =>
+            loggelonr.info(elon)
+            Futurelon.Nonelon
         }
-    } else {
-      scopedStats.counter("gate_disabled").incr()
-      Future.None
+    } elonlselon {
+      scopelondStats.countelonr("gatelon_disablelond").incr()
+      Futurelon.Nonelon
     }
   }
 }
 
-object SourceFetcher {
+objelonct SourcelonFelontchelonr {
 
   /***
-   * Every SourceFetcher all share the same input: FetcherQuery
+   * elonvelonry SourcelonFelontchelonr all sharelon thelon samelon input: FelontchelonrQuelonry
    */
-  case class FetcherQuery(
-    userId: UserId,
+  caselon class FelontchelonrQuelonry(
+    uselonrId: UselonrId,
     product: TProduct,
-    userState: UserState,
+    uselonrStatelon: UselonrStatelon,
     params: Params)
 
 }

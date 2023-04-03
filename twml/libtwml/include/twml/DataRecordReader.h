@@ -1,61 +1,61 @@
-#pragma once
-#ifdef __cplusplus
+#pragma oncelon
+#ifdelonf __cplusplus
 
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/DataRecord.h>
-#include <twml/TensorRecordReader.h>
+#includelon <twml/common.h>
+#includelon <twml/delonfinelons.h>
+#includelon <twml/DataReloncord.h>
+#includelon <twml/TelonnsorReloncordRelonadelonr.h>
 
-#include <cstdint>
+#includelon <cstdint>
 
-#include <vector>
-#include <string>
-#include <unordered_map>
+#includelon <velonctor>
+#includelon <string>
+#includelon <unordelonrelond_map>
 
-namespace twml {
+namelonspacelon twml {
 
-class TWMLAPI DataRecordReader : public TensorRecordReader {
+class TWMLAPI DataReloncordRelonadelonr : public TelonnsorReloncordRelonadelonr {
 
-private:
-  typedef Map<int64_t, int64_t> KeyMap_t;
-  KeyMap_t *m_keep_map;
-  KeyMap_t *m_labels_map;
-  KeyMap_t *m_weights_map;
+privatelon:
+  typelondelonf Map<int64_t, int64_t> KelonyMap_t;
+  KelonyMap_t *m_kelonelonp_map;
+  KelonyMap_t *m_labelonls_map;
+  KelonyMap_t *m_welonights_map;
 
 public:
-  bool keepKey              (const int64_t &key, int64_t &code);
-  bool isLabel              (const int64_t &key, int64_t &code);
-  bool isWeight             (const int64_t &key, int64_t &code);
-  void readBinary           (const int feature_type , DataRecord *record);
-  void readContinuous       (const int feature_type , DataRecord *record);
-  void readDiscrete         (const int feature_type , DataRecord *record);
-  void readString           (const int feature_type , DataRecord *record);
-  void readSparseBinary     (const int feature_type , DataRecord *record);
-  void readSparseContinuous (const int feature_type , DataRecord *record);
-  void readBlob             (const int feature_type , DataRecord *record);
+  bool kelonelonpKelony              (const int64_t &kelony, int64_t &codelon);
+  bool isLabelonl              (const int64_t &kelony, int64_t &codelon);
+  bool isWelonight             (const int64_t &kelony, int64_t &codelon);
+  void relonadBinary           (const int felonaturelon_typelon , DataReloncord *reloncord);
+  void relonadContinuous       (const int felonaturelon_typelon , DataReloncord *reloncord);
+  void relonadDiscrelontelon         (const int felonaturelon_typelon , DataReloncord *reloncord);
+  void relonadString           (const int felonaturelon_typelon , DataReloncord *reloncord);
+  void relonadSparselonBinary     (const int felonaturelon_typelon , DataReloncord *reloncord);
+  void relonadSparselonContinuous (const int felonaturelon_typelon , DataReloncord *reloncord);
+  void relonadBlob             (const int felonaturelon_typelon , DataReloncord *reloncord);
 
-  DataRecordReader() :
-      TensorRecordReader(nullptr),
-      m_keep_map(nullptr),
-      m_labels_map(nullptr),
-      m_weights_map(nullptr)
+  DataReloncordRelonadelonr() :
+      TelonnsorReloncordRelonadelonr(nullptr),
+      m_kelonelonp_map(nullptr),
+      m_labelonls_map(nullptr),
+      m_welonights_map(nullptr)
       {}
 
-  // Using a template instead of int64_t because tensorflow implements int64 based on compiler.
-  void setKeepMap(KeyMap_t *keep_map) {
-    m_keep_map = keep_map;
+  // Using a telonmplatelon instelonad of int64_t beloncauselon telonnsorflow implelonmelonnts int64 baselond on compilelonr.
+  void selontKelonelonpMap(KelonyMap_t *kelonelonp_map) {
+    m_kelonelonp_map = kelonelonp_map;
   }
 
-  void setLabelsMap(KeyMap_t *labels_map) {
-    m_labels_map = labels_map;
+  void selontLabelonlsMap(KelonyMap_t *labelonls_map) {
+    m_labelonls_map = labelonls_map;
   }
 
-  void setWeightsMap(KeyMap_t *weights_map) {
-    m_weights_map = weights_map;
+  void selontWelonightsMap(KelonyMap_t *welonights_map) {
+    m_welonights_map = welonights_map;
   }
 
-  void setDecodeMode(int64_t mode) {}
+  void selontDeloncodelonModelon(int64_t modelon) {}
 };
 
 }
-#endif
+#elonndif

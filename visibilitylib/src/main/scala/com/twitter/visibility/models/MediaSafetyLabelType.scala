@@ -1,89 +1,89 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.visibility.safety_label_store.{thriftscala => s}
-import com.twitter.visibility.util.NamingUtils
+import com.twittelonr.visibility.safelonty_labelonl_storelon.{thriftscala => s}
+import com.twittelonr.visibility.util.NamingUtils
 
-sealed trait MediaSafetyLabelType extends SafetyLabelType {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+selonalelond trait MelondiaSafelontyLabelonlTypelon elonxtelonnds SafelontyLabelonlTypelon {
+  lazy val namelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
 }
 
-object MediaSafetyLabelType extends SafetyLabelType {
+objelonct MelondiaSafelontyLabelonlTypelon elonxtelonnds SafelontyLabelonlTypelon {
 
-  val List: List[MediaSafetyLabelType] = s.MediaSafetyLabelType.list.map(fromThrift)
+  val List: List[MelondiaSafelontyLabelonlTypelon] = s.MelondiaSafelontyLabelonlTypelon.list.map(fromThrift)
 
-  val ActiveLabels: List[MediaSafetyLabelType] = List.filter { labelType =>
-    labelType != Unknown && labelType != Deprecated
+  val ActivelonLabelonls: List[MelondiaSafelontyLabelonlTypelon] = List.filtelonr { labelonlTypelon =>
+    labelonlTypelon != Unknown && labelonlTypelon != Delonpreloncatelond
   }
 
-  private lazy val nameToValueMap: Map[String, MediaSafetyLabelType] =
-    List.map(l => l.name.toLowerCase -> l).toMap
-  def fromName(name: String): Option[MediaSafetyLabelType] = nameToValueMap.get(name.toLowerCase)
+  privatelon lazy val namelonToValuelonMap: Map[String, MelondiaSafelontyLabelonlTypelon] =
+    List.map(l => l.namelon.toLowelonrCaselon -> l).toMap
+  delonf fromNamelon(namelon: String): Option[MelondiaSafelontyLabelonlTypelon] = namelonToValuelonMap.gelont(namelon.toLowelonrCaselon)
 
-  private val UnknownThriftSafetyLabelType =
-    s.MediaSafetyLabelType.EnumUnknownMediaSafetyLabelType(UnknownEnumValue)
+  privatelon val UnknownThriftSafelontyLabelonlTypelon =
+    s.MelondiaSafelontyLabelonlTypelon.elonnumUnknownMelondiaSafelontyLabelonlTypelon(UnknownelonnumValuelon)
 
-  private lazy val thriftToModelMap: Map[s.MediaSafetyLabelType, MediaSafetyLabelType] = Map(
-    s.MediaSafetyLabelType.NsfwHighPrecision -> NsfwHighPrecision,
-    s.MediaSafetyLabelType.NsfwHighRecall -> NsfwHighRecall,
-    s.MediaSafetyLabelType.NsfwNearPerfect -> NsfwNearPerfect,
-    s.MediaSafetyLabelType.NsfwCardImage -> NsfwCardImage,
-    s.MediaSafetyLabelType.Pdna -> Pdna,
-    s.MediaSafetyLabelType.PdnaNoTreatmentIfVerified -> PdnaNoTreatmentIfVerified,
-    s.MediaSafetyLabelType.DmcaWithheld -> DmcaWithheld,
-    s.MediaSafetyLabelType.LegalDemandsWithheld -> LegalDemandsWithheld,
-    s.MediaSafetyLabelType.LocalLawsWithheld -> LocalLawsWithheld,
-    s.MediaSafetyLabelType.Reserved10 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved11 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved12 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved13 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved14 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved15 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved16 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved17 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved18 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved19 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved20 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved21 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved22 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved23 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved24 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved25 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved26 -> Deprecated,
-    s.MediaSafetyLabelType.Reserved27 -> Deprecated,
+  privatelon lazy val thriftToModelonlMap: Map[s.MelondiaSafelontyLabelonlTypelon, MelondiaSafelontyLabelonlTypelon] = Map(
+    s.MelondiaSafelontyLabelonlTypelon.NsfwHighPreloncision -> NsfwHighPreloncision,
+    s.MelondiaSafelontyLabelonlTypelon.NsfwHighReloncall -> NsfwHighReloncall,
+    s.MelondiaSafelontyLabelonlTypelon.NsfwNelonarPelonrfelonct -> NsfwNelonarPelonrfelonct,
+    s.MelondiaSafelontyLabelonlTypelon.NsfwCardImagelon -> NsfwCardImagelon,
+    s.MelondiaSafelontyLabelonlTypelon.Pdna -> Pdna,
+    s.MelondiaSafelontyLabelonlTypelon.PdnaNoTrelonatmelonntIfVelonrifielond -> PdnaNoTrelonatmelonntIfVelonrifielond,
+    s.MelondiaSafelontyLabelonlTypelon.DmcaWithhelonld -> DmcaWithhelonld,
+    s.MelondiaSafelontyLabelonlTypelon.LelongalDelonmandsWithhelonld -> LelongalDelonmandsWithhelonld,
+    s.MelondiaSafelontyLabelonlTypelon.LocalLawsWithhelonld -> LocalLawsWithhelonld,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond10 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond11 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond12 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond13 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond14 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond15 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond16 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond17 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond18 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond19 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond20 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond21 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond22 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond23 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond24 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond25 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond26 -> Delonpreloncatelond,
+    s.MelondiaSafelontyLabelonlTypelon.Relonselonrvelond27 -> Delonpreloncatelond,
   )
 
-  private lazy val modelToThriftMap: Map[MediaSafetyLabelType, s.MediaSafetyLabelType] =
-    (for ((k, v) <- thriftToModelMap) yield (v, k)) ++ Map(
-      Deprecated -> s.MediaSafetyLabelType.EnumUnknownMediaSafetyLabelType(DeprecatedEnumValue),
+  privatelon lazy val modelonlToThriftMap: Map[MelondiaSafelontyLabelonlTypelon, s.MelondiaSafelontyLabelonlTypelon] =
+    (for ((k, v) <- thriftToModelonlMap) yielonld (v, k)) ++ Map(
+      Delonpreloncatelond -> s.MelondiaSafelontyLabelonlTypelon.elonnumUnknownMelondiaSafelontyLabelonlTypelon(DelonpreloncatelondelonnumValuelon),
     )
 
-  case object NsfwHighPrecision extends MediaSafetyLabelType
-  case object NsfwHighRecall extends MediaSafetyLabelType
-  case object NsfwNearPerfect extends MediaSafetyLabelType
-  case object NsfwCardImage extends MediaSafetyLabelType
-  case object Pdna extends MediaSafetyLabelType
-  case object PdnaNoTreatmentIfVerified extends MediaSafetyLabelType
-  case object DmcaWithheld extends MediaSafetyLabelType
-  case object LegalDemandsWithheld extends MediaSafetyLabelType
-  case object LocalLawsWithheld extends MediaSafetyLabelType
+  caselon objelonct NsfwHighPreloncision elonxtelonnds MelondiaSafelontyLabelonlTypelon
+  caselon objelonct NsfwHighReloncall elonxtelonnds MelondiaSafelontyLabelonlTypelon
+  caselon objelonct NsfwNelonarPelonrfelonct elonxtelonnds MelondiaSafelontyLabelonlTypelon
+  caselon objelonct NsfwCardImagelon elonxtelonnds MelondiaSafelontyLabelonlTypelon
+  caselon objelonct Pdna elonxtelonnds MelondiaSafelontyLabelonlTypelon
+  caselon objelonct PdnaNoTrelonatmelonntIfVelonrifielond elonxtelonnds MelondiaSafelontyLabelonlTypelon
+  caselon objelonct DmcaWithhelonld elonxtelonnds MelondiaSafelontyLabelonlTypelon
+  caselon objelonct LelongalDelonmandsWithhelonld elonxtelonnds MelondiaSafelontyLabelonlTypelon
+  caselon objelonct LocalLawsWithhelonld elonxtelonnds MelondiaSafelontyLabelonlTypelon
 
-  case object Deprecated extends MediaSafetyLabelType
-  case object Unknown extends MediaSafetyLabelType
+  caselon objelonct Delonpreloncatelond elonxtelonnds MelondiaSafelontyLabelonlTypelon
+  caselon objelonct Unknown elonxtelonnds MelondiaSafelontyLabelonlTypelon
 
-  def fromThrift(safetyLabelType: s.MediaSafetyLabelType): MediaSafetyLabelType =
-    thriftToModelMap.get(safetyLabelType) match {
-      case Some(mediaSafetyLabelType) => mediaSafetyLabelType
-      case _ =>
-        safetyLabelType match {
-          case s.MediaSafetyLabelType.EnumUnknownMediaSafetyLabelType(DeprecatedEnumValue) =>
-            Deprecated
-          case _ =>
+  delonf fromThrift(safelontyLabelonlTypelon: s.MelondiaSafelontyLabelonlTypelon): MelondiaSafelontyLabelonlTypelon =
+    thriftToModelonlMap.gelont(safelontyLabelonlTypelon) match {
+      caselon Somelon(melondiaSafelontyLabelonlTypelon) => melondiaSafelontyLabelonlTypelon
+      caselon _ =>
+        safelontyLabelonlTypelon match {
+          caselon s.MelondiaSafelontyLabelonlTypelon.elonnumUnknownMelondiaSafelontyLabelonlTypelon(DelonpreloncatelondelonnumValuelon) =>
+            Delonpreloncatelond
+          caselon _ =>
             Unknown
         }
     }
 
-  def toThrift(safetyLabelType: MediaSafetyLabelType): s.MediaSafetyLabelType = {
-    modelToThriftMap
-      .get(safetyLabelType).getOrElse(UnknownThriftSafetyLabelType)
+  delonf toThrift(safelontyLabelonlTypelon: MelondiaSafelontyLabelonlTypelon): s.MelondiaSafelontyLabelonlTypelon = {
+    modelonlToThriftMap
+      .gelont(safelontyLabelonlTypelon).gelontOrelonlselon(UnknownThriftSafelontyLabelonlTypelon)
   }
 }

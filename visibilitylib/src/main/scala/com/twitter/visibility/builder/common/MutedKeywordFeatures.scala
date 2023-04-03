@@ -1,224 +1,224 @@
-package com.twitter.visibility.builder.common
+packagelon com.twittelonr.visibility.buildelonr.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.MuteOption
-import com.twitter.gizmoduck.thriftscala.MuteSurface
-import com.twitter.gizmoduck.thriftscala.{MutedKeyword => GdMutedKeyword}
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common._
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.{MutedKeyword => VfMutedKeyword}
-import java.util.Locale
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.MutelonOption
+import com.twittelonr.gizmoduck.thriftscala.MutelonSurfacelon
+import com.twittelonr.gizmoduck.thriftscala.{MutelondKelonyword => GdMutelondKelonyword}
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common._
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.modelonls.{MutelondKelonyword => VfMutelondKelonyword}
+import java.util.Localelon
 
-class MutedKeywordFeatures(
-  userSource: UserSource,
-  userRelationshipSource: UserRelationshipSource,
-  keywordMatcher: KeywordMatcher.Matcher = KeywordMatcher.TestMatcher,
-  statsReceiver: StatsReceiver,
-  enableFollowCheckInMutedKeyword: Gate[Unit] = Gate.False) {
+class MutelondKelonywordFelonaturelons(
+  uselonrSourcelon: UselonrSourcelon,
+  uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon,
+  kelonywordMatchelonr: KelonywordMatchelonr.Matchelonr = KelonywordMatchelonr.TelonstMatchelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  elonnablelonFollowChelonckInMutelondKelonyword: Gatelon[Unit] = Gatelon.Falselon) {
 
-  private[this] val scopedStatsReceiver: StatsReceiver =
-    statsReceiver.scope("muted_keyword_features")
+  privatelon[this] val scopelondStatsReloncelonivelonr: StatsReloncelonivelonr =
+    statsReloncelonivelonr.scopelon("mutelond_kelonyword_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val viewerMutesKeywordInTweetForHomeTimeline =
-    scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForHomeTimeline.name).counter("requests")
-  private[this] val viewerMutesKeywordInTweetForTweetReplies =
-    scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForTweetReplies.name).counter("requests")
-  private[this] val viewerMutesKeywordInTweetForNotifications =
-    scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForNotifications.name).counter("requests")
-  private[this] val excludeFollowingForMutedKeywordsRequests =
-    scopedStatsReceiver.scope("exclude_following").counter("requests")
-  private[this] val viewerMutesKeywordInTweetForAllSurfaces =
-    scopedStatsReceiver.scope(ViewerMutesKeywordInTweetForAllSurfaces.name).counter("requests")
+  privatelon[this] val vielonwelonrMutelonsKelonywordInTwelonelontForHomelonTimelonlinelon =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrMutelonsKelonywordInTwelonelontForHomelonTimelonlinelon.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrMutelonsKelonywordInTwelonelontForTwelonelontRelonplielons =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrMutelonsKelonywordInTwelonelontForTwelonelontRelonplielons.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrMutelonsKelonywordInTwelonelontForNotifications =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrMutelonsKelonywordInTwelonelontForNotifications.namelon).countelonr("relonquelonsts")
+  privatelon[this] val elonxcludelonFollowingForMutelondKelonywordsRelonquelonsts =
+    scopelondStatsReloncelonivelonr.scopelon("elonxcludelon_following").countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrMutelonsKelonywordInTwelonelontForAllSurfacelons =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrMutelonsKelonywordInTwelonelontForAllSurfacelons.namelon).countelonr("relonquelonsts")
 
-  def forTweet(
-    tweet: Tweet,
-    viewerId: Option[Long],
+  delonf forTwelonelont(
+    twelonelont: Twelonelont,
+    vielonwelonrId: Option[Long],
     authorId: Long
-  ): FeatureMapBuilder => FeatureMapBuilder = { featureMapBuilder =>
-    requests.incr()
-    viewerMutesKeywordInTweetForHomeTimeline.incr()
-    viewerMutesKeywordInTweetForTweetReplies.incr()
-    viewerMutesKeywordInTweetForNotifications.incr()
-    viewerMutesKeywordInTweetForAllSurfaces.incr()
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = { felonaturelonMapBuildelonr =>
+    relonquelonsts.incr()
+    vielonwelonrMutelonsKelonywordInTwelonelontForHomelonTimelonlinelon.incr()
+    vielonwelonrMutelonsKelonywordInTwelonelontForTwelonelontRelonplielons.incr()
+    vielonwelonrMutelonsKelonywordInTwelonelontForNotifications.incr()
+    vielonwelonrMutelonsKelonywordInTwelonelontForAllSurfacelons.incr()
 
-    val keywordsBySurface = allMutedKeywords(viewerId)
+    val kelonywordsBySurfacelon = allMutelondKelonywords(vielonwelonrId)
 
-    val keywordsWithoutDefinedSurface = allMutedKeywordsWithoutDefinedSurface(viewerId)
+    val kelonywordsWithoutDelonfinelondSurfacelon = allMutelondKelonywordsWithoutDelonfinelondSurfacelon(vielonwelonrId)
 
-    featureMapBuilder
-      .withFeature(
-        ViewerMutesKeywordInTweetForHomeTimeline,
-        tweetContainsMutedKeyword(
-          tweet,
-          keywordsBySurface,
-          MuteSurface.HomeTimeline,
-          viewerId,
+    felonaturelonMapBuildelonr
+      .withFelonaturelon(
+        VielonwelonrMutelonsKelonywordInTwelonelontForHomelonTimelonlinelon,
+        twelonelontContainsMutelondKelonyword(
+          twelonelont,
+          kelonywordsBySurfacelon,
+          MutelonSurfacelon.HomelonTimelonlinelon,
+          vielonwelonrId,
           authorId
         )
       )
-      .withFeature(
-        ViewerMutesKeywordInTweetForTweetReplies,
-        tweetContainsMutedKeyword(
-          tweet,
-          keywordsBySurface,
-          MuteSurface.TweetReplies,
-          viewerId,
+      .withFelonaturelon(
+        VielonwelonrMutelonsKelonywordInTwelonelontForTwelonelontRelonplielons,
+        twelonelontContainsMutelondKelonyword(
+          twelonelont,
+          kelonywordsBySurfacelon,
+          MutelonSurfacelon.TwelonelontRelonplielons,
+          vielonwelonrId,
           authorId
         )
       )
-      .withFeature(
-        ViewerMutesKeywordInTweetForNotifications,
-        tweetContainsMutedKeyword(
-          tweet,
-          keywordsBySurface,
-          MuteSurface.Notifications,
-          viewerId,
+      .withFelonaturelon(
+        VielonwelonrMutelonsKelonywordInTwelonelontForNotifications,
+        twelonelontContainsMutelondKelonyword(
+          twelonelont,
+          kelonywordsBySurfacelon,
+          MutelonSurfacelon.Notifications,
+          vielonwelonrId,
           authorId
         )
       )
-      .withFeature(
-        ViewerMutesKeywordInTweetForAllSurfaces,
-        tweetContainsMutedKeywordWithoutDefinedSurface(
-          tweet,
-          keywordsWithoutDefinedSurface,
-          viewerId,
+      .withFelonaturelon(
+        VielonwelonrMutelonsKelonywordInTwelonelontForAllSurfacelons,
+        twelonelontContainsMutelondKelonywordWithoutDelonfinelondSurfacelon(
+          twelonelont,
+          kelonywordsWithoutDelonfinelondSurfacelon,
+          vielonwelonrId,
           authorId
         )
       )
   }
 
-  def allMutedKeywords(viewerId: Option[Long]): Stitch[Map[MuteSurface, Seq[GdMutedKeyword]]] =
-    viewerId
-      .map { id => userSource.getAllMutedKeywords(id) }.getOrElse(Stitch.value(Map.empty))
+  delonf allMutelondKelonywords(vielonwelonrId: Option[Long]): Stitch[Map[MutelonSurfacelon, Selonq[GdMutelondKelonyword]]] =
+    vielonwelonrId
+      .map { id => uselonrSourcelon.gelontAllMutelondKelonywords(id) }.gelontOrelonlselon(Stitch.valuelon(Map.elonmpty))
 
-  def allMutedKeywordsWithoutDefinedSurface(viewerId: Option[Long]): Stitch[Seq[GdMutedKeyword]] =
-    viewerId
-      .map { id => userSource.getAllMutedKeywordsWithoutDefinedSurface(id) }.getOrElse(
-        Stitch.value(Seq.empty))
+  delonf allMutelondKelonywordsWithoutDelonfinelondSurfacelon(vielonwelonrId: Option[Long]): Stitch[Selonq[GdMutelondKelonyword]] =
+    vielonwelonrId
+      .map { id => uselonrSourcelon.gelontAllMutelondKelonywordsWithoutDelonfinelondSurfacelon(id) }.gelontOrelonlselon(
+        Stitch.valuelon(Selonq.elonmpty))
 
-  private def mutingKeywordsText(
-    mutedKeywords: Seq[GdMutedKeyword],
-    muteSurface: MuteSurface,
-    viewerIdOpt: Option[Long],
+  privatelon delonf mutingKelonywordsTelonxt(
+    mutelondKelonywords: Selonq[GdMutelondKelonyword],
+    mutelonSurfacelon: MutelonSurfacelon,
+    vielonwelonrIdOpt: Option[Long],
     authorId: Long
   ): Stitch[Option[String]] = {
-    if (muteSurface == MuteSurface.HomeTimeline && mutedKeywords.nonEmpty) {
-      Stitch.value(Some(mutedKeywords.map(_.keyword).mkString(",")))
-    } else {
-      mutedKeywords.partition(kw =>
-        kw.muteOptions.contains(MuteOption.ExcludeFollowingAccounts)) match {
-        case (_, mutedKeywordsFromAnyone) if mutedKeywordsFromAnyone.nonEmpty =>
-          Stitch.value(Some(mutedKeywordsFromAnyone.map(_.keyword).mkString(",")))
-        case (mutedKeywordsExcludeFollowing, _)
-            if mutedKeywordsExcludeFollowing.nonEmpty && enableFollowCheckInMutedKeyword() =>
-          excludeFollowingForMutedKeywordsRequests.incr()
-          viewerIdOpt match {
-            case Some(viewerId) =>
-              userRelationshipSource.follows(viewerId, authorId).map {
-                case true =>
-                case false => Some(mutedKeywordsExcludeFollowing.map(_.keyword).mkString(","))
+    if (mutelonSurfacelon == MutelonSurfacelon.HomelonTimelonlinelon && mutelondKelonywords.nonelonmpty) {
+      Stitch.valuelon(Somelon(mutelondKelonywords.map(_.kelonyword).mkString(",")))
+    } elonlselon {
+      mutelondKelonywords.partition(kw =>
+        kw.mutelonOptions.contains(MutelonOption.elonxcludelonFollowingAccounts)) match {
+        caselon (_, mutelondKelonywordsFromAnyonelon) if mutelondKelonywordsFromAnyonelon.nonelonmpty =>
+          Stitch.valuelon(Somelon(mutelondKelonywordsFromAnyonelon.map(_.kelonyword).mkString(",")))
+        caselon (mutelondKelonywordselonxcludelonFollowing, _)
+            if mutelondKelonywordselonxcludelonFollowing.nonelonmpty && elonnablelonFollowChelonckInMutelondKelonyword() =>
+          elonxcludelonFollowingForMutelondKelonywordsRelonquelonsts.incr()
+          vielonwelonrIdOpt match {
+            caselon Somelon(vielonwelonrId) =>
+              uselonrRelonlationshipSourcelon.follows(vielonwelonrId, authorId).map {
+                caselon truelon =>
+                caselon falselon => Somelon(mutelondKelonywordselonxcludelonFollowing.map(_.kelonyword).mkString(","))
               }
-            case _ => Stitch.None
+            caselon _ => Stitch.Nonelon
           }
-        case (_, _) => Stitch.None
+        caselon (_, _) => Stitch.Nonelon
       }
     }
   }
 
-  private def mutingKeywordsTextWithoutDefinedSurface(
-    mutedKeywords: Seq[GdMutedKeyword],
-    viewerIdOpt: Option[Long],
+  privatelon delonf mutingKelonywordsTelonxtWithoutDelonfinelondSurfacelon(
+    mutelondKelonywords: Selonq[GdMutelondKelonyword],
+    vielonwelonrIdOpt: Option[Long],
     authorId: Long
   ): Stitch[Option[String]] = {
-    mutedKeywords.partition(kw =>
-      kw.muteOptions.contains(MuteOption.ExcludeFollowingAccounts)) match {
-      case (_, mutedKeywordsFromAnyone) if mutedKeywordsFromAnyone.nonEmpty =>
-        Stitch.value(Some(mutedKeywordsFromAnyone.map(_.keyword).mkString(",")))
-      case (mutedKeywordsExcludeFollowing, _)
-          if mutedKeywordsExcludeFollowing.nonEmpty && enableFollowCheckInMutedKeyword() =>
-        excludeFollowingForMutedKeywordsRequests.incr()
-        viewerIdOpt match {
-          case Some(viewerId) =>
-            userRelationshipSource.follows(viewerId, authorId).map {
-              case true =>
-              case false => Some(mutedKeywordsExcludeFollowing.map(_.keyword).mkString(","))
+    mutelondKelonywords.partition(kw =>
+      kw.mutelonOptions.contains(MutelonOption.elonxcludelonFollowingAccounts)) match {
+      caselon (_, mutelondKelonywordsFromAnyonelon) if mutelondKelonywordsFromAnyonelon.nonelonmpty =>
+        Stitch.valuelon(Somelon(mutelondKelonywordsFromAnyonelon.map(_.kelonyword).mkString(",")))
+      caselon (mutelondKelonywordselonxcludelonFollowing, _)
+          if mutelondKelonywordselonxcludelonFollowing.nonelonmpty && elonnablelonFollowChelonckInMutelondKelonyword() =>
+        elonxcludelonFollowingForMutelondKelonywordsRelonquelonsts.incr()
+        vielonwelonrIdOpt match {
+          caselon Somelon(vielonwelonrId) =>
+            uselonrRelonlationshipSourcelon.follows(vielonwelonrId, authorId).map {
+              caselon truelon =>
+              caselon falselon => Somelon(mutelondKelonywordselonxcludelonFollowing.map(_.kelonyword).mkString(","))
             }
-          case _ => Stitch.None
+          caselon _ => Stitch.Nonelon
         }
-      case (_, _) => Stitch.None
+      caselon (_, _) => Stitch.Nonelon
     }
   }
 
-  def tweetContainsMutedKeyword(
-    tweet: Tweet,
-    mutedKeywordMap: Stitch[Map[MuteSurface, Seq[GdMutedKeyword]]],
-    muteSurface: MuteSurface,
-    viewerIdOpt: Option[Long],
+  delonf twelonelontContainsMutelondKelonyword(
+    twelonelont: Twelonelont,
+    mutelondKelonywordMap: Stitch[Map[MutelonSurfacelon, Selonq[GdMutelondKelonyword]]],
+    mutelonSurfacelon: MutelonSurfacelon,
+    vielonwelonrIdOpt: Option[Long],
     authorId: Long
-  ): Stitch[VfMutedKeyword] = {
-    mutedKeywordMap.flatMap { keywordMap =>
-      if (keywordMap.isEmpty) {
-        Stitch.value(VfMutedKeyword(None))
-      } else {
-        val mutedKeywords = keywordMap.getOrElse(muteSurface, Nil)
-        val matchTweetFn: KeywordMatcher.MatchTweet = keywordMatcher(mutedKeywords)
-        val locale = tweet.language.map(l => Locale.forLanguageTag(l.language))
-        val text = tweet.coreData.get.text
+  ): Stitch[VfMutelondKelonyword] = {
+    mutelondKelonywordMap.flatMap { kelonywordMap =>
+      if (kelonywordMap.iselonmpty) {
+        Stitch.valuelon(VfMutelondKelonyword(Nonelon))
+      } elonlselon {
+        val mutelondKelonywords = kelonywordMap.gelontOrelonlselon(mutelonSurfacelon, Nil)
+        val matchTwelonelontFn: KelonywordMatchelonr.MatchTwelonelont = kelonywordMatchelonr(mutelondKelonywords)
+        val localelon = twelonelont.languagelon.map(l => Localelon.forLanguagelonTag(l.languagelon))
+        val telonxt = twelonelont.corelonData.gelont.telonxt
 
-        matchTweetFn(locale, text).flatMap { results =>
-          mutingKeywordsText(results, muteSurface, viewerIdOpt, authorId).map(VfMutedKeyword)
+        matchTwelonelontFn(localelon, telonxt).flatMap { relonsults =>
+          mutingKelonywordsTelonxt(relonsults, mutelonSurfacelon, vielonwelonrIdOpt, authorId).map(VfMutelondKelonyword)
         }
       }
     }
   }
 
-  def tweetContainsMutedKeywordWithoutDefinedSurface(
-    tweet: Tweet,
-    mutedKeywordSeq: Stitch[Seq[GdMutedKeyword]],
-    viewerIdOpt: Option[Long],
+  delonf twelonelontContainsMutelondKelonywordWithoutDelonfinelondSurfacelon(
+    twelonelont: Twelonelont,
+    mutelondKelonywordSelonq: Stitch[Selonq[GdMutelondKelonyword]],
+    vielonwelonrIdOpt: Option[Long],
     authorId: Long
-  ): Stitch[VfMutedKeyword] = {
-    mutedKeywordSeq.flatMap { mutedKeyword =>
-      if (mutedKeyword.isEmpty) {
-        Stitch.value(VfMutedKeyword(None))
-      } else {
-        val matchTweetFn: KeywordMatcher.MatchTweet = keywordMatcher(mutedKeyword)
-        val locale = tweet.language.map(l => Locale.forLanguageTag(l.language))
-        val text = tweet.coreData.get.text
+  ): Stitch[VfMutelondKelonyword] = {
+    mutelondKelonywordSelonq.flatMap { mutelondKelonyword =>
+      if (mutelondKelonyword.iselonmpty) {
+        Stitch.valuelon(VfMutelondKelonyword(Nonelon))
+      } elonlselon {
+        val matchTwelonelontFn: KelonywordMatchelonr.MatchTwelonelont = kelonywordMatchelonr(mutelondKelonyword)
+        val localelon = twelonelont.languagelon.map(l => Localelon.forLanguagelonTag(l.languagelon))
+        val telonxt = twelonelont.corelonData.gelont.telonxt
 
-        matchTweetFn(locale, text).flatMap { results =>
-          mutingKeywordsTextWithoutDefinedSurface(results, viewerIdOpt, authorId).map(
-            VfMutedKeyword
+        matchTwelonelontFn(localelon, telonxt).flatMap { relonsults =>
+          mutingKelonywordsTelonxtWithoutDelonfinelondSurfacelon(relonsults, vielonwelonrIdOpt, authorId).map(
+            VfMutelondKelonyword
           )
         }
       }
     }
   }
-  def spaceTitleContainsMutedKeyword(
-    spaceTitle: String,
-    spaceLanguageOpt: Option[String],
-    mutedKeywordMap: Stitch[Map[MuteSurface, Seq[GdMutedKeyword]]],
-    muteSurface: MuteSurface,
-  ): Stitch[VfMutedKeyword] = {
-    mutedKeywordMap.flatMap { keywordMap =>
-      if (keywordMap.isEmpty) {
-        Stitch.value(VfMutedKeyword(None))
-      } else {
-        val mutedKeywords = keywordMap.getOrElse(muteSurface, Nil)
-        val matchTweetFn: KeywordMatcher.MatchTweet = keywordMatcher(mutedKeywords)
+  delonf spacelonTitlelonContainsMutelondKelonyword(
+    spacelonTitlelon: String,
+    spacelonLanguagelonOpt: Option[String],
+    mutelondKelonywordMap: Stitch[Map[MutelonSurfacelon, Selonq[GdMutelondKelonyword]]],
+    mutelonSurfacelon: MutelonSurfacelon,
+  ): Stitch[VfMutelondKelonyword] = {
+    mutelondKelonywordMap.flatMap { kelonywordMap =>
+      if (kelonywordMap.iselonmpty) {
+        Stitch.valuelon(VfMutelondKelonyword(Nonelon))
+      } elonlselon {
+        val mutelondKelonywords = kelonywordMap.gelontOrelonlselon(mutelonSurfacelon, Nil)
+        val matchTwelonelontFn: KelonywordMatchelonr.MatchTwelonelont = kelonywordMatchelonr(mutelondKelonywords)
 
-        val locale = spaceLanguageOpt.map(l => Locale.forLanguageTag(l))
-        matchTweetFn(locale, spaceTitle).flatMap { results =>
-          if (results.nonEmpty) {
-            Stitch.value(Some(results.map(_.keyword).mkString(","))).map(VfMutedKeyword)
-          } else {
-            Stitch.None.map(VfMutedKeyword)
+        val localelon = spacelonLanguagelonOpt.map(l => Localelon.forLanguagelonTag(l))
+        matchTwelonelontFn(localelon, spacelonTitlelon).flatMap { relonsults =>
+          if (relonsults.nonelonmpty) {
+            Stitch.valuelon(Somelon(relonsults.map(_.kelonyword).mkString(","))).map(VfMutelondKelonyword)
+          } elonlselon {
+            Stitch.Nonelon.map(VfMutelondKelonyword)
           }
         }
       }

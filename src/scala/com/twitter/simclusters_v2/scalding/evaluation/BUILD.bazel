@@ -1,72 +1,72 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-only",
     ],
-    dependencies = [
-        "src/scala/com/twitter/simclusters_v2/scalding/common",
-        "src/scala/com/twitter/simclusters_v2/scalding/offline_job",
+    delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding/common",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding/offlinelon_job",
     ],
 )
 
 hadoop_binary(
-    name = "tweet_evaluation_dummy_candidate_adhoc",
-    main = "com.twitter.simclusters_v2.scalding.DummyCandidateGenerationAdhocJob",
+    namelon = "twelonelont_elonvaluation_dummy_candidatelon_adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.DummyCandidatelonGelonnelonrationAdhocJob",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":evaluation",
+    delonpelonndelonncielons = [
+        ":elonvaluation",
     ],
 )
 
 hadoop_binary(
-    name = "tweet_evaluation_timelines_reference_adhoc",
-    main = "com.twitter.simclusters_v2.scalding.evaluation.AdhocTimelinesDataExtraction",
+    namelon = "twelonelont_elonvaluation_timelonlinelons_relonfelonrelonncelon_adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.elonvaluation.AdhocTimelonlinelonsDataelonxtraction",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":evaluation",
+    delonpelonndelonncielons = [
+        ":elonvaluation",
     ],
 )
 
 hadoop_binary(
-    name = "tweet_evaluation_timelines_reference_batch",
-    main = "com.twitter.simclusters_v2.scalding.evaluation.ScheduledTimelinesDataExtractionBatch",
+    namelon = "twelonelont_elonvaluation_timelonlinelons_relonfelonrelonncelon_batch",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.elonvaluation.SchelondulelondTimelonlinelonsDataelonxtractionBatch",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":evaluation",
+    delonpelonndelonncielons = [
+        ":elonvaluation",
     ],
 )
 
 hadoop_binary(
-    name = "simcluster_offline_eval_adhoc",
-    main = "com.twitter.simclusters_v2.scalding.evaluation.SimClustersEvaluationAdhocApp",
+    namelon = "simclustelonr_offlinelon_elonval_adhoc",
+    main = "com.twittelonr.simclustelonrs_v2.scalding.elonvaluation.SimClustelonrselonvaluationAdhocApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":evaluation",
+    delonpelonndelonncielons = [
+        ":elonvaluation",
     ],
 )

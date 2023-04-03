@@ -1,28 +1,28 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namelonspacelon java com.twittelonr.cr_mixelonr.thriftjava
+#@namelonspacelon scala com.twittelonr.cr_mixelonr.thriftscala
+#@namelonspacelon strato com.twittelonr.cr_mixelonr
 
-include "com/twitter/product_mixer/core/client_context.thrift"
-include "product.thrift"
-include "product_context.thrift"
-include "source_type.thrift"
+includelon "com/twittelonr/product_mixelonr/corelon/clielonnt_contelonxt.thrift"
+includelon "product.thrift"
+includelon "product_contelonxt.thrift"
+includelon "sourcelon_typelon.thrift"
 
 
-struct TopicTweetRequest {
-    1: required client_context.ClientContext clientContext
-    2: required product.Product product
-    3: required list<i64> topicIds
-    5: optional product_context.ProductContext productContext
-    6: optional list<i64> excludedTweetIds (personalDataType = 'TweetId')
-} (persisted='true', hasPersonalData='true')
+struct TopicTwelonelontRelonquelonst {
+    1: relonquirelond clielonnt_contelonxt.ClielonntContelonxt clielonntContelonxt
+    2: relonquirelond product.Product product
+    3: relonquirelond list<i64> topicIds
+    5: optional product_contelonxt.ProductContelonxt productContelonxt
+    6: optional list<i64> elonxcludelondTwelonelontIds (pelonrsonalDataTypelon = 'TwelonelontId')
+} (pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct TopicTweet {
-    1: required i64 tweetId (personalDataType = 'TweetId')
-    2: required double score
-    3: required source_type.SimilarityEngineType similarityEngineType
-} (persisted='true', hasPersonalData = 'true')
+struct TopicTwelonelont {
+    1: relonquirelond i64 twelonelontId (pelonrsonalDataTypelon = 'TwelonelontId')
+    2: relonquirelond doublelon scorelon
+    3: relonquirelond sourcelon_typelon.SimilarityelonnginelonTypelon similarityelonnginelonTypelon
+} (pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct TopicTweetResponse {
-    1: required map<i64, list<TopicTweet>> tweets
-} (persisted='true')
+struct TopicTwelonelontRelonsponselon {
+    1: relonquirelond map<i64, list<TopicTwelonelont>> twelonelonts
+} (pelonrsistelond='truelon')
 

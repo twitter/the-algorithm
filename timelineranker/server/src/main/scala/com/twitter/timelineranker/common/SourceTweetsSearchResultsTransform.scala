@@ -1,62 +1,62 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.util.SourceTweetsUtil
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.util.SourcelonTwelonelontsUtil
+import com.twittelonr.timelonlinelons.clielonnts.relonlelonvancelon_selonarch.SelonarchClielonnt
+import com.twittelonr.timelonlinelons.util.FailOpelonnHandlelonr
+import com.twittelonr.util.Futurelon
 
-object SourceTweetsSearchResultsTransform {
-  val EmptySearchResults: Seq[ThriftSearchResult] = Seq.empty[ThriftSearchResult]
-  val EmptySearchResultsFuture: Future[Seq[ThriftSearchResult]] = Future.value(EmptySearchResults)
+objelonct SourcelonTwelonelontsSelonarchRelonsultsTransform {
+  val elonmptySelonarchRelonsults: Selonq[ThriftSelonarchRelonsult] = Selonq.elonmpty[ThriftSelonarchRelonsult]
+  val elonmptySelonarchRelonsultsFuturelon: Futurelon[Selonq[ThriftSelonarchRelonsult]] = Futurelon.valuelon(elonmptySelonarchRelonsults)
 }
 
 /**
- * Fetch source tweets for a given set of search results
- * Collects ids of source tweets, including extended reply and reply source tweets if needed,
- * fetches those tweets from search and populates them into the envelope
+ * Felontch sourcelon twelonelonts for a givelonn selont of selonarch relonsults
+ * Colleloncts ids of sourcelon twelonelonts, including elonxtelonndelond relonply and relonply sourcelon twelonelonts if nelonelondelond,
+ * felontchelons thoselon twelonelonts from selonarch and populatelons thelonm into thelon elonnvelonlopelon
  */
-class SourceTweetsSearchResultsTransform(
-  searchClient: SearchClient,
-  failOpenHandler: FailOpenHandler,
-  hydrateReplyRootTweetProvider: DependencyProvider[Boolean],
-  perRequestSourceSearchClientIdProvider: DependencyProvider[Option[String]],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import SourceTweetsSearchResultsTransform._
+class SourcelonTwelonelontsSelonarchRelonsultsTransform(
+  selonarchClielonnt: SelonarchClielonnt,
+  failOpelonnHandlelonr: FailOpelonnHandlelonr,
+  hydratelonRelonplyRootTwelonelontProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan],
+  pelonrRelonquelonstSourcelonSelonarchClielonntIdProvidelonr: DelonpelonndelonncyProvidelonr[Option[String]],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
+  import SourcelonTwelonelontsSelonarchRelonsultsTransform._
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(gelontClass.gelontSimplelonNamelon)
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    failOpenHandler {
-      envelope.followGraphData.followedUserIdsFuture.flatMap { followedUserIds =>
-        // NOTE: tweetIds are pre-computed as a performance optimisation.
-        val searchResultsTweetIds = envelope.searchResults.map(_.id).toSet
-        val sourceTweetIds = SourceTweetsUtil.getSourceTweetIds(
-          searchResults = envelope.searchResults,
-          searchResultsTweetIds = searchResultsTweetIds,
-          followedUserIds = followedUserIds,
-          shouldIncludeReplyRootTweets = hydrateReplyRootTweetProvider(envelope.query),
-          statsReceiver = scopedStatsReceiver
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    failOpelonnHandlelonr {
+      elonnvelonlopelon.followGraphData.followelondUselonrIdsFuturelon.flatMap { followelondUselonrIds =>
+        // NOTelon: twelonelontIds arelon prelon-computelond as a pelonrformancelon optimisation.
+        val selonarchRelonsultsTwelonelontIds = elonnvelonlopelon.selonarchRelonsults.map(_.id).toSelont
+        val sourcelonTwelonelontIds = SourcelonTwelonelontsUtil.gelontSourcelonTwelonelontIds(
+          selonarchRelonsults = elonnvelonlopelon.selonarchRelonsults,
+          selonarchRelonsultsTwelonelontIds = selonarchRelonsultsTwelonelontIds,
+          followelondUselonrIds = followelondUselonrIds,
+          shouldIncludelonRelonplyRootTwelonelonts = hydratelonRelonplyRootTwelonelontProvidelonr(elonnvelonlopelon.quelonry),
+          statsReloncelonivelonr = scopelondStatsReloncelonivelonr
         )
-        if (sourceTweetIds.isEmpty) {
-          EmptySearchResultsFuture
-        } else {
-          searchClient.getTweetsScoredForRecap(
-            userId = envelope.query.userId,
-            tweetIds = sourceTweetIds,
-            earlybirdOptions = envelope.query.earlybirdOptions,
-            logSearchDebugInfo = false,
-            searchClientId = perRequestSourceSearchClientIdProvider(envelope.query)
+        if (sourcelonTwelonelontIds.iselonmpty) {
+          elonmptySelonarchRelonsultsFuturelon
+        } elonlselon {
+          selonarchClielonnt.gelontTwelonelontsScorelondForReloncap(
+            uselonrId = elonnvelonlopelon.quelonry.uselonrId,
+            twelonelontIds = sourcelonTwelonelontIds,
+            elonarlybirdOptions = elonnvelonlopelon.quelonry.elonarlybirdOptions,
+            logSelonarchDelonbugInfo = falselon,
+            selonarchClielonntId = pelonrRelonquelonstSourcelonSelonarchClielonntIdProvidelonr(elonnvelonlopelon.quelonry)
           )
         }
       }
-    } { _: Throwable => EmptySearchResultsFuture }.map { sourceSearchResults =>
-      envelope.copy(sourceSearchResults = sourceSearchResults)
+    } { _: Throwablelon => elonmptySelonarchRelonsultsFuturelon }.map { sourcelonSelonarchRelonsults =>
+      elonnvelonlopelon.copy(sourcelonSelonarchRelonsults = sourcelonSelonarchRelonsults)
     }
   }
 }

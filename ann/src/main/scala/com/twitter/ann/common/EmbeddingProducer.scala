@@ -1,13 +1,13 @@
-package com.twitter.ann.common
+packagelon com.twittelonr.ann.common
 
-import com.twitter.stitch.Stitch
+import com.twittelonr.stitch.Stitch
 
-trait EmbeddingProducer[T] {
+trait elonmbelonddingProducelonr[T] {
 
   /**
-   * Produce an embedding from type T. Implementations of this could do a lookup from an id to an
-   * embedding. Or they could run a deep model on features that output and embedding.
-   * @return An embedding Stitch. See go/stitch for details on how to use the Stitch API.
+   * Producelon an elonmbelondding from typelon T. Implelonmelonntations of this could do a lookup from an id to an
+   * elonmbelondding. Or thelony could run a delonelonp modelonl on felonaturelons that output and elonmbelondding.
+   * @relonturn An elonmbelondding Stitch. Selonelon go/stitch for delontails on how to uselon thelon Stitch API.
    */
-  def produceEmbedding(input: T): Stitch[Option[EmbeddingType.EmbeddingVector]]
+  delonf producelonelonmbelondding(input: T): Stitch[Option[elonmbelonddingTypelon.elonmbelonddingVelonctor]]
 }

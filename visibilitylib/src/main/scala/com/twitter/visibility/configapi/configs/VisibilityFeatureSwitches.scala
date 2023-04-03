@@ -1,74 +1,74 @@
-package com.twitter.visibility.configapi.configs
+packagelon com.twittelonr.visibility.configapi.configs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi._
-import com.twitter.util.Time
-import com.twitter.visibility.configapi.params.FSEnumRuleParam
-import com.twitter.visibility.configapi.params.FSRuleParams._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.configapi._
+import com.twittelonr.util.Timelon
+import com.twittelonr.visibility.configapi.params.FSelonnumRulelonParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams._
 
-private[visibility] object VisibilityFeatureSwitches {
+privatelon[visibility] objelonct VisibilityFelonaturelonSwitchelons {
 
-  val booleanFsOverrides: Seq[OptionalOverride[Boolean]] =
-    FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      AgeGatingAdultContentExperimentRuleEnabledParam,
-      CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam,
-      CommunityTweetDropProtectedRuleEnabledParam,
-      CommunityTweetDropRuleEnabledParam,
-      CommunityTweetLimitedActionsRulesEnabledParam,
-      CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam,
-      CommunityTweetNonMemberLimitedActionsRuleEnabledParam,
-      NsfwAgeBasedDropRulesHoldbackParam,
-      SkipTweetDetailLimitedEngagementRuleEnabledParam,
-      StaleTweetLimitedActionsRulesEnabledParam,
-      TrustedFriendsTweetLimitedEngagementsRuleEnabledParam,
-      FosnrFallbackDropRulesEnabledParam,
-      FosnrRulesEnabledParam
+  val boolelonanFsOvelonrridelons: Selonq[OptionalOvelonrridelon[Boolelonan]] =
+    FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      AgelonGatingAdultContelonntelonxpelonrimelonntRulelonelonnablelondParam,
+      CommunityTwelonelontCommunityUnavailablelonLimitelondActionsRulelonselonnablelondParam,
+      CommunityTwelonelontDropProtelonctelondRulelonelonnablelondParam,
+      CommunityTwelonelontDropRulelonelonnablelondParam,
+      CommunityTwelonelontLimitelondActionsRulelonselonnablelondParam,
+      CommunityTwelonelontMelonmbelonrRelonmovelondLimitelondActionsRulelonselonnablelondParam,
+      CommunityTwelonelontNonMelonmbelonrLimitelondActionsRulelonelonnablelondParam,
+      NsfwAgelonBaselondDropRulelonsHoldbackParam,
+      SkipTwelonelontDelontailLimitelondelonngagelonmelonntRulelonelonnablelondParam,
+      StalelonTwelonelontLimitelondActionsRulelonselonnablelondParam,
+      TrustelondFrielonndsTwelonelontLimitelondelonngagelonmelonntsRulelonelonnablelondParam,
+      FosnrFallbackDropRulelonselonnablelondParam,
+      FosnrRulelonselonnablelondParam
     )
 
-  val doubleFsOverrides: Seq[OptionalOverride[Double]] =
-    FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      HighSpammyTweetContentScoreSearchTopProdTweetLabelDropRuleThresholdParam,
-      HighSpammyTweetContentScoreSearchLatestProdTweetLabelDropRuleThresholdParam,
-      HighSpammyTweetContentScoreTrendTopTweetLabelDropRuleThresholdParam,
-      HighSpammyTweetContentScoreTrendLatestTweetLabelDropRuleThresholdParam,
-      HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam,
-      HighToxicityModelScoreSpaceThresholdParam,
-      AdAvoidanceHighToxicityModelScoreThresholdParam,
-      AdAvoidanceReportedTweetModelScoreThresholdParam,
+  val doublelonFsOvelonrridelons: Selonq[OptionalOvelonrridelon[Doublelon]] =
+    FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(
+      HighSpammyTwelonelontContelonntScorelonSelonarchTopProdTwelonelontLabelonlDropRulelonThrelonsholdParam,
+      HighSpammyTwelonelontContelonntScorelonSelonarchLatelonstProdTwelonelontLabelonlDropRulelonThrelonsholdParam,
+      HighSpammyTwelonelontContelonntScorelonTrelonndTopTwelonelontLabelonlDropRulelonThrelonsholdParam,
+      HighSpammyTwelonelontContelonntScorelonTrelonndLatelonstTwelonelontLabelonlDropRulelonThrelonsholdParam,
+      HighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityThrelonsholdParam,
+      HighToxicityModelonlScorelonSpacelonThrelonsholdParam,
+      AdAvoidancelonHighToxicityModelonlScorelonThrelonsholdParam,
+      AdAvoidancelonRelonportelondTwelonelontModelonlScorelonThrelonsholdParam,
     )
 
-  val timeFsOverrides: Seq[OptionalOverride[Time]] =
-    FeatureSwitchOverrideUtil.getTimeFromStringFSOverrides()
+  val timelonFsOvelonrridelons: Selonq[OptionalOvelonrridelon[Timelon]] =
+    FelonaturelonSwitchOvelonrridelonUtil.gelontTimelonFromStringFSOvelonrridelons()
 
-  val stringSeqFeatureSwitchOverrides: Seq[OptionalOverride[Seq[String]]] =
-    FeatureSwitchOverrideUtil.getStringSeqFSOverrides(
-      CountrySpecificNsfwContentGatingCountriesParam,
-      AgeGatingAdultContentExperimentCountriesParam,
-      CardUriRootDomainDenyListParam
+  val stringSelonqFelonaturelonSwitchOvelonrridelons: Selonq[OptionalOvelonrridelon[Selonq[String]]] =
+    FelonaturelonSwitchOvelonrridelonUtil.gelontStringSelonqFSOvelonrridelons(
+      CountrySpeloncificNsfwContelonntGatingCountrielonsParam,
+      AgelonGatingAdultContelonntelonxpelonrimelonntCountrielonsParam,
+      CardUriRootDomainDelonnyListParam
     )
 
-  val enumFsParams: Seq[FSEnumRuleParam[_ <: Enumeration]] = Seq()
+  val elonnumFsParams: Selonq[FSelonnumRulelonParam[_ <: elonnumelonration]] = Selonq()
 
-  val mkOptionalEnumFsOverrides: (StatsReceiver, Logger) => Seq[OptionalOverride[_]] = {
-    (statsReceiver: StatsReceiver, logger: Logger) =>
-      FeatureSwitchOverrideUtil.getEnumFSOverrides(
-        statsReceiver,
-        logger,
-        enumFsParams: _*
+  val mkOptionalelonnumFsOvelonrridelons: (StatsReloncelonivelonr, Loggelonr) => Selonq[OptionalOvelonrridelon[_]] = {
+    (statsReloncelonivelonr: StatsReloncelonivelonr, loggelonr: Loggelonr) =>
+      FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(
+        statsReloncelonivelonr,
+        loggelonr,
+        elonnumFsParams: _*
       )
   }
 
-  def overrides(statsReceiver: StatsReceiver, logger: Logger): Seq[OptionalOverride[_]] = {
-    val enumOverrides = mkOptionalEnumFsOverrides(statsReceiver, logger)
-    booleanFsOverrides ++
-      doubleFsOverrides ++
-      timeFsOverrides ++
-      stringSeqFeatureSwitchOverrides ++
-      enumOverrides
+  delonf ovelonrridelons(statsReloncelonivelonr: StatsReloncelonivelonr, loggelonr: Loggelonr): Selonq[OptionalOvelonrridelon[_]] = {
+    val elonnumOvelonrridelons = mkOptionalelonnumFsOvelonrridelons(statsReloncelonivelonr, loggelonr)
+    boolelonanFsOvelonrridelons ++
+      doublelonFsOvelonrridelons ++
+      timelonFsOvelonrridelons ++
+      stringSelonqFelonaturelonSwitchOvelonrridelons ++
+      elonnumOvelonrridelons
   }
 
-  def config(statsReceiver: StatsReceiver, logger: Logger): BaseConfig =
-    BaseConfigBuilder(overrides(statsReceiver.scope("features_switches"), logger))
-      .build("VisibilityFeatureSwitches")
+  delonf config(statsReloncelonivelonr: StatsReloncelonivelonr, loggelonr: Loggelonr): BaselonConfig =
+    BaselonConfigBuildelonr(ovelonrridelons(statsReloncelonivelonr.scopelon("felonaturelons_switchelons"), loggelonr))
+      .build("VisibilityFelonaturelonSwitchelons")
 }

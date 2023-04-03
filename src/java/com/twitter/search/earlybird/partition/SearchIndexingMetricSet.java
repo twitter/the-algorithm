@@ -1,208 +1,208 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.util.EnumMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.elonnumMap;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.concurrelonnt.atomic.AtomicLong;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.earlybird.util.ScheduledExecutorManager;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonntTypelon;
+import com.twittelonr.selonarch.elonarlybird.util.SchelondulelondelonxeloncutorManagelonr;
 
 /**
- * Collection of common metrics used in the indexing, and related code.
- * We create a set/holder for them as we want to create all counters only one time, and these
- * counters can be used by both SimpleUpdateIndexer, PartitionIndexer, EarlybirdSegment, and others.
+ * Collelonction of common melontrics uselond in thelon indelonxing, and relonlatelond codelon.
+ * Welon crelonatelon a selont/holdelonr for thelonm as welon want to crelonatelon all countelonrs only onelon timelon, and thelonselon
+ * countelonrs can belon uselond by both SimplelonUpdatelonIndelonxelonr, PartitionIndelonxelonr, elonarlybirdSelongmelonnt, and othelonrs.
  */
-public class SearchIndexingMetricSet {
+public class SelonarchIndelonxingMelontricSelont {
   /**
-   * A proxy for the creation time of the "freshest" tweet that we have in the index.
-   * It is used in computing the index freshness stat "earlybird_index_freshness_millis".
-   * - In the realtme clusters, this should match the creation time of highestStatusId.
-   * - In the archive clusters, this should match the timestamp of the latest indexed day.
+   * A proxy for thelon crelonation timelon of thelon "frelonshelonst" twelonelont that welon havelon in thelon indelonx.
+   * It is uselond in computing thelon indelonx frelonshnelonss stat "elonarlybird_indelonx_frelonshnelonss_millis".
+   * - In thelon relonaltmelon clustelonrs, this should match thelon crelonation timelon of highelonstStatusId.
+   * - In thelon archivelon clustelonrs, this should match thelon timelonstamp of thelon latelonst indelonxelond day.
    */
-  public final SearchLongGauge freshestTweetTimeMillis;
+  public final SelonarchLongGaugelon frelonshelonstTwelonelontTimelonMillis;
 
-  /** The highest indexed tweet ID. Used to compute index freshness. */
-  public final SearchLongGauge highestStatusId;
-
-  /**
-   * The current timeslice's ID. We can compare this to indexer's exported current timeslice ID to
-   * identify stuck timeslice rolls.
-   */
-  public final SearchLongGauge currentTimesliceId;
-
-  /** The number of archive timeslices that we failed to process. */
-  public final SearchCounter archiveTimeSliceBuildFailedCounter;
-
-  /** The number of times we checked a segment's size on disk. */
-  public final SearchCounter segmentSizeCheckCount;
-
-  /** The number of segments that have reached their max size. */
-  public final SearchCounter maxSegmentSizeReachedCounter;
-
-  /** The number of indexed tweets and the aggregate indexing latencies in microseconds. */
-  public final SearchTimerStats statusStats;
-  /** The number of applied updates and the aggregate indexing latencies in microseconds. */
-  public final SearchTimerStats updateStats;
-  /** The number of retried updates and the aggregate indexing latencies in microseconds. */
-  public final SearchTimerStats updateRetryStats;
-  /** The number of applied user updates and the aggregate indexing latencies in microseconds. */
-  public final SearchTimerStats userUpdateIndexingStats;
-  /** The number of applied userGeoScrubEvents and the aggregate indexing latencies in
-   * microseconds. */
-  public final SearchTimerStats userScrubGeoIndexingStats;
-  /** The number of updates attempted on missing tweets. */
-  public final SearchRateCounter updateOnMissingTweetCounter;
-  /** The number of updates dropped. */
-  public final SearchRateCounter droppedUpdateEvent;
-
-  /** The latencies in microseconds of the PartitionIndexer loop. */
-  public final SearchTimerStats partitionIndexerRunLoopCounter;
-  /** The latencies in microseconds of the PartitionIndexer.indexFromReaders() calls. */
-  public final SearchTimerStats partitionIndexerIndexFromReadersCounter;
-  /** The number of invocations of the PartitionIndexer task. */
-  public final SearchCounter partitionIndexerIterationCounter;
-
-  /** The number of unsorted updates handled by SimpleUpdateIndexer. */
-  public final SearchCounter simpleUpdateIndexerUnsortedUpdateCounter;
-  /** The number of unsorted updates with the wrong segment handled by SimpleUpdateIndexer. */
-  public final SearchCounter simpleUpdateIndexerUnsortedUpdateWithWrongSegmentCounter;
-
-  /** The number of invocations of the SimpleUserUpdateIndexer task. */
-  public final SearchCounter simpleUserUpdateIndexerIterationCounter;
-
-  /** The number of exceptions encountered by SimpleSegmentIndexer while indexing a segment. */
-  public final SearchCounter simpleSegmentIndexerExceptionCounter;
+  /** Thelon highelonst indelonxelond twelonelont ID. Uselond to computelon indelonx frelonshnelonss. */
+  public final SelonarchLongGaugelon highelonstStatusId;
 
   /**
-   * A map from TIE update type to the creation time of the updated tweet in milliseconds of the
-   * freshest update we have indexed.
+   * Thelon currelonnt timelonslicelon's ID. Welon can comparelon this to indelonxelonr's elonxportelond currelonnt timelonslicelon ID to
+   * idelonntify stuck timelonslicelon rolls.
    */
-  public final EnumMap<ThriftIndexingEventType, AtomicLong> updateFreshness =
-      new EnumMap<>(ThriftIndexingEventType.class);
+  public final SelonarchLongGaugelon currelonntTimelonslicelonId;
 
-  public final SearchStatsReceiver searchStatsReceiver;
+  /** Thelon numbelonr of archivelon timelonslicelons that welon failelond to procelonss. */
+  public final SelonarchCountelonr archivelonTimelonSlicelonBuildFailelondCountelonr;
 
-  public static class StartupMetric {
-    // Switched from 0 to 1 during the event.
-    private SearchLongGauge duringGauge;
-    // Switched from 0 to time it takes, in milliseconds.
-    private SearchLongGauge durationMillisGauge;
+  /** Thelon numbelonr of timelons welon chelonckelond a selongmelonnt's sizelon on disk. */
+  public final SelonarchCountelonr selongmelonntSizelonChelonckCount;
 
-    StartupMetric(String name) {
-      this.duringGauge = SearchLongGauge.export(name);
-      this.durationMillisGauge = SearchLongGauge.export("duration_of_" + name);
+  /** Thelon numbelonr of selongmelonnts that havelon relonachelond thelonir max sizelon. */
+  public final SelonarchCountelonr maxSelongmelonntSizelonRelonachelondCountelonr;
+
+  /** Thelon numbelonr of indelonxelond twelonelonts and thelon aggrelongatelon indelonxing latelonncielons in microselonconds. */
+  public final SelonarchTimelonrStats statusStats;
+  /** Thelon numbelonr of applielond updatelons and thelon aggrelongatelon indelonxing latelonncielons in microselonconds. */
+  public final SelonarchTimelonrStats updatelonStats;
+  /** Thelon numbelonr of relontrielond updatelons and thelon aggrelongatelon indelonxing latelonncielons in microselonconds. */
+  public final SelonarchTimelonrStats updatelonRelontryStats;
+  /** Thelon numbelonr of applielond uselonr updatelons and thelon aggrelongatelon indelonxing latelonncielons in microselonconds. */
+  public final SelonarchTimelonrStats uselonrUpdatelonIndelonxingStats;
+  /** Thelon numbelonr of applielond uselonrGelonoScrubelonvelonnts and thelon aggrelongatelon indelonxing latelonncielons in
+   * microselonconds. */
+  public final SelonarchTimelonrStats uselonrScrubGelonoIndelonxingStats;
+  /** Thelon numbelonr of updatelons attelonmptelond on missing twelonelonts. */
+  public final SelonarchRatelonCountelonr updatelonOnMissingTwelonelontCountelonr;
+  /** Thelon numbelonr of updatelons droppelond. */
+  public final SelonarchRatelonCountelonr droppelondUpdatelonelonvelonnt;
+
+  /** Thelon latelonncielons in microselonconds of thelon PartitionIndelonxelonr loop. */
+  public final SelonarchTimelonrStats partitionIndelonxelonrRunLoopCountelonr;
+  /** Thelon latelonncielons in microselonconds of thelon PartitionIndelonxelonr.indelonxFromRelonadelonrs() calls. */
+  public final SelonarchTimelonrStats partitionIndelonxelonrIndelonxFromRelonadelonrsCountelonr;
+  /** Thelon numbelonr of invocations of thelon PartitionIndelonxelonr task. */
+  public final SelonarchCountelonr partitionIndelonxelonrItelonrationCountelonr;
+
+  /** Thelon numbelonr of unsortelond updatelons handlelond by SimplelonUpdatelonIndelonxelonr. */
+  public final SelonarchCountelonr simplelonUpdatelonIndelonxelonrUnsortelondUpdatelonCountelonr;
+  /** Thelon numbelonr of unsortelond updatelons with thelon wrong selongmelonnt handlelond by SimplelonUpdatelonIndelonxelonr. */
+  public final SelonarchCountelonr simplelonUpdatelonIndelonxelonrUnsortelondUpdatelonWithWrongSelongmelonntCountelonr;
+
+  /** Thelon numbelonr of invocations of thelon SimplelonUselonrUpdatelonIndelonxelonr task. */
+  public final SelonarchCountelonr simplelonUselonrUpdatelonIndelonxelonrItelonrationCountelonr;
+
+  /** Thelon numbelonr of elonxcelonptions elonncountelonrelond by SimplelonSelongmelonntIndelonxelonr whilelon indelonxing a selongmelonnt. */
+  public final SelonarchCountelonr simplelonSelongmelonntIndelonxelonrelonxcelonptionCountelonr;
+
+  /**
+   * A map from TIelon updatelon typelon to thelon crelonation timelon of thelon updatelond twelonelont in milliselonconds of thelon
+   * frelonshelonst updatelon welon havelon indelonxelond.
+   */
+  public final elonnumMap<ThriftIndelonxingelonvelonntTypelon, AtomicLong> updatelonFrelonshnelonss =
+      nelonw elonnumMap<>(ThriftIndelonxingelonvelonntTypelon.class);
+
+  public final SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr;
+
+  public static class StartupMelontric {
+    // Switchelond from 0 to 1 during thelon elonvelonnt.
+    privatelon SelonarchLongGaugelon duringGaugelon;
+    // Switchelond from 0 to timelon it takelons, in milliselonconds.
+    privatelon SelonarchLongGaugelon durationMillisGaugelon;
+
+    StartupMelontric(String namelon) {
+      this.duringGaugelon = SelonarchLongGaugelon.elonxport(namelon);
+      this.durationMillisGaugelon = SelonarchLongGaugelon.elonxport("duration_of_" + namelon);
     }
 
-    public void begin() {
-      duringGauge.set(1);
+    public void belongin() {
+      duringGaugelon.selont(1);
     }
 
-    public void end(long durationInMillis) {
-      duringGauge.set(0);
-      durationMillisGauge.set(durationInMillis);
+    public void elonnd(long durationInMillis) {
+      duringGaugelon.selont(0);
+      durationMillisGaugelon.selont(durationInMillis);
     }
   }
 
-  public final StartupMetric startupInProgress;
-  public final StartupMetric startupInIndexCompletedSegments;
-  public final StartupMetric startupInLoadCompletedSegments;
-  public final StartupMetric startupInIndexUpdatesForCompletedSegments;
-  public final StartupMetric startupInCurrentSegment;
-  public final StartupMetric startupInUserUpdates;
-  public final StartupMetric startupInQueryCacheUpdates;
-  public final StartupMetric startupInMultiSegmentTermDictionaryUpdates;
-  public final StartupMetric startupInWarmUp;
+  public final StartupMelontric startupInProgrelonss;
+  public final StartupMelontric startupInIndelonxComplelontelondSelongmelonnts;
+  public final StartupMelontric startupInLoadComplelontelondSelongmelonnts;
+  public final StartupMelontric startupInIndelonxUpdatelonsForComplelontelondSelongmelonnts;
+  public final StartupMelontric startupInCurrelonntSelongmelonnt;
+  public final StartupMelontric startupInUselonrUpdatelons;
+  public final StartupMelontric startupInQuelonryCachelonUpdatelons;
+  public final StartupMelontric startupInMultiSelongmelonntTelonrmDictionaryUpdatelons;
+  public final StartupMelontric startupInWarmUp;
 
-  // Kafka metrics
-  public final StartupMetric startupInLoadFlushedIndex;
-  public final StartupMetric startupInFreshStartup;
-  public final StartupMetric startupInIngestUntilCurrent;
-  public final StartupMetric startupInUserUpdatesStartup;
-  public final StartupMetric startupInUserEventIndexer;
-  public final StartupMetric startupInAudioSpaceEventIndexer;
+  // Kafka melontrics
+  public final StartupMelontric startupInLoadFlushelondIndelonx;
+  public final StartupMelontric startupInFrelonshStartup;
+  public final StartupMelontric startupInIngelonstUntilCurrelonnt;
+  public final StartupMelontric startupInUselonrUpdatelonsStartup;
+  public final StartupMelontric startupInUselonrelonvelonntIndelonxelonr;
+  public final StartupMelontric startupInAudioSpacelonelonvelonntIndelonxelonr;
 
-  public SearchIndexingMetricSet(SearchStatsReceiver searchStatsReceiver) {
-    this.freshestTweetTimeMillis = searchStatsReceiver.getLongGauge(
-        "earlybird_freshest_tweet_timestamp_millis");
-    this.highestStatusId = searchStatsReceiver.getLongGauge("highest_indexed_status_id");
-    this.currentTimesliceId = searchStatsReceiver.getLongGauge("earlybird_current_timeslice_id");
-    this.archiveTimeSliceBuildFailedCounter = searchStatsReceiver.getCounter(
-        "archive_time_slice_build_failed");
-    this.segmentSizeCheckCount = searchStatsReceiver.getCounter("segment_size_check_count");
-    this.maxSegmentSizeReachedCounter = searchStatsReceiver.getCounter("max_segment_reached");
+  public SelonarchIndelonxingMelontricSelont(SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr) {
+    this.frelonshelonstTwelonelontTimelonMillis = selonarchStatsReloncelonivelonr.gelontLongGaugelon(
+        "elonarlybird_frelonshelonst_twelonelont_timelonstamp_millis");
+    this.highelonstStatusId = selonarchStatsReloncelonivelonr.gelontLongGaugelon("highelonst_indelonxelond_status_id");
+    this.currelonntTimelonslicelonId = selonarchStatsReloncelonivelonr.gelontLongGaugelon("elonarlybird_currelonnt_timelonslicelon_id");
+    this.archivelonTimelonSlicelonBuildFailelondCountelonr = selonarchStatsReloncelonivelonr.gelontCountelonr(
+        "archivelon_timelon_slicelon_build_failelond");
+    this.selongmelonntSizelonChelonckCount = selonarchStatsReloncelonivelonr.gelontCountelonr("selongmelonnt_sizelon_chelonck_count");
+    this.maxSelongmelonntSizelonRelonachelondCountelonr = selonarchStatsReloncelonivelonr.gelontCountelonr("max_selongmelonnt_relonachelond");
 
-    this.statusStats = searchStatsReceiver.getTimerStats(
-        "index_status", TimeUnit.MICROSECONDS, false, false, false);
-    this.updateStats = searchStatsReceiver.getTimerStats(
-        "updates", TimeUnit.MICROSECONDS, false, false, false);
-    this.updateRetryStats = searchStatsReceiver.getTimerStats(
-        "update_retries", TimeUnit.MICROSECONDS, false, false, false);
-    this.userUpdateIndexingStats = searchStatsReceiver.getTimerStats(
-        "user_updates", TimeUnit.MICROSECONDS, false, false, false);
-    this.userScrubGeoIndexingStats = searchStatsReceiver.getTimerStats(
-        "user_scrub_geo", TimeUnit.MICROSECONDS, false, false, false);
-    this.updateOnMissingTweetCounter = searchStatsReceiver.getRateCounter(
-        "index_update_on_missing_tweet");
-    this.droppedUpdateEvent = searchStatsReceiver.getRateCounter("dropped_update_event");
+    this.statusStats = selonarchStatsReloncelonivelonr.gelontTimelonrStats(
+        "indelonx_status", TimelonUnit.MICROSelonCONDS, falselon, falselon, falselon);
+    this.updatelonStats = selonarchStatsReloncelonivelonr.gelontTimelonrStats(
+        "updatelons", TimelonUnit.MICROSelonCONDS, falselon, falselon, falselon);
+    this.updatelonRelontryStats = selonarchStatsReloncelonivelonr.gelontTimelonrStats(
+        "updatelon_relontrielons", TimelonUnit.MICROSelonCONDS, falselon, falselon, falselon);
+    this.uselonrUpdatelonIndelonxingStats = selonarchStatsReloncelonivelonr.gelontTimelonrStats(
+        "uselonr_updatelons", TimelonUnit.MICROSelonCONDS, falselon, falselon, falselon);
+    this.uselonrScrubGelonoIndelonxingStats = selonarchStatsReloncelonivelonr.gelontTimelonrStats(
+        "uselonr_scrub_gelono", TimelonUnit.MICROSelonCONDS, falselon, falselon, falselon);
+    this.updatelonOnMissingTwelonelontCountelonr = selonarchStatsReloncelonivelonr.gelontRatelonCountelonr(
+        "indelonx_updatelon_on_missing_twelonelont");
+    this.droppelondUpdatelonelonvelonnt = selonarchStatsReloncelonivelonr.gelontRatelonCountelonr("droppelond_updatelon_elonvelonnt");
 
-    this.partitionIndexerRunLoopCounter = searchStatsReceiver.getTimerStats(
-        "partition_indexer_run_loop", TimeUnit.MICROSECONDS, false, true, false);
-    this.partitionIndexerIndexFromReadersCounter = searchStatsReceiver.getTimerStats(
-        "partition_indexer_indexFromReaders", TimeUnit.MICROSECONDS, false, true, false);
-    this.partitionIndexerIterationCounter = searchStatsReceiver.getCounter(
-        ScheduledExecutorManager.SCHEDULED_EXECUTOR_TASK_PREFIX + "PartitionIndexer");
+    this.partitionIndelonxelonrRunLoopCountelonr = selonarchStatsReloncelonivelonr.gelontTimelonrStats(
+        "partition_indelonxelonr_run_loop", TimelonUnit.MICROSelonCONDS, falselon, truelon, falselon);
+    this.partitionIndelonxelonrIndelonxFromRelonadelonrsCountelonr = selonarchStatsReloncelonivelonr.gelontTimelonrStats(
+        "partition_indelonxelonr_indelonxFromRelonadelonrs", TimelonUnit.MICROSelonCONDS, falselon, truelon, falselon);
+    this.partitionIndelonxelonrItelonrationCountelonr = selonarchStatsReloncelonivelonr.gelontCountelonr(
+        SchelondulelondelonxeloncutorManagelonr.SCHelonDULelonD_elonXelonCUTOR_TASK_PRelonFIX + "PartitionIndelonxelonr");
 
-    this.simpleUpdateIndexerUnsortedUpdateCounter = searchStatsReceiver.getCounter(
-        "simple_update_indexer_unsorted_update_count");
-    this.simpleUpdateIndexerUnsortedUpdateWithWrongSegmentCounter = searchStatsReceiver.getCounter(
-        "simple_update_indexer_unsorted_update_with_wrong_segment_count");
+    this.simplelonUpdatelonIndelonxelonrUnsortelondUpdatelonCountelonr = selonarchStatsReloncelonivelonr.gelontCountelonr(
+        "simplelon_updatelon_indelonxelonr_unsortelond_updatelon_count");
+    this.simplelonUpdatelonIndelonxelonrUnsortelondUpdatelonWithWrongSelongmelonntCountelonr = selonarchStatsReloncelonivelonr.gelontCountelonr(
+        "simplelon_updatelon_indelonxelonr_unsortelond_updatelon_with_wrong_selongmelonnt_count");
 
-    this.simpleUserUpdateIndexerIterationCounter = searchStatsReceiver.getCounter(
-        ScheduledExecutorManager.SCHEDULED_EXECUTOR_TASK_PREFIX + "SimpleUserUpdateIndexer");
+    this.simplelonUselonrUpdatelonIndelonxelonrItelonrationCountelonr = selonarchStatsReloncelonivelonr.gelontCountelonr(
+        SchelondulelondelonxeloncutorManagelonr.SCHelonDULelonD_elonXelonCUTOR_TASK_PRelonFIX + "SimplelonUselonrUpdatelonIndelonxelonr");
 
-    this.simpleSegmentIndexerExceptionCounter = searchStatsReceiver.getCounter(
-        "exception_while_indexing_segment");
+    this.simplelonSelongmelonntIndelonxelonrelonxcelonptionCountelonr = selonarchStatsReloncelonivelonr.gelontCountelonr(
+        "elonxcelonption_whilelon_indelonxing_selongmelonnt");
 
-    for (ThriftIndexingEventType type : ThriftIndexingEventType.values()) {
-      AtomicLong freshness = new AtomicLong(0);
-      updateFreshness.put(type, freshness);
-      String statName = ("index_freshness_" + type + "_age_millis").toLowerCase();
-      searchStatsReceiver.getCustomGauge(statName,
-          () -> System.currentTimeMillis() - freshness.get());
+    for (ThriftIndelonxingelonvelonntTypelon typelon : ThriftIndelonxingelonvelonntTypelon.valuelons()) {
+      AtomicLong frelonshnelonss = nelonw AtomicLong(0);
+      updatelonFrelonshnelonss.put(typelon, frelonshnelonss);
+      String statNamelon = ("indelonx_frelonshnelonss_" + typelon + "_agelon_millis").toLowelonrCaselon();
+      selonarchStatsReloncelonivelonr.gelontCustomGaugelon(statNamelon,
+          () -> Systelonm.currelonntTimelonMillis() - frelonshnelonss.gelont());
     }
 
-    this.startupInProgress = new StartupMetric("startup_in_progress");
-    this.startupInIndexCompletedSegments = new StartupMetric("startup_in_index_completed_segments");
-    this.startupInLoadCompletedSegments = new StartupMetric("startup_in_load_completed_segments");
-    this.startupInIndexUpdatesForCompletedSegments =
-        new StartupMetric("startup_in_index_updates_for_completed_segments");
-    this.startupInCurrentSegment = new StartupMetric("startup_in_current_segment");
-    this.startupInUserUpdates = new StartupMetric("startup_in_user_updates");
-    this.startupInQueryCacheUpdates = new StartupMetric("startup_in_query_cache_updates");
-    this.startupInMultiSegmentTermDictionaryUpdates =
-        new StartupMetric("startup_in_multi_segment_dictionary_updates");
-    this.startupInWarmUp = new StartupMetric("startup_in_warm_up");
+    this.startupInProgrelonss = nelonw StartupMelontric("startup_in_progrelonss");
+    this.startupInIndelonxComplelontelondSelongmelonnts = nelonw StartupMelontric("startup_in_indelonx_complelontelond_selongmelonnts");
+    this.startupInLoadComplelontelondSelongmelonnts = nelonw StartupMelontric("startup_in_load_complelontelond_selongmelonnts");
+    this.startupInIndelonxUpdatelonsForComplelontelondSelongmelonnts =
+        nelonw StartupMelontric("startup_in_indelonx_updatelons_for_complelontelond_selongmelonnts");
+    this.startupInCurrelonntSelongmelonnt = nelonw StartupMelontric("startup_in_currelonnt_selongmelonnt");
+    this.startupInUselonrUpdatelons = nelonw StartupMelontric("startup_in_uselonr_updatelons");
+    this.startupInQuelonryCachelonUpdatelons = nelonw StartupMelontric("startup_in_quelonry_cachelon_updatelons");
+    this.startupInMultiSelongmelonntTelonrmDictionaryUpdatelons =
+        nelonw StartupMelontric("startup_in_multi_selongmelonnt_dictionary_updatelons");
+    this.startupInWarmUp = nelonw StartupMelontric("startup_in_warm_up");
 
-    this.startupInLoadFlushedIndex = new StartupMetric("startup_in_load_flushed_index");
-    this.startupInFreshStartup = new StartupMetric("startup_in_fresh_startup");
-    this.startupInIngestUntilCurrent = new StartupMetric("startup_in_ingest_until_current");
-    this.startupInUserUpdatesStartup = new StartupMetric("startup_in_user_updates_startup");
-    this.startupInUserEventIndexer = new StartupMetric("startup_in_user_events_indexer");
-    this.startupInAudioSpaceEventIndexer =
-        new StartupMetric("startup_in_audio_space_events_indexer");
+    this.startupInLoadFlushelondIndelonx = nelonw StartupMelontric("startup_in_load_flushelond_indelonx");
+    this.startupInFrelonshStartup = nelonw StartupMelontric("startup_in_frelonsh_startup");
+    this.startupInIngelonstUntilCurrelonnt = nelonw StartupMelontric("startup_in_ingelonst_until_currelonnt");
+    this.startupInUselonrUpdatelonsStartup = nelonw StartupMelontric("startup_in_uselonr_updatelons_startup");
+    this.startupInUselonrelonvelonntIndelonxelonr = nelonw StartupMelontric("startup_in_uselonr_elonvelonnts_indelonxelonr");
+    this.startupInAudioSpacelonelonvelonntIndelonxelonr =
+        nelonw StartupMelontric("startup_in_audio_spacelon_elonvelonnts_indelonxelonr");
 
-    searchStatsReceiver.getCustomGauge("earlybird_index_freshness_millis",
-        this::getIndexFreshnessInMillis);
+    selonarchStatsReloncelonivelonr.gelontCustomGaugelon("elonarlybird_indelonx_frelonshnelonss_millis",
+        this::gelontIndelonxFrelonshnelonssInMillis);
 
-    this.searchStatsReceiver = searchStatsReceiver;
+    this.selonarchStatsReloncelonivelonr = selonarchStatsReloncelonivelonr;
   }
 
-  long getIndexFreshnessInMillis() {
-    return System.currentTimeMillis() - freshestTweetTimeMillis.get();
+  long gelontIndelonxFrelonshnelonssInMillis() {
+    relonturn Systelonm.currelonntTimelonMillis() - frelonshelonstTwelonelontTimelonMillis.gelont();
   }
 }

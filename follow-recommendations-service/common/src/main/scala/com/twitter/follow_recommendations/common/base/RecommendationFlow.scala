@@ -1,250 +1,250 @@
-package com.twitter.follow_recommendations.common.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.baselon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.stitch.Stitch
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ReloncommelonndationPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.reloncommelonndation.ReloncommelonndationPipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
+import com.twittelonr.stitch.Stitch
 
 /**
- * configs for results generated from the recommendation flow
+ * configs for relonsults gelonnelonratelond from thelon reloncommelonndation flow
  *
- * @param desiredCandidateCount num of desired candidates to return
- * @param batchForCandidatesCheck batch size for candidates check
+ * @param delonsirelondCandidatelonCount num of delonsirelond candidatelons to relonturn
+ * @param batchForCandidatelonsChelonck batch sizelon for candidatelons chelonck
  */
-case class RecommendationResultsConfig(desiredCandidateCount: Int, batchForCandidatesCheck: Int)
+caselon class ReloncommelonndationRelonsultsConfig(delonsirelondCandidatelonCount: Int, batchForCandidatelonsChelonck: Int)
 
-trait BaseRecommendationFlow[Target, Candidate <: UniversalNoun[Long]] {
-  val identifier = RecommendationPipelineIdentifier("RecommendationFlow")
+trait BaselonReloncommelonndationFlow[Targelont, Candidatelon <: UnivelonrsalNoun[Long]] {
+  val idelonntifielonr = ReloncommelonndationPipelonlinelonIdelonntifielonr("ReloncommelonndationFlow")
 
-  def process(
-    pipelineRequest: Target
-  ): Stitch[RecommendationPipelineResult[Candidate, Seq[Candidate]]]
+  delonf procelonss(
+    pipelonlinelonRelonquelonst: Targelont
+  ): Stitch[ReloncommelonndationPipelonlinelonRelonsult[Candidatelon, Selonq[Candidatelon]]]
 
-  def mapKey[Target2](fn: Target2 => Target): BaseRecommendationFlow[Target2, Candidate] = {
+  delonf mapKelony[Targelont2](fn: Targelont2 => Targelont): BaselonReloncommelonndationFlow[Targelont2, Candidatelon] = {
     val original = this
-    new BaseRecommendationFlow[Target2, Candidate] {
-      override def process(
-        pipelineRequest: Target2
-      ): Stitch[RecommendationPipelineResult[Candidate, Seq[Candidate]]] =
-        original.process(fn(pipelineRequest))
+    nelonw BaselonReloncommelonndationFlow[Targelont2, Candidatelon] {
+      ovelonrridelon delonf procelonss(
+        pipelonlinelonRelonquelonst: Targelont2
+      ): Stitch[ReloncommelonndationPipelonlinelonRelonsult[Candidatelon, Selonq[Candidatelon]]] =
+        original.procelonss(fn(pipelonlinelonRelonquelonst))
     }
   }
 }
 
 /**
- * Defines a typical recommendation flow to fetch, filter, rank and transform candidates.
+ * Delonfinelons a typical reloncommelonndation flow to felontch, filtelonr, rank and transform candidatelons.
  *
- * 1. targetEligibility: determine the eligibility of target request
- * 2. candidateSources: fetch candidates from candidate sources based on target type
- * 3. preRankerCandidateFilter: light filtering of candidates
- * 4. ranker: ranking of candidates (could be composed of multiple stages, light ranking, heavy ranking and etc)
- * 5. postRankerTransform: deduping, grouping, rule based promotion / demotions and etc
- * 6. validateCandidates: heavy filters to determine the eligibility of the candidates.
- *    will only be applied to candidates that we expect to return.
- * 7. transformResults: transform the individual candidates into desired format (e.g. hydrate social proof)
+ * 1. targelontelonligibility: delontelonrminelon thelon elonligibility of targelont relonquelonst
+ * 2. candidatelonSourcelons: felontch candidatelons from candidatelon sourcelons baselond on targelont typelon
+ * 3. prelonRankelonrCandidatelonFiltelonr: light filtelonring of candidatelons
+ * 4. rankelonr: ranking of candidatelons (could belon composelond of multiplelon stagelons, light ranking, helonavy ranking and elontc)
+ * 5. postRankelonrTransform: delonduping, grouping, rulelon baselond promotion / delonmotions and elontc
+ * 6. validatelonCandidatelons: helonavy filtelonrs to delontelonrminelon thelon elonligibility of thelon candidatelons.
+ *    will only belon applielond to candidatelons that welon elonxpelonct to relonturn.
+ * 7. transformRelonsults: transform thelon individual candidatelons into delonsirelond format (elon.g. hydratelon social proof)
  *
- * Note that the actual implementations may not need to implement all the steps if not needed
- * (could just leave to IdentityRanker if ranking is not needed).
+ * Notelon that thelon actual implelonmelonntations may not nelonelond to implelonmelonnt all thelon stelonps if not nelonelondelond
+ * (could just lelonavelon to IdelonntityRankelonr if ranking is not nelonelondelond).
  *
- * Theoretically, the actual implementation could override the above flow to add
- * more steps (e.g. add a transform step before ranking).
- * But it is recommended to add the additional steps into this base flow if the step proves
- * to have significant justification, or merge it into an existing step if it is a minor change.
+ * Thelonorelontically, thelon actual implelonmelonntation could ovelonrridelon thelon abovelon flow to add
+ * morelon stelonps (elon.g. add a transform stelonp belonforelon ranking).
+ * But it is reloncommelonndelond to add thelon additional stelonps into this baselon flow if thelon stelonp provelons
+ * to havelon significant justification, or melonrgelon it into an elonxisting stelonp if it is a minor changelon.
  *
- * @tparam Target type of target request
- * @tparam Candidate type of candidate to return
+ * @tparam Targelont typelon of targelont relonquelonst
+ * @tparam Candidatelon typelon of candidatelon to relonturn
  */
-trait RecommendationFlow[Target, Candidate <: UniversalNoun[Long]]
-    extends BaseRecommendationFlow[Target, Candidate]
-    with SideEffectsUtil[Target, Candidate] {
+trait ReloncommelonndationFlow[Targelont, Candidatelon <: UnivelonrsalNoun[Long]]
+    elonxtelonnds BaselonReloncommelonndationFlow[Targelont, Candidatelon]
+    with SidelonelonffelonctsUtil[Targelont, Candidatelon] {
 
   /**
-   * optionally update or enrich the request before executing the flows
+   * optionally updatelon or elonnrich thelon relonquelonst belonforelon elonxeloncuting thelon flows
    */
-  protected def updateTarget(target: Target): Stitch[Target] = Stitch.value(target)
+  protelonctelond delonf updatelonTargelont(targelont: Targelont): Stitch[Targelont] = Stitch.valuelon(targelont)
 
   /**
-   *  check if the target is eligible for the flow
+   *  chelonck if thelon targelont is elonligiblelon for thelon flow
    */
-  protected def targetEligibility: Predicate[Target]
+  protelonctelond delonf targelontelonligibility: Prelondicatelon[Targelont]
 
   /**
-   *  define the candidate sources that should be used for the given target
+   *  delonfinelon thelon candidatelon sourcelons that should belon uselond for thelon givelonn targelont
    */
-  protected def candidateSources(target: Target): Seq[CandidateSource[Target, Candidate]]
+  protelonctelond delonf candidatelonSourcelons(targelont: Targelont): Selonq[CandidatelonSourcelon[Targelont, Candidatelon]]
 
   /**
-   *  filter invalid candidates before the ranking phase.
+   *  filtelonr invalid candidatelons belonforelon thelon ranking phaselon.
    */
-  protected def preRankerCandidateFilter: Predicate[(Target, Candidate)]
+  protelonctelond delonf prelonRankelonrCandidatelonFiltelonr: Prelondicatelon[(Targelont, Candidatelon)]
 
   /**
-   * rank the candidates
+   * rank thelon candidatelons
    */
-  protected def selectRanker(target: Target): Ranker[Target, Candidate]
+  protelonctelond delonf selonlelonctRankelonr(targelont: Targelont): Rankelonr[Targelont, Candidatelon]
 
   /**
-   * transform the candidates after ranking (e.g. dedupping, grouping and etc)
+   * transform thelon candidatelons aftelonr ranking (elon.g. delondupping, grouping and elontc)
    */
-  protected def postRankerTransform: Transform[Target, Candidate]
+  protelonctelond delonf postRankelonrTransform: Transform[Targelont, Candidatelon]
 
   /**
-   *  filter invalid candidates before returning the results.
+   *  filtelonr invalid candidatelons belonforelon relonturning thelon relonsults.
    *
-   *  Some heavy filters e.g. SGS filter could be applied in this step
+   *  Somelon helonavy filtelonrs elon.g. SGS filtelonr could belon applielond in this stelonp
    */
-  protected def validateCandidates: Predicate[(Target, Candidate)]
+  protelonctelond delonf validatelonCandidatelons: Prelondicatelon[(Targelont, Candidatelon)]
 
   /**
-   * transform the candidates into results and return
+   * transform thelon candidatelons into relonsults and relonturn
    */
-  protected def transformResults: Transform[Target, Candidate]
+  protelonctelond delonf transformRelonsults: Transform[Targelont, Candidatelon]
 
   /**
-   *  configuration for recommendation results
+   *  configuration for reloncommelonndation relonsults
    */
-  protected def resultsConfig(target: Target): RecommendationResultsConfig
+  protelonctelond delonf relonsultsConfig(targelont: Targelont): ReloncommelonndationRelonsultsConfig
 
   /**
-   * track the quality factor the recommendation pipeline
+   * track thelon quality factor thelon reloncommelonndation pipelonlinelon
    */
-  protected def qualityFactorObserver: Option[QualityFactorObserver] = None
+  protelonctelond delonf qualityFactorObselonrvelonr: Option[QualityFactorObselonrvelonr] = Nonelon
 
-  def statsReceiver: StatsReceiver
+  delonf statsReloncelonivelonr: StatsReloncelonivelonr
 
   /**
-   * high level monitoring for the whole flow
-   * (make sure to add monitoring for each individual component by yourself)
+   * high lelonvelonl monitoring for thelon wholelon flow
+   * (makelon surelon to add monitoring for elonach individual componelonnt by yourselonlf)
    *
-   * additional candidates: count, stats, non_empty_count
-   * target eligibility: latency, success, failures, request, count, valid_count, invalid_count, invalid_reasons
-   * candidate generation: latency, success, failures, request, count, non_empty_count, results_stat
-   * pre ranker filter: latency, success, failures, request, count, non_empty_count, results_stat
-   * ranker: latency, success, failures, request, count, non_empty_count, results_stat
-   * post ranker: latency, success, failures, request, count, non_empty_count, results_stat
-   * filter and take: latency, success, failures, request, count, non_empty_count, results_stat, batch count
-   * transform results: latency, success, failures, request, count, non_empty_count, results_stat
+   * additional candidatelons: count, stats, non_elonmpty_count
+   * targelont elonligibility: latelonncy, succelonss, failurelons, relonquelonst, count, valid_count, invalid_count, invalid_relonasons
+   * candidatelon gelonnelonration: latelonncy, succelonss, failurelons, relonquelonst, count, non_elonmpty_count, relonsults_stat
+   * prelon rankelonr filtelonr: latelonncy, succelonss, failurelons, relonquelonst, count, non_elonmpty_count, relonsults_stat
+   * rankelonr: latelonncy, succelonss, failurelons, relonquelonst, count, non_elonmpty_count, relonsults_stat
+   * post rankelonr: latelonncy, succelonss, failurelons, relonquelonst, count, non_elonmpty_count, relonsults_stat
+   * filtelonr and takelon: latelonncy, succelonss, failurelons, relonquelonst, count, non_elonmpty_count, relonsults_stat, batch count
+   * transform relonsults: latelonncy, succelonss, failurelons, relonquelonst, count, non_elonmpty_count, relonsults_stat
    */
-  import RecommendationFlow._
-  lazy val additionalCandidatesStats = statsReceiver.scope(AdditionalCandidatesStats)
-  lazy val targetEligibilityStats = statsReceiver.scope(TargetEligibilityStats)
-  lazy val candidateGenerationStats = statsReceiver.scope(CandidateGenerationStats)
-  lazy val preRankerFilterStats = statsReceiver.scope(PreRankerFilterStats)
-  lazy val rankerStats = statsReceiver.scope(RankerStats)
-  lazy val postRankerTransformStats = statsReceiver.scope(PostRankerTransformStats)
-  lazy val filterAndTakeStats = statsReceiver.scope(FilterAndTakeStats)
-  lazy val transformResultsStats = statsReceiver.scope(TransformResultsStats)
+  import ReloncommelonndationFlow._
+  lazy val additionalCandidatelonsStats = statsReloncelonivelonr.scopelon(AdditionalCandidatelonsStats)
+  lazy val targelontelonligibilityStats = statsReloncelonivelonr.scopelon(TargelontelonligibilityStats)
+  lazy val candidatelonGelonnelonrationStats = statsReloncelonivelonr.scopelon(CandidatelonGelonnelonrationStats)
+  lazy val prelonRankelonrFiltelonrStats = statsReloncelonivelonr.scopelon(PrelonRankelonrFiltelonrStats)
+  lazy val rankelonrStats = statsReloncelonivelonr.scopelon(RankelonrStats)
+  lazy val postRankelonrTransformStats = statsReloncelonivelonr.scopelon(PostRankelonrTransformStats)
+  lazy val filtelonrAndTakelonStats = statsReloncelonivelonr.scopelon(FiltelonrAndTakelonStats)
+  lazy val transformRelonsultsStats = statsReloncelonivelonr.scopelon(TransformRelonsultsStats)
 
-  lazy val overallStats = statsReceiver.scope(OverallStats)
+  lazy val ovelonrallStats = statsReloncelonivelonr.scopelon(OvelonrallStats)
 
   import StatsUtil._
 
-  override def process(
-    pipelineRequest: Target
-  ): Stitch[RecommendationPipelineResult[Candidate, Seq[Candidate]]] = {
+  ovelonrridelon delonf procelonss(
+    pipelonlinelonRelonquelonst: Targelont
+  ): Stitch[ReloncommelonndationPipelonlinelonRelonsult[Candidatelon, Selonq[Candidatelon]]] = {
 
-    observeStitchQualityFactor(
-      profileStitchSeqResults(
-        updateTarget(pipelineRequest).flatMap { target =>
-          profilePredicateResult(targetEligibility(target), targetEligibilityStats).flatMap {
-            case PredicateResult.Valid => processValidTarget(target, Seq.empty)
-            case PredicateResult.Invalid(_) => Stitch.Nil
+    obselonrvelonStitchQualityFactor(
+      profilelonStitchSelonqRelonsults(
+        updatelonTargelont(pipelonlinelonRelonquelonst).flatMap { targelont =>
+          profilelonPrelondicatelonRelonsult(targelontelonligibility(targelont), targelontelonligibilityStats).flatMap {
+            caselon PrelondicatelonRelonsult.Valid => procelonssValidTargelont(targelont, Selonq.elonmpty)
+            caselon PrelondicatelonRelonsult.Invalid(_) => Stitch.Nil
           }
         },
-        overallStats
-      ).map { candidates =>
-        RecommendationPipelineResult.empty.withResult(candidates)
+        ovelonrallStats
+      ).map { candidatelons =>
+        ReloncommelonndationPipelonlinelonRelonsult.elonmpty.withRelonsult(candidatelons)
       },
-      qualityFactorObserver,
-      overallStats
+      qualityFactorObselonrvelonr,
+      ovelonrallStats
     )
   }
 
-  protected def processValidTarget(
-    target: Target,
-    additionalCandidates: Seq[Candidate]
-  ): Stitch[Seq[Candidate]] = {
+  protelonctelond delonf procelonssValidTargelont(
+    targelont: Targelont,
+    additionalCandidatelons: Selonq[Candidatelon]
+  ): Stitch[Selonq[Candidatelon]] = {
 
     /**
-     * A basic recommendation flow looks like this:
+     * A basic reloncommelonndation flow looks likelon this:
      *
-     * 1. fetch candidates from candidate sources
-     * 2. blend candidates with existing candidates
-     * 3. filter the candidates (light filters) before ranking
+     * 1. felontch candidatelons from candidatelon sourcelons
+     * 2. blelonnd candidatelons with elonxisting candidatelons
+     * 3. filtelonr thelon candidatelons (light filtelonrs) belonforelon ranking
      * 4. ranking
-     * 5. filter and truncate the candidates using postRankerCandidateFilter
-     * 6. transform the candidates based on product requirement
+     * 5. filtelonr and truncatelon thelon candidatelons using postRankelonrCandidatelonFiltelonr
+     * 6. transform thelon candidatelons baselond on product relonquirelonmelonnt
      */
-    val candidateSourcesToFetch = candidateSources(target)
+    val candidatelonSourcelonsToFelontch = candidatelonSourcelons(targelont)
     for {
-      candidates <- profileStitchSeqResults(
-        Stitch.traverse(candidateSourcesToFetch)(_(target)).map(_.flatten),
-        candidateGenerationStats
+      candidatelons <- profilelonStitchSelonqRelonsults(
+        Stitch.travelonrselon(candidatelonSourcelonsToFelontch)(_(targelont)).map(_.flattelonn),
+        candidatelonGelonnelonrationStats
       )
-      mergedCandidates =
-        profileSeqResults(additionalCandidates, additionalCandidatesStats) ++
-          candidates
-      filteredCandidates <- profileStitchSeqResults(
-        Predicate.filter(target, mergedCandidates, preRankerCandidateFilter),
-        preRankerFilterStats
+      melonrgelondCandidatelons =
+        profilelonSelonqRelonsults(additionalCandidatelons, additionalCandidatelonsStats) ++
+          candidatelons
+      filtelonrelondCandidatelons <- profilelonStitchSelonqRelonsults(
+        Prelondicatelon.filtelonr(targelont, melonrgelondCandidatelons, prelonRankelonrCandidatelonFiltelonr),
+        prelonRankelonrFiltelonrStats
       )
-      rankedCandidates <- profileStitchSeqResults(
-        selectRanker(target).rank(target, filteredCandidates),
-        rankerStats
+      rankelondCandidatelons <- profilelonStitchSelonqRelonsults(
+        selonlelonctRankelonr(targelont).rank(targelont, filtelonrelondCandidatelons),
+        rankelonrStats
       )
-      transformed <- profileStitchSeqResults(
-        postRankerTransform.transform(target, rankedCandidates),
-        postRankerTransformStats
+      transformelond <- profilelonStitchSelonqRelonsults(
+        postRankelonrTransform.transform(targelont, rankelondCandidatelons),
+        postRankelonrTransformStats
       )
-      truncated <- profileStitchSeqResults(
-        take(target, transformed, resultsConfig(target)),
-        filterAndTakeStats
+      truncatelond <- profilelonStitchSelonqRelonsults(
+        takelon(targelont, transformelond, relonsultsConfig(targelont)),
+        filtelonrAndTakelonStats
       )
-      results <- profileStitchSeqResults(
-        transformResults.transform(target, truncated),
-        transformResultsStats
+      relonsults <- profilelonStitchSelonqRelonsults(
+        transformRelonsults.transform(targelont, truncatelond),
+        transformRelonsultsStats
       )
-      _ <- applySideEffects(
-        target,
-        candidateSourcesToFetch,
-        candidates,
-        mergedCandidates,
-        filteredCandidates,
-        rankedCandidates,
-        transformed,
-        truncated,
-        results)
-    } yield results
+      _ <- applySidelonelonffeloncts(
+        targelont,
+        candidatelonSourcelonsToFelontch,
+        candidatelons,
+        melonrgelondCandidatelons,
+        filtelonrelondCandidatelons,
+        rankelondCandidatelons,
+        transformelond,
+        truncatelond,
+        relonsults)
+    } yielonld relonsults
   }
 
-  private[this] def take(
-    target: Target,
-    candidates: Seq[Candidate],
-    config: RecommendationResultsConfig
-  ): Stitch[Seq[Candidate]] = {
-    Predicate
-      .batchFilterTake(
-        candidates.map(c => (target, c)),
-        validateCandidates,
-        config.batchForCandidatesCheck,
-        config.desiredCandidateCount,
-        statsReceiver
+  privatelon[this] delonf takelon(
+    targelont: Targelont,
+    candidatelons: Selonq[Candidatelon],
+    config: ReloncommelonndationRelonsultsConfig
+  ): Stitch[Selonq[Candidatelon]] = {
+    Prelondicatelon
+      .batchFiltelonrTakelon(
+        candidatelons.map(c => (targelont, c)),
+        validatelonCandidatelons,
+        config.batchForCandidatelonsChelonck,
+        config.delonsirelondCandidatelonCount,
+        statsReloncelonivelonr
       ).map(_.map(_._2))
   }
 }
 
-object RecommendationFlow {
+objelonct ReloncommelonndationFlow {
 
-  val AdditionalCandidatesStats = "additional_candidates"
-  val TargetEligibilityStats = "target_eligibility"
-  val CandidateGenerationStats = "candidate_generation"
-  val PreRankerFilterStats = "pre_ranker_filter"
-  val RankerStats = "ranker"
-  val PostRankerTransformStats = "post_ranker_transform"
-  val FilterAndTakeStats = "filter_and_take"
-  val TransformResultsStats = "transform_results"
-  val OverallStats = "overall"
+  val AdditionalCandidatelonsStats = "additional_candidatelons"
+  val TargelontelonligibilityStats = "targelont_elonligibility"
+  val CandidatelonGelonnelonrationStats = "candidatelon_gelonnelonration"
+  val PrelonRankelonrFiltelonrStats = "prelon_rankelonr_filtelonr"
+  val RankelonrStats = "rankelonr"
+  val PostRankelonrTransformStats = "post_rankelonr_transform"
+  val FiltelonrAndTakelonStats = "filtelonr_and_takelon"
+  val TransformRelonsultsStats = "transform_relonsults"
+  val OvelonrallStats = "ovelonrall"
 }

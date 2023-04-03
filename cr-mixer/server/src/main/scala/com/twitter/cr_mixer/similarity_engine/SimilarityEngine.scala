@@ -1,169 +1,169 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.GlobalRequestTimeoutException
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mux.ServerApplicationError
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.hashing.KeyHasher
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.TimeoutException
-import com.twitter.util.logging.Logging
-import org.apache.thrift.TApplicationException
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.CrMixelonrDeloncidelonr
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.GlobalRelonquelonstTimelonoutelonxcelonption
+import com.twittelonr.finaglelon.mux.ClielonntDiscardelondRelonquelonstelonxcelonption
+import com.twittelonr.finaglelon.melonmcachelond.Clielonnt
+import com.twittelonr.finaglelon.mux.SelonrvelonrApplicationelonrror
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.hashing.KelonyHashelonr
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondMelonmcachelondRelonadablelonStorelon
+import com.twittelonr.relonlelonvancelon_platform.common.injelonction.LZ4Injelonction
+import com.twittelonr.relonlelonvancelon_platform.common.injelonction.SelonqObjelonctInjelonction
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelonoutelonxcelonption
+import com.twittelonr.util.logging.Logging
+import org.apachelon.thrift.TApplicationelonxcelonption
 
 /**
- * A SimilarityEngine is a wrapper which, given a [[Query]], returns a list of [[Candidate]]
- * The main purposes of a SimilarityEngine is to provide a consistent interface for candidate
- * generation logic, and provides default functions, including:
- * - Identification
- * - Observability
- * - Timeout settings
- * - Exception Handling
- * - Gating by Deciders & FeatureSwitch settings
+ * A Similarityelonnginelon is a wrappelonr which, givelonn a [[Quelonry]], relonturns a list of [[Candidatelon]]
+ * Thelon main purposelons of a Similarityelonnginelon is to providelon a consistelonnt intelonrfacelon for candidatelon
+ * gelonnelonration logic, and providelons delonfault functions, including:
+ * - Idelonntification
+ * - Obselonrvability
+ * - Timelonout selonttings
+ * - elonxcelonption Handling
+ * - Gating by Deloncidelonrs & FelonaturelonSwitch selonttings
  * - (coming soon): Dark traffic
  *
- * Note:
- * A SimilarityEngine by itself is NOT meant to be cacheable.
- * Caching should be implemented in the underlying ReadableStore that provides the [[Candidate]]s
+ * Notelon:
+ * A Similarityelonnginelon by itselonlf is NOT melonant to belon cachelonablelon.
+ * Caching should belon implelonmelonntelond in thelon undelonrlying RelonadablelonStorelon that providelons thelon [[Candidatelon]]s
  *
- * Please keep extension of this class local this directory only
+ * Plelonaselon kelonelonp elonxtelonnsion of this class local this direlonctory only
  *
  */
-trait SimilarityEngine[Query, Candidate] {
+trait Similarityelonnginelon[Quelonry, Candidatelon] {
 
   /**
-   * Uniquely identifies a similarity engine.
-   * Avoid using the same engine type for more than one engine, it will cause stats to double count
+   * Uniquelonly idelonntifielons a similarity elonnginelon.
+   * Avoid using thelon samelon elonnginelon typelon for morelon than onelon elonnginelon, it will causelon stats to doublelon count
    */
-  private[similarity_engine] def identifier: SimilarityEngineType
+  privatelon[similarity_elonnginelon] delonf idelonntifielonr: SimilarityelonnginelonTypelon
 
-  def getCandidates(query: Query): Future[Option[Seq[Candidate]]]
+  delonf gelontCandidatelons(quelonry: Quelonry): Futurelon[Option[Selonq[Candidatelon]]]
 
 }
 
-object SimilarityEngine extends Logging {
-  case class SimilarityEngineConfig(
-    timeout: Duration,
+objelonct Similarityelonnginelon elonxtelonnds Logging {
+  caselon class SimilarityelonnginelonConfig(
+    timelonout: Duration,
     gatingConfig: GatingConfig)
 
   /**
-   * Controls for whether or not this Engine is enabled.
-   * In our previous design, we were expecting a Sim Engine will only take one set of Params,
-   * and that’s why we decided to have GatingConfig and the EnableFeatureSwitch in the trait.
-   * However, we now have two candidate generation pipelines: Tweet Rec, Related Tweets
-   * and they are now having their own set of Params, but EnableFeatureSwitch can only put in 1 fixed value.
-   * We need some further refactor work to make it more flexible.
+   * Controls for whelonthelonr or not this elonnginelon is elonnablelond.
+   * In our prelonvious delonsign, welon welonrelon elonxpeloncting a Sim elonnginelon will only takelon onelon selont of Params,
+   * and that’s why welon deloncidelond to havelon GatingConfig and thelon elonnablelonFelonaturelonSwitch in thelon trait.
+   * Howelonvelonr, welon now havelon two candidatelon gelonnelonration pipelonlinelons: Twelonelont Relonc, Relonlatelond Twelonelonts
+   * and thelony arelon now having thelonir own selont of Params, but elonnablelonFelonaturelonSwitch can only put in 1 fixelond valuelon.
+   * Welon nelonelond somelon furthelonr relonfactor work to makelon it morelon flelonxiblelon.
    *
-   * @param deciderConfig Gate the Engine by a decider. If specified,
-   * @param enableFeatureSwitch. DO NOT USE IT FOR NOW. It needs some refactorting. Please set it to None (SD-20268)
+   * @param deloncidelonrConfig Gatelon thelon elonnginelon by a deloncidelonr. If speloncifielond,
+   * @param elonnablelonFelonaturelonSwitch. DO NOT USelon IT FOR NOW. It nelonelonds somelon relonfactorting. Plelonaselon selont it to Nonelon (SD-20268)
    */
-  case class GatingConfig(
-    deciderConfig: Option[DeciderConfig],
-    enableFeatureSwitch: Option[
-      FSParam[Boolean]
-    ]) // Do NOT use the enableFeatureSwitch. It needs some refactoring.
+  caselon class GatingConfig(
+    deloncidelonrConfig: Option[DeloncidelonrConfig],
+    elonnablelonFelonaturelonSwitch: Option[
+      FSParam[Boolelonan]
+    ]) // Do NOT uselon thelon elonnablelonFelonaturelonSwitch. It nelonelonds somelon relonfactoring.
 
-  case class DeciderConfig(
-    decider: CrMixerDecider,
-    deciderString: String)
+  caselon class DeloncidelonrConfig(
+    deloncidelonr: CrMixelonrDeloncidelonr,
+    deloncidelonrString: String)
 
-  case class MemCacheConfig[K](
-    cacheClient: Client,
+  caselon class MelonmCachelonConfig[K](
+    cachelonClielonnt: Clielonnt,
     ttl: Duration,
-    asyncUpdate: Boolean = false,
-    keyToString: K => String)
+    asyncUpdatelon: Boolelonan = falselon,
+    kelonyToString: K => String)
 
-  private[similarity_engine] def isEnabled(
+  privatelon[similarity_elonnginelon] delonf iselonnablelond(
     params: Params,
     gatingConfig: GatingConfig
-  ): Boolean = {
-    val enabledByDecider =
-      gatingConfig.deciderConfig.forall { config =>
-        config.decider.isAvailable(config.deciderString)
+  ): Boolelonan = {
+    val elonnablelondByDeloncidelonr =
+      gatingConfig.deloncidelonrConfig.forall { config =>
+        config.deloncidelonr.isAvailablelon(config.deloncidelonrString)
       }
 
-    val enabledByFS = gatingConfig.enableFeatureSwitch.forall(params.apply)
+    val elonnablelondByFS = gatingConfig.elonnablelonFelonaturelonSwitch.forall(params.apply)
 
-    enabledByDecider && enabledByFS
+    elonnablelondByDeloncidelonr && elonnablelondByFS
   }
 
-  // Default key hasher for memcache keys
-  val keyHasher: KeyHasher = KeyHasher.FNV1A_64
+  // Delonfault kelony hashelonr for melonmcachelon kelonys
+  val kelonyHashelonr: KelonyHashelonr = KelonyHashelonr.FNV1A_64
 
   /**
-   * Add a MemCache wrapper to a ReadableStore with a preset key and value injection functions
-   * Note: The [[Query]] object needs to be cacheable,
-   * i.e. it cannot be a runtime objects or complex objects, for example, configapi.Params
+   * Add a MelonmCachelon wrappelonr to a RelonadablelonStorelon with a prelonselont kelony and valuelon injelonction functions
+   * Notelon: Thelon [[Quelonry]] objelonct nelonelonds to belon cachelonablelon,
+   * i.elon. it cannot belon a runtimelon objeloncts or complelonx objeloncts, for elonxamplelon, configapi.Params
    *
-   * @param underlyingStore un-cached store implementation
-   * @param keyPrefix       a prefix differentiates 2 stores if they share the same key space.
-   *                        e.x. 2 implementations of ReadableStore[UserId, Seq[Candidiate] ]
-   *                        can use prefix "store_v1", "store_v2"
-   * @return                A ReadableStore with a MemCache wrapper
+   * @param undelonrlyingStorelon un-cachelond storelon implelonmelonntation
+   * @param kelonyPrelonfix       a prelonfix diffelonrelonntiatelons 2 storelons if thelony sharelon thelon samelon kelony spacelon.
+   *                        elon.x. 2 implelonmelonntations of RelonadablelonStorelon[UselonrId, Selonq[Candidiatelon] ]
+   *                        can uselon prelonfix "storelon_v1", "storelon_v2"
+   * @relonturn                A RelonadablelonStorelon with a MelonmCachelon wrappelonr
    */
-  private[similarity_engine] def addMemCache[Query, Candidate <: Serializable](
-    underlyingStore: ReadableStore[Query, Seq[Candidate]],
-    memCacheConfig: MemCacheConfig[Query],
-    keyPrefix: Option[String] = None,
-    statsReceiver: StatsReceiver
-  ): ReadableStore[Query, Seq[Candidate]] = {
-    val prefix = keyPrefix.getOrElse("")
+  privatelon[similarity_elonnginelon] delonf addMelonmCachelon[Quelonry, Candidatelon <: Selonrializablelon](
+    undelonrlyingStorelon: RelonadablelonStorelon[Quelonry, Selonq[Candidatelon]],
+    melonmCachelonConfig: MelonmCachelonConfig[Quelonry],
+    kelonyPrelonfix: Option[String] = Nonelon,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadablelonStorelon[Quelonry, Selonq[Candidatelon]] = {
+    val prelonfix = kelonyPrelonfix.gelontOrelonlselon("")
 
-    ObservedMemcachedReadableStore.fromCacheClient[Query, Seq[Candidate]](
-      backingStore = underlyingStore,
-      cacheClient = memCacheConfig.cacheClient,
-      ttl = memCacheConfig.ttl,
-      asyncUpdate = memCacheConfig.asyncUpdate,
+    ObselonrvelondMelonmcachelondRelonadablelonStorelon.fromCachelonClielonnt[Quelonry, Selonq[Candidatelon]](
+      backingStorelon = undelonrlyingStorelon,
+      cachelonClielonnt = melonmCachelonConfig.cachelonClielonnt,
+      ttl = melonmCachelonConfig.ttl,
+      asyncUpdatelon = melonmCachelonConfig.asyncUpdatelon,
     )(
-      valueInjection = LZ4Injection.compose(SeqObjectInjection[Candidate]()),
-      keyToString = { k: Query => s"CRMixer:$prefix${memCacheConfig.keyToString(k)}" },
-      statsReceiver = statsReceiver
+      valuelonInjelonction = LZ4Injelonction.composelon(SelonqObjelonctInjelonction[Candidatelon]()),
+      kelonyToString = { k: Quelonry => s"CRMixelonr:$prelonfix${melonmCachelonConfig.kelonyToString(k)}" },
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
   }
 
-  private val timer = com.twitter.finagle.util.DefaultTimer
+  privatelon val timelonr = com.twittelonr.finaglelon.util.DelonfaultTimelonr
 
   /**
-   * Applies runtime configs, like stats, timeouts, exception handling, onto fn
+   * Applielons runtimelon configs, likelon stats, timelonouts, elonxcelonption handling, onto fn
    */
-  private[similarity_engine] def getFromFn[Query, Candidate](
-    fn: Query => Future[Option[Seq[Candidate]]],
-    storeQuery: Query,
-    engineConfig: SimilarityEngineConfig,
+  privatelon[similarity_elonnginelon] delonf gelontFromFn[Quelonry, Candidatelon](
+    fn: Quelonry => Futurelon[Option[Selonq[Candidatelon]]],
+    storelonQuelonry: Quelonry,
+    elonnginelonConfig: SimilarityelonnginelonConfig,
     params: Params,
-    scopedStats: StatsReceiver
-  ): Future[Option[Seq[Candidate]]] = {
-    if (isEnabled(params, engineConfig.gatingConfig)) {
-      scopedStats.counter("gate_enabled").incr()
+    scopelondStats: StatsReloncelonivelonr
+  ): Futurelon[Option[Selonq[Candidatelon]]] = {
+    if (iselonnablelond(params, elonnginelonConfig.gatingConfig)) {
+      scopelondStats.countelonr("gatelon_elonnablelond").incr()
 
       StatsUtil
-        .trackOptionItemsStats(scopedStats) {
-          fn.apply(storeQuery).raiseWithin(engineConfig.timeout)(timer)
+        .trackOptionItelonmsStats(scopelondStats) {
+          fn.apply(storelonQuelonry).raiselonWithin(elonnginelonConfig.timelonout)(timelonr)
         }
-        .rescue {
-          case _: TimeoutException | _: GlobalRequestTimeoutException | _: TApplicationException |
-              _: ClientDiscardedRequestException |
-              _: ServerApplicationError // TApplicationException inside
+        .relonscuelon {
+          caselon _: Timelonoutelonxcelonption | _: GlobalRelonquelonstTimelonoutelonxcelonption | _: TApplicationelonxcelonption |
+              _: ClielonntDiscardelondRelonquelonstelonxcelonption |
+              _: SelonrvelonrApplicationelonrror // TApplicationelonxcelonption insidelon
               =>
-            debug("Failed to fetch. request aborted or timed out")
-            Future.None
-          case e =>
-            error("Failed to fetch. request aborted or timed out", e)
-            Future.None
+            delonbug("Failelond to felontch. relonquelonst abortelond or timelond out")
+            Futurelon.Nonelon
+          caselon elon =>
+            elonrror("Failelond to felontch. relonquelonst abortelond or timelond out", elon)
+            Futurelon.Nonelon
         }
-    } else {
-      scopedStats.counter("gate_disabled").incr()
-      Future.None
+    } elonlselon {
+      scopelondStats.countelonr("gatelon_disablelond").incr()
+      Futurelon.Nonelon
     }
   }
 }

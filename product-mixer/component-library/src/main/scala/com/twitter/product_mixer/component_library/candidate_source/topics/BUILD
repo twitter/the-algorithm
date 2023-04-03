@@ -1,11 +1,11 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "strato/config/columns/interests:interests-strato-client",
-        "strato/src/main/scala/com/twitter/strato/client",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/candidatelon_sourcelon/strato",
+        "strato/config/columns/intelonrelonsts:intelonrelonsts-strato-clielonnt",
+        "strato/src/main/scala/com/twittelonr/strato/clielonnt",
     ],
 )

@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.functional_component.filter
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InRelonplyToTwelonelontIdFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Exclude conversation modules where Tweets have been dropped by other filters
+ * elonxcludelon convelonrsation modulelons whelonrelon Twelonelonts havelon belonelonn droppelond by othelonr filtelonrs
  *
- * Largest conversation modules have 3 Tweets, so if all 3 are present, module is valid.
- * For 2 Tweet modules, check if the head is the root (not a reply) and the last item
- * is actually replying to the root directly with no missing intermediate tweets
+ * Largelonst convelonrsation modulelons havelon 3 Twelonelonts, so if all 3 arelon prelonselonnt, modulelon is valid.
+ * For 2 Twelonelont modulelons, chelonck if thelon helonad is thelon root (not a relonply) and thelon last itelonm
+ * is actually relonplying to thelon root direlonctly with no missing intelonrmelondiatelon twelonelonts
  */
-object InvalidConversationModuleFilter extends Filter[PipelineQuery, TweetCandidate] {
+objelonct InvalidConvelonrsationModulelonFiltelonr elonxtelonnds Filtelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("InvalidConversationModule")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("InvalidConvelonrsationModulelon")
 
-  val ValidThreeTweetModuleSize = 3
-  val ValidTwoTweetModuleSize = 2
+  val ValidThrelonelonTwelonelontModulelonSizelon = 3
+  val ValidTwoTwelonelontModulelonSizelon = 2
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val allowedTweetIds = candidates
-      .groupBy(_.features.getOrElse(ConversationModuleFocalTweetIdFeature, None))
-      .map { case (id, candidates) => (id, candidates.sortBy(_.candidate.id)) }
-      .filter {
-        case (Some(_), conversation) if conversation.size == ValidThreeTweetModuleSize => true
-        case (Some(focalId), conversation) if conversation.size == ValidTwoTweetModuleSize =>
-          conversation.head.features.getOrElse(InReplyToTweetIdFeature, None).isEmpty &&
-            conversation.last.candidate.id == focalId &&
-            conversation.last.features
-              .getOrElse(InReplyToTweetIdFeature, None)
-              .contains(conversation.head.candidate.id)
-        case (None, _) => true
-        case _ => false
-      }.values.flatten.toSeq.map(_.candidate.id).toSet
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[TwelonelontCandidatelon]] = {
+    val allowelondTwelonelontIds = candidatelons
+      .groupBy(_.felonaturelons.gelontOrelonlselon(ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon, Nonelon))
+      .map { caselon (id, candidatelons) => (id, candidatelons.sortBy(_.candidatelon.id)) }
+      .filtelonr {
+        caselon (Somelon(_), convelonrsation) if convelonrsation.sizelon == ValidThrelonelonTwelonelontModulelonSizelon => truelon
+        caselon (Somelon(focalId), convelonrsation) if convelonrsation.sizelon == ValidTwoTwelonelontModulelonSizelon =>
+          convelonrsation.helonad.felonaturelons.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon).iselonmpty &&
+            convelonrsation.last.candidatelon.id == focalId &&
+            convelonrsation.last.felonaturelons
+              .gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon)
+              .contains(convelonrsation.helonad.candidatelon.id)
+        caselon (Nonelon, _) => truelon
+        caselon _ => falselon
+      }.valuelons.flattelonn.toSelonq.map(_.candidatelon.id).toSelont
 
-    val (kept, removed) =
-      candidates.map(_.candidate).partition(candidate => allowedTweetIds.contains(candidate.id))
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    val (kelonpt, relonmovelond) =
+      candidatelons.map(_.candidatelon).partition(candidatelon => allowelondTwelonelontIds.contains(candidatelon.id))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonpt, relonmovelond = relonmovelond))
   }
 }

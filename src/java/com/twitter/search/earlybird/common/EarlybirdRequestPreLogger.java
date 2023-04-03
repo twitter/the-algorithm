@@ -1,32 +1,32 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
 
-public final class EarlybirdRequestPreLogger {
-  private final EarlybirdRequestLogger logger;
+public final class elonarlybirdRelonquelonstPrelonLoggelonr {
+  privatelon final elonarlybirdRelonquelonstLoggelonr loggelonr;
 
-  public static EarlybirdRequestPreLogger buildForRoot(Decider decider) {
-    EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForRoot(
-        EarlybirdRequestPreLogger.class.getName(), Integer.MAX_VALUE, decider);
+  public static elonarlybirdRelonquelonstPrelonLoggelonr buildForRoot(Deloncidelonr deloncidelonr) {
+    elonarlybirdRelonquelonstLoggelonr relonquelonstLoggelonr = elonarlybirdRelonquelonstLoggelonr.buildForRoot(
+        elonarlybirdRelonquelonstPrelonLoggelonr.class.gelontNamelon(), Intelongelonr.MAX_VALUelon, deloncidelonr);
 
-    return new EarlybirdRequestPreLogger(requestLogger);
+    relonturn nelonw elonarlybirdRelonquelonstPrelonLoggelonr(relonquelonstLoggelonr);
   }
 
-  public static EarlybirdRequestPreLogger buildForShard(
-      int latencyWarnThreshold, Decider decider) {
+  public static elonarlybirdRelonquelonstPrelonLoggelonr buildForShard(
+      int latelonncyWarnThrelonshold, Deloncidelonr deloncidelonr) {
 
-    EarlybirdRequestLogger requestLogger = EarlybirdRequestLogger.buildForShard(
-        EarlybirdRequestPreLogger.class.getName(), latencyWarnThreshold, decider);
+    elonarlybirdRelonquelonstLoggelonr relonquelonstLoggelonr = elonarlybirdRelonquelonstLoggelonr.buildForShard(
+        elonarlybirdRelonquelonstPrelonLoggelonr.class.gelontNamelon(), latelonncyWarnThrelonshold, deloncidelonr);
 
-    return new EarlybirdRequestPreLogger(requestLogger);
+    relonturn nelonw elonarlybirdRelonquelonstPrelonLoggelonr(relonquelonstLoggelonr);
   }
 
-  private EarlybirdRequestPreLogger(EarlybirdRequestLogger logger) {
-    this.logger = logger;
+  privatelon elonarlybirdRelonquelonstPrelonLoggelonr(elonarlybirdRelonquelonstLoggelonr loggelonr) {
+    this.loggelonr = loggelonr;
   }
 
-  public void logRequest(EarlybirdRequest request) {
-    logger.logRequest(request, null, null);
+  public void logRelonquelonst(elonarlybirdRelonquelonst relonquelonst) {
+    loggelonr.logRelonquelonst(relonquelonst, null, null);
   }
 }

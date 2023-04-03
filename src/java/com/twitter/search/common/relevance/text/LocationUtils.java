@@ -1,41 +1,41 @@
-package com.twitter.search.common.relevance.text;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.telonxt;
 
-import java.util.regex.Matcher;
+import java.util.relongelonx.Matchelonr;
 
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.util.text.regex.Regex;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.util.telonxt.relongelonx.Relongelonx;
 
 public final class LocationUtils {
-  private LocationUtils() {
+  privatelon LocationUtils() {
   }
 
   /**
-   * Extract lat/lon information from a twitter message.
-   * @param message The twitter message.
-   * @return A two-element double array for the lat/lon information.
+   * elonxtract lat/lon information from a twittelonr melonssagelon.
+   * @param melonssagelon Thelon twittelonr melonssagelon.
+   * @relonturn A two-elonlelonmelonnt doublelon array for thelon lat/lon information.
    */
-  public static double[] extractLatLon(TwitterMessage message) {
-    // first look in text for L:, then fall back to profile
-    Matcher loc = Regex.LAT_LON_LOC_PATTERN.matcher(message.getText());
-    if (loc.find() || message.getOrigLocation() != null
-        && (loc = Regex.LAT_LON_PATTERN.matcher(message.getOrigLocation())).find()) {
-      final double lat = Double.parseDouble(loc.group(2));
-      final double lon = Double.parseDouble(loc.group(3));
+  public static doublelon[] elonxtractLatLon(TwittelonrMelonssagelon melonssagelon) {
+    // first look in telonxt for L:, thelonn fall back to profilelon
+    Matchelonr loc = Relongelonx.LAT_LON_LOC_PATTelonRN.matchelonr(melonssagelon.gelontTelonxt());
+    if (loc.find() || melonssagelon.gelontOrigLocation() != null
+        && (loc = Relongelonx.LAT_LON_PATTelonRN.matchelonr(melonssagelon.gelontOrigLocation())).find()) {
+      final doublelon lat = Doublelon.parselonDoublelon(loc.group(2));
+      final doublelon lon = Doublelon.parselonDoublelon(loc.group(3));
 
       if (Math.abs(lat) > 90.0) {
-        throw new NumberFormatException("Latitude cannot exceed +-90 degrees: " + lat);
+        throw nelonw NumbelonrFormatelonxcelonption("Latitudelon cannot elonxcelonelond +-90 delongrelonelons: " + lat);
       }
       if (Math.abs(lon) > 180.0) {
-        throw new NumberFormatException("Longitude cannot exceed +-180 degrees: " + lon);
+        throw nelonw NumbelonrFormatelonxcelonption("Longitudelon cannot elonxcelonelond +-180 delongrelonelons: " + lon);
       }
 
-      // Reject these common "bogus" regions.
+      // Relonjelonct thelonselon common "bogus" relongions.
       if ((lat == 0 && lon == 0) || lat == -1 || lon == -1) {
-        return null;
+        relonturn null;
       }
 
-      return new double[]{lat, lon};
+      relonturn nelonw doublelon[]{lat, lon};
     }
-    return null;
+    relonturn null;
   }
 }

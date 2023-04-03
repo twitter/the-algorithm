@@ -1,33 +1,33 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import javax.injelonct.Injelonct
 
-@Singleton
-class PopCountryBackFillSource @Inject() (popGeoSource: PopGeoSource)
-    extends CandidateSource[HasClientContext with HasParams, CandidateUser] {
+@Singlelonton
+class PopCountryBackFillSourcelon @Injelonct() (popGelonoSourcelon: PopGelonoSourcelon)
+    elonxtelonnds CandidatelonSourcelon[HasClielonntContelonxt with HasParams, CandidatelonUselonr] {
 
-  override val identifier: CandidateSourceIdentifier = PopCountryBackFillSource.Identifier
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = PopCountryBackFillSourcelon.Idelonntifielonr
 
-  override def apply(target: HasClientContext with HasParams): Stitch[Seq[CandidateUser]] = {
-    target.getOptionalUserId
+  ovelonrridelon delonf apply(targelont: HasClielonntContelonxt with HasParams): Stitch[Selonq[CandidatelonUselonr]] = {
+    targelont.gelontOptionalUselonrId
       .map(_ =>
-        popGeoSource(PopCountryBackFillSource.DefaultKey)
-          .map(_.take(PopCountryBackFillSource.MaxResults).map(_.withCandidateSource(identifier))))
-      .getOrElse(Stitch.Nil)
+        popGelonoSourcelon(PopCountryBackFillSourcelon.DelonfaultKelony)
+          .map(_.takelon(PopCountryBackFillSourcelon.MaxRelonsults).map(_.withCandidatelonSourcelon(idelonntifielonr))))
+      .gelontOrelonlselon(Stitch.Nil)
   }
 }
 
-object PopCountryBackFillSource {
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.PopCountryBackFill.toString)
-  val MaxResults = 40
-  val DefaultKey = "country_US"
+objelonct PopCountryBackFillSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr(Algorithm.PopCountryBackFill.toString)
+  val MaxRelonsults = 40
+  val DelonfaultKelony = "country_US"
 }

@@ -1,82 +1,82 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
-import java.util.Objects;
+import java.io.IOelonxcelonption;
+import java.util.Objeloncts;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.query.FilteredQuery;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.index.TweetIDMapper;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.quelonry.FiltelonrelondQuelonry;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrScrubGelonoMap;
+import com.twittelonr.selonarch.elonarlybird.indelonx.TwelonelontIDMappelonr;
 
 /**
- * Filter that can be used with searches over geo field postings lists in order to filter out tweets
- * that have been geo scrubbed. Determines if a tweet has been geo scrubbed by comparing the
- * tweet's id against the max scrubbed tweet id for that tweet's author, which is stored in the
- * UserScrubGeoMap.
+ * Filtelonr that can belon uselond with selonarchelons ovelonr gelono fielonld postings lists in ordelonr to filtelonr out twelonelonts
+ * that havelon belonelonn gelono scrubbelond. Delontelonrminelons if a twelonelont has belonelonn gelono scrubbelond by comparing thelon
+ * twelonelont's id against thelon max scrubbelond twelonelont id for that twelonelont's author, which is storelond in thelon
+ * UselonrScrubGelonoMap.
  *
- * See: go/realtime-geo-filtering
+ * Selonelon: go/relonaltimelon-gelono-filtelonring
  */
-public class UserScrubGeoFilter implements FilteredQuery.DocIdFilterFactory {
+public class UselonrScrubGelonoFiltelonr implelonmelonnts FiltelonrelondQuelonry.DocIdFiltelonrFactory {
 
-  private UserScrubGeoMap userScrubGeoMap;
+  privatelon UselonrScrubGelonoMap uselonrScrubGelonoMap;
 
-  private final SearchRateCounter totalRequestsUsingFilterCounter =
-      SearchRateCounter.export("user_scrub_geo_filter_total_requests");
+  privatelon final SelonarchRatelonCountelonr totalRelonquelonstsUsingFiltelonrCountelonr =
+      SelonarchRatelonCountelonr.elonxport("uselonr_scrub_gelono_filtelonr_total_relonquelonsts");
 
-  public static FilteredQuery.DocIdFilterFactory getDocIdFilterFactory(
-      UserScrubGeoMap userScrubGeoMap) {
-    return new UserScrubGeoFilter(userScrubGeoMap);
+  public static FiltelonrelondQuelonry.DocIdFiltelonrFactory gelontDocIdFiltelonrFactory(
+      UselonrScrubGelonoMap uselonrScrubGelonoMap) {
+    relonturn nelonw UselonrScrubGelonoFiltelonr(uselonrScrubGelonoMap);
   }
 
-  public UserScrubGeoFilter(UserScrubGeoMap userScrubGeoMap) {
-    this.userScrubGeoMap = userScrubGeoMap;
-    totalRequestsUsingFilterCounter.increment();
+  public UselonrScrubGelonoFiltelonr(UselonrScrubGelonoMap uselonrScrubGelonoMap) {
+    this.uselonrScrubGelonoMap = uselonrScrubGelonoMap;
+    totalRelonquelonstsUsingFiltelonrCountelonr.increlonmelonnt();
   }
 
-  @Override
-  public FilteredQuery.DocIdFilter getDocIdFilter(LeafReaderContext context) throws IOException {
-    // To determine if a given doc has been geo scrubbed we need two pieces of information about the
-    // doc: the associated tweet id and the user id of the tweet's author. We can get the tweet id
-    // from the TweetIDMapper for the segment we are currently searching, and we can get the user id
-    // of the tweet's author by looking up the doc id in the NumericDocValues for the
-    // FROM_USER_ID_CSF.
+  @Ovelonrridelon
+  public FiltelonrelondQuelonry.DocIdFiltelonr gelontDocIdFiltelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+    // To delontelonrminelon if a givelonn doc has belonelonn gelono scrubbelond welon nelonelond two pieloncelons of information about thelon
+    // doc: thelon associatelond twelonelont id and thelon uselonr id of thelon twelonelont's author. Welon can gelont thelon twelonelont id
+    // from thelon TwelonelontIDMappelonr for thelon selongmelonnt welon arelon currelonntly selonarching, and welon can gelont thelon uselonr id
+    // of thelon twelonelont's author by looking up thelon doc id in thelon NumelonricDocValuelons for thelon
+    // FROM_USelonR_ID_CSF.
     //
-    // With this information we can check the UserScrubGeoMap to find out if the tweet has been
-    // geo scrubbed and filter it out accordingly.
-    final EarlybirdIndexSegmentAtomicReader currTwitterReader =
-        (EarlybirdIndexSegmentAtomicReader) context.reader();
-    final TweetIDMapper tweetIdMapper =
-        (TweetIDMapper) currTwitterReader.getSegmentData().getDocIDToTweetIDMapper();
-    final NumericDocValues fromUserIdDocValues = currTwitterReader.getNumericDocValues(
-        EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
-    return (docId) -> fromUserIdDocValues.advanceExact(docId)
-        && !userScrubGeoMap.isTweetGeoScrubbed(
-            tweetIdMapper.getTweetID(docId), fromUserIdDocValues.longValue());
+    // With this information welon can chelonck thelon UselonrScrubGelonoMap to find out if thelon twelonelont has belonelonn
+    // gelono scrubbelond and filtelonr it out accordingly.
+    final elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr currTwittelonrRelonadelonr =
+        (elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) contelonxt.relonadelonr();
+    final TwelonelontIDMappelonr twelonelontIdMappelonr =
+        (TwelonelontIDMappelonr) currTwittelonrRelonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
+    final NumelonricDocValuelons fromUselonrIdDocValuelons = currTwittelonrRelonadelonr.gelontNumelonricDocValuelons(
+        elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF.gelontFielonldNamelon());
+    relonturn (docId) -> fromUselonrIdDocValuelons.advancelonelonxact(docId)
+        && !uselonrScrubGelonoMap.isTwelonelontGelonoScrubbelond(
+            twelonelontIdMappelonr.gelontTwelonelontID(docId), fromUselonrIdDocValuelons.longValuelon());
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return "UserScrubGeoFilter";
+    relonturn "UselonrScrubGelonoFiltelonr";
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof UserScrubGeoMap)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof UselonrScrubGelonoMap)) {
+      relonturn falselon;
     }
 
-    UserScrubGeoFilter filter = UserScrubGeoFilter.class.cast(obj);
-    // filters are considered equal as long as they are using the same UserScrubGeoMap
-    return Objects.equals(userScrubGeoMap, filter.userScrubGeoMap);
+    UselonrScrubGelonoFiltelonr filtelonr = UselonrScrubGelonoFiltelonr.class.cast(obj);
+    // filtelonrs arelon considelonrelond elonqual as long as thelony arelon using thelon samelon UselonrScrubGelonoMap
+    relonturn Objeloncts.elonquals(uselonrScrubGelonoMap, filtelonr.uselonrScrubGelonoMap);
   }
 
-  @Override
-  public int hashCode() {
-    return userScrubGeoMap == null ? 0 : userScrubGeoMap.hashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn uselonrScrubGelonoMap == null ? 0 : uselonrScrubGelonoMap.hashCodelon();
   }
 }

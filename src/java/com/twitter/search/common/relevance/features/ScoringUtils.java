@@ -1,24 +1,24 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
 /**
- * Scoring utilities
+ * Scoring utilitielons
  */
 public final class ScoringUtils {
-  private ScoringUtils() { }
+  privatelon ScoringUtils() { }
 
   /**
-   * normalize a positive value of arbitrary range to [0.0, 1.0], with a slop
-   * @param value the value to normalize.
-   * @param halfval a reference value that will be normalized to 0.5
-   * @param exp an exponential parameter (must be positive) to control the converging speed,
-   * the smaller the value the faster it reaches the halfval but slower it reaches the maximum.
-   * @return a normalized value
+   * normalizelon a positivelon valuelon of arbitrary rangelon to [0.0, 1.0], with a slop
+   * @param valuelon thelon valuelon to normalizelon.
+   * @param halfval a relonfelonrelonncelon valuelon that will belon normalizelond to 0.5
+   * @param elonxp an elonxponelonntial paramelontelonr (must belon positivelon) to control thelon convelonrging spelonelond,
+   * thelon smallelonr thelon valuelon thelon fastelonr it relonachelons thelon halfval but slowelonr it relonachelons thelon maximum.
+   * @relonturn a normalizelond valuelon
    */
-  public static float normalize(float value, double halfval, double exp) {
-    Preconditions.checkArgument(exp > 0.0 && exp <= 1.0);
-    return (float) (Math.pow(value, exp) / (Math.pow(value, exp) + Math.pow(halfval, exp)));
+  public static float normalizelon(float valuelon, doublelon halfval, doublelon elonxp) {
+    Prelonconditions.chelonckArgumelonnt(elonxp > 0.0 && elonxp <= 1.0);
+    relonturn (float) (Math.pow(valuelon, elonxp) / (Math.pow(valuelon, elonxp) + Math.pow(halfval, elonxp)));
   }
 
 }

@@ -1,126 +1,126 @@
-package com.twitter.search.earlybird.index.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx.facelonts;
 
-import java.io.IOException;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.HashSelont;
+import java.util.Itelonrator;
+import java.util.Selont;
 
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
+import org.apachelon.lucelonnelon.analysis.TokelonnStrelonam;
+import org.apachelon.lucelonnelon.analysis.tokelonnattributelons.CharTelonrmAttributelon;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.TelonrmQuelonry;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountStatelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmRelonquelonst;
 
-public abstract class FacetSkipList {
-  public static class SkipTokenStream extends TokenStream {
-    private CharTermAttribute termAtt = addAttribute(CharTermAttribute.class);
+public abstract class FacelontSkipList {
+  public static class SkipTokelonnStrelonam elonxtelonnds TokelonnStrelonam {
+    privatelon CharTelonrmAttributelon telonrmAtt = addAttributelon(CharTelonrmAttributelon.class);
 
-    private Iterator<Schema.FieldInfo> iterator;
-    private Set<Schema.FieldInfo> facetFields = new HashSet<>();
+    privatelon Itelonrator<Schelonma.FielonldInfo> itelonrator;
+    privatelon Selont<Schelonma.FielonldInfo> facelontFielonlds = nelonw HashSelont<>();
 
-    public void add(Schema.FieldInfo field) {
-      this.facetFields.add(field);
+    public void add(Schelonma.FielonldInfo fielonld) {
+      this.facelontFielonlds.add(fielonld);
     }
 
-    @Override
-    public final boolean incrementToken() throws IOException {
-      if (iterator == null) {
-        iterator = facetFields.iterator();
+    @Ovelonrridelon
+    public final boolelonan increlonmelonntTokelonn() throws IOelonxcelonption {
+      if (itelonrator == null) {
+        itelonrator = facelontFielonlds.itelonrator();
       }
 
-      while (iterator.hasNext()) {
-        Schema.FieldInfo field = iterator.next();
-        if (field.getFieldType().isStoreFacetSkiplist()) {
-          termAtt.setEmpty();
-          termAtt.append(EarlybirdFieldConstant.getFacetSkipFieldName(field.getName()));
+      whilelon (itelonrator.hasNelonxt()) {
+        Schelonma.FielonldInfo fielonld = itelonrator.nelonxt();
+        if (fielonld.gelontFielonldTypelon().isStorelonFacelontSkiplist()) {
+          telonrmAtt.selontelonmpty();
+          telonrmAtt.appelonnd(elonarlybirdFielonldConstant.gelontFacelontSkipFielonldNamelon(fielonld.gelontNamelon()));
 
-          return true;
+          relonturn truelon;
         }
       }
 
-      return false;
+      relonturn falselon;
     }
   }
 
   /**
-   * Returns a Term query to search in the given facet field.
+   * Relonturns a Telonrm quelonry to selonarch in thelon givelonn facelont fielonld.
    */
-  public static Term getSkipListTerm(Schema.FieldInfo facetField) {
-    if (facetField.getFieldType().isStoreFacetSkiplist()) {
-      return new Term(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-                      EarlybirdFieldConstant.getFacetSkipFieldName(facetField.getName()));
+  public static Telonrm gelontSkipListTelonrm(Schelonma.FielonldInfo facelontFielonld) {
+    if (facelontFielonld.gelontFielonldTypelon().isStorelonFacelontSkiplist()) {
+      relonturn nelonw Telonrm(elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
+                      elonarlybirdFielonldConstant.gelontFacelontSkipFielonldNamelon(facelontFielonld.gelontNamelon()));
     }
-    return null;
+    relonturn null;
   }
 
   /**
-   * Returns a disjunction query that searches in all facet fields in the given facet count state.
+   * Relonturns a disjunction quelonry that selonarchelons in all facelont fielonlds in thelon givelonn facelont count statelon.
    */
-  public static Query getSkipListQuery(FacetCountState facetCountState) {
-    Set<Schema.FieldInfo> fieldsWithSkipLists =
-        facetCountState.getFacetFieldsToCountWithSkipLists();
+  public static Quelonry gelontSkipListQuelonry(FacelontCountStatelon facelontCountStatelon) {
+    Selont<Schelonma.FielonldInfo> fielonldsWithSkipLists =
+        facelontCountStatelon.gelontFacelontFielonldsToCountWithSkipLists();
 
-    if (fieldsWithSkipLists == null || fieldsWithSkipLists.isEmpty()) {
-      return null;
+    if (fielonldsWithSkipLists == null || fielonldsWithSkipLists.iselonmpty()) {
+      relonturn null;
     }
 
-    Query skipLists;
+    Quelonry skipLists;
 
-    if (fieldsWithSkipLists.size() == 1) {
-      skipLists = new TermQuery(getSkipListTerm(fieldsWithSkipLists.iterator().next()));
-    } else {
-      BooleanQuery.Builder disjunctionBuilder = new BooleanQuery.Builder();
-      for (Schema.FieldInfo facetField : fieldsWithSkipLists) {
-        disjunctionBuilder.add(
-            new TermQuery(new Term(
-                EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-                EarlybirdFieldConstant.getFacetSkipFieldName(facetField.getName()))),
-            BooleanClause.Occur.SHOULD);
+    if (fielonldsWithSkipLists.sizelon() == 1) {
+      skipLists = nelonw TelonrmQuelonry(gelontSkipListTelonrm(fielonldsWithSkipLists.itelonrator().nelonxt()));
+    } elonlselon {
+      BoolelonanQuelonry.Buildelonr disjunctionBuildelonr = nelonw BoolelonanQuelonry.Buildelonr();
+      for (Schelonma.FielonldInfo facelontFielonld : fielonldsWithSkipLists) {
+        disjunctionBuildelonr.add(
+            nelonw TelonrmQuelonry(nelonw Telonrm(
+                elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
+                elonarlybirdFielonldConstant.gelontFacelontSkipFielonldNamelon(facelontFielonld.gelontNamelon()))),
+            BoolelonanClauselon.Occur.SHOULD);
       }
-      skipLists = disjunctionBuilder.build();
+      skipLists = disjunctionBuildelonr.build();
     }
 
-    return skipLists;
+    relonturn skipLists;
   }
 
   /**
-   * Returns a term request that can be used to get term statistics for the skip list term
-   * associated with the provided facet. Returns null, if this FacetField is configured to not
-   * store a skiplist.
+   * Relonturns a telonrm relonquelonst that can belon uselond to gelont telonrm statistics for thelon skip list telonrm
+   * associatelond with thelon providelond facelont. Relonturns null, if this FacelontFielonld is configurelond to not
+   * storelon a skiplist.
    */
-  public static ThriftTermRequest getSkipListTermRequest(Schema schema, String facetName) {
-    return getSkipListTermRequest(schema.getFacetFieldByFacetName(facetName));
+  public static ThriftTelonrmRelonquelonst gelontSkipListTelonrmRelonquelonst(Schelonma schelonma, String facelontNamelon) {
+    relonturn gelontSkipListTelonrmRelonquelonst(schelonma.gelontFacelontFielonldByFacelontNamelon(facelontNamelon));
   }
 
   /**
-   * Returns a term request that can be used to get term statistics for the skip list term
-   * associated with the provided facet. Returns null, if this FacetField is configured to not
-   * store a skiplist.
+   * Relonturns a telonrm relonquelonst that can belon uselond to gelont telonrm statistics for thelon skip list telonrm
+   * associatelond with thelon providelond facelont. Relonturns null, if this FacelontFielonld is configurelond to not
+   * storelon a skiplist.
    */
-  public static ThriftTermRequest getSkipListTermRequest(Schema.FieldInfo facetField) {
-    return facetField != null && facetField.getFieldType().isStoreFacetSkiplist()
-           ? new ThriftTermRequest(
-                EarlybirdFieldConstant.getFacetSkipFieldName(facetField.getName()))
-             .setFieldName(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName())
+  public static ThriftTelonrmRelonquelonst gelontSkipListTelonrmRelonquelonst(Schelonma.FielonldInfo facelontFielonld) {
+    relonturn facelontFielonld != null && facelontFielonld.gelontFielonldTypelon().isStorelonFacelontSkiplist()
+           ? nelonw ThriftTelonrmRelonquelonst(
+                elonarlybirdFielonldConstant.gelontFacelontSkipFielonldNamelon(facelontFielonld.gelontNamelon()))
+             .selontFielonldNamelon(elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon())
            : null;
   }
 
   /**
-   * Returns a term request using the specified fieldName. This is only a temporary solution until
-   * Blender can access the Schema to pass the FacetIDMap into the method above.
+   * Relonturns a telonrm relonquelonst using thelon speloncifielond fielonldNamelon. This is only a telonmporary solution until
+   * Blelonndelonr can accelonss thelon Schelonma to pass thelon FacelontIDMap into thelon melonthod abovelon.
    *
-   * @deprecated Temporary solution until Blender
+   * @delonpreloncatelond Telonmporary solution until Blelonndelonr
    */
-  @Deprecated
-  public static ThriftTermRequest getSkipListTermRequest(String fieldName) {
-    return new ThriftTermRequest(EarlybirdFieldConstant.getFacetSkipFieldName(fieldName))
-        .setFieldName(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName());
+  @Delonpreloncatelond
+  public static ThriftTelonrmRelonquelonst gelontSkipListTelonrmRelonquelonst(String fielonldNamelon) {
+    relonturn nelonw ThriftTelonrmRelonquelonst(elonarlybirdFielonldConstant.gelontFacelontSkipFielonldNamelon(fielonldNamelon))
+        .selontFielonldNamelon(elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon());
   }
 }

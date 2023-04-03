@@ -1,10 +1,10 @@
 scala_library(
     platform = "java11",
-    strict_deps = False,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "finagle/finagle-stats",
-        "recos-injector/server/src/main/scala/com/twitter/recosinjector/clients",
-        "src/thrift/com/twitter/gizmoduck:thrift-scala",
+    strict_delonps = Falselon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "finaglelon/finaglelon-stats",
+        "reloncos-injelonctor/selonrvelonr/src/main/scala/com/twittelonr/reloncosinjelonctor/clielonnts",
+        "src/thrift/com/twittelonr/gizmoduck:thrift-scala",
     ],
 )

@@ -1,157 +1,157 @@
-package com.twitter.visibility.interfaces.notifications
+packagelon com.twittelonr.visibility.intelonrfacelons.notifications
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.util.Throwables
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.CommunityNotificationFeatures
-import com.twitter.visibility.builder.tweets.UnmentionNotificationFeatures
-import com.twitter.visibility.builder.users.AuthorDeviceFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.builder.users.RelationshipFeatures
-import com.twitter.visibility.builder.users.ViewerAdvancedFilteringFeatures
-import com.twitter.visibility.builder.users.ViewerFeatures
-import com.twitter.visibility.common.UserDeviceSource
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.AuthorUserLabels
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.Action
-import com.twitter.visibility.rules.RuleResult
-import com.twitter.visibility.rules.{Allow => AllowAction}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Throwablelons
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.twelonelonts.CommunityNotificationFelonaturelons
+import com.twittelonr.visibility.buildelonr.twelonelonts.UnmelonntionNotificationFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorDelonvicelonFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.RelonlationshipFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrAdvancelondFiltelonringFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrFelonaturelons
+import com.twittelonr.visibility.common.UselonrDelonvicelonSourcelon
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.felonaturelons.AuthorUselonrLabelonls
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
+import com.twittelonr.visibility.rulelons.Statelon.FelonaturelonFailelond
+import com.twittelonr.visibility.rulelons.Statelon.MissingFelonaturelon
+import com.twittelonr.visibility.rulelons.Action
+import com.twittelonr.visibility.rulelons.RulelonRelonsult
+import com.twittelonr.visibility.rulelons.{Allow => AllowAction}
 
-object NotificationsPlatformVisibilityLibrary {
-  type NotificationsPlatformVFType =
-    NotificationVFRequest => Stitch[NotificationsPlatformFilteringResponse]
+objelonct NotificationsPlatformVisibilityLibrary {
+  typelon NotificationsPlatformVFTypelon =
+    NotificationVFRelonquelonst => Stitch[NotificationsPlatformFiltelonringRelonsponselon]
 
-  private val AllowResponse: Stitch[NotificationsPlatformFilteringResponse] =
-    Stitch.value(AllowVerdict)
+  privatelon val AllowRelonsponselon: Stitch[NotificationsPlatformFiltelonringRelonsponselon] =
+    Stitch.valuelon(AllowVelonrdict)
 
-  def apply(
-    userSource: UserSource,
-    userRelationshipSource: UserRelationshipSource,
-    userDeviceSource: UserDeviceSource,
+  delonf apply(
+    uselonrSourcelon: UselonrSourcelon,
+    uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon,
+    uselonrDelonvicelonSourcelon: UselonrDelonvicelonSourcelon,
     visibilityLibrary: VisibilityLibrary,
-    enableShimFeatureHydration: Gate[Unit] = Gate.False
-  ): NotificationsPlatformVFType = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    elonnablelonShimFelonaturelonHydration: Gatelon[Unit] = Gatelon.Falselon
+  ): NotificationsPlatformVFTypelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr
+    val vfelonnginelonCountelonr = libraryStatsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
 
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val authorDeviceFeatures = new AuthorDeviceFeatures(userDeviceSource, libraryStatsReceiver)
-    val viewerFeatures = new ViewerFeatures(userSource, libraryStatsReceiver)
+    val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+    val authorDelonvicelonFelonaturelons = nelonw AuthorDelonvicelonFelonaturelons(uselonrDelonvicelonSourcelon, libraryStatsReloncelonivelonr)
+    val vielonwelonrFelonaturelons = nelonw VielonwelonrFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
 
-    val viewerAdvancedFilteringFeatures =
-      new ViewerAdvancedFilteringFeatures(userSource, libraryStatsReceiver)
-    val relationshipFeatures =
-      new RelationshipFeatures(userRelationshipSource, libraryStatsReceiver)
+    val vielonwelonrAdvancelondFiltelonringFelonaturelons =
+      nelonw VielonwelonrAdvancelondFiltelonringFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+    val relonlationshipFelonaturelons =
+      nelonw RelonlationshipFelonaturelons(uselonrRelonlationshipSourcelon, libraryStatsReloncelonivelonr)
 
-    val isShimFeatureHydrationEnabled = enableShimFeatureHydration()
+    val isShimFelonaturelonHydrationelonnablelond = elonnablelonShimFelonaturelonHydration()
 
-    def runRuleEngine(candidate: NotificationVFRequest): Stitch[VisibilityResult] = {
-      val featureMap =
-        visibilityLibrary.featureMapBuilder(
-          Seq(
-            viewerFeatures.forViewerId(Some(candidate.recipientId)),
-            viewerAdvancedFilteringFeatures.forViewerId(Some(candidate.recipientId)),
-            authorFeatures.forAuthorId(candidate.subject.id),
-            authorDeviceFeatures.forAuthorId(candidate.subject.id),
-            relationshipFeatures.forAuthorId(candidate.subject.id, Some(candidate.recipientId)),
-            CommunityNotificationFeatures.ForNonCommunityTweetNotification,
-            UnmentionNotificationFeatures.ForNonUnmentionNotificationFeatures
+    delonf runRulelonelonnginelon(candidatelon: NotificationVFRelonquelonst): Stitch[VisibilityRelonsult] = {
+      val felonaturelonMap =
+        visibilityLibrary.felonaturelonMapBuildelonr(
+          Selonq(
+            vielonwelonrFelonaturelons.forVielonwelonrId(Somelon(candidatelon.reloncipielonntId)),
+            vielonwelonrAdvancelondFiltelonringFelonaturelons.forVielonwelonrId(Somelon(candidatelon.reloncipielonntId)),
+            authorFelonaturelons.forAuthorId(candidatelon.subjelonct.id),
+            authorDelonvicelonFelonaturelons.forAuthorId(candidatelon.subjelonct.id),
+            relonlationshipFelonaturelons.forAuthorId(candidatelon.subjelonct.id, Somelon(candidatelon.reloncipielonntId)),
+            CommunityNotificationFelonaturelons.ForNonCommunityTwelonelontNotification,
+            UnmelonntionNotificationFelonaturelons.ForNonUnmelonntionNotificationFelonaturelons
           )
         )
 
-      vfEngineCounter.incr()
+      vfelonnginelonCountelonr.incr()
 
-      if (isShimFeatureHydrationEnabled) {
-        FeatureMap.resolve(featureMap, libraryStatsReceiver).flatMap { resolvedFeatureMap =>
-          visibilityLibrary.runRuleEngine(
-            contentId = candidate.subject,
-            featureMap = resolvedFeatureMap,
-            viewerContext =
-              ViewerContext.fromContextWithViewerIdFallback(Some(candidate.recipientId)),
-            safetyLevel = candidate.safetyLevel
+      if (isShimFelonaturelonHydrationelonnablelond) {
+        FelonaturelonMap.relonsolvelon(felonaturelonMap, libraryStatsReloncelonivelonr).flatMap { relonsolvelondFelonaturelonMap =>
+          visibilityLibrary.runRulelonelonnginelon(
+            contelonntId = candidatelon.subjelonct,
+            felonaturelonMap = relonsolvelondFelonaturelonMap,
+            vielonwelonrContelonxt =
+              VielonwelonrContelonxt.fromContelonxtWithVielonwelonrIdFallback(Somelon(candidatelon.reloncipielonntId)),
+            safelontyLelonvelonl = candidatelon.safelontyLelonvelonl
           )
         }
-      } else {
-        visibilityLibrary.runRuleEngine(
-          contentId = candidate.subject,
-          featureMap = featureMap,
-          viewerContext =
-            ViewerContext.fromContextWithViewerIdFallback(Some(candidate.recipientId)),
-          safetyLevel = candidate.safetyLevel
+      } elonlselon {
+        visibilityLibrary.runRulelonelonnginelon(
+          contelonntId = candidatelon.subjelonct,
+          felonaturelonMap = felonaturelonMap,
+          vielonwelonrContelonxt =
+            VielonwelonrContelonxt.fromContelonxtWithVielonwelonrIdFallback(Somelon(candidatelon.reloncipielonntId)),
+          safelontyLelonvelonl = candidatelon.safelontyLelonvelonl
         )
       }
     }
 
     {
-      case candidate: NotificationVFRequest =>
-        runRuleEngine(candidate).flatMap(failCloseForFailures(_, libraryStatsReceiver))
-      case _ =>
-        AllowResponse
+      caselon candidatelon: NotificationVFRelonquelonst =>
+        runRulelonelonnginelon(candidatelon).flatMap(failCloselonForFailurelons(_, libraryStatsReloncelonivelonr))
+      caselon _ =>
+        AllowRelonsponselon
     }
   }
 
-  private def failCloseForFailures(
-    visibilityResult: VisibilityResult,
-    stats: StatsReceiver
-  ): Stitch[NotificationsPlatformFilteringResponse] = {
-    lazy val vfEngineSuccess = stats.counter("vf_engine_success")
-    lazy val vfEngineFailures = stats.counter("vf_engine_failures")
-    lazy val vfEngineFailuresMissing = stats.scope("vf_engine_failures").counter("missing")
-    lazy val vfEngineFailuresFailed = stats.scope("vf_engine_failures").counter("failed")
-    lazy val vfEngineFiltered = stats.counter("vf_engine_filtered")
+  privatelon delonf failCloselonForFailurelons(
+    visibilityRelonsult: VisibilityRelonsult,
+    stats: StatsReloncelonivelonr
+  ): Stitch[NotificationsPlatformFiltelonringRelonsponselon] = {
+    lazy val vfelonnginelonSuccelonss = stats.countelonr("vf_elonnginelon_succelonss")
+    lazy val vfelonnginelonFailurelons = stats.countelonr("vf_elonnginelon_failurelons")
+    lazy val vfelonnginelonFailurelonsMissing = stats.scopelon("vf_elonnginelon_failurelons").countelonr("missing")
+    lazy val vfelonnginelonFailurelonsFailelond = stats.scopelon("vf_elonnginelon_failurelons").countelonr("failelond")
+    lazy val vfelonnginelonFiltelonrelond = stats.countelonr("vf_elonnginelon_filtelonrelond")
 
-    val isFailedOrMissingFeature: RuleResult => Boolean = {
-      case RuleResult(_, FeatureFailed(features)) =>
-        !(features.contains(AuthorUserLabels) && features.size == 1)
-      case RuleResult(_, MissingFeature(_)) => true
-      case _ => false
+    val isFailelondOrMissingFelonaturelon: RulelonRelonsult => Boolelonan = {
+      caselon RulelonRelonsult(_, FelonaturelonFailelond(felonaturelons)) =>
+        !(felonaturelons.contains(AuthorUselonrLabelonls) && felonaturelons.sizelon == 1)
+      caselon RulelonRelonsult(_, MissingFelonaturelon(_)) => truelon
+      caselon _ => falselon
     }
 
-    val failedRuleResults =
-      visibilityResult.ruleResultMap.values.filter(isFailedOrMissingFeature(_))
+    val failelondRulelonRelonsults =
+      visibilityRelonsult.rulelonRelonsultMap.valuelons.filtelonr(isFailelondOrMissingFelonaturelon(_))
 
-    val (failedFeatures, missingFeatures) = failedRuleResults.partition {
-      case RuleResult(_, FeatureFailed(_)) => true
-      case RuleResult(_, MissingFeature(_)) => false
-      case _ => false
+    val (failelondFelonaturelons, missingFelonaturelons) = failelondRulelonRelonsults.partition {
+      caselon RulelonRelonsult(_, FelonaturelonFailelond(_)) => truelon
+      caselon RulelonRelonsult(_, MissingFelonaturelon(_)) => falselon
+      caselon _ => falselon
     }
 
-    val failedOrMissingFeatures: Map[Feature[_], String] = failedRuleResults
-      .collect {
-        case RuleResult(_, FeatureFailed(features)) =>
-          features.map {
-            case (feature: Feature[_], throwable: Throwable) =>
-              feature -> Throwables.mkString(throwable).mkString(" -> ")
-          }.toSet
-        case RuleResult(_, MissingFeature(features)) => features.map(_ -> "Feature missing.")
-      }.flatten.toMap
+    val failelondOrMissingFelonaturelons: Map[Felonaturelon[_], String] = failelondRulelonRelonsults
+      .collelonct {
+        caselon RulelonRelonsult(_, FelonaturelonFailelond(felonaturelons)) =>
+          felonaturelons.map {
+            caselon (felonaturelon: Felonaturelon[_], throwablelon: Throwablelon) =>
+              felonaturelon -> Throwablelons.mkString(throwablelon).mkString(" -> ")
+          }.toSelont
+        caselon RulelonRelonsult(_, MissingFelonaturelon(felonaturelons)) => felonaturelons.map(_ -> "Felonaturelon missing.")
+      }.flattelonn.toMap
 
-    visibilityResult.verdict match {
-      case AllowAction if failedOrMissingFeatures.isEmpty =>
-        vfEngineSuccess.incr()
-        AllowResponse
-      case AllowAction if failedOrMissingFeatures.nonEmpty =>
-        vfEngineFailures.incr()
-        if (missingFeatures.nonEmpty) {
-          vfEngineFailuresMissing.incr()
+    visibilityRelonsult.velonrdict match {
+      caselon AllowAction if failelondOrMissingFelonaturelons.iselonmpty =>
+        vfelonnginelonSuccelonss.incr()
+        AllowRelonsponselon
+      caselon AllowAction if failelondOrMissingFelonaturelons.nonelonmpty =>
+        vfelonnginelonFailurelons.incr()
+        if (missingFelonaturelons.nonelonmpty) {
+          vfelonnginelonFailurelonsMissing.incr()
         }
-        if (failedFeatures.nonEmpty) {
-          vfEngineFailuresFailed.incr()
+        if (failelondFelonaturelons.nonelonmpty) {
+          vfelonnginelonFailurelonsFailelond.incr()
         }
 
-        Stitch.value(FailedVerdict(failedOrMissingFeatures))
-      case action: Action =>
-        vfEngineFiltered.incr()
-        Stitch.value(FilteredVerdict(action))
+        Stitch.valuelon(FailelondVelonrdict(failelondOrMissingFelonaturelons))
+      caselon action: Action =>
+        vfelonnginelonFiltelonrelond.incr()
+        Stitch.valuelon(FiltelonrelondVelonrdict(action))
     }
   }
 }

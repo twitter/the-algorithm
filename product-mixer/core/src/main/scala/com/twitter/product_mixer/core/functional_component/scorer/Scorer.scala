@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.core.functional_component.scorer
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseBulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.SupportsConditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonBulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.SupportsConditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-/** Scores the provided `candidates` */
-trait Scorer[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]]
-    extends BaseBulkCandidateFeatureHydrator[Query, Candidate, Feature[_, _]]
-    with SupportsConditionally[Query] {
+/** Scorelons thelon providelond `candidatelons` */
+trait Scorelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]]
+    elonxtelonnds BaselonBulkCandidatelonFelonaturelonHydrator[Quelonry, Candidatelon, Felonaturelon[_, _]]
+    with SupportsConditionally[Quelonry] {
 
-  /** @see [[ScorerIdentifier]] */
-  override val identifier: ScorerIdentifier
+  /** @selonelon [[ScorelonrIdelonntifielonr]] */
+  ovelonrridelon val idelonntifielonr: ScorelonrIdelonntifielonr
 
   /**
-   * Features returned by the Scorer
+   * Felonaturelons relonturnelond by thelon Scorelonr
    */
-  def features: Set[Feature[_, _]]
+  delonf felonaturelons: Selont[Felonaturelon[_, _]]
 
   /**
-   * Scores the provided `candidates`
+   * Scorelons thelon providelond `candidatelons`
    *
-   * @note the returned Seq of [[FeatureMap]] must contain all the input 'candidates'
-   * and be in the same order as the input 'candidates'
+   * @notelon thelon relonturnelond Selonq of [[FelonaturelonMap]] must contain all thelon input 'candidatelons'
+   * and belon in thelon samelon ordelonr as thelon input 'candidatelons'
    **/
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[FeatureMap]]
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]]
 }

@@ -1,13 +1,13 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import com.twitter.search.queryparser.query.annotation.Annotation;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.Annotation;
 
 
 /**
- * A visitor that collects the nodes that have :v annotation
+ * A visitor that colleloncts thelon nodelons that havelon :v annotation
  */
-public class CollectVariantVisitor extends CollectAnnotationsVisitor {
-  public CollectVariantVisitor() {
-    super(Annotation.Type.VARIANT);
+public class CollelonctVariantVisitor elonxtelonnds CollelonctAnnotationsVisitor {
+  public CollelonctVariantVisitor() {
+    supelonr(Annotation.Typelon.VARIANT);
   }
 }

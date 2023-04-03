@@ -1,313 +1,313 @@
-package com.twitter.interaction_graph.scio.agg_all
+packagelon com.twittelonr.intelonraction_graph.scio.agg_all
 
-import com.google.cloud.bigquery.BigQueryOptions
-import com.google.cloud.bigquery.QueryJobConfiguration
-import com.spotify.scio.ScioContext
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.dal.DAL.PathLayout
-import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.io.exception.DataNotFoundException
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.agg_all.InteractionGraphAggregationTransform._
-import com.twitter.interaction_graph.scio.common.DateUtil
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.UserUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.util.Duration
-import com.twitter.wtf.candidate.thriftscala.ScoredEdge
-import java.time.Instant
-import org.apache.avro.generic.GenericRecord
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO.TypedRead
-import org.apache.beam.sdk.io.gcp.bigquery.SchemaAndRecord
-import org.apache.beam.sdk.transforms.SerializableFunction
-import org.joda.time.Interval
-import scala.collection.JavaConverters._
+import com.googlelon.cloud.bigquelonry.BigQuelonryOptions
+import com.googlelon.cloud.bigquelonry.QuelonryJobConfiguration
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.ScioMelontrics
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.dal.DAL.DiskFormat
+import com.twittelonr.belonam.io.dal.DAL.PathLayout
+import com.twittelonr.belonam.io.dal.DAL.WritelonOptions
+import com.twittelonr.belonam.io.elonxcelonption.DataNotFoundelonxcelonption
+import com.twittelonr.belonam.job.SelonrvicelonIdelonntifielonrOptions
+import com.twittelonr.intelonraction_graph.scio.agg_all.IntelonractionGraphAggrelongationTransform._
+import com.twittelonr.intelonraction_graph.scio.common.DatelonUtil
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonGelonnelonratorUtil
+import com.twittelonr.intelonraction_graph.scio.common.UselonrUtil
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.statelonbird.v2.thriftscala.elonnvironmelonnt
+import com.twittelonr.uselonr_selonssion_storelon.thriftscala.UselonrSelonssion
+import com.twittelonr.util.Duration
+import com.twittelonr.wtf.candidatelon.thriftscala.Scorelondelondgelon
+import java.timelon.Instant
+import org.apachelon.avro.gelonnelonric.GelonnelonricReloncord
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.BigQuelonryIO
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.BigQuelonryIO.TypelondRelonad
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.SchelonmaAndReloncord
+import org.apachelon.belonam.sdk.transforms.SelonrializablelonFunction
+import org.joda.timelon.Intelonrval
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object InteractionGraphAggregationJob extends ScioBeamJob[InteractionGraphAggregationOption] {
+objelonct IntelonractionGraphAggrelongationJob elonxtelonnds ScioBelonamJob[IntelonractionGraphAggrelongationOption] {
 
-  // to parse latest date from the BQ table we're reading from
-  val parseDateRow = new SerializableFunction[SchemaAndRecord, String] {
-    override def apply(input: SchemaAndRecord): String = {
-      val genericRecord: GenericRecord = input.getRecord()
-      genericRecord.get("ds").toString
+  // to parselon latelonst datelon from thelon BQ tablelon welon'relon relonading from
+  val parselonDatelonRow = nelonw SelonrializablelonFunction[SchelonmaAndReloncord, String] {
+    ovelonrridelon delonf apply(input: SchelonmaAndReloncord): String = {
+      val gelonnelonricReloncord: GelonnelonricReloncord = input.gelontReloncord()
+      gelonnelonricReloncord.gelont("ds").toString
     }
   }
 
-  // note that we're using the prob_explicit for real_graph_features (for Home)
-  val parseRow = new SerializableFunction[SchemaAndRecord, ScoredEdge] {
-    override def apply(record: SchemaAndRecord): ScoredEdge = {
-      val genericRecord: GenericRecord = record.getRecord()
-      ScoredEdge(
-        genericRecord.get("source_id").asInstanceOf[Long],
-        genericRecord.get("destination_id").asInstanceOf[Long],
-        genericRecord.get("prob_explicit").asInstanceOf[Double],
-        genericRecord.get("followed").asInstanceOf[Boolean],
+  // notelon that welon'relon using thelon prob_elonxplicit for relonal_graph_felonaturelons (for Homelon)
+  val parselonRow = nelonw SelonrializablelonFunction[SchelonmaAndReloncord, Scorelondelondgelon] {
+    ovelonrridelon delonf apply(reloncord: SchelonmaAndReloncord): Scorelondelondgelon = {
+      val gelonnelonricReloncord: GelonnelonricReloncord = reloncord.gelontReloncord()
+      Scorelondelondgelon(
+        gelonnelonricReloncord.gelont("sourcelon_id").asInstancelonOf[Long],
+        gelonnelonricReloncord.gelont("delonstination_id").asInstancelonOf[Long],
+        gelonnelonricReloncord.gelont("prob_elonxplicit").asInstancelonOf[Doublelon],
+        gelonnelonricReloncord.gelont("followelond").asInstancelonOf[Boolelonan],
       )
     }
   }
 
-  override def runPipeline(
-    sc: ScioContext,
-    opts: InteractionGraphAggregationOption
+  ovelonrridelon delonf runPipelonlinelon(
+    sc: ScioContelonxt,
+    opts: IntelonractionGraphAggrelongationOption
   ): Unit = {
 
-    val dateStr: String = opts.getDate().value.getStart.toString("yyyyMMdd")
-    logger.info(s"dateStr $dateStr")
-    val project: String = "twttr-recos-ml-prod"
-    val datasetName: String = "realgraph"
-    val bqTableName: String = "scores"
-    val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
+    val datelonStr: String = opts.gelontDatelon().valuelon.gelontStart.toString("yyyyMMdd")
+    loggelonr.info(s"datelonStr $datelonStr")
+    val projelonct: String = "twttr-reloncos-ml-prod"
+    val dataselontNamelon: String = "relonalgraph"
+    val bqTablelonNamelon: String = "scorelons"
+    val fullBqTablelonNamelon: String = s"$projelonct:$dataselontNamelon.$bqTablelonNamelon"
 
-    if (opts.getDALWriteEnvironment.toLowerCase == "prod") {
-      val bqClient =
-        BigQueryOptions.newBuilder.setProjectId(project).build.getService
-      val query =
+    if (opts.gelontDALWritelonelonnvironmelonnt.toLowelonrCaselon == "prod") {
+      val bqClielonnt =
+        BigQuelonryOptions.nelonwBuildelonr.selontProjelonctId(projelonct).build.gelontSelonrvicelon
+      val quelonry =
         s"""
-           |SELECT total_rows
-           |FROM `$project.$datasetName.INFORMATION_SCHEMA.PARTITIONS`
-           |WHERE partition_id ="$dateStr" AND
-           |table_name="$bqTableName" AND total_rows > 0
+           |SelonLelonCT total_rows
+           |FROM `$projelonct.$dataselontNamelon.INFORMATION_SCHelonMA.PARTITIONS`
+           |WHelonRelon partition_id ="$datelonStr" AND
+           |tablelon_namelon="$bqTablelonNamelon" AND total_rows > 0
            |""".stripMargin
-      val queryConfig = QueryJobConfiguration.of(query)
-      val results = bqClient.query(queryConfig).getValues.asScala.toSeq
-      if (results.isEmpty || results.head.get(0).getLongValue == 0) {
-        throw new DataNotFoundException(s"$dateStr not present in $fullBqTableName.")
+      val quelonryConfig = QuelonryJobConfiguration.of(quelonry)
+      val relonsults = bqClielonnt.quelonry(quelonryConfig).gelontValuelons.asScala.toSelonq
+      if (relonsults.iselonmpty || relonsults.helonad.gelont(0).gelontLongValuelon == 0) {
+        throw nelonw DataNotFoundelonxcelonption(s"$datelonStr not prelonselonnt in $fullBqTablelonNamelon.")
       }
     }
     sc.run()
   }
 
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAggregationOption
+  ovelonrridelon protelonctelond delonf configurelonPipelonlinelon(
+    scioContelonxt: ScioContelonxt,
+    pipelonlinelonOptions: IntelonractionGraphAggrelongationOption
   ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
-    val yesterday = DateUtil.subtract(dateInterval, Duration.fromDays(1))
+    @transielonnt
+    implicit lazy val sc: ScioContelonxt = scioContelonxt
+    implicit lazy val datelonIntelonrval: Intelonrval = pipelonlinelonOptions.intelonrval
+    val yelonstelonrday = DatelonUtil.subtract(datelonIntelonrval, Duration.fromDays(1))
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
-    } else {
-      dalEnvironment
+    val dalelonnvironmelonnt: String = pipelonlinelonOptions
+      .as(classOf[SelonrvicelonIdelonntifielonrOptions])
+      .gelontelonnvironmelonnt()
+    val dalWritelonelonnvironmelonnt = if (pipelonlinelonOptions.gelontDALWritelonelonnvironmelonnt != null) {
+      pipelonlinelonOptions.gelontDALWritelonelonnvironmelonnt
+    } elonlselon {
+      dalelonnvironmelonnt
     }
-    val dateStr: String = pipelineOptions.getDate().value.getStart.toString("yyyy-MM-dd")
-    logger.info(s"dateStr $dateStr")
-    val project: String = "twttr-recos-ml-prod"
-    val datasetName: String = "realgraph"
-    val bqTableName: String = "scores"
-    val fullBqTableName: String = s"$project:$datasetName.$bqTableName"
+    val datelonStr: String = pipelonlinelonOptions.gelontDatelon().valuelon.gelontStart.toString("yyyy-MM-dd")
+    loggelonr.info(s"datelonStr $datelonStr")
+    val projelonct: String = "twttr-reloncos-ml-prod"
+    val dataselontNamelon: String = "relonalgraph"
+    val bqTablelonNamelon: String = "scorelons"
+    val fullBqTablelonNamelon: String = s"$projelonct:$dataselontNamelon.$bqTablelonNamelon"
 
-    val scoreExport: SCollection[ScoredEdge] =
+    val scorelonelonxport: SCollelonction[Scorelondelondgelon] =
       sc.customInput(
-        s"Read from BQ table $fullBqTableName",
-        BigQueryIO
-          .read(parseRow)
-          .fromQuery(s"""SELECT source_id, destination_id, prob_explicit, followed
-               |FROM `$project.$datasetName.$bqTableName`
-               |WHERE ds = '$dateStr'""".stripMargin)
+        s"Relonad from BQ tablelon $fullBqTablelonNamelon",
+        BigQuelonryIO
+          .relonad(parselonRow)
+          .fromQuelonry(s"""SelonLelonCT sourcelon_id, delonstination_id, prob_elonxplicit, followelond
+               |FROM `$projelonct.$dataselontNamelon.$bqTablelonNamelon`
+               |WHelonRelon ds = '$datelonStr'""".stripMargin)
           .usingStandardSql()
-          .withMethod(TypedRead.Method.DEFAULT)
+          .withMelonthod(TypelondRelonad.Melonthod.DelonFAULT)
       )
 
-    val source = InteractionGraphAggregationSource(pipelineOptions)
+    val sourcelon = IntelonractionGraphAggrelongationSourcelon(pipelonlinelonOptions)
 
-    val (addressEdgeFeatures, addressVertexFeatures) = source.readAddressBookFeatures()
+    val (addrelonsselondgelonFelonaturelons, addrelonssVelonrtelonxFelonaturelons) = sourcelon.relonadAddrelonssBookFelonaturelons()
 
-    val (clientEventLogsEdgeFeatures, clientEventLogsVertexFeatures) =
-      source.readClientEventLogsFeatures(dateInterval)
+    val (clielonntelonvelonntLogselondgelonFelonaturelons, clielonntelonvelonntLogsVelonrtelonxFelonaturelons) =
+      sourcelon.relonadClielonntelonvelonntLogsFelonaturelons(datelonIntelonrval)
 
-    val (flockEdgeFeatures, flockVertexFeatures) = source.readFlockFeatures()
+    val (flockelondgelonFelonaturelons, flockVelonrtelonxFelonaturelons) = sourcelon.relonadFlockFelonaturelons()
 
-    val (directInteractionsEdgeFeatures, directInteractionsVertexFeatures) =
-      source.readDirectInteractionsFeatures(dateInterval)
+    val (direlonctIntelonractionselondgelonFelonaturelons, direlonctIntelonractionsVelonrtelonxFelonaturelons) =
+      sourcelon.relonadDirelonctIntelonractionsFelonaturelons(datelonIntelonrval)
 
-    val invalidUsers = UserUtil.getInvalidUsers(source.readFlatUsers())
+    val invalidUselonrs = UselonrUtil.gelontInvalidUselonrs(sourcelon.relonadFlatUselonrs())
 
-    val (prevAggEdge, prevAggVertex) = source.readAggregatedFeatures(yesterday)
+    val (prelonvAggelondgelon, prelonvAggVelonrtelonx) = sourcelon.relonadAggrelongatelondFelonaturelons(yelonstelonrday)
 
-    val prevAggregatedVertex: SCollection[Vertex] =
-      UserUtil
-        .filterUsersByIdMapping[Vertex](
-          prevAggVertex,
-          invalidUsers,
-          v => v.userId
+    val prelonvAggrelongatelondVelonrtelonx: SCollelonction[Velonrtelonx] =
+      UselonrUtil
+        .filtelonrUselonrsByIdMapping[Velonrtelonx](
+          prelonvAggVelonrtelonx,
+          invalidUselonrs,
+          v => v.uselonrId
         )
 
-    /** Remove status-based features (flock/ab) from current graph, because we only need the latest
-     *  This is to allow us to filter and roll-up a smaller dataset, to which we will still add
-     *  back the status-based features for the complete scoredAggregates (that other teams will read).
+    /** Relonmovelon status-baselond felonaturelons (flock/ab) from currelonnt graph, beloncauselon welon only nelonelond thelon latelonst
+     *  This is to allow us to filtelonr and roll-up a smallelonr dataselont, to which welon will still add
+     *  back thelon status-baselond felonaturelons for thelon complelontelon scorelondAggrelongatelons (that othelonr telonams will relonad).
      */
-    val prevAggEdgeFiltered = prevAggEdge
-      .filter { e =>
-        e.sourceId != e.destinationId
+    val prelonvAggelondgelonFiltelonrelond = prelonvAggelondgelon
+      .filtelonr { elon =>
+        elon.sourcelonId != elon.delonstinationId
       }
-      .withName("filtering status-based edges")
-      .flatMap(FeatureGeneratorUtil.removeStatusFeatures)
-    val prevAggEdgeValid: SCollection[Edge] =
-      UserUtil
-        .filterUsersByMultipleIdMappings[Edge](
-          prevAggEdgeFiltered,
-          invalidUsers,
-          Seq(e => e.sourceId, e => e.destinationId)
+      .withNamelon("filtelonring status-baselond elondgelons")
+      .flatMap(FelonaturelonGelonnelonratorUtil.relonmovelonStatusFelonaturelons)
+    val prelonvAggelondgelonValid: SCollelonction[elondgelon] =
+      UselonrUtil
+        .filtelonrUselonrsByMultiplelonIdMappings[elondgelon](
+          prelonvAggelondgelonFiltelonrelond,
+          invalidUselonrs,
+          Selonq(elon => elon.sourcelonId, elon => elon.delonstinationId)
         )
 
-    val aggregatedActivityVertexDaily = UserUtil
-      .filterUsersByIdMapping[Vertex](
-        FeatureGeneratorUtil
-          .combineVertexFeatures(
-            clientEventLogsVertexFeatures ++
-              directInteractionsVertexFeatures ++
-              addressVertexFeatures ++
-              flockVertexFeatures
+    val aggrelongatelondActivityVelonrtelonxDaily = UselonrUtil
+      .filtelonrUselonrsByIdMapping[Velonrtelonx](
+        FelonaturelonGelonnelonratorUtil
+          .combinelonVelonrtelonxFelonaturelons(
+            clielonntelonvelonntLogsVelonrtelonxFelonaturelons ++
+              direlonctIntelonractionsVelonrtelonxFelonaturelons ++
+              addrelonssVelonrtelonxFelonaturelons ++
+              flockVelonrtelonxFelonaturelons
           ),
-        invalidUsers,
-        v => v.userId
+        invalidUselonrs,
+        v => v.uselonrId
       )
 
-    // we split up the roll-up of decayed counts between status vs activity/count-based features
-    val aggregatedActivityEdgeDaily = FeatureGeneratorUtil
-      .combineEdgeFeatures(clientEventLogsEdgeFeatures ++ directInteractionsEdgeFeatures)
+    // welon split up thelon roll-up of deloncayelond counts belontwelonelonn status vs activity/count-baselond felonaturelons
+    val aggrelongatelondActivityelondgelonDaily = FelonaturelonGelonnelonratorUtil
+      .combinelonelondgelonFelonaturelons(clielonntelonvelonntLogselondgelonFelonaturelons ++ direlonctIntelonractionselondgelonFelonaturelons)
 
-    // Vertex level, Add the decay sum for history and daily
-    val aggregatedActivityVertex = FeatureGeneratorUtil
-      .combineVertexFeaturesWithDecay(
-        prevAggregatedVertex,
-        aggregatedActivityVertexDaily,
-        InteractionGraphScoringConfig.ONE_MINUS_ALPHA,
-        InteractionGraphScoringConfig.ALPHA
+    // Velonrtelonx lelonvelonl, Add thelon deloncay sum for history and daily
+    val aggrelongatelondActivityVelonrtelonx = FelonaturelonGelonnelonratorUtil
+      .combinelonVelonrtelonxFelonaturelonsWithDeloncay(
+        prelonvAggrelongatelondVelonrtelonx,
+        aggrelongatelondActivityVelonrtelonxDaily,
+        IntelonractionGraphScoringConfig.ONelon_MINUS_ALPHA,
+        IntelonractionGraphScoringConfig.ALPHA
       )
 
-    // Edge level, Add the decay sum for history and daily
-    val aggregatedActivityEdge = FeatureGeneratorUtil
-      .combineEdgeFeaturesWithDecay(
-        prevAggEdgeValid,
-        aggregatedActivityEdgeDaily,
-        InteractionGraphScoringConfig.ONE_MINUS_ALPHA,
-        InteractionGraphScoringConfig.ALPHA
+    // elondgelon lelonvelonl, Add thelon deloncay sum for history and daily
+    val aggrelongatelondActivityelondgelon = FelonaturelonGelonnelonratorUtil
+      .combinelonelondgelonFelonaturelonsWithDeloncay(
+        prelonvAggelondgelonValid,
+        aggrelongatelondActivityelondgelonDaily,
+        IntelonractionGraphScoringConfig.ONelon_MINUS_ALPHA,
+        IntelonractionGraphScoringConfig.ALPHA
       )
-      .filter(FeatureGeneratorUtil.edgeWithFeatureOtherThanDwellTime)
-      .withName("removing edges that only have dwell time features")
+      .filtelonr(FelonaturelonGelonnelonratorUtil.elondgelonWithFelonaturelonOthelonrThanDwelonllTimelon)
+      .withNamelon("relonmoving elondgelons that only havelon dwelonll timelon felonaturelons")
 
-    val edgeKeyedScores = scoreExport.keyBy { e => (e.sourceId, e.destinationId) }
+    val elondgelonKelonyelondScorelons = scorelonelonxport.kelonyBy { elon => (elon.sourcelonId, elon.delonstinationId) }
 
-    val scoredAggregatedActivityEdge = aggregatedActivityEdge
-      .keyBy { e => (e.sourceId, e.destinationId) }
-      .withName("join with scores")
-      .leftOuterJoin(edgeKeyedScores)
+    val scorelondAggrelongatelondActivityelondgelon = aggrelongatelondActivityelondgelon
+      .kelonyBy { elon => (elon.sourcelonId, elon.delonstinationId) }
+      .withNamelon("join with scorelons")
+      .lelonftOutelonrJoin(elondgelonKelonyelondScorelons)
       .map {
-        case (_, (e, scoredEdgeOpt)) =>
-          val scoreOpt = scoredEdgeOpt.map(_.score)
-          e.copy(weight = if (scoreOpt.nonEmpty) {
-            ScioMetrics.counter("after joining edge with scores", "has score").inc()
-            scoreOpt
-          } else {
-            ScioMetrics.counter("after joining edge with scores", "no score").inc()
-            None
+        caselon (_, (elon, scorelondelondgelonOpt)) =>
+          val scorelonOpt = scorelondelondgelonOpt.map(_.scorelon)
+          elon.copy(welonight = if (scorelonOpt.nonelonmpty) {
+            ScioMelontrics.countelonr("aftelonr joining elondgelon with scorelons", "has scorelon").inc()
+            scorelonOpt
+          } elonlselon {
+            ScioMelontrics.countelonr("aftelonr joining elondgelon with scorelons", "no scorelon").inc()
+            Nonelon
           })
       }
 
-    val combinedFeatures = FeatureGeneratorUtil
-      .combineEdgeFeatures(aggregatedActivityEdge ++ addressEdgeFeatures ++ flockEdgeFeatures)
-      .keyBy { e => (e.sourceId, e.destinationId) }
+    val combinelondFelonaturelons = FelonaturelonGelonnelonratorUtil
+      .combinelonelondgelonFelonaturelons(aggrelongatelondActivityelondgelon ++ addrelonsselondgelonFelonaturelons ++ flockelondgelonFelonaturelons)
+      .kelonyBy { elon => (elon.sourcelonId, elon.delonstinationId) }
 
-    val aggregatedActivityScoredEdge =
-      edgeKeyedScores
-        .withName("join with combined edge features")
-        .leftOuterJoin(combinedFeatures)
+    val aggrelongatelondActivityScorelondelondgelon =
+      elondgelonKelonyelondScorelons
+        .withNamelon("join with combinelond elondgelon felonaturelons")
+        .lelonftOutelonrJoin(combinelondFelonaturelons)
         .map {
-          case (_, (scoredEdge, combinedFeaturesOpt)) =>
-            if (combinedFeaturesOpt.exists(_.features.nonEmpty)) {
-              ScioMetrics.counter("after joining scored edge with features", "has features").inc()
-              Edge(
-                sourceId = scoredEdge.sourceId,
-                destinationId = scoredEdge.destinationId,
-                weight = Some(scoredEdge.score),
-                features = combinedFeaturesOpt.map(_.features).getOrElse(Nil)
+          caselon (_, (scorelondelondgelon, combinelondFelonaturelonsOpt)) =>
+            if (combinelondFelonaturelonsOpt.elonxists(_.felonaturelons.nonelonmpty)) {
+              ScioMelontrics.countelonr("aftelonr joining scorelond elondgelon with felonaturelons", "has felonaturelons").inc()
+              elondgelon(
+                sourcelonId = scorelondelondgelon.sourcelonId,
+                delonstinationId = scorelondelondgelon.delonstinationId,
+                welonight = Somelon(scorelondelondgelon.scorelon),
+                felonaturelons = combinelondFelonaturelonsOpt.map(_.felonaturelons).gelontOrelonlselon(Nil)
               )
-            } else {
-              ScioMetrics.counter("after joining scored edge with features", "no features").inc()
-              Edge(
-                sourceId = scoredEdge.sourceId,
-                destinationId = scoredEdge.destinationId,
-                weight = Some(scoredEdge.score),
-                features = Nil
+            } elonlselon {
+              ScioMelontrics.countelonr("aftelonr joining scorelond elondgelon with felonaturelons", "no felonaturelons").inc()
+              elondgelon(
+                sourcelonId = scorelondelondgelon.sourcelonId,
+                delonstinationId = scorelondelondgelon.delonstinationId,
+                welonight = Somelon(scorelondelondgelon.scorelon),
+                felonaturelons = Nil
               )
             }
         }
 
-    val realGraphFeatures =
-      getTopKTimelineFeatures(aggregatedActivityScoredEdge, pipelineOptions.getMaxDestinationIds)
+    val relonalGraphFelonaturelons =
+      gelontTopKTimelonlinelonFelonaturelons(aggrelongatelondActivityScorelondelondgelon, pipelonlinelonOptions.gelontMaxDelonstinationIds)
 
-    aggregatedActivityVertex.saveAsCustomOutput(
-      "Write History Aggregated Vertex Records",
-      DAL.writeSnapshot[Vertex](
-        dataset = InteractionGraphHistoryAggregatedVertexSnapshotScalaDataset,
-        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_vertex"),
-        endDate = Instant.ofEpochMilli(dateInterval.getEndMillis),
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards / 10))
+    aggrelongatelondActivityVelonrtelonx.savelonAsCustomOutput(
+      "Writelon History Aggrelongatelond Velonrtelonx Reloncords",
+      DAL.writelonSnapshot[Velonrtelonx](
+        dataselont = IntelonractionGraphHistoryAggrelongatelondVelonrtelonxSnapshotScalaDataselont,
+        pathLayout = PathLayout.DailyPath(pipelonlinelonOptions.gelontOutputPath + "/aggrelongatelond_velonrtelonx"),
+        elonndDatelon = Instant.ofelonpochMilli(datelonIntelonrval.gelontelonndMillis),
+        diskFormat = DiskFormat.Parquelont,
+        elonnvironmelonntOvelonrridelon = elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption = WritelonOptions(numOfShards = Somelon(pipelonlinelonOptions.gelontNumbelonrOfShards / 10))
       )
     )
 
-    scoredAggregatedActivityEdge.saveAsCustomOutput(
-      "Write History Aggregated Edge Records",
-      DAL.writeSnapshot[Edge](
-        dataset = InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset,
-        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_raw_edge"),
-        endDate = Instant.ofEpochMilli(dateInterval.getEndMillis),
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    scorelondAggrelongatelondActivityelondgelon.savelonAsCustomOutput(
+      "Writelon History Aggrelongatelond elondgelon Reloncords",
+      DAL.writelonSnapshot[elondgelon](
+        dataselont = IntelonractionGraphHistoryAggrelongatelondelondgelonSnapshotScalaDataselont,
+        pathLayout = PathLayout.DailyPath(pipelonlinelonOptions.gelontOutputPath + "/aggrelongatelond_raw_elondgelon"),
+        elonndDatelon = Instant.ofelonpochMilli(datelonIntelonrval.gelontelonndMillis),
+        diskFormat = DiskFormat.Parquelont,
+        elonnvironmelonntOvelonrridelon = elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption = WritelonOptions(numOfShards = Somelon(pipelonlinelonOptions.gelontNumbelonrOfShards))
       )
     )
 
-    aggregatedActivityVertexDaily.saveAsCustomOutput(
-      "Write Daily Aggregated Vertex Records",
-      DAL.write[Vertex](
-        dataset = InteractionGraphAggregatedVertexDailyScalaDataset,
+    aggrelongatelondActivityVelonrtelonxDaily.savelonAsCustomOutput(
+      "Writelon Daily Aggrelongatelond Velonrtelonx Reloncords",
+      DAL.writelon[Velonrtelonx](
+        dataselont = IntelonractionGraphAggrelongatelondVelonrtelonxDailyScalaDataselont,
         pathLayout =
-          PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_vertex_daily"),
-        interval = dateInterval,
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards / 10))
+          PathLayout.DailyPath(pipelonlinelonOptions.gelontOutputPath + "/aggrelongatelond_velonrtelonx_daily"),
+        intelonrval = datelonIntelonrval,
+        diskFormat = DiskFormat.Parquelont,
+        elonnvironmelonntOvelonrridelon = elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption = WritelonOptions(numOfShards = Somelon(pipelonlinelonOptions.gelontNumbelonrOfShards / 10))
       )
     )
 
-    aggregatedActivityEdgeDaily.saveAsCustomOutput(
-      "Write Daily Aggregated Edge Records",
-      DAL.write[Edge](
-        dataset = InteractionGraphAggregatedEdgeDailyScalaDataset,
-        pathLayout = PathLayout.DailyPath(pipelineOptions.getOutputPath + "/aggregated_edge_daily"),
-        interval = dateInterval,
-        diskFormat = DiskFormat.Parquet,
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    aggrelongatelondActivityelondgelonDaily.savelonAsCustomOutput(
+      "Writelon Daily Aggrelongatelond elondgelon Reloncords",
+      DAL.writelon[elondgelon](
+        dataselont = IntelonractionGraphAggrelongatelondelondgelonDailyScalaDataselont,
+        pathLayout = PathLayout.DailyPath(pipelonlinelonOptions.gelontOutputPath + "/aggrelongatelond_elondgelon_daily"),
+        intelonrval = datelonIntelonrval,
+        diskFormat = DiskFormat.Parquelont,
+        elonnvironmelonntOvelonrridelon = elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption = WritelonOptions(numOfShards = Somelon(pipelonlinelonOptions.gelontNumbelonrOfShards))
       )
     )
 
-    realGraphFeatures.saveAsCustomOutput(
-      "Write Timeline Real Graph Features",
-      DAL.writeVersionedKeyVal[KeyVal[Long, UserSession]](
-        dataset = RealGraphFeaturesScalaDataset,
+    relonalGraphFelonaturelons.savelonAsCustomOutput(
+      "Writelon Timelonlinelon Relonal Graph Felonaturelons",
+      DAL.writelonVelonrsionelondKelonyVal[KelonyVal[Long, UselonrSelonssion]](
+        dataselont = RelonalGraphFelonaturelonsScalaDataselont,
         pathLayout =
-          PathLayout.VersionedPath(pipelineOptions.getOutputPath + "/real_graph_features"),
-        environmentOverride = Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+          PathLayout.VelonrsionelondPath(pipelonlinelonOptions.gelontOutputPath + "/relonal_graph_felonaturelons"),
+        elonnvironmelonntOvelonrridelon = elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption = WritelonOptions(numOfShards = Somelon(pipelonlinelonOptions.gelontNumbelonrOfShards))
       )
     )
   }

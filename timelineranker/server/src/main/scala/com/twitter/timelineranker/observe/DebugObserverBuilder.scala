@@ -1,35 +1,35 @@
-package com.twitter.timelineranker.observe
+packagelon com.twittelonr.timelonlinelonrankelonr.obselonrvelon
 
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.model.TimelineQuery
-import com.twitter.timelines.features.Features
-import com.twitter.timelines.features.UserList
-import com.twitter.timelines.observe.DebugObserver
-import com.twitter.timelineranker.{thriftscala => thrift}
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.TimelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.felonaturelons.Felonaturelons
+import com.twittelonr.timelonlinelons.felonaturelons.UselonrList
+import com.twittelonr.timelonlinelons.obselonrvelon.DelonbugObselonrvelonr
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
 
 /**
- * Builds the DebugObserver that is attached to thrift requests.
- * This class exists to centralize the gates that determine whether or not
- * to enable debug transcripts for a particular request.
+ * Builds thelon DelonbugObselonrvelonr that is attachelond to thrift relonquelonsts.
+ * This class elonxists to celonntralizelon thelon gatelons that delontelonrminelon whelonthelonr or not
+ * to elonnablelon delonbug transcripts for a particular relonquelonst.
  */
-class DebugObserverBuilder(whitelist: UserList) {
+class DelonbugObselonrvelonrBuildelonr(whitelonlist: UselonrList) {
 
-  lazy val observer: DebugObserver = build()
+  lazy val obselonrvelonr: DelonbugObselonrvelonr = build()
 
-  private[this] def build(): DebugObserver = {
-    new DebugObserver(queryGate)
+  privatelon[this] delonf build(): DelonbugObselonrvelonr = {
+    nelonw DelonbugObselonrvelonr(quelonryGatelon)
   }
 
-  private[observe] def queryGate: Gate[Any] = {
-    val shouldEnableDebug = whitelist.userIdGate(Features.DebugTranscript)
+  privatelon[obselonrvelon] delonf quelonryGatelon: Gatelon[Any] = {
+    val shouldelonnablelonDelonbug = whitelonlist.uselonrIdGatelon(Felonaturelons.DelonbugTranscript)
 
-    Gate { a: Any =>
+    Gatelon { a: Any =>
       a match {
-        case q: thrift.EngagedTweetsQuery => shouldEnableDebug(q.userId)
-        case q: thrift.RecapHydrationQuery => shouldEnableDebug(q.userId)
-        case q: thrift.RecapQuery => shouldEnableDebug(q.userId)
-        case q: TimelineQuery => shouldEnableDebug(q.userId)
-        case _ => false
+        caselon q: thrift.elonngagelondTwelonelontsQuelonry => shouldelonnablelonDelonbug(q.uselonrId)
+        caselon q: thrift.ReloncapHydrationQuelonry => shouldelonnablelonDelonbug(q.uselonrId)
+        caselon q: thrift.ReloncapQuelonry => shouldelonnablelonDelonbug(q.uselonrId)
+        caselon q: TimelonlinelonQuelonry => shouldelonnablelonDelonbug(q.uselonrId)
+        caselon _ => falselon
       }
     }
   }

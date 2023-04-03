@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Singlelonton;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.SearchRootServer;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird_root.filters.QueryTokenizerFilter;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.root.SelonarchRootSelonrvelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.QuelonryTokelonnizelonrFiltelonr;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
 
-@Singleton
-public class SuperRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
-  private final QueryTokenizerFilter queryTokenizerFilter;
+@Singlelonton
+public class SupelonrRootSelonrvelonr elonxtelonnds SelonarchRootSelonrvelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> {
+  privatelon final QuelonryTokelonnizelonrFiltelonr quelonryTokelonnizelonrFiltelonr;
 
-  @Inject
-  public SuperRootServer(
-      SuperRootService svc,
-      Service<byte[], byte[]> byteSvc,
-      QueryTokenizerFilter queryTokenizerFilter) {
-    super(svc, byteSvc);
+  @Injelonct
+  public SupelonrRootSelonrvelonr(
+      SupelonrRootSelonrvicelon svc,
+      Selonrvicelon<bytelon[], bytelon[]> bytelonSvc,
+      QuelonryTokelonnizelonrFiltelonr quelonryTokelonnizelonrFiltelonr) {
+    supelonr(svc, bytelonSvc);
 
-    this.queryTokenizerFilter = queryTokenizerFilter;
+    this.quelonryTokelonnizelonrFiltelonr = quelonryTokelonnizelonrFiltelonr;
   }
 
-  @Override
+  @Ovelonrridelon
   public void warmup() {
-    super.warmup();
+    supelonr.warmup();
 
     try {
-      queryTokenizerFilter.performExpensiveInitialization();
-    } catch (QueryParserException e) {
-      throw new RuntimeException(e);
+      quelonryTokelonnizelonrFiltelonr.pelonrformelonxpelonnsivelonInitialization();
+    } catch (QuelonryParselonrelonxcelonption elon) {
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 }

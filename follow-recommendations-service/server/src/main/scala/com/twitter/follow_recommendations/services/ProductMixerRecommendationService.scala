@@ -1,72 +1,72 @@
-package com.twitter.follow_recommendations.services
+packagelon com.twittelonr.follow_reloncommelonndations.selonrvicelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.configapi.Params
-import com.twitter.follow_recommendations.common.utils.DisplayLocationProductConverterUtil
-import com.twitter.follow_recommendations.configapi.deciders.DeciderParams
-import com.twitter.follow_recommendations.logging.FrsLogger
-import com.twitter.follow_recommendations.models.{DebugParams => FrsDebugParams}
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.models.RecommendationResponse
-import com.twitter.follow_recommendations.models.Request
-import com.twitter.product_mixer.core.model.marshalling.request.{
-  DebugParams => ProductMixerDebugParams
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.follow_reloncommelonndations.common.utils.DisplayLocationProductConvelonrtelonrUtil
+import com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs.DeloncidelonrParams
+import com.twittelonr.follow_reloncommelonndations.logging.FrsLoggelonr
+import com.twittelonr.follow_reloncommelonndations.modelonls.{DelonbugParams => FrsDelonbugParams}
+import com.twittelonr.follow_reloncommelonndations.modelonls.ReloncommelonndationRelonquelonst
+import com.twittelonr.follow_reloncommelonndations.modelonls.ReloncommelonndationRelonsponselon
+import com.twittelonr.follow_reloncommelonndations.modelonls.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.{
+  DelonbugParams => ProductMixelonrDelonbugParams
 }
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.product.relongistry.ProductPipelonlinelonRelongistry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonRelonquelonst
+import com.twittelonr.stitch.Stitch
 
-@Singleton
-class ProductMixerRecommendationService @Inject() (
-  productPipelineRegistry: ProductPipelineRegistry,
-  resultLogger: FrsLogger,
-  baseStats: StatsReceiver) {
+@Singlelonton
+class ProductMixelonrReloncommelonndationSelonrvicelon @Injelonct() (
+  productPipelonlinelonRelongistry: ProductPipelonlinelonRelongistry,
+  relonsultLoggelonr: FrsLoggelonr,
+  baselonStats: StatsReloncelonivelonr) {
 
-  private val stats = baseStats.scope("product_mixer_recos_service_stats")
-  private val loggingStats = stats.scope("logged")
+  privatelon val stats = baselonStats.scopelon("product_mixelonr_reloncos_selonrvicelon_stats")
+  privatelon val loggingStats = stats.scopelon("loggelond")
 
-  def get(request: RecommendationRequest, params: Params): Stitch[RecommendationResponse] = {
-    if (params(DeciderParams.EnableRecommendations)) {
-      val productMixerRequest = convertToProductMixerRequest(request)
+  delonf gelont(relonquelonst: ReloncommelonndationRelonquelonst, params: Params): Stitch[ReloncommelonndationRelonsponselon] = {
+    if (params(DeloncidelonrParams.elonnablelonReloncommelonndations)) {
+      val productMixelonrRelonquelonst = convelonrtToProductMixelonrRelonquelonst(relonquelonst)
 
-      productPipelineRegistry
-        .getProductPipeline[Request, RecommendationResponse](productMixerRequest.product)
-        .process(ProductPipelineRequest(productMixerRequest, params)).onSuccess { response =>
-          if (resultLogger.shouldLog(request.debugParams)) {
-            loggingStats.counter().incr()
-            resultLogger.logRecommendationResult(request, response)
+      productPipelonlinelonRelongistry
+        .gelontProductPipelonlinelon[Relonquelonst, ReloncommelonndationRelonsponselon](productMixelonrRelonquelonst.product)
+        .procelonss(ProductPipelonlinelonRelonquelonst(productMixelonrRelonquelonst, params)).onSuccelonss { relonsponselon =>
+          if (relonsultLoggelonr.shouldLog(relonquelonst.delonbugParams)) {
+            loggingStats.countelonr().incr()
+            relonsultLoggelonr.logReloncommelonndationRelonsult(relonquelonst, relonsponselon)
           }
         }
-    } else {
-      Stitch.value(RecommendationResponse(Nil))
+    } elonlselon {
+      Stitch.valuelon(ReloncommelonndationRelonsponselon(Nil))
     }
 
   }
 
-  def convertToProductMixerRequest(frsRequest: RecommendationRequest): Request = {
-    Request(
-      maxResults = frsRequest.maxResults,
-      debugParams = convertToProductMixerDebugParams(frsRequest.debugParams),
-      productContext = None,
+  delonf convelonrtToProductMixelonrRelonquelonst(frsRelonquelonst: ReloncommelonndationRelonquelonst): Relonquelonst = {
+    Relonquelonst(
+      maxRelonsults = frsRelonquelonst.maxRelonsults,
+      delonbugParams = convelonrtToProductMixelonrDelonbugParams(frsRelonquelonst.delonbugParams),
+      productContelonxt = Nonelon,
       product =
-        DisplayLocationProductConverterUtil.displayLocationToProduct(frsRequest.displayLocation),
-      clientContext = frsRequest.clientContext,
-      serializedRequestCursor = frsRequest.cursor,
-      frsDebugParams = frsRequest.debugParams,
-      displayLocation = frsRequest.displayLocation,
-      excludedIds = frsRequest.excludedIds,
-      fetchPromotedContent = frsRequest.fetchPromotedContent,
-      userLocationState = frsRequest.userLocationState
+        DisplayLocationProductConvelonrtelonrUtil.displayLocationToProduct(frsRelonquelonst.displayLocation),
+      clielonntContelonxt = frsRelonquelonst.clielonntContelonxt,
+      selonrializelondRelonquelonstCursor = frsRelonquelonst.cursor,
+      frsDelonbugParams = frsRelonquelonst.delonbugParams,
+      displayLocation = frsRelonquelonst.displayLocation,
+      elonxcludelondIds = frsRelonquelonst.elonxcludelondIds,
+      felontchPromotelondContelonnt = frsRelonquelonst.felontchPromotelondContelonnt,
+      uselonrLocationStatelon = frsRelonquelonst.uselonrLocationStatelon
     )
   }
 
-  private def convertToProductMixerDebugParams(
-    frsDebugParams: Option[FrsDebugParams]
-  ): Option[ProductMixerDebugParams] = {
-    frsDebugParams.map { debugParams =>
-      ProductMixerDebugParams(debugParams.featureOverrides, None)
+  privatelon delonf convelonrtToProductMixelonrDelonbugParams(
+    frsDelonbugParams: Option[FrsDelonbugParams]
+  ): Option[ProductMixelonrDelonbugParams] = {
+    frsDelonbugParams.map { delonbugParams =>
+      ProductMixelonrDelonbugParams(delonbugParams.felonaturelonOvelonrridelons, Nonelon)
     }
   }
 }

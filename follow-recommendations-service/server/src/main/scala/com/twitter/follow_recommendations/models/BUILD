@@ -1,13 +1,13 @@
 scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/feature_hydration/common",
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/assembler/models",
-        "follow-recommendations-service/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/marshalling/request",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "configapi/configapi-corelon/src/main/scala/com/twittelonr/timelonlinelons/configapi",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/felonaturelon_hydration/common",
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/modelonls",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/asselonmblelonr/modelonls",
+        "follow-reloncommelonndations-selonrvicelon/thrift/src/main/thrift:thrift-scala",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/marshalling/relonquelonst",
     ],
 )

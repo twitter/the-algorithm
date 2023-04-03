@@ -1,19 +1,19 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-public class TweetFeatures {
-  private final TweetTextQuality tweetTextQuality = new TweetTextQuality();
-  private final TweetTextFeatures tweetTextFeatures = new TweetTextFeatures();
-  private final TweetUserFeatures tweetUserFeatures = new TweetUserFeatures();
+public class TwelonelontFelonaturelons {
+  privatelon final TwelonelontTelonxtQuality twelonelontTelonxtQuality = nelonw TwelonelontTelonxtQuality();
+  privatelon final TwelonelontTelonxtFelonaturelons twelonelontTelonxtFelonaturelons = nelonw TwelonelontTelonxtFelonaturelons();
+  privatelon final TwelonelontUselonrFelonaturelons twelonelontUselonrFelonaturelons = nelonw TwelonelontUselonrFelonaturelons();
 
-  public TweetTextFeatures getTweetTextFeatures() {
-    return tweetTextFeatures;
+  public TwelonelontTelonxtFelonaturelons gelontTwelonelontTelonxtFelonaturelons() {
+    relonturn twelonelontTelonxtFelonaturelons;
   }
 
-  public TweetTextQuality getTweetTextQuality() {
-    return tweetTextQuality;
+  public TwelonelontTelonxtQuality gelontTwelonelontTelonxtQuality() {
+    relonturn twelonelontTelonxtQuality;
   }
 
-  public TweetUserFeatures getTweetUserFeatures() {
-    return tweetUserFeatures;
+  public TwelonelontUselonrFelonaturelons gelontTwelonelontUselonrFelonaturelons() {
+    relonturn twelonelontUselonrFelonaturelons;
   }
 }

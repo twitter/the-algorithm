@@ -1,229 +1,229 @@
-package com.twitter.simclusters_v2.common.clustering
+packagelon com.twittelonr.simclustelonrs_v2.common.clustelonring
 
-import com.twitter.eventdetection.common.louvain.LouvainDriver
-import com.twitter.eventdetection.common.louvain.NetworkFactory
-import com.twitter.eventdetection.common.model.Entity
-import com.twitter.eventdetection.common.model.NetworkInput
-import com.twitter.eventdetection.common.model.TextEntityValue
-import com.twitter.util.Stopwatch
-import scala.collection.JavaConverters._
+import com.twittelonr.elonvelonntdelontelonction.common.louvain.LouvainDrivelonr
+import com.twittelonr.elonvelonntdelontelonction.common.louvain.NelontworkFactory
+import com.twittelonr.elonvelonntdelontelonction.common.modelonl.elonntity
+import com.twittelonr.elonvelonntdelontelonction.common.modelonl.NelontworkInput
+import com.twittelonr.elonvelonntdelontelonction.common.modelonl.TelonxtelonntityValuelon
+import com.twittelonr.util.Stopwatch
+import scala.collelonction.JavaConvelonrtelonrs._
 import scala.math.max
 
 /**
- * Groups entities by the Louvain clustering method.
- * @param similarityThreshold: When building the edges between entities, edges with weight
- * less than or equal to this threshold will be filtered out.
- * @param appliedResolutionFactor: If present, will be used to multiply the applied resolution
- * parameter of the Louvain method by this factor.
- * Note that the DEFAULT_MAX_RESOLUTION will not be applied.
+ * Groups elonntitielons by thelon Louvain clustelonring melonthod.
+ * @param similarityThrelonshold: Whelonn building thelon elondgelons belontwelonelonn elonntitielons, elondgelons with welonight
+ * lelonss than or elonqual to this threlonshold will belon filtelonrelond out.
+ * @param applielondRelonsolutionFactor: If prelonselonnt, will belon uselond to multiply thelon applielond relonsolution
+ * paramelontelonr of thelon Louvain melonthod by this factor.
+ * Notelon that thelon DelonFAULT_MAX_RelonSOLUTION will not belon applielond.
  */
-class LouvainClusteringMethod(
-  similarityThreshold: Double,
-  appliedResolutionFactor: Option[Double])
-    extends ClusteringMethod {
+class LouvainClustelonringMelonthod(
+  similarityThrelonshold: Doublelon,
+  applielondRelonsolutionFactor: Option[Doublelon])
+    elonxtelonnds ClustelonringMelonthod {
 
-  import ClusteringStatistics._
+  import ClustelonringStatistics._
 
-  def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit = (_, _) => ()
-  ): Set[Set[Long]] = {
+  delonf clustelonr[T](
+    elonmbelonddings: Map[Long, T],
+    similarityFn: (T, T) => Doublelon,
+    reloncordStatCallback: (String, Long) => Unit = (_, _) => ()
+  ): Selont[Selont[Long]] = {
 
-    // 1. Build the graph on which to run Louvain:
-    //   - Weigh edges by the similarity between the 2 embeddings,
-    //   - Filter out edges with weight <= threshold.
-    val timeSinceGraphBuildStart = Stopwatch.start()
-    val edges: Seq[((Long, Long), Double)] = embeddings.toSeq
+    // 1. Build thelon graph on which to run Louvain:
+    //   - Welonigh elondgelons by thelon similarity belontwelonelonn thelon 2 elonmbelonddings,
+    //   - Filtelonr out elondgelons with welonight <= threlonshold.
+    val timelonSincelonGraphBuildStart = Stopwatch.start()
+    val elondgelons: Selonq[((Long, Long), Doublelon)] = elonmbelonddings.toSelonq
       .combinations(2)
-      .map { pair: Seq[(Long, T)] => // pair of 2
-        val (user1, embedding1) = pair.head
-        val (user2, embedding2) = pair(1)
-        val similarity = similarityFn(embedding1, embedding2)
+      .map { pair: Selonq[(Long, T)] => // pair of 2
+        val (uselonr1, elonmbelondding1) = pair.helonad
+        val (uselonr2, elonmbelondding2) = pair(1)
+        val similarity = similarityFn(elonmbelondding1, elonmbelondding2)
 
-        recordStatCallback(
-          StatComputedSimilarityBeforeFilter,
-          (similarity * 100).toLong // preserve up to two decimal places
+        reloncordStatCallback(
+          StatComputelondSimilarityBelonforelonFiltelonr,
+          (similarity * 100).toLong // prelonselonrvelon up to two deloncimal placelons
         )
 
-        ((user1, user2), similarity)
+        ((uselonr1, uselonr2), similarity)
       }
-      .filter(_._2 > similarityThreshold)
-      .toSeq
+      .filtelonr(_._2 > similarityThrelonshold)
+      .toSelonq
 
-    recordStatCallback(StatSimilarityGraphTotalBuildTime, timeSinceGraphBuildStart().inMilliseconds)
+    reloncordStatCallback(StatSimilarityGraphTotalBuildTimelon, timelonSincelonGraphBuildStart().inMilliselonconds)
 
-    // check if some entities do not have any incoming / outgoing edge
-    // these are size-1 clusters (i.e. their own)
-    val individualClusters: Set[Long] = embeddings.keySet -- edges.flatMap {
-      case ((user1, user2), _) => Set(user1, user2)
-    }.toSet
+    // chelonck if somelon elonntitielons do not havelon any incoming / outgoing elondgelon
+    // thelonselon arelon sizelon-1 clustelonrs (i.elon. thelonir own)
+    val individualClustelonrs: Selont[Long] = elonmbelonddings.kelonySelont -- elondgelons.flatMap {
+      caselon ((uselonr1, uselonr2), _) => Selont(uselonr1, uselonr2)
+    }.toSelont
 
-    // 2. LouvainDriver uses "Entity" as input, so build 2 mappings
-    // - Long (entity id) -> Entity
-    // - Entity -> Long (entity id)
-    val embeddingIdToEntity: Map[Long, Entity] = embeddings.map {
-      case (id, _) => id -> Entity(TextEntityValue(id.toString, Some(id.toString)), None)
+    // 2. LouvainDrivelonr uselons "elonntity" as input, so build 2 mappings
+    // - Long (elonntity id) -> elonntity
+    // - elonntity -> Long (elonntity id)
+    val elonmbelonddingIdToelonntity: Map[Long, elonntity] = elonmbelonddings.map {
+      caselon (id, _) => id -> elonntity(TelonxtelonntityValuelon(id.toString, Somelon(id.toString)), Nonelon)
     }
-    val entityToEmbeddingId: Map[Entity, Long] = embeddingIdToEntity.map {
-      case (id, e) => e -> id
+    val elonntityToelonmbelonddingId: Map[elonntity, Long] = elonmbelonddingIdToelonntity.map {
+      caselon (id, elon) => elon -> id
     }
 
-    // 3. Create the list of NetworkInput on which to run LouvainDriver
-    val networkInputList = edges
+    // 3. Crelonatelon thelon list of NelontworkInput on which to run LouvainDrivelonr
+    val nelontworkInputList = elondgelons
       .map {
-        case ((fromUserId: Long, toUserId: Long), weight: Double) =>
-          new NetworkInput(embeddingIdToEntity(fromUserId), embeddingIdToEntity(toUserId), weight)
+        caselon ((fromUselonrId: Long, toUselonrId: Long), welonight: Doublelon) =>
+          nelonw NelontworkInput(elonmbelonddingIdToelonntity(fromUselonrId), elonmbelonddingIdToelonntity(toUselonrId), welonight)
       }.toList.asJava
 
-    val timeSinceClusteringAlgRunStart = Stopwatch.start()
-    val networkDictionary = NetworkFactory.buildDictionary(networkInputList)
-    val network = NetworkFactory.buildNetwork(networkInputList, networkDictionary)
+    val timelonSincelonClustelonringAlgRunStart = Stopwatch.start()
+    val nelontworkDictionary = NelontworkFactory.buildDictionary(nelontworkInputList)
+    val nelontwork = NelontworkFactory.buildNelontwork(nelontworkInputList, nelontworkDictionary)
 
-    if (networkInputList.size() == 0) {
-      // handle case if no edge at all (only one entity or all entities are too far apart)
-      embeddings.keySet.map(e => Set(e))
-    } else {
-      // 4. Run clustering algorithm
-      val clusteredIds = appliedResolutionFactor match {
-        case Some(res) =>
-          LouvainDriver.clusterAppliedResolutionFactor(network, networkDictionary, res)
-        case None => LouvainDriver.cluster(network, networkDictionary)
+    if (nelontworkInputList.sizelon() == 0) {
+      // handlelon caselon if no elondgelon at all (only onelon elonntity or all elonntitielons arelon too far apart)
+      elonmbelonddings.kelonySelont.map(elon => Selont(elon))
+    } elonlselon {
+      // 4. Run clustelonring algorithm
+      val clustelonrelondIds = applielondRelonsolutionFactor match {
+        caselon Somelon(relons) =>
+          LouvainDrivelonr.clustelonrApplielondRelonsolutionFactor(nelontwork, nelontworkDictionary, relons)
+        caselon Nonelon => LouvainDrivelonr.clustelonr(nelontwork, nelontworkDictionary)
       }
 
-      recordStatCallback(
-        StatClusteringAlgorithmRunTime,
-        timeSinceClusteringAlgRunStart().inMilliseconds)
+      reloncordStatCallback(
+        StatClustelonringAlgorithmRunTimelon,
+        timelonSincelonClustelonringAlgRunStart().inMilliselonconds)
 
-      // 5. Post-processing
-      val atLeast2MembersClusters: Set[Set[Long]] = clusteredIds.asScala
+      // 5. Post-procelonssing
+      val atLelonast2MelonmbelonrsClustelonrs: Selont[Selont[Long]] = clustelonrelondIds.asScala
         .groupBy(_._2)
-        .mapValues(_.map { case (e, _) => entityToEmbeddingId(e) }.toSet)
-        .values.toSet
+        .mapValuelons(_.map { caselon (elon, _) => elonntityToelonmbelonddingId(elon) }.toSelont)
+        .valuelons.toSelont
 
-      atLeast2MembersClusters ++ individualClusters.map { e => Set(e) }
+      atLelonast2MelonmbelonrsClustelonrs ++ individualClustelonrs.map { elon => Selont(elon) }
 
     }
   }
 
-  def clusterWithSilhouette[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    similarityFnForSil: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit = (_, _) => ()
-  ): (Set[Set[Long]], Set[Set[(Long, Double)]]) = {
+  delonf clustelonrWithSilhouelonttelon[T](
+    elonmbelonddings: Map[Long, T],
+    similarityFn: (T, T) => Doublelon,
+    similarityFnForSil: (T, T) => Doublelon,
+    reloncordStatCallback: (String, Long) => Unit = (_, _) => ()
+  ): (Selont[Selont[Long]], Selont[Selont[(Long, Doublelon)]]) = {
 
-    // 1. Build the graph on which to run Louvain:
-    //   - Weigh edges by the similarity between the 2 embeddings,
-    //   - Filter out edges with weight <= threshold.
-    val timeSinceGraphBuildStart = Stopwatch.start()
-    val edgesSimilarityMap = collection.mutable.Map[(Long, Long), Double]()
+    // 1. Build thelon graph on which to run Louvain:
+    //   - Welonigh elondgelons by thelon similarity belontwelonelonn thelon 2 elonmbelonddings,
+    //   - Filtelonr out elondgelons with welonight <= threlonshold.
+    val timelonSincelonGraphBuildStart = Stopwatch.start()
+    val elondgelonsSimilarityMap = collelonction.mutablelon.Map[(Long, Long), Doublelon]()
 
-    val edges: Seq[((Long, Long), Double)] = embeddings.toSeq
+    val elondgelons: Selonq[((Long, Long), Doublelon)] = elonmbelonddings.toSelonq
       .combinations(2)
-      .map { pair: Seq[(Long, T)] => // pair of 2
-        val (user1, embedding1) = pair.head
-        val (user2, embedding2) = pair(1)
-        val similarity = similarityFn(embedding1, embedding2)
-        val similarityForSil = similarityFnForSil(embedding1, embedding2)
-        edgesSimilarityMap.put((user1, user2), similarityForSil)
-        edgesSimilarityMap.put((user2, user1), similarityForSil)
+      .map { pair: Selonq[(Long, T)] => // pair of 2
+        val (uselonr1, elonmbelondding1) = pair.helonad
+        val (uselonr2, elonmbelondding2) = pair(1)
+        val similarity = similarityFn(elonmbelondding1, elonmbelondding2)
+        val similarityForSil = similarityFnForSil(elonmbelondding1, elonmbelondding2)
+        elondgelonsSimilarityMap.put((uselonr1, uselonr2), similarityForSil)
+        elondgelonsSimilarityMap.put((uselonr2, uselonr1), similarityForSil)
 
-        recordStatCallback(
-          StatComputedSimilarityBeforeFilter,
-          (similarity * 100).toLong // preserve up to two decimal places
+        reloncordStatCallback(
+          StatComputelondSimilarityBelonforelonFiltelonr,
+          (similarity * 100).toLong // prelonselonrvelon up to two deloncimal placelons
         )
 
-        ((user1, user2), similarity)
+        ((uselonr1, uselonr2), similarity)
       }
-      .filter(_._2 > similarityThreshold)
-      .toSeq
+      .filtelonr(_._2 > similarityThrelonshold)
+      .toSelonq
 
-    recordStatCallback(StatSimilarityGraphTotalBuildTime, timeSinceGraphBuildStart().inMilliseconds)
+    reloncordStatCallback(StatSimilarityGraphTotalBuildTimelon, timelonSincelonGraphBuildStart().inMilliselonconds)
 
-    // check if some entities do not have any incoming / outgoing edge
-    // these are size-1 clusters (i.e. their own)
-    val individualClusters: Set[Long] = embeddings.keySet -- edges.flatMap {
-      case ((user1, user2), _) => Set(user1, user2)
-    }.toSet
+    // chelonck if somelon elonntitielons do not havelon any incoming / outgoing elondgelon
+    // thelonselon arelon sizelon-1 clustelonrs (i.elon. thelonir own)
+    val individualClustelonrs: Selont[Long] = elonmbelonddings.kelonySelont -- elondgelons.flatMap {
+      caselon ((uselonr1, uselonr2), _) => Selont(uselonr1, uselonr2)
+    }.toSelont
 
-    // 2. LouvainDriver uses "Entity" as input, so build 2 mappings
-    // - Long (entity id) -> Entity
-    // - Entity -> Long (entity id)
-    val embeddingIdToEntity: Map[Long, Entity] = embeddings.map {
-      case (id, _) => id -> Entity(TextEntityValue(id.toString, Some(id.toString)), None)
+    // 2. LouvainDrivelonr uselons "elonntity" as input, so build 2 mappings
+    // - Long (elonntity id) -> elonntity
+    // - elonntity -> Long (elonntity id)
+    val elonmbelonddingIdToelonntity: Map[Long, elonntity] = elonmbelonddings.map {
+      caselon (id, _) => id -> elonntity(TelonxtelonntityValuelon(id.toString, Somelon(id.toString)), Nonelon)
     }
-    val entityToEmbeddingId: Map[Entity, Long] = embeddingIdToEntity.map {
-      case (id, e) => e -> id
+    val elonntityToelonmbelonddingId: Map[elonntity, Long] = elonmbelonddingIdToelonntity.map {
+      caselon (id, elon) => elon -> id
     }
 
-    // 3. Create the list of NetworkInput on which to run LouvainDriver
-    val networkInputList = edges
+    // 3. Crelonatelon thelon list of NelontworkInput on which to run LouvainDrivelonr
+    val nelontworkInputList = elondgelons
       .map {
-        case ((fromUserId: Long, toUserId: Long), weight: Double) =>
-          new NetworkInput(embeddingIdToEntity(fromUserId), embeddingIdToEntity(toUserId), weight)
+        caselon ((fromUselonrId: Long, toUselonrId: Long), welonight: Doublelon) =>
+          nelonw NelontworkInput(elonmbelonddingIdToelonntity(fromUselonrId), elonmbelonddingIdToelonntity(toUselonrId), welonight)
       }.toList.asJava
 
-    val timeSinceClusteringAlgRunStart = Stopwatch.start()
-    val networkDictionary = NetworkFactory.buildDictionary(networkInputList)
-    val network = NetworkFactory.buildNetwork(networkInputList, networkDictionary)
+    val timelonSincelonClustelonringAlgRunStart = Stopwatch.start()
+    val nelontworkDictionary = NelontworkFactory.buildDictionary(nelontworkInputList)
+    val nelontwork = NelontworkFactory.buildNelontwork(nelontworkInputList, nelontworkDictionary)
 
-    val clusters = if (networkInputList.size() == 0) {
-      // handle case if no edge at all (only one entity or all entities are too far apart)
-      embeddings.keySet.map(e => Set(e))
-    } else {
-      // 4. Run clustering algorithm
-      val clusteredIds = appliedResolutionFactor match {
-        case Some(res) =>
-          LouvainDriver.clusterAppliedResolutionFactor(network, networkDictionary, res)
-        case None => LouvainDriver.cluster(network, networkDictionary)
+    val clustelonrs = if (nelontworkInputList.sizelon() == 0) {
+      // handlelon caselon if no elondgelon at all (only onelon elonntity or all elonntitielons arelon too far apart)
+      elonmbelonddings.kelonySelont.map(elon => Selont(elon))
+    } elonlselon {
+      // 4. Run clustelonring algorithm
+      val clustelonrelondIds = applielondRelonsolutionFactor match {
+        caselon Somelon(relons) =>
+          LouvainDrivelonr.clustelonrApplielondRelonsolutionFactor(nelontwork, nelontworkDictionary, relons)
+        caselon Nonelon => LouvainDrivelonr.clustelonr(nelontwork, nelontworkDictionary)
       }
 
-      recordStatCallback(
-        StatClusteringAlgorithmRunTime,
-        timeSinceClusteringAlgRunStart().inMilliseconds)
+      reloncordStatCallback(
+        StatClustelonringAlgorithmRunTimelon,
+        timelonSincelonClustelonringAlgRunStart().inMilliselonconds)
 
-      // 5. Post-processing
-      val atLeast2MembersClusters: Set[Set[Long]] = clusteredIds.asScala
+      // 5. Post-procelonssing
+      val atLelonast2MelonmbelonrsClustelonrs: Selont[Selont[Long]] = clustelonrelondIds.asScala
         .groupBy(_._2)
-        .mapValues(_.map { case (e, _) => entityToEmbeddingId(e) }.toSet)
-        .values.toSet
+        .mapValuelons(_.map { caselon (elon, _) => elonntityToelonmbelonddingId(elon) }.toSelont)
+        .valuelons.toSelont
 
-      atLeast2MembersClusters ++ individualClusters.map { e => Set(e) }
+      atLelonast2MelonmbelonrsClustelonrs ++ individualClustelonrs.map { elon => Selont(elon) }
 
     }
 
-    // Calculate silhouette metrics
-    val contactIdWithSilhouette = clusters.map {
-      case cluster =>
-        val otherClusters = clusters - cluster
+    // Calculatelon silhouelonttelon melontrics
+    val contactIdWithSilhouelonttelon = clustelonrs.map {
+      caselon clustelonr =>
+        val othelonrClustelonrs = clustelonrs - clustelonr
 
-        cluster.map {
-          case contactId =>
-            if (otherClusters.isEmpty) {
+        clustelonr.map {
+          caselon contactId =>
+            if (othelonrClustelonrs.iselonmpty) {
               (contactId, 0.0)
-            } else {
-              val otherSameClusterContacts = cluster - contactId
+            } elonlselon {
+              val othelonrSamelonClustelonrContacts = clustelonr - contactId
 
-              if (otherSameClusterContacts.isEmpty) {
+              if (othelonrSamelonClustelonrContacts.iselonmpty) {
                 (contactId, 0.0)
-              } else {
-                // calculate similarity of given userId with all other users in the same cluster
-                val a_i = otherSameClusterContacts.map {
-                  case sameClusterContact =>
-                    edgesSimilarityMap((contactId, sameClusterContact))
-                }.sum / otherSameClusterContacts.size
+              } elonlselon {
+                // calculatelon similarity of givelonn uselonrId with all othelonr uselonrs in thelon samelon clustelonr
+                val a_i = othelonrSamelonClustelonrContacts.map {
+                  caselon samelonClustelonrContact =>
+                    elondgelonsSimilarityMap((contactId, samelonClustelonrContact))
+                }.sum / othelonrSamelonClustelonrContacts.sizelon
 
-                // calculate similarity of given userId to all other clusters, find the best nearest cluster
-                val b_i = otherClusters.map {
-                  case otherCluster =>
-                    otherCluster.map {
-                      case otherClusterContact =>
-                        edgesSimilarityMap((contactId, otherClusterContact))
-                    }.sum / otherCluster.size
+                // calculatelon similarity of givelonn uselonrId to all othelonr clustelonrs, find thelon belonst nelonarelonst clustelonr
+                val b_i = othelonrClustelonrs.map {
+                  caselon othelonrClustelonr =>
+                    othelonrClustelonr.map {
+                      caselon othelonrClustelonrContact =>
+                        elondgelonsSimilarityMap((contactId, othelonrClustelonrContact))
+                    }.sum / othelonrClustelonr.sizelon
                 }.max
 
-                // silhouette (value) of one userId i
+                // silhouelonttelon (valuelon) of onelon uselonrId i
                 val s_i = (a_i - b_i) / max(a_i, b_i)
                 (contactId, s_i)
               }
@@ -231,6 +231,6 @@ class LouvainClusteringMethod(
         }
     }
 
-    (clusters, contactIdWithSilhouette)
+    (clustelonrs, contactIdWithSilhouelonttelon)
   }
 }

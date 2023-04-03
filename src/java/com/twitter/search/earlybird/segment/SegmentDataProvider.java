@@ -1,14 +1,14 @@
-package com.twitter.search.earlybird.segment;
+packagelon com.twittelonr.selonarch.elonarlybird.selongmelonnt;
 
 /**
- * SegmentDataProvider provides information about available segments for indexing. This interface
- * abstracts away the actual source of the segment data. It might be a MySQL database, a mock
- * object, or a directory of flat files. It also provides access to the segmentInfoMap itself, which
- * contains information about the indexing state of Segments.
+ * SelongmelonntDataProvidelonr providelons information about availablelon selongmelonnts for indelonxing. This intelonrfacelon
+ * abstracts away thelon actual sourcelon of thelon selongmelonnt data. It might belon a MySQL databaselon, a mock
+ * objelonct, or a direlonctory of flat filelons. It also providelons accelonss to thelon selongmelonntInfoMap itselonlf, which
+ * contains information about thelon indelonxing statelon of Selongmelonnts.
  */
-public interface SegmentDataProvider extends SegmentProvider {
+public intelonrfacelon SelongmelonntDataProvidelonr elonxtelonnds SelongmelonntProvidelonr {
   /**
-   * Returns the set of segment data record readers.
+   * Relonturns thelon selont of selongmelonnt data reloncord relonadelonrs.
    */
-  SegmentDataReaderSet getSegmentDataReaderSet();
+  SelongmelonntDataRelonadelonrSelont gelontSelongmelonntDataRelonadelonrSelont();
 }

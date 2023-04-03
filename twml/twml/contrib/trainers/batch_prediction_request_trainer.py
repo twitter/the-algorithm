@@ -1,180 +1,180 @@
-# pylint: disable=arguments-differ, invalid-name
+# pylint: disablelon=argumelonnts-diffelonr, invalid-namelon
 """
-This file contains the DataRecordTrainer class.
+This filelon contains thelon DataReloncordTrainelonr class.
 """
 import warnings
 
 import twml
-from twml.trainers import DataRecordTrainer
+from twml.trainelonrs import DataReloncordTrainelonr
 
 
-class BatchPredictionRequestTrainer(DataRecordTrainer):  # pylint: disable=abstract-method
+class BatchPrelondictionRelonquelonstTrainelonr(DataReloncordTrainelonr):  # pylint: disablelon=abstract-melonthod
   """
-  The ``BatchPredictionRequestTrainer`` implementation is intended to satisfy use cases
-  that input is BatchPredictionRequest at Twitter and also where only the build_graph methods
-  needs to be overridden. For this reason, ``Trainer.[train,eval]_input_fn`` methods
-  assume a DataRecord dataset partitioned into part files stored in compressed (e.g. gzip) format.
+  Thelon ``BatchPrelondictionRelonquelonstTrainelonr`` implelonmelonntation is intelonndelond to satisfy uselon caselons
+  that input is BatchPrelondictionRelonquelonst at Twittelonr and also whelonrelon only thelon build_graph melonthods
+  nelonelonds to belon ovelonrriddelonn. For this relonason, ``Trainelonr.[train,elonval]_input_fn`` melonthods
+  assumelon a DataReloncord dataselont partitionelond into part filelons storelond in comprelonsselond (elon.g. gzip) format.
 
-  For use-cases that differ from this common Twitter use-case,
-  further Trainer methods can be overridden.
-  If that still doesn't provide enough flexibility, the user can always
-  use the tf.estimator.Esimator or tf.session.run directly.
+  For uselon-caselons that diffelonr from this common Twittelonr uselon-caselon,
+  furthelonr Trainelonr melonthods can belon ovelonrriddelonn.
+  If that still doelonsn't providelon elonnough flelonxibility, thelon uselonr can always
+  uselon thelon tf.elonstimator.elonsimator or tf.selonssion.run direlonctly.
   """
 
-  def __init__(
-          self, name, params,
+  delonf __init__(
+          selonlf, namelon, params,
           build_graph_fn,
-          feature_config=None,
+          felonaturelon_config=Nonelon,
           **kwargs):
     """
-    The BatchPredictionRequestTrainer constructor builds a
-    ``tf.estimator.Estimator`` and stores it in self.estimator.
-    For this reason, BatchPredictionRequestTrainer accepts the same Estimator constructor arguments.
-    It also accepts additional arguments to facilitate metric evaluation and multi-phase training
+    Thelon BatchPrelondictionRelonquelonstTrainelonr constructor builds a
+    ``tf.elonstimator.elonstimator`` and storelons it in selonlf.elonstimator.
+    For this relonason, BatchPrelondictionRelonquelonstTrainelonr accelonpts thelon samelon elonstimator constructor argumelonnts.
+    It also accelonpts additional argumelonnts to facilitatelon melontric elonvaluation and multi-phaselon training
     (init_from_dir, init_map).
 
     Args:
-      parent arguments:
-        See the `Trainer constructor <#twml.trainers.Trainer.__init__>`_ documentation
-        for a full list of arguments accepted by the parent class.
-      name, params, build_graph_fn (and other parent class args):
-        see documentation for twml.Trainer and twml.DataRecordTrainer doc.
-      feature_config:
-        An object of type FeatureConfig describing what features to decode.
-        Defaults to None. But it is needed in the following cases:
-          - `get_train_input_fn()` / `get_eval_input_fn()` is called without a `parse_fn`
-          - `learn()`, `train()`, `eval()`, `calibrate()` are called without providing `*input_fn`.
+      parelonnt argumelonnts:
+        Selonelon thelon `Trainelonr constructor <#twml.trainelonrs.Trainelonr.__init__>`_ documelonntation
+        for a full list of argumelonnts accelonptelond by thelon parelonnt class.
+      namelon, params, build_graph_fn (and othelonr parelonnt class args):
+        selonelon documelonntation for twml.Trainelonr and twml.DataReloncordTrainelonr doc.
+      felonaturelon_config:
+        An objelonct of typelon FelonaturelonConfig delonscribing what felonaturelons to deloncodelon.
+        Delonfaults to Nonelon. But it is nelonelondelond in thelon following caselons:
+          - `gelont_train_input_fn()` / `gelont_elonval_input_fn()` is callelond without a `parselon_fn`
+          - `lelonarn()`, `train()`, `elonval()`, `calibratelon()` arelon callelond without providing `*input_fn`.
 
       **kwargs:
-        further kwargs can be specified and passed to the Estimator constructor.
+        furthelonr kwargs can belon speloncifielond and passelond to thelon elonstimator constructor.
     """
 
-    # Check and update train_batch_size and eval_batch_size in params before initialization
-    # to print correct parameter logs and does not stop running
-    # This overwrites batch_size parameter constrains in twml.trainers.Trainer.check_params
-    updated_params = self.check_batch_size_params(params)
-    super(BatchPredictionRequestTrainer, self).__init__(
-      name=name, params=updated_params, build_graph_fn=build_graph_fn, **kwargs)
+    # Chelonck and updatelon train_batch_sizelon and elonval_batch_sizelon in params belonforelon initialization
+    # to print correlonct paramelontelonr logs and doelons not stop running
+    # This ovelonrwritelons batch_sizelon paramelontelonr constrains in twml.trainelonrs.Trainelonr.chelonck_params
+    updatelond_params = selonlf.chelonck_batch_sizelon_params(params)
+    supelonr(BatchPrelondictionRelonquelonstTrainelonr, selonlf).__init__(
+      namelon=namelon, params=updatelond_params, build_graph_fn=build_graph_fn, **kwargs)
 
-  def check_batch_size_params(self, params):
-    """ Verify that params has the correct key,values """
-    # updated_params is an instance of tensorflow.contrib.training.HParams
-    updated_params = twml.util.convert_to_hparams(params)
-    param_values = updated_params.values()
+  delonf chelonck_batch_sizelon_params(selonlf, params):
+    """ Velonrify that params has thelon correlonct kelony,valuelons """
+    # updatelond_params is an instancelon of telonnsorflow.contrib.training.HParams
+    updatelond_params = twml.util.convelonrt_to_hparams(params)
+    param_valuelons = updatelond_params.valuelons()
 
-    # twml.trainers.Trainer.check_params already checks other constraints,
-    # such as being an integer
-    if 'train_batch_size' in param_values:
-      if not isinstance(updated_params.train_batch_size, int):
-        raise ValueError("Expecting params.train_batch_size to be an integer.")
-      if param_values['train_batch_size'] != 1:
-        # This can be a bit annoying to force users to pass the batch sizes,
-        # but it is good to let them know what they actually use in the models
-        # Use warning instead of ValueError in there to continue the run
-        # and print out that train_batch_size is changed
-        warnings.warn('You are processing BatchPredictionRequest data, '
-          'train_batch_size is always 1.\n'
-          'The number of DataRecords in a batch is determined by the size '
-          'of each BatchPredictionRequest.\n'
-          'If you did not pass train.batch_size or eval.batch_size, and '
-          'the default batch_size 32 was in use,\n'
-          'please pass --train.batch_size 1 --eval.batch_size 1')
-        # If the upper error warning, change/pass --train.batch_size 1
-        # so that train_batch_size = 1
-        updated_params.train_batch_size = 1
+    # twml.trainelonrs.Trainelonr.chelonck_params alrelonady cheloncks othelonr constraints,
+    # such as beloning an intelongelonr
+    if 'train_batch_sizelon' in param_valuelons:
+      if not isinstancelon(updatelond_params.train_batch_sizelon, int):
+        raiselon Valuelonelonrror("elonxpeloncting params.train_batch_sizelon to belon an intelongelonr.")
+      if param_valuelons['train_batch_sizelon'] != 1:
+        # This can belon a bit annoying to forcelon uselonrs to pass thelon batch sizelons,
+        # but it is good to lelont thelonm know what thelony actually uselon in thelon modelonls
+        # Uselon warning instelonad of Valuelonelonrror in thelonrelon to continuelon thelon run
+        # and print out that train_batch_sizelon is changelond
+        warnings.warn('You arelon procelonssing BatchPrelondictionRelonquelonst data, '
+          'train_batch_sizelon is always 1.\n'
+          'Thelon numbelonr of DataReloncords in a batch is delontelonrminelond by thelon sizelon '
+          'of elonach BatchPrelondictionRelonquelonst.\n'
+          'If you did not pass train.batch_sizelon or elonval.batch_sizelon, and '
+          'thelon delonfault batch_sizelon 32 was in uselon,\n'
+          'plelonaselon pass --train.batch_sizelon 1 --elonval.batch_sizelon 1')
+        # If thelon uppelonr elonrror warning, changelon/pass --train.batch_sizelon 1
+        # so that train_batch_sizelon = 1
+        updatelond_params.train_batch_sizelon = 1
 
-    if 'eval_batch_size' in param_values:
-      if not isinstance(updated_params.train_batch_size, int):
-        raise ValueError('Expecting params.eval_batch_size to be an integer.')
-      if param_values['eval_batch_size'] != 1:
-        # This can be a bit annoying to force users to pass the batch sizes,
-        # but it is good to let them know what they actually use in the models
-        # Use warning instead of ValueError in there to continue the run
-        # and print out that eval_batch_size is changed
-        warnings.warn('You are processing BatchPredictionRequest data, '
-          'eval_batch_size is also always 1.\n'
-          'The number of DataRecords in a batch is determined by the size '
-          'of each BatchPredictionRequest.\n'
-          'If you did not pass train.batch_size or eval.batch_size, and '
-          'the default batch_size 32 was in use,\n'
-          'please pass --train.batch_size 1 --eval.batch_size 1')
-        # If the upper warning raises, change/pass --eval.batch_size 1
-        # so that eval_batch_size = 1
-        updated_params.eval_batch_size = 1
+    if 'elonval_batch_sizelon' in param_valuelons:
+      if not isinstancelon(updatelond_params.train_batch_sizelon, int):
+        raiselon Valuelonelonrror('elonxpeloncting params.elonval_batch_sizelon to belon an intelongelonr.')
+      if param_valuelons['elonval_batch_sizelon'] != 1:
+        # This can belon a bit annoying to forcelon uselonrs to pass thelon batch sizelons,
+        # but it is good to lelont thelonm know what thelony actually uselon in thelon modelonls
+        # Uselon warning instelonad of Valuelonelonrror in thelonrelon to continuelon thelon run
+        # and print out that elonval_batch_sizelon is changelond
+        warnings.warn('You arelon procelonssing BatchPrelondictionRelonquelonst data, '
+          'elonval_batch_sizelon is also always 1.\n'
+          'Thelon numbelonr of DataReloncords in a batch is delontelonrminelond by thelon sizelon '
+          'of elonach BatchPrelondictionRelonquelonst.\n'
+          'If you did not pass train.batch_sizelon or elonval.batch_sizelon, and '
+          'thelon delonfault batch_sizelon 32 was in uselon,\n'
+          'plelonaselon pass --train.batch_sizelon 1 --elonval.batch_sizelon 1')
+        # If thelon uppelonr warning raiselons, changelon/pass --elonval.batch_sizelon 1
+        # so that elonval_batch_sizelon = 1
+        updatelond_params.elonval_batch_sizelon = 1
 
-    if 'eval_batch_size' not in param_values:
-      updated_params.eval_batch_size = 1
+    if 'elonval_batch_sizelon' not in param_valuelons:
+      updatelond_params.elonval_batch_sizelon = 1
 
-    if not updated_params.eval_batch_size:
-      updated_params.eval_batch_size = 1
+    if not updatelond_params.elonval_batch_sizelon:
+      updatelond_params.elonval_batch_sizelon = 1
 
-    return updated_params
+    relonturn updatelond_params
 
-  @staticmethod
-  def add_batch_prediction_request_arguments():
+  @staticmelonthod
+  delonf add_batch_prelondiction_relonquelonst_argumelonnts():
     """
-    Add commandline args to parse typically for the BatchPredictionRequestTrainer class.
-    Typically, the user calls this function and then parses cmd-line arguments
-    into an argparse.Namespace object which is then passed to the Trainer constructor
-    via the params argument.
+    Add commandlinelon args to parselon typically for thelon BatchPrelondictionRelonquelonstTrainelonr class.
+    Typically, thelon uselonr calls this function and thelonn parselons cmd-linelon argumelonnts
+    into an argparselon.Namelonspacelon objelonct which is thelonn passelond to thelon Trainelonr constructor
+    via thelon params argumelonnt.
 
-    See the `code <_modules/twml/argument_parser.html#get_trainer_parser>`_
-    for a list and description of all cmd-line arguments.
+    Selonelon thelon `codelon <_modulelons/twml/argumelonnt_parselonr.html#gelont_trainelonr_parselonr>`_
+    for a list and delonscription of all cmd-linelon argumelonnts.
 
-    Returns:
-      argparse.ArgumentParser instance with some useful args already added.
+    Relonturns:
+      argparselon.ArgumelonntParselonr instancelon with somelon uselonful args alrelonady addelond.
     """
-    parser = super(BatchPredictionRequestTrainer,
-      BatchPredictionRequestTrainer).add_parser_arguments()
+    parselonr = supelonr(BatchPrelondictionRelonquelonstTrainelonr,
+      BatchPrelondictionRelonquelonstTrainelonr).add_parselonr_argumelonnts()
 
-    # mlp arguments
-    parser.add_argument(
-      '--model.use_existing_discretizer', action='store_true',
-      dest="model_use_existing_discretizer",
-      help='Load a pre-trained calibration or train a new one')
-    parser.add_argument(
-      '--model.use_binary_values', action='store_true',
-      dest='model_use_binary_values',
-      help='Use the use_binary_values optimization')
+    # mlp argumelonnts
+    parselonr.add_argumelonnt(
+      '--modelonl.uselon_elonxisting_discrelontizelonr', action='storelon_truelon',
+      delonst="modelonl_uselon_elonxisting_discrelontizelonr",
+      helonlp='Load a prelon-trainelond calibration or train a nelonw onelon')
+    parselonr.add_argumelonnt(
+      '--modelonl.uselon_binary_valuelons', action='storelon_truelon',
+      delonst='modelonl_uselon_binary_valuelons',
+      helonlp='Uselon thelon uselon_binary_valuelons optimization')
 
-    # control hom many featues we keep in sparse tensors
-    # 12 is enough for learning-to-rank for now
-    parser.add_argument(
-      '--input_size_bits', type=int, default=12,
-      help='Number of bits allocated to the input size')
+    # control hom many felonatuelons welon kelonelonp in sparselon telonnsors
+    # 12 is elonnough for lelonarning-to-rank for now
+    parselonr.add_argumelonnt(
+      '--input_sizelon_bits', typelon=int, delonfault=12,
+      helonlp='Numbelonr of bits allocatelond to thelon input sizelon')
 
-    parser.add_argument(
-      '--loss_function', type=str, default='ranknet',
-      dest='loss_function',
-      help='Options are pairwise: ranknet (default), lambdarank, '
-      'listnet, listmle, attrank, '
-      'pointwise')
+    parselonr.add_argumelonnt(
+      '--loss_function', typelon=str, delonfault='ranknelont',
+      delonst='loss_function',
+      helonlp='Options arelon pairwiselon: ranknelont (delonfault), lambdarank, '
+      'listnelont, listmlelon, attrank, '
+      'pointwiselon')
 
-    # whether convert sparse tensors to dense tensor
-    # in order to use dense normalization methods
-    parser.add_argument(
-      '--use_dense_tensor', action='store_true',
-      dest='use_dense_tensor',
-      default=False,
-      help='If use_dense_tensor is False, '
-      'sparse tensor and spare normalization are in use. '
-      'If use_dense_tensor is True, '
-      'dense tensor and dense normalization are in use.')
+    # whelonthelonr convelonrt sparselon telonnsors to delonnselon telonnsor
+    # in ordelonr to uselon delonnselon normalization melonthods
+    parselonr.add_argumelonnt(
+      '--uselon_delonnselon_telonnsor', action='storelon_truelon',
+      delonst='uselon_delonnselon_telonnsor',
+      delonfault=Falselon,
+      helonlp='If uselon_delonnselon_telonnsor is Falselon, '
+      'sparselon telonnsor and sparelon normalization arelon in uselon. '
+      'If uselon_delonnselon_telonnsor is Truelon, '
+      'delonnselon telonnsor and delonnselon normalization arelon in uselon.')
 
-    parser.add_argument(
-      '--dense_normalization', type=str, default='mean_max_normalizaiton',
-      dest='dense_normalization',
-      help='Options are mean_max_normalizaiton (default), standard_normalizaiton')
+    parselonr.add_argumelonnt(
+      '--delonnselon_normalization', typelon=str, delonfault='melonan_max_normalizaiton',
+      delonst='delonnselon_normalization',
+      helonlp='Options arelon melonan_max_normalizaiton (delonfault), standard_normalizaiton')
 
-    parser.add_argument(
-      '--sparse_normalization', type=str, default='SparseMaxNorm',
-      dest='sparse_normalization',
-      help='Options are SparseMaxNorm (default), SparseBatchNorm')
+    parselonr.add_argumelonnt(
+      '--sparselon_normalization', typelon=str, delonfault='SparselonMaxNorm',
+      delonst='sparselon_normalization',
+      helonlp='Options arelon SparselonMaxNorm (delonfault), SparselonBatchNorm')
 
-    # so far only used in pairwise learning-to-rank
-    parser.add_argument(
-      '--mask', type=str, default='full_mask',
-      dest='mask',
-      help='Options are full_mask (default), diag_mask')
+    # so far only uselond in pairwiselon lelonarning-to-rank
+    parselonr.add_argumelonnt(
+      '--mask', typelon=str, delonfault='full_mask',
+      delonst='mask',
+      helonlp='Options arelon full_mask (delonfault), diag_mask')
 
-    return parser
+    relonturn parselonr

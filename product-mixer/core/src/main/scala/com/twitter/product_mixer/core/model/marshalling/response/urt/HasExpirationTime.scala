@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-import com.twitter.util.Time
+import com.twittelonr.util.Timelon
 
-trait HasExpirationTime {
-  def expirationTime: Option[Time] = None
+trait HaselonxpirationTimelon {
+  delonf elonxpirationTimelon: Option[Timelon] = Nonelon
 
-  final def expirationTimeInMillis: Option[Long] = expirationTime.map(_.inMillis)
+  final delonf elonxpirationTimelonInMillis: Option[Long] = elonxpirationTimelon.map(_.inMillis)
 }

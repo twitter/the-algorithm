@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtUnorderedBloomFilterCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.util.bloomfilter.AdaptiveLongIntBloomFilterBuilder
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtUnordelonrelondBloomFiltelonrCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor.UrtCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.BottomCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonarch.common.util.bloomfiltelonr.AdaptivelonLongIntBloomFiltelonrBuildelonr
 
 /**
- * Builds [[UrtUnorderedBloomFilterCursor]] in the Bottom position
+ * Builds [[UrtUnordelonrelondBloomFiltelonrCursor]] in thelon Bottom position
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param serializer Converts the cursor to an encoded string
+ * @param idSelonlelonctor Speloncifielons thelon elonntry from which to delonrivelon thelon `id` fielonld
+ * @param selonrializelonr Convelonrts thelon cursor to an elonncodelond string
  */
-case class UnorderedBloomFilterBottomCursorBuilder(
-  idSelector: PartialFunction[UniversalNoun[_], Long],
-  serializer: PipelineCursorSerializer[UrtUnorderedBloomFilterCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[
-      PipelineQuery with HasPipelineCursor[UrtUnorderedBloomFilterCursor]
+caselon class UnordelonrelondBloomFiltelonrBottomCursorBuildelonr(
+  idSelonlelonctor: PartialFunction[UnivelonrsalNoun[_], Long],
+  selonrializelonr: PipelonlinelonCursorSelonrializelonr[UrtUnordelonrelondBloomFiltelonrCursor] = UrtCursorSelonrializelonr)
+    elonxtelonnds UrtCursorBuildelonr[
+      PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtUnordelonrelondBloomFiltelonrCursor]
     ] {
 
-  override val cursorType: CursorType = BottomCursor
+  ovelonrridelon val cursorTypelon: CursorTypelon = BottomCursor
 
-  override def cursorValue(
-    query: PipelineQuery with HasPipelineCursor[UrtUnorderedBloomFilterCursor],
-    entries: Seq[TimelineEntry]
+  ovelonrridelon delonf cursorValuelon(
+    quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtUnordelonrelondBloomFiltelonrCursor],
+    elonntrielons: Selonq[Timelonlinelonelonntry]
   ): String = {
-    val bloomFilter = query.pipelineCursor.map(_.longIntBloomFilter)
-    val ids = entries.collect(idSelector)
+    val bloomFiltelonr = quelonry.pipelonlinelonCursor.map(_.longIntBloomFiltelonr)
+    val ids = elonntrielons.collelonct(idSelonlelonctor)
 
-    val cursor = UrtUnorderedBloomFilterCursor(
-      initialSortIndex = nextBottomInitialSortIndex(query, entries),
-      longIntBloomFilter = AdaptiveLongIntBloomFilterBuilder.build(ids, bloomFilter)
+    val cursor = UrtUnordelonrelondBloomFiltelonrCursor(
+      initialSortIndelonx = nelonxtBottomInitialSortIndelonx(quelonry, elonntrielons),
+      longIntBloomFiltelonr = AdaptivelonLongIntBloomFiltelonrBuildelonr.build(ids, bloomFiltelonr)
     )
 
-    serializer.serializeCursor(cursor)
+    selonrializelonr.selonrializelonCursor(cursor)
   }
 }

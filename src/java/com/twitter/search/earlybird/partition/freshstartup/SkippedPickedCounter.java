@@ -1,26 +1,26 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+packagelon com.twittelonr.selonarch.elonarlybird.partition.frelonshstartup;
 
-class SkippedPickedCounter {
-  private long skipped;
-  private long picked;
-  private String name;
+class SkippelondPickelondCountelonr {
+  privatelon long skippelond;
+  privatelon long pickelond;
+  privatelon String namelon;
 
-  public SkippedPickedCounter(String name) {
-    this.skipped = 0;
-    this.picked = 0;
-    this.name = name;
+  public SkippelondPickelondCountelonr(String namelon) {
+    this.skippelond = 0;
+    this.pickelond = 0;
+    this.namelon = namelon;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return String.format("[%s - picked: %,d, skipped: %,d]",
-        name, picked, skipped);
+    relonturn String.format("[%s - pickelond: %,d, skippelond: %,d]",
+        namelon, pickelond, skippelond);
   }
 
-  void incrementSkipped() {
-    skipped++;
+  void increlonmelonntSkippelond() {
+    skippelond++;
   }
-  void incrementPicked() {
-    picked++;
+  void increlonmelonntPickelond() {
+    pickelond++;
   }
 }

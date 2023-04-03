@@ -1,93 +1,93 @@
-package com.twitter.home_mixer.util
+packagelon com.twittelonr.homelon_mixelonr.util
 
-import com.twitter.search.common.constants.{thriftscala => scc}
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.service.metastore.gen.{thriftscala => smg}
+import com.twittelonr.selonarch.common.constants.{thriftscala => scc}
+import com.twittelonr.selonarch.common.util.lang.ThriftLanguagelonUtil
+import com.twittelonr.selonrvicelon.melontastorelon.gelonn.{thriftscala => smg}
 
-object LanguageUtil {
+objelonct LanguagelonUtil {
 
-  private val DafaultMinProducedLanguageRatio = 0.05
-  private val DefaultMinConsumedLanguageConfidence = 0.8
+  privatelon val DafaultMinProducelondLanguagelonRatio = 0.05
+  privatelon val DelonfaultMinConsumelondLanguagelonConfidelonncelon = 0.8
 
   /**
-   * Computes a list of languages based on UserLanguages information retrieved from Metastore.
+   * Computelons a list of languagelons baselond on UselonrLanguagelons information relontrielonvelond from Melontastorelon.
    *
-   * The list is sorted in descending order of confidence score associated with each language.
-   * That is, language with highest confidence value is in index 0.
+   * Thelon list is sortelond in delonscelonnding ordelonr of confidelonncelon scorelon associatelond with elonach languagelon.
+   * That is, languagelon with highelonst confidelonncelon valuelon is in indelonx 0.
    */
-  def computeLanguages(
-    userLanguages: smg.UserLanguages,
-    minProducedLanguageRatio: Double = DafaultMinProducedLanguageRatio,
-    minConsumedLanguageConfidence: Double = DefaultMinConsumedLanguageConfidence
-  ): Seq[scc.ThriftLanguage] = {
-    val languageConfidenceMap = computeLanguageConfidenceMap(
-      userLanguages,
-      minProducedLanguageRatio,
-      minConsumedLanguageConfidence
+  delonf computelonLanguagelons(
+    uselonrLanguagelons: smg.UselonrLanguagelons,
+    minProducelondLanguagelonRatio: Doublelon = DafaultMinProducelondLanguagelonRatio,
+    minConsumelondLanguagelonConfidelonncelon: Doublelon = DelonfaultMinConsumelondLanguagelonConfidelonncelon
+  ): Selonq[scc.ThriftLanguagelon] = {
+    val languagelonConfidelonncelonMap = computelonLanguagelonConfidelonncelonMap(
+      uselonrLanguagelons,
+      minProducelondLanguagelonRatio,
+      minConsumelondLanguagelonConfidelonncelon
     )
-    languageConfidenceMap.toSeq.sortWith(_._2 > _._2).map(_._1) // _1 = language, _2 = score
+    languagelonConfidelonncelonMap.toSelonq.sortWith(_._2 > _._2).map(_._1) // _1 = languagelon, _2 = scorelon
   }
 
   /**
-   * Computes confidence map based on UserLanguages information retrieved from Metastore.
-   * where,
-   * key   = language code
-   * value = level of confidence that the language is applicable to a user.
+   * Computelons confidelonncelon map baselond on UselonrLanguagelons information relontrielonvelond from Melontastorelon.
+   * whelonrelon,
+   * kelony   = languagelon codelon
+   * valuelon = lelonvelonl of confidelonncelon that thelon languagelon is applicablelon to a uselonr.
    */
-  private def computeLanguageConfidenceMap(
-    userLanguages: smg.UserLanguages,
-    minProducedLanguageRatio: Double,
-    minConsumedLanguageConfidence: Double
-  ): Map[scc.ThriftLanguage, Double] = {
+  privatelon delonf computelonLanguagelonConfidelonncelonMap(
+    uselonrLanguagelons: smg.UselonrLanguagelons,
+    minProducelondLanguagelonRatio: Doublelon,
+    minConsumelondLanguagelonConfidelonncelon: Doublelon
+  ): Map[scc.ThriftLanguagelon, Doublelon] = {
 
-    val producedLanguages = getLanguageMap(userLanguages.produced)
-    val consumedLanguages = getLanguageMap(userLanguages.consumed)
-    val languages = (producedLanguages.keys ++ consumedLanguages.keys).toSet
-    var maxConfidence = 0.0
+    val producelondLanguagelons = gelontLanguagelonMap(uselonrLanguagelons.producelond)
+    val consumelondLanguagelons = gelontLanguagelonMap(uselonrLanguagelons.consumelond)
+    val languagelons = (producelondLanguagelons.kelonys ++ consumelondLanguagelons.kelonys).toSelont
+    var maxConfidelonncelon = 0.0
 
-    val confidenceMap = languages.map { language =>
-      val produceRatio = producedLanguages
-        .get(language)
-        .map { score => if (score < minProducedLanguageRatio) 0.0 else score }
-        .getOrElse(0.0)
+    val confidelonncelonMap = languagelons.map { languagelon =>
+      val producelonRatio = producelondLanguagelons
+        .gelont(languagelon)
+        .map { scorelon => if (scorelon < minProducelondLanguagelonRatio) 0.0 elonlselon scorelon }
+        .gelontOrelonlselon(0.0)
 
-      val consumeConfidence = consumedLanguages
-        .get(language)
-        .map { score => if (score < minConsumedLanguageConfidence) 0.0 else score }
-        .getOrElse(0.0)
+      val consumelonConfidelonncelon = consumelondLanguagelons
+        .gelont(languagelon)
+        .map { scorelon => if (scorelon < minConsumelondLanguagelonConfidelonncelon) 0.0 elonlselon scorelon }
+        .gelontOrelonlselon(0.0)
 
-      val overallConfidence = (0.3 + 4 * produceRatio) * (0.1 + consumeConfidence)
-      maxConfidence = Math.max(maxConfidence, overallConfidence)
+      val ovelonrallConfidelonncelon = (0.3 + 4 * producelonRatio) * (0.1 + consumelonConfidelonncelon)
+      maxConfidelonncelon = Math.max(maxConfidelonncelon, ovelonrallConfidelonncelon)
 
-      (language -> overallConfidence)
+      (languagelon -> ovelonrallConfidelonncelon)
     }.toMap
 
-    val normalizedConfidenceMap = if (maxConfidence > 0) {
-      confidenceMap.map {
-        case (language, confidenceScore) =>
-          val normalizedScore = (confidenceScore / maxConfidence * 0.9) + 0.1
-          (language -> normalizedScore)
+    val normalizelondConfidelonncelonMap = if (maxConfidelonncelon > 0) {
+      confidelonncelonMap.map {
+        caselon (languagelon, confidelonncelonScorelon) =>
+          val normalizelondScorelon = (confidelonncelonScorelon / maxConfidelonncelon * 0.9) + 0.1
+          (languagelon -> normalizelondScorelon)
       }
-    } else {
-      confidenceMap
+    } elonlselon {
+      confidelonncelonMap
     }
-    normalizedConfidenceMap
+    normalizelondConfidelonncelonMap
   }
 
-  private def getLanguageMap(
-    scoredLanguages: Seq[smg.ScoredString]
-  ): Map[scc.ThriftLanguage, Double] = {
-    scoredLanguages.flatMap { scoredLanguage =>
-      getThriftLanguage(scoredLanguage.item).map { language => (language -> scoredLanguage.weight) }
+  privatelon delonf gelontLanguagelonMap(
+    scorelondLanguagelons: Selonq[smg.ScorelondString]
+  ): Map[scc.ThriftLanguagelon, Doublelon] = {
+    scorelondLanguagelons.flatMap { scorelondLanguagelon =>
+      gelontThriftLanguagelon(scorelondLanguagelon.itelonm).map { languagelon => (languagelon -> scorelondLanguagelon.welonight) }
     }.toMap
   }
 
-  private def getThriftLanguage(languageName: String): Option[scc.ThriftLanguage] = {
-    val languageOrdinal = ThriftLanguageUtil.getThriftLanguageOf(languageName).ordinal
-    val language = scc.ThriftLanguage(languageOrdinal)
-    language match {
-      case scc.ThriftLanguage.Unknown => None
-      case _ => Some(language)
+  privatelon delonf gelontThriftLanguagelon(languagelonNamelon: String): Option[scc.ThriftLanguagelon] = {
+    val languagelonOrdinal = ThriftLanguagelonUtil.gelontThriftLanguagelonOf(languagelonNamelon).ordinal
+    val languagelon = scc.ThriftLanguagelon(languagelonOrdinal)
+    languagelon match {
+      caselon scc.ThriftLanguagelon.Unknown => Nonelon
+      caselon _ => Somelon(languagelon)
     }
   }
 }

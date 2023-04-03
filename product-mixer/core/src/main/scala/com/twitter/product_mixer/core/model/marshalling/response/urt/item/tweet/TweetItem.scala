@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.ContextualTweetRef
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation.ConversationAnnotation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot.ForwardPivot
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf.ContelonxtualTwelonelontRelonf
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.convelonrsation_annotation.ConvelonrsationAnnotation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot.ForwardPivot
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon.TombstonelonInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Badgelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SocialContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PrelonrollMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PromotelondMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
 
-object TweetItem {
-  val TweetEntryNamespace = EntryNamespace("tweet")
-  val PromotedTweetEntryNamespace = EntryNamespace("promoted-tweet")
+objelonct TwelonelontItelonm {
+  val TwelonelontelonntryNamelonspacelon = elonntryNamelonspacelon("twelonelont")
+  val PromotelondTwelonelontelonntryNamelonspacelon = elonntryNamelonspacelon("promotelond-twelonelont")
 }
 
-case class TweetItem(
-  override val id: Long,
-  override val entryNamespace: EntryNamespace,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  override val isPinned: Option[Boolean],
-  override val entryIdToReplace: Option[String],
-  socialContext: Option[SocialContext],
-  highlights: Option[TweetHighlights],
-  displayType: TweetDisplayType,
-  innerTombstoneInfo: Option[TombstoneInfo],
-  timelinesScoreInfo: Option[TimelinesScoreInfo],
-  hasModeratedReplies: Option[Boolean],
+caselon class TwelonelontItelonm(
+  ovelonrridelon val id: Long,
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo],
+  ovelonrridelon val isPinnelond: Option[Boolelonan],
+  ovelonrridelon val elonntryIdToRelonplacelon: Option[String],
+  socialContelonxt: Option[SocialContelonxt],
+  highlights: Option[TwelonelontHighlights],
+  displayTypelon: TwelonelontDisplayTypelon,
+  innelonrTombstonelonInfo: Option[TombstonelonInfo],
+  timelonlinelonsScorelonInfo: Option[TimelonlinelonsScorelonInfo],
+  hasModelonratelondRelonplielons: Option[Boolelonan],
   forwardPivot: Option[ForwardPivot],
-  innerForwardPivot: Option[ForwardPivot],
-  promotedMetadata: Option[PromotedMetadata],
-  conversationAnnotation: Option[ConversationAnnotation],
-  contextualTweetRef: Option[ContextualTweetRef],
-  prerollMetadata: Option[PrerollMetadata],
-  replyBadge: Option[Badge],
-  destination: Option[Url])
-    extends TimelineItem {
+  innelonrForwardPivot: Option[ForwardPivot],
+  promotelondMelontadata: Option[PromotelondMelontadata],
+  convelonrsationAnnotation: Option[ConvelonrsationAnnotation],
+  contelonxtualTwelonelontRelonf: Option[ContelonxtualTwelonelontRelonf],
+  prelonrollMelontadata: Option[PrelonrollMelontadata],
+  relonplyBadgelon: Option[Badgelon],
+  delonstination: Option[Url])
+    elonxtelonnds TimelonlinelonItelonm {
 
   /**
-   * Promoted tweets need to include the impression ID in the entry ID since some clients have
-   * client-side logic that deduplicates ads impression callbacks based on a combination of the
-   * tweet and impression IDs. Not including the impression ID will lead to over deduplication.
+   * Promotelond twelonelonts nelonelond to includelon thelon imprelonssion ID in thelon elonntry ID sincelon somelon clielonnts havelon
+   * clielonnt-sidelon logic that delonduplicatelons ads imprelonssion callbacks baselond on a combination of thelon
+   * twelonelont and imprelonssion IDs. Not including thelon imprelonssion ID will lelonad to ovelonr delonduplication.
    */
-  override lazy val entryIdentifier: String = promotedMetadata
-    .map { metadata =>
-      val impressionId = metadata.impressionString match {
-        case Some(impressionString) if impressionString.nonEmpty => impressionString
-        case _ => throw new IllegalStateException(s"Promoted Tweet $id missing impression ID")
+  ovelonrridelon lazy val elonntryIdelonntifielonr: String = promotelondMelontadata
+    .map { melontadata =>
+      val imprelonssionId = melontadata.imprelonssionString match {
+        caselon Somelon(imprelonssionString) if imprelonssionString.nonelonmpty => imprelonssionString
+        caselon _ => throw nelonw IllelongalStatelonelonxcelonption(s"Promotelond Twelonelont $id missing imprelonssion ID")
       }
-      s"$entryNamespace-$id-$impressionId"
-    }.getOrElse(s"$entryNamespace-$id")
+      s"$elonntryNamelonspacelon-$id-$imprelonssionId"
+    }.gelontOrelonlselon(s"$elonntryNamelonspacelon-$id")
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

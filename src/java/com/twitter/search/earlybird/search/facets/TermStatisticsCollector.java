@@ -1,487 +1,487 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.commons.lang.StringUtils;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchResultsStats;
-import com.twitter.search.common.schema.SchemaUtil;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.util.earlybird.TermStatisticsUtil;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermResults;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRelonsultsStats;
+import com.twittelonr.selonarch.common.schelonma.SchelonmaUtil;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.selonarch.elonarlyTelonrminationStatelon;
+import com.twittelonr.selonarch.common.util.elonarlybird.TelonrmStatisticsUtil;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.TimelonMappelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSinglelonSelongmelonntSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AbstractRelonsultsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SelonarchRelonsultsInfo;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftHistogramSelonttings;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmRelonsults;
 
-public class TermStatisticsCollector extends AbstractResultsCollector
-        <TermStatisticsRequestInfo, TermStatisticsCollector.TermStatisticsSearchResults> {
-  private static final EarlyTerminationState TERMINATED_TERM_STATS_COUNTING_DONE =
-      new EarlyTerminationState("terminated_term_stats_counting_done", true);
+public class TelonrmStatisticsCollelonctor elonxtelonnds AbstractRelonsultsCollelonctor
+        <TelonrmStatisticsRelonquelonstInfo, TelonrmStatisticsCollelonctor.TelonrmStatisticsSelonarchRelonsults> {
+  privatelon static final elonarlyTelonrminationStatelon TelonRMINATelonD_TelonRM_STATS_COUNTING_DONelon =
+      nelonw elonarlyTelonrminationStatelon("telonrminatelond_telonrm_stats_counting_donelon", truelon);
 
-  // Stats for tracking histogram results.
-  private static final SearchResultsStats TERM_STATS_HISTOGRAM_REQUESTS_WITH_MOVED_BACK_BINS =
-      SearchResultsStats.export("term_statistics_collector_queries_with_moved_back_bins");
-  private static final SearchCounter TERM_STATS_SKIPPED_LARGER_OUT_OF_BOUNDS_HITS =
-      SearchCounter.export("term_statistics_collector_skipped_larger_out_of_bounds_hits");
+  // Stats for tracking histogram relonsults.
+  privatelon static final SelonarchRelonsultsStats TelonRM_STATS_HISTOGRAM_RelonQUelonSTS_WITH_MOVelonD_BACK_BINS =
+      SelonarchRelonsultsStats.elonxport("telonrm_statistics_collelonctor_quelonrielons_with_movelond_back_bins");
+  privatelon static final SelonarchCountelonr TelonRM_STATS_SKIPPelonD_LARGelonR_OUT_OF_BOUNDS_HITS =
+      SelonarchCountelonr.elonxport("telonrm_statistics_collelonctor_skippelond_largelonr_out_of_bounds_hits");
 
-  @VisibleForTesting
-  static final class TermStatistics {
-    private final ThriftTermRequest termRequest;
-    private final Term term;  // could be null, for count across all fields
-    private int termDF = 0;
-    private int termCount = 0;
-    private final int[] histogramBins;
+  @VisiblelonForTelonsting
+  static final class TelonrmStatistics {
+    privatelon final ThriftTelonrmRelonquelonst telonrmRelonquelonst;
+    privatelon final Telonrm telonrm;  // could belon null, for count across all fielonlds
+    privatelon int telonrmDF = 0;
+    privatelon int telonrmCount = 0;
+    privatelon final int[] histogramBins;
 
-    // Per-segment information.
-    private PostingsEnum segmentDocsEnum;  // could be null, for count across all fields
-    private boolean segmentDone;
+    // Pelonr-selongmelonnt information.
+    privatelon Postingselonnum selongmelonntDocselonnum;  // could belon null, for count across all fielonlds
+    privatelon boolelonan selongmelonntDonelon;
 
-    @VisibleForTesting
-    TermStatistics(ThriftTermRequest termRequest, Term term, int numBins) {
-      this.termRequest = termRequest;
-      this.term = term;
-      this.histogramBins = new int[numBins];
+    @VisiblelonForTelonsting
+    TelonrmStatistics(ThriftTelonrmRelonquelonst telonrmRelonquelonst, Telonrm telonrm, int numBins) {
+      this.telonrmRelonquelonst = telonrmRelonquelonst;
+      this.telonrm = telonrm;
+      this.histogramBins = nelonw int[numBins];
     }
 
     /**
-     * Take the currently accumulated counts and "move them back" to make room for counts from more
-     * recent binIds.
+     * Takelon thelon currelonntly accumulatelond counts and "movelon thelonm back" to makelon room for counts from morelon
+     * reloncelonnt binIds.
      *
-     * For example, if the oldFirstBinID was set to 10, and the histogramBins were {3, 4, 5, 6, 7},
-     * after this call with newFirstBinID set to 12, the histogramBins will be set
+     * For elonxamplelon, if thelon oldFirstBinID was selont to 10, and thelon histogramBins welonrelon {3, 4, 5, 6, 7},
+     * aftelonr this call with nelonwFirstBinID selont to 12, thelon histogramBins will belon selont
      * to {5, 6, 7, 0, 0}.
      *
-     * @param oldFirstBinID the binId of the firstBin that's been used up to now.
-     * @param newFirstBinID the new binId of the firstBin that will be used from now on.
-     *     The newFirstBinID is presumed to be larger than the oldFirstBinID, and is asserted.
+     * @param oldFirstBinID thelon binId of thelon firstBin that's belonelonn uselond up to now.
+     * @param nelonwFirstBinID thelon nelonw binId of thelon firstBin that will belon uselond from now on.
+     *     Thelon nelonwFirstBinID is prelonsumelond to belon largelonr than thelon oldFirstBinID, and is asselonrtelond.
      */
-    @VisibleForTesting
-    void moveBackTermCounts(int oldFirstBinID, int newFirstBinID) {
-      Preconditions.checkState(oldFirstBinID < newFirstBinID);
-      // move counts back by this many bins
-      final int moveBackBy = newFirstBinID - oldFirstBinID;
+    @VisiblelonForTelonsting
+    void movelonBackTelonrmCounts(int oldFirstBinID, int nelonwFirstBinID) {
+      Prelonconditions.chelonckStatelon(oldFirstBinID < nelonwFirstBinID);
+      // movelon counts back by this many bins
+      final int movelonBackBy = nelonwFirstBinID - oldFirstBinID;
 
-      this.termCount = 0;
-      for (int i = 0; i < histogramBins.length; i++) {
+      this.telonrmCount = 0;
+      for (int i = 0; i < histogramBins.lelonngth; i++) {
         int oldCount = histogramBins[i];
         histogramBins[i] = 0;
-        int newIndex = i - moveBackBy;
-        if (newIndex >= 0) {
-          histogramBins[newIndex] = oldCount;
-          this.termCount += oldCount;
+        int nelonwIndelonx = i - movelonBackBy;
+        if (nelonwIndelonx >= 0) {
+          histogramBins[nelonwIndelonx] = oldCount;
+          this.telonrmCount += oldCount;
         }
       }
     }
 
-    @VisibleForTesting void countHit(int bin) {
-      termCount++;
+    @VisiblelonForTelonsting void countHit(int bin) {
+      telonrmCount++;
       histogramBins[bin]++;
     }
 
-    @VisibleForTesting int getTermCount() {
-      return termCount;
+    @VisiblelonForTelonsting int gelontTelonrmCount() {
+      relonturn telonrmCount;
     }
 
-    @VisibleForTesting int[] getHistogramBins() {
-      return histogramBins;
+    @VisiblelonForTelonsting int[] gelontHistogramBins() {
+      relonturn histogramBins;
     }
   }
 
-  private TermStatistics[] termStatistics;
+  privatelon TelonrmStatistics[] telonrmStatistics;
 
-  // Histogram fields.
-  private int numBins;
-  private int binSize;
+  // Histogram fielonlds.
+  privatelon int numBins;
+  privatelon int binSizelon;
 
-  private int numTimesBinsWereMovedBack = 0;
-  private int numLargerOutOfBoundsBinsSkipped = 0;
+  privatelon int numTimelonsBinsWelonrelonMovelondBack = 0;
+  privatelon int numLargelonrOutOfBoundsBinsSkippelond = 0;
 
-  private static final int SEEN_OUT_OF_RANGE_THRESHOLD = 10;
+  privatelon static final int SelonelonN_OUT_OF_RANGelon_THRelonSHOLD = 10;
 
-  private int seenOutOfRange = 0;
+  privatelon int selonelonnOutOfRangelon = 0;
 
-  // ID of the first bin - effectively time / binSize.  This is calculated
-  // relative to the first collected in-order hit.
-  private int firstBinID = -1;
-  // List of per-segment debug information specifically useful for termstat request debugging.
-  private List<String> termStatisticsDebugInfo = new ArrayList<>();
+  // ID of thelon first bin - elonffelonctivelonly timelon / binSizelon.  This is calculatelond
+  // relonlativelon to thelon first collelonctelond in-ordelonr hit.
+  privatelon int firstBinID = -1;
+  // List of pelonr-selongmelonnt delonbug information speloncifically uselonful for telonrmstat relonquelonst delonbugging.
+  privatelon List<String> telonrmStatisticsDelonbugInfo = nelonw ArrayList<>();
 
   /**
-   * Creates a new term stats collector.
+   * Crelonatelons a nelonw telonrm stats collelonctor.
    */
-  public TermStatisticsCollector(
-      ImmutableSchemaInterface schema,
-      TermStatisticsRequestInfo searchRequestInfo,
-      EarlybirdSearcherStats searcherStats,
+  public TelonrmStatisticsCollelonctor(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      TelonrmStatisticsRelonquelonstInfo selonarchRelonquelonstInfo,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
       Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, clock, searcherStats, requestDebugMode);
+      int relonquelonstDelonbugModelon) {
+    supelonr(schelonma, selonarchRelonquelonstInfo, clock, selonarchelonrStats, relonquelonstDelonbugModelon);
 
-    // Set up the histogram bins.
-    if (searchRequestInfo.isReturnHistogram()) {
-      ThriftHistogramSettings histogramSettings = searchRequestInfo.getHistogramSettings();
-      this.numBins = histogramSettings.getNumBins();
-      binSize = TermStatisticsUtil.determineBinSize(histogramSettings);
-    } else {
+    // Selont up thelon histogram bins.
+    if (selonarchRelonquelonstInfo.isRelonturnHistogram()) {
+      ThriftHistogramSelonttings histogramSelonttings = selonarchRelonquelonstInfo.gelontHistogramSelonttings();
+      this.numBins = histogramSelonttings.gelontNumBins();
+      binSizelon = TelonrmStatisticsUtil.delontelonrminelonBinSizelon(histogramSelonttings);
+    } elonlselon {
       this.numBins = 0;
-      this.binSize = 0;
+      this.binSizelon = 0;
     }
 
-    // Set up the term statistics array.
-    List<ThriftTermRequest> termRequests = searchRequestInfo.getTermRequests();
-    if (termRequests == null) {
-      this.termStatistics = new TermStatistics[0];
-      return;
+    // Selont up thelon telonrm statistics array.
+    List<ThriftTelonrmRelonquelonst> telonrmRelonquelonsts = selonarchRelonquelonstInfo.gelontTelonrmRelonquelonsts();
+    if (telonrmRelonquelonsts == null) {
+      this.telonrmStatistics = nelonw TelonrmStatistics[0];
+      relonturn;
     }
 
-    this.termStatistics = new TermStatistics[searchRequestInfo.getTermRequests().size()];
-    for (int i = 0; i < searchRequestInfo.getTermRequests().size(); i++) {
-      final ThriftTermRequest termRequest = searchRequestInfo.getTermRequests().get(i);
+    this.telonrmStatistics = nelonw TelonrmStatistics[selonarchRelonquelonstInfo.gelontTelonrmRelonquelonsts().sizelon()];
+    for (int i = 0; i < selonarchRelonquelonstInfo.gelontTelonrmRelonquelonsts().sizelon(); i++) {
+      final ThriftTelonrmRelonquelonst telonrmRelonquelonst = selonarchRelonquelonstInfo.gelontTelonrmRelonquelonsts().gelont(i);
 
-      Term term = null;
-      String fieldName = termRequest.getFieldName();
-      if (!StringUtils.isBlank(fieldName)) {
-        // First check if it's a facet field.
-        Schema.FieldInfo facetField = schema.getFacetFieldByFacetName(termRequest.getFieldName());
-        if (facetField != null) {
-          term = new Term(facetField.getName(), termRequest.getTerm());
-        } else {
-          // EarlybirdSearcher.validateRequest() should've already checked that the field exists in
-          // the schema, and that the term can be converted to the type of this field. However, if
-          // that did not happen for some reason, an exception will be thrown here, which will be
-          // converted to a TRANSIENT_ERROR response code.
-          Schema.FieldInfo fieldInfo = schema.getFieldInfo(fieldName);
-          Preconditions.checkNotNull(
-              fieldInfo,
-              "Found a ThriftTermRequest for a field that's not in the schema: " + fieldName
-              + ". This should've been caught by EarlybirdSearcher.validateRequest()!");
-          term = new Term(fieldName, SchemaUtil.toBytesRef(fieldInfo, termRequest.getTerm()));
+      Telonrm telonrm = null;
+      String fielonldNamelon = telonrmRelonquelonst.gelontFielonldNamelon();
+      if (!StringUtils.isBlank(fielonldNamelon)) {
+        // First chelonck if it's a facelont fielonld.
+        Schelonma.FielonldInfo facelontFielonld = schelonma.gelontFacelontFielonldByFacelontNamelon(telonrmRelonquelonst.gelontFielonldNamelon());
+        if (facelontFielonld != null) {
+          telonrm = nelonw Telonrm(facelontFielonld.gelontNamelon(), telonrmRelonquelonst.gelontTelonrm());
+        } elonlselon {
+          // elonarlybirdSelonarchelonr.validatelonRelonquelonst() should'velon alrelonady chelonckelond that thelon fielonld elonxists in
+          // thelon schelonma, and that thelon telonrm can belon convelonrtelond to thelon typelon of this fielonld. Howelonvelonr, if
+          // that did not happelonn for somelon relonason, an elonxcelonption will belon thrown helonrelon, which will belon
+          // convelonrtelond to a TRANSIelonNT_elonRROR relonsponselon codelon.
+          Schelonma.FielonldInfo fielonldInfo = schelonma.gelontFielonldInfo(fielonldNamelon);
+          Prelonconditions.chelonckNotNull(
+              fielonldInfo,
+              "Found a ThriftTelonrmRelonquelonst for a fielonld that's not in thelon schelonma: " + fielonldNamelon
+              + ". This should'velon belonelonn caught by elonarlybirdSelonarchelonr.validatelonRelonquelonst()!");
+          telonrm = nelonw Telonrm(fielonldNamelon, SchelonmaUtil.toBytelonsRelonf(fielonldInfo, telonrmRelonquelonst.gelontTelonrm()));
         }
-      } else {
-        // NOTE: if the fieldName is empty, this is a catch-all term request for the count across
-        // all fields. We'll just use a null term in the TermStatistics object.
+      } elonlselon {
+        // NOTelon: if thelon fielonldNamelon is elonmpty, this is a catch-all telonrm relonquelonst for thelon count across
+        // all fielonlds. Welon'll just uselon a null telonrm in thelon TelonrmStatistics objelonct.
       }
 
-      termStatistics[i] = new TermStatistics(termRequest, term, numBins);
+      telonrmStatistics[i] = nelonw TelonrmStatistics(telonrmRelonquelonst, telonrm, numBins);
     }
   }
 
-  @Override
-  public void startSegment() throws IOException {
-    termStatisticsDebugInfo.add(
-        "Starting segment in timestamp range: [" + timeMapper.getFirstTime()
-        + ", " + timeMapper.getLastTime() + "]");
-    for (TermStatistics termStats : termStatistics) {
-      termStats.segmentDone = true;  // until we know it's false later.
-      TermsEnum termsEnum = null;
-      if (termStats.term != null) {
-        Terms terms = currTwitterReader.terms(termStats.term.field());
-        if (terms != null) {
-          termsEnum = terms.iterator();
-          if (termsEnum != null && termsEnum.seekExact(termStats.term.bytes())) {
-            termStats.termDF += termsEnum.docFreq();  // Only meaningful for matchAll queries.
-            termStats.segmentDocsEnum =
-                termsEnum.postings(termStats.segmentDocsEnum, PostingsEnum.FREQS);
-            termStats.segmentDone = termStats.segmentDocsEnum == null
-                 || termStats.segmentDocsEnum.nextDoc() == DocIdSetIterator.NO_MORE_DOCS;
-          } else {
-            // this term doesn't exist in this segment.
+  @Ovelonrridelon
+  public void startSelongmelonnt() throws IOelonxcelonption {
+    telonrmStatisticsDelonbugInfo.add(
+        "Starting selongmelonnt in timelonstamp rangelon: [" + timelonMappelonr.gelontFirstTimelon()
+        + ", " + timelonMappelonr.gelontLastTimelon() + "]");
+    for (TelonrmStatistics telonrmStats : telonrmStatistics) {
+      telonrmStats.selongmelonntDonelon = truelon;  // until welon know it's falselon latelonr.
+      Telonrmselonnum telonrmselonnum = null;
+      if (telonrmStats.telonrm != null) {
+        Telonrms telonrms = currTwittelonrRelonadelonr.telonrms(telonrmStats.telonrm.fielonld());
+        if (telonrms != null) {
+          telonrmselonnum = telonrms.itelonrator();
+          if (telonrmselonnum != null && telonrmselonnum.selonelonkelonxact(telonrmStats.telonrm.bytelons())) {
+            telonrmStats.telonrmDF += telonrmselonnum.docFrelonq();  // Only melonaningful for matchAll quelonrielons.
+            telonrmStats.selongmelonntDocselonnum =
+                telonrmselonnum.postings(telonrmStats.selongmelonntDocselonnum, Postingselonnum.FRelonQS);
+            telonrmStats.selongmelonntDonelon = telonrmStats.selongmelonntDocselonnum == null
+                 || telonrmStats.selongmelonntDocselonnum.nelonxtDoc() == DocIdSelontItelonrator.NO_MORelon_DOCS;
+          } elonlselon {
+            // this telonrm doelonsn't elonxist in this selongmelonnt.
           }
         }
-      } else {
-        // Catch-all case
-        termStats.termDF += currTwitterReader.numDocs();   // Only meaningful for matchAll queries.
-        termStats.segmentDocsEnum = null;
-        termStats.segmentDone = false;
+      } elonlselon {
+        // Catch-all caselon
+        telonrmStats.telonrmDF += currTwittelonrRelonadelonr.numDocs();   // Only melonaningful for matchAll quelonrielons.
+        telonrmStats.selongmelonntDocselonnum = null;
+        telonrmStats.selongmelonntDonelon = falselon;
       }
     }
   }
 
-  private int calculateBin(final int tweetTime) {
-    if (tweetTime == TimeMapper.ILLEGAL_TIME) {
-      return -1;
+  privatelon int calculatelonBin(final int twelonelontTimelon) {
+    if (twelonelontTimelon == TimelonMappelonr.ILLelonGAL_TIMelon) {
+      relonturn -1;
     }
 
-    final int binID = Math.abs(tweetTime) / binSize;
-    final int expectedFirstBinId = binID - numBins + 1;
+    final int binID = Math.abs(twelonelontTimelon) / binSizelon;
+    final int elonxpelonctelondFirstBinId = binID - numBins + 1;
 
     if (firstBinID == -1) {
-      firstBinID = expectedFirstBinId;
-    } else if (expectedFirstBinId > firstBinID) {
-      numTimesBinsWereMovedBack++;
-      final int oldOutOfOrderFirstBinID = firstBinID;
-      firstBinID = expectedFirstBinId;
-      // We got a more recent out of order bin, move previous counts back.
-      for (TermStatistics ts : termStatistics) {
-        ts.moveBackTermCounts(oldOutOfOrderFirstBinID, firstBinID);
+      firstBinID = elonxpelonctelondFirstBinId;
+    } elonlselon if (elonxpelonctelondFirstBinId > firstBinID) {
+      numTimelonsBinsWelonrelonMovelondBack++;
+      final int oldOutOfOrdelonrFirstBinID = firstBinID;
+      firstBinID = elonxpelonctelondFirstBinId;
+      // Welon got a morelon reloncelonnt out of ordelonr bin, movelon prelonvious counts back.
+      for (TelonrmStatistics ts : telonrmStatistics) {
+        ts.movelonBackTelonrmCounts(oldOutOfOrdelonrFirstBinID, firstBinID);
       }
     }
 
-    final int binIndex = binID - firstBinID;
-    if (binIndex >= numBins) {
-      // In-order times should be decreasing,
-      // and out of order times seen after an in-order tweet should also be smaller than the
-      // first in-order tweet's time. Will track these and export as a stat.
-      numLargerOutOfBoundsBinsSkipped++;
-      return -1;
-    } else if (binIndex < 0) {
-      // Early termination criteria.
-      seenOutOfRange++;
-    } else {
-      // Reset the counter, since we want to see consecutive tweets that are out of our bin range
-      // not single anomalies.
-      seenOutOfRange = 0;
+    final int binIndelonx = binID - firstBinID;
+    if (binIndelonx >= numBins) {
+      // In-ordelonr timelons should belon deloncrelonasing,
+      // and out of ordelonr timelons selonelonn aftelonr an in-ordelonr twelonelont should also belon smallelonr than thelon
+      // first in-ordelonr twelonelont's timelon. Will track thelonselon and elonxport as a stat.
+      numLargelonrOutOfBoundsBinsSkippelond++;
+      relonturn -1;
+    } elonlselon if (binIndelonx < 0) {
+      // elonarly telonrmination critelonria.
+      selonelonnOutOfRangelon++;
+    } elonlselon {
+      // Relonselont thelon countelonr, sincelon welon want to selonelon conseloncutivelon twelonelonts that arelon out of our bin rangelon
+      // not singlelon anomalielons.
+      selonelonnOutOfRangelon = 0;
     }
 
-    return binIndex;
+    relonturn binIndelonx;
   }
 
-  @Override
-  public void doCollect(long tweetID) throws IOException {
-    if (searchRequestInfo.isReturnHistogram()) {
-      final int tweetTime = timeMapper.getTime(curDocId);
-      final int binIndex = calculateBin(tweetTime);
-      if (binIndex >= 0) {
-        for (TermStatistics ts : termStatistics) {
-          if (!ts.segmentDone) {
-            countHist(ts, binIndex);
+  @Ovelonrridelon
+  public void doCollelonct(long twelonelontID) throws IOelonxcelonption {
+    if (selonarchRelonquelonstInfo.isRelonturnHistogram()) {
+      final int twelonelontTimelon = timelonMappelonr.gelontTimelon(curDocId);
+      final int binIndelonx = calculatelonBin(twelonelontTimelon);
+      if (binIndelonx >= 0) {
+        for (TelonrmStatistics ts : telonrmStatistics) {
+          if (!ts.selongmelonntDonelon) {
+            countHist(ts, binIndelonx);
           }
         }
       }
-    } else {
-      for (TermStatistics ts : termStatistics) {
-        if (!ts.segmentDone) {
+    } elonlselon {
+      for (TelonrmStatistics ts : telonrmStatistics) {
+        if (!ts.selongmelonntDonelon) {
           countNoHist(ts);
         }
       }
     }
   }
 
-  @Override
-  public void skipSegment(EarlybirdSingleSegmentSearcher searcher) {
-    // Do nothing here.
-    // We don't do accounting that's done in AbstractResultsCollector for Term Stats
-    // requests because otherwise the bin ID calculation will be confused.
+  @Ovelonrridelon
+  public void skipSelongmelonnt(elonarlybirdSinglelonSelongmelonntSelonarchelonr selonarchelonr) {
+    // Do nothing helonrelon.
+    // Welon don't do accounting that's donelon in AbstractRelonsultsCollelonctor for Telonrm Stats
+    // relonquelonsts beloncauselon othelonrwiselon thelon bin ID calculation will belon confuselond.
   }
 
-  private boolean advance(TermStatistics ts) throws IOException {
-    PostingsEnum docsEnum = ts.segmentDocsEnum;
-    if (docsEnum.docID() < curDocId) {
-      if (docsEnum.advance(curDocId) == DocIdSetIterator.NO_MORE_DOCS) {
-        ts.segmentDone = true;
-        return false;
+  privatelon boolelonan advancelon(TelonrmStatistics ts) throws IOelonxcelonption {
+    Postingselonnum docselonnum = ts.selongmelonntDocselonnum;
+    if (docselonnum.docID() < curDocId) {
+      if (docselonnum.advancelon(curDocId) == DocIdSelontItelonrator.NO_MORelon_DOCS) {
+        ts.selongmelonntDonelon = truelon;
+        relonturn falselon;
       }
     }
-    return docsEnum.docID() == curDocId;
+    relonturn docselonnum.docID() == curDocId;
   }
 
-  private boolean countHist(TermStatistics ts, int bin) throws IOException {
-    if (ts.term != null && !advance(ts)) {
-      return false;
+  privatelon boolelonan countHist(TelonrmStatistics ts, int bin) throws IOelonxcelonption {
+    if (ts.telonrm != null && !advancelon(ts)) {
+      relonturn falselon;
     }
     ts.countHit(bin);
-    return true;
+    relonturn truelon;
   }
 
-  private boolean countNoHist(TermStatistics ts) throws IOException {
-    if (ts.term != null && !advance(ts)) {
-      return false;
+  privatelon boolelonan countNoHist(TelonrmStatistics ts) throws IOelonxcelonption {
+    if (ts.telonrm != null && !advancelon(ts)) {
+      relonturn falselon;
     }
-    ts.termCount++;
-    return true;
+    ts.telonrmCount++;
+    relonturn truelon;
   }
 
-  @Override
-  public EarlyTerminationState innerShouldCollectMore() {
-    if (readyToTerminate()) {
-      return setEarlyTerminationState(TERMINATED_TERM_STATS_COUNTING_DONE);
+  @Ovelonrridelon
+  public elonarlyTelonrminationStatelon innelonrShouldCollelonctMorelon() {
+    if (relonadyToTelonrminatelon()) {
+      relonturn selontelonarlyTelonrminationStatelon(TelonRMINATelonD_TelonRM_STATS_COUNTING_DONelon);
     }
-    return EarlyTerminationState.COLLECTING;
+    relonturn elonarlyTelonrminationStatelon.COLLelonCTING;
   }
 
   /**
-   * The termination logic is simple - we know what our earliest bin is and once we see a result
-   * that's before our earliest bin, we terminate.
+   * Thelon telonrmination logic is simplelon - welon know what our elonarlielonst bin is and oncelon welon selonelon a relonsult
+   * that's belonforelon our elonarlielonst bin, welon telonrminatelon.
    *
-   * Our results come with increasing internal doc ids, which should correspond to decreasing
-   * timestamps. See SEARCH-27729, TWEETYPIE-7031.
+   * Our relonsults comelon with increlonasing intelonrnal doc ids, which should correlonspond to deloncrelonasing
+   * timelonstamps. Selonelon SelonARCH-27729, TWelonelonTYPIelon-7031.
    *
-   * We early terminate after we have seen enough tweets that are outside of the bin
-   * range that we want to return. This way we're not terminating too early because of single tweets
-   * with wrong timestamps.
+   * Welon elonarly telonrminatelon aftelonr welon havelon selonelonn elonnough twelonelonts that arelon outsidelon of thelon bin
+   * rangelon that welon want to relonturn. This way welon'relon not telonrminating too elonarly beloncauselon of singlelon twelonelonts
+   * with wrong timelonstamps.
    */
-  @VisibleForTesting
-  boolean readyToTerminate() {
-    return this.seenOutOfRange >= SEEN_OUT_OF_RANGE_THRESHOLD;
+  @VisiblelonForTelonsting
+  boolelonan relonadyToTelonrminatelon() {
+    relonturn this.selonelonnOutOfRangelon >= SelonelonN_OUT_OF_RANGelon_THRelonSHOLD;
   }
 
-  @Override
-  public TermStatisticsSearchResults doGetResults() {
-    return new TermStatisticsSearchResults();
+  @Ovelonrridelon
+  public TelonrmStatisticsSelonarchRelonsults doGelontRelonsults() {
+    relonturn nelonw TelonrmStatisticsSelonarchRelonsults();
   }
 
-  public final class TermStatisticsSearchResults extends SearchResultsInfo {
-    public final List<Integer> binIds;
-    public final Map<ThriftTermRequest, ThriftTermResults> results;
-    public final int lastCompleteBinId;
-    public final List<String>  termStatisticsDebugInfo;
+  public final class TelonrmStatisticsSelonarchRelonsults elonxtelonnds SelonarchRelonsultsInfo {
+    public final List<Intelongelonr> binIds;
+    public final Map<ThriftTelonrmRelonquelonst, ThriftTelonrmRelonsults> relonsults;
+    public final int lastComplelontelonBinId;
+    public final List<String>  telonrmStatisticsDelonbugInfo;
 
-    private TermStatisticsSearchResults() {
-      // Initialize term stat debug info
-      termStatisticsDebugInfo = TermStatisticsCollector.this.termStatisticsDebugInfo;
+    privatelon TelonrmStatisticsSelonarchRelonsults() {
+      // Initializelon telonrm stat delonbug info
+      telonrmStatisticsDelonbugInfo = TelonrmStatisticsCollelonctor.this.telonrmStatisticsDelonbugInfo;
 
-      if (termStatistics.length > 0) {
-        results = new HashMap<>();
+      if (telonrmStatistics.lelonngth > 0) {
+        relonsults = nelonw HashMap<>();
 
-        if (searchRequestInfo.isReturnHistogram()) {
-          binIds = new ArrayList<>(numBins);
-          int minSearchedTime = TermStatisticsCollector.this.getMinSearchedTime();
+        if (selonarchRelonquelonstInfo.isRelonturnHistogram()) {
+          binIds = nelonw ArrayList<>(numBins);
+          int minSelonarchelondTimelon = TelonrmStatisticsCollelonctor.this.gelontMinSelonarchelondTimelon();
 
-          if (shouldCollectDetailedDebugInfo()) {
-            termStatisticsDebugInfo.add("minSearchedTime: " + minSearchedTime);
-            int maxSearchedTime = TermStatisticsCollector.this.getMaxSearchedTime();
-            termStatisticsDebugInfo.add("maxSearchedTime: " + maxSearchedTime);
+          if (shouldCollelonctDelontailelondDelonbugInfo()) {
+            telonrmStatisticsDelonbugInfo.add("minSelonarchelondTimelon: " + minSelonarchelondTimelon);
+            int maxSelonarchelondTimelon = TelonrmStatisticsCollelonctor.this.gelontMaxSelonarchelondTimelon();
+            telonrmStatisticsDelonbugInfo.add("maxSelonarchelondTimelon: " + maxSelonarchelondTimelon);
           }
 
-          int lastCompleteBin = -1;
+          int lastComplelontelonBin = -1;
 
-          computeFirstBinId(TermStatisticsCollector.this.isSetMinSearchedTime(), minSearchedTime);
-          trackHistogramResultStats();
+          computelonFirstBinId(TelonrmStatisticsCollelonctor.this.isSelontMinSelonarchelondTimelon(), minSelonarchelondTimelon);
+          trackHistogramRelonsultStats();
 
-          // Example:
-          //  minSearchTime = 53s
-          //  binSize = 10
+          // elonxamplelon:
+          //  minSelonarchTimelon = 53s
+          //  binSizelon = 10
           //  firstBinId = 5
           //  numBins = 4
           //  binId = 5, 6, 7, 8
-          //  binTimeStamp = 50s, 60s, 70s, 80s
+          //  binTimelonStamp = 50s, 60s, 70s, 80s
           for (int i = 0; i < numBins; i++) {
             int binId = firstBinID + i;
-            int binTimeStamp = binId * binSize;
+            int binTimelonStamp = binId * binSizelon;
             binIds.add(binId);
-            if (lastCompleteBin == -1 && binTimeStamp > minSearchedTime) {
-              lastCompleteBin = binId;
+            if (lastComplelontelonBin == -1 && binTimelonStamp > minSelonarchelondTimelon) {
+              lastComplelontelonBin = binId;
             }
           }
 
-          if (!getEarlyTerminationState().isTerminated()) {
-            // only if we didn't early terminate we can be sure to use the firstBinID as
-            // lastCompleteBinId
-            lastCompleteBinId = firstBinID;
-            if (shouldCollectDetailedDebugInfo()) {
-              termStatisticsDebugInfo.add("no early termination");
+          if (!gelontelonarlyTelonrminationStatelon().isTelonrminatelond()) {
+            // only if welon didn't elonarly telonrminatelon welon can belon surelon to uselon thelon firstBinID as
+            // lastComplelontelonBinId
+            lastComplelontelonBinId = firstBinID;
+            if (shouldCollelonctDelontailelondDelonbugInfo()) {
+              telonrmStatisticsDelonbugInfo.add("no elonarly telonrmination");
             }
-          } else {
-            lastCompleteBinId = lastCompleteBin;
-            if (shouldCollectDetailedDebugInfo()) {
-              termStatisticsDebugInfo.add(
-                  "early terminated for reason: " + getEarlyTerminationReason());
+          } elonlselon {
+            lastComplelontelonBinId = lastComplelontelonBin;
+            if (shouldCollelonctDelontailelondDelonbugInfo()) {
+              telonrmStatisticsDelonbugInfo.add(
+                  "elonarly telonrminatelond for relonason: " + gelontelonarlyTelonrminationRelonason());
             }
           }
-          if (shouldCollectDetailedDebugInfo()) {
-            termStatisticsDebugInfo.add("lastCompleteBinId: " + lastCompleteBinId);
+          if (shouldCollelonctDelontailelondDelonbugInfo()) {
+            telonrmStatisticsDelonbugInfo.add("lastComplelontelonBinId: " + lastComplelontelonBinId);
           }
-        } else {
+        } elonlselon {
           binIds = null;
-          lastCompleteBinId = -1;
+          lastComplelontelonBinId = -1;
         }
 
-        for (TermStatistics ts : termStatistics) {
-          ThriftTermResults termResults = new ThriftTermResults().setTotalCount(ts.termCount);
+        for (TelonrmStatistics ts : telonrmStatistics) {
+          ThriftTelonrmRelonsults telonrmRelonsults = nelonw ThriftTelonrmRelonsults().selontTotalCount(ts.telonrmCount);
 
-          if (searchRequestInfo.isReturnHistogram()) {
-            List<Integer> list = new ArrayList<>();
+          if (selonarchRelonquelonstInfo.isRelonturnHistogram()) {
+            List<Intelongelonr> list = nelonw ArrayList<>();
             for (int count : ts.histogramBins) {
               list.add(count);
             }
-            termResults.setHistogramBins(list);
+            telonrmRelonsults.selontHistogramBins(list);
           }
 
-          results.put(ts.termRequest, termResults);
+          relonsults.put(ts.telonrmRelonquelonst, telonrmRelonsults);
         }
-      } else {
+      } elonlselon {
         binIds = null;
-        results = null;
-        lastCompleteBinId = -1;
+        relonsults = null;
+        lastComplelontelonBinId = -1;
       }
     }
 
-    @Override
+    @Ovelonrridelon
     public String toString() {
-      StringBuilder res = new StringBuilder();
-      res.append("TermStatisticsSearchResults(\n");
+      StringBuildelonr relons = nelonw StringBuildelonr();
+      relons.appelonnd("TelonrmStatisticsSelonarchRelonsults(\n");
       if (binIds != null) {
-        res.append("  binIds=").append(binIds).append("\n");
+        relons.appelonnd("  binIds=").appelonnd(binIds).appelonnd("\n");
       }
-      res.append("  lastCompleteBinId=").append(lastCompleteBinId).append("\n");
-      if (results != null) {
-        res.append("  results=").append(results).append("\n");
+      relons.appelonnd("  lastComplelontelonBinId=").appelonnd(lastComplelontelonBinId).appelonnd("\n");
+      if (relonsults != null) {
+        relons.appelonnd("  relonsults=").appelonnd(relonsults).appelonnd("\n");
       }
-      res.append(")");
-      return res.toString();
+      relons.appelonnd(")");
+      relonturn relons.toString();
     }
 
-    public List<String> getTermStatisticsDebugInfo() {
-      return termStatisticsDebugInfo;
+    public List<String> gelontTelonrmStatisticsDelonbugInfo() {
+      relonturn telonrmStatisticsDelonbugInfo;
     }
   }
 
   /**
-   * Figure out what the actual firstBinId is for this query.
+   * Figurelon out what thelon actual firstBinId is for this quelonry.
    */
-  private void computeFirstBinId(boolean isSetMinSearchedTime, int minSearchedTime) {
+  privatelon void computelonFirstBinId(boolelonan isSelontMinSelonarchelondTimelon, int minSelonarchelondTimelon) {
     if (firstBinID == -1) {
-      if (!isSetMinSearchedTime) {
-        // This would only happen if we don't search any segments, which for now we have
-        // only seen happening if since_time or until_time don't intersect at all with
-        // the range of the served segments.
+      if (!isSelontMinSelonarchelondTimelon) {
+        // This would only happelonn if welon don't selonarch any selongmelonnts, which for now welon havelon
+        // only selonelonn happelonning if sincelon_timelon or until_timelon don't intelonrselonct at all with
+        // thelon rangelon of thelon selonrvelond selongmelonnts.
         firstBinID = 0;
-      } else {
-        // Example:
-        //    minSearchedTime = 54
-        //    binSize = 10
+      } elonlselon {
+        // elonxamplelon:
+        //    minSelonarchelondTimelon = 54
+        //    binSizelon = 10
         //    firstBinId = 5
-        firstBinID = minSearchedTime / binSize;
+        firstBinID = minSelonarchelondTimelon / binSizelon;
       }
 
-      if (shouldCollectDetailedDebugInfo()) {
-        termStatisticsDebugInfo.add("firstBinId: " + firstBinID);
+      if (shouldCollelonctDelontailelondDelonbugInfo()) {
+        telonrmStatisticsDelonbugInfo.add("firstBinId: " + firstBinID);
       }
     }
   }
 
-  @VisibleForTesting
-  int getSeenOutOfRange() {
-    return seenOutOfRange;
+  @VisiblelonForTelonsting
+  int gelontSelonelonnOutOfRangelon() {
+    relonturn selonelonnOutOfRangelon;
   }
 
-  private void trackHistogramResultStats() {
-    if (numLargerOutOfBoundsBinsSkipped > 0) {
-      TERM_STATS_SKIPPED_LARGER_OUT_OF_BOUNDS_HITS.increment();
+  privatelon void trackHistogramRelonsultStats() {
+    if (numLargelonrOutOfBoundsBinsSkippelond > 0) {
+      TelonRM_STATS_SKIPPelonD_LARGelonR_OUT_OF_BOUNDS_HITS.increlonmelonnt();
     }
 
-    if (numTimesBinsWereMovedBack > 0) {
-      TERM_STATS_HISTOGRAM_REQUESTS_WITH_MOVED_BACK_BINS.recordResults(numTimesBinsWereMovedBack);
+    if (numTimelonsBinsWelonrelonMovelondBack > 0) {
+      TelonRM_STATS_HISTOGRAM_RelonQUelonSTS_WITH_MOVelonD_BACK_BINS.reloncordRelonsults(numTimelonsBinsWelonrelonMovelondBack);
     }
   }
 }

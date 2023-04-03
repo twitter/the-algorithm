@@ -1,89 +1,89 @@
-package com.twitter.timelineranker.repository
+packagelon com.twittelonr.timelonlinelonrankelonr.relonpository
 
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.timelineranker.visibility.ScopedSgsFollowGraphDataProviderFactory
-import com.twitter.timelines.clients.relevance_search.ScopedSearchClientFactory
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.user_tweet_entity_graph.UserTweetEntityGraphClient
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
-import com.twitter.timelineranker.config.ClientWrapperFactories
-import com.twitter.timelineranker.config.UnderlyingClientConfiguration
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
-import com.twitter.timelines.clients.manhattan.ManhattanUserMetadataClient
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdSelonrvicelon
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.timelonlinelonrankelonr.config.RuntimelonConfiguration
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.visibility.SgsFollowGraphDataFielonlds
+import com.twittelonr.timelonlinelonrankelonr.visibility.ScopelondSgsFollowGraphDataProvidelonrFactory
+import com.twittelonr.timelonlinelons.clielonnts.relonlelonvancelon_selonarch.ScopelondSelonarchClielonntFactory
+import com.twittelonr.timelonlinelons.clielonnts.relonlelonvancelon_selonarch.SelonarchClielonnt
+import com.twittelonr.timelonlinelons.clielonnts.uselonr_twelonelont_elonntity_graph.UselonrTwelonelontelonntityGraphClielonnt
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstScopelon
+import com.twittelonr.util.Duration
+import com.twittelonr.timelonlinelonrankelonr.config.ClielonntWrappelonrFactorielons
+import com.twittelonr.timelonlinelonrankelonr.config.UndelonrlyingClielonntConfiguration
+import com.twittelonr.timelonlinelonrankelonr.visibility.FollowGraphDataProvidelonr
+import com.twittelonr.timelonlinelons.clielonnts.gizmoduck.GizmoduckClielonnt
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.ManhattanUselonrMelontadataClielonnt
+import com.twittelonr.timelonlinelons.clielonnts.twelonelontypielon.TwelonelontyPielonClielonnt
 
-abstract class CandidatesRepositoryBuilder(config: RuntimeConfiguration) extends RepositoryBuilder {
+abstract class CandidatelonsRelonpositoryBuildelonr(config: RuntimelonConfiguration) elonxtelonnds RelonpositoryBuildelonr {
 
-  def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint
-  def searchProcessingTimeout: Duration
-  def clientSubId: String
-  def requestScope: RequestScope
-  def followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet
+  delonf elonarlybirdClielonnt(scopelon: String): elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint
+  delonf selonarchProcelonssingTimelonout: Duration
+  delonf clielonntSubId: String
+  delonf relonquelonstScopelon: RelonquelonstScopelon
+  delonf followGraphDataFielonldsToFelontch: SgsFollowGraphDataFielonlds.ValuelonSelont
 
-  protected lazy val clientConfig: UnderlyingClientConfiguration = config.underlyingClients
+  protelonctelond lazy val clielonntConfig: UndelonrlyingClielonntConfiguration = config.undelonrlyingClielonnts
 
-  protected lazy val clientFactories: ClientWrapperFactories = config.clientWrapperFactories
-  protected lazy val gizmoduckClient: GizmoduckClient =
-    clientFactories.gizmoduckClientFactory.scope(requestScope)
-  protected lazy val searchClient: SearchClient = newSearchClient(clientId = clientSubId)
-  protected lazy val tweetyPieHighQoSClient: TweetyPieClient =
-    clientFactories.tweetyPieHighQoSClientFactory.scope(requestScope)
-  protected lazy val tweetyPieLowQoSClient: TweetyPieClient =
-    clientFactories.tweetyPieLowQoSClientFactory.scope(requestScope)
-  protected lazy val followGraphDataProvider: FollowGraphDataProvider =
-    new ScopedSgsFollowGraphDataProviderFactory(
-      clientFactories.socialGraphClientFactory,
-      clientFactories.visibilityProfileHydratorFactory,
-      followGraphDataFieldsToFetch,
-      config.statsReceiver
-    ).scope(requestScope)
-  protected lazy val userMetadataClient: ManhattanUserMetadataClient =
-    clientFactories.userMetadataClientFactory.scope(requestScope)
-  protected lazy val userTweetEntityGraphClient: UserTweetEntityGraphClient =
-    new UserTweetEntityGraphClient(
-      config.underlyingClients.userTweetEntityGraphClient,
-      config.statsReceiver
+  protelonctelond lazy val clielonntFactorielons: ClielonntWrappelonrFactorielons = config.clielonntWrappelonrFactorielons
+  protelonctelond lazy val gizmoduckClielonnt: GizmoduckClielonnt =
+    clielonntFactorielons.gizmoduckClielonntFactory.scopelon(relonquelonstScopelon)
+  protelonctelond lazy val selonarchClielonnt: SelonarchClielonnt = nelonwSelonarchClielonnt(clielonntId = clielonntSubId)
+  protelonctelond lazy val twelonelontyPielonHighQoSClielonnt: TwelonelontyPielonClielonnt =
+    clielonntFactorielons.twelonelontyPielonHighQoSClielonntFactory.scopelon(relonquelonstScopelon)
+  protelonctelond lazy val twelonelontyPielonLowQoSClielonnt: TwelonelontyPielonClielonnt =
+    clielonntFactorielons.twelonelontyPielonLowQoSClielonntFactory.scopelon(relonquelonstScopelon)
+  protelonctelond lazy val followGraphDataProvidelonr: FollowGraphDataProvidelonr =
+    nelonw ScopelondSgsFollowGraphDataProvidelonrFactory(
+      clielonntFactorielons.socialGraphClielonntFactory,
+      clielonntFactorielons.visibilityProfilelonHydratorFactory,
+      followGraphDataFielonldsToFelontch,
+      config.statsReloncelonivelonr
+    ).scopelon(relonquelonstScopelon)
+  protelonctelond lazy val uselonrMelontadataClielonnt: ManhattanUselonrMelontadataClielonnt =
+    clielonntFactorielons.uselonrMelontadataClielonntFactory.scopelon(relonquelonstScopelon)
+  protelonctelond lazy val uselonrTwelonelontelonntityGraphClielonnt: UselonrTwelonelontelonntityGraphClielonnt =
+    nelonw UselonrTwelonelontelonntityGraphClielonnt(
+      config.undelonrlyingClielonnts.uselonrTwelonelontelonntityGraphClielonnt,
+      config.statsReloncelonivelonr
     )
 
-  protected lazy val perRequestSearchClientIdProvider: DependencyProvider[Option[String]] =
-    DependencyProvider { recapQuery: RecapQuery =>
-      recapQuery.searchClientSubId.map { subId =>
-        clientConfig.timelineRankerClientId(Some(s"$subId.$clientSubId")).name
+  protelonctelond lazy val pelonrRelonquelonstSelonarchClielonntIdProvidelonr: DelonpelonndelonncyProvidelonr[Option[String]] =
+    DelonpelonndelonncyProvidelonr { reloncapQuelonry: ReloncapQuelonry =>
+      reloncapQuelonry.selonarchClielonntSubId.map { subId =>
+        clielonntConfig.timelonlinelonRankelonrClielonntId(Somelon(s"$subId.$clielonntSubId")).namelon
       }
     }
 
-  protected lazy val perRequestSourceSearchClientIdProvider: DependencyProvider[Option[String]] =
-    DependencyProvider { recapQuery: RecapQuery =>
-      recapQuery.searchClientSubId.map { subId =>
-        clientConfig.timelineRankerClientId(Some(s"$subId.${clientSubId}_source_tweets")).name
+  protelonctelond lazy val pelonrRelonquelonstSourcelonSelonarchClielonntIdProvidelonr: DelonpelonndelonncyProvidelonr[Option[String]] =
+    DelonpelonndelonncyProvidelonr { reloncapQuelonry: ReloncapQuelonry =>
+      reloncapQuelonry.selonarchClielonntSubId.map { subId =>
+        clielonntConfig.timelonlinelonRankelonrClielonntId(Somelon(s"$subId.${clielonntSubId}_sourcelon_twelonelonts")).namelon
       }
     }
 
-  protected def newSearchClient(clientId: String): SearchClient =
-    new ScopedSearchClientFactory(
-      searchServiceClient = earlybirdClient(clientId),
-      clientId = clientConfig.timelineRankerClientId(Some(clientId)).name,
-      processingTimeout = Some(searchProcessingTimeout),
-      collectConversationIdGate = Gate.True,
-      statsReceiver = config.statsReceiver
-    ).scope(requestScope)
+  protelonctelond delonf nelonwSelonarchClielonnt(clielonntId: String): SelonarchClielonnt =
+    nelonw ScopelondSelonarchClielonntFactory(
+      selonarchSelonrvicelonClielonnt = elonarlybirdClielonnt(clielonntId),
+      clielonntId = clielonntConfig.timelonlinelonRankelonrClielonntId(Somelon(clielonntId)).namelon,
+      procelonssingTimelonout = Somelon(selonarchProcelonssingTimelonout),
+      collelonctConvelonrsationIdGatelon = Gatelon.Truelon,
+      statsReloncelonivelonr = config.statsReloncelonivelonr
+    ).scopelon(relonquelonstScopelon)
 
-  protected def newSearchClient(
-    earlybirdReplacementClient: String => EarlybirdService.MethodPerEndpoint,
-    clientId: String
-  ): SearchClient =
-    new ScopedSearchClientFactory(
-      searchServiceClient = earlybirdReplacementClient(clientId),
-      clientId = clientConfig.timelineRankerClientId(Some(clientId)).name,
-      processingTimeout = Some(searchProcessingTimeout),
-      collectConversationIdGate = Gate.True,
-      statsReceiver = config.statsReceiver
-    ).scope(requestScope)
+  protelonctelond delonf nelonwSelonarchClielonnt(
+    elonarlybirdRelonplacelonmelonntClielonnt: String => elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint,
+    clielonntId: String
+  ): SelonarchClielonnt =
+    nelonw ScopelondSelonarchClielonntFactory(
+      selonarchSelonrvicelonClielonnt = elonarlybirdRelonplacelonmelonntClielonnt(clielonntId),
+      clielonntId = clielonntConfig.timelonlinelonRankelonrClielonntId(Somelon(clielonntId)).namelon,
+      procelonssingTimelonout = Somelon(selonarchProcelonssingTimelonout),
+      collelonctConvelonrsationIdGatelon = Gatelon.Truelon,
+      statsReloncelonivelonr = config.statsReloncelonivelonr
+    ).scopelon(relonquelonstScopelon)
 }

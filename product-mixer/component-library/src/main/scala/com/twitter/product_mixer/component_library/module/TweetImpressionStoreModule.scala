@@ -1,66 +1,66 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.Resolver
-import com.twitter.finagle.memcached.protocol.Command
-import com.twitter.finagle.memcached.protocol.Response
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.param.HighResTimer
-import com.twitter.finagle.service.RetryExceptionsFilter
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.service.StatsFilter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.impressionstore.store.TweetImpressionsStore
-import com.twitter.timelines.impressionstore.thriftscala.ImpressionList
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.Melonmcachelond
+import com.twittelonr.finaglelon.Relonsolvelonr
+import com.twittelonr.finaglelon.melonmcachelond.protocol.Command
+import com.twittelonr.finaglelon.melonmcachelond.protocol.Relonsponselon
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt._
+import com.twittelonr.finaglelon.param.HighRelonsTimelonr
+import com.twittelonr.finaglelon.selonrvicelon.RelontryelonxcelonptionsFiltelonr
+import com.twittelonr.finaglelon.selonrvicelon.RelontryPolicy
+import com.twittelonr.finaglelon.selonrvicelon.StatsFiltelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.storelon.TwelonelontImprelonssionsStorelon
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.thriftscala.ImprelonssionList
+import javax.injelonct.Singlelonton
 
-object TweetImpressionStoreModule extends TwitterModule {
-  private val TweetImpressionMemcacheWilyPath = "/s/cache/timelines_impressionstore:twemcaches"
-  private val tweetImpressionLabel = "timelinesTweetImpressions"
+objelonct TwelonelontImprelonssionStorelonModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon val TwelonelontImprelonssionMelonmcachelonWilyPath = "/s/cachelon/timelonlinelons_imprelonssionstorelon:twelonmcachelons"
+  privatelon val twelonelontImprelonssionLabelonl = "timelonlinelonsTwelonelontImprelonssions"
 
-  @Provides
-  @Singleton
-  def provideTimelineTweetImpressionStore(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): ReadableStore[Long, ImpressionList] = {
-    val scopedStatsReceiver = statsReceiver.scope("timelinesTweetImpressions")
+  @Providelons
+  @Singlelonton
+  delonf providelonTimelonlinelonTwelonelontImprelonssionStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadablelonStorelon[Long, ImprelonssionList] = {
+    val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("timelonlinelonsTwelonelontImprelonssions")
 
-    // the below values for configuring the Memcached client
-    // are set to be the same as Home timeline's read path to the impression store.
-    val acquisitionTimeoutMillis = 200.milliseconds
-    val requestTimeoutMillis = 300.milliseconds
-    val numTries = 2
+    // thelon belonlow valuelons for configuring thelon Melonmcachelond clielonnt
+    // arelon selont to belon thelon samelon as Homelon timelonlinelon's relonad path to thelon imprelonssion storelon.
+    val acquisitionTimelonoutMillis = 200.milliselonconds
+    val relonquelonstTimelonoutMillis = 300.milliselonconds
+    val numTrielons = 2
 
-    val statsFilter = new StatsFilter[Command, Response](scopedStatsReceiver)
-    val retryFilter = new RetryExceptionsFilter[Command, Response](
-      retryPolicy = RetryPolicy.tries(
-        numTries,
-        RetryPolicy.TimeoutAndWriteExceptionsOnly
-          .orElse(RetryPolicy.ChannelClosedExceptionsOnly)
+    val statsFiltelonr = nelonw StatsFiltelonr[Command, Relonsponselon](scopelondStatsReloncelonivelonr)
+    val relontryFiltelonr = nelonw RelontryelonxcelonptionsFiltelonr[Command, Relonsponselon](
+      relontryPolicy = RelontryPolicy.trielons(
+        numTrielons,
+        RelontryPolicy.TimelonoutAndWritelonelonxcelonptionsOnly
+          .orelonlselon(RelontryPolicy.ChannelonlCloselondelonxcelonptionsOnly)
       ),
-      timer = HighResTimer.Default,
-      statsReceiver = scopedStatsReceiver
+      timelonr = HighRelonsTimelonr.Delonfault,
+      statsReloncelonivelonr = scopelondStatsReloncelonivelonr
     )
 
-    val client = Memcached.client
-      .withMutualTls(serviceIdentifier)
-      .withSession
-      .acquisitionTimeout(acquisitionTimeoutMillis)
-      .withRequestTimeout(requestTimeoutMillis)
-      .withStatsReceiver(scopedStatsReceiver)
-      .filtered(statsFilter.andThen(retryFilter))
-      .newRichClient(
-        dest = Resolver.eval(TweetImpressionMemcacheWilyPath),
-        label = tweetImpressionLabel
+    val clielonnt = Melonmcachelond.clielonnt
+      .withMutualTls(selonrvicelonIdelonntifielonr)
+      .withSelonssion
+      .acquisitionTimelonout(acquisitionTimelonoutMillis)
+      .withRelonquelonstTimelonout(relonquelonstTimelonoutMillis)
+      .withStatsReloncelonivelonr(scopelondStatsReloncelonivelonr)
+      .filtelonrelond(statsFiltelonr.andThelonn(relontryFiltelonr))
+      .nelonwRichClielonnt(
+        delonst = Relonsolvelonr.elonval(TwelonelontImprelonssionMelonmcachelonWilyPath),
+        labelonl = twelonelontImprelonssionLabelonl
       )
 
-    TweetImpressionsStore.tweetImpressionsStore(client)
+    TwelonelontImprelonssionsStorelon.twelonelontImprelonssionsStorelon(clielonnt)
   }
 
 }

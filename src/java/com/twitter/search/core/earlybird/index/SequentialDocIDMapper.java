@@ -1,87 +1,87 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
 /**
- * A doc ID mapper that assigns doc IDs sequentially in decreasing order, starting with the given
- * max ID. Used by Expertsearch, which doesn't index tweets.
+ * A doc ID mappelonr that assigns doc IDs selonquelonntially in deloncrelonasing ordelonr, starting with thelon givelonn
+ * max ID. Uselond by elonxpelonrtselonarch, which doelonsn't indelonx twelonelonts.
  */
-public class SequentialDocIDMapper implements DocIDToTweetIDMapper {
-  private final int maxSegmentSize;
-  private int lastAssignedDocId;
+public class SelonquelonntialDocIDMappelonr implelonmelonnts DocIDToTwelonelontIDMappelonr {
+  privatelon final int maxSelongmelonntSizelon;
+  privatelon int lastAssignelondDocId;
 
-  public SequentialDocIDMapper(int maxSegmentSize) {
-    this.maxSegmentSize = maxSegmentSize;
-    lastAssignedDocId = maxSegmentSize;
+  public SelonquelonntialDocIDMappelonr(int maxSelongmelonntSizelon) {
+    this.maxSelongmelonntSizelon = maxSelongmelonntSizelon;
+    lastAssignelondDocId = maxSelongmelonntSizelon;
   }
 
-  @Override
-  public long getTweetID(int docID) {
-    // Should be used only at segment optimization time and in tests.
-    if ((docID < lastAssignedDocId) || (docID >= maxSegmentSize)) {
-      return ID_NOT_FOUND;
+  @Ovelonrridelon
+  public long gelontTwelonelontID(int docID) {
+    // Should belon uselond only at selongmelonnt optimization timelon and in telonsts.
+    if ((docID < lastAssignelondDocId) || (docID >= maxSelongmelonntSizelon)) {
+      relonturn ID_NOT_FOUND;
     }
 
-    return docID;
+    relonturn docID;
   }
 
-  @Override
-  public int getDocID(long tweetID) {
-    // Should be used only at segment optimization time and in tests.
-    if ((tweetID < lastAssignedDocId) || (tweetID >= maxSegmentSize)) {
-      return ID_NOT_FOUND;
+  @Ovelonrridelon
+  public int gelontDocID(long twelonelontID) {
+    // Should belon uselond only at selongmelonnt optimization timelon and in telonsts.
+    if ((twelonelontID < lastAssignelondDocId) || (twelonelontID >= maxSelongmelonntSizelon)) {
+      relonturn ID_NOT_FOUND;
     }
 
-    return (int) tweetID;
+    relonturn (int) twelonelontID;
   }
 
-  @Override
-  public int getNumDocs() {
-    return maxSegmentSize - lastAssignedDocId;
+  @Ovelonrridelon
+  public int gelontNumDocs() {
+    relonturn maxSelongmelonntSizelon - lastAssignelondDocId;
   }
 
-  @Override
-  public int getNextDocID(int docID) {
-    int nextDocID = docID + 1;
+  @Ovelonrridelon
+  public int gelontNelonxtDocID(int docID) {
+    int nelonxtDocID = docID + 1;
 
-    // nextDocID is larger than any doc ID that can be assigned by this mapper.
-    if (nextDocID >= maxSegmentSize) {
-      return ID_NOT_FOUND;
+    // nelonxtDocID is largelonr than any doc ID that can belon assignelond by this mappelonr.
+    if (nelonxtDocID >= maxSelongmelonntSizelon) {
+      relonturn ID_NOT_FOUND;
     }
 
-    // nextDocID is smaller than any doc ID assigned by this mapper so far.
-    if (nextDocID < lastAssignedDocId) {
-      return lastAssignedDocId;
+    // nelonxtDocID is smallelonr than any doc ID assignelond by this mappelonr so far.
+    if (nelonxtDocID < lastAssignelondDocId) {
+      relonturn lastAssignelondDocId;
     }
 
-    // nextDocID is in the range of doc IDs assigned by this mapper.
-    return nextDocID;
+    // nelonxtDocID is in thelon rangelon of doc IDs assignelond by this mappelonr.
+    relonturn nelonxtDocID;
   }
 
-  @Override
-  public int getPreviousDocID(int docID) {
-    int previousDocID = docID - 1;
+  @Ovelonrridelon
+  public int gelontPrelonviousDocID(int docID) {
+    int prelonviousDocID = docID - 1;
 
-    // previousDocID is larger than any doc ID that can be assigned by this mapper.
-    if (previousDocID >= maxSegmentSize) {
-      return maxSegmentSize - 1;
+    // prelonviousDocID is largelonr than any doc ID that can belon assignelond by this mappelonr.
+    if (prelonviousDocID >= maxSelongmelonntSizelon) {
+      relonturn maxSelongmelonntSizelon - 1;
     }
 
-    // previousDocID is smaller than any doc ID assigned by this mapper so far.
-    if (previousDocID < lastAssignedDocId) {
-      return ID_NOT_FOUND;
+    // prelonviousDocID is smallelonr than any doc ID assignelond by this mappelonr so far.
+    if (prelonviousDocID < lastAssignelondDocId) {
+      relonturn ID_NOT_FOUND;
     }
 
-    // previousDocID is in the range of doc IDs assigned by this mapper.
-    return previousDocID;
+    // prelonviousDocID is in thelon rangelon of doc IDs assignelond by this mappelonr.
+    relonturn prelonviousDocID;
   }
 
-  @Override
-  public int addMapping(final long tweetID) {
-    return --lastAssignedDocId;
+  @Ovelonrridelon
+  public int addMapping(final long twelonelontID) {
+    relonturn --lastAssignelondDocId;
   }
 
-  @Override
-  public DocIDToTweetIDMapper optimize() {
-    // Segments that use this DocIDToTweetIDMapper should never be optimized.
-    throw new UnsupportedOperationException("SequentialDocIDMapper cannot be optimized.");
+  @Ovelonrridelon
+  public DocIDToTwelonelontIDMappelonr optimizelon() {
+    // Selongmelonnts that uselon this DocIDToTwelonelontIDMappelonr should nelonvelonr belon optimizelond.
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("SelonquelonntialDocIDMappelonr cannot belon optimizelond.");
   }
 }

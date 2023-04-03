@@ -1,30 +1,30 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.util.Future
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.util.Futurelon
 
 /**
- * Transform that explicitly hydrates candidate tweets and fetches source tweets in parallel
- * and then joins the results back into the original Envelope
- * @param candidateTweetHydration Pipeline that hydrates candidate tweets
- * @param sourceTweetHydration Pipeline that fetches and hydrates source tweets
+ * Transform that elonxplicitly hydratelons candidatelon twelonelonts and felontchelons sourcelon twelonelonts in parallelonl
+ * and thelonn joins thelon relonsults back into thelon original elonnvelonlopelon
+ * @param candidatelonTwelonelontHydration Pipelonlinelon that hydratelons candidatelon twelonelonts
+ * @param sourcelonTwelonelontHydration Pipelonlinelon that felontchelons and hydratelons sourcelon twelonelonts
  */
-class HydrateTweetsAndSourceTweetsInParallelTransform(
-  candidateTweetHydration: FutureArrow[CandidateEnvelope, CandidateEnvelope],
-  sourceTweetHydration: FutureArrow[CandidateEnvelope, CandidateEnvelope])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    Future
+class HydratelonTwelonelontsAndSourcelonTwelonelontsInParallelonlTransform(
+  candidatelonTwelonelontHydration: FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon],
+  sourcelonTwelonelontHydration: FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon])
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    Futurelon
       .join(
-        candidateTweetHydration(envelope),
-        sourceTweetHydration(envelope)
+        candidatelonTwelonelontHydration(elonnvelonlopelon),
+        sourcelonTwelonelontHydration(elonnvelonlopelon)
       ).map {
-        case (candidateTweetEnvelope, sourceTweetEnvelope) =>
-          envelope.copy(
-            hydratedTweets = candidateTweetEnvelope.hydratedTweets,
-            sourceSearchResults = sourceTweetEnvelope.sourceSearchResults,
-            sourceHydratedTweets = sourceTweetEnvelope.sourceHydratedTweets
+        caselon (candidatelonTwelonelontelonnvelonlopelon, sourcelonTwelonelontelonnvelonlopelon) =>
+          elonnvelonlopelon.copy(
+            hydratelondTwelonelonts = candidatelonTwelonelontelonnvelonlopelon.hydratelondTwelonelonts,
+            sourcelonSelonarchRelonsults = sourcelonTwelonelontelonnvelonlopelon.sourcelonSelonarchRelonsults,
+            sourcelonHydratelondTwelonelonts = sourcelonTwelonelontelonnvelonlopelon.sourcelonHydratelondTwelonelonts
           )
       }
   }

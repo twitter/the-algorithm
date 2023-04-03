@@ -1,23 +1,23 @@
-package com.twitter.follow_recommendations.common.predicates
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.FilterReason.ExcludedId
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasExcludedUserIds
-import com.twitter.stitch.Stitch
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason.elonxcludelondId
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HaselonxcludelondUselonrIds
+import com.twittelonr.stitch.Stitch
 
-object ExcludedUserIdPredicate extends Predicate[(HasExcludedUserIds, CandidateUser)] {
+objelonct elonxcludelondUselonrIdPrelondicatelon elonxtelonnds Prelondicatelon[(HaselonxcludelondUselonrIds, CandidatelonUselonr)] {
 
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val ExcludedStitch: Stitch[PredicateResult.Invalid] =
-    Stitch.value(PredicateResult.Invalid(Set(ExcludedId)))
+  val ValidStitch: Stitch[PrelondicatelonRelonsult.Valid.typelon] = Stitch.valuelon(PrelondicatelonRelonsult.Valid)
+  val elonxcludelondStitch: Stitch[PrelondicatelonRelonsult.Invalid] =
+    Stitch.valuelon(PrelondicatelonRelonsult.Invalid(Selont(elonxcludelondId)))
 
-  override def apply(pair: (HasExcludedUserIds, CandidateUser)): Stitch[PredicateResult] = {
-    val (excludedUserIds, candidate) = pair
-    if (excludedUserIds.excludedUserIds.contains(candidate.id)) {
-      ExcludedStitch
-    } else {
+  ovelonrridelon delonf apply(pair: (HaselonxcludelondUselonrIds, CandidatelonUselonr)): Stitch[PrelondicatelonRelonsult] = {
+    val (elonxcludelondUselonrIds, candidatelon) = pair
+    if (elonxcludelondUselonrIds.elonxcludelondUselonrIds.contains(candidatelon.id)) {
+      elonxcludelondStitch
+    } elonlselon {
       ValidStitch
     }
   }

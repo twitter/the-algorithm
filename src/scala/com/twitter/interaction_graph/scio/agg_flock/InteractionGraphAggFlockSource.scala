@@ -1,24 +1,24 @@
-package com.twitter.interaction_graph.scio.agg_flock
+packagelon com.twittelonr.intelonraction_graph.scio.agg_flock
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.flockdb.tools.datasets.flock.thriftscala.FlockEdge
-import com.twitter.cde.scio.dal_read.SourceUtil
-import com.twitter.wtf.dataflow.user_events.ValidUserFollowsScalaDataset
-import org.joda.time.Interval
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.belonam.job.SelonrvicelonIdelonntifielonrOptions
+import com.twittelonr.flockdb.tools.dataselonts.flock.thriftscala.Flockelondgelon
+import com.twittelonr.cdelon.scio.dal_relonad.SourcelonUtil
+import com.twittelonr.wtf.dataflow.uselonr_elonvelonnts.ValidUselonrFollowsScalaDataselont
+import org.joda.timelon.Intelonrval
 
-case class InteractionGraphAggFlockSource(
-  pipelineOptions: InteractionGraphAggFlockOption
+caselon class IntelonractionGraphAggFlockSourcelon(
+  pipelonlinelonOptions: IntelonractionGraphAggFlockOption
 )(
-  implicit sc: ScioContext) {
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  implicit sc: ScioContelonxt) {
+  val dalelonnvironmelonnt: String = pipelonlinelonOptions
+    .as(classOf[SelonrvicelonIdelonntifielonrOptions])
+    .gelontelonnvironmelonnt()
 
-  def readFlockFollowsSnapshot(dateInterval: Interval): SCollection[FlockEdge] =
-    SourceUtil.readMostRecentSnapshotDALDataset(
-      dataset = ValidUserFollowsScalaDataset,
-      dateInterval = dateInterval,
-      dalEnvironment = dalEnvironment)
+  delonf relonadFlockFollowsSnapshot(datelonIntelonrval: Intelonrval): SCollelonction[Flockelondgelon] =
+    SourcelonUtil.relonadMostReloncelonntSnapshotDALDataselont(
+      dataselont = ValidUselonrFollowsScalaDataselont,
+      datelonIntelonrval = datelonIntelonrval,
+      dalelonnvironmelonnt = dalelonnvironmelonnt)
 }

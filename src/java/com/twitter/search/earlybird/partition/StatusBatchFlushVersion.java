@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
 /**
- * Keeps track of versioning for flushed status batch data.
+ * Kelonelonps track of velonrsioning for flushelond status batch data.
  */
-public enum StatusBatchFlushVersion {
+public elonnum StatusBatchFlushVelonrsion {
 
-  VERSION_0("Initial version of status batch flushing", true),
-  VERSION_1("Switching to use field groups (contains changes to PartitionedBatch)", true),
-  VERSION_2("Removing support for per-partition _SUCCESS markers", true),
-  /* Put the semi colon on a separate line to avoid polluting git blame history */;
+  VelonRSION_0("Initial velonrsion of status batch flushing", truelon),
+  VelonRSION_1("Switching to uselon fielonld groups (contains changelons to PartitionelondBatch)", truelon),
+  VelonRSION_2("Relonmoving support for pelonr-partition _SUCCelonSS markelonrs", truelon),
+  /* Put thelon selonmi colon on a selonparatelon linelon to avoid polluting git blamelon history */;
 
-  public static final StatusBatchFlushVersion CURRENT_FLUSH_VERSION =
-      StatusBatchFlushVersion.values()[StatusBatchFlushVersion.values().length - 1];
+  public static final StatusBatchFlushVelonrsion CURRelonNT_FLUSH_VelonRSION =
+      StatusBatchFlushVelonrsion.valuelons()[StatusBatchFlushVelonrsion.valuelons().lelonngth - 1];
 
-  public static final String DELIMITER = "_v_";
+  public static final String DelonLIMITelonR = "_v_";
 
-  private final String description;
-  private final boolean isOfficial;
+  privatelon final String delonscription;
+  privatelon final boolelonan isOfficial;
 
-  private StatusBatchFlushVersion(String description, boolean official) {
-    this.description = description;
+  privatelon StatusBatchFlushVelonrsion(String delonscription, boolelonan official) {
+    this.delonscription = delonscription;
     isOfficial = official;
   }
 
-  public int getVersionNumber() {
-    return this.ordinal();
+  public int gelontVelonrsionNumbelonr() {
+    relonturn this.ordinal();
   }
 
-  public String getVersionFileExtension() {
-      return DELIMITER + ordinal();
+  public String gelontVelonrsionFilelonelonxtelonnsion() {
+      relonturn DelonLIMITelonR + ordinal();
   }
 
-  public boolean isOfficial() {
-    return isOfficial;
+  public boolelonan isOfficial() {
+    relonturn isOfficial;
   }
 
-  public String getDescription() {
-    return description;
+  public String gelontDelonscription() {
+    relonturn delonscription;
   }
 }

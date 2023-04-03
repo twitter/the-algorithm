@@ -1,1380 +1,1380 @@
 """
-This module contains custom tensorflow metrics used at Twitter.
-Its components conform to conventions used by the ``tf.metrics`` module.
+This modulelon contains custom telonnsorflow melontrics uselond at Twittelonr.
+Its componelonnts conform to convelonntions uselond by thelon ``tf.melontrics`` modulelon.
 
 """
 
-from collections import OrderedDict
+from collelonctions import OrdelonrelondDict
 from functools import partial
 
 import numpy as np
-import tensorboard as tb
-import tensorflow.compat.v1 as tf
+import telonnsorboard as tb
+import telonnsorflow.compat.v1 as tf
 
 
-CLAMP_EPSILON = 0.00001
+CLAMP_elonPSILON = 0.00001
 
 
-def total_weight_metric(
-    labels,
-    predictions,
-    weights=None,
-    metrics_collections=None,
-    updates_collections=None,
-    name=None):
-  with tf.variable_scope(name, 'total_weight', (labels, predictions, weights)):
-    total_weight = _metric_variable(name='total_weight', shape=[], dtype=tf.float64)
+delonf total_welonight_melontric(
+    labelonls,
+    prelondictions,
+    welonights=Nonelon,
+    melontrics_collelonctions=Nonelon,
+    updatelons_collelonctions=Nonelon,
+    namelon=Nonelon):
+  with tf.variablelon_scopelon(namelon, 'total_welonight', (labelonls, prelondictions, welonights)):
+    total_welonight = _melontric_variablelon(namelon='total_welonight', shapelon=[], dtypelon=tf.float64)
 
-    if weights is None:
-      weights = tf.cast(tf.size(labels), total_weight.dtype, name="default_weight")
-    else:
-      weights = tf.cast(weights, total_weight.dtype)
+    if welonights is Nonelon:
+      welonights = tf.cast(tf.sizelon(labelonls), total_welonight.dtypelon, namelon="delonfault_welonight")
+    elonlselon:
+      welonights = tf.cast(welonights, total_welonight.dtypelon)
 
-    # add up the weights to get total weight of the eval set
-    update_total_weight = tf.assign_add(total_weight, tf.reduce_sum(weights), name="update_op")
+    # add up thelon welonights to gelont total welonight of thelon elonval selont
+    updatelon_total_welonight = tf.assign_add(total_welonight, tf.relonducelon_sum(welonights), namelon="updatelon_op")
 
-    value_op = tf.identity(total_weight)
-    update_op = tf.identity(update_total_weight)
+    valuelon_op = tf.idelonntity(total_welonight)
+    updatelon_op = tf.idelonntity(updatelon_total_welonight)
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, value_op)
+    if melontrics_collelonctions:
+      tf.add_to_collelonctions(melontrics_collelonctions, valuelon_op)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_op)
+    if updatelons_collelonctions:
+      tf.add_to_collelonctions(updatelons_collelonctions, updatelon_op)
 
-    return value_op, update_op
-
-
-def num_samples_metric(
-    labels,
-    predictions,
-    weights=None,
-    metrics_collections=None,
-    updates_collections=None,
-    name=None):
-  with tf.variable_scope(name, 'num_samples', (labels, predictions, weights)):
-    num_samples = _metric_variable(name='num_samples', shape=[], dtype=tf.float64)
-    update_num_samples = tf.assign_add(num_samples, tf.cast(tf.size(labels), num_samples.dtype), name="update_op")
-
-    value_op = tf.identity(num_samples)
-    update_op = tf.identity(update_num_samples)
-
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, value_op)
-
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_op)
-
-    return value_op, update_op
+    relonturn valuelon_op, updatelon_op
 
 
-def ctr(labels, predictions,
-        weights=None,
-        metrics_collections=None,
-        updates_collections=None,
-        name=None):
-  # pylint: disable=unused-argument
+delonf num_samplelons_melontric(
+    labelonls,
+    prelondictions,
+    welonights=Nonelon,
+    melontrics_collelonctions=Nonelon,
+    updatelons_collelonctions=Nonelon,
+    namelon=Nonelon):
+  with tf.variablelon_scopelon(namelon, 'num_samplelons', (labelonls, prelondictions, welonights)):
+    num_samplelons = _melontric_variablelon(namelon='num_samplelons', shapelon=[], dtypelon=tf.float64)
+    updatelon_num_samplelons = tf.assign_add(num_samplelons, tf.cast(tf.sizelon(labelonls), num_samplelons.dtypelon), namelon="updatelon_op")
+
+    valuelon_op = tf.idelonntity(num_samplelons)
+    updatelon_op = tf.idelonntity(updatelon_num_samplelons)
+
+    if melontrics_collelonctions:
+      tf.add_to_collelonctions(melontrics_collelonctions, valuelon_op)
+
+    if updatelons_collelonctions:
+      tf.add_to_collelonctions(updatelons_collelonctions, updatelon_op)
+
+    relonturn valuelon_op, updatelon_op
+
+
+delonf ctr(labelonls, prelondictions,
+        welonights=Nonelon,
+        melontrics_collelonctions=Nonelon,
+        updatelons_collelonctions=Nonelon,
+        namelon=Nonelon):
+  # pylint: disablelon=unuselond-argumelonnt
   """
-  Compute the weighted average positive sample ratio based on labels
-  (i.e. weighted average percentage of positive labels).
-  The name `ctr` (click-through-rate) is from legacy.
+  Computelon thelon welonightelond avelonragelon positivelon samplelon ratio baselond on labelonls
+  (i.elon. welonightelond avelonragelon pelonrcelonntagelon of positivelon labelonls).
+  Thelon namelon `ctr` (click-through-ratelon) is from lelongacy.
 
   Args:
-    labels: the ground truth value.
-    predictions: the predicted values, whose shape must match labels. Ignored for CTR computation.
-    weights: optional weights, whose shape must match labels . Weight is 1 if not set.
-    metrics_collections: optional list of collections to add this metric into.
-    updates_collections: optional list of collections to add the associated update_op into.
-    name: an optional variable_scope name.
+    labelonls: thelon ground truth valuelon.
+    prelondictions: thelon prelondictelond valuelons, whoselon shapelon must match labelonls. Ignorelond for CTR computation.
+    welonights: optional welonights, whoselon shapelon must match labelonls . Welonight is 1 if not selont.
+    melontrics_collelonctions: optional list of collelonctions to add this melontric into.
+    updatelons_collelonctions: optional list of collelonctions to add thelon associatelond updatelon_op into.
+    namelon: an optional variablelon_scopelon namelon.
 
-  Return:
-    ctr: A `Tensor` representing positive sample ratio.
-    update_op: A update operation used to accumulate data into this metric.
+  Relonturn:
+    ctr: A `Telonnsor` relonprelonselonnting positivelon samplelon ratio.
+    updatelon_op: A updatelon opelonration uselond to accumulatelon data into this melontric.
   """
-  return tf.metrics.mean(
-    values=labels,
-    weights=weights,
-    metrics_collections=metrics_collections,
-    updates_collections=updates_collections,
-    name=name)
+  relonturn tf.melontrics.melonan(
+    valuelons=labelonls,
+    welonights=welonights,
+    melontrics_collelonctions=melontrics_collelonctions,
+    updatelons_collelonctions=updatelons_collelonctions,
+    namelon=namelon)
 
 
-def predicted_ctr(labels, predictions,
-                  weights=None,
-                  metrics_collections=None,
-                  updates_collections=None,
-                  name=None):
-  # pylint: disable=unused-argument
+delonf prelondictelond_ctr(labelonls, prelondictions,
+                  welonights=Nonelon,
+                  melontrics_collelonctions=Nonelon,
+                  updatelons_collelonctions=Nonelon,
+                  namelon=Nonelon):
+  # pylint: disablelon=unuselond-argumelonnt
   """
-  Compute the weighted average positive ratio based on predictions,
-  (i.e. weighted averaged predicted positive probability).
-  The name `ctr` (click-through-rate) is from legacy.
+  Computelon thelon welonightelond avelonragelon positivelon ratio baselond on prelondictions,
+  (i.elon. welonightelond avelonragelond prelondictelond positivelon probability).
+  Thelon namelon `ctr` (click-through-ratelon) is from lelongacy.
 
   Args:
-    labels: the ground truth value.
-    predictions: the predicted values, whose shape must match labels. Ignored for CTR computation.
-    weights: optional weights, whose shape must match labels . Weight is 1 if not set.
-    metrics_collections: optional list of collections to add this metric into.
-    updates_collections: optional list of collections to add the associated update_op into.
-    name: an optional variable_scope name.
+    labelonls: thelon ground truth valuelon.
+    prelondictions: thelon prelondictelond valuelons, whoselon shapelon must match labelonls. Ignorelond for CTR computation.
+    welonights: optional welonights, whoselon shapelon must match labelonls . Welonight is 1 if not selont.
+    melontrics_collelonctions: optional list of collelonctions to add this melontric into.
+    updatelons_collelonctions: optional list of collelonctions to add thelon associatelond updatelon_op into.
+    namelon: an optional variablelon_scopelon namelon.
 
-  Return:
-    predicted_ctr: A `Tensor` representing the predicted positive ratio.
-    update_op: A update operation used to accumulate data into this metric.
+  Relonturn:
+    prelondictelond_ctr: A `Telonnsor` relonprelonselonnting thelon prelondictelond positivelon ratio.
+    updatelon_op: A updatelon opelonration uselond to accumulatelon data into this melontric.
   """
-  return tf.metrics.mean(
-    values=predictions,
-    weights=weights,
-    metrics_collections=metrics_collections,
-    updates_collections=updates_collections,
-    name=name)
+  relonturn tf.melontrics.melonan(
+    valuelons=prelondictions,
+    welonights=welonights,
+    melontrics_collelonctions=melontrics_collelonctions,
+    updatelons_collelonctions=updatelons_collelonctions,
+    namelon=namelon)
 
 
-def prediction_std_dev(labels, predictions,
-                       weights=None,
-                       metrics_collections=None,
-                       updates_collections=None,
-                       name=None):
+delonf prelondiction_std_delonv(labelonls, prelondictions,
+                       welonights=Nonelon,
+                       melontrics_collelonctions=Nonelon,
+                       updatelons_collelonctions=Nonelon,
+                       namelon=Nonelon):
   """
-  Compute the weighted standard deviation of the predictions.
-  Note - this is not a confidence interval metric.
+  Computelon thelon welonightelond standard delonviation of thelon prelondictions.
+  Notelon - this is not a confidelonncelon intelonrval melontric.
 
   Args:
-    labels: the ground truth value.
-    predictions: the predicted values, whose shape must match labels. Ignored for CTR computation.
-    weights: optional weights, whose shape must match labels . Weight is 1 if not set.
-    metrics_collections: optional list of collections to add this metric into.
-    updates_collections: optional list of collections to add the associated update_op into.
-    name: an optional variable_scope name.
+    labelonls: thelon ground truth valuelon.
+    prelondictions: thelon prelondictelond valuelons, whoselon shapelon must match labelonls. Ignorelond for CTR computation.
+    welonights: optional welonights, whoselon shapelon must match labelonls . Welonight is 1 if not selont.
+    melontrics_collelonctions: optional list of collelonctions to add this melontric into.
+    updatelons_collelonctions: optional list of collelonctions to add thelon associatelond updatelon_op into.
+    namelon: an optional variablelon_scopelon namelon.
 
-  Return:
-    metric value: A `Tensor` representing the value of the metric on the data accumulated so far.
-    update_op: A update operation used to accumulate data into this metric.
+  Relonturn:
+    melontric valuelon: A `Telonnsor` relonprelonselonnting thelon valuelon of thelon melontric on thelon data accumulatelond so far.
+    updatelon_op: A updatelon opelonration uselond to accumulatelon data into this melontric.
   """
-  with tf.variable_scope(name, 'pred_std_dev', (labels, predictions, weights)):
-    labels = tf.cast(labels, tf.float64)
-    predictions = tf.cast(predictions, tf.float64)
+  with tf.variablelon_scopelon(namelon, 'prelond_std_delonv', (labelonls, prelondictions, welonights)):
+    labelonls = tf.cast(labelonls, tf.float64)
+    prelondictions = tf.cast(prelondictions, tf.float64)
 
-    if weights is None:
-      weights = tf.ones(shape=tf.shape(labels), dtype=tf.float64, name="default_weight")
-    else:
-      weights = tf.cast(weights, tf.float64)
+    if welonights is Nonelon:
+      welonights = tf.onelons(shapelon=tf.shapelon(labelonls), dtypelon=tf.float64, namelon="delonfault_welonight")
+    elonlselon:
+      welonights = tf.cast(welonights, tf.float64)
 
-    # State kept during streaming of examples
-    total_weighted_preds = _metric_variable(
-        name='total_weighted_preds', shape=[], dtype=tf.float64)
-    total_weighted_preds_sq = _metric_variable(
-        name='total_weighted_preds_sq', shape=[], dtype=tf.float64)
-    total_weights = _metric_variable(
-        name='total_weights', shape=[], dtype=tf.float64)
+    # Statelon kelonpt during strelonaming of elonxamplelons
+    total_welonightelond_prelonds = _melontric_variablelon(
+        namelon='total_welonightelond_prelonds', shapelon=[], dtypelon=tf.float64)
+    total_welonightelond_prelonds_sq = _melontric_variablelon(
+        namelon='total_welonightelond_prelonds_sq', shapelon=[], dtypelon=tf.float64)
+    total_welonights = _melontric_variablelon(
+        namelon='total_welonights', shapelon=[], dtypelon=tf.float64)
 
-    # Update state
-    update_total_weighted_preds = tf.assign_add(total_weighted_preds, tf.reduce_sum(weights * predictions))
-    update_total_weighted_preds_sq = tf.assign_add(total_weighted_preds_sq, tf.reduce_sum(weights * predictions * predictions))
-    update_total_weights = tf.assign_add(total_weights, tf.reduce_sum(weights))
+    # Updatelon statelon
+    updatelon_total_welonightelond_prelonds = tf.assign_add(total_welonightelond_prelonds, tf.relonducelon_sum(welonights * prelondictions))
+    updatelon_total_welonightelond_prelonds_sq = tf.assign_add(total_welonightelond_prelonds_sq, tf.relonducelon_sum(welonights * prelondictions * prelondictions))
+    updatelon_total_welonights = tf.assign_add(total_welonights, tf.relonducelon_sum(welonights))
 
-    # Compute output
-    def compute_output(tot_w, tot_wp, tot_wpp):
-      return tf.math.sqrt(tot_wpp / tot_w - (tot_wp / tot_w) ** 2)
-    std_dev_est = compute_output(total_weights, total_weighted_preds, total_weighted_preds_sq)
-    update_std_dev_est = compute_output(update_total_weights, update_total_weighted_preds, update_total_weighted_preds_sq)
+    # Computelon output
+    delonf computelon_output(tot_w, tot_wp, tot_wpp):
+      relonturn tf.math.sqrt(tot_wpp / tot_w - (tot_wp / tot_w) ** 2)
+    std_delonv_elonst = computelon_output(total_welonights, total_welonightelond_prelonds, total_welonightelond_prelonds_sq)
+    updatelon_std_delonv_elonst = computelon_output(updatelon_total_welonights, updatelon_total_welonightelond_prelonds, updatelon_total_welonightelond_prelonds_sq)
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, std_dev_est)
+    if melontrics_collelonctions:
+      tf.add_to_collelonctions(melontrics_collelonctions, std_delonv_elonst)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_std_dev_est)
+    if updatelons_collelonctions:
+      tf.add_to_collelonctions(updatelons_collelonctions, updatelon_std_delonv_elonst)
 
-    return std_dev_est, update_std_dev_est
+    relonturn std_delonv_elonst, updatelon_std_delonv_elonst
 
 
-def _get_arce_predictions(predictions, weights, label_weighted, labels,
-                         up_weight, deprecated_rce,
-                         total_positive, update_total_positive):
+delonf _gelont_arcelon_prelondictions(prelondictions, welonights, labelonl_welonightelond, labelonls,
+                         up_welonight, delonpreloncatelond_rcelon,
+                         total_positivelon, updatelon_total_positivelon):
   """
-  Returns the ARCE predictions, total_positive, update_total_positive and weights
-  used by the rest of the twml.metrics.rce metric computation.
+  Relonturns thelon ARCelon prelondictions, total_positivelon, updatelon_total_positivelon and welonights
+  uselond by thelon relonst of thelon twml.melontrics.rcelon melontric computation.
   """
-  predictions_weighted = tf.multiply(predictions, weights, name="weighted_preds")
-  label_weighted_comp = tf.subtract(tf.reduce_sum(weights), tf.reduce_sum(label_weighted))
-  pred_weight_comp = tf.subtract(tf.reduce_sum(weights), tf.reduce_sum(predictions_weighted))
-  normalizer_comp = label_weighted_comp / pred_weight_comp
+  prelondictions_welonightelond = tf.multiply(prelondictions, welonights, namelon="welonightelond_prelonds")
+  labelonl_welonightelond_comp = tf.subtract(tf.relonducelon_sum(welonights), tf.relonducelon_sum(labelonl_welonightelond))
+  prelond_welonight_comp = tf.subtract(tf.relonducelon_sum(welonights), tf.relonducelon_sum(prelondictions_welonightelond))
+  normalizelonr_comp = labelonl_welonightelond_comp / prelond_welonight_comp
 
-  if up_weight is False:
-    total_positive_unweighted = _metric_variable(
-      name='total_positive_unweighted', shape=[], dtype=tf.float32)
+  if up_welonight is Falselon:
+    total_positivelon_unwelonightelond = _melontric_variablelon(
+      namelon='total_positivelon_unwelonightelond', shapelon=[], dtypelon=tf.float32)
 
-    update_total_positive_unweighted = tf.assign_add(
-      total_positive_unweighted, tf.reduce_sum(labels),
-      name="total_positive_unweighted_update")
+    updatelon_total_positivelon_unwelonightelond = tf.assign_add(
+      total_positivelon_unwelonightelond, tf.relonducelon_sum(labelonls),
+      namelon="total_positivelon_unwelonightelond_updatelon")
 
-    if deprecated_rce:
-      normalizer = tf.reduce_sum(labels) / tf.reduce_sum(label_weighted)
-    else:
-      # sum of labels / sum of weighted labels
-      normalizer = update_total_positive_unweighted / update_total_positive
+    if delonpreloncatelond_rcelon:
+      normalizelonr = tf.relonducelon_sum(labelonls) / tf.relonducelon_sum(labelonl_welonightelond)
+    elonlselon:
+      # sum of labelonls / sum of welonightelond labelonls
+      normalizelonr = updatelon_total_positivelon_unwelonightelond / updatelon_total_positivelon
 
-    label_comp = tf.subtract(tf.to_float(tf.size(labels)), tf.reduce_sum(labels))
-    normalizer_comp = label_comp / label_weighted_comp
+    labelonl_comp = tf.subtract(tf.to_float(tf.sizelon(labelonls)), tf.relonducelon_sum(labelonls))
+    normalizelonr_comp = labelonl_comp / labelonl_welonightelond_comp
 
-    # note that up_weight=True changes these for the rest of the twml.metric.rce computation
-    weights = tf.ones(shape=tf.shape(labels), dtype=tf.float32, name="default_weight")
-    total_positive = total_positive_unweighted
-    update_total_positive = update_total_positive_unweighted
-  else:
-    if deprecated_rce:
-      normalizer = tf.reduce_sum(label_weighted) / tf.reduce_sum(predictions_weighted)
-    else:
-      # normalizer used for NRCE (and ARCE with up_weight=True)
-      total_prediction = _metric_variable(name='total_prediction', shape=[], dtype=tf.float32)
+    # notelon that up_welonight=Truelon changelons thelonselon for thelon relonst of thelon twml.melontric.rcelon computation
+    welonights = tf.onelons(shapelon=tf.shapelon(labelonls), dtypelon=tf.float32, namelon="delonfault_welonight")
+    total_positivelon = total_positivelon_unwelonightelond
+    updatelon_total_positivelon = updatelon_total_positivelon_unwelonightelond
+  elonlselon:
+    if delonpreloncatelond_rcelon:
+      normalizelonr = tf.relonducelon_sum(labelonl_welonightelond) / tf.relonducelon_sum(prelondictions_welonightelond)
+    elonlselon:
+      # normalizelonr uselond for NRCelon (and ARCelon with up_welonight=Truelon)
+      total_prelondiction = _melontric_variablelon(namelon='total_prelondiction', shapelon=[], dtypelon=tf.float32)
 
-      # update the variable holding the sum of weighted predictions
-      update_total_prediction = tf.assign_add(
-        total_prediction, tf.reduce_sum(predictions_weighted), name="total_prediction_update")
+      # updatelon thelon variablelon holding thelon sum of welonightelond prelondictions
+      updatelon_total_prelondiction = tf.assign_add(
+        total_prelondiction, tf.relonducelon_sum(prelondictions_welonightelond), namelon="total_prelondiction_updatelon")
 
-      # this used to be tf.reduce_sum(label_weighted) / tf.reduce_sum(predictions_weighted)
-      # but it measure normalizer over batch was too flawed an approximation.
-      normalizer = update_total_positive / update_total_prediction
+      # this uselond to belon tf.relonducelon_sum(labelonl_welonightelond) / tf.relonducelon_sum(prelondictions_welonightelond)
+      # but it melonasurelon normalizelonr ovelonr batch was too flawelond an approximation.
+      normalizelonr = updatelon_total_positivelon / updatelon_total_prelondiction
 
-  pred_comp = tf.subtract(tf.ones(shape=tf.shape(labels), dtype=tf.float32), predictions)
-  pred_comp_norm = tf.multiply(pred_comp, normalizer_comp, name="normalized_predictions_comp")
-  pred_num = tf.multiply(predictions, normalizer, name="normalized_pred_numerator")
-  pred_denom = tf.add(pred_num, pred_comp_norm, name="normalized_pred_denominator")
-  predictions = pred_num / pred_denom
+  prelond_comp = tf.subtract(tf.onelons(shapelon=tf.shapelon(labelonls), dtypelon=tf.float32), prelondictions)
+  prelond_comp_norm = tf.multiply(prelond_comp, normalizelonr_comp, namelon="normalizelond_prelondictions_comp")
+  prelond_num = tf.multiply(prelondictions, normalizelonr, namelon="normalizelond_prelond_numelonrator")
+  prelond_delonnom = tf.add(prelond_num, prelond_comp_norm, namelon="normalizelond_prelond_delonnominator")
+  prelondictions = prelond_num / prelond_delonnom
 
-  return predictions, total_positive, update_total_positive, weights
+  relonturn prelondictions, total_positivelon, updatelon_total_positivelon, welonights
 
 
-def rce(labels, predictions,
-        weights=None,
-        normalize=False,
-        arce=False,
-        up_weight=True,
-        metrics_collections=None,
-        updates_collections=None,
-        name=None,
-        deprecated_rce=False):
+delonf rcelon(labelonls, prelondictions,
+        welonights=Nonelon,
+        normalizelon=Falselon,
+        arcelon=Falselon,
+        up_welonight=Truelon,
+        melontrics_collelonctions=Nonelon,
+        updatelons_collelonctions=Nonelon,
+        namelon=Nonelon,
+        delonpreloncatelond_rcelon=Falselon):
   """
-  Compute the relative cross entropy (RCE).
-  The RCE is a relative measurement compared to the baseline model's performance.
-  The baseline model always predicts average click-through-rate (CTR).
-  The RCE measures, in percentage, how much better the predictions are, compared
-  to the baseline model, in terms of cross entropy loss.
+  Computelon thelon relonlativelon cross elonntropy (RCelon).
+  Thelon RCelon is a relonlativelon melonasurelonmelonnt comparelond to thelon baselonlinelon modelonl's pelonrformancelon.
+  Thelon baselonlinelon modelonl always prelondicts avelonragelon click-through-ratelon (CTR).
+  Thelon RCelon melonasurelons, in pelonrcelonntagelon, how much belonttelonr thelon prelondictions arelon, comparelond
+  to thelon baselonlinelon modelonl, in telonrms of cross elonntropy loss.
 
-  y = label; p = prediction;
-  binary cross entropy = y * log(p) + (1-y) * log(1-p)
+  y = labelonl; p = prelondiction;
+  binary cross elonntropy = y * log(p) + (1-y) * log(1-p)
 
   Args:
-    labels:
-      the ground true value.
-    predictions:
-      the predicted values, whose shape must match labels.
-    weights:
-      optional weights, whose shape must match labels . Weight is 1 if not set.
-    normalize:
-      if set to true, produce NRCEs used at Twitter. (normalize preds by weights first)
-      NOTE: if you don't understand what NRCE is, please don't use it.
-    arce:
-      if set to true, produces `ARCE <http://go/arce>`_.
-      This can only be activated if `normalize=True`.
-    up_weight:
-      if set to true, produces arce in the up_weighted space (considers CTR after up_weighting
-      data), while False gives arce in the original space (only considers CTR before up_weighting).
-      In the actual version, this flag can only be activated if arce is True.
-      Notice that the actual version of NRCE corresponds to up_weight=True.
-    metrics_collections:
-      optional list of collections to add this metric into.
-    updates_collections:
-      optional list of collections to add the associated update_op into.
-    name:
-      an optional variable_scope name.
-    deprecated_rce:
-      enables the previous NRCE/ARCE calculations which calculated some label metrics
-      on the batch instead of on all batches seen so far. Note that the older metric
-      calculation is less stable, especially for smaller batch sizes. You should probably
-      never have to set this to True.
+    labelonls:
+      thelon ground truelon valuelon.
+    prelondictions:
+      thelon prelondictelond valuelons, whoselon shapelon must match labelonls.
+    welonights:
+      optional welonights, whoselon shapelon must match labelonls . Welonight is 1 if not selont.
+    normalizelon:
+      if selont to truelon, producelon NRCelons uselond at Twittelonr. (normalizelon prelonds by welonights first)
+      NOTelon: if you don't undelonrstand what NRCelon is, plelonaselon don't uselon it.
+    arcelon:
+      if selont to truelon, producelons `ARCelon <http://go/arcelon>`_.
+      This can only belon activatelond if `normalizelon=Truelon`.
+    up_welonight:
+      if selont to truelon, producelons arcelon in thelon up_welonightelond spacelon (considelonrs CTR aftelonr up_welonighting
+      data), whilelon Falselon givelons arcelon in thelon original spacelon (only considelonrs CTR belonforelon up_welonighting).
+      In thelon actual velonrsion, this flag can only belon activatelond if arcelon is Truelon.
+      Noticelon that thelon actual velonrsion of NRCelon correlonsponds to up_welonight=Truelon.
+    melontrics_collelonctions:
+      optional list of collelonctions to add this melontric into.
+    updatelons_collelonctions:
+      optional list of collelonctions to add thelon associatelond updatelon_op into.
+    namelon:
+      an optional variablelon_scopelon namelon.
+    delonpreloncatelond_rcelon:
+      elonnablelons thelon prelonvious NRCelon/ARCelon calculations which calculatelond somelon labelonl melontrics
+      on thelon batch instelonad of on all batchelons selonelonn so far. Notelon that thelon oldelonr melontric
+      calculation is lelonss stablelon, elonspeloncially for smallelonr batch sizelons. You should probably
+      nelonvelonr havelon to selont this to Truelon.
 
-  Return:
-    rce_value:
-      A ``Tensor`` representing the RCE.
-    update_op:
-      A update operation used to accumulate data into this metric.
+  Relonturn:
+    rcelon_valuelon:
+      A ``Telonnsor`` relonprelonselonnting thelon RCelon.
+    updatelon_op:
+      A updatelon opelonration uselond to accumulatelon data into this melontric.
 
-  .. note:: Must have at least 1 positive and 1 negative sample accumulated,
-     or RCE will come out as NaN.
+  .. notelon:: Must havelon at lelonast 1 positivelon and 1 nelongativelon samplelon accumulatelond,
+     or RCelon will comelon out as NaN.
   """
-  with tf.variable_scope(name, 'rce', (labels, predictions, weights)):
-    labels = tf.to_float(labels, name="label_to_float")
-    predictions = tf.to_float(predictions, name="predictions_to_float")
+  with tf.variablelon_scopelon(namelon, 'rcelon', (labelonls, prelondictions, welonights)):
+    labelonls = tf.to_float(labelonls, namelon="labelonl_to_float")
+    prelondictions = tf.to_float(prelondictions, namelon="prelondictions_to_float")
 
-    if weights is None:
-      weights = tf.ones(shape=tf.shape(labels), dtype=tf.float32, name="default_weight")
-    else:
-      weights = tf.to_float(weights, name="weight_to_float")
+    if welonights is Nonelon:
+      welonights = tf.onelons(shapelon=tf.shapelon(labelonls), dtypelon=tf.float32, namelon="delonfault_welonight")
+    elonlselon:
+      welonights = tf.to_float(welonights, namelon="welonight_to_float")
 
-    total_positive = _metric_variable(name='total_positive', shape=[], dtype=tf.float32)
-    total_loss = _metric_variable(name='total_loss', shape=[], dtype=tf.float32)
-    total_weight = _metric_variable(name='total_weight', shape=[], dtype=tf.float32)
+    total_positivelon = _melontric_variablelon(namelon='total_positivelon', shapelon=[], dtypelon=tf.float32)
+    total_loss = _melontric_variablelon(namelon='total_loss', shapelon=[], dtypelon=tf.float32)
+    total_welonight = _melontric_variablelon(namelon='total_welonight', shapelon=[], dtypelon=tf.float32)
 
-    label_weighted = tf.multiply(labels, weights, name="weighted_label")
+    labelonl_welonightelond = tf.multiply(labelonls, welonights, namelon="welonightelond_labelonl")
 
-    update_total_positive = tf.assign_add(
-      total_positive, tf.reduce_sum(label_weighted), name="total_pos_update")
+    updatelon_total_positivelon = tf.assign_add(
+      total_positivelon, tf.relonducelon_sum(labelonl_welonightelond), namelon="total_pos_updatelon")
 
-    if arce:
-      if normalize is False:
-        raise ValueError('This configuration of parameters is not actually allowed')
+    if arcelon:
+      if normalizelon is Falselon:
+        raiselon Valuelonelonrror('This configuration of paramelontelonrs is not actually allowelond')
 
-      predictions, total_positive, update_total_positive, weights = _get_arce_predictions(
-        predictions=predictions, weights=weights, deprecated_rce=deprecated_rce,
-        label_weighted=label_weighted, labels=labels, up_weight=up_weight,
-        total_positive=total_positive, update_total_positive=update_total_positive)
+      prelondictions, total_positivelon, updatelon_total_positivelon, welonights = _gelont_arcelon_prelondictions(
+        prelondictions=prelondictions, welonights=welonights, delonpreloncatelond_rcelon=delonpreloncatelond_rcelon,
+        labelonl_welonightelond=labelonl_welonightelond, labelonls=labelonls, up_welonight=up_welonight,
+        total_positivelon=total_positivelon, updatelon_total_positivelon=updatelon_total_positivelon)
 
-    elif normalize:
-      predictions_weighted = tf.multiply(predictions, weights, name="weighted_preds")
+    elonlif normalizelon:
+      prelondictions_welonightelond = tf.multiply(prelondictions, welonights, namelon="welonightelond_prelonds")
 
-      if deprecated_rce:
-        normalizer = tf.reduce_sum(label_weighted) / tf.reduce_sum(predictions_weighted)
-      else:
-        total_prediction = _metric_variable(name='total_prediction', shape=[], dtype=tf.float32)
+      if delonpreloncatelond_rcelon:
+        normalizelonr = tf.relonducelon_sum(labelonl_welonightelond) / tf.relonducelon_sum(prelondictions_welonightelond)
+      elonlselon:
+        total_prelondiction = _melontric_variablelon(namelon='total_prelondiction', shapelon=[], dtypelon=tf.float32)
 
-        # update the variable holding the sum of weighted predictions
-        update_total_prediction = tf.assign_add(
-          total_prediction, tf.reduce_sum(predictions_weighted), name="total_prediction_update")
+        # updatelon thelon variablelon holding thelon sum of welonightelond prelondictions
+        updatelon_total_prelondiction = tf.assign_add(
+          total_prelondiction, tf.relonducelon_sum(prelondictions_welonightelond), namelon="total_prelondiction_updatelon")
 
-        # this used to be tf.reduce_sum(label_weighted) / tf.reduce_sum(predictions_weighted)
-        # but it measure normalizer over batch was too flawed an approximation.
-        normalizer = update_total_positive / update_total_prediction
+        # this uselond to belon tf.relonducelon_sum(labelonl_welonightelond) / tf.relonducelon_sum(prelondictions_welonightelond)
+        # but it melonasurelon normalizelonr ovelonr batch was too flawelond an approximation.
+        normalizelonr = updatelon_total_positivelon / updatelon_total_prelondiction
 
-      # NRCE
-      predictions = tf.multiply(predictions, normalizer, name="normalized_predictions")
+      # NRCelon
+      prelondictions = tf.multiply(prelondictions, normalizelonr, namelon="normalizelond_prelondictions")
 
-    # clamp predictions to keep log(p) stable
-    clip_p = tf.clip_by_value(predictions, CLAMP_EPSILON, 1.0 - CLAMP_EPSILON, name="clip_p")
-    logloss = _binary_cross_entropy(pred=clip_p, target=labels, name="logloss")
+    # clamp prelondictions to kelonelonp log(p) stablelon
+    clip_p = tf.clip_by_valuelon(prelondictions, CLAMP_elonPSILON, 1.0 - CLAMP_elonPSILON, namelon="clip_p")
+    logloss = _binary_cross_elonntropy(prelond=clip_p, targelont=labelonls, namelon="logloss")
 
-    logloss_weighted = tf.multiply(logloss, weights, name="weighted_logloss")
+    logloss_welonightelond = tf.multiply(logloss, welonights, namelon="welonightelond_logloss")
 
-    update_total_loss = tf.assign_add(
-      total_loss, tf.reduce_sum(logloss_weighted), name="total_loss_update")
-    update_total_weight = tf.assign_add(
-      total_weight, tf.reduce_sum(weights), name="total_weight_update")
+    updatelon_total_loss = tf.assign_add(
+      total_loss, tf.relonducelon_sum(logloss_welonightelond), namelon="total_loss_updatelon")
+    updatelon_total_welonight = tf.assign_add(
+      total_welonight, tf.relonducelon_sum(welonights), namelon="total_welonight_updatelon")
 
-    # metric value retrieval subgraph
-    ctr1 = tf.truediv(total_positive, total_weight, name="ctr")
-    # Note: we don't have to keep running averages for computing baseline CE. Because the prediction
-    # is constant for every sample, we can simplify it to the formula below.
-    baseline_ce = _binary_cross_entropy(pred=ctr1, target=ctr1, name="baseline_ce")
-    pred_ce = tf.truediv(total_loss, total_weight, name="pred_ce")
+    # melontric valuelon relontrielonval subgraph
+    ctr1 = tf.truelondiv(total_positivelon, total_welonight, namelon="ctr")
+    # Notelon: welon don't havelon to kelonelonp running avelonragelons for computing baselonlinelon Celon. Beloncauselon thelon prelondiction
+    # is constant for elonvelonry samplelon, welon can simplify it to thelon formula belonlow.
+    baselonlinelon_celon = _binary_cross_elonntropy(prelond=ctr1, targelont=ctr1, namelon="baselonlinelon_celon")
+    prelond_celon = tf.truelondiv(total_loss, total_welonight, namelon="prelond_celon")
 
-    rce_t = tf.multiply(
-      1.0 - tf.truediv(pred_ce, baseline_ce),
+    rcelon_t = tf.multiply(
+      1.0 - tf.truelondiv(prelond_celon, baselonlinelon_celon),
       100,
-      name="rce")
+      namelon="rcelon")
 
-    # metric update subgraph
-    ctr2 = tf.truediv(update_total_positive, update_total_weight, name="ctr_update")
-    # Note: we don't have to keep running averages for computing baseline CE. Because the prediction
-    # is constant for every sample, we can simplify it to the formula below.
-    baseline_ce2 = _binary_cross_entropy(pred=ctr2, target=ctr2, name="baseline_ce_update")
-    pred_ce2 = tf.truediv(update_total_loss, update_total_weight, name="pred_ce_update")
+    # melontric updatelon subgraph
+    ctr2 = tf.truelondiv(updatelon_total_positivelon, updatelon_total_welonight, namelon="ctr_updatelon")
+    # Notelon: welon don't havelon to kelonelonp running avelonragelons for computing baselonlinelon Celon. Beloncauselon thelon prelondiction
+    # is constant for elonvelonry samplelon, welon can simplify it to thelon formula belonlow.
+    baselonlinelon_celon2 = _binary_cross_elonntropy(prelond=ctr2, targelont=ctr2, namelon="baselonlinelon_celon_updatelon")
+    prelond_celon2 = tf.truelondiv(updatelon_total_loss, updatelon_total_welonight, namelon="prelond_celon_updatelon")
 
-    update_op = tf.multiply(
-      1.0 - tf.truediv(pred_ce2, baseline_ce2),
+    updatelon_op = tf.multiply(
+      1.0 - tf.truelondiv(prelond_celon2, baselonlinelon_celon2),
       100,
-      name="update_op")
+      namelon="updatelon_op")
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, rce_t)
+    if melontrics_collelonctions:
+      tf.add_to_collelonctions(melontrics_collelonctions, rcelon_t)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_op)
+    if updatelons_collelonctions:
+      tf.add_to_collelonctions(updatelons_collelonctions, updatelon_op)
 
-    return rce_t, update_op
-
-
-def ce(p_true, p_est=None):
-  if p_est is None:
-    p_est = p_true
-  return _binary_cross_entropy(pred=p_est, target=p_true, name=None)
+    relonturn rcelon_t, updatelon_op
 
 
-def rce_transform(outputs, labels, weights):
+delonf celon(p_truelon, p_elonst=Nonelon):
+  if p_elonst is Nonelon:
+    p_elonst = p_truelon
+  relonturn _binary_cross_elonntropy(prelond=p_elonst, targelont=p_truelon, namelon=Nonelon)
+
+
+delonf rcelon_transform(outputs, labelonls, welonights):
   '''
-  Construct an OrderedDict of quantities to aggregate over eval batches
-  outputs, labels, weights are TensorFlow tensors, and are assumed to
-    be of shape [N] for batch_size = N
-  Each entry in the output OrderedDict should also be of shape [N]
+  Construct an OrdelonrelondDict of quantitielons to aggrelongatelon ovelonr elonval batchelons
+  outputs, labelonls, welonights arelon TelonnsorFlow telonnsors, and arelon assumelond to
+    belon of shapelon [N] for batch_sizelon = N
+  elonach elonntry in thelon output OrdelonrelondDict should also belon of shapelon [N]
   '''
-  out_vals = OrderedDict()
-  out_vals['weighted_loss'] = weights * ce(p_true=labels, p_est=outputs)
-  out_vals['weighted_labels'] = labels * weights
-  out_vals['weight'] = weights
-  return out_vals
+  out_vals = OrdelonrelondDict()
+  out_vals['welonightelond_loss'] = welonights * celon(p_truelon=labelonls, p_elonst=outputs)
+  out_vals['welonightelond_labelonls'] = labelonls * welonights
+  out_vals['welonight'] = welonights
+  relonturn out_vals
 
 
-def rce_metric(aggregates):
+delonf rcelon_melontric(aggrelongatelons):
   '''
-  input ``aggregates`` is an OrderedDict with the same keys as those created
-    by rce_transform(). The dict values are the aggregates (reduce_sum)
-    of the values produced by rce_transform(), and should be scalars.
-  output is the value of RCE
+  input ``aggrelongatelons`` is an OrdelonrelondDict with thelon samelon kelonys as thoselon crelonatelond
+    by rcelon_transform(). Thelon dict valuelons arelon thelon aggrelongatelons (relonducelon_sum)
+    of thelon valuelons producelond by rcelon_transform(), and should belon scalars.
+  output is thelon valuelon of RCelon
   '''
-  # cummulative weighted loss of model predictions
-  total_weighted_loss = aggregates['weighted_loss']
-  total_weighted_labels = aggregates['weighted_labels']
-  total_weight = aggregates['weight']
+  # cummulativelon welonightelond loss of modelonl prelondictions
+  total_welonightelond_loss = aggrelongatelons['welonightelond_loss']
+  total_welonightelond_labelonls = aggrelongatelons['welonightelond_labelonls']
+  total_welonight = aggrelongatelons['welonight']
 
-  model_average_loss = total_weighted_loss / total_weight
-  baseline_average_loss = ce(total_weighted_labels / total_weight)
-  return 100.0 * (1 - model_average_loss / baseline_average_loss)
+  modelonl_avelonragelon_loss = total_welonightelond_loss / total_welonight
+  baselonlinelon_avelonragelon_loss = celon(total_welonightelond_labelonls / total_welonight)
+  relonturn 100.0 * (1 - modelonl_avelonragelon_loss / baselonlinelon_avelonragelon_loss)
 
 
-def metric_std_err(labels, predictions,
-                   weights=None,
-                   transform=rce_transform, metric=rce_metric,
-                   metrics_collections=None,
-                   updates_collections=None,
-                   name='rce_std_err'):
+delonf melontric_std_elonrr(labelonls, prelondictions,
+                   welonights=Nonelon,
+                   transform=rcelon_transform, melontric=rcelon_melontric,
+                   melontrics_collelonctions=Nonelon,
+                   updatelons_collelonctions=Nonelon,
+                   namelon='rcelon_std_elonrr'):
   """
-  Compute the weighted standard error of the RCE metric on this eval set.
-  This can be used for confidence intervals and unpaired hypothesis tests.
+  Computelon thelon welonightelond standard elonrror of thelon RCelon melontric on this elonval selont.
+  This can belon uselond for confidelonncelon intelonrvals and unpairelond hypothelonsis telonsts.
 
   Args:
-    labels: the ground truth value.
-    predictions: the predicted values, whose shape must match labels.
-    weights: optional weights, whose shape must match labels . Weight is 1 if not set.
-    transform: a function of the following form:
+    labelonls: thelon ground truth valuelon.
+    prelondictions: thelon prelondictelond valuelons, whoselon shapelon must match labelonls.
+    welonights: optional welonights, whoselon shapelon must match labelonls . Welonight is 1 if not selont.
+    transform: a function of thelon following form:
 
-      .. code-block:: python
+      .. codelon-block:: python
 
-        def transform(outputs, labels, weights):
-          out_vals = OrderedDict()
+        delonf transform(outputs, labelonls, welonights):
+          out_vals = OrdelonrelondDict()
           ...
-          return out_vals
+          relonturn out_vals
 
-      where outputs, labels, and weights are all tensors of shape [eval_batch_size].
-      The returned OrderedDict() should have values that are tensors of shape  [eval_batch_size].
-      These will be aggregated across many batches in the eval dataset, to produce
-      one scalar value per key of out_vals.
-    metric: a function of the following form
+      whelonrelon outputs, labelonls, and welonights arelon all telonnsors of shapelon [elonval_batch_sizelon].
+      Thelon relonturnelond OrdelonrelondDict() should havelon valuelons that arelon telonnsors of shapelon  [elonval_batch_sizelon].
+      Thelonselon will belon aggrelongatelond across many batchelons in thelon elonval dataselont, to producelon
+      onelon scalar valuelon pelonr kelony of out_vals.
+    melontric: a function of thelon following form
 
-      .. code-block:: python
+      .. codelon-block:: python
 
-        def metric(aggregates):
+        delonf melontric(aggrelongatelons):
           ...
-          return metric_value
+          relonturn melontric_valuelon
 
-      where aggregates is an OrderedDict() having the same keys created by transform().
-      Each of the corresponding dict values is the reduce_sum of the values produced by
-      transform(), and is a TF scalar. The return value should be a scalar representing
-      the value of the desired metric.
-    metrics_collections: optional list of collections to add this metric into.
-    updates_collections: optional list of collections to add the associated update_op into.
-    name: an optional variable_scope name.
+      whelonrelon aggrelongatelons is an OrdelonrelondDict() having thelon samelon kelonys crelonatelond by transform().
+      elonach of thelon correlonsponding dict valuelons is thelon relonducelon_sum of thelon valuelons producelond by
+      transform(), and is a TF scalar. Thelon relonturn valuelon should belon a scalar relonprelonselonnting
+      thelon valuelon of thelon delonsirelond melontric.
+    melontrics_collelonctions: optional list of collelonctions to add this melontric into.
+    updatelons_collelonctions: optional list of collelonctions to add thelon associatelond updatelon_op into.
+    namelon: an optional variablelon_scopelon namelon.
 
-  Return:
-    metric value: A `Tensor` representing the value of the metric on the data accumulated so far.
-    update_op: A update operation used to accumulate data into this metric.
+  Relonturn:
+    melontric valuelon: A `Telonnsor` relonprelonselonnting thelon valuelon of thelon melontric on thelon data accumulatelond so far.
+    updatelon_op: A updatelon opelonration uselond to accumulatelon data into this melontric.
   """
-  with tf.variable_scope(name, 'metric_std_err', (labels, predictions, weights)):
-    labels = tf.cast(labels, tf.float64)
-    predictions = tf.cast(predictions, tf.float64)
+  with tf.variablelon_scopelon(namelon, 'melontric_std_elonrr', (labelonls, prelondictions, welonights)):
+    labelonls = tf.cast(labelonls, tf.float64)
+    prelondictions = tf.cast(prelondictions, tf.float64)
 
-    if weights is None:
-      weights = tf.ones_like(labels, dtype=tf.float64, name="default_weight")
-    else:
-      weights = tf.cast(weights, tf.float64)
+    if welonights is Nonelon:
+      welonights = tf.onelons_likelon(labelonls, dtypelon=tf.float64, namelon="delonfault_welonight")
+    elonlselon:
+      welonights = tf.cast(welonights, tf.float64)
 
-    labels = tf.reshape(labels, [-1])
-    predictions = tf.reshape(predictions, [-1])
-    predictions = tf.clip_by_value(predictions, CLAMP_EPSILON, 1.0 - CLAMP_EPSILON, name="clip_p")
-    weights = tf.reshape(weights, [-1])
+    labelonls = tf.relonshapelon(labelonls, [-1])
+    prelondictions = tf.relonshapelon(prelondictions, [-1])
+    prelondictions = tf.clip_by_valuelon(prelondictions, CLAMP_elonPSILON, 1.0 - CLAMP_elonPSILON, namelon="clip_p")
+    welonights = tf.relonshapelon(welonights, [-1])
 
-    # first apply the supplied transform function to the output, label, weight data
-    # returns an OrderedDict of 1xN tensors for N input samples
-    # for each sample, compute f = transform(pred, l, w)
-    transformed = transform(predictions, labels, weights)
+    # first apply thelon supplielond transform function to thelon output, labelonl, welonight data
+    # relonturns an OrdelonrelondDict of 1xN telonnsors for N input samplelons
+    # for elonach samplelon, computelon f = transform(prelond, l, w)
+    transformelond = transform(prelondictions, labelonls, welonights)
 
-    # we track 3 types of aggregate information
-    # 1. total number of samples
-    # 2. aggregated transformed samples (moment1), i.e. sum(f)
-    # 3. aggregated crosses of transformed samples (moment2), i.e. sum(f*f^T)
+    # welon track 3 typelons of aggrelongatelon information
+    # 1. total numbelonr of samplelons
+    # 2. aggrelongatelond transformelond samplelons (momelonnt1), i.elon. sum(f)
+    # 3. aggrelongatelond crosselons of transformelond samplelons (momelonnt2), i.elon. sum(f*f^T)
 
-    # count total number of samples
-    sample_count = _metric_variable(
-        name='sample_count', shape=[], dtype=tf.int64)
-    update_sample_count = tf.assign_add(sample_count, tf.size(labels, out_type=sample_count.dtype))
+    # count total numbelonr of samplelons
+    samplelon_count = _melontric_variablelon(
+        namelon='samplelon_count', shapelon=[], dtypelon=tf.int64)
+    updatelon_samplelon_count = tf.assign_add(samplelon_count, tf.sizelon(labelonls, out_typelon=samplelon_count.dtypelon))
 
-    # compose the ordered dict into a single vector
-    # so f can be treated as a single column vector rather than a collection of scalars
-    N = len(transformed)
-    transformed_vec = tf.stack(list(transformed.values()), axis=1)
+    # composelon thelon ordelonrelond dict into a singlelon velonctor
+    # so f can belon trelonatelond as a singlelon column velonctor rathelonr than a collelonction of scalars
+    N = lelonn(transformelond)
+    transformelond_velonc = tf.stack(list(transformelond.valuelons()), axis=1)
 
-    # compute and update transformed samples (1st order statistics)
-    # i.e. accumulate f into F as F += sum(f)
-    aggregates_1 = _metric_variable(
-        name='aggregates_1', shape=[N], dtype=tf.float64)
-    update_aggregates_1 = tf.assign_add(aggregates_1, tf.reduce_sum(transformed_vec, axis=0))
+    # computelon and updatelon transformelond samplelons (1st ordelonr statistics)
+    # i.elon. accumulatelon f into F as F += sum(f)
+    aggrelongatelons_1 = _melontric_variablelon(
+        namelon='aggrelongatelons_1', shapelon=[N], dtypelon=tf.float64)
+    updatelon_aggrelongatelons_1 = tf.assign_add(aggrelongatelons_1, tf.relonducelon_sum(transformelond_velonc, axis=0))
 
-    # compute and update crossed transformed samples (2nd order statistics)
-    # i.e. accumulate f*f^T into F2 as F2 += sum(f*transpose(f))
-    aggregates_2 = _metric_variable(
-        name='aggregates_2', shape=[N, N], dtype=tf.float64)
-    moment_2_temp = (
-      tf.reshape(transformed_vec, shape=[-1, N, 1])
-      * tf.reshape(transformed_vec, shape=[-1, 1, N])
+    # computelon and updatelon crosselond transformelond samplelons (2nd ordelonr statistics)
+    # i.elon. accumulatelon f*f^T into F2 as F2 += sum(f*transposelon(f))
+    aggrelongatelons_2 = _melontric_variablelon(
+        namelon='aggrelongatelons_2', shapelon=[N, N], dtypelon=tf.float64)
+    momelonnt_2_telonmp = (
+      tf.relonshapelon(transformelond_velonc, shapelon=[-1, N, 1])
+      * tf.relonshapelon(transformelond_velonc, shapelon=[-1, 1, N])
     )
-    update_aggregates_2 = tf.assign_add(aggregates_2, tf.reduce_sum(moment_2_temp, axis=0))
+    updatelon_aggrelongatelons_2 = tf.assign_add(aggrelongatelons_2, tf.relonducelon_sum(momelonnt_2_telonmp, axis=0))
 
-    def compute_output(agg_1, agg_2, samp_cnt):
-      # decompose the aggregates back into a dict to pass to the user-supplied metric fn
-      aggregates_dict = OrderedDict()
-      for i, key in enumerate(transformed.keys()):
-        aggregates_dict[key] = agg_1[i]
+    delonf computelon_output(agg_1, agg_2, samp_cnt):
+      # deloncomposelon thelon aggrelongatelons back into a dict to pass to thelon uselonr-supplielond melontric fn
+      aggrelongatelons_dict = OrdelonrelondDict()
+      for i, kelony in elonnumelonratelon(transformelond.kelonys()):
+        aggrelongatelons_dict[kelony] = agg_1[i]
 
-      metric_value = metric(aggregates_dict)
+      melontric_valuelon = melontric(aggrelongatelons_dict)
 
-      # derivative of metric with respect to the 1st order aggregates
-      # i.e. d M(agg1) / d agg1
-      metric_prime = tf.gradients(metric_value, agg_1, stop_gradients=agg_1)
+      # delonrivativelon of melontric with relonspelonct to thelon 1st ordelonr aggrelongatelons
+      # i.elon. d M(agg1) / d agg1
+      melontric_primelon = tf.gradielonnts(melontric_valuelon, agg_1, stop_gradielonnts=agg_1)
 
-      # estimated covariance of agg_1
+      # elonstimatelond covariancelon of agg_1
       # cov(F) = sum(f*f^T) - (sum(f) * sum(f)^T) / N
       #     = agg_2 - (agg_1 * agg_1^T) / N
-      N_covariance_estimate = agg_2 - (
-        tf.reshape(agg_1, shape=[-1, 1])
-        @ tf.reshape(agg_1, shape=[1, -1])
-        / tf.cast(samp_cnt, dtype=tf.float64)
+      N_covariancelon_elonstimatelon = agg_2 - (
+        tf.relonshapelon(agg_1, shapelon=[-1, 1])
+        @ tf.relonshapelon(agg_1, shapelon=[1, -1])
+        / tf.cast(samp_cnt, dtypelon=tf.float64)
       )
 
-      # push N_covariance_estimate through a linearization of metric around agg_1
-      # metric var = transpose(d M(agg1) / d agg1) * cov(F) * (d M(agg1) / d agg1)
-      metric_variance = (
-        tf.reshape(metric_prime, shape=[1, -1])
-        @ N_covariance_estimate
-        @ tf.reshape(metric_prime, shape=[-1, 1])
+      # push N_covariancelon_elonstimatelon through a linelonarization of melontric around agg_1
+      # melontric var = transposelon(d M(agg1) / d agg1) * cov(F) * (d M(agg1) / d agg1)
+      melontric_variancelon = (
+        tf.relonshapelon(melontric_primelon, shapelon=[1, -1])
+        @ N_covariancelon_elonstimatelon
+        @ tf.relonshapelon(melontric_primelon, shapelon=[-1, 1])
       )
-      # result should be a single element, but the matmul is 2D
-      metric_variance = metric_variance[0][0]
-      metric_stderr = tf.sqrt(metric_variance)
-      return metric_stderr
+      # relonsult should belon a singlelon elonlelonmelonnt, but thelon matmul is 2D
+      melontric_variancelon = melontric_variancelon[0][0]
+      melontric_stdelonrr = tf.sqrt(melontric_variancelon)
+      relonturn melontric_stdelonrr
 
-    metric_stderr = compute_output(aggregates_1, aggregates_2, sample_count)
-    update_metric_stderr = compute_output(update_aggregates_1, update_aggregates_2, update_sample_count)
+    melontric_stdelonrr = computelon_output(aggrelongatelons_1, aggrelongatelons_2, samplelon_count)
+    updatelon_melontric_stdelonrr = computelon_output(updatelon_aggrelongatelons_1, updatelon_aggrelongatelons_2, updatelon_samplelon_count)
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, metric_stderr)
+    if melontrics_collelonctions:
+      tf.add_to_collelonctions(melontrics_collelonctions, melontric_stdelonrr)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_metric_stderr)
+    if updatelons_collelonctions:
+      tf.add_to_collelonctions(updatelons_collelonctions, updatelon_melontric_stdelonrr)
 
-    return metric_stderr, update_metric_stderr
+    relonturn melontric_stdelonrr, updatelon_melontric_stdelonrr
 
 
-def lolly_nrce(labels, predictions,
-               weights=None,
-               metrics_collections=None,
-               updates_collections=None,
-               name=None):
+delonf lolly_nrcelon(labelonls, prelondictions,
+               welonights=Nonelon,
+               melontrics_collelonctions=Nonelon,
+               updatelons_collelonctions=Nonelon,
+               namelon=Nonelon):
   """
-  Compute the Lolly NRCE.
+  Computelon thelon Lolly NRCelon.
 
-  Note: As this NRCE calculation uses Taylor expansion, it becomes inaccurate when the ctr is large,
-  especially when the adjusted ctr goes above 1.0.
+  Notelon: As this NRCelon calculation uselons Taylor elonxpansion, it beloncomelons inaccuratelon whelonn thelon ctr is largelon,
+  elonspeloncially whelonn thelon adjustelond ctr goelons abovelon 1.0.
 
   Calculation:
 
   ::
 
-    NRCE: lolly NRCE
-    BCE: baseline cross entropy
-    NCE: normalized cross entropy
-    CE: cross entropy
-    y_i: label of example i
-    p_i: prediction of example i
+    NRCelon: lolly NRCelon
+    BCelon: baselonlinelon cross elonntropy
+    NCelon: normalizelond cross elonntropy
+    Celon: cross elonntropy
+    y_i: labelonl of elonxamplelon i
+    p_i: prelondiction of elonxamplelon i
     y: ctr
-    p: average prediction
-    a: normalizer
+    p: avelonragelon prelondiction
+    a: normalizelonr
 
-    Assumes any p_i and a * p_i is within [0, 1)
-    NRCE = (1 - NCE / BCE) * 100
-    BCE = - sum_i(y_i * log(y) + (1 - y_i) * log(1 - y))
+    Assumelons any p_i and a * p_i is within [0, 1)
+    NRCelon = (1 - NCelon / BCelon) * 100
+    BCelon = - sum_i(y_i * log(y) + (1 - y_i) * log(1 - y))
         = - (y * log(y) + (1 - y) * log(1 - y))
     a = y / p
-    CE = - sum_i(y_i * log(p_i) + (1 - y_i) * log(1 - p_i))
-    NCE = - sum_i(y_i * log(a * p_i) + (1 - y_i) * log(1 - a * p_i))
+    Celon = - sum_i(y_i * log(p_i) + (1 - y_i) * log(1 - p_i))
+    NCelon = - sum_i(y_i * log(a * p_i) + (1 - y_i) * log(1 - a * p_i))
         = - sum_i(y_i * log(p_i) + (1 - y_i) * log(1 - p_i))
           - sum_i(y_i * log(a))
           + sum_i((1 - y_i) * log(1 - p_i))
           - sum_i((1 - y_i) * log(1 - a * p_i))
-        ~= CE - sum_i(y_i) * log(a)
+        ~= Celon - sum_i(y_i) * log(a)
           + sum_i((1 - y_i) * (- sum_{j=1~5}(p_i^j / j)))
           - sum_i((1 - y_i) * (- sum_{j=1~5}(a^j * p_i^j / j)))
-          # Takes 5 items from the Taylor expansion, can be increased if needed
-          # Error for each example is O(p_i^6)
-        = CE - sum_i(y_i) * log(a)
+          # Takelons 5 itelonms from thelon Taylor elonxpansion, can belon increlonaselond if nelonelondelond
+          # elonrror for elonach elonxamplelon is O(p_i^6)
+        = Celon - sum_i(y_i) * log(a)
           - sum_{j=1~5}(sum_i((1 - y_i) * p_i^j) / j)
           + sum_{j=1~5}(sum_i((1 - y_i) * p_i^j) * a^j / j)
-        = CE - sum_i(y_i) * log(a)
+        = Celon - sum_i(y_i) * log(a)
           + sum_{j=1~5}(sum_i((1 - y_i) * p_i^j) * (a^j - 1) / j)
 
-  Thus we keep track of CE, sum_i(y_i), sum_i((1 - y_i) * p_i^j) for j=1~5.
-  We also keep track of p and y by sum_i(y_i), sum_i(p_i), sum_i(1) so that
-  we can get a at the end, which leads to this NRCE.
+  Thus welon kelonelonp track of Celon, sum_i(y_i), sum_i((1 - y_i) * p_i^j) for j=1~5.
+  Welon also kelonelonp track of p and y by sum_i(y_i), sum_i(p_i), sum_i(1) so that
+  welon can gelont a at thelon elonnd, which lelonads to this NRCelon.
 
-  NRCE uses ctr and average pctr to normalize the pctrs.
-  It removes the impact of prediction error from RCE.
-  Usually NRCE is higher as the prediction error impact on RCE is negative.
-  Removing prediction error in our model can make RCE closer to NRCE and thus improve RCE.
+  NRCelon uselons ctr and avelonragelon pctr to normalizelon thelon pctrs.
+  It relonmovelons thelon impact of prelondiction elonrror from RCelon.
+  Usually NRCelon is highelonr as thelon prelondiction elonrror impact on RCelon is nelongativelon.
+  Relonmoving prelondiction elonrror in our modelonl can makelon RCelon closelonr to NRCelon and thus improvelon RCelon.
 
-  In Lolly NRCE we use ctr and average pctr of the whole dataset.
-  We thus remove the dataset level error in NRCE calculation.
-  In this case, when we want to improve RCE to the level of NRCE,
-  it is achievable as dataset level prediction error is easy to remove by calibration.
-  Lolly NRCE is thus a good estimate about the potential gain by adding calibration.
+  In Lolly NRCelon welon uselon ctr and avelonragelon pctr of thelon wholelon dataselont.
+  Welon thus relonmovelon thelon dataselont lelonvelonl elonrror in NRCelon calculation.
+  In this caselon, whelonn welon want to improvelon RCelon to thelon lelonvelonl of NRCelon,
+  it is achielonvablelon as dataselont lelonvelonl prelondiction elonrror is elonasy to relonmovelon by calibration.
+  Lolly NRCelon is thus a good elonstimatelon about thelon potelonntial gain by adding calibration.
 
-  In DBv2 NRCE, we use per-batch ctr and average pctr. We remove the batch level error.
-  This error is difficult to remove by modeling improvement,
-  at least not by simple calibration.
-  It thus cannot indicate the same opportunity as the Lolly NRCE does.
+  In DBv2 NRCelon, welon uselon pelonr-batch ctr and avelonragelon pctr. Welon relonmovelon thelon batch lelonvelonl elonrror.
+  This elonrror is difficult to relonmovelon by modelonling improvelonmelonnt,
+  at lelonast not by simplelon calibration.
+  It thus cannot indicatelon thelon samelon opportunity as thelon Lolly NRCelon doelons.
 
   Args:
-    labels:
-      the ground true value.
-    predictions:
-      the predicted values, whose shape must match labels.
-    weights:
-      optional weights, whose shape must match labels . Weight is 1 if not set.
-    metrics_collections:
-      optional list of collections to add this metric into.
-    updates_collections:
-      optional list of collections to add the associated update_op into.
-    name:
-      an optional variable_scope name.
+    labelonls:
+      thelon ground truelon valuelon.
+    prelondictions:
+      thelon prelondictelond valuelons, whoselon shapelon must match labelonls.
+    welonights:
+      optional welonights, whoselon shapelon must match labelonls . Welonight is 1 if not selont.
+    melontrics_collelonctions:
+      optional list of collelonctions to add this melontric into.
+    updatelons_collelonctions:
+      optional list of collelonctions to add thelon associatelond updatelon_op into.
+    namelon:
+      an optional variablelon_scopelon namelon.
 
-  Return:
-    rce_value:
-      A ``Tensor`` representing the RCE.
-    update_op:
-      A update operation used to accumulate data into this metric.
+  Relonturn:
+    rcelon_valuelon:
+      A ``Telonnsor`` relonprelonselonnting thelon RCelon.
+    updatelon_op:
+      A updatelon opelonration uselond to accumulatelon data into this melontric.
 
-  Note: Must have at least 1 positive and 1 negative sample accumulated,
-        or NRCE will come out as NaN.
+  Notelon: Must havelon at lelonast 1 positivelon and 1 nelongativelon samplelon accumulatelond,
+        or NRCelon will comelon out as NaN.
   """
-  with tf.variable_scope(name, "lolly_nrce", (labels, predictions, weights)):
-    labels = tf.to_float(labels, name="label_to_float")
-    predictions = tf.to_float(predictions, name="predictions_to_float")
+  with tf.variablelon_scopelon(namelon, "lolly_nrcelon", (labelonls, prelondictions, welonights)):
+    labelonls = tf.to_float(labelonls, namelon="labelonl_to_float")
+    prelondictions = tf.to_float(prelondictions, namelon="prelondictions_to_float")
 
-    if weights is None:
-      weights = tf.ones(shape=tf.shape(labels), dtype=tf.float32, name="default_weight")
-    else:
-      weights = tf.to_float(weights, name="weight_to_float")
+    if welonights is Nonelon:
+      welonights = tf.onelons(shapelon=tf.shapelon(labelonls), dtypelon=tf.float32, namelon="delonfault_welonight")
+    elonlselon:
+      welonights = tf.to_float(welonights, namelon="welonight_to_float")
 
-    positive_weights = tf.multiply(labels, weights, name="positive_weights")
+    positivelon_welonights = tf.multiply(labelonls, welonights, namelon="positivelon_welonights")
 
-    # clamp predictions to keep log(p) stable
-    clip_predictions = tf.clip_by_value(
-      predictions,
-      CLAMP_EPSILON,
-      1.0 - CLAMP_EPSILON,
-      name="clip_predictions")
-    weighted_predictions = tf.multiply(
-      predictions, weights,
-      name="weighted_predictions")
+    # clamp prelondictions to kelonelonp log(p) stablelon
+    clip_prelondictions = tf.clip_by_valuelon(
+      prelondictions,
+      CLAMP_elonPSILON,
+      1.0 - CLAMP_elonPSILON,
+      namelon="clip_prelondictions")
+    welonightelond_prelondictions = tf.multiply(
+      prelondictions, welonights,
+      namelon="welonightelond_prelondictions")
 
-    logloss = _binary_cross_entropy(pred=clip_predictions, target=labels, name="logloss")
-    weighted_logloss = tf.multiply(logloss, weights, name="weighted_logloss")
+    logloss = _binary_cross_elonntropy(prelond=clip_prelondictions, targelont=labelonls, namelon="logloss")
+    welonightelond_logloss = tf.multiply(logloss, welonights, namelon="welonightelond_logloss")
 
-    negatives = tf.subtract(
-      tf.ones(shape=tf.shape(labels), dtype=tf.float32),
-      labels,
-      name="negatives")
-    negative_predictions = tf.multiply(
-      predictions,
-      negatives,
-      name="negative_predictions")
-    weighted_negative_predictions = tf.multiply(
-      negative_predictions, weights,
-      name="weighted_negative_predictions")
-    negative_squared_predictions = tf.multiply(
-      negative_predictions,
-      negative_predictions,
-      name="negative_squared_predictions")
-    weighted_negative_squared_predictions = tf.multiply(
-      negative_squared_predictions, weights,
-      name="weighted_negative_squared_predictions")
-    negative_cubed_predictions = tf.multiply(
-      negative_squared_predictions,
-      negative_predictions,
-      name="negative_cubed_predictions")
-    weighted_negative_cubed_predictions = tf.multiply(
-      negative_cubed_predictions, weights,
-      name="weighted_negative_cubed_predictions")
-    negative_quartic_predictions = tf.multiply(
-      negative_cubed_predictions,
-      negative_predictions,
-      name="negative_quartic_predictions")
-    weighted_negative_quartic_predictions = tf.multiply(
-      negative_quartic_predictions, weights,
-      name="weighted_negative_quartic_predictions")
-    negative_quintic_predictions = tf.multiply(
-      negative_quartic_predictions,
-      negative_predictions,
-      name="negative_quintic_predictions")
-    weighted_negative_quintic_predictions = tf.multiply(
-      negative_quintic_predictions, weights,
-      name="weighted_negative_quintic_predictions")
+    nelongativelons = tf.subtract(
+      tf.onelons(shapelon=tf.shapelon(labelonls), dtypelon=tf.float32),
+      labelonls,
+      namelon="nelongativelons")
+    nelongativelon_prelondictions = tf.multiply(
+      prelondictions,
+      nelongativelons,
+      namelon="nelongativelon_prelondictions")
+    welonightelond_nelongativelon_prelondictions = tf.multiply(
+      nelongativelon_prelondictions, welonights,
+      namelon="welonightelond_nelongativelon_prelondictions")
+    nelongativelon_squarelond_prelondictions = tf.multiply(
+      nelongativelon_prelondictions,
+      nelongativelon_prelondictions,
+      namelon="nelongativelon_squarelond_prelondictions")
+    welonightelond_nelongativelon_squarelond_prelondictions = tf.multiply(
+      nelongativelon_squarelond_prelondictions, welonights,
+      namelon="welonightelond_nelongativelon_squarelond_prelondictions")
+    nelongativelon_cubelond_prelondictions = tf.multiply(
+      nelongativelon_squarelond_prelondictions,
+      nelongativelon_prelondictions,
+      namelon="nelongativelon_cubelond_prelondictions")
+    welonightelond_nelongativelon_cubelond_prelondictions = tf.multiply(
+      nelongativelon_cubelond_prelondictions, welonights,
+      namelon="welonightelond_nelongativelon_cubelond_prelondictions")
+    nelongativelon_quartic_prelondictions = tf.multiply(
+      nelongativelon_cubelond_prelondictions,
+      nelongativelon_prelondictions,
+      namelon="nelongativelon_quartic_prelondictions")
+    welonightelond_nelongativelon_quartic_prelondictions = tf.multiply(
+      nelongativelon_quartic_prelondictions, welonights,
+      namelon="welonightelond_nelongativelon_quartic_prelondictions")
+    nelongativelon_quintic_prelondictions = tf.multiply(
+      nelongativelon_quartic_prelondictions,
+      nelongativelon_prelondictions,
+      namelon="nelongativelon_quintic_prelondictions")
+    welonightelond_nelongativelon_quintic_prelondictions = tf.multiply(
+      nelongativelon_quintic_prelondictions, welonights,
+      namelon="welonightelond_nelongativelon_quintic_prelondictions")
 
-    # Tracked stats
-    total_positive = _metric_variable(name="total_positive", shape=[], dtype=tf.float32)
-    total_weight = _metric_variable(name="total_weight", shape=[], dtype=tf.float32)
+    # Trackelond stats
+    total_positivelon = _melontric_variablelon(namelon="total_positivelon", shapelon=[], dtypelon=tf.float32)
+    total_welonight = _melontric_variablelon(namelon="total_welonight", shapelon=[], dtypelon=tf.float32)
 
-    total_prediction = _metric_variable(name="total_prediction", shape=[], dtype=tf.float32)
+    total_prelondiction = _melontric_variablelon(namelon="total_prelondiction", shapelon=[], dtypelon=tf.float32)
 
-    total_negative_prediction = _metric_variable(
-      name="total_negative_prediction",
-      shape=[], dtype=tf.float32)
-    total_negative_squared_prediction = _metric_variable(
-      name="total_negative_squared_prediction",
-      shape=[], dtype=tf.float32)
-    total_negative_cubed_prediction = _metric_variable(
-      name="total_negative_cubed_prediction",
-      shape=[], dtype=tf.float32)
-    total_negative_quartic_prediction = _metric_variable(
-      name="total_negative_quartic_prediction",
-      shape=[], dtype=tf.float32)
-    total_negative_quintic_prediction = _metric_variable(
-      name="total_negative_quintic_prediction",
-      shape=[], dtype=tf.float32)
+    total_nelongativelon_prelondiction = _melontric_variablelon(
+      namelon="total_nelongativelon_prelondiction",
+      shapelon=[], dtypelon=tf.float32)
+    total_nelongativelon_squarelond_prelondiction = _melontric_variablelon(
+      namelon="total_nelongativelon_squarelond_prelondiction",
+      shapelon=[], dtypelon=tf.float32)
+    total_nelongativelon_cubelond_prelondiction = _melontric_variablelon(
+      namelon="total_nelongativelon_cubelond_prelondiction",
+      shapelon=[], dtypelon=tf.float32)
+    total_nelongativelon_quartic_prelondiction = _melontric_variablelon(
+      namelon="total_nelongativelon_quartic_prelondiction",
+      shapelon=[], dtypelon=tf.float32)
+    total_nelongativelon_quintic_prelondiction = _melontric_variablelon(
+      namelon="total_nelongativelon_quintic_prelondiction",
+      shapelon=[], dtypelon=tf.float32)
 
-    total_loss = _metric_variable(name="total_loss", shape=[], dtype=tf.float32)
+    total_loss = _melontric_variablelon(namelon="total_loss", shapelon=[], dtypelon=tf.float32)
 
-    # Update tracked stats
-    update_total_positive = tf.assign_add(
-      total_positive, tf.reduce_sum(positive_weights), name="total_positive_update")
-    update_total_weight = tf.assign_add(
-      total_weight, tf.reduce_sum(weights), name="total_weight_update")
-    update_total_prediction = tf.assign_add(
-      total_prediction, tf.reduce_sum(weighted_predictions), name="total_prediction_update")
-    update_total_negative_prediction = tf.assign_add(
-      total_negative_prediction,
-      tf.reduce_sum(weighted_negative_predictions), name="total_negative_prediction_update")
-    update_total_negative_squared_prediction = tf.assign_add(
-      total_negative_squared_prediction,
-      tf.reduce_sum(weighted_negative_squared_predictions),
-      name="total_negative_squared_prediction_update")
-    update_total_negative_cubed_prediction = tf.assign_add(
-      total_negative_cubed_prediction,
-      tf.reduce_sum(weighted_negative_cubed_predictions),
-      name="total_negative_cubed_prediction_update")
-    update_total_negative_quartic_prediction = tf.assign_add(
-      total_negative_quartic_prediction,
-      tf.reduce_sum(weighted_negative_quartic_predictions),
-      name="total_negative_quartic_prediction_update")
-    update_total_negative_quintic_prediction = tf.assign_add(
-      total_negative_quintic_prediction,
-      tf.reduce_sum(weighted_negative_quintic_predictions),
-      name="total_negative_quintic_prediction_update")
-    update_total_loss = tf.assign_add(
-      total_loss, tf.reduce_sum(weighted_logloss), name="total_loss_update")
+    # Updatelon trackelond stats
+    updatelon_total_positivelon = tf.assign_add(
+      total_positivelon, tf.relonducelon_sum(positivelon_welonights), namelon="total_positivelon_updatelon")
+    updatelon_total_welonight = tf.assign_add(
+      total_welonight, tf.relonducelon_sum(welonights), namelon="total_welonight_updatelon")
+    updatelon_total_prelondiction = tf.assign_add(
+      total_prelondiction, tf.relonducelon_sum(welonightelond_prelondictions), namelon="total_prelondiction_updatelon")
+    updatelon_total_nelongativelon_prelondiction = tf.assign_add(
+      total_nelongativelon_prelondiction,
+      tf.relonducelon_sum(welonightelond_nelongativelon_prelondictions), namelon="total_nelongativelon_prelondiction_updatelon")
+    updatelon_total_nelongativelon_squarelond_prelondiction = tf.assign_add(
+      total_nelongativelon_squarelond_prelondiction,
+      tf.relonducelon_sum(welonightelond_nelongativelon_squarelond_prelondictions),
+      namelon="total_nelongativelon_squarelond_prelondiction_updatelon")
+    updatelon_total_nelongativelon_cubelond_prelondiction = tf.assign_add(
+      total_nelongativelon_cubelond_prelondiction,
+      tf.relonducelon_sum(welonightelond_nelongativelon_cubelond_prelondictions),
+      namelon="total_nelongativelon_cubelond_prelondiction_updatelon")
+    updatelon_total_nelongativelon_quartic_prelondiction = tf.assign_add(
+      total_nelongativelon_quartic_prelondiction,
+      tf.relonducelon_sum(welonightelond_nelongativelon_quartic_prelondictions),
+      namelon="total_nelongativelon_quartic_prelondiction_updatelon")
+    updatelon_total_nelongativelon_quintic_prelondiction = tf.assign_add(
+      total_nelongativelon_quintic_prelondiction,
+      tf.relonducelon_sum(welonightelond_nelongativelon_quintic_prelondictions),
+      namelon="total_nelongativelon_quintic_prelondiction_updatelon")
+    updatelon_total_loss = tf.assign_add(
+      total_loss, tf.relonducelon_sum(welonightelond_logloss), namelon="total_loss_updatelon")
 
-    # metric value retrieval subgraph
+    # melontric valuelon relontrielonval subgraph
     # ctr of this batch
-    positive_rate = tf.truediv(total_positive, total_weight, name="positive_rate")
-    # Note: we don't have to keep running averages for computing baseline CE. Because the prediction
-    # is constant for every sample, we can simplify it to the formula below.
-    baseline_loss = _binary_cross_entropy(
-      pred=positive_rate,
-      target=positive_rate,
-      name="baseline_loss")
+    positivelon_ratelon = tf.truelondiv(total_positivelon, total_welonight, namelon="positivelon_ratelon")
+    # Notelon: welon don't havelon to kelonelonp running avelonragelons for computing baselonlinelon Celon. Beloncauselon thelon prelondiction
+    # is constant for elonvelonry samplelon, welon can simplify it to thelon formula belonlow.
+    baselonlinelon_loss = _binary_cross_elonntropy(
+      prelond=positivelon_ratelon,
+      targelont=positivelon_ratelon,
+      namelon="baselonlinelon_loss")
 
-    # normalizing ratio for nrce
-    # calculated using total ctr and pctr so the last batch has the dataset ctr and pctr
-    normalizer = tf.truediv(total_positive, total_prediction, name="normalizer")
-    # Taylor expansion to calculate nl = - sum(y * log(p * a) + (1 - y) * log (1 - p * a))
+    # normalizing ratio for nrcelon
+    # calculatelond using total ctr and pctr so thelon last batch has thelon dataselont ctr and pctr
+    normalizelonr = tf.truelondiv(total_positivelon, total_prelondiction, namelon="normalizelonr")
+    # Taylor elonxpansion to calculatelon nl = - sum(y * log(p * a) + (1 - y) * log (1 - p * a))
     # log(1 - p * a) = -sum_{i=1~+inf}(a^i * x^i / i)
     # log(1 - p) = -sum_{i=1~+inf}(a^i * x^i / i)
-    normalized_loss = (
+    normalizelond_loss = (
       total_loss -
-      total_positive * tf.log(normalizer) +
-      total_negative_prediction * (normalizer - 1) +
-      total_negative_squared_prediction * (normalizer * normalizer - 1) / 2 +
-      total_negative_cubed_prediction *
-      (normalizer * normalizer * normalizer - 1) / 3 +
-      total_negative_quartic_prediction *
-      (normalizer * normalizer * normalizer * normalizer - 1) / 4 +
-      total_negative_quintic_prediction *
-      (normalizer * normalizer * normalizer * normalizer * normalizer - 1) / 5)
+      total_positivelon * tf.log(normalizelonr) +
+      total_nelongativelon_prelondiction * (normalizelonr - 1) +
+      total_nelongativelon_squarelond_prelondiction * (normalizelonr * normalizelonr - 1) / 2 +
+      total_nelongativelon_cubelond_prelondiction *
+      (normalizelonr * normalizelonr * normalizelonr - 1) / 3 +
+      total_nelongativelon_quartic_prelondiction *
+      (normalizelonr * normalizelonr * normalizelonr * normalizelonr - 1) / 4 +
+      total_nelongativelon_quintic_prelondiction *
+      (normalizelonr * normalizelonr * normalizelonr * normalizelonr * normalizelonr - 1) / 5)
 
-    # average normalized loss
-    avg_loss = tf.truediv(normalized_loss, total_weight, name="avg_loss")
+    # avelonragelon normalizelond loss
+    avg_loss = tf.truelondiv(normalizelond_loss, total_welonight, namelon="avg_loss")
 
-    nrce_t = tf.multiply(
-      1.0 - tf.truediv(avg_loss, baseline_loss),
+    nrcelon_t = tf.multiply(
+      1.0 - tf.truelondiv(avg_loss, baselonlinelon_loss),
       100,
-      name="lolly_nrce")
+      namelon="lolly_nrcelon")
 
-    # metric update subgraph
-    update_positive_rate = tf.truediv(
-      update_total_positive,
-      update_total_weight,
-      name="update_positive_rate")
-    # Note: we don't have to keep running averages for computing baseline CE. Because the prediction
-    # is constant for every sample, we can simplify it to the formula below.
-    update_baseline_loss = _binary_cross_entropy(
-      pred=update_positive_rate,
-      target=update_positive_rate,
-      name="update_baseline_loss")
+    # melontric updatelon subgraph
+    updatelon_positivelon_ratelon = tf.truelondiv(
+      updatelon_total_positivelon,
+      updatelon_total_welonight,
+      namelon="updatelon_positivelon_ratelon")
+    # Notelon: welon don't havelon to kelonelonp running avelonragelons for computing baselonlinelon Celon. Beloncauselon thelon prelondiction
+    # is constant for elonvelonry samplelon, welon can simplify it to thelon formula belonlow.
+    updatelon_baselonlinelon_loss = _binary_cross_elonntropy(
+      prelond=updatelon_positivelon_ratelon,
+      targelont=updatelon_positivelon_ratelon,
+      namelon="updatelon_baselonlinelon_loss")
 
-    update_normalizer = tf.truediv(
-      update_total_positive,
-      update_total_prediction,
-      name="update_normalizer")
-    update_normalized_loss = (
-      update_total_loss -
-      update_total_positive * tf.log(update_normalizer) +
-      update_total_negative_prediction *
-      (update_normalizer - 1) +
-      update_total_negative_squared_prediction *
-      (update_normalizer * update_normalizer - 1) / 2 +
-      update_total_negative_cubed_prediction *
-      (update_normalizer * update_normalizer * update_normalizer - 1) / 3 +
-      update_total_negative_quartic_prediction *
-      (update_normalizer * update_normalizer * update_normalizer *
-       update_normalizer - 1) / 4 +
-      update_total_negative_quintic_prediction *
-      (update_normalizer * update_normalizer * update_normalizer *
-       update_normalizer * update_normalizer - 1) / 5)
+    updatelon_normalizelonr = tf.truelondiv(
+      updatelon_total_positivelon,
+      updatelon_total_prelondiction,
+      namelon="updatelon_normalizelonr")
+    updatelon_normalizelond_loss = (
+      updatelon_total_loss -
+      updatelon_total_positivelon * tf.log(updatelon_normalizelonr) +
+      updatelon_total_nelongativelon_prelondiction *
+      (updatelon_normalizelonr - 1) +
+      updatelon_total_nelongativelon_squarelond_prelondiction *
+      (updatelon_normalizelonr * updatelon_normalizelonr - 1) / 2 +
+      updatelon_total_nelongativelon_cubelond_prelondiction *
+      (updatelon_normalizelonr * updatelon_normalizelonr * updatelon_normalizelonr - 1) / 3 +
+      updatelon_total_nelongativelon_quartic_prelondiction *
+      (updatelon_normalizelonr * updatelon_normalizelonr * updatelon_normalizelonr *
+       updatelon_normalizelonr - 1) / 4 +
+      updatelon_total_nelongativelon_quintic_prelondiction *
+      (updatelon_normalizelonr * updatelon_normalizelonr * updatelon_normalizelonr *
+       updatelon_normalizelonr * updatelon_normalizelonr - 1) / 5)
 
-    update_avg_loss = tf.truediv(
-      update_normalized_loss,
-      update_total_weight,
-      name="update_avg_loss")
+    updatelon_avg_loss = tf.truelondiv(
+      updatelon_normalizelond_loss,
+      updatelon_total_welonight,
+      namelon="updatelon_avg_loss")
 
-    update_op = tf.multiply(
-      1.0 - tf.truediv(update_avg_loss, update_baseline_loss),
+    updatelon_op = tf.multiply(
+      1.0 - tf.truelondiv(updatelon_avg_loss, updatelon_baselonlinelon_loss),
       100,
-      name="update_op")
+      namelon="updatelon_op")
 
-    if metrics_collections:
-      tf.add_to_collections(metrics_collections, nrce_t)
+    if melontrics_collelonctions:
+      tf.add_to_collelonctions(melontrics_collelonctions, nrcelon_t)
 
-    if updates_collections:
-      tf.add_to_collections(updates_collections, update_op)
+    if updatelons_collelonctions:
+      tf.add_to_collelonctions(updatelons_collelonctions, updatelon_op)
 
-    return nrce_t, update_op
-
-
-def _binary_cross_entropy(pred, target, name):
-  return - tf.add(
-    target * tf.log(pred),
-    (1.0 - target) * tf.log(1.0 - pred),
-    name=name)
+    relonturn nrcelon_t, updatelon_op
 
 
-# Copied from metrics_impl.py with minor modifications.
-# https://github.com/tensorflow/tensorflow/blob/v1.5.0/tensorflow/python/ops/metrics_impl.py#L39
-def _metric_variable(shape, dtype, validate_shape=True, name=None):
-  """Create variable in `GraphKeys.(LOCAL|METRIC_VARIABLES`) collections."""
+delonf _binary_cross_elonntropy(prelond, targelont, namelon):
+  relonturn - tf.add(
+    targelont * tf.log(prelond),
+    (1.0 - targelont) * tf.log(1.0 - prelond),
+    namelon=namelon)
 
-  return tf.Variable(
-    lambda: tf.zeros(shape, dtype),
-    trainable=False,
-    collections=[tf.GraphKeys.LOCAL_VARIABLES, tf.GraphKeys.METRIC_VARIABLES],
-    validate_shape=validate_shape,
-    name=name)
 
-PERCENTILES = np.linspace(0, 1, 101, dtype=np.float32)
+# Copielond from melontrics_impl.py with minor modifications.
+# https://github.com/telonnsorflow/telonnsorflow/blob/v1.5.0/telonnsorflow/python/ops/melontrics_impl.py#L39
+delonf _melontric_variablelon(shapelon, dtypelon, validatelon_shapelon=Truelon, namelon=Nonelon):
+  """Crelonatelon variablelon in `GraphKelonys.(LOCAL|MelonTRIC_VARIABLelonS`) collelonctions."""
 
-# metric_name: (metric, requires thresholded output)
-SUPPORTED_BINARY_CLASS_METRICS = {
-  # TWML metrics
-  'total_weight': (total_weight_metric, False),
-  'num_samples': (num_samples_metric, False),
-  'rce': (rce, False),
-  'rce_std_err': (partial(metric_std_err, transform=rce_transform, metric=rce_metric, name='rce_std_err'), False),
-  'nrce': (partial(rce, normalize=True), False),
-  'lolly_nrce': (lolly_nrce, False),
-  'arce': (partial(rce, normalize=True, arce=True), False),
-  'arce_original': (partial(rce, normalize=True, arce=True, up_weight=False), False),
-  # CTR measures positive sample ratio. This terminology is inherited from Ads.
-  'ctr': (ctr, False),
-  # predicted CTR measures predicted positive ratio.
-  'predicted_ctr': (predicted_ctr, False),
-  'pred_std_dev': (prediction_std_dev, False),
-  # thresholded metrics
-  'accuracy': (tf.metrics.accuracy, True),
-  'precision': (tf.metrics.precision, True),
-  'recall': (tf.metrics.recall, True),
+  relonturn tf.Variablelon(
+    lambda: tf.zelonros(shapelon, dtypelon),
+    trainablelon=Falselon,
+    collelonctions=[tf.GraphKelonys.LOCAL_VARIABLelonS, tf.GraphKelonys.MelonTRIC_VARIABLelonS],
+    validatelon_shapelon=validatelon_shapelon,
+    namelon=namelon)
 
-  'false_positives': (tf.metrics.false_positives, True),
-  'false_negatives': (tf.metrics.false_negatives, True),
-  'true_positives': (tf.metrics.true_positives, True),
-  'true_negatives': (tf.metrics.true_negatives, True),
+PelonRCelonNTILelonS = np.linspacelon(0, 1, 101, dtypelon=np.float32)
 
-  'precision_at_percentiles': (partial(tf.metrics.precision_at_thresholds, thresholds=PERCENTILES), False),
-  'recall_at_percentiles': (partial(tf.metrics.recall_at_thresholds, thresholds=PERCENTILES), False),
-  'false_positives_at_percentiles': (partial(tf.metrics.false_positives_at_thresholds, thresholds=PERCENTILES), False),
-  'false_negatives_at_percentiles': (partial(tf.metrics.false_negatives_at_thresholds, thresholds=PERCENTILES), False),
-  'true_positives_at_percentiles': (partial(tf.metrics.true_positives_at_thresholds, thresholds=PERCENTILES), False),
-  'true_negatives_at_percentiles': (partial(tf.metrics.true_negatives_at_thresholds, thresholds=PERCENTILES), False),
+# melontric_namelon: (melontric, relonquirelons threlonsholdelond output)
+SUPPORTelonD_BINARY_CLASS_MelonTRICS = {
+  # TWML melontrics
+  'total_welonight': (total_welonight_melontric, Falselon),
+  'num_samplelons': (num_samplelons_melontric, Falselon),
+  'rcelon': (rcelon, Falselon),
+  'rcelon_std_elonrr': (partial(melontric_std_elonrr, transform=rcelon_transform, melontric=rcelon_melontric, namelon='rcelon_std_elonrr'), Falselon),
+  'nrcelon': (partial(rcelon, normalizelon=Truelon), Falselon),
+  'lolly_nrcelon': (lolly_nrcelon, Falselon),
+  'arcelon': (partial(rcelon, normalizelon=Truelon, arcelon=Truelon), Falselon),
+  'arcelon_original': (partial(rcelon, normalizelon=Truelon, arcelon=Truelon, up_welonight=Falselon), Falselon),
+  # CTR melonasurelons positivelon samplelon ratio. This telonrminology is inhelonritelond from Ads.
+  'ctr': (ctr, Falselon),
+  # prelondictelond CTR melonasurelons prelondictelond positivelon ratio.
+  'prelondictelond_ctr': (prelondictelond_ctr, Falselon),
+  'prelond_std_delonv': (prelondiction_std_delonv, Falselon),
+  # threlonsholdelond melontrics
+  'accuracy': (tf.melontrics.accuracy, Truelon),
+  'preloncision': (tf.melontrics.preloncision, Truelon),
+  'reloncall': (tf.melontrics.reloncall, Truelon),
 
-  # tensorflow metrics
-  'roc_auc': (partial(tf.metrics.auc, curve='ROC',
-    summation_method='careful_interpolation'), False),
-  'pr_auc': (partial(tf.metrics.auc, curve='PR',
-    summation_method='careful_interpolation'), False),
+  'falselon_positivelons': (tf.melontrics.falselon_positivelons, Truelon),
+  'falselon_nelongativelons': (tf.melontrics.falselon_nelongativelons, Truelon),
+  'truelon_positivelons': (tf.melontrics.truelon_positivelons, Truelon),
+  'truelon_nelongativelons': (tf.melontrics.truelon_nelongativelons, Truelon),
 
-  # tensorboard curves
-  'pr_curve': (tb.summary.v1.pr_curve_streaming_op, False),
+  'preloncision_at_pelonrcelonntilelons': (partial(tf.melontrics.preloncision_at_threlonsholds, threlonsholds=PelonRCelonNTILelonS), Falselon),
+  'reloncall_at_pelonrcelonntilelons': (partial(tf.melontrics.reloncall_at_threlonsholds, threlonsholds=PelonRCelonNTILelonS), Falselon),
+  'falselon_positivelons_at_pelonrcelonntilelons': (partial(tf.melontrics.falselon_positivelons_at_threlonsholds, threlonsholds=PelonRCelonNTILelonS), Falselon),
+  'falselon_nelongativelons_at_pelonrcelonntilelons': (partial(tf.melontrics.falselon_nelongativelons_at_threlonsholds, threlonsholds=PelonRCelonNTILelonS), Falselon),
+  'truelon_positivelons_at_pelonrcelonntilelons': (partial(tf.melontrics.truelon_positivelons_at_threlonsholds, threlonsholds=PelonRCelonNTILelonS), Falselon),
+  'truelon_nelongativelons_at_pelonrcelonntilelons': (partial(tf.melontrics.truelon_nelongativelons_at_threlonsholds, threlonsholds=PelonRCelonNTILelonS), Falselon),
 
-  # deprecated metrics
-  'deprecated_nrce': (partial(rce, normalize=True, deprecated_rce=True), False),
-  'deprecated_arce': (partial(rce, normalize=True, arce=True, deprecated_rce=True), False),
-  'deprecated_arce_original': (partial(rce, normalize=True, arce=True,
-                                     up_weight=False, deprecated_rce=True), False)
+  # telonnsorflow melontrics
+  'roc_auc': (partial(tf.melontrics.auc, curvelon='ROC',
+    summation_melonthod='carelonful_intelonrpolation'), Falselon),
+  'pr_auc': (partial(tf.melontrics.auc, curvelon='PR',
+    summation_melonthod='carelonful_intelonrpolation'), Falselon),
+
+  # telonnsorboard curvelons
+  'pr_curvelon': (tb.summary.v1.pr_curvelon_strelonaming_op, Falselon),
+
+  # delonpreloncatelond melontrics
+  'delonpreloncatelond_nrcelon': (partial(rcelon, normalizelon=Truelon, delonpreloncatelond_rcelon=Truelon), Falselon),
+  'delonpreloncatelond_arcelon': (partial(rcelon, normalizelon=Truelon, arcelon=Truelon, delonpreloncatelond_rcelon=Truelon), Falselon),
+  'delonpreloncatelond_arcelon_original': (partial(rcelon, normalizelon=Truelon, arcelon=Truelon,
+                                     up_welonight=Falselon, delonpreloncatelond_rcelon=Truelon), Falselon)
 }
 
-# default metrics provided by get_binary_class_metric_fn
-DEFAULT_BINARY_CLASS_METRICS = ['total_weight', 'num_samples', 'rce', 'rce_std_err',
-                                'nrce', 'arce', 'ctr', 'predicted_ctr', 'pred_std_dev',
-                                'accuracy', 'precision', 'recall', 'roc_auc', 'pr_auc']
+# delonfault melontrics providelond by gelont_binary_class_melontric_fn
+DelonFAULT_BINARY_CLASS_MelonTRICS = ['total_welonight', 'num_samplelons', 'rcelon', 'rcelon_std_elonrr',
+                                'nrcelon', 'arcelon', 'ctr', 'prelondictelond_ctr', 'prelond_std_delonv',
+                                'accuracy', 'preloncision', 'reloncall', 'roc_auc', 'pr_auc']
 
 
-def get_binary_class_metric_fn(metrics=None):
+delonf gelont_binary_class_melontric_fn(melontrics=Nonelon):
   """
-  Returns a function having signature:
+  Relonturns a function having signaturelon:
 
-  .. code-block:: python
+  .. codelon-block:: python
 
-    def get_eval_metric_ops(graph_output, labels, weights):
+    delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
       ...
-      return eval_metric_ops
+      relonturn elonval_melontric_ops
 
-  where the returned eval_metric_ops is a dict of common evaluation metric
-  Ops for binary classification. See `tf.estimator.EstimatorSpec
-  <https://www.tensorflow.org/api_docs/python/tf/estimator/EstimatorSpec>`_
-  for a description of eval_metric_ops. The graph_output is a the result
-  dict returned by build_graph. Labels and weights are tf.Tensors.
+  whelonrelon thelon relonturnelond elonval_melontric_ops is a dict of common elonvaluation melontric
+  Ops for binary classification. Selonelon `tf.elonstimator.elonstimatorSpelonc
+  <https://www.telonnsorflow.org/api_docs/python/tf/elonstimator/elonstimatorSpelonc>`_
+  for a delonscription of elonval_melontric_ops. Thelon graph_output is a thelon relonsult
+  dict relonturnelond by build_graph. Labelonls and welonights arelon tf.Telonnsors.
 
-  The following graph_output keys are recognized:
+  Thelon following graph_output kelonys arelon reloncognizelond:
     output:
-      the raw predictions between 0 and 1. Required.
-    threshold:
-      A value between 0 and 1 used to threshold the output into a hard_output.
-      Defaults to 0.5 when threshold and hard_output are missing.
-      Either threshold or hard_output can be provided, but not both.
+      thelon raw prelondictions belontwelonelonn 0 and 1. Relonquirelond.
+    threlonshold:
+      A valuelon belontwelonelonn 0 and 1 uselond to threlonshold thelon output into a hard_output.
+      Delonfaults to 0.5 whelonn threlonshold and hard_output arelon missing.
+      elonithelonr threlonshold or hard_output can belon providelond, but not both.
     hard_output:
-      A thresholded output. Either threshold or hard_output can be provided, but not both.
+      A threlonsholdelond output. elonithelonr threlonshold or hard_output can belon providelond, but not both.
 
   Args:
-    metrics (list of String):
-      a list of metrics of interest. E.g. ['ctr', 'accuracy', 'rce']
-      Element in the list can be a string from following supported metrics, or can be a tuple
-      with three items: metric name, metric function, bool for thresholded output.
+    melontrics (list of String):
+      a list of melontrics of intelonrelonst. elon.g. ['ctr', 'accuracy', 'rcelon']
+      elonlelonmelonnt in thelon list can belon a string from following supportelond melontrics, or can belon a tuplelon
+      with threlonelon itelonms: melontric namelon, melontric function, bool for threlonsholdelond output.
 
-      These metrics are evaluated and reported to tensorboard *during the eval phases only*.
-      Supported metrics:
+      Thelonselon melontrics arelon elonvaluatelond and relonportelond to telonnsorboard *during thelon elonval phaselons only*.
+      Supportelond melontrics:
 
-      - ctr (same as positive sample ratio.)
-      - rce (cross entropy loss compared to the baseline model of always predicting ctr)
-      - nrce (normalized rce, do not use this one if you do not understand what it is)
-      - `arce <http://go/arce>`_ (a more recent proposed improvment over NRCE)
-      - arce_original
-      - lolly_nrce (NRCE as it is computed in Lolly, with Taylor expansion)
+      - ctr (samelon as positivelon samplelon ratio.)
+      - rcelon (cross elonntropy loss comparelond to thelon baselonlinelon modelonl of always prelondicting ctr)
+      - nrcelon (normalizelond rcelon, do not uselon this onelon if you do not undelonrstand what it is)
+      - `arcelon <http://go/arcelon>`_ (a morelon reloncelonnt proposelond improvmelonnt ovelonr NRCelon)
+      - arcelon_original
+      - lolly_nrcelon (NRCelon as it is computelond in Lolly, with Taylor elonxpansion)
       - pr_auc
       - roc_auc
-      - accuracy (percentage of predictions that are correct)
-      - precision (true positives) / (true positives + false positives)
-      - recall (true positives) / (true positives + false negatives)
-      - pr_curve (precision-recall curve)
-      - deprecated_arce (ARCE as it was calculated before a stability fix)
-      - deprecated_nrce (NRCE as it was calculated before a stability fix)
+      - accuracy (pelonrcelonntagelon of prelondictions that arelon correlonct)
+      - preloncision (truelon positivelons) / (truelon positivelons + falselon positivelons)
+      - reloncall (truelon positivelons) / (truelon positivelons + falselon nelongativelons)
+      - pr_curvelon (preloncision-reloncall curvelon)
+      - delonpreloncatelond_arcelon (ARCelon as it was calculatelond belonforelon a stability fix)
+      - delonpreloncatelond_nrcelon (NRCelon as it was calculatelond belonforelon a stability fix)
 
-      Example of metrics list with mixture of string and tuple:
-      metrics = [
-        'rce','nrce',
-        'roc_auc',  # default roc_auc metric
+      elonxamplelon of melontrics list with mixturelon of string and tuplelon:
+      melontrics = [
+        'rcelon','nrcelon',
+        'roc_auc',  # delonfault roc_auc melontric
         (
-          'roc_auc_500',  # give this metric a name
-          partial(tf.metrics.auc, curve='ROC', summation_method='careful_interpolation', num_thresholds=500),  # the metric fn
-          False,  # whether the metric requires thresholded output
+          'roc_auc_500',  # givelon this melontric a namelon
+          partial(tf.melontrics.auc, curvelon='ROC', summation_melonthod='carelonful_intelonrpolation', num_threlonsholds=500),  # thelon melontric fn
+          Falselon,  # whelonthelonr thelon melontric relonquirelons threlonsholdelond output
         )]
 
-      NOTE: When predicting rare events roc_auc can be underestimated. Increasing num_threshold
-      can reduce the underestimation. See go/roc-auc-pitfall for more details.
+      NOTelon: Whelonn prelondicting rarelon elonvelonnts roc_auc can belon undelonrelonstimatelond. Increlonasing num_threlonshold
+      can relonducelon thelon undelonrelonstimation. Selonelon go/roc-auc-pitfall for morelon delontails.
 
-      NOTE: accuracy / precision / recall apply to binary classification problems only.
-      I.e. a prediction is only considered correct if it matches the label. E.g. if the label
-      is 1.0, and the prediction is 0.99, it does not get credit.  If you want to use
-      precision / recall / accuracy metrics with soft predictions, you'll need to threshold
-      your predictions into hard 0/1 labels.
+      NOTelon: accuracy / preloncision / reloncall apply to binary classification problelonms only.
+      I.elon. a prelondiction is only considelonrelond correlonct if it matchelons thelon labelonl. elon.g. if thelon labelonl
+      is 1.0, and thelon prelondiction is 0.99, it doelons not gelont crelondit.  If you want to uselon
+      preloncision / reloncall / accuracy melontrics with soft prelondictions, you'll nelonelond to threlonshold
+      your prelondictions into hard 0/1 labelonls.
 
-      When metrics is None (the default), it defaults to:
-      [rce, nrce, arce, ctr, predicted_ctr, accuracy, precision, recall, prauc, roc_auc],
+      Whelonn melontrics is Nonelon (thelon delonfault), it delonfaults to:
+      [rcelon, nrcelon, arcelon, ctr, prelondictelond_ctr, accuracy, preloncision, reloncall, prauc, roc_auc],
   """
-  # pylint: disable=dict-keys-not-iterating
-  if metrics is None:
-    # remove expensive metrics by default for faster eval
-    metrics = list(DEFAULT_BINARY_CLASS_METRICS)
+  # pylint: disablelon=dict-kelonys-not-itelonrating
+  if melontrics is Nonelon:
+    # relonmovelon elonxpelonnsivelon melontrics by delonfault for fastelonr elonval
+    melontrics = list(DelonFAULT_BINARY_CLASS_MelonTRICS)
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
     """
     graph_output:
-      dict that is returned by build_graph given input features.
-    labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+      dict that is relonturnelond by build_graph givelonn input felonaturelons.
+    labelonls:
+      targelont labelonls associatelond to batch.
+    welonights:
+      welonights of thelon samplelons..
     """
 
-    eval_metric_ops = OrderedDict()
+    elonval_melontric_ops = OrdelonrelondDict()
 
-    preds = graph_output['output']
+    prelonds = graph_output['output']
 
-    threshold = graph_output['threshold'] if 'threshold' in graph_output else 0.5
+    threlonshold = graph_output['threlonshold'] if 'threlonshold' in graph_output elonlselon 0.5
 
-    hard_preds = graph_output.get('hard_output')
-    if hard_preds is None:
-      hard_preds = tf.greater_equal(preds, threshold)
+    hard_prelonds = graph_output.gelont('hard_output')
+    if hard_prelonds is Nonelon:
+      hard_prelonds = tf.grelonatelonr_elonqual(prelonds, threlonshold)
 
-    # add metrics to eval_metric_ops dict
-    for metric in metrics:
-      if isinstance(metric, tuple) and len(metric) == 3:
-        metric_name, metric_factory, requires_threshold = metric
-        metric_name = metric_name.lower()
-      elif isinstance(metric, str):
-        metric_name = metric.lower()  # metric name are case insensitive.
-        metric_factory, requires_threshold = SUPPORTED_BINARY_CLASS_METRICS.get(metric_name)
-      else:
-        raise ValueError("Metric should be either string or tuple of length 3.")
+    # add melontrics to elonval_melontric_ops dict
+    for melontric in melontrics:
+      if isinstancelon(melontric, tuplelon) and lelonn(melontric) == 3:
+        melontric_namelon, melontric_factory, relonquirelons_threlonshold = melontric
+        melontric_namelon = melontric_namelon.lowelonr()
+      elonlif isinstancelon(melontric, str):
+        melontric_namelon = melontric.lowelonr()  # melontric namelon arelon caselon inselonnsitivelon.
+        melontric_factory, relonquirelons_threlonshold = SUPPORTelonD_BINARY_CLASS_MelonTRICS.gelont(melontric_namelon)
+      elonlselon:
+        raiselon Valuelonelonrror("Melontric should belon elonithelonr string or tuplelon of lelonngth 3.")
 
-      if metric_name in eval_metric_ops:
-        # avoid adding duplicate metrics.
-        continue
+      if melontric_namelon in elonval_melontric_ops:
+        # avoid adding duplicatelon melontrics.
+        continuelon
 
-      if metric_factory:
-        value_op, update_op = metric_factory(
-          labels=labels,
-          predictions=(hard_preds if requires_threshold else preds),
-          weights=weights, name=metric_name)
-        eval_metric_ops[metric_name] = (value_op, update_op)
-      else:
-        raise ValueError('Cannot find the metric named ' + metric_name)
+      if melontric_factory:
+        valuelon_op, updatelon_op = melontric_factory(
+          labelonls=labelonls,
+          prelondictions=(hard_prelonds if relonquirelons_threlonshold elonlselon prelonds),
+          welonights=welonights, namelon=melontric_namelon)
+        elonval_melontric_ops[melontric_namelon] = (valuelon_op, updatelon_op)
+      elonlselon:
+        raiselon Valuelonelonrror('Cannot find thelon melontric namelond ' + melontric_namelon)
 
-    return eval_metric_ops
+    relonturn elonval_melontric_ops
 
-  return get_eval_metric_ops
+  relonturn gelont_elonval_melontric_ops
 
 
-def get_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1):
+delonf gelont_multi_binary_class_melontric_fn(melontrics, classelons=Nonelon, class_dim=1):
   """
-  Returns a function having signature:
+  Relonturns a function having signaturelon:
 
-  .. code-block:: python
+  .. codelon-block:: python
 
-    def get_eval_metric_ops(graph_output, labels, weights):
+    delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
       ...
-      return eval_metric_ops
+      relonturn elonval_melontric_ops
 
-  where the returned eval_metric_ops is a dict of common evaluation metric
-  Ops for concatenated binary classifications. See `tf.estimator.EstimatorSpec
-  <https://www.tensorflow.org/api_docs/python/tf/estimator/EstimatorSpec>`_
-  for a description of eval_metric_ops. The graph_output is a the result
-  dict returned by build_graph. Labels and weights are tf.Tensors.
+  whelonrelon thelon relonturnelond elonval_melontric_ops is a dict of common elonvaluation melontric
+  Ops for concatelonnatelond binary classifications. Selonelon `tf.elonstimator.elonstimatorSpelonc
+  <https://www.telonnsorflow.org/api_docs/python/tf/elonstimator/elonstimatorSpelonc>`_
+  for a delonscription of elonval_melontric_ops. Thelon graph_output is a thelon relonsult
+  dict relonturnelond by build_graph. Labelonls and welonights arelon tf.Telonnsors.
 
-  In multiple binary classification problems, the
-  ``predictions`` (that is, ``graph_output['output']``)
-  are expected to have shape ``batch_size x n_classes``,
-  where ``n_classes`` is the number of binary classification.
-  Binary classification at output[i] is expected to discriminate between ``classes[i]`` (1)
-  and NOT ``classes[i]`` (0). The labels should be of the same shape as ``graph_output``
-  with binary values (0 or 1). The weights can be of size ``batch_size`` or
-  ``batch_size x n_classes``. The ``class_dim`` contain separate probabilities,
-  and need to have separate metrics.
+  In multiplelon binary classification problelonms, thelon
+  ``prelondictions`` (that is, ``graph_output['output']``)
+  arelon elonxpelonctelond to havelon shapelon ``batch_sizelon x n_classelons``,
+  whelonrelon ``n_classelons`` is thelon numbelonr of binary classification.
+  Binary classification at output[i] is elonxpelonctelond to discriminatelon belontwelonelonn ``classelons[i]`` (1)
+  and NOT ``classelons[i]`` (0). Thelon labelonls should belon of thelon samelon shapelon as ``graph_output``
+  with binary valuelons (0 or 1). Thelon welonights can belon of sizelon ``batch_sizelon`` or
+  ``batch_sizelon x n_classelons``. Thelon ``class_dim`` contain selonparatelon probabilitielons,
+  and nelonelond to havelon selonparatelon melontrics.
 
-  The following graph_output keys are recognized:
+  Thelon following graph_output kelonys arelon reloncognizelond:
     output:
-      the raw predictions between 0 and 1. Required.
-    threshold:
-      A value between 0 and 1 used to threshold the output into a hard_output.
-      Defaults to 0.5 when threshold and hard_output are missing.
-      Either threshold or hard_output can be provided, but not both.
+      thelon raw prelondictions belontwelonelonn 0 and 1. Relonquirelond.
+    threlonshold:
+      A valuelon belontwelonelonn 0 and 1 uselond to threlonshold thelon output into a hard_output.
+      Delonfaults to 0.5 whelonn threlonshold and hard_output arelon missing.
+      elonithelonr threlonshold or hard_output can belon providelond, but not both.
     hard_output:
-      A thresholded output. Either threshold or hard_output can be provided, but not both.
+      A threlonsholdelond output. elonithelonr threlonshold or hard_output can belon providelond, but not both.
 
   Args:
-    metrics (list of Metrics):
-      a list of metrics of interest. E.g. ['ctr', 'accuracy', 'rce']
-      Element in the list can be a string from following supported metrics, or can be a tuple
-      with three items: metric name, metric function, bool for thresholded output.
+    melontrics (list of Melontrics):
+      a list of melontrics of intelonrelonst. elon.g. ['ctr', 'accuracy', 'rcelon']
+      elonlelonmelonnt in thelon list can belon a string from following supportelond melontrics, or can belon a tuplelon
+      with threlonelon itelonms: melontric namelon, melontric function, bool for threlonsholdelond output.
 
-      These metrics are evaluated and reported to tensorboard *during the eval phases only*.
-      Supported metrics:
+      Thelonselon melontrics arelon elonvaluatelond and relonportelond to telonnsorboard *during thelon elonval phaselons only*.
+      Supportelond melontrics:
 
-      - ctr (same as positive sample ratio.)
-      - rce (cross entropy loss compared to the baseline model of always predicting ctr)
-      - nrce (normalized rce, do not use this one if you do not understand what it is)
+      - ctr (samelon as positivelon samplelon ratio.)
+      - rcelon (cross elonntropy loss comparelond to thelon baselonlinelon modelonl of always prelondicting ctr)
+      - nrcelon (normalizelond rcelon, do not uselon this onelon if you do not undelonrstand what it is)
       - pr_auc
       - roc_auc
-      - accuracy (percentage of predictions that are correct)
-      - precision (true positives) / (true positives + false positives)
-      - recall (true positives) / (true positives + false negatives)
-      - pr_curve (precision-recall curve)
+      - accuracy (pelonrcelonntagelon of prelondictions that arelon correlonct)
+      - preloncision (truelon positivelons) / (truelon positivelons + falselon positivelons)
+      - reloncall (truelon positivelons) / (truelon positivelons + falselon nelongativelons)
+      - pr_curvelon (preloncision-reloncall curvelon)
 
-      Example of metrics list with mixture of string and tuple:
-      metrics = [
-        'rce','nrce',
-        'roc_auc',  # default roc_auc metric
+      elonxamplelon of melontrics list with mixturelon of string and tuplelon:
+      melontrics = [
+        'rcelon','nrcelon',
+        'roc_auc',  # delonfault roc_auc melontric
         (
-          'roc_auc_500',  # give this metric a name
-          partial(tf.metrics.auc, curve='ROC', summation_method='careful_interpolation', num_thresholds=500),  # the metric fn
-          False,  # whether the metric requires thresholded output
+          'roc_auc_500',  # givelon this melontric a namelon
+          partial(tf.melontrics.auc, curvelon='ROC', summation_melonthod='carelonful_intelonrpolation', num_threlonsholds=500),  # thelon melontric fn
+          Falselon,  # whelonthelonr thelon melontric relonquirelons threlonsholdelond output
         )]
 
-      NOTE: When prediction on rare events, roc_auc can be underestimated. Increase num_threshold
-      can reduce the underestimation. See go/roc-auc-pitfall for more details.
+      NOTelon: Whelonn prelondiction on rarelon elonvelonnts, roc_auc can belon undelonrelonstimatelond. Increlonaselon num_threlonshold
+      can relonducelon thelon undelonrelonstimation. Selonelon go/roc-auc-pitfall for morelon delontails.
 
-      NOTE: accuracy / precision / recall apply to binary classification problems only.
-      I.e. a prediction is only considered correct if it matches the label. E.g. if the label
-      is 1.0, and the prediction is 0.99, it does not get credit.  If you want to use
-      precision / recall / accuracy metrics with soft predictions, you'll need to threshold
-      your predictions into hard 0/1 labels.
+      NOTelon: accuracy / preloncision / reloncall apply to binary classification problelonms only.
+      I.elon. a prelondiction is only considelonrelond correlonct if it matchelons thelon labelonl. elon.g. if thelon labelonl
+      is 1.0, and thelon prelondiction is 0.99, it doelons not gelont crelondit.  If you want to uselon
+      preloncision / reloncall / accuracy melontrics with soft prelondictions, you'll nelonelond to threlonshold
+      your prelondictions into hard 0/1 labelonls.
 
-      When metrics is None (the default), it defaults to:
-      [rce, nrce, arce, ctr, predicted_ctr, accuracy, precision, recall, prauc, roc_auc],
+      Whelonn melontrics is Nonelon (thelon delonfault), it delonfaults to:
+      [rcelon, nrcelon, arcelon, ctr, prelondictelond_ctr, accuracy, preloncision, reloncall, prauc, roc_auc],
 
-    classes (list of strings):
-      In case of multiple binary class models, the names for each class or label.
-      These are used to display metrics on tensorboard.
-      If these are not specified, the index in the class or label dimension is used, and you'll
-      get metrics on tensorboard named like: accuracy_0, accuracy_1, etc.
+    classelons (list of strings):
+      In caselon of multiplelon binary class modelonls, thelon namelons for elonach class or labelonl.
+      Thelonselon arelon uselond to display melontrics on telonnsorboard.
+      If thelonselon arelon not speloncifielond, thelon indelonx in thelon class or labelonl dimelonnsion is uselond, and you'll
+      gelont melontrics on telonnsorboard namelond likelon: accuracy_0, accuracy_1, elontc.
 
-    class_dim (number):
-      Dimension of the classes in predictions. Defaults to 1, that is, batch_size x n_classes.
+    class_dim (numbelonr):
+      Dimelonnsion of thelon classelons in prelondictions. Delonfaults to 1, that is, batch_sizelon x n_classelons.
   """
-  # pylint: disable=invalid-name,dict-keys-not-iterating
-  if metrics is None:
-    # remove expensive metrics by default for faster eval
-    metrics = list(DEFAULT_BINARY_CLASS_METRICS)
+  # pylint: disablelon=invalid-namelon,dict-kelonys-not-itelonrating
+  if melontrics is Nonelon:
+    # relonmovelon elonxpelonnsivelon melontrics by delonfault for fastelonr elonval
+    melontrics = list(DelonFAULT_BINARY_CLASS_MelonTRICS)
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
     """
     graph_output:
-      dict that is returned by build_graph given input features.
-    labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+      dict that is relonturnelond by build_graph givelonn input felonaturelons.
+    labelonls:
+      targelont labelonls associatelond to batch.
+    welonights:
+      welonights of thelon samplelons..
     """
 
-    eval_metric_ops = OrderedDict()
+    elonval_melontric_ops = OrdelonrelondDict()
 
-    preds = graph_output['output']
+    prelonds = graph_output['output']
 
-    threshold = graph_output['threshold'] if 'threshold' in graph_output else 0.5
+    threlonshold = graph_output['threlonshold'] if 'threlonshold' in graph_output elonlselon 0.5
 
-    hard_preds = graph_output.get('hard_output')
-    if hard_preds is None:
-      hard_preds = tf.greater_equal(preds, threshold)
+    hard_prelonds = graph_output.gelont('hard_output')
+    if hard_prelonds is Nonelon:
+      hard_prelonds = tf.grelonatelonr_elonqual(prelonds, threlonshold)
 
-    shape = labels.get_shape()
-    # basic sanity check: multi_metric dimension must exist
-    assert len(shape) > class_dim, "Dimension specified by class_dim does not exist."
+    shapelon = labelonls.gelont_shapelon()
+    # basic sanity chelonck: multi_melontric dimelonnsion must elonxist
+    asselonrt lelonn(shapelon) > class_dim, "Dimelonnsion speloncifielond by class_dim doelons not elonxist."
 
-    num_labels = shape[class_dim]
-    # If we are doing multi-class / multi-label metric, the number of classes / labels must
-    # be know at graph construction time.  This dimension cannot have size None.
-    assert num_labels is not None, "The multi-metric dimension cannot be None."
-    assert classes is None or len(classes) == num_labels, (
-      "Number of classes must match the number of labels")
+    num_labelonls = shapelon[class_dim]
+    # If welon arelon doing multi-class / multi-labelonl melontric, thelon numbelonr of classelons / labelonls must
+    # belon know at graph construction timelon.  This dimelonnsion cannot havelon sizelon Nonelon.
+    asselonrt num_labelonls is not Nonelon, "Thelon multi-melontric dimelonnsion cannot belon Nonelon."
+    asselonrt classelons is Nonelon or lelonn(classelons) == num_labelonls, (
+      "Numbelonr of classelons must match thelon numbelonr of labelonls")
 
-    weights_shape = weights.get_shape() if weights is not None else None
-    if weights_shape is None:
-      num_weights = None
-    elif len(weights_shape) > 1:
-      num_weights = weights_shape[class_dim]
-    else:
-      num_weights = 1
+    welonights_shapelon = welonights.gelont_shapelon() if welonights is not Nonelon elonlselon Nonelon
+    if welonights_shapelon is Nonelon:
+      num_welonights = Nonelon
+    elonlif lelonn(welonights_shapelon) > 1:
+      num_welonights = welonights_shapelon[class_dim]
+    elonlselon:
+      num_welonights = 1
 
-    for i in range(num_labels):
+    for i in rangelon(num_labelonls):
 
-      # add metrics to eval_metric_ops dict
-      for metric in metrics:
-        if isinstance(metric, tuple) and len(metric) == 3:
-          metric_name, metric_factory, requires_threshold = metric
-          metric_name = metric_name.lower()
-        elif isinstance(metric, str):
-          metric_name = metric.lower()  # metric name are case insensitive.
-          metric_factory, requires_threshold = SUPPORTED_BINARY_CLASS_METRICS.get(metric_name)
-        else:
-          raise ValueError("Metric should be either string or tuple of length 3.")
+      # add melontrics to elonval_melontric_ops dict
+      for melontric in melontrics:
+        if isinstancelon(melontric, tuplelon) and lelonn(melontric) == 3:
+          melontric_namelon, melontric_factory, relonquirelons_threlonshold = melontric
+          melontric_namelon = melontric_namelon.lowelonr()
+        elonlif isinstancelon(melontric, str):
+          melontric_namelon = melontric.lowelonr()  # melontric namelon arelon caselon inselonnsitivelon.
+          melontric_factory, relonquirelons_threlonshold = SUPPORTelonD_BINARY_CLASS_MelonTRICS.gelont(melontric_namelon)
+        elonlselon:
+          raiselon Valuelonelonrror("Melontric should belon elonithelonr string or tuplelon of lelonngth 3.")
 
-        class_metric_name = metric_name + "_" + (classes[i] if classes is not None else str(i))
+        class_melontric_namelon = melontric_namelon + "_" + (classelons[i] if classelons is not Nonelon elonlselon str(i))
 
-        if class_metric_name in eval_metric_ops:
-          # avoid adding duplicate metrics.
-          continue
+        if class_melontric_namelon in elonval_melontric_ops:
+          # avoid adding duplicatelon melontrics.
+          continuelon
 
-        class_labels = tf.gather(labels, indices=[i], axis=class_dim)
-        class_preds = tf.gather(preds, indices=[i], axis=class_dim)
-        class_hard_preds = tf.gather(hard_preds, indices=[i], axis=class_dim)
+        class_labelonls = tf.gathelonr(labelonls, indicelons=[i], axis=class_dim)
+        class_prelonds = tf.gathelonr(prelonds, indicelons=[i], axis=class_dim)
+        class_hard_prelonds = tf.gathelonr(hard_prelonds, indicelons=[i], axis=class_dim)
 
-        if num_weights is None:
-          class_weights = None
-        elif num_weights == num_labels:
-          class_weights = tf.gather(weights, indices=[i], axis=class_dim)
-        elif num_weights == 1:
-          class_weights = weights
-        else:
-          raise ValueError("num_weights (%d) and num_labels (%d) do not match"
-                           % (num_weights, num_labels))
+        if num_welonights is Nonelon:
+          class_welonights = Nonelon
+        elonlif num_welonights == num_labelonls:
+          class_welonights = tf.gathelonr(welonights, indicelons=[i], axis=class_dim)
+        elonlif num_welonights == 1:
+          class_welonights = welonights
+        elonlselon:
+          raiselon Valuelonelonrror("num_welonights (%d) and num_labelonls (%d) do not match"
+                           % (num_welonights, num_labelonls))
 
-        if metric_factory:
-          value_op, update_op = metric_factory(
-            labels=class_labels,
-            predictions=(class_hard_preds if requires_threshold else class_preds),
-            weights=class_weights, name=class_metric_name)
-          eval_metric_ops[class_metric_name] = (value_op, update_op)
-        else:
-          raise ValueError('Cannot find the metric named ' + metric_name)
+        if melontric_factory:
+          valuelon_op, updatelon_op = melontric_factory(
+            labelonls=class_labelonls,
+            prelondictions=(class_hard_prelonds if relonquirelons_threlonshold elonlselon class_prelonds),
+            welonights=class_welonights, namelon=class_melontric_namelon)
+          elonval_melontric_ops[class_melontric_namelon] = (valuelon_op, updatelon_op)
+        elonlselon:
+          raiselon Valuelonelonrror('Cannot find thelon melontric namelond ' + melontric_namelon)
 
-    return eval_metric_ops
+    relonturn elonval_melontric_ops
 
-  return get_eval_metric_ops
+  relonturn gelont_elonval_melontric_ops
 
 
-def _get_uncalibrated_metric_fn(calibrated_metric_fn, keep_weight=True):
+delonf _gelont_uncalibratelond_melontric_fn(calibratelond_melontric_fn, kelonelonp_welonight=Truelon):
   """
-  Returns a function having signature:
+  Relonturns a function having signaturelon:
 
-  .. code-block:: python
+  .. codelon-block:: python
 
-    def get_eval_metric_ops(graph_output, labels, weights):
+    delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
       ...
-      return eval_metric_ops
+      relonturn elonval_melontric_ops
 
-  where the returned eval_metric_ops is a dict of common evaluation metric
-  Ops with uncalibrated output.
+  whelonrelon thelon relonturnelond elonval_melontric_ops is a dict of common elonvaluation melontric
+  Ops with uncalibratelond output.
 
-  The following graph_output keys are recognized:
-    uncalibrated_output:
-      the uncalibrated raw predictions between 0 and 1. Required.
+  Thelon following graph_output kelonys arelon reloncognizelond:
+    uncalibratelond_output:
+      thelon uncalibratelond raw prelondictions belontwelonelonn 0 and 1. Relonquirelond.
     output:
-      the calibrated predictions between 0 and 1.
-    threshold:
-      A value between 0 and 1 used to threshold the output into a hard_output.
-      Defaults to 0.5 when threshold and hard_output are missing.
-      Either threshold or hard_output can be provided, but not both.
+      thelon calibratelond prelondictions belontwelonelonn 0 and 1.
+    threlonshold:
+      A valuelon belontwelonelonn 0 and 1 uselond to threlonshold thelon output into a hard_output.
+      Delonfaults to 0.5 whelonn threlonshold and hard_output arelon missing.
+      elonithelonr threlonshold or hard_output can belon providelond, but not both.
     hard_output:
-      A thresholded output. Either threshold or hard_output can be provided, but not both.
+      A threlonsholdelond output. elonithelonr threlonshold or hard_output can belon providelond, but not both.
 
   Args:
-    calibrated_metric_fn: metrics function with calibration and weight.
-    keep_weight: Bool indicating whether we keep weight.
+    calibratelond_melontric_fn: melontrics function with calibration and welonight.
+    kelonelonp_welonight: Bool indicating whelonthelonr welon kelonelonp welonight.
   """
-  metric_scope = 'uncalibrated' if keep_weight else 'unweighted'
+  melontric_scopelon = 'uncalibratelond' if kelonelonp_welonight elonlselon 'unwelonightelond'
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
     """
     graph_output:
-      dict that is returned by build_graph given input features.
-    labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+      dict that is relonturnelond by build_graph givelonn input felonaturelons.
+    labelonls:
+      targelont labelonls associatelond to batch.
+    welonights:
+      welonights of thelon samplelons..
     """
-    with tf.variable_scope(metric_scope):
-      if 'uncalibrated_output' not in graph_output:
-        raise Exception("Missing uncalibrated_output in graph_output!")
-      un_calibrated_weights = weights if keep_weight else tf.ones_like(weights)
-      uncalibrated_output = {
-        'output': graph_output['uncalibrated_output'],
-        'threshold': graph_output.get('threshold', 0.5),
-        'hard_output': graph_output.get('hard_output'),
-        **{k: v for k, v in graph_output.items() if k not in ['output', 'threshold', 'hard_output']}
+    with tf.variablelon_scopelon(melontric_scopelon):
+      if 'uncalibratelond_output' not in graph_output:
+        raiselon elonxcelonption("Missing uncalibratelond_output in graph_output!")
+      un_calibratelond_welonights = welonights if kelonelonp_welonight elonlselon tf.onelons_likelon(welonights)
+      uncalibratelond_output = {
+        'output': graph_output['uncalibratelond_output'],
+        'threlonshold': graph_output.gelont('threlonshold', 0.5),
+        'hard_output': graph_output.gelont('hard_output'),
+        **{k: v for k, v in graph_output.itelonms() if k not in ['output', 'threlonshold', 'hard_output']}
       }
 
-      eval_metrics_ops = calibrated_metric_fn(uncalibrated_output, labels, un_calibrated_weights)
+      elonval_melontrics_ops = calibratelond_melontric_fn(uncalibratelond_output, labelonls, un_calibratelond_welonights)
 
-      renamed_metrics_ops = {f'{metric_scope}_{k}': v for k, v in eval_metrics_ops.items()}
-      return renamed_metrics_ops
+      relonnamelond_melontrics_ops = {f'{melontric_scopelon}_{k}': v for k, v in elonval_melontrics_ops.itelonms()}
+      relonturn relonnamelond_melontrics_ops
 
-  return get_eval_metric_ops
+  relonturn gelont_elonval_melontric_ops
 
 
-def get_multi_binary_class_uncalibrated_metric_fn(
-  metrics, classes=None, class_dim=1, keep_weight=True):
+delonf gelont_multi_binary_class_uncalibratelond_melontric_fn(
+  melontrics, classelons=Nonelon, class_dim=1, kelonelonp_welonight=Truelon):
   """
-  Returns a function having signature:
+  Relonturns a function having signaturelon:
 
-  .. code-block:: python
+  .. codelon-block:: python
 
-    def get_eval_metric_ops(graph_output, labels, weights):
+    delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
       ...
-      return eval_metric_ops
+      relonturn elonval_melontric_ops
 
-  where the returned eval_metric_ops is a dict of common evaluation metric
-  Ops for concatenated binary classifications without calibration.
+  whelonrelon thelon relonturnelond elonval_melontric_ops is a dict of common elonvaluation melontric
+  Ops for concatelonnatelond binary classifications without calibration.
 
-  Note: 'uncalibrated_output' is required key in graph_output.
+  Notelon: 'uncalibratelond_output' is relonquirelond kelony in graph_output.
 
-  The main use case for this function is:
+  Thelon main uselon caselon for this function is:
 
-  1) To calculated roc-auc for rare event.
-  Calibrated prediction score for rare events will be concentrated near zero. As a result,
-  the roc-auc can be seriously underestimated with current implementation in tf.metric.auc.
-  Since roc-auc is invariant against calibration, we can directly use uncalibrated score for roc-auc.
-  For more details, please refer to: go/roc-auc-invariance.
+  1) To calculatelond roc-auc for rarelon elonvelonnt.
+  Calibratelond prelondiction scorelon for rarelon elonvelonnts will belon concelonntratelond nelonar zelonro. As a relonsult,
+  thelon roc-auc can belon selonriously undelonrelonstimatelond with currelonnt implelonmelonntation in tf.melontric.auc.
+  Sincelon roc-auc is invariant against calibration, welon can direlonctly uselon uncalibratelond scorelon for roc-auc.
+  For morelon delontails, plelonaselon relonfelonr to: go/roc-auc-invariancelon.
 
-  2) To set keep_weight=False and get unweighted and uncalibrated metrics.
-  This is useful to eval how the model is fitted to its actual training data, since
-  often time the model is trained without weight.
-
-  Args:
-    metrics (list of String):
-      a list of metrics of interest. E.g. ['ctr', 'accuracy', 'rce']
-      Element in the list can be a string from supported metrics, or can be a tuple
-      with three items: metric name, metric function, bool for thresholded output.
-      These metrics are evaluated and reported to tensorboard *during the eval phases only*.
-
-      When metrics is None (the default), it defaults to:
-      [rce, nrce, arce, ctr, predicted_ctr, accuracy, precision, recall, prauc, roc_auc],
-
-    classes (list of strings):
-      In case of multiple binary class models, the names for each class or label.
-      These are used to display metrics on tensorboard.
-      If these are not specified, the index in the class or label dimension is used, and you'll
-      get metrics on tensorboard named like: accuracy_0, accuracy_1, etc.
-
-    class_dim (number):
-      Dimension of the classes in predictions. Defaults to 1, that is, batch_size x n_classes.
-
-    keep_weight (bool):
-      Whether to keep weights for the metric.
-  """
-
-  calibrated_metric_fn = get_multi_binary_class_metric_fn(
-    metrics, classes=classes, class_dim=class_dim)
-  return _get_uncalibrated_metric_fn(calibrated_metric_fn, keep_weight=keep_weight)
-
-
-def combine_metric_fns(*fn_list):
-  """
-  Combine multiple metric functions.
-  For example, we can combine metrics function generated by
-  get_multi_binary_class_metric_fn and get_multi_binary_class_uncalibrated_metric_fn.
+  2) To selont kelonelonp_welonight=Falselon and gelont unwelonightelond and uncalibratelond melontrics.
+  This is uselonful to elonval how thelon modelonl is fittelond to its actual training data, sincelon
+  oftelonn timelon thelon modelonl is trainelond without welonight.
 
   Args:
-    *fn_list: Multiple metric functions to be combined
+    melontrics (list of String):
+      a list of melontrics of intelonrelonst. elon.g. ['ctr', 'accuracy', 'rcelon']
+      elonlelonmelonnt in thelon list can belon a string from supportelond melontrics, or can belon a tuplelon
+      with threlonelon itelonms: melontric namelon, melontric function, bool for threlonsholdelond output.
+      Thelonselon melontrics arelon elonvaluatelond and relonportelond to telonnsorboard *during thelon elonval phaselons only*.
 
-  Returns:
-    Combined metric function.
+      Whelonn melontrics is Nonelon (thelon delonfault), it delonfaults to:
+      [rcelon, nrcelon, arcelon, ctr, prelondictelond_ctr, accuracy, preloncision, reloncall, prauc, roc_auc],
+
+    classelons (list of strings):
+      In caselon of multiplelon binary class modelonls, thelon namelons for elonach class or labelonl.
+      Thelonselon arelon uselond to display melontrics on telonnsorboard.
+      If thelonselon arelon not speloncifielond, thelon indelonx in thelon class or labelonl dimelonnsion is uselond, and you'll
+      gelont melontrics on telonnsorboard namelond likelon: accuracy_0, accuracy_1, elontc.
+
+    class_dim (numbelonr):
+      Dimelonnsion of thelon classelons in prelondictions. Delonfaults to 1, that is, batch_sizelon x n_classelons.
+
+    kelonelonp_welonight (bool):
+      Whelonthelonr to kelonelonp welonights for thelon melontric.
   """
-  def combined_metric_ops(*args, **kwargs):
-    eval_metric_ops = OrderedDict()
+
+  calibratelond_melontric_fn = gelont_multi_binary_class_melontric_fn(
+    melontrics, classelons=classelons, class_dim=class_dim)
+  relonturn _gelont_uncalibratelond_melontric_fn(calibratelond_melontric_fn, kelonelonp_welonight=kelonelonp_welonight)
+
+
+delonf combinelon_melontric_fns(*fn_list):
+  """
+  Combinelon multiplelon melontric functions.
+  For elonxamplelon, welon can combinelon melontrics function gelonnelonratelond by
+  gelont_multi_binary_class_melontric_fn and gelont_multi_binary_class_uncalibratelond_melontric_fn.
+
+  Args:
+    *fn_list: Multiplelon melontric functions to belon combinelond
+
+  Relonturns:
+    Combinelond melontric function.
+  """
+  delonf combinelond_melontric_ops(*args, **kwargs):
+    elonval_melontric_ops = OrdelonrelondDict()
     for fn in fn_list:
-      eval_metric_ops.update(fn(*args, **kwargs))
-    return eval_metric_ops
-  return combined_metric_ops
+      elonval_melontric_ops.updatelon(fn(*args, **kwargs))
+    relonturn elonval_melontric_ops
+  relonturn combinelond_melontric_ops

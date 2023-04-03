@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.LargeUserFacepileDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.CompactUserFacepileDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepileDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.LargelonUselonrFacelonpilelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.CompactUselonrFacelonpilelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.UselonrFacelonpilelonDisplayTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UserFacepileDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class UselonrFacelonpilelonDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(userFacepileDisplayType: UserFacepileDisplayType): urt.UserFacepileDisplayType =
-    userFacepileDisplayType match {
-      case LargeUserFacepileDisplayType => urt.UserFacepileDisplayType.Large
-      case CompactUserFacepileDisplayType => urt.UserFacepileDisplayType.Compact
+  delonf apply(uselonrFacelonpilelonDisplayTypelon: UselonrFacelonpilelonDisplayTypelon): urt.UselonrFacelonpilelonDisplayTypelon =
+    uselonrFacelonpilelonDisplayTypelon match {
+      caselon LargelonUselonrFacelonpilelonDisplayTypelon => urt.UselonrFacelonpilelonDisplayTypelon.Largelon
+      caselon CompactUselonrFacelonpilelonDisplayTypelon => urt.UselonrFacelonpilelonDisplayTypelon.Compact
     }
 }

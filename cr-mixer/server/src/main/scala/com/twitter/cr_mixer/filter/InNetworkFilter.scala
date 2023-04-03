@@ -1,80 +1,80 @@
-package com.twitter.cr_mixer.filter
+packagelon com.twittelonr.cr_mixelonr.filtelonr
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.UtelongTwelonelontCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.param.UtelongTwelonelontGlobalParams
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq
 
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
 /***
- * Filters in-network tweets
+ * Filtelonrs in-nelontwork twelonelonts
  */
-@Singleton
-case class InNetworkFilter @Inject() (
-  @Named(ModuleNames.RealGraphInStore) realGraphStoreMh: ReadableStore[UserId, CandidateSeq],
-  globalStats: StatsReceiver)
-    extends FilterBase {
-  override val name: String = this.getClass.getCanonicalName
-  import InNetworkFilter._
+@Singlelonton
+caselon class InNelontworkFiltelonr @Injelonct() (
+  @Namelond(ModulelonNamelons.RelonalGraphInStorelon) relonalGraphStorelonMh: RelonadablelonStorelon[UselonrId, CandidatelonSelonq],
+  globalStats: StatsReloncelonivelonr)
+    elonxtelonnds FiltelonrBaselon {
+  ovelonrridelon val namelon: String = this.gelontClass.gelontCanonicalNamelon
+  import InNelontworkFiltelonr._
 
-  override type ConfigType = FilterConfig
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val filterCandidatesStats = stats.scope("filter_candidates")
+  ovelonrridelon typelon ConfigTypelon = FiltelonrConfig
+  privatelon val stats: StatsReloncelonivelonr = globalStats.scopelon(this.gelontClass.gelontCanonicalNamelon)
+  privatelon val filtelonrCandidatelonsStats = stats.scopelon("filtelonr_candidatelons")
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    filterConfig: FilterConfig,
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    StatsUtil.trackItemsStats(filterCandidatesStats) {
-      filterCandidates(candidates, filterConfig)
+  ovelonrridelon delonf filtelonr(
+    candidatelons: Selonq[Selonq[InitialCandidatelon]],
+    filtelonrConfig: FiltelonrConfig,
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    StatsUtil.trackItelonmsStats(filtelonrCandidatelonsStats) {
+      filtelonrCandidatelons(candidatelons, filtelonrConfig)
     }
   }
 
-  private def filterCandidates(
-    candidates: Seq[Seq[InitialCandidate]],
-    filterConfig: FilterConfig,
-  ): Future[Seq[Seq[InitialCandidate]]] = {
+  privatelon delonf filtelonrCandidatelons(
+    candidatelons: Selonq[Selonq[InitialCandidatelon]],
+    filtelonrConfig: FiltelonrConfig,
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
 
-    if (!filterConfig.enableInNetworkFilter) {
-      Future.value(candidates)
-    } else {
-      filterConfig.userIdOpt match {
-        case Some(userId) =>
-          realGraphStoreMh
-            .get(userId).map(_.map(_.candidates.map(_.userId)).getOrElse(Seq.empty).toSet).map {
-              realGraphInNetworkAuthorsSet =>
-                candidates.map(_.filterNot { candidate =>
-                  realGraphInNetworkAuthorsSet.contains(candidate.tweetInfo.authorId)
+    if (!filtelonrConfig.elonnablelonInNelontworkFiltelonr) {
+      Futurelon.valuelon(candidatelons)
+    } elonlselon {
+      filtelonrConfig.uselonrIdOpt match {
+        caselon Somelon(uselonrId) =>
+          relonalGraphStorelonMh
+            .gelont(uselonrId).map(_.map(_.candidatelons.map(_.uselonrId)).gelontOrelonlselon(Selonq.elonmpty).toSelont).map {
+              relonalGraphInNelontworkAuthorsSelont =>
+                candidatelons.map(_.filtelonrNot { candidatelon =>
+                  relonalGraphInNelontworkAuthorsSelont.contains(candidatelon.twelonelontInfo.authorId)
                 })
             }
-        case None => Future.value(candidates)
+        caselon Nonelon => Futurelon.valuelon(candidatelons)
       }
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    request: CGQueryType
-  ): FilterConfig = {
-    request match {
-      case UtegTweetCandidateGeneratorQuery(userId, _, _, _, _, params, _) =>
-        FilterConfig(Some(userId), params(UtegTweetGlobalParams.EnableInNetworkFilterParam))
-      case _ => FilterConfig(None, false)
+  ovelonrridelon delonf relonquelonstToConfig[CGQuelonryTypelon <: CandidatelonGelonnelonratorQuelonry](
+    relonquelonst: CGQuelonryTypelon
+  ): FiltelonrConfig = {
+    relonquelonst match {
+      caselon UtelongTwelonelontCandidatelonGelonnelonratorQuelonry(uselonrId, _, _, _, _, params, _) =>
+        FiltelonrConfig(Somelon(uselonrId), params(UtelongTwelonelontGlobalParams.elonnablelonInNelontworkFiltelonrParam))
+      caselon _ => FiltelonrConfig(Nonelon, falselon)
     }
   }
 }
 
-object InNetworkFilter {
-  case class FilterConfig(
-    userIdOpt: Option[UserId],
-    enableInNetworkFilter: Boolean)
+objelonct InNelontworkFiltelonr {
+  caselon class FiltelonrConfig(
+    uselonrIdOpt: Option[UselonrId],
+    elonnablelonInNelontworkFiltelonr: Boolelonan)
 }

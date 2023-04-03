@@ -1,112 +1,112 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.Gate
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.contentfeatures.ContentFeaturesProvider
-import com.twitter.timelineranker.core.FutureDependencyTransformer
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelineranker.util.SearchResultUtil._
-import com.twitter.timelineranker.util.CachingContentFeaturesProvider
-import com.twitter.timelineranker.util.TweetHydrator
-import com.twitter.timelineranker.util.TweetypieContentFeaturesProvider
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
-import com.twitter.timelines.configapi
-import com.twitter.timelines.util.FutureUtils
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.storelonhaus.Storelon
+import com.twittelonr.timelonlinelonrankelonr.contelonntfelonaturelons.ContelonntFelonaturelonsProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.corelon.FuturelonDelonpelonndelonncyTransformelonr
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.timelonlinelonrankelonr.util.SelonarchRelonsultUtil._
+import com.twittelonr.timelonlinelonrankelonr.util.CachingContelonntFelonaturelonsProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.util.TwelonelontHydrator
+import com.twittelonr.timelonlinelonrankelonr.util.TwelonelontypielonContelonntFelonaturelonsProvidelonr
+import com.twittelonr.timelonlinelons.clielonnts.twelonelontypielon.TwelonelontyPielonClielonnt
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.util.Futurelon
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.timelonlinelons.util.FuturelonUtils
 
-class ContentFeaturesHydrationTransformBuilder(
-  tweetyPieClient: TweetyPieClient,
-  contentFeaturesCache: Store[TweetId, ContentFeatures],
-  enableContentFeaturesGate: Gate[RecapQuery],
-  enableTokensInContentFeaturesGate: Gate[RecapQuery],
-  enableTweetTextInContentFeaturesGate: Gate[RecapQuery],
-  enableConversationControlContentFeaturesGate: Gate[RecapQuery],
-  enableTweetMediaHydrationGate: Gate[RecapQuery],
-  hydrateInReplyToTweets: Boolean,
-  statsReceiver: StatsReceiver) {
-  val scopedStatsReceiver: StatsReceiver = statsReceiver.scope("ContentFeaturesHydrationTransform")
-  val tweetHydrator: TweetHydrator = new TweetHydrator(tweetyPieClient, scopedStatsReceiver)
-  val tweetypieContentFeaturesProvider: ContentFeaturesProvider =
-    new TweetypieContentFeaturesProvider(
-      tweetHydrator,
-      enableContentFeaturesGate,
-      enableTokensInContentFeaturesGate,
-      enableTweetTextInContentFeaturesGate,
-      enableConversationControlContentFeaturesGate,
-      enableTweetMediaHydrationGate,
-      scopedStatsReceiver
+class ContelonntFelonaturelonsHydrationTransformBuildelonr(
+  twelonelontyPielonClielonnt: TwelonelontyPielonClielonnt,
+  contelonntFelonaturelonsCachelon: Storelon[TwelonelontId, ContelonntFelonaturelons],
+  elonnablelonContelonntFelonaturelonsGatelon: Gatelon[ReloncapQuelonry],
+  elonnablelonTokelonnsInContelonntFelonaturelonsGatelon: Gatelon[ReloncapQuelonry],
+  elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsGatelon: Gatelon[ReloncapQuelonry],
+  elonnablelonConvelonrsationControlContelonntFelonaturelonsGatelon: Gatelon[ReloncapQuelonry],
+  elonnablelonTwelonelontMelondiaHydrationGatelon: Gatelon[ReloncapQuelonry],
+  hydratelonInRelonplyToTwelonelonts: Boolelonan,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  val scopelondStatsReloncelonivelonr: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("ContelonntFelonaturelonsHydrationTransform")
+  val twelonelontHydrator: TwelonelontHydrator = nelonw TwelonelontHydrator(twelonelontyPielonClielonnt, scopelondStatsReloncelonivelonr)
+  val twelonelontypielonContelonntFelonaturelonsProvidelonr: ContelonntFelonaturelonsProvidelonr =
+    nelonw TwelonelontypielonContelonntFelonaturelonsProvidelonr(
+      twelonelontHydrator,
+      elonnablelonContelonntFelonaturelonsGatelon,
+      elonnablelonTokelonnsInContelonntFelonaturelonsGatelon,
+      elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsGatelon,
+      elonnablelonConvelonrsationControlContelonntFelonaturelonsGatelon,
+      elonnablelonTwelonelontMelondiaHydrationGatelon,
+      scopelondStatsReloncelonivelonr
     )
 
-  val cachingContentFeaturesProvider: ContentFeaturesProvider = new CachingContentFeaturesProvider(
-    underlying = tweetypieContentFeaturesProvider,
-    contentFeaturesCache = contentFeaturesCache,
-    statsReceiver = scopedStatsReceiver
+  val cachingContelonntFelonaturelonsProvidelonr: ContelonntFelonaturelonsProvidelonr = nelonw CachingContelonntFelonaturelonsProvidelonr(
+    undelonrlying = twelonelontypielonContelonntFelonaturelonsProvidelonr,
+    contelonntFelonaturelonsCachelon = contelonntFelonaturelonsCachelon,
+    statsReloncelonivelonr = scopelondStatsReloncelonivelonr
   )
 
-  val contentFeaturesProvider: configapi.FutureDependencyTransformer[RecapQuery, Seq[TweetId], Map[
-    TweetId,
-    ContentFeatures
-  ]] = FutureDependencyTransformer.partition(
-    gate = enableContentFeaturesGate,
-    ifTrue = cachingContentFeaturesProvider,
-    ifFalse = tweetypieContentFeaturesProvider
+  val contelonntFelonaturelonsProvidelonr: configapi.FuturelonDelonpelonndelonncyTransformelonr[ReloncapQuelonry, Selonq[TwelonelontId], Map[
+    TwelonelontId,
+    ContelonntFelonaturelons
+  ]] = FuturelonDelonpelonndelonncyTransformelonr.partition(
+    gatelon = elonnablelonContelonntFelonaturelonsGatelon,
+    ifTruelon = cachingContelonntFelonaturelonsProvidelonr,
+    ifFalselon = twelonelontypielonContelonntFelonaturelonsProvidelonr
   )
 
-  lazy val contentFeaturesHydrationTransform: ContentFeaturesHydrationTransform =
-    new ContentFeaturesHydrationTransform(
-      contentFeaturesProvider,
-      enableContentFeaturesGate,
-      hydrateInReplyToTweets
+  lazy val contelonntFelonaturelonsHydrationTransform: ContelonntFelonaturelonsHydrationTransform =
+    nelonw ContelonntFelonaturelonsHydrationTransform(
+      contelonntFelonaturelonsProvidelonr,
+      elonnablelonContelonntFelonaturelonsGatelon,
+      hydratelonInRelonplyToTwelonelonts
     )
-  def build(): ContentFeaturesHydrationTransform = contentFeaturesHydrationTransform
+  delonf build(): ContelonntFelonaturelonsHydrationTransform = contelonntFelonaturelonsHydrationTransform
 }
 
-class ContentFeaturesHydrationTransform(
-  contentFeaturesProvider: ContentFeaturesProvider,
-  enableContentFeaturesGate: Gate[RecapQuery],
-  hydrateInReplyToTweets: Boolean)
-    extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+class ContelonntFelonaturelonsHydrationTransform(
+  contelonntFelonaturelonsProvidelonr: ContelonntFelonaturelonsProvidelonr,
+  elonnablelonContelonntFelonaturelonsGatelon: Gatelon[ReloncapQuelonry],
+  hydratelonInRelonplyToTwelonelonts: Boolelonan)
+    elonxtelonnds FuturelonArrow[
+      HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon,
+      HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
     ] {
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
-    if (enableContentFeaturesGate(request.candidateEnvelope.query)) {
-      val searchResults = request.candidateEnvelope.searchResults
+  ovelonrridelon delonf apply(
+    relonquelonst: HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+  ): Futurelon[HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon] = {
+    if (elonnablelonContelonntFelonaturelonsGatelon(relonquelonst.candidatelonelonnvelonlopelon.quelonry)) {
+      val selonarchRelonsults = relonquelonst.candidatelonelonnvelonlopelon.selonarchRelonsults
 
-      val sourceTweetIdMap = searchResults.map { searchResult =>
-        (searchResult.id, getRetweetSourceTweetId(searchResult).getOrElse(searchResult.id))
+      val sourcelonTwelonelontIdMap = selonarchRelonsults.map { selonarchRelonsult =>
+        (selonarchRelonsult.id, gelontRelontwelonelontSourcelonTwelonelontId(selonarchRelonsult).gelontOrelonlselon(selonarchRelonsult.id))
       }.toMap
 
-      val inReplyToTweetIds = if (hydrateInReplyToTweets) {
-        searchResults.flatMap(getInReplyToTweetId)
-      } else {
-        Seq.empty
+      val inRelonplyToTwelonelontIds = if (hydratelonInRelonplyToTwelonelonts) {
+        selonarchRelonsults.flatMap(gelontInRelonplyToTwelonelontId)
+      } elonlselon {
+        Selonq.elonmpty
       }
 
-      val tweetIdsToHydrate = (sourceTweetIdMap.values ++ inReplyToTweetIds).toSeq.distinct
+      val twelonelontIdsToHydratelon = (sourcelonTwelonelontIdMap.valuelons ++ inRelonplyToTwelonelontIds).toSelonq.distinct
 
-      val contentFeaturesMapFuture = if (tweetIdsToHydrate.nonEmpty) {
-        contentFeaturesProvider(request.candidateEnvelope.query, tweetIdsToHydrate)
-      } else {
-        FutureUtils.EmptyMap[TweetId, ContentFeatures]
+      val contelonntFelonaturelonsMapFuturelon = if (twelonelontIdsToHydratelon.nonelonmpty) {
+        contelonntFelonaturelonsProvidelonr(relonquelonst.candidatelonelonnvelonlopelon.quelonry, twelonelontIdsToHydratelon)
+      } elonlselon {
+        FuturelonUtils.elonmptyMap[TwelonelontId, ContelonntFelonaturelons]
       }
 
-      Future.value(
-        request.copy(
-          contentFeaturesFuture = contentFeaturesMapFuture,
-          tweetSourceTweetMap = sourceTweetIdMap,
-          inReplyToTweetIds = inReplyToTweetIds.toSet
+      Futurelon.valuelon(
+        relonquelonst.copy(
+          contelonntFelonaturelonsFuturelon = contelonntFelonaturelonsMapFuturelon,
+          twelonelontSourcelonTwelonelontMap = sourcelonTwelonelontIdMap,
+          inRelonplyToTwelonelontIds = inRelonplyToTwelonelontIds.toSelont
         )
       )
-    } else {
-      Future.value(request)
+    } elonlselon {
+      Futurelon.valuelon(relonquelonst)
     }
   }
 }

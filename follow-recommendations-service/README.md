@@ -1,40 +1,40 @@
-# Follow Recommendations Service
+# Follow Reloncommelonndations Selonrvicelon
 
-## Introduction to the Follow Recommendations Service (FRS)
-The Follow Recommendations Service (FRS) is a robust recommendation engine designed to provide users with personalized suggestions for accounts to follow. At present, FRS supports Who-To-Follow (WTF) module recommendations across a variety of Twitter product interfaces. Additionally, by suggesting tweet authors, FRS also delivers FutureGraph tweet recommendations, which consist of tweets from accounts that users may be interested in following in the future.
+## Introduction to thelon Follow Reloncommelonndations Selonrvicelon (FRS)
+Thelon Follow Reloncommelonndations Selonrvicelon (FRS) is a robust reloncommelonndation elonnginelon delonsignelond to providelon uselonrs with pelonrsonalizelond suggelonstions for accounts to follow. At prelonselonnt, FRS supports Who-To-Follow (WTF) modulelon reloncommelonndations across a varielonty of Twittelonr product intelonrfacelons. Additionally, by suggelonsting twelonelont authors, FRS also delonlivelonrs FuturelonGraph twelonelont reloncommelonndations, which consist of twelonelonts from accounts that uselonrs may belon intelonrelonstelond in following in thelon futurelon.
 
-## Design
-The system is tailored to accommodate diverse use cases, such as Post New-User-Experience (NUX), advertisements, FutureGraph tweets, and more. Each use case features a unique display location identifier. To view all display locations, refer to the following path: `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models/DisplayLocation.scala`.
+## Delonsign
+Thelon systelonm is tailorelond to accommodatelon divelonrselon uselon caselons, such as Post Nelonw-Uselonr-elonxpelonrielonncelon (NUX), advelonrtiselonmelonnts, FuturelonGraph twelonelonts, and morelon. elonach uselon caselon felonaturelons a uniquelon display location idelonntifielonr. To vielonw all display locations, relonfelonr to thelon following path: `follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/modelonls/DisplayLocation.scala`.
 
-Recommendation steps are customized according to each display location. Common and high-level steps are encapsulated within the "RecommendationFlow," which includes operations like candidate generation, ranker selection, filtering, transformation, and beyond. To explore all flows, refer to this path: `follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/flows`.
+Reloncommelonndation stelonps arelon customizelond according to elonach display location. Common and high-lelonvelonl stelonps arelon elonncapsulatelond within thelon "ReloncommelonndationFlow," which includelons opelonrations likelon candidatelon gelonnelonration, rankelonr selonlelonction, filtelonring, transformation, and belonyond. To elonxplorelon all flows, relonfelonr to this path: `follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/flows`.
 
-For each product (corresponding to a display location), one or multiple flows can be selected to generate candidates based on code and configurations. To view all products, refer to the following path: `follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/home_timeline_tweet_recs`.
+For elonach product (correlonsponding to a display location), onelon or multiplelon flows can belon selonlelonctelond to gelonnelonratelon candidatelons baselond on codelon and configurations. To vielonw all products, relonfelonr to thelon following path: `follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/products/homelon_timelonlinelon_twelonelont_reloncs`.
 
-The FRS overview diagram is depicted below:
+Thelon FRS ovelonrvielonw diagram is delonpictelond belonlow:
 
-![FRS_architecture.png](FRS_architecture.png)
+![FRS_architeloncturelon.png](FRS_architeloncturelon.png)
 
 
-### Candidate Generation
-During this step, FRS utilizes various user signals and algorithms to identify candidates from all Twitter accounts. The candidate source folder is located at `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/candidate_sources/`, with a README file provided within each candidate source folder.
+### Candidatelon Gelonnelonration
+During this stelonp, FRS utilizelons various uselonr signals and algorithms to idelonntify candidatelons from all Twittelonr accounts. Thelon candidatelon sourcelon foldelonr is locatelond at `follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/candidatelon_sourcelons/`, with a RelonADMelon filelon providelond within elonach candidatelon sourcelon foldelonr.
 
-### Filtering
-In this phase, FRS applies different filtering logic after generating account candidates to improve quality and health. Filtering may occur before and/or after the ranking step, with heavier filtering logic (e.g., higher latency) typically applied after the ranking step. The filters' folder is located at `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/predicates`.
+### Filtelonring
+In this phaselon, FRS applielons diffelonrelonnt filtelonring logic aftelonr gelonnelonrating account candidatelons to improvelon quality and helonalth. Filtelonring may occur belonforelon and/or aftelonr thelon ranking stelonp, with helonavielonr filtelonring logic (elon.g., highelonr latelonncy) typically applielond aftelonr thelon ranking stelonp. Thelon filtelonrs' foldelonr is locatelond at `follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/prelondicatelons`.
 
 ### Ranking
-During this step, FRS employs both Machine Learning (ML) and heuristic rule-based candidate ranking. For the ML ranker, ML features are fetched beforehand (i.e., feature hydration),
-and a DataRecord (the Twitter-standard Machine Learning data format used to represent feature data, labels, and predictions when training or serving) is constructed for each <user, candidate> pair. 
-These pairs are then sent to a separate ML prediction service, which houses the ML model trained offline.
-The ML prediction service returns a prediction score, representing the probability that a user will follow and engage with the candidate.
-This score is a weighted sum of p(follow|recommendation) and p(positive engagement|follow), and FRS uses this score to rank the candidates.
+During this stelonp, FRS elonmploys both Machinelon Lelonarning (ML) and helonuristic rulelon-baselond candidatelon ranking. For thelon ML rankelonr, ML felonaturelons arelon felontchelond belonforelonhand (i.elon., felonaturelon hydration),
+and a DataReloncord (thelon Twittelonr-standard Machinelon Lelonarning data format uselond to relonprelonselonnt felonaturelon data, labelonls, and prelondictions whelonn training or selonrving) is constructelond for elonach <uselonr, candidatelon> pair. 
+Thelonselon pairs arelon thelonn selonnt to a selonparatelon ML prelondiction selonrvicelon, which houselons thelon ML modelonl trainelond offlinelon.
+Thelon ML prelondiction selonrvicelon relonturns a prelondiction scorelon, relonprelonselonnting thelon probability that a uselonr will follow and elonngagelon with thelon candidatelon.
+This scorelon is a welonightelond sum of p(follow|reloncommelonndation) and p(positivelon elonngagelonmelonnt|follow), and FRS uselons this scorelon to rank thelon candidatelons.
 
-The rankers' folder is located at `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/rankers`.
+Thelon rankelonrs' foldelonr is locatelond at `follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/rankelonrs`.
 
 ### Transform
-In this phase, the sequence of candidates undergoes necessary transformations, such as deduplication, attaching social proof (i.e., "followed by XX user"), adding tracking tokens, and more.
-The transformers' folder can be found at `follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/transforms`.
+In this phaselon, thelon selonquelonncelon of candidatelons undelonrgoelons neloncelonssary transformations, such as delonduplication, attaching social proof (i.elon., "followelond by XX uselonr"), adding tracking tokelonns, and morelon.
+Thelon transformelonrs' foldelonr can belon found at `follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/transforms`.
 
 ### Truncation
-During this final step, FRS trims the candidate pool to a specified size. This process ensures that only the most relevant and engaging candidates are presented to users while maintaining an optimal user experience.
+During this final stelonp, FRS trims thelon candidatelon pool to a speloncifielond sizelon. This procelonss elonnsurelons that only thelon most relonlelonvant and elonngaging candidatelons arelon prelonselonntelond to uselonrs whilelon maintaining an optimal uselonr elonxpelonrielonncelon.
 
-By implementing these comprehensive steps and adapting to various use cases, the Follow Recommendations Service (FRS) effectively curates tailored suggestions for Twitter users, enhancing their overall experience and promoting meaningful connections within the platform.
+By implelonmelonnting thelonselon comprelonhelonnsivelon stelonps and adapting to various uselon caselons, thelon Follow Reloncommelonndations Selonrvicelon (FRS) elonffelonctivelonly curatelons tailorelond suggelonstions for Twittelonr uselonrs, elonnhancing thelonir ovelonrall elonxpelonrielonncelon and promoting melonaningful connelonctions within thelon platform.

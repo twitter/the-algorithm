@@ -1,95 +1,95 @@
-package com.twitter.follow_recommendations.common.predicates.hss
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.hss
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.FilterReason.FailOpen
-import com.twitter.hss.api.thriftscala.SignalValue
-import com.twitter.hss.api.thriftscala.UserHealthSignal.AgathaCseDouble
-import com.twitter.hss.api.thriftscala.UserHealthSignal.NsfwAgathaUserScoreDouble
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.hss.user_signals.api.HealthSignalsOnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.util.Duration
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.baselon.StatsUtil
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason.FailOpelonn
+import com.twittelonr.hss.api.thriftscala.SignalValuelon
+import com.twittelonr.hss.api.thriftscala.UselonrHelonalthSignal.AgathaCselonDoublelon
+import com.twittelonr.hss.api.thriftscala.UselonrHelonalthSignal.NsfwAgathaUselonrScorelonDoublelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.hss.uselonr_signals.api.HelonalthSignalsOnUselonrClielonntColumn
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.logging.Logging
+import com.twittelonr.util.Duration
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Filter out candidates based on Health Signal Store (HSS) health signals
+ * Filtelonr out candidatelons baselond on Helonalth Signal Storelon (HSS) helonalth signals
  */
-@Singleton
-case class HssPredicate @Inject() (
-  healthSignalsOnUserClientColumn: HealthSignalsOnUserClientColumn,
-  statsReceiver: StatsReceiver)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
+@Singlelonton
+caselon class HssPrelondicatelon @Injelonct() (
+  helonalthSignalsOnUselonrClielonntColumn: HelonalthSignalsOnUselonrClielonntColumn,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Prelondicatelon[(HasClielonntContelonxt with HasParams, CandidatelonUselonr)]
     with Logging {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon(this.gelontClass.gelontNamelon)
 
-  override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (request, candidate) = pair
-    StatsUtil.profileStitch(
-      getHssPredicateResult(request, candidate),
-      stats.scope("getHssPredicateResult")
+  ovelonrridelon delonf apply(
+    pair: (HasClielonntContelonxt with HasParams, CandidatelonUselonr)
+  ): Stitch[PrelondicatelonRelonsult] = {
+    val (relonquelonst, candidatelon) = pair
+    StatsUtil.profilelonStitch(
+      gelontHssPrelondicatelonRelonsult(relonquelonst, candidatelon),
+      stats.scopelon("gelontHssPrelondicatelonRelonsult")
     )
   }
 
-  private def getHssPredicateResult(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser
-  ): Stitch[PredicateResult] = {
+  privatelon delonf gelontHssPrelondicatelonRelonsult(
+    relonquelonst: HasClielonntContelonxt with HasParams,
+    candidatelon: CandidatelonUselonr
+  ): Stitch[PrelondicatelonRelonsult] = {
 
-    val hssCseScoreThreshold: Double = request.params(HssPredicateParams.HssCseScoreThreshold)
-    val hssNsfwScoreThreshold: Double = request.params(HssPredicateParams.HssNsfwScoreThreshold)
-    val timeout: Duration = request.params(HssPredicateParams.HssApiTimeout)
+    val hssCselonScorelonThrelonshold: Doublelon = relonquelonst.params(HssPrelondicatelonParams.HssCselonScorelonThrelonshold)
+    val hssNsfwScorelonThrelonshold: Doublelon = relonquelonst.params(HssPrelondicatelonParams.HssNsfwScorelonThrelonshold)
+    val timelonout: Duration = relonquelonst.params(HssPrelondicatelonParams.HssApiTimelonout)
 
-    healthSignalsOnUserClientColumn.fetcher
-      .fetch(candidate.id, Seq(AgathaCseDouble, NsfwAgathaUserScoreDouble))
-      .map { fetchResult =>
-        fetchResult.v match {
-          case Some(response) =>
-            val agathaCseScoreDouble: Double = userHealthSignalValueToDoubleOpt(
-              response.signalValues.get(AgathaCseDouble)).getOrElse(0d)
-            val agathaNsfwScoreDouble: Double = userHealthSignalValueToDoubleOpt(
-              response.signalValues.get(NsfwAgathaUserScoreDouble)).getOrElse(0d)
+    helonalthSignalsOnUselonrClielonntColumn.felontchelonr
+      .felontch(candidatelon.id, Selonq(AgathaCselonDoublelon, NsfwAgathaUselonrScorelonDoublelon))
+      .map { felontchRelonsult =>
+        felontchRelonsult.v match {
+          caselon Somelon(relonsponselon) =>
+            val agathaCselonScorelonDoublelon: Doublelon = uselonrHelonalthSignalValuelonToDoublelonOpt(
+              relonsponselon.signalValuelons.gelont(AgathaCselonDoublelon)).gelontOrelonlselon(0d)
+            val agathaNsfwScorelonDoublelon: Doublelon = uselonrHelonalthSignalValuelonToDoublelonOpt(
+              relonsponselon.signalValuelons.gelont(NsfwAgathaUselonrScorelonDoublelon)).gelontOrelonlselon(0d)
 
-            stats.stat("agathaCseScoreDistribution").add(agathaCseScoreDouble.toFloat)
-            stats.stat("agathaNsfwScoreDistribution").add(agathaNsfwScoreDouble.toFloat)
+            stats.stat("agathaCselonScorelonDistribution").add(agathaCselonScorelonDoublelon.toFloat)
+            stats.stat("agathaNsfwScorelonDistribution").add(agathaNsfwScorelonDoublelon.toFloat)
 
             /**
-             * Only filter out the candidate when it has both high Agatha CSE score and NSFW score, as the Agatha CSE
-             * model is an old one that may not be precise or have high recall.
+             * Only filtelonr out thelon candidatelon whelonn it has both high Agatha CSelon scorelon and NSFW scorelon, as thelon Agatha CSelon
+             * modelonl is an old onelon that may not belon prelonciselon or havelon high reloncall.
              */
-            if (agathaCseScoreDouble >= hssCseScoreThreshold && agathaNsfwScoreDouble >= hssNsfwScoreThreshold) {
-              PredicateResult.Invalid(Set(FilterReason.HssSignal))
-            } else {
-              PredicateResult.Valid
+            if (agathaCselonScorelonDoublelon >= hssCselonScorelonThrelonshold && agathaNsfwScorelonDoublelon >= hssNsfwScorelonThrelonshold) {
+              PrelondicatelonRelonsult.Invalid(Selont(FiltelonrRelonason.HssSignal))
+            } elonlselon {
+              PrelondicatelonRelonsult.Valid
             }
-          case None =>
-            PredicateResult.Valid
+          caselon Nonelon =>
+            PrelondicatelonRelonsult.Valid
         }
       }
-      .within(timeout)(DefaultTimer)
-      .rescue {
-        case e: Exception =>
-          stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
+      .within(timelonout)(DelonfaultTimelonr)
+      .relonscuelon {
+        caselon elon: elonxcelonption =>
+          stats.scopelon("relonscuelond").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          Stitch(PrelondicatelonRelonsult.Invalid(Selont(FailOpelonn)))
       }
   }
 
-  private def userHealthSignalValueToDoubleOpt(signalValue: Option[SignalValue]): Option[Double] = {
-    signalValue match {
-      case Some(SignalValue.DoubleValue(value)) => Some(value)
-      case _ => None
+  privatelon delonf uselonrHelonalthSignalValuelonToDoublelonOpt(signalValuelon: Option[SignalValuelon]): Option[Doublelon] = {
+    signalValuelon match {
+      caselon Somelon(SignalValuelon.DoublelonValuelon(valuelon)) => Somelon(valuelon)
+      caselon _ => Nonelon
     }
   }
 }

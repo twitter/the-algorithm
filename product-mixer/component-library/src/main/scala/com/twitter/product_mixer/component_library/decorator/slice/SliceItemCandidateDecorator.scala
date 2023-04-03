@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.slice
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.slicelon
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.component_library.model.presentation.slice.SliceItemPresentation
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.slice.CursorItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.decorator.slice.builder.CandidateSliceItemBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.slicelon.SlicelonItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DeloncoratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon.CursorItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.Deloncoration
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.slicelon.buildelonr.CandidatelonSlicelonItelonmBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.stitch.Stitch
 
 /**
- * Adds a [[Decoration]] for all `candidates` that are [[CursorCandidate]]s
+ * Adds a [[Deloncoration]] for all `candidatelons` that arelon [[CursorCandidatelon]]s
  *
- * @note Only [[CursorCandidate]]s get decorated in [[SliceItemCandidateDecorator]]
- *       because the [[com.twitter.product_mixer.component_library.premarshaller.slice.SliceDomainMarshaller]]
- *       handles the undecorated non-[[CursorCandidate]] `candidates` directly.
+ * @notelon Only [[CursorCandidatelon]]s gelont deloncoratelond in [[SlicelonItelonmCandidatelonDeloncorator]]
+ *       beloncauselon thelon [[com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.slicelon.SlicelonDomainMarshallelonr]]
+ *       handlelons thelon undeloncoratelond non-[[CursorCandidatelon]] `candidatelons` direlonctly.
  */
-case class SliceItemCandidateDecorator[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  cursorBuilder: CandidateSliceItemBuilder[Query, CursorCandidate, CursorItem],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("SliceItemCandidate"))
-    extends CandidateDecorator[Query, Candidate] {
+caselon class SlicelonItelonmCandidatelonDeloncorator[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+  cursorBuildelonr: CandidatelonSlicelonItelonmBuildelonr[Quelonry, CursorCandidatelon, CursorItelonm],
+  ovelonrridelon val idelonntifielonr: DeloncoratorIdelonntifielonr = DeloncoratorIdelonntifielonr("SlicelonItelonmCandidatelon"))
+    elonxtelonnds CandidatelonDeloncorator[Quelonry, Candidatelon] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[Seq[Decoration]] = {
-    val cursorPresentations = candidates.collect {
-      case CandidateWithFeatures(candidate: CursorCandidate, features) =>
-        val cursorItem = cursorBuilder(query, candidate, features)
-        val presentation = SliceItemPresentation(sliceItem = cursorItem)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[Selonq[Deloncoration]] = {
+    val cursorPrelonselonntations = candidatelons.collelonct {
+      caselon CandidatelonWithFelonaturelons(candidatelon: CursorCandidatelon, felonaturelons) =>
+        val cursorItelonm = cursorBuildelonr(quelonry, candidatelon, felonaturelons)
+        val prelonselonntation = SlicelonItelonmPrelonselonntation(slicelonItelonm = cursorItelonm)
 
-        Decoration(candidate, presentation)
+        Deloncoration(candidatelon, prelonselonntation)
     }
 
-    Stitch.value(cursorPresentations)
+    Stitch.valuelon(cursorPrelonselonntations)
   }
 }

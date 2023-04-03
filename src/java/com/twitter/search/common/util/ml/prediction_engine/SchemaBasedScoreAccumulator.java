@@ -1,62 +1,62 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.modeling.common.TweetFeaturesUtils;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchRelonsultFelonaturelons;
+import com.twittelonr.selonarch.modelonling.common.TwelonelontFelonaturelonsUtils;
 
 /**
- * Score accumulator for schema-based features.
+ * Scorelon accumulator for schelonma-baselond felonaturelons.
  */
-public class SchemaBasedScoreAccumulator extends BaseScoreAccumulator<ThriftSearchResultFeatures> {
+public class SchelonmaBaselondScorelonAccumulator elonxtelonnds BaselonScorelonAccumulator<ThriftSelonarchRelonsultFelonaturelons> {
 
-  public SchemaBasedScoreAccumulator(LightweightLinearModel model) {
-    super(model);
-    Preconditions.checkState(model.isSchemaBased(),
-        "Cannot create SchemaBasedScoreAccumulator with a non-schema-based model: %s",
-        model.getName());
+  public SchelonmaBaselondScorelonAccumulator(LightwelonightLinelonarModelonl modelonl) {
+    supelonr(modelonl);
+    Prelonconditions.chelonckStatelon(modelonl.isSchelonmaBaselond(),
+        "Cannot crelonatelon SchelonmaBaselondScorelonAccumulator with a non-schelonma-baselond modelonl: %s",
+        modelonl.gelontNamelon());
   }
 
-  @Override
-  protected final void updateScoreWithFeatures(ThriftSearchResultFeatures featureData) {
-    // go through all features available and apply all those available in the model
-    addSchemaBooleanFeatures(featureData.getBoolValues());
-    addSchemaContinuousFeatures(featureData.getIntValues());
-    addSchemaContinuousFeatures(featureData.getLongValues());
-    addSchemaContinuousFeatures(featureData.getDoubleValues());
+  @Ovelonrridelon
+  protelonctelond final void updatelonScorelonWithFelonaturelons(ThriftSelonarchRelonsultFelonaturelons felonaturelonData) {
+    // go through all felonaturelons availablelon and apply all thoselon availablelon in thelon modelonl
+    addSchelonmaBoolelonanFelonaturelons(felonaturelonData.gelontBoolValuelons());
+    addSchelonmaContinuousFelonaturelons(felonaturelonData.gelontIntValuelons());
+    addSchelonmaContinuousFelonaturelons(felonaturelonData.gelontLongValuelons());
+    addSchelonmaContinuousFelonaturelons(felonaturelonData.gelontDoublelonValuelons());
   }
 
-  private void addSchemaBooleanFeatures(Map<Integer, Boolean> booleanMap) {
-    if (booleanMap == null || booleanMap.isEmpty()) {
-      return;
+  privatelon void addSchelonmaBoolelonanFelonaturelons(Map<Intelongelonr, Boolelonan> boolelonanMap) {
+    if (boolelonanMap == null || boolelonanMap.iselonmpty()) {
+      relonturn;
     }
-    for (Map.Entry<Integer, Boolean> entry : booleanMap.entrySet()) {
-      if (entry.getValue()) {
-        score += model.binaryFeaturesById.getOrDefault(entry.getKey(), 0.0);
+    for (Map.elonntry<Intelongelonr, Boolelonan> elonntry : boolelonanMap.elonntrySelont()) {
+      if (elonntry.gelontValuelon()) {
+        scorelon += modelonl.binaryFelonaturelonsById.gelontOrDelonfault(elonntry.gelontKelony(), 0.0);
       }
     }
   }
 
-  private void addSchemaContinuousFeatures(Map<Integer, ? extends Number> valueMap) {
-    if (valueMap == null || valueMap.isEmpty()) {
-      return;
+  privatelon void addSchelonmaContinuousFelonaturelons(Map<Intelongelonr, ? elonxtelonnds Numbelonr> valuelonMap) {
+    if (valuelonMap == null || valuelonMap.iselonmpty()) {
+      relonturn;
     }
-    for (Map.Entry<Integer, ? extends Number> entry : valueMap.entrySet()) {
-      Integer id = entry.getKey();
-      if (TweetFeaturesUtils.isFeatureDiscrete(id)) {
-        continue;  // we don't process any discrete features now
+    for (Map.elonntry<Intelongelonr, ? elonxtelonnds Numbelonr> elonntry : valuelonMap.elonntrySelont()) {
+      Intelongelonr id = elonntry.gelontKelony();
+      if (TwelonelontFelonaturelonsUtils.isFelonaturelonDiscrelontelon(id)) {
+        continuelon;  // welon don't procelonss any discrelontelon felonaturelons now
       }
-      Double weight = model.continuousFeaturesById.get(id);
-      if (weight != null) {
-        // found non-discretized entry
-        score += weight * entry.getValue().doubleValue();
-      } else {
-        DiscretizedFeature discretizedFeature = model.discretizedFeaturesById.get(id);
-        if (discretizedFeature != null) {
-          // Use only the weight of the discretized feature (there's no need to multiply it)
-          score += discretizedFeature.getWeight(entry.getValue().doubleValue());
+      Doublelon welonight = modelonl.continuousFelonaturelonsById.gelont(id);
+      if (welonight != null) {
+        // found non-discrelontizelond elonntry
+        scorelon += welonight * elonntry.gelontValuelon().doublelonValuelon();
+      } elonlselon {
+        DiscrelontizelondFelonaturelon discrelontizelondFelonaturelon = modelonl.discrelontizelondFelonaturelonsById.gelont(id);
+        if (discrelontizelondFelonaturelon != null) {
+          // Uselon only thelon welonight of thelon discrelontizelond felonaturelon (thelonrelon's no nelonelond to multiply it)
+          scorelon += discrelontizelondFelonaturelon.gelontWelonight(elonntry.gelontValuelon().doublelonValuelon());
         }
       }
     }

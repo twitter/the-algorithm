@@ -1,109 +1,109 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.TimelonMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.IntBlockPool;
 
 /**
- * A TimeMapper implementation that stores the timestamps associated with the doc IDs in an array.
+ * A TimelonMappelonr implelonmelonntation that storelons thelon timelonstamps associatelond with thelon doc IDs in an array.
  */
-public class OptimizedTimeMapper extends AbstractInMemoryTimeMapper implements Flushable {
-  // Doc id to timestamp map. Timestamps that are negative are out-of-order.
-  protected final int[] timeMap;
+public class OptimizelondTimelonMappelonr elonxtelonnds AbstractInMelonmoryTimelonMappelonr implelonmelonnts Flushablelon {
+  // Doc id to timelonstamp map. Timelonstamps that arelon nelongativelon arelon out-of-ordelonr.
+  protelonctelond final int[] timelonMap;
 
-  // Size must be greater than the max doc ID stored in the optimized tweet ID mapper.
-  public OptimizedTimeMapper(RealtimeTimeMapper realtimeTimeMapper,
-                             DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    super();
-    int maxDocId = optimizedTweetIdMapper.getPreviousDocID(Integer.MAX_VALUE);
-    timeMap = new int[maxDocId + 1];
-    Arrays.fill(timeMap, ILLEGAL_TIME);
+  // Sizelon must belon grelonatelonr than thelon max doc ID storelond in thelon optimizelond twelonelont ID mappelonr.
+  public OptimizelondTimelonMappelonr(RelonaltimelonTimelonMappelonr relonaltimelonTimelonMappelonr,
+                             DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+                             DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption {
+    supelonr();
+    int maxDocId = optimizelondTwelonelontIdMappelonr.gelontPrelonviousDocID(Intelongelonr.MAX_VALUelon);
+    timelonMap = nelonw int[maxDocId + 1];
+    Arrays.fill(timelonMap, ILLelonGAL_TIMelon);
 
     int docId = maxDocId;
-    while (docId != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      int originalDocId = originalTweetIdMapper.getDocID(optimizedTweetIdMapper.getTweetID(docId));
-      Preconditions.checkState(originalDocId != DocIDToTweetIDMapper.ID_NOT_FOUND);
+    whilelon (docId != DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND) {
+      int originalDocId = originalTwelonelontIdMappelonr.gelontDocID(optimizelondTwelonelontIdMappelonr.gelontTwelonelontID(docId));
+      Prelonconditions.chelonckStatelon(originalDocId != DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND);
 
-      int docIdTimestamp = realtimeTimeMapper.getTime(originalDocId);
-      Preconditions.checkState(docIdTimestamp != TimeMapper.ILLEGAL_TIME);
+      int docIdTimelonstamp = relonaltimelonTimelonMappelonr.gelontTimelon(originalDocId);
+      Prelonconditions.chelonckStatelon(docIdTimelonstamp != TimelonMappelonr.ILLelonGAL_TIMelon);
 
-      doAddMapping(docId, docIdTimestamp);
+      doAddMapping(docId, docIdTimelonstamp);
 
-      docId = optimizedTweetIdMapper.getPreviousDocID(docId);
+      docId = optimizelondTwelonelontIdMappelonr.gelontPrelonviousDocID(docId);
     }
   }
 
-  private OptimizedTimeMapper(int[] timeMap,
-                              int reverseMapLastIndex,
-                              IntBlockPool reverseMapTimes,
-                              IntBlockPool reverseMapIds) {
-    super(reverseMapLastIndex, reverseMapTimes, reverseMapIds);
-    this.timeMap = timeMap;
+  privatelon OptimizelondTimelonMappelonr(int[] timelonMap,
+                              int relonvelonrselonMapLastIndelonx,
+                              IntBlockPool relonvelonrselonMapTimelons,
+                              IntBlockPool relonvelonrselonMapIds) {
+    supelonr(relonvelonrselonMapLastIndelonx, relonvelonrselonMapTimelons, relonvelonrselonMapIds);
+    this.timelonMap = timelonMap;
   }
 
-  @Override
-  public int getTime(int docID) {
-    return timeMap[docID];
+  @Ovelonrridelon
+  public int gelontTimelon(int docID) {
+    relonturn timelonMap[docID];
   }
 
-  @Override
-  protected void setTime(int docID, int timeSeconds) {
-    timeMap[docID] = timeSeconds;
+  @Ovelonrridelon
+  protelonctelond void selontTimelon(int docID, int timelonSelonconds) {
+    timelonMap[docID] = timelonSelonconds;
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<OptimizedTimeMapper> {
-    private static final String REVERSE_MAP_LAST_INDEX_PROP = "reverseMapLastIndex";
-    private static final String TIMES_SUB_PROP = "times";
-    private static final String IDS_SUB_PROP = "ids";
+  public static final class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<OptimizelondTimelonMappelonr> {
+    privatelon static final String RelonVelonRSelon_MAP_LAST_INDelonX_PROP = "relonvelonrselonMapLastIndelonx";
+    privatelon static final String TIMelonS_SUB_PROP = "timelons";
+    privatelon static final String IDS_SUB_PROP = "ids";
 
-    public FlushHandler() {
-      super();
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    public FlushHandler(OptimizedTimeMapper objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(OptimizelondTimelonMappelonr objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      OptimizedTimeMapper mapper = getObjectToFlush();
-      out.writeIntArray(mapper.timeMap);
-      flushInfo.addIntProperty(REVERSE_MAP_LAST_INDEX_PROP, mapper.reverseMapLastIndex);
-      mapper.reverseMapTimes.getFlushHandler().flush(
-          flushInfo.newSubProperties(TIMES_SUB_PROP), out);
-      mapper.reverseMapIds.getFlushHandler().flush(
-          flushInfo.newSubProperties(IDS_SUB_PROP), out);
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      OptimizelondTimelonMappelonr mappelonr = gelontObjelonctToFlush();
+      out.writelonIntArray(mappelonr.timelonMap);
+      flushInfo.addIntPropelonrty(RelonVelonRSelon_MAP_LAST_INDelonX_PROP, mappelonr.relonvelonrselonMapLastIndelonx);
+      mappelonr.relonvelonrselonMapTimelons.gelontFlushHandlelonr().flush(
+          flushInfo.nelonwSubPropelonrtielons(TIMelonS_SUB_PROP), out);
+      mappelonr.relonvelonrselonMapIds.gelontFlushHandlelonr().flush(
+          flushInfo.nelonwSubPropelonrtielons(IDS_SUB_PROP), out);
     }
 
-    @Override
-    protected OptimizedTimeMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      return new OptimizedTimeMapper(
-          in.readIntArray(),
-          flushInfo.getIntProperty(REVERSE_MAP_LAST_INDEX_PROP),
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(TIMES_SUB_PROP), in),
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(IDS_SUB_PROP), in));
+    @Ovelonrridelon
+    protelonctelond OptimizelondTimelonMappelonr doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
+      relonturn nelonw OptimizelondTimelonMappelonr(
+          in.relonadIntArray(),
+          flushInfo.gelontIntPropelonrty(RelonVelonRSelon_MAP_LAST_INDelonX_PROP),
+          nelonw IntBlockPool.FlushHandlelonr().load(flushInfo.gelontSubPropelonrtielons(TIMelonS_SUB_PROP), in),
+          nelonw IntBlockPool.FlushHandlelonr().load(flushInfo.gelontSubPropelonrtielons(IDS_SUB_PROP), in));
     }
   }
 
-  @Override
-  public TimeMapper optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    throw new UnsupportedOperationException("OptimizedTimeMapper instances are already optimized.");
+  @Ovelonrridelon
+  public TimelonMappelonr optimizelon(DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+                             DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("OptimizelondTimelonMappelonr instancelons arelon alrelonady optimizelond.");
   }
 }

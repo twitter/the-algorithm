@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfBelow
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon.TriggelonrIfBelonlow
 
 /**
- * [[SuccessRateAlert]] triggers when the Success Rate for the component this is used
- * with drops below the [[TriggerIfBelow]] threshold for the configured amount of time
+ * [[SuccelonssRatelonAlelonrt]] triggelonrs whelonn thelon Succelonss Ratelon for thelon componelonnt this is uselond
+ * with drops belonlow thelon [[TriggelonrIfBelonlow]] threlonshold for thelon configurelond amount of timelon
  *
- * @note SuccessRate thresholds must be between 0 and 100%
+ * @notelon SuccelonssRatelon threlonsholds must belon belontwelonelonn 0 and 100%
  */
-case class SuccessRateAlert(
-  override val notificationGroup: NotificationGroup,
-  override val warnPredicate: TriggerIfBelow,
-  override val criticalPredicate: TriggerIfBelow,
-  override val runbookLink: Option[String] = None)
-    extends Alert
-    with IsObservableFromStrato {
-  override val alertType: AlertType = SuccessRate
-  require(
-    warnPredicate.threshold > 0 && warnPredicate.threshold <= 100,
-    s"SuccessRateAlert predicates must be between 0 and 100 but got warnPredicate = ${warnPredicate.threshold}"
+caselon class SuccelonssRatelonAlelonrt(
+  ovelonrridelon val notificationGroup: NotificationGroup,
+  ovelonrridelon val warnPrelondicatelon: TriggelonrIfBelonlow,
+  ovelonrridelon val criticalPrelondicatelon: TriggelonrIfBelonlow,
+  ovelonrridelon val runbookLink: Option[String] = Nonelon)
+    elonxtelonnds Alelonrt
+    with IsObselonrvablelonFromStrato {
+  ovelonrridelon val alelonrtTypelon: AlelonrtTypelon = SuccelonssRatelon
+  relonquirelon(
+    warnPrelondicatelon.threlonshold > 0 && warnPrelondicatelon.threlonshold <= 100,
+    s"SuccelonssRatelonAlelonrt prelondicatelons must belon belontwelonelonn 0 and 100 but got warnPrelondicatelon = ${warnPrelondicatelon.threlonshold}"
   )
-  require(
-    criticalPredicate.threshold > 0 && criticalPredicate.threshold <= 100,
-    s"SuccessRateAlert predicates must be between 0 and 100 but got criticalPredicate = ${criticalPredicate.threshold}"
+  relonquirelon(
+    criticalPrelondicatelon.threlonshold > 0 && criticalPrelondicatelon.threlonshold <= 100,
+    s"SuccelonssRatelonAlelonrt prelondicatelons must belon belontwelonelonn 0 and 100 but got criticalPrelondicatelon = ${criticalPrelondicatelon.threlonshold}"
   )
 }

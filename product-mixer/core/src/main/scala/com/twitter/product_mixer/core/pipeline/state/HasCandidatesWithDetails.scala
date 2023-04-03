@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.pipeline.state
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon
 
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.Deloncoration
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
 
-trait HasCandidatesWithDetails[T] {
-  def candidatesWithDetails: Seq[CandidateWithDetails]
-  def updateCandidatesWithDetails(newCandidates: Seq[CandidateWithDetails]): T
+trait HasCandidatelonsWithDelontails[T] {
+  delonf candidatelonsWithDelontails: Selonq[CandidatelonWithDelontails]
+  delonf updatelonCandidatelonsWithDelontails(nelonwCandidatelons: Selonq[CandidatelonWithDelontails]): T
 
-  def updateDecorations(decoration: Seq[Decoration]): T
+  delonf updatelonDeloncorations(deloncoration: Selonq[Deloncoration]): T
 }

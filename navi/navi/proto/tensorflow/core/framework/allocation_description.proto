@@ -1,29 +1,29 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "AllocationDescriptionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/allocation_description_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "AllocationDelonscriptionProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/allocation_delonscription_go_proto";
 
-message AllocationDescription {
-  // Total number of bytes requested
-  int64 requested_bytes = 1;
+melonssagelon AllocationDelonscription {
+  // Total numbelonr of bytelons relonquelonstelond
+  int64 relonquelonstelond_bytelons = 1;
 
-  // Total number of bytes allocated if known
-  int64 allocated_bytes = 2;
+  // Total numbelonr of bytelons allocatelond if known
+  int64 allocatelond_bytelons = 2;
 
-  // Name of the allocator used
-  string allocator_name = 3;
+  // Namelon of thelon allocator uselond
+  string allocator_namelon = 3;
 
-  // Identifier of the allocated buffer if known
+  // Idelonntifielonr of thelon allocatelond buffelonr if known
   int64 allocation_id = 4;
 
-  // Set if this tensor only has one remaining reference
-  bool has_single_reference = 5;
+  // Selont if this telonnsor only has onelon relonmaining relonfelonrelonncelon
+  bool has_singlelon_relonfelonrelonncelon = 5;
 
-  // Address of the allocation.
+  // Addrelonss of thelon allocation.
   uint64 ptr = 6;
 }

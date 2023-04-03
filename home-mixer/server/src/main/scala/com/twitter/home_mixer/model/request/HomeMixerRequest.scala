@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.model.request
+packagelon com.twittelonr.homelon_mixelonr.modelonl.relonquelonst
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.DebugParams
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.product_mixer.core.model.marshalling.request.ProductContext
-import com.twitter.product_mixer.core.model.marshalling.request.Request
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.DelonbugParams
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ProductContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
 
-case class HomeMixerRequest(
-  override val clientContext: ClientContext,
-  override val product: Product,
-  // Product-specific parameters should be placed in the Product Context
-  override val productContext: Option[ProductContext],
-  override val serializedRequestCursor: Option[String],
-  override val maxResults: Option[Int],
-  override val debugParams: Option[DebugParams],
-  // Parameters that apply to all products can be promoted to the request-level
-  homeRequestParam: Boolean)
-    extends Request
+caselon class HomelonMixelonrRelonquelonst(
+  ovelonrridelon val clielonntContelonxt: ClielonntContelonxt,
+  ovelonrridelon val product: Product,
+  // Product-speloncific paramelontelonrs should belon placelond in thelon Product Contelonxt
+  ovelonrridelon val productContelonxt: Option[ProductContelonxt],
+  ovelonrridelon val selonrializelondRelonquelonstCursor: Option[String],
+  ovelonrridelon val maxRelonsults: Option[Int],
+  ovelonrridelon val delonbugParams: Option[DelonbugParams],
+  // Paramelontelonrs that apply to all products can belon promotelond to thelon relonquelonst-lelonvelonl
+  homelonRelonquelonstParam: Boolelonan)
+    elonxtelonnds Relonquelonst

@@ -1,61 +1,61 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.gelonoduck
 
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.geoduck.common.thriftscala.LocationSource
-import com.twitter.geoduck.common.thriftscala.PlaceQuery
-import com.twitter.geoduck.common.thriftscala.TransactionLocation
-import com.twitter.geoduck.common.thriftscala.UserLocationRequest
-import com.twitter.geoduck.thriftscala.LocationService
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.GelonohashAndCountryCodelon
+import com.twittelonr.gelonoduck.common.thriftscala.LocationSourcelon
+import com.twittelonr.gelonoduck.common.thriftscala.PlacelonQuelonry
+import com.twittelonr.gelonoduck.common.thriftscala.TransactionLocation
+import com.twittelonr.gelonoduck.common.thriftscala.UselonrLocationRelonquelonst
+import com.twittelonr.gelonoduck.thriftscala.LocationSelonrvicelon
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class LocationServiceClient @Inject() (locationService: LocationService.MethodPerEndpoint) {
-  def getGeohashAndCountryCode(userId: Long): Stitch[GeohashAndCountryCode] = {
+@Singlelonton
+class LocationSelonrvicelonClielonnt @Injelonct() (locationSelonrvicelon: LocationSelonrvicelon.MelonthodPelonrelonndpoint) {
+  delonf gelontGelonohashAndCountryCodelon(uselonrId: Long): Stitch[GelonohashAndCountryCodelon] = {
     Stitch
-      .callFuture {
-        locationService
-          .userLocation(
-            UserLocationRequest(
-              Seq(userId),
-              Some(PlaceQuery(allPlaceTypes = Some(true))),
-              simpleReverseGeocode = true))
-          .map(_.found.get(userId)).map { transactionLocationOpt =>
-            val geohashOpt = transactionLocationOpt.flatMap(getGeohashFromTransactionLocation)
-            val countryCodeOpt =
-              transactionLocationOpt.flatMap(_.simpleRgcResult.flatMap(_.countryCodeAlpha2))
-            GeohashAndCountryCode(geohashOpt, countryCodeOpt)
+      .callFuturelon {
+        locationSelonrvicelon
+          .uselonrLocation(
+            UselonrLocationRelonquelonst(
+              Selonq(uselonrId),
+              Somelon(PlacelonQuelonry(allPlacelonTypelons = Somelon(truelon))),
+              simplelonRelonvelonrselonGelonocodelon = truelon))
+          .map(_.found.gelont(uselonrId)).map { transactionLocationOpt =>
+            val gelonohashOpt = transactionLocationOpt.flatMap(gelontGelonohashFromTransactionLocation)
+            val countryCodelonOpt =
+              transactionLocationOpt.flatMap(_.simplelonRgcRelonsult.flatMap(_.countryCodelonAlpha2))
+            GelonohashAndCountryCodelon(gelonohashOpt, countryCodelonOpt)
           }
       }
   }
 
-  private[this] def getGeohashFromTransactionLocation(
+  privatelon[this] delonf gelontGelonohashFromTransactionLocation(
     transactionLocation: TransactionLocation
   ): Option[String] = {
-    transactionLocation.geohash.flatMap { geohash =>
-      val geohashPrefixLength = transactionLocation.locationSource match {
-        // if location source is logical, keep the first 4 chars in geohash
-        case Some(LocationSource.Logical) => Some(4)
-        // if location source is physical, keep the prefix according to accuracy
-        // accuracy is the accuracy of GPS readings in the unit of meter
-        case Some(LocationSource.Physical) =>
-          transactionLocation.coordinate.flatMap { coordinate =>
-            coordinate.accuracy match {
-              case Some(accuracy) if (accuracy < 50) => Some(7)
-              case Some(accuracy) if (accuracy < 200) => Some(6)
-              case Some(accuracy) if (accuracy < 1000) => Some(5)
-              case Some(accuracy) if (accuracy < 50000) => Some(4)
-              case Some(accuracy) if (accuracy < 100000) => Some(3)
-              case _ => None
+    transactionLocation.gelonohash.flatMap { gelonohash =>
+      val gelonohashPrelonfixLelonngth = transactionLocation.locationSourcelon match {
+        // if location sourcelon is logical, kelonelonp thelon first 4 chars in gelonohash
+        caselon Somelon(LocationSourcelon.Logical) => Somelon(4)
+        // if location sourcelon is physical, kelonelonp thelon prelonfix according to accuracy
+        // accuracy is thelon accuracy of GPS relonadings in thelon unit of melontelonr
+        caselon Somelon(LocationSourcelon.Physical) =>
+          transactionLocation.coordinatelon.flatMap { coordinatelon =>
+            coordinatelon.accuracy match {
+              caselon Somelon(accuracy) if (accuracy < 50) => Somelon(7)
+              caselon Somelon(accuracy) if (accuracy < 200) => Somelon(6)
+              caselon Somelon(accuracy) if (accuracy < 1000) => Somelon(5)
+              caselon Somelon(accuracy) if (accuracy < 50000) => Somelon(4)
+              caselon Somelon(accuracy) if (accuracy < 100000) => Somelon(3)
+              caselon _ => Nonelon
             }
           }
-        case Some(LocationSource.Model) => Some(4)
-        case _ => None
+        caselon Somelon(LocationSourcelon.Modelonl) => Somelon(4)
+        caselon _ => Nonelon
       }
-      geohashPrefixLength match {
-        case Some(l: Int) => geohash.stringGeohash.map(_.take(l))
-        case _ => None
+      gelonohashPrelonfixLelonngth match {
+        caselon Somelon(l: Int) => gelonohash.stringGelonohash.map(_.takelon(l))
+        caselon _ => Nonelon
       }
     }
   }

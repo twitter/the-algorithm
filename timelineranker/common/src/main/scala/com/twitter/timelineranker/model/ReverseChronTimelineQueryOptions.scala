@@ -1,31 +1,31 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
 
-object ReverseChronTimelineQueryOptions {
-  val Default: ReverseChronTimelineQueryOptions = ReverseChronTimelineQueryOptions()
+objelonct RelonvelonrselonChronTimelonlinelonQuelonryOptions {
+  val Delonfault: RelonvelonrselonChronTimelonlinelonQuelonryOptions = RelonvelonrselonChronTimelonlinelonQuelonryOptions()
 
-  def fromThrift(
-    options: thrift.ReverseChronTimelineQueryOptions
-  ): ReverseChronTimelineQueryOptions = {
-    ReverseChronTimelineQueryOptions(
-      getTweetsFromArchiveIndex = options.getTweetsFromArchiveIndex
+  delonf fromThrift(
+    options: thrift.RelonvelonrselonChronTimelonlinelonQuelonryOptions
+  ): RelonvelonrselonChronTimelonlinelonQuelonryOptions = {
+    RelonvelonrselonChronTimelonlinelonQuelonryOptions(
+      gelontTwelonelontsFromArchivelonIndelonx = options.gelontTwelonelontsFromArchivelonIndelonx
     )
   }
 }
 
-case class ReverseChronTimelineQueryOptions(getTweetsFromArchiveIndex: Boolean = true)
-    extends TimelineQueryOptions {
+caselon class RelonvelonrselonChronTimelonlinelonQuelonryOptions(gelontTwelonelontsFromArchivelonIndelonx: Boolelonan = truelon)
+    elonxtelonnds TimelonlinelonQuelonryOptions {
 
   throwIfInvalid()
 
-  def toThrift: thrift.ReverseChronTimelineQueryOptions = {
-    thrift.ReverseChronTimelineQueryOptions(getTweetsFromArchiveIndex = getTweetsFromArchiveIndex)
+  delonf toThrift: thrift.RelonvelonrselonChronTimelonlinelonQuelonryOptions = {
+    thrift.RelonvelonrselonChronTimelonlinelonQuelonryOptions(gelontTwelonelontsFromArchivelonIndelonx = gelontTwelonelontsFromArchivelonIndelonx)
   }
 
-  def toTimelineQueryOptionsThrift: thrift.TimelineQueryOptions = {
-    thrift.TimelineQueryOptions.ReverseChronTimelineQueryOptions(toThrift)
+  delonf toTimelonlinelonQuelonryOptionsThrift: thrift.TimelonlinelonQuelonryOptions = {
+    thrift.TimelonlinelonQuelonryOptions.RelonvelonrselonChronTimelonlinelonQuelonryOptions(toThrift)
   }
 
-  def throwIfInvalid(): Unit = {}
+  delonf throwIfInvalid(): Unit = {}
 }

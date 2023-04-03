@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collelonction;
 
-import com.google.inject.Module;
+import com.googlelon.injelonct.Modulelon;
 
-import com.twitter.search.common.root.SearchRootAppMain;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+import com.twittelonr.selonarch.common.root.SelonarchRootAppMain;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
 
-public class RealtimeRootAppMain extends SearchRootAppMain<RealtimeRootServer> {
+public class RelonaltimelonRootAppMain elonxtelonnds SelonarchRootAppMain<RelonaltimelonRootSelonrvelonr> {
   /**
-   * Boilerplate for the Java-friendly AbstractTwitterServer
+   * Boilelonrplatelon for thelon Java-frielonndly AbstractTwittelonrSelonrvelonr
    */
   public static class Main {
     public static void main(String[] args) {
-      new RealtimeRootAppMain().main(args);
+      nelonw RelonaltimelonRootAppMain().main(args);
     }
   }
 
-  @Override
-  protected Collection<? extends Module> getAdditionalModules() {
-    return Arrays.asList(
-        new EarlybirdCommonModule(),
-        new EarlybirdCacheCommonModule(),
-        new RealtimeRootAppModule(),
-        new RealtimeScatterGatherModule());
+  @Ovelonrridelon
+  protelonctelond Collelonction<? elonxtelonnds Modulelon> gelontAdditionalModulelons() {
+    relonturn Arrays.asList(
+        nelonw elonarlybirdCommonModulelon(),
+        nelonw elonarlybirdCachelonCommonModulelon(),
+        nelonw RelonaltimelonRootAppModulelon(),
+        nelonw RelonaltimelonScattelonrGathelonrModulelon());
   }
 
-  @Override
-  protected Class<RealtimeRootServer> getSearchRootServerClass() {
-    return RealtimeRootServer.class;
+  @Ovelonrridelon
+  protelonctelond Class<RelonaltimelonRootSelonrvelonr> gelontSelonarchRootSelonrvelonrClass() {
+    relonturn RelonaltimelonRootSelonrvelonr.class;
   }
 
-  @Override
-  protected Class<?> getServiceIfaceClass() {
-    return EarlybirdService.ServiceIface.class;
+  @Ovelonrridelon
+  protelonctelond Class<?> gelontSelonrvicelonIfacelonClass() {
+    relonturn elonarlybirdSelonrvicelon.SelonrvicelonIfacelon.class;
   }
 }

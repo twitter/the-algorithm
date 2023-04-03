@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.search.DocIdSet;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.Bits;
-import org.apache.lucene.util.RamUsageEstimator;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelont;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.util.Bits;
+import org.apachelon.lucelonnelon.util.RamUsagelonelonstimator;
 
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.AllDocsItelonrator;
 
-public final class MatchAllDocIdSet extends DocIdSet {
-  private final LeafReader reader;
+public final class MatchAllDocIdSelont elonxtelonnds DocIdSelont {
+  privatelon final LelonafRelonadelonr relonadelonr;
 
-  public MatchAllDocIdSet(LeafReader reader) {
-    this.reader = reader;
+  public MatchAllDocIdSelont(LelonafRelonadelonr relonadelonr) {
+    this.relonadelonr = relonadelonr;
   }
 
-  @Override
-  public DocIdSetIterator iterator() throws IOException {
-    return new AllDocsIterator(reader);
+  @Ovelonrridelon
+  public DocIdSelontItelonrator itelonrator() throws IOelonxcelonption {
+    relonturn nelonw AllDocsItelonrator(relonadelonr);
   }
 
-  @Override
-  public Bits bits() throws IOException {
-    return new Bits() {
-      @Override
-      public boolean get(int index) {
-        return true;
+  @Ovelonrridelon
+  public Bits bits() throws IOelonxcelonption {
+    relonturn nelonw Bits() {
+      @Ovelonrridelon
+      public boolelonan gelont(int indelonx) {
+        relonturn truelon;
       }
 
-      @Override
-      public int length() {
-        return reader.maxDoc();
+      @Ovelonrridelon
+      public int lelonngth() {
+        relonturn relonadelonr.maxDoc();
       }
     };
   }
 
-  @Override
-  public long ramBytesUsed() {
-    return RamUsageEstimator.shallowSizeOf(this);
+  @Ovelonrridelon
+  public long ramBytelonsUselond() {
+    relonturn RamUsagelonelonstimator.shallowSizelonOf(this);
   }
 }

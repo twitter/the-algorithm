@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.service.candidate_decorator_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_deloncorator_elonxeloncutor
 
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.service.ExecutorResult
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.Deloncoration
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
 
-case class CandidateDecoratorExecutorResult(result: Seq[Decoration]) extends ExecutorResult
+caselon class CandidatelonDeloncoratorelonxeloncutorRelonsult(relonsult: Selonq[Deloncoration]) elonxtelonnds elonxeloncutorRelonsult

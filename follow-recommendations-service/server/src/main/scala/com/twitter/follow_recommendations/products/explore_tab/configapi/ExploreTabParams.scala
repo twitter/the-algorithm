@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.products.explore_tab.configapi
+packagelon com.twittelonr.follow_reloncommelonndations.products.elonxplorelon_tab.configapi
 
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object ExploreTabParams {
-  object EnableProduct extends Param[Boolean](false)
-  object EnableProductForSoftUser
-      extends FSParam[Boolean]("explore_tab_enable_product_for_soft_user", false)
+objelonct elonxplorelonTabParams {
+  objelonct elonnablelonProduct elonxtelonnds Param[Boolelonan](falselon)
+  objelonct elonnablelonProductForSoftUselonr
+      elonxtelonnds FSParam[Boolelonan]("elonxplorelon_tab_elonnablelon_product_for_soft_uselonr", falselon)
 }

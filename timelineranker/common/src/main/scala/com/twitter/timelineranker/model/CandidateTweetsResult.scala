@@ -1,37 +1,37 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.util.Futurelon
 
-object CandidateTweetsResult {
-  val Empty: CandidateTweetsResult = CandidateTweetsResult(Nil, Nil)
-  val EmptyFuture: Future[CandidateTweetsResult] = Future.value(Empty)
-  val EmptyCandidateTweet: Seq[CandidateTweet] = Seq.empty[CandidateTweet]
+objelonct CandidatelonTwelonelontsRelonsult {
+  val elonmpty: CandidatelonTwelonelontsRelonsult = CandidatelonTwelonelontsRelonsult(Nil, Nil)
+  val elonmptyFuturelon: Futurelon[CandidatelonTwelonelontsRelonsult] = Futurelon.valuelon(elonmpty)
+  val elonmptyCandidatelonTwelonelont: Selonq[CandidatelonTwelonelont] = Selonq.elonmpty[CandidatelonTwelonelont]
 
-  def fromThrift(response: thrift.GetCandidateTweetsResponse): CandidateTweetsResult = {
-    val candidates = response.candidates
-      .map(_.map(CandidateTweet.fromThrift))
-      .getOrElse(EmptyCandidateTweet)
-    val sourceTweets = response.sourceTweets
-      .map(_.map(CandidateTweet.fromThrift))
-      .getOrElse(EmptyCandidateTweet)
-    if (sourceTweets.nonEmpty) {
-      require(candidates.nonEmpty, "sourceTweets cannot have a value if candidates list is empty.")
+  delonf fromThrift(relonsponselon: thrift.GelontCandidatelonTwelonelontsRelonsponselon): CandidatelonTwelonelontsRelonsult = {
+    val candidatelons = relonsponselon.candidatelons
+      .map(_.map(CandidatelonTwelonelont.fromThrift))
+      .gelontOrelonlselon(elonmptyCandidatelonTwelonelont)
+    val sourcelonTwelonelonts = relonsponselon.sourcelonTwelonelonts
+      .map(_.map(CandidatelonTwelonelont.fromThrift))
+      .gelontOrelonlselon(elonmptyCandidatelonTwelonelont)
+    if (sourcelonTwelonelonts.nonelonmpty) {
+      relonquirelon(candidatelons.nonelonmpty, "sourcelonTwelonelonts cannot havelon a valuelon if candidatelons list is elonmpty.")
     }
-    CandidateTweetsResult(candidates, sourceTweets)
+    CandidatelonTwelonelontsRelonsult(candidatelons, sourcelonTwelonelonts)
   }
 }
 
-case class CandidateTweetsResult(
-  candidates: Seq[CandidateTweet],
-  sourceTweets: Seq[CandidateTweet]) {
+caselon class CandidatelonTwelonelontsRelonsult(
+  candidatelons: Selonq[CandidatelonTwelonelont],
+  sourcelonTwelonelonts: Selonq[CandidatelonTwelonelont]) {
 
-  def toThrift: thrift.GetCandidateTweetsResponse = {
-    val thriftCandidates = candidates.map(_.toThrift)
-    val thriftSourceTweets = sourceTweets.map(_.toThrift)
-    thrift.GetCandidateTweetsResponse(
-      candidates = Some(thriftCandidates),
-      sourceTweets = Some(thriftSourceTweets)
+  delonf toThrift: thrift.GelontCandidatelonTwelonelontsRelonsponselon = {
+    val thriftCandidatelons = candidatelons.map(_.toThrift)
+    val thriftSourcelonTwelonelonts = sourcelonTwelonelonts.map(_.toThrift)
+    thrift.GelontCandidatelonTwelonelontsRelonsponselon(
+      candidatelons = Somelon(thriftCandidatelons),
+      sourcelonTwelonelonts = Somelon(thriftSourcelonTwelonelonts)
     )
   }
 }

@@ -1,24 +1,24 @@
-package com.twitter.timelineranker.core
+packagelon com.twittelonr.timelonlinelonrankelonr.corelon
 
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.model.TweetId
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.TwelonelontReloncommelonndation
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
 
-object CandidateEnvelope {
-  val EmptySearchResults: Seq[ThriftSearchResult] = Seq.empty[ThriftSearchResult]
-  val EmptyHydratedTweets: HydratedTweets = HydratedTweets(Seq.empty, Seq.empty)
-  val EmptyUtegResults: Map[TweetId, TweetRecommendation] = Map.empty[TweetId, TweetRecommendation]
+objelonct Candidatelonelonnvelonlopelon {
+  val elonmptySelonarchRelonsults: Selonq[ThriftSelonarchRelonsult] = Selonq.elonmpty[ThriftSelonarchRelonsult]
+  val elonmptyHydratelondTwelonelonts: HydratelondTwelonelonts = HydratelondTwelonelonts(Selonq.elonmpty, Selonq.elonmpty)
+  val elonmptyUtelongRelonsults: Map[TwelonelontId, TwelonelontReloncommelonndation] = Map.elonmpty[TwelonelontId, TwelonelontReloncommelonndation]
 }
 
-case class CandidateEnvelope(
-  query: RecapQuery,
-  searchResults: Seq[ThriftSearchResult] = CandidateEnvelope.EmptySearchResults,
-  utegResults: Map[TweetId, TweetRecommendation] = CandidateEnvelope.EmptyUtegResults,
-  hydratedTweets: HydratedTweets = CandidateEnvelope.EmptyHydratedTweets,
-  followGraphData: FollowGraphDataFuture = FollowGraphDataFuture.EmptyFollowGraphDataFuture,
-  // The source tweets are
-  // - the retweeted tweet, for retweets
-  // - the inReplyTo tweet, for extended replies
-  sourceSearchResults: Seq[ThriftSearchResult] = CandidateEnvelope.EmptySearchResults,
-  sourceHydratedTweets: HydratedTweets = CandidateEnvelope.EmptyHydratedTweets)
+caselon class Candidatelonelonnvelonlopelon(
+  quelonry: ReloncapQuelonry,
+  selonarchRelonsults: Selonq[ThriftSelonarchRelonsult] = Candidatelonelonnvelonlopelon.elonmptySelonarchRelonsults,
+  utelongRelonsults: Map[TwelonelontId, TwelonelontReloncommelonndation] = Candidatelonelonnvelonlopelon.elonmptyUtelongRelonsults,
+  hydratelondTwelonelonts: HydratelondTwelonelonts = Candidatelonelonnvelonlopelon.elonmptyHydratelondTwelonelonts,
+  followGraphData: FollowGraphDataFuturelon = FollowGraphDataFuturelon.elonmptyFollowGraphDataFuturelon,
+  // Thelon sourcelon twelonelonts arelon
+  // - thelon relontwelonelontelond twelonelont, for relontwelonelonts
+  // - thelon inRelonplyTo twelonelont, for elonxtelonndelond relonplielons
+  sourcelonSelonarchRelonsults: Selonq[ThriftSelonarchRelonsult] = Candidatelonelonnvelonlopelon.elonmptySelonarchRelonsults,
+  sourcelonHydratelondTwelonelonts: HydratelondTwelonelonts = Candidatelonelonnvelonlopelon.elonmptyHydratelondTwelonelonts)

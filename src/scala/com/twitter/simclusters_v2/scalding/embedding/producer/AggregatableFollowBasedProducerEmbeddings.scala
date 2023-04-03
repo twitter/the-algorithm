@@ -1,165 +1,165 @@
-package com.twitter.simclusters_v2.scalding.embedding.producer
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.producelonr
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.hdfs_sources.AggregatableProducerSimclustersEmbeddingsByFollowScore2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.AggregatableProducerSimclustersEmbeddingsByFollowScore2020ThriftScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingWithId
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scalding_intelonrnal.sourcelon.lzo_scroogelon.FixelondPathLzoScroogelon
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFollowScorelon2020ScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFollowScorelon2020ThriftScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.NelonighborWithWelonights
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingWithId
+import com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToIntelonrelonstelondInClustelonrScorelons
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * This file implements a new Producer SimClusters Embeddings.
- * The differences with existing producer embeddings are:
+ * This filelon implelonmelonnts a nelonw Producelonr SimClustelonrs elonmbelonddings.
+ * Thelon diffelonrelonncelons with elonxisting producelonr elonmbelonddings arelon:
  *
- * 1) the embedding scores are not normalized, so that one can aggregate multiple producer embeddings by adding them.
- * 2) we use follow scores in the user-producer graph and user-simclusters graph.
+ * 1) thelon elonmbelondding scorelons arelon not normalizelond, so that onelon can aggrelongatelon multiplelon producelonr elonmbelonddings by adding thelonm.
+ * 2) welon uselon follow scorelons in thelon uselonr-producelonr graph and uselonr-simclustelonrs graph.
  */
 
 /**
  * Production job:
-capesospy-v2 update --build_locally --start_cron aggregatable_producer_embeddings_by_follow_score_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron aggrelongatablelon_producelonr_elonmbelonddings_by_follow_scorelon_2020 src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object AggregatableFollowBasedProducerEmbeddings2020ScheduledApp
-    extends AggregatableFollowBasedProducerEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+objelonct AggrelongatablelonFollowBaselondProducelonrelonmbelonddings2020SchelondulelondApp
+    elonxtelonnds AggrelongatablelonFollowBaselondProducelonrelonmbelonddingsBaselonApp
+    with SchelondulelondelonxeloncutionApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  // Not using the EmbeddingUtil.getHdfsPath to preserve the previous functionality.
-  private val outputPath: String =
-    "/user/cassowary/manhattan_sequence_files/producer_simclusters_aggregatable_embeddings_by_follow_score_20m145k2020"
+  ovelonrridelon val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
+  // Not using thelon elonmbelonddingUtil.gelontHdfsPath to prelonselonrvelon thelon prelonvious functionality.
+  privatelon val outputPath: String =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_follow_scorelon_20m145k2020"
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_follow_score_thrift"
+  privatelon val outputPathThrift: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = falselon,
+    isManhattanKelonyVal = falselon,
+    modelonlVelonrsion = modelonlVelonrsion,
+    pathSuffix = "producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_follow_scorelon_thrift"
   )
 
-  override def batchIncrement: Duration = Days(7)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Days(7)
 
-  override def firstTime: RichDate = RichDate("2021-11-10")
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2021-11-10")
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  ovelonrridelon delonf writelonToManhattan(
+    output: TypelondPipelon[KelonyVal[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .writeDALVersionedKeyValExecution(
-        AggregatableProducerSimclustersEmbeddingsByFollowScore2020ScalaDataset,
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFollowScorelon2020ScalaDataselont,
         D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+        velonrsion = elonxplicitelonndTimelon(datelonRangelon.elonnd)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  ovelonrridelon delonf writelonToThrift(
+    output: TypelondPipelon[SimClustelonrselonmbelonddingWithId]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .writeDALSnapshotExecution(
-        dataset = AggregatableProducerSimclustersEmbeddingsByFollowScore2020ThriftScalaDataset,
-        updateStep = D.Daily,
+      .writelonDALSnapshotelonxeloncution(
+        dataselont = AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFollowScorelon2020ThriftScalaDataselont,
+        updatelonStelonp = D.Daily,
         pathLayout = D.Suffix(outputPathThrift),
-        fmt = D.Parquet,
-        endDate = dateRange.end
+        fmt = D.Parquelont,
+        elonndDatelon = datelonRangelon.elonnd
       )
   }
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_follow_based_producer_embeddings_job_2020-adhoc
-scalding remote run \
---user cassowary \
---keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
---principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFollowBasedProducerEmbeddings2020AdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_follow_based_producer_embeddings_job_2020-adhoc \
---hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
--- --date 2021-11-10
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/producelonr:aggrelongatablelon_follow_baselond_producelonr_elonmbelonddings_job_2020-adhoc
+scalding relonmotelon run \
+--uselonr cassowary \
+--kelonytab /var/lib/tss/kelonys/fluffy/kelonytabs/clielonnt/cassowary.kelonytab \
+--principal selonrvicelon_acoount@TWITTelonR.BIZ \
+--clustelonr bluelonbird-qus1 \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.producelonr.AggrelongatablelonFollowBaselondProducelonrelonmbelonddings2020AdhocApp \
+--targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/producelonr:aggrelongatablelon_follow_baselond_producelonr_elonmbelonddings_job_2020-adhoc \
+--hadoop-propelonrtielons "scalding.with.relonducelonrs.selont.elonxplicitly=truelon maprelonducelon.job.relonducelons=4000" \
+-- --datelon 2021-11-10
  */
 
-object AggregatableFollowBasedProducerEmbeddings2020AdhocApp
-    extends AggregatableFollowBasedProducerEmbeddingsBaseApp
-    with AdhocExecutionApp {
+objelonct AggrelongatablelonFollowBaselondProducelonrelonmbelonddings2020AdhocApp
+    elonxtelonnds AggrelongatablelonFollowBaselondProducelonrelonmbelonddingsBaselonApp
+    with AdhocelonxeloncutionApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
+  ovelonrridelon val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
 
-  private val outputPath: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = true,
-    isManhattanKeyVal = true,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_follow_score"
+  privatelon val outputPath: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = truelon,
+    isManhattanKelonyVal = truelon,
+    modelonlVelonrsion = modelonlVelonrsion,
+    pathSuffix = "producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_follow_scorelon"
   )
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = true,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_follow_score_thrift"
+  privatelon val outputPathThrift: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = truelon,
+    isManhattanKelonyVal = falselon,
+    modelonlVelonrsion = modelonlVelonrsion,
+    pathSuffix = "producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_follow_scorelon_thrift"
   )
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  ovelonrridelon delonf writelonToManhattan(
+    output: TypelondPipelon[KelonyVal[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .flatMap { keyVal =>
-        keyVal.value.embedding.map { simClusterWithScore =>
+      .flatMap { kelonyVal =>
+        kelonyVal.valuelon.elonmbelondding.map { simClustelonrWithScorelon =>
           (
-            keyVal.key.embeddingType,
-            keyVal.key.modelVersion,
-            keyVal.key.internalId,
-            simClusterWithScore.clusterId,
-            simClusterWithScore.score
+            kelonyVal.kelony.elonmbelonddingTypelon,
+            kelonyVal.kelony.modelonlVelonrsion,
+            kelonyVal.kelony.intelonrnalId,
+            simClustelonrWithScorelon.clustelonrId,
+            simClustelonrWithScorelon.scorelon
           )
         }
       }
-      .writeExecution(
-        // Write to TSV for easier debugging of the adhoc job.
-        TypedTsv(outputPath)
+      .writelonelonxeloncution(
+        // Writelon to TSV for elonasielonr delonbugging of thelon adhoc job.
+        TypelondTsv(outputPath)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  ovelonrridelon delonf writelonToThrift(
+    output: TypelondPipelon[SimClustelonrselonmbelonddingWithId]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .writeExecution(
-        new FixedPathLzoScrooge(outputPathThrift, SimClustersEmbeddingWithId)
+      .writelonelonxeloncution(
+        nelonw FixelondPathLzoScroogelon(outputPathThrift, SimClustelonrselonmbelonddingWithId)
       )
   }
 }
 
-trait AggregatableFollowBasedProducerEmbeddingsBaseApp
-    extends AggregatableProducerEmbeddingsBaseApp {
-  override val userToProducerScoringFn: NeighborWithWeights => Double =
-    _.followScoreNormalizedByNeighborFollowersL2.getOrElse(0.0)
-  override val userToClusterScoringFn: UserToInterestedInClusterScores => Double =
-    _.followScoreClusterNormalizedOnly.getOrElse(0.0)
-  override val embeddingType: EmbeddingType = EmbeddingType.AggregatableFollowBasedProducer
+trait AggrelongatablelonFollowBaselondProducelonrelonmbelonddingsBaselonApp
+    elonxtelonnds AggrelongatablelonProducelonrelonmbelonddingsBaselonApp {
+  ovelonrridelon val uselonrToProducelonrScoringFn: NelonighborWithWelonights => Doublelon =
+    _.followScorelonNormalizelondByNelonighborFollowelonrsL2.gelontOrelonlselon(0.0)
+  ovelonrridelon val uselonrToClustelonrScoringFn: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon =
+    _.followScorelonClustelonrNormalizelondOnly.gelontOrelonlselon(0.0)
+  ovelonrridelon val elonmbelonddingTypelon: elonmbelonddingTypelon = elonmbelonddingTypelon.AggrelongatablelonFollowBaselondProducelonr
 }

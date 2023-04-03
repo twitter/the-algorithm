@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
 trait HasQualityFactor {
-  def qualityFactor: Option[Double]
+  delonf qualityFactor: Option[Doublelon]
 }

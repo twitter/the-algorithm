@@ -1,128 +1,128 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.earlybird.EarlybirdAdapter
-import com.twitter.home_mixer.model.HomeFeatures.DeviceLanguageFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetUrlsFeature
-import com.twitter.home_mixer.model.HomeFeatures.UserScreenNameFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.EarlybirdRepository
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.home_mixer.util.earlybird.EarlybirdResponseUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.util.Return
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.elonarlybird.elonarlybirdAdaptelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.DelonvicelonLanguagelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.elonarlybirdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TwelonelontUrlsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.UselonrScrelonelonnNamelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.elonarlybirdRelonpository
+import com.twittelonr.homelon_mixelonr.util.ObselonrvelondKelonyValuelonRelonsultHandlelonr
+import com.twittelonr.homelon_mixelonr.util.elonarlybird.elonarlybirdRelonsponselonUtil
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonarch.elonarlybird.{thriftscala => elonb}
+import com.twittelonr.selonrvo.kelonyvaluelon.KelonyValuelonRelonsult
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonpository
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Relonturn
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object EarlybirdDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct elonarlybirdDataReloncordFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class EarlybirdFeatureHydrator @Inject() (
-  @Named(EarlybirdRepository) client: KeyValueRepository[
-    (Seq[Long], Long),
+@Singlelonton
+class elonarlybirdFelonaturelonHydrator @Injelonct() (
+  @Namelond(elonarlybirdRelonpository) clielonnt: KelonyValuelonRelonpository[
+    (Selonq[Long], Long),
     Long,
-    eb.ThriftSearchResult
+    elonb.ThriftSelonarchRelonsult
   ],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon]
+    with ObselonrvelondKelonyValuelonRelonsultHandlelonr {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Earlybird")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("elonarlybird")
 
-  override val features: Set[Feature[_, _]] =
-    Set(EarlybirdDataRecordFeature, EarlybirdFeature, TweetUrlsFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] =
+    Selont(elonarlybirdDataReloncordFelonaturelon, elonarlybirdFelonaturelon, TwelonelontUrlsFelonaturelon)
 
-  override val statScope: String = identifier.toString
+  ovelonrridelon val statScopelon: String = idelonntifielonr.toString
 
-  private val scopedStatsReceiver = statsReceiver.scope(statScope)
-  private val originalKeyFoundCounter = scopedStatsReceiver.counter("originalKey/found")
-  private val originalKeyLossCounter = scopedStatsReceiver.counter("originalKey/loss")
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(statScopelon)
+  privatelon val originalKelonyFoundCountelonr = scopelondStatsReloncelonivelonr.countelonr("originalKelony/found")
+  privatelon val originalKelonyLossCountelonr = scopelondStatsReloncelonivelonr.countelonr("originalKelony/loss")
 
-  private val ebFeaturesNotExistPredicate: CandidateWithFeatures[TweetCandidate] => Boolean =
-    candidate => candidate.features.getOrElse(EarlybirdFeature, None).isEmpty
+  privatelon val elonbFelonaturelonsNotelonxistPrelondicatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon] => Boolelonan =
+    candidatelon => candidatelon.felonaturelons.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).iselonmpty
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val candidatesToHydrate = candidates.filter { candidate =>
-      val isEmpty = ebFeaturesNotExistPredicate(candidate)
-      if (isEmpty) originalKeyLossCounter.incr() else originalKeyFoundCounter.incr()
-      isEmpty
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val candidatelonsToHydratelon = candidatelons.filtelonr { candidatelon =>
+      val iselonmpty = elonbFelonaturelonsNotelonxistPrelondicatelon(candidatelon)
+      if (iselonmpty) originalKelonyLossCountelonr.incr() elonlselon originalKelonyFoundCountelonr.incr()
+      iselonmpty
     }
     Stitch
-      .callFuture(client((candidatesToHydrate.map(_.candidate.id), query.getRequiredUserId)))
-      .map(handleResponse(query, candidates, _))
+      .callFuturelon(clielonnt((candidatelonsToHydratelon.map(_.candidatelon.id), quelonry.gelontRelonquirelondUselonrId)))
+      .map(handlelonRelonsponselon(quelonry, candidatelons, _))
   }
 
-  private def handleResponse(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]],
-    results: KeyValueResult[Long, eb.ThriftSearchResult]
-  ): Seq[FeatureMap] = {
-    val queryFeatureMap = query.features.getOrElse(FeatureMap.empty)
-    val userLanguages = queryFeatureMap.getOrElse(UserLanguagesFeature, Seq.empty)
-    val uiLanguageCode = queryFeatureMap.getOrElse(DeviceLanguageFeature, None)
-    val screenName = queryFeatureMap.getOrElse(UserScreenNameFeature, None)
+  privatelon delonf handlelonRelonsponselon(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]],
+    relonsults: KelonyValuelonRelonsult[Long, elonb.ThriftSelonarchRelonsult]
+  ): Selonq[FelonaturelonMap] = {
+    val quelonryFelonaturelonMap = quelonry.felonaturelons.gelontOrelonlselon(FelonaturelonMap.elonmpty)
+    val uselonrLanguagelons = quelonryFelonaturelonMap.gelontOrelonlselon(UselonrLanguagelonsFelonaturelon, Selonq.elonmpty)
+    val uiLanguagelonCodelon = quelonryFelonaturelonMap.gelontOrelonlselon(DelonvicelonLanguagelonFelonaturelon, Nonelon)
+    val screlonelonnNamelon = quelonryFelonaturelonMap.gelontOrelonlselon(UselonrScrelonelonnNamelonFelonaturelon, Nonelon)
 
-    val searchResults = candidates
-      .filter(ebFeaturesNotExistPredicate).map { candidate =>
-        observedGet(Some(candidate.candidate.id), results)
-      }.collect {
-        case Return(Some(value)) => value
+    val selonarchRelonsults = candidatelons
+      .filtelonr(elonbFelonaturelonsNotelonxistPrelondicatelon).map { candidatelon =>
+        obselonrvelondGelont(Somelon(candidatelon.candidatelon.id), relonsults)
+      }.collelonct {
+        caselon Relonturn(Somelon(valuelon)) => valuelon
       }
 
-    val tweetIdToEbFeatures = EarlybirdResponseUtil.getOONTweetThriftFeaturesByTweetId(
-      searcherUserId = query.getRequiredUserId,
-      screenName = screenName,
-      userLanguages = userLanguages,
-      uiLanguageCode = uiLanguageCode,
-      searchResults = searchResults
+    val twelonelontIdToelonbFelonaturelons = elonarlybirdRelonsponselonUtil.gelontOONTwelonelontThriftFelonaturelonsByTwelonelontId(
+      selonarchelonrUselonrId = quelonry.gelontRelonquirelondUselonrId,
+      screlonelonnNamelon = screlonelonnNamelon,
+      uselonrLanguagelons = uselonrLanguagelons,
+      uiLanguagelonCodelon = uiLanguagelonCodelon,
+      selonarchRelonsults = selonarchRelonsults
     )
 
-    candidates.map { candidate =>
-      val hydratedEbFeatures = tweetIdToEbFeatures.get(candidate.candidate.id)
-      val earlybirdFeatures =
-        if (hydratedEbFeatures.nonEmpty) hydratedEbFeatures
-        else candidate.features.getOrElse(EarlybirdFeature, None)
+    candidatelons.map { candidatelon =>
+      val hydratelondelonbFelonaturelons = twelonelontIdToelonbFelonaturelons.gelont(candidatelon.candidatelon.id)
+      val elonarlybirdFelonaturelons =
+        if (hydratelondelonbFelonaturelons.nonelonmpty) hydratelondelonbFelonaturelons
+        elonlselon candidatelon.felonaturelons.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon)
 
-      val candidateIsRetweet = candidate.features.getOrElse(IsRetweetFeature, false)
-      val sourceTweetEbFeatures =
-        candidate.features.getOrElse(SourceTweetEarlybirdFeature, None)
+      val candidatelonIsRelontwelonelont = candidatelon.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)
+      val sourcelonTwelonelontelonbFelonaturelons =
+        candidatelon.felonaturelons.gelontOrelonlselon(SourcelonTwelonelontelonarlybirdFelonaturelon, Nonelon)
 
-      val originalTweetEbFeatures =
-        if (candidateIsRetweet && sourceTweetEbFeatures.nonEmpty)
-          sourceTweetEbFeatures
-        else earlybirdFeatures
+      val originalTwelonelontelonbFelonaturelons =
+        if (candidatelonIsRelontwelonelont && sourcelonTwelonelontelonbFelonaturelons.nonelonmpty)
+          sourcelonTwelonelontelonbFelonaturelons
+        elonlselon elonarlybirdFelonaturelons
 
-      val earlybirdDataRecord =
-        EarlybirdAdapter.adaptToDataRecords(originalTweetEbFeatures).asScala.head
+      val elonarlybirdDataReloncord =
+        elonarlybirdAdaptelonr.adaptToDataReloncords(originalTwelonelontelonbFelonaturelons).asScala.helonad
 
-      FeatureMapBuilder()
-        .add(EarlybirdFeature, earlybirdFeatures)
-        .add(EarlybirdDataRecordFeature, earlybirdDataRecord)
-        .add(TweetUrlsFeature, earlybirdFeatures.flatMap(_.urlsList).getOrElse(Seq.empty))
+      FelonaturelonMapBuildelonr()
+        .add(elonarlybirdFelonaturelon, elonarlybirdFelonaturelons)
+        .add(elonarlybirdDataReloncordFelonaturelon, elonarlybirdDataReloncord)
+        .add(TwelonelontUrlsFelonaturelon, elonarlybirdFelonaturelons.flatMap(_.urlsList).gelontOrelonlselon(Selonq.elonmpty))
         .build()
     }
   }

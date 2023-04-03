@@ -1,157 +1,157 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
 import java.util.List;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Namelond;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelondicatelon;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.rewriter.PredicateQueryNodeDropper;
-import com.twitter.search.queryparser.visitors.TermExtractorVisitor;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.root.SelonarchRootModulelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Telonrm;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.Annotation;
+import com.twittelonr.selonarch.quelonryparselonr.relonwritelonr.PrelondicatelonQuelonryNodelonDroppelonr;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.TelonrmelonxtractorVisitor;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Filter that rewrites the serialized query on EarlybirdRequest.
- * As of now, this filter performs the following rewrites:
- *   - Drop ":v annotated variants based on decider, if the query has enough term nodes.
+ * Filtelonr that relonwritelons thelon selonrializelond quelonry on elonarlybirdRelonquelonst.
+ * As of now, this filtelonr pelonrforms thelon following relonwritelons:
+ *   - Drop ":v annotatelond variants baselond on deloncidelonr, if thelon quelonry has elonnough telonrm nodelons.
  */
-public class EarlybirdQueryRewriteFilter extends
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+public class elonarlybirdQuelonryRelonwritelonFiltelonr elonxtelonnds
+    SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdQueryRewriteFilter.class);
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(elonarlybirdQuelonryRelonwritelonFiltelonr.class);
 
-  private static final String DROP_PHRASE_VARIANT_FROM_QUERY_DECIDER_KEY_PATTERN =
-      "drop_variants_from_%s_%s_queries";
+  privatelon static final String DROP_PHRASelon_VARIANT_FROM_QUelonRY_DelonCIDelonR_KelonY_PATTelonRN =
+      "drop_variants_from_%s_%s_quelonrielons";
 
-  // only drop variants from queries with more than this number of terms.
-  private static final String MIN_TERM_COUNT_FOR_VARIANT_DROPPING_DECIDER_KEY_PATTERN =
-      "drop_variants_from_%s_%s_queries_term_count_threshold";
+  // only drop variants from quelonrielons with morelon than this numbelonr of telonrms.
+  privatelon static final String MIN_TelonRM_COUNT_FOR_VARIANT_DROPPING_DelonCIDelonR_KelonY_PATTelonRN =
+      "drop_variants_from_%s_%s_quelonrielons_telonrm_count_threlonshold";
 
-  private static final SearchCounter QUERY_PARSER_FAILURE_COUNT =
-      SearchCounter.export("query_rewrite_filter_query_parser_failure_count");
+  privatelon static final SelonarchCountelonr QUelonRY_PARSelonR_FAILURelon_COUNT =
+      SelonarchCountelonr.elonxport("quelonry_relonwritelon_filtelonr_quelonry_parselonr_failurelon_count");
 
-  // We currently add variants only to RECENCY and RELEVANCE requests, but it doesn't hurt to export
-  // stats for all request types.
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, SearchCounter> DROP_VARIANTS_QUERY_COUNTS =
-    Maps.newEnumMap(EarlybirdRequestType.class);
+  // Welon currelonntly add variants only to RelonCelonNCY and RelonLelonVANCelon relonquelonsts, but it doelonsn't hurt to elonxport
+  // stats for all relonquelonst typelons.
+  @VisiblelonForTelonsting
+  static final Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr> DROP_VARIANTS_QUelonRY_COUNTS =
+    Maps.nelonwelonnumMap(elonarlybirdRelonquelonstTypelon.class);
   static {
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      DROP_VARIANTS_QUERY_COUNTS.put(
-          requestType,
-          SearchCounter.export(String.format("drop_%s_variants_query_count",
-                                             requestType.getNormalizedName())));
+    for (elonarlybirdRelonquelonstTypelon relonquelonstTypelon : elonarlybirdRelonquelonstTypelon.valuelons()) {
+      DROP_VARIANTS_QUelonRY_COUNTS.put(
+          relonquelonstTypelon,
+          SelonarchCountelonr.elonxport(String.format("drop_%s_variants_quelonry_count",
+                                             relonquelonstTypelon.gelontNormalizelondNamelon())));
     }
   }
 
-  private static final Predicate<Query> DROP_VARIANTS_PREDICATE =
-      q -> q.hasAnnotationType(Annotation.Type.VARIANT);
+  privatelon static final Prelondicatelon<Quelonry> DROP_VARIANTS_PRelonDICATelon =
+      q -> q.hasAnnotationTypelon(Annotation.Typelon.VARIANT);
 
-  private static final PredicateQueryNodeDropper DROP_VARIANTS_VISITOR =
-    new PredicateQueryNodeDropper(DROP_VARIANTS_PREDICATE);
+  privatelon static final PrelondicatelonQuelonryNodelonDroppelonr DROP_VARIANTS_VISITOR =
+    nelonw PrelondicatelonQuelonryNodelonDroppelonr(DROP_VARIANTS_PRelonDICATelon);
 
-  private final SearchDecider decider;
-  private final String normalizedSearchRootName;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final String normalizelondSelonarchRootNamelon;
 
-  @Inject
-  public EarlybirdQueryRewriteFilter(
-      SearchDecider decider,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName) {
-    this.decider = decider;
-    this.normalizedSearchRootName = normalizedSearchRootName;
+  @Injelonct
+  public elonarlybirdQuelonryRelonwritelonFiltelonr(
+      SelonarchDeloncidelonr deloncidelonr,
+      @Namelond(SelonarchRootModulelon.NAMelonD_NORMALIZelonD_SelonARCH_ROOT_NAMelon) String normalizelondSelonarchRootNamelon) {
+    this.deloncidelonr = deloncidelonr;
+    this.normalizelondSelonarchRootNamelon = normalizelondSelonarchRootNamelon;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
 
-    Query query = requestContext.getParsedQuery();
-    // If there's no serialized query, no rewrite is necessary.
-    if (query == null) {
-      return service.apply(requestContext);
-    } else {
+    Quelonry quelonry = relonquelonstContelonxt.gelontParselondQuelonry();
+    // If thelonrelon's no selonrializelond quelonry, no relonwritelon is neloncelonssary.
+    if (quelonry == null) {
+      relonturn selonrvicelon.apply(relonquelonstContelonxt);
+    } elonlselon {
       try {
-        Query variantsRemoved = maybeRemoveVariants(requestContext, query);
+        Quelonry variantsRelonmovelond = maybelonRelonmovelonVariants(relonquelonstContelonxt, quelonry);
 
-        if (query == variantsRemoved) {
-          return service.apply(requestContext);
-        } else {
-          EarlybirdRequestContext clonedRequestContext =
-            EarlybirdRequestContext.copyRequestContext(requestContext, variantsRemoved);
+        if (quelonry == variantsRelonmovelond) {
+          relonturn selonrvicelon.apply(relonquelonstContelonxt);
+        } elonlselon {
+          elonarlybirdRelonquelonstContelonxt clonelondRelonquelonstContelonxt =
+            elonarlybirdRelonquelonstContelonxt.copyRelonquelonstContelonxt(relonquelonstContelonxt, variantsRelonmovelond);
 
-          return service.apply(clonedRequestContext);
+          relonturn selonrvicelon.apply(clonelondRelonquelonstContelonxt);
         }
-      } catch (QueryParserException e) {
-        // It is not clear here that the QueryParserException is the client's fault, or our fault.
-        // At this point it is most likely not the client's since we have a legitimate parsed Query
-        // from the client's request, and it's the rewriting that failed.
-        // In this case we choose to send the query as is (without the rewrite), instead of
-        // failing the entire request.
-        QUERY_PARSER_FAILURE_COUNT.increment();
-        LOG.warn("Failed to rewrite serialized query: " + query.serialize(), e);
-        return service.apply(requestContext);
+      } catch (QuelonryParselonrelonxcelonption elon) {
+        // It is not clelonar helonrelon that thelon QuelonryParselonrelonxcelonption is thelon clielonnt's fault, or our fault.
+        // At this point it is most likelonly not thelon clielonnt's sincelon welon havelon a lelongitimatelon parselond Quelonry
+        // from thelon clielonnt's relonquelonst, and it's thelon relonwriting that failelond.
+        // In this caselon welon chooselon to selonnd thelon quelonry as is (without thelon relonwritelon), instelonad of
+        // failing thelon elonntirelon relonquelonst.
+        QUelonRY_PARSelonR_FAILURelon_COUNT.increlonmelonnt();
+        LOG.warn("Failelond to relonwritelon selonrializelond quelonry: " + quelonry.selonrializelon(), elon);
+        relonturn selonrvicelon.apply(relonquelonstContelonxt);
       }
     }
   }
 
-  private Query maybeRemoveVariants(EarlybirdRequestContext requestContext, Query query)
-      throws QueryParserException {
+  privatelon Quelonry maybelonRelonmovelonVariants(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt, Quelonry quelonry)
+      throws QuelonryParselonrelonxcelonption {
 
-    if (shouldDropVariants(requestContext, query)) {
-      Query rewrittenQuery = DROP_VARIANTS_VISITOR.apply(query);
-      if (!query.equals(rewrittenQuery)) {
-        DROP_VARIANTS_QUERY_COUNTS.get(requestContext.getEarlybirdRequestType()).increment();
-        return rewrittenQuery;
+    if (shouldDropVariants(relonquelonstContelonxt, quelonry)) {
+      Quelonry relonwrittelonnQuelonry = DROP_VARIANTS_VISITOR.apply(quelonry);
+      if (!quelonry.elonquals(relonwrittelonnQuelonry)) {
+        DROP_VARIANTS_QUelonRY_COUNTS.gelont(relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon()).increlonmelonnt();
+        relonturn relonwrittelonnQuelonry;
       }
     }
-    return query;
+    relonturn quelonry;
   }
 
-  private boolean shouldDropVariants(EarlybirdRequestContext requestContext, Query query)
-      throws QueryParserException {
-    TermExtractorVisitor termExtractorVisitor = new TermExtractorVisitor(false);
-    List<Term> terms = query.accept(termExtractorVisitor);
+  privatelon boolelonan shouldDropVariants(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt, Quelonry quelonry)
+      throws QuelonryParselonrelonxcelonption {
+    TelonrmelonxtractorVisitor telonrmelonxtractorVisitor = nelonw TelonrmelonxtractorVisitor(falselon);
+    List<Telonrm> telonrms = quelonry.accelonpt(telonrmelonxtractorVisitor);
 
-    EarlybirdRequestType requestType = requestContext.getEarlybirdRequestType();
+    elonarlybirdRelonquelonstTypelon relonquelonstTypelon = relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon();
 
-    boolean shouldDropVariants = decider.isAvailable(getDropPhaseVariantDeciderKey(requestType));
+    boolelonan shouldDropVariants = deloncidelonr.isAvailablelon(gelontDropPhaselonVariantDeloncidelonrKelony(relonquelonstTypelon));
 
-    return terms != null
-        && terms.size() >= decider.getAvailability(
-            getMinTermCountForVariantDroppingDeciderKey(requestType))
+    relonturn telonrms != null
+        && telonrms.sizelon() >= deloncidelonr.gelontAvailability(
+            gelontMinTelonrmCountForVariantDroppingDeloncidelonrKelony(relonquelonstTypelon))
         && shouldDropVariants;
   }
 
-  private String getDropPhaseVariantDeciderKey(EarlybirdRequestType requestType) {
-    return String.format(DROP_PHRASE_VARIANT_FROM_QUERY_DECIDER_KEY_PATTERN,
-                         normalizedSearchRootName,
-                         requestType.getNormalizedName());
+  privatelon String gelontDropPhaselonVariantDeloncidelonrKelony(elonarlybirdRelonquelonstTypelon relonquelonstTypelon) {
+    relonturn String.format(DROP_PHRASelon_VARIANT_FROM_QUelonRY_DelonCIDelonR_KelonY_PATTelonRN,
+                         normalizelondSelonarchRootNamelon,
+                         relonquelonstTypelon.gelontNormalizelondNamelon());
   }
 
-  private String getMinTermCountForVariantDroppingDeciderKey(EarlybirdRequestType requestType) {
-    return String.format(MIN_TERM_COUNT_FOR_VARIANT_DROPPING_DECIDER_KEY_PATTERN,
-                         normalizedSearchRootName,
-                         requestType.getNormalizedName());
+  privatelon String gelontMinTelonrmCountForVariantDroppingDeloncidelonrKelony(elonarlybirdRelonquelonstTypelon relonquelonstTypelon) {
+    relonturn String.format(MIN_TelonRM_COUNT_FOR_VARIANT_DROPPING_DelonCIDelonR_KelonY_PATTelonRN,
+                         normalizelondSelonarchRootNamelon,
+                         relonquelonstTypelon.gelontNormalizelondNamelon());
   }
 }

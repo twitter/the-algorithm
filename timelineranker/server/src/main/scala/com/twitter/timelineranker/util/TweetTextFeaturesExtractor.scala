@@ -1,171 +1,171 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.common.text.tagger.UniversalPOS
-import com.twitter.common.text.token.attribute.TokenType
-import com.twitter.common_internal.text.pipeline.TwitterTextNormalizer
-import com.twitter.common_internal.text.pipeline.TwitterTextTokenizer
-import com.twitter.common_internal.text.version.PenguinVersion
-import com.twitter.search.common.util.text.LanguageIdentifierHelper
-import com.twitter.search.common.util.text.PhraseExtractor
-import com.twitter.search.common.util.text.TokenizerHelper
-import com.twitter.search.common.util.text.TokenizerResult
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.tweetypie.{thriftscala => tweetypie}
-import com.twitter.util.Try
-import java.util.Locale
-import scala.collection.JavaConversions._
+import com.twittelonr.common.telonxt.taggelonr.UnivelonrsalPOS
+import com.twittelonr.common.telonxt.tokelonn.attributelon.TokelonnTypelon
+import com.twittelonr.common_intelonrnal.telonxt.pipelonlinelon.TwittelonrTelonxtNormalizelonr
+import com.twittelonr.common_intelonrnal.telonxt.pipelonlinelon.TwittelonrTelonxtTokelonnizelonr
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion
+import com.twittelonr.selonarch.common.util.telonxt.LanguagelonIdelonntifielonrHelonlpelonr
+import com.twittelonr.selonarch.common.util.telonxt.Phraselonelonxtractor
+import com.twittelonr.selonarch.common.util.telonxt.TokelonnizelonrHelonlpelonr
+import com.twittelonr.selonarch.common.util.telonxt.TokelonnizelonrRelonsult
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.twelonelontypielon.{thriftscala => twelonelontypielon}
+import com.twittelonr.util.Try
+import java.util.Localelon
+import scala.collelonction.JavaConvelonrsions._
 
-object TweetTextFeaturesExtractor {
+objelonct TwelonelontTelonxtFelonaturelonselonxtractor {
 
-  private[this] val threadLocaltokenizer = new ThreadLocal[Option[TwitterTextTokenizer]] {
-    override protected def initialValue(): Option[TwitterTextTokenizer] =
+  privatelon[this] val threlonadLocaltokelonnizelonr = nelonw ThrelonadLocal[Option[TwittelonrTelonxtTokelonnizelonr]] {
+    ovelonrridelon protelonctelond delonf initialValuelon(): Option[TwittelonrTelonxtTokelonnizelonr] =
       Try {
-        val normalizer = new TwitterTextNormalizer.Builder(penguinVersion).build
-        TokenizerHelper
-          .getTokenizerBuilder(penguinVersion)
-          .enablePOSTagger
-          .enableStopwordFilterWithNormalizer(normalizer)
-          .setStopwordResourcePath("com/twitter/ml/feature/generator/stopwords_extended_{LANG}.txt")
-          .enableStemmer
+        val normalizelonr = nelonw TwittelonrTelonxtNormalizelonr.Buildelonr(pelonnguinVelonrsion).build
+        TokelonnizelonrHelonlpelonr
+          .gelontTokelonnizelonrBuildelonr(pelonnguinVelonrsion)
+          .elonnablelonPOSTaggelonr
+          .elonnablelonStopwordFiltelonrWithNormalizelonr(normalizelonr)
+          .selontStopwordRelonsourcelonPath("com/twittelonr/ml/felonaturelon/gelonnelonrator/stopwords_elonxtelonndelond_{LANG}.txt")
+          .elonnablelonStelonmmelonr
           .build
       }.toOption
   }
 
-  val penguinVersion: PenguinVersion = PenguinVersion.PENGUIN_6
+  val pelonnguinVelonrsion: PelonnguinVelonrsion = PelonnguinVelonrsion.PelonNGUIN_6
 
-  def addTextFeaturesFromTweet(
-    inputFeatures: ContentFeatures,
-    tweet: tweetypie.Tweet,
-    hydratePenguinTextFeatures: Boolean,
-    hydrateTokens: Boolean,
-    hydrateTweetText: Boolean
-  ): ContentFeatures = {
-    tweet.coreData
-      .map { coreData =>
-        val tweetText = coreData.text
-        val hasQuestion = hasQuestionCharacter(tweetText)
-        val length = getLength(tweetText).toShort
-        val numCaps = getCaps(tweetText).toShort
-        val numWhiteSpaces = getSpaces(tweetText).toShort
-        val numNewlines = Some(getNumNewlines(tweetText))
-        val tweetTextOpt = getTweetText(tweetText, hydrateTweetText)
+  delonf addTelonxtFelonaturelonsFromTwelonelont(
+    inputFelonaturelons: ContelonntFelonaturelons,
+    twelonelont: twelonelontypielon.Twelonelont,
+    hydratelonPelonnguinTelonxtFelonaturelons: Boolelonan,
+    hydratelonTokelonns: Boolelonan,
+    hydratelonTwelonelontTelonxt: Boolelonan
+  ): ContelonntFelonaturelons = {
+    twelonelont.corelonData
+      .map { corelonData =>
+        val twelonelontTelonxt = corelonData.telonxt
+        val hasQuelonstion = hasQuelonstionCharactelonr(twelonelontTelonxt)
+        val lelonngth = gelontLelonngth(twelonelontTelonxt).toShort
+        val numCaps = gelontCaps(twelonelontTelonxt).toShort
+        val numWhitelonSpacelons = gelontSpacelons(twelonelontTelonxt).toShort
+        val numNelonwlinelons = Somelon(gelontNumNelonwlinelons(twelonelontTelonxt))
+        val twelonelontTelonxtOpt = gelontTwelonelontTelonxt(twelonelontTelonxt, hydratelonTwelonelontTelonxt)
 
-        if (hydratePenguinTextFeatures) {
-          val locale = getLocale(tweetText)
-          val tokenizerOpt = threadLocaltokenizer.get
+        if (hydratelonPelonnguinTelonxtFelonaturelons) {
+          val localelon = gelontLocalelon(twelonelontTelonxt)
+          val tokelonnizelonrOpt = threlonadLocaltokelonnizelonr.gelont
 
-          val tokenizerResult = tokenizerOpt.flatMap { tokenizer =>
-            tokenizeWithPosTagger(tokenizer, locale, tweetText)
+          val tokelonnizelonrRelonsult = tokelonnizelonrOpt.flatMap { tokelonnizelonr =>
+            tokelonnizelonWithPosTaggelonr(tokelonnizelonr, localelon, twelonelontTelonxt)
           }
 
-          val normalizedTokensOpt = if (hydrateTokens) {
-            tokenizerOpt.flatMap { tokenizer =>
-              tokenizedStringsWithNormalizerAndStemmer(tokenizer, locale, tweetText)
+          val normalizelondTokelonnsOpt = if (hydratelonTokelonns) {
+            tokelonnizelonrOpt.flatMap { tokelonnizelonr =>
+              tokelonnizelondStringsWithNormalizelonrAndStelonmmelonr(tokelonnizelonr, localelon, twelonelontTelonxt)
             }
-          } else None
+          } elonlselon Nonelon
 
-          val emoticonTokensOpt = tokenizerResult.map(getEmoticons)
-          val emojiTokensOpt = tokenizerResult.map(getEmojis)
-          val posUnigramsOpt = tokenizerResult.map(getPosUnigrams)
-          val posBigramsOpt = posUnigramsOpt.map(getPosBigrams)
-          val tokensOpt = normalizedTokensOpt
+          val elonmoticonTokelonnsOpt = tokelonnizelonrRelonsult.map(gelontelonmoticons)
+          val elonmojiTokelonnsOpt = tokelonnizelonrRelonsult.map(gelontelonmojis)
+          val posUnigramsOpt = tokelonnizelonrRelonsult.map(gelontPosUnigrams)
+          val posBigramsOpt = posUnigramsOpt.map(gelontPosBigrams)
+          val tokelonnsOpt = normalizelondTokelonnsOpt
 
-          inputFeatures.copy(
-            emojiTokens = emojiTokensOpt,
-            emoticonTokens = emoticonTokensOpt,
-            hasQuestion = hasQuestion,
-            length = length,
+          inputFelonaturelons.copy(
+            elonmojiTokelonns = elonmojiTokelonnsOpt,
+            elonmoticonTokelonns = elonmoticonTokelonnsOpt,
+            hasQuelonstion = hasQuelonstion,
+            lelonngth = lelonngth,
             numCaps = numCaps,
-            numWhiteSpaces = numWhiteSpaces,
-            numNewlines = numNewlines,
-            posUnigrams = posUnigramsOpt.map(_.toSet),
-            posBigrams = posBigramsOpt.map(_.toSet),
-            tokens = tokensOpt.map(_.toSeq),
-            tweetText = tweetTextOpt
+            numWhitelonSpacelons = numWhitelonSpacelons,
+            numNelonwlinelons = numNelonwlinelons,
+            posUnigrams = posUnigramsOpt.map(_.toSelont),
+            posBigrams = posBigramsOpt.map(_.toSelont),
+            tokelonns = tokelonnsOpt.map(_.toSelonq),
+            twelonelontTelonxt = twelonelontTelonxtOpt
           )
-        } else {
-          inputFeatures.copy(
-            hasQuestion = hasQuestion,
-            length = length,
+        } elonlselon {
+          inputFelonaturelons.copy(
+            hasQuelonstion = hasQuelonstion,
+            lelonngth = lelonngth,
             numCaps = numCaps,
-            numWhiteSpaces = numWhiteSpaces,
-            numNewlines = numNewlines,
-            tweetText = tweetTextOpt
+            numWhitelonSpacelons = numWhitelonSpacelons,
+            numNelonwlinelons = numNelonwlinelons,
+            twelonelontTelonxt = twelonelontTelonxtOpt
           )
         }
       }
-      .getOrElse(inputFeatures)
+      .gelontOrelonlselon(inputFelonaturelons)
   }
 
-  private def tokenizeWithPosTagger(
-    tokenizer: TwitterTextTokenizer,
-    locale: Locale,
-    text: String
-  ): Option[TokenizerResult] = {
-    tokenizer.enableStemmer(false)
-    tokenizer.enableStopwordFilter(false)
+  privatelon delonf tokelonnizelonWithPosTaggelonr(
+    tokelonnizelonr: TwittelonrTelonxtTokelonnizelonr,
+    localelon: Localelon,
+    telonxt: String
+  ): Option[TokelonnizelonrRelonsult] = {
+    tokelonnizelonr.elonnablelonStelonmmelonr(falselon)
+    tokelonnizelonr.elonnablelonStopwordFiltelonr(falselon)
 
-    Try { TokenizerHelper.tokenizeTweet(tokenizer, text, locale) }.toOption
+    Try { TokelonnizelonrHelonlpelonr.tokelonnizelonTwelonelont(tokelonnizelonr, telonxt, localelon) }.toOption
   }
 
-  private def tokenizedStringsWithNormalizerAndStemmer(
-    tokenizer: TwitterTextTokenizer,
-    locale: Locale,
-    text: String
-  ): Option[Seq[String]] = {
-    tokenizer.enableStemmer(true)
-    tokenizer.enableStopwordFilter(true)
+  privatelon delonf tokelonnizelondStringsWithNormalizelonrAndStelonmmelonr(
+    tokelonnizelonr: TwittelonrTelonxtTokelonnizelonr,
+    localelon: Localelon,
+    telonxt: String
+  ): Option[Selonq[String]] = {
+    tokelonnizelonr.elonnablelonStelonmmelonr(truelon)
+    tokelonnizelonr.elonnablelonStopwordFiltelonr(truelon)
 
-    Try { tokenizer.tokenizeToStrings(text, locale).toSeq }.toOption
+    Try { tokelonnizelonr.tokelonnizelonToStrings(telonxt, localelon).toSelonq }.toOption
   }
 
-  def getLocale(text: String): Locale = LanguageIdentifierHelper.identifyLanguage(text)
+  delonf gelontLocalelon(telonxt: String): Localelon = LanguagelonIdelonntifielonrHelonlpelonr.idelonntifyLanguagelon(telonxt)
 
-  def getTokens(tokenizerResult: TokenizerResult): List[String] =
-    tokenizerResult.rawSequence.getTokenStrings().toList
+  delonf gelontTokelonns(tokelonnizelonrRelonsult: TokelonnizelonrRelonsult): List[String] =
+    tokelonnizelonrRelonsult.rawSelonquelonncelon.gelontTokelonnStrings().toList
 
-  def getEmoticons(tokenizerResult: TokenizerResult): Set[String] =
-    tokenizerResult.smileys.toSet
+  delonf gelontelonmoticons(tokelonnizelonrRelonsult: TokelonnizelonrRelonsult): Selont[String] =
+    tokelonnizelonrRelonsult.smilelonys.toSelont
 
-  def getEmojis(tokenizerResult: TokenizerResult): Set[String] =
-    tokenizerResult.rawSequence.getTokenStringsOf(TokenType.EMOJI).toSet
+  delonf gelontelonmojis(tokelonnizelonrRelonsult: TokelonnizelonrRelonsult): Selont[String] =
+    tokelonnizelonrRelonsult.rawSelonquelonncelon.gelontTokelonnStringsOf(TokelonnTypelon.elonMOJI).toSelont
 
-  def getPhrases(tokenizerResult: TokenizerResult, locale: Locale): Set[String] = {
-    PhraseExtractor.getPhrases(tokenizerResult.rawSequence, locale).map(_.toString).toSet
+  delonf gelontPhraselons(tokelonnizelonrRelonsult: TokelonnizelonrRelonsult, localelon: Localelon): Selont[String] = {
+    Phraselonelonxtractor.gelontPhraselons(tokelonnizelonrRelonsult.rawSelonquelonncelon, localelon).map(_.toString).toSelont
   }
 
-  def getPosUnigrams(tokenizerResult: TokenizerResult): List[String] =
-    tokenizerResult.tokenSequence.getTokens.toList
-      .map { token =>
-        Option(token.getPartOfSpeech)
+  delonf gelontPosUnigrams(tokelonnizelonrRelonsult: TokelonnizelonrRelonsult): List[String] =
+    tokelonnizelonrRelonsult.tokelonnSelonquelonncelon.gelontTokelonns.toList
+      .map { tokelonn =>
+        Option(tokelonn.gelontPartOfSpelonelonch)
           .map(_.toString)
-          .getOrElse(UniversalPOS.X.toString) // UniversalPOS.X is unknown POS tag
+          .gelontOrelonlselon(UnivelonrsalPOS.X.toString) // UnivelonrsalPOS.X is unknown POS tag
       }
 
-  def getPosBigrams(tagsList: List[String]): List[String] = {
-    if (tagsList.nonEmpty) {
+  delonf gelontPosBigrams(tagsList: List[String]): List[String] = {
+    if (tagsList.nonelonmpty) {
       tagsList
         .zip(tagsList.tail)
-        .map(tagPair => Seq(tagPair._1, tagPair._2).mkString(" "))
-    } else {
+        .map(tagPair => Selonq(tagPair._1, tagPair._2).mkString(" "))
+    } elonlselon {
       tagsList
     }
   }
 
-  def getLength(text: String): Int =
-    text.codePointCount(0, text.length())
+  delonf gelontLelonngth(telonxt: String): Int =
+    telonxt.codelonPointCount(0, telonxt.lelonngth())
 
-  def getCaps(text: String): Int = text.count(Character.isUpperCase)
+  delonf gelontCaps(telonxt: String): Int = telonxt.count(Charactelonr.isUppelonrCaselon)
 
-  def getSpaces(text: String): Int = text.count(Character.isWhitespace)
+  delonf gelontSpacelons(telonxt: String): Int = telonxt.count(Charactelonr.isWhitelonspacelon)
 
-  def hasQuestionCharacter(text: String): Boolean = {
-    // List based on https://unicode-search.net/unicode-namesearch.pl?term=question
-    val QUESTION_MARK_CHARS = Seq(
+  delonf hasQuelonstionCharactelonr(telonxt: String): Boolelonan = {
+    // List baselond on https://unicodelon-selonarch.nelont/unicodelon-namelonselonarch.pl?telonrm=quelonstion
+    val QUelonSTION_MARK_CHARS = Selonq(
       "\u003F",
       "\u00BF",
-      "\u037E",
-      "\u055E",
+      "\u037elon",
+      "\u055elon",
       "\u061F",
       "\u1367",
       "\u1945",
@@ -176,24 +176,24 @@ object TweetTextFeaturesExtractor {
       "\u2754",
       "\u2CFA",
       "\u2CFB",
-      "\u2E2E",
+      "\u2elon2elon",
       "\uA60F",
       "\uA6F7",
-      "\uFE16",
-      "\uFE56",
+      "\uFelon16",
+      "\uFelon56",
       "\uFF1F",
       "\u1114",
-      "\u1E95"
+      "\u1elon95"
     )
-    QUESTION_MARK_CHARS.exists(text.contains)
+    QUelonSTION_MARK_CHARS.elonxists(telonxt.contains)
   }
 
-  def getNumNewlines(text: String): Short = {
-    val newlineRegex = "\r\n|\r|\n".r
-    newlineRegex.findAllIn(text).length.toShort
+  delonf gelontNumNelonwlinelons(telonxt: String): Short = {
+    val nelonwlinelonRelongelonx = "\r\n|\r|\n".r
+    nelonwlinelonRelongelonx.findAllIn(telonxt).lelonngth.toShort
   }
 
-  private[this] def getTweetText(tweetText: String, hydrateTweetText: Boolean): Option[String] = {
-    if (hydrateTweetText) Some(tweetText) else None
+  privatelon[this] delonf gelontTwelonelontTelonxt(twelonelontTelonxt: String, hydratelonTwelonelontTelonxt: Boolelonan): Option[String] = {
+    if (hydratelonTwelonelontTelonxt) Somelon(twelonelontTelonxt) elonlselon Nonelon
   }
 }

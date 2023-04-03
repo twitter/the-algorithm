@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonScribelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class StaticTimelineScribeConfigBuilder(
-  timelineScribeConfig: TimelineScribeConfig)
-    extends TimelineScribeConfigBuilder[PipelineQuery] {
+caselon class StaticTimelonlinelonScribelonConfigBuildelonr(
+  timelonlinelonScribelonConfig: TimelonlinelonScribelonConfig)
+    elonxtelonnds TimelonlinelonScribelonConfigBuildelonr[PipelonlinelonQuelonry] {
 
-  def build(
-    query: PipelineQuery,
-    entries: Seq[TimelineEntry]
-  ): Option[TimelineScribeConfig] = Some(timelineScribeConfig)
+  delonf build(
+    quelonry: PipelonlinelonQuelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Option[TimelonlinelonScribelonConfig] = Somelon(timelonlinelonScribelonConfig)
 }

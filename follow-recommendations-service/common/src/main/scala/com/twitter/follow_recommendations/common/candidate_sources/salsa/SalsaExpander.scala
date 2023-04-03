@@ -1,117 +1,117 @@
-package com.twitter.follow_recommendations.common.candidate_sources.salsa
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.salsa
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.strato.generated.client.onboarding.userrecs.SalsaFirstDegreeOnUserClientColumn
-import com.twitter.strato.generated.client.onboarding.userrecs.SalsaSecondDegreeOnUserClientColumn
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.stitch.Stitch
-import com.twitter.wtf.candidate.thriftscala.Candidate
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.SalsaFirstDelongrelonelonOnUselonrClielonntColumn
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.SalsaSeloncondDelongrelonelonOnUselonrClielonntColumn
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FollowProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.wtf.candidatelon.thriftscala.Candidatelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-case class SalsaExpandedCandidate(
-  candidateId: Long,
-  numberOfConnections: Int,
-  totalScore: Double,
-  connectingUsers: Seq[Long]) {
-  def toCandidateUser: CandidateUser =
-    CandidateUser(
-      id = candidateId,
-      score = Some(totalScore),
-      reason = Some(Reason(
-        Some(AccountProof(followProof = Some(FollowProof(connectingUsers, connectingUsers.size))))))
+caselon class SalsaelonxpandelondCandidatelon(
+  candidatelonId: Long,
+  numbelonrOfConnelonctions: Int,
+  totalScorelon: Doublelon,
+  connelonctingUselonrs: Selonq[Long]) {
+  delonf toCandidatelonUselonr: CandidatelonUselonr =
+    CandidatelonUselonr(
+      id = candidatelonId,
+      scorelon = Somelon(totalScorelon),
+      relonason = Somelon(Relonason(
+        Somelon(AccountProof(followProof = Somelon(FollowProof(connelonctingUselonrs, connelonctingUselonrs.sizelon))))))
     )
 }
 
-case class SimilarUserCandidate(candidateId: Long, score: Double, similarToCandidate: Long)
+caselon class SimilarUselonrCandidatelon(candidatelonId: Long, scorelon: Doublelon, similarToCandidatelon: Long)
 
 /**
- * Salsa expander uses pre-computed lists of candidates for each input user id and returns the highest scored candidates in the pre-computed lists as the expansion for the corresponding input id.
+ * Salsa elonxpandelonr uselons prelon-computelond lists of candidatelons for elonach input uselonr id and relonturns thelon highelonst scorelond candidatelons in thelon prelon-computelond lists as thelon elonxpansion for thelon correlonsponding input id.
  */
-@Singleton
-class SalsaExpander @Inject() (
-  statsReceiver: StatsReceiver,
-  firstDegreeClient: SalsaFirstDegreeOnUserClientColumn,
-  secondDegreeClient: SalsaSecondDegreeOnUserClientColumn,
+@Singlelonton
+class Salsaelonxpandelonr @Injelonct() (
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  firstDelongrelonelonClielonnt: SalsaFirstDelongrelonelonOnUselonrClielonntColumn,
+  seloncondDelongrelonelonClielonnt: SalsaSeloncondDelongrelonelonOnUselonrClielonntColumn,
 ) {
 
-  val stats = statsReceiver.scope("salsa_expander")
+  val stats = statsReloncelonivelonr.scopelon("salsa_elonxpandelonr")
 
-  private def similarUsers(
-    input: Seq[Long],
-    neighbors: Seq[Option[Seq[Candidate]]]
-  ): Seq[SalsaExpandedCandidate] = {
+  privatelon delonf similarUselonrs(
+    input: Selonq[Long],
+    nelonighbors: Selonq[Option[Selonq[Candidatelon]]]
+  ): Selonq[SalsaelonxpandelondCandidatelon] = {
     input
-      .zip(neighbors).flatMap {
-        case (recId, Some(neighbors)) =>
-          neighbors.map(neighbor => SimilarUserCandidate(neighbor.userId, neighbor.score, recId))
-        case _ => Nil
-      }.groupBy(_.candidateId).map {
-        case (key, neighbors) =>
-          val scores = neighbors.map(_.score)
-          val connectingUsers = neighbors
-            .sortBy(-_.score)
-            .take(SalsaExpander.MaxConnectingUsersToOutputPerExpandedCandidate)
-            .map(_.similarToCandidate)
+      .zip(nelonighbors).flatMap {
+        caselon (reloncId, Somelon(nelonighbors)) =>
+          nelonighbors.map(nelonighbor => SimilarUselonrCandidatelon(nelonighbor.uselonrId, nelonighbor.scorelon, reloncId))
+        caselon _ => Nil
+      }.groupBy(_.candidatelonId).map {
+        caselon (kelony, nelonighbors) =>
+          val scorelons = nelonighbors.map(_.scorelon)
+          val connelonctingUselonrs = nelonighbors
+            .sortBy(-_.scorelon)
+            .takelon(Salsaelonxpandelonr.MaxConnelonctingUselonrsToOutputPelonrelonxpandelondCandidatelon)
+            .map(_.similarToCandidatelon)
 
-          SalsaExpandedCandidate(key, scores.size, scores.sum, connectingUsers)
+          SalsaelonxpandelondCandidatelon(kelony, scorelons.sizelon, scorelons.sum, connelonctingUselonrs)
       }
-      .filter(
-        _.numberOfConnections >= math
-          .min(SalsaExpander.MinConnectingUsersThreshold, input.size)
+      .filtelonr(
+        _.numbelonrOfConnelonctions >= math
+          .min(Salsaelonxpandelonr.MinConnelonctingUselonrsThrelonshold, input.sizelon)
       )
-      .toSeq
+      .toSelonq
   }
 
-  def apply(
-    firstDegreeInput: Seq[Long],
-    secondDegreeInput: Seq[Long],
-    maxNumOfCandidatesToReturn: Int
-  ): Stitch[Seq[CandidateUser]] = {
+  delonf apply(
+    firstDelongrelonelonInput: Selonq[Long],
+    seloncondDelongrelonelonInput: Selonq[Long],
+    maxNumOfCandidatelonsToRelonturn: Int
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
 
-    val firstDegreeNeighborsStitch =
+    val firstDelongrelonelonNelonighborsStitch =
       Stitch
-        .collect(firstDegreeInput.map(firstDegreeClient.fetcher
-          .fetch(_).map(_.v.map(_.candidates.take(SalsaExpander.MaxDirectNeighbors))))).onSuccess {
-          firstDegreeNeighbors =>
-            stats.stat("first_degree_neighbors").add(firstDegreeNeighbors.flatten.size)
+        .collelonct(firstDelongrelonelonInput.map(firstDelongrelonelonClielonnt.felontchelonr
+          .felontch(_).map(_.v.map(_.candidatelons.takelon(Salsaelonxpandelonr.MaxDirelonctNelonighbors))))).onSuccelonss {
+          firstDelongrelonelonNelonighbors =>
+            stats.stat("first_delongrelonelon_nelonighbors").add(firstDelongrelonelonNelonighbors.flattelonn.sizelon)
         }
 
-    val secondDegreeNeighborsStitch =
+    val seloncondDelongrelonelonNelonighborsStitch =
       Stitch
-        .collect(
-          secondDegreeInput.map(
-            secondDegreeClient.fetcher
-              .fetch(_).map(
-                _.v.map(_.candidates.take(SalsaExpander.MaxIndirectNeighbors))))).onSuccess {
-          secondDegreeNeighbors =>
-            stats.stat("second_degree_neighbors").add(secondDegreeNeighbors.flatten.size)
+        .collelonct(
+          seloncondDelongrelonelonInput.map(
+            seloncondDelongrelonelonClielonnt.felontchelonr
+              .felontch(_).map(
+                _.v.map(_.candidatelons.takelon(Salsaelonxpandelonr.MaxIndirelonctNelonighbors))))).onSuccelonss {
+          seloncondDelongrelonelonNelonighbors =>
+            stats.stat("seloncond_delongrelonelon_nelonighbors").add(seloncondDelongrelonelonNelonighbors.flattelonn.sizelon)
         }
 
-    val neighborStitches =
-      Stitch.join(firstDegreeNeighborsStitch, secondDegreeNeighborsStitch).map {
-        case (first, second) => first ++ second
+    val nelonighborStitchelons =
+      Stitch.join(firstDelongrelonelonNelonighborsStitch, seloncondDelongrelonelonNelonighborsStitch).map {
+        caselon (first, seloncond) => first ++ seloncond
       }
 
-    val similarUsersToInput = neighborStitches.map { neighbors =>
-      similarUsers(firstDegreeInput ++ secondDegreeInput, neighbors)
+    val similarUselonrsToInput = nelonighborStitchelons.map { nelonighbors =>
+      similarUselonrs(firstDelongrelonelonInput ++ seloncondDelongrelonelonInput, nelonighbors)
     }
 
-    similarUsersToInput.map {
-      // Rank the candidate cot users by the combined weights from the connecting users. This is the default original implementation. It is unlikely to have weight ties and thus a second ranking function is not necessary.
-      _.sortBy(-_.totalScore)
-        .take(maxNumOfCandidatesToReturn)
-        .map(_.toCandidateUser)
+    similarUselonrsToInput.map {
+      // Rank thelon candidatelon cot uselonrs by thelon combinelond welonights from thelon conneloncting uselonrs. This is thelon delonfault original implelonmelonntation. It is unlikelonly to havelon welonight tielons and thus a seloncond ranking function is not neloncelonssary.
+      _.sortBy(-_.totalScorelon)
+        .takelon(maxNumOfCandidatelonsToRelonturn)
+        .map(_.toCandidatelonUselonr)
     }
   }
 }
 
-object SalsaExpander {
-  val MaxDirectNeighbors = 2000
-  val MaxIndirectNeighbors = 2000
-  val MinConnectingUsersThreshold = 2
-  val MaxConnectingUsersToOutputPerExpandedCandidate = 3
+objelonct Salsaelonxpandelonr {
+  val MaxDirelonctNelonighbors = 2000
+  val MaxIndirelonctNelonighbors = 2000
+  val MinConnelonctingUselonrsThrelonshold = 2
+  val MaxConnelonctingUselonrsToOutputPelonrelonxpandelondCandidatelon = 3
 }

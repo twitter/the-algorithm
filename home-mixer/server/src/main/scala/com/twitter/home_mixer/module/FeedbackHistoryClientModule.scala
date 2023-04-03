@@ -1,39 +1,39 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClient
-import com.twitter.timelinemixer.clients.feedback.FeedbackHistoryManhattanClientConfig
-import com.twitter.timelines.clients.manhattan.mhv3.ManhattanClientBuilder
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.felonelondback.FelonelondbackHistoryManhattanClielonnt
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.felonelondback.FelonelondbackHistoryManhattanClielonntConfig
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.mhv3.ManhattanClielonntBuildelonr
+import javax.injelonct.Singlelonton
 
-object FeedbackHistoryClientModule extends TwitterModule {
-  private val ProdDataset = "feedback_history"
-  private val StagingDataset = "feedback_history_nonprod"
+objelonct FelonelondbackHistoryClielonntModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon val ProdDataselont = "felonelondback_history"
+  privatelon val StagingDataselont = "felonelondback_history_nonprod"
 
-  @Provides
-  @Singleton
-  def providesFeedbackHistoryClient(
-    serviceId: ServiceIdentifier,
-    statsReceiver: StatsReceiver
+  @Providelons
+  @Singlelonton
+  delonf providelonsFelonelondbackHistoryClielonnt(
+    selonrvicelonId: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
   ) = {
-    val manhattanDataset = serviceId.environment.toLowerCase match {
-      case "prod" => ProdDataset
-      case _ => StagingDataset
+    val manhattanDataselont = selonrvicelonId.elonnvironmelonnt.toLowelonrCaselon match {
+      caselon "prod" => ProdDataselont
+      caselon _ => StagingDataselont
     }
 
-    val config = new FeedbackHistoryManhattanClientConfig {
-      val dataset = manhattanDataset
-      val isReadOnly = true
-      val serviceIdentifier = serviceId
+    val config = nelonw FelonelondbackHistoryManhattanClielonntConfig {
+      val dataselont = manhattanDataselont
+      val isRelonadOnly = truelon
+      val selonrvicelonIdelonntifielonr = selonrvicelonId
     }
 
-    new FeedbackHistoryManhattanClient(
-      ManhattanClientBuilder.buildManhattanEndpoint(config, statsReceiver),
-      manhattanDataset,
-      statsReceiver
+    nelonw FelonelondbackHistoryManhattanClielonnt(
+      ManhattanClielonntBuildelonr.buildManhattanelonndpoint(config, statsReloncelonivelonr),
+      manhattanDataselont,
+      statsReloncelonivelonr
     )
   }
 }

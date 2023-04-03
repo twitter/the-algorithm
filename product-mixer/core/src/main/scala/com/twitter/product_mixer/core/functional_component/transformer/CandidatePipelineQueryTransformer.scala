@@ -1,85 +1,85 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.CandidatePipelineResults
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.CandidatelonPipelonlinelonRelonsults
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
 
 /**
- * A transformer for transforming a mixer or recommendation pipeline's query type into a candidate
- * pipeline's query type.
- * @tparam Query The parent pipeline's query type
- * @tparam CandidateSourceQuery The Candidate Source's query type that the Query should be converted to
+ * A transformelonr for transforming a mixelonr or reloncommelonndation pipelonlinelon's quelonry typelon into a candidatelon
+ * pipelonlinelon's quelonry typelon.
+ * @tparam Quelonry Thelon parelonnt pipelonlinelon's quelonry typelon
+ * @tparam CandidatelonSourcelonQuelonry Thelon Candidatelon Sourcelon's quelonry typelon that thelon Quelonry should belon convelonrtelond to
  */
-protected[core] sealed trait BaseCandidatePipelineQueryTransformer[
-  -Query <: PipelineQuery,
-  +CandidateSourceQuery]
-    extends Transformer[Query, CandidateSourceQuery] {
+protelonctelond[corelon] selonalelond trait BaselonCandidatelonPipelonlinelonQuelonryTransformelonr[
+  -Quelonry <: PipelonlinelonQuelonry,
+  +CandidatelonSourcelonQuelonry]
+    elonxtelonnds Transformelonr[Quelonry, CandidatelonSourcelonQuelonry] {
 
-  override val identifier: TransformerIdentifier =
-    BaseCandidatePipelineQueryTransformer.DefaultTransformerId
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr =
+    BaselonCandidatelonPipelonlinelonQuelonryTransformelonr.DelonfaultTransformelonrId
 }
 
-trait CandidatePipelineQueryTransformer[-Query <: PipelineQuery, CandidateSourceQuery]
-    extends BaseCandidatePipelineQueryTransformer[Query, CandidateSourceQuery]
+trait CandidatelonPipelonlinelonQuelonryTransformelonr[-Quelonry <: PipelonlinelonQuelonry, CandidatelonSourcelonQuelonry]
+    elonxtelonnds BaselonCandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, CandidatelonSourcelonQuelonry]
 
-trait DependentCandidatePipelineQueryTransformer[-Query <: PipelineQuery, CandidateSourceQuery]
-    extends BaseCandidatePipelineQueryTransformer[Query, CandidateSourceQuery] {
-  def transform(query: Query, candidates: Seq[CandidateWithDetails]): CandidateSourceQuery
+trait DelonpelonndelonntCandidatelonPipelonlinelonQuelonryTransformelonr[-Quelonry <: PipelonlinelonQuelonry, CandidatelonSourcelonQuelonry]
+    elonxtelonnds BaselonCandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, CandidatelonSourcelonQuelonry] {
+  delonf transform(quelonry: Quelonry, candidatelons: Selonq[CandidatelonWithDelontails]): CandidatelonSourcelonQuelonry
 
-  final override def transform(query: Query): CandidateSourceQuery = {
-    val candidates = query.features
-      .map(_.get(CandidatePipelineResults)).getOrElse(
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Candidate Pipeline Results Feature missing from query features"))
-    transform(query, candidates)
+  final ovelonrridelon delonf transform(quelonry: Quelonry): CandidatelonSourcelonQuelonry = {
+    val candidatelons = quelonry.felonaturelons
+      .map(_.gelont(CandidatelonPipelonlinelonRelonsults)).gelontOrelonlselon(
+        throw PipelonlinelonFailurelon(
+          IllelongalStatelonFailurelon,
+          "Candidatelon Pipelonlinelon Relonsults Felonaturelon missing from quelonry felonaturelons"))
+    transform(quelonry, candidatelons)
   }
 }
 
-object BaseCandidatePipelineQueryTransformer {
-  private[core] val DefaultTransformerId: TransformerIdentifier =
-    TransformerIdentifier(ComponentIdentifier.BasedOnParentComponent)
-  private[core] val TransformerIdSuffix = "Query"
+objelonct BaselonCandidatelonPipelonlinelonQuelonryTransformelonr {
+  privatelon[corelon] val DelonfaultTransformelonrId: TransformelonrIdelonntifielonr =
+    TransformelonrIdelonntifielonr(ComponelonntIdelonntifielonr.BaselondOnParelonntComponelonnt)
+  privatelon[corelon] val TransformelonrIdSuffix = "Quelonry"
 
   /**
-   * For use when building a [[BaseCandidatePipelineQueryTransformer]] in a [[com.twitter.product_mixer.core.pipeline.PipelineBuilder]]
-   * to ensure that the identifier is updated with the parent [[com.twitter.product_mixer.core.pipeline.Pipeline.identifier]]
+   * For uselon whelonn building a [[BaselonCandidatelonPipelonlinelonQuelonryTransformelonr]] in a [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonBuildelonr]]
+   * to elonnsurelon that thelon idelonntifielonr is updatelond with thelon parelonnt [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon.idelonntifielonr]]
    */
-  private[core] def copyWithUpdatedIdentifier[Query <: PipelineQuery, CandidateSourceQuery](
-    queryTransformer: BaseCandidatePipelineQueryTransformer[Query, CandidateSourceQuery],
-    parentIdentifier: ComponentIdentifier
-  ): BaseCandidatePipelineQueryTransformer[Query, CandidateSourceQuery] = {
-    if (queryTransformer.identifier == DefaultTransformerId) {
-      val transformerIdentifierFromParentName = TransformerIdentifier(
-        s"${parentIdentifier.name}$TransformerIdSuffix")
-      queryTransformer match {
-        case queryTransformer: CandidatePipelineQueryTransformer[Query, CandidateSourceQuery] =>
-          new CandidatePipelineQueryTransformer[Query, CandidateSourceQuery] {
-            override val identifier: TransformerIdentifier = transformerIdentifierFromParentName
+  privatelon[corelon] delonf copyWithUpdatelondIdelonntifielonr[Quelonry <: PipelonlinelonQuelonry, CandidatelonSourcelonQuelonry](
+    quelonryTransformelonr: BaselonCandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, CandidatelonSourcelonQuelonry],
+    parelonntIdelonntifielonr: ComponelonntIdelonntifielonr
+  ): BaselonCandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, CandidatelonSourcelonQuelonry] = {
+    if (quelonryTransformelonr.idelonntifielonr == DelonfaultTransformelonrId) {
+      val transformelonrIdelonntifielonrFromParelonntNamelon = TransformelonrIdelonntifielonr(
+        s"${parelonntIdelonntifielonr.namelon}$TransformelonrIdSuffix")
+      quelonryTransformelonr match {
+        caselon quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, CandidatelonSourcelonQuelonry] =>
+          nelonw CandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, CandidatelonSourcelonQuelonry] {
+            ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr = transformelonrIdelonntifielonrFromParelonntNamelon
 
-            override def transform(input: Query): CandidateSourceQuery =
-              queryTransformer.transform(input)
+            ovelonrridelon delonf transform(input: Quelonry): CandidatelonSourcelonQuelonry =
+              quelonryTransformelonr.transform(input)
           }
-        case queryTransformer: DependentCandidatePipelineQueryTransformer[
-              Query,
-              CandidateSourceQuery
+        caselon quelonryTransformelonr: DelonpelonndelonntCandidatelonPipelonlinelonQuelonryTransformelonr[
+              Quelonry,
+              CandidatelonSourcelonQuelonry
             ] =>
-          new DependentCandidatePipelineQueryTransformer[Query, CandidateSourceQuery] {
-            override val identifier: TransformerIdentifier = transformerIdentifierFromParentName
+          nelonw DelonpelonndelonntCandidatelonPipelonlinelonQuelonryTransformelonr[Quelonry, CandidatelonSourcelonQuelonry] {
+            ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr = transformelonrIdelonntifielonrFromParelonntNamelon
 
-            override def transform(
-              input: Query,
-              candidates: Seq[CandidateWithDetails]
-            ): CandidateSourceQuery =
-              queryTransformer.transform(input, candidates)
+            ovelonrridelon delonf transform(
+              input: Quelonry,
+              candidatelons: Selonq[CandidatelonWithDelontails]
+            ): CandidatelonSourcelonQuelonry =
+              quelonryTransformelonr.transform(input, candidatelons)
           }
       }
-    } else {
-      queryTransformer
+    } elonlselon {
+      quelonryTransformelonr
     }
   }
 }

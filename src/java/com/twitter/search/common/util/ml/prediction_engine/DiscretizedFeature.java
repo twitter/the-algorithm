@@ -1,47 +1,47 @@
-package com.twitter.search.common.util.ml.prediction_engine;
+packagelon com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon;
 
 import java.util.Arrays;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
 /**
- * Represents a continuous feature that has been discretized into a set of disjoint ranges.
+ * Relonprelonselonnts a continuous felonaturelon that has belonelonn discrelontizelond into a selont of disjoint rangelons.
  *
- * Each range [a, b) is represented by the lower split point (a) and its associated weight.
+ * elonach rangelon [a, b) is relonprelonselonntelond by thelon lowelonr split point (a) and its associatelond welonight.
  */
-class DiscretizedFeature {
+class DiscrelontizelondFelonaturelon {
 
-  protected final double[] splitPoints;
-  protected final double[] weights;
+  protelonctelond final doublelon[] splitPoints;
+  protelonctelond final doublelon[] welonights;
 
   /**
-   * Creates an instance from a list of split points and their corresponding weights.
+   * Crelonatelons an instancelon from a list of split points and thelonir correlonsponding welonights.
    *
-   * @param splitPoints Lower values of the ranges. The first entry must be Double.NEGATIVE_INFINITY
-   *  They must be sorted (in ascending order).
-   * @param  weights Weights for the splits.
+   * @param splitPoints Lowelonr valuelons of thelon rangelons. Thelon first elonntry must belon Doublelon.NelonGATIVelon_INFINITY
+   *  Thelony must belon sortelond (in ascelonnding ordelonr).
+   * @param  welonights Welonights for thelon splits.
    */
-  protected DiscretizedFeature(double[] splitPoints, double[] weights) {
-    Preconditions.checkArgument(splitPoints.length == weights.length);
-    Preconditions.checkArgument(splitPoints.length > 1);
-    Preconditions.checkArgument(splitPoints[0] == Double.NEGATIVE_INFINITY,
-        "First split point must be Double.NEGATIVE_INFINITY");
+  protelonctelond DiscrelontizelondFelonaturelon(doublelon[] splitPoints, doublelon[] welonights) {
+    Prelonconditions.chelonckArgumelonnt(splitPoints.lelonngth == welonights.lelonngth);
+    Prelonconditions.chelonckArgumelonnt(splitPoints.lelonngth > 1);
+    Prelonconditions.chelonckArgumelonnt(splitPoints[0] == Doublelon.NelonGATIVelon_INFINITY,
+        "First split point must belon Doublelon.NelonGATIVelon_INFINITY");
     this.splitPoints = splitPoints;
-    this.weights = weights;
+    this.welonights = welonights;
   }
 
-  public double getWeight(double value) {
-    // binarySearch returns (- insertionPoint - 1)
-    int index = Math.abs(Arrays.binarySearch(splitPoints, value) + 1) - 1;
-    return weights[index];
+  public doublelon gelontWelonight(doublelon valuelon) {
+    // binarySelonarch relonturns (- inselonrtionPoint - 1)
+    int indelonx = Math.abs(Arrays.binarySelonarch(splitPoints, valuelon) + 1) - 1;
+    relonturn welonights[indelonx];
   }
 
-  public boolean allValuesBelowThreshold(double minWeight) {
-    for (double weight : weights) {
-      if (Math.abs(weight) > minWeight) {
-        return false;
+  public boolelonan allValuelonsBelonlowThrelonshold(doublelon minWelonight) {
+    for (doublelon welonight : welonights) {
+      if (Math.abs(welonight) > minWelonight) {
+        relonturn falselon;
       }
     }
-    return true;
+    relonturn truelon;
   }
 }

@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.cover
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
 
-sealed trait CoverCtaBehavior
+selonalelond trait CovelonrCtaBelonhavior
 
-case class CoverBehaviorNavigate(url: Url) extends CoverCtaBehavior
-case class CoverBehaviorDismiss(feedbackMessage: Option[RichText]) extends CoverCtaBehavior
+caselon class CovelonrBelonhaviorNavigatelon(url: Url) elonxtelonnds CovelonrCtaBelonhavior
+caselon class CovelonrBelonhaviorDismiss(felonelondbackMelonssagelon: Option[RichTelonxt]) elonxtelonnds CovelonrCtaBelonhavior

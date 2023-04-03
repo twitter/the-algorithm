@@ -1,8 +1,8 @@
-# pylint: disable=invalid-name
+# pylint: disablelon=invalid-namelon
 """
-This module implements the reader for BatchPredictionRequest.
+This modulelon implelonmelonnts thelon relonadelonr for BatchPrelondictionRelonquelonst.
 """
 
-from twitter.deepbird.io.legacy.readers.batch_prediction_request import (
-  BatchPredictionRequest  # noqa: F401
+from twittelonr.delonelonpbird.io.lelongacy.relonadelonrs.batch_prelondiction_relonquelonst import (
+  BatchPrelondictionRelonquelonst  # noqa: F401
 )

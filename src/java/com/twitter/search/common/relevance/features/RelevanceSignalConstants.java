@@ -1,30 +1,30 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
 /**
- * Defines relevance related constants that are used at both ingestion time and
- * earlybird scoring time.
+ * Delonfinelons relonlelonvancelon relonlatelond constants that arelon uselond at both ingelonstion timelon and
+ * elonarlybird scoring timelon.
  */
-public final class RelevanceSignalConstants {
-  // user reputation
-  public static final byte UNSET_REPUTATION_SENTINEL = Byte.MIN_VALUE;
-  public static final byte MAX_REPUTATION = 100;
-  public static final byte MIN_REPUTATION = 0;
-  // below overall CDF of ~10%, default value for new users,
-  // given as a goodwill value in case it is unset
-  public static final byte GOODWILL_REPUTATION = 17;
+public final class RelonlelonvancelonSignalConstants {
+  // uselonr relonputation
+  public static final bytelon UNSelonT_RelonPUTATION_SelonNTINelonL = Bytelon.MIN_VALUelon;
+  public static final bytelon MAX_RelonPUTATION = 100;
+  public static final bytelon MIN_RelonPUTATION = 0;
+  // belonlow ovelonrall CDF of ~10%, delonfault valuelon for nelonw uselonrs,
+  // givelonn as a goodwill valuelon in caselon it is unselont
+  public static final bytelon GOODWILL_RelonPUTATION = 17;
 
-  // text score
-  public static final byte UNSET_TEXT_SCORE_SENTINEL = Byte.MIN_VALUE;
-  // roughly at overall CDF of ~10%, given as a goodwill value in case it is unset
-  public static final byte GOODWILL_TEXT_SCORE = 19;
+  // telonxt scorelon
+  public static final bytelon UNSelonT_TelonXT_SCORelon_SelonNTINelonL = Bytelon.MIN_VALUelon;
+  // roughly at ovelonrall CDF of ~10%, givelonn as a goodwill valuelon in caselon it is unselont
+  public static final bytelon GOODWILL_TelonXT_SCORelon = 19;
 
-  private RelevanceSignalConstants() {
+  privatelon RelonlelonvancelonSignalConstants() {
   }
 
-  // check whether the specified user rep value is valid
-  public static boolean isValidUserReputation(int userRep) {
-    return userRep != UNSET_REPUTATION_SENTINEL
-           && userRep >= MIN_REPUTATION
-           && userRep < MAX_REPUTATION;
+  // chelonck whelonthelonr thelon speloncifielond uselonr relonp valuelon is valid
+  public static boolelonan isValidUselonrRelonputation(int uselonrRelonp) {
+    relonturn uselonrRelonp != UNSelonT_RelonPUTATION_SelonNTINelonL
+           && uselonrRelonp >= MIN_RelonPUTATION
+           && uselonrRelonp < MAX_RelonPUTATION;
   }
 }

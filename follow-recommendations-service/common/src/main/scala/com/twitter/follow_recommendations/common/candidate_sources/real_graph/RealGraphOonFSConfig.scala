@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.relonal_graph
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.Param
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RealGraphOonFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(
-      RealGraphOonParams.IncludeRealGraphOonCandidates,
-      RealGraphOonParams.TryToReadRealGraphOonCandidates,
-      RealGraphOonParams.UseV2
+@Singlelonton
+class RelonalGraphOonFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[Param[Boolelonan] with FSNamelon] =
+    Selonq(
+      RelonalGraphOonParams.IncludelonRelonalGraphOonCandidatelons,
+      RelonalGraphOonParams.TryToRelonadRelonalGraphOonCandidatelons,
+      RelonalGraphOonParams.UselonV2
     )
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] =
-    Seq(
-      RealGraphOonParams.ScoreThreshold
+  ovelonrridelon val doublelonFSParams: Selonq[FSBoundelondParam[Doublelon]] =
+    Selonq(
+      RelonalGraphOonParams.ScorelonThrelonshold
     )
-  override val intFSParams: Seq[FSBoundedParam[Int]] =
-    Seq(
-      RealGraphOonParams.RealGraphOonResultCountThreshold,
-      RealGraphOonParams.MaxResults,
+  ovelonrridelon val intFSParams: Selonq[FSBoundelondParam[Int]] =
+    Selonq(
+      RelonalGraphOonParams.RelonalGraphOonRelonsultCountThrelonshold,
+      RelonalGraphOonParams.MaxRelonsults,
     )
 }

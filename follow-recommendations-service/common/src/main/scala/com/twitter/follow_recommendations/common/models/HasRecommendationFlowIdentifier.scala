@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasRecommendationFlowIdentifier {
-  def recommendationFlowIdentifier: Option[String]
+trait HasReloncommelonndationFlowIdelonntifielonr {
+  delonf reloncommelonndationFlowIdelonntifielonr: Option[String]
 }

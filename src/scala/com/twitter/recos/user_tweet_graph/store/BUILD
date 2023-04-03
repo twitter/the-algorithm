@@ -1,9 +1,9 @@
 scala_library(
-    sources = ["*.scala"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/storehaus:core",
-        "src/scala/com/twitter/simclusters_v2/common",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
+    sourcelons = ["*.scala"],
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/twittelonr/storelonhaus:corelon",
+        "src/scala/com/twittelonr/simclustelonrs_v2/common",
+        "src/thrift/com/twittelonr/socialgraph:thrift-scala",
     ],
 )

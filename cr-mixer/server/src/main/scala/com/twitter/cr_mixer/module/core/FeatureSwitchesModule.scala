@@ -1,74 +1,74 @@
-package com.twitter.cr_mixer.module.core
+packagelon com.twittelonr.cr_mixelonr.modulelon.corelon
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.featureswitch.CrMixerLoggingABDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.featureswitches.v2.experimentation.NullBucketImpressor
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.util.Duration
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.cr_mixelonr.felonaturelonswitch.CrMixelonrLoggingABDeloncidelonr
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.felonaturelonswitchelons.v2.buildelonr.FelonaturelonSwitchelonsBuildelonr
+import com.twittelonr.felonaturelonswitchelons.v2.elonxpelonrimelonntation.NullBuckelontImprelonssor
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.util.Duration
+import javax.injelonct.Singlelonton
 
-object FeatureSwitchesModule extends TwitterModule {
+objelonct FelonaturelonSwitchelonsModulelon elonxtelonnds TwittelonrModulelon {
 
   flag(
-    name = "featureswitches.path",
-    default = "/features/cr-mixer/main",
-    help = "path to the featureswitch configuration directory"
+    namelon = "felonaturelonswitchelons.path",
+    delonfault = "/felonaturelons/cr-mixelonr/main",
+    helonlp = "path to thelon felonaturelonswitch configuration direlonctory"
   )
   flag(
-    "use_config_repo_mirror.bool",
-    false,
-    "If true, read config from a different directory, to facilitate testing.")
+    "uselon_config_relonpo_mirror.bool",
+    falselon,
+    "If truelon, relonad config from a diffelonrelonnt direlonctory, to facilitatelon telonsting.")
 
-  val DefaultFastRefresh: Boolean = false
-  val AddServiceDetailsFromAurora: Boolean = true
-  val ImpressExperiments: Boolean = true
+  val DelonfaultFastRelonfrelonsh: Boolelonan = falselon
+  val AddSelonrvicelonDelontailsFromAurora: Boolelonan = truelon
+  val Imprelonsselonxpelonrimelonnts: Boolelonan = truelon
 
-  @Provides
-  @Singleton
-  def providesFeatureSwitches(
-    @Flag("featureswitches.path") featureSwitchDirectory: String,
-    @Flag("use_config_repo_mirror.bool") useConfigRepoMirrorFlag: Boolean,
-    abDecider: CrMixerLoggingABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches = {
-    val configRepoAbsPath =
-      getConfigRepoAbsPath(useConfigRepoMirrorFlag)
-    val fastRefresh =
-      shouldFastRefresh(useConfigRepoMirrorFlag)
+  @Providelons
+  @Singlelonton
+  delonf providelonsFelonaturelonSwitchelons(
+    @Flag("felonaturelonswitchelons.path") felonaturelonSwitchDirelonctory: String,
+    @Flag("uselon_config_relonpo_mirror.bool") uselonConfigRelonpoMirrorFlag: Boolelonan,
+    abDeloncidelonr: CrMixelonrLoggingABDeloncidelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): FelonaturelonSwitchelons = {
+    val configRelonpoAbsPath =
+      gelontConfigRelonpoAbsPath(uselonConfigRelonpoMirrorFlag)
+    val fastRelonfrelonsh =
+      shouldFastRelonfrelonsh(uselonConfigRelonpoMirrorFlag)
 
-    val featureSwitches = FeatureSwitchesBuilder()
-      .abDecider(abDecider)
-      .statsReceiver(statsReceiver.scope("featureswitches-v2"))
-      .configRepoAbsPath(configRepoAbsPath)
-      .featuresDirectory(featureSwitchDirectory)
-      .limitToReferencedExperiments(shouldLimit = true)
-      .experimentImpressionStatsEnabled(true)
+    val felonaturelonSwitchelons = FelonaturelonSwitchelonsBuildelonr()
+      .abDeloncidelonr(abDeloncidelonr)
+      .statsReloncelonivelonr(statsReloncelonivelonr.scopelon("felonaturelonswitchelons-v2"))
+      .configRelonpoAbsPath(configRelonpoAbsPath)
+      .felonaturelonsDirelonctory(felonaturelonSwitchDirelonctory)
+      .limitToRelonfelonrelonncelondelonxpelonrimelonnts(shouldLimit = truelon)
+      .elonxpelonrimelonntImprelonssionStatselonnablelond(truelon)
 
-    if (!ImpressExperiments) featureSwitches.experimentBucketImpressor(NullBucketImpressor)
-    if (AddServiceDetailsFromAurora) featureSwitches.serviceDetailsFromAurora()
-    if (fastRefresh) featureSwitches.refreshPeriod(Duration.fromSeconds(10))
+    if (!Imprelonsselonxpelonrimelonnts) felonaturelonSwitchelons.elonxpelonrimelonntBuckelontImprelonssor(NullBuckelontImprelonssor)
+    if (AddSelonrvicelonDelontailsFromAurora) felonaturelonSwitchelons.selonrvicelonDelontailsFromAurora()
+    if (fastRelonfrelonsh) felonaturelonSwitchelons.relonfrelonshPelonriod(Duration.fromSelonconds(10))
 
-    featureSwitches.build()
+    felonaturelonSwitchelons.build()
   }
 
-  private def getConfigRepoAbsPath(
-    useConfigRepoMirrorFlag: Boolean
+  privatelon delonf gelontConfigRelonpoAbsPath(
+    uselonConfigRelonpoMirrorFlag: Boolelonan
   ): String = {
-    if (useConfigRepoMirrorFlag)
-      "config_repo_mirror/"
-    else "/usr/local/config"
+    if (uselonConfigRelonpoMirrorFlag)
+      "config_relonpo_mirror/"
+    elonlselon "/usr/local/config"
   }
 
-  private def shouldFastRefresh(
-    useConfigRepoMirrorFlag: Boolean
-  ): Boolean = {
-    if (useConfigRepoMirrorFlag)
-      true
-    else DefaultFastRefresh
+  privatelon delonf shouldFastRelonfrelonsh(
+    uselonConfigRelonpoMirrorFlag: Boolelonan
+  ): Boolelonan = {
+    if (uselonConfigRelonpoMirrorFlag)
+      truelon
+    elonlselon DelonfaultFastRelonfrelonsh
   }
 
 }

@@ -1,115 +1,115 @@
-package com.twitter.timelineranker.parameters.recap
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.parameters.recap.RecapParams._
-import com.twitter.timelineranker.parameters.util.ConfigHelper
-import com.twitter.timelines.configapi._
-import com.twitter.servo.decider.DeciderKeyEnum
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyNamelon
+import com.twittelonr.timelonlinelonrankelonr.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap.ReloncapParams._
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.util.ConfigHelonlpelonr
+import com.twittelonr.timelonlinelons.configapi._
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyelonnum
 
-object RecapProduction {
-  val deciderByParam: Map[Param[_], DeciderKeyEnum#Value] = Map[Param[_], DeciderKeyName](
-    EnableRealGraphUsersParam -> DeciderKey.EnableRealGraphUsers,
-    MaxRealGraphAndFollowedUsersParam -> DeciderKey.MaxRealGraphAndFollowedUsers,
-    EnableContentFeaturesHydrationParam -> DeciderKey.RecapEnableContentFeaturesHydration,
-    MaxCountMultiplierParam -> DeciderKey.RecapMaxCountMultiplier,
-    EnableNewRecapAuthorPipeline -> DeciderKey.RecapAuthorEnableNewPipeline,
-    RecapParams.EnableExtraSortingInSearchResultParam -> DeciderKey.RecapEnableExtraSortingInResults
+objelonct ReloncapProduction {
+  val deloncidelonrByParam: Map[Param[_], DeloncidelonrKelonyelonnum#Valuelon] = Map[Param[_], DeloncidelonrKelonyNamelon](
+    elonnablelonRelonalGraphUselonrsParam -> DeloncidelonrKelony.elonnablelonRelonalGraphUselonrs,
+    MaxRelonalGraphAndFollowelondUselonrsParam -> DeloncidelonrKelony.MaxRelonalGraphAndFollowelondUselonrs,
+    elonnablelonContelonntFelonaturelonsHydrationParam -> DeloncidelonrKelony.ReloncapelonnablelonContelonntFelonaturelonsHydration,
+    MaxCountMultiplielonrParam -> DeloncidelonrKelony.ReloncapMaxCountMultiplielonr,
+    elonnablelonNelonwReloncapAuthorPipelonlinelon -> DeloncidelonrKelony.ReloncapAuthorelonnablelonNelonwPipelonlinelon,
+    ReloncapParams.elonnablelonelonxtraSortingInSelonarchRelonsultParam -> DeloncidelonrKelony.ReloncapelonnablelonelonxtraSortingInRelonsults
   )
 
-  val intParams: Seq[MaxRealGraphAndFollowedUsersParam.type] = Seq(
-    MaxRealGraphAndFollowedUsersParam
+  val intParams: Selonq[MaxRelonalGraphAndFollowelondUselonrsParam.typelon] = Selonq(
+    MaxRelonalGraphAndFollowelondUselonrsParam
   )
 
-  val doubleParams: Seq[MaxCountMultiplierParam.type] = Seq(
-    MaxCountMultiplierParam
+  val doublelonParams: Selonq[MaxCountMultiplielonrParam.typelon] = Selonq(
+    MaxCountMultiplielonrParam
   )
 
-  val boundedDoubleFeatureSwitchParams: Seq[FSBoundedParam[Double]] = Seq(
-    RecapParams.ProbabilityRandomTweetParam
+  val boundelondDoublelonFelonaturelonSwitchParams: Selonq[FSBoundelondParam[Doublelon]] = Selonq(
+    ReloncapParams.ProbabilityRandomTwelonelontParam
   )
 
-  val booleanParams: Seq[Param[Boolean]] = Seq(
-    EnableRealGraphUsersParam,
-    EnableContentFeaturesHydrationParam,
-    EnableNewRecapAuthorPipeline,
-    RecapParams.EnableExtraSortingInSearchResultParam
+  val boolelonanParams: Selonq[Param[Boolelonan]] = Selonq(
+    elonnablelonRelonalGraphUselonrsParam,
+    elonnablelonContelonntFelonaturelonsHydrationParam,
+    elonnablelonNelonwReloncapAuthorPipelonlinelon,
+    ReloncapParams.elonnablelonelonxtraSortingInSelonarchRelonsultParam
   )
 
-  val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
-    RecapParams.EnableReturnAllResultsParam,
-    RecapParams.IncludeRandomTweetParam,
-    RecapParams.IncludeSingleRandomTweetParam,
-    RecapParams.EnableInNetworkInReplyToTweetFeaturesHydrationParam,
-    RecapParams.EnableReplyRootTweetHydrationParam,
-    RecapParams.EnableSettingTweetTypesWithTweetKindOption,
-    RecapParams.EnableRelevanceSearchParam,
-    EnableTokensInContentFeaturesHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
-    EnableExpandedExtendedRepliesFilterParam,
-    EnableConversationControlInContentFeaturesHydrationParam,
-    EnableTweetMediaHydrationParam,
-    ImputeRealGraphAuthorWeightsParam,
-    EnableExcludeSourceTweetIdsQueryParam
+  val boolelonanFelonaturelonSwitchParams: Selonq[FSParam[Boolelonan]] = Selonq(
+    ReloncapParams.elonnablelonRelonturnAllRelonsultsParam,
+    ReloncapParams.IncludelonRandomTwelonelontParam,
+    ReloncapParams.IncludelonSinglelonRandomTwelonelontParam,
+    ReloncapParams.elonnablelonInNelontworkInRelonplyToTwelonelontFelonaturelonsHydrationParam,
+    ReloncapParams.elonnablelonRelonplyRootTwelonelontHydrationParam,
+    ReloncapParams.elonnablelonSelonttingTwelonelontTypelonsWithTwelonelontKindOption,
+    ReloncapParams.elonnablelonRelonlelonvancelonSelonarchParam,
+    elonnablelonTokelonnsInContelonntFelonaturelonsHydrationParam,
+    elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsHydrationParam,
+    elonnablelonelonxpandelondelonxtelonndelondRelonplielonsFiltelonrParam,
+    elonnablelonConvelonrsationControlInContelonntFelonaturelonsHydrationParam,
+    elonnablelonTwelonelontMelondiaHydrationParam,
+    ImputelonRelonalGraphAuthorWelonightsParam,
+    elonnablelonelonxcludelonSourcelonTwelonelontIdsQuelonryParam
   )
 
-  val boundedIntFeatureSwitchParams: Seq[FSBoundedParam[Int]] = Seq(
-    RecapParams.MaxFollowedUsersParam,
-    ImputeRealGraphAuthorWeightsPercentileParam,
-    RecapParams.RelevanceOptionsMaxHitsToProcessParam
+  val boundelondIntFelonaturelonSwitchParams: Selonq[FSBoundelondParam[Int]] = Selonq(
+    ReloncapParams.MaxFollowelondUselonrsParam,
+    ImputelonRelonalGraphAuthorWelonightsPelonrcelonntilelonParam,
+    ReloncapParams.RelonlelonvancelonOptionsMaxHitsToProcelonssParam
   )
 }
 
-class RecapProduction(deciderGateBuilder: DeciderGateBuilder, statsReceiver: StatsReceiver) {
+class ReloncapProduction(deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr, statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  val configHelper: ConfigHelper =
-    new ConfigHelper(RecapProduction.deciderByParam, deciderGateBuilder)
-  val intOverrides: Seq[OptionalOverride[Int]] =
-    configHelper.createDeciderBasedOverrides(RecapProduction.intParams)
-  val optionalBoundedIntFeatureSwitchOverrides: Seq[OptionalOverride[Option[Int]]] =
-    FeatureSwitchOverrideUtil.getBoundedOptionalIntOverrides(
+  val configHelonlpelonr: ConfigHelonlpelonr =
+    nelonw ConfigHelonlpelonr(ReloncapProduction.deloncidelonrByParam, deloncidelonrGatelonBuildelonr)
+  val intOvelonrridelons: Selonq[OptionalOvelonrridelon[Int]] =
+    configHelonlpelonr.crelonatelonDeloncidelonrBaselondOvelonrridelons(ReloncapProduction.intParams)
+  val optionalBoundelondIntFelonaturelonSwitchOvelonrridelons: Selonq[OptionalOvelonrridelon[Option[Int]]] =
+    FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondOptionalIntOvelonrridelons(
       (
-        MaxRealGraphAndFollowedUsersFSOverrideParam,
-        "max_real_graph_and_followers_users_fs_override_defined",
-        "max_real_graph_and_followers_users_fs_override_value"
+        MaxRelonalGraphAndFollowelondUselonrsFSOvelonrridelonParam,
+        "max_relonal_graph_and_followelonrs_uselonrs_fs_ovelonrridelon_delonfinelond",
+        "max_relonal_graph_and_followelonrs_uselonrs_fs_ovelonrridelon_valuelon"
       )
     )
-  val doubleOverrides: Seq[OptionalOverride[Double]] =
-    configHelper.createDeciderBasedOverrides(RecapProduction.doubleParams)
-  val booleanOverrides: Seq[OptionalOverride[Boolean]] =
-    configHelper.createDeciderBasedBooleanOverrides(RecapProduction.booleanParams)
-  val booleanFeatureSwitchOverrides: Seq[OptionalOverride[Boolean]] =
-    FeatureSwitchOverrideUtil.getBooleanFSOverrides(RecapProduction.booleanFeatureSwitchParams: _*)
-  val boundedDoubleFeatureSwitchOverrides: Seq[OptionalOverride[Double]] =
-    FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(
-      RecapProduction.boundedDoubleFeatureSwitchParams: _*)
-  val boundedIntFeatureSwitchOverrides: Seq[OptionalOverride[Int]] =
-    FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
-      RecapProduction.boundedIntFeatureSwitchParams: _*)
+  val doublelonOvelonrridelons: Selonq[OptionalOvelonrridelon[Doublelon]] =
+    configHelonlpelonr.crelonatelonDeloncidelonrBaselondOvelonrridelons(ReloncapProduction.doublelonParams)
+  val boolelonanOvelonrridelons: Selonq[OptionalOvelonrridelon[Boolelonan]] =
+    configHelonlpelonr.crelonatelonDeloncidelonrBaselondBoolelonanOvelonrridelons(ReloncapProduction.boolelonanParams)
+  val boolelonanFelonaturelonSwitchOvelonrridelons: Selonq[OptionalOvelonrridelon[Boolelonan]] =
+    FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(ReloncapProduction.boolelonanFelonaturelonSwitchParams: _*)
+  val boundelondDoublelonFelonaturelonSwitchOvelonrridelons: Selonq[OptionalOvelonrridelon[Doublelon]] =
+    FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(
+      ReloncapProduction.boundelondDoublelonFelonaturelonSwitchParams: _*)
+  val boundelondIntFelonaturelonSwitchOvelonrridelons: Selonq[OptionalOvelonrridelon[Int]] =
+    FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
+      ReloncapProduction.boundelondIntFelonaturelonSwitchParams: _*)
 
-  val config: BaseConfig = new BaseConfigBuilder()
-    .set(
-      intOverrides: _*
+  val config: BaselonConfig = nelonw BaselonConfigBuildelonr()
+    .selont(
+      intOvelonrridelons: _*
     )
-    .set(
-      booleanOverrides: _*
+    .selont(
+      boolelonanOvelonrridelons: _*
     )
-    .set(
-      doubleOverrides: _*
+    .selont(
+      doublelonOvelonrridelons: _*
     )
-    .set(
-      booleanFeatureSwitchOverrides: _*
+    .selont(
+      boolelonanFelonaturelonSwitchOvelonrridelons: _*
     )
-    .set(
-      boundedIntFeatureSwitchOverrides: _*
+    .selont(
+      boundelondIntFelonaturelonSwitchOvelonrridelons: _*
     )
-    .set(
-      optionalBoundedIntFeatureSwitchOverrides: _*
+    .selont(
+      optionalBoundelondIntFelonaturelonSwitchOvelonrridelons: _*
     )
-    .set(
-      boundedDoubleFeatureSwitchOverrides: _*
+    .selont(
+      boundelondDoublelonFelonaturelonSwitchOvelonrridelons: _*
     )
-    .build(RecapProduction.getClass.getSimpleName)
+    .build(ReloncapProduction.gelontClass.gelontSimplelonNamelon)
 }

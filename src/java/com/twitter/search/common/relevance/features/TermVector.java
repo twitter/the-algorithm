@@ -1,79 +1,79 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.common.base.Function;
+import com.twittelonr.common.baselon.Function;
 
 /**
- * Class to keep String-Double of term vectors
- * It can calculate magnitude, dot product, and cosine similarity
+ * Class to kelonelonp String-Doublelon of telonrm velonctors
+ * It can calculatelon magnitudelon, dot product, and cosinelon similarity
  */
-public class TermVector {
-  private static final double MIN_MAGNITUDE = 0.00001;
-  private final double magnitude;
-  private final ImmutableMap<String, Double> termWeights;
+public class TelonrmVelonctor {
+  privatelon static final doublelon MIN_MAGNITUDelon = 0.00001;
+  privatelon final doublelon magnitudelon;
+  privatelon final ImmutablelonMap<String, Doublelon> telonrmWelonights;
 
-  /** Creates a new TermVector instance. */
-  public TermVector(Map<String, Double> termWeights) {
-    this.termWeights = ImmutableMap.copyOf(termWeights);
-    double sum = 0.0;
-    for (Map.Entry<String, Double> entry : termWeights.entrySet()) {
-      double value = entry.getValue();
-      sum += value * value;
+  /** Crelonatelons a nelonw TelonrmVelonctor instancelon. */
+  public TelonrmVelonctor(Map<String, Doublelon> telonrmWelonights) {
+    this.telonrmWelonights = ImmutablelonMap.copyOf(telonrmWelonights);
+    doublelon sum = 0.0;
+    for (Map.elonntry<String, Doublelon> elonntry : telonrmWelonights.elonntrySelont()) {
+      doublelon valuelon = elonntry.gelontValuelon();
+      sum += valuelon * valuelon;
     }
-    magnitude = Math.sqrt(sum);
+    magnitudelon = Math.sqrt(sum);
   }
 
-  public ImmutableMap<String, Double> getTermWeights() {
-    return termWeights;
+  public ImmutablelonMap<String, Doublelon> gelontTelonrmWelonights() {
+    relonturn telonrmWelonights;
   }
 
-  public double getMagnitude() {
-    return magnitude;
+  public doublelon gelontMagnitudelon() {
+    relonturn magnitudelon;
   }
 
   /**
-   * Normalize term vector into unit magnitude
-   * @return           the unit normalized TermVector with magnitude equals 1
-   *                   return null if magnitude is very low
+   * Normalizelon telonrm velonctor into unit magnitudelon
+   * @relonturn           thelon unit normalizelond TelonrmVelonctor with magnitudelon elonquals 1
+   *                   relonturn null if magnitudelon is velonry low
    */
-  public TermVector getUnitNormalized() {
-    if (magnitude < MIN_MAGNITUDE) {
-      return null;
+  public TelonrmVelonctor gelontUnitNormalizelond() {
+    if (magnitudelon < MIN_MAGNITUDelon) {
+      relonturn null;
     }
-    return new TermVector(
-        Maps.transformValues(termWeights, (Function<Double, Double>) weight -> weight / magnitude));
+    relonturn nelonw TelonrmVelonctor(
+        Maps.transformValuelons(telonrmWelonights, (Function<Doublelon, Doublelon>) welonight -> welonight / magnitudelon));
   }
 
   /**
-   * Calculate the dot product with another term vector
-   * @param other      the other term vector
-   * @return           the dot product of the two vectors
+   * Calculatelon thelon dot product with anothelonr telonrm velonctor
+   * @param othelonr      thelon othelonr telonrm velonctor
+   * @relonturn           thelon dot product of thelon two velonctors
    */
-  public double getDotProduct(TermVector other) {
-    double sum = 0.0;
-    for (Map.Entry<String, Double> entry : termWeights.entrySet()) {
-      Double value2 = other.termWeights.get(entry.getKey());
-      if (value2 != null) {
-        sum += entry.getValue() * value2;
+  public doublelon gelontDotProduct(TelonrmVelonctor othelonr) {
+    doublelon sum = 0.0;
+    for (Map.elonntry<String, Doublelon> elonntry : telonrmWelonights.elonntrySelont()) {
+      Doublelon valuelon2 = othelonr.telonrmWelonights.gelont(elonntry.gelontKelony());
+      if (valuelon2 != null) {
+        sum += elonntry.gelontValuelon() * valuelon2;
       }
     }
-    return sum;
+    relonturn sum;
   }
 
   /**
-   * Calculate the cosine similarity of with another term vector
-   * @param other     the other term vector
-   * @return          the cosine similarity.
-   *                  if either has very small magnitude, it returns 0 (dotProduct close to 0)
+   * Calculatelon thelon cosinelon similarity of with anothelonr telonrm velonctor
+   * @param othelonr     thelon othelonr telonrm velonctor
+   * @relonturn          thelon cosinelon similarity.
+   *                  if elonithelonr has velonry small magnitudelon, it relonturns 0 (dotProduct closelon to 0)
    */
-  public double getCosineSimilarity(TermVector other) {
-    if (magnitude < MIN_MAGNITUDE || other.magnitude < MIN_MAGNITUDE) {
-      return 0;
+  public doublelon gelontCosinelonSimilarity(TelonrmVelonctor othelonr) {
+    if (magnitudelon < MIN_MAGNITUDelon || othelonr.magnitudelon < MIN_MAGNITUDelon) {
+      relonturn 0;
     }
-    return getDotProduct(other) / (magnitude * other.magnitude);
+    relonturn gelontDotProduct(othelonr) / (magnitudelon * othelonr.magnitudelon);
   }
 }

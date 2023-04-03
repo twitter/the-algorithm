@@ -1,46 +1,46 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.stitch.Stitch
 
 /**
- * base trait for two-hop expansion based algorithms, e.g. online_stp, phonebook_prediction,
- * recent following sims, recent engagement sims, ...
+ * baselon trait for two-hop elonxpansion baselond algorithms, elon.g. onlinelon_stp, phonelonbook_prelondiction,
+ * reloncelonnt following sims, reloncelonnt elonngagelonmelonnt sims, ...
  *
- * @tparam Target target type
- * @tparam FirstDegree type of first degree nodes
- * @tparam SecondaryDegree type of secondary degree nodes
- * @tparam Candidate output candidate types
+ * @tparam Targelont targelont typelon
+ * @tparam FirstDelongrelonelon typelon of first delongrelonelon nodelons
+ * @tparam SeloncondaryDelongrelonelon typelon of seloncondary delongrelonelon nodelons
+ * @tparam Candidatelon output candidatelon typelons
  */
-trait TwoHopExpansionCandidateSource[-Target, FirstDegree, SecondaryDegree, +Candidate]
-    extends CandidateSource[Target, Candidate] {
+trait TwoHopelonxpansionCandidatelonSourcelon[-Targelont, FirstDelongrelonelon, SeloncondaryDelongrelonelon, +Candidatelon]
+    elonxtelonnds CandidatelonSourcelon[Targelont, Candidatelon] {
 
   /**
-   * fetch first degree nodes given request
+   * felontch first delongrelonelon nodelons givelonn relonquelonst
    */
-  def firstDegreeNodes(req: Target): Stitch[Seq[FirstDegree]]
+  delonf firstDelongrelonelonNodelons(relonq: Targelont): Stitch[Selonq[FirstDelongrelonelon]]
 
   /**
-   * fetch secondary degree nodes given request and first degree nodes
+   * felontch seloncondary delongrelonelon nodelons givelonn relonquelonst and first delongrelonelon nodelons
    */
-  def secondaryDegreeNodes(req: Target, node: FirstDegree): Stitch[Seq[SecondaryDegree]]
+  delonf seloncondaryDelongrelonelonNodelons(relonq: Targelont, nodelon: FirstDelongrelonelon): Stitch[Selonq[SeloncondaryDelongrelonelon]]
 
   /**
-   * aggregate and score the candidates to generate final results
+   * aggrelongatelon and scorelon thelon candidatelons to gelonnelonratelon final relonsults
    */
-  def aggregateAndScore(
-    req: Target,
-    firstDegreeToSecondDegreeNodesMap: Map[FirstDegree, Seq[SecondaryDegree]]
-  ): Stitch[Seq[Candidate]]
+  delonf aggrelongatelonAndScorelon(
+    relonq: Targelont,
+    firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap: Map[FirstDelongrelonelon, Selonq[SeloncondaryDelongrelonelon]]
+  ): Stitch[Selonq[Candidatelon]]
 
   /**
-   * Generate a list of candidates for the target
+   * Gelonnelonratelon a list of candidatelons for thelon targelont
    */
-  def apply(target: Target): Stitch[Seq[Candidate]] = {
+  delonf apply(targelont: Targelont): Stitch[Selonq[Candidatelon]] = {
     for {
-      firstDegreeNodes <- firstDegreeNodes(target)
-      secondaryDegreeNodes <- Stitch.traverse(firstDegreeNodes)(secondaryDegreeNodes(target, _))
-      aggregated <- aggregateAndScore(target, firstDegreeNodes.zip(secondaryDegreeNodes).toMap)
-    } yield aggregated
+      firstDelongrelonelonNodelons <- firstDelongrelonelonNodelons(targelont)
+      seloncondaryDelongrelonelonNodelons <- Stitch.travelonrselon(firstDelongrelonelonNodelons)(seloncondaryDelongrelonelonNodelons(targelont, _))
+      aggrelongatelond <- aggrelongatelonAndScorelon(targelont, firstDelongrelonelonNodelons.zip(seloncondaryDelongrelonelonNodelons).toMap)
+    } yielonld aggrelongatelond
   }
 }

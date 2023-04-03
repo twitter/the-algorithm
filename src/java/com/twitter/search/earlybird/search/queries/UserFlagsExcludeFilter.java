@@ -1,128 +1,128 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
+import com.twittelonr.selonarch.common.quelonry.DelonfaultFiltelonrWelonight;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.AllDocsItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.RangelonFiltelonrDISI;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
 
-public final class UserFlagsExcludeFilter extends Query {
+public final class UselonrFlagselonxcludelonFiltelonr elonxtelonnds Quelonry {
   /**
-   * Returns a query that filters hits based on their author flags.
+   * Relonturns a quelonry that filtelonrs hits baselond on thelonir author flags.
    *
-   * @param excludeAntisocial Determines if the filter should exclude hits from antisocial users.
-   * @param excludeOffensive Determines if the filter should exclude hits from offensive users.
-   * @param excludeProtected Determines if the filter should exclude hits from protected users
-   * @return A query that filters hits based on their author flags.
+   * @param elonxcludelonAntisocial Delontelonrminelons if thelon filtelonr should elonxcludelon hits from antisocial uselonrs.
+   * @param elonxcludelonOffelonnsivelon Delontelonrminelons if thelon filtelonr should elonxcludelon hits from offelonnsivelon uselonrs.
+   * @param elonxcludelonProtelonctelond Delontelonrminelons if thelon filtelonr should elonxcludelon hits from protelonctelond uselonrs
+   * @relonturn A quelonry that filtelonrs hits baselond on thelonir author flags.
    */
-  public static Query getUserFlagsExcludeFilter(UserTable userTable,
-                                                boolean excludeAntisocial,
-                                                boolean excludeOffensive,
-                                                boolean excludeProtected) {
-    return new BooleanQuery.Builder()
-        .add(new UserFlagsExcludeFilter(
-                userTable, excludeAntisocial, excludeOffensive, excludeProtected),
-            BooleanClause.Occur.FILTER)
+  public static Quelonry gelontUselonrFlagselonxcludelonFiltelonr(UselonrTablelon uselonrTablelon,
+                                                boolelonan elonxcludelonAntisocial,
+                                                boolelonan elonxcludelonOffelonnsivelon,
+                                                boolelonan elonxcludelonProtelonctelond) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw UselonrFlagselonxcludelonFiltelonr(
+                uselonrTablelon, elonxcludelonAntisocial, elonxcludelonOffelonnsivelon, elonxcludelonProtelonctelond),
+            BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  private final UserTable userTable;
-  private final boolean excludeAntisocial;
-  private final boolean excludeOffensive;
-  private final boolean excludeProtected;
+  privatelon final UselonrTablelon uselonrTablelon;
+  privatelon final boolelonan elonxcludelonAntisocial;
+  privatelon final boolelonan elonxcludelonOffelonnsivelon;
+  privatelon final boolelonan elonxcludelonProtelonctelond;
 
-  private UserFlagsExcludeFilter(
-      UserTable userTable,
-      boolean excludeAntisocial,
-      boolean excludeOffensive,
-      boolean excludeProtected) {
-    this.userTable = userTable;
-    this.excludeAntisocial = excludeAntisocial;
-    this.excludeOffensive = excludeOffensive;
-    this.excludeProtected = excludeProtected;
+  privatelon UselonrFlagselonxcludelonFiltelonr(
+      UselonrTablelon uselonrTablelon,
+      boolelonan elonxcludelonAntisocial,
+      boolelonan elonxcludelonOffelonnsivelon,
+      boolelonan elonxcludelonProtelonctelond) {
+    this.uselonrTablelon = uselonrTablelon;
+    this.elonxcludelonAntisocial = elonxcludelonAntisocial;
+    this.elonxcludelonOffelonnsivelon = elonxcludelonOffelonnsivelon;
+    this.elonxcludelonProtelonctelond = elonxcludelonProtelonctelond;
   }
 
-  @Override
-  public int hashCode() {
-    return (excludeAntisocial ? 13 : 0) + (excludeOffensive ? 1 : 0) + (excludeProtected ? 2 : 0);
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn (elonxcludelonAntisocial ? 13 : 0) + (elonxcludelonOffelonnsivelon ? 1 : 0) + (elonxcludelonProtelonctelond ? 2 : 0);
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof UserFlagsExcludeFilter)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof UselonrFlagselonxcludelonFiltelonr)) {
+      relonturn falselon;
     }
 
-    UserFlagsExcludeFilter filter = UserFlagsExcludeFilter.class.cast(obj);
-    return (excludeAntisocial == filter.excludeAntisocial)
-        && (excludeOffensive == filter.excludeOffensive)
-        && (excludeProtected == filter.excludeProtected);
+    UselonrFlagselonxcludelonFiltelonr filtelonr = UselonrFlagselonxcludelonFiltelonr.class.cast(obj);
+    relonturn (elonxcludelonAntisocial == filtelonr.elonxcludelonAntisocial)
+        && (elonxcludelonOffelonnsivelon == filtelonr.elonxcludelonOffelonnsivelon)
+        && (elonxcludelonProtelonctelond == filtelonr.elonxcludelonProtelonctelond);
   }
 
-  @Override
-  public String toString(String field) {
-    return "UserFlagsExcludeFilter";
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn "UselonrFlagselonxcludelonFiltelonr";
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader reader = context.reader();
-        if (userTable == null) {
-          return new AllDocsIterator(reader);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+    relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+      @Ovelonrridelon
+      protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        LelonafRelonadelonr relonadelonr = contelonxt.relonadelonr();
+        if (uselonrTablelon == null) {
+          relonturn nelonw AllDocsItelonrator(relonadelonr);
         }
 
         final int bits =
-            (excludeAntisocial ? UserTable.ANTISOCIAL_BIT : 0)
-                | (excludeOffensive ? UserTable.OFFENSIVE_BIT | UserTable.NSFW_BIT : 0)
-                | (excludeProtected ? UserTable.IS_PROTECTED_BIT : 0);
+            (elonxcludelonAntisocial ? UselonrTablelon.ANTISOCIAL_BIT : 0)
+                | (elonxcludelonOffelonnsivelon ? UselonrTablelon.OFFelonNSIVelon_BIT | UselonrTablelon.NSFW_BIT : 0)
+                | (elonxcludelonProtelonctelond ? UselonrTablelon.IS_PROTelonCTelonD_BIT : 0);
         if (bits != 0) {
-          return new UserFlagsExcludeDocIdSetIterator(reader, userTable) {
-            @Override
-            protected boolean checkUserFlags(UserTable table, long userID) {
-              return !table.isSet(userID, bits);
+          relonturn nelonw UselonrFlagselonxcludelonDocIdSelontItelonrator(relonadelonr, uselonrTablelon) {
+            @Ovelonrridelon
+            protelonctelond boolelonan chelonckUselonrFlags(UselonrTablelon tablelon, long uselonrID) {
+              relonturn !tablelon.isSelont(uselonrID, bits);
             }
           };
         }
 
-        return new AllDocsIterator(reader);
+        relonturn nelonw AllDocsItelonrator(relonadelonr);
       }
     };
   }
 
-  private abstract static class UserFlagsExcludeDocIdSetIterator extends RangeFilterDISI {
-    private final UserTable userTable;
-    private final NumericDocValues fromUserID;
+  privatelon abstract static class UselonrFlagselonxcludelonDocIdSelontItelonrator elonxtelonnds RangelonFiltelonrDISI {
+    privatelon final UselonrTablelon uselonrTablelon;
+    privatelon final NumelonricDocValuelons fromUselonrID;
 
-    public UserFlagsExcludeDocIdSetIterator(
-        LeafReader indexReader, UserTable table) throws IOException {
-      super(indexReader);
-      userTable = table;
-      fromUserID =
-          indexReader.getNumericDocValues(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName());
+    public UselonrFlagselonxcludelonDocIdSelontItelonrator(
+        LelonafRelonadelonr indelonxRelonadelonr, UselonrTablelon tablelon) throws IOelonxcelonption {
+      supelonr(indelonxRelonadelonr);
+      uselonrTablelon = tablelon;
+      fromUselonrID =
+          indelonxRelonadelonr.gelontNumelonricDocValuelons(elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF.gelontFielonldNamelon());
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      return fromUserID.advanceExact(docID())
-          && checkUserFlags(userTable, fromUserID.longValue());
+    @Ovelonrridelon
+    protelonctelond boolelonan shouldRelonturnDoc() throws IOelonxcelonption {
+      relonturn fromUselonrID.advancelonelonxact(docID())
+          && chelonckUselonrFlags(uselonrTablelon, fromUselonrID.longValuelon());
     }
 
-    protected abstract boolean checkUserFlags(UserTable table, long userID);
+    protelonctelond abstract boolelonan chelonckUselonrFlags(UselonrTablelon tablelon, long uselonrID);
   }
 }

@@ -1,53 +1,53 @@
-package com.twitter.product_mixer.core.pipeline.step.selector
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutor
-import com.twitter.product_mixer.core.service.selector_executor.SelectorExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasCandidatelonsWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor.Selonlelonctorelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor.SelonlelonctorelonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A selection step, it takes the input list of candidates with details and the given
- * selectors and executes them to decide which candidates should be selected.
+ * A selonlelonction stelonp, it takelons thelon input list of candidatelons with delontails and thelon givelonn
+ * selonlelonctors and elonxeloncutelons thelonm to deloncidelon which candidatelons should belon selonlelonctelond.
  *
- * @param selectorExecutor Selector Executor
- * @tparam Query Type of PipelineQuery domain model
- * @tparam State The pipeline state domain model.
+ * @param selonlelonctorelonxeloncutor Selonlelonctor elonxeloncutor
+ * @tparam Quelonry Typelon of PipelonlinelonQuelonry domain modelonl
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class SelectorStep[
-  Query <: PipelineQuery,
-  State <: HasQuery[Query, State] with HasCandidatesWithDetails[State]] @Inject() (
-  selectorExecutor: SelectorExecutor)
-    extends Step[State, Seq[
-      Selector[Query]
-    ], SelectorExecutor.Inputs[
-      Query
-    ], SelectorExecutorResult] {
+caselon class SelonlelonctorStelonp[
+  Quelonry <: PipelonlinelonQuelonry,
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HasCandidatelonsWithDelontails[Statelon]] @Injelonct() (
+  selonlelonctorelonxeloncutor: Selonlelonctorelonxeloncutor)
+    elonxtelonnds Stelonp[Statelon, Selonq[
+      Selonlelonctor[Quelonry]
+    ], Selonlelonctorelonxeloncutor.Inputs[
+      Quelonry
+    ], SelonlelonctorelonxeloncutorRelonsult] {
 
-  override def adaptInput(
-    state: State,
-    config: Seq[Selector[Query]]
-  ): SelectorExecutor.Inputs[Query] =
-    SelectorExecutor.Inputs(state.query, state.candidatesWithDetails)
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: Selonq[Selonlelonctor[Quelonry]]
+  ): Selonlelonctorelonxeloncutor.Inputs[Quelonry] =
+    Selonlelonctorelonxeloncutor.Inputs(statelon.quelonry, statelon.candidatelonsWithDelontails)
 
-  override def arrow(
-    config: Seq[Selector[Query]],
-    context: Executor.Context
-  ): Arrow[SelectorExecutor.Inputs[Query], SelectorExecutorResult] =
-    selectorExecutor.arrow(config, context)
+  ovelonrridelon delonf arrow(
+    config: Selonq[Selonlelonctor[Quelonry]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Selonlelonctorelonxeloncutor.Inputs[Quelonry], SelonlelonctorelonxeloncutorRelonsult] =
+    selonlelonctorelonxeloncutor.arrow(config, contelonxt)
 
-  override def updateState(
-    input: State,
-    executorResult: SelectorExecutorResult,
-    config: Seq[Selector[Query]]
-  ): State = input.updateCandidatesWithDetails(executorResult.selectedCandidates)
+  ovelonrridelon delonf updatelonStatelon(
+    input: Statelon,
+    elonxeloncutorRelonsult: SelonlelonctorelonxeloncutorRelonsult,
+    config: Selonq[Selonlelonctor[Quelonry]]
+  ): Statelon = input.updatelonCandidatelonsWithDelontails(elonxeloncutorRelonsult.selonlelonctelondCandidatelons)
 
-  // Selection is a bit different to other steps (i.e, other steps, empty means don't change anything)
-  // where an empty selection list drops all candidates.
-  override def isEmpty(config: Seq[Selector[Query]]): Boolean = false
+  // Selonlelonction is a bit diffelonrelonnt to othelonr stelonps (i.elon, othelonr stelonps, elonmpty melonans don't changelon anything)
+  // whelonrelon an elonmpty selonlelonction list drops all candidatelons.
+  ovelonrridelon delonf iselonmpty(config: Selonq[Selonlelonctor[Quelonry]]): Boolelonan = falselon
 }

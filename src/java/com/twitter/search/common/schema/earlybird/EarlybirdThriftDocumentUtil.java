@@ -1,377 +1,377 @@
-package com.twitter.search.common.schema.earlybird;
+packagelon com.twittelonr.selonarch.common.schelonma.elonarlybird;
 
-import java.io.IOException;
-import java.util.Iterator;
+import java.io.IOelonxcelonption;
+import java.util.Itelonrator;
 import java.util.List;
 
-import com.google.common.collect.ImmutableList;
+import com.googlelon.common.collelonct.ImmutablelonList;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.util.analysis.IntTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.TwitterNormalizedMinEngagementTokenStream;
+import com.twittelonr.common.telonxt.util.TokelonnStrelonamSelonrializelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.ThriftDocumelonntUtil;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonld;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldData;
+import com.twittelonr.selonarch.common.util.analysis.IntTelonrmAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.TwittelonrNormalizelondMinelonngagelonmelonntTokelonnStrelonam;
 
 /**
- * Utility APIs for ThriftDocument used in Earlybird.
+ * Utility APIs for ThriftDocumelonnt uselond in elonarlybird.
  */
-public final class EarlybirdThriftDocumentUtil {
-  private static final EarlybirdFieldConstants ID_MAPPING = new EarlybirdFieldConstants();
+public final class elonarlybirdThriftDocumelonntUtil {
+  privatelon static final elonarlybirdFielonldConstants ID_MAPPING = nelonw elonarlybirdFielonldConstants();
 
-  private static final String FILTER_FORMAT_STRING = "__filter_%s";
+  privatelon static final String FILTelonR_FORMAT_STRING = "__filtelonr_%s";
 
   /**
-   * Used to check whether a thrift document has filter nullcast internal field set.
-   * @see #isNullcastFilterSet(ThriftDocument)
+   * Uselond to chelonck whelonthelonr a thrift documelonnt has filtelonr nullcast intelonrnal fielonld selont.
+   * @selonelon #isNullcastFiltelonrSelont(ThriftDocumelonnt)
    */
-  private static final String NULLCAST_FILTER_TERM =
-      formatFilter(EarlybirdFieldConstant.NULLCAST_FILTER_TERM);
+  privatelon static final String NULLCAST_FILTelonR_TelonRM =
+      formatFiltelonr(elonarlybirdFielonldConstant.NULLCAST_FILTelonR_TelonRM);
 
-  private static final String SELF_THREAD_FILTER_TERM =
-      formatFilter(EarlybirdFieldConstant.SELF_THREAD_FILTER_TERM);
+  privatelon static final String SelonLF_THRelonAD_FILTelonR_TelonRM =
+      formatFiltelonr(elonarlybirdFielonldConstant.SelonLF_THRelonAD_FILTelonR_TelonRM);
 
-  private static final String DIRECTED_AT_FILTER_TERM =
-      formatFilter(EarlybirdFieldConstant.DIRECTED_AT_FILTER_TERM);
+  privatelon static final String DIRelonCTelonD_AT_FILTelonR_TelonRM =
+      formatFiltelonr(elonarlybirdFielonldConstant.DIRelonCTelonD_AT_FILTelonR_TelonRM);
 
-  private EarlybirdThriftDocumentUtil() {
-    // Cannot instantiate.
+  privatelon elonarlybirdThriftDocumelonntUtil() {
+    // Cannot instantiatelon.
   }
 
   /**
-   * Formats a regular, simple filter term. The 'filter' argument should correspond to a constant
-   * from the Operator class, matching the operand (filter:links -> "links").
+   * Formats a relongular, simplelon filtelonr telonrm. Thelon 'filtelonr' argumelonnt should correlonspond to a constant
+   * from thelon Opelonrator class, matching thelon opelonrand (filtelonr:links -> "links").
    */
-  public static final String formatFilter(String filter) {
-    return String.format(FILTER_FORMAT_STRING, filter);
+  public static final String formatFiltelonr(String filtelonr) {
+    relonturn String.format(FILTelonR_FORMAT_STRING, filtelonr);
   }
 
   /**
-   * Get status id.
+   * Gelont status id.
    */
-  public static long getID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.ID_FIELD.getFieldName(), ID_MAPPING);
+  public static long gelontID(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontLongValuelon(
+        documelonnt, elonarlybirdFielonldConstant.ID_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get Card name.
+   * Gelont Card namelon.
    */
-  public static String getCardName(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName(), ID_MAPPING);
+  public static String gelontCardNamelon(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontStringValuelon(
+        documelonnt, elonarlybirdFielonldConstant.CARD_NAMelon_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get Card language.
+   * Gelont Card languagelon.
    */
-  public static String getCardLang(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.CARD_LANG.getFieldName(), ID_MAPPING);
+  public static String gelontCardLang(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontStringValuelon(
+        documelonnt, elonarlybirdFielonldConstant.CARD_LANG.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get Card language CSF.
+   * Gelont Card languagelon CSF.
    *
-   * card language CSF is represented internally as an integer ID for a ThriftLanguage.
+   * card languagelon CSF is relonprelonselonntelond intelonrnally as an intelongelonr ID for a ThriftLanguagelon.
    */
-  public static int getCardLangCSF(ThriftDocument document) {
-    return ThriftDocumentUtil.getIntValue(
-        document, EarlybirdFieldConstant.CARD_LANG_CSF.getFieldName(), ID_MAPPING);
+  public static int gelontCardLangCSF(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontIntValuelon(
+        documelonnt, elonarlybirdFielonldConstant.CARD_LANG_CSF.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get quoted tweet id.
+   * Gelont quotelond twelonelont id.
    */
-  public static long getQuotedTweetID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName(), ID_MAPPING);
+  public static long gelontQuotelondTwelonelontID(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontLongValuelon(
+        documelonnt, elonarlybirdFielonldConstant.QUOTelonD_TWelonelonT_ID_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get quoted tweet user id.
+   * Gelont quotelond twelonelont uselonr id.
    */
-  public static long getQuotedUserID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName(), ID_MAPPING);
+  public static long gelontQuotelondUselonrID(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontLongValuelon(
+        documelonnt, elonarlybirdFielonldConstant.QUOTelonD_USelonR_ID_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get directed at user id.
+   * Gelont direlonctelond at uselonr id.
    */
-  public static long getDirectedAtUserId(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName(), ID_MAPPING);
+  public static long gelontDirelonctelondAtUselonrId(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontLongValuelon(
+        documelonnt, elonarlybirdFielonldConstant.DIRelonCTelonD_AT_USelonR_ID_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get directed at user id CSF.
+   * Gelont direlonctelond at uselonr id CSF.
    */
-  public static long getDirectedAtUserIdCSF(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName(), ID_MAPPING);
+  public static long gelontDirelonctelondAtUselonrIdCSF(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontLongValuelon(
+        documelonnt, elonarlybirdFielonldConstant.DIRelonCTelonD_AT_USelonR_ID_CSF.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get reference author id CSF.
+   * Gelont relonfelonrelonncelon author id CSF.
    */
-  public static long getReferenceAuthorIdCSF(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(), ID_MAPPING);
+  public static long gelontRelonfelonrelonncelonAuthorIdCSF(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontLongValuelon(
+        documelonnt, elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_CSF.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get links.
+   * Gelont links.
    */
-  public static List<String> getLinks(ThriftDocument document) {
-    return getStringValues(document, EarlybirdFieldConstant.LINKS_FIELD);
+  public static List<String> gelontLinks(ThriftDocumelonnt documelonnt) {
+    relonturn gelontStringValuelons(documelonnt, elonarlybirdFielonldConstant.LINKS_FIelonLD);
   }
 
   /**
-   * Get created at timestamp in sec.
+   * Gelont crelonatelond at timelonstamp in selonc.
    */
-  public static int getCreatedAtSec(ThriftDocument document) {
-    return ThriftDocumentUtil.getIntValue(
-        document, EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(), ID_MAPPING);
+  public static int gelontCrelonatelondAtSelonc(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontIntValuelon(
+        documelonnt, elonarlybirdFielonldConstant.CRelonATelonD_AT_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get created at timestamp in ms.
+   * Gelont crelonatelond at timelonstamp in ms.
    */
-  public static long getCreatedAtMs(ThriftDocument document) {
-    long createdAtSec = (long) getCreatedAtSec(document);
-    return createdAtSec * 1000L;
+  public static long gelontCrelonatelondAtMs(ThriftDocumelonnt documelonnt) {
+    long crelonatelondAtSelonc = (long) gelontCrelonatelondAtSelonc(documelonnt);
+    relonturn crelonatelondAtSelonc * 1000L;
   }
 
   /**
-   * Get from user id.
+   * Gelont from uselonr id.
    */
-  public static long getFromUserID(ThriftDocument document) {
-    return ThriftDocumentUtil.getLongValue(
-        document, EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(), ID_MAPPING);
+  public static long gelontFromUselonrID(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontLongValuelon(
+        documelonnt, elonarlybirdFielonldConstant.FROM_USelonR_ID_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get from user.
+   * Gelont from uselonr.
    */
-  public static String getFromUser(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), ID_MAPPING);
+  public static String gelontFromUselonr(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontStringValuelon(
+        documelonnt, elonarlybirdFielonldConstant.FROM_USelonR_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get tokenized from user display name.
+   * Gelont tokelonnizelond from uselonr display namelon.
    */
-  public static String getFromUserDisplayName(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName(), ID_MAPPING);
+  public static String gelontFromUselonrDisplayNamelon(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontStringValuelon(
+        documelonnt, elonarlybirdFielonldConstant.TOKelonNIZelonD_USelonR_NAMelon_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get tokenized from user.
+   * Gelont tokelonnizelond from uselonr.
    */
-  public static String getTokenizedFromUser(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(), ID_MAPPING);
+  public static String gelontTokelonnizelondFromUselonr(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontStringValuelon(
+        documelonnt, elonarlybirdFielonldConstant.TOKelonNIZelonD_FROM_USelonR_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get resolved links text.
+   * Gelont relonsolvelond links telonxt.
    */
-  public static String getResolvedLinksText(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValue(
-        document, EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), ID_MAPPING);
+  public static String gelontRelonsolvelondLinksTelonxt(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontStringValuelon(
+        documelonnt, elonarlybirdFielonldConstant.RelonSOLVelonD_LINKS_TelonXT_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * Get iso language code.
+   * Gelont iso languagelon codelon.
    */
-  public static List<String> getISOLanguage(ThriftDocument document) {
-    return ThriftDocumentUtil.getStringValues(
-        document, EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName(), ID_MAPPING);
+  public static List<String> gelontISOLanguagelon(ThriftDocumelonnt documelonnt) {
+    relonturn ThriftDocumelonntUtil.gelontStringValuelons(
+        documelonnt, elonarlybirdFielonldConstant.ISO_LANGUAGelon_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
   }
 
   /**
-   * First remove the old timestamp if they exist.
-   * Then add the created at and created at csf fields to the given thrift document.
+   * First relonmovelon thelon old timelonstamp if thelony elonxist.
+   * Thelonn add thelon crelonatelond at and crelonatelond at csf fielonlds to thelon givelonn thrift documelonnt.
    */
-  public static void replaceCreatedAtAndCreatedAtCSF(ThriftDocument document, int value) {
-    removeField(document, EarlybirdFieldConstant.CREATED_AT_FIELD);
-    removeField(document, EarlybirdFieldConstant.CREATED_AT_CSF_FIELD);
+  public static void relonplacelonCrelonatelondAtAndCrelonatelondAtCSF(ThriftDocumelonnt documelonnt, int valuelon) {
+    relonmovelonFielonld(documelonnt, elonarlybirdFielonldConstant.CRelonATelonD_AT_FIelonLD);
+    relonmovelonFielonld(documelonnt, elonarlybirdFielonldConstant.CRelonATelonD_AT_CSF_FIelonLD);
 
-    addIntField(document, EarlybirdFieldConstant.CREATED_AT_FIELD, value);
-    addIntField(document, EarlybirdFieldConstant.CREATED_AT_CSF_FIELD, value);
+    addIntFielonld(documelonnt, elonarlybirdFielonldConstant.CRelonATelonD_AT_FIelonLD, valuelon);
+    addIntFielonld(documelonnt, elonarlybirdFielonldConstant.CRelonATelonD_AT_CSF_FIelonLD, valuelon);
   }
 
   /**
-   * Add the given int value as the given field into the given document.
+   * Add thelon givelonn int valuelon as thelon givelonn fielonld into thelon givelonn documelonnt.
    */
-  public static ThriftDocument addIntField(
-      ThriftDocument document, EarlybirdFieldConstant fieldConstant, int value) {
-    ThriftFieldData fieldData = new ThriftFieldData().setIntValue(value);
-    ThriftField field =
-        new ThriftField().setFieldConfigId(fieldConstant.getFieldId()).setFieldData(fieldData);
-    document.addToFields(field);
-    return document;
+  public static ThriftDocumelonnt addIntFielonld(
+      ThriftDocumelonnt documelonnt, elonarlybirdFielonldConstant fielonldConstant, int valuelon) {
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData().selontIntValuelon(valuelon);
+    ThriftFielonld fielonld =
+        nelonw ThriftFielonld().selontFielonldConfigId(fielonldConstant.gelontFielonldId()).selontFielonldData(fielonldData);
+    documelonnt.addToFielonlds(fielonld);
+    relonturn documelonnt;
   }
 
-  private static EarlybirdFieldConstant getFeatureField(EarlybirdFieldConstant field) {
-    if (field.getFieldName().startsWith(
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName())) {
-      return EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD;
-    } else if (field.getFieldName().startsWith(
-        EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName())) {
-      return EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD;
-    } else {
-      throw new IllegalArgumentException("Not a feature field: " + field);
+  privatelon static elonarlybirdFielonldConstant gelontFelonaturelonFielonld(elonarlybirdFielonldConstant fielonld) {
+    if (fielonld.gelontFielonldNamelon().startsWith(
+        elonarlybirdFielonldConstant.elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD.gelontFielonldNamelon())) {
+      relonturn elonarlybirdFielonldConstant.elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD;
+    } elonlselon if (fielonld.gelontFielonldNamelon().startsWith(
+        elonarlybirdFielonldConstant.elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD.gelontFielonldNamelon())) {
+      relonturn elonarlybirdFielonldConstant.elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD;
+    } elonlselon {
+      throw nelonw IllelongalArgumelonntelonxcelonption("Not a felonaturelon fielonld: " + fielonld);
     }
   }
 
   /**
-   * Get the feature value of a field.
+   * Gelont thelon felonaturelon valuelon of a fielonld.
    */
-  public static int getFeatureValue(
-      ImmutableSchemaInterface schema,
-      ThriftDocument document,
-      EarlybirdFieldConstant field) {
+  public static int gelontFelonaturelonValuelon(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      ThriftDocumelonnt documelonnt,
+      elonarlybirdFielonldConstant fielonld) {
 
-    EarlybirdFieldConstant featureField = getFeatureField(field);
+    elonarlybirdFielonldConstant felonaturelonFielonld = gelontFelonaturelonFielonld(fielonld);
 
-    byte[] encodedFeaturesBytes =
-        ThriftDocumentUtil.getBytesValue(document, featureField.getFieldName(), ID_MAPPING);
+    bytelon[] elonncodelondFelonaturelonsBytelons =
+        ThriftDocumelonntUtil.gelontBytelonsValuelon(documelonnt, felonaturelonFielonld.gelontFielonldNamelon(), ID_MAPPING);
 
-    if (encodedFeaturesBytes == null) {
-      // Treat the feature value as 0 if there is no encoded feature field.
-      return 0;
-    } else {
-      EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-          schema, featureField, encodedFeaturesBytes, 0);
-      return encodedFeatures.getFeatureValue(field);
+    if (elonncodelondFelonaturelonsBytelons == null) {
+      // Trelonat thelon felonaturelon valuelon as 0 if thelonrelon is no elonncodelond felonaturelon fielonld.
+      relonturn 0;
+    } elonlselon {
+      elonarlybirdelonncodelondFelonaturelons elonncodelondFelonaturelons = elonarlybirdelonncodelondFelonaturelonsUtil.fromBytelons(
+          schelonma, felonaturelonFielonld, elonncodelondFelonaturelonsBytelons, 0);
+      relonturn elonncodelondFelonaturelons.gelontFelonaturelonValuelon(fielonld);
     }
   }
 
   /**
-   * Check whether the feature flag is set.
+   * Chelonck whelonthelonr thelon felonaturelon flag is selont.
    */
-  public static boolean isFeatureBitSet(
-      ImmutableSchemaInterface schema,
-      ThriftDocument document,
-      EarlybirdFieldConstant field) {
+  public static boolelonan isFelonaturelonBitSelont(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      ThriftDocumelonnt documelonnt,
+      elonarlybirdFielonldConstant fielonld) {
 
-    EarlybirdFieldConstant featureField = getFeatureField(field);
+    elonarlybirdFielonldConstant felonaturelonFielonld = gelontFelonaturelonFielonld(fielonld);
 
-    byte[] encodedFeaturesBytes =
-        ThriftDocumentUtil.getBytesValue(document, featureField.getFieldName(), ID_MAPPING);
+    bytelon[] elonncodelondFelonaturelonsBytelons =
+        ThriftDocumelonntUtil.gelontBytelonsValuelon(documelonnt, felonaturelonFielonld.gelontFielonldNamelon(), ID_MAPPING);
 
-    if (encodedFeaturesBytes == null) {
-      // Treat the bit as not set if there is no encoded feature field.
-      return false;
-    } else {
-      EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-          schema, featureField, encodedFeaturesBytes, 0);
-      return encodedFeatures.isFlagSet(field);
+    if (elonncodelondFelonaturelonsBytelons == null) {
+      // Trelonat thelon bit as not selont if thelonrelon is no elonncodelond felonaturelon fielonld.
+      relonturn falselon;
+    } elonlselon {
+      elonarlybirdelonncodelondFelonaturelons elonncodelondFelonaturelons = elonarlybirdelonncodelondFelonaturelonsUtil.fromBytelons(
+          schelonma, felonaturelonFielonld, elonncodelondFelonaturelonsBytelons, 0);
+      relonturn elonncodelondFelonaturelons.isFlagSelont(fielonld);
     }
   }
 
   /**
-   * Check whether nullcast flag is set in the encoded features field.
+   * Chelonck whelonthelonr nullcast flag is selont in thelon elonncodelond felonaturelons fielonld.
    */
-  public static boolean isNullcastBitSet(ImmutableSchemaInterface schema, ThriftDocument document) {
-    return isFeatureBitSet(schema, document, EarlybirdFieldConstant.IS_NULLCAST_FLAG);
+  public static boolelonan isNullcastBitSelont(ImmutablelonSchelonmaIntelonrfacelon schelonma, ThriftDocumelonnt documelonnt) {
+    relonturn isFelonaturelonBitSelont(schelonma, documelonnt, elonarlybirdFielonldConstant.IS_NULLCAST_FLAG);
   }
 
   /**
-   * Remove all fields with the given field constant in a document.
+   * Relonmovelon all fielonlds with thelon givelonn fielonld constant in a documelonnt.
    */
-  public static void removeField(ThriftDocument document, EarlybirdFieldConstant fieldConstant) {
-    List<ThriftField> fields = document.getFields();
-    if (fields != null) {
-      Iterator<ThriftField> fieldsIterator = fields.iterator();
-      while (fieldsIterator.hasNext()) {
-        if (fieldsIterator.next().getFieldConfigId() == fieldConstant.getFieldId()) {
-          fieldsIterator.remove();
+  public static void relonmovelonFielonld(ThriftDocumelonnt documelonnt, elonarlybirdFielonldConstant fielonldConstant) {
+    List<ThriftFielonld> fielonlds = documelonnt.gelontFielonlds();
+    if (fielonlds != null) {
+      Itelonrator<ThriftFielonld> fielonldsItelonrator = fielonlds.itelonrator();
+      whilelon (fielonldsItelonrator.hasNelonxt()) {
+        if (fielonldsItelonrator.nelonxt().gelontFielonldConfigId() == fielonldConstant.gelontFielonldId()) {
+          fielonldsItelonrator.relonmovelon();
         }
       }
     }
   }
 
   /**
-   * Remove a string field with given fieldConstant and value.
+   * Relonmovelon a string fielonld with givelonn fielonldConstant and valuelon.
    */
-  public static void removeStringField(
-      ThriftDocument document, EarlybirdFieldConstant fieldConstant, String value) {
-    List<ThriftField> fields = document.getFields();
-    if (fields != null) {
-      for (ThriftField field : fields) {
-        if (field.getFieldConfigId() == fieldConstant.getFieldId()
-            && field.getFieldData().getStringValue().equals(value)) {
-          fields.remove(field);
-          return;
+  public static void relonmovelonStringFielonld(
+      ThriftDocumelonnt documelonnt, elonarlybirdFielonldConstant fielonldConstant, String valuelon) {
+    List<ThriftFielonld> fielonlds = documelonnt.gelontFielonlds();
+    if (fielonlds != null) {
+      for (ThriftFielonld fielonld : fielonlds) {
+        if (fielonld.gelontFielonldConfigId() == fielonldConstant.gelontFielonldId()
+            && fielonld.gelontFielonldData().gelontStringValuelon().elonquals(valuelon)) {
+          fielonlds.relonmovelon(fielonld);
+          relonturn;
         }
       }
     }
   }
 
   /**
-   * Adds a new TokenStream field for each engagement counter if normalizedNumEngagements >= 1.
+   * Adds a nelonw TokelonnStrelonam fielonld for elonach elonngagelonmelonnt countelonr if normalizelondNumelonngagelonmelonnts >= 1.
    */
-  public static void addNormalizedMinEngagementField(
-      ThriftDocument doc,
-      String fieldName,
-      int normalizedNumEngagements) throws IOException {
-    if (normalizedNumEngagements < 1) {
-      return;
+  public static void addNormalizelondMinelonngagelonmelonntFielonld(
+      ThriftDocumelonnt doc,
+      String fielonldNamelon,
+      int normalizelondNumelonngagelonmelonnts) throws IOelonxcelonption {
+    if (normalizelondNumelonngagelonmelonnts < 1) {
+      relonturn;
     }
-    TokenStreamSerializer serializer =
-        new TokenStreamSerializer(ImmutableList.of(new IntTermAttributeSerializer()));
-    TwitterNormalizedMinEngagementTokenStream stream = new
-        TwitterNormalizedMinEngagementTokenStream(normalizedNumEngagements);
-    byte[] serializedStream = serializer.serialize(stream);
-    ThriftFieldData fieldData = new ThriftFieldData().setTokenStreamValue(serializedStream);
-    ThriftField field = new ThriftField().setFieldConfigId(ID_MAPPING.getFieldID(fieldName))
-        .setFieldData(fieldData);
-    doc.addToFields(field);
+    TokelonnStrelonamSelonrializelonr selonrializelonr =
+        nelonw TokelonnStrelonamSelonrializelonr(ImmutablelonList.of(nelonw IntTelonrmAttributelonSelonrializelonr()));
+    TwittelonrNormalizelondMinelonngagelonmelonntTokelonnStrelonam strelonam = nelonw
+        TwittelonrNormalizelondMinelonngagelonmelonntTokelonnStrelonam(normalizelondNumelonngagelonmelonnts);
+    bytelon[] selonrializelondStrelonam = selonrializelonr.selonrializelon(strelonam);
+    ThriftFielonldData fielonldData = nelonw ThriftFielonldData().selontTokelonnStrelonamValuelon(selonrializelondStrelonam);
+    ThriftFielonld fielonld = nelonw ThriftFielonld().selontFielonldConfigId(ID_MAPPING.gelontFielonldID(fielonldNamelon))
+        .selontFielonldData(fielonldData);
+    doc.addToFielonlds(fielonld);
   }
 
-  public static List<String> getStringValues(
-      ThriftDocument document, EarlybirdFieldConstant field) {
-    return ThriftDocumentUtil.getStringValues(document, field.getFieldName(), ID_MAPPING);
+  public static List<String> gelontStringValuelons(
+      ThriftDocumelonnt documelonnt, elonarlybirdFielonldConstant fielonld) {
+    relonturn ThriftDocumelonntUtil.gelontStringValuelons(documelonnt, fielonld.gelontFielonldNamelon(), ID_MAPPING);
   }
 
-  public static boolean isNullcastFilterSet(ThriftDocument document) {
-    return isFilterSet(document, NULLCAST_FILTER_TERM);
+  public static boolelonan isNullcastFiltelonrSelont(ThriftDocumelonnt documelonnt) {
+    relonturn isFiltelonrSelont(documelonnt, NULLCAST_FILTelonR_TelonRM);
   }
 
-  public static boolean isSelfThreadFilterSet(ThriftDocument document) {
-    return isFilterSet(document, SELF_THREAD_FILTER_TERM);
+  public static boolelonan isSelonlfThrelonadFiltelonrSelont(ThriftDocumelonnt documelonnt) {
+    relonturn isFiltelonrSelont(documelonnt, SelonLF_THRelonAD_FILTelonR_TelonRM);
   }
 
-  public static String getSelfThreadFilterTerm() {
-    return SELF_THREAD_FILTER_TERM;
+  public static String gelontSelonlfThrelonadFiltelonrTelonrm() {
+    relonturn SelonLF_THRelonAD_FILTelonR_TelonRM;
   }
 
-  public static String getDirectedAtFilterTerm() {
-    return DIRECTED_AT_FILTER_TERM;
+  public static String gelontDirelonctelondAtFiltelonrTelonrm() {
+    relonturn DIRelonCTelonD_AT_FILTelonR_TelonRM;
   }
 
-  public static boolean isDirectedAtFilterSet(ThriftDocument document) {
-    return isFilterSet(document, DIRECTED_AT_FILTER_TERM);
+  public static boolelonan isDirelonctelondAtFiltelonrSelont(ThriftDocumelonnt documelonnt) {
+    relonturn isFiltelonrSelont(documelonnt, DIRelonCTelonD_AT_FILTelonR_TelonRM);
   }
 
   /**
-   * Check whether given filter is set in the internal field.
+   * Chelonck whelonthelonr givelonn filtelonr is selont in thelon intelonrnal fielonld.
    */
-  private static boolean isFilterSet(ThriftDocument document, String filter) {
-    List<String> terms = ThriftDocumentUtil.getStringValues(
-        document, EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(), ID_MAPPING);
-    for (String term : terms) {
-      if (filter.equals(term)) {
-        return true;
+  privatelon static boolelonan isFiltelonrSelont(ThriftDocumelonnt documelonnt, String filtelonr) {
+    List<String> telonrms = ThriftDocumelonntUtil.gelontStringValuelons(
+        documelonnt, elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
+    for (String telonrm : telonrms) {
+      if (filtelonr.elonquals(telonrm)) {
+        relonturn truelon;
       }
     }
-    return false;
+    relonturn falselon;
   }
 }

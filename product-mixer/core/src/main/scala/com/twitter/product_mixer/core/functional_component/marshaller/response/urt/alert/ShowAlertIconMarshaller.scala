@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.alelonrt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.DownArrow
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.UpArrow
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.DownArrow
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtIcon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.UpArrow
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-@Singleton
-class ShowAlertIconMarshaller @Inject() () {
+@Singlelonton
+class ShowAlelonrtIconMarshallelonr @Injelonct() () {
 
-  def apply(alertIcon: ShowAlertIcon): urt.ShowAlertIcon = alertIcon match {
-    case UpArrow => urt.ShowAlertIcon.UpArrow
-    case DownArrow => urt.ShowAlertIcon.DownArrow
+  delonf apply(alelonrtIcon: ShowAlelonrtIcon): urt.ShowAlelonrtIcon = alelonrtIcon match {
+    caselon UpArrow => urt.ShowAlelonrtIcon.UpArrow
+    caselon DownArrow => urt.ShowAlelonrtIcon.DownArrow
   }
 }

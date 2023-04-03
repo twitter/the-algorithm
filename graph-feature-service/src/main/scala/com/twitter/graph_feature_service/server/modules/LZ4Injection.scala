@@ -1,17 +1,17 @@
-package com.twitter.graph_feature_service.server.modules
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.modulelons
 
-import com.twitter.bijection.Injection
+import com.twittelonr.bijelonction.Injelonction
 import scala.util.Try
-import net.jpountz.lz4.{LZ4CompressorWithLength, LZ4DecompressorWithLength, LZ4Factory}
+import nelont.jpountz.lz4.{LZ4ComprelonssorWithLelonngth, LZ4DeloncomprelonssorWithLelonngth, LZ4Factory}
 
-object LZ4Injection extends Injection[Array[Byte], Array[Byte]] {
-  private val lz4Factory = LZ4Factory.fastestInstance()
-  private val fastCompressor = new LZ4CompressorWithLength(lz4Factory.fastCompressor())
-  private val decompressor = new LZ4DecompressorWithLength(lz4Factory.fastDecompressor())
+objelonct LZ4Injelonction elonxtelonnds Injelonction[Array[Bytelon], Array[Bytelon]] {
+  privatelon val lz4Factory = LZ4Factory.fastelonstInstancelon()
+  privatelon val fastComprelonssor = nelonw LZ4ComprelonssorWithLelonngth(lz4Factory.fastComprelonssor())
+  privatelon val deloncomprelonssor = nelonw LZ4DeloncomprelonssorWithLelonngth(lz4Factory.fastDeloncomprelonssor())
 
-  override def apply(a: Array[Byte]): Array[Byte] = LZ4Injection.fastCompressor.compress(a)
+  ovelonrridelon delonf apply(a: Array[Bytelon]): Array[Bytelon] = LZ4Injelonction.fastComprelonssor.comprelonss(a)
 
-  override def invert(b: Array[Byte]): Try[Array[Byte]] = Try {
-    LZ4Injection.decompressor.decompress(b)
+  ovelonrridelon delonf invelonrt(b: Array[Bytelon]): Try[Array[Bytelon]] = Try {
+    LZ4Injelonction.deloncomprelonssor.deloncomprelonss(b)
   }
 }

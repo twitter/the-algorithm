@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon.selongmelonntbuildelonr;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
 /**
- * Used if exceptions are thrown during creating new SegmentInfo during the indexing loop
+ * Uselond if elonxcelonptions arelon thrown during crelonating nelonw SelongmelonntInfo during thelon indelonxing loop
  */
-class SegmentInfoConstructionException extends Exception {
-  SegmentInfoConstructionException(String msg, IOException e) {
-    super(msg, e);
+class SelongmelonntInfoConstructionelonxcelonption elonxtelonnds elonxcelonption {
+  SelongmelonntInfoConstructionelonxcelonption(String msg, IOelonxcelonption elon) {
+    supelonr(msg, elon);
   }
 }

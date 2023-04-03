@@ -1,48 +1,48 @@
-# Without this alias, library :follow-recommendations-service_lib would conflict with :bin
+# Without this alias, library :follow-reloncommelonndations-selonrvicelon_lib would conflict with :bin
 alias(
-    name = "follow-recommendations-service",
-    target = ":follow-recommendations-service_lib",
+    namelon = "follow-reloncommelonndations-selonrvicelon",
+    targelont = ":follow-reloncommelonndations-selonrvicelon_lib",
 )
 
-target(
-    name = "follow-recommendations-service_lib",
-    dependencies = [
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/models",
+targelont(
+    namelon = "follow-reloncommelonndations-selonrvicelon_lib",
+    delonpelonndelonncielons = [
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/modelonls",
     ],
 )
 
 jvm_binary(
-    name = "bin",
-    basename = "follow-recommendations-service",
-    main = "com.twitter.follow_recommendations.FollowRecommendationsServiceThriftServerMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":follow-recommendations-service",
+    namelon = "bin",
+    baselonnamelon = "follow-reloncommelonndations-selonrvicelon",
+    main = "com.twittelonr.follow_reloncommelonndations.FollowReloncommelonndationsSelonrvicelonThriftSelonrvelonrMain",
+    runtimelon_platform = "java11",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":follow-reloncommelonndations-selonrvicelon",
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "finagle/finagle-zipkin-scribe/src/main/scala",
-        "finatra/inject/inject-logback/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "finaglelon/finaglelon-zipkin-scribelon/src/main/scala",
+        "finatra/injelonct/injelonct-logback/src/main/scala",
+        "loglelonns/loglelonns-logback/src/main/scala/com/twittelonr/loglelonns/logback",
+        "twittelonr-selonrvelonr-intelonrnal/src/main/scala",
+        "twittelonr-selonrvelonr/logback-classic/src/main/scala",
     ],
 )
 
-#  Aurora Workflows build phase convention requires a jvm_app named with ${project-name}-app
+#  Aurora Workflows build phaselon convelonntion relonquirelons a jvm_app namelond with ${projelonct-namelon}-app
 jvm_app(
-    name = "follow-recommendations-service-app",
-    archive = "zip",
+    namelon = "follow-reloncommelonndations-selonrvicelon-app",
+    archivelon = "zip",
     binary = ":bin",
-    bundles = [
-        bundle(
-            fileset = [
-                "server/src/main/resources/*",
-                "server/src/main/resources/**/*",
+    bundlelons = [
+        bundlelon(
+            filelonselont = [
+                "selonrvelonr/src/main/relonsourcelons/*",
+                "selonrvelonr/src/main/relonsourcelons/**/*",
             ],
-            owning_target = "follow-recommendations-service/server/src/main/resources:frs_resources",
-            relative_to = "server/src/main/resources",
+            owning_targelont = "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/relonsourcelons:frs_relonsourcelons",
+            relonlativelon_to = "selonrvelonr/src/main/relonsourcelons",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazelonl-compatiblelon"],
 )

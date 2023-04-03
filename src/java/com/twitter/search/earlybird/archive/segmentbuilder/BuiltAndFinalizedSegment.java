@@ -1,29 +1,29 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon.selongmelonntbuildelonr;
 
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncConfig;
 
-public class BuiltAndFinalizedSegment extends SegmentBuilderSegment {
-  public BuiltAndFinalizedSegment(
-      SegmentInfo segmentInfo,
-      SegmentConfig segmentConfig,
-      EarlybirdSegmentFactory earlybirdSegmentFactory,
-      int alreadyRetriedCount,
-      SegmentSyncConfig sync) {
+public class BuiltAndFinalizelondSelongmelonnt elonxtelonnds SelongmelonntBuildelonrSelongmelonnt {
+  public BuiltAndFinalizelondSelongmelonnt(
+      SelongmelonntInfo selongmelonntInfo,
+      SelongmelonntConfig selongmelonntConfig,
+      elonarlybirdSelongmelonntFactory elonarlybirdSelongmelonntFactory,
+      int alrelonadyRelontrielondCount,
+      SelongmelonntSyncConfig sync) {
 
-    super(segmentInfo, segmentConfig, earlybirdSegmentFactory, alreadyRetriedCount, sync);
+    supelonr(selongmelonntInfo, selongmelonntConfig, elonarlybirdSelongmelonntFactory, alrelonadyRelontrielondCount, sync);
   }
 
-  @Override
-  public SegmentBuilderSegment handle() throws SegmentInfoConstructionException,
-      SegmentUpdaterException {
+  @Ovelonrridelon
+  public SelongmelonntBuildelonrSelongmelonnt handlelon() throws SelongmelonntInfoConstructionelonxcelonption,
+      SelongmelonntUpdatelonrelonxcelonption {
 
-    throw new IllegalStateException("Should not handle a BuildAndFinalizedSegment.");
+    throw nelonw IllelongalStatelonelonxcelonption("Should not handlelon a BuildAndFinalizelondSelongmelonnt.");
   }
 
-  @Override
-  public boolean isBuilt() {
-    return true;
+  @Ovelonrridelon
+  public boolelonan isBuilt() {
+    relonturn truelon;
   }
 }

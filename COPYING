@@ -1,661 +1,661 @@
-                    GNU AFFERO GENERAL PUBLIC LICENSE
-                       Version 3, 19 November 2007
+                    GNU AFFelonRO GelonNelonRAL PUBLIC LICelonNSelon
+                       Velonrsion 3, 19 Novelonmbelonr 2007
 
- Copyright (C) 2007 Free Software Foundation, Inc. <https://fsf.org/>
- Everyone is permitted to copy and distribute verbatim copies
- of this license document, but changing it is not allowed.
+ Copyright (C) 2007 Frelonelon Softwarelon Foundation, Inc. <https://fsf.org/>
+ elonvelonryonelon is pelonrmittelond to copy and distributelon velonrbatim copielons
+ of this licelonnselon documelonnt, but changing it is not allowelond.
 
-                            Preamble
+                            Prelonamblelon
 
-  The GNU Affero General Public License is a free, copyleft license for
-software and other kinds of works, specifically designed to ensure
-cooperation with the community in the case of network server software.
+  Thelon GNU Affelonro Gelonnelonral Public Licelonnselon is a frelonelon, copylelonft licelonnselon for
+softwarelon and othelonr kinds of works, speloncifically delonsignelond to elonnsurelon
+coopelonration with thelon community in thelon caselon of nelontwork selonrvelonr softwarelon.
 
-  The licenses for most software and other practical works are designed
-to take away your freedom to share and change the works.  By contrast,
-our General Public Licenses are intended to guarantee your freedom to
-share and change all versions of a program--to make sure it remains free
-software for all its users.
+  Thelon licelonnselons for most softwarelon and othelonr practical works arelon delonsignelond
+to takelon away your frelonelondom to sharelon and changelon thelon works.  By contrast,
+our Gelonnelonral Public Licelonnselons arelon intelonndelond to guarantelonelon your frelonelondom to
+sharelon and changelon all velonrsions of a program--to makelon surelon it relonmains frelonelon
+softwarelon for all its uselonrs.
 
-  When we speak of free software, we are referring to freedom, not
-price.  Our General Public Licenses are designed to make sure that you
-have the freedom to distribute copies of free software (and charge for
-them if you wish), that you receive source code or can get it if you
-want it, that you can change the software or use pieces of it in new
-free programs, and that you know you can do these things.
+  Whelonn welon spelonak of frelonelon softwarelon, welon arelon relonfelonrring to frelonelondom, not
+pricelon.  Our Gelonnelonral Public Licelonnselons arelon delonsignelond to makelon surelon that you
+havelon thelon frelonelondom to distributelon copielons of frelonelon softwarelon (and chargelon for
+thelonm if you wish), that you reloncelonivelon sourcelon codelon or can gelont it if you
+want it, that you can changelon thelon softwarelon or uselon pieloncelons of it in nelonw
+frelonelon programs, and that you know you can do thelonselon things.
 
-  Developers that use our General Public Licenses protect your rights
-with two steps: (1) assert copyright on the software, and (2) offer
-you this License which gives you legal permission to copy, distribute
-and/or modify the software.
+  Delonvelonlopelonrs that uselon our Gelonnelonral Public Licelonnselons protelonct your rights
+with two stelonps: (1) asselonrt copyright on thelon softwarelon, and (2) offelonr
+you this Licelonnselon which givelons you lelongal pelonrmission to copy, distributelon
+and/or modify thelon softwarelon.
 
-  A secondary benefit of defending all users' freedom is that
-improvements made in alternate versions of the program, if they
-receive widespread use, become available for other developers to
-incorporate.  Many developers of free software are heartened and
-encouraged by the resulting cooperation.  However, in the case of
-software used on network servers, this result may fail to come about.
-The GNU General Public License permits making a modified version and
-letting the public access it on a server without ever releasing its
-source code to the public.
+  A seloncondary belonnelonfit of delonfelonnding all uselonrs' frelonelondom is that
+improvelonmelonnts madelon in altelonrnatelon velonrsions of thelon program, if thelony
+reloncelonivelon widelonsprelonad uselon, beloncomelon availablelon for othelonr delonvelonlopelonrs to
+incorporatelon.  Many delonvelonlopelonrs of frelonelon softwarelon arelon helonartelonnelond and
+elonncouragelond by thelon relonsulting coopelonration.  Howelonvelonr, in thelon caselon of
+softwarelon uselond on nelontwork selonrvelonrs, this relonsult may fail to comelon about.
+Thelon GNU Gelonnelonral Public Licelonnselon pelonrmits making a modifielond velonrsion and
+lelontting thelon public accelonss it on a selonrvelonr without elonvelonr relonlelonasing its
+sourcelon codelon to thelon public.
 
-  The GNU Affero General Public License is designed specifically to
-ensure that, in such cases, the modified source code becomes available
-to the community.  It requires the operator of a network server to
-provide the source code of the modified version running there to the
-users of that server.  Therefore, public use of a modified version, on
-a publicly accessible server, gives the public access to the source
-code of the modified version.
+  Thelon GNU Affelonro Gelonnelonral Public Licelonnselon is delonsignelond speloncifically to
+elonnsurelon that, in such caselons, thelon modifielond sourcelon codelon beloncomelons availablelon
+to thelon community.  It relonquirelons thelon opelonrator of a nelontwork selonrvelonr to
+providelon thelon sourcelon codelon of thelon modifielond velonrsion running thelonrelon to thelon
+uselonrs of that selonrvelonr.  Thelonrelonforelon, public uselon of a modifielond velonrsion, on
+a publicly accelonssiblelon selonrvelonr, givelons thelon public accelonss to thelon sourcelon
+codelon of thelon modifielond velonrsion.
 
-  An older license, called the Affero General Public License and
-published by Affero, was designed to accomplish similar goals.  This is
-a different license, not a version of the Affero GPL, but Affero has
-released a new version of the Affero GPL which permits relicensing under
-this license.
+  An oldelonr licelonnselon, callelond thelon Affelonro Gelonnelonral Public Licelonnselon and
+publishelond by Affelonro, was delonsignelond to accomplish similar goals.  This is
+a diffelonrelonnt licelonnselon, not a velonrsion of thelon Affelonro GPL, but Affelonro has
+relonlelonaselond a nelonw velonrsion of thelon Affelonro GPL which pelonrmits relonlicelonnsing undelonr
+this licelonnselon.
 
-  The precise terms and conditions for copying, distribution and
+  Thelon prelonciselon telonrms and conditions for copying, distribution and
 modification follow.
 
-                       TERMS AND CONDITIONS
+                       TelonRMS AND CONDITIONS
 
-  0. Definitions.
+  0. Delonfinitions.
 
-  "This License" refers to version 3 of the GNU Affero General Public License.
+  "This Licelonnselon" relonfelonrs to velonrsion 3 of thelon GNU Affelonro Gelonnelonral Public Licelonnselon.
 
-  "Copyright" also means copyright-like laws that apply to other kinds of
-works, such as semiconductor masks.
+  "Copyright" also melonans copyright-likelon laws that apply to othelonr kinds of
+works, such as selonmiconductor masks.
 
-  "The Program" refers to any copyrightable work licensed under this
-License.  Each licensee is addressed as "you".  "Licensees" and
-"recipients" may be individuals or organizations.
+  "Thelon Program" relonfelonrs to any copyrightablelon work licelonnselond undelonr this
+Licelonnselon.  elonach licelonnselonelon is addrelonsselond as "you".  "Licelonnselonelons" and
+"reloncipielonnts" may belon individuals or organizations.
 
-  To "modify" a work means to copy from or adapt all or part of the work
-in a fashion requiring copyright permission, other than the making of an
-exact copy.  The resulting work is called a "modified version" of the
-earlier work or a work "based on" the earlier work.
+  To "modify" a work melonans to copy from or adapt all or part of thelon work
+in a fashion relonquiring copyright pelonrmission, othelonr than thelon making of an
+elonxact copy.  Thelon relonsulting work is callelond a "modifielond velonrsion" of thelon
+elonarlielonr work or a work "baselond on" thelon elonarlielonr work.
 
-  A "covered work" means either the unmodified Program or a work based
-on the Program.
+  A "covelonrelond work" melonans elonithelonr thelon unmodifielond Program or a work baselond
+on thelon Program.
 
-  To "propagate" a work means to do anything with it that, without
-permission, would make you directly or secondarily liable for
-infringement under applicable copyright law, except executing it on a
-computer or modifying a private copy.  Propagation includes copying,
-distribution (with or without modification), making available to the
-public, and in some countries other activities as well.
+  To "propagatelon" a work melonans to do anything with it that, without
+pelonrmission, would makelon you direlonctly or seloncondarily liablelon for
+infringelonmelonnt undelonr applicablelon copyright law, elonxcelonpt elonxeloncuting it on a
+computelonr or modifying a privatelon copy.  Propagation includelons copying,
+distribution (with or without modification), making availablelon to thelon
+public, and in somelon countrielons othelonr activitielons as welonll.
 
-  To "convey" a work means any kind of propagation that enables other
-parties to make or receive copies.  Mere interaction with a user through
-a computer network, with no transfer of a copy, is not conveying.
+  To "convelony" a work melonans any kind of propagation that elonnablelons othelonr
+partielons to makelon or reloncelonivelon copielons.  Melonrelon intelonraction with a uselonr through
+a computelonr nelontwork, with no transfelonr of a copy, is not convelonying.
 
-  An interactive user interface displays "Appropriate Legal Notices"
-to the extent that it includes a convenient and prominently visible
-feature that (1) displays an appropriate copyright notice, and (2)
-tells the user that there is no warranty for the work (except to the
-extent that warranties are provided), that licensees may convey the
-work under this License, and how to view a copy of this License.  If
-the interface presents a list of user commands or options, such as a
-menu, a prominent item in the list meets this criterion.
+  An intelonractivelon uselonr intelonrfacelon displays "Appropriatelon Lelongal Noticelons"
+to thelon elonxtelonnt that it includelons a convelonnielonnt and prominelonntly visiblelon
+felonaturelon that (1) displays an appropriatelon copyright noticelon, and (2)
+telonlls thelon uselonr that thelonrelon is no warranty for thelon work (elonxcelonpt to thelon
+elonxtelonnt that warrantielons arelon providelond), that licelonnselonelons may convelony thelon
+work undelonr this Licelonnselon, and how to vielonw a copy of this Licelonnselon.  If
+thelon intelonrfacelon prelonselonnts a list of uselonr commands or options, such as a
+melonnu, a prominelonnt itelonm in thelon list melonelonts this critelonrion.
 
-  1. Source Code.
+  1. Sourcelon Codelon.
 
-  The "source code" for a work means the preferred form of the work
-for making modifications to it.  "Object code" means any non-source
+  Thelon "sourcelon codelon" for a work melonans thelon prelonfelonrrelond form of thelon work
+for making modifications to it.  "Objelonct codelon" melonans any non-sourcelon
 form of a work.
 
-  A "Standard Interface" means an interface that either is an official
-standard defined by a recognized standards body, or, in the case of
-interfaces specified for a particular programming language, one that
-is widely used among developers working in that language.
-
-  The "System Libraries" of an executable work include anything, other
-than the work as a whole, that (a) is included in the normal form of
-packaging a Major Component, but which is not part of that Major
-Component, and (b) serves only to enable use of the work with that
-Major Component, or to implement a Standard Interface for which an
-implementation is available to the public in source code form.  A
-"Major Component", in this context, means a major essential component
-(kernel, window system, and so on) of the specific operating system
-(if any) on which the executable work runs, or a compiler used to
-produce the work, or an object code interpreter used to run it.
-
-  The "Corresponding Source" for a work in object code form means all
-the source code needed to generate, install, and (for an executable
-work) run the object code and to modify the work, including scripts to
-control those activities.  However, it does not include the work's
-System Libraries, or general-purpose tools or generally available free
-programs which are used unmodified in performing those activities but
-which are not part of the work.  For example, Corresponding Source
-includes interface definition files associated with source files for
-the work, and the source code for shared libraries and dynamically
-linked subprograms that the work is specifically designed to require,
-such as by intimate data communication or control flow between those
-subprograms and other parts of the work.
-
-  The Corresponding Source need not include anything that users
-can regenerate automatically from other parts of the Corresponding
-Source.
-
-  The Corresponding Source for a work in source code form is that
-same work.
-
-  2. Basic Permissions.
-
-  All rights granted under this License are granted for the term of
-copyright on the Program, and are irrevocable provided the stated
-conditions are met.  This License explicitly affirms your unlimited
-permission to run the unmodified Program.  The output from running a
-covered work is covered by this License only if the output, given its
-content, constitutes a covered work.  This License acknowledges your
-rights of fair use or other equivalent, as provided by copyright law.
-
-  You may make, run and propagate covered works that you do not
-convey, without conditions so long as your license otherwise remains
-in force.  You may convey covered works to others for the sole purpose
-of having them make modifications exclusively for you, or provide you
-with facilities for running those works, provided that you comply with
-the terms of this License in conveying all material for which you do
-not control copyright.  Those thus making or running the covered works
-for you must do so exclusively on your behalf, under your direction
-and control, on terms that prohibit them from making any copies of
-your copyrighted material outside their relationship with you.
-
-  Conveying under any other circumstances is permitted solely under
-the conditions stated below.  Sublicensing is not allowed; section 10
-makes it unnecessary.
-
-  3. Protecting Users' Legal Rights From Anti-Circumvention Law.
-
-  No covered work shall be deemed part of an effective technological
-measure under any applicable law fulfilling obligations under article
-11 of the WIPO copyright treaty adopted on 20 December 1996, or
-similar laws prohibiting or restricting circumvention of such
-measures.
-
-  When you convey a covered work, you waive any legal power to forbid
-circumvention of technological measures to the extent such circumvention
-is effected by exercising rights under this License with respect to
-the covered work, and you disclaim any intention to limit operation or
-modification of the work as a means of enforcing, against the work's
-users, your or third parties' legal rights to forbid circumvention of
-technological measures.
-
-  4. Conveying Verbatim Copies.
-
-  You may convey verbatim copies of the Program's source code as you
-receive it, in any medium, provided that you conspicuously and
-appropriately publish on each copy an appropriate copyright notice;
-keep intact all notices stating that this License and any
-non-permissive terms added in accord with section 7 apply to the code;
-keep intact all notices of the absence of any warranty; and give all
-recipients a copy of this License along with the Program.
-
-  You may charge any price or no price for each copy that you convey,
-and you may offer support or warranty protection for a fee.
-
-  5. Conveying Modified Source Versions.
-
-  You may convey a work based on the Program, or the modifications to
-produce it from the Program, in the form of source code under the
-terms of section 4, provided that you also meet all of these conditions:
-
-    a) The work must carry prominent notices stating that you modified
-    it, and giving a relevant date.
-
-    b) The work must carry prominent notices stating that it is
-    released under this License and any conditions added under section
-    7.  This requirement modifies the requirement in section 4 to
-    "keep intact all notices".
-
-    c) You must license the entire work, as a whole, under this
-    License to anyone who comes into possession of a copy.  This
-    License will therefore apply, along with any applicable section 7
-    additional terms, to the whole of the work, and all its parts,
-    regardless of how they are packaged.  This License gives no
-    permission to license the work in any other way, but it does not
-    invalidate such permission if you have separately received it.
-
-    d) If the work has interactive user interfaces, each must display
-    Appropriate Legal Notices; however, if the Program has interactive
-    interfaces that do not display Appropriate Legal Notices, your
-    work need not make them do so.
-
-  A compilation of a covered work with other separate and independent
-works, which are not by their nature extensions of the covered work,
-and which are not combined with it such as to form a larger program,
-in or on a volume of a storage or distribution medium, is called an
-"aggregate" if the compilation and its resulting copyright are not
-used to limit the access or legal rights of the compilation's users
-beyond what the individual works permit.  Inclusion of a covered work
-in an aggregate does not cause this License to apply to the other
-parts of the aggregate.
-
-  6. Conveying Non-Source Forms.
-
-  You may convey a covered work in object code form under the terms
-of sections 4 and 5, provided that you also convey the
-machine-readable Corresponding Source under the terms of this License,
-in one of these ways:
-
-    a) Convey the object code in, or embodied in, a physical product
-    (including a physical distribution medium), accompanied by the
-    Corresponding Source fixed on a durable physical medium
-    customarily used for software interchange.
-
-    b) Convey the object code in, or embodied in, a physical product
-    (including a physical distribution medium), accompanied by a
-    written offer, valid for at least three years and valid for as
-    long as you offer spare parts or customer support for that product
-    model, to give anyone who possesses the object code either (1) a
-    copy of the Corresponding Source for all the software in the
-    product that is covered by this License, on a durable physical
-    medium customarily used for software interchange, for a price no
-    more than your reasonable cost of physically performing this
-    conveying of source, or (2) access to copy the
-    Corresponding Source from a network server at no charge.
-
-    c) Convey individual copies of the object code with a copy of the
-    written offer to provide the Corresponding Source.  This
-    alternative is allowed only occasionally and noncommercially, and
-    only if you received the object code with such an offer, in accord
-    with subsection 6b.
-
-    d) Convey the object code by offering access from a designated
-    place (gratis or for a charge), and offer equivalent access to the
-    Corresponding Source in the same way through the same place at no
-    further charge.  You need not require recipients to copy the
-    Corresponding Source along with the object code.  If the place to
-    copy the object code is a network server, the Corresponding Source
-    may be on a different server (operated by you or a third party)
-    that supports equivalent copying facilities, provided you maintain
-    clear directions next to the object code saying where to find the
-    Corresponding Source.  Regardless of what server hosts the
-    Corresponding Source, you remain obligated to ensure that it is
-    available for as long as needed to satisfy these requirements.
-
-    e) Convey the object code using peer-to-peer transmission, provided
-    you inform other peers where the object code and Corresponding
-    Source of the work are being offered to the general public at no
-    charge under subsection 6d.
-
-  A separable portion of the object code, whose source code is excluded
-from the Corresponding Source as a System Library, need not be
-included in conveying the object code work.
-
-  A "User Product" is either (1) a "consumer product", which means any
-tangible personal property which is normally used for personal, family,
-or household purposes, or (2) anything designed or sold for incorporation
-into a dwelling.  In determining whether a product is a consumer product,
-doubtful cases shall be resolved in favor of coverage.  For a particular
-product received by a particular user, "normally used" refers to a
-typical or common use of that class of product, regardless of the status
-of the particular user or of the way in which the particular user
-actually uses, or expects or is expected to use, the product.  A product
-is a consumer product regardless of whether the product has substantial
-commercial, industrial or non-consumer uses, unless such uses represent
-the only significant mode of use of the product.
-
-  "Installation Information" for a User Product means any methods,
-procedures, authorization keys, or other information required to install
-and execute modified versions of a covered work in that User Product from
-a modified version of its Corresponding Source.  The information must
-suffice to ensure that the continued functioning of the modified object
-code is in no case prevented or interfered with solely because
-modification has been made.
-
-  If you convey an object code work under this section in, or with, or
-specifically for use in, a User Product, and the conveying occurs as
-part of a transaction in which the right of possession and use of the
-User Product is transferred to the recipient in perpetuity or for a
-fixed term (regardless of how the transaction is characterized), the
-Corresponding Source conveyed under this section must be accompanied
-by the Installation Information.  But this requirement does not apply
-if neither you nor any third party retains the ability to install
-modified object code on the User Product (for example, the work has
-been installed in ROM).
-
-  The requirement to provide Installation Information does not include a
-requirement to continue to provide support service, warranty, or updates
-for a work that has been modified or installed by the recipient, or for
-the User Product in which it has been modified or installed.  Access to a
-network may be denied when the modification itself materially and
-adversely affects the operation of the network or violates the rules and
-protocols for communication across the network.
-
-  Corresponding Source conveyed, and Installation Information provided,
-in accord with this section must be in a format that is publicly
-documented (and with an implementation available to the public in
-source code form), and must require no special password or key for
-unpacking, reading or copying.
-
-  7. Additional Terms.
-
-  "Additional permissions" are terms that supplement the terms of this
-License by making exceptions from one or more of its conditions.
-Additional permissions that are applicable to the entire Program shall
-be treated as though they were included in this License, to the extent
-that they are valid under applicable law.  If additional permissions
-apply only to part of the Program, that part may be used separately
-under those permissions, but the entire Program remains governed by
-this License without regard to the additional permissions.
-
-  When you convey a copy of a covered work, you may at your option
-remove any additional permissions from that copy, or from any part of
-it.  (Additional permissions may be written to require their own
-removal in certain cases when you modify the work.)  You may place
-additional permissions on material, added by you to a covered work,
-for which you have or can give appropriate copyright permission.
-
-  Notwithstanding any other provision of this License, for material you
-add to a covered work, you may (if authorized by the copyright holders of
-that material) supplement the terms of this License with terms:
-
-    a) Disclaiming warranty or limiting liability differently from the
-    terms of sections 15 and 16 of this License; or
-
-    b) Requiring preservation of specified reasonable legal notices or
-    author attributions in that material or in the Appropriate Legal
-    Notices displayed by works containing it; or
-
-    c) Prohibiting misrepresentation of the origin of that material, or
-    requiring that modified versions of such material be marked in
-    reasonable ways as different from the original version; or
-
-    d) Limiting the use for publicity purposes of names of licensors or
-    authors of the material; or
-
-    e) Declining to grant rights under trademark law for use of some
-    trade names, trademarks, or service marks; or
-
-    f) Requiring indemnification of licensors and authors of that
-    material by anyone who conveys the material (or modified versions of
-    it) with contractual assumptions of liability to the recipient, for
-    any liability that these contractual assumptions directly impose on
-    those licensors and authors.
-
-  All other non-permissive additional terms are considered "further
-restrictions" within the meaning of section 10.  If the Program as you
-received it, or any part of it, contains a notice stating that it is
-governed by this License along with a term that is a further
-restriction, you may remove that term.  If a license document contains
-a further restriction but permits relicensing or conveying under this
-License, you may add to a covered work material governed by the terms
-of that license document, provided that the further restriction does
-not survive such relicensing or conveying.
-
-  If you add terms to a covered work in accord with this section, you
-must place, in the relevant source files, a statement of the
-additional terms that apply to those files, or a notice indicating
-where to find the applicable terms.
-
-  Additional terms, permissive or non-permissive, may be stated in the
-form of a separately written license, or stated as exceptions;
-the above requirements apply either way.
-
-  8. Termination.
-
-  You may not propagate or modify a covered work except as expressly
-provided under this License.  Any attempt otherwise to propagate or
-modify it is void, and will automatically terminate your rights under
-this License (including any patent licenses granted under the third
-paragraph of section 11).
-
-  However, if you cease all violation of this License, then your
-license from a particular copyright holder is reinstated (a)
-provisionally, unless and until the copyright holder explicitly and
-finally terminates your license, and (b) permanently, if the copyright
-holder fails to notify you of the violation by some reasonable means
-prior to 60 days after the cessation.
-
-  Moreover, your license from a particular copyright holder is
-reinstated permanently if the copyright holder notifies you of the
-violation by some reasonable means, this is the first time you have
-received notice of violation of this License (for any work) from that
-copyright holder, and you cure the violation prior to 30 days after
-your receipt of the notice.
-
-  Termination of your rights under this section does not terminate the
-licenses of parties who have received copies or rights from you under
-this License.  If your rights have been terminated and not permanently
-reinstated, you do not qualify to receive new licenses for the same
-material under section 10.
-
-  9. Acceptance Not Required for Having Copies.
-
-  You are not required to accept this License in order to receive or
-run a copy of the Program.  Ancillary propagation of a covered work
-occurring solely as a consequence of using peer-to-peer transmission
-to receive a copy likewise does not require acceptance.  However,
-nothing other than this License grants you permission to propagate or
-modify any covered work.  These actions infringe copyright if you do
-not accept this License.  Therefore, by modifying or propagating a
-covered work, you indicate your acceptance of this License to do so.
-
-  10. Automatic Licensing of Downstream Recipients.
-
-  Each time you convey a covered work, the recipient automatically
-receives a license from the original licensors, to run, modify and
-propagate that work, subject to this License.  You are not responsible
-for enforcing compliance by third parties with this License.
-
-  An "entity transaction" is a transaction transferring control of an
-organization, or substantially all assets of one, or subdividing an
-organization, or merging organizations.  If propagation of a covered
-work results from an entity transaction, each party to that
-transaction who receives a copy of the work also receives whatever
-licenses to the work the party's predecessor in interest had or could
-give under the previous paragraph, plus a right to possession of the
-Corresponding Source of the work from the predecessor in interest, if
-the predecessor has it or can get it with reasonable efforts.
-
-  You may not impose any further restrictions on the exercise of the
-rights granted or affirmed under this License.  For example, you may
-not impose a license fee, royalty, or other charge for exercise of
-rights granted under this License, and you may not initiate litigation
-(including a cross-claim or counterclaim in a lawsuit) alleging that
-any patent claim is infringed by making, using, selling, offering for
-sale, or importing the Program or any portion of it.
-
-  11. Patents.
-
-  A "contributor" is a copyright holder who authorizes use under this
-License of the Program or a work on which the Program is based.  The
-work thus licensed is called the contributor's "contributor version".
-
-  A contributor's "essential patent claims" are all patent claims
-owned or controlled by the contributor, whether already acquired or
-hereafter acquired, that would be infringed by some manner, permitted
-by this License, of making, using, or selling its contributor version,
-but do not include claims that would be infringed only as a
-consequence of further modification of the contributor version.  For
-purposes of this definition, "control" includes the right to grant
-patent sublicenses in a manner consistent with the requirements of
-this License.
-
-  Each contributor grants you a non-exclusive, worldwide, royalty-free
-patent license under the contributor's essential patent claims, to
-make, use, sell, offer for sale, import and otherwise run, modify and
-propagate the contents of its contributor version.
-
-  In the following three paragraphs, a "patent license" is any express
-agreement or commitment, however denominated, not to enforce a patent
-(such as an express permission to practice a patent or covenant not to
-sue for patent infringement).  To "grant" such a patent license to a
-party means to make such an agreement or commitment not to enforce a
-patent against the party.
-
-  If you convey a covered work, knowingly relying on a patent license,
-and the Corresponding Source of the work is not available for anyone
-to copy, free of charge and under the terms of this License, through a
-publicly available network server or other readily accessible means,
-then you must either (1) cause the Corresponding Source to be so
-available, or (2) arrange to deprive yourself of the benefit of the
-patent license for this particular work, or (3) arrange, in a manner
-consistent with the requirements of this License, to extend the patent
-license to downstream recipients.  "Knowingly relying" means you have
-actual knowledge that, but for the patent license, your conveying the
-covered work in a country, or your recipient's use of the covered work
-in a country, would infringe one or more identifiable patents in that
-country that you have reason to believe are valid.
-
-  If, pursuant to or in connection with a single transaction or
-arrangement, you convey, or propagate by procuring conveyance of, a
-covered work, and grant a patent license to some of the parties
-receiving the covered work authorizing them to use, propagate, modify
-or convey a specific copy of the covered work, then the patent license
-you grant is automatically extended to all recipients of the covered
-work and works based on it.
-
-  A patent license is "discriminatory" if it does not include within
-the scope of its coverage, prohibits the exercise of, or is
-conditioned on the non-exercise of one or more of the rights that are
-specifically granted under this License.  You may not convey a covered
-work if you are a party to an arrangement with a third party that is
-in the business of distributing software, under which you make payment
-to the third party based on the extent of your activity of conveying
-the work, and under which the third party grants, to any of the
-parties who would receive the covered work from you, a discriminatory
-patent license (a) in connection with copies of the covered work
-conveyed by you (or copies made from those copies), or (b) primarily
-for and in connection with specific products or compilations that
-contain the covered work, unless you entered into that arrangement,
-or that patent license was granted, prior to 28 March 2007.
-
-  Nothing in this License shall be construed as excluding or limiting
-any implied license or other defenses to infringement that may
-otherwise be available to you under applicable patent law.
-
-  12. No Surrender of Others' Freedom.
-
-  If conditions are imposed on you (whether by court order, agreement or
-otherwise) that contradict the conditions of this License, they do not
-excuse you from the conditions of this License.  If you cannot convey a
-covered work so as to satisfy simultaneously your obligations under this
-License and any other pertinent obligations, then as a consequence you may
-not convey it at all.  For example, if you agree to terms that obligate you
-to collect a royalty for further conveying from those to whom you convey
-the Program, the only way you could satisfy both those terms and this
-License would be to refrain entirely from conveying the Program.
-
-  13. Remote Network Interaction; Use with the GNU General Public License.
-
-  Notwithstanding any other provision of this License, if you modify the
-Program, your modified version must prominently offer all users
-interacting with it remotely through a computer network (if your version
-supports such interaction) an opportunity to receive the Corresponding
-Source of your version by providing access to the Corresponding Source
-from a network server at no charge, through some standard or customary
-means of facilitating copying of software.  This Corresponding Source
-shall include the Corresponding Source for any work covered by version 3
-of the GNU General Public License that is incorporated pursuant to the
+  A "Standard Intelonrfacelon" melonans an intelonrfacelon that elonithelonr is an official
+standard delonfinelond by a reloncognizelond standards body, or, in thelon caselon of
+intelonrfacelons speloncifielond for a particular programming languagelon, onelon that
+is widelonly uselond among delonvelonlopelonrs working in that languagelon.
+
+  Thelon "Systelonm Librarielons" of an elonxeloncutablelon work includelon anything, othelonr
+than thelon work as a wholelon, that (a) is includelond in thelon normal form of
+packaging a Major Componelonnt, but which is not part of that Major
+Componelonnt, and (b) selonrvelons only to elonnablelon uselon of thelon work with that
+Major Componelonnt, or to implelonmelonnt a Standard Intelonrfacelon for which an
+implelonmelonntation is availablelon to thelon public in sourcelon codelon form.  A
+"Major Componelonnt", in this contelonxt, melonans a major elonsselonntial componelonnt
+(kelonrnelonl, window systelonm, and so on) of thelon speloncific opelonrating systelonm
+(if any) on which thelon elonxeloncutablelon work runs, or a compilelonr uselond to
+producelon thelon work, or an objelonct codelon intelonrprelontelonr uselond to run it.
+
+  Thelon "Correlonsponding Sourcelon" for a work in objelonct codelon form melonans all
+thelon sourcelon codelon nelonelondelond to gelonnelonratelon, install, and (for an elonxeloncutablelon
+work) run thelon objelonct codelon and to modify thelon work, including scripts to
+control thoselon activitielons.  Howelonvelonr, it doelons not includelon thelon work's
+Systelonm Librarielons, or gelonnelonral-purposelon tools or gelonnelonrally availablelon frelonelon
+programs which arelon uselond unmodifielond in pelonrforming thoselon activitielons but
+which arelon not part of thelon work.  For elonxamplelon, Correlonsponding Sourcelon
+includelons intelonrfacelon delonfinition filelons associatelond with sourcelon filelons for
+thelon work, and thelon sourcelon codelon for sharelond librarielons and dynamically
+linkelond subprograms that thelon work is speloncifically delonsignelond to relonquirelon,
+such as by intimatelon data communication or control flow belontwelonelonn thoselon
+subprograms and othelonr parts of thelon work.
+
+  Thelon Correlonsponding Sourcelon nelonelond not includelon anything that uselonrs
+can relongelonnelonratelon automatically from othelonr parts of thelon Correlonsponding
+Sourcelon.
+
+  Thelon Correlonsponding Sourcelon for a work in sourcelon codelon form is that
+samelon work.
+
+  2. Basic Pelonrmissions.
+
+  All rights grantelond undelonr this Licelonnselon arelon grantelond for thelon telonrm of
+copyright on thelon Program, and arelon irrelonvocablelon providelond thelon statelond
+conditions arelon melont.  This Licelonnselon elonxplicitly affirms your unlimitelond
+pelonrmission to run thelon unmodifielond Program.  Thelon output from running a
+covelonrelond work is covelonrelond by this Licelonnselon only if thelon output, givelonn its
+contelonnt, constitutelons a covelonrelond work.  This Licelonnselon acknowlelondgelons your
+rights of fair uselon or othelonr elonquivalelonnt, as providelond by copyright law.
+
+  You may makelon, run and propagatelon covelonrelond works that you do not
+convelony, without conditions so long as your licelonnselon othelonrwiselon relonmains
+in forcelon.  You may convelony covelonrelond works to othelonrs for thelon solelon purposelon
+of having thelonm makelon modifications elonxclusivelonly for you, or providelon you
+with facilitielons for running thoselon works, providelond that you comply with
+thelon telonrms of this Licelonnselon in convelonying all matelonrial for which you do
+not control copyright.  Thoselon thus making or running thelon covelonrelond works
+for you must do so elonxclusivelonly on your belonhalf, undelonr your direlonction
+and control, on telonrms that prohibit thelonm from making any copielons of
+your copyrightelond matelonrial outsidelon thelonir relonlationship with you.
+
+  Convelonying undelonr any othelonr circumstancelons is pelonrmittelond solelonly undelonr
+thelon conditions statelond belonlow.  Sublicelonnsing is not allowelond; selonction 10
+makelons it unneloncelonssary.
+
+  3. Proteloncting Uselonrs' Lelongal Rights From Anti-Circumvelonntion Law.
+
+  No covelonrelond work shall belon delonelonmelond part of an elonffelonctivelon telonchnological
+melonasurelon undelonr any applicablelon law fulfilling obligations undelonr articlelon
+11 of thelon WIPO copyright trelonaty adoptelond on 20 Deloncelonmbelonr 1996, or
+similar laws prohibiting or relonstricting circumvelonntion of such
+melonasurelons.
+
+  Whelonn you convelony a covelonrelond work, you waivelon any lelongal powelonr to forbid
+circumvelonntion of telonchnological melonasurelons to thelon elonxtelonnt such circumvelonntion
+is elonffelonctelond by elonxelonrcising rights undelonr this Licelonnselon with relonspelonct to
+thelon covelonrelond work, and you disclaim any intelonntion to limit opelonration or
+modification of thelon work as a melonans of elonnforcing, against thelon work's
+uselonrs, your or third partielons' lelongal rights to forbid circumvelonntion of
+telonchnological melonasurelons.
+
+  4. Convelonying Velonrbatim Copielons.
+
+  You may convelony velonrbatim copielons of thelon Program's sourcelon codelon as you
+reloncelonivelon it, in any melondium, providelond that you conspicuously and
+appropriatelonly publish on elonach copy an appropriatelon copyright noticelon;
+kelonelonp intact all noticelons stating that this Licelonnselon and any
+non-pelonrmissivelon telonrms addelond in accord with selonction 7 apply to thelon codelon;
+kelonelonp intact all noticelons of thelon abselonncelon of any warranty; and givelon all
+reloncipielonnts a copy of this Licelonnselon along with thelon Program.
+
+  You may chargelon any pricelon or no pricelon for elonach copy that you convelony,
+and you may offelonr support or warranty protelonction for a felonelon.
+
+  5. Convelonying Modifielond Sourcelon Velonrsions.
+
+  You may convelony a work baselond on thelon Program, or thelon modifications to
+producelon it from thelon Program, in thelon form of sourcelon codelon undelonr thelon
+telonrms of selonction 4, providelond that you also melonelont all of thelonselon conditions:
+
+    a) Thelon work must carry prominelonnt noticelons stating that you modifielond
+    it, and giving a relonlelonvant datelon.
+
+    b) Thelon work must carry prominelonnt noticelons stating that it is
+    relonlelonaselond undelonr this Licelonnselon and any conditions addelond undelonr selonction
+    7.  This relonquirelonmelonnt modifielons thelon relonquirelonmelonnt in selonction 4 to
+    "kelonelonp intact all noticelons".
+
+    c) You must licelonnselon thelon elonntirelon work, as a wholelon, undelonr this
+    Licelonnselon to anyonelon who comelons into posselonssion of a copy.  This
+    Licelonnselon will thelonrelonforelon apply, along with any applicablelon selonction 7
+    additional telonrms, to thelon wholelon of thelon work, and all its parts,
+    relongardlelonss of how thelony arelon packagelond.  This Licelonnselon givelons no
+    pelonrmission to licelonnselon thelon work in any othelonr way, but it doelons not
+    invalidatelon such pelonrmission if you havelon selonparatelonly reloncelonivelond it.
+
+    d) If thelon work has intelonractivelon uselonr intelonrfacelons, elonach must display
+    Appropriatelon Lelongal Noticelons; howelonvelonr, if thelon Program has intelonractivelon
+    intelonrfacelons that do not display Appropriatelon Lelongal Noticelons, your
+    work nelonelond not makelon thelonm do so.
+
+  A compilation of a covelonrelond work with othelonr selonparatelon and indelonpelonndelonnt
+works, which arelon not by thelonir naturelon elonxtelonnsions of thelon covelonrelond work,
+and which arelon not combinelond with it such as to form a largelonr program,
+in or on a volumelon of a storagelon or distribution melondium, is callelond an
+"aggrelongatelon" if thelon compilation and its relonsulting copyright arelon not
+uselond to limit thelon accelonss or lelongal rights of thelon compilation's uselonrs
+belonyond what thelon individual works pelonrmit.  Inclusion of a covelonrelond work
+in an aggrelongatelon doelons not causelon this Licelonnselon to apply to thelon othelonr
+parts of thelon aggrelongatelon.
+
+  6. Convelonying Non-Sourcelon Forms.
+
+  You may convelony a covelonrelond work in objelonct codelon form undelonr thelon telonrms
+of selonctions 4 and 5, providelond that you also convelony thelon
+machinelon-relonadablelon Correlonsponding Sourcelon undelonr thelon telonrms of this Licelonnselon,
+in onelon of thelonselon ways:
+
+    a) Convelony thelon objelonct codelon in, or elonmbodielond in, a physical product
+    (including a physical distribution melondium), accompanielond by thelon
+    Correlonsponding Sourcelon fixelond on a durablelon physical melondium
+    customarily uselond for softwarelon intelonrchangelon.
+
+    b) Convelony thelon objelonct codelon in, or elonmbodielond in, a physical product
+    (including a physical distribution melondium), accompanielond by a
+    writtelonn offelonr, valid for at lelonast threlonelon yelonars and valid for as
+    long as you offelonr sparelon parts or customelonr support for that product
+    modelonl, to givelon anyonelon who posselonsselons thelon objelonct codelon elonithelonr (1) a
+    copy of thelon Correlonsponding Sourcelon for all thelon softwarelon in thelon
+    product that is covelonrelond by this Licelonnselon, on a durablelon physical
+    melondium customarily uselond for softwarelon intelonrchangelon, for a pricelon no
+    morelon than your relonasonablelon cost of physically pelonrforming this
+    convelonying of sourcelon, or (2) accelonss to copy thelon
+    Correlonsponding Sourcelon from a nelontwork selonrvelonr at no chargelon.
+
+    c) Convelony individual copielons of thelon objelonct codelon with a copy of thelon
+    writtelonn offelonr to providelon thelon Correlonsponding Sourcelon.  This
+    altelonrnativelon is allowelond only occasionally and noncommelonrcially, and
+    only if you reloncelonivelond thelon objelonct codelon with such an offelonr, in accord
+    with subselonction 6b.
+
+    d) Convelony thelon objelonct codelon by offelonring accelonss from a delonsignatelond
+    placelon (gratis or for a chargelon), and offelonr elonquivalelonnt accelonss to thelon
+    Correlonsponding Sourcelon in thelon samelon way through thelon samelon placelon at no
+    furthelonr chargelon.  You nelonelond not relonquirelon reloncipielonnts to copy thelon
+    Correlonsponding Sourcelon along with thelon objelonct codelon.  If thelon placelon to
+    copy thelon objelonct codelon is a nelontwork selonrvelonr, thelon Correlonsponding Sourcelon
+    may belon on a diffelonrelonnt selonrvelonr (opelonratelond by you or a third party)
+    that supports elonquivalelonnt copying facilitielons, providelond you maintain
+    clelonar direlonctions nelonxt to thelon objelonct codelon saying whelonrelon to find thelon
+    Correlonsponding Sourcelon.  Relongardlelonss of what selonrvelonr hosts thelon
+    Correlonsponding Sourcelon, you relonmain obligatelond to elonnsurelon that it is
+    availablelon for as long as nelonelondelond to satisfy thelonselon relonquirelonmelonnts.
+
+    elon) Convelony thelon objelonct codelon using pelonelonr-to-pelonelonr transmission, providelond
+    you inform othelonr pelonelonrs whelonrelon thelon objelonct codelon and Correlonsponding
+    Sourcelon of thelon work arelon beloning offelonrelond to thelon gelonnelonral public at no
+    chargelon undelonr subselonction 6d.
+
+  A selonparablelon portion of thelon objelonct codelon, whoselon sourcelon codelon is elonxcludelond
+from thelon Correlonsponding Sourcelon as a Systelonm Library, nelonelond not belon
+includelond in convelonying thelon objelonct codelon work.
+
+  A "Uselonr Product" is elonithelonr (1) a "consumelonr product", which melonans any
+tangiblelon pelonrsonal propelonrty which is normally uselond for pelonrsonal, family,
+or houselonhold purposelons, or (2) anything delonsignelond or sold for incorporation
+into a dwelonlling.  In delontelonrmining whelonthelonr a product is a consumelonr product,
+doubtful caselons shall belon relonsolvelond in favor of covelonragelon.  For a particular
+product reloncelonivelond by a particular uselonr, "normally uselond" relonfelonrs to a
+typical or common uselon of that class of product, relongardlelonss of thelon status
+of thelon particular uselonr or of thelon way in which thelon particular uselonr
+actually uselons, or elonxpeloncts or is elonxpelonctelond to uselon, thelon product.  A product
+is a consumelonr product relongardlelonss of whelonthelonr thelon product has substantial
+commelonrcial, industrial or non-consumelonr uselons, unlelonss such uselons relonprelonselonnt
+thelon only significant modelon of uselon of thelon product.
+
+  "Installation Information" for a Uselonr Product melonans any melonthods,
+procelondurelons, authorization kelonys, or othelonr information relonquirelond to install
+and elonxeloncutelon modifielond velonrsions of a covelonrelond work in that Uselonr Product from
+a modifielond velonrsion of its Correlonsponding Sourcelon.  Thelon information must
+sufficelon to elonnsurelon that thelon continuelond functioning of thelon modifielond objelonct
+codelon is in no caselon prelonvelonntelond or intelonrfelonrelond with solelonly beloncauselon
+modification has belonelonn madelon.
+
+  If you convelony an objelonct codelon work undelonr this selonction in, or with, or
+speloncifically for uselon in, a Uselonr Product, and thelon convelonying occurs as
+part of a transaction in which thelon right of posselonssion and uselon of thelon
+Uselonr Product is transfelonrrelond to thelon reloncipielonnt in pelonrpelontuity or for a
+fixelond telonrm (relongardlelonss of how thelon transaction is charactelonrizelond), thelon
+Correlonsponding Sourcelon convelonyelond undelonr this selonction must belon accompanielond
+by thelon Installation Information.  But this relonquirelonmelonnt doelons not apply
+if nelonithelonr you nor any third party relontains thelon ability to install
+modifielond objelonct codelon on thelon Uselonr Product (for elonxamplelon, thelon work has
+belonelonn installelond in ROM).
+
+  Thelon relonquirelonmelonnt to providelon Installation Information doelons not includelon a
+relonquirelonmelonnt to continuelon to providelon support selonrvicelon, warranty, or updatelons
+for a work that has belonelonn modifielond or installelond by thelon reloncipielonnt, or for
+thelon Uselonr Product in which it has belonelonn modifielond or installelond.  Accelonss to a
+nelontwork may belon delonnielond whelonn thelon modification itselonlf matelonrially and
+advelonrselonly affeloncts thelon opelonration of thelon nelontwork or violatelons thelon rulelons and
+protocols for communication across thelon nelontwork.
+
+  Correlonsponding Sourcelon convelonyelond, and Installation Information providelond,
+in accord with this selonction must belon in a format that is publicly
+documelonntelond (and with an implelonmelonntation availablelon to thelon public in
+sourcelon codelon form), and must relonquirelon no speloncial password or kelony for
+unpacking, relonading or copying.
+
+  7. Additional Telonrms.
+
+  "Additional pelonrmissions" arelon telonrms that supplelonmelonnt thelon telonrms of this
+Licelonnselon by making elonxcelonptions from onelon or morelon of its conditions.
+Additional pelonrmissions that arelon applicablelon to thelon elonntirelon Program shall
+belon trelonatelond as though thelony welonrelon includelond in this Licelonnselon, to thelon elonxtelonnt
+that thelony arelon valid undelonr applicablelon law.  If additional pelonrmissions
+apply only to part of thelon Program, that part may belon uselond selonparatelonly
+undelonr thoselon pelonrmissions, but thelon elonntirelon Program relonmains govelonrnelond by
+this Licelonnselon without relongard to thelon additional pelonrmissions.
+
+  Whelonn you convelony a copy of a covelonrelond work, you may at your option
+relonmovelon any additional pelonrmissions from that copy, or from any part of
+it.  (Additional pelonrmissions may belon writtelonn to relonquirelon thelonir own
+relonmoval in celonrtain caselons whelonn you modify thelon work.)  You may placelon
+additional pelonrmissions on matelonrial, addelond by you to a covelonrelond work,
+for which you havelon or can givelon appropriatelon copyright pelonrmission.
+
+  Notwithstanding any othelonr provision of this Licelonnselon, for matelonrial you
+add to a covelonrelond work, you may (if authorizelond by thelon copyright holdelonrs of
+that matelonrial) supplelonmelonnt thelon telonrms of this Licelonnselon with telonrms:
+
+    a) Disclaiming warranty or limiting liability diffelonrelonntly from thelon
+    telonrms of selonctions 15 and 16 of this Licelonnselon; or
+
+    b) Relonquiring prelonselonrvation of speloncifielond relonasonablelon lelongal noticelons or
+    author attributions in that matelonrial or in thelon Appropriatelon Lelongal
+    Noticelons displayelond by works containing it; or
+
+    c) Prohibiting misrelonprelonselonntation of thelon origin of that matelonrial, or
+    relonquiring that modifielond velonrsions of such matelonrial belon markelond in
+    relonasonablelon ways as diffelonrelonnt from thelon original velonrsion; or
+
+    d) Limiting thelon uselon for publicity purposelons of namelons of licelonnsors or
+    authors of thelon matelonrial; or
+
+    elon) Delonclining to grant rights undelonr tradelonmark law for uselon of somelon
+    tradelon namelons, tradelonmarks, or selonrvicelon marks; or
+
+    f) Relonquiring indelonmnification of licelonnsors and authors of that
+    matelonrial by anyonelon who convelonys thelon matelonrial (or modifielond velonrsions of
+    it) with contractual assumptions of liability to thelon reloncipielonnt, for
+    any liability that thelonselon contractual assumptions direlonctly imposelon on
+    thoselon licelonnsors and authors.
+
+  All othelonr non-pelonrmissivelon additional telonrms arelon considelonrelond "furthelonr
+relonstrictions" within thelon melonaning of selonction 10.  If thelon Program as you
+reloncelonivelond it, or any part of it, contains a noticelon stating that it is
+govelonrnelond by this Licelonnselon along with a telonrm that is a furthelonr
+relonstriction, you may relonmovelon that telonrm.  If a licelonnselon documelonnt contains
+a furthelonr relonstriction but pelonrmits relonlicelonnsing or convelonying undelonr this
+Licelonnselon, you may add to a covelonrelond work matelonrial govelonrnelond by thelon telonrms
+of that licelonnselon documelonnt, providelond that thelon furthelonr relonstriction doelons
+not survivelon such relonlicelonnsing or convelonying.
+
+  If you add telonrms to a covelonrelond work in accord with this selonction, you
+must placelon, in thelon relonlelonvant sourcelon filelons, a statelonmelonnt of thelon
+additional telonrms that apply to thoselon filelons, or a noticelon indicating
+whelonrelon to find thelon applicablelon telonrms.
+
+  Additional telonrms, pelonrmissivelon or non-pelonrmissivelon, may belon statelond in thelon
+form of a selonparatelonly writtelonn licelonnselon, or statelond as elonxcelonptions;
+thelon abovelon relonquirelonmelonnts apply elonithelonr way.
+
+  8. Telonrmination.
+
+  You may not propagatelon or modify a covelonrelond work elonxcelonpt as elonxprelonssly
+providelond undelonr this Licelonnselon.  Any attelonmpt othelonrwiselon to propagatelon or
+modify it is void, and will automatically telonrminatelon your rights undelonr
+this Licelonnselon (including any patelonnt licelonnselons grantelond undelonr thelon third
+paragraph of selonction 11).
+
+  Howelonvelonr, if you celonaselon all violation of this Licelonnselon, thelonn your
+licelonnselon from a particular copyright holdelonr is reloninstatelond (a)
+provisionally, unlelonss and until thelon copyright holdelonr elonxplicitly and
+finally telonrminatelons your licelonnselon, and (b) pelonrmanelonntly, if thelon copyright
+holdelonr fails to notify you of thelon violation by somelon relonasonablelon melonans
+prior to 60 days aftelonr thelon celonssation.
+
+  Morelonovelonr, your licelonnselon from a particular copyright holdelonr is
+reloninstatelond pelonrmanelonntly if thelon copyright holdelonr notifielons you of thelon
+violation by somelon relonasonablelon melonans, this is thelon first timelon you havelon
+reloncelonivelond noticelon of violation of this Licelonnselon (for any work) from that
+copyright holdelonr, and you curelon thelon violation prior to 30 days aftelonr
+your reloncelonipt of thelon noticelon.
+
+  Telonrmination of your rights undelonr this selonction doelons not telonrminatelon thelon
+licelonnselons of partielons who havelon reloncelonivelond copielons or rights from you undelonr
+this Licelonnselon.  If your rights havelon belonelonn telonrminatelond and not pelonrmanelonntly
+reloninstatelond, you do not qualify to reloncelonivelon nelonw licelonnselons for thelon samelon
+matelonrial undelonr selonction 10.
+
+  9. Accelonptancelon Not Relonquirelond for Having Copielons.
+
+  You arelon not relonquirelond to accelonpt this Licelonnselon in ordelonr to reloncelonivelon or
+run a copy of thelon Program.  Ancillary propagation of a covelonrelond work
+occurring solelonly as a conselonquelonncelon of using pelonelonr-to-pelonelonr transmission
+to reloncelonivelon a copy likelonwiselon doelons not relonquirelon accelonptancelon.  Howelonvelonr,
+nothing othelonr than this Licelonnselon grants you pelonrmission to propagatelon or
+modify any covelonrelond work.  Thelonselon actions infringelon copyright if you do
+not accelonpt this Licelonnselon.  Thelonrelonforelon, by modifying or propagating a
+covelonrelond work, you indicatelon your accelonptancelon of this Licelonnselon to do so.
+
+  10. Automatic Licelonnsing of Downstrelonam Reloncipielonnts.
+
+  elonach timelon you convelony a covelonrelond work, thelon reloncipielonnt automatically
+reloncelonivelons a licelonnselon from thelon original licelonnsors, to run, modify and
+propagatelon that work, subjelonct to this Licelonnselon.  You arelon not relonsponsiblelon
+for elonnforcing compliancelon by third partielons with this Licelonnselon.
+
+  An "elonntity transaction" is a transaction transfelonrring control of an
+organization, or substantially all asselonts of onelon, or subdividing an
+organization, or melonrging organizations.  If propagation of a covelonrelond
+work relonsults from an elonntity transaction, elonach party to that
+transaction who reloncelonivelons a copy of thelon work also reloncelonivelons whatelonvelonr
+licelonnselons to thelon work thelon party's prelondeloncelonssor in intelonrelonst had or could
+givelon undelonr thelon prelonvious paragraph, plus a right to posselonssion of thelon
+Correlonsponding Sourcelon of thelon work from thelon prelondeloncelonssor in intelonrelonst, if
+thelon prelondeloncelonssor has it or can gelont it with relonasonablelon elonfforts.
+
+  You may not imposelon any furthelonr relonstrictions on thelon elonxelonrciselon of thelon
+rights grantelond or affirmelond undelonr this Licelonnselon.  For elonxamplelon, you may
+not imposelon a licelonnselon felonelon, royalty, or othelonr chargelon for elonxelonrciselon of
+rights grantelond undelonr this Licelonnselon, and you may not initiatelon litigation
+(including a cross-claim or countelonrclaim in a lawsuit) allelonging that
+any patelonnt claim is infringelond by making, using, selonlling, offelonring for
+salelon, or importing thelon Program or any portion of it.
+
+  11. Patelonnts.
+
+  A "contributor" is a copyright holdelonr who authorizelons uselon undelonr this
+Licelonnselon of thelon Program or a work on which thelon Program is baselond.  Thelon
+work thus licelonnselond is callelond thelon contributor's "contributor velonrsion".
+
+  A contributor's "elonsselonntial patelonnt claims" arelon all patelonnt claims
+ownelond or controllelond by thelon contributor, whelonthelonr alrelonady acquirelond or
+helonrelonaftelonr acquirelond, that would belon infringelond by somelon mannelonr, pelonrmittelond
+by this Licelonnselon, of making, using, or selonlling its contributor velonrsion,
+but do not includelon claims that would belon infringelond only as a
+conselonquelonncelon of furthelonr modification of thelon contributor velonrsion.  For
+purposelons of this delonfinition, "control" includelons thelon right to grant
+patelonnt sublicelonnselons in a mannelonr consistelonnt with thelon relonquirelonmelonnts of
+this Licelonnselon.
+
+  elonach contributor grants you a non-elonxclusivelon, worldwidelon, royalty-frelonelon
+patelonnt licelonnselon undelonr thelon contributor's elonsselonntial patelonnt claims, to
+makelon, uselon, selonll, offelonr for salelon, import and othelonrwiselon run, modify and
+propagatelon thelon contelonnts of its contributor velonrsion.
+
+  In thelon following threlonelon paragraphs, a "patelonnt licelonnselon" is any elonxprelonss
+agrelonelonmelonnt or commitmelonnt, howelonvelonr delonnominatelond, not to elonnforcelon a patelonnt
+(such as an elonxprelonss pelonrmission to practicelon a patelonnt or covelonnant not to
+suelon for patelonnt infringelonmelonnt).  To "grant" such a patelonnt licelonnselon to a
+party melonans to makelon such an agrelonelonmelonnt or commitmelonnt not to elonnforcelon a
+patelonnt against thelon party.
+
+  If you convelony a covelonrelond work, knowingly relonlying on a patelonnt licelonnselon,
+and thelon Correlonsponding Sourcelon of thelon work is not availablelon for anyonelon
+to copy, frelonelon of chargelon and undelonr thelon telonrms of this Licelonnselon, through a
+publicly availablelon nelontwork selonrvelonr or othelonr relonadily accelonssiblelon melonans,
+thelonn you must elonithelonr (1) causelon thelon Correlonsponding Sourcelon to belon so
+availablelon, or (2) arrangelon to delonprivelon yourselonlf of thelon belonnelonfit of thelon
+patelonnt licelonnselon for this particular work, or (3) arrangelon, in a mannelonr
+consistelonnt with thelon relonquirelonmelonnts of this Licelonnselon, to elonxtelonnd thelon patelonnt
+licelonnselon to downstrelonam reloncipielonnts.  "Knowingly relonlying" melonans you havelon
+actual knowlelondgelon that, but for thelon patelonnt licelonnselon, your convelonying thelon
+covelonrelond work in a country, or your reloncipielonnt's uselon of thelon covelonrelond work
+in a country, would infringelon onelon or morelon idelonntifiablelon patelonnts in that
+country that you havelon relonason to belonlielonvelon arelon valid.
+
+  If, pursuant to or in connelonction with a singlelon transaction or
+arrangelonmelonnt, you convelony, or propagatelon by procuring convelonyancelon of, a
+covelonrelond work, and grant a patelonnt licelonnselon to somelon of thelon partielons
+relonceloniving thelon covelonrelond work authorizing thelonm to uselon, propagatelon, modify
+or convelony a speloncific copy of thelon covelonrelond work, thelonn thelon patelonnt licelonnselon
+you grant is automatically elonxtelonndelond to all reloncipielonnts of thelon covelonrelond
+work and works baselond on it.
+
+  A patelonnt licelonnselon is "discriminatory" if it doelons not includelon within
+thelon scopelon of its covelonragelon, prohibits thelon elonxelonrciselon of, or is
+conditionelond on thelon non-elonxelonrciselon of onelon or morelon of thelon rights that arelon
+speloncifically grantelond undelonr this Licelonnselon.  You may not convelony a covelonrelond
+work if you arelon a party to an arrangelonmelonnt with a third party that is
+in thelon businelonss of distributing softwarelon, undelonr which you makelon paymelonnt
+to thelon third party baselond on thelon elonxtelonnt of your activity of convelonying
+thelon work, and undelonr which thelon third party grants, to any of thelon
+partielons who would reloncelonivelon thelon covelonrelond work from you, a discriminatory
+patelonnt licelonnselon (a) in connelonction with copielons of thelon covelonrelond work
+convelonyelond by you (or copielons madelon from thoselon copielons), or (b) primarily
+for and in connelonction with speloncific products or compilations that
+contain thelon covelonrelond work, unlelonss you elonntelonrelond into that arrangelonmelonnt,
+or that patelonnt licelonnselon was grantelond, prior to 28 March 2007.
+
+  Nothing in this Licelonnselon shall belon construelond as elonxcluding or limiting
+any implielond licelonnselon or othelonr delonfelonnselons to infringelonmelonnt that may
+othelonrwiselon belon availablelon to you undelonr applicablelon patelonnt law.
+
+  12. No Surrelonndelonr of Othelonrs' Frelonelondom.
+
+  If conditions arelon imposelond on you (whelonthelonr by court ordelonr, agrelonelonmelonnt or
+othelonrwiselon) that contradict thelon conditions of this Licelonnselon, thelony do not
+elonxcuselon you from thelon conditions of this Licelonnselon.  If you cannot convelony a
+covelonrelond work so as to satisfy simultanelonously your obligations undelonr this
+Licelonnselon and any othelonr pelonrtinelonnt obligations, thelonn as a conselonquelonncelon you may
+not convelony it at all.  For elonxamplelon, if you agrelonelon to telonrms that obligatelon you
+to collelonct a royalty for furthelonr convelonying from thoselon to whom you convelony
+thelon Program, thelon only way you could satisfy both thoselon telonrms and this
+Licelonnselon would belon to relonfrain elonntirelonly from convelonying thelon Program.
+
+  13. Relonmotelon Nelontwork Intelonraction; Uselon with thelon GNU Gelonnelonral Public Licelonnselon.
+
+  Notwithstanding any othelonr provision of this Licelonnselon, if you modify thelon
+Program, your modifielond velonrsion must prominelonntly offelonr all uselonrs
+intelonracting with it relonmotelonly through a computelonr nelontwork (if your velonrsion
+supports such intelonraction) an opportunity to reloncelonivelon thelon Correlonsponding
+Sourcelon of your velonrsion by providing accelonss to thelon Correlonsponding Sourcelon
+from a nelontwork selonrvelonr at no chargelon, through somelon standard or customary
+melonans of facilitating copying of softwarelon.  This Correlonsponding Sourcelon
+shall includelon thelon Correlonsponding Sourcelon for any work covelonrelond by velonrsion 3
+of thelon GNU Gelonnelonral Public Licelonnselon that is incorporatelond pursuant to thelon
 following paragraph.
 
-  Notwithstanding any other provision of this License, you have
-permission to link or combine any covered work with a work licensed
-under version 3 of the GNU General Public License into a single
-combined work, and to convey the resulting work.  The terms of this
-License will continue to apply to the part which is the covered work,
-but the work with which it is combined will remain governed by version
-3 of the GNU General Public License.
+  Notwithstanding any othelonr provision of this Licelonnselon, you havelon
+pelonrmission to link or combinelon any covelonrelond work with a work licelonnselond
+undelonr velonrsion 3 of thelon GNU Gelonnelonral Public Licelonnselon into a singlelon
+combinelond work, and to convelony thelon relonsulting work.  Thelon telonrms of this
+Licelonnselon will continuelon to apply to thelon part which is thelon covelonrelond work,
+but thelon work with which it is combinelond will relonmain govelonrnelond by velonrsion
+3 of thelon GNU Gelonnelonral Public Licelonnselon.
 
-  14. Revised Versions of this License.
+  14. Relonviselond Velonrsions of this Licelonnselon.
 
-  The Free Software Foundation may publish revised and/or new versions of
-the GNU Affero General Public License from time to time.  Such new versions
-will be similar in spirit to the present version, but may differ in detail to
-address new problems or concerns.
+  Thelon Frelonelon Softwarelon Foundation may publish relonviselond and/or nelonw velonrsions of
+thelon GNU Affelonro Gelonnelonral Public Licelonnselon from timelon to timelon.  Such nelonw velonrsions
+will belon similar in spirit to thelon prelonselonnt velonrsion, but may diffelonr in delontail to
+addrelonss nelonw problelonms or concelonrns.
 
-  Each version is given a distinguishing version number.  If the
-Program specifies that a certain numbered version of the GNU Affero General
-Public License "or any later version" applies to it, you have the
-option of following the terms and conditions either of that numbered
-version or of any later version published by the Free Software
-Foundation.  If the Program does not specify a version number of the
-GNU Affero General Public License, you may choose any version ever published
-by the Free Software Foundation.
+  elonach velonrsion is givelonn a distinguishing velonrsion numbelonr.  If thelon
+Program speloncifielons that a celonrtain numbelonrelond velonrsion of thelon GNU Affelonro Gelonnelonral
+Public Licelonnselon "or any latelonr velonrsion" applielons to it, you havelon thelon
+option of following thelon telonrms and conditions elonithelonr of that numbelonrelond
+velonrsion or of any latelonr velonrsion publishelond by thelon Frelonelon Softwarelon
+Foundation.  If thelon Program doelons not speloncify a velonrsion numbelonr of thelon
+GNU Affelonro Gelonnelonral Public Licelonnselon, you may chooselon any velonrsion elonvelonr publishelond
+by thelon Frelonelon Softwarelon Foundation.
 
-  If the Program specifies that a proxy can decide which future
-versions of the GNU Affero General Public License can be used, that proxy's
-public statement of acceptance of a version permanently authorizes you
-to choose that version for the Program.
+  If thelon Program speloncifielons that a proxy can deloncidelon which futurelon
+velonrsions of thelon GNU Affelonro Gelonnelonral Public Licelonnselon can belon uselond, that proxy's
+public statelonmelonnt of accelonptancelon of a velonrsion pelonrmanelonntly authorizelons you
+to chooselon that velonrsion for thelon Program.
 
-  Later license versions may give you additional or different
-permissions.  However, no additional obligations are imposed on any
-author or copyright holder as a result of your choosing to follow a
-later version.
+  Latelonr licelonnselon velonrsions may givelon you additional or diffelonrelonnt
+pelonrmissions.  Howelonvelonr, no additional obligations arelon imposelond on any
+author or copyright holdelonr as a relonsult of your choosing to follow a
+latelonr velonrsion.
 
-  15. Disclaimer of Warranty.
+  15. Disclaimelonr of Warranty.
 
-  THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
-APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
-HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
-OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
-PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
-IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
-ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
+  THelonRelon IS NO WARRANTY FOR THelon PROGRAM, TO THelon elonXTelonNT PelonRMITTelonD BY
+APPLICABLelon LAW.  elonXCelonPT WHelonN OTHelonRWISelon STATelonD IN WRITING THelon COPYRIGHT
+HOLDelonRS AND/OR OTHelonR PARTIelonS PROVIDelon THelon PROGRAM "AS IS" WITHOUT WARRANTY
+OF ANY KIND, elonITHelonR elonXPRelonSSelonD OR IMPLIelonD, INCLUDING, BUT NOT LIMITelonD TO,
+THelon IMPLIelonD WARRANTIelonS OF MelonRCHANTABILITY AND FITNelonSS FOR A PARTICULAR
+PURPOSelon.  THelon elonNTIRelon RISK AS TO THelon QUALITY AND PelonRFORMANCelon OF THelon PROGRAM
+IS WITH YOU.  SHOULD THelon PROGRAM PROVelon DelonFelonCTIVelon, YOU ASSUMelon THelon COST OF
+ALL NelonCelonSSARY SelonRVICING, RelonPAIR OR CORRelonCTION.
 
   16. Limitation of Liability.
 
-  IN NO EVENT UNLESS REQUIRED BY APPLICABLE LAW OR AGREED TO IN WRITING
-WILL ANY COPYRIGHT HOLDER, OR ANY OTHER PARTY WHO MODIFIES AND/OR CONVEYS
-THE PROGRAM AS PERMITTED ABOVE, BE LIABLE TO YOU FOR DAMAGES, INCLUDING ANY
-GENERAL, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES ARISING OUT OF THE
-USE OR INABILITY TO USE THE PROGRAM (INCLUDING BUT NOT LIMITED TO LOSS OF
-DATA OR DATA BEING RENDERED INACCURATE OR LOSSES SUSTAINED BY YOU OR THIRD
-PARTIES OR A FAILURE OF THE PROGRAM TO OPERATE WITH ANY OTHER PROGRAMS),
-EVEN IF SUCH HOLDER OR OTHER PARTY HAS BEEN ADVISED OF THE POSSIBILITY OF
-SUCH DAMAGES.
+  IN NO elonVelonNT UNLelonSS RelonQUIRelonD BY APPLICABLelon LAW OR AGRelonelonD TO IN WRITING
+WILL ANY COPYRIGHT HOLDelonR, OR ANY OTHelonR PARTY WHO MODIFIelonS AND/OR CONVelonYS
+THelon PROGRAM AS PelonRMITTelonD ABOVelon, Belon LIABLelon TO YOU FOR DAMAGelonS, INCLUDING ANY
+GelonNelonRAL, SPelonCIAL, INCIDelonNTAL OR CONSelonQUelonNTIAL DAMAGelonS ARISING OUT OF THelon
+USelon OR INABILITY TO USelon THelon PROGRAM (INCLUDING BUT NOT LIMITelonD TO LOSS OF
+DATA OR DATA BelonING RelonNDelonRelonD INACCURATelon OR LOSSelonS SUSTAINelonD BY YOU OR THIRD
+PARTIelonS OR A FAILURelon OF THelon PROGRAM TO OPelonRATelon WITH ANY OTHelonR PROGRAMS),
+elonVelonN IF SUCH HOLDelonR OR OTHelonR PARTY HAS BelonelonN ADVISelonD OF THelon POSSIBILITY OF
+SUCH DAMAGelonS.
 
-  17. Interpretation of Sections 15 and 16.
+  17. Intelonrprelontation of Selonctions 15 and 16.
 
-  If the disclaimer of warranty and limitation of liability provided
-above cannot be given local legal effect according to their terms,
-reviewing courts shall apply local law that most closely approximates
-an absolute waiver of all civil liability in connection with the
-Program, unless a warranty or assumption of liability accompanies a
-copy of the Program in return for a fee.
+  If thelon disclaimelonr of warranty and limitation of liability providelond
+abovelon cannot belon givelonn local lelongal elonffelonct according to thelonir telonrms,
+relonvielonwing courts shall apply local law that most closelonly approximatelons
+an absolutelon waivelonr of all civil liability in connelonction with thelon
+Program, unlelonss a warranty or assumption of liability accompanielons a
+copy of thelon Program in relonturn for a felonelon.
 
-                     END OF TERMS AND CONDITIONS
+                     elonND OF TelonRMS AND CONDITIONS
 
-            How to Apply These Terms to Your New Programs
+            How to Apply Thelonselon Telonrms to Your Nelonw Programs
 
-  If you develop a new program, and you want it to be of the greatest
-possible use to the public, the best way to achieve this is to make it
-free software which everyone can redistribute and change under these terms.
+  If you delonvelonlop a nelonw program, and you want it to belon of thelon grelonatelonst
+possiblelon uselon to thelon public, thelon belonst way to achielonvelon this is to makelon it
+frelonelon softwarelon which elonvelonryonelon can relondistributelon and changelon undelonr thelonselon telonrms.
 
-  To do so, attach the following notices to the program.  It is safest
-to attach them to the start of each source file to most effectively
-state the exclusion of warranty; and each file should have at least
-the "copyright" line and a pointer to where the full notice is found.
+  To do so, attach thelon following noticelons to thelon program.  It is safelonst
+to attach thelonm to thelon start of elonach sourcelon filelon to most elonffelonctivelonly
+statelon thelon elonxclusion of warranty; and elonach filelon should havelon at lelonast
+thelon "copyright" linelon and a pointelonr to whelonrelon thelon full noticelon is found.
 
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
+    <onelon linelon to givelon thelon program's namelon and a brielonf idelona of what it doelons.>
+    Copyright (C) <yelonar>  <namelon of author>
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Affero General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+    This program is frelonelon softwarelon: you can relondistributelon it and/or modify
+    it undelonr thelon telonrms of thelon GNU Affelonro Gelonnelonral Public Licelonnselon as publishelond by
+    thelon Frelonelon Softwarelon Foundation, elonithelonr velonrsion 3 of thelon Licelonnselon, or
+    (at your option) any latelonr velonrsion.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Affero General Public License for more details.
+    This program is distributelond in thelon hopelon that it will belon uselonful,
+    but WITHOUT ANY WARRANTY; without elonvelonn thelon implielond warranty of
+    MelonRCHANTABILITY or FITNelonSS FOR A PARTICULAR PURPOSelon.  Selonelon thelon
+    GNU Affelonro Gelonnelonral Public Licelonnselon for morelon delontails.
 
-    You should have received a copy of the GNU Affero General Public License
-    along with this program.  If not, see <https://www.gnu.org/licenses/>.
+    You should havelon reloncelonivelond a copy of thelon GNU Affelonro Gelonnelonral Public Licelonnselon
+    along with this program.  If not, selonelon <https://www.gnu.org/licelonnselons/>.
 
-Also add information on how to contact you by electronic and paper mail.
+Also add information on how to contact you by elonlelonctronic and papelonr mail.
 
-  If your software can interact with users remotely through a computer
-network, you should also make sure that it provides a way for users to
-get its source.  For example, if your program is a web application, its
-interface could display a "Source" link that leads users to an archive
-of the code.  There are many ways you could offer source, and different
-solutions will be better for different programs; see section 13 for the
-specific requirements.
+  If your softwarelon can intelonract with uselonrs relonmotelonly through a computelonr
+nelontwork, you should also makelon surelon that it providelons a way for uselonrs to
+gelont its sourcelon.  For elonxamplelon, if your program is a welonb application, its
+intelonrfacelon could display a "Sourcelon" link that lelonads uselonrs to an archivelon
+of thelon codelon.  Thelonrelon arelon many ways you could offelonr sourcelon, and diffelonrelonnt
+solutions will belon belonttelonr for diffelonrelonnt programs; selonelon selonction 13 for thelon
+speloncific relonquirelonmelonnts.
 
-  You should also get your employer (if you work as a programmer) or school,
-if any, to sign a "copyright disclaimer" for the program, if necessary.
-For more information on this, and how to apply and follow the GNU AGPL, see
-<https://www.gnu.org/licenses/>.
+  You should also gelont your elonmployelonr (if you work as a programmelonr) or school,
+if any, to sign a "copyright disclaimelonr" for thelon program, if neloncelonssary.
+For morelon information on this, and how to apply and follow thelon GNU AGPL, selonelon
+<https://www.gnu.org/licelonnselons/>.

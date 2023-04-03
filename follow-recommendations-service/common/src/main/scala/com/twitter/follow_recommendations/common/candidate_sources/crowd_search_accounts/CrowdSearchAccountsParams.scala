@@ -1,32 +1,32 @@
-package com.twitter.follow_recommendations.common.candidate_sources.crowd_search_accounts
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.crowd_selonarch_accounts
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumSeqParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSelonnumSelonqParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object CrowdSearchAccountsParams {
-  // whether or not to fetch CrowdSearchAccounts candidate sources
-  case object CandidateSourceEnabled
-      extends FSParam[Boolean]("crowd_search_accounts_candidate_source_enabled", false)
+objelonct CrowdSelonarchAccountsParams {
+  // whelonthelonr or not to felontch CrowdSelonarchAccounts candidatelon sourcelons
+  caselon objelonct CandidatelonSourcelonelonnablelond
+      elonxtelonnds FSParam[Boolelonan]("crowd_selonarch_accounts_candidatelon_sourcelon_elonnablelond", falselon)
 
   /**
-   *   Contains the logic key for account filtering and ranking. Currently we have 3 main logic keys
-   *    - new_daily: filtering top searched accounts with max daily searches based on new users
-   *    - new_weekly: filtering top searched accounts with max weekly searches based on new users
-   *    - daily: filtering top searched accounts with max daily searches
-   *    - weekly: filtering top searched accounts with max weekly searches
-   *    Mapping of the Logic Id to Logic key is done via @enum AccountsFilteringAndRankingLogic
+   *   Contains thelon logic kelony for account filtelonring and ranking. Currelonntly welon havelon 3 main logic kelonys
+   *    - nelonw_daily: filtelonring top selonarchelond accounts with max daily selonarchelons baselond on nelonw uselonrs
+   *    - nelonw_welonelonkly: filtelonring top selonarchelond accounts with max welonelonkly selonarchelons baselond on nelonw uselonrs
+   *    - daily: filtelonring top selonarchelond accounts with max daily selonarchelons
+   *    - welonelonkly: filtelonring top selonarchelond accounts with max welonelonkly selonarchelons
+   *    Mapping of thelon Logic Id to Logic kelony is donelon via @elonnum AccountsFiltelonringAndRankingLogic
    */
-  case object AccountsFilteringAndRankingLogics
-      extends FSEnumSeqParam[AccountsFilteringAndRankingLogicId.type](
-        name = "crowd_search_accounts_filtering_and_ranking_logic_ids",
-        default = Seq(AccountsFilteringAndRankingLogicId.SearchesWeekly),
-        enum = AccountsFilteringAndRankingLogicId)
+  caselon objelonct AccountsFiltelonringAndRankingLogics
+      elonxtelonnds FSelonnumSelonqParam[AccountsFiltelonringAndRankingLogicId.typelon](
+        namelon = "crowd_selonarch_accounts_filtelonring_and_ranking_logic_ids",
+        delonfault = Selonq(AccountsFiltelonringAndRankingLogicId.SelonarchelonsWelonelonkly),
+        elonnum = AccountsFiltelonringAndRankingLogicId)
 
-  case object CandidateSourceWeight
-      extends FSBoundedParam[Double](
-        "crowd_search_accounts_candidate_source_weight",
-        default = 1200,
+  caselon objelonct CandidatelonSourcelonWelonight
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        "crowd_selonarch_accounts_candidatelon_sourcelon_welonight",
+        delonfault = 1200,
         min = 0.001,
         max = 2000)
 }

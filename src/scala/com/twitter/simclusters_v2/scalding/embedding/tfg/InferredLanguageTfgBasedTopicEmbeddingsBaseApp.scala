@@ -1,194 +1,194 @@
-package com.twitter.simclusters_v2.scalding.embedding.tfg
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.tfg
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite.{D, _}
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.{Country, Language, SimClustersEmbedding, TopicId}
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.common.matrix.{SparseMatrix, SparseRowMatrix}
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.{UserId, _}
-import com.twitter.simclusters_v2.scalding.embedding.common.{
-  EmbeddingUtil,
-  ExternalDataSources,
-  SimClustersEmbeddingBaseJob
+import com.twittelonr.bijelonction.{Buffelonrablelon, Injelonction}
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.{D, _}
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.{Country, Languagelon, SimClustelonrselonmbelondding, TopicId}
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.IntelonrelonstelondInSourcelons
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.{SparselonMatrix, SparselonRowMatrix}
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.{UselonrId, _}
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.{
+  elonmbelonddingUtil,
+  elonxtelonrnalDataSourcelons,
+  SimClustelonrselonmbelonddingBaselonJob
 }
-import com.twitter.simclusters_v2.thriftscala.{
-  EmbeddingType,
-  InternalId,
-  ModelVersion,
-  SimClustersEmbeddingId,
-  UserToInterestedInClusterScores,
-  SimClustersEmbedding => ThriftSimClustersEmbedding,
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  elonmbelonddingTypelon,
+  IntelonrnalId,
+  ModelonlVelonrsion,
+  SimClustelonrselonmbelonddingId,
+  UselonrToIntelonrelonstelondInClustelonrScorelons,
+  SimClustelonrselonmbelondding => ThriftSimClustelonrselonmbelondding,
   TopicId => ThriftTopicId
 }
-import com.twitter.wtf.scalding.jobs.common.DateRangeExecutionApp
-import java.util.TimeZone
+import com.twittelonr.wtf.scalding.jobs.common.DatelonRangelonelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * Base app to generate Topic-Follow-Graph (TFG) topic embeddings from inferred languages.
- * In this app, topic embeddings are keyed by (topic, language, country).
- * Given a (topic t, country c, language l) tuple, the embedding is the sum of the
- * InterestedIn of the topic followers whose inferred language has l and account country is c
- * The language and the country fields in the keys are optional.
- * The app will generate 1) country-language-based 2) language-based 3) global embeddings in one dataset.
- * It's up to the clients to decide which embeddings to use
+ * Baselon app to gelonnelonratelon Topic-Follow-Graph (TFG) topic elonmbelonddings from infelonrrelond languagelons.
+ * In this app, topic elonmbelonddings arelon kelonyelond by (topic, languagelon, country).
+ * Givelonn a (topic t, country c, languagelon l) tuplelon, thelon elonmbelondding is thelon sum of thelon
+ * IntelonrelonstelondIn of thelon topic followelonrs whoselon infelonrrelond languagelon has l and account country is c
+ * Thelon languagelon and thelon country fielonlds in thelon kelonys arelon optional.
+ * Thelon app will gelonnelonratelon 1) country-languagelon-baselond 2) languagelon-baselond 3) global elonmbelonddings in onelon dataselont.
+ * It's up to thelon clielonnts to deloncidelon which elonmbelonddings to uselon
  */
-trait InferredLanguageTfgBasedTopicEmbeddingsBaseApp
-    extends SimClustersEmbeddingBaseJob[(TopicId, Option[Language], Option[Country])]
-    with DateRangeExecutionApp {
+trait InfelonrrelondLanguagelonTfgBaselondTopicelonmbelonddingsBaselonApp
+    elonxtelonnds SimClustelonrselonmbelonddingBaselonJob[(TopicId, Option[Languagelon], Option[Country])]
+    with DatelonRangelonelonxeloncutionApp {
 
-  val isAdhoc: Boolean
-  val embeddingType: EmbeddingType
-  val embeddingSource: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]]
+  val isAdhoc: Boolelonan
+  val elonmbelonddingTypelon: elonmbelonddingTypelon
+  val elonmbelonddingSourcelon: KelonyValDALDataselont[KelonyVal[SimClustelonrselonmbelonddingId, ThriftSimClustelonrselonmbelondding]]
   val pathSuffix: String
-  val modelVersion: ModelVersion
-  def scoreExtractor: UserToInterestedInClusterScores => Double
+  val modelonlVelonrsion: ModelonlVelonrsion
+  delonf scorelonelonxtractor: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon
 
-  override def numClustersPerNoun: Int = 50
-  override def numNounsPerClusters: Int = 1 // not used for now. Set to an arbitrary number
-  override def thresholdForEmbeddingScores: Double = 0.001
+  ovelonrridelon delonf numClustelonrsPelonrNoun: Int = 50
+  ovelonrridelon delonf numNounsPelonrClustelonrs: Int = 1 // not uselond for now. Selont to an arbitrary numbelonr
+  ovelonrridelon delonf threlonsholdForelonmbelonddingScorelons: Doublelon = 0.001
 
-  implicit val inj: Injection[(TopicId, Option[Language], Option[Country]), Array[Byte]] =
-    Bufferable.injectionOf[(TopicId, Option[Language], Option[Country])]
+  implicit val inj: Injelonction[(TopicId, Option[Languagelon], Option[Country]), Array[Bytelon]] =
+    Buffelonrablelon.injelonctionOf[(TopicId, Option[Languagelon], Option[Country])]
 
-  // Default to 10K, top 1% for (topic, country, language) follows
-  // Child classes may want to tune this number for their own use cases.
-  val minPerCountryFollowers = 10000
-  val minFollowers = 100
+  // Delonfault to 10K, top 1% for (topic, country, languagelon) follows
+  // Child classelons may want to tunelon this numbelonr for thelonir own uselon caselons.
+  val minPelonrCountryFollowelonrs = 10000
+  val minFollowelonrs = 100
 
-  def getTopicUsers(
-    topicFollowGraph: TypedPipe[(TopicId, UserId)],
-    userSource: TypedPipe[(UserId, (Country, Language))],
-    userLanguages: TypedPipe[(UserId, Seq[(Language, Double)])]
-  ): TypedPipe[((TopicId, Option[Language], Option[Country]), UserId, Double)] = {
+  delonf gelontTopicUselonrs(
+    topicFollowGraph: TypelondPipelon[(TopicId, UselonrId)],
+    uselonrSourcelon: TypelondPipelon[(UselonrId, (Country, Languagelon))],
+    uselonrLanguagelons: TypelondPipelon[(UselonrId, Selonq[(Languagelon, Doublelon)])]
+  ): TypelondPipelon[((TopicId, Option[Languagelon], Option[Country]), UselonrId, Doublelon)] = {
     topicFollowGraph
-      .map { case (topic, user) => (user, topic) }
-      .join(userSource)
-      .join(userLanguages)
+      .map { caselon (topic, uselonr) => (uselonr, topic) }
+      .join(uselonrSourcelon)
+      .join(uselonrLanguagelons)
       .flatMap {
-        case (user, ((topic, (country, _)), scoredLangs)) =>
-          scoredLangs.flatMap {
-            case (lang, score) =>
-              Seq(
-                ((topic, Some(lang), Some(country)), user, score), // with language and country
-                ((topic, Some(lang), None), user, score) // with language
+        caselon (uselonr, ((topic, (country, _)), scorelondLangs)) =>
+          scorelondLangs.flatMap {
+            caselon (lang, scorelon) =>
+              Selonq(
+                ((topic, Somelon(lang), Somelon(country)), uselonr, scorelon), // with languagelon and country
+                ((topic, Somelon(lang), Nonelon), uselonr, scorelon) // with languagelon
               )
-          } ++ Seq(((topic, None, None), user, 1.0)) // non-language
-      }.forceToDisk
+          } ++ Selonq(((topic, Nonelon, Nonelon), uselonr, 1.0)) // non-languagelon
+      }.forcelonToDisk
   }
 
-  def getValidTopics(
-    topicUsers: TypedPipe[((TopicId, Option[Language], Option[Country]), UserId, Double)]
+  delonf gelontValidTopics(
+    topicUselonrs: TypelondPipelon[((TopicId, Option[Languagelon], Option[Country]), UselonrId, Doublelon)]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(TopicId, Option[Language], Option[Country])] = {
-    val countryBasedTopics = Stat("country_based_topics")
-    val nonCountryBasedTopics = Stat("non_country_based_topics")
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[(TopicId, Option[Languagelon], Option[Country])] = {
+    val countryBaselondTopics = Stat("country_baselond_topics")
+    val nonCountryBaselondTopics = Stat("non_country_baselond_topics")
 
-    val (countryBased, nonCountryBased) = topicUsers.partition {
-      case ((_, lang, country), _, _) => lang.isDefined && country.isDefined
+    val (countryBaselond, nonCountryBaselond) = topicUselonrs.partition {
+      caselon ((_, lang, country), _, _) => lang.isDelonfinelond && country.isDelonfinelond
     }
 
-    SparseMatrix(countryBased).rowL1Norms.collect {
-      case (key, l1Norm) if l1Norm >= minPerCountryFollowers =>
-        countryBasedTopics.inc()
-        key
+    SparselonMatrix(countryBaselond).rowL1Norms.collelonct {
+      caselon (kelony, l1Norm) if l1Norm >= minPelonrCountryFollowelonrs =>
+        countryBaselondTopics.inc()
+        kelony
     } ++
-      SparseMatrix(nonCountryBased).rowL1Norms.collect {
-        case (key, l1Norm) if l1Norm >= minFollowers =>
-          nonCountryBasedTopics.inc()
-          key
+      SparselonMatrix(nonCountryBaselond).rowL1Norms.collelonct {
+        caselon (kelony, l1Norm) if l1Norm >= minFollowelonrs =>
+          nonCountryBaselondTopics.inc()
+          kelony
       }
   }
 
-  override def prepareNounToUserMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseMatrix[(TopicId, Option[Language], Option[Country]), UserId, Double] = {
-    val topicUsers = getTopicUsers(
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource)
+  ovelonrridelon delonf prelonparelonNounToUselonrMatrix(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): SparselonMatrix[(TopicId, Option[Languagelon], Option[Country]), UselonrId, Doublelon] = {
+    val topicUselonrs = gelontTopicUselonrs(
+      elonxtelonrnalDataSourcelons.topicFollowGraphSourcelon,
+      elonxtelonrnalDataSourcelons.uselonrSourcelon,
+      elonxtelonrnalDataSourcelons.infelonrrelondUselonrConsumelondLanguagelonSourcelon)
 
-    SparseMatrix[(TopicId, Option[Language], Option[Country]), UserId, Double](topicUsers)
-      .filterRows(getValidTopics(topicUsers))
+    SparselonMatrix[(TopicId, Option[Languagelon], Option[Country]), UselonrId, Doublelon](topicUselonrs)
+      .filtelonrRows(gelontValidTopics(topicUselonrs))
   }
 
-  override def prepareUserToClusterMatrix(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): SparseRowMatrix[UserId, ClusterId, Double] =
-    SparseRowMatrix(
-      InterestedInSources
-        .simClustersInterestedInSource(modelVersion, dateRange, timeZone)
+  ovelonrridelon delonf prelonparelonUselonrToClustelonrMatrix(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): SparselonRowMatrix[UselonrId, ClustelonrId, Doublelon] =
+    SparselonRowMatrix(
+      IntelonrelonstelondInSourcelons
+        .simClustelonrsIntelonrelonstelondInSourcelon(modelonlVelonrsion, datelonRangelon, timelonZonelon)
         .map {
-          case (userId, clustersUserIsInterestedIn) =>
-            userId -> clustersUserIsInterestedIn.clusterIdToScores
+          caselon (uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+            uselonrId -> clustelonrsUselonrIsIntelonrelonstelondIn.clustelonrIdToScorelons
               .map {
-                case (clusterId, scores) =>
-                  clusterId -> scoreExtractor(scores)
+                caselon (clustelonrId, scorelons) =>
+                  clustelonrId -> scorelonelonxtractor(scorelons)
               }
-              .filter(_._2 > 0.0)
+              .filtelonr(_._2 > 0.0)
               .toMap
         },
-      isSkinnyMatrix = true
+      isSkinnyMatrix = truelon
     )
 
-  override def writeNounToClustersIndex(
-    output: TypedPipe[((TopicId, Option[Language], Option[Country]), Seq[(ClusterId, Double)])]
+  ovelonrridelon delonf writelonNounToClustelonrsIndelonx(
+    output: TypelondPipelon[((TopicId, Option[Languagelon], Option[Country]), Selonq[(ClustelonrId, Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val topicEmbeddingCount = Stat(s"topic_embedding_count")
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val topicelonmbelonddingCount = Stat(s"topic_elonmbelondding_count")
 
-    val tsvExec =
+    val tsvelonxelonc =
       output
         .map {
-          case ((entityId, language, country), clustersWithScores) =>
-            (entityId, language, country, clustersWithScores.take(5).mkString(","))
+          caselon ((elonntityId, languagelon, country), clustelonrsWithScorelons) =>
+            (elonntityId, languagelon, country, clustelonrsWithScorelons.takelon(5).mkString(","))
         }
         .shard(5)
-        .writeExecution(TypedTsv[(TopicId, Option[Language], Option[Country], String)](
-          s"/user/recos-platform/adhoc/topic_embedding/$pathSuffix/$ModelVersionPathMap($modelVersion)"))
+        .writelonelonxeloncution(TypelondTsv[(TopicId, Option[Languagelon], Option[Country], String)](
+          s"/uselonr/reloncos-platform/adhoc/topic_elonmbelondding/$pathSuffix/$ModelonlVelonrsionPathMap($modelonlVelonrsion)"))
 
-    val keyValExec = output
+    val kelonyValelonxelonc = output
       .map {
-        case ((entityId, lang, country), clustersWithScores) =>
-          topicEmbeddingCount.inc()
-          KeyVal(
-            SimClustersEmbeddingId(
-              embeddingType,
-              modelVersion,
-              InternalId.TopicId(ThriftTopicId(entityId, lang, country))
+        caselon ((elonntityId, lang, country), clustelonrsWithScorelons) =>
+          topicelonmbelonddingCount.inc()
+          KelonyVal(
+            SimClustelonrselonmbelonddingId(
+              elonmbelonddingTypelon,
+              modelonlVelonrsion,
+              IntelonrnalId.TopicId(ThriftTopicId(elonntityId, lang, country))
             ),
-            SimClustersEmbedding(clustersWithScores).toThrift
+            SimClustelonrselonmbelondding(clustelonrsWithScorelons).toThrift
           )
       }
-      .writeDALVersionedKeyValExecution(
-        embeddingSource,
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        elonmbelonddingSourcelon,
         D.Suffix(
-          EmbeddingUtil
-            .getHdfsPath(isAdhoc = isAdhoc, isManhattanKeyVal = true, modelVersion, pathSuffix))
+          elonmbelonddingUtil
+            .gelontHdfsPath(isAdhoc = isAdhoc, isManhattanKelonyVal = truelon, modelonlVelonrsion, pathSuffix))
       )
     if (isAdhoc)
-      Execution.zip(tsvExec, keyValExec).unit
-    else
-      keyValExec
+      elonxeloncution.zip(tsvelonxelonc, kelonyValelonxelonc).unit
+    elonlselon
+      kelonyValelonxelonc
   }
 
-  override def writeClusterToNounsIndex(
-    output: TypedPipe[(ClusterId, Seq[((TopicId, Option[Language], Option[Country]), Double)])]
+  ovelonrridelon delonf writelonClustelonrToNounsIndelonx(
+    output: TypelondPipelon[(ClustelonrId, Selonq[((TopicId, Option[Languagelon], Option[Country]), Doublelon)])]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    Execution.unit // do not need this
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    elonxeloncution.unit // do not nelonelond this
   }
 }

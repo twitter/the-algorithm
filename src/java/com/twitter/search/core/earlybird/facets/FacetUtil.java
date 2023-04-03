@@ -1,106 +1,106 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.thriftjava.ThriftNumericType;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.IndelonxelondNumelonricFielonldSelonttings;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftNumelonricTypelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondIndelonx;
 
 /**
- * A utility class for selecting iterators and label providers
- * for facets.
+ * A utility class for selonleloncting itelonrators and labelonl providelonrs
+ * for facelonts.
  *
  */
-public abstract class FacetUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(FacetUtil.class);
+public abstract class FacelontUtil {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(FacelontUtil.class);
 
-  private FacetUtil() {
-    // unused
+  privatelon FacelontUtil() {
+    // unuselond
   }
 
   /**
-   * A utility method for choosing the right facet label provider based on the EarlybirdFieldType.
-   * Takes in a InvertedIndex since some facet label providers are or depend on the inverted
-   * index.
-   * Should never return null.
+   * A utility melonthod for choosing thelon right facelont labelonl providelonr baselond on thelon elonarlybirdFielonldTypelon.
+   * Takelons in a InvelonrtelondIndelonx sincelon somelon facelont labelonl providelonrs arelon or delonpelonnd on thelon invelonrtelond
+   * indelonx.
+   * Should nelonvelonr relonturn null.
    *
-   * @param fieldType A FieldType for the facet
-   * @param invertedField The inverted index associated with the facet. May be null.
-   * @return A non-null FacetLabelProvider
+   * @param fielonldTypelon A FielonldTypelon for thelon facelont
+   * @param invelonrtelondFielonld Thelon invelonrtelond indelonx associatelond with thelon facelont. May belon null.
+   * @relonturn A non-null FacelontLabelonlProvidelonr
    */
-  public static FacetLabelProvider chooseFacetLabelProvider(
-      EarlybirdFieldType fieldType,
-      InvertedIndex invertedField) {
-    Preconditions.checkNotNull(fieldType);
+  public static FacelontLabelonlProvidelonr chooselonFacelontLabelonlProvidelonr(
+      elonarlybirdFielonldTypelon fielonldTypelon,
+      InvelonrtelondIndelonx invelonrtelondFielonld) {
+    Prelonconditions.chelonckNotNull(fielonldTypelon);
 
-    // In the case neither inverted index existing nor using CSF,
-    // return FacetLabelProvider.InaccessibleFacetLabelProvider to throw exception
-    // more meaningfully and explicitly.
-    if (invertedField == null && !fieldType.isUseCSFForFacetCounting()) {
-      return new FacetLabelProvider.InaccessibleFacetLabelProvider(fieldType.getFacetName());
+    // In thelon caselon nelonithelonr invelonrtelond indelonx elonxisting nor using CSF,
+    // relonturn FacelontLabelonlProvidelonr.InaccelonssiblelonFacelontLabelonlProvidelonr to throw elonxcelonption
+    // morelon melonaningfully and elonxplicitly.
+    if (invelonrtelondFielonld == null && !fielonldTypelon.isUselonCSFForFacelontCounting()) {
+      relonturn nelonw FacelontLabelonlProvidelonr.InaccelonssiblelonFacelontLabelonlProvidelonr(fielonldTypelon.gelontFacelontNamelon());
     }
 
-    if (fieldType.isUseCSFForFacetCounting()) {
-      return new FacetLabelProvider.IdentityFacetLabelProvider();
+    if (fielonldTypelon.isUselonCSFForFacelontCounting()) {
+      relonturn nelonw FacelontLabelonlProvidelonr.IdelonntityFacelontLabelonlProvidelonr();
     }
-    IndexedNumericFieldSettings numericSettings = fieldType.getNumericFieldSettings();
-    if (numericSettings != null && numericSettings.isUseTwitterFormat()) {
-      if (numericSettings.getNumericType() == ThriftNumericType.INT) {
-        return new FacetLabelProvider.IntTermFacetLabelProvider(invertedField);
-      } else if (numericSettings.getNumericType() == ThriftNumericType.LONG) {
-        return numericSettings.isUseSortableEncoding()
-            ? new FacetLabelProvider.SortedLongTermFacetLabelProvider(invertedField)
-            : new FacetLabelProvider.LongTermFacetLabelProvider(invertedField);
-      } else {
-        Preconditions.checkState(false,
-            "Should never be reached, indicates incomplete handling of different kinds of facets");
-        return null;
+    IndelonxelondNumelonricFielonldSelonttings numelonricSelonttings = fielonldTypelon.gelontNumelonricFielonldSelonttings();
+    if (numelonricSelonttings != null && numelonricSelonttings.isUselonTwittelonrFormat()) {
+      if (numelonricSelonttings.gelontNumelonricTypelon() == ThriftNumelonricTypelon.INT) {
+        relonturn nelonw FacelontLabelonlProvidelonr.IntTelonrmFacelontLabelonlProvidelonr(invelonrtelondFielonld);
+      } elonlselon if (numelonricSelonttings.gelontNumelonricTypelon() == ThriftNumelonricTypelon.LONG) {
+        relonturn numelonricSelonttings.isUselonSortablelonelonncoding()
+            ? nelonw FacelontLabelonlProvidelonr.SortelondLongTelonrmFacelontLabelonlProvidelonr(invelonrtelondFielonld)
+            : nelonw FacelontLabelonlProvidelonr.LongTelonrmFacelontLabelonlProvidelonr(invelonrtelondFielonld);
+      } elonlselon {
+        Prelonconditions.chelonckStatelon(falselon,
+            "Should nelonvelonr belon relonachelond, indicatelons incomplelontelon handling of diffelonrelonnt kinds of facelonts");
+        relonturn null;
       }
-    } else {
-      return invertedField;
+    } elonlselon {
+      relonturn invelonrtelondFielonld;
     }
   }
 
   /**
-   * Get segment-specific facet label providers based on the schema
-   * and on the fieldToInvertedIndexMapping for the segment.
-   * These will be used by facet accumulators to get the text of the termIDs
+   * Gelont selongmelonnt-speloncific facelont labelonl providelonrs baselond on thelon schelonma
+   * and on thelon fielonldToInvelonrtelondIndelonxMapping for thelon selongmelonnt.
+   * Thelonselon will belon uselond by facelont accumulators to gelont thelon telonxt of thelon telonrmIDs
    *
-   * @param schema the schema, for info on fields and facets
-   * @param fieldToInvertedIndexMapping map of fields to their inverted indices
-   * @return facet label provider map
+   * @param schelonma thelon schelonma, for info on fielonlds and facelonts
+   * @param fielonldToInvelonrtelondIndelonxMapping map of fielonlds to thelonir invelonrtelond indicelons
+   * @relonturn facelont labelonl providelonr map
    */
-  public static Map<String, FacetLabelProvider> getFacetLabelProviders(
-      Schema schema,
-      Map<String, InvertedIndex> fieldToInvertedIndexMapping) {
+  public static Map<String, FacelontLabelonlProvidelonr> gelontFacelontLabelonlProvidelonrs(
+      Schelonma schelonma,
+      Map<String, InvelonrtelondIndelonx> fielonldToInvelonrtelondIndelonxMapping) {
 
-    HashMap<String, FacetLabelProvider> facetLabelProviderBuilder
-        = new HashMap<>();
+    HashMap<String, FacelontLabelonlProvidelonr> facelontLabelonlProvidelonrBuildelonr
+        = nelonw HashMap<>();
 
-    for (Schema.FieldInfo fieldInfo : schema.getFacetFields()) {
-      EarlybirdFieldType fieldType = fieldInfo.getFieldType();
-      Preconditions.checkNotNull(fieldType);
-      String fieldName = fieldInfo.getName();
-      String facetName = fieldType.getFacetName();
-      InvertedIndex invertedIndex = fieldToInvertedIndexMapping.get(fieldName);
-      if (invertedIndex == null && !fieldType.isUseCSFForFacetCounting()) {
-        LOG.warn("No docs in segment had field " + fieldName
-                + " indexed for facet " + facetName
-                + " so InaccessibleFacetLabelProvider will be provided."
+    for (Schelonma.FielonldInfo fielonldInfo : schelonma.gelontFacelontFielonlds()) {
+      elonarlybirdFielonldTypelon fielonldTypelon = fielonldInfo.gelontFielonldTypelon();
+      Prelonconditions.chelonckNotNull(fielonldTypelon);
+      String fielonldNamelon = fielonldInfo.gelontNamelon();
+      String facelontNamelon = fielonldTypelon.gelontFacelontNamelon();
+      InvelonrtelondIndelonx invelonrtelondIndelonx = fielonldToInvelonrtelondIndelonxMapping.gelont(fielonldNamelon);
+      if (invelonrtelondIndelonx == null && !fielonldTypelon.isUselonCSFForFacelontCounting()) {
+        LOG.warn("No docs in selongmelonnt had fielonld " + fielonldNamelon
+                + " indelonxelond for facelont " + facelontNamelon
+                + " so InaccelonssiblelonFacelontLabelonlProvidelonr will belon providelond."
         );
       }
-      facetLabelProviderBuilder.put(facetName, Preconditions.checkNotNull(
-          chooseFacetLabelProvider(fieldType, invertedIndex)));
+      facelontLabelonlProvidelonrBuildelonr.put(facelontNamelon, Prelonconditions.chelonckNotNull(
+          chooselonFacelontLabelonlProvidelonr(fielonldTypelon, invelonrtelondIndelonx)));
     }
 
-    return facetLabelProviderBuilder;
+    relonturn facelontLabelonlProvidelonrBuildelonr;
   }
 }

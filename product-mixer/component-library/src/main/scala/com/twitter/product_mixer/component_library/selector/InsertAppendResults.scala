@@ -1,53 +1,53 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import CandidatelonScopelon.PartitionelondCandidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object InsertAppendResults {
-  def apply(candidatePipeline: CandidatePipelineIdentifier): InsertAppendResults[PipelineQuery] =
-    new InsertAppendResults(SpecificPipeline(candidatePipeline))
+objelonct InselonrtAppelonndRelonsults {
+  delonf apply(candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr): InselonrtAppelonndRelonsults[PipelonlinelonQuelonry] =
+    nelonw InselonrtAppelonndRelonsults(SpeloncificPipelonlinelon(candidatelonPipelonlinelon))
 
-  def apply(
-    candidatePipelines: Set[CandidatePipelineIdentifier]
-  ): InsertAppendResults[PipelineQuery] = new InsertAppendResults(
-    SpecificPipelines(candidatePipelines))
+  delonf apply(
+    candidatelonPipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr]
+  ): InselonrtAppelonndRelonsults[PipelonlinelonQuelonry] = nelonw InselonrtAppelonndRelonsults(
+    SpeloncificPipelonlinelons(candidatelonPipelonlinelons))
 }
 
 /**
- * Select all candidates from candidate pipeline(s) and append to the end of the result.
+ * Selonlelonct all candidatelons from candidatelon pipelonlinelon(s) and appelonnd to thelon elonnd of thelon relonsult.
  *
- * @note that if multiple candidate pipelines are specified, their candidates will be added
- *       to the result in the order in which they appear in the candidate pool. This ordering often
- *       reflects the order in which the candidate pipelines were listed in the mixer/recommendations
- *       pipeline, unless for example an UpdateSortCandidates selector was run prior to running
- *       this selector which could change this ordering.
+ * @notelon that if multiplelon candidatelon pipelonlinelons arelon speloncifielond, thelonir candidatelons will belon addelond
+ *       to thelon relonsult in thelon ordelonr in which thelony appelonar in thelon candidatelon pool. This ordelonring oftelonn
+ *       relonfleloncts thelon ordelonr in which thelon candidatelon pipelonlinelons welonrelon listelond in thelon mixelonr/reloncommelonndations
+ *       pipelonlinelon, unlelonss for elonxamplelon an UpdatelonSortCandidatelons selonlelonctor was run prior to running
+ *       this selonlelonctor which could changelon this ordelonring.
  *
- * @note if inserting results from multiple candidate pipelines (see note above related to ordering),
- *       it is more performant to include all (or a subset) of the candidate pipelines in a single
- *       InsertAppendResults, as opposed to calling InsertAppendResults individually for each
- *       candidate pipeline because each selector does an O(n) pass on the candidate pool.
+ * @notelon if inselonrting relonsults from multiplelon candidatelon pipelonlinelons (selonelon notelon abovelon relonlatelond to ordelonring),
+ *       it is morelon pelonrformant to includelon all (or a subselont) of thelon candidatelon pipelonlinelons in a singlelon
+ *       InselonrtAppelonndRelonsults, as opposelond to calling InselonrtAppelonndRelonsults individually for elonach
+ *       candidatelon pipelonlinelon beloncauselon elonach selonlelonctor doelons an O(n) pass on thelon candidatelon pool.
  */
-case class InsertAppendResults[-Query <: PipelineQuery](
-  override val pipelineScope: CandidateScope)
-    extends Selector[Query] {
+caselon class InselonrtAppelonndRelonsults[-Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon)
+    elonxtelonnds Selonlelonctor[Quelonry] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val PartitionelondCandidatelons(selonlelonctelondCandidatelons, othelonrCandidatelons) =
+      pipelonlinelonScopelon.partition(relonmainingCandidatelons)
 
-    val resultUpdated = result ++ selectedCandidates
+    val relonsultUpdatelond = relonsult ++ selonlelonctelondCandidatelons
 
-    SelectorResult(remainingCandidates = otherCandidates, result = resultUpdated)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = othelonrCandidatelons, relonsult = relonsultUpdatelond)
   }
 }

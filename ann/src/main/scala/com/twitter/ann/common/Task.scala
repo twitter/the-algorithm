@@ -1,121 +1,121 @@
-package com.twitter.ann.common
+packagelon com.twittelonr.ann.common
 
-import com.twitter.finagle.stats.CategorizingExceptionStatsHandler
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.DefaultTracer
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finagle.util.Rng
-import com.twitter.inject.logging.MDCKeys
-import com.twitter.util.Closable
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.util.Timer
-import com.twitter.util.logging.Logging
-import java.util.concurrent.atomic.AtomicInteger
+import com.twittelonr.finaglelon.stats.CatelongorizingelonxcelonptionStatsHandlelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.tracing.DelonfaultTracelonr
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.finaglelon.util.Rng
+import com.twittelonr.injelonct.logging.MDCKelonys
+import com.twittelonr.util.Closablelon
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
+import com.twittelonr.util.Timelonr
+import com.twittelonr.util.logging.Logging
+import java.util.concurrelonnt.atomic.AtomicIntelongelonr
 import org.slf4j.MDC
 
 /**
- * A Task that will be scheduled to execute periodically on every interval. If a task takes
- * longer than an interval to complete, it will be immediately scheduled to run.
+ * A Task that will belon schelondulelond to elonxeloncutelon pelonriodically on elonvelonry intelonrval. If a task takelons
+ * longelonr than an intelonrval to complelontelon, it will belon immelondiatelonly schelondulelond to run.
  */
-trait Task extends Closable { self: Logging =>
+trait Task elonxtelonnds Closablelon { selonlf: Logging =>
 
-  // Exposed if the implementation of `task` need to report failures
-  val exnStatsHandler = new CategorizingExceptionStatsHandler(categorizer = _ => Some("failures"))
+  // elonxposelond if thelon implelonmelonntation of `task` nelonelond to relonport failurelons
+  val elonxnStatsHandlelonr = nelonw CatelongorizingelonxcelonptionStatsHandlelonr(catelongorizelonr = _ => Somelon("failurelons"))
 
-  protected val statsReceiver: StatsReceiver
-  private val totalTasks = statsReceiver.counter("total")
-  private val successfulTasks = statsReceiver.counter("success")
-  private val taskLatency = statsReceiver.stat("latency_ms")
+  protelonctelond val statsReloncelonivelonr: StatsReloncelonivelonr
+  privatelon val totalTasks = statsReloncelonivelonr.countelonr("total")
+  privatelon val succelonssfulTasks = statsReloncelonivelonr.countelonr("succelonss")
+  privatelon val taskLatelonncy = statsReloncelonivelonr.stat("latelonncy_ms")
 
-  private val activeTasks = new AtomicInteger(0)
+  privatelon val activelonTasks = nelonw AtomicIntelongelonr(0)
 
-  protected[common] val rng: Rng = Rng.threadLocal
-  protected[common] val timer: Timer = DefaultTimer
+  protelonctelond[common] val rng: Rng = Rng.threlonadLocal
+  protelonctelond[common] val timelonr: Timelonr = DelonfaultTimelonr
 
-  @volatile private var taskLoop: Future[Unit] = null
+  @volatilelon privatelon var taskLoop: Futurelon[Unit] = null
 
-  /** Execute the task wih bookkeeping **/
-  private def run(): Future[Unit] = {
+  /** elonxeloncutelon thelon task wih bookkelonelonping **/
+  privatelon delonf run(): Futurelon[Unit] = {
     totalTasks.incr()
-    activeTasks.getAndIncrement()
+    activelonTasks.gelontAndIncrelonmelonnt()
 
-    val start = Time.now
+    val start = Timelon.now
     val runningTask =
-      // Setup a new trace root for this task. We also want logs to contain
-      // the same trace information finatra populates for requests.
-      // See com.twitter.finatra.thrift.filters.TraceIdMDCFilter
-      Trace.letTracerAndNextId(DefaultTracer) {
-        val trace = Trace()
-        MDC.put(MDCKeys.TraceId, trace.id.traceId.toString)
-        MDC.put(MDCKeys.TraceSampled, trace.id._sampled.getOrElse(false).toString)
-        MDC.put(MDCKeys.TraceSpanId, trace.id.spanId.toString)
+      // Selontup a nelonw tracelon root for this task. Welon also want logs to contain
+      // thelon samelon tracelon information finatra populatelons for relonquelonsts.
+      // Selonelon com.twittelonr.finatra.thrift.filtelonrs.TracelonIdMDCFiltelonr
+      Tracelon.lelontTracelonrAndNelonxtId(DelonfaultTracelonr) {
+        val tracelon = Tracelon()
+        MDC.put(MDCKelonys.TracelonId, tracelon.id.tracelonId.toString)
+        MDC.put(MDCKelonys.TracelonSamplelond, tracelon.id._samplelond.gelontOrelonlselon(falselon).toString)
+        MDC.put(MDCKelonys.TracelonSpanId, tracelon.id.spanId.toString)
 
-        info(s"starting task ${getClass.toString}")
+        info(s"starting task ${gelontClass.toString}")
         task()
-          .onSuccess({ _ =>
-            info(s"completed task ${getClass.toString}")
-            successfulTasks.incr()
+          .onSuccelonss({ _ =>
+            info(s"complelontelond task ${gelontClass.toString}")
+            succelonssfulTasks.incr()
           })
-          .onFailure({ e =>
-            warn(s"failed task. ", e)
-            exnStatsHandler.record(statsReceiver, e)
+          .onFailurelon({ elon =>
+            warn(s"failelond task. ", elon)
+            elonxnStatsHandlelonr.reloncord(statsReloncelonivelonr, elon)
           })
       }
 
     runningTask.transform { _ =>
-      val elapsed = Time.now - start
-      activeTasks.getAndDecrement()
-      taskLatency.add(elapsed.inMilliseconds)
+      val elonlapselond = Timelon.now - start
+      activelonTasks.gelontAndDeloncrelonmelonnt()
+      taskLatelonncy.add(elonlapselond.inMilliselonconds)
 
-      Future
-        .sleep(taskInterval)(timer)
-        .before(run())
+      Futurelon
+        .slelonelonp(taskIntelonrval)(timelonr)
+        .belonforelon(run())
     }
   }
 
   // Body of a task to run
-  protected def task(): Future[Unit]
+  protelonctelond delonf task(): Futurelon[Unit]
 
-  // Task interval
-  protected def taskInterval: Duration
+  // Task intelonrval
+  protelonctelond delonf taskIntelonrval: Duration
 
   /**
-   * Start the task after random jitter
+   * Start thelon task aftelonr random jittelonr
    */
-  final def jitteredStart(): Unit = synchronized {
+  final delonf jittelonrelondStart(): Unit = synchronizelond {
     if (taskLoop != null) {
-      throw new RuntimeException(s"task already started")
-    } else {
-      val jitterNs = rng.nextLong(taskInterval.inNanoseconds)
-      val jitter = Duration.fromNanoseconds(jitterNs)
+      throw nelonw Runtimelonelonxcelonption(s"task alrelonady startelond")
+    } elonlselon {
+      val jittelonrNs = rng.nelonxtLong(taskIntelonrval.inNanoselonconds)
+      val jittelonr = Duration.fromNanoselonconds(jittelonrNs)
 
-      taskLoop = Future
-        .sleep(jitter)(timer)
-        .before(run())
+      taskLoop = Futurelon
+        .slelonelonp(jittelonr)(timelonr)
+        .belonforelon(run())
     }
   }
 
   /**
-   * Start the task without applying any delay
+   * Start thelon task without applying any delonlay
    */
-  final def startImmediately(): Unit = synchronized {
+  final delonf startImmelondiatelonly(): Unit = synchronizelond {
     if (taskLoop != null) {
-      throw new RuntimeException(s"task already started")
-    } else {
+      throw nelonw Runtimelonelonxcelonption(s"task alrelonady startelond")
+    } elonlselon {
       taskLoop = run()
     }
   }
 
   /**
-   * Close the task. A closed task cannot be restarted.
+   * Closelon thelon task. A closelond task cannot belon relonstartelond.
    */
-  override def close(deadline: Time): Future[Unit] = {
+  ovelonrridelon delonf closelon(delonadlinelon: Timelon): Futurelon[Unit] = {
     if (taskLoop != null) {
-      taskLoop.raise(new InterruptedException("task closed"))
+      taskLoop.raiselon(nelonw Intelonrruptelondelonxcelonption("task closelond"))
     }
-    Future.Done
+    Futurelon.Donelon
   }
 }

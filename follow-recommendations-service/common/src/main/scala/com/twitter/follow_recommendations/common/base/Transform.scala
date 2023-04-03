@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.common.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.baselon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * transform a or a list of candidate for target T
+ * transform a or a list of candidatelon for targelont T
  *
- * @tparam T target type
- * @tparam C candidate type
+ * @tparam T targelont typelon
+ * @tparam C candidatelon typelon
  */
 trait Transform[-T, C] {
 
-  // you need to implement at least one of the two methods here.
-  def transformItem(target: T, item: C): Stitch[C] = {
-    transform(target, Seq(item)).map(_.head)
+  // you nelonelond to implelonmelonnt at lelonast onelon of thelon two melonthods helonrelon.
+  delonf transformItelonm(targelont: T, itelonm: C): Stitch[C] = {
+    transform(targelont, Selonq(itelonm)).map(_.helonad)
   }
 
-  def transform(target: T, items: Seq[C]): Stitch[Seq[C]]
+  delonf transform(targelont: T, itelonms: Selonq[C]): Stitch[Selonq[C]]
 
-  def mapTarget[T2](mapper: T2 => T): Transform[T2, C] = {
+  delonf mapTargelont[T2](mappelonr: T2 => T): Transform[T2, C] = {
     val original = this
-    new Transform[T2, C] {
-      override def transformItem(target: T2, item: C): Stitch[C] = {
-        original.transformItem(mapper(target), item)
+    nelonw Transform[T2, C] {
+      ovelonrridelon delonf transformItelonm(targelont: T2, itelonm: C): Stitch[C] = {
+        original.transformItelonm(mappelonr(targelont), itelonm)
       }
-      override def transform(target: T2, items: Seq[C]): Stitch[Seq[C]] = {
-        original.transform(mapper(target), items)
+      ovelonrridelon delonf transform(targelont: T2, itelonms: Selonq[C]): Stitch[Selonq[C]] = {
+        original.transform(mappelonr(targelont), itelonms)
       }
     }
   }
 
   /**
-   * sequential composition. we execute this' transform first, followed by the other's transform
+   * selonquelonntial composition. welon elonxeloncutelon this' transform first, followelond by thelon othelonr's transform
    */
-  def andThen[T1 <: T](other: Transform[T1, C]): Transform[T1, C] = {
+  delonf andThelonn[T1 <: T](othelonr: Transform[T1, C]): Transform[T1, C] = {
     val original = this
-    new Transform[T1, C] {
-      override def transformItem(target: T1, item: C): Stitch[C] =
-        original.transformItem(target, item).flatMap(other.transformItem(target, _))
-      override def transform(target: T1, items: Seq[C]): Stitch[Seq[C]] =
-        original.transform(target, items).flatMap(other.transform(target, _))
+    nelonw Transform[T1, C] {
+      ovelonrridelon delonf transformItelonm(targelont: T1, itelonm: C): Stitch[C] =
+        original.transformItelonm(targelont, itelonm).flatMap(othelonr.transformItelonm(targelont, _))
+      ovelonrridelon delonf transform(targelont: T1, itelonms: Selonq[C]): Stitch[Selonq[C]] =
+        original.transform(targelont, itelonms).flatMap(othelonr.transform(targelont, _))
     }
   }
 
-  def observe(statsReceiver: StatsReceiver): Transform[T, C] = {
+  delonf obselonrvelon(statsReloncelonivelonr: StatsReloncelonivelonr): Transform[T, C] = {
     val originalTransform = this
-    new Transform[T, C] {
-      override def transform(target: T, items: Seq[C]): Stitch[Seq[C]] = {
-        statsReceiver.counter(Transform.InputCandidatesCount).incr(items.size)
-        statsReceiver.stat(Transform.InputCandidatesStat).add(items.size)
-        StatsUtil.profileStitchSeqResults(originalTransform.transform(target, items), statsReceiver)
+    nelonw Transform[T, C] {
+      ovelonrridelon delonf transform(targelont: T, itelonms: Selonq[C]): Stitch[Selonq[C]] = {
+        statsReloncelonivelonr.countelonr(Transform.InputCandidatelonsCount).incr(itelonms.sizelon)
+        statsReloncelonivelonr.stat(Transform.InputCandidatelonsStat).add(itelonms.sizelon)
+        StatsUtil.profilelonStitchSelonqRelonsults(originalTransform.transform(targelont, itelonms), statsReloncelonivelonr)
       }
 
-      override def transformItem(target: T, item: C): Stitch[C] = {
-        statsReceiver.counter(Transform.InputCandidatesCount).incr()
-        StatsUtil.profileStitch(originalTransform.transformItem(target, item), statsReceiver)
+      ovelonrridelon delonf transformItelonm(targelont: T, itelonm: C): Stitch[C] = {
+        statsReloncelonivelonr.countelonr(Transform.InputCandidatelonsCount).incr()
+        StatsUtil.profilelonStitch(originalTransform.transformItelonm(targelont, itelonm), statsReloncelonivelonr)
       }
     }
   }
 }
 
-trait GatedTransform[T <: HasParams, C] extends Transform[T, C] {
-  def gated(param: Param[Boolean]): Transform[T, C] = {
+trait GatelondTransform[T <: HasParams, C] elonxtelonnds Transform[T, C] {
+  delonf gatelond(param: Param[Boolelonan]): Transform[T, C] = {
     val original = this
-    (target: T, items: Seq[C]) => {
-      if (target.params(param)) {
-        original.transform(target, items)
-      } else {
-        Stitch.value(items)
+    (targelont: T, itelonms: Selonq[C]) => {
+      if (targelont.params(param)) {
+        original.transform(targelont, itelonms)
+      } elonlselon {
+        Stitch.valuelon(itelonms)
       }
     }
   }
 }
 
-object Transform {
-  val InputCandidatesCount = "input_candidates"
-  val InputCandidatesStat = "input_candidates_stat"
+objelonct Transform {
+  val InputCandidatelonsCount = "input_candidatelons"
+  val InputCandidatelonsStat = "input_candidatelons_stat"
 }
 
-class IdentityTransform[T, C] extends Transform[T, C] {
-  override def transform(target: T, items: Seq[C]): Stitch[Seq[C]] = Stitch.value(items)
+class IdelonntityTransform[T, C] elonxtelonnds Transform[T, C] {
+  ovelonrridelon delonf transform(targelont: T, itelonms: Selonq[C]): Stitch[Selonq[C]] = Stitch.valuelon(itelonms)
 }

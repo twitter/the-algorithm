@@ -1,47 +1,47 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * A two-way mapping between terms and their interned value (termID).
+ * A two-way mapping belontwelonelonn telonrms and thelonir intelonrnelond valuelon (telonrmID).
  *
- * Implementation of this interface must guarantee that termIDs are dense, starting at 0;
- * so they are good to be used as indices in arrays.
+ * Implelonmelonntation of this intelonrfacelon must guarantelonelon that telonrmIDs arelon delonnselon, starting at 0;
+ * so thelony arelon good to belon uselond as indicelons in arrays.
  */
-public interface TermDictionary extends Flushable {
-  int TERM_NOT_FOUND = EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+public intelonrfacelon TelonrmDictionary elonxtelonnds Flushablelon {
+  int TelonRM_NOT_FOUND = elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
 
   /**
-   * Returns the number of terms in this dictionary.
+   * Relonturns thelon numbelonr of telonrms in this dictionary.
    */
-  int getNumTerms();
+  int gelontNumTelonrms();
 
   /**
-   * Create a TermsEnum object over this TermDictionary for a given index.
-   * @param index
+   * Crelonatelon a Telonrmselonnum objelonct ovelonr this TelonrmDictionary for a givelonn indelonx.
+   * @param indelonx
    */
-  TermsEnum createTermsEnum(OptimizedMemoryIndex index);
+  Telonrmselonnum crelonatelonTelonrmselonnum(OptimizelondMelonmoryIndelonx indelonx);
 
   /**
-   * Lookup a term in this dictionary.
-   * @param term  the term to lookup.
-   * @return  the term id for this term, or TERM_NOT_FOUND
-   * @throws IOException
+   * Lookup a telonrm in this dictionary.
+   * @param telonrm  thelon telonrm to lookup.
+   * @relonturn  thelon telonrm id for this telonrm, or TelonRM_NOT_FOUND
+   * @throws IOelonxcelonption
    */
-  int lookupTerm(BytesRef term) throws IOException;
+  int lookupTelonrm(BytelonsRelonf telonrm) throws IOelonxcelonption;
 
   /**
-   * Get the term for given id and possibly its payload.
-   * @param termID  the term that we want to get.
-   * @param text  MUST be non-null. It will be filled with the term.
-   * @param termPayload  if non-null, it will be filled with the payload if the term has any.
-   * @return  Returns true, iff this term has a term payload.
+   * Gelont thelon telonrm for givelonn id and possibly its payload.
+   * @param telonrmID  thelon telonrm that welon want to gelont.
+   * @param telonxt  MUST belon non-null. It will belon fillelond with thelon telonrm.
+   * @param telonrmPayload  if non-null, it will belon fillelond with thelon payload if thelon telonrm has any.
+   * @relonturn  Relonturns truelon, iff this telonrm has a telonrm payload.
    */
-  boolean getTerm(int termID, BytesRef text, BytesRef termPayload);
+  boolelonan gelontTelonrm(int telonrmID, BytelonsRelonf telonxt, BytelonsRelonf telonrmPayload);
 }

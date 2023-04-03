@@ -1,64 +1,64 @@
-package com.twitter.visibility.configapi
+packagelon com.twittelonr.visibility.configapi
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.featureswitches.FSRecipient
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.timelines.configapi.abdecider.UserRecipientExperimentContextFactory
-import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.NullExperimentContext
-import com.twitter.timelines.configapi.UseFeatureContextExperimentContext
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.UnitOfDiversion
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.felonaturelonswitchelons.FSReloncipielonnt
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.timelonlinelons.configapi.abdeloncidelonr.UselonrReloncipielonntelonxpelonrimelonntContelonxtFactory
+import com.twittelonr.timelonlinelons.configapi.felonaturelonswitchelons.v2.FelonaturelonSwitchRelonsultsFelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.NullelonxpelonrimelonntContelonxt
+import com.twittelonr.timelonlinelons.configapi.UselonFelonaturelonContelonxtelonxpelonrimelonntContelonxt
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.UnitOfDivelonrsion
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-class VisibilityRequestContextFactory(
-  loggingABDecider: LoggingABDecider,
-  featureSwitches: FeatureSwitches) {
-  private val userExperimentContextFactory = new UserRecipientExperimentContextFactory(
-    loggingABDecider
+class VisibilityRelonquelonstContelonxtFactory(
+  loggingABDeloncidelonr: LoggingABDeloncidelonr,
+  felonaturelonSwitchelons: FelonaturelonSwitchelons) {
+  privatelon val uselonrelonxpelonrimelonntContelonxtFactory = nelonw UselonrReloncipielonntelonxpelonrimelonntContelonxtFactory(
+    loggingABDeloncidelonr
   )
-  private[this] def getFeatureContext(
-    context: ViewerContext,
-    safetyLevel: SafetyLevel,
-    unitsOfDiversion: Seq[UnitOfDiversion]
-  ): FeatureContext = {
-    val uodCustomFields = unitsOfDiversion.map(_.apply)
-    val recipient = FSRecipient(
-      userId = context.userId,
-      guestId = context.guestId,
-      userAgent = context.fsUserAgent,
-      clientApplicationId = context.clientApplicationId,
-      countryCode = context.requestCountryCode,
-      deviceId = context.deviceId,
-      languageCode = context.requestLanguageCode,
-      isTwoffice = Some(context.isTwOffice),
-      userRoles = context.userRoles,
-    ).withCustomFields(("safety_level", safetyLevel.name), uodCustomFields: _*)
+  privatelon[this] delonf gelontFelonaturelonContelonxt(
+    contelonxt: VielonwelonrContelonxt,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    unitsOfDivelonrsion: Selonq[UnitOfDivelonrsion]
+  ): FelonaturelonContelonxt = {
+    val uodCustomFielonlds = unitsOfDivelonrsion.map(_.apply)
+    val reloncipielonnt = FSReloncipielonnt(
+      uselonrId = contelonxt.uselonrId,
+      guelonstId = contelonxt.guelonstId,
+      uselonrAgelonnt = contelonxt.fsUselonrAgelonnt,
+      clielonntApplicationId = contelonxt.clielonntApplicationId,
+      countryCodelon = contelonxt.relonquelonstCountryCodelon,
+      delonvicelonId = contelonxt.delonvicelonId,
+      languagelonCodelon = contelonxt.relonquelonstLanguagelonCodelon,
+      isTwofficelon = Somelon(contelonxt.isTwOfficelon),
+      uselonrRolelons = contelonxt.uselonrRolelons,
+    ).withCustomFielonlds(("safelonty_lelonvelonl", safelontyLelonvelonl.namelon), uodCustomFielonlds: _*)
 
-    val results = featureSwitches.matchRecipient(recipient)
-    new FeatureSwitchResultsFeatureContext(results)
+    val relonsults = felonaturelonSwitchelons.matchReloncipielonnt(reloncipielonnt)
+    nelonw FelonaturelonSwitchRelonsultsFelonaturelonContelonxt(relonsults)
   }
 
-  def apply(
-    context: ViewerContext,
-    safetyLevel: SafetyLevel,
-    unitsOfDiversion: Seq[UnitOfDiversion] = Seq.empty
-  ): VisibilityRequestContext = {
-    val experimentContextBase =
-      context.userId
-        .map(userId => userExperimentContextFactory.apply(userId)).getOrElse(NullExperimentContext)
+  delonf apply(
+    contelonxt: VielonwelonrContelonxt,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    unitsOfDivelonrsion: Selonq[UnitOfDivelonrsion] = Selonq.elonmpty
+  ): VisibilityRelonquelonstContelonxt = {
+    val elonxpelonrimelonntContelonxtBaselon =
+      contelonxt.uselonrId
+        .map(uselonrId => uselonrelonxpelonrimelonntContelonxtFactory.apply(uselonrId)).gelontOrelonlselon(NullelonxpelonrimelonntContelonxt)
 
-    val featureContext = getFeatureContext(context, safetyLevel, unitsOfDiversion)
+    val felonaturelonContelonxt = gelontFelonaturelonContelonxt(contelonxt, safelontyLelonvelonl, unitsOfDivelonrsion)
 
-    val experimentContext =
-      UseFeatureContextExperimentContext(experimentContextBase, featureContext)
+    val elonxpelonrimelonntContelonxt =
+      UselonFelonaturelonContelonxtelonxpelonrimelonntContelonxt(elonxpelonrimelonntContelonxtBaselon, felonaturelonContelonxt)
 
-    VisibilityRequestContext(
-      context.userId,
-      context.guestId,
-      experimentContext,
-      featureContext
+    VisibilityRelonquelonstContelonxt(
+      contelonxt.uselonrId,
+      contelonxt.guelonstId,
+      elonxpelonrimelonntContelonxt,
+      felonaturelonContelonxt
     )
   }
 }

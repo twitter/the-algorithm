@@ -1,42 +1,42 @@
-import datetime
+import datelontimelon
 
 from absl import logging
 import pytz
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
 
-class StopAtTimeHook(tf.train.SessionRunHook):
+class StopAtTimelonHook(tf.train.SelonssionRunHook):
   """
-  Hook that stops training at a fixed datetime
+  Hook that stops training at a fixelond datelontimelon
   """
 
-  def __init__(self, stop_time):
+  delonf __init__(selonlf, stop_timelon):
     """
-    Arguments:
-      stop_time:
-        a datetime.datetime or a datetime.timedelta specifying when to stop.
-        For naive datetime.datetime objects (with no time zone specified),
-        UTC time zone is assumed.
+    Argumelonnts:
+      stop_timelon:
+        a datelontimelon.datelontimelon or a datelontimelon.timelondelonlta speloncifying whelonn to stop.
+        For naivelon datelontimelon.datelontimelon objeloncts (with no timelon zonelon speloncifielond),
+        UTC timelon zonelon is assumelond.
     """
-    if isinstance(stop_time, datetime.timedelta):
-      self._stop_datetime = pytz.utc.localize(datetime.datetime.utcnow() + stop_time)
-    elif isinstance(stop_time, datetime.datetime):
-      if stop_time.tzinfo is None:
-        self._stop_datetime = pytz.utc.localize(stop_time)
-      else:
-        self._stop_datetime = stop_time.astimezone(pytz.UTC)
-    else:
-      raise ValueError("Expecting datetime or timedelta for stop_time arg")
-    self._stop_requested = False
+    if isinstancelon(stop_timelon, datelontimelon.timelondelonlta):
+      selonlf._stop_datelontimelon = pytz.utc.localizelon(datelontimelon.datelontimelon.utcnow() + stop_timelon)
+    elonlif isinstancelon(stop_timelon, datelontimelon.datelontimelon):
+      if stop_timelon.tzinfo is Nonelon:
+        selonlf._stop_datelontimelon = pytz.utc.localizelon(stop_timelon)
+      elonlselon:
+        selonlf._stop_datelontimelon = stop_timelon.astimelonzonelon(pytz.UTC)
+    elonlselon:
+      raiselon Valuelonelonrror("elonxpeloncting datelontimelon or timelondelonlta for stop_timelon arg")
+    selonlf._stop_relonquelonstelond = Falselon
 
-  def after_run(self, run_context, run_values):
-    delta = self._stop_datetime - pytz.utc.localize(datetime.datetime.utcnow())
-    if delta.total_seconds() <= 0:
-      logging.info("StopAtTimeHook reached stop_time; requesting stop")
-      run_context.request_stop()
-      self._stop_requested = True
+  delonf aftelonr_run(selonlf, run_contelonxt, run_valuelons):
+    delonlta = selonlf._stop_datelontimelon - pytz.utc.localizelon(datelontimelon.datelontimelon.utcnow())
+    if delonlta.total_selonconds() <= 0:
+      logging.info("StopAtTimelonHook relonachelond stop_timelon; relonquelonsting stop")
+      run_contelonxt.relonquelonst_stop()
+      selonlf._stop_relonquelonstelond = Truelon
 
-  @property
-  def stop_requested(self):
-    """ true if this hook requested a stop """
-    return self._stop_requested
+  @propelonrty
+  delonf stop_relonquelonstelond(selonlf):
+    """ truelon if this hook relonquelonstelond a stop """
+    relonturn selonlf._stop_relonquelonstelond

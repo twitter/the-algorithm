@@ -1,33 +1,33 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.cr_mixelonr.modelonl.ModelonlConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object CustomizedRetrievalBasedOfflineInterestedInParams {
+objelonct CustomizelondRelontrielonvalBaselondOfflinelonIntelonrelonstelondInParams {
 
-  // Model slots available for offline InterestedIn candidate generation
-  object CustomizedRetrievalBasedOfflineInterestedInSource
-      extends FSParam[String](
-        name = "customized_retrieval_based_offline_interestedin_model_id",
-        default = ModelConfig.OfflineInterestedInFromKnownFor2020
+  // Modelonl slots availablelon for offlinelon IntelonrelonstelondIn candidatelon gelonnelonration
+  objelonct CustomizelondRelontrielonvalBaselondOfflinelonIntelonrelonstelondInSourcelon
+      elonxtelonnds FSParam[String](
+        namelon = "customizelond_relontrielonval_baselond_offlinelon_intelonrelonstelondin_modelonl_id",
+        delonfault = ModelonlConfig.OfflinelonIntelonrelonstelondInFromKnownFor2020
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(CustomizedRetrievalBasedOfflineInterestedInSource)
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(CustomizelondRelontrielonvalBaselondOfflinelonIntelonrelonstelondInSourcelon)
 
-  lazy val config: BaseConfig = {
+  lazy val config: BaselonConfig = {
 
-    val stringFSOverrides =
-      FeatureSwitchOverrideUtil.getStringFSOverrides(
-        CustomizedRetrievalBasedOfflineInterestedInSource
+    val stringFSOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontStringFSOvelonrridelons(
+        CustomizelondRelontrielonvalBaselondOfflinelonIntelonrelonstelondInSourcelon
       )
 
-    BaseConfigBuilder()
-      .set(stringFSOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(stringFSOvelonrridelons: _*)
       .build()
   }
 }

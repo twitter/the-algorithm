@@ -1,36 +1,36 @@
-package com.twitter.search.common.util.earlybird;
+packagelon com.twittelonr.selonarch.common.util.elonarlybird;
 
 import java.util.Map;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Function;
+import com.googlelon.common.collelonct.Itelonrablelons;
+import com.googlelon.common.collelonct.Maps;
 
 /**
- * Utility class used to help merging results.
+ * Utility class uselond to helonlp melonrging relonsults.
  */
-public final class ResultsUtil {
-  private ResultsUtil() { }
+public final class RelonsultsUtil {
+  privatelon RelonsultsUtil() { }
 
   /**
-   * Aggregate a list of responses in the following way.
-   * 1. For each response, mapGetter can turn the response into a map.
-   * 2. Dump all entries from the above map into a "total" map, which accumulates entries from
-   *    all the responses.
+   * Aggrelongatelon a list of relonsponselons in thelon following way.
+   * 1. For elonach relonsponselon, mapGelonttelonr can turn thelon relonsponselon into a map.
+   * 2. Dump all elonntrielons from thelon abovelon map into a "total" map, which accumulatelons elonntrielons from
+   *    all thelon relonsponselons.
    */
-  public static <T, V> Map<T, Integer> aggregateCountMap(
-          Iterable<V> responses,
-          Function<V, Map<T, Integer>> mapGetter) {
-    Map<T, Integer> total = Maps.newHashMap();
-    for (Map<T, Integer> map : Iterables.transform(responses, mapGetter)) {
+  public static <T, V> Map<T, Intelongelonr> aggrelongatelonCountMap(
+          Itelonrablelon<V> relonsponselons,
+          Function<V, Map<T, Intelongelonr>> mapGelonttelonr) {
+    Map<T, Intelongelonr> total = Maps.nelonwHashMap();
+    for (Map<T, Intelongelonr> map : Itelonrablelons.transform(relonsponselons, mapGelonttelonr)) {
       if (map != null) {
-        for (Map.Entry<T, Integer> entry : map.entrySet()) {
-          T key = entry.getKey();
-          total.put(key, total.containsKey(key)
-              ? total.get(key) + entry.getValue() : entry.getValue());
+        for (Map.elonntry<T, Intelongelonr> elonntry : map.elonntrySelont()) {
+          T kelony = elonntry.gelontKelony();
+          total.put(kelony, total.containsKelony(kelony)
+              ? total.gelont(kelony) + elonntry.gelontValuelon() : elonntry.gelontValuelon());
         }
       }
     }
-    return total;
+    relonturn total;
   }
 }

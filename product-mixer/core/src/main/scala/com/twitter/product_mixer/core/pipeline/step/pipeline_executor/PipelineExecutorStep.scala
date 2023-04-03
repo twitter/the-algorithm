@@ -1,81 +1,81 @@
-package com.twitter.product_mixer.core.pipeline.step.pipeline_executor
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.pipelonlinelon_elonxeloncutor
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.Pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.state.HasExecutorResults
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.state.HasResult
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.pipeline.step.pipeline_selector.PipelineSelectorResult
-import com.twitter.product_mixer.core.quality_factor.QualityFactorObserver
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutor
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutorRequest
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HaselonxeloncutorRelonsults
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.pipelonlinelon_selonlelonctor.PipelonlinelonSelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorObselonrvelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncutor.Pipelonlinelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncutor.PipelonlinelonelonxeloncutorRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncutor.PipelonlinelonelonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * Pipeline Execution step that takes a selected pipeline and executes it.
+ * Pipelonlinelon elonxeloncution stelonp that takelons a selonlelonctelond pipelonlinelon and elonxeloncutelons it.
  *
- * @param pipelineExecutor Pipeline executor that executes the selected pipeline
+ * @param pipelonlinelonelonxeloncutor Pipelonlinelon elonxeloncutor that elonxeloncutelons thelon selonlelonctelond pipelonlinelon
  *
- * @tparam Query Pipeline query model with quality factor status
- * @tparam Result The expected result type
- * @tparam State The pipeline state domain model.
+ * @tparam Quelonry Pipelonlinelon quelonry modelonl with quality factor status
+ * @tparam Relonsult Thelon elonxpelonctelond relonsult typelon
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class PipelineExecutorStep[
-  Query <: PipelineQuery,
-  Result,
-  State <: HasQuery[Query, State] with HasExecutorResults[State] with HasResult[Result]] @Inject() (
-  pipelineExecutor: PipelineExecutor)
-    extends Step[
-      State,
-      PipelineExecutorStepConfig[Query, Result],
-      PipelineExecutorRequest[Query],
-      PipelineExecutorResult[Result]
+caselon class PipelonlinelonelonxeloncutorStelonp[
+  Quelonry <: PipelonlinelonQuelonry,
+  Relonsult,
+  Statelon <: HasQuelonry[Quelonry, Statelon] with HaselonxeloncutorRelonsults[Statelon] with HasRelonsult[Relonsult]] @Injelonct() (
+  pipelonlinelonelonxeloncutor: Pipelonlinelonelonxeloncutor)
+    elonxtelonnds Stelonp[
+      Statelon,
+      PipelonlinelonelonxeloncutorStelonpConfig[Quelonry, Relonsult],
+      PipelonlinelonelonxeloncutorRelonquelonst[Quelonry],
+      PipelonlinelonelonxeloncutorRelonsult[Relonsult]
     ] {
 
-  override def isEmpty(config: PipelineExecutorStepConfig[Query, Result]): Boolean =
-    false
+  ovelonrridelon delonf iselonmpty(config: PipelonlinelonelonxeloncutorStelonpConfig[Quelonry, Relonsult]): Boolelonan =
+    falselon
 
-  override def adaptInput(
-    state: State,
-    config: PipelineExecutorStepConfig[Query, Result]
-  ): PipelineExecutorRequest[Query] = {
-    val pipelineSelectorResult = state.executorResultsByPipelineStep
-      .getOrElse(
-        config.selectedPipelineResultIdentifier,
-        throw PipelineFailure(
-          IllegalStateFailure,
-          "Missing Selected Pipeline in Pipeline Executor Step")).asInstanceOf[
-        PipelineSelectorResult]
-    PipelineExecutorRequest(state.query, pipelineSelectorResult.pipelineIdentifier)
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: PipelonlinelonelonxeloncutorStelonpConfig[Quelonry, Relonsult]
+  ): PipelonlinelonelonxeloncutorRelonquelonst[Quelonry] = {
+    val pipelonlinelonSelonlelonctorRelonsult = statelon.elonxeloncutorRelonsultsByPipelonlinelonStelonp
+      .gelontOrelonlselon(
+        config.selonlelonctelondPipelonlinelonRelonsultIdelonntifielonr,
+        throw PipelonlinelonFailurelon(
+          IllelongalStatelonFailurelon,
+          "Missing Selonlelonctelond Pipelonlinelon in Pipelonlinelon elonxeloncutor Stelonp")).asInstancelonOf[
+        PipelonlinelonSelonlelonctorRelonsult]
+    PipelonlinelonelonxeloncutorRelonquelonst(statelon.quelonry, pipelonlinelonSelonlelonctorRelonsult.pipelonlinelonIdelonntifielonr)
   }
 
-  override def arrow(
-    config: PipelineExecutorStepConfig[Query, Result],
-    context: Executor.Context
-  ): Arrow[PipelineExecutorRequest[Query], PipelineExecutorResult[Result]] = pipelineExecutor.arrow(
-    config.pipelinesByIdentifier,
-    config.qualityFactorObserversByIdentifier,
-    context
+  ovelonrridelon delonf arrow(
+    config: PipelonlinelonelonxeloncutorStelonpConfig[Quelonry, Relonsult],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[PipelonlinelonelonxeloncutorRelonquelonst[Quelonry], PipelonlinelonelonxeloncutorRelonsult[Relonsult]] = pipelonlinelonelonxeloncutor.arrow(
+    config.pipelonlinelonsByIdelonntifielonr,
+    config.qualityFactorObselonrvelonrsByIdelonntifielonr,
+    contelonxt
   )
 
-  // Noop since the platform will add the final result to the executor result map then state
-  // is responsible for reading it in [[WithResult]]
-  override def updateState(
-    state: State,
-    executorResult: PipelineExecutorResult[Result],
-    config: PipelineExecutorStepConfig[Query, Result]
-  ): State = state
+  // Noop sincelon thelon platform will add thelon final relonsult to thelon elonxeloncutor relonsult map thelonn statelon
+  // is relonsponsiblelon for relonading it in [[WithRelonsult]]
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: PipelonlinelonelonxeloncutorRelonsult[Relonsult],
+    config: PipelonlinelonelonxeloncutorStelonpConfig[Quelonry, Relonsult]
+  ): Statelon = statelon
 }
 
-case class PipelineExecutorStepConfig[Query <: PipelineQuery, Result](
-  pipelinesByIdentifier: Map[ComponentIdentifier, Pipeline[Query, Result]],
-  selectedPipelineResultIdentifier: PipelineStepIdentifier,
-  qualityFactorObserversByIdentifier: Map[ComponentIdentifier, QualityFactorObserver])
+caselon class PipelonlinelonelonxeloncutorStelonpConfig[Quelonry <: PipelonlinelonQuelonry, Relonsult](
+  pipelonlinelonsByIdelonntifielonr: Map[ComponelonntIdelonntifielonr, Pipelonlinelon[Quelonry, Relonsult]],
+  selonlelonctelondPipelonlinelonRelonsultIdelonntifielonr: PipelonlinelonStelonpIdelonntifielonr,
+  qualityFactorObselonrvelonrsByIdelonntifielonr: Map[ComponelonntIdelonntifielonr, QualityFactorObselonrvelonr])

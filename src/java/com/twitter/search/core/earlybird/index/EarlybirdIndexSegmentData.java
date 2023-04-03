@@ -1,474 +1,474 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Itelonrator;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.store.Directory;
+import org.apachelon.lucelonnelon.indelonx.DirelonctoryRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.IndelonxWritelonrConfig;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideByteIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesManager;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndex;
-import com.twitter.search.core.earlybird.index.inverted.OptimizedMemoryIndex;
-import com.twitter.search.core.earlybird.index.inverted.TermPointerEncoding;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.AbstractFacelontCountingArray;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountingArrayWritelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.ColumnStridelonBytelonIndelonx;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.DocValuelonsManagelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdIndelonxelonxtelonnsionsData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdIndelonxelonxtelonnsionsFactory;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.DelonlelontelondDocs;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondIndelonx;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondRelonaltimelonIndelonx;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.OptimizelondMelonmoryIndelonx;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.TelonrmPointelonrelonncoding;
 
 /**
- * Base class that references data structures belonging to an Earlybird segment.
+ * Baselon class that relonfelonrelonncelons data structurelons belonlonging to an elonarlybird selongmelonnt.
  */
-public abstract class EarlybirdIndexSegmentData implements Flushable {
+public abstract class elonarlybirdIndelonxSelongmelonntData implelonmelonnts Flushablelon {
   /**
-   * This class has a map which contains a snapshot of max published pointers, to distinguish the
-   * documents in the skip lists that are fully indexed, and safe to return to searchers and those
-   * that are in progress and should not be returned to searchers. See
-   * "Earlybird Indexing Latency Design Document"
-   * for rationale and design.
+   * This class has a map which contains a snapshot of max publishelond pointelonrs, to distinguish thelon
+   * documelonnts in thelon skip lists that arelon fully indelonxelond, and safelon to relonturn to selonarchelonrs and thoselon
+   * that arelon in progrelonss and should not belon relonturnelond to selonarchelonrs. Selonelon
+   * "elonarlybird Indelonxing Latelonncy Delonsign Documelonnt"
+   * for rationalelon and delonsign.
    *
-   * It also has the smallestDocID, which determines the smallest assigned doc ID in the tweet ID
-   * mapper that is safe to traverse.
+   * It also has thelon smallelonstDocID, which delontelonrminelons thelon smallelonst assignelond doc ID in thelon twelonelont ID
+   * mappelonr that is safelon to travelonrselon.
    *
-   * The pointer map and smallestDocID need to be updated atomically. See SEARCH-27650.
+   * Thelon pointelonr map and smallelonstDocID nelonelond to belon updatelond atomically. Selonelon SelonARCH-27650.
    */
   public static class SyncData {
-    private final Map<InvertedIndex, Integer> indexPointers;
-    private final int smallestDocID;
+    privatelon final Map<InvelonrtelondIndelonx, Intelongelonr> indelonxPointelonrs;
+    privatelon final int smallelonstDocID;
 
-    public SyncData(Map<InvertedIndex, Integer> indexPointers, int smallestDocID) {
-      this.indexPointers = indexPointers;
-      this.smallestDocID = smallestDocID;
+    public SyncData(Map<InvelonrtelondIndelonx, Intelongelonr> indelonxPointelonrs, int smallelonstDocID) {
+      this.indelonxPointelonrs = indelonxPointelonrs;
+      this.smallelonstDocID = smallelonstDocID;
     }
 
-    public Map<InvertedIndex, Integer> getIndexPointers() {
-      return indexPointers;
+    public Map<InvelonrtelondIndelonx, Intelongelonr> gelontIndelonxPointelonrs() {
+      relonturn indelonxPointelonrs;
     }
 
-    public int getSmallestDocID() {
-      return smallestDocID;
+    public int gelontSmallelonstDocID() {
+      relonturn smallelonstDocID;
     }
   }
 
-  private volatile SyncData syncData;
+  privatelon volatilelon SyncData syncData;
 
-  private final int maxSegmentSize;
-  private final long timeSliceID;
+  privatelon final int maxSelongmelonntSizelon;
+  privatelon final long timelonSlicelonID;
 
-  private final ConcurrentHashMap<String, QueryCacheResultForSegment> queryCacheMap =
-      new ConcurrentHashMap<>();
-  private final AbstractFacetCountingArray facetCountingArray;
-  private final boolean isOptimized;
-  private final ConcurrentHashMap<String, InvertedIndex> perFieldMap;
-  private final ConcurrentHashMap<String, ColumnStrideByteIndex> normsMap;
+  privatelon final ConcurrelonntHashMap<String, QuelonryCachelonRelonsultForSelongmelonnt> quelonryCachelonMap =
+      nelonw ConcurrelonntHashMap<>();
+  privatelon final AbstractFacelontCountingArray facelontCountingArray;
+  privatelon final boolelonan isOptimizelond;
+  privatelon final ConcurrelonntHashMap<String, InvelonrtelondIndelonx> pelonrFielonldMap;
+  privatelon final ConcurrelonntHashMap<String, ColumnStridelonBytelonIndelonx> normsMap;
 
-  private final Map<String, FacetLabelProvider> facetLabelProviders;
-  private final FacetIDMap facetIDMap;
+  privatelon final Map<String, FacelontLabelonlProvidelonr> facelontLabelonlProvidelonrs;
+  privatelon final FacelontIDMap facelontIDMap;
 
-  private final Schema schema;
-  private final DocValuesManager docValuesManager;
+  privatelon final Schelonma schelonma;
+  privatelon final DocValuelonsManagelonr docValuelonsManagelonr;
 
-  private final DeletedDocs deletedDocs;
+  privatelon final DelonlelontelondDocs delonlelontelondDocs;
 
-  private final DocIDToTweetIDMapper docIdToTweetIdMapper;
-  private final TimeMapper timeMapper;
+  privatelon final DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr;
+  privatelon final TimelonMappelonr timelonMappelonr;
 
-  static LeafReader getLeafReaderFromOptimizedDirectory(Directory directory) throws IOException {
-    List<LeafReaderContext> leaves = DirectoryReader.open(directory).getContext().leaves();
-    int leavesSize = leaves.size();
-    Preconditions.checkState(1 == leavesSize,
-        "Expected one leaf reader in directory %s, but found %s", directory, leavesSize);
-    return leaves.get(0).reader();
+  static LelonafRelonadelonr gelontLelonafRelonadelonrFromOptimizelondDirelonctory(Direlonctory direlonctory) throws IOelonxcelonption {
+    List<LelonafRelonadelonrContelonxt> lelonavelons = DirelonctoryRelonadelonr.opelonn(direlonctory).gelontContelonxt().lelonavelons();
+    int lelonavelonsSizelon = lelonavelons.sizelon();
+    Prelonconditions.chelonckStatelon(1 == lelonavelonsSizelon,
+        "elonxpelonctelond onelon lelonaf relonadelonr in direlonctory %s, but found %s", direlonctory, lelonavelonsSizelon);
+    relonturn lelonavelons.gelont(0).relonadelonr();
   }
 
   /**
-   * Creates a new SegmentData instance using the provided data.
+   * Crelonatelons a nelonw SelongmelonntData instancelon using thelon providelond data.
    */
-  public EarlybirdIndexSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      boolean isOptimized,
-      int smallestDocID,
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-      ConcurrentHashMap<String, ColumnStrideByteIndex> normsMap,
-      AbstractFacetCountingArray facetCountingArray,
-      DocValuesManager docValuesManager,
-      Map<String, FacetLabelProvider> facetLabelProviders,
-      FacetIDMap facetIDMap,
-      DeletedDocs deletedDocs,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper) {
-    this.maxSegmentSize = maxSegmentSize;
-    this.timeSliceID = timeSliceID;
-    this.schema = schema;
-    this.isOptimized = isOptimized;
-    this.facetCountingArray = facetCountingArray;
-    this.perFieldMap = perFieldMap;
-    this.syncData = new SyncData(buildIndexPointers(), smallestDocID);
+  public elonarlybirdIndelonxSelongmelonntData(
+      int maxSelongmelonntSizelon,
+      long timelonSlicelonID,
+      Schelonma schelonma,
+      boolelonan isOptimizelond,
+      int smallelonstDocID,
+      ConcurrelonntHashMap<String, InvelonrtelondIndelonx> pelonrFielonldMap,
+      ConcurrelonntHashMap<String, ColumnStridelonBytelonIndelonx> normsMap,
+      AbstractFacelontCountingArray facelontCountingArray,
+      DocValuelonsManagelonr docValuelonsManagelonr,
+      Map<String, FacelontLabelonlProvidelonr> facelontLabelonlProvidelonrs,
+      FacelontIDMap facelontIDMap,
+      DelonlelontelondDocs delonlelontelondDocs,
+      DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr,
+      TimelonMappelonr timelonMappelonr) {
+    this.maxSelongmelonntSizelon = maxSelongmelonntSizelon;
+    this.timelonSlicelonID = timelonSlicelonID;
+    this.schelonma = schelonma;
+    this.isOptimizelond = isOptimizelond;
+    this.facelontCountingArray = facelontCountingArray;
+    this.pelonrFielonldMap = pelonrFielonldMap;
+    this.syncData = nelonw SyncData(buildIndelonxPointelonrs(), smallelonstDocID);
     this.normsMap = normsMap;
-    this.docValuesManager = docValuesManager;
-    this.facetLabelProviders = facetLabelProviders;
-    this.facetIDMap = facetIDMap;
-    this.deletedDocs = deletedDocs;
-    this.docIdToTweetIdMapper = docIdToTweetIdMapper;
-    this.timeMapper = timeMapper;
+    this.docValuelonsManagelonr = docValuelonsManagelonr;
+    this.facelontLabelonlProvidelonrs = facelontLabelonlProvidelonrs;
+    this.facelontIDMap = facelontIDMap;
+    this.delonlelontelondDocs = delonlelontelondDocs;
+    this.docIdToTwelonelontIdMappelonr = docIdToTwelonelontIdMappelonr;
+    this.timelonMappelonr = timelonMappelonr;
 
-    Preconditions.checkNotNull(schema);
+    Prelonconditions.chelonckNotNull(schelonma);
   }
 
-  public final Schema getSchema() {
-    return schema;
-  }
-
-  /**
-   * Returns all {@link EarlybirdIndexExtensionsData} instances contained in this segment.
-   * Since index extensions are optional, the returned map might be null or empty.
-   */
-  public abstract <S extends EarlybirdIndexExtensionsData> S getIndexExtensionsData();
-
-  public DocIDToTweetIDMapper getDocIDToTweetIDMapper() {
-    return docIdToTweetIdMapper;
-  }
-
-  public TimeMapper getTimeMapper() {
-    return timeMapper;
-  }
-
-  public final DocValuesManager getDocValuesManager() {
-    return docValuesManager;
-  }
-
-  public Map<String, FacetLabelProvider> getFacetLabelProviders() {
-    return facetLabelProviders;
-  }
-
-  public FacetIDMap getFacetIDMap() {
-    return facetIDMap;
+  public final Schelonma gelontSchelonma() {
+    relonturn schelonma;
   }
 
   /**
-   * Returns the QueryCacheResult for the given filter for this segment.
+   * Relonturns all {@link elonarlybirdIndelonxelonxtelonnsionsData} instancelons containelond in this selongmelonnt.
+   * Sincelon indelonx elonxtelonnsions arelon optional, thelon relonturnelond map might belon null or elonmpty.
    */
-  public QueryCacheResultForSegment getQueryCacheResult(String queryCacheFilterName) {
-    return queryCacheMap.get(queryCacheFilterName);
+  public abstract <S elonxtelonnds elonarlybirdIndelonxelonxtelonnsionsData> S gelontIndelonxelonxtelonnsionsData();
+
+  public DocIDToTwelonelontIDMappelonr gelontDocIDToTwelonelontIDMappelonr() {
+    relonturn docIdToTwelonelontIdMappelonr;
   }
 
-  public long getQueryCachesCardinality() {
-    return queryCacheMap.values().stream().mapToLong(q -> q.getCardinality()).sum();
+  public TimelonMappelonr gelontTimelonMappelonr() {
+    relonturn timelonMappelonr;
+  }
+
+  public final DocValuelonsManagelonr gelontDocValuelonsManagelonr() {
+    relonturn docValuelonsManagelonr;
+  }
+
+  public Map<String, FacelontLabelonlProvidelonr> gelontFacelontLabelonlProvidelonrs() {
+    relonturn facelontLabelonlProvidelonrs;
+  }
+
+  public FacelontIDMap gelontFacelontIDMap() {
+    relonturn facelontIDMap;
   }
 
   /**
-   * Get cache cardinality for each query cache.
-   * @return
+   * Relonturns thelon QuelonryCachelonRelonsult for thelon givelonn filtelonr for this selongmelonnt.
    */
-  public List<Pair<String, Long>> getPerQueryCacheCardinality() {
-    ArrayList<Pair<String, Long>> result = new ArrayList<>();
+  public QuelonryCachelonRelonsultForSelongmelonnt gelontQuelonryCachelonRelonsult(String quelonryCachelonFiltelonrNamelon) {
+    relonturn quelonryCachelonMap.gelont(quelonryCachelonFiltelonrNamelon);
+  }
 
-    queryCacheMap.forEach((cacheName, queryCacheResult) -> {
-      result.add(Pair.of(cacheName, queryCacheResult.getCardinality()));
+  public long gelontQuelonryCachelonsCardinality() {
+    relonturn quelonryCachelonMap.valuelons().strelonam().mapToLong(q -> q.gelontCardinality()).sum();
+  }
+
+  /**
+   * Gelont cachelon cardinality for elonach quelonry cachelon.
+   * @relonturn
+   */
+  public List<Pair<String, Long>> gelontPelonrQuelonryCachelonCardinality() {
+    ArrayList<Pair<String, Long>> relonsult = nelonw ArrayList<>();
+
+    quelonryCachelonMap.forelonach((cachelonNamelon, quelonryCachelonRelonsult) -> {
+      relonsult.add(Pair.of(cachelonNamelon, quelonryCachelonRelonsult.gelontCardinality()));
     });
-    return result;
+    relonturn relonsult;
   }
 
   /**
-   * Updates the QueryCacheResult stored for the given filter for this segment
+   * Updatelons thelon QuelonryCachelonRelonsult storelond for thelon givelonn filtelonr for this selongmelonnt
    */
-  public QueryCacheResultForSegment updateQueryCacheResult(
-      String queryCacheFilterName, QueryCacheResultForSegment queryCacheResultForSegment) {
-    return queryCacheMap.put(queryCacheFilterName, queryCacheResultForSegment);
+  public QuelonryCachelonRelonsultForSelongmelonnt updatelonQuelonryCachelonRelonsult(
+      String quelonryCachelonFiltelonrNamelon, QuelonryCachelonRelonsultForSelongmelonnt quelonryCachelonRelonsultForSelongmelonnt) {
+    relonturn quelonryCachelonMap.put(quelonryCachelonFiltelonrNamelon, quelonryCachelonRelonsultForSelongmelonnt);
   }
 
   /**
-   * Subclasses are allowed to return null here to disable writing to a FacetCountingArray.
+   * Subclasselons arelon allowelond to relonturn null helonrelon to disablelon writing to a FacelontCountingArray.
    */
-  public FacetCountingArrayWriter createFacetCountingArrayWriter() {
-    return getFacetCountingArray() != null
-        ? new FacetCountingArrayWriter(getFacetCountingArray()) : null;
+  public FacelontCountingArrayWritelonr crelonatelonFacelontCountingArrayWritelonr() {
+    relonturn gelontFacelontCountingArray() != null
+        ? nelonw FacelontCountingArrayWritelonr(gelontFacelontCountingArray()) : null;
   }
 
-  public int getMaxSegmentSize() {
-    return maxSegmentSize;
+  public int gelontMaxSelongmelonntSizelon() {
+    relonturn maxSelongmelonntSizelon;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  public long gelontTimelonSlicelonID() {
+    relonturn timelonSlicelonID;
   }
 
-  public void updateSmallestDocID(int smallestDocID) {
+  public void updatelonSmallelonstDocID(int smallelonstDocID) {
     // Atomic swap
-    syncData = new SyncData(Collections.unmodifiableMap(buildIndexPointers()), smallestDocID);
+    syncData = nelonw SyncData(Collelonctions.unmodifiablelonMap(buildIndelonxPointelonrs()), smallelonstDocID);
   }
 
-  private Map<InvertedIndex, Integer> buildIndexPointers() {
-    Map<InvertedIndex, Integer> newIndexPointers = new HashMap<>();
-    for (InvertedIndex index : perFieldMap.values()) {
-      if (index.hasMaxPublishedPointer()) {
-        newIndexPointers.put(index, index.getMaxPublishedPointer());
+  privatelon Map<InvelonrtelondIndelonx, Intelongelonr> buildIndelonxPointelonrs() {
+    Map<InvelonrtelondIndelonx, Intelongelonr> nelonwIndelonxPointelonrs = nelonw HashMap<>();
+    for (InvelonrtelondIndelonx indelonx : pelonrFielonldMap.valuelons()) {
+      if (indelonx.hasMaxPublishelondPointelonr()) {
+        nelonwIndelonxPointelonrs.put(indelonx, indelonx.gelontMaxPublishelondPointelonr());
       }
     }
 
-    return newIndexPointers;
+    relonturn nelonwIndelonxPointelonrs;
   }
 
-  public SyncData getSyncData() {
-    return syncData;
+  public SyncData gelontSyncData() {
+    relonturn syncData;
   }
 
-  public AbstractFacetCountingArray getFacetCountingArray() {
-    return facetCountingArray;
+  public AbstractFacelontCountingArray gelontFacelontCountingArray() {
+    relonturn facelontCountingArray;
   }
 
-  public void addField(String fieldName, InvertedIndex field) {
-    perFieldMap.put(fieldName, field);
+  public void addFielonld(String fielonldNamelon, InvelonrtelondIndelonx fielonld) {
+    pelonrFielonldMap.put(fielonldNamelon, fielonld);
   }
 
-  public Map<String, InvertedIndex> getPerFieldMap() {
-    return Collections.unmodifiableMap(perFieldMap);
+  public Map<String, InvelonrtelondIndelonx> gelontPelonrFielonldMap() {
+    relonturn Collelonctions.unmodifiablelonMap(pelonrFielonldMap);
   }
 
-  public InvertedIndex getFieldIndex(String fieldName) {
-    return perFieldMap.get(fieldName);
+  public InvelonrtelondIndelonx gelontFielonldIndelonx(String fielonldNamelon) {
+    relonturn pelonrFielonldMap.gelont(fielonldNamelon);
   }
 
-  public Map<String, ColumnStrideByteIndex> getNormsMap() {
-    return Collections.unmodifiableMap(normsMap);
+  public Map<String, ColumnStridelonBytelonIndelonx> gelontNormsMap() {
+    relonturn Collelonctions.unmodifiablelonMap(normsMap);
   }
 
-  public DeletedDocs getDeletedDocs() {
-    return deletedDocs;
-  }
-
-  /**
-   * Returns the norms index for the given field name.
-   */
-  public ColumnStrideByteIndex getNormIndex(String fieldName) {
-    return normsMap == null ? null : normsMap.get(fieldName);
+  public DelonlelontelondDocs gelontDelonlelontelondDocs() {
+    relonturn delonlelontelondDocs;
   }
 
   /**
-   * Returns the norms index for the given field name, add if not exist.
+   * Relonturns thelon norms indelonx for thelon givelonn fielonld namelon.
    */
-  public ColumnStrideByteIndex createNormIndex(String fieldName) {
+  public ColumnStridelonBytelonIndelonx gelontNormIndelonx(String fielonldNamelon) {
+    relonturn normsMap == null ? null : normsMap.gelont(fielonldNamelon);
+  }
+
+  /**
+   * Relonturns thelon norms indelonx for thelon givelonn fielonld namelon, add if not elonxist.
+   */
+  public ColumnStridelonBytelonIndelonx crelonatelonNormIndelonx(String fielonldNamelon) {
     if (normsMap == null) {
-      return null;
+      relonturn null;
     }
-    ColumnStrideByteIndex csf = normsMap.get(fieldName);
+    ColumnStridelonBytelonIndelonx csf = normsMap.gelont(fielonldNamelon);
     if (csf == null) {
-      csf = new ColumnStrideByteIndex(fieldName, maxSegmentSize);
-      normsMap.put(fieldName, csf);
+      csf = nelonw ColumnStridelonBytelonIndelonx(fielonldNamelon, maxSelongmelonntSizelon);
+      normsMap.put(fielonldNamelon, csf);
     }
-    return csf;
+    relonturn csf;
   }
 
   /**
-   * Flushes this segment to disk.
+   * Flushelons this selongmelonnt to disk.
    */
-  public void flushSegment(FlushInfo flushInfo, DataSerializer out) throws IOException {
-    getFlushHandler().flush(flushInfo, out);
+  public void flushSelongmelonnt(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+    gelontFlushHandlelonr().flush(flushInfo, out);
   }
 
-  public final boolean isOptimized() {
-    return this.isOptimized;
+  public final boolelonan isOptimizelond() {
+    relonturn this.isOptimizelond;
   }
 
   /**
-   * Returns a new atomic reader for this segment.
+   * Relonturns a nelonw atomic relonadelonr for this selongmelonnt.
    */
-  public EarlybirdIndexSegmentAtomicReader createAtomicReader() throws IOException {
-    EarlybirdIndexSegmentAtomicReader reader = doCreateAtomicReader();
-    EarlybirdIndexExtensionsData indexExtension = getIndexExtensionsData();
-    if (indexExtension != null) {
-      indexExtension.setupExtensions(reader);
+  public elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr crelonatelonAtomicRelonadelonr() throws IOelonxcelonption {
+    elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr = doCrelonatelonAtomicRelonadelonr();
+    elonarlybirdIndelonxelonxtelonnsionsData indelonxelonxtelonnsion = gelontIndelonxelonxtelonnsionsData();
+    if (indelonxelonxtelonnsion != null) {
+      indelonxelonxtelonnsion.selontupelonxtelonnsions(relonadelonr);
     }
-    return reader;
+    relonturn relonadelonr;
   }
 
   /**
-   * Creates a new atomic reader for this segment.
+   * Crelonatelons a nelonw atomic relonadelonr for this selongmelonnt.
    */
-  protected abstract EarlybirdIndexSegmentAtomicReader doCreateAtomicReader() throws IOException;
+  protelonctelond abstract elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr doCrelonatelonAtomicRelonadelonr() throws IOelonxcelonption;
 
   /**
-   * Creates a new segment writer for this segment.
+   * Crelonatelons a nelonw selongmelonnt writelonr for this selongmelonnt.
    */
-  public abstract EarlybirdIndexSegmentWriter createEarlybirdIndexSegmentWriter(
-      IndexWriterConfig indexWriterConfig) throws IOException;
+  public abstract elonarlybirdIndelonxSelongmelonntWritelonr crelonatelonelonarlybirdIndelonxSelongmelonntWritelonr(
+      IndelonxWritelonrConfig indelonxWritelonrConfig) throws IOelonxcelonption;
 
-  public abstract static class AbstractSegmentDataFlushHandler
-      <S extends EarlybirdIndexExtensionsData>
-      extends Flushable.Handler<EarlybirdIndexSegmentData> {
-    protected static final String MAX_SEGMENT_SIZE_PROP_NAME = "maxSegmentSize";
-    protected static final String TIME_SLICE_ID_PROP_NAME = "time_slice_id";
-    protected static final String SMALLEST_DOCID_PROP_NAME = "smallestDocID";
-    protected static final String DOC_ID_MAPPER_SUBPROPS_NAME = "doc_id_mapper";
-    protected static final String TIME_MAPPER_SUBPROPS_NAME = "time_mapper";
-    public static final String IS_OPTIMIZED_PROP_NAME = "isOptimized";
+  public abstract static class AbstractSelongmelonntDataFlushHandlelonr
+      <S elonxtelonnds elonarlybirdIndelonxelonxtelonnsionsData>
+      elonxtelonnds Flushablelon.Handlelonr<elonarlybirdIndelonxSelongmelonntData> {
+    protelonctelond static final String MAX_SelonGMelonNT_SIZelon_PROP_NAMelon = "maxSelongmelonntSizelon";
+    protelonctelond static final String TIMelon_SLICelon_ID_PROP_NAMelon = "timelon_slicelon_id";
+    protelonctelond static final String SMALLelonST_DOCID_PROP_NAMelon = "smallelonstDocID";
+    protelonctelond static final String DOC_ID_MAPPelonR_SUBPROPS_NAMelon = "doc_id_mappelonr";
+    protelonctelond static final String TIMelon_MAPPelonR_SUBPROPS_NAMelon = "timelon_mappelonr";
+    public static final String IS_OPTIMIZelonD_PROP_NAMelon = "isOptimizelond";
 
-    // Abstract methods child classes should implement:
-    // 1. How to additional data structures
-    protected abstract void flushAdditionalDataStructures(
-        FlushInfo flushInfo, DataSerializer out, EarlybirdIndexSegmentData toFlush)
-            throws IOException;
+    // Abstract melonthods child classelons should implelonmelonnt:
+    // 1. How to additional data structurelons
+    protelonctelond abstract void flushAdditionalDataStructurelons(
+        FlushInfo flushInfo, DataSelonrializelonr out, elonarlybirdIndelonxSelongmelonntData toFlush)
+            throws IOelonxcelonption;
 
-    // 2. Load additional data structures and construct SegmentData.
-    // Common data structures should be passed into this method to avoid code duplication.
-    // Subclasses should load additional data structures and construct a SegmentData.
-    protected abstract EarlybirdIndexSegmentData constructSegmentData(
+    // 2. Load additional data structurelons and construct SelongmelonntData.
+    // Common data structurelons should belon passelond into this melonthod to avoid codelon duplication.
+    // Subclasselons should load additional data structurelons and construct a SelongmelonntData.
+    protelonctelond abstract elonarlybirdIndelonxSelongmelonntData constructSelongmelonntData(
         FlushInfo flushInfo,
-        ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-        int maxSegmentSize,
-        S indexExtension,
-        DocIDToTweetIDMapper docIdToTweetIdMapper,
-        TimeMapper timeMapper,
-        DataDeserializer in) throws IOException;
+        ConcurrelonntHashMap<String, InvelonrtelondIndelonx> pelonrFielonldMap,
+        int maxSelongmelonntSizelon,
+        S indelonxelonxtelonnsion,
+        DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr,
+        TimelonMappelonr timelonMappelonr,
+        DataDelonselonrializelonr in) throws IOelonxcelonption;
 
-    protected abstract S newIndexExtension();
+    protelonctelond abstract S nelonwIndelonxelonxtelonnsion();
 
-    protected final Schema schema;
-    protected final EarlybirdIndexExtensionsFactory indexExtensionsFactory;
-    private final Flushable.Handler<? extends DocIDToTweetIDMapper> docIdMapperFlushHandler;
-    private final Flushable.Handler<? extends TimeMapper> timeMapperFlushHandler;
+    protelonctelond final Schelonma schelonma;
+    protelonctelond final elonarlybirdIndelonxelonxtelonnsionsFactory indelonxelonxtelonnsionsFactory;
+    privatelon final Flushablelon.Handlelonr<? elonxtelonnds DocIDToTwelonelontIDMappelonr> docIdMappelonrFlushHandlelonr;
+    privatelon final Flushablelon.Handlelonr<? elonxtelonnds TimelonMappelonr> timelonMappelonrFlushHandlelonr;
 
-    public AbstractSegmentDataFlushHandler(
-        Schema schema,
-        EarlybirdIndexExtensionsFactory indexExtensionsFactory,
-        Flushable.Handler<? extends DocIDToTweetIDMapper> docIdMapperFlushHandler,
-        Flushable.Handler<? extends TimeMapper> timeMapperFlushHandler) {
-      super();
-      this.schema = schema;
-      this.indexExtensionsFactory = indexExtensionsFactory;
-      this.docIdMapperFlushHandler = docIdMapperFlushHandler;
-      this.timeMapperFlushHandler = timeMapperFlushHandler;
+    public AbstractSelongmelonntDataFlushHandlelonr(
+        Schelonma schelonma,
+        elonarlybirdIndelonxelonxtelonnsionsFactory indelonxelonxtelonnsionsFactory,
+        Flushablelon.Handlelonr<? elonxtelonnds DocIDToTwelonelontIDMappelonr> docIdMappelonrFlushHandlelonr,
+        Flushablelon.Handlelonr<? elonxtelonnds TimelonMappelonr> timelonMappelonrFlushHandlelonr) {
+      supelonr();
+      this.schelonma = schelonma;
+      this.indelonxelonxtelonnsionsFactory = indelonxelonxtelonnsionsFactory;
+      this.docIdMappelonrFlushHandlelonr = docIdMappelonrFlushHandlelonr;
+      this.timelonMappelonrFlushHandlelonr = timelonMappelonrFlushHandlelonr;
     }
 
-    public AbstractSegmentDataFlushHandler(EarlybirdIndexSegmentData objectToFlush) {
-      super(objectToFlush);
-      this.schema = objectToFlush.schema;
-      this.indexExtensionsFactory = null; // factory only needed for loading SegmentData from disk
-      this.docIdMapperFlushHandler = null; // docIdMapperFlushHandler needed only for loading data
-      this.timeMapperFlushHandler = null; // timeMapperFlushHandler needed only for loading data
+    public AbstractSelongmelonntDataFlushHandlelonr(elonarlybirdIndelonxSelongmelonntData objelonctToFlush) {
+      supelonr(objelonctToFlush);
+      this.schelonma = objelonctToFlush.schelonma;
+      this.indelonxelonxtelonnsionsFactory = null; // factory only nelonelondelond for loading SelongmelonntData from disk
+      this.docIdMappelonrFlushHandlelonr = null; // docIdMappelonrFlushHandlelonr nelonelondelond only for loading data
+      this.timelonMappelonrFlushHandlelonr = null; // timelonMappelonrFlushHandlelonr nelonelondelond only for loading data
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      EarlybirdIndexSegmentData segmentData = getObjectToFlush();
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out)
+        throws IOelonxcelonption {
+      elonarlybirdIndelonxSelongmelonntData selongmelonntData = gelontObjelonctToFlush();
 
-      Preconditions.checkState(segmentData.docIdToTweetIdMapper instanceof Flushable);
-      ((Flushable) segmentData.docIdToTweetIdMapper).getFlushHandler().flush(
-          flushInfo.newSubProperties(DOC_ID_MAPPER_SUBPROPS_NAME), out);
+      Prelonconditions.chelonckStatelon(selongmelonntData.docIdToTwelonelontIdMappelonr instancelonof Flushablelon);
+      ((Flushablelon) selongmelonntData.docIdToTwelonelontIdMappelonr).gelontFlushHandlelonr().flush(
+          flushInfo.nelonwSubPropelonrtielons(DOC_ID_MAPPelonR_SUBPROPS_NAMelon), out);
 
-      if (segmentData.timeMapper != null) {
-        segmentData.timeMapper.getFlushHandler()
-            .flush(flushInfo.newSubProperties(TIME_MAPPER_SUBPROPS_NAME), out);
+      if (selongmelonntData.timelonMappelonr != null) {
+        selongmelonntData.timelonMappelonr.gelontFlushHandlelonr()
+            .flush(flushInfo.nelonwSubPropelonrtielons(TIMelon_MAPPelonR_SUBPROPS_NAMelon), out);
       }
 
-      flushInfo.addBooleanProperty(IS_OPTIMIZED_PROP_NAME, segmentData.isOptimized());
-      flushInfo.addIntProperty(MAX_SEGMENT_SIZE_PROP_NAME, segmentData.getMaxSegmentSize());
-      flushInfo.addLongProperty(TIME_SLICE_ID_PROP_NAME, segmentData.getTimeSliceID());
-      flushInfo.addIntProperty(SMALLEST_DOCID_PROP_NAME,
-                               segmentData.getSyncData().getSmallestDocID());
+      flushInfo.addBoolelonanPropelonrty(IS_OPTIMIZelonD_PROP_NAMelon, selongmelonntData.isOptimizelond());
+      flushInfo.addIntPropelonrty(MAX_SelonGMelonNT_SIZelon_PROP_NAMelon, selongmelonntData.gelontMaxSelongmelonntSizelon());
+      flushInfo.addLongPropelonrty(TIMelon_SLICelon_ID_PROP_NAMelon, selongmelonntData.gelontTimelonSlicelonID());
+      flushInfo.addIntPropelonrty(SMALLelonST_DOCID_PROP_NAMelon,
+                               selongmelonntData.gelontSyncData().gelontSmallelonstDocID());
 
-      flushIndexes(flushInfo, out, segmentData);
+      flushIndelonxelons(flushInfo, out, selongmelonntData);
 
-      // Flush cluster specific data structures:
-      // FacetCountingArray, TweetIDMapper, LatLonMapper, and TimeMapper
-      flushAdditionalDataStructures(flushInfo, out, segmentData);
+      // Flush clustelonr speloncific data structurelons:
+      // FacelontCountingArray, TwelonelontIDMappelonr, LatLonMappelonr, and TimelonMappelonr
+      flushAdditionalDataStructurelons(flushInfo, out, selongmelonntData);
     }
 
-    private void flushIndexes(
+    privatelon void flushIndelonxelons(
         FlushInfo flushInfo,
-        DataSerializer out,
-        EarlybirdIndexSegmentData segmentData) throws IOException {
-      Map<String, InvertedIndex> perFieldMap = segmentData.getPerFieldMap();
-      FlushInfo fieldProps = flushInfo.newSubProperties("fields");
-      long sizeBeforeFlush = out.length();
-      for (Map.Entry<String, InvertedIndex> entry : perFieldMap.entrySet()) {
-        String fieldName = entry.getKey();
-        entry.getValue().getFlushHandler().flush(fieldProps.newSubProperties(fieldName), out);
+        DataSelonrializelonr out,
+        elonarlybirdIndelonxSelongmelonntData selongmelonntData) throws IOelonxcelonption {
+      Map<String, InvelonrtelondIndelonx> pelonrFielonldMap = selongmelonntData.gelontPelonrFielonldMap();
+      FlushInfo fielonldProps = flushInfo.nelonwSubPropelonrtielons("fielonlds");
+      long sizelonBelonforelonFlush = out.lelonngth();
+      for (Map.elonntry<String, InvelonrtelondIndelonx> elonntry : pelonrFielonldMap.elonntrySelont()) {
+        String fielonldNamelon = elonntry.gelontKelony();
+        elonntry.gelontValuelon().gelontFlushHandlelonr().flush(fielonldProps.nelonwSubPropelonrtielons(fielonldNamelon), out);
       }
-      fieldProps.setSizeInBytes(out.length() - sizeBeforeFlush);
+      fielonldProps.selontSizelonInBytelons(out.lelonngth() - sizelonBelonforelonFlush);
     }
 
-    @Override
-    protected EarlybirdIndexSegmentData doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      DocIDToTweetIDMapper docIdToTweetIdMapper = docIdMapperFlushHandler.load(
-          flushInfo.getSubProperties(DOC_ID_MAPPER_SUBPROPS_NAME), in);
+    @Ovelonrridelon
+    protelonctelond elonarlybirdIndelonxSelongmelonntData doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
+      DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr = docIdMappelonrFlushHandlelonr.load(
+          flushInfo.gelontSubPropelonrtielons(DOC_ID_MAPPelonR_SUBPROPS_NAMelon), in);
 
-      FlushInfo timeMapperFlushInfo = flushInfo.getSubProperties(TIME_MAPPER_SUBPROPS_NAME);
-      TimeMapper timeMapper =
-          timeMapperFlushInfo != null ? timeMapperFlushHandler.load(timeMapperFlushInfo, in) : null;
+      FlushInfo timelonMappelonrFlushInfo = flushInfo.gelontSubPropelonrtielons(TIMelon_MAPPelonR_SUBPROPS_NAMelon);
+      TimelonMappelonr timelonMappelonr =
+          timelonMappelonrFlushInfo != null ? timelonMappelonrFlushHandlelonr.load(timelonMappelonrFlushInfo, in) : null;
 
-      final int maxSegmentSize = flushInfo.getIntProperty(MAX_SEGMENT_SIZE_PROP_NAME);
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap = loadIndexes(flushInfo, in);
-      return constructSegmentData(
+      final int maxSelongmelonntSizelon = flushInfo.gelontIntPropelonrty(MAX_SelonGMelonNT_SIZelon_PROP_NAMelon);
+      ConcurrelonntHashMap<String, InvelonrtelondIndelonx> pelonrFielonldMap = loadIndelonxelons(flushInfo, in);
+      relonturn constructSelongmelonntData(
           flushInfo,
-          perFieldMap,
-          maxSegmentSize,
-          newIndexExtension(),
-          docIdToTweetIdMapper,
-          timeMapper,
+          pelonrFielonldMap,
+          maxSelongmelonntSizelon,
+          nelonwIndelonxelonxtelonnsion(),
+          docIdToTwelonelontIdMappelonr,
+          timelonMappelonr,
           in);
     }
 
-    // Move this method into EarlybirdRealtimeIndexSegmentData (careful,
-    // we may need to increment FlushVersion because EarlybirdLuceneIndexSegmentData
-    // currently has the 'fields' subproperty in its FlushInfo as well)
-    private ConcurrentHashMap<String, InvertedIndex> loadIndexes(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap = new ConcurrentHashMap<>();
+    // Movelon this melonthod into elonarlybirdRelonaltimelonIndelonxSelongmelonntData (carelonful,
+    // welon may nelonelond to increlonmelonnt FlushVelonrsion beloncauselon elonarlybirdLucelonnelonIndelonxSelongmelonntData
+    // currelonntly has thelon 'fielonlds' subpropelonrty in its FlushInfo as welonll)
+    privatelon ConcurrelonntHashMap<String, InvelonrtelondIndelonx> loadIndelonxelons(
+        FlushInfo flushInfo, DataDelonselonrializelonr in) throws IOelonxcelonption {
+      ConcurrelonntHashMap<String, InvelonrtelondIndelonx> pelonrFielonldMap = nelonw ConcurrelonntHashMap<>();
 
-      FlushInfo fieldProps = flushInfo.getSubProperties("fields");
-      Iterator<String> fieldIterator = fieldProps.getKeyIterator();
-      while (fieldIterator.hasNext()) {
-        String fieldName = fieldIterator.next();
-        EarlybirdFieldType fieldType = schema.getFieldInfo(fieldName).getFieldType();
-        FlushInfo subProp = fieldProps.getSubProperties(fieldName);
-        boolean isOptimized = subProp.getBooleanProperty(
-            OptimizedMemoryIndex.FlushHandler.IS_OPTIMIZED_PROP_NAME);
-        final InvertedIndex invertedIndex;
-        if (isOptimized) {
-          if (!fieldType.becomesImmutable()) {
-            throw new IOException("Tried to load an optimized field that is not immutable: "
-                + fieldName);
+      FlushInfo fielonldProps = flushInfo.gelontSubPropelonrtielons("fielonlds");
+      Itelonrator<String> fielonldItelonrator = fielonldProps.gelontKelonyItelonrator();
+      whilelon (fielonldItelonrator.hasNelonxt()) {
+        String fielonldNamelon = fielonldItelonrator.nelonxt();
+        elonarlybirdFielonldTypelon fielonldTypelon = schelonma.gelontFielonldInfo(fielonldNamelon).gelontFielonldTypelon();
+        FlushInfo subProp = fielonldProps.gelontSubPropelonrtielons(fielonldNamelon);
+        boolelonan isOptimizelond = subProp.gelontBoolelonanPropelonrty(
+            OptimizelondMelonmoryIndelonx.FlushHandlelonr.IS_OPTIMIZelonD_PROP_NAMelon);
+        final InvelonrtelondIndelonx invelonrtelondIndelonx;
+        if (isOptimizelond) {
+          if (!fielonldTypelon.beloncomelonsImmutablelon()) {
+            throw nelonw IOelonxcelonption("Trielond to load an optimizelond fielonld that is not immutablelon: "
+                + fielonldNamelon);
           }
-          invertedIndex = (new OptimizedMemoryIndex.FlushHandler(fieldType)).load(subProp, in);
-        } else {
-          invertedIndex = (new InvertedRealtimeIndex.FlushHandler(
-                               fieldType, TermPointerEncoding.DEFAULT_ENCODING))
+          invelonrtelondIndelonx = (nelonw OptimizelondMelonmoryIndelonx.FlushHandlelonr(fielonldTypelon)).load(subProp, in);
+        } elonlselon {
+          invelonrtelondIndelonx = (nelonw InvelonrtelondRelonaltimelonIndelonx.FlushHandlelonr(
+                               fielonldTypelon, TelonrmPointelonrelonncoding.DelonFAULT_elonNCODING))
               .load(subProp, in);
         }
-        perFieldMap.put(fieldName, invertedIndex);
+        pelonrFielonldMap.put(fielonldNamelon, invelonrtelondIndelonx);
       }
-      return perFieldMap;
+      relonturn pelonrFielonldMap;
     }
   }
 
   public int numDocs() {
-    return docIdToTweetIdMapper.getNumDocs();
+    relonturn docIdToTwelonelontIdMappelonr.gelontNumDocs();
   }
 }

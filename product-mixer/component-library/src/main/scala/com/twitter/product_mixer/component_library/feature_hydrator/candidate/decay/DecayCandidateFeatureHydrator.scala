@@ -1,65 +1,65 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.decay
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.deloncay
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.StaticParam
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
 
-object DecayScore extends Feature[UniversalNoun[Long], Double]
+objelonct DeloncayScorelon elonxtelonnds Felonaturelon[UnivelonrsalNoun[Long], Doublelon]
 
 /**
- * Hydrates snowflake ID candidates with a decay score:
+ * Hydratelons snowflakelon ID candidatelons with a deloncay scorelon:
  *
- * It is using exponential decay formula to calculate the score
- * exp(k * age)
- * where k = ln(0.5) / half-life
+ * It is using elonxponelonntial deloncay formula to calculatelon thelon scorelon
+ * elonxp(k * agelon)
+ * whelonrelon k = ln(0.5) / half-lifelon
  *
- * Here is an example for half-life = 1 day
- * For the brand new tweet it will be exp((ln(0.5)/1)*0) = 1
- * For the tweet which was created 1 day ago it will be exp((ln(0.5)/1)*1) = 0.5
- * For the tweet which was created 10 day ago it will be exp((ln(0.5)/1)*10) = 0.00097
+ * Helonrelon is an elonxamplelon for half-lifelon = 1 day
+ * For thelon brand nelonw twelonelont it will belon elonxp((ln(0.5)/1)*0) = 1
+ * For thelon twelonelont which was crelonatelond 1 day ago it will belon elonxp((ln(0.5)/1)*1) = 0.5
+ * For thelon twelonelont which was crelonatelond 10 day ago it will belon elonxp((ln(0.5)/1)*10) = 0.00097
  *
- * Reference: https://www.cuemath.com/exponential-decay-formula/
+ * Relonfelonrelonncelon: https://www.cuelonmath.com/elonxponelonntial-deloncay-formula/
  *
- * @note This penalizes but does not filter out the candidate, so "stale" candidates can still appear.
+ * @notelon This pelonnalizelons but doelons not filtelonr out thelon candidatelon, so "stalelon" candidatelons can still appelonar.
  */
-case class DecayCandidateFeatureHydrator[Candidate <: UniversalNoun[Long]](
-  halfLife: Param[Duration] = StaticParam[Duration](2.days),
-  resultFeature: Feature[UniversalNoun[Long], Double] = DecayScore)
-    extends CandidateFeatureHydrator[PipelineQuery, Candidate] {
+caselon class DeloncayCandidatelonFelonaturelonHydrator[Candidatelon <: UnivelonrsalNoun[Long]](
+  halfLifelon: Param[Duration] = StaticParam[Duration](2.days),
+  relonsultFelonaturelon: Felonaturelon[UnivelonrsalNoun[Long], Doublelon] = DeloncayScorelon)
+    elonxtelonnds CandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, Candidatelon] {
 
-  override val features: Set[Feature[_, _]] = Set(resultFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(relonsultFelonaturelon)
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("Decay")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("Deloncay")
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: Candidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val halfLifeInMillis = query.params(halfLife).inMillis
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: Candidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): Stitch[FelonaturelonMap] = {
+    val halfLifelonInMillis = quelonry.params(halfLifelon).inMillis
 
-    val creationTime = SnowflakeId.timeFromId(candidate.id)
-    val ageInMillis = creationTime.untilNow.inMilliseconds
+    val crelonationTimelon = SnowflakelonId.timelonFromId(candidatelon.id)
+    val agelonInMillis = crelonationTimelon.untilNow.inMilliselonconds
 
-    // it is using a exponential decay formula:  e^(k * tweetAge)
-    // where k = ln(0.5) / half-life
-    val k = math.log(0.5D) / halfLifeInMillis
-    val decayScore = math.exp(k * ageInMillis)
+    // it is using a elonxponelonntial deloncay formula:  elon^(k * twelonelontAgelon)
+    // whelonrelon k = ln(0.5) / half-lifelon
+    val k = math.log(0.5D) / halfLifelonInMillis
+    val deloncayScorelon = math.elonxp(k * agelonInMillis)
 
-    Stitch.value(
-      FeatureMapBuilder()
-        .add(resultFeature, decayScore)
+    Stitch.valuelon(
+      FelonaturelonMapBuildelonr()
+        .add(relonsultFelonaturelon, deloncayScorelon)
         .build())
   }
 }

@@ -1,149 +1,149 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.TimelonMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.IntBlockPool;
 
 import it.unimi.dsi.fastutil.ints.Int2IntMap;
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpelonnHashMap;
 
 /**
- * Maps 32-bit document IDs to seconds-since-epoch timestamps.
+ * Maps 32-bit documelonnt IDs to selonconds-sincelon-elonpoch timelonstamps.
  */
-public class RealtimeTimeMapper extends AbstractInMemoryTimeMapper {
-  // Doc id to timestamp map. Timestamps that are negative are out-of-order.
-  protected final Int2IntOpenHashMap timeMap;
-  private final int capacity;
+public class RelonaltimelonTimelonMappelonr elonxtelonnds AbstractInMelonmoryTimelonMappelonr {
+  // Doc id to timelonstamp map. Timelonstamps that arelon nelongativelon arelon out-of-ordelonr.
+  protelonctelond final Int2IntOpelonnHashMap timelonMap;
+  privatelon final int capacity;
 
-  public RealtimeTimeMapper(int capacity) {
-    super();
+  public RelonaltimelonTimelonMappelonr(int capacity) {
+    supelonr();
     this.capacity = capacity;
 
-    timeMap = new Int2IntOpenHashMap(capacity);
-    timeMap.defaultReturnValue(ILLEGAL_TIME);
+    timelonMap = nelonw Int2IntOpelonnHashMap(capacity);
+    timelonMap.delonfaultRelonturnValuelon(ILLelonGAL_TIMelon);
   }
 
-  @Override
-  public int getTime(int docID) {
-    return timeMap.get(docID);
+  @Ovelonrridelon
+  public int gelontTimelon(int docID) {
+    relonturn timelonMap.gelont(docID);
   }
 
-  @Override
-  protected void setTime(int docID, int timeSeconds) {
-    timeMap.put(docID, timeSeconds);
+  @Ovelonrridelon
+  protelonctelond void selontTimelon(int docID, int timelonSelonconds) {
+    timelonMap.put(docID, timelonSelonconds);
   }
 
-  public final void addMapping(int docID, int timeSeconds) {
-    doAddMapping(docID, timeSeconds);
+  public final void addMapping(int docID, int timelonSelonconds) {
+    doAddMapping(docID, timelonSelonconds);
   }
 
-  @Override
-  public TimeMapper optimize(DocIDToTweetIDMapper originalTweetIdMapper,
-                             DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return new OptimizedTimeMapper(this, originalTweetIdMapper, optimizedTweetIdMapper);
+  @Ovelonrridelon
+  public TimelonMappelonr optimizelon(DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+                             DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption {
+    relonturn nelonw OptimizelondTimelonMappelonr(this, originalTwelonelontIdMappelonr, optimizelondTwelonelontIdMappelonr);
   }
 
   /**
-   * Evaluates whether two instances of RealtimeTimeMapper are equal by value. It is
-   * slow because it has to check every tweet ID/timestamp in the map.
+   * elonvaluatelons whelonthelonr two instancelons of RelonaltimelonTimelonMappelonr arelon elonqual by valuelon. It is
+   * slow beloncauselon it has to chelonck elonvelonry twelonelont ID/timelonstamp in thelon map.
    */
-  @VisibleForTesting
-  boolean verySlowEqualsForTests(RealtimeTimeMapper that) {
-    return reverseMapLastIndex == that.reverseMapLastIndex
-        && reverseMapIds.verySlowEqualsForTests(that.reverseMapIds)
-        && reverseMapTimes.verySlowEqualsForTests(that.reverseMapTimes)
+  @VisiblelonForTelonsting
+  boolelonan velonrySlowelonqualsForTelonsts(RelonaltimelonTimelonMappelonr that) {
+    relonturn relonvelonrselonMapLastIndelonx == that.relonvelonrselonMapLastIndelonx
+        && relonvelonrselonMapIds.velonrySlowelonqualsForTelonsts(that.relonvelonrselonMapIds)
+        && relonvelonrselonMapTimelons.velonrySlowelonqualsForTelonsts(that.relonvelonrselonMapTimelons)
         && capacity == that.capacity
-        && timeMap.equals(that.timeMap);
+        && timelonMap.elonquals(that.timelonMap);
   }
 
-  private RealtimeTimeMapper(
+  privatelon RelonaltimelonTimelonMappelonr(
       int capacity,
-      int reverseMapLastIndex,
+      int relonvelonrselonMapLastIndelonx,
       int[] docIds,
-      int[] timestamps,
-      IntBlockPool reverseMapTimes,
-      IntBlockPool reverseMapIds
+      int[] timelonstamps,
+      IntBlockPool relonvelonrselonMapTimelons,
+      IntBlockPool relonvelonrselonMapIds
   ) {
-    super(reverseMapLastIndex, reverseMapTimes, reverseMapIds);
+    supelonr(relonvelonrselonMapLastIndelonx, relonvelonrselonMapTimelons, relonvelonrselonMapIds);
 
     this.capacity = capacity;
 
-    timeMap = new Int2IntOpenHashMap(capacity);
-    timeMap.defaultReturnValue(ILLEGAL_TIME);
+    timelonMap = nelonw Int2IntOpelonnHashMap(capacity);
+    timelonMap.delonfaultRelonturnValuelon(ILLelonGAL_TIMelon);
 
-    Preconditions.checkState(docIds.length == timestamps.length);
+    Prelonconditions.chelonckStatelon(docIds.lelonngth == timelonstamps.lelonngth);
 
-    for (int i = 0; i < docIds.length; i++) {
-      timeMap.put(docIds[i], timestamps[i]);
+    for (int i = 0; i < docIds.lelonngth; i++) {
+      timelonMap.put(docIds[i], timelonstamps[i]);
     }
   }
 
-  @Override
-  public RealtimeTimeMapper.FlushHandler getFlushHandler() {
-    return new RealtimeTimeMapper.FlushHandler(this);
+  @Ovelonrridelon
+  public RelonaltimelonTimelonMappelonr.FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw RelonaltimelonTimelonMappelonr.FlushHandlelonr(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<RealtimeTimeMapper> {
-    private static final String REVERSE_MAP_LAST_INDEX_PROP = "reverseMapLastIndex";
-    private static final String TIMES_SUB_PROP = "times";
-    private static final String IDS_SUB_PROP = "ids";
-    private static final String CAPACITY_PROP = "capacity";
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<RelonaltimelonTimelonMappelonr> {
+    privatelon static final String RelonVelonRSelon_MAP_LAST_INDelonX_PROP = "relonvelonrselonMapLastIndelonx";
+    privatelon static final String TIMelonS_SUB_PROP = "timelons";
+    privatelon static final String IDS_SUB_PROP = "ids";
+    privatelon static final String CAPACITY_PROP = "capacity";
 
-    public FlushHandler() {
-      super();
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    public FlushHandler(RealtimeTimeMapper objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(RelonaltimelonTimelonMappelonr objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer serializer) throws IOException {
-      RealtimeTimeMapper mapper = getObjectToFlush();
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr selonrializelonr) throws IOelonxcelonption {
+      RelonaltimelonTimelonMappelonr mappelonr = gelontObjelonctToFlush();
 
-      flushInfo.addIntProperty(CAPACITY_PROP, mapper.capacity);
-      flushInfo.addIntProperty(REVERSE_MAP_LAST_INDEX_PROP, mapper.reverseMapLastIndex);
+      flushInfo.addIntPropelonrty(CAPACITY_PROP, mappelonr.capacity);
+      flushInfo.addIntPropelonrty(RelonVelonRSelon_MAP_LAST_INDelonX_PROP, mappelonr.relonvelonrselonMapLastIndelonx);
 
-      serializer.writeInt(mapper.timeMap.size());
-      for (Int2IntMap.Entry entry : mapper.timeMap.int2IntEntrySet()) {
-        serializer.writeInt(entry.getIntKey());
-        serializer.writeInt(entry.getIntValue());
+      selonrializelonr.writelonInt(mappelonr.timelonMap.sizelon());
+      for (Int2IntMap.elonntry elonntry : mappelonr.timelonMap.int2IntelonntrySelont()) {
+        selonrializelonr.writelonInt(elonntry.gelontIntKelony());
+        selonrializelonr.writelonInt(elonntry.gelontIntValuelon());
       }
 
-      mapper.reverseMapTimes.getFlushHandler().flush(
-          flushInfo.newSubProperties(TIMES_SUB_PROP), serializer);
-      mapper.reverseMapIds.getFlushHandler().flush(
-          flushInfo.newSubProperties(IDS_SUB_PROP), serializer);
+      mappelonr.relonvelonrselonMapTimelons.gelontFlushHandlelonr().flush(
+          flushInfo.nelonwSubPropelonrtielons(TIMelonS_SUB_PROP), selonrializelonr);
+      mappelonr.relonvelonrselonMapIds.gelontFlushHandlelonr().flush(
+          flushInfo.nelonwSubPropelonrtielons(IDS_SUB_PROP), selonrializelonr);
     }
 
-    @Override
-    protected RealtimeTimeMapper doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
+    @Ovelonrridelon
+    protelonctelond RelonaltimelonTimelonMappelonr doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
 
-      int size = in.readInt();
-      int[] docIds = new int[size];
-      int[] timestamps = new int[size];
-      for (int i = 0; i < size; i++) {
-        docIds[i] = in.readInt();
-        timestamps[i] = in.readInt();
+      int sizelon = in.relonadInt();
+      int[] docIds = nelonw int[sizelon];
+      int[] timelonstamps = nelonw int[sizelon];
+      for (int i = 0; i < sizelon; i++) {
+        docIds[i] = in.relonadInt();
+        timelonstamps[i] = in.relonadInt();
       }
 
-      return new RealtimeTimeMapper(
-          flushInfo.getIntProperty(CAPACITY_PROP),
-          flushInfo.getIntProperty(REVERSE_MAP_LAST_INDEX_PROP),
+      relonturn nelonw RelonaltimelonTimelonMappelonr(
+          flushInfo.gelontIntPropelonrty(CAPACITY_PROP),
+          flushInfo.gelontIntPropelonrty(RelonVelonRSelon_MAP_LAST_INDelonX_PROP),
           docIds,
-          timestamps,
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(TIMES_SUB_PROP), in),
-          new IntBlockPool.FlushHandler().load(flushInfo.getSubProperties(IDS_SUB_PROP), in));
+          timelonstamps,
+          nelonw IntBlockPool.FlushHandlelonr().load(flushInfo.gelontSubPropelonrtielons(TIMelonS_SUB_PROP), in),
+          nelonw IntBlockPool.FlushHandlelonr().load(flushInfo.gelontSubPropelonrtielons(IDS_SUB_PROP), in));
     }
   }
 }

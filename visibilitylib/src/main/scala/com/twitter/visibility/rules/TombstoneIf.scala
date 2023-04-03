@@ -1,44 +1,44 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.IsFocalTweet
-import com.twitter.visibility.rules.Condition.Not
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.IsFocalTwelonelont
+import com.twittelonr.visibility.rulelons.Condition.Not
 
-object TombstoneIf {
+objelonct TombstonelonIf {
 
-  object AuthorIsProtected
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Protected),
+  objelonct AuthorIsProtelonctelond
+      elonxtelonnds RulelonWithConstantAction(
+        Tombstonelon(elonpitaph.Protelonctelond),
         And(
-          Condition.LoggedOutOrViewerNotFollowingAuthor,
-          Condition.ProtectedAuthor
+          Condition.LoggelondOutOrVielonwelonrNotFollowingAuthor,
+          Condition.ProtelonctelondAuthor
         )
       )
 
-  object ReplyIsModeratedByRootAuthor
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Moderated),
+  objelonct RelonplyIsModelonratelondByRootAuthor
+      elonxtelonnds RulelonWithConstantAction(
+        Tombstonelon(elonpitaph.Modelonratelond),
         And(
-          Not(IsFocalTweet),
-          Condition.Moderated
+          Not(IsFocalTwelonelont),
+          Condition.Modelonratelond
         )
       )
 
-  object ViewerIsBlockedByAuthor
-      extends OnlyWhenNotAuthorViewerRule(
-        Tombstone(Epitaph.BlockedBy),
-        Condition.AuthorBlocksViewer
+  objelonct VielonwelonrIsBlockelondByAuthor
+      elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+        Tombstonelon(elonpitaph.BlockelondBy),
+        Condition.AuthorBlocksVielonwelonr
       )
 
-  object AuthorIsDeactivated
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Deactivated),
-        Condition.DeactivatedAuthor
+  objelonct AuthorIsDelonactivatelond
+      elonxtelonnds RulelonWithConstantAction(
+        Tombstonelon(elonpitaph.Delonactivatelond),
+        Condition.DelonactivatelondAuthor
       )
 
-  object AuthorIsSuspended
-      extends RuleWithConstantAction(
-        Tombstone(Epitaph.Suspended),
-        Condition.SuspendedAuthor
+  objelonct AuthorIsSuspelonndelond
+      elonxtelonnds RulelonWithConstantAction(
+        Tombstonelon(elonpitaph.Suspelonndelond),
+        Condition.SuspelonndelondAuthor
       )
 }

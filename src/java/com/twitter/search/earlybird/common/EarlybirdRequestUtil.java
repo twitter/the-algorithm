@@ -1,244 +1,244 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchMovingAverage;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchMovingAvelonragelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorParams;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorTelonrminationParams;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonlelonvancelonOptions;
 
-public final class EarlybirdRequestUtil {
-  // This logger is setup to log to a separate set of log files (request_info) and use an
-  // async logger so as to not block the searcher thread. See search/earlybird/config/log4j.xml
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdRequestUtil.class);
+public final class elonarlybirdRelonquelonstUtil {
+  // This loggelonr is selontup to log to a selonparatelon selont of log filelons (relonquelonst_info) and uselon an
+  // async loggelonr so as to not block thelon selonarchelonr threlonad. Selonelon selonarch/elonarlybird/config/log4j.xml
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdRelonquelonstUtil.class);
 
-  @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_NUM_RESULTS_STAT =
-      SearchMovingAverage.export("requested_num_results");
+  @VisiblelonForTelonsting
+  static final SelonarchMovingAvelonragelon RelonQUelonSTelonD_NUM_RelonSULTS_STAT =
+      SelonarchMovingAvelonragelon.elonxport("relonquelonstelond_num_relonsults");
 
-  @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_MAX_HITS_TO_PROCESS_STAT =
-      SearchMovingAverage.export("requested_max_hits_to_process");
+  @VisiblelonForTelonsting
+  static final SelonarchMovingAvelonragelon RelonQUelonSTelonD_MAX_HITS_TO_PROCelonSS_STAT =
+      SelonarchMovingAvelonragelon.elonxport("relonquelonstelond_max_hits_to_procelonss");
 
-  @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_STAT =
-      SearchMovingAverage.export("requested_collector_params_max_hits_to_process");
+  @VisiblelonForTelonsting
+  static final SelonarchMovingAvelonragelon RelonQUelonSTelonD_COLLelonCTOR_PARAMS_MAX_HITS_TO_PROCelonSS_STAT =
+      SelonarchMovingAvelonragelon.elonxport("relonquelonstelond_collelonctor_params_max_hits_to_procelonss");
 
-  @VisibleForTesting
-  static final SearchMovingAverage REQUESTED_RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS_STAT =
-      SearchMovingAverage.export("requested_relevance_options_max_hits_to_process");
+  @VisiblelonForTelonsting
+  static final SelonarchMovingAvelonragelon RelonQUelonSTelonD_RelonLelonVANCelon_OPTIONS_MAX_HITS_TO_PROCelonSS_STAT =
+      SelonarchMovingAvelonragelon.elonxport("relonquelonstelond_relonlelonvancelon_options_max_hits_to_procelonss");
 
-  @VisibleForTesting
-  static final SearchCounter REQUESTED_MAX_HITS_TO_PROCESS_ARE_DIFFERENT_STAT =
-      SearchCounter.export("requested_max_hits_to_process_are_different");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr RelonQUelonSTelonD_MAX_HITS_TO_PROCelonSS_ARelon_DIFFelonRelonNT_STAT =
+      SelonarchCountelonr.elonxport("relonquelonstelond_max_hits_to_procelonss_arelon_diffelonrelonnt");
 
-  private static final SearchRateCounter REQUEST_WITH_MORE_THAN_2K_NUM_RESULTS_STAT =
-      SearchRateCounter.export("request_with_more_than_2k_num_result");
-  private static final SearchRateCounter REQUEST_WITH_MORE_THAN_4K_NUM_RESULTS_STAT =
-      SearchRateCounter.export("request_with_more_than_4k_num_result");
+  privatelon static final SelonarchRatelonCountelonr RelonQUelonST_WITH_MORelon_THAN_2K_NUM_RelonSULTS_STAT =
+      SelonarchRatelonCountelonr.elonxport("relonquelonst_with_morelon_than_2k_num_relonsult");
+  privatelon static final SelonarchRatelonCountelonr RelonQUelonST_WITH_MORelon_THAN_4K_NUM_RelonSULTS_STAT =
+      SelonarchRatelonCountelonr.elonxport("relonquelonst_with_morelon_than_4k_num_relonsult");
 
-  // Stats for tracking clock skew between earlybird and the client-specified request timestamp.
-  @VisibleForTesting
-  public static final SearchTimerStats CLIENT_CLOCK_DIFF_ABS =
-      SearchTimerStats.export("client_clock_diff_abs", TimeUnit.MILLISECONDS, false, true);
-  @VisibleForTesting
-  public static final SearchTimerStats CLIENT_CLOCK_DIFF_POS =
-      SearchTimerStats.export("client_clock_diff_pos", TimeUnit.MILLISECONDS, false, true);
-  @VisibleForTesting
-  public static final SearchTimerStats CLIENT_CLOCK_DIFF_NEG =
-      SearchTimerStats.export("client_clock_diff_neg", TimeUnit.MILLISECONDS, false, true);
-  @VisibleForTesting
-  public static final SearchRateCounter CLIENT_CLOCK_DIFF_MISSING =
-      SearchRateCounter.export("client_clock_diff_missing");
+  // Stats for tracking clock skelonw belontwelonelonn elonarlybird and thelon clielonnt-speloncifielond relonquelonst timelonstamp.
+  @VisiblelonForTelonsting
+  public static final SelonarchTimelonrStats CLIelonNT_CLOCK_DIFF_ABS =
+      SelonarchTimelonrStats.elonxport("clielonnt_clock_diff_abs", TimelonUnit.MILLISelonCONDS, falselon, truelon);
+  @VisiblelonForTelonsting
+  public static final SelonarchTimelonrStats CLIelonNT_CLOCK_DIFF_POS =
+      SelonarchTimelonrStats.elonxport("clielonnt_clock_diff_pos", TimelonUnit.MILLISelonCONDS, falselon, truelon);
+  @VisiblelonForTelonsting
+  public static final SelonarchTimelonrStats CLIelonNT_CLOCK_DIFF_NelonG =
+      SelonarchTimelonrStats.elonxport("clielonnt_clock_diff_nelong", TimelonUnit.MILLISelonCONDS, falselon, truelon);
+  @VisiblelonForTelonsting
+  public static final SelonarchRatelonCountelonr CLIelonNT_CLOCK_DIFF_MISSING =
+      SelonarchRatelonCountelonr.elonxport("clielonnt_clock_diff_missing");
 
-  private static final int MAX_NUM_RESULTS = 4000;
-  private static final int OLD_MAX_NUM_RESULTS = 2000;
+  privatelon static final int MAX_NUM_RelonSULTS = 4000;
+  privatelon static final int OLD_MAX_NUM_RelonSULTS = 2000;
 
-  private EarlybirdRequestUtil() {
+  privatelon elonarlybirdRelonquelonstUtil() {
   }
 
   /**
-   * Logs and fixes some potentially excessive values in the given request.
+   * Logs and fixelons somelon potelonntially elonxcelonssivelon valuelons in thelon givelonn relonquelonst.
    */
-  public static void logAndFixExcessiveValues(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    if (searchQuery != null) {
-      int maxHitsToProcess = 0;
-      int numResultsToReturn = 0;
+  public static void logAndFixelonxcelonssivelonValuelons(elonarlybirdRelonquelonst relonquelonst) {
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
+    if (selonarchQuelonry != null) {
+      int maxHitsToProcelonss = 0;
+      int numRelonsultsToRelonturn = 0;
 
-      if (searchQuery.isSetCollectorParams()) {
-        numResultsToReturn = searchQuery.getCollectorParams().getNumResultsToReturn();
+      if (selonarchQuelonry.isSelontCollelonctorParams()) {
+        numRelonsultsToRelonturn = selonarchQuelonry.gelontCollelonctorParams().gelontNumRelonsultsToRelonturn();
 
-        if (searchQuery.getCollectorParams().isSetTerminationParams()) {
-          maxHitsToProcess =
-              searchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess();
+        if (selonarchQuelonry.gelontCollelonctorParams().isSelontTelonrminationParams()) {
+          maxHitsToProcelonss =
+              selonarchQuelonry.gelontCollelonctorParams().gelontTelonrminationParams().gelontMaxHitsToProcelonss();
         }
       }
 
-      if (maxHitsToProcess > 50000) {
-        LOG.warn("Excessive max hits in " + request.toString());
+      if (maxHitsToProcelonss > 50000) {
+        LOG.warn("elonxcelonssivelon max hits in " + relonquelonst.toString());
       }
 
-      // We used to limit number of results to 2000. These two counters help us track if we receive
-      // too many requests with large number of results set.
-      String warningMessageTemplate = "Exceed %d num result in %s";
-      if (numResultsToReturn > MAX_NUM_RESULTS) {
-        LOG.warn(String.format(warningMessageTemplate, MAX_NUM_RESULTS, request.toString()));
-        REQUEST_WITH_MORE_THAN_4K_NUM_RESULTS_STAT.increment();
-        searchQuery.getCollectorParams().setNumResultsToReturn(MAX_NUM_RESULTS);
-      } else if (numResultsToReturn > OLD_MAX_NUM_RESULTS) {
-        LOG.warn(String.format(warningMessageTemplate, OLD_MAX_NUM_RESULTS, request.toString()));
-        REQUEST_WITH_MORE_THAN_2K_NUM_RESULTS_STAT.increment();
+      // Welon uselond to limit numbelonr of relonsults to 2000. Thelonselon two countelonrs helonlp us track if welon reloncelonivelon
+      // too many relonquelonsts with largelon numbelonr of relonsults selont.
+      String warningMelonssagelonTelonmplatelon = "elonxcelonelond %d num relonsult in %s";
+      if (numRelonsultsToRelonturn > MAX_NUM_RelonSULTS) {
+        LOG.warn(String.format(warningMelonssagelonTelonmplatelon, MAX_NUM_RelonSULTS, relonquelonst.toString()));
+        RelonQUelonST_WITH_MORelon_THAN_4K_NUM_RelonSULTS_STAT.increlonmelonnt();
+        selonarchQuelonry.gelontCollelonctorParams().selontNumRelonsultsToRelonturn(MAX_NUM_RelonSULTS);
+      } elonlselon if (numRelonsultsToRelonturn > OLD_MAX_NUM_RelonSULTS) {
+        LOG.warn(String.format(warningMelonssagelonTelonmplatelon, OLD_MAX_NUM_RelonSULTS, relonquelonst.toString()));
+        RelonQUelonST_WITH_MORelon_THAN_2K_NUM_RelonSULTS_STAT.increlonmelonnt();
       }
 
-      ThriftSearchRelevanceOptions options = searchQuery.getRelevanceOptions();
+      ThriftSelonarchRelonlelonvancelonOptions options = selonarchQuelonry.gelontRelonlelonvancelonOptions();
       if (options != null) {
-        if (options.getMaxHitsToProcess() > 50000) {
-          LOG.warn("Excessive max hits in " + request.toString());
+        if (options.gelontMaxHitsToProcelonss() > 50000) {
+          LOG.warn("elonxcelonssivelon max hits in " + relonquelonst.toString());
         }
       }
     }
   }
 
   /**
-   * Sets {@code request.searchQuery.collectorParams} if they are not already set.
+   * Selonts {@codelon relonquelonst.selonarchQuelonry.collelonctorParams} if thelony arelon not alrelonady selont.
    */
-  public static void checkAndSetCollectorParams(EarlybirdRequest request) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    if (searchQuery == null) {
-      return;
+  public static void chelonckAndSelontCollelonctorParams(elonarlybirdRelonquelonst relonquelonst) {
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
+    if (selonarchQuelonry == null) {
+      relonturn;
     }
 
-    if (!searchQuery.isSetCollectorParams()) {
-      searchQuery.setCollectorParams(new CollectorParams());
+    if (!selonarchQuelonry.isSelontCollelonctorParams()) {
+      selonarchQuelonry.selontCollelonctorParams(nelonw CollelonctorParams());
     }
-    if (!searchQuery.getCollectorParams().isSetNumResultsToReturn()) {
-      searchQuery.getCollectorParams().setNumResultsToReturn(searchQuery.getNumResults());
+    if (!selonarchQuelonry.gelontCollelonctorParams().isSelontNumRelonsultsToRelonturn()) {
+      selonarchQuelonry.gelontCollelonctorParams().selontNumRelonsultsToRelonturn(selonarchQuelonry.gelontNumRelonsults());
     }
-    if (!searchQuery.getCollectorParams().isSetTerminationParams()) {
-      CollectorTerminationParams terminationParams = new CollectorTerminationParams();
-      if (request.isSetTimeoutMs()) {
-        terminationParams.setTimeoutMs(request.getTimeoutMs());
+    if (!selonarchQuelonry.gelontCollelonctorParams().isSelontTelonrminationParams()) {
+      CollelonctorTelonrminationParams telonrminationParams = nelonw CollelonctorTelonrminationParams();
+      if (relonquelonst.isSelontTimelonoutMs()) {
+        telonrminationParams.selontTimelonoutMs(relonquelonst.gelontTimelonoutMs());
       }
-      if (request.isSetMaxQueryCost()) {
-        terminationParams.setMaxQueryCost(request.getMaxQueryCost());
+      if (relonquelonst.isSelontMaxQuelonryCost()) {
+        telonrminationParams.selontMaxQuelonryCost(relonquelonst.gelontMaxQuelonryCost());
       }
-      searchQuery.getCollectorParams().setTerminationParams(terminationParams);
+      selonarchQuelonry.gelontCollelonctorParams().selontTelonrminationParams(telonrminationParams);
     }
-    setMaxHitsToProcess(searchQuery);
+    selontMaxHitsToProcelonss(selonarchQuelonry);
   }
 
-  // Early birds will only look for maxHitsToProcess in CollectorParameters.TerminationParameters.
-  // Priority to set  CollectorParameters.TerminationParameters.maxHitsToProcess is
-  // 1 Collector parameters
-  // 2 RelevanceParameters
-  // 3 ThrfitQuery.maxHitsToProcess
-  private static void setMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
-    CollectorTerminationParams terminationParams = thriftSearchQuery
-        .getCollectorParams().getTerminationParams();
-    if (!terminationParams.isSetMaxHitsToProcess()) {
-      if (thriftSearchQuery.isSetRelevanceOptions()
-          && thriftSearchQuery.getRelevanceOptions().isSetMaxHitsToProcess()) {
-        terminationParams.setMaxHitsToProcess(
-            thriftSearchQuery.getRelevanceOptions().getMaxHitsToProcess());
-      } else {
-        terminationParams.setMaxHitsToProcess(thriftSearchQuery.getMaxHitsToProcess());
+  // elonarly birds will only look for maxHitsToProcelonss in CollelonctorParamelontelonrs.TelonrminationParamelontelonrs.
+  // Priority to selont  CollelonctorParamelontelonrs.TelonrminationParamelontelonrs.maxHitsToProcelonss is
+  // 1 Collelonctor paramelontelonrs
+  // 2 RelonlelonvancelonParamelontelonrs
+  // 3 ThrfitQuelonry.maxHitsToProcelonss
+  privatelon static void selontMaxHitsToProcelonss(ThriftSelonarchQuelonry thriftSelonarchQuelonry) {
+    CollelonctorTelonrminationParams telonrminationParams = thriftSelonarchQuelonry
+        .gelontCollelonctorParams().gelontTelonrminationParams();
+    if (!telonrminationParams.isSelontMaxHitsToProcelonss()) {
+      if (thriftSelonarchQuelonry.isSelontRelonlelonvancelonOptions()
+          && thriftSelonarchQuelonry.gelontRelonlelonvancelonOptions().isSelontMaxHitsToProcelonss()) {
+        telonrminationParams.selontMaxHitsToProcelonss(
+            thriftSelonarchQuelonry.gelontRelonlelonvancelonOptions().gelontMaxHitsToProcelonss());
+      } elonlselon {
+        telonrminationParams.selontMaxHitsToProcelonss(thriftSelonarchQuelonry.gelontMaxHitsToProcelonss());
       }
     }
   }
 
   /**
-   * Creates a copy of the given request and unsets the binary fields to make the logged line for
-   * this request look nicer.
+   * Crelonatelons a copy of thelon givelonn relonquelonst and unselonts thelon binary fielonlds to makelon thelon loggelond linelon for
+   * this relonquelonst look nicelonr.
    */
-  public static EarlybirdRequest copyAndClearUnnecessaryValuesForLogging(EarlybirdRequest request) {
-    EarlybirdRequest copiedRequest = request.deepCopy();
+  public static elonarlybirdRelonquelonst copyAndClelonarUnneloncelonssaryValuelonsForLogging(elonarlybirdRelonquelonst relonquelonst) {
+    elonarlybirdRelonquelonst copielondRelonquelonst = relonquelonst.delonelonpCopy();
 
-    if (copiedRequest.isSetSearchQuery()) {
-      // These fields are very large and the binary data doesn't play well with formz
-      copiedRequest.getSearchQuery().unsetTrustedFilter();
-      copiedRequest.getSearchQuery().unsetDirectFollowFilter();
+    if (copielondRelonquelonst.isSelontSelonarchQuelonry()) {
+      // Thelonselon fielonlds arelon velonry largelon and thelon binary data doelonsn't play welonll with formz
+      copielondRelonquelonst.gelontSelonarchQuelonry().unselontTrustelondFiltelonr();
+      copielondRelonquelonst.gelontSelonarchQuelonry().unselontDirelonctFollowFiltelonr();
     }
 
-    return copiedRequest;
+    relonturn copielondRelonquelonst;
   }
 
   /**
-   * Updates some hit-related stats based on the parameters in the given request.
+   * Updatelons somelon hit-relonlatelond stats baselond on thelon paramelontelonrs in thelon givelonn relonquelonst.
    */
-  public static void updateHitsCounters(EarlybirdRequest request) {
-    if ((request == null) || !request.isSetSearchQuery()) {
-      return;
+  public static void updatelonHitsCountelonrs(elonarlybirdRelonquelonst relonquelonst) {
+    if ((relonquelonst == null) || !relonquelonst.isSelontSelonarchQuelonry()) {
+      relonturn;
     }
 
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
 
-    if (searchQuery.isSetNumResults()) {
-      REQUESTED_NUM_RESULTS_STAT.addSample(searchQuery.getNumResults());
+    if (selonarchQuelonry.isSelontNumRelonsults()) {
+      RelonQUelonSTelonD_NUM_RelonSULTS_STAT.addSamplelon(selonarchQuelonry.gelontNumRelonsults());
     }
 
-    if (searchQuery.isSetMaxHitsToProcess()) {
-      REQUESTED_MAX_HITS_TO_PROCESS_STAT.addSample(searchQuery.getMaxHitsToProcess());
+    if (selonarchQuelonry.isSelontMaxHitsToProcelonss()) {
+      RelonQUelonSTelonD_MAX_HITS_TO_PROCelonSS_STAT.addSamplelon(selonarchQuelonry.gelontMaxHitsToProcelonss());
     }
 
-    Integer collectorParamsMaxHitsToProcess = null;
-    if (searchQuery.isSetCollectorParams()
-        && searchQuery.getCollectorParams().isSetTerminationParams()
-        && searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
-      collectorParamsMaxHitsToProcess =
-          searchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess();
-      REQUESTED_COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_STAT
-          .addSample(collectorParamsMaxHitsToProcess);
+    Intelongelonr collelonctorParamsMaxHitsToProcelonss = null;
+    if (selonarchQuelonry.isSelontCollelonctorParams()
+        && selonarchQuelonry.gelontCollelonctorParams().isSelontTelonrminationParams()
+        && selonarchQuelonry.gelontCollelonctorParams().gelontTelonrminationParams().isSelontMaxHitsToProcelonss()) {
+      collelonctorParamsMaxHitsToProcelonss =
+          selonarchQuelonry.gelontCollelonctorParams().gelontTelonrminationParams().gelontMaxHitsToProcelonss();
+      RelonQUelonSTelonD_COLLelonCTOR_PARAMS_MAX_HITS_TO_PROCelonSS_STAT
+          .addSamplelon(collelonctorParamsMaxHitsToProcelonss);
     }
 
-    Integer relevanceOptionsMaxHitsToProcess = null;
-    if (searchQuery.isSetRelevanceOptions()
-        && searchQuery.getRelevanceOptions().isSetMaxHitsToProcess()) {
-      relevanceOptionsMaxHitsToProcess = searchQuery.getRelevanceOptions().getMaxHitsToProcess();
-      REQUESTED_RELEVANCE_OPTIONS_MAX_HITS_TO_PROCESS_STAT
-          .addSample(relevanceOptionsMaxHitsToProcess);
+    Intelongelonr relonlelonvancelonOptionsMaxHitsToProcelonss = null;
+    if (selonarchQuelonry.isSelontRelonlelonvancelonOptions()
+        && selonarchQuelonry.gelontRelonlelonvancelonOptions().isSelontMaxHitsToProcelonss()) {
+      relonlelonvancelonOptionsMaxHitsToProcelonss = selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontMaxHitsToProcelonss();
+      RelonQUelonSTelonD_RelonLelonVANCelon_OPTIONS_MAX_HITS_TO_PROCelonSS_STAT
+          .addSamplelon(relonlelonvancelonOptionsMaxHitsToProcelonss);
     }
 
-    if ((collectorParamsMaxHitsToProcess != null)
-        && (relevanceOptionsMaxHitsToProcess != null)
-        && (collectorParamsMaxHitsToProcess != relevanceOptionsMaxHitsToProcess)) {
-      REQUESTED_MAX_HITS_TO_PROCESS_ARE_DIFFERENT_STAT.increment();
+    if ((collelonctorParamsMaxHitsToProcelonss != null)
+        && (relonlelonvancelonOptionsMaxHitsToProcelonss != null)
+        && (collelonctorParamsMaxHitsToProcelonss != relonlelonvancelonOptionsMaxHitsToProcelonss)) {
+      RelonQUelonSTelonD_MAX_HITS_TO_PROCelonSS_ARelon_DIFFelonRelonNT_STAT.increlonmelonnt();
     }
   }
 
-  public static boolean isCachingAllowed(EarlybirdRequest request) {
-    return !request.isSetCachingParams() || request.getCachingParams().isCache();
+  public static boolelonan isCachingAllowelond(elonarlybirdRelonquelonst relonquelonst) {
+    relonturn !relonquelonst.isSelontCachingParams() || relonquelonst.gelontCachingParams().isCachelon();
   }
 
   /**
-   * Track the clock difference between this server and its client's specified request time.
-   * When there is no clock drift between machines, this will record the inflight time between this
-   * server and the client.
+   * Track thelon clock diffelonrelonncelon belontwelonelonn this selonrvelonr and its clielonnt's speloncifielond relonquelonst timelon.
+   * Whelonn thelonrelon is no clock drift belontwelonelonn machinelons, this will reloncord thelon inflight timelon belontwelonelonn this
+   * selonrvelonr and thelon clielonnt.
    *
-   * @param request the incoming earlybird request.
+   * @param relonquelonst thelon incoming elonarlybird relonquelonst.
    */
-  public static void recordClientClockDiff(EarlybirdRequest request) {
-    if (request.isSetClientRequestTimeMs()) {
-      final long timeDiff = System.currentTimeMillis() - request.getClientRequestTimeMs();
-      final long timeDiffAbs = Math.abs(timeDiff);
-      if (timeDiff >= 0) {
-        CLIENT_CLOCK_DIFF_POS.timerIncrement(timeDiffAbs);
-      } else {
-        CLIENT_CLOCK_DIFF_NEG.timerIncrement(timeDiffAbs);
+  public static void reloncordClielonntClockDiff(elonarlybirdRelonquelonst relonquelonst) {
+    if (relonquelonst.isSelontClielonntRelonquelonstTimelonMs()) {
+      final long timelonDiff = Systelonm.currelonntTimelonMillis() - relonquelonst.gelontClielonntRelonquelonstTimelonMs();
+      final long timelonDiffAbs = Math.abs(timelonDiff);
+      if (timelonDiff >= 0) {
+        CLIelonNT_CLOCK_DIFF_POS.timelonrIncrelonmelonnt(timelonDiffAbs);
+      } elonlselon {
+        CLIelonNT_CLOCK_DIFF_NelonG.timelonrIncrelonmelonnt(timelonDiffAbs);
       }
-      CLIENT_CLOCK_DIFF_ABS.timerIncrement(timeDiffAbs);
-    } else {
-      CLIENT_CLOCK_DIFF_MISSING.increment();
+      CLIelonNT_CLOCK_DIFF_ABS.timelonrIncrelonmelonnt(timelonDiffAbs);
+    } elonlselon {
+      CLIelonNT_CLOCK_DIFF_MISSING.increlonmelonnt();
     }
   }
 }

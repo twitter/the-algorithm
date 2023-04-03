@@ -1,160 +1,160 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Selont;
+import java.util.logging.Lelonvelonl;
+import java.util.logging.Loggelonr;
 
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.search.Link;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchQueryVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Disjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Phraselon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.SpeloncialTelonrm;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Telonrm;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.Link;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchQuelonryVisitor;
 
 /**
- * Visitor to track the fields hits of each node
- * Returns the common fields among conjunctions and the union of the fields amongst disjunctions
+ * Visitor to track thelon fielonlds hits of elonach nodelon
+ * Relonturns thelon common fielonlds among conjunctions and thelon union of thelon fielonlds amongst disjunctions
  */
-public final class QueryCommonFieldHitsVisitor extends SearchQueryVisitor<Set<String>> {
+public final class QuelonryCommonFielonldHitsVisitor elonxtelonnds SelonarchQuelonryVisitor<Selont<String>> {
 
-  private static final Logger LOG = Logger.getLogger(QueryCommonFieldHitsVisitor.class.getName());
+  privatelon static final Loggelonr LOG = Loggelonr.gelontLoggelonr(QuelonryCommonFielonldHitsVisitor.class.gelontNamelon());
 
-  private Map<Query, Integer> nodeToRankMap;
-  private Map<Integer, List<String>> hitFieldsByRank;
+  privatelon Map<Quelonry, Intelongelonr> nodelonToRankMap;
+  privatelon Map<Intelongelonr, List<String>> hitFielonldsByRank;
 
   /**
-   * Find query term hit intersections based on hitmap given by HitAttributeHelper
+   * Find quelonry telonrm hit intelonrselonctions baselond on hitmap givelonn by HitAttributelonHelonlpelonr
    *
-   * @param hitAttributeHelper the HitAttributeHelper
-   * @param docID documentID
-   * @param query the query searched
-   * @return a set of hit fields in String representation
+   * @param hitAttributelonHelonlpelonr thelon HitAttributelonHelonlpelonr
+   * @param docID documelonntID
+   * @param quelonry thelon quelonry selonarchelond
+   * @relonturn a selont of hit fielonlds in String relonprelonselonntation
    */
-  public static Set<String> findIntersection(
-      HitAttributeHelper hitAttributeHelper,
+  public static Selont<String> findIntelonrselonction(
+      HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr,
       int docID,
-      Query query) {
-    return findIntersection(hitAttributeHelper.getNodeToRankMap(),
-                            hitAttributeHelper.getHitAttribution(docID),
-                            query);
+      Quelonry quelonry) {
+    relonturn findIntelonrselonction(hitAttributelonHelonlpelonr.gelontNodelonToRankMap(),
+                            hitAttributelonHelonlpelonr.gelontHitAttribution(docID),
+                            quelonry);
   }
 
   /**
-   * Find query term hit intersections based on hitmap given by HitAttributeHelper
+   * Find quelonry telonrm hit intelonrselonctions baselond on hitmap givelonn by HitAttributelonHelonlpelonr
    *
-   * @param nodeToRankMap the map of query node to its integer rank value
-   * @param hitFieldsByRank map of rank to list of hit fields in String representation
-   * @param query the query searched
-   * @return a set of hit fields in String representation
+   * @param nodelonToRankMap thelon map of quelonry nodelon to its intelongelonr rank valuelon
+   * @param hitFielonldsByRank map of rank to list of hit fielonlds in String relonprelonselonntation
+   * @param quelonry thelon quelonry selonarchelond
+   * @relonturn a selont of hit fielonlds in String relonprelonselonntation
    */
-  public static Set<String> findIntersection(
-      Map<Query, Integer> nodeToRankMap,
-      Map<Integer, List<String>> hitFieldsByRank,
-      Query query) {
-    QueryCommonFieldHitsVisitor visitor =
-        new QueryCommonFieldHitsVisitor(nodeToRankMap, hitFieldsByRank);
+  public static Selont<String> findIntelonrselonction(
+      Map<Quelonry, Intelongelonr> nodelonToRankMap,
+      Map<Intelongelonr, List<String>> hitFielonldsByRank,
+      Quelonry quelonry) {
+    QuelonryCommonFielonldHitsVisitor visitor =
+        nelonw QuelonryCommonFielonldHitsVisitor(nodelonToRankMap, hitFielonldsByRank);
     try {
-      Set<String> returnSet = query.accept(visitor);
-      return returnSet;
-    } catch (QueryParserException e) {
-      LOG.log(Level.SEVERE, "Could not find intersection for query [" + query + "]: ", e);
-      return Collections.emptySet();
+      Selont<String> relonturnSelont = quelonry.accelonpt(visitor);
+      relonturn relonturnSelont;
+    } catch (QuelonryParselonrelonxcelonption elon) {
+      LOG.log(Lelonvelonl.SelonVelonRelon, "Could not find intelonrselonction for quelonry [" + quelonry + "]: ", elon);
+      relonturn Collelonctions.elonmptySelont();
     }
   }
 
-  private QueryCommonFieldHitsVisitor(Map<Query, Integer> nodeToRankMap,
-                                      Map<Integer, List<String>> hitFieldsByRank) {
-    this.nodeToRankMap = nodeToRankMap;
-    this.hitFieldsByRank = hitFieldsByRank;
+  privatelon QuelonryCommonFielonldHitsVisitor(Map<Quelonry, Intelongelonr> nodelonToRankMap,
+                                      Map<Intelongelonr, List<String>> hitFielonldsByRank) {
+    this.nodelonToRankMap = nodelonToRankMap;
+    this.hitFielonldsByRank = hitFielonldsByRank;
   }
 
-  @Override
-  public Set<String> visit(Disjunction disjunction) throws QueryParserException {
-    Set<String> fieldHitIntersections = Sets.newHashSet();
-    for (Query child : disjunction.getChildren()) {
-      fieldHitIntersections.addAll(child.accept(this));
+  @Ovelonrridelon
+  public Selont<String> visit(Disjunction disjunction) throws QuelonryParselonrelonxcelonption {
+    Selont<String> fielonldHitIntelonrselonctions = Selonts.nelonwHashSelont();
+    for (Quelonry child : disjunction.gelontChildrelonn()) {
+      fielonldHitIntelonrselonctions.addAll(child.accelonpt(this));
     }
-    return fieldHitIntersections;
+    relonturn fielonldHitIntelonrselonctions;
   }
 
-  @Override
-  public Set<String> visit(Conjunction conjunction) throws QueryParserException {
-    List<Query> children = conjunction.getChildren();
-    if (!children.isEmpty()) {
-      boolean initializedIntersections = false;
-      Set<String> fieldHitIntersections = Sets.newHashSet();
-      for (Query child : children) {
-        Set<String> hits = child.accept(this);
-        if (hits.isEmpty()) {
-          // if it is empty, it means this query node is not of term type
-          // and we do not include these in the field intersection
-          // eg. cache filters, proximity groups
-          continue;
+  @Ovelonrridelon
+  public Selont<String> visit(Conjunction conjunction) throws QuelonryParselonrelonxcelonption {
+    List<Quelonry> childrelonn = conjunction.gelontChildrelonn();
+    if (!childrelonn.iselonmpty()) {
+      boolelonan initializelondIntelonrselonctions = falselon;
+      Selont<String> fielonldHitIntelonrselonctions = Selonts.nelonwHashSelont();
+      for (Quelonry child : childrelonn) {
+        Selont<String> hits = child.accelonpt(this);
+        if (hits.iselonmpty()) {
+          // if it is elonmpty, it melonans this quelonry nodelon is not of telonrm typelon
+          // and welon do not includelon thelonselon in thelon fielonld intelonrselonction
+          // elong. cachelon filtelonrs, proximity groups
+          continuelon;
         }
-        if (!initializedIntersections) {
-          fieldHitIntersections.addAll(hits);
-          initializedIntersections = true;
-        } else {
-          fieldHitIntersections.retainAll(hits);
+        if (!initializelondIntelonrselonctions) {
+          fielonldHitIntelonrselonctions.addAll(hits);
+          initializelondIntelonrselonctions = truelon;
+        } elonlselon {
+          fielonldHitIntelonrselonctions.relontainAll(hits);
         }
       }
-      return fieldHitIntersections;
+      relonturn fielonldHitIntelonrselonctions;
     }
-    return Collections.emptySet();
+    relonturn Collelonctions.elonmptySelont();
   }
 
-  @Override
-  public Set<String> visit(Term term) throws QueryParserException {
-    Set<String> fieldHitIntersections = Sets.newHashSet();
-    Integer rank = nodeToRankMap.get(term);
+  @Ovelonrridelon
+  public Selont<String> visit(Telonrm telonrm) throws QuelonryParselonrelonxcelonption {
+    Selont<String> fielonldHitIntelonrselonctions = Selonts.nelonwHashSelont();
+    Intelongelonr rank = nodelonToRankMap.gelont(telonrm);
     if (rank != null) {
-      List<String> fields = hitFieldsByRank.get(rank);
-      // for disjunction cases where a term may not have any hits
-      if (fields != null) {
-        fieldHitIntersections.addAll(fields);
+      List<String> fielonlds = hitFielonldsByRank.gelont(rank);
+      // for disjunction caselons whelonrelon a telonrm may not havelon any hits
+      if (fielonlds != null) {
+        fielonldHitIntelonrselonctions.addAll(fielonlds);
       }
     }
-    return fieldHitIntersections;
+    relonturn fielonldHitIntelonrselonctions;
   }
 
-  @Override
-  public Set<String> visit(SpecialTerm specialTerm) throws QueryParserException {
-    // This is way of splitting @mentions ensures consistency with way the lucene query is built in
-    // expertsearch
-    if (specialTerm.getType() == SpecialTerm.Type.MENTION && specialTerm.getValue().contains("_")) {
-      Phrase phrase = new Phrase(specialTerm.getValue().split("_"));
-      return phrase.accept(this);
+  @Ovelonrridelon
+  public Selont<String> visit(SpeloncialTelonrm speloncialTelonrm) throws QuelonryParselonrelonxcelonption {
+    // This is way of splitting @melonntions elonnsurelons consistelonncy with way thelon lucelonnelon quelonry is built in
+    // elonxpelonrtselonarch
+    if (speloncialTelonrm.gelontTypelon() == SpeloncialTelonrm.Typelon.MelonNTION && speloncialTelonrm.gelontValuelon().contains("_")) {
+      Phraselon phraselon = nelonw Phraselon(speloncialTelonrm.gelontValuelon().split("_"));
+      relonturn phraselon.accelonpt(this);
     }
-    return specialTerm.toTermOrPhrase().accept(this);
+    relonturn speloncialTelonrm.toTelonrmOrPhraselon().accelonpt(this);
   }
 
-  @Override
-  public Set<String> visit(SearchOperator operator) throws QueryParserException {
-    return Collections.emptySet();
+  @Ovelonrridelon
+  public Selont<String> visit(SelonarchOpelonrator opelonrator) throws QuelonryParselonrelonxcelonption {
+    relonturn Collelonctions.elonmptySelont();
   }
 
-  @Override
-  public Set<String> visit(Link link) throws QueryParserException {
-    return link.toPhrase().accept(this);
+  @Ovelonrridelon
+  public Selont<String> visit(Link link) throws QuelonryParselonrelonxcelonption {
+    relonturn link.toPhraselon().accelonpt(this);
   }
 
-  @Override
-  public Set<String> visit(Phrase phrase) throws QueryParserException {
-    // All terms in the phrase should return the same hits fields, just check the first one
-    List<String> terms = phrase.getTerms();
-    if (!terms.isEmpty()) {
-      Term term = new Term(phrase.getTerms().get(0));
-      return term.accept(this);
+  @Ovelonrridelon
+  public Selont<String> visit(Phraselon phraselon) throws QuelonryParselonrelonxcelonption {
+    // All telonrms in thelon phraselon should relonturn thelon samelon hits fielonlds, just chelonck thelon first onelon
+    List<String> telonrms = phraselon.gelontTelonrms();
+    if (!telonrms.iselonmpty()) {
+      Telonrm telonrm = nelonw Telonrm(phraselon.gelontTelonrms().gelont(0));
+      relonturn telonrm.accelonpt(this);
     }
-    return Collections.emptySet();
+    relonturn Collelonctions.elonmptySelont();
   }
 }

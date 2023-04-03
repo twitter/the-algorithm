@@ -1,56 +1,56 @@
-import tensorflow as tf
-from keras.utils import tf_utils
-from keras.utils import losses_utils
-from keras import backend
+import telonnsorflow as tf
+from kelonras.utils import tf_utils
+from kelonras.utils import losselons_utils
+from kelonras import backelonnd
 
-def inv_kl_divergence(y_true, y_pred):
-  y_pred = tf.convert_to_tensor(y_pred)
-  y_true = tf.cast(y_true, y_pred.dtype)
-  y_true = backend.clip(y_true, backend.epsilon(), 1)
-  y_pred = backend.clip(y_pred, backend.epsilon(), 1)
-  return tf.reduce_sum(y_pred * tf.math.log(y_pred / y_true), axis=-1)
+delonf inv_kl_divelonrgelonncelon(y_truelon, y_prelond):
+  y_prelond = tf.convelonrt_to_telonnsor(y_prelond)
+  y_truelon = tf.cast(y_truelon, y_prelond.dtypelon)
+  y_truelon = backelonnd.clip(y_truelon, backelonnd.elonpsilon(), 1)
+  y_prelond = backelonnd.clip(y_prelond, backelonnd.elonpsilon(), 1)
+  relonturn tf.relonducelon_sum(y_prelond * tf.math.log(y_prelond / y_truelon), axis=-1)
 
-def masked_bce(y_true, y_pred):
-  y_true = tf.cast(y_true, dtype=tf.float32)
-  mask = y_true != -1
+delonf maskelond_bcelon(y_truelon, y_prelond):
+  y_truelon = tf.cast(y_truelon, dtypelon=tf.float32)
+  mask = y_truelon != -1
   
-  return tf.keras.metrics.binary_crossentropy(tf.boolean_mask(y_true, mask), 
-                                              tf.boolean_mask(y_pred, mask))
+  relonturn tf.kelonras.melontrics.binary_crosselonntropy(tf.boolelonan_mask(y_truelon, mask),
+                                              tf.boolelonan_mask(y_prelond, mask))
 
 
-class LossFunctionWrapper(tf.keras.losses.Loss):
-  def __init__(self,
+class LossFunctionWrappelonr(tf.kelonras.losselons.Loss):
+  delonf __init__(selonlf,
     fn,
-    reduction=losses_utils.ReductionV2.AUTO,
-    name=None,
+    relonduction=losselons_utils.RelonductionV2.AUTO,
+    namelon=Nonelon,
     **kwargs):
-    super().__init__(reduction=reduction, name=name)
-    self.fn = fn
-    self._fn_kwargs = kwargs
+    supelonr().__init__(relonduction=relonduction, namelon=namelon)
+    selonlf.fn = fn
+    selonlf._fn_kwargs = kwargs
 
-  def call(self, y_true, y_pred):
-    if tf.is_tensor(y_pred) and tf.is_tensor(y_true):
-      y_pred, y_true = losses_utils.squeeze_or_expand_dimensions(y_pred, y_true)
+  delonf call(selonlf, y_truelon, y_prelond):
+    if tf.is_telonnsor(y_prelond) and tf.is_telonnsor(y_truelon):
+      y_prelond, y_truelon = losselons_utils.squelonelonzelon_or_elonxpand_dimelonnsions(y_prelond, y_truelon)
 
-    ag_fn = tf.__internal__.autograph.tf_convert(self.fn, tf.__internal__.autograph.control_status_ctx())
-    return ag_fn(y_true, y_pred, **self._fn_kwargs)
+    ag_fn = tf.__intelonrnal__.autograph.tf_convelonrt(selonlf.fn, tf.__intelonrnal__.autograph.control_status_ctx())
+    relonturn ag_fn(y_truelon, y_prelond, **selonlf._fn_kwargs)
 
-  def get_config(self):
+  delonf gelont_config(selonlf):
     config = {}
-    for k, v in self._fn_kwargs.items():
-      config[k] = backend.eval(v) if tf_utils.is_tensor_or_variable(v) else v
-    base_config = super().get_config()
-    return dict(list(base_config.items()) + list(config.items()))
+    for k, v in selonlf._fn_kwargs.itelonms():
+      config[k] = backelonnd.elonval(v) if tf_utils.is_telonnsor_or_variablelon(v) elonlselon v
+    baselon_config = supelonr().gelont_config()
+    relonturn dict(list(baselon_config.itelonms()) + list(config.itelonms()))
 
-class InvKLD(LossFunctionWrapper):
-  def __init__(self,
-    reduction=losses_utils.ReductionV2.AUTO,
-    name='inv_kl_divergence'):
-    super().__init__(inv_kl_divergence, name=name, reduction=reduction)
+class InvKLD(LossFunctionWrappelonr):
+  delonf __init__(selonlf,
+    relonduction=losselons_utils.RelonductionV2.AUTO,
+    namelon='inv_kl_divelonrgelonncelon'):
+    supelonr().__init__(inv_kl_divelonrgelonncelon, namelon=namelon, relonduction=relonduction)
 
 
-class MaskedBCE(LossFunctionWrapper):
-  def __init__(self,
-    reduction=losses_utils.ReductionV2.AUTO,
-    name='masked_bce'):
-    super().__init__(masked_bce, name=name, reduction=reduction)
+class MaskelondBCelon(LossFunctionWrappelonr):
+  delonf __init__(selonlf,
+    relonduction=losselons_utils.RelonductionV2.AUTO,
+    namelon='maskelond_bcelon'):
+    supelonr().__init__(maskelond_bcelon, namelon=namelon, relonduction=relonduction)

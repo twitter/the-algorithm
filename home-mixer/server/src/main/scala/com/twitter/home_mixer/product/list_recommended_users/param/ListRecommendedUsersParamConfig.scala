@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.product.list_recommended_users.param
+packagelon com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.param
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ExcludedIdsMaxLengthParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.SupportedClientFSName
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
+import com.twittelonr.homelon_mixelonr.param.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.param.ListReloncommelonndelondUselonrsParam.elonxcludelondIdsMaxLelonngthParam
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.param.ListReloncommelonndelondUselonrsParam.SelonrvelonrMaxRelonsultsParam
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.param.ListReloncommelonndelondUselonrsParam.SupportelondClielonntFSNamelon
+import com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyNamelon
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ListRecommendedUsersParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableListRecommendedUsersProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@Singlelonton
+class ListReloncommelonndelondUselonrsParamConfig @Injelonct() () elonxtelonnds ProductParamConfig {
+  ovelonrridelon val elonnablelondDeloncidelonrKelony: DeloncidelonrKelonyNamelon = DeloncidelonrKelony.elonnablelonListReloncommelonndelondUselonrsProduct
+  ovelonrridelon val supportelondClielonntFSNamelon: String = SupportelondClielonntFSNamelon
 
-  override val boundedIntFSOverrides = Seq(
-    ServerMaxResultsParam,
-    ExcludedIdsMaxLengthParam
+  ovelonrridelon val boundelondIntFSOvelonrridelons = Selonq(
+    SelonrvelonrMaxRelonsultsParam,
+    elonxcludelondIdsMaxLelonngthParam
   )
 }

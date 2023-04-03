@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.service.urt
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.urt
 
-import com.fasterxml.jackson.databind.SerializationFeature
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.UrtTransportMarshaller
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.product_mixer.core.{thriftscala => t}
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.util.jackson.ScalaObjectMapper
+import com.fastelonrxml.jackson.databind.SelonrializationFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.UrtTransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.ProductDisablelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.product.relongistry.ProductPipelonlinelonRelongistry
+import com.twittelonr.product_mixelonr.corelon.{thriftscala => t}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import com.twittelonr.util.jackson.ScalaObjelonctMappelonr
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe.TypeTag
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.relonflelonct.runtimelon.univelonrselon.TypelonTag
 
 /**
- * Look up and execute products in the [[ProductPipelineRegistry]]
+ * Look up and elonxeloncutelon products in thelon [[ProductPipelonlinelonRelongistry]]
  */
-@Singleton
-class UrtService @Inject() (productPipelineRegistry: ProductPipelineRegistry) {
+@Singlelonton
+class UrtSelonrvicelon @Injelonct() (productPipelonlinelonRelongistry: ProductPipelonlinelonRelongistry) {
 
-  def getUrtResponse[RequestType <: Request](
-    request: RequestType,
+  delonf gelontUrtRelonsponselon[RelonquelonstTypelon <: Relonquelonst](
+    relonquelonst: RelonquelonstTypelon,
     params: Params
   )(
-    implicit requestTypeTag: TypeTag[RequestType]
-  ): Stitch[urt.TimelineResponse] =
-    productPipelineRegistry
-      .getProductPipeline[RequestType, urt.TimelineResponse](request.product)
-      .process(ProductPipelineRequest(request, params))
-      .handle {
-        // Detect ProductDisabled and convert it to TimelineUnavailable
-        case pipelineFailure: PipelineFailure if pipelineFailure.category == ProductDisabled =>
-          UrtTransportMarshaller.unavailable("")
+    implicit relonquelonstTypelonTag: TypelonTag[RelonquelonstTypelon]
+  ): Stitch[urt.TimelonlinelonRelonsponselon] =
+    productPipelonlinelonRelongistry
+      .gelontProductPipelonlinelon[RelonquelonstTypelon, urt.TimelonlinelonRelonsponselon](relonquelonst.product)
+      .procelonss(ProductPipelonlinelonRelonquelonst(relonquelonst, params))
+      .handlelon {
+        // Delontelonct ProductDisablelond and convelonrt it to TimelonlinelonUnavailablelon
+        caselon pipelonlinelonFailurelon: PipelonlinelonFailurelon if pipelonlinelonFailurelon.catelongory == ProductDisablelond =>
+          UrtTransportMarshallelonr.unavailablelon("")
       }
 
   /**
-   * Get detailed pipeline execution as a serialized JSON String
+   * Gelont delontailelond pipelonlinelon elonxeloncution as a selonrializelond JSON String
    */
-  def getPipelineExecutionResult[RequestType <: Request](
-    request: RequestType,
+  delonf gelontPipelonlinelonelonxeloncutionRelonsult[RelonquelonstTypelon <: Relonquelonst](
+    relonquelonst: RelonquelonstTypelon,
     params: Params
   )(
-    implicit requestTypeTag: TypeTag[RequestType]
-  ): Stitch[t.PipelineExecutionResult] =
-    productPipelineRegistry
-      .getProductPipeline[RequestType, urt.TimelineResponse](request.product)
-      .arrow(ProductPipelineRequest(request, params)).map { detailedResult =>
-        val mapper = ScalaObjectMapper()
-        // configure so that exception is not thrown whenever case class is not serializable
-        mapper.underlying.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-        val serializedJSON = mapper.writePrettyString(detailedResult)
-        t.PipelineExecutionResult(serializedJSON)
+    implicit relonquelonstTypelonTag: TypelonTag[RelonquelonstTypelon]
+  ): Stitch[t.PipelonlinelonelonxeloncutionRelonsult] =
+    productPipelonlinelonRelongistry
+      .gelontProductPipelonlinelon[RelonquelonstTypelon, urt.TimelonlinelonRelonsponselon](relonquelonst.product)
+      .arrow(ProductPipelonlinelonRelonquelonst(relonquelonst, params)).map { delontailelondRelonsult =>
+        val mappelonr = ScalaObjelonctMappelonr()
+        // configurelon so that elonxcelonption is not thrown whelonnelonvelonr caselon class is not selonrializablelon
+        mappelonr.undelonrlying.configurelon(SelonrializationFelonaturelon.FAIL_ON_elonMPTY_BelonANS, falselon)
+        val selonrializelondJSON = mappelonr.writelonPrelonttyString(delontailelondRelonsult)
+        t.PipelonlinelonelonxeloncutionRelonsult(selonrializelondJSON)
       }
 
 }

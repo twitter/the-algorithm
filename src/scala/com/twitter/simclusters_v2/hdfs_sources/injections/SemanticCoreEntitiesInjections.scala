@@ -1,53 +1,53 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.{
+  Long2Bigelonndian,
   ScalaCompactThrift,
   StringUtf8
 }
-import com.twitter.recos.entities.thriftscala.{
-  SemanticCoreEntityScoreList,
-  SemanticCoreEntityWithLocale,
-  UserIdWithLocale,
-  UserScoreList
+import com.twittelonr.reloncos.elonntitielons.thriftscala.{
+  SelonmanticCorelonelonntityScorelonList,
+  SelonmanticCorelonelonntityWithLocalelon,
+  UselonrIdWithLocalelon,
+  UselonrScorelonList
 }
 
-object SemanticCoreEntitiesInjections {
+objelonct SelonmanticCorelonelonntitielonsInjelonctions {
 
-  final val StringToSemanticCoreEntityScoreListInjection: KeyValInjection[
+  final val StringToSelonmanticCorelonelonntityScorelonListInjelonction: KelonyValInjelonction[
     String,
-    SemanticCoreEntityScoreList
+    SelonmanticCorelonelonntityScorelonList
   ] =
-    KeyValInjection(
+    KelonyValInjelonction(
       StringUtf8,
-      ScalaCompactThrift(SemanticCoreEntityScoreList)
+      ScalaCompactThrift(SelonmanticCorelonelonntityScorelonList)
     )
 
-  final val LongToSemanticCoreEntityScoreListInjection: KeyValInjection[
+  final val LongToSelonmanticCorelonelonntityScorelonListInjelonction: KelonyValInjelonction[
     Long,
-    SemanticCoreEntityScoreList
+    SelonmanticCorelonelonntityScorelonList
   ] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(SemanticCoreEntityScoreList)
+    KelonyValInjelonction(
+      Long2Bigelonndian,
+      ScalaCompactThrift(SelonmanticCorelonelonntityScorelonList)
     )
 
-  final val UserWithLocaleToSemanticCoreEntityScoreListInjection: KeyValInjection[
-    UserIdWithLocale,
-    SemanticCoreEntityScoreList
+  final val UselonrWithLocalelonToSelonmanticCorelonelonntityScorelonListInjelonction: KelonyValInjelonction[
+    UselonrIdWithLocalelon,
+    SelonmanticCorelonelonntityScorelonList
   ] =
-    KeyValInjection(
-      ScalaCompactThrift(UserIdWithLocale),
-      ScalaCompactThrift(SemanticCoreEntityScoreList)
+    KelonyValInjelonction(
+      ScalaCompactThrift(UselonrIdWithLocalelon),
+      ScalaCompactThrift(SelonmanticCorelonelonntityScorelonList)
     )
 
-  final val SemanticCoreEntityWithLocaleToUsersScoreListInjection: KeyValInjection[
-    SemanticCoreEntityWithLocale,
-    UserScoreList
+  final val SelonmanticCorelonelonntityWithLocalelonToUselonrsScorelonListInjelonction: KelonyValInjelonction[
+    SelonmanticCorelonelonntityWithLocalelon,
+    UselonrScorelonList
   ] =
-    KeyValInjection(
-      ScalaCompactThrift(SemanticCoreEntityWithLocale),
-      ScalaCompactThrift(UserScoreList)
+    KelonyValInjelonction(
+      ScalaCompactThrift(SelonmanticCorelonelonntityWithLocalelon),
+      ScalaCompactThrift(UselonrScorelonList)
     )
 }

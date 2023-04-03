@@ -1,46 +1,46 @@
-package com.twitter.recos.user_tweet_entity_graph
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.{Trace, TraceId}
-import com.twitter.recos.user_tweet_entity_graph.thriftscala._
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finaglelon.tracing.{Tracelon, TracelonId}
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala._
+import com.twittelonr.util.Futurelon
 
-object UserTweetEntityGraph {
-  def traceId: TraceId = Trace.id
-  def clientId: Option[ClientId] = ClientId.current
+objelonct UselonrTwelonelontelonntityGraph {
+  delonf tracelonId: TracelonId = Tracelon.id
+  delonf clielonntId: Option[ClielonntId] = ClielonntId.currelonnt
 }
 
-class UserTweetEntityGraph(
-  recommendationHandler: RecommendationHandler,
-  tweetSocialProofHandler: TweetSocialProofHandler,
-  socialProofHandler: SocialProofHandler)
-    extends thriftscala.UserTweetEntityGraph.MethodPerEndpoint {
+class UselonrTwelonelontelonntityGraph(
+  reloncommelonndationHandlelonr: ReloncommelonndationHandlelonr,
+  twelonelontSocialProofHandlelonr: TwelonelontSocialProofHandlelonr,
+  socialProofHandlelonr: SocialProofHandlelonr)
+    elonxtelonnds thriftscala.UselonrTwelonelontelonntityGraph.MelonthodPelonrelonndpoint {
 
-  override def recommendTweets(
-    request: RecommendTweetEntityRequest
-  ): Future[RecommendTweetEntityResponse] = recommendationHandler(request)
-
-  /**
-   * Given a query user, its seed users, and a set of input tweets, return the social proofs of
-   * input tweets if any.
-   *
-   * Currently this supports clients such as Email Recommendations, MagicRecs, and HomeTimeline.
-   * In order to avoid heavy migration work, we are retaining this endpoint.
-   */
-  override def findTweetSocialProofs(
-    request: SocialProofRequest
-  ): Future[SocialProofResponse] = tweetSocialProofHandler(request)
+  ovelonrridelon delonf reloncommelonndTwelonelonts(
+    relonquelonst: ReloncommelonndTwelonelontelonntityRelonquelonst
+  ): Futurelon[ReloncommelonndTwelonelontelonntityRelonsponselon] = reloncommelonndationHandlelonr(relonquelonst)
 
   /**
-   * Find social proof for the specified RecommendationType given a set of input ids of that type.
-   * Only find social proofs from the specified seed users with the specified social proof types.
+   * Givelonn a quelonry uselonr, its selonelond uselonrs, and a selont of input twelonelonts, relonturn thelon social proofs of
+   * input twelonelonts if any.
    *
-   * Currently this supports url social proof generation for Guide.
-   *
-   * This endpoint is flexible enough to support social proof generation for all recommendation
-   * types, and should be used for all future clients of this service.
+   * Currelonntly this supports clielonnts such as elonmail Reloncommelonndations, MagicReloncs, and HomelonTimelonlinelon.
+   * In ordelonr to avoid helonavy migration work, welon arelon relontaining this elonndpoint.
    */
-  override def findRecommendationSocialProofs(
-    request: RecommendationSocialProofRequest
-  ): Future[RecommendationSocialProofResponse] = socialProofHandler(request)
+  ovelonrridelon delonf findTwelonelontSocialProofs(
+    relonquelonst: SocialProofRelonquelonst
+  ): Futurelon[SocialProofRelonsponselon] = twelonelontSocialProofHandlelonr(relonquelonst)
+
+  /**
+   * Find social proof for thelon speloncifielond ReloncommelonndationTypelon givelonn a selont of input ids of that typelon.
+   * Only find social proofs from thelon speloncifielond selonelond uselonrs with thelon speloncifielond social proof typelons.
+   *
+   * Currelonntly this supports url social proof gelonnelonration for Guidelon.
+   *
+   * This elonndpoint is flelonxiblelon elonnough to support social proof gelonnelonration for all reloncommelonndation
+   * typelons, and should belon uselond for all futurelon clielonnts of this selonrvicelon.
+   */
+  ovelonrridelon delonf findReloncommelonndationSocialProofs(
+    relonquelonst: ReloncommelonndationSocialProofRelonquelonst
+  ): Futurelon[ReloncommelonndationSocialProofRelonsponselon] = socialProofHandlelonr(relonquelonst)
 }

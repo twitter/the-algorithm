@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.button
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.CtaButton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.IconCtaButton
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.TextCtaButton
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.CtaButton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.IconCtaButton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.TelonxtCtaButton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CtaButtonMarshaller @Inject() (
-  iconCtaButtonMarshaller: IconCtaButtonMarshaller,
-  textCtaButtonMarshaller: TextCtaButtonMarshaller) {
+@Singlelonton
+class CtaButtonMarshallelonr @Injelonct() (
+  iconCtaButtonMarshallelonr: IconCtaButtonMarshallelonr,
+  telonxtCtaButtonMarshallelonr: TelonxtCtaButtonMarshallelonr) {
 
-  def apply(ctaButton: CtaButton): urt.CtaButton = ctaButton match {
-    case button: TextCtaButton => urt.CtaButton.Text(textCtaButtonMarshaller(button))
-    case button: IconCtaButton => urt.CtaButton.Icon(iconCtaButtonMarshaller(button))
+  delonf apply(ctaButton: CtaButton): urt.CtaButton = ctaButton match {
+    caselon button: TelonxtCtaButton => urt.CtaButton.Telonxt(telonxtCtaButtonMarshallelonr(button))
+    caselon button: IconCtaButton => urt.CtaButton.Icon(iconCtaButtonMarshallelonr(button))
   }
 }

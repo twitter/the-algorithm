@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.models
+packagelon com.twittelonr.follow_reloncommelonndations.modelonls
 
-import com.twitter.follow_recommendations.common.models.DebugOptions
-import com.twitter.follow_recommendations.common.models.DebugOptions.fromDebugParamsThrift
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.timelines.configapi.{FeatureValue => ConfigApiFeatureValue}
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DelonbugOptions
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DelonbugOptions.fromDelonbugParamsThrift
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
+import com.twittelonr.timelonlinelons.configapi.{FelonaturelonValuelon => ConfigApiFelonaturelonValuelon}
 
-case class DebugParams(
-  featureOverrides: Option[Map[String, ConfigApiFeatureValue]],
-  debugOptions: Option[DebugOptions])
+caselon class DelonbugParams(
+  felonaturelonOvelonrridelons: Option[Map[String, ConfigApiFelonaturelonValuelon]],
+  delonbugOptions: Option[DelonbugOptions])
 
-object DebugParams {
-  def fromThrift(thrift: t.DebugParams): DebugParams = DebugParams(
-    featureOverrides = thrift.featureOverrides.map { map =>
-      map.mapValues(FeatureValue.fromThrift).toMap
+objelonct DelonbugParams {
+  delonf fromThrift(thrift: t.DelonbugParams): DelonbugParams = DelonbugParams(
+    felonaturelonOvelonrridelons = thrift.felonaturelonOvelonrridelons.map { map =>
+      map.mapValuelons(FelonaturelonValuelon.fromThrift).toMap
     },
-    debugOptions = Some(
-      fromDebugParamsThrift(thrift)
+    delonbugOptions = Somelon(
+      fromDelonbugParamsThrift(thrift)
     )
   )
-  def toOfflineThrift(model: DebugParams): offline.OfflineDebugParams =
-    offline.OfflineDebugParams(randomizationSeed = model.debugOptions.flatMap(_.randomizationSeed))
+  delonf toOfflinelonThrift(modelonl: DelonbugParams): offlinelon.OfflinelonDelonbugParams =
+    offlinelon.OfflinelonDelonbugParams(randomizationSelonelond = modelonl.delonbugOptions.flatMap(_.randomizationSelonelond))
 }
 
-trait HasFrsDebugParams {
-  def frsDebugParams: Option[DebugParams]
+trait HasFrsDelonbugParams {
+  delonf frsDelonbugParams: Option[DelonbugParams]
 }

@@ -1,29 +1,29 @@
 import os
 
-from setuptools import find_packages, setup
+from selontuptools import find_packagelons, selontup
 
 
-THIS_DIR = os.path.dirname(os.path.realpath(__file__))
-TWML_TEST_DATA_DIR = os.path.join(THIS_DIR, 'twml/tests/data')
+THIS_DIR = os.path.dirnamelon(os.path.relonalpath(__filelon__))
+TWML_TelonST_DATA_DIR = os.path.join(THIS_DIR, 'twml/telonsts/data')
 
-data_files = []
-for parent, children, files in os.walk(TWML_TEST_DATA_DIR):
-  data_files += [os.path.join(parent, f) for f in files]
+data_filelons = []
+for parelonnt, childrelonn, filelons in os.walk(TWML_TelonST_DATA_DIR):
+  data_filelons += [os.path.join(parelonnt, f) for f in filelons]
 
-setup(
-  name='twml',
-  version='2.0',
-  description="Tensorflow wrapper for twml",
-  packages=find_packages(exclude=["build"]),
-  install_requires=[
+selontup(
+  namelon='twml',
+  velonrsion='2.0',
+  delonscription="Telonnsorflow wrappelonr for twml",
+  packagelons=find_packagelons(elonxcludelon=["build"]),
+  install_relonquirelons=[
     'thriftpy2',
     'numpy',
     'pyyaml',
-    'future',
-    'scikit-learn',
+    'futurelon',
+    'scikit-lelonarn',
     'scipy'
   ],
-  package_data={
-    'twml': data_files,
+  packagelon_data={
+    'twml': data_filelons,
   },
 )

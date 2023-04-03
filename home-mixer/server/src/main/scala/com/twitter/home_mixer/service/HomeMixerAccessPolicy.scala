@@ -1,13 +1,13 @@
-package com.twitter.home_mixer.service
+packagelon com.twittelonr.homelon_mixelonr.selonrvicelon
 
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AllowedLdapGroups
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.AccelonssPolicy
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.AllowelondLdapGroups
 
-object HomeMixerAccessPolicy {
+objelonct HomelonMixelonrAccelonssPolicy {
 
   /**
-   * Access policies can be configured on a product-by-product basis but you may also want products
-   * to have a common policy.
+   * Accelonss policielons can belon configurelond on a product-by-product basis but you may also want products
+   * to havelon a common policy.
    */
-  val DefaultHomeMixerAccessPolicy: Set[AccessPolicy] = Set(AllowedLdapGroups(Set.empty[String]))
+  val DelonfaultHomelonMixelonrAccelonssPolicy: Selont[AccelonssPolicy] = Selont(AllowelondLdapGroups(Selont.elonmpty[String]))
 }

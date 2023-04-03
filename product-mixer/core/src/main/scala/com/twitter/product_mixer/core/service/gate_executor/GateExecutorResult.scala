@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.service.gate_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor
 
-import com.twitter.product_mixer.core.service.ExecutorResult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
 
-case class GateExecutorResult(
-  individualGateResults: Seq[ExecutedGateResult])
-    extends ExecutorResult
+caselon class GatelonelonxeloncutorRelonsult(
+  individualGatelonRelonsults: Selonq[elonxeloncutelondGatelonRelonsult])
+    elonxtelonnds elonxeloncutorRelonsult

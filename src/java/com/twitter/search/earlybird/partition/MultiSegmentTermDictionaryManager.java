@@ -1,314 +1,314 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
-import java.util.Collections;
+import java.io.IOelonxcelonption;
+import java.util.Collelonctions;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+import java.util.concurrelonnt.TimelonUnit;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionary;
-import com.twitter.search.core.earlybird.index.inverted.MultiSegmentTermDictionaryWithFastutil;
-import com.twitter.search.core.earlybird.index.inverted.OptimizedMemoryIndex;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.partition.SegmentManager.Filter;
-import com.twitter.search.earlybird.partition.SegmentManager.Order;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondIndelonx;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.MultiSelongmelonntTelonrmDictionary;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.MultiSelongmelonntTelonrmDictionaryWithFastutil;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.OptimizelondMelonmoryIndelonx;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonnt;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr.Filtelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr.Ordelonr;
 
 /**
- * Manages MultiSegmentTermDictionary's for specific fields on this earlybird. Only manages them
- * for optimized segments, and should only regenerate new dictionaries when the list of optimized
- * segments changes. See SEARCH-10836
+ * Managelons MultiSelongmelonntTelonrmDictionary's for speloncific fielonlds on this elonarlybird. Only managelons thelonm
+ * for optimizelond selongmelonnts, and should only relongelonnelonratelon nelonw dictionarielons whelonn thelon list of optimizelond
+ * selongmelonnts changelons. Selonelon SelonARCH-10836
  */
-public class MultiSegmentTermDictionaryManager {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(MultiSegmentTermDictionaryManager.class);
+public class MultiSelongmelonntTelonrmDictionaryManagelonr {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(MultiSelongmelonntTelonrmDictionaryManagelonr.class);
 
-  @VisibleForTesting
-  public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
-      SearchTimerStats.export("multi_segment_term_dictionary_manager_build_dictionary",
-          TimeUnit.MILLISECONDS, false);
+  @VisiblelonForTelonsting
+  public static final SelonarchTimelonrStats TelonRM_DICTIONARY_CRelonATION_STATS =
+      SelonarchTimelonrStats.elonxport("multi_selongmelonnt_telonrm_dictionary_managelonr_build_dictionary",
+          TimelonUnit.MILLISelonCONDS, falselon);
 
-  public static final MultiSegmentTermDictionaryManager NOOP_INSTANCE =
-      new MultiSegmentTermDictionaryManager(
-          new Config(Collections.emptyList()), null, null, null, null) {
-        @Override
-        public boolean buildDictionary() {
-          return false;
+  public static final MultiSelongmelonntTelonrmDictionaryManagelonr NOOP_INSTANCelon =
+      nelonw MultiSelongmelonntTelonrmDictionaryManagelonr(
+          nelonw Config(Collelonctions.elonmptyList()), null, null, null, null) {
+        @Ovelonrridelon
+        public boolelonan buildDictionary() {
+          relonturn falselon;
         }
       };
 
-  private static final String MANAGER_DISABLED_DECIDER_KEY_PREFIX =
-      "multi_segment_term_dictionary_manager_disabled_in_";
+  privatelon static final String MANAGelonR_DISABLelonD_DelonCIDelonR_KelonY_PRelonFIX =
+      "multi_selongmelonnt_telonrm_dictionary_managelonr_disablelond_in_";
 
   public static class Config {
-    private final ImmutableList<String> fieldNames;
+    privatelon final ImmutablelonList<String> fielonldNamelons;
 
-    public Config(List<String> fieldNames) {
-      Preconditions.checkNotNull(fieldNames);
-      this.fieldNames = ImmutableList.copyOf(fieldNames);
+    public Config(List<String> fielonldNamelons) {
+      Prelonconditions.chelonckNotNull(fielonldNamelons);
+      this.fielonldNamelons = ImmutablelonList.copyOf(fielonldNamelons);
     }
 
-    public List<String> managedFieldNames() {
-      return fieldNames;
+    public List<String> managelondFielonldNamelons() {
+      relonturn fielonldNamelons;
     }
 
-    public boolean isEnabled() {
-      return EarlybirdConfig.getBool("multi_segment_term_dictionary_enabled", false);
-    }
-  }
-
-  @VisibleForTesting
-  public static String getManagerDisabledDeciderName(EarlybirdCluster earlybirdCluster) {
-    return MANAGER_DISABLED_DECIDER_KEY_PREFIX + earlybirdCluster.name().toLowerCase();
-  }
-
-  private static final class FieldStats {
-    private final SearchTimerStats buildTime;
-    private final SearchLongGauge numTerms;
-    private final SearchLongGauge numTermEntries;
-
-    private FieldStats(SearchStatsReceiver statsReceiver, String fieldName) {
-      Preconditions.checkNotNull(fieldName);
-      Preconditions.checkNotNull(statsReceiver);
-
-      String timerName = String.format(
-          "multi_segment_term_dictionary_manager_field_%s_build_dictionary", fieldName);
-      this.buildTime = statsReceiver.getTimerStats(
-          timerName, TimeUnit.MILLISECONDS, false, false, false);
-
-      String numTermsName = String.format(
-          "multi_segment_term_dictionary_manager_field_%s_num_terms", fieldName);
-      this.numTerms = statsReceiver.getLongGauge(numTermsName);
-
-      String numTermEntriesName = String.format(
-          "multi_segment_term_dictionary_manager_field_%s_num_term_entries", fieldName);
-      this.numTermEntries = statsReceiver.getLongGauge(numTermEntriesName);
+    public boolelonan iselonnablelond() {
+      relonturn elonarlybirdConfig.gelontBool("multi_selongmelonnt_telonrm_dictionary_elonnablelond", falselon);
     }
   }
 
-  private final Config config;
-  @Nullable private final SegmentManager segmentManager;
-  @Nullable private final Decider decider;
-  @Nullable private final EarlybirdCluster earlybirdCluster;
-  private final ImmutableMap<String, FieldStats> fieldTimerStats;
-  // A per-field map of multi-segment term dictionaries. Each key is a field. The values are the
-  // multi-segment term dictionaries for that field.
-  private volatile ImmutableMap<String, MultiSegmentTermDictionary> multiSegmentTermDictionaryMap;
-  private List<SegmentInfo> previousSegmentsToMerge;
+  @VisiblelonForTelonsting
+  public static String gelontManagelonrDisablelondDeloncidelonrNamelon(elonarlybirdClustelonr elonarlybirdClustelonr) {
+    relonturn MANAGelonR_DISABLelonD_DelonCIDelonR_KelonY_PRelonFIX + elonarlybirdClustelonr.namelon().toLowelonrCaselon();
+  }
 
-  public MultiSegmentTermDictionaryManager(
+  privatelon static final class FielonldStats {
+    privatelon final SelonarchTimelonrStats buildTimelon;
+    privatelon final SelonarchLongGaugelon numTelonrms;
+    privatelon final SelonarchLongGaugelon numTelonrmelonntrielons;
+
+    privatelon FielonldStats(SelonarchStatsReloncelonivelonr statsReloncelonivelonr, String fielonldNamelon) {
+      Prelonconditions.chelonckNotNull(fielonldNamelon);
+      Prelonconditions.chelonckNotNull(statsReloncelonivelonr);
+
+      String timelonrNamelon = String.format(
+          "multi_selongmelonnt_telonrm_dictionary_managelonr_fielonld_%s_build_dictionary", fielonldNamelon);
+      this.buildTimelon = statsReloncelonivelonr.gelontTimelonrStats(
+          timelonrNamelon, TimelonUnit.MILLISelonCONDS, falselon, falselon, falselon);
+
+      String numTelonrmsNamelon = String.format(
+          "multi_selongmelonnt_telonrm_dictionary_managelonr_fielonld_%s_num_telonrms", fielonldNamelon);
+      this.numTelonrms = statsReloncelonivelonr.gelontLongGaugelon(numTelonrmsNamelon);
+
+      String numTelonrmelonntrielonsNamelon = String.format(
+          "multi_selongmelonnt_telonrm_dictionary_managelonr_fielonld_%s_num_telonrm_elonntrielons", fielonldNamelon);
+      this.numTelonrmelonntrielons = statsReloncelonivelonr.gelontLongGaugelon(numTelonrmelonntrielonsNamelon);
+    }
+  }
+
+  privatelon final Config config;
+  @Nullablelon privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  @Nullablelon privatelon final Deloncidelonr deloncidelonr;
+  @Nullablelon privatelon final elonarlybirdClustelonr elonarlybirdClustelonr;
+  privatelon final ImmutablelonMap<String, FielonldStats> fielonldTimelonrStats;
+  // A pelonr-fielonld map of multi-selongmelonnt telonrm dictionarielons. elonach kelony is a fielonld. Thelon valuelons arelon thelon
+  // multi-selongmelonnt telonrm dictionarielons for that fielonld.
+  privatelon volatilelon ImmutablelonMap<String, MultiSelongmelonntTelonrmDictionary> multiSelongmelonntTelonrmDictionaryMap;
+  privatelon List<SelongmelonntInfo> prelonviousSelongmelonntsToMelonrgelon;
+
+  public MultiSelongmelonntTelonrmDictionaryManagelonr(
       Config config,
-      SegmentManager segmentManager,
-      SearchStatsReceiver statsReceiver,
-      Decider decider,
-      EarlybirdCluster earlybirdCluster) {
+      SelongmelonntManagelonr selongmelonntManagelonr,
+      SelonarchStatsReloncelonivelonr statsReloncelonivelonr,
+      Deloncidelonr deloncidelonr,
+      elonarlybirdClustelonr elonarlybirdClustelonr) {
     this.config = config;
-    this.segmentManager = segmentManager;
-    this.decider = decider;
-    this.earlybirdCluster = earlybirdCluster;
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.deloncidelonr = deloncidelonr;
+    this.elonarlybirdClustelonr = elonarlybirdClustelonr;
 
-    this.multiSegmentTermDictionaryMap = ImmutableMap.of();
-    this.previousSegmentsToMerge = Lists.newArrayList();
+    this.multiSelongmelonntTelonrmDictionaryMap = ImmutablelonMap.of();
+    this.prelonviousSelongmelonntsToMelonrgelon = Lists.nelonwArrayList();
 
-    ImmutableMap.Builder<String, FieldStats> builder = ImmutableMap.builder();
-    if (statsReceiver != null) {
-      for (String fieldName : config.managedFieldNames()) {
-        builder.put(fieldName, new FieldStats(statsReceiver, fieldName));
+    ImmutablelonMap.Buildelonr<String, FielonldStats> buildelonr = ImmutablelonMap.buildelonr();
+    if (statsReloncelonivelonr != null) {
+      for (String fielonldNamelon : config.managelondFielonldNamelons()) {
+        buildelonr.put(fielonldNamelon, nelonw FielonldStats(statsReloncelonivelonr, fielonldNamelon));
       }
     }
-    this.fieldTimerStats = builder.build();
+    this.fielonldTimelonrStats = buildelonr.build();
   }
 
   /**
-   * Return the most recently built MultiSegmentTermDictionary for the given field.
-   * Will return null if the field is not supported by this manager.
+   * Relonturn thelon most reloncelonntly built MultiSelongmelonntTelonrmDictionary for thelon givelonn fielonld.
+   * Will relonturn null if thelon fielonld is not supportelond by this managelonr.
    */
-  @Nullable
-  public MultiSegmentTermDictionary getMultiSegmentTermDictionary(String fieldName) {
-    return this.multiSegmentTermDictionaryMap.get(fieldName);
+  @Nullablelon
+  public MultiSelongmelonntTelonrmDictionary gelontMultiSelongmelonntTelonrmDictionary(String fielonldNamelon) {
+    relonturn this.multiSelongmelonntTelonrmDictionaryMap.gelont(fielonldNamelon);
   }
 
   /**
-   * Build new versions of multi-segment term dictionaries if the manager is enabled, and new
-   * segments are available.
-   * @return true if the manager actually ran, and generated new versions of multi-segment term
-   * dictionaries.
+   * Build nelonw velonrsions of multi-selongmelonnt telonrm dictionarielons if thelon managelonr is elonnablelond, and nelonw
+   * selongmelonnts arelon availablelon.
+   * @relonturn truelon if thelon managelonr actually ran, and gelonnelonratelond nelonw velonrsions of multi-selongmelonnt telonrm
+   * dictionarielons.
    *
-   * We synchronize this method because it would be a logic error to modify the variables from
-   * multiple threads simultaneously, and it is possible for two segments to finish optimizing at
-   * the same time and try to run it.
+   * Welon synchronizelon this melonthod beloncauselon it would belon a logic elonrror to modify thelon variablelons from
+   * multiplelon threlonads simultanelonously, and it is possiblelon for two selongmelonnts to finish optimizing at
+   * thelon samelon timelon and try to run it.
    */
-  public synchronized boolean buildDictionary() {
-    if (!config.isEnabled()) {
-      return false;
+  public synchronizelond boolelonan buildDictionary() {
+    if (!config.iselonnablelond()) {
+      relonturn falselon;
     }
 
-    Preconditions.checkNotNull(decider);
-    Preconditions.checkNotNull(earlybirdCluster);
-    if (DeciderUtil.isAvailableForRandomRecipient(decider,
-        getManagerDisabledDeciderName(earlybirdCluster))) {
-      LOG.info("Multi segment term dictionary manager is disabled via decider for cluster {}.",
-          earlybirdCluster);
-      this.multiSegmentTermDictionaryMap = ImmutableMap.of();
-      this.previousSegmentsToMerge = Lists.newArrayList();
-      return false;
+    Prelonconditions.chelonckNotNull(deloncidelonr);
+    Prelonconditions.chelonckNotNull(elonarlybirdClustelonr);
+    if (DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr,
+        gelontManagelonrDisablelondDeloncidelonrNamelon(elonarlybirdClustelonr))) {
+      LOG.info("Multi selongmelonnt telonrm dictionary managelonr is disablelond via deloncidelonr for clustelonr {}.",
+          elonarlybirdClustelonr);
+      this.multiSelongmelonntTelonrmDictionaryMap = ImmutablelonMap.of();
+      this.prelonviousSelongmelonntsToMelonrgelon = Lists.nelonwArrayList();
+      relonturn falselon;
     }
 
-    List<SegmentInfo> segmentsToMerge = getSegmentsToMerge();
+    List<SelongmelonntInfo> selongmelonntsToMelonrgelon = gelontSelongmelonntsToMelonrgelon();
 
-    if (differentFromPreviousList(segmentsToMerge)) {
-       long start = System.currentTimeMillis();
+    if (diffelonrelonntFromPrelonviousList(selongmelonntsToMelonrgelon)) {
+       long start = Systelonm.currelonntTimelonMillis();
        try {
-         this.multiSegmentTermDictionaryMap = createNewDictionaries(segmentsToMerge);
-         this.previousSegmentsToMerge = segmentsToMerge;
-         return true;
-       } catch (IOException e) {
-         LOG.error("Unable to build multi segment term dictionaries", e);
-         return false;
+         this.multiSelongmelonntTelonrmDictionaryMap = crelonatelonNelonwDictionarielons(selongmelonntsToMelonrgelon);
+         this.prelonviousSelongmelonntsToMelonrgelon = selongmelonntsToMelonrgelon;
+         relonturn truelon;
+       } catch (IOelonxcelonption elon) {
+         LOG.elonrror("Unablelon to build multi selongmelonnt telonrm dictionarielons", elon);
+         relonturn falselon;
        } finally {
-         long elapsed = System.currentTimeMillis() - start;
-         TERM_DICTIONARY_CREATION_STATS.timerIncrement(elapsed);
+         long elonlapselond = Systelonm.currelonntTimelonMillis() - start;
+         TelonRM_DICTIONARY_CRelonATION_STATS.timelonrIncrelonmelonnt(elonlapselond);
        }
-    } else {
+    } elonlselon {
       LOG.warn("No-op for buildDictionary()");
-      return false;
+      relonturn falselon;
     }
   }
 
   /**
-   * Only merge terms from enabled and optimized segments. No need to look at non-enabled segments,
-   * and we also don't want to use un-optimized segments as their term dictionaries are still
+   * Only melonrgelon telonrms from elonnablelond and optimizelond selongmelonnts. No nelonelond to look at non-elonnablelond selongmelonnts,
+   * and welon also don't want to uselon un-optimizelond selongmelonnts as thelonir telonrm dictionarielons arelon still
    * changing.
    */
-  private List<SegmentInfo> getSegmentsToMerge() {
-    Iterable<SegmentInfo> segmentInfos =
-        segmentManager.getSegmentInfos(Filter.Enabled, Order.OLD_TO_NEW);
+  privatelon List<SelongmelonntInfo> gelontSelongmelonntsToMelonrgelon() {
+    Itelonrablelon<SelongmelonntInfo> selongmelonntInfos =
+        selongmelonntManagelonr.gelontSelongmelonntInfos(Filtelonr.elonnablelond, Ordelonr.OLD_TO_NelonW);
 
-    List<SegmentInfo> segmentsToMerge = Lists.newArrayList();
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      if (segmentInfo.getIndexSegment().isOptimized()) {
-        segmentsToMerge.add(segmentInfo);
+    List<SelongmelonntInfo> selongmelonntsToMelonrgelon = Lists.nelonwArrayList();
+    for (SelongmelonntInfo selongmelonntInfo : selongmelonntInfos) {
+      if (selongmelonntInfo.gelontIndelonxSelongmelonnt().isOptimizelond()) {
+        selongmelonntsToMelonrgelon.add(selongmelonntInfo);
       }
     }
-    return segmentsToMerge;
+    relonturn selongmelonntsToMelonrgelon;
   }
 
-  private boolean differentFromPreviousList(List<SegmentInfo> segmentsToMerge) {
-    // there is a potentially different approach here to only check if the
-    // segmentsToMerge is subsumed by the previousSegmentsToMerge list, and not recompute
-    // the multi segment term dictionary if so.
-    // There is a case where a new segment is added, the previously current segment is not yet
-    // optimized, but the oldest segment is dropped. With this impl, we will recompute to remove
-    // the dropped segment, however, we will recompute soon again when the
-    // "previously current segment" is actually optimized. We can potentially delay the first
-    // merging before the optimization.
-    if (this.previousSegmentsToMerge.size() == segmentsToMerge.size()) {
-      for (int i = 0; i < this.previousSegmentsToMerge.size(); i++) {
-        if (previousSegmentsToMerge.get(i).compareTo(segmentsToMerge.get(i)) != 0) {
-          return true;
+  privatelon boolelonan diffelonrelonntFromPrelonviousList(List<SelongmelonntInfo> selongmelonntsToMelonrgelon) {
+    // thelonrelon is a potelonntially diffelonrelonnt approach helonrelon to only chelonck if thelon
+    // selongmelonntsToMelonrgelon is subsumelond by thelon prelonviousSelongmelonntsToMelonrgelon list, and not reloncomputelon
+    // thelon multi selongmelonnt telonrm dictionary if so.
+    // Thelonrelon is a caselon whelonrelon a nelonw selongmelonnt is addelond, thelon prelonviously currelonnt selongmelonnt is not yelont
+    // optimizelond, but thelon oldelonst selongmelonnt is droppelond. With this impl, welon will reloncomputelon to relonmovelon
+    // thelon droppelond selongmelonnt, howelonvelonr, welon will reloncomputelon soon again whelonn thelon
+    // "prelonviously currelonnt selongmelonnt" is actually optimizelond. Welon can potelonntially delonlay thelon first
+    // melonrging belonforelon thelon optimization.
+    if (this.prelonviousSelongmelonntsToMelonrgelon.sizelon() == selongmelonntsToMelonrgelon.sizelon()) {
+      for (int i = 0; i < this.prelonviousSelongmelonntsToMelonrgelon.sizelon(); i++) {
+        if (prelonviousSelongmelonntsToMelonrgelon.gelont(i).comparelonTo(selongmelonntsToMelonrgelon.gelont(i)) != 0) {
+          relonturn truelon;
         }
       }
-      return false;
+      relonturn falselon;
     }
-    return true;
+    relonturn truelon;
   }
 
   /**
-   * Rebuild the term dictionaries from scratch for all the managed fields.
-   * Returning a brand new map here with all the fields' term dictionaries so that we can isolate
-   * failures to build, and only replace the entire map of all the fields are built successfully.
+   * Relonbuild thelon telonrm dictionarielons from scratch for all thelon managelond fielonlds.
+   * Relonturning a brand nelonw map helonrelon with all thelon fielonlds' telonrm dictionarielons so that welon can isolatelon
+   * failurelons to build, and only relonplacelon thelon elonntirelon map of all thelon fielonlds arelon built succelonssfully.
    */
-  private ImmutableMap<String, MultiSegmentTermDictionary> createNewDictionaries(
-      List<SegmentInfo> segments) throws IOException {
+  privatelon ImmutablelonMap<String, MultiSelongmelonntTelonrmDictionary> crelonatelonNelonwDictionarielons(
+      List<SelongmelonntInfo> selongmelonnts) throws IOelonxcelonption {
 
-    Map<String, MultiSegmentTermDictionary> map = Maps.newHashMap();
+    Map<String, MultiSelongmelonntTelonrmDictionary> map = Maps.nelonwHashMap();
 
-    for (String field : config.managedFieldNames()) {
-      LOG.info("Merging term dictionaries for field {}", field);
+    for (String fielonld : config.managelondFielonldNamelons()) {
+      LOG.info("Melonrging telonrm dictionarielons for fielonld {}", fielonld);
 
-      List<OptimizedMemoryIndex> indexesToMerge = findFieldIndexesToMerge(segments, field);
+      List<OptimizelondMelonmoryIndelonx> indelonxelonsToMelonrgelon = findFielonldIndelonxelonsToMelonrgelon(selongmelonnts, fielonld);
 
-      if (indexesToMerge.isEmpty()) {
-        LOG.info("No indexes to merge for field {}", field);
-      } else {
-        long start = System.currentTimeMillis();
+      if (indelonxelonsToMelonrgelon.iselonmpty()) {
+        LOG.info("No indelonxelons to melonrgelon for fielonld {}", fielonld);
+      } elonlselon {
+        long start = Systelonm.currelonntTimelonMillis();
 
-        MultiSegmentTermDictionary multiSegmentTermDictionary =
-            mergeDictionaries(field, indexesToMerge);
+        MultiSelongmelonntTelonrmDictionary multiSelongmelonntTelonrmDictionary =
+            melonrgelonDictionarielons(fielonld, indelonxelonsToMelonrgelon);
 
-        map.put(field, multiSegmentTermDictionary);
+        map.put(fielonld, multiSelongmelonntTelonrmDictionary);
 
-        long elapsed = System.currentTimeMillis() - start;
-        LOG.info("Done merging term dictionary for field {}, for {} segments in {}ms",
-            field, indexesToMerge.size(), elapsed);
+        long elonlapselond = Systelonm.currelonntTimelonMillis() - start;
+        LOG.info("Donelon melonrging telonrm dictionary for fielonld {}, for {} selongmelonnts in {}ms",
+            fielonld, indelonxelonsToMelonrgelon.sizelon(), elonlapselond);
 
-        FieldStats fieldStats = fieldTimerStats.get(field);
-        fieldStats.buildTime.timerIncrement(elapsed);
-        fieldStats.numTerms.set(multiSegmentTermDictionary.getNumTerms());
-        fieldStats.numTermEntries.set(multiSegmentTermDictionary.getNumTermEntries());
+        FielonldStats fielonldStats = fielonldTimelonrStats.gelont(fielonld);
+        fielonldStats.buildTimelon.timelonrIncrelonmelonnt(elonlapselond);
+        fielonldStats.numTelonrms.selont(multiSelongmelonntTelonrmDictionary.gelontNumTelonrms());
+        fielonldStats.numTelonrmelonntrielons.selont(multiSelongmelonntTelonrmDictionary.gelontNumTelonrmelonntrielons());
       }
     }
-    return ImmutableMap.copyOf(map);
+    relonturn ImmutablelonMap.copyOf(map);
   }
 
-  private List<OptimizedMemoryIndex> findFieldIndexesToMerge(
-      List<SegmentInfo> segments, String field) throws IOException {
+  privatelon List<OptimizelondMelonmoryIndelonx> findFielonldIndelonxelonsToMelonrgelon(
+      List<SelongmelonntInfo> selongmelonnts, String fielonld) throws IOelonxcelonption {
 
-    List<OptimizedMemoryIndex> indexesToMerge = Lists.newArrayList();
+    List<OptimizelondMelonmoryIndelonx> indelonxelonsToMelonrgelon = Lists.nelonwArrayList();
 
-    for (SegmentInfo segment : segments) {
-      EarlybirdSegment indexSegment = segment.getIndexSegment();
-      Preconditions.checkState(indexSegment.isOptimized(),
-          "Expect segment to be optimized: %s", segment);
+    for (SelongmelonntInfo selongmelonnt : selongmelonnts) {
+      elonarlybirdSelongmelonnt indelonxSelongmelonnt = selongmelonnt.gelontIndelonxSelongmelonnt();
+      Prelonconditions.chelonckStatelon(indelonxSelongmelonnt.isOptimizelond(),
+          "elonxpelonct selongmelonnt to belon optimizelond: %s", selongmelonnt);
 
-      InvertedIndex fieldIndex = Preconditions.checkNotNull(indexSegment.getIndexReader())
-          .getSegmentData().getFieldIndex(field);
+      InvelonrtelondIndelonx fielonldIndelonx = Prelonconditions.chelonckNotNull(indelonxSelongmelonnt.gelontIndelonxRelonadelonr())
+          .gelontSelongmelonntData().gelontFielonldIndelonx(fielonld);
 
-      // See SEARCH-11952
-      // We will only have a InvertedIndex/OptimizedMemoryIndex here
-      // in the in-memory non-lucene-based indexes, and not in the archive. We can somewhat
-      // reasonably extend this to work with the archive by making the dictionaries work with
-      // TermsEnum's directly instead of OptimizedMemoryIndex's. Leaving this as a further
-      // extension for now.
-      if (fieldIndex != null) {
-        if (fieldIndex instanceof OptimizedMemoryIndex) {
-          indexesToMerge.add((OptimizedMemoryIndex) fieldIndex);
-        } else {
-          LOG.info("Found field index for field {} in segment {} of type {}",
-              field, segment, fieldIndex.getClass());
+      // Selonelon SelonARCH-11952
+      // Welon will only havelon a InvelonrtelondIndelonx/OptimizelondMelonmoryIndelonx helonrelon
+      // in thelon in-melonmory non-lucelonnelon-baselond indelonxelons, and not in thelon archivelon. Welon can somelonwhat
+      // relonasonably elonxtelonnd this to work with thelon archivelon by making thelon dictionarielons work with
+      // Telonrmselonnum's direlonctly instelonad of OptimizelondMelonmoryIndelonx's. Lelonaving this as a furthelonr
+      // elonxtelonnsion for now.
+      if (fielonldIndelonx != null) {
+        if (fielonldIndelonx instancelonof OptimizelondMelonmoryIndelonx) {
+          indelonxelonsToMelonrgelon.add((OptimizelondMelonmoryIndelonx) fielonldIndelonx);
+        } elonlselon {
+          LOG.info("Found fielonld indelonx for fielonld {} in selongmelonnt {} of typelon {}",
+              fielonld, selongmelonnt, fielonldIndelonx.gelontClass());
         }
-      } else {
-        LOG.info("Found null field index for field {} in segment {}", field, segment);
+      } elonlselon {
+        LOG.info("Found null fielonld indelonx for fielonld {} in selongmelonnt {}", fielonld, selongmelonnt);
       }
     }
-    LOG.info("Found good fields for {} out of {} segments", indexesToMerge.size(),
-            segments.size());
+    LOG.info("Found good fielonlds for {} out of {} selongmelonnts", indelonxelonsToMelonrgelon.sizelon(),
+            selongmelonnts.sizelon());
 
-    return indexesToMerge;
+    relonturn indelonxelonsToMelonrgelon;
   }
 
-  private MultiSegmentTermDictionary mergeDictionaries(
-      String field,
-      List<OptimizedMemoryIndex> indexes) {
-    // May change this if we get a better implementation in the future.
-    return new MultiSegmentTermDictionaryWithFastutil(field, indexes);
+  privatelon MultiSelongmelonntTelonrmDictionary melonrgelonDictionarielons(
+      String fielonld,
+      List<OptimizelondMelonmoryIndelonx> indelonxelons) {
+    // May changelon this if welon gelont a belonttelonr implelonmelonntation in thelon futurelon.
+    relonturn nelonw MultiSelongmelonntTelonrmDictionaryWithFastutil(fielonld, indelonxelons);
   }
 }

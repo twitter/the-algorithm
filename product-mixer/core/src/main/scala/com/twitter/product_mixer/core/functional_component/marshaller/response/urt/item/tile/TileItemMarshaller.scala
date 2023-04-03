@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.tilelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ImagelonVariantMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tilelon.TilelonItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TileItemMarshaller @Inject() (
-  tileContentMarshaller: TileContentMarshaller,
-  urlMarshaller: UrlMarshaller,
-  imageVariantMarshaller: ImageVariantMarshaller) {
+@Singlelonton
+class TilelonItelonmMarshallelonr @Injelonct() (
+  tilelonContelonntMarshallelonr: TilelonContelonntMarshallelonr,
+  urlMarshallelonr: UrlMarshallelonr,
+  imagelonVariantMarshallelonr: ImagelonVariantMarshallelonr) {
 
-  def apply(tileItem: TileItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Tile(
-      urt.Tile(
-        title = tileItem.title,
-        supportingText = tileItem.supportingText,
-        url = tileItem.url.map(urlMarshaller(_)),
-        image = tileItem.image.map(imageVariantMarshaller(_)),
-        badge = None,
-        content = tileContentMarshaller(tileItem.content)
+  delonf apply(tilelonItelonm: TilelonItelonm): urt.TimelonlinelonItelonmContelonnt = {
+    urt.TimelonlinelonItelonmContelonnt.Tilelon(
+      urt.Tilelon(
+        titlelon = tilelonItelonm.titlelon,
+        supportingTelonxt = tilelonItelonm.supportingTelonxt,
+        url = tilelonItelonm.url.map(urlMarshallelonr(_)),
+        imagelon = tilelonItelonm.imagelon.map(imagelonVariantMarshallelonr(_)),
+        badgelon = Nonelon,
+        contelonnt = tilelonContelonntMarshallelonr(tilelonItelonm.contelonnt)
       )
     )
   }

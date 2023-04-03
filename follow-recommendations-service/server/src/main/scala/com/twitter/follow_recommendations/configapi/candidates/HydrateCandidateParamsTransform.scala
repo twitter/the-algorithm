@@ -1,21 +1,21 @@
-package com.twitter.follow_recommendations.configapi.candidates
+packagelon com.twittelonr.follow_reloncommelonndations.configapi.candidatelons
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Transform
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.logging.Logging
 
-@Singleton
-class HydrateCandidateParamsTransform[Target <: HasParams with HasDisplayLocation] @Inject() (
-  candidateParamsFactory: CandidateUserParamsFactory[Target])
-    extends Transform[Target, CandidateUser]
+@Singlelonton
+class HydratelonCandidatelonParamsTransform[Targelont <: HasParams with HasDisplayLocation] @Injelonct() (
+  candidatelonParamsFactory: CandidatelonUselonrParamsFactory[Targelont])
+    elonxtelonnds Transform[Targelont, CandidatelonUselonr]
     with Logging {
 
-  def transform(target: Target, candidates: Seq[CandidateUser]): Stitch[Seq[CandidateUser]] = {
-    Stitch.value(candidates.map(candidateParamsFactory.apply(_, target)))
+  delonf transform(targelont: Targelont, candidatelons: Selonq[CandidatelonUselonr]): Stitch[Selonq[CandidatelonUselonr]] = {
+    Stitch.valuelon(candidatelons.map(candidatelonParamsFactory.apply(_, targelont)))
   }
 }

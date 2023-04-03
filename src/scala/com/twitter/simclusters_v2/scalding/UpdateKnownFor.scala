@@ -1,310 +1,310 @@
-package com.twitter.simclusters_v2.scalding
+packagelon com.twittelonr.simclustelonrs_v2.scalding
 
-import com.twitter.algebird.{Monoid, Semigroup}
-import com.twitter.scalding._
+import com.twittelonr.algelonbird.{Monoid, Selonmigroup}
+import com.twittelonr.scalding._
 
-object UpdateKnownFor {
+objelonct UpdatelonKnownFor {
 
   /**
-   * Convenience datastructure that can summarize key stats about a node's set of
-   * immediate neighbors.
+   * Convelonnielonncelon datastructurelon that can summarizelon kelony stats about a nodelon's selont of
+   * immelondiatelon nelonighbors.
    *
-   * @param nodeCount                          number of nodes
-   * @param sumOfEdgeWeights                   sum of weights on edges in the neighborhood.
-   * @param sumOfMembershipWeightedEdgeWeights sum of { edge weight * membership weight } for each node
-   *                                           in the neighborhood. Membership weight to what is not
-   *                                           specified in this case class and is instead part of the
-   *                                           context.
-   * @param sumOfMembershipWeights             sum of membership weight for each node in the
-   *                                           neighborhood. Membership weight to what is not
-   *                                           specified in this case class and is instead part of
-   *                                           the context.
+   * @param nodelonCount                          numbelonr of nodelons
+   * @param sumOfelondgelonWelonights                   sum of welonights on elondgelons in thelon nelonighborhood.
+   * @param sumOfMelonmbelonrshipWelonightelondelondgelonWelonights sum of { elondgelon welonight * melonmbelonrship welonight } for elonach nodelon
+   *                                           in thelon nelonighborhood. Melonmbelonrship welonight to what is not
+   *                                           speloncifielond in this caselon class and is instelonad part of thelon
+   *                                           contelonxt.
+   * @param sumOfMelonmbelonrshipWelonights             sum of melonmbelonrship welonight for elonach nodelon in thelon
+   *                                           nelonighborhood. Melonmbelonrship welonight to what is not
+   *                                           speloncifielond in this caselon class and is instelonad part of
+   *                                           thelon contelonxt.
    */
-  case class NeighborhoodInformation(
-    nodeCount: Int,
-    sumOfEdgeWeights: Float,
-    sumOfMembershipWeightedEdgeWeights: Float,
-    sumOfMembershipWeights: Float)
+  caselon class NelonighborhoodInformation(
+    nodelonCount: Int,
+    sumOfelondgelonWelonights: Float,
+    sumOfMelonmbelonrshipWelonightelondelondgelonWelonights: Float,
+    sumOfMelonmbelonrshipWelonights: Float)
 
-  object NeighborhoodInformationMonoid extends Monoid[NeighborhoodInformation] {
-    override val zero: NeighborhoodInformation = NeighborhoodInformation(0, 0f, 0f, 0f)
-    override def plus(l: NeighborhoodInformation, r: NeighborhoodInformation) =
-      NeighborhoodInformation(
-        l.nodeCount + r.nodeCount,
-        l.sumOfEdgeWeights + r.sumOfEdgeWeights,
-        l.sumOfMembershipWeightedEdgeWeights + r.sumOfMembershipWeightedEdgeWeights,
-        l.sumOfMembershipWeights + r.sumOfMembershipWeights
+  objelonct NelonighborhoodInformationMonoid elonxtelonnds Monoid[NelonighborhoodInformation] {
+    ovelonrridelon val zelonro: NelonighborhoodInformation = NelonighborhoodInformation(0, 0f, 0f, 0f)
+    ovelonrridelon delonf plus(l: NelonighborhoodInformation, r: NelonighborhoodInformation) =
+      NelonighborhoodInformation(
+        l.nodelonCount + r.nodelonCount,
+        l.sumOfelondgelonWelonights + r.sumOfelondgelonWelonights,
+        l.sumOfMelonmbelonrshipWelonightelondelondgelonWelonights + r.sumOfMelonmbelonrshipWelonightelondelondgelonWelonights,
+        l.sumOfMelonmbelonrshipWelonights + r.sumOfMelonmbelonrshipWelonights
       )
   }
 
-  case class NodeInformation(
-    originalClusters: List[Int],
-    overallStats: NeighborhoodInformation,
-    statsOfClustersInNeighborhood: Map[Int, NeighborhoodInformation])
+  caselon class NodelonInformation(
+    originalClustelonrs: List[Int],
+    ovelonrallStats: NelonighborhoodInformation,
+    statsOfClustelonrsInNelonighborhood: Map[Int, NelonighborhoodInformation])
 
-  object NodeInformationSemigroup extends Semigroup[NodeInformation] {
-    implicit val ctsMonoid: Monoid[NeighborhoodInformation] = NeighborhoodInformationMonoid
+  objelonct NodelonInformationSelonmigroup elonxtelonnds Selonmigroup[NodelonInformation] {
+    implicit val ctsMonoid: Monoid[NelonighborhoodInformation] = NelonighborhoodInformationMonoid
 
-    override def plus(l: NodeInformation, r: NodeInformation) =
-      NodeInformation(
-        l.originalClusters ++ r.originalClusters,
-        ctsMonoid.plus(l.overallStats, r.overallStats),
+    ovelonrridelon delonf plus(l: NodelonInformation, r: NodelonInformation) =
+      NodelonInformation(
+        l.originalClustelonrs ++ r.originalClustelonrs,
+        ctsMonoid.plus(l.ovelonrallStats, r.ovelonrallStats),
         Monoid
-          .mapMonoid[Int, NeighborhoodInformation].plus(
-            l.statsOfClustersInNeighborhood,
-            r.statsOfClustersInNeighborhood)
+          .mapMonoid[Int, NelonighborhoodInformation].plus(
+            l.statsOfClustelonrsInNelonighborhood,
+            r.statsOfClustelonrsInNelonighborhood)
       )
   }
 
-  case class ClusterScoresForNode(
-    sumScoreIgnoringMembershipScores: Double,
-    ratioScoreIgnoringMembershipScores: Double,
-    ratioScoreUsingMembershipScores: Double)
+  caselon class ClustelonrScorelonsForNodelon(
+    sumScorelonIgnoringMelonmbelonrshipScorelons: Doublelon,
+    ratioScorelonIgnoringMelonmbelonrshipScorelons: Doublelon,
+    ratioScorelonUsingMelonmbelonrshipScorelons: Doublelon)
 
   /**
-   * Given a user and a cluster:
-   * True positive weight = sum of edge weights to neighbors who belong to that cluster.
-   * False negative weight = sum of edge weights to neighbors who don’t belong to that cluster.
-   * False positive weight = (number of users in the cluster who are not neighbors of the node) * globalAvgEdgeWeight
-   * Membership-weighted true positive weight = for neighbors who are also in the cluster, sum of edge weight times user membership score in the cluster.
-   * Membership-weighted false negative weight = for neighbors who are not in the cluster, sum of edge weight times avg membership score across the whole knownFor input.
-   * Membership-weighted false positive weight = for users in the cluster who are not neighbors of the node, avg global edge weight times user membership score for the cluster.
+   * Givelonn a uselonr and a clustelonr:
+   * Truelon positivelon welonight = sum of elondgelon welonights to nelonighbors who belonlong to that clustelonr.
+   * Falselon nelongativelon welonight = sum of elondgelon welonights to nelonighbors who don’t belonlong to that clustelonr.
+   * Falselon positivelon welonight = (numbelonr of uselonrs in thelon clustelonr who arelon not nelonighbors of thelon nodelon) * globalAvgelondgelonWelonight
+   * Melonmbelonrship-welonightelond truelon positivelon welonight = for nelonighbors who arelon also in thelon clustelonr, sum of elondgelon welonight timelons uselonr melonmbelonrship scorelon in thelon clustelonr.
+   * Melonmbelonrship-welonightelond falselon nelongativelon welonight = for nelonighbors who arelon not in thelon clustelonr, sum of elondgelon welonight timelons avg melonmbelonrship scorelon across thelon wholelon knownFor input.
+   * Melonmbelonrship-welonightelond falselon positivelon welonight = for uselonrs in thelon clustelonr who arelon not nelonighbors of thelon nodelon, avg global elondgelon welonight timelons uselonr melonmbelonrship scorelon for thelon clustelonr.
    *
-   * Ignoring membership scores, sum formula:
-   * truePositiveWtFactor*(True positive weight) - false negative weight - false positive weight
-   * Ignoring membership scores, ratio formula:
-   * True positive weight / (true positive weight + false negative weight + false positive weight)
-   * Using membership scores
-   * Membership-weighted true positive weight / (Membership-weighted true positive weight + Membership-weighted false negative weight + Membership-weighted false positive weight)
+   * Ignoring melonmbelonrship scorelons, sum formula:
+   * truelonPositivelonWtFactor*(Truelon positivelon welonight) - falselon nelongativelon welonight - falselon positivelon welonight
+   * Ignoring melonmbelonrship scorelons, ratio formula:
+   * Truelon positivelon welonight / (truelon positivelon welonight + falselon nelongativelon welonight + falselon positivelon welonight)
+   * Using melonmbelonrship scorelons
+   * Melonmbelonrship-welonightelond truelon positivelon welonight / (Melonmbelonrship-welonightelond truelon positivelon welonight + Melonmbelonrship-welonightelond falselon nelongativelon welonight + Melonmbelonrship-welonightelond falselon positivelon welonight)
    *
-   * @param overallNeighborhoodStats
-   * @param statsForCluster
-   * @param clusterSize
-   * @param sumOfClusterMembershipScores
-   * @param globalAvgEdgeWeight
-   * @param truePositiveWtFactor
+   * @param ovelonrallNelonighborhoodStats
+   * @param statsForClustelonr
+   * @param clustelonrSizelon
+   * @param sumOfClustelonrMelonmbelonrshipScorelons
+   * @param globalAvgelondgelonWelonight
+   * @param truelonPositivelonWtFactor
    *
-   * @return
+   * @relonturn
    */
-  def getScoresForCluster(
-    overallNeighborhoodStats: NeighborhoodInformation,
-    statsForCluster: NeighborhoodInformation,
-    clusterSize: Int,
-    sumOfClusterMembershipScores: Double,
-    globalAvgEdgeWeight: Double,
-    truePositiveWtFactor: Double
-  ): ClusterScoresForNode = {
-    val truePositiveWt = statsForCluster.sumOfEdgeWeights
-    val falseNegativeWt = overallNeighborhoodStats.sumOfEdgeWeights - truePositiveWt
-    val falsePositiveWt = (clusterSize - statsForCluster.nodeCount) * globalAvgEdgeWeight
-    val membershipWeightedTruePositiveWt = statsForCluster.sumOfMembershipWeightedEdgeWeights
-    val membershipWeightedFalseNegativeWt =
-      overallNeighborhoodStats.sumOfMembershipWeightedEdgeWeights - membershipWeightedTruePositiveWt
-    val membershipWeightedFalsePositiveWt =
-      (sumOfClusterMembershipScores - statsForCluster.sumOfMembershipWeights) * globalAvgEdgeWeight
-    val sumScore =
-      truePositiveWtFactor * statsForCluster.sumOfEdgeWeights - falseNegativeWt - falsePositiveWt
-    val ratioScore = truePositiveWt / (truePositiveWt + falseNegativeWt + falsePositiveWt)
-    val ratioUsingMemberships =
-      membershipWeightedTruePositiveWt / (membershipWeightedTruePositiveWt +
-        membershipWeightedFalsePositiveWt + membershipWeightedFalseNegativeWt)
-    ClusterScoresForNode(sumScore, ratioScore, ratioUsingMemberships)
+  delonf gelontScorelonsForClustelonr(
+    ovelonrallNelonighborhoodStats: NelonighborhoodInformation,
+    statsForClustelonr: NelonighborhoodInformation,
+    clustelonrSizelon: Int,
+    sumOfClustelonrMelonmbelonrshipScorelons: Doublelon,
+    globalAvgelondgelonWelonight: Doublelon,
+    truelonPositivelonWtFactor: Doublelon
+  ): ClustelonrScorelonsForNodelon = {
+    val truelonPositivelonWt = statsForClustelonr.sumOfelondgelonWelonights
+    val falselonNelongativelonWt = ovelonrallNelonighborhoodStats.sumOfelondgelonWelonights - truelonPositivelonWt
+    val falselonPositivelonWt = (clustelonrSizelon - statsForClustelonr.nodelonCount) * globalAvgelondgelonWelonight
+    val melonmbelonrshipWelonightelondTruelonPositivelonWt = statsForClustelonr.sumOfMelonmbelonrshipWelonightelondelondgelonWelonights
+    val melonmbelonrshipWelonightelondFalselonNelongativelonWt =
+      ovelonrallNelonighborhoodStats.sumOfMelonmbelonrshipWelonightelondelondgelonWelonights - melonmbelonrshipWelonightelondTruelonPositivelonWt
+    val melonmbelonrshipWelonightelondFalselonPositivelonWt =
+      (sumOfClustelonrMelonmbelonrshipScorelons - statsForClustelonr.sumOfMelonmbelonrshipWelonights) * globalAvgelondgelonWelonight
+    val sumScorelon =
+      truelonPositivelonWtFactor * statsForClustelonr.sumOfelondgelonWelonights - falselonNelongativelonWt - falselonPositivelonWt
+    val ratioScorelon = truelonPositivelonWt / (truelonPositivelonWt + falselonNelongativelonWt + falselonPositivelonWt)
+    val ratioUsingMelonmbelonrships =
+      melonmbelonrshipWelonightelondTruelonPositivelonWt / (melonmbelonrshipWelonightelondTruelonPositivelonWt +
+        melonmbelonrshipWelonightelondFalselonPositivelonWt + melonmbelonrshipWelonightelondFalselonNelongativelonWt)
+    ClustelonrScorelonsForNodelon(sumScorelon, ratioScorelon, ratioUsingMelonmbelonrships)
   }
 
-  def pickBestCluster(
-    overallNeighborhoodStats: NeighborhoodInformation,
-    statsOfClustersInNeighborhood: Map[Int, NeighborhoodInformation],
-    clusterOverallStatsMap: Map[Int, NeighborhoodInformation],
-    globalAvgEdgeWeight: Double,
-    truePositiveWtFactor: Double,
-    clusterScoresToFinalScore: ClusterScoresForNode => Double,
-    minNeighborsInCluster: Int
-  ): Option[(Int, Double)] = {
-    val clusterToScores = statsOfClustersInNeighborhood.toList.flatMap {
-      case (clusterId, statsInNeighborhood) =>
-        val clusterOverallStats = clusterOverallStatsMap(clusterId)
-        if (statsInNeighborhood.nodeCount >= minNeighborsInCluster) {
-          Some(
+  delonf pickBelonstClustelonr(
+    ovelonrallNelonighborhoodStats: NelonighborhoodInformation,
+    statsOfClustelonrsInNelonighborhood: Map[Int, NelonighborhoodInformation],
+    clustelonrOvelonrallStatsMap: Map[Int, NelonighborhoodInformation],
+    globalAvgelondgelonWelonight: Doublelon,
+    truelonPositivelonWtFactor: Doublelon,
+    clustelonrScorelonsToFinalScorelon: ClustelonrScorelonsForNodelon => Doublelon,
+    minNelonighborsInClustelonr: Int
+  ): Option[(Int, Doublelon)] = {
+    val clustelonrToScorelons = statsOfClustelonrsInNelonighborhood.toList.flatMap {
+      caselon (clustelonrId, statsInNelonighborhood) =>
+        val clustelonrOvelonrallStats = clustelonrOvelonrallStatsMap(clustelonrId)
+        if (statsInNelonighborhood.nodelonCount >= minNelonighborsInClustelonr) {
+          Somelon(
             (
-              clusterId,
-              clusterScoresToFinalScore(
-                getScoresForCluster(
-                  overallNeighborhoodStats,
-                  statsInNeighborhood,
-                  clusterOverallStats.nodeCount,
-                  clusterOverallStats.sumOfMembershipWeights,
-                  globalAvgEdgeWeight,
-                  truePositiveWtFactor
+              clustelonrId,
+              clustelonrScorelonsToFinalScorelon(
+                gelontScorelonsForClustelonr(
+                  ovelonrallNelonighborhoodStats,
+                  statsInNelonighborhood,
+                  clustelonrOvelonrallStats.nodelonCount,
+                  clustelonrOvelonrallStats.sumOfMelonmbelonrshipWelonights,
+                  globalAvgelondgelonWelonight,
+                  truelonPositivelonWtFactor
                 )
               )
             )
           )
-        } else {
-          None
+        } elonlselon {
+          Nonelon
         }
     }
-    if (clusterToScores.nonEmpty) {
-      Some(clusterToScores.maxBy(_._2))
-    } else None
+    if (clustelonrToScorelons.nonelonmpty) {
+      Somelon(clustelonrToScorelons.maxBy(_._2))
+    } elonlselon Nonelon
   }
 
-  def updateGeneric(
-    graph: TypedPipe[(Long, Map[Long, Float])],
-    inputUserToClusters: TypedPipe[(Long, Array[(Int, Float)])],
-    clusterOverallStatsMap: Map[Int, NeighborhoodInformation],
-    minNeighborsInCluster: Int,
-    globalAvgWeight: Double,
-    avgMembershipScore: Double,
-    truePositiveWtFactor: Double,
-    clusterScoresToFinalScore: ClusterScoresForNode => Double
+  delonf updatelonGelonnelonric(
+    graph: TypelondPipelon[(Long, Map[Long, Float])],
+    inputUselonrToClustelonrs: TypelondPipelon[(Long, Array[(Int, Float)])],
+    clustelonrOvelonrallStatsMap: Map[Int, NelonighborhoodInformation],
+    minNelonighborsInClustelonr: Int,
+    globalAvgWelonight: Doublelon,
+    avgMelonmbelonrshipScorelon: Doublelon,
+    truelonPositivelonWtFactor: Doublelon,
+    clustelonrScorelonsToFinalScorelon: ClustelonrScorelonsForNodelon => Doublelon
   )(
-    implicit uniqId: UniqueID
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    val emptyToSomething = Stat("no_assignment_to_some")
-    val somethingToEmpty = Stat("some_assignment_to_none")
-    val emptyToEmpty = Stat("empty_to_empty")
-    val sameCluster = Stat("same_cluster")
-    val diffCluster = Stat("diff_cluster")
-    val nodesWithSmallDegree = Stat("nodes_with_degree_lt_" + minNeighborsInCluster)
+    implicit uniqId: UniquelonID
+  ): TypelondPipelon[(Long, Array[(Int, Float)])] = {
+    val elonmptyToSomelonthing = Stat("no_assignmelonnt_to_somelon")
+    val somelonthingToelonmpty = Stat("somelon_assignmelonnt_to_nonelon")
+    val elonmptyToelonmpty = Stat("elonmpty_to_elonmpty")
+    val samelonClustelonr = Stat("samelon_clustelonr")
+    val diffClustelonr = Stat("diff_clustelonr")
+    val nodelonsWithSmallDelongrelonelon = Stat("nodelons_with_delongrelonelon_lt_" + minNelonighborsInClustelonr)
 
-    collectInformationPerNode(graph, inputUserToClusters, avgMembershipScore)
-      .mapValues {
-        case NodeInformation(originalClusters, overallStats, statsOfClustersInNeighborhood) =>
-          val newClusterWithScoreOpt = if (overallStats.nodeCount < minNeighborsInCluster) {
-            nodesWithSmallDegree.inc()
-            None
-          } else {
-            pickBestCluster(
-              overallStats,
-              statsOfClustersInNeighborhood,
-              clusterOverallStatsMap,
-              globalAvgWeight,
-              truePositiveWtFactor,
-              clusterScoresToFinalScore,
-              minNeighborsInCluster
+    collelonctInformationPelonrNodelon(graph, inputUselonrToClustelonrs, avgMelonmbelonrshipScorelon)
+      .mapValuelons {
+        caselon NodelonInformation(originalClustelonrs, ovelonrallStats, statsOfClustelonrsInNelonighborhood) =>
+          val nelonwClustelonrWithScorelonOpt = if (ovelonrallStats.nodelonCount < minNelonighborsInClustelonr) {
+            nodelonsWithSmallDelongrelonelon.inc()
+            Nonelon
+          } elonlselon {
+            pickBelonstClustelonr(
+              ovelonrallStats,
+              statsOfClustelonrsInNelonighborhood,
+              clustelonrOvelonrallStatsMap,
+              globalAvgWelonight,
+              truelonPositivelonWtFactor,
+              clustelonrScorelonsToFinalScorelon,
+              minNelonighborsInClustelonr
             )
           }
-          newClusterWithScoreOpt match {
-            case Some((newClusterId, score)) =>
-              if (originalClusters.isEmpty) {
-                emptyToSomething.inc()
-              } else if (originalClusters.contains(newClusterId)) {
-                sameCluster.inc()
-              } else {
-                diffCluster.inc()
+          nelonwClustelonrWithScorelonOpt match {
+            caselon Somelon((nelonwClustelonrId, scorelon)) =>
+              if (originalClustelonrs.iselonmpty) {
+                elonmptyToSomelonthing.inc()
+              } elonlselon if (originalClustelonrs.contains(nelonwClustelonrId)) {
+                samelonClustelonr.inc()
+              } elonlselon {
+                diffClustelonr.inc()
               }
-              Array((newClusterId, score.toFloat))
-            case None =>
-              if (originalClusters.isEmpty) {
-                emptyToEmpty.inc()
-              } else {
-                somethingToEmpty.inc()
+              Array((nelonwClustelonrId, scorelon.toFloat))
+            caselon Nonelon =>
+              if (originalClustelonrs.iselonmpty) {
+                elonmptyToelonmpty.inc()
+              } elonlselon {
+                somelonthingToelonmpty.inc()
               }
-              Array.empty[(Int, Float)]
+              Array.elonmpty[(Int, Float)]
           }
       }
   }
 
   /**
-   * Assembles the information we need at a node in order to decide what the new cluster should be.
-   * So this is where we assemble what the overall
+   * Asselonmblelons thelon information welon nelonelond at a nodelon in ordelonr to deloncidelon what thelon nelonw clustelonr should belon.
+   * So this is whelonrelon welon asselonmblelon what thelon ovelonrall
    *
-   * This function is where all the crucial steps take place. First get the cluster that each
-   * node belongs to, and then broadcast information about this node and cluster membership to each
-   * of it's neighbors. Now bring together all records with the same nodeId as the key and create
-   * the NodeInformation dataset.
-   * @param graph symmetric graph i.e. if u is in v's adj list, then v is in u's adj list.
-   * @param userToClusters current knownFor.
-   * @param avgMembershipScore avg. membership score of a node in the knownFor we're updating.
-   *                           Useful to deal with nodes which don't belong to any knownFor.
-   * @return pipe with node information for each node
+   * This function is whelonrelon all thelon crucial stelonps takelon placelon. First gelont thelon clustelonr that elonach
+   * nodelon belonlongs to, and thelonn broadcast information about this nodelon and clustelonr melonmbelonrship to elonach
+   * of it's nelonighbors. Now bring togelonthelonr all reloncords with thelon samelon nodelonId as thelon kelony and crelonatelon
+   * thelon NodelonInformation dataselont.
+   * @param graph symmelontric graph i.elon. if u is in v's adj list, thelonn v is in u's adj list.
+   * @param uselonrToClustelonrs currelonnt knownFor.
+   * @param avgMelonmbelonrshipScorelon avg. melonmbelonrship scorelon of a nodelon in thelon knownFor welon'relon updating.
+   *                           Uselonful to delonal with nodelons which don't belonlong to any knownFor.
+   * @relonturn pipelon with nodelon information for elonach nodelon
    */
-  def collectInformationPerNode(
-    graph: TypedPipe[(Long, Map[Long, Float])],
-    userToClusters: TypedPipe[(Long, Array[(Int, Float)])],
-    avgMembershipScore: Double
-  ): TypedPipe[(Long, NodeInformation)] = {
-    implicit val nisg: Semigroup[NodeInformation] = NodeInformationSemigroup
+  delonf collelonctInformationPelonrNodelon(
+    graph: TypelondPipelon[(Long, Map[Long, Float])],
+    uselonrToClustelonrs: TypelondPipelon[(Long, Array[(Int, Float)])],
+    avgMelonmbelonrshipScorelon: Doublelon
+  ): TypelondPipelon[(Long, NodelonInformation)] = {
+    implicit val nisg: Selonmigroup[NodelonInformation] = NodelonInformationSelonmigroup
     graph
-      .leftJoin(userToClusters)
-      // uncomment for adhoc job
-      //.withReducers(200)
+      .lelonftJoin(uselonrToClustelonrs)
+      // uncommelonnt for adhoc job
+      //.withRelonducelonrs(200)
       .flatMap {
-        case (nodeId, (adjList, assignedClustersOpt)) =>
-          val assignedClusters =
-            assignedClustersOpt.map(_.toList).getOrElse(Nil)
-          val res = adjList.toList.flatMap {
-            case (neighborId, neighborWeight) =>
-              if (assignedClusters.nonEmpty) {
-                assignedClusters.map {
-                  case (clusterId, membershipScore) =>
-                    val neighborhoodInformationForCluster = NeighborhoodInformation(
+        caselon (nodelonId, (adjList, assignelondClustelonrsOpt)) =>
+          val assignelondClustelonrs =
+            assignelondClustelonrsOpt.map(_.toList).gelontOrelonlselon(Nil)
+          val relons = adjList.toList.flatMap {
+            caselon (nelonighborId, nelonighborWelonight) =>
+              if (assignelondClustelonrs.nonelonmpty) {
+                assignelondClustelonrs.map {
+                  caselon (clustelonrId, melonmbelonrshipScorelon) =>
+                    val nelonighborhoodInformationForClustelonr = NelonighborhoodInformation(
                       1,
-                      neighborWeight,
-                      membershipScore * neighborWeight,
-                      membershipScore)
-                    val originalClusters =
-                      if (neighborId == nodeId) List(clusterId)
-                      else List.empty[Int]
+                      nelonighborWelonight,
+                      melonmbelonrshipScorelon * nelonighborWelonight,
+                      melonmbelonrshipScorelon)
+                    val originalClustelonrs =
+                      if (nelonighborId == nodelonId) List(clustelonrId)
+                      elonlselon List.elonmpty[Int]
                     (
-                      neighborId,
-                      NodeInformation(
-                        originalClusters,
-                        neighborhoodInformationForCluster,
-                        Map(clusterId -> neighborhoodInformationForCluster)))
+                      nelonighborId,
+                      NodelonInformation(
+                        originalClustelonrs,
+                        nelonighborhoodInformationForClustelonr,
+                        Map(clustelonrId -> nelonighborhoodInformationForClustelonr)))
                 }
-              } else {
+              } elonlselon {
                 List(
                   (
-                    neighborId,
-                    NodeInformation(
+                    nelonighborId,
+                    NodelonInformation(
                       Nil,
-                      NeighborhoodInformation(
+                      NelonighborhoodInformation(
                         1,
-                        neighborWeight,
-                        (avgMembershipScore * neighborWeight).toFloat,
-                        avgMembershipScore.toFloat),
-                      Map.empty[Int, NeighborhoodInformation]
+                        nelonighborWelonight,
+                        (avgMelonmbelonrshipScorelon * nelonighborWelonight).toFloat,
+                        avgMelonmbelonrshipScorelon.toFloat),
+                      Map.elonmpty[Int, NelonighborhoodInformation]
                     )))
               }
           }
-          res
+          relons
       }
-      .sumByKey
-    // uncomment for adhoc job
-    //.withReducers(100)
+      .sumByKelony
+    // uncommelonnt for adhoc job
+    //.withRelonducelonrs(100)
   }
 
   /**
-   * Replace incoming knownFor scores with ratioScoreIgnoringMembershipScores
+   * Relonplacelon incoming knownFor scorelons with ratioScorelonIgnoringMelonmbelonrshipScorelons
    * @param knownFor
-   * @param simsGraphWithoutSelfLoops
-   * @param globalAvgWeight
-   * @param clusterStats
-   * @param avgMembershipScore
-   * @return
+   * @param simsGraphWithoutSelonlfLoops
+   * @param globalAvgWelonight
+   * @param clustelonrStats
+   * @param avgMelonmbelonrshipScorelon
+   * @relonturn
    */
-  def newKnownForScores(
-    knownFor: TypedPipe[(Long, Array[(Int, Float)])],
-    simsGraphWithoutSelfLoops: TypedPipe[(Long, Map[Long, Float])],
-    globalAvgWeight: Double,
-    clusterStats: Map[Int, NeighborhoodInformation],
-    avgMembershipScore: Double
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    collectInformationPerNode(simsGraphWithoutSelfLoops, knownFor, avgMembershipScore)
-      .mapValues {
-        case NodeInformation(originalClusters, overallStats, statsOfClustersInNeighborhood) =>
-          originalClusters.map { clusterId =>
+  delonf nelonwKnownForScorelons(
+    knownFor: TypelondPipelon[(Long, Array[(Int, Float)])],
+    simsGraphWithoutSelonlfLoops: TypelondPipelon[(Long, Map[Long, Float])],
+    globalAvgWelonight: Doublelon,
+    clustelonrStats: Map[Int, NelonighborhoodInformation],
+    avgMelonmbelonrshipScorelon: Doublelon
+  ): TypelondPipelon[(Long, Array[(Int, Float)])] = {
+    collelonctInformationPelonrNodelon(simsGraphWithoutSelonlfLoops, knownFor, avgMelonmbelonrshipScorelon)
+      .mapValuelons {
+        caselon NodelonInformation(originalClustelonrs, ovelonrallStats, statsOfClustelonrsInNelonighborhood) =>
+          originalClustelonrs.map { clustelonrId =>
             (
-              clusterId,
-              getScoresForCluster(
-                overallStats,
-                statsOfClustersInNeighborhood(clusterId),
-                clusterStats(clusterId).nodeCount,
-                clusterStats(clusterId).sumOfMembershipWeights,
-                globalAvgWeight,
+              clustelonrId,
+              gelontScorelonsForClustelonr(
+                ovelonrallStats,
+                statsOfClustelonrsInNelonighborhood(clustelonrId),
+                clustelonrStats(clustelonrId).nodelonCount,
+                clustelonrStats(clustelonrId).sumOfMelonmbelonrshipWelonights,
+                globalAvgWelonight,
                 0
-              ).ratioScoreIgnoringMembershipScores.toFloat)
+              ).ratioScorelonIgnoringMelonmbelonrshipScorelons.toFloat)
           }.toArray
       }
   }

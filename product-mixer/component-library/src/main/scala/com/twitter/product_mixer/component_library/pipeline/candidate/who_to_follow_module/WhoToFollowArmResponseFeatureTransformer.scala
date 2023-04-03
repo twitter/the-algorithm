@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon
 
-import com.twitter.hermit.{thriftscala => h}
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.twittelonr.helonrmit.{thriftscala => h}
+import com.twittelonr.account_reloncommelonndations_mixelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
 
-object ContextTypeFeature extends Feature[UserCandidate, Option[t.ContextType]]
+objelonct ContelonxtTypelonFelonaturelon elonxtelonnds Felonaturelon[UselonrCandidatelon, Option[t.ContelonxtTypelon]]
 
-object WhoToFollowArmResponseFeatureTransformer
-    extends CandidateFeatureTransformer[t.RecommendedUser] {
+objelonct WhoToFollowArmRelonsponselonFelonaturelonTransformelonr
+    elonxtelonnds CandidatelonFelonaturelonTransformelonr[t.ReloncommelonndelondUselonr] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("WhoToFollowArmResponse")
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr = TransformelonrIdelonntifielonr("WhoToFollowArmRelonsponselon")
 
-  override val features: Set[Feature[_, _]] =
-    Set(
-      AdImpressionFeature,
-      ContextTypeFeature,
-      HermitContextTypeFeature,
-      SocialTextFeature,
-      TrackingTokenFeature,
-      ScoreFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] =
+    Selont(
+      AdImprelonssionFelonaturelon,
+      ContelonxtTypelonFelonaturelon,
+      HelonrmitContelonxtTypelonFelonaturelon,
+      SocialTelonxtFelonaturelon,
+      TrackingTokelonnFelonaturelon,
+      ScorelonFelonaturelon)
 
-  override def transform(input: t.RecommendedUser): FeatureMap = FeatureMapBuilder()
-    .add(AdImpressionFeature, input.adImpression)
-    .add(ContextTypeFeature, input.contextType)
+  ovelonrridelon delonf transform(input: t.ReloncommelonndelondUselonr): FelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(AdImprelonssionFelonaturelon, input.adImprelonssion)
+    .add(ContelonxtTypelonFelonaturelon, input.contelonxtTypelon)
     .add(
-      HermitContextTypeFeature,
-      input.contextType.map(contextType => h.ContextType(contextType.value)))
-    .add(SocialTextFeature, input.socialText)
-    .add(TrackingTokenFeature, input.trackingToken)
-    .add(ScoreFeature, input.mlPredictionScore)
+      HelonrmitContelonxtTypelonFelonaturelon,
+      input.contelonxtTypelon.map(contelonxtTypelon => h.ContelonxtTypelon(contelonxtTypelon.valuelon)))
+    .add(SocialTelonxtFelonaturelon, input.socialTelonxt)
+    .add(TrackingTokelonnFelonaturelon, input.trackingTokelonn)
+    .add(ScorelonFelonaturelon, input.mlPrelondictionScorelon)
     .build()
 }

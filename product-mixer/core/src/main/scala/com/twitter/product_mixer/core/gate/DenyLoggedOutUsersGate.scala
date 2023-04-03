@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.gate
+packagelon com.twittelonr.product_mixelonr.corelon.gatelon
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.gate.DenyLoggedOutUsersGate.Suffix
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.Authentication
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.gatelon.DelonnyLoggelondOutUselonrsGatelon.Suffix
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.Authelonntication
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.stitch.Stitch
 
-case class DenyLoggedOutUsersGate(pipelineIdentifier: ComponentIdentifier)
-    extends Gate[PipelineQuery] {
-  override val identifier: GateIdentifier = GateIdentifier(pipelineIdentifier + Suffix)
+caselon class DelonnyLoggelondOutUselonrsGatelon(pipelonlinelonIdelonntifielonr: ComponelonntIdelonntifielonr)
+    elonxtelonnds Gatelon[PipelonlinelonQuelonry] {
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr(pipelonlinelonIdelonntifielonr + Suffix)
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
-    if (query.getUserOrGuestId.nonEmpty) {
-      Stitch.value(!query.isLoggedOut)
-    } else {
-      Stitch.exception(
-        PipelineFailure(
-          Authentication,
-          "Expected either a `userId` (for logged in users) or `guestId` (for logged out users) but found neither"
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry): Stitch[Boolelonan] = {
+    if (quelonry.gelontUselonrOrGuelonstId.nonelonmpty) {
+      Stitch.valuelon(!quelonry.isLoggelondOut)
+    } elonlselon {
+      Stitch.elonxcelonption(
+        PipelonlinelonFailurelon(
+          Authelonntication,
+          "elonxpelonctelond elonithelonr a `uselonrId` (for loggelond in uselonrs) or `guelonstId` (for loggelond out uselonrs) but found nelonithelonr"
         ))
     }
   }
 }
 
-object DenyLoggedOutUsersGate {
-  val Suffix = "DenyLoggedOutUsers"
+objelonct DelonnyLoggelondOutUselonrsGatelon {
+  val Suffix = "DelonnyLoggelondOutUselonrs"
 }

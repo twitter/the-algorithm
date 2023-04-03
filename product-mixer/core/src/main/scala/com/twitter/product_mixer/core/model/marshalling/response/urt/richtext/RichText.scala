@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt
 
-case class RichText(
-  text: String,
-  entities: List[RichTextEntity],
-  rtl: Option[Boolean],
-  alignment: Option[RichTextAlignment])
+caselon class RichTelonxt(
+  telonxt: String,
+  elonntitielons: List[RichTelonxtelonntity],
+  rtl: Option[Boolelonan],
+  alignmelonnt: Option[RichTelonxtAlignmelonnt])

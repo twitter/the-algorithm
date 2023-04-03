@@ -1,74 +1,74 @@
-package com.twitter.simclusters_v2.scalding
-package multi_type_graph.assemble_multi_type_graph
+packagelon com.twittelonr.simclustelonrs_v2.scalding
+packagelon multi_typelon_graph.asselonmblelon_multi_typelon_graph
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.RichDate
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources._
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.dal.clielonnt.dataselont.SnapshotDALDataselont
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.Duration
+import com.twittelonr.scalding.RichDatelon
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.thriftscala.LelonftNodelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonTypelonStruct
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonWithelondgelonWelonightList
+import com.twittelonr.simclustelonrs_v2.thriftscala.NounWithFrelonquelonncyList
+import com.twittelonr.simclustelonrs_v2.thriftscala.MultiTypelonGraphelondgelon
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph:multi_type_graph-adhoc
-scalding remote run \
---user cassowary \
---keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
---principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.multi_type_graph.assemble_multi_type_graph.AssembleMultiTypeGraphAdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph:multi_type_graph-adhoc \
---hadoop-properties "mapreduce.reduce.memory.mb=8192 mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.java.opts='-Xmx7618M' mapreduce.task.timeout=3600000" \
--- --date 2021-07-10 --outputDir /gcs/user/cassowary/adhoc/your_ldap/multi_type/multi_type
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/multi_typelon_graph/asselonmblelon_multi_typelon_graph:multi_typelon_graph-adhoc
+scalding relonmotelon run \
+--uselonr cassowary \
+--kelonytab /var/lib/tss/kelonys/fluffy/kelonytabs/clielonnt/cassowary.kelonytab \
+--principal selonrvicelon_acoount@TWITTelonR.BIZ \
+--clustelonr bluelonbird-qus1 \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.multi_typelon_graph.asselonmblelon_multi_typelon_graph.AsselonmblelonMultiTypelonGraphAdhocApp \
+--targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/multi_typelon_graph/asselonmblelon_multi_typelon_graph:multi_typelon_graph-adhoc \
+--hadoop-propelonrtielons "maprelonducelon.relonducelon.melonmory.mb=8192 maprelonducelon.map.melonmory.mb=8192 maprelonducelon.map.java.opts='-Xmx7618M' maprelonducelon.relonducelon.java.opts='-Xmx7618M' maprelonducelon.task.timelonout=3600000" \
+-- --datelon 2021-07-10 --outputDir /gcs/uselonr/cassowary/adhoc/your_ldap/multi_typelon/multi_typelon
 
-To run using scalding_job target:
-scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph:multi_type_graph-adhoc
+To run using scalding_job targelont:
+scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/multi_typelon_graph/asselonmblelon_multi_typelon_graph:multi_typelon_graph-adhoc
  */
 
-object AssembleMultiTypeGraphAdhocApp extends AssembleMultiTypeGraphBaseApp with AdhocExecutionApp {
-  override val isAdhoc: Boolean = true
-  override val truncatedMultiTypeGraphMHOutputPath: String = "truncated_graph_mh"
-  override val topKRightNounsMHOutputPath: String = "top_k_right_nouns_mh"
-  override val fullMultiTypeGraphThriftOutputPath: String = "full_graph_thrift"
-  override val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
-  ] = TruncatedMultiTypeGraphAdhocScalaDataset
-  override val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
-  ] = TopKRightNounsAdhocScalaDataset
-  override val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge] =
-    FullMultiTypeGraphAdhocScalaDataset
+objelonct AsselonmblelonMultiTypelonGraphAdhocApp elonxtelonnds AsselonmblelonMultiTypelonGraphBaselonApp with AdhocelonxeloncutionApp {
+  ovelonrridelon val isAdhoc: Boolelonan = truelon
+  ovelonrridelon val truncatelondMultiTypelonGraphMHOutputPath: String = "truncatelond_graph_mh"
+  ovelonrridelon val topKRightNounsMHOutputPath: String = "top_k_right_nouns_mh"
+  ovelonrridelon val fullMultiTypelonGraphThriftOutputPath: String = "full_graph_thrift"
+  ovelonrridelon val truncatelondMultiTypelonGraphKelonyValDataselont: KelonyValDALDataselont[
+    KelonyVal[LelonftNodelon, RightNodelonWithelondgelonWelonightList]
+  ] = TruncatelondMultiTypelonGraphAdhocScalaDataselont
+  ovelonrridelon val topKRightNounsKelonyValDataselont: KelonyValDALDataselont[
+    KelonyVal[RightNodelonTypelonStruct, NounWithFrelonquelonncyList]
+  ] = TopKRightNounsAdhocScalaDataselont
+  ovelonrridelon val fullMultiTypelonGraphSnapshotDataselont: SnapshotDALDataselont[MultiTypelonGraphelondgelon] =
+    FullMultiTypelonGraphAdhocScalaDataselont
 }
 
 /**
-To deploy the job:
+To delonploy thelon job:
 
-capesospy-v2 update --build_locally \
- --start_cron assemble_multi_type_graph \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capelonsospy-v2 updatelon --build_locally \
+ --start_cron asselonmblelon_multi_typelon_graph \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object AssembleMultiTypeGraphBatchApp
-    extends AssembleMultiTypeGraphBaseApp
-    with ScheduledExecutionApp {
-  override val isAdhoc: Boolean = false
-  override val truncatedMultiTypeGraphMHOutputPath: String = "truncated_graph_mh"
-  override val topKRightNounsMHOutputPath: String = "top_k_right_nouns_mh"
-  override val fullMultiTypeGraphThriftOutputPath: String = "full_graph_thrift"
-  override val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
-  ] = TruncatedMultiTypeGraphScalaDataset
-  override val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
-  ] = TopKRightNounsScalaDataset
-  override val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge] =
-    FullMultiTypeGraphScalaDataset
-  override val firstTime: RichDate = RichDate("2021-08-21")
-  override val batchIncrement: Duration = Days(7)
+objelonct AsselonmblelonMultiTypelonGraphBatchApp
+    elonxtelonnds AsselonmblelonMultiTypelonGraphBaselonApp
+    with SchelondulelondelonxeloncutionApp {
+  ovelonrridelon val isAdhoc: Boolelonan = falselon
+  ovelonrridelon val truncatelondMultiTypelonGraphMHOutputPath: String = "truncatelond_graph_mh"
+  ovelonrridelon val topKRightNounsMHOutputPath: String = "top_k_right_nouns_mh"
+  ovelonrridelon val fullMultiTypelonGraphThriftOutputPath: String = "full_graph_thrift"
+  ovelonrridelon val truncatelondMultiTypelonGraphKelonyValDataselont: KelonyValDALDataselont[
+    KelonyVal[LelonftNodelon, RightNodelonWithelondgelonWelonightList]
+  ] = TruncatelondMultiTypelonGraphScalaDataselont
+  ovelonrridelon val topKRightNounsKelonyValDataselont: KelonyValDALDataselont[
+    KelonyVal[RightNodelonTypelonStruct, NounWithFrelonquelonncyList]
+  ] = TopKRightNounsScalaDataselont
+  ovelonrridelon val fullMultiTypelonGraphSnapshotDataselont: SnapshotDALDataselont[MultiTypelonGraphelondgelon] =
+    FullMultiTypelonGraphScalaDataselont
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2021-08-21")
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 }

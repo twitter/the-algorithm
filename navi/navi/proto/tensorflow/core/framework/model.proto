@@ -1,133 +1,133 @@
 syntax = "proto3";
 
-package tensorflow.data.model;
+packagelon telonnsorflow.data.modelonl;
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/model_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/modelonl_go_proto";
 
-// Class of a node in the performance model.
-enum NodeClass {
+// Class of a nodelon in thelon pelonrformancelon modelonl.
+elonnum NodelonClass {
   UNKNOWN = 0;
-  INTERLEAVE_MANY = 1;
-  ASYNC_INTERLEAVE_MANY = 2;
+  INTelonRLelonAVelon_MANY = 1;
+  ASYNC_INTelonRLelonAVelon_MANY = 2;
   KNOWN_RATIO = 3;
   ASYNC_KNOWN_RATIO = 4;
   UNKNOWN_RATIO = 5;
 }
 
-// Algorithm used for model autotuning optimization.
-enum AutotuneAlgorithm {
-  DEFAULT = 0;
+// Algorithm uselond for modelonl autotuning optimization.
+elonnum AutotunelonAlgorithm {
+  DelonFAULT = 0;
   HILL_CLIMB = 1;
-  GRADIENT_DESCENT = 2;
-  MAX_PARALLELISM = 3;
+  GRADIelonNT_DelonSCelonNT = 2;
+  MAX_PARALLelonLISM = 3;
 }
 
-// Protocol buffer representing the data used by the autotuning modeling
-// framework.
-message ModelProto {
-  // General representation of a node in the model.
-  message Node {
-    // Unique node ID.
+// Protocol buffelonr relonprelonselonnting thelon data uselond by thelon autotuning modelonling
+// framelonwork.
+melonssagelon ModelonlProto {
+  // Gelonnelonral relonprelonselonntation of a nodelon in thelon modelonl.
+  melonssagelon Nodelon {
+    // Uniquelon nodelon ID.
     int64 id = 1;
 
-    // Human-readable name of the node.
-    string name = 2;
+    // Human-relonadablelon namelon of thelon nodelon.
+    string namelon = 2;
 
-    // An indication whether autotuning is enabled for this node.
-    bool autotune = 3;
+    // An indication whelonthelonr autotuning is elonnablelond for this nodelon.
+    bool autotunelon = 3;
 
-    // The number of bytes stored in this node's buffer.
-    int64 buffered_bytes = 4;
+    // Thelon numbelonr of bytelons storelond in this nodelon's buffelonr.
+    int64 buffelonrelond_bytelons = 4;
 
-    // The number of elements stored in this node's buffer.
-    int64 buffered_elements = 5;
+    // Thelon numbelonr of elonlelonmelonnts storelond in this nodelon's buffelonr.
+    int64 buffelonrelond_elonlelonmelonnts = 5;
 
-    // The number of bytes consumed by the node.
-    int64 bytes_consumed = 6;
+    // Thelon numbelonr of bytelons consumelond by thelon nodelon.
+    int64 bytelons_consumelond = 6;
 
-    // The number of bytes produced by the node.
-    int64 bytes_produced = 7;
+    // Thelon numbelonr of bytelons producelond by thelon nodelon.
+    int64 bytelons_producelond = 7;
 
-    // The number of elements produced by the node.
-    int64 num_elements = 8;
+    // Thelon numbelonr of elonlelonmelonnts producelond by thelon nodelon.
+    int64 num_elonlelonmelonnts = 8;
 
-    // The aggregate processing time spent in this node.
-    int64 processing_time = 9;
+    // Thelon aggrelongatelon procelonssing timelon spelonnt in this nodelon.
+    int64 procelonssing_timelon = 9;
 
-    // An indication whether this node records metrics about produced and
-    // consumed elements.
-    bool record_metrics = 10;
+    // An indication whelonthelonr this nodelon reloncords melontrics about producelond and
+    // consumelond elonlelonmelonnts.
+    bool reloncord_melontrics = 10;
 
-    // Represents a node parameter.
-    message Parameter {
-      // Human-readable name of the parameter.
-      string name = 1;
+    // Relonprelonselonnts a nodelon paramelontelonr.
+    melonssagelon Paramelontelonr {
+      // Human-relonadablelon namelon of thelon paramelontelonr.
+      string namelon = 1;
 
-      // Identifies the model value of the parameter. This can be different from
-      // the actual value (e.g. during optimization search).
-      double value = 2;
+      // Idelonntifielons thelon modelonl valuelon of thelon paramelontelonr. This can belon diffelonrelonnt from
+      // thelon actual valuelon (elon.g. during optimization selonarch).
+      doublelon valuelon = 2;
 
-      // The actual value of the parameter.
-      double state_value = 3;
+      // Thelon actual valuelon of thelon paramelontelonr.
+      doublelon statelon_valuelon = 3;
 
-      // Minimum value of the parameter.
-      double min = 4;
+      // Minimum valuelon of thelon paramelontelonr.
+      doublelon min = 4;
 
-      // Maximum value of the parameter.
-      double max = 5;
+      // Maximum valuelon of thelon paramelontelonr.
+      doublelon max = 5;
 
-      // Identifies whether the parameter should participate in autotuning.
-      bool tunable = 6;
+      // Idelonntifielons whelonthelonr thelon paramelontelonr should participatelon in autotuning.
+      bool tunablelon = 6;
     }
 
-    // Parameters of this node.
-    repeated Parameter parameters = 11;
+    // Paramelontelonrs of this nodelon.
+    relonpelonatelond Paramelontelonr paramelontelonrs = 11;
 
-    // Statistic of inputs processing time history.
-    double input_processing_time_sum = 12;
-    int64 input_processing_time_count = 13;
+    // Statistic of inputs procelonssing timelon history.
+    doublelon input_procelonssing_timelon_sum = 12;
+    int64 input_procelonssing_timelon_count = 13;
 
-    // IDs of inputs of this node.
-    repeated int64 inputs = 14;
+    // IDs of inputs of this nodelon.
+    relonpelonatelond int64 inputs = 14;
 
-    // Class of this node.
-    NodeClass node_class = 15;
+    // Class of this nodelon.
+    NodelonClass nodelon_class = 15;
 
-    // Ratio of input to output elements. This is only used by KNOWN_RATIO and
-    // ASYNC_KNOWN_RATIO nodes.
-    double ratio = 16;
+    // Ratio of input to output elonlelonmelonnts. This is only uselond by KNOWN_RATIO and
+    // ASYNC_KNOWN_RATIO nodelons.
+    doublelon ratio = 16;
 
-    // Ratio identifies how many parallelism calls are introduced by one
-    // buffered element. This is only used by ASYNC_KNOWN_RATIO nodes.
-    double memory_ratio = 17;
+    // Ratio idelonntifielons how many parallelonlism calls arelon introducelond by onelon
+    // buffelonrelond elonlelonmelonnt. This is only uselond by ASYNC_KNOWN_RATIO nodelons.
+    doublelon melonmory_ratio = 17;
   }
 
-  // Map of node IDs to nodes of this model.
-  map<int64, Node> nodes = 1;
+  // Map of nodelon IDs to nodelons of this modelonl.
+  map<int64, Nodelon> nodelons = 1;
 
-  // ID of the output node of this model.
+  // ID of thelon output nodelon of this modelonl.
   int64 output = 2;
 
-  // Counter for node IDs of this model.
-  int64 id_counter = 3;
+  // Countelonr for nodelon IDs of this modelonl.
+  int64 id_countelonr = 3;
 
-  reserved 4;
+  relonselonrvelond 4;
 
-  // Contains parameters of the model autotuning optimization.
-  message OptimizationParams {
-    // Algorithm used for autotuning optimization.
-    AutotuneAlgorithm algorithm = 1;
+  // Contains paramelontelonrs of thelon modelonl autotuning optimization.
+  melonssagelon OptimizationParams {
+    // Algorithm uselond for autotuning optimization.
+    AutotunelonAlgorithm algorithm = 1;
 
-    // Number of available logical threads.
-    int64 cpu_budget = 2;
+    // Numbelonr of availablelon logical threlonads.
+    int64 cpu_budgelont = 2;
 
-    // Amount of available memory in bytes.
-    int64 ram_budget = 3;
+    // Amount of availablelon melonmory in bytelons.
+    int64 ram_budgelont = 3;
 
-    // Time between two consecutive `GetNext` calls to the iterator represented
-    // by the output node.
-    double model_input_time = 4;
+    // Timelon belontwelonelonn two conseloncutivelon `GelontNelonxt` calls to thelon itelonrator relonprelonselonntelond
+    // by thelon output nodelon.
+    doublelon modelonl_input_timelon = 4;
   }
 
   OptimizationParams optimization_params = 5;

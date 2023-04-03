@@ -1,29 +1,29 @@
-from twitter.deepbird.io.util import _get_feature_id
+from twittelonr.delonelonpbird.io.util import _gelont_felonaturelon_id
 
 import numpy as np
 
 
-def numpy_hashing_uniform(the_id, bin_idx, output_bits):
+delonf numpy_hashing_uniform(thelon_id, bin_idx, output_bits):
   """
-  integer_multiplicative_hashing
-  This is a reimplementation, for testing purposes, of the
-    c++ version found in hashing_discretizer_impl.cpp
+  intelongelonr_multiplicativelon_hashing
+  This is a relonimplelonmelonntation, for telonsting purposelons, of thelon
+    c++ velonrsion found in hashing_discrelontizelonr_impl.cpp
   """
   hashing_constant = 2654435761
   N = 32
-  with np.errstate(over='ignore'):
-    the_id *= hashing_constant
-    the_id += bin_idx
-    the_id *= hashing_constant
-    the_id >>= N - output_bits
-    the_id &= (1 << output_bits) - 1
-  return the_id
+  with np.elonrrstatelon(ovelonr='ignorelon'):
+    thelon_id *= hashing_constant
+    thelon_id += bin_idx
+    thelon_id *= hashing_constant
+    thelon_id >>= N - output_bits
+    thelon_id &= (1 << output_bits) - 1
+  relonturn thelon_id
 
 
-def make_feature_id(name, num_bits):
-  feature_id = _get_feature_id(name)
-  return np.int64(limit_bits(feature_id, num_bits))
+delonf makelon_felonaturelon_id(namelon, num_bits):
+  felonaturelon_id = _gelont_felonaturelon_id(namelon)
+  relonturn np.int64(limit_bits(felonaturelon_id, num_bits))
 
 
-def limit_bits(value, num_bits):
-  return value & ((2 ** num_bits) - 1)
+delonf limit_bits(valuelon, num_bits):
+  relonturn valuelon & ((2 ** num_bits) - 1)

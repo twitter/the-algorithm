@@ -1,102 +1,102 @@
-package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.socialgraph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.TwoHopExpansionCandidateSource
-import com.twitter.follow_recommendations.common.clients.socialgraph.RecentEdgesQuery
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.hermit.model.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.TwoHopelonxpansionCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph.ReloncelonntelondgelonsQuelonry
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph.SocialGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FollowProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.socialgraph.thriftscala.RelonlationshipTypelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * This candidate source is a two hop expansion over the follow graph. The candidates returned from this source is the users that get followed by the target user's recent followings. It will call SocialGraph `n` + 1 times where `n` is the number of recent followings of the target user to be considered.
+ * This candidatelon sourcelon is a two hop elonxpansion ovelonr thelon follow graph. Thelon candidatelons relonturnelond from this sourcelon is thelon uselonrs that gelont followelond by thelon targelont uselonr's reloncelonnt followings. It will call SocialGraph `n` + 1 timelons whelonrelon `n` is thelon numbelonr of reloncelonnt followings of thelon targelont uselonr to belon considelonrelond.
  */
-@Singleton
-class RecentFollowingRecentFollowingExpansionSource @Inject() (
-  socialGraphClient: SocialGraphClient,
-  statsReceiver: StatsReceiver)
-    extends TwoHopExpansionCandidateSource[
-      HasParams with HasRecentFollowedUserIds,
+@Singlelonton
+class ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelon @Injelonct() (
+  socialGraphClielonnt: SocialGraphClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds TwoHopelonxpansionCandidatelonSourcelon[
+      HasParams with HasReloncelonntFollowelondUselonrIds,
       Long,
       Long,
-      CandidateUser
+      CandidatelonUselonr
     ]
     with Logging {
 
-  override val identifier: CandidateSourceIdentifier =
-    RecentFollowingRecentFollowingExpansionSource.Identifier
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelon.Idelonntifielonr
 
-  val stats = statsReceiver.scope(identifier.name)
+  val stats = statsReloncelonivelonr.scopelon(idelonntifielonr.namelon)
 
-  override def firstDegreeNodes(
-    target: HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[Long]] = Stitch.value(
-    target.recentFollowedUserIds
-      .getOrElse(Nil).take(
-        RecentFollowingRecentFollowingExpansionSource.NumFirstDegreeNodesToRetrieve)
+  ovelonrridelon delonf firstDelongrelonelonNodelons(
+    targelont: HasParams with HasReloncelonntFollowelondUselonrIds
+  ): Stitch[Selonq[Long]] = Stitch.valuelon(
+    targelont.reloncelonntFollowelondUselonrIds
+      .gelontOrelonlselon(Nil).takelon(
+        ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelon.NumFirstDelongrelonelonNodelonsToRelontrielonvelon)
   )
 
-  override def secondaryDegreeNodes(
-    target: HasParams with HasRecentFollowedUserIds,
-    node: Long
-  ): Stitch[Seq[Long]] = socialGraphClient
-    .getRecentEdgesCached(
-      RecentEdgesQuery(
-        node,
-        Seq(RelationshipType.Following),
-        Some(RecentFollowingRecentFollowingExpansionSource.NumSecondDegreeNodesToRetrieve)),
-      useCachedStratoColumn =
-        target.params(RecentFollowingRecentFollowingExpansionSourceParams.CallSgsCachedColumn)
+  ovelonrridelon delonf seloncondaryDelongrelonelonNodelons(
+    targelont: HasParams with HasReloncelonntFollowelondUselonrIds,
+    nodelon: Long
+  ): Stitch[Selonq[Long]] = socialGraphClielonnt
+    .gelontReloncelonntelondgelonsCachelond(
+      ReloncelonntelondgelonsQuelonry(
+        nodelon,
+        Selonq(RelonlationshipTypelon.Following),
+        Somelon(ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelon.NumSeloncondDelongrelonelonNodelonsToRelontrielonvelon)),
+      uselonCachelondStratoColumn =
+        targelont.params(ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelonParams.CallSgsCachelondColumn)
     ).map(
-      _.take(RecentFollowingRecentFollowingExpansionSource.NumSecondDegreeNodesToRetrieve)).rescue {
-      case exception: Exception =>
-        logger.warn(
-          s"${this.getClass} fails to retrieve second degree nodes for first degree node $node",
-          exception)
-        stats.counter("second_degree_expansion_error").incr()
+      _.takelon(ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelon.NumSeloncondDelongrelonelonNodelonsToRelontrielonvelon)).relonscuelon {
+      caselon elonxcelonption: elonxcelonption =>
+        loggelonr.warn(
+          s"${this.gelontClass} fails to relontrielonvelon seloncond delongrelonelon nodelons for first delongrelonelon nodelon $nodelon",
+          elonxcelonption)
+        stats.countelonr("seloncond_delongrelonelon_elonxpansion_elonrror").incr()
         Stitch.Nil
     }
 
-  override def aggregateAndScore(
-    target: HasParams with HasRecentFollowedUserIds,
-    firstDegreeToSecondDegreeNodesMap: Map[Long, Seq[Long]]
-  ): Stitch[Seq[CandidateUser]] = {
-    val zipped = firstDegreeToSecondDegreeNodesMap.toSeq.flatMap {
-      case (firstDegreeId, secondDegreeIds) =>
-        secondDegreeIds.map(secondDegreeId => firstDegreeId -> secondDegreeId)
+  ovelonrridelon delonf aggrelongatelonAndScorelon(
+    targelont: HasParams with HasReloncelonntFollowelondUselonrIds,
+    firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap: Map[Long, Selonq[Long]]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    val zippelond = firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap.toSelonq.flatMap {
+      caselon (firstDelongrelonelonId, seloncondDelongrelonelonIds) =>
+        seloncondDelongrelonelonIds.map(seloncondDelongrelonelonId => firstDelongrelonelonId -> seloncondDelongrelonelonId)
     }
-    val candidateAndConnections = zipped
-      .groupBy { case (_, secondDegreeId) => secondDegreeId }
-      .mapValues { v => v.map { case (firstDegreeId, _) => firstDegreeId } }
-      .toSeq
-      .sortBy { case (_, connections) => -connections.size }
+    val candidatelonAndConnelonctions = zippelond
+      .groupBy { caselon (_, seloncondDelongrelonelonId) => seloncondDelongrelonelonId }
+      .mapValuelons { v => v.map { caselon (firstDelongrelonelonId, _) => firstDelongrelonelonId } }
+      .toSelonq
+      .sortBy { caselon (_, connelonctions) => -connelonctions.sizelon }
       .map {
-        case (candidateId, connections) =>
-          CandidateUser(
-            id = candidateId,
-            score = Some(CandidateUser.DefaultCandidateScore),
-            reason = Some(
-              Reason(
-                Some(AccountProof(followProof = Some(FollowProof(connections, connections.size))))))
-          ).withCandidateSource(identifier)
+        caselon (candidatelonId, connelonctions) =>
+          CandidatelonUselonr(
+            id = candidatelonId,
+            scorelon = Somelon(CandidatelonUselonr.DelonfaultCandidatelonScorelon),
+            relonason = Somelon(
+              Relonason(
+                Somelon(AccountProof(followProof = Somelon(FollowProof(connelonctions, connelonctions.sizelon))))))
+          ).withCandidatelonSourcelon(idelonntifielonr)
       }
-    Stitch.value(candidateAndConnections)
+    Stitch.valuelon(candidatelonAndConnelonctions)
   }
 }
 
-object RecentFollowingRecentFollowingExpansionSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.NewFollowingNewFollowingExpansion.toString)
+objelonct ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelon {
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.NelonwFollowingNelonwFollowingelonxpansion.toString)
 
-  val NumFirstDegreeNodesToRetrieve = 5
-  val NumSecondDegreeNodesToRetrieve = 20
+  val NumFirstDelongrelonelonNodelonsToRelontrielonvelon = 5
+  val NumSeloncondDelongrelonelonNodelonsToRelontrielonvelon = 20
 }

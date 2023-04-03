@@ -1,48 +1,48 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
-import com.google.common.base.Strings;
+import com.googlelon.common.baselon.Strings;
 
-import com.twitter.expandodo.thriftjava.BindingValue;
-import com.twitter.expandodo.thriftjava.BindingValueType;
-import com.twitter.expandodo.thriftjava.Card2;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
+import com.twittelonr.elonxpandodo.thriftjava.BindingValuelon;
+import com.twittelonr.elonxpandodo.thriftjava.BindingValuelonTypelon;
+import com.twittelonr.elonxpandodo.thriftjava.Card2;
+import com.twittelonr.selonarch.common.util.telonxt.LanguagelonIdelonntifielonrHelonlpelonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
 
-public final class CardFieldUtil {
+public final class CardFielonldUtil {
 
-  private CardFieldUtil() {
-    /* prevent instantiation */
+  privatelon CardFielonldUtil() {
+    /* prelonvelonnt instantiation */
   }
 
   /**
-   * Binding Keys for card fields
+   * Binding Kelonys for card fielonlds
    */
-  public static final String TITLE_BINDING_KEY = "title";
-  public static final String DESCRIPTION_BINDING_KEY = "description";
+  public static final String TITLelon_BINDING_KelonY = "titlelon";
+  public static final String DelonSCRIPTION_BINDING_KelonY = "delonscription";
 
   /**
-   * given a bindingKey and card, will return the bindingValue of the given bindingKey
-   * if present in card.getBinding_values(). If no match is found return null.
+   * givelonn a bindingKelony and card, will relonturn thelon bindingValuelon of thelon givelonn bindingKelony
+   * if prelonselonnt in card.gelontBinding_valuelons(). If no match is found relonturn null.
    */
-  public static String extractBindingValue(String bindingKey, Card2 card) {
-    for (BindingValue bindingValue : card.getBinding_values()) {
-      if ((bindingValue != null)
-          && bindingValue.isSetType()
-          && (bindingValue.getType() == BindingValueType.STRING)
-          && bindingKey.equals(bindingValue.getKey())) {
-        return bindingValue.getString_value();
+  public static String elonxtractBindingValuelon(String bindingKelony, Card2 card) {
+    for (BindingValuelon bindingValuelon : card.gelontBinding_valuelons()) {
+      if ((bindingValuelon != null)
+          && bindingValuelon.isSelontTypelon()
+          && (bindingValuelon.gelontTypelon() == BindingValuelonTypelon.STRING)
+          && bindingKelony.elonquals(bindingValuelon.gelontKelony())) {
+        relonturn bindingValuelon.gelontString_valuelon();
       }
     }
-    return null;
+    relonturn null;
   }
 
   /**
-   * derives card lang from title + description and sets it in TwitterMessage.
+   * delonrivelons card lang from titlelon + delonscription and selonts it in TwittelonrMelonssagelon.
    */
-  public static void deriveCardLang(IngesterTwitterMessage message) {
-    message.setCardLang(LanguageIdentifierHelper.identifyLanguage(String.format("%s %s",
-        Strings.nullToEmpty(message.getCardTitle()),
-        Strings.nullToEmpty(message.getCardDescription()))).getLanguage());
+  public static void delonrivelonCardLang(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    melonssagelon.selontCardLang(LanguagelonIdelonntifielonrHelonlpelonr.idelonntifyLanguagelon(String.format("%s %s",
+        Strings.nullToelonmpty(melonssagelon.gelontCardTitlelon()),
+        Strings.nullToelonmpty(melonssagelon.gelontCardDelonscription()))).gelontLanguagelon());
   }
 }
 

@@ -1,30 +1,30 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.buildelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.AncestorsFeature
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleMetadataBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleConversationMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AncelonstorsFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonConvelonrsationMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonMelontadata
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class HomeConversationModuleMetadataBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: BaseTweetCandidate
-]() extends BaseModuleMetadataBuilder[Query, Candidate] {
+caselon class HomelonConvelonrsationModulelonMelontadataBuildelonr[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Candidatelon <: BaselonTwelonelontCandidatelon
+]() elonxtelonnds BaselonModulelonMelontadataBuildelonr[Quelonry, Candidatelon] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ModuleMetadata = ModuleMetadata(
-    adsMetadata = None,
-    conversationMetadata = Some(
-      ModuleConversationMetadata(
-        allTweetIds = Some((candidates.last.candidate.id +:
-          candidates.last.features.getOrElse(AncestorsFeature, Seq.empty).map(_.tweetId)).reverse),
-        socialContext = None,
-        enableDeduplication = Some(true)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): ModulelonMelontadata = ModulelonMelontadata(
+    adsMelontadata = Nonelon,
+    convelonrsationMelontadata = Somelon(
+      ModulelonConvelonrsationMelontadata(
+        allTwelonelontIds = Somelon((candidatelons.last.candidatelon.id +:
+          candidatelons.last.felonaturelons.gelontOrelonlselon(AncelonstorsFelonaturelon, Selonq.elonmpty).map(_.twelonelontId)).relonvelonrselon),
+        socialContelonxt = Nonelon,
+        elonnablelonDelonduplication = Somelon(truelon)
       )),
-    gridCarouselMetadata = None
+    gridCarouselonlMelontadata = Nonelon
   )
 }

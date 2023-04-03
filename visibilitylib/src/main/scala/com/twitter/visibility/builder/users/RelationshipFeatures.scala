@@ -1,176 +1,176 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.features._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.felonaturelons._
 
-class RelationshipFeatures(
-  userRelationshipSource: UserRelationshipSource,
-  statsReceiver: StatsReceiver) {
+class RelonlationshipFelonaturelons(
+  uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("relationship_features")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("relonlationship_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val authorFollowsViewer =
-    scopedStatsReceiver.scope(AuthorFollowsViewer.name).counter("requests")
-  private[this] val viewerFollowsAuthor =
-    scopedStatsReceiver.scope(ViewerFollowsAuthor.name).counter("requests")
-  private[this] val authorBlocksViewer =
-    scopedStatsReceiver.scope(AuthorBlocksViewer.name).counter("requests")
-  private[this] val viewerBlocksAuthor =
-    scopedStatsReceiver.scope(ViewerBlocksAuthor.name).counter("requests")
-  private[this] val authorMutesViewer =
-    scopedStatsReceiver.scope(AuthorMutesViewer.name).counter("requests")
-  private[this] val viewerMutesAuthor =
-    scopedStatsReceiver.scope(ViewerMutesAuthor.name).counter("requests")
-  private[this] val authorHasReportedViewer =
-    scopedStatsReceiver.scope(AuthorReportsViewerAsSpam.name).counter("requests")
-  private[this] val viewerHasReportedAuthor =
-    scopedStatsReceiver.scope(ViewerReportsAuthorAsSpam.name).counter("requests")
-  private[this] val viewerMutesRetweetsFromAuthor =
-    scopedStatsReceiver.scope(ViewerMutesRetweetsFromAuthor.name).counter("requests")
+  privatelon[this] val authorFollowsVielonwelonr =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorFollowsVielonwelonr.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrFollowsAuthor =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrFollowsAuthor.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorBlocksVielonwelonr =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorBlocksVielonwelonr.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrBlocksAuthor =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrBlocksAuthor.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorMutelonsVielonwelonr =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorMutelonsVielonwelonr.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrMutelonsAuthor =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrMutelonsAuthor.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorHasRelonportelondVielonwelonr =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorRelonportsVielonwelonrAsSpam.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrHasRelonportelondAuthor =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrRelonportsAuthorAsSpam.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrMutelonsRelontwelonelontsFromAuthor =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrMutelonsRelontwelonelontsFromAuthor.namelon).countelonr("relonquelonsts")
 
-  def forAuthorId(
+  delonf forAuthorId(
     authorId: Long,
-    viewerId: Option[Long]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+    vielonwelonrId: Option[Long]
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
 
-    _.withFeature(AuthorFollowsViewer, authorFollowsViewer(authorId, viewerId))
-      .withFeature(ViewerFollowsAuthor, viewerFollowsAuthor(authorId, viewerId))
-      .withFeature(AuthorBlocksViewer, authorBlocksViewer(authorId, viewerId))
-      .withFeature(ViewerBlocksAuthor, viewerBlocksAuthor(authorId, viewerId))
-      .withFeature(AuthorMutesViewer, authorMutesViewer(authorId, viewerId))
-      .withFeature(ViewerMutesAuthor, viewerMutesAuthor(authorId, viewerId))
-      .withFeature(AuthorReportsViewerAsSpam, authorHasReportedViewer(authorId, viewerId))
-      .withFeature(ViewerReportsAuthorAsSpam, viewerHasReportedAuthor(authorId, viewerId))
-      .withFeature(ViewerMutesRetweetsFromAuthor, viewerMutesRetweetsFromAuthor(authorId, viewerId))
+    _.withFelonaturelon(AuthorFollowsVielonwelonr, authorFollowsVielonwelonr(authorId, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrFollowsAuthor, vielonwelonrFollowsAuthor(authorId, vielonwelonrId))
+      .withFelonaturelon(AuthorBlocksVielonwelonr, authorBlocksVielonwelonr(authorId, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrBlocksAuthor, vielonwelonrBlocksAuthor(authorId, vielonwelonrId))
+      .withFelonaturelon(AuthorMutelonsVielonwelonr, authorMutelonsVielonwelonr(authorId, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrMutelonsAuthor, vielonwelonrMutelonsAuthor(authorId, vielonwelonrId))
+      .withFelonaturelon(AuthorRelonportsVielonwelonrAsSpam, authorHasRelonportelondVielonwelonr(authorId, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrRelonportsAuthorAsSpam, vielonwelonrHasRelonportelondAuthor(authorId, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrMutelonsRelontwelonelontsFromAuthor, vielonwelonrMutelonsRelontwelonelontsFromAuthor(authorId, vielonwelonrId))
   }
 
-  def forNoAuthor(): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(AuthorFollowsViewer, false)
-      .withConstantFeature(ViewerFollowsAuthor, false)
-      .withConstantFeature(AuthorBlocksViewer, false)
-      .withConstantFeature(ViewerBlocksAuthor, false)
-      .withConstantFeature(AuthorMutesViewer, false)
-      .withConstantFeature(ViewerMutesAuthor, false)
-      .withConstantFeature(AuthorReportsViewerAsSpam, false)
-      .withConstantFeature(ViewerReportsAuthorAsSpam, false)
-      .withConstantFeature(ViewerMutesRetweetsFromAuthor, false)
+  delonf forNoAuthor(): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    _.withConstantFelonaturelon(AuthorFollowsVielonwelonr, falselon)
+      .withConstantFelonaturelon(VielonwelonrFollowsAuthor, falselon)
+      .withConstantFelonaturelon(AuthorBlocksVielonwelonr, falselon)
+      .withConstantFelonaturelon(VielonwelonrBlocksAuthor, falselon)
+      .withConstantFelonaturelon(AuthorMutelonsVielonwelonr, falselon)
+      .withConstantFelonaturelon(VielonwelonrMutelonsAuthor, falselon)
+      .withConstantFelonaturelon(AuthorRelonportsVielonwelonrAsSpam, falselon)
+      .withConstantFelonaturelon(VielonwelonrRelonportsAuthorAsSpam, falselon)
+      .withConstantFelonaturelon(VielonwelonrMutelonsRelontwelonelontsFromAuthor, falselon)
   }
 
-  def forAuthor(author: User, viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  delonf forAuthor(author: Uselonr, vielonwelonrId: Option[Long]): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
 
 
-    _.withFeature(AuthorFollowsViewer, authorFollowsViewer(author, viewerId))
-      .withFeature(ViewerFollowsAuthor, viewerFollowsAuthor(author, viewerId))
-      .withFeature(AuthorBlocksViewer, authorBlocksViewer(author, viewerId))
-      .withFeature(ViewerBlocksAuthor, viewerBlocksAuthor(author, viewerId))
-      .withFeature(AuthorMutesViewer, authorMutesViewer(author, viewerId))
-      .withFeature(ViewerMutesAuthor, viewerMutesAuthor(author, viewerId))
-      .withFeature(AuthorReportsViewerAsSpam, authorHasReportedViewer(author.id, viewerId))
-      .withFeature(ViewerReportsAuthorAsSpam, viewerHasReportedAuthor(author.id, viewerId))
-      .withFeature(ViewerMutesRetweetsFromAuthor, viewerMutesRetweetsFromAuthor(author, viewerId))
+    _.withFelonaturelon(AuthorFollowsVielonwelonr, authorFollowsVielonwelonr(author, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrFollowsAuthor, vielonwelonrFollowsAuthor(author, vielonwelonrId))
+      .withFelonaturelon(AuthorBlocksVielonwelonr, authorBlocksVielonwelonr(author, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrBlocksAuthor, vielonwelonrBlocksAuthor(author, vielonwelonrId))
+      .withFelonaturelon(AuthorMutelonsVielonwelonr, authorMutelonsVielonwelonr(author, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrMutelonsAuthor, vielonwelonrMutelonsAuthor(author, vielonwelonrId))
+      .withFelonaturelon(AuthorRelonportsVielonwelonrAsSpam, authorHasRelonportelondVielonwelonr(author.id, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrRelonportsAuthorAsSpam, vielonwelonrHasRelonportelondAuthor(author.id, vielonwelonrId))
+      .withFelonaturelon(VielonwelonrMutelonsRelontwelonelontsFromAuthor, vielonwelonrMutelonsRelontwelonelontsFromAuthor(author, vielonwelonrId))
   }
 
-  def viewerFollowsAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.follows, viewerFollowsAuthor)
+  delonf vielonwelonrFollowsAuthor(authorId: UselonrId, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(authorId, vielonwelonrId, uselonrRelonlationshipSourcelon.follows, vielonwelonrFollowsAuthor)
 
-  def viewerFollowsAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  delonf vielonwelonrFollowsAuthor(author: Uselonr, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(
       author,
-      viewerId,
+      vielonwelonrId,
       p => p.following,
-      userRelationshipSource.follows,
-      viewerFollowsAuthor)
+      uselonrRelonlationshipSourcelon.follows,
+      vielonwelonrFollowsAuthor)
 
-  def authorFollowsViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    AuthorVerbsViewer(authorId, viewerId, userRelationshipSource.follows, authorFollowsViewer)
+  delonf authorFollowsVielonwelonr(authorId: UselonrId, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    AuthorVelonrbsVielonwelonr(authorId, vielonwelonrId, uselonrRelonlationshipSourcelon.follows, authorFollowsVielonwelonr)
 
-  def authorFollowsViewer(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    AuthorVerbsViewer(
+  delonf authorFollowsVielonwelonr(author: Uselonr, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    AuthorVelonrbsVielonwelonr(
       author,
-      viewerId,
-      p => p.followedBy,
-      userRelationshipSource.follows,
-      authorFollowsViewer)
+      vielonwelonrId,
+      p => p.followelondBy,
+      uselonrRelonlationshipSourcelon.follows,
+      authorFollowsVielonwelonr)
 
-  def viewerBlocksAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.blocks, viewerBlocksAuthor)
+  delonf vielonwelonrBlocksAuthor(authorId: UselonrId, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(authorId, vielonwelonrId, uselonrRelonlationshipSourcelon.blocks, vielonwelonrBlocksAuthor)
 
-  def viewerBlocksAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  delonf vielonwelonrBlocksAuthor(author: Uselonr, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(
       author,
-      viewerId,
+      vielonwelonrId,
       p => p.blocking,
-      userRelationshipSource.blocks,
-      viewerBlocksAuthor)
+      uselonrRelonlationshipSourcelon.blocks,
+      vielonwelonrBlocksAuthor)
 
-  def authorBlocksViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.blockedBy, authorBlocksViewer)
+  delonf authorBlocksVielonwelonr(authorId: UselonrId, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(authorId, vielonwelonrId, uselonrRelonlationshipSourcelon.blockelondBy, authorBlocksVielonwelonr)
 
-  def authorBlocksViewer(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  delonf authorBlocksVielonwelonr(author: Uselonr, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(
       author,
-      viewerId,
-      p => p.blockedBy,
-      userRelationshipSource.blockedBy,
-      authorBlocksViewer)
+      vielonwelonrId,
+      p => p.blockelondBy,
+      uselonrRelonlationshipSourcelon.blockelondBy,
+      authorBlocksVielonwelonr)
 
-  def viewerMutesAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.mutes, viewerMutesAuthor)
+  delonf vielonwelonrMutelonsAuthor(authorId: UselonrId, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(authorId, vielonwelonrId, uselonrRelonlationshipSourcelon.mutelons, vielonwelonrMutelonsAuthor)
 
-  def viewerMutesAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  delonf vielonwelonrMutelonsAuthor(author: Uselonr, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(
       author,
-      viewerId,
+      vielonwelonrId,
       p => p.muting,
-      userRelationshipSource.mutes,
-      viewerMutesAuthor)
+      uselonrRelonlationshipSourcelon.mutelons,
+      vielonwelonrMutelonsAuthor)
 
-  def authorMutesViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(authorId, viewerId, userRelationshipSource.mutedBy, authorMutesViewer)
+  delonf authorMutelonsVielonwelonr(authorId: UselonrId, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(authorId, vielonwelonrId, uselonrRelonlationshipSourcelon.mutelondBy, authorMutelonsVielonwelonr)
 
-  def authorMutesViewer(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  delonf authorMutelonsVielonwelonr(author: Uselonr, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(
       author,
-      viewerId,
-      p => p.mutedBy,
-      userRelationshipSource.mutedBy,
-      authorMutesViewer)
+      vielonwelonrId,
+      p => p.mutelondBy,
+      uselonrRelonlationshipSourcelon.mutelondBy,
+      authorMutelonsVielonwelonr)
 
-  def viewerHasReportedAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  delonf vielonwelonrHasRelonportelondAuthor(authorId: UselonrId, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(
       authorId,
-      viewerId,
-      userRelationshipSource.reportsAsSpam,
-      viewerHasReportedAuthor)
+      vielonwelonrId,
+      uselonrRelonlationshipSourcelon.relonportsAsSpam,
+      vielonwelonrHasRelonportelondAuthor)
 
-  def authorHasReportedViewer(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  delonf authorHasRelonportelondVielonwelonr(authorId: UselonrId, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(
       authorId,
-      viewerId,
-      userRelationshipSource.reportedAsSpamBy,
-      authorHasReportedViewer)
+      vielonwelonrId,
+      uselonrRelonlationshipSourcelon.relonportelondAsSpamBy,
+      authorHasRelonportelondVielonwelonr)
 
-  def viewerMutesRetweetsFromAuthor(authorId: UserId, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  delonf vielonwelonrMutelonsRelontwelonelontsFromAuthor(authorId: UselonrId, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(
       authorId,
-      viewerId,
-      userRelationshipSource.noRetweetsFrom,
-      viewerMutesRetweetsFromAuthor)
+      vielonwelonrId,
+      uselonrRelonlationshipSourcelon.noRelontwelonelontsFrom,
+      vielonwelonrMutelonsRelontwelonelontsFromAuthor)
 
-  def viewerMutesRetweetsFromAuthor(author: User, viewerId: Option[UserId]): Stitch[Boolean] =
-    ViewerVerbsAuthor(
+  delonf vielonwelonrMutelonsRelontwelonelontsFromAuthor(author: Uselonr, vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    VielonwelonrVelonrbsAuthor(
       author,
-      viewerId,
-      p => p.noRetweetsFrom,
-      userRelationshipSource.noRetweetsFrom,
-      viewerMutesRetweetsFromAuthor)
+      vielonwelonrId,
+      p => p.noRelontwelonelontsFrom,
+      uselonrRelonlationshipSourcelon.noRelontwelonelontsFrom,
+      vielonwelonrMutelonsRelontwelonelontsFromAuthor)
 }

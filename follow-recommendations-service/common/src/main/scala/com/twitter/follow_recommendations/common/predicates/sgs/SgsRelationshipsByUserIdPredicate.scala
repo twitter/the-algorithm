@@ -1,113 +1,113 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason.InvalidRelationshipTypes
-import com.twitter.socialgraph.thriftscala.ExistsRequest
-import com.twitter.socialgraph.thriftscala.ExistsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.Relationship
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason.InvalidRelonlationshipTypelons
+import com.twittelonr.socialgraph.thriftscala.elonxistsRelonquelonst
+import com.twittelonr.socialgraph.thriftscala.elonxistsRelonsult
+import com.twittelonr.socialgraph.thriftscala.LookupContelonxt
+import com.twittelonr.socialgraph.thriftscala.Relonlationship
+import com.twittelonr.socialgraph.thriftscala.RelonlationshipTypelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.socialgraph.SocialGraph
+import com.twittelonr.util.logging.Logging
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-class SgsRelationshipsByUserIdPredicate(
+class SgsRelonlationshipsByUselonrIdPrelondicatelon(
   socialGraph: SocialGraph,
-  relationshipMappings: Seq[RelationshipMapping],
-  statsReceiver: StatsReceiver)
-    extends Predicate[(Option[Long], CandidateUser)]
+  relonlationshipMappings: Selonq[RelonlationshipMapping],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Prelondicatelon[(Option[Long], CandidatelonUselonr)]
     with Logging {
-  private val InvalidFromPrimaryCandidateSourceName = "invalid_from_primary_candidate_source"
-  private val InvalidFromCandidateSourceName = "invalid_from_candidate_source"
-  private val NoPrimaryCandidateSource = "no_primary_candidate_source"
+  privatelon val InvalidFromPrimaryCandidatelonSourcelonNamelon = "invalid_from_primary_candidatelon_sourcelon"
+  privatelon val InvalidFromCandidatelonSourcelonNamelon = "invalid_from_candidatelon_sourcelon"
+  privatelon val NoPrimaryCandidatelonSourcelon = "no_primary_candidatelon_sourcelon"
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon(this.gelontClass.gelontNamelon)
 
-  override def apply(
-    pair: (Option[Long], CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (idOpt, candidate) = pair
-    val relationships = relationshipMappings.map { relationshipMapping: RelationshipMapping =>
-      Relationship(
-        relationshipMapping.relationshipType,
-        relationshipMapping.includeBasedOnRelationship)
+  ovelonrridelon delonf apply(
+    pair: (Option[Long], CandidatelonUselonr)
+  ): Stitch[PrelondicatelonRelonsult] = {
+    val (idOpt, candidatelon) = pair
+    val relonlationships = relonlationshipMappings.map { relonlationshipMapping: RelonlationshipMapping =>
+      Relonlationship(
+        relonlationshipMapping.relonlationshipTypelon,
+        relonlationshipMapping.includelonBaselondOnRelonlationship)
     }
     idOpt
       .map { id: Long =>
-        val existsRequest = ExistsRequest(
+        val elonxistsRelonquelonst = elonxistsRelonquelonst(
           id,
-          candidate.id,
-          relationships = relationships,
-          context = SgsRelationshipsByUserIdPredicate.UnionLookupContext
+          candidatelon.id,
+          relonlationships = relonlationships,
+          contelonxt = SgsRelonlationshipsByUselonrIdPrelondicatelon.UnionLookupContelonxt
         )
         socialGraph
-          .exists(existsRequest).map { existsResult: ExistsResult =>
-            if (existsResult.exists) {
-              candidate.getPrimaryCandidateSource match {
-                case Some(candidateSource) =>
+          .elonxists(elonxistsRelonquelonst).map { elonxistsRelonsult: elonxistsRelonsult =>
+            if (elonxistsRelonsult.elonxists) {
+              candidatelon.gelontPrimaryCandidatelonSourcelon match {
+                caselon Somelon(candidatelonSourcelon) =>
                   stats
-                    .scope(InvalidFromPrimaryCandidateSourceName).counter(
-                      candidateSource.name).incr()
-                case None =>
+                    .scopelon(InvalidFromPrimaryCandidatelonSourcelonNamelon).countelonr(
+                      candidatelonSourcelon.namelon).incr()
+                caselon Nonelon =>
                   stats
-                    .scope(InvalidFromPrimaryCandidateSourceName).counter(
-                      NoPrimaryCandidateSource).incr()
+                    .scopelon(InvalidFromPrimaryCandidatelonSourcelonNamelon).countelonr(
+                      NoPrimaryCandidatelonSourcelon).incr()
               }
-              candidate.getCandidateSources.foreach({
-                case (candidateSource, _) =>
+              candidatelon.gelontCandidatelonSourcelons.forelonach({
+                caselon (candidatelonSourcelon, _) =>
                   stats
-                    .scope(InvalidFromCandidateSourceName).counter(candidateSource.name).incr()
+                    .scopelon(InvalidFromCandidatelonSourcelonNamelon).countelonr(candidatelonSourcelon.namelon).incr()
               })
-              PredicateResult.Invalid(Set(InvalidRelationshipTypes(relationshipMappings
-                .map { relationshipMapping: RelationshipMapping =>
-                  relationshipMapping.relationshipType
+              PrelondicatelonRelonsult.Invalid(Selont(InvalidRelonlationshipTypelons(relonlationshipMappings
+                .map { relonlationshipMapping: RelonlationshipMapping =>
+                  relonlationshipMapping.relonlationshipTypelon
                 }.mkString(", "))))
-            } else {
-              PredicateResult.Valid
+            } elonlselon {
+              PrelondicatelonRelonsult.Valid
             }
           }
       }
-      // if no user id is present, return true by default
-      .getOrElse(Stitch.value(PredicateResult.Valid))
+      // if no uselonr id is prelonselonnt, relonturn truelon by delonfault
+      .gelontOrelonlselon(Stitch.valuelon(PrelondicatelonRelonsult.Valid))
   }
 }
 
-object SgsRelationshipsByUserIdPredicate {
-  // OR Operation
-  @VisibleForTesting
-  private[follow_recommendations] val UnionLookupContext = Some(
-    LookupContext(performUnion = Some(true)))
+objelonct SgsRelonlationshipsByUselonrIdPrelondicatelon {
+  // OR Opelonration
+  @VisiblelonForTelonsting
+  privatelon[follow_reloncommelonndations] val UnionLookupContelonxt = Somelon(
+    LookupContelonxt(pelonrformUnion = Somelon(truelon)))
 }
 
-@Singleton
-class ExcludeNonFollowersSgsPredicate @Inject() (
+@Singlelonton
+class elonxcludelonNonFollowelonrsSgsPrelondicatelon @Injelonct() (
   socialGraph: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds SgsRelonlationshipsByUselonrIdPrelondicatelon(
       socialGraph,
-      Seq(RelationshipMapping(RelationshipType.FollowedBy, includeBasedOnRelationship = false)),
-      statsReceiver)
+      Selonq(RelonlationshipMapping(RelonlationshipTypelon.FollowelondBy, includelonBaselondOnRelonlationship = falselon)),
+      statsReloncelonivelonr)
 
-@Singleton
-class ExcludeNonFollowingSgsPredicate @Inject() (
+@Singlelonton
+class elonxcludelonNonFollowingSgsPrelondicatelon @Injelonct() (
   socialGraph: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds SgsRelonlationshipsByUselonrIdPrelondicatelon(
       socialGraph,
-      Seq(RelationshipMapping(RelationshipType.Following, includeBasedOnRelationship = false)),
-      statsReceiver)
+      Selonq(RelonlationshipMapping(RelonlationshipTypelon.Following, includelonBaselondOnRelonlationship = falselon)),
+      statsReloncelonivelonr)
 
-@Singleton
-class ExcludeFollowingSgsPredicate @Inject() (
+@Singlelonton
+class elonxcludelonFollowingSgsPrelondicatelon @Injelonct() (
   socialGraph: SocialGraph,
-  statsReceiver: StatsReceiver)
-    extends SgsRelationshipsByUserIdPredicate(
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds SgsRelonlationshipsByUselonrIdPrelondicatelon(
       socialGraph,
-      Seq(RelationshipMapping(RelationshipType.Following, includeBasedOnRelationship = true)),
-      statsReceiver)
+      Selonq(RelonlationshipMapping(RelonlationshipTypelon.Following, includelonBaselondOnRelonlationship = truelon)),
+      statsReloncelonivelonr)

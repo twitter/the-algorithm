@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.product.scored_tweets.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CachedScoredTweets
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.TtlCache
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Time
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParam.CachelondScorelondTwelonelonts
+import com.twittelonr.homelon_mixelonr.{thriftscala => hmt}
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.cachelon.TtlCachelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Timelon
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Fetch scored Tweets from cache and exclude the seen ones
+ * Felontch scorelond Twelonelonts from cachelon and elonxcludelon thelon selonelonn onelons
  */
-@Singleton
-case class CachedScoredTweetsQueryFeatureHydrator @Inject() (
-  scoredTweetsCache: TtlCache[UserId, hmt.CachedScoredTweets])
-    extends QueryFeatureHydrator[PipelineQuery] {
+@Singlelonton
+caselon class CachelondScorelondTwelonelontsQuelonryFelonaturelonHydrator @Injelonct() (
+  scorelondTwelonelontsCachelon: TtlCachelon[UselonrId, hmt.CachelondScorelondTwelonelonts])
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("CachedScoredTweets")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("CachelondScorelondTwelonelonts")
 
-  override val features: Set[Feature[_, _]] = Set(CachedScoredTweetsFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(CachelondScorelondTwelonelontsFelonaturelon)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
-    val tweetScoreTtl = query.params(CachedScoredTweets.TTLParam)
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    val uselonrId = quelonry.gelontRelonquirelondUselonrId
+    val twelonelontScorelonTtl = quelonry.params(CachelondScorelondTwelonelonts.TTLParam)
 
-    Stitch.callFuture(scoredTweetsCache.get(Seq(userId))).map { keyValueResult =>
-      keyValueResult(userId) match {
-        case Return(cachedCandidatesOpt) =>
-          val cachedScoredTweets = cachedCandidatesOpt.map(_.tweets).getOrElse(Seq.empty)
-          val nonExpiredTweets = cachedScoredTweets.filter { tweet =>
-            tweet.lastScoredTimestampMs.exists(Time.fromMilliseconds(_).untilNow < tweetScoreTtl)
+    Stitch.callFuturelon(scorelondTwelonelontsCachelon.gelont(Selonq(uselonrId))).map { kelonyValuelonRelonsult =>
+      kelonyValuelonRelonsult(uselonrId) match {
+        caselon Relonturn(cachelondCandidatelonsOpt) =>
+          val cachelondScorelondTwelonelonts = cachelondCandidatelonsOpt.map(_.twelonelonts).gelontOrelonlselon(Selonq.elonmpty)
+          val nonelonxpirelondTwelonelonts = cachelondScorelondTwelonelonts.filtelonr { twelonelont =>
+            twelonelont.lastScorelondTimelonstampMs.elonxists(Timelon.fromMilliselonconds(_).untilNow < twelonelontScorelonTtl)
           }
-          FeatureMapBuilder().add(CachedScoredTweetsFeature, nonExpiredTweets).build()
-        case Throw(exception) => throw exception
+          FelonaturelonMapBuildelonr().add(CachelondScorelondTwelonelontsFelonaturelon, nonelonxpirelondTwelonelonts).build()
+        caselon Throw(elonxcelonption) => throw elonxcelonption
       }
     }
   }

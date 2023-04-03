@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.prompt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.prompt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RelevancePromptDisplayTypeMarshaller {
+@Singlelonton
+class RelonlelonvancelonPromptDisplayTypelonMarshallelonr {
 
-  def apply(
-    relevancePromptDisplayType: RelevancePromptDisplayType
-  ): urt.RelevancePromptDisplayType = relevancePromptDisplayType match {
-    case Normal => urt.RelevancePromptDisplayType.Normal
-    case Compact => urt.RelevancePromptDisplayType.Compact
-    case Large => urt.RelevancePromptDisplayType.Large
-    case ThumbsUpAndDown => urt.RelevancePromptDisplayType.ThumbsUpAndDown
+  delonf apply(
+    relonlelonvancelonPromptDisplayTypelon: RelonlelonvancelonPromptDisplayTypelon
+  ): urt.RelonlelonvancelonPromptDisplayTypelon = relonlelonvancelonPromptDisplayTypelon match {
+    caselon Normal => urt.RelonlelonvancelonPromptDisplayTypelon.Normal
+    caselon Compact => urt.RelonlelonvancelonPromptDisplayTypelon.Compact
+    caselon Largelon => urt.RelonlelonvancelonPromptDisplayTypelon.Largelon
+    caselon ThumbsUpAndDown => urt.RelonlelonvancelonPromptDisplayTypelon.ThumbsUpAndDown
   }
 }

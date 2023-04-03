@@ -1,163 +1,163 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Collelonctions;
+import java.util.HashSelont;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.util.LongIntConverter;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchRelonsultFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.selonarch.elonarlyTelonrminationStatelon;
+import com.twittelonr.selonarch.common.util.LongIntConvelonrtelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadataOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultTypelon;
 
 /**
- * This class collects results for Recency queries for delegation to collectors based on query mode
+ * This class colleloncts relonsults for Reloncelonncy quelonrielons for delonlelongation to collelonctors baselond on quelonry modelon
  */
-public class SearchResultsCollector
-    extends AbstractResultsCollector<SearchRequestInfo, SimpleSearchResults> {
-  private static final EarlyTerminationState TERMINATED_COLLECTED_ENOUGH_RESULTS =
-      new EarlyTerminationState("terminated_collected_enough_results", true);
+public class SelonarchRelonsultsCollelonctor
+    elonxtelonnds AbstractRelonsultsCollelonctor<SelonarchRelonquelonstInfo, SimplelonSelonarchRelonsults> {
+  privatelon static final elonarlyTelonrminationStatelon TelonRMINATelonD_COLLelonCTelonD_elonNOUGH_RelonSULTS =
+      nelonw elonarlyTelonrminationStatelon("telonrminatelond_collelonctelond_elonnough_relonsults", truelon);
 
-  protected final List<Hit> results;
-  private final Set<Integer> requestedFeatureIds;
-  private final EarlybirdCluster cluster;
-  private final UserTable userTable;
+  protelonctelond final List<Hit> relonsults;
+  privatelon final Selont<Intelongelonr> relonquelonstelondFelonaturelonIds;
+  privatelon final elonarlybirdClustelonr clustelonr;
+  privatelon final UselonrTablelon uselonrTablelon;
 
-  public SearchResultsCollector(
-      ImmutableSchemaInterface schema,
-      SearchRequestInfo searchRequestInfo,
+  public SelonarchRelonsultsCollelonctor(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      SelonarchRelonquelonstInfo selonarchRelonquelonstInfo,
       Clock clock,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
-      UserTable userTable,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, clock, searcherStats, requestDebugMode);
-    results = new ArrayList<>();
-    this.cluster = cluster;
-    this.userTable = userTable;
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
+      elonarlybirdClustelonr clustelonr,
+      UselonrTablelon uselonrTablelon,
+      int relonquelonstDelonbugModelon) {
+    supelonr(schelonma, selonarchRelonquelonstInfo, clock, selonarchelonrStats, relonquelonstDelonbugModelon);
+    relonsults = nelonw ArrayList<>();
+    this.clustelonr = clustelonr;
+    this.uselonrTablelon = uselonrTablelon;
 
-    ThriftSearchResultMetadataOptions options =
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions();
-    if (options != null && options.isReturnSearchResultFeatures()) {
-      requestedFeatureIds = schema.getSearchFeatureSchema().getEntries().keySet();
-    } else if (options != null && options.isSetRequestedFeatureIDs()) {
-      requestedFeatureIds = new HashSet<>(options.getRequestedFeatureIDs());
-    } else {
-      requestedFeatureIds = null;
+    ThriftSelonarchRelonsultMelontadataOptions options =
+        selonarchRelonquelonstInfo.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions();
+    if (options != null && options.isRelonturnSelonarchRelonsultFelonaturelons()) {
+      relonquelonstelondFelonaturelonIds = schelonma.gelontSelonarchFelonaturelonSchelonma().gelontelonntrielons().kelonySelont();
+    } elonlselon if (options != null && options.isSelontRelonquelonstelondFelonaturelonIDs()) {
+      relonquelonstelondFelonaturelonIds = nelonw HashSelont<>(options.gelontRelonquelonstelondFelonaturelonIDs());
+    } elonlselon {
+      relonquelonstelondFelonaturelonIds = null;
     }
   }
 
-  @Override
-  public void startSegment() throws IOException {
-    featuresRequested = requestedFeatureIds != null;
+  @Ovelonrridelon
+  public void startSelongmelonnt() throws IOelonxcelonption {
+    felonaturelonsRelonquelonstelond = relonquelonstelondFelonaturelonIds != null;
   }
 
-  @Override
-  public void doCollect(long tweetID) throws IOException {
-    Hit hit = new Hit(currTimeSliceID, tweetID);
-    ThriftSearchResultMetadata metadata =
-        new ThriftSearchResultMetadata(ThriftSearchResultType.RECENCY)
-            .setPenguinVersion(EarlybirdConfig.getPenguinVersionByte());
+  @Ovelonrridelon
+  public void doCollelonct(long twelonelontID) throws IOelonxcelonption {
+    Hit hit = nelonw Hit(currTimelonSlicelonID, twelonelontID);
+    ThriftSelonarchRelonsultMelontadata melontadata =
+        nelonw ThriftSelonarchRelonsultMelontadata(ThriftSelonarchRelonsultTypelon.RelonCelonNCY)
+            .selontPelonnguinVelonrsion(elonarlybirdConfig.gelontPelonnguinVelonrsionBytelon());
 
-    // Set tweet language in metadata
-    ThriftLanguage thriftLanguage = ThriftLanguage.findByValue(
-        (int) documentFeatures.getFeatureValue(EarlybirdFieldConstant.LANGUAGE));
-    metadata.setLanguage(thriftLanguage);
+    // Selont twelonelont languagelon in melontadata
+    ThriftLanguagelon thriftLanguagelon = ThriftLanguagelon.findByValuelon(
+        (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.LANGUAGelon));
+    melontadata.selontLanguagelon(thriftLanguagelon);
 
-    // Check and collect hit attribution data, if it's available.
-    fillHitAttributionMetadata(metadata);
+    // Chelonck and collelonct hit attribution data, if it's availablelon.
+    fillHitAttributionMelontadata(melontadata);
 
-    // Set the nullcast flag in metadata
-    metadata.setIsNullcast(documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_NULLCAST_FLAG));
+    // Selont thelon nullcast flag in melontadata
+    melontadata.selontIsNullcast(documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_NULLCAST_FLAG));
 
-    if (searchRequestInfo.isCollectConversationId()) {
-      long conversationId =
-          documentFeatures.getFeatureValue(EarlybirdFieldConstant.CONVERSATION_ID_CSF);
-      if (conversationId != 0) {
-        ensureExtraMetadataIsSet(metadata);
-        metadata.getExtraMetadata().setConversationId(conversationId);
+    if (selonarchRelonquelonstInfo.isCollelonctConvelonrsationId()) {
+      long convelonrsationId =
+          documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.CONVelonRSATION_ID_CSF);
+      if (convelonrsationId != 0) {
+        elonnsurelonelonxtraMelontadataIsSelont(melontadata);
+        melontadata.gelontelonxtraMelontadata().selontConvelonrsationId(convelonrsationId);
       }
     }
 
-    fillResultGeoLocation(metadata);
-    collectRetweetAndReplyMetadata(metadata);
+    fillRelonsultGelonoLocation(melontadata);
+    collelonctRelontwelonelontAndRelonplyMelontadata(melontadata);
 
-    long fromUserId = documentFeatures.getFeatureValue(EarlybirdFieldConstant.FROM_USER_ID_CSF);
-    if (requestedFeatureIds != null) {
-      ThriftSearchResultFeatures features = documentFeatures.getSearchResultFeatures(
-          getSchema(), requestedFeatureIds::contains);
-      ensureExtraMetadataIsSet(metadata);
-      metadata.getExtraMetadata().setFeatures(features);
-      metadata.setFromUserId(fromUserId);
-      if (documentFeatures.isFlagSet(EarlybirdFieldConstant.HAS_CARD_FLAG)) {
-        metadata.setCardType(
-            (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD));
+    long fromUselonrId = documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF);
+    if (relonquelonstelondFelonaturelonIds != null) {
+      ThriftSelonarchRelonsultFelonaturelons felonaturelons = documelonntFelonaturelons.gelontSelonarchRelonsultFelonaturelons(
+          gelontSchelonma(), relonquelonstelondFelonaturelonIds::contains);
+      elonnsurelonelonxtraMelontadataIsSelont(melontadata);
+      melontadata.gelontelonxtraMelontadata().selontFelonaturelons(felonaturelons);
+      melontadata.selontFromUselonrId(fromUselonrId);
+      if (documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.HAS_CARD_FLAG)) {
+        melontadata.selontCardTypelon(
+            (bytelon) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.CARD_TYPelon_CSF_FIelonLD));
       }
     }
-    if (searchRequestInfo.isGetFromUserId()) {
-      metadata.setFromUserId(fromUserId);
+    if (selonarchRelonquelonstInfo.isGelontFromUselonrId()) {
+      melontadata.selontFromUselonrId(fromUselonrId);
     }
 
-    collectExclusiveConversationAuthorId(metadata);
-    collectFacets(metadata);
-    collectFeatures(metadata);
-    collectIsProtected(metadata, cluster, userTable);
-    hit.setMetadata(metadata);
-    results.add(hit);
-    updateHitCounts(tweetID);
+    collelonctelonxclusivelonConvelonrsationAuthorId(melontadata);
+    collelonctFacelonts(melontadata);
+    collelonctFelonaturelons(melontadata);
+    collelonctIsProtelonctelond(melontadata, clustelonr, uselonrTablelon);
+    hit.selontMelontadata(melontadata);
+    relonsults.add(hit);
+    updatelonHitCounts(twelonelontID);
   }
 
-  private final void collectRetweetAndReplyMetadata(ThriftSearchResultMetadata metadata)
-      throws IOException {
-    if (searchRequestInfo.isGetInReplyToStatusId() || searchRequestInfo.isGetReferenceAuthorId()) {
-      boolean isRetweet = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_RETWEET_FLAG);
-      boolean isReply = documentFeatures.isFlagSet(EarlybirdFieldConstant.IS_REPLY_FLAG);
-      // Set the isRetweet and isReply metadata so that clients who request retweet and reply
-      // metadata know whether a result is a retweet or reply or neither.
-      metadata.setIsRetweet(isRetweet);
-      metadata.setIsReply(isReply);
+  privatelon final void collelonctRelontwelonelontAndRelonplyMelontadata(ThriftSelonarchRelonsultMelontadata melontadata)
+      throws IOelonxcelonption {
+    if (selonarchRelonquelonstInfo.isGelontInRelonplyToStatusId() || selonarchRelonquelonstInfo.isGelontRelonfelonrelonncelonAuthorId()) {
+      boolelonan isRelontwelonelont = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_RelonTWelonelonT_FLAG);
+      boolelonan isRelonply = documelonntFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_RelonPLY_FLAG);
+      // Selont thelon isRelontwelonelont and isRelonply melontadata so that clielonnts who relonquelonst relontwelonelont and relonply
+      // melontadata know whelonthelonr a relonsult is a relontwelonelont or relonply or nelonithelonr.
+      melontadata.selontIsRelontwelonelont(isRelontwelonelont);
+      melontadata.selontIsRelonply(isRelonply);
 
-      // Only store the shared status id if the hit is a reply or a retweet and
-      // the getInReplyToStatusId flag is set.
-      if (searchRequestInfo.isGetInReplyToStatusId() && (isReply || isRetweet)) {
-        long sharedStatusID =
-            documentFeatures.getFeatureValue(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF);
-        if (sharedStatusID != 0) {
-          metadata.setSharedStatusId(sharedStatusID);
+      // Only storelon thelon sharelond status id if thelon hit is a relonply or a relontwelonelont and
+      // thelon gelontInRelonplyToStatusId flag is selont.
+      if (selonarchRelonquelonstInfo.isGelontInRelonplyToStatusId() && (isRelonply || isRelontwelonelont)) {
+        long sharelondStatusID =
+            documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.SHARelonD_STATUS_ID_CSF);
+        if (sharelondStatusID != 0) {
+          melontadata.selontSharelondStatusId(sharelondStatusID);
         }
       }
 
-      // Only store the reference tweet author ID if the hit is a reply or a retweet and the
-      // getReferenceAuthorId flag is set.
-      if (searchRequestInfo.isGetReferenceAuthorId() && (isReply || isRetweet)) {
-        // the REFERENCE_AUTHOR_ID_CSF stores the source tweet author id for all retweets
-        long referenceAuthorId =
-            documentFeatures.getFeatureValue(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF);
-        if (referenceAuthorId != 0) {
-          metadata.setReferencedTweetAuthorId(referenceAuthorId);
-        } else if (cluster != EarlybirdCluster.FULL_ARCHIVE) {
-          // we also store the reference author id for retweets, directed at tweets, and self
-          // threaded tweets separately on Realtime/Protected Earlybirds. This data will be moved to
-          // the REFERENCE_AUTHOR_ID_CSF and these fields will be deprecated in SEARCH-34958.
-          referenceAuthorId = LongIntConverter.convertTwoIntToOneLong(
-              (int) documentFeatures.getFeatureValue(
-                  EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT),
-              (int) documentFeatures.getFeatureValue(
-                  EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT));
-          if (referenceAuthorId > 0) {
-            metadata.setReferencedTweetAuthorId(referenceAuthorId);
+      // Only storelon thelon relonfelonrelonncelon twelonelont author ID if thelon hit is a relonply or a relontwelonelont and thelon
+      // gelontRelonfelonrelonncelonAuthorId flag is selont.
+      if (selonarchRelonquelonstInfo.isGelontRelonfelonrelonncelonAuthorId() && (isRelonply || isRelontwelonelont)) {
+        // thelon RelonFelonRelonNCelon_AUTHOR_ID_CSF storelons thelon sourcelon twelonelont author id for all relontwelonelonts
+        long relonfelonrelonncelonAuthorId =
+            documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_CSF);
+        if (relonfelonrelonncelonAuthorId != 0) {
+          melontadata.selontRelonfelonrelonncelondTwelonelontAuthorId(relonfelonrelonncelonAuthorId);
+        } elonlselon if (clustelonr != elonarlybirdClustelonr.FULL_ARCHIVelon) {
+          // welon also storelon thelon relonfelonrelonncelon author id for relontwelonelonts, direlonctelond at twelonelonts, and selonlf
+          // threlonadelond twelonelonts selonparatelonly on Relonaltimelon/Protelonctelond elonarlybirds. This data will belon movelond to
+          // thelon RelonFelonRelonNCelon_AUTHOR_ID_CSF and thelonselon fielonlds will belon delonpreloncatelond in SelonARCH-34958.
+          relonfelonrelonncelonAuthorId = LongIntConvelonrtelonr.convelonrtTwoIntToOnelonLong(
+              (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(
+                  elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_MOST_SIGNIFICANT_INT),
+              (int) documelonntFelonaturelons.gelontFelonaturelonValuelon(
+                  elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_LelonAST_SIGNIFICANT_INT));
+          if (relonfelonrelonncelonAuthorId > 0) {
+            melontadata.selontRelonfelonrelonncelondTwelonelontAuthorId(relonfelonrelonncelonAuthorId);
           }
         }
       }
@@ -165,24 +165,24 @@ public class SearchResultsCollector
   }
 
   /**
-   * This differs from base class because we check against num results collected instead of
-   * num hits collected.
+   * This diffelonrs from baselon class beloncauselon welon chelonck against num relonsults collelonctelond instelonad of
+   * num hits collelonctelond.
    */
-  @Override
-  public EarlyTerminationState innerShouldCollectMore() throws IOException {
-    if (results.size() >= searchRequestInfo.getNumResultsRequested()) {
-      collectedEnoughResults();
-      if (shouldTerminate()) {
-        return setEarlyTerminationState(TERMINATED_COLLECTED_ENOUGH_RESULTS);
+  @Ovelonrridelon
+  public elonarlyTelonrminationStatelon innelonrShouldCollelonctMorelon() throws IOelonxcelonption {
+    if (relonsults.sizelon() >= selonarchRelonquelonstInfo.gelontNumRelonsultsRelonquelonstelond()) {
+      collelonctelondelonnoughRelonsults();
+      if (shouldTelonrminatelon()) {
+        relonturn selontelonarlyTelonrminationStatelon(TelonRMINATelonD_COLLelonCTelonD_elonNOUGH_RelonSULTS);
       }
     }
-    return EarlyTerminationState.COLLECTING;
+    relonturn elonarlyTelonrminationStatelon.COLLelonCTING;
   }
 
-  @Override
-  public SimpleSearchResults doGetResults() {
-    // Sort hits by tweet id.
-    Collections.sort(results);
-    return new SimpleSearchResults(results);
+  @Ovelonrridelon
+  public SimplelonSelonarchRelonsults doGelontRelonsults() {
+    // Sort hits by twelonelont id.
+    Collelonctions.sort(relonsults);
+    relonturn nelonw SimplelonSelonarchRelonsults(relonsults);
   }
 }

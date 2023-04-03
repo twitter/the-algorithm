@@ -1,269 +1,269 @@
-package com.twitter.visibility.features
+packagelon com.twittelonr.visibility.felonaturelons
 
-import com.twitter.contenthealth.toxicreplyfilter.thriftscala.FilterState
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.tseng.withholding.thriftscala.TakedownReason
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import com.twitter.visibility.models.TweetDeleteReason.TweetDeleteReason
-import com.twitter.visibility.models._
+import com.twittelonr.contelonnthelonalth.toxicrelonplyfiltelonr.thriftscala.FiltelonrStatelon
+import com.twittelonr.gizmoduck.thriftscala.Labelonl
+import com.twittelonr.selonarch.common.constants.thriftscala.ThriftQuelonrySourcelon
+import com.twittelonr.tselonng.withholding.thriftscala.TakelondownRelonason
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
+import com.twittelonr.visibility.modelonls.TwelonelontDelonlelontelonRelonason.TwelonelontDelonlelontelonRelonason
+import com.twittelonr.visibility.modelonls._
 
-case object AuthorId extends Feature[Set[Long]]
+caselon objelonct AuthorId elonxtelonnds Felonaturelon[Selont[Long]]
 
-case object ViewerId extends Feature[Long]
+caselon objelonct VielonwelonrId elonxtelonnds Felonaturelon[Long]
 
-case object AuthorIsProtected extends Feature[Boolean]
+caselon objelonct AuthorIsProtelonctelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorIsSuspended extends Feature[Boolean]
+caselon objelonct AuthorIsSuspelonndelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorIsUnavailable extends Feature[Boolean]
+caselon objelonct AuthorIsUnavailablelon elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorIsDeactivated extends Feature[Boolean]
+caselon objelonct AuthorIsDelonactivatelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorIsErased extends Feature[Boolean]
+caselon objelonct AuthorIselonraselond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorIsOffboarded extends Feature[Boolean]
+caselon objelonct AuthorIsOffboardelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorIsVerified extends Feature[Boolean]
+caselon objelonct AuthorIsVelonrifielond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorIsBlueVerified extends Feature[Boolean]
+caselon objelonct AuthorIsBluelonVelonrifielond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerIsSuspended extends Feature[Boolean]
+caselon objelonct VielonwelonrIsSuspelonndelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerIsDeactivated extends Feature[Boolean]
+caselon objelonct VielonwelonrIsDelonactivatelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorFollowsViewer extends Feature[Boolean]
+caselon objelonct AuthorFollowsVielonwelonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorUserLabels extends Feature[Seq[Label]]
+caselon objelonct AuthorUselonrLabelonls elonxtelonnds Felonaturelon[Selonq[Labelonl]]
 
-case object ViewerFollowsAuthorOfViolatingTweet extends Feature[Boolean]
+caselon objelonct VielonwelonrFollowsAuthorOfViolatingTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerDoesNotFollowAuthorOfViolatingTweet extends Feature[Boolean]
+caselon objelonct VielonwelonrDoelonsNotFollowAuthorOfViolatingTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerFollowsAuthor extends Feature[Boolean]
+caselon objelonct VielonwelonrFollowsAuthor elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerBlocksAuthor extends Feature[Boolean]
+caselon objelonct VielonwelonrBlocksAuthor elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorBlocksViewer extends Feature[Boolean]
+caselon objelonct AuthorBlocksVielonwelonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorMutesViewer extends Feature[Boolean]
+caselon objelonct AuthorMutelonsVielonwelonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerMutesAuthor extends Feature[Boolean]
+caselon objelonct VielonwelonrMutelonsAuthor elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorReportsViewerAsSpam extends Feature[Boolean]
+caselon objelonct AuthorRelonportsVielonwelonrAsSpam elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerReportsAuthorAsSpam extends Feature[Boolean]
+caselon objelonct VielonwelonrRelonportsAuthorAsSpam elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerReportedTweet extends Feature[Boolean]
+caselon objelonct VielonwelonrRelonportelondTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerMutesRetweetsFromAuthor extends Feature[Boolean]
+caselon objelonct VielonwelonrMutelonsRelontwelonelontsFromAuthor elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerHasUniversalQualityFilterEnabled extends Feature[Boolean]
+caselon objelonct VielonwelonrHasUnivelonrsalQualityFiltelonrelonnablelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerIsProtected extends Feature[Boolean]
+caselon objelonct VielonwelonrIsProtelonctelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerIsSoftUser extends Feature[Boolean]
+caselon objelonct VielonwelonrIsSoftUselonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetSafetyLabels extends Feature[Seq[TweetSafetyLabel]]
+caselon objelonct TwelonelontSafelontyLabelonls elonxtelonnds Felonaturelon[Selonq[TwelonelontSafelontyLabelonl]]
 
-case object SpaceSafetyLabels extends Feature[Seq[SpaceSafetyLabel]]
+caselon objelonct SpacelonSafelontyLabelonls elonxtelonnds Felonaturelon[Selonq[SpacelonSafelontyLabelonl]]
 
-case object MediaSafetyLabels extends Feature[Seq[MediaSafetyLabel]]
+caselon objelonct MelondiaSafelontyLabelonls elonxtelonnds Felonaturelon[Selonq[MelondiaSafelontyLabelonl]]
 
-case object TweetTakedownReasons extends Feature[Seq[TakedownReason]]
+caselon objelonct TwelonelontTakelondownRelonasons elonxtelonnds Felonaturelon[Selonq[TakelondownRelonason]]
 
-case object AuthorTakedownReasons extends Feature[Seq[TakedownReason]]
+caselon objelonct AuthorTakelondownRelonasons elonxtelonnds Felonaturelon[Selonq[TakelondownRelonason]]
 
-case object AuthorIsNsfwUser extends Feature[Boolean]
+caselon objelonct AuthorIsNsfwUselonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object AuthorIsNsfwAdmin extends Feature[Boolean]
+caselon objelonct AuthorIsNsfwAdmin elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetHasNsfwUser extends Feature[Boolean]
+caselon objelonct TwelonelontHasNsfwUselonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetHasNsfwAdmin extends Feature[Boolean]
+caselon objelonct TwelonelontHasNsfwAdmin elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetHasMedia extends Feature[Boolean]
+caselon objelonct TwelonelontHasMelondia elonxtelonnds Felonaturelon[Boolelonan]
 
-case object CardHasMedia extends Feature[Boolean]
+caselon objelonct CardHasMelondia elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetHasCard extends Feature[Boolean]
+caselon objelonct TwelonelontHasCard elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerMutesKeywordInTweetForHomeTimeline extends Feature[MutedKeyword]
+caselon objelonct VielonwelonrMutelonsKelonywordInTwelonelontForHomelonTimelonlinelon elonxtelonnds Felonaturelon[MutelondKelonyword]
 
-case object ViewerMutesKeywordInTweetForTweetReplies extends Feature[MutedKeyword]
+caselon objelonct VielonwelonrMutelonsKelonywordInTwelonelontForTwelonelontRelonplielons elonxtelonnds Felonaturelon[MutelondKelonyword]
 
-case object ViewerMutesKeywordInTweetForNotifications extends Feature[MutedKeyword]
+caselon objelonct VielonwelonrMutelonsKelonywordInTwelonelontForNotifications elonxtelonnds Felonaturelon[MutelondKelonyword]
 
-case object ViewerMutesKeywordInSpaceTitleForNotifications extends Feature[MutedKeyword]
+caselon objelonct VielonwelonrMutelonsKelonywordInSpacelonTitlelonForNotifications elonxtelonnds Felonaturelon[MutelondKelonyword]
 
-case object ViewerMutesKeywordInTweetForAllSurfaces extends Feature[MutedKeyword]
+caselon objelonct VielonwelonrMutelonsKelonywordInTwelonelontForAllSurfacelons elonxtelonnds Felonaturelon[MutelondKelonyword]
 
-case object ViewerUserLabels extends Feature[Seq[Label]]
+caselon objelonct VielonwelonrUselonrLabelonls elonxtelonnds Felonaturelon[Selonq[Labelonl]]
 
-case object RequestCountryCode extends Feature[String]
+caselon objelonct RelonquelonstCountryCodelon elonxtelonnds Felonaturelon[String]
 
-case object RequestIsVerifiedCrawler extends Feature[Boolean]
+caselon objelonct RelonquelonstIsVelonrifielondCrawlelonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerCountryCode extends Feature[String]
+caselon objelonct VielonwelonrCountryCodelon elonxtelonnds Felonaturelon[String]
 
-case object TweetIsSelfReply extends Feature[Boolean]
+caselon objelonct TwelonelontIsSelonlfRelonply elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsNullcast extends Feature[Boolean]
+caselon objelonct TwelonelontIsNullcast elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetTimestamp extends Feature[Time]
+caselon objelonct TwelonelontTimelonstamp elonxtelonnds Felonaturelon[Timelon]
 
-case object TweetIsInnerQuotedTweet extends Feature[Boolean]
+caselon objelonct TwelonelontIsInnelonrQuotelondTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsRetweet extends Feature[Boolean]
+caselon objelonct TwelonelontIsRelontwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsSourceTweet extends Feature[Boolean]
+caselon objelonct TwelonelontIsSourcelonTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetDeleteReason extends Feature[TweetDeleteReason]
+caselon objelonct TwelonelontDelonlelontelonRelonason elonxtelonnds Felonaturelon[TwelonelontDelonlelontelonRelonason]
 
-case object TweetReplyToParentTweetDuration extends Feature[Duration]
+caselon objelonct TwelonelontRelonplyToParelonntTwelonelontDuration elonxtelonnds Felonaturelon[Duration]
 
-case object TweetReplyToRootTweetDuration extends Feature[Duration]
+caselon objelonct TwelonelontRelonplyToRootTwelonelontDuration elonxtelonnds Felonaturelon[Duration]
 
-case object TweetHasCommunityConversationControl extends Feature[Boolean]
-case object TweetHasByInvitationConversationControl extends Feature[Boolean]
-case object TweetHasFollowersConversationControl extends Feature[Boolean]
-case object TweetConversationViewerIsInvited extends Feature[Boolean]
-case object TweetConversationViewerIsInvitedViaReplyMention extends Feature[Boolean]
-case object TweetConversationViewerIsRootAuthor extends Feature[Boolean]
-case object ConversationRootAuthorFollowsViewer extends Feature[Boolean]
-case object ViewerFollowsConversationRootAuthor extends Feature[Boolean]
+caselon objelonct TwelonelontHasCommunityConvelonrsationControl elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct TwelonelontHasByInvitationConvelonrsationControl elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct TwelonelontHasFollowelonrsConvelonrsationControl elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct TwelonelontConvelonrsationVielonwelonrIsInvitelond elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct TwelonelontConvelonrsationVielonwelonrIsInvitelondViaRelonplyMelonntion elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct TwelonelontConvelonrsationVielonwelonrIsRootAuthor elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct ConvelonrsationRootAuthorFollowsVielonwelonr elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct VielonwelonrFollowsConvelonrsationRootAuthor elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsExclusiveTweet extends Feature[Boolean]
-case object ViewerIsExclusiveTweetRootAuthor extends Feature[Boolean]
-case object ViewerSuperFollowsExclusiveTweetRootAuthor extends Feature[Boolean]
+caselon objelonct TwelonelontIselonxclusivelonTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct VielonwelonrIselonxclusivelonTwelonelontRootAuthor elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct VielonwelonrSupelonrFollowselonxclusivelonTwelonelontRootAuthor elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsCommunityTweet extends Feature[Boolean]
+caselon objelonct TwelonelontIsCommunityTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object CommunityTweetCommunityNotFound extends Feature[Boolean]
+caselon objelonct CommunityTwelonelontCommunityNotFound elonxtelonnds Felonaturelon[Boolelonan]
 
-case object CommunityTweetCommunityDeleted extends Feature[Boolean]
+caselon objelonct CommunityTwelonelontCommunityDelonlelontelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object CommunityTweetCommunitySuspended extends Feature[Boolean]
+caselon objelonct CommunityTwelonelontCommunitySuspelonndelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object CommunityTweetCommunityVisible extends Feature[Boolean]
+caselon objelonct CommunityTwelonelontCommunityVisiblelon elonxtelonnds Felonaturelon[Boolelonan]
 
-case object CommunityTweetIsHidden extends Feature[Boolean]
+caselon objelonct CommunityTwelonelontIsHiddelonn elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerIsInternalCommunitiesAdmin extends Feature[Boolean]
+caselon objelonct VielonwelonrIsIntelonrnalCommunitielonsAdmin elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerIsCommunityAdmin extends Feature[Boolean]
+caselon objelonct VielonwelonrIsCommunityAdmin elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerIsCommunityModerator extends Feature[Boolean]
+caselon objelonct VielonwelonrIsCommunityModelonrator elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerIsCommunityMember extends Feature[Boolean]
+caselon objelonct VielonwelonrIsCommunityMelonmbelonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object CommunityTweetAuthorIsRemoved extends Feature[Boolean]
+caselon objelonct CommunityTwelonelontAuthorIsRelonmovelond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object NotificationIsOnCommunityTweet extends Feature[Boolean]
+caselon objelonct NotificationIsOnCommunityTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object NotificationIsOnUnmentionedViewer extends Feature[Boolean]
+caselon objelonct NotificationIsOnUnmelonntionelondVielonwelonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object SearchResultsPageNumber extends Feature[Int]
+caselon objelonct SelonarchRelonsultsPagelonNumbelonr elonxtelonnds Felonaturelon[Int]
 
-case object SearchCandidateCount extends Feature[Int]
+caselon objelonct SelonarchCandidatelonCount elonxtelonnds Felonaturelon[Int]
 
-case object SearchQuerySource extends Feature[ThriftQuerySource]
+caselon objelonct SelonarchQuelonrySourcelon elonxtelonnds Felonaturelon[ThriftQuelonrySourcelon]
 
-case object SearchQueryHasUser extends Feature[Boolean]
+caselon objelonct SelonarchQuelonryHasUselonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetSemanticCoreAnnotations extends Feature[Seq[SemanticCoreAnnotation]]
+caselon objelonct TwelonelontSelonmanticCorelonAnnotations elonxtelonnds Felonaturelon[Selonq[SelonmanticCorelonAnnotation]]
 
-case object OuterAuthorId extends Feature[Long]
+caselon objelonct OutelonrAuthorId elonxtelonnds Felonaturelon[Long]
 
-case object AuthorBlocksOuterAuthor extends Feature[Boolean]
+caselon objelonct AuthorBlocksOutelonrAuthor elonxtelonnds Felonaturelon[Boolelonan]
 
-case object OuterAuthorFollowsAuthor extends Feature[Boolean]
+caselon objelonct OutelonrAuthorFollowsAuthor elonxtelonnds Felonaturelon[Boolelonan]
 
-case object OuterAuthorIsInnerAuthor extends Feature[Boolean]
+caselon objelonct OutelonrAuthorIsInnelonrAuthor elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsModerated extends Feature[Boolean]
-case object FocalTweetId extends Feature[Long]
+caselon objelonct TwelonelontIsModelonratelond elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct FocalTwelonelontId elonxtelonnds Felonaturelon[Long]
 
-case object TweetId extends Feature[Long]
+caselon objelonct TwelonelontId elonxtelonnds Felonaturelon[Long]
 
-case object TweetConversationId extends Feature[Long]
-case object TweetParentId extends Feature[Long]
-case object ConversationRootAuthorIsVerified extends Feature[Boolean]
+caselon objelonct TwelonelontConvelonrsationId elonxtelonnds Felonaturelon[Long]
+caselon objelonct TwelonelontParelonntId elonxtelonnds Felonaturelon[Long]
+caselon objelonct ConvelonrsationRootAuthorIsVelonrifielond elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerOptInBlocking extends Feature[Boolean]
+caselon objelonct VielonwelonrOptInBlocking elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerOptInFiltering extends Feature[Boolean]
+caselon objelonct VielonwelonrOptInFiltelonring elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerRoles extends Feature[Seq[String]] {
-  val EmployeeRole = "employee"
+caselon objelonct VielonwelonrRolelons elonxtelonnds Felonaturelon[Selonq[String]] {
+  val elonmployelonelonRolelon = "elonmployelonelon"
 }
 
-case object TweetMisinformationPolicies extends Feature[Seq[MisinformationPolicy]]
+caselon objelonct TwelonelontMisinformationPolicielons elonxtelonnds Felonaturelon[Selonq[MisinformationPolicy]]
 
-case object TweetEnglishMisinformationPolicies extends Feature[Seq[MisinformationPolicy]]
+caselon objelonct TwelonelontelonnglishMisinformationPolicielons elonxtelonnds Felonaturelon[Selonq[MisinformationPolicy]]
 
-case object HasInnerCircleOfFriendsRelationship extends Feature[Boolean]
+caselon objelonct HasInnelonrCirclelonOfFrielonndsRelonlationship elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerAge extends Feature[UserAge]
+caselon objelonct VielonwelonrAgelon elonxtelonnds Felonaturelon[UselonrAgelon]
 
-case object HasDmcaMediaFeature extends Feature[Boolean]
+caselon objelonct HasDmcaMelondiaFelonaturelon elonxtelonnds Felonaturelon[Boolelonan]
 
-case object MediaGeoRestrictionsAllowList extends Feature[Seq[String]]
-case object MediaGeoRestrictionsDenyList extends Feature[Seq[String]]
+caselon objelonct MelondiaGelonoRelonstrictionsAllowList elonxtelonnds Felonaturelon[Selonq[String]]
+caselon objelonct MelondiaGelonoRelonstrictionsDelonnyList elonxtelonnds Felonaturelon[Selonq[String]]
 
-case object TweetIsTrustedFriendTweet extends Feature[Boolean]
-case object ViewerIsTrustedFriendTweetAuthor extends Feature[Boolean]
-case object ViewerIsTrustedFriendOfTweetAuthor extends Feature[Boolean]
+caselon objelonct TwelonelontIsTrustelondFrielonndTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct VielonwelonrIsTrustelondFrielonndTwelonelontAuthor elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct VielonwelonrIsTrustelondFrielonndOfTwelonelontAuthor elonxtelonnds Felonaturelon[Boolelonan]
 
-case object DmConversationIsOneToOneConversation extends Feature[Boolean]
-case object DmConversationHasEmptyTimeline extends Feature[Boolean]
-case object DmConversationHasValidLastReadableEventId extends Feature[Boolean]
-case object DmConversationInfoExists extends Feature[Boolean]
-case object DmConversationTimelineExists extends Feature[Boolean]
-case object ViewerIsDmConversationParticipant extends Feature[Boolean]
+caselon objelonct DmConvelonrsationIsOnelonToOnelonConvelonrsation elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmConvelonrsationHaselonmptyTimelonlinelon elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmConvelonrsationHasValidLastRelonadablelonelonvelonntId elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmConvelonrsationInfoelonxists elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmConvelonrsationTimelonlinelonelonxists elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct VielonwelonrIsDmConvelonrsationParticipant elonxtelonnds Felonaturelon[Boolelonan]
 
-case object DmEventIsMessageCreateEvent extends Feature[Boolean]
-case object DmEventIsWelcomeMessageCreateEvent extends Feature[Boolean]
-case object DmEventIsLastMessageReadUpdateEvent extends Feature[Boolean]
-case object DmEventIsDeleted extends Feature[Boolean]
-case object DmEventIsHidden extends Feature[Boolean]
-case object ViewerIsDmEventInitiatingUser extends Feature[Boolean]
-case object DmEventInOneToOneConversationWithUnavailableUser extends Feature[Boolean]
-case object DmEventIsJoinConversationEvent extends Feature[Boolean]
-case object DmEventIsConversationCreateEvent extends Feature[Boolean]
-case object DmEventInOneToOneConversation extends Feature[Boolean]
-case object DmEventIsTrustConversationEvent extends Feature[Boolean]
-case object DmEventIsCsFeedbackSubmitted extends Feature[Boolean]
-case object DmEventIsCsFeedbackDismissed extends Feature[Boolean]
-case object DmEventIsPerspectivalJoinConversationEvent extends Feature[Boolean]
+caselon objelonct DmelonvelonntIsMelonssagelonCrelonatelonelonvelonnt elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntIsWelonlcomelonMelonssagelonCrelonatelonelonvelonnt elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntIsLastMelonssagelonRelonadUpdatelonelonvelonnt elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntIsDelonlelontelond elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntIsHiddelonn elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct VielonwelonrIsDmelonvelonntInitiatingUselonr elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntInOnelonToOnelonConvelonrsationWithUnavailablelonUselonr elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntIsJoinConvelonrsationelonvelonnt elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntIsConvelonrsationCrelonatelonelonvelonnt elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntInOnelonToOnelonConvelonrsation elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntIsTrustConvelonrsationelonvelonnt elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntIsCsFelonelondbackSubmittelond elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntIsCsFelonelondbackDismisselond elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntIsPelonrspelonctivalJoinConvelonrsationelonvelonnt elonxtelonnds Felonaturelon[Boolelonan]
 
-case object DmEventOccurredBeforeLastClearedEvent extends Feature[Boolean]
-case object DmEventOccurredBeforeJoinConversationEvent extends Feature[Boolean]
+caselon objelonct DmelonvelonntOccurrelondBelonforelonLastClelonarelondelonvelonnt elonxtelonnds Felonaturelon[Boolelonan]
+caselon objelonct DmelonvelonntOccurrelondBelonforelonJoinConvelonrsationelonvelonnt elonxtelonnds Felonaturelon[Boolelonan]
 
-case object CardUriHost extends Feature[String]
-case object CardIsPoll extends Feature[Boolean]
+caselon objelonct CardUriHost elonxtelonnds Felonaturelon[String]
+caselon objelonct CardIsPoll elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsStaleTweet extends Feature[Boolean]
+caselon objelonct TwelonelontIsStalelonTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsEditTweet extends Feature[Boolean]
+caselon objelonct TwelonelontIselonditTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsLatestTweet extends Feature[Boolean]
+caselon objelonct TwelonelontIsLatelonstTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsInitialTweet extends Feature[Boolean]
+caselon objelonct TwelonelontIsInitialTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsCollabInvitationTweet extends Feature[Boolean]
+caselon objelonct TwelonelontIsCollabInvitationTwelonelont elonxtelonnds Felonaturelon[Boolelonan]
 
-case object ViewerSensitiveMediaSettings extends Feature[UserSensitiveMediaSettings]
-
-
-case object ToxicReplyFilterState extends Feature[FilterState]
+caselon objelonct VielonwelonrSelonnsitivelonMelondiaSelonttings elonxtelonnds Felonaturelon[UselonrSelonnsitivelonMelondiaSelonttings]
 
 
-case object ToxicReplyFilterConversationAuthorIsViewer extends Feature[Boolean]
+caselon objelonct ToxicRelonplyFiltelonrStatelon elonxtelonnds Felonaturelon[FiltelonrStatelon]
 
-case object RawQuery extends Feature[String]
 
-case object AuthorScreenName extends Feature[String]
+caselon objelonct ToxicRelonplyFiltelonrConvelonrsationAuthorIsVielonwelonr elonxtelonnds Felonaturelon[Boolelonan]
 
-case object TweetIsInternalPromotedContent extends Feature[Boolean]
+caselon objelonct RawQuelonry elonxtelonnds Felonaturelon[String]
+
+caselon objelonct AuthorScrelonelonnNamelon elonxtelonnds Felonaturelon[String]
+
+caselon objelonct TwelonelontIsIntelonrnalPromotelondContelonnt elonxtelonnds Felonaturelon[Boolelonan]

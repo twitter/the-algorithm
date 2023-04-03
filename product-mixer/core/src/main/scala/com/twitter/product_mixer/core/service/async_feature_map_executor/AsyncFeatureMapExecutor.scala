@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.core.service.async_feature_map_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.async_felonaturelon_map_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor._
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.asyncfelonaturelonmap.AsyncFelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor._
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class AsyncFeatureMapExecutor @Inject() (
-  override val statsReceiver: StatsReceiver)
-    extends Executor {
+@Singlelonton
+class AsyncFelonaturelonMapelonxeloncutor @Injelonct() (
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor {
 
   /**
-   * Forces an [[AsyncFeatureMap]] to hydrate and resolve into a [[FeatureMap]]
-   * containing all [[com.twitter.product_mixer.core.feature.Feature]]s that are
-   * supposed to be hydrated before `stepToHydrateBefore`.
+   * Forcelons an [[AsyncFelonaturelonMap]] to hydratelon and relonsolvelon into a [[FelonaturelonMap]]
+   * containing all [[com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon]]s that arelon
+   * supposelond to belon hydratelond belonforelon `stelonpToHydratelonBelonforelon`.
    */
-  def arrow(
-    stepToHydrateFor: PipelineStepIdentifier,
-    currentStep: PipelineStepIdentifier,
-    context: Context
-  ): Arrow[AsyncFeatureMap, AsyncFeatureMapExecutorResults] = {
+  delonf arrow(
+    stelonpToHydratelonFor: PipelonlinelonStelonpIdelonntifielonr,
+    currelonntStelonp: PipelonlinelonStelonpIdelonntifielonr,
+    contelonxt: Contelonxt
+  ): Arrow[AsyncFelonaturelonMap, AsyncFelonaturelonMapelonxeloncutorRelonsults] = {
     Arrow
-      .map[AsyncFeatureMap, Option[Stitch[FeatureMap]]](_.hydrate(stepToHydrateFor))
-      .andThen(
-        Arrow.choose(
-          Arrow.Choice.ifDefinedAt(
-            { case Some(stitchOfFeatureMap) => stitchOfFeatureMap },
-            // only stat if there's something to hydrate
-            wrapComponentWithExecutorBookkeeping(context, currentStep)(
+      .map[AsyncFelonaturelonMap, Option[Stitch[FelonaturelonMap]]](_.hydratelon(stelonpToHydratelonFor))
+      .andThelonn(
+        Arrow.chooselon(
+          Arrow.Choicelon.ifDelonfinelondAt(
+            { caselon Somelon(stitchOfFelonaturelonMap) => stitchOfFelonaturelonMap },
+            // only stat if thelonrelon's somelonthing to hydratelon
+            wrapComponelonntWithelonxeloncutorBookkelonelonping(contelonxt, currelonntStelonp)(
               Arrow
-                .flatMap[Stitch[FeatureMap], FeatureMap](identity)
-                .map(featureMap =>
-                  AsyncFeatureMapExecutorResults(Map(stepToHydrateFor -> featureMap)))
+                .flatMap[Stitch[FelonaturelonMap], FelonaturelonMap](idelonntity)
+                .map(felonaturelonMap =>
+                  AsyncFelonaturelonMapelonxeloncutorRelonsults(Map(stelonpToHydratelonFor -> felonaturelonMap)))
             )
           ),
-          Arrow.Choice.otherwise(Arrow.value(AsyncFeatureMapExecutorResults(Map.empty)))
+          Arrow.Choicelon.othelonrwiselon(Arrow.valuelon(AsyncFelonaturelonMapelonxeloncutorRelonsults(Map.elonmpty)))
         )
       )
   }
 }
 
-case class AsyncFeatureMapExecutorResults(
-  featureMapsByStep: Map[PipelineStepIdentifier, FeatureMap])
-    extends ExecutorResult {
-  def ++(
-    asyncFeatureMapExecutorResults: AsyncFeatureMapExecutorResults
-  ): AsyncFeatureMapExecutorResults =
-    AsyncFeatureMapExecutorResults(
-      featureMapsByStep ++ asyncFeatureMapExecutorResults.featureMapsByStep)
+caselon class AsyncFelonaturelonMapelonxeloncutorRelonsults(
+  felonaturelonMapsByStelonp: Map[PipelonlinelonStelonpIdelonntifielonr, FelonaturelonMap])
+    elonxtelonnds elonxeloncutorRelonsult {
+  delonf ++(
+    asyncFelonaturelonMapelonxeloncutorRelonsults: AsyncFelonaturelonMapelonxeloncutorRelonsults
+  ): AsyncFelonaturelonMapelonxeloncutorRelonsults =
+    AsyncFelonaturelonMapelonxeloncutorRelonsults(
+      felonaturelonMapsByStelonp ++ asyncFelonaturelonMapelonxeloncutorRelonsults.felonaturelonMapsByStelonp)
 }

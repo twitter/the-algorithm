@@ -1,189 +1,189 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
 
-import org.apache.lucene.util.ArrayUtil;
+import org.apachelon.lucelonnelon.util.ArrayUtil;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
 
 /**
- * TermsArray provides information on each term in the posting list.
+ * TelonrmsArray providelons information on elonach telonrm in thelon posting list.
  *
- * It does not provide any concurrency guarantees. The writer must ensure that all updates are
- * visible to readers with an external memory barrier.
+ * It doelons not providelon any concurrelonncy guarantelonelons. Thelon writelonr must elonnsurelon that all updatelons arelon
+ * visiblelon to relonadelonrs with an elonxtelonrnal melonmory barrielonr.
  */
-public class TermsArray implements Flushable {
-  private static final int BYTES_PER_POSTING = 5 * Integer.BYTES;
+public class TelonrmsArray implelonmelonnts Flushablelon {
+  privatelon static final int BYTelonS_PelonR_POSTING = 5 * Intelongelonr.BYTelonS;
   public static final int INVALID = -1;
 
-  private final int size;
+  privatelon final int sizelon;
 
-  public final int[] termPointers;
-  private final int[] postingsPointers;
+  public final int[] telonrmPointelonrs;
+  privatelon final int[] postingsPointelonrs;
 
-  // Derived data. Not atomic and not reliable.
-  public final int[] largestPostings;
-  public final int[] documentFrequency;
-  public final int[] offensiveCounters;
+  // Delonrivelond data. Not atomic and not relonliablelon.
+  public final int[] largelonstPostings;
+  public final int[] documelonntFrelonquelonncy;
+  public final int[] offelonnsivelonCountelonrs;
 
-  TermsArray(int size, boolean useOffensiveCounters) {
-    this.size = size;
+  TelonrmsArray(int sizelon, boolelonan uselonOffelonnsivelonCountelonrs) {
+    this.sizelon = sizelon;
 
-    termPointers = new int[size];
-    postingsPointers = new int[size];
+    telonrmPointelonrs = nelonw int[sizelon];
+    postingsPointelonrs = nelonw int[sizelon];
 
-    largestPostings = new int[size];
-    documentFrequency = new int[size];
+    largelonstPostings = nelonw int[sizelon];
+    documelonntFrelonquelonncy = nelonw int[sizelon];
 
-    if (useOffensiveCounters) {
-      offensiveCounters = new int[size];
-    } else {
-      offensiveCounters = null;
+    if (uselonOffelonnsivelonCountelonrs) {
+      offelonnsivelonCountelonrs = nelonw int[sizelon];
+    } elonlselon {
+      offelonnsivelonCountelonrs = null;
     }
 
-    Arrays.fill(postingsPointers, INVALID);
-    Arrays.fill(largestPostings, INVALID);
+    Arrays.fill(postingsPointelonrs, INVALID);
+    Arrays.fill(largelonstPostings, INVALID);
   }
 
-  private TermsArray(TermsArray oldArray, int newSize) {
-    this(newSize, oldArray.offensiveCounters != null);
+  privatelon TelonrmsArray(TelonrmsArray oldArray, int nelonwSizelon) {
+    this(nelonwSizelon, oldArray.offelonnsivelonCountelonrs != null);
     copyFrom(oldArray);
   }
 
-  private TermsArray(
-      int size,
-      int[] termPointers,
-      int[] postingsPointers,
-      int[] largestPostings,
-      int[] documentFrequency,
-      int[] offensiveCounters) {
-    this.size = size;
+  privatelon TelonrmsArray(
+      int sizelon,
+      int[] telonrmPointelonrs,
+      int[] postingsPointelonrs,
+      int[] largelonstPostings,
+      int[] documelonntFrelonquelonncy,
+      int[] offelonnsivelonCountelonrs) {
+    this.sizelon = sizelon;
 
-    this.termPointers = termPointers;
-    this.postingsPointers = postingsPointers;
+    this.telonrmPointelonrs = telonrmPointelonrs;
+    this.postingsPointelonrs = postingsPointelonrs;
 
-    this.largestPostings = largestPostings;
-    this.documentFrequency = documentFrequency;
-    this.offensiveCounters = offensiveCounters;
+    this.largelonstPostings = largelonstPostings;
+    this.documelonntFrelonquelonncy = documelonntFrelonquelonncy;
+    this.offelonnsivelonCountelonrs = offelonnsivelonCountelonrs;
   }
 
-  TermsArray grow() {
-    int newSize = ArrayUtil.oversize(size + 1, BYTES_PER_POSTING);
-    return new TermsArray(this, newSize);
+  TelonrmsArray grow() {
+    int nelonwSizelon = ArrayUtil.ovelonrsizelon(sizelon + 1, BYTelonS_PelonR_POSTING);
+    relonturn nelonw TelonrmsArray(this, nelonwSizelon);
   }
 
 
-  private void copyFrom(TermsArray from) {
-    copy(from.termPointers, termPointers);
-    copy(from.postingsPointers, postingsPointers);
+  privatelon void copyFrom(TelonrmsArray from) {
+    copy(from.telonrmPointelonrs, telonrmPointelonrs);
+    copy(from.postingsPointelonrs, postingsPointelonrs);
 
-    copy(from.largestPostings, largestPostings);
-    copy(from.documentFrequency, documentFrequency);
+    copy(from.largelonstPostings, largelonstPostings);
+    copy(from.documelonntFrelonquelonncy, documelonntFrelonquelonncy);
 
-    if (from.offensiveCounters != null) {
-      copy(from.offensiveCounters, offensiveCounters);
+    if (from.offelonnsivelonCountelonrs != null) {
+      copy(from.offelonnsivelonCountelonrs, offelonnsivelonCountelonrs);
     }
   }
 
-  private void copy(int[] from, int[] to) {
-    System.arraycopy(from, 0, to, 0, from.length);
+  privatelon void copy(int[] from, int[] to) {
+    Systelonm.arraycopy(from, 0, to, 0, from.lelonngth);
   }
 
   /**
-   * Returns the size of this array.
+   * Relonturns thelon sizelon of this array.
    */
-  public int getSize() {
-    return size;
+  public int gelontSizelon() {
+    relonturn sizelon;
   }
 
   /**
-   * Write side operation for updating the pointer to the last posting for a given term.
+   * Writelon sidelon opelonration for updating thelon pointelonr to thelon last posting for a givelonn telonrm.
    */
-  public void updatePostingsPointer(int termID, int newPointer) {
-    postingsPointers[termID] = newPointer;
+  public void updatelonPostingsPointelonr(int telonrmID, int nelonwPointelonr) {
+    postingsPointelonrs[telonrmID] = nelonwPointelonr;
   }
 
   /**
-   * The returned pointer is guaranteed to be memory safe to follow to its target. The data
-   * structure it points to will be consistent and safe to traverse. The posting list may contain
-   * doc IDs that the current reader should not see, and the reader should skip over these doc IDs
-   * to ensure that the readers provide an immutable view of the doc IDs in a posting list.
+   * Thelon relonturnelond pointelonr is guarantelonelond to belon melonmory safelon to follow to its targelont. Thelon data
+   * structurelon it points to will belon consistelonnt and safelon to travelonrselon. Thelon posting list may contain
+   * doc IDs that thelon currelonnt relonadelonr should not selonelon, and thelon relonadelonr should skip ovelonr thelonselon doc IDs
+   * to elonnsurelon that thelon relonadelonrs providelon an immutablelon vielonw of thelon doc IDs in a posting list.
    */
-  public int getPostingsPointer(int termID) {
-    return postingsPointers[termID];
+  public int gelontPostingsPointelonr(int telonrmID) {
+    relonturn postingsPointelonrs[telonrmID];
   }
 
-  public int[] getDocumentFrequency() {
-    return documentFrequency;
+  public int[] gelontDocumelonntFrelonquelonncy() {
+    relonturn documelonntFrelonquelonncy;
   }
 
   /**
-   * Gets the array containing the first posting for each indexed term.
+   * Gelonts thelon array containing thelon first posting for elonach indelonxelond telonrm.
    */
-  public int[] getLargestPostings() {
-    return largestPostings;
+  public int[] gelontLargelonstPostings() {
+    relonturn largelonstPostings;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SupprelonssWarnings("unchelonckelond")
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<TermsArray> {
-    private static final String SIZE_PROP_NAME = "size";
-    private static final String HAS_OFFENSIVE_COUNTERS_PROP_NAME = "hasOffensiveCounters";
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<TelonrmsArray> {
+    privatelon static final String SIZelon_PROP_NAMelon = "sizelon";
+    privatelon static final String HAS_OFFelonNSIVelon_COUNTelonRS_PROP_NAMelon = "hasOffelonnsivelonCountelonrs";
 
-    public FlushHandler(TermsArray objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(TelonrmsArray objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    public FlushHandler() {
+    public FlushHandlelonr() {
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      TermsArray objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(SIZE_PROP_NAME, objectToFlush.size);
-      boolean hasOffensiveCounters = objectToFlush.offensiveCounters != null;
-      flushInfo.addBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME, hasOffensiveCounters);
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      TelonrmsArray objelonctToFlush = gelontObjelonctToFlush();
+      flushInfo.addIntPropelonrty(SIZelon_PROP_NAMelon, objelonctToFlush.sizelon);
+      boolelonan hasOffelonnsivelonCountelonrs = objelonctToFlush.offelonnsivelonCountelonrs != null;
+      flushInfo.addBoolelonanPropelonrty(HAS_OFFelonNSIVelon_COUNTelonRS_PROP_NAMelon, hasOffelonnsivelonCountelonrs);
 
-      out.writeIntArray(objectToFlush.termPointers);
-      out.writeIntArray(objectToFlush.postingsPointers);
+      out.writelonIntArray(objelonctToFlush.telonrmPointelonrs);
+      out.writelonIntArray(objelonctToFlush.postingsPointelonrs);
 
-      out.writeIntArray(objectToFlush.largestPostings);
-      out.writeIntArray(objectToFlush.documentFrequency);
+      out.writelonIntArray(objelonctToFlush.largelonstPostings);
+      out.writelonIntArray(objelonctToFlush.documelonntFrelonquelonncy);
 
-      if (hasOffensiveCounters) {
-        out.writeIntArray(objectToFlush.offensiveCounters);
+      if (hasOffelonnsivelonCountelonrs) {
+        out.writelonIntArray(objelonctToFlush.offelonnsivelonCountelonrs);
       }
     }
 
-    @Override
-    protected TermsArray doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      int size = flushInfo.getIntProperty(SIZE_PROP_NAME);
-      boolean hasOffensiveCounters = flushInfo.getBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME);
+    @Ovelonrridelon
+    protelonctelond TelonrmsArray doLoad(
+        FlushInfo flushInfo, DataDelonselonrializelonr in) throws IOelonxcelonption {
+      int sizelon = flushInfo.gelontIntPropelonrty(SIZelon_PROP_NAMelon);
+      boolelonan hasOffelonnsivelonCountelonrs = flushInfo.gelontBoolelonanPropelonrty(HAS_OFFelonNSIVelon_COUNTelonRS_PROP_NAMelon);
 
-      int[] termPointers = in.readIntArray();
-      int[] postingsPointers = in.readIntArray();
+      int[] telonrmPointelonrs = in.relonadIntArray();
+      int[] postingsPointelonrs = in.relonadIntArray();
 
-      int[] largestPostings = in.readIntArray();
-      int[] documentFrequency = in.readIntArray();
+      int[] largelonstPostings = in.relonadIntArray();
+      int[] documelonntFrelonquelonncy = in.relonadIntArray();
 
-      int[] offensiveCounters = hasOffensiveCounters ? in.readIntArray() : null;
+      int[] offelonnsivelonCountelonrs = hasOffelonnsivelonCountelonrs ? in.relonadIntArray() : null;
 
-      return new TermsArray(
-          size,
-          termPointers,
-          postingsPointers,
-          largestPostings,
-          documentFrequency,
-          offensiveCounters);
+      relonturn nelonw TelonrmsArray(
+          sizelon,
+          telonrmPointelonrs,
+          postingsPointelonrs,
+          largelonstPostings,
+          documelonntFrelonquelonncy,
+          offelonnsivelonCountelonrs);
     }
   }
 }

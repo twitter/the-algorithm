@@ -1,44 +1,44 @@
-package com.twitter.recosinjector.edges
+packagelon com.twittelonr.reloncosinjelonctor.elondgelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.UuaEngagementEventDetails
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.util.Action
+import com.twittelonr.reloncosinjelonctor.util.UuaelonngagelonmelonntelonvelonntDelontails
+import com.twittelonr.util.Futurelon
 
-class UnifiedUserActionToUserAdGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
+class UnifielondUselonrActionToUselonrAdGraphBuildelonr(
+  uselonrTwelonelontelonntityelondgelonBuildelonr: UselonrTwelonelontelonntityelondgelonBuildelonr
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[UuaEngagementEventDetails, UserTweetEntityEdge] {
+  ovelonrridelon implicit val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonvelonntToMelonssagelonBuildelonr[UuaelonngagelonmelonntelonvelonntDelontails, UselonrTwelonelontelonntityelondgelon] {
 
-  override def shouldProcessEvent(event: UuaEngagementEventDetails): Future[Boolean] = {
-    event.userTweetEngagement.action match {
-      case Action.Click | Action.VideoPlayback75 | Action.Favorite => Future(true)
-      case _ => Future(false)
+  ovelonrridelon delonf shouldProcelonsselonvelonnt(elonvelonnt: UuaelonngagelonmelonntelonvelonntDelontails): Futurelon[Boolelonan] = {
+    elonvelonnt.uselonrTwelonelontelonngagelonmelonnt.action match {
+      caselon Action.Click | Action.VidelonoPlayback75 | Action.Favoritelon => Futurelon(truelon)
+      caselon _ => Futurelon(falselon)
     }
   }
 
-  override def buildEdges(details: UuaEngagementEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val engagement = details.userTweetEngagement
-    val tweetDetails = engagement.tweetDetails
+  ovelonrridelon delonf buildelondgelons(delontails: UuaelonngagelonmelonntelonvelonntDelontails): Futurelon[Selonq[UselonrTwelonelontelonntityelondgelon]] = {
+    val elonngagelonmelonnt = delontails.uselonrTwelonelontelonngagelonmelonnt
+    val twelonelontDelontails = elonngagelonmelonnt.twelonelontDelontails
 
-    Future.value(
-      Seq(
-        UserTweetEntityEdge(
-          sourceUser = engagement.engageUserId,
-          targetTweet = engagement.tweetId,
-          action = engagement.action,
-          metadata = engagement.engagementTimeMillis,
-          cardInfo = engagement.tweetDetails.map(_.cardInfo.toByte),
-          entitiesMap = None,
-          tweetDetails = tweetDetails
+    Futurelon.valuelon(
+      Selonq(
+        UselonrTwelonelontelonntityelondgelon(
+          sourcelonUselonr = elonngagelonmelonnt.elonngagelonUselonrId,
+          targelontTwelonelont = elonngagelonmelonnt.twelonelontId,
+          action = elonngagelonmelonnt.action,
+          melontadata = elonngagelonmelonnt.elonngagelonmelonntTimelonMillis,
+          cardInfo = elonngagelonmelonnt.twelonelontDelontails.map(_.cardInfo.toBytelon),
+          elonntitielonsMap = Nonelon,
+          twelonelontDelontails = twelonelontDelontails
         )))
   }
 
-  override def filterEdges(
-    event: UuaEngagementEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges)
+  ovelonrridelon delonf filtelonrelondgelons(
+    elonvelonnt: UuaelonngagelonmelonntelonvelonntDelontails,
+    elondgelons: Selonq[UselonrTwelonelontelonntityelondgelon]
+  ): Futurelon[Selonq[UselonrTwelonelontelonntityelondgelon]] = {
+    Futurelon(elondgelons)
   }
 }

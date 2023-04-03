@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.stringcelonntelonr
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait BaseStringCenterPlaceholderBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]] {
+trait BaselonStringCelonntelonrPlacelonholdelonrBuildelonr[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Candidatelon <: UnivelonrsalNoun[Any]] {
 
-  def apply(query: Query, candidate: Candidate, candidateFeatures: FeatureMap): Map[String, Any]
+  delonf apply(quelonry: Quelonry, candidatelon: Candidatelon, candidatelonFelonaturelons: FelonaturelonMap): Map[String, Any]
 }

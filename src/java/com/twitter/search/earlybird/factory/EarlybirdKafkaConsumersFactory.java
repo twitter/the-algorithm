@@ -1,19 +1,19 @@
-package com.twitter.search.earlybird.factory;
+packagelon com.twittelonr.selonarch.elonarlybird.factory;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apachelon.kafka.clielonnts.consumelonr.KafkaConsumelonr;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
 
-public interface EarlybirdKafkaConsumersFactory {
+public intelonrfacelon elonarlybirdKafkaConsumelonrsFactory {
   /**
-   * Create a kafka consumer with default records to be polled.
+   * Crelonatelon a kafka consumelonr with delonfault reloncords to belon pollelond.
    */
-  KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(
-      String clientID);
+  KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> crelonatelonKafkaConsumelonr(
+      String clielonntID);
 
   /**
-   * Create a kafka consumer with a set number of records to be polled.
+   * Crelonatelon a kafka consumelonr with a selont numbelonr of reloncords to belon pollelond.
    */
-  KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(
-      String clientID, int maxPollRecords);
+  KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> crelonatelonKafkaConsumelonr(
+      String clielonntID, int maxPollReloncords);
 }

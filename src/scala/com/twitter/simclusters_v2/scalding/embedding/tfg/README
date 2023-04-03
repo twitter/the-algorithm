@@ -1,7 +1,7 @@
 TFG stands for Topic Follow Graph
-The TFG topic embeddings are embeddings built from Topic Follow Graph.
-Each topic is represented by the sum of its followers' user InterestedIn embeddings.
+Thelon TFG topic elonmbelonddings arelon elonmbelonddings built from Topic Follow Graph.
+elonach topic is relonprelonselonntelond by thelon sum of its followelonrs' uselonr IntelonrelonstelondIn elonmbelonddings.
 
-There are two types of embeddings:
-logfav - topic embeddings built from followers' logfav-based InterestedIn
-fav - topic embeddings built from followers' fav-based InterestedIn
+Thelonrelon arelon two typelons of elonmbelonddings:
+logfav - topic elonmbelonddings built from followelonrs' logfav-baselond IntelonrelonstelondIn
+fav - topic elonmbelonddings built from followelonrs' fav-baselond IntelonrelonstelondIn

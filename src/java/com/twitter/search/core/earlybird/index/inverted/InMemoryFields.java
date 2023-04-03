@@ -1,44 +1,44 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Itelonrator;
 import java.util.Map;
 
-import org.apache.lucene.index.Fields;
-import org.apache.lucene.index.Terms;
+import org.apachelon.lucelonnelon.indelonx.Fielonlds;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
 
-public class InMemoryFields extends Fields {
-  private final Map<InvertedIndex, Terms> termsCache = new HashMap<>();
-  private final Map<String, InvertedIndex> perFields;
-  private final Map<InvertedIndex, Integer> pointerIndex;
+public class InMelonmoryFielonlds elonxtelonnds Fielonlds {
+  privatelon final Map<InvelonrtelondIndelonx, Telonrms> telonrmsCachelon = nelonw HashMap<>();
+  privatelon final Map<String, InvelonrtelondIndelonx> pelonrFielonlds;
+  privatelon final Map<InvelonrtelondIndelonx, Intelongelonr> pointelonrIndelonx;
 
   /**
-   * Returns a new {@link Fields} instance for the provided {@link InvertedIndex}es.
+   * Relonturns a nelonw {@link Fielonlds} instancelon for thelon providelond {@link InvelonrtelondIndelonx}elons.
    */
-  public InMemoryFields(Map<String, InvertedIndex> perFields,
-                        Map<InvertedIndex, Integer> pointerIndex) {
-    this.perFields = perFields;
-    this.pointerIndex = pointerIndex;
+  public InMelonmoryFielonlds(Map<String, InvelonrtelondIndelonx> pelonrFielonlds,
+                        Map<InvelonrtelondIndelonx, Intelongelonr> pointelonrIndelonx) {
+    this.pelonrFielonlds = pelonrFielonlds;
+    this.pointelonrIndelonx = pointelonrIndelonx;
   }
 
-  @Override
-  public Iterator<String> iterator() {
-    return perFields.keySet().iterator();
+  @Ovelonrridelon
+  public Itelonrator<String> itelonrator() {
+    relonturn pelonrFielonlds.kelonySelont().itelonrator();
   }
 
-  @Override
-  public Terms terms(String field) {
-    InvertedIndex invertedIndex = perFields.get(field);
-    if (invertedIndex == null) {
-      return null;
+  @Ovelonrridelon
+  public Telonrms telonrms(String fielonld) {
+    InvelonrtelondIndelonx invelonrtelondIndelonx = pelonrFielonlds.gelont(fielonld);
+    if (invelonrtelondIndelonx == null) {
+      relonturn null;
     }
 
-    return termsCache.computeIfAbsent(invertedIndex,
-        index -> index.createTerms(pointerIndex.getOrDefault(invertedIndex, -1)));
+    relonturn telonrmsCachelon.computelonIfAbselonnt(invelonrtelondIndelonx,
+        indelonx -> indelonx.crelonatelonTelonrms(pointelonrIndelonx.gelontOrDelonfault(invelonrtelondIndelonx, -1)));
   }
 
-  @Override
-  public int size() {
-    return perFields.size();
+  @Ovelonrridelon
+  public int sizelon() {
+    relonturn pelonrFielonlds.sizelon();
   }
 }

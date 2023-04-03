@@ -1,91 +1,91 @@
-package com.twitter.home_mixer.product.scored_tweets.response_transformer
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.relonsponselon_transformelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.DirectedAtUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdScoreFeature
-import com.twitter.home_mixer.model.HomeFeatures.FromInNetworkSourceFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasImageFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasVideoFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRandomTweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionScreenNameFeature
-import com.twitter.home_mixer.model.HomeFeatures.MentionUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SemanticAnnotationFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.model.HomeFeatures.TweetUrlsFeature
-import com.twitter.home_mixer.util.tweetypie.content.TweetMediaFeaturesExtractor
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.timelineranker.{thriftscala => tlr}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.CandidatelonSourcelonIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.DirelonctelondAtUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.elonarlybirdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.elonarlybirdScorelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FromInNelontworkSourcelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.HasImagelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.HasVidelonoFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InRelonplyToTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InRelonplyToUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRandomTwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.MelonntionScrelonelonnNamelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.MelonntionUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.QuotelondTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.QuotelondUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonmanticAnnotationFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.StrelonamToKafkaFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SuggelonstTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TwelonelontUrlsFelonaturelon
+import com.twittelonr.homelon_mixelonr.util.twelonelontypielon.contelonnt.TwelonelontMelondiaFelonaturelonselonxtractor
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => tlr}
 
-object TimelineRankerResponseTransformer {
+objelonct TimelonlinelonRankelonrRelonsponselonTransformelonr {
 
-  val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    CandidateSourceIdFeature,
-    DirectedAtUserIdFeature,
-    EarlybirdFeature,
-    EarlybirdScoreFeature,
-    FromInNetworkSourceFeature,
-    HasImageFeature,
-    HasVideoFeature,
-    InReplyToTweetIdFeature,
-    InReplyToUserIdFeature,
-    IsRandomTweetFeature,
-    IsRetweetFeature,
-    MentionScreenNameFeature,
-    MentionUserIdFeature,
-    SemanticAnnotationFeature,
-    StreamToKafkaFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
-    SuggestTypeFeature,
-    TweetUrlsFeature
+  val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    AuthorIdFelonaturelon,
+    CandidatelonSourcelonIdFelonaturelon,
+    DirelonctelondAtUselonrIdFelonaturelon,
+    elonarlybirdFelonaturelon,
+    elonarlybirdScorelonFelonaturelon,
+    FromInNelontworkSourcelonFelonaturelon,
+    HasImagelonFelonaturelon,
+    HasVidelonoFelonaturelon,
+    InRelonplyToTwelonelontIdFelonaturelon,
+    InRelonplyToUselonrIdFelonaturelon,
+    IsRandomTwelonelontFelonaturelon,
+    IsRelontwelonelontFelonaturelon,
+    MelonntionScrelonelonnNamelonFelonaturelon,
+    MelonntionUselonrIdFelonaturelon,
+    SelonmanticAnnotationFelonaturelon,
+    StrelonamToKafkaFelonaturelon,
+    QuotelondTwelonelontIdFelonaturelon,
+    QuotelondUselonrIdFelonaturelon,
+    SourcelonTwelonelontIdFelonaturelon,
+    SourcelonUselonrIdFelonaturelon,
+    SuggelonstTypelonFelonaturelon,
+    TwelonelontUrlsFelonaturelon
   )
 
-  def transform(candidate: tlr.CandidateTweet): FeatureMap = {
-    val tweet = candidate.tweet
-    val quotedTweet = tweet.flatMap(_.quotedTweet)
-    val mentions = tweet.flatMap(_.mentions).getOrElse(Seq.empty)
-    val coreData = tweet.flatMap(_.coreData)
-    val share = coreData.flatMap(_.share)
-    val reply = coreData.flatMap(_.reply)
-    val semanticAnnotations =
-      tweet.flatMap(_.escherbirdEntityAnnotations.map(_.entityAnnotations)).getOrElse(Seq.empty)
+  delonf transform(candidatelon: tlr.CandidatelonTwelonelont): FelonaturelonMap = {
+    val twelonelont = candidatelon.twelonelont
+    val quotelondTwelonelont = twelonelont.flatMap(_.quotelondTwelonelont)
+    val melonntions = twelonelont.flatMap(_.melonntions).gelontOrelonlselon(Selonq.elonmpty)
+    val corelonData = twelonelont.flatMap(_.corelonData)
+    val sharelon = corelonData.flatMap(_.sharelon)
+    val relonply = corelonData.flatMap(_.relonply)
+    val selonmanticAnnotations =
+      twelonelont.flatMap(_.elonschelonrbirdelonntityAnnotations.map(_.elonntityAnnotations)).gelontOrelonlselon(Selonq.elonmpty)
 
-    FeatureMapBuilder()
-      .add(AuthorIdFeature, coreData.map(_.userId))
-      .add(DirectedAtUserIdFeature, coreData.flatMap(_.directedAtUser.map(_.userId)))
-      .add(EarlybirdFeature, candidate.features)
-      .add(EarlybirdScoreFeature, candidate.features.map(_.earlybirdScore))
-      .add(FromInNetworkSourceFeature, false)
-      .add(HasImageFeature, tweet.exists(TweetMediaFeaturesExtractor.hasImage))
-      .add(HasVideoFeature, tweet.exists(TweetMediaFeaturesExtractor.hasVideo))
-      .add(InReplyToTweetIdFeature, reply.flatMap(_.inReplyToStatusId))
-      .add(InReplyToUserIdFeature, reply.map(_.inReplyToUserId))
-      .add(IsRandomTweetFeature, candidate.features.exists(_.isRandomTweet.getOrElse(false)))
-      .add(IsRetweetFeature, share.isDefined)
-      .add(MentionScreenNameFeature, mentions.map(_.screenName))
-      .add(MentionUserIdFeature, mentions.flatMap(_.userId))
-      .add(SemanticAnnotationFeature, semanticAnnotations)
-      .add(StreamToKafkaFeature, true)
-      .add(QuotedTweetIdFeature, quotedTweet.map(_.tweetId))
-      .add(QuotedUserIdFeature, quotedTweet.map(_.userId))
-      .add(SourceTweetIdFeature, share.map(_.sourceStatusId))
-      .add(SourceUserIdFeature, share.map(_.sourceUserId))
-      .add(TweetUrlsFeature, candidate.features.flatMap(_.urlsList).getOrElse(Seq.empty))
+    FelonaturelonMapBuildelonr()
+      .add(AuthorIdFelonaturelon, corelonData.map(_.uselonrId))
+      .add(DirelonctelondAtUselonrIdFelonaturelon, corelonData.flatMap(_.direlonctelondAtUselonr.map(_.uselonrId)))
+      .add(elonarlybirdFelonaturelon, candidatelon.felonaturelons)
+      .add(elonarlybirdScorelonFelonaturelon, candidatelon.felonaturelons.map(_.elonarlybirdScorelon))
+      .add(FromInNelontworkSourcelonFelonaturelon, falselon)
+      .add(HasImagelonFelonaturelon, twelonelont.elonxists(TwelonelontMelondiaFelonaturelonselonxtractor.hasImagelon))
+      .add(HasVidelonoFelonaturelon, twelonelont.elonxists(TwelonelontMelondiaFelonaturelonselonxtractor.hasVidelono))
+      .add(InRelonplyToTwelonelontIdFelonaturelon, relonply.flatMap(_.inRelonplyToStatusId))
+      .add(InRelonplyToUselonrIdFelonaturelon, relonply.map(_.inRelonplyToUselonrId))
+      .add(IsRandomTwelonelontFelonaturelon, candidatelon.felonaturelons.elonxists(_.isRandomTwelonelont.gelontOrelonlselon(falselon)))
+      .add(IsRelontwelonelontFelonaturelon, sharelon.isDelonfinelond)
+      .add(MelonntionScrelonelonnNamelonFelonaturelon, melonntions.map(_.screlonelonnNamelon))
+      .add(MelonntionUselonrIdFelonaturelon, melonntions.flatMap(_.uselonrId))
+      .add(SelonmanticAnnotationFelonaturelon, selonmanticAnnotations)
+      .add(StrelonamToKafkaFelonaturelon, truelon)
+      .add(QuotelondTwelonelontIdFelonaturelon, quotelondTwelonelont.map(_.twelonelontId))
+      .add(QuotelondUselonrIdFelonaturelon, quotelondTwelonelont.map(_.uselonrId))
+      .add(SourcelonTwelonelontIdFelonaturelon, sharelon.map(_.sourcelonStatusId))
+      .add(SourcelonUselonrIdFelonaturelon, sharelon.map(_.sourcelonUselonrId))
+      .add(TwelonelontUrlsFelonaturelon, candidatelon.felonaturelons.flatMap(_.urlsList).gelontOrelonlselon(Selonq.elonmpty))
       .build()
   }
 }

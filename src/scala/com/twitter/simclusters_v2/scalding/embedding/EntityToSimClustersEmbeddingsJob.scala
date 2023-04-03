@@ -1,354 +1,354 @@
-package com.twitter.simclusters_v2.scalding.embedding
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.recos.entities.thriftscala.Entity
-import com.twitter.recos.entities.thriftscala.Hashtag
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntity
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil._
-import com.twitter.simclusters_v2.scalding.embedding.common.EntityEmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.SimClustersEmbeddingJob
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbedding => ThriftSimClustersEmbedding,
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.reloncos.elonntitielons.thriftscala.elonntity
+import com.twittelonr.reloncos.elonntitielons.thriftscala.Hashtag
+import com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticCorelonelonntity
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil._
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonntityelonmbelonddingUtil
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.SimClustelonrselonmbelonddingJob
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  SimClustelonrselonmbelondding => ThriftSimClustelonrselonmbelondding,
   _
 }
-import com.twitter.wtf.entity_real_graph.common.EntityUtil
-import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.DataSources
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.wtf.elonntity_relonal_graph.common.elonntityUtil
+import com.twittelonr.wtf.elonntity_relonal_graph.thriftscala.elonntityTypelon
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.DataSourcelons
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embeddings_job-adhoc
+ * $ ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:elonntity_elonmbelonddings_job-adhoc
  *
- * ---------------------- Deploy to atla ----------------------
- * $ scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.embedding.EntityToSimClustersEmbeddingAdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/embedding:entity_embeddings_job-adhoc \
-  --user recos-platform \
-  -- --date 2019-09-09 --model-version 20M_145K_updated --entity-type SemanticCore
+ * ---------------------- Delonploy to atla ----------------------
+ * $ scalding relonmotelon run \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.elonntityToSimClustelonrselonmbelonddingAdhocApp \
+  --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:elonntity_elonmbelonddings_job-adhoc \
+  --uselonr reloncos-platform \
+  -- --datelon 2019-09-09 --modelonl-velonrsion 20M_145K_updatelond --elonntity-typelon SelonmanticCorelon
  */
-object EntityToSimClustersEmbeddingAdhocApp extends AdhocExecutionApp {
+objelonct elonntityToSimClustelonrselonmbelonddingAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
 
-  import EmbeddingUtil._
-  import EntityEmbeddingUtil._
-  import EntityToSimClustersEmbeddingsJob._
-  import EntityUtil._
-  import SimClustersEmbeddingJob._
+  import elonmbelonddingUtil._
+  import elonntityelonmbelonddingUtil._
+  import elonntityToSimClustelonrselonmbelonddingsJob._
+  import elonntityUtil._
+  import SimClustelonrselonmbelonddingJob._
 
-  def writeOutput(
-    embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
-    topKEmbeddings: TypedPipe[(SimClustersEmbeddingId, Seq[(ClusterId, EmbeddingScore)])],
-    jobConfig: EntityEmbeddingsJobConfig
-  ): Execution[Unit] = {
+  delonf writelonOutput(
+    elonmbelonddings: TypelondPipelon[(SimClustelonrselonmbelonddingId, (ClustelonrId, elonmbelonddingScorelon))],
+    topKelonmbelonddings: TypelondPipelon[(SimClustelonrselonmbelonddingId, Selonq[(ClustelonrId, elonmbelonddingScorelon)])],
+    jobConfig: elonntityelonmbelonddingsJobConfig
+  ): elonxeloncution[Unit] = {
 
-    val toSimClusterEmbeddingExec = topKEmbeddings
-      .mapValues(SimClustersEmbedding.apply(_).toThrift)
-      .writeExecution(
-        AdhocKeyValSources.entityToClustersSource(
-          EntityToSimClustersEmbeddingsJob.getHdfsPath(
-            isAdhoc = true,
-            isManhattanKeyVal = true,
-            isReverseIndex = false,
-            jobConfig.modelVersion,
-            jobConfig.entityType)))
+    val toSimClustelonrelonmbelonddingelonxelonc = topKelonmbelonddings
+      .mapValuelons(SimClustelonrselonmbelondding.apply(_).toThrift)
+      .writelonelonxeloncution(
+        AdhocKelonyValSourcelons.elonntityToClustelonrsSourcelon(
+          elonntityToSimClustelonrselonmbelonddingsJob.gelontHdfsPath(
+            isAdhoc = truelon,
+            isManhattanKelonyVal = truelon,
+            isRelonvelonrselonIndelonx = falselon,
+            jobConfig.modelonlVelonrsion,
+            jobConfig.elonntityTypelon)))
 
-    val fromSimClusterEmbeddingExec =
-      toReverseIndexSimClusterEmbedding(embeddings, jobConfig.topK)
-        .writeExecution(
-          AdhocKeyValSources.clusterToEntitiesSource(
-            EntityToSimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = true,
-              isManhattanKeyVal = true,
-              isReverseIndex = true,
-              jobConfig.modelVersion,
-              jobConfig.entityType)))
+    val fromSimClustelonrelonmbelonddingelonxelonc =
+      toRelonvelonrselonIndelonxSimClustelonrelonmbelondding(elonmbelonddings, jobConfig.topK)
+        .writelonelonxeloncution(
+          AdhocKelonyValSourcelons.clustelonrToelonntitielonsSourcelon(
+            elonntityToSimClustelonrselonmbelonddingsJob.gelontHdfsPath(
+              isAdhoc = truelon,
+              isManhattanKelonyVal = truelon,
+              isRelonvelonrselonIndelonx = truelon,
+              jobConfig.modelonlVelonrsion,
+              jobConfig.elonntityTypelon)))
 
-    Execution.zip(toSimClusterEmbeddingExec, fromSimClusterEmbeddingExec).unit
+    elonxeloncution.zip(toSimClustelonrelonmbelonddingelonxelonc, fromSimClustelonrelonmbelonddingelonxelonc).unit
   }
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val jobConfig = EntityEmbeddingsJobConfig(args, isAdhoc = true)
+    val jobConfig = elonntityelonmbelonddingsJobConfig(args, isAdhoc = truelon)
 
-    val numReducers = args.getOrElse("m", "1000").toInt
+    val numRelonducelonrs = args.gelontOrelonlselon("m", "1000").toInt
 
     /*
-      Using the ERG daily dataset in the adhoc job for quick prototyping, note that there may be
-      issues with scaling the job when productionizing on ERG aggregated dataset.
+      Using thelon elonRG daily dataselont in thelon adhoc job for quick prototyping, notelon that thelonrelon may belon
+      issuelons with scaling thelon job whelonn productionizing on elonRG aggrelongatelond dataselont.
      */
-    val entityRealGraphSource = DataSources.entityRealGraphDailyDataSetSource
+    val elonntityRelonalGraphSourcelon = DataSourcelons.elonntityRelonalGraphDailyDataSelontSourcelon
 
-    val entityUserMatrix: TypedPipe[(Entity, (UserId, Double))] =
-      (jobConfig.entityType match {
-        case EntityType.SemanticCore =>
-          getEntityUserMatrix(entityRealGraphSource, jobConfig.halfLife, EntityType.SemanticCore)
-        case EntityType.Hashtag =>
-          getEntityUserMatrix(entityRealGraphSource, jobConfig.halfLife, EntityType.Hashtag)
-        case _ =>
-          throw new IllegalArgumentException(
-            s"Argument [--entity-type] must be provided. Supported options [${EntityType.SemanticCore.name}, ${EntityType.Hashtag.name}]")
-      }).forceToDisk
+    val elonntityUselonrMatrix: TypelondPipelon[(elonntity, (UselonrId, Doublelon))] =
+      (jobConfig.elonntityTypelon match {
+        caselon elonntityTypelon.SelonmanticCorelon =>
+          gelontelonntityUselonrMatrix(elonntityRelonalGraphSourcelon, jobConfig.halfLifelon, elonntityTypelon.SelonmanticCorelon)
+        caselon elonntityTypelon.Hashtag =>
+          gelontelonntityUselonrMatrix(elonntityRelonalGraphSourcelon, jobConfig.halfLifelon, elonntityTypelon.Hashtag)
+        caselon _ =>
+          throw nelonw IllelongalArgumelonntelonxcelonption(
+            s"Argumelonnt [--elonntity-typelon] must belon providelond. Supportelond options [${elonntityTypelon.SelonmanticCorelon.namelon}, ${elonntityTypelon.Hashtag.namelon}]")
+      }).forcelonToDisk
 
-    val normalizedUserEntityMatrix =
-      getNormalizedTransposeInputMatrix(entityUserMatrix, numReducers = Some(numReducers))
+    val normalizelondUselonrelonntityMatrix =
+      gelontNormalizelondTransposelonInputMatrix(elonntityUselonrMatrix, numRelonducelonrs = Somelon(numRelonducelonrs))
 
-    //determine which data source to use based on model version
-    val simClustersSource = jobConfig.modelVersion match {
-      case ModelVersion.Model20m145kUpdated =>
-        InterestedInSources.simClustersInterestedInUpdatedSource(dateRange, timeZone)
-      case _ =>
-        InterestedInSources.simClustersInterestedInDec11Source(dateRange, timeZone)
+    //delontelonrminelon which data sourcelon to uselon baselond on modelonl velonrsion
+    val simClustelonrsSourcelon = jobConfig.modelonlVelonrsion match {
+      caselon ModelonlVelonrsion.Modelonl20m145kUpdatelond =>
+        IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondInUpdatelondSourcelon(datelonRangelon, timelonZonelon)
+      caselon _ =>
+        IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondInDelonc11Sourcelon(datelonRangelon, timelonZonelon)
     }
 
-    val embeddings = computeEmbeddings(
-      simClustersSource,
-      normalizedUserEntityMatrix,
-      scoreExtractors,
-      ModelVersion.Model20m145kUpdated,
-      toSimClustersEmbeddingId(jobConfig.modelVersion),
-      numReducers = Some(numReducers * 2)
+    val elonmbelonddings = computelonelonmbelonddings(
+      simClustelonrsSourcelon,
+      normalizelondUselonrelonntityMatrix,
+      scorelonelonxtractors,
+      ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+      toSimClustelonrselonmbelonddingId(jobConfig.modelonlVelonrsion),
+      numRelonducelonrs = Somelon(numRelonducelonrs * 2)
     )
 
-    val topKEmbeddings =
-      embeddings.group
-        .sortedReverseTake(jobConfig.topK)(Ordering.by(_._2))
-        .withReducers(numReducers)
+    val topKelonmbelonddings =
+      elonmbelonddings.group
+        .sortelondRelonvelonrselonTakelon(jobConfig.topK)(Ordelonring.by(_._2))
+        .withRelonducelonrs(numRelonducelonrs)
 
-    writeOutput(embeddings, topKEmbeddings, jobConfig)
+    writelonOutput(elonmbelonddings, topKelonmbelonddings, jobConfig)
   }
 }
 
 /**
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding:semantic_core_entity_embeddings_2020_job
- * $ capesospy-v2 update \
+ * $ ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding:selonmantic_corelon_elonntity_elonmbelonddings_2020_job
+ * $ capelonsospy-v2 updatelon \
   --build_locally \
-  --start_cron semantic_core_entity_embeddings_2020_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+  --start_cron selonmantic_corelon_elonntity_elonmbelonddings_2020_job src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object SemanticCoreEntityEmbeddings2020App extends EntityToSimClustersEmbeddingApp
+objelonct SelonmanticCorelonelonntityelonmbelonddings2020App elonxtelonnds elonntityToSimClustelonrselonmbelonddingApp
 
-trait EntityToSimClustersEmbeddingApp extends ScheduledExecutionApp {
+trait elonntityToSimClustelonrselonmbelonddingApp elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  import EmbeddingUtil._
-  import EntityEmbeddingUtil._
-  import EntityToSimClustersEmbeddingsJob._
-  import EntityUtil._
-  import SimClustersEmbeddingJob._
+  import elonmbelonddingUtil._
+  import elonntityelonmbelonddingUtil._
+  import elonntityToSimClustelonrselonmbelonddingsJob._
+  import elonntityUtil._
+  import SimClustelonrselonmbelonddingJob._
 
-  override val firstTime: RichDate = RichDate("2023-01-01")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2023-01-01")
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  private def writeOutput(
-    embeddings: TypedPipe[(SimClustersEmbeddingId, (ClusterId, EmbeddingScore))],
-    topKEmbeddings: TypedPipe[(SimClustersEmbeddingId, Seq[(ClusterId, EmbeddingScore)])],
-    jobConfig: EntityEmbeddingsJobConfig,
-    clusterEmbeddingsDataset: KeyValDALDataset[
-      KeyVal[SimClustersEmbeddingId, ThriftSimClustersEmbedding]
+  privatelon delonf writelonOutput(
+    elonmbelonddings: TypelondPipelon[(SimClustelonrselonmbelonddingId, (ClustelonrId, elonmbelonddingScorelon))],
+    topKelonmbelonddings: TypelondPipelon[(SimClustelonrselonmbelonddingId, Selonq[(ClustelonrId, elonmbelonddingScorelon)])],
+    jobConfig: elonntityelonmbelonddingsJobConfig,
+    clustelonrelonmbelonddingsDataselont: KelonyValDALDataselont[
+      KelonyVal[SimClustelonrselonmbelonddingId, ThriftSimClustelonrselonmbelondding]
     ],
-    entityEmbeddingsDataset: KeyValDALDataset[KeyVal[SimClustersEmbeddingId, InternalIdEmbedding]]
-  ): Execution[Unit] = {
+    elonntityelonmbelonddingsDataselont: KelonyValDALDataselont[KelonyVal[SimClustelonrselonmbelonddingId, IntelonrnalIdelonmbelondding]]
+  ): elonxeloncution[Unit] = {
 
-    val toSimClustersEmbeddings =
-      topKEmbeddings
-        .mapValues(SimClustersEmbedding.apply(_).toThrift)
+    val toSimClustelonrselonmbelonddings =
+      topKelonmbelonddings
+        .mapValuelons(SimClustelonrselonmbelondding.apply(_).toThrift)
         .map {
-          case (entityId, topSimClusters) => KeyVal(entityId, topSimClusters)
+          caselon (elonntityId, topSimClustelonrs) => KelonyVal(elonntityId, topSimClustelonrs)
         }
-        .writeDALVersionedKeyValExecution(
-          clusterEmbeddingsDataset,
+        .writelonDALVelonrsionelondKelonyValelonxeloncution(
+          clustelonrelonmbelonddingsDataselont,
           D.Suffix(
-            EntityToSimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = false,
-              isManhattanKeyVal = true,
-              isReverseIndex = false,
-              jobConfig.modelVersion,
-              jobConfig.entityType))
+            elonntityToSimClustelonrselonmbelonddingsJob.gelontHdfsPath(
+              isAdhoc = falselon,
+              isManhattanKelonyVal = truelon,
+              isRelonvelonrselonIndelonx = falselon,
+              jobConfig.modelonlVelonrsion,
+              jobConfig.elonntityTypelon))
         )
 
-    val fromSimClustersEmbeddings =
-      toReverseIndexSimClusterEmbedding(embeddings, jobConfig.topK)
+    val fromSimClustelonrselonmbelonddings =
+      toRelonvelonrselonIndelonxSimClustelonrelonmbelondding(elonmbelonddings, jobConfig.topK)
         .map {
-          case (embeddingId, internalIdsWithScore) =>
-            KeyVal(embeddingId, internalIdsWithScore)
+          caselon (elonmbelonddingId, intelonrnalIdsWithScorelon) =>
+            KelonyVal(elonmbelonddingId, intelonrnalIdsWithScorelon)
         }
-        .writeDALVersionedKeyValExecution(
-          entityEmbeddingsDataset,
+        .writelonDALVelonrsionelondKelonyValelonxeloncution(
+          elonntityelonmbelonddingsDataselont,
           D.Suffix(
-            EntityToSimClustersEmbeddingsJob.getHdfsPath(
-              isAdhoc = false,
-              isManhattanKeyVal = true,
-              isReverseIndex = true,
-              jobConfig.modelVersion,
-              jobConfig.entityType))
+            elonntityToSimClustelonrselonmbelonddingsJob.gelontHdfsPath(
+              isAdhoc = falselon,
+              isManhattanKelonyVal = truelon,
+              isRelonvelonrselonIndelonx = truelon,
+              jobConfig.modelonlVelonrsion,
+              jobConfig.elonntityTypelon))
         )
 
-    Execution.zip(toSimClustersEmbeddings, fromSimClustersEmbeddings).unit
+    elonxeloncution.zip(toSimClustelonrselonmbelonddings, fromSimClustelonrselonmbelonddings).unit
   }
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val jobConfig = EntityEmbeddingsJobConfig(args, isAdhoc = false)
+    val jobConfig = elonntityelonmbelonddingsJobConfig(args, isAdhoc = falselon)
 
-    val embeddingsDataset = EntityEmbeddingsSources.getEntityEmbeddingsDataset(
-      jobConfig.entityType,
-      ModelVersions.toKnownForModelVersion(jobConfig.modelVersion)
+    val elonmbelonddingsDataselont = elonntityelonmbelonddingsSourcelons.gelontelonntityelonmbelonddingsDataselont(
+      jobConfig.elonntityTypelon,
+      ModelonlVelonrsions.toKnownForModelonlVelonrsion(jobConfig.modelonlVelonrsion)
     )
 
-    val reverseIndexEmbeddingsDataset =
-      EntityEmbeddingsSources.getReverseIndexedEntityEmbeddingsDataset(
-        jobConfig.entityType,
-        ModelVersions.toKnownForModelVersion(jobConfig.modelVersion)
+    val relonvelonrselonIndelonxelonmbelonddingsDataselont =
+      elonntityelonmbelonddingsSourcelons.gelontRelonvelonrselonIndelonxelondelonntityelonmbelonddingsDataselont(
+        jobConfig.elonntityTypelon,
+        ModelonlVelonrsions.toKnownForModelonlVelonrsion(jobConfig.modelonlVelonrsion)
       )
 
-    val entityRealGraphSource =
-      DataSources.entityRealGraphAggregationDataSetSource(dateRange.embiggen(Days(7)))
+    val elonntityRelonalGraphSourcelon =
+      DataSourcelons.elonntityRelonalGraphAggrelongationDataSelontSourcelon(datelonRangelon.elonmbiggelonn(Days(7)))
 
-    val entityUserMatrix: TypedPipe[(Entity, (UserId, Double))] =
-      getEntityUserMatrix(
-        entityRealGraphSource,
-        jobConfig.halfLife,
-        jobConfig.entityType).forceToDisk
+    val elonntityUselonrMatrix: TypelondPipelon[(elonntity, (UselonrId, Doublelon))] =
+      gelontelonntityUselonrMatrix(
+        elonntityRelonalGraphSourcelon,
+        jobConfig.halfLifelon,
+        jobConfig.elonntityTypelon).forcelonToDisk
 
-    val normalizedUserEntityMatrix = getNormalizedTransposeInputMatrix(entityUserMatrix)
+    val normalizelondUselonrelonntityMatrix = gelontNormalizelondTransposelonInputMatrix(elonntityUselonrMatrix)
 
-    val simClustersEmbedding = jobConfig.modelVersion match {
-      case ModelVersion.Model20m145k2020 =>
-        val simClustersSource2020 =
-          InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone)
-        computeEmbeddings(
-          simClustersSource2020,
-          normalizedUserEntityMatrix,
-          scoreExtractors,
-          ModelVersion.Model20m145k2020,
-          toSimClustersEmbeddingId(ModelVersion.Model20m145k2020)
+    val simClustelonrselonmbelondding = jobConfig.modelonlVelonrsion match {
+      caselon ModelonlVelonrsion.Modelonl20m145k2020 =>
+        val simClustelonrsSourcelon2020 =
+          IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondIn2020Sourcelon(datelonRangelon, timelonZonelon)
+        computelonelonmbelonddings(
+          simClustelonrsSourcelon2020,
+          normalizelondUselonrelonntityMatrix,
+          scorelonelonxtractors,
+          ModelonlVelonrsion.Modelonl20m145k2020,
+          toSimClustelonrselonmbelonddingId(ModelonlVelonrsion.Modelonl20m145k2020)
         )
-      case modelVersion =>
-        throw new IllegalArgumentException(s"Model Version ${modelVersion.name} not supported")
+      caselon modelonlVelonrsion =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(s"Modelonl Velonrsion ${modelonlVelonrsion.namelon} not supportelond")
     }
 
-    val topKEmbeddings =
-      simClustersEmbedding.group.sortedReverseTake(jobConfig.topK)(Ordering.by(_._2))
+    val topKelonmbelonddings =
+      simClustelonrselonmbelondding.group.sortelondRelonvelonrselonTakelon(jobConfig.topK)(Ordelonring.by(_._2))
 
-    val simClustersEmbeddingsExec =
-      writeOutput(
-        simClustersEmbedding,
-        topKEmbeddings,
+    val simClustelonrselonmbelonddingselonxelonc =
+      writelonOutput(
+        simClustelonrselonmbelondding,
+        topKelonmbelonddings,
         jobConfig,
-        embeddingsDataset,
-        reverseIndexEmbeddingsDataset)
+        elonmbelonddingsDataselont,
+        relonvelonrselonIndelonxelonmbelonddingsDataselont)
 
-    // We don't support embeddingsLite for the 2020 model version.
-    val embeddingsLiteExec = if (jobConfig.modelVersion == ModelVersion.Model20m145kUpdated) {
-      topKEmbeddings
-        .collect {
-          case (
-                SimClustersEmbeddingId(
-                  EmbeddingType.FavBasedSematicCoreEntity,
-                  ModelVersion.Model20m145kUpdated,
-                  InternalId.EntityId(entityId)),
-                clustersWithScores) =>
-            entityId -> clustersWithScores
+    // Welon don't support elonmbelonddingsLitelon for thelon 2020 modelonl velonrsion.
+    val elonmbelonddingsLitelonelonxelonc = if (jobConfig.modelonlVelonrsion == ModelonlVelonrsion.Modelonl20m145kUpdatelond) {
+      topKelonmbelonddings
+        .collelonct {
+          caselon (
+                SimClustelonrselonmbelonddingId(
+                  elonmbelonddingTypelon.FavBaselondSelonmaticCorelonelonntity,
+                  ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+                  IntelonrnalId.elonntityId(elonntityId)),
+                clustelonrsWithScorelons) =>
+            elonntityId -> clustelonrsWithScorelons
         }
         .flatMap {
-          case (entityId, clustersWithScores) =>
-            clustersWithScores.map {
-              case (clusterId, score) => EmbeddingsLite(entityId, clusterId, score)
+          caselon (elonntityId, clustelonrsWithScorelons) =>
+            clustelonrsWithScorelons.map {
+              caselon (clustelonrId, scorelon) => elonmbelonddingsLitelon(elonntityId, clustelonrId, scorelon)
             }
-          case _ => Nil
-        }.writeDALSnapshotExecution(
-          SimclustersV2EmbeddingsLiteScalaDataset,
+          caselon _ => Nil
+        }.writelonDALSnapshotelonxeloncution(
+          SimclustelonrsV2elonmbelonddingsLitelonScalaDataselont,
           D.Daily,
-          D.Suffix(embeddingsLitePath(ModelVersion.Model20m145kUpdated, "fav_based")),
-          D.EBLzo(),
-          dateRange.end)
-    } else {
-      Execution.unit
+          D.Suffix(elonmbelonddingsLitelonPath(ModelonlVelonrsion.Modelonl20m145kUpdatelond, "fav_baselond")),
+          D.elonBLzo(),
+          datelonRangelon.elonnd)
+    } elonlselon {
+      elonxeloncution.unit
     }
 
-    Execution
-      .zip(simClustersEmbeddingsExec, embeddingsLiteExec).unit
+    elonxeloncution
+      .zip(simClustelonrselonmbelonddingselonxelonc, elonmbelonddingsLitelonelonxelonc).unit
   }
 }
 
-object EntityToSimClustersEmbeddingsJob {
+objelonct elonntityToSimClustelonrselonmbelonddingsJob {
 
-  def toSimClustersEmbeddingId(
-    modelVersion: ModelVersion
-  ): (Entity, ScoreType.ScoreType) => SimClustersEmbeddingId = {
-    case (Entity.SemanticCore(SemanticCoreEntity(entityId, _)), ScoreType.FavScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FavBasedSematicCoreEntity,
-        modelVersion,
-        InternalId.EntityId(entityId))
-    case (Entity.SemanticCore(SemanticCoreEntity(entityId, _)), ScoreType.FollowScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FollowBasedSematicCoreEntity,
-        modelVersion,
-        InternalId.EntityId(entityId))
-    case (Entity.Hashtag(Hashtag(hashtag)), ScoreType.FavScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FavBasedHashtagEntity,
-        modelVersion,
-        InternalId.Hashtag(hashtag))
-    case (Entity.Hashtag(Hashtag(hashtag)), ScoreType.FollowScore) =>
-      SimClustersEmbeddingId(
-        EmbeddingType.FollowBasedHashtagEntity,
-        modelVersion,
-        InternalId.Hashtag(hashtag))
-    case (scoreType, entity) =>
-      throw new IllegalArgumentException(
-        s"(ScoreType, Entity) ($scoreType, ${entity.toString}) not supported")
+  delonf toSimClustelonrselonmbelonddingId(
+    modelonlVelonrsion: ModelonlVelonrsion
+  ): (elonntity, ScorelonTypelon.ScorelonTypelon) => SimClustelonrselonmbelonddingId = {
+    caselon (elonntity.SelonmanticCorelon(SelonmanticCorelonelonntity(elonntityId, _)), ScorelonTypelon.FavScorelon) =>
+      SimClustelonrselonmbelonddingId(
+        elonmbelonddingTypelon.FavBaselondSelonmaticCorelonelonntity,
+        modelonlVelonrsion,
+        IntelonrnalId.elonntityId(elonntityId))
+    caselon (elonntity.SelonmanticCorelon(SelonmanticCorelonelonntity(elonntityId, _)), ScorelonTypelon.FollowScorelon) =>
+      SimClustelonrselonmbelonddingId(
+        elonmbelonddingTypelon.FollowBaselondSelonmaticCorelonelonntity,
+        modelonlVelonrsion,
+        IntelonrnalId.elonntityId(elonntityId))
+    caselon (elonntity.Hashtag(Hashtag(hashtag)), ScorelonTypelon.FavScorelon) =>
+      SimClustelonrselonmbelonddingId(
+        elonmbelonddingTypelon.FavBaselondHashtagelonntity,
+        modelonlVelonrsion,
+        IntelonrnalId.Hashtag(hashtag))
+    caselon (elonntity.Hashtag(Hashtag(hashtag)), ScorelonTypelon.FollowScorelon) =>
+      SimClustelonrselonmbelonddingId(
+        elonmbelonddingTypelon.FollowBaselondHashtagelonntity,
+        modelonlVelonrsion,
+        IntelonrnalId.Hashtag(hashtag))
+    caselon (scorelonTypelon, elonntity) =>
+      throw nelonw IllelongalArgumelonntelonxcelonption(
+        s"(ScorelonTypelon, elonntity) ($scorelonTypelon, ${elonntity.toString}) not supportelond")
   }
 
   /**
-   * Generates the output path for the Entity Embeddings Job.
+   * Gelonnelonratelons thelon output path for thelon elonntity elonmbelonddings Job.
    *
-   * Example Adhoc: /user/recos-platform/processed/adhoc/simclusters_embeddings/hashtag/model_20m_145k_updated
-   * Example Prod: /atla/proc/user/cassowary/processed/simclusters_embeddings/semantic_core/model_20m_145k_dec11
+   * elonxamplelon Adhoc: /uselonr/reloncos-platform/procelonsselond/adhoc/simclustelonrs_elonmbelonddings/hashtag/modelonl_20m_145k_updatelond
+   * elonxamplelon Prod: /atla/proc/uselonr/cassowary/procelonsselond/simclustelonrs_elonmbelonddings/selonmantic_corelon/modelonl_20m_145k_delonc11
    *
    */
-  def getHdfsPath(
-    isAdhoc: Boolean,
-    isManhattanKeyVal: Boolean,
-    isReverseIndex: Boolean,
-    modelVersion: ModelVersion,
-    entityType: EntityType
+  delonf gelontHdfsPath(
+    isAdhoc: Boolelonan,
+    isManhattanKelonyVal: Boolelonan,
+    isRelonvelonrselonIndelonx: Boolelonan,
+    modelonlVelonrsion: ModelonlVelonrsion,
+    elonntityTypelon: elonntityTypelon
   ): String = {
 
-    val reverseIndex = if (isReverseIndex) "reverse_index/" else ""
+    val relonvelonrselonIndelonx = if (isRelonvelonrselonIndelonx) "relonvelonrselon_indelonx/" elonlselon ""
 
-    val entityTypeSuffix = entityType match {
-      case EntityType.SemanticCore => "semantic_core"
-      case EntityType.Hashtag => "hashtag"
-      case _ => "unknown"
+    val elonntityTypelonSuffix = elonntityTypelon match {
+      caselon elonntityTypelon.SelonmanticCorelon => "selonmantic_corelon"
+      caselon elonntityTypelon.Hashtag => "hashtag"
+      caselon _ => "unknown"
     }
 
-    val pathSuffix = s"$reverseIndex$entityTypeSuffix"
+    val pathSuffix = s"$relonvelonrselonIndelonx$elonntityTypelonSuffix"
 
-    EmbeddingUtil.getHdfsPath(isAdhoc, isManhattanKeyVal, modelVersion, pathSuffix)
+    elonmbelonddingUtil.gelontHdfsPath(isAdhoc, isManhattanKelonyVal, modelonlVelonrsion, pathSuffix)
   }
 
-  def embeddingsLitePath(modelVersion: ModelVersion, pathSuffix: String): String = {
-    s"/user/cassowary/processed/entity_real_graph/simclusters_embedding/lite/$modelVersion/$pathSuffix/"
+  delonf elonmbelonddingsLitelonPath(modelonlVelonrsion: ModelonlVelonrsion, pathSuffix: String): String = {
+    s"/uselonr/cassowary/procelonsselond/elonntity_relonal_graph/simclustelonrs_elonmbelondding/litelon/$modelonlVelonrsion/$pathSuffix/"
   }
 }

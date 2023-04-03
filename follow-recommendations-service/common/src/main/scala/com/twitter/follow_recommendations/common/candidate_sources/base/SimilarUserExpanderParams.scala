@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object SimilarUserExpanderParams {
+objelonct SimilarUselonrelonxpandelonrParams {
 
-  case object EnableNonDirectFollowExpansion
-      extends FSParam[Boolean]("similar_user_enable_non_direct_follow_expansion", true)
+  caselon objelonct elonnablelonNonDirelonctFollowelonxpansion
+      elonxtelonnds FSParam[Boolelonan]("similar_uselonr_elonnablelon_non_direlonct_follow_elonxpansion", truelon)
 
-  case object EnableSimsExpandSeedAccountsSort
-      extends FSParam[Boolean]("similar_user_enable_sims_expander_seed_account_sort", false)
+  caselon objelonct elonnablelonSimselonxpandSelonelondAccountsSort
+      elonxtelonnds FSParam[Boolelonan]("similar_uselonr_elonnablelon_sims_elonxpandelonr_selonelond_account_sort", falselon)
 
-  case object DefaultExpansionInputCount
-      extends FSBoundedParam[Int](
-        name = "similar_user_default_expansion_input_count",
-        default = Integer.MAX_VALUE,
+  caselon objelonct DelonfaultelonxpansionInputCount
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "similar_uselonr_delonfault_elonxpansion_input_count",
+        delonfault = Intelongelonr.MAX_VALUelon,
         min = 0,
-        max = Integer.MAX_VALUE)
+        max = Intelongelonr.MAX_VALUelon)
 
-  case object DefaultFinalCandidatesReturnedCount
-      extends FSBoundedParam[Int](
-        name = "similar_user_default_final_candidates_returned_count",
-        default = Integer.MAX_VALUE,
+  caselon objelonct DelonfaultFinalCandidatelonsRelonturnelondCount
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "similar_uselonr_delonfault_final_candidatelons_relonturnelond_count",
+        delonfault = Intelongelonr.MAX_VALUelon,
         min = 0,
-        max = Integer.MAX_VALUE)
+        max = Intelongelonr.MAX_VALUelon)
 
-  case object DefaultEnableImplicitEngagedExpansion
-      extends FSParam[Boolean]("similar_user_enable_implicit_engaged_expansion", true)
+  caselon objelonct DelonfaultelonnablelonImplicitelonngagelondelonxpansion
+      elonxtelonnds FSParam[Boolelonan]("similar_uselonr_elonnablelon_implicit_elonngagelond_elonxpansion", truelon)
 
 }

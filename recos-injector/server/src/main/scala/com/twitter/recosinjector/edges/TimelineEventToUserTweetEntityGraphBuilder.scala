@@ -1,60 +1,60 @@
-package com.twitter.recosinjector.edges
+packagelon com.twittelonr.reloncosinjelonctor.elondgelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.TweetFavoriteEventDetails
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.util.Action
+import com.twittelonr.reloncosinjelonctor.util.TwelonelontFavoritelonelonvelonntDelontails
+import com.twittelonr.util.Futurelon
 
-class TimelineEventToUserTweetEntityGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
+class TimelonlinelonelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr(
+  uselonrTwelonelontelonntityelondgelonBuildelonr: UselonrTwelonelontelonntityelondgelonBuildelonr
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetFavoriteEventDetails, UserTweetEntityEdge] {
+  ovelonrridelon implicit val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonvelonntToMelonssagelonBuildelonr[TwelonelontFavoritelonelonvelonntDelontails, UselonrTwelonelontelonntityelondgelon] {
 
-  private val numFavEdgeCounter = statsReceiver.counter("num_favorite_edge")
-  private val numUnfavEdgeCounter = statsReceiver.counter("num_unfavorite_edge")
+  privatelon val numFavelondgelonCountelonr = statsReloncelonivelonr.countelonr("num_favoritelon_elondgelon")
+  privatelon val numUnfavelondgelonCountelonr = statsReloncelonivelonr.countelonr("num_unfavoritelon_elondgelon")
 
-  override def shouldProcessEvent(event: TweetFavoriteEventDetails): Future[Boolean] = {
-    Future(true)
+  ovelonrridelon delonf shouldProcelonsselonvelonnt(elonvelonnt: TwelonelontFavoritelonelonvelonntDelontails): Futurelon[Boolelonan] = {
+    Futurelon(truelon)
   }
 
-  override def buildEdges(details: TweetFavoriteEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val engagement = details.userTweetEngagement
-    val tweetDetails = engagement.tweetDetails
+  ovelonrridelon delonf buildelondgelons(delontails: TwelonelontFavoritelonelonvelonntDelontails): Futurelon[Selonq[UselonrTwelonelontelonntityelondgelon]] = {
+    val elonngagelonmelonnt = delontails.uselonrTwelonelontelonngagelonmelonnt
+    val twelonelontDelontails = elonngagelonmelonnt.twelonelontDelontails
 
-    val entitiesMapFut = userTweetEntityEdgeBuilder.getEntitiesMapAndUpdateCache(
-      tweetId = engagement.tweetId,
-      tweetDetails = tweetDetails
+    val elonntitielonsMapFut = uselonrTwelonelontelonntityelondgelonBuildelonr.gelontelonntitielonsMapAndUpdatelonCachelon(
+      twelonelontId = elonngagelonmelonnt.twelonelontId,
+      twelonelontDelontails = twelonelontDelontails
     )
 
-    entitiesMapFut
-      .map { entitiesMap =>
-        UserTweetEntityEdge(
-          sourceUser = engagement.engageUserId,
-          targetTweet = engagement.tweetId,
-          action = engagement.action,
-          metadata = engagement.engagementTimeMillis,
-          cardInfo = engagement.tweetDetails.map(_.cardInfo.toByte),
-          entitiesMap = entitiesMap,
-          tweetDetails = tweetDetails
+    elonntitielonsMapFut
+      .map { elonntitielonsMap =>
+        UselonrTwelonelontelonntityelondgelon(
+          sourcelonUselonr = elonngagelonmelonnt.elonngagelonUselonrId,
+          targelontTwelonelont = elonngagelonmelonnt.twelonelontId,
+          action = elonngagelonmelonnt.action,
+          melontadata = elonngagelonmelonnt.elonngagelonmelonntTimelonMillis,
+          cardInfo = elonngagelonmelonnt.twelonelontDelontails.map(_.cardInfo.toBytelon),
+          elonntitielonsMap = elonntitielonsMap,
+          twelonelontDelontails = twelonelontDelontails
         )
       }
-      .map { edge =>
-        edge match {
-          case fav if fav.action == Action.Favorite =>
-            numFavEdgeCounter.incr()
-          case unfav if unfav.action == Action.Unfavorite =>
-            numUnfavEdgeCounter.incr()
-          case _ =>
+      .map { elondgelon =>
+        elondgelon match {
+          caselon fav if fav.action == Action.Favoritelon =>
+            numFavelondgelonCountelonr.incr()
+          caselon unfav if unfav.action == Action.Unfavoritelon =>
+            numUnfavelondgelonCountelonr.incr()
+          caselon _ =>
         }
-        Seq(edge)
+        Selonq(elondgelon)
       }
   }
 
-  override def filterEdges(
-    event: TweetFavoriteEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges)
+  ovelonrridelon delonf filtelonrelondgelons(
+    elonvelonnt: TwelonelontFavoritelonelonvelonntDelontails,
+    elondgelons: Selonq[UselonrTwelonelontelonntityelondgelon]
+  ): Futurelon[Selonq[UselonrTwelonelontelonntityelondgelon]] = {
+    Futurelon(elondgelons)
   }
 }

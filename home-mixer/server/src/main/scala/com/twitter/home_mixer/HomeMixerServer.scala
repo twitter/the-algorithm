@@ -1,118 +1,118 @@
-package com.twitter.home_mixer
+packagelon com.twittelonr.homelon_mixelonr
 
-import com.google.inject.Module
-import com.twitter.finagle.Filter
-import com.twitter.finatra.annotations.DarkTrafficFilterType
-import com.twitter.finatra.http.HttpServer
-import com.twitter.finatra.http.routing.HttpRouter
-import com.twitter.finatra.mtls.http.{Mtls => HttpMtls}
-import com.twitter.finatra.mtls.thriftmux.Mtls
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.finatra.thrift.filters._
-import com.twitter.finatra.thrift.routing.ThriftRouter
-import com.twitter.home_mixer.controller.HomeThriftController
-import com.twitter.home_mixer.module._
-import com.twitter.home_mixer.param.GlobalParamConfigModule
-import com.twitter.home_mixer.product.HomeMixerProductModule
-import com.twitter.home_mixer.{thriftscala => st}
-import com.twitter.product_mixer.component_library.module.AccountRecommendationsMixerModule
-import com.twitter.product_mixer.component_library.module.CrMixerClientModule
-import com.twitter.product_mixer.component_library.module.DarkTrafficFilterModule
-import com.twitter.product_mixer.component_library.module.EarlybirdModule
-import com.twitter.product_mixer.component_library.module.ExploreRankerClientModule
-import com.twitter.product_mixer.component_library.module.GizmoduckClientModule
-import com.twitter.product_mixer.component_library.module.OnboardingTaskServiceModule
-import com.twitter.product_mixer.component_library.module.SocialGraphServiceModule
-import com.twitter.product_mixer.component_library.module.TimelineMixerClientModule
-import com.twitter.product_mixer.component_library.module.TimelineRankerClientModule
-import com.twitter.product_mixer.component_library.module.TimelineScorerClientModule
-import com.twitter.product_mixer.component_library.module.TimelineServiceClientModule
-import com.twitter.product_mixer.component_library.module.TweetImpressionStoreModule
-import com.twitter.product_mixer.component_library.module.UserSessionStoreModule
-import com.twitter.product_mixer.core.controllers.ProductMixerController
-import com.twitter.product_mixer.core.module.LoggingThrowableExceptionMapper
-import com.twitter.product_mixer.core.module.ProductMixerModule
-import com.twitter.product_mixer.core.module.StratoClientModule
-import com.twitter.product_mixer.core.module.stringcenter.ProductScopeStringCenterModule
+import com.googlelon.injelonct.Modulelon
+import com.twittelonr.finaglelon.Filtelonr
+import com.twittelonr.finatra.annotations.DarkTrafficFiltelonrTypelon
+import com.twittelonr.finatra.http.HttpSelonrvelonr
+import com.twittelonr.finatra.http.routing.HttpRoutelonr
+import com.twittelonr.finatra.mtls.http.{Mtls => HttpMtls}
+import com.twittelonr.finatra.mtls.thriftmux.Mtls
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsThriftWelonbFormsModulelon
+import com.twittelonr.finatra.thrift.ThriftSelonrvelonr
+import com.twittelonr.finatra.thrift.filtelonrs._
+import com.twittelonr.finatra.thrift.routing.ThriftRoutelonr
+import com.twittelonr.homelon_mixelonr.controllelonr.HomelonThriftControllelonr
+import com.twittelonr.homelon_mixelonr.modulelon._
+import com.twittelonr.homelon_mixelonr.param.GlobalParamConfigModulelon
+import com.twittelonr.homelon_mixelonr.product.HomelonMixelonrProductModulelon
+import com.twittelonr.homelon_mixelonr.{thriftscala => st}
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.AccountReloncommelonndationsMixelonrModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.CrMixelonrClielonntModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.DarkTrafficFiltelonrModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.elonarlybirdModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.elonxplorelonRankelonrClielonntModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.GizmoduckClielonntModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.OnboardingTaskSelonrvicelonModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.SocialGraphSelonrvicelonModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.TimelonlinelonMixelonrClielonntModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.TimelonlinelonRankelonrClielonntModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.TimelonlinelonScorelonrClielonntModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.TimelonlinelonSelonrvicelonClielonntModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.TwelonelontImprelonssionStorelonModulelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.UselonrSelonssionStorelonModulelon
+import com.twittelonr.product_mixelonr.corelon.controllelonrs.ProductMixelonrControllelonr
+import com.twittelonr.product_mixelonr.corelon.modulelon.LoggingThrowablelonelonxcelonptionMappelonr
+import com.twittelonr.product_mixelonr.corelon.modulelon.ProductMixelonrModulelon
+import com.twittelonr.product_mixelonr.corelon.modulelon.StratoClielonntModulelon
+import com.twittelonr.product_mixelonr.corelon.modulelon.stringcelonntelonr.ProductScopelonStringCelonntelonrModulelon
 
-object HomeMixerServerMain extends HomeMixerServer
+objelonct HomelonMixelonrSelonrvelonrMain elonxtelonnds HomelonMixelonrSelonrvelonr
 
-class HomeMixerServer extends ThriftServer with Mtls with HttpServer with HttpMtls {
-  override val name = "home-mixer-server"
+class HomelonMixelonrSelonrvelonr elonxtelonnds ThriftSelonrvelonr with Mtls with HttpSelonrvelonr with HttpMtls {
+  ovelonrridelon val namelon = "homelon-mixelonr-selonrvelonr"
 
-  override val modules: Seq[Module] = Seq(
-    AccountRecommendationsMixerModule,
-    AdvertiserBrandSafetySettingsStoreModule,
-    ClientSentImpressionsPublisherModule,
-    ConversationServiceModule,
-    CrMixerClientModule,
-    EarlybirdModule,
-    ExploreRankerClientModule,
-    GizmoduckClientModule,
-    GlobalParamConfigModule,
-    HomeAdsCandidateSourceModule,
-    HomeMixerFlagsModule,
-    HomeMixerProductModule,
-    HomeMixerResourcesModule,
-    HomeNaviModelClientModule,
-    ImpressionBloomFilterModule,
-    InjectionHistoryClientModule,
-    FeedbackHistoryClientModule,
-    ManhattanClientsModule,
-    ManhattanFeatureRepositoryModule,
-    ManhattanTweetImpressionStoreModule,
-    MemcachedFeatureRepositoryModule,
-    OnboardingTaskServiceModule,
-    OptimizedStratoClientModule,
-    PeopleDiscoveryServiceModule,
-    ProductMixerModule,
-    RealGraphInNetworkScoresModule,
-    RealtimeAggregateFeatureRepositoryModule,
-    ScoredTweetsMemcacheModule,
-    ScribeEventPublisherModule,
-    SimClustersRecentEngagementsClientModule,
-    SocialGraphServiceModule,
-    StaleTweetsCacheModule,
-    StratoClientModule,
-    ThriftFeatureRepositoryModule,
-    TimelineMixerClientModule,
-    TimelineRankerClientModule,
-    TimelineScorerClientModule,
-    TimelineServiceClientModule,
-    TimelinesPersistenceStoreClientModule,
-    TweetImpressionStoreModule,
-    TweetyPieClientModule,
-    TweetypieStaticEntitiesCacheClientModule,
-    UserMetadataStoreModule,
-    UserSessionStoreModule,
-    new DarkTrafficFilterModule[st.HomeMixer.ReqRepServicePerEndpoint](),
-    new MtlsThriftWebFormsModule[st.HomeMixer.MethodPerEndpoint](this),
-    new ProductScopeStringCenterModule()
+  ovelonrridelon val modulelons: Selonq[Modulelon] = Selonq(
+    AccountReloncommelonndationsMixelonrModulelon,
+    AdvelonrtiselonrBrandSafelontySelonttingsStorelonModulelon,
+    ClielonntSelonntImprelonssionsPublishelonrModulelon,
+    ConvelonrsationSelonrvicelonModulelon,
+    CrMixelonrClielonntModulelon,
+    elonarlybirdModulelon,
+    elonxplorelonRankelonrClielonntModulelon,
+    GizmoduckClielonntModulelon,
+    GlobalParamConfigModulelon,
+    HomelonAdsCandidatelonSourcelonModulelon,
+    HomelonMixelonrFlagsModulelon,
+    HomelonMixelonrProductModulelon,
+    HomelonMixelonrRelonsourcelonsModulelon,
+    HomelonNaviModelonlClielonntModulelon,
+    ImprelonssionBloomFiltelonrModulelon,
+    InjelonctionHistoryClielonntModulelon,
+    FelonelondbackHistoryClielonntModulelon,
+    ManhattanClielonntsModulelon,
+    ManhattanFelonaturelonRelonpositoryModulelon,
+    ManhattanTwelonelontImprelonssionStorelonModulelon,
+    MelonmcachelondFelonaturelonRelonpositoryModulelon,
+    OnboardingTaskSelonrvicelonModulelon,
+    OptimizelondStratoClielonntModulelon,
+    PelonoplelonDiscovelonrySelonrvicelonModulelon,
+    ProductMixelonrModulelon,
+    RelonalGraphInNelontworkScorelonsModulelon,
+    RelonaltimelonAggrelongatelonFelonaturelonRelonpositoryModulelon,
+    ScorelondTwelonelontsMelonmcachelonModulelon,
+    ScribelonelonvelonntPublishelonrModulelon,
+    SimClustelonrsReloncelonntelonngagelonmelonntsClielonntModulelon,
+    SocialGraphSelonrvicelonModulelon,
+    StalelonTwelonelontsCachelonModulelon,
+    StratoClielonntModulelon,
+    ThriftFelonaturelonRelonpositoryModulelon,
+    TimelonlinelonMixelonrClielonntModulelon,
+    TimelonlinelonRankelonrClielonntModulelon,
+    TimelonlinelonScorelonrClielonntModulelon,
+    TimelonlinelonSelonrvicelonClielonntModulelon,
+    TimelonlinelonsPelonrsistelonncelonStorelonClielonntModulelon,
+    TwelonelontImprelonssionStorelonModulelon,
+    TwelonelontyPielonClielonntModulelon,
+    TwelonelontypielonStaticelonntitielonsCachelonClielonntModulelon,
+    UselonrMelontadataStorelonModulelon,
+    UselonrSelonssionStorelonModulelon,
+    nelonw DarkTrafficFiltelonrModulelon[st.HomelonMixelonr.RelonqRelonpSelonrvicelonPelonrelonndpoint](),
+    nelonw MtlsThriftWelonbFormsModulelon[st.HomelonMixelonr.MelonthodPelonrelonndpoint](this),
+    nelonw ProductScopelonStringCelonntelonrModulelon()
   )
 
-  def configureThrift(router: ThriftRouter): Unit = {
-    router
-      .filter[LoggingMDCFilter]
-      .filter[TraceIdMDCFilter]
-      .filter[ThriftMDCFilter]
-      .filter[StatsFilter]
-      .filter[AccessLoggingFilter]
-      .filter[ExceptionMappingFilter]
-      .filter[Filter.TypeAgnostic, DarkTrafficFilterType]
-      .exceptionMapper[LoggingThrowableExceptionMapper]
-      .exceptionMapper[PipelineFailureExceptionMapper]
-      .add[HomeThriftController]
+  delonf configurelonThrift(routelonr: ThriftRoutelonr): Unit = {
+    routelonr
+      .filtelonr[LoggingMDCFiltelonr]
+      .filtelonr[TracelonIdMDCFiltelonr]
+      .filtelonr[ThriftMDCFiltelonr]
+      .filtelonr[StatsFiltelonr]
+      .filtelonr[AccelonssLoggingFiltelonr]
+      .filtelonr[elonxcelonptionMappingFiltelonr]
+      .filtelonr[Filtelonr.TypelonAgnostic, DarkTrafficFiltelonrTypelon]
+      .elonxcelonptionMappelonr[LoggingThrowablelonelonxcelonptionMappelonr]
+      .elonxcelonptionMappelonr[PipelonlinelonFailurelonelonxcelonptionMappelonr]
+      .add[HomelonThriftControllelonr]
   }
 
-  override def configureHttp(router: HttpRouter): Unit =
-    router.add(
-      ProductMixerController[st.HomeMixer.MethodPerEndpoint](
-        this.injector,
-        st.HomeMixer.ExecutePipeline))
+  ovelonrridelon delonf configurelonHttp(routelonr: HttpRoutelonr): Unit =
+    routelonr.add(
+      ProductMixelonrControllelonr[st.HomelonMixelonr.MelonthodPelonrelonndpoint](
+        this.injelonctor,
+        st.HomelonMixelonr.elonxeloncutelonPipelonlinelon))
 
-  override protected def warmup(): Unit = {
-    handle[HomeMixerThriftServerWarmupHandler]()
-    handle[HomeMixerHttpServerWarmupHandler]()
+  ovelonrridelon protelonctelond delonf warmup(): Unit = {
+    handlelon[HomelonMixelonrThriftSelonrvelonrWarmupHandlelonr]()
+    handlelon[HomelonMixelonrHttpSelonrvelonrWarmupHandlelonr]()
   }
 }

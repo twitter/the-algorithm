@@ -1,44 +1,44 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.non_ml_features
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.non_ml_felonaturelons
 
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
+import com.twittelonr.ml.api.constant.SharelondFelonaturelons
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.timelonlinelons.prelondiction.common.adaptelonrs.TimelonlinelonsMutatingAdaptelonrBaselon
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.common.TimelonlinelonsSharelondFelonaturelons
 import java.lang.{Long => JLong}
 
-case class NonMLCandidateFeatures(
-  tweetId: Long,
-  sourceTweetId: Option[Long],
+caselon class NonMLCandidatelonFelonaturelons(
+  twelonelontId: Long,
+  sourcelonTwelonelontId: Option[Long],
   originalAuthorId: Option[Long],
 )
 
 /**
- * define non ml features adapter to create a data record which includes many non ml features
- * e.g. predictionRequestId, userId, tweetId to be used as joined key in batch pipeline.
+ * delonfinelon non ml felonaturelons adaptelonr to crelonatelon a data reloncord which includelons many non ml felonaturelons
+ * elon.g. prelondictionRelonquelonstId, uselonrId, twelonelontId to belon uselond as joinelond kelony in batch pipelonlinelon.
  */
-object NonMLCandidateFeaturesAdapter extends TimelinesMutatingAdapterBase[NonMLCandidateFeatures] {
+objelonct NonMLCandidatelonFelonaturelonsAdaptelonr elonxtelonnds TimelonlinelonsMutatingAdaptelonrBaselon[NonMLCandidatelonFelonaturelons] {
 
-  private val featureContext = new FeatureContext(
-    SharedFeatures.TWEET_ID,
-    // For Secondary Engagement data generation
-    TimelinesSharedFeatures.SOURCE_TWEET_ID,
-    TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID,
+  privatelon val felonaturelonContelonxt = nelonw FelonaturelonContelonxt(
+    SharelondFelonaturelons.TWelonelonT_ID,
+    // For Seloncondary elonngagelonmelonnt data gelonnelonration
+    TimelonlinelonsSharelondFelonaturelons.SOURCelon_TWelonelonT_ID,
+    TimelonlinelonsSharelondFelonaturelons.ORIGINAL_AUTHOR_ID,
   )
 
-  override def getFeatureContext: FeatureContext = featureContext
+  ovelonrridelon delonf gelontFelonaturelonContelonxt: FelonaturelonContelonxt = felonaturelonContelonxt
 
-  override val commonFeatures: Set[Feature[_]] = Set.empty
+  ovelonrridelon val commonFelonaturelons: Selont[Felonaturelon[_]] = Selont.elonmpty
 
-  override def setFeatures(
-    nonMLCandidateFeatures: NonMLCandidateFeatures,
-    richDataRecord: RichDataRecord
+  ovelonrridelon delonf selontFelonaturelons(
+    nonMLCandidatelonFelonaturelons: NonMLCandidatelonFelonaturelons,
+    richDataReloncord: RichDataReloncord
   ): Unit = {
-    richDataRecord.setFeatureValue[JLong](SharedFeatures.TWEET_ID, nonMLCandidateFeatures.tweetId)
-    nonMLCandidateFeatures.sourceTweetId.foreach(
-      richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.SOURCE_TWEET_ID, _))
-    nonMLCandidateFeatures.originalAuthorId.foreach(
-      richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.ORIGINAL_AUTHOR_ID, _))
+    richDataReloncord.selontFelonaturelonValuelon[JLong](SharelondFelonaturelons.TWelonelonT_ID, nonMLCandidatelonFelonaturelons.twelonelontId)
+    nonMLCandidatelonFelonaturelons.sourcelonTwelonelontId.forelonach(
+      richDataReloncord.selontFelonaturelonValuelon[JLong](TimelonlinelonsSharelondFelonaturelons.SOURCelon_TWelonelonT_ID, _))
+    nonMLCandidatelonFelonaturelons.originalAuthorId.forelonach(
+      richDataReloncord.selontFelonaturelonValuelon[JLong](TimelonlinelonsSharelondFelonaturelons.ORIGINAL_AUTHOR_ID, _))
   }
 }

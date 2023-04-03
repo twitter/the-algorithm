@@ -1,15 +1,15 @@
-package com.twitter.simclustersann.modules
+packagelon com.twittelonr.simclustelonrsann.modulelons
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance_platform.simclustersann.multicluster.ServiceNameMapper
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.relonlelonvancelon_platform.simclustelonrsann.multiclustelonr.SelonrvicelonNamelonMappelonr
+import javax.injelonct.Singlelonton
 
-object ServiceNameMapperModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesServiceNameMapper(
-  ): ServiceNameMapper = {
-    ServiceNameMapper
+objelonct SelonrvicelonNamelonMappelonrModulelon elonxtelonnds TwittelonrModulelon {
+  @Singlelonton
+  @Providelons
+  delonf providelonsSelonrvicelonNamelonMappelonr(
+  ): SelonrvicelonNamelonMappelonr = {
+    SelonrvicelonNamelonMappelonr
   }
 }

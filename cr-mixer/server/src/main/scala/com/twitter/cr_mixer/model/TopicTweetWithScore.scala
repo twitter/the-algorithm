@@ -1,13 +1,13 @@
-package com.twitter.cr_mixer.model
+packagelon com.twittelonr.cr_mixelonr.modelonl
 
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.simclusters_v2.common.TweetId
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
 
 /***
- * Bind a tweetId with a raw score generated from one single Similarity Engine
- * @param similarityEngineType, which underlying topic source the topic tweet is from
+ * Bind a twelonelontId with a raw scorelon gelonnelonratelond from onelon singlelon Similarity elonnginelon
+ * @param similarityelonnginelonTypelon, which undelonrlying topic sourcelon thelon topic twelonelont is from
  */
-case class TopicTweetWithScore(
-  tweetId: TweetId,
-  score: Double,
-  similarityEngineType: SimilarityEngineType)
+caselon class TopicTwelonelontWithScorelon(
+  twelonelontId: TwelonelontId,
+  scorelon: Doublelon,
+  similarityelonnginelonTypelon: SimilarityelonnginelonTypelon)

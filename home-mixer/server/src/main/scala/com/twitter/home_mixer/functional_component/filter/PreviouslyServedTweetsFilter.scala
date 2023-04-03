@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.functional_component.filter
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.GetOlderFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.GelontOldelonrFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondTwelonelontIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object PreviouslyServedTweetsFilter
-    extends Filter[PipelineQuery, TweetCandidate]
-    with Filter.Conditionally[PipelineQuery, TweetCandidate] {
+objelonct PrelonviouslySelonrvelondTwelonelontsFiltelonr
+    elonxtelonnds Filtelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon]
+    with Filtelonr.Conditionally[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("PreviouslyServedTweets")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("PrelonviouslySelonrvelondTwelonelonts")
 
-  override def onlyIf(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Boolean = {
-    query.features.exists(_.getOrElse(GetOlderFeature, false))
+  ovelonrridelon delonf onlyIf(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Boolelonan = {
+    quelonry.felonaturelons.elonxists(_.gelontOrelonlselon(GelontOldelonrFelonaturelon, falselon))
   }
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[TwelonelontCandidatelon]] = {
 
-    val servedTweetIds =
-      query.features.map(_.getOrElse(ServedTweetIdsFeature, Seq.empty)).toSeq.flatten.toSet
+    val selonrvelondTwelonelontIds =
+      quelonry.felonaturelons.map(_.gelontOrelonlselon(SelonrvelondTwelonelontIdsFelonaturelon, Selonq.elonmpty)).toSelonq.flattelonn.toSelont
 
-    val (removed, kept) = candidates.partition { candidate =>
-      val tweetIdAndSourceId = CandidatesUtil.getTweetIdAndSourceId(candidate)
-      tweetIdAndSourceId.exists(servedTweetIds.contains)
+    val (relonmovelond, kelonpt) = candidatelons.partition { candidatelon =>
+      val twelonelontIdAndSourcelonId = CandidatelonsUtil.gelontTwelonelontIdAndSourcelonId(candidatelon)
+      twelonelontIdAndSourcelonId.elonxists(selonrvelondTwelonelontIds.contains)
     }
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonpt.map(_.candidatelon), relonmovelond = relonmovelond.map(_.candidatelon)))
   }
 }

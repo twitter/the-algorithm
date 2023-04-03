@@ -1,88 +1,88 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/framework/allocation_description.proto";
-import "tensorflow/core/framework/tensor_description.proto";
+import "telonnsorflow/corelon/framelonwork/allocation_delonscription.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor_delonscription.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "StepStatsProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/step_stats_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "StelonpStatsProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/stelonp_stats_go_proto";
 
-// An allocation/de-allocation operation performed by the allocator.
-message AllocationRecord {
-  // The timestamp of the operation.
+// An allocation/delon-allocation opelonration pelonrformelond by thelon allocator.
+melonssagelon AllocationReloncord {
+  // Thelon timelonstamp of thelon opelonration.
   int64 alloc_micros = 1;
-  // Number of bytes allocated, or de-allocated if negative.
-  int64 alloc_bytes = 2;
+  // Numbelonr of bytelons allocatelond, or delon-allocatelond if nelongativelon.
+  int64 alloc_bytelons = 2;
 }
 
-message AllocatorMemoryUsed {
-  string allocator_name = 1;
-  // These are per-node allocator memory stats.
-  int64 total_bytes = 2;
-  int64 peak_bytes = 3;
-  // The bytes that are not deallocated.
-  int64 live_bytes = 4;
-  // The allocation and deallocation timeline.
-  repeated AllocationRecord allocation_records = 6;
+melonssagelon AllocatorMelonmoryUselond {
+  string allocator_namelon = 1;
+  // Thelonselon arelon pelonr-nodelon allocator melonmory stats.
+  int64 total_bytelons = 2;
+  int64 pelonak_bytelons = 3;
+  // Thelon bytelons that arelon not delonallocatelond.
+  int64 livelon_bytelons = 4;
+  // Thelon allocation and delonallocation timelonlinelon.
+  relonpelonatelond AllocationReloncord allocation_reloncords = 6;
 
-  // These are snapshots of the overall allocator memory stats.
-  // The number of live bytes currently allocated by the allocator.
-  int64 allocator_bytes_in_use = 5;
+  // Thelonselon arelon snapshots of thelon ovelonrall allocator melonmory stats.
+  // Thelon numbelonr of livelon bytelons currelonntly allocatelond by thelon allocator.
+  int64 allocator_bytelons_in_uselon = 5;
 }
 
-// Output sizes recorded for a single execution of a graph node.
-message NodeOutput {
+// Output sizelons reloncordelond for a singlelon elonxeloncution of a graph nodelon.
+melonssagelon NodelonOutput {
   int32 slot = 1;
-  TensorDescription tensor_description = 3;
+  TelonnsorDelonscription telonnsor_delonscription = 3;
 }
 
-// For memory tracking.
-message MemoryStats {
-  int64 temp_memory_size = 1;
-  int64 persistent_memory_size = 3;
-  repeated int64 persistent_tensor_alloc_ids = 5;
+// For melonmory tracking.
+melonssagelon MelonmoryStats {
+  int64 telonmp_melonmory_sizelon = 1;
+  int64 pelonrsistelonnt_melonmory_sizelon = 3;
+  relonpelonatelond int64 pelonrsistelonnt_telonnsor_alloc_ids = 5;
 
-  int64 device_temp_memory_size = 2 [deprecated = true];
-  int64 device_persistent_memory_size = 4 [deprecated = true];
-  repeated int64 device_persistent_tensor_alloc_ids = 6 [deprecated = true];
+  int64 delonvicelon_telonmp_melonmory_sizelon = 2 [delonpreloncatelond = truelon];
+  int64 delonvicelon_pelonrsistelonnt_melonmory_sizelon = 4 [delonpreloncatelond = truelon];
+  relonpelonatelond int64 delonvicelon_pelonrsistelonnt_telonnsor_alloc_ids = 6 [delonpreloncatelond = truelon];
 }
 
-// Time/size stats recorded for a single execution of a graph node.
-message NodeExecStats {
-  // TODO: Use some more compact form of node identity than
-  // the full string name.  Either all processes should agree on a
-  // global id (cost_id?) for each node, or we should use a hash of
-  // the name.
-  string node_name = 1;
+// Timelon/sizelon stats reloncordelond for a singlelon elonxeloncution of a graph nodelon.
+melonssagelon NodelonelonxeloncStats {
+  // TODO: Uselon somelon morelon compact form of nodelon idelonntity than
+  // thelon full string namelon.  elonithelonr all procelonsselons should agrelonelon on a
+  // global id (cost_id?) for elonach nodelon, or welon should uselon a hash of
+  // thelon namelon.
+  string nodelon_namelon = 1;
   int64 all_start_micros = 2;
-  int64 op_start_rel_micros = 3;
-  int64 op_end_rel_micros = 4;
-  int64 all_end_rel_micros = 5;
-  repeated AllocatorMemoryUsed memory = 6;
-  repeated NodeOutput output = 7;
-  string timeline_label = 8;
-  int64 scheduled_micros = 9;
-  uint32 thread_id = 10;
-  repeated AllocationDescription referenced_tensor = 11;
-  MemoryStats memory_stats = 12;
+  int64 op_start_relonl_micros = 3;
+  int64 op_elonnd_relonl_micros = 4;
+  int64 all_elonnd_relonl_micros = 5;
+  relonpelonatelond AllocatorMelonmoryUselond melonmory = 6;
+  relonpelonatelond NodelonOutput output = 7;
+  string timelonlinelon_labelonl = 8;
+  int64 schelondulelond_micros = 9;
+  uint32 threlonad_id = 10;
+  relonpelonatelond AllocationDelonscription relonfelonrelonncelond_telonnsor = 11;
+  MelonmoryStats melonmory_stats = 12;
   int64 all_start_nanos = 13;
-  int64 op_start_rel_nanos = 14;
-  int64 op_end_rel_nanos = 15;
-  int64 all_end_rel_nanos = 16;
-  int64 scheduled_nanos = 17;
+  int64 op_start_relonl_nanos = 14;
+  int64 op_elonnd_relonl_nanos = 15;
+  int64 all_elonnd_relonl_nanos = 16;
+  int64 schelondulelond_nanos = 17;
 }
 
-message DeviceStepStats {
-  string device = 1;
-  repeated NodeExecStats node_stats = 2;
-  // Its key is thread id.
-  map<uint32, string> thread_names = 3;
+melonssagelon DelonvicelonStelonpStats {
+  string delonvicelon = 1;
+  relonpelonatelond NodelonelonxeloncStats nodelon_stats = 2;
+  // Its kelony is threlonad id.
+  map<uint32, string> threlonad_namelons = 3;
 }
 
-message StepStats {
-  repeated DeviceStepStats dev_stats = 1;
+melonssagelon StelonpStats {
+  relonpelonatelond DelonvicelonStelonpStats delonv_stats = 1;
 }

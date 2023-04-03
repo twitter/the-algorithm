@@ -1,13 +1,13 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/functional_component/feature_hydrator",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model/request",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/product/list_recommended_users/model",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/filter",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "homelon-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/homelon_mixelonr/functional_componelonnt/felonaturelon_hydrator",
+        "homelon-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/homelon_mixelonr/modelonl/relonquelonst",
+        "homelon-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/homelon_mixelonr/product/list_reloncommelonndelond_uselonrs/modelonl",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/filtelonr",
     ],
-    exports = [],
+    elonxports = [],
 )

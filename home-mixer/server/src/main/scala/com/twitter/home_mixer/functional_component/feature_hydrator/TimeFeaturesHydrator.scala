@@ -1,251 +1,251 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.home_mixer.model.HomeFeatures.NonPollingTimesFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.search.common.features.{thriftscala => sc}
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.features.time_features.AccountAgeInterval
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures._
-import com.twitter.timelines.prediction.features.time_features.TimeFeatures
-import com.twitter.util.Duration
-import scala.collection.Searching._
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.elonarlybirdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.NonPollingTimelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonTwelonelontIdFelonaturelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonarch.common.felonaturelons.{thriftscala => sc}
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.timelon_felonaturelons.AccountAgelonIntelonrval
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.timelon_felonaturelons.TimelonDataReloncordFelonaturelons._
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.timelon_felonaturelons.TimelonFelonaturelons
+import com.twittelonr.util.Duration
+import scala.collelonction.Selonarching._
 
-object TimeFeaturesDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct TimelonFelonaturelonsDataReloncordFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-object TimeFeaturesHydrator extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+objelonct TimelonFelonaturelonsHydrator elonxtelonnds CandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TimeFeatures")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("TimelonFelonaturelons")
 
-  override val features: Set[Feature[_, _]] = Set(TimeFeaturesDataRecordFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(TimelonFelonaturelonsDataReloncordFelonaturelon)
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    Stitch.value {
-      val richDataRecord = new RichDataRecord()
-      setTimeFeatures(richDataRecord, candidate, existingFeatures, query)
-      FeatureMapBuilder()
-        .add(TimeFeaturesDataRecordFeature, richDataRecord.getRecord)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): Stitch[FelonaturelonMap] = {
+    Stitch.valuelon {
+      val richDataReloncord = nelonw RichDataReloncord()
+      selontTimelonFelonaturelons(richDataReloncord, candidatelon, elonxistingFelonaturelons, quelonry)
+      FelonaturelonMapBuildelonr()
+        .add(TimelonFelonaturelonsDataReloncordFelonaturelon, richDataReloncord.gelontReloncord)
         .build()
     }
   }
 
-  private def setTimeFeatures(
-    richDataRecord: RichDataRecord,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap,
-    query: PipelineQuery,
+  privatelon delonf selontTimelonFelonaturelons(
+    richDataReloncord: RichDataReloncord,
+    candidatelon: TwelonelontCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap,
+    quelonry: PipelonlinelonQuelonry,
   ): Unit = {
-    val timeFeaturesOpt = getTimeFeatures(query, candidate, existingFeatures)
-    timeFeaturesOpt.foreach(timeFeatures => setFeatures(timeFeatures, richDataRecord))
+    val timelonFelonaturelonsOpt = gelontTimelonFelonaturelons(quelonry, candidatelon, elonxistingFelonaturelons)
+    timelonFelonaturelonsOpt.forelonach(timelonFelonaturelons => selontFelonaturelons(timelonFelonaturelons, richDataReloncord))
   }
 
-  private[feature_hydrator] def getTimeFeatures(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap,
-  ): Option[TimeFeatures] = {
+  privatelon[felonaturelon_hydrator] delonf gelontTimelonFelonaturelons(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap,
+  ): Option[TimelonFelonaturelons] = {
     for {
-      requestTimestampMs <- Some(query.queryTime.inMilliseconds)
-      tweetId <- Some(candidate.id)
-      viewerId <- query.getOptionalUserId
-      tweetCreationTimeMs <- timeFromTweetOrUserId(tweetId)
-      timeSinceTweetCreation = requestTimestampMs - tweetCreationTimeMs
-      accountAgeDurationOpt = timeFromTweetOrUserId(viewerId).map { viewerAccountCreationTimeMs =>
-        Duration.fromMilliseconds(requestTimestampMs - viewerAccountCreationTimeMs)
+      relonquelonstTimelonstampMs <- Somelon(quelonry.quelonryTimelon.inMilliselonconds)
+      twelonelontId <- Somelon(candidatelon.id)
+      vielonwelonrId <- quelonry.gelontOptionalUselonrId
+      twelonelontCrelonationTimelonMs <- timelonFromTwelonelontOrUselonrId(twelonelontId)
+      timelonSincelonTwelonelontCrelonation = relonquelonstTimelonstampMs - twelonelontCrelonationTimelonMs
+      accountAgelonDurationOpt = timelonFromTwelonelontOrUselonrId(vielonwelonrId).map { vielonwelonrAccountCrelonationTimelonMs =>
+        Duration.fromMilliselonconds(relonquelonstTimelonstampMs - vielonwelonrAccountCrelonationTimelonMs)
       }
-      timeSinceSourceTweetCreation =
-        existingFeatures
-          .getOrElse(SourceTweetIdFeature, None)
-          .flatMap { sourceTweetId =>
-            timeFromTweetOrUserId(sourceTweetId).map { sourceTweetCreationTimeMs =>
-              requestTimestampMs - sourceTweetCreationTimeMs
+      timelonSincelonSourcelonTwelonelontCrelonation =
+        elonxistingFelonaturelons
+          .gelontOrelonlselon(SourcelonTwelonelontIdFelonaturelon, Nonelon)
+          .flatMap { sourcelonTwelonelontId =>
+            timelonFromTwelonelontOrUselonrId(sourcelonTwelonelontId).map { sourcelonTwelonelontCrelonationTimelonMs =>
+              relonquelonstTimelonstampMs - sourcelonTwelonelontCrelonationTimelonMs
             }
           }
-          .getOrElse(timeSinceTweetCreation)
-      if (timeSinceTweetCreation > 0 && timeSinceSourceTweetCreation > 0)
-    } yield {
-      val timeFeatures = TimeFeatures(
-        timeSinceTweetCreation = timeSinceTweetCreation,
-        timeSinceSourceTweetCreation = timeSinceSourceTweetCreation,
-        timeSinceViewerAccountCreationSecs = accountAgeDurationOpt.map(_.inSeconds),
-        isDay30NewUser = accountAgeDurationOpt.map(_ < 30.days).getOrElse(false),
-        isMonth12NewUser = accountAgeDurationOpt.map(_ < 365.days).getOrElse(false),
-        accountAgeInterval = accountAgeDurationOpt.flatMap(AccountAgeInterval.fromDuration),
-        isTweetRecycled = false // only set in RecyclableTweetCandidateFilter, but it's not used
+          .gelontOrelonlselon(timelonSincelonTwelonelontCrelonation)
+      if (timelonSincelonTwelonelontCrelonation > 0 && timelonSincelonSourcelonTwelonelontCrelonation > 0)
+    } yielonld {
+      val timelonFelonaturelons = TimelonFelonaturelons(
+        timelonSincelonTwelonelontCrelonation = timelonSincelonTwelonelontCrelonation,
+        timelonSincelonSourcelonTwelonelontCrelonation = timelonSincelonSourcelonTwelonelontCrelonation,
+        timelonSincelonVielonwelonrAccountCrelonationSeloncs = accountAgelonDurationOpt.map(_.inSelonconds),
+        isDay30NelonwUselonr = accountAgelonDurationOpt.map(_ < 30.days).gelontOrelonlselon(falselon),
+        isMonth12NelonwUselonr = accountAgelonDurationOpt.map(_ < 365.days).gelontOrelonlselon(falselon),
+        accountAgelonIntelonrval = accountAgelonDurationOpt.flatMap(AccountAgelonIntelonrval.fromDuration),
+        isTwelonelontReloncyclelond = falselon // only selont in ReloncyclablelonTwelonelontCandidatelonFiltelonr, but it's not uselond
       )
 
-      val timeFeaturesWithLastEngagement = addLastEngagementTimeFeatures(
-        existingFeatures.getOrElse(EarlybirdFeature, None),
-        timeFeatures,
-        timeSinceSourceTweetCreation
-      ).getOrElse(timeFeatures)
+      val timelonFelonaturelonsWithLastelonngagelonmelonnt = addLastelonngagelonmelonntTimelonFelonaturelons(
+        elonxistingFelonaturelons.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon),
+        timelonFelonaturelons,
+        timelonSincelonSourcelonTwelonelontCrelonation
+      ).gelontOrelonlselon(timelonFelonaturelons)
 
-      val nonPollingTimestampsMs =
-        query.features.map(_.getOrElse(NonPollingTimesFeature, Seq.empty))
-      val timeFeaturesWithNonPollingOpt = addNonPollingTimeFeatures(
-        timeFeaturesWithLastEngagement,
-        requestTimestampMs,
-        tweetCreationTimeMs,
-        nonPollingTimestampsMs
+      val nonPollingTimelonstampsMs =
+        quelonry.felonaturelons.map(_.gelontOrelonlselon(NonPollingTimelonsFelonaturelon, Selonq.elonmpty))
+      val timelonFelonaturelonsWithNonPollingOpt = addNonPollingTimelonFelonaturelons(
+        timelonFelonaturelonsWithLastelonngagelonmelonnt,
+        relonquelonstTimelonstampMs,
+        twelonelontCrelonationTimelonMs,
+        nonPollingTimelonstampsMs
       )
-      timeFeaturesWithNonPollingOpt.getOrElse(timeFeaturesWithLastEngagement)
+      timelonFelonaturelonsWithNonPollingOpt.gelontOrelonlselon(timelonFelonaturelonsWithLastelonngagelonmelonnt)
     }
   }
 
-  private def timeFromTweetOrUserId(tweetOrUserId: Long): Option[Long] = {
-    if (SnowflakeId.isSnowflakeId(tweetOrUserId))
-      Some(SnowflakeId(tweetOrUserId).time.inMilliseconds)
-    else None
+  privatelon delonf timelonFromTwelonelontOrUselonrId(twelonelontOrUselonrId: Long): Option[Long] = {
+    if (SnowflakelonId.isSnowflakelonId(twelonelontOrUselonrId))
+      Somelon(SnowflakelonId(twelonelontOrUselonrId).timelon.inMilliselonconds)
+    elonlselon Nonelon
   }
 
-  private def addLastEngagementTimeFeatures(
-    tweetFeaturesOpt: Option[sc.ThriftTweetFeatures],
-    timeFeatures: TimeFeatures,
-    timeSinceSourceTweetCreation: Long
-  ): Option[TimeFeatures] = {
-    tweetFeaturesOpt.map { tweetFeatures =>
-      val lastFavSinceCreationHrs = tweetFeatures.lastFavSinceCreationHrs.map(_.toDouble)
-      val lastRetweetSinceCreationHrs = tweetFeatures.lastRetweetSinceCreationHrs.map(_.toDouble)
-      val lastReplySinceCreationHrs = tweetFeatures.lastReplySinceCreationHrs.map(_.toDouble)
-      val lastQuoteSinceCreationHrs = tweetFeatures.lastQuoteSinceCreationHrs.map(_.toDouble)
+  privatelon delonf addLastelonngagelonmelonntTimelonFelonaturelons(
+    twelonelontFelonaturelonsOpt: Option[sc.ThriftTwelonelontFelonaturelons],
+    timelonFelonaturelons: TimelonFelonaturelons,
+    timelonSincelonSourcelonTwelonelontCrelonation: Long
+  ): Option[TimelonFelonaturelons] = {
+    twelonelontFelonaturelonsOpt.map { twelonelontFelonaturelons =>
+      val lastFavSincelonCrelonationHrs = twelonelontFelonaturelons.lastFavSincelonCrelonationHrs.map(_.toDoublelon)
+      val lastRelontwelonelontSincelonCrelonationHrs = twelonelontFelonaturelons.lastRelontwelonelontSincelonCrelonationHrs.map(_.toDoublelon)
+      val lastRelonplySincelonCrelonationHrs = twelonelontFelonaturelons.lastRelonplySincelonCrelonationHrs.map(_.toDoublelon)
+      val lastQuotelonSincelonCrelonationHrs = twelonelontFelonaturelons.lastQuotelonSincelonCrelonationHrs.map(_.toDoublelon)
 
-      timeFeatures.copy(
-        lastFavSinceCreationHrs = lastFavSinceCreationHrs,
-        lastRetweetSinceCreationHrs = lastRetweetSinceCreationHrs,
-        lastReplySinceCreationHrs = lastReplySinceCreationHrs,
-        lastQuoteSinceCreationHrs = lastQuoteSinceCreationHrs,
-        timeSinceLastFavoriteHrs = getTimeSinceLastEngagementHrs(
-          lastFavSinceCreationHrs,
-          timeSinceSourceTweetCreation
+      timelonFelonaturelons.copy(
+        lastFavSincelonCrelonationHrs = lastFavSincelonCrelonationHrs,
+        lastRelontwelonelontSincelonCrelonationHrs = lastRelontwelonelontSincelonCrelonationHrs,
+        lastRelonplySincelonCrelonationHrs = lastRelonplySincelonCrelonationHrs,
+        lastQuotelonSincelonCrelonationHrs = lastQuotelonSincelonCrelonationHrs,
+        timelonSincelonLastFavoritelonHrs = gelontTimelonSincelonLastelonngagelonmelonntHrs(
+          lastFavSincelonCrelonationHrs,
+          timelonSincelonSourcelonTwelonelontCrelonation
         ),
-        timeSinceLastRetweetHrs = getTimeSinceLastEngagementHrs(
-          lastRetweetSinceCreationHrs,
-          timeSinceSourceTweetCreation
+        timelonSincelonLastRelontwelonelontHrs = gelontTimelonSincelonLastelonngagelonmelonntHrs(
+          lastRelontwelonelontSincelonCrelonationHrs,
+          timelonSincelonSourcelonTwelonelontCrelonation
         ),
-        timeSinceLastReplyHrs = getTimeSinceLastEngagementHrs(
-          lastReplySinceCreationHrs,
-          timeSinceSourceTweetCreation
+        timelonSincelonLastRelonplyHrs = gelontTimelonSincelonLastelonngagelonmelonntHrs(
+          lastRelonplySincelonCrelonationHrs,
+          timelonSincelonSourcelonTwelonelontCrelonation
         ),
-        timeSinceLastQuoteHrs = getTimeSinceLastEngagementHrs(
-          lastQuoteSinceCreationHrs,
-          timeSinceSourceTweetCreation
+        timelonSincelonLastQuotelonHrs = gelontTimelonSincelonLastelonngagelonmelonntHrs(
+          lastQuotelonSincelonCrelonationHrs,
+          timelonSincelonSourcelonTwelonelontCrelonation
         )
       )
     }
   }
 
-  private def addNonPollingTimeFeatures(
-    timeFeatures: TimeFeatures,
-    requestTimestampMs: Long,
-    creationTimeMs: Long,
-    nonPollingTimestampsMs: Option[Seq[Long]]
-  ): Option[TimeFeatures] = {
+  privatelon delonf addNonPollingTimelonFelonaturelons(
+    timelonFelonaturelons: TimelonFelonaturelons,
+    relonquelonstTimelonstampMs: Long,
+    crelonationTimelonMs: Long,
+    nonPollingTimelonstampsMs: Option[Selonq[Long]]
+  ): Option[TimelonFelonaturelons] = {
     for {
-      nonPollingTimestampsMs <- nonPollingTimestampsMs
-      lastNonPollingTimestampMs <- nonPollingTimestampsMs.headOption
-      earliestNonPollingTimestampMs <- nonPollingTimestampsMs.lastOption
-    } yield {
-      val timeSinceLastNonPollingRequest = requestTimestampMs - lastNonPollingTimestampMs
-      val tweetAgeRatio = timeSinceLastNonPollingRequest / math.max(
+      nonPollingTimelonstampsMs <- nonPollingTimelonstampsMs
+      lastNonPollingTimelonstampMs <- nonPollingTimelonstampsMs.helonadOption
+      elonarlielonstNonPollingTimelonstampMs <- nonPollingTimelonstampsMs.lastOption
+    } yielonld {
+      val timelonSincelonLastNonPollingRelonquelonst = relonquelonstTimelonstampMs - lastNonPollingTimelonstampMs
+      val twelonelontAgelonRatio = timelonSincelonLastNonPollingRelonquelonst / math.max(
         1.0,
-        timeFeatures.timeSinceTweetCreation
+        timelonFelonaturelons.timelonSincelonTwelonelontCrelonation
       )
       /*
-       * Non-polling timestamps are stored in chronological order.
-       * The latest timestamps occur first, therefore we need to explicitly search in reverse order.
+       * Non-polling timelonstamps arelon storelond in chronological ordelonr.
+       * Thelon latelonst timelonstamps occur first, thelonrelonforelon welon nelonelond to elonxplicitly selonarch in relonvelonrselon ordelonr.
        */
-      val nonPollingRequestsSinceTweetCreation =
-        if (nonPollingTimestampsMs.nonEmpty) {
-          nonPollingTimestampsMs.search(creationTimeMs)(Ordering[Long].reverse).insertionPoint
-        } else {
+      val nonPollingRelonquelonstsSincelonTwelonelontCrelonation =
+        if (nonPollingTimelonstampsMs.nonelonmpty) {
+          nonPollingTimelonstampsMs.selonarch(crelonationTimelonMs)(Ordelonring[Long].relonvelonrselon).inselonrtionPoint
+        } elonlselon {
           0
         }
       /*
-       * Calculate the average time between non-polling requests; include
-       * request time in this calculation as latest timestamp.
+       * Calculatelon thelon avelonragelon timelon belontwelonelonn non-polling relonquelonsts; includelon
+       * relonquelonst timelon in this calculation as latelonst timelonstamp.
        */
-      val timeBetweenNonPollingRequestsAvg =
-        (requestTimestampMs - earliestNonPollingTimestampMs) / math
-          .max(1.0, nonPollingTimestampsMs.size)
-      val timeFeaturesWithNonPolling = timeFeatures.copy(
-        timeBetweenNonPollingRequestsAvg = Some(timeBetweenNonPollingRequestsAvg),
-        timeSinceLastNonPollingRequest = Some(timeSinceLastNonPollingRequest),
-        nonPollingRequestsSinceTweetCreation = Some(nonPollingRequestsSinceTweetCreation),
-        tweetAgeRatio = Some(tweetAgeRatio)
+      val timelonBelontwelonelonnNonPollingRelonquelonstsAvg =
+        (relonquelonstTimelonstampMs - elonarlielonstNonPollingTimelonstampMs) / math
+          .max(1.0, nonPollingTimelonstampsMs.sizelon)
+      val timelonFelonaturelonsWithNonPolling = timelonFelonaturelons.copy(
+        timelonBelontwelonelonnNonPollingRelonquelonstsAvg = Somelon(timelonBelontwelonelonnNonPollingRelonquelonstsAvg),
+        timelonSincelonLastNonPollingRelonquelonst = Somelon(timelonSincelonLastNonPollingRelonquelonst),
+        nonPollingRelonquelonstsSincelonTwelonelontCrelonation = Somelon(nonPollingRelonquelonstsSincelonTwelonelontCrelonation),
+        twelonelontAgelonRatio = Somelon(twelonelontAgelonRatio)
       )
-      timeFeaturesWithNonPolling
+      timelonFelonaturelonsWithNonPolling
     }
   }
 
-  private[this] def getTimeSinceLastEngagementHrs(
-    lastEngagementTimeSinceCreationHrsOpt: Option[Double],
-    timeSinceTweetCreation: Long
-  ): Option[Double] = {
-    lastEngagementTimeSinceCreationHrsOpt.map { lastEngagementTimeSinceCreationHrs =>
-      val timeSinceTweetCreationHrs = (timeSinceTweetCreation / (60 * 60 * 1000)).toInt
-      timeSinceTweetCreationHrs - lastEngagementTimeSinceCreationHrs
+  privatelon[this] delonf gelontTimelonSincelonLastelonngagelonmelonntHrs(
+    lastelonngagelonmelonntTimelonSincelonCrelonationHrsOpt: Option[Doublelon],
+    timelonSincelonTwelonelontCrelonation: Long
+  ): Option[Doublelon] = {
+    lastelonngagelonmelonntTimelonSincelonCrelonationHrsOpt.map { lastelonngagelonmelonntTimelonSincelonCrelonationHrs =>
+      val timelonSincelonTwelonelontCrelonationHrs = (timelonSincelonTwelonelontCrelonation / (60 * 60 * 1000)).toInt
+      timelonSincelonTwelonelontCrelonationHrs - lastelonngagelonmelonntTimelonSincelonCrelonationHrs
     }
   }
 
-  private def setFeatures(features: TimeFeatures, richDataRecord: RichDataRecord): Unit = {
-    val record = richDataRecord.getRecord
-      .setFeatureValue(IS_TWEET_RECYCLED, features.isTweetRecycled)
-      .setFeatureValue(TIME_SINCE_TWEET_CREATION, features.timeSinceTweetCreation)
-      .setFeatureValueFromOption(
-        TIME_SINCE_VIEWER_ACCOUNT_CREATION_SECS,
-        features.timeSinceViewerAccountCreationSecs)
-      .setFeatureValue(
-        USER_ID_IS_SNOWFLAKE_ID,
-        features.timeSinceViewerAccountCreationSecs.isDefined
+  privatelon delonf selontFelonaturelons(felonaturelons: TimelonFelonaturelons, richDataReloncord: RichDataReloncord): Unit = {
+    val reloncord = richDataReloncord.gelontReloncord
+      .selontFelonaturelonValuelon(IS_TWelonelonT_RelonCYCLelonD, felonaturelons.isTwelonelontReloncyclelond)
+      .selontFelonaturelonValuelon(TIMelon_SINCelon_TWelonelonT_CRelonATION, felonaturelons.timelonSincelonTwelonelontCrelonation)
+      .selontFelonaturelonValuelonFromOption(
+        TIMelon_SINCelon_VIelonWelonR_ACCOUNT_CRelonATION_SelonCS,
+        felonaturelons.timelonSincelonVielonwelonrAccountCrelonationSeloncs)
+      .selontFelonaturelonValuelon(
+        USelonR_ID_IS_SNOWFLAKelon_ID,
+        felonaturelons.timelonSincelonVielonwelonrAccountCrelonationSeloncs.isDelonfinelond
       )
-      .setFeatureValueFromOption(ACCOUNT_AGE_INTERVAL, features.accountAgeInterval.map(_.id.toLong))
-      .setFeatureValue(IS_30_DAY_NEW_USER, features.isDay30NewUser)
-      .setFeatureValue(IS_12_MONTH_NEW_USER, features.isMonth12NewUser)
-      .setFeatureValueFromOption(LAST_FAVORITE_SINCE_CREATION_HRS, features.lastFavSinceCreationHrs)
-      .setFeatureValueFromOption(
-        LAST_RETWEET_SINCE_CREATION_HRS,
-        features.lastRetweetSinceCreationHrs
+      .selontFelonaturelonValuelonFromOption(ACCOUNT_AGelon_INTelonRVAL, felonaturelons.accountAgelonIntelonrval.map(_.id.toLong))
+      .selontFelonaturelonValuelon(IS_30_DAY_NelonW_USelonR, felonaturelons.isDay30NelonwUselonr)
+      .selontFelonaturelonValuelon(IS_12_MONTH_NelonW_USelonR, felonaturelons.isMonth12NelonwUselonr)
+      .selontFelonaturelonValuelonFromOption(LAST_FAVORITelon_SINCelon_CRelonATION_HRS, felonaturelons.lastFavSincelonCrelonationHrs)
+      .selontFelonaturelonValuelonFromOption(
+        LAST_RelonTWelonelonT_SINCelon_CRelonATION_HRS,
+        felonaturelons.lastRelontwelonelontSincelonCrelonationHrs
       )
-      .setFeatureValueFromOption(LAST_REPLY_SINCE_CREATION_HRS, features.lastReplySinceCreationHrs)
-      .setFeatureValueFromOption(LAST_QUOTE_SINCE_CREATION_HRS, features.lastQuoteSinceCreationHrs)
-      .setFeatureValueFromOption(TIME_SINCE_LAST_FAVORITE_HRS, features.timeSinceLastFavoriteHrs)
-      .setFeatureValueFromOption(TIME_SINCE_LAST_RETWEET_HRS, features.timeSinceLastRetweetHrs)
-      .setFeatureValueFromOption(TIME_SINCE_LAST_REPLY_HRS, features.timeSinceLastReplyHrs)
-      .setFeatureValueFromOption(TIME_SINCE_LAST_QUOTE_HRS, features.timeSinceLastQuoteHrs)
+      .selontFelonaturelonValuelonFromOption(LAST_RelonPLY_SINCelon_CRelonATION_HRS, felonaturelons.lastRelonplySincelonCrelonationHrs)
+      .selontFelonaturelonValuelonFromOption(LAST_QUOTelon_SINCelon_CRelonATION_HRS, felonaturelons.lastQuotelonSincelonCrelonationHrs)
+      .selontFelonaturelonValuelonFromOption(TIMelon_SINCelon_LAST_FAVORITelon_HRS, felonaturelons.timelonSincelonLastFavoritelonHrs)
+      .selontFelonaturelonValuelonFromOption(TIMelon_SINCelon_LAST_RelonTWelonelonT_HRS, felonaturelons.timelonSincelonLastRelontwelonelontHrs)
+      .selontFelonaturelonValuelonFromOption(TIMelon_SINCelon_LAST_RelonPLY_HRS, felonaturelons.timelonSincelonLastRelonplyHrs)
+      .selontFelonaturelonValuelonFromOption(TIMelon_SINCelon_LAST_QUOTelon_HRS, felonaturelons.timelonSincelonLastQuotelonHrs)
     /*
-     * set features whose values are optional as some users do not have non-polling timestamps
+     * selont felonaturelons whoselon valuelons arelon optional as somelon uselonrs do not havelon non-polling timelonstamps
      */
-    features.timeBetweenNonPollingRequestsAvg.foreach(
-      record.setFeatureValue(TIME_BETWEEN_NON_POLLING_REQUESTS_AVG, _)
+    felonaturelons.timelonBelontwelonelonnNonPollingRelonquelonstsAvg.forelonach(
+      reloncord.selontFelonaturelonValuelon(TIMelon_BelonTWelonelonN_NON_POLLING_RelonQUelonSTS_AVG, _)
     )
-    features.timeSinceLastNonPollingRequest.foreach(
-      record.setFeatureValue(TIME_SINCE_LAST_NON_POLLING_REQUEST, _)
+    felonaturelons.timelonSincelonLastNonPollingRelonquelonst.forelonach(
+      reloncord.selontFelonaturelonValuelon(TIMelon_SINCelon_LAST_NON_POLLING_RelonQUelonST, _)
     )
-    features.nonPollingRequestsSinceTweetCreation.foreach(
-      record.setFeatureValue(NON_POLLING_REQUESTS_SINCE_TWEET_CREATION, _)
+    felonaturelons.nonPollingRelonquelonstsSincelonTwelonelontCrelonation.forelonach(
+      reloncord.selontFelonaturelonValuelon(NON_POLLING_RelonQUelonSTS_SINCelon_TWelonelonT_CRelonATION, _)
     )
-    features.tweetAgeRatio.foreach(record.setFeatureValue(TWEET_AGE_RATIO, _))
+    felonaturelons.twelonelontAgelonRatio.forelonach(reloncord.selontFelonaturelonValuelon(TWelonelonT_AGelon_RATIO, _))
   }
 }

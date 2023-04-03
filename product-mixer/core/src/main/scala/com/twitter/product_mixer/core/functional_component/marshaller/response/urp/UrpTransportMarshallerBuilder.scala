@@ -1,65 +1,65 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.TimelineScribeConfigMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ArticleDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CommerceDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ConversationDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ConversationSectionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.LiveEventDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.TimelinesDetailsMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrtEndpointOptionsMarshaller
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.TimelonlinelonScribelonConfigMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ArticlelonDelontailsMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ClielonntelonvelonntDelontailsMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ClielonntelonvelonntInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.CommelonrcelonDelontailsMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ConvelonrsationDelontailsMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ConvelonrsationSelonctionMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.LivelonelonvelonntDelontailsMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.TimelonlinelonsDelontailsMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlTypelonMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrtelonndpointOptionsMarshallelonr
 
-object UrpTransportMarshallerBuilder {
-  // Convenience constructor for services not using dependency injection and unit tests. If using
-  // dependency injection, instead @Inject an instance of UrpTransportMarshaller to construct.
+objelonct UrpTransportMarshallelonrBuildelonr {
+  // Convelonnielonncelon constructor for selonrvicelons not using delonpelonndelonncy injelonction and unit telonsts. If using
+  // delonpelonndelonncy injelonction, instelonad @Injelonct an instancelon of UrpTransportMarshallelonr to construct.
 
-  val timelineKeyMarshaller = new TimelineKeyMarshaller
-  val timelineScribeConfigMarshaller = new TimelineScribeConfigMarshaller
-  val urlMarshaller = new UrlMarshaller(new UrlTypeMarshaller, new UrtEndpointOptionsMarshaller)
-  val clientEventInfoMarshaller = new ClientEventInfoMarshaller(
-    new ClientEventDetailsMarshaller(
-      new ConversationDetailsMarshaller(new ConversationSectionMarshaller),
-      new TimelinesDetailsMarshaller,
-      new ArticleDetailsMarshaller,
-      new LiveEventDetailsMarshaller,
-      new CommerceDetailsMarshaller)
+  val timelonlinelonKelonyMarshallelonr = nelonw TimelonlinelonKelonyMarshallelonr
+  val timelonlinelonScribelonConfigMarshallelonr = nelonw TimelonlinelonScribelonConfigMarshallelonr
+  val urlMarshallelonr = nelonw UrlMarshallelonr(nelonw UrlTypelonMarshallelonr, nelonw UrtelonndpointOptionsMarshallelonr)
+  val clielonntelonvelonntInfoMarshallelonr = nelonw ClielonntelonvelonntInfoMarshallelonr(
+    nelonw ClielonntelonvelonntDelontailsMarshallelonr(
+      nelonw ConvelonrsationDelontailsMarshallelonr(nelonw ConvelonrsationSelonctionMarshallelonr),
+      nelonw TimelonlinelonsDelontailsMarshallelonr,
+      nelonw ArticlelonDelontailsMarshallelonr,
+      nelonw LivelonelonvelonntDelontailsMarshallelonr,
+      nelonw CommelonrcelonDelontailsMarshallelonr)
   )
 
-  val segmentedTimelineMarshaller =
-    new SegmentedTimelineMarshaller(timelineKeyMarshaller, timelineScribeConfigMarshaller)
-  val segmentedTimelinesMarshaller = new SegmentedTimelinesMarshaller(segmentedTimelineMarshaller)
+  val selongmelonntelondTimelonlinelonMarshallelonr =
+    nelonw SelongmelonntelondTimelonlinelonMarshallelonr(timelonlinelonKelonyMarshallelonr, timelonlinelonScribelonConfigMarshallelonr)
+  val selongmelonntelondTimelonlinelonsMarshallelonr = nelonw SelongmelonntelondTimelonlinelonsMarshallelonr(selongmelonntelondTimelonlinelonMarshallelonr)
 
-  val pageBodyMarshaller: PageBodyMarshaller = new PageBodyMarshaller(
-    timelineKeyMarshaller,
-    segmentedTimelinesMarshaller
+  val pagelonBodyMarshallelonr: PagelonBodyMarshallelonr = nelonw PagelonBodyMarshallelonr(
+    timelonlinelonKelonyMarshallelonr,
+    selongmelonntelondTimelonlinelonsMarshallelonr
   )
 
-  val topicPageHeaderFacepileMarshaller = new TopicPageHeaderFacepileMarshaller(urlMarshaller)
-  val topicPageHeaderDisplayTypeMarshaller = new TopicPageHeaderDisplayTypeMarshaller
-  val topicPageHeaderMarshaller = new TopicPageHeaderMarshaller(
-    topicPageHeaderFacepileMarshaller,
-    clientEventInfoMarshaller,
-    topicPageHeaderDisplayTypeMarshaller
+  val topicPagelonHelonadelonrFacelonpilelonMarshallelonr = nelonw TopicPagelonHelonadelonrFacelonpilelonMarshallelonr(urlMarshallelonr)
+  val topicPagelonHelonadelonrDisplayTypelonMarshallelonr = nelonw TopicPagelonHelonadelonrDisplayTypelonMarshallelonr
+  val topicPagelonHelonadelonrMarshallelonr = nelonw TopicPagelonHelonadelonrMarshallelonr(
+    topicPagelonHelonadelonrFacelonpilelonMarshallelonr,
+    clielonntelonvelonntInfoMarshallelonr,
+    topicPagelonHelonadelonrDisplayTypelonMarshallelonr
   )
-  val pageHeaderMarshaller: PageHeaderMarshaller = new PageHeaderMarshaller(
-    topicPageHeaderMarshaller)
+  val pagelonHelonadelonrMarshallelonr: PagelonHelonadelonrMarshallelonr = nelonw PagelonHelonadelonrMarshallelonr(
+    topicPagelonHelonadelonrMarshallelonr)
 
-  val topicPageNavBarMarshaller = new TopicPageNavBarMarshaller(clientEventInfoMarshaller)
-  val titleNavBarMarshaller = new TitleNavBarMarshaller(clientEventInfoMarshaller)
-  val pageNavBarMarshaller: PageNavBarMarshaller = new PageNavBarMarshaller(
-    topicPageNavBarMarshaller,
-    titleNavBarMarshaller
+  val topicPagelonNavBarMarshallelonr = nelonw TopicPagelonNavBarMarshallelonr(clielonntelonvelonntInfoMarshallelonr)
+  val titlelonNavBarMarshallelonr = nelonw TitlelonNavBarMarshallelonr(clielonntelonvelonntInfoMarshallelonr)
+  val pagelonNavBarMarshallelonr: PagelonNavBarMarshallelonr = nelonw PagelonNavBarMarshallelonr(
+    topicPagelonNavBarMarshallelonr,
+    titlelonNavBarMarshallelonr
   )
 
-  val marshaller: UrpTransportMarshaller =
-    new UrpTransportMarshaller(
-      pageBodyMarshaller = pageBodyMarshaller,
-      timelineScribeConfigMarshaller = timelineScribeConfigMarshaller,
-      pageHeaderMarshaller = pageHeaderMarshaller,
-      pageNavBarMarshaller = pageNavBarMarshaller
+  val marshallelonr: UrpTransportMarshallelonr =
+    nelonw UrpTransportMarshallelonr(
+      pagelonBodyMarshallelonr = pagelonBodyMarshallelonr,
+      timelonlinelonScribelonConfigMarshallelonr = timelonlinelonScribelonConfigMarshallelonr,
+      pagelonHelonadelonrMarshallelonr = pagelonHelonadelonrMarshallelonr,
+      pagelonNavBarMarshallelonr = pagelonNavBarMarshallelonr
     )
 }

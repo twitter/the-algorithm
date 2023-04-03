@@ -1,40 +1,40 @@
-package com.twitter.product_mixer.component_library.decorator.urt
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt
 
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtItemPresentation
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.DecoratorIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DeloncoratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.Deloncoration
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.stitch.Stitch
 
 /**
- * Decorator that will apply the provided [[CandidateUrtEntryBuilder]] to each candidate independently to make a [[TimelineItem]]
+ * Deloncorator that will apply thelon providelond [[CandidatelonUrtelonntryBuildelonr]] to elonach candidatelon indelonpelonndelonntly to makelon a [[TimelonlinelonItelonm]]
  */
-case class UrtItemCandidateDecorator[
-  Query <: PipelineQuery,
-  BuilderInput <: UniversalNoun[Any],
-  BuilderOutput <: TimelineItem
+caselon class UrtItelonmCandidatelonDeloncorator[
+  Quelonry <: PipelonlinelonQuelonry,
+  BuildelonrInput <: UnivelonrsalNoun[Any],
+  BuildelonrOutput <: TimelonlinelonItelonm
 ](
-  builder: CandidateUrtEntryBuilder[Query, BuilderInput, BuilderOutput],
-  override val identifier: DecoratorIdentifier = DecoratorIdentifier("UrtItemCandidate"))
-    extends CandidateDecorator[Query, BuilderInput] {
+  buildelonr: CandidatelonUrtelonntryBuildelonr[Quelonry, BuildelonrInput, BuildelonrOutput],
+  ovelonrridelon val idelonntifielonr: DeloncoratorIdelonntifielonr = DeloncoratorIdelonntifielonr("UrtItelonmCandidatelon"))
+    elonxtelonnds CandidatelonDeloncorator[Quelonry, BuildelonrInput] {
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[BuilderInput]]
-  ): Stitch[Seq[Decoration]] = {
-    val candidatePresentations = candidates.map { candidate =>
-      val itemPresentation = UrtItemPresentation(
-        timelineItem = builder(query, candidate.candidate, candidate.features)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[BuildelonrInput]]
+  ): Stitch[Selonq[Deloncoration]] = {
+    val candidatelonPrelonselonntations = candidatelons.map { candidatelon =>
+      val itelonmPrelonselonntation = UrtItelonmPrelonselonntation(
+        timelonlinelonItelonm = buildelonr(quelonry, candidatelon.candidatelon, candidatelon.felonaturelons)
       )
 
-      Decoration(candidate.candidate, itemPresentation)
+      Deloncoration(candidatelon.candidatelon, itelonmPrelonselonntation)
     }
 
-    Stitch.value(candidatePresentations)
+    Stitch.valuelon(candidatelonPrelonselonntations)
   }
 }

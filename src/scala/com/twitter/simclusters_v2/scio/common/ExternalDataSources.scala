@@ -1,300 +1,300 @@
-package com.twitter.simclusters_v2.scio.common
+packagelon com.twittelonr.simclustelonrs_v2.scio.common
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.common.util.Clock
-import com.twitter.common_header.thriftscala.CommonHeader
-import com.twitter.common_header.thriftscala.IdType
-import com.twitter.common_header.thriftscala.VersionedCommonHeader
-import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.frigate.data_pipeline.scalding.magicrecs.magicrecs_notification_lite.MagicrecsNotificationLite1DayLagScalaDataset
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionTargetType
-import com.twitter.interests_ds.jobs.interests_service.UserTopicRelationSnapshotScalaDataset
-import com.twitter.interests.thriftscala.InterestRelationType
-import com.twitter.interests.thriftscala.UserInterestsRelationSnapshot
-import com.twitter.penguin.scalding.datasets.PenguinUserLanguagesScalaDataset
-import com.twitter.search.adaptive.scribing.thriftscala.AdaptiveSearchScribeLog
-import com.twitter.simclusters_v2.hdfs_sources.UserUserFavGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources.ValidFlockEdgeStateId
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources.getStandardLanguageCode
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
-import org.joda.time.Interval
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.util.Duration
-import twadoop_config.configuration.log_categories.group.search.AdaptiveSearchScalaDataset
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.common.util.Clock
+import com.twittelonr.common_helonadelonr.thriftscala.CommonHelonadelonr
+import com.twittelonr.common_helonadelonr.thriftscala.IdTypelon
+import com.twittelonr.common_helonadelonr.thriftscala.VelonrsionelondCommonHelonadelonr
+import com.twittelonr.frigatelon.data_pipelonlinelon.magicreloncs.magicreloncs_notifications_litelon.thriftscala.MagicReloncsNotificationLitelon
+import com.twittelonr.frigatelon.data_pipelonlinelon.scalding.magicreloncs.magicreloncs_notification_litelon.MagicreloncsNotificationLitelon1DayLagScalaDataselont
+import com.twittelonr.ielonsourcelon.thriftscala.Intelonractionelonvelonnt
+import com.twittelonr.ielonsourcelon.thriftscala.IntelonractionTargelontTypelon
+import com.twittelonr.intelonrelonsts_ds.jobs.intelonrelonsts_selonrvicelon.UselonrTopicRelonlationSnapshotScalaDataselont
+import com.twittelonr.intelonrelonsts.thriftscala.IntelonrelonstRelonlationTypelon
+import com.twittelonr.intelonrelonsts.thriftscala.UselonrIntelonrelonstsRelonlationSnapshot
+import com.twittelonr.pelonnguin.scalding.dataselonts.PelonnguinUselonrLanguagelonsScalaDataselont
+import com.twittelonr.selonarch.adaptivelon.scribing.thriftscala.AdaptivelonSelonarchScribelonLog
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.UselonrUselonrFavGraphScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonxtelonrnalDataSourcelons.ValidFlockelondgelonStatelonId
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonxtelonrnalDataSourcelons.gelontStandardLanguagelonCodelon
+import com.twittelonr.twadoop.uselonr.gelonn.thriftscala.CombinelondUselonr
+import flockdb_tools.dataselonts.flock.FlockBlockselondgelonsScalaDataselont
+import flockdb_tools.dataselonts.flock.FlockFollowselondgelonsScalaDataselont
+import flockdb_tools.dataselonts.flock.FlockRelonportAsAbuselonelondgelonsScalaDataselont
+import flockdb_tools.dataselonts.flock.FlockRelonportAsSpamelondgelonsScalaDataselont
+import org.joda.timelon.Intelonrval
+import com.twittelonr.simclustelonrs_v2.thriftscala.elondgelonWithDeloncayelondWelonights
+import com.twittelonr.uselonrsourcelon.snapshot.combinelond.UselonrsourcelonScalaDataselont
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import com.twittelonr.util.Duration
+import twadoop_config.configuration.log_catelongorielons.group.selonarch.AdaptivelonSelonarchScalaDataselont
 
-object ExternalDataSources {
-  def userSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+objelonct elonxtelonrnalDataSourcelons {
+  delonf uselonrSourcelon(
+    noOldelonrThan: Duration = Duration.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[CombinedUser] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[CombinelondUselonr] = {
     sc.customInput(
-      "ReadUserSource",
+      "RelonadUselonrSourcelon",
       DAL
-        .readMostRecentSnapshotNoOlderThan(
-          UsersourceScalaDataset,
-          noOlderThan,
-          Clock.SYSTEM_CLOCK,
-          DAL.Environment.Prod
+        .relonadMostReloncelonntSnapshotNoOldelonrThan(
+          UselonrsourcelonScalaDataselont,
+          noOldelonrThan,
+          Clock.SYSTelonM_CLOCK,
+          DAL.elonnvironmelonnt.Prod
         )
     )
   }
 
-  def userCountrySource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  delonf uselonrCountrySourcelon(
+    noOldelonrThan: Duration = Duration.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, String)] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[(Long, String)] = {
     sc.customInput(
-        "ReadUserCountrySource",
+        "RelonadUselonrCountrySourcelon",
         DAL
-          .readMostRecentSnapshotNoOlderThan(
-            UsersourceFlatScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod,
+          .relonadMostReloncelonntSnapshotNoOldelonrThan(
+            UselonrsourcelonFlatScalaDataselont,
+            noOldelonrThan,
+            Clock.SYSTelonM_CLOCK,
+            DAL.elonnvironmelonnt.Prod,
           )
-      ).flatMap { flatUser =>
+      ).flatMap { flatUselonr =>
         for {
-          userId <- flatUser.id
-          country <- flatUser.accountCountryCode
-        } yield {
-          (userId, country.toUpperCase)
+          uselonrId <- flatUselonr.id
+          country <- flatUselonr.accountCountryCodelon
+        } yielonld {
+          (uselonrId, country.toUppelonrCaselon)
         }
       }.distinct
   }
 
-  def userUserFavSource(
-    noOlderThan: Duration = Duration.fromDays(14)
+  delonf uselonrUselonrFavSourcelon(
+    noOldelonrThan: Duration = Duration.fromDays(14)
   )(
-    implicit sc: ScioContext
-  ): SCollection[EdgeWithDecayedWeights] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[elondgelonWithDeloncayelondWelonights] = {
     sc.customInput(
-      "ReadUserUserFavSource",
+      "RelonadUselonrUselonrFavSourcelon",
       DAL
-        .readMostRecentSnapshotNoOlderThan(
-          UserUserFavGraphScalaDataset,
-          noOlderThan,
-          Clock.SYSTEM_CLOCK,
-          DAL.Environment.Prod
+        .relonadMostReloncelonntSnapshotNoOldelonrThan(
+          UselonrUselonrFavGraphScalaDataselont,
+          noOldelonrThan,
+          Clock.SYSTelonM_CLOCK,
+          DAL.elonnvironmelonnt.Prod
         )
     )
   }
 
-  def inferredUserConsumedLanguageSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  delonf infelonrrelondUselonrConsumelondLanguagelonSourcelon(
+    noOldelonrThan: Duration = Duration.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Seq[(String, Double)])] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[(Long, Selonq[(String, Doublelon)])] = {
     sc.customInput(
-        "ReadInferredUserConsumedLanguageSource",
+        "RelonadInfelonrrelondUselonrConsumelondLanguagelonSourcelon",
         DAL
-          .readMostRecentSnapshotNoOlderThan(
-            PenguinUserLanguagesScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod
+          .relonadMostReloncelonntSnapshotNoOldelonrThan(
+            PelonnguinUselonrLanguagelonsScalaDataselont,
+            noOldelonrThan,
+            Clock.SYSTelonM_CLOCK,
+            DAL.elonnvironmelonnt.Prod
           )
       ).map { kv =>
-        val consumed = kv.value.consumed
-          .collect {
-            case scoredString if scoredString.weight > 0.001 => //throw away 5% outliers
-              (getStandardLanguageCode(scoredString.item), scoredString.weight)
-          }.collect {
-            case (Some(language), score) => (language, score)
+        val consumelond = kv.valuelon.consumelond
+          .collelonct {
+            caselon scorelondString if scorelondString.welonight > 0.001 => //throw away 5% outlielonrs
+              (gelontStandardLanguagelonCodelon(scorelondString.itelonm), scorelondString.welonight)
+          }.collelonct {
+            caselon (Somelon(languagelon), scorelon) => (languagelon, scorelon)
           }
-        (kv.key, consumed)
+        (kv.kelony, consumelond)
       }
   }
 
-  def flockBlockSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  delonf flockBlockSourcelon(
+    noOldelonrThan: Duration = Duration.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[(Long, Long)] = {
     sc.customInput(
-        "ReadFlockBlock",
-        DAL.readMostRecentSnapshotNoOlderThan(
-          FlockBlocksEdgesScalaDataset,
-          noOlderThan,
-          Clock.SYSTEM_CLOCK,
-          DAL.Environment.Prod))
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+        "RelonadFlockBlock",
+        DAL.relonadMostReloncelonntSnapshotNoOldelonrThan(
+          FlockBlockselondgelonsScalaDataselont,
+          noOldelonrThan,
+          Clock.SYSTelonM_CLOCK,
+          DAL.elonnvironmelonnt.Prod))
+      .collelonct {
+        caselon elondgelon if elondgelon.statelon == ValidFlockelondgelonStatelonId =>
+          (elondgelon.sourcelonId, elondgelon.delonstinationId)
       }
   }
 
-  def flockFollowSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  delonf flockFollowSourcelon(
+    noOldelonrThan: Duration = Duration.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[(Long, Long)] = {
     sc.customInput(
-        "ReadFlockFollow",
+        "RelonadFlockFollow",
         DAL
-          .readMostRecentSnapshotNoOlderThan(
-            FlockFollowsEdgesScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod))
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+          .relonadMostReloncelonntSnapshotNoOldelonrThan(
+            FlockFollowselondgelonsScalaDataselont,
+            noOldelonrThan,
+            Clock.SYSTelonM_CLOCK,
+            DAL.elonnvironmelonnt.Prod))
+      .collelonct {
+        caselon elondgelon if elondgelon.statelon == ValidFlockelondgelonStatelonId =>
+          (elondgelon.sourcelonId, elondgelon.delonstinationId)
       }
   }
 
-  def flockReportAsAbuseSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  delonf flockRelonportAsAbuselonSourcelon(
+    noOldelonrThan: Duration = Duration.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[(Long, Long)] = {
     sc.customInput(
-        "ReadFlockReportAsAbuseJava",
+        "RelonadFlockRelonportAsAbuselonJava",
         DAL
-          .readMostRecentSnapshotNoOlderThan(
-            FlockReportAsAbuseEdgesScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod)
+          .relonadMostReloncelonntSnapshotNoOldelonrThan(
+            FlockRelonportAsAbuselonelondgelonsScalaDataselont,
+            noOldelonrThan,
+            Clock.SYSTelonM_CLOCK,
+            DAL.elonnvironmelonnt.Prod)
       )
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+      .collelonct {
+        caselon elondgelon if elondgelon.statelon == ValidFlockelondgelonStatelonId =>
+          (elondgelon.sourcelonId, elondgelon.delonstinationId)
       }
   }
 
-  def flockReportAsSpamSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  delonf flockRelonportAsSpamSourcelon(
+    noOldelonrThan: Duration = Duration.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[(Long, Long)] = {
     sc.customInput(
-        "ReadFlockReportAsSpam",
+        "RelonadFlockRelonportAsSpam",
         DAL
-          .readMostRecentSnapshotNoOlderThan(
-            FlockReportAsSpamEdgesScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod))
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+          .relonadMostReloncelonntSnapshotNoOldelonrThan(
+            FlockRelonportAsSpamelondgelonsScalaDataselont,
+            noOldelonrThan,
+            Clock.SYSTelonM_CLOCK,
+            DAL.elonnvironmelonnt.Prod))
+      .collelonct {
+        caselon elondgelon if elondgelon.statelon == ValidFlockelondgelonStatelonId =>
+          (elondgelon.sourcelonId, elondgelon.delonstinationId)
       }
   }
 
-  def ieSourceTweetEngagementsSource(
-    interval: Interval
+  delonf ielonSourcelonTwelonelontelonngagelonmelonntsSourcelon(
+    intelonrval: Intelonrval
   )(
-    implicit sc: ScioContext
-  ): SCollection[InteractionEvent] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[Intelonractionelonvelonnt] = {
     sc.customInput(
-        "ReadIeSourceTweetEngagementsSource",
+        "RelonadIelonSourcelonTwelonelontelonngagelonmelonntsSourcelon",
         DAL
-          .read(
-            com.twitter.iesource.processing.events.batch.ServerEngagementsScalaDataset,
-            interval,
-            DAL.Environment.Prod,
+          .relonad(
+            com.twittelonr.ielonsourcelon.procelonssing.elonvelonnts.batch.SelonrvelonrelonngagelonmelonntsScalaDataselont,
+            intelonrval,
+            DAL.elonnvironmelonnt.Prod,
           )
-      ).filter { event =>
-        // filter out logged out users because their favorites are less reliable
-        event.engagingUserId > 0L && event.targetType == InteractionTargetType.Tweet
+      ).filtelonr { elonvelonnt =>
+        // filtelonr out loggelond out uselonrs beloncauselon thelonir favoritelons arelon lelonss relonliablelon
+        elonvelonnt.elonngagingUselonrId > 0L && elonvelonnt.targelontTypelon == IntelonractionTargelontTypelon.Twelonelont
       }
   }
 
-  def topicFollowGraphSource(
-    noOlderThan: Duration = Duration.fromDays(7)
+  delonf topicFollowGraphSourcelon(
+    noOldelonrThan: Duration = Duration.fromDays(7)
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, Long)] = {
-    // The implementation here is slightly different than the topicFollowGraphSource function in
-    // src/scala/com/twitter/simclusters_v2/scalding/embedding/common/ExternalDataSources.scala
-    // We don't do an additional hashJoin on uttFollowableEntitiesSource.
+    implicit sc: ScioContelonxt
+  ): SCollelonction[(Long, Long)] = {
+    // Thelon implelonmelonntation helonrelon is slightly diffelonrelonnt than thelon topicFollowGraphSourcelon function in
+    // src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/common/elonxtelonrnalDataSourcelons.scala
+    // Welon don't do an additional hashJoin on uttFollowablelonelonntitielonsSourcelon.
     sc.customInput(
-        "ReadTopicFollowGraphSource",
+        "RelonadTopicFollowGraphSourcelon",
         DAL
-          .readMostRecentSnapshotNoOlderThan(
-            UserTopicRelationSnapshotScalaDataset,
-            noOlderThan,
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod
+          .relonadMostReloncelonntSnapshotNoOldelonrThan(
+            UselonrTopicRelonlationSnapshotScalaDataselont,
+            noOldelonrThan,
+            Clock.SYSTelonM_CLOCK,
+            DAL.elonnvironmelonnt.Prod
           )
-      ).collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.Followed =>
-          (userInterestsRelationSnapshot.interestId, userInterestsRelationSnapshot.userId)
+      ).collelonct {
+        caselon uselonrIntelonrelonstsRelonlationSnapshot: UselonrIntelonrelonstsRelonlationSnapshot
+            if uselonrIntelonrelonstsRelonlationSnapshot.intelonrelonstTypelon == "UTT" &&
+              uselonrIntelonrelonstsRelonlationSnapshot.relonlation == IntelonrelonstRelonlationTypelon.Followelond =>
+          (uselonrIntelonrelonstsRelonlationSnapshot.intelonrelonstId, uselonrIntelonrelonstsRelonlationSnapshot.uselonrId)
       }
   }
 
-  def magicRecsNotficationOpenOrClickEventsSource(
-    interval: Interval
+  delonf magicReloncsNotficationOpelonnOrClickelonvelonntsSourcelon(
+    intelonrval: Intelonrval
   )(
-    implicit sc: ScioContext
-  ): SCollection[MagicRecsNotificationLite] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[MagicReloncsNotificationLitelon] = {
     sc.customInput(
-        "ReadMagicRecsNotficationOpenOrClickEventsSource",
+        "RelonadMagicReloncsNotficationOpelonnOrClickelonvelonntsSourcelon",
         DAL
-          .read(MagicrecsNotificationLite1DayLagScalaDataset, interval, DAL.Environment.Prod))
-      .filter { entry =>
-        // keep entries with a valid userId and tweetId, opened or clicked timestamp defined
-        val userIdExists = entry.targetUserId.isDefined
-        val tweetIdExists = entry.tweetId.isDefined
-        val openOrClickExists =
-          entry.openTimestampMs.isDefined || entry.ntabClickTimestampMs.isDefined
-        userIdExists && tweetIdExists && openOrClickExists
+          .relonad(MagicreloncsNotificationLitelon1DayLagScalaDataselont, intelonrval, DAL.elonnvironmelonnt.Prod))
+      .filtelonr { elonntry =>
+        // kelonelonp elonntrielons with a valid uselonrId and twelonelontId, opelonnelond or clickelond timelonstamp delonfinelond
+        val uselonrIdelonxists = elonntry.targelontUselonrId.isDelonfinelond
+        val twelonelontIdelonxists = elonntry.twelonelontId.isDelonfinelond
+        val opelonnOrClickelonxists =
+          elonntry.opelonnTimelonstampMs.isDelonfinelond || elonntry.ntabClickTimelonstampMs.isDelonfinelond
+        uselonrIdelonxists && twelonelontIdelonxists && opelonnOrClickelonxists
       }
   }
 
-  def adaptiveSearchScribeLogsSource(
-    interval: Interval
+  delonf adaptivelonSelonarchScribelonLogsSourcelon(
+    intelonrval: Intelonrval
   )(
-    implicit sc: ScioContext
-  ): SCollection[(Long, String)] = {
+    implicit sc: ScioContelonxt
+  ): SCollelonction[(Long, String)] = {
     sc.customInput(
-        "ReadAdaptiveSearchScribeLogsSource",
+        "RelonadAdaptivelonSelonarchScribelonLogsSourcelon",
         DAL
-          .read(AdaptiveSearchScalaDataset, interval, DAL.Environment.Prod))
-      .flatMap({ scribeLog: AdaptiveSearchScribeLog =>
+          .relonad(AdaptivelonSelonarchScalaDataselont, intelonrval, DAL.elonnvironmelonnt.Prod))
+      .flatMap({ scribelonLog: AdaptivelonSelonarchScribelonLog =>
         for {
-          userId <- userIdFromBlenderAdaptiveScribeLog(scribeLog)
-          // filter out logged out search queries
-          if userId != 0
-          queryString <- scribeLog.requestLog.flatMap(_.request).flatMap(_.rawQuery)
-        } yield {
-          (userId, Set(queryString))
+          uselonrId <- uselonrIdFromBlelonndelonrAdaptivelonScribelonLog(scribelonLog)
+          // filtelonr out loggelond out selonarch quelonrielons
+          if uselonrId != 0
+          quelonryString <- scribelonLog.relonquelonstLog.flatMap(_.relonquelonst).flatMap(_.rawQuelonry)
+        } yielonld {
+          (uselonrId, Selont(quelonryString))
         }
       })
-      // if a user searches for the same query multiple times, there could be duplicates.
-      // De-dup them to get the distinct queries searched by a user
-      .sumByKey
+      // if a uselonr selonarchelons for thelon samelon quelonry multiplelon timelons, thelonrelon could belon duplicatelons.
+      // Delon-dup thelonm to gelont thelon distinct quelonrielons selonarchelond by a uselonr
+      .sumByKelony
       .flatMap {
-        case (userId, distinctQuerySet) =>
-          distinctQuerySet.map { query =>
-            (userId, query)
+        caselon (uselonrId, distinctQuelonrySelont) =>
+          distinctQuelonrySelont.map { quelonry =>
+            (uselonrId, quelonry)
           }
       }
   }
 
-  private def userIdFromBlenderAdaptiveScribeLog(
-    blenderAdaptiveLog: AdaptiveSearchScribeLog
+  privatelon delonf uselonrIdFromBlelonndelonrAdaptivelonScribelonLog(
+    blelonndelonrAdaptivelonLog: AdaptivelonSelonarchScribelonLog
   ): Option[Long] = {
-    blenderAdaptiveLog.versionedCommonHeader match {
-      case VersionedCommonHeader.CommonHeader(CommonHeader.ServerHeader(serverHeader)) =>
-        serverHeader.requestInfo match {
-          case Some(requestInfo) => requestInfo.ids.get(IdType.UserId).map(_.toLong)
-          case _ => None
+    blelonndelonrAdaptivelonLog.velonrsionelondCommonHelonadelonr match {
+      caselon VelonrsionelondCommonHelonadelonr.CommonHelonadelonr(CommonHelonadelonr.SelonrvelonrHelonadelonr(selonrvelonrHelonadelonr)) =>
+        selonrvelonrHelonadelonr.relonquelonstInfo match {
+          caselon Somelon(relonquelonstInfo) => relonquelonstInfo.ids.gelont(IdTypelon.UselonrId).map(_.toLong)
+          caselon _ => Nonelon
         }
-      case _ => None
+      caselon _ => Nonelon
     }
   }
 

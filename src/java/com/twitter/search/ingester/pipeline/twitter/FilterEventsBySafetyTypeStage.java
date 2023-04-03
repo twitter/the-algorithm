@@ -1,278 +1,278 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
+import java.util.concurrelonnt.TimelonUnit;
 import javax.annotation.Nonnull;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelondTypelons;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchDelayStats;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.ingester.model.IngesterTweetEvent;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
-import com.twitter.tweetypie.thriftjava.Tweet;
-import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
-import com.twitter.tweetypie.thriftjava.TweetEvent;
-import com.twitter.tweetypie.thriftjava.TweetEventData;
-import com.twitter.tweetypie.thriftjava.TweetEventFlags;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchDelonlayStats;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwelonelontelonvelonnt;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonRuntimelonelonxcelonption;
+import com.twittelonr.twelonelontypielon.thriftjava.Twelonelont;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontCrelonatelonelonvelonnt;
+import com.twittelonr.twelonelontypielon.thriftjava.Twelonelontelonvelonnt;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontelonvelonntData;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontelonvelonntFlags;
 
 /**
- * Only lets through the create events that match the specified safety type.
- * Also lets through all delete events.
+ * Only lelonts through thelon crelonatelon elonvelonnts that match thelon speloncifielond safelonty typelon.
+ * Also lelonts through all delonlelontelon elonvelonnts.
  */
-@ConsumedTypes(IngesterTweetEvent.class)
-@ProducedTypes(IngesterTweetEvent.class)
-public class FilterEventsBySafetyTypeStage extends TwitterBaseStage
-        <IngesterTweetEvent, IngesterTweetEvent> {
-  private static final Logger LOG = LoggerFactory.getLogger(FilterEventsBySafetyTypeStage.class);
+@ConsumelondTypelons(IngelonstelonrTwelonelontelonvelonnt.class)
+@ProducelondTypelons(IngelonstelonrTwelonelontelonvelonnt.class)
+public class FiltelonrelonvelonntsBySafelontyTypelonStagelon elonxtelonnds TwittelonrBaselonStagelon
+        <IngelonstelonrTwelonelontelonvelonnt, IngelonstelonrTwelonelontelonvelonnt> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(FiltelonrelonvelonntsBySafelontyTypelonStagelon.class);
 
-  private SearchCounter totalEventsCount;
-  private SearchCounter createEventsCount;
-  private SearchCounter createPublicEventsCount;
-  private SearchCounter createProtectedEventsCount;
-  private SearchCounter createRestrictedEventsCount;
-  private SearchCounter createInvalidSafetyTypeCount;
-  private SearchCounter deleteEventsCount;
-  private SearchCounter deletePublicEventsCount;
-  private SearchCounter deleteProtectedEventsCount;
-  private SearchCounter deleteRestrictedEventsCount;
-  private SearchCounter deleteInvalidSafetyTypeCount;
-  private SearchCounter otherEventsCount;
+  privatelon SelonarchCountelonr totalelonvelonntsCount;
+  privatelon SelonarchCountelonr crelonatelonelonvelonntsCount;
+  privatelon SelonarchCountelonr crelonatelonPublicelonvelonntsCount;
+  privatelon SelonarchCountelonr crelonatelonProtelonctelondelonvelonntsCount;
+  privatelon SelonarchCountelonr crelonatelonRelonstrictelondelonvelonntsCount;
+  privatelon SelonarchCountelonr crelonatelonInvalidSafelontyTypelonCount;
+  privatelon SelonarchCountelonr delonlelontelonelonvelonntsCount;
+  privatelon SelonarchCountelonr delonlelontelonPublicelonvelonntsCount;
+  privatelon SelonarchCountelonr delonlelontelonProtelonctelondelonvelonntsCount;
+  privatelon SelonarchCountelonr delonlelontelonRelonstrictelondelonvelonntsCount;
+  privatelon SelonarchCountelonr delonlelontelonInvalidSafelontyTypelonCount;
+  privatelon SelonarchCountelonr othelonrelonvelonntsCount;
 
-  private SearchDelayStats tweetCreateDelayStats;
+  privatelon SelonarchDelonlayStats twelonelontCrelonatelonDelonlayStats;
 
-  private long tweetCreateLatencyLogThresholdMillis = -1;
-  private SafetyType safetyType = null;
-  private Map<String, Map<String, SearchCounter>> invalidSafetyTypeByEventTypeStatMap =
-          new ConcurrentHashMap<>();
+  privatelon long twelonelontCrelonatelonLatelonncyLogThrelonsholdMillis = -1;
+  privatelon SafelontyTypelon safelontyTypelon = null;
+  privatelon Map<String, Map<String, SelonarchCountelonr>> invalidSafelontyTypelonByelonvelonntTypelonStatMap =
+          nelonw ConcurrelonntHashMap<>();
 
-  public FilterEventsBySafetyTypeStage() { }
+  public FiltelonrelonvelonntsBySafelontyTypelonStagelon() { }
 
-  public FilterEventsBySafetyTypeStage(String safetyType, long tweetCreateLatencyThresholdMillis) {
-    setSafetyType(safetyType);
-    this.tweetCreateLatencyLogThresholdMillis = tweetCreateLatencyThresholdMillis;
+  public FiltelonrelonvelonntsBySafelontyTypelonStagelon(String safelontyTypelon, long twelonelontCrelonatelonLatelonncyThrelonsholdMillis) {
+    selontSafelontyTypelon(safelontyTypelon);
+    this.twelonelontCrelonatelonLatelonncyLogThrelonsholdMillis = twelonelontCrelonatelonLatelonncyThrelonsholdMillis;
   }
 
   /**
-   * To be called by XML config. Can be made private after we delete ACP code.
+   * To belon callelond by XML config. Can belon madelon privatelon aftelonr welon delonlelontelon ACP codelon.
    */
-  public void setSafetyType(@Nonnull String safetyTypeString) {
-    this.safetyType = SafetyType.valueOf(safetyTypeString);
-    if (this.safetyType == SafetyType.INVALID) {
-      throw new UnsupportedOperationException(
-              "Can't create a stage that permits 'INVALID' safetytypes");
+  public void selontSafelontyTypelon(@Nonnull String safelontyTypelonString) {
+    this.safelontyTypelon = SafelontyTypelon.valuelonOf(safelontyTypelonString);
+    if (this.safelontyTypelon == SafelontyTypelon.INVALID) {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(
+              "Can't crelonatelon a stagelon that pelonrmits 'INVALID' safelontytypelons");
     }
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    innerSetupStats();
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
+    innelonrSelontupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    totalEventsCount = SearchCounter.export(getStageNamePrefix() + "_total_events_count");
-    createEventsCount = SearchCounter.export(getStageNamePrefix() + "_create_events_count");
-    createPublicEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_public_events_count");
-    createProtectedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_protected_events_count");
-    createRestrictedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_restricted_events_count");
-    createInvalidSafetyTypeCount =
-            SearchCounter.export(getStageNamePrefix() + "_create_missing_or_unknown_safetytype");
-    deleteEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_events_count");
-    deletePublicEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_public_events_count");
-    deleteProtectedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_protected_events_count");
-    deleteRestrictedEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_restricted_events_count");
-    deleteInvalidSafetyTypeCount =
-            SearchCounter.export(getStageNamePrefix() + "_delete_missing_or_unknown_safetytype");
-    otherEventsCount =
-            SearchCounter.export(getStageNamePrefix() + "_other_events_count");
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    totalelonvelonntsCount = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_total_elonvelonnts_count");
+    crelonatelonelonvelonntsCount = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_crelonatelon_elonvelonnts_count");
+    crelonatelonPublicelonvelonntsCount =
+            SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_crelonatelon_public_elonvelonnts_count");
+    crelonatelonProtelonctelondelonvelonntsCount =
+            SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_crelonatelon_protelonctelond_elonvelonnts_count");
+    crelonatelonRelonstrictelondelonvelonntsCount =
+            SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_crelonatelon_relonstrictelond_elonvelonnts_count");
+    crelonatelonInvalidSafelontyTypelonCount =
+            SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_crelonatelon_missing_or_unknown_safelontytypelon");
+    delonlelontelonelonvelonntsCount =
+            SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_delonlelontelon_elonvelonnts_count");
+    delonlelontelonPublicelonvelonntsCount =
+            SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_delonlelontelon_public_elonvelonnts_count");
+    delonlelontelonProtelonctelondelonvelonntsCount =
+            SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_delonlelontelon_protelonctelond_elonvelonnts_count");
+    delonlelontelonRelonstrictelondelonvelonntsCount =
+            SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_delonlelontelon_relonstrictelond_elonvelonnts_count");
+    delonlelontelonInvalidSafelontyTypelonCount =
+            SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_delonlelontelon_missing_or_unknown_safelontytypelon");
+    othelonrelonvelonntsCount =
+            SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_othelonr_elonvelonnts_count");
 
-    tweetCreateDelayStats = SearchDelayStats.export(
-            "create_histogram_" + getStageNamePrefix(), 90,
-            TimeUnit.SECONDS, TimeUnit.MILLISECONDS);
+    twelonelontCrelonatelonDelonlayStats = SelonarchDelonlayStats.elonxport(
+            "crelonatelon_histogram_" + gelontStagelonNamelonPrelonfix(), 90,
+            TimelonUnit.SelonCONDS, TimelonUnit.MILLISelonCONDS);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (obj instanceof IngesterTweetEvent) {
-      IngesterTweetEvent tweetEvent = (IngesterTweetEvent) obj;
-      if (tryToRecordCreateLatency(tweetEvent)) {
-        emitAndCount(tweetEvent);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (obj instancelonof IngelonstelonrTwelonelontelonvelonnt) {
+      IngelonstelonrTwelonelontelonvelonnt twelonelontelonvelonnt = (IngelonstelonrTwelonelontelonvelonnt) obj;
+      if (tryToReloncordCrelonatelonLatelonncy(twelonelontelonvelonnt)) {
+        elonmitAndCount(twelonelontelonvelonnt);
       }
-    } else {
-      throw new StageException(this, "Object is not a IngesterTweetEvent: " + obj);
+    } elonlselon {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not a IngelonstelonrTwelonelontelonvelonnt: " + obj);
     }
   }
 
-  @Override
-  protected IngesterTweetEvent innerRunStageV2(IngesterTweetEvent tweetEvent) {
-    if (!tryToRecordCreateLatency(tweetEvent)) {
-      throw new PipelineStageRuntimeException("Event does not have to pass to the next stage.");
+  @Ovelonrridelon
+  protelonctelond IngelonstelonrTwelonelontelonvelonnt innelonrRunStagelonV2(IngelonstelonrTwelonelontelonvelonnt twelonelontelonvelonnt) {
+    if (!tryToReloncordCrelonatelonLatelonncy(twelonelontelonvelonnt)) {
+      throw nelonw PipelonlinelonStagelonRuntimelonelonxcelonption("elonvelonnt doelons not havelon to pass to thelon nelonxt stagelon.");
     }
-    return tweetEvent;
+    relonturn twelonelontelonvelonnt;
   }
 
-  private boolean tryToRecordCreateLatency(IngesterTweetEvent tweetEvent) {
-    incrementCounters(tweetEvent);
-    boolean shouldEmit = shouldEmit(tweetEvent);
-    if (shouldEmit) {
-      if (isCreateEvent(tweetEvent.getData())) {
-        recordCreateLatency(tweetEvent.getData().getTweet_create_event());
-      }
-    }
-    return shouldEmit;
-  }
-
-  private void incrementCounters(@Nonnull TweetEvent tweetEvent) {
-    totalEventsCount.increment();
-    SafetyType eventSafetyType = getEventSafetyType(tweetEvent);
-
-    if (isCreateEvent(tweetEvent.getData())) {
-      createEventsCount.increment();
-      switch (eventSafetyType) {
-        case PUBLIC:
-          createPublicEventsCount.increment();
-          break;
-        case PROTECTED:
-          createProtectedEventsCount.increment();
-          break;
-        case RESTRICTED:
-          createRestrictedEventsCount.increment();
-          break;
-        default:
-          createInvalidSafetyTypeCount.increment();
-          incrementInvalidSafetyTypeStatMap(tweetEvent, "create");
-      }
-    } else if (isDeleteEvent(tweetEvent.getData())) {
-      deleteEventsCount.increment();
-      switch (eventSafetyType) {
-        case PUBLIC:
-          deletePublicEventsCount.increment();
-          break;
-        case PROTECTED:
-          deleteProtectedEventsCount.increment();
-          break;
-        case RESTRICTED:
-          deleteRestrictedEventsCount.increment();
-          break;
-        default:
-          deleteInvalidSafetyTypeCount.increment();
-          incrementInvalidSafetyTypeStatMap(tweetEvent, "delete");
-      }
-    } else {
-      otherEventsCount.increment();
-    }
-  }
-
-  private void incrementInvalidSafetyTypeStatMap(TweetEvent tweetEvent, String eventType) {
-    com.twitter.tweetypie.thriftjava.SafetyType thriftSafetyType =
-            tweetEvent.getFlags().getSafety_type();
-    String safetyTypeString =
-            thriftSafetyType == null ? "null" : thriftSafetyType.toString().toLowerCase();
-    invalidSafetyTypeByEventTypeStatMap.putIfAbsent(eventType, new ConcurrentHashMap<>());
-    SearchCounter stat = invalidSafetyTypeByEventTypeStatMap.get(eventType).computeIfAbsent(
-            safetyTypeString,
-            safetyTypeStr -> SearchCounter.export(
-                    getStageNamePrefix()
-                            + String.format("_%s_missing_or_unknown_safetytype_%s",
-                            eventType, safetyTypeStr)));
-    stat.increment();
-  }
-
-  @VisibleForTesting
-  boolean shouldEmit(@Nonnull TweetEvent tweetEvent) {
-    // Do not emit any undelete events.
-    if (isUndeleteEvent(tweetEvent.getData())) {
-      return false;
-    }
-
-    SafetyType eventSafetyType = getEventSafetyType(tweetEvent);
-    // Custom logic for REALTIME_CG cluster
-    if (safetyType == SafetyType.PUBLIC_OR_PROTECTED) {
-      return eventSafetyType == SafetyType.PUBLIC || eventSafetyType == SafetyType.PROTECTED;
-    } else {
-      return eventSafetyType == safetyType;
-    }
-  }
-
-  private SafetyType getEventSafetyType(@Nonnull TweetEvent tweetEvent) {
-    TweetEventFlags tweetEventFlags = tweetEvent.getFlags();
-    return SafetyType.fromThriftSafetyType(tweetEventFlags.getSafety_type());
-  }
-
-  private boolean isCreateEvent(@Nonnull TweetEventData tweetEventData) {
-    return tweetEventData.isSet(TweetEventData._Fields.TWEET_CREATE_EVENT);
-  }
-
-  private boolean isDeleteEvent(@Nonnull TweetEventData tweetEventData) {
-    return tweetEventData.isSet(TweetEventData._Fields.TWEET_DELETE_EVENT);
-  }
-
-  private boolean isUndeleteEvent(@Nonnull TweetEventData tweetEventData) {
-    return tweetEventData.isSet(TweetEventData._Fields.TWEET_UNDELETE_EVENT);
-  }
-
-  private void recordCreateLatency(TweetCreateEvent tweetCreateEvent) {
-    Tweet tweet = tweetCreateEvent.getTweet();
-    if (tweet != null) {
-      long tweetCreateLatency =
-              clock.nowMillis() - SnowflakeIdParser.getTimestampFromTweetId(tweet.getId());
-      tweetCreateDelayStats.recordLatency(tweetCreateLatency, TimeUnit.MILLISECONDS);
-      if (tweetCreateLatency < 0) {
-        LOG.warn("Received a tweet created in the future: {}", tweet);
-      } else if (tweetCreateLatencyLogThresholdMillis > 0
-              && tweetCreateLatency > tweetCreateLatencyLogThresholdMillis) {
-        LOG.debug("Found late incoming tweet: {}. Create latency: {}ms. Tweet: {}",
-                tweet.getId(), tweetCreateLatency, tweet);
+  privatelon boolelonan tryToReloncordCrelonatelonLatelonncy(IngelonstelonrTwelonelontelonvelonnt twelonelontelonvelonnt) {
+    increlonmelonntCountelonrs(twelonelontelonvelonnt);
+    boolelonan shouldelonmit = shouldelonmit(twelonelontelonvelonnt);
+    if (shouldelonmit) {
+      if (isCrelonatelonelonvelonnt(twelonelontelonvelonnt.gelontData())) {
+        reloncordCrelonatelonLatelonncy(twelonelontelonvelonnt.gelontData().gelontTwelonelont_crelonatelon_elonvelonnt());
       }
     }
+    relonturn shouldelonmit;
   }
 
-  public void setTweetCreateLatencyLogThresholdMillis(long tweetCreateLatencyLogThresholdMillis) {
-    LOG.info("Setting tweetCreateLatencyLogThresholdMillis to {}.",
-            tweetCreateLatencyLogThresholdMillis);
-    this.tweetCreateLatencyLogThresholdMillis = tweetCreateLatencyLogThresholdMillis;
+  privatelon void increlonmelonntCountelonrs(@Nonnull Twelonelontelonvelonnt twelonelontelonvelonnt) {
+    totalelonvelonntsCount.increlonmelonnt();
+    SafelontyTypelon elonvelonntSafelontyTypelon = gelontelonvelonntSafelontyTypelon(twelonelontelonvelonnt);
+
+    if (isCrelonatelonelonvelonnt(twelonelontelonvelonnt.gelontData())) {
+      crelonatelonelonvelonntsCount.increlonmelonnt();
+      switch (elonvelonntSafelontyTypelon) {
+        caselon PUBLIC:
+          crelonatelonPublicelonvelonntsCount.increlonmelonnt();
+          brelonak;
+        caselon PROTelonCTelonD:
+          crelonatelonProtelonctelondelonvelonntsCount.increlonmelonnt();
+          brelonak;
+        caselon RelonSTRICTelonD:
+          crelonatelonRelonstrictelondelonvelonntsCount.increlonmelonnt();
+          brelonak;
+        delonfault:
+          crelonatelonInvalidSafelontyTypelonCount.increlonmelonnt();
+          increlonmelonntInvalidSafelontyTypelonStatMap(twelonelontelonvelonnt, "crelonatelon");
+      }
+    } elonlselon if (isDelonlelontelonelonvelonnt(twelonelontelonvelonnt.gelontData())) {
+      delonlelontelonelonvelonntsCount.increlonmelonnt();
+      switch (elonvelonntSafelontyTypelon) {
+        caselon PUBLIC:
+          delonlelontelonPublicelonvelonntsCount.increlonmelonnt();
+          brelonak;
+        caselon PROTelonCTelonD:
+          delonlelontelonProtelonctelondelonvelonntsCount.increlonmelonnt();
+          brelonak;
+        caselon RelonSTRICTelonD:
+          delonlelontelonRelonstrictelondelonvelonntsCount.increlonmelonnt();
+          brelonak;
+        delonfault:
+          delonlelontelonInvalidSafelontyTypelonCount.increlonmelonnt();
+          increlonmelonntInvalidSafelontyTypelonStatMap(twelonelontelonvelonnt, "delonlelontelon");
+      }
+    } elonlselon {
+      othelonrelonvelonntsCount.increlonmelonnt();
+    }
   }
 
-  public enum SafetyType {
+  privatelon void increlonmelonntInvalidSafelontyTypelonStatMap(Twelonelontelonvelonnt twelonelontelonvelonnt, String elonvelonntTypelon) {
+    com.twittelonr.twelonelontypielon.thriftjava.SafelontyTypelon thriftSafelontyTypelon =
+            twelonelontelonvelonnt.gelontFlags().gelontSafelonty_typelon();
+    String safelontyTypelonString =
+            thriftSafelontyTypelon == null ? "null" : thriftSafelontyTypelon.toString().toLowelonrCaselon();
+    invalidSafelontyTypelonByelonvelonntTypelonStatMap.putIfAbselonnt(elonvelonntTypelon, nelonw ConcurrelonntHashMap<>());
+    SelonarchCountelonr stat = invalidSafelontyTypelonByelonvelonntTypelonStatMap.gelont(elonvelonntTypelon).computelonIfAbselonnt(
+            safelontyTypelonString,
+            safelontyTypelonStr -> SelonarchCountelonr.elonxport(
+                    gelontStagelonNamelonPrelonfix()
+                            + String.format("_%s_missing_or_unknown_safelontytypelon_%s",
+                            elonvelonntTypelon, safelontyTypelonStr)));
+    stat.increlonmelonnt();
+  }
+
+  @VisiblelonForTelonsting
+  boolelonan shouldelonmit(@Nonnull Twelonelontelonvelonnt twelonelontelonvelonnt) {
+    // Do not elonmit any undelonlelontelon elonvelonnts.
+    if (isUndelonlelontelonelonvelonnt(twelonelontelonvelonnt.gelontData())) {
+      relonturn falselon;
+    }
+
+    SafelontyTypelon elonvelonntSafelontyTypelon = gelontelonvelonntSafelontyTypelon(twelonelontelonvelonnt);
+    // Custom logic for RelonALTIMelon_CG clustelonr
+    if (safelontyTypelon == SafelontyTypelon.PUBLIC_OR_PROTelonCTelonD) {
+      relonturn elonvelonntSafelontyTypelon == SafelontyTypelon.PUBLIC || elonvelonntSafelontyTypelon == SafelontyTypelon.PROTelonCTelonD;
+    } elonlselon {
+      relonturn elonvelonntSafelontyTypelon == safelontyTypelon;
+    }
+  }
+
+  privatelon SafelontyTypelon gelontelonvelonntSafelontyTypelon(@Nonnull Twelonelontelonvelonnt twelonelontelonvelonnt) {
+    TwelonelontelonvelonntFlags twelonelontelonvelonntFlags = twelonelontelonvelonnt.gelontFlags();
+    relonturn SafelontyTypelon.fromThriftSafelontyTypelon(twelonelontelonvelonntFlags.gelontSafelonty_typelon());
+  }
+
+  privatelon boolelonan isCrelonatelonelonvelonnt(@Nonnull TwelonelontelonvelonntData twelonelontelonvelonntData) {
+    relonturn twelonelontelonvelonntData.isSelont(TwelonelontelonvelonntData._Fielonlds.TWelonelonT_CRelonATelon_elonVelonNT);
+  }
+
+  privatelon boolelonan isDelonlelontelonelonvelonnt(@Nonnull TwelonelontelonvelonntData twelonelontelonvelonntData) {
+    relonturn twelonelontelonvelonntData.isSelont(TwelonelontelonvelonntData._Fielonlds.TWelonelonT_DelonLelonTelon_elonVelonNT);
+  }
+
+  privatelon boolelonan isUndelonlelontelonelonvelonnt(@Nonnull TwelonelontelonvelonntData twelonelontelonvelonntData) {
+    relonturn twelonelontelonvelonntData.isSelont(TwelonelontelonvelonntData._Fielonlds.TWelonelonT_UNDelonLelonTelon_elonVelonNT);
+  }
+
+  privatelon void reloncordCrelonatelonLatelonncy(TwelonelontCrelonatelonelonvelonnt twelonelontCrelonatelonelonvelonnt) {
+    Twelonelont twelonelont = twelonelontCrelonatelonelonvelonnt.gelontTwelonelont();
+    if (twelonelont != null) {
+      long twelonelontCrelonatelonLatelonncy =
+              clock.nowMillis() - SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(twelonelont.gelontId());
+      twelonelontCrelonatelonDelonlayStats.reloncordLatelonncy(twelonelontCrelonatelonLatelonncy, TimelonUnit.MILLISelonCONDS);
+      if (twelonelontCrelonatelonLatelonncy < 0) {
+        LOG.warn("Reloncelonivelond a twelonelont crelonatelond in thelon futurelon: {}", twelonelont);
+      } elonlselon if (twelonelontCrelonatelonLatelonncyLogThrelonsholdMillis > 0
+              && twelonelontCrelonatelonLatelonncy > twelonelontCrelonatelonLatelonncyLogThrelonsholdMillis) {
+        LOG.delonbug("Found latelon incoming twelonelont: {}. Crelonatelon latelonncy: {}ms. Twelonelont: {}",
+                twelonelont.gelontId(), twelonelontCrelonatelonLatelonncy, twelonelont);
+      }
+    }
+  }
+
+  public void selontTwelonelontCrelonatelonLatelonncyLogThrelonsholdMillis(long twelonelontCrelonatelonLatelonncyLogThrelonsholdMillis) {
+    LOG.info("Selontting twelonelontCrelonatelonLatelonncyLogThrelonsholdMillis to {}.",
+            twelonelontCrelonatelonLatelonncyLogThrelonsholdMillis);
+    this.twelonelontCrelonatelonLatelonncyLogThrelonsholdMillis = twelonelontCrelonatelonLatelonncyLogThrelonsholdMillis;
+  }
+
+  public elonnum SafelontyTypelon {
     PUBLIC,
-    PROTECTED,
-    RESTRICTED,
-    PUBLIC_OR_PROTECTED,
+    PROTelonCTelonD,
+    RelonSTRICTelonD,
+    PUBLIC_OR_PROTelonCTelonD,
     INVALID;
 
-    /** Converts a tweetypie SafetyType instance to an instance of this enum. */
+    /** Convelonrts a twelonelontypielon SafelontyTypelon instancelon to an instancelon of this elonnum. */
     @Nonnull
-    public static SafetyType fromThriftSafetyType(
-            com.twitter.tweetypie.thriftjava.SafetyType safetyType) {
-      if (safetyType == null) {
-        return INVALID;
+    public static SafelontyTypelon fromThriftSafelontyTypelon(
+            com.twittelonr.twelonelontypielon.thriftjava.SafelontyTypelon safelontyTypelon) {
+      if (safelontyTypelon == null) {
+        relonturn INVALID;
       }
-      switch(safetyType) {
-        case PRIVATE:
-          return PROTECTED;
-        case PUBLIC:
-          return PUBLIC;
-        case RESTRICTED:
-          return RESTRICTED;
-        default:
-          return INVALID;
+      switch(safelontyTypelon) {
+        caselon PRIVATelon:
+          relonturn PROTelonCTelonD;
+        caselon PUBLIC:
+          relonturn PUBLIC;
+        caselon RelonSTRICTelonD:
+          relonturn RelonSTRICTelonD;
+        delonfault:
+          relonturn INVALID;
       }
     }
   }

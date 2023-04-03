@@ -1,50 +1,50 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.DmConversationLastReadableEventIdIsValid
-import com.twitter.visibility.rules.Condition.DmConversationTimelineIsEmpty
-import com.twitter.visibility.rules.Condition.ViewerIsDmConversationParticipant
-import com.twitter.visibility.rules.Condition.DmConversationInfoExists
-import com.twitter.visibility.rules.Condition.DmConversationTimelineExists
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.DeactivatedAuthor
-import com.twitter.visibility.rules.Condition.ErasedAuthor
-import com.twitter.visibility.rules.Condition.OneToOneDmConversation
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.SuspendedAuthor
-import com.twitter.visibility.rules.Reason.Unspecified
+import com.twittelonr.visibility.configapi.params.RulelonParams
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.DmConvelonrsationLastRelonadablelonelonvelonntIdIsValid
+import com.twittelonr.visibility.rulelons.Condition.DmConvelonrsationTimelonlinelonIselonmpty
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrIsDmConvelonrsationParticipant
+import com.twittelonr.visibility.rulelons.Condition.DmConvelonrsationInfoelonxists
+import com.twittelonr.visibility.rulelons.Condition.DmConvelonrsationTimelonlinelonelonxists
+import com.twittelonr.visibility.rulelons.Condition.Not
+import com.twittelonr.visibility.rulelons.Condition.DelonactivatelondAuthor
+import com.twittelonr.visibility.rulelons.Condition.elonraselondAuthor
+import com.twittelonr.visibility.rulelons.Condition.OnelonToOnelonDmConvelonrsation
+import com.twittelonr.visibility.rulelons.Condition.Or
+import com.twittelonr.visibility.rulelons.Condition.SuspelonndelondAuthor
+import com.twittelonr.visibility.rulelons.Relonason.Unspeloncifielond
 
-object DmConversationRules {
+objelonct DmConvelonrsationRulelons {
 
-  object DropEmptyDmConversationRule
-      extends RuleWithConstantAction(
-        Drop(Unspecified),
+  objelonct DropelonmptyDmConvelonrsationRulelon
+      elonxtelonnds RulelonWithConstantAction(
+        Drop(Unspeloncifielond),
         Or(
-          Not(DmConversationLastReadableEventIdIsValid),
-          And(OneToOneDmConversation, DmConversationTimelineIsEmpty))) {
-    override def enableFailClosed = Seq(RuleParams.True)
+          Not(DmConvelonrsationLastRelonadablelonelonvelonntIdIsValid),
+          And(OnelonToOnelonDmConvelonrsation, DmConvelonrsationTimelonlinelonIselonmpty))) {
+    ovelonrridelon delonf elonnablelonFailCloselond = Selonq(RulelonParams.Truelon)
   }
 
-  object DropInaccessibleDmConversationRule
-      extends RuleWithConstantAction(Drop(Unspecified), Not(ViewerIsDmConversationParticipant)) {
-    override def enableFailClosed = Seq(RuleParams.True)
+  objelonct DropInaccelonssiblelonDmConvelonrsationRulelon
+      elonxtelonnds RulelonWithConstantAction(Drop(Unspeloncifielond), Not(VielonwelonrIsDmConvelonrsationParticipant)) {
+    ovelonrridelon delonf elonnablelonFailCloselond = Selonq(RulelonParams.Truelon)
   }
 
-  object DropDmConversationWithUndefinedConversationInfoRule
-      extends RuleWithConstantAction(Drop(Unspecified), Not(DmConversationInfoExists)) {
-    override def enableFailClosed = Seq(RuleParams.True)
+  objelonct DropDmConvelonrsationWithUndelonfinelondConvelonrsationInfoRulelon
+      elonxtelonnds RulelonWithConstantAction(Drop(Unspeloncifielond), Not(DmConvelonrsationInfoelonxists)) {
+    ovelonrridelon delonf elonnablelonFailCloselond = Selonq(RulelonParams.Truelon)
   }
 
-  object DropDmConversationWithUndefinedConversationTimelineRule
-      extends RuleWithConstantAction(Drop(Unspecified), Not(DmConversationTimelineExists)) {
-    override def enableFailClosed = Seq(RuleParams.True)
+  objelonct DropDmConvelonrsationWithUndelonfinelondConvelonrsationTimelonlinelonRulelon
+      elonxtelonnds RulelonWithConstantAction(Drop(Unspeloncifielond), Not(DmConvelonrsationTimelonlinelonelonxists)) {
+    ovelonrridelon delonf elonnablelonFailCloselond = Selonq(RulelonParams.Truelon)
   }
 
-  object DropOneToOneDmConversationWithUnavailableParticipantsRule
-      extends RuleWithConstantAction(
-        Drop(Unspecified),
-        And(OneToOneDmConversation, Or(SuspendedAuthor, DeactivatedAuthor, ErasedAuthor))) {
-    override def enableFailClosed = Seq(RuleParams.True)
+  objelonct DropOnelonToOnelonDmConvelonrsationWithUnavailablelonParticipantsRulelon
+      elonxtelonnds RulelonWithConstantAction(
+        Drop(Unspeloncifielond),
+        And(OnelonToOnelonDmConvelonrsation, Or(SuspelonndelondAuthor, DelonactivatelondAuthor, elonraselondAuthor))) {
+    ovelonrridelon delonf elonnablelonFailCloselond = Selonq(RulelonParams.Truelon)
   }
 }

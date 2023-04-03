@@ -1,107 +1,107 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.representation_manager.thriftscala.SimClustersEmbeddingView
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import javax.inject.Named
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.simclusters_v2.thriftscala.{SimClustersEmbedding => ThriftSimClustersEmbedding}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.relonprelonselonntation_managelonr.thriftscala.SimClustelonrselonmbelonddingVielonw
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import javax.injelonct.Namelond
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.{SimClustelonrselonmbelondding => ThriftSimClustelonrselonmbelondding}
 
-object RepresentationManagerModule extends TwitterModule {
-  private val ColPathPrefix = "recommendations/representation_manager/"
-  private val SimclustersTweetColPath = ColPathPrefix + "simClustersEmbedding.Tweet"
-  private val SimclustersUserColPath = ColPathPrefix + "simClustersEmbedding.User"
+objelonct RelonprelonselonntationManagelonrModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon val ColPathPrelonfix = "reloncommelonndations/relonprelonselonntation_managelonr/"
+  privatelon val SimclustelonrsTwelonelontColPath = ColPathPrelonfix + "simClustelonrselonmbelondding.Twelonelont"
+  privatelon val SimclustelonrsUselonrColPath = ColPathPrelonfix + "simClustelonrselonmbelondding.Uselonr"
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RmsTweetLogFavLongestL2EmbeddingStore)
-  def providesRepresentationManagerTweetStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[TweetId, SimClustersEmbedding] = {
-    ObservedReadableStore(
-      StratoFetchableStore
-        .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-          stratoClient,
-          SimclustersTweetColPath,
-          SimClustersEmbeddingView(
-            EmbeddingType.LogFavLongestL2EmbeddingTweet,
-            ModelVersion.Model20m145k2020))
-        .mapValues(SimClustersEmbedding(_)))(
-      statsReceiver.scope("rms_tweet_log_fav_longest_l2_store"))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.RmsTwelonelontLogFavLongelonstL2elonmbelonddingStorelon)
+  delonf providelonsRelonprelonselonntationManagelonrTwelonelontStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    stratoClielonnt: StratoClielonnt,
+  ): RelonadablelonStorelon[TwelonelontId, SimClustelonrselonmbelondding] = {
+    ObselonrvelondRelonadablelonStorelon(
+      StratoFelontchablelonStorelon
+        .withVielonw[Long, SimClustelonrselonmbelonddingVielonw, ThriftSimClustelonrselonmbelondding](
+          stratoClielonnt,
+          SimclustelonrsTwelonelontColPath,
+          SimClustelonrselonmbelonddingVielonw(
+            elonmbelonddingTypelon.LogFavLongelonstL2elonmbelonddingTwelonelont,
+            ModelonlVelonrsion.Modelonl20m145k2020))
+        .mapValuelons(SimClustelonrselonmbelondding(_)))(
+      statsReloncelonivelonr.scopelon("rms_twelonelont_log_fav_longelonst_l2_storelon"))
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RmsUserFavBasedProducerEmbeddingStore)
-  def providesRepresentationManagerUserFavBasedProducerEmbeddingStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[UserId, SimClustersEmbedding] = {
-    ObservedReadableStore(
-      StratoFetchableStore
-        .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-          stratoClient,
-          SimclustersUserColPath,
-          SimClustersEmbeddingView(
-            EmbeddingType.FavBasedProducer,
-            ModelVersion.Model20m145k2020
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.RmsUselonrFavBaselondProducelonrelonmbelonddingStorelon)
+  delonf providelonsRelonprelonselonntationManagelonrUselonrFavBaselondProducelonrelonmbelonddingStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    stratoClielonnt: StratoClielonnt,
+  ): RelonadablelonStorelon[UselonrId, SimClustelonrselonmbelondding] = {
+    ObselonrvelondRelonadablelonStorelon(
+      StratoFelontchablelonStorelon
+        .withVielonw[Long, SimClustelonrselonmbelonddingVielonw, ThriftSimClustelonrselonmbelondding](
+          stratoClielonnt,
+          SimclustelonrsUselonrColPath,
+          SimClustelonrselonmbelonddingVielonw(
+            elonmbelonddingTypelon.FavBaselondProducelonr,
+            ModelonlVelonrsion.Modelonl20m145k2020
           )
         )
-        .mapValues(SimClustersEmbedding(_)))(
-      statsReceiver.scope("rms_user_fav_based_producer_store"))
+        .mapValuelons(SimClustelonrselonmbelondding(_)))(
+      statsReloncelonivelonr.scopelon("rms_uselonr_fav_baselond_producelonr_storelon"))
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RmsUserLogFavInterestedInEmbeddingStore)
-  def providesRepresentationManagerUserLogFavConsumerEmbeddingStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[UserId, SimClustersEmbedding] = {
-    ObservedReadableStore(
-      StratoFetchableStore
-        .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-          stratoClient,
-          SimclustersUserColPath,
-          SimClustersEmbeddingView(
-            EmbeddingType.LogFavBasedUserInterestedIn,
-            ModelVersion.Model20m145k2020
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.RmsUselonrLogFavIntelonrelonstelondInelonmbelonddingStorelon)
+  delonf providelonsRelonprelonselonntationManagelonrUselonrLogFavConsumelonrelonmbelonddingStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    stratoClielonnt: StratoClielonnt,
+  ): RelonadablelonStorelon[UselonrId, SimClustelonrselonmbelondding] = {
+    ObselonrvelondRelonadablelonStorelon(
+      StratoFelontchablelonStorelon
+        .withVielonw[Long, SimClustelonrselonmbelonddingVielonw, ThriftSimClustelonrselonmbelondding](
+          stratoClielonnt,
+          SimclustelonrsUselonrColPath,
+          SimClustelonrselonmbelonddingVielonw(
+            elonmbelonddingTypelon.LogFavBaselondUselonrIntelonrelonstelondIn,
+            ModelonlVelonrsion.Modelonl20m145k2020
           )
         )
-        .mapValues(SimClustersEmbedding(_)))(
-      statsReceiver.scope("rms_user_log_fav_interestedin_store"))
+        .mapValuelons(SimClustelonrselonmbelondding(_)))(
+      statsReloncelonivelonr.scopelon("rms_uselonr_log_fav_intelonrelonstelondin_storelon"))
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RmsUserFollowInterestedInEmbeddingStore)
-  def providesRepresentationManagerUserFollowInterestedInEmbeddingStore(
-    statsReceiver: StatsReceiver,
-    stratoClient: StratoClient,
-  ): ReadableStore[UserId, SimClustersEmbedding] = {
-    ObservedReadableStore(
-      StratoFetchableStore
-        .withView[Long, SimClustersEmbeddingView, ThriftSimClustersEmbedding](
-          stratoClient,
-          SimclustersUserColPath,
-          SimClustersEmbeddingView(
-            EmbeddingType.FollowBasedUserInterestedIn,
-            ModelVersion.Model20m145k2020
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.RmsUselonrFollowIntelonrelonstelondInelonmbelonddingStorelon)
+  delonf providelonsRelonprelonselonntationManagelonrUselonrFollowIntelonrelonstelondInelonmbelonddingStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    stratoClielonnt: StratoClielonnt,
+  ): RelonadablelonStorelon[UselonrId, SimClustelonrselonmbelondding] = {
+    ObselonrvelondRelonadablelonStorelon(
+      StratoFelontchablelonStorelon
+        .withVielonw[Long, SimClustelonrselonmbelonddingVielonw, ThriftSimClustelonrselonmbelondding](
+          stratoClielonnt,
+          SimclustelonrsUselonrColPath,
+          SimClustelonrselonmbelonddingVielonw(
+            elonmbelonddingTypelon.FollowBaselondUselonrIntelonrelonstelondIn,
+            ModelonlVelonrsion.Modelonl20m145k2020
           )
         )
-        .mapValues(SimClustersEmbedding(_)))(
-      statsReceiver.scope("rms_user_follow_interestedin_store"))
+        .mapValuelons(SimClustelonrselonmbelondding(_)))(
+      statsReloncelonivelonr.scopelon("rms_uselonr_follow_intelonrelonstelondin_storelon"))
   }
 }

@@ -1,14 +1,14 @@
-package com.twitter.graph_feature_service.worker.handlers
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.handlelonrs
 
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import javax.inject.{Inject, Singleton}
+import com.twittelonr.finatra.thrift.routing.ThriftWarmup
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.injelonct.utils.Handlelonr
+import javax.injelonct.{Injelonct, Singlelonton}
 
-@Singleton
-class WorkerWarmupHandler @Inject() (warmup: ThriftWarmup) extends Handler with Logging {
+@Singlelonton
+class WorkelonrWarmupHandlelonr @Injelonct() (warmup: ThriftWarmup) elonxtelonnds Handlelonr with Logging {
 
-  override def handle(): Unit = {
-    info("Warmup Done!")
+  ovelonrridelon delonf handlelon(): Unit = {
+    info("Warmup Donelon!")
   }
 }

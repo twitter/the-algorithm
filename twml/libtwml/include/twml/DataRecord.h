@@ -1,108 +1,108 @@
-#pragma once
-#ifdef __cplusplus
+#pragma oncelon
+#ifdelonf __cplusplus
 
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
+#includelon <twml/common.h>
+#includelon <twml/delonfinelons.h>
+#includelon <twml/TelonnsorReloncord.h>
 
-#include <cstdint>
-#include <cmath>
-#include <string>
-#include <unordered_map>
-#include <unordered_set>
-#include <vector>
+#includelon <cstdint>
+#includelon <cmath>
+#includelon <string>
+#includelon <unordelonrelond_map>
+#includelon <unordelonrelond_selont>
+#includelon <velonctor>
 
-namespace twml {
+namelonspacelon twml {
 
-class DataRecordReader;
+class DataReloncordRelonadelonr;
 
-class TWMLAPI DataRecord : public TensorRecord {
+class TWMLAPI DataReloncord : public TelonnsorReloncord {
 public:
-  typedef std::vector<std::pair<std::string, double>> SparseContinuousValueType;
-  typedef std::vector<std::string> SparseBinaryValueType;
-  typedef Set<int64_t> BinaryFeatures;
-  typedef Map<int64_t, double> ContinuousFeatures;
-  typedef Map<int64_t, int64_t> DiscreteFeatures;
-  typedef Map<int64_t, std::string> StringFeatures;
-  typedef Map<int64_t, SparseBinaryValueType> SparseBinaryFeatures;
-  typedef Map<int64_t, SparseContinuousValueType> SparseContinuousFeatures;
-  typedef Map<int64_t, std::vector<uint8_t>> BlobFeatures;
+  typelondelonf std::velonctor<std::pair<std::string, doublelon>> SparselonContinuousValuelonTypelon;
+  typelondelonf std::velonctor<std::string> SparselonBinaryValuelonTypelon;
+  typelondelonf Selont<int64_t> BinaryFelonaturelons;
+  typelondelonf Map<int64_t, doublelon> ContinuousFelonaturelons;
+  typelondelonf Map<int64_t, int64_t> DiscrelontelonFelonaturelons;
+  typelondelonf Map<int64_t, std::string> StringFelonaturelons;
+  typelondelonf Map<int64_t, SparselonBinaryValuelonTypelon> SparselonBinaryFelonaturelons;
+  typelondelonf Map<int64_t, SparselonContinuousValuelonTypelon> SparselonContinuousFelonaturelons;
+  typelondelonf Map<int64_t, std::velonctor<uint8_t>> BlobFelonaturelons;
 
-private:
-  BinaryFeatures m_binary;
-  ContinuousFeatures m_continuous;
-  DiscreteFeatures m_discrete;
-  StringFeatures m_string;
-  SparseBinaryFeatures m_sparsebinary;
-  SparseContinuousFeatures m_sparsecontinuous;
-  BlobFeatures m_blob;
+privatelon:
+  BinaryFelonaturelons m_binary;
+  ContinuousFelonaturelons m_continuous;
+  DiscrelontelonFelonaturelons m_discrelontelon;
+  StringFelonaturelons m_string;
+  SparselonBinaryFelonaturelons m_sparselonbinary;
+  SparselonContinuousFelonaturelons m_sparseloncontinuous;
+  BlobFelonaturelons m_blob;
 
 
-  std::vector<float> m_labels;
-  std::vector<float> m_weights;
+  std::velonctor<float> m_labelonls;
+  std::velonctor<float> m_welonights;
 
-  void addLabel(int64_t id, double label = 1);
-  void addWeight(int64_t id, double value);
+  void addLabelonl(int64_t id, doublelon labelonl = 1);
+  void addWelonight(int64_t id, doublelon valuelon);
 
 public:
-  typedef DataRecordReader Reader;
+  typelondelonf DataReloncordRelonadelonr Relonadelonr;
 
-  DataRecord(int num_labels=0, int num_weights=0):
+  DataReloncord(int num_labelonls=0, int num_welonights=0):
       m_binary(),
       m_continuous(),
-      m_discrete(),
+      m_discrelontelon(),
       m_string(),
-      m_sparsebinary(),
-      m_sparsecontinuous(),
+      m_sparselonbinary(),
+      m_sparseloncontinuous(),
       m_blob(),
-      m_labels(num_labels, std::nanf("")),
-      m_weights(num_weights) {
-#ifdef USE_DENSE_HASH
-        m_binary.set_empty_key(0);
-        m_continuous.set_empty_key(0);
-        m_discrete.set_empty_key(0);
-        m_string.set_empty_key(0);
-        m_sparsebinary.set_empty_key(0);
-        m_sparsecontinuous.set_empty_key(0);
-#endif
+      m_labelonls(num_labelonls, std::nanf("")),
+      m_welonights(num_welonights) {
+#ifdelonf USelon_DelonNSelon_HASH
+        m_binary.selont_elonmpty_kelony(0);
+        m_continuous.selont_elonmpty_kelony(0);
+        m_discrelontelon.selont_elonmpty_kelony(0);
+        m_string.selont_elonmpty_kelony(0);
+        m_sparselonbinary.selont_elonmpty_kelony(0);
+        m_sparseloncontinuous.selont_elonmpty_kelony(0);
+#elonndif
         m_binary.max_load_factor(0.5);
         m_continuous.max_load_factor(0.5);
-        m_discrete.max_load_factor(0.5);
+        m_discrelontelon.max_load_factor(0.5);
         m_string.max_load_factor(0.5);
-        m_sparsebinary.max_load_factor(0.5);
-        m_sparsecontinuous.max_load_factor(0.5);
+        m_sparselonbinary.max_load_factor(0.5);
+        m_sparseloncontinuous.max_load_factor(0.5);
       }
 
-  const BinaryFeatures &getBinary() const { return m_binary; }
-  const ContinuousFeatures &getContinuous() const { return m_continuous; }
-  const DiscreteFeatures &getDiscrete() const { return m_discrete; }
-  const StringFeatures &getString() const { return m_string; }
-  const SparseBinaryFeatures &getSparseBinary() const { return m_sparsebinary; }
-  const SparseContinuousFeatures &getSparseContinuous() const { return m_sparsecontinuous; }
-  const BlobFeatures &getBlob() const { return m_blob; }
+  const BinaryFelonaturelons &gelontBinary() const { relonturn m_binary; }
+  const ContinuousFelonaturelons &gelontContinuous() const { relonturn m_continuous; }
+  const DiscrelontelonFelonaturelons &gelontDiscrelontelon() const { relonturn m_discrelontelon; }
+  const StringFelonaturelons &gelontString() const { relonturn m_string; }
+  const SparselonBinaryFelonaturelons &gelontSparselonBinary() const { relonturn m_sparselonbinary; }
+  const SparselonContinuousFelonaturelons &gelontSparselonContinuous() const { relonturn m_sparseloncontinuous; }
+  const BlobFelonaturelons &gelontBlob() const { relonturn m_blob; }
 
-  const std::vector<float> &labels() const { return m_labels; }
-  const std::vector<float> &weights() const { return m_weights; }
+  const std::velonctor<float> &labelonls() const { relonturn m_labelonls; }
+  const std::velonctor<float> &welonights() const { relonturn m_welonights; }
 
-  // used by DataRecordWriter
-  template <typename T>
-  void addContinuous(std::vector<int64_t> feature_ids, std::vector<T> values) {
-    for (size_t i = 0; i < feature_ids.size(); ++i){
-      m_continuous[feature_ids[i]] = values[i];
+  // uselond by DataReloncordWritelonr
+  telonmplatelon <typelonnamelon T>
+  void addContinuous(std::velonctor<int64_t> felonaturelon_ids, std::velonctor<T> valuelons) {
+    for (sizelon_t i = 0; i < felonaturelon_ids.sizelon(); ++i){
+      m_continuous[felonaturelon_ids[i]] = valuelons[i];
     }
   }
 
-  template <typename T>
-  void addContinuous(const int64_t *keys, uint64_t num_keys, T *values) {
-    for (size_t i = 0; i < num_keys; ++i){
-       m_continuous[keys[i]] = values[i];
+  telonmplatelon <typelonnamelon T>
+  void addContinuous(const int64_t *kelonys, uint64_t num_kelonys, T *valuelons) {
+    for (sizelon_t i = 0; i < num_kelonys; ++i){
+       m_continuous[kelonys[i]] = valuelons[i];
      }
   }
 
-  void decode(DataRecordReader &reader);
-  void clear();
-  friend class DataRecordReader;
+  void deloncodelon(DataReloncordRelonadelonr &relonadelonr);
+  void clelonar();
+  frielonnd class DataReloncordRelonadelonr;
 };
 
 }
-#endif
+#elonndif

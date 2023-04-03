@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TopicContext
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.BasicTopicContelonxtFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TopicContelonxt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TopicContextMarshaller @Inject() () {
+@Singlelonton
+class TopicContelonxtMarshallelonr @Injelonct() () {
 
-  def apply(topicContext: TopicContext): urt.SocialContext = {
-    urt.SocialContext.TopicContext(
-      urt.TopicContext(
-        topicId = topicContext.topicId,
-        functionalityType = TopicContextFunctionalityTypeMarshaller(
-          topicContext.functionalityType.getOrElse(BasicTopicContextFunctionalityType))
+  delonf apply(topicContelonxt: TopicContelonxt): urt.SocialContelonxt = {
+    urt.SocialContelonxt.TopicContelonxt(
+      urt.TopicContelonxt(
+        topicId = topicContelonxt.topicId,
+        functionalityTypelon = TopicContelonxtFunctionalityTypelonMarshallelonr(
+          topicContelonxt.functionalityTypelon.gelontOrelonlselon(BasicTopicContelonxtFunctionalityTypelon))
       )
     )
   }

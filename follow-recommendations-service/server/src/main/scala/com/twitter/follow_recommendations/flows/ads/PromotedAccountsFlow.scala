@@ -1,112 +1,112 @@
-package com.twitter.follow_recommendations.flows.ads
+packagelon com.twittelonr.follow_reloncommelonndations.flows.ads
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.EnrichedCandidateSource
-import com.twitter.follow_recommendations.common.base.IdentityRanker
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.ParamPredicate
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.RecommendationFlow
-import com.twitter.follow_recommendations.common.base.RecommendationResultsConfig
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.base.TruePredicate
-import com.twitter.follow_recommendations.common.candidate_sources.promoted_accounts.PromotedAccountsCandidateSource
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.predicates.ExcludedUserIdPredicate
-import com.twitter.follow_recommendations.common.transforms.tracking_token.TrackingTokenTransform
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.elonnrichelondCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.IdelonntityRankelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.IdelonntityTransform
+import com.twittelonr.follow_reloncommelonndations.common.baselon.ParamPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Rankelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.ReloncommelonndationFlow
+import com.twittelonr.follow_reloncommelonndations.common.baselon.ReloncommelonndationRelonsultsConfig
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Transform
+import com.twittelonr.follow_reloncommelonndations.common.baselon.TruelonPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.promotelond_accounts.PromotelondAccountsCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.elonxcludelondUselonrIdPrelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.transforms.tracking_tokelonn.TrackingTokelonnTransform
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.util.Duration
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PromotedAccountsFlow @Inject() (
-  promotedAccountsCandidateSource: PromotedAccountsCandidateSource,
-  trackingTokenTransform: TrackingTokenTransform,
-  baseStatsReceiver: StatsReceiver,
-  @Flag("fetch_prod_promoted_accounts") fetchProductionPromotedAccounts: Boolean)
-    extends RecommendationFlow[PromotedAccountsFlowRequest, CandidateUser] {
+@Singlelonton
+class PromotelondAccountsFlow @Injelonct() (
+  promotelondAccountsCandidatelonSourcelon: PromotelondAccountsCandidatelonSourcelon,
+  trackingTokelonnTransform: TrackingTokelonnTransform,
+  baselonStatsReloncelonivelonr: StatsReloncelonivelonr,
+  @Flag("felontch_prod_promotelond_accounts") felontchProductionPromotelondAccounts: Boolelonan)
+    elonxtelonnds ReloncommelonndationFlow[PromotelondAccountsFlowRelonquelonst, CandidatelonUselonr] {
 
-  protected override def targetEligibility: Predicate[PromotedAccountsFlowRequest] =
-    new ParamPredicate[PromotedAccountsFlowRequest](
-      PromotedAccountsFlowParams.TargetEligibility
+  protelonctelond ovelonrridelon delonf targelontelonligibility: Prelondicatelon[PromotelondAccountsFlowRelonquelonst] =
+    nelonw ParamPrelondicatelon[PromotelondAccountsFlowRelonquelonst](
+      PromotelondAccountsFlowParams.Targelontelonligibility
     )
 
-  protected override def candidateSources(
-    target: PromotedAccountsFlowRequest
-  ): Seq[CandidateSource[PromotedAccountsFlowRequest, CandidateUser]] = {
-    import EnrichedCandidateSource._
-    val candidateSourceStats = statsReceiver.scope("candidate_sources")
-    val budget: Duration = target.params(PromotedAccountsFlowParams.FetchCandidateSourceBudget)
-    val candidateSources = Seq(
-      promotedAccountsCandidateSource
-        .mapKeys[PromotedAccountsFlowRequest](r =>
-          Seq(r.toAdsRequest(fetchProductionPromotedAccounts)))
-        .mapValue(PromotedAccountsUtil.toCandidateUser)
-    ).map { candidateSource =>
-      candidateSource
-        .failOpenWithin(budget, candidateSourceStats).observe(candidateSourceStats)
+  protelonctelond ovelonrridelon delonf candidatelonSourcelons(
+    targelont: PromotelondAccountsFlowRelonquelonst
+  ): Selonq[CandidatelonSourcelon[PromotelondAccountsFlowRelonquelonst, CandidatelonUselonr]] = {
+    import elonnrichelondCandidatelonSourcelon._
+    val candidatelonSourcelonStats = statsReloncelonivelonr.scopelon("candidatelon_sourcelons")
+    val budgelont: Duration = targelont.params(PromotelondAccountsFlowParams.FelontchCandidatelonSourcelonBudgelont)
+    val candidatelonSourcelons = Selonq(
+      promotelondAccountsCandidatelonSourcelon
+        .mapKelonys[PromotelondAccountsFlowRelonquelonst](r =>
+          Selonq(r.toAdsRelonquelonst(felontchProductionPromotelondAccounts)))
+        .mapValuelon(PromotelondAccountsUtil.toCandidatelonUselonr)
+    ).map { candidatelonSourcelon =>
+      candidatelonSourcelon
+        .failOpelonnWithin(budgelont, candidatelonSourcelonStats).obselonrvelon(candidatelonSourcelonStats)
     }
-    candidateSources
+    candidatelonSourcelons
   }
 
-  protected override def preRankerCandidateFilter: Predicate[
-    (PromotedAccountsFlowRequest, CandidateUser)
+  protelonctelond ovelonrridelon delonf prelonRankelonrCandidatelonFiltelonr: Prelondicatelon[
+    (PromotelondAccountsFlowRelonquelonst, CandidatelonUselonr)
   ] = {
-    val preRankerFilterStats = statsReceiver.scope("pre_ranker")
-    ExcludedUserIdPredicate.observe(preRankerFilterStats.scope("exclude_user_id_predicate"))
+    val prelonRankelonrFiltelonrStats = statsReloncelonivelonr.scopelon("prelon_rankelonr")
+    elonxcludelondUselonrIdPrelondicatelon.obselonrvelon(prelonRankelonrFiltelonrStats.scopelon("elonxcludelon_uselonr_id_prelondicatelon"))
   }
 
   /**
-   * rank the candidates
+   * rank thelon candidatelons
    */
-  protected override def selectRanker(
-    target: PromotedAccountsFlowRequest
-  ): Ranker[PromotedAccountsFlowRequest, CandidateUser] = {
-    new IdentityRanker[PromotedAccountsFlowRequest, CandidateUser]
+  protelonctelond ovelonrridelon delonf selonlelonctRankelonr(
+    targelont: PromotelondAccountsFlowRelonquelonst
+  ): Rankelonr[PromotelondAccountsFlowRelonquelonst, CandidatelonUselonr] = {
+    nelonw IdelonntityRankelonr[PromotelondAccountsFlowRelonquelonst, CandidatelonUselonr]
   }
 
   /**
-   * transform the candidates after ranking (e.g. dedupping, grouping and etc)
+   * transform thelon candidatelons aftelonr ranking (elon.g. delondupping, grouping and elontc)
    */
-  protected override def postRankerTransform: Transform[
-    PromotedAccountsFlowRequest,
-    CandidateUser
+  protelonctelond ovelonrridelon delonf postRankelonrTransform: Transform[
+    PromotelondAccountsFlowRelonquelonst,
+    CandidatelonUselonr
   ] = {
-    new IdentityTransform[PromotedAccountsFlowRequest, CandidateUser]
+    nelonw IdelonntityTransform[PromotelondAccountsFlowRelonquelonst, CandidatelonUselonr]
   }
 
   /**
-   *  filter invalid candidates before returning the results.
+   *  filtelonr invalid candidatelons belonforelon relonturning thelon relonsults.
    *
-   *  Some heavy filters e.g. SGS filter could be applied in this step
+   *  Somelon helonavy filtelonrs elon.g. SGS filtelonr could belon applielond in this stelonp
    */
-  protected override def validateCandidates: Predicate[
-    (PromotedAccountsFlowRequest, CandidateUser)
+  protelonctelond ovelonrridelon delonf validatelonCandidatelons: Prelondicatelon[
+    (PromotelondAccountsFlowRelonquelonst, CandidatelonUselonr)
   ] = {
-    new TruePredicate[(PromotedAccountsFlowRequest, CandidateUser)]
+    nelonw TruelonPrelondicatelon[(PromotelondAccountsFlowRelonquelonst, CandidatelonUselonr)]
   }
 
   /**
-   * transform the candidates into results and return
+   * transform thelon candidatelons into relonsults and relonturn
    */
-  protected override def transformResults: Transform[PromotedAccountsFlowRequest, CandidateUser] = {
-    trackingTokenTransform
+  protelonctelond ovelonrridelon delonf transformRelonsults: Transform[PromotelondAccountsFlowRelonquelonst, CandidatelonUselonr] = {
+    trackingTokelonnTransform
   }
 
   /**
-   *  configuration for recommendation results
+   *  configuration for reloncommelonndation relonsults
    */
-  protected override def resultsConfig(
-    target: PromotedAccountsFlowRequest
-  ): RecommendationResultsConfig = {
-    RecommendationResultsConfig(
-      target.params(PromotedAccountsFlowParams.ResultSizeParam),
-      target.params(PromotedAccountsFlowParams.BatchSizeParam)
+  protelonctelond ovelonrridelon delonf relonsultsConfig(
+    targelont: PromotelondAccountsFlowRelonquelonst
+  ): ReloncommelonndationRelonsultsConfig = {
+    ReloncommelonndationRelonsultsConfig(
+      targelont.params(PromotelondAccountsFlowParams.RelonsultSizelonParam),
+      targelont.params(PromotelondAccountsFlowParams.BatchSizelonParam)
     )
   }
 
-  override val statsReceiver: StatsReceiver = baseStatsReceiver.scope("promoted_accounts_flow")
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr = baselonStatsReloncelonivelonr.scopelon("promotelond_accounts_flow")
 }

@@ -1,64 +1,64 @@
-package com.twitter.simclusters_v2.summingbird.stores
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.thriftscala.ClusterDetails
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.{Athena, ManhattanRO, ManhattanROConfig}
-import com.twitter.storehaus_internal.util.{ApplicationID, DatasetName, HDFSPath}
-import com.twitter.util.{Future, Memoize}
+import com.twittelonr.bijelonction.{Buffelonrablelon, Injelonction}
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrDelontails
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.{Athelonna, ManhattanRO, ManhattanROConfig}
+import com.twittelonr.storelonhaus_intelonrnal.util.{ApplicationID, DataselontNamelon, HDFSPath}
+import com.twittelonr.util.{Futurelon, Melonmoizelon}
 
-object ClusterDetailsReadableStore {
+objelonct ClustelonrDelontailsRelonadablelonStorelon {
 
-  val modelVersionToDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145KDec11 -> "simclusters_v2_cluster_details",
-    ModelVersions.Model20M145KUpdated -> "simclusters_v2_cluster_details_20m_145k_updated",
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_cluster_details_20m_145k_2020"
+  val modelonlVelonrsionToDataselontMap: Map[String, String] = Map(
+    ModelonlVelonrsions.Modelonl20M145KDelonc11 -> "simclustelonrs_v2_clustelonr_delontails",
+    ModelonlVelonrsions.Modelonl20M145KUpdatelond -> "simclustelonrs_v2_clustelonr_delontails_20m_145k_updatelond",
+    ModelonlVelonrsions.Modelonl20M145K2020 -> "simclustelonrs_v2_clustelonr_delontails_20m_145k_2020"
   )
 
-  val knownModelVersions: String = modelVersionToDatasetMap.keys.mkString(",")
+  val knownModelonlVelonrsions: String = modelonlVelonrsionToDataselontMap.kelonys.mkString(",")
 
-  private val clusterDetailsStores =
-    Memoize[(ManhattanKVClientMtlsParams, String), ReadableStore[(String, Int), ClusterDetails]] {
-      case (mhMtlsParams: ManhattanKVClientMtlsParams, datasetName: String) =>
-        getForDatasetName(mhMtlsParams, datasetName)
+  privatelon val clustelonrDelontailsStorelons =
+    Melonmoizelon[(ManhattanKVClielonntMtlsParams, String), RelonadablelonStorelon[(String, Int), ClustelonrDelontails]] {
+      caselon (mhMtlsParams: ManhattanKVClielonntMtlsParams, dataselontNamelon: String) =>
+        gelontForDataselontNamelon(mhMtlsParams, dataselontNamelon)
     }
 
-  def getForDatasetName(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    datasetName: String
-  ): ReadableStore[(String, Int), ClusterDetails] = {
-    implicit val keyInjection: Injection[(String, Int), Array[Byte]] =
-      Bufferable.injectionOf[(String, Int)]
-    implicit val valueInjection: Injection[ClusterDetails, Array[Byte]] =
-      CompactScalaCodec(ClusterDetails)
+  delonf gelontForDataselontNamelon(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    dataselontNamelon: String
+  ): RelonadablelonStorelon[(String, Int), ClustelonrDelontails] = {
+    implicit val kelonyInjelonction: Injelonction[(String, Int), Array[Bytelon]] =
+      Buffelonrablelon.injelonctionOf[(String, Int)]
+    implicit val valuelonInjelonction: Injelonction[ClustelonrDelontails, Array[Bytelon]] =
+      CompactScalaCodelonc(ClustelonrDelontails)
 
-    ManhattanRO.getReadableStoreWithMtls[(String, Int), ClusterDetails](
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[(String, Int), ClustelonrDelontails](
       ManhattanROConfig(
-        HDFSPath(""), // not needed
-        ApplicationID("simclusters_v2"),
-        DatasetName(datasetName), // this should be correct
-        Athena
+        HDFSPath(""), // not nelonelondelond
+        ApplicationID("simclustelonrs_v2"),
+        DataselontNamelon(dataselontNamelon), // this should belon correlonct
+        Athelonna
       ),
       mhMtlsParams
     )
   }
 
-  def apply(
-    mhMtlsParams: ManhattanKVClientMtlsParams
-  ): ReadableStore[(String, Int), ClusterDetails] = {
-    new ReadableStore[(String, Int), ClusterDetails] {
-      override def get(modelVersionAndClusterId: (String, Int)): Future[Option[ClusterDetails]] = {
-        val (modelVersion, _) = modelVersionAndClusterId
-        modelVersionToDatasetMap.get(modelVersion) match {
-          case Some(datasetName) =>
-            clusterDetailsStores((mhMtlsParams, datasetName)).get(modelVersionAndClusterId)
-          case None =>
-            Future.exception(
-              new IllegalArgumentException(
-                "Unknown model version " + modelVersion + ". Known modelVersions: " + knownModelVersions)
+  delonf apply(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams
+  ): RelonadablelonStorelon[(String, Int), ClustelonrDelontails] = {
+    nelonw RelonadablelonStorelon[(String, Int), ClustelonrDelontails] {
+      ovelonrridelon delonf gelont(modelonlVelonrsionAndClustelonrId: (String, Int)): Futurelon[Option[ClustelonrDelontails]] = {
+        val (modelonlVelonrsion, _) = modelonlVelonrsionAndClustelonrId
+        modelonlVelonrsionToDataselontMap.gelont(modelonlVelonrsion) match {
+          caselon Somelon(dataselontNamelon) =>
+            clustelonrDelontailsStorelons((mhMtlsParams, dataselontNamelon)).gelont(modelonlVelonrsionAndClustelonrId)
+          caselon Nonelon =>
+            Futurelon.elonxcelonption(
+              nelonw IllelongalArgumelonntelonxcelonption(
+                "Unknown modelonl velonrsion " + modelonlVelonrsion + ". Known modelonlVelonrsions: " + knownModelonlVelonrsions)
             )
         }
       }

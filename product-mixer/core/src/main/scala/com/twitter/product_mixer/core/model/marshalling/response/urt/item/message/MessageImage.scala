@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonVariant
 
-case class MessageImage(
-  imageVariants: Set[ImageVariant],
+caselon class MelonssagelonImagelon(
+  imagelonVariants: Selont[ImagelonVariant],
   backgroundColor: Option[String])

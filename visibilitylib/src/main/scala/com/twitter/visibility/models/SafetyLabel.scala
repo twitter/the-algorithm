@@ -1,90 +1,90 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.spam.rtf.{thriftscala => s}
-import com.twitter.visibility.safety_label_store.{thriftscala => store}
+import com.twittelonr.spam.rtf.{thriftscala => s}
+import com.twittelonr.visibility.safelonty_labelonl_storelon.{thriftscala => storelon}
 
-case class SafetyLabel(
-  score: Option[Double] = None,
-  applicableUsers: Set[Long] = Set.empty,
-  source: Option[LabelSource] = None,
-  modelMetadata: Option[TweetModelMetadata] = None,
-  createdAtMsec: Option[Long] = None,
-  expiresAtMsec: Option[Long] = None,
-  labelMetadata: Option[SafetyLabelMetadata] = None,
-  applicableCountries: Option[Seq[String]] = None)
+caselon class SafelontyLabelonl(
+  scorelon: Option[Doublelon] = Nonelon,
+  applicablelonUselonrs: Selont[Long] = Selont.elonmpty,
+  sourcelon: Option[LabelonlSourcelon] = Nonelon,
+  modelonlMelontadata: Option[TwelonelontModelonlMelontadata] = Nonelon,
+  crelonatelondAtMselonc: Option[Long] = Nonelon,
+  elonxpirelonsAtMselonc: Option[Long] = Nonelon,
+  labelonlMelontadata: Option[SafelontyLabelonlMelontadata] = Nonelon,
+  applicablelonCountrielons: Option[Selonq[String]] = Nonelon)
 
-object SafetyLabel {
-  def fromThrift(safetyLabel: s.SafetyLabel): SafetyLabel = {
-    SafetyLabel(
-      score = safetyLabel.score,
-      applicableUsers = safetyLabel.applicableUsers
-        .map { perspectivalUsers =>
-          (perspectivalUsers map {
-            _.userId
-          }).toSet
-        }.getOrElse(Set.empty),
-      source = safetyLabel.source.flatMap(LabelSource.fromString),
-      modelMetadata = safetyLabel.modelMetadata.flatMap(TweetModelMetadata.fromThrift),
-      createdAtMsec = safetyLabel.createdAtMsec,
-      expiresAtMsec = safetyLabel.expiresAtMsec,
-      labelMetadata = safetyLabel.labelMetadata.map(SafetyLabelMetadata.fromThrift(_)),
-      applicableCountries = safetyLabel.applicableCountries
+objelonct SafelontyLabelonl {
+  delonf fromThrift(safelontyLabelonl: s.SafelontyLabelonl): SafelontyLabelonl = {
+    SafelontyLabelonl(
+      scorelon = safelontyLabelonl.scorelon,
+      applicablelonUselonrs = safelontyLabelonl.applicablelonUselonrs
+        .map { pelonrspelonctivalUselonrs =>
+          (pelonrspelonctivalUselonrs map {
+            _.uselonrId
+          }).toSelont
+        }.gelontOrelonlselon(Selont.elonmpty),
+      sourcelon = safelontyLabelonl.sourcelon.flatMap(LabelonlSourcelon.fromString),
+      modelonlMelontadata = safelontyLabelonl.modelonlMelontadata.flatMap(TwelonelontModelonlMelontadata.fromThrift),
+      crelonatelondAtMselonc = safelontyLabelonl.crelonatelondAtMselonc,
+      elonxpirelonsAtMselonc = safelontyLabelonl.elonxpirelonsAtMselonc,
+      labelonlMelontadata = safelontyLabelonl.labelonlMelontadata.map(SafelontyLabelonlMelontadata.fromThrift(_)),
+      applicablelonCountrielons = safelontyLabelonl.applicablelonCountrielons
     )
   }
 
-  def toThrift(safetyLabel: SafetyLabel): s.SafetyLabel = {
-    s.SafetyLabel(
-      score = safetyLabel.score,
-      applicableUsers = if (safetyLabel.applicableUsers.nonEmpty) {
-        Some(safetyLabel.applicableUsers.toSeq.map {
-          s.PerspectivalUser(_)
+  delonf toThrift(safelontyLabelonl: SafelontyLabelonl): s.SafelontyLabelonl = {
+    s.SafelontyLabelonl(
+      scorelon = safelontyLabelonl.scorelon,
+      applicablelonUselonrs = if (safelontyLabelonl.applicablelonUselonrs.nonelonmpty) {
+        Somelon(safelontyLabelonl.applicablelonUselonrs.toSelonq.map {
+          s.PelonrspelonctivalUselonr(_)
         })
-      } else {
-        None
+      } elonlselon {
+        Nonelon
       },
-      source = safetyLabel.source.map(_.name),
-      modelMetadata = safetyLabel.modelMetadata.map(TweetModelMetadata.toThrift),
-      createdAtMsec = safetyLabel.createdAtMsec,
-      expiresAtMsec = safetyLabel.expiresAtMsec,
-      labelMetadata = safetyLabel.labelMetadata.map(_.toThrift),
-      applicableCountries = safetyLabel.applicableCountries
+      sourcelon = safelontyLabelonl.sourcelon.map(_.namelon),
+      modelonlMelontadata = safelontyLabelonl.modelonlMelontadata.map(TwelonelontModelonlMelontadata.toThrift),
+      crelonatelondAtMselonc = safelontyLabelonl.crelonatelondAtMselonc,
+      elonxpirelonsAtMselonc = safelontyLabelonl.elonxpirelonsAtMselonc,
+      labelonlMelontadata = safelontyLabelonl.labelonlMelontadata.map(_.toThrift),
+      applicablelonCountrielons = safelontyLabelonl.applicablelonCountrielons
     )
   }
 }
 
-trait SafetyLabelWithType[EntitySafetyLabelType <: SafetyLabelType] {
-  val safetyLabelType: EntitySafetyLabelType
-  val safetyLabel: SafetyLabel
+trait SafelontyLabelonlWithTypelon[elonntitySafelontyLabelonlTypelon <: SafelontyLabelonlTypelon] {
+  val safelontyLabelonlTypelon: elonntitySafelontyLabelonlTypelon
+  val safelontyLabelonl: SafelontyLabelonl
 }
 
-case class MediaSafetyLabel(
-  override val safetyLabelType: MediaSafetyLabelType,
-  override val safetyLabel: SafetyLabel)
-    extends SafetyLabelWithType[MediaSafetyLabelType] {
+caselon class MelondiaSafelontyLabelonl(
+  ovelonrridelon val safelontyLabelonlTypelon: MelondiaSafelontyLabelonlTypelon,
+  ovelonrridelon val safelontyLabelonl: SafelontyLabelonl)
+    elonxtelonnds SafelontyLabelonlWithTypelon[MelondiaSafelontyLabelonlTypelon] {
 
-  def fromThrift(
-    thriftType: store.MediaSafetyLabelType,
-    thriftLabel: s.SafetyLabel
-  ): MediaSafetyLabel = {
-    MediaSafetyLabel(
-      MediaSafetyLabelType.fromThrift(thriftType),
-      SafetyLabel.fromThrift(thriftLabel)
+  delonf fromThrift(
+    thriftTypelon: storelon.MelondiaSafelontyLabelonlTypelon,
+    thriftLabelonl: s.SafelontyLabelonl
+  ): MelondiaSafelontyLabelonl = {
+    MelondiaSafelontyLabelonl(
+      MelondiaSafelontyLabelonlTypelon.fromThrift(thriftTypelon),
+      SafelontyLabelonl.fromThrift(thriftLabelonl)
     )
   }
 }
 
-case class SpaceSafetyLabel(
-  override val safetyLabelType: SpaceSafetyLabelType,
-  override val safetyLabel: SafetyLabel)
-    extends SafetyLabelWithType[SpaceSafetyLabelType] {
+caselon class SpacelonSafelontyLabelonl(
+  ovelonrridelon val safelontyLabelonlTypelon: SpacelonSafelontyLabelonlTypelon,
+  ovelonrridelon val safelontyLabelonl: SafelontyLabelonl)
+    elonxtelonnds SafelontyLabelonlWithTypelon[SpacelonSafelontyLabelonlTypelon] {
 
-  def fromThrift(
-    thriftType: store.SpaceSafetyLabelType,
-    thriftLabel: s.SafetyLabel
-  ): SpaceSafetyLabel = {
-    SpaceSafetyLabel(
-      SpaceSafetyLabelType.fromThrift(thriftType),
-      SafetyLabel.fromThrift(thriftLabel)
+  delonf fromThrift(
+    thriftTypelon: storelon.SpacelonSafelontyLabelonlTypelon,
+    thriftLabelonl: s.SafelontyLabelonl
+  ): SpacelonSafelontyLabelonl = {
+    SpacelonSafelontyLabelonl(
+      SpacelonSafelontyLabelonlTypelon.fromThrift(thriftTypelon),
+      SafelontyLabelonl.fromThrift(thriftLabelonl)
     )
   }
 }

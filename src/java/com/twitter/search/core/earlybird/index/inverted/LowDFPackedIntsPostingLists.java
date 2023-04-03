@@ -1,254 +1,254 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.packed.PackedInts;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.util.packelond.PackelondInts;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
 
 /**
- * A posting list intended for low-df terms, terms that have a small number of postings.
+ * A posting list intelonndelond for low-df telonrms, telonrms that havelon a small numbelonr of postings.
  *
- * The postings (docs and positions) are stored in PackedInts, packed based on the largest docId
- * and position across all low-df terms in a field.
+ * Thelon postings (docs and positions) arelon storelond in PackelondInts, packelond baselond on thelon largelonst docId
+ * and position across all low-df telonrms in a fielonld.
  *
- * All docIds are packed together in their own PackedInts, and all positions are stored together
- * in their own PackedInts.
- *  - A docId is stored for every single posting, that is if a doc has a frequency of N, it will be
- * stored N times.
- * - For fields that omitPositions, positions are not stored at all.
+ * All docIds arelon packelond togelonthelonr in thelonir own PackelondInts, and all positions arelon storelond togelonthelonr
+ * in thelonir own PackelondInts.
+ *  - A docId is storelond for elonvelonry singlelon posting, that is if a doc has a frelonquelonncy of N, it will belon
+ * storelond N timelons.
+ * - For fielonlds that omitPositions, positions arelon not storelond at all.
  *
- * Example:
- * Postings in the form (docId, position):
+ * elonxamplelon:
+ * Postings in thelon form (docId, position):
  *   (1, 0), (1, 1), (2, 1), (2, 3), (2, 5), (4, 0), (5, 0)
- * Will be stored as:
- *   packedDocIds:    [1, 1, 2, 2, 2, 4, 5]
- *   packedPositions: [0, 1, 1, 3, 5, 0, 0]
+ * Will belon storelond as:
+ *   packelondDocIds:    [1, 1, 2, 2, 2, 4, 5]
+ *   packelondPositions: [0, 1, 1, 3, 5, 0, 0]
  */
-public class LowDFPackedIntsPostingLists extends OptimizedPostingLists {
-  private static final SearchCounter GETTING_POSITIONS_WITH_OMIT_POSITIONS =
-      SearchCounter.export("low_df_packed_ints_posting_list_getting_positions_with_omit_positions");
+public class LowDFPackelondIntsPostingLists elonxtelonnds OptimizelondPostingLists {
+  privatelon static final SelonarchCountelonr GelonTTING_POSITIONS_WITH_OMIT_POSITIONS =
+      SelonarchCountelonr.elonxport("low_df_packelond_ints_posting_list_gelontting_positions_with_omit_positions");
 
   /**
-   * Internal class for hiding PackedInts Readers and Writers. A Mutable instance of PackedInts is
-   * only required when we're optimizing a new index.
-   * For the read side, we only need a PackedInts.Reader.
-   * For loaded indexes, we also only need a PackedInts.Reader.
+   * Intelonrnal class for hiding PackelondInts Relonadelonrs and Writelonrs. A Mutablelon instancelon of PackelondInts is
+   * only relonquirelond whelonn welon'relon optimizing a nelonw indelonx.
+   * For thelon relonad sidelon, welon only nelonelond a PackelondInts.Relonadelonr.
+   * For loadelond indelonxelons, welon also only nelonelond a PackelondInts.Relonadelonr.
    */
-  private static final class PackedIntsWrapper {
-    // Will be null if we are operating on a loaded in read-only index.
-    @Nullable
-    private final PackedInts.Mutable mutablePackedInts;
-    private final PackedInts.Reader readerPackedInts;
+  privatelon static final class PackelondIntsWrappelonr {
+    // Will belon null if welon arelon opelonrating on a loadelond in relonad-only indelonx.
+    @Nullablelon
+    privatelon final PackelondInts.Mutablelon mutablelonPackelondInts;
+    privatelon final PackelondInts.Relonadelonr relonadelonrPackelondInts;
 
-    private PackedIntsWrapper(PackedInts.Mutable mutablePackedInts) {
-      this.mutablePackedInts = Preconditions.checkNotNull(mutablePackedInts);
-      this.readerPackedInts = mutablePackedInts;
+    privatelon PackelondIntsWrappelonr(PackelondInts.Mutablelon mutablelonPackelondInts) {
+      this.mutablelonPackelondInts = Prelonconditions.chelonckNotNull(mutablelonPackelondInts);
+      this.relonadelonrPackelondInts = mutablelonPackelondInts;
     }
 
-    private PackedIntsWrapper(PackedInts.Reader readerPackedInts) {
-      this.mutablePackedInts = null;
-      this.readerPackedInts = readerPackedInts;
+    privatelon PackelondIntsWrappelonr(PackelondInts.Relonadelonr relonadelonrPackelondInts) {
+      this.mutablelonPackelondInts = null;
+      this.relonadelonrPackelondInts = relonadelonrPackelondInts;
     }
 
-    public int size() {
-      return readerPackedInts.size();
+    public int sizelon() {
+      relonturn relonadelonrPackelondInts.sizelon();
     }
 
-    public PackedInts.Reader getReader() {
-      return readerPackedInts;
+    public PackelondInts.Relonadelonr gelontRelonadelonr() {
+      relonturn relonadelonrPackelondInts;
     }
 
-    public void set(int index, long value) {
-      this.mutablePackedInts.set(index, value);
+    public void selont(int indelonx, long valuelon) {
+      this.mutablelonPackelondInts.selont(indelonx, valuelon);
     }
   }
 
-  private final PackedIntsWrapper packedDocIds;
+  privatelon final PackelondIntsWrappelonr packelondDocIds;
   /**
-   * Will be null for fields that omitPositions.
+   * Will belon null for fielonlds that omitPositions.
    */
-  @Nullable
-  private final PackedIntsWrapper packedPositions;
-  private final boolean omitPositions;
-  private final int totalPostingsAcrossTerms;
-  private final int maxPosition;
-  private int currentPackedIntsPosition;
+  @Nullablelon
+  privatelon final PackelondIntsWrappelonr packelondPositions;
+  privatelon final boolelonan omitPositions;
+  privatelon final int totalPostingsAcrossTelonrms;
+  privatelon final int maxPosition;
+  privatelon int currelonntPackelondIntsPosition;
 
   /**
-   * Creates a new LowDFPackedIntsPostingLists.
-   * @param omitPositions whether positions should be omitted or not.
-   * @param totalPostingsAcrossTerms how many postings across all terms this field has.
-   * @param maxPosition the largest position used in all the postings for this field.
+   * Crelonatelons a nelonw LowDFPackelondIntsPostingLists.
+   * @param omitPositions whelonthelonr positions should belon omittelond or not.
+   * @param totalPostingsAcrossTelonrms how many postings across all telonrms this fielonld has.
+   * @param maxPosition thelon largelonst position uselond in all thelon postings for this fielonld.
    */
-  public LowDFPackedIntsPostingLists(
-      boolean omitPositions,
-      int totalPostingsAcrossTerms,
+  public LowDFPackelondIntsPostingLists(
+      boolelonan omitPositions,
+      int totalPostingsAcrossTelonrms,
       int maxPosition) {
     this(
-        new PackedIntsWrapper(PackedInts.getMutable(
-            totalPostingsAcrossTerms,
-            PackedInts.bitsRequired(MAX_DOC_ID),
-            PackedInts.DEFAULT)),
+        nelonw PackelondIntsWrappelonr(PackelondInts.gelontMutablelon(
+            totalPostingsAcrossTelonrms,
+            PackelondInts.bitsRelonquirelond(MAX_DOC_ID),
+            PackelondInts.DelonFAULT)),
         omitPositions
             ? null
-            : new PackedIntsWrapper(PackedInts.getMutable(
-            totalPostingsAcrossTerms,
-            PackedInts.bitsRequired(maxPosition),
-            PackedInts.DEFAULT)),
+            : nelonw PackelondIntsWrappelonr(PackelondInts.gelontMutablelon(
+            totalPostingsAcrossTelonrms,
+            PackelondInts.bitsRelonquirelond(maxPosition),
+            PackelondInts.DelonFAULT)),
         omitPositions,
-        totalPostingsAcrossTerms,
+        totalPostingsAcrossTelonrms,
         maxPosition);
   }
 
-  private LowDFPackedIntsPostingLists(
-      PackedIntsWrapper packedDocIds,
-      @Nullable
-      PackedIntsWrapper packedPositions,
-      boolean omitPositions,
-      int totalPostingsAcrossTerms,
+  privatelon LowDFPackelondIntsPostingLists(
+      PackelondIntsWrappelonr packelondDocIds,
+      @Nullablelon
+      PackelondIntsWrappelonr packelondPositions,
+      boolelonan omitPositions,
+      int totalPostingsAcrossTelonrms,
       int maxPosition) {
-    this.packedDocIds = packedDocIds;
-    this.packedPositions = packedPositions;
+    this.packelondDocIds = packelondDocIds;
+    this.packelondPositions = packelondPositions;
     this.omitPositions = omitPositions;
-    this.totalPostingsAcrossTerms = totalPostingsAcrossTerms;
+    this.totalPostingsAcrossTelonrms = totalPostingsAcrossTelonrms;
     this.maxPosition = maxPosition;
-    this.currentPackedIntsPosition = 0;
+    this.currelonntPackelondIntsPosition = 0;
   }
 
-  @Override
-  public int copyPostingList(PostingsEnum postingsEnum, int numPostings) throws IOException {
-    int pointer = currentPackedIntsPosition;
+  @Ovelonrridelon
+  public int copyPostingList(Postingselonnum postingselonnum, int numPostings) throws IOelonxcelonption {
+    int pointelonr = currelonntPackelondIntsPosition;
 
     int docId;
 
-    while ((docId = postingsEnum.nextDoc()) != DocIdSetIterator.NO_MORE_DOCS) {
-      assert docId <= MAX_DOC_ID;
-      int freq = postingsEnum.freq();
-      assert freq <= numPostings;
+    whilelon ((docId = postingselonnum.nelonxtDoc()) != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      asselonrt docId <= MAX_DOC_ID;
+      int frelonq = postingselonnum.frelonq();
+      asselonrt frelonq <= numPostings;
 
-      for (int i = 0; i < freq; i++) {
-        packedDocIds.set(currentPackedIntsPosition, docId);
-        if (packedPositions != null) {
-          int position = postingsEnum.nextPosition();
-          assert position <= maxPosition;
-          packedPositions.set(currentPackedIntsPosition, position);
+      for (int i = 0; i < frelonq; i++) {
+        packelondDocIds.selont(currelonntPackelondIntsPosition, docId);
+        if (packelondPositions != null) {
+          int position = postingselonnum.nelonxtPosition();
+          asselonrt position <= maxPosition;
+          packelondPositions.selont(currelonntPackelondIntsPosition, position);
         }
-        currentPackedIntsPosition++;
+        currelonntPackelondIntsPosition++;
       }
     }
 
-    return pointer;
+    relonturn pointelonr;
   }
 
-  @Override
-  public EarlybirdPostingsEnum postings(
-      int postingListPointer,
+  @Ovelonrridelon
+  public elonarlybirdPostingselonnum postings(
+      int postingListPointelonr,
       int numPostings,
-      int flags) throws IOException {
+      int flags) throws IOelonxcelonption {
 
-    if (PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS) && !omitPositions) {
-      assert packedPositions != null;
-      return new LowDFPackedIntsPostingsEnum(
-          packedDocIds.getReader(),
-          packedPositions.getReader(),
-          postingListPointer,
+    if (Postingselonnum.felonaturelonRelonquelonstelond(flags, Postingselonnum.POSITIONS) && !omitPositions) {
+      asselonrt packelondPositions != null;
+      relonturn nelonw LowDFPackelondIntsPostingselonnum(
+          packelondDocIds.gelontRelonadelonr(),
+          packelondPositions.gelontRelonadelonr(),
+          postingListPointelonr,
           numPostings);
-    } else {
-      if (PostingsEnum.featureRequested(flags, PostingsEnum.POSITIONS) && omitPositions) {
-        GETTING_POSITIONS_WITH_OMIT_POSITIONS.increment();
+    } elonlselon {
+      if (Postingselonnum.felonaturelonRelonquelonstelond(flags, Postingselonnum.POSITIONS) && omitPositions) {
+        GelonTTING_POSITIONS_WITH_OMIT_POSITIONS.increlonmelonnt();
       }
 
-      return new LowDFPackedIntsPostingsEnum(
-          packedDocIds.getReader(),
+      relonturn nelonw LowDFPackelondIntsPostingselonnum(
+          packelondDocIds.gelontRelonadelonr(),
           null, // no positions
-          postingListPointer,
+          postingListPointelonr,
           numPostings);
     }
   }
 
-  @VisibleForTesting
-  int getPackedIntsSize() {
-    return packedDocIds.size();
+  @VisiblelonForTelonsting
+  int gelontPackelondIntsSizelon() {
+    relonturn packelondDocIds.sizelon();
   }
 
-  @VisibleForTesting
-  int getMaxPosition() {
-    return maxPosition;
+  @VisiblelonForTelonsting
+  int gelontMaxPosition() {
+    relonturn maxPosition;
   }
 
-  @VisibleForTesting
-  boolean isOmitPositions() {
-    return omitPositions;
+  @VisiblelonForTelonsting
+  boolelonan isOmitPositions() {
+    relonturn omitPositions;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SupprelonssWarnings("unchelonckelond")
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  static class FlushHandler extends Flushable.Handler<LowDFPackedIntsPostingLists> {
-    private static final String OMIT_POSITIONS_PROP_NAME = "omitPositions";
-    private static final String TOTAL_POSTINGS_PROP_NAME = "totalPostingsAcrossTerms";
-    private static final String MAX_POSITION_PROP_NAME = "maxPosition";
+  static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<LowDFPackelondIntsPostingLists> {
+    privatelon static final String OMIT_POSITIONS_PROP_NAMelon = "omitPositions";
+    privatelon static final String TOTAL_POSTINGS_PROP_NAMelon = "totalPostingsAcrossTelonrms";
+    privatelon static final String MAX_POSITION_PROP_NAMelon = "maxPosition";
 
-    public FlushHandler() {
-      super();
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    public FlushHandler(LowDFPackedIntsPostingLists objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(LowDFPackelondIntsPostingLists objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      LowDFPackedIntsPostingLists objectToFlush = getObjectToFlush();
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      LowDFPackelondIntsPostingLists objelonctToFlush = gelontObjelonctToFlush();
 
-      flushInfo.addBooleanProperty(OMIT_POSITIONS_PROP_NAME, objectToFlush.omitPositions);
-      flushInfo.addIntProperty(TOTAL_POSTINGS_PROP_NAME, objectToFlush.totalPostingsAcrossTerms);
-      flushInfo.addIntProperty(MAX_POSITION_PROP_NAME, objectToFlush.maxPosition);
+      flushInfo.addBoolelonanPropelonrty(OMIT_POSITIONS_PROP_NAMelon, objelonctToFlush.omitPositions);
+      flushInfo.addIntPropelonrty(TOTAL_POSTINGS_PROP_NAMelon, objelonctToFlush.totalPostingsAcrossTelonrms);
+      flushInfo.addIntPropelonrty(MAX_POSITION_PROP_NAMelon, objelonctToFlush.maxPosition);
 
-      out.writePackedInts(objectToFlush.packedDocIds.getReader());
+      out.writelonPackelondInts(objelonctToFlush.packelondDocIds.gelontRelonadelonr());
 
-      if (!objectToFlush.omitPositions) {
-        assert objectToFlush.packedPositions != null;
-        out.writePackedInts(objectToFlush.packedPositions.getReader());
+      if (!objelonctToFlush.omitPositions) {
+        asselonrt objelonctToFlush.packelondPositions != null;
+        out.writelonPackelondInts(objelonctToFlush.packelondPositions.gelontRelonadelonr());
       }
     }
 
-    @Override
-    protected LowDFPackedIntsPostingLists doLoad(
+    @Ovelonrridelon
+    protelonctelond LowDFPackelondIntsPostingLists doLoad(
         FlushInfo flushInfo,
-        DataDeserializer in) throws IOException {
+        DataDelonselonrializelonr in) throws IOelonxcelonption {
 
-      boolean omitPositions = flushInfo.getBooleanProperty(OMIT_POSITIONS_PROP_NAME);
-      int totalPostingsAcrossTerms = flushInfo.getIntProperty(TOTAL_POSTINGS_PROP_NAME);
-      int maxPosition = flushInfo.getIntProperty(MAX_POSITION_PROP_NAME);
+      boolelonan omitPositions = flushInfo.gelontBoolelonanPropelonrty(OMIT_POSITIONS_PROP_NAMelon);
+      int totalPostingsAcrossTelonrms = flushInfo.gelontIntPropelonrty(TOTAL_POSTINGS_PROP_NAMelon);
+      int maxPosition = flushInfo.gelontIntPropelonrty(MAX_POSITION_PROP_NAMelon);
 
-      PackedIntsWrapper packedDocIds = new PackedIntsWrapper(in.readPackedInts());
+      PackelondIntsWrappelonr packelondDocIds = nelonw PackelondIntsWrappelonr(in.relonadPackelondInts());
 
-      PackedIntsWrapper packedPositions = null;
+      PackelondIntsWrappelonr packelondPositions = null;
       if (!omitPositions) {
-        packedPositions = new PackedIntsWrapper(in.readPackedInts());
+        packelondPositions = nelonw PackelondIntsWrappelonr(in.relonadPackelondInts());
       }
 
-      return new LowDFPackedIntsPostingLists(
-          packedDocIds,
-          packedPositions,
+      relonturn nelonw LowDFPackelondIntsPostingLists(
+          packelondDocIds,
+          packelondPositions,
           omitPositions,
-          totalPostingsAcrossTerms,
+          totalPostingsAcrossTelonrms,
           maxPosition);
     }
   }

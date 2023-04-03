@@ -1,32 +1,32 @@
-package com.twitter.search.common.util.ml;
+packagelon com.twittelonr.selonarch.common.util.ml;
 
 import java.util.Map;
 
 /**
- * An interface for linear models that are backed by some sort of map
+ * An intelonrfacelon for linelonar modelonls that arelon backelond by somelon sort of map
  */
-public interface MapBasedLinearModel<K> {
+public intelonrfacelon MapBaselondLinelonarModelonl<K> {
   /**
-   * Evaluate using this model given a feature vector.
-   * @param instance The feature vector in format of a hashmap.
-   * @return
+   * elonvaluatelon using this modelonl givelonn a felonaturelon velonctor.
+   * @param instancelon Thelon felonaturelon velonctor in format of a hashmap.
+   * @relonturn
    */
-  boolean classify(Map<K, Float> instance);
+  boolelonan classify(Map<K, Float> instancelon);
 
   /**
-   * Evaluate using this model given a classification threshold and a feature vector.
-   * @param threshold Score threshold used for classification.
-   * @param instance The feature vector in format of a hashmap.
-   * @return
+   * elonvaluatelon using this modelonl givelonn a classification threlonshold and a felonaturelon velonctor.
+   * @param threlonshold Scorelon threlonshold uselond for classification.
+   * @param instancelon Thelon felonaturelon velonctor in format of a hashmap.
+   * @relonturn
    */
-  boolean classify(float threshold, Map<K, Float> instance);
+  boolelonan classify(float threlonshold, Map<K, Float> instancelon);
 
   /**
-   * Computes the score of an instance as a linear combination of the features and the model
-   * weights. 0 is used as default value for features or weights that are not present.
+   * Computelons thelon scorelon of an instancelon as a linelonar combination of thelon felonaturelons and thelon modelonl
+   * welonights. 0 is uselond as delonfault valuelon for felonaturelons or welonights that arelon not prelonselonnt.
    *
-   * @param instance The feature vector in format of a hashmap.
-   * @return The instance score according to the model.
+   * @param instancelon Thelon felonaturelon velonctor in format of a hashmap.
+   * @relonturn Thelon instancelon scorelon according to thelon modelonl.
    */
-  float score(Map<K, Float> instance);
+  float scorelon(Map<K, Float> instancelon);
 }

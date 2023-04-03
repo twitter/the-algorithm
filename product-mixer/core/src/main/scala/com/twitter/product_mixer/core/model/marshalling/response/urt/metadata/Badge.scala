@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.color.RoselonttaColor
 
-case class Badge(
-  text: Option[String],
-  textColorName: Option[RosettaColor],
-  backgroundColorName: Option[RosettaColor])
+caselon class Badgelon(
+  telonxt: Option[String],
+  telonxtColorNamelon: Option[RoselonttaColor],
+  backgroundColorNamelon: Option[RoselonttaColor])

@@ -1,45 +1,45 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
 /**
- * A forward search finger used, optionally, by {@link SkipListContainer#search}.
+ * A forward selonarch fingelonr uselond, optionally, by {@link SkipListContainelonr#selonarch}.
  *
- * A search finger is pointer to the result returned by last time a search method is performed.
- * @see <a href="http://en.wikipedia.org/wiki/Finger_search">Finger search wikipedia</a>.
+ * A selonarch fingelonr is pointelonr to thelon relonsult relonturnelond by last timelon a selonarch melonthod is pelonrformelond.
+ * @selonelon <a hrelonf="http://elonn.wikipelondia.org/wiki/Fingelonr_selonarch">Fingelonr selonarch wikipelondia</a>.
  *
- * Using a search finger on a skip list could reduce the search search time from
- * log(n) to log(k), where n is length of the skip list and k is the distance between last searched
- * key and current searched key.
+ * Using a selonarch fingelonr on a skip list could relonducelon thelon selonarch selonarch timelon from
+ * log(n) to log(k), whelonrelon n is lelonngth of thelon skip list and k is thelon distancelon belontwelonelonn last selonarchelond
+ * kelony and currelonnt selonarchelond kelony.
  */
-public class SkipListSearchFinger {
-  // Pointer used when initialize the search finger.
-  public static final int INITIAL_POINTER = Integer.MIN_VALUE;
+public class SkipListSelonarchFingelonr {
+  // Pointelonr uselond whelonn initializelon thelon selonarch fingelonr.
+  public static final int INITIAL_POINTelonR = Intelongelonr.MIN_VALUelon;
 
-  private final int[] lastPointers;
+  privatelon final int[] lastPointelonrs;
 
   /**
-   * Creates a new search finger.
+   * Crelonatelons a nelonw selonarch fingelonr.
    */
-  public SkipListSearchFinger(int maxTowerHeight) {
-    lastPointers = new int[maxTowerHeight];
+  public SkipListSelonarchFingelonr(int maxTowelonrHelonight) {
+    lastPointelonrs = nelonw int[maxTowelonrHelonight];
 
-    reset();
+    relonselont();
   }
 
-  public void reset() {
-    for (int i = 0; i < lastPointers.length; i++) {
-      setPointer(i, INITIAL_POINTER);
+  public void relonselont() {
+    for (int i = 0; i < lastPointelonrs.lelonngth; i++) {
+      selontPointelonr(i, INITIAL_POINTelonR);
     }
   }
 
-  public int getPointer(int level) {
-    return lastPointers[level];
+  public int gelontPointelonr(int lelonvelonl) {
+    relonturn lastPointelonrs[lelonvelonl];
   }
 
-  public void setPointer(int level, int pointer) {
-    lastPointers[level] = pointer;
+  public void selontPointelonr(int lelonvelonl, int pointelonr) {
+    lastPointelonrs[lelonvelonl] = pointelonr;
   }
 
-  public boolean isInitialPointer(int pointer) {
-    return pointer == INITIAL_POINTER;
+  public boolelonan isInitialPointelonr(int pointelonr) {
+    relonturn pointelonr == INITIAL_POINTelonR;
   }
 }

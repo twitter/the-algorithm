@@ -1,195 +1,195 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
-import java.util.Objects;
+import java.io.IOelonxcelonption;
+import java.util.Objeloncts;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
+import com.twittelonr.selonarch.common.quelonry.DelonfaultFiltelonrWelonight;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFTypelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.AllDocsItelonrator;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.RangelonFiltelonrDISI;
 
 /**
- * Filters tweets according to the specified CSF field value.
- * Note that min value is inclusive, and max value is exclusive.
+ * Filtelonrs twelonelonts according to thelon speloncifielond CSF fielonld valuelon.
+ * Notelon that min valuelon is inclusivelon, and max valuelon is elonxclusivelon.
  */
-public final class DocValRangeFilter extends Query {
-  private final String csfField;
-  private final ThriftCSFType csfFieldType;
-  private final Number minValInclusive;
-  private final Number maxValExclusive;
+public final class DocValRangelonFiltelonr elonxtelonnds Quelonry {
+  privatelon final String csfFielonld;
+  privatelon final ThriftCSFTypelon csfFielonldTypelon;
+  privatelon final Numbelonr minValInclusivelon;
+  privatelon final Numbelonr maxValelonxclusivelon;
 
   /**
-   * Returns a query that filters hits based on the value of a CSF.
+   * Relonturns a quelonry that filtelonrs hits baselond on thelon valuelon of a CSF.
    *
-   * @param csfField The CSF name.
-   * @param csfFieldType The CSF type.
-   * @param minVal The minimum acceptable value (inclusive).
-   * @param maxVal The maximum acceptable value (exclusive).
-   * @return A query that filters hits based on the value of a CSF.
+   * @param csfFielonld Thelon CSF namelon.
+   * @param csfFielonldTypelon Thelon CSF typelon.
+   * @param minVal Thelon minimum accelonptablelon valuelon (inclusivelon).
+   * @param maxVal Thelon maximum accelonptablelon valuelon (elonxclusivelon).
+   * @relonturn A quelonry that filtelonrs hits baselond on thelon valuelon of a CSF.
    */
-  public static Query getDocValRangeQuery(String csfField, ThriftCSFType csfFieldType,
-                                          double minVal, double maxVal) {
-    return new BooleanQuery.Builder()
-        .add(new DocValRangeFilter(csfField, csfFieldType, minVal, maxVal),
-             BooleanClause.Occur.FILTER)
+  public static Quelonry gelontDocValRangelonQuelonry(String csfFielonld, ThriftCSFTypelon csfFielonldTypelon,
+                                          doublelon minVal, doublelon maxVal) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw DocValRangelonFiltelonr(csfFielonld, csfFielonldTypelon, minVal, maxVal),
+             BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
   /**
-   * Returns a query that filters hits based on the value of a CSF.
+   * Relonturns a quelonry that filtelonrs hits baselond on thelon valuelon of a CSF.
    *
-   * @param csfField The CSF name.
-   * @param csfFieldType The CSF type.
-   * @param minVal The minimum acceptable value (inclusive).
-   * @param maxVal The maximum acceptable value (exclusive).
-   * @return A query that filters hits based on the value of a CSF.
+   * @param csfFielonld Thelon CSF namelon.
+   * @param csfFielonldTypelon Thelon CSF typelon.
+   * @param minVal Thelon minimum accelonptablelon valuelon (inclusivelon).
+   * @param maxVal Thelon maximum accelonptablelon valuelon (elonxclusivelon).
+   * @relonturn A quelonry that filtelonrs hits baselond on thelon valuelon of a CSF.
    */
-  public static Query getDocValRangeQuery(String csfField, ThriftCSFType csfFieldType,
+  public static Quelonry gelontDocValRangelonQuelonry(String csfFielonld, ThriftCSFTypelon csfFielonldTypelon,
                                           long minVal, long maxVal) {
-    return new BooleanQuery.Builder()
-        .add(new DocValRangeFilter(csfField, csfFieldType, minVal, maxVal),
-             BooleanClause.Occur.FILTER)
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw DocValRangelonFiltelonr(csfFielonld, csfFielonldTypelon, minVal, maxVal),
+             BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  private DocValRangeFilter(String csfField, ThriftCSFType csfFieldType,
-                            double minVal, double maxVal) {
-    this.csfField = csfField;
-    this.csfFieldType = csfFieldType;
-    this.minValInclusive = new Float(minVal);
-    this.maxValExclusive = new Float(maxVal);
+  privatelon DocValRangelonFiltelonr(String csfFielonld, ThriftCSFTypelon csfFielonldTypelon,
+                            doublelon minVal, doublelon maxVal) {
+    this.csfFielonld = csfFielonld;
+    this.csfFielonldTypelon = csfFielonldTypelon;
+    this.minValInclusivelon = nelonw Float(minVal);
+    this.maxValelonxclusivelon = nelonw Float(maxVal);
   }
 
-  private DocValRangeFilter(String csfField, ThriftCSFType csfFieldType,
+  privatelon DocValRangelonFiltelonr(String csfFielonld, ThriftCSFTypelon csfFielonldTypelon,
                             long minVal, long maxVal) {
-    this.csfField = csfField;
-    this.csfFieldType = csfFieldType;
-    this.minValInclusive = new Long(minVal);
-    this.maxValExclusive = new Long(maxVal);
+    this.csfFielonld = csfFielonld;
+    this.csfFielonldTypelon = csfFielonldTypelon;
+    this.minValInclusivelon = nelonw Long(minVal);
+    this.maxValelonxclusivelon = nelonw Long(maxVal);
   }
 
-  @Override
-  public int hashCode() {
-    return (csfField == null ? 0 : csfField.hashCode()) * 29
-        + (csfFieldType == null ? 0 : csfFieldType.hashCode()) * 17
-        + minValInclusive.hashCode() * 7
-        + maxValExclusive.hashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn (csfFielonld == null ? 0 : csfFielonld.hashCodelon()) * 29
+        + (csfFielonldTypelon == null ? 0 : csfFielonldTypelon.hashCodelon()) * 17
+        + minValInclusivelon.hashCodelon() * 7
+        + maxValelonxclusivelon.hashCodelon();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof DocValRangeFilter)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof DocValRangelonFiltelonr)) {
+      relonturn falselon;
     }
 
-    DocValRangeFilter filter = DocValRangeFilter.class.cast(obj);
-    return Objects.equals(csfField, filter.csfField)
-        && (csfFieldType == filter.csfFieldType)
-        && minValInclusive.equals(filter.minValInclusive)
-        && maxValExclusive.equals(filter.maxValExclusive);
+    DocValRangelonFiltelonr filtelonr = DocValRangelonFiltelonr.class.cast(obj);
+    relonturn Objeloncts.elonquals(csfFielonld, filtelonr.csfFielonld)
+        && (csfFielonldTypelon == filtelonr.csfFielonldTypelon)
+        && minValInclusivelon.elonquals(filtelonr.minValInclusivelon)
+        && maxValelonxclusivelon.elonquals(filtelonr.maxValelonxclusivelon);
   }
 
-  @Override
-  public String toString(String field) {
-    return "DocValRangeFilter:" + csfField
-        + ",type:" + csfFieldType.toString()
-        + ",min:" + this.minValInclusive.toString()
-        + ",max:" + this.maxValExclusive.toString();
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn "DocValRangelonFiltelonr:" + csfFielonld
+        + ",typelon:" + csfFielonldTypelon.toString()
+        + ",min:" + this.minValInclusivelon.toString()
+        + ",max:" + this.maxValelonxclusivelon.toString();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        LeafReader reader = context.reader();
-        if (csfFieldType == null) {
-          return new AllDocsIterator(reader);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+    relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+      @Ovelonrridelon
+      protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        LelonafRelonadelonr relonadelonr = contelonxt.relonadelonr();
+        if (csfFielonldTypelon == null) {
+          relonturn nelonw AllDocsItelonrator(relonadelonr);
         }
 
-        int smallestDoc = (reader instanceof EarlybirdIndexSegmentAtomicReader)
-            ? ((EarlybirdIndexSegmentAtomicReader) reader).getSmallestDocID() : 0;
-        int largestDoc = reader.maxDoc() - 1;
-        return new CSFRangeDocIdSetIterator(reader, csfField, csfFieldType,
-                                            smallestDoc, largestDoc,
-                                            minValInclusive, maxValExclusive);
+        int smallelonstDoc = (relonadelonr instancelonof elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr)
+            ? ((elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) relonadelonr).gelontSmallelonstDocID() : 0;
+        int largelonstDoc = relonadelonr.maxDoc() - 1;
+        relonturn nelonw CSFRangelonDocIdSelontItelonrator(relonadelonr, csfFielonld, csfFielonldTypelon,
+                                            smallelonstDoc, largelonstDoc,
+                                            minValInclusivelon, maxValelonxclusivelon);
       }
     };
   }
 
-  private static final class CSFRangeDocIdSetIterator extends RangeFilterDISI {
-    private final NumericDocValues numericDocValues;
-    private final ThriftCSFType csfType;
-    private final Number minValInclusive;
-    private final Number maxValExclusive;
+  privatelon static final class CSFRangelonDocIdSelontItelonrator elonxtelonnds RangelonFiltelonrDISI {
+    privatelon final NumelonricDocValuelons numelonricDocValuelons;
+    privatelon final ThriftCSFTypelon csfTypelon;
+    privatelon final Numbelonr minValInclusivelon;
+    privatelon final Numbelonr maxValelonxclusivelon;
 
-    public CSFRangeDocIdSetIterator(LeafReader reader,
-                                    String csfField,
-                                    ThriftCSFType csfType,
-                                    int smallestDocID,
-                                    int largestDocID,
-                                    Number minValInclusive,
-                                    Number maxValExclusive) throws IOException {
-      super(reader, smallestDocID, largestDocID);
-      this.numericDocValues = reader.getNumericDocValues(csfField);
-      this.csfType = csfType;
-      this.minValInclusive = minValInclusive;
-      this.maxValExclusive = maxValExclusive;
+    public CSFRangelonDocIdSelontItelonrator(LelonafRelonadelonr relonadelonr,
+                                    String csfFielonld,
+                                    ThriftCSFTypelon csfTypelon,
+                                    int smallelonstDocID,
+                                    int largelonstDocID,
+                                    Numbelonr minValInclusivelon,
+                                    Numbelonr maxValelonxclusivelon) throws IOelonxcelonption {
+      supelonr(relonadelonr, smallelonstDocID, largelonstDocID);
+      this.numelonricDocValuelons = relonadelonr.gelontNumelonricDocValuelons(csfFielonld);
+      this.csfTypelon = csfTypelon;
+      this.minValInclusivelon = minValInclusivelon;
+      this.maxValelonxclusivelon = maxValelonxclusivelon;
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      if (!numericDocValues.advanceExact(docID())) {
-        return false;
+    @Ovelonrridelon
+    protelonctelond boolelonan shouldRelonturnDoc() throws IOelonxcelonption {
+      if (!numelonricDocValuelons.advancelonelonxact(docID())) {
+        relonturn falselon;
       }
 
-      long val = numericDocValues.longValue();
-      switch (csfType) {
-        case DOUBLE:
-          double doubleVal = Double.longBitsToDouble(val);
-          return doubleVal >= minValInclusive.doubleValue()
-              && doubleVal < maxValExclusive.doubleValue();
-        case FLOAT:
+      long val = numelonricDocValuelons.longValuelon();
+      switch (csfTypelon) {
+        caselon DOUBLelon:
+          doublelon doublelonVal = Doublelon.longBitsToDoublelon(val);
+          relonturn doublelonVal >= minValInclusivelon.doublelonValuelon()
+              && doublelonVal < maxValelonxclusivelon.doublelonValuelon();
+        caselon FLOAT:
           float floatVal = Float.intBitsToFloat((int) val);
-          return floatVal >= minValInclusive.doubleValue()
-              && floatVal < maxValExclusive.doubleValue();
-        case LONG:
-          return val >= minValInclusive.longValue() && val < maxValExclusive.longValue();
-        case INT:
-          return val >= minValInclusive.longValue() && (int) val < maxValExclusive.longValue();
-        case BYTE:
-          return (byte) val >= minValInclusive.longValue()
-              && (byte) val < maxValExclusive.longValue();
-        default:
-          return false;
+          relonturn floatVal >= minValInclusivelon.doublelonValuelon()
+              && floatVal < maxValelonxclusivelon.doublelonValuelon();
+        caselon LONG:
+          relonturn val >= minValInclusivelon.longValuelon() && val < maxValelonxclusivelon.longValuelon();
+        caselon INT:
+          relonturn val >= minValInclusivelon.longValuelon() && (int) val < maxValelonxclusivelon.longValuelon();
+        caselon BYTelon:
+          relonturn (bytelon) val >= minValInclusivelon.longValuelon()
+              && (bytelon) val < maxValelonxclusivelon.longValuelon();
+        delonfault:
+          relonturn falselon;
       }
     }
   }
 
   //////////////////////////
-  // for unit tests only
+  // for unit telonsts only
   //////////////////////////
-  @VisibleForTesting
-  public Number getMinValForTest() {
-    return minValInclusive;
+  @VisiblelonForTelonsting
+  public Numbelonr gelontMinValForTelonst() {
+    relonturn minValInclusivelon;
   }
 
-  @VisibleForTesting
-  public Number getMaxValForTest() {
-    return maxValExclusive;
+  @VisiblelonForTelonsting
+  public Numbelonr gelontMaxValForTelonst() {
+    relonturn maxValelonxclusivelon;
   }
 }

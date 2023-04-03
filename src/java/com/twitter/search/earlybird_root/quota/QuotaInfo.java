@@ -1,78 +1,78 @@
-package com.twitter.search.earlybird_root.quota;
+packagelon com.twittelonr.selonarch.elonarlybird_root.quota;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
 /**
- * Simple container of quota related information.
+ * Simplelon containelonr of quota relonlatelond information.
  */
 public class QuotaInfo {
-  public static final String DEFAULT_TIER_VALUE = "no_tier";
-  public static final boolean DEFAULT_ARCHIVE_ACCESS_VALUE = false;
+  public static final String DelonFAULT_TIelonR_VALUelon = "no_tielonr";
+  public static final boolelonan DelonFAULT_ARCHIVelon_ACCelonSS_VALUelon = falselon;
 
-  private final String quotaClientId;
-  private final String quotaEmail;
-  private final int quota;
-  private final boolean shouldEnforceQuota;
-  private final String clientTier;
-  private final boolean archiveAccess;
+  privatelon final String quotaClielonntId;
+  privatelon final String quotaelonmail;
+  privatelon final int quota;
+  privatelon final boolelonan shouldelonnforcelonQuota;
+  privatelon final String clielonntTielonr;
+  privatelon final boolelonan archivelonAccelonss;
 
   /**
-   * Creates a new QuotaInfo object with the given clientId, quota and shouldEnforceQuota.
+   * Crelonatelons a nelonw QuotaInfo objelonct with thelon givelonn clielonntId, quota and shouldelonnforcelonQuota.
    */
   public QuotaInfo(
-      String quotaClientId,
-      String quotaEmail,
+      String quotaClielonntId,
+      String quotaelonmail,
       int quota,
-      boolean shouldEnforceQuota,
-      String clientTier,
-      boolean archiveAccess) {
-    this.quotaClientId = Preconditions.checkNotNull(quotaClientId);
-    this.quotaEmail = Preconditions.checkNotNull(quotaEmail);
+      boolelonan shouldelonnforcelonQuota,
+      String clielonntTielonr,
+      boolelonan archivelonAccelonss) {
+    this.quotaClielonntId = Prelonconditions.chelonckNotNull(quotaClielonntId);
+    this.quotaelonmail = Prelonconditions.chelonckNotNull(quotaelonmail);
     this.quota = quota;
-    this.shouldEnforceQuota = shouldEnforceQuota;
-    this.clientTier = Preconditions.checkNotNull(clientTier);
-    this.archiveAccess = archiveAccess;
+    this.shouldelonnforcelonQuota = shouldelonnforcelonQuota;
+    this.clielonntTielonr = Prelonconditions.chelonckNotNull(clielonntTielonr);
+    this.archivelonAccelonss = archivelonAccelonss;
   }
 
   /**
-   * Returns the clientId for which we have the QuotaInfo.
+   * Relonturns thelon clielonntId for which welon havelon thelon QuotaInfo.
    */
-  public String getQuotaClientId() {
-    return quotaClientId;
+  public String gelontQuotaClielonntId() {
+    relonturn quotaClielonntId;
   }
 
   /**
-   * Returns the email associated with this clientId.
+   * Relonturns thelon elonmail associatelond with this clielonntId.
    */
-  public String getQuotaEmail() {
-    return quotaEmail;
+  public String gelontQuotaelonmail() {
+    relonturn quotaelonmail;
   }
 
   /**
-   * Returns the integer based quota for the stored client id.
+   * Relonturns thelon intelongelonr baselond quota for thelon storelond clielonnt id.
    */
-  public int getQuota() {
-    return quota;
+  public int gelontQuota() {
+    relonturn quota;
   }
 
   /**
-   * Returns whether the quota should be enforced or not.
+   * Relonturns whelonthelonr thelon quota should belon elonnforcelond or not.
    */
-  public boolean shouldEnforceQuota() {
-    return shouldEnforceQuota;
+  public boolelonan shouldelonnforcelonQuota() {
+    relonturn shouldelonnforcelonQuota;
   }
 
   /**
-   * Return tier info about the client.
+   * Relonturn tielonr info about thelon clielonnt.
    */
-  public String getClientTier() {
-    return clientTier;
+  public String gelontClielonntTielonr() {
+    relonturn clielonntTielonr;
   }
 
   /**
-   * Returns whether the client has access to the full archive.
+   * Relonturns whelonthelonr thelon clielonnt has accelonss to thelon full archivelon.
    */
-  public boolean hasArchiveAccess() {
-    return archiveAccess;
+  public boolelonan hasArchivelonAccelonss() {
+    relonturn archivelonAccelonss;
   }
 }

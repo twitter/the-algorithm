@@ -1,20 +1,20 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class ServedCandidateKeysKafkaSideEffectBuilder @Inject() (
-  injectedServiceIdentifier: ServiceIdentifier) {
-  def build(
-    sourceIdentifiers: Set[CandidatePipelineIdentifier]
-  ): ServedCandidateKeysKafkaSideEffect = {
-    val topic = injectedServiceIdentifier.environment.toLowerCase match {
-      case "prod" => "tq_ct_served_candidate_keys"
-      case _ => "tq_ct_served_candidate_keys_staging"
+@Singlelonton
+caselon class SelonrvelondCandidatelonKelonysKafkaSidelonelonffelonctBuildelonr @Injelonct() (
+  injelonctelondSelonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr) {
+  delonf build(
+    sourcelonIdelonntifielonrs: Selont[CandidatelonPipelonlinelonIdelonntifielonr]
+  ): SelonrvelondCandidatelonKelonysKafkaSidelonelonffelonct = {
+    val topic = injelonctelondSelonrvicelonIdelonntifielonr.elonnvironmelonnt.toLowelonrCaselon match {
+      caselon "prod" => "tq_ct_selonrvelond_candidatelon_kelonys"
+      caselon _ => "tq_ct_selonrvelond_candidatelon_kelonys_staging"
     }
-    new ServedCandidateKeysKafkaSideEffect(topic, sourceIdentifiers)
+    nelonw SelonrvelondCandidatelonKelonysKafkaSidelonelonffelonct(topic, sourcelonIdelonntifielonrs)
   }
 }

@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.constants
+packagelon com.twittelonr.follow_reloncommelonndations.common.constants
 
-import com.twitter.conversions.StorageUnitOps._
+import com.twittelonr.convelonrsions.StoragelonUnitOps._
 
-object ServiceConstants {
+objelonct SelonrvicelonConstants {
 
-  /** thrift client response size limits
-   *  these were estimated using monitoring dashboard
-   *  3MB network usage per second / 25 rps ~ 120KB/req << 1MB
-   *  we give some buffer here in case some requests require more data than others
+  /** thrift clielonnt relonsponselon sizelon limits
+   *  thelonselon welonrelon elonstimatelond using monitoring dashboard
+   *  3MB nelontwork usagelon pelonr seloncond / 25 rps ~ 120KB/relonq << 1MB
+   *  welon givelon somelon buffelonr helonrelon in caselon somelon relonquelonsts relonquirelon morelon data than othelonrs
    */
-  val StringLengthLimit: Long =
-    10.megabyte.inBytes
-  val ContainerLengthLimit: Long = 1.megabyte.inBytes
+  val StringLelonngthLimit: Long =
+    10.melongabytelon.inBytelons
+  val ContainelonrLelonngthLimit: Long = 1.melongabytelon.inBytelons
 }

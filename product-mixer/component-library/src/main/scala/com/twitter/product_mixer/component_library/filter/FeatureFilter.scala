@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object FeatureFilter {
+objelonct FelonaturelonFiltelonr {
 
   /**
-   * Builds a Filter using the Feature name as the FilterIdentifier
+   * Builds a Filtelonr using thelon Felonaturelon namelon as thelon FiltelonrIdelonntifielonr
    *
-   * @see [[FeatureFilter.fromFeature(identifier, feature)]]
+   * @selonelon [[FelonaturelonFiltelonr.fromFelonaturelon(idelonntifielonr, felonaturelon)]]
    */
-  def fromFeature[Candidate <: UniversalNoun[Any]](
-    feature: Feature[Candidate, Boolean]
-  ): Filter[PipelineQuery, Candidate] =
-    FeatureFilter.fromFeature(FilterIdentifier(feature.toString), feature)
+  delonf fromFelonaturelon[Candidatelon <: UnivelonrsalNoun[Any]](
+    felonaturelon: Felonaturelon[Candidatelon, Boolelonan]
+  ): Filtelonr[PipelonlinelonQuelonry, Candidatelon] =
+    FelonaturelonFiltelonr.fromFelonaturelon(FiltelonrIdelonntifielonr(felonaturelon.toString), felonaturelon)
 
   /**
-   * Builds a Filter that keeps candidates when the provided Boolean Feature is present and True.
-   * If the Feature is missing or False, the candidate is removed.
+   * Builds a Filtelonr that kelonelonps candidatelons whelonn thelon providelond Boolelonan Felonaturelon is prelonselonnt and Truelon.
+   * If thelon Felonaturelon is missing or Falselon, thelon candidatelon is relonmovelond.
    *
    *  {{{
-   *  Filter.fromFeature(
-   *    FilterIdentifier("SomeFilter"),
-   *    feature = SomeFeature
+   *  Filtelonr.fromFelonaturelon(
+   *    FiltelonrIdelonntifielonr("SomelonFiltelonr"),
+   *    felonaturelon = SomelonFelonaturelon
    *  )
    *  }}}
    *
-   * @param identifier A FilterIdentifier for the new filter
-   * @param feature A feature of [Candidate, Boolean] type used to determine whether Candidates will be kept
-   *                            when this feature is present and true otherwise they will be removed.
+   * @param idelonntifielonr A FiltelonrIdelonntifielonr for thelon nelonw filtelonr
+   * @param felonaturelon A felonaturelon of [Candidatelon, Boolelonan] typelon uselond to delontelonrminelon whelonthelonr Candidatelons will belon kelonpt
+   *                            whelonn this felonaturelon is prelonselonnt and truelon othelonrwiselon thelony will belon relonmovelond.
    */
-  def fromFeature[Candidate <: UniversalNoun[Any]](
-    identifier: FilterIdentifier,
-    feature: Feature[Candidate, Boolean]
-  ): Filter[PipelineQuery, Candidate] = {
-    val i = identifier
+  delonf fromFelonaturelon[Candidatelon <: UnivelonrsalNoun[Any]](
+    idelonntifielonr: FiltelonrIdelonntifielonr,
+    felonaturelon: Felonaturelon[Candidatelon, Boolelonan]
+  ): Filtelonr[PipelonlinelonQuelonry, Candidatelon] = {
+    val i = idelonntifielonr
 
-    new Filter[PipelineQuery, Candidate] {
-      override val identifier: FilterIdentifier = i
+    nelonw Filtelonr[PipelonlinelonQuelonry, Candidatelon] {
+      ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = i
 
-      override def apply(
-        query: PipelineQuery,
-        candidates: Seq[CandidateWithFeatures[Candidate]]
-      ): Stitch[FilterResult[Candidate]] = {
-        val (keptCandidates, removedCandidates) = candidates.partition { filterCandidate =>
-          filterCandidate.features.getOrElse(feature, false)
+      ovelonrridelon delonf apply(
+        quelonry: PipelonlinelonQuelonry,
+        candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+      ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
+        val (kelonptCandidatelons, relonmovelondCandidatelons) = candidatelons.partition { filtelonrCandidatelon =>
+          filtelonrCandidatelon.felonaturelons.gelontOrelonlselon(felonaturelon, falselon)
         }
 
-        Stitch.value(
-          FilterResult(
-            kept = keptCandidates.map(_.candidate),
-            removed = removedCandidates.map(_.candidate)))
+        Stitch.valuelon(
+          FiltelonrRelonsult(
+            kelonpt = kelonptCandidatelons.map(_.candidatelon),
+            relonmovelond = relonmovelondCandidatelons.map(_.candidatelon)))
       }
     }
   }

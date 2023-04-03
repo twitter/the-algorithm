@@ -1,14 +1,14 @@
-package com.twitter.visibility.interfaces.tweets
+packagelon com.twittelonr.visibility.intelonrfacelons.twelonelonts
 
-import com.twitter.visibility.models.UserUnavailableStateEnum
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.visibility.modelonls.UselonrUnavailablelonStatelonelonnum
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class UserUnavailableStateVisibilityRequest(
-  safetyLevel: SafetyLevel,
-  tweetId: Long,
-  viewerContext: ViewerContext,
-  userUnavailableState: UserUnavailableStateEnum,
-  isRetweet: Boolean,
-  isInnerQuotedTweet: Boolean,
+caselon class UselonrUnavailablelonStatelonVisibilityRelonquelonst(
+  safelontyLelonvelonl: SafelontyLelonvelonl,
+  twelonelontId: Long,
+  vielonwelonrContelonxt: VielonwelonrContelonxt,
+  uselonrUnavailablelonStatelon: UselonrUnavailablelonStatelonelonnum,
+  isRelontwelonelont: Boolelonan,
+  isInnelonrQuotelondTwelonelont: Boolelonan,
 )

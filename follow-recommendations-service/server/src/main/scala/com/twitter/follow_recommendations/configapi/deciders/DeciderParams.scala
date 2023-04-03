@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.configapi.deciders
+packagelon com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs
 
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object DeciderParams {
-  object EnableRecommendations extends Param[Boolean](false)
-  object EnableScoreUserCandidates extends Param[Boolean](false)
+objelonct DeloncidelonrParams {
+  objelonct elonnablelonReloncommelonndations elonxtelonnds Param[Boolelonan](falselon)
+  objelonct elonnablelonScorelonUselonrCandidatelons elonxtelonnds Param[Boolelonan](falselon)
 }

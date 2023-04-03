@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtPassThroughCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtPassThroughCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor.UrtCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class PassThroughCursorBuilder[
-  -Query <: PipelineQuery with HasPipelineCursor[UrtPassThroughCursor]
+caselon class PassThroughCursorBuildelonr[
+  -Quelonry <: PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtPassThroughCursor]
 ](
-  cursorFeature: Feature[Query, String],
-  override val cursorType: CursorType)
-    extends UrtCursorBuilder[Query] {
+  cursorFelonaturelon: Felonaturelon[Quelonry, String],
+  ovelonrridelon val cursorTypelon: CursorTypelon)
+    elonxtelonnds UrtCursorBuildelonr[Quelonry] {
 
-  override val includeOperation: IncludeInstruction[Query] = { (query, _) =>
-    query.features.exists(_.getOrElse(cursorFeature, "").nonEmpty)
+  ovelonrridelon val includelonOpelonration: IncludelonInstruction[Quelonry] = { (quelonry, _) =>
+    quelonry.felonaturelons.elonxists(_.gelontOrelonlselon(cursorFelonaturelon, "").nonelonmpty)
   }
 
-  override def cursorValue(
-    query: Query,
-    entries: Seq[TimelineEntry]
+  ovelonrridelon delonf cursorValuelon(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
   ): String =
-    UrtCursorSerializer.serializeCursor(
+    UrtCursorSelonrializelonr.selonrializelonCursor(
       UrtPassThroughCursor(
-        cursorSortIndex(query, entries),
-        query.features.map(_.get(cursorFeature)).getOrElse(""),
-        cursorType = Some(cursorType)
+        cursorSortIndelonx(quelonry, elonntrielons),
+        quelonry.felonaturelons.map(_.gelont(cursorFelonaturelon)).gelontOrelonlselon(""),
+        cursorTypelon = Somelon(cursorTypelon)
       )
     )
 }

@@ -1,60 +1,60 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import com.google.common.collect.ImmutableList;
+import com.googlelon.common.collelonct.ImmutablelonList;
 
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * A term dictionary that's backed by multiple underlying segments/indexes. For a given term, will
- * be able to return the termId for each of the underlying indexes.
+ * A telonrm dictionary that's backelond by multiplelon undelonrlying selongmelonnts/indelonxelons. For a givelonn telonrm, will
+ * belon ablelon to relonturn thelon telonrmId for elonach of thelon undelonrlying indelonxelons.
  */
-public interface MultiSegmentTermDictionary {
+public intelonrfacelon MultiSelongmelonntTelonrmDictionary {
 
   /**
-   * Lookup a term in this multi segment term dictionary, and return the term ids for that term on
-   * all of the managed segments.
+   * Lookup a telonrm in this multi selongmelonnt telonrm dictionary, and relonturn thelon telonrm ids for that telonrm on
+   * all of thelon managelond selongmelonnts.
    *
-   * @return An array containing a termId for each segment that this term dictionary is backed by.
-   * The order of segments will match the order returned by {@link #getSegmentIndexes()}.
+   * @relonturn An array containing a telonrmId for elonach selongmelonnt that this telonrm dictionary is backelond by.
+   * Thelon ordelonr of selongmelonnts will match thelon ordelonr relonturnelond by {@link #gelontSelongmelonntIndelonxelons()}.
    *
-   * For each segment, the term id will be returned, or
-   * {@link EarlybirdIndexSegmentAtomicReader#TERM_NOT_FOUND} if that segment does not have the
-   * given term.
+   * For elonach selongmelonnt, thelon telonrm id will belon relonturnelond, or
+   * {@link elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr#TelonRM_NOT_FOUND} if that selongmelonnt doelons not havelon thelon
+   * givelonn telonrm.
    */
-  int[] lookupTermIds(BytesRef term);
+  int[] lookupTelonrmIds(BytelonsRelonf telonrm);
 
   /**
-   * A convenience method for checking whether a specific index/segment is backed by this term
-   * dictionary. Returning true here is equivalent to returning:
-   * <pre>
-   * getSegmentIndexes().contains(invertedIndex);
-   * </pre>
+   * A convelonnielonncelon melonthod for cheloncking whelonthelonr a speloncific indelonx/selongmelonnt is backelond by this telonrm
+   * dictionary. Relonturning truelon helonrelon is elonquivalelonnt to relonturning:
+   * <prelon>
+   * gelontSelongmelonntIndelonxelons().contains(invelonrtelondIndelonx);
+   * </prelon>
    */
-  default boolean supportSegmentIndex(InvertedIndex invertedIndex) {
-    return getSegmentIndexes().contains(invertedIndex);
+  delonfault boolelonan supportSelongmelonntIndelonx(InvelonrtelondIndelonx invelonrtelondIndelonx) {
+    relonturn gelontSelongmelonntIndelonxelons().contains(invelonrtelondIndelonx);
   }
 
   /**
-   * The list of indexes that this term dictionary is backed by. The order of indexes here will
-   * be consistent with the order of termIds returned by {@link #lookupTermIds(BytesRef)}.
+   * Thelon list of indelonxelons that this telonrm dictionary is backelond by. Thelon ordelonr of indelonxelons helonrelon will
+   * belon consistelonnt with thelon ordelonr of telonrmIds relonturnelond by {@link #lookupTelonrmIds(BytelonsRelonf)}.
    */
-  ImmutableList<? extends InvertedIndex> getSegmentIndexes();
+  ImmutablelonList<? elonxtelonnds InvelonrtelondIndelonx> gelontSelongmelonntIndelonxelons();
 
   /**
-   * Returns the number of terms in this term dictionary.
+   * Relonturns thelon numbelonr of telonrms in this telonrm dictionary.
    *
-   * If the term "foo" appears in segment A and in segment B, it will be counted once. To get the
-   * total number of terms across all managed segments, see {@link #getNumTermEntries()}.
+   * If thelon telonrm "foo" appelonars in selongmelonnt A and in selongmelonnt B, it will belon countelond oncelon. To gelont thelon
+   * total numbelonr of telonrms across all managelond selongmelonnts, selonelon {@link #gelontNumTelonrmelonntrielons()}.
    */
-  int getNumTerms();
+  int gelontNumTelonrms();
 
   /**
-   * Returns the total number of terms in this term dictionary across all managed segments.
+   * Relonturns thelon total numbelonr of telonrms in this telonrm dictionary across all managelond selongmelonnts.
    *
-   * If the term "foo" appears in segment A and in segment B, it will have 2 entries in this term
+   * If thelon telonrm "foo" appelonars in selongmelonnt A and in selongmelonnt B, it will havelon 2 elonntrielons in this telonrm
    * dictionary.
    */
-  int getNumTermEntries();
+  int gelontNumTelonrmelonntrielons();
 }

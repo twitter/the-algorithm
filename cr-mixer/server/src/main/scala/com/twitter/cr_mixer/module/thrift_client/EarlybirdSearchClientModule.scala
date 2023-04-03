@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.module.thrift_client
-import com.twitter.app.Flag
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.inject.Injector
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.module.core.TimeoutConfigModule.EarlybirdClientTimeoutFlagName
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.util.Duration
-import org.apache.thrift.protocol.TCompactProtocol
+packagelon com.twittelonr.cr_mixelonr.modulelon.thrift_clielonnt
+import com.twittelonr.app.Flag
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdSelonrvicelon
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.modulelon.corelon.TimelonoutConfigModulelon.elonarlybirdClielonntTimelonoutFlagNamelon
+import com.twittelonr.finaglelon.selonrvicelon.RelontryBudgelont
+import com.twittelonr.util.Duration
+import org.apachelon.thrift.protocol.TCompactProtocol
 
-object EarlybirdSearchClientModule
-    extends ThriftMethodBuilderClientModule[
-      EarlybirdService.ServicePerEndpoint,
-      EarlybirdService.MethodPerEndpoint
+objelonct elonarlybirdSelonarchClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      elonarlybirdSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override def label: String = "earlybird"
-  override def dest: String = "/s/earlybird-root-superroot/root-superroot"
-  private val requestTimeoutFlag: Flag[Duration] =
-    flag[Duration](EarlybirdClientTimeoutFlagName, "Earlybird client timeout")
-  override protected def requestTimeout: Duration = requestTimeoutFlag()
+  ovelonrridelon delonf labelonl: String = "elonarlybird"
+  ovelonrridelon delonf delonst: String = "/s/elonarlybird-root-supelonrroot/root-supelonrroot"
+  privatelon val relonquelonstTimelonoutFlag: Flag[Duration] =
+    flag[Duration](elonarlybirdClielonntTimelonoutFlagNamelon, "elonarlybird clielonnt timelonout")
+  ovelonrridelon protelonctelond delonf relonquelonstTimelonout: Duration = relonquelonstTimelonoutFlag()
 
-  override def retryBudget: RetryBudget = RetryBudget.Empty
+  ovelonrridelon delonf relontryBudgelont: RelontryBudgelont = RelontryBudgelont.elonmpty
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client = {
-    super
-      .configureThriftMuxClient(injector, client)
-      .withProtocolFactory(new TCompactProtocol.Factory())
-      .withSessionQualifier
-      .successRateFailureAccrual(successRate = 0.9, window = 30.seconds)
+  ovelonrridelon delonf configurelonThriftMuxClielonnt(
+    injelonctor: Injelonctor,
+    clielonnt: ThriftMux.Clielonnt
+  ): ThriftMux.Clielonnt = {
+    supelonr
+      .configurelonThriftMuxClielonnt(injelonctor, clielonnt)
+      .withProtocolFactory(nelonw TCompactProtocol.Factory())
+      .withSelonssionQualifielonr
+      .succelonssRatelonFailurelonAccrual(succelonssRatelon = 0.9, window = 30.selonconds)
   }
 }

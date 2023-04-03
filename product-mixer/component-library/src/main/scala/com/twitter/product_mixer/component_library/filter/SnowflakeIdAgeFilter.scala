@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
 
 /**
- * @param maxAgeParam Feature Switch configurable for convenience
- * @tparam Candidate The type of the candidates
+ * @param maxAgelonParam Felonaturelon Switch configurablelon for convelonnielonncelon
+ * @tparam Candidatelon Thelon typelon of thelon candidatelons
  */
-case class SnowflakeIdAgeFilter[Candidate <: UniversalNoun[Long]](
-  maxAgeParam: Param[Duration])
-    extends Filter[PipelineQuery, Candidate] {
+caselon class SnowflakelonIdAgelonFiltelonr[Candidatelon <: UnivelonrsalNoun[Long]](
+  maxAgelonParam: Param[Duration])
+    elonxtelonnds Filtelonr[PipelonlinelonQuelonry, Candidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("SnowflakeIdAge")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("SnowflakelonIdAgelon")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val maxAge = query.params(maxAgeParam)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
+    val maxAgelon = quelonry.params(maxAgelonParam)
 
-    val (keptCandidates, removedCandidates) = candidates
-      .map(_.candidate)
-      .partition { filterCandidate =>
-        SnowflakeId.timeFromIdOpt(filterCandidate.id) match {
-          case Some(creationTime) =>
-            query.queryTime.since(creationTime) <= maxAge
-          case _ => false
+    val (kelonptCandidatelons, relonmovelondCandidatelons) = candidatelons
+      .map(_.candidatelon)
+      .partition { filtelonrCandidatelon =>
+        SnowflakelonId.timelonFromIdOpt(filtelonrCandidatelon.id) match {
+          caselon Somelon(crelonationTimelon) =>
+            quelonry.quelonryTimelon.sincelon(crelonationTimelon) <= maxAgelon
+          caselon _ => falselon
         }
       }
 
-    Stitch.value(FilterResult(kept = keptCandidates, removed = removedCandidates))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonptCandidatelons, relonmovelond = relonmovelondCandidatelons))
   }
 }

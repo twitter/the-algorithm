@@ -1,138 +1,138 @@
-package com.twitter.follow_recommendations.blenders
+packagelon com.twittelonr.follow_reloncommelonndations.blelonndelonrs
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.AdMetadata
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.inject.Logging
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Transform
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AdMelontadata
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Reloncommelonndation
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PromotedAccountsBlender @Inject() (statsReceiver: StatsReceiver)
-    extends Transform[Int, Recommendation]
+@Singlelonton
+class PromotelondAccountsBlelonndelonr @Injelonct() (statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Transform[Int, Reloncommelonndation]
     with Logging {
 
-  import PromotedAccountsBlender._
-  val stats = statsReceiver.scope(Name)
-  val inputOrganicAccounts = stats.counter(InputOrganic)
-  val inputPromotedAccounts = stats.counter(InputPromoted)
-  val outputOrganicAccounts = stats.counter(OutputOrganic)
-  val outputPromotedAccounts = stats.counter(OutputPromoted)
-  val promotedAccountsStats = stats.scope(NumPromotedAccounts)
+  import PromotelondAccountsBlelonndelonr._
+  val stats = statsReloncelonivelonr.scopelon(Namelon)
+  val inputOrganicAccounts = stats.countelonr(InputOrganic)
+  val inputPromotelondAccounts = stats.countelonr(InputPromotelond)
+  val outputOrganicAccounts = stats.countelonr(OutputOrganic)
+  val outputPromotelondAccounts = stats.countelonr(OutputPromotelond)
+  val promotelondAccountsStats = stats.scopelon(NumPromotelondAccounts)
 
-  override def transform(
-    maxResults: Int,
-    items: Seq[Recommendation]
-  ): Stitch[Seq[Recommendation]] = {
-    val (promoted, organic) = items.partition(_.isPromotedAccount)
-    val promotedIds = promoted.map(_.id).toSet
-    val dedupedOrganic = organic.filterNot(u => promotedIds.contains(u.id))
-    val blended = blendPromotedAccount(dedupedOrganic, promoted, maxResults)
-    val (outputPromoted, outputOrganic) = blended.partition(_.isPromotedAccount)
-    inputOrganicAccounts.incr(dedupedOrganic.size)
-    inputPromotedAccounts.incr(promoted.size)
-    outputOrganicAccounts.incr(outputOrganic.size)
-    val size = outputPromoted.size
-    outputPromotedAccounts.incr(size)
-    if (size <= 5) {
-      promotedAccountsStats.counter(outputPromoted.size.toString).incr()
-    } else {
-      promotedAccountsStats.counter(MoreThan5Promoted).incr()
+  ovelonrridelon delonf transform(
+    maxRelonsults: Int,
+    itelonms: Selonq[Reloncommelonndation]
+  ): Stitch[Selonq[Reloncommelonndation]] = {
+    val (promotelond, organic) = itelonms.partition(_.isPromotelondAccount)
+    val promotelondIds = promotelond.map(_.id).toSelont
+    val delondupelondOrganic = organic.filtelonrNot(u => promotelondIds.contains(u.id))
+    val blelonndelond = blelonndPromotelondAccount(delondupelondOrganic, promotelond, maxRelonsults)
+    val (outputPromotelond, outputOrganic) = blelonndelond.partition(_.isPromotelondAccount)
+    inputOrganicAccounts.incr(delondupelondOrganic.sizelon)
+    inputPromotelondAccounts.incr(promotelond.sizelon)
+    outputOrganicAccounts.incr(outputOrganic.sizelon)
+    val sizelon = outputPromotelond.sizelon
+    outputPromotelondAccounts.incr(sizelon)
+    if (sizelon <= 5) {
+      promotelondAccountsStats.countelonr(outputPromotelond.sizelon.toString).incr()
+    } elonlselon {
+      promotelondAccountsStats.countelonr(MorelonThan5Promotelond).incr()
     }
-    Stitch.value(blended)
+    Stitch.valuelon(blelonndelond)
   }
 
   /**
-   * Merge Promoted results and organic results. Promoted result dictates the position
-   * in the merge list.
+   * Melonrgelon Promotelond relonsults and organic relonsults. Promotelond relonsult dictatelons thelon position
+   * in thelon melonrgelon list.
    *
-   * merge a list of positioned users, aka. promoted, and a list of organic
-   * users.  The positioned promoted users are pre-sorted with regards to their
-   * position ascendingly.  Only requirement about position is to be within the
-   * range, i.e, can not exceed the combined length if merge is successful, ok
-   * to be at the last position, but not beyond.
-   * For more detailed description of location position:
-   * http://confluence.local.twitter.com/display/ADS/Promoted+Tweets+in+Timeline+Design+Document
+   * melonrgelon a list of positionelond uselonrs, aka. promotelond, and a list of organic
+   * uselonrs.  Thelon positionelond promotelond uselonrs arelon prelon-sortelond with relongards to thelonir
+   * position ascelonndingly.  Only relonquirelonmelonnt about position is to belon within thelon
+   * rangelon, i.elon, can not elonxcelonelond thelon combinelond lelonngth if melonrgelon is succelonssful, ok
+   * to belon at thelon last position, but not belonyond.
+   * For morelon delontailelond delonscription of location position:
+   * http://confluelonncelon.local.twittelonr.com/display/ADS/Promotelond+Twelonelonts+in+Timelonlinelon+Delonsign+Documelonnt
    */
-  @VisibleForTesting
-  private[blenders] def mergePromotedAccounts(
-    organicUsers: Seq[Recommendation],
-    promotedUsers: Seq[Recommendation]
-  ): Seq[Recommendation] = {
-    def mergeAccountWithIndex(
-      organicUsers: Seq[Recommendation],
-      promotedUsers: Seq[Recommendation],
-      index: Int
-    ): Stream[Recommendation] = {
-      if (promotedUsers.isEmpty) organicUsers.toStream
-      else {
-        val promotedHead = promotedUsers.head
-        val promotedTail = promotedUsers.tail
-        promotedHead.adMetadata match {
-          case Some(AdMetadata(position, _)) =>
-            if (position < 0) mergeAccountWithIndex(organicUsers, promotedTail, index)
-            else if (position == index)
-              promotedHead #:: mergeAccountWithIndex(organicUsers, promotedTail, index)
-            else if (organicUsers.isEmpty) organicUsers.toStream
-            else {
-              val organicHead = organicUsers.head
-              val organicTail = organicUsers.tail
-              organicHead #:: mergeAccountWithIndex(organicTail, promotedUsers, index + 1)
+  @VisiblelonForTelonsting
+  privatelon[blelonndelonrs] delonf melonrgelonPromotelondAccounts(
+    organicUselonrs: Selonq[Reloncommelonndation],
+    promotelondUselonrs: Selonq[Reloncommelonndation]
+  ): Selonq[Reloncommelonndation] = {
+    delonf melonrgelonAccountWithIndelonx(
+      organicUselonrs: Selonq[Reloncommelonndation],
+      promotelondUselonrs: Selonq[Reloncommelonndation],
+      indelonx: Int
+    ): Strelonam[Reloncommelonndation] = {
+      if (promotelondUselonrs.iselonmpty) organicUselonrs.toStrelonam
+      elonlselon {
+        val promotelondHelonad = promotelondUselonrs.helonad
+        val promotelondTail = promotelondUselonrs.tail
+        promotelondHelonad.adMelontadata match {
+          caselon Somelon(AdMelontadata(position, _)) =>
+            if (position < 0) melonrgelonAccountWithIndelonx(organicUselonrs, promotelondTail, indelonx)
+            elonlselon if (position == indelonx)
+              promotelondHelonad #:: melonrgelonAccountWithIndelonx(organicUselonrs, promotelondTail, indelonx)
+            elonlselon if (organicUselonrs.iselonmpty) organicUselonrs.toStrelonam
+            elonlselon {
+              val organicHelonad = organicUselonrs.helonad
+              val organicTail = organicUselonrs.tail
+              organicHelonad #:: melonrgelonAccountWithIndelonx(organicTail, promotelondUselonrs, indelonx + 1)
             }
-          case _ =>
-            logger.error("Unknown Candidate type in mergePromotedAccounts")
-            Stream.empty
+          caselon _ =>
+            loggelonr.elonrror("Unknown Candidatelon typelon in melonrgelonPromotelondAccounts")
+            Strelonam.elonmpty
         }
       }
     }
 
-    mergeAccountWithIndex(organicUsers, promotedUsers, 0)
+    melonrgelonAccountWithIndelonx(organicUselonrs, promotelondUselonrs, 0)
   }
 
-  private[this] def blendPromotedAccount(
-    organic: Seq[Recommendation],
-    promoted: Seq[Recommendation],
-    maxResults: Int
-  ): Seq[Recommendation] = {
+  privatelon[this] delonf blelonndPromotelondAccount(
+    organic: Selonq[Reloncommelonndation],
+    promotelond: Selonq[Reloncommelonndation],
+    maxRelonsults: Int
+  ): Selonq[Reloncommelonndation] = {
 
-    val merged = mergePromotedAccounts(organic, promoted)
-    val mergedServed = merged.take(maxResults)
-    val promotedServed = promoted.intersect(mergedServed)
+    val melonrgelond = melonrgelonPromotelondAccounts(organic, promotelond)
+    val melonrgelondSelonrvelond = melonrgelond.takelon(maxRelonsults)
+    val promotelondSelonrvelond = promotelond.intelonrselonct(melonrgelondSelonrvelond)
 
-    if (isBlendPromotedNeeded(
-        mergedServed.size - promotedServed.size,
-        promotedServed.size,
-        maxResults
+    if (isBlelonndPromotelondNelonelondelond(
+        melonrgelondSelonrvelond.sizelon - promotelondSelonrvelond.sizelon,
+        promotelondSelonrvelond.sizelon,
+        maxRelonsults
       )) {
-      mergedServed
-    } else {
-      organic.take(maxResults)
+      melonrgelondSelonrvelond
+    } elonlselon {
+      organic.takelon(maxRelonsults)
     }
   }
 
-  @VisibleForTesting
-  private[blenders] def isBlendPromotedNeeded(
-    organicSize: Int,
-    promotedSize: Int,
-    maxResults: Int
-  ): Boolean = {
-    (organicSize > 1) &&
-    (promotedSize > 0) &&
-    (promotedSize < organicSize) &&
-    (promotedSize <= 2) &&
-    (maxResults > 1)
+  @VisiblelonForTelonsting
+  privatelon[blelonndelonrs] delonf isBlelonndPromotelondNelonelondelond(
+    organicSizelon: Int,
+    promotelondSizelon: Int,
+    maxRelonsults: Int
+  ): Boolelonan = {
+    (organicSizelon > 1) &&
+    (promotelondSizelon > 0) &&
+    (promotelondSizelon < organicSizelon) &&
+    (promotelondSizelon <= 2) &&
+    (maxRelonsults > 1)
   }
 }
 
-object PromotedAccountsBlender {
-  val Name = "promoted_accounts_blender"
+objelonct PromotelondAccountsBlelonndelonr {
+  val Namelon = "promotelond_accounts_blelonndelonr"
   val InputOrganic = "input_organic_accounts"
-  val InputPromoted = "input_promoted_accounts"
+  val InputPromotelond = "input_promotelond_accounts"
   val OutputOrganic = "output_organic_accounts"
-  val OutputPromoted = "output_promoted_accounts"
-  val NumPromotedAccounts = "num_promoted_accounts"
-  val MoreThan5Promoted = "more_than_5"
+  val OutputPromotelond = "output_promotelond_accounts"
+  val NumPromotelondAccounts = "num_promotelond_accounts"
+  val MorelonThan5Promotelond = "morelon_than_5"
 }

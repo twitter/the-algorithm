@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.util
+packagelon com.twittelonr.cr_mixelonr.util
 
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.thriftscala.CandidateGenerationKey
-import com.twitter.cr_mixer.thriftscala.SimilarityEngine
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Time
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.thriftscala.CandidatelonGelonnelonrationKelony
+import com.twittelonr.cr_mixelonr.thriftscala.Similarityelonnginelon
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.util.Timelon
 
-object CandidateGenerationKeyUtil {
-  private val PlaceholderUserId = 0L // this default value will not be used
+objelonct CandidatelonGelonnelonrationKelonyUtil {
+  privatelon val PlacelonholdelonrUselonrId = 0L // this delonfault valuelon will not belon uselond
 
-  private val DefaultSourceInfo: SourceInfo = SourceInfo(
-    sourceType = SourceType.RequestUserId,
-    sourceEventTime = None,
-    internalId = InternalId.UserId(PlaceholderUserId)
+  privatelon val DelonfaultSourcelonInfo: SourcelonInfo = SourcelonInfo(
+    sourcelonTypelon = SourcelonTypelon.RelonquelonstUselonrId,
+    sourcelonelonvelonntTimelon = Nonelon,
+    intelonrnalId = IntelonrnalId.UselonrId(PlacelonholdelonrUselonrId)
   )
 
-  def toThrift(
-    candidateGenerationInfo: CandidateGenerationInfo,
-    requestUserId: UserId
-  ): CandidateGenerationKey = {
-    CandidateGenerationKey(
-      sourceType = candidateGenerationInfo.sourceInfoOpt.getOrElse(DefaultSourceInfo).sourceType,
-      sourceEventTime = candidateGenerationInfo.sourceInfoOpt
-        .getOrElse(DefaultSourceInfo).sourceEventTime.getOrElse(Time.fromMilliseconds(0L)).inMillis,
-      id = candidateGenerationInfo.sourceInfoOpt
-        .map(_.internalId).getOrElse(InternalId.UserId(requestUserId)),
-      modelId = candidateGenerationInfo.similarityEngineInfo.modelId.getOrElse(""),
-      similarityEngineType =
-        Some(candidateGenerationInfo.similarityEngineInfo.similarityEngineType),
-      contributingSimilarityEngine =
-        Some(candidateGenerationInfo.contributingSimilarityEngines.map(se =>
-          SimilarityEngine(se.similarityEngineType, se.modelId, se.score)))
+  delonf toThrift(
+    candidatelonGelonnelonrationInfo: CandidatelonGelonnelonrationInfo,
+    relonquelonstUselonrId: UselonrId
+  ): CandidatelonGelonnelonrationKelony = {
+    CandidatelonGelonnelonrationKelony(
+      sourcelonTypelon = candidatelonGelonnelonrationInfo.sourcelonInfoOpt.gelontOrelonlselon(DelonfaultSourcelonInfo).sourcelonTypelon,
+      sourcelonelonvelonntTimelon = candidatelonGelonnelonrationInfo.sourcelonInfoOpt
+        .gelontOrelonlselon(DelonfaultSourcelonInfo).sourcelonelonvelonntTimelon.gelontOrelonlselon(Timelon.fromMilliselonconds(0L)).inMillis,
+      id = candidatelonGelonnelonrationInfo.sourcelonInfoOpt
+        .map(_.intelonrnalId).gelontOrelonlselon(IntelonrnalId.UselonrId(relonquelonstUselonrId)),
+      modelonlId = candidatelonGelonnelonrationInfo.similarityelonnginelonInfo.modelonlId.gelontOrelonlselon(""),
+      similarityelonnginelonTypelon =
+        Somelon(candidatelonGelonnelonrationInfo.similarityelonnginelonInfo.similarityelonnginelonTypelon),
+      contributingSimilarityelonnginelon =
+        Somelon(candidatelonGelonnelonrationInfo.contributingSimilarityelonnginelons.map(selon =>
+          Similarityelonnginelon(selon.similarityelonnginelonTypelon, selon.modelonlId, selon.scorelon)))
     )
   }
 }

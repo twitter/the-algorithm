@@ -1,233 +1,233 @@
-use crate::{MAX_NUM_INPUTS, MAX_NUM_MODELS, MAX_NUM_OUTPUTS};
-use arrayvec::ArrayVec;
-use clap::Parser;
-use log::info;
-use once_cell::sync::OnceCell;
-use std::error::Error;
-use time::OffsetDateTime;
-use time::format_description::well_known::Rfc3339;
-#[derive(Parser, Debug, Clone)]
-///Navi is configured through CLI arguments(for now) defined below.
-//TODO: use clap_serde to make it config file driven
+uselon cratelon::{MAX_NUM_INPUTS, MAX_NUM_MODelonLS, MAX_NUM_OUTPUTS};
+uselon arrayvelonc::ArrayVelonc;
+uselon clap::Parselonr;
+uselon log::info;
+uselon oncelon_celonll::sync::OncelonCelonll;
+uselon std::elonrror::elonrror;
+uselon timelon::OffselontDatelonTimelon;
+uselon timelon::format_delonscription::welonll_known::Rfc3339;
+#[delonrivelon(Parselonr, Delonbug, Clonelon)]
+///Navi is configurelond through CLI argumelonnts(for now) delonfinelond belonlow.
+//TODO: uselon clap_selonrdelon to makelon it config filelon drivelonn
 pub struct Args {
-    #[clap(short, long, help = "gRPC port Navi runs ons")]
+    #[clap(short, long, helonlp = "gRPC port Navi runs ons")]
     pub port: i32,
-    #[clap(long, default_value_t = 9000, help = "prometheus metrics port")]
-    pub prometheus_port: u16,
+    #[clap(long, delonfault_valuelon_t = 9000, helonlp = "promelonthelonus melontrics port")]
+    pub promelonthelonus_port: u16,
     #[clap(
         short,
         long,
-        default_value_t = 1,
-        help = "number of worker threads for tokio async runtime"
+        delonfault_valuelon_t = 1,
+        helonlp = "numbelonr of workelonr threlonads for tokio async runtimelon"
     )]
-    pub num_worker_threads: usize,
+    pub num_workelonr_threlonads: usizelon,
     #[clap(
         long,
-        default_value_t = 14,
-        help = "number of blocking threads in tokio blocking thread pool"
+        delonfault_valuelon_t = 14,
+        helonlp = "numbelonr of blocking threlonads in tokio blocking threlonad pool"
     )]
-    pub max_blocking_threads: usize,
-    #[clap(long, default_value = "16", help = "maximum batch size for a batch")]
-    pub max_batch_size: Vec<String>,
+    pub max_blocking_threlonads: usizelon,
+    #[clap(long, delonfault_valuelon = "16", helonlp = "maximum batch sizelon for a batch")]
+    pub max_batch_sizelon: Velonc<String>,
     #[clap(
         short,
         long,
-        default_value = "2",
-        help = "max wait time for accumulating a batch"
+        delonfault_valuelon = "2",
+        helonlp = "max wait timelon for accumulating a batch"
     )]
-    pub batch_time_out_millis: Vec<String>,
+    pub batch_timelon_out_millis: Velonc<String>,
     #[clap(
         long,
-        default_value_t = 90,
-        help = "threshold to start dropping batches under stress"
+        delonfault_valuelon_t = 90,
+        helonlp = "threlonshold to start dropping batchelons undelonr strelonss"
     )]
     pub batch_drop_millis: u64,
     #[clap(
         long,
-        default_value_t = 300,
-        help = "polling interval for new version of a model and META.json config"
+        delonfault_valuelon_t = 300,
+        helonlp = "polling intelonrval for nelonw velonrsion of a modelonl and MelonTA.json config"
     )]
-    pub model_check_interval_secs: u64,
+    pub modelonl_chelonck_intelonrval_seloncs: u64,
     #[clap(
         short,
         long,
-        default_value = "models/pvideo/",
-        help = "root directory for models"
+        delonfault_valuelon = "modelonls/pvidelono/",
+        helonlp = "root direlonctory for modelonls"
     )]
-    pub model_dir: Vec<String>,
+    pub modelonl_dir: Velonc<String>,
     #[clap(
         long,
-        help = "directory containing META.json config. separate from model_dir to facilitate remote config management"
+        helonlp = "direlonctory containing MelonTA.json config. selonparatelon from modelonl_dir to facilitatelon relonmotelon config managelonmelonnt"
     )]
-    pub meta_json_dir: Option<String>,
-    #[clap(short, long, default_value = "", help = "directory for ssl certs")]
+    pub melonta_json_dir: Option<String>,
+    #[clap(short, long, delonfault_valuelon = "", helonlp = "direlonctory for ssl celonrts")]
     pub ssl_dir: String,
     #[clap(
         long,
-        help = "call out to external process to check model updates. custom logic can be written to pull from hdfs, gcs etc"
+        helonlp = "call out to elonxtelonrnal procelonss to chelonck modelonl updatelons. custom logic can belon writtelonn to pull from hdfs, gcs elontc"
     )]
-    pub modelsync_cli: Option<String>,
+    pub modelonlsync_cli: Option<String>,
     #[clap(
         long,
-        default_value_t = 1,
-        help = "specify how many versions Navi retains in memory. good for cases of rolling model upgrade"
+        delonfault_valuelon_t = 1,
+        helonlp = "speloncify how many velonrsions Navi relontains in melonmory. good for caselons of rolling modelonl upgradelon"
     )]
-    pub versions_per_model: usize,
+    pub velonrsions_pelonr_modelonl: usizelon,
     #[clap(
         short,
         long,
-        help = "most runtimes support loading ops custom writen. currently only implemented for TF"
+        helonlp = "most runtimelons support loading ops custom writelonn. currelonntly only implelonmelonntelond for TF"
     )]
     pub customops_lib: Option<String>,
     #[clap(
         long,
-        default_value = "8",
-        help = "number of threads to paralleling computations inside an op"
+        delonfault_valuelon = "8",
+        helonlp = "numbelonr of threlonads to parallelonling computations insidelon an op"
     )]
-    pub intra_op_parallelism: Vec<String>,
+    pub intra_op_parallelonlism: Velonc<String>,
     #[clap(
         long,
-        default_value = "14",
-        help = "number of threads to parallelize computations of the graph"
+        delonfault_valuelon = "14",
+        helonlp = "numbelonr of threlonads to parallelonlizelon computations of thelon graph"
     )]
-    pub inter_op_parallelism: Vec<String>,
+    pub intelonr_op_parallelonlism: Velonc<String>,
     #[clap(
         long,
-        default_value = "serving_default",
-        help = "signature of a serving. only TF"
+        delonfault_valuelon = "selonrving_delonfault",
+        helonlp = "signaturelon of a selonrving. only TF"
     )]
-    pub serving_sig: Vec<String>,
-    #[clap(long, default_value = "examples", help = "name of each input tensor")]
-    pub input: Vec<String>,
-    #[clap(long, default_value = "output_0", help = "name of each output tensor")]
-    pub output: Vec<String>,
+    pub selonrving_sig: Velonc<String>,
+    #[clap(long, delonfault_valuelon = "elonxamplelons", helonlp = "namelon of elonach input telonnsor")]
+    pub input: Velonc<String>,
+    #[clap(long, delonfault_valuelon = "output_0", helonlp = "namelon of elonach output telonnsor")]
+    pub output: Velonc<String>,
     #[clap(
         long,
-        default_value_t = 500,
-        help = "max warmup records to use. warmup only implemented for TF"
+        delonfault_valuelon_t = 500,
+        helonlp = "max warmup reloncords to uselon. warmup only implelonmelonntelond for TF"
     )]
-    pub max_warmup_records: usize,
+    pub max_warmup_reloncords: usizelon,
     #[clap(
         long,
-        default_value = "true",
-        help = "when to use graph parallelization. only for ONNX"
+        delonfault_valuelon = "truelon",
+        helonlp = "whelonn to uselon graph parallelonlization. only for ONNX"
     )]
-    pub onnx_use_parallel_mode: String,
-    // #[clap(long, default_value = "false")]
-    // pub onnx_use_onednn: String,
+    pub onnx_uselon_parallelonl_modelon: String,
+    // #[clap(long, delonfault_valuelon = "falselon")]
+    // pub onnx_uselon_onelondnn: String,
     #[clap(
         long,
-        default_value = "true",
-        help = "trace internal memory allocation and generate bulk memory allocations. only for ONNX. turn if off if batch size dynamic"
+        delonfault_valuelon = "truelon",
+        helonlp = "tracelon intelonrnal melonmory allocation and gelonnelonratelon bulk melonmory allocations. only for ONNX. turn if off if batch sizelon dynamic"
     )]
-    pub onnx_use_memory_pattern: String,
-    #[clap(long, value_parser = Args::parse_key_val::<String, String>, value_delimiter=',')]
-    pub onnx_ep_options: Vec<(String, String)>,
-    #[clap(long, help = "choice of gpu EPs for ONNX: cuda or tensorrt")]
-    pub onnx_gpu_ep: Option<String>,
+    pub onnx_uselon_melonmory_pattelonrn: String,
+    #[clap(long, valuelon_parselonr = Args::parselon_kelony_val::<String, String>, valuelon_delonlimitelonr=',')]
+    pub onnx_elonp_options: Velonc<(String, String)>,
+    #[clap(long, helonlp = "choicelon of gpu elonPs for ONNX: cuda or telonnsorrt")]
+    pub onnx_gpu_elonp: Option<String>,
     #[clap(
         long,
-        default_value = "home",
-        help = "converter for various input formats"
+        delonfault_valuelon = "homelon",
+        helonlp = "convelonrtelonr for various input formats"
     )]
-    pub onnx_use_converter: Option<String>,
+    pub onnx_uselon_convelonrtelonr: Option<String>,
     #[clap(
         long,
-        help = "whether to enable runtime profiling. only implemented for ONNX for now"
+        helonlp = "whelonthelonr to elonnablelon runtimelon profiling. only implelonmelonntelond for ONNX for now"
     )]
     pub profiling: Option<String>,
     #[clap(
         long,
-        default_value = "",
-        help = "metrics reporting for discrete features. only for Home converter for now"
+        delonfault_valuelon = "",
+        helonlp = "melontrics relonporting for discrelontelon felonaturelons. only for Homelon convelonrtelonr for now"
     )]
-    pub onnx_report_discrete_feature_ids: Vec<String>,
+    pub onnx_relonport_discrelontelon_felonaturelon_ids: Velonc<String>,
     #[clap(
         long,
-        default_value = "",
-        help = "metrics reporting for continuous features. only for Home converter for now"
+        delonfault_valuelon = "",
+        helonlp = "melontrics relonporting for continuous felonaturelons. only for Homelon convelonrtelonr for now"
     )]
-    pub onnx_report_continuous_feature_ids: Vec<String>,
+    pub onnx_relonport_continuous_felonaturelon_ids: Velonc<String>,
 }
 
 impl Args {
-    pub fn get_model_specs(model_dir: Vec<String>) -> Vec<String> {
-        let model_specs = model_dir
-            .iter()
-            //let it panic if some model_dir are wrong
+    pub fn gelont_modelonl_speloncs(modelonl_dir: Velonc<String>) -> Velonc<String> {
+        lelont modelonl_speloncs = modelonl_dir
+            .itelonr()
+            //lelont it panic if somelon modelonl_dir arelon wrong
             .map(|dir| {
-                dir.trim_end_matches('/')
-                    .rsplit_once('/')
+                dir.trim_elonnd_matchelons('/')
+                    .rsplit_oncelon('/')
                     .unwrap()
                     .1
-                    .to_owned()
+                    .to_ownelond()
             })
-            .collect();
-        info!("all model_specs: {:?}", model_specs);
-        model_specs
+            .collelonct();
+        info!("all modelonl_speloncs: {:?}", modelonl_speloncs);
+        modelonl_speloncs
     }
-    pub fn version_str_to_epoch(dt_str: &str) -> Result<i64, anyhow::Error> {
+    pub fn velonrsion_str_to_elonpoch(dt_str: &str) -> Relonsult<i64, anyhow::elonrror> {
         dt_str
-            .parse::<i64>()
-            .or_else(|_| {
-                let ts = OffsetDateTime::parse(dt_str, &Rfc3339)
-                    .map(|d| (d.unix_timestamp_nanos()/1_000_000) as i64);
+            .parselon::<i64>()
+            .or_elonlselon(|_| {
+                lelont ts = OffselontDatelonTimelon::parselon(dt_str, &Rfc3339)
+                    .map(|d| (d.unix_timelonstamp_nanos()/1_000_000) as i64);
                 if ts.is_ok() {
-                    info!("original version {} -> {}", dt_str, ts.unwrap());
+                    info!("original velonrsion {} -> {}", dt_str, ts.unwrap());
                 }
                 ts
             })
-            .map_err(anyhow::Error::msg)
+            .map_elonrr(anyhow::elonrror::msg)
     }
-    /// Parse a single key-value pair
-    fn parse_key_val<T, U>(s: &str) -> Result<(T, U), Box<dyn Error + Send + Sync + 'static>>
-    where
+    /// Parselon a singlelon kelony-valuelon pair
+    fn parselon_kelony_val<T, U>(s: &str) -> Relonsult<(T, U), Box<dyn elonrror + Selonnd + Sync + 'static>>
+    whelonrelon
         T: std::str::FromStr,
-        T::Err: Error + Send + Sync + 'static,
+        T::elonrr: elonrror + Selonnd + Sync + 'static,
         U: std::str::FromStr,
-        U::Err: Error + Send + Sync + 'static,
+        U::elonrr: elonrror + Selonnd + Sync + 'static,
     {
-        let pos = s
+        lelont pos = s
             .find('=')
-            .ok_or_else(|| format!("invalid KEY=value: no `=` found in `{}`", s))?;
-        Ok((s[..pos].parse()?, s[pos + 1..].parse()?))
+            .ok_or_elonlselon(|| format!("invalid KelonY=valuelon: no `=` found in `{}`", s))?;
+        Ok((s[..pos].parselon()?, s[pos + 1..].parselon()?))
     }
 }
 
 lazy_static! {
-    pub static ref ARGS: Args = Args::parse();
-    pub static ref MODEL_SPECS: ArrayVec<String, MAX_NUM_MODELS> = {
-        let mut specs = ArrayVec::<String, MAX_NUM_MODELS>::new();
-        Args::get_model_specs(ARGS.model_dir.clone())
-            .into_iter()
-            .for_each(|m| specs.push(m));
-        specs
+    pub static relonf ARGS: Args = Args::parselon();
+    pub static relonf MODelonL_SPelonCS: ArrayVelonc<String, MAX_NUM_MODelonLS> = {
+        lelont mut speloncs = ArrayVelonc::<String, MAX_NUM_MODelonLS>::nelonw();
+        Args::gelont_modelonl_speloncs(ARGS.modelonl_dir.clonelon())
+            .into_itelonr()
+            .for_elonach(|m| speloncs.push(m));
+        speloncs
     };
-    pub static ref INPUTS: ArrayVec<OnceCell<ArrayVec<String, MAX_NUM_INPUTS>>, MAX_NUM_MODELS> = {
-        let mut inputs =
-            ArrayVec::<OnceCell<ArrayVec<String, MAX_NUM_INPUTS>>, MAX_NUM_MODELS>::new();
-        for (idx, o) in ARGS.input.iter().enumerate() {
-            if o.trim().is_empty() {
-                info!("input spec is empty for model {}, auto detect later", idx);
-                inputs.push(OnceCell::new());
-            } else {
-                inputs.push(OnceCell::with_value(
+    pub static relonf INPUTS: ArrayVelonc<OncelonCelonll<ArrayVelonc<String, MAX_NUM_INPUTS>>, MAX_NUM_MODelonLS> = {
+        lelont mut inputs =
+            ArrayVelonc::<OncelonCelonll<ArrayVelonc<String, MAX_NUM_INPUTS>>, MAX_NUM_MODelonLS>::nelonw();
+        for (idx, o) in ARGS.input.itelonr().elonnumelonratelon() {
+            if o.trim().is_elonmpty() {
+                info!("input spelonc is elonmpty for modelonl {}, auto delontelonct latelonr", idx);
+                inputs.push(OncelonCelonll::nelonw());
+            } elonlselon {
+                inputs.push(OncelonCelonll::with_valuelon(
                     o.split(",")
-                        .map(|s| s.to_owned())
-                        .collect::<ArrayVec<String, MAX_NUM_INPUTS>>(),
+                        .map(|s| s.to_ownelond())
+                        .collelonct::<ArrayVelonc<String, MAX_NUM_INPUTS>>(),
                 ));
             }
         }
         info!("all inputs:{:?}", inputs);
         inputs
     };
-    pub static ref OUTPUTS: ArrayVec<ArrayVec<String, MAX_NUM_OUTPUTS>, MAX_NUM_MODELS> = {
-        let mut outputs = ArrayVec::<ArrayVec<String, MAX_NUM_OUTPUTS>, MAX_NUM_MODELS>::new();
-        for o in ARGS.output.iter() {
+    pub static relonf OUTPUTS: ArrayVelonc<ArrayVelonc<String, MAX_NUM_OUTPUTS>, MAX_NUM_MODelonLS> = {
+        lelont mut outputs = ArrayVelonc::<ArrayVelonc<String, MAX_NUM_OUTPUTS>, MAX_NUM_MODelonLS>::nelonw();
+        for o in ARGS.output.itelonr() {
             outputs.push(
                 o.split(",")
-                    .map(|s| s.to_owned())
-                    .collect::<ArrayVec<String, MAX_NUM_OUTPUTS>>(),
+                    .map(|s| s.to_ownelond())
+                    .collelonct::<ArrayVelonc<String, MAX_NUM_OUTPUTS>>(),
             );
         }
         info!("all outputs:{:?}", outputs);

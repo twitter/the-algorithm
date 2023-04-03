@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims
 
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
+import com.twittelonr.elonschelonrbird.util.stitchcachelon.StitchCachelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasSimilarToContelonxt
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.Duration
 
 import java.lang.{Long => JLong}
 
-class CacheBasedSimsStore(
-  id: CandidateSourceIdentifier,
-  fetcher: Fetcher[Long, Unit, Candidates],
-  maxCacheSize: Int,
-  cacheTtl: Duration,
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[HasParams with HasSimilarToContext, CandidateUser] {
+class CachelonBaselondSimsStorelon(
+  id: CandidatelonSourcelonIdelonntifielonr,
+  felontchelonr: Felontchelonr[Long, Unit, Candidatelons],
+  maxCachelonSizelon: Int,
+  cachelonTtl: Duration,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[HasParams with HasSimilarToContelonxt, CandidatelonUselonr] {
 
-  override val identifier: CandidateSourceIdentifier = id
-  private def getUsersFromSimsSource(userId: JLong): Stitch[Option[Candidates]] = {
-    fetcher
-      .fetch(userId)
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = id
+  privatelon delonf gelontUselonrsFromSimsSourcelon(uselonrId: JLong): Stitch[Option[Candidatelons]] = {
+    felontchelonr
+      .felontch(uselonrId)
       .map(_.v)
   }
 
-  private val simsCache = StitchCache[JLong, Option[Candidates]](
-    maxCacheSize = maxCacheSize,
-    ttl = cacheTtl,
-    statsReceiver = statsReceiver,
-    underlyingCall = getUsersFromSimsSource
+  privatelon val simsCachelon = StitchCachelon[JLong, Option[Candidatelons]](
+    maxCachelonSizelon = maxCachelonSizelon,
+    ttl = cachelonTtl,
+    statsReloncelonivelonr = statsReloncelonivelonr,
+    undelonrlyingCall = gelontUselonrsFromSimsSourcelon
   )
 
-  override def apply(request: HasParams with HasSimilarToContext): Stitch[Seq[CandidateUser]] = {
+  ovelonrridelon delonf apply(relonquelonst: HasParams with HasSimilarToContelonxt): Stitch[Selonq[CandidatelonUselonr]] = {
     Stitch
-      .traverse(request.similarToUserIds) { userId =>
-        simsCache.readThrough(userId).map { candidatesOpt =>
-          candidatesOpt
-            .map { candidates =>
-              StratoBasedSimsCandidateSource.map(userId, candidates)
-            }.getOrElse(Nil)
+      .travelonrselon(relonquelonst.similarToUselonrIds) { uselonrId =>
+        simsCachelon.relonadThrough(uselonrId).map { candidatelonsOpt =>
+          candidatelonsOpt
+            .map { candidatelons =>
+              StratoBaselondSimsCandidatelonSourcelon.map(uselonrId, candidatelons)
+            }.gelontOrelonlselon(Nil)
         }
-      }.map(_.flatten.distinct.map(_.withCandidateSource(identifier)))
+      }.map(_.flattelonn.distinct.map(_.withCandidatelonSourcelon(idelonntifielonr)))
   }
 }

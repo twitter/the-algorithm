@@ -1,289 +1,289 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+packagelon com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity
 
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.{DataRecord, DataRecordMerger, DataSetPipe, FeatureContext}
-import com.twitter.ml.featurestore.lib.data.EntityIds.Entry
-import com.twitter.ml.featurestore.lib.data.{EntityIds, FeatureValuesById, PredictionRecord}
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.simclusters_v2.common.SimClustersEmbedding._
-import com.twitter.simclusters_v2.tweet_similarity.ModelBasedTweetSimilaritySimClustersEmbeddingAdapter.{
-  NormalizedCandidateEmbAdapter,
-  NormalizedQueryEmbAdapter
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.ml.api.{DataReloncord, DataReloncordMelonrgelonr, DataSelontPipelon, FelonaturelonContelonxt}
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.elonntityIds.elonntry
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.{elonntityIds, FelonaturelonValuelonsById, PrelondictionReloncord}
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding._
+import com.twittelonr.simclustelonrs_v2.twelonelont_similarity.ModelonlBaselondTwelonelontSimilaritySimClustelonrselonmbelonddingAdaptelonr.{
+  NormalizelondCandidatelonelonmbAdaptelonr,
+  NormalizelondQuelonryelonmbAdaptelonr
 }
-import com.twitter.simclusters_v2.tweet_similarity.{
-  TweetSimilarityFeatures,
-  TweetSimilarityFeaturesStoreConfig
+import com.twittelonr.simclustelonrs_v2.twelonelont_similarity.{
+  TwelonelontSimilarityFelonaturelons,
+  TwelonelontSimilarityFelonaturelonsStorelonConfig
 }
-import com.twitter.simclusters_v2.common.{Timestamp, TweetId, UserId}
-import com.twitter.simclusters_v2.scalding.tweet_similarity.TweetPairLabelCollectionUtil.FeaturedTweet
-import com.twitter.simclusters_v2.thriftscala.{
-  PersistentSimClustersEmbedding,
-  SimClustersEmbedding => ThriftSimClustersEmbedding
+import com.twittelonr.simclustelonrs_v2.common.{Timelonstamp, TwelonelontId, UselonrId}
+import com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.TwelonelontPairLabelonlCollelonctionUtil.FelonaturelondTwelonelont
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  PelonrsistelonntSimClustelonrselonmbelondding,
+  SimClustelonrselonmbelondding => ThriftSimClustelonrselonmbelondding
 }
 
-object TweetPairFeatureHydrationUtil {
-  val QueryTweetConfig = new TweetSimilarityFeaturesStoreConfig("query_tweet_user_id")
-  val CandidateTweetConfig = new TweetSimilarityFeaturesStoreConfig("candidate_tweet_user_id")
-  val DataRecordMerger = new DataRecordMerger()
+objelonct TwelonelontPairFelonaturelonHydrationUtil {
+  val QuelonryTwelonelontConfig = nelonw TwelonelontSimilarityFelonaturelonsStorelonConfig("quelonry_twelonelont_uselonr_id")
+  val CandidatelonTwelonelontConfig = nelonw TwelonelontSimilarityFelonaturelonsStorelonConfig("candidatelon_twelonelont_uselonr_id")
+  val DataReloncordMelonrgelonr = nelonw DataReloncordMelonrgelonr()
 
   /**
-   * Given persistentEmbeddings TypedPipe, extract tweetId, timestamp, and the embedding
+   * Givelonn pelonrsistelonntelonmbelonddings TypelondPipelon, elonxtract twelonelontId, timelonstamp, and thelon elonmbelondding
    *
-   * @param persistentEmbeddings TypedPipe of ((TweetId, Timestamp), PersistentSimClustersEmbedding), read from PersistentTweetEmbeddingMhExportSource
+   * @param pelonrsistelonntelonmbelonddings TypelondPipelon of ((TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding), relonad from PelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon
    *
-   * @return Extracted TypedPipe of (TweetId, (Timestamp, SimClustersEmbedding))
+   * @relonturn elonxtractelond TypelondPipelon of (TwelonelontId, (Timelonstamp, SimClustelonrselonmbelondding))
    */
-  def extractEmbeddings(
-    persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)]
-  ): TypedPipe[(TweetId, (Timestamp, ThriftSimClustersEmbedding))] = {
-    persistentEmbeddings
-      .collect {
-        case ((tweetId, _), embedding) if embedding.metadata.updatedAtMs.isDefined =>
-          (tweetId, (embedding.metadata.updatedAtMs.get, embedding.embedding))
+  delonf elonxtractelonmbelonddings(
+    pelonrsistelonntelonmbelonddings: TypelondPipelon[((TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding)]
+  ): TypelondPipelon[(TwelonelontId, (Timelonstamp, ThriftSimClustelonrselonmbelondding))] = {
+    pelonrsistelonntelonmbelonddings
+      .collelonct {
+        caselon ((twelonelontId, _), elonmbelondding) if elonmbelondding.melontadata.updatelondAtMs.isDelonfinelond =>
+          (twelonelontId, (elonmbelondding.melontadata.updatelondAtMs.gelont, elonmbelondding.elonmbelondding))
       }
   }
 
   /**
-   * Hydrate the tweet pairs with the latest persistent embeddings before engagement/impression.
+   * Hydratelon thelon twelonelont pairs with thelon latelonst pelonrsistelonnt elonmbelonddings belonforelon elonngagelonmelonnt/imprelonssion.
    *
-   * @param tweetPairs           TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
-   * @param persistentEmbeddings TypedPipe of persistentEmbeddings from PersistentTweetEmbeddingMhExportSource
+   * @param twelonelontPairs           TypelondPipelon of thelon (uselonrId, quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl)
+   * @param pelonrsistelonntelonmbelonddings TypelondPipelon of pelonrsistelonntelonmbelonddings from PelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon
    *
-   * @return TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label) with persistent embeddings set
+   * @relonturn TypelondPipelon of thelon (uselonrId, quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl) with pelonrsistelonnt elonmbelonddings selont
    */
-  def getTweetPairsWithPersistentEmbeddings(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    val extractedEmbeddings = extractEmbeddings(persistentEmbeddings)
-    tweetPairs
+  delonf gelontTwelonelontPairsWithPelonrsistelonntelonmbelonddings(
+    twelonelontPairs: TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)],
+    pelonrsistelonntelonmbelonddings: TypelondPipelon[((TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding)]
+  ): TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)] = {
+    val elonxtractelondelonmbelonddings = elonxtractelonmbelonddings(pelonrsistelonntelonmbelonddings)
+    twelonelontPairs
       .groupBy {
-        case (queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet
+        caselon (quelonryFelonaturelondTwelonelont, _, _) => quelonryFelonaturelondTwelonelont.twelonelont
       }
-      .join(extractedEmbeddings)
-      .collect {
-        case (
+      .join(elonxtractelondelonmbelonddings)
+      .collelonct {
+        caselon (
               _,
               (
-                (queryFeaturedTweet, candidateFeaturedTweet, label),
-                (embeddingTimestamp, embedding)))
-            if embeddingTimestamp <= queryFeaturedTweet.timestamp =>
-          ((queryFeaturedTweet, candidateFeaturedTweet), (embeddingTimestamp, embedding, label))
+                (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl),
+                (elonmbelonddingTimelonstamp, elonmbelondding)))
+            if elonmbelonddingTimelonstamp <= quelonryFelonaturelondTwelonelont.timelonstamp =>
+          ((quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont), (elonmbelonddingTimelonstamp, elonmbelondding, labelonl))
       }
       .group
       .maxBy(_._1)
       .map {
-        case ((queryFeaturedTweet, candidateFeaturedTweet), (_, embedding, label)) =>
+        caselon ((quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont), (_, elonmbelondding, labelonl)) =>
           (
-            candidateFeaturedTweet.tweet,
-            (queryFeaturedTweet.copy(embedding = Some(embedding)), candidateFeaturedTweet, label)
+            candidatelonFelonaturelondTwelonelont.twelonelont,
+            (quelonryFelonaturelondTwelonelont.copy(elonmbelondding = Somelon(elonmbelondding)), candidatelonFelonaturelondTwelonelont, labelonl)
           )
       }
-      .join(extractedEmbeddings)
-      .collect {
-        case (
+      .join(elonxtractelondelonmbelonddings)
+      .collelonct {
+        caselon (
               _,
               (
-                (queryFeaturedTweet, candidateFeaturedTweet, label),
-                (embeddingTimestamp, embedding)))
-            if embeddingTimestamp <= candidateFeaturedTweet.timestamp =>
-          ((queryFeaturedTweet, candidateFeaturedTweet), (embeddingTimestamp, embedding, label))
+                (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl),
+                (elonmbelonddingTimelonstamp, elonmbelondding)))
+            if elonmbelonddingTimelonstamp <= candidatelonFelonaturelondTwelonelont.timelonstamp =>
+          ((quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont), (elonmbelonddingTimelonstamp, elonmbelondding, labelonl))
       }
       .group
       .maxBy(_._1)
       .map {
-        case ((queryFeaturedTweet, candidateFeaturedTweet), (_, embedding, label)) =>
-          (queryFeaturedTweet, candidateFeaturedTweet.copy(embedding = Some(embedding)), label)
+        caselon ((quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont), (_, elonmbelondding, labelonl)) =>
+          (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont.copy(elonmbelondding = Somelon(elonmbelondding)), labelonl)
       }
   }
 
   /**
-   * Get tweet pairs with the author userIds
+   * Gelont twelonelont pairs with thelon author uselonrIds
    *
-   * @param tweetPairs       TypedPipe of (queryTweet, queryEmbedding, queryTimestamp, candidateTweet, candidateEmbedding, candidateTimestamp, label)
-   * @param tweetAuthorPairs TypedPipe of (tweetId, author userId)
+   * @param twelonelontPairs       TypelondPipelon of (quelonryTwelonelont, quelonryelonmbelondding, quelonryTimelonstamp, candidatelonTwelonelont, candidatelonelonmbelondding, candidatelonTimelonstamp, labelonl)
+   * @param twelonelontAuthorPairs TypelondPipelon of (twelonelontId, author uselonrId)
    *
-   * @return TypedPipe of (queryTweet, queryAuthor, queryEmbedding, queryTimestamp, candidateTweet, candidateAuthor, candidateEmbedding, candidateTimestamp, label)
+   * @relonturn TypelondPipelon of (quelonryTwelonelont, quelonryAuthor, quelonryelonmbelondding, quelonryTimelonstamp, candidatelonTwelonelont, candidatelonAuthor, candidatelonelonmbelondding, candidatelonTimelonstamp, labelonl)
    */
-  def getTweetPairsWithAuthors(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    tweetAuthorPairs: TypedPipe[(TweetId, UserId)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)] = {
-    tweetPairs
-    //keyed by queryTweet s.t. we get queryTweet's author after joining with tweetAuthorPairs
-      .groupBy { case (queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet }
-      .join(tweetAuthorPairs)
-      .values
-      //keyed by candidateTweet
-      .groupBy { case ((_, candidateFeaturedTweet, _), _) => candidateFeaturedTweet.tweet }
-      .join(tweetAuthorPairs)
-      .values
+  delonf gelontTwelonelontPairsWithAuthors(
+    twelonelontPairs: TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)],
+    twelonelontAuthorPairs: TypelondPipelon[(TwelonelontId, UselonrId)]
+  ): TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)] = {
+    twelonelontPairs
+    //kelonyelond by quelonryTwelonelont s.t. welon gelont quelonryTwelonelont's author aftelonr joining with twelonelontAuthorPairs
+      .groupBy { caselon (quelonryFelonaturelondTwelonelont, _, _) => quelonryFelonaturelondTwelonelont.twelonelont }
+      .join(twelonelontAuthorPairs)
+      .valuelons
+      //kelonyelond by candidatelonTwelonelont
+      .groupBy { caselon ((_, candidatelonFelonaturelondTwelonelont, _), _) => candidatelonFelonaturelondTwelonelont.twelonelont }
+      .join(twelonelontAuthorPairs)
+      .valuelons
       .map {
-        case (
-              ((queryFeaturedTweet, candidateFeaturedTweet, label), queryAuthor),
-              candidateAuthor) =>
+        caselon (
+              ((quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl), quelonryAuthor),
+              candidatelonAuthor) =>
           (
-            queryFeaturedTweet.copy(author = Some(queryAuthor)),
-            candidateFeaturedTweet.copy(author = Some(candidateAuthor)),
-            label
+            quelonryFelonaturelondTwelonelont.copy(author = Somelon(quelonryAuthor)),
+            candidatelonFelonaturelondTwelonelont.copy(author = Somelon(candidatelonAuthor)),
+            labelonl
           )
       }
   }
 
   /**
-   * Get tweet pairs with popularity counts
+   * Gelont twelonelont pairs with popularity counts
    *
-   * @param tweetPairs TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
+   * @param twelonelontPairs TypelondPipelon of thelon (uselonrId, quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl)
    *
-   * @return TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, queryTweetCount, label)
+   * @relonturn TypelondPipelon of thelon (uselonrId, quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, twelonelontPairCount, quelonryTwelonelontCount, labelonl)
    */
-  def getTweetPairsWithCounts(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)]
-  ): TypedPipe[(FeaturedTweet, FeaturedTweet, Long, Long, Boolean)] = {
-    val tweetPairCount = tweetPairs.groupBy {
-      case (queryFeaturedTweet, candidateFeaturedTweet, _) =>
-        (queryFeaturedTweet.tweet, candidateFeaturedTweet.tweet)
-    }.size
+  delonf gelontTwelonelontPairsWithCounts(
+    twelonelontPairs: TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)]
+  ): TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Long, Long, Boolelonan)] = {
+    val twelonelontPairCount = twelonelontPairs.groupBy {
+      caselon (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, _) =>
+        (quelonryFelonaturelondTwelonelont.twelonelont, candidatelonFelonaturelondTwelonelont.twelonelont)
+    }.sizelon
 
-    val queryTweetCount = tweetPairs.groupBy {
-      case (queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet
-    }.size
+    val quelonryTwelonelontCount = twelonelontPairs.groupBy {
+      caselon (quelonryFelonaturelondTwelonelont, _, _) => quelonryFelonaturelondTwelonelont.twelonelont
+    }.sizelon
 
-    tweetPairs
+    twelonelontPairs
       .groupBy {
-        case (queryFeaturedTweet, candidateFeaturedTweet, _) =>
-          (queryFeaturedTweet.tweet, candidateFeaturedTweet.tweet)
+        caselon (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, _) =>
+          (quelonryFelonaturelondTwelonelont.twelonelont, candidatelonFelonaturelondTwelonelont.twelonelont)
       }
-      .join(tweetPairCount)
-      .values
+      .join(twelonelontPairCount)
+      .valuelons
       .map {
-        case ((queryFeaturedTweet, candidateFeaturedTweet, label), tweetPairCount) =>
-          (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, label)
+        caselon ((quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl), twelonelontPairCount) =>
+          (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, twelonelontPairCount, labelonl)
       }
-      .groupBy { case (queryFeaturedTweet, _, _, _) => queryFeaturedTweet.tweet }
-      .join(queryTweetCount)
-      .values
+      .groupBy { caselon (quelonryFelonaturelondTwelonelont, _, _, _) => quelonryFelonaturelondTwelonelont.twelonelont }
+      .join(quelonryTwelonelontCount)
+      .valuelons
       .map {
-        case (
-              (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, label),
-              queryTweetCount) =>
-          (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, queryTweetCount, label)
+        caselon (
+              (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, twelonelontPairCount, labelonl),
+              quelonryTwelonelontCount) =>
+          (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, twelonelontPairCount, quelonryTwelonelontCount, labelonl)
       }
   }
 
   /**
-   * Get training data records
+   * Gelont training data reloncords
    *
-   * @param tweetPairs           TypedPipe of the (userId, queryFeaturedTweet, candidateFeaturedTweet, label)
-   * @param persistentEmbeddings TypedPipe of persistentEmbeddings from PersistentTweetEmbeddingMhExportSource
-   * @param tweetAuthorPairs     TypedPipe of (tweetId, author userId)
-   * @param useAuthorFeatures    whether to use author features or not
+   * @param twelonelontPairs           TypelondPipelon of thelon (uselonrId, quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl)
+   * @param pelonrsistelonntelonmbelonddings TypelondPipelon of pelonrsistelonntelonmbelonddings from PelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon
+   * @param twelonelontAuthorPairs     TypelondPipelon of (twelonelontId, author uselonrId)
+   * @param uselonAuthorFelonaturelons    whelonthelonr to uselon author felonaturelons or not
    *
-   * @return DataSetPipe with features and label
+   * @relonturn DataSelontPipelon with felonaturelons and labelonl
    */
-  def getDataSetPipeWithFeatures(
-    tweetPairs: TypedPipe[(FeaturedTweet, FeaturedTweet, Boolean)],
-    persistentEmbeddings: TypedPipe[((TweetId, Timestamp), PersistentSimClustersEmbedding)],
-    tweetAuthorPairs: TypedPipe[(TweetId, UserId)],
-    useAuthorFeatures: Boolean
-  ): DataSetPipe = {
-    val featuredTweetPairs =
-      if (useAuthorFeatures)
-        getTweetPairsWithCounts(
-          getTweetPairsWithPersistentEmbeddings(
-            getTweetPairsWithAuthors(tweetPairs, tweetAuthorPairs),
-            persistentEmbeddings))
-      else
-        getTweetPairsWithCounts(
-          getTweetPairsWithPersistentEmbeddings(tweetPairs, persistentEmbeddings))
+  delonf gelontDataSelontPipelonWithFelonaturelons(
+    twelonelontPairs: TypelondPipelon[(FelonaturelondTwelonelont, FelonaturelondTwelonelont, Boolelonan)],
+    pelonrsistelonntelonmbelonddings: TypelondPipelon[((TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding)],
+    twelonelontAuthorPairs: TypelondPipelon[(TwelonelontId, UselonrId)],
+    uselonAuthorFelonaturelons: Boolelonan
+  ): DataSelontPipelon = {
+    val felonaturelondTwelonelontPairs =
+      if (uselonAuthorFelonaturelons)
+        gelontTwelonelontPairsWithCounts(
+          gelontTwelonelontPairsWithPelonrsistelonntelonmbelonddings(
+            gelontTwelonelontPairsWithAuthors(twelonelontPairs, twelonelontAuthorPairs),
+            pelonrsistelonntelonmbelonddings))
+      elonlselon
+        gelontTwelonelontPairsWithCounts(
+          gelontTwelonelontPairsWithPelonrsistelonntelonmbelonddings(twelonelontPairs, pelonrsistelonntelonmbelonddings))
 
-    DataSetPipe(
-      featuredTweetPairs.flatMap {
-        case (queryFeaturedTweet, candidateFeaturedTweet, tweetPairCount, queryTweetCount, label) =>
-          getDataRecordWithFeatures(
-            queryFeaturedTweet,
-            candidateFeaturedTweet,
-            tweetPairCount,
-            queryTweetCount,
-            label)
+    DataSelontPipelon(
+      felonaturelondTwelonelontPairs.flatMap {
+        caselon (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, twelonelontPairCount, quelonryTwelonelontCount, labelonl) =>
+          gelontDataReloncordWithFelonaturelons(
+            quelonryFelonaturelondTwelonelont,
+            candidatelonFelonaturelondTwelonelont,
+            twelonelontPairCount,
+            quelonryTwelonelontCount,
+            labelonl)
       },
-      FeatureContext.merge(
-        TweetSimilarityFeatures.FeatureContext,
-        QueryTweetConfig.predictionRecordAdapter.getFeatureContext,
-        CandidateTweetConfig.predictionRecordAdapter.getFeatureContext
+      FelonaturelonContelonxt.melonrgelon(
+        TwelonelontSimilarityFelonaturelons.FelonaturelonContelonxt,
+        QuelonryTwelonelontConfig.prelondictionReloncordAdaptelonr.gelontFelonaturelonContelonxt,
+        CandidatelonTwelonelontConfig.prelondictionReloncordAdaptelonr.gelontFelonaturelonContelonxt
       )
     )
   }
 
   /**
-   * Given raw features, return a DataRecord with all the features
+   * Givelonn raw felonaturelons, relonturn a DataReloncord with all thelon felonaturelons
    *
-   * @param queryFeaturedTweet     FeaturedTweet for query tweet
-   * @param candidateFeaturedTweet FeaturedTweet for candidate tweet
-   * @param tweetPairCount         popularity count for the (query tweet, candidate tweet) pair
-   * @param queryTweetCount        popularity count for each query tweet
-   * @param label                  true for positive and false for negative
+   * @param quelonryFelonaturelondTwelonelont     FelonaturelondTwelonelont for quelonry twelonelont
+   * @param candidatelonFelonaturelondTwelonelont FelonaturelondTwelonelont for candidatelon twelonelont
+   * @param twelonelontPairCount         popularity count for thelon (quelonry twelonelont, candidatelon twelonelont) pair
+   * @param quelonryTwelonelontCount        popularity count for elonach quelonry twelonelont
+   * @param labelonl                  truelon for positivelon and falselon for nelongativelon
    *
-   * @return
+   * @relonturn
    */
-  def getDataRecordWithFeatures(
-    queryFeaturedTweet: FeaturedTweet,
-    candidateFeaturedTweet: FeaturedTweet,
-    tweetPairCount: Long,
-    queryTweetCount: Long,
-    label: Boolean
-  ): Option[DataRecord] = {
+  delonf gelontDataReloncordWithFelonaturelons(
+    quelonryFelonaturelondTwelonelont: FelonaturelondTwelonelont,
+    candidatelonFelonaturelondTwelonelont: FelonaturelondTwelonelont,
+    twelonelontPairCount: Long,
+    quelonryTwelonelontCount: Long,
+    labelonl: Boolelonan
+  ): Option[DataReloncord] = {
 
     for {
-      queryEmbedding <- queryFeaturedTweet.embedding
-      candidateEmbedding <- candidateFeaturedTweet.embedding
-    } yield {
-      val featureDataRecord = NormalizedQueryEmbAdapter.adaptToDataRecord(queryEmbedding)
-      DataRecordMerger.merge(
-        featureDataRecord,
-        NormalizedCandidateEmbAdapter.adaptToDataRecord(candidateEmbedding))
-      featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.QueryTweetId,
-        queryFeaturedTweet.tweet)
-      featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.CandidateTweetId,
-        candidateFeaturedTweet.tweet)
-      featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.QueryTweetTimestamp,
-        queryFeaturedTweet.timestamp)
-      featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.CandidateTweetTimestamp,
-        candidateFeaturedTweet.timestamp)
-      featureDataRecord.setFeatureValue(
-        TweetSimilarityFeatures.CosineSimilarity,
-        queryEmbedding.cosineSimilarity(candidateEmbedding))
-      featureDataRecord.setFeatureValue(TweetSimilarityFeatures.TweetPairCount, tweetPairCount)
-      featureDataRecord.setFeatureValue(TweetSimilarityFeatures.QueryTweetCount, queryTweetCount)
-      featureDataRecord.setFeatureValue(TweetSimilarityFeatures.Label, label)
+      quelonryelonmbelondding <- quelonryFelonaturelondTwelonelont.elonmbelondding
+      candidatelonelonmbelondding <- candidatelonFelonaturelondTwelonelont.elonmbelondding
+    } yielonld {
+      val felonaturelonDataReloncord = NormalizelondQuelonryelonmbAdaptelonr.adaptToDataReloncord(quelonryelonmbelondding)
+      DataReloncordMelonrgelonr.melonrgelon(
+        felonaturelonDataReloncord,
+        NormalizelondCandidatelonelonmbAdaptelonr.adaptToDataReloncord(candidatelonelonmbelondding))
+      felonaturelonDataReloncord.selontFelonaturelonValuelon(
+        TwelonelontSimilarityFelonaturelons.QuelonryTwelonelontId,
+        quelonryFelonaturelondTwelonelont.twelonelont)
+      felonaturelonDataReloncord.selontFelonaturelonValuelon(
+        TwelonelontSimilarityFelonaturelons.CandidatelonTwelonelontId,
+        candidatelonFelonaturelondTwelonelont.twelonelont)
+      felonaturelonDataReloncord.selontFelonaturelonValuelon(
+        TwelonelontSimilarityFelonaturelons.QuelonryTwelonelontTimelonstamp,
+        quelonryFelonaturelondTwelonelont.timelonstamp)
+      felonaturelonDataReloncord.selontFelonaturelonValuelon(
+        TwelonelontSimilarityFelonaturelons.CandidatelonTwelonelontTimelonstamp,
+        candidatelonFelonaturelondTwelonelont.timelonstamp)
+      felonaturelonDataReloncord.selontFelonaturelonValuelon(
+        TwelonelontSimilarityFelonaturelons.CosinelonSimilarity,
+        quelonryelonmbelondding.cosinelonSimilarity(candidatelonelonmbelondding))
+      felonaturelonDataReloncord.selontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.TwelonelontPairCount, twelonelontPairCount)
+      felonaturelonDataReloncord.selontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.QuelonryTwelonelontCount, quelonryTwelonelontCount)
+      felonaturelonDataReloncord.selontFelonaturelonValuelon(TwelonelontSimilarityFelonaturelons.Labelonl, labelonl)
 
-      if (queryFeaturedTweet.author.isDefined && candidateFeaturedTweet.author.isDefined) {
-        DataRecordMerger.merge(
-          featureDataRecord,
-          new DataRecord(
-            QueryTweetConfig.predictionRecordAdapter.adaptToDataRecord(PredictionRecord(
-              FeatureValuesById.empty,
-              EntityIds(Entry(
-                QueryTweetConfig.bindingIdentifier,
-                Set(com.twitter.ml.featurestore.lib.UserId(queryFeaturedTweet.author.get))))
+      if (quelonryFelonaturelondTwelonelont.author.isDelonfinelond && candidatelonFelonaturelondTwelonelont.author.isDelonfinelond) {
+        DataReloncordMelonrgelonr.melonrgelon(
+          felonaturelonDataReloncord,
+          nelonw DataReloncord(
+            QuelonryTwelonelontConfig.prelondictionReloncordAdaptelonr.adaptToDataReloncord(PrelondictionReloncord(
+              FelonaturelonValuelonsById.elonmpty,
+              elonntityIds(elonntry(
+                QuelonryTwelonelontConfig.bindingIdelonntifielonr,
+                Selont(com.twittelonr.ml.felonaturelonstorelon.lib.UselonrId(quelonryFelonaturelondTwelonelont.author.gelont))))
             )))
         )
-        DataRecordMerger.merge(
-          featureDataRecord,
-          new DataRecord(
-            CandidateTweetConfig.predictionRecordAdapter.adaptToDataRecord(PredictionRecord(
-              FeatureValuesById.empty,
-              EntityIds(Entry(
-                CandidateTweetConfig.bindingIdentifier,
-                Set(com.twitter.ml.featurestore.lib.UserId(candidateFeaturedTweet.author.get))))
+        DataReloncordMelonrgelonr.melonrgelon(
+          felonaturelonDataReloncord,
+          nelonw DataReloncord(
+            CandidatelonTwelonelontConfig.prelondictionReloncordAdaptelonr.adaptToDataReloncord(PrelondictionReloncord(
+              FelonaturelonValuelonsById.elonmpty,
+              elonntityIds(elonntry(
+                CandidatelonTwelonelontConfig.bindingIdelonntifielonr,
+                Selont(com.twittelonr.ml.felonaturelonstorelon.lib.UselonrId(candidatelonFelonaturelondTwelonelont.author.gelont))))
             )))
         )
       }
-      featureDataRecord
+      felonaturelonDataReloncord
     }
   }
 }

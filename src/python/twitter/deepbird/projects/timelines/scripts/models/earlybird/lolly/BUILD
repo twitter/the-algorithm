@@ -1,18 +1,18 @@
 python3_library(
-    name = "libs_py3",
-    sources = ["*.py"],
-    dependencies = [
-        "src/python/twitter/deepbird/io",
-        "twml:twml-nodeps",
+    namelon = "libs_py3",
+    sourcelons = ["*.py"],
+    delonpelonndelonncielons = [
+        "src/python/twittelonr/delonelonpbird/io",
+        "twml:twml-nodelonps",
     ],
 )
 
 python37_binary(
-    name = "score",
-    source = "score.py",
-    dependencies = [
+    namelon = "scorelon",
+    sourcelon = "scorelon.py",
+    delonpelonndelonncielons = [
         ":libs_py3",
-        "3rdparty/python/_closures/src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/lolly:score",
+        "3rdparty/python/_closurelons/src/python/twittelonr/delonelonpbird/projeloncts/timelonlinelons/scripts/modelonls/elonarlybird/lolly:scorelon",
         "twml",
     ],
 )

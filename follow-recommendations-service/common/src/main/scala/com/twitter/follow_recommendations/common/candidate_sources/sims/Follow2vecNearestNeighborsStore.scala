@@ -1,68 +1,68 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.sims.Follow2vecNearestNeighborsStore.NearestNeighborParamsType
-import com.twitter.hermit.candidate.thriftscala.Candidate
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.recommendations.follow2vec.LinearRegressionFollow2vecNearestNeighborsClientColumn
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import javax.inject.Inject
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims.Follow2veloncNelonarelonstNelonighborsStorelon.NelonarelonstNelonighborParamsTypelon
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelon
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.catalog.Felontch
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.reloncommelonndations.follow2velonc.LinelonarRelongrelonssionFollow2veloncNelonarelonstNelonighborsClielonntColumn
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import javax.injelonct.Injelonct
 
-@Singleton
-class LinearRegressionFollow2vecNearestNeighborsStore @Inject() (
-  linearRegressionFollow2vecNearestNeighborsClientColumn: LinearRegressionFollow2vecNearestNeighborsClientColumn)
-    extends StratoBasedSimsCandidateSource[NearestNeighborParamsType](
-      Follow2vecNearestNeighborsStore.convertFetcher(
-        linearRegressionFollow2vecNearestNeighborsClientColumn.fetcher),
-      view = Follow2vecNearestNeighborsStore.defaultSearchParams,
-      identifier = Follow2vecNearestNeighborsStore.IdentifierF2vLinearRegression
+@Singlelonton
+class LinelonarRelongrelonssionFollow2veloncNelonarelonstNelonighborsStorelon @Injelonct() (
+  linelonarRelongrelonssionFollow2veloncNelonarelonstNelonighborsClielonntColumn: LinelonarRelongrelonssionFollow2veloncNelonarelonstNelonighborsClielonntColumn)
+    elonxtelonnds StratoBaselondSimsCandidatelonSourcelon[NelonarelonstNelonighborParamsTypelon](
+      Follow2veloncNelonarelonstNelonighborsStorelon.convelonrtFelontchelonr(
+        linelonarRelongrelonssionFollow2veloncNelonarelonstNelonighborsClielonntColumn.felontchelonr),
+      vielonw = Follow2veloncNelonarelonstNelonighborsStorelon.delonfaultSelonarchParams,
+      idelonntifielonr = Follow2veloncNelonarelonstNelonighborsStorelon.IdelonntifielonrF2vLinelonarRelongrelonssion
     )
 
-object Follow2vecNearestNeighborsStore {
-  // (userid, feature store version for data)
-  type NearestNeighborKeyType = (Long, Long)
-  // (neighbors to be returned, ef value: accuracy / latency tradeoff, distance for filtering)
-  type NearestNeighborParamsType = (Option[Int], Option[Int], Option[Double])
-  // (seq(found neighbor id, score), distance for filtering)
-  type NearestNeighborValueType = (Seq[(Long, Option[Double])], Option[Double])
+objelonct Follow2veloncNelonarelonstNelonighborsStorelon {
+  // (uselonrid, felonaturelon storelon velonrsion for data)
+  typelon NelonarelonstNelonighborKelonyTypelon = (Long, Long)
+  // (nelonighbors to belon relonturnelond, elonf valuelon: accuracy / latelonncy tradelonoff, distancelon for filtelonring)
+  typelon NelonarelonstNelonighborParamsTypelon = (Option[Int], Option[Int], Option[Doublelon])
+  // (selonq(found nelonighbor id, scorelon), distancelon for filtelonring)
+  typelon NelonarelonstNelonighborValuelonTypelon = (Selonq[(Long, Option[Doublelon])], Option[Doublelon])
 
-  val IdentifierF2vLinearRegression: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.LinearRegressionFollow2VecNearestNeighbors.toString)
+  val IdelonntifielonrF2vLinelonarRelongrelonssion: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.LinelonarRelongrelonssionFollow2VeloncNelonarelonstNelonighbors.toString)
 
-  val defaultFeatureStoreVersion: Long = 20210708
-  val defaultSearchParams: NearestNeighborParamsType = (None, None, None)
+  val delonfaultFelonaturelonStorelonVelonrsion: Long = 20210708
+  val delonfaultSelonarchParams: NelonarelonstNelonighborParamsTypelon = (Nonelon, Nonelon, Nonelon)
 
-  def convertFetcher(
-    fetcher: Fetcher[NearestNeighborKeyType, NearestNeighborParamsType, NearestNeighborValueType]
-  ): Fetcher[Long, NearestNeighborParamsType, Candidates] = {
-    (key: Long, view: NearestNeighborParamsType) =>
+  delonf convelonrtFelontchelonr(
+    felontchelonr: Felontchelonr[NelonarelonstNelonighborKelonyTypelon, NelonarelonstNelonighborParamsTypelon, NelonarelonstNelonighborValuelonTypelon]
+  ): Felontchelonr[Long, NelonarelonstNelonighborParamsTypelon, Candidatelons] = {
+    (kelony: Long, vielonw: NelonarelonstNelonighborParamsTypelon) =>
       {
-        def toCandidates(
-          results: Option[NearestNeighborValueType]
-        ): Option[Candidates] = {
-          results.flatMap { r =>
-            Some(
-              Candidates(
-                key,
-                r._1.map { neighbor =>
-                  Candidate(neighbor._1, neighbor._2.getOrElse(0))
+        delonf toCandidatelons(
+          relonsults: Option[NelonarelonstNelonighborValuelonTypelon]
+        ): Option[Candidatelons] = {
+          relonsults.flatMap { r =>
+            Somelon(
+              Candidatelons(
+                kelony,
+                r._1.map { nelonighbor =>
+                  Candidatelon(nelonighbor._1, nelonighbor._2.gelontOrelonlselon(0))
                 }
               )
             )
           }
         }
 
-        val results: Stitch[Fetch.Result[NearestNeighborValueType]] =
-          fetcher.fetch(key = (key, defaultFeatureStoreVersion), view = view)
-        results.transform {
-          case Return(r) => Stitch.value(Fetch.Result(toCandidates(r.v)))
-          case Throw(e) => Stitch.exception(e)
+        val relonsults: Stitch[Felontch.Relonsult[NelonarelonstNelonighborValuelonTypelon]] =
+          felontchelonr.felontch(kelony = (kelony, delonfaultFelonaturelonStorelonVelonrsion), vielonw = vielonw)
+        relonsults.transform {
+          caselon Relonturn(r) => Stitch.valuelon(Felontch.Relonsult(toCandidatelons(r.v)))
+          caselon Throw(elon) => Stitch.elonxcelonption(elon)
         }
       }
   }

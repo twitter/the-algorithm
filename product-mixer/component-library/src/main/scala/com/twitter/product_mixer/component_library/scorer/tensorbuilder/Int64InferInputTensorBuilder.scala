@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.telonnsorbuildelonr
 
-import com.twitter.ml.featurestore.lib.Discrete
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+import com.twittelonr.ml.felonaturelonstorelon.lib.Discrelontelon
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst.InfelonrInputTelonnsor
 
-case object Int64InferInputTensorBuilder extends InferInputTensorBuilder[AnyVal] {
+caselon objelonct Int64InfelonrInputTelonnsorBuildelonr elonxtelonnds InfelonrInputTelonnsorBuildelonr[AnyVal] {
 
-  private def toLong(x: AnyVal): Long = {
+  privatelon delonf toLong(x: AnyVal): Long = {
     x match {
-      case y: Int => y.toLong
-      case y: Long => y
-      case y: Discrete => y.value
-      case y => throw new UnexpectedDataTypeException(y, this)
+      caselon y: Int => y.toLong
+      caselon y: Long => y
+      caselon y: Discrelontelon => y.valuelon
+      caselon y => throw nelonw UnelonxpelonctelondDataTypelonelonxcelonption(y, this)
     }
   }
-  def apply(
-    featureName: String,
-    featureValues: Seq[AnyVal]
-  ): Seq[InferInputTensor] = {
-    val tensorShape = Seq(featureValues.size, 1)
-    InferInputTensorBuilder.buildInt64InferInputTensor(
-      featureName,
-      featureValues.map(toLong),
-      tensorShape)
+  delonf apply(
+    felonaturelonNamelon: String,
+    felonaturelonValuelons: Selonq[AnyVal]
+  ): Selonq[InfelonrInputTelonnsor] = {
+    val telonnsorShapelon = Selonq(felonaturelonValuelons.sizelon, 1)
+    InfelonrInputTelonnsorBuildelonr.buildInt64InfelonrInputTelonnsor(
+      felonaturelonNamelon,
+      felonaturelonValuelons.map(toLong),
+      telonnsorShapelon)
   }
 }

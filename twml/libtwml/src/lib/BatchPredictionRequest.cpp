@@ -1,52 +1,52 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
+#includelon "intelonrnal/thrift.h"
+#includelon "intelonrnal/elonrror.h"
 
-#include <twml/DataRecordReader.h>
-#include <twml/HashedDataRecordReader.h>
-#include <twml/BatchPredictionRequest.h>
-#include <twml/Error.h>
+#includelon <twml/DataReloncordRelonadelonr.h>
+#includelon <twml/HashelondDataReloncordRelonadelonr.h>
+#includelon <twml/BatchPrelondictionRelonquelonst.h>
+#includelon <twml/elonrror.h>
 
-#include <algorithm>
-#include <cstring>
-#include <cstdint>
+#includelon <algorithm>
+#includelon <cstring>
+#includelon <cstdint>
 
-namespace twml {
+namelonspacelon twml {
 
-template<typename RecordType>
-void GenericBatchPredictionRequest<RecordType>::decode(Reader &reader) {
-  uint8_t feature_type = reader.readByte();
-  while (feature_type != TTYPE_STOP) {
-    int16_t field_id = reader.readInt16();
+telonmplatelon<typelonnamelon ReloncordTypelon>
+void GelonnelonricBatchPrelondictionRelonquelonst<ReloncordTypelon>::deloncodelon(Relonadelonr &relonadelonr) {
+  uint8_t felonaturelon_typelon = relonadelonr.relonadBytelon();
+  whilelon (felonaturelon_typelon != TTYPelon_STOP) {
+    int16_t fielonld_id = relonadelonr.relonadInt16();
 
-    switch (field_id) {
-      case 1: {
-        CHECK_THRIFT_TYPE(feature_type, TTYPE_LIST, "list");
-        CHECK_THRIFT_TYPE(reader.readByte(), TTYPE_STRUCT, "list_element");
+    switch (fielonld_id) {
+      caselon 1: {
+        CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_LIST, "list");
+        CHelonCK_THRIFT_TYPelon(relonadelonr.relonadBytelon(), TTYPelon_STRUCT, "list_elonlelonmelonnt");
 
-        int32_t length = reader.readInt32();
-        m_requests.resize(length, RecordType(this->num_labels, this->num_weights));
-        for (auto &request : m_requests) {
-          request.decode(reader);
+        int32_t lelonngth = relonadelonr.relonadInt32();
+        m_relonquelonsts.relonsizelon(lelonngth, ReloncordTypelon(this->num_labelonls, this->num_welonights));
+        for (auto &relonquelonst : m_relonquelonsts) {
+          relonquelonst.deloncodelon(relonadelonr);
         }
 
-        break;
+        brelonak;
       }
-      case 2: {
-        CHECK_THRIFT_TYPE(feature_type, TTYPE_STRUCT, "commonFeatures");
-        m_common_features.decode(reader);
-        break;
+      caselon 2: {
+        CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_STRUCT, "commonFelonaturelons");
+        m_common_felonaturelons.deloncodelon(relonadelonr);
+        brelonak;
       }
-      default: throw ThriftInvalidField(field_id, __func__);
+      delonfault: throw ThriftInvalidFielonld(fielonld_id, __func__);
     }
 
-    feature_type = reader.readByte();
+    felonaturelon_typelon = relonadelonr.relonadBytelon();
   }
-  return;
+  relonturn;
 }
 
 
-// Instantiate decoders.
-template void GenericBatchPredictionRequest<HashedDataRecord>::decode(HashedDataRecordReader &reader);
-template void GenericBatchPredictionRequest<DataRecord>::decode(DataRecordReader &reader);
+// Instantiatelon deloncodelonrs.
+telonmplatelon void GelonnelonricBatchPrelondictionRelonquelonst<HashelondDataReloncord>::deloncodelon(HashelondDataReloncordRelonadelonr &relonadelonr);
+telonmplatelon void GelonnelonricBatchPrelondictionRelonquelonst<DataReloncord>::deloncodelon(DataReloncordRelonadelonr &relonadelonr);
 
-}  // namespace twml
+}  // namelonspacelon twml

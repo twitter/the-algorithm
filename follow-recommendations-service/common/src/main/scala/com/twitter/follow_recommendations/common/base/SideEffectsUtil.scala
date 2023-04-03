@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.baselon
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.stitch.Stitch
 
 /**
- * SideEffectsUtil applies side effects to the intermediate candidate results from a recommendation flow pipeline.
+ * SidelonelonffelonctsUtil applielons sidelon elonffeloncts to thelon intelonrmelondiatelon candidatelon relonsults from a reloncommelonndation flow pipelonlinelon.
  *
- * @tparam Target target to recommend the candidates
- * @tparam Candidate candidate type to rank
+ * @tparam Targelont targelont to reloncommelonnd thelon candidatelons
+ * @tparam Candidatelon candidatelon typelon to rank
  */
-trait SideEffectsUtil[Target, Candidate] {
-  def applySideEffects(
-    target: Target,
-    candidateSources: Seq[CandidateSource[Target, Candidate]],
-    candidatesFromCandidateSources: Seq[Candidate],
-    mergedCandidates: Seq[Candidate],
-    filteredCandidates: Seq[Candidate],
-    rankedCandidates: Seq[Candidate],
-    transformedCandidates: Seq[Candidate],
-    truncatedCandidates: Seq[Candidate],
-    results: Seq[Candidate]
+trait SidelonelonffelonctsUtil[Targelont, Candidatelon] {
+  delonf applySidelonelonffeloncts(
+    targelont: Targelont,
+    candidatelonSourcelons: Selonq[CandidatelonSourcelon[Targelont, Candidatelon]],
+    candidatelonsFromCandidatelonSourcelons: Selonq[Candidatelon],
+    melonrgelondCandidatelons: Selonq[Candidatelon],
+    filtelonrelondCandidatelons: Selonq[Candidatelon],
+    rankelondCandidatelons: Selonq[Candidatelon],
+    transformelondCandidatelons: Selonq[Candidatelon],
+    truncatelondCandidatelons: Selonq[Candidatelon],
+    relonsults: Selonq[Candidatelon]
   ): Stitch[Unit] = Stitch.Unit
 }

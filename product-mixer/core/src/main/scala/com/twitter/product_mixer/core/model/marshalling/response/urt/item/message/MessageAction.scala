@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Callback
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
 
-case class MessageAction(
-  dismissOnClick: Boolean,
+caselon class MelonssagelonAction(
+  dismissOnClick: Boolelonan,
   url: Option[String],
-  clientEventInfo: Option[ClientEventInfo],
-  onClickCallbacks: Option[Seq[Callback]])
+  clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  onClickCallbacks: Option[Selonq[Callback]])

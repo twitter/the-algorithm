@@ -1,373 +1,373 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
 
-import org.apache.lucene.store.DataInput;
-import org.apache.lucene.store.DataOutput;
-import org.apache.lucene.util.ArrayUtil;
-import org.apache.lucene.util.ByteBlockPool;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.storelon.DataInput;
+import org.apachelon.lucelonnelon.storelon.DataOutput;
+import org.apachelon.lucelonnelon.util.ArrayUtil;
+import org.apachelon.lucelonnelon.util.BytelonBlockPool;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import static org.apache.lucene.util.RamUsageEstimator.NUM_BYTES_OBJECT_REF;
+import static org.apachelon.lucelonnelon.util.RamUsagelonelonstimator.NUM_BYTelonS_OBJelonCT_RelonF;
 
 /**
- * Base class for BlockPools backed by byte[] arrays.
+ * Baselon class for BlockPools backelond by bytelon[] arrays.
  */
-public abstract class BaseByteBlockPool {
+public abstract class BaselonBytelonBlockPool {
   /**
-   * The extra object with final array is necessary to guarantee visibility to
-   * other threads without synchronization/using volatile.
+   * Thelon elonxtra objelonct with final array is neloncelonssary to guarantelonelon visibility to
+   * othelonr threlonads without synchronization/using volatilelon.
    *
-   * From 'Java Concurrency in practice' by Brian Goetz, p. 349:
+   * From 'Java Concurrelonncy in practicelon' by Brian Goelontz, p. 349:
    *
-   * "Initialization safety guarantees that for properly constructed objects, all
-   *  threads will see the correct values of final fields that were set by the con-
-   *  structor, regardless of how the object is published. Further, any variables
-   *  that can be reached through a final field of a properly constructed object
-   *  (such as the elements of a final array or the contents of a HashMap refer-
-   *  enced by a final field) are also guaranteed to be visible to other threads."
+   * "Initialization safelonty guarantelonelons that for propelonrly constructelond objeloncts, all
+   *  threlonads will selonelon thelon correlonct valuelons of final fielonlds that welonrelon selont by thelon con-
+   *  structor, relongardlelonss of how thelon objelonct is publishelond. Furthelonr, any variablelons
+   *  that can belon relonachelond through a final fielonld of a propelonrly constructelond objelonct
+   *  (such as thelon elonlelonmelonnts of a final array or thelon contelonnts of a HashMap relonfelonr-
+   *  elonncelond by a final fielonld) arelon also guarantelonelond to belon visiblelon to othelonr threlonads."
    */
   public static final class Pool {
-    public final byte[][] buffers;
+    public final bytelon[][] buffelonrs;
 
-    public Pool(byte[][] buffers) {
-      this.buffers = buffers;
+    public Pool(bytelon[][] buffelonrs) {
+      this.buffelonrs = buffelonrs;
     }
 
-    public byte[][] getBlocks() {
-      return buffers;
+    public bytelon[][] gelontBlocks() {
+      relonturn buffelonrs;
     }
   }
 
-  public Pool pool = new Pool(new byte[10][]);
-  // The index of the current buffer in pool.buffers.
-  public int bufferUpto = -1;
-  // The number of bytes that have been written in the current buffer.
-  public int byteUpto = ByteBlockPool.BYTE_BLOCK_SIZE;
-  // The current buffer, i.e. a reference to pool.buffers[bufferUpto]
-  public byte[] buffer;
-  // The total number of bytes that have been used up to now, excluding the current buffer.
-  public int byteOffset = -ByteBlockPool.BYTE_BLOCK_SIZE;
-  // The one and only WriteStream for this pool.
-  private WriteStream writeStream = new WriteStream();
+  public Pool pool = nelonw Pool(nelonw bytelon[10][]);
+  // Thelon indelonx of thelon currelonnt buffelonr in pool.buffelonrs.
+  public int buffelonrUpto = -1;
+  // Thelon numbelonr of bytelons that havelon belonelonn writtelonn in thelon currelonnt buffelonr.
+  public int bytelonUpto = BytelonBlockPool.BYTelon_BLOCK_SIZelon;
+  // Thelon currelonnt buffelonr, i.elon. a relonfelonrelonncelon to pool.buffelonrs[buffelonrUpto]
+  public bytelon[] buffelonr;
+  // Thelon total numbelonr of bytelons that havelon belonelonn uselond up to now, elonxcluding thelon currelonnt buffelonr.
+  public int bytelonOffselont = -BytelonBlockPool.BYTelon_BLOCK_SIZelon;
+  // Thelon onelon and only WritelonStrelonam for this pool.
+  privatelon WritelonStrelonam writelonStrelonam = nelonw WritelonStrelonam();
 
-  protected BaseByteBlockPool() { }
+  protelonctelond BaselonBytelonBlockPool() { }
 
   /**
-   * Used for loading flushed pool.
+   * Uselond for loading flushelond pool.
    */
-  protected BaseByteBlockPool(Pool pool, int bufferUpto, int byteUpTo, int byteOffset) {
+  protelonctelond BaselonBytelonBlockPool(Pool pool, int buffelonrUpto, int bytelonUpTo, int bytelonOffselont) {
     this.pool = pool;
-    this.bufferUpto = bufferUpto;
-    this.byteUpto = byteUpTo;
-    this.byteOffset = byteOffset;
-    if (bufferUpto >= 0) {
-      this.buffer = pool.buffers[bufferUpto];
+    this.buffelonrUpto = buffelonrUpto;
+    this.bytelonUpto = bytelonUpTo;
+    this.bytelonOffselont = bytelonOffselont;
+    if (buffelonrUpto >= 0) {
+      this.buffelonr = pool.buffelonrs[buffelonrUpto];
     }
   }
 
   /**
-   * Resets the index of the pool to 0 in the first buffer and resets the byte arrays of
-   * all previously allocated buffers to 0s.
+   * Relonselonts thelon indelonx of thelon pool to 0 in thelon first buffelonr and relonselonts thelon bytelon arrays of
+   * all prelonviously allocatelond buffelonrs to 0s.
    */
-  public void reset() {
-    if (bufferUpto != -1) {
-      // We allocated at least one buffer
+  public void relonselont() {
+    if (buffelonrUpto != -1) {
+      // Welon allocatelond at lelonast onelon buffelonr
 
-      for (int i = 0; i < bufferUpto; i++) {
-        // Fully zero fill buffers that we fully used
-        Arrays.fill(pool.buffers[i], (byte) 0);
+      for (int i = 0; i < buffelonrUpto; i++) {
+        // Fully zelonro fill buffelonrs that welon fully uselond
+        Arrays.fill(pool.buffelonrs[i], (bytelon) 0);
       }
 
-      // Partial zero fill the final buffer
-      Arrays.fill(pool.buffers[bufferUpto], 0, byteUpto, (byte) 0);
+      // Partial zelonro fill thelon final buffelonr
+      Arrays.fill(pool.buffelonrs[buffelonrUpto], 0, bytelonUpto, (bytelon) 0);
 
-      bufferUpto = 0;
-      byteUpto = 0;
-      byteOffset = 0;
-      buffer = pool.buffers[0];
+      buffelonrUpto = 0;
+      bytelonUpto = 0;
+      bytelonOffselont = 0;
+      buffelonr = pool.buffelonrs[0];
     }
   }
 
   /**
-   * Switches to the next buffer and positions the index at its beginning.
+   * Switchelons to thelon nelonxt buffelonr and positions thelon indelonx at its belonginning.
    */
-  public void nextBuffer() {
-    if (1 + bufferUpto == pool.buffers.length) {
-      byte[][] newBuffers = new byte[ArrayUtil.oversize(pool.buffers.length + 1,
-                                                           NUM_BYTES_OBJECT_REF)][];
-      System.arraycopy(pool.buffers, 0, newBuffers, 0, pool.buffers.length);
-      pool = new Pool(newBuffers);
+  public void nelonxtBuffelonr() {
+    if (1 + buffelonrUpto == pool.buffelonrs.lelonngth) {
+      bytelon[][] nelonwBuffelonrs = nelonw bytelon[ArrayUtil.ovelonrsizelon(pool.buffelonrs.lelonngth + 1,
+                                                           NUM_BYTelonS_OBJelonCT_RelonF)][];
+      Systelonm.arraycopy(pool.buffelonrs, 0, nelonwBuffelonrs, 0, pool.buffelonrs.lelonngth);
+      pool = nelonw Pool(nelonwBuffelonrs);
     }
-    buffer = pool.buffers[1 + bufferUpto] = new byte[ByteBlockPool.BYTE_BLOCK_SIZE];
-    bufferUpto++;
+    buffelonr = pool.buffelonrs[1 + buffelonrUpto] = nelonw bytelon[BytelonBlockPool.BYTelon_BLOCK_SIZelon];
+    buffelonrUpto++;
 
-    byteUpto = 0;
-    byteOffset += ByteBlockPool.BYTE_BLOCK_SIZE;
+    bytelonUpto = 0;
+    bytelonOffselont += BytelonBlockPool.BYTelon_BLOCK_SIZelon;
   }
 
   /**
-   * Returns the start offset of the next data that will be added to the pool, UNLESS the data is
-   * added using addBytes and avoidSplitting = true
+   * Relonturns thelon start offselont of thelon nelonxt data that will belon addelond to thelon pool, UNLelonSS thelon data is
+   * addelond using addBytelons and avoidSplitting = truelon
    */
-  public int getOffset() {
-    return byteOffset + byteUpto;
+  public int gelontOffselont() {
+    relonturn bytelonOffselont + bytelonUpto;
   }
 
   /**
-   * Returns the start offset of b in the pool
-   * @param b byte to put
+   * Relonturns thelon start offselont of b in thelon pool
+   * @param b bytelon to put
    */
-  public int addByte(byte b) {
-    int initOffset = byteOffset + byteUpto;
-    int remainingBytesInBuffer = ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto;
-    // If the buffer is full, move on to the next one.
-    if (remainingBytesInBuffer <= 0) {
-      nextBuffer();
+  public int addBytelon(bytelon b) {
+    int initOffselont = bytelonOffselont + bytelonUpto;
+    int relonmainingBytelonsInBuffelonr = BytelonBlockPool.BYTelon_BLOCK_SIZelon - bytelonUpto;
+    // If thelon buffelonr is full, movelon on to thelon nelonxt onelon.
+    if (relonmainingBytelonsInBuffelonr <= 0) {
+      nelonxtBuffelonr();
     }
-    buffer[byteUpto] = b;
-    byteUpto++;
-    return initOffset;
+    buffelonr[bytelonUpto] = b;
+    bytelonUpto++;
+    relonturn initOffselont;
   }
 
   /**
-   * Returns the start offset of the bytes in the pool.
-   *        If avoidSplitting is false, this is guaranteed to return the same value that would be
-   *        returned by getOffset()
-   * @param bytes source array
-   * @param length number of bytes to put
-   * @param avoidSplitting if possible (the length is less than ByteBlockPool.BYTE_BLOCK_SIZE),
-   *        the bytes will not be split across buffer boundaries. This is useful for small data
-   *        that will be read a lot (small amount of space wasted in return for avoiding copying
-   *        memory when calling getBytes).
+   * Relonturns thelon start offselont of thelon bytelons in thelon pool.
+   *        If avoidSplitting is falselon, this is guarantelonelond to relonturn thelon samelon valuelon that would belon
+   *        relonturnelond by gelontOffselont()
+   * @param bytelons sourcelon array
+   * @param lelonngth numbelonr of bytelons to put
+   * @param avoidSplitting if possiblelon (thelon lelonngth is lelonss than BytelonBlockPool.BYTelon_BLOCK_SIZelon),
+   *        thelon bytelons will not belon split across buffelonr boundarielons. This is uselonful for small data
+   *        that will belon relonad a lot (small amount of spacelon wastelond in relonturn for avoiding copying
+   *        melonmory whelonn calling gelontBytelons).
    */
-  public int addBytes(byte[] bytes, int offset, int length, boolean avoidSplitting) {
-    // The first time this is called, there may not be an existing buffer yet.
-    if (buffer == null) {
-      nextBuffer();
+  public int addBytelons(bytelon[] bytelons, int offselont, int lelonngth, boolelonan avoidSplitting) {
+    // Thelon first timelon this is callelond, thelonrelon may not belon an elonxisting buffelonr yelont.
+    if (buffelonr == null) {
+      nelonxtBuffelonr();
     }
 
-    int remainingBytesInBuffer = ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto;
+    int relonmainingBytelonsInBuffelonr = BytelonBlockPool.BYTelon_BLOCK_SIZelon - bytelonUpto;
 
-    if (avoidSplitting && length < ByteBlockPool.BYTE_BLOCK_SIZE) {
-      if (remainingBytesInBuffer < length) {
-        nextBuffer();
+    if (avoidSplitting && lelonngth < BytelonBlockPool.BYTelon_BLOCK_SIZelon) {
+      if (relonmainingBytelonsInBuffelonr < lelonngth) {
+        nelonxtBuffelonr();
       }
-      int initOffset = byteOffset + byteUpto;
-      System.arraycopy(bytes, offset, buffer, byteUpto, length);
-      byteUpto += length;
-      return initOffset;
-    } else {
-      int initOffset = byteOffset + byteUpto;
-      if (remainingBytesInBuffer < length) {
-        // Must split the bytes across buffers.
-        int remainingLength = length;
-        while (remainingLength > ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto) {
-          int lengthToCopy = ByteBlockPool.BYTE_BLOCK_SIZE - byteUpto;
-          System.arraycopy(bytes, length - remainingLength + offset,
-                  buffer, byteUpto, lengthToCopy);
-          remainingLength -= lengthToCopy;
-          nextBuffer();
+      int initOffselont = bytelonOffselont + bytelonUpto;
+      Systelonm.arraycopy(bytelons, offselont, buffelonr, bytelonUpto, lelonngth);
+      bytelonUpto += lelonngth;
+      relonturn initOffselont;
+    } elonlselon {
+      int initOffselont = bytelonOffselont + bytelonUpto;
+      if (relonmainingBytelonsInBuffelonr < lelonngth) {
+        // Must split thelon bytelons across buffelonrs.
+        int relonmainingLelonngth = lelonngth;
+        whilelon (relonmainingLelonngth > BytelonBlockPool.BYTelon_BLOCK_SIZelon - bytelonUpto) {
+          int lelonngthToCopy = BytelonBlockPool.BYTelon_BLOCK_SIZelon - bytelonUpto;
+          Systelonm.arraycopy(bytelons, lelonngth - relonmainingLelonngth + offselont,
+                  buffelonr, bytelonUpto, lelonngthToCopy);
+          relonmainingLelonngth -= lelonngthToCopy;
+          nelonxtBuffelonr();
         }
-        System.arraycopy(bytes, length - remainingLength + offset,
-                buffer, byteUpto, remainingLength);
-        byteUpto += remainingLength;
-      } else {
-        // Just add all bytes to the current buffer.
-        System.arraycopy(bytes, offset, buffer, byteUpto, length);
-        byteUpto += length;
+        Systelonm.arraycopy(bytelons, lelonngth - relonmainingLelonngth + offselont,
+                buffelonr, bytelonUpto, relonmainingLelonngth);
+        bytelonUpto += relonmainingLelonngth;
+      } elonlselon {
+        // Just add all bytelons to thelon currelonnt buffelonr.
+        Systelonm.arraycopy(bytelons, offselont, buffelonr, bytelonUpto, lelonngth);
+        bytelonUpto += lelonngth;
       }
-      return initOffset;
+      relonturn initOffselont;
     }
   }
 
   /**
-   * Default addBytes. Does not avoid splitting.
-   * @see #addBytes(byte[], int, boolean)
+   * Delonfault addBytelons. Doelons not avoid splitting.
+   * @selonelon #addBytelons(bytelon[], int, boolelonan)
    */
-  public int addBytes(byte[] bytes, int length) {
-    return addBytes(bytes, 0, length, false);
+  public int addBytelons(bytelon[] bytelons, int lelonngth) {
+    relonturn addBytelons(bytelons, 0, lelonngth, falselon);
   }
 
   /**
-   * Default addBytes. Does not avoid splitting.
-   * @see #addBytes(byte[], int, boolean)
+   * Delonfault addBytelons. Doelons not avoid splitting.
+   * @selonelon #addBytelons(bytelon[], int, boolelonan)
    */
-  public int addBytes(byte[] bytes, int offset, int length) {
-    return addBytes(bytes, offset, length, false);
+  public int addBytelons(bytelon[] bytelons, int offselont, int lelonngth) {
+    relonturn addBytelons(bytelons, offselont, lelonngth, falselon);
   }
 
   /**
-   * Reads one byte from the pool.
-   * @param offset location to read byte from
+   * Relonads onelon bytelon from thelon pool.
+   * @param offselont location to relonad bytelon from
    */
-  public byte getByte(int offset) {
-    int bufferIndex = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
-    int bufferOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
-    return pool.buffers[bufferIndex][bufferOffset];
+  public bytelon gelontBytelon(int offselont) {
+    int buffelonrIndelonx = offselont >>> BytelonBlockPool.BYTelon_BLOCK_SHIFT;
+    int buffelonrOffselont = offselont & BytelonBlockPool.BYTelon_BLOCK_MASK;
+    relonturn pool.buffelonrs[buffelonrIndelonx][buffelonrOffselont];
   }
 
   /**
-   * Returns false if offset is invalid or there aren't these many bytes
-   * available in the pool.
-   * @param offset location to start reading bytes from
-   * @param length number of bytes to read
-   * @param output the object to write the output to. MUST be non null.
+   * Relonturns falselon if offselont is invalid or thelonrelon arelonn't thelonselon many bytelons
+   * availablelon in thelon pool.
+   * @param offselont location to start relonading bytelons from
+   * @param lelonngth numbelonr of bytelons to relonad
+   * @param output thelon objelonct to writelon thelon output to. MUST belon non null.
    */
-  public boolean getBytesToBytesRef(int offset, int length, BytesRef output) {
-    if (offset < 0 || offset + length > byteUpto + byteOffset) {
-      return false;
+  public boolelonan gelontBytelonsToBytelonsRelonf(int offselont, int lelonngth, BytelonsRelonf output) {
+    if (offselont < 0 || offselont + lelonngth > bytelonUpto + bytelonOffselont) {
+      relonturn falselon;
     }
-    int currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
-    int currentOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
-    // If the requested bytes are split across pools, we have to make a new array of bytes
-    // to copy them into and return a ref to that.
-    if (currentOffset + length <= ByteBlockPool.BYTE_BLOCK_SIZE) {
-      output.bytes = pool.buffers[currentBuffer];
-      output.offset = currentOffset;
-      output.length = length;
-    } else {
-      byte[] bytes = new byte[length];
-      int remainingLength = length;
-      while (remainingLength > ByteBlockPool.BYTE_BLOCK_SIZE - currentOffset) {
-        int lengthToCopy = ByteBlockPool.BYTE_BLOCK_SIZE - currentOffset;
-        System.arraycopy(pool.buffers[currentBuffer], currentOffset, bytes,
-                         length - remainingLength, lengthToCopy);
-        remainingLength -= lengthToCopy;
-        currentBuffer++;
-        currentOffset = 0;
+    int currelonntBuffelonr = offselont >>> BytelonBlockPool.BYTelon_BLOCK_SHIFT;
+    int currelonntOffselont = offselont & BytelonBlockPool.BYTelon_BLOCK_MASK;
+    // If thelon relonquelonstelond bytelons arelon split across pools, welon havelon to makelon a nelonw array of bytelons
+    // to copy thelonm into and relonturn a relonf to that.
+    if (currelonntOffselont + lelonngth <= BytelonBlockPool.BYTelon_BLOCK_SIZelon) {
+      output.bytelons = pool.buffelonrs[currelonntBuffelonr];
+      output.offselont = currelonntOffselont;
+      output.lelonngth = lelonngth;
+    } elonlselon {
+      bytelon[] bytelons = nelonw bytelon[lelonngth];
+      int relonmainingLelonngth = lelonngth;
+      whilelon (relonmainingLelonngth > BytelonBlockPool.BYTelon_BLOCK_SIZelon - currelonntOffselont) {
+        int lelonngthToCopy = BytelonBlockPool.BYTelon_BLOCK_SIZelon - currelonntOffselont;
+        Systelonm.arraycopy(pool.buffelonrs[currelonntBuffelonr], currelonntOffselont, bytelons,
+                         lelonngth - relonmainingLelonngth, lelonngthToCopy);
+        relonmainingLelonngth -= lelonngthToCopy;
+        currelonntBuffelonr++;
+        currelonntOffselont = 0;
       }
-      System.arraycopy(pool.buffers[currentBuffer], currentOffset, bytes, length - remainingLength,
-                       remainingLength);
-      output.bytes = bytes;
-      output.length = bytes.length;
-      output.offset = 0;
+      Systelonm.arraycopy(pool.buffelonrs[currelonntBuffelonr], currelonntOffselont, bytelons, lelonngth - relonmainingLelonngth,
+                       relonmainingLelonngth);
+      output.bytelons = bytelons;
+      output.lelonngth = bytelons.lelonngth;
+      output.offselont = 0;
     }
-    return true;
+    relonturn truelon;
 
   }
 
   /**
-   * Returns the read bytes, or null if offset is invalid or there aren't these many bytes
-   * available in the pool.
-   * @param offset location to start reading bytes from
-   * @param length number of bytes to read
+   * Relonturns thelon relonad bytelons, or null if offselont is invalid or thelonrelon arelonn't thelonselon many bytelons
+   * availablelon in thelon pool.
+   * @param offselont location to start relonading bytelons from
+   * @param lelonngth numbelonr of bytelons to relonad
    */
-  public BytesRef getBytes(int offset, int length) {
-    BytesRef result = new BytesRef();
-    if (getBytesToBytesRef(offset, length, result)) {
-      return result;
-    } else {
-      return null;
+  public BytelonsRelonf gelontBytelons(int offselont, int lelonngth) {
+    BytelonsRelonf relonsult = nelonw BytelonsRelonf();
+    if (gelontBytelonsToBytelonsRelonf(offselont, lelonngth, relonsult)) {
+      relonturn relonsult;
+    } elonlselon {
+      relonturn null;
     }
   }
 
   /**
-   * get a new readStream at a given offset for this pool.
+   * gelont a nelonw relonadStrelonam at a givelonn offselont for this pool.
    *
-   * Notice that individual ReadStreams are not threadsafe, but you can get as many ReadStreams as
+   * Noticelon that individual RelonadStrelonams arelon not threlonadsafelon, but you can gelont as many RelonadStrelonams as
    * you want.
    */
-  public ReadStream getReadStream(int offset) {
-    return new ReadStream(offset);
+  public RelonadStrelonam gelontRelonadStrelonam(int offselont) {
+    relonturn nelonw RelonadStrelonam(offselont);
   }
 
   /**
-   * get the (one and only) WriteStream for this pool.
+   * gelont thelon (onelon and only) WritelonStrelonam for this pool.
    *
-   * Notice that there is exactly one WriteStream per pool, and it is not threadsafe.
+   * Noticelon that thelonrelon is elonxactly onelon WritelonStrelonam pelonr pool, and it is not threlonadsafelon.
    */
-  public WriteStream getWriteStream() {
-    return writeStream;
+  public WritelonStrelonam gelontWritelonStrelonam() {
+    relonturn writelonStrelonam;
   }
 
   /**
-   * A DataOutput-like interface for writing "contiguous" data to a ByteBlockPool.
+   * A DataOutput-likelon intelonrfacelon for writing "contiguous" data to a BytelonBlockPool.
    *
-   * This is not threadsafe.
+   * This is not threlonadsafelon.
    */
-  public final class WriteStream extends DataOutput {
-    private WriteStream() { }
+  public final class WritelonStrelonam elonxtelonnds DataOutput {
+    privatelon WritelonStrelonam() { }
 
     /**
-     * Returns the start offset of the next data that will be added to the pool, UNLESS the data is
-     * added using addBytes and avoidSplitting = true
+     * Relonturns thelon start offselont of thelon nelonxt data that will belon addelond to thelon pool, UNLelonSS thelon data is
+     * addelond using addBytelons and avoidSplitting = truelon
      */
-    public int getOffset() {
-      return BaseByteBlockPool.this.getOffset();
+    public int gelontOffselont() {
+      relonturn BaselonBytelonBlockPool.this.gelontOffselont();
     }
 
     /**
-     * Write bytes to the pool.
-     * @param bytes  source array
-     * @param offset  offset in bytes of the data to write
-     * @param length  number of bytes to put
-     * @param avoidSplitting  same as {link ByteBlockPool.addBytes}
-     * @return  the start offset of the bytes in the pool
+     * Writelon bytelons to thelon pool.
+     * @param bytelons  sourcelon array
+     * @param offselont  offselont in bytelons of thelon data to writelon
+     * @param lelonngth  numbelonr of bytelons to put
+     * @param avoidSplitting  samelon as {link BytelonBlockPool.addBytelons}
+     * @relonturn  thelon start offselont of thelon bytelons in thelon pool
      */
-    public int writeBytes(byte[] bytes, int offset, int length, boolean avoidSplitting) {
-      return addBytes(bytes, offset, length, avoidSplitting);
+    public int writelonBytelons(bytelon[] bytelons, int offselont, int lelonngth, boolelonan avoidSplitting) {
+      relonturn addBytelons(bytelons, offselont, lelonngth, avoidSplitting);
     }
 
-    @Override
-    public void writeBytes(byte[] b, int offset, int length) throws IOException {
-      addBytes(b, offset, length);
+    @Ovelonrridelon
+    public void writelonBytelons(bytelon[] b, int offselont, int lelonngth) throws IOelonxcelonption {
+      addBytelons(b, offselont, lelonngth);
     }
 
-    @Override
-    public void writeByte(byte b) {
-      addByte(b);
+    @Ovelonrridelon
+    public void writelonBytelon(bytelon b) {
+      addBytelon(b);
     }
   }
 
   /**
-   * A DataInput-like interface for reading "contiguous" data from a ByteBlockPool.
+   * A DataInput-likelon intelonrfacelon for relonading "contiguous" data from a BytelonBlockPool.
    *
-   * This is not threadsafe.
+   * This is not threlonadsafelon.
    *
-   * This does not fully implement the DataInput interface - its DataInput.readBytes method throws
-   * UnsupportedOperationException because this class provides a facility for no-copy reading.
+   * This doelons not fully implelonmelonnt thelon DataInput intelonrfacelon - its DataInput.relonadBytelons melonthod throws
+   * UnsupportelondOpelonrationelonxcelonption beloncauselon this class providelons a facility for no-copy relonading.
    */
-  public final class ReadStream extends DataInput {
-    private int offset;
+  public final class RelonadStrelonam elonxtelonnds DataInput {
+    privatelon int offselont;
 
-    private ReadStream(int offset) {
-      this.offset = offset;
+    privatelon RelonadStrelonam(int offselont) {
+      this.offselont = offselont;
     }
 
-    public BytesRef readBytes(int n) {
-      return readBytes(n, false);
+    public BytelonsRelonf relonadBytelons(int n) {
+      relonturn relonadBytelons(n, falselon);
     }
 
     /**
-     * read n bytes that were written with a given value of avoidSplitting
-     * @param n  number of bytes to read.
-     * @param avoidSplitting  this should be the same that was used at writeBytes time.
-     * @return  a reference to the bytes read or null.
+     * relonad n bytelons that welonrelon writtelonn with a givelonn valuelon of avoidSplitting
+     * @param n  numbelonr of bytelons to relonad.
+     * @param avoidSplitting  this should belon thelon samelon that was uselond at writelonBytelons timelon.
+     * @relonturn  a relonfelonrelonncelon to thelon bytelons relonad or null.
      */
-    public BytesRef readBytes(int n, boolean avoidSplitting) {
-      int currentBuffer = offset >>> ByteBlockPool.BYTE_BLOCK_SHIFT;
-      int currentOffset = offset & ByteBlockPool.BYTE_BLOCK_MASK;
-      if (avoidSplitting && n < ByteBlockPool.BYTE_BLOCK_SIZE
-          && currentOffset + n > ByteBlockPool.BYTE_BLOCK_SIZE) {
-        ++currentBuffer;
-        currentOffset = 0;
-        offset = currentBuffer << ByteBlockPool.BYTE_BLOCK_SHIFT;
+    public BytelonsRelonf relonadBytelons(int n, boolelonan avoidSplitting) {
+      int currelonntBuffelonr = offselont >>> BytelonBlockPool.BYTelon_BLOCK_SHIFT;
+      int currelonntOffselont = offselont & BytelonBlockPool.BYTelon_BLOCK_MASK;
+      if (avoidSplitting && n < BytelonBlockPool.BYTelon_BLOCK_SIZelon
+          && currelonntOffselont + n > BytelonBlockPool.BYTelon_BLOCK_SIZelon) {
+        ++currelonntBuffelonr;
+        currelonntOffselont = 0;
+        offselont = currelonntBuffelonr << BytelonBlockPool.BYTelon_BLOCK_SHIFT;
       }
-      BytesRef result = getBytes(offset, n);
-      this.offset += n;
-      return result;
+      BytelonsRelonf relonsult = gelontBytelons(offselont, n);
+      this.offselont += n;
+      relonturn relonsult;
     }
 
-    @Override
-    public byte readByte() {
-      return getByte(offset++);
+    @Ovelonrridelon
+    public bytelon relonadBytelon() {
+      relonturn gelontBytelon(offselont++);
     }
 
-    @Override
-    public void readBytes(byte[] b, int off, int len) throws IOException {
-      throw new UnsupportedOperationException("Use the no-copies version of ReadBytes instead.");
+    @Ovelonrridelon
+    public void relonadBytelons(bytelon[] b, int off, int lelonn) throws IOelonxcelonption {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption("Uselon thelon no-copielons velonrsion of RelonadBytelons instelonad.");
     }
   }
 }

@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.topic
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.topic
 
-import com.twitter.product_mixer.component_library.model.candidate.TopicCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.BasicTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PillTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.NoIconTopicDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PillWithoutActionIconDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicDisplayType
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic.BaseTopicDisplayTypeBuilder
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TopicCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.BasicTopicDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.PillTopicDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.NoIconTopicDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.PillWithoutActionIconDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.TopicDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.topic.BaselonTopicDisplayTypelonBuildelonr
 
-object TopicCandidateDisplayType extends Enumeration {
-  type TopicDisplayType = Value
+objelonct TopicCandidatelonDisplayTypelon elonxtelonnds elonnumelonration {
+  typelon TopicDisplayTypelon = Valuelon
 
-  val Basic = Value
-  val Pill = Value
-  val NoIcon = Value
-  val PillWithoutActionIcon = Value
+  val Basic = Valuelon
+  val Pill = Valuelon
+  val NoIcon = Valuelon
+  val PillWithoutActionIcon = Valuelon
 }
 
-case class ParamTopicDisplayTypeBuilder(
-  displayTypeParam: FSEnumParam[TopicCandidateDisplayType.type])
-    extends BaseTopicDisplayTypeBuilder[PipelineQuery, TopicCandidate] {
+caselon class ParamTopicDisplayTypelonBuildelonr(
+  displayTypelonParam: FSelonnumParam[TopicCandidatelonDisplayTypelon.typelon])
+    elonxtelonnds BaselonTopicDisplayTypelonBuildelonr[PipelonlinelonQuelonry, TopicCandidatelon] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TopicCandidate,
-    candidateFeatures: FeatureMap
-  ): Option[TopicDisplayType] = {
-    val displayType = query.params(displayTypeParam)
-    displayType match {
-      case TopicCandidateDisplayType.Basic => Some(BasicTopicDisplayType)
-      case TopicCandidateDisplayType.Pill => Some(PillTopicDisplayType)
-      case TopicCandidateDisplayType.NoIcon =>
-        Some(NoIconTopicDisplayType)
-      case TopicCandidateDisplayType.PillWithoutActionIcon => Some(PillWithoutActionIconDisplayType)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TopicCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[TopicDisplayTypelon] = {
+    val displayTypelon = quelonry.params(displayTypelonParam)
+    displayTypelon match {
+      caselon TopicCandidatelonDisplayTypelon.Basic => Somelon(BasicTopicDisplayTypelon)
+      caselon TopicCandidatelonDisplayTypelon.Pill => Somelon(PillTopicDisplayTypelon)
+      caselon TopicCandidatelonDisplayTypelon.NoIcon =>
+        Somelon(NoIconTopicDisplayTypelon)
+      caselon TopicCandidatelonDisplayTypelon.PillWithoutActionIcon => Somelon(PillWithoutActionIconDisplayTypelon)
     }
   }
 }

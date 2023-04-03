@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.ReferenceObject
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextCashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextHashtag
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextMention
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextUser
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RelonfelonrelonncelonObjelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtCashtag
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtHashtag
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtList
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtMelonntion
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtUselonr
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ReferenceObjectMarshaller @Inject() (urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class RelonfelonrelonncelonObjelonctMarshallelonr @Injelonct() (urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(ref: ReferenceObject): urt.ReferenceObject = ref match {
-    case url: Url => urt.ReferenceObject.Url(urlMarshaller(url))
-    case user: RichTextUser => urt.ReferenceObject.User(urt.RichTextUser(id = user.id))
-    case mention: RichTextMention =>
-      urt.ReferenceObject.Mention(
-        urt.RichTextMention(id = mention.id, screenName = mention.screenName))
-    case hashtag: RichTextHashtag =>
-      urt.ReferenceObject.Hashtag(urt.RichTextHashtag(text = hashtag.text))
-    case cashtag: RichTextCashtag =>
-      urt.ReferenceObject.Cashtag(urt.RichTextCashtag(text = cashtag.text))
-    case twitterList: RichTextList =>
-      urt.ReferenceObject.TwitterList(urt.RichTextList(id = twitterList.id, url = twitterList.url))
+  delonf apply(relonf: RelonfelonrelonncelonObjelonct): urt.RelonfelonrelonncelonObjelonct = relonf match {
+    caselon url: Url => urt.RelonfelonrelonncelonObjelonct.Url(urlMarshallelonr(url))
+    caselon uselonr: RichTelonxtUselonr => urt.RelonfelonrelonncelonObjelonct.Uselonr(urt.RichTelonxtUselonr(id = uselonr.id))
+    caselon melonntion: RichTelonxtMelonntion =>
+      urt.RelonfelonrelonncelonObjelonct.Melonntion(
+        urt.RichTelonxtMelonntion(id = melonntion.id, screlonelonnNamelon = melonntion.screlonelonnNamelon))
+    caselon hashtag: RichTelonxtHashtag =>
+      urt.RelonfelonrelonncelonObjelonct.Hashtag(urt.RichTelonxtHashtag(telonxt = hashtag.telonxt))
+    caselon cashtag: RichTelonxtCashtag =>
+      urt.RelonfelonrelonncelonObjelonct.Cashtag(urt.RichTelonxtCashtag(telonxt = cashtag.telonxt))
+    caselon twittelonrList: RichTelonxtList =>
+      urt.RelonfelonrelonncelonObjelonct.TwittelonrList(urt.RichTelonxtList(id = twittelonrList.id, url = twittelonrList.url))
   }
 }

@@ -1,113 +1,113 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.HomeAuthorFeaturesCacheClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelinesRealTimeAggregateClient
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinAuthorFollow20200101FeatureCacheClient
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.shared_library.memcached_client.MemcachedClientBuilder
-import com.twitter.servo.cache.FinagleMemcacheFactory
-import com.twitter.servo.cache.Memcache
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.Melonmcachelond
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.HomelonAuthorFelonaturelonsCachelonClielonnt
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.RelonalTimelonIntelonractionGraphUselonrVelonrtelonxClielonnt
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TwhinAuthorFollow20200101FelonaturelonCachelonClielonnt
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.product_mixelonr.sharelond_library.melonmcachelond_clielonnt.MelonmcachelondClielonntBuildelonr
+import com.twittelonr.selonrvo.cachelon.FinaglelonMelonmcachelonFactory
+import com.twittelonr.selonrvo.cachelon.Melonmcachelon
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object MemcachedFeatureRepositoryModule extends TwitterModule {
+objelonct MelonmcachelondFelonaturelonRelonpositoryModulelon elonxtelonnds TwittelonrModulelon {
 
-  // This must match the respective parameter on the write path. Note that servo sets a different
-  // hasher by default. See [[com.twitter.hashing.KeyHasher]] for the list of other available
-  // hashers.
-  private val memcacheKeyHasher = "ketama"
+  // This must match thelon relonspelonctivelon paramelontelonr on thelon writelon path. Notelon that selonrvo selonts a diffelonrelonnt
+  // hashelonr by delonfault. Selonelon [[com.twittelonr.hashing.KelonyHashelonr]] for thelon list of othelonr availablelon
+  // hashelonrs.
+  privatelon val melonmcachelonKelonyHashelonr = "kelontama"
 
-  @Provides
-  @Singleton
-  @Named(TimelinesRealTimeAggregateClient)
-  def providesTimelinesRealTimeAggregateClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val rawClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 1,
-      requestTimeout = 150.milliseconds,
-      globalTimeout = 150.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Providelons
+  @Singlelonton
+  @Namelond(TimelonlinelonsRelonalTimelonAggrelongatelonClielonnt)
+  delonf providelonsTimelonlinelonsRelonalTimelonAggrelongatelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Melonmcachelon = {
+    val rawClielonnt = MelonmcachelondClielonntBuildelonr.buildRawMelonmcachelondClielonnt(
+      numTrielons = 1,
+      relonquelonstTimelonout = 150.milliselonconds,
+      globalTimelonout = 150.milliselonconds,
+      connelonctTimelonout = 200.milliselonconds,
+      acquisitionTimelonout = 200.milliselonconds,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-    buildMemcacheClient(rawClient, "/s/cache/timelines_real_time_aggregates:twemcaches")
+    buildMelonmcachelonClielonnt(rawClielonnt, "/s/cachelon/timelonlinelons_relonal_timelon_aggrelongatelons:twelonmcachelons")
   }
 
-  @Provides
-  @Singleton
-  @Named(HomeAuthorFeaturesCacheClient)
-  def providesHomeAuthorFeaturesCacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 1,
-      requestTimeout = 50.milliseconds,
-      globalTimeout = 50.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Providelons
+  @Singlelonton
+  @Namelond(HomelonAuthorFelonaturelonsCachelonClielonnt)
+  delonf providelonsHomelonAuthorFelonaturelonsCachelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Melonmcachelon = {
+    val cachelonClielonnt = MelonmcachelondClielonntBuildelonr.buildRawMelonmcachelondClielonnt(
+      numTrielons = 1,
+      relonquelonstTimelonout = 50.milliselonconds,
+      globalTimelonout = 50.milliselonconds,
+      connelonctTimelonout = 200.milliselonconds,
+      acquisitionTimelonout = 200.milliselonconds,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-    buildMemcacheClient(cacheClient, "/s/cache/timelines_author_features:twemcaches")
+    buildMelonmcachelonClielonnt(cachelonClielonnt, "/s/cachelon/timelonlinelons_author_felonaturelons:twelonmcachelons")
   }
 
-  @Provides
-  @Singleton
-  @Named(TwhinAuthorFollow20200101FeatureCacheClient)
-  def providesTwhinAuthorFollow20200101FeatureCacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 1,
-      requestTimeout = 50.milliseconds,
-      globalTimeout = 50.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Providelons
+  @Singlelonton
+  @Namelond(TwhinAuthorFollow20200101FelonaturelonCachelonClielonnt)
+  delonf providelonsTwhinAuthorFollow20200101FelonaturelonCachelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Melonmcachelon = {
+    val cachelonClielonnt = MelonmcachelondClielonntBuildelonr.buildRawMelonmcachelondClielonnt(
+      numTrielons = 1,
+      relonquelonstTimelonout = 50.milliselonconds,
+      globalTimelonout = 50.milliselonconds,
+      connelonctTimelonout = 200.milliselonconds,
+      acquisitionTimelonout = 200.milliselonconds,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-    buildMemcacheClient(cacheClient, "/s/cache/home_twhin_author_features:twemcaches")
+    buildMelonmcachelonClielonnt(cachelonClielonnt, "/s/cachelon/homelon_twhin_author_felonaturelons:twelonmcachelons")
   }
 
-  @Provides
-  @Singleton
-  @Named(RealTimeInteractionGraphUserVertexClient)
-  def providesRealTimeInteractionGraphUserVertexClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Memcache = {
-    val cacheClient = MemcachedClientBuilder.buildRawMemcachedClient(
-      numTries = 1,
-      requestTimeout = 100.milliseconds,
-      globalTimeout = 100.milliseconds,
-      connectTimeout = 200.milliseconds,
-      acquisitionTimeout = 200.milliseconds,
-      serviceIdentifier = serviceIdentifier,
-      statsReceiver = statsReceiver
+  @Providelons
+  @Singlelonton
+  @Namelond(RelonalTimelonIntelonractionGraphUselonrVelonrtelonxClielonnt)
+  delonf providelonsRelonalTimelonIntelonractionGraphUselonrVelonrtelonxClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Melonmcachelon = {
+    val cachelonClielonnt = MelonmcachelondClielonntBuildelonr.buildRawMelonmcachelondClielonnt(
+      numTrielons = 1,
+      relonquelonstTimelonout = 100.milliselonconds,
+      globalTimelonout = 100.milliselonconds,
+      connelonctTimelonout = 200.milliselonconds,
+      acquisitionTimelonout = 200.milliselonconds,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-    buildMemcacheClient(cacheClient, "/s/cache/realtime_interactive_graph_prod_v2:twemcaches")
+    buildMelonmcachelonClielonnt(cachelonClielonnt, "/s/cachelon/relonaltimelon_intelonractivelon_graph_prod_v2:twelonmcachelons")
   }
 
-  private def buildMemcacheClient(cacheClient: Memcached.Client, dest: String): Memcache =
-    FinagleMemcacheFactory(
-      client = cacheClient,
-      dest = dest,
-      hashName = memcacheKeyHasher
+  privatelon delonf buildMelonmcachelonClielonnt(cachelonClielonnt: Melonmcachelond.Clielonnt, delonst: String): Melonmcachelon =
+    FinaglelonMelonmcachelonFactory(
+      clielonnt = cachelonClielonnt,
+      delonst = delonst,
+      hashNamelon = melonmcachelonKelonyHashelonr
     )()
 
 }

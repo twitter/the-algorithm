@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
 
 /**
- * A [[CandidateSource]] that always returns [[result]] regardless of the input
+ * A [[CandidatelonSourcelon]] that always relonturns [[relonsult]] relongardlelonss of thelon input
  */
-case class StaticCandidateSource[Candidate](
-  override val identifier: CandidateSourceIdentifier,
-  result: Seq[Candidate])
-    extends CandidateSource[Any, Candidate] {
+caselon class StaticCandidatelonSourcelon[Candidatelon](
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr,
+  relonsult: Selonq[Candidatelon])
+    elonxtelonnds CandidatelonSourcelon[Any, Candidatelon] {
 
-  def apply(request: Any): Stitch[Seq[Candidate]] = Stitch.value(result)
+  delonf apply(relonquelonst: Any): Stitch[Selonq[Candidatelon]] = Stitch.valuelon(relonsult)
 }

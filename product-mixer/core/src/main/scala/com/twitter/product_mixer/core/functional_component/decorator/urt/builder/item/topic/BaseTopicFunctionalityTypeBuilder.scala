@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.item.topic
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.itelonm.topic
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFunctionalityType
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.TopicFunctionalityTypelon
 
-trait BaseTopicFunctionalityTypeBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]] {
+trait BaselonTopicFunctionalityTypelonBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): Option[TopicFunctionalityType]
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[TopicFunctionalityTypelon]
 }

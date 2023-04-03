@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
 
-object TombstoneItem {
-  val TombstoneEntryNamespace = EntryNamespace("tombstone")
+objelonct TombstonelonItelonm {
+  val TombstonelonelonntryNamelonspacelon = elonntryNamelonspacelon("tombstonelon")
 }
 
-case class TombstoneItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  tombstoneDisplayType: TombstoneDisplayType,
-  tombstoneInfo: Option[TombstoneInfo],
-  tweet: Option[TweetItem])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = TombstoneItem.TombstoneEntryNamespace
+caselon class TombstonelonItelonm(
+  ovelonrridelon val id: Long,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo],
+  tombstonelonDisplayTypelon: TombstonelonDisplayTypelon,
+  tombstonelonInfo: Option[TombstonelonInfo],
+  twelonelont: Option[TwelonelontItelonm])
+    elonxtelonnds TimelonlinelonItelonm {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = TombstonelonItelonm.TombstonelonelonntryNamelonspacelon
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

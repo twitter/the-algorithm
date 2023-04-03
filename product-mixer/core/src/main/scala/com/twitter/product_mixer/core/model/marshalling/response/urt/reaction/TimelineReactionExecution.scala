@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.reaction
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.relonaction
 
-sealed abstract class TimelineReactionExecution
+selonalelond abstract class TimelonlinelonRelonactionelonxeloncution
 
-case class ImmediateTimelineReaction(key: String) extends TimelineReactionExecution
+caselon class ImmelondiatelonTimelonlinelonRelonaction(kelony: String) elonxtelonnds TimelonlinelonRelonactionelonxeloncution
 
-case class RemoteTimelineReaction(
-  requestParams: Map[String, String],
-  timeoutInSeconds: Option[Short])
-    extends TimelineReactionExecution
+caselon class RelonmotelonTimelonlinelonRelonaction(
+  relonquelonstParams: Map[String, String],
+  timelonoutInSelonconds: Option[Short])
+    elonxtelonnds TimelonlinelonRelonactionelonxeloncution

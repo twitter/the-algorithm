@@ -1,16 +1,16 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.root.SearchRootServer;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.root.SelonarchRootSelonrvelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
 
-public class FullArchiveRootServer extends SearchRootServer<EarlybirdService.ServiceIface> {
+public class FullArchivelonRootSelonrvelonr elonxtelonnds SelonarchRootSelonrvelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> {
 
-  @Inject
-  public FullArchiveRootServer(FullArchiveRootService svc, Service<byte[], byte[]> byteSvc) {
-    super(svc, byteSvc);
+  @Injelonct
+  public FullArchivelonRootSelonrvelonr(FullArchivelonRootSelonrvicelon svc, Selonrvicelon<bytelon[], bytelon[]> bytelonSvc) {
+    supelonr(svc, bytelonSvc);
   }
 
 }

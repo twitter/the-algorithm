@@ -1,15 +1,15 @@
-package com.twitter.visibility.configapi.params
+packagelon com.twittelonr.visibility.configapi.params
 
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.Param
 
-abstract class LabelSourceParam(override val default: Boolean) extends Param(default) {
-  override val statName: String = s"LabelSourceParam/${this.getClass.getSimpleName}"
+abstract class LabelonlSourcelonParam(ovelonrridelon val delonfault: Boolelonan) elonxtelonnds Param(delonfault) {
+  ovelonrridelon val statNamelon: String = s"LabelonlSourcelonParam/${this.gelontClass.gelontSimplelonNamelon}"
 }
 
-private[visibility] object LabelSourceParams {
-  object FilterLabelsFromBot7174Param extends LabelSourceParam(false)
+privatelon[visibility] objelonct LabelonlSourcelonParams {
+  objelonct FiltelonrLabelonlsFromBot7174Param elonxtelonnds LabelonlSourcelonParam(falselon)
 
-  object FilterTweetsSmyteAutomationParamA extends LabelSourceParam(false)
-  object FilterTweetsSmyteAutomationParamB extends LabelSourceParam(false)
-  object FilterTweetsSmyteAutomationParamAB extends LabelSourceParam(false)
+  objelonct FiltelonrTwelonelontsSmytelonAutomationParamA elonxtelonnds LabelonlSourcelonParam(falselon)
+  objelonct FiltelonrTwelonelontsSmytelonAutomationParamB elonxtelonnds LabelonlSourcelonParam(falselon)
+  objelonct FiltelonrTwelonelontsSmytelonAutomationParamAB elonxtelonnds LabelonlSourcelonParam(falselon)
 }

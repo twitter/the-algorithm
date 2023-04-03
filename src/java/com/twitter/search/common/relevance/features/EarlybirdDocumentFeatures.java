@@ -1,232 +1,232 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
 
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureNormalizationType;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchRelonsultFelonaturelons;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFTypelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFelonaturelonNormalizationTypelon;
 
-public class EarlybirdDocumentFeatures {
-  private static final Map<Integer, SearchCounter> FEATURE_CONFIG_IS_NULL_MAP = Maps.newHashMap();
-  private static final Map<Integer, SearchCounter> FEATURE_OUTPUT_TYPE_IS_NULL_MAP =
-      Maps.newHashMap();
-  private static final Map<Integer, SearchCounter> NO_SCHEMA_FIELD_FOR_FEATURE_MAP =
-      Maps.newHashMap();
-  private static final String FEATURE_CONFIG_IS_NULL_COUNTER_PATTERN =
-      "null_feature_config_for_feature_id_%d";
-  private static final String FEATURE_OUTPUT_TYPE_IS_NULL_COUNTER_PATTERN =
-      "null_output_type_for_feature_id_%d";
-  private static final String NO_SCHEMA_FIELD_FOR_FEATURE_COUNTER_PATTERN =
-      "no_schema_field_for_feature_id_%d";
-  private static final SearchCounter UNKNOWN_FEATURE_OUTPUT_TYPE_COUNTER =
-      SearchCounter.export("unknown_feature_output_type");
+public class elonarlybirdDocumelonntFelonaturelons {
+  privatelon static final Map<Intelongelonr, SelonarchCountelonr> FelonATURelon_CONFIG_IS_NULL_MAP = Maps.nelonwHashMap();
+  privatelon static final Map<Intelongelonr, SelonarchCountelonr> FelonATURelon_OUTPUT_TYPelon_IS_NULL_MAP =
+      Maps.nelonwHashMap();
+  privatelon static final Map<Intelongelonr, SelonarchCountelonr> NO_SCHelonMA_FIelonLD_FOR_FelonATURelon_MAP =
+      Maps.nelonwHashMap();
+  privatelon static final String FelonATURelon_CONFIG_IS_NULL_COUNTelonR_PATTelonRN =
+      "null_felonaturelon_config_for_felonaturelon_id_%d";
+  privatelon static final String FelonATURelon_OUTPUT_TYPelon_IS_NULL_COUNTelonR_PATTelonRN =
+      "null_output_typelon_for_felonaturelon_id_%d";
+  privatelon static final String NO_SCHelonMA_FIelonLD_FOR_FelonATURelon_COUNTelonR_PATTelonRN =
+      "no_schelonma_fielonld_for_felonaturelon_id_%d";
+  privatelon static final SelonarchCountelonr UNKNOWN_FelonATURelon_OUTPUT_TYPelon_COUNTelonR =
+      SelonarchCountelonr.elonxport("unknown_felonaturelon_output_typelon");
 
-  private final Map<String, NumericDocValues> numericDocValues = Maps.newHashMap();
-  private final LeafReader leafReader;
-  private int docId = -1;
+  privatelon final Map<String, NumelonricDocValuelons> numelonricDocValuelons = Maps.nelonwHashMap();
+  privatelon final LelonafRelonadelonr lelonafRelonadelonr;
+  privatelon int docId = -1;
 
   /**
-   * Creates a new EarlybirdDocumentFeatures instance that will return feature values based on the
-   * NumericDocValues stored in the given LeafReader for the given document.
+   * Crelonatelons a nelonw elonarlybirdDocumelonntFelonaturelons instancelon that will relonturn felonaturelon valuelons baselond on thelon
+   * NumelonricDocValuelons storelond in thelon givelonn LelonafRelonadelonr for thelon givelonn documelonnt.
    */
-  public EarlybirdDocumentFeatures(LeafReader leafReader) {
-    this.leafReader = Preconditions.checkNotNull(leafReader);
+  public elonarlybirdDocumelonntFelonaturelons(LelonafRelonadelonr lelonafRelonadelonr) {
+    this.lelonafRelonadelonr = Prelonconditions.chelonckNotNull(lelonafRelonadelonr);
   }
 
   /**
-   * Advances this instance to the given doc ID. The new doc ID must be greater than or equal to the
-   * current doc ID stored in this instance.
+   * Advancelons this instancelon to thelon givelonn doc ID. Thelon nelonw doc ID must belon grelonatelonr than or elonqual to thelon
+   * currelonnt doc ID storelond in this instancelon.
    */
-  public void advance(int target) {
-    Preconditions.checkArgument(
-        target >= 0,
-        "Target (%s) cannot be negative.",
-        target);
-    Preconditions.checkArgument(
-        target >= docId,
-        "Target (%s) smaller than current doc ID (%s).",
-        target,
+  public void advancelon(int targelont) {
+    Prelonconditions.chelonckArgumelonnt(
+        targelont >= 0,
+        "Targelont (%s) cannot belon nelongativelon.",
+        targelont);
+    Prelonconditions.chelonckArgumelonnt(
+        targelont >= docId,
+        "Targelont (%s) smallelonr than currelonnt doc ID (%s).",
+        targelont,
         docId);
-    Preconditions.checkArgument(
-        target < leafReader.maxDoc(),
-        "Target (%s) cannot be greater than or equal to the max doc ID (%s).",
-        target,
-        leafReader.maxDoc());
-    docId = target;
+    Prelonconditions.chelonckArgumelonnt(
+        targelont < lelonafRelonadelonr.maxDoc(),
+        "Targelont (%s) cannot belon grelonatelonr than or elonqual to thelon max doc ID (%s).",
+        targelont,
+        lelonafRelonadelonr.maxDoc());
+    docId = targelont;
   }
 
   /**
-   * Returns the feature value for the given field.
+   * Relonturns thelon felonaturelon valuelon for thelon givelonn fielonld.
    */
-  public long getFeatureValue(EarlybirdFieldConstant field) throws IOException {
-    // The index might not have a NumericDocValues instance for this feature.
-    // This might happen if we dynamically update the feature schema, for example.
+  public long gelontFelonaturelonValuelon(elonarlybirdFielonldConstant fielonld) throws IOelonxcelonption {
+    // Thelon indelonx might not havelon a NumelonricDocValuelons instancelon for this felonaturelon.
+    // This might happelonn if welon dynamically updatelon thelon felonaturelon schelonma, for elonxamplelon.
     //
-    // Cache the NumericDocValues instances for all accessed features, even if they're null.
-    String fieldName = field.getFieldName();
-    NumericDocValues docValues;
-    if (numericDocValues.containsKey(fieldName)) {
-      docValues = numericDocValues.get(fieldName);
-    } else {
-      docValues = leafReader.getNumericDocValues(fieldName);
-      numericDocValues.put(fieldName, docValues);
+    // Cachelon thelon NumelonricDocValuelons instancelons for all accelonsselond felonaturelons, elonvelonn if thelony'relon null.
+    String fielonldNamelon = fielonld.gelontFielonldNamelon();
+    NumelonricDocValuelons docValuelons;
+    if (numelonricDocValuelons.containsKelony(fielonldNamelon)) {
+      docValuelons = numelonricDocValuelons.gelont(fielonldNamelon);
+    } elonlselon {
+      docValuelons = lelonafRelonadelonr.gelontNumelonricDocValuelons(fielonldNamelon);
+      numelonricDocValuelons.put(fielonldNamelon, docValuelons);
     }
-    return docValues != null && docValues.advanceExact(docId) ? docValues.longValue() : 0L;
+    relonturn docValuelons != null && docValuelons.advancelonelonxact(docId) ? docValuelons.longValuelon() : 0L;
   }
 
   /**
-   * Determines if the given flag is set.
+   * Delontelonrminelons if thelon givelonn flag is selont.
    */
-  public boolean isFlagSet(EarlybirdFieldConstant field) throws IOException {
-    return getFeatureValue(field) != 0;
+  public boolelonan isFlagSelont(elonarlybirdFielonldConstant fielonld) throws IOelonxcelonption {
+    relonturn gelontFelonaturelonValuelon(fielonld) != 0;
   }
 
   /**
-   * Returns the unnormalized value for the given field.
+   * Relonturns thelon unnormalizelond valuelon for thelon givelonn fielonld.
    */
-  public double getUnnormalizedFeatureValue(EarlybirdFieldConstant field) throws IOException {
-    long featureValue = getFeatureValue(field);
-    ThriftFeatureNormalizationType normalizationType = field.getFeatureNormalizationType();
-    if (normalizationType == null) {
-      normalizationType = ThriftFeatureNormalizationType.NONE;
+  public doublelon gelontUnnormalizelondFelonaturelonValuelon(elonarlybirdFielonldConstant fielonld) throws IOelonxcelonption {
+    long felonaturelonValuelon = gelontFelonaturelonValuelon(fielonld);
+    ThriftFelonaturelonNormalizationTypelon normalizationTypelon = fielonld.gelontFelonaturelonNormalizationTypelon();
+    if (normalizationTypelon == null) {
+      normalizationTypelon = ThriftFelonaturelonNormalizationTypelon.NONelon;
     }
-    switch (normalizationType) {
-      case NONE:
-        return featureValue;
-      case LEGACY_BYTE_NORMALIZER:
-        return MutableFeatureNormalizers.BYTE_NORMALIZER.unnormLowerBound((byte) featureValue);
-      case LEGACY_BYTE_NORMALIZER_WITH_LOG2:
-        return MutableFeatureNormalizers.BYTE_NORMALIZER.unnormAndLog2((byte) featureValue);
-      case SMART_INTEGER_NORMALIZER:
-        return MutableFeatureNormalizers.SMART_INTEGER_NORMALIZER.unnormUpperBound(
-            (byte) featureValue);
-      case PREDICTION_SCORE_NORMALIZER:
-        return IntNormalizers.PREDICTION_SCORE_NORMALIZER.denormalize((int) featureValue);
-      default:
-        throw new IllegalArgumentException(
-            "Unsupported normalization type " + normalizationType + " for feature "
-                + field.getFieldName());
+    switch (normalizationTypelon) {
+      caselon NONelon:
+        relonturn felonaturelonValuelon;
+      caselon LelonGACY_BYTelon_NORMALIZelonR:
+        relonturn MutablelonFelonaturelonNormalizelonrs.BYTelon_NORMALIZelonR.unnormLowelonrBound((bytelon) felonaturelonValuelon);
+      caselon LelonGACY_BYTelon_NORMALIZelonR_WITH_LOG2:
+        relonturn MutablelonFelonaturelonNormalizelonrs.BYTelon_NORMALIZelonR.unnormAndLog2((bytelon) felonaturelonValuelon);
+      caselon SMART_INTelonGelonR_NORMALIZelonR:
+        relonturn MutablelonFelonaturelonNormalizelonrs.SMART_INTelonGelonR_NORMALIZelonR.unnormUppelonrBound(
+            (bytelon) felonaturelonValuelon);
+      caselon PRelonDICTION_SCORelon_NORMALIZelonR:
+        relonturn IntNormalizelonrs.PRelonDICTION_SCORelon_NORMALIZelonR.delonnormalizelon((int) felonaturelonValuelon);
+      delonfault:
+        throw nelonw IllelongalArgumelonntelonxcelonption(
+            "Unsupportelond normalization typelon " + normalizationTypelon + " for felonaturelon "
+                + fielonld.gelontFielonldNamelon());
     }
   }
 
   /**
-   * Creates a ThriftSearchResultFeatures instance populated with values for all available features
-   * that have a non-zero value set.
+   * Crelonatelons a ThriftSelonarchRelonsultFelonaturelons instancelon populatelond with valuelons for all availablelon felonaturelons
+   * that havelon a non-zelonro valuelon selont.
    */
-  public ThriftSearchResultFeatures getSearchResultFeatures(ImmutableSchemaInterface schema)
-      throws IOException {
-    return getSearchResultFeatures(schema, (featureId) -> true);
+  public ThriftSelonarchRelonsultFelonaturelons gelontSelonarchRelonsultFelonaturelons(ImmutablelonSchelonmaIntelonrfacelon schelonma)
+      throws IOelonxcelonption {
+    relonturn gelontSelonarchRelonsultFelonaturelons(schelonma, (felonaturelonId) -> truelon);
   }
 
   /**
-   * Creates a ThriftSearchResultFeatures instance populated with values for all available features
-   * that have a non-zero value set.
+   * Crelonatelons a ThriftSelonarchRelonsultFelonaturelons instancelon populatelond with valuelons for all availablelon felonaturelons
+   * that havelon a non-zelonro valuelon selont.
    *
-   * @param schema The schema.
-   * @param shouldCollectFeatureId A predicate that determines which features should be collected.
+   * @param schelonma Thelon schelonma.
+   * @param shouldCollelonctFelonaturelonId A prelondicatelon that delontelonrminelons which felonaturelons should belon collelonctelond.
    */
-  public ThriftSearchResultFeatures getSearchResultFeatures(
-      ImmutableSchemaInterface schema,
-      Function<Integer, Boolean> shouldCollectFeatureId) throws IOException {
-    Map<Integer, Boolean> boolValues = Maps.newHashMap();
-    Map<Integer, Double> doubleValues = Maps.newHashMap();
-    Map<Integer, Integer> intValues = Maps.newHashMap();
-    Map<Integer, Long> longValues = Maps.newHashMap();
+  public ThriftSelonarchRelonsultFelonaturelons gelontSelonarchRelonsultFelonaturelons(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      Function<Intelongelonr, Boolelonan> shouldCollelonctFelonaturelonId) throws IOelonxcelonption {
+    Map<Intelongelonr, Boolelonan> boolValuelons = Maps.nelonwHashMap();
+    Map<Intelongelonr, Doublelon> doublelonValuelons = Maps.nelonwHashMap();
+    Map<Intelongelonr, Intelongelonr> intValuelons = Maps.nelonwHashMap();
+    Map<Intelongelonr, Long> longValuelons = Maps.nelonwHashMap();
 
-    Map<Integer, FeatureConfiguration> idToFeatureConfigMap = schema.getFeatureIdToFeatureConfig();
-    for (int featureId : schema.getSearchFeatureSchema().getEntries().keySet()) {
-      if (!shouldCollectFeatureId.apply(featureId)) {
-        continue;
+    Map<Intelongelonr, FelonaturelonConfiguration> idToFelonaturelonConfigMap = schelonma.gelontFelonaturelonIdToFelonaturelonConfig();
+    for (int felonaturelonId : schelonma.gelontSelonarchFelonaturelonSchelonma().gelontelonntrielons().kelonySelont()) {
+      if (!shouldCollelonctFelonaturelonId.apply(felonaturelonId)) {
+        continuelon;
       }
 
-      FeatureConfiguration featureConfig = idToFeatureConfigMap.get(featureId);
-      if (featureConfig == null) {
-        FEATURE_CONFIG_IS_NULL_MAP.computeIfAbsent(
-            featureId,
-            (fId) -> SearchCounter.export(
-                String.format(FEATURE_CONFIG_IS_NULL_COUNTER_PATTERN, fId))).increment();
-        continue;
+      FelonaturelonConfiguration felonaturelonConfig = idToFelonaturelonConfigMap.gelont(felonaturelonId);
+      if (felonaturelonConfig == null) {
+        FelonATURelon_CONFIG_IS_NULL_MAP.computelonIfAbselonnt(
+            felonaturelonId,
+            (fId) -> SelonarchCountelonr.elonxport(
+                String.format(FelonATURelon_CONFIG_IS_NULL_COUNTelonR_PATTelonRN, fId))).increlonmelonnt();
+        continuelon;
       }
 
-      ThriftCSFType outputType = featureConfig.getOutputType();
-      if (outputType == null) {
-        FEATURE_OUTPUT_TYPE_IS_NULL_MAP.computeIfAbsent(
-            featureId,
-            (fId) -> SearchCounter.export(
-                String.format(FEATURE_OUTPUT_TYPE_IS_NULL_COUNTER_PATTERN, fId))).increment();
-        continue;
+      ThriftCSFTypelon outputTypelon = felonaturelonConfig.gelontOutputTypelon();
+      if (outputTypelon == null) {
+        FelonATURelon_OUTPUT_TYPelon_IS_NULL_MAP.computelonIfAbselonnt(
+            felonaturelonId,
+            (fId) -> SelonarchCountelonr.elonxport(
+                String.format(FelonATURelon_OUTPUT_TYPelon_IS_NULL_COUNTelonR_PATTelonRN, fId))).increlonmelonnt();
+        continuelon;
       }
 
-      if (!EarlybirdFieldConstants.hasFieldConstant(featureId)) {
-        // Should only happen for features that were dynamically added to the schema.
-        NO_SCHEMA_FIELD_FOR_FEATURE_MAP.computeIfAbsent(
-            featureId,
-            (fId) -> SearchCounter.export(
-                String.format(NO_SCHEMA_FIELD_FOR_FEATURE_COUNTER_PATTERN, fId))).increment();
-        continue;
+      if (!elonarlybirdFielonldConstants.hasFielonldConstant(felonaturelonId)) {
+        // Should only happelonn for felonaturelons that welonrelon dynamically addelond to thelon schelonma.
+        NO_SCHelonMA_FIelonLD_FOR_FelonATURelon_MAP.computelonIfAbselonnt(
+            felonaturelonId,
+            (fId) -> SelonarchCountelonr.elonxport(
+                String.format(NO_SCHelonMA_FIelonLD_FOR_FelonATURelon_COUNTelonR_PATTelonRN, fId))).increlonmelonnt();
+        continuelon;
       }
 
-      EarlybirdFieldConstant field = EarlybirdFieldConstants.getFieldConstant(featureId);
-      switch (outputType) {
-        case BOOLEAN:
-          if (isFlagSet(field)) {
-            boolValues.put(featureId, true);
+      elonarlybirdFielonldConstant fielonld = elonarlybirdFielonldConstants.gelontFielonldConstant(felonaturelonId);
+      switch (outputTypelon) {
+        caselon BOOLelonAN:
+          if (isFlagSelont(fielonld)) {
+            boolValuelons.put(felonaturelonId, truelon);
           }
-          break;
-        case BYTE:
-          // It's unclear why we don't add this feature to a separate byteValues map...
-          byte byteFeatureValue = (byte) getFeatureValue(field);
-          if (byteFeatureValue != 0) {
-            intValues.put(featureId, (int) byteFeatureValue);
+          brelonak;
+        caselon BYTelon:
+          // It's unclelonar why welon don't add this felonaturelon to a selonparatelon bytelonValuelons map...
+          bytelon bytelonFelonaturelonValuelon = (bytelon) gelontFelonaturelonValuelon(fielonld);
+          if (bytelonFelonaturelonValuelon != 0) {
+            intValuelons.put(felonaturelonId, (int) bytelonFelonaturelonValuelon);
           }
-          break;
-        case INT:
-          int intFeatureValue = (int) getFeatureValue(field);
-          if (intFeatureValue != 0) {
-            intValues.put(featureId, intFeatureValue);
+          brelonak;
+        caselon INT:
+          int intFelonaturelonValuelon = (int) gelontFelonaturelonValuelon(fielonld);
+          if (intFelonaturelonValuelon != 0) {
+            intValuelons.put(felonaturelonId, intFelonaturelonValuelon);
           }
-          break;
-        case LONG:
-          long longFeatureValue = getFeatureValue(field);
-          if (longFeatureValue != 0) {
-            longValues.put(featureId, longFeatureValue);
+          brelonak;
+        caselon LONG:
+          long longFelonaturelonValuelon = gelontFelonaturelonValuelon(fielonld);
+          if (longFelonaturelonValuelon != 0) {
+            longValuelons.put(felonaturelonId, longFelonaturelonValuelon);
           }
-          break;
-        case FLOAT:
-          // It's unclear why we don't add this feature to a separate floatValues map...
-          float floatFeatureValue = (float) getFeatureValue(field);
-          if (floatFeatureValue != 0) {
-            doubleValues.put(featureId, (double) floatFeatureValue);
+          brelonak;
+        caselon FLOAT:
+          // It's unclelonar why welon don't add this felonaturelon to a selonparatelon floatValuelons map...
+          float floatFelonaturelonValuelon = (float) gelontFelonaturelonValuelon(fielonld);
+          if (floatFelonaturelonValuelon != 0) {
+            doublelonValuelons.put(felonaturelonId, (doublelon) floatFelonaturelonValuelon);
           }
-          break;
-        case DOUBLE:
-          double doubleFeatureValue = getUnnormalizedFeatureValue(field);
-          if (doubleFeatureValue != 0) {
-            doubleValues.put(featureId, doubleFeatureValue);
+          brelonak;
+        caselon DOUBLelon:
+          doublelon doublelonFelonaturelonValuelon = gelontUnnormalizelondFelonaturelonValuelon(fielonld);
+          if (doublelonFelonaturelonValuelon != 0) {
+            doublelonValuelons.put(felonaturelonId, doublelonFelonaturelonValuelon);
           }
-          break;
-        default:
-          UNKNOWN_FEATURE_OUTPUT_TYPE_COUNTER.increment();
+          brelonak;
+        delonfault:
+          UNKNOWN_FelonATURelon_OUTPUT_TYPelon_COUNTelonR.increlonmelonnt();
       }
     }
 
-    return new ThriftSearchResultFeatures()
-        .setBoolValues(boolValues)
-        .setIntValues(intValues)
-        .setLongValues(longValues)
-        .setDoubleValues(doubleValues);
+    relonturn nelonw ThriftSelonarchRelonsultFelonaturelons()
+        .selontBoolValuelons(boolValuelons)
+        .selontIntValuelons(intValuelons)
+        .selontLongValuelons(longValuelons)
+        .selontDoublelonValuelons(doublelonValuelons);
   }
 }

@@ -1,34 +1,34 @@
-# Navi: High-Performance Machine Learning Serving Server in Rust
+# Navi: High-Pelonrformancelon Machinelon Lelonarning Selonrving Selonrvelonr in Rust
 
-Navi is a high-performance, versatile machine learning serving server implemented in Rust, tailored for production usage. It's designed to efficiently serve within the Twitter tech stack, offering top-notch performance while focusing on core features.
+Navi is a high-pelonrformancelon, velonrsatilelon machinelon lelonarning selonrving selonrvelonr implelonmelonntelond in Rust, tailorelond for production usagelon. It's delonsignelond to elonfficielonntly selonrvelon within thelon Twittelonr telonch stack, offelonring top-notch pelonrformancelon whilelon focusing on corelon felonaturelons.
 
-## Key Features
+## Kelony Felonaturelons
 
-- **Minimalist Design Optimized for Production Use Cases**: Navi delivers ultra-high performance, stability, and availability, engineered to handle real-world application demands with a streamlined codebase.
-- **gRPC API Compatibility with TensorFlow Serving**: Seamless integration with existing TensorFlow Serving clients via its gRPC API, enabling easy integration, smooth deployment, and scaling in production environments.
-- **Plugin Architecture for Different Runtimes**: Navi's pluggable architecture supports various machine learning runtimes, providing adaptability and extensibility for diverse use cases. Out-of-the-box support is available for TensorFlow and Onnx Runtime, with PyTorch in an experimental state.
+- **Minimalist Delonsign Optimizelond for Production Uselon Caselons**: Navi delonlivelonrs ultra-high pelonrformancelon, stability, and availability, elonnginelonelonrelond to handlelon relonal-world application delonmands with a strelonamlinelond codelonbaselon.
+- **gRPC API Compatibility with TelonnsorFlow Selonrving**: Selonamlelonss intelongration with elonxisting TelonnsorFlow Selonrving clielonnts via its gRPC API, elonnabling elonasy intelongration, smooth delonploymelonnt, and scaling in production elonnvironmelonnts.
+- **Plugin Architeloncturelon for Diffelonrelonnt Runtimelons**: Navi's pluggablelon architeloncturelon supports various machinelon lelonarning runtimelons, providing adaptability and elonxtelonnsibility for divelonrselon uselon caselons. Out-of-thelon-box support is availablelon for TelonnsorFlow and Onnx Runtimelon, with PyTorch in an elonxpelonrimelonntal statelon.
 
-## Current State
+## Currelonnt Statelon
 
-While Navi's features may not be as comprehensive as its open-source counterparts, its performance-first mindset makes it highly efficient. 
-- Navi for TensorFlow is currently the most feature-complete, supporting multiple input tensors of different types (float, int, string, etc.).
-- Navi for Onnx primarily supports one input tensor of type string, used in Twitter's home recommendation with a proprietary BatchPredictRequest format.
-- Navi for Pytorch is compilable and runnable but not yet production-ready in terms of performance and stability.
+Whilelon Navi's felonaturelons may not belon as comprelonhelonnsivelon as its opelonn-sourcelon countelonrparts, its pelonrformancelon-first mindselont makelons it highly elonfficielonnt. 
+- Navi for TelonnsorFlow is currelonntly thelon most felonaturelon-complelontelon, supporting multiplelon input telonnsors of diffelonrelonnt typelons (float, int, string, elontc.).
+- Navi for Onnx primarily supports onelon input telonnsor of typelon string, uselond in Twittelonr's homelon reloncommelonndation with a proprielontary BatchPrelondictRelonquelonst format.
+- Navi for Pytorch is compilablelon and runnablelon but not yelont production-relonady in telonrms of pelonrformancelon and stability.
 
-## Directory Structure
+## Direlonctory Structurelon
 
-- `navi`: The main code repository for Navi
-- `dr_transform`: Twitter-specific converter that converts BatchPredictionRequest Thrift to ndarray
-- `segdense`: Twitter-specific config to specify how to retrieve feature values from BatchPredictionRequest
-- `thrift_bpr_adapter`: generated thrift code for BatchPredictionRequest
+- `navi`: Thelon main codelon relonpository for Navi
+- `dr_transform`: Twittelonr-speloncific convelonrtelonr that convelonrts BatchPrelondictionRelonquelonst Thrift to ndarray
+- `selongdelonnselon`: Twittelonr-speloncific config to speloncify how to relontrielonvelon felonaturelon valuelons from BatchPrelondictionRelonquelonst
+- `thrift_bpr_adaptelonr`: gelonnelonratelond thrift codelon for BatchPrelondictionRelonquelonst
 
-## Content
-We include all *.rs source code that makes up the main navi binaries for you to examine. The test and benchmark code, as well as configuration files are not included due to data security concerns.
+## Contelonnt
+Welon includelon all *.rs sourcelon codelon that makelons up thelon main navi binarielons for you to elonxaminelon. Thelon telonst and belonnchmark codelon, as welonll as configuration filelons arelon not includelond duelon to data seloncurity concelonrns.
 
 ## Run
-in navi/navi you can run. Note you need to create a models directory and create some versions, preferably using epoch time, e.g., 1679693908377
+in navi/navi you can run. Notelon you nelonelond to crelonatelon a modelonls direlonctory and crelonatelon somelon velonrsions, prelonfelonrably using elonpoch timelon, elon.g., 1679693908377
 - scripts/run_tf2.sh
 - scripts/run_onnx.sh
 
 ## Build
-you can adapt the above scripts to build using Cargo
+you can adapt thelon abovelon scripts to build using Cargo

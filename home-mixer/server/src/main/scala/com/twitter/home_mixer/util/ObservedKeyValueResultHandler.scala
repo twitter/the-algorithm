@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.util
+packagelon com.twittelonr.homelon_mixelonr.util
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.kelonyvaluelon.KelonyValuelonRelonsult
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
 
-trait ObservedKeyValueResultHandler {
-  val statsReceiver: StatsReceiver
-  val statScope: String
+trait ObselonrvelondKelonyValuelonRelonsultHandlelonr {
+  val statsReloncelonivelonr: StatsReloncelonivelonr
+  val statScopelon: String
 
-  private lazy val scopedStatsReceiver = statsReceiver.scope(statScope)
-  private lazy val keyTotalCounter = scopedStatsReceiver.counter("key/total")
-  private lazy val keyFoundCounter = scopedStatsReceiver.counter("key/found")
-  private lazy val keyLossCounter = scopedStatsReceiver.counter("key/loss")
-  private lazy val keyFailureCounter = scopedStatsReceiver.counter("key/failure")
+  privatelon lazy val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(statScopelon)
+  privatelon lazy val kelonyTotalCountelonr = scopelondStatsReloncelonivelonr.countelonr("kelony/total")
+  privatelon lazy val kelonyFoundCountelonr = scopelondStatsReloncelonivelonr.countelonr("kelony/found")
+  privatelon lazy val kelonyLossCountelonr = scopelondStatsReloncelonivelonr.countelonr("kelony/loss")
+  privatelon lazy val kelonyFailurelonCountelonr = scopelondStatsReloncelonivelonr.countelonr("kelony/failurelon")
 
-  def observedGet[K, V](
-    key: Option[K],
-    keyValueResult: KeyValueResult[K, V],
+  delonf obselonrvelondGelont[K, V](
+    kelony: Option[K],
+    kelonyValuelonRelonsult: KelonyValuelonRelonsult[K, V],
   ): Try[Option[V]] = {
-    if (key.nonEmpty) {
-      keyTotalCounter.incr()
-      keyValueResult(key.get) match {
-        case Return(Some(value)) =>
-          keyFoundCounter.incr()
-          Return(Some(value))
-        case Return(None) =>
-          keyLossCounter.incr()
-          Return(None)
-        case Throw(exception) =>
-          keyFailureCounter.incr()
-          Throw(exception)
-        case _ =>
-          // never reaches here
-          Return(None)
+    if (kelony.nonelonmpty) {
+      kelonyTotalCountelonr.incr()
+      kelonyValuelonRelonsult(kelony.gelont) match {
+        caselon Relonturn(Somelon(valuelon)) =>
+          kelonyFoundCountelonr.incr()
+          Relonturn(Somelon(valuelon))
+        caselon Relonturn(Nonelon) =>
+          kelonyLossCountelonr.incr()
+          Relonturn(Nonelon)
+        caselon Throw(elonxcelonption) =>
+          kelonyFailurelonCountelonr.incr()
+          Throw(elonxcelonption)
+        caselon _ =>
+          // nelonvelonr relonachelons helonrelon
+          Relonturn(Nonelon)
       }
-    } else {
-      Throw(MissingKeyException)
+    } elonlselon {
+      Throw(MissingKelonyelonxcelonption)
     }
   }
 }

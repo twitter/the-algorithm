@@ -1,248 +1,248 @@
-package com.twitter.simclusters_v2.common
+packagelon com.twittelonr.simclustelonrs_v2.common
 
-object CosineSimilarityUtil {
+objelonct CosinelonSimilarityUtil {
 
   /**
-   * Sum of squared elements for a given vector v
+   * Sum of squarelond elonlelonmelonnts for a givelonn velonctor v
    */
-  def sumOfSquares[T](v: Map[T, Double]): Double = {
-    v.values.foldLeft(0.0) { (sum, value) => sum + value * value }
+  delonf sumOfSquarelons[T](v: Map[T, Doublelon]): Doublelon = {
+    v.valuelons.foldLelonft(0.0) { (sum, valuelon) => sum + valuelon * valuelon }
   }
 
   /**
-   * Sum of squared elements for a given vector v
+   * Sum of squarelond elonlelonmelonnts for a givelonn velonctor v
    */
-  def sumOfSquaresArray(v: Array[Double]): Double = {
-    v.foldLeft(0.0) { (sum, value) => sum + value * value }
+  delonf sumOfSquarelonsArray(v: Array[Doublelon]): Doublelon = {
+    v.foldLelonft(0.0) { (sum, valuelon) => sum + valuelon * valuelon }
   }
 
   /**
-   * Calculate the l2Norm score
+   * Calculatelon thelon l2Norm scorelon
    */
-  def norm[T](v: Map[T, Double]): Double = {
-    math.sqrt(sumOfSquares(v))
+  delonf norm[T](v: Map[T, Doublelon]): Doublelon = {
+    math.sqrt(sumOfSquarelons(v))
   }
 
   /**
-   * Calculate the l2Norm score
+   * Calculatelon thelon l2Norm scorelon
    */
-  def normArray(v: Array[Double]): Double = {
-    math.sqrt(sumOfSquaresArray(v))
+  delonf normArray(v: Array[Doublelon]): Doublelon = {
+    math.sqrt(sumOfSquarelonsArray(v))
   }
 
   /**
-   * Calculate the logNorm score
+   * Calculatelon thelon logNorm scorelon
    */
-  def logNorm[T](v: Map[T, Double]): Double = {
-    math.log(sumOfSquares(v) + 1)
+  delonf logNorm[T](v: Map[T, Doublelon]): Doublelon = {
+    math.log(sumOfSquarelons(v) + 1)
   }
 
   /**
-   * Calculate the logNorm score
+   * Calculatelon thelon logNorm scorelon
    */
-  def logNormArray(v: Array[Double]): Double = {
-    math.log(sumOfSquaresArray(v) + 1)
+  delonf logNormArray(v: Array[Doublelon]): Doublelon = {
+    math.log(sumOfSquarelonsArray(v) + 1)
   }
 
   /**
-   * Calculate the exp scaled norm score
+   * Calculatelon thelon elonxp scalelond norm scorelon
    * */
-  def expScaledNorm[T](v: Map[T, Double], exponent: Double): Double = {
-    math.pow(sumOfSquares(v), exponent)
+  delonf elonxpScalelondNorm[T](v: Map[T, Doublelon], elonxponelonnt: Doublelon): Doublelon = {
+    math.pow(sumOfSquarelons(v), elonxponelonnt)
   }
 
   /**
-   * Calculate the exp scaled norm score
+   * Calculatelon thelon elonxp scalelond norm scorelon
    * */
-  def expScaledNormArray(v: Array[Double], exponent: Double): Double = {
-    math.pow(sumOfSquaresArray(v), exponent)
+  delonf elonxpScalelondNormArray(v: Array[Doublelon], elonxponelonnt: Doublelon): Doublelon = {
+    math.pow(sumOfSquarelonsArray(v), elonxponelonnt)
   }
 
   /**
-   * Calculate the l1Norm score
+   * Calculatelon thelon l1Norm scorelon
    */
-  def l1Norm[T](v: Map[T, Double]): Double = {
-    v.values.foldLeft(0.0) { (sum, value) => sum + Math.abs(value) }
+  delonf l1Norm[T](v: Map[T, Doublelon]): Doublelon = {
+    v.valuelons.foldLelonft(0.0) { (sum, valuelon) => sum + Math.abs(valuelon) }
   }
 
   /**
-   * Calculate the l1Norm score
+   * Calculatelon thelon l1Norm scorelon
    */
-  def l1NormArray(v: Array[Double]): Double = {
-    v.foldLeft(0.0) { (sum, value) => sum + Math.abs(value) }
+  delonf l1NormArray(v: Array[Doublelon]): Doublelon = {
+    v.foldLelonft(0.0) { (sum, valuelon) => sum + Math.abs(valuelon) }
   }
 
   /**
-   * Divide the weight vector with the applied norm
-   * Return the original object if the norm is 0
+   * Dividelon thelon welonight velonctor with thelon applielond norm
+   * Relonturn thelon original objelonct if thelon norm is 0
    *
-   * @param v    a map from cluster id to its weight
-   * @param norm a calculated norm from the given map v
+   * @param v    a map from clustelonr id to its welonight
+   * @param norm a calculatelond norm from thelon givelonn map v
    *
-   * @return a map with normalized weight
+   * @relonturn a map with normalizelond welonight
    */
-  def applyNorm[T](v: Map[T, Double], norm: Double): Map[T, Double] = {
-    if (norm == 0) v else v.mapValues(x => x / norm)
+  delonf applyNorm[T](v: Map[T, Doublelon], norm: Doublelon): Map[T, Doublelon] = {
+    if (norm == 0) v elonlselon v.mapValuelons(x => x / norm)
   }
 
   /**
-   * Divide the weight vector with the applied norm
-   * Return the original object if the norm is 0
+   * Dividelon thelon welonight velonctor with thelon applielond norm
+   * Relonturn thelon original objelonct if thelon norm is 0
    *
-   * @param v    a an array of weights
-   * @param norm a calculated norm from the given array v
+   * @param v    a an array of welonights
+   * @param norm a calculatelond norm from thelon givelonn array v
    *
-   * @return an array with normalized weight in the same order as v
+   * @relonturn an array with normalizelond welonight in thelon samelon ordelonr as v
    */
-  def applyNormArray(v: Array[Double], norm: Double): Array[Double] = {
-    if (norm == 0) v else v.map(_ / norm)
+  delonf applyNormArray(v: Array[Doublelon], norm: Doublelon): Array[Doublelon] = {
+    if (norm == 0) v elonlselon v.map(_ / norm)
   }
 
   /**
-   * Normalize the weight vector for easy cosine similarity calculation. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * Normalizelon thelon welonight velonctor for elonasy cosinelon similarity calculation. If thelon input welonight velonctor
+   * is elonmpty or its norm is 0, relonturn thelon original map.
    *
-   * @param v a map from cluster id to its weight
+   * @param v a map from clustelonr id to its welonight
    *
-   * @return a map with normalized weight (the norm of the weight vector is 1)
+   * @relonturn a map with normalizelond welonight (thelon norm of thelon welonight velonctor is 1)
    */
-  def normalize[T](v: Map[T, Double], maybeNorm: Option[Double] = None): Map[T, Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.norm(v))
+  delonf normalizelon[T](v: Map[T, Doublelon], maybelonNorm: Option[Doublelon] = Nonelon): Map[T, Doublelon] = {
+    val norm = maybelonNorm.gelontOrelonlselon(CosinelonSimilarityUtil.norm(v))
     applyNorm(v, norm)
   }
 
   /**
-   * Normalize the weight vector for easy cosine similarity calculation. If the input weight vector
-   * is empty or its norm is 0, return the original array.
+   * Normalizelon thelon welonight velonctor for elonasy cosinelon similarity calculation. If thelon input welonight velonctor
+   * is elonmpty or its norm is 0, relonturn thelon original array.
    *
-   * @param v an array of weights
+   * @param v an array of welonights
    *
-   * @return an array with normalized weight (the norm of the weight vector is 1), in the same order as v
+   * @relonturn an array with normalizelond welonight (thelon norm of thelon welonight velonctor is 1), in thelon samelon ordelonr as v
    */
-  def normalizeArray(
-    v: Array[Double],
-    maybeNorm: Option[Double] = None
-  ): Array[Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.normArray(v))
+  delonf normalizelonArray(
+    v: Array[Doublelon],
+    maybelonNorm: Option[Doublelon] = Nonelon
+  ): Array[Doublelon] = {
+    val norm = maybelonNorm.gelontOrelonlselon(CosinelonSimilarityUtil.normArray(v))
     applyNormArray(v, norm)
   }
 
   /**
-   * Normalize the weight vector with log norm. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * Normalizelon thelon welonight velonctor with log norm. If thelon input welonight velonctor
+   * is elonmpty or its norm is 0, relonturn thelon original map.
    *
-   * @param v a map from cluster id to its weight
+   * @param v a map from clustelonr id to its welonight
    *
-   * @return a map with log normalized weight
+   * @relonturn a map with log normalizelond welonight
    * */
-  def logNormalize[T](v: Map[T, Double], maybeNorm: Option[Double] = None): Map[T, Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.logNorm(v))
+  delonf logNormalizelon[T](v: Map[T, Doublelon], maybelonNorm: Option[Doublelon] = Nonelon): Map[T, Doublelon] = {
+    val norm = maybelonNorm.gelontOrelonlselon(CosinelonSimilarityUtil.logNorm(v))
     applyNorm(v, norm)
   }
 
   /**
-   * Normalize the weight vector with log norm. If the input weight vector
-   * is empty or its norm is 0, return the original array.
+   * Normalizelon thelon welonight velonctor with log norm. If thelon input welonight velonctor
+   * is elonmpty or its norm is 0, relonturn thelon original array.
    *
-   * @param v an array of weights
+   * @param v an array of welonights
    *
-   * @return an array with log normalized weight, in the same order as v
+   * @relonturn an array with log normalizelond welonight, in thelon samelon ordelonr as v
    * */
-  def logNormalizeArray(
-    v: Array[Double],
-    maybeNorm: Option[Double] = None
-  ): Array[Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.logNormArray(v))
+  delonf logNormalizelonArray(
+    v: Array[Doublelon],
+    maybelonNorm: Option[Doublelon] = Nonelon
+  ): Array[Doublelon] = {
+    val norm = maybelonNorm.gelontOrelonlselon(CosinelonSimilarityUtil.logNormArray(v))
     applyNormArray(v, norm)
   }
 
   /**
-   * Normalize the weight vector with exponentially scaled norm. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * Normalizelon thelon welonight velonctor with elonxponelonntially scalelond norm. If thelon input welonight velonctor
+   * is elonmpty or its norm is 0, relonturn thelon original map.
    *
-   * @param v        a map from cluster id to its weight
-   * @param exponent the exponent we apply to the weight vector's norm
+   * @param v        a map from clustelonr id to its welonight
+   * @param elonxponelonnt thelon elonxponelonnt welon apply to thelon welonight velonctor's norm
    *
-   * @return a map with exp scaled normalized weight
+   * @relonturn a map with elonxp scalelond normalizelond welonight
    * */
-  def expScaledNormalize[T](
-    v: Map[T, Double],
-    exponent: Option[Double] = None,
-    maybeNorm: Option[Double] = None
-  ): Map[T, Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.expScaledNorm(v, exponent.getOrElse(0.3)))
+  delonf elonxpScalelondNormalizelon[T](
+    v: Map[T, Doublelon],
+    elonxponelonnt: Option[Doublelon] = Nonelon,
+    maybelonNorm: Option[Doublelon] = Nonelon
+  ): Map[T, Doublelon] = {
+    val norm = maybelonNorm.gelontOrelonlselon(CosinelonSimilarityUtil.elonxpScalelondNorm(v, elonxponelonnt.gelontOrelonlselon(0.3)))
     applyNorm(v, norm)
   }
 
   /**
-   * Normalize the weight vector with exponentially scaled norm. If the input weight vector
-   * is empty or its norm is 0, return the original map.
+   * Normalizelon thelon welonight velonctor with elonxponelonntially scalelond norm. If thelon input welonight velonctor
+   * is elonmpty or its norm is 0, relonturn thelon original map.
    *
-   * @param v        an array of weights
-   * @param exponent the exponent we apply to the weight vector's norm
+   * @param v        an array of welonights
+   * @param elonxponelonnt thelon elonxponelonnt welon apply to thelon welonight velonctor's norm
    *
-   * @return an array with exp scaled normalized weight, in the same order as v
+   * @relonturn an array with elonxp scalelond normalizelond welonight, in thelon samelon ordelonr as v
    * */
-  def expScaledNormalizeArray(
-    v: Array[Double],
-    exponent: Double,
-    maybeNorm: Option[Double] = None
-  ): Array[Double] = {
-    val norm = maybeNorm.getOrElse(CosineSimilarityUtil.expScaledNormArray(v, exponent))
+  delonf elonxpScalelondNormalizelonArray(
+    v: Array[Doublelon],
+    elonxponelonnt: Doublelon,
+    maybelonNorm: Option[Doublelon] = Nonelon
+  ): Array[Doublelon] = {
+    val norm = maybelonNorm.gelontOrelonlselon(CosinelonSimilarityUtil.elonxpScalelondNormArray(v, elonxponelonnt))
     applyNormArray(v, norm)
   }
 
   /**
-   * Given two sparse vectors, calculate its dot product.
+   * Givelonn two sparselon velonctors, calculatelon its dot product.
    *
-   * @param v1 the first map from cluster id to its weight
-   * @param v2 the second map from cluster id to its weight
+   * @param v1 thelon first map from clustelonr id to its welonight
+   * @param v2 thelon seloncond map from clustelonr id to its welonight
    *
-   * @return the dot product of above two sparse vector
+   * @relonturn thelon dot product of abovelon two sparselon velonctor
    */
-  def dotProduct[T](v1: Map[T, Double], v2: Map[T, Double]): Double = {
-    val comparer = v1.size - v2.size
-    val smaller = if (comparer > 0) v2 else v1
-    val bigger = if (comparer > 0) v1 else v2
+  delonf dotProduct[T](v1: Map[T, Doublelon], v2: Map[T, Doublelon]): Doublelon = {
+    val comparelonr = v1.sizelon - v2.sizelon
+    val smallelonr = if (comparelonr > 0) v2 elonlselon v1
+    val biggelonr = if (comparelonr > 0) v1 elonlselon v2
 
-    smaller.foldLeft(0.0) {
-      case (sum, (id, value)) =>
-        sum + bigger.getOrElse(id, 0.0) * value
+    smallelonr.foldLelonft(0.0) {
+      caselon (sum, (id, valuelon)) =>
+        sum + biggelonr.gelontOrelonlselon(id, 0.0) * valuelon
     }
   }
 
   /**
-   * Given two sparse vectors, calculate its dot product.
+   * Givelonn two sparselon velonctors, calculatelon its dot product.
    *
-   * @param v1C an array of cluster ids. Must be sorted in ascending order
-   * @param v1S an array of corresponding cluster scores, of the same length and order as v1c
-   * @param v2C an array of cluster ids. Must be sorted in ascending order
-   * @param v2S an array of corresponding cluster scores, of the same length and order as v2c
+   * @param v1C an array of clustelonr ids. Must belon sortelond in ascelonnding ordelonr
+   * @param v1S an array of correlonsponding clustelonr scorelons, of thelon samelon lelonngth and ordelonr as v1c
+   * @param v2C an array of clustelonr ids. Must belon sortelond in ascelonnding ordelonr
+   * @param v2S an array of correlonsponding clustelonr scorelons, of thelon samelon lelonngth and ordelonr as v2c
    *
-   * @return the dot product of above two sparse vector
+   * @relonturn thelon dot product of abovelon two sparselon velonctor
    */
-  def dotProductForSortedClusterAndScores(
+  delonf dotProductForSortelondClustelonrAndScorelons(
     v1C: Array[Int],
-    v1S: Array[Double],
+    v1S: Array[Doublelon],
     v2C: Array[Int],
-    v2S: Array[Double]
-  ): Double = {
-    require(v1C.size == v1S.size)
-    require(v2C.size == v2S.size)
+    v2S: Array[Doublelon]
+  ): Doublelon = {
+    relonquirelon(v1C.sizelon == v1S.sizelon)
+    relonquirelon(v2C.sizelon == v2S.sizelon)
     var i1 = 0
     var i2 = 0
-    var product: Double = 0.0
+    var product: Doublelon = 0.0
 
-    while (i1 < v1C.size && i2 < v2C.size) {
+    whilelon (i1 < v1C.sizelon && i2 < v2C.sizelon) {
       if (v1C(i1) == v2C(i2)) {
         product += v1S(i1) * v2S(i2)
         i1 += 1
         i2 += 1
-      } else if (v1C(i1) > v2C(i2)) {
-        // v2 cluster is lower. Increment it to see if the next one matches v1's
+      } elonlselon if (v1C(i1) > v2C(i2)) {
+        // v2 clustelonr is lowelonr. Increlonmelonnt it to selonelon if thelon nelonxt onelon matchelons v1's
         i2 += 1
-      } else {
-        // v1 cluster is lower. Increment it to see if the next one matches v2's
+      } elonlselon {
+        // v1 clustelonr is lowelonr. Increlonmelonnt it to selonelon if thelon nelonxt onelon matchelons v2's
         i1 += 1
       }
     }

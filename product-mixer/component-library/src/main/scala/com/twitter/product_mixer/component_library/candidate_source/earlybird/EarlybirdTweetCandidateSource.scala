@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.component_library.candidate_source.earlybird
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.elonarlybird
 
-import com.twitter.search.earlybird.{thriftscala => t}
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.selonarch.elonarlybird.{thriftscala => t}
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class EarlybirdTweetCandidateSource @Inject() (
-  earlybirdService: t.EarlybirdService.MethodPerEndpoint)
-    extends CandidateSource[t.EarlybirdRequest, t.ThriftSearchResult]
+@Singlelonton
+class elonarlybirdTwelonelontCandidatelonSourcelon @Injelonct() (
+  elonarlybirdSelonrvicelon: t.elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelon[t.elonarlybirdRelonquelonst, t.ThriftSelonarchRelonsult]
     with Logging {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier("EarlybirdTweets")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr("elonarlybirdTwelonelonts")
 
-  override def apply(request: t.EarlybirdRequest): Stitch[Seq[t.ThriftSearchResult]] = {
+  ovelonrridelon delonf apply(relonquelonst: t.elonarlybirdRelonquelonst): Stitch[Selonq[t.ThriftSelonarchRelonsult]] = {
     Stitch
-      .callFuture(earlybirdService.search(request))
-      .map { response: t.EarlybirdResponse =>
-        response.searchResults.map(_.results).getOrElse(Seq.empty)
+      .callFuturelon(elonarlybirdSelonrvicelon.selonarch(relonquelonst))
+      .map { relonsponselon: t.elonarlybirdRelonsponselon =>
+        relonsponselon.selonarchRelonsults.map(_.relonsults).gelontOrelonlselon(Selonq.elonmpty)
       }
   }
 }

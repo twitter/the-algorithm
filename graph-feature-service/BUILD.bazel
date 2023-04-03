@@ -1,67 +1,67 @@
 alias(
-    name = "graph_feature_service-server",
-    target = ":graph_feature_service-server_lib",
+    namelon = "graph_felonaturelon_selonrvicelon-selonrvelonr",
+    targelont = ":graph_felonaturelon_selonrvicelon-selonrvelonr_lib",
 )
 
-target(
-    name = "graph_feature_service-server_lib",
-    dependencies = [
-        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/server",
+targelont(
+    namelon = "graph_felonaturelon_selonrvicelon-selonrvelonr_lib",
+    delonpelonndelonncielons = [
+        "graph-felonaturelon-selonrvicelon/src/main/scala/com/twittelonr/graph_felonaturelon_selonrvicelon/selonrvelonr",
     ],
 )
 
 alias(
-    name = "graph_feature_service-worker",
-    target = ":graph_feature_service-worker_lib",
+    namelon = "graph_felonaturelon_selonrvicelon-workelonr",
+    targelont = ":graph_felonaturelon_selonrvicelon-workelonr_lib",
 )
 
-target(
-    name = "graph_feature_service-worker_lib",
-    dependencies = [
-        "graph-feature-service/src/main/scala/com/twitter/graph_feature_service/worker",
+targelont(
+    namelon = "graph_felonaturelon_selonrvicelon-workelonr_lib",
+    delonpelonndelonncielons = [
+        "graph-felonaturelon-selonrvicelon/src/main/scala/com/twittelonr/graph_felonaturelon_selonrvicelon/workelonr",
     ],
 )
 
 jvm_binary(
-    name = "server-bin",
-    basename = "graph_feature_service-server",
-    main = "com.twitter.graph_feature_service.server.Main",
+    namelon = "selonrvelonr-bin",
+    baselonnamelon = "graph_felonaturelon_selonrvicelon-selonrvelonr",
+    main = "com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.Main",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":graph_feature_service-server",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":graph_felonaturelon_selonrvicelon-selonrvelonr",
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "finagle/finagle-zipkin-scribe/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server/logback-classic/src/main/scala",
+        "finaglelon/finaglelon-zipkin-scribelon/src/main/scala",
+        "loglelonns/loglelonns-logback/src/main/scala/com/twittelonr/loglelonns/logback",
+        "twittelonr-selonrvelonr/logback-classic/src/main/scala",
     ],
 )
 
 jvm_binary(
-    name = "worker-bin",
-    basename = "graph_feature_service-worker",
-    main = "com.twitter.graph_feature_service.worker.Main",
+    namelon = "workelonr-bin",
+    baselonnamelon = "graph_felonaturelon_selonrvicelon-workelonr",
+    main = "com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.Main",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":graph_feature_service-worker",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":graph_felonaturelon_selonrvicelon-workelonr",
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "finagle/finagle-zipkin-scribe/src/main/scala",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server/logback-classic/src/main/scala",
+        "finaglelon/finaglelon-zipkin-scribelon/src/main/scala",
+        "loglelonns/loglelonns-logback/src/main/scala/com/twittelonr/loglelonns/logback",
+        "twittelonr-selonrvelonr/logback-classic/src/main/scala",
     ],
 )
 
 jvm_app(
-    name = "server-bundle",
-    basename = "graph_feature_service-server-dist",
-    binary = ":server-bin",
-    tags = ["bazel-compatible"],
+    namelon = "selonrvelonr-bundlelon",
+    baselonnamelon = "graph_felonaturelon_selonrvicelon-selonrvelonr-dist",
+    binary = ":selonrvelonr-bin",
+    tags = ["bazelonl-compatiblelon"],
 )
 
 jvm_app(
-    name = "worker-bundle",
-    basename = "graph_feature_service-worker-dist",
-    binary = ":worker-bin",
-    tags = ["bazel-compatible"],
+    namelon = "workelonr-bundlelon",
+    baselonnamelon = "graph_felonaturelon_selonrvicelon-workelonr-dist",
+    binary = ":workelonr-bin",
+    tags = ["bazelonl-compatiblelon"],
 )

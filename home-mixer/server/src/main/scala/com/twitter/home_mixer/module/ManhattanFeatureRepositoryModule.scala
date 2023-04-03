@@ -1,450 +1,450 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.bijection.thrift.ThriftCodec
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.home_mixer.param.HomeMixerInjectionNames._
-import com.twitter.home_mixer.util.InjectionTransformerImplicits._
-import com.twitter.home_mixer.util.TensorFlowUtil
-import com.twitter.inject.TwitterModule
-import com.twitter.manhattan.v1.thriftscala.ManhattanCoordinator
-import com.twitter.manhattan.v1.{thriftscala => mh}
-import com.twitter.ml.api.thriftscala.FloatTensor
-import com.twitter.ml.api.{thriftscala => ml}
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.thriftscala.EntityId
-import com.twitter.onboarding.relevance.features.{thriftjava => rf}
-import com.twitter.product_mixer.shared_library.manhattan_client.ManhattanClientBuilder
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaBinaryThrift
-import com.twitter.servo.cache._
-import com.twitter.servo.manhattan.ManhattanKeyValueRepository
-import com.twitter.servo.repository.CachingKeyValueRepository
-import com.twitter.servo.repository.ChunkingStrategy
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.repository.Repository
-import com.twitter.servo.repository.keysAsQuery
-import com.twitter.servo.util.Transformer
-import com.twitter.storehaus_internal.manhattan.ManhattanClusters
-import com.twitter.timelines.author_features.v1.{thriftjava => af}
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.user_session_store.{thriftjava => uss}
-import com.twitter.util.Duration
-import com.twitter.util.Try
-import java.nio.ByteBuffer
-import javax.inject.Named
-import javax.inject.Singleton
-import org.apache.thrift.protocol.TCompactProtocol
-import org.apache.thrift.transport.TMemoryInputTransport
-import org.apache.thrift.transport.TTransport
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.bijelonction.thrift.ThriftCodelonc
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons._
+import com.twittelonr.homelon_mixelonr.util.InjelonctionTransformelonrImplicits._
+import com.twittelonr.homelon_mixelonr.util.TelonnsorFlowUtil
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.manhattan.v1.thriftscala.ManhattanCoordinator
+import com.twittelonr.manhattan.v1.{thriftscala => mh}
+import com.twittelonr.ml.api.thriftscala.FloatTelonnsor
+import com.twittelonr.ml.api.{thriftscala => ml}
+import com.twittelonr.ml.felonaturelonstorelon.lib.UselonrId
+import com.twittelonr.ml.felonaturelonstorelon.thriftscala.elonntityId
+import com.twittelonr.onboarding.relonlelonvancelon.felonaturelons.{thriftjava => rf}
+import com.twittelonr.product_mixelonr.sharelond_library.manhattan_clielonnt.ManhattanClielonntBuildelonr
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.ScalaBinaryThrift
+import com.twittelonr.selonrvo.cachelon._
+import com.twittelonr.selonrvo.manhattan.ManhattanKelonyValuelonRelonpository
+import com.twittelonr.selonrvo.relonpository.CachingKelonyValuelonRelonpository
+import com.twittelonr.selonrvo.relonpository.ChunkingStratelongy
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonpository
+import com.twittelonr.selonrvo.relonpository.Relonpository
+import com.twittelonr.selonrvo.relonpository.kelonysAsQuelonry
+import com.twittelonr.selonrvo.util.Transformelonr
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanClustelonrs
+import com.twittelonr.timelonlinelons.author_felonaturelons.v1.{thriftjava => af}
+import com.twittelonr.timelonlinelons.suggelonsts.common.delonnselon_data_reloncord.thriftscala.DelonnselonFelonaturelonMelontadata
+import com.twittelonr.uselonr_selonssion_storelon.thriftscala.UselonrSelonssion
+import com.twittelonr.uselonr_selonssion_storelon.{thriftjava => uss}
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Try
+import java.nio.BytelonBuffelonr
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
+import org.apachelon.thrift.protocol.TCompactProtocol
+import org.apachelon.thrift.transport.TMelonmoryInputTransport
+import org.apachelon.thrift.transport.TTransport
 
-object ManhattanFeatureRepositoryModule extends TwitterModule {
+objelonct ManhattanFelonaturelonRelonpositoryModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val DEFAULT_RPC_CHUNK_SIZE = 50
+  privatelon val DelonFAULT_RPC_CHUNK_SIZelon = 50
 
-  private val ThriftEntityIdInjection = ScalaBinaryThrift(EntityId)
+  privatelon val ThriftelonntityIdInjelonction = ScalaBinaryThrift(elonntityId)
 
-  val UserIdKeyTransformer = new Transformer[Long, ByteBuffer] {
-    override def to(userId: Long): Try[ByteBuffer] = {
-      Try(ByteBuffer.wrap(ThriftEntityIdInjection.apply(UserId(userId).toThrift)))
+  val UselonrIdKelonyTransformelonr = nelonw Transformelonr[Long, BytelonBuffelonr] {
+    ovelonrridelon delonf to(uselonrId: Long): Try[BytelonBuffelonr] = {
+      Try(BytelonBuffelonr.wrap(ThriftelonntityIdInjelonction.apply(UselonrId(uselonrId).toThrift)))
     }
-    override def from(b: ByteBuffer): Try[Long] = ???
+    ovelonrridelon delonf from(b: BytelonBuffelonr): Try[Long] = ???
   }
 
-  val FloatTensorTransformer = new Transformer[ByteBuffer, FloatTensor] {
-    override def to(input: ByteBuffer): Try[FloatTensor] = {
-      val floatTensor = TensorFlowUtil.embeddingByteBufferToFloatTensor(input)
-      Try(floatTensor)
+  val FloatTelonnsorTransformelonr = nelonw Transformelonr[BytelonBuffelonr, FloatTelonnsor] {
+    ovelonrridelon delonf to(input: BytelonBuffelonr): Try[FloatTelonnsor] = {
+      val floatTelonnsor = TelonnsorFlowUtil.elonmbelonddingBytelonBuffelonrToFloatTelonnsor(input)
+      Try(floatTelonnsor)
     }
 
-    override def from(b: FloatTensor): Try[ByteBuffer] = ???
+    ovelonrridelon delonf from(b: FloatTelonnsor): Try[BytelonBuffelonr] = ???
   }
 
-  // manhattan clients
+  // manhattan clielonnts
 
-  @Provides
-  @Singleton
-  @Named(ManhattanApolloClient)
-  def providesManhattanApolloClient(
-    serviceIdentifier: ServiceIdentifier
-  ): mh.ManhattanCoordinator.MethodPerEndpoint = {
-    ManhattanClientBuilder
-      .buildManhattanV1FinagleClient(
-        ManhattanClusters.apollo,
-        serviceIdentifier
+  @Providelons
+  @Singlelonton
+  @Namelond(ManhattanApolloClielonnt)
+  delonf providelonsManhattanApolloClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): mh.ManhattanCoordinator.MelonthodPelonrelonndpoint = {
+    ManhattanClielonntBuildelonr
+      .buildManhattanV1FinaglelonClielonnt(
+        ManhattanClustelonrs.apollo,
+        selonrvicelonIdelonntifielonr
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(ManhattanAthenaClient)
-  def providesManhattanAthenaClient(
-    serviceIdentifier: ServiceIdentifier
-  ): mh.ManhattanCoordinator.MethodPerEndpoint = {
-    ManhattanClientBuilder
-      .buildManhattanV1FinagleClient(
-        ManhattanClusters.athena,
-        serviceIdentifier
+  @Providelons
+  @Singlelonton
+  @Namelond(ManhattanAthelonnaClielonnt)
+  delonf providelonsManhattanAthelonnaClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): mh.ManhattanCoordinator.MelonthodPelonrelonndpoint = {
+    ManhattanClielonntBuildelonr
+      .buildManhattanV1FinaglelonClielonnt(
+        ManhattanClustelonrs.athelonna,
+        selonrvicelonIdelonntifielonr
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(ManhattanOmegaClient)
-  def providesManhattanOmegaClient(
-    serviceIdentifier: ServiceIdentifier
-  ): mh.ManhattanCoordinator.MethodPerEndpoint = {
-    ManhattanClientBuilder
-      .buildManhattanV1FinagleClient(
-        ManhattanClusters.omega,
-        serviceIdentifier
+  @Providelons
+  @Singlelonton
+  @Namelond(ManhattanOmelongaClielonnt)
+  delonf providelonsManhattanOmelongaClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): mh.ManhattanCoordinator.MelonthodPelonrelonndpoint = {
+    ManhattanClielonntBuildelonr
+      .buildManhattanV1FinaglelonClielonnt(
+        ManhattanClustelonrs.omelonga,
+        selonrvicelonIdelonntifielonr
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(ManhattanStarbuckClient)
-  def providesManhattanStarbuckClient(
-    serviceIdentifier: ServiceIdentifier
-  ): mh.ManhattanCoordinator.MethodPerEndpoint = {
-    ManhattanClientBuilder
-      .buildManhattanV1FinagleClient(
-        ManhattanClusters.starbuck,
-        serviceIdentifier
+  @Providelons
+  @Singlelonton
+  @Namelond(ManhattanStarbuckClielonnt)
+  delonf providelonsManhattanStarbuckClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): mh.ManhattanCoordinator.MelonthodPelonrelonndpoint = {
+    ManhattanClielonntBuildelonr
+      .buildManhattanV1FinaglelonClielonnt(
+        ManhattanClustelonrs.starbuck,
+        selonrvicelonIdelonntifielonr
       )
   }
 
-  // non-cached manhattan repositories
+  // non-cachelond manhattan relonpositorielons
 
-  @Provides
-  @Singleton
-  @Named(MetricCenterUserCountingFeatureRepository)
-  def providesMetricCenterUserCountingFeatureRepository(
-    @Named(ManhattanStarbuckClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): KeyValueRepository[Seq[Long], Long, rf.MCUserCountingFeatures] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(MelontricCelonntelonrUselonrCountingFelonaturelonRelonpository)
+  delonf providelonsMelontricCelonntelonrUselonrCountingFelonaturelonRelonpository(
+    @Namelond(ManhattanStarbuckClielonnt) clielonnt: mh.ManhattanCoordinator.MelonthodPelonrelonndpoint
+  ): KelonyValuelonRelonpository[Selonq[Long], Long, rf.MCUselonrCountingFelonaturelons] = {
 
-    val keyTransformer = Injection
-      .connect[Long, Array[Byte]]
-      .toByteBufferTransformer()
+    val kelonyTransformelonr = Injelonction
+      .connelonct[Long, Array[Bytelon]]
+      .toBytelonBuffelonrTransformelonr()
 
-    val valueTransformer = ThriftCodec
-      .toCompact[rf.MCUserCountingFeatures]
-      .toByteBufferTransformer()
+    val valuelonTransformelonr = ThriftCodelonc
+      .toCompact[rf.MCUselonrCountingFelonaturelons]
+      .toBytelonBuffelonrTransformelonr()
       .flip
 
-    batchedManhattanKeyValueRepository[Long, rf.MCUserCountingFeatures](
-      client = client,
-      keyTransformer = keyTransformer,
-      valueTransformer = valueTransformer,
+    batchelondManhattanKelonyValuelonRelonpository[Long, rf.MCUselonrCountingFelonaturelons](
+      clielonnt = clielonnt,
+      kelonyTransformelonr = kelonyTransformelonr,
+      valuelonTransformelonr = valuelonTransformelonr,
       appId = "wtf_ml",
-      dataset = "mc_user_counting_features_v0_starbuck",
-      timeoutInMillis = 100
+      dataselont = "mc_uselonr_counting_felonaturelons_v0_starbuck",
+      timelonoutInMillis = 100
     )
   }
 
   /**
-   * A repository of the offline aggregate feature metadata necessary to decode
-   * DenseCompactDataRecords.
+   * A relonpository of thelon offlinelon aggrelongatelon felonaturelon melontadata neloncelonssary to deloncodelon
+   * DelonnselonCompactDataReloncords.
    *
-   * This repository is expected to virtually always pick up the metadata form the local cache with
-   * nearly 0 latency.
+   * This relonpository is elonxpelonctelond to virtually always pick up thelon melontadata form thelon local cachelon with
+   * nelonarly 0 latelonncy.
    */
-  @Provides
-  @Singleton
-  @Named(TimelineAggregateMetadataRepository)
-  def providesTimelineAggregateMetadataRepository(
-    @Named(ManhattanAthenaClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): Repository[Int, Option[DenseFeatureMetadata]] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(TimelonlinelonAggrelongatelonMelontadataRelonpository)
+  delonf providelonsTimelonlinelonAggrelongatelonMelontadataRelonpository(
+    @Namelond(ManhattanAthelonnaClielonnt) clielonnt: mh.ManhattanCoordinator.MelonthodPelonrelonndpoint
+  ): Relonpository[Int, Option[DelonnselonFelonaturelonMelontadata]] = {
 
-    val keyTransformer = Injection
-      .connect[Int, Array[Byte]]
-      .toByteBufferTransformer()
+    val kelonyTransformelonr = Injelonction
+      .connelonct[Int, Array[Bytelon]]
+      .toBytelonBuffelonrTransformelonr()
 
-    val valueTransformer = new Transformer[ByteBuffer, DenseFeatureMetadata] {
-      private val compactProtocolFactory = new TCompactProtocol.Factory
+    val valuelonTransformelonr = nelonw Transformelonr[BytelonBuffelonr, DelonnselonFelonaturelonMelontadata] {
+      privatelon val compactProtocolFactory = nelonw TCompactProtocol.Factory
 
-      def to(buffer: ByteBuffer): Try[DenseFeatureMetadata] = Try {
-        val transport = transportFromByteBuffer(buffer)
-        DenseFeatureMetadata.decode(compactProtocolFactory.getProtocol(transport))
+      delonf to(buffelonr: BytelonBuffelonr): Try[DelonnselonFelonaturelonMelontadata] = Try {
+        val transport = transportFromBytelonBuffelonr(buffelonr)
+        DelonnselonFelonaturelonMelontadata.deloncodelon(compactProtocolFactory.gelontProtocol(transport))
       }
 
-      // Encoding intentionally not implemented as it is never used
-      def from(metadata: DenseFeatureMetadata): Try[ByteBuffer] = ???
+      // elonncoding intelonntionally not implelonmelonntelond as it is nelonvelonr uselond
+      delonf from(melontadata: DelonnselonFelonaturelonMelontadata): Try[BytelonBuffelonr] = ???
     }
 
-    val inProcessCache: Cache[Int, Cached[DenseFeatureMetadata]] = InProcessLruCacheFactory(
-      ttl = Duration.fromMinutes(20),
-      lruSize = 30
-    ).apply(serializer = Transformer(_ => ???, _ => ???)) // Serialization is not necessary here.
+    val inProcelonssCachelon: Cachelon[Int, Cachelond[DelonnselonFelonaturelonMelontadata]] = InProcelonssLruCachelonFactory(
+      ttl = Duration.fromMinutelons(20),
+      lruSizelon = 30
+    ).apply(selonrializelonr = Transformelonr(_ => ???, _ => ???)) // Selonrialization is not neloncelonssary helonrelon.
 
-    val keyValueRepository = new ManhattanKeyValueRepository(
-      client = client,
-      keyTransformer = keyTransformer,
-      valueTransformer = valueTransformer,
-      appId = "timelines_dense_aggregates_encoding_metadata", // Expected QPS is negligible.
-      dataset = "user_session_dense_feature_metadata",
-      timeoutInMillis = 100
+    val kelonyValuelonRelonpository = nelonw ManhattanKelonyValuelonRelonpository(
+      clielonnt = clielonnt,
+      kelonyTransformelonr = kelonyTransformelonr,
+      valuelonTransformelonr = valuelonTransformelonr,
+      appId = "timelonlinelons_delonnselon_aggrelongatelons_elonncoding_melontadata", // elonxpelonctelond QPS is nelongligiblelon.
+      dataselont = "uselonr_selonssion_delonnselon_felonaturelon_melontadata",
+      timelonoutInMillis = 100
     )
 
-    KeyValueRepository
+    KelonyValuelonRelonpository
       .singular(
-        new CachingKeyValueRepository[Seq[Int], Int, DenseFeatureMetadata](
-          keyValueRepository,
-          new NonLockingCache(inProcessCache),
-          keysAsQuery[Int]
+        nelonw CachingKelonyValuelonRelonpository[Selonq[Int], Int, DelonnselonFelonaturelonMelontadata](
+          kelonyValuelonRelonpository,
+          nelonw NonLockingCachelon(inProcelonssCachelon),
+          kelonysAsQuelonry[Int]
         )
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(RealGraphFeatureRepository)
-  def providesRealGraphFeatureRepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): Repository[Long, Option[UserSession]] = {
-    val valueTransformer = CompactScalaCodec(UserSession).toByteBufferTransformer().flip
+  @Providelons
+  @Singlelonton
+  @Namelond(RelonalGraphFelonaturelonRelonpository)
+  delonf providelonsRelonalGraphFelonaturelonRelonpository(
+    @Namelond(ManhattanApolloClielonnt) clielonnt: mh.ManhattanCoordinator.MelonthodPelonrelonndpoint
+  ): Relonpository[Long, Option[UselonrSelonssion]] = {
+    val valuelonTransformelonr = CompactScalaCodelonc(UselonrSelonssion).toBytelonBuffelonrTransformelonr().flip
 
-    KeyValueRepository.singular(
-      new ManhattanKeyValueRepository(
-        client = client,
-        keyTransformer = UserIdKeyTransformer,
-        valueTransformer = valueTransformer,
-        appId = "real_graph",
-        dataset = "real_graph_user_features",
-        timeoutInMillis = 100,
+    KelonyValuelonRelonpository.singular(
+      nelonw ManhattanKelonyValuelonRelonpository(
+        clielonnt = clielonnt,
+        kelonyTransformelonr = UselonrIdKelonyTransformelonr,
+        valuelonTransformelonr = valuelonTransformelonr,
+        appId = "relonal_graph",
+        dataselont = "relonal_graph_uselonr_felonaturelons",
+        timelonoutInMillis = 100,
       )
     )
   }
 
-  // cached manhattan repositories
+  // cachelond manhattan relonpositorielons
 
-  @Provides
-  @Singleton
-  @Named(AuthorFeatureRepository)
-  def providesAuthorFeatureRepository(
-    @Named(ManhattanAthenaClient) client: mh.ManhattanCoordinator.MethodPerEndpoint,
-    @Named(HomeAuthorFeaturesCacheClient) cacheClient: Memcache
-  ): KeyValueRepository[Seq[Long], Long, af.AuthorFeatures] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(AuthorFelonaturelonRelonpository)
+  delonf providelonsAuthorFelonaturelonRelonpository(
+    @Namelond(ManhattanAthelonnaClielonnt) clielonnt: mh.ManhattanCoordinator.MelonthodPelonrelonndpoint,
+    @Namelond(HomelonAuthorFelonaturelonsCachelonClielonnt) cachelonClielonnt: Melonmcachelon
+  ): KelonyValuelonRelonpository[Selonq[Long], Long, af.AuthorFelonaturelons] = {
 
-    val keyTransformer = Injection
-      .connect[Long, Array[Byte]]
-      .toByteBufferTransformer()
+    val kelonyTransformelonr = Injelonction
+      .connelonct[Long, Array[Bytelon]]
+      .toBytelonBuffelonrTransformelonr()
 
-    val valueInjection = ThriftCodec
-      .toCompact[af.AuthorFeatures]
+    val valuelonInjelonction = ThriftCodelonc
+      .toCompact[af.AuthorFelonaturelons]
 
-    val keyValueRepository = batchedManhattanKeyValueRepository(
-      client = client,
-      keyTransformer = keyTransformer,
-      valueTransformer = valueInjection.toByteBufferTransformer().flip,
-      appId = "timelines_author_feature_store_athena",
-      dataset = "timelines_author_features",
-      timeoutInMillis = 100
+    val kelonyValuelonRelonpository = batchelondManhattanKelonyValuelonRelonpository(
+      clielonnt = clielonnt,
+      kelonyTransformelonr = kelonyTransformelonr,
+      valuelonTransformelonr = valuelonInjelonction.toBytelonBuffelonrTransformelonr().flip,
+      appId = "timelonlinelons_author_felonaturelon_storelon_athelonna",
+      dataselont = "timelonlinelons_author_felonaturelons",
+      timelonoutInMillis = 100
     )
 
-    val remoteCacheRepo = buildMemCachedRepository(
-      keyValueRepository = keyValueRepository,
-      cacheClient = cacheClient,
-      cachePrefix = "AuthorFeatureHydrator",
+    val relonmotelonCachelonRelonpo = buildMelonmCachelondRelonpository(
+      kelonyValuelonRelonpository = kelonyValuelonRelonpository,
+      cachelonClielonnt = cachelonClielonnt,
+      cachelonPrelonfix = "AuthorFelonaturelonHydrator",
       ttl = 12.hours,
-      valueInjection = valueInjection)
+      valuelonInjelonction = valuelonInjelonction)
 
-    buildInProcessCachedRepository(
-      keyValueRepository = remoteCacheRepo,
-      ttl = 15.minutes,
-      size = 8000,
-      valueInjection = valueInjection
+    buildInProcelonssCachelondRelonpository(
+      kelonyValuelonRelonpository = relonmotelonCachelonRelonpo,
+      ttl = 15.minutelons,
+      sizelon = 8000,
+      valuelonInjelonction = valuelonInjelonction
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TwhinAuthorFollow20200101FeatureRepository)
-  def providesTwhinAuthorFollow20200101FeatureRepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint,
-    @Named(TwhinAuthorFollow20200101FeatureCacheClient) cacheClient: Memcache
-  ): KeyValueRepository[Seq[Long], Long, ml.Embedding] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(TwhinAuthorFollow20200101FelonaturelonRelonpository)
+  delonf providelonsTwhinAuthorFollow20200101FelonaturelonRelonpository(
+    @Namelond(ManhattanApolloClielonnt) clielonnt: mh.ManhattanCoordinator.MelonthodPelonrelonndpoint,
+    @Namelond(TwhinAuthorFollow20200101FelonaturelonCachelonClielonnt) cachelonClielonnt: Melonmcachelon
+  ): KelonyValuelonRelonpository[Selonq[Long], Long, ml.elonmbelondding] = {
 
-    val keyTransformer = Injection
-      .connect[Long, Array[Byte]]
-      .toByteBufferTransformer()
+    val kelonyTransformelonr = Injelonction
+      .connelonct[Long, Array[Bytelon]]
+      .toBytelonBuffelonrTransformelonr()
 
-    val valueInjection: Injection[ml.Embedding, Array[Byte]] =
-      BinaryScalaCodec(ml.Embedding)
+    val valuelonInjelonction: Injelonction[ml.elonmbelondding, Array[Bytelon]] =
+      BinaryScalaCodelonc(ml.elonmbelondding)
 
-    val keyValueRepository = batchedManhattanKeyValueRepository(
-      client = client,
-      keyTransformer = keyTransformer,
-      valueTransformer = valueInjection.toByteBufferTransformer().flip,
+    val kelonyValuelonRelonpository = batchelondManhattanKelonyValuelonRelonpository(
+      clielonnt = clielonnt,
+      kelonyTransformelonr = kelonyTransformelonr,
+      valuelonTransformelonr = valuelonInjelonction.toBytelonBuffelonrTransformelonr().flip,
       appId = "twhin",
-      dataset = "twhinauthor_follow_0101",
-      timeoutInMillis = 100
+      dataselont = "twhinauthor_follow_0101",
+      timelonoutInMillis = 100
     )
 
-    buildMemCachedRepository(
-      keyValueRepository = keyValueRepository,
-      cacheClient = cacheClient,
-      cachePrefix = "TwhinAuthorFollow20200101FeatureHydrator",
+    buildMelonmCachelondRelonpository(
+      kelonyValuelonRelonpository = kelonyValuelonRelonpository,
+      cachelonClielonnt = cachelonClielonnt,
+      cachelonPrelonfix = "TwhinAuthorFollow20200101FelonaturelonHydrator",
       ttl = 48.hours,
-      valueInjection = valueInjection
+      valuelonInjelonction = valuelonInjelonction
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TwhinUserFollowFeatureRepository)
-  def providesTwhinUserFollowFeatureRepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): KeyValueRepository[Seq[Long], Long, FloatTensor] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(TwhinUselonrFollowFelonaturelonRelonpository)
+  delonf providelonsTwhinUselonrFollowFelonaturelonRelonpository(
+    @Namelond(ManhattanApolloClielonnt) clielonnt: mh.ManhattanCoordinator.MelonthodPelonrelonndpoint
+  ): KelonyValuelonRelonpository[Selonq[Long], Long, FloatTelonnsor] = {
 
-    batchedManhattanKeyValueRepository(
-      client = client,
-      keyTransformer = UserIdKeyTransformer,
-      valueTransformer = FloatTensorTransformer,
-      appId = "ml_features_apollo",
-      dataset = "twhin_user_follow_embedding_fsv1__v1_thrift__embedding",
-      timeoutInMillis = 100
+    batchelondManhattanKelonyValuelonRelonpository(
+      clielonnt = clielonnt,
+      kelonyTransformelonr = UselonrIdKelonyTransformelonr,
+      valuelonTransformelonr = FloatTelonnsorTransformelonr,
+      appId = "ml_felonaturelons_apollo",
+      dataselont = "twhin_uselonr_follow_elonmbelondding_fsv1__v1_thrift__elonmbelondding",
+      timelonoutInMillis = 100
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(TimelineAggregatePartARepository)
-  def providesTimelineAggregatePartARepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint,
-  ): Repository[Long, Option[uss.UserSession]] =
-    timelineAggregateRepository(
-      mhClient = client,
-      mhDataset = "timelines_aggregates_v2_features_by_user_part_a_apollo",
-      mhAppId = "timelines_aggregates_v2_features_by_user_part_a_apollo"
+  @Providelons
+  @Singlelonton
+  @Namelond(TimelonlinelonAggrelongatelonPartARelonpository)
+  delonf providelonsTimelonlinelonAggrelongatelonPartARelonpository(
+    @Namelond(ManhattanApolloClielonnt) clielonnt: mh.ManhattanCoordinator.MelonthodPelonrelonndpoint,
+  ): Relonpository[Long, Option[uss.UselonrSelonssion]] =
+    timelonlinelonAggrelongatelonRelonpository(
+      mhClielonnt = clielonnt,
+      mhDataselont = "timelonlinelons_aggrelongatelons_v2_felonaturelons_by_uselonr_part_a_apollo",
+      mhAppId = "timelonlinelons_aggrelongatelons_v2_felonaturelons_by_uselonr_part_a_apollo"
     )
 
-  @Provides
-  @Singleton
-  @Named(TimelineAggregatePartBRepository)
-  def providesTimelineAggregatePartBRepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint,
-  ): Repository[Long, Option[uss.UserSession]] =
-    timelineAggregateRepository(
-      mhClient = client,
-      mhDataset = "timelines_aggregates_v2_features_by_user_part_b_apollo",
-      mhAppId = "timelines_aggregates_v2_features_by_user_part_b_apollo"
+  @Providelons
+  @Singlelonton
+  @Namelond(TimelonlinelonAggrelongatelonPartBRelonpository)
+  delonf providelonsTimelonlinelonAggrelongatelonPartBRelonpository(
+    @Namelond(ManhattanApolloClielonnt) clielonnt: mh.ManhattanCoordinator.MelonthodPelonrelonndpoint,
+  ): Relonpository[Long, Option[uss.UselonrSelonssion]] =
+    timelonlinelonAggrelongatelonRelonpository(
+      mhClielonnt = clielonnt,
+      mhDataselont = "timelonlinelons_aggrelongatelons_v2_felonaturelons_by_uselonr_part_b_apollo",
+      mhAppId = "timelonlinelons_aggrelongatelons_v2_felonaturelons_by_uselonr_part_b_apollo"
     )
 
-  @Provides
-  @Singleton
-  @Named(TwhinUserEngagementFeatureRepository)
-  def providesTwhinUserEngagementFeatureRepository(
-    @Named(ManhattanApolloClient) client: mh.ManhattanCoordinator.MethodPerEndpoint
-  ): KeyValueRepository[Seq[Long], Long, FloatTensor] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(TwhinUselonrelonngagelonmelonntFelonaturelonRelonpository)
+  delonf providelonsTwhinUselonrelonngagelonmelonntFelonaturelonRelonpository(
+    @Namelond(ManhattanApolloClielonnt) clielonnt: mh.ManhattanCoordinator.MelonthodPelonrelonndpoint
+  ): KelonyValuelonRelonpository[Selonq[Long], Long, FloatTelonnsor] = {
 
-    batchedManhattanKeyValueRepository(
-      client = client,
-      keyTransformer = UserIdKeyTransformer,
-      valueTransformer = FloatTensorTransformer,
-      appId = "ml_features_apollo",
-      dataset = "twhin_user_engagement_embedding_fsv1__v1_thrift__embedding",
-      timeoutInMillis = 100
+    batchelondManhattanKelonyValuelonRelonpository(
+      clielonnt = clielonnt,
+      kelonyTransformelonr = UselonrIdKelonyTransformelonr,
+      valuelonTransformelonr = FloatTelonnsorTransformelonr,
+      appId = "ml_felonaturelons_apollo",
+      dataselont = "twhin_uselonr_elonngagelonmelonnt_elonmbelondding_fsv1__v1_thrift__elonmbelondding",
+      timelonoutInMillis = 100
     )
   }
 
-  private def buildMemCachedRepository[K, V](
-    keyValueRepository: KeyValueRepository[Seq[K], K, V],
-    cacheClient: Memcache,
-    cachePrefix: String,
+  privatelon delonf buildMelonmCachelondRelonpository[K, V](
+    kelonyValuelonRelonpository: KelonyValuelonRelonpository[Selonq[K], K, V],
+    cachelonClielonnt: Melonmcachelon,
+    cachelonPrelonfix: String,
     ttl: Duration,
-    valueInjection: Injection[V, Array[Byte]]
-  ): CachingKeyValueRepository[Seq[K], K, V] = {
-    val cachedSerializer = CachedSerializer.binary(
-      valueInjection.toByteArrayTransformer()
+    valuelonInjelonction: Injelonction[V, Array[Bytelon]]
+  ): CachingKelonyValuelonRelonpository[Selonq[K], K, V] = {
+    val cachelondSelonrializelonr = CachelondSelonrializelonr.binary(
+      valuelonInjelonction.toBytelonArrayTransformelonr()
     )
 
-    val cache = MemcacheCacheFactory(
-      cacheClient,
+    val cachelon = MelonmcachelonCachelonFactory(
+      cachelonClielonnt,
       ttl,
-      PrefixKeyTransformerFactory(cachePrefix)
-    )[K, Cached[V]](cachedSerializer)
+      PrelonfixKelonyTransformelonrFactory(cachelonPrelonfix)
+    )[K, Cachelond[V]](cachelondSelonrializelonr)
 
-    new CachingKeyValueRepository(
-      keyValueRepository,
-      new NonLockingCache(cache),
-      keysAsQuery[K]
+    nelonw CachingKelonyValuelonRelonpository(
+      kelonyValuelonRelonpository,
+      nelonw NonLockingCachelon(cachelon),
+      kelonysAsQuelonry[K]
     )
   }
 
-  private def buildInProcessCachedRepository[K, V](
-    keyValueRepository: KeyValueRepository[Seq[K], K, V],
+  privatelon delonf buildInProcelonssCachelondRelonpository[K, V](
+    kelonyValuelonRelonpository: KelonyValuelonRelonpository[Selonq[K], K, V],
     ttl: Duration,
-    size: Int,
-    valueInjection: Injection[V, Array[Byte]]
-  ): CachingKeyValueRepository[Seq[K], K, V] = {
-    val cachedSerializer = CachedSerializer.binary(
-      valueInjection.toByteArrayTransformer()
+    sizelon: Int,
+    valuelonInjelonction: Injelonction[V, Array[Bytelon]]
+  ): CachingKelonyValuelonRelonpository[Selonq[K], K, V] = {
+    val cachelondSelonrializelonr = CachelondSelonrializelonr.binary(
+      valuelonInjelonction.toBytelonArrayTransformelonr()
     )
 
-    val cache = InProcessLruCacheFactory(
+    val cachelon = InProcelonssLruCachelonFactory(
       ttl = ttl,
-      lruSize = size
-    )[K, Cached[V]](cachedSerializer)
+      lruSizelon = sizelon
+    )[K, Cachelond[V]](cachelondSelonrializelonr)
 
-    new CachingKeyValueRepository(
-      keyValueRepository,
-      new NonLockingCache(cache),
-      keysAsQuery[K]
+    nelonw CachingKelonyValuelonRelonpository(
+      kelonyValuelonRelonpository,
+      nelonw NonLockingCachelon(cachelon),
+      kelonysAsQuelonry[K]
     )
   }
 
-  private def batchedManhattanKeyValueRepository[K, V](
-    client: ManhattanCoordinator.MethodPerEndpoint,
-    keyTransformer: Transformer[K, ByteBuffer],
-    valueTransformer: Transformer[ByteBuffer, V],
+  privatelon delonf batchelondManhattanKelonyValuelonRelonpository[K, V](
+    clielonnt: ManhattanCoordinator.MelonthodPelonrelonndpoint,
+    kelonyTransformelonr: Transformelonr[K, BytelonBuffelonr],
+    valuelonTransformelonr: Transformelonr[BytelonBuffelonr, V],
     appId: String,
-    dataset: String,
-    timeoutInMillis: Int,
-    chunkSize: Int = DEFAULT_RPC_CHUNK_SIZE
-  ): KeyValueRepository[Seq[K], K, V] =
-    KeyValueRepository.chunked(
-      new ManhattanKeyValueRepository(
-        client = client,
-        keyTransformer = keyTransformer,
-        valueTransformer = valueTransformer,
+    dataselont: String,
+    timelonoutInMillis: Int,
+    chunkSizelon: Int = DelonFAULT_RPC_CHUNK_SIZelon
+  ): KelonyValuelonRelonpository[Selonq[K], K, V] =
+    KelonyValuelonRelonpository.chunkelond(
+      nelonw ManhattanKelonyValuelonRelonpository(
+        clielonnt = clielonnt,
+        kelonyTransformelonr = kelonyTransformelonr,
+        valuelonTransformelonr = valuelonTransformelonr,
         appId = appId,
-        dataset = dataset,
-        timeoutInMillis = timeoutInMillis
+        dataselont = dataselont,
+        timelonoutInMillis = timelonoutInMillis
       ),
-      chunker = ChunkingStrategy.equalSize(chunkSize)
+      chunkelonr = ChunkingStratelongy.elonqualSizelon(chunkSizelon)
     )
 
-  private def transportFromByteBuffer(buffer: ByteBuffer): TTransport =
-    new TMemoryInputTransport(
-      buffer.array(),
-      buffer.arrayOffset() + buffer.position(),
-      buffer.remaining())
+  privatelon delonf transportFromBytelonBuffelonr(buffelonr: BytelonBuffelonr): TTransport =
+    nelonw TMelonmoryInputTransport(
+      buffelonr.array(),
+      buffelonr.arrayOffselont() + buffelonr.position(),
+      buffelonr.relonmaining())
 
-  private def timelineAggregateRepository(
-    mhClient: mh.ManhattanCoordinator.MethodPerEndpoint,
-    mhDataset: String,
+  privatelon delonf timelonlinelonAggrelongatelonRelonpository(
+    mhClielonnt: mh.ManhattanCoordinator.MelonthodPelonrelonndpoint,
+    mhDataselont: String,
     mhAppId: String
-  ): Repository[Long, Option[uss.UserSession]] = {
-    val keyTransformer = Injection
-      .connect[Long, Array[Byte]]
-      .toByteBufferTransformer()
+  ): Relonpository[Long, Option[uss.UselonrSelonssion]] = {
+    val kelonyTransformelonr = Injelonction
+      .connelonct[Long, Array[Bytelon]]
+      .toBytelonBuffelonrTransformelonr()
 
-    val valueInjection = ThriftCodec
-      .toCompact[uss.UserSession]
+    val valuelonInjelonction = ThriftCodelonc
+      .toCompact[uss.UselonrSelonssion]
 
-    KeyValueRepository.singular(
-      new ManhattanKeyValueRepository(
-        client = mhClient,
-        keyTransformer = keyTransformer,
-        valueTransformer = valueInjection.toByteBufferTransformer().flip,
+    KelonyValuelonRelonpository.singular(
+      nelonw ManhattanKelonyValuelonRelonpository(
+        clielonnt = mhClielonnt,
+        kelonyTransformelonr = kelonyTransformelonr,
+        valuelonTransformelonr = valuelonInjelonction.toBytelonBuffelonrTransformelonr().flip,
         appId = mhAppId,
-        dataset = mhDataset,
-        timeoutInMillis = 100
+        dataselont = mhDataselont,
+        timelonoutInMillis = 100
       )
     )
 

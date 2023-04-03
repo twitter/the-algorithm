@@ -1,106 +1,106 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.promoted
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.promotelond
 
-import com.twitter.ads.adserver.{thriftscala => ads}
-import com.twitter.ads.common.base.{thriftscala => ac}
-import com.twitter.adserver.{thriftscala => ad}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.util.AdMetadataContainerSerializer
+import com.twittelonr.ads.adselonrvelonr.{thriftscala => ads}
+import com.twittelonr.ads.common.baselon.{thriftscala => ac}
+import com.twittelonr.adselonrvelonr.{thriftscala => ad}
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.promotelond.BaselonPromotelondMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.util.AdMelontadataContainelonrSelonrializelonr
 
-case class FeaturePromotedMetadataBuilder(adImpressionFeature: Feature[_, Option[ad.AdImpression]])
-    extends BasePromotedMetadataBuilder[PipelineQuery, UniversalNoun[Any]] {
+caselon class FelonaturelonPromotelondMelontadataBuildelonr(adImprelonssionFelonaturelon: Felonaturelon[_, Option[ad.AdImprelonssion]])
+    elonxtelonnds BaselonPromotelondMelontadataBuildelonr[PipelonlinelonQuelonry, UnivelonrsalNoun[Any]] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Option[PromotedMetadata] = {
-    candidateFeatures.getOrElse(adImpressionFeature, None).map { impression =>
-      PromotedMetadata(
-        advertiserId = impression.advertiserId,
-        disclosureType = impression.disclosureType.map(convertDisclosureType),
-        experimentValues = impression.experimentValues.map(_.toMap),
-        promotedTrendId = impression.promotedTrendId.map(_.toLong),
-        promotedTrendName = impression.promotedTrendName,
-        promotedTrendQueryTerm = impression.promotedTrendQueryTerm,
-        adMetadataContainer =
-          impression.serializedAdMetadataContainer.flatMap(convertAdMetadataContainer),
-        promotedTrendDescription = impression.promotedTrendDescription,
-        impressionString = impression.impressionString,
-        clickTrackingInfo = impression.clickTrackingInfo.map(convertClickTrackingInfo),
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: UnivelonrsalNoun[Any],
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[PromotelondMelontadata] = {
+    candidatelonFelonaturelons.gelontOrelonlselon(adImprelonssionFelonaturelon, Nonelon).map { imprelonssion =>
+      PromotelondMelontadata(
+        advelonrtiselonrId = imprelonssion.advelonrtiselonrId,
+        disclosurelonTypelon = imprelonssion.disclosurelonTypelon.map(convelonrtDisclosurelonTypelon),
+        elonxpelonrimelonntValuelons = imprelonssion.elonxpelonrimelonntValuelons.map(_.toMap),
+        promotelondTrelonndId = imprelonssion.promotelondTrelonndId.map(_.toLong),
+        promotelondTrelonndNamelon = imprelonssion.promotelondTrelonndNamelon,
+        promotelondTrelonndQuelonryTelonrm = imprelonssion.promotelondTrelonndQuelonryTelonrm,
+        adMelontadataContainelonr =
+          imprelonssion.selonrializelondAdMelontadataContainelonr.flatMap(convelonrtAdMelontadataContainelonr),
+        promotelondTrelonndDelonscription = imprelonssion.promotelondTrelonndDelonscription,
+        imprelonssionString = imprelonssion.imprelonssionString,
+        clickTrackingInfo = imprelonssion.clickTrackingInfo.map(convelonrtClickTrackingInfo),
       )
     }
   }
 
-  private def convertAdMetadataContainer(
-    serializedAdMetadataContainer: ac.SerializedThrift
-  ): Option[AdMetadataContainer] =
-    AdMetadataContainerSerializer.deserialize(serializedAdMetadataContainer).map { container =>
-      AdMetadataContainer(
-        removePromotedAttributionForPreroll = container.removePromotedAttributionForPreroll,
-        sponsorshipCandidate = container.sponsorshipCandidate,
-        sponsorshipOrganization = container.sponsorshipOrganization,
-        sponsorshipOrganizationWebsite = container.sponsorshipOrganizationWebsite,
-        sponsorshipType = container.sponsorshipType.map(convertSponsorshipType),
-        disclaimerType = container.disclaimerType.map(convertDisclaimerType),
-        skAdNetworkDataList = container.skAdNetworkDataList.map(convertSkAdNetworkDataList),
-        unifiedCardOverride = container.unifiedCardOverride
+  privatelon delonf convelonrtAdMelontadataContainelonr(
+    selonrializelondAdMelontadataContainelonr: ac.SelonrializelondThrift
+  ): Option[AdMelontadataContainelonr] =
+    AdMelontadataContainelonrSelonrializelonr.delonselonrializelon(selonrializelondAdMelontadataContainelonr).map { containelonr =>
+      AdMelontadataContainelonr(
+        relonmovelonPromotelondAttributionForPrelonroll = containelonr.relonmovelonPromotelondAttributionForPrelonroll,
+        sponsorshipCandidatelon = containelonr.sponsorshipCandidatelon,
+        sponsorshipOrganization = containelonr.sponsorshipOrganization,
+        sponsorshipOrganizationWelonbsitelon = containelonr.sponsorshipOrganizationWelonbsitelon,
+        sponsorshipTypelon = containelonr.sponsorshipTypelon.map(convelonrtSponsorshipTypelon),
+        disclaimelonrTypelon = containelonr.disclaimelonrTypelon.map(convelonrtDisclaimelonrTypelon),
+        skAdNelontworkDataList = containelonr.skAdNelontworkDataList.map(convelonrtSkAdNelontworkDataList),
+        unifielondCardOvelonrridelon = containelonr.unifielondCardOvelonrridelon
       )
     }
 
-  private def convertDisclosureType(disclosureType: ad.DisclosureType): DisclosureType =
-    disclosureType match {
-      case ad.DisclosureType.None => NoDisclosure
-      case ad.DisclosureType.Political => Political
-      case ad.DisclosureType.Earned => Earned
-      case ad.DisclosureType.Issue => Issue
-      case _ => throw new UnsupportedOperationException(s"Unsupported: $disclosureType")
+  privatelon delonf convelonrtDisclosurelonTypelon(disclosurelonTypelon: ad.DisclosurelonTypelon): DisclosurelonTypelon =
+    disclosurelonTypelon match {
+      caselon ad.DisclosurelonTypelon.Nonelon => NoDisclosurelon
+      caselon ad.DisclosurelonTypelon.Political => Political
+      caselon ad.DisclosurelonTypelon.elonarnelond => elonarnelond
+      caselon ad.DisclosurelonTypelon.Issuelon => Issuelon
+      caselon _ => throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unsupportelond: $disclosurelonTypelon")
     }
 
-  private def convertSponsorshipType(sponsorshipType: ads.SponsorshipType): SponsorshipType =
-    sponsorshipType match {
-      case ads.SponsorshipType.Direct => DirectSponsorshipType
-      case ads.SponsorshipType.Indirect => IndirectSponsorshipType
-      case ads.SponsorshipType.NoSponsorship => NoSponsorshipSponsorshipType
-      case _ => throw new UnsupportedOperationException(s"Unsupported: $sponsorshipType")
+  privatelon delonf convelonrtSponsorshipTypelon(sponsorshipTypelon: ads.SponsorshipTypelon): SponsorshipTypelon =
+    sponsorshipTypelon match {
+      caselon ads.SponsorshipTypelon.Direlonct => DirelonctSponsorshipTypelon
+      caselon ads.SponsorshipTypelon.Indirelonct => IndirelonctSponsorshipTypelon
+      caselon ads.SponsorshipTypelon.NoSponsorship => NoSponsorshipSponsorshipTypelon
+      caselon _ => throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unsupportelond: $sponsorshipTypelon")
     }
 
-  private def convertDisclaimerType(disclaimerType: ads.DisclaimerType): DisclaimerType =
-    disclaimerType match {
-      case ads.DisclaimerType.Political => DisclaimerPolitical
-      case ads.DisclaimerType.Issue => DisclaimerIssue
-      case _ => throw new UnsupportedOperationException(s"Unsupported: $disclaimerType")
+  privatelon delonf convelonrtDisclaimelonrTypelon(disclaimelonrTypelon: ads.DisclaimelonrTypelon): DisclaimelonrTypelon =
+    disclaimelonrTypelon match {
+      caselon ads.DisclaimelonrTypelon.Political => DisclaimelonrPolitical
+      caselon ads.DisclaimelonrTypelon.Issuelon => DisclaimelonrIssuelon
+      caselon _ => throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unsupportelond: $disclaimelonrTypelon")
     }
 
-  private def convertSkAdNetworkDataList(
-    skAdNetworkDataList: Seq[ads.SkAdNetworkData]
-  ): Seq[SkAdNetworkData] = skAdNetworkDataList.map { sdAdNetwork =>
-    SkAdNetworkData(
-      version = sdAdNetwork.version,
-      srcAppId = sdAdNetwork.srcAppId,
-      dstAppId = sdAdNetwork.dstAppId,
-      adNetworkId = sdAdNetwork.adNetworkId,
-      campaignId = sdAdNetwork.campaignId,
-      impressionTimeInMillis = sdAdNetwork.impressionTimeInMillis,
-      nonce = sdAdNetwork.nonce,
-      signature = sdAdNetwork.signature,
-      fidelityType = sdAdNetwork.fidelityType
+  privatelon delonf convelonrtSkAdNelontworkDataList(
+    skAdNelontworkDataList: Selonq[ads.SkAdNelontworkData]
+  ): Selonq[SkAdNelontworkData] = skAdNelontworkDataList.map { sdAdNelontwork =>
+    SkAdNelontworkData(
+      velonrsion = sdAdNelontwork.velonrsion,
+      srcAppId = sdAdNelontwork.srcAppId,
+      dstAppId = sdAdNelontwork.dstAppId,
+      adNelontworkId = sdAdNelontwork.adNelontworkId,
+      campaignId = sdAdNelontwork.campaignId,
+      imprelonssionTimelonInMillis = sdAdNelontwork.imprelonssionTimelonInMillis,
+      noncelon = sdAdNelontwork.noncelon,
+      signaturelon = sdAdNelontwork.signaturelon,
+      fidelonlityTypelon = sdAdNelontwork.fidelonlityTypelon
     )
   }
 
-  private def convertClickTrackingInfo(clickTracking: ad.ClickTrackingInfo): ClickTrackingInfo =
+  privatelon delonf convelonrtClickTrackingInfo(clickTracking: ad.ClickTrackingInfo): ClickTrackingInfo =
     ClickTrackingInfo(
-      urlParams = clickTracking.urlParams.getOrElse(Map.empty),
-      urlOverride = clickTracking.urlOverride,
-      urlOverrideType = clickTracking.urlOverrideType.map {
-        case ad.UrlOverrideType.Unknown => UnknownUrlOverrideType
-        case ad.UrlOverrideType.Dcm => DcmUrlOverrideType
-        case ad.UrlOverrideType.EnumUnknownUrlOverrideType(value) =>
-          throw new UnsupportedOperationException(s"Unsupported: $value")
+      urlParams = clickTracking.urlParams.gelontOrelonlselon(Map.elonmpty),
+      urlOvelonrridelon = clickTracking.urlOvelonrridelon,
+      urlOvelonrridelonTypelon = clickTracking.urlOvelonrridelonTypelon.map {
+        caselon ad.UrlOvelonrridelonTypelon.Unknown => UnknownUrlOvelonrridelonTypelon
+        caselon ad.UrlOvelonrridelonTypelon.Dcm => DcmUrlOvelonrridelonTypelon
+        caselon ad.UrlOvelonrridelonTypelon.elonnumUnknownUrlOvelonrridelonTypelon(valuelon) =>
+          throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unsupportelond: $valuelon")
       }
     )
 }

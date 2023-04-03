@@ -1,22 +1,22 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons
 
-import com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates.EdgeAggregateFeatures._
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons.elondgelonAggrelongatelonFelonaturelons._
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class Phase2EdgeAggregateFeatureHydrator @Inject() extends BaseEdgeAggregateFeatureHydrator {
+@Singlelonton
+class Phaselon2elondgelonAggrelongatelonFelonaturelonHydrator @Injelonct() elonxtelonnds BaselonelondgelonAggrelongatelonFelonaturelonHydrator {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("Phase2EdgeAggregate")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("Phaselon2elondgelonAggrelongatelon")
 
-  override val aggregateFeatures: Set[BaseEdgeAggregateFeature] =
-    Set(
-      UserEngagerAggregateFeature,
-      UserEngagerGoodClickAggregateFeature,
-      UserInferredTopicAggregateFeature,
-      UserTopicAggregateFeature,
-      UserMediaUnderstandingAnnotationAggregateFeature
+  ovelonrridelon val aggrelongatelonFelonaturelons: Selont[BaselonelondgelonAggrelongatelonFelonaturelon] =
+    Selont(
+      UselonrelonngagelonrAggrelongatelonFelonaturelon,
+      UselonrelonngagelonrGoodClickAggrelongatelonFelonaturelon,
+      UselonrInfelonrrelondTopicAggrelongatelonFelonaturelon,
+      UselonrTopicAggrelongatelonFelonaturelon,
+      UselonrMelondiaUndelonrstandingAnnotationAggrelongatelonFelonaturelon
     )
 }

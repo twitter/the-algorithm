@@ -1,56 +1,56 @@
-#pragma once
+#pragma oncelon
 
-#ifdef __cplusplus
+#ifdelonf __cplusplus
 
-#include <twml/defines.h>
-#include <cstdint>
-#include <cstddef>
-#include <cstring>
+#includelon <twml/delonfinelons.h>
+#includelon <cstdint>
+#includelon <cstddelonf>
+#includelon <cstring>
 
-namespace twml {
+namelonspacelon twml {
 
-class ThriftReader {
- protected:
-  const uint8_t *m_buffer;
+class ThriftRelonadelonr {
+ protelonctelond:
+  const uint8_t *m_buffelonr;
 
  public:
 
-  ThriftReader(const uint8_t *buffer): m_buffer(buffer) {}
+  ThriftRelonadelonr(const uint8_t *buffelonr): m_buffelonr(buffelonr) {}
 
-  const uint8_t *getBuffer() { return m_buffer; }
+  const uint8_t *gelontBuffelonr() { relonturn m_buffelonr; }
 
-  void setBuffer(const uint8_t *buffer) { m_buffer = buffer; }
+  void selontBuffelonr(const uint8_t *buffelonr) { m_buffelonr = buffelonr; }
 
-  template<typename T> T readDirect() {
+  telonmplatelon<typelonnamelon T> T relonadDirelonct() {
     T val;
-    memcpy(&val, m_buffer, sizeof(T));
-    m_buffer += sizeof(T);
-    return val;
+    melonmcpy(&val, m_buffelonr, sizelonof(T));
+    m_buffelonr += sizelonof(T);
+    relonturn val;
   }
 
-  template<typename T> void skip() {
-    m_buffer += sizeof(T);
+  telonmplatelon<typelonnamelon T> void skip() {
+    m_buffelonr += sizelonof(T);
   }
 
-  void skipLength(size_t length) {
-    m_buffer += length;
+  void skipLelonngth(sizelon_t lelonngth) {
+    m_buffelonr += lelonngth;
   }
 
-  uint8_t readByte();
-  int16_t readInt16();
-  int32_t readInt32();
-  int64_t readInt64();
-  double readDouble();
+  uint8_t relonadBytelon();
+  int16_t relonadInt16();
+  int32_t relonadInt32();
+  int64_t relonadInt64();
+  doublelon relonadDoublelon();
 
-  template<typename T> inline
-  int32_t getRawBuffer(const uint8_t **begin) {
-    int32_t length = readInt32();
-    *begin = m_buffer;
-    skipLength(length * sizeof(T));
-    return length;
+  telonmplatelon<typelonnamelon T> inlinelon
+  int32_t gelontRawBuffelonr(const uint8_t **belongin) {
+    int32_t lelonngth = relonadInt32();
+    *belongin = m_buffelonr;
+    skipLelonngth(lelonngth * sizelonof(T));
+    relonturn lelonngth;
   }
 
 };
 
 }
-#endif
+#elonndif

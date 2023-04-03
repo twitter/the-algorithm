@@ -1,278 +1,278 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.SortelondSelont;
+import java.util.TrelonelonSelont;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.PartitionConfig;
-import com.twitter.search.common.root.PartitionLoggingSupport;
-import com.twitter.search.common.root.RequestSuccessStats;
-import com.twitter.search.common.root.RootClientServiceBuilder;
-import com.twitter.search.common.root.ScatterGatherService;
-import com.twitter.search.common.root.ScatterGatherSupport;
-import com.twitter.search.common.root.SearchRootModule;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.config.TierInfo;
-import com.twitter.search.earlybird.config.TierInfoSource;
-import com.twitter.search.earlybird.config.TierInfoUtil;
-import com.twitter.search.earlybird.config.TierInfoWrapper;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.EarlybirdService.ServiceIface;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.root.PartitionConfig;
+import com.twittelonr.selonarch.common.root.PartitionLoggingSupport;
+import com.twittelonr.selonarch.common.root.RelonquelonstSuccelonssStats;
+import com.twittelonr.selonarch.common.root.RootClielonntSelonrvicelonBuildelonr;
+import com.twittelonr.selonarch.common.root.ScattelonrGathelonrSelonrvicelon;
+import com.twittelonr.selonarch.common.root.ScattelonrGathelonrSupport;
+import com.twittelonr.selonarch.common.root.SelonarchRootModulelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrConfig;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrInfo;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrInfoSourcelon;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrInfoUtil;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrInfoWrappelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon.SelonrvicelonIfacelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.elonarlybirdTimelonRangelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
-@Singleton
-public class EarlybirdServiceChainBuilder {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServiceChainBuilder.class);
+@Singlelonton
+public class elonarlybirdSelonrvicelonChainBuildelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdSelonrvicelonChainBuildelonr.class);
 
-  private static final String SEARCH_METHOD_NAME = "search";
+  privatelon static final String SelonARCH_MelonTHOD_NAMelon = "selonarch";
 
-  private static final EarlybirdResponse TIER_SKIPPED_RESPONSE =
-      new EarlybirdResponse(EarlybirdResponseCode.TIER_SKIPPED, 0)
-          .setSearchResults(new ThriftSearchResults())
-          .setDebugString("Request to cluster dropped by decider, or sent as dark read.");
+  privatelon static final elonarlybirdRelonsponselon TIelonR_SKIPPelonD_RelonSPONSelon =
+      nelonw elonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.TIelonR_SKIPPelonD, 0)
+          .selontSelonarchRelonsults(nelonw ThriftSelonarchRelonsults())
+          .selontDelonbugString("Relonquelonst to clustelonr droppelond by deloncidelonr, or selonnt as dark relonad.");
 
-  private final EarlybirdTierThrottleDeciders tierThrottleDeciders;
+  privatelon final elonarlybirdTielonrThrottlelonDeloncidelonrs tielonrThrottlelonDeloncidelonrs;
 
-  private final RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter;
+  privatelon final RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr;
 
-  private final SearchDecider decider;
-  private final String normalizedSearchRootName;
-  private final RootClientServiceBuilder<ServiceIface> clientServiceBuilder;
-  private final String partitionPath;
-  private final int numPartitions;
-  private final SortedSet<TierInfo> tierInfos;
-  private final PartitionAccessController partitionAccessController;
-  private final StatsReceiver statsReceiver;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final String normalizelondSelonarchRootNamelon;
+  privatelon final RootClielonntSelonrvicelonBuildelonr<SelonrvicelonIfacelon> clielonntSelonrvicelonBuildelonr;
+  privatelon final String partitionPath;
+  privatelon final int numPartitions;
+  privatelon final SortelondSelont<TielonrInfo> tielonrInfos;
+  privatelon final PartitionAccelonssControllelonr partitionAccelonssControllelonr;
+  privatelon final StatsReloncelonivelonr statsReloncelonivelonr;
 
   /**
-   * Construct a ScatterGatherServiceChain, by loading configurations from earlybird-tiers.yml.
+   * Construct a ScattelonrGathelonrSelonrvicelonChain, by loading configurations from elonarlybird-tielonrs.yml.
    */
-  @Inject
-  public EarlybirdServiceChainBuilder(
+  @Injelonct
+  public elonarlybirdSelonrvicelonChainBuildelonr(
       PartitionConfig partitionConfig,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      EarlybirdTierThrottleDeciders tierThrottleDeciders,
-      @Named(SearchRootModule.NAMED_NORMALIZED_SEARCH_ROOT_NAME) String normalizedSearchRootName,
-      SearchDecider decider,
-      TierInfoSource tierConfig,
-      RootClientServiceBuilder<ServiceIface> clientServiceBuilder,
-      PartitionAccessController partitionAccessController,
-      StatsReceiver statsReceiver) {
-    this.partitionAccessController = partitionAccessController;
-    this.tierThrottleDeciders = Preconditions.checkNotNull(tierThrottleDeciders);
-    this.requestContextToEarlybirdRequestFilter = requestContextToEarlybirdRequestFilter;
-    this.normalizedSearchRootName = normalizedSearchRootName;
-    this.decider = decider;
-    this.statsReceiver = statsReceiver;
+      RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+      elonarlybirdTielonrThrottlelonDeloncidelonrs tielonrThrottlelonDeloncidelonrs,
+      @Namelond(SelonarchRootModulelon.NAMelonD_NORMALIZelonD_SelonARCH_ROOT_NAMelon) String normalizelondSelonarchRootNamelon,
+      SelonarchDeloncidelonr deloncidelonr,
+      TielonrInfoSourcelon tielonrConfig,
+      RootClielonntSelonrvicelonBuildelonr<SelonrvicelonIfacelon> clielonntSelonrvicelonBuildelonr,
+      PartitionAccelonssControllelonr partitionAccelonssControllelonr,
+      StatsReloncelonivelonr statsReloncelonivelonr) {
+    this.partitionAccelonssControllelonr = partitionAccelonssControllelonr;
+    this.tielonrThrottlelonDeloncidelonrs = Prelonconditions.chelonckNotNull(tielonrThrottlelonDeloncidelonrs);
+    this.relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr = relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr;
+    this.normalizelondSelonarchRootNamelon = normalizelondSelonarchRootNamelon;
+    this.deloncidelonr = deloncidelonr;
+    this.statsReloncelonivelonr = statsReloncelonivelonr;
 
-    List<TierInfo> tierInformation = tierConfig.getTierInformation();
-    if (tierInformation == null || tierInformation.isEmpty()) {
-      LOG.error(
-          "No tier found in config file {} Did you set SEARCH_ENV correctly?",
-          tierConfig.getConfigFileType());
-      throw new RuntimeException("No tier found in tier config file.");
+    List<TielonrInfo> tielonrInformation = tielonrConfig.gelontTielonrInformation();
+    if (tielonrInformation == null || tielonrInformation.iselonmpty()) {
+      LOG.elonrror(
+          "No tielonr found in config filelon {} Did you selont SelonARCH_elonNV correlonctly?",
+          tielonrConfig.gelontConfigFilelonTypelon());
+      throw nelonw Runtimelonelonxcelonption("No tielonr found in tielonr config filelon.");
     }
 
-    // Get the tier info from the tier config yml file
-    TreeSet<TierInfo> infos = new TreeSet<>(TierInfoUtil.TIER_COMPARATOR);
-    infos.addAll(tierInformation);
-    this.tierInfos = Collections.unmodifiableSortedSet(infos);
-    this.clientServiceBuilder = clientServiceBuilder;
-    this.partitionPath = partitionConfig.getPartitionPath();
-    this.numPartitions = partitionConfig.getNumPartitions();
+    // Gelont thelon tielonr info from thelon tielonr config yml filelon
+    TrelonelonSelont<TielonrInfo> infos = nelonw TrelonelonSelont<>(TielonrInfoUtil.TIelonR_COMPARATOR);
+    infos.addAll(tielonrInformation);
+    this.tielonrInfos = Collelonctions.unmodifiablelonSortelondSelont(infos);
+    this.clielonntSelonrvicelonBuildelonr = clielonntSelonrvicelonBuildelonr;
+    this.partitionPath = partitionConfig.gelontPartitionPath();
+    this.numPartitions = partitionConfig.gelontNumPartitions();
 
-    LOG.info("Found the following tiers from config: {}", tierInfos);
+    LOG.info("Found thelon following tielonrs from config: {}", tielonrInfos);
   }
 
-  /** Builds the chain of services that should be queried on each request. */
-  public List<Service<EarlybirdRequestContext, EarlybirdResponse>> buildServiceChain(
-      ScatterGatherSupport<EarlybirdRequestContext, EarlybirdResponse> support,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
-    // Make sure the tier serving ranges do not overlap and do not have gaps.
-    TierInfoUtil.checkTierServingRanges(tierInfos);
+  /** Builds thelon chain of selonrvicelons that should belon quelonrielond on elonach relonquelonst. */
+  public List<Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>> buildSelonrvicelonChain(
+      ScattelonrGathelonrSupport<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> support,
+      PartitionLoggingSupport<elonarlybirdRelonquelonstContelonxt> partitionLoggingSupport) {
+    // Makelon surelon thelon tielonr selonrving rangelons do not ovelonrlap and do not havelon gaps.
+    TielonrInfoUtil.chelonckTielonrSelonrvingRangelons(tielonrInfos);
 
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> chain = Lists.newArrayList();
+    List<Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>> chain = Lists.nelonwArrayList();
 
-    for (TierInfo tierInfo : tierInfos) {
-      String tierName = tierInfo.getTierName();
-      if (tierInfo.isEnabled()) {
-        String rewrittenPartitionPath = partitionPath;
-        // This rewriting rule must match the rewriting rule inside
-        // EarlybirdServer#joinServerSet().
-        if (!TierConfig.DEFAULT_TIER_NAME.equals(tierName)) {
-          rewrittenPartitionPath = partitionPath + "/" + tierName;
+    for (TielonrInfo tielonrInfo : tielonrInfos) {
+      String tielonrNamelon = tielonrInfo.gelontTielonrNamelon();
+      if (tielonrInfo.iselonnablelond()) {
+        String relonwrittelonnPartitionPath = partitionPath;
+        // This relonwriting rulelon must match thelon relonwriting rulelon insidelon
+        // elonarlybirdSelonrvelonr#joinSelonrvelonrSelont().
+        if (!TielonrConfig.DelonFAULT_TIelonR_NAMelon.elonquals(tielonrNamelon)) {
+          relonwrittelonnPartitionPath = partitionPath + "/" + tielonrNamelon;
         }
 
-        clientServiceBuilder.initializeWithPathSuffix(
-            tierInfo.getTierName(),
+        clielonntSelonrvicelonBuildelonr.initializelonWithPathSuffix(
+            tielonrInfo.gelontTielonrNamelon(),
             numPartitions,
-            rewrittenPartitionPath);
+            relonwrittelonnPartitionPath);
 
         try {
-          chain.add(createTierService(
-                        support, tierInfo, clientServiceBuilder, partitionLoggingSupport));
-        } catch (Exception e) {
-          LOG.error("Failed to build clients for tier: {}", tierInfo.getTierName());
-          throw new RuntimeException(e);
+          chain.add(crelonatelonTielonrSelonrvicelon(
+                        support, tielonrInfo, clielonntSelonrvicelonBuildelonr, partitionLoggingSupport));
+        } catch (elonxcelonption elon) {
+          LOG.elonrror("Failelond to build clielonnts for tielonr: {}", tielonrInfo.gelontTielonrNamelon());
+          throw nelonw Runtimelonelonxcelonption(elon);
         }
 
-      } else {
-        LOG.info("Skipped disabled tier: {}", tierName);
+      } elonlselon {
+        LOG.info("Skippelond disablelond tielonr: {}", tielonrNamelon);
       }
     }
 
-    return chain;
+    relonturn chain;
   }
 
-  private Service<EarlybirdRequestContext, EarlybirdResponse> createTierService(
-      ScatterGatherSupport<EarlybirdRequestContext, EarlybirdResponse> support,
-      final TierInfo tierInfo,
-      RootClientServiceBuilder<ServiceIface> builder,
-      PartitionLoggingSupport<EarlybirdRequestContext> partitionLoggingSupport) {
+  privatelon Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> crelonatelonTielonrSelonrvicelon(
+      ScattelonrGathelonrSupport<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> support,
+      final TielonrInfo tielonrInfo,
+      RootClielonntSelonrvicelonBuildelonr<SelonrvicelonIfacelon> buildelonr,
+      PartitionLoggingSupport<elonarlybirdRelonquelonstContelonxt> partitionLoggingSupport) {
 
-    final String tierName = tierInfo.getTierName();
-    RequestSuccessStats stats = new RequestSuccessStats(tierName);
+    final String tielonrNamelon = tielonrInfo.gelontTielonrNamelon();
+    RelonquelonstSuccelonssStats stats = nelonw RelonquelonstSuccelonssStats(tielonrNamelon);
 
-    List<Service<EarlybirdRequest, EarlybirdResponse>> services =
-        builder.safeBuildServiceList(SEARCH_METHOD_NAME);
+    List<Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon>> selonrvicelons =
+        buildelonr.safelonBuildSelonrvicelonList(SelonARCH_MelonTHOD_NAMelon);
 
-    // Get the client list for this tier, and apply the degradationTrackerFilter to each response.
+    // Gelont thelon clielonnt list for this tielonr, and apply thelon delongradationTrackelonrFiltelonr to elonach relonsponselon.
     //
-    // We currently do this only for the EarlybirdSearchMultiTierAdaptor (the full archive cluster).
-    // If we want to do this for all clusters (or if we want to apply any other filter to all
-    // earlybird responses, for other clusters), we should change ScatterGatherService's constructor
-    // to take in a filter, and apply it there.
-    ClientBackupFilter backupFilter = new ClientBackupFilter(
-        "root_" + EarlybirdCluster.FULL_ARCHIVE.getNameForStats(),
-        tierName,
-        statsReceiver,
-        decider);
-    List<Service<EarlybirdRequestContext, EarlybirdResponse>> clients = Lists.newArrayList();
-    ClientLatencyFilter latencyFilter = new ClientLatencyFilter(tierName);
-    for (Service<EarlybirdRequest, EarlybirdResponse> client : services) {
-        clients.add(requestContextToEarlybirdRequestFilter
-            .andThen(backupFilter)
-            .andThen(latencyFilter)
-            .andThen(client));
+    // Welon currelonntly do this only for thelon elonarlybirdSelonarchMultiTielonrAdaptor (thelon full archivelon clustelonr).
+    // If welon want to do this for all clustelonrs (or if welon want to apply any othelonr filtelonr to all
+    // elonarlybird relonsponselons, for othelonr clustelonrs), welon should changelon ScattelonrGathelonrSelonrvicelon's constructor
+    // to takelon in a filtelonr, and apply it thelonrelon.
+    ClielonntBackupFiltelonr backupFiltelonr = nelonw ClielonntBackupFiltelonr(
+        "root_" + elonarlybirdClustelonr.FULL_ARCHIVelon.gelontNamelonForStats(),
+        tielonrNamelon,
+        statsReloncelonivelonr,
+        deloncidelonr);
+    List<Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>> clielonnts = Lists.nelonwArrayList();
+    ClielonntLatelonncyFiltelonr latelonncyFiltelonr = nelonw ClielonntLatelonncyFiltelonr(tielonrNamelon);
+    for (Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> clielonnt : selonrvicelons) {
+        clielonnts.add(relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr
+            .andThelonn(backupFiltelonr)
+            .andThelonn(latelonncyFiltelonr)
+            .andThelonn(clielonnt));
     }
 
-    clients = SkipPartitionFilter.wrapServices(tierName, clients, partitionAccessController);
+    clielonnts = SkipPartitionFiltelonr.wrapSelonrvicelons(tielonrNamelon, clielonnts, partitionAccelonssControllelonr);
 
-    // Build the scatter gather service for this tier.
-    // Each tier has their own stats.
-    ScatterGatherService<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService =
-        new ScatterGatherService<>(
-            support, clients, stats, partitionLoggingSupport);
+    // Build thelon scattelonr gathelonr selonrvicelon for this tielonr.
+    // elonach tielonr has thelonir own stats.
+    ScattelonrGathelonrSelonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> scattelonrGathelonrSelonrvicelon =
+        nelonw ScattelonrGathelonrSelonrvicelon<>(
+            support, clielonnts, stats, partitionLoggingSupport);
 
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> tierThrottleFilter =
-        getTierThrottleFilter(tierInfo, tierName);
+    SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> tielonrThrottlelonFiltelonr =
+        gelontTielonrThrottlelonFiltelonr(tielonrInfo, tielonrNamelon);
 
-    EarlybirdTimeRangeFilter timeRangeFilter =
-        EarlybirdTimeRangeFilter.newTimeRangeFilterWithQueryRewriter(
-            (requestContext, userOverride) -> new TierInfoWrapper(tierInfo, userOverride),
-            decider);
+    elonarlybirdTimelonRangelonFiltelonr timelonRangelonFiltelonr =
+        elonarlybirdTimelonRangelonFiltelonr.nelonwTimelonRangelonFiltelonrWithQuelonryRelonwritelonr(
+            (relonquelonstContelonxt, uselonrOvelonrridelon) -> nelonw TielonrInfoWrappelonr(tielonrInfo, uselonrOvelonrridelon),
+            deloncidelonr);
 
-    return tierThrottleFilter
-        .andThen(timeRangeFilter)
-        .andThen(scatterGatherService);
+    relonturn tielonrThrottlelonFiltelonr
+        .andThelonn(timelonRangelonFiltelonr)
+        .andThelonn(scattelonrGathelonrSelonrvicelon);
   }
 
-  private SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> getTierThrottleFilter(
-      final TierInfo tierInfo,
-      final String tierName) {
+  privatelon SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> gelontTielonrThrottlelonFiltelonr(
+      final TielonrInfo tielonrInfo,
+      final String tielonrNamelon) {
 
-    // A filter that throttles request rate.
-    final String tierThrottleDeciderKey = tierThrottleDeciders.getTierThrottleDeciderKey(
-        normalizedSearchRootName, tierName);
+    // A filtelonr that throttlelons relonquelonst ratelon.
+    final String tielonrThrottlelonDeloncidelonrKelony = tielonrThrottlelonDeloncidelonrs.gelontTielonrThrottlelonDeloncidelonrKelony(
+        normalizelondSelonarchRootNamelon, tielonrNamelon);
 
-    SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> tierThrottleFilter =
-        new SimpleFilter<EarlybirdRequestContext, EarlybirdResponse>() {
-          private final Map<TierInfo.RequestReadType, SearchCounter> readCounts =
-              getReadCountsMap();
+    SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> tielonrThrottlelonFiltelonr =
+        nelonw SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon>() {
+          privatelon final Map<TielonrInfo.RelonquelonstRelonadTypelon, SelonarchCountelonr> relonadCounts =
+              gelontRelonadCountsMap();
 
-          private Map<TierInfo.RequestReadType, SearchCounter> getReadCountsMap() {
-            Map<TierInfo.RequestReadType, SearchCounter> readCountsMap =
-                Maps.newEnumMap(TierInfo.RequestReadType.class);
-            for (TierInfo.RequestReadType readType : TierInfo.RequestReadType.values()) {
-              readCountsMap.put(readType,
-                  SearchCounter.export("earlybird_tier_" + tierName + "_"
-                      + readType.name().toLowerCase() + "_read_count"));
+          privatelon Map<TielonrInfo.RelonquelonstRelonadTypelon, SelonarchCountelonr> gelontRelonadCountsMap() {
+            Map<TielonrInfo.RelonquelonstRelonadTypelon, SelonarchCountelonr> relonadCountsMap =
+                Maps.nelonwelonnumMap(TielonrInfo.RelonquelonstRelonadTypelon.class);
+            for (TielonrInfo.RelonquelonstRelonadTypelon relonadTypelon : TielonrInfo.RelonquelonstRelonadTypelon.valuelons()) {
+              relonadCountsMap.put(relonadTypelon,
+                  SelonarchCountelonr.elonxport("elonarlybird_tielonr_" + tielonrNamelon + "_"
+                      + relonadTypelon.namelon().toLowelonrCaselon() + "_relonad_count"));
             }
-            return Collections.unmodifiableMap(readCountsMap);
+            relonturn Collelonctions.unmodifiablelonMap(relonadCountsMap);
           }
 
-          private final SearchCounter tierRequestDroppedByDeciderCount =
-              SearchCounter.export("earlybird_tier_" + tierName
-                  + "_request_dropped_by_decider_count");
+          privatelon final SelonarchCountelonr tielonrRelonquelonstDroppelondByDeloncidelonrCount =
+              SelonarchCountelonr.elonxport("elonarlybird_tielonr_" + tielonrNamelon
+                  + "_relonquelonst_droppelond_by_deloncidelonr_count");
 
-          @Override
-          public Future<EarlybirdResponse> apply(
-              EarlybirdRequestContext requestContext,
-              Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+          @Ovelonrridelon
+          public Futurelon<elonarlybirdRelonsponselon> apply(
+              elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+              Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
 
-            // a blank response is returned when a request is dropped by decider, or
-            // a request is sent as a dark read.
-            final Future<EarlybirdResponse> blankTierResponse = Future.value(TIER_SKIPPED_RESPONSE);
-            if (tierThrottleDeciders.shouldSendRequestToTier(tierThrottleDeciderKey)) {
-              TierInfoWrapper tierInfoWrapper =
-                  new TierInfoWrapper(tierInfo, requestContext.useOverrideTierConfig());
+            // a blank relonsponselon is relonturnelond whelonn a relonquelonst is droppelond by deloncidelonr, or
+            // a relonquelonst is selonnt as a dark relonad.
+            final Futurelon<elonarlybirdRelonsponselon> blankTielonrRelonsponselon = Futurelon.valuelon(TIelonR_SKIPPelonD_RelonSPONSelon);
+            if (tielonrThrottlelonDeloncidelonrs.shouldSelonndRelonquelonstToTielonr(tielonrThrottlelonDeloncidelonrKelony)) {
+              TielonrInfoWrappelonr tielonrInfoWrappelonr =
+                  nelonw TielonrInfoWrappelonr(tielonrInfo, relonquelonstContelonxt.uselonOvelonrridelonTielonrConfig());
 
-              TierInfo.RequestReadType readType = tierInfoWrapper.getReadType();
-              readCounts.get(readType).increment();
-              switch (readType) {
-                case DARK:
-                  // dark read: call backend but do not wait for results
-                  service.apply(requestContext);
-                  return blankTierResponse;
-                case GREY:
-                  // grey read: call backend, wait for results, but discard results.
-                  return service.apply(requestContext).flatMap(
-                      new Function<EarlybirdResponse, Future<EarlybirdResponse>>() {
-                        @Override
-                        public Future<EarlybirdResponse> apply(EarlybirdResponse v1) {
-                          // No matter what's returned, always return blankTierResponse.
-                          return blankTierResponse;
+              TielonrInfo.RelonquelonstRelonadTypelon relonadTypelon = tielonrInfoWrappelonr.gelontRelonadTypelon();
+              relonadCounts.gelont(relonadTypelon).increlonmelonnt();
+              switch (relonadTypelon) {
+                caselon DARK:
+                  // dark relonad: call backelonnd but do not wait for relonsults
+                  selonrvicelon.apply(relonquelonstContelonxt);
+                  relonturn blankTielonrRelonsponselon;
+                caselon GRelonY:
+                  // grelony relonad: call backelonnd, wait for relonsults, but discard relonsults.
+                  relonturn selonrvicelon.apply(relonquelonstContelonxt).flatMap(
+                      nelonw Function<elonarlybirdRelonsponselon, Futurelon<elonarlybirdRelonsponselon>>() {
+                        @Ovelonrridelon
+                        public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonsponselon v1) {
+                          // No mattelonr what's relonturnelond, always relonturn blankTielonrRelonsponselon.
+                          relonturn blankTielonrRelonsponselon;
                         }
                       });
-                case LIGHT:
-                  // light read: return the future from the backend service.
-                  return service.apply(requestContext);
-                default:
-                  throw new RuntimeException("Unknown read type: " + readType);
+                caselon LIGHT:
+                  // light relonad: relonturn thelon futurelon from thelon backelonnd selonrvicelon.
+                  relonturn selonrvicelon.apply(relonquelonstContelonxt);
+                delonfault:
+                  throw nelonw Runtimelonelonxcelonption("Unknown relonad typelon: " + relonadTypelon);
               }
-            } else {
-              // Request is dropped by throttle decider
-              tierRequestDroppedByDeciderCount.increment();
-              return blankTierResponse;
+            } elonlselon {
+              // Relonquelonst is droppelond by throttlelon deloncidelonr
+              tielonrRelonquelonstDroppelondByDeloncidelonrCount.increlonmelonnt();
+              relonturn blankTielonrRelonsponselon;
             }
           }
         };
-    return tierThrottleFilter;
+    relonturn tielonrThrottlelonFiltelonr;
   }
 }

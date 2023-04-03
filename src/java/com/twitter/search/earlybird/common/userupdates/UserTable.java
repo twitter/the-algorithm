@@ -1,572 +1,572 @@
-package com.twitter.search.earlybird.common.userupdates;
+packagelon com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons;
 
-import java.util.Iterator;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Predicate;
+import java.util.Itelonrator;
+import java.util.concurrelonnt.atomic.AtomicRelonfelonrelonncelon;
+import java.util.function.Prelondicatelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.util.hash.GeneralLongHashFunction;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.util.hash.GelonnelonralLongHashFunction;
 
 /**
- * Table containing metadata about users, like NSFW or Antisocial status.
- * Used for result filtering.
+ * Tablelon containing melontadata about uselonrs, likelon NSFW or Antisocial status.
+ * Uselond for relonsult filtelonring.
  */
-public class UserTable {
-  private static final Logger LOG = LoggerFactory.getLogger(UserTable.class);
+public class UselonrTablelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(UselonrTablelon.class);
 
-  @VisibleForTesting // Not final for testing.
-  protected static long userUpdateTableMaxCapacity = 1L << 30;
+  @VisiblelonForTelonsting // Not final for telonsting.
+  protelonctelond static long uselonrUpdatelonTablelonMaxCapacity = 1L << 30;
 
-  private static final int DEFAULT_INITIAL_CAPACITY = 1024;
-  private static final int BYTE_WIDTH = 8;
+  privatelon static final int DelonFAULT_INITIAL_CAPACITY = 1024;
+  privatelon static final int BYTelon_WIDTH = 8;
 
-  private static final String USER_TABLE_CAPACITY = "user_table_capacity";
-  private static final String USER_TABLE_SIZE = "user_table_size";
-  private static final String
-      USER_NUM_USERS_WITH_NO_BITS_SET = "user_table_users_with_no_bits_set";
-  private static final String USER_TABLE_ANTISOCIAL_USERS = "user_table_antisocial_users";
-  private static final String USER_TABLE_OFFENSIVE_USERS = "user_table_offensive_users";
-  private static final String USER_TABLE_NSFW_USERS = "user_table_nsfw_users";
-  private static final String USER_TABLE_IS_PROTECTED_USERS = "user_table_is_protected_users";
+  privatelon static final String USelonR_TABLelon_CAPACITY = "uselonr_tablelon_capacity";
+  privatelon static final String USelonR_TABLelon_SIZelon = "uselonr_tablelon_sizelon";
+  privatelon static final String
+      USelonR_NUM_USelonRS_WITH_NO_BITS_SelonT = "uselonr_tablelon_uselonrs_with_no_bits_selont";
+  privatelon static final String USelonR_TABLelon_ANTISOCIAL_USelonRS = "uselonr_tablelon_antisocial_uselonrs";
+  privatelon static final String USelonR_TABLelon_OFFelonNSIVelon_USelonRS = "uselonr_tablelon_offelonnsivelon_uselonrs";
+  privatelon static final String USelonR_TABLelon_NSFW_USelonRS = "uselonr_tablelon_nsfw_uselonrs";
+  privatelon static final String USelonR_TABLelon_IS_PROTelonCTelonD_USelonRS = "uselonr_tablelon_is_protelonctelond_uselonrs";
 
   /**
-   * number of users filtered
+   * numbelonr of uselonrs filtelonrelond
    */
-  private static final SearchRateCounter USER_TABLE_USERS_FILTERED_COUNTER =
-      new SearchRateCounter("user_table_users_filtered");
+  privatelon static final SelonarchRatelonCountelonr USelonR_TABLelon_USelonRS_FILTelonRelonD_COUNTelonR =
+      nelonw SelonarchRatelonCountelonr("uselonr_tablelon_uselonrs_filtelonrelond");
 
-  private SearchLongGauge userTableCapacity;
-  private SearchLongGauge userTableSize;
-  private SearchLongGauge userTableNumUsersWithNoBitsSet;
-  private SearchLongGauge userTableAntisocialUsers;
-  private SearchLongGauge userTableOffensiveUsers;
-  private SearchLongGauge userTableNsfwUsers;
-  private SearchLongGauge userTableIsProtectedUsers;
+  privatelon SelonarchLongGaugelon uselonrTablelonCapacity;
+  privatelon SelonarchLongGaugelon uselonrTablelonSizelon;
+  privatelon SelonarchLongGaugelon uselonrTablelonNumUselonrsWithNoBitsSelont;
+  privatelon SelonarchLongGaugelon uselonrTablelonAntisocialUselonrs;
+  privatelon SelonarchLongGaugelon uselonrTablelonOffelonnsivelonUselonrs;
+  privatelon SelonarchLongGaugelon uselonrTablelonNsfwUselonrs;
+  privatelon SelonarchLongGaugelon uselonrTablelonIsProtelonctelondUselonrs;
 
-  private final Predicate<Long> userIdFilter;
-  private long lastRecordTimestamp;
+  privatelon final Prelondicatelon<Long> uselonrIdFiltelonr;
+  privatelon long lastReloncordTimelonstamp;
 
-  private static final class HashTable {
-    private int numUsersInTable;
-    private int numUsersWithNoBitsSet;
-    // size 8 array contains the number of users who have the bit set at the index (0-7) position
-    // e.g. setBitCounts[0] stores the number of users who have the 0 bit set in their bytes
-    private long[] setBitCounts;
+  privatelon static final class HashTablelon {
+    privatelon int numUselonrsInTablelon;
+    privatelon int numUselonrsWithNoBitsSelont;
+    // sizelon 8 array contains thelon numbelonr of uselonrs who havelon thelon bit selont at thelon indelonx (0-7) position
+    // elon.g. selontBitCounts[0] storelons thelon numbelonr of uselonrs who havelon thelon 0 bit selont in thelonir bytelons
+    privatelon long[] selontBitCounts;
 
-    private final long[] hash;
-    private final byte[] bits;
+    privatelon final long[] hash;
+    privatelon final bytelon[] bits;
 
-    private final int hashMask;
+    privatelon final int hashMask;
 
-    HashTable(int size) {
-      this.hash = new long[size];
-      this.bits = new byte[size];
-      this.hashMask = size - 1;
-      this.numUsersInTable = 0;
-      this.setBitCounts = new long[BYTE_WIDTH];
+    HashTablelon(int sizelon) {
+      this.hash = nelonw long[sizelon];
+      this.bits = nelonw bytelon[sizelon];
+      this.hashMask = sizelon - 1;
+      this.numUselonrsInTablelon = 0;
+      this.selontBitCounts = nelonw long[BYTelon_WIDTH];
     }
 
-    protected int hashSize() {
-      return hash.length;
+    protelonctelond int hashSizelon() {
+      relonturn hash.lelonngth;
     }
 
-    // If we want to decrease the number of users in the table, we can delete as many users
-    // as this table returns, by calling filterTableAndCountValidItems.
-    public void setCountOfNumUsersWithNoBitsSet() {
+    // If welon want to deloncrelonaselon thelon numbelonr of uselonrs in thelon tablelon, welon can delonlelontelon as many uselonrs
+    // as this tablelon relonturns, by calling filtelonrTablelonAndCountValidItelonms.
+    public void selontCountOfNumUselonrsWithNoBitsSelont() {
       int count = 0;
-      for (int i = 0; i < hash.length; i++) {
+      for (int i = 0; i < hash.lelonngth; i++) {
         if ((hash[i] > 0) && (bits[i] == 0)) {
           count++;
         }
       }
 
-      numUsersWithNoBitsSet = count;
+      numUselonrsWithNoBitsSelont = count;
     }
 
-    public void setSetBitCounts() {
-      long[] counts = new long[BYTE_WIDTH];
-      for (int i = 0; i < hash.length; i++) {
+    public void selontSelontBitCounts() {
+      long[] counts = nelonw long[BYTelon_WIDTH];
+      for (int i = 0; i < hash.lelonngth; i++) {
         if (hash[i] > 0) {
-          int tempBits = bits[i] & 0xff;
+          int telonmpBits = bits[i] & 0xff;
           int curBitPos = 0;
-          while (tempBits != 0) {
-            if ((tempBits & 1) != 0) {
+          whilelon (telonmpBits != 0) {
+            if ((telonmpBits & 1) != 0) {
               counts[curBitPos]++;
             }
-            tempBits = tempBits >>> 1;
+            telonmpBits = telonmpBits >>> 1;
             curBitPos++;
           }
         }
       }
-      setBitCounts = counts;
+      selontBitCounts = counts;
     }
   }
 
   public static final int ANTISOCIAL_BIT = 1;
-  public static final int OFFENSIVE_BIT = 1 << 1;
+  public static final int OFFelonNSIVelon_BIT = 1 << 1;
   public static final int NSFW_BIT = 1 << 2;
-  public static final int IS_PROTECTED_BIT = 1 << 3;
+  public static final int IS_PROTelonCTelonD_BIT = 1 << 3;
 
-  public long getLastRecordTimestamp() {
-    return this.lastRecordTimestamp;
+  public long gelontLastReloncordTimelonstamp() {
+    relonturn this.lastReloncordTimelonstamp;
   }
 
-  public void setLastRecordTimestamp(long lastRecordTimestamp) {
-    this.lastRecordTimestamp = lastRecordTimestamp;
+  public void selontLastReloncordTimelonstamp(long lastReloncordTimelonstamp) {
+    this.lastReloncordTimelonstamp = lastReloncordTimelonstamp;
   }
 
-  public void setOffensive(long userID, boolean offensive) {
-    set(userID, OFFENSIVE_BIT, offensive);
+  public void selontOffelonnsivelon(long uselonrID, boolelonan offelonnsivelon) {
+    selont(uselonrID, OFFelonNSIVelon_BIT, offelonnsivelon);
   }
 
-  public void setAntisocial(long userID, boolean antisocial) {
-    set(userID, ANTISOCIAL_BIT, antisocial);
+  public void selontAntisocial(long uselonrID, boolelonan antisocial) {
+    selont(uselonrID, ANTISOCIAL_BIT, antisocial);
   }
 
-  public void setNSFW(long userID, boolean nsfw) {
-    set(userID, NSFW_BIT, nsfw);
+  public void selontNSFW(long uselonrID, boolelonan nsfw) {
+    selont(uselonrID, NSFW_BIT, nsfw);
   }
 
-  public void setIsProtected(long userID, boolean isProtected) {
-    set(userID, IS_PROTECTED_BIT, isProtected);
-  }
-
-  /**
-   * Adds the given user update to this table.
-   */
-  public boolean indexUserUpdate(UserUpdatesChecker checker, UserUpdate userUpdate) {
-    if (checker.skipUserUpdate(userUpdate)) {
-      return false;
-    }
-
-    switch (userUpdate.updateType) {
-      case ANTISOCIAL:
-        setAntisocial(userUpdate.twitterUserID, userUpdate.updateValue != 0);
-        break;
-      case NSFW:
-        setNSFW(userUpdate.twitterUserID, userUpdate.updateValue != 0);
-        break;
-      case OFFENSIVE:
-        setOffensive(userUpdate.twitterUserID, userUpdate.updateValue != 0);
-        break;
-      case PROTECTED:
-        setIsProtected(userUpdate.twitterUserID, userUpdate.updateValue != 0);
-        break;
-      default:
-        return false;
-    }
-
-    return true;
-  }
-
-  private final AtomicReference<HashTable> hashTable = new AtomicReference<>();
-
-  private int hashCode(long userID) {
-    return (int) GeneralLongHashFunction.hash(userID);
+  public void selontIsProtelonctelond(long uselonrID, boolelonan isProtelonctelond) {
+    selont(uselonrID, IS_PROTelonCTelonD_BIT, isProtelonctelond);
   }
 
   /**
-   * Returns an iterator for user IDs that have at least one of the bits set.
+   * Adds thelon givelonn uselonr updatelon to this tablelon.
    */
-  public Iterator<Long> getFlaggedUserIdIterator() {
-    HashTable table = hashTable.get();
+  public boolelonan indelonxUselonrUpdatelon(UselonrUpdatelonsChelonckelonr chelonckelonr, UselonrUpdatelon uselonrUpdatelon) {
+    if (chelonckelonr.skipUselonrUpdatelon(uselonrUpdatelon)) {
+      relonturn falselon;
+    }
 
-    final long[] currUserIdTable = table.hash;
-    final byte[] currBitsTable = table.bits;
-    return new Iterator<Long>() {
-      private int index = findNext(0);
+    switch (uselonrUpdatelon.updatelonTypelon) {
+      caselon ANTISOCIAL:
+        selontAntisocial(uselonrUpdatelon.twittelonrUselonrID, uselonrUpdatelon.updatelonValuelon != 0);
+        brelonak;
+      caselon NSFW:
+        selontNSFW(uselonrUpdatelon.twittelonrUselonrID, uselonrUpdatelon.updatelonValuelon != 0);
+        brelonak;
+      caselon OFFelonNSIVelon:
+        selontOffelonnsivelon(uselonrUpdatelon.twittelonrUselonrID, uselonrUpdatelon.updatelonValuelon != 0);
+        brelonak;
+      caselon PROTelonCTelonD:
+        selontIsProtelonctelond(uselonrUpdatelon.twittelonrUselonrID, uselonrUpdatelon.updatelonValuelon != 0);
+        brelonak;
+      delonfault:
+        relonturn falselon;
+    }
 
-      private int findNext(int index) {
-        int startingIndex = index;
-        while (startingIndex < currUserIdTable.length) {
-          if (currUserIdTable[startingIndex] != 0 && currBitsTable[startingIndex] != 0) {
-            break;
+    relonturn truelon;
+  }
+
+  privatelon final AtomicRelonfelonrelonncelon<HashTablelon> hashTablelon = nelonw AtomicRelonfelonrelonncelon<>();
+
+  privatelon int hashCodelon(long uselonrID) {
+    relonturn (int) GelonnelonralLongHashFunction.hash(uselonrID);
+  }
+
+  /**
+   * Relonturns an itelonrator for uselonr IDs that havelon at lelonast onelon of thelon bits selont.
+   */
+  public Itelonrator<Long> gelontFlaggelondUselonrIdItelonrator() {
+    HashTablelon tablelon = hashTablelon.gelont();
+
+    final long[] currUselonrIdTablelon = tablelon.hash;
+    final bytelon[] currBitsTablelon = tablelon.bits;
+    relonturn nelonw Itelonrator<Long>() {
+      privatelon int indelonx = findNelonxt(0);
+
+      privatelon int findNelonxt(int indelonx) {
+        int startingIndelonx = indelonx;
+        whilelon (startingIndelonx < currUselonrIdTablelon.lelonngth) {
+          if (currUselonrIdTablelon[startingIndelonx] != 0 && currBitsTablelon[startingIndelonx] != 0) {
+            brelonak;
           }
-          ++startingIndex;
+          ++startingIndelonx;
         }
-        return startingIndex;
+        relonturn startingIndelonx;
       }
 
-      @Override
-      public boolean hasNext() {
-        return index < currUserIdTable.length;
+      @Ovelonrridelon
+      public boolelonan hasNelonxt() {
+        relonturn indelonx < currUselonrIdTablelon.lelonngth;
       }
 
-      @Override
-      public Long next() {
-        Long r = currUserIdTable[index];
-        index = findNext(index + 1);
-        return r;
+      @Ovelonrridelon
+      public Long nelonxt() {
+        Long r = currUselonrIdTablelon[indelonx];
+        indelonx = findNelonxt(indelonx + 1);
+        relonturn r;
       }
 
-      @Override
-      public void remove() {
-        throw new UnsupportedOperationException();
+      @Ovelonrridelon
+      public void relonmovelon() {
+        throw nelonw UnsupportelondOpelonrationelonxcelonption();
       }
     };
   }
 
   /**
-   * Constructs an UserUpdatesTable with an given HashTable instance.
-   * Use <code>useIdFilter</code> as a Predicate that returns true for the elements
-   * needed to be kept in the table.
-   * Use shouldRehash to force a rehasing on the given HashTable.
+   * Constructs an UselonrUpdatelonsTablelon with an givelonn HashTablelon instancelon.
+   * Uselon <codelon>uselonIdFiltelonr</codelon> as a Prelondicatelon that relonturns truelon for thelon elonlelonmelonnts
+   * nelonelondelond to belon kelonpt in thelon tablelon.
+   * Uselon shouldRelonhash to forcelon a relonhasing on thelon givelonn HashTablelon.
    */
-  private UserTable(HashTable hashTable, Predicate<Long> userIdFilter,
-                    boolean shouldRehash) {
+  privatelon UselonrTablelon(HashTablelon hashTablelon, Prelondicatelon<Long> uselonrIdFiltelonr,
+                    boolelonan shouldRelonhash) {
 
-    Preconditions.checkNotNull(userIdFilter);
+    Prelonconditions.chelonckNotNull(uselonrIdFiltelonr);
 
-    this.hashTable.set(hashTable);
-    this.userIdFilter = userIdFilter;
+    this.hashTablelon.selont(hashTablelon);
+    this.uselonrIdFiltelonr = uselonrIdFiltelonr;
 
-    exportUserUpdatesTableStats();
+    elonxportUselonrUpdatelonsTablelonStats();
 
-    LOG.info("User table num users: {}. Users with no bits set: {}. "
-            + "Antisocial users: {}. Offensive users: {}. Nsfw users: {}. IsProtected users: {}.",
-        this.getNumUsersInTable(),
-        this.getNumUsersWithNoBitsSet(),
-        this.getSetBitCount(ANTISOCIAL_BIT),
-        this.getSetBitCount(OFFENSIVE_BIT),
-        this.getSetBitCount(NSFW_BIT),
-        this.getSetBitCount(IS_PROTECTED_BIT));
+    LOG.info("Uselonr tablelon num uselonrs: {}. Uselonrs with no bits selont: {}. "
+            + "Antisocial uselonrs: {}. Offelonnsivelon uselonrs: {}. Nsfw uselonrs: {}. IsProtelonctelond uselonrs: {}.",
+        this.gelontNumUselonrsInTablelon(),
+        this.gelontNumUselonrsWithNoBitsSelont(),
+        this.gelontSelontBitCount(ANTISOCIAL_BIT),
+        this.gelontSelontBitCount(OFFelonNSIVelon_BIT),
+        this.gelontSelontBitCount(NSFW_BIT),
+        this.gelontSelontBitCount(IS_PROTelonCTelonD_BIT));
 
-    if (shouldRehash) {
-      int filteredTableSize = filterTableAndCountValidItems();
-      // Having exactly 100% usage can impact lookup. Maintain the table at under 50% usage.
-      int newTableCapacity = computeDesiredHashTableCapacity(filteredTableSize * 2);
+    if (shouldRelonhash) {
+      int filtelonrelondTablelonSizelon = filtelonrTablelonAndCountValidItelonms();
+      // Having elonxactly 100% usagelon can impact lookup. Maintain thelon tablelon at undelonr 50% usagelon.
+      int nelonwTablelonCapacity = computelonDelonsirelondHashTablelonCapacity(filtelonrelondTablelonSizelon * 2);
 
-      rehash(newTableCapacity);
+      relonhash(nelonwTablelonCapacity);
 
-      LOG.info("User table num users after rehash: {}. Users with no bits set: {}. "
-              + "Antisocial users: {}. Offensive users: {}. Nsfw users: {}. IsProtected users: {}.",
-          this.getNumUsersInTable(),
-          this.getNumUsersWithNoBitsSet(),
-          this.getSetBitCount(ANTISOCIAL_BIT),
-          this.getSetBitCount(OFFENSIVE_BIT),
-          this.getSetBitCount(NSFW_BIT),
-          this.getSetBitCount(IS_PROTECTED_BIT));
+      LOG.info("Uselonr tablelon num uselonrs aftelonr relonhash: {}. Uselonrs with no bits selont: {}. "
+              + "Antisocial uselonrs: {}. Offelonnsivelon uselonrs: {}. Nsfw uselonrs: {}. IsProtelonctelond uselonrs: {}.",
+          this.gelontNumUselonrsInTablelon(),
+          this.gelontNumUselonrsWithNoBitsSelont(),
+          this.gelontSelontBitCount(ANTISOCIAL_BIT),
+          this.gelontSelontBitCount(OFFelonNSIVelon_BIT),
+          this.gelontSelontBitCount(NSFW_BIT),
+          this.gelontSelontBitCount(IS_PROTelonCTelonD_BIT));
     }
   }
 
-  private UserTable(int initialSize, Predicate<Long> userIdFilter) {
-    this(new HashTable(computeDesiredHashTableCapacity(initialSize)), userIdFilter, false);
+  privatelon UselonrTablelon(int initialSizelon, Prelondicatelon<Long> uselonrIdFiltelonr) {
+    this(nelonw HashTablelon(computelonDelonsirelondHashTablelonCapacity(initialSizelon)), uselonrIdFiltelonr, falselon);
   }
 
-  @VisibleForTesting
-  public UserTable(int initialSize) {
-    this(initialSize, userId -> true);
+  @VisiblelonForTelonsting
+  public UselonrTablelon(int initialSizelon) {
+    this(initialSizelon, uselonrId -> truelon);
   }
 
-  public static UserTable
-    newTableWithDefaultCapacityAndPredicate(Predicate<Long> userIdFilter) {
+  public static UselonrTablelon
+    nelonwTablelonWithDelonfaultCapacityAndPrelondicatelon(Prelondicatelon<Long> uselonrIdFiltelonr) {
 
-    return new UserTable(DEFAULT_INITIAL_CAPACITY, userIdFilter);
+    relonturn nelonw UselonrTablelon(DelonFAULT_INITIAL_CAPACITY, uselonrIdFiltelonr);
   }
 
-  public static UserTable newTableNonFilteredWithDefaultCapacity() {
-    return newTableWithDefaultCapacityAndPredicate(userId -> true);
+  public static UselonrTablelon nelonwTablelonNonFiltelonrelondWithDelonfaultCapacity() {
+    relonturn nelonwTablelonWithDelonfaultCapacityAndPrelondicatelon(uselonrId -> truelon);
   }
 
-  private void exportUserUpdatesTableStats() {
-    userTableSize = SearchLongGauge.export(USER_TABLE_SIZE);
-    userTableCapacity = SearchLongGauge.export(USER_TABLE_CAPACITY);
-    userTableNumUsersWithNoBitsSet = SearchLongGauge.export(
-        USER_NUM_USERS_WITH_NO_BITS_SET
+  privatelon void elonxportUselonrUpdatelonsTablelonStats() {
+    uselonrTablelonSizelon = SelonarchLongGaugelon.elonxport(USelonR_TABLelon_SIZelon);
+    uselonrTablelonCapacity = SelonarchLongGaugelon.elonxport(USelonR_TABLelon_CAPACITY);
+    uselonrTablelonNumUselonrsWithNoBitsSelont = SelonarchLongGaugelon.elonxport(
+        USelonR_NUM_USelonRS_WITH_NO_BITS_SelonT
     );
-    userTableAntisocialUsers = SearchLongGauge.export(USER_TABLE_ANTISOCIAL_USERS);
-    userTableOffensiveUsers = SearchLongGauge.export(USER_TABLE_OFFENSIVE_USERS);
-    userTableNsfwUsers = SearchLongGauge.export(USER_TABLE_NSFW_USERS);
-    userTableIsProtectedUsers = SearchLongGauge.export(USER_TABLE_IS_PROTECTED_USERS);
+    uselonrTablelonAntisocialUselonrs = SelonarchLongGaugelon.elonxport(USelonR_TABLelon_ANTISOCIAL_USelonRS);
+    uselonrTablelonOffelonnsivelonUselonrs = SelonarchLongGaugelon.elonxport(USelonR_TABLelon_OFFelonNSIVelon_USelonRS);
+    uselonrTablelonNsfwUselonrs = SelonarchLongGaugelon.elonxport(USelonR_TABLelon_NSFW_USelonRS);
+    uselonrTablelonIsProtelonctelondUselonrs = SelonarchLongGaugelon.elonxport(USelonR_TABLelon_IS_PROTelonCTelonD_USelonRS);
 
     LOG.info(
-        "Exporting stats for user table. Starting with numUsersInTable={}, usersWithZeroBits={}, "
-            + "antisocialUsers={}, offensiveUsers={}, nsfwUsers={}, isProtectedUsers={}.",
-        getNumUsersInTable(),
-        getNumUsersWithNoBitsSet(),
-        getSetBitCount(ANTISOCIAL_BIT),
-        getSetBitCount(OFFENSIVE_BIT),
-        getSetBitCount(NSFW_BIT),
-        getSetBitCount(IS_PROTECTED_BIT));
-    updateStats();
+        "elonxporting stats for uselonr tablelon. Starting with numUselonrsInTablelon={}, uselonrsWithZelonroBits={}, "
+            + "antisocialUselonrs={}, offelonnsivelonUselonrs={}, nsfwUselonrs={}, isProtelonctelondUselonrs={}.",
+        gelontNumUselonrsInTablelon(),
+        gelontNumUselonrsWithNoBitsSelont(),
+        gelontSelontBitCount(ANTISOCIAL_BIT),
+        gelontSelontBitCount(OFFelonNSIVelon_BIT),
+        gelontSelontBitCount(NSFW_BIT),
+        gelontSelontBitCount(IS_PROTelonCTelonD_BIT));
+    updatelonStats();
   }
 
-  private void updateStats() {
-    HashTable table = this.hashTable.get();
-    userTableSize.set(table.numUsersInTable);
-    userTableNumUsersWithNoBitsSet.set(table.numUsersWithNoBitsSet);
-    userTableCapacity.set(table.hashSize());
-    userTableAntisocialUsers.set(getSetBitCount(ANTISOCIAL_BIT));
-    userTableOffensiveUsers.set(getSetBitCount(OFFENSIVE_BIT));
-    userTableNsfwUsers.set(getSetBitCount(NSFW_BIT));
-    userTableIsProtectedUsers.set(getSetBitCount(IS_PROTECTED_BIT));
-  }
-
-  /**
-   * Computes the size of the hashtable as the first power of two greater than or equal to initialSize
-   */
-  private static int computeDesiredHashTableCapacity(int initialSize) {
-    long powerOfTwoSize = 2;
-    while (initialSize > powerOfTwoSize) {
-      powerOfTwoSize *= 2;
-    }
-    if (powerOfTwoSize > Integer.MAX_VALUE) {
-      LOG.error("Error: powerOfTwoSize overflowed Integer.MAX_VALUE! Initial size: " + initialSize);
-      powerOfTwoSize = 1 << 30;  // max power of 2
-    }
-
-    return (int) powerOfTwoSize;
-  }
-
-  public int getNumUsersInTable() {
-    return hashTable.get().numUsersInTable;
+  privatelon void updatelonStats() {
+    HashTablelon tablelon = this.hashTablelon.gelont();
+    uselonrTablelonSizelon.selont(tablelon.numUselonrsInTablelon);
+    uselonrTablelonNumUselonrsWithNoBitsSelont.selont(tablelon.numUselonrsWithNoBitsSelont);
+    uselonrTablelonCapacity.selont(tablelon.hashSizelon());
+    uselonrTablelonAntisocialUselonrs.selont(gelontSelontBitCount(ANTISOCIAL_BIT));
+    uselonrTablelonOffelonnsivelonUselonrs.selont(gelontSelontBitCount(OFFelonNSIVelon_BIT));
+    uselonrTablelonNsfwUselonrs.selont(gelontSelontBitCount(NSFW_BIT));
+    uselonrTablelonIsProtelonctelondUselonrs.selont(gelontSelontBitCount(IS_PROTelonCTelonD_BIT));
   }
 
   /**
-   * Get the number of users who have the bit set at the `userStateBit` position
+   * Computelons thelon sizelon of thelon hashtablelon as thelon first powelonr of two grelonatelonr than or elonqual to initialSizelon
    */
-  public long getSetBitCount(int userStateBit) {
-    int bit = userStateBit;
+  privatelon static int computelonDelonsirelondHashTablelonCapacity(int initialSizelon) {
+    long powelonrOfTwoSizelon = 2;
+    whilelon (initialSizelon > powelonrOfTwoSizelon) {
+      powelonrOfTwoSizelon *= 2;
+    }
+    if (powelonrOfTwoSizelon > Intelongelonr.MAX_VALUelon) {
+      LOG.elonrror("elonrror: powelonrOfTwoSizelon ovelonrflowelond Intelongelonr.MAX_VALUelon! Initial sizelon: " + initialSizelon);
+      powelonrOfTwoSizelon = 1 << 30;  // max powelonr of 2
+    }
+
+    relonturn (int) powelonrOfTwoSizelon;
+  }
+
+  public int gelontNumUselonrsInTablelon() {
+    relonturn hashTablelon.gelont().numUselonrsInTablelon;
+  }
+
+  /**
+   * Gelont thelon numbelonr of uselonrs who havelon thelon bit selont at thelon `uselonrStatelonBit` position
+   */
+  public long gelontSelontBitCount(int uselonrStatelonBit) {
+    int bit = uselonrStatelonBit;
     int bitPosition = 0;
-    while (bit != 0 && (bit & 1) == 0) {
+    whilelon (bit != 0 && (bit & 1) == 0) {
       bit = bit >>> 1;
       bitPosition++;
     }
-    return hashTable.get().setBitCounts[bitPosition];
+    relonturn hashTablelon.gelont().selontBitCounts[bitPosition];
   }
 
-  public Predicate<Long> getUserIdFilter() {
-    return userIdFilter::test;
+  public Prelondicatelon<Long> gelontUselonrIdFiltelonr() {
+    relonturn uselonrIdFiltelonr::telonst;
   }
 
   /**
-   * Updates a user flag in this table.
+   * Updatelons a uselonr flag in this tablelon.
    */
-  public final void set(long userID, int bit, boolean value) {
-    // if userID is filtered return immediately
-    if (!shouldKeepUser(userID)) {
-      USER_TABLE_USERS_FILTERED_COUNTER.increment();
-      return;
+  public final void selont(long uselonrID, int bit, boolelonan valuelon) {
+    // if uselonrID is filtelonrelond relonturn immelondiatelonly
+    if (!shouldKelonelonpUselonr(uselonrID)) {
+      USelonR_TABLelon_USelonRS_FILTelonRelonD_COUNTelonR.increlonmelonnt();
+      relonturn;
     }
 
-    HashTable table = this.hashTable.get();
+    HashTablelon tablelon = this.hashTablelon.gelont();
 
-    int hashPos = findHashPosition(table, userID);
-    long item = table.hash[hashPos];
-    byte bits = 0;
+    int hashPos = findHashPosition(tablelon, uselonrID);
+    long itelonm = tablelon.hash[hashPos];
+    bytelon bits = 0;
     int bitsDiff = 0;
 
-    if (item != 0) {
-      byte bitsOriginally = bits = table.bits[hashPos];
-      if (value) {
+    if (itelonm != 0) {
+      bytelon bitsOriginally = bits = tablelon.bits[hashPos];
+      if (valuelon) {
         bits |= bit;
-      } else {
-        // AND'ing with the inverse map clears the desired bit, but
-        // doesn't change any of the other bits
+      } elonlselon {
+        // AND'ing with thelon invelonrselon map clelonars thelon delonsirelond bit, but
+        // doelonsn't changelon any of thelon othelonr bits
         bits &= ~bit;
       }
 
-      // Find the changed bits after the above operation, it is possible that no bit is changed if
-      // the input 'bit' is already set/unset in the table.
-      // Since bitwise operators cannot be directly applied on Byte, Byte is promoted into int to
-      // apply the operators. When that happens, if the most significant bit of the Byte is set,
-      // the promoted int has all significant bits set to 1. 0xff bitmask is applied here to make
-      // sure only the last 8 bits are considered.
+      // Find thelon changelond bits aftelonr thelon abovelon opelonration, it is possiblelon that no bit is changelond if
+      // thelon input 'bit' is alrelonady selont/unselont in thelon tablelon.
+      // Sincelon bitwiselon opelonrators cannot belon direlonctly applielond on Bytelon, Bytelon is promotelond into int to
+      // apply thelon opelonrators. Whelonn that happelonns, if thelon most significant bit of thelon Bytelon is selont,
+      // thelon promotelond int has all significant bits selont to 1. 0xff bitmask is applielond helonrelon to makelon
+      // surelon only thelon last 8 bits arelon considelonrelond.
       bitsDiff = (bitsOriginally & 0xff) ^ (bits & 0xff);
 
       if (bitsOriginally > 0 && bits == 0) {
-        table.numUsersWithNoBitsSet++;
-      } else if (bitsOriginally == 0 && bits > 0) {
-        table.numUsersWithNoBitsSet--;
+        tablelon.numUselonrsWithNoBitsSelont++;
+      } elonlselon if (bitsOriginally == 0 && bits > 0) {
+        tablelon.numUselonrsWithNoBitsSelont--;
       }
-    } else {
-      if (!value) {
-        // no need to add this user, since all bits would be false anyway
-        return;
+    } elonlselon {
+      if (!valuelon) {
+        // no nelonelond to add this uselonr, sincelon all bits would belon falselon anyway
+        relonturn;
       }
 
-      // New user string.
-      if (table.numUsersInTable + 1 >= (table.hashSize() >> 1)
-          && table.hashSize() != userUpdateTableMaxCapacity) {
-        if (2L * (long) table.hashSize() < userUpdateTableMaxCapacity) {
-          rehash(2 * table.hashSize());
-          table = this.hashTable.get();
-        } else {
-          if (table.hashSize() < (int) userUpdateTableMaxCapacity) {
-            rehash((int) userUpdateTableMaxCapacity);
-            table = this.hashTable.get();
-            LOG.warn("User update table size reached Integer.MAX_VALUE, performance will degrade.");
+      // Nelonw uselonr string.
+      if (tablelon.numUselonrsInTablelon + 1 >= (tablelon.hashSizelon() >> 1)
+          && tablelon.hashSizelon() != uselonrUpdatelonTablelonMaxCapacity) {
+        if (2L * (long) tablelon.hashSizelon() < uselonrUpdatelonTablelonMaxCapacity) {
+          relonhash(2 * tablelon.hashSizelon());
+          tablelon = this.hashTablelon.gelont();
+        } elonlselon {
+          if (tablelon.hashSizelon() < (int) uselonrUpdatelonTablelonMaxCapacity) {
+            relonhash((int) uselonrUpdatelonTablelonMaxCapacity);
+            tablelon = this.hashTablelon.gelont();
+            LOG.warn("Uselonr updatelon tablelon sizelon relonachelond Intelongelonr.MAX_VALUelon, pelonrformancelon will delongradelon.");
           }
         }
 
-        // Must repeat this operation with the resized hashTable.
-        hashPos = findHashPosition(table, userID);
+        // Must relonpelonat this opelonration with thelon relonsizelond hashTablelon.
+        hashPos = findHashPosition(tablelon, uselonrID);
       }
 
-      item = userID;
+      itelonm = uselonrID;
       bits |= bit;
       bitsDiff = bit & 0xff;
 
-      table.numUsersInTable++;
+      tablelon.numUselonrsInTablelon++;
     }
 
-    table.hash[hashPos] = item;
-    table.bits[hashPos] = bits;
+    tablelon.hash[hashPos] = itelonm;
+    tablelon.bits[hashPos] = bits;
 
-    // update setBitCounts for the changed bits after applying the input 'bit'
+    // updatelon selontBitCounts for thelon changelond bits aftelonr applying thelon input 'bit'
     int curBitsDiffPos = 0;
-    while (bitsDiff != 0) {
+    whilelon (bitsDiff != 0) {
       if ((bitsDiff & 1) != 0) {
-        if (value) {
-          table.setBitCounts[curBitsDiffPos]++;
-        } else {
-          table.setBitCounts[curBitsDiffPos]--;
+        if (valuelon) {
+          tablelon.selontBitCounts[curBitsDiffPos]++;
+        } elonlselon {
+          tablelon.selontBitCounts[curBitsDiffPos]--;
         }
       }
       bitsDiff = bitsDiff >>> 1;
       curBitsDiffPos++;
     }
 
-    updateStats();
+    updatelonStats();
   }
 
-  public final boolean isSet(long userID, int bits) {
-    HashTable table = hashTable.get();
-    int hashPos = findHashPosition(table, userID);
-    return table.hash[hashPos] != 0 && (table.bits[hashPos] & bits) != 0;
+  public final boolelonan isSelont(long uselonrID, int bits) {
+    HashTablelon tablelon = hashTablelon.gelont();
+    int hashPos = findHashPosition(tablelon, uselonrID);
+    relonturn tablelon.hash[hashPos] != 0 && (tablelon.bits[hashPos] & bits) != 0;
   }
 
   /**
-   * Returns true when userIdFilter condition is being met.
-   * If filter is not present returns true
+   * Relonturns truelon whelonn uselonrIdFiltelonr condition is beloning melont.
+   * If filtelonr is not prelonselonnt relonturns truelon
    */
-  private boolean shouldKeepUser(long userID) {
-    return userIdFilter.test(userID);
+  privatelon boolelonan shouldKelonelonpUselonr(long uselonrID) {
+    relonturn uselonrIdFiltelonr.telonst(uselonrID);
   }
 
-  private int findHashPosition(final HashTable table, final long userID) {
-    int code = hashCode(userID);
-    int hashPos = code & table.hashMask;
+  privatelon int findHashPosition(final HashTablelon tablelon, final long uselonrID) {
+    int codelon = hashCodelon(uselonrID);
+    int hashPos = codelon & tablelon.hashMask;
 
-    // Locate user in hash
-    long item = table.hash[hashPos];
+    // Locatelon uselonr in hash
+    long itelonm = tablelon.hash[hashPos];
 
-    if (item != 0 && item != userID) {
-      // Conflict: keep searching different locations in
-      // the hash table.
-      final int inc = ((code >> 8) + code) | 1;
+    if (itelonm != 0 && itelonm != uselonrID) {
+      // Conflict: kelonelonp selonarching diffelonrelonnt locations in
+      // thelon hash tablelon.
+      final int inc = ((codelon >> 8) + codelon) | 1;
       do {
-        code += inc;
-        hashPos = code & table.hashMask;
-        item = table.hash[hashPos];
-      } while (item != 0 && item != userID);
+        codelon += inc;
+        hashPos = codelon & tablelon.hashMask;
+        itelonm = tablelon.hash[hashPos];
+      } whilelon (itelonm != 0 && itelonm != uselonrID);
     }
 
-    return hashPos;
+    relonturn hashPos;
   }
 
   /**
-   * Applies the filtering predicate and returns the size of the filtered table.
+   * Applielons thelon filtelonring prelondicatelon and relonturns thelon sizelon of thelon filtelonrelond tablelon.
    */
-  private synchronized int filterTableAndCountValidItems() {
-    final HashTable oldTable = this.hashTable.get();
-    int newSize = 0;
+  privatelon synchronizelond int filtelonrTablelonAndCountValidItelonms() {
+    final HashTablelon oldTablelon = this.hashTablelon.gelont();
+    int nelonwSizelon = 0;
 
-    int clearNoItemSet = 0;
-    int clearNoBitsSet = 0;
-    int clearDontKeepUser = 0;
+    int clelonarNoItelonmSelont = 0;
+    int clelonarNoBitsSelont = 0;
+    int clelonarDontKelonelonpUselonr = 0;
 
-    for (int i = 0; i < oldTable.hashSize(); i++) {
-      final long item = oldTable.hash[i]; // this is the userID
-      final byte bits = oldTable.bits[i];
+    for (int i = 0; i < oldTablelon.hashSizelon(); i++) {
+      final long itelonm = oldTablelon.hash[i]; // this is thelon uselonrID
+      final bytelon bits = oldTablelon.bits[i];
 
-      boolean clearSlot = false;
-      if (item == 0) {
-        clearSlot = true;
-        clearNoItemSet++;
-      } else if (bits == 0) {
-        clearSlot = true;
-        clearNoBitsSet++;
-      } else if (!shouldKeepUser(item)) {
-        clearSlot = true;
-        clearDontKeepUser++;
+      boolelonan clelonarSlot = falselon;
+      if (itelonm == 0) {
+        clelonarSlot = truelon;
+        clelonarNoItelonmSelont++;
+      } elonlselon if (bits == 0) {
+        clelonarSlot = truelon;
+        clelonarNoBitsSelont++;
+      } elonlselon if (!shouldKelonelonpUselonr(itelonm)) {
+        clelonarSlot = truelon;
+        clelonarDontKelonelonpUselonr++;
       }
 
-      if (clearSlot) {
-        oldTable.hash[i] = 0;
-        oldTable.bits[i] = 0;
-      } else {
-        newSize += 1;
+      if (clelonarSlot) {
+        oldTablelon.hash[i] = 0;
+        oldTablelon.bits[i] = 0;
+      } elonlselon {
+        nelonwSizelon += 1;
       }
     }
 
-    oldTable.setCountOfNumUsersWithNoBitsSet();
-    oldTable.setSetBitCounts();
+    oldTablelon.selontCountOfNumUselonrsWithNoBitsSelont();
+    oldTablelon.selontSelontBitCounts();
 
-    LOG.info("Done filtering table: clearNoItemSet={}, clearNoBitsSet={}, clearDontKeepUser={}",
-        clearNoItemSet, clearNoBitsSet, clearDontKeepUser);
+    LOG.info("Donelon filtelonring tablelon: clelonarNoItelonmSelont={}, clelonarNoBitsSelont={}, clelonarDontKelonelonpUselonr={}",
+        clelonarNoItelonmSelont, clelonarNoBitsSelont, clelonarDontKelonelonpUselonr);
 
-    return newSize;
+    relonturn nelonwSizelon;
   }
 
   /**
-   * Called when hash is too small (> 50% occupied)
+   * Callelond whelonn hash is too small (> 50% occupielond)
    */
-  private void rehash(final int newSize) {
-    final HashTable oldTable = this.hashTable.get();
-    final HashTable newTable = new HashTable(newSize);
+  privatelon void relonhash(final int nelonwSizelon) {
+    final HashTablelon oldTablelon = this.hashTablelon.gelont();
+    final HashTablelon nelonwTablelon = nelonw HashTablelon(nelonwSizelon);
 
-    final int newMask = newTable.hashMask;
-    final long[] newHash = newTable.hash;
-    final byte[] newBits = newTable.bits;
+    final int nelonwMask = nelonwTablelon.hashMask;
+    final long[] nelonwHash = nelonwTablelon.hash;
+    final bytelon[] nelonwBits = nelonwTablelon.bits;
 
-    for (int i = 0; i < oldTable.hashSize(); i++) {
-      final long item = oldTable.hash[i];
-      final byte bits = oldTable.bits[i];
-      if (item != 0 && bits != 0) {
-        int code = hashCode(item);
+    for (int i = 0; i < oldTablelon.hashSizelon(); i++) {
+      final long itelonm = oldTablelon.hash[i];
+      final bytelon bits = oldTablelon.bits[i];
+      if (itelonm != 0 && bits != 0) {
+        int codelon = hashCodelon(itelonm);
 
-        int hashPos = code & newMask;
-        assert hashPos >= 0;
-        if (newHash[hashPos] != 0) {
-          final int inc = ((code >> 8) + code) | 1;
+        int hashPos = codelon & nelonwMask;
+        asselonrt hashPos >= 0;
+        if (nelonwHash[hashPos] != 0) {
+          final int inc = ((codelon >> 8) + codelon) | 1;
           do {
-            code += inc;
-            hashPos = code & newMask;
-          } while (newHash[hashPos] != 0);
+            codelon += inc;
+            hashPos = codelon & nelonwMask;
+          } whilelon (nelonwHash[hashPos] != 0);
         }
-        newHash[hashPos] = item;
-        newBits[hashPos] = bits;
-        newTable.numUsersInTable++;
+        nelonwHash[hashPos] = itelonm;
+        nelonwBits[hashPos] = bits;
+        nelonwTablelon.numUselonrsInTablelon++;
       }
     }
 
-    newTable.setCountOfNumUsersWithNoBitsSet();
-    newTable.setSetBitCounts();
-    this.hashTable.set(newTable);
+    nelonwTablelon.selontCountOfNumUselonrsWithNoBitsSelont();
+    nelonwTablelon.selontSelontBitCounts();
+    this.hashTablelon.selont(nelonwTablelon);
 
-    updateStats();
+    updatelonStats();
   }
 
-  public void setTable(UserTable newTable) {
-    hashTable.set(newTable.hashTable.get());
-    updateStats();
+  public void selontTablelon(UselonrTablelon nelonwTablelon) {
+    hashTablelon.selont(nelonwTablelon.hashTablelon.gelont());
+    updatelonStats();
   }
 
-  @VisibleForTesting
-  protected int getHashTableCapacity() {
-    return hashTable.get().hashSize();
+  @VisiblelonForTelonsting
+  protelonctelond int gelontHashTablelonCapacity() {
+    relonturn hashTablelon.gelont().hashSizelon();
   }
 
-  @VisibleForTesting
-  protected int getNumUsersWithNoBitsSet() {
-    return hashTable.get().numUsersWithNoBitsSet;
+  @VisiblelonForTelonsting
+  protelonctelond int gelontNumUselonrsWithNoBitsSelont() {
+    relonturn hashTablelon.gelont().numUselonrsWithNoBitsSelont;
   }
 }

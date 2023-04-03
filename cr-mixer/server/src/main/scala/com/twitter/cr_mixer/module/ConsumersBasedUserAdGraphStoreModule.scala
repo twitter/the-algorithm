@@ -1,29 +1,29 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.recos.user_ad_graph.thriftscala.ConsumersBasedRelatedAdRequest
-import com.twitter.recos.user_ad_graph.thriftscala.RelatedAdResponse
-import com.twitter.recos.user_ad_graph.thriftscala.UserAdGraph
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.reloncos.uselonr_ad_graph.thriftscala.ConsumelonrsBaselondRelonlatelondAdRelonquelonst
+import com.twittelonr.reloncos.uselonr_ad_graph.thriftscala.RelonlatelondAdRelonsponselon
+import com.twittelonr.reloncos.uselonr_ad_graph.thriftscala.UselonrAdGraph
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object ConsumersBasedUserAdGraphStoreModule extends TwitterModule {
+objelonct ConsumelonrsBaselondUselonrAdGraphStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.ConsumerBasedUserAdGraphStore)
-  def providesConsumerBasedUserAdGraphStore(
-    userAdGraphService: UserAdGraph.MethodPerEndpoint
-  ): ReadableStore[ConsumersBasedRelatedAdRequest, RelatedAdResponse] = {
-    new ReadableStore[ConsumersBasedRelatedAdRequest, RelatedAdResponse] {
-      override def get(
-        k: ConsumersBasedRelatedAdRequest
-      ): Future[Option[RelatedAdResponse]] = {
-        userAdGraphService.consumersBasedRelatedAds(k).map(Some(_))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.ConsumelonrBaselondUselonrAdGraphStorelon)
+  delonf providelonsConsumelonrBaselondUselonrAdGraphStorelon(
+    uselonrAdGraphSelonrvicelon: UselonrAdGraph.MelonthodPelonrelonndpoint
+  ): RelonadablelonStorelon[ConsumelonrsBaselondRelonlatelondAdRelonquelonst, RelonlatelondAdRelonsponselon] = {
+    nelonw RelonadablelonStorelon[ConsumelonrsBaselondRelonlatelondAdRelonquelonst, RelonlatelondAdRelonsponselon] {
+      ovelonrridelon delonf gelont(
+        k: ConsumelonrsBaselondRelonlatelondAdRelonquelonst
+      ): Futurelon[Option[RelonlatelondAdRelonsponselon]] = {
+        uselonrAdGraphSelonrvicelon.consumelonrsBaselondRelonlatelondAds(k).map(Somelon(_))
       }
     }
   }

@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon
 
-sealed trait UserFacepileDisplayType
+selonalelond trait UselonrFacelonpilelonDisplayTypelon
 
-case object LargeUserFacepileDisplayType extends UserFacepileDisplayType
-case object CompactUserFacepileDisplayType extends UserFacepileDisplayType
+caselon objelonct LargelonUselonrFacelonpilelonDisplayTypelon elonxtelonnds UselonrFacelonpilelonDisplayTypelon
+caselon objelonct CompactUselonrFacelonpilelonDisplayTypelon elonxtelonnds UselonrFacelonpilelonDisplayTypelon

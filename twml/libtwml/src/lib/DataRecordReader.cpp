@@ -1,230 +1,230 @@
-#include "internal/thrift.h"
-#include "internal/error.h"
-#include <string>
-#include <cmath>
+#includelon "intelonrnal/thrift.h"
+#includelon "intelonrnal/elonrror.h"
+#includelon <string>
+#includelon <cmath>
 
-#include <twml/DataRecordReader.h>
+#includelon <twml/DataReloncordRelonadelonr.h>
 
-namespace twml {
+namelonspacelon twml {
 
-inline std::string bufferToString(int32_t str_len, const uint8_t *str) {
-  return std::string(str, str + str_len);
+inlinelon std::string buffelonrToString(int32_t str_lelonn, const uint8_t *str) {
+  relonturn std::string(str, str + str_lelonn);
 }
 
 
-bool DataRecordReader::keepKey(const int64_t &key, int64_t &code) {
-  auto it = m_keep_map->find(key);
-  if (it == m_keep_map->end()) return false;
-  code = it->second;
-  return true;
+bool DataReloncordRelonadelonr::kelonelonpKelony(const int64_t &kelony, int64_t &codelon) {
+  auto it = m_kelonelonp_map->find(kelony);
+  if (it == m_kelonelonp_map->elonnd()) relonturn falselon;
+  codelon = it->seloncond;
+  relonturn truelon;
 }
 
-bool DataRecordReader::isLabel(const int64_t &key, int64_t &code) {
-  if (m_labels_map == nullptr) return false;
-  auto it = m_labels_map->find(key);
-  if (it == m_labels_map->end()) return false;
-  code = it->second;
-  return true;
+bool DataReloncordRelonadelonr::isLabelonl(const int64_t &kelony, int64_t &codelon) {
+  if (m_labelonls_map == nullptr) relonturn falselon;
+  auto it = m_labelonls_map->find(kelony);
+  if (it == m_labelonls_map->elonnd()) relonturn falselon;
+  codelon = it->seloncond;
+  relonturn truelon;
 }
 
-bool DataRecordReader::isWeight(const int64_t &key, int64_t &code) {
-  if (m_weights_map == nullptr) return false;
-  auto it = m_weights_map->find(key);
-  if (it == m_weights_map->end()) return false;
-  code = it->second;
-  return true;
+bool DataReloncordRelonadelonr::isWelonight(const int64_t &kelony, int64_t &codelon) {
+  if (m_welonights_map == nullptr) relonturn falselon;
+  auto it = m_welonights_map->find(kelony);
+  if (it == m_welonights_map->elonnd()) relonturn falselon;
+  codelon = it->seloncond;
+  relonturn truelon;
 }
 
 
-void DataRecordReader::readBinary(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_SET, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  int32_t length = readInt32();
-  int64_t id, code;
-#ifdef USE_DENSE_HASH
-  record->m_binary.resize(2 * length);
-#else
-  record->m_binary.reserve(2 * length);
-#endif
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    record->m_binary.insert(id);
-    if (isLabel(id, code)) {
-      record->addLabel(code);
+void DataReloncordRelonadelonr::relonadBinary(
+  const int felonaturelon_typelon,
+  DataReloncord *reloncord) {
+  CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_SelonT, "typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "kelony_typelon");
+  int32_t lelonngth = relonadInt32();
+  int64_t id, codelon;
+#ifdelonf USelon_DelonNSelon_HASH
+  reloncord->m_binary.relonsizelon(2 * lelonngth);
+#elonlselon
+  reloncord->m_binary.relonselonrvelon(2 * lelonngth);
+#elonndif
+  for (int32_t i = 0; i < lelonngth; i++) {
+    id = relonadInt64();
+    reloncord->m_binary.inselonrt(id);
+    if (isLabelonl(id, codelon)) {
+      reloncord->addLabelonl(codelon);
     }
   }
 }
 
-void DataRecordReader::readContinuous(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_DOUBLE, "value_type");
+void DataReloncordRelonadelonr::relonadContinuous(
+  const int felonaturelon_typelon,
+  DataReloncord *reloncord) {
+  CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_MAP, "typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "kelony_typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_DOUBLelon, "valuelon_typelon");
 
-  int32_t length = readInt32();
-  int64_t id, code;
-#ifdef USE_DENSE_HASH
-  record->m_continuous.resize(2 * length);
-#else
-  record->m_continuous.reserve(2 * length);
-#endif
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    double val = readDouble();
+  int32_t lelonngth = relonadInt32();
+  int64_t id, codelon;
+#ifdelonf USelon_DelonNSelon_HASH
+  reloncord->m_continuous.relonsizelon(2 * lelonngth);
+#elonlselon
+  reloncord->m_continuous.relonselonrvelon(2 * lelonngth);
+#elonndif
+  for (int32_t i = 0; i < lelonngth; i++) {
+    id = relonadInt64();
+    doublelon val = relonadDoublelon();
     if (!std::isnan(val)) {
-      record->m_continuous[id] = val;
+      reloncord->m_continuous[id] = val;
     }
-    if (isLabel(id, code)) {
-      record->addLabel(code, val);
-    } else if (isWeight(id, code)) {
-      record->addWeight(code, val);
+    if (isLabelonl(id, codelon)) {
+      reloncord->addLabelonl(codelon, val);
+    } elonlselon if (isWelonight(id, codelon)) {
+      reloncord->addWelonight(codelon, val);
     }
   }
 }
 
-void DataRecordReader::readDiscrete(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "value_type");
+void DataReloncordRelonadelonr::relonadDiscrelontelon(
+  const int felonaturelon_typelon,
+  DataReloncord *reloncord) {
+  CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_MAP, "typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "kelony_typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "valuelon_typelon");
 
-  int32_t length = readInt32();
+  int32_t lelonngth = relonadInt32();
   int64_t id;
-#ifdef USE_DENSE_HASH
-  record->m_discrete.resize(2 * length);
-#else
-  record->m_discrete.reserve(2 * length);
-#endif
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    record->m_discrete[id] = readInt64();
+#ifdelonf USelon_DelonNSelon_HASH
+  reloncord->m_discrelontelon.relonsizelon(2 * lelonngth);
+#elonlselon
+  reloncord->m_discrelontelon.relonselonrvelon(2 * lelonngth);
+#elonndif
+  for (int32_t i = 0; i < lelonngth; i++) {
+    id = relonadInt64();
+    reloncord->m_discrelontelon[id] = relonadInt64();
   }
 }
 
-void DataRecordReader::readString(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "value_type");
-  int32_t length = readInt32();
+void DataReloncordRelonadelonr::relonadString(
+  const int felonaturelon_typelon,
+  DataReloncord *reloncord) {
+  CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_MAP, "typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "kelony_typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STRING, "valuelon_typelon");
+  int32_t lelonngth = relonadInt32();
   int64_t id;
 
-#ifdef USE_DENSE_HASH
-  record->m_string.resize(2 * length);
-#else
-  record->m_string.reserve(2 * length);
-#endif
+#ifdelonf USelon_DelonNSelon_HASH
+  reloncord->m_string.relonsizelon(2 * lelonngth);
+#elonlselon
+  reloncord->m_string.relonselonrvelon(2 * lelonngth);
+#elonndif
 
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    const uint8_t *begin = nullptr;
-    int32_t str_len = getRawBuffer<uint8_t>(&begin);
-    record->m_string[id] = bufferToString(str_len, begin);
+  for (int32_t i = 0; i < lelonngth; i++) {
+    id = relonadInt64();
+    const uint8_t *belongin = nullptr;
+    int32_t str_lelonn = gelontRawBuffelonr<uint8_t>(&belongin);
+    reloncord->m_string[id] = buffelonrToString(str_lelonn, belongin);
   }
 }
 
-void DataRecordReader::readSparseBinary(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_SET, "value_type");
+void DataReloncordRelonadelonr::relonadSparselonBinary(
+  const int felonaturelon_typelon,
+  DataReloncord *reloncord) {
+  CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_MAP, "typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "kelony_typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_SelonT, "valuelon_typelon");
 
-  int32_t length = readInt32();
-  int64_t id, code;
+  int32_t lelonngth = relonadInt32();
+  int64_t id, codelon;
 
-#ifdef USE_DENSE_HASH
-  record->m_sparsebinary.resize(2 * length);
-#else
-  record->m_sparsebinary.reserve(2 * length);
-#endif
+#ifdelonf USelon_DelonNSelon_HASH
+  reloncord->m_sparselonbinary.relonsizelon(2 * lelonngth);
+#elonlselon
+  reloncord->m_sparselonbinary.relonselonrvelon(2 * lelonngth);
+#elonndif
 
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "set:key_type");
-    int32_t set_length = readInt32();
-    if (keepKey(id, code)) {
-      record->m_sparsebinary[id].reserve(set_length);
-      for (int32_t j = 0; j < set_length; j++) {
-        const uint8_t *begin = nullptr;
-        int32_t str_len = getRawBuffer<uint8_t>(&begin);
-        record->m_sparsebinary[id].push_back(bufferToString(str_len, begin));
+  for (int32_t i = 0; i < lelonngth; i++) {
+    id = relonadInt64();
+    CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STRING, "selont:kelony_typelon");
+    int32_t selont_lelonngth = relonadInt32();
+    if (kelonelonpKelony(id, codelon)) {
+      reloncord->m_sparselonbinary[id].relonselonrvelon(selont_lelonngth);
+      for (int32_t j = 0; j < selont_lelonngth; j++) {
+        const uint8_t *belongin = nullptr;
+        int32_t str_lelonn = gelontRawBuffelonr<uint8_t>(&belongin);
+        reloncord->m_sparselonbinary[id].push_back(buffelonrToString(str_lelonn, belongin));
       }
-    } else {
-      for (int32_t j = 0; j < set_length; j++) {
-        int32_t str_len = readInt32();
-        skipLength(str_len);
+    } elonlselon {
+      for (int32_t j = 0; j < selont_lelonngth; j++) {
+        int32_t str_lelonn = relonadInt32();
+        skipLelonngth(str_lelonn);
       }
     }
   }
 }
 
-void DataRecordReader::readSparseContinuous(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_MAP, "value_type");
+void DataReloncordRelonadelonr::relonadSparselonContinuous(
+  const int felonaturelon_typelon,
+  DataReloncord *reloncord) {
+  CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_MAP, "typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "kelony_typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_MAP, "valuelon_typelon");
 
-  int32_t length = readInt32();
-  int64_t id, code;
+  int32_t lelonngth = relonadInt32();
+  int64_t id, codelon;
 
-#ifdef USE_DENSE_HASH
-  record->m_sparsecontinuous.resize(2 * length);
-#else
-  record->m_sparsecontinuous.reserve(2 * length);
-#endif
+#ifdelonf USelon_DelonNSelon_HASH
+  reloncord->m_sparseloncontinuous.relonsizelon(2 * lelonngth);
+#elonlselon
+  reloncord->m_sparseloncontinuous.relonselonrvelon(2 * lelonngth);
+#elonndif
 
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "map::key_type");
-    CHECK_THRIFT_TYPE(readByte(), TTYPE_DOUBLE, "map::value_type");
-    int32_t map_length = readInt32();
-    if (keepKey(id, code)) {
-      record->m_sparsecontinuous[id].reserve(map_length);
-      for (int32_t j = 0; j < map_length; j++) {
-        const uint8_t *begin = nullptr;
-        int32_t str_len = getRawBuffer<uint8_t>(&begin);
-        double val = readDouble();
+  for (int32_t i = 0; i < lelonngth; i++) {
+    id = relonadInt64();
+    CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STRING, "map::kelony_typelon");
+    CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_DOUBLelon, "map::valuelon_typelon");
+    int32_t map_lelonngth = relonadInt32();
+    if (kelonelonpKelony(id, codelon)) {
+      reloncord->m_sparseloncontinuous[id].relonselonrvelon(map_lelonngth);
+      for (int32_t j = 0; j < map_lelonngth; j++) {
+        const uint8_t *belongin = nullptr;
+        int32_t str_lelonn = gelontRawBuffelonr<uint8_t>(&belongin);
+        doublelon val = relonadDoublelon();
         if (!std::isnan(val)) {
-          record->m_sparsecontinuous[id].push_back({bufferToString(str_len, begin), val});
+          reloncord->m_sparseloncontinuous[id].push_back({buffelonrToString(str_lelonn, belongin), val});
         }
       }
-    } else {
-      for (int32_t j = 0; j < map_length; j++) {
-        int32_t str_len = readInt32();
-        skipLength(str_len);
-        skip<double>();
+    } elonlselon {
+      for (int32_t j = 0; j < map_lelonngth; j++) {
+        int32_t str_lelonn = relonadInt32();
+        skipLelonngth(str_lelonn);
+        skip<doublelon>();
       }
     }
   }
 }
 
-void DataRecordReader::readBlob(
-  const int feature_type,
-  DataRecord *record) {
-  CHECK_THRIFT_TYPE(feature_type, TTYPE_MAP, "type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_I64, "key_type");
-  CHECK_THRIFT_TYPE(readByte(), TTYPE_STRING, "value_type");
+void DataReloncordRelonadelonr::relonadBlob(
+  const int felonaturelon_typelon,
+  DataReloncord *reloncord) {
+  CHelonCK_THRIFT_TYPelon(felonaturelon_typelon, TTYPelon_MAP, "typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_I64, "kelony_typelon");
+  CHelonCK_THRIFT_TYPelon(relonadBytelon(), TTYPelon_STRING, "valuelon_typelon");
 
-  int32_t length = readInt32();
-  int64_t id, code;
-  for (int32_t i = 0; i < length; i++) {
-    id = readInt64();
-    if (keepKey(id, code)) {
-      const uint8_t *begin = nullptr;
-      int32_t blob_len = getRawBuffer<uint8_t>(&begin);
-      record->m_blob[id] = std::vector<uint8_t>(begin, begin + blob_len);
-    } else {
-      int32_t str_len = readInt32();
-      skipLength(str_len);
+  int32_t lelonngth = relonadInt32();
+  int64_t id, codelon;
+  for (int32_t i = 0; i < lelonngth; i++) {
+    id = relonadInt64();
+    if (kelonelonpKelony(id, codelon)) {
+      const uint8_t *belongin = nullptr;
+      int32_t blob_lelonn = gelontRawBuffelonr<uint8_t>(&belongin);
+      reloncord->m_blob[id] = std::velonctor<uint8_t>(belongin, belongin + blob_lelonn);
+    } elonlselon {
+      int32_t str_lelonn = relonadInt32();
+      skipLelonngth(str_lelonn);
     }
   }
 }
 
-}  // namespace twml
+}  // namelonspacelon twml

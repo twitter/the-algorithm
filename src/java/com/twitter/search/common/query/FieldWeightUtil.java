@@ -1,204 +1,204 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.util.Collections;
-import java.util.EnumSet;
+import java.util.Collelonctions;
+import java.util.elonnumSelont;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Enums;
-import com.google.common.base.Function;
-import com.google.common.base.Functions;
-import com.google.common.base.Predicates;
-import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.elonnums;
+import com.googlelon.common.baselon.Function;
+import com.googlelon.common.baselon.Functions;
+import com.googlelon.common.baselon.Prelondicatelons;
+import com.googlelon.common.collelonct.FluelonntItelonrablelon;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Itelonrablelons;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.annotation.FieldAnnotationUtils;
-import com.twitter.search.queryparser.query.annotation.FieldNameWithBoost;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldWelonightDelonfault;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.Annotation;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.FielonldAnnotationUtils;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.FielonldNamelonWithBoost;
 
-public final class FieldWeightUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(FieldWeightUtil.class);
-  private FieldWeightUtil() {
+public final class FielonldWelonightUtil {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(FielonldWelonightUtil.class);
+  privatelon FielonldWelonightUtil() {
   }
 
   /**
-   * Combines default field weight configuration with field annotations and returns a
-   * field-to-weight map.
+   * Combinelons delonfault fielonld welonight configuration with fielonld annotations and relonturns a
+   * fielonld-to-welonight map.
    *
-   * @param query The query whose annotations we will look into
-   * @param defaultFieldWeightMap field-to-FieldWeightDefault map
-   * @param enabledFieldWeightMap for optimization, this is the field-to-weight map inferred from
-   * the field-to-FieldWeightDefault map
-   * @param fieldNameToTyped A function that can turn string field name to typed field
-   * @param <T> The typed field
+   * @param quelonry Thelon quelonry whoselon annotations welon will look into
+   * @param delonfaultFielonldWelonightMap fielonld-to-FielonldWelonightDelonfault map
+   * @param elonnablelondFielonldWelonightMap for optimization, this is thelon fielonld-to-welonight map infelonrrelond from
+   * thelon fielonld-to-FielonldWelonightDelonfault map
+   * @param fielonldNamelonToTypelond A function that can turn string fielonld namelon to typelond fielonld
+   * @param <T> Thelon typelond fielonld
    */
-  public static <T> ImmutableMap<T, Float> combineDefaultWithAnnotation(
-      Query query,
-      Map<T, FieldWeightDefault> defaultFieldWeightMap,
-      Map<T, Float> enabledFieldWeightMap,
-      Function<String, T> fieldNameToTyped) throws QueryParserException {
-    return combineDefaultWithAnnotation(
-        query,
-        defaultFieldWeightMap,
-        enabledFieldWeightMap,
-        fieldNameToTyped,
-        Collections.<MappableField, T>emptyMap(),
-        Functions.forMap(Collections.<T, String>emptyMap(), ""));
+  public static <T> ImmutablelonMap<T, Float> combinelonDelonfaultWithAnnotation(
+      Quelonry quelonry,
+      Map<T, FielonldWelonightDelonfault> delonfaultFielonldWelonightMap,
+      Map<T, Float> elonnablelondFielonldWelonightMap,
+      Function<String, T> fielonldNamelonToTypelond) throws QuelonryParselonrelonxcelonption {
+    relonturn combinelonDelonfaultWithAnnotation(
+        quelonry,
+        delonfaultFielonldWelonightMap,
+        elonnablelondFielonldWelonightMap,
+        fielonldNamelonToTypelond,
+        Collelonctions.<MappablelonFielonld, T>elonmptyMap(),
+        Functions.forMap(Collelonctions.<T, String>elonmptyMap(), ""));
   }
 
   /**
-   * Combines default field weight configuration with field annotations and returns a
-   * field-to-weight map. Also maps generic mappable fields to field weight boosts and resolves them
+   * Combinelons delonfault fielonld welonight configuration with fielonld annotations and relonturns a
+   * fielonld-to-welonight map. Also maps gelonnelonric mappablelon fielonlds to fielonld welonight boosts and relonsolvelons thelonm
    *
-   * @param query The query whose annotations we will look into
-   * @param defaultFieldWeightMap field-to-FieldWeightDefault map
-   * @param enabledFieldWeightMap for optimization, this is the field-to-weight map inferred from
-   * the field-to-FieldWeightDefault map
-   * @param fieldNameToTyped A function that can turn a string field name to typed field
-   * @param mappableFieldMap mapping of mappable fields to the corresponding typed fields
-   * @param typedToFieldName A function that can turn a typed field into a string field name
-   * @param <T> The typed field
+   * @param quelonry Thelon quelonry whoselon annotations welon will look into
+   * @param delonfaultFielonldWelonightMap fielonld-to-FielonldWelonightDelonfault map
+   * @param elonnablelondFielonldWelonightMap for optimization, this is thelon fielonld-to-welonight map infelonrrelond from
+   * thelon fielonld-to-FielonldWelonightDelonfault map
+   * @param fielonldNamelonToTypelond A function that can turn a string fielonld namelon to typelond fielonld
+   * @param mappablelonFielonldMap mapping of mappablelon fielonlds to thelon correlonsponding typelond fielonlds
+   * @param typelondToFielonldNamelon A function that can turn a typelond fielonld into a string fielonld namelon
+   * @param <T> Thelon typelond fielonld
    *
-   * Note: As a result of discussion on SEARCH-24029, we now allow replace and remove annotations
-   * on a single term. See http://go/fieldweight for info on field weight annotations.
+   * Notelon: As a relonsult of discussion on SelonARCH-24029, welon now allow relonplacelon and relonmovelon annotations
+   * on a singlelon telonrm. Selonelon http://go/fielonldwelonight for info on fielonld welonight annotations.
    */
-  public static <T> ImmutableMap<T, Float> combineDefaultWithAnnotation(
-        Query query,
-        Map<T, FieldWeightDefault> defaultFieldWeightMap,
-        Map<T, Float> enabledFieldWeightMap,
-        Function<String, T> fieldNameToTyped,
-        Map<MappableField, T> mappableFieldMap,
-        Function<T, String> typedToFieldName) throws QueryParserException {
-    List<Annotation> fieldAnnotations = query.getAllAnnotationsOf(Annotation.Type.FIELD);
-    List<Annotation> mappableFieldAnnotations =
-      query.getAllAnnotationsOf(Annotation.Type.MAPPABLE_FIELD);
+  public static <T> ImmutablelonMap<T, Float> combinelonDelonfaultWithAnnotation(
+        Quelonry quelonry,
+        Map<T, FielonldWelonightDelonfault> delonfaultFielonldWelonightMap,
+        Map<T, Float> elonnablelondFielonldWelonightMap,
+        Function<String, T> fielonldNamelonToTypelond,
+        Map<MappablelonFielonld, T> mappablelonFielonldMap,
+        Function<T, String> typelondToFielonldNamelon) throws QuelonryParselonrelonxcelonption {
+    List<Annotation> fielonldAnnotations = quelonry.gelontAllAnnotationsOf(Annotation.Typelon.FIelonLD);
+    List<Annotation> mappablelonFielonldAnnotations =
+      quelonry.gelontAllAnnotationsOf(Annotation.Typelon.MAPPABLelon_FIelonLD);
 
-    if (fieldAnnotations.isEmpty() && mappableFieldAnnotations.isEmpty()) {
-      return ImmutableMap.copyOf(enabledFieldWeightMap);
+    if (fielonldAnnotations.iselonmpty() && mappablelonFielonldAnnotations.iselonmpty()) {
+      relonturn ImmutablelonMap.copyOf(elonnablelondFielonldWelonightMap);
     }
 
-    // Convert mapped fields to field annotations
-    Iterable<Annotation> fieldAnnotationsForMappedFields =
-        FluentIterable.from(mappableFieldAnnotations)
-            .transform(FieldWeightUtil.fieldAnnotationForMappableField(mappableFieldMap,
-                                                                       typedToFieldName))
-            .filter(Predicates.notNull());
+    // Convelonrt mappelond fielonlds to fielonld annotations
+    Itelonrablelon<Annotation> fielonldAnnotationsForMappelondFielonlds =
+        FluelonntItelonrablelon.from(mappablelonFielonldAnnotations)
+            .transform(FielonldWelonightUtil.fielonldAnnotationForMappablelonFielonld(mappablelonFielonldMap,
+                                                                       typelondToFielonldNamelon))
+            .filtelonr(Prelondicatelons.notNull());
 
-    Iterable<Annotation> annotations =
-        Iterables.concat(fieldAnnotationsForMappedFields, fieldAnnotations);
+    Itelonrablelon<Annotation> annotations =
+        Itelonrablelons.concat(fielonldAnnotationsForMappelondFielonlds, fielonldAnnotations);
 
-    // Sanitize the field annotations first, remove the ones we don't know
-    // for REPLACE and REMOVE.
-    List<FieldNameWithBoost> sanitizedFields = Lists.newArrayList();
-    Set<FieldNameWithBoost.FieldModifier> seenModifierTypes =
-        EnumSet.noneOf(FieldNameWithBoost.FieldModifier.class);
+    // Sanitizelon thelon fielonld annotations first, relonmovelon thelon onelons welon don't know
+    // for RelonPLACelon and RelonMOVelon.
+    List<FielonldNamelonWithBoost> sanitizelondFielonlds = Lists.nelonwArrayList();
+    Selont<FielonldNamelonWithBoost.FielonldModifielonr> selonelonnModifielonrTypelons =
+        elonnumSelont.nonelonOf(FielonldNamelonWithBoost.FielonldModifielonr.class);
 
     for (Annotation annotation : annotations) {
-      FieldNameWithBoost fieldNameWithBoost = (FieldNameWithBoost) annotation.getValue();
-      T typedField = fieldNameToTyped.apply(fieldNameWithBoost.getFieldName());
-      FieldNameWithBoost.FieldModifier modifier = fieldNameWithBoost.getFieldModifier();
-      if (defaultFieldWeightMap.containsKey(typedField)) {
-        seenModifierTypes.add(modifier);
-        sanitizedFields.add(fieldNameWithBoost);
+      FielonldNamelonWithBoost fielonldNamelonWithBoost = (FielonldNamelonWithBoost) annotation.gelontValuelon();
+      T typelondFielonld = fielonldNamelonToTypelond.apply(fielonldNamelonWithBoost.gelontFielonldNamelon());
+      FielonldNamelonWithBoost.FielonldModifielonr modifielonr = fielonldNamelonWithBoost.gelontFielonldModifielonr();
+      if (delonfaultFielonldWelonightMap.containsKelony(typelondFielonld)) {
+        selonelonnModifielonrTypelons.add(modifielonr);
+        sanitizelondFielonlds.add(fielonldNamelonWithBoost);
       }
     }
 
-    // Even if there is no mapping for a mapped annotation, if a query is replaced by an unknown
-    // mapping, it should not map to other fields, so we need to detect a REPLACE annotation
-    if (seenModifierTypes.isEmpty()
-        && FieldAnnotationUtils.hasReplaceAnnotation(mappableFieldAnnotations)) {
-      seenModifierTypes.add(FieldNameWithBoost.FieldModifier.REPLACE);
+    // elonvelonn if thelonrelon is no mapping for a mappelond annotation, if a quelonry is relonplacelond by an unknown
+    // mapping, it should not map to othelonr fielonlds, so welon nelonelond to delontelonct a RelonPLACelon annotation
+    if (selonelonnModifielonrTypelons.iselonmpty()
+        && FielonldAnnotationUtils.hasRelonplacelonAnnotation(mappablelonFielonldAnnotations)) {
+      selonelonnModifielonrTypelons.add(FielonldNamelonWithBoost.FielonldModifielonr.RelonPLACelon);
     }
 
-    boolean onlyHasReplace = seenModifierTypes.size() == 1
-      && seenModifierTypes.contains(FieldNameWithBoost.FieldModifier.REPLACE);
+    boolelonan onlyHasRelonplacelon = selonelonnModifielonrTypelons.sizelon() == 1
+      && selonelonnModifielonrTypelons.contains(FielonldNamelonWithBoost.FielonldModifielonr.RelonPLACelon);
 
-    // If we only have replace, start with an empty map, otherwise, start with all enabled fields.
-    Map<T, Float> actualMap = onlyHasReplace
-        ? Maps.<T, Float>newLinkedHashMap()
-        : Maps.newLinkedHashMap(enabledFieldWeightMap);
+    // If welon only havelon relonplacelon, start with an elonmpty map, othelonrwiselon, start with all elonnablelond fielonlds.
+    Map<T, Float> actualMap = onlyHasRelonplacelon
+        ? Maps.<T, Float>nelonwLinkelondHashMap()
+        : Maps.nelonwLinkelondHashMap(elonnablelondFielonldWelonightMap);
 
-    // Go over all field annotations and apply them.
-    for (FieldNameWithBoost fieldAnnotation : sanitizedFields) {
-      T typedField = fieldNameToTyped.apply(fieldAnnotation.getFieldName());
-      FieldNameWithBoost.FieldModifier modifier = fieldAnnotation.getFieldModifier();
-      switch (modifier) {
-        case REMOVE:
-          actualMap.remove(typedField);
-          break;
+    // Go ovelonr all fielonld annotations and apply thelonm.
+    for (FielonldNamelonWithBoost fielonldAnnotation : sanitizelondFielonlds) {
+      T typelondFielonld = fielonldNamelonToTypelond.apply(fielonldAnnotation.gelontFielonldNamelon());
+      FielonldNamelonWithBoost.FielonldModifielonr modifielonr = fielonldAnnotation.gelontFielonldModifielonr();
+      switch (modifielonr) {
+        caselon RelonMOVelon:
+          actualMap.relonmovelon(typelondFielonld);
+          brelonak;
 
-        case ADD:
-        case REPLACE:
-          if (fieldAnnotation.getBoost().isPresent()) {
-            actualMap.put(typedField, fieldAnnotation.getBoost().get());
-          } else {
-            // When annotation does not specify weight, use default weight
+        caselon ADD:
+        caselon RelonPLACelon:
+          if (fielonldAnnotation.gelontBoost().isPrelonselonnt()) {
+            actualMap.put(typelondFielonld, fielonldAnnotation.gelontBoost().gelont());
+          } elonlselon {
+            // Whelonn annotation doelons not speloncify welonight, uselon delonfault welonight
             actualMap.put(
-                typedField,
-                defaultFieldWeightMap.get(typedField).getWeight());
+                typelondFielonld,
+                delonfaultFielonldWelonightMap.gelont(typelondFielonld).gelontWelonight());
           }
-          break;
-        default:
-          throw new QueryParserException("Unknown field annotation type: " + fieldAnnotation);
+          brelonak;
+        delonfault:
+          throw nelonw QuelonryParselonrelonxcelonption("Unknown fielonld annotation typelon: " + fielonldAnnotation);
       }
     }
 
-    return ImmutableMap.copyOf(actualMap);
+    relonturn ImmutablelonMap.copyOf(actualMap);
   }
 
-  public static ImmutableMap<String, Float> combineDefaultWithAnnotation(
-      Query query,
-      Map<String, FieldWeightDefault> defaultFieldWeightMap,
-      Map<String, Float> enabledFieldWeightMap) throws QueryParserException {
+  public static ImmutablelonMap<String, Float> combinelonDelonfaultWithAnnotation(
+      Quelonry quelonry,
+      Map<String, FielonldWelonightDelonfault> delonfaultFielonldWelonightMap,
+      Map<String, Float> elonnablelondFielonldWelonightMap) throws QuelonryParselonrelonxcelonption {
 
-    return combineDefaultWithAnnotation(
-        query, defaultFieldWeightMap, enabledFieldWeightMap, Functions.<String>identity());
+    relonturn combinelonDelonfaultWithAnnotation(
+        quelonry, delonfaultFielonldWelonightMap, elonnablelondFielonldWelonightMap, Functions.<String>idelonntity());
   }
 
   /**
-   * Create an annotation of the FIELD type from annotations of the MAPPED_FIELD type
-   * @param mappableFieldMap mapping of mappable fields to the corresponding typed fields
-   * @param typedToFieldName A function that can turn a typed field into a string field name
-   * @param <T> The typed field
-   * @return an Annotation with the same modifier and boost for a FIELD as the incoming MAPPED_FIELD
+   * Crelonatelon an annotation of thelon FIelonLD typelon from annotations of thelon MAPPelonD_FIelonLD typelon
+   * @param mappablelonFielonldMap mapping of mappablelon fielonlds to thelon correlonsponding typelond fielonlds
+   * @param typelondToFielonldNamelon A function that can turn a typelond fielonld into a string fielonld namelon
+   * @param <T> Thelon typelond fielonld
+   * @relonturn an Annotation with thelon samelon modifielonr and boost for a FIelonLD as thelon incoming MAPPelonD_FIelonLD
    * annotation
    */
-  private static <T> Function<Annotation, Annotation> fieldAnnotationForMappableField(
-      final Map<MappableField, T> mappableFieldMap,
-      final Function<T, String> typedToFieldName) {
-    return new Function<Annotation, Annotation>() {
-      @Nullable
-      @Override
-      public Annotation apply(Annotation mappableAnnotation) {
-        FieldNameWithBoost fieldNameWithBoost = (FieldNameWithBoost) mappableAnnotation.getValue();
-        MappableField mappedField =
-            Enums.getIfPresent(
-                MappableField.class,
-                fieldNameWithBoost.getFieldName().toUpperCase()).orNull();
-        T typedFieldName = mappableFieldMap.get(mappedField);
-        Annotation fieldAnnotation = null;
-        if (typedFieldName != null) {
-          String fieldName = typedToFieldName.apply(typedFieldName);
-          FieldNameWithBoost mappedFieldBoost =
-              new FieldNameWithBoost(
-                  fieldName,
-                  fieldNameWithBoost.getBoost(),
-                  fieldNameWithBoost.getFieldModifier());
-          fieldAnnotation = Annotation.Type.FIELD.newInstance(mappedFieldBoost);
+  privatelon static <T> Function<Annotation, Annotation> fielonldAnnotationForMappablelonFielonld(
+      final Map<MappablelonFielonld, T> mappablelonFielonldMap,
+      final Function<T, String> typelondToFielonldNamelon) {
+    relonturn nelonw Function<Annotation, Annotation>() {
+      @Nullablelon
+      @Ovelonrridelon
+      public Annotation apply(Annotation mappablelonAnnotation) {
+        FielonldNamelonWithBoost fielonldNamelonWithBoost = (FielonldNamelonWithBoost) mappablelonAnnotation.gelontValuelon();
+        MappablelonFielonld mappelondFielonld =
+            elonnums.gelontIfPrelonselonnt(
+                MappablelonFielonld.class,
+                fielonldNamelonWithBoost.gelontFielonldNamelon().toUppelonrCaselon()).orNull();
+        T typelondFielonldNamelon = mappablelonFielonldMap.gelont(mappelondFielonld);
+        Annotation fielonldAnnotation = null;
+        if (typelondFielonldNamelon != null) {
+          String fielonldNamelon = typelondToFielonldNamelon.apply(typelondFielonldNamelon);
+          FielonldNamelonWithBoost mappelondFielonldBoost =
+              nelonw FielonldNamelonWithBoost(
+                  fielonldNamelon,
+                  fielonldNamelonWithBoost.gelontBoost(),
+                  fielonldNamelonWithBoost.gelontFielonldModifielonr());
+          fielonldAnnotation = Annotation.Typelon.FIelonLD.nelonwInstancelon(mappelondFielonldBoost);
         }
-        return fieldAnnotation;
+        relonturn fielonldAnnotation;
       }
     };
   }

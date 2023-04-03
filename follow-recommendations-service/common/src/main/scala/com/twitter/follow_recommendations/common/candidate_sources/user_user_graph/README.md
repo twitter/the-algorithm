@@ -1,4 +1,4 @@
-# User-User Graph Candidate Source
-Provides account candidates generated from the User-User Graph (UUG).
-## User-User Graph (UUG)
-The UUG algorithm reads User-Follow-User engagements that occurred in the past 24-48 hours, and provides accounts that the given user's recent followings have recently followed themselves. The UUG algorithm is implemented using the real-time graph processing library GraphJet.
+# Uselonr-Uselonr Graph Candidatelon Sourcelon
+Providelons account candidatelons gelonnelonratelond from thelon Uselonr-Uselonr Graph (UUG).
+## Uselonr-Uselonr Graph (UUG)
+Thelon UUG algorithm relonads Uselonr-Follow-Uselonr elonngagelonmelonnts that occurrelond in thelon past 24-48 hours, and providelons accounts that thelon givelonn uselonr's reloncelonnt followings havelon reloncelonntly followelond thelonmselonlvelons. Thelon UUG algorithm is implelonmelonntelond using thelon relonal-timelon graph procelonssing library GraphJelont.

@@ -1,72 +1,72 @@
-package com.twitter.simclusters_v2.scalding.offline_job.adhoc
+packagelon com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.adhoc
 
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.scalding._
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.simclusters_v2.common.{ClusterId, CosineSimilarityUtil, TweetId}
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseRowMatrix
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import java.util.TimeZone
+import com.twittelonr.bijelonction.{Buffelonrablelon, Injelonction}
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.commons.sourcelon.VelonrsionelondKelonyValSourcelon
+import com.twittelonr.simclustelonrs_v2.common.{ClustelonrId, CosinelonSimilarityUtil, TwelonelontId}
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.SparselonRowMatrix
+import com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.SimClustelonrsOfflinelonJobUtil
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
  *
- * A job to sample some tweets for evaluation.
+ * A job to samplelon somelon twelonelonts for elonvaluation.
  *
- * we bucket tweets by the log(# of fav + 1) and randomly pick 1000 for each bucket for evaluation.
+ * welon buckelont twelonelonts by thelon log(# of fav + 1) and randomly pick 1000 for elonach buckelont for elonvaluation.
  *
- * to run the job:
+ * to run thelon job:
  *
-  scalding remote run \
-     --target src/scala/com/twitter/simclusters_v2/scalding/offline_job/adhoc:tweet_embedding_evaluation_samples-adhoc \
-     --user recos-platform \
-     --reducers 1000 \
-     --main-class com.twitter.simclusters_v2.scalding.offline_job.adhoc.TweetSimilarityEvaluationSamplingAdhocApp -- \
-     --date 2021-01-27 2021-01-28 \
-     --output /user/recos-platform/adhoc/tweet_embedding_01_27_28_sample_tweets
+  scalding relonmotelon run \
+     --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/offlinelon_job/adhoc:twelonelont_elonmbelondding_elonvaluation_samplelons-adhoc \
+     --uselonr reloncos-platform \
+     --relonducelonrs 1000 \
+     --main-class com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.adhoc.TwelonelontSimilarityelonvaluationSamplingAdhocApp -- \
+     --datelon 2021-01-27 2021-01-28 \
+     --output /uselonr/reloncos-platform/adhoc/twelonelont_elonmbelondding_01_27_28_samplelon_twelonelonts
  */
-object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
+objelonct TwelonelontSimilarityelonvaluationSamplingAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val random = new java.util.Random(args.long("seed", 20200322L))
+    val random = nelonw java.util.Random(args.long("selonelond", 20200322L))
 
-    // # of tweets in each bucket
-    val topK = args.int("bucket_size", 1000)
+    // # of twelonelonts in elonach buckelont
+    val topK = args.int("buckelont_sizelon", 1000)
 
     val output = args("output")
 
-    SimClustersOfflineJobUtil
-      .readTimelineFavoriteData(dateRange)
+    SimClustelonrsOfflinelonJobUtil
+      .relonadTimelonlinelonFavoritelonData(datelonRangelon)
       .map {
-        case (_, tweetId, _) =>
-          tweetId -> 1L
+        caselon (_, twelonelontId, _) =>
+          twelonelontId -> 1L
       }
-      .sumByKey
-      .filter(_._2 >= 10L) // only consider tweets with more than 10 favs
+      .sumByKelony
+      .filtelonr(_._2 >= 10L) // only considelonr twelonelonts with morelon than 10 favs
       .map {
-        case (tweetId, tweetFavs) =>
-          val bucket = math.log10(tweetFavs + 1.0).toInt
-          bucket -> (tweetId, random.nextDouble())
+        caselon (twelonelontId, twelonelontFavs) =>
+          val buckelont = math.log10(twelonelontFavs + 1.0).toInt
+          buckelont -> (twelonelontId, random.nelonxtDoublelon())
       }
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_._2))
       .flatMap {
-        case (bucket, tweets) =>
-          val bucketSize = tweets.length
-          tweets.map {
-            case (tweetId, _) =>
-              (tweetId, bucket, bucketSize)
+        caselon (buckelont, twelonelonts) =>
+          val buckelontSizelon = twelonelonts.lelonngth
+          twelonelonts.map {
+            caselon (twelonelontId, _) =>
+              (twelonelontId, buckelont, buckelontSizelon)
           }
       }
-      .writeExecution(
-        TypedTsv[(Long, Int, Int)](output)
+      .writelonelonxeloncution(
+        TypelondTsv[(Long, Int, Int)](output)
       )
 
   }
@@ -74,287 +74,287 @@ object TweetSimilarityEvaluationSamplingAdhocApp extends AdhocExecutionApp {
 
 /**
  *
- * A job for evaluating the performance of an approximate nearest neighbor search method with a brute
- * force method.
+ * A job for elonvaluating thelon pelonrformancelon of an approximatelon nelonarelonst nelonighbor selonarch melonthod with a brutelon
+ * forcelon melonthod.
  *
- * Evaluation method:
+ * elonvaluation melonthod:
  *
- * After getting the embeddings for these tweets, we bucketize tweets based on the number of favs they have
- * (i.e., math.log10(numFavors).toInt), and then randomly select 1000 tweets from each bucket.
- * We do not include tweets with fewer than 10 favs. We compute the nearest neighbors (in terms of cosine similarity)
- * for these tweets using the brute force method and use up to top 100 neighbors with the cosine
- * similarity score >0.8 for each tweet as ground-truth set G.
+ * Aftelonr gelontting thelon elonmbelonddings for thelonselon twelonelonts, welon buckelontizelon twelonelonts baselond on thelon numbelonr of favs thelony havelon
+ * (i.elon., math.log10(numFavors).toInt), and thelonn randomly selonlelonct 1000 twelonelonts from elonach buckelont.
+ * Welon do not includelon twelonelonts with felonwelonr than 10 favs. Welon computelon thelon nelonarelonst nelonighbors (in telonrms of cosinelon similarity)
+ * for thelonselon twelonelonts using thelon brutelon forcelon melonthod and uselon up to top 100 nelonighbors with thelon cosinelon
+ * similarity scorelon >0.8 for elonach twelonelont as ground-truth selont G.
  *
- * We then compute the nearest neighbors for these tweets based on the approximate nearest neighbor search: for each tweet, we find the top clusters, and then find top tweets in each cluster as potential candidates. We rank these potential candidates by the cosine similarity scores and take top 100 as prediction set P. We evaluate the precision and recall using
+ * Welon thelonn computelon thelon nelonarelonst nelonighbors for thelonselon twelonelonts baselond on thelon approximatelon nelonarelonst nelonighbor selonarch: for elonach twelonelont, welon find thelon top clustelonrs, and thelonn find top twelonelonts in elonach clustelonr as potelonntial candidatelons. Welon rank thelonselon potelonntial candidatelons by thelon cosinelon similarity scorelons and takelon top 100 as prelondiction selont P. Welon elonvaluatelon thelon preloncision and reloncall using
  *
- * Precision = |P \intersect G| / |P|
- * Recall = |P \intersect G| / |G|
+ * Preloncision = |P \intelonrselonct G| / |P|
+ * Reloncall = |P \intelonrselonct G| / |G|
  *
- * Note that |P| and |G| can be different, when there are not many neighbors returned.
+ * Notelon that |P| and |G| can belon diffelonrelonnt, whelonn thelonrelon arelon not many nelonighbors relonturnelond.
  *
-  scalding remote run \
-  --target src/scala/com/twitter/simclusters_v2/scalding/offline_job/adhoc:tweet_embedding_evaluation-adhoc \
-  --user recos-platform \
-  --reducers 1000 \
-  --main-class com.twitter.simclusters_v2.scalding.offline_job.adhoc.TweetSimilarityEvaluationAdhocApp -- \
-  --date 2021-01-27 \
-  --tweet_top_k /user/recos-platform/adhoc/tweet_embedding_01_27_28_unnormalized_t9/tweet_top_k_clusters \
-  --cluster_top_k /user/recos-platform/adhoc/tweet_embedding_01_27_28_unnormalized_t9/cluster_top_k_tweets \
-  --tweets /user/recos-platform/adhoc/tweet_embedding_01_27_28_sample_tweets \
-  --output  /user/recos-platform/adhoc/tweet_embedding_evaluation_01_27_28_t05_k50_1
+  scalding relonmotelon run \
+  --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/offlinelon_job/adhoc:twelonelont_elonmbelondding_elonvaluation-adhoc \
+  --uselonr reloncos-platform \
+  --relonducelonrs 1000 \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.adhoc.TwelonelontSimilarityelonvaluationAdhocApp -- \
+  --datelon 2021-01-27 \
+  --twelonelont_top_k /uselonr/reloncos-platform/adhoc/twelonelont_elonmbelondding_01_27_28_unnormalizelond_t9/twelonelont_top_k_clustelonrs \
+  --clustelonr_top_k /uselonr/reloncos-platform/adhoc/twelonelont_elonmbelondding_01_27_28_unnormalizelond_t9/clustelonr_top_k_twelonelonts \
+  --twelonelonts /uselonr/reloncos-platform/adhoc/twelonelont_elonmbelondding_01_27_28_samplelon_twelonelonts \
+  --output  /uselonr/reloncos-platform/adhoc/twelonelont_elonmbelondding_elonvaluation_01_27_28_t05_k50_1
  */
-object TweetSimilarityEvaluationAdhocApp extends AdhocExecutionApp {
+objelonct TwelonelontSimilarityelonvaluationAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
 
-  implicit val inj1: Injection[List[(Int, Double)], Array[Byte]] =
-    Bufferable.injectionOf[List[(Int, Double)]]
-  implicit val inj2: Injection[List[(Long, Double)], Array[Byte]] =
-    Bufferable.injectionOf[List[(Long, Double)]]
+  implicit val inj1: Injelonction[List[(Int, Doublelon)], Array[Bytelon]] =
+    Buffelonrablelon.injelonctionOf[List[(Int, Doublelon)]]
+  implicit val inj2: Injelonction[List[(Long, Doublelon)], Array[Bytelon]] =
+    Buffelonrablelon.injelonctionOf[List[(Long, Doublelon)]]
 
-  // Take top 20 candidates, the score * 100
-  private def formatList(candidates: Seq[(TweetId, Double)]): Seq[(TweetId, Int)] = {
-    candidates.take(10).map {
-      case (clusterId, score) =>
-        (clusterId, (score * 100).toInt)
+  // Takelon top 20 candidatelons, thelon scorelon * 100
+  privatelon delonf formatList(candidatelons: Selonq[(TwelonelontId, Doublelon)]): Selonq[(TwelonelontId, Int)] = {
+    candidatelons.takelon(10).map {
+      caselon (clustelonrId, scorelon) =>
+        (clustelonrId, (scorelon * 100).toInt)
     }
   }
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    // path to read the tweet -> top cluster data set. should be the same from the SimClustersTweetEmbeddingAdhocApp job
-    val tweetTopKClustersPath = args("tweet_top_k")
+    // path to relonad thelon twelonelont -> top clustelonr data selont. should belon thelon samelon from thelon SimClustelonrsTwelonelontelonmbelonddingAdhocApp job
+    val twelonelontTopKClustelonrsPath = args("twelonelont_top_k")
 
-    // path to read the cluster -> top tweets data set. should be the same from the SimClustersTweetEmbeddingAdhocApp job
-    val clusterTopKTweetsPath = args("cluster_top_k")
+    // path to relonad thelon clustelonr -> top twelonelonts data selont. should belon thelon samelon from thelon SimClustelonrsTwelonelontelonmbelonddingAdhocApp job
+    val clustelonrTopKTwelonelontsPath = args("clustelonr_top_k")
 
-    // path to read the sampled tweets, should be the same from TweetSimilarityEvaluationSamplingAdhocApp
-    val tweetsPath = args("tweets")
+    // path to relonad thelon samplelond twelonelonts, should belon thelon samelon from TwelonelontSimilarityelonvaluationSamplingAdhocApp
+    val twelonelontsPath = args("twelonelonts")
 
-    // see the comment of this class. this is to determine which tweet should be ground truth
-    val threshold = args.double("threshold", 0.8)
+    // selonelon thelon commelonnt of this class. this is to delontelonrminelon which twelonelont should belon ground truth
+    val threlonshold = args.doublelon("threlonshold", 0.8)
 
-    // see the comment of this class. this is to determine which tweet should be ground truth
+    // selonelon thelon commelonnt of this class. this is to delontelonrminelon which twelonelont should belon ground truth
     val topK = args.int("topK", 100)
 
-    // output path for evaluation results
+    // output path for elonvaluation relonsults
     val output = args("output")
 
-    // read tweet -> top clusters data set
-    val tweetTopKClusters: SparseRowMatrix[TweetId, ClusterId, Double] =
-      SparseRowMatrix(
-        TypedPipe
+    // relonad twelonelont -> top clustelonrs data selont
+    val twelonelontTopKClustelonrs: SparselonRowMatrix[TwelonelontId, ClustelonrId, Doublelon] =
+      SparselonRowMatrix(
+        TypelondPipelon
           .from(
-            VersionedKeyValSource[TweetId, List[(ClusterId, Double)]](tweetTopKClustersPath)
+            VelonrsionelondKelonyValSourcelon[TwelonelontId, List[(ClustelonrId, Doublelon)]](twelonelontTopKClustelonrsPath)
           )
-          .mapValues(_.filter(_._2 > 0.001).toMap),
-        isSkinnyMatrix = true
-      ).rowL2Normalize
+          .mapValuelons(_.filtelonr(_._2 > 0.001).toMap),
+        isSkinnyMatrix = truelon
+      ).rowL2Normalizelon
 
-    // read cluster -> top tweets data set
-    val clusterTopTweets: SparseRowMatrix[ClusterId, TweetId, Double] =
-      SparseRowMatrix(
-        TypedPipe
+    // relonad clustelonr -> top twelonelonts data selont
+    val clustelonrTopTwelonelonts: SparselonRowMatrix[ClustelonrId, TwelonelontId, Doublelon] =
+      SparselonRowMatrix(
+        TypelondPipelon
           .from(
-            VersionedKeyValSource[ClusterId, List[(TweetId, Double)]](clusterTopKTweetsPath)
+            VelonrsionelondKelonyValSourcelon[ClustelonrId, List[(TwelonelontId, Doublelon)]](clustelonrTopKTwelonelontsPath)
           )
-          .mapValues(_.filter(_._2 > 0.02).toMap),
-        isSkinnyMatrix = false
+          .mapValuelons(_.filtelonr(_._2 > 0.02).toMap),
+        isSkinnyMatrix = falselon
       )
 
-    // read the sampled tweets from TweetSimilarityEvaluationSamplingAdhocApp
-    val tweetSubset = TypedPipe.from(TypedTsv[(Long, Int, Int)](tweetsPath))
+    // relonad thelon samplelond twelonelonts from TwelonelontSimilarityelonvaluationSamplingAdhocApp
+    val twelonelontSubselont = TypelondPipelon.from(TypelondTsv[(Long, Int, Int)](twelonelontsPath))
 
-    // the tweet -> top clusters for the sampled tweets
-    val tweetEmbeddingSubset =
-      tweetTopKClusters.filterRows(tweetSubset.map(_._1))
+    // thelon twelonelont -> top clustelonrs for thelon samplelond twelonelonts
+    val twelonelontelonmbelonddingSubselont =
+      twelonelontTopKClustelonrs.filtelonrRows(twelonelontSubselont.map(_._1))
 
-    // compute ground-truth top similar tweets for each sampled tweets.
-    // for each sampled tweets, we compute their similarity with every tweets in the tweet -> top clusters data set.
-    // we filter out those with similarity score smaller than the threshold and keep top k as the ground truth similar tweets
-    val groundTruthData = tweetTopKClusters.toSparseMatrix
-      .multiplySkinnySparseRowMatrix(
-        tweetEmbeddingSubset.toSparseMatrix.transpose.toSparseRowMatrix(true),
-        numReducersOpt = Some(5000)
+    // computelon ground-truth top similar twelonelonts for elonach samplelond twelonelonts.
+    // for elonach samplelond twelonelonts, welon computelon thelonir similarity with elonvelonry twelonelonts in thelon twelonelont -> top clustelonrs data selont.
+    // welon filtelonr out thoselon with similarity scorelon smallelonr than thelon threlonshold and kelonelonp top k as thelon ground truth similar twelonelonts
+    val groundTruthData = twelonelontTopKClustelonrs.toSparselonMatrix
+      .multiplySkinnySparselonRowMatrix(
+        twelonelontelonmbelonddingSubselont.toSparselonMatrix.transposelon.toSparselonRowMatrix(truelon),
+        numRelonducelonrsOpt = Somelon(5000)
       )
-      .toSparseMatrix
-      .transpose
-      .filter((_, _, v) => v > threshold)
-      .sortWithTakePerRow(topK)(Ordering.by(-_._2))
+      .toSparselonMatrix
+      .transposelon
+      .filtelonr((_, _, v) => v > threlonshold)
+      .sortWithTakelonPelonrRow(topK)(Ordelonring.by(-_._2))
 
-    // compute approximate similar tweets for each sampled tweets.
-    // this is achieved by multiplying "sampled_tweets -> top clusters" matrix with "cluster -> top tweets" matrix.
-    // note that in the implementation, we first compute the transponse of this matrix in order to ultlize the optimization done on skinny matrices
-    val predictionData = clusterTopTweets.toSparseMatrix.transpose
-      .multiplySkinnySparseRowMatrix(
-        tweetEmbeddingSubset.toSparseMatrix.transpose.toSparseRowMatrix(true),
-        numReducersOpt = Some(5000)
+    // computelon approximatelon similar twelonelonts for elonach samplelond twelonelonts.
+    // this is achielonvelond by multiplying "samplelond_twelonelonts -> top clustelonrs" matrix with "clustelonr -> top twelonelonts" matrix.
+    // notelon that in thelon implelonmelonntation, welon first computelon thelon transponselon of this matrix in ordelonr to ultlizelon thelon optimization donelon on skinny matricelons
+    val prelondictionData = clustelonrTopTwelonelonts.toSparselonMatrix.transposelon
+      .multiplySkinnySparselonRowMatrix(
+        twelonelontelonmbelonddingSubselont.toSparselonMatrix.transposelon.toSparselonRowMatrix(truelon),
+        numRelonducelonrsOpt = Somelon(5000)
       )
-      .toSparseMatrix
-      .transpose
-      .toTypedPipe
+      .toSparselonMatrix
+      .transposelon
+      .toTypelondPipelon
       .map {
-        case (queryTweet, candidateTweet, _) =>
-          (queryTweet, candidateTweet)
+        caselon (quelonryTwelonelont, candidatelonTwelonelont, _) =>
+          (quelonryTwelonelont, candidatelonTwelonelont)
       }
-      .join(tweetEmbeddingSubset.toTypedPipe)
+      .join(twelonelontelonmbelonddingSubselont.toTypelondPipelon)
       .map {
-        case (queryId, (candidateId, queryEmbedding)) =>
-          candidateId -> (queryId, queryEmbedding)
+        caselon (quelonryId, (candidatelonId, quelonryelonmbelondding)) =>
+          candidatelonId -> (quelonryId, quelonryelonmbelondding)
       }
-      .join(tweetTopKClusters.toTypedPipe)
+      .join(twelonelontTopKClustelonrs.toTypelondPipelon)
       .map {
-        case (candidateId, ((queryId, queryEmbedding), candidateEmbedding)) =>
-          queryId -> (candidateId, CosineSimilarityUtil
+        caselon (candidatelonId, ((quelonryId, quelonryelonmbelondding), candidatelonelonmbelondding)) =>
+          quelonryId -> (candidatelonId, CosinelonSimilarityUtil
             .dotProduct(
-              queryEmbedding,
-              candidateEmbedding
+              quelonryelonmbelondding,
+              candidatelonelonmbelondding
             ))
       }
-      .filter(_._2._2 > threshold)
+      .filtelonr(_._2._2 > threlonshold)
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_._2))
 
-    // Exist in Ground Truth but not exist in Predication
-    val potentialData =
+    // elonxist in Ground Truth but not elonxist in Prelondication
+    val potelonntialData =
       groundTruthData
-        .leftJoin(predictionData)
+        .lelonftJoin(prelondictionData)
         .map {
-          case (tweetId, (groundTruthCandidates, predictedCandidates)) =>
-            val predictedCandidateSet = predictedCandidates.toSeq.flatten.map(_._1).toSet
-            val potentialTweets = groundTruthCandidates.filterNot {
-              case (candidateId, _) =>
-                predictedCandidateSet.contains(candidateId)
+          caselon (twelonelontId, (groundTruthCandidatelons, prelondictelondCandidatelons)) =>
+            val prelondictelondCandidatelonSelont = prelondictelondCandidatelons.toSelonq.flattelonn.map(_._1).toSelont
+            val potelonntialTwelonelonts = groundTruthCandidatelons.filtelonrNot {
+              caselon (candidatelonId, _) =>
+                prelondictelondCandidatelonSelont.contains(candidatelonId)
             }
-            (tweetId, potentialTweets)
+            (twelonelontId, potelonntialTwelonelonts)
         }
 
-    val debuggingData =
+    val delonbuggingData =
       groundTruthData
-        .leftJoin(predictionData)
+        .lelonftJoin(prelondictionData)
         .map {
-          case (tweetId, (groundTruthTweets, maybepredictedTweets)) =>
-            val predictedTweets = maybepredictedTweets.toSeq.flatten
-            val predictedTweetSet = predictedTweets.map(_._1).toSet
-            val potentialTweets = groundTruthTweets.filterNot {
-              case (candidateId, _) =>
-                predictedTweetSet.contains(candidateId)
+          caselon (twelonelontId, (groundTruthTwelonelonts, maybelonprelondictelondTwelonelonts)) =>
+            val prelondictelondTwelonelonts = maybelonprelondictelondTwelonelonts.toSelonq.flattelonn
+            val prelondictelondTwelonelontSelont = prelondictelondTwelonelonts.map(_._1).toSelont
+            val potelonntialTwelonelonts = groundTruthTwelonelonts.filtelonrNot {
+              caselon (candidatelonId, _) =>
+                prelondictelondTwelonelontSelont.contains(candidatelonId)
             }
 
             (
-              tweetId,
-              Seq(
-                formatList(potentialTweets),
-                formatList(groundTruthTweets),
-                formatList(predictedTweets)))
+              twelonelontId,
+              Selonq(
+                formatList(potelonntialTwelonelonts),
+                formatList(groundTruthTwelonelonts),
+                formatList(prelondictelondTwelonelonts)))
         }
 
-    // for each tweet, compare the approximate topk and ground-truth topk.
-    // compute precision and recall, then averaging them per bucket.
-    val eval = tweetSubset
+    // for elonach twelonelont, comparelon thelon approximatelon topk and ground-truth topk.
+    // computelon preloncision and reloncall, thelonn avelonraging thelonm pelonr buckelont.
+    val elonval = twelonelontSubselont
       .map {
-        case (tweetId, bucket, bucketSize) =>
-          tweetId -> (bucket, bucketSize)
+        caselon (twelonelontId, buckelont, buckelontSizelon) =>
+          twelonelontId -> (buckelont, buckelontSizelon)
       }
-      .leftJoin(groundTruthData)
-      .leftJoin(predictionData)
+      .lelonftJoin(groundTruthData)
+      .lelonftJoin(prelondictionData)
       .map {
-        case (_, (((bucket, bucketSize), groundTruthOpt), predictionOpt)) =>
-          val groundTruth = groundTruthOpt.getOrElse(Nil).map(_._1)
-          val prediction = predictionOpt.getOrElse(Nil).map(_._1)
+        caselon (_, (((buckelont, buckelontSizelon), groundTruthOpt), prelondictionOpt)) =>
+          val groundTruth = groundTruthOpt.gelontOrelonlselon(Nil).map(_._1)
+          val prelondiction = prelondictionOpt.gelontOrelonlselon(Nil).map(_._1)
 
-          assert(groundTruth.distinct.size == groundTruth.size)
-          assert(prediction.distinct.size == prediction.size)
+          asselonrt(groundTruth.distinct.sizelon == groundTruth.sizelon)
+          asselonrt(prelondiction.distinct.sizelon == prelondiction.sizelon)
 
-          val intersection = groundTruth.toSet.intersect(prediction.toSet)
+          val intelonrselonction = groundTruth.toSelont.intelonrselonct(prelondiction.toSelont)
 
-          val precision =
-            if (prediction.nonEmpty)
-              intersection.size.toDouble / prediction.size.toDouble
-            else 0.0
-          val recall =
-            if (groundTruth.nonEmpty)
-              intersection.size.toDouble / groundTruth.size.toDouble
-            else 0.0
+          val preloncision =
+            if (prelondiction.nonelonmpty)
+              intelonrselonction.sizelon.toDoublelon / prelondiction.sizelon.toDoublelon
+            elonlselon 0.0
+          val reloncall =
+            if (groundTruth.nonelonmpty)
+              intelonrselonction.sizelon.toDoublelon / groundTruth.sizelon.toDoublelon
+            elonlselon 0.0
 
           (
-            bucket,
-            bucketSize) -> (groundTruth.size, prediction.size, intersection.size, precision, recall, 1.0)
+            buckelont,
+            buckelontSizelon) -> (groundTruth.sizelon, prelondiction.sizelon, intelonrselonction.sizelon, preloncision, reloncall, 1.0)
       }
-      .sumByKey
+      .sumByKelony
       .map {
-        case (
-              (bucket, bucketSize),
-              (groundTruthSum, predictionSum, interSectionSum, precisionSum, recallSum, count)) =>
+        caselon (
+              (buckelont, buckelontSizelon),
+              (groundTruthSum, prelondictionSum, intelonrSelonctionSum, preloncisionSum, reloncallSum, count)) =>
           (
-            bucket,
-            bucketSize,
+            buckelont,
+            buckelontSizelon,
             groundTruthSum / count,
-            predictionSum / count,
-            interSectionSum / count,
-            precisionSum / count,
-            recallSum / count,
+            prelondictionSum / count,
+            intelonrSelonctionSum / count,
+            preloncisionSum / count,
+            reloncallSum / count,
             count)
       }
 
-    // output the eval results and some sample results for eyeballing
-    Execution
+    // output thelon elonval relonsults and somelon samplelon relonsults for elonyelonballing
+    elonxeloncution
       .zip(
-        eval
-          .writeExecution(TypedTsv(output)),
+        elonval
+          .writelonelonxeloncution(TypelondTsv(output)),
         groundTruthData
           .map {
-            case (tweetId, neighbors) =>
-              tweetId -> neighbors
+            caselon (twelonelontId, nelonighbors) =>
+              twelonelontId -> nelonighbors
                 .map {
-                  case (id, score) => s"$id:$score"
+                  caselon (id, scorelon) => s"$id:$scorelon"
                 }
                 .mkString(",")
           }
-          .writeExecution(
-            TypedTsv(args("output") + "_ground_truth")
+          .writelonelonxeloncution(
+            TypelondTsv(args("output") + "_ground_truth")
           ),
-        predictionData
+        prelondictionData
           .map {
-            case (tweetId, neighbors) =>
-              tweetId -> neighbors
+            caselon (twelonelontId, nelonighbors) =>
+              twelonelontId -> nelonighbors
                 .map {
-                  case (id, score) => s"$id:$score"
+                  caselon (id, scorelon) => s"$id:$scorelon"
                 }
                 .mkString(",")
           }
-          .writeExecution(
-            TypedTsv(args("output") + "_prediction")
+          .writelonelonxeloncution(
+            TypelondTsv(args("output") + "_prelondiction")
           ),
-        potentialData
+        potelonntialData
           .map {
-            case (tweetId, neighbors) =>
-              tweetId -> neighbors
+            caselon (twelonelontId, nelonighbors) =>
+              twelonelontId -> nelonighbors
                 .map {
-                  case (id, score) => s"$id:$score"
+                  caselon (id, scorelon) => s"$id:$scorelon"
                 }
                 .mkString(",")
-          }.writeExecution(
-            TypedTsv(args("output") + "_potential")
+          }.writelonelonxeloncution(
+            TypelondTsv(args("output") + "_potelonntial")
           ),
-        debuggingData
+        delonbuggingData
           .map {
-            case (tweetId, candidateList) =>
-              val value = candidateList
-                .map { candidates =>
-                  candidates
+            caselon (twelonelontId, candidatelonList) =>
+              val valuelon = candidatelonList
+                .map { candidatelons =>
+                  candidatelons
                     .map {
-                      case (id, score) =>
-                        s"${id}D$score"
+                      caselon (id, scorelon) =>
+                        s"${id}D$scorelon"
                     }.mkString("C")
                 }.mkString("B")
-              s"${tweetId}A$value"
-          }.writeExecution(
-            TypedTsv(args("output") + "_debugging")
+              s"${twelonelontId}A$valuelon"
+          }.writelonelonxeloncution(
+            TypelondTsv(args("output") + "_delonbugging")
           )
       )
       .unit

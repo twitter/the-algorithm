@@ -1,254 +1,254 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.HashSelont;
+import java.util.LinkelondHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Selont;
+import java.util.strelonam.Collelonctors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.MultiReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.MultiRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.Collelonctor;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.index.TweetIDMapper;
-import com.twitter.search.earlybird.search.facets.AbstractFacetTermCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector.TermStatisticsSearchResults;
-import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.search.queries.SinceMaxIDFilter;
-import com.twitter.search.earlybird.search.queries.SinceUntilFilter;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntData;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSinglelonSelongmelonntSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.TwelonelontIDMappelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.AbstractFacelontTelonrmCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.TelonrmStatisticsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.TelonrmStatisticsCollelonctor.TelonrmStatisticsSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.TelonrmStatisticsRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.SincelonMaxIDFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.SincelonUntilFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontCount;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmStatisticsRelonsults;
+import com.twittelonr.selonarch.quelonryparselonr.util.IdTimelonRangelons;
 
-public class EarlybirdMultiSegmentSearcher extends EarlybirdLuceneSearcher {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdMultiSegmentSearcher.class);
+public class elonarlybirdMultiSelongmelonntSelonarchelonr elonxtelonnds elonarlybirdLucelonnelonSelonarchelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdMultiSelongmelonntSelonarchelonr.class);
 
-  private final ImmutableSchemaInterface schema;
-  private final Map<Long, EarlybirdSingleSegmentSearcher> segmentSearchers;
-  protected final int numSegments;
-  private final Clock clock;
+  privatelon final ImmutablelonSchelonmaIntelonrfacelon schelonma;
+  privatelon final Map<Long, elonarlybirdSinglelonSelongmelonntSelonarchelonr> selongmelonntSelonarchelonrs;
+  protelonctelond final int numSelongmelonnts;
+  privatelon final Clock clock;
 
-  // This will prevent us from even considering segments that are out of range.
-  // It's an important optimization for a certain class of queries.
-  protected IdTimeRanges idTimeRanges = null;
+  // This will prelonvelonnt us from elonvelonn considelonring selongmelonnts that arelon out of rangelon.
+  // It's an important optimization for a celonrtain class of quelonrielons.
+  protelonctelond IdTimelonRangelons idTimelonRangelons = null;
 
-  private final EarlybirdSearcherStats searcherStats;
+  privatelon final elonarlybirdSelonarchelonrStats selonarchelonrStats;
 
-  public EarlybirdMultiSegmentSearcher(
-      ImmutableSchemaInterface schema,
-      List<EarlybirdSingleSegmentSearcher> searchers,
-      EarlybirdSearcherStats searcherStats,
-      Clock clock) throws IOException {
-    // NOTE: We pass in an empty MultiReader to super and retain the list of searchers in this
-    // class since MultiReader does not allow an aggregate of more than Integer.MAX_VALUE docs,
-    // which some of our larger archive indexes may have.
-    super(new MultiReader());
-    // segmentSearchers are mapped from time slice IDs to searchers so that we can quickly
-    // find the correct searcher for a given time slice ID (see fillPayload).
-    // make sure we maintain order of segments, hence a LinkedHashMap instead of just a HashMap
-    this.segmentSearchers = new LinkedHashMap<>();
-    this.schema = schema;
-    for (EarlybirdSingleSegmentSearcher searcher : searchers) {
-      if (searcher != null) {
-        long timeSliceID = searcher.getTimeSliceID();
-        this.segmentSearchers.put(timeSliceID, searcher);
+  public elonarlybirdMultiSelongmelonntSelonarchelonr(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      List<elonarlybirdSinglelonSelongmelonntSelonarchelonr> selonarchelonrs,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
+      Clock clock) throws IOelonxcelonption {
+    // NOTelon: Welon pass in an elonmpty MultiRelonadelonr to supelonr and relontain thelon list of selonarchelonrs in this
+    // class sincelon MultiRelonadelonr doelons not allow an aggrelongatelon of morelon than Intelongelonr.MAX_VALUelon docs,
+    // which somelon of our largelonr archivelon indelonxelons may havelon.
+    supelonr(nelonw MultiRelonadelonr());
+    // selongmelonntSelonarchelonrs arelon mappelond from timelon slicelon IDs to selonarchelonrs so that welon can quickly
+    // find thelon correlonct selonarchelonr for a givelonn timelon slicelon ID (selonelon fillPayload).
+    // makelon surelon welon maintain ordelonr of selongmelonnts, helonncelon a LinkelondHashMap instelonad of just a HashMap
+    this.selongmelonntSelonarchelonrs = nelonw LinkelondHashMap<>();
+    this.schelonma = schelonma;
+    for (elonarlybirdSinglelonSelongmelonntSelonarchelonr selonarchelonr : selonarchelonrs) {
+      if (selonarchelonr != null) {
+        long timelonSlicelonID = selonarchelonr.gelontTimelonSlicelonID();
+        this.selongmelonntSelonarchelonrs.put(timelonSlicelonID, selonarchelonr);
       }
     }
-    // initializing this after populating the list.  previously initialized before, and
-    // this may have lead to a race condition, although this doesn't seem possible given
-    // that segments should be an immutable cloned list.
-    this.numSegments = segmentSearchers.size();
+    // initializing this aftelonr populating thelon list.  prelonviously initializelond belonforelon, and
+    // this may havelon lelonad to a racelon condition, although this doelonsn't selonelonm possiblelon givelonn
+    // that selongmelonnts should belon an immutablelon clonelond list.
+    this.numSelongmelonnts = selongmelonntSelonarchelonrs.sizelon();
 
-    this.searcherStats = searcherStats;
+    this.selonarchelonrStats = selonarchelonrStats;
     this.clock = clock;
   }
 
-  public void setIdTimeRanges(IdTimeRanges idTimeRanges) {
-    this.idTimeRanges = idTimeRanges;
+  public void selontIdTimelonRangelons(IdTimelonRangelons idTimelonRangelons) {
+    this.idTimelonRangelons = idTimelonRangelons;
   }
 
-  @Override
-  protected void search(List<LeafReaderContext> unusedLeaves, Weight weight, Collector coll)
-      throws IOException {
-    Preconditions.checkState(coll instanceof AbstractResultsCollector);
-    AbstractResultsCollector<?, ?> collector = (AbstractResultsCollector<?, ?>) coll;
+  @Ovelonrridelon
+  protelonctelond void selonarch(List<LelonafRelonadelonrContelonxt> unuselondLelonavelons, Welonight welonight, Collelonctor coll)
+      throws IOelonxcelonption {
+    Prelonconditions.chelonckStatelon(coll instancelonof AbstractRelonsultsCollelonctor);
+    AbstractRelonsultsCollelonctor<?, ?> collelonctor = (AbstractRelonsultsCollelonctor<?, ?>) coll;
 
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      if (shouldSkipSegment(segmentSearcher)) {
-        collector.skipSegment(segmentSearcher);
-      } else {
-        segmentSearcher.search(weight.getQuery(), collector);
-        if (collector.isTerminated()) {
-          break;
+    for (elonarlybirdSinglelonSelongmelonntSelonarchelonr selongmelonntSelonarchelonr : selongmelonntSelonarchelonrs.valuelons()) {
+      if (shouldSkipSelongmelonnt(selongmelonntSelonarchelonr)) {
+        collelonctor.skipSelongmelonnt(selongmelonntSelonarchelonr);
+      } elonlselon {
+        selongmelonntSelonarchelonr.selonarch(welonight.gelontQuelonry(), collelonctor);
+        if (collelonctor.isTelonrminatelond()) {
+          brelonak;
         }
       }
     }
   }
 
-  @VisibleForTesting
-  protected boolean shouldSkipSegment(EarlybirdSingleSegmentSearcher segmentSearcher) {
-    EarlybirdIndexSegmentData segmentData =
-        segmentSearcher.getTwitterIndexReader().getSegmentData();
-    if (idTimeRanges != null) {
-      if (!SinceMaxIDFilter.sinceMaxIDsInRange(
-              (TweetIDMapper) segmentData.getDocIDToTweetIDMapper(),
-              idTimeRanges.getSinceIDExclusive().or(SinceMaxIDFilter.NO_FILTER),
-              idTimeRanges.getMaxIDInclusive().or(SinceMaxIDFilter.NO_FILTER))
-          || !SinceUntilFilter.sinceUntilTimesInRange(
-              segmentData.getTimeMapper(),
-              idTimeRanges.getSinceTimeInclusive().or(SinceUntilFilter.NO_FILTER),
-              idTimeRanges.getUntilTimeExclusive().or(SinceUntilFilter.NO_FILTER))) {
-        return true;
+  @VisiblelonForTelonsting
+  protelonctelond boolelonan shouldSkipSelongmelonnt(elonarlybirdSinglelonSelongmelonntSelonarchelonr selongmelonntSelonarchelonr) {
+    elonarlybirdIndelonxSelongmelonntData selongmelonntData =
+        selongmelonntSelonarchelonr.gelontTwittelonrIndelonxRelonadelonr().gelontSelongmelonntData();
+    if (idTimelonRangelons != null) {
+      if (!SincelonMaxIDFiltelonr.sincelonMaxIDsInRangelon(
+              (TwelonelontIDMappelonr) selongmelonntData.gelontDocIDToTwelonelontIDMappelonr(),
+              idTimelonRangelons.gelontSincelonIDelonxclusivelon().or(SincelonMaxIDFiltelonr.NO_FILTelonR),
+              idTimelonRangelons.gelontMaxIDInclusivelon().or(SincelonMaxIDFiltelonr.NO_FILTelonR))
+          || !SincelonUntilFiltelonr.sincelonUntilTimelonsInRangelon(
+              selongmelonntData.gelontTimelonMappelonr(),
+              idTimelonRangelons.gelontSincelonTimelonInclusivelon().or(SincelonUntilFiltelonr.NO_FILTelonR),
+              idTimelonRangelons.gelontUntilTimelonelonxclusivelon().or(SincelonUntilFiltelonr.NO_FILTelonR))) {
+        relonturn truelon;
       }
     }
-    return false;
+    relonturn falselon;
   }
 
-  @Override
-  public void fillFacetResults(
-      AbstractFacetTermCollector collector, ThriftSearchResults searchResults) throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      segmentSearcher.fillFacetResults(collector, searchResults);
+  @Ovelonrridelon
+  public void fillFacelontRelonsults(
+      AbstractFacelontTelonrmCollelonctor collelonctor, ThriftSelonarchRelonsults selonarchRelonsults) throws IOelonxcelonption {
+    for (elonarlybirdSinglelonSelongmelonntSelonarchelonr selongmelonntSelonarchelonr : selongmelonntSelonarchelonrs.valuelons()) {
+      selongmelonntSelonarchelonr.fillFacelontRelonsults(collelonctor, selonarchRelonsults);
     }
   }
 
-  @Override
-  public TermStatisticsSearchResults collectTermStatistics(
-      TermStatisticsRequestInfo searchRequestInfo,
-      EarlybirdSearcher searcher,
-      int requestDebugMode) throws IOException {
-    TermStatisticsCollector collector = new TermStatisticsCollector(
-        schema, searchRequestInfo, searcherStats, clock, requestDebugMode);
-    search(collector.getSearchRequestInfo().getLuceneQuery(), collector);
-    searcher.maybeSetCollectorDebugInfo(collector);
-    return collector.getResults();
+  @Ovelonrridelon
+  public TelonrmStatisticsSelonarchRelonsults collelonctTelonrmStatistics(
+      TelonrmStatisticsRelonquelonstInfo selonarchRelonquelonstInfo,
+      elonarlybirdSelonarchelonr selonarchelonr,
+      int relonquelonstDelonbugModelon) throws IOelonxcelonption {
+    TelonrmStatisticsCollelonctor collelonctor = nelonw TelonrmStatisticsCollelonctor(
+        schelonma, selonarchRelonquelonstInfo, selonarchelonrStats, clock, relonquelonstDelonbugModelon);
+    selonarch(collelonctor.gelontSelonarchRelonquelonstInfo().gelontLucelonnelonQuelonry(), collelonctor);
+    selonarchelonr.maybelonSelontCollelonctorDelonbugInfo(collelonctor);
+    relonturn collelonctor.gelontRelonsults();
   }
 
-  @Override
-  public void explainSearchResults(SearchRequestInfo searchRequestInfo,
-      SimpleSearchResults hits, ThriftSearchResults searchResults) throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      // the hits that are getting passed into this method are hits across
-      // all searched segments. We need to get the per segment hits and
-      // generate explanations one segment at a time.
-      List<Hit> hitsForCurrentSegment = new ArrayList<>();
-      Set<Long> tweetIdsForCurrentSegment = new HashSet<>();
-      List<ThriftSearchResult> hitResultsForCurrentSegment = new ArrayList<>();
+  @Ovelonrridelon
+  public void elonxplainSelonarchRelonsults(SelonarchRelonquelonstInfo selonarchRelonquelonstInfo,
+      SimplelonSelonarchRelonsults hits, ThriftSelonarchRelonsults selonarchRelonsults) throws IOelonxcelonption {
+    for (elonarlybirdSinglelonSelongmelonntSelonarchelonr selongmelonntSelonarchelonr : selongmelonntSelonarchelonrs.valuelons()) {
+      // thelon hits that arelon gelontting passelond into this melonthod arelon hits across
+      // all selonarchelond selongmelonnts. Welon nelonelond to gelont thelon pelonr selongmelonnt hits and
+      // gelonnelonratelon elonxplanations onelon selongmelonnt at a timelon.
+      List<Hit> hitsForCurrelonntSelongmelonnt = nelonw ArrayList<>();
+      Selont<Long> twelonelontIdsForCurrelonntSelongmelonnt = nelonw HashSelont<>();
+      List<ThriftSelonarchRelonsult> hitRelonsultsForCurrelonntSelongmelonnt = nelonw ArrayList<>();
 
       for (Hit hit : hits.hits) {
-        if (hit.getTimeSliceID() == segmentSearcher.getTimeSliceID()) {
-          hitsForCurrentSegment.add(hit);
-          tweetIdsForCurrentSegment.add(hit.statusID);
+        if (hit.gelontTimelonSlicelonID() == selongmelonntSelonarchelonr.gelontTimelonSlicelonID()) {
+          hitsForCurrelonntSelongmelonnt.add(hit);
+          twelonelontIdsForCurrelonntSelongmelonnt.add(hit.statusID);
         }
       }
-      for (ThriftSearchResult result : searchResults.getResults()) {
-        if (tweetIdsForCurrentSegment.contains(result.id)) {
-          hitResultsForCurrentSegment.add(result);
+      for (ThriftSelonarchRelonsult relonsult : selonarchRelonsults.gelontRelonsults()) {
+        if (twelonelontIdsForCurrelonntSelongmelonnt.contains(relonsult.id)) {
+          hitRelonsultsForCurrelonntSelongmelonnt.add(relonsult);
         }
       }
-      ThriftSearchResults resultsForSegment = new ThriftSearchResults()
-          .setResults(hitResultsForCurrentSegment);
+      ThriftSelonarchRelonsults relonsultsForSelongmelonnt = nelonw ThriftSelonarchRelonsults()
+          .selontRelonsults(hitRelonsultsForCurrelonntSelongmelonnt);
 
-      SimpleSearchResults finalHits = new SimpleSearchResults(hitsForCurrentSegment);
-      segmentSearcher.explainSearchResults(searchRequestInfo, finalHits, resultsForSegment);
+      SimplelonSelonarchRelonsults finalHits = nelonw SimplelonSelonarchRelonsults(hitsForCurrelonntSelongmelonnt);
+      selongmelonntSelonarchelonr.elonxplainSelonarchRelonsults(selonarchRelonquelonstInfo, finalHits, relonsultsForSelongmelonnt);
     }
-    // We should not see hits that are not associated with an active segment
-    List<Hit> hitsWithUnknownSegment =
-        Arrays.stream(hits.hits()).filter(hit -> !hit.isHasExplanation())
-            .collect(Collectors.toList());
-    for (Hit hit : hitsWithUnknownSegment) {
-      LOG.error("Unable to find segment associated with hit: " + hit.toString());
-    }
-  }
-
-  @Override
-  public void fillFacetResultMetadata(Map<Term, ThriftFacetCount> facetResults,
-                                      ImmutableSchemaInterface documentSchema, byte debugMode)
-      throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      segmentSearcher.fillFacetResultMetadata(facetResults, documentSchema, debugMode);
+    // Welon should not selonelon hits that arelon not associatelond with an activelon selongmelonnt
+    List<Hit> hitsWithUnknownSelongmelonnt =
+        Arrays.strelonam(hits.hits()).filtelonr(hit -> !hit.isHaselonxplanation())
+            .collelonct(Collelonctors.toList());
+    for (Hit hit : hitsWithUnknownSelongmelonnt) {
+      LOG.elonrror("Unablelon to find selongmelonnt associatelond with hit: " + hit.toString());
     }
   }
 
-  @Override
-  public void fillTermStatsMetadata(ThriftTermStatisticsResults termStatsResults,
-                                    ImmutableSchemaInterface documentSchema, byte debugMode)
-      throws IOException {
-    for (EarlybirdSingleSegmentSearcher segmentSearcher : segmentSearchers.values()) {
-      segmentSearcher.fillTermStatsMetadata(termStatsResults, documentSchema, debugMode);
+  @Ovelonrridelon
+  public void fillFacelontRelonsultMelontadata(Map<Telonrm, ThriftFacelontCount> facelontRelonsults,
+                                      ImmutablelonSchelonmaIntelonrfacelon documelonntSchelonma, bytelon delonbugModelon)
+      throws IOelonxcelonption {
+    for (elonarlybirdSinglelonSelongmelonntSelonarchelonr selongmelonntSelonarchelonr : selongmelonntSelonarchelonrs.valuelons()) {
+      selongmelonntSelonarchelonr.fillFacelontRelonsultMelontadata(facelontRelonsults, documelonntSchelonma, delonbugModelon);
     }
   }
 
-  /**
-   * The searchers for individual segments will rewrite the query as they see fit, so the multi
-   * segment searcher does not need to rewrite it. In fact, not rewriting the query here improves
-   * the request latency by ~5%.
-   */
-  @Override
-  public Query rewrite(Query original) {
-    return original;
+  @Ovelonrridelon
+  public void fillTelonrmStatsMelontadata(ThriftTelonrmStatisticsRelonsults telonrmStatsRelonsults,
+                                    ImmutablelonSchelonmaIntelonrfacelon documelonntSchelonma, bytelon delonbugModelon)
+      throws IOelonxcelonption {
+    for (elonarlybirdSinglelonSelongmelonntSelonarchelonr selongmelonntSelonarchelonr : selongmelonntSelonarchelonrs.valuelons()) {
+      selongmelonntSelonarchelonr.fillTelonrmStatsMelontadata(telonrmStatsRelonsults, documelonntSchelonma, delonbugModelon);
+    }
   }
 
   /**
-   * The searchers for individual segments will create their own weights. This method only creates
-   * a dummy weight to pass the Lucene query to the search() method of these individual segment
-   * searchers.
+   * Thelon selonarchelonrs for individual selongmelonnts will relonwritelon thelon quelonry as thelony selonelon fit, so thelon multi
+   * selongmelonnt selonarchelonr doelons not nelonelond to relonwritelon it. In fact, not relonwriting thelon quelonry helonrelon improvelons
+   * thelon relonquelonst latelonncy by ~5%.
    */
-  @Override
-  public Weight createWeight(Query query, ScoreMode scoreMode, float boost) {
-    return new DummyWeight(query);
+  @Ovelonrridelon
+  public Quelonry relonwritelon(Quelonry original) {
+    relonturn original;
   }
 
   /**
-   * Dummy weight used solely to pass Lucene Query around.
+   * Thelon selonarchelonrs for individual selongmelonnts will crelonatelon thelonir own welonights. This melonthod only crelonatelons
+   * a dummy welonight to pass thelon Lucelonnelon quelonry to thelon selonarch() melonthod of thelonselon individual selongmelonnt
+   * selonarchelonrs.
    */
-  private static final class DummyWeight extends Weight {
-    private DummyWeight(Query luceneQuery) {
-      super(luceneQuery);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(Quelonry quelonry, ScorelonModelon scorelonModelon, float boost) {
+    relonturn nelonw DummyWelonight(quelonry);
+  }
+
+  /**
+   * Dummy welonight uselond solelonly to pass Lucelonnelon Quelonry around.
+   */
+  privatelon static final class DummyWelonight elonxtelonnds Welonight {
+    privatelon DummyWelonight(Quelonry lucelonnelonQuelonry) {
+      supelonr(lucelonnelonQuelonry);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) {
-      throw new UnsupportedOperationException();
+    @Ovelonrridelon
+    public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc) {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption();
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) {
-      throw new UnsupportedOperationException();
+    @Ovelonrridelon
+    public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption();
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      throw new UnsupportedOperationException();
+    @Ovelonrridelon
+    public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption();
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext context) {
-      return true;
+    @Ovelonrridelon
+    public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt contelonxt) {
+      relonturn truelon;
     }
   }
 }

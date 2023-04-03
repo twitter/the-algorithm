@@ -1,84 +1,84 @@
-package com.twitter.home_mixer.candidate_pipeline
+packagelon com.twittelonr.homelon_mixelonr.candidatelon_pipelonlinelon
 
-import com.twitter.home_mixer.functional_component.candidate_source.StaleTweetsCacheCandidateSource
-import com.twitter.home_mixer.functional_component.decorator.HomeFeedbackActionInfoBuilder
-import com.twitter.home_mixer.functional_component.feature_hydrator.NamesFeatureHydrator
-import com.twitter.home_mixer.functional_component.query_transformer.EditedTweetsCandidatePipelineQueryTransformer
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.EmptyClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.TimelineFocalTweetSafetyLevel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.candidatelon_sourcelon.StalelonTwelonelontsCachelonCandidatelonSourcelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.HomelonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.NamelonsFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.quelonry_transformelonr.elonditelondTwelonelontsCandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.UrtItelonmCandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.contelonxtual_relonf.ContelonxtualTwelonelontRelonfBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.twelonelont.TwelonelontCandidatelonUrtItelonmBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata.elonmptyClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.BaselonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.rtf.safelonty_lelonvelonl.TimelonlinelonFocalTwelonelontSafelontyLelonvelonl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf.TwelonelontHydrationContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.DelonpelonndelonntCandidatelonPipelonlinelonConfig
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Candidate Pipeline Config that fetches edited tweets from the Stale Tweets Cache
+ * Candidatelon Pipelonlinelon Config that felontchelons elonditelond twelonelonts from thelon Stalelon Twelonelonts Cachelon
  */
-@Singleton
-case class EditedTweetsCandidatePipelineConfig @Inject() (
-  staleTweetsCacheCandidateSource: StaleTweetsCacheCandidateSource,
-  namesFeatureHydrator: NamesFeatureHydrator,
-  homeFeedbackActionInfoBuilder: HomeFeedbackActionInfoBuilder)
-    extends DependentCandidatePipelineConfig[
-      PipelineQuery,
-      Seq[Long],
+@Singlelonton
+caselon class elonditelondTwelonelontsCandidatelonPipelonlinelonConfig @Injelonct() (
+  stalelonTwelonelontsCachelonCandidatelonSourcelon: StalelonTwelonelontsCachelonCandidatelonSourcelon,
+  namelonsFelonaturelonHydrator: NamelonsFelonaturelonHydrator,
+  homelonFelonelondbackActionInfoBuildelonr: HomelonFelonelondbackActionInfoBuildelonr)
+    elonxtelonnds DelonpelonndelonntCandidatelonPipelonlinelonConfig[
+      PipelonlinelonQuelonry,
+      Selonq[Long],
       Long,
-      TweetCandidate
+      TwelonelontCandidatelon
     ] {
 
-  override val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("EditedTweets")
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr = CandidatelonPipelonlinelonIdelonntifielonr("elonditelondTwelonelonts")
 
-  override val candidateSource: BaseCandidateSource[Seq[Long], Long] =
-    staleTweetsCacheCandidateSource
+  ovelonrridelon val candidatelonSourcelon: BaselonCandidatelonSourcelon[Selonq[Long], Long] =
+    stalelonTwelonelontsCachelonCandidatelonSourcelon
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    PipelineQuery,
-    Seq[Long]
-  ] = EditedTweetsCandidatePipelineQueryTransformer
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[
+    PipelonlinelonQuelonry,
+    Selonq[Long]
+  ] = elonditelondTwelonelontsCandidatelonPipelonlinelonQuelonryTransformelonr
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[
     Long,
-    TweetCandidate
-  ] = { candidate => TweetCandidate(id = candidate) }
+    TwelonelontCandidatelon
+  ] = { candidatelon => TwelonelontCandidatelon(id = candidatelon) }
 
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[PipelineQuery, TweetCandidate, _]
-  ] = Seq(namesFeatureHydrator)
+  ovelonrridelon val postFiltelonrFelonaturelonHydration: Selonq[
+    BaselonCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon, _]
+  ] = Selonq(namelonsFelonaturelonHydrator)
 
-  override val decorator: Option[CandidateDecorator[PipelineQuery, TweetCandidate]] = {
-    val tweetItemBuilder = TweetCandidateUrtItemBuilder[PipelineQuery, TweetCandidate](
-      clientEventInfoBuilder = EmptyClientEventInfoBuilder,
-      entryIdToReplaceBuilder = Some((_, candidate, _) =>
-        Some(s"${TweetItem.TweetEntryNamespace}-${candidate.id.toString}")),
-      contextualTweetRefBuilder = Some(
-        ContextualTweetRefBuilder(
-          TweetHydrationContext(
-            // Apply safety level that includes canonical VF treatments that apply regardless of context.
-            safetyLevelOverride = Some(TimelineFocalTweetSafetyLevel),
-            outerTweetContext = None
+  ovelonrridelon val deloncorator: Option[CandidatelonDeloncorator[PipelonlinelonQuelonry, TwelonelontCandidatelon]] = {
+    val twelonelontItelonmBuildelonr = TwelonelontCandidatelonUrtItelonmBuildelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon](
+      clielonntelonvelonntInfoBuildelonr = elonmptyClielonntelonvelonntInfoBuildelonr,
+      elonntryIdToRelonplacelonBuildelonr = Somelon((_, candidatelon, _) =>
+        Somelon(s"${TwelonelontItelonm.TwelonelontelonntryNamelonspacelon}-${candidatelon.id.toString}")),
+      contelonxtualTwelonelontRelonfBuildelonr = Somelon(
+        ContelonxtualTwelonelontRelonfBuildelonr(
+          TwelonelontHydrationContelonxt(
+            // Apply safelonty lelonvelonl that includelons canonical VF trelonatmelonnts that apply relongardlelonss of contelonxt.
+            safelontyLelonvelonlOvelonrridelon = Somelon(TimelonlinelonFocalTwelonelontSafelontyLelonvelonl),
+            outelonrTwelonelontContelonxt = Nonelon
           )
         )
       ),
-      feedbackActionInfoBuilder = Some(homeFeedbackActionInfoBuilder)
+      felonelondbackActionInfoBuildelonr = Somelon(homelonFelonelondbackActionInfoBuildelonr)
     )
 
-    Some(UrtItemCandidateDecorator(tweetItemBuilder))
+    Somelon(UrtItelonmCandidatelonDeloncorator(twelonelontItelonmBuildelonr))
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.5, 50, 60, 60)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.5, 50, 60, 60)
   )
 }

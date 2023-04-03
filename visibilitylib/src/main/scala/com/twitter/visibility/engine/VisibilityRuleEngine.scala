@@ -1,266 +1,266 @@
-package com.twitter.visibility.engine
+packagelon com.twittelonr.visibility.elonnginelon
 
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.{SafetyLevel => ThriftSafetyLevel}
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.VisibilityResultBuilder
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevel.DeprecatedSafetyLevel
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.State._
-import com.twitter.visibility.rules._
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.providers.PolicyProvider
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.spam.rtf.thriftscala.{SafelontyLelonvelonl => ThriftSafelontyLelonvelonl}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsultBuildelonr
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.DelonpreloncatelondSafelontyLelonvelonl
+import com.twittelonr.visibility.rulelons.elonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.Statelon._
+import com.twittelonr.visibility.rulelons._
+import com.twittelonr.visibility.rulelons.providelonrs.ProvidelondelonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.providelonrs.PolicyProvidelonr
 
-class VisibilityRuleEngine private[VisibilityRuleEngine] (
-  rulePreprocessor: VisibilityRulePreprocessor,
-  metricsRecorder: VisibilityResultsMetricRecorder,
-  enableComposableActions: Gate[Unit],
-  enableFailClosed: Gate[Unit],
-  policyProviderOpt: Option[PolicyProvider] = None)
-    extends DeciderableVisibilityRuleEngine {
+class VisibilityRulelonelonnginelon privatelon[VisibilityRulelonelonnginelon] (
+  rulelonPrelonprocelonssor: VisibilityRulelonPrelonprocelonssor,
+  melontricsReloncordelonr: VisibilityRelonsultsMelontricReloncordelonr,
+  elonnablelonComposablelonActions: Gatelon[Unit],
+  elonnablelonFailCloselond: Gatelon[Unit],
+  policyProvidelonrOpt: Option[PolicyProvidelonr] = Nonelon)
+    elonxtelonnds DeloncidelonrablelonVisibilityRulelonelonnginelon {
 
-  private[visibility] def apply(
-    evaluationContext: ProvidedEvaluationContext,
+  privatelon[visibility] delonf apply(
+    elonvaluationContelonxt: ProvidelondelonvaluationContelonxt,
     visibilityPolicy: VisibilityPolicy,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    enableShortCircuiting: Gate[Unit],
-    preprocessedRules: Option[Seq[Rule]]
-  ): Stitch[VisibilityResult] = {
-    val (resultBuilder, rules) = preprocessedRules match {
-      case Some(r) =>
-        (visibilityResultBuilder, r)
-      case None =>
-        rulePreprocessor.evaluate(evaluationContext, visibilityPolicy, visibilityResultBuilder)
+    visibilityRelonsultBuildelonr: VisibilityRelonsultBuildelonr,
+    elonnablelonShortCircuiting: Gatelon[Unit],
+    prelonprocelonsselondRulelons: Option[Selonq[Rulelon]]
+  ): Stitch[VisibilityRelonsult] = {
+    val (relonsultBuildelonr, rulelons) = prelonprocelonsselondRulelons match {
+      caselon Somelon(r) =>
+        (visibilityRelonsultBuildelonr, r)
+      caselon Nonelon =>
+        rulelonPrelonprocelonssor.elonvaluatelon(elonvaluationContelonxt, visibilityPolicy, visibilityRelonsultBuildelonr)
     }
-    evaluate(evaluationContext, resultBuilder, rules, enableShortCircuiting)
+    elonvaluatelon(elonvaluationContelonxt, relonsultBuildelonr, rulelons, elonnablelonShortCircuiting)
   }
 
-  def apply(
-    evaluationContext: EvaluationContext,
-    safetyLevel: SafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    enableShortCircuiting: Gate[Unit] = Gate.True,
-    preprocessedRules: Option[Seq[Rule]] = None
-  ): Stitch[VisibilityResult] = {
-    val visibilityPolicy = policyProviderOpt match {
-      case Some(policyProvider) =>
-        policyProvider.policyForSurface(safetyLevel)
-      case None => RuleBase.RuleMap(safetyLevel)
+  delonf apply(
+    elonvaluationContelonxt: elonvaluationContelonxt,
+    safelontyLelonvelonl: SafelontyLelonvelonl,
+    visibilityRelonsultBuildelonr: VisibilityRelonsultBuildelonr,
+    elonnablelonShortCircuiting: Gatelon[Unit] = Gatelon.Truelon,
+    prelonprocelonsselondRulelons: Option[Selonq[Rulelon]] = Nonelon
+  ): Stitch[VisibilityRelonsult] = {
+    val visibilityPolicy = policyProvidelonrOpt match {
+      caselon Somelon(policyProvidelonr) =>
+        policyProvidelonr.policyForSurfacelon(safelontyLelonvelonl)
+      caselon Nonelon => RulelonBaselon.RulelonMap(safelontyLelonvelonl)
     }
-    if (evaluationContext.params(safetyLevel.enabledParam)) {
+    if (elonvaluationContelonxt.params(safelontyLelonvelonl.elonnablelondParam)) {
       apply(
-        ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-          evaluationContext = evaluationContext,
-          safetyLevel = Some(safetyLevel),
-          policyProviderOpt = policyProviderOpt
+        ProvidelondelonvaluationContelonxt.injelonctRuntimelonRulelonsIntoelonvaluationContelonxt(
+          elonvaluationContelonxt = elonvaluationContelonxt,
+          safelontyLelonvelonl = Somelon(safelontyLelonvelonl),
+          policyProvidelonrOpt = policyProvidelonrOpt
         ),
         visibilityPolicy,
-        visibilityResultBuilder,
-        enableShortCircuiting,
-        preprocessedRules
-      ).onSuccess { result =>
-          metricsRecorder.recordSuccess(safetyLevel, result)
+        visibilityRelonsultBuildelonr,
+        elonnablelonShortCircuiting,
+        prelonprocelonsselondRulelons
+      ).onSuccelonss { relonsult =>
+          melontricsReloncordelonr.reloncordSuccelonss(safelontyLelonvelonl, relonsult)
         }
-        .onFailure { _ =>
-          metricsRecorder.recordAction(safetyLevel, "failure")
+        .onFailurelon { _ =>
+          melontricsReloncordelonr.reloncordAction(safelontyLelonvelonl, "failurelon")
         }
-    } else {
-      metricsRecorder.recordAction(safetyLevel, "disabled")
-      val rules: Seq[Rule] = visibilityPolicy.forContentId(visibilityResultBuilder.contentId)
-      Stitch.value(
-        visibilityResultBuilder
-          .withRuleResultMap(rules.map(r => r -> RuleResult(Allow, Skipped)).toMap)
-          .withVerdict(verdict = Allow)
-          .withFinished(finished = true)
+    } elonlselon {
+      melontricsReloncordelonr.reloncordAction(safelontyLelonvelonl, "disablelond")
+      val rulelons: Selonq[Rulelon] = visibilityPolicy.forContelonntId(visibilityRelonsultBuildelonr.contelonntId)
+      Stitch.valuelon(
+        visibilityRelonsultBuildelonr
+          .withRulelonRelonsultMap(rulelons.map(r => r -> RulelonRelonsult(Allow, Skippelond)).toMap)
+          .withVelonrdict(velonrdict = Allow)
+          .withFinishelond(finishelond = truelon)
           .build
       )
     }
   }
 
-  def apply(
-    evaluationContext: EvaluationContext,
-    thriftSafetyLevel: ThriftSafetyLevel,
-    visibilityResultBuilder: VisibilityResultBuilder
-  ): Stitch[VisibilityResult] = {
-    val safetyLevel: SafetyLevel = SafetyLevel.fromThrift(thriftSafetyLevel)
-    safetyLevel match {
-      case DeprecatedSafetyLevel =>
-        metricsRecorder.recordUnknownSafetyLevel(safetyLevel)
-        Stitch.value(
-          visibilityResultBuilder
-            .withVerdict(verdict = Allow)
-            .withFinished(finished = true)
+  delonf apply(
+    elonvaluationContelonxt: elonvaluationContelonxt,
+    thriftSafelontyLelonvelonl: ThriftSafelontyLelonvelonl,
+    visibilityRelonsultBuildelonr: VisibilityRelonsultBuildelonr
+  ): Stitch[VisibilityRelonsult] = {
+    val safelontyLelonvelonl: SafelontyLelonvelonl = SafelontyLelonvelonl.fromThrift(thriftSafelontyLelonvelonl)
+    safelontyLelonvelonl match {
+      caselon DelonpreloncatelondSafelontyLelonvelonl =>
+        melontricsReloncordelonr.reloncordUnknownSafelontyLelonvelonl(safelontyLelonvelonl)
+        Stitch.valuelon(
+          visibilityRelonsultBuildelonr
+            .withVelonrdict(velonrdict = Allow)
+            .withFinishelond(finishelond = truelon)
             .build
         )
 
-      case thriftSafetyLevel: SafetyLevel =>
+      caselon thriftSafelontyLelonvelonl: SafelontyLelonvelonl =>
         this(
-          ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-            evaluationContext = evaluationContext,
-            safetyLevel = Some(safetyLevel),
-            policyProviderOpt = policyProviderOpt
+          ProvidelondelonvaluationContelonxt.injelonctRuntimelonRulelonsIntoelonvaluationContelonxt(
+            elonvaluationContelonxt = elonvaluationContelonxt,
+            safelontyLelonvelonl = Somelon(safelontyLelonvelonl),
+            policyProvidelonrOpt = policyProvidelonrOpt
           ),
-          thriftSafetyLevel,
-          visibilityResultBuilder
+          thriftSafelontyLelonvelonl,
+          visibilityRelonsultBuildelonr
         )
     }
   }
 
-  private[visibility] def evaluateRules(
-    evaluationContext: ProvidedEvaluationContext,
-    resolvedFeatureMap: Map[Feature[_], Any],
-    failedFeatures: Map[Feature[_], Throwable],
-    resultBuilderWithoutFailedFeatures: VisibilityResultBuilder,
-    preprocessedRules: Seq[Rule],
-    enableShortCircuiting: Gate[Unit]
-  ): VisibilityResultBuilder = {
-    preprocessedRules
-      .foldLeft(resultBuilderWithoutFailedFeatures) { (builder, rule) =>
-        builder.ruleResults.get(rule) match {
-          case Some(RuleResult(_, state)) if state == Evaluated || state == ShortCircuited =>
-            builder
+  privatelon[visibility] delonf elonvaluatelonRulelons(
+    elonvaluationContelonxt: ProvidelondelonvaluationContelonxt,
+    relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any],
+    failelondFelonaturelons: Map[Felonaturelon[_], Throwablelon],
+    relonsultBuildelonrWithoutFailelondFelonaturelons: VisibilityRelonsultBuildelonr,
+    prelonprocelonsselondRulelons: Selonq[Rulelon],
+    elonnablelonShortCircuiting: Gatelon[Unit]
+  ): VisibilityRelonsultBuildelonr = {
+    prelonprocelonsselondRulelons
+      .foldLelonft(relonsultBuildelonrWithoutFailelondFelonaturelons) { (buildelonr, rulelon) =>
+        buildelonr.rulelonRelonsults.gelont(rulelon) match {
+          caselon Somelon(RulelonRelonsult(_, statelon)) if statelon == elonvaluatelond || statelon == ShortCircuitelond =>
+            buildelonr
 
-          case _ =>
-            val failedFeatureDependencies: Map[Feature[_], Throwable] =
-              failedFeatures.filterKeys(key => rule.featureDependencies.contains(key))
+          caselon _ =>
+            val failelondFelonaturelonDelonpelonndelonncielons: Map[Felonaturelon[_], Throwablelon] =
+              failelondFelonaturelons.filtelonrKelonys(kelony => rulelon.felonaturelonDelonpelonndelonncielons.contains(kelony))
 
             val shortCircuit =
-              builder.finished && enableShortCircuiting() &&
-                !(enableComposableActions() && builder.isVerdictComposable())
+              buildelonr.finishelond && elonnablelonShortCircuiting() &&
+                !(elonnablelonComposablelonActions() && buildelonr.isVelonrdictComposablelon())
 
-            if (failedFeatureDependencies.nonEmpty && rule.fallbackActionBuilder.isEmpty) {
-              metricsRecorder.recordRuleFailedFeatures(rule.name, failedFeatureDependencies)
-              builder.withRuleResult(
-                rule,
-                RuleResult(NotEvaluated, FeatureFailed(failedFeatureDependencies)))
+            if (failelondFelonaturelonDelonpelonndelonncielons.nonelonmpty && rulelon.fallbackActionBuildelonr.iselonmpty) {
+              melontricsReloncordelonr.reloncordRulelonFailelondFelonaturelons(rulelon.namelon, failelondFelonaturelonDelonpelonndelonncielons)
+              buildelonr.withRulelonRelonsult(
+                rulelon,
+                RulelonRelonsult(Notelonvaluatelond, FelonaturelonFailelond(failelondFelonaturelonDelonpelonndelonncielons)))
 
-            } else if (shortCircuit) {
+            } elonlselon if (shortCircuit) {
 
-              metricsRecorder.recordRuleEvaluation(rule.name, NotEvaluated, ShortCircuited)
-              builder.withRuleResult(rule, RuleResult(builder.verdict, ShortCircuited))
-            } else {
+              melontricsReloncordelonr.reloncordRulelonelonvaluation(rulelon.namelon, Notelonvaluatelond, ShortCircuitelond)
+              buildelonr.withRulelonRelonsult(rulelon, RulelonRelonsult(buildelonr.velonrdict, ShortCircuitelond))
+            } elonlselon {
 
-              if (rule.fallbackActionBuilder.nonEmpty) {
-                metricsRecorder.recordRuleFallbackAction(rule.name)
+              if (rulelon.fallbackActionBuildelonr.nonelonmpty) {
+                melontricsReloncordelonr.reloncordRulelonFallbackAction(rulelon.namelon)
               }
 
 
-              val ruleResult =
-                rule.evaluate(evaluationContext, resolvedFeatureMap)
-              metricsRecorder
-                .recordRuleEvaluation(rule.name, ruleResult.action, ruleResult.state)
-              val nextBuilder = (ruleResult.action, builder.finished) match {
-                case (NotEvaluated | Allow, _) =>
-                  ruleResult.state match {
-                    case Heldback =>
-                      metricsRecorder.recordRuleHoldBack(rule.name)
-                    case RuleFailed(_) =>
-                      metricsRecorder.recordRuleFailed(rule.name)
-                    case _ =>
+              val rulelonRelonsult =
+                rulelon.elonvaluatelon(elonvaluationContelonxt, relonsolvelondFelonaturelonMap)
+              melontricsReloncordelonr
+                .reloncordRulelonelonvaluation(rulelon.namelon, rulelonRelonsult.action, rulelonRelonsult.statelon)
+              val nelonxtBuildelonr = (rulelonRelonsult.action, buildelonr.finishelond) match {
+                caselon (Notelonvaluatelond | Allow, _) =>
+                  rulelonRelonsult.statelon match {
+                    caselon Helonldback =>
+                      melontricsReloncordelonr.reloncordRulelonHoldBack(rulelon.namelon)
+                    caselon RulelonFailelond(_) =>
+                      melontricsReloncordelonr.reloncordRulelonFailelond(rulelon.namelon)
+                    caselon _ =>
                   }
-                  builder.withRuleResult(rule, ruleResult)
+                  buildelonr.withRulelonRelonsult(rulelon, rulelonRelonsult)
 
-                case (_, true) =>
-                  builder
-                    .withRuleResult(rule, ruleResult)
-                    .withSecondaryVerdict(ruleResult.action, rule)
+                caselon (_, truelon) =>
+                  buildelonr
+                    .withRulelonRelonsult(rulelon, rulelonRelonsult)
+                    .withSeloncondaryVelonrdict(rulelonRelonsult.action, rulelon)
 
-                case _ =>
-                  builder
-                    .withRuleResult(rule, ruleResult)
-                    .withVerdict(ruleResult.action, Some(rule))
-                    .withFinished(true)
+                caselon _ =>
+                  buildelonr
+                    .withRulelonRelonsult(rulelon, rulelonRelonsult)
+                    .withVelonrdict(rulelonRelonsult.action, Somelon(rulelon))
+                    .withFinishelond(truelon)
               }
 
-              nextBuilder
+              nelonxtBuildelonr
             }
         }
-      }.withResolvedFeatureMap(resolvedFeatureMap)
+      }.withRelonsolvelondFelonaturelonMap(relonsolvelondFelonaturelonMap)
   }
 
-  private[visibility] def evaluateFailClosed(
-    evaluationContext: ProvidedEvaluationContext
-  ): VisibilityResultBuilder => Stitch[VisibilityResultBuilder] = { builder =>
-    builder.failClosedException(evaluationContext) match {
-      case Some(e: FailClosedException) if enableFailClosed() =>
-        metricsRecorder.recordFailClosed(e.getRuleName, e.getState);
-        Stitch.exception(e)
-      case _ => Stitch.value(builder)
+  privatelon[visibility] delonf elonvaluatelonFailCloselond(
+    elonvaluationContelonxt: ProvidelondelonvaluationContelonxt
+  ): VisibilityRelonsultBuildelonr => Stitch[VisibilityRelonsultBuildelonr] = { buildelonr =>
+    buildelonr.failCloselondelonxcelonption(elonvaluationContelonxt) match {
+      caselon Somelon(elon: FailCloselondelonxcelonption) if elonnablelonFailCloselond() =>
+        melontricsReloncordelonr.reloncordFailCloselond(elon.gelontRulelonNamelon, elon.gelontStatelon);
+        Stitch.elonxcelonption(elon)
+      caselon _ => Stitch.valuelon(buildelonr)
     }
   }
 
-  private[visibility] def checkMarkFinished(
-    builder: VisibilityResultBuilder
-  ): VisibilityResult = {
-    val allRulesEvaluated: Boolean = builder.ruleResults.values.forall {
-      case RuleResult(_, state) =>
-        state == Evaluated || state == Disabled || state == Skipped
-      case _ =>
-        false
+  privatelon[visibility] delonf chelonckMarkFinishelond(
+    buildelonr: VisibilityRelonsultBuildelonr
+  ): VisibilityRelonsult = {
+    val allRulelonselonvaluatelond: Boolelonan = buildelonr.rulelonRelonsults.valuelons.forall {
+      caselon RulelonRelonsult(_, statelon) =>
+        statelon == elonvaluatelond || statelon == Disablelond || statelon == Skippelond
+      caselon _ =>
+        falselon
     }
 
-    if (allRulesEvaluated) {
-      builder.withFinished(true).build
-    } else {
-      builder.build
+    if (allRulelonselonvaluatelond) {
+      buildelonr.withFinishelond(truelon).build
+    } elonlselon {
+      buildelonr.build
     }
   }
 
-  private[visibility] def evaluate(
-    evaluationContext: ProvidedEvaluationContext,
-    visibilityResultBuilder: VisibilityResultBuilder,
-    preprocessedRules: Seq[Rule],
-    enableShortCircuiting: Gate[Unit] = Gate.True
-  ): Stitch[VisibilityResult] = {
+  privatelon[visibility] delonf elonvaluatelon(
+    elonvaluationContelonxt: ProvidelondelonvaluationContelonxt,
+    visibilityRelonsultBuildelonr: VisibilityRelonsultBuildelonr,
+    prelonprocelonsselondRulelons: Selonq[Rulelon],
+    elonnablelonShortCircuiting: Gatelon[Unit] = Gatelon.Truelon
+  ): Stitch[VisibilityRelonsult] = {
 
-    val finalBuilder =
-      FeatureMap.resolve(visibilityResultBuilder.features, evaluationContext.statsReceiver).map {
-        resolvedFeatureMap =>
-          val (failedFeatureMap, successfulFeatureMap) = resolvedFeatureMap.constantMap.partition({
-            case (_, _: FeatureFailedPlaceholderObject) => true
-            case _ => false
+    val finalBuildelonr =
+      FelonaturelonMap.relonsolvelon(visibilityRelonsultBuildelonr.felonaturelons, elonvaluationContelonxt.statsReloncelonivelonr).map {
+        relonsolvelondFelonaturelonMap =>
+          val (failelondFelonaturelonMap, succelonssfulFelonaturelonMap) = relonsolvelondFelonaturelonMap.constantMap.partition({
+            caselon (_, _: FelonaturelonFailelondPlacelonholdelonrObjelonct) => truelon
+            caselon _ => falselon
           })
 
-          val failedFeatures: Map[Feature[_], Throwable] =
-            failedFeatureMap.mapValues({
-              case failurePlaceholder: FeatureFailedPlaceholderObject =>
-                failurePlaceholder.throwable
+          val failelondFelonaturelons: Map[Felonaturelon[_], Throwablelon] =
+            failelondFelonaturelonMap.mapValuelons({
+              caselon failurelonPlacelonholdelonr: FelonaturelonFailelondPlacelonholdelonrObjelonct =>
+                failurelonPlacelonholdelonr.throwablelon
             })
 
-          val resultBuilderWithoutFailedFeatures =
-            visibilityResultBuilder.withFeatureMap(ResolvedFeatureMap(successfulFeatureMap))
+          val relonsultBuildelonrWithoutFailelondFelonaturelons =
+            visibilityRelonsultBuildelonr.withFelonaturelonMap(RelonsolvelondFelonaturelonMap(succelonssfulFelonaturelonMap))
 
-          evaluateRules(
-            evaluationContext,
-            successfulFeatureMap,
-            failedFeatures,
-            resultBuilderWithoutFailedFeatures,
-            preprocessedRules,
-            enableShortCircuiting
+          elonvaluatelonRulelons(
+            elonvaluationContelonxt,
+            succelonssfulFelonaturelonMap,
+            failelondFelonaturelons,
+            relonsultBuildelonrWithoutFailelondFelonaturelons,
+            prelonprocelonsselondRulelons,
+            elonnablelonShortCircuiting
           )
       }
 
-    finalBuilder.flatMap(evaluateFailClosed(evaluationContext)).map(checkMarkFinished)
+    finalBuildelonr.flatMap(elonvaluatelonFailCloselond(elonvaluationContelonxt)).map(chelonckMarkFinishelond)
   }
 }
 
-object VisibilityRuleEngine {
+objelonct VisibilityRulelonelonnginelon {
 
-  def apply(
-    rulePreprocessor: Option[VisibilityRulePreprocessor] = None,
-    metricsRecorder: VisibilityResultsMetricRecorder = NullVisibilityResultsMetricsRecorder,
-    enableComposableActions: Gate[Unit] = Gate.False,
-    enableFailClosed: Gate[Unit] = Gate.False,
-    policyProviderOpt: Option[PolicyProvider] = None,
-  ): VisibilityRuleEngine = {
-    new VisibilityRuleEngine(
-      rulePreprocessor.getOrElse(VisibilityRulePreprocessor(metricsRecorder)),
-      metricsRecorder,
-      enableComposableActions,
-      enableFailClosed,
-      policyProviderOpt = policyProviderOpt)
+  delonf apply(
+    rulelonPrelonprocelonssor: Option[VisibilityRulelonPrelonprocelonssor] = Nonelon,
+    melontricsReloncordelonr: VisibilityRelonsultsMelontricReloncordelonr = NullVisibilityRelonsultsMelontricsReloncordelonr,
+    elonnablelonComposablelonActions: Gatelon[Unit] = Gatelon.Falselon,
+    elonnablelonFailCloselond: Gatelon[Unit] = Gatelon.Falselon,
+    policyProvidelonrOpt: Option[PolicyProvidelonr] = Nonelon,
+  ): VisibilityRulelonelonnginelon = {
+    nelonw VisibilityRulelonelonnginelon(
+      rulelonPrelonprocelonssor.gelontOrelonlselon(VisibilityRulelonPrelonprocelonssor(melontricsReloncordelonr)),
+      melontricsReloncordelonr,
+      elonnablelonComposablelonActions,
+      elonnablelonFailCloselond,
+      policyProvidelonrOpt = policyProvidelonrOpt)
   }
 }

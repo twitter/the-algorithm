@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.common;
+packagelon com.twittelonr.selonarch.elonarlybird_root.common;
 
-public class ClientErrorException extends RuntimeException {
+public class Clielonntelonrrorelonxcelonption elonxtelonnds Runtimelonelonxcelonption {
 
-  public ClientErrorException() {
+  public Clielonntelonrrorelonxcelonption() {
   }
 
-  public ClientErrorException(String message) {
-    super(message);
+  public Clielonntelonrrorelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 
-  public ClientErrorException(String message, Throwable cause) {
-    super(message, cause);
+  public Clielonntelonrrorelonxcelonption(String melonssagelon, Throwablelon causelon) {
+    supelonr(melonssagelon, causelon);
   }
 
-  public ClientErrorException(Throwable cause) {
-    super(cause);
+  public Clielonntelonrrorelonxcelonption(Throwablelon causelon) {
+    supelonr(causelon);
   }
 
-  public ClientErrorException(String message, Throwable cause,
-                              boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
+  public Clielonntelonrrorelonxcelonption(String melonssagelon, Throwablelon causelon,
+                              boolelonan elonnablelonSupprelonssion, boolelonan writablelonStackTracelon) {
+    supelonr(melonssagelon, causelon, elonnablelonSupprelonssion, writablelonStackTracelon);
   }
 }

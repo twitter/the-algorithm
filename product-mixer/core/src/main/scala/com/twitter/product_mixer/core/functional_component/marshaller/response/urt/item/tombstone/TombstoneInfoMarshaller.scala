@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.tombstonelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon.TombstonelonInfo
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TombstoneInfoMarshaller @Inject() (
-  richTextMarshaller: RichTextMarshaller) {
+@Singlelonton
+class TombstonelonInfoMarshallelonr @Injelonct() (
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr) {
 
-  def apply(tombstoneInfo: TombstoneInfo): urt.TombstoneInfo = urt.TombstoneInfo(
-    text = tombstoneInfo.text,
-    richText = tombstoneInfo.richText.map(richTextMarshaller(_)),
-    richRevealText = tombstoneInfo.richRevealText.map(richTextMarshaller(_))
+  delonf apply(tombstonelonInfo: TombstonelonInfo): urt.TombstonelonInfo = urt.TombstonelonInfo(
+    telonxt = tombstonelonInfo.telonxt,
+    richTelonxt = tombstonelonInfo.richTelonxt.map(richTelonxtMarshallelonr(_)),
+    richRelonvelonalTelonxt = tombstonelonInfo.richRelonvelonalTelonxt.map(richTelonxtMarshallelonr(_))
   )
 }

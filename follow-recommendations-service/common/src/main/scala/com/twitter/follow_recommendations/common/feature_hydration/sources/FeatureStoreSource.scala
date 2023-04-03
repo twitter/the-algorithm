@@ -1,368 +1,368 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.CandidateAlgorithmAdapter.remapCandidateSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.adaptAdditionalFeaturesToDataRecord
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.randomizedTTL
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.featurestore.catalog.datasets.core.UsersourceEntityDataset
-import com.twitter.ml.featurestore.catalog.datasets.magicrecs.NotificationSummariesEntityDataset
-import com.twitter.ml.featurestore.catalog.datasets.onboarding.MetricCenterUserCountingFeaturesDataset
-import com.twitter.ml.featurestore.catalog.datasets.timelines.AuthorFeaturesEntityDataset
-import com.twitter.ml.featurestore.catalog.entities.core.{Author => AuthorEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{AuthorTopic => AuthorTopicEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{CandidateUser => CandidateUserEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{Topic => TopicEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{User => UserEntity}
-import com.twitter.ml.featurestore.catalog.entities.core.{UserCandidate => UserCandidateEntity}
-import com.twitter.ml.featurestore.catalog.entities.onboarding.UserWtfAlgorithmEntity
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.dataset.online.Hydrator.HydrationResponse
-import com.twitter.ml.featurestore.lib.dataset.online.OnlineAccessDataset
-import com.twitter.ml.featurestore.lib.dataset.DatasetId
-import com.twitter.ml.featurestore.lib.dynamic._
-import com.twitter.ml.featurestore.lib.feature._
-import com.twitter.ml.featurestore.lib.online.DatasetValuesCache
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.ml.featurestore.lib.online.OnlineFeatureGenerationStats
-import com.twitter.ml.featurestore.lib.EdgeEntityId
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.TopicId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.WtfAlgorithmId
-import com.twitter.onboarding.relevance.adapters.features.featurestore.CandidateAuthorTopicAggregatesAdapter
-import com.twitter.onboarding.relevance.adapters.features.featurestore.CandidateTopicEngagementRealTimeAggregatesAdapter
-import com.twitter.onboarding.relevance.adapters.features.featurestore.CandidateTopicEngagementUserStateRealTimeAggregatesAdapter
-import com.twitter.onboarding.relevance.adapters.features.featurestore.CandidateTopicNegativeEngagementUserStateRealTimeAggregatesAdapter
-import com.twitter.onboarding.relevance.adapters.features.featurestore.FeatureStoreAdapter
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.github.belonnmanelons.caffeloninelon.cachelon.Caffeloninelon
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.Timelonoutelonxcelonption
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.adaptelonrs.CandidatelonAlgorithmAdaptelonr.relonmapCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.FelonaturelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.FelonaturelonSourcelonId
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.HasPrelonFelontchelondFelonaturelon
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons.Utils.adaptAdditionalFelonaturelonsToDataReloncord
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons.Utils.randomizelondTTL
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasSimilarToContelonxt
+import com.twittelonr.helonrmit.constants.AlgorithmFelonelondbackTokelonns.AlgorithmToFelonelondbackTokelonnMap
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.IReloncordOnelonToOnelonAdaptelonr
+import com.twittelonr.ml.felonaturelonstorelon.catalog.dataselonts.corelon.UselonrsourcelonelonntityDataselont
+import com.twittelonr.ml.felonaturelonstorelon.catalog.dataselonts.magicreloncs.NotificationSummarielonselonntityDataselont
+import com.twittelonr.ml.felonaturelonstorelon.catalog.dataselonts.onboarding.MelontricCelonntelonrUselonrCountingFelonaturelonsDataselont
+import com.twittelonr.ml.felonaturelonstorelon.catalog.dataselonts.timelonlinelons.AuthorFelonaturelonselonntityDataselont
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons.corelon.{Author => Authorelonntity}
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons.corelon.{AuthorTopic => AuthorTopicelonntity}
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons.corelon.{CandidatelonUselonr => CandidatelonUselonrelonntity}
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons.corelon.{Topic => Topicelonntity}
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons.corelon.{Uselonr => Uselonrelonntity}
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons.corelon.{UselonrCandidatelon => UselonrCandidatelonelonntity}
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons.onboarding.UselonrWtfAlgorithmelonntity
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.PrelondictionReloncord
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.PrelondictionReloncordAdaptelonr
+import com.twittelonr.ml.felonaturelonstorelon.lib.dataselont.onlinelon.Hydrator.HydrationRelonsponselon
+import com.twittelonr.ml.felonaturelonstorelon.lib.dataselont.onlinelon.OnlinelonAccelonssDataselont
+import com.twittelonr.ml.felonaturelonstorelon.lib.dataselont.DataselontId
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic._
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon._
+import com.twittelonr.ml.felonaturelonstorelon.lib.onlinelon.DataselontValuelonsCachelon
+import com.twittelonr.ml.felonaturelonstorelon.lib.onlinelon.FelonaturelonStorelonRelonquelonst
+import com.twittelonr.ml.felonaturelonstorelon.lib.onlinelon.OnlinelonFelonaturelonGelonnelonrationStats
+import com.twittelonr.ml.felonaturelonstorelon.lib.elondgelonelonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.TopicId
+import com.twittelonr.ml.felonaturelonstorelon.lib.UselonrId
+import com.twittelonr.ml.felonaturelonstorelon.lib.WtfAlgorithmId
+import com.twittelonr.onboarding.relonlelonvancelon.adaptelonrs.felonaturelons.felonaturelonstorelon.CandidatelonAuthorTopicAggrelongatelonsAdaptelonr
+import com.twittelonr.onboarding.relonlelonvancelon.adaptelonrs.felonaturelons.felonaturelonstorelon.CandidatelonTopicelonngagelonmelonntRelonalTimelonAggrelongatelonsAdaptelonr
+import com.twittelonr.onboarding.relonlelonvancelon.adaptelonrs.felonaturelons.felonaturelonstorelon.CandidatelonTopicelonngagelonmelonntUselonrStatelonRelonalTimelonAggrelongatelonsAdaptelonr
+import com.twittelonr.onboarding.relonlelonvancelon.adaptelonrs.felonaturelons.felonaturelonstorelon.CandidatelonTopicNelongativelonelonngagelonmelonntUselonrStatelonRelonalTimelonAggrelongatelonsAdaptelonr
+import com.twittelonr.onboarding.relonlelonvancelon.adaptelonrs.felonaturelons.felonaturelonstorelon.FelonaturelonStorelonAdaptelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
-import java.util.concurrent.TimeUnit
+import java.util.concurrelonnt.TimelonUnit
 
-@Singleton
-class FeatureStoreSource @Inject() (
-  serviceIdentifier: ServiceIdentifier,
-  stats: StatsReceiver)
-    extends FeatureSource {
-  import FeatureStoreSource._
+@Singlelonton
+class FelonaturelonStorelonSourcelon @Injelonct() (
+  selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+  stats: StatsReloncelonivelonr)
+    elonxtelonnds FelonaturelonSourcelon {
+  import FelonaturelonStorelonSourcelon._
 
-  override val id: FeatureSourceId = FeatureSourceId.FeatureStoreSourceId
-  override val featureContext: FeatureContext = FeatureStoreSource.getFeatureContext
-  val hydrateFeaturesStats = stats.scope("hydrate_features")
-  val adapterStats = stats.scope("adapters")
-  val featureSet: BoundFeatureSet = BoundFeatureSet(FeatureStoreSource.allFeatures)
-  val clientConfig: ClientConfig[HasParams] = ClientConfig(
-    dynamicHydrationConfig = FeatureStoreSource.dynamicHydrationConfig,
-    featureStoreParamsConfig =
-      FeatureStoreParamsConfig(FeatureStoreParameters.featureStoreParams, Map.empty),
+  ovelonrridelon val id: FelonaturelonSourcelonId = FelonaturelonSourcelonId.FelonaturelonStorelonSourcelonId
+  ovelonrridelon val felonaturelonContelonxt: FelonaturelonContelonxt = FelonaturelonStorelonSourcelon.gelontFelonaturelonContelonxt
+  val hydratelonFelonaturelonsStats = stats.scopelon("hydratelon_felonaturelons")
+  val adaptelonrStats = stats.scopelon("adaptelonrs")
+  val felonaturelonSelont: BoundFelonaturelonSelont = BoundFelonaturelonSelont(FelonaturelonStorelonSourcelon.allFelonaturelons)
+  val clielonntConfig: ClielonntConfig[HasParams] = ClielonntConfig(
+    dynamicHydrationConfig = FelonaturelonStorelonSourcelon.dynamicHydrationConfig,
+    felonaturelonStorelonParamsConfig =
+      FelonaturelonStorelonParamsConfig(FelonaturelonStorelonParamelontelonrs.felonaturelonStorelonParams, Map.elonmpty),
     /**
-     * The smaller one between `timeoutProvider` and `FeatureStoreSourceParams.GlobalFetchTimeout`
-     * used below takes effect.
+     * Thelon smallelonr onelon belontwelonelonn `timelonoutProvidelonr` and `FelonaturelonStorelonSourcelonParams.GlobalFelontchTimelonout`
+     * uselond belonlow takelons elonffelonct.
      */
-    timeoutProvider = Function.const(800.millis),
-    serviceIdentifier = serviceIdentifier
+    timelonoutProvidelonr = Function.const(800.millis),
+    selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr
   )
 
-  private val datasetsToCache = Set(
-    MetricCenterUserCountingFeaturesDataset,
-    UsersourceEntityDataset,
-    AuthorFeaturesEntityDataset,
-    NotificationSummariesEntityDataset
-  ).asInstanceOf[Set[OnlineAccessDataset[_ <: EntityId, _]]]
+  privatelon val dataselontsToCachelon = Selont(
+    MelontricCelonntelonrUselonrCountingFelonaturelonsDataselont,
+    UselonrsourcelonelonntityDataselont,
+    AuthorFelonaturelonselonntityDataselont,
+    NotificationSummarielonselonntityDataselont
+  ).asInstancelonOf[Selont[OnlinelonAccelonssDataselont[_ <: elonntityId, _]]]
 
-  private val datasetValuesCache: DatasetValuesCache =
-    DatasetValuesCache(
-      Caffeine
-        .newBuilder()
-        .expireAfterWrite(randomizedTTL(12.hours.inSeconds), TimeUnit.SECONDS)
-        .maximumSize(DefaultCacheMaxKeys)
-        .build[(_ <: EntityId, DatasetId), Stitch[HydrationResponse[_]]]
+  privatelon val dataselontValuelonsCachelon: DataselontValuelonsCachelon =
+    DataselontValuelonsCachelon(
+      Caffeloninelon
+        .nelonwBuildelonr()
+        .elonxpirelonAftelonrWritelon(randomizelondTTL(12.hours.inSelonconds), TimelonUnit.SelonCONDS)
+        .maximumSizelon(DelonfaultCachelonMaxKelonys)
+        .build[(_ <: elonntityId, DataselontId), Stitch[HydrationRelonsponselon[_]]]
         .asMap,
-      datasetsToCache,
-      DatasetCacheScope
+      dataselontsToCachelon,
+      DataselontCachelonScopelon
     )
 
-  private val dynamicFeatureStoreClient = DynamicFeatureStoreClient(
-    clientConfig,
+  privatelon val dynamicFelonaturelonStorelonClielonnt = DynamicFelonaturelonStorelonClielonnt(
+    clielonntConfig,
     stats,
-    Set(datasetValuesCache)
+    Selont(dataselontValuelonsCachelon)
   )
 
-  private val adapter: IRecordOneToOneAdapter[PredictionRecord] =
-    PredictionRecordAdapter.oneToOne(
-      BoundFeatureSet(allFeatures),
-      OnlineFeatureGenerationStats(stats)
+  privatelon val adaptelonr: IReloncordOnelonToOnelonAdaptelonr[PrelondictionReloncord] =
+    PrelondictionReloncordAdaptelonr.onelonToOnelon(
+      BoundFelonaturelonSelont(allFelonaturelons),
+      OnlinelonFelonaturelonGelonnelonrationStats(stats)
     )
 
-  override def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
+  ovelonrridelon delonf hydratelonFelonaturelons(
+    targelont: HasClielonntContelonxt
+      with HasPrelonFelontchelondFelonaturelon
       with HasParams
-      with HasSimilarToContext
+      with HasSimilarToContelonxt
       with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    target.getOptionalUserId
-      .map { targetUserId =>
-        val featureRequests = candidates.map { candidate =>
-          val userId = UserId(targetUserId)
-          val userEntityId = UserEntity.withId(userId)
-          val candidateEntityId = CandidateUserEntity.withId(UserId(candidate.id))
-          val userCandidateEdgeEntityId =
-            UserCandidateEntity.withId(EdgeEntityId(userId, UserId(candidate.id)))
-          val similarToUserId = target.similarToUserIds.map(id => AuthorEntity.withId(UserId(id)))
-          val topicProof = candidate.reason.flatMap(_.accountProof.flatMap(_.topicProof))
-          val topicEntities = if (topicProof.isDefined) {
-            hydrateFeaturesStats.counter("candidates_with_topic_proof").incr()
-            val topicId = topicProof.get.topicId
-            val topicEntityId = TopicEntity.withId(TopicId(topicId))
-            val authorTopicEntityId =
-              AuthorTopicEntity.withId(EdgeEntityId(UserId(candidate.id), TopicId(topicId)))
-            Seq(topicEntityId, authorTopicEntityId)
-          } else Nil
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Stitch[Map[CandidatelonUselonr, DataReloncord]] = {
+    targelont.gelontOptionalUselonrId
+      .map { targelontUselonrId =>
+        val felonaturelonRelonquelonsts = candidatelons.map { candidatelon =>
+          val uselonrId = UselonrId(targelontUselonrId)
+          val uselonrelonntityId = Uselonrelonntity.withId(uselonrId)
+          val candidatelonelonntityId = CandidatelonUselonrelonntity.withId(UselonrId(candidatelon.id))
+          val uselonrCandidatelonelondgelonelonntityId =
+            UselonrCandidatelonelonntity.withId(elondgelonelonntityId(uselonrId, UselonrId(candidatelon.id)))
+          val similarToUselonrId = targelont.similarToUselonrIds.map(id => Authorelonntity.withId(UselonrId(id)))
+          val topicProof = candidatelon.relonason.flatMap(_.accountProof.flatMap(_.topicProof))
+          val topicelonntitielons = if (topicProof.isDelonfinelond) {
+            hydratelonFelonaturelonsStats.countelonr("candidatelons_with_topic_proof").incr()
+            val topicId = topicProof.gelont.topicId
+            val topicelonntityId = Topicelonntity.withId(TopicId(topicId))
+            val authorTopicelonntityId =
+              AuthorTopicelonntity.withId(elondgelonelonntityId(UselonrId(candidatelon.id), TopicId(topicId)))
+            Selonq(topicelonntityId, authorTopicelonntityId)
+          } elonlselon Nil
 
-          val candidateAlgorithmsWithScores = candidate.getAllAlgorithms
-          val userWtfAlgEdgeEntities =
-            candidateAlgorithmsWithScores.flatMap(algo => {
-              val algoId = AlgorithmToFeedbackTokenMap.get(remapCandidateSource(algo))
+          val candidatelonAlgorithmsWithScorelons = candidatelon.gelontAllAlgorithms
+          val uselonrWtfAlgelondgelonelonntitielons =
+            candidatelonAlgorithmsWithScorelons.flatMap(algo => {
+              val algoId = AlgorithmToFelonelondbackTokelonnMap.gelont(relonmapCandidatelonSourcelon(algo))
               algoId.map(id =>
-                UserWtfAlgorithmEntity.withId(EdgeEntityId(userId, WtfAlgorithmId(id))))
+                UselonrWtfAlgorithmelonntity.withId(elondgelonelonntityId(uselonrId, WtfAlgorithmId(id))))
             })
 
-          val entities = Seq(
-            userEntityId,
-            candidateEntityId,
-            userCandidateEdgeEntityId) ++ similarToUserId ++ topicEntities ++ userWtfAlgEdgeEntities
-          FeatureStoreRequest(entities)
+          val elonntitielons = Selonq(
+            uselonrelonntityId,
+            candidatelonelonntityId,
+            uselonrCandidatelonelondgelonelonntityId) ++ similarToUselonrId ++ topicelonntitielons ++ uselonrWtfAlgelondgelonelonntitielons
+          FelonaturelonStorelonRelonquelonst(elonntitielons)
         }
 
-        val predictionRecordsFut = dynamicFeatureStoreClient(featureRequests, target)
-        val candidateFeatureMap = predictionRecordsFut.map { predictionRecords =>
-          // we can zip predictionRecords with candidates as the order is preserved in the client
-          candidates
-            .zip(predictionRecords).map {
-              case (candidate, predictionRecord) =>
-                candidate -> adaptAdditionalFeaturesToDataRecord(
-                  adapter.adaptToDataRecord(predictionRecord),
-                  adapterStats,
-                  FeatureStoreSource.featureAdapters)
+        val prelondictionReloncordsFut = dynamicFelonaturelonStorelonClielonnt(felonaturelonRelonquelonsts, targelont)
+        val candidatelonFelonaturelonMap = prelondictionReloncordsFut.map { prelondictionReloncords =>
+          // welon can zip prelondictionReloncords with candidatelons as thelon ordelonr is prelonselonrvelond in thelon clielonnt
+          candidatelons
+            .zip(prelondictionReloncords).map {
+              caselon (candidatelon, prelondictionReloncord) =>
+                candidatelon -> adaptAdditionalFelonaturelonsToDataReloncord(
+                  adaptelonr.adaptToDataReloncord(prelondictionReloncord),
+                  adaptelonrStats,
+                  FelonaturelonStorelonSourcelon.felonaturelonAdaptelonrs)
             }.toMap
         }
         Stitch
-          .callFuture(candidateFeatureMap)
-          .within(target.params(FeatureStoreSourceParams.GlobalFetchTimeout))(
-            com.twitter.finagle.util.DefaultTimer)
-          .rescue {
-            case _: TimeoutException =>
-              Stitch.value(Map.empty[CandidateUser, DataRecord])
+          .callFuturelon(candidatelonFelonaturelonMap)
+          .within(targelont.params(FelonaturelonStorelonSourcelonParams.GlobalFelontchTimelonout))(
+            com.twittelonr.finaglelon.util.DelonfaultTimelonr)
+          .relonscuelon {
+            caselon _: Timelonoutelonxcelonption =>
+              Stitch.valuelon(Map.elonmpty[CandidatelonUselonr, DataReloncord])
           }
-      }.getOrElse(Stitch.value(Map.empty[CandidateUser, DataRecord]))
+      }.gelontOrelonlselon(Stitch.valuelon(Map.elonmpty[CandidatelonUselonr, DataReloncord]))
   }
 }
 
-// list of features that we will be fetching, even if we are only scribing but not scoring with them
-object FeatureStoreSource {
+// list of felonaturelons that welon will belon felontching, elonvelonn if welon arelon only scribing but not scoring with thelonm
+objelonct FelonaturelonStorelonSourcelon {
 
-  private val DatasetCacheScope = "feature_store_local_cache"
-  private val DefaultCacheMaxKeys = 70000
+  privatelon val DataselontCachelonScopelon = "felonaturelon_storelon_local_cachelon"
+  privatelon val DelonfaultCachelonMaxKelonys = 70000
 
-  import FeatureStoreFeatures._
+  import FelonaturelonStorelonFelonaturelons._
 
-  ///////////////////// ALL hydrated features /////////////////////
-  val allFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    //target user
-    targetUserFeatures ++
-      targetUserUserAuthorUserStateRealTimeAggregatesFeature ++
-      targetUserResurrectionFeatures ++
-      targetUserWtfImpressionFeatures ++
-      targetUserStatusFeatures ++
-      targetUserMetricCountFeatures ++
-      //candidate user
-      candidateUserFeatures ++
-      candidateUserResurrectionFeatures ++
-      candidateUserAuthorRealTimeAggregateFeatures ++
-      candidateUserStatusFeatures ++
-      candidateUserMetricCountFeatures ++
-      candidateUserTimelinesAuthorAggregateFeatures ++
-      candidateUserClientFeatures ++
-      //similar to user
-      similarToUserFeatures ++
-      similarToUserStatusFeatures ++
-      similarToUserMetricCountFeatures ++
-      similarToUserTimelinesAuthorAggregateFeatures ++
-      //other
-      userCandidateEdgeFeatures ++
-      userCandidateWtfImpressionCandidateFeatures ++
-      topicFeatures ++
-      userWtfAlgorithmEdgeFeatures ++
-      targetUserClientFeatures
+  ///////////////////// ALL hydratelond felonaturelons /////////////////////
+  val allFelonaturelons: Selont[BoundFelonaturelon[_ <: elonntityId, _]] =
+    //targelont uselonr
+    targelontUselonrFelonaturelons ++
+      targelontUselonrUselonrAuthorUselonrStatelonRelonalTimelonAggrelongatelonsFelonaturelon ++
+      targelontUselonrRelonsurrelonctionFelonaturelons ++
+      targelontUselonrWtfImprelonssionFelonaturelons ++
+      targelontUselonrStatusFelonaturelons ++
+      targelontUselonrMelontricCountFelonaturelons ++
+      //candidatelon uselonr
+      candidatelonUselonrFelonaturelons ++
+      candidatelonUselonrRelonsurrelonctionFelonaturelons ++
+      candidatelonUselonrAuthorRelonalTimelonAggrelongatelonFelonaturelons ++
+      candidatelonUselonrStatusFelonaturelons ++
+      candidatelonUselonrMelontricCountFelonaturelons ++
+      candidatelonUselonrTimelonlinelonsAuthorAggrelongatelonFelonaturelons ++
+      candidatelonUselonrClielonntFelonaturelons ++
+      //similar to uselonr
+      similarToUselonrFelonaturelons ++
+      similarToUselonrStatusFelonaturelons ++
+      similarToUselonrMelontricCountFelonaturelons ++
+      similarToUselonrTimelonlinelonsAuthorAggrelongatelonFelonaturelons ++
+      //othelonr
+      uselonrCandidatelonelondgelonFelonaturelons ++
+      uselonrCandidatelonWtfImprelonssionCandidatelonFelonaturelons ++
+      topicFelonaturelons ++
+      uselonrWtfAlgorithmelondgelonFelonaturelons ++
+      targelontUselonrClielonntFelonaturelons
 
   val dynamicHydrationConfig: DynamicHydrationConfig[HasParams] =
     DynamicHydrationConfig(
-      Set(
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(topicAggregateFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableTopicAggregateFeatures)
+      Selont(
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(topicAggrelongatelonFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonTopicAggrelongatelonFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(authorTopicFeatures),
-          gate =
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(authorTopicFelonaturelons),
+          gatelon =
             HasParams
-              .paramGate(FeatureStoreSourceParams.EnableSeparateClientForTimelinesAuthors).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableAuthorTopicAggregateFeatures)
+              .paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForTimelonlinelonsAuthors).unary_! &
+              HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonAuthorTopicAggrelongatelonFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(userTopicFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableUserTopicFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(uselonrTopicFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonUselonrTopicFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(targelontUselonrFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonTargelontUselonrFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserUserAuthorUserStateRealTimeAggregatesFeature),
-          gate = HasParams.paramGate(
-            FeatureStoreSourceParams.EnableTargetUserUserAuthorUserStateRealTimeAggregatesFeature)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(targelontUselonrUselonrAuthorUselonrStatelonRelonalTimelonAggrelongatelonsFelonaturelon),
+          gatelon = HasParams.paramGatelon(
+            FelonaturelonStorelonSourcelonParams.elonnablelonTargelontUselonrUselonrAuthorUselonrStatelonRelonalTimelonAggrelongatelonsFelonaturelon)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserResurrectionFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserResurrectionFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(targelontUselonrRelonsurrelonctionFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonTargelontUselonrRelonsurrelonctionFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserWtfImpressionFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserWtfImpressionFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(targelontUselonrWtfImprelonssionFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonTargelontUselonrWtfImprelonssionFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserStatusFeatures),
-          gate =
-            HasParams.paramGate(FeatureStoreSourceParams.EnableSeparateClientForGizmoduck).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(targelontUselonrStatusFelonaturelons),
+          gatelon =
+            HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForGizmoduck).unary_! &
+              HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonTargelontUselonrFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserMetricCountFeatures),
-          gate = HasParams
-            .paramGate(
-              FeatureStoreSourceParams.EnableSeparateClientForMetricCenterUserCounting).unary_! &
-            HasParams.paramGate(FeatureStoreSourceParams.EnableTargetUserFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(targelontUselonrMelontricCountFelonaturelons),
+          gatelon = HasParams
+            .paramGatelon(
+              FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForMelontricCelonntelonrUselonrCounting).unary_! &
+            HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonTargelontUselonrFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateUserFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(candidatelonUselonrFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonUselonrFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserAuthorRealTimeAggregateFeatures),
-          gate = HasParams.paramGate(
-            FeatureStoreSourceParams.EnableCandidateUserAuthorRealTimeAggregateFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(candidatelonUselonrAuthorRelonalTimelonAggrelongatelonFelonaturelons),
+          gatelon = HasParams.paramGatelon(
+            FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonUselonrAuthorRelonalTimelonAggrelongatelonFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserResurrectionFeatures),
-          gate =
-            HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateUserResurrectionFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(candidatelonUselonrRelonsurrelonctionFelonaturelons),
+          gatelon =
+            HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonUselonrRelonsurrelonctionFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserStatusFeatures),
-          gate =
-            HasParams.paramGate(FeatureStoreSourceParams.EnableSeparateClientForGizmoduck).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateUserFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(candidatelonUselonrStatusFelonaturelons),
+          gatelon =
+            HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForGizmoduck).unary_! &
+              HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonUselonrFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserTimelinesAuthorAggregateFeatures),
-          gate =
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(candidatelonUselonrTimelonlinelonsAuthorAggrelongatelonFelonaturelons),
+          gatelon =
             HasParams
-              .paramGate(FeatureStoreSourceParams.EnableSeparateClientForTimelinesAuthors).unary_! &
-              HasParams.paramGate(
-                FeatureStoreSourceParams.EnableCandidateUserTimelinesAuthorAggregateFeatures)
+              .paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForTimelonlinelonsAuthors).unary_! &
+              HasParams.paramGatelon(
+                FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonUselonrTimelonlinelonsAuthorAggrelongatelonFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserMetricCountFeatures),
-          gate =
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(candidatelonUselonrMelontricCountFelonaturelons),
+          gatelon =
             HasParams
-              .paramGate(
-                FeatureStoreSourceParams.EnableSeparateClientForMetricCenterUserCounting).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateUserFeatures)
+              .paramGatelon(
+                FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForMelontricCelonntelonrUselonrCounting).unary_! &
+              HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonUselonrFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(userCandidateEdgeFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableUserCandidateEdgeFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(uselonrCandidatelonelondgelonFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonUselonrCandidatelonelondgelonFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(userCandidateWtfImpressionCandidateFeatures),
-          gate = HasParams.paramGate(
-            FeatureStoreSourceParams.EnableUserCandidateWtfImpressionCandidateFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(uselonrCandidatelonWtfImprelonssionCandidatelonFelonaturelons),
+          gatelon = HasParams.paramGatelon(
+            FelonaturelonStorelonSourcelonParams.elonnablelonUselonrCandidatelonWtfImprelonssionCandidatelonFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(userWtfAlgorithmEdgeFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableUserWtfAlgEdgeFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(uselonrWtfAlgorithmelondgelonFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonUselonrWtfAlgelondgelonFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(similarToUserFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableSimilarToUserFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(similarToUselonrFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonSimilarToUselonrFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(similarToUserStatusFeatures),
-          gate =
-            HasParams.paramGate(FeatureStoreSourceParams.EnableSeparateClientForGizmoduck).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableSimilarToUserFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(similarToUselonrStatusFelonaturelons),
+          gatelon =
+            HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForGizmoduck).unary_! &
+              HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonSimilarToUselonrFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(similarToUserTimelinesAuthorAggregateFeatures),
-          gate =
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(similarToUselonrTimelonlinelonsAuthorAggrelongatelonFelonaturelons),
+          gatelon =
             HasParams
-              .paramGate(FeatureStoreSourceParams.EnableSeparateClientForTimelinesAuthors).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableSimilarToUserFeatures)
+              .paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForTimelonlinelonsAuthors).unary_! &
+              HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonSimilarToUselonrFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(similarToUserMetricCountFeatures),
-          gate =
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(similarToUselonrMelontricCountFelonaturelons),
+          gatelon =
             HasParams
-              .paramGate(
-                FeatureStoreSourceParams.EnableSeparateClientForMetricCenterUserCounting).unary_! &
-              HasParams.paramGate(FeatureStoreSourceParams.EnableSimilarToUserFeatures)
+              .paramGatelon(
+                FelonaturelonStorelonSourcelonParams.elonnablelonSelonparatelonClielonntForMelontricCelonntelonrUselonrCounting).unary_! &
+              HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonSimilarToUselonrFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(candidateUserClientFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableCandidateClientFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(candidatelonUselonrClielonntFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonCandidatelonClielonntFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet = BoundFeatureSet(targetUserClientFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableUserClientFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont = BoundFelonaturelonSelont(targelontUselonrClielonntFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonUselonrClielonntFelonaturelons)
         ),
       )
     )
-  // for calibrating features, e.g. add log transformed topic features
-  val featureAdapters: Seq[FeatureStoreAdapter] = Seq(
-    CandidateTopicEngagementRealTimeAggregatesAdapter,
-    CandidateTopicNegativeEngagementUserStateRealTimeAggregatesAdapter,
-    CandidateTopicEngagementUserStateRealTimeAggregatesAdapter,
-    CandidateAuthorTopicAggregatesAdapter
+  // for calibrating felonaturelons, elon.g. add log transformelond topic felonaturelons
+  val felonaturelonAdaptelonrs: Selonq[FelonaturelonStorelonAdaptelonr] = Selonq(
+    CandidatelonTopicelonngagelonmelonntRelonalTimelonAggrelongatelonsAdaptelonr,
+    CandidatelonTopicNelongativelonelonngagelonmelonntUselonrStatelonRelonalTimelonAggrelongatelonsAdaptelonr,
+    CandidatelonTopicelonngagelonmelonntUselonrStatelonRelonalTimelonAggrelongatelonsAdaptelonr,
+    CandidatelonAuthorTopicAggrelongatelonsAdaptelonr
   )
-  val additionalFeatureContext: FeatureContext = FeatureContext.merge(
-    featureAdapters
-      .foldRight(new FeatureContext())((adapter, context) =>
-        context
-          .addFeatures(adapter.getFeatureContext))
+  val additionalFelonaturelonContelonxt: FelonaturelonContelonxt = FelonaturelonContelonxt.melonrgelon(
+    felonaturelonAdaptelonrs
+      .foldRight(nelonw FelonaturelonContelonxt())((adaptelonr, contelonxt) =>
+        contelonxt
+          .addFelonaturelons(adaptelonr.gelontFelonaturelonContelonxt))
   )
-  val getFeatureContext: FeatureContext =
-    BoundFeatureSet(allFeatures).toFeatureContext
-      .addFeatures(additionalFeatureContext)
-      // The below are aggregated features that are aggregated for a second time over multiple keys.
-      .addFeatures(maxSumAvgAggregatedFeatureContext)
+  val gelontFelonaturelonContelonxt: FelonaturelonContelonxt =
+    BoundFelonaturelonSelont(allFelonaturelons).toFelonaturelonContelonxt
+      .addFelonaturelons(additionalFelonaturelonContelonxt)
+      // Thelon belonlow arelon aggrelongatelond felonaturelons that arelon aggrelongatelond for a seloncond timelon ovelonr multiplelon kelonys.
+      .addFelonaturelons(maxSumAvgAggrelongatelondFelonaturelonContelonxt)
 }

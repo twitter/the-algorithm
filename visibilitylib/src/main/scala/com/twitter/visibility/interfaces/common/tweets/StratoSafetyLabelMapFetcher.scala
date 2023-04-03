@@ -1,17 +1,17 @@
-package com.twitter.visibility.interfaces.common.tweets
+packagelon com.twittelonr.visibility.intelonrfacelons.common.twelonelonts
 
-import com.twitter.spam.rtf.thriftscala.SafetyLabelMap
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlMap
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
 
-object StratoSafetyLabelMapFetcher {
-  val column = "visibility/baseTweetSafetyLabelMap"
+objelonct StratoSafelontyLabelonlMapFelontchelonr {
+  val column = "visibility/baselonTwelonelontSafelontyLabelonlMap"
 
-  def apply(client: StratoClient): SafetyLabelMapFetcherType = {
-    val fetcher: Fetcher[Long, Unit, SafetyLabelMap] =
-      client.fetcher[Long, SafetyLabelMap](column)
+  delonf apply(clielonnt: StratoClielonnt): SafelontyLabelonlMapFelontchelonrTypelon = {
+    val felontchelonr: Felontchelonr[Long, Unit, SafelontyLabelonlMap] =
+      clielonnt.felontchelonr[Long, SafelontyLabelonlMap](column)
 
-    tweetId => fetcher.fetch(tweetId).map(_.v)
+    twelonelontId => felontchelonr.felontch(twelonelontId).map(_.v)
   }
 }

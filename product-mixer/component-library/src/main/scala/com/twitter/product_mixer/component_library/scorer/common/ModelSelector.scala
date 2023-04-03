@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.scorer.common
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.common
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * Selector for choosing which Model ID/Name to use when calling an underlying ML Model Service.
+ * Selonlelonctor for choosing which Modelonl ID/Namelon to uselon whelonn calling an undelonrlying ML Modelonl Selonrvicelon.
  */
-trait ModelSelector[-Query <: PipelineQuery] {
-  def apply(query: Query): Option[String]
+trait ModelonlSelonlelonctor[-Quelonry <: PipelonlinelonQuelonry] {
+  delonf apply(quelonry: Quelonry): Option[String]
 }
 
 /**
- * Simple Model ID Selector that chooses model based off of a Param object.
- * @param param ConfigAPI Param that decides the model id.
+ * Simplelon Modelonl ID Selonlelonctor that chooselons modelonl baselond off of a Param objelonct.
+ * @param param ConfigAPI Param that deloncidelons thelon modelonl id.
  */
-case class ParamModelSelector[Query <: PipelineQuery](param: Param[String])
-    extends ModelSelector[Query] {
-  override def apply(query: Query): Option[String] = Some(query.params(param))
+caselon class ParamModelonlSelonlelonctor[Quelonry <: PipelonlinelonQuelonry](param: Param[String])
+    elonxtelonnds ModelonlSelonlelonctor[Quelonry] {
+  ovelonrridelon delonf apply(quelonry: Quelonry): Option[String] = Somelon(quelonry.params(param))
 }
 
 /**
- * Static Selector that chooses the same model name always
- * @param modelName The model name to use.
+ * Static Selonlelonctor that chooselons thelon samelon modelonl namelon always
+ * @param modelonlNamelon Thelon modelonl namelon to uselon.
  */
-case class StaticModelSelector(modelName: String) extends ModelSelector[PipelineQuery] {
-  override def apply(query: PipelineQuery): Option[String] = Some(modelName)
+caselon class StaticModelonlSelonlelonctor(modelonlNamelon: String) elonxtelonnds ModelonlSelonlelonctor[PipelonlinelonQuelonry] {
+  ovelonrridelon delonf apply(quelonry: PipelonlinelonQuelonry): Option[String] = Somelon(modelonlNamelon)
 }

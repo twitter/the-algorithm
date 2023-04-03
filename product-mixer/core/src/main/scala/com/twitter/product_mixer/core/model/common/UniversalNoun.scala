@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.common
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fastelonrxml.jackson.annotation.JsonTypelonInfo
 
-@JsonTypeInfo(include = JsonTypeInfo.As.PROPERTY, use = JsonTypeInfo.Id.NAME)
-trait UniversalNoun[+T] extends Equals {
-  def id: T
+@JsonTypelonInfo(includelon = JsonTypelonInfo.As.PROPelonRTY, uselon = JsonTypelonInfo.Id.NAMelon)
+trait UnivelonrsalNoun[+T] elonxtelonnds elonquals {
+  delonf id: T
 }

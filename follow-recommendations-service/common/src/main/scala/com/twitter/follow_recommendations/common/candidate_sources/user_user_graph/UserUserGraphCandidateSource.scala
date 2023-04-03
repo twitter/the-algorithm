@@ -1,125 +1,125 @@
-package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.uselonr_uselonr_graph
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserDisplayLocation
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserRequest
-import com.twitter.recos.user_user_graph.thriftscala.RecommendUserResponse
-import com.twitter.recos.user_user_graph.thriftscala.RecommendedUser
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.Countelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.follow_reloncommelonndations.common.modelonls._
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.reloncos.reloncos_common.thriftscala.UselonrSocialProofTypelon
+import com.twittelonr.reloncos.uselonr_uselonr_graph.thriftscala.ReloncommelonndUselonrDisplayLocation
+import com.twittelonr.reloncos.uselonr_uselonr_graph.thriftscala.ReloncommelonndUselonrRelonquelonst
+import com.twittelonr.reloncos.uselonr_uselonr_graph.thriftscala.ReloncommelonndUselonrRelonsponselon
+import com.twittelonr.reloncos.uselonr_uselonr_graph.thriftscala.ReloncommelonndelondUselonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UserUserGraphCandidateSource @Inject() (
-  @Named(GuiceNamedConstants.USER_USER_GRAPH_FETCHER)
-  fetcher: Fetcher[RecommendUserRequest, Unit, RecommendUserResponse],
-  statsReceiver: StatsReceiver)
-    extends CandidateSource[
-      UserUserGraphCandidateSource.Target,
-      CandidateUser
+@Singlelonton
+class UselonrUselonrGraphCandidatelonSourcelon @Injelonct() (
+  @Namelond(GuicelonNamelondConstants.USelonR_USelonR_GRAPH_FelonTCHelonR)
+  felontchelonr: Felontchelonr[ReloncommelonndUselonrRelonquelonst, Unit, ReloncommelonndUselonrRelonsponselon],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[
+      UselonrUselonrGraphCandidatelonSourcelon.Targelont,
+      CandidatelonUselonr
     ] {
 
-  override val identifier: CandidateSourceIdentifier = UserUserGraphCandidateSource.Identifier
-  val stats: StatsReceiver = statsReceiver.scope("UserUserGraph")
-  val requestCounter: Counter = stats.counter("requests")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = UselonrUselonrGraphCandidatelonSourcelon.Idelonntifielonr
+  val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("UselonrUselonrGraph")
+  val relonquelonstCountelonr: Countelonr = stats.countelonr("relonquelonsts")
 
-  override def apply(
-    target: UserUserGraphCandidateSource.Target
-  ): Stitch[Seq[CandidateUser]] = {
-    if (target.params(UserUserGraphParams.UserUserGraphCandidateSourceEnabledInWeightMap)) {
-      requestCounter.incr()
-      buildRecommendUserRequest(target)
-        .map { request =>
-          fetcher
-            .fetch(request)
+  ovelonrridelon delonf apply(
+    targelont: UselonrUselonrGraphCandidatelonSourcelon.Targelont
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    if (targelont.params(UselonrUselonrGraphParams.UselonrUselonrGraphCandidatelonSourcelonelonnablelondInWelonightMap)) {
+      relonquelonstCountelonr.incr()
+      buildReloncommelonndUselonrRelonquelonst(targelont)
+        .map { relonquelonst =>
+          felontchelonr
+            .felontch(relonquelonst)
             .map(_.v)
-            .map { responseOpt =>
-              responseOpt
-                .map { response =>
-                  response.recommendedUsers
-                    .sortBy(-_.score)
-                    .map(convertToCandidateUsers)
-                    .map(_.withCandidateSource(identifier))
-                }.getOrElse(Nil)
+            .map { relonsponselonOpt =>
+              relonsponselonOpt
+                .map { relonsponselon =>
+                  relonsponselon.reloncommelonndelondUselonrs
+                    .sortBy(-_.scorelon)
+                    .map(convelonrtToCandidatelonUselonrs)
+                    .map(_.withCandidatelonSourcelon(idelonntifielonr))
+                }.gelontOrelonlselon(Nil)
             }
-        }.getOrElse(Stitch.Nil)
-    } else {
+        }.gelontOrelonlselon(Stitch.Nil)
+    } elonlselon {
       Stitch.Nil
     }
   }
 
-  private[this] def buildRecommendUserRequest(
-    target: UserUserGraphCandidateSource.Target
-  ): Option[RecommendUserRequest] = {
-    (target.getOptionalUserId, target.recentFollowedUserIds) match {
-      case (Some(userId), Some(recentFollowedUserIds)) =>
-        // use recentFollowedUserIds as seeds for initial experiment
-        val seedsWithWeights: Map[Long, Double] = recentFollowedUserIds.map {
-          recentFollowedUserId =>
-            recentFollowedUserId -> UserUserGraphCandidateSource.DefaultSeedWeight
+  privatelon[this] delonf buildReloncommelonndUselonrRelonquelonst(
+    targelont: UselonrUselonrGraphCandidatelonSourcelon.Targelont
+  ): Option[ReloncommelonndUselonrRelonquelonst] = {
+    (targelont.gelontOptionalUselonrId, targelont.reloncelonntFollowelondUselonrIds) match {
+      caselon (Somelon(uselonrId), Somelon(reloncelonntFollowelondUselonrIds)) =>
+        // uselon reloncelonntFollowelondUselonrIds as selonelonds for initial elonxpelonrimelonnt
+        val selonelondsWithWelonights: Map[Long, Doublelon] = reloncelonntFollowelondUselonrIds.map {
+          reloncelonntFollowelondUselonrId =>
+            reloncelonntFollowelondUselonrId -> UselonrUselonrGraphCandidatelonSourcelon.DelonfaultSelonelondWelonight
         }.toMap
-        val request = RecommendUserRequest(
-          requesterId = userId,
-          displayLocation = UserUserGraphCandidateSource.DisplayLocation,
-          seedsWithWeights = seedsWithWeights,
-          excludedUserIds = Some(target.excludedUserIds),
-          maxNumResults = Some(target.params.getInt(UserUserGraphParams.MaxCandidatesToReturn)),
-          maxNumSocialProofs = Some(UserUserGraphCandidateSource.MaxNumSocialProofs),
-          minUserPerSocialProof = Some(UserUserGraphCandidateSource.MinUserPerSocialProof),
-          socialProofTypes = Some(Seq(UserUserGraphCandidateSource.SocialProofType))
+        val relonquelonst = ReloncommelonndUselonrRelonquelonst(
+          relonquelonstelonrId = uselonrId,
+          displayLocation = UselonrUselonrGraphCandidatelonSourcelon.DisplayLocation,
+          selonelondsWithWelonights = selonelondsWithWelonights,
+          elonxcludelondUselonrIds = Somelon(targelont.elonxcludelondUselonrIds),
+          maxNumRelonsults = Somelon(targelont.params.gelontInt(UselonrUselonrGraphParams.MaxCandidatelonsToRelonturn)),
+          maxNumSocialProofs = Somelon(UselonrUselonrGraphCandidatelonSourcelon.MaxNumSocialProofs),
+          minUselonrPelonrSocialProof = Somelon(UselonrUselonrGraphCandidatelonSourcelon.MinUselonrPelonrSocialProof),
+          socialProofTypelons = Somelon(Selonq(UselonrUselonrGraphCandidatelonSourcelon.SocialProofTypelon))
         )
-        Some(request)
-      case _ => None
+        Somelon(relonquelonst)
+      caselon _ => Nonelon
     }
   }
 
-  private[this] def convertToCandidateUsers(
-    recommendedUser: RecommendedUser
-  ): CandidateUser = {
-    val socialProofUserIds =
-      recommendedUser.socialProofs.getOrElse(UserUserGraphCandidateSource.SocialProofType, Nil)
-    val reasonOpt = if (socialProofUserIds.nonEmpty) {
-      Some(
-        Reason(
-          Some(AccountProof(followProof =
-            Some(FollowProof(socialProofUserIds, socialProofUserIds.size)))))
+  privatelon[this] delonf convelonrtToCandidatelonUselonrs(
+    reloncommelonndelondUselonr: ReloncommelonndelondUselonr
+  ): CandidatelonUselonr = {
+    val socialProofUselonrIds =
+      reloncommelonndelondUselonr.socialProofs.gelontOrelonlselon(UselonrUselonrGraphCandidatelonSourcelon.SocialProofTypelon, Nil)
+    val relonasonOpt = if (socialProofUselonrIds.nonelonmpty) {
+      Somelon(
+        Relonason(
+          Somelon(AccountProof(followProof =
+            Somelon(FollowProof(socialProofUselonrIds, socialProofUselonrIds.sizelon)))))
       )
-    } else {
-      None
+    } elonlselon {
+      Nonelon
     }
-    CandidateUser(
-      id = recommendedUser.userId,
-      score = Some(recommendedUser.score),
-      reason = reasonOpt)
+    CandidatelonUselonr(
+      id = reloncommelonndelondUselonr.uselonrId,
+      scorelon = Somelon(reloncommelonndelondUselonr.scorelon),
+      relonason = relonasonOpt)
   }
 }
 
-object UserUserGraphCandidateSource {
-  type Target = HasParams
-    with HasClientContext
-    with HasRecentFollowedUserIds
-    with HasExcludedUserIds
+objelonct UselonrUselonrGraphCandidatelonSourcelon {
+  typelon Targelont = HasParams
+    with HasClielonntContelonxt
+    with HasReloncelonntFollowelondUselonrIds
+    with HaselonxcludelondUselonrIds
 
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.UserUserGraph.toString)
-  //Use HomeTimeline for experiment
-  val DisplayLocation: RecommendUserDisplayLocation = RecommendUserDisplayLocation.HomeTimeLine
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.UselonrUselonrGraph.toString)
+  //Uselon HomelonTimelonlinelon for elonxpelonrimelonnt
+  val DisplayLocation: ReloncommelonndUselonrDisplayLocation = ReloncommelonndUselonrDisplayLocation.HomelonTimelonLinelon
 
-  //Default params used in MagicRecs
-  val DefaultSeedWeight: Double = 1.0
-  val SocialProofType = UserSocialProofType.Follow
+  //Delonfault params uselond in MagicReloncs
+  val DelonfaultSelonelondWelonight: Doublelon = 1.0
+  val SocialProofTypelon = UselonrSocialProofTypelon.Follow
   val MaxNumSocialProofs = 10
-  val MinUserPerSocialProof: Map[UserSocialProofType, Int] =
-    Map[UserSocialProofType, Int]((SocialProofType, 2))
+  val MinUselonrPelonrSocialProof: Map[UselonrSocialProofTypelon, Int] =
+    Map[UselonrSocialProofTypelon, Int]((SocialProofTypelon, 2))
 }

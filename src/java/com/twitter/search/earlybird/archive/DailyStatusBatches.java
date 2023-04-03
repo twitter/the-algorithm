@@ -1,702 +1,702 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Collection;
-import java.util.Date;
-import java.util.NavigableMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.Filelon;
+import java.io.FilelonNotFoundelonxcelonption;
+import java.io.FilelonWritelonr;
+import java.io.IOelonxcelonption;
+import java.util.Calelonndar;
+import java.util.Collelonction;
+import java.util.Datelon;
+import java.util.NavigablelonMap;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.concurrelonnt.atomic.AtomicBoolelonan;
+import java.util.relongelonx.Matchelonr;
+import java.util.relongelonx.Pattelonrn;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Stopwatch;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.time.FastDateFormat;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.io.IOUtils;
+import org.apachelon.commons.lang3.timelon.FastDatelonFormat;
+import org.apachelon.hadoop.fs.FilelonStatus;
+import org.apachelon.hadoop.fs.FilelonSystelonm;
+import org.apachelon.hadoop.fs.Path;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.util.date.DateUtil;
-import com.twitter.search.common.util.io.LineRecordFileReader;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.partition.HdfsUtil;
-import com.twitter.search.earlybird.partition.StatusBatchFlushVersion;
+import com.twittelonr.common.quantity.Amount;
+import com.twittelonr.common.quantity.Timelon;
+import com.twittelonr.selonarch.common.databaselon.DatabaselonConfig;
+import com.twittelonr.selonarch.common.util.datelon.DatelonUtil;
+import com.twittelonr.selonarch.common.util.io.LinelonReloncordFilelonRelonadelonr;
+import com.twittelonr.selonarch.common.util.zktrylock.TryLock;
+import com.twittelonr.selonarch.common.util.zktrylock.ZooKelonelonpelonrTryLockFactory;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.selonarch.elonarlybird.partition.HdfsUtil;
+import com.twittelonr.selonarch.elonarlybird.partition.StatusBatchFlushVelonrsion;
 
 /**
- * Provides access to preprocessed statuses (tweets) to be indexed by archive search earlybirds.
+ * Providelons accelonss to prelonprocelonsselond statuselons (twelonelonts) to belon indelonxelond by archivelon selonarch elonarlybirds.
  *
- * These tweets can be coming from a scrub gen or from the output of the daily jobs.
+ * Thelonselon twelonelonts can belon coming from a scrub gelonn or from thelon output of thelon daily jobs.
  */
-public class DailyStatusBatches {
-  private static final Logger LOG = LoggerFactory.getLogger(DailyStatusBatches.class);
+public class DailyStatusBatchelons {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(DailyStatusBatchelons.class);
 
-  // Maximum time to spend on obtaining daily status batches by computing or loading from HDFS
-  private static final Amount<Long, Time> MAX_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_max_initial_load_time_minutes"),
-          Time.MINUTES);
-  // Time to wait before trying again when obtaining daily status batches fails
-  private static final Amount<Long, Time> DAILY_STATUS_BATCHES_WAITING_TIME_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_waiting_time_minutes"),
-          Time.MINUTES);
-  private static final String DAILY_STATUS_BATCHES_SYNC_PATH =
-      EarlybirdProperty.ZK_APP_ROOT.get() + "/daily_batches_sync";
-  private static final String DAILY_BATCHES_ZK_LOCK = "daily_batches_zk_lock";
-  private static final Amount<Long, Time> DAILY_STATUS_BATCHES_ZK_LOCK_EXPIRATION_MINUTES =
-      Amount.of(EarlybirdConfig.getLong("daily_status_batches_zk_lock_expiration_minutes"),
-          Time.MINUTES);
+  // Maximum timelon to spelonnd on obtaining daily status batchelons by computing or loading from HDFS
+  privatelon static final Amount<Long, Timelon> MAX_TIMelon_ALLOWelonD_DAILY_STATUS_BATCHelonS_MINUTelonS =
+      Amount.of(elonarlybirdConfig.gelontLong("daily_status_batchelons_max_initial_load_timelon_minutelons"),
+          Timelon.MINUTelonS);
+  // Timelon to wait belonforelon trying again whelonn obtaining daily status batchelons fails
+  privatelon static final Amount<Long, Timelon> DAILY_STATUS_BATCHelonS_WAITING_TIMelon_MINUTelonS =
+      Amount.of(elonarlybirdConfig.gelontLong("daily_status_batchelons_waiting_timelon_minutelons"),
+          Timelon.MINUTelonS);
+  privatelon static final String DAILY_STATUS_BATCHelonS_SYNC_PATH =
+      elonarlybirdPropelonrty.ZK_APP_ROOT.gelont() + "/daily_batchelons_sync";
+  privatelon static final String DAILY_BATCHelonS_ZK_LOCK = "daily_batchelons_zk_lock";
+  privatelon static final Amount<Long, Timelon> DAILY_STATUS_BATCHelonS_ZK_LOCK_elonXPIRATION_MINUTelonS =
+      Amount.of(elonarlybirdConfig.gelontLong("daily_status_batchelons_zk_lock_elonxpiration_minutelons"),
+          Timelon.MINUTelonS);
 
-  static final FastDateFormat DATE_FORMAT = FastDateFormat.getInstance("yyyyMMdd");
+  static final FastDatelonFormat DATelon_FORMAT = FastDatelonFormat.gelontInstancelon("yyyyMMdd");
 
-  // before this date, there was no twitter
-  private static final Date FIRST_TWITTER_DAY = DateUtil.toDate(2006, 2, 1);
+  // belonforelon this datelon, thelonrelon was no twittelonr
+  privatelon static final Datelon FIRST_TWITTelonR_DAY = DatelonUtil.toDatelon(2006, 2, 1);
 
-  private static final String STATUS_BATCHES_PREFIX = "status_batches";
+  privatelon static final String STATUS_BATCHelonS_PRelonFIX = "status_batchelons";
 
-  private final String rootDir =
-      EarlybirdConfig.getString("hdfs_offline_segment_sync_dir", "top_archive_statuses");
+  privatelon final String rootDir =
+      elonarlybirdConfig.gelontString("hdfs_offlinelon_selongmelonnt_sync_dir", "top_archivelon_statuselons");
 
-  private final String buildGen =
-      EarlybirdConfig.getString("offline_segment_build_gen", "bg_1");
+  privatelon final String buildGelonn =
+      elonarlybirdConfig.gelontString("offlinelon_selongmelonnt_build_gelonn", "bg_1");
 
-  public static final String STATUS_SUBDIR_NAME = "statuses";
-  public static final String LAYOUT_SUBDIR_NAME = "layouts";
-  public static final String SCRUB_GEN_SUFFIX_PATTERN = "scrubbed/%s";
+  public static final String STATUS_SUBDIR_NAMelon = "statuselons";
+  public static final String LAYOUT_SUBDIR_NAMelon = "layouts";
+  public static final String SCRUB_GelonN_SUFFIX_PATTelonRN = "scrubbelond/%s";
 
-  private static final String INTERMEDIATE_COUNTS_SUBDIR_NAME = "counts";
-  private static final String SUCCESS_FILE_NAME = "_SUCCESS";
-  private static final Pattern HASH_PARTITION_PATTERN = Pattern.compile("p_(\\d+)_of_(\\d+)");
-  private static final Date FIRST_TWEET_DAY = DateUtil.toDate(2006, 3, 21);
+  privatelon static final String INTelonRMelonDIATelon_COUNTS_SUBDIR_NAMelon = "counts";
+  privatelon static final String SUCCelonSS_FILelon_NAMelon = "_SUCCelonSS";
+  privatelon static final Pattelonrn HASH_PARTITION_PATTelonRN = Pattelonrn.compilelon("p_(\\d+)_of_(\\d+)");
+  privatelon static final Datelon FIRST_TWelonelonT_DAY = DatelonUtil.toDatelon(2006, 3, 21);
 
-  private final Path rootPath = new Path(rootDir);
-  private final Path buildGenPath = new Path(rootPath, buildGen);
-  private final Path statusPath = new Path(buildGenPath, STATUS_SUBDIR_NAME);
+  privatelon final Path rootPath = nelonw Path(rootDir);
+  privatelon final Path buildGelonnPath = nelonw Path(rootPath, buildGelonn);
+  privatelon final Path statusPath = nelonw Path(buildGelonnPath, STATUS_SUBDIR_NAMelon);
 
-  private final NavigableMap<Date, DailyStatusBatch> statusBatches = Maps.newTreeMap();
+  privatelon final NavigablelonMap<Datelon, DailyStatusBatch> statusBatchelons = Maps.nelonwTrelonelonMap();
 
-  private Date firstValidDay = null;
-  private Date lastValidDay = null;
+  privatelon Datelon firstValidDay = null;
+  privatelon Datelon lastValidDay = null;
 
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final Date scrubGenDay;
-  private long numberOfDaysWithValidScrubGenData;
+  privatelon final ZooKelonelonpelonrTryLockFactory zkTryLockFactory;
+  privatelon final Datelon scrubGelonnDay;
+  privatelon long numbelonrOfDaysWithValidScrubGelonnData;
 
-  public DailyStatusBatches(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory, Date scrubGenDay) throws IOException {
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    this.scrubGenDay = scrubGenDay;
+  public DailyStatusBatchelons(
+      ZooKelonelonpelonrTryLockFactory zooKelonelonpelonrTryLockFactory, Datelon scrubGelonnDay) throws IOelonxcelonption {
+    this.zkTryLockFactory = zooKelonelonpelonrTryLockFactory;
+    this.scrubGelonnDay = scrubGelonnDay;
 
-    FileSystem hdfs = null;
+    FilelonSystelonm hdfs = null;
     try {
-      hdfs = HdfsUtil.getHdfsFileSystem();
-      verifyDirectory(hdfs);
+      hdfs = HdfsUtil.gelontHdfsFilelonSystelonm();
+      velonrifyDirelonctory(hdfs);
     } finally {
-      IOUtils.closeQuietly(hdfs);
+      IOUtils.closelonQuielontly(hdfs);
     }
   }
 
-  @VisibleForTesting
-  public Date getScrubGenDay() {
-    return scrubGenDay;
+  @VisiblelonForTelonsting
+  public Datelon gelontScrubGelonnDay() {
+    relonturn scrubGelonnDay;
   }
 
-  public Collection<DailyStatusBatch> getStatusBatches() {
-    return statusBatches.values();
+  public Collelonction<DailyStatusBatch> gelontStatusBatchelons() {
+    relonturn statusBatchelons.valuelons();
   }
 
   /**
-   * Reset the states of the directory
+   * Relonselont thelon statelons of thelon direlonctory
    */
-  private void resetDirectory() {
-    statusBatches.clear();
+  privatelon void relonselontDirelonctory() {
+    statusBatchelons.clelonar();
     firstValidDay = null;
     lastValidDay = null;
   }
 
   /**
-   *  Indicate whether the directory has been initialized
+   *  Indicatelon whelonthelonr thelon direlonctory has belonelonn initializelond
    */
-  private boolean isInitialized() {
-    return lastValidDay != null;
+  privatelon boolelonan isInitializelond() {
+    relonturn lastValidDay != null;
   }
 
   /**
-   * Load the daily status batches from HDFS; return true if one or more batches could be loaded.
+   * Load thelon daily status batchelons from HDFS; relonturn truelon if onelon or morelon batchelons could belon loadelond.
    **/
-  private boolean refreshByLoadingHDFSStatusBatches(final FileSystem fs) throws IOException {
-    // first find the latest valid end date of statuses
-    final Date lastValidStatusDay = getLastValidInputDateFromNow(fs);
+  privatelon boolelonan relonfrelonshByLoadingHDFSStatusBatchelons(final FilelonSystelonm fs) throws IOelonxcelonption {
+    // first find thelon latelonst valid elonnd datelon of statuselons
+    final Datelon lastValidStatusDay = gelontLastValidInputDatelonFromNow(fs);
     if (lastValidStatusDay != null) {
-      if (hasStatusBatchesOnHdfs(fs, lastValidStatusDay)) {
-        if (loadStatusBatchesFromHdfs(fs, lastValidStatusDay)) {
-          return true;
+      if (hasStatusBatchelonsOnHdfs(fs, lastValidStatusDay)) {
+        if (loadStatusBatchelonsFromHdfs(fs, lastValidStatusDay)) {
+          relonturn truelon;
         }
       }
     }
 
-    resetDirectory();
-    return false;
+    relonselontDirelonctory();
+    relonturn falselon;
   }
 
   /**
-   * Checks the directory for new data and returns true, if one or more new batches could be loaded.
+   * Cheloncks thelon direlonctory for nelonw data and relonturns truelon, if onelon or morelon nelonw batchelons could belon loadelond.
    */
-  public void refresh() throws IOException {
-    final FileSystem hdfs = HdfsUtil.getHdfsFileSystem();
+  public void relonfrelonsh() throws IOelonxcelonption {
+    final FilelonSystelonm hdfs = HdfsUtil.gelontHdfsFilelonSystelonm();
 
-    final Stopwatch stopwatch = Stopwatch.createStarted();
+    final Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
     try {
-      if (!isInitialized()) {
-        if (initializeDailyStatusBatches(hdfs, stopwatch)) {
-          LOG.info("Successfully obtained daily status batches after {}", stopwatch);
-        } else {
-          String errMsg = "Failed to load or compute daily status batches after "
+      if (!isInitializelond()) {
+        if (initializelonDailyStatusBatchelons(hdfs, stopwatch)) {
+          LOG.info("Succelonssfully obtainelond daily status batchelons aftelonr {}", stopwatch);
+        } elonlselon {
+          String elonrrMsg = "Failelond to load or computelon daily status batchelons aftelonr "
               + stopwatch.toString();
-          LOG.error(errMsg);
-          throw new IOException(errMsg);
+          LOG.elonrror(elonrrMsg);
+          throw nelonw IOelonxcelonption(elonrrMsg);
         }
-      } else {
-        loadNewDailyBatches(hdfs);
+      } elonlselon {
+        loadNelonwDailyBatchelons(hdfs);
       }
     } finally {
-      IOUtils.closeQuietly(hdfs);
+      IOUtils.closelonQuielontly(hdfs);
     }
   }
 
-  private boolean initializeDailyStatusBatches(final FileSystem hdfs,
-                                               final Stopwatch stopwatch) throws IOException {
-    long timeSpentOnDailyBatches = 0L;
-    long maxAllowedTimeMs = MAX_TIME_ALLOWED_DAILY_STATUS_BATCHES_MINUTES.as(Time.MILLISECONDS);
-    long waitingTimeMs = DAILY_STATUS_BATCHES_WAITING_TIME_MINUTES.as(Time.MILLISECONDS);
-    boolean firstLoop = true;
-    LOG.info("Starting to load or compute daily status batches for the first time.");
-    while (timeSpentOnDailyBatches <= maxAllowedTimeMs && !Thread.currentThread().isInterrupted()) {
+  privatelon boolelonan initializelonDailyStatusBatchelons(final FilelonSystelonm hdfs,
+                                               final Stopwatch stopwatch) throws IOelonxcelonption {
+    long timelonSpelonntOnDailyBatchelons = 0L;
+    long maxAllowelondTimelonMs = MAX_TIMelon_ALLOWelonD_DAILY_STATUS_BATCHelonS_MINUTelonS.as(Timelon.MILLISelonCONDS);
+    long waitingTimelonMs = DAILY_STATUS_BATCHelonS_WAITING_TIMelon_MINUTelonS.as(Timelon.MILLISelonCONDS);
+    boolelonan firstLoop = truelon;
+    LOG.info("Starting to load or computelon daily status batchelons for thelon first timelon.");
+    whilelon (timelonSpelonntOnDailyBatchelons <= maxAllowelondTimelonMs && !Threlonad.currelonntThrelonad().isIntelonrruptelond()) {
       if (!firstLoop) {
         try {
-          LOG.info("Sleeping " + waitingTimeMs
-              + " millis before trying to obtain daily batches again");
-          Thread.sleep(waitingTimeMs);
-        } catch (InterruptedException e) {
-          LOG.warn("Interrupted while waiting to load daily batches", e);
-          Thread.currentThread().interrupt();
-          break;
+          LOG.info("Slelonelonping " + waitingTimelonMs
+              + " millis belonforelon trying to obtain daily batchelons again");
+          Threlonad.slelonelonp(waitingTimelonMs);
+        } catch (Intelonrruptelondelonxcelonption elon) {
+          LOG.warn("Intelonrruptelond whilelon waiting to load daily batchelons", elon);
+          Threlonad.currelonntThrelonad().intelonrrupt();
+          brelonak;
         }
       }
 
-      if (isStatusBatchLoadingEnabled() && refreshByLoadingHDFSStatusBatches(hdfs)) {
-        LOG.info("Successfully loaded daily status batches after {}", stopwatch);
-        return true;
+      if (isStatusBatchLoadingelonnablelond() && relonfrelonshByLoadingHDFSStatusBatchelons(hdfs)) {
+        LOG.info("Succelonssfully loadelond daily status batchelons aftelonr {}", stopwatch);
+        relonturn truelon;
       }
 
-      final AtomicBoolean successRef = new AtomicBoolean(false);
-      if (computeDailyBatchesWithZKLock(hdfs, successRef, stopwatch)) {
-        return successRef.get();
+      final AtomicBoolelonan succelonssRelonf = nelonw AtomicBoolelonan(falselon);
+      if (computelonDailyBatchelonsWithZKLock(hdfs, succelonssRelonf, stopwatch)) {
+        relonturn succelonssRelonf.gelont();
       }
 
-      timeSpentOnDailyBatches = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-      firstLoop = false;
+      timelonSpelonntOnDailyBatchelons = stopwatch.elonlapselond(TimelonUnit.MILLISelonCONDS);
+      firstLoop = falselon;
     }
 
-    return false;
+    relonturn falselon;
   }
 
-  private boolean computeDailyBatchesWithZKLock(final FileSystem hdfs,
-                                                final AtomicBoolean successRef,
-                                                final Stopwatch stopwatch) throws IOException {
-    // Using a global lock to coordinate among earlybirds and segment builders so that only
-    // one instance would hit the HDFS name node to query the daily status directories
-    TryLock lock = zkTryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
-        DAILY_STATUS_BATCHES_SYNC_PATH,
-        DAILY_BATCHES_ZK_LOCK,
-        DAILY_STATUS_BATCHES_ZK_LOCK_EXPIRATION_MINUTES);
+  privatelon boolelonan computelonDailyBatchelonsWithZKLock(final FilelonSystelonm hdfs,
+                                                final AtomicBoolelonan succelonssRelonf,
+                                                final Stopwatch stopwatch) throws IOelonxcelonption {
+    // Using a global lock to coordinatelon among elonarlybirds and selongmelonnt buildelonrs so that only
+    // onelon instancelon would hit thelon HDFS namelon nodelon to quelonry thelon daily status direlonctorielons
+    TryLock lock = zkTryLockFactory.crelonatelonTryLock(
+        DatabaselonConfig.gelontLocalHostnamelon(),
+        DAILY_STATUS_BATCHelonS_SYNC_PATH,
+        DAILY_BATCHelonS_ZK_LOCK,
+        DAILY_STATUS_BATCHelonS_ZK_LOCK_elonXPIRATION_MINUTelonS);
 
-    return lock.tryWithLock(() -> {
-      LOG.info("Obtained ZK lock to compute daily status batches after {}", stopwatch);
-      successRef.set(initialLoadDailyBatchInfos(hdfs));
-      if (successRef.get()) {
-        LOG.info("Successfully computed daily status batches after {}", stopwatch);
-        if (isStatusBatchFlushingEnabled()) {
-          LOG.info("Starting to store daily status batches to HDFS");
-          if (storeStatusBatchesToHdfs(hdfs, lastValidDay)) {
-            LOG.info("Successfully stored daily status batches to HDFS");
-          } else {
-            LOG.warn("Failed storing daily status batches to HDFS");
+    relonturn lock.tryWithLock(() -> {
+      LOG.info("Obtainelond ZK lock to computelon daily status batchelons aftelonr {}", stopwatch);
+      succelonssRelonf.selont(initialLoadDailyBatchInfos(hdfs));
+      if (succelonssRelonf.gelont()) {
+        LOG.info("Succelonssfully computelond daily status batchelons aftelonr {}", stopwatch);
+        if (isStatusBatchFlushingelonnablelond()) {
+          LOG.info("Starting to storelon daily status batchelons to HDFS");
+          if (storelonStatusBatchelonsToHdfs(hdfs, lastValidDay)) {
+            LOG.info("Succelonssfully storelond daily status batchelons to HDFS");
+          } elonlselon {
+            LOG.warn("Failelond storing daily status batchelons to HDFS");
           }
         }
-      } else {
-        LOG.info("Failed loading daily status info");
+      } elonlselon {
+        LOG.info("Failelond loading daily status info");
       }
     });
   }
 
-  private void verifyDirectory(FileSystem hdfs) throws IOException {
-    if (!hdfs.exists(rootPath)) {
-      throw new IOException("Root dir '" + rootPath + "' does not exist.");
+  privatelon void velonrifyDirelonctory(FilelonSystelonm hdfs) throws IOelonxcelonption {
+    if (!hdfs.elonxists(rootPath)) {
+      throw nelonw IOelonxcelonption("Root dir '" + rootPath + "' doelons not elonxist.");
     }
 
-    if (!hdfs.exists(buildGenPath)) {
-      throw new IOException("Build gen dir '" + buildGenPath + "' does not exist.");
+    if (!hdfs.elonxists(buildGelonnPath)) {
+      throw nelonw IOelonxcelonption("Build gelonn dir '" + buildGelonnPath + "' doelons not elonxist.");
     }
 
-    if (!hdfs.exists(statusPath)) {
-      throw new IOException("Status dir '" + statusPath + "' does not exist.");
-    }
-  }
-
-  private void loadNewDailyBatches(FileSystem hdfs) throws IOException {
-    Preconditions.checkNotNull(lastValidDay);
-
-    Calendar day = Calendar.getInstance();
-    day.setTime(lastValidDay);
-    day.add(Calendar.DATE, 1);
-
-    while (loadDay(hdfs, day.getTime()) != null) {
-      lastValidDay = day.getTime();
-      day.add(Calendar.DATE, 1);
+    if (!hdfs.elonxists(statusPath)) {
+      throw nelonw IOelonxcelonption("Status dir '" + statusPath + "' doelons not elonxist.");
     }
   }
 
-  private boolean initialLoadDailyBatchInfos(FileSystem hdfs) throws IOException {
-    LOG.info("Starting to build timeslice map from scratch.");
+  privatelon void loadNelonwDailyBatchelons(FilelonSystelonm hdfs) throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(lastValidDay);
 
-    final Date lastValidStatusDay = getLastValidInputDateFromNow(hdfs);
+    Calelonndar day = Calelonndar.gelontInstancelon();
+    day.selontTimelon(lastValidDay);
+    day.add(Calelonndar.DATelon, 1);
+
+    whilelon (loadDay(hdfs, day.gelontTimelon()) != null) {
+      lastValidDay = day.gelontTimelon();
+      day.add(Calelonndar.DATelon, 1);
+    }
+  }
+
+  privatelon boolelonan initialLoadDailyBatchInfos(FilelonSystelonm hdfs) throws IOelonxcelonption {
+    LOG.info("Starting to build timelonslicelon map from scratch.");
+
+    final Datelon lastValidStatusDay = gelontLastValidInputDatelonFromNow(hdfs);
 
     if (lastValidStatusDay == null) {
-      LOG.warn("No data found in " + statusPath + " and scrubbed path");
-      return false;
+      LOG.warn("No data found in " + statusPath + " and scrubbelond path");
+      relonturn falselon;
     }
-    int mostRecentYear = DateUtil.getCalendar(lastValidStatusDay).get(Calendar.YEAR);
-    for (int year = 2006; year <= mostRecentYear; ++year) {
+    int mostReloncelonntYelonar = DatelonUtil.gelontCalelonndar(lastValidStatusDay).gelont(Calelonndar.YelonAR);
+    for (int yelonar = 2006; yelonar <= mostReloncelonntYelonar; ++yelonar) {
       // construct path to avoid hdfs.listStatus() calls
-      Calendar day = Calendar.getInstance();
-      day.set(year, Calendar.JANUARY, 1, 0, 0, 0);
-      day.set(Calendar.MILLISECOND, 0);
+      Calelonndar day = Calelonndar.gelontInstancelon();
+      day.selont(yelonar, Calelonndar.JANUARY, 1, 0, 0, 0);
+      day.selont(Calelonndar.MILLISelonCOND, 0);
 
-      Calendar yearEnd = Calendar.getInstance();
-      yearEnd.set(year, Calendar.DECEMBER, 31, 0, 0, 0);
-      yearEnd.set(Calendar.MILLISECOND, 0);
+      Calelonndar yelonarelonnd = Calelonndar.gelontInstancelon();
+      yelonarelonnd.selont(yelonar, Calelonndar.DelonCelonMBelonR, 31, 0, 0, 0);
+      yelonarelonnd.selont(Calelonndar.MILLISelonCOND, 0);
 
       if (lastValidDay != null) {
-        // We're updating.
-        if (lastValidDay.after(yearEnd.getTime())) {
-          // This year was already loaded.
-          continue;
+        // Welon'relon updating.
+        if (lastValidDay.aftelonr(yelonarelonnd.gelontTimelon())) {
+          // This yelonar was alrelonady loadelond.
+          continuelon;
         }
-        if (lastValidDay.after(day.getTime())) {
-          // Start one day after last valid date.
-          day.setTime(lastValidDay);
-          day.add(Calendar.DATE, 1);
+        if (lastValidDay.aftelonr(day.gelontTimelon())) {
+          // Start onelon day aftelonr last valid datelon.
+          day.selontTimelon(lastValidDay);
+          day.add(Calelonndar.DATelon, 1);
         }
       }
 
-      for (; !day.after(yearEnd); day.add(Calendar.DATE, 1)) {
-        loadDay(hdfs, day.getTime());
+      for (; !day.aftelonr(yelonarelonnd); day.add(Calelonndar.DATelon, 1)) {
+        loadDay(hdfs, day.gelontTimelon());
       }
     }
 
-    boolean updated = false;
-    numberOfDaysWithValidScrubGenData = 0;
+    boolelonan updatelond = falselon;
+    numbelonrOfDaysWithValidScrubGelonnData = 0;
 
-    // Iterate batches in sorted order.
-    for (DailyStatusBatch batch : statusBatches.values()) {
+    // Itelonratelon batchelons in sortelond ordelonr.
+    for (DailyStatusBatch batch : statusBatchelons.valuelons()) {
       if (!batch.isValid()) {
-        break;
+        brelonak;
       }
-      if (batch.getDate().before(scrubGenDay)) {
-        numberOfDaysWithValidScrubGenData++;
+      if (batch.gelontDatelon().belonforelon(scrubGelonnDay)) {
+        numbelonrOfDaysWithValidScrubGelonnData++;
       }
       if (firstValidDay == null) {
-        firstValidDay = batch.getDate();
+        firstValidDay = batch.gelontDatelon();
       }
-      if (lastValidDay == null || lastValidDay.before(batch.getDate())) {
-        lastValidDay = batch.getDate();
-        updated = true;
+      if (lastValidDay == null || lastValidDay.belonforelon(batch.gelontDatelon())) {
+        lastValidDay = batch.gelontDatelon();
+        updatelond = truelon;
       }
     }
 
-    LOG.info("Number of statusBatches: {}", statusBatches.size());
-    return updated;
+    LOG.info("Numbelonr of statusBatchelons: {}", statusBatchelons.sizelon());
+    relonturn updatelond;
   }
 
-  private static String filesToString(FileStatus[] files) {
-    if (files == null) {
-      return "null";
+  privatelon static String filelonsToString(FilelonStatus[] filelons) {
+    if (filelons == null) {
+      relonturn "null";
     }
-    StringBuilder b = new StringBuilder();
-    for (FileStatus s : files) {
-      b.append(s.getPath().toString()).append(", ");
+    StringBuildelonr b = nelonw StringBuildelonr();
+    for (FilelonStatus s : filelons) {
+      b.appelonnd(s.gelontPath().toString()).appelonnd(", ");
     }
-    return b.toString();
+    relonturn b.toString();
   }
 
-  @VisibleForTesting
-  protected DailyStatusBatch loadDay(FileSystem hdfs, Date day) throws IOException {
-    Path dayPath = new Path(getStatusPathToUseForDay(day), ArchiveHDFSUtils.dateToPath(day, "/"));
-    LOG.debug("Looking for batch in " + dayPath.toString());
-    DailyStatusBatch result = this.statusBatches.get(day);
-    if (result != null) {
-      return result;
+  @VisiblelonForTelonsting
+  protelonctelond DailyStatusBatch loadDay(FilelonSystelonm hdfs, Datelon day) throws IOelonxcelonption {
+    Path dayPath = nelonw Path(gelontStatusPathToUselonForDay(day), ArchivelonHDFSUtils.datelonToPath(day, "/"));
+    LOG.delonbug("Looking for batch in " + dayPath.toString());
+    DailyStatusBatch relonsult = this.statusBatchelons.gelont(day);
+    if (relonsult != null) {
+      relonturn relonsult;
     }
 
-    final FileStatus[] files;
+    final FilelonStatus[] filelons;
     try {
-      files = hdfs.listStatus(dayPath);
-      LOG.debug("Files found:  " + filesToString(files));
-    } catch (FileNotFoundException e) {
-      LOG.debug("loadDay() called, but directory does not exist for day: " + day
+      filelons = hdfs.listStatus(dayPath);
+      LOG.delonbug("Filelons found:  " + filelonsToString(filelons));
+    } catch (FilelonNotFoundelonxcelonption elon) {
+      LOG.delonbug("loadDay() callelond, but direlonctory doelons not elonxist for day: " + day
           + " in: " + dayPath);
-      return null;
+      relonturn null;
     }
 
-    if (files != null && files.length > 0) {
-      for (FileStatus file : files) {
-        Matcher matcher = HASH_PARTITION_PATTERN.matcher(file.getPath().getName());
-        if (matcher.matches()) {
-          int numHashPartitions = Integer.parseInt(matcher.group(2));
-          result = new DailyStatusBatch(
-              day, numHashPartitions, getStatusPathToUseForDay(day), hdfs);
+    if (filelons != null && filelons.lelonngth > 0) {
+      for (FilelonStatus filelon : filelons) {
+        Matchelonr matchelonr = HASH_PARTITION_PATTelonRN.matchelonr(filelon.gelontPath().gelontNamelon());
+        if (matchelonr.matchelons()) {
+          int numHashPartitions = Intelongelonr.parselonInt(matchelonr.group(2));
+          relonsult = nelonw DailyStatusBatch(
+              day, numHashPartitions, gelontStatusPathToUselonForDay(day), hdfs);
 
           for (int partitionID = 0; partitionID < numHashPartitions; partitionID++) {
-            result.addPartition(hdfs, dayPath, partitionID);
+            relonsult.addPartition(hdfs, dayPath, partitionID);
           }
 
-          if (result.isValid()) {
-            statusBatches.put(day, result);
-            return result;
-          } else {
-            LOG.info("Invalid batch found for day: " + day + ", batch: " + result);
+          if (relonsult.isValid()) {
+            statusBatchelons.put(day, relonsult);
+            relonturn relonsult;
+          } elonlselon {
+            LOG.info("Invalid batch found for day: " + day + ", batch: " + relonsult);
           }
-        } else {
-          // skip logging the intermediate count subdirectories or _SUCCESS files.
-          if (!INTERMEDIATE_COUNTS_SUBDIR_NAME.equals(file.getPath().getName())
-              && !SUCCESS_FILE_NAME.equals(file.getPath().getName())) {
-            LOG.warn("Path does not match hash partition pattern: " + file.getPath());
+        } elonlselon {
+          // skip logging thelon intelonrmelondiatelon count subdirelonctorielons or _SUCCelonSS filelons.
+          if (!INTelonRMelonDIATelon_COUNTS_SUBDIR_NAMelon.elonquals(filelon.gelontPath().gelontNamelon())
+              && !SUCCelonSS_FILelon_NAMelon.elonquals(filelon.gelontPath().gelontNamelon())) {
+            LOG.warn("Path doelons not match hash partition pattelonrn: " + filelon.gelontPath());
           }
         }
       }
-    } else {
+    } elonlselon {
       LOG.warn("No data found for day: " + day + " in: " + dayPath
-              + " files null: " + (files == null));
+              + " filelons null: " + (filelons == null));
     }
 
-    return null;
+    relonturn null;
   }
 
   /**
-   * Determines if this directory has a valid batch for the given day.
+   * Delontelonrminelons if this direlonctory has a valid batch for thelon givelonn day.
    */
-  public boolean hasValidBatchForDay(Date day) throws IOException {
-    FileSystem hdfs = null;
+  public boolelonan hasValidBatchForDay(Datelon day) throws IOelonxcelonption {
+    FilelonSystelonm hdfs = null;
     try {
-      hdfs = HdfsUtil.getHdfsFileSystem();
-      return hasValidBatchForDay(hdfs, day);
+      hdfs = HdfsUtil.gelontHdfsFilelonSystelonm();
+      relonturn hasValidBatchForDay(hdfs, day);
     } finally {
-      IOUtils.closeQuietly(hdfs);
+      IOUtils.closelonQuielontly(hdfs);
     }
   }
 
-  private boolean hasValidBatchForDay(FileSystem fs, Date day) throws IOException {
+  privatelon boolelonan hasValidBatchForDay(FilelonSystelonm fs, Datelon day) throws IOelonxcelonption {
     DailyStatusBatch batch = loadDay(fs, day);
 
-    return batch != null && batch.isValid();
+    relonturn batch != null && batch.isValid();
   }
 
-  @VisibleForTesting
-  Date getFirstValidDay() {
-    return firstValidDay;
+  @VisiblelonForTelonsting
+  Datelon gelontFirstValidDay() {
+    relonturn firstValidDay;
   }
 
-  @VisibleForTesting
-  Date getLastValidDay() {
-    return lastValidDay;
+  @VisiblelonForTelonsting
+  Datelon gelontLastValidDay() {
+    relonturn lastValidDay;
   }
 
-  private Date getLastValidInputDateFromNow(FileSystem hdfs) throws IOException {
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(new Date()); // current date
-    return getLastValidInputDate(hdfs, cal);
+  privatelon Datelon gelontLastValidInputDatelonFromNow(FilelonSystelonm hdfs) throws IOelonxcelonption {
+    Calelonndar cal = Calelonndar.gelontInstancelon();
+    cal.selontTimelon(nelonw Datelon()); // currelonnt datelon
+    relonturn gelontLastValidInputDatelon(hdfs, cal);
   }
 
   /**
-   * Starting from current date, probe backward till we find a valid input Date
+   * Starting from currelonnt datelon, probelon backward till welon find a valid input Datelon
    */
-  @VisibleForTesting
-  Date getLastValidInputDate(FileSystem hdfs, Calendar cal) throws IOException {
-    cal.set(Calendar.MILLISECOND, 0);
-    cal.set(Calendar.HOUR_OF_DAY, 0);
-    cal.set(Calendar.MINUTE, 0);
-    cal.set(Calendar.SECOND, 0);
-    cal.set(Calendar.MILLISECOND, 0);
-    Date lastValidInputDate = cal.getTime();
-    LOG.info("Probing backwards for last valid data date from " + lastValidInputDate);
-    while (lastValidInputDate.after(FIRST_TWITTER_DAY)) {
-      if (hasValidBatchForDay(hdfs, lastValidInputDate)) {
-        LOG.info("Found latest valid data on date " + lastValidInputDate);
-        LOG.info("  Used path: {}", getStatusPathToUseForDay(lastValidInputDate));
-        return lastValidInputDate;
+  @VisiblelonForTelonsting
+  Datelon gelontLastValidInputDatelon(FilelonSystelonm hdfs, Calelonndar cal) throws IOelonxcelonption {
+    cal.selont(Calelonndar.MILLISelonCOND, 0);
+    cal.selont(Calelonndar.HOUR_OF_DAY, 0);
+    cal.selont(Calelonndar.MINUTelon, 0);
+    cal.selont(Calelonndar.SelonCOND, 0);
+    cal.selont(Calelonndar.MILLISelonCOND, 0);
+    Datelon lastValidInputDatelon = cal.gelontTimelon();
+    LOG.info("Probing backwards for last valid data datelon from " + lastValidInputDatelon);
+    whilelon (lastValidInputDatelon.aftelonr(FIRST_TWITTelonR_DAY)) {
+      if (hasValidBatchForDay(hdfs, lastValidInputDatelon)) {
+        LOG.info("Found latelonst valid data on datelon " + lastValidInputDatelon);
+        LOG.info("  Uselond path: {}", gelontStatusPathToUselonForDay(lastValidInputDatelon));
+        relonturn lastValidInputDatelon;
       }
-      cal.add(Calendar.DATE, -1);
-      lastValidInputDate = cal.getTime();
+      cal.add(Calelonndar.DATelon, -1);
+      lastValidInputDatelon = cal.gelontTimelon();
     }
 
-    return null;
+    relonturn null;
   }
 
   /**
-   * Check if the daily status batches are already on HDFS
+   * Chelonck if thelon daily status batchelons arelon alrelonady on HDFS
    */
-  @VisibleForTesting
-  boolean hasStatusBatchesOnHdfs(FileSystem fs, Date lastDataDay) {
-    String hdfsFileName = getHdfsStatusBatchSyncFileName(lastDataDay);
+  @VisiblelonForTelonsting
+  boolelonan hasStatusBatchelonsOnHdfs(FilelonSystelonm fs, Datelon lastDataDay) {
+    String hdfsFilelonNamelon = gelontHdfsStatusBatchSyncFilelonNamelon(lastDataDay);
     try {
-      return fs.exists(new Path(hdfsFileName));
-    } catch (IOException ex) {
-      LOG.error("Failed checking status batch file on HDFS: " + hdfsFileName, ex);
-      return false;
+      relonturn fs.elonxists(nelonw Path(hdfsFilelonNamelon));
+    } catch (IOelonxcelonption elonx) {
+      LOG.elonrror("Failelond cheloncking status batch filelon on HDFS: " + hdfsFilelonNamelon, elonx);
+      relonturn falselon;
     }
   }
 
   /**
-   * Load the daily status batches from HDFS by first copying the file from HDFS to local disk
-   * and then reading from the local disk.
+   * Load thelon daily status batchelons from HDFS by first copying thelon filelon from HDFS to local disk
+   * and thelonn relonading from thelon local disk.
    *
-   * @param day the latest day of valid statuses.
-   * @return true if the loading is successful.
+   * @param day thelon latelonst day of valid statuselons.
+   * @relonturn truelon if thelon loading is succelonssful.
    */
-  @VisibleForTesting
-  boolean loadStatusBatchesFromHdfs(FileSystem fs, Date day) {
-    // set the directory state to initial state
-    resetDirectory();
+  @VisiblelonForTelonsting
+  boolelonan loadStatusBatchelonsFromHdfs(FilelonSystelonm fs, Datelon day) {
+    // selont thelon direlonctory statelon to initial statelon
+    relonselontDirelonctory();
 
-    String fileHdfsPath = getHdfsStatusBatchSyncFileName(day);
-    String fileLocalPath = getLocalStatusBatchSyncFileName(day);
+    String filelonHdfsPath = gelontHdfsStatusBatchSyncFilelonNamelon(day);
+    String filelonLocalPath = gelontLocalStatusBatchSyncFilelonNamelon(day);
 
-    LOG.info("Using " + fileHdfsPath + " as the HDFS batch summary load path.");
-    LOG.info("Using " + fileLocalPath + " as the local batch summary sync path.");
+    LOG.info("Using " + filelonHdfsPath + " as thelon HDFS batch summary load path.");
+    LOG.info("Using " + filelonLocalPath + " as thelon local batch summary sync path.");
 
-    LineRecordFileReader lineReader = null;
+    LinelonReloncordFilelonRelonadelonr linelonRelonadelonr = null;
     try {
-      fs.copyToLocalFile(new Path(fileHdfsPath), new Path(fileLocalPath));
+      fs.copyToLocalFilelon(nelonw Path(filelonHdfsPath), nelonw Path(filelonLocalPath));
 
-      lineReader = new LineRecordFileReader(fileLocalPath);
-      String batchLine;
-      while ((batchLine = lineReader.readNext()) != null) {
-        DailyStatusBatch batch = DailyStatusBatch.deserializeFromJson(batchLine);
+      linelonRelonadelonr = nelonw LinelonReloncordFilelonRelonadelonr(filelonLocalPath);
+      String batchLinelon;
+      whilelon ((batchLinelon = linelonRelonadelonr.relonadNelonxt()) != null) {
+        DailyStatusBatch batch = DailyStatusBatch.delonselonrializelonFromJson(batchLinelon);
         if (batch == null) {
-          LOG.error("Invalid daily status batch constructed from line: " + batchLine);
-          resetDirectory();
-          return false;
+          LOG.elonrror("Invalid daily status batch constructelond from linelon: " + batchLinelon);
+          relonselontDirelonctory();
+          relonturn falselon;
         }
-        Date date = batch.getDate();
-        if (firstValidDay == null || firstValidDay.after(date)) {
-          firstValidDay = date;
+        Datelon datelon = batch.gelontDatelon();
+        if (firstValidDay == null || firstValidDay.aftelonr(datelon)) {
+          firstValidDay = datelon;
         }
-        if (lastValidDay == null || lastValidDay.before(date)) {
-          lastValidDay = date;
+        if (lastValidDay == null || lastValidDay.belonforelon(datelon)) {
+          lastValidDay = datelon;
         }
-        statusBatches.put(date, batch);
+        statusBatchelons.put(datelon, batch);
       }
-      LOG.info("Loaded {} status batches from HDFS: {}",
-          statusBatches.size(), fileHdfsPath);
-      LOG.info("First entry: {}", statusBatches.firstEntry().getValue().toString());
-      LOG.info("Last entry: {}", statusBatches.lastEntry().getValue().toString());
+      LOG.info("Loadelond {} status batchelons from HDFS: {}",
+          statusBatchelons.sizelon(), filelonHdfsPath);
+      LOG.info("First elonntry: {}", statusBatchelons.firstelonntry().gelontValuelon().toString());
+      LOG.info("Last elonntry: {}", statusBatchelons.lastelonntry().gelontValuelon().toString());
 
-      return true;
-    } catch (IOException ex) {
-      LOG.error("Failed loading time slices from HDFS: " + fileHdfsPath, ex);
-      resetDirectory();
-      return false;
+      relonturn truelon;
+    } catch (IOelonxcelonption elonx) {
+      LOG.elonrror("Failelond loading timelon slicelons from HDFS: " + filelonHdfsPath, elonx);
+      relonselontDirelonctory();
+      relonturn falselon;
     } finally {
-      if (lineReader != null) {
-        lineReader.stop();
+      if (linelonRelonadelonr != null) {
+        linelonRelonadelonr.stop();
       }
     }
   }
 
   /**
-   * Flush the daily status batches to local disk and then upload to HDFS.
+   * Flush thelon daily status batchelons to local disk and thelonn upload to HDFS.
    */
-  private boolean storeStatusBatchesToHdfs(FileSystem fs, Date day) {
-    Preconditions.checkNotNull(lastValidDay);
+  privatelon boolelonan storelonStatusBatchelonsToHdfs(FilelonSystelonm fs, Datelon day) {
+    Prelonconditions.chelonckNotNull(lastValidDay);
 
-    if (!StatusBatchFlushVersion.CURRENT_FLUSH_VERSION.isOfficial()) {
-      LOG.info("Status batch flush version is not official, no batches will be flushed to HDFS");
-      return true;
+    if (!StatusBatchFlushVelonrsion.CURRelonNT_FLUSH_VelonRSION.isOfficial()) {
+      LOG.info("Status batch flush velonrsion is not official, no batchelons will belon flushelond to HDFS");
+      relonturn truelon;
     }
 
-    String fileLocalPath = getLocalStatusBatchSyncFileName(day);
+    String filelonLocalPath = gelontLocalStatusBatchSyncFilelonNamelon(day);
 
     // Flush to local disk
-    File outputFile = null;
-    FileWriter fileWriter = null;
+    Filelon outputFilelon = null;
+    FilelonWritelonr filelonWritelonr = null;
     try {
-      LOG.info("Flushing daily status batches into: " + fileLocalPath);
-      outputFile = new File(fileLocalPath);
-      outputFile.getParentFile().mkdirs();
-      if (!outputFile.getParentFile().exists()) {
-        LOG.error("Cannot create directory: " + outputFile.getParentFile().toString());
-        return false;
+      LOG.info("Flushing daily status batchelons into: " + filelonLocalPath);
+      outputFilelon = nelonw Filelon(filelonLocalPath);
+      outputFilelon.gelontParelonntFilelon().mkdirs();
+      if (!outputFilelon.gelontParelonntFilelon().elonxists()) {
+        LOG.elonrror("Cannot crelonatelon direlonctory: " + outputFilelon.gelontParelonntFilelon().toString());
+        relonturn falselon;
       }
-      fileWriter = new FileWriter(outputFile, false);
-      for (Date date : statusBatches.keySet()) {
-        fileWriter.write(statusBatches.get(date).serializeToJson());
-        fileWriter.write("\n");
+      filelonWritelonr = nelonw FilelonWritelonr(outputFilelon, falselon);
+      for (Datelon datelon : statusBatchelons.kelonySelont()) {
+        filelonWritelonr.writelon(statusBatchelons.gelont(datelon).selonrializelonToJson());
+        filelonWritelonr.writelon("\n");
       }
-      fileWriter.flush();
+      filelonWritelonr.flush();
 
-      // Upload the file to HDFS
-      return uploadStatusBatchesToHdfs(fs, day);
-    } catch (IOException e) {
-      String fileHdfsPath = getHdfsStatusBatchSyncFileName(day);
-      LOG.error("Failed storing status batches to HDFS: " + fileHdfsPath, e);
-      return false;
+      // Upload thelon filelon to HDFS
+      relonturn uploadStatusBatchelonsToHdfs(fs, day);
+    } catch (IOelonxcelonption elon) {
+      String filelonHdfsPath = gelontHdfsStatusBatchSyncFilelonNamelon(day);
+      LOG.elonrror("Failelond storing status batchelons to HDFS: " + filelonHdfsPath, elon);
+      relonturn falselon;
     } finally {
       try {
-        if (fileWriter != null) {
-          fileWriter.close();
+        if (filelonWritelonr != null) {
+          filelonWritelonr.closelon();
         }
-      } catch (IOException e) {
-        LOG.error("Error to close fileWrite.", e);
+      } catch (IOelonxcelonption elon) {
+        LOG.elonrror("elonrror to closelon filelonWritelon.", elon);
       }
-      if (outputFile != null) {
-        // Delete the local file
-        outputFile.delete();
+      if (outputFilelon != null) {
+        // Delonlelontelon thelon local filelon
+        outputFilelon.delonlelontelon();
       }
     }
   }
 
   /**
-   * Upload the status batches to HDFS.
+   * Upload thelon status batchelons to HDFS.
    */
-  @VisibleForTesting
-  boolean uploadStatusBatchesToHdfs(FileSystem fs, Date day) {
-    String localFileName = getLocalStatusBatchSyncFileName(day);
-    String hdfsFileName = getHdfsStatusBatchSyncFileName(day);
+  @VisiblelonForTelonsting
+  boolelonan uploadStatusBatchelonsToHdfs(FilelonSystelonm fs, Datelon day) {
+    String localFilelonNamelon = gelontLocalStatusBatchSyncFilelonNamelon(day);
+    String hdfsFilelonNamelon = gelontHdfsStatusBatchSyncFilelonNamelon(day);
 
-    LOG.info("Using " + hdfsFileName + " as the HDFS batch summary upload path.");
-    LOG.info("Using " + localFileName + " as the local batch summary sync path.");
+    LOG.info("Using " + hdfsFilelonNamelon + " as thelon HDFS batch summary upload path.");
+    LOG.info("Using " + localFilelonNamelon + " as thelon local batch summary sync path.");
 
     try {
-      Path hdfsFilePath = new Path(hdfsFileName);
-      if (fs.exists(hdfsFilePath)) {
-        LOG.warn("Found status batch file on HDFS: " + hdfsFileName);
-        return true;
+      Path hdfsFilelonPath = nelonw Path(hdfsFilelonNamelon);
+      if (fs.elonxists(hdfsFilelonPath)) {
+        LOG.warn("Found status batch filelon on HDFS: " + hdfsFilelonNamelon);
+        relonturn truelon;
       }
 
-      String hdfsTempName = getHdfsStatusBatchTempSyncFileName(day);
-      Path hdfsTempPath = new Path(hdfsTempName);
-      if (fs.exists(hdfsTempPath)) {
-        LOG.info("Found existing temporary status batch file on HDFS, removing: " + hdfsTempName);
-        if (!fs.delete(hdfsTempPath, false)) {
-          LOG.error("Failed to delete temporary file: " + hdfsTempName);
-          return false;
+      String hdfsTelonmpNamelon = gelontHdfsStatusBatchTelonmpSyncFilelonNamelon(day);
+      Path hdfsTelonmpPath = nelonw Path(hdfsTelonmpNamelon);
+      if (fs.elonxists(hdfsTelonmpPath)) {
+        LOG.info("Found elonxisting telonmporary status batch filelon on HDFS, relonmoving: " + hdfsTelonmpNamelon);
+        if (!fs.delonlelontelon(hdfsTelonmpPath, falselon)) {
+          LOG.elonrror("Failelond to delonlelontelon telonmporary filelon: " + hdfsTelonmpNamelon);
+          relonturn falselon;
         }
       }
-      fs.copyFromLocalFile(new Path(localFileName), hdfsTempPath);
+      fs.copyFromLocalFilelon(nelonw Path(localFilelonNamelon), hdfsTelonmpPath);
 
-      if (fs.rename(hdfsTempPath, hdfsFilePath)) {
-        LOG.debug("Renamed " + hdfsTempName + " on HDFS to: " + hdfsFileName);
-        return true;
-      } else {
-        LOG.error("Failed to rename " + hdfsTempName + " on HDFS to: " + hdfsFileName);
-        return false;
+      if (fs.relonnamelon(hdfsTelonmpPath, hdfsFilelonPath)) {
+        LOG.delonbug("Relonnamelond " + hdfsTelonmpNamelon + " on HDFS to: " + hdfsFilelonNamelon);
+        relonturn truelon;
+      } elonlselon {
+        LOG.elonrror("Failelond to relonnamelon " + hdfsTelonmpNamelon + " on HDFS to: " + hdfsFilelonNamelon);
+        relonturn falselon;
       }
-    } catch (IOException ex) {
-      LOG.error("Failed uploading status batch file to HDFS: " + hdfsFileName, ex);
-      return false;
+    } catch (IOelonxcelonption elonx) {
+      LOG.elonrror("Failelond uploading status batch filelon to HDFS: " + hdfsFilelonNamelon, elonx);
+      relonturn falselon;
     }
   }
 
-  private static boolean isStatusBatchFlushingEnabled() {
-    return EarlybirdProperty.ARCHIVE_DAILY_STATUS_BATCH_FLUSHING_ENABLED.get(false);
+  privatelon static boolelonan isStatusBatchFlushingelonnablelond() {
+    relonturn elonarlybirdPropelonrty.ARCHIVelon_DAILY_STATUS_BATCH_FLUSHING_elonNABLelonD.gelont(falselon);
   }
 
-  private static boolean isStatusBatchLoadingEnabled() {
-    return EarlybirdConfig.getBool("archive_daily_status_batch_loading_enabled", false);
+  privatelon static boolelonan isStatusBatchLoadingelonnablelond() {
+    relonturn elonarlybirdConfig.gelontBool("archivelon_daily_status_batch_loading_elonnablelond", falselon);
   }
 
-  private static String getVersionFileExtension() {
-    return StatusBatchFlushVersion.CURRENT_FLUSH_VERSION.getVersionFileExtension();
+  privatelon static String gelontVelonrsionFilelonelonxtelonnsion() {
+    relonturn StatusBatchFlushVelonrsion.CURRelonNT_FLUSH_VelonRSION.gelontVelonrsionFilelonelonxtelonnsion();
   }
 
-  String getStatusBatchSyncRootDir() {
-    return EarlybirdConfig.getString("archive_daily_status_batch_sync_dir",
-        "daily_status_batches") + "/" + scrubGenSuffix();
+  String gelontStatusBatchSyncRootDir() {
+    relonturn elonarlybirdConfig.gelontString("archivelon_daily_status_batch_sync_dir",
+        "daily_status_batchelons") + "/" + scrubGelonnSuffix();
   }
 
-  @VisibleForTesting
-  String getLocalStatusBatchSyncFileName(Date day) {
-    return  getStatusBatchSyncRootDir() + "/" + STATUS_BATCHES_PREFIX + "_"
-        + DATE_FORMAT.format(day) + getVersionFileExtension();
+  @VisiblelonForTelonsting
+  String gelontLocalStatusBatchSyncFilelonNamelon(Datelon day) {
+    relonturn  gelontStatusBatchSyncRootDir() + "/" + STATUS_BATCHelonS_PRelonFIX + "_"
+        + DATelon_FORMAT.format(day) + gelontVelonrsionFilelonelonxtelonnsion();
   }
 
-  String getHdfsStatusBatchSyncRootDir() {
-    return EarlybirdConfig.getString("hdfs_archive_daily_status_batch_sync_dir",
-        "daily_status_batches") + "/" + scrubGenSuffix();
+  String gelontHdfsStatusBatchSyncRootDir() {
+    relonturn elonarlybirdConfig.gelontString("hdfs_archivelon_daily_status_batch_sync_dir",
+        "daily_status_batchelons") + "/" + scrubGelonnSuffix();
   }
 
-  @VisibleForTesting
-  String getHdfsStatusBatchSyncFileName(Date day) {
-    return getHdfsStatusBatchSyncRootDir() + "/" + STATUS_BATCHES_PREFIX + "_"
-        + DATE_FORMAT.format(day) + getVersionFileExtension();
+  @VisiblelonForTelonsting
+  String gelontHdfsStatusBatchSyncFilelonNamelon(Datelon day) {
+    relonturn gelontHdfsStatusBatchSyncRootDir() + "/" + STATUS_BATCHelonS_PRelonFIX + "_"
+        + DATelon_FORMAT.format(day) + gelontVelonrsionFilelonelonxtelonnsion();
   }
 
-  private String getHdfsStatusBatchTempSyncFileName(Date day) {
-    return getHdfsStatusBatchSyncRootDir() + "/" + DatabaseConfig.getLocalHostname() + "_"
-        + STATUS_BATCHES_PREFIX + "_" + DATE_FORMAT.format(day) + getVersionFileExtension();
+  privatelon String gelontHdfsStatusBatchTelonmpSyncFilelonNamelon(Datelon day) {
+    relonturn gelontHdfsStatusBatchSyncRootDir() + "/" + DatabaselonConfig.gelontLocalHostnamelon() + "_"
+        + STATUS_BATCHelonS_PRelonFIX + "_" + DATelon_FORMAT.format(day) + gelontVelonrsionFilelonelonxtelonnsion();
   }
 
-  private String scrubGenSuffix() {
-    return String.format(SCRUB_GEN_SUFFIX_PATTERN, DATE_FORMAT.format(scrubGenDay));
+  privatelon String scrubGelonnSuffix() {
+    relonturn String.format(SCRUB_GelonN_SUFFIX_PATTelonRN, DATelon_FORMAT.format(scrubGelonnDay));
   }
 
   /**
-   * Returns the path to the directory that stores the statuses for the given day.
+   * Relonturns thelon path to thelon direlonctory that storelons thelon statuselons for thelon givelonn day.
    */
-  public Path getStatusPathToUseForDay(Date day) {
-    if (!day.before(scrubGenDay)) {
-      return statusPath;
+  public Path gelontStatusPathToUselonForDay(Datelon day) {
+    if (!day.belonforelon(scrubGelonnDay)) {
+      relonturn statusPath;
     }
 
-    String suffix = scrubGenSuffix();
-    Preconditions.checkArgument(!suffix.isEmpty());
-    Path scrubPath = new Path(buildGenPath, suffix);
-    return new Path(scrubPath, STATUS_SUBDIR_NAME);
+    String suffix = scrubGelonnSuffix();
+    Prelonconditions.chelonckArgumelonnt(!suffix.iselonmpty());
+    Path scrubPath = nelonw Path(buildGelonnPath, suffix);
+    relonturn nelonw Path(scrubPath, STATUS_SUBDIR_NAMelon);
   }
 
   /**
-   * Determines if the data for the specified scrub gen was fully built, by checking the number of
-   * days for which data was built against the expected number of days extracted from the specified
-   * scrub gen date.
+   * Delontelonrminelons if thelon data for thelon speloncifielond scrub gelonn was fully built, by cheloncking thelon numbelonr of
+   * days for which data was built against thelon elonxpelonctelond numbelonr of days elonxtractelond from thelon speloncifielond
+   * scrub gelonn datelon.
    */
-  public boolean isScrubGenDataFullyBuilt(FileSystem hdfs) throws IOException {
+  public boolelonan isScrubGelonnDataFullyBuilt(FilelonSystelonm hdfs) throws IOelonxcelonption {
     initialLoadDailyBatchInfos(hdfs);
-    if (numberOfDaysWithValidScrubGenData == 0) {
-      LOG.warn("numberOfDaysWithValidScrubGenData is 0");
+    if (numbelonrOfDaysWithValidScrubGelonnData == 0) {
+      LOG.warn("numbelonrOfDaysWithValidScrubGelonnData is 0");
     }
-    long expectedDays = getDiffBetweenDays(scrubGenDay);
-    return expectedDays == numberOfDaysWithValidScrubGenData;
+    long elonxpelonctelondDays = gelontDiffBelontwelonelonnDays(scrubGelonnDay);
+    relonturn elonxpelonctelondDays == numbelonrOfDaysWithValidScrubGelonnData;
   }
 
-  @VisibleForTesting
-  long getDiffBetweenDays(Date day) {
-    long diff = day.getTime() - FIRST_TWEET_DAY.getTime();
-    return TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
+  @VisiblelonForTelonsting
+  long gelontDiffBelontwelonelonnDays(Datelon day) {
+    long diff = day.gelontTimelon() - FIRST_TWelonelonT_DAY.gelontTimelon();
+    relonturn TimelonUnit.DAYS.convelonrt(diff, TimelonUnit.MILLISelonCONDS);
   }
 }

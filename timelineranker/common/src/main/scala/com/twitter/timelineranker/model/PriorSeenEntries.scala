@@ -1,23 +1,23 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
 
-object PriorSeenEntries {
-  def fromThrift(entries: thrift.PriorSeenEntries): PriorSeenEntries = {
-    PriorSeenEntries(seenEntries = entries.seenEntries)
+objelonct PriorSelonelonnelonntrielons {
+  delonf fromThrift(elonntrielons: thrift.PriorSelonelonnelonntrielons): PriorSelonelonnelonntrielons = {
+    PriorSelonelonnelonntrielons(selonelonnelonntrielons = elonntrielons.selonelonnelonntrielons)
   }
 }
 
-case class PriorSeenEntries(seenEntries: Seq[TweetId]) {
+caselon class PriorSelonelonnelonntrielons(selonelonnelonntrielons: Selonq[TwelonelontId]) {
 
   throwIfInvalid()
 
-  def toThrift: thrift.PriorSeenEntries = {
-    thrift.PriorSeenEntries(seenEntries = seenEntries)
+  delonf toThrift: thrift.PriorSelonelonnelonntrielons = {
+    thrift.PriorSelonelonnelonntrielons(selonelonnelonntrielons = selonelonnelonntrielons)
   }
 
-  def throwIfInvalid(): Unit = {
-    // No validation performed.
+  delonf throwIfInvalid(): Unit = {
+    // No validation pelonrformelond.
   }
 }

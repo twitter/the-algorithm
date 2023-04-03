@@ -1,149 +1,149 @@
-package com.twitter.simclusters_v2.scalding.embedding.abuse
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon
 
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.Years
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.NumBlocksP95
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getFlockBlocksSparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.abuse.DataSources.getUserInterestedInTruncatedKMatrix
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ClusterId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.AdhocCrossSimClusterInteractionScores
-import com.twitter.simclusters_v2.thriftscala.ClustersScore
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.CassowaryJob
-import com.twitter.simclusters_v2.hdfs_sources.AdhocCrossSimclusterBlockInteractionFeaturesScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.AdhocCrossSimclusterFavInteractionFeaturesScalaDataset
-import java.util.TimeZone
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding.Args
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding.Yelonars
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.SparselonMatrix
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon.DataSourcelons.NumBlocksP95
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon.DataSourcelons.gelontFlockBlocksSparselonMatrix
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon.DataSourcelons.gelontUselonrIntelonrelonstelondInTruncatelondKMatrix
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.D
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.UselonrId
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonxtelonrnalDataSourcelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.AdhocCrossSimClustelonrIntelonractionScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsScorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.CassowaryJob
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AdhocCrossSimclustelonrBlockIntelonractionFelonaturelonsScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AdhocCrossSimclustelonrFavIntelonractionFelonaturelonsScalaDataselont
+import java.util.TimelonZonelon
 
 /*
 To run:
-scalding remote run \
---user cassowary \
---submitter hadoopnest1.atla.twitter.com \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/abuse:cross_simcluster-adhoc \
---main-class com.twitter.simclusters_v2.scalding.embedding.abuse.CrossSimClusterFeaturesScaldingJob \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+scalding relonmotelon run \
+--uselonr cassowary \
+--submittelonr hadoopnelonst1.atla.twittelonr.com \
+--targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/abuselon:cross_simclustelonr-adhoc \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.abuselon.CrossSimClustelonrFelonaturelonsScaldingJob \
+--submittelonr-melonmory 128192.melongabytelon --hadoop-propelonrtielons "maprelonducelon.map.melonmory.mb=8192 maprelonducelon.map.java.opts='-Xmx7618M' maprelonducelon.relonducelon.melonmory.mb=8192 maprelonducelon.relonducelon.java.opts='-Xmx7618M'" \
 -- \
---date 2021-02-07 \
---dalEnvironment Prod
+--datelon 2021-02-07 \
+--dalelonnvironmelonnt Prod
  */
 
-object CrossSimClusterFeaturesUtil {
+objelonct CrossSimClustelonrFelonaturelonsUtil {
 
   /**
-   * To generate the interaction score for 2 simclusters c1 and c2 for all cluster combinations (I):
-   * a) Get C - user interestedIn matrix, User * Cluster
-   * b) Get INT - positive or negative interaction matrix, User * User
-   * c) Compute C^T*INT
-   * d) Finally, return C^T*INT*C
+   * To gelonnelonratelon thelon intelonraction scorelon for 2 simclustelonrs c1 and c2 for all clustelonr combinations (I):
+   * a) Gelont C - uselonr intelonrelonstelondIn matrix, Uselonr * Clustelonr
+   * b) Gelont INT - positivelon or nelongativelon intelonraction matrix, Uselonr * Uselonr
+   * c) Computelon C^T*INT
+   * d) Finally, relonturn C^T*INT*C
    */
-  def getCrossClusterScores(
-    userClusterMatrix: SparseMatrix[UserId, ClusterId, Double],
-    userInteractionMatrix: SparseMatrix[UserId, UserId, Double]
-  ): SparseMatrix[ClusterId, ClusterId, Double] = {
-    // intermediate = C^T*INT
-    val intermediateResult = userClusterMatrix.transpose.multiplySparseMatrix(userInteractionMatrix)
-    // return intermediate*C
-    intermediateResult.multiplySparseMatrix(userClusterMatrix)
+  delonf gelontCrossClustelonrScorelons(
+    uselonrClustelonrMatrix: SparselonMatrix[UselonrId, ClustelonrId, Doublelon],
+    uselonrIntelonractionMatrix: SparselonMatrix[UselonrId, UselonrId, Doublelon]
+  ): SparselonMatrix[ClustelonrId, ClustelonrId, Doublelon] = {
+    // intelonrmelondiatelon = C^T*INT
+    val intelonrmelondiatelonRelonsult = uselonrClustelonrMatrix.transposelon.multiplySparselonMatrix(uselonrIntelonractionMatrix)
+    // relonturn intelonrmelondiatelon*C
+    intelonrmelondiatelonRelonsult.multiplySparselonMatrix(uselonrClustelonrMatrix)
   }
 }
 
-object CrossSimClusterFeaturesScaldingJob extends AdhocExecutionApp with CassowaryJob {
-  override def jobName: String = "AdhocAbuseCrossSimClusterFeaturesScaldingJob"
+objelonct CrossSimClustelonrFelonaturelonsScaldingJob elonxtelonnds AdhocelonxeloncutionApp with CassowaryJob {
+  ovelonrridelon delonf jobNamelon: String = "AdhocAbuselonCrossSimClustelonrFelonaturelonsScaldingJob"
 
-  private val outputPathBlocksThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "abuse_cross_simcluster_block_features"
+  privatelon val outputPathBlocksThrift: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = falselon,
+    isManhattanKelonyVal = falselon,
+    modelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+    pathSuffix = "abuselon_cross_simclustelonr_block_felonaturelons"
   )
 
-  private val outputPathFavThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = ModelVersion.Model20m145kUpdated,
-    pathSuffix = "abuse_cross_simcluster_fav_features"
+  privatelon val outputPathFavThrift: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = falselon,
+    isManhattanKelonyVal = falselon,
+    modelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kUpdatelond,
+    pathSuffix = "abuselon_cross_simclustelonr_fav_felonaturelons"
   )
 
-  private val HalfLifeInDaysForFavScore = 100
+  privatelon val HalfLifelonInDaysForFavScorelon = 100
 
-  // Adhoc jobs which use all user interestedIn simclusters (default=50) was failing
-  // Hence truncating the number of clusters
-  private val MaxNumClustersPerUser = 20
+  // Adhoc jobs which uselon all uselonr intelonrelonstelondIn simclustelonrs (delonfault=50) was failing
+  // Helonncelon truncating thelon numbelonr of clustelonrs
+  privatelon val MaxNumClustelonrsPelonrUselonr = 20
 
-  import CrossSimClusterFeaturesUtil._
-  override def runOnDateRange(
+  import CrossSimClustelonrFelonaturelonsUtil._
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val normalizedUserInterestedInMatrix: SparseMatrix[UserId, ClusterId, Double] =
-      getUserInterestedInTruncatedKMatrix(MaxNumClustersPerUser).rowL2Normalize
+    val normalizelondUselonrIntelonrelonstelondInMatrix: SparselonMatrix[UselonrId, ClustelonrId, Doublelon] =
+      gelontUselonrIntelonrelonstelondInTruncatelondKMatrix(MaxNumClustelonrsPelonrUselonr).rowL2Normalizelon
 
-    //the below code is to get cross simcluster features from flockblocks - negative user-user interactions.
-    val flockBlocksMatrix: SparseMatrix[UserId, UserId, Double] =
-      getFlockBlocksSparseMatrix(NumBlocksP95, dateRange.prepend(Years(1)))
+    //thelon belonlow codelon is to gelont cross simclustelonr felonaturelons from flockblocks - nelongativelon uselonr-uselonr intelonractions.
+    val flockBlocksMatrix: SparselonMatrix[UselonrId, UselonrId, Doublelon] =
+      gelontFlockBlocksSparselonMatrix(NumBlocksP95, datelonRangelon.prelonpelonnd(Yelonars(1)))
 
-    val crossClusterBlockScores: SparseMatrix[ClusterId, ClusterId, Double] =
-      getCrossClusterScores(normalizedUserInterestedInMatrix, flockBlocksMatrix)
+    val crossClustelonrBlockScorelons: SparselonMatrix[ClustelonrId, ClustelonrId, Doublelon] =
+      gelontCrossClustelonrScorelons(normalizelondUselonrIntelonrelonstelondInMatrix, flockBlocksMatrix)
 
-    val blockScores: TypedPipe[AdhocCrossSimClusterInteractionScores] =
-      crossClusterBlockScores.rowAsKeys
-        .mapValues(List(_)).sumByKey.toTypedPipe.map {
-          case (givingClusterId, receivingClustersWithScores) =>
-            AdhocCrossSimClusterInteractionScores(
-              clusterId = givingClusterId,
-              clusterScores = receivingClustersWithScores.map {
-                case (cluster, score) => ClustersScore(cluster, score)
+    val blockScorelons: TypelondPipelon[AdhocCrossSimClustelonrIntelonractionScorelons] =
+      crossClustelonrBlockScorelons.rowAsKelonys
+        .mapValuelons(List(_)).sumByKelony.toTypelondPipelon.map {
+          caselon (givingClustelonrId, reloncelonivingClustelonrsWithScorelons) =>
+            AdhocCrossSimClustelonrIntelonractionScorelons(
+              clustelonrId = givingClustelonrId,
+              clustelonrScorelons = reloncelonivingClustelonrsWithScorelons.map {
+                caselon (clustelonr, scorelon) => ClustelonrsScorelon(clustelonr, scorelon)
               })
         }
 
-    // get cross simcluster features from fav graph - positive user-user interactions
-    val favGraphMatrix: SparseMatrix[UserId, UserId, Double] =
-      SparseMatrix.apply[UserId, UserId, Double](
-        ExternalDataSources.getFavEdges(HalfLifeInDaysForFavScore))
+    // gelont cross simclustelonr felonaturelons from fav graph - positivelon uselonr-uselonr intelonractions
+    val favGraphMatrix: SparselonMatrix[UselonrId, UselonrId, Doublelon] =
+      SparselonMatrix.apply[UselonrId, UselonrId, Doublelon](
+        elonxtelonrnalDataSourcelons.gelontFavelondgelons(HalfLifelonInDaysForFavScorelon))
 
-    val crossClusterFavScores: SparseMatrix[ClusterId, ClusterId, Double] =
-      getCrossClusterScores(normalizedUserInterestedInMatrix, favGraphMatrix)
+    val crossClustelonrFavScorelons: SparselonMatrix[ClustelonrId, ClustelonrId, Doublelon] =
+      gelontCrossClustelonrScorelons(normalizelondUselonrIntelonrelonstelondInMatrix, favGraphMatrix)
 
-    val favScores: TypedPipe[AdhocCrossSimClusterInteractionScores] =
-      crossClusterFavScores.rowAsKeys
-        .mapValues(List(_)).sumByKey.toTypedPipe.map {
-          case (givingClusterId, receivingClustersWithScores) =>
-            AdhocCrossSimClusterInteractionScores(
-              clusterId = givingClusterId,
-              clusterScores = receivingClustersWithScores.map {
-                case (cluster, score) => ClustersScore(cluster, score)
+    val favScorelons: TypelondPipelon[AdhocCrossSimClustelonrIntelonractionScorelons] =
+      crossClustelonrFavScorelons.rowAsKelonys
+        .mapValuelons(List(_)).sumByKelony.toTypelondPipelon.map {
+          caselon (givingClustelonrId, reloncelonivingClustelonrsWithScorelons) =>
+            AdhocCrossSimClustelonrIntelonractionScorelons(
+              clustelonrId = givingClustelonrId,
+              clustelonrScorelons = reloncelonivingClustelonrsWithScorelons.map {
+                caselon (clustelonr, scorelon) => ClustelonrsScorelon(clustelonr, scorelon)
               })
         }
-    // write both block and fav interaction matrices to hdfs in thrift format
-    Execution
+    // writelon both block and fav intelonraction matricelons to hdfs in thrift format
+    elonxeloncution
       .zip(
-        blockScores.writeDALSnapshotExecution(
-          AdhocCrossSimclusterBlockInteractionFeaturesScalaDataset,
+        blockScorelons.writelonDALSnapshotelonxeloncution(
+          AdhocCrossSimclustelonrBlockIntelonractionFelonaturelonsScalaDataselont,
           D.Daily,
           D.Suffix(outputPathBlocksThrift),
-          D.Parquet,
-          dateRange.`end`),
-        favScores.writeDALSnapshotExecution(
-          AdhocCrossSimclusterFavInteractionFeaturesScalaDataset,
+          D.Parquelont,
+          datelonRangelon.`elonnd`),
+        favScorelons.writelonDALSnapshotelonxeloncution(
+          AdhocCrossSimclustelonrFavIntelonractionFelonaturelonsScalaDataselont,
           D.Daily,
           D.Suffix(outputPathFavThrift),
-          D.Parquet,
-          dateRange.`end`)
+          D.Parquelont,
+          datelonRangelon.`elonnd`)
       ).unit
   }
 }

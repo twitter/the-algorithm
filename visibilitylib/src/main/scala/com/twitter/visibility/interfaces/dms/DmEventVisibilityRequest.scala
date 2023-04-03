@@ -1,9 +1,9 @@
-package com.twitter.visibility.interfaces.dms
+packagelon com.twittelonr.visibility.intelonrfacelons.dms
 
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class DmEventVisibilityRequest(
-  dmEventId: Long,
-  safetyLevel: SafetyLevel,
-  viewerContext: ViewerContext)
+caselon class DmelonvelonntVisibilityRelonquelonst(
+  dmelonvelonntId: Long,
+  safelontyLelonvelonl: SafelontyLelonvelonl,
+  vielonwelonrContelonxt: VielonwelonrContelonxt)

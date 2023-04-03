@@ -1,11 +1,11 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-public class MissingKafkaTopicException extends Exception {
-  public MissingKafkaTopicException(String message) {
-    super(message);
+public class MissingKafkaTopicelonxcelonption elonxtelonnds elonxcelonption {
+  public MissingKafkaTopicelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 
-  public MissingKafkaTopicException(String message, Throwable cause) {
-    super(message, cause);
+  public MissingKafkaTopicelonxcelonption(String melonssagelon, Throwablelon causelon) {
+    supelonr(melonssagelon, causelon);
   }
 }

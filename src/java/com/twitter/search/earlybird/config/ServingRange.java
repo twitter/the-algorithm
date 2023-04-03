@@ -1,26 +1,26 @@
-package com.twitter.search.earlybird.config;
+packagelon com.twittelonr.selonarch.elonarlybird.config;
 
 /**
- * An interface for abstracting a tier's serving range.
+ * An intelonrfacelon for abstracting a tielonr's selonrving rangelon.
  */
-public interface ServingRange {
+public intelonrfacelon SelonrvingRangelon {
   /**
-   * Returns the serving range's lowest tweet ID.
+   * Relonturns thelon selonrving rangelon's lowelonst twelonelont ID.
    */
-  long getServingRangeSinceId();
+  long gelontSelonrvingRangelonSincelonId();
 
   /**
-   * Returns the serving range's highest tweet ID.
+   * Relonturns thelon selonrving rangelon's highelonst twelonelont ID.
    */
-  long getServingRangeMaxId();
+  long gelontSelonrvingRangelonMaxId();
 
   /**
-   * Returns the serving range's earliest time, in seconds since epoch.
+   * Relonturns thelon selonrving rangelon's elonarlielonst timelon, in selonconds sincelon elonpoch.
    */
-  long getServingRangeSinceTimeSecondsFromEpoch();
+  long gelontSelonrvingRangelonSincelonTimelonSeloncondsFromelonpoch();
 
   /**
-   * Returns the serving range's latest time, in seconds since epoch.
+   * Relonturns thelon selonrving rangelon's latelonst timelon, in selonconds sincelon elonpoch.
    */
-  long getServingRangeUntilTimeSecondsFromEpoch();
+  long gelontSelonrvingRangelonUntilTimelonSeloncondsFromelonpoch();
 }

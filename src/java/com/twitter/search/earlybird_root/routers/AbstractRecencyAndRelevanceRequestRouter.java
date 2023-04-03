@@ -1,441 +1,441 @@
-package com.twitter.search.earlybird_root.routers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.routelonrs;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.futures.Futures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseMergeUtil;
-import com.twitter.search.earlybird.thrift.AdjustedRequestParams;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.ClientErrorException;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdServiceResponse;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.mergers.SuperRootResponseMerger;
-import com.twitter.search.queryparser.util.QueryUtil;
-import com.twitter.util.Function;
-import com.twitter.util.Function0;
-import com.twitter.util.Future;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.futurelons.Futurelons;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonMelonrgelonUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.AdjustelondRelonquelonstParams;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRankingModelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.common.Clielonntelonrrorelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstUtil;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdSelonrvicelonRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.elonarlybirdTimelonRangelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.SupelonrRootRelonsponselonMelonrgelonr;
+import com.twittelonr.selonarch.quelonryparselonr.util.QuelonryUtil;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Function0;
+import com.twittelonr.util.Futurelon;
 
 /**
- * For Recency traffic SuperRoot hits realtime and/or protected realtime first and then archive
+ * For Reloncelonncy traffic SupelonrRoot hits relonaltimelon and/or protelonctelond relonaltimelon first and thelonn archivelon
  */
-public abstract class AbstractRecencyAndRelevanceRequestRouter extends RequestRouter {
-  public static final String FULL_ARCHIVE_AVAILABLE_FOR_GET_PROTECTED_TWEETS_ONLY_DECIDER_KEY =
-      "superroot_full_archive_cluster_available_for_get_protected_tweets_only_requests";
-  public static final String FULL_ARCHIVE_AVAILABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DECIDER_KEY =
-      "superroot_full_archive_cluster_available_for_requests_without_enough_protected_results";
+public abstract class AbstractReloncelonncyAndRelonlelonvancelonRelonquelonstRoutelonr elonxtelonnds RelonquelonstRoutelonr {
+  public static final String FULL_ARCHIVelon_AVAILABLelon_FOR_GelonT_PROTelonCTelonD_TWelonelonTS_ONLY_DelonCIDelonR_KelonY =
+      "supelonrroot_full_archivelon_clustelonr_availablelon_for_gelont_protelonctelond_twelonelonts_only_relonquelonsts";
+  public static final String FULL_ARCHIVelon_AVAILABLelon_FOR_NOT_elonNOUGH_PROTelonCTelonD_RelonSULTS_DelonCIDelonR_KelonY =
+      "supelonrroot_full_archivelon_clustelonr_availablelon_for_relonquelonsts_without_elonnough_protelonctelond_relonsults";
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(AbstractRecencyAndRelevanceRequestRouter.class);
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(AbstractReloncelonncyAndRelonlelonvancelonRelonquelonstRoutelonr.class);
 
-  private final String skipProtectedClusterDeciderKey;
-  private final String skipFullArchiveClusterDeciderKey;
+  privatelon final String skipProtelonctelondClustelonrDeloncidelonrKelony;
+  privatelon final String skipFullArchivelonClustelonrDeloncidelonrKelony;
 
-  private final SearchCounter realtimeResponseInvalidCounter;
-  private final SearchCounter realtimeResponseSearchResultsNotSetCounter;
-  private final SearchCounter minSearchedStatusIdLargerThanRequestMaxIdCounter;
-  private final SearchCounter minSearchedStatusIdLargerThanRequestUntilTimeCounter;
+  privatelon final SelonarchCountelonr relonaltimelonRelonsponselonInvalidCountelonr;
+  privatelon final SelonarchCountelonr relonaltimelonRelonsponselonSelonarchRelonsultsNotSelontCountelonr;
+  privatelon final SelonarchCountelonr minSelonarchelondStatusIdLargelonrThanRelonquelonstMaxIdCountelonr;
+  privatelon final SelonarchCountelonr minSelonarchelondStatusIdLargelonrThanRelonquelonstUntilTimelonCountelonr;
 
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> realtime;
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime;
-  private final Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive;
-  private final SuperRootResponseMerger responseMerger;
-  private final SearchDecider decider;
+  privatelon final Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> relonaltimelon;
+  privatelon final Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> protelonctelondRelonaltimelon;
+  privatelon final Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> fullArchivelon;
+  privatelon final SupelonrRootRelonsponselonMelonrgelonr relonsponselonMelonrgelonr;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
 
-  AbstractRecencyAndRelevanceRequestRouter(
-      Service<EarlybirdRequestContext, EarlybirdResponse> realtime,
-      Service<EarlybirdRequestContext, EarlybirdResponse> protectedRealtime,
-      Service<EarlybirdRequestContext, EarlybirdResponse> fullArchive,
-      EarlybirdTimeRangeFilter realtimeTimeRangeFilter,
-      EarlybirdTimeRangeFilter protectedTimeRangeFilter,
-      EarlybirdTimeRangeFilter fullArchiveTimeRangeFilter,
-      ThriftSearchRankingMode rankingMode,
+  AbstractReloncelonncyAndRelonlelonvancelonRelonquelonstRoutelonr(
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> relonaltimelon,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> protelonctelondRelonaltimelon,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> fullArchivelon,
+      elonarlybirdTimelonRangelonFiltelonr relonaltimelonTimelonRangelonFiltelonr,
+      elonarlybirdTimelonRangelonFiltelonr protelonctelondTimelonRangelonFiltelonr,
+      elonarlybirdTimelonRangelonFiltelonr fullArchivelonTimelonRangelonFiltelonr,
+      ThriftSelonarchRankingModelon rankingModelon,
       Clock clock,
-      SearchDecider decider,
-      EarlybirdFeatureSchemaMerger featureSchemaMerger) {
-    LOG.info("Instantiating AbstractRecencyAndRelevanceRequestRouter");
-    this.realtime = realtimeTimeRangeFilter.andThen(realtime);
-    this.protectedRealtime = protectedTimeRangeFilter.andThen(protectedRealtime);
-    this.fullArchive = fullArchiveTimeRangeFilter.andThen(fullArchive);
-    this.responseMerger = new SuperRootResponseMerger(rankingMode, featureSchemaMerger, clock);
-    this.decider = decider;
+      SelonarchDeloncidelonr deloncidelonr,
+      elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr) {
+    LOG.info("Instantiating AbstractReloncelonncyAndRelonlelonvancelonRelonquelonstRoutelonr");
+    this.relonaltimelon = relonaltimelonTimelonRangelonFiltelonr.andThelonn(relonaltimelon);
+    this.protelonctelondRelonaltimelon = protelonctelondTimelonRangelonFiltelonr.andThelonn(protelonctelondRelonaltimelon);
+    this.fullArchivelon = fullArchivelonTimelonRangelonFiltelonr.andThelonn(fullArchivelon);
+    this.relonsponselonMelonrgelonr = nelonw SupelonrRootRelonsponselonMelonrgelonr(rankingModelon, felonaturelonSchelonmaMelonrgelonr, clock);
+    this.deloncidelonr = deloncidelonr;
 
-    String rankingModeForStats = rankingMode.name().toLowerCase();
-    skipProtectedClusterDeciderKey =
-        String.format("superroot_skip_protected_cluster_for_%s_requests", rankingModeForStats);
-    skipFullArchiveClusterDeciderKey =
-        String.format("superroot_skip_full_archive_cluster_for_%s_requests", rankingModeForStats);
+    String rankingModelonForStats = rankingModelon.namelon().toLowelonrCaselon();
+    skipProtelonctelondClustelonrDeloncidelonrKelony =
+        String.format("supelonrroot_skip_protelonctelond_clustelonr_for_%s_relonquelonsts", rankingModelonForStats);
+    skipFullArchivelonClustelonrDeloncidelonrKelony =
+        String.format("supelonrroot_skip_full_archivelon_clustelonr_for_%s_relonquelonsts", rankingModelonForStats);
 
-    realtimeResponseInvalidCounter =
-        SearchCounter.export(rankingModeForStats + "_realtime_response_invalid");
-    realtimeResponseSearchResultsNotSetCounter =
-        SearchCounter.export(rankingModeForStats + "_realtime_response_search_results_not_set");
-    minSearchedStatusIdLargerThanRequestMaxIdCounter = SearchCounter.export(
-        rankingModeForStats + "_min_searched_status_id_larger_than_request_max_id");
-    minSearchedStatusIdLargerThanRequestUntilTimeCounter = SearchCounter.export(
-        rankingModeForStats + "_min_searched_status_id_larger_than_request_until_time");
+    relonaltimelonRelonsponselonInvalidCountelonr =
+        SelonarchCountelonr.elonxport(rankingModelonForStats + "_relonaltimelon_relonsponselon_invalid");
+    relonaltimelonRelonsponselonSelonarchRelonsultsNotSelontCountelonr =
+        SelonarchCountelonr.elonxport(rankingModelonForStats + "_relonaltimelon_relonsponselon_selonarch_relonsults_not_selont");
+    minSelonarchelondStatusIdLargelonrThanRelonquelonstMaxIdCountelonr = SelonarchCountelonr.elonxport(
+        rankingModelonForStats + "_min_selonarchelond_status_id_largelonr_than_relonquelonst_max_id");
+    minSelonarchelondStatusIdLargelonrThanRelonquelonstUntilTimelonCountelonr = SelonarchCountelonr.elonxport(
+        rankingModelonForStats + "_min_selonarchelond_status_id_largelonr_than_relonquelonst_until_timelon");
   }
 
-  private void checkRequestPreconditions(EarlybirdRequest request) {
-    // CollectorParams should be set in EarlybirdRequestUtil.checkAndSetCollectorParams().
-    Preconditions.checkNotNull(request.getSearchQuery().getCollectorParams());
+  privatelon void chelonckRelonquelonstPrelonconditions(elonarlybirdRelonquelonst relonquelonst) {
+    // CollelonctorParams should belon selont in elonarlybirdRelonquelonstUtil.chelonckAndSelontCollelonctorParams().
+    Prelonconditions.chelonckNotNull(relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams());
 
-    // return a Client error if the num results are less than 0
-    if (request.getSearchQuery().getNumResults() < 0) {
-      throw new ClientErrorException("The request.searchQuery.numResults field can't be negative");
+    // relonturn a Clielonnt elonrror if thelon num relonsults arelon lelonss than 0
+    if (relonquelonst.gelontSelonarchQuelonry().gelontNumRelonsults() < 0) {
+      throw nelonw Clielonntelonrrorelonxcelonption("Thelon relonquelonst.selonarchQuelonry.numRelonsults fielonld can't belon nelongativelon");
     }
 
-    if (request.getSearchQuery().getCollectorParams().getNumResultsToReturn() < 0) {
-      throw new ClientErrorException("The request.searchQuery.collectorParams.numResultsToReturn "
-          + "field can't be negative");
+    if (relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams().gelontNumRelonsultsToRelonturn() < 0) {
+      throw nelonw Clielonntelonrrorelonxcelonption("Thelon relonquelonst.selonarchQuelonry.collelonctorParams.numRelonsultsToRelonturn "
+          + "fielonld can't belon nelongativelon");
     }
   }
 
   /**
-   * Hit realtime and/or protected realtime first, if not enough results, then hit archive,
-   * merge the results.
+   * Hit relonaltimelon and/or protelonctelond relonaltimelon first, if not elonnough relonsults, thelonn hit archivelon,
+   * melonrgelon thelon relonsults.
    */
-  @Override
-  public Future<EarlybirdResponse> route(final EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> routelon(final elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
 
-    this.checkRequestPreconditions(request);
+    this.chelonckRelonquelonstPrelonconditions(relonquelonst);
 
-    ArrayList<RequestResponse> savedRequestResponses = new ArrayList<>();
+    ArrayList<RelonquelonstRelonsponselon> savelondRelonquelonstRelonsponselons = nelonw ArrayList<>();
 
-    // If clients do not define numResults to return or the numResults requested are 0
-    // return an empty EarlyBirdResponse without hitting any service.
-    if (request.getSearchQuery().getNumResults() == 0
-        || request.getSearchQuery().getCollectorParams().getNumResultsToReturn() == 0) {
-      return Future.value(successNoResultsResponse());
+    // If clielonnts do not delonfinelon numRelonsults to relonturn or thelon numRelonsults relonquelonstelond arelon 0
+    // relonturn an elonmpty elonarlyBirdRelonsponselon without hitting any selonrvicelon.
+    if (relonquelonst.gelontSelonarchQuelonry().gelontNumRelonsults() == 0
+        || relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams().gelontNumRelonsultsToRelonturn() == 0) {
+      relonturn Futurelon.valuelon(succelonssNoRelonsultsRelonsponselon());
     }
 
-    // Realtime earlybird response is already required. Even if the service is not called
-    // the result passed to the mergers should be a valid one.
-    EarlybirdServiceResponse.ServiceState realtimeServiceState =
-        getRealtimeServiceState(requestContext);
-    final Future<EarlybirdServiceResponse> realtimeResponseFuture =
-        realtimeServiceState.serviceWasCalled()
-            ? getRealtimeResponse(savedRequestResponses, requestContext)
-            : Future.value(EarlybirdServiceResponse.serviceNotCalled(realtimeServiceState));
+    // Relonaltimelon elonarlybird relonsponselon is alrelonady relonquirelond. elonvelonn if thelon selonrvicelon is not callelond
+    // thelon relonsult passelond to thelon melonrgelonrs should belon a valid onelon.
+    elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon relonaltimelonSelonrvicelonStatelon =
+        gelontRelonaltimelonSelonrvicelonStatelon(relonquelonstContelonxt);
+    final Futurelon<elonarlybirdSelonrvicelonRelonsponselon> relonaltimelonRelonsponselonFuturelon =
+        relonaltimelonSelonrvicelonStatelon.selonrvicelonWasCallelond()
+            ? gelontRelonaltimelonRelonsponselon(savelondRelonquelonstRelonsponselons, relonquelonstContelonxt)
+            : Futurelon.valuelon(elonarlybirdSelonrvicelonRelonsponselon.selonrvicelonNotCallelond(relonaltimelonSelonrvicelonStatelon));
 
-    // If no flock response (followedUserIds) is set, request wont be sent to protected.
-    EarlybirdServiceResponse.ServiceState protectedServiceState =
-        getProtectedServiceState(requestContext);
-    final Future<EarlybirdServiceResponse> protectedResponseFuture =
-        protectedServiceState.serviceWasCalled()
-            ? getProtectedResponse(savedRequestResponses, requestContext)
-            : Future.value(EarlybirdServiceResponse.serviceNotCalled(protectedServiceState));
+    // If no flock relonsponselon (followelondUselonrIds) is selont, relonquelonst wont belon selonnt to protelonctelond.
+    elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon protelonctelondSelonrvicelonStatelon =
+        gelontProtelonctelondSelonrvicelonStatelon(relonquelonstContelonxt);
+    final Futurelon<elonarlybirdSelonrvicelonRelonsponselon> protelonctelondRelonsponselonFuturelon =
+        protelonctelondSelonrvicelonStatelon.selonrvicelonWasCallelond()
+            ? gelontProtelonctelondRelonsponselon(savelondRelonquelonstRelonsponselons, relonquelonstContelonxt)
+            : Futurelon.valuelon(elonarlybirdSelonrvicelonRelonsponselon.selonrvicelonNotCallelond(protelonctelondSelonrvicelonStatelon));
 
-    final Future<EarlybirdServiceResponse> archiveResponseFuture =
-        Futures.flatMap(realtimeResponseFuture, protectedResponseFuture,
-            new Function0<Future<EarlybirdServiceResponse>>() {
-              @Override
-              public Future<EarlybirdServiceResponse> apply() {
-                EarlybirdServiceResponse realtimeResponse = Futures.get(realtimeResponseFuture);
-                EarlybirdServiceResponse protectedResponse = Futures.get(protectedResponseFuture);
-                EarlybirdServiceResponse.ServiceState fullArchiveServiceState =
-                    getFullArchiveServiceState(requestContext, realtimeResponse, protectedResponse);
-                return fullArchiveServiceState.serviceWasCalled()
-                    ? getFullArchiveResponse(savedRequestResponses, requestContext,
-                    realtimeResponse.getResponse(), protectedResponse.getResponse())
-                    : Future.value(
-                        EarlybirdServiceResponse.serviceNotCalled(fullArchiveServiceState));
+    final Futurelon<elonarlybirdSelonrvicelonRelonsponselon> archivelonRelonsponselonFuturelon =
+        Futurelons.flatMap(relonaltimelonRelonsponselonFuturelon, protelonctelondRelonsponselonFuturelon,
+            nelonw Function0<Futurelon<elonarlybirdSelonrvicelonRelonsponselon>>() {
+              @Ovelonrridelon
+              public Futurelon<elonarlybirdSelonrvicelonRelonsponselon> apply() {
+                elonarlybirdSelonrvicelonRelonsponselon relonaltimelonRelonsponselon = Futurelons.gelont(relonaltimelonRelonsponselonFuturelon);
+                elonarlybirdSelonrvicelonRelonsponselon protelonctelondRelonsponselon = Futurelons.gelont(protelonctelondRelonsponselonFuturelon);
+                elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon fullArchivelonSelonrvicelonStatelon =
+                    gelontFullArchivelonSelonrvicelonStatelon(relonquelonstContelonxt, relonaltimelonRelonsponselon, protelonctelondRelonsponselon);
+                relonturn fullArchivelonSelonrvicelonStatelon.selonrvicelonWasCallelond()
+                    ? gelontFullArchivelonRelonsponselon(savelondRelonquelonstRelonsponselons, relonquelonstContelonxt,
+                    relonaltimelonRelonsponselon.gelontRelonsponselon(), protelonctelondRelonsponselon.gelontRelonsponselon())
+                    : Futurelon.valuelon(
+                        elonarlybirdSelonrvicelonRelonsponselon.selonrvicelonNotCallelond(fullArchivelonSelonrvicelonStatelon));
               }
             }
         );
 
-    Future<EarlybirdResponse> mergedResponse = responseMerger.mergeResponseFutures(
-        requestContext, realtimeResponseFuture, protectedResponseFuture, archiveResponseFuture);
-    mergedResponse = mergedResponse
-        .map(RequestRouterUtil.checkMinSearchedStatusId(
-                 requestContext,
+    Futurelon<elonarlybirdRelonsponselon> melonrgelondRelonsponselon = relonsponselonMelonrgelonr.melonrgelonRelonsponselonFuturelons(
+        relonquelonstContelonxt, relonaltimelonRelonsponselonFuturelon, protelonctelondRelonsponselonFuturelon, archivelonRelonsponselonFuturelon);
+    melonrgelondRelonsponselon = melonrgelondRelonsponselon
+        .map(RelonquelonstRoutelonrUtil.chelonckMinSelonarchelondStatusId(
+                 relonquelonstContelonxt,
                  "max_id",
-                 EarlybirdRequestUtil.getRequestMaxId(requestContext.getParsedQuery()),
-                 realtimeResponseFuture,
-                 protectedResponseFuture,
-                 archiveResponseFuture,
-                 minSearchedStatusIdLargerThanRequestMaxIdCounter))
-        .map(RequestRouterUtil.checkMinSearchedStatusId(
-                 requestContext,
-                 "until_time",
-                 EarlybirdRequestUtil.getRequestMaxIdFromUntilTime(requestContext.getParsedQuery()),
-                 realtimeResponseFuture,
-                 protectedResponseFuture,
-                 archiveResponseFuture,
-                 minSearchedStatusIdLargerThanRequestUntilTimeCounter));
+                 elonarlybirdRelonquelonstUtil.gelontRelonquelonstMaxId(relonquelonstContelonxt.gelontParselondQuelonry()),
+                 relonaltimelonRelonsponselonFuturelon,
+                 protelonctelondRelonsponselonFuturelon,
+                 archivelonRelonsponselonFuturelon,
+                 minSelonarchelondStatusIdLargelonrThanRelonquelonstMaxIdCountelonr))
+        .map(RelonquelonstRoutelonrUtil.chelonckMinSelonarchelondStatusId(
+                 relonquelonstContelonxt,
+                 "until_timelon",
+                 elonarlybirdRelonquelonstUtil.gelontRelonquelonstMaxIdFromUntilTimelon(relonquelonstContelonxt.gelontParselondQuelonry()),
+                 relonaltimelonRelonsponselonFuturelon,
+                 protelonctelondRelonsponselonFuturelon,
+                 archivelonRelonsponselonFuturelon,
+                 minSelonarchelondStatusIdLargelonrThanRelonquelonstUntilTimelonCountelonr));
 
-    return this.maybeAttachSentRequestsToDebugInfo(
-        savedRequestResponses,
-        requestContext,
-        mergedResponse
+    relonturn this.maybelonAttachSelonntRelonquelonstsToDelonbugInfo(
+        savelondRelonquelonstRelonsponselons,
+        relonquelonstContelonxt,
+        melonrgelondRelonsponselon
     );
   }
 
-  private EarlybirdResponse successNoResultsResponse() {
-    return new EarlybirdResponse(EarlybirdResponseCode.SUCCESS, 0)
-        .setSearchResults(new ThriftSearchResults().setResults(Collections.emptyList()));
+  privatelon elonarlybirdRelonsponselon succelonssNoRelonsultsRelonsponselon() {
+    relonturn nelonw elonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.SUCCelonSS, 0)
+        .selontSelonarchRelonsults(nelonw ThriftSelonarchRelonsults().selontRelonsults(Collelonctions.elonmptyList()));
   }
 
-  protected abstract boolean shouldSendRequestToFullArchiveCluster(
-      EarlybirdRequest request, EarlybirdResponse realtimeResponse);
+  protelonctelond abstract boolelonan shouldSelonndRelonquelonstToFullArchivelonClustelonr(
+      elonarlybirdRelonquelonst relonquelonst, elonarlybirdRelonsponselon relonaltimelonRelonsponselon);
 
-  /** Determines if the protected service is available and if a request should be sent to it. */
-  private EarlybirdServiceResponse.ServiceState getProtectedServiceState(
-      EarlybirdRequestContext requestContext) {
-    if (!requestContext.getRequest().isSetFollowedUserIds()
-        || requestContext.getRequest().getFollowedUserIds().isEmpty()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+  /** Delontelonrminelons if thelon protelonctelond selonrvicelon is availablelon and if a relonquelonst should belon selonnt to it. */
+  privatelon elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon gelontProtelonctelondSelonrvicelonStatelon(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    if (!relonquelonstContelonxt.gelontRelonquelonst().isSelontFollowelondUselonrIds()
+        || relonquelonstContelonxt.gelontRelonquelonst().gelontFollowelondUselonrIds().iselonmpty()) {
+      relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_RelonQUelonSTelonD;
     }
 
-    if (decider.isAvailable(skipProtectedClusterDeciderKey)) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_AVAILABLE;
+    if (deloncidelonr.isAvailablelon(skipProtelonctelondClustelonrDeloncidelonrKelony)) {
+      relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_AVAILABLelon;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_CALLelonD;
   }
 
-  /** Determines if the realtime service is available and if a request should be sent to it. */
-  private EarlybirdServiceResponse.ServiceState getRealtimeServiceState(
-      EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
+  /** Delontelonrminelons if thelon relonaltimelon selonrvicelon is availablelon and if a relonquelonst should belon selonnt to it. */
+  privatelon elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon gelontRelonaltimelonSelonrvicelonStatelon(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
 
-    // SERVICE_NOT_REQUESTED should always be returned before other states as
-    // SuperRootResponseMerger has special logic for this case.
-    if (request.isSetGetProtectedTweetsOnly() && request.isGetProtectedTweetsOnly()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+    // SelonRVICelon_NOT_RelonQUelonSTelonD should always belon relonturnelond belonforelon othelonr statelons as
+    // SupelonrRootRelonsponselonMelonrgelonr has speloncial logic for this caselon.
+    if (relonquelonst.isSelontGelontProtelonctelondTwelonelontsOnly() && relonquelonst.isGelontProtelonctelondTwelonelontsOnly()) {
+      relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_RelonQUelonSTelonD;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_CALLelonD;
   }
 
-  /** Determines if the full archive service is available and if a request should be sent to it. */
-  private EarlybirdServiceResponse.ServiceState getFullArchiveServiceState(
-      EarlybirdRequestContext requestContext,
-      EarlybirdServiceResponse publicServiceResponse,
-      EarlybirdServiceResponse protectedServiceResponse) {
+  /** Delontelonrminelons if thelon full archivelon selonrvicelon is availablelon and if a relonquelonst should belon selonnt to it. */
+  privatelon elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon gelontFullArchivelonSelonrvicelonStatelon(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      elonarlybirdSelonrvicelonRelonsponselon publicSelonrvicelonRelonsponselon,
+      elonarlybirdSelonrvicelonRelonsponselon protelonctelondSelonrvicelonRelonsponselon) {
 
-    // SERVICE_NOT_REQUESTED should be always be returned before other states as
-    // SuperRootResponseMerger has special logic for this case.
-    if (!requestContext.getRequest().isSetGetOlderResults()
-        || !requestContext.getRequest().isGetOlderResults()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+    // SelonRVICelon_NOT_RelonQUelonSTelonD should belon always belon relonturnelond belonforelon othelonr statelons as
+    // SupelonrRootRelonsponselonMelonrgelonr has speloncial logic for this caselon.
+    if (!relonquelonstContelonxt.gelontRelonquelonst().isSelontGelontOldelonrRelonsults()
+        || !relonquelonstContelonxt.gelontRelonquelonst().isGelontOldelonrRelonsults()) {
+      relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_RelonQUelonSTelonD;
     }
 
-    // allow requesting full archive service when decider is enabled
-    if (!decider.isAvailable(FULL_ARCHIVE_AVAILABLE_FOR_GET_PROTECTED_TWEETS_ONLY_DECIDER_KEY)
-        && requestContext.getRequest().isSetGetProtectedTweetsOnly()
-        && requestContext.getRequest().isGetProtectedTweetsOnly()) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED;
+    // allow relonquelonsting full archivelon selonrvicelon whelonn deloncidelonr is elonnablelond
+    if (!deloncidelonr.isAvailablelon(FULL_ARCHIVelon_AVAILABLelon_FOR_GelonT_PROTelonCTelonD_TWelonelonTS_ONLY_DelonCIDelonR_KelonY)
+        && relonquelonstContelonxt.gelontRelonquelonst().isSelontGelontProtelonctelondTwelonelontsOnly()
+        && relonquelonstContelonxt.gelontRelonquelonst().isGelontProtelonctelondTwelonelontsOnly()) {
+      relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_RelonQUelonSTelonD;
     }
 
-    if (decider.isAvailable(skipFullArchiveClusterDeciderKey)) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_AVAILABLE;
+    if (deloncidelonr.isAvailablelon(skipFullArchivelonClustelonrDeloncidelonrKelony)) {
+      relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_AVAILABLelon;
     }
 
-    boolean serviceWasCalledForPublic =
-        getFullArchiveServiceState(requestContext, publicServiceResponse).serviceWasCalled();
-    boolean serviceWasCalledForProtected =
-        decider.isAvailable(FULL_ARCHIVE_AVAILABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DECIDER_KEY)
-        && getFullArchiveServiceState(requestContext, protectedServiceResponse).serviceWasCalled();
-    if (!serviceWasCalledForPublic && !serviceWasCalledForProtected) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+    boolelonan selonrvicelonWasCallelondForPublic =
+        gelontFullArchivelonSelonrvicelonStatelon(relonquelonstContelonxt, publicSelonrvicelonRelonsponselon).selonrvicelonWasCallelond();
+    boolelonan selonrvicelonWasCallelondForProtelonctelond =
+        deloncidelonr.isAvailablelon(FULL_ARCHIVelon_AVAILABLelon_FOR_NOT_elonNOUGH_PROTelonCTelonD_RelonSULTS_DelonCIDelonR_KelonY)
+        && gelontFullArchivelonSelonrvicelonStatelon(relonquelonstContelonxt, protelonctelondSelonrvicelonRelonsponselon).selonrvicelonWasCallelond();
+    if (!selonrvicelonWasCallelondForPublic && !selonrvicelonWasCallelondForProtelonctelond) {
+      relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_CALLelonD;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_CALLelonD;
   }
 
-  private EarlybirdServiceResponse.ServiceState getFullArchiveServiceState(
-      EarlybirdRequestContext requestContext,
-      EarlybirdServiceResponse realtimeServiceResponse) {
-    EarlybirdResponse realtimeResponse = realtimeServiceResponse.getResponse();
+  privatelon elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon gelontFullArchivelonSelonrvicelonStatelon(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      elonarlybirdSelonrvicelonRelonsponselon relonaltimelonSelonrvicelonRelonsponselon) {
+    elonarlybirdRelonsponselon relonaltimelonRelonsponselon = relonaltimelonSelonrvicelonRelonsponselon.gelontRelonsponselon();
 
-    if (!EarlybirdResponseMergeUtil.isValidResponse(realtimeResponse)) {
-      realtimeResponseInvalidCounter.increment();
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+    if (!elonarlybirdRelonsponselonMelonrgelonUtil.isValidRelonsponselon(relonaltimelonRelonsponselon)) {
+      relonaltimelonRelonsponselonInvalidCountelonr.increlonmelonnt();
+      relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_CALLelonD;
     }
 
-    if (!realtimeResponse.isSetSearchResults()) {
-      realtimeResponseSearchResultsNotSetCounter.increment();
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+    if (!relonaltimelonRelonsponselon.isSelontSelonarchRelonsults()) {
+      relonaltimelonRelonsponselonSelonarchRelonsultsNotSelontCountelonr.increlonmelonnt();
+      relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_CALLelonD;
     }
 
-    if (!shouldSendRequestToFullArchiveCluster(requestContext.getRequest(), realtimeResponse)) {
-      return EarlybirdServiceResponse.ServiceState.SERVICE_NOT_CALLED;
+    if (!shouldSelonndRelonquelonstToFullArchivelonClustelonr(relonquelonstContelonxt.gelontRelonquelonst(), relonaltimelonRelonsponselon)) {
+      relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_CALLelonD;
     }
 
-    return EarlybirdServiceResponse.ServiceState.SERVICE_CALLED;
+    relonturn elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_CALLelonD;
   }
 
   /**
-   * Modify the original request context based on the followedUserId field and then send the
-   * request to the protected cluster.
+   * Modify thelon original relonquelonst contelonxt baselond on thelon followelondUselonrId fielonld and thelonn selonnd thelon
+   * relonquelonst to thelon protelonctelond clustelonr.
    */
-  private Future<EarlybirdServiceResponse> getProtectedResponse(
-      ArrayList<RequestResponse> savedRequestResponses,
-      final EarlybirdRequestContext requestContext) {
-    EarlybirdRequestContext protectedRequestContext =
-        EarlybirdRequestContext.newContextWithRestrictFromUserIdFilter64(requestContext);
-    Preconditions.checkArgument(
-        protectedRequestContext.getRequest().getSearchQuery().isSetFromUserIDFilter64());
+  privatelon Futurelon<elonarlybirdSelonrvicelonRelonsponselon> gelontProtelonctelondRelonsponselon(
+      ArrayList<RelonquelonstRelonsponselon> savelondRelonquelonstRelonsponselons,
+      final elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    elonarlybirdRelonquelonstContelonxt protelonctelondRelonquelonstContelonxt =
+        elonarlybirdRelonquelonstContelonxt.nelonwContelonxtWithRelonstrictFromUselonrIdFiltelonr64(relonquelonstContelonxt);
+    Prelonconditions.chelonckArgumelonnt(
+        protelonctelondRelonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry().isSelontFromUselonrIDFiltelonr64());
 
-    // SERVICE_NOT_REQUESTED should be always be returned before other states as
-    // SuperRootResponseMerger has special logic for this case.
-    if (protectedRequestContext.getRequest().getSearchQuery().getFromUserIDFilter64().isEmpty()) {
-      return Future.value(EarlybirdServiceResponse.serviceNotCalled(
-          EarlybirdServiceResponse.ServiceState.SERVICE_NOT_REQUESTED));
+    // SelonRVICelon_NOT_RelonQUelonSTelonD should belon always belon relonturnelond belonforelon othelonr statelons as
+    // SupelonrRootRelonsponselonMelonrgelonr has speloncial logic for this caselon.
+    if (protelonctelondRelonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry().gelontFromUselonrIDFiltelonr64().iselonmpty()) {
+      relonturn Futurelon.valuelon(elonarlybirdSelonrvicelonRelonsponselon.selonrvicelonNotCallelond(
+          elonarlybirdSelonrvicelonRelonsponselon.SelonrvicelonStatelon.SelonRVICelon_NOT_RelonQUelonSTelonD));
     }
 
-    if (requestContext.getRequest().isSetAdjustedProtectedRequestParams()) {
-      adjustRequestParams(protectedRequestContext.getRequest(),
-                          requestContext.getRequest().getAdjustedProtectedRequestParams());
+    if (relonquelonstContelonxt.gelontRelonquelonst().isSelontAdjustelondProtelonctelondRelonquelonstParams()) {
+      adjustRelonquelonstParams(protelonctelondRelonquelonstContelonxt.gelontRelonquelonst(),
+                          relonquelonstContelonxt.gelontRelonquelonst().gelontAdjustelondProtelonctelondRelonquelonstParams());
     }
 
-    LOG.debug("Request sent to the protected cluster: {}", protectedRequestContext.getRequest());
-    return toEarlybirdServiceResponseFuture(
-        savedRequestResponses,
-        protectedRequestContext,
-        "protected",
-        this.protectedRealtime
+    LOG.delonbug("Relonquelonst selonnt to thelon protelonctelond clustelonr: {}", protelonctelondRelonquelonstContelonxt.gelontRelonquelonst());
+    relonturn toelonarlybirdSelonrvicelonRelonsponselonFuturelon(
+        savelondRelonquelonstRelonsponselons,
+        protelonctelondRelonquelonstContelonxt,
+        "protelonctelond",
+        this.protelonctelondRelonaltimelon
     );
   }
 
-  private Future<EarlybirdServiceResponse> getRealtimeResponse(
-      ArrayList<RequestResponse> savedRequestResponses,
-      EarlybirdRequestContext requestContext) {
-    return toEarlybirdServiceResponseFuture(
-        savedRequestResponses,
-        requestContext,
-        "realtime",
-        this.realtime);
+  privatelon Futurelon<elonarlybirdSelonrvicelonRelonsponselon> gelontRelonaltimelonRelonsponselon(
+      ArrayList<RelonquelonstRelonsponselon> savelondRelonquelonstRelonsponselons,
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    relonturn toelonarlybirdSelonrvicelonRelonsponselonFuturelon(
+        savelondRelonquelonstRelonsponselons,
+        relonquelonstContelonxt,
+        "relonaltimelon",
+        this.relonaltimelon);
   }
 
   /**
-   * Modifying the existing max id filter of the request or appending a new
-   * max id filter and then send the request to the full archive cluster.
+   * Modifying thelon elonxisting max id filtelonr of thelon relonquelonst or appelonnding a nelonw
+   * max id filtelonr and thelonn selonnd thelon relonquelonst to thelon full archivelon clustelonr.
    */
-  private Future<EarlybirdServiceResponse> getFullArchiveResponse(
-      ArrayList<RequestResponse> savedRequestResponses,
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse protectedResponse) {
-    long realtimeMinId = getMinSearchedId(realtimeResponse);
-    long protectedMinId = getMinSearchedId(protectedResponse);
-    // if both realtime and protected min searched ids are available, the larger(newer) one is used
-    // to make sure no tweets are left out. However, this means it might introduce duplicates for
-    // the other response. The response merger will dedup the response. This logic is enabled
-    // when full archive cluster is available for requests without enough protected results.
+  privatelon Futurelon<elonarlybirdSelonrvicelonRelonsponselon> gelontFullArchivelonRelonsponselon(
+      ArrayList<RelonquelonstRelonsponselon> savelondRelonquelonstRelonsponselons,
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      elonarlybirdRelonsponselon relonaltimelonRelonsponselon,
+      elonarlybirdRelonsponselon protelonctelondRelonsponselon) {
+    long relonaltimelonMinId = gelontMinSelonarchelondId(relonaltimelonRelonsponselon);
+    long protelonctelondMinId = gelontMinSelonarchelondId(protelonctelondRelonsponselon);
+    // if both relonaltimelon and protelonctelond min selonarchelond ids arelon availablelon, thelon largelonr(nelonwelonr) onelon is uselond
+    // to makelon surelon no twelonelonts arelon lelonft out. Howelonvelonr, this melonans it might introducelon duplicatelons for
+    // thelon othelonr relonsponselon. Thelon relonsponselon melonrgelonr will delondup thelon relonsponselon. This logic is elonnablelond
+    // whelonn full archivelon clustelonr is availablelon for relonquelonsts without elonnough protelonctelond relonsults.
     long minId =
-        decider.isAvailable(FULL_ARCHIVE_AVAILABLE_FOR_NOT_ENOUGH_PROTECTED_RESULTS_DECIDER_KEY)
-            ? Math.max(realtimeMinId, protectedMinId) : realtimeMinId;
+        deloncidelonr.isAvailablelon(FULL_ARCHIVelon_AVAILABLelon_FOR_NOT_elonNOUGH_PROTelonCTelonD_RelonSULTS_DelonCIDelonR_KelonY)
+            ? Math.max(relonaltimelonMinId, protelonctelondMinId) : relonaltimelonMinId;
 
     if (minId <= 0) {
-      // If the realtime response doesn't have a minSearchedStatusID set, get all results from
-      // the full archive cluster.
-      minId = Long.MAX_VALUE;
+      // If thelon relonaltimelon relonsponselon doelonsn't havelon a minSelonarchelondStatusID selont, gelont all relonsults from
+      // thelon full archivelon clustelonr.
+      minId = Long.MAX_VALUelon;
     }
 
-    // The [max_id] operator is inclusive in earlybirds. This means that a query with [max_id X]
-    // will return tweet X, if X matches the rest of the query. So we should add a [max_id (X - 1)]
-    // operator to the full archive query (instead of [max_id X]). Otherwise, we could end up with
-    // duplicates. For example:
+    // Thelon [max_id] opelonrator is inclusivelon in elonarlybirds. This melonans that a quelonry with [max_id X]
+    // will relonturn twelonelont X, if X matchelons thelon relonst of thelon quelonry. So welon should add a [max_id (X - 1)]
+    // opelonrator to thelon full archivelon quelonry (instelonad of [max_id X]). Othelonrwiselon, welon could elonnd up with
+    // duplicatelons. For elonxamplelon:
     //
-    //  realtime response: results = [ 100, 90, 80 ], minSearchedStatusID = 80
-    //  full archive request: [max_id 80]
-    //  full archive response: results = [ 80, 70, 60 ]
+    //  relonaltimelon relonsponselon: relonsults = [ 100, 90, 80 ], minSelonarchelondStatusID = 80
+    //  full archivelon relonquelonst: [max_id 80]
+    //  full archivelon relonsponselon: relonsults = [ 80, 70, 60 ]
     //
-    // In this case, tweet 80 would be returned from both the realtime and full archive clusters.
-    EarlybirdRequestContext archiveRequestContext =
-        EarlybirdRequestContext.copyRequestContext(
-            requestContext,
-            QueryUtil.addOrReplaceMaxIdFilter(
-                requestContext.getParsedQuery(),
+    // In this caselon, twelonelont 80 would belon relonturnelond from both thelon relonaltimelon and full archivelon clustelonrs.
+    elonarlybirdRelonquelonstContelonxt archivelonRelonquelonstContelonxt =
+        elonarlybirdRelonquelonstContelonxt.copyRelonquelonstContelonxt(
+            relonquelonstContelonxt,
+            QuelonryUtil.addOrRelonplacelonMaxIdFiltelonr(
+                relonquelonstContelonxt.gelontParselondQuelonry(),
                 minId - 1));
 
-    if (requestContext.getRequest().isSetAdjustedFullArchiveRequestParams()) {
-      adjustRequestParams(archiveRequestContext.getRequest(),
-                          requestContext.getRequest().getAdjustedFullArchiveRequestParams());
+    if (relonquelonstContelonxt.gelontRelonquelonst().isSelontAdjustelondFullArchivelonRelonquelonstParams()) {
+      adjustRelonquelonstParams(archivelonRelonquelonstContelonxt.gelontRelonquelonst(),
+                          relonquelonstContelonxt.gelontRelonquelonst().gelontAdjustelondFullArchivelonRelonquelonstParams());
     }
 
-    LOG.debug("Request sent to the full archive cluster: {},", archiveRequestContext.getRequest());
-    return toEarlybirdServiceResponseFuture(
-        savedRequestResponses,
-        archiveRequestContext,
-        "archive",
-        this.fullArchive
+    LOG.delonbug("Relonquelonst selonnt to thelon full archivelon clustelonr: {},", archivelonRelonquelonstContelonxt.gelontRelonquelonst());
+    relonturn toelonarlybirdSelonrvicelonRelonsponselonFuturelon(
+        savelondRelonquelonstRelonsponselons,
+        archivelonRelonquelonstContelonxt,
+        "archivelon",
+        this.fullArchivelon
     );
   }
 
-  private long getMinSearchedId(EarlybirdResponse response) {
-    return response != null && response.isSetSearchResults()
-        ? response.getSearchResults().getMinSearchedStatusID() : 0;
+  privatelon long gelontMinSelonarchelondId(elonarlybirdRelonsponselon relonsponselon) {
+    relonturn relonsponselon != null && relonsponselon.isSelontSelonarchRelonsults()
+        ? relonsponselon.gelontSelonarchRelonsults().gelontMinSelonarchelondStatusID() : 0;
   }
 
-  private void adjustRequestParams(EarlybirdRequest request,
-                                   AdjustedRequestParams adjustedRequestParams) {
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+  privatelon void adjustRelonquelonstParams(elonarlybirdRelonquelonst relonquelonst,
+                                   AdjustelondRelonquelonstParams adjustelondRelonquelonstParams) {
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
 
-    if (adjustedRequestParams.isSetNumResults()) {
-      searchQuery.setNumResults(adjustedRequestParams.getNumResults());
-      if (searchQuery.isSetCollectorParams()) {
-        searchQuery.getCollectorParams().setNumResultsToReturn(
-            adjustedRequestParams.getNumResults());
+    if (adjustelondRelonquelonstParams.isSelontNumRelonsults()) {
+      selonarchQuelonry.selontNumRelonsults(adjustelondRelonquelonstParams.gelontNumRelonsults());
+      if (selonarchQuelonry.isSelontCollelonctorParams()) {
+        selonarchQuelonry.gelontCollelonctorParams().selontNumRelonsultsToRelonturn(
+            adjustelondRelonquelonstParams.gelontNumRelonsults());
       }
     }
 
-    if (adjustedRequestParams.isSetMaxHitsToProcess()) {
-      searchQuery.setMaxHitsToProcess(adjustedRequestParams.getMaxHitsToProcess());
-      if (searchQuery.isSetRelevanceOptions()) {
-        searchQuery.getRelevanceOptions().setMaxHitsToProcess(
-            adjustedRequestParams.getMaxHitsToProcess());
+    if (adjustelondRelonquelonstParams.isSelontMaxHitsToProcelonss()) {
+      selonarchQuelonry.selontMaxHitsToProcelonss(adjustelondRelonquelonstParams.gelontMaxHitsToProcelonss());
+      if (selonarchQuelonry.isSelontRelonlelonvancelonOptions()) {
+        selonarchQuelonry.gelontRelonlelonvancelonOptions().selontMaxHitsToProcelonss(
+            adjustelondRelonquelonstParams.gelontMaxHitsToProcelonss());
       }
-      if (searchQuery.isSetCollectorParams()
-          && searchQuery.getCollectorParams().isSetTerminationParams()) {
-        searchQuery.getCollectorParams().getTerminationParams().setMaxHitsToProcess(
-            adjustedRequestParams.getMaxHitsToProcess());
+      if (selonarchQuelonry.isSelontCollelonctorParams()
+          && selonarchQuelonry.gelontCollelonctorParams().isSelontTelonrminationParams()) {
+        selonarchQuelonry.gelontCollelonctorParams().gelontTelonrminationParams().selontMaxHitsToProcelonss(
+            adjustelondRelonquelonstParams.gelontMaxHitsToProcelonss());
       }
     }
 
-    if (adjustedRequestParams.isSetReturnAllResults()) {
-      if (searchQuery.isSetRelevanceOptions()) {
-        searchQuery.getRelevanceOptions().setReturnAllResults(
-            adjustedRequestParams.isReturnAllResults());
+    if (adjustelondRelonquelonstParams.isSelontRelonturnAllRelonsults()) {
+      if (selonarchQuelonry.isSelontRelonlelonvancelonOptions()) {
+        selonarchQuelonry.gelontRelonlelonvancelonOptions().selontRelonturnAllRelonsults(
+            adjustelondRelonquelonstParams.isRelonturnAllRelonsults());
       }
     }
   }
 
-  private Future<EarlybirdServiceResponse> toEarlybirdServiceResponseFuture(
-      List<RequestResponse> savedRequestResponses,
-      EarlybirdRequestContext requestContext,
-      String sentTo,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Future<EarlybirdResponse> responseFuture = service.apply(requestContext);
-    this.saveRequestResponse(
-        savedRequestResponses, sentTo, requestContext, responseFuture
+  privatelon Futurelon<elonarlybirdSelonrvicelonRelonsponselon> toelonarlybirdSelonrvicelonRelonsponselonFuturelon(
+      List<RelonquelonstRelonsponselon> savelondRelonquelonstRelonsponselons,
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      String selonntTo,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    Futurelon<elonarlybirdRelonsponselon> relonsponselonFuturelon = selonrvicelon.apply(relonquelonstContelonxt);
+    this.savelonRelonquelonstRelonsponselon(
+        savelondRelonquelonstRelonsponselons, selonntTo, relonquelonstContelonxt, relonsponselonFuturelon
     );
 
-    return responseFuture.map(new Function<EarlybirdResponse, EarlybirdServiceResponse>() {
-      @Override
-      public EarlybirdServiceResponse apply(EarlybirdResponse response) {
-        return EarlybirdServiceResponse.serviceCalled(response);
+    relonturn relonsponselonFuturelon.map(nelonw Function<elonarlybirdRelonsponselon, elonarlybirdSelonrvicelonRelonsponselon>() {
+      @Ovelonrridelon
+      public elonarlybirdSelonrvicelonRelonsponselon apply(elonarlybirdRelonsponselon relonsponselon) {
+        relonturn elonarlybirdSelonrvicelonRelonsponselon.selonrvicelonCallelond(relonsponselon);
       }
     });
   }

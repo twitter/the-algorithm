@@ -1,25 +1,25 @@
-package com.twitter.cr_mixer.module.thrift_client
+packagelon com.twittelonr.cr_mixelonr.modulelon.thrift_clielonnt
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.hydra.root.{thriftscala => ht}
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.hydra.root.{thriftscala => ht}
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
 
-object HydraRootClientModule
-    extends ThriftMethodBuilderClientModule[
-      ht.HydraRoot.ServicePerEndpoint,
-      ht.HydraRoot.MethodPerEndpoint
+objelonct HydraRootClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      ht.HydraRoot.SelonrvicelonPelonrelonndpoint,
+      ht.HydraRoot.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
-  override def label: String = "hydra-root"
+    with MtlsClielonnt {
+  ovelonrridelon delonf labelonl: String = "hydra-root"
 
-  override def dest: String = "/s/hydra/hydra-root"
+  ovelonrridelon delonf delonst: String = "/s/hydra/hydra-root"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = methodBuilder.withTimeoutTotal(500.milliseconds)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = melonthodBuildelonr.withTimelonoutTotal(500.milliselonconds)
 
 }

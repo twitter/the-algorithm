@@ -1,71 +1,71 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
 /**
- * Tracks what situations are encountered when trimming results
+ * Tracks what situations arelon elonncountelonrelond whelonn trimming relonsults
  */
 class TrimStats {
-  protected static final TrimStats EMPTY_STATS = new TrimStats();
+  protelonctelond static final TrimStats elonMPTY_STATS = nelonw TrimStats();
 
-  private int maxIdFilterCount = 0;
-  private int minIdFilterCount = 0;
-  private int removedDupsCount = 0;
-  private int resultsTruncatedFromTailCount = 0;
+  privatelon int maxIdFiltelonrCount = 0;
+  privatelon int minIdFiltelonrCount = 0;
+  privatelon int relonmovelondDupsCount = 0;
+  privatelon int relonsultsTruncatelondFromTailCount = 0;
 
-  int getMinIdFilterCount() {
-    return minIdFilterCount;
+  int gelontMinIdFiltelonrCount() {
+    relonturn minIdFiltelonrCount;
   }
 
-  int getRemovedDupsCount() {
-    return removedDupsCount;
+  int gelontRelonmovelondDupsCount() {
+    relonturn relonmovelondDupsCount;
   }
 
-  int getResultsTruncatedFromTailCount() {
-    return resultsTruncatedFromTailCount;
+  int gelontRelonsultsTruncatelondFromTailCount() {
+    relonturn relonsultsTruncatelondFromTailCount;
   }
 
-  void decreaseMaxIdFilterCount() {
-    maxIdFilterCount--;
+  void deloncrelonaselonMaxIdFiltelonrCount() {
+    maxIdFiltelonrCount--;
   }
 
-  void decreaseMinIdFilterCount() {
-    minIdFilterCount--;
+  void deloncrelonaselonMinIdFiltelonrCount() {
+    minIdFiltelonrCount--;
   }
 
-  public void clearMaxIdFilterCount() {
-    this.maxIdFilterCount = 0;
+  public void clelonarMaxIdFiltelonrCount() {
+    this.maxIdFiltelonrCount = 0;
   }
 
-  public void clearMinIdFilterCount() {
-    this.minIdFilterCount = 0;
+  public void clelonarMinIdFiltelonrCount() {
+    this.minIdFiltelonrCount = 0;
   }
 
-  void increaseMaxIdFilterCount() {
-    maxIdFilterCount++;
+  void increlonaselonMaxIdFiltelonrCount() {
+    maxIdFiltelonrCount++;
   }
 
-  void increaseMinIdFilterCount() {
-    minIdFilterCount++;
+  void increlonaselonMinIdFiltelonrCount() {
+    minIdFiltelonrCount++;
   }
 
-  void increaseRemovedDupsCount() {
-    removedDupsCount++;
+  void increlonaselonRelonmovelondDupsCount() {
+    relonmovelondDupsCount++;
   }
 
-  void setResultsTruncatedFromTailCount(int resultsTruncatedFromTailCount) {
-    this.resultsTruncatedFromTailCount = resultsTruncatedFromTailCount;
+  void selontRelonsultsTruncatelondFromTailCount(int relonsultsTruncatelondFromTailCount) {
+    this.relonsultsTruncatelondFromTailCount = relonsultsTruncatelondFromTailCount;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    StringBuilder builder = new StringBuilder();
+    StringBuildelonr buildelonr = nelonw StringBuildelonr();
 
-    builder.append("TrimStats{");
-    builder.append("maxIdFilterCount=").append(maxIdFilterCount);
-    builder.append(", minIdFilterCount=").append(minIdFilterCount);
-    builder.append(", removedDupsCount=").append(removedDupsCount);
-    builder.append(", resultsTruncatedFromTailCount=").append(resultsTruncatedFromTailCount);
-    builder.append("}");
+    buildelonr.appelonnd("TrimStats{");
+    buildelonr.appelonnd("maxIdFiltelonrCount=").appelonnd(maxIdFiltelonrCount);
+    buildelonr.appelonnd(", minIdFiltelonrCount=").appelonnd(minIdFiltelonrCount);
+    buildelonr.appelonnd(", relonmovelondDupsCount=").appelonnd(relonmovelondDupsCount);
+    buildelonr.appelonnd(", relonsultsTruncatelondFromTailCount=").appelonnd(relonsultsTruncatelondFromTailCount);
+    buildelonr.appelonnd("}");
 
-    return builder.toString();
+    relonturn buildelonr.toString();
   }
 }

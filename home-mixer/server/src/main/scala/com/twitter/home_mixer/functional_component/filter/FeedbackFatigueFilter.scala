@@ -1,89 +1,89 @@
-package com.twitter.home_mixer.functional_component.filter
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FeedbackHistoryFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.common.thriftscala.FeedbackEntity
-import com.twitter.timelineservice.model.FeedbackEntry
-import com.twitter.timelineservice.{thriftscala => tls}
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FelonelondbackHistoryFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SGSValidFollowelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SGSValidLikelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.common.thriftscala.Felonelondbackelonntity
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.Felonelondbackelonntry
+import com.twittelonr.timelonlinelonselonrvicelon.{thriftscala => tls}
 
-object FeedbackFatigueFilter
-    extends Filter[PipelineQuery, TweetCandidate]
-    with Filter.Conditionally[PipelineQuery, TweetCandidate] {
+objelonct FelonelondbackFatiguelonFiltelonr
+    elonxtelonnds Filtelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon]
+    with Filtelonr.Conditionally[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("FeedbackFatigue")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("FelonelondbackFatiguelon")
 
-  override def onlyIf(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Boolean =
-    query.features.exists(_.getOrElse(FeedbackHistoryFeature, Seq.empty).nonEmpty)
+  ovelonrridelon delonf onlyIf(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Boolelonan =
+    quelonry.felonaturelons.elonxists(_.gelontOrelonlselon(FelonelondbackHistoryFelonaturelon, Selonq.elonmpty).nonelonmpty)
 
-  private val DurationForFiltering = 14.days
+  privatelon val DurationForFiltelonring = 14.days
 
-  override def apply(
-    query: pipeline.PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val feedbackEntriesByEngagementType =
-      query.features
-        .getOrElse(FeatureMap.empty).getOrElse(FeedbackHistoryFeature, Seq.empty)
-        .filter { entry =>
-          val timeSinceFeedback = query.queryTime.minus(entry.timestamp)
-          timeSinceFeedback < DurationForFiltering &&
-          entry.feedbackType == tls.FeedbackType.SeeFewer
-        }.groupBy(_.engagementType)
+  ovelonrridelon delonf apply(
+    quelonry: pipelonlinelon.PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[TwelonelontCandidatelon]] = {
+    val felonelondbackelonntrielonsByelonngagelonmelonntTypelon =
+      quelonry.felonaturelons
+        .gelontOrelonlselon(FelonaturelonMap.elonmpty).gelontOrelonlselon(FelonelondbackHistoryFelonaturelon, Selonq.elonmpty)
+        .filtelonr { elonntry =>
+          val timelonSincelonFelonelondback = quelonry.quelonryTimelon.minus(elonntry.timelonstamp)
+          timelonSincelonFelonelondback < DurationForFiltelonring &&
+          elonntry.felonelondbackTypelon == tls.FelonelondbackTypelon.SelonelonFelonwelonr
+        }.groupBy(_.elonngagelonmelonntTypelon)
 
-    val authorsToFilter =
-      getUserIds(
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Tweet, Seq.empty))
-    val likersToFilter =
-      getUserIds(
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Like, Seq.empty))
-    val followersToFilter =
-      getUserIds(
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Follow, Seq.empty))
-    val retweetersToFilter =
-      getUserIds(
-        feedbackEntriesByEngagementType.getOrElse(tls.FeedbackEngagementType.Retweet, Seq.empty))
+    val authorsToFiltelonr =
+      gelontUselonrIds(
+        felonelondbackelonntrielonsByelonngagelonmelonntTypelon.gelontOrelonlselon(tls.FelonelondbackelonngagelonmelonntTypelon.Twelonelont, Selonq.elonmpty))
+    val likelonrsToFiltelonr =
+      gelontUselonrIds(
+        felonelondbackelonntrielonsByelonngagelonmelonntTypelon.gelontOrelonlselon(tls.FelonelondbackelonngagelonmelonntTypelon.Likelon, Selonq.elonmpty))
+    val followelonrsToFiltelonr =
+      gelontUselonrIds(
+        felonelondbackelonntrielonsByelonngagelonmelonntTypelon.gelontOrelonlselon(tls.FelonelondbackelonngagelonmelonntTypelon.Follow, Selonq.elonmpty))
+    val relontwelonelontelonrsToFiltelonr =
+      gelontUselonrIds(
+        felonelondbackelonntrielonsByelonngagelonmelonntTypelon.gelontOrelonlselon(tls.FelonelondbackelonngagelonmelonntTypelon.Relontwelonelont, Selonq.elonmpty))
 
-    val (removed, kept) = candidates.partition { candidate =>
-      val originalAuthorId = CandidatesUtil.getOriginalAuthorId(candidate.features)
-      val authorId = candidate.features.getOrElse(AuthorIdFeature, None)
+    val (relonmovelond, kelonpt) = candidatelons.partition { candidatelon =>
+      val originalAuthorId = CandidatelonsUtil.gelontOriginalAuthorId(candidatelon.felonaturelons)
+      val authorId = candidatelon.felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon)
 
-      val likers = candidate.features.getOrElse(SGSValidLikedByUserIdsFeature, Seq.empty)
-      val eligibleLikers = likers.filterNot(likersToFilter.contains)
+      val likelonrs = candidatelon.felonaturelons.gelontOrelonlselon(SGSValidLikelondByUselonrIdsFelonaturelon, Selonq.elonmpty)
+      val elonligiblelonLikelonrs = likelonrs.filtelonrNot(likelonrsToFiltelonr.contains)
 
-      val followers = candidate.features.getOrElse(SGSValidFollowedByUserIdsFeature, Seq.empty)
-      val eligibleFollowers = followers.filterNot(followersToFilter.contains)
+      val followelonrs = candidatelon.felonaturelons.gelontOrelonlselon(SGSValidFollowelondByUselonrIdsFelonaturelon, Selonq.elonmpty)
+      val elonligiblelonFollowelonrs = followelonrs.filtelonrNot(followelonrsToFiltelonr.contains)
 
-      originalAuthorId.exists(authorsToFilter.contains) ||
-      (likers.nonEmpty && eligibleLikers.isEmpty) ||
-      (followers.nonEmpty && eligibleFollowers.isEmpty) ||
-      (candidate.features.getOrElse(IsRetweetFeature, false) &&
-      authorId.exists(retweetersToFilter.contains))
+      originalAuthorId.elonxists(authorsToFiltelonr.contains) ||
+      (likelonrs.nonelonmpty && elonligiblelonLikelonrs.iselonmpty) ||
+      (followelonrs.nonelonmpty && elonligiblelonFollowelonrs.iselonmpty) ||
+      (candidatelon.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon) &&
+      authorId.elonxists(relontwelonelontelonrsToFiltelonr.contains))
     }
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonpt.map(_.candidatelon), relonmovelond = relonmovelond.map(_.candidatelon)))
   }
 
-  private def getUserIds(
-    feedbackEntries: Seq[FeedbackEntry],
-  ): Set[Long] =
-    feedbackEntries.collect {
-      case FeedbackEntry(_, _, FeedbackEntity.UserId(userId), _, _) => userId
-    }.toSet
+  privatelon delonf gelontUselonrIds(
+    felonelondbackelonntrielons: Selonq[Felonelondbackelonntry],
+  ): Selont[Long] =
+    felonelondbackelonntrielons.collelonct {
+      caselon Felonelondbackelonntry(_, _, Felonelondbackelonntity.UselonrId(uselonrId), _, _) => uselonrId
+    }.toSelont
 }

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.RosettaColor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Badge
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.color.RoselonttaColor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Badgelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonVariant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
 
-case class ForwardPivot(
-  text: RichText,
+caselon class ForwardPivot(
+  telonxt: RichTelonxt,
   landingUrl: Url,
-  displayType: ForwardPivotDisplayType,
-  iconImageVariant: Option[ImageVariant],
-  stateBadge: Option[Badge],
-  subtext: Option[RichText],
-  backgroundColorName: Option[RosettaColor],
-  engagementNudge: Option[Boolean],
-  softInterventionDisplayType: Option[SoftInterventionDisplayType])
+  displayTypelon: ForwardPivotDisplayTypelon,
+  iconImagelonVariant: Option[ImagelonVariant],
+  statelonBadgelon: Option[Badgelon],
+  subtelonxt: Option[RichTelonxt],
+  backgroundColorNamelon: Option[RoselonttaColor],
+  elonngagelonmelonntNudgelon: Option[Boolelonan],
+  softIntelonrvelonntionDisplayTypelon: Option[SoftIntelonrvelonntionDisplayTypelon])

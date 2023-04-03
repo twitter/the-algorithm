@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tombstone
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.tombstonelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet.TweetItemMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tombstone.TombstoneItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonmMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tombstonelon.TombstonelonItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TombstoneItemMarshaller @Inject() (
-  displayTypeMarshaller: TombstoneDisplayTypeMarshaller,
-  tombstoneInfoMarshaller: TombstoneInfoMarshaller,
-  tweetItemMarshaller: TweetItemMarshaller) {
+@Singlelonton
+class TombstonelonItelonmMarshallelonr @Injelonct() (
+  displayTypelonMarshallelonr: TombstonelonDisplayTypelonMarshallelonr,
+  tombstonelonInfoMarshallelonr: TombstonelonInfoMarshallelonr,
+  twelonelontItelonmMarshallelonr: TwelonelontItelonmMarshallelonr) {
 
-  def apply(tombstoneItem: TombstoneItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.Tombstone(
-      urt.Tombstone(
-        displayType = displayTypeMarshaller(tombstoneItem.tombstoneDisplayType),
-        tombstoneInfo = tombstoneItem.tombstoneInfo.map(tombstoneInfoMarshaller(_)),
-        tweet = tombstoneItem.tweet.map(tweetItemMarshaller(_).tweet)
+  delonf apply(tombstonelonItelonm: TombstonelonItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.Tombstonelon(
+      urt.Tombstonelon(
+        displayTypelon = displayTypelonMarshallelonr(tombstonelonItelonm.tombstonelonDisplayTypelon),
+        tombstonelonInfo = tombstonelonItelonm.tombstonelonInfo.map(tombstonelonInfoMarshallelonr(_)),
+        twelonelont = tombstonelonItelonm.twelonelont.map(twelonelontItelonmMarshallelonr(_).twelonelont)
       )
     )
 }

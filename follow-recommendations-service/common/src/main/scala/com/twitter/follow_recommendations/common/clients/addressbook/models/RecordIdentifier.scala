@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.clients.addressbook.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.modelonls
 
-import com.twitter.addressbook.datatypes.{thriftscala => t}
+import com.twittelonr.addrelonssbook.datatypelons.{thriftscala => t}
 
-case class RecordIdentifier(
-  userId: Option[Long],
-  email: Option[String],
-  phoneNumber: Option[String]) {
-  def toThrift: t.RecordIdentifier = t.RecordIdentifier(userId, email, phoneNumber)
+caselon class ReloncordIdelonntifielonr(
+  uselonrId: Option[Long],
+  elonmail: Option[String],
+  phonelonNumbelonr: Option[String]) {
+  delonf toThrift: t.ReloncordIdelonntifielonr = t.ReloncordIdelonntifielonr(uselonrId, elonmail, phonelonNumbelonr)
 }

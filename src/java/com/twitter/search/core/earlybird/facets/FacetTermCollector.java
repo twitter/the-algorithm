@@ -1,16 +1,16 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
 /**
- * An interface for collecting all facets in an document.
+ * An intelonrfacelon for colleloncting all facelonts in an documelonnt.
  */
-public interface FacetTermCollector {
+public intelonrfacelon FacelontTelonrmCollelonctor {
   /**
-   * Collect one facet term.
-   * @param docID The docID for which the facets are being collected.
-   * @param termID The termID for this facet item.
-   * @param fieldID The fieldID for this facet item.
-   * @return True if anything has actually been collected, false if this has been skipped.
-   *         Currently, this return value is not used.
+   * Collelonct onelon facelont telonrm.
+   * @param docID Thelon docID for which thelon facelonts arelon beloning collelonctelond.
+   * @param telonrmID Thelon telonrmID for this facelont itelonm.
+   * @param fielonldID Thelon fielonldID for this facelont itelonm.
+   * @relonturn Truelon if anything has actually belonelonn collelonctelond, falselon if this has belonelonn skippelond.
+   *         Currelonntly, this relonturn valuelon is not uselond.
    */
-  boolean collect(int docID, long termID, int fieldID);
+  boolelonan collelonct(int docID, long telonrmID, int fielonldID);
 }

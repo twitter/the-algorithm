@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.candidate_sources.socialgraph
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.socialgraph
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RecentFollowingRecentFollowingExpansionSourceFSConfig @Inject() ()
-    extends FeatureSwitchConfig {
+@Singlelonton
+class ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelonFSConfig @Injelonct() ()
+    elonxtelonnds FelonaturelonSwitchConfig {
 
-  override val booleanFSParams: Seq[FSParam[Boolean] with FSName] = Seq(
-    RecentFollowingRecentFollowingExpansionSourceParams.CallSgsCachedColumn,
+  ovelonrridelon val boolelonanFSParams: Selonq[FSParam[Boolelonan] with FSNamelon] = Selonq(
+    ReloncelonntFollowingReloncelonntFollowingelonxpansionSourcelonParams.CallSgsCachelondColumn,
   )
 }

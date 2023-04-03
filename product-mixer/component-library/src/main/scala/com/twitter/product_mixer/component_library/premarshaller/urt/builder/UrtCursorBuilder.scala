@@ -1,134 +1,134 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder.DefaultSortIndex
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder.NextPageTopCursorEntryOffset
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder.UrtEntryOffset
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.UrtPipelineCursor
-import com.twitter.product_mixer.core.util.SortIndexBuilder
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UrtCursorBuildelonr.DelonfaultSortIndelonx
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UrtCursorBuildelonr.NelonxtPagelonTopCursorelonntryOffselont
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UrtCursorBuildelonr.UrtelonntryOffselont
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.BottomCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorOpelonration
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.GapCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.TopCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.UrtPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.util.SortIndelonxBuildelonr
 
-object UrtCursorBuilder {
-  val NextPageTopCursorEntryOffset = 1L
-  val UrtEntryOffset = 1L
-  val DefaultSortIndex = (query: PipelineQuery) => SortIndexBuilder.timeToId(query.queryTime)
+objelonct UrtCursorBuildelonr {
+  val NelonxtPagelonTopCursorelonntryOffselont = 1L
+  val UrtelonntryOffselont = 1L
+  val DelonfaultSortIndelonx = (quelonry: PipelonlinelonQuelonry) => SortIndelonxBuildelonr.timelonToId(quelonry.quelonryTimelon)
 }
 
-trait UrtCursorBuilder[-Query <: PipelineQuery] {
+trait UrtCursorBuildelonr[-Quelonry <: PipelonlinelonQuelonry] {
 
-  val includeOperation: IncludeInstruction[Query] = AlwaysInclude
+  val includelonOpelonration: IncludelonInstruction[Quelonry] = AlwaysIncludelon
 
-  def cursorType: CursorType
-  def cursorValue(query: Query, entries: Seq[TimelineEntry]): String
+  delonf cursorTypelon: CursorTypelon
+  delonf cursorValuelon(quelonry: Quelonry, elonntrielons: Selonq[Timelonlinelonelonntry]): String
 
   /**
-   * Identifier of an *existing* timeline cursor that this new cursor would replace, if this cursor
-   * is returned in a `ReplaceEntry` timeline instruction.
+   * Idelonntifielonr of an *elonxisting* timelonlinelon cursor that this nelonw cursor would relonplacelon, if this cursor
+   * is relonturnelond in a `Relonplacelonelonntry` timelonlinelon instruction.
    *
-   * Note:
-   *   - This id is used to populate the `entryIdToReplace` field on the URT TimelineEntry
-   *     generated. More details at [[CursorOperation.entryIdToReplace]].
-   *   - As a convention, we use the sortIndex of the cursor for its id/entryId fields. So the
-   *     `idToReplace` should represent the sortIndex of the existing cursor to be replaced.
+   * Notelon:
+   *   - This id is uselond to populatelon thelon `elonntryIdToRelonplacelon` fielonld on thelon URT Timelonlinelonelonntry
+   *     gelonnelonratelond. Morelon delontails at [[CursorOpelonration.elonntryIdToRelonplacelon]].
+   *   - As a convelonntion, welon uselon thelon sortIndelonx of thelon cursor for its id/elonntryId fielonlds. So thelon
+   *     `idToRelonplacelon` should relonprelonselonnt thelon sortIndelonx of thelon elonxisting cursor to belon relonplacelond.
    */
-  def idToReplace(query: Query): Option[Long] = None
+  delonf idToRelonplacelon(quelonry: Quelonry): Option[Long] = Nonelon
 
-  def cursorSortIndex(query: Query, entries: Seq[TimelineEntry]): Long =
-    (query, cursorType) match {
-      case (query: PipelineQuery with HasPipelineCursor[_], TopCursor) =>
-        topCursorSortIndex(query, entries)
-      case (query: PipelineQuery with HasPipelineCursor[_], BottomCursor | GapCursor) =>
-        bottomCursorSortIndex(query, entries)
-      case _ =>
-        throw new UnsupportedOperationException(
-          "Automatic sort index support limited to top and bottom cursors")
+  delonf cursorSortIndelonx(quelonry: Quelonry, elonntrielons: Selonq[Timelonlinelonelonntry]): Long =
+    (quelonry, cursorTypelon) match {
+      caselon (quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[_], TopCursor) =>
+        topCursorSortIndelonx(quelonry, elonntrielons)
+      caselon (quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[_], BottomCursor | GapCursor) =>
+        bottomCursorSortIndelonx(quelonry, elonntrielons)
+      caselon _ =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(
+          "Automatic sort indelonx support limitelond to top and bottom cursors")
     }
 
-  def build(query: Query, entries: Seq[TimelineEntry]): Option[CursorOperation] = {
-    if (includeOperation(query, entries)) {
-      val sortIndex = cursorSortIndex(query, entries)
+  delonf build(quelonry: Quelonry, elonntrielons: Selonq[Timelonlinelonelonntry]): Option[CursorOpelonration] = {
+    if (includelonOpelonration(quelonry, elonntrielons)) {
+      val sortIndelonx = cursorSortIndelonx(quelonry, elonntrielons)
 
-      val cursorOperation = CursorOperation(
-        id = sortIndex,
-        sortIndex = Some(sortIndex),
-        value = cursorValue(query, entries),
-        cursorType = cursorType,
-        displayTreatment = None,
-        idToReplace = idToReplace(query),
+      val cursorOpelonration = CursorOpelonration(
+        id = sortIndelonx,
+        sortIndelonx = Somelon(sortIndelonx),
+        valuelon = cursorValuelon(quelonry, elonntrielons),
+        cursorTypelon = cursorTypelon,
+        displayTrelonatmelonnt = Nonelon,
+        idToRelonplacelon = idToRelonplacelon(quelonry),
       )
 
-      Some(cursorOperation)
-    } else None
+      Somelon(cursorOpelonration)
+    } elonlselon Nonelon
   }
 
   /**
-   * Build the top cursor sort index which handles the following cases:
-   * 1. When there is at least one non-cursor entry, use the first entry's sort index + UrtEntryOffset
-   * 2. When there are no non-cursor entries, and initialSortIndex is not set which indicates that
-   *    it is the first page, use DefaultSortIndex + UrtEntryOffset
-   * 3. When there are no non-cursor entries, and initialSortIndex is set which indicates that it is
-   *    not the first page, use the query.initialSortIndex from the passed-in cursor + UrtEntryOffset
+   * Build thelon top cursor sort indelonx which handlelons thelon following caselons:
+   * 1. Whelonn thelonrelon is at lelonast onelon non-cursor elonntry, uselon thelon first elonntry's sort indelonx + UrtelonntryOffselont
+   * 2. Whelonn thelonrelon arelon no non-cursor elonntrielons, and initialSortIndelonx is not selont which indicatelons that
+   *    it is thelon first pagelon, uselon DelonfaultSortIndelonx + UrtelonntryOffselont
+   * 3. Whelonn thelonrelon arelon no non-cursor elonntrielons, and initialSortIndelonx is selont which indicatelons that it is
+   *    not thelon first pagelon, uselon thelon quelonry.initialSortIndelonx from thelon passelond-in cursor + UrtelonntryOffselont
    */
-  protected def topCursorSortIndex(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
+  protelonctelond delonf topCursorSortIndelonx(
+    quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[_],
+    elonntrielons: Selonq[Timelonlinelonelonntry]
   ): Long = {
-    val nonCursorEntries = entries.filter {
-      case _: CursorOperation => false
-      case _: CursorItem => false
-      case _ => true
+    val nonCursorelonntrielons = elonntrielons.filtelonr {
+      caselon _: CursorOpelonration => falselon
+      caselon _: CursorItelonm => falselon
+      caselon _ => truelon
     }
 
-    lazy val initialSortIndex =
-      UrtPipelineCursor.getCursorInitialSortIndex(query).getOrElse(DefaultSortIndex(query))
+    lazy val initialSortIndelonx =
+      UrtPipelonlinelonCursor.gelontCursorInitialSortIndelonx(quelonry).gelontOrelonlselon(DelonfaultSortIndelonx(quelonry))
 
-    nonCursorEntries.headOption.flatMap(_.sortIndex).getOrElse(initialSortIndex) + UrtEntryOffset
+    nonCursorelonntrielons.helonadOption.flatMap(_.sortIndelonx).gelontOrelonlselon(initialSortIndelonx) + UrtelonntryOffselont
   }
 
   /**
-   * Specifies the point at which the next page's entries' sort indices will start counting.
+   * Speloncifielons thelon point at which thelon nelonxt pagelon's elonntrielons' sort indicelons will start counting.
    *
-   * Note that in the case of URT, the next page's entries' does not include the top cursor. As
-   * such, the value of initialSortIndex passed back in the cursor is typically the bottom cursor's
-   * sort index - 2. Subtracting 2 leaves room for the next page's top cursor, which will have a
-   * sort index of top entry + 1.
+   * Notelon that in thelon caselon of URT, thelon nelonxt pagelon's elonntrielons' doelons not includelon thelon top cursor. As
+   * such, thelon valuelon of initialSortIndelonx passelond back in thelon cursor is typically thelon bottom cursor's
+   * sort indelonx - 2. Subtracting 2 lelonavelons room for thelon nelonxt pagelon's top cursor, which will havelon a
+   * sort indelonx of top elonntry + 1.
    */
-  protected def nextBottomInitialSortIndex(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
+  protelonctelond delonf nelonxtBottomInitialSortIndelonx(
+    quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[_],
+    elonntrielons: Selonq[Timelonlinelonelonntry]
   ): Long = {
-    bottomCursorSortIndex(query, entries) - NextPageTopCursorEntryOffset - UrtEntryOffset
+    bottomCursorSortIndelonx(quelonry, elonntrielons) - NelonxtPagelonTopCursorelonntryOffselont - UrtelonntryOffselont
   }
 
   /**
-   * Build the bottom cursor sort index which handles the following cases:
-   * 1. When there is at least one non-cursor entry, use the last entry's sort index - UrtEntryOffset
-   * 2. When there are no non-cursor entries, and initialSortIndex is not set which indicates that
-   *    it is the first page, use DefaultSortIndex
-   * 3. When there are no non-cursor entries, and initialSortIndex is set which indicates that it is
-   *    not the first page, use the query.initialSortIndex from the passed-in cursor
+   * Build thelon bottom cursor sort indelonx which handlelons thelon following caselons:
+   * 1. Whelonn thelonrelon is at lelonast onelon non-cursor elonntry, uselon thelon last elonntry's sort indelonx - UrtelonntryOffselont
+   * 2. Whelonn thelonrelon arelon no non-cursor elonntrielons, and initialSortIndelonx is not selont which indicatelons that
+   *    it is thelon first pagelon, uselon DelonfaultSortIndelonx
+   * 3. Whelonn thelonrelon arelon no non-cursor elonntrielons, and initialSortIndelonx is selont which indicatelons that it is
+   *    not thelon first pagelon, uselon thelon quelonry.initialSortIndelonx from thelon passelond-in cursor
    */
-  protected def bottomCursorSortIndex(
-    query: PipelineQuery with HasPipelineCursor[_],
-    entries: Seq[TimelineEntry]
+  protelonctelond delonf bottomCursorSortIndelonx(
+    quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[_],
+    elonntrielons: Selonq[Timelonlinelonelonntry]
   ): Long = {
-    val nonCursorEntries = entries.filter {
-      case _: CursorOperation => false
-      case _: CursorItem => false
-      case _ => true
+    val nonCursorelonntrielons = elonntrielons.filtelonr {
+      caselon _: CursorOpelonration => falselon
+      caselon _: CursorItelonm => falselon
+      caselon _ => truelon
     }
 
-    lazy val initialSortIndex =
-      UrtPipelineCursor.getCursorInitialSortIndex(query).getOrElse(DefaultSortIndex(query))
+    lazy val initialSortIndelonx =
+      UrtPipelonlinelonCursor.gelontCursorInitialSortIndelonx(quelonry).gelontOrelonlselon(DelonfaultSortIndelonx(quelonry))
 
-    nonCursorEntries.lastOption
-      .flatMap(_.sortIndex).map(_ - UrtEntryOffset).getOrElse(initialSortIndex)
+    nonCursorelonntrielons.lastOption
+      .flatMap(_.sortIndelonx).map(_ - UrtelonntryOffselont).gelontOrelonlselon(initialSortIndelonx)
   }
 }

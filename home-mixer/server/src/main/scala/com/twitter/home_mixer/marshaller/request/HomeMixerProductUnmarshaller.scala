@@ -1,28 +1,28 @@
-package com.twitter.home_mixer.marshaller.request
+packagelon com.twittelonr.homelon_mixelonr.marshallelonr.relonquelonst
 
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.ListRecommendedUsersProduct
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.ScoredTweetsProduct
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.model.marshalling.request.Product
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ForYouProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListReloncommelonndelondUselonrsProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListTwelonelontsProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ScorelondTwelonelontsProduct
+import com.twittelonr.homelon_mixelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HomeMixerProductUnmarshaller @Inject() () {
+@Singlelonton
+class HomelonMixelonrProductUnmarshallelonr @Injelonct() () {
 
-  def apply(product: t.Product): Product = product match {
-    case t.Product.Following => FollowingProduct
-    case t.Product.ForYou => ForYouProduct
-    case t.Product.Realtime =>
-      throw new UnsupportedOperationException(s"This product is no longer used")
-    case t.Product.ScoredTweets => ScoredTweetsProduct
-    case t.Product.ListTweets => ListTweetsProduct
-    case t.Product.ListRecommendedUsers => ListRecommendedUsersProduct
-    case t.Product.EnumUnknownProduct(value) =>
-      throw new UnsupportedOperationException(s"Unknown product: $value")
+  delonf apply(product: t.Product): Product = product match {
+    caselon t.Product.Following => FollowingProduct
+    caselon t.Product.ForYou => ForYouProduct
+    caselon t.Product.Relonaltimelon =>
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(s"This product is no longelonr uselond")
+    caselon t.Product.ScorelondTwelonelonts => ScorelondTwelonelontsProduct
+    caselon t.Product.ListTwelonelonts => ListTwelonelontsProduct
+    caselon t.Product.ListReloncommelonndelondUselonrs => ListReloncommelonndelondUselonrsProduct
+    caselon t.Product.elonnumUnknownProduct(valuelon) =>
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $valuelon")
   }
 }

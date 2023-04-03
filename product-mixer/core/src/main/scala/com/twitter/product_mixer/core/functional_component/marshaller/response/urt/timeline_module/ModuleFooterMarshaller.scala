@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleFooter
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonFootelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-@Singleton
-class ModuleFooterMarshaller @Inject() (urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class ModulelonFootelonrMarshallelonr @Injelonct() (urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(footer: ModuleFooter): urt.ModuleFooter = urt.ModuleFooter(
-    text = footer.text,
-    landingUrl = footer.landingUrl.map(urlMarshaller(_))
+  delonf apply(footelonr: ModulelonFootelonr): urt.ModulelonFootelonr = urt.ModulelonFootelonr(
+    telonxt = footelonr.telonxt,
+    landingUrl = footelonr.landingUrl.map(urlMarshallelonr(_))
   )
 }

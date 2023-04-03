@@ -1,54 +1,54 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetPerspectiveSource
-import com.twitter.visibility.features.ViewerReportedTweet
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.TwelonelontPelonrspelonctivelonSourcelon
+import com.twittelonr.visibility.felonaturelons.VielonwelonrRelonportelondTwelonelont
 
-class TweetPerspectiveFeatures(
-  tweetPerspectiveSource: TweetPerspectiveSource,
-  statsReceiver: StatsReceiver) {
+class TwelonelontPelonrspelonctivelonFelonaturelons(
+  twelonelontPelonrspelonctivelonSourcelon: TwelonelontPelonrspelonctivelonSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("tweet_perspective_features")
-  private[this] val reportedStats = scopedStatsReceiver.scope("reported")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("twelonelont_pelonrspelonctivelon_felonaturelons")
+  privatelon[this] val relonportelondStats = scopelondStatsReloncelonivelonr.scopelon("relonportelond")
 
-  def forTweet(
-    tweet: Tweet,
-    viewerId: Option[Long],
-    enableFetchReportedPerspective: Boolean
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    _.withFeature(
-      ViewerReportedTweet,
-      tweetIsReported(tweet, viewerId, enableFetchReportedPerspective))
+  delonf forTwelonelont(
+    twelonelont: Twelonelont,
+    vielonwelonrId: Option[Long],
+    elonnablelonFelontchRelonportelondPelonrspelonctivelon: Boolelonan
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr =
+    _.withFelonaturelon(
+      VielonwelonrRelonportelondTwelonelont,
+      twelonelontIsRelonportelond(twelonelont, vielonwelonrId, elonnablelonFelontchRelonportelondPelonrspelonctivelon))
 
-  private[builder] def tweetIsReported(
-    tweet: Tweet,
-    viewerId: Option[Long],
-    enableFetchReportedPerspective: Boolean = true
-  ): Stitch[Boolean] = {
-    ((tweet.perspective, viewerId) match {
-      case (Some(perspective), _) =>
-        Stitch.value(perspective.reported).onSuccess { _ =>
-          reportedStats.counter("already_hydrated").incr()
+  privatelon[buildelonr] delonf twelonelontIsRelonportelond(
+    twelonelont: Twelonelont,
+    vielonwelonrId: Option[Long],
+    elonnablelonFelontchRelonportelondPelonrspelonctivelon: Boolelonan = truelon
+  ): Stitch[Boolelonan] = {
+    ((twelonelont.pelonrspelonctivelon, vielonwelonrId) match {
+      caselon (Somelon(pelonrspelonctivelon), _) =>
+        Stitch.valuelon(pelonrspelonctivelon.relonportelond).onSuccelonss { _ =>
+          relonportelondStats.countelonr("alrelonady_hydratelond").incr()
         }
-      case (None, Some(viewerId)) =>
-        if (enableFetchReportedPerspective) {
-          tweetPerspectiveSource.reported(tweet.id, viewerId).onSuccess { _ =>
-            reportedStats.counter("request").incr()
+      caselon (Nonelon, Somelon(vielonwelonrId)) =>
+        if (elonnablelonFelontchRelonportelondPelonrspelonctivelon) {
+          twelonelontPelonrspelonctivelonSourcelon.relonportelond(twelonelont.id, vielonwelonrId).onSuccelonss { _ =>
+            relonportelondStats.countelonr("relonquelonst").incr()
           }
-        } else {
-          Stitch.False.onSuccess { _ =>
-            reportedStats.counter("light_request").incr()
+        } elonlselon {
+          Stitch.Falselon.onSuccelonss { _ =>
+            relonportelondStats.countelonr("light_relonquelonst").incr()
           }
         }
-      case _ =>
-        Stitch.False.onSuccess { _ =>
-          reportedStats.counter("empty").incr()
+      caselon _ =>
+        Stitch.Falselon.onSuccelonss { _ =>
+          relonportelondStats.countelonr("elonmpty").incr()
         }
-    }).onSuccess { _ =>
-      reportedStats.counter("").incr()
+    }).onSuccelonss { _ =>
+      relonportelondStats.countelonr("").incr()
     }
   }
 }

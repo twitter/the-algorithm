@@ -1,190 +1,190 @@
-package com.twitter.search.common.relevance.text;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.telonxt;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.Localelon;
+import java.util.Selont;
 
-import com.google.common.base.Joiner;
-import com.google.common.collect.Sets;
+import com.googlelon.common.baselon.Joinelonr;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.common.text.util.CharSequenceUtils;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.Smileys;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TokenizerResult;
+import com.twittelonr.common.telonxt.util.CharSelonquelonncelonUtils;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftelonxpandelondUrl;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontTelonxtFelonaturelons;
+import com.twittelonr.selonarch.common.util.telonxt.NormalizelonrHelonlpelonr;
+import com.twittelonr.selonarch.common.util.telonxt.Smilelonys;
+import com.twittelonr.selonarch.common.util.telonxt.TokelonnizelonrHelonlpelonr;
+import com.twittelonr.selonarch.common.util.telonxt.TokelonnizelonrRelonsult;
 
 /**
- * A parser to extract very basic information from a tweet.
+ * A parselonr to elonxtract velonry basic information from a twelonelont.
  */
-public class TweetParser {
-  private static final boolean DO_NOT_REMOVE_WWW = false;
+public class TwelonelontParselonr {
+  privatelon static final boolelonan DO_NOT_RelonMOVelon_WWW = falselon;
 
-  /** Parses the given TwitterMessage. */
-  public void parseTweet(TwitterMessage message) {
-    parseTweet(message, false, true);
+  /** Parselons thelon givelonn TwittelonrMelonssagelon. */
+  public void parselonTwelonelont(TwittelonrMelonssagelon melonssagelon) {
+    parselonTwelonelont(melonssagelon, falselon, truelon);
   }
 
-  /** Parses the given TwitterMessage. */
-  public void parseTweet(TwitterMessage message,
-                         boolean useEntitiesFromTweetText,
-                         boolean parseUrls) {
-    for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-      parseTweet(message, useEntitiesFromTweetText, parseUrls, penguinVersion);
+  /** Parselons thelon givelonn TwittelonrMelonssagelon. */
+  public void parselonTwelonelont(TwittelonrMelonssagelon melonssagelon,
+                         boolelonan uselonelonntitielonsFromTwelonelontTelonxt,
+                         boolelonan parselonUrls) {
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : melonssagelon.gelontSupportelondPelonnguinVelonrsions()) {
+      parselonTwelonelont(melonssagelon, uselonelonntitielonsFromTwelonelontTelonxt, parselonUrls, pelonnguinVelonrsion);
     }
   }
 
-  /** Parses the given TwitterMessage. */
-  public void parseTweet(TwitterMessage message,
-                         boolean useEntitiesFromTweetText,
-                         boolean parseUrls,
-                         PenguinVersion penguinVersion) {
-    TweetTextFeatures textFeatures = message.getTweetTextFeatures(penguinVersion);
-    String rawText = message.getText();
-    Locale locale = message.getLocale();
+  /** Parselons thelon givelonn TwittelonrMelonssagelon. */
+  public void parselonTwelonelont(TwittelonrMelonssagelon melonssagelon,
+                         boolelonan uselonelonntitielonsFromTwelonelontTelonxt,
+                         boolelonan parselonUrls,
+                         PelonnguinVelonrsion pelonnguinVelonrsion) {
+    TwelonelontTelonxtFelonaturelons telonxtFelonaturelons = melonssagelon.gelontTwelonelontTelonxtFelonaturelons(pelonnguinVelonrsion);
+    String rawTelonxt = melonssagelon.gelontTelonxt();
+    Localelon localelon = melonssagelon.gelontLocalelon();
 
-    // don't lower case first.
-    String normalizedText = NormalizerHelper.normalizeKeepCase(rawText, locale, penguinVersion);
-    String lowercasedNormalizedText =
-      CharSequenceUtils.toLowerCase(normalizedText, locale).toString();
+    // don't lowelonr caselon first.
+    String normalizelondTelonxt = NormalizelonrHelonlpelonr.normalizelonKelonelonpCaselon(rawTelonxt, localelon, pelonnguinVelonrsion);
+    String lowelonrcaselondNormalizelondTelonxt =
+      CharSelonquelonncelonUtils.toLowelonrCaselon(normalizelondTelonxt, localelon).toString();
 
-    textFeatures.setNormalizedText(lowercasedNormalizedText);
+    telonxtFelonaturelons.selontNormalizelondTelonxt(lowelonrcaselondNormalizelondTelonxt);
 
-    TokenizerResult result = TokenizerHelper.tokenizeTweet(normalizedText, locale, penguinVersion);
-    List<String> tokens = new ArrayList<>(result.tokens);
-    textFeatures.setTokens(tokens);
-    textFeatures.setTokenSequence(result.tokenSequence);
+    TokelonnizelonrRelonsult relonsult = TokelonnizelonrHelonlpelonr.tokelonnizelonTwelonelont(normalizelondTelonxt, localelon, pelonnguinVelonrsion);
+    List<String> tokelonns = nelonw ArrayList<>(relonsult.tokelonns);
+    telonxtFelonaturelons.selontTokelonns(tokelonns);
+    telonxtFelonaturelons.selontTokelonnSelonquelonncelon(relonsult.tokelonnSelonquelonncelon);
 
-    if (parseUrls) {
-      parseUrls(message, textFeatures);
+    if (parselonUrls) {
+      parselonUrls(melonssagelon, telonxtFelonaturelons);
     }
 
-    textFeatures.setStrippedTokens(result.strippedDownTokens);
-    textFeatures.setNormalizedStrippedText(Joiner.on(" ").skipNulls()
-                                                 .join(result.strippedDownTokens));
+    telonxtFelonaturelons.selontStrippelondTokelonns(relonsult.strippelondDownTokelonns);
+    telonxtFelonaturelons.selontNormalizelondStrippelondTelonxt(Joinelonr.on(" ").skipNulls()
+                                                 .join(relonsult.strippelondDownTokelonns));
 
-    // Sanity checks, make sure there is no null token list.
-    if (textFeatures.getTokens() == null) {
-      textFeatures.setTokens(Collections.<String>emptyList());
+    // Sanity cheloncks, makelon surelon thelonrelon is no null tokelonn list.
+    if (telonxtFelonaturelons.gelontTokelonns() == null) {
+      telonxtFelonaturelons.selontTokelonns(Collelonctions.<String>elonmptyList());
     }
-    if (textFeatures.getResolvedUrlTokens() == null) {
-      textFeatures.setResolvedUrlTokens(Collections.<String>emptyList());
+    if (telonxtFelonaturelons.gelontRelonsolvelondUrlTokelonns() == null) {
+      telonxtFelonaturelons.selontRelonsolvelondUrlTokelonns(Collelonctions.<String>elonmptyList());
     }
-    if (textFeatures.getStrippedTokens() == null) {
-      textFeatures.setStrippedTokens(Collections.<String>emptyList());
+    if (telonxtFelonaturelons.gelontStrippelondTokelonns() == null) {
+      telonxtFelonaturelons.selontStrippelondTokelonns(Collelonctions.<String>elonmptyList());
     }
 
-    setHashtagsAndMentions(message, textFeatures, penguinVersion);
-    textFeatures.setStocks(sanitizeTokenizerResults(result.stocks, '$'));
-    textFeatures.setHasQuestionMark(findQuestionMark(textFeatures));
+    selontHashtagsAndMelonntions(melonssagelon, telonxtFelonaturelons, pelonnguinVelonrsion);
+    telonxtFelonaturelons.selontStocks(sanitizelonTokelonnizelonrRelonsults(relonsult.stocks, '$'));
+    telonxtFelonaturelons.selontHasQuelonstionMark(findQuelonstionMark(telonxtFelonaturelons));
 
-    // Set smiley polarities.
-    textFeatures.setSmileys(result.smileys);
-    for (String smiley : textFeatures.getSmileys()) {
-      if (Smileys.isValidSmiley(smiley)) {
-        boolean polarity = Smileys.getPolarity(smiley);
+    // Selont smilelony polaritielons.
+    telonxtFelonaturelons.selontSmilelonys(relonsult.smilelonys);
+    for (String smilelony : telonxtFelonaturelons.gelontSmilelonys()) {
+      if (Smilelonys.isValidSmilelony(smilelony)) {
+        boolelonan polarity = Smilelonys.gelontPolarity(smilelony);
         if (polarity) {
-          textFeatures.setHasPositiveSmiley(true);
-        } else {
-          textFeatures.setHasNegativeSmiley(true);
+          telonxtFelonaturelons.selontHasPositivelonSmilelony(truelon);
+        } elonlselon {
+          telonxtFelonaturelons.selontHasNelongativelonSmilelony(truelon);
         }
       }
     }
-    message.setTokenizedCharSequence(penguinVersion, result.rawSequence);
+    melonssagelon.selontTokelonnizelondCharSelonquelonncelon(pelonnguinVelonrsion, relonsult.rawSelonquelonncelon);
 
-    if (useEntitiesFromTweetText) {
-      takeEntities(message, textFeatures, result, penguinVersion);
+    if (uselonelonntitielonsFromTwelonelontTelonxt) {
+      takelonelonntitielons(melonssagelon, telonxtFelonaturelons, relonsult, pelonnguinVelonrsion);
     }
   }
 
-  /** Parse the URLs in the given TwitterMessage. */
-  public void parseUrls(TwitterMessage message) {
-    for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-      parseUrls(message, message.getTweetTextFeatures(penguinVersion));
+  /** Parselon thelon URLs in thelon givelonn TwittelonrMelonssagelon. */
+  public void parselonUrls(TwittelonrMelonssagelon melonssagelon) {
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : melonssagelon.gelontSupportelondPelonnguinVelonrsions()) {
+      parselonUrls(melonssagelon, melonssagelon.gelontTwelonelontTelonxtFelonaturelons(pelonnguinVelonrsion));
     }
   }
 
-  /** Parse the URLs in the given TwitterMessage. */
-  public void parseUrls(TwitterMessage message, TweetTextFeatures textFeatures) {
-    if (message.getExpandedUrlMap() != null) {
-      Set<String> urlsToTokenize = Sets.newLinkedHashSet();
-      for (ThriftExpandedUrl url : message.getExpandedUrlMap().values()) {
-        if (url.isSetExpandedUrl()) {
-          urlsToTokenize.add(url.getExpandedUrl());
+  /** Parselon thelon URLs in thelon givelonn TwittelonrMelonssagelon. */
+  public void parselonUrls(TwittelonrMelonssagelon melonssagelon, TwelonelontTelonxtFelonaturelons telonxtFelonaturelons) {
+    if (melonssagelon.gelontelonxpandelondUrlMap() != null) {
+      Selont<String> urlsToTokelonnizelon = Selonts.nelonwLinkelondHashSelont();
+      for (ThriftelonxpandelondUrl url : melonssagelon.gelontelonxpandelondUrlMap().valuelons()) {
+        if (url.isSelontelonxpandelondUrl()) {
+          urlsToTokelonnizelon.add(url.gelontelonxpandelondUrl());
         }
-        if (url.isSetCanonicalLastHopUrl()) {
-          urlsToTokenize.add(url.getCanonicalLastHopUrl());
-        }
-      }
-      TokenizerResult resolvedUrlResult =
-          TokenizerHelper.tokenizeUrls(urlsToTokenize, message.getLocale(), DO_NOT_REMOVE_WWW);
-      List<String> urlTokens = new ArrayList<>(resolvedUrlResult.tokens);
-      textFeatures.setResolvedUrlTokens(urlTokens);
-    }
-  }
-
-  private void takeEntities(TwitterMessage message,
-                            TweetTextFeatures textFeatures,
-                            TokenizerResult result,
-                            PenguinVersion penguinVersion) {
-    if (message.getHashtags().isEmpty()) {
-      // add hashtags to TwitterMessage if it doens't already have them, from
-      // JSON entities, this happens when we do offline indexing
-      for (String hashtag : sanitizeTokenizerResults(result.hashtags, '#')) {
-        message.addHashtag(hashtag);
-      }
-    }
-
-    if (message.getMentions().isEmpty()) {
-      // add mentions to TwitterMessage if it doens't already have them, from
-      // JSON entities, this happens when we do offline indexing
-      for (String mention : sanitizeTokenizerResults(result.mentions, '@')) {
-        message.addMention(mention);
-      }
-    }
-
-    setHashtagsAndMentions(message, textFeatures, penguinVersion);
-  }
-
-  private void setHashtagsAndMentions(TwitterMessage message,
-                                      TweetTextFeatures textFeatures,
-                                      PenguinVersion penguinVersion) {
-    textFeatures.setHashtags(message.getNormalizedHashtags(penguinVersion));
-    textFeatures.setMentions(message.getLowercasedMentions());
-  }
-
-  // The strings in the mentions, hashtags and stocks lists in TokenizerResult should already have
-  // the leading characters ('@', '#' and '$') stripped. So in most cases, this sanitization is not
-  // needed. However, sometimes Penguin tokenizes hashtags, cashtags and mentions incorrectly
-  // (for example, when using the Korean tokenizer for tokens like ~@mention or ?#hashtag -- see
-  // SEARCHQUAL-11924 for more details). So we're doing this extra sanitization here to try to work
-  // around these tokenization issues.
-  private List<String> sanitizeTokenizerResults(List<String> tokens, char tokenSymbol) {
-    List<String> sanitizedTokens = new ArrayList<String>();
-    for (String token : tokens) {
-      int indexOfTokenSymbol = token.indexOf(tokenSymbol);
-      if (indexOfTokenSymbol < 0) {
-        sanitizedTokens.add(token);
-      } else {
-        String sanitizedToken = token.substring(indexOfTokenSymbol + 1);
-        if (!sanitizedToken.isEmpty()) {
-          sanitizedTokens.add(sanitizedToken);
+        if (url.isSelontCanonicalLastHopUrl()) {
+          urlsToTokelonnizelon.add(url.gelontCanonicalLastHopUrl());
         }
       }
+      TokelonnizelonrRelonsult relonsolvelondUrlRelonsult =
+          TokelonnizelonrHelonlpelonr.tokelonnizelonUrls(urlsToTokelonnizelon, melonssagelon.gelontLocalelon(), DO_NOT_RelonMOVelon_WWW);
+      List<String> urlTokelonns = nelonw ArrayList<>(relonsolvelondUrlRelonsult.tokelonns);
+      telonxtFelonaturelons.selontRelonsolvelondUrlTokelonns(urlTokelonns);
     }
-    return sanitizedTokens;
   }
 
-  /** Determines if the normalized text of the given features contain a question mark. */
-  public static boolean findQuestionMark(TweetTextFeatures textFeatures) {
-    // t.co links don't contain ?'s, so it's not necessary to subtract ?'s occurring in Urls
-    // the tweet text always contains t.co, even if the display url is different
-    // all links on twitter are now wrapped into t.co
-    return textFeatures.getNormalizedText().contains("?");
+  privatelon void takelonelonntitielons(TwittelonrMelonssagelon melonssagelon,
+                            TwelonelontTelonxtFelonaturelons telonxtFelonaturelons,
+                            TokelonnizelonrRelonsult relonsult,
+                            PelonnguinVelonrsion pelonnguinVelonrsion) {
+    if (melonssagelon.gelontHashtags().iselonmpty()) {
+      // add hashtags to TwittelonrMelonssagelon if it doelonns't alrelonady havelon thelonm, from
+      // JSON elonntitielons, this happelonns whelonn welon do offlinelon indelonxing
+      for (String hashtag : sanitizelonTokelonnizelonrRelonsults(relonsult.hashtags, '#')) {
+        melonssagelon.addHashtag(hashtag);
+      }
+    }
+
+    if (melonssagelon.gelontMelonntions().iselonmpty()) {
+      // add melonntions to TwittelonrMelonssagelon if it doelonns't alrelonady havelon thelonm, from
+      // JSON elonntitielons, this happelonns whelonn welon do offlinelon indelonxing
+      for (String melonntion : sanitizelonTokelonnizelonrRelonsults(relonsult.melonntions, '@')) {
+        melonssagelon.addMelonntion(melonntion);
+      }
+    }
+
+    selontHashtagsAndMelonntions(melonssagelon, telonxtFelonaturelons, pelonnguinVelonrsion);
+  }
+
+  privatelon void selontHashtagsAndMelonntions(TwittelonrMelonssagelon melonssagelon,
+                                      TwelonelontTelonxtFelonaturelons telonxtFelonaturelons,
+                                      PelonnguinVelonrsion pelonnguinVelonrsion) {
+    telonxtFelonaturelons.selontHashtags(melonssagelon.gelontNormalizelondHashtags(pelonnguinVelonrsion));
+    telonxtFelonaturelons.selontMelonntions(melonssagelon.gelontLowelonrcaselondMelonntions());
+  }
+
+  // Thelon strings in thelon melonntions, hashtags and stocks lists in TokelonnizelonrRelonsult should alrelonady havelon
+  // thelon lelonading charactelonrs ('@', '#' and '$') strippelond. So in most caselons, this sanitization is not
+  // nelonelondelond. Howelonvelonr, somelontimelons Pelonnguin tokelonnizelons hashtags, cashtags and melonntions incorrelonctly
+  // (for elonxamplelon, whelonn using thelon Korelonan tokelonnizelonr for tokelonns likelon ~@melonntion or ?#hashtag -- selonelon
+  // SelonARCHQUAL-11924 for morelon delontails). So welon'relon doing this elonxtra sanitization helonrelon to try to work
+  // around thelonselon tokelonnization issuelons.
+  privatelon List<String> sanitizelonTokelonnizelonrRelonsults(List<String> tokelonns, char tokelonnSymbol) {
+    List<String> sanitizelondTokelonns = nelonw ArrayList<String>();
+    for (String tokelonn : tokelonns) {
+      int indelonxOfTokelonnSymbol = tokelonn.indelonxOf(tokelonnSymbol);
+      if (indelonxOfTokelonnSymbol < 0) {
+        sanitizelondTokelonns.add(tokelonn);
+      } elonlselon {
+        String sanitizelondTokelonn = tokelonn.substring(indelonxOfTokelonnSymbol + 1);
+        if (!sanitizelondTokelonn.iselonmpty()) {
+          sanitizelondTokelonns.add(sanitizelondTokelonn);
+        }
+      }
+    }
+    relonturn sanitizelondTokelonns;
+  }
+
+  /** Delontelonrminelons if thelon normalizelond telonxt of thelon givelonn felonaturelons contain a quelonstion mark. */
+  public static boolelonan findQuelonstionMark(TwelonelontTelonxtFelonaturelons telonxtFelonaturelons) {
+    // t.co links don't contain ?'s, so it's not neloncelonssary to subtract ?'s occurring in Urls
+    // thelon twelonelont telonxt always contains t.co, elonvelonn if thelon display url is diffelonrelonnt
+    // all links on twittelonr arelon now wrappelond into t.co
+    relonturn telonxtFelonaturelons.gelontNormalizelondTelonxt().contains("?");
   }
 }

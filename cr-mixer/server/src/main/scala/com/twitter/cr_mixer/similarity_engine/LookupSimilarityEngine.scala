@@ -1,78 +1,78 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.MemCacheConfig
-import com.twitter.cr_mixer.similarity_engine.SimilarityEngine.SimilarityEngineConfig
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi.Params
-import com.twitter.util.Future
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.MelonmCachelonConfig
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.Similarityelonnginelon.SimilarityelonnginelonConfig
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.util.Futurelon
 
-case class LookupEngineQuery[Query](
-  storeQuery: Query, // the actual Query type of the underlying store
-  lookupKey: String,
+caselon class LookupelonnginelonQuelonry[Quelonry](
+  storelonQuelonry: Quelonry, // thelon actual Quelonry typelon of thelon undelonrlying storelon
+  lookupKelony: String,
   params: Params,
 )
 
 /**
- * This Engine provides a map interface for looking up different model implementations.
- * It provides modelId level monitoring for free.
+ * This elonnginelon providelons a map intelonrfacelon for looking up diffelonrelonnt modelonl implelonmelonntations.
+ * It providelons modelonlId lelonvelonl monitoring for frelonelon.
  *
- * Example use cases include OfflineSimClusters lookup
+ * elonxamplelon uselon caselons includelon OfflinelonSimClustelonrs lookup
  *
  *
- * @param versionedStoreMap   A mapping from a modelId to a corresponding implementation
- * @param memCacheConfigOpt   If specified, it will wrap the underlying store with a MemCache layer
- *                            You should only enable this for cacheable queries, e.x. TweetIds.
- *                            consumer based UserIds are generally not possible to cache.
+ * @param velonrsionelondStorelonMap   A mapping from a modelonlId to a correlonsponding implelonmelonntation
+ * @param melonmCachelonConfigOpt   If speloncifielond, it will wrap thelon undelonrlying storelon with a MelonmCachelon layelonr
+ *                            You should only elonnablelon this for cachelonablelon quelonrielons, elon.x. TwelonelontIds.
+ *                            consumelonr baselond UselonrIds arelon gelonnelonrally not possiblelon to cachelon.
  */
-class LookupSimilarityEngine[Query, Candidate <: Serializable](
-  versionedStoreMap: Map[String, ReadableStore[Query, Seq[Candidate]]], // key = modelId
-  override val identifier: SimilarityEngineType,
-  globalStats: StatsReceiver,
-  engineConfig: SimilarityEngineConfig,
-  memCacheConfigOpt: Option[MemCacheConfig[Query]] = None)
-    extends SimilarityEngine[LookupEngineQuery[Query], Candidate] {
+class LookupSimilarityelonnginelon[Quelonry, Candidatelon <: Selonrializablelon](
+  velonrsionelondStorelonMap: Map[String, RelonadablelonStorelon[Quelonry, Selonq[Candidatelon]]], // kelony = modelonlId
+  ovelonrridelon val idelonntifielonr: SimilarityelonnginelonTypelon,
+  globalStats: StatsReloncelonivelonr,
+  elonnginelonConfig: SimilarityelonnginelonConfig,
+  melonmCachelonConfigOpt: Option[MelonmCachelonConfig[Quelonry]] = Nonelon)
+    elonxtelonnds Similarityelonnginelon[LookupelonnginelonQuelonry[Quelonry], Candidatelon] {
 
-  private val scopedStats = globalStats.scope("similarityEngine", identifier.toString)
+  privatelon val scopelondStats = globalStats.scopelon("similarityelonnginelon", idelonntifielonr.toString)
 
-  private val underlyingLookupMap = {
-    memCacheConfigOpt match {
-      case Some(config) =>
-        versionedStoreMap.map {
-          case (modelId, store) =>
+  privatelon val undelonrlyingLookupMap = {
+    melonmCachelonConfigOpt match {
+      caselon Somelon(config) =>
+        velonrsionelondStorelonMap.map {
+          caselon (modelonlId, storelon) =>
             (
-              modelId,
-              SimilarityEngine.addMemCache(
-                underlyingStore = store,
-                memCacheConfig = config,
-                keyPrefix = Some(modelId),
-                statsReceiver = scopedStats
+              modelonlId,
+              Similarityelonnginelon.addMelonmCachelon(
+                undelonrlyingStorelon = storelon,
+                melonmCachelonConfig = config,
+                kelonyPrelonfix = Somelon(modelonlId),
+                statsReloncelonivelonr = scopelondStats
               )
             )
         }
-      case _ => versionedStoreMap
+      caselon _ => velonrsionelondStorelonMap
     }
   }
 
-  override def getCandidates(
-    engineQuery: LookupEngineQuery[Query]
-  ): Future[Option[Seq[Candidate]]] = {
-    val versionedStore =
-      underlyingLookupMap
-        .getOrElse(
-          engineQuery.lookupKey,
-          throw new IllegalArgumentException(
-            s"${this.getClass.getSimpleName} ${identifier.toString}: ModelId ${engineQuery.lookupKey} does not exist"
+  ovelonrridelon delonf gelontCandidatelons(
+    elonnginelonQuelonry: LookupelonnginelonQuelonry[Quelonry]
+  ): Futurelon[Option[Selonq[Candidatelon]]] = {
+    val velonrsionelondStorelon =
+      undelonrlyingLookupMap
+        .gelontOrelonlselon(
+          elonnginelonQuelonry.lookupKelony,
+          throw nelonw IllelongalArgumelonntelonxcelonption(
+            s"${this.gelontClass.gelontSimplelonNamelon} ${idelonntifielonr.toString}: ModelonlId ${elonnginelonQuelonry.lookupKelony} doelons not elonxist"
           )
         )
 
-    SimilarityEngine.getFromFn(
-      fn = versionedStore.get,
-      storeQuery = engineQuery.storeQuery,
-      engineConfig = engineConfig,
-      params = engineQuery.params,
-      scopedStats = scopedStats.scope(engineQuery.lookupKey)
+    Similarityelonnginelon.gelontFromFn(
+      fn = velonrsionelondStorelon.gelont,
+      storelonQuelonry = elonnginelonQuelonry.storelonQuelonry,
+      elonnginelonConfig = elonnginelonConfig,
+      params = elonnginelonQuelonry.params,
+      scopelondStats = scopelondStats.scopelon(elonnginelonQuelonry.lookupKelony)
     )
   }
 }

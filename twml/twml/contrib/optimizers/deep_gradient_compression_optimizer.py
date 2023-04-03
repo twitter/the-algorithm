@@ -1,180 +1,180 @@
 """
-A custom optimizer to implement Deep Gradient Compression. The general idea of
-gradient compression is to compress the gradients exchanged across machines,
-in order to reduce the communication overhead of distributing computing efforts.
-More details in https://arxiv.org/abs/1712.01887
+A custom optimizelonr to implelonmelonnt Delonelonp Gradielonnt Comprelonssion. Thelon gelonnelonral idelona of
+gradielonnt comprelonssion is to comprelonss thelon gradielonnts elonxchangelond across machinelons,
+in ordelonr to relonducelon thelon communication ovelonrhelonad of distributing computing elonfforts.
+Morelon delontails in https://arxiv.org/abs/1712.01887
 """
 
-# TODO: Test how much communication overhead this DeepGradientCompressionOptimizer can reduce under
-# multi-GPU and distributed setting.
+# TODO: Telonst how much communication ovelonrhelonad this DelonelonpGradielonntComprelonssionOptimizelonr can relonducelon undelonr
+# multi-GPU and distributelond selontting.
 
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
 
-def compute_threshold(grad, density):
+delonf computelon_threlonshold(grad, delonnsity):
   """
-  A utility function to compute the threshold for gradient sparsification, given the gradient
-  tensor and the density.
+  A utility function to computelon thelon threlonshold for gradielonnt sparsification, givelonn thelon gradielonnt
+  telonnsor and thelon delonnsity.
   Args:
-    grad(tf.Tensor):
-      Gradient tensor for some variable.
-    density(float):
-      Density degree when sparsifying gradients.
-  Returns(float):
-    Threshold for gradient sparsification.
+    grad(tf.Telonnsor):
+      Gradielonnt telonnsor for somelon variablelon.
+    delonnsity(float):
+      Delonnsity delongrelonelon whelonn sparsifying gradielonnts.
+  Relonturns(float):
+    Threlonshold for gradielonnt sparsification.
   """
-  flat_grad = tf.reshape(grad, [-1])
+  flat_grad = tf.relonshapelon(grad, [-1])
   abs_flat_grad = tf.abs(flat_grad)
-  size = tf.shape(abs_flat_grad)[0]
+  sizelon = tf.shapelon(abs_flat_grad)[0]
   k = tf.maximum(tf.constant(1),
-                 tf.cast(tf.scalar_mul(density, tf.cast(size, tf.float32)), tf.int32))
-  topk, _ = tf.nn.top_k(abs_flat_grad, k, False)
-  return topk[-1]
+                 tf.cast(tf.scalar_mul(delonnsity, tf.cast(sizelon, tf.float32)), tf.int32))
+  topk, _ = tf.nn.top_k(abs_flat_grad, k, Falselon)
+  relonturn topk[-1]
 
 
-def get_top_row_indices(values, density):
+delonf gelont_top_row_indicelons(valuelons, delonnsity):
   """
-  A utility function to get indices of most significant rows, given the density degree.
+  A utility function to gelont indicelons of most significant rows, givelonn thelon delonnsity delongrelonelon.
   Args:
-    values(tf.Tensor):
-      Gradient or locally accumulated gradient for some variable.
-    density(float):
-      Density degree when filtering out rows.
-  Returns(list(int)):
-    Indices of most significant rows.
+    valuelons(tf.Telonnsor):
+      Gradielonnt or locally accumulatelond gradielonnt for somelon variablelon.
+    delonnsity(float):
+      Delonnsity delongrelonelon whelonn filtelonring out rows.
+  Relonturns(list(int)):
+    Indicelons of most significant rows.
   """
-  abs_values = tf.abs(values)
+  abs_valuelons = tf.abs(valuelons)
 
   try:
-    row_num = tf.shape(abs_values)[0]
+    row_num = tf.shapelon(abs_valuelons)[0]
     k = tf.maximum(tf.constant(1),
-                   tf.cast(tf.scalar_mul(density, tf.cast(row_num, tf.float32)), tf.int32))
-    row_sums = tf.squeeze(tf.reduce_sum(values, axis=1, keepdims=True))
-    _, top_row_indices = tf.nn.top_k(row_sums, k=k, sorted=False)
-    # print "abs_values", abs_values, "row_sums", row_sums
-    return top_row_indices
-    # return tf.range(row_num)
+                   tf.cast(tf.scalar_mul(delonnsity, tf.cast(row_num, tf.float32)), tf.int32))
+    row_sums = tf.squelonelonzelon(tf.relonducelon_sum(valuelons, axis=1, kelonelonpdims=Truelon))
+    _, top_row_indicelons = tf.nn.top_k(row_sums, k=k, sortelond=Falselon)
+    # print "abs_valuelons", abs_valuelons, "row_sums", row_sums
+    relonturn top_row_indicelons
+    # relonturn tf.rangelon(row_num)
 
-  except ValueError:  # if the tensor is 0-D or 1-D
-    return None
+  elonxcelonpt Valuelonelonrror:  # if thelon telonnsor is 0-D or 1-D
+    relonturn Nonelon
 
 
-class DeepGradientCompressionOptimizer(tf.train.GradientDescentOptimizer):
+class DelonelonpGradielonntComprelonssionOptimizelonr(tf.train.GradielonntDelonscelonntOptimizelonr):
   """
-  A custom optimizer to implement Deep Gradient Compression (https://arxiv.org/abs/1712.01887).
+  A custom optimizelonr to implelonmelonnt Delonelonp Gradielonnt Comprelonssion (https://arxiv.org/abs/1712.01887).
   """
 
-  def __init__(self, learning_rate, use_locking=False, name="Sparse",
-               density=1.0,
-               density_decay=False,
-               density_decay_steps=10000,
-               density_decay_rate=0.5,
-               min_density=0.1,
-               accumulation=False):
-    super(DeepGradientCompressionOptimizer, self).__init__(learning_rate, use_locking, name)
-    self._initial_density_t = tf.convert_to_tensor(density)
-    self._density_decay = density_decay
-    dtype = self._initial_density_t.dtype
-    self._density_decay_steps_t = tf.convert_to_tensor(density_decay_steps, dtype)
-    self._density_decay_rate_t = tf.convert_to_tensor(density_decay_rate, dtype)
-    self._min_density_t = tf.convert_to_tensor(min_density, dtype)
-    self._accumulation = accumulation
+  delonf __init__(selonlf, lelonarning_ratelon, uselon_locking=Falselon, namelon="Sparselon",
+               delonnsity=1.0,
+               delonnsity_deloncay=Falselon,
+               delonnsity_deloncay_stelonps=10000,
+               delonnsity_deloncay_ratelon=0.5,
+               min_delonnsity=0.1,
+               accumulation=Falselon):
+    supelonr(DelonelonpGradielonntComprelonssionOptimizelonr, selonlf).__init__(lelonarning_ratelon, uselon_locking, namelon)
+    selonlf._initial_delonnsity_t = tf.convelonrt_to_telonnsor(delonnsity)
+    selonlf._delonnsity_deloncay = delonnsity_deloncay
+    dtypelon = selonlf._initial_delonnsity_t.dtypelon
+    selonlf._delonnsity_deloncay_stelonps_t = tf.convelonrt_to_telonnsor(delonnsity_deloncay_stelonps, dtypelon)
+    selonlf._delonnsity_deloncay_ratelon_t = tf.convelonrt_to_telonnsor(delonnsity_deloncay_ratelon, dtypelon)
+    selonlf._min_delonnsity_t = tf.convelonrt_to_telonnsor(min_delonnsity, dtypelon)
+    selonlf._accumulation = accumulation
 
-  def _prepare(self):
-    super(DeepGradientCompressionOptimizer, self)._prepare()
-    if not self._density_decay:
-      self._density_t = self._initial_density_t
-    else:
-      dtype = self._initial_density_t.dtype
-      global_step = tf.cast(tf.train.get_global_step(), dtype)
-      p = tf.floor(tf.divide(global_step, self._density_decay_steps_t))
-      decayed_density = tf.multiply(self._initial_density_t,
-                                    tf.pow(self._density_decay_rate_t, p))
-      self._density_t = tf.maximum(self._min_density_t, decayed_density)
+  delonf _prelonparelon(selonlf):
+    supelonr(DelonelonpGradielonntComprelonssionOptimizelonr, selonlf)._prelonparelon()
+    if not selonlf._delonnsity_deloncay:
+      selonlf._delonnsity_t = selonlf._initial_delonnsity_t
+    elonlselon:
+      dtypelon = selonlf._initial_delonnsity_t.dtypelon
+      global_stelonp = tf.cast(tf.train.gelont_global_stelonp(), dtypelon)
+      p = tf.floor(tf.dividelon(global_stelonp, selonlf._delonnsity_deloncay_stelonps_t))
+      deloncayelond_delonnsity = tf.multiply(selonlf._initial_delonnsity_t,
+                                    tf.pow(selonlf._delonnsity_deloncay_ratelon_t, p))
+      selonlf._delonnsity_t = tf.maximum(selonlf._min_delonnsity_t, deloncayelond_delonnsity)
 
-  def _create_slots(self, var_list):
+  delonf _crelonatelon_slots(selonlf, var_list):
     """
-    Create a slot variable to accumulate gradients locally for each variable in `var_list`.
+    Crelonatelon a slot variablelon to accumulatelon gradielonnts locally for elonach variablelon in `var_list`.
     Args:
-      var_list(list(tf.Variable)):
-        List of variables to accumulate gradients locally for.
+      var_list(list(tf.Variablelon)):
+        List of variablelons to accumulatelon gradielonnts locally for.
     """
     for var in var_list:
-      self._zeros_slot(var, "g_buffer", self._name)
+      selonlf._zelonros_slot(var, "g_buffelonr", selonlf._namelon)
 
-  def _apply_dense(self, grad, var):
-    if not self._accumulation:
-      top_row_indices = get_top_row_indices(grad, self._density_t)
+  delonf _apply_delonnselon(selonlf, grad, var):
+    if not selonlf._accumulation:
+      top_row_indicelons = gelont_top_row_indicelons(grad, selonlf._delonnsity_t)
 
-      if top_row_indices is None:
-        return super(DeepGradientCompressionOptimizer, self)._apply_dense(grad, var)
+      if top_row_indicelons is Nonelon:
+        relonturn supelonr(DelonelonpGradielonntComprelonssionOptimizelonr, selonlf)._apply_delonnselon(grad, var)
 
-      sparsified_values = tf.gather(grad, top_row_indices)
-      sparsified_indices = top_row_indices
+      sparsifielond_valuelons = tf.gathelonr(grad, top_row_indicelons)
+      sparsifielond_indicelons = top_row_indicelons
 
-      sparsified_grad = tf.IndexedSlices(sparsified_values, sparsified_indices)
+      sparsifielond_grad = tf.IndelonxelondSlicelons(sparsifielond_valuelons, sparsifielond_indicelons)
 
-      return super(DeepGradientCompressionOptimizer, self)._apply_sparse_duplicate_indices(
-        sparsified_grad, var)
+      relonturn supelonr(DelonelonpGradielonntComprelonssionOptimizelonr, selonlf)._apply_sparselon_duplicatelon_indicelons(
+        sparsifielond_grad, var)
 
-    else:
-      g_buffer = self.get_slot(var, "g_buffer")
+    elonlselon:
+      g_buffelonr = selonlf.gelont_slot(var, "g_buffelonr")
 
-      g_buffer = tf.assign_add(g_buffer, grad)
+      g_buffelonr = tf.assign_add(g_buffelonr, grad)
 
-      top_row_indices = get_top_row_indices(g_buffer, self._density_t)
+      top_row_indicelons = gelont_top_row_indicelons(g_buffelonr, selonlf._delonnsity_t)
 
-      if top_row_indices is None:
-        return super(DeepGradientCompressionOptimizer, self)._apply_dense(grad, var)
+      if top_row_indicelons is Nonelon:
+        relonturn supelonr(DelonelonpGradielonntComprelonssionOptimizelonr, selonlf)._apply_delonnselon(grad, var)
 
-      sparsified_values = tf.gather(g_buffer, top_row_indices)
-      sparsified_indices = top_row_indices
+      sparsifielond_valuelons = tf.gathelonr(g_buffelonr, top_row_indicelons)
+      sparsifielond_indicelons = top_row_indicelons
 
-      sparsified_grad = tf.IndexedSlices(sparsified_values, sparsified_indices)
+      sparsifielond_grad = tf.IndelonxelondSlicelons(sparsifielond_valuelons, sparsifielond_indicelons)
 
-      update_var = super(DeepGradientCompressionOptimizer, self)._apply_sparse_duplicate_indices(
-        sparsified_grad, var)
+      updatelon_var = supelonr(DelonelonpGradielonntComprelonssionOptimizelonr, selonlf)._apply_sparselon_duplicatelon_indicelons(
+        sparsifielond_grad, var)
 
-      update_g_buffer = tf.scatter_update(g_buffer, sparsified_indices, tf.zeros_like(
-        sparsified_values))
+      updatelon_g_buffelonr = tf.scattelonr_updatelon(g_buffelonr, sparsifielond_indicelons, tf.zelonros_likelon(
+        sparsifielond_valuelons))
 
-      return tf.group(*[update_var, update_g_buffer])
+      relonturn tf.group(*[updatelon_var, updatelon_g_buffelonr])
 
-  def _apply_sparse_duplicate_indices(self, grad, var):
-    if not self._accumulation:
-      top_row_indices = get_top_row_indices(grad.values, self._density_t)
+  delonf _apply_sparselon_duplicatelon_indicelons(selonlf, grad, var):
+    if not selonlf._accumulation:
+      top_row_indicelons = gelont_top_row_indicelons(grad.valuelons, selonlf._delonnsity_t)
 
-      if top_row_indices is None:
-        return super(DeepGradientCompressionOptimizer, self)._apply_sparse_duplicate_indices(grad, var)  # noqa: E501
+      if top_row_indicelons is Nonelon:
+        relonturn supelonr(DelonelonpGradielonntComprelonssionOptimizelonr, selonlf)._apply_sparselon_duplicatelon_indicelons(grad, var)  # noqa: elon501
 
-      sparsified_values = tf.gather(grad.values, top_row_indices)
-      sparsified_indices = tf.gather(grad.indices, top_row_indices)
+      sparsifielond_valuelons = tf.gathelonr(grad.valuelons, top_row_indicelons)
+      sparsifielond_indicelons = tf.gathelonr(grad.indicelons, top_row_indicelons)
 
-      sparsified_grad = tf.IndexedSlices(sparsified_values, sparsified_indices)
+      sparsifielond_grad = tf.IndelonxelondSlicelons(sparsifielond_valuelons, sparsifielond_indicelons)
 
-      return super(DeepGradientCompressionOptimizer, self)._apply_sparse_duplicate_indices(
-        sparsified_grad, var)
+      relonturn supelonr(DelonelonpGradielonntComprelonssionOptimizelonr, selonlf)._apply_sparselon_duplicatelon_indicelons(
+        sparsifielond_grad, var)
 
-    else:
-      g_buffer = self.get_slot(var, "g_buffer")
+    elonlselon:
+      g_buffelonr = selonlf.gelont_slot(var, "g_buffelonr")
 
-      g_buffer = tf.scatter_update(g_buffer, grad.indices, grad.values)
+      g_buffelonr = tf.scattelonr_updatelon(g_buffelonr, grad.indicelons, grad.valuelons)
 
-      top_row_indices = get_top_row_indices(g_buffer, self._density_t)
+      top_row_indicelons = gelont_top_row_indicelons(g_buffelonr, selonlf._delonnsity_t)
 
-      if top_row_indices is None:
-        return super(DeepGradientCompressionOptimizer,
-                     self)._apply_sparse_duplicate_indices(grad, var)
+      if top_row_indicelons is Nonelon:
+        relonturn supelonr(DelonelonpGradielonntComprelonssionOptimizelonr,
+                     selonlf)._apply_sparselon_duplicatelon_indicelons(grad, var)
 
-      sparsified_values = tf.gather(g_buffer, top_row_indices)
-      sparsified_indices = top_row_indices
+      sparsifielond_valuelons = tf.gathelonr(g_buffelonr, top_row_indicelons)
+      sparsifielond_indicelons = top_row_indicelons
 
-      sparsified_grad = tf.IndexedSlices(sparsified_values, sparsified_indices)
+      sparsifielond_grad = tf.IndelonxelondSlicelons(sparsifielond_valuelons, sparsifielond_indicelons)
 
-      update_var = super(DeepGradientCompressionOptimizer, self)._apply_sparse_duplicate_indices(
-        sparsified_grad, var)
+      updatelon_var = supelonr(DelonelonpGradielonntComprelonssionOptimizelonr, selonlf)._apply_sparselon_duplicatelon_indicelons(
+        sparsifielond_grad, var)
 
-      update_g_buffer = tf.scatter_update(g_buffer, sparsified_indices, tf.zeros_like(
-        sparsified_values))
+      updatelon_g_buffelonr = tf.scattelonr_updatelon(g_buffelonr, sparsifielond_indicelons, tf.zelonros_likelon(
+        sparsifielond_valuelons))
 
-      return tf.group(*[update_var, update_g_buffer])
+      relonturn tf.group(*[updatelon_var, updatelon_g_buffelonr])

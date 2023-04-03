@@ -1,15 +1,15 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "cache/client",
-        "finagle/finagle-memcached/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-thrift-client/src/main/scala",
-        "stitch/stitch-core",
-        "util/util-core:scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "cachelon/clielonnt",
+        "finaglelon/finaglelon-melonmcachelond/src/main/scala",
+        "finatra/injelonct/injelonct-corelon/src/main/scala",
+        "finatra/injelonct/injelonct-thrift-clielonnt/src/main/scala",
+        "stitch/stitch-corelon",
+        "util/util-corelon:scala",
         "util/util-thrift",
     ],
 )

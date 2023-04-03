@@ -1,95 +1,95 @@
-# SimClusters embedding store enable / disable decider values
+# SimClustelonrs elonmbelondding storelon elonnablelon / disablelon deloncidelonr valuelons
 
 # ---------- Dark Traffic Proxy ----------
-dark_traffic_filter:
-  comment: Proportion of the requests that are forwarded as dark traffic to the proxy
-  default_availability: 0
+dark_traffic_filtelonr:
+  commelonnt: Proportion of thelon relonquelonsts that arelon forwardelond as dark traffic to thelon proxy
+  delonfault_availability: 0
 
-# Tweet embeddings
-enable_LogFavBasedTweet_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# Twelonelont elonmbelonddings
+elonnablelon_LogFavBaselondTwelonelont_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_LogFavLongestL2EmbeddingTweet_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_LogFavLongelonstL2elonmbelonddingTwelonelont_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-# Entity embeddings
-enable_FavTfgTopic_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# elonntity elonmbelonddings
+elonnablelon_FavTfgTopic_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
 
-enable_LogFavBasedKgoApeTopic_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_LogFavBaselondKgoApelonTopic_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-# KnownFor embeddings
-enable_FavBasedProducer_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# KnownFor elonmbelonddings
+elonnablelon_FavBaselondProducelonr_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_FollowBasedProducer_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_FollowBaselondProducelonr_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_RelaxedAggregatableLogFavBasedProducer_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_RelonlaxelondAggrelongatablelonLogFavBaselondProducelonr_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-# InterestedIn embeddings
-enable_LogFavBasedUserInterestedInFromAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+# IntelonrelonstelondIn elonmbelonddings
+elonnablelon_LogFavBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_FollowBasedUserInterestedInFromAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_FollowBaselondUselonrIntelonrelonstelondInFromAPelon_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_FavBasedUserInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_FavBaselondUselonrIntelonrelonstelondIn_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_FollowBasedUserInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_FollowBaselondUselonrIntelonrelonstelondIn_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_LogFavBasedUserInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_LogFavBaselondUselonrIntelonrelonstelondIn_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_FilteredUserInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_FiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_UnfilteredUserInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_UnfiltelonrelondUselonrIntelonrelonstelondIn_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_LogFavBaselondUselonrIntelonrelonstelondMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_LogFavBasedUserInterestedAverageAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_LogFavBaselondUselonrIntelonrelonstelondAvelonragelonAddrelonssBookFromIIAPelon_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_LogFavBaselondUselonrIntelonrelonstelondBooktypelonMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_LogFavBaselondUselonrIntelonrelonstelondLargelonstDimMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_LogFavBaselondUselonrIntelonrelonstelondConnelonctelondMaxpoolingAddrelonssBookFromIIAPelon_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000
 
-enable_UserNextInterestedIn_Model20m145k2020:
-  comment: "Enable the read traffic to (embeddingType, modelVersion) from 0% to 100%. 0 means return EMPTY for all requests."
-  default_availability: 10000
+elonnablelon_UselonrNelonxtIntelonrelonstelondIn_Modelonl20m145k2020:
+  commelonnt: "elonnablelon thelon relonad traffic to (elonmbelonddingTypelon, modelonlVelonrsion) from 0% to 100%. 0 melonans relonturn elonMPTY for all relonquelonsts."
+  delonfault_availability: 10000

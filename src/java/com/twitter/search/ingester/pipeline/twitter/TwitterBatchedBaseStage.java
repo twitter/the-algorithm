@@ -1,309 +1,309 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collelonction;
+import java.util.Itelonrator;
 import java.util.Optional;
-import java.util.Queue;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-import javax.naming.NamingException;
+import java.util.Quelonuelon;
+import java.util.concurrelonnt.ComplelontablelonFuturelon;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.strelonam.Collelonctors;
+import javax.naming.Namingelonxcelonption;
 
-import scala.runtime.BoxedUnit;
+import scala.runtimelon.BoxelondUnit;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Queues;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Quelonuelons;
 
-import org.apache.commons.pipeline.StageException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.Batchelondelonlelonmelonnt;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonelonxcelonption;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
-public abstract class TwitterBatchedBaseStage<T, R> extends
-    TwitterBaseStage<T, CompletableFuture<R>> {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterBatchedBaseStage.class);
+public abstract class TwittelonrBatchelondBaselonStagelon<T, R> elonxtelonnds
+    TwittelonrBaselonStagelon<T, ComplelontablelonFuturelon<R>> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwittelonrBatchelondBaselonStagelon.class);
 
-  protected final Queue<BatchedElement<T, R>> queue =
-      Queues.newLinkedBlockingQueue(MAX_BATCHING_QUEUE_SIZE);
+  protelonctelond final Quelonuelon<Batchelondelonlelonmelonnt<T, R>> quelonuelon =
+      Quelonuelons.nelonwLinkelondBlockingQuelonuelon(MAX_BATCHING_QUelonUelon_SIZelon);
 
-  private int batchedStageBatchSize = 100;
-  private int forceProcessAfterMs = 500;
+  privatelon int batchelondStagelonBatchSizelon = 100;
+  privatelon int forcelonProcelonssAftelonrMs = 500;
 
-  private long lastProcessingTime;
+  privatelon long lastProcelonssingTimelon;
 
-  private SearchRateCounter timeBasedQueueFlush;
-  private SearchRateCounter sizeBasedQueueFlush;
-  private SearchRateCounter eventsFailed;
-  private SearchRateCounter numberOfCallsToNextBatchIfReady;
-  private SearchTimerStats batchExecutionTime;
-  private SearchTimerStats batchFailedExecutionTime;
-  private SearchRateCounter validElements;
-  private SearchRateCounter batchedElements;
-  private SearchRateCounter emittedElements;
-  private static final int MAX_BATCHING_QUEUE_SIZE = 10000;
+  privatelon SelonarchRatelonCountelonr timelonBaselondQuelonuelonFlush;
+  privatelon SelonarchRatelonCountelonr sizelonBaselondQuelonuelonFlush;
+  privatelon SelonarchRatelonCountelonr elonvelonntsFailelond;
+  privatelon SelonarchRatelonCountelonr numbelonrOfCallsToNelonxtBatchIfRelonady;
+  privatelon SelonarchTimelonrStats batchelonxeloncutionTimelon;
+  privatelon SelonarchTimelonrStats batchFailelondelonxeloncutionTimelon;
+  privatelon SelonarchRatelonCountelonr validelonlelonmelonnts;
+  privatelon SelonarchRatelonCountelonr batchelondelonlelonmelonnts;
+  privatelon SelonarchRatelonCountelonr elonmittelondelonlelonmelonnts;
+  privatelon static final int MAX_BATCHING_QUelonUelon_SIZelon = 10000;
 
-  // force the implementing class to set type correctly to avoid catching issues at runtime
-  protected abstract Class<T> getQueueObjectType();
+  // forcelon thelon implelonmelonnting class to selont typelon correlonctly to avoid catching issuelons at runtimelon
+  protelonctelond abstract Class<T> gelontQuelonuelonObjelonctTypelon();
 
-  // up to the developer on how each batch is processed.
-  protected abstract Future<Collection<R>> innerProcessBatch(Collection<BatchedElement<T, R>>
+  // up to thelon delonvelonlopelonr on how elonach batch is procelonsselond.
+  protelonctelond abstract Futurelon<Collelonction<R>> innelonrProcelonssBatch(Collelonction<Batchelondelonlelonmelonnt<T, R>>
                                                                  batch);
 
-  // classes that need to update their batch e.g after a decider change
-  // can override this
-  protected void updateBatchSize() {
+  // classelons that nelonelond to updatelon thelonir batch elon.g aftelonr a deloncidelonr changelon
+  // can ovelonrridelon this
+  protelonctelond void updatelonBatchSizelon() {
   }
 
-  protected Collection<T> extractOnlyElementsFromBatch(Collection<BatchedElement<T, R>> batch) {
-    Collection<T> elementsOnly = new ArrayList<>();
+  protelonctelond Collelonction<T> elonxtractOnlyelonlelonmelonntsFromBatch(Collelonction<Batchelondelonlelonmelonnt<T, R>> batch) {
+    Collelonction<T> elonlelonmelonntsOnly = nelonw ArrayList<>();
 
-    for (BatchedElement<T, R> batchedElement : batch) {
-      elementsOnly.add(batchedElement.getItem());
+    for (Batchelondelonlelonmelonnt<T, R> batchelondelonlelonmelonnt : batch) {
+      elonlelonmelonntsOnly.add(batchelondelonlelonmelonnt.gelontItelonm());
     }
-    return elementsOnly;
+    relonturn elonlelonmelonntsOnly;
   }
   /**
-   * This function is used to filter the elements that we want to batch.
-   * e.g. if a tweet has urls batch it to resolve the urls, if it doesn't contain urls
+   * This function is uselond to filtelonr thelon elonlelonmelonnts that welon want to batch.
+   * elon.g. if a twelonelont has urls batch it to relonsolvelon thelon urls, if it doelonsn't contain urls
    * do not batch.
    *
-   * @param element to be evaluated
+   * @param elonlelonmelonnt to belon elonvaluatelond
    */
-  protected abstract boolean needsToBeBatched(T element);
+  protelonctelond abstract boolelonan nelonelondsToBelonBatchelond(T elonlelonmelonnt);
 
   /**
-   * Tranform from type T to U element.
-   * T and U might be different types so this function will help with the transformation
-   * if the incoming T element is filtered out and is bypass directly to the next stage
-   * that takes incoming objects of type U
+   * Tranform from typelon T to U elonlelonmelonnt.
+   * T and U might belon diffelonrelonnt typelons so this function will helonlp with thelon transformation
+   * if thelon incoming T elonlelonmelonnt is filtelonrelond out and is bypass direlonctly to thelon nelonxt stagelon
+   * that takelons incoming objeloncts of typelon U
    *
-   * @param element incoming element
+   * @param elonlelonmelonnt incoming elonlelonmelonnt
    */
-  protected abstract R transform(T element);
+  protelonctelond abstract R transform(T elonlelonmelonnt);
 
-  protected void reEnqueueAndRetry(BatchedElement<T, R> batchedElement) {
-    queue.add(batchedElement);
+  protelonctelond void relonelonnquelonuelonAndRelontry(Batchelondelonlelonmelonnt<T, R> batchelondelonlelonmelonnt) {
+    quelonuelon.add(batchelondelonlelonmelonnt);
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    commonInnerSetupStats();
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
+    commonInnelonrSelontupStats();
   }
 
-  private void commonInnerSetupStats() {
-    timeBasedQueueFlush = SearchRateCounter.export(getStageNamePrefix()
-        + "_time_based_queue_flush");
-    sizeBasedQueueFlush = SearchRateCounter.export(getStageNamePrefix()
-        + "_size_based_queue_flush");
-    batchExecutionTime = SearchTimerStats.export(getStageNamePrefix()
-        + "_batch_execution_time", TimeUnit.MILLISECONDS, false, true);
-    batchFailedExecutionTime = SearchTimerStats.export(getStageNamePrefix()
-        + "_batch_failed_execution_time", TimeUnit.MILLISECONDS, false, true);
-    eventsFailed = SearchRateCounter.export(getStageNamePrefix() + "_events_dropped");
-    SearchCustomGauge.export(getStageNamePrefix() + "_batched_stage_queue_size", queue::size);
-    numberOfCallsToNextBatchIfReady = SearchRateCounter.export(getStageNamePrefix()
-        + "_calls_to_nextBatchIfReady");
-    validElements = SearchRateCounter.export(getStageNamePrefix() + "_valid_elements");
-    batchedElements = SearchRateCounter.export(getStageNamePrefix() + "_batched_elements");
-    emittedElements = SearchRateCounter.export(getStageNamePrefix() + "_emitted_elements");
+  privatelon void commonInnelonrSelontupStats() {
+    timelonBaselondQuelonuelonFlush = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix()
+        + "_timelon_baselond_quelonuelon_flush");
+    sizelonBaselondQuelonuelonFlush = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix()
+        + "_sizelon_baselond_quelonuelon_flush");
+    batchelonxeloncutionTimelon = SelonarchTimelonrStats.elonxport(gelontStagelonNamelonPrelonfix()
+        + "_batch_elonxeloncution_timelon", TimelonUnit.MILLISelonCONDS, falselon, truelon);
+    batchFailelondelonxeloncutionTimelon = SelonarchTimelonrStats.elonxport(gelontStagelonNamelonPrelonfix()
+        + "_batch_failelond_elonxeloncution_timelon", TimelonUnit.MILLISelonCONDS, falselon, truelon);
+    elonvelonntsFailelond = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_elonvelonnts_droppelond");
+    SelonarchCustomGaugelon.elonxport(gelontStagelonNamelonPrelonfix() + "_batchelond_stagelon_quelonuelon_sizelon", quelonuelon::sizelon);
+    numbelonrOfCallsToNelonxtBatchIfRelonady = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix()
+        + "_calls_to_nelonxtBatchIfRelonady");
+    validelonlelonmelonnts = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_valid_elonlelonmelonnts");
+    batchelondelonlelonmelonnts = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_batchelond_elonlelonmelonnts");
+    elonmittelondelonlelonmelonnts = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_elonmittelond_elonlelonmelonnts");
   }
 
-  @Override
-  protected void innerSetupStats() {
-    commonInnerSetupStats();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    commonInnelonrSelontupStats();
   }
 
-  // return a possible batch of elements to process. If we have enough for one batch
-  protected Optional<Collection<BatchedElement<T, R>>> nextBatchIfReady() {
-    numberOfCallsToNextBatchIfReady.increment();
-    Optional<Collection<BatchedElement<T, R>>> batch = Optional.empty();
+  // relonturn a possiblelon batch of elonlelonmelonnts to procelonss. If welon havelon elonnough for onelon batch
+  protelonctelond Optional<Collelonction<Batchelondelonlelonmelonnt<T, R>>> nelonxtBatchIfRelonady() {
+    numbelonrOfCallsToNelonxtBatchIfRelonady.increlonmelonnt();
+    Optional<Collelonction<Batchelondelonlelonmelonnt<T, R>>> batch = Optional.elonmpty();
 
-    if (!queue.isEmpty()) {
-      long elapsed = clock.nowMillis() - lastProcessingTime;
-      if (elapsed > forceProcessAfterMs) {
-        batch = Optional.of(Lists.newArrayList(queue));
-        timeBasedQueueFlush.increment();
-        queue.clear();
-      } else if (queue.size() >= batchedStageBatchSize) {
-        batch = Optional.of(queue.stream()
-            .limit(batchedStageBatchSize)
-            .map(element -> queue.remove())
-            .collect(Collectors.toList()));
-        sizeBasedQueueFlush.increment();
+    if (!quelonuelon.iselonmpty()) {
+      long elonlapselond = clock.nowMillis() - lastProcelonssingTimelon;
+      if (elonlapselond > forcelonProcelonssAftelonrMs) {
+        batch = Optional.of(Lists.nelonwArrayList(quelonuelon));
+        timelonBaselondQuelonuelonFlush.increlonmelonnt();
+        quelonuelon.clelonar();
+      } elonlselon if (quelonuelon.sizelon() >= batchelondStagelonBatchSizelon) {
+        batch = Optional.of(quelonuelon.strelonam()
+            .limit(batchelondStagelonBatchSizelon)
+            .map(elonlelonmelonnt -> quelonuelon.relonmovelon())
+            .collelonct(Collelonctors.toList()));
+        sizelonBaselondQuelonuelonFlush.increlonmelonnt();
       }
     }
-    return batch;
+    relonturn batch;
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    T element;
-    if (getQueueObjectType().isInstance(obj)) {
-      element = getQueueObjectType().cast(obj);
-    } else {
-      throw new StageException(this, "Trying to add an object of the wrong type to a queue. "
-          + getQueueObjectType().getSimpleName()
-          + " is the expected type");
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    T elonlelonmelonnt;
+    if (gelontQuelonuelonObjelonctTypelon().isInstancelon(obj)) {
+      elonlelonmelonnt = gelontQuelonuelonObjelonctTypelon().cast(obj);
+    } elonlselon {
+      throw nelonw Stagelonelonxcelonption(this, "Trying to add an objelonct of thelon wrong typelon to a quelonuelon. "
+          + gelontQuelonuelonObjelonctTypelon().gelontSimplelonNamelon()
+          + " is thelon elonxpelonctelond typelon");
     }
 
-   if (!tryToAddElementToBatch(element)) {
-     emitAndCount(transform(element));
+   if (!tryToAddelonlelonmelonntToBatch(elonlelonmelonnt)) {
+     elonmitAndCount(transform(elonlelonmelonnt));
    }
 
-   tryToSendBatchedRequest();
+   tryToSelonndBatchelondRelonquelonst();
   }
 
-  @Override
-  protected CompletableFuture<R> innerRunStageV2(T element) {
-    CompletableFuture<R> completableFuture = new CompletableFuture<>();
-    if (!tryToAddElementToBatch(element, completableFuture)) {
-      completableFuture.complete(transform(element));
+  @Ovelonrridelon
+  protelonctelond ComplelontablelonFuturelon<R> innelonrRunStagelonV2(T elonlelonmelonnt) {
+    ComplelontablelonFuturelon<R> complelontablelonFuturelon = nelonw ComplelontablelonFuturelon<>();
+    if (!tryToAddelonlelonmelonntToBatch(elonlelonmelonnt, complelontablelonFuturelon)) {
+      complelontablelonFuturelon.complelontelon(transform(elonlelonmelonnt));
     }
 
-    tryToSendBatchedRequestV2();
+    tryToSelonndBatchelondRelonquelonstV2();
 
-    return completableFuture;
+    relonturn complelontablelonFuturelon;
   }
 
-  private boolean tryToAddElementToBatch(T element, CompletableFuture<R> cf) {
-    boolean needsToBeBatched = needsToBeBatched(element);
-    if (needsToBeBatched) {
-      queue.add(new BatchedElement<>(element, cf));
+  privatelon boolelonan tryToAddelonlelonmelonntToBatch(T elonlelonmelonnt, ComplelontablelonFuturelon<R> cf) {
+    boolelonan nelonelondsToBelonBatchelond = nelonelondsToBelonBatchelond(elonlelonmelonnt);
+    if (nelonelondsToBelonBatchelond) {
+      quelonuelon.add(nelonw Batchelondelonlelonmelonnt<>(elonlelonmelonnt, cf));
     }
 
-    return needsToBeBatched;
+    relonturn nelonelondsToBelonBatchelond;
   }
 
-  private boolean tryToAddElementToBatch(T element) {
-    return tryToAddElementToBatch(element, CompletableFuture.completedFuture(null));
+  privatelon boolelonan tryToAddelonlelonmelonntToBatch(T elonlelonmelonnt) {
+    relonturn tryToAddelonlelonmelonntToBatch(elonlelonmelonnt, ComplelontablelonFuturelon.complelontelondFuturelon(null));
   }
 
-  private void tryToSendBatchedRequest() {
-    Optional<Collection<BatchedElement<T, R>>> maybeToProcess = nextBatchIfReady();
-    if (maybeToProcess.isPresent()) {
-      Collection<BatchedElement<T, R>> batch = maybeToProcess.get();
-      lastProcessingTime = clock.nowMillis();
-      processBatch(batch, getOnSuccessFunction(lastProcessingTime),
-          getOnFailureFunction(batch, lastProcessingTime));
-    }
-  }
-
-  private void tryToSendBatchedRequestV2() {
-    Optional<Collection<BatchedElement<T, R>>> maybeToProcess = nextBatchIfReady();
-    if (maybeToProcess.isPresent()) {
-      Collection<BatchedElement<T, R>> batch = maybeToProcess.get();
-      lastProcessingTime = clock.nowMillis();
-      processBatch(batch, getOnSuccessFunctionV2(batch, lastProcessingTime),
-          getOnFailureFunctionV2(batch, lastProcessingTime));
+  privatelon void tryToSelonndBatchelondRelonquelonst() {
+    Optional<Collelonction<Batchelondelonlelonmelonnt<T, R>>> maybelonToProcelonss = nelonxtBatchIfRelonady();
+    if (maybelonToProcelonss.isPrelonselonnt()) {
+      Collelonction<Batchelondelonlelonmelonnt<T, R>> batch = maybelonToProcelonss.gelont();
+      lastProcelonssingTimelon = clock.nowMillis();
+      procelonssBatch(batch, gelontOnSuccelonssFunction(lastProcelonssingTimelon),
+          gelontOnFailurelonFunction(batch, lastProcelonssingTimelon));
     }
   }
 
-  private void processBatch(Collection<BatchedElement<T, R>> batch,
-                            Function<Collection<R>, BoxedUnit> onSuccess,
-                            Function<Throwable, BoxedUnit> onFailure) {
-    updateBatchSize();
-
-    Future<Collection<R>> futureComputation = innerProcessBatch(batch);
-
-    futureComputation.onSuccess(onSuccess);
-
-    futureComputation.onFailure(onFailure);
+  privatelon void tryToSelonndBatchelondRelonquelonstV2() {
+    Optional<Collelonction<Batchelondelonlelonmelonnt<T, R>>> maybelonToProcelonss = nelonxtBatchIfRelonady();
+    if (maybelonToProcelonss.isPrelonselonnt()) {
+      Collelonction<Batchelondelonlelonmelonnt<T, R>> batch = maybelonToProcelonss.gelont();
+      lastProcelonssingTimelon = clock.nowMillis();
+      procelonssBatch(batch, gelontOnSuccelonssFunctionV2(batch, lastProcelonssingTimelon),
+          gelontOnFailurelonFunctionV2(batch, lastProcelonssingTimelon));
+    }
   }
 
-  private Function<Collection<R>, BoxedUnit> getOnSuccessFunction(long started) {
-    return Function.cons((elements) -> {
-      elements.forEach(this::emitAndCount);
-      batchExecutionTime.timerIncrement(clock.nowMillis() - started);
+  privatelon void procelonssBatch(Collelonction<Batchelondelonlelonmelonnt<T, R>> batch,
+                            Function<Collelonction<R>, BoxelondUnit> onSuccelonss,
+                            Function<Throwablelon, BoxelondUnit> onFailurelon) {
+    updatelonBatchSizelon();
+
+    Futurelon<Collelonction<R>> futurelonComputation = innelonrProcelonssBatch(batch);
+
+    futurelonComputation.onSuccelonss(onSuccelonss);
+
+    futurelonComputation.onFailurelon(onFailurelon);
+  }
+
+  privatelon Function<Collelonction<R>, BoxelondUnit> gelontOnSuccelonssFunction(long startelond) {
+    relonturn Function.cons((elonlelonmelonnts) -> {
+      elonlelonmelonnts.forelonach(this::elonmitAndCount);
+      batchelonxeloncutionTimelon.timelonrIncrelonmelonnt(clock.nowMillis() - startelond);
     });
   }
 
-  private Function<Collection<R>, BoxedUnit> getOnSuccessFunctionV2(Collection<BatchedElement<T, R>>
-                                                                        batch, long started) {
-    return Function.cons((elements) -> {
-      Iterator<BatchedElement<T, R>> iterator = batch.iterator();
-      for (R element : elements) {
-        if (iterator.hasNext()) {
-          iterator.next().getCompletableFuture().complete(element);
-        } else {
-          LOG.error("Getting Response from Batched Request, but no CompleteableFuture object"
-              + " to complete.");
+  privatelon Function<Collelonction<R>, BoxelondUnit> gelontOnSuccelonssFunctionV2(Collelonction<Batchelondelonlelonmelonnt<T, R>>
+                                                                        batch, long startelond) {
+    relonturn Function.cons((elonlelonmelonnts) -> {
+      Itelonrator<Batchelondelonlelonmelonnt<T, R>> itelonrator = batch.itelonrator();
+      for (R elonlelonmelonnt : elonlelonmelonnts) {
+        if (itelonrator.hasNelonxt()) {
+          itelonrator.nelonxt().gelontComplelontablelonFuturelon().complelontelon(elonlelonmelonnt);
+        } elonlselon {
+          LOG.elonrror("Gelontting Relonsponselon from Batchelond Relonquelonst, but no ComplelontelonablelonFuturelon objelonct"
+              + " to complelontelon.");
         }
       }
-      batchExecutionTime.timerIncrement(clock.nowMillis() - started);
+      batchelonxeloncutionTimelon.timelonrIncrelonmelonnt(clock.nowMillis() - startelond);
 
     });
   }
 
-  private Function<Throwable, BoxedUnit> getOnFailureFunction(Collection<BatchedElement<T, R>>
-                                                                    batch, long started) {
-    return Function.cons((throwable) -> {
-      batch.forEach(batchedElement -> {
-        eventsFailed.increment();
-        // pass the tweet event down better to index an incomplete event than nothing at all
-        emitAndCount(transform(batchedElement.getItem()));
+  privatelon Function<Throwablelon, BoxelondUnit> gelontOnFailurelonFunction(Collelonction<Batchelondelonlelonmelonnt<T, R>>
+                                                                    batch, long startelond) {
+    relonturn Function.cons((throwablelon) -> {
+      batch.forelonach(batchelondelonlelonmelonnt -> {
+        elonvelonntsFailelond.increlonmelonnt();
+        // pass thelon twelonelont elonvelonnt down belonttelonr to indelonx an incomplelontelon elonvelonnt than nothing at all
+        elonmitAndCount(transform(batchelondelonlelonmelonnt.gelontItelonm()));
       });
-      batchFailedExecutionTime.timerIncrement(clock.nowMillis() - started);
-      LOG.error("Failed processing batch", throwable);
+      batchFailelondelonxeloncutionTimelon.timelonrIncrelonmelonnt(clock.nowMillis() - startelond);
+      LOG.elonrror("Failelond procelonssing batch", throwablelon);
     });
   }
 
-  private Function<Throwable, BoxedUnit> getOnFailureFunctionV2(Collection<BatchedElement<T, R>>
-                                                                  batch, long started) {
-    return Function.cons((throwable) -> {
-      batch.forEach(batchedElement -> {
-        eventsFailed.increment();
-        R itemTransformed = transform(batchedElement.getItem());
-        // complete the future, its better to index an incomplete event than nothing at all
-        batchedElement.getCompletableFuture().complete(itemTransformed);
+  privatelon Function<Throwablelon, BoxelondUnit> gelontOnFailurelonFunctionV2(Collelonction<Batchelondelonlelonmelonnt<T, R>>
+                                                                  batch, long startelond) {
+    relonturn Function.cons((throwablelon) -> {
+      batch.forelonach(batchelondelonlelonmelonnt -> {
+        elonvelonntsFailelond.increlonmelonnt();
+        R itelonmTransformelond = transform(batchelondelonlelonmelonnt.gelontItelonm());
+        // complelontelon thelon futurelon, its belonttelonr to indelonx an incomplelontelon elonvelonnt than nothing at all
+        batchelondelonlelonmelonnt.gelontComplelontablelonFuturelon().complelontelon(itelonmTransformelond);
       });
-      batchFailedExecutionTime.timerIncrement(clock.nowMillis() - started);
-      LOG.error("Failed processing batch", throwable);
+      batchFailelondelonxeloncutionTimelon.timelonrIncrelonmelonnt(clock.nowMillis() - startelond);
+      LOG.elonrror("Failelond procelonssing batch", throwablelon);
     });
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
     try {
-      commonInnerSetup();
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+      commonInnelonrSelontup();
+    } catch (PipelonlinelonStagelonelonxcelonption elon) {
+      throw nelonw Stagelonelonxcelonption(this, elon);
     }
   }
 
-  private void commonInnerSetup() throws PipelineStageException, NamingException {
-    updateBatchSize();
+  privatelon void commonInnelonrSelontup() throws PipelonlinelonStagelonelonxcelonption, Namingelonxcelonption {
+    updatelonBatchSizelon();
 
-    if (batchedStageBatchSize < 1) {
-      throw new PipelineStageException(this,
-          "Batch size must be set at least to 1 for batched stages but is set to"
-              + batchedStageBatchSize);
+    if (batchelondStagelonBatchSizelon < 1) {
+      throw nelonw PipelonlinelonStagelonelonxcelonption(this,
+          "Batch sizelon must belon selont at lelonast to 1 for batchelond stagelons but is selont to"
+              + batchelondStagelonBatchSizelon);
     }
 
-    if (forceProcessAfterMs < 1) {
-      throw new PipelineStageException(this, "forceProcessAfterMs needs to be at least 1 "
-          + "ms but is set to " + forceProcessAfterMs);
+    if (forcelonProcelonssAftelonrMs < 1) {
+      throw nelonw PipelonlinelonStagelonelonxcelonption(this, "forcelonProcelonssAftelonrMs nelonelonds to belon at lelonast 1 "
+          + "ms but is selont to " + forcelonProcelonssAftelonrMs);
     }
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    commonInnerSetup();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() throws PipelonlinelonStagelonelonxcelonption, Namingelonxcelonption {
+    commonInnelonrSelontup();
   }
 
-  // Setters for configuration parameters
-  public void setBatchedStageBatchSize(int maxElementsToWaitFor) {
-    this.batchedStageBatchSize = maxElementsToWaitFor;
+  // Selonttelonrs for configuration paramelontelonrs
+  public void selontBatchelondStagelonBatchSizelon(int maxelonlelonmelonntsToWaitFor) {
+    this.batchelondStagelonBatchSizelon = maxelonlelonmelonntsToWaitFor;
   }
 
-  public void setForceProcessAfter(int forceProcessAfterMS) {
-    this.forceProcessAfterMs = forceProcessAfterMS;
+  public void selontForcelonProcelonssAftelonr(int forcelonProcelonssAftelonrMS) {
+    this.forcelonProcelonssAftelonrMs = forcelonProcelonssAftelonrMS;
   }
 }

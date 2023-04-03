@@ -1,251 +1,251 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.search.IndexSearcher;
+import org.apachelon.lucelonnelon.indelonx.IndelonxWritelonrConfig;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
 
-import com.twitter.search.common.schema.SearchWhitespaceAnalyzer;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.AbstractFacetCountingArray;
-import com.twitter.search.core.earlybird.facets.EarlybirdFacetDocValueSet;
-import com.twitter.search.core.earlybird.facets.FacetCountingArray;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetUtil;
-import com.twitter.search.core.earlybird.facets.OptimizedFacetCountingArray;
-import com.twitter.search.core.earlybird.index.column.DocValuesManager;
-import com.twitter.search.core.earlybird.index.column.OptimizedDocValuesManager;
-import com.twitter.search.core.earlybird.index.column.UnoptimizedDocValuesManager;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.inverted.DeletedDocs;
-import com.twitter.search.core.earlybird.index.inverted.IndexOptimizer;
-import com.twitter.search.core.earlybird.index.inverted.InvertedIndex;
+import com.twittelonr.selonarch.common.schelonma.SelonarchWhitelonspacelonAnalyzelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.AbstractFacelontCountingArray;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.elonarlybirdFacelontDocValuelonSelont;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountingArray;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontUtil;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.OptimizelondFacelontCountingArray;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.DocValuelonsManagelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.OptimizelondDocValuelonsManagelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.UnoptimizelondDocValuelonsManagelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdIndelonxelonxtelonnsionsFactory;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.DelonlelontelondDocs;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.IndelonxOptimizelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondIndelonx;
 
 /**
- * Implements {@link EarlybirdIndexSegmentData} for real-time in-memory Earlybird segments.
+ * Implelonmelonnts {@link elonarlybirdIndelonxSelongmelonntData} for relonal-timelon in-melonmory elonarlybird selongmelonnts.
  */
-public class EarlybirdRealtimeIndexSegmentData extends EarlybirdIndexSegmentData {
-  private final EarlybirdRealtimeIndexExtensionsData indexExtension;
+public class elonarlybirdRelonaltimelonIndelonxSelongmelonntData elonxtelonnds elonarlybirdIndelonxSelongmelonntData {
+  privatelon final elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData indelonxelonxtelonnsion;
 
-  private EarlybirdFacetDocValueSet facetDocValueSet;
+  privatelon elonarlybirdFacelontDocValuelonSelont facelontDocValuelonSelont;
 
   /**
-   * Creates a new empty real-time SegmentData instance.
+   * Crelonatelons a nelonw elonmpty relonal-timelon SelongmelonntData instancelon.
    */
-  public EarlybirdRealtimeIndexSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper,
-      EarlybirdIndexExtensionsFactory indexExtensionsFactory) {
+  public elonarlybirdRelonaltimelonIndelonxSelongmelonntData(
+      int maxSelongmelonntSizelon,
+      long timelonSlicelonID,
+      Schelonma schelonma,
+      DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr,
+      TimelonMappelonr timelonMappelonr,
+      elonarlybirdIndelonxelonxtelonnsionsFactory indelonxelonxtelonnsionsFactory) {
     this(
-        maxSegmentSize,
-        timeSliceID,
-        schema,
-        false, // isOptimized
-        Integer.MAX_VALUE,
-        new ConcurrentHashMap<>(),
-        new FacetCountingArray(maxSegmentSize),
-        new UnoptimizedDocValuesManager(schema, maxSegmentSize),
-        Maps.newHashMapWithExpectedSize(schema.getNumFacetFields()),
-        FacetIDMap.build(schema),
-        new DeletedDocs.Default(maxSegmentSize),
-        docIdToTweetIdMapper,
-        timeMapper,
-        indexExtensionsFactory == null
+        maxSelongmelonntSizelon,
+        timelonSlicelonID,
+        schelonma,
+        falselon, // isOptimizelond
+        Intelongelonr.MAX_VALUelon,
+        nelonw ConcurrelonntHashMap<>(),
+        nelonw FacelontCountingArray(maxSelongmelonntSizelon),
+        nelonw UnoptimizelondDocValuelonsManagelonr(schelonma, maxSelongmelonntSizelon),
+        Maps.nelonwHashMapWithelonxpelonctelondSizelon(schelonma.gelontNumFacelontFielonlds()),
+        FacelontIDMap.build(schelonma),
+        nelonw DelonlelontelondDocs.Delonfault(maxSelongmelonntSizelon),
+        docIdToTwelonelontIdMappelonr,
+        timelonMappelonr,
+        indelonxelonxtelonnsionsFactory == null
             ? null
-            : indexExtensionsFactory.newRealtimeIndexExtensionsData());
+            : indelonxelonxtelonnsionsFactory.nelonwRelonaltimelonIndelonxelonxtelonnsionsData());
   }
 
   /**
-   * Creates a new real-time SegmentData instance using the passed in data structures. Usually this
-   * constructor is used by the FlushHandler after a segment was loaded from disk, but also the
-   * {@link IndexOptimizer} uses it to create an
-   * optimized segment.
+   * Crelonatelons a nelonw relonal-timelon SelongmelonntData instancelon using thelon passelond in data structurelons. Usually this
+   * constructor is uselond by thelon FlushHandlelonr aftelonr a selongmelonnt was loadelond from disk, but also thelon
+   * {@link IndelonxOptimizelonr} uselons it to crelonatelon an
+   * optimizelond selongmelonnt.
    */
-  public EarlybirdRealtimeIndexSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Schema schema,
-      boolean isOptimized,
-      int smallestDocID,
-      ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-      AbstractFacetCountingArray facetCountingArray,
-      DocValuesManager docValuesManager,
-      Map<String, FacetLabelProvider> facetLabelProviders,
-      FacetIDMap facetIDMap,
-      DeletedDocs deletedDocs,
-      DocIDToTweetIDMapper docIdToTweetIdMapper,
-      TimeMapper timeMapper,
-      EarlybirdRealtimeIndexExtensionsData indexExtension) {
-    super(maxSegmentSize,
-          timeSliceID,
-          schema,
-          isOptimized,
-          smallestDocID,
-          perFieldMap,
-          new ConcurrentHashMap<>(),
-          facetCountingArray,
-          docValuesManager,
-          facetLabelProviders,
-          facetIDMap,
-          deletedDocs,
-          docIdToTweetIdMapper,
-          timeMapper);
-    this.indexExtension = indexExtension;
-    this.facetDocValueSet = null;
+  public elonarlybirdRelonaltimelonIndelonxSelongmelonntData(
+      int maxSelongmelonntSizelon,
+      long timelonSlicelonID,
+      Schelonma schelonma,
+      boolelonan isOptimizelond,
+      int smallelonstDocID,
+      ConcurrelonntHashMap<String, InvelonrtelondIndelonx> pelonrFielonldMap,
+      AbstractFacelontCountingArray facelontCountingArray,
+      DocValuelonsManagelonr docValuelonsManagelonr,
+      Map<String, FacelontLabelonlProvidelonr> facelontLabelonlProvidelonrs,
+      FacelontIDMap facelontIDMap,
+      DelonlelontelondDocs delonlelontelondDocs,
+      DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr,
+      TimelonMappelonr timelonMappelonr,
+      elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData indelonxelonxtelonnsion) {
+    supelonr(maxSelongmelonntSizelon,
+          timelonSlicelonID,
+          schelonma,
+          isOptimizelond,
+          smallelonstDocID,
+          pelonrFielonldMap,
+          nelonw ConcurrelonntHashMap<>(),
+          facelontCountingArray,
+          docValuelonsManagelonr,
+          facelontLabelonlProvidelonrs,
+          facelontIDMap,
+          delonlelontelondDocs,
+          docIdToTwelonelontIdMappelonr,
+          timelonMappelonr);
+    this.indelonxelonxtelonnsion = indelonxelonxtelonnsion;
+    this.facelontDocValuelonSelont = null;
   }
 
-  @Override
-  public EarlybirdRealtimeIndexExtensionsData getIndexExtensionsData() {
-    return indexExtension;
+  @Ovelonrridelon
+  public elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData gelontIndelonxelonxtelonnsionsData() {
+    relonturn indelonxelonxtelonnsion;
   }
 
   /**
-   * For realtime segments, this wraps a facet datastructure into a SortedSetDocValues to
-   * comply to Lucene facet api.
+   * For relonaltimelon selongmelonnts, this wraps a facelont datastructurelon into a SortelondSelontDocValuelons to
+   * comply to Lucelonnelon facelont api.
    */
-  public EarlybirdFacetDocValueSet getFacetDocValueSet() {
-    if (facetDocValueSet == null) {
-      AbstractFacetCountingArray facetCountingArray = getFacetCountingArray();
-      if (facetCountingArray != null) {
-        facetDocValueSet = new EarlybirdFacetDocValueSet(
-            facetCountingArray, getFacetLabelProviders(), getFacetIDMap());
+  public elonarlybirdFacelontDocValuelonSelont gelontFacelontDocValuelonSelont() {
+    if (facelontDocValuelonSelont == null) {
+      AbstractFacelontCountingArray facelontCountingArray = gelontFacelontCountingArray();
+      if (facelontCountingArray != null) {
+        facelontDocValuelonSelont = nelonw elonarlybirdFacelontDocValuelonSelont(
+            facelontCountingArray, gelontFacelontLabelonlProvidelonrs(), gelontFacelontIDMap());
       }
     }
-    return facetDocValueSet;
+    relonturn facelontDocValuelonSelont;
   }
 
-  @Override
-  protected EarlybirdIndexSegmentAtomicReader doCreateAtomicReader() {
-    return new EarlybirdRealtimeIndexSegmentAtomicReader(this);
+  @Ovelonrridelon
+  protelonctelond elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr doCrelonatelonAtomicRelonadelonr() {
+    relonturn nelonw elonarlybirdRelonaltimelonIndelonxSelongmelonntAtomicRelonadelonr(this);
   }
 
   /**
-   * Convenience method for creating an EarlybirdIndexSegmentWriter for this segment with a default
-   * IndexSegmentWriter config.
+   * Convelonnielonncelon melonthod for crelonating an elonarlybirdIndelonxSelongmelonntWritelonr for this selongmelonnt with a delonfault
+   * IndelonxSelongmelonntWritelonr config.
    */
-  public EarlybirdIndexSegmentWriter createEarlybirdIndexSegmentWriter() {
-    return createEarlybirdIndexSegmentWriter(
-        new IndexWriterConfig(new SearchWhitespaceAnalyzer()).setSimilarity(
-            IndexSearcher.getDefaultSimilarity()));
+  public elonarlybirdIndelonxSelongmelonntWritelonr crelonatelonelonarlybirdIndelonxSelongmelonntWritelonr() {
+    relonturn crelonatelonelonarlybirdIndelonxSelongmelonntWritelonr(
+        nelonw IndelonxWritelonrConfig(nelonw SelonarchWhitelonspacelonAnalyzelonr()).selontSimilarity(
+            IndelonxSelonarchelonr.gelontDelonfaultSimilarity()));
   }
 
-  @Override
-  public EarlybirdIndexSegmentWriter createEarlybirdIndexSegmentWriter(
-      IndexWriterConfig indexWriterConfig) {
-    // Prepare the in-memory segment with all enabled CSF fields.
-    DocValuesManager docValuesManager = getDocValuesManager();
-    for (Schema.FieldInfo fieldInfo : getSchema().getFieldInfos()) {
-      if (fieldInfo.getFieldType().getCsfType() != null) {
-        docValuesManager.addColumnStrideField(fieldInfo.getName(), fieldInfo.getFieldType());
+  @Ovelonrridelon
+  public elonarlybirdIndelonxSelongmelonntWritelonr crelonatelonelonarlybirdIndelonxSelongmelonntWritelonr(
+      IndelonxWritelonrConfig indelonxWritelonrConfig) {
+    // Prelonparelon thelon in-melonmory selongmelonnt with all elonnablelond CSF fielonlds.
+    DocValuelonsManagelonr docValuelonsManagelonr = gelontDocValuelonsManagelonr();
+    for (Schelonma.FielonldInfo fielonldInfo : gelontSchelonma().gelontFielonldInfos()) {
+      if (fielonldInfo.gelontFielonldTypelon().gelontCsfTypelon() != null) {
+        docValuelonsManagelonr.addColumnStridelonFielonld(fielonldInfo.gelontNamelon(), fielonldInfo.gelontFielonldTypelon());
       }
     }
 
-    return new EarlybirdRealtimeIndexSegmentWriter(
+    relonturn nelonw elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr(
         this,
-        indexWriterConfig.getAnalyzer(),
-        indexWriterConfig.getSimilarity());
+        indelonxWritelonrConfig.gelontAnalyzelonr(),
+        indelonxWritelonrConfig.gelontSimilarity());
   }
 
-  @Override
-  public EarlybirdIndexSegmentData.AbstractSegmentDataFlushHandler getFlushHandler() {
-    return new InMemorySegmentDataFlushHandler(this);
+  @Ovelonrridelon
+  public elonarlybirdIndelonxSelongmelonntData.AbstractSelongmelonntDataFlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw InMelonmorySelongmelonntDataFlushHandlelonr(this);
   }
 
-  public static class InMemorySegmentDataFlushHandler
-      extends AbstractSegmentDataFlushHandler<EarlybirdRealtimeIndexExtensionsData> {
-    public InMemorySegmentDataFlushHandler(EarlybirdIndexSegmentData objectToFlush) {
-      super(objectToFlush);
+  public static class InMelonmorySelongmelonntDataFlushHandlelonr
+      elonxtelonnds AbstractSelongmelonntDataFlushHandlelonr<elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData> {
+    public InMelonmorySelongmelonntDataFlushHandlelonr(elonarlybirdIndelonxSelongmelonntData objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    public InMemorySegmentDataFlushHandler(
-        Schema schema,
-        EarlybirdIndexExtensionsFactory factory,
-        Flushable.Handler<? extends DocIDToTweetIDMapper> docIdMapperFlushHandler,
-        Flushable.Handler<? extends TimeMapper> timeMapperFlushHandler) {
-      super(schema, factory, docIdMapperFlushHandler, timeMapperFlushHandler);
+    public InMelonmorySelongmelonntDataFlushHandlelonr(
+        Schelonma schelonma,
+        elonarlybirdIndelonxelonxtelonnsionsFactory factory,
+        Flushablelon.Handlelonr<? elonxtelonnds DocIDToTwelonelontIDMappelonr> docIdMappelonrFlushHandlelonr,
+        Flushablelon.Handlelonr<? elonxtelonnds TimelonMappelonr> timelonMappelonrFlushHandlelonr) {
+      supelonr(schelonma, factory, docIdMappelonrFlushHandlelonr, timelonMappelonrFlushHandlelonr);
     }
 
-    @Override
-    protected EarlybirdRealtimeIndexExtensionsData newIndexExtension() {
-      return indexExtensionsFactory.newRealtimeIndexExtensionsData();
+    @Ovelonrridelon
+    protelonctelond elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData nelonwIndelonxelonxtelonnsion() {
+      relonturn indelonxelonxtelonnsionsFactory.nelonwRelonaltimelonIndelonxelonxtelonnsionsData();
     }
 
-    @Override
-    protected void flushAdditionalDataStructures(
+    @Ovelonrridelon
+    protelonctelond void flushAdditionalDataStructurelons(
         FlushInfo flushInfo,
-        DataSerializer out,
-        EarlybirdIndexSegmentData segmentData) throws IOException {
-      segmentData.getFacetCountingArray().getFlushHandler()
-          .flush(flushInfo.newSubProperties("facet_counting_array"), out);
+        DataSelonrializelonr out,
+        elonarlybirdIndelonxSelongmelonntData selongmelonntData) throws IOelonxcelonption {
+      selongmelonntData.gelontFacelontCountingArray().gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons("facelont_counting_array"), out);
 
-      // flush all column stride fields
-      segmentData.getDocValuesManager().getFlushHandler()
-          .flush(flushInfo.newSubProperties("doc_values"), out);
+      // flush all column stridelon fielonlds
+      selongmelonntData.gelontDocValuelonsManagelonr().gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons("doc_valuelons"), out);
 
-      segmentData.getFacetIDMap().getFlushHandler()
-          .flush(flushInfo.newSubProperties("facet_id_map"), out);
+      selongmelonntData.gelontFacelontIDMap().gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons("facelont_id_map"), out);
 
-      segmentData.getDeletedDocs().getFlushHandler()
-          .flush(flushInfo.newSubProperties("deleted_docs"), out);
+      selongmelonntData.gelontDelonlelontelondDocs().gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons("delonlelontelond_docs"), out);
     }
 
-    @Override
-    protected EarlybirdIndexSegmentData constructSegmentData(
+    @Ovelonrridelon
+    protelonctelond elonarlybirdIndelonxSelongmelonntData constructSelongmelonntData(
         FlushInfo flushInfo,
-        ConcurrentHashMap<String, InvertedIndex> perFieldMap,
-        int maxSegmentSize,
-        EarlybirdRealtimeIndexExtensionsData indexExtension,
-        DocIDToTweetIDMapper docIdToTweetIdMapper,
-        TimeMapper timeMapper,
-        DataDeserializer in) throws IOException {
-      boolean isOptimized = flushInfo.getBooleanProperty(IS_OPTIMIZED_PROP_NAME);
+        ConcurrelonntHashMap<String, InvelonrtelondIndelonx> pelonrFielonldMap,
+        int maxSelongmelonntSizelon,
+        elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData indelonxelonxtelonnsion,
+        DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr,
+        TimelonMappelonr timelonMappelonr,
+        DataDelonselonrializelonr in) throws IOelonxcelonption {
+      boolelonan isOptimizelond = flushInfo.gelontBoolelonanPropelonrty(IS_OPTIMIZelonD_PROP_NAMelon);
 
-      Flushable.Handler<? extends AbstractFacetCountingArray> facetLoader = isOptimized
-          ? new OptimizedFacetCountingArray.FlushHandler()
-          : new FacetCountingArray.FlushHandler(maxSegmentSize);
-      AbstractFacetCountingArray facetCountingArray =
-          facetLoader.load(flushInfo.getSubProperties("facet_counting_array"), in);
+      Flushablelon.Handlelonr<? elonxtelonnds AbstractFacelontCountingArray> facelontLoadelonr = isOptimizelond
+          ? nelonw OptimizelondFacelontCountingArray.FlushHandlelonr()
+          : nelonw FacelontCountingArray.FlushHandlelonr(maxSelongmelonntSizelon);
+      AbstractFacelontCountingArray facelontCountingArray =
+          facelontLoadelonr.load(flushInfo.gelontSubPropelonrtielons("facelont_counting_array"), in);
 
-      Flushable.Handler<? extends DocValuesManager> docValuesLoader = isOptimized
-          ? new OptimizedDocValuesManager.OptimizedFlushHandler(schema)
-          : new UnoptimizedDocValuesManager.UnoptimizedFlushHandler(schema);
-      DocValuesManager docValuesManager =
-          docValuesLoader.load(flushInfo.getSubProperties("doc_values"), in);
+      Flushablelon.Handlelonr<? elonxtelonnds DocValuelonsManagelonr> docValuelonsLoadelonr = isOptimizelond
+          ? nelonw OptimizelondDocValuelonsManagelonr.OptimizelondFlushHandlelonr(schelonma)
+          : nelonw UnoptimizelondDocValuelonsManagelonr.UnoptimizelondFlushHandlelonr(schelonma);
+      DocValuelonsManagelonr docValuelonsManagelonr =
+          docValuelonsLoadelonr.load(flushInfo.gelontSubPropelonrtielons("doc_valuelons"), in);
 
-      FacetIDMap facetIDMap = new FacetIDMap.FlushHandler(schema)
-          .load(flushInfo.getSubProperties("facet_id_map"), in);
+      FacelontIDMap facelontIDMap = nelonw FacelontIDMap.FlushHandlelonr(schelonma)
+          .load(flushInfo.gelontSubPropelonrtielons("facelont_id_map"), in);
 
-      DeletedDocs.Default deletedDocs = new DeletedDocs.Default.FlushHandler(maxSegmentSize)
-          .load(flushInfo.getSubProperties("deleted_docs"), in);
+      DelonlelontelondDocs.Delonfault delonlelontelondDocs = nelonw DelonlelontelondDocs.Delonfault.FlushHandlelonr(maxSelongmelonntSizelon)
+          .load(flushInfo.gelontSubPropelonrtielons("delonlelontelond_docs"), in);
 
-      return new EarlybirdRealtimeIndexSegmentData(
-          maxSegmentSize,
-          flushInfo.getLongProperty(TIME_SLICE_ID_PROP_NAME),
-          schema,
-          isOptimized,
-          flushInfo.getIntProperty(SMALLEST_DOCID_PROP_NAME),
-          perFieldMap,
-          facetCountingArray,
-          docValuesManager,
-          FacetUtil.getFacetLabelProviders(schema, perFieldMap),
-          facetIDMap,
-          deletedDocs,
-          docIdToTweetIdMapper,
-          timeMapper,
-          indexExtension);
+      relonturn nelonw elonarlybirdRelonaltimelonIndelonxSelongmelonntData(
+          maxSelongmelonntSizelon,
+          flushInfo.gelontLongPropelonrty(TIMelon_SLICelon_ID_PROP_NAMelon),
+          schelonma,
+          isOptimizelond,
+          flushInfo.gelontIntPropelonrty(SMALLelonST_DOCID_PROP_NAMelon),
+          pelonrFielonldMap,
+          facelontCountingArray,
+          docValuelonsManagelonr,
+          FacelontUtil.gelontFacelontLabelonlProvidelonrs(schelonma, pelonrFielonldMap),
+          facelontIDMap,
+          delonlelontelondDocs,
+          docIdToTwelonelontIdMappelonr,
+          timelonMappelonr,
+          indelonxelonxtelonnsion);
     }
   }
 }

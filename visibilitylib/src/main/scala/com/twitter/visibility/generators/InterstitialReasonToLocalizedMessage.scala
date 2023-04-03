@@ -1,47 +1,47 @@
-package com.twitter.visibility.generators
+packagelon com.twittelonr.visibility.gelonnelonrators
 
-import com.twitter.visibility.common.actions.InterstitialReason
-import com.twitter.visibility.common.actions.LocalizedMessage
-import com.twitter.visibility.common.actions.MessageLink
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText.InterstitialCopy
-import com.twitter.visibility.results.richtext.InterstitialReasonToRichText.InterstitialLink
-import com.twitter.visibility.results.translation.LearnMoreLink
-import com.twitter.visibility.results.translation.Resource
-import com.twitter.visibility.results.translation.Translator
+import com.twittelonr.visibility.common.actions.IntelonrstitialRelonason
+import com.twittelonr.visibility.common.actions.LocalizelondMelonssagelon
+import com.twittelonr.visibility.common.actions.MelonssagelonLink
+import com.twittelonr.visibility.relonsults.richtelonxt.IntelonrstitialRelonasonToRichTelonxt
+import com.twittelonr.visibility.relonsults.richtelonxt.IntelonrstitialRelonasonToRichTelonxt.IntelonrstitialCopy
+import com.twittelonr.visibility.relonsults.richtelonxt.IntelonrstitialRelonasonToRichTelonxt.IntelonrstitialLink
+import com.twittelonr.visibility.relonsults.translation.LelonarnMorelonLink
+import com.twittelonr.visibility.relonsults.translation.Relonsourcelon
+import com.twittelonr.visibility.relonsults.translation.Translator
 
-object InterstitialReasonToLocalizedMessage {
-  def apply(
-    reason: InterstitialReason,
-    languageTag: String,
-  ): Option[LocalizedMessage] = {
-    InterstitialReasonToRichText.reasonToCopy(reason).map { copy =>
-      val text = Translator.translate(
-        copy.resource,
-        languageTag
+objelonct IntelonrstitialRelonasonToLocalizelondMelonssagelon {
+  delonf apply(
+    relonason: IntelonrstitialRelonason,
+    languagelonTag: String,
+  ): Option[LocalizelondMelonssagelon] = {
+    IntelonrstitialRelonasonToRichTelonxt.relonasonToCopy(relonason).map { copy =>
+      val telonxt = Translator.translatelon(
+        copy.relonsourcelon,
+        languagelonTag
       )
-      localizeWithCopyAndText(copy, languageTag, text)
+      localizelonWithCopyAndTelonxt(copy, languagelonTag, telonxt)
     }
   }
 
-  private def localizeWithCopyAndText(
-    copy: InterstitialCopy,
-    languageTag: String,
-    text: String
-  ): LocalizedMessage = {
-    val learnMore = Translator.translate(LearnMoreLink, languageTag)
+  privatelon delonf localizelonWithCopyAndTelonxt(
+    copy: IntelonrstitialCopy,
+    languagelonTag: String,
+    telonxt: String
+  ): LocalizelondMelonssagelon = {
+    val lelonarnMorelon = Translator.translatelon(LelonarnMorelonLink, languagelonTag)
 
-    val learnMoreLinkOpt =
+    val lelonarnMorelonLinkOpt =
       copy.link.map { link =>
-        MessageLink(key = Resource.LearnMorePlaceholder, displayText = learnMore, uri = link)
+        MelonssagelonLink(kelony = Relonsourcelon.LelonarnMorelonPlacelonholdelonr, displayTelonxt = lelonarnMorelon, uri = link)
       }
     val additionalLinks = copy.additionalLinks.map {
-      case InterstitialLink(placeholder, copyResource, link) =>
-        val copyText = Translator.translate(copyResource, languageTag)
-        MessageLink(key = placeholder, displayText = copyText, uri = link)
+      caselon IntelonrstitialLink(placelonholdelonr, copyRelonsourcelon, link) =>
+        val copyTelonxt = Translator.translatelon(copyRelonsourcelon, languagelonTag)
+        MelonssagelonLink(kelony = placelonholdelonr, displayTelonxt = copyTelonxt, uri = link)
     }
 
-    val links = learnMoreLinkOpt.toSeq ++ additionalLinks
-    LocalizedMessage(message = text, language = languageTag, links = links)
+    val links = lelonarnMorelonLinkOpt.toSelonq ++ additionalLinks
+    LocalizelondMelonssagelon(melonssagelon = telonxt, languagelon = languagelonTag, links = links)
   }
 }

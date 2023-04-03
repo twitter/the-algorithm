@@ -1,50 +1,50 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
-import com.twitter.home_mixer.model.HomeFeatures.PredictionRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.StreamToKafkaFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelonadFromCachelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PrelondictionRelonquelonstIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondRelonquelonstIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.StrelonamToKafkaFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object ServedCandidateKafkaSideEffect {
+objelonct SelonrvelondCandidatelonKafkaSidelonelonffelonct {
 
-  def extractCandidates(
-    query: PipelineQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    sourceIdentifiers: Set[CandidatePipelineIdentifier]
-  ): Seq[ItemCandidateWithDetails] = {
-    val servedRequestIdOpt =
-      query.features.getOrElse(FeatureMap.empty).getOrElse(ServedRequestIdFeature, None)
+  delonf elonxtractCandidatelons(
+    quelonry: PipelonlinelonQuelonry,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    sourcelonIdelonntifielonrs: Selont[CandidatelonPipelonlinelonIdelonntifielonr]
+  ): Selonq[ItelonmCandidatelonWithDelontails] = {
+    val selonrvelondRelonquelonstIdOpt =
+      quelonry.felonaturelons.gelontOrelonlselon(FelonaturelonMap.elonmpty).gelontOrelonlselon(SelonrvelondRelonquelonstIdFelonaturelon, Nonelon)
 
-    selectedCandidates.iterator
-      .filter(candidate => sourceIdentifiers.contains(candidate.source))
+    selonlelonctelondCandidatelons.itelonrator
+      .filtelonr(candidatelon => sourcelonIdelonntifielonrs.contains(candidatelon.sourcelon))
       .flatMap {
-        case item: ItemCandidateWithDetails => Seq(item)
-        case module: ModuleCandidateWithDetails => module.candidates
+        caselon itelonm: ItelonmCandidatelonWithDelontails => Selonq(itelonm)
+        caselon modulelon: ModulelonCandidatelonWithDelontails => modulelon.candidatelons
       }
-      .filter(candidate => candidate.features.getOrElse(StreamToKafkaFeature, false))
-      .map { candidate =>
-        val servedId =
-          if (candidate.features.getOrElse(IsReadFromCacheFeature, false) &&
-            servedRequestIdOpt.nonEmpty)
-            servedRequestIdOpt
-          else
-            candidate.features.getOrElse(PredictionRequestIdFeature, None)
+      .filtelonr(candidatelon => candidatelon.felonaturelons.gelontOrelonlselon(StrelonamToKafkaFelonaturelon, falselon))
+      .map { candidatelon =>
+        val selonrvelondId =
+          if (candidatelon.felonaturelons.gelontOrelonlselon(IsRelonadFromCachelonFelonaturelon, falselon) &&
+            selonrvelondRelonquelonstIdOpt.nonelonmpty)
+            selonrvelondRelonquelonstIdOpt
+          elonlselon
+            candidatelon.felonaturelons.gelontOrelonlselon(PrelondictionRelonquelonstIdFelonaturelon, Nonelon)
 
-        candidate.copy(features = candidate.features + (ServedIdFeature, servedId))
-      }.toSeq
-      // deduplicate by (tweetId, userId, servedId)
-      .groupBy { candidate =>
+        candidatelon.copy(felonaturelons = candidatelon.felonaturelons + (SelonrvelondIdFelonaturelon, selonrvelondId))
+      }.toSelonq
+      // delonduplicatelon by (twelonelontId, uselonrId, selonrvelondId)
+      .groupBy { candidatelon =>
         (
-          candidate.candidateIdLong,
-          query.getRequiredUserId,
-          candidate.features.getOrElse(ServedIdFeature, None))
-      }.values.map(_.head).toSeq
+          candidatelon.candidatelonIdLong,
+          quelonry.gelontRelonquirelondUselonrId,
+          candidatelon.felonaturelons.gelontOrelonlselon(SelonrvelondIdFelonaturelon, Nonelon))
+      }.valuelons.map(_.helonad).toSelonq
   }
 }

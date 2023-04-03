@@ -1,50 +1,50 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-import scala.util.matching.Regex
+import scala.util.matching.Relongelonx
 
 /**
- * Entry Identifiers (commonly entry ids) are a type of identifier used in URT to identify
- * unique timeline entries - tweets, users, modules, etc.
+ * elonntry Idelonntifielonrs (commonly elonntry ids) arelon a typelon of idelonntifielonr uselond in URT to idelonntify
+ * uniquelon timelonlinelon elonntrielons - twelonelonts, uselonrs, modulelons, elontc.
  *
- * Entry Identifiers are formed from two parts - a namespace (EntryNamespace) and an underlying
+ * elonntry Idelonntifielonrs arelon formelond from two parts - a namelonspacelon (elonntryNamelonspacelon) and an undelonrlying
  * id.
  *
- * A Entry Namespace is restricted to:
- * - 3 to 60 characters to ensure reasonable length
- * - a-z and dashes (kebab-case)
- * - Examples include "user" and "tweet"
+ * A elonntry Namelonspacelon is relonstrictelond to:
+ * - 3 to 60 charactelonrs to elonnsurelon relonasonablelon lelonngth
+ * - a-z and dashelons (kelonbab-caselon)
+ * - elonxamplelons includelon "uselonr" and "twelonelont"
  *
- * When specific entries identifiers are created, they will be appended with a dash and their
- * own id, like user-12 or tweet-20
+ * Whelonn speloncific elonntrielons idelonntifielonrs arelon crelonatelond, thelony will belon appelonndelond with a dash and thelonir
+ * own id, likelon uselonr-12 or twelonelont-20
  */
 
-trait HasEntryNamespace {
-  val entryNamespace: EntryNamespace
+trait HaselonntryNamelonspacelon {
+  val elonntryNamelonspacelon: elonntryNamelonspacelon
 }
 
-// sealed abstract case class is basically a scala 2.12 opaque type -
-// you can only create them via the factory method on the companion
-// allowing us to enforce validation
-sealed abstract case class EntryNamespace(override val toString: String)
+// selonalelond abstract caselon class is basically a scala 2.12 opaquelon typelon -
+// you can only crelonatelon thelonm via thelon factory melonthod on thelon companion
+// allowing us to elonnforcelon validation
+selonalelond abstract caselon class elonntryNamelonspacelon(ovelonrridelon val toString: String)
 
-object EntryNamespace {
-  val AllowedCharacters: Regex = "[a-z-]+".r // Allows for kebab-case
+objelonct elonntryNamelonspacelon {
+  val AllowelondCharactelonrs: Relongelonx = "[a-z-]+".r // Allows for kelonbab-caselon
 
-  def apply(str: String): EntryNamespace = {
+  delonf apply(str: String): elonntryNamelonspacelon = {
     val isValid = str match {
-      case n if n.length < 3 =>
-        false
-      case n if n.length > 60 =>
-        false
-      case AllowedCharacters() =>
-        true
-      case _ =>
-        false
+      caselon n if n.lelonngth < 3 =>
+        falselon
+      caselon n if n.lelonngth > 60 =>
+        falselon
+      caselon AllowelondCharactelonrs() =>
+        truelon
+      caselon _ =>
+        falselon
     }
 
     if (isValid)
-      new EntryNamespace(str) {}
-    else
-      throw new IllegalArgumentException(s"Illegal EntryNamespace: $str")
+      nelonw elonntryNamelonspacelon(str) {}
+    elonlselon
+      throw nelonw IllelongalArgumelonntelonxcelonption(s"Illelongal elonntryNamelonspacelon: $str")
   }
 }

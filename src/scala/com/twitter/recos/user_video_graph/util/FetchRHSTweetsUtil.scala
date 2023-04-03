@@ -1,29 +1,29 @@
-package com.twitter.recos.user_video_graph.util
+packagelon com.twittelonr.reloncos.uselonr_videlono_graph.util
 
-import com.twitter.graphjet.bipartite.MultiSegmentIterator
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment
-import scala.collection.mutable.ListBuffer
+import com.twittelonr.graphjelont.bipartitelon.MultiSelongmelonntItelonrator
+import com.twittelonr.graphjelont.bipartitelon.api.BipartitelonGraph
+import com.twittelonr.graphjelont.bipartitelon.selongmelonnt.BipartitelonGraphSelongmelonnt
+import scala.collelonction.mutablelon.ListBuffelonr
 
-object FetchRHSTweetsUtil {
-  // get RHS tweets given LHS users
-  def fetchRHSTweets(
-    userIds: Seq[Long],
-    bipartiteGraph: BipartiteGraph
-  ): Seq[Long] = {
-    userIds.distinct
-      .flatMap { userId =>
-        val tweetIdsIterator = bipartiteGraph
-          .getLeftNodeEdges(userId).asInstanceOf[MultiSegmentIterator[BipartiteGraphSegment]]
+objelonct FelontchRHSTwelonelontsUtil {
+  // gelont RHS twelonelonts givelonn LHS uselonrs
+  delonf felontchRHSTwelonelonts(
+    uselonrIds: Selonq[Long],
+    bipartitelonGraph: BipartitelonGraph
+  ): Selonq[Long] = {
+    uselonrIds.distinct
+      .flatMap { uselonrId =>
+        val twelonelontIdsItelonrator = bipartitelonGraph
+          .gelontLelonftNodelonelondgelons(uselonrId).asInstancelonOf[MultiSelongmelonntItelonrator[BipartitelonGraphSelongmelonnt]]
 
-        val tweetIds = new ListBuffer[Long]()
-        if (tweetIdsIterator != null) {
-          while (tweetIdsIterator.hasNext) {
-            val rightNode = tweetIdsIterator.nextLong()
-            tweetIds += rightNode
+        val twelonelontIds = nelonw ListBuffelonr[Long]()
+        if (twelonelontIdsItelonrator != null) {
+          whilelon (twelonelontIdsItelonrator.hasNelonxt) {
+            val rightNodelon = twelonelontIdsItelonrator.nelonxtLong()
+            twelonelontIds += rightNodelon
           }
         }
-        tweetIds.distinct
+        twelonelontIds.distinct
       }
   }
 }

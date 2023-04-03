@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasDismissedUserIds {
-  // user ids that are recently followed by the target user
-  def dismissedUserIds: Option[Seq[Long]]
+trait HasDismisselondUselonrIds {
+  // uselonr ids that arelon reloncelonntly followelond by thelon targelont uselonr
+  delonf dismisselondUselonrIds: Option[Selonq[Long]]
 }

@@ -1,73 +1,73 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.notificationservice.model.notification._
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.SettingsUnmentions
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetSource
-import com.twitter.visibility.features.NotificationIsOnUnmentionedViewer
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.notificationselonrvicelon.modelonl.notification._
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.SelonttingsUnmelonntions
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.TwelonelontSourcelon
+import com.twittelonr.visibility.felonaturelons.NotificationIsOnUnmelonntionelondVielonwelonr
 
-object UnmentionNotificationFeatures {
-  def ForNonUnmentionNotificationFeatures: FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(NotificationIsOnUnmentionedViewer, false)
+objelonct UnmelonntionNotificationFelonaturelons {
+  delonf ForNonUnmelonntionNotificationFelonaturelons: FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    _.withConstantFelonaturelon(NotificationIsOnUnmelonntionelondVielonwelonr, falselon)
   }
 }
 
-class UnmentionNotificationFeatures(
-  tweetSource: TweetSource,
-  enableUnmentionHydration: Gate[Long],
-  statsReceiver: StatsReceiver) {
+class UnmelonntionNotificationFelonaturelons(
+  twelonelontSourcelon: TwelonelontSourcelon,
+  elonnablelonUnmelonntionHydration: Gatelon[Long],
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("unmention_notification_features")
-  private[this] val requestsCounter = scopedStatsReceiver.counter("requests")
-  private[this] val hydrationsCounter = scopedStatsReceiver.counter("hydrations")
-  private[this] val notificationsUnmentionUserCounter =
-    scopedStatsReceiver
-      .scope(NotificationIsOnUnmentionedViewer.name).counter("unmentioned_users")
+  privatelon[this] val scopelondStatsReloncelonivelonr =
+    statsReloncelonivelonr.scopelon("unmelonntion_notification_felonaturelons")
+  privatelon[this] val relonquelonstsCountelonr = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
+  privatelon[this] val hydrationsCountelonr = scopelondStatsReloncelonivelonr.countelonr("hydrations")
+  privatelon[this] val notificationsUnmelonntionUselonrCountelonr =
+    scopelondStatsReloncelonivelonr
+      .scopelon(NotificationIsOnUnmelonntionelondVielonwelonr.namelon).countelonr("unmelonntionelond_uselonrs")
 
-  def forNotification(notification: Notification): FeatureMapBuilder => FeatureMapBuilder = {
-    requestsCounter.incr()
+  delonf forNotification(notification: Notification): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonstsCountelonr.incr()
 
-    val isUnmentionNotification = tweetId(notification) match {
-      case Some(tweetId) if enableUnmentionHydration(notification.target) =>
-        hydrationsCounter.incr()
-        tweetSource
-          .getTweet(tweetId)
+    val isUnmelonntionNotification = twelonelontId(notification) match {
+      caselon Somelon(twelonelontId) if elonnablelonUnmelonntionHydration(notification.targelont) =>
+        hydrationsCountelonr.incr()
+        twelonelontSourcelon
+          .gelontTwelonelont(twelonelontId)
           .map {
-            case Some(tweet) =>
-              tweet.settingsUnmentions match {
-                case Some(SettingsUnmentions(Some(unmentionedUserIds))) =>
-                  if (unmentionedUserIds.contains(notification.target)) {
-                    notificationsUnmentionUserCounter.incr()
-                    true
-                  } else {
-                    false
+            caselon Somelon(twelonelont) =>
+              twelonelont.selonttingsUnmelonntions match {
+                caselon Somelon(SelonttingsUnmelonntions(Somelon(unmelonntionelondUselonrIds))) =>
+                  if (unmelonntionelondUselonrIds.contains(notification.targelont)) {
+                    notificationsUnmelonntionUselonrCountelonr.incr()
+                    truelon
+                  } elonlselon {
+                    falselon
                   }
-                case _ => false
+                caselon _ => falselon
               }
-            case _ => false
+            caselon _ => falselon
           }
-      case _ => Stitch.False
+      caselon _ => Stitch.Falselon
     }
-    _.withFeature(NotificationIsOnUnmentionedViewer, isUnmentionNotification)
+    _.withFelonaturelon(NotificationIsOnUnmelonntionelondVielonwelonr, isUnmelonntionNotification)
   }
 
-  private[this] def tweetId(notification: Notification): Option[Long] = {
+  privatelon[this] delonf twelonelontId(notification: Notification): Option[Long] = {
     notification match {
-      case n: MentionNotification => Some(n.mentioningTweetId)
-      case n: FavoritedMentioningTweetNotification => Some(n.mentioningTweetId)
-      case n: FavoritedReplyToYourTweetNotification => Some(n.replyTweetId)
-      case n: MentionQuoteNotification => Some(n.mentioningTweetId)
-      case n: ReactionMentioningTweetNotification => Some(n.mentioningTweetId)
-      case n: ReplyNotification => Some(n.replyingTweetId)
-      case n: RetweetedMentionNotification => Some(n.mentioningTweetId)
-      case n: RetweetedReplyToYourTweetNotification => Some(n.replyTweetId)
-      case n: ReplyToConversationNotification => Some(n.replyingTweetId)
-      case n: ReactionReplyToYourTweetNotification => Some(n.replyTweetId)
-      case _ => None
+      caselon n: MelonntionNotification => Somelon(n.melonntioningTwelonelontId)
+      caselon n: FavoritelondMelonntioningTwelonelontNotification => Somelon(n.melonntioningTwelonelontId)
+      caselon n: FavoritelondRelonplyToYourTwelonelontNotification => Somelon(n.relonplyTwelonelontId)
+      caselon n: MelonntionQuotelonNotification => Somelon(n.melonntioningTwelonelontId)
+      caselon n: RelonactionMelonntioningTwelonelontNotification => Somelon(n.melonntioningTwelonelontId)
+      caselon n: RelonplyNotification => Somelon(n.relonplyingTwelonelontId)
+      caselon n: RelontwelonelontelondMelonntionNotification => Somelon(n.melonntioningTwelonelontId)
+      caselon n: RelontwelonelontelondRelonplyToYourTwelonelontNotification => Somelon(n.relonplyTwelonelontId)
+      caselon n: RelonplyToConvelonrsationNotification => Somelon(n.relonplyingTwelonelontId)
+      caselon n: RelonactionRelonplyToYourTwelonelontNotification => Somelon(n.relonplyTwelonelontId)
+      caselon _ => Nonelon
     }
 
   }

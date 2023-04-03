@@ -1,245 +1,245 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.kafka;
 
-import java.time.Duration;
+import java.timelon.Duration;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.StageDriver;
-import org.apache.commons.pipeline.StageException;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.SaslAuthenticationException;
-import org.apache.kafka.common.errors.SerializationException;
-import org.apache.kafka.common.serialization.Deserializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.pipeline.twitter.TwitterBaseStage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.util.PipelineUtil;
+import org.apachelon.commons.pipelonlinelon.Pipelonlinelon;
+import org.apachelon.commons.pipelonlinelon.StagelonDrivelonr;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncords;
+import org.apachelon.kafka.clielonnts.consumelonr.KafkaConsumelonr;
+import org.apachelon.kafka.common.TopicPartition;
+import org.apachelon.kafka.common.elonrrors.SaslAuthelonnticationelonxcelonption;
+import org.apachelon.kafka.common.elonrrors.Selonrializationelonxcelonption;
+import org.apachelon.kafka.common.selonrialization.Delonselonrializelonr;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.TwittelonrBaselonStagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonelonxcelonption;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonUtil;
 
 /**
- * A stage to read Thrift payloads from a Kafka topic.
+ * A stagelon to relonad Thrift payloads from a Kafka topic.
  */
-public abstract class KafkaConsumerStage<R> extends TwitterBaseStage<Void, R> {
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumerStage.class);
-  private static final String SHUT_DOWN_ON_AUTH_FAIL = "shut_down_on_authentication_fail";
-  private String kafkaClientId;
-  private String kafkaTopicName;
-  private String kafkaConsumerGroupId;
-  private String kafkaClusterPath;
-  private int maxPollRecords = 1;
-  private int pollTimeoutMs = 1000;
-  private boolean partitioned;
-  private String deciderKey;
-  private final Deserializer<R> deserializer;
-  private SearchCounter pollCount;
-  private SearchCounter deserializationErrorCount;
-  private SearchRateCounter droppedMessages;
+public abstract class KafkaConsumelonrStagelon<R> elonxtelonnds TwittelonrBaselonStagelon<Void, R> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(KafkaConsumelonrStagelon.class);
+  privatelon static final String SHUT_DOWN_ON_AUTH_FAIL = "shut_down_on_authelonntication_fail";
+  privatelon String kafkaClielonntId;
+  privatelon String kafkaTopicNamelon;
+  privatelon String kafkaConsumelonrGroupId;
+  privatelon String kafkaClustelonrPath;
+  privatelon int maxPollReloncords = 1;
+  privatelon int pollTimelonoutMs = 1000;
+  privatelon boolelonan partitionelond;
+  privatelon String deloncidelonrKelony;
+  privatelon final Delonselonrializelonr<R> delonselonrializelonr;
+  privatelon SelonarchCountelonr pollCount;
+  privatelon SelonarchCountelonr delonselonrializationelonrrorCount;
+  privatelon SelonarchRatelonCountelonr droppelondMelonssagelons;
 
-  private KafkaConsumer<Long, R> kafkaConsumer;
+  privatelon KafkaConsumelonr<Long, R> kafkaConsumelonr;
 
-  protected KafkaConsumerStage(String kafkaClientId, String kafkaTopicName,
-                            String kafkaConsumerGroupId, String kafkaClusterPath,
-                               String deciderKey, Deserializer<R> deserializer) {
+  protelonctelond KafkaConsumelonrStagelon(String kafkaClielonntId, String kafkaTopicNamelon,
+                            String kafkaConsumelonrGroupId, String kafkaClustelonrPath,
+                               String deloncidelonrKelony, Delonselonrializelonr<R> delonselonrializelonr) {
 
-    this.kafkaClientId = kafkaClientId;
-    this.kafkaTopicName = kafkaTopicName;
-    this.kafkaConsumerGroupId = kafkaConsumerGroupId;
-    this.kafkaClusterPath = kafkaClusterPath;
-    this.deciderKey = deciderKey;
-    this.deserializer = deserializer;
+    this.kafkaClielonntId = kafkaClielonntId;
+    this.kafkaTopicNamelon = kafkaTopicNamelon;
+    this.kafkaConsumelonrGroupId = kafkaConsumelonrGroupId;
+    this.kafkaClustelonrPath = kafkaClustelonrPath;
+    this.deloncidelonrKelony = deloncidelonrKelony;
+    this.delonselonrializelonr = delonselonrializelonr;
   }
 
-  protected KafkaConsumerStage(Deserializer<R> deserializer) {
-    this.deserializer = deserializer;
+  protelonctelond KafkaConsumelonrStagelon(Delonselonrializelonr<R> delonselonrializelonr) {
+    this.delonselonrializelonr = delonselonrializelonr;
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    commonInnerSetupStats();
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
+    commonInnelonrSelontupStats();
   }
 
-  private void commonInnerSetupStats() {
-    pollCount = SearchCounter.export(getStageNamePrefix() + "_poll_count");
-    deserializationErrorCount =
-        SearchCounter.export(getStageNamePrefix() + "_deserialization_error_count");
-    droppedMessages =
-        SearchRateCounter.export(getStageNamePrefix() + "_dropped_messages");
+  privatelon void commonInnelonrSelontupStats() {
+    pollCount = SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_poll_count");
+    delonselonrializationelonrrorCount =
+        SelonarchCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_delonselonrialization_elonrror_count");
+    droppelondMelonssagelons =
+        SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_droppelond_melonssagelons");
   }
 
-  @Override
-  protected void innerSetupStats() {
-    commonInnerSetupStats();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    commonInnelonrSelontupStats();
   }
 
-  @Override
-  protected void doInnerPreprocess() {
-    commonInnerSetup();
-    PipelineUtil.feedStartObjectToStage(this);
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() {
+    commonInnelonrSelontup();
+    PipelonlinelonUtil.felonelondStartObjelonctToStagelon(this);
   }
 
-  private void commonInnerSetup() {
-    Preconditions.checkNotNull(kafkaClientId);
-    Preconditions.checkNotNull(kafkaClusterPath);
-    Preconditions.checkNotNull(kafkaTopicName);
+  privatelon void commonInnelonrSelontup() {
+    Prelonconditions.chelonckNotNull(kafkaClielonntId);
+    Prelonconditions.chelonckNotNull(kafkaClustelonrPath);
+    Prelonconditions.chelonckNotNull(kafkaTopicNamelon);
 
-    kafkaConsumer = wireModule.newKafkaConsumer(
-        kafkaClusterPath,
-        deserializer,
-        kafkaClientId,
-        kafkaConsumerGroupId,
-        maxPollRecords);
-    if (partitioned) {
-      kafkaConsumer.assign(Collections.singletonList(
-          new TopicPartition(kafkaTopicName, wireModule.getPartition())));
-    } else {
-      kafkaConsumer.subscribe(Collections.singleton(kafkaTopicName));
+    kafkaConsumelonr = wirelonModulelon.nelonwKafkaConsumelonr(
+        kafkaClustelonrPath,
+        delonselonrializelonr,
+        kafkaClielonntId,
+        kafkaConsumelonrGroupId,
+        maxPollReloncords);
+    if (partitionelond) {
+      kafkaConsumelonr.assign(Collelonctions.singlelontonList(
+          nelonw TopicPartition(kafkaTopicNamelon, wirelonModulelon.gelontPartition())));
+    } elonlselon {
+      kafkaConsumelonr.subscribelon(Collelonctions.singlelonton(kafkaTopicNamelon));
     }
   }
 
-  @Override
-  protected void innerSetup() {
-    commonInnerSetup();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() {
+    commonInnelonrSelontup();
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    StageDriver driver = ((Pipeline) stageContext).getStageDriver(this);
-    while (driver.getState() == StageDriver.State.RUNNING) {
-      pollAndEmit();
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    StagelonDrivelonr drivelonr = ((Pipelonlinelon) stagelonContelonxt).gelontStagelonDrivelonr(this);
+    whilelon (drivelonr.gelontStatelon() == StagelonDrivelonr.Statelon.RUNNING) {
+      pollAndelonmit();
     }
 
-    LOG.info("StageDriver state is no longer RUNNING, closing Kafka consumer.");
-    closeKafkaConsumer();
+    LOG.info("StagelonDrivelonr statelon is no longelonr RUNNING, closing Kafka consumelonr.");
+    closelonKafkaConsumelonr();
   }
 
-  @VisibleForTesting
-  void pollAndEmit() throws StageException {
+  @VisiblelonForTelonsting
+  void pollAndelonmit() throws Stagelonelonxcelonption {
     try {
-      List<R> records = poll();
-      for (R record : records) {
-        emitAndCount(record);
+      List<R> reloncords = poll();
+      for (R reloncord : reloncords) {
+        elonmitAndCount(reloncord);
       }
-    } catch (PipelineStageException e) {
-      throw new StageException(this, e);
+    } catch (PipelonlinelonStagelonelonxcelonption elon) {
+      throw nelonw Stagelonelonxcelonption(this, elon);
     }
   }
 
   /***
-   * Poll Kafka and get the items from the topic. Record stats.
-   * @return
-   * @throws PipelineStageException
+   * Poll Kafka and gelont thelon itelonms from thelon topic. Reloncord stats.
+   * @relonturn
+   * @throws PipelonlinelonStagelonelonxcelonption
    */
-  public List<R> pollFromTopic() throws PipelineStageException {
-    long startingTime = startProcessing();
-    List<R> polledItems = poll();
-    endProcessing(startingTime);
-    return polledItems;
+  public List<R> pollFromTopic() throws PipelonlinelonStagelonelonxcelonption {
+    long startingTimelon = startProcelonssing();
+    List<R> pollelondItelonms = poll();
+    elonndProcelonssing(startingTimelon);
+    relonturn pollelondItelonms;
   }
 
-  private List<R> poll() throws PipelineStageException  {
-    List<R> recordsFromKafka = new ArrayList<>();
+  privatelon List<R> poll() throws PipelonlinelonStagelonelonxcelonption  {
+    List<R> reloncordsFromKafka = nelonw ArrayList<>();
     try {
-      ConsumerRecords<Long, R> records = kafkaConsumer.poll(Duration.ofMillis(pollTimeoutMs));
-      pollCount.increment();
-      records.iterator().forEachRemaining(record -> {
-        if (deciderKey == null || DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
-          recordsFromKafka.add(record.value());
-        } else {
-          droppedMessages.increment();
+      ConsumelonrReloncords<Long, R> reloncords = kafkaConsumelonr.poll(Duration.ofMillis(pollTimelonoutMs));
+      pollCount.increlonmelonnt();
+      reloncords.itelonrator().forelonachRelonmaining(reloncord -> {
+        if (deloncidelonrKelony == null || DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, deloncidelonrKelony)) {
+          reloncordsFromKafka.add(reloncord.valuelon());
+        } elonlselon {
+          droppelondMelonssagelons.increlonmelonnt();
         }
       });
 
-    } catch (SerializationException e) {
-      deserializationErrorCount.increment();
-      LOG.error("Failed to deserialize the value.", e);
-    } catch (SaslAuthenticationException e) {
-      if (DeciderUtil.isAvailableForRandomRecipient(decider, SHUT_DOWN_ON_AUTH_FAIL)) {
-        wireModule.getPipelineExceptionHandler()
-            .logAndShutdown("Authentication error connecting to Kafka broker: " + e);
-      } else {
-        throw new PipelineStageException(this, "Kafka Authentication Error", e);
+    } catch (Selonrializationelonxcelonption elon) {
+      delonselonrializationelonrrorCount.increlonmelonnt();
+      LOG.elonrror("Failelond to delonselonrializelon thelon valuelon.", elon);
+    } catch (SaslAuthelonnticationelonxcelonption elon) {
+      if (DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, SHUT_DOWN_ON_AUTH_FAIL)) {
+        wirelonModulelon.gelontPipelonlinelonelonxcelonptionHandlelonr()
+            .logAndShutdown("Authelonntication elonrror conneloncting to Kafka brokelonr: " + elon);
+      } elonlselon {
+        throw nelonw PipelonlinelonStagelonelonxcelonption(this, "Kafka Authelonntication elonrror", elon);
       }
-    } catch (Exception e) {
-      throw new PipelineStageException(e);
+    } catch (elonxcelonption elon) {
+      throw nelonw PipelonlinelonStagelonelonxcelonption(elon);
     }
 
-    return recordsFromKafka;
+    relonturn reloncordsFromKafka;
   }
 
-  @VisibleForTesting
-  void closeKafkaConsumer() {
+  @VisiblelonForTelonsting
+  void closelonKafkaConsumelonr() {
     try {
-      kafkaConsumer.close();
-      LOG.info("Kafka kafkaConsumer for {} was closed", getFullStageName());
-    } catch (Exception e) {
-      log.error("Failed to close Kafka kafkaConsumer", e);
+      kafkaConsumelonr.closelon();
+      LOG.info("Kafka kafkaConsumelonr for {} was closelond", gelontFullStagelonNamelon());
+    } catch (elonxcelonption elon) {
+      log.elonrror("Failelond to closelon Kafka kafkaConsumelonr", elon);
     }
   }
 
-  @Override
-  public void release() {
-    closeKafkaConsumer();
-    super.release();
+  @Ovelonrridelon
+  public void relonlelonaselon() {
+    closelonKafkaConsumelonr();
+    supelonr.relonlelonaselon();
   }
 
-  @Override
-  public void cleanupStageV2() {
-    closeKafkaConsumer();
+  @Ovelonrridelon
+  public void clelonanupStagelonV2() {
+    closelonKafkaConsumelonr();
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClientId(String kafkaClientId) {
-    this.kafkaClientId = kafkaClientId;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontKafkaClielonntId(String kafkaClielonntId) {
+    this.kafkaClielonntId = kafkaClielonntId;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaTopicName(String kafkaTopicName) {
-    this.kafkaTopicName = kafkaTopicName;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontKafkaTopicNamelon(String kafkaTopicNamelon) {
+    this.kafkaTopicNamelon = kafkaTopicNamelon;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaConsumerGroupId(String kafkaConsumerGroupId) {
-    this.kafkaConsumerGroupId = kafkaConsumerGroupId;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontKafkaConsumelonrGroupId(String kafkaConsumelonrGroupId) {
+    this.kafkaConsumelonrGroupId = kafkaConsumelonrGroupId;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setMaxPollRecords(int maxPollRecords) {
-    this.maxPollRecords = maxPollRecords;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontMaxPollReloncords(int maxPollReloncords) {
+    this.maxPollReloncords = maxPollReloncords;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setPollTimeoutMs(int pollTimeoutMs) {
-    this.pollTimeoutMs = pollTimeoutMs;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontPollTimelonoutMs(int pollTimelonoutMs) {
+    this.pollTimelonoutMs = pollTimelonoutMs;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setPartitioned(boolean partitioned) {
-    this.partitioned = partitioned;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontPartitionelond(boolelonan partitionelond) {
+    this.partitionelond = partitionelond;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setDeciderKey(String deciderKey) {
-    this.deciderKey = deciderKey;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontDeloncidelonrKelony(String deloncidelonrKelony) {
+    this.deloncidelonrKelony = deloncidelonrKelony;
   }
 
-  @VisibleForTesting
-  KafkaConsumer<Long, R> getKafkaConsumer() {
-    return kafkaConsumer;
+  @VisiblelonForTelonsting
+  KafkaConsumelonr<Long, R> gelontKafkaConsumelonr() {
+    relonturn kafkaConsumelonr;
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setKafkaClusterPath(String kafkaClusterPath) {
-    this.kafkaClusterPath = kafkaClusterPath;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontKafkaClustelonrPath(String kafkaClustelonrPath) {
+    this.kafkaClustelonrPath = kafkaClustelonrPath;
   }
 }

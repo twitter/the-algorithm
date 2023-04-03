@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.core.model.common.identifier.HasComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.HasComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
 
-trait PipelineConfig extends HasComponentIdentifier
+trait PipelonlinelonConfig elonxtelonnds HasComponelonntIdelonntifielonr
 
-trait PipelineConfigCompanion {
+trait PipelonlinelonConfigCompanion {
 
-  /** used to generate `AsyncFeaturesFor` [[PipelineStepIdentifier]]s for the internal Async Features Step */
-  private[core] def asyncFeaturesStep(
-    stepToHydrateFor: PipelineStepIdentifier
-  ): PipelineStepIdentifier =
-    PipelineStepIdentifier("AsyncFeaturesFor" + stepToHydrateFor.name)
+  /** uselond to gelonnelonratelon `AsyncFelonaturelonsFor` [[PipelonlinelonStelonpIdelonntifielonr]]s for thelon intelonrnal Async Felonaturelons Stelonp */
+  privatelon[corelon] delonf asyncFelonaturelonsStelonp(
+    stelonpToHydratelonFor: PipelonlinelonStelonpIdelonntifielonr
+  ): PipelonlinelonStelonpIdelonntifielonr =
+    PipelonlinelonStelonpIdelonntifielonr("AsyncFelonaturelonsFor" + stelonpToHydratelonFor.namelon)
 
-  /** All the Steps which are executed by a [[Pipeline]] in the order in which they are run */
-  val stepsInOrder: Seq[PipelineStepIdentifier]
+  /** All thelon Stelonps which arelon elonxeloncutelond by a [[Pipelonlinelon]] in thelon ordelonr in which thelony arelon run */
+  val stelonpsInOrdelonr: Selonq[PipelonlinelonStelonpIdelonntifielonr]
 
-  val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set.empty
+  val stelonpsAsyncFelonaturelonHydrationCanBelonComplelontelondBy: Selont[PipelonlinelonStelonpIdelonntifielonr] = Selont.elonmpty
 }

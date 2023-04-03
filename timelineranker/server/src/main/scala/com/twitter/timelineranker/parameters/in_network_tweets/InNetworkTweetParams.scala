@@ -1,133 +1,133 @@
-package com.twitter.timelineranker.parameters.in_network_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.in_nelontwork_twelonelonts
 
-import com.twitter.timelineranker.parameters.recap.RecapQueryContext
-import com.twitter.timelines.configapi.decider._
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap.ReloncapQuelonryContelonxt
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr._
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object InNetworkTweetParams {
-  import RecapQueryContext._
+objelonct InNelontworkTwelonelontParams {
+  import ReloncapQuelonryContelonxt._
 
   /**
-   * Controls limit on the number of followed users fetched from SGS.
+   * Controls limit on thelon numbelonr of followelond uselonrs felontchelond from SGS.
    *
-   * The specific default value below is for blender-timelines parity.
+   * Thelon speloncific delonfault valuelon belonlow is for blelonndelonr-timelonlinelons parity.
    */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam[Int](
-        name = "recycled_max_followed_users",
-        default = MaxFollowedUsers.default,
-        min = MaxFollowedUsers.bounds.minInclusive,
-        max = MaxFollowedUsers.bounds.maxInclusive
+  objelonct MaxFollowelondUselonrsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "reloncyclelond_max_followelond_uselonrs",
+        delonfault = MaxFollowelondUselonrs.delonfault,
+        min = MaxFollowelondUselonrs.bounds.minInclusivelon,
+        max = MaxFollowelondUselonrs.bounds.maxInclusivelon
       )
 
   /**
-   * Controls limit on the number of hits for Earlybird.
+   * Controls limit on thelon numbelonr of hits for elonarlybird.
    *
    */
-  object RelevanceOptionsMaxHitsToProcessParam
-      extends FSBoundedParam[Int](
-        name = "recycled_relevance_options_max_hits_to_process",
-        default = 500,
+  objelonct RelonlelonvancelonOptionsMaxHitsToProcelonssParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "reloncyclelond_relonlelonvancelon_options_max_hits_to_procelonss",
+        delonfault = 500,
         min = 100,
         max = 20000
       )
 
   /**
-   * Fallback value for maximum number of search results, if not specified by query.maxCount
+   * Fallback valuelon for maximum numbelonr of selonarch relonsults, if not speloncifielond by quelonry.maxCount
    */
-  object DefaultMaxTweetCount extends Param(200)
+  objelonct DelonfaultMaxTwelonelontCount elonxtelonnds Param(200)
 
   /**
-   * We multiply maxCount (caller supplied value) by this multiplier and fetch those many
-   * candidates from search so that we are left with sufficient number of candidates after
-   * hydration and filtering.
+   * Welon multiply maxCount (callelonr supplielond valuelon) by this multiplielonr and felontch thoselon many
+   * candidatelons from selonarch so that welon arelon lelonft with sufficielonnt numbelonr of candidatelons aftelonr
+   * hydration and filtelonring.
    */
-  object MaxCountMultiplierParam
-      extends Param(MaxCountMultiplier.default)
-      with DeciderValueConverter[Double] {
-    override def convert: IntConverter[Double] =
-      OutputBoundIntConverter[Double](divideDeciderBy100 _, MaxCountMultiplier.bounds)
+  objelonct MaxCountMultiplielonrParam
+      elonxtelonnds Param(MaxCountMultiplielonr.delonfault)
+      with DeloncidelonrValuelonConvelonrtelonr[Doublelon] {
+    ovelonrridelon delonf convelonrt: IntConvelonrtelonr[Doublelon] =
+      OutputBoundIntConvelonrtelonr[Doublelon](dividelonDeloncidelonrBy100 _, MaxCountMultiplielonr.bounds)
   }
 
   /**
-   * Enable [[SearchQueryBuilder.createExcludedSourceTweetIdsQuery]]
+   * elonnablelon [[SelonarchQuelonryBuildelonr.crelonatelonelonxcludelondSourcelonTwelonelontIdsQuelonry]]
    */
-  object EnableExcludeSourceTweetIdsQueryParam
-      extends FSParam[Boolean](
-        name = "recycled_exclude_source_tweet_ids_query_enable",
-        default = false
+  objelonct elonnablelonelonxcludelonSourcelonTwelonelontIdsQuelonryParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "reloncyclelond_elonxcludelon_sourcelon_twelonelont_ids_quelonry_elonnablelon",
+        delonfault = falselon
       )
 
-  object EnableEarlybirdReturnAllResultsParam
-      extends FSParam[Boolean](
-        name = "recycled_enable_earlybird_return_all_results",
-        default = true
+  objelonct elonnablelonelonarlybirdRelonturnAllRelonsultsParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "reloncyclelond_elonnablelon_elonarlybird_relonturn_all_relonsults",
+        delonfault = truelon
       )
 
   /**
-   * FS-controlled param to enable anti-dilution transform for DDG-16198
+   * FS-controllelond param to elonnablelon anti-dilution transform for DDG-16198
    */
-  object RecycledMaxFollowedUsersEnableAntiDilutionParam
-      extends FSParam[Boolean](
-        name = "recycled_max_followed_users_enable_anti_dilution",
-        default = false
+  objelonct ReloncyclelondMaxFollowelondUselonrselonnablelonAntiDilutionParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "reloncyclelond_max_followelond_uselonrs_elonnablelon_anti_dilution",
+        delonfault = falselon
       )
 
   /**
-   * Enables semantic core, penguin, and tweetypie content features in recycled source.
+   * elonnablelons selonmantic corelon, pelonnguin, and twelonelontypielon contelonnt felonaturelons in reloncyclelond sourcelon.
    */
-  object EnableContentFeaturesHydrationParam extends Param(default = true)
+  objelonct elonnablelonContelonntFelonaturelonsHydrationParam elonxtelonnds Param(delonfault = truelon)
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * additionally elonnablelons tokelonns whelonn hydrating contelonnt felonaturelons.
    */
-  object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recycled_enable_tokens_in_content_features_hydration",
-        default = false
-      )
-
-  /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
-   */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "recycled_enable_tweet_text_in_content_features_hydration",
-        default = false
+  objelonct elonnablelonTokelonnsInContelonntFelonaturelonsHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "reloncyclelond_elonnablelon_tokelonns_in_contelonnt_felonaturelons_hydration",
+        delonfault = falselon
       )
 
   /**
-   * Enables hydrating root tweet of in-network replies and extended replies
+   * additionally elonnablelons twelonelont telonxt whelonn hydrating contelonnt felonaturelons.
+   * This only works if elonnablelonContelonntFelonaturelonsHydrationParam is selont to truelon
    */
-  object EnableReplyRootTweetHydrationParam
-      extends FSParam(
-        name = "recycled_enable_reply_root_tweet_hydration",
-        default = true
+  objelonct elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "reloncyclelond_elonnablelon_twelonelont_telonxt_in_contelonnt_felonaturelons_hydration",
+        delonfault = falselon
       )
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * elonnablelons hydrating root twelonelont of in-nelontwork relonplielons and elonxtelonndelond relonplielons
    */
-  object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "conversation_control_in_content_features_hydration_recycled_enable",
-        default = false
+  objelonct elonnablelonRelonplyRootTwelonelontHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "reloncyclelond_elonnablelon_relonply_root_twelonelont_hydration",
+        delonfault = truelon
       )
 
-  object EnableTweetMediaHydrationParam
-      extends FSParam(
-        name = "tweet_media_hydration_recycled_enable",
-        default = false
+  /**
+   * additionally elonnablelons convelonrsationControl whelonn hydrating contelonnt felonaturelons.
+   * This only works if elonnablelonContelonntFelonaturelonsHydrationParam is selont to truelon
+   */
+  objelonct elonnablelonConvelonrsationControlInContelonntFelonaturelonsHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "convelonrsation_control_in_contelonnt_felonaturelons_hydration_reloncyclelond_elonnablelon",
+        delonfault = falselon
       )
 
-  object EnableEarlybirdRealtimeCgMigrationParam
-      extends FSParam(
-        name = "recycled_enable_earlybird_realtime_cg_migration",
-        default = false
+  objelonct elonnablelonTwelonelontMelondiaHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "twelonelont_melondia_hydration_reloncyclelond_elonnablelon",
+        delonfault = falselon
+      )
+
+  objelonct elonnablelonelonarlybirdRelonaltimelonCgMigrationParam
+      elonxtelonnds FSParam(
+        namelon = "reloncyclelond_elonnablelon_elonarlybird_relonaltimelon_cg_migration",
+        delonfault = falselon
       )
 
 }

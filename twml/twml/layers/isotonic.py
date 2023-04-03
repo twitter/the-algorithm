@@ -1,76 +1,76 @@
-# pylint: disable=no-member, invalid-name, attribute-defined-outside-init
+# pylint: disablelon=no-melonmbelonr, invalid-namelon, attributelon-delonfinelond-outsidelon-init
 """
-Contains the Isotonic Layer
+Contains thelon Isotonic Layelonr
 """
 
-from .layer import Layer
+from .layelonr import Layelonr
 
 import libtwml
 import numpy as np
 
 
-class Isotonic(Layer):
+class Isotonic(Layelonr):
   """
-  This layer is created by the IsotonicCalibrator.
-  Typically it is used intead of sigmoid activation on the output unit.
+  This layelonr is crelonatelond by thelon IsotonicCalibrator.
+  Typically it is uselond intelonad of sigmoid activation on thelon output unit.
 
-  Arguments:
+  Argumelonnts:
     n_unit:
-      number of input units to the layer (same as number of output units).
+      numbelonr of input units to thelon layelonr (samelon as numbelonr of output units).
     n_bin:
-      number of bins used for isotonic calibration.
-      More bins means a more precise isotonic function.
-      Less bins means a more regularized isotonic function.
+      numbelonr of bins uselond for isotonic calibration.
+      Morelon bins melonans a morelon prelonciselon isotonic function.
+      Lelonss bins melonans a morelon relongularizelond isotonic function.
     xs_input:
-      A tensor containing the boundaries of the bins.
+      A telonnsor containing thelon boundarielons of thelon bins.
     ys_input:
-      A tensor containing calibrated values for the corresponding bins.
+      A telonnsor containing calibratelond valuelons for thelon correlonsponding bins.
 
   Output:
       output:
-        A layer containing calibrated probabilities with same shape and size as input.
-  Expected Sizes:
+        A layelonr containing calibratelond probabilitielons with samelon shapelon and sizelon as input.
+  elonxpelonctelond Sizelons:
       xs_input, ys_input:
         [n_unit, n_bin].
-  Expected Types:
+  elonxpelonctelond Typelons:
       xs_input, ys_input:
-        same as input.
+        samelon as input.
   """
 
-  def __init__(self, n_unit, n_bin, xs_input=None, ys_input=None, **kwargs):
-    super(Isotonic, self).__init__(**kwargs)
+  delonf __init__(selonlf, n_unit, n_bin, xs_input=Nonelon, ys_input=Nonelon, **kwargs):
+    supelonr(Isotonic, selonlf).__init__(**kwargs)
 
-    self._n_unit = n_unit
-    self._n_bin = n_bin
+    selonlf._n_unit = n_unit
+    selonlf._n_bin = n_bin
 
-    self.xs_input = np.empty([n_unit, n_bin], dtype=np.float32) if xs_input is None else xs_input
-    self.ys_input = np.empty([n_unit, n_bin], dtype=np.float32) if ys_input is None else ys_input
+    selonlf.xs_input = np.elonmpty([n_unit, n_bin], dtypelon=np.float32) if xs_input is Nonelon elonlselon xs_input
+    selonlf.ys_input = np.elonmpty([n_unit, n_bin], dtypelon=np.float32) if ys_input is Nonelon elonlselon ys_input
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    """Computelons thelon output shapelon of thelon layelonr givelonn thelon input shapelon.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+      input_shapelon: A (possibly nelonstelond tuplelon of) `TelonnsorShapelon`.  It nelonelond not
+        belon fully delonfinelond (elon.g. thelon batch sizelon may belon unknown).
 
-    Raises NotImplementedError.
+    Raiselons NotImplelonmelonntelondelonrror.
 
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
-    """Creates the variables of the layer."""
+  delonf build(selonlf, input_shapelon):  # pylint: disablelon=unuselond-argumelonnt
+    """Crelonatelons thelon variablelons of thelon layelonr."""
 
-    self.built = True
+    selonlf.built = Truelon
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  delonf call(selonlf, inputs, **kwargs):  # pylint: disablelon=unuselond-argumelonnt
+    """Thelon logic of thelon layelonr livelons helonrelon.
 
-    Arguments:
-      inputs: input tensor(s).
+    Argumelonnts:
+      inputs: input telonnsor(s).
 
-    Returns:
-      The output from the layer
+    Relonturns:
+      Thelon output from thelon layelonr
     """
-    calibrate_op = libtwml.ops.isotonic_calibration(inputs, self.xs_input, self.ys_input)
-    return calibrate_op
+    calibratelon_op = libtwml.ops.isotonic_calibration(inputs, selonlf.xs_input, selonlf.ys_input)
+    relonturn calibratelon_op

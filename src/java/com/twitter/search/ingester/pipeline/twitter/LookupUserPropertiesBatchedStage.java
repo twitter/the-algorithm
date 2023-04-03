@@ -1,60 +1,60 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.util.Collection;
-import javax.naming.NamingException;
+import java.util.Collelonction;
+import javax.naming.Namingelonxcelonption;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.util.UserPropertiesManager;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.Batchelondelonlelonmelonnt;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonelonxcelonption;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.UselonrPropelonrtielonsManagelonr;
+import com.twittelonr.util.Futurelon;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class LookupUserPropertiesBatchedStage extends TwitterBatchedBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class LookupUselonrPropelonrtielonsBatchelondStagelon elonxtelonnds TwittelonrBatchelondBaselonStagelon
+    <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> {
 
-  protected UserPropertiesManager userPropertiesManager;
+  protelonctelond UselonrPropelonrtielonsManagelonr uselonrPropelonrtielonsManagelonr;
 
-  @Override
-  protected Class<IngesterTwitterMessage> getQueueObjectType() {
-    return IngesterTwitterMessage.class;
+  @Ovelonrridelon
+  protelonctelond Class<IngelonstelonrTwittelonrMelonssagelon> gelontQuelonuelonObjelonctTypelon() {
+    relonturn IngelonstelonrTwittelonrMelonssagelon.class;
   }
 
-  @Override
-  protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
-      <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
-    Collection<IngesterTwitterMessage> batchedElements = extractOnlyElementsFromBatch(batch);
-    return userPropertiesManager.populateUserProperties(batchedElements);
+  @Ovelonrridelon
+  protelonctelond Futurelon<Collelonction<IngelonstelonrTwittelonrMelonssagelon>> innelonrProcelonssBatch(Collelonction<Batchelondelonlelonmelonnt
+      <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon>> batch) {
+    Collelonction<IngelonstelonrTwittelonrMelonssagelon> batchelondelonlelonmelonnts = elonxtractOnlyelonlelonmelonntsFromBatch(batch);
+    relonturn uselonrPropelonrtielonsManagelonr.populatelonUselonrPropelonrtielons(batchelondelonlelonmelonnts);
   }
 
-  @Override
-  protected boolean needsToBeBatched(IngesterTwitterMessage element) {
-    return true;
+  @Ovelonrridelon
+  protelonctelond boolelonan nelonelondsToBelonBatchelond(IngelonstelonrTwittelonrMelonssagelon elonlelonmelonnt) {
+    relonturn truelon;
   }
 
-  @Override
-  protected IngesterTwitterMessage transform(IngesterTwitterMessage element) {
-    return element;
+  @Ovelonrridelon
+  protelonctelond IngelonstelonrTwittelonrMelonssagelon transform(IngelonstelonrTwittelonrMelonssagelon elonlelonmelonnt) {
+    relonturn elonlelonmelonnt;
   }
 
-  @Override
-  public synchronized void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @Ovelonrridelon
+  public synchronizelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    supelonr.doInnelonrPrelonprocelonss();
+    commonInnelonrSelontup();
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
-    commonInnerSetup();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() throws PipelonlinelonStagelonelonxcelonption, Namingelonxcelonption {
+    supelonr.innelonrSelontup();
+    commonInnelonrSelontup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    userPropertiesManager = new UserPropertiesManager(wireModule.getMetastoreClient());
+  privatelon void commonInnelonrSelontup() throws Namingelonxcelonption {
+    uselonrPropelonrtielonsManagelonr = nelonw UselonrPropelonrtielonsManagelonr(wirelonModulelon.gelontMelontastorelonClielonnt());
   }
 }

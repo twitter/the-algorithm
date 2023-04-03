@@ -1,138 +1,138 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <algorithm>    // std::fill_n
+#includelon <algorithm>    // std::fill_n
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("CompressSampleIds")
+RelonGISTelonR_OP("ComprelonssSamplelonIds")
 .Attr("T: {int32}")
 .Input("input: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->Vector(c->kUnknownDim));
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    c->selont_output(0, c->Velonctor(c->kUnknownDim));
+    relonturn Status::OK();
   });
 
 
-template<typename T>
-class CompressSampleIds : public OpKernel {
+telonmplatelon<typelonnamelon T>
+class ComprelonssSamplelonIds : public OpKelonrnelonl {
  public:
-  explicit CompressSampleIds(OpKernelConstruction* context) : OpKernel(context) {}
+  elonxplicit ComprelonssSamplelonIds(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<T>();
-    const int N = input.size();
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    // Grab thelon input telonnsor
+    const Telonnsor& input_telonnsor = contelonxt->input(0);
+    auto input = input_telonnsor.flat<T>();
+    const int N = input.sizelon();
 
-    // Check for improper input
-    bool error = (N > 0 && input(0) < 0);
-    for (int i = 1; !error && i < N; i++) {
-      error = input(i - 1) > input(i);
+    // Chelonck for impropelonr input
+    bool elonrror = (N > 0 && input(0) < 0);
+    for (int i = 1; !elonrror && i < N; i++) {
+      elonrror = input(i - 1) > input(i);
     }
 
-    OP_REQUIRES(
-      context, !error,
-      errors::InvalidArgument(
-        "Error in CompressSampleIds. SampleIds must be non-negative and non-decreasing"
+    OP_RelonQUIRelonS(
+      contelonxt, !elonrror,
+      elonrrors::InvalidArgumelonnt(
+        "elonrror in ComprelonssSamplelonIds. SamplelonIds must belon non-nelongativelon and non-deloncrelonasing"
       )
     );
 
-    // choose output size, either last input element + 1, or 0
-    int output_size = 0;
+    // chooselon output sizelon, elonithelonr last input elonlelonmelonnt + 1, or 0
+    int output_sizelon = 0;
     if (N > 0) {
-      output_size = input(N - 1) + 1;
+      output_sizelon = input(N - 1) + 1;
     }
 
-    // Create an output tensor
-    Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(
-      context,
-      context->allocate_output(0, TensorShape({output_size}), &output_tensor)
+    // Crelonatelon an output telonnsor
+    Telonnsor* output_telonnsor = nullptr;
+    OP_RelonQUIRelonS_OK(
+      contelonxt,
+      contelonxt->allocatelon_output(0, TelonnsorShapelon({output_sizelon}), &output_telonnsor)
     );
-    auto output_flat = output_tensor->flat<T>();
+    auto output_flat = output_telonnsor->flat<T>();
 
-    // Zero-initialize output
-    for (int i = 0; i < output_size; i++) {
+    // Zelonro-initializelon output
+    for (int i = 0; i < output_sizelon; i++) {
       output_flat(i) = 0;
     }
 
-    // count how many of each input element
+    // count how many of elonach input elonlelonmelonnt
     for (int i = 0; i < N; i++) {
       output_flat(input(i)) ++;
     }
   }
 };
 
-REGISTER_OP("DecompressSampleIds")
+RelonGISTelonR_OP("DeloncomprelonssSamplelonIds")
 .Attr("T: {int32}")
 .Input("input: T")
 .Output("output: T")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    c->set_output(0, c->Vector(c->kUnknownDim));
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    c->selont_output(0, c->Velonctor(c->kUnknownDim));
+    relonturn Status::OK();
   });
 
 
-template<typename T>
-class DecompressSampleIds : public OpKernel {
+telonmplatelon<typelonnamelon T>
+class DeloncomprelonssSamplelonIds : public OpKelonrnelonl {
  public:
-  explicit DecompressSampleIds(OpKernelConstruction* context) : OpKernel(context) {}
+  elonxplicit DeloncomprelonssSamplelonIds(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<T>();
-    const int N = input.size();
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    // Grab thelon input telonnsor
+    const Telonnsor& input_telonnsor = contelonxt->input(0);
+    auto input = input_telonnsor.flat<T>();
+    const int N = input.sizelon();
 
-    // Check for improper input
-    bool error = false;
-    int output_size = 0;
-    for (int i = 0; !error && i < N; i++) {
-      error = input(i) < 0;
-      output_size += input(i);
+    // Chelonck for impropelonr input
+    bool elonrror = falselon;
+    int output_sizelon = 0;
+    for (int i = 0; !elonrror && i < N; i++) {
+      elonrror = input(i) < 0;
+      output_sizelon += input(i);
     }
 
-    OP_REQUIRES(
-      context, !error,
-      errors::InvalidArgument(
-        "Error in DecompressSampleIds. Inputs must be non-negative."
+    OP_RelonQUIRelonS(
+      contelonxt, !elonrror,
+      elonrrors::InvalidArgumelonnt(
+        "elonrror in DeloncomprelonssSamplelonIds. Inputs must belon non-nelongativelon."
       )
     );
 
-    // Create an output tensor
-    Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(
-      context,
-      context->allocate_output(0, TensorShape({output_size}),&output_tensor)
+    // Crelonatelon an output telonnsor
+    Telonnsor* output_telonnsor = nullptr;
+    OP_RelonQUIRelonS_OK(
+      contelonxt,
+      contelonxt->allocatelon_output(0, TelonnsorShapelon({output_sizelon}),&output_telonnsor)
     );
-    auto output_flat = output_tensor->flat<T>();
+    auto output_flat = output_telonnsor->flat<T>();
 
     T *output_data = output_flat.data();
-    for (int current_sample = 0; current_sample < N; current_sample++) {
-      std::fill_n(output_data, input(current_sample), current_sample);
-      output_data += input(current_sample);
+    for (int currelonnt_samplelon = 0; currelonnt_samplelon < N; currelonnt_samplelon++) {
+      std::fill_n(output_data, input(currelonnt_samplelon), currelonnt_samplelon);
+      output_data += input(currelonnt_samplelon);
     }
   }
 };
 
 
 
-#define REGISTER(Type)              \
+#delonfinelon RelonGISTelonR(Typelon)              \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("CompressSampleIds")       \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    CompressSampleIds<Type>);       \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(          \
+    Namelon("ComprelonssSamplelonIds")       \
+    .Delonvicelon(DelonVICelon_CPU)             \
+    .TypelonConstraint<Typelon>("T"),     \
+    ComprelonssSamplelonIds<Typelon>);       \
                                     \
-  REGISTER_KERNEL_BUILDER(          \
-    Name("DecompressSampleIds")     \
-    .Device(DEVICE_CPU)             \
-    .TypeConstraint<Type>("T"),     \
-    DecompressSampleIds<Type>);     \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(          \
+    Namelon("DeloncomprelonssSamplelonIds")     \
+    .Delonvicelon(DelonVICelon_CPU)             \
+    .TypelonConstraint<Typelon>("T"),     \
+    DeloncomprelonssSamplelonIds<Typelon>);     \
                                     \
 
-REGISTER(int32);
+RelonGISTelonR(int32);

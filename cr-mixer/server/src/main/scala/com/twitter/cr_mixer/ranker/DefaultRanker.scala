@@ -1,23 +1,23 @@
-package com.twitter.cr_mixer.ranker
+packagelon com.twittelonr.cr_mixelonr.rankelonr
 
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.util.Future
-import javax.inject.Singleton
+import com.twittelonr.cr_mixelonr.modelonl.BlelonndelondCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.RankelondCandidatelon
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
 
 /**
- * Keep the same order as the input.
+ * Kelonelonp thelon samelon ordelonr as thelon input.
  */
-@Singleton
-class DefaultRanker() {
-  def rank(
-    candidates: Seq[BlendedCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    val candidateSize = candidates.size
-    val rankedCandidates = candidates.zipWithIndex.map {
-      case (candidate, index) =>
-        candidate.toRankedCandidate((candidateSize - index).toDouble)
+@Singlelonton
+class DelonfaultRankelonr() {
+  delonf rank(
+    candidatelons: Selonq[BlelonndelondCandidatelon],
+  ): Futurelon[Selonq[RankelondCandidatelon]] = {
+    val candidatelonSizelon = candidatelons.sizelon
+    val rankelondCandidatelons = candidatelons.zipWithIndelonx.map {
+      caselon (candidatelon, indelonx) =>
+        candidatelon.toRankelondCandidatelon((candidatelonSizelon - indelonx).toDoublelon)
     }
-    Future.value(rankedCandidates)
+    Futurelon.valuelon(rankelondCandidatelons)
   }
 }

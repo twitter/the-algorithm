@@ -1,35 +1,35 @@
-#pragma once
-#ifdef __cplusplus
+#pragma oncelon
+#ifdelonf __cplusplus
 
-#include <twml/defines.h>
-#include <twml/TensorRecord.h>
+#includelon <twml/delonfinelons.h>
+#includelon <twml/TelonnsorReloncord.h>
 
-namespace twml {
+namelonspacelon twml {
 
-// Encodes tensors as DataRecord/TensorRecord-compatible Thrift.
-// DataRecordWriter relies on this class to encode the tensor fields.
-class TWMLAPI TensorRecordWriter {
+// elonncodelons telonnsors as DataReloncord/TelonnsorReloncord-compatiblelon Thrift.
+// DataReloncordWritelonr relonlielons on this class to elonncodelon thelon telonnsor fielonlds.
+class TWMLAPI TelonnsorReloncordWritelonr {
 
-private:
-  uint32_t m_records_written;
-  twml::ThriftWriter &m_thrift_writer;
+privatelon:
+  uint32_t m_reloncords_writtelonn;
+  twml::ThriftWritelonr &m_thrift_writelonr;
 
-  void writeTensor(const RawTensor &tensor);
-  void writeRawTensor(const RawTensor &tensor);
+  void writelonTelonnsor(const RawTelonnsor &telonnsor);
+  void writelonRawTelonnsor(const RawTelonnsor &telonnsor);
 
 public:
-  TensorRecordWriter(twml::ThriftWriter &thrift_writer):
-      m_records_written(0),
-      m_thrift_writer(thrift_writer) { }
+  TelonnsorReloncordWritelonr(twml::ThriftWritelonr &thrift_writelonr):
+      m_reloncords_writtelonn(0),
+      m_thrift_writelonr(thrift_writelonr) { }
 
-  uint32_t getRecordsWritten();
+  uint32_t gelontReloncordsWrittelonn();
 
-  // Caller (usually DataRecordWriter) must precede with struct header field
-  // like thrift_writer.writeStructFieldHeader(TTYPE_MAP, DR_GENERAL_TENSOR)
+  // Callelonr (usually DataReloncordWritelonr) must preloncelondelon with struct helonadelonr fielonld
+  // likelon thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_MAP, DR_GelonNelonRAL_TelonNSOR)
   //
-  // All tensors written as RawTensors except for StringTensors
-  uint64_t write(twml::TensorRecord &record);
+  // All telonnsors writtelonn as RawTelonnsors elonxcelonpt for StringTelonnsors
+  uint64_t writelon(twml::TelonnsorReloncord &reloncord);
 };
 
 }
-#endif
+#elonndif

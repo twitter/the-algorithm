@@ -1,237 +1,237 @@
-package com.twitter.search.earlybird.segment;
+packagelon com.twittelonr.selonarch.elonarlybird.selongmelonnt;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Function;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.thrift.Telonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchRequestStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.ReaderWithStatsFactory;
-import com.twitter.search.common.util.io.TransformingRecordReader;
-import com.twitter.search.common.util.io.dl.DLMultiStreamReader;
-import com.twitter.search.common.util.io.dl.DLReaderWriterFactory;
-import com.twitter.search.common.util.io.dl.DLTimestampedReaderFactory;
-import com.twitter.search.common.util.io.dl.SegmentDLUtil;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReaderFactory;
-import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.SegmentInfo;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRelonquelonstStats;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdThriftDocumelonntUtil;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.util.io.RelonadelonrWithStatsFactory;
+import com.twittelonr.selonarch.common.util.io.TransformingReloncordRelonadelonr;
+import com.twittelonr.selonarch.common.util.io.dl.DLMultiStrelonamRelonadelonr;
+import com.twittelonr.selonarch.common.util.io.dl.DLRelonadelonrWritelonrFactory;
+import com.twittelonr.selonarch.common.util.io.dl.DLTimelonstampelondRelonadelonrFactory;
+import com.twittelonr.selonarch.common.util.io.dl.SelongmelonntDLUtil;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonr;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonrFactory;
+import com.twittelonr.selonarch.common.util.thrift.ThriftUtils;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.DocumelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
 
-public class DLSegmentDataReaderSet implements SegmentDataReaderSet {
-  private static final Logger LOG = LoggerFactory.getLogger(DLSegmentDataReaderSet.class);
+public class DLSelongmelonntDataRelonadelonrSelont implelonmelonnts SelongmelonntDataRelonadelonrSelont {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(DLSelongmelonntDataRelonadelonrSelont.class);
 
-  public static final SearchRequestStats STATUS_DL_READ_STATS =
-      SearchRequestStats.export("status_dlreader", TimeUnit.MICROSECONDS, false);
-  private static final SearchRequestStats UPDATE_EVENT_DL_READ_STATS =
-      SearchRequestStats.export("update_events_dlreader", TimeUnit.MICROSECONDS, false);
-  // The number of tweets not indexed because they failed deserialization.
-  private static final SearchCounter STATUS_SKIPPED_DUE_TO_FAILED_DESERIALIZATION_COUNTER =
-      SearchCounter.export("statuses_skipped_due_to_failed_deserialization");
+  public static final SelonarchRelonquelonstStats STATUS_DL_RelonAD_STATS =
+      SelonarchRelonquelonstStats.elonxport("status_dlrelonadelonr", TimelonUnit.MICROSelonCONDS, falselon);
+  privatelon static final SelonarchRelonquelonstStats UPDATelon_elonVelonNT_DL_RelonAD_STATS =
+      SelonarchRelonquelonstStats.elonxport("updatelon_elonvelonnts_dlrelonadelonr", TimelonUnit.MICROSelonCONDS, falselon);
+  // Thelon numbelonr of twelonelonts not indelonxelond beloncauselon thelony failelond delonselonrialization.
+  privatelon static final SelonarchCountelonr STATUS_SKIPPelonD_DUelon_TO_FAILelonD_DelonSelonRIALIZATION_COUNTelonR =
+      SelonarchCountelonr.elonxport("statuselons_skippelond_duelon_to_failelond_delonselonrialization");
 
-  @VisibleForTesting
-  public static final int FRESH_READ_THRESHOLD = (int) TimeUnit.MINUTES.toMillis(1);
+  @VisiblelonForTelonsting
+  public static final int FRelonSH_RelonAD_THRelonSHOLD = (int) TimelonUnit.MINUTelonS.toMillis(1);
 
-  private final int documentReadFreshnessThreshold =
-      EarlybirdConfig.getInt("documents_reader_freshness_threshold_millis", 10000);
-  private final int updateReadFreshnessThreshold =
-      EarlybirdConfig.getInt("updates_freshness_threshold_millis", FRESH_READ_THRESHOLD);
-  private final int dlReaderVersion = EarlybirdConfig.getInt("dl_reader_version");
+  privatelon final int documelonntRelonadFrelonshnelonssThrelonshold =
+      elonarlybirdConfig.gelontInt("documelonnts_relonadelonr_frelonshnelonss_threlonshold_millis", 10000);
+  privatelon final int updatelonRelonadFrelonshnelonssThrelonshold =
+      elonarlybirdConfig.gelontInt("updatelons_frelonshnelonss_threlonshold_millis", FRelonSH_RelonAD_THRelonSHOLD);
+  privatelon final int dlRelonadelonrVelonrsion = elonarlybirdConfig.gelontInt("dl_relonadelonr_velonrsion");
 
-  private final DLReaderWriterFactory dlFactory;
-  private final RecordReaderFactory<byte[]> dlUpdateEventsFactory;
-  private final EarlybirdIndexConfig indexConfig;
-  private final Clock clock;
+  privatelon final DLRelonadelonrWritelonrFactory dlFactory;
+  privatelon final ReloncordRelonadelonrFactory<bytelon[]> dlUpdatelonelonvelonntsFactory;
+  privatelon final elonarlybirdIndelonxConfig indelonxConfig;
+  privatelon final Clock clock;
 
-  private RecordReader<TweetDocument> documentReader;
+  privatelon ReloncordRelonadelonr<TwelonelontDocumelonnt> documelonntRelonadelonr;
 
-  // RecordReaders for update events that span all live segments.
-  private final RecordReader<ThriftVersionedEvents> updateEventsReader;
-  private final DLMultiStreamReader updateEventsMultiReader;
-  private final Map<Long, RecordReader<ThriftVersionedEvents>> updateEventReaders = new HashMap<>();
+  // ReloncordRelonadelonrs for updatelon elonvelonnts that span all livelon selongmelonnts.
+  privatelon final ReloncordRelonadelonr<ThriftVelonrsionelondelonvelonnts> updatelonelonvelonntsRelonadelonr;
+  privatelon final DLMultiStrelonamRelonadelonr updatelonelonvelonntsMultiRelonadelonr;
+  privatelon final Map<Long, ReloncordRelonadelonr<ThriftVelonrsionelondelonvelonnts>> updatelonelonvelonntRelonadelonrs = nelonw HashMap<>();
 
-  DLSegmentDataReaderSet(
-      DLReaderWriterFactory dlFactory,
-      final EarlybirdIndexConfig indexConfig,
-      Clock clock) throws IOException {
+  DLSelongmelonntDataRelonadelonrSelont(
+      DLRelonadelonrWritelonrFactory dlFactory,
+      final elonarlybirdIndelonxConfig indelonxConfig,
+      Clock clock) throws IOelonxcelonption {
     this.dlFactory = dlFactory;
-    this.indexConfig = indexConfig;
+    this.indelonxConfig = indelonxConfig;
     this.clock = clock;
 
-    this.dlUpdateEventsFactory = new ReaderWithStatsFactory(
-        new DLTimestampedReaderFactory(dlFactory, clock, updateReadFreshnessThreshold),
-        UPDATE_EVENT_DL_READ_STATS);
-    this.updateEventsMultiReader =
-        new DLMultiStreamReader("update_events", dlUpdateEventsFactory, true, clock);
-    this.updateEventsReader =
-        new TransformingRecordReader<>(updateEventsMultiReader, record ->
-            (record != null) ? deserializeTVE(record.getBytes()) : null);
+    this.dlUpdatelonelonvelonntsFactory = nelonw RelonadelonrWithStatsFactory(
+        nelonw DLTimelonstampelondRelonadelonrFactory(dlFactory, clock, updatelonRelonadFrelonshnelonssThrelonshold),
+        UPDATelon_elonVelonNT_DL_RelonAD_STATS);
+    this.updatelonelonvelonntsMultiRelonadelonr =
+        nelonw DLMultiStrelonamRelonadelonr("updatelon_elonvelonnts", dlUpdatelonelonvelonntsFactory, truelon, clock);
+    this.updatelonelonvelonntsRelonadelonr =
+        nelonw TransformingReloncordRelonadelonr<>(updatelonelonvelonntsMultiRelonadelonr, reloncord ->
+            (reloncord != null) ? delonselonrializelonTVelon(reloncord.gelontBytelons()) : null);
 
-    SearchCustomGauge.export("open_dl_update_events_streams", updateEventReaders::size);
+    SelonarchCustomGaugelon.elonxport("opelonn_dl_updatelon_elonvelonnts_strelonams", updatelonelonvelonntRelonadelonrs::sizelon);
   }
 
-  private ThriftVersionedEvents deserializeTVE(byte[] bytes) {
-    ThriftVersionedEvents event = new ThriftVersionedEvents();
+  privatelon ThriftVelonrsionelondelonvelonnts delonselonrializelonTVelon(bytelon[] bytelons) {
+    ThriftVelonrsionelondelonvelonnts elonvelonnt = nelonw ThriftVelonrsionelondelonvelonnts();
     try {
-      ThriftUtils.fromCompactBinaryFormat(bytes, event);
-      return event;
-    } catch (TException e) {
-      LOG.error("error deserializing TVE", e);
-      return null;
+      ThriftUtils.fromCompactBinaryFormat(bytelons, elonvelonnt);
+      relonturn elonvelonnt;
+    } catch (Telonxcelonption elon) {
+      LOG.elonrror("elonrror delonselonrializing TVelon", elon);
+      relonturn null;
     }
   }
 
-  @Override
-  public void attachDocumentReaders(SegmentInfo segmentInfo) throws IOException {
-    // Close any document reader left open before.
-    if (documentReader != null) {
-      LOG.warn("Previous documentReader not closed: {}", documentReader);
-      completeSegmentDocs(segmentInfo);
+  @Ovelonrridelon
+  public void attachDocumelonntRelonadelonrs(SelongmelonntInfo selongmelonntInfo) throws IOelonxcelonption {
+    // Closelon any documelonnt relonadelonr lelonft opelonn belonforelon.
+    if (documelonntRelonadelonr != null) {
+      LOG.warn("Prelonvious documelonntRelonadelonr not closelond: {}", documelonntRelonadelonr);
+      complelontelonSelongmelonntDocs(selongmelonntInfo);
     }
-    documentReader = newDocumentReader(segmentInfo);
+    documelonntRelonadelonr = nelonwDocumelonntRelonadelonr(selongmelonntInfo);
   }
 
-  @Override
-  public void attachUpdateReaders(SegmentInfo segmentInfo) throws IOException {
-    if (updateEventsMultiReader == null) {
-      return;
+  @Ovelonrridelon
+  public void attachUpdatelonRelonadelonrs(SelongmelonntInfo selongmelonntInfo) throws IOelonxcelonption {
+    if (updatelonelonvelonntsMultiRelonadelonr == null) {
+      relonturn;
     }
 
-    String segmentName = segmentInfo.getSegmentName();
-    if (getUpdateEventsReaderForSegment(segmentInfo) != null) {
-      LOG.info("Update events reader for segment {} is already attached.", segmentName);
-      return;
+    String selongmelonntNamelon = selongmelonntInfo.gelontSelongmelonntNamelon();
+    if (gelontUpdatelonelonvelonntsRelonadelonrForSelongmelonnt(selongmelonntInfo) != null) {
+      LOG.info("Updatelon elonvelonnts relonadelonr for selongmelonnt {} is alrelonady attachelond.", selongmelonntNamelon);
+      relonturn;
     }
 
-    long updateEventStreamOffsetTimestamp = segmentInfo.getUpdatesStreamOffsetTimestamp();
-    LOG.info("Attaching update events reader for segment {} with timestamp: {}.",
-             segmentName, updateEventStreamOffsetTimestamp);
+    long updatelonelonvelonntStrelonamOffselontTimelonstamp = selongmelonntInfo.gelontUpdatelonsStrelonamOffselontTimelonstamp();
+    LOG.info("Attaching updatelon elonvelonnts relonadelonr for selongmelonnt {} with timelonstamp: {}.",
+             selongmelonntNamelon, updatelonelonvelonntStrelonamOffselontTimelonstamp);
 
-    String topic = SegmentDLUtil.getDLTopicForUpdateEvents(segmentName, dlReaderVersion);
-    RecordReader<byte[]> recordReader =
-        dlUpdateEventsFactory.newRecordReaderForTimestamp(topic, updateEventStreamOffsetTimestamp);
-    updateEventsMultiReader.addRecordReader(recordReader, topic);
-    updateEventReaders.put(segmentInfo.getTimeSliceID(),
-        new TransformingRecordReader<>(recordReader, this::deserializeTVE));
+    String topic = SelongmelonntDLUtil.gelontDLTopicForUpdatelonelonvelonnts(selongmelonntNamelon, dlRelonadelonrVelonrsion);
+    ReloncordRelonadelonr<bytelon[]> reloncordRelonadelonr =
+        dlUpdatelonelonvelonntsFactory.nelonwReloncordRelonadelonrForTimelonstamp(topic, updatelonelonvelonntStrelonamOffselontTimelonstamp);
+    updatelonelonvelonntsMultiRelonadelonr.addReloncordRelonadelonr(reloncordRelonadelonr, topic);
+    updatelonelonvelonntRelonadelonrs.put(selongmelonntInfo.gelontTimelonSlicelonID(),
+        nelonw TransformingReloncordRelonadelonr<>(reloncordRelonadelonr, this::delonselonrializelonTVelon));
   }
 
-  @Override
+  @Ovelonrridelon
   public void stopAll() {
-    if (documentReader != null) {
-      documentReader.close();
+    if (documelonntRelonadelonr != null) {
+      documelonntRelonadelonr.closelon();
     }
-    if (updateEventsReader != null) {
-      updateEventsReader.close();
+    if (updatelonelonvelonntsRelonadelonr != null) {
+      updatelonelonvelonntsRelonadelonr.closelon();
     }
     try {
-      dlFactory.close();
-    } catch (IOException e) {
-      LOG.error("Exception while closing DL factory", e);
+      dlFactory.closelon();
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("elonxcelonption whilelon closing DL factory", elon);
     }
   }
 
-  @Override
-  public void completeSegmentDocs(SegmentInfo segmentInfo) {
-    if (documentReader != null) {
-      documentReader.close();
-      documentReader = null;
+  @Ovelonrridelon
+  public void complelontelonSelongmelonntDocs(SelongmelonntInfo selongmelonntInfo) {
+    if (documelonntRelonadelonr != null) {
+      documelonntRelonadelonr.closelon();
+      documelonntRelonadelonr = null;
     }
   }
 
-  @Override
-  public void stopSegmentUpdates(SegmentInfo segmentInfo) {
-    if (updateEventsMultiReader != null) {
-      updateEventsMultiReader.removeStream(
-          SegmentDLUtil.getDLTopicForUpdateEvents(segmentInfo.getSegmentName(), dlReaderVersion));
-      updateEventReaders.remove(segmentInfo.getTimeSliceID());
+  @Ovelonrridelon
+  public void stopSelongmelonntUpdatelons(SelongmelonntInfo selongmelonntInfo) {
+    if (updatelonelonvelonntsMultiRelonadelonr != null) {
+      updatelonelonvelonntsMultiRelonadelonr.relonmovelonStrelonam(
+          SelongmelonntDLUtil.gelontDLTopicForUpdatelonelonvelonnts(selongmelonntInfo.gelontSelongmelonntNamelon(), dlRelonadelonrVelonrsion));
+      updatelonelonvelonntRelonadelonrs.relonmovelon(selongmelonntInfo.gelontTimelonSlicelonID());
     }
   }
 
-  @Override
-  public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo) throws IOException {
-    String topic = SegmentDLUtil.getDLTopicForTweets(segmentInfo.getSegmentName(),
-        EarlybirdConfig.getPenguinVersion(), dlReaderVersion);
-    final long timeSliceId = segmentInfo.getTimeSliceID();
-    final DocumentFactory<ThriftIndexingEvent> docFactory = indexConfig.createDocumentFactory();
+  @Ovelonrridelon
+  public ReloncordRelonadelonr<TwelonelontDocumelonnt> nelonwDocumelonntRelonadelonr(SelongmelonntInfo selongmelonntInfo) throws IOelonxcelonption {
+    String topic = SelongmelonntDLUtil.gelontDLTopicForTwelonelonts(selongmelonntInfo.gelontSelongmelonntNamelon(),
+        elonarlybirdConfig.gelontPelonnguinVelonrsion(), dlRelonadelonrVelonrsion);
+    final long timelonSlicelonId = selongmelonntInfo.gelontTimelonSlicelonID();
+    final DocumelonntFactory<ThriftIndelonxingelonvelonnt> docFactory = indelonxConfig.crelonatelonDocumelonntFactory();
 
-    // Create the underlying DLRecordReader wrapped with the tweet reader stats.
-    RecordReader<byte[]> dlReader = new ReaderWithStatsFactory(
-        new DLTimestampedReaderFactory(
+    // Crelonatelon thelon undelonrlying DLReloncordRelonadelonr wrappelond with thelon twelonelont relonadelonr stats.
+    ReloncordRelonadelonr<bytelon[]> dlRelonadelonr = nelonw RelonadelonrWithStatsFactory(
+        nelonw DLTimelonstampelondRelonadelonrFactory(
             dlFactory,
             clock,
-            documentReadFreshnessThreshold),
-        STATUS_DL_READ_STATS)
-        .newRecordReader(topic);
+            documelonntRelonadFrelonshnelonssThrelonshold),
+        STATUS_DL_RelonAD_STATS)
+        .nelonwReloncordRelonadelonr(topic);
 
-    // Create the wrapped reader which transforms serialized byte[] to TweetDocument.
-    return new TransformingRecordReader<>(
-        dlReader,
-        new Function<byte[], TweetDocument>() {
-          @Override
-          public TweetDocument apply(byte[] input) {
-            ThriftIndexingEvent event = new ThriftIndexingEvent();
+    // Crelonatelon thelon wrappelond relonadelonr which transforms selonrializelond bytelon[] to TwelonelontDocumelonnt.
+    relonturn nelonw TransformingReloncordRelonadelonr<>(
+        dlRelonadelonr,
+        nelonw Function<bytelon[], TwelonelontDocumelonnt>() {
+          @Ovelonrridelon
+          public TwelonelontDocumelonnt apply(bytelon[] input) {
+            ThriftIndelonxingelonvelonnt elonvelonnt = nelonw ThriftIndelonxingelonvelonnt();
             try {
-              ThriftUtils.fromCompactBinaryFormat(input, event);
-            } catch (TException e) {
-              LOG.error("Could not deserialize status document", e);
-              STATUS_SKIPPED_DUE_TO_FAILED_DESERIALIZATION_COUNTER.increment();
-              return null;
+              ThriftUtils.fromCompactBinaryFormat(input, elonvelonnt);
+            } catch (Telonxcelonption elon) {
+              LOG.elonrror("Could not delonselonrializelon status documelonnt", elon);
+              STATUS_SKIPPelonD_DUelon_TO_FAILelonD_DelonSelonRIALIZATION_COUNTelonR.increlonmelonnt();
+              relonturn null;
             }
 
-            Preconditions.checkNotNull(event.getDocument());
-            return new TweetDocument(
-                docFactory.getStatusId(event),
-                timeSliceId,
-                EarlybirdThriftDocumentUtil.getCreatedAtMs(event.getDocument()),
-                docFactory.newDocument(event));
+            Prelonconditions.chelonckNotNull(elonvelonnt.gelontDocumelonnt());
+            relonturn nelonw TwelonelontDocumelonnt(
+                docFactory.gelontStatusId(elonvelonnt),
+                timelonSlicelonId,
+                elonarlybirdThriftDocumelonntUtil.gelontCrelonatelondAtMs(elonvelonnt.gelontDocumelonnt()),
+                docFactory.nelonwDocumelonnt(elonvelonnt));
           }
         });
   }
 
-  @Override
-  public RecordReader<TweetDocument> getDocumentReader() {
-    return documentReader;
+  @Ovelonrridelon
+  public ReloncordRelonadelonr<TwelonelontDocumelonnt> gelontDocumelonntRelonadelonr() {
+    relonturn documelonntRelonadelonr;
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReader() {
-    return updateEventsReader;
+  @Ovelonrridelon
+  public ReloncordRelonadelonr<ThriftVelonrsionelondelonvelonnts> gelontUpdatelonelonvelonntsRelonadelonr() {
+    relonturn updatelonelonvelonntsRelonadelonr;
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReaderForSegment(
-      SegmentInfo segmentInfo) {
-    return updateEventReaders.get(segmentInfo.getTimeSliceID());
+  @Ovelonrridelon
+  public ReloncordRelonadelonr<ThriftVelonrsionelondelonvelonnts> gelontUpdatelonelonvelonntsRelonadelonrForSelongmelonnt(
+      SelongmelonntInfo selongmelonntInfo) {
+    relonturn updatelonelonvelonntRelonadelonrs.gelont(selongmelonntInfo.gelontTimelonSlicelonID());
   }
 
-  @Override
-  public Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo) {
+  @Ovelonrridelon
+  public Optional<Long> gelontUpdatelonelonvelonntsStrelonamOffselontForSelongmelonnt(SelongmelonntInfo selongmelonntInfo) {
     String topic =
-        SegmentDLUtil.getDLTopicForUpdateEvents(segmentInfo.getSegmentName(), dlReaderVersion);
-    return updateEventsMultiReader.getUnderlyingOffsetForSegmentWithTopic(topic);
+        SelongmelonntDLUtil.gelontDLTopicForUpdatelonelonvelonnts(selongmelonntInfo.gelontSelongmelonntNamelon(), dlRelonadelonrVelonrsion);
+    relonturn updatelonelonvelonntsMultiRelonadelonr.gelontUndelonrlyingOffselontForSelongmelonntWithTopic(topic);
   }
 
-  @Override
-  public boolean allCaughtUp() {
-    return ((getDocumentReader() == null) || getDocumentReader().isCaughtUp())
-        && ((getUpdateEventsReader() == null) || getUpdateEventsReader().isCaughtUp());
+  @Ovelonrridelon
+  public boolelonan allCaughtUp() {
+    relonturn ((gelontDocumelonntRelonadelonr() == null) || gelontDocumelonntRelonadelonr().isCaughtUp())
+        && ((gelontUpdatelonelonvelonntsRelonadelonr() == null) || gelontUpdatelonelonvelonntsRelonadelonr().isCaughtUp());
   }
 }

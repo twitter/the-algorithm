@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.selector
-import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.RelonlelonvancelonPromptCandidatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Compute a position for inserting a specific candidate into the result sequence originally provided to the Selector.
- * If a `None` is returned, the Selector using this would not insert that candidate into the result.
+ * Computelon a position for inselonrting a speloncific candidatelon into thelon relonsult selonquelonncelon originally providelond to thelon Selonlelonctor.
+ * If a `Nonelon` is relonturnelond, thelon Selonlelonctor using this would not inselonrt that candidatelon into thelon relonsult.
  */
-trait CandidatePositionInResults[-Query <: PipelineQuery] {
-  def apply(
-    query: Query,
-    candidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
+trait CandidatelonPositionInRelonsults[-Quelonry <: PipelonlinelonQuelonry] {
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelon: CandidatelonWithDelontails,
+    relonsult: Selonq[CandidatelonWithDelontails]
   ): Option[Int]
 }
 
-object PromptCandidatePositionInResults extends CandidatePositionInResults[PipelineQuery] {
-  override def apply(
-    query: PipelineQuery,
-    candidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
-  ): Option[Int] = candidate match {
-    case ItemCandidateWithDetails(candidate, _, _) =>
-      candidate match {
-        case relevancePromptCandidate: RelevancePromptCandidate => relevancePromptCandidate.position
-        case _ => None
+objelonct PromptCandidatelonPositionInRelonsults elonxtelonnds CandidatelonPositionInRelonsults[PipelonlinelonQuelonry] {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: CandidatelonWithDelontails,
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): Option[Int] = candidatelon match {
+    caselon ItelonmCandidatelonWithDelontails(candidatelon, _, _) =>
+      candidatelon match {
+        caselon relonlelonvancelonPromptCandidatelon: RelonlelonvancelonPromptCandidatelon => relonlelonvancelonPromptCandidatelon.position
+        caselon _ => Nonelon
       }
-    // not supporting ModuleCandidateWithDetails right now as RelevancePromptCandidate shouldn't be in a module
-    case _ => None
+    // not supporting ModulelonCandidatelonWithDelontails right now as RelonlelonvancelonPromptCandidatelon shouldn't belon in a modulelon
+    caselon _ => Nonelon
   }
 }

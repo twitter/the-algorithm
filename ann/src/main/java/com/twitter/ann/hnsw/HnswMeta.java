@@ -1,45 +1,45 @@
-package com.twitter.ann.hnsw;
+packagelon com.twittelonr.ann.hnsw;
 
-import java.util.Objects;
+import java.util.Objeloncts;
 import java.util.Optional;
 
-class HnswMeta<T> {
-  private final int maxLevel;
-  private final Optional<T> entryPoint;
+class HnswMelonta<T> {
+  privatelon final int maxLelonvelonl;
+  privatelon final Optional<T> elonntryPoint;
 
-  HnswMeta(int maxLevel, Optional<T> entryPoint) {
-    this.maxLevel = maxLevel;
-    this.entryPoint = entryPoint;
+  HnswMelonta(int maxLelonvelonl, Optional<T> elonntryPoint) {
+    this.maxLelonvelonl = maxLelonvelonl;
+    this.elonntryPoint = elonntryPoint;
   }
 
-  public int getMaxLevel() {
-    return maxLevel;
+  public int gelontMaxLelonvelonl() {
+    relonturn maxLelonvelonl;
   }
 
-  public Optional<T> getEntryPoint() {
-    return entryPoint;
+  public Optional<T> gelontelonntryPoint() {
+    relonturn elonntryPoint;
   }
 
-  @Override
-  public boolean equals(Object o) {
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct o) {
     if (this == o) {
-      return true;
+      relonturn truelon;
     }
-    if (o == null || getClass() != o.getClass()) {
-      return false;
+    if (o == null || gelontClass() != o.gelontClass()) {
+      relonturn falselon;
     }
-    HnswMeta<?> hnswMeta = (HnswMeta<?>) o;
-    return maxLevel == hnswMeta.maxLevel
-        && Objects.equals(entryPoint, hnswMeta.entryPoint);
+    HnswMelonta<?> hnswMelonta = (HnswMelonta<?>) o;
+    relonturn maxLelonvelonl == hnswMelonta.maxLelonvelonl
+        && Objeloncts.elonquals(elonntryPoint, hnswMelonta.elonntryPoint);
   }
 
-  @Override
-  public int hashCode() {
-    return Objects.hash(maxLevel, entryPoint);
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn Objeloncts.hash(maxLelonvelonl, elonntryPoint);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return "HnswMeta{maxLevel=" + maxLevel + ", entryPoint=" + entryPoint + '}';
+    relonturn "HnswMelonta{maxLelonvelonl=" + maxLelonvelonl + ", elonntryPoint=" + elonntryPoint + '}';
   }
 }

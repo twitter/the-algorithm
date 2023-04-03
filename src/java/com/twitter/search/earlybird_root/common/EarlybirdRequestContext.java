@@ -1,227 +1,227 @@
-package com.twitter.search.earlybird_root.common;
+packagelon com.twittelonr.selonarch.elonarlybird_root.common;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
 import scala.Option;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.common.util.Clock;
-import com.twitter.context.thriftscala.Viewer;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaSpecifier;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.contelonxt.thriftscala.Vielonwelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
 
 /**
- * A class that wraps a request and additional per-request data that should be passed to services.
+ * A class that wraps a relonquelonst and additional pelonr-relonquelonst data that should belon passelond to selonrvicelons.
  *
- * This class should be immutable. At the very least, it must be thread-safe. In practice, since
- * EarlybirdRequest is a mutable Thrift structure, the users of this class need to make sure that
- * once a request is used to create a RequestContext instance, it is not modified.
+ * This class should belon immutablelon. At thelon velonry lelonast, it must belon threlonad-safelon. In practicelon, sincelon
+ * elonarlybirdRelonquelonst is a mutablelon Thrift structurelon, thelon uselonrs of this class nelonelond to makelon surelon that
+ * oncelon a relonquelonst is uselond to crelonatelon a RelonquelonstContelonxt instancelon, it is not modifielond.
  *
- * If the request needs to be modified, a new RequestContext with the modified EarlybirdRequest
- * should be created.
+ * If thelon relonquelonst nelonelonds to belon modifielond, a nelonw RelonquelonstContelonxt with thelon modifielond elonarlybirdRelonquelonst
+ * should belon crelonatelond.
  */
-public final class EarlybirdRequestContext {
+public final class elonarlybirdRelonquelonstContelonxt {
 
-  private static final String OVERRIDE_TIER_CONFIGS_DECIDER_KEY = "use_override_tier_configs";
+  privatelon static final String OVelonRRIDelon_TIelonR_CONFIGS_DelonCIDelonR_KelonY = "uselon_ovelonrridelon_tielonr_configs";
 
   /**
-   * Creates a new context with the provided earlybird request, and using the given decider.
+   * Crelonatelons a nelonw contelonxt with thelon providelond elonarlybird relonquelonst, and using thelon givelonn deloncidelonr.
    */
-  public static EarlybirdRequestContext newContext(
-      EarlybirdRequest request,
-      SearchDecider decider,
-      Option<Viewer> twitterContextViewer,
-      Clock clock) throws QueryParserException {
+  public static elonarlybirdRelonquelonstContelonxt nelonwContelonxt(
+      elonarlybirdRelonquelonst relonquelonst,
+      SelonarchDeloncidelonr deloncidelonr,
+      Option<Vielonwelonr> twittelonrContelonxtVielonwelonr,
+      Clock clock) throws QuelonryParselonrelonxcelonption {
 
-    // Try to capture created time as early as possible. For example, we want to account for query
-    // parsing time.
-    long createdTimeMillis = clock.nowMillis();
+    // Try to capturelon crelonatelond timelon as elonarly as possiblelon. For elonxamplelon, welon want to account for quelonry
+    // parsing timelon.
+    long crelonatelondTimelonMillis = clock.nowMillis();
 
-    boolean useOverrideTierConfig = decider.isAvailable(OVERRIDE_TIER_CONFIGS_DECIDER_KEY);
+    boolelonan uselonOvelonrridelonTielonrConfig = deloncidelonr.isAvailablelon(OVelonRRIDelon_TIelonR_CONFIGS_DelonCIDelonR_KelonY);
 
-    Query parsedQuery = QueryParsingUtils.getParsedQuery(request);
+    Quelonry parselondQuelonry = QuelonryParsingUtils.gelontParselondQuelonry(relonquelonst);
 
-    return new EarlybirdRequestContext(
-        request,
-        parsedQuery,
-        useOverrideTierConfig,
-        createdTimeMillis,
-        twitterContextViewer);
+    relonturn nelonw elonarlybirdRelonquelonstContelonxt(
+        relonquelonst,
+        parselondQuelonry,
+        uselonOvelonrridelonTielonrConfig,
+        crelonatelondTimelonMillis,
+        twittelonrContelonxtVielonwelonr);
   }
 
   /**
-   * Intersection of the userID and the flock response, which is set in the followedUserIds field.
-   * This is used for protected cluster.
+   * Intelonrselonction of thelon uselonrID and thelon flock relonsponselon, which is selont in thelon followelondUselonrIds fielonld.
+   * This is uselond for protelonctelond clustelonr.
    */
-  public static EarlybirdRequestContext newContextWithRestrictFromUserIdFilter64(
-      EarlybirdRequestContext requestContext) {
-    Preconditions.checkArgument(requestContext.getRequest().isSetFollowedUserIds());
+  public static elonarlybirdRelonquelonstContelonxt nelonwContelonxtWithRelonstrictFromUselonrIdFiltelonr64(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    Prelonconditions.chelonckArgumelonnt(relonquelonstContelonxt.gelontRelonquelonst().isSelontFollowelondUselonrIds());
 
-    EarlybirdRequest request = requestContext.getRequest().deepCopy();
-    List<Long> toIntersect = request.getFollowedUserIds();
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    if (!searchQuery.isSetFromUserIDFilter64()) {
-      searchQuery.setFromUserIDFilter64(new ArrayList<>(toIntersect));
-    } else {
-      Set<Long> intersection = Sets.intersection(
-          Sets.newHashSet(searchQuery.getFromUserIDFilter64()),
-          Sets.newHashSet(toIntersect));
-      searchQuery.setFromUserIDFilter64(new ArrayList<>(intersection));
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst().delonelonpCopy();
+    List<Long> toIntelonrselonct = relonquelonst.gelontFollowelondUselonrIds();
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
+    if (!selonarchQuelonry.isSelontFromUselonrIDFiltelonr64()) {
+      selonarchQuelonry.selontFromUselonrIDFiltelonr64(nelonw ArrayList<>(toIntelonrselonct));
+    } elonlselon {
+      Selont<Long> intelonrselonction = Selonts.intelonrselonction(
+          Selonts.nelonwHashSelont(selonarchQuelonry.gelontFromUselonrIDFiltelonr64()),
+          Selonts.nelonwHashSelont(toIntelonrselonct));
+      selonarchQuelonry.selontFromUselonrIDFiltelonr64(nelonw ArrayList<>(intelonrselonction));
     }
 
-    return new EarlybirdRequestContext(requestContext, request, requestContext.getParsedQuery());
+    relonturn nelonw elonarlybirdRelonquelonstContelonxt(relonquelonstContelonxt, relonquelonst, relonquelonstContelonxt.gelontParselondQuelonry());
   }
 
   /**
-   * Makes an exact copy of the provided request context, by cloning the underlying earlybird
-   * request.
+   * Makelons an elonxact copy of thelon providelond relonquelonst contelonxt, by cloning thelon undelonrlying elonarlybird
+   * relonquelonst.
    */
-  public static EarlybirdRequestContext copyRequestContext(
-      EarlybirdRequestContext requestContext,
-      Query parsedQuery) {
-    return new EarlybirdRequestContext(requestContext, parsedQuery);
+  public static elonarlybirdRelonquelonstContelonxt copyRelonquelonstContelonxt(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Quelonry parselondQuelonry) {
+    relonturn nelonw elonarlybirdRelonquelonstContelonxt(relonquelonstContelonxt, parselondQuelonry);
   }
 
   /**
-   * Creates a new context with the provided request, context and reset both the feature schemas
-   * cached in client and the feature schemas cached in the local cache.
+   * Crelonatelons a nelonw contelonxt with thelon providelond relonquelonst, contelonxt and relonselont both thelon felonaturelon schelonmas
+   * cachelond in clielonnt and thelon felonaturelon schelonmas cachelond in thelon local cachelon.
    */
-  public static EarlybirdRequestContext newContext(
-      EarlybirdRequest oldRequest,
-      EarlybirdRequestContext oldRequestContext,
-      List<ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInCache,
-      List<ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient) {
-    EarlybirdRequest request = oldRequest.deepCopy();
-    request.getSearchQuery().getResultMetadataOptions()
-        .setFeatureSchemasAvailableInClient(featureSchemasAvailableInCache);
+  public static elonarlybirdRelonquelonstContelonxt nelonwContelonxt(
+      elonarlybirdRelonquelonst oldRelonquelonst,
+      elonarlybirdRelonquelonstContelonxt oldRelonquelonstContelonxt,
+      List<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr> felonaturelonSchelonmasAvailablelonInCachelon,
+      List<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr> felonaturelonSchelonmasAvailablelonInClielonnt) {
+    elonarlybirdRelonquelonst relonquelonst = oldRelonquelonst.delonelonpCopy();
+    relonquelonst.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions()
+        .selontFelonaturelonSchelonmasAvailablelonInClielonnt(felonaturelonSchelonmasAvailablelonInCachelon);
 
-    ImmutableSet<ThriftSearchFeatureSchemaSpecifier> featureSchemaSetAvailableInClient = null;
-    if (featureSchemasAvailableInClient != null) {
-      featureSchemaSetAvailableInClient = ImmutableSet.copyOf(featureSchemasAvailableInClient);
+    ImmutablelonSelont<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr> felonaturelonSchelonmaSelontAvailablelonInClielonnt = null;
+    if (felonaturelonSchelonmasAvailablelonInClielonnt != null) {
+      felonaturelonSchelonmaSelontAvailablelonInClielonnt = ImmutablelonSelont.copyOf(felonaturelonSchelonmasAvailablelonInClielonnt);
     }
 
-    return new EarlybirdRequestContext(
-        request,
-        EarlybirdRequestType.of(request),
-        oldRequestContext.getParsedQuery(),
-        oldRequestContext.useOverrideTierConfig(),
-        oldRequestContext.getCreatedTimeMillis(),
-        oldRequestContext.getTwitterContextViewer(),
-        featureSchemaSetAvailableInClient);
+    relonturn nelonw elonarlybirdRelonquelonstContelonxt(
+        relonquelonst,
+        elonarlybirdRelonquelonstTypelon.of(relonquelonst),
+        oldRelonquelonstContelonxt.gelontParselondQuelonry(),
+        oldRelonquelonstContelonxt.uselonOvelonrridelonTielonrConfig(),
+        oldRelonquelonstContelonxt.gelontCrelonatelondTimelonMillis(),
+        oldRelonquelonstContelonxt.gelontTwittelonrContelonxtVielonwelonr(),
+        felonaturelonSchelonmaSelontAvailablelonInClielonnt);
   }
 
-  public EarlybirdRequestContext deepCopy() {
-    return new EarlybirdRequestContext(request.deepCopy(), parsedQuery, useOverrideTierConfig,
-        createdTimeMillis, twitterContextViewer);
+  public elonarlybirdRelonquelonstContelonxt delonelonpCopy() {
+    relonturn nelonw elonarlybirdRelonquelonstContelonxt(relonquelonst.delonelonpCopy(), parselondQuelonry, uselonOvelonrridelonTielonrConfig,
+        crelonatelondTimelonMillis, twittelonrContelonxtVielonwelonr);
   }
 
-  private final EarlybirdRequest request;
-  // EarlybirdRequestType should not change for a given request. Computing it once here so that we
-  // don't need to compute it from the request every time we want to use it.
-  private final EarlybirdRequestType earlybirdRequestType;
-  // The parsed query matching the serialized query in the request. May be null if the request does
-  // not contain a serialized query.
-  // If a request's serialized query needs to be rewritten for any reason, a new
-  // EarlybirdRequestContext should be created, with a new EarlybirdRequest (with a new serialized
-  // query), and a new parsed query (matching the new serialized query).
-  @Nullable
-  private final Query parsedQuery;
-  private final boolean useOverrideTierConfig;
-  private final long createdTimeMillis;
-  private final Option<Viewer> twitterContextViewer;
+  privatelon final elonarlybirdRelonquelonst relonquelonst;
+  // elonarlybirdRelonquelonstTypelon should not changelon for a givelonn relonquelonst. Computing it oncelon helonrelon so that welon
+  // don't nelonelond to computelon it from thelon relonquelonst elonvelonry timelon welon want to uselon it.
+  privatelon final elonarlybirdRelonquelonstTypelon elonarlybirdRelonquelonstTypelon;
+  // Thelon parselond quelonry matching thelon selonrializelond quelonry in thelon relonquelonst. May belon null if thelon relonquelonst doelons
+  // not contain a selonrializelond quelonry.
+  // If a relonquelonst's selonrializelond quelonry nelonelonds to belon relonwrittelonn for any relonason, a nelonw
+  // elonarlybirdRelonquelonstContelonxt should belon crelonatelond, with a nelonw elonarlybirdRelonquelonst (with a nelonw selonrializelond
+  // quelonry), and a nelonw parselond quelonry (matching thelon nelonw selonrializelond quelonry).
+  @Nullablelon
+  privatelon final Quelonry parselondQuelonry;
+  privatelon final boolelonan uselonOvelonrridelonTielonrConfig;
+  privatelon final long crelonatelondTimelonMillis;
+  privatelon final Option<Vielonwelonr> twittelonrContelonxtVielonwelonr;
 
-  @Nullable
-  private final ImmutableSet<ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient;
+  @Nullablelon
+  privatelon final ImmutablelonSelont<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr> felonaturelonSchelonmasAvailablelonInClielonnt;
 
-  private EarlybirdRequestContext(
-      EarlybirdRequest request,
-      Query parsedQuery,
-      boolean useOverrideTierConfig,
-      long createdTimeMillis,
-      Option<Viewer> twitterContextViewer) {
-    this(request,
-        EarlybirdRequestType.of(request),
-        parsedQuery,
-        useOverrideTierConfig,
-        createdTimeMillis,
-        twitterContextViewer,
+  privatelon elonarlybirdRelonquelonstContelonxt(
+      elonarlybirdRelonquelonst relonquelonst,
+      Quelonry parselondQuelonry,
+      boolelonan uselonOvelonrridelonTielonrConfig,
+      long crelonatelondTimelonMillis,
+      Option<Vielonwelonr> twittelonrContelonxtVielonwelonr) {
+    this(relonquelonst,
+        elonarlybirdRelonquelonstTypelon.of(relonquelonst),
+        parselondQuelonry,
+        uselonOvelonrridelonTielonrConfig,
+        crelonatelondTimelonMillis,
+        twittelonrContelonxtVielonwelonr,
         null);
   }
 
-  private EarlybirdRequestContext(
-      EarlybirdRequest request,
-      EarlybirdRequestType earlybirdRequestType,
-      Query parsedQuery,
-      boolean useOverrideTierConfig,
-      long createdTimeMillis,
-      Option<Viewer> twitterContextViewer,
-      @Nullable ImmutableSet<ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient) {
-    this.request = Preconditions.checkNotNull(request);
-    this.earlybirdRequestType = earlybirdRequestType;
-    this.parsedQuery = parsedQuery;
-    this.useOverrideTierConfig = useOverrideTierConfig;
-    this.createdTimeMillis = createdTimeMillis;
-    this.twitterContextViewer = twitterContextViewer;
-    this.featureSchemasAvailableInClient = featureSchemasAvailableInClient;
+  privatelon elonarlybirdRelonquelonstContelonxt(
+      elonarlybirdRelonquelonst relonquelonst,
+      elonarlybirdRelonquelonstTypelon elonarlybirdRelonquelonstTypelon,
+      Quelonry parselondQuelonry,
+      boolelonan uselonOvelonrridelonTielonrConfig,
+      long crelonatelondTimelonMillis,
+      Option<Vielonwelonr> twittelonrContelonxtVielonwelonr,
+      @Nullablelon ImmutablelonSelont<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr> felonaturelonSchelonmasAvailablelonInClielonnt) {
+    this.relonquelonst = Prelonconditions.chelonckNotNull(relonquelonst);
+    this.elonarlybirdRelonquelonstTypelon = elonarlybirdRelonquelonstTypelon;
+    this.parselondQuelonry = parselondQuelonry;
+    this.uselonOvelonrridelonTielonrConfig = uselonOvelonrridelonTielonrConfig;
+    this.crelonatelondTimelonMillis = crelonatelondTimelonMillis;
+    this.twittelonrContelonxtVielonwelonr = twittelonrContelonxtVielonwelonr;
+    this.felonaturelonSchelonmasAvailablelonInClielonnt = felonaturelonSchelonmasAvailablelonInClielonnt;
   }
 
-  private EarlybirdRequestContext(EarlybirdRequestContext otherContext, Query otherParsedQuery) {
-    this(otherContext, otherContext.getRequest().deepCopy(), otherParsedQuery);
+  privatelon elonarlybirdRelonquelonstContelonxt(elonarlybirdRelonquelonstContelonxt othelonrContelonxt, Quelonry othelonrParselondQuelonry) {
+    this(othelonrContelonxt, othelonrContelonxt.gelontRelonquelonst().delonelonpCopy(), othelonrParselondQuelonry);
   }
 
-  private EarlybirdRequestContext(EarlybirdRequestContext otherContext,
-                                  EarlybirdRequest otherRequest,
-                                  Query otherParsedQuery) {
-    this(otherRequest,
-        otherContext.earlybirdRequestType,
-        otherParsedQuery,
-        otherContext.useOverrideTierConfig,
-        otherContext.createdTimeMillis,
-        otherContext.twitterContextViewer,
+  privatelon elonarlybirdRelonquelonstContelonxt(elonarlybirdRelonquelonstContelonxt othelonrContelonxt,
+                                  elonarlybirdRelonquelonst othelonrRelonquelonst,
+                                  Quelonry othelonrParselondQuelonry) {
+    this(othelonrRelonquelonst,
+        othelonrContelonxt.elonarlybirdRelonquelonstTypelon,
+        othelonrParselondQuelonry,
+        othelonrContelonxt.uselonOvelonrridelonTielonrConfig,
+        othelonrContelonxt.crelonatelondTimelonMillis,
+        othelonrContelonxt.twittelonrContelonxtVielonwelonr,
         null);
 
-    Preconditions.checkState(request.isSetSearchQuery());
-    this.request.getSearchQuery().setSerializedQuery(otherParsedQuery.serialize());
+    Prelonconditions.chelonckStatelon(relonquelonst.isSelontSelonarchQuelonry());
+    this.relonquelonst.gelontSelonarchQuelonry().selontSelonrializelondQuelonry(othelonrParselondQuelonry.selonrializelon());
   }
 
-  public EarlybirdRequest getRequest() {
-    return request;
+  public elonarlybirdRelonquelonst gelontRelonquelonst() {
+    relonturn relonquelonst;
   }
 
-  public boolean useOverrideTierConfig() {
-    return useOverrideTierConfig;
+  public boolelonan uselonOvelonrridelonTielonrConfig() {
+    relonturn uselonOvelonrridelonTielonrConfig;
   }
 
-  public EarlybirdRequestType getEarlybirdRequestType() {
-    return earlybirdRequestType;
+  public elonarlybirdRelonquelonstTypelon gelontelonarlybirdRelonquelonstTypelon() {
+    relonturn elonarlybirdRelonquelonstTypelon;
   }
 
-  @Nullable
-  public Query getParsedQuery() {
-    return parsedQuery;
+  @Nullablelon
+  public Quelonry gelontParselondQuelonry() {
+    relonturn parselondQuelonry;
   }
 
-  public long getCreatedTimeMillis() {
-    return createdTimeMillis;
+  public long gelontCrelonatelondTimelonMillis() {
+    relonturn crelonatelondTimelonMillis;
   }
 
-  public Option<Viewer> getTwitterContextViewer() {
-    return twitterContextViewer;
+  public Option<Vielonwelonr> gelontTwittelonrContelonxtVielonwelonr() {
+    relonturn twittelonrContelonxtVielonwelonr;
   }
 
-  @Nullable
-  public Set<ThriftSearchFeatureSchemaSpecifier> getFeatureSchemasAvailableInClient() {
-    return featureSchemasAvailableInClient;
+  @Nullablelon
+  public Selont<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr> gelontFelonaturelonSchelonmasAvailablelonInClielonnt() {
+    relonturn felonaturelonSchelonmasAvailablelonInClielonnt;
   }
 }

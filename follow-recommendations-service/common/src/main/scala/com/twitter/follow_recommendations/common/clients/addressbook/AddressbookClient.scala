@@ -1,220 +1,220 @@
-package com.twitter.follow_recommendations.common.clients.addressbook
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook
 
-import com.twitter.addressbook.datatypes.thriftscala.QueryType
-import com.twitter.addressbook.thriftscala.AddressBookGetRequest
-import com.twitter.addressbook.thriftscala.AddressBookGetResponse
-import com.twitter.addressbook.thriftscala.Addressbook2
-import com.twitter.addressbook.thriftscala.ClientInfo
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.wtf.scalding.jobs.addressbook.thriftscala.STPResultFeature
-import com.twitter.follow_recommendations.common.clients.addressbook.models.Contact
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.QueryOption
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.wtf.scalding.jobs.address_book.ABUtil.hashContact
-import com.twitter.wtf.scalding.jobs.address_book.ABUtil.normalizeEmail
-import com.twitter.wtf.scalding.jobs.address_book.ABUtil.normalizePhoneNumber
-import com.twitter.hermit.usercontacts.thriftscala.{UserContacts => tUserContacts}
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.addrelonssbook.datatypelons.thriftscala.QuelonryTypelon
+import com.twittelonr.addrelonssbook.thriftscala.AddrelonssBookGelontRelonquelonst
+import com.twittelonr.addrelonssbook.thriftscala.AddrelonssBookGelontRelonsponselon
+import com.twittelonr.addrelonssbook.thriftscala.Addrelonssbook2
+import com.twittelonr.addrelonssbook.thriftscala.ClielonntInfo
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.wtf.scalding.jobs.addrelonssbook.thriftscala.STPRelonsultFelonaturelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.modelonls.Contact
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.modelonls.elondgelonTypelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.modelonls.QuelonryOption
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.modelonls.ReloncordIdelonntifielonr
+import com.twittelonr.wtf.scalding.jobs.addrelonss_book.ABUtil.hashContact
+import com.twittelonr.wtf.scalding.jobs.addrelonss_book.ABUtil.normalizelonelonmail
+import com.twittelonr.wtf.scalding.jobs.addrelonss_book.ABUtil.normalizelonPhonelonNumbelonr
+import com.twittelonr.helonrmit.uselonrcontacts.thriftscala.{UselonrContacts => tUselonrContacts}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class AddressbookClient @Inject() (
-  addressbookService: Addressbook2.MethodPerEndpoint,
-  statsReceiver: StatsReceiver = NullStatsReceiver) {
+@Singlelonton
+class AddrelonssbookClielonnt @Injelonct() (
+  addrelonssbookSelonrvicelon: Addrelonssbook2.MelonthodPelonrelonndpoint,
+  statsReloncelonivelonr: StatsReloncelonivelonr = NullStatsReloncelonivelonr) {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  private[this] def getResponseFromService(
-    identifiers: Seq[RecordIdentifier],
-    batchSize: Int,
-    edgeType: EdgeType,
-    maxFetches: Int,
-    queryOption: Option[QueryOption]
-  ): Stitch[Seq[AddressBookGetResponse]] = {
+  privatelon[this] delonf gelontRelonsponselonFromSelonrvicelon(
+    idelonntifielonrs: Selonq[ReloncordIdelonntifielonr],
+    batchSizelon: Int,
+    elondgelonTypelon: elondgelonTypelon,
+    maxFelontchelons: Int,
+    quelonryOption: Option[QuelonryOption]
+  ): Stitch[Selonq[AddrelonssBookGelontRelonsponselon]] = {
     Stitch
-      .collect(
-        identifiers.map { identifier =>
-          Stitch.callFuture(
-            addressbookService.get(AddressBookGetRequest(
-              clientInfo = ClientInfo(None),
-              identifier = identifier.toThrift,
-              edgeType = edgeType.toThrift,
-              queryType = QueryType.UserId,
-              queryOption = queryOption.map(_.toThrift),
-              maxFetches = maxFetches,
-              resultBatchSize = batchSize
+      .collelonct(
+        idelonntifielonrs.map { idelonntifielonr =>
+          Stitch.callFuturelon(
+            addrelonssbookSelonrvicelon.gelont(AddrelonssBookGelontRelonquelonst(
+              clielonntInfo = ClielonntInfo(Nonelon),
+              idelonntifielonr = idelonntifielonr.toThrift,
+              elondgelonTypelon = elondgelonTypelon.toThrift,
+              quelonryTypelon = QuelonryTypelon.UselonrId,
+              quelonryOption = quelonryOption.map(_.toThrift),
+              maxFelontchelons = maxFelontchelons,
+              relonsultBatchSizelon = batchSizelon
             )))
         }
       )
   }
 
-  private[this] def getContactsResponseFromService(
-    identifiers: Seq[RecordIdentifier],
-    batchSize: Int,
-    edgeType: EdgeType,
-    maxFetches: Int,
-    queryOption: Option[QueryOption]
-  ): Stitch[Seq[AddressBookGetResponse]] = {
+  privatelon[this] delonf gelontContactsRelonsponselonFromSelonrvicelon(
+    idelonntifielonrs: Selonq[ReloncordIdelonntifielonr],
+    batchSizelon: Int,
+    elondgelonTypelon: elondgelonTypelon,
+    maxFelontchelons: Int,
+    quelonryOption: Option[QuelonryOption]
+  ): Stitch[Selonq[AddrelonssBookGelontRelonsponselon]] = {
     Stitch
-      .collect(
-        identifiers.map { identifier =>
-          Stitch.callFuture(
-            addressbookService.get(AddressBookGetRequest(
-              clientInfo = ClientInfo(None),
-              identifier = identifier.toThrift,
-              edgeType = edgeType.toThrift,
-              queryType = QueryType.Contact,
-              queryOption = queryOption.map(_.toThrift),
-              maxFetches = maxFetches,
-              resultBatchSize = batchSize
+      .collelonct(
+        idelonntifielonrs.map { idelonntifielonr =>
+          Stitch.callFuturelon(
+            addrelonssbookSelonrvicelon.gelont(AddrelonssBookGelontRelonquelonst(
+              clielonntInfo = ClielonntInfo(Nonelon),
+              idelonntifielonr = idelonntifielonr.toThrift,
+              elondgelonTypelon = elondgelonTypelon.toThrift,
+              quelonryTypelon = QuelonryTypelon.Contact,
+              quelonryOption = quelonryOption.map(_.toThrift),
+              maxFelontchelons = maxFelontchelons,
+              relonsultBatchSizelon = batchSizelon
             )))
         }
       )
   }
 
-  /** Mode of addressbook resolving logic
-   * ManhattanThenABV2: fetching manhattan cached result and backfill with addressbook v2
-   * ABV2Only: calling addressbook v2 directly without fetching manhattan cached result
-   * This can be controlled by passing a fetcher or not. Passing a fetcher will attempt to use it,
-   * if not then it won't.
+  /** Modelon of addrelonssbook relonsolving logic
+   * ManhattanThelonnABV2: felontching manhattan cachelond relonsult and backfill with addrelonssbook v2
+   * ABV2Only: calling addrelonssbook v2 direlonctly without felontching manhattan cachelond relonsult
+   * This can belon controllelond by passing a felontchelonr or not. Passing a felontchelonr will attelonmpt to uselon it,
+   * if not thelonn it won't.
    */
-  def getUsers(
-    userId: Long,
-    identifiers: Seq[RecordIdentifier],
-    batchSize: Int,
-    edgeType: EdgeType,
-    fetcherOption: Option[Fetcher[Long, Unit, tUserContacts]] = None,
-    maxFetches: Int = 1,
-    queryOption: Option[QueryOption] = None,
-  ): Stitch[Seq[Long]] = {
-    fetcherOption match {
-      case Some(fetcher) =>
-        getUsersFromManhattan(userId, fetcher).flatMap { userContacts =>
-          if (userContacts.isEmpty) {
-            stats.counter("mhEmptyThenFromAbService").incr()
-            getResponseFromService(identifiers, batchSize, edgeType, maxFetches, queryOption)
-              .map(_.flatMap(_.users).flatten.distinct)
-          } else {
-            stats.counter("fromManhattan").incr()
-            Stitch.value(userContacts)
+  delonf gelontUselonrs(
+    uselonrId: Long,
+    idelonntifielonrs: Selonq[ReloncordIdelonntifielonr],
+    batchSizelon: Int,
+    elondgelonTypelon: elondgelonTypelon,
+    felontchelonrOption: Option[Felontchelonr[Long, Unit, tUselonrContacts]] = Nonelon,
+    maxFelontchelons: Int = 1,
+    quelonryOption: Option[QuelonryOption] = Nonelon,
+  ): Stitch[Selonq[Long]] = {
+    felontchelonrOption match {
+      caselon Somelon(felontchelonr) =>
+        gelontUselonrsFromManhattan(uselonrId, felontchelonr).flatMap { uselonrContacts =>
+          if (uselonrContacts.iselonmpty) {
+            stats.countelonr("mhelonmptyThelonnFromAbSelonrvicelon").incr()
+            gelontRelonsponselonFromSelonrvicelon(idelonntifielonrs, batchSizelon, elondgelonTypelon, maxFelontchelons, quelonryOption)
+              .map(_.flatMap(_.uselonrs).flattelonn.distinct)
+          } elonlselon {
+            stats.countelonr("fromManhattan").incr()
+            Stitch.valuelon(uselonrContacts)
           }
         }
-      case None =>
-        stats.counter("fromAbService").incr()
-        getResponseFromService(identifiers, batchSize, edgeType, maxFetches, queryOption)
-          .map(_.flatMap(_.users).flatten.distinct)
+      caselon Nonelon =>
+        stats.countelonr("fromAbSelonrvicelon").incr()
+        gelontRelonsponselonFromSelonrvicelon(idelonntifielonrs, batchSizelon, elondgelonTypelon, maxFelontchelons, quelonryOption)
+          .map(_.flatMap(_.uselonrs).flattelonn.distinct)
     }
   }
 
-  def getHashedContacts(
-    normalizeFn: String => String,
-    extractField: String,
+  delonf gelontHashelondContacts(
+    normalizelonFn: String => String,
+    elonxtractFielonld: String,
   )(
-    userId: Long,
-    identifiers: Seq[RecordIdentifier],
-    batchSize: Int,
-    edgeType: EdgeType,
-    fetcherOption: Option[Fetcher[String, Unit, STPResultFeature]] = None,
-    maxFetches: Int = 1,
-    queryOption: Option[QueryOption] = None,
-  ): Stitch[Seq[String]] = {
+    uselonrId: Long,
+    idelonntifielonrs: Selonq[ReloncordIdelonntifielonr],
+    batchSizelon: Int,
+    elondgelonTypelon: elondgelonTypelon,
+    felontchelonrOption: Option[Felontchelonr[String, Unit, STPRelonsultFelonaturelon]] = Nonelon,
+    maxFelontchelons: Int = 1,
+    quelonryOption: Option[QuelonryOption] = Nonelon,
+  ): Stitch[Selonq[String]] = {
 
-    fetcherOption match {
-      case Some(fetcher) =>
-        getContactsFromManhattan(userId, fetcher).flatMap { userContacts =>
-          if (userContacts.isEmpty) {
-            getContactsResponseFromService(
-              identifiers,
-              batchSize,
-              edgeType,
-              maxFetches,
-              queryOption)
-              .map { response =>
+    felontchelonrOption match {
+      caselon Somelon(felontchelonr) =>
+        gelontContactsFromManhattan(uselonrId, felontchelonr).flatMap { uselonrContacts =>
+          if (uselonrContacts.iselonmpty) {
+            gelontContactsRelonsponselonFromSelonrvicelon(
+              idelonntifielonrs,
+              batchSizelon,
+              elondgelonTypelon,
+              maxFelontchelons,
+              quelonryOption)
+              .map { relonsponselon =>
                 for {
-                  resp <- response
-                  contacts <- resp.contacts
+                  relonsp <- relonsponselon
+                  contacts <- relonsp.contacts
                   contactsThrift = contacts.map(Contact.fromThrift)
-                  contactsSet = extractField match {
-                    case "emails" => contactsThrift.flatMap(_.emails.toSeq.flatten)
-                    case "phoneNumbers" => contactsThrift.flatMap(_.phoneNumbers.toSeq.flatten)
+                  contactsSelont = elonxtractFielonld match {
+                    caselon "elonmails" => contactsThrift.flatMap(_.elonmails.toSelonq.flattelonn)
+                    caselon "phonelonNumbelonrs" => contactsThrift.flatMap(_.phonelonNumbelonrs.toSelonq.flattelonn)
                   }
-                  hashedAndNormalizedContacts = contactsSet.map(c => hashContact(normalizeFn(c)))
-                } yield hashedAndNormalizedContacts
-              }.map(_.flatten)
-          } else {
+                  hashelondAndNormalizelondContacts = contactsSelont.map(c => hashContact(normalizelonFn(c)))
+                } yielonld hashelondAndNormalizelondContacts
+              }.map(_.flattelonn)
+          } elonlselon {
             Stitch.Nil
           }
         }
-      case None => {
-        getContactsResponseFromService(identifiers, batchSize, edgeType, maxFetches, queryOption)
-          .map { response =>
+      caselon Nonelon => {
+        gelontContactsRelonsponselonFromSelonrvicelon(idelonntifielonrs, batchSizelon, elondgelonTypelon, maxFelontchelons, quelonryOption)
+          .map { relonsponselon =>
             for {
-              resp <- response
-              contacts <- resp.contacts
+              relonsp <- relonsponselon
+              contacts <- relonsp.contacts
               contactsThrift = contacts.map(Contact.fromThrift)
-              contactsSet = extractField match {
-                case "emails" => contactsThrift.flatMap(_.emails.toSeq.flatten)
-                case "phoneNumbers" => contactsThrift.flatMap(_.phoneNumbers.toSeq.flatten)
+              contactsSelont = elonxtractFielonld match {
+                caselon "elonmails" => contactsThrift.flatMap(_.elonmails.toSelonq.flattelonn)
+                caselon "phonelonNumbelonrs" => contactsThrift.flatMap(_.phonelonNumbelonrs.toSelonq.flattelonn)
               }
-              hashedAndNormalizedContacts = contactsSet.map(c => hashContact(normalizeFn(c)))
-            } yield hashedAndNormalizedContacts
-          }.map(_.flatten)
+              hashelondAndNormalizelondContacts = contactsSelont.map(c => hashContact(normalizelonFn(c)))
+            } yielonld hashelondAndNormalizelondContacts
+          }.map(_.flattelonn)
       }
     }
   }
 
-  def getEmailContacts = getHashedContacts(normalizeEmail, "emails") _
-  def getPhoneContacts = getHashedContacts(normalizePhoneNumber, "phoneNumbers") _
+  delonf gelontelonmailContacts = gelontHashelondContacts(normalizelonelonmail, "elonmails") _
+  delonf gelontPhonelonContacts = gelontHashelondContacts(normalizelonPhonelonNumbelonr, "phonelonNumbelonrs") _
 
-  private def getUsersFromManhattan(
-    userId: Long,
-    fetcher: Fetcher[Long, Unit, tUserContacts],
-  ): Stitch[Seq[Long]] = fetcher
-    .fetch(userId)
-    .map(_.v.map(_.destinationIds).toSeq.flatten.distinct)
+  privatelon delonf gelontUselonrsFromManhattan(
+    uselonrId: Long,
+    felontchelonr: Felontchelonr[Long, Unit, tUselonrContacts],
+  ): Stitch[Selonq[Long]] = felontchelonr
+    .felontch(uselonrId)
+    .map(_.v.map(_.delonstinationIds).toSelonq.flattelonn.distinct)
 
-  private def getContactsFromManhattan(
-    userId: Long,
-    fetcher: Fetcher[String, Unit, STPResultFeature],
-  ): Stitch[Seq[String]] = fetcher
-    .fetch(userId.toString)
-    .map(_.v.map(_.strongTieUserFeature.map(_.destId)).toSeq.flatten.distinct)
+  privatelon delonf gelontContactsFromManhattan(
+    uselonrId: Long,
+    felontchelonr: Felontchelonr[String, Unit, STPRelonsultFelonaturelon],
+  ): Stitch[Selonq[String]] = felontchelonr
+    .felontch(uselonrId.toString)
+    .map(_.v.map(_.strongTielonUselonrFelonaturelon.map(_.delonstId)).toSelonq.flattelonn.distinct)
 }
 
-object AddressbookClient {
-  val AddressBook2BatchSize = 500
+objelonct AddrelonssbookClielonnt {
+  val AddrelonssBook2BatchSizelon = 500
 
-  def createQueryOption(edgeType: EdgeType, isPhone: Boolean): Option[QueryOption] =
-    (edgeType, isPhone) match {
-      case (EdgeType.Reverse, _) =>
-        None
-      case (EdgeType.Forward, true) =>
-        Some(
-          QueryOption(
-            onlyDiscoverableInExpansion = false,
-            onlyConfirmedInExpansion = false,
-            onlyDiscoverableInResult = false,
-            onlyConfirmedInResult = false,
-            fetchGlobalApiNamespace = false,
-            isDebugRequest = false,
-            resolveEmails = false,
-            resolvePhoneNumbers = true
+  delonf crelonatelonQuelonryOption(elondgelonTypelon: elondgelonTypelon, isPhonelon: Boolelonan): Option[QuelonryOption] =
+    (elondgelonTypelon, isPhonelon) match {
+      caselon (elondgelonTypelon.Relonvelonrselon, _) =>
+        Nonelon
+      caselon (elondgelonTypelon.Forward, truelon) =>
+        Somelon(
+          QuelonryOption(
+            onlyDiscovelonrablelonInelonxpansion = falselon,
+            onlyConfirmelondInelonxpansion = falselon,
+            onlyDiscovelonrablelonInRelonsult = falselon,
+            onlyConfirmelondInRelonsult = falselon,
+            felontchGlobalApiNamelonspacelon = falselon,
+            isDelonbugRelonquelonst = falselon,
+            relonsolvelonelonmails = falselon,
+            relonsolvelonPhonelonNumbelonrs = truelon
           ))
-      case (EdgeType.Forward, false) =>
-        Some(
-          QueryOption(
-            onlyDiscoverableInExpansion = false,
-            onlyConfirmedInExpansion = false,
-            onlyDiscoverableInResult = false,
-            onlyConfirmedInResult = false,
-            fetchGlobalApiNamespace = false,
-            isDebugRequest = false,
-            resolveEmails = true,
-            resolvePhoneNumbers = false
+      caselon (elondgelonTypelon.Forward, falselon) =>
+        Somelon(
+          QuelonryOption(
+            onlyDiscovelonrablelonInelonxpansion = falselon,
+            onlyConfirmelondInelonxpansion = falselon,
+            onlyDiscovelonrablelonInRelonsult = falselon,
+            onlyConfirmelondInRelonsult = falselon,
+            felontchGlobalApiNamelonspacelon = falselon,
+            isDelonbugRelonquelonst = falselon,
+            relonsolvelonelonmails = truelon,
+            relonsolvelonPhonelonNumbelonrs = falselon
           ))
     }
 

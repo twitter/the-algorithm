@@ -1,72 +1,72 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi
 
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.UserAgent
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.timelines.configapi.featureswitches.v2.FeatureSwitchResultsFeatureContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.ForcedFeatureContext
-import com.twitter.timelines.configapi.OrElseFeatureContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.felonaturelonswitchelons.UselonrAgelonnt
+import com.twittelonr.felonaturelonswitchelons.{Reloncipielonnt => FelonaturelonSwitchReloncipielonnt}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
+import com.twittelonr.timelonlinelons.configapi.felonaturelonswitchelons.v2.FelonaturelonSwitchRelonsultsFelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonValuelon
+import com.twittelonr.timelonlinelons.configapi.ForcelondFelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.OrelonlselonFelonaturelonContelonxt
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Request Context Factory is used to build RequestContext objects which are used
- * by the config api to determine the param overrides to apply to the request.
- * The param overrides are determined per request by configs which specify which
- * FS/Deciders/AB translate to what param overrides.
+ * Relonquelonst Contelonxt Factory is uselond to build RelonquelonstContelonxt objeloncts which arelon uselond
+ * by thelon config api to delontelonrminelon thelon param ovelonrridelons to apply to thelon relonquelonst.
+ * Thelon param ovelonrridelons arelon delontelonrminelond pelonr relonquelonst by configs which speloncify which
+ * FS/Deloncidelonrs/AB translatelon to what param ovelonrridelons.
  */
-@Singleton
-class RequestContextBuilder @Inject() (featureSwitches: FeatureSwitches) {
+@Singlelonton
+class RelonquelonstContelonxtBuildelonr @Injelonct() (felonaturelonSwitchelons: FelonaturelonSwitchelons) {
 
   /**
-   * @param `fsCustomMapInput` allows you to set custom fields on your feature switches.
-   * This feature isn't directly supported by product mixer yet, so using this argument
-   * will likely result in future cleanup work.
+   * @param `fsCustomMapInput` allows you to selont custom fielonlds on your felonaturelon switchelons.
+   * This felonaturelon isn't direlonctly supportelond by product mixelonr yelont, so using this argumelonnt
+   * will likelonly relonsult in futurelon clelonanup work.
    *
    */
-  def build(
-    clientContext: ClientContext,
+  delonf build(
+    clielonntContelonxt: ClielonntContelonxt,
     product: Product,
-    featureOverrides: Map[String, FeatureValue],
+    felonaturelonOvelonrridelons: Map[String, FelonaturelonValuelon],
     fsCustomMapInput: Map[String, Any]
-  ): RequestContext = {
-    val featureContext =
-      getFeatureContext(clientContext, product, featureOverrides, fsCustomMapInput)
+  ): RelonquelonstContelonxt = {
+    val felonaturelonContelonxt =
+      gelontFelonaturelonContelonxt(clielonntContelonxt, product, felonaturelonOvelonrridelons, fsCustomMapInput)
 
-    RequestContext(clientContext.userId, clientContext.guestId, featureContext)
+    RelonquelonstContelonxt(clielonntContelonxt.uselonrId, clielonntContelonxt.guelonstId, felonaturelonContelonxt)
   }
 
-  private[configapi] def getFeatureContext(
-    clientContext: ClientContext,
+  privatelon[configapi] delonf gelontFelonaturelonContelonxt(
+    clielonntContelonxt: ClielonntContelonxt,
     product: Product,
-    featureOverrides: Map[String, FeatureValue],
+    felonaturelonOvelonrridelons: Map[String, FelonaturelonValuelon],
     fsCustomMapInput: Map[String, Any]
-  ): FeatureContext = {
-    val recipient = getFeatureSwitchRecipient(clientContext)
-      .withCustomFields("product" -> product.identifier.toString, fsCustomMapInput.toSeq: _*)
+  ): FelonaturelonContelonxt = {
+    val reloncipielonnt = gelontFelonaturelonSwitchReloncipielonnt(clielonntContelonxt)
+      .withCustomFielonlds("product" -> product.idelonntifielonr.toString, fsCustomMapInput.toSelonq: _*)
 
-    val results = featureSwitches.matchRecipient(recipient)
-    OrElseFeatureContext(
-      ForcedFeatureContext(featureOverrides),
-      new FeatureSwitchResultsFeatureContext(results))
+    val relonsults = felonaturelonSwitchelons.matchReloncipielonnt(reloncipielonnt)
+    OrelonlselonFelonaturelonContelonxt(
+      ForcelondFelonaturelonContelonxt(felonaturelonOvelonrridelons),
+      nelonw FelonaturelonSwitchRelonsultsFelonaturelonContelonxt(relonsults))
   }
 
-  private[configapi] def getFeatureSwitchRecipient(
-    clientContext: ClientContext
-  ): FeatureSwitchRecipient = FeatureSwitchRecipient(
-    userId = clientContext.userId,
-    userRoles = clientContext.userRoles,
-    deviceId = clientContext.deviceId,
-    guestId = clientContext.guestId,
-    languageCode = clientContext.languageCode,
-    countryCode = clientContext.countryCode,
-    userAgent = clientContext.userAgent.flatMap(UserAgent.apply),
-    isVerified = None,
-    clientApplicationId = clientContext.appId,
-    isTwoffice = clientContext.isTwoffice
+  privatelon[configapi] delonf gelontFelonaturelonSwitchReloncipielonnt(
+    clielonntContelonxt: ClielonntContelonxt
+  ): FelonaturelonSwitchReloncipielonnt = FelonaturelonSwitchReloncipielonnt(
+    uselonrId = clielonntContelonxt.uselonrId,
+    uselonrRolelons = clielonntContelonxt.uselonrRolelons,
+    delonvicelonId = clielonntContelonxt.delonvicelonId,
+    guelonstId = clielonntContelonxt.guelonstId,
+    languagelonCodelon = clielonntContelonxt.languagelonCodelon,
+    countryCodelon = clielonntContelonxt.countryCodelon,
+    uselonrAgelonnt = clielonntContelonxt.uselonrAgelonnt.flatMap(UselonrAgelonnt.apply),
+    isVelonrifielond = Nonelon,
+    clielonntApplicationId = clielonntContelonxt.appId,
+    isTwofficelon = clielonntContelonxt.isTwofficelon
   )
 }

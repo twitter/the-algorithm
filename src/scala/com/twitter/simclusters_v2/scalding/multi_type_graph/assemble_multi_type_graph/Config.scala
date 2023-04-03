@@ -1,35 +1,35 @@
-package com.twitter.simclusters_v2.scalding
-package multi_type_graph.assemble_multi_type_graph
+packagelon com.twittelonr.simclustelonrs_v2.scalding
+packagelon multi_typelon_graph.asselonmblelon_multi_typelon_graph
 
-import com.twitter.simclusters_v2.thriftscala.RightNodeType
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonTypelon
 
-object Config {
+objelonct Config {
 
-  val User = System.getenv("USER")
-  val RootPath: String = s"/user/$User/manhattan_sequence_files/multi_type_simclusters/"
-  val RootThriftPath: String = s"/user/$User/processed/multi_type_simclusters/"
-  val AdhocRootPrefix = s"/gcs/user/$User/adhoc/multi_type_simclusters/"
-  val HalfLifeInDaysForFavScore = 100
-  val NumTopNounsForUnknownRightNodeType = 20
-  val GlobalDefaultMinFrequencyOfRightNodeType = 100
+  val Uselonr = Systelonm.gelontelonnv("USelonR")
+  val RootPath: String = s"/uselonr/$Uselonr/manhattan_selonquelonncelon_filelons/multi_typelon_simclustelonrs/"
+  val RootThriftPath: String = s"/uselonr/$Uselonr/procelonsselond/multi_typelon_simclustelonrs/"
+  val AdhocRootPrelonfix = s"/gcs/uselonr/$Uselonr/adhoc/multi_typelon_simclustelonrs/"
+  val HalfLifelonInDaysForFavScorelon = 100
+  val NumTopNounsForUnknownRightNodelonTypelon = 20
+  val GlobalDelonfaultMinFrelonquelonncyOfRightNodelonTypelon = 100
   val TopKRightNounsForMHDump = 1000
 
-  // the topK most frequent nouns for each engagement type
-  val TopKConfig: Map[RightNodeType, Int] = Map(
-    RightNodeType.FollowUser -> 10000000, // 10M, current simclusters_v2 has this value set to 20M, providing this the most weight
-    RightNodeType.FavUser -> 5000000,
-    RightNodeType.BlockUser -> 1000000,
-    RightNodeType.AbuseReportUser -> 1000000,
-    RightNodeType.SpamReportUser -> 1000000,
-    RightNodeType.FollowTopic -> 5000,
-    RightNodeType.SignUpCountry -> 200,
-    RightNodeType.ConsumedLanguage -> 50,
-    RightNodeType.FavTweet -> 500000,
-    RightNodeType.ReplyTweet -> 500000,
-    RightNodeType.RetweetTweet -> 500000,
-    RightNodeType.NotifOpenOrClickTweet -> 500000,
-    RightNodeType.SearchQuery -> 500000
+  // thelon topK most frelonquelonnt nouns for elonach elonngagelonmelonnt typelon
+  val TopKConfig: Map[RightNodelonTypelon, Int] = Map(
+    RightNodelonTypelon.FollowUselonr -> 10000000, // 10M, currelonnt simclustelonrs_v2 has this valuelon selont to 20M, providing this thelon most welonight
+    RightNodelonTypelon.FavUselonr -> 5000000,
+    RightNodelonTypelon.BlockUselonr -> 1000000,
+    RightNodelonTypelon.AbuselonRelonportUselonr -> 1000000,
+    RightNodelonTypelon.SpamRelonportUselonr -> 1000000,
+    RightNodelonTypelon.FollowTopic -> 5000,
+    RightNodelonTypelon.SignUpCountry -> 200,
+    RightNodelonTypelon.ConsumelondLanguagelon -> 50,
+    RightNodelonTypelon.FavTwelonelont -> 500000,
+    RightNodelonTypelon.RelonplyTwelonelont -> 500000,
+    RightNodelonTypelon.RelontwelonelontTwelonelont -> 500000,
+    RightNodelonTypelon.NotifOpelonnOrClickTwelonelont -> 500000,
+    RightNodelonTypelon.SelonarchQuelonry -> 500000
   )
-  val SampledEmployeeIds: Set[Long] =
-    Set()
+  val SamplelondelonmployelonelonIds: Selont[Long] =
+    Selont()
 }

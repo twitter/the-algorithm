@@ -1,26 +1,26 @@
-package com.twitter.home_mixer.marshaller.timelines
+packagelon com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelons
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.timelines.service.{thriftscala => t}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.BottomCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.GapCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.TopCursor
+import com.twittelonr.timelonlinelons.selonrvicelon.{thriftscala => t}
 
-object ChronologicalCursorUnmarshaller {
+objelonct ChronologicalCursorUnmarshallelonr {
 
-  def apply(requestCursor: t.RequestCursor): Option[UrtOrderedCursor] = {
-    requestCursor match {
-      case t.RequestCursor.ChronologicalCursor(cursor) =>
+  delonf apply(relonquelonstCursor: t.RelonquelonstCursor): Option[UrtOrdelonrelondCursor] = {
+    relonquelonstCursor match {
+      caselon t.RelonquelonstCursor.ChronologicalCursor(cursor) =>
         (cursor.top, cursor.bottom) match {
-          case (Some(top), None) =>
-            Some(UrtOrderedCursor(top, cursor.top, Some(BottomCursor)))
-          case (None, Some(bottom)) =>
-            Some(UrtOrderedCursor(bottom, cursor.bottom, Some(TopCursor)))
-          case (Some(top), Some(bottom)) =>
-            Some(UrtOrderedCursor(top, cursor.top, Some(GapCursor), cursor.bottom))
-          case _ => None
+          caselon (Somelon(top), Nonelon) =>
+            Somelon(UrtOrdelonrelondCursor(top, cursor.top, Somelon(BottomCursor)))
+          caselon (Nonelon, Somelon(bottom)) =>
+            Somelon(UrtOrdelonrelondCursor(bottom, cursor.bottom, Somelon(TopCursor)))
+          caselon (Somelon(top), Somelon(bottom)) =>
+            Somelon(UrtOrdelonrelondCursor(top, cursor.top, Somelon(GapCursor), cursor.bottom))
+          caselon _ => Nonelon
         }
-      case _ => None
+      caselon _ => Nonelon
     }
   }
 }

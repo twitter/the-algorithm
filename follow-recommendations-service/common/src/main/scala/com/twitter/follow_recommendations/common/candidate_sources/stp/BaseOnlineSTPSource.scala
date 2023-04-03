@@ -1,55 +1,55 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.STPGraph
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.logging.Logging
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPFeatureGenerator
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.STPRecord
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.STPGraph
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.logging.Logging
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.STPFelonaturelonGelonnelonrator
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.STPReloncord
 
-abstract class BaseOnlineSTPSource(
-  stpGraphBuilder: STPGraphBuilder,
-  baseStatsReceiver: StatsReceiver)
-    extends CandidateSource[
-      HasClientContext with HasParams with HasRecentFollowedUserIds,
-      CandidateUser
+abstract class BaselonOnlinelonSTPSourcelon(
+  stpGraphBuildelonr: STPGraphBuildelonr,
+  baselonStatsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[
+      HasClielonntContelonxt with HasParams with HasReloncelonntFollowelondUselonrIds,
+      CandidatelonUselonr
     ]
     with Logging {
 
-  protected val statsReceiver: StatsReceiver = baseStatsReceiver.scope("online_stp")
+  protelonctelond val statsReloncelonivelonr: StatsReloncelonivelonr = baselonStatsReloncelonivelonr.scopelon("onlinelon_stp")
 
-  override val identifier: CandidateSourceIdentifier = BaseOnlineSTPSource.Identifier
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = BaselonOnlinelonSTPSourcelon.Idelonntifielonr
 
-  def getCandidates(
-    records: Seq[STPRecord],
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[CandidateUser]]
+  delonf gelontCandidatelons(
+    reloncords: Selonq[STPReloncord],
+    relonquelonst: HasClielonntContelonxt with HasParams with HasReloncelonntFollowelondUselonrIds
+  ): Stitch[Selonq[CandidatelonUselonr]]
 
-  override def apply(
-    request: HasClientContext with HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[CandidateUser]] =
-    request.getOptionalUserId
-      .map { userId =>
-        stpGraphBuilder(request)
+  ovelonrridelon delonf apply(
+    relonquelonst: HasClielonntContelonxt with HasParams with HasReloncelonntFollowelondUselonrIds
+  ): Stitch[Selonq[CandidatelonUselonr]] =
+    relonquelonst.gelontOptionalUselonrId
+      .map { uselonrId =>
+        stpGraphBuildelonr(relonquelonst)
           .flatMap { graph: STPGraph =>
-            logger.debug(graph)
-            val records = STPFeatureGenerator.constructFeatures(
-              userId,
-              graph.firstDegreeEdgeInfoList,
-              graph.secondDegreeEdgeInfoList)
-            getCandidates(records, request)
+            loggelonr.delonbug(graph)
+            val reloncords = STPFelonaturelonGelonnelonrator.constructFelonaturelons(
+              uselonrId,
+              graph.firstDelongrelonelonelondgelonInfoList,
+              graph.seloncondDelongrelonelonelondgelonInfoList)
+            gelontCandidatelons(reloncords, relonquelonst)
           }
-      }.getOrElse(Stitch.Nil)
+      }.gelontOrelonlselon(Stitch.Nil)
 }
 
-object BaseOnlineSTPSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.OnlineStrongTiePredictionRecNoCaching.toString)
+objelonct BaselonOnlinelonSTPSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.OnlinelonStrongTielonPrelondictionReloncNoCaching.toString)
 }

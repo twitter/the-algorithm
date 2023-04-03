@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.color
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.color
 
-case class Color(
-  red: Short,
-  green: Short,
-  blue: Short,
+caselon class Color(
+  relond: Short,
+  grelonelonn: Short,
+  bluelon: Short,
   opacity: Option[Short])

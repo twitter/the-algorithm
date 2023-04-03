@@ -1,118 +1,118 @@
-package com.twitter.search.earlybird.search.relevance.collectors;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.collelonctors;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.features.thrift.ThriftSearchResultFeatures;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.scoring.BatchHit;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchRelonsultFelonaturelons;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.selonarch.elonarlyTelonrminationStatelon;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.LinelonarScoringData;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonSelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.BatchHit;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunction;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonlelonvancelonOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultelonxtraMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
 
 /**
- * BatchRelevanceTopCollector is similar to the `RelevanceTopCollector` in what it outputs:
- * Collects the top numResults by score, filtering out duplicates
- * and results with scores equal to Flat.MIN_VALUE.
- * The way that it achieves that is different though: it will score documents through the batch score
- * function instead of scoring documents one by one.
+ * BatchRelonlelonvancelonTopCollelonctor is similar to thelon `RelonlelonvancelonTopCollelonctor` in what it outputs:
+ * Colleloncts thelon top numRelonsults by scorelon, filtelonring out duplicatelons
+ * and relonsults with scorelons elonqual to Flat.MIN_VALUelon.
+ * Thelon way that it achielonvelons that is diffelonrelonnt though: it will scorelon documelonnts through thelon batch scorelon
+ * function instelonad of scoring documelonnts onelon by onelon.
  */
-public class BatchRelevanceTopCollector extends RelevanceTopCollector {
-  protected final List<BatchHit> hits;
+public class BatchRelonlelonvancelonTopCollelonctor elonxtelonnds RelonlelonvancelonTopCollelonctor {
+  protelonctelond final List<BatchHit> hits;
 
-  public BatchRelevanceTopCollector(
-      ImmutableSchemaInterface schema,
-      RelevanceSearchRequestInfo searchRequestInfo,
+  public BatchRelonlelonvancelonTopCollelonctor(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      RelonlelonvancelonSelonarchRelonquelonstInfo selonarchRelonquelonstInfo,
       ScoringFunction scoringFunction,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
-      UserTable userTable,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
+      elonarlybirdClustelonr clustelonr,
+      UselonrTablelon uselonrTablelon,
       Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, scoringFunction, searcherStats, cluster, userTable, clock,
-        requestDebugMode);
-    this.hits = new ArrayList<>((int) getMaxHitsToProcess());
+      int relonquelonstDelonbugModelon) {
+    supelonr(schelonma, selonarchRelonquelonstInfo, scoringFunction, selonarchelonrStats, clustelonr, uselonrTablelon, clock,
+        relonquelonstDelonbugModelon);
+    this.hits = nelonw ArrayList<>((int) gelontMaxHitsToProcelonss());
   }
 
-  @Override
-  protected void doCollectWithScore(long tweetID, float score) throws IOException {
-    Pair<LinearScoringData, ThriftSearchResultFeatures> pair =
-        scoringFunction.collectFeatures(score);
-    ThriftSearchResultMetadata metadata = collectMetadata();
-    hits.add(new BatchHit(pair.getFirst(),
-        pair.getSecond(),
-        metadata,
-        tweetID,
-        currTimeSliceID));
+  @Ovelonrridelon
+  protelonctelond void doCollelonctWithScorelon(long twelonelontID, float scorelon) throws IOelonxcelonption {
+    Pair<LinelonarScoringData, ThriftSelonarchRelonsultFelonaturelons> pair =
+        scoringFunction.collelonctFelonaturelons(scorelon);
+    ThriftSelonarchRelonsultMelontadata melontadata = collelonctMelontadata();
+    hits.add(nelonw BatchHit(pair.gelontFirst(),
+        pair.gelontSeloncond(),
+        melontadata,
+        twelonelontID,
+        currTimelonSlicelonID));
   }
 
-  @Override
-  public EarlyTerminationState innerShouldCollectMore() {
-    if (hits.size() >= getMaxHitsToProcess()) {
-      return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED);
+  @Ovelonrridelon
+  public elonarlyTelonrminationStatelon innelonrShouldCollelonctMorelon() {
+    if (hits.sizelon() >= gelontMaxHitsToProcelonss()) {
+      relonturn selontelonarlyTelonrminationStatelon(elonarlyTelonrminationStatelon.TelonRMINATelonD_MAX_HITS_elonXCelonelonDelonD);
     }
-    return EarlyTerminationState.COLLECTING;
+    relonturn elonarlyTelonrminationStatelon.COLLelonCTING;
   }
 
-  @Override
-  protected RelevanceSearchResults doGetRelevanceResults() throws IOException {
-    final long scoringStartNanos = getClock().nowNanos();
-    float[] scores = scoringFunction.batchScore(hits);
-    final long scoringEndNanos = getClock().nowNanos();
-    addToOverallScoringTimeNanos(scoringStartNanos, scoringEndNanos);
-    exportBatchScoringTime(scoringEndNanos - scoringStartNanos);
+  @Ovelonrridelon
+  protelonctelond RelonlelonvancelonSelonarchRelonsults doGelontRelonlelonvancelonRelonsults() throws IOelonxcelonption {
+    final long scoringStartNanos = gelontClock().nowNanos();
+    float[] scorelons = scoringFunction.batchScorelon(hits);
+    final long scoringelonndNanos = gelontClock().nowNanos();
+    addToOvelonrallScoringTimelonNanos(scoringStartNanos, scoringelonndNanos);
+    elonxportBatchScoringTimelon(scoringelonndNanos - scoringStartNanos);
 
-    for (int i = 0; i < hits.size(); i++) {
-      BatchHit hit = hits.get(i);
-      ThriftSearchResultMetadata metadata = hit.getMetadata();
+    for (int i = 0; i < hits.sizelon(); i++) {
+      BatchHit hit = hits.gelont(i);
+      ThriftSelonarchRelonsultMelontadata melontadata = hit.gelontMelontadata();
 
-      if (!metadata.isSetExtraMetadata()) {
-        metadata.setExtraMetadata(new ThriftSearchResultExtraMetadata());
+      if (!melontadata.isSelontelonxtraMelontadata()) {
+        melontadata.selontelonxtraMelontadata(nelonw ThriftSelonarchRelonsultelonxtraMelontadata());
       }
-      metadata.getExtraMetadata().setFeatures(hit.getFeatures());
+      melontadata.gelontelonxtraMelontadata().selontFelonaturelons(hit.gelontFelonaturelons());
 
 
-      // Populate the ThriftSearchResultMetadata post batch scoring with information from the
-      // LinearScoringData, which now includes a score.
-      scoringFunction.populateResultMetadataBasedOnScoringData(
-          searchRequestInfo.getSearchQuery().getResultMetadataOptions(),
-          metadata,
-          hit.getScoringData());
+      // Populatelon thelon ThriftSelonarchRelonsultMelontadata post batch scoring with information from thelon
+      // LinelonarScoringData, which now includelons a scorelon.
+      scoringFunction.populatelonRelonsultMelontadataBaselondOnScoringData(
+          selonarchRelonquelonstInfo.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions(),
+          melontadata,
+          hit.gelontScoringData());
 
-      collectWithScoreInternal(
-          hit.getTweetID(),
-          hit.getTimeSliceID(),
-          scores[i],
-          metadata
+      collelonctWithScorelonIntelonrnal(
+          hit.gelontTwelonelontID(),
+          hit.gelontTimelonSlicelonID(),
+          scorelons[i],
+          melontadata
       );
     }
-    return getRelevanceResultsInternal();
+    relonturn gelontRelonlelonvancelonRelonsultsIntelonrnal();
   }
 
-  private void exportBatchScoringTime(long scoringTimeNanos) {
-    ThriftSearchRelevanceOptions relevanceOptions = searchRequestInfo.getRelevanceOptions();
-    if (relevanceOptions.isSetRankingParams()
-        && relevanceOptions.getRankingParams().isSetSelectedTensorflowModel()) {
-      String model = relevanceOptions.getRankingParams().getSelectedTensorflowModel();
-      SearchTimerStats batchScoringPerModelTimer = SearchTimerStats.export(
-          String.format("batch_scoring_time_for_model_%s", model),
-          TimeUnit.NANOSECONDS,
-          false,
-          true);
-      batchScoringPerModelTimer.timerIncrement(scoringTimeNanos);
+  privatelon void elonxportBatchScoringTimelon(long scoringTimelonNanos) {
+    ThriftSelonarchRelonlelonvancelonOptions relonlelonvancelonOptions = selonarchRelonquelonstInfo.gelontRelonlelonvancelonOptions();
+    if (relonlelonvancelonOptions.isSelontRankingParams()
+        && relonlelonvancelonOptions.gelontRankingParams().isSelontSelonlelonctelondTelonnsorflowModelonl()) {
+      String modelonl = relonlelonvancelonOptions.gelontRankingParams().gelontSelonlelonctelondTelonnsorflowModelonl();
+      SelonarchTimelonrStats batchScoringPelonrModelonlTimelonr = SelonarchTimelonrStats.elonxport(
+          String.format("batch_scoring_timelon_for_modelonl_%s", modelonl),
+          TimelonUnit.NANOSelonCONDS,
+          falselon,
+          truelon);
+      batchScoringPelonrModelonlTimelonr.timelonrIncrelonmelonnt(scoringTimelonNanos);
     }
   }
 }

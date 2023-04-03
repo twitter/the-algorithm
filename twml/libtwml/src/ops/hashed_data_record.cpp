@@ -1,520 +1,520 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
-#include "resource_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
+#includelon "relonsourcelon_utils.h"
 
-#include <functional>
+#includelon <functional>
 
-REGISTER_OP("DecodeAndHashDataRecord")
-.Attr("InputType: {uint8, string}")
-.Input("input_bytes: InputType")
-.Attr("keep_features: list(int)")
-.Attr("keep_codes: list(int)")
-.Attr("label_features: list(int)")
-.Attr("weight_features: list(int) = []")
-.Attr("decode_mode: int = 0")
-.Output("hashed_data_record_handle: resource")
-.SetShapeFn(shape_inference::ScalarShape)
+RelonGISTelonR_OP("DeloncodelonAndHashDataReloncord")
+.Attr("InputTypelon: {uint8, string}")
+.Input("input_bytelons: InputTypelon")
+.Attr("kelonelonp_felonaturelons: list(int)")
+.Attr("kelonelonp_codelons: list(int)")
+.Attr("labelonl_felonaturelons: list(int)")
+.Attr("welonight_felonaturelons: list(int) = []")
+.Attr("deloncodelon_modelon: int = 0")
+.Output("hashelond_data_reloncord_handlelon: relonsourcelon")
+.SelontShapelonFn(shapelon_infelonrelonncelon::ScalarShapelon)
 .Doc(R"doc(
-A tensorflow OP that creates a handle for the hashed data record.
+A telonnsorflow OP that crelonatelons a handlelon for thelon hashelond data reloncord.
 
 Attr
-  keep_features: a list of int ids to keep.
-  keep_codes: their corresponding code.
-  label_features: list of feature ids representing the labels.
-  weight_features: list of feature ids representing the weights. Defaults to empty list.
-  decode_mode: integer, indicates which decoding method to use. Let a sparse continuous
-    have a feature_name and a dict of {name: value}. 0 indicates feature_ids are computed
-    as hash(name). 1 indicates feature_ids are computed as hash(feature_name, name)
-  shared_name: name used by the resource handle inside the resource manager.
-  container: name used by the container of the resources.
+  kelonelonp_felonaturelons: a list of int ids to kelonelonp.
+  kelonelonp_codelons: thelonir correlonsponding codelon.
+  labelonl_felonaturelons: list of felonaturelon ids relonprelonselonnting thelon labelonls.
+  welonight_felonaturelons: list of felonaturelon ids relonprelonselonnting thelon welonights. Delonfaults to elonmpty list.
+  deloncodelon_modelon: intelongelonr, indicatelons which deloncoding melonthod to uselon. Lelont a sparselon continuous
+    havelon a felonaturelon_namelon and a dict of {namelon: valuelon}. 0 indicatelons felonaturelon_ids arelon computelond
+    as hash(namelon). 1 indicatelons felonaturelon_ids arelon computelond as hash(felonaturelon_namelon, namelon)
+  sharelond_namelon: namelon uselond by thelon relonsourcelon handlelon insidelon thelon relonsourcelon managelonr.
+  containelonr: namelon uselond by thelon containelonr of thelon relonsourcelons.
 
 Input
-  input_bytes: Input tensor containing the serialized batch of HashedDataRecords.
+  input_bytelons: Input telonnsor containing thelon selonrializelond batch of HashelondDataReloncords.
 
 Outputs
-  hashed_data_record_handle: A resource handle to batch of HashedDataRecords.
+  hashelond_data_reloncord_handlelon: A relonsourcelon handlelon to batch of HashelondDataReloncords.
 )doc");
 
-template<typename InputType>
-class DecodeAndHashDataRecord : public OpKernel {
+telonmplatelon<typelonnamelon InputTypelon>
+class DeloncodelonAndHashDataReloncord : public OpKelonrnelonl {
  public:
-  explicit DecodeAndHashDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {
-    std::vector<int64> keep_features;
-    std::vector<int64> keep_codes;
+  elonxplicit DeloncodelonAndHashDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {
+    std::velonctor<int64> kelonelonp_felonaturelons;
+    std::velonctor<int64> kelonelonp_codelons;
 
-    std::vector<int64> label_features;
-    std::vector<int64> weight_features;
+    std::velonctor<int64> labelonl_felonaturelons;
+    std::velonctor<int64> welonight_felonaturelons;
 
-    OP_REQUIRES_OK(context, context->GetAttr("keep_features", &keep_features));
-    OP_REQUIRES_OK(context, context->GetAttr("keep_codes", &keep_codes));
-    OP_REQUIRES_OK(context, context->GetAttr("label_features", &label_features));
-    OP_REQUIRES_OK(context, context->GetAttr("weight_features", &weight_features));
-    OP_REQUIRES_OK(context, context->GetAttr("decode_mode", &m_decode_mode));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("kelonelonp_felonaturelons", &kelonelonp_felonaturelons));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("kelonelonp_codelons", &kelonelonp_codelons));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("labelonl_felonaturelons", &labelonl_felonaturelons));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("welonight_felonaturelons", &welonight_felonaturelons));
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("deloncodelon_modelon", &m_deloncodelon_modelon));
 
-    OP_REQUIRES(context, keep_features.size() == keep_codes.size(),
-                errors::InvalidArgument("keep keys and values must have same size."));
+    OP_RelonQUIRelonS(contelonxt, kelonelonp_felonaturelons.sizelon() == kelonelonp_codelons.sizelon(),
+                elonrrors::InvalidArgumelonnt("kelonelonp kelonys and valuelons must havelon samelon sizelon."));
 
-#ifdef USE_DENSE_HASH
-    m_keep_map.set_empty_key(0);
-    m_labels_map.set_empty_key(0);
-    m_weights_map.set_empty_key(0);
-#endif  // USE_DENSE_HASH
+#ifdelonf USelon_DelonNSelon_HASH
+    m_kelonelonp_map.selont_elonmpty_kelony(0);
+    m_labelonls_map.selont_elonmpty_kelony(0);
+    m_welonights_map.selont_elonmpty_kelony(0);
+#elonndif  // USelon_DelonNSelon_HASH
 
-    for (uint64_t i = 0; i < keep_features.size(); i++) {
-      m_keep_map[keep_features[i]] = keep_codes[i];
+    for (uint64_t i = 0; i < kelonelonp_felonaturelons.sizelon(); i++) {
+      m_kelonelonp_map[kelonelonp_felonaturelons[i]] = kelonelonp_codelons[i];
     }
 
-    for (uint64_t i = 0; i < label_features.size(); i++) {
-      m_labels_map[label_features[i]] = i;
+    for (uint64_t i = 0; i < labelonl_felonaturelons.sizelon(); i++) {
+      m_labelonls_map[labelonl_felonaturelons[i]] = i;
     }
 
-    for (uint64_t i = 0; i < weight_features.size(); i++) {
-      m_weights_map[weight_features[i]] = i;
+    for (uint64_t i = 0; i < welonight_felonaturelons.sizelon(); i++) {
+      m_welonights_map[welonight_felonaturelons[i]] = i;
     }
   }
 
- private:
-  twml::Map<int64_t, int64_t> m_keep_map;
-  twml::Map<int64_t, int64_t> m_labels_map;
-  twml::Map<int64_t, int64_t> m_weights_map;
-  int64 m_decode_mode;
+ privatelon:
+  twml::Map<int64_t, int64_t> m_kelonelonp_map;
+  twml::Map<int64_t, int64_t> m_labelonls_map;
+  twml::Map<int64_t, int64_t> m_welonights_map;
+  int64 m_deloncodelon_modelon;
 
-  void Compute(OpKernelContext* context) override {
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
     try {
-      HashedDataRecordResource *resource = nullptr;
-      OP_REQUIRES_OK(context, makeResourceHandle<HashedDataRecordResource>(context, 0, &resource));
+      HashelondDataReloncordRelonsourcelon *relonsourcelon = nullptr;
+      OP_RelonQUIRelonS_OK(contelonxt, makelonRelonsourcelonHandlelon<HashelondDataReloncordRelonsourcelon>(contelonxt, 0, &relonsourcelon));
 
-      // Store the input bytes in the resource so it isnt freed before the resource.
-      // This is necessary because we are not copying the contents for tensors.
-      resource->input = context->input(0);
-      int batch_size = getBatchSize<InputType>(resource->input);
-      int num_labels = static_cast<int>(m_labels_map.size());
-      int num_weights = static_cast<int>(m_weights_map.size());
+      // Storelon thelon input bytelons in thelon relonsourcelon so it isnt frelonelond belonforelon thelon relonsourcelon.
+      // This is neloncelonssary beloncauselon welon arelon not copying thelon contelonnts for telonnsors.
+      relonsourcelon->input = contelonxt->input(0);
+      int batch_sizelon = gelontBatchSizelon<InputTypelon>(relonsourcelon->input);
+      int num_labelonls = static_cast<int>(m_labelonls_map.sizelon());
+      int num_welonights = static_cast<int>(m_welonights_map.sizelon());
 
-      twml::HashedDataRecordReader reader;
-      reader.setKeepMap(&m_keep_map);
-      reader.setLabelsMap(&m_labels_map);
-      reader.setDecodeMode(m_decode_mode);
+      twml::HashelondDataReloncordRelonadelonr relonadelonr;
+      relonadelonr.selontKelonelonpMap(&m_kelonelonp_map);
+      relonadelonr.selontLabelonlsMap(&m_labelonls_map);
+      relonadelonr.selontDeloncodelonModelon(m_deloncodelon_modelon);
 
-      // Do not set weight map if it is empty. This will take a faster path.
-      if (num_weights != 0) {
-        reader.setWeightsMap(&m_weights_map);
+      // Do not selont welonight map if it is elonmpty. This will takelon a fastelonr path.
+      if (num_welonights != 0) {
+        relonadelonr.selontWelonightsMap(&m_welonights_map);
       }
 
-      resource->records.clear();
-      resource->records.reserve(batch_size);
+      relonsourcelon->reloncords.clelonar();
+      relonsourcelon->reloncords.relonselonrvelon(batch_sizelon);
 
-      int64 total_size = 0;
+      int64 total_sizelon = 0;
 
-      for (int id = 0; id < batch_size; id++) {
-        const uint8_t *input_bytes = getInputBytes<InputType>(resource->input, id);
-        reader.setBuffer(input_bytes);
-        resource->records.emplace_back(num_labels, num_weights);
-        resource->records[id].decode(reader);
-        total_size += static_cast<int64>(resource->records[id].totalSize());
+      for (int id = 0; id < batch_sizelon; id++) {
+        const uint8_t *input_bytelons = gelontInputBytelons<InputTypelon>(relonsourcelon->input, id);
+        relonadelonr.selontBuffelonr(input_bytelons);
+        relonsourcelon->reloncords.elonmplacelon_back(num_labelonls, num_welonights);
+        relonsourcelon->reloncords[id].deloncodelon(relonadelonr);
+        total_sizelon += static_cast<int64>(relonsourcelon->reloncords[id].totalSizelon());
       }
 
-      resource->total_size = total_size;
-      resource->num_labels = num_labels;
-      resource->num_weights = num_weights;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      relonsourcelon->total_sizelon = total_sizelon;
+      relonsourcelon->num_labelonls = num_labelonls;
+      relonsourcelon->num_welonights = num_welonights;
+    } catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-REGISTER_OP("GetIdsFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
+RelonGISTelonR_OP("GelontIdsFromHashelondDataReloncord")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
 .Output("ids: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns unhashed ids from the hashed data record.
+A telonnsorflow OP that relonturns unhashelond ids from thelon hashelond data reloncord.
 Input
-  hashed_data_record_handle: Resource handle to DataRecord
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord
 
 Outputs
-  ids: ids specifies the index of the records[id] in the batch (int64)
+  ids: ids speloncifielons thelon indelonx of thelon reloncords[id] in thelon batch (int64)
 )doc");
 
-// This Kernel is used for both training and serving once the resource is created.
-class GetIdsFromHashedDataRecord : public OpKernel {
+// This Kelonrnelonl is uselond for both training and selonrving oncelon thelon relonsourcelon is crelonatelond.
+class GelontIdsFromHashelondDataReloncord : public OpKelonrnelonl {
  public:
-  explicit GetIdsFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  elonxplicit GelontIdsFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const auto &common = handle->common;
-      const int64 common_size = static_cast<int64>(common.totalSize());
-      const int64 total_size = handle->total_size;
-      TensorShape shape = {total_size};
+      auto handlelon = gelontHandlelon<HashelondDataReloncordRelonsourcelon>(contelonxt, 0);
+      const auto &reloncords = handlelon->reloncords;
+      const auto &common = handlelon->common;
+      const int64 common_sizelon = static_cast<int64>(common.totalSizelon());
+      const int64 total_sizelon = handlelon->total_sizelon;
+      TelonnsorShapelon shapelon = {total_sizelon};
 
-      Tensor *ids;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &ids));
+      Telonnsor *ids;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, shapelon, &ids));
 
       int id = 0;
-      int64 offset = 0;
+      int64 offselont = 0;
       auto ids_flat = ids->flat<int64>();
-      for (const auto &record : records) {
-        // Since common features are added to each input, add the common_size to the current size.
-        // For training common_size == 0, for serving it can be a non-zero value.
-        int64 curr_size = static_cast<int64>(record.totalSize()) + common_size;
-        std::fill(ids_flat.data() + offset, ids_flat.data() + offset + curr_size, id);
-        offset += curr_size;
+      for (const auto &reloncord : reloncords) {
+        // Sincelon common felonaturelons arelon addelond to elonach input, add thelon common_sizelon to thelon currelonnt sizelon.
+        // For training common_sizelon == 0, for selonrving it can belon a non-zelonro valuelon.
+        int64 curr_sizelon = static_cast<int64>(reloncord.totalSizelon()) + common_sizelon;
+        std::fill(ids_flat.data() + offselont, ids_flat.data() + offselont + curr_sizelon, id);
+        offselont += curr_sizelon;
         id++;
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
 
-// OutType: Output Tensor Type. FieldType: The storage type used inside HashedDatarecord.
-template<typename OutType, typename FieldType>
-class GetOutputFromHashedDataRecord : public OpKernel {
- protected:
-  using Getter = std::function<const std::vector<FieldType>&(const twml::HashedDataRecord &)>;
-  Getter getter;
+// OutTypelon: Output Telonnsor Typelon. FielonldTypelon: Thelon storagelon typelon uselond insidelon HashelondDatareloncord.
+telonmplatelon<typelonnamelon OutTypelon, typelonnamelon FielonldTypelon>
+class GelontOutputFromHashelondDataReloncord : public OpKelonrnelonl {
+ protelonctelond:
+  using Gelonttelonr = std::function<const std::velonctor<FielonldTypelon>&(const twml::HashelondDataReloncord &)>;
+  Gelonttelonr gelonttelonr;
 
  public:
-  explicit GetOutputFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  elonxplicit GelontOutputFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const auto &common = handle->common;
-      const int64 total_size = handle->total_size;
-      TensorShape shape = {total_size};
+      auto handlelon = gelontHandlelon<HashelondDataReloncordRelonsourcelon>(contelonxt, 0);
+      const auto &reloncords = handlelon->reloncords;
+      const auto &common = handlelon->common;
+      const int64 total_sizelon = handlelon->total_sizelon;
+      TelonnsorShapelon shapelon = {total_sizelon};
 
-      Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &output));
+      Telonnsor *output;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, shapelon, &output));
 
-      const auto &common_output = getter(common);
+      const auto &common_output = gelonttelonr(common);
 
-      auto output_data = output->flat<OutType>().data();
-      for (const auto &record : records) {
-        // This is does not copy anything during training as common_size == 0
-        // It will copy the relevant common features coming from a batch prediction request.
-        output_data = std::copy(common_output.begin(), common_output.end(), output_data);
+      auto output_data = output->flat<OutTypelon>().data();
+      for (const auto &reloncord : reloncords) {
+        // This is doelons not copy anything during training as common_sizelon == 0
+        // It will copy thelon relonlelonvant common felonaturelons coming from a batch prelondiction relonquelonst.
+        output_data = std::copy(common_output.belongin(), common_output.elonnd(), output_data);
 
-        // Copy the current record to output.
-        const auto& rec_output = getter(record);
-        output_data = std::copy(rec_output.begin(), rec_output.end(), output_data);
+        // Copy thelon currelonnt reloncord to output.
+        const auto& relonc_output = gelonttelonr(reloncord);
+        output_data = std::copy(relonc_output.belongin(), relonc_output.elonnd(), output_data);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-REGISTER_OP("GetUKeysFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("ukeys: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+RelonGISTelonR_OP("GelontUKelonysFromHashelondDataReloncord")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
+.Output("ukelonys: int64")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns unhashed keys from the hashed data record.
+A telonnsorflow OP that relonturns unhashelond kelonys from thelon hashelond data reloncord.
 Input
-  hashed_data_record_handle: Resource handle to DataRecord
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord
 
 Outputs
-  ukeys: unhased keys / raw feature ids from the original request.
+  ukelonys: unhaselond kelonys / raw felonaturelon ids from thelon original relonquelonst.
 )doc");
 
-class GetUKeysFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
+class GelontUKelonysFromHashelondDataReloncord : public GelontOutputFromHashelondDataReloncord<int64, int64_t> {
  public:
-  explicit GetUKeysFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
-      return record.keys();
+  elonxplicit GelontUKelonysFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : GelontOutputFromHashelondDataReloncord<int64, int64_t>(contelonxt){
+    gelonttelonr = [](const twml::HashelondDataReloncord &reloncord) -> const std::velonctor<int64_t> & {
+      relonturn reloncord.kelonys();
     };
   }
 };
 
-REGISTER_OP("GetKeysFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("keys: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+RelonGISTelonR_OP("GelontKelonysFromHashelondDataReloncord")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
+.Output("kelonys: int64")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns keys from the hashed data record.
+A telonnsorflow OP that relonturns kelonys from thelon hashelond data reloncord.
 Input
-  hashed_data_record_handle: Resource handle to DataRecord
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord
 
 Outputs
-  keys: keys after raw feature ids are hashed with values (int64)
+  kelonys: kelonys aftelonr raw felonaturelon ids arelon hashelond with valuelons (int64)
 )doc");
 
-class GetKeysFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
+class GelontKelonysFromHashelondDataReloncord : public GelontOutputFromHashelondDataReloncord<int64, int64_t> {
  public:
-  explicit GetKeysFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
-      return record.transformed_keys();
+  elonxplicit GelontKelonysFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : GelontOutputFromHashelondDataReloncord<int64, int64_t>(contelonxt){
+    gelonttelonr = [](const twml::HashelondDataReloncord &reloncord) -> const std::velonctor<int64_t> & {
+      relonturn reloncord.transformelond_kelonys();
     };
   }
 };
 
-REGISTER_OP("GetValuesFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("values: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+RelonGISTelonR_OP("GelontValuelonsFromHashelondDataReloncord")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
+.Output("valuelons: float")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns values from the hashed data record.
+A telonnsorflow OP that relonturns valuelons from thelon hashelond data reloncord.
 Input
-  hashed_data_record_handle: Resource handle to DataRecord
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord
 
 Outputs
-  values: feature values.
+  valuelons: felonaturelon valuelons.
 )doc");
 
-class GetValuesFromHashedDataRecord : public GetOutputFromHashedDataRecord<float, double> {
+class GelontValuelonsFromHashelondDataReloncord : public GelontOutputFromHashelondDataReloncord<float, doublelon> {
  public:
-  explicit GetValuesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<float, double>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<double> & {
-      return record.values();
+  elonxplicit GelontValuelonsFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : GelontOutputFromHashelondDataReloncord<float, doublelon>(contelonxt){
+    gelonttelonr = [](const twml::HashelondDataReloncord &reloncord) -> const std::velonctor<doublelon> & {
+      relonturn reloncord.valuelons();
     };
   }
 };
 
-REGISTER_OP("GetCodesFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("codes: int64")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+RelonGISTelonR_OP("GelontCodelonsFromHashelondDataReloncord")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
+.Output("codelons: int64")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns codes from the hashed data record.
+A telonnsorflow OP that relonturns codelons from thelon hashelond data reloncord.
 Input
-  hashed_data_record_handle: Resource handle to DataRecord
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord
 
 Outputs
-  codes: deepbird feature code, usually from A,B,C,D ... in the config.
+  codelons: delonelonpbird felonaturelon codelon, usually from A,B,C,D ... in thelon config.
 )doc");
 
-class GetCodesFromHashedDataRecord : public GetOutputFromHashedDataRecord<int64, int64_t> {
+class GelontCodelonsFromHashelondDataReloncord : public GelontOutputFromHashelondDataReloncord<int64, int64_t> {
  public:
-  explicit GetCodesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int64, int64_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<int64_t> & {
-      return record.codes();
+  elonxplicit GelontCodelonsFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : GelontOutputFromHashelondDataReloncord<int64, int64_t>(contelonxt){
+    gelonttelonr = [](const twml::HashelondDataReloncord &reloncord) -> const std::velonctor<int64_t> & {
+      relonturn reloncord.codelons();
     };
   }
 };
 
-REGISTER_OP("GetTypesFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("types: int8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+RelonGISTelonR_OP("GelontTypelonsFromHashelondDataReloncord")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
+.Output("typelons: int8")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns types from the hashed data record.
+A telonnsorflow OP that relonturns typelons from thelon hashelond data reloncord.
 Input
-  hashed_data_record_handle: Resource handle to DataRecord
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord
 
 Outputs
-  types: feature types corresponding to BINARY, DISCRETE, etc.
+  typelons: felonaturelon typelons correlonsponding to BINARY, DISCRelonTelon, elontc.
 )doc");
 
-class GetTypesFromHashedDataRecord : public GetOutputFromHashedDataRecord<int8, uint8_t> {
+class GelontTypelonsFromHashelondDataReloncord : public GelontOutputFromHashelondDataReloncord<int8, uint8_t> {
  public:
-  explicit GetTypesFromHashedDataRecord(OpKernelConstruction* context)
-      : GetOutputFromHashedDataRecord<int8, uint8_t>(context){
-    getter = [](const twml::HashedDataRecord &record) -> const std::vector<uint8_t> & {
-      return record.types();
+  elonxplicit GelontTypelonsFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : GelontOutputFromHashelondDataReloncord<int8, uint8_t>(contelonxt){
+    gelonttelonr = [](const twml::HashelondDataReloncord &reloncord) -> const std::velonctor<uint8_t> & {
+      relonturn reloncord.typelons();
     };
   }
 };
 
-REGISTER_OP("GetBatchSizeFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("batch_size: int64")
-.SetShapeFn(shape_inference::ScalarShape)
+RelonGISTelonR_OP("GelontBatchSizelonFromHashelondDataReloncord")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
+.Output("batch_sizelon: int64")
+.SelontShapelonFn(shapelon_infelonrelonncelon::ScalarShapelon)
 .Doc(R"doc(
-A tensorflow OP that returns batch size from the hashed data record.
+A telonnsorflow OP that relonturns batch sizelon from thelon hashelond data reloncord.
 Input
-  hashed_data_record_handle: Resource handle to DataRecord
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord
 
 Outputs
-  batch_size: Number of records held in the handle.
+  batch_sizelon: Numbelonr of reloncords helonld in thelon handlelon.
 )doc");
 
-class GetBatchSizeFromHashedDataRecord : public OpKernel {
+class GelontBatchSizelonFromHashelondDataReloncord : public OpKelonrnelonl {
  public:
-  explicit GetBatchSizeFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  elonxplicit GelontBatchSizelonFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
-      Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
-      output->scalar<int64>()() = handle->records.size();
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      auto handlelon = gelontHandlelon<HashelondDataReloncordRelonsourcelon>(contelonxt, 0);
+      Telonnsor *output;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, TelonnsorShapelon({}), &output));
+      output->scalar<int64>()() = handlelon->reloncords.sizelon();
+    } catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-REGISTER_OP("GetTotalSizeFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("total_size: int64")
-.SetShapeFn(shape_inference::ScalarShape)
+RelonGISTelonR_OP("GelontTotalSizelonFromHashelondDataReloncord")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
+.Output("total_sizelon: int64")
+.SelontShapelonFn(shapelon_infelonrelonncelon::ScalarShapelon)
 .Doc(R"doc(
-A tensorflow OP that returns total size from the hashed data record.
+A telonnsorflow OP that relonturns total sizelon from thelon hashelond data reloncord.
 Input
-  hashed_data_record_handle: Resource handle to DataRecord
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord
 
 Outputs
-  total_size: Total number of keys / values in the batch.
+  total_sizelon: Total numbelonr of kelonys / valuelons in thelon batch.
 )doc");
 
-class GetTotalSizeFromHashedDataRecord : public OpKernel {
+class GelontTotalSizelonFromHashelondDataReloncord : public OpKelonrnelonl {
  public:
-  explicit GetTotalSizeFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  elonxplicit GelontTotalSizelonFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
+      auto handlelon = gelontHandlelon<HashelondDataReloncordRelonsourcelon>(contelonxt, 0);
 
-      Tensor *output;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output));
-      output->scalar<int64>()() = handle->total_size;
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      Telonnsor *output;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, TelonnsorShapelon({}), &output));
+      output->scalar<int64>()() = handlelon->total_sizelon;
+    } catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-REGISTER_OP("GetLabelsFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("labels: float")
-.Attr("default_label: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+RelonGISTelonR_OP("GelontLabelonlsFromHashelondDataReloncord")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
+.Output("labelonls: float")
+.Attr("delonfault_labelonl: float")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns labels from the hashed data record.
+A telonnsorflow OP that relonturns labelonls from thelon hashelond data reloncord.
 Input
-  hashed_data_record_handle: Resource handle to DataRecord
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord
 
 Outputs
-  labels: A 2D tensor of size [batch_size, num_labels] containing the label values.
+  labelonls: A 2D telonnsor of sizelon [batch_sizelon, num_labelonls] containing thelon labelonl valuelons.
 )doc");
 
-class GetLabelsFromHashedDataRecord : public OpKernel {
- private:
-  float default_label;
+class GelontLabelonlsFromHashelondDataReloncord : public OpKelonrnelonl {
+ privatelon:
+  float delonfault_labelonl;
 
  public:
-  explicit GetLabelsFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("default_label", &default_label));
+  elonxplicit GelontLabelonlsFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("delonfault_labelonl", &delonfault_labelonl));
   }
 
-  void Compute(OpKernelContext* context) override {
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const int num_labels = static_cast<int>(handle->num_labels);
-      TensorShape shape = {static_cast<int64>(handle->records.size()), num_labels};
+      auto handlelon = gelontHandlelon<HashelondDataReloncordRelonsourcelon>(contelonxt, 0);
+      const auto &reloncords = handlelon->reloncords;
+      const int num_labelonls = static_cast<int>(handlelon->num_labelonls);
+      TelonnsorShapelon shapelon = {static_cast<int64>(handlelon->reloncords.sizelon()), num_labelonls};
 
-      Tensor *labels;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &labels));
+      Telonnsor *labelonls;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, shapelon, &labelonls));
 
-      // The default value of label is not present in data record is std::nanf
-      // For continuous labels, change that to a default_label or label.
-      auto func = [this](float label) -> float {
-        return std::isnan(label) ? default_label : label;
+      // Thelon delonfault valuelon of labelonl is not prelonselonnt in data reloncord is std::nanf
+      // For continuous labelonls, changelon that to a delonfault_labelonl or labelonl.
+      auto func = [this](float labelonl) -> float {
+        relonturn std::isnan(labelonl) ? delonfault_labelonl : labelonl;
       };
 
-      auto labels_data = labels->flat<float>().data();
-      for (const auto &record : records) {
-        const auto& rec_labels = record.labels();
-        labels_data = std::transform(rec_labels.begin(), rec_labels.end(), labels_data, func);
+      auto labelonls_data = labelonls->flat<float>().data();
+      for (const auto &reloncord : reloncords) {
+        const auto& relonc_labelonls = reloncord.labelonls();
+        labelonls_data = std::transform(relonc_labelonls.belongin(), relonc_labelonls.elonnd(), labelonls_data, func);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-REGISTER_OP("GetWeightsFromHashedDataRecord")
-.Input("hashed_data_record_handle: resource")
-.Output("weights: float")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    return Status::OK();
+RelonGISTelonR_OP("GelontWelonightsFromHashelondDataReloncord")
+.Input("hashelond_data_reloncord_handlelon: relonsourcelon")
+.Output("welonights: float")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    relonturn Status::OK();
   }).Doc(R"doc(
-A tensorflow OP that returns weights from the hashed data record.
+A telonnsorflow OP that relonturns welonights from thelon hashelond data reloncord.
 Input
-  hashed_data_record_handle: Resource handle to DataRecord
+  hashelond_data_reloncord_handlelon: Relonsourcelon handlelon to DataReloncord
 
 Outputs
-  weights: A 2D tensor of size [batch_size, num_weights] containing the weight values.
+  welonights: A 2D telonnsor of sizelon [batch_sizelon, num_welonights] containing thelon welonight valuelons.
 )doc");
 
-class GetWeightsFromHashedDataRecord : public OpKernel {
+class GelontWelonightsFromHashelondDataReloncord : public OpKelonrnelonl {
  public:
-  explicit GetWeightsFromHashedDataRecord(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  elonxplicit GelontWelonightsFromHashelondDataReloncord(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
     try {
-      auto handle = getHandle<HashedDataRecordResource>(context, 0);
-      const auto &records = handle->records;
-      const int num_weights = static_cast<int>(handle->num_weights);
-      TensorShape shape = {static_cast<int64>(handle->records.size()), num_weights};
+      auto handlelon = gelontHandlelon<HashelondDataReloncordRelonsourcelon>(contelonxt, 0);
+      const auto &reloncords = handlelon->reloncords;
+      const int num_welonights = static_cast<int>(handlelon->num_welonights);
+      TelonnsorShapelon shapelon = {static_cast<int64>(handlelon->reloncords.sizelon()), num_welonights};
 
-      Tensor *weights;
-      OP_REQUIRES_OK(context, context->allocate_output(0, shape, &weights));
+      Telonnsor *welonights;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, shapelon, &welonights));
 
-      auto weights_data = weights->flat<float>().data();
-      for (const auto &record : records) {
-        const auto& rec_weights = record.weights();
-        weights_data = std::copy(rec_weights.begin(), rec_weights.end(), weights_data);
+      auto welonights_data = welonights->flat<float>().data();
+      for (const auto &reloncord : reloncords) {
+        const auto& relonc_welonights = reloncord.welonights();
+        welonights_data = std::copy(relonc_welonights.belongin(), relonc_welonights.elonnd(), welonights_data);
       }
-    } catch (const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+    } catch (const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
 
-#define REGISTER_DECODE_AND_HASH(InputType)     \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("DecodeAndHashDataRecord")             \
-    .Device(DEVICE_CPU)                         \
-    .TypeConstraint<InputType>("InputType"),    \
-    DecodeAndHashDataRecord<InputType>);        \
+#delonfinelon RelonGISTelonR_DelonCODelon_AND_HASH(InputTypelon)     \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(                      \
+    Namelon("DeloncodelonAndHashDataReloncord")             \
+    .Delonvicelon(DelonVICelon_CPU)                         \
+    .TypelonConstraint<InputTypelon>("InputTypelon"),    \
+    DeloncodelonAndHashDataReloncord<InputTypelon>);        \
 
-REGISTER_DECODE_AND_HASH(uint8)
-REGISTER_DECODE_AND_HASH(string)
+RelonGISTelonR_DelonCODelon_AND_HASH(uint8)
+RelonGISTelonR_DelonCODelon_AND_HASH(string)
 
-#define REGISTER_GETTER(FIELD)                  \
-  REGISTER_KERNEL_BUILDER(                      \
-    Name("Get" #FIELD "FromHashedDataRecord")   \
-    .Device(DEVICE_CPU),                        \
-    Get##FIELD##FromHashedDataRecord);          \
+#delonfinelon RelonGISTelonR_GelonTTelonR(FIelonLD)                  \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(                      \
+    Namelon("Gelont" #FIelonLD "FromHashelondDataReloncord")   \
+    .Delonvicelon(DelonVICelon_CPU),                        \
+    Gelont##FIelonLD##FromHashelondDataReloncord);          \
 
-REGISTER_GETTER(Ids)
-REGISTER_GETTER(UKeys)
-REGISTER_GETTER(Keys)
-REGISTER_GETTER(Values)
-REGISTER_GETTER(Codes)
-REGISTER_GETTER(Types)
-REGISTER_GETTER(BatchSize)
-REGISTER_GETTER(TotalSize)
-REGISTER_GETTER(Labels)
-REGISTER_GETTER(Weights)
+RelonGISTelonR_GelonTTelonR(Ids)
+RelonGISTelonR_GelonTTelonR(UKelonys)
+RelonGISTelonR_GelonTTelonR(Kelonys)
+RelonGISTelonR_GelonTTelonR(Valuelons)
+RelonGISTelonR_GelonTTelonR(Codelons)
+RelonGISTelonR_GelonTTelonR(Typelons)
+RelonGISTelonR_GelonTTelonR(BatchSizelon)
+RelonGISTelonR_GelonTTelonR(TotalSizelon)
+RelonGISTelonR_GelonTTelonR(Labelonls)
+RelonGISTelonR_GelonTTelonR(Welonights)

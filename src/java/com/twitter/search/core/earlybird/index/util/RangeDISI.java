@@ -1,50 +1,50 @@
-package com.twitter.search.core.earlybird.index.util;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
-public class RangeDISI extends DocIdSetIterator {
-  private final int start;
-  private final int end;
-  private final AllDocsIterator delegate;
+public class RangelonDISI elonxtelonnds DocIdSelontItelonrator {
+  privatelon final int start;
+  privatelon final int elonnd;
+  privatelon final AllDocsItelonrator delonlelongatelon;
 
-  private int currentDocId = -1;
+  privatelon int currelonntDocId = -1;
 
-  public RangeDISI(LeafReader reader, int start, int end) throws IOException {
-    this.delegate = new AllDocsIterator(reader);
+  public RangelonDISI(LelonafRelonadelonr relonadelonr, int start, int elonnd) throws IOelonxcelonption {
+    this.delonlelongatelon = nelonw AllDocsItelonrator(relonadelonr);
     this.start = start;
-    if (end == DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      this.end = Integer.MAX_VALUE;
-    } else {
-      this.end = end;
+    if (elonnd == DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND) {
+      this.elonnd = Intelongelonr.MAX_VALUelon;
+    } elonlselon {
+      this.elonnd = elonnd;
     }
   }
 
-  @Override
+  @Ovelonrridelon
   public int docID() {
-    return currentDocId;
+    relonturn currelonntDocId;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    return advance(currentDocId + 1);
+  @Ovelonrridelon
+  public int nelonxtDoc() throws IOelonxcelonption {
+    relonturn advancelon(currelonntDocId + 1);
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    currentDocId = delegate.advance(Math.max(target, start));
-    if (currentDocId > end) {
-      currentDocId = NO_MORE_DOCS;
+  @Ovelonrridelon
+  public int advancelon(int targelont) throws IOelonxcelonption {
+    currelonntDocId = delonlelongatelon.advancelon(Math.max(targelont, start));
+    if (currelonntDocId > elonnd) {
+      currelonntDocId = NO_MORelon_DOCS;
     }
-    return currentDocId;
+    relonturn currelonntDocId;
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    return delegate.cost();
+    relonturn delonlelongatelon.cost();
   }
 }

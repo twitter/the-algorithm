@@ -1,70 +1,70 @@
-package com.twitter.ann.hnsw
+packagelon com.twittelonr.ann.hnsw
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.Metric.toThrift
-import com.twitter.ann.common._
-import com.twitter.ann.common.thriftscala.DistanceMetric
-import com.twitter.ann.hnsw.HnswIndex.RandomProvider
-import com.twitter.util.Future
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.twittelonr.ann.common.elonmbelonddingTypelon._
+import com.twittelonr.ann.common.Melontric.toThrift
+import com.twittelonr.ann.common._
+import com.twittelonr.ann.common.thriftscala.DistancelonMelontric
+import com.twittelonr.ann.hnsw.HnswIndelonx.RandomProvidelonr
+import com.twittelonr.util.Futurelon
 import java.util.Random
-import java.util.concurrent.ConcurrentHashMap
-import java.util.concurrent.ThreadLocalRandom
-import java.util.concurrent.locks.Lock
-import java.util.concurrent.locks.ReentrantLock
-import scala.collection.JavaConverters._
+import java.util.concurrelonnt.ConcurrelonntHashMap
+import java.util.concurrelonnt.ThrelonadLocalRandom
+import java.util.concurrelonnt.locks.Lock
+import java.util.concurrelonnt.locks.RelonelonntrantLock
+import scala.collelonction.JavaConvelonrtelonrs._
 
-private[hnsw] object Hnsw {
-  private[hnsw] def apply[T, D <: Distance[D]](
-    dimension: Int,
-    metric: Metric[D],
-    efConstruction: Int,
+privatelon[hnsw] objelonct Hnsw {
+  privatelon[hnsw] delonf apply[T, D <: Distancelon[D]](
+    dimelonnsion: Int,
+    melontric: Melontric[D],
+    elonfConstruction: Int,
     maxM: Int,
-    expectedElements: Int,
-    futurePool: ReadWriteFuturePool,
-    idEmbeddingMap: IdEmbeddingMap[T]
+    elonxpelonctelondelonlelonmelonnts: Int,
+    futurelonPool: RelonadWritelonFuturelonPool,
+    idelonmbelonddingMap: IdelonmbelonddingMap[T]
   ): Hnsw[T, D] = {
-    val randomProvider = new RandomProvider {
-      override def get(): Random = ThreadLocalRandom.current()
+    val randomProvidelonr = nelonw RandomProvidelonr {
+      ovelonrridelon delonf gelont(): Random = ThrelonadLocalRandom.currelonnt()
     }
     val distFn =
-      DistanceFunctionGenerator(metric, (key: T) => idEmbeddingMap.get(key))
-    val internalIndex = new HnswIndex[T, EmbeddingVector](
-      distFn.index,
-      distFn.query,
-      efConstruction,
+      DistancelonFunctionGelonnelonrator(melontric, (kelony: T) => idelonmbelonddingMap.gelont(kelony))
+    val intelonrnalIndelonx = nelonw HnswIndelonx[T, elonmbelonddingVelonctor](
+      distFn.indelonx,
+      distFn.quelonry,
+      elonfConstruction,
       maxM,
-      expectedElements,
-      randomProvider
+      elonxpelonctelondelonlelonmelonnts,
+      randomProvidelonr
     )
-    new Hnsw[T, D](
-      dimension,
-      metric,
-      internalIndex,
-      futurePool,
-      idEmbeddingMap,
-      distFn.shouldNormalize,
-      LockedAccess.apply(expectedElements)
+    nelonw Hnsw[T, D](
+      dimelonnsion,
+      melontric,
+      intelonrnalIndelonx,
+      futurelonPool,
+      idelonmbelonddingMap,
+      distFn.shouldNormalizelon,
+      LockelondAccelonss.apply(elonxpelonctelondelonlelonmelonnts)
     )
   }
 }
 
-private[hnsw] object LockedAccess {
-  protected[hnsw] def apply[T](expectedElements: Int): LockedAccess[T] =
-    DefaultLockedAccess(new ConcurrentHashMap[T, Lock](expectedElements))
-  protected[hnsw] def apply[T](): LockedAccess[T] =
-    DefaultLockedAccess(new ConcurrentHashMap[T, Lock]())
+privatelon[hnsw] objelonct LockelondAccelonss {
+  protelonctelond[hnsw] delonf apply[T](elonxpelonctelondelonlelonmelonnts: Int): LockelondAccelonss[T] =
+    DelonfaultLockelondAccelonss(nelonw ConcurrelonntHashMap[T, Lock](elonxpelonctelondelonlelonmelonnts))
+  protelonctelond[hnsw] delonf apply[T](): LockelondAccelonss[T] =
+    DelonfaultLockelondAccelonss(nelonw ConcurrelonntHashMap[T, Lock]())
 }
 
-private[hnsw] case class DefaultLockedAccess[T](locks: ConcurrentHashMap[T, Lock])
-    extends LockedAccess[T] {
-  override def lockProvider(item: T) = locks.computeIfAbsent(item, (_: T) => new ReentrantLock())
+privatelon[hnsw] caselon class DelonfaultLockelondAccelonss[T](locks: ConcurrelonntHashMap[T, Lock])
+    elonxtelonnds LockelondAccelonss[T] {
+  ovelonrridelon delonf lockProvidelonr(itelonm: T) = locks.computelonIfAbselonnt(itelonm, (_: T) => nelonw RelonelonntrantLock())
 }
 
-private[hnsw] trait LockedAccess[T] {
-  protected def lockProvider(item: T): Lock
-  def lock[K](item: T)(fn: => K): K = {
-    val lock = lockProvider(item)
+privatelon[hnsw] trait LockelondAccelonss[T] {
+  protelonctelond delonf lockProvidelonr(itelonm: T): Lock
+  delonf lock[K](itelonm: T)(fn: => K): K = {
+    val lock = lockProvidelonr(itelonm)
     lock.lock()
     try {
       fn
@@ -74,110 +74,110 @@ private[hnsw] trait LockedAccess[T] {
   }
 }
 
-@VisibleForTesting
-private[hnsw] class Hnsw[T, D <: Distance[D]](
-  dimension: Int,
-  metric: Metric[D],
-  hnswIndex: HnswIndex[T, EmbeddingVector],
-  readWriteFuturePool: ReadWriteFuturePool,
-  idEmbeddingMap: IdEmbeddingMap[T],
-  shouldNormalize: Boolean,
-  lockedAccess: LockedAccess[T] = LockedAccess.apply[T]())
-    extends Appendable[T, HnswParams, D]
-    with Queryable[T, HnswParams, D]
-    with Updatable[T] {
-  override def append(entity: EntityEmbedding[T]): Future[Unit] = {
-    readWriteFuturePool.write {
-      val indexDimension = entity.embedding.length
-      assert(
-        toThrift(metric) == DistanceMetric.EditDistance || indexDimension == dimension,
-        s"Dimension mismatch for index(${indexDimension}) and embedding($dimension)"
+@VisiblelonForTelonsting
+privatelon[hnsw] class Hnsw[T, D <: Distancelon[D]](
+  dimelonnsion: Int,
+  melontric: Melontric[D],
+  hnswIndelonx: HnswIndelonx[T, elonmbelonddingVelonctor],
+  relonadWritelonFuturelonPool: RelonadWritelonFuturelonPool,
+  idelonmbelonddingMap: IdelonmbelonddingMap[T],
+  shouldNormalizelon: Boolelonan,
+  lockelondAccelonss: LockelondAccelonss[T] = LockelondAccelonss.apply[T]())
+    elonxtelonnds Appelonndablelon[T, HnswParams, D]
+    with Quelonryablelon[T, HnswParams, D]
+    with Updatablelon[T] {
+  ovelonrridelon delonf appelonnd(elonntity: elonntityelonmbelondding[T]): Futurelon[Unit] = {
+    relonadWritelonFuturelonPool.writelon {
+      val indelonxDimelonnsion = elonntity.elonmbelondding.lelonngth
+      asselonrt(
+        toThrift(melontric) == DistancelonMelontric.elonditDistancelon || indelonxDimelonnsion == dimelonnsion,
+        s"Dimelonnsion mismatch for indelonx(${indelonxDimelonnsion}) and elonmbelondding($dimelonnsion)"
       )
 
-      lockedAccess.lock(entity.id) {
-        // To make this thread-safe, we are using ConcurrentHashMap#putIfAbsent underneath,
-        // so if there is a pre-existing item, put() will return something that is not null
-        val embedding = idEmbeddingMap.putIfAbsent(entity.id, updatedEmbedding(entity.embedding))
+      lockelondAccelonss.lock(elonntity.id) {
+        // To makelon this threlonad-safelon, welon arelon using ConcurrelonntHashMap#putIfAbselonnt undelonrnelonath,
+        // so if thelonrelon is a prelon-elonxisting itelonm, put() will relonturn somelonthing that is not null
+        val elonmbelondding = idelonmbelonddingMap.putIfAbselonnt(elonntity.id, updatelondelonmbelondding(elonntity.elonmbelondding))
 
-        if (embedding == null) { // New element - insert into the index
-          hnswIndex.insert(entity.id)
-        } else { // Existing element - update the embedding and graph structure
-          throw new IllegalDuplicateInsertException(
-            "Append method does not permit duplicates (try using update method): " + entity.id)
+        if (elonmbelondding == null) { // Nelonw elonlelonmelonnt - inselonrt into thelon indelonx
+          hnswIndelonx.inselonrt(elonntity.id)
+        } elonlselon { // elonxisting elonlelonmelonnt - updatelon thelon elonmbelondding and graph structurelon
+          throw nelonw IllelongalDuplicatelonInselonrtelonxcelonption(
+            "Appelonnd melonthod doelons not pelonrmit duplicatelons (try using updatelon melonthod): " + elonntity.id)
         }
       }
-    } onFailure { e =>
-      Future.exception(e)
+    } onFailurelon { elon =>
+      Futurelon.elonxcelonption(elon)
     }
   }
 
-  override def toQueryable: Queryable[T, HnswParams, D] = this
+  ovelonrridelon delonf toQuelonryablelon: Quelonryablelon[T, HnswParams, D] = this
 
-  override def query(
-    embedding: EmbeddingVector,
-    numOfNeighbours: Int,
-    runtimeParams: HnswParams
-  ): Future[List[T]] = {
-    queryWithDistance(embedding, numOfNeighbours, runtimeParams)
-      .map(_.map(_.neighbor))
+  ovelonrridelon delonf quelonry(
+    elonmbelondding: elonmbelonddingVelonctor,
+    numOfNelonighbours: Int,
+    runtimelonParams: HnswParams
+  ): Futurelon[List[T]] = {
+    quelonryWithDistancelon(elonmbelondding, numOfNelonighbours, runtimelonParams)
+      .map(_.map(_.nelonighbor))
   }
 
-  override def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbours: Int,
-    runtimeParams: HnswParams
-  ): Future[List[NeighborWithDistance[T, D]]] = {
-    val indexDimension = embedding.length
-    assert(
-      toThrift(metric) == DistanceMetric.EditDistance || indexDimension == dimension,
-      s"Dimension mismatch for index(${indexDimension}) and embedding($dimension)"
+  ovelonrridelon delonf quelonryWithDistancelon(
+    elonmbelondding: elonmbelonddingVelonctor,
+    numOfNelonighbours: Int,
+    runtimelonParams: HnswParams
+  ): Futurelon[List[NelonighborWithDistancelon[T, D]]] = {
+    val indelonxDimelonnsion = elonmbelondding.lelonngth
+    asselonrt(
+      toThrift(melontric) == DistancelonMelontric.elonditDistancelon || indelonxDimelonnsion == dimelonnsion,
+      s"Dimelonnsion mismatch for indelonx(${indelonxDimelonnsion}) and elonmbelondding($dimelonnsion)"
     )
-    readWriteFuturePool.read {
-      hnswIndex
-        .searchKnn(updatedEmbedding(embedding), numOfNeighbours, runtimeParams.ef)
+    relonadWritelonFuturelonPool.relonad {
+      hnswIndelonx
+        .selonarchKnn(updatelondelonmbelondding(elonmbelondding), numOfNelonighbours, runtimelonParams.elonf)
         .asScala
         .map { nn =>
-          NeighborWithDistance(
-            nn.getItem,
-            metric.fromAbsoluteDistance(nn.getDistance)
+          NelonighborWithDistancelon(
+            nn.gelontItelonm,
+            melontric.fromAbsolutelonDistancelon(nn.gelontDistancelon)
           )
         }
         .toList
     }
   }
 
-  private[this] def updatedEmbedding(embedding: EmbeddingVector): EmbeddingVector = {
-    if (shouldNormalize) {
-      MetricUtil.norm(embedding)
-    } else {
-      embedding
+  privatelon[this] delonf updatelondelonmbelondding(elonmbelondding: elonmbelonddingVelonctor): elonmbelonddingVelonctor = {
+    if (shouldNormalizelon) {
+      MelontricUtil.norm(elonmbelondding)
+    } elonlselon {
+      elonmbelondding
     }
   }
 
-  def getIndex: HnswIndex[T, EmbeddingVector] = hnswIndex
-  def getDimen: Int = dimension
-  def getMetric: Metric[D] = metric
-  def getIdEmbeddingMap: IdEmbeddingMap[T] = idEmbeddingMap
-  override def update(
-    entity: EntityEmbedding[T]
-  ): Future[Unit] = {
-    readWriteFuturePool.write {
-      val indexDimension = entity.embedding.length
-      assert(
-        toThrift(metric) == DistanceMetric.EditDistance || indexDimension == dimension,
-        s"Dimension mismatch for index(${indexDimension}) and embedding($dimension)"
+  delonf gelontIndelonx: HnswIndelonx[T, elonmbelonddingVelonctor] = hnswIndelonx
+  delonf gelontDimelonn: Int = dimelonnsion
+  delonf gelontMelontric: Melontric[D] = melontric
+  delonf gelontIdelonmbelonddingMap: IdelonmbelonddingMap[T] = idelonmbelonddingMap
+  ovelonrridelon delonf updatelon(
+    elonntity: elonntityelonmbelondding[T]
+  ): Futurelon[Unit] = {
+    relonadWritelonFuturelonPool.writelon {
+      val indelonxDimelonnsion = elonntity.elonmbelondding.lelonngth
+      asselonrt(
+        toThrift(melontric) == DistancelonMelontric.elonditDistancelon || indelonxDimelonnsion == dimelonnsion,
+        s"Dimelonnsion mismatch for indelonx(${indelonxDimelonnsion}) and elonmbelondding($dimelonnsion)"
       )
 
-      lockedAccess.lock(entity.id) {
-        val embedding = idEmbeddingMap.put(entity.id, updatedEmbedding(entity.embedding))
-        if (embedding == null) { // New element - insert into the index
-          hnswIndex.insert(entity.id)
-        } else { // Existing element - update the embedding and graph structure
-          hnswIndex.reInsert(entity.id);
+      lockelondAccelonss.lock(elonntity.id) {
+        val elonmbelondding = idelonmbelonddingMap.put(elonntity.id, updatelondelonmbelondding(elonntity.elonmbelondding))
+        if (elonmbelondding == null) { // Nelonw elonlelonmelonnt - inselonrt into thelon indelonx
+          hnswIndelonx.inselonrt(elonntity.id)
+        } elonlselon { // elonxisting elonlelonmelonnt - updatelon thelon elonmbelondding and graph structurelon
+          hnswIndelonx.relonInselonrt(elonntity.id);
         }
       }
-    } onFailure { e =>
-      Future.exception(e)
+    } onFailurelon { elon =>
+      Futurelon.elonxcelonption(elon)
     }
   }
 }

@@ -1,91 +1,91 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.Selont;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonScorelonr;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.RangelonFiltelonrDISI;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSinglelonSelongmelonntSelonarchelonr;
 
 /**
- * A MatchAllDocsQuery implementation that does not assume that doc IDs are assigned sequentially.
- * Instead, it wraps the EarlybirdIndexSegmentAtomicReader into a RangeFilterDISI, and uses
- * this iterator to traverse only the valid doc IDs in this segment.
+ * A MatchAllDocsQuelonry implelonmelonntation that doelons not assumelon that doc IDs arelon assignelond selonquelonntially.
+ * Instelonad, it wraps thelon elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr into a RangelonFiltelonrDISI, and uselons
+ * this itelonrator to travelonrselon only thelon valid doc IDs in this selongmelonnt.
  *
- * Note that org.apache.lucene.index.MatchAllDocsQuery is final, so we cannot extend it.
+ * Notelon that org.apachelon.lucelonnelon.indelonx.MatchAllDocsQuelonry is final, so welon cannot elonxtelonnd it.
  */
-public class MatchAllDocsQuery extends Query {
-  private static class MatchAllDocsWeight extends Weight {
-    private final Weight luceneWeight;
+public class MatchAllDocsQuelonry elonxtelonnds Quelonry {
+  privatelon static class MatchAllDocsWelonight elonxtelonnds Welonight {
+    privatelon final Welonight lucelonnelonWelonight;
 
-    public MatchAllDocsWeight(Query query, Weight luceneWeight) {
-      super(query);
-      this.luceneWeight = luceneWeight;
+    public MatchAllDocsWelonight(Quelonry quelonry, Welonight lucelonnelonWelonight) {
+      supelonr(quelonry);
+      this.lucelonnelonWelonight = lucelonnelonWelonight;
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      luceneWeight.extractTerms(terms);
+    @Ovelonrridelon
+    public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
+      lucelonnelonWelonight.elonxtractTelonrms(telonrms);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return luceneWeight.explain(context, doc);
+    @Ovelonrridelon
+    public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc) throws IOelonxcelonption {
+      relonturn lucelonnelonWelonight.elonxplain(contelonxt, doc);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Preconditions.checkState(context.reader() instanceof EarlybirdIndexSegmentAtomicReader,
-                               "Expected an EarlybirdIndexSegmentAtomicReader, but got a "
-                               + context.reader().getClass().getName() + " instance.");
-      EarlybirdIndexSegmentAtomicReader reader =
-          (EarlybirdIndexSegmentAtomicReader) context.reader();
-      return new ConstantScoreScorer(
-          this, 1.0f, ScoreMode.COMPLETE_NO_SCORES, new RangeFilterDISI(reader));
+    @Ovelonrridelon
+    public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+      Prelonconditions.chelonckStatelon(contelonxt.relonadelonr() instancelonof elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr,
+                               "elonxpelonctelond an elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr, but got a "
+                               + contelonxt.relonadelonr().gelontClass().gelontNamelon() + " instancelon.");
+      elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr =
+          (elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) contelonxt.relonadelonr();
+      relonturn nelonw ConstantScorelonScorelonr(
+          this, 1.0f, ScorelonModelon.COMPLelonTelon_NO_SCORelonS, nelonw RangelonFiltelonrDISI(relonadelonr));
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return luceneWeight.isCacheable(ctx);
+    @Ovelonrridelon
+    public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+      relonturn lucelonnelonWelonight.isCachelonablelon(ctx);
     }
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-    org.apache.lucene.search.MatchAllDocsQuery luceneMatchAllDocsQuery =
-        new org.apache.lucene.search.MatchAllDocsQuery();
-    Weight luceneWeight = luceneMatchAllDocsQuery.createWeight(searcher, scoreMode, boost);
-    if (!(searcher instanceof EarlybirdSingleSegmentSearcher)) {
-      return luceneWeight;
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+    org.apachelon.lucelonnelon.selonarch.MatchAllDocsQuelonry lucelonnelonMatchAllDocsQuelonry =
+        nelonw org.apachelon.lucelonnelon.selonarch.MatchAllDocsQuelonry();
+    Welonight lucelonnelonWelonight = lucelonnelonMatchAllDocsQuelonry.crelonatelonWelonight(selonarchelonr, scorelonModelon, boost);
+    if (!(selonarchelonr instancelonof elonarlybirdSinglelonSelongmelonntSelonarchelonr)) {
+      relonturn lucelonnelonWelonight;
     }
-    return new MatchAllDocsWeight(this, luceneWeight);
+    relonturn nelonw MatchAllDocsWelonight(this, lucelonnelonWelonight);
   }
 
-  @Override
-  public int hashCode() {
-    return 0;
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn 0;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return obj instanceof MatchAllDocsQuery;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    relonturn obj instancelonof MatchAllDocsQuelonry;
   }
 
-  // Copied from org.apache.lucene.search.MatchAllDocsWeight
-  @Override
-  public String toString(String field) {
-    return "*:*";
+  // Copielond from org.apachelon.lucelonnelon.selonarch.MatchAllDocsWelonight
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn "*:*";
   }
 }

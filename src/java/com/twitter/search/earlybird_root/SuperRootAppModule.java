@@ -1,234 +1,234 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
-import com.google.inject.Key;
-import com.google.inject.Provides;
-import com.google.inject.util.Providers;
+import com.googlelon.injelonct.Kelony;
+import com.googlelon.injelonct.Providelons;
+import com.googlelon.injelonct.util.Providelonrs;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersionConfig;
-import com.twitter.finagle.Name;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.config.SearchPenguinVersionsConfig;
-import com.twitter.search.common.dark.ResolverProxy;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.root.LoggingSupport;
-import com.twitter.search.common.root.RemoteClientBuilder;
-import com.twitter.search.common.root.SearchRootWarmup;
-import com.twitter.search.common.root.ValidationBehavior;
-import com.twitter.search.common.root.WarmupConfig;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.ThriftTweetSource;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.InjectionNames;
-import com.twitter.search.earlybird_root.filters.EarlybirdClusterAvailableFilter;
-import com.twitter.search.earlybird_root.filters.MarkTweetSourceFilter;
-import com.twitter.search.earlybird_root.filters.RequestContextToEarlybirdRequestFilter;
-import com.twitter.search.earlybird_root.filters.RequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.ServiceExceptionHandlingFilter;
-import com.twitter.search.earlybird_root.filters.ServiceResponseValidationFilter;
-import com.twitter.search.earlybird_root.filters.UnsetSuperRootFieldsFilter;
-import com.twitter.util.Future;
+import com.twittelonr.app.Flag;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsionConfig;
+import com.twittelonr.finaglelon.Namelon;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.selonarch.common.config.SelonarchPelonnguinVelonrsionsConfig;
+import com.twittelonr.selonarch.common.dark.RelonsolvelonrProxy;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.root.LoggingSupport;
+import com.twittelonr.selonarch.common.root.RelonmotelonClielonntBuildelonr;
+import com.twittelonr.selonarch.common.root.SelonarchRootWarmup;
+import com.twittelonr.selonarch.common.root.ValidationBelonhavior;
+import com.twittelonr.selonarch.common.root.WarmupConfig;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTwelonelontSourcelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.InjelonctionNamelons;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.elonarlybirdClustelonrAvailablelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.MarkTwelonelontSourcelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.RelonquelonstTypelonCountFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.SelonrvicelonelonxcelonptionHandlingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.SelonrvicelonRelonsponselonValidationFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.UnselontSupelonrRootFielonldsFiltelonr;
+import com.twittelonr.util.Futurelon;
 
-public class SuperRootAppModule extends TwitterModule {
-  private final Flag<String> rootRealtimeFlag = createFlag(
-      "root-realtime",
+public class SupelonrRootAppModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon final Flag<String> rootRelonaltimelonFlag = crelonatelonFlag(
+      "root-relonaltimelon",
       "",
-      "Override the path to root-realtime",
-      Flaggable.ofString());
-  private final Flag<String> rootProtectedFlag = createFlag(
-      "root-protected",
+      "Ovelonrridelon thelon path to root-relonaltimelon",
+      Flaggablelon.ofString());
+  privatelon final Flag<String> rootProtelonctelondFlag = crelonatelonFlag(
+      "root-protelonctelond",
       "",
-      "Override the path to root-protected",
-      Flaggable.ofString());
-  private final Flag<String> rootArchiveFullFlag = createFlag(
-      "root-archive-full",
+      "Ovelonrridelon thelon path to root-protelonctelond",
+      Flaggablelon.ofString());
+  privatelon final Flag<String> rootArchivelonFullFlag = crelonatelonFlag(
+      "root-archivelon-full",
       "",
-      "Override the path to root-archive-full",
-      Flaggable.ofString());
-  private final Flag<String> penguinVersionsFlag = createMandatoryFlag(
-      "penguin_versions",
-      "Penguin versions to be tokenized",
+      "Ovelonrridelon thelon path to root-archivelon-full",
+      Flaggablelon.ofString());
+  privatelon final Flag<String> pelonnguinVelonrsionsFlag = crelonatelonMandatoryFlag(
+      "pelonnguin_velonrsions",
+      "Pelonnguin velonrsions to belon tokelonnizelond",
       "",
-      Flaggable.ofString());
+      Flaggablelon.ofString());
 
-  @Override
-  public void configure() {
-    // SuperRoot uses all clusters, not just one. We bind EarlybirdCluster to null to indicate that
-    // there is not one specific cluster to use.
-    bind(Key.get(EarlybirdCluster.class)).toProvider(Providers.<EarlybirdCluster>of(null));
+  @Ovelonrridelon
+  public void configurelon() {
+    // SupelonrRoot uselons all clustelonrs, not just onelon. Welon bind elonarlybirdClustelonr to null to indicatelon that
+    // thelonrelon is not onelon speloncific clustelonr to uselon.
+    bind(Kelony.gelont(elonarlybirdClustelonr.class)).toProvidelonr(Providelonrs.<elonarlybirdClustelonr>of(null));
 
-    bind(EarlybirdService.ServiceIface.class).to(SuperRootService.class);
+    bind(elonarlybirdSelonrvicelon.SelonrvicelonIfacelon.class).to(SupelonrRootSelonrvicelon.class);
   }
 
-  @Provides
-  SearchRootWarmup<EarlybirdService.ServiceIface, ?, ?> providesSearchRootWarmup(
+  @Providelons
+  SelonarchRootWarmup<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon, ?, ?> providelonsSelonarchRootWarmup(
       Clock clock,
       WarmupConfig config) {
-    return new EarlybirdWarmup(clock, config);
+    relonturn nelonw elonarlybirdWarmup(clock, config);
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.REALTIME)
-  private EarlybirdService.ServiceIface providesRealtimeIface(
-      RemoteClientBuilder<EarlybirdService.ServiceIface> builder,
-      ResolverProxy proxy) throws Exception {
-    Name name = proxy.resolve(rootRealtimeFlag.apply());
-    return builder.createRemoteClient(name, "realtime", "realtime_");
+  @Providelons
+  @Singlelonton
+  @Namelond(InjelonctionNamelons.RelonALTIMelon)
+  privatelon elonarlybirdSelonrvicelon.SelonrvicelonIfacelon providelonsRelonaltimelonIfacelon(
+      RelonmotelonClielonntBuildelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> buildelonr,
+      RelonsolvelonrProxy proxy) throws elonxcelonption {
+    Namelon namelon = proxy.relonsolvelon(rootRelonaltimelonFlag.apply());
+    relonturn buildelonr.crelonatelonRelonmotelonClielonnt(namelon, "relonaltimelon", "relonaltimelon_");
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.REALTIME)
-  private Service<EarlybirdRequestContext, EarlybirdResponse> providesRealtimeService(
-      @Named(InjectionNames.REALTIME)
-      EarlybirdService.ServiceIface realtimeServiceIface,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      StatsReceiver statsReceiver,
-      SearchDecider decider) {
-    return buildClientService(
-        realtimeServiceIface,
-        new EarlybirdClusterAvailableFilter(decider, EarlybirdCluster.REALTIME),
-        new MarkTweetSourceFilter(ThriftTweetSource.REALTIME_CLUSTER),
-        new ServiceExceptionHandlingFilter(EarlybirdCluster.REALTIME),
-        new ServiceResponseValidationFilter(EarlybirdCluster.REALTIME),
-        new RequestTypeCountFilter(EarlybirdCluster.REALTIME.getNameForStats()),
-        requestContextToEarlybirdRequestFilter,
-        new UnsetSuperRootFieldsFilter(),
-        new ClientLatencyFilter(EarlybirdCluster.REALTIME.getNameForStats()));
+  @Providelons
+  @Singlelonton
+  @Namelond(InjelonctionNamelons.RelonALTIMelon)
+  privatelon Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> providelonsRelonaltimelonSelonrvicelon(
+      @Namelond(InjelonctionNamelons.RelonALTIMelon)
+      elonarlybirdSelonrvicelon.SelonrvicelonIfacelon relonaltimelonSelonrvicelonIfacelon,
+      RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+      StatsReloncelonivelonr statsReloncelonivelonr,
+      SelonarchDeloncidelonr deloncidelonr) {
+    relonturn buildClielonntSelonrvicelon(
+        relonaltimelonSelonrvicelonIfacelon,
+        nelonw elonarlybirdClustelonrAvailablelonFiltelonr(deloncidelonr, elonarlybirdClustelonr.RelonALTIMelon),
+        nelonw MarkTwelonelontSourcelonFiltelonr(ThriftTwelonelontSourcelon.RelonALTIMelon_CLUSTelonR),
+        nelonw SelonrvicelonelonxcelonptionHandlingFiltelonr(elonarlybirdClustelonr.RelonALTIMelon),
+        nelonw SelonrvicelonRelonsponselonValidationFiltelonr(elonarlybirdClustelonr.RelonALTIMelon),
+        nelonw RelonquelonstTypelonCountFiltelonr(elonarlybirdClustelonr.RelonALTIMelon.gelontNamelonForStats()),
+        relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+        nelonw UnselontSupelonrRootFielonldsFiltelonr(),
+        nelonw ClielonntLatelonncyFiltelonr(elonarlybirdClustelonr.RelonALTIMelon.gelontNamelonForStats()));
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.FULL_ARCHIVE)
-  private EarlybirdService.ServiceIface providesFullArchiveIface(
-      RemoteClientBuilder<EarlybirdService.ServiceIface> builder,
-      ResolverProxy proxy) throws Exception {
-    Name name = proxy.resolve(rootArchiveFullFlag.apply());
-    return builder.createRemoteClient(name, "fullarchive", "full_archive_");
+  @Providelons
+  @Singlelonton
+  @Namelond(InjelonctionNamelons.FULL_ARCHIVelon)
+  privatelon elonarlybirdSelonrvicelon.SelonrvicelonIfacelon providelonsFullArchivelonIfacelon(
+      RelonmotelonClielonntBuildelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> buildelonr,
+      RelonsolvelonrProxy proxy) throws elonxcelonption {
+    Namelon namelon = proxy.relonsolvelon(rootArchivelonFullFlag.apply());
+    relonturn buildelonr.crelonatelonRelonmotelonClielonnt(namelon, "fullarchivelon", "full_archivelon_");
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.FULL_ARCHIVE)
-  private Service<EarlybirdRequestContext, EarlybirdResponse> providesFullArchiveService(
-      @Named(InjectionNames.FULL_ARCHIVE)
-      EarlybirdService.ServiceIface fullArchiveServiceIface,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      StatsReceiver statsReceiver,
-      SearchDecider decider) {
-    return buildClientService(
-        fullArchiveServiceIface,
-        new EarlybirdClusterAvailableFilter(decider, EarlybirdCluster.FULL_ARCHIVE),
-        new MarkTweetSourceFilter(ThriftTweetSource.FULL_ARCHIVE_CLUSTER),
-        new ServiceExceptionHandlingFilter(EarlybirdCluster.FULL_ARCHIVE),
-        new ServiceResponseValidationFilter(EarlybirdCluster.FULL_ARCHIVE),
-        new RequestTypeCountFilter(EarlybirdCluster.FULL_ARCHIVE.getNameForStats()),
-        requestContextToEarlybirdRequestFilter,
-        // Disable unset followedUserIds for archive since archive earlybirds rely on this field
-        // to rewrite query to include protected Tweets
-        new UnsetSuperRootFieldsFilter(false),
-        new ClientLatencyFilter(EarlybirdCluster.FULL_ARCHIVE.getNameForStats()));
+  @Providelons
+  @Singlelonton
+  @Namelond(InjelonctionNamelons.FULL_ARCHIVelon)
+  privatelon Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> providelonsFullArchivelonSelonrvicelon(
+      @Namelond(InjelonctionNamelons.FULL_ARCHIVelon)
+      elonarlybirdSelonrvicelon.SelonrvicelonIfacelon fullArchivelonSelonrvicelonIfacelon,
+      RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+      StatsReloncelonivelonr statsReloncelonivelonr,
+      SelonarchDeloncidelonr deloncidelonr) {
+    relonturn buildClielonntSelonrvicelon(
+        fullArchivelonSelonrvicelonIfacelon,
+        nelonw elonarlybirdClustelonrAvailablelonFiltelonr(deloncidelonr, elonarlybirdClustelonr.FULL_ARCHIVelon),
+        nelonw MarkTwelonelontSourcelonFiltelonr(ThriftTwelonelontSourcelon.FULL_ARCHIVelon_CLUSTelonR),
+        nelonw SelonrvicelonelonxcelonptionHandlingFiltelonr(elonarlybirdClustelonr.FULL_ARCHIVelon),
+        nelonw SelonrvicelonRelonsponselonValidationFiltelonr(elonarlybirdClustelonr.FULL_ARCHIVelon),
+        nelonw RelonquelonstTypelonCountFiltelonr(elonarlybirdClustelonr.FULL_ARCHIVelon.gelontNamelonForStats()),
+        relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+        // Disablelon unselont followelondUselonrIds for archivelon sincelon archivelon elonarlybirds relonly on this fielonld
+        // to relonwritelon quelonry to includelon protelonctelond Twelonelonts
+        nelonw UnselontSupelonrRootFielonldsFiltelonr(falselon),
+        nelonw ClielonntLatelonncyFiltelonr(elonarlybirdClustelonr.FULL_ARCHIVelon.gelontNamelonForStats()));
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.PROTECTED)
-  private EarlybirdService.ServiceIface providesProtectedIface(
-      RemoteClientBuilder<EarlybirdService.ServiceIface> builder,
-      ResolverProxy proxy) throws Exception {
-    Name name = proxy.resolve(rootProtectedFlag.apply());
-    return builder.createRemoteClient(name, "protected", "protected_");
+  @Providelons
+  @Singlelonton
+  @Namelond(InjelonctionNamelons.PROTelonCTelonD)
+  privatelon elonarlybirdSelonrvicelon.SelonrvicelonIfacelon providelonsProtelonctelondIfacelon(
+      RelonmotelonClielonntBuildelonr<elonarlybirdSelonrvicelon.SelonrvicelonIfacelon> buildelonr,
+      RelonsolvelonrProxy proxy) throws elonxcelonption {
+    Namelon namelon = proxy.relonsolvelon(rootProtelonctelondFlag.apply());
+    relonturn buildelonr.crelonatelonRelonmotelonClielonnt(namelon, "protelonctelond", "protelonctelond_");
   }
 
-  @Provides
-  @Singleton
-  @Named(InjectionNames.PROTECTED)
-  private Service<EarlybirdRequestContext, EarlybirdResponse> providesProtectedService(
-      @Named(InjectionNames.PROTECTED)
-      EarlybirdService.ServiceIface protectedServiceIface,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      StatsReceiver statsReceiver,
-      SearchDecider decider) {
-    return buildClientService(
-        protectedServiceIface,
-        new EarlybirdClusterAvailableFilter(decider, EarlybirdCluster.PROTECTED),
-        new MarkTweetSourceFilter(ThriftTweetSource.REALTIME_PROTECTED_CLUSTER),
-        new ServiceExceptionHandlingFilter(EarlybirdCluster.PROTECTED),
-        new ServiceResponseValidationFilter(EarlybirdCluster.PROTECTED),
-        new RequestTypeCountFilter(EarlybirdCluster.PROTECTED.getNameForStats()),
-        requestContextToEarlybirdRequestFilter,
-        new UnsetSuperRootFieldsFilter(),
-        new ClientLatencyFilter(EarlybirdCluster.PROTECTED.getNameForStats()));
+  @Providelons
+  @Singlelonton
+  @Namelond(InjelonctionNamelons.PROTelonCTelonD)
+  privatelon Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> providelonsProtelonctelondSelonrvicelon(
+      @Namelond(InjelonctionNamelons.PROTelonCTelonD)
+      elonarlybirdSelonrvicelon.SelonrvicelonIfacelon protelonctelondSelonrvicelonIfacelon,
+      RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+      StatsReloncelonivelonr statsReloncelonivelonr,
+      SelonarchDeloncidelonr deloncidelonr) {
+    relonturn buildClielonntSelonrvicelon(
+        protelonctelondSelonrvicelonIfacelon,
+        nelonw elonarlybirdClustelonrAvailablelonFiltelonr(deloncidelonr, elonarlybirdClustelonr.PROTelonCTelonD),
+        nelonw MarkTwelonelontSourcelonFiltelonr(ThriftTwelonelontSourcelon.RelonALTIMelon_PROTelonCTelonD_CLUSTelonR),
+        nelonw SelonrvicelonelonxcelonptionHandlingFiltelonr(elonarlybirdClustelonr.PROTelonCTelonD),
+        nelonw SelonrvicelonRelonsponselonValidationFiltelonr(elonarlybirdClustelonr.PROTelonCTelonD),
+        nelonw RelonquelonstTypelonCountFiltelonr(elonarlybirdClustelonr.PROTelonCTelonD.gelontNamelonForStats()),
+        relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+        nelonw UnselontSupelonrRootFielonldsFiltelonr(),
+        nelonw ClielonntLatelonncyFiltelonr(elonarlybirdClustelonr.PROTelonCTelonD.gelontNamelonForStats()));
   }
 
   /**
-   * Builds a Finagle Service based on a EarlybirdService.ServiceIface.
+   * Builds a Finaglelon Selonrvicelon baselond on a elonarlybirdSelonrvicelon.SelonrvicelonIfacelon.
    */
-  private Service<EarlybirdRequestContext, EarlybirdResponse> buildClientService(
-      final EarlybirdService.ServiceIface serviceIface,
-      EarlybirdClusterAvailableFilter earlybirdClusterAvailableFilter,
-      MarkTweetSourceFilter markTweetSourceFilter,
-      ServiceExceptionHandlingFilter serviceExceptionHandlingFilter,
-      ServiceResponseValidationFilter serviceResponseValidationFilter,
-      RequestTypeCountFilter requestTypeCountFilter,
-      RequestContextToEarlybirdRequestFilter requestContextToEarlybirdRequestFilter,
-      UnsetSuperRootFieldsFilter unsetSuperRootFieldsFilter,
-      ClientLatencyFilter latencyFilter) {
-    Service<EarlybirdRequest, EarlybirdResponse> service =
-        new Service<EarlybirdRequest, EarlybirdResponse>() {
+  privatelon Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> buildClielonntSelonrvicelon(
+      final elonarlybirdSelonrvicelon.SelonrvicelonIfacelon selonrvicelonIfacelon,
+      elonarlybirdClustelonrAvailablelonFiltelonr elonarlybirdClustelonrAvailablelonFiltelonr,
+      MarkTwelonelontSourcelonFiltelonr markTwelonelontSourcelonFiltelonr,
+      SelonrvicelonelonxcelonptionHandlingFiltelonr selonrvicelonelonxcelonptionHandlingFiltelonr,
+      SelonrvicelonRelonsponselonValidationFiltelonr selonrvicelonRelonsponselonValidationFiltelonr,
+      RelonquelonstTypelonCountFiltelonr relonquelonstTypelonCountFiltelonr,
+      RelonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr,
+      UnselontSupelonrRootFielonldsFiltelonr unselontSupelonrRootFielonldsFiltelonr,
+      ClielonntLatelonncyFiltelonr latelonncyFiltelonr) {
+    Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon =
+        nelonw Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon>() {
 
-          @Override
-          public Future<EarlybirdResponse> apply(EarlybirdRequest requestContext) {
-            return serviceIface.search(requestContext);
+          @Ovelonrridelon
+          public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonstContelonxt) {
+            relonturn selonrvicelonIfacelon.selonarch(relonquelonstContelonxt);
           }
         };
 
-    // We should apply ServiceResponseValidationFilter first, to validate the response.
-    // Then, if the response is valid, we should tag all results with the appropriate tweet source.
-    // ServiceExceptionHandlingFilter should come last, to catch all possible exceptions (that were
-    // thrown by the service, or by ServiceResponseValidationFilter and MarkTweetSourceFilter).
+    // Welon should apply SelonrvicelonRelonsponselonValidationFiltelonr first, to validatelon thelon relonsponselon.
+    // Thelonn, if thelon relonsponselon is valid, welon should tag all relonsults with thelon appropriatelon twelonelont sourcelon.
+    // SelonrvicelonelonxcelonptionHandlingFiltelonr should comelon last, to catch all possiblelon elonxcelonptions (that welonrelon
+    // thrown by thelon selonrvicelon, or by SelonrvicelonRelonsponselonValidationFiltelonr and MarkTwelonelontSourcelonFiltelonr).
     //
-    // But before we do all of this, we should apply the EarlybirdClusterAvailableFilter to see if
-    // we even need to send the request to this cluster.
-    return earlybirdClusterAvailableFilter
-        .andThen(serviceExceptionHandlingFilter)
-        .andThen(markTweetSourceFilter)
-        .andThen(serviceResponseValidationFilter)
-        .andThen(requestTypeCountFilter)
-        .andThen(requestContextToEarlybirdRequestFilter)
-        .andThen(latencyFilter)
-        .andThen(unsetSuperRootFieldsFilter)
-        .andThen(service);
+    // But belonforelon welon do all of this, welon should apply thelon elonarlybirdClustelonrAvailablelonFiltelonr to selonelon if
+    // welon elonvelonn nelonelond to selonnd thelon relonquelonst to this clustelonr.
+    relonturn elonarlybirdClustelonrAvailablelonFiltelonr
+        .andThelonn(selonrvicelonelonxcelonptionHandlingFiltelonr)
+        .andThelonn(markTwelonelontSourcelonFiltelonr)
+        .andThelonn(selonrvicelonRelonsponselonValidationFiltelonr)
+        .andThelonn(relonquelonstTypelonCountFiltelonr)
+        .andThelonn(relonquelonstContelonxtToelonarlybirdRelonquelonstFiltelonr)
+        .andThelonn(latelonncyFiltelonr)
+        .andThelonn(unselontSupelonrRootFielonldsFiltelonr)
+        .andThelonn(selonrvicelon);
   }
 
-  @Provides
-  public LoggingSupport<EarlybirdRequest, EarlybirdResponse> provideLoggingSupport(
-      SearchDecider decider) {
-    return new EarlybirdServiceLoggingSupport(decider);
+  @Providelons
+  public LoggingSupport<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> providelonLoggingSupport(
+      SelonarchDeloncidelonr deloncidelonr) {
+    relonturn nelonw elonarlybirdSelonrvicelonLoggingSupport(deloncidelonr);
   }
 
-  @Provides
-  public ValidationBehavior<EarlybirdRequest, EarlybirdResponse> provideValidationBehavior() {
-    return new EarlybirdServiceValidationBehavior();
+  @Providelons
+  public ValidationBelonhavior<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> providelonValidationBelonhavior() {
+    relonturn nelonw elonarlybirdSelonrvicelonValidationBelonhavior();
   }
 
   /**
-   * Provides the penguin versions that we should use to retokenize the query if requested.
+   * Providelons thelon pelonnguin velonrsions that welon should uselon to relontokelonnizelon thelon quelonry if relonquelonstelond.
    */
-  @Provides
-  @Singleton
-  public PenguinVersionConfig providePenguinVersions() {
-    return SearchPenguinVersionsConfig.deserialize(penguinVersionsFlag.apply());
+  @Providelons
+  @Singlelonton
+  public PelonnguinVelonrsionConfig providelonPelonnguinVelonrsions() {
+    relonturn SelonarchPelonnguinVelonrsionsConfig.delonselonrializelon(pelonnguinVelonrsionsFlag.apply());
   }
 }

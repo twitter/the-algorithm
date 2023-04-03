@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.utelong_likelond_by_twelonelonts
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelonrankelonr.modelonl.CandidatelonTwelonelontsRelonsult
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.util.Futurelon
 
 /**
- * A repository of YML tweets candidiates
+ * A relonpository of YML twelonelonts candidiatelons
  */
-class UtegLikedByTweetsRepository(source: UtegLikedByTweetsSource) {
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    source.get(query)
+class UtelongLikelondByTwelonelontsRelonpository(sourcelon: UtelongLikelondByTwelonelontsSourcelon) {
+  delonf gelont(quelonry: ReloncapQuelonry): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    sourcelon.gelont(quelonry)
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    source.get(queries)
+  delonf gelont(quelonrielons: Selonq[ReloncapQuelonry]): Futurelon[Selonq[CandidatelonTwelonelontsRelonsult]] = {
+    sourcelon.gelont(quelonrielons)
   }
 }

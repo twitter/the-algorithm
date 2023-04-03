@@ -1,89 +1,89 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Operator;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.QueryVisitor;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.BoolelonanQuelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Disjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Opelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Phraselon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.SpeloncialTelonrm;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Telonrm;
 
 /**
- * Collects the nodes with a specified query type in the given query.
+ * Colleloncts thelon nodelons with a speloncifielond quelonry typelon in thelon givelonn quelonry.
  */
-public class CollectQueryTypeVisitor extends QueryVisitor<Boolean> {
+public class CollelonctQuelonryTypelonVisitor elonxtelonnds QuelonryVisitor<Boolelonan> {
 
-  protected final Query.QueryType queryType;
+  protelonctelond final Quelonry.QuelonryTypelon quelonryTypelon;
 
-  protected final Map<Query, Boolean> nodeToTypeMap = Maps.newIdentityHashMap();
+  protelonctelond final Map<Quelonry, Boolelonan> nodelonToTypelonMap = Maps.nelonwIdelonntityHashMap();
 
-  public CollectQueryTypeVisitor(Query.QueryType queryType) {
-    this.queryType = queryType;
+  public CollelonctQuelonryTypelonVisitor(Quelonry.QuelonryTypelon quelonryTypelon) {
+    this.quelonryTypelon = quelonryTypelon;
   }
 
-  @Override
-  public Boolean visit(Disjunction disjunction) throws QueryParserException {
-    return visitBooleanQuery(disjunction);
+  @Ovelonrridelon
+  public Boolelonan visit(Disjunction disjunction) throws QuelonryParselonrelonxcelonption {
+    relonturn visitBoolelonanQuelonry(disjunction);
   }
 
-  @Override
-  public Boolean visit(Conjunction conjunction) throws QueryParserException {
-    return visitBooleanQuery(conjunction);
+  @Ovelonrridelon
+  public Boolelonan visit(Conjunction conjunction) throws QuelonryParselonrelonxcelonption {
+    relonturn visitBoolelonanQuelonry(conjunction);
   }
 
-  @Override
-  public Boolean visit(Phrase phrase) throws QueryParserException {
-    return visitQuery(phrase);
+  @Ovelonrridelon
+  public Boolelonan visit(Phraselon phraselon) throws QuelonryParselonrelonxcelonption {
+    relonturn visitQuelonry(phraselon);
   }
 
-  @Override
-  public Boolean visit(Term term) throws QueryParserException {
-    return visitQuery(term);
+  @Ovelonrridelon
+  public Boolelonan visit(Telonrm telonrm) throws QuelonryParselonrelonxcelonption {
+    relonturn visitQuelonry(telonrm);
   }
 
-  @Override
-  public Boolean visit(Operator operator) throws QueryParserException {
-    return visitQuery(operator);
+  @Ovelonrridelon
+  public Boolelonan visit(Opelonrator opelonrator) throws QuelonryParselonrelonxcelonption {
+    relonturn visitQuelonry(opelonrator);
   }
 
-  @Override
-  public Boolean visit(SpecialTerm special) throws QueryParserException {
-    return visitQuery(special);
+  @Ovelonrridelon
+  public Boolelonan visit(SpeloncialTelonrm speloncial) throws QuelonryParselonrelonxcelonption {
+    relonturn visitQuelonry(speloncial);
   }
 
-  public Set<Query> getCollectedNodes() {
-    return nodeToTypeMap.keySet();
+  public Selont<Quelonry> gelontCollelonctelondNodelons() {
+    relonturn nodelonToTypelonMap.kelonySelont();
   }
 
-  protected boolean visitQuery(Query query) throws QueryParserException {
-    if (query.isTypeOf(queryType)) {
-      collectNode(query);
-      return true;
+  protelonctelond boolelonan visitQuelonry(Quelonry quelonry) throws QuelonryParselonrelonxcelonption {
+    if (quelonry.isTypelonOf(quelonryTypelon)) {
+      collelonctNodelon(quelonry);
+      relonturn truelon;
     }
-    return false;
+    relonturn falselon;
   }
 
-  protected void collectNode(Query query) {
-    nodeToTypeMap.put(query, true);
+  protelonctelond void collelonctNodelon(Quelonry quelonry) {
+    nodelonToTypelonMap.put(quelonry, truelon);
   }
 
-  protected boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
-    boolean found = false;
-    if (query.isTypeOf(queryType)) {
-      collectNode(query);
-      found = true;
+  protelonctelond boolelonan visitBoolelonanQuelonry(BoolelonanQuelonry quelonry) throws QuelonryParselonrelonxcelonption {
+    boolelonan found = falselon;
+    if (quelonry.isTypelonOf(quelonryTypelon)) {
+      collelonctNodelon(quelonry);
+      found = truelon;
     }
-    for (Query child : query.getChildren()) {
-      found |= child.accept(this);
+    for (Quelonry child : quelonry.gelontChildrelonn()) {
+      found |= child.accelonpt(this);
     }
-    return found;
+    relonturn found;
   }
 }

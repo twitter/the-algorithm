@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.timelinemixer.clients.persistence.TimelinePersistenceManhattanClientBuilder
-import com.twitter.timelinemixer.clients.persistence.TimelinePersistenceManhattanClientConfig
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonPelonrsistelonncelonManhattanClielonntBuildelonr
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonPelonrsistelonncelonManhattanClielonntConfig
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonRelonsponselonBatchelonsClielonnt
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonRelonsponselonV3
+import javax.injelonct.Singlelonton
 
-object TimelinesPersistenceStoreClientModule extends TwitterModule {
-  private val StagingDataset = "timeline_response_batches_v5_nonprod"
-  private val ProdDataset = "timeline_response_batches_v5"
+objelonct TimelonlinelonsPelonrsistelonncelonStorelonClielonntModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon val StagingDataselont = "timelonlinelon_relonsponselon_batchelons_v5_nonprod"
+  privatelon val ProdDataselont = "timelonlinelon_relonsponselon_batchelons_v5"
 
-  @Provides
-  @Singleton
-  def providesTimelinesPersistenceStoreClient(
-    injectedServiceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): TimelineResponseBatchesClient[TimelineResponseV3] = {
-    val (timelineResponseBatchesDataset, manhattanReadOnly) =
-      injectedServiceIdentifier.environment.toLowerCase match {
-        case "prod" => (ProdDataset, false)
-        case _ => (StagingDataset, true)
+  @Providelons
+  @Singlelonton
+  delonf providelonsTimelonlinelonsPelonrsistelonncelonStorelonClielonnt(
+    injelonctelondSelonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): TimelonlinelonRelonsponselonBatchelonsClielonnt[TimelonlinelonRelonsponselonV3] = {
+    val (timelonlinelonRelonsponselonBatchelonsDataselont, manhattanRelonadOnly) =
+      injelonctelondSelonrvicelonIdelonntifielonr.elonnvironmelonnt.toLowelonrCaselon match {
+        caselon "prod" => (ProdDataselont, falselon)
+        caselon _ => (StagingDataselont, truelon)
       }
 
-    val timelineResponseBatchesConfig = new TimelinePersistenceManhattanClientConfig {
-      val dataset = timelineResponseBatchesDataset
-      val isReadOnly = manhattanReadOnly
-      val serviceIdentifier = injectedServiceIdentifier
-      override val defaultMaxTimeout = 300.milliseconds
-      override val maxRetryCount = 1
+    val timelonlinelonRelonsponselonBatchelonsConfig = nelonw TimelonlinelonPelonrsistelonncelonManhattanClielonntConfig {
+      val dataselont = timelonlinelonRelonsponselonBatchelonsDataselont
+      val isRelonadOnly = manhattanRelonadOnly
+      val selonrvicelonIdelonntifielonr = injelonctelondSelonrvicelonIdelonntifielonr
+      ovelonrridelon val delonfaultMaxTimelonout = 300.milliselonconds
+      ovelonrridelon val maxRelontryCount = 1
     }
 
-    TimelinePersistenceManhattanClientBuilder.buildTimelineResponseV3BatchesClient(
-      timelineResponseBatchesConfig,
-      statsReceiver
+    TimelonlinelonPelonrsistelonncelonManhattanClielonntBuildelonr.buildTimelonlinelonRelonsponselonV3BatchelonsClielonnt(
+      timelonlinelonRelonsponselonBatchelonsConfig,
+      statsReloncelonivelonr
     )
   }
 }

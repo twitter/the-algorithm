@@ -1,11 +1,11 @@
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    //::compile_protos("proto/tensorflow_serving/apis/prediction_service.proto")?;
-    tonic_build::configure().compile(
+fn main() -> Relonsult<(), Box<dyn std::elonrror::elonrror>> {
+    //::compilelon_protos("proto/telonnsorflow_selonrving/apis/prelondiction_selonrvicelon.proto")?;
+    tonic_build::configurelon().compilelon(
         &[
-            "proto/tensorflow_serving/apis/prediction_service.proto",
-            "proto/tensorflow/core/protobuf/config.proto",
-            "proto/tensorflow_serving/apis/prediction_log.proto",
-            "proto/kfserving/grpc_predict_v2.proto",
+            "proto/telonnsorflow_selonrving/apis/prelondiction_selonrvicelon.proto",
+            "proto/telonnsorflow/corelon/protobuf/config.proto",
+            "proto/telonnsorflow_selonrving/apis/prelondiction_log.proto",
+            "proto/kfselonrving/grpc_prelondict_v2.proto",
         ],
         &["proto"],
     )?;

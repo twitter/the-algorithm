@@ -1,16 +1,16 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/query/ads",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/gate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/quality_factor",
-        "src/scala/com/twitter/ml/featurestore/lib",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/quelonry/ads",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/common",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/gatelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/quality_factor",
+        "src/scala/com/twittelonr/ml/felonaturelonstorelon/lib",
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/common",
+    elonxports = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/common",
     ],
 )

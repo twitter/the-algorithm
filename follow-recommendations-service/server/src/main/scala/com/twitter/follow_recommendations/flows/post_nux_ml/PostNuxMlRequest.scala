@@ -1,54 +1,54 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+packagelon com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.HasPrelonFelontchelondFelonaturelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls._
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Params
 
-case class PostNuxMlRequest(
-  override val params: Params,
-  override val clientContext: ClientContext,
-  override val similarToUserIds: Seq[Long],
-  inputExcludeUserIds: Seq[Long],
-  override val recentFollowedUserIds: Option[Seq[Long]],
-  override val invalidRelationshipUserIds: Option[Set[Long]],
-  override val recentFollowedByUserIds: Option[Seq[Long]],
-  override val dismissedUserIds: Option[Seq[Long]],
-  override val displayLocation: DisplayLocation,
-  maxResults: Option[Int] = None,
-  override val debugOptions: Option[DebugOptions] = None,
-  override val wtfImpressions: Option[Seq[WtfImpression]],
-  override val uttInterestIds: Option[Seq[Long]] = None,
-  override val customInterests: Option[Seq[String]] = None,
-  override val geohashAndCountryCode: Option[GeohashAndCountryCode] = None,
-  inputPreviouslyRecommendedUserIds: Option[Set[Long]] = None,
-  inputPreviouslyFollowedUserIds: Option[Set[Long]] = None,
-  override val isSoftUser: Boolean = false,
-  override val userState: Option[UserState] = None,
-  override val qualityFactor: Option[Double] = None)
-    extends HasParams
-    with HasSimilarToContext
-    with HasClientContext
-    with HasExcludedUserIds
+caselon class PostNuxMlRelonquelonst(
+  ovelonrridelon val params: Params,
+  ovelonrridelon val clielonntContelonxt: ClielonntContelonxt,
+  ovelonrridelon val similarToUselonrIds: Selonq[Long],
+  inputelonxcludelonUselonrIds: Selonq[Long],
+  ovelonrridelon val reloncelonntFollowelondUselonrIds: Option[Selonq[Long]],
+  ovelonrridelon val invalidRelonlationshipUselonrIds: Option[Selont[Long]],
+  ovelonrridelon val reloncelonntFollowelondByUselonrIds: Option[Selonq[Long]],
+  ovelonrridelon val dismisselondUselonrIds: Option[Selonq[Long]],
+  ovelonrridelon val displayLocation: DisplayLocation,
+  maxRelonsults: Option[Int] = Nonelon,
+  ovelonrridelon val delonbugOptions: Option[DelonbugOptions] = Nonelon,
+  ovelonrridelon val wtfImprelonssions: Option[Selonq[WtfImprelonssion]],
+  ovelonrridelon val uttIntelonrelonstIds: Option[Selonq[Long]] = Nonelon,
+  ovelonrridelon val customIntelonrelonsts: Option[Selonq[String]] = Nonelon,
+  ovelonrridelon val gelonohashAndCountryCodelon: Option[GelonohashAndCountryCodelon] = Nonelon,
+  inputPrelonviouslyReloncommelonndelondUselonrIds: Option[Selont[Long]] = Nonelon,
+  inputPrelonviouslyFollowelondUselonrIds: Option[Selont[Long]] = Nonelon,
+  ovelonrridelon val isSoftUselonr: Boolelonan = falselon,
+  ovelonrridelon val uselonrStatelon: Option[UselonrStatelon] = Nonelon,
+  ovelonrridelon val qualityFactor: Option[Doublelon] = Nonelon)
+    elonxtelonnds HasParams
+    with HasSimilarToContelonxt
+    with HasClielonntContelonxt
+    with HaselonxcludelondUselonrIds
     with HasDisplayLocation
-    with HasDebugOptions
-    with HasGeohashAndCountryCode
-    with HasPreFetchedFeature
-    with HasDismissedUserIds
-    with HasInterestIds
-    with HasPreviousRecommendationsContext
-    with HasIsSoftUser
-    with HasUserState
-    with HasInvalidRelationshipUserIds
+    with HasDelonbugOptions
+    with HasGelonohashAndCountryCodelon
+    with HasPrelonFelontchelondFelonaturelon
+    with HasDismisselondUselonrIds
+    with HasIntelonrelonstIds
+    with HasPrelonviousReloncommelonndationsContelonxt
+    with HasIsSoftUselonr
+    with HasUselonrStatelon
+    with HasInvalidRelonlationshipUselonrIds
     with HasQualityFactor {
-  override val excludedUserIds: Seq[Long] = {
-    inputExcludeUserIds ++ clientContext.userId.toSeq ++ similarToUserIds
+  ovelonrridelon val elonxcludelondUselonrIds: Selonq[Long] = {
+    inputelonxcludelonUselonrIds ++ clielonntContelonxt.uselonrId.toSelonq ++ similarToUselonrIds
   }
-  override val previouslyRecommendedUserIDs: Set[Long] =
-    inputPreviouslyRecommendedUserIds.getOrElse(Set.empty)
-  override val previouslyFollowedUserIds: Set[Long] =
-    inputPreviouslyFollowedUserIds.getOrElse(Set.empty)
+  ovelonrridelon val prelonviouslyReloncommelonndelondUselonrIDs: Selont[Long] =
+    inputPrelonviouslyReloncommelonndelondUselonrIds.gelontOrelonlselon(Selont.elonmpty)
+  ovelonrridelon val prelonviouslyFollowelondUselonrIds: Selont[Long] =
+    inputPrelonviouslyFollowelondUselonrIds.gelontOrelonlselon(Selont.elonmpty)
 }

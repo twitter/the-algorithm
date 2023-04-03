@@ -1,79 +1,79 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
 /**
- * An interface for mapping the doc IDs in our indexes to the corresponding tweet IDs.
+ * An intelonrfacelon for mapping thelon doc IDs in our indelonxelons to thelon correlonsponding twelonelont IDs.
  */
-public interface DocIDToTweetIDMapper {
-  /** A constant indicating that a doc ID was not found in the mapper. */
+public intelonrfacelon DocIDToTwelonelontIDMappelonr {
+  /** A constant indicating that a doc ID was not found in thelon mappelonr. */
   int ID_NOT_FOUND = -1;
 
   /**
-   * Returns the tweet ID corresponding to the given doc ID.
+   * Relonturns thelon twelonelont ID correlonsponding to thelon givelonn doc ID.
    *
-   * @param docID The doc ID stored in our indexes.
-   * @return The tweet ID corresponding to the given doc ID.
+   * @param docID Thelon doc ID storelond in our indelonxelons.
+   * @relonturn Thelon twelonelont ID correlonsponding to thelon givelonn doc ID.
    */
-  long getTweetID(int docID);
+  long gelontTwelonelontID(int docID);
 
   /**
-   * Returns the internal doc ID corresponding to the given tweet ID. Returns ID_NOT_FOUND if the
-   * given tweet ID cannot be found in the index.
+   * Relonturns thelon intelonrnal doc ID correlonsponding to thelon givelonn twelonelont ID. Relonturns ID_NOT_FOUND if thelon
+   * givelonn twelonelont ID cannot belon found in thelon indelonx.
    *
-   * @param tweetID The tweet ID.
-   * @return The doc ID corresponding to the given tweet ID.
+   * @param twelonelontID Thelon twelonelont ID.
+   * @relonturn Thelon doc ID correlonsponding to thelon givelonn twelonelont ID.
    */
-  int getDocID(long tweetID) throws IOException;
+  int gelontDocID(long twelonelontID) throws IOelonxcelonption;
 
   /**
-   * Returns the smallest valid doc ID in this mapper that's strictly higher than the given doc ID.
-   * If no such doc ID exists, ID_NOT_FOUND is returned.
+   * Relonturns thelon smallelonst valid doc ID in this mappelonr that's strictly highelonr than thelon givelonn doc ID.
+   * If no such doc ID elonxists, ID_NOT_FOUND is relonturnelond.
    *
-   * @param docID The current doc ID.
-   * @return The smallest valid doc ID in this mapper that's strictly higher than the given doc ID,
-   *         or a negative number, if no such doc ID exists.
+   * @param docID Thelon currelonnt doc ID.
+   * @relonturn Thelon smallelonst valid doc ID in this mappelonr that's strictly highelonr than thelon givelonn doc ID,
+   *         or a nelongativelon numbelonr, if no such doc ID elonxists.
    */
-  int getNextDocID(int docID);
+  int gelontNelonxtDocID(int docID);
 
   /**
-   * Returns the largest valid doc ID in this mapper that's strictly smaller than the given doc ID.
-   * If no such doc ID exists, ID_NOT_FOUND is returned.
+   * Relonturns thelon largelonst valid doc ID in this mappelonr that's strictly smallelonr than thelon givelonn doc ID.
+   * If no such doc ID elonxists, ID_NOT_FOUND is relonturnelond.
    *
-   * @param docID The current doc ID.
-   * @return The largest valid doc ID in this mapper that's strictly smaller than the given doc ID,
-   *         or a negative number, if no such doc ID exists.
+   * @param docID Thelon currelonnt doc ID.
+   * @relonturn Thelon largelonst valid doc ID in this mappelonr that's strictly smallelonr than thelon givelonn doc ID,
+   *         or a nelongativelon numbelonr, if no such doc ID elonxists.
    */
-  int getPreviousDocID(int docID);
+  int gelontPrelonviousDocID(int docID);
 
   /**
-   * Returns the total number of documents stored in this mapper.
+   * Relonturns thelon total numbelonr of documelonnts storelond in this mappelonr.
    *
-   * @return The total number of documents stored in this mapper.
+   * @relonturn Thelon total numbelonr of documelonnts storelond in this mappelonr.
    */
-  int getNumDocs();
+  int gelontNumDocs();
 
   /**
-   * Adds a mapping for the given tweet ID. Returns the doc ID assigned to this tweet ID.
-   * This method does not check if the tweet ID is already present in the mapper. It always assigns
-   * a new doc ID to the given tweet.
+   * Adds a mapping for thelon givelonn twelonelont ID. Relonturns thelon doc ID assignelond to this twelonelont ID.
+   * This melonthod doelons not chelonck if thelon twelonelont ID is alrelonady prelonselonnt in thelon mappelonr. It always assigns
+   * a nelonw doc ID to thelon givelonn twelonelont.
    *
-   * @param tweetID The tweet ID to be added to the mapper.
-   * @return The doc ID assigned to the given tweet ID, or ID_NOT_FOUND if a doc ID could not be
-   *         assigned to this tweet.
+   * @param twelonelontID Thelon twelonelont ID to belon addelond to thelon mappelonr.
+   * @relonturn Thelon doc ID assignelond to thelon givelonn twelonelont ID, or ID_NOT_FOUND if a doc ID could not belon
+   *         assignelond to this twelonelont.
    */
-  int addMapping(long tweetID);
+  int addMapping(long twelonelontID);
 
   /**
-   * Converts the current DocIDToTweetIDMapper to a DocIDToTweetIDMapper instance with the same
-   * tweet IDs. The tweet IDs in the original and optimized instances can be mapped to different
-   * doc IDs. However, we expect doc IDs to be assigned such that tweets created later have smaller
-   * have smaller doc IDs.
+   * Convelonrts thelon currelonnt DocIDToTwelonelontIDMappelonr to a DocIDToTwelonelontIDMappelonr instancelon with thelon samelon
+   * twelonelont IDs. Thelon twelonelont IDs in thelon original and optimizelond instancelons can belon mappelond to diffelonrelonnt
+   * doc IDs. Howelonvelonr, welon elonxpelonct doc IDs to belon assignelond such that twelonelonts crelonatelond latelonr havelon smallelonr
+   * havelon smallelonr doc IDs.
    *
-   * This method should be called when an earlybird segment is being optimized, right before
+   * This melonthod should belon callelond whelonn an elonarlybird selongmelonnt is beloning optimizelond, right belonforelon
    * flushing it to disk.
    *
-   * @return An optimized DocIDToTweetIDMapper with the same tweet IDs.
+   * @relonturn An optimizelond DocIDToTwelonelontIDMappelonr with thelon samelon twelonelont IDs.
    */
-  DocIDToTweetIDMapper optimize() throws IOException;
+  DocIDToTwelonelontIDMappelonr optimizelon() throws IOelonxcelonption;
 }

@@ -1,135 +1,135 @@
-package com.twitter.home_mixer.product.for_you
+packagelon com.twittelonr.homelon_mixelonr.product.for_you
 
-import com.twitter.home_mixer.candidate_pipeline.ConversationServiceResponseFeatureTransformer
-import com.twitter.home_mixer.functional_component.decorator.HomeConversationServiceCandidateDecorator
-import com.twitter.home_mixer.functional_component.decorator.HomeFeedbackActionInfoBuilder
-import com.twitter.home_mixer.functional_component.feature_hydrator.NamesFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.SocialGraphServiceFeatureHydrator
-import com.twitter.home_mixer.functional_component.feature_hydrator.TimelineServiceTweetsFeature
-import com.twitter.home_mixer.functional_component.feature_hydrator.TweetypieFeatureHydrator
-import com.twitter.home_mixer.functional_component.filter.InvalidConversationModuleFilter
-import com.twitter.home_mixer.functional_component.filter.PredicateFeatureFilter
-import com.twitter.home_mixer.functional_component.filter.PreviouslySeenTweetsFilter
-import com.twitter.home_mixer.functional_component.filter.PreviouslyServedTweetsFilter
-import com.twitter.home_mixer.functional_component.filter.RetweetDeduplicationFilter
-import com.twitter.home_mixer.functional_component.gate.NonEmptySeqFeatureGate
-import com.twitter.home_mixer.model.HomeFeatures.IsHydratedFeature
-import com.twitter.home_mixer.model.HomeFeatures.QuotedTweetDroppedFeature
-import com.twitter.home_mixer.product.for_you.model.ForYouQuery
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc.ConversationServiceCandidateSource
-import com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc.ConversationServiceCandidateSourceRequest
-import com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc.TweetWithConversationMetadata
-import com.twitter.product_mixer.component_library.filter.FeatureFilter
-import com.twitter.product_mixer.component_library.gate.NoCandidatesGate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.BaseGate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.DependentCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.candidatelon_pipelonlinelon.ConvelonrsationSelonrvicelonRelonsponselonFelonaturelonTransformelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.HomelonConvelonrsationSelonrvicelonCandidatelonDeloncorator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.HomelonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.NamelonsFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.SocialGraphSelonrvicelonFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.TimelonlinelonSelonrvicelonTwelonelontsFelonaturelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.TwelonelontypielonFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.InvalidConvelonrsationModulelonFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.PrelondicatelonFelonaturelonFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.PrelonviouslySelonelonnTwelonelontsFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.PrelonviouslySelonrvelondTwelonelontsFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.RelontwelonelontDelonduplicationFiltelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon.NonelonmptySelonqFelonaturelonGatelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsHydratelondFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.QuotelondTwelonelontDroppelondFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.for_you.modelonl.ForYouQuelonry
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.twelonelontconvosvc.ConvelonrsationSelonrvicelonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.twelonelontconvosvc.ConvelonrsationSelonrvicelonCandidatelonSourcelonRelonquelonst
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.twelonelontconvosvc.TwelonelontWithConvelonrsationMelontadata
+import com.twittelonr.product_mixelonr.componelonnt_library.filtelonr.FelonaturelonFiltelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.gatelon.NoCandidatelonsGatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.BaselonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.BaselonGatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.DelonpelonndelonntCandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.DelonpelonndelonntCandidatelonPipelonlinelonConfig
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Candidate Pipeline Config that fetches Tweet ancestors from Conversation Service Candidate Source
+ * Candidatelon Pipelonlinelon Config that felontchelons Twelonelont ancelonstors from Convelonrsation Selonrvicelon Candidatelon Sourcelon
  */
-@Singleton
-class ForYouConversationServiceCandidatePipelineConfig @Inject() (
-  forYouScoredTweetsCandidatePipelineConfig: ForYouScoredTweetsCandidatePipelineConfig,
-  forYouTimelineScorerCandidatePipelineConfig: ForYouTimelineScorerCandidatePipelineConfig,
-  conversationServiceCandidateSource: ConversationServiceCandidateSource,
-  tweetypieFeatureHydrator: TweetypieFeatureHydrator,
-  socialGraphServiceFeatureHydrator: SocialGraphServiceFeatureHydrator,
-  namesFeatureHydrator: NamesFeatureHydrator,
-  homeFeedbackActionInfoBuilder: HomeFeedbackActionInfoBuilder)
-    extends DependentCandidatePipelineConfig[
-      ForYouQuery,
-      ConversationServiceCandidateSourceRequest,
-      TweetWithConversationMetadata,
-      TweetCandidate
+@Singlelonton
+class ForYouConvelonrsationSelonrvicelonCandidatelonPipelonlinelonConfig @Injelonct() (
+  forYouScorelondTwelonelontsCandidatelonPipelonlinelonConfig: ForYouScorelondTwelonelontsCandidatelonPipelonlinelonConfig,
+  forYouTimelonlinelonScorelonrCandidatelonPipelonlinelonConfig: ForYouTimelonlinelonScorelonrCandidatelonPipelonlinelonConfig,
+  convelonrsationSelonrvicelonCandidatelonSourcelon: ConvelonrsationSelonrvicelonCandidatelonSourcelon,
+  twelonelontypielonFelonaturelonHydrator: TwelonelontypielonFelonaturelonHydrator,
+  socialGraphSelonrvicelonFelonaturelonHydrator: SocialGraphSelonrvicelonFelonaturelonHydrator,
+  namelonsFelonaturelonHydrator: NamelonsFelonaturelonHydrator,
+  homelonFelonelondbackActionInfoBuildelonr: HomelonFelonelondbackActionInfoBuildelonr)
+    elonxtelonnds DelonpelonndelonntCandidatelonPipelonlinelonConfig[
+      ForYouQuelonry,
+      ConvelonrsationSelonrvicelonCandidatelonSourcelonRelonquelonst,
+      TwelonelontWithConvelonrsationMelontadata,
+      TwelonelontCandidatelon
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ForYouConversationService")
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr =
+    CandidatelonPipelonlinelonIdelonntifielonr("ForYouConvelonrsationSelonrvicelon")
 
-  override val gates: Seq[BaseGate[ForYouQuery]] = Seq(
-    NoCandidatesGate(
-      SpecificPipelines(
-        forYouTimelineScorerCandidatePipelineConfig.identifier,
-        forYouScoredTweetsCandidatePipelineConfig.identifier
+  ovelonrridelon val gatelons: Selonq[BaselonGatelon[ForYouQuelonry]] = Selonq(
+    NoCandidatelonsGatelon(
+      SpeloncificPipelonlinelons(
+        forYouTimelonlinelonScorelonrCandidatelonPipelonlinelonConfig.idelonntifielonr,
+        forYouScorelondTwelonelontsCandidatelonPipelonlinelonConfig.idelonntifielonr
       )
     ),
-    NonEmptySeqFeatureGate(TimelineServiceTweetsFeature)
+    NonelonmptySelonqFelonaturelonGatelon(TimelonlinelonSelonrvicelonTwelonelontsFelonaturelon)
   )
 
-  override val candidateSource: BaseCandidateSource[
-    ConversationServiceCandidateSourceRequest,
-    TweetWithConversationMetadata
-  ] = conversationServiceCandidateSource
+  ovelonrridelon val candidatelonSourcelon: BaselonCandidatelonSourcelon[
+    ConvelonrsationSelonrvicelonCandidatelonSourcelonRelonquelonst,
+    TwelonelontWithConvelonrsationMelontadata
+  ] = convelonrsationSelonrvicelonCandidatelonSourcelon
 
-  override val queryTransformer: DependentCandidatePipelineQueryTransformer[
-    ForYouQuery,
-    ConversationServiceCandidateSourceRequest
-  ] = { (query, candidates) =>
-    val timelineServiceTweets = query.features
-      .map(_.getOrElse(TimelineServiceTweetsFeature, Seq.empty)).getOrElse(Seq.empty)
+  ovelonrridelon val quelonryTransformelonr: DelonpelonndelonntCandidatelonPipelonlinelonQuelonryTransformelonr[
+    ForYouQuelonry,
+    ConvelonrsationSelonrvicelonCandidatelonSourcelonRelonquelonst
+  ] = { (quelonry, candidatelons) =>
+    val timelonlinelonSelonrvicelonTwelonelonts = quelonry.felonaturelons
+      .map(_.gelontOrelonlselon(TimelonlinelonSelonrvicelonTwelonelontsFelonaturelon, Selonq.elonmpty)).gelontOrelonlselon(Selonq.elonmpty)
 
-    val tweetsWithConversationMetadata = timelineServiceTweets.map { id =>
-      TweetWithConversationMetadata(
-        tweetId = id,
-        userId = None,
-        sourceTweetId = None,
-        sourceUserId = None,
-        inReplyToTweetId = None,
-        conversationId = None,
-        ancestors = Seq.empty
+    val twelonelontsWithConvelonrsationMelontadata = timelonlinelonSelonrvicelonTwelonelonts.map { id =>
+      TwelonelontWithConvelonrsationMelontadata(
+        twelonelontId = id,
+        uselonrId = Nonelon,
+        sourcelonTwelonelontId = Nonelon,
+        sourcelonUselonrId = Nonelon,
+        inRelonplyToTwelonelontId = Nonelon,
+        convelonrsationId = Nonelon,
+        ancelonstors = Selonq.elonmpty
       )
     }
-    ConversationServiceCandidateSourceRequest(tweetsWithConversationMetadata)
+    ConvelonrsationSelonrvicelonCandidatelonSourcelonRelonquelonst(twelonelontsWithConvelonrsationMelontadata)
   }
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[TweetWithConversationMetadata]
-  ] = Seq(ConversationServiceResponseFeatureTransformer)
+  ovelonrridelon val felonaturelonsFromCandidatelonSourcelonTransformelonrs: Selonq[
+    CandidatelonFelonaturelonTransformelonr[TwelonelontWithConvelonrsationMelontadata]
+  ] = Selonq(ConvelonrsationSelonrvicelonRelonsponselonFelonaturelonTransformelonr)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    TweetWithConversationMetadata,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[
+    TwelonelontWithConvelonrsationMelontadata,
+    TwelonelontCandidatelon
+  ] = { sourcelonRelonsult => TwelonelontCandidatelon(id = sourcelonRelonsult.twelonelontId) }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ForYouQuery, TweetCandidate, _]
-  ] = Seq(tweetypieFeatureHydrator, socialGraphServiceFeatureHydrator)
+  ovelonrridelon val prelonFiltelonrFelonaturelonHydrationPhaselon1: Selonq[
+    BaselonCandidatelonFelonaturelonHydrator[ForYouQuelonry, TwelonelontCandidatelon, _]
+  ] = Selonq(twelonelontypielonFelonaturelonHydrator, socialGraphSelonrvicelonFelonaturelonHydrator)
 
-  override def filters: Seq[Filter[ForYouQuery, TweetCandidate]] = Seq(
-    PreviouslyServedTweetsFilter,
-    PreviouslySeenTweetsFilter,
-    RetweetDeduplicationFilter,
-    FeatureFilter.fromFeature(FilterIdentifier("TweetypieHydrated"), IsHydratedFeature),
-    PredicateFeatureFilter.fromPredicate(
-      FilterIdentifier("QuotedTweetDropped"),
-      shouldKeepCandidate = { features => !features.getOrElse(QuotedTweetDroppedFeature, false) }
+  ovelonrridelon delonf filtelonrs: Selonq[Filtelonr[ForYouQuelonry, TwelonelontCandidatelon]] = Selonq(
+    PrelonviouslySelonrvelondTwelonelontsFiltelonr,
+    PrelonviouslySelonelonnTwelonelontsFiltelonr,
+    RelontwelonelontDelonduplicationFiltelonr,
+    FelonaturelonFiltelonr.fromFelonaturelon(FiltelonrIdelonntifielonr("TwelonelontypielonHydratelond"), IsHydratelondFelonaturelon),
+    PrelondicatelonFelonaturelonFiltelonr.fromPrelondicatelon(
+      FiltelonrIdelonntifielonr("QuotelondTwelonelontDroppelond"),
+      shouldKelonelonpCandidatelon = { felonaturelons => !felonaturelons.gelontOrelonlselon(QuotelondTwelonelontDroppelondFelonaturelon, falselon) }
     ),
-    InvalidConversationModuleFilter
+    InvalidConvelonrsationModulelonFiltelonr
   )
 
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[ForYouQuery, TweetCandidate, _]
-  ] = Seq(namesFeatureHydrator)
+  ovelonrridelon val postFiltelonrFelonaturelonHydration: Selonq[
+    BaselonCandidatelonFelonaturelonHydrator[ForYouQuelonry, TwelonelontCandidatelon, _]
+  ] = Selonq(namelonsFelonaturelonHydrator)
 
-  override val decorator: Option[CandidateDecorator[ForYouQuery, TweetCandidate]] =
-    HomeConversationServiceCandidateDecorator(homeFeedbackActionInfoBuilder)
+  ovelonrridelon val deloncorator: Option[CandidatelonDeloncorator[ForYouQuelonry, TwelonelontCandidatelon]] =
+    HomelonConvelonrsationSelonrvicelonCandidatelonDeloncorator(homelonFelonelondbackActionInfoBuildelonr)
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(),
-    HomeMixerAlertConfig.BusinessHours.defaultEmptyResponseRateAlert()
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(),
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultelonmptyRelonsponselonRatelonAlelonrt()
   )
 }

@@ -1,5 +1,5 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.twitter.inject.TwitterModule
+import com.twittelonr.injelonct.TwittelonrModulelon
 
-object HomeMixerResourcesModule extends TwitterModule {}
+objelonct HomelonMixelonrRelonsourcelonsModulelon elonxtelonnds TwittelonrModulelon {}

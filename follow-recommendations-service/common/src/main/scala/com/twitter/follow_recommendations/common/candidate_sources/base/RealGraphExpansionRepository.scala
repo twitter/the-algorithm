@@ -1,208 +1,208 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.candidate_sources.base.RealGraphExpansionRepository.DefaultScore
-import com.twitter.follow_recommendations.common.candidate_sources.base.RealGraphExpansionRepository.MaxNumIntermediateNodesToKeep
-import com.twitter.follow_recommendations.common.candidate_sources.base.RealGraphExpansionRepository.FirstDegreeCandidatesTimeout
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.onboarding.relevance.features.ymbii.ExpansionCandidateScores
-import com.twitter.onboarding.relevance.features.ymbii.RawYMBIICandidateFeatures
-import com.twitter.onboarding.relevance.store.thriftscala.CandidatesFollowedV1
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.util.Duration
-import scala.collection.immutable
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.RelonalGraphelonxpansionRelonpository.DelonfaultScorelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.RelonalGraphelonxpansionRelonpository.MaxNumIntelonrmelondiatelonNodelonsToKelonelonp
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.RelonalGraphelonxpansionRelonpository.FirstDelongrelonelonCandidatelonsTimelonout
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls._
+import com.twittelonr.onboarding.relonlelonvancelon.felonaturelons.ymbii.elonxpansionCandidatelonScorelons
+import com.twittelonr.onboarding.relonlelonvancelon.felonaturelons.ymbii.RawYMBIICandidatelonFelonaturelons
+import com.twittelonr.onboarding.relonlelonvancelon.storelon.thriftscala.CandidatelonsFollowelondV1
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.util.Duration
+import scala.collelonction.immutablelon
 import scala.util.control.NonFatal
 
-private final case class InterestExpansionCandidate(
-  userID: Long,
-  score: Double,
-  features: RawYMBIICandidateFeatures)
+privatelon final caselon class IntelonrelonstelonxpansionCandidatelon(
+  uselonrID: Long,
+  scorelon: Doublelon,
+  felonaturelons: RawYMBIICandidatelonFelonaturelons)
 
-abstract class RealGraphExpansionRepository[Request](
-  realgraphExpansionStore: Fetcher[
+abstract class RelonalGraphelonxpansionRelonpository[Relonquelonst](
+  relonalgraphelonxpansionStorelon: Felontchelonr[
     Long,
     Unit,
-    CandidatesFollowedV1
+    CandidatelonsFollowelondV1
   ],
-  override val identifier: CandidateSourceIdentifier,
-  statsReceiver: StatsReceiver = NullStatsReceiver,
-  maxUnderlyingCandidatesToQuery: Int = 50,
-  maxCandidatesToReturn: Int = 40,
-  overrideUnderlyingTimeout: Option[Duration] = None,
-  appendSocialProof: Boolean = false)
-    extends CandidateSource[
-      Request,
-      CandidateUser
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr = NullStatsReloncelonivelonr,
+  maxUndelonrlyingCandidatelonsToQuelonry: Int = 50,
+  maxCandidatelonsToRelonturn: Int = 40,
+  ovelonrridelonUndelonrlyingTimelonout: Option[Duration] = Nonelon,
+  appelonndSocialProof: Boolelonan = falselon)
+    elonxtelonnds CandidatelonSourcelon[
+      Relonquelonst,
+      CandidatelonUselonr
     ] {
 
-  val underlyingCandidateSource: Seq[
-    CandidateSource[
-      Request,
-      CandidateUser
+  val undelonrlyingCandidatelonSourcelon: Selonq[
+    CandidatelonSourcelon[
+      Relonquelonst,
+      CandidatelonUselonr
     ]
   ]
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName).scope(identifier.name)
-  private val underlyingCandidateSourceFailureStats =
-    stats.scope("underlying_candidate_source_failure")
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon).scopelon(idelonntifielonr.namelon)
+  privatelon val undelonrlyingCandidatelonSourcelonFailurelonStats =
+    stats.scopelon("undelonrlying_candidatelon_sourcelon_failurelon")
 
-  def apply(
-    request: Request,
-  ): Stitch[Seq[CandidateUser]] = {
+  delonf apply(
+    relonquelonst: Relonquelonst,
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
 
-    val candidatesFromUnderlyingSourcesStitch: Seq[Stitch[Seq[CandidateUser]]] =
-      underlyingCandidateSource.map { candidateSource =>
-        candidateSource
-          .apply(request)
-          .within(overrideUnderlyingTimeout.getOrElse(FirstDegreeCandidatesTimeout))(
-            DefaultTimer
+    val candidatelonsFromUndelonrlyingSourcelonsStitch: Selonq[Stitch[Selonq[CandidatelonUselonr]]] =
+      undelonrlyingCandidatelonSourcelon.map { candidatelonSourcelon =>
+        candidatelonSourcelon
+          .apply(relonquelonst)
+          .within(ovelonrridelonUndelonrlyingTimelonout.gelontOrelonlselon(FirstDelongrelonelonCandidatelonsTimelonout))(
+            DelonfaultTimelonr
           )
-          .handle {
-            case NonFatal(e) =>
-              underlyingCandidateSourceFailureStats
-                .counter(candidateSource.identifier.name, e.getClass.getSimpleName).incr()
-              Seq.empty
+          .handlelon {
+            caselon NonFatal(elon) =>
+              undelonrlyingCandidatelonSourcelonFailurelonStats
+                .countelonr(candidatelonSourcelon.idelonntifielonr.namelon, elon.gelontClass.gelontSimplelonNamelon).incr()
+              Selonq.elonmpty
           }
       }
 
     for {
-      underlyingCandidatesFromEachAlgo <- Stitch.collect(candidatesFromUnderlyingSourcesStitch)
-      // The first algorithm in the list has the highest priority. Depending on if its not
-      // populated, fall back to other algorithms. Once a particular algorithm is chosen, only
-      // take the top few candidates from the underlying store for expansion.
-      underlyingCandidatesTuple =
-        underlyingCandidatesFromEachAlgo
-          .zip(underlyingCandidateSource)
-          .find(_._1.nonEmpty)
+      undelonrlyingCandidatelonsFromelonachAlgo <- Stitch.collelonct(candidatelonsFromUndelonrlyingSourcelonsStitch)
+      // Thelon first algorithm in thelon list has thelon highelonst priority. Delonpelonnding on if its not
+      // populatelond, fall back to othelonr algorithms. Oncelon a particular algorithm is choselonn, only
+      // takelon thelon top felonw candidatelons from thelon undelonrlying storelon for elonxpansion.
+      undelonrlyingCandidatelonsTuplelon =
+        undelonrlyingCandidatelonsFromelonachAlgo
+          .zip(undelonrlyingCandidatelonSourcelon)
+          .find(_._1.nonelonmpty)
 
-      underlyingAlgorithmUsed: Option[CandidateSourceIdentifier] = underlyingCandidatesTuple.map {
-        case (_, candidateSource) => candidateSource.identifier
+      undelonrlyingAlgorithmUselond: Option[CandidatelonSourcelonIdelonntifielonr] = undelonrlyingCandidatelonsTuplelon.map {
+        caselon (_, candidatelonSourcelon) => candidatelonSourcelon.idelonntifielonr
       }
 
-      // Take maxUnderlyingCandidatesToQuery to query realgraphExpansionStore
-      underlyingCandidates =
-        underlyingCandidatesTuple
+      // Takelon maxUndelonrlyingCandidatelonsToQuelonry to quelonry relonalgraphelonxpansionStorelon
+      undelonrlyingCandidatelons =
+        undelonrlyingCandidatelonsTuplelon
           .map {
-            case (candidates, candidateSource) =>
+            caselon (candidatelons, candidatelonSourcelon) =>
               stats
-                .scope("underlyingAlgorithmUsedScope").counter(
-                  candidateSource.identifier.name).incr()
-              candidates
+                .scopelon("undelonrlyingAlgorithmUselondScopelon").countelonr(
+                  candidatelonSourcelon.idelonntifielonr.namelon).incr()
+              candidatelons
           }
-          .getOrElse(Seq.empty)
-          .sortBy(_.score.getOrElse(DefaultScore))(Ordering.Double.reverse)
-          .take(maxUnderlyingCandidatesToQuery)
+          .gelontOrelonlselon(Selonq.elonmpty)
+          .sortBy(_.scorelon.gelontOrelonlselon(DelonfaultScorelon))(Ordelonring.Doublelon.relonvelonrselon)
+          .takelon(maxUndelonrlyingCandidatelonsToQuelonry)
 
-      underlyingCandidateMap: Map[Long, Double] = underlyingCandidates.map { candidate =>
-        (candidate.id, candidate.score.getOrElse(DefaultScore))
+      undelonrlyingCandidatelonMap: Map[Long, Doublelon] = undelonrlyingCandidatelons.map { candidatelon =>
+        (candidatelon.id, candidatelon.scorelon.gelontOrelonlselon(DelonfaultScorelon))
       }.toMap
 
-      expansionCandidates <-
+      elonxpansionCandidatelons <-
         Stitch
-          .traverse(underlyingCandidateMap.keySet.toSeq) { candidateId =>
+          .travelonrselon(undelonrlyingCandidatelonMap.kelonySelont.toSelonq) { candidatelonId =>
             Stitch.join(
-              Stitch.value(candidateId),
-              realgraphExpansionStore.fetch(candidateId).map(_.v))
+              Stitch.valuelon(candidatelonId),
+              relonalgraphelonxpansionStorelon.felontch(candidatelonId).map(_.v))
 
           }.map(_.toMap)
 
-      rerankedCandidates: Seq[InterestExpansionCandidate] =
-        rerankCandidateExpansions(underlyingCandidateMap, expansionCandidates)
+      relonrankelondCandidatelons: Selonq[IntelonrelonstelonxpansionCandidatelon] =
+        relonrankCandidatelonelonxpansions(undelonrlyingCandidatelonMap, elonxpansionCandidatelons)
 
-      rerankedCandidatesFiltered = rerankedCandidates.take(maxCandidatesToReturn)
+      relonrankelondCandidatelonsFiltelonrelond = relonrankelondCandidatelons.takelon(maxCandidatelonsToRelonturn)
 
-    } yield {
-      rerankedCandidatesFiltered.map { candidate =>
-        val socialProofReason = if (appendSocialProof) {
-          val socialProofIds = candidate.features.expansionCandidateScores
-            .map(_.intermediateCandidateId)
-          Some(
-            Reason(Some(
-              AccountProof(followProof = Some(FollowProof(socialProofIds, socialProofIds.size))))))
-        } else {
-          None
+    } yielonld {
+      relonrankelondCandidatelonsFiltelonrelond.map { candidatelon =>
+        val socialProofRelonason = if (appelonndSocialProof) {
+          val socialProofIds = candidatelon.felonaturelons.elonxpansionCandidatelonScorelons
+            .map(_.intelonrmelondiatelonCandidatelonId)
+          Somelon(
+            Relonason(Somelon(
+              AccountProof(followProof = Somelon(FollowProof(socialProofIds, socialProofIds.sizelon))))))
+        } elonlselon {
+          Nonelon
         }
-        CandidateUser(
-          id = candidate.userID,
-          score = Some(candidate.score),
-          reason = socialProofReason,
-          userCandidateSourceDetails = Some(
-            UserCandidateSourceDetails(
-              primaryCandidateSource = Some(identifier),
-              candidateSourceFeatures = Map(identifier -> Seq(candidate.features))
+        CandidatelonUselonr(
+          id = candidatelon.uselonrID,
+          scorelon = Somelon(candidatelon.scorelon),
+          relonason = socialProofRelonason,
+          uselonrCandidatelonSourcelonDelontails = Somelon(
+            UselonrCandidatelonSourcelonDelontails(
+              primaryCandidatelonSourcelon = Somelon(idelonntifielonr),
+              candidatelonSourcelonFelonaturelons = Map(idelonntifielonr -> Selonq(candidatelon.felonaturelons))
             ))
-        ).addAddressBookMetadataIfAvailable(underlyingAlgorithmUsed.toSeq)
+        ).addAddrelonssBookMelontadataIfAvailablelon(undelonrlyingAlgorithmUselond.toSelonq)
       }
     }
   }
 
   /**
-   * Expands underlying candidates, returning them in sorted order.
+   * elonxpands undelonrlying candidatelons, relonturning thelonm in sortelond ordelonr.
    *
-   * @param underlyingCandidatesMap A map from underlying candidate id to score
-   * @param expansionCandidateMap A map from underlying candidate id to optional expansion candidates
-   * @return A sorted sequence of expansion candidates and associated scores
+   * @param undelonrlyingCandidatelonsMap A map from undelonrlying candidatelon id to scorelon
+   * @param elonxpansionCandidatelonMap A map from undelonrlying candidatelon id to optional elonxpansion candidatelons
+   * @relonturn A sortelond selonquelonncelon of elonxpansion candidatelons and associatelond scorelons
    */
-  private def rerankCandidateExpansions(
-    underlyingCandidatesMap: Map[Long, Double],
-    expansionCandidateMap: Map[Long, Option[CandidatesFollowedV1]]
-  ): Seq[InterestExpansionCandidate] = {
+  privatelon delonf relonrankCandidatelonelonxpansions(
+    undelonrlyingCandidatelonsMap: Map[Long, Doublelon],
+    elonxpansionCandidatelonMap: Map[Long, Option[CandidatelonsFollowelondV1]]
+  ): Selonq[IntelonrelonstelonxpansionCandidatelon] = {
 
-    // extract features
-    val candidates: Seq[(Long, ExpansionCandidateScores)] = for {
-      (underlyingCandidateId, underlyingCandidateScore) <- underlyingCandidatesMap.toSeq
-      expansionCandidates =
-        expansionCandidateMap
-          .get(underlyingCandidateId)
-          .flatten
-          .map(_.candidatesFollowed)
-          .getOrElse(Seq.empty)
-      expansionCandidate <- expansionCandidates
-    } yield expansionCandidate.candidateID -> ExpansionCandidateScores(
-      underlyingCandidateId,
-      Some(underlyingCandidateScore),
-      Some(expansionCandidate.score)
+    // elonxtract felonaturelons
+    val candidatelons: Selonq[(Long, elonxpansionCandidatelonScorelons)] = for {
+      (undelonrlyingCandidatelonId, undelonrlyingCandidatelonScorelon) <- undelonrlyingCandidatelonsMap.toSelonq
+      elonxpansionCandidatelons =
+        elonxpansionCandidatelonMap
+          .gelont(undelonrlyingCandidatelonId)
+          .flattelonn
+          .map(_.candidatelonsFollowelond)
+          .gelontOrelonlselon(Selonq.elonmpty)
+      elonxpansionCandidatelon <- elonxpansionCandidatelons
+    } yielonld elonxpansionCandidatelon.candidatelonID -> elonxpansionCandidatelonScorelons(
+      undelonrlyingCandidatelonId,
+      Somelon(undelonrlyingCandidatelonScorelon),
+      Somelon(elonxpansionCandidatelon.scorelon)
     )
 
-    // merge intermediate nodes for the same candidate
-    val dedupedCandidates: Seq[(Long, Seq[ExpansionCandidateScores])] =
-      candidates.groupBy(_._1).mapValues(_.map(_._2).sortBy(_.intermediateCandidateId)).toSeq
+    // melonrgelon intelonrmelondiatelon nodelons for thelon samelon candidatelon
+    val delondupelondCandidatelons: Selonq[(Long, Selonq[elonxpansionCandidatelonScorelons])] =
+      candidatelons.groupBy(_._1).mapValuelons(_.map(_._2).sortBy(_.intelonrmelondiatelonCandidatelonId)).toSelonq
 
-    // score the candidate
-    val candidatesWithTotalScore: Seq[((Long, Seq[ExpansionCandidateScores]), Double)] =
-      dedupedCandidates.map { candidate: (Long, Seq[ExpansionCandidateScores]) =>
+    // scorelon thelon candidatelon
+    val candidatelonsWithTotalScorelon: Selonq[((Long, Selonq[elonxpansionCandidatelonScorelons]), Doublelon)] =
+      delondupelondCandidatelons.map { candidatelon: (Long, Selonq[elonxpansionCandidatelonScorelons]) =>
         (
-          candidate,
-          candidate._2.map { ieScore: ExpansionCandidateScores =>
-            ieScore.scoreFromUserToIntermediateCandidate.getOrElse(DefaultScore) *
-              ieScore.scoreFromIntermediateToExpansionCandidate.getOrElse(DefaultScore)
+          candidatelon,
+          candidatelon._2.map { ielonScorelon: elonxpansionCandidatelonScorelons =>
+            ielonScorelon.scorelonFromUselonrToIntelonrmelondiatelonCandidatelon.gelontOrelonlselon(DelonfaultScorelon) *
+              ielonScorelon.scorelonFromIntelonrmelondiatelonToelonxpansionCandidatelon.gelontOrelonlselon(DelonfaultScorelon)
           }.sum)
       }
 
-    // sort candidate by score
+    // sort candidatelon by scorelon
     for {
-      ((candidate, edges), score) <- candidatesWithTotalScore.sortBy(_._2)(Ordering[Double].reverse)
-    } yield InterestExpansionCandidate(
-      candidate,
-      score,
-      RawYMBIICandidateFeatures(
-        edges.size,
-        edges.take(MaxNumIntermediateNodesToKeep).to[immutable.Seq])
+      ((candidatelon, elondgelons), scorelon) <- candidatelonsWithTotalScorelon.sortBy(_._2)(Ordelonring[Doublelon].relonvelonrselon)
+    } yielonld IntelonrelonstelonxpansionCandidatelon(
+      candidatelon,
+      scorelon,
+      RawYMBIICandidatelonFelonaturelons(
+        elondgelons.sizelon,
+        elondgelons.takelon(MaxNumIntelonrmelondiatelonNodelonsToKelonelonp).to[immutablelon.Selonq])
     )
   }
 
 }
 
-object RealGraphExpansionRepository {
-  private val FirstDegreeCandidatesTimeout: Duration = 250.milliseconds
-  private val MaxNumIntermediateNodesToKeep = 20
-  private val DefaultScore = 0.0d
+objelonct RelonalGraphelonxpansionRelonpository {
+  privatelon val FirstDelongrelonelonCandidatelonsTimelonout: Duration = 250.milliselonconds
+  privatelon val MaxNumIntelonrmelondiatelonNodelonsToKelonelonp = 20
+  privatelon val DelonfaultScorelon = 0.0d
 
 }

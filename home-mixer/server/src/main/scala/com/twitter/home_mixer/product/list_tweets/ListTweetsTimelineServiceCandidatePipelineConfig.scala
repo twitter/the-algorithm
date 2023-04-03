@@ -1,54 +1,54 @@
-package com.twitter.home_mixer.product.list_tweets
+packagelon com.twittelonr.homelon_mixelonr.product.list_twelonelonts
 
-import com.twitter.home_mixer.candidate_pipeline.TimelineServiceResponseFeatureTransformer
-import com.twitter.home_mixer.marshaller.timelines.TimelineServiceCursorMarshaller
-import com.twitter.home_mixer.product.list_tweets.model.ListTweetsQuery
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
-import com.twitter.product_mixer.component_library.candidate_source.timeline_service.TimelineServiceTweetCandidateSource
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.timelineservice.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.candidatelon_pipelonlinelon.TimelonlinelonSelonrvicelonRelonsponselonFelonaturelonTransformelonr
+import com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelons.TimelonlinelonSelonrvicelonCursorMarshallelonr
+import com.twittelonr.homelon_mixelonr.product.list_twelonelonts.modelonl.ListTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.product.list_twelonelonts.param.ListTwelonelontsParam.SelonrvelonrMaxRelonsultsParam
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.timelonlinelon_selonrvicelon.TimelonlinelonSelonrvicelonTwelonelontCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.BaselonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.timelonlinelonselonrvicelon.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ListTweetsTimelineServiceCandidatePipelineConfig @Inject() (
-  timelineServiceTweetCandidateSource: TimelineServiceTweetCandidateSource)
-    extends CandidatePipelineConfig[ListTweetsQuery, t.TimelineQuery, t.Tweet, TweetCandidate] {
+@Singlelonton
+class ListTwelonelontsTimelonlinelonSelonrvicelonCandidatelonPipelonlinelonConfig @Injelonct() (
+  timelonlinelonSelonrvicelonTwelonelontCandidatelonSourcelon: TimelonlinelonSelonrvicelonTwelonelontCandidatelonSourcelon)
+    elonxtelonnds CandidatelonPipelonlinelonConfig[ListTwelonelontsQuelonry, t.TimelonlinelonQuelonry, t.Twelonelont, TwelonelontCandidatelon] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ListTweetsTimelineServiceTweets")
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr =
+    CandidatelonPipelonlinelonIdelonntifielonr("ListTwelonelontsTimelonlinelonSelonrvicelonTwelonelonts")
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ListTweetsQuery,
-    t.TimelineQuery
-  ] = { query =>
-    val timelineQueryOptions = t.TimelineQueryOptions(
-      contextualUserId = query.clientContext.userId,
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[
+    ListTwelonelontsQuelonry,
+    t.TimelonlinelonQuelonry
+  ] = { quelonry =>
+    val timelonlinelonQuelonryOptions = t.TimelonlinelonQuelonryOptions(
+      contelonxtualUselonrId = quelonry.clielonntContelonxt.uselonrId,
     )
 
-    t.TimelineQuery(
-      timelineType = t.TimelineType.List,
-      timelineId = query.listId,
-      maxCount = query.maxResults(ServerMaxResultsParam).toShort,
-      cursor2 = query.pipelineCursor.flatMap(TimelineServiceCursorMarshaller(_)),
-      options = Some(timelineQueryOptions),
-      timelineId2 = Some(t.TimelineId(t.TimelineType.List, query.listId, None))
+    t.TimelonlinelonQuelonry(
+      timelonlinelonTypelon = t.TimelonlinelonTypelon.List,
+      timelonlinelonId = quelonry.listId,
+      maxCount = quelonry.maxRelonsults(SelonrvelonrMaxRelonsultsParam).toShort,
+      cursor2 = quelonry.pipelonlinelonCursor.flatMap(TimelonlinelonSelonrvicelonCursorMarshallelonr(_)),
+      options = Somelon(timelonlinelonQuelonryOptions),
+      timelonlinelonId2 = Somelon(t.TimelonlinelonId(t.TimelonlinelonTypelon.List, quelonry.listId, Nonelon))
     )
   }
 
-  override def candidateSource: BaseCandidateSource[t.TimelineQuery, t.Tweet] =
-    timelineServiceTweetCandidateSource
+  ovelonrridelon delonf candidatelonSourcelon: BaselonCandidatelonSourcelon[t.TimelonlinelonQuelonry, t.Twelonelont] =
+    timelonlinelonSelonrvicelonTwelonelontCandidatelonSourcelon
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[t.Tweet, TweetCandidate] = {
-    sourceResult => TweetCandidate(id = sourceResult.statusId)
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[t.Twelonelont, TwelonelontCandidatelon] = {
+    sourcelonRelonsult => TwelonelontCandidatelon(id = sourcelonRelonsult.statusId)
   }
 
-  override val featuresFromCandidateSourceTransformers: Seq[CandidateFeatureTransformer[t.Tweet]] =
-    Seq(TimelineServiceResponseFeatureTransformer)
+  ovelonrridelon val felonaturelonsFromCandidatelonSourcelonTransformelonrs: Selonq[CandidatelonFelonaturelonTransformelonr[t.Twelonelont]] =
+    Selonq(TimelonlinelonSelonrvicelonRelonsponselonFelonaturelonTransformelonr)
 }

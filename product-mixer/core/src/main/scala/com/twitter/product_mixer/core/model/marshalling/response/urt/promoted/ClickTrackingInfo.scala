@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-import scala.collection.Map
+import scala.collelonction.Map
 
-case class ClickTrackingInfo(
+caselon class ClickTrackingInfo(
   urlParams: Map[String, String],
-  urlOverride: Option[String],
-  urlOverrideType: Option[UrlOverrideType])
+  urlOvelonrridelon: Option[String],
+  urlOvelonrridelonTypelon: Option[UrlOvelonrridelonTypelon])

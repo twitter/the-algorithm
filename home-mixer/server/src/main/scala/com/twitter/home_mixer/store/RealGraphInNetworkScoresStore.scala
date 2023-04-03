@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.store
+packagelon com.twittelonr.homelon_mixelonr.storelon
 
-import com.twitter.bijection.Injection
-import com.twitter.home_mixer.store.ManhattanRealGraphKVDescriptor._
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryScalaInjection
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.impl.ReadOnlyKeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.wtf.candidate.{thriftscala => wtf}
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.homelon_mixelonr.storelon.ManhattanRelonalGraphKVDelonscriptor._
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.storagelon.clielonnt.manhattan.bijelonctions.Bijelonctions
+import com.twittelonr.storagelon.clielonnt.manhattan.bijelonctions.Bijelonctions.BinaryScalaInjelonction
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVelonndpoint
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.RelonadOnlyKelonyDelonscriptor
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.ValuelonDelonscriptor
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import com.twittelonr.wtf.candidatelon.{thriftscala => wtf}
 
-object ManhattanRealGraphKVDescriptor {
-  implicit val byteArray2Buf = Bijections.BytesBijection
+objelonct ManhattanRelonalGraphKVDelonscriptor {
+  implicit val bytelonArray2Buf = Bijelonctions.BytelonsBijelonction
 
-  val realGraphDatasetName = "real_graph_scores_in"
-  val keyInjection = Injection.connect[Long, Array[Byte]].andThen(Bijections.BytesInjection)
-  val keyDesc = ReadOnlyKeyDescriptor(keyInjection)
-  val valueDesc = ValueDescriptor(BinaryScalaInjection(wtf.CandidateSeq))
-  val realGraphDatasetKey = keyDesc.withDataset(realGraphDatasetName)
+  val relonalGraphDataselontNamelon = "relonal_graph_scorelons_in"
+  val kelonyInjelonction = Injelonction.connelonct[Long, Array[Bytelon]].andThelonn(Bijelonctions.BytelonsInjelonction)
+  val kelonyDelonsc = RelonadOnlyKelonyDelonscriptor(kelonyInjelonction)
+  val valuelonDelonsc = ValuelonDelonscriptor(BinaryScalaInjelonction(wtf.CandidatelonSelonq))
+  val relonalGraphDataselontKelony = kelonyDelonsc.withDataselont(relonalGraphDataselontNamelon)
 }
 
 /**
- * Hydrates real graph in network scores for a viewer
+ * Hydratelons relonal graph in nelontwork scorelons for a vielonwelonr
  */
-class RealGraphInNetworkScoresStore(manhattanKVEndpoint: ManhattanKVEndpoint)
-    extends ReadableStore[Long, Seq[wtf.Candidate]] {
+class RelonalGraphInNelontworkScorelonsStorelon(manhattanKVelonndpoint: ManhattanKVelonndpoint)
+    elonxtelonnds RelonadablelonStorelon[Long, Selonq[wtf.Candidatelon]] {
 
-  override def get(viewerId: Long): Future[Option[Seq[wtf.Candidate]]] = Stitch
-    .run(manhattanKVEndpoint.get(realGraphDatasetKey.withPkey(viewerId), valueDesc))
-    .map(_.map(mhResponse => mhResponse.contents.candidates))
+  ovelonrridelon delonf gelont(vielonwelonrId: Long): Futurelon[Option[Selonq[wtf.Candidatelon]]] = Stitch
+    .run(manhattanKVelonndpoint.gelont(relonalGraphDataselontKelony.withPkelony(vielonwelonrId), valuelonDelonsc))
+    .map(_.map(mhRelonsponselon => mhRelonsponselon.contelonnts.candidatelons))
 }

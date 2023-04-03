@@ -1,21 +1,21 @@
-package com.twitter.search.ingester.model;
+packagelon com.twittelonr.selonarch.ingelonstelonr.modelonl;
 
-import com.twitter.util.Promise;
+import com.twittelonr.util.Promiselon;
 
-public class PromiseContainer<T, U> {
-  private final Promise<T> promise;
-  private final U obj;
+public class PromiselonContainelonr<T, U> {
+  privatelon final Promiselon<T> promiselon;
+  privatelon final U obj;
 
-  public PromiseContainer(Promise<T> promise, U obj) {
-    this.promise = promise;
+  public PromiselonContainelonr(Promiselon<T> promiselon, U obj) {
+    this.promiselon = promiselon;
     this.obj = obj;
   }
 
-  public Promise<T> getPromise() {
-    return promise;
+  public Promiselon<T> gelontPromiselon() {
+    relonturn promiselon;
   }
 
-  public U getObj() {
-    return obj;
+  public U gelontObj() {
+    relonturn obj;
   }
 }

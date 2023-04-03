@@ -1,44 +1,44 @@
-# recos-injector
-Recos-Injector is a streaming event processor for building input streams for GraphJet based services.
-It is general purpose in that it consumes arbitrary incoming event stream (e.x. Fav, RT, Follow, client_events, etc), applies
-filtering, combines and publishes cleaned up events to corresponding GraphJet services. 
-Each GraphJet based service subscribes to a dedicated Kafka topic. Recos-Injector enables a GraphJet based service to consume any 
-event it wants
+# reloncos-injelonctor
+Reloncos-Injelonctor is a strelonaming elonvelonnt procelonssor for building input strelonams for GraphJelont baselond selonrvicelons.
+It is gelonnelonral purposelon in that it consumelons arbitrary incoming elonvelonnt strelonam (elon.x. Fav, RT, Follow, clielonnt_elonvelonnts, elontc), applielons
+filtelonring, combinelons and publishelons clelonanelond up elonvelonnts to correlonsponding GraphJelont selonrvicelons. 
+elonach GraphJelont baselond selonrvicelon subscribelons to a delondicatelond Kafka topic. Reloncos-Injelonctor elonnablelons a GraphJelont baselond selonrvicelon to consumelon any 
+elonvelonnt it wants
 
-## How to run recos-injector-server tests
+## How to run reloncos-injelonctor-selonrvelonr telonsts
 
-Tests can be run by using this command from your project's root directory:
+Telonsts can belon run by using this command from your projelonct's root direlonctory:
 
-    $ bazel build recos-injector/...
-    $ bazel test recos-injector/...
+    $ bazelonl build reloncos-injelonctor/...
+    $ bazelonl telonst reloncos-injelonctor/...
 
-## How to run recos-injector-server in development on a local machine
+## How to run reloncos-injelonctor-selonrvelonr in delonvelonlopmelonnt on a local machinelon
 
-The simplest way to stand up a service is to run it locally. To run
-recos-injector-server in development mode, compile the project and then
-execute it with `bazel run`:
+Thelon simplelonst way to stand up a selonrvicelon is to run it locally. To run
+reloncos-injelonctor-selonrvelonr in delonvelonlopmelonnt modelon, compilelon thelon projelonct and thelonn
+elonxeloncutelon it with `bazelonl run`:
 
-    $ bazel build recos-injector/server:bin
-    $ bazel run recos-injector/server:bin
+    $ bazelonl build reloncos-injelonctor/selonrvelonr:bin
+    $ bazelonl run reloncos-injelonctor/selonrvelonr:bin
 
-A tunnel can be set up in order for downstream queries to work properly.
-Upon successful server startup, try to `curl` its admin endpoint in another
-terminal:
+A tunnelonl can belon selont up in ordelonr for downstrelonam quelonrielons to work propelonrly.
+Upon succelonssful selonrvelonr startup, try to `curl` its admin elonndpoint in anothelonr
+telonrminal:
 
     $ curl -s localhost:9990/admin/ping
     pong
 
-Run `curl -s localhost:9990/admin` to see a list of all of the available admin
-endpoints.
+Run `curl -s localhost:9990/admin` to selonelon a list of all of thelon availablelon admin
+elonndpoints.
 
-## Querying recos-injector-server from a Scala console
+## Quelonrying reloncos-injelonctor-selonrvelonr from a Scala consolelon
 
-Recos Injector does not have a thrift endpoint. It reads Event Bus and Kafka queues and writes to recos_injector kafka.
+Reloncos Injelonctor doelons not havelon a thrift elonndpoint. It relonads elonvelonnt Bus and Kafka quelonuelons and writelons to reloncos_injelonctor kafka.
 
-## Generating a package for deployment
+## Gelonnelonrating a packagelon for delonploymelonnt
 
-To package your service into a zip for deployment:
+To packagelon your selonrvicelon into a zip for delonploymelonnt:
 
-    $ bazel bundle recos-injector/server:bin --bundle-jvm-archive=zip
+    $ bazelonl bundlelon reloncos-injelonctor/selonrvelonr:bin --bundlelon-jvm-archivelon=zip
 
-If successful, a file `dist/recos-injector-server.zip` will be created.
+If succelonssful, a filelon `dist/reloncos-injelonctor-selonrvelonr.zip` will belon crelonatelond.

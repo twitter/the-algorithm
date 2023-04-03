@@ -1,65 +1,65 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
 
-public class EarlybirdIndex {
-  private final List<SegmentInfo> segmentInfoList;
+public class elonarlybirdIndelonx {
+  privatelon final List<SelongmelonntInfo> selongmelonntInfoList;
 
-  public static final int MAX_NUM_OF_NON_OPTIMIZED_SEGMENTS = 2;
+  public static final int MAX_NUM_OF_NON_OPTIMIZelonD_SelonGMelonNTS = 2;
 
-  // The Kafka offsets for the tweet create stream and the tweet update stream. Indexing should
-  // start from these offsets when it resumes.
-  private final long tweetOffset;
-  private final long updateOffset;
-  private final long maxIndexedTweetId;
+  // Thelon Kafka offselonts for thelon twelonelont crelonatelon strelonam and thelon twelonelont updatelon strelonam. Indelonxing should
+  // start from thelonselon offselonts whelonn it relonsumelons.
+  privatelon final long twelonelontOffselont;
+  privatelon final long updatelonOffselont;
+  privatelon final long maxIndelonxelondTwelonelontId;
 
-  public EarlybirdIndex(
-      List<SegmentInfo> segmentInfoList,
-      long tweetOffset,
-      long updateOffset,
-      long maxIndexedTweetId
+  public elonarlybirdIndelonx(
+      List<SelongmelonntInfo> selongmelonntInfoList,
+      long twelonelontOffselont,
+      long updatelonOffselont,
+      long maxIndelonxelondTwelonelontId
   ) {
-    List<SegmentInfo> segmentInfos = new ArrayList<>(segmentInfoList);
-    Collections.sort(segmentInfos);
-    this.segmentInfoList = segmentInfos;
-    this.tweetOffset = tweetOffset;
-    this.updateOffset = updateOffset;
-    this.maxIndexedTweetId = maxIndexedTweetId;
+    List<SelongmelonntInfo> selongmelonntInfos = nelonw ArrayList<>(selongmelonntInfoList);
+    Collelonctions.sort(selongmelonntInfos);
+    this.selongmelonntInfoList = selongmelonntInfos;
+    this.twelonelontOffselont = twelonelontOffselont;
+    this.updatelonOffselont = updatelonOffselont;
+    this.maxIndelonxelondTwelonelontId = maxIndelonxelondTwelonelontId;
   }
 
-  public EarlybirdIndex(List<SegmentInfo> segmentInfoList, long tweetOffset, long updateOffset) {
-    this(segmentInfoList, tweetOffset, updateOffset, -1);
+  public elonarlybirdIndelonx(List<SelongmelonntInfo> selongmelonntInfoList, long twelonelontOffselont, long updatelonOffselont) {
+    this(selongmelonntInfoList, twelonelontOffselont, updatelonOffselont, -1);
   }
 
-  public List<SegmentInfo> getSegmentInfoList() {
-    return segmentInfoList;
+  public List<SelongmelonntInfo> gelontSelongmelonntInfoList() {
+    relonturn selongmelonntInfoList;
   }
 
-  public long getTweetOffset() {
-    return tweetOffset;
+  public long gelontTwelonelontOffselont() {
+    relonturn twelonelontOffselont;
   }
 
-  public long getUpdateOffset() {
-    return updateOffset;
+  public long gelontUpdatelonOffselont() {
+    relonturn updatelonOffselont;
   }
 
-  public long getMaxIndexedTweetId() {
-    return maxIndexedTweetId;
+  public long gelontMaxIndelonxelondTwelonelontId() {
+    relonturn maxIndelonxelondTwelonelontId;
   }
 
   /**
-   * Returns the number of non-optimized segments in this index.
-   * @return the number of non-optimized segments in this index.
+   * Relonturns thelon numbelonr of non-optimizelond selongmelonnts in this indelonx.
+   * @relonturn thelon numbelonr of non-optimizelond selongmelonnts in this indelonx.
    */
-  public int numOfNonOptimizedSegments() {
-    int numNonOptimized = 0;
-    for (SegmentInfo segmentInfo : segmentInfoList) {
-      if (!segmentInfo.isOptimized()) {
-        numNonOptimized++;
+  public int numOfNonOptimizelondSelongmelonnts() {
+    int numNonOptimizelond = 0;
+    for (SelongmelonntInfo selongmelonntInfo : selongmelonntInfoList) {
+      if (!selongmelonntInfo.isOptimizelond()) {
+        numNonOptimizelond++;
       }
     }
-    return numNonOptimized;
+    relonturn numNonOptimizelond;
   }
 }

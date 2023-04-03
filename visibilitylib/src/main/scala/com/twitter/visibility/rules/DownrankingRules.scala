@@ -1,207 +1,207 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.common.ModelScoreThresholds
-import com.twitter.visibility.configapi.configs.DeciderKey
-import com.twitter.visibility.configapi.params.FSRuleParams.HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableDownrankSpamReplySectioningRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.NotGraduatedUserLabelRuleHoldbackExperimentParam
-import com.twitter.visibility.configapi.params.TimelineConversationsDownrankingSpecificParams._
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
-import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.visibility.common.ModelonlScorelonThrelonsholds
+import com.twittelonr.visibility.configapi.configs.DeloncidelonrKelony
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.HighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityThrelonsholdParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonDownrankSpamRelonplySelonctioningRulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonNotGraduatelondDownrankConvosAbusivelonQualityRulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.NotGraduatelondUselonrLabelonlRulelonHoldbackelonxpelonrimelonntParam
+import com.twittelonr.visibility.configapi.params.TimelonlinelonConvelonrsationsDownrankingSpeloncificParams._
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonlTypelon
+import com.twittelonr.visibility.modelonls.UselonrLabelonlValuelon
+import com.twittelonr.visibility.rulelons.Condition._
+import com.twittelonr.visibility.rulelons.RulelonActionSourcelonBuildelonr.TwelonelontSafelontyLabelonlSourcelonBuildelonr
+import com.twittelonr.visibility.rulelons.RulelonActionSourcelonBuildelonr.UselonrSafelontyLabelonlSourcelonBuildelonr
 
-object DownrankingRules {
+objelonct DownrankingRulelons {
 
-  val ToxicityScoreAboveDownrankAbusiveQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
-    TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityAbusiveQualityLanguagesToThresholds
+  val ToxicityScorelonAbovelonDownrankAbusivelonQualitySelonctionThrelonsholdCondition: TwelonelontHasLabelonlWithLanguagelonScorelonAbovelonThrelonshold =
+    TwelonelontHasLabelonlWithLanguagelonScorelonAbovelonThrelonshold(
+      safelontyLabelonl = TwelonelontSafelontyLabelonlTypelon.HighToxicityScorelon,
+      languagelonsToScorelonThrelonsholds = ModelonlScorelonThrelonsholds.ToxicityAbusivelonQualityLanguagelonsToThrelonsholds
     )
 
-  val ToxicityScoreAboveDownrankLowQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
-    TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityLowQualityLanguagesToThresholds
+  val ToxicityScorelonAbovelonDownrankLowQualitySelonctionThrelonsholdCondition: TwelonelontHasLabelonlWithLanguagelonScorelonAbovelonThrelonshold =
+    TwelonelontHasLabelonlWithLanguagelonScorelonAbovelonThrelonshold(
+      safelontyLabelonl = TwelonelontSafelontyLabelonlTypelon.HighToxicityScorelon,
+      languagelonsToScorelonThrelonsholds = ModelonlScorelonThrelonsholds.ToxicityLowQualityLanguagelonsToThrelonsholds
     )
 
-  val ToxicityScoreAboveDownrankHighQualitySectionThresholdCondition: TweetHasLabelWithLanguageScoreAboveThreshold =
-    TweetHasLabelWithLanguageScoreAboveThreshold(
-      safetyLabel = TweetSafetyLabelType.HighToxicityScore,
-      languagesToScoreThresholds = ModelScoreThresholds.ToxicityHighQualityLanguagesToThresholds
+  val ToxicityScorelonAbovelonDownrankHighQualitySelonctionThrelonsholdCondition: TwelonelontHasLabelonlWithLanguagelonScorelonAbovelonThrelonshold =
+    TwelonelontHasLabelonlWithLanguagelonScorelonAbovelonThrelonshold(
+      safelontyLabelonl = TwelonelontSafelontyLabelonlTypelon.HighToxicityScorelon,
+      languagelonsToScorelonThrelonsholds = ModelonlScorelonThrelonsholds.ToxicityHighQualityLanguagelonsToThrelonsholds
     )
 
-  val HighSpammyTweetContentScoreConvoDownrankAbusiveQualityCondition: Condition =
-    TweetHasLabelWithScoreAboveThresholdWithParam(
-      TweetSafetyLabelType.HighSpammyTweetContentScore,
-      HighSpammyTweetContentScoreConvoDownrankAbusiveQualityThresholdParam)
+  val HighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityCondition: Condition =
+    TwelonelontHasLabelonlWithScorelonAbovelonThrelonsholdWithParam(
+      TwelonelontSafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon,
+      HighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityThrelonsholdParam)
 
-  val HighCryptospamScoreConvoDownrankAbusiveQualityCondition: Condition =
-    TweetHasLabel(TweetSafetyLabelType.HighCryptospamScore)
+  val HighCryptospamScorelonConvoDownrankAbusivelonQualityCondition: Condition =
+    TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.HighCryptospamScorelon)
 }
 
-object HighToxicityScoreDownrankHighQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+objelonct HighToxicityScorelonDownrankHighQualitySelonctionRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
       Downrank,
-      DownrankingRules.ToxicityScoreAboveDownrankHighQualitySectionThresholdCondition
+      DownrankingRulelons.ToxicityScorelonAbovelonDownrankHighQualitySelonctionThrelonsholdCondition
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighToxicityScorelon))
 
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }
 
-object HighToxicityScoreDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionLowQuality,
-      DownrankingRules.ToxicityScoreAboveDownrankLowQualitySectionThresholdCondition
+objelonct HighToxicityScorelonDownrankLowQualitySelonctionRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionLowQuality,
+      DownrankingRulelons.ToxicityScorelonAbovelonDownrankLowQualitySelonctionThrelonsholdCondition
     )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    with DoelonsLogVelonrdict {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighToxicityScorelon))
 }
 
-object HighToxicityScoreDownrankAbusiveQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      DownrankingRules.ToxicityScoreAboveDownrankAbusiveQualitySectionThresholdCondition
+objelonct HighToxicityScorelonDownrankAbusivelonQualitySelonctionRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionAbusivelonQuality,
+      DownrankingRulelons.ToxicityScorelonAbovelonDownrankAbusivelonQualitySelonctionThrelonsholdCondition
     )
-    with DoesLogVerdict {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighToxicityScore))
+    with DoelonsLogVelonrdict {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighToxicityScorelon))
 }
 
-object UntrustedUrlConversationsTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.UntrustedUrl)
+objelonct UntrustelondUrlConvelonrsationsTwelonelontLabelonlRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionAbusivelonQuality,
+      TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.UntrustelondUrl)
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.UntrustedUrl))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.UntrustelondUrl))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }
 
-object DownrankSpamReplyConversationsTweetLabelRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.DownrankSpamReply)
+objelonct DownrankSpamRelonplyConvelonrsationsTwelonelontLabelonlRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionAbusivelonQuality,
+      TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.DownrankSpamRelonply)
     )
-    with DoesLogVerdictDecidered {
+    with DoelonsLogVelonrdictDeloncidelonrelond {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonDownrankSpamRelonplySelonctioningRulelonParam)
 
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.DownrankSpamReply))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.DownrankSpamRelonply))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }
 
-object DownrankSpamReplyConversationsAuthorLabelRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      UserLabelValue.DownrankSpamReply
+objelonct DownrankSpamRelonplyConvelonrsationsAuthorLabelonlRulelon
+    elonxtelonnds AuthorLabelonlWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionAbusivelonQuality,
+      UselonrLabelonlValuelon.DownrankSpamRelonply
     )
-    with DoesLogVerdictDecidered {
+    with DoelonsLogVelonrdictDeloncidelonrelond {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableDownrankSpamReplySectioningRuleParam)
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonDownrankSpamRelonplySelonctioningRulelonParam)
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(UserLabelValue.DownrankSpamReply))
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    UselonrSafelontyLabelonlSourcelonBuildelonr(UselonrLabelonlValuelon.DownrankSpamRelonply))
 }
 
-object NotGraduatedConversationsAuthorLabelRule
-    extends AuthorLabelWithNotInnerCircleOfFriendsRule(
-      ConversationSectionLowQuality,
-      UserLabelValue.NotGraduated
+objelonct NotGraduatelondConvelonrsationsAuthorLabelonlRulelon
+    elonxtelonnds AuthorLabelonlWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionLowQuality,
+      UselonrLabelonlValuelon.NotGraduatelond
     )
-    with DoesLogVerdictDecidered {
+    with DoelonsLogVelonrdictDeloncidelonrelond {
 
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonNotGraduatelondDownrankConvosAbusivelonQualityRulelonParam)
 
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(
-    NotGraduatedUserLabelRuleHoldbackExperimentParam)
+  ovelonrridelon delonf holdbacks: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    NotGraduatelondUselonrLabelonlRulelonHoldbackelonxpelonrimelonntParam)
 
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(UserLabelValue.NotGraduated))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    UselonrSafelontyLabelonlSourcelonBuildelonr(UselonrLabelonlValuelon.NotGraduatelond))
 }
 
-object HighProactiveTosScoreTweetLabelDownrankingRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      ConversationSectionAbusiveQuality,
-      TweetHasLabel(TweetSafetyLabelType.HighProactiveTosScore)
+objelonct HighProactivelonTosScorelonTwelonelontLabelonlDownrankingRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      ConvelonrsationSelonctionAbusivelonQuality,
+      TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.HighProactivelonTosScorelon)
     )
-    with DoesLogVerdictDecidered {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighProactiveTosScore))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighProactivelonTosScorelon))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }
 
-object HighPSpammyTweetScoreDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionLowQuality,
-      condition = TweetHasLabelWithScoreAboveThreshold(
-        TweetSafetyLabelType.HighPSpammyTweetScore,
-        ModelScoreThresholds.HighPSpammyTweetScoreThreshold)
+objelonct HighPSpammyTwelonelontScorelonDownrankLowQualitySelonctionRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      action = ConvelonrsationSelonctionLowQuality,
+      condition = TwelonelontHasLabelonlWithScorelonAbovelonThrelonshold(
+        TwelonelontSafelontyLabelonlTypelon.HighPSpammyTwelonelontScorelon,
+        ModelonlScorelonThrelonsholds.HighPSpammyTwelonelontScorelonThrelonshold)
     )
-    with DoesLogVerdictDecidered {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnablePSpammyTweetDownrankConvosLowQualityParam)
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighPSpammyTweetScore))
-  override def verdictLogDeciderKey: DeciderKey.Value =
-    DeciderKey.EnableSpammyTweetRuleVerdictLogging
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonPSpammyTwelonelontDownrankConvosLowQualityParam)
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighPSpammyTwelonelontScorelon))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony: DeloncidelonrKelony.Valuelon =
+    DeloncidelonrKelony.elonnablelonSpammyTwelonelontRulelonVelonrdictLogging
 }
 
-object HighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionAbusiveQuality,
+objelonct HighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      action = ConvelonrsationSelonctionAbusivelonQuality,
       condition = And(
-        Not(IsTweetInTweetLevelStcmHoldback),
-        DownrankingRules.HighSpammyTweetContentScoreConvoDownrankAbusiveQualityCondition)
+        Not(IsTwelonelontInTwelonelontLelonvelonlStcmHoldback),
+        DownrankingRulelons.HighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityCondition)
     )
-    with DoesLogVerdictDecidered {
-  override def isEnabled(params: Params): Boolean = {
-    params(EnableHighSpammyTweetContentScoreConvoDownrankAbusiveQualityRuleParam)
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf iselonnablelond(params: Params): Boolelonan = {
+    params(elonnablelonHighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityRulelonParam)
   }
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighSpammyTweetContentScore))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }
 
-object HighCryptospamScoreConvoDownrankAbusiveQualityRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionAbusiveQuality,
-      condition = DownrankingRules.HighCryptospamScoreConvoDownrankAbusiveQualityCondition
+objelonct HighCryptospamScorelonConvoDownrankAbusivelonQualityRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      action = ConvelonrsationSelonctionAbusivelonQuality,
+      condition = DownrankingRulelons.HighCryptospamScorelonConvoDownrankAbusivelonQualityCondition
     )
-    with DoesLogVerdictDecidered {
-  override def isEnabled(params: Params): Boolean = {
-    params(EnableHighCryptospamScoreConvoDownrankAbusiveQualityRuleParam)
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf iselonnablelond(params: Params): Boolelonan = {
+    params(elonnablelonHighCryptospamScorelonConvoDownrankAbusivelonQualityRulelonParam)
   }
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.HighCryptospamScore))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.HighCryptospamScorelon))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }
 
-object RitoActionedTweetDownrankLowQualitySectionRule
-    extends ConditionWithNotInnerCircleOfFriendsRule(
-      action = ConversationSectionLowQuality,
-      condition = TweetHasLabel(TweetSafetyLabelType.RitoActionedTweet)
+objelonct RitoActionelondTwelonelontDownrankLowQualitySelonctionRulelon
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
+      action = ConvelonrsationSelonctionLowQuality,
+      condition = TwelonelontHasLabelonl(TwelonelontSafelontyLabelonlTypelon.RitoActionelondTwelonelont)
     )
-    with DoesLogVerdictDecidered {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableRitoActionedTweetDownrankConvosLowQualityParam)
+    with DoelonsLogVelonrdictDeloncidelonrelond {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonRitoActionelondTwelonelontDownrankConvosLowQualityParam)
 
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.RitoActionedTweet))
-  override def verdictLogDeciderKey = DeciderKey.EnableDownlevelRuleVerdictLogging
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.RitoActionelondTwelonelont))
+  ovelonrridelon delonf velonrdictLogDeloncidelonrKelony = DeloncidelonrKelony.elonnablelonDownlelonvelonlRulelonVelonrdictLogging
 }

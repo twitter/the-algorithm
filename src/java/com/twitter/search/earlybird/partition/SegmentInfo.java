@@ -1,428 +1,428 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
+import java.io.Filelon;
+import java.io.IOelonxcelonption;
+import java.io.OutputStrelonamWritelonr;
+import java.util.concurrelonnt.atomic.AtomicBoolelonan;
+import java.util.concurrelonnt.atomic.AtomicIntelongelonr;
+import java.util.concurrelonnt.atomic.AtomicLong;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.io.FilelonUtils;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.partitioning.base.TimeSlice;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.PersistentFile;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.common.partitioning.baselon.TimelonSlicelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.FlushVelonrsion;
+import com.twittelonr.selonarch.common.util.LogFormatUtil;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.PelonrsistelonntFilelon;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonnt;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonntFactory;
 
-public class SegmentInfo implements Comparable<SegmentInfo> {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentInfo.class);
+public class SelongmelonntInfo implelonmelonnts Comparablelon<SelongmelonntInfo> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SelongmelonntInfo.class);
 
-  private static final String UPDATE_STREAM_OFFSET_TIMESTAMP = "updateStreamOffsetTimestamp";
+  privatelon static final String UPDATelon_STRelonAM_OFFSelonT_TIMelonSTAMP = "updatelonStrelonamOffselontTimelonstamp";
   public static final int INVALID_ID = -1;
 
-  // Delay before deleting a segment
-  private final long timeToWaitBeforeClosingMillis = EarlybirdConfig.getLong(
-      "defer_index_closing_time_millis", 600000L);
-  // How many times deletions are retired.
-  private final AtomicInteger deletionRetries = new AtomicInteger(5);
+  // Delonlay belonforelon delonlelonting a selongmelonnt
+  privatelon final long timelonToWaitBelonforelonClosingMillis = elonarlybirdConfig.gelontLong(
+      "delonfelonr_indelonx_closing_timelon_millis", 600000L);
+  // How many timelons delonlelontions arelon relontirelond.
+  privatelon final AtomicIntelongelonr delonlelontionRelontrielons = nelonw AtomicIntelongelonr(5);
 
-  // Base segment information, including database name, minStatusId.
-  private final Segment segment;
+  // Baselon selongmelonnt information, including databaselon namelon, minStatusId.
+  privatelon final Selongmelonnt selongmelonnt;
 
-  // Bits managed by various SegmentProcessors and PartitionManager.
-  private volatile boolean isEnabled   = true;   // True if the segment is enabled.
-  private volatile boolean isIndexing  = false;  // True during indexing.
-  private volatile boolean isComplete  = false;  // True when indexing is complete.
-  private volatile boolean isClosed    = false;  // True if indexSegment is closed.
-  private volatile boolean wasIndexed  = false;  // True if the segment was indexed from scratch.
-  private volatile boolean failedOptimize = false;  // optimize attempt failed.
-  private AtomicBoolean beingUploaded = new AtomicBoolean();  // segment is being copied to HDFS
+  // Bits managelond by various SelongmelonntProcelonssors and PartitionManagelonr.
+  privatelon volatilelon boolelonan iselonnablelond   = truelon;   // Truelon if thelon selongmelonnt is elonnablelond.
+  privatelon volatilelon boolelonan isIndelonxing  = falselon;  // Truelon during indelonxing.
+  privatelon volatilelon boolelonan isComplelontelon  = falselon;  // Truelon whelonn indelonxing is complelontelon.
+  privatelon volatilelon boolelonan isCloselond    = falselon;  // Truelon if indelonxSelongmelonnt is closelond.
+  privatelon volatilelon boolelonan wasIndelonxelond  = falselon;  // Truelon if thelon selongmelonnt was indelonxelond from scratch.
+  privatelon volatilelon boolelonan failelondOptimizelon = falselon;  // optimizelon attelonmpt failelond.
+  privatelon AtomicBoolelonan beloningUploadelond = nelonw AtomicBoolelonan();  // selongmelonnt is beloning copielond to HDFS
 
-  private final SegmentSyncInfo segmentSyncInfo;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
+  privatelon final SelongmelonntSyncInfo selongmelonntSyncInfo;
+  privatelon final elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig;
 
-  private final EarlybirdSegment indexSegment;
+  privatelon final elonarlybirdSelongmelonnt indelonxSelongmelonnt;
 
-  private final AtomicLong updatesStreamOffsetTimestamp = new AtomicLong(0);
+  privatelon final AtomicLong updatelonsStrelonamOffselontTimelonstamp = nelonw AtomicLong(0);
 
-  public SegmentInfo(Segment segment,
-                     EarlybirdSegmentFactory earlybirdSegmentFactory,
-                     SegmentSyncConfig syncConfig) throws IOException {
-    this(segment, earlybirdSegmentFactory, new SegmentSyncInfo(syncConfig, segment));
+  public SelongmelonntInfo(Selongmelonnt selongmelonnt,
+                     elonarlybirdSelongmelonntFactory elonarlybirdSelongmelonntFactory,
+                     SelongmelonntSyncConfig syncConfig) throws IOelonxcelonption {
+    this(selongmelonnt, elonarlybirdSelongmelonntFactory, nelonw SelongmelonntSyncInfo(syncConfig, selongmelonnt));
   }
 
-  @VisibleForTesting
-  public SegmentInfo(Segment segment,
-                     EarlybirdSegmentFactory earlybirdSegmentFactory,
-                     SegmentSyncInfo segmentSyncInfo) throws IOException {
-    this(earlybirdSegmentFactory.newEarlybirdSegment(segment, segmentSyncInfo),
-        segmentSyncInfo,
-        segment,
-        earlybirdSegmentFactory.getEarlybirdIndexConfig());
+  @VisiblelonForTelonsting
+  public SelongmelonntInfo(Selongmelonnt selongmelonnt,
+                     elonarlybirdSelongmelonntFactory elonarlybirdSelongmelonntFactory,
+                     SelongmelonntSyncInfo selongmelonntSyncInfo) throws IOelonxcelonption {
+    this(elonarlybirdSelongmelonntFactory.nelonwelonarlybirdSelongmelonnt(selongmelonnt, selongmelonntSyncInfo),
+        selongmelonntSyncInfo,
+        selongmelonnt,
+        elonarlybirdSelongmelonntFactory.gelontelonarlybirdIndelonxConfig());
   }
 
-  public SegmentInfo(
-      EarlybirdSegment earlybirdSegment,
-      SegmentSyncInfo segmentSyncInfo,
-      Segment segment,
-      EarlybirdIndexConfig earlybirdIndexConfig
+  public SelongmelonntInfo(
+      elonarlybirdSelongmelonnt elonarlybirdSelongmelonnt,
+      SelongmelonntSyncInfo selongmelonntSyncInfo,
+      Selongmelonnt selongmelonnt,
+      elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig
   ) {
-    this.indexSegment = earlybirdSegment;
-    this.segmentSyncInfo = segmentSyncInfo;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.segment = segment;
+    this.indelonxSelongmelonnt = elonarlybirdSelongmelonnt;
+    this.selongmelonntSyncInfo = selongmelonntSyncInfo;
+    this.elonarlybirdIndelonxConfig = elonarlybirdIndelonxConfig;
+    this.selongmelonnt = selongmelonnt;
   }
 
-  public EarlybirdSegment getIndexSegment() {
-    return indexSegment;
+  public elonarlybirdSelongmelonnt gelontIndelonxSelongmelonnt() {
+    relonturn indelonxSelongmelonnt;
   }
 
-  public SegmentIndexStats getIndexStats() {
-    return indexSegment.getIndexStats();
+  public SelongmelonntIndelonxStats gelontIndelonxStats() {
+    relonturn indelonxSelongmelonnt.gelontIndelonxStats();
   }
 
-  public EarlybirdIndexConfig getEarlybirdIndexConfig() {
-    return earlybirdIndexConfig;
+  public elonarlybirdIndelonxConfig gelontelonarlybirdIndelonxConfig() {
+    relonturn elonarlybirdIndelonxConfig;
   }
 
-  public long getTimeSliceID() {
-    return segment.getTimeSliceID();
+  public long gelontTimelonSlicelonID() {
+    relonturn selongmelonnt.gelontTimelonSlicelonID();
   }
 
-  public String getSegmentName() {
-    return segment.getSegmentName();
+  public String gelontSelongmelonntNamelon() {
+    relonturn selongmelonnt.gelontSelongmelonntNamelon();
   }
 
-  public int getNumPartitions() {
-    return segment.getNumHashPartitions();
+  public int gelontNumPartitions() {
+    relonturn selongmelonnt.gelontNumHashPartitions();
   }
 
-  public boolean isEnabled() {
-    return isEnabled;
+  public boolelonan iselonnablelond() {
+    relonturn iselonnablelond;
   }
 
-  public void setIsEnabled(boolean isEnabled) {
-    this.isEnabled = isEnabled;
+  public void selontIselonnablelond(boolelonan iselonnablelond) {
+    this.iselonnablelond = iselonnablelond;
   }
 
-  public boolean isOptimized() {
-    return indexSegment.isOptimized();
+  public boolelonan isOptimizelond() {
+    relonturn indelonxSelongmelonnt.isOptimizelond();
   }
 
-  public boolean wasIndexed() {
-    return wasIndexed;
+  public boolelonan wasIndelonxelond() {
+    relonturn wasIndelonxelond;
   }
 
-  public void setWasIndexed(boolean wasIndexed) {
-    this.wasIndexed = wasIndexed;
+  public void selontWasIndelonxelond(boolelonan wasIndelonxelond) {
+    this.wasIndelonxelond = wasIndelonxelond;
   }
 
-  public boolean isFailedOptimize() {
-    return failedOptimize;
+  public boolelonan isFailelondOptimizelon() {
+    relonturn failelondOptimizelon;
   }
 
-  public void setFailedOptimize() {
-    this.failedOptimize = true;
+  public void selontFailelondOptimizelon() {
+    this.failelondOptimizelon = truelon;
   }
 
-  public boolean isIndexing() {
-    return isIndexing;
+  public boolelonan isIndelonxing() {
+    relonturn isIndelonxing;
   }
 
-  public void setIndexing(boolean indexing) {
-    this.isIndexing = indexing;
+  public void selontIndelonxing(boolelonan indelonxing) {
+    this.isIndelonxing = indelonxing;
   }
 
-  public boolean isComplete() {
-    return isComplete;
+  public boolelonan isComplelontelon() {
+    relonturn isComplelontelon;
   }
 
-  public boolean isClosed() {
-    return isClosed;
+  public boolelonan isCloselond() {
+    relonturn isCloselond;
   }
 
-  public boolean isBeingUploaded() {
-    return beingUploaded.get();
+  public boolelonan isBeloningUploadelond() {
+    relonturn beloningUploadelond.gelont();
   }
 
-  public void setBeingUploaded(boolean beingUploaded) {
-    this.beingUploaded.set(beingUploaded);
+  public void selontBeloningUploadelond(boolelonan beloningUploadelond) {
+    this.beloningUploadelond.selont(beloningUploadelond);
   }
 
-  public boolean casBeingUploaded(boolean expectation, boolean updateValue) {
-    return beingUploaded.compareAndSet(expectation, updateValue);
+  public boolelonan casBeloningUploadelond(boolelonan elonxpelonctation, boolelonan updatelonValuelon) {
+    relonturn beloningUploadelond.comparelonAndSelont(elonxpelonctation, updatelonValuelon);
   }
 
-  @VisibleForTesting
-  public void setComplete(boolean complete) {
-    this.isComplete = complete;
+  @VisiblelonForTelonsting
+  public void selontComplelontelon(boolelonan complelontelon) {
+    this.isComplelontelon = complelontelon;
   }
 
-  public boolean needsIndexing() {
-    return isEnabled && !isIndexing && !isComplete;
+  public boolelonan nelonelondsIndelonxing() {
+    relonturn iselonnablelond && !isIndelonxing && !isComplelontelon;
   }
 
-  @Override
-  public int compareTo(SegmentInfo other) {
-    return Long.compare(getTimeSliceID(), other.getTimeSliceID());
+  @Ovelonrridelon
+  public int comparelonTo(SelongmelonntInfo othelonr) {
+    relonturn Long.comparelon(gelontTimelonSlicelonID(), othelonr.gelontTimelonSlicelonID());
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    return obj instanceof SegmentInfo && compareTo((SegmentInfo) obj) == 0;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    relonturn obj instancelonof SelongmelonntInfo && comparelonTo((SelongmelonntInfo) obj) == 0;
   }
 
-  @Override
-  public int hashCode() {
-    return new Long(getTimeSliceID()).hashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn nelonw Long(gelontTimelonSlicelonID()).hashCodelon();
   }
 
-  public long getUpdatesStreamOffsetTimestamp() {
-    return updatesStreamOffsetTimestamp.get();
+  public long gelontUpdatelonsStrelonamOffselontTimelonstamp() {
+    relonturn updatelonsStrelonamOffselontTimelonstamp.gelont();
   }
 
-  public void setUpdatesStreamOffsetTimestamp(long timestamp) {
-    updatesStreamOffsetTimestamp.set(timestamp);
+  public void selontUpdatelonsStrelonamOffselontTimelonstamp(long timelonstamp) {
+    updatelonsStrelonamOffselontTimelonstamp.selont(timelonstamp);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    StringBuilder builder = new StringBuilder();
-    builder.append(getSegmentName()).append(" [");
-    builder.append(isEnabled ? "enabled, " : "disabled, ");
+    StringBuildelonr buildelonr = nelonw StringBuildelonr();
+    buildelonr.appelonnd(gelontSelongmelonntNamelon()).appelonnd(" [");
+    buildelonr.appelonnd(iselonnablelond ? "elonnablelond, " : "disablelond, ");
 
-    if (isIndexing) {
-      builder.append("indexing, ");
+    if (isIndelonxing) {
+      buildelonr.appelonnd("indelonxing, ");
     }
 
-    if (isComplete) {
-      builder.append("complete, ");
+    if (isComplelontelon) {
+      buildelonr.appelonnd("complelontelon, ");
     }
 
-    if (isOptimized()) {
-      builder.append("optimized, ");
+    if (isOptimizelond()) {
+      buildelonr.appelonnd("optimizelond, ");
     }
 
-    if (wasIndexed) {
-      builder.append("wasIndexed, ");
+    if (wasIndelonxelond) {
+      buildelonr.appelonnd("wasIndelonxelond, ");
     }
 
-    builder.append("IndexSync:");
-    this.segmentSyncInfo.addDebugInfo(builder);
+    buildelonr.appelonnd("IndelonxSync:");
+    this.selongmelonntSyncInfo.addDelonbugInfo(buildelonr);
 
-    return builder.append("]").toString();
+    relonturn buildelonr.appelonnd("]").toString();
   }
 
-  public Segment getSegment() {
-    return segment;
+  public Selongmelonnt gelontSelongmelonnt() {
+    relonturn selongmelonnt;
   }
 
   /**
-   * Delete the index segment directory corresponding to this segment info. Return true if deleted
-   * successfully; otherwise, false.
+   * Delonlelontelon thelon indelonx selongmelonnt direlonctory correlonsponding to this selongmelonnt info. Relonturn truelon if delonlelontelond
+   * succelonssfully; othelonrwiselon, falselon.
    */
-  public boolean deleteLocalIndexedSegmentDirectoryImmediately() {
-    if (isClosed) {
-      LOG.info("SegmentInfo is already closed: " + toString());
-      return true;
+  public boolelonan delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly() {
+    if (isCloselond) {
+      LOG.info("SelongmelonntInfo is alrelonady closelond: " + toString());
+      relonturn truelon;
     }
 
-    Preconditions.checkNotNull(indexSegment, "indexSegment should never be null.");
-    isClosed = true;
-    indexSegment.destroyImmediately();
+    Prelonconditions.chelonckNotNull(indelonxSelongmelonnt, "indelonxSelongmelonnt should nelonvelonr belon null.");
+    isCloselond = truelon;
+    indelonxSelongmelonnt.delonstroyImmelondiatelonly();
 
-    SegmentSyncConfig sync = getSyncInfo().getSegmentSyncConfig();
+    SelongmelonntSyncConfig sync = gelontSyncInfo().gelontSelongmelonntSyncConfig();
     try {
-      String dirToClear = sync.getLocalSyncDirName(segment);
-      FileUtils.forceDelete(new File(dirToClear));
-      LOG.info("Deleted segment directory: " + toString());
-      return true;
-    } catch (IOException e) {
-      LOG.error("Cannot clean up segment directory for segment: " + toString(), e);
-      return false;
+      String dirToClelonar = sync.gelontLocalSyncDirNamelon(selongmelonnt);
+      FilelonUtils.forcelonDelonlelontelon(nelonw Filelon(dirToClelonar));
+      LOG.info("Delonlelontelond selongmelonnt direlonctory: " + toString());
+      relonturn truelon;
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("Cannot clelonan up selongmelonnt direlonctory for selongmelonnt: " + toString(), elon);
+      relonturn falselon;
     }
   }
 
   /**
-   * Delete the index segment directory after some configured delay.
-   * Note that we don't delete segments that are being uploaded.
-   * If a segment is being uploaded when we try to delete, close() retries the deletion later.
+   * Delonlelontelon thelon indelonx selongmelonnt direlonctory aftelonr somelon configurelond delonlay.
+   * Notelon that welon don't delonlelontelon selongmelonnts that arelon beloning uploadelond.
+   * If a selongmelonnt is beloning uploadelond whelonn welon try to delonlelontelon, closelon() relontrielons thelon delonlelontion latelonr.
    */
-  public void deleteIndexSegmentDirectoryAfterDelay() {
-    LOG.info("Scheduling SegmentInfo for deletion: " + toString());
-    getEarlybirdIndexConfig().getResourceCloser().closeResourceQuietlyAfterDelay(
-        timeToWaitBeforeClosingMillis, () -> {
-          // Atomically check and set the being uploaded flag, if it is not set.
-          if (beingUploaded.compareAndSet(false, true)) {
-            // If successfully set the flag to true, we can delete immediately
-            setIsEnabled(false);
-            deleteLocalIndexedSegmentDirectoryImmediately();
-            LOG.info("Deleted index segment dir for segment: "
-                + getSegment().getSegmentName());
-          } else {
-            // If the flag is already true (compareAndSet fails), we need to reschedule.
-            if (deletionRetries.decrementAndGet() > 0) {
-              LOG.warn("Segment is being uploaded, will retry deletion later. SegmentInfo: "
-                  + getSegment().getSegmentName());
-              deleteIndexSegmentDirectoryAfterDelay();
-            } else {
-              LOG.warn("Failed to cleanup index segment dir for segment: "
-                  + getSegment().getSegmentName());
+  public void delonlelontelonIndelonxSelongmelonntDirelonctoryAftelonrDelonlay() {
+    LOG.info("Schelonduling SelongmelonntInfo for delonlelontion: " + toString());
+    gelontelonarlybirdIndelonxConfig().gelontRelonsourcelonCloselonr().closelonRelonsourcelonQuielontlyAftelonrDelonlay(
+        timelonToWaitBelonforelonClosingMillis, () -> {
+          // Atomically chelonck and selont thelon beloning uploadelond flag, if it is not selont.
+          if (beloningUploadelond.comparelonAndSelont(falselon, truelon)) {
+            // If succelonssfully selont thelon flag to truelon, welon can delonlelontelon immelondiatelonly
+            selontIselonnablelond(falselon);
+            delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
+            LOG.info("Delonlelontelond indelonx selongmelonnt dir for selongmelonnt: "
+                + gelontSelongmelonnt().gelontSelongmelonntNamelon());
+          } elonlselon {
+            // If thelon flag is alrelonady truelon (comparelonAndSelont fails), welon nelonelond to relonschelondulelon.
+            if (delonlelontionRelontrielons.deloncrelonmelonntAndGelont() > 0) {
+              LOG.warn("Selongmelonnt is beloning uploadelond, will relontry delonlelontion latelonr. SelongmelonntInfo: "
+                  + gelontSelongmelonnt().gelontSelongmelonntNamelon());
+              delonlelontelonIndelonxSelongmelonntDirelonctoryAftelonrDelonlay();
+            } elonlselon {
+              LOG.warn("Failelond to clelonanup indelonx selongmelonnt dir for selongmelonnt: "
+                  + gelontSelongmelonnt().gelontSelongmelonntNamelon());
             }
           }
         });
   }
 
-  public SegmentSyncInfo getSyncInfo() {
-    return segmentSyncInfo;
+  public SelongmelonntSyncInfo gelontSyncInfo() {
+    relonturn selongmelonntSyncInfo;
   }
 
-  public FlushVersion getFlushVersion() {
-    return FlushVersion.CURRENT_FLUSH_VERSION;
+  public FlushVelonrsion gelontFlushVelonrsion() {
+    relonturn FlushVelonrsion.CURRelonNT_FLUSH_VelonRSION;
   }
 
-  public String getZkNodeName() {
-    return getSegmentName() + getFlushVersion().getVersionFileExtension();
+  public String gelontZkNodelonNamelon() {
+    relonturn gelontSelongmelonntNamelon() + gelontFlushVelonrsion().gelontVelonrsionFilelonelonxtelonnsion();
   }
 
-  static String getSyncDirName(String parentDir, String dbName, String version) {
-    return parentDir + "/" + dbName + version;
+  static String gelontSyncDirNamelon(String parelonntDir, String dbNamelon, String velonrsion) {
+    relonturn parelonntDir + "/" + dbNamelon + velonrsion;
   }
 
   /**
-   * Parses the segment name from the name of the flushed directory.
+   * Parselons thelon selongmelonnt namelon from thelon namelon of thelon flushelond direlonctory.
    */
-  public static String getSegmentNameFromFlushedDir(String flushedDir) {
-    String segmentName = null;
-    String[] fields = flushedDir.split("/");
-    if (fields.length > 0) {
-      segmentName = fields[fields.length - 1];
-      segmentName = segmentName.replaceAll(FlushVersion.DELIMITER + ".*", "");
+  public static String gelontSelongmelonntNamelonFromFlushelondDir(String flushelondDir) {
+    String selongmelonntNamelon = null;
+    String[] fielonlds = flushelondDir.split("/");
+    if (fielonlds.lelonngth > 0) {
+      selongmelonntNamelon = fielonlds[fielonlds.lelonngth - 1];
+      selongmelonntNamelon = selongmelonntNamelon.relonplacelonAll(FlushVelonrsion.DelonLIMITelonR + ".*", "");
     }
-    return segmentName;
+    relonturn selongmelonntNamelon;
   }
 
   /**
-   * Flushes this segment to the given directory.
+   * Flushelons this selongmelonnt to thelon givelonn direlonctory.
    *
-   * @param dir The directory to flush the segment to.
-   * @throws IOException If the segment could not be flushed.
+   * @param dir Thelon direlonctory to flush thelon selongmelonnt to.
+   * @throws IOelonxcelonption If thelon selongmelonnt could not belon flushelond.
    */
-  public void flush(Directory dir) throws IOException {
-    LOG.info("Flushing segment: {}", getSegmentName());
-    try (PersistentFile.Writer writer = PersistentFile.getWriter(dir, getSegmentName())) {
-      FlushInfo flushInfo = new FlushInfo();
-      flushInfo.addLongProperty(UPDATE_STREAM_OFFSET_TIMESTAMP, getUpdatesStreamOffsetTimestamp());
-      getIndexSegment().flush(flushInfo, writer.getDataSerializer());
+  public void flush(Direlonctory dir) throws IOelonxcelonption {
+    LOG.info("Flushing selongmelonnt: {}", gelontSelongmelonntNamelon());
+    try (PelonrsistelonntFilelon.Writelonr writelonr = PelonrsistelonntFilelon.gelontWritelonr(dir, gelontSelongmelonntNamelon())) {
+      FlushInfo flushInfo = nelonw FlushInfo();
+      flushInfo.addLongPropelonrty(UPDATelon_STRelonAM_OFFSelonT_TIMelonSTAMP, gelontUpdatelonsStrelonamOffselontTimelonstamp());
+      gelontIndelonxSelongmelonnt().flush(flushInfo, writelonr.gelontDataSelonrializelonr());
 
-      OutputStreamWriter infoFileWriter = new OutputStreamWriter(writer.getInfoFileOutputStream());
-      FlushInfo.flushAsYaml(flushInfo, infoFileWriter);
+      OutputStrelonamWritelonr infoFilelonWritelonr = nelonw OutputStrelonamWritelonr(writelonr.gelontInfoFilelonOutputStrelonam());
+      FlushInfo.flushAsYaml(flushInfo, infoFilelonWritelonr);
     }
   }
 
   /**
-   * Makes a new SegmentInfo out of the current segment info, except that we switch the underlying
-   * segment.
+   * Makelons a nelonw SelongmelonntInfo out of thelon currelonnt selongmelonnt info, elonxcelonpt that welon switch thelon undelonrlying
+   * selongmelonnt.
    */
-  public SegmentInfo copyWithEarlybirdSegment(EarlybirdSegment optimizedSegment) {
-    // Take everything from the current segment info that doesn't change for the new segment
-    // info and rebuild everything that can change.
-    TimeSlice newTimeSlice = new TimeSlice(
-      getTimeSliceID(),
-      EarlybirdConfig.getMaxSegmentSize(),
-      segment.getHashPartitionID(),
-      segment.getNumHashPartitions()
+  public SelongmelonntInfo copyWithelonarlybirdSelongmelonnt(elonarlybirdSelongmelonnt optimizelondSelongmelonnt) {
+    // Takelon elonvelonrything from thelon currelonnt selongmelonnt info that doelonsn't changelon for thelon nelonw selongmelonnt
+    // info and relonbuild elonvelonrything that can changelon.
+    TimelonSlicelon nelonwTimelonSlicelon = nelonw TimelonSlicelon(
+      gelontTimelonSlicelonID(),
+      elonarlybirdConfig.gelontMaxSelongmelonntSizelon(),
+      selongmelonnt.gelontHashPartitionID(),
+      selongmelonnt.gelontNumHashPartitions()
     );
-    Segment newSegment = newTimeSlice.getSegment();
+    Selongmelonnt nelonwSelongmelonnt = nelonwTimelonSlicelon.gelontSelongmelonnt();
 
-    return new SegmentInfo(
-        optimizedSegment,
-        new SegmentSyncInfo(
-            segmentSyncInfo.getSegmentSyncConfig(),
-            newSegment),
-        newSegment,
-        earlybirdIndexConfig
+    relonturn nelonw SelongmelonntInfo(
+        optimizelondSelongmelonnt,
+        nelonw SelongmelonntSyncInfo(
+            selongmelonntSyncInfo.gelontSelongmelonntSyncConfig(),
+            nelonwSelongmelonnt),
+        nelonwSelongmelonnt,
+        elonarlybirdIndelonxConfig
     );
   }
 
   /**
-   * Loads the segment from the given directory.
+   * Loads thelon selongmelonnt from thelon givelonn direlonctory.
    *
-   * @param dir The directory to load the segment from.
-   * @throws IOException If the segment could not be loaded.
+   * @param dir Thelon direlonctory to load thelon selongmelonnt from.
+   * @throws IOelonxcelonption If thelon selongmelonnt could not belon loadelond.
    */
-  public void load(Directory dir) throws IOException {
-    LOG.info("Loading segment: {}", getSegmentName());
-    try (PersistentFile.Reader reader = PersistentFile.getReader(dir, getSegmentName())) {
-      FlushInfo flushInfo = FlushInfo.loadFromYaml(reader.getInfoInputStream());
-      setUpdatesStreamOffsetTimestamp(flushInfo.getLongProperty(UPDATE_STREAM_OFFSET_TIMESTAMP));
-      getIndexSegment().load(reader.getDataInputStream(), flushInfo);
+  public void load(Direlonctory dir) throws IOelonxcelonption {
+    LOG.info("Loading selongmelonnt: {}", gelontSelongmelonntNamelon());
+    try (PelonrsistelonntFilelon.Relonadelonr relonadelonr = PelonrsistelonntFilelon.gelontRelonadelonr(dir, gelontSelongmelonntNamelon())) {
+      FlushInfo flushInfo = FlushInfo.loadFromYaml(relonadelonr.gelontInfoInputStrelonam());
+      selontUpdatelonsStrelonamOffselontTimelonstamp(flushInfo.gelontLongPropelonrty(UPDATelon_STRelonAM_OFFSelonT_TIMelonSTAMP));
+      gelontIndelonxSelongmelonnt().load(relonadelonr.gelontDataInputStrelonam(), flushInfo);
     }
   }
 
-  private String getShortStatus() {
-    if (!isEnabled()) {
-      return "disabled";
+  privatelon String gelontShortStatus() {
+    if (!iselonnablelond()) {
+      relonturn "disablelond";
     }
 
-    if (isIndexing()) {
-      return "indexing";
+    if (isIndelonxing()) {
+      relonturn "indelonxing";
     }
 
-    if (isComplete()) {
-      return "indexed";
+    if (isComplelontelon()) {
+      relonturn "indelonxelond";
     }
 
-    return "pending";
+    relonturn "pelonnding";
   }
 
   /**
-   * Get a string to be shown in admin commands which shows the query caches' sizes for this
-   * segment.
+   * Gelont a string to belon shown in admin commands which shows thelon quelonry cachelons' sizelons for this
+   * selongmelonnt.
    */
-  public String getQueryCachesData() {
-    StringBuilder out = new StringBuilder();
-    out.append("Segment: " + getSegmentName() + "\n");
-    out.append("Total documents: " + LogFormatUtil.formatInt(
-        getIndexStats().getStatusCount()) + "\n");
-    out.append("Query caches:\n");
-    for (Pair<String, Long> data : indexSegment.getQueryCachesData()) {
-      out.append("  " + data.getFirst());
-      out.append(": ");
-      out.append(LogFormatUtil.formatInt(data.getSecond()));
-      out.append("\n");
+  public String gelontQuelonryCachelonsData() {
+    StringBuildelonr out = nelonw StringBuildelonr();
+    out.appelonnd("Selongmelonnt: " + gelontSelongmelonntNamelon() + "\n");
+    out.appelonnd("Total documelonnts: " + LogFormatUtil.formatInt(
+        gelontIndelonxStats().gelontStatusCount()) + "\n");
+    out.appelonnd("Quelonry cachelons:\n");
+    for (Pair<String, Long> data : indelonxSelongmelonnt.gelontQuelonryCachelonsData()) {
+      out.appelonnd("  " + data.gelontFirst());
+      out.appelonnd(": ");
+      out.appelonnd(LogFormatUtil.formatInt(data.gelontSeloncond()));
+      out.appelonnd("\n");
     }
-    return out.toString();
+    relonturn out.toString();
   }
 
-  public String getSegmentMetadata() {
-    return "status: " + getShortStatus() + "\n"
-        + "id: " + getTimeSliceID() + "\n"
-        + "name: " + getSegmentName() + "\n"
-        + "statusCount: " + getIndexStats().getStatusCount() + "\n"
-        + "deleteCount: " + getIndexStats().getDeleteCount() + "\n"
-        + "partialUpdateCount: " + getIndexStats().getPartialUpdateCount() + "\n"
-        + "outOfOrderUpdateCount: " + getIndexStats().getOutOfOrderUpdateCount() + "\n"
-        + "isEnabled: " + isEnabled() + "\n"
-        + "isIndexing: " + isIndexing() + "\n"
-        + "isComplete: " + isComplete() + "\n"
-        + "isFlushed: " + getSyncInfo().isFlushed() + "\n"
-        + "isOptimized: " + isOptimized() + "\n"
-        + "isLoaded: " + getSyncInfo().isLoaded() + "\n"
-        + "wasIndexed: " + wasIndexed() + "\n"
-        + "queryCachesCardinality: " + indexSegment.getQueryCachesCardinality() + "\n";
+  public String gelontSelongmelonntMelontadata() {
+    relonturn "status: " + gelontShortStatus() + "\n"
+        + "id: " + gelontTimelonSlicelonID() + "\n"
+        + "namelon: " + gelontSelongmelonntNamelon() + "\n"
+        + "statusCount: " + gelontIndelonxStats().gelontStatusCount() + "\n"
+        + "delonlelontelonCount: " + gelontIndelonxStats().gelontDelonlelontelonCount() + "\n"
+        + "partialUpdatelonCount: " + gelontIndelonxStats().gelontPartialUpdatelonCount() + "\n"
+        + "outOfOrdelonrUpdatelonCount: " + gelontIndelonxStats().gelontOutOfOrdelonrUpdatelonCount() + "\n"
+        + "iselonnablelond: " + iselonnablelond() + "\n"
+        + "isIndelonxing: " + isIndelonxing() + "\n"
+        + "isComplelontelon: " + isComplelontelon() + "\n"
+        + "isFlushelond: " + gelontSyncInfo().isFlushelond() + "\n"
+        + "isOptimizelond: " + isOptimizelond() + "\n"
+        + "isLoadelond: " + gelontSyncInfo().isLoadelond() + "\n"
+        + "wasIndelonxelond: " + wasIndelonxelond() + "\n"
+        + "quelonryCachelonsCardinality: " + indelonxSelongmelonnt.gelontQuelonryCachelonsCardinality() + "\n";
   }
 }

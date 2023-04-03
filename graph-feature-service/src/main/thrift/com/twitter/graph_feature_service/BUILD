@@ -1,15 +1,15 @@
-create_thrift_libraries(
-    base_name = "graph_feature_service_thrift",
-    sources = ["*.thrift"],
+crelonatelon_thrift_librarielons(
+    baselon_namelon = "graph_felonaturelon_selonrvicelon_thrift",
+    sourcelons = ["*.thrift"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    generate_languages = [
+    tags = ["bazelonl-compatiblelon"],
+    gelonnelonratelon_languagelons = [
         "java",
-        # ruby is added due to ruby dependees in timelines
+        # ruby is addelond duelon to ruby delonpelonndelonelons in timelonlinelons
         "ruby",
         "scala",
         "strato",
     ],
-    provides_java_name = "graph_feature_service_thrift_java",
-    provides_scala_name = "graph_feature_service_thrift_scala",
+    providelons_java_namelon = "graph_felonaturelon_selonrvicelon_thrift_java",
+    providelons_scala_namelon = "graph_felonaturelon_selonrvicelon_thrift_scala",
 )

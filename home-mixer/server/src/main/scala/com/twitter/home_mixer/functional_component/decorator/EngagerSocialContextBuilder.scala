@@ -1,117 +1,117 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.RealNamesFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.RelonalNamelonsFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import com.twittelonr.stringcelonntelonr.clielonnt.corelon.elonxtelonrnalString
 
-private[decorator] case class SocialContextIdAndScreenName(
-  socialContextId: Long,
-  screenName: String)
+privatelon[deloncorator] caselon class SocialContelonxtIdAndScrelonelonnNamelon(
+  socialContelonxtId: Long,
+  screlonelonnNamelon: String)
 
-object EngagerSocialContextBuilder {
-  private val UserIdRequestParamName = "user_id"
-  private val DirectInjectionContentSourceRequestParamName = "dis"
-  private val DirectInjectionIdRequestParamName = "diid"
-  private val DirectInjectionContentSourceSocialProofUsers = "socialproofusers"
-  private val SocialProofUrl = ""
+objelonct elonngagelonrSocialContelonxtBuildelonr {
+  privatelon val UselonrIdRelonquelonstParamNamelon = "uselonr_id"
+  privatelon val DirelonctInjelonctionContelonntSourcelonRelonquelonstParamNamelon = "dis"
+  privatelon val DirelonctInjelonctionIdRelonquelonstParamNamelon = "diid"
+  privatelon val DirelonctInjelonctionContelonntSourcelonSocialProofUselonrs = "socialproofuselonrs"
+  privatelon val SocialProofUrl = ""
 }
 
-case class EngagerSocialContextBuilder(
-  contextType: GeneralContextType,
-  stringCenter: StringCenter,
-  oneUserString: ExternalString,
-  twoUsersString: ExternalString,
-  moreUsersString: ExternalString,
-  timelineTitle: ExternalString) {
-  import EngagerSocialContextBuilder._
+caselon class elonngagelonrSocialContelonxtBuildelonr(
+  contelonxtTypelon: GelonnelonralContelonxtTypelon,
+  stringCelonntelonr: StringCelonntelonr,
+  onelonUselonrString: elonxtelonrnalString,
+  twoUselonrsString: elonxtelonrnalString,
+  morelonUselonrsString: elonxtelonrnalString,
+  timelonlinelonTitlelon: elonxtelonrnalString) {
+  import elonngagelonrSocialContelonxtBuildelonr._
 
-  def apply(
-    socialContextIds: Seq[Long],
-    query: PipelineQuery,
-    candidateFeatures: FeatureMap
-  ): Option[SocialContext] = {
-    val realNames = candidateFeatures.getOrElse(RealNamesFeature, Map.empty[Long, String])
-    val validSocialContextIdAndScreenNames = socialContextIds.flatMap { socialContextId =>
-      realNames
-        .get(socialContextId).map(screenName =>
-          SocialContextIdAndScreenName(socialContextId, screenName))
+  delonf apply(
+    socialContelonxtIds: Selonq[Long],
+    quelonry: PipelonlinelonQuelonry,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[SocialContelonxt] = {
+    val relonalNamelons = candidatelonFelonaturelons.gelontOrelonlselon(RelonalNamelonsFelonaturelon, Map.elonmpty[Long, String])
+    val validSocialContelonxtIdAndScrelonelonnNamelons = socialContelonxtIds.flatMap { socialContelonxtId =>
+      relonalNamelons
+        .gelont(socialContelonxtId).map(screlonelonnNamelon =>
+          SocialContelonxtIdAndScrelonelonnNamelon(socialContelonxtId, screlonelonnNamelon))
     }
 
-    validSocialContextIdAndScreenNames match {
-      case Seq(user) =>
-        val socialContextString =
-          stringCenter.prepare(oneUserString, Map("user" -> user.screenName))
-        Some(mkOneUserSocialContext(socialContextString, user.socialContextId))
-      case Seq(firstUser, secondUser) =>
-        val socialContextString =
-          stringCenter
-            .prepare(
-              twoUsersString,
-              Map("user1" -> firstUser.screenName, "user2" -> secondUser.screenName))
-        Some(
-          mkManyUserSocialContext(
-            socialContextString,
-            query.getRequiredUserId,
-            validSocialContextIdAndScreenNames.map(_.socialContextId)))
+    validSocialContelonxtIdAndScrelonelonnNamelons match {
+      caselon Selonq(uselonr) =>
+        val socialContelonxtString =
+          stringCelonntelonr.prelonparelon(onelonUselonrString, Map("uselonr" -> uselonr.screlonelonnNamelon))
+        Somelon(mkOnelonUselonrSocialContelonxt(socialContelonxtString, uselonr.socialContelonxtId))
+      caselon Selonq(firstUselonr, seloncondUselonr) =>
+        val socialContelonxtString =
+          stringCelonntelonr
+            .prelonparelon(
+              twoUselonrsString,
+              Map("uselonr1" -> firstUselonr.screlonelonnNamelon, "uselonr2" -> seloncondUselonr.screlonelonnNamelon))
+        Somelon(
+          mkManyUselonrSocialContelonxt(
+            socialContelonxtString,
+            quelonry.gelontRelonquirelondUselonrId,
+            validSocialContelonxtIdAndScrelonelonnNamelons.map(_.socialContelonxtId)))
 
-      case firstUser +: otherUsers =>
-        val otherUsersCount = otherUsers.size
-        val socialContextString =
-          stringCenter
-            .prepare(
-              moreUsersString,
-              Map("user" -> firstUser.screenName, "count" -> otherUsersCount))
-        Some(
-          mkManyUserSocialContext(
-            socialContextString,
-            query.getRequiredUserId,
-            validSocialContextIdAndScreenNames.map(_.socialContextId)))
-      case _ => None
+      caselon firstUselonr +: othelonrUselonrs =>
+        val othelonrUselonrsCount = othelonrUselonrs.sizelon
+        val socialContelonxtString =
+          stringCelonntelonr
+            .prelonparelon(
+              morelonUselonrsString,
+              Map("uselonr" -> firstUselonr.screlonelonnNamelon, "count" -> othelonrUselonrsCount))
+        Somelon(
+          mkManyUselonrSocialContelonxt(
+            socialContelonxtString,
+            quelonry.gelontRelonquirelondUselonrId,
+            validSocialContelonxtIdAndScrelonelonnNamelons.map(_.socialContelonxtId)))
+      caselon _ => Nonelon
     }
   }
 
-  private def mkOneUserSocialContext(socialContextString: String, userId: Long): GeneralContext = {
-    GeneralContext(
-      contextType = contextType,
-      text = socialContextString,
-      url = None,
-      contextImageUrls = None,
-      landingUrl = Some(
+  privatelon delonf mkOnelonUselonrSocialContelonxt(socialContelonxtString: String, uselonrId: Long): GelonnelonralContelonxt = {
+    GelonnelonralContelonxt(
+      contelonxtTypelon = contelonxtTypelon,
+      telonxt = socialContelonxtString,
+      url = Nonelon,
+      contelonxtImagelonUrls = Nonelon,
+      landingUrl = Somelon(
         Url(
-          urlType = DeepLink,
+          urlTypelon = DelonelonpLink,
           url = "",
-          urtEndpointOptions = None
+          urtelonndpointOptions = Nonelon
         )
       )
     )
   }
 
-  private def mkManyUserSocialContext(
-    socialContextString: String,
-    viewerId: Long,
-    socialContextIds: Seq[Long]
-  ): GeneralContext = {
-    GeneralContext(
-      contextType = contextType,
-      text = socialContextString,
-      url = None,
-      contextImageUrls = None,
-      landingUrl = Some(
+  privatelon delonf mkManyUselonrSocialContelonxt(
+    socialContelonxtString: String,
+    vielonwelonrId: Long,
+    socialContelonxtIds: Selonq[Long]
+  ): GelonnelonralContelonxt = {
+    GelonnelonralContelonxt(
+      contelonxtTypelon = contelonxtTypelon,
+      telonxt = socialContelonxtString,
+      url = Nonelon,
+      contelonxtImagelonUrls = Nonelon,
+      landingUrl = Somelon(
         Url(
-          urlType = UrtEndpoint,
+          urlTypelon = Urtelonndpoint,
           url = SocialProofUrl,
-          urtEndpointOptions = Some(UrtEndpointOptions(
-            requestParams = Some(Map(
-              UserIdRequestParamName -> viewerId.toString,
-              DirectInjectionContentSourceRequestParamName -> DirectInjectionContentSourceSocialProofUsers,
-              DirectInjectionIdRequestParamName -> socialContextIds.mkString(",")
+          urtelonndpointOptions = Somelon(UrtelonndpointOptions(
+            relonquelonstParams = Somelon(Map(
+              UselonrIdRelonquelonstParamNamelon -> vielonwelonrId.toString,
+              DirelonctInjelonctionContelonntSourcelonRelonquelonstParamNamelon -> DirelonctInjelonctionContelonntSourcelonSocialProofUselonrs,
+              DirelonctInjelonctionIdRelonquelonstParamNamelon -> socialContelonxtIds.mkString(",")
             )),
-            title = Some(stringCenter.prepare(timelineTitle)),
-            cacheId = None,
-            subtitle = None
+            titlelon = Somelon(stringCelonntelonr.prelonparelon(timelonlinelonTitlelon)),
+            cachelonId = Nonelon,
+            subtitlelon = Nonelon
           ))
         ))
     )

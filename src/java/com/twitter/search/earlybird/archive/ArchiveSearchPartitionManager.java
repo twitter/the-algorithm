@@ -1,485 +1,485 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.IOException;
-import java.util.Date;
+import java.io.IOelonxcelonption;
+import java.util.Datelon;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import javax.annotation.Nullable;
+import java.util.concurrelonnt.TimelonUnit;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Lists;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Prelondicatelon;
+import com.googlelon.common.collelonct.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.ServerSetMember;
-import com.twitter.search.earlybird.archive.ArchiveTimeSlicer.ArchiveTimeSlice;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.util.ScrubGenUtil;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.CompleteSegmentManager;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionManager;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentHdfsFlusher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentLoader;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentManager.Filter;
-import com.twitter.search.earlybird.partition.SegmentManager.Order;
-import com.twitter.search.earlybird.partition.SegmentOptimizer;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.partition.SegmentWarmer;
-import com.twitter.search.earlybird.partition.SimpleSegmentIndexer;
-import com.twitter.search.earlybird.partition.UserScrubGeoEventStreamIndexer;
-import com.twitter.search.earlybird.partition.UserUpdatesStreamIndexer;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdAction;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionLockFailed;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelonFactory;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.util.GCUtil;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonr;
+import com.twittelonr.selonarch.common.util.zktrylock.ZooKelonelonpelonrTryLockFactory;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdStatus;
+import com.twittelonr.selonarch.elonarlybird.SelonrvelonrSelontMelonmbelonr;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonTimelonSlicelonr.ArchivelonTimelonSlicelon;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.util.ScrubGelonnUtil;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.ComplelontelonSelongmelonntManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.DynamicPartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.MultiSelongmelonntTelonrmDictionaryManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntHdfsFlushelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntLoadelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr.Filtelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr.Ordelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntOptimizelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntWarmelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SimplelonSelongmelonntIndelonxelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.UselonrUpdatelonsStrelonamIndelonxelonr;
+import com.twittelonr.selonarch.elonarlybird.quelonrycachelon.QuelonryCachelonManagelonr;
+import com.twittelonr.selonarch.elonarlybird.selongmelonnt.SelongmelonntDataProvidelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdStatusCodelon;
+import com.twittelonr.selonarch.elonarlybird.util.CoordinatelondelonarlybirdAction;
+import com.twittelonr.selonarch.elonarlybird.util.CoordinatelondelonarlybirdActionIntelonrfacelon;
+import com.twittelonr.selonarch.elonarlybird.util.CoordinatelondelonarlybirdActionLockFailelond;
 
-public class ArchiveSearchPartitionManager extends PartitionManager {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ArchiveSearchPartitionManager.class);
+public class ArchivelonSelonarchPartitionManagelonr elonxtelonnds PartitionManagelonr {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(ArchivelonSelonarchPartitionManagelonr.class);
 
-  public static final String CONFIG_NAME = "archive";
+  public static final String CONFIG_NAMelon = "archivelon";
 
-  private static final long ONE_DAY_MILLIS = TimeUnit.DAYS.toMillis(1);
+  privatelon static final long ONelon_DAY_MILLIS = TimelonUnit.DAYS.toMillis(1);
 
-  private final ArchiveTimeSlicer timeSlicer;
-  private final ArchiveSegmentDataProvider segmentDataProvider;
+  privatelon final ArchivelonTimelonSlicelonr timelonSlicelonr;
+  privatelon final ArchivelonSelongmelonntDataProvidelonr selongmelonntDataProvidelonr;
 
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
+  privatelon final UselonrUpdatelonsStrelonamIndelonxelonr uselonrUpdatelonsStrelonamIndelonxelonr;
+  privatelon final UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr;
 
-  private final SegmentWarmer segmentWarmer;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final Clock clock;
-  private final SegmentSyncConfig segmentSyncConfig;
-  protected final SearchCounter gcAfterIndexing;
+  privatelon final SelongmelonntWarmelonr selongmelonntWarmelonr;
+  privatelon final elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig;
+  privatelon final ZooKelonelonpelonrTryLockFactory zkTryLockFactory;
+  privatelon final Clock clock;
+  privatelon final SelongmelonntSyncConfig selongmelonntSyncConfig;
+  protelonctelond final SelonarchCountelonr gcAftelonrIndelonxing;
 
-  // Used for coordinating daily updated across different replicas on the same hash partition,
-  // to run them one at a time, and minimize the impact on query latencies.
-  private final CoordinatedEarlybirdActionInterface coordinatedDailyUpdate;
+  // Uselond for coordinating daily updatelond across diffelonrelonnt relonplicas on thelon samelon hash partition,
+  // to run thelonm onelon at a timelon, and minimizelon thelon impact on quelonry latelonncielons.
+  privatelon final CoordinatelondelonarlybirdActionIntelonrfacelon coordinatelondDailyUpdatelon;
 
-  private final SearchIndexingMetricSet indexingMetricSet;
+  privatelon final SelonarchIndelonxingMelontricSelont indelonxingMelontricSelont;
 
-  // This is only used in tests where no coordination is needed.
-  @VisibleForTesting
-  public ArchiveSearchPartitionManager(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      QueryCacheManager queryCacheManager,
-      SegmentManager segmentManager,
+  // This is only uselond in telonsts whelonrelon no coordination is nelonelondelond.
+  @VisiblelonForTelonsting
+  public ArchivelonSelonarchPartitionManagelonr(
+      ZooKelonelonpelonrTryLockFactory zooKelonelonpelonrTryLockFactory,
+      QuelonryCachelonManagelonr quelonryCachelonManagelonr,
+      SelongmelonntManagelonr selongmelonntManagelonr,
       DynamicPartitionConfig dynamicPartitionConfig,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SearchStatsReceiver searchStatsReceiver,
-      ArchiveEarlybirdIndexConfig earlybirdIndexConfig,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScheduledExecutorServiceFactory userUpdateIndexerScheduledExecutorFactory,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      SegmentSyncConfig syncConfig,
+      UselonrUpdatelonsStrelonamIndelonxelonr uselonrUpdatelonsStrelonamIndelonxelonr,
+      UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      ArchivelonelonarlybirdIndelonxConfig elonarlybirdIndelonxConfig,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory elonxeloncutorSelonrvicelonFactory,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory uselonrUpdatelonIndelonxelonrSchelondulelondelonxeloncutorFactory,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      SelongmelonntSyncConfig syncConfig,
       Clock clock,
-      CriticalExceptionHandler criticalExceptionHandler)
-      throws IOException {
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr)
+      throws IOelonxcelonption {
     this(
-        zooKeeperTryLockFactory,
-        queryCacheManager,
-        segmentManager,
+        zooKelonelonpelonrTryLockFactory,
+        quelonryCachelonManagelonr,
+        selongmelonntManagelonr,
         dynamicPartitionConfig,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        searchStatsReceiver,
-        earlybirdIndexConfig,
+        uselonrUpdatelonsStrelonamIndelonxelonr,
+        uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
+        selonarchStatsReloncelonivelonr,
+        elonarlybirdIndelonxConfig,
         null,
-        executorServiceFactory,
-        userUpdateIndexerScheduledExecutorFactory,
-        searchIndexingMetricSet,
+        elonxeloncutorSelonrvicelonFactory,
+        uselonrUpdatelonIndelonxelonrSchelondulelondelonxeloncutorFactory,
+        selonarchIndelonxingMelontricSelont,
         syncConfig,
         clock,
-        criticalExceptionHandler);
+        criticalelonxcelonptionHandlelonr);
   }
 
-  public ArchiveSearchPartitionManager(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      QueryCacheManager queryCacheManager,
-      SegmentManager segmentManager,
+  public ArchivelonSelonarchPartitionManagelonr(
+      ZooKelonelonpelonrTryLockFactory zooKelonelonpelonrTryLockFactory,
+      QuelonryCachelonManagelonr quelonryCachelonManagelonr,
+      SelongmelonntManagelonr selongmelonntManagelonr,
       DynamicPartitionConfig dynamicPartitionConfig,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      SearchStatsReceiver searchStatsReceiver,
-      ArchiveEarlybirdIndexConfig earlybirdIndexConfig,
-      ServerSetMember serverSetMember,
-      ScheduledExecutorServiceFactory executorServiceFactory,
-      ScheduledExecutorServiceFactory userUpdateIndexerExecutorFactory,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      SegmentSyncConfig syncConfig,
+      UselonrUpdatelonsStrelonamIndelonxelonr uselonrUpdatelonsStrelonamIndelonxelonr,
+      UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      ArchivelonelonarlybirdIndelonxConfig elonarlybirdIndelonxConfig,
+      SelonrvelonrSelontMelonmbelonr selonrvelonrSelontMelonmbelonr,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory elonxeloncutorSelonrvicelonFactory,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory uselonrUpdatelonIndelonxelonrelonxeloncutorFactory,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      SelongmelonntSyncConfig syncConfig,
       Clock clock,
-      CriticalExceptionHandler criticalExceptionHandler) throws IOException {
-    super(queryCacheManager, segmentManager, dynamicPartitionConfig, executorServiceFactory,
-        searchIndexingMetricSet, searchStatsReceiver, criticalExceptionHandler);
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) throws IOelonxcelonption {
+    supelonr(quelonryCachelonManagelonr, selongmelonntManagelonr, dynamicPartitionConfig, elonxeloncutorSelonrvicelonFactory,
+        selonarchIndelonxingMelontricSelont, selonarchStatsReloncelonivelonr, criticalelonxcelonptionHandlelonr);
 
-    Preconditions.checkState(syncConfig.getScrubGen().isPresent());
-    Date scrubGen = ScrubGenUtil.parseScrubGenToDate(syncConfig.getScrubGen().get());
+    Prelonconditions.chelonckStatelon(syncConfig.gelontScrubGelonn().isPrelonselonnt());
+    Datelon scrubGelonn = ScrubGelonnUtil.parselonScrubGelonnToDatelon(syncConfig.gelontScrubGelonn().gelont());
 
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
-    final DailyStatusBatches dailyStatusBatches = new DailyStatusBatches(
+    this.zkTryLockFactory = zooKelonelonpelonrTryLockFactory;
+    final DailyStatusBatchelons dailyStatusBatchelons = nelonw DailyStatusBatchelons(
         zkTryLockFactory,
-        scrubGen);
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
+        scrubGelonn);
+    this.elonarlybirdIndelonxConfig = elonarlybirdIndelonxConfig;
+    PartitionConfig curPartitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
 
-    this.indexingMetricSet = searchIndexingMetricSet;
+    this.indelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
 
-    this.timeSlicer = new ArchiveTimeSlicer(
-        EarlybirdConfig.getMaxSegmentSize(), dailyStatusBatches,
-        curPartitionConfig.getTierStartDate(), curPartitionConfig.getTierEndDate(),
-        earlybirdIndexConfig);
-    this.segmentDataProvider =
-        new ArchiveSegmentDataProvider(
+    this.timelonSlicelonr = nelonw ArchivelonTimelonSlicelonr(
+        elonarlybirdConfig.gelontMaxSelongmelonntSizelon(), dailyStatusBatchelons,
+        curPartitionConfig.gelontTielonrStartDatelon(), curPartitionConfig.gelontTielonrelonndDatelon(),
+        elonarlybirdIndelonxConfig);
+    this.selongmelonntDataProvidelonr =
+        nelonw ArchivelonSelongmelonntDataProvidelonr(
             dynamicPartitionConfig,
-            timeSlicer,
-            this.earlybirdIndexConfig);
+            timelonSlicelonr,
+            this.elonarlybirdIndelonxConfig);
 
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
+    this.uselonrUpdatelonsStrelonamIndelonxelonr = uselonrUpdatelonsStrelonamIndelonxelonr;
+    this.uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr = uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr;
 
-    this.coordinatedDailyUpdate = new CoordinatedEarlybirdAction(
+    this.coordinatelondDailyUpdatelon = nelonw CoordinatelondelonarlybirdAction(
         zkTryLockFactory,
-        "archive_daily_update",
+        "archivelon_daily_updatelon",
         dynamicPartitionConfig,
-        serverSetMember,
-        criticalExceptionHandler,
+        selonrvelonrSelontMelonmbelonr,
+        criticalelonxcelonptionHandlelonr,
         syncConfig);
 
-    this.segmentWarmer = new SegmentWarmer(criticalExceptionHandler);
+    this.selongmelonntWarmelonr = nelonw SelongmelonntWarmelonr(criticalelonxcelonptionHandlelonr);
     this.clock = clock;
-    this.segmentSyncConfig = syncConfig;
-    this.gcAfterIndexing = SearchCounter.export("gc_after_indexing");
+    this.selongmelonntSyncConfig = syncConfig;
+    this.gcAftelonrIndelonxing = SelonarchCountelonr.elonxport("gc_aftelonr_indelonxing");
   }
 
-  @Override
-  public SegmentDataProvider getSegmentDataProvider() {
-    return segmentDataProvider;
+  @Ovelonrridelon
+  public SelongmelonntDataProvidelonr gelontSelongmelonntDataProvidelonr() {
+    relonturn selongmelonntDataProvidelonr;
   }
 
-  @Override
-  protected void startUp() throws Exception {
-    LOG.info("Using CompleteSegmentManager to index complete segments.");
+  @Ovelonrridelon
+  protelonctelond void startUp() throws elonxcelonption {
+    LOG.info("Using ComplelontelonSelongmelonntManagelonr to indelonx complelontelon selongmelonnts.");
 
-    // deferring handling of multi-segment term dictionary for the archive.
-    // SEARCH-11952
-    CompleteSegmentManager completeSegmentManager = new CompleteSegmentManager(
+    // delonfelonrring handling of multi-selongmelonnt telonrm dictionary for thelon archivelon.
+    // SelonARCH-11952
+    ComplelontelonSelongmelonntManagelonr complelontelonSelongmelonntManagelonr = nelonw ComplelontelonSelongmelonntManagelonr(
         zkTryLockFactory,
-        segmentDataProvider,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        segmentManager,
+        selongmelonntDataProvidelonr,
+        uselonrUpdatelonsStrelonamIndelonxelonr,
+        uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
+        selongmelonntManagelonr,
         null,
-        indexingMetricSet,
+        indelonxingMelontricSelont,
         clock,
-        MultiSegmentTermDictionaryManager.NOOP_INSTANCE,
-        segmentSyncConfig,
-        criticalExceptionHandler);
+        MultiSelongmelonntTelonrmDictionaryManagelonr.NOOP_INSTANCelon,
+        selongmelonntSyncConfig,
+        criticalelonxcelonptionHandlelonr);
 
-    completeSegmentManager.indexUserEvents();
-    completeSegmentManager.indexCompleteSegments(
-        () -> segmentManager.getSegmentInfos(Filter.NeedsIndexing, Order.OLD_TO_NEW));
+    complelontelonSelongmelonntManagelonr.indelonxUselonrelonvelonnts();
+    complelontelonSelongmelonntManagelonr.indelonxComplelontelonSelongmelonnts(
+        () -> selongmelonntManagelonr.gelontSelongmelonntInfos(Filtelonr.NelonelondsIndelonxing, Ordelonr.OLD_TO_NelonW));
 
-    // In the archive cluster, the current segment needs to be loaded too.
-    List<SegmentInfo> allSegments =
-        Lists.newArrayList(segmentManager.getSegmentInfos(Filter.All, Order.OLD_TO_NEW));
-    completeSegmentManager.loadCompleteSegments(allSegments);
+    // In thelon archivelon clustelonr, thelon currelonnt selongmelonnt nelonelonds to belon loadelond too.
+    List<SelongmelonntInfo> allSelongmelonnts =
+        Lists.nelonwArrayList(selongmelonntManagelonr.gelontSelongmelonntInfos(Filtelonr.All, Ordelonr.OLD_TO_NelonW));
+    complelontelonSelongmelonntManagelonr.loadComplelontelonSelongmelonnts(allSelongmelonnts);
 
-    completeSegmentManager.buildMultiSegmentTermDictionary();
+    complelontelonSelongmelonntManagelonr.buildMultiSelongmelonntTelonrmDictionary();
 
-    completeSegmentManager.warmSegments(allSegments);
+    complelontelonSelongmelonntManagelonr.warmSelongmelonnts(allSelongmelonnts);
 
-    LOG.info("Starting to run UserUpdatesKafkaConsumer");
-    new Thread(userUpdatesStreamIndexer::run, "userupdates-stream-indexer").start();
+    LOG.info("Starting to run UselonrUpdatelonsKafkaConsumelonr");
+    nelonw Threlonad(uselonrUpdatelonsStrelonamIndelonxelonr::run, "uselonrupdatelons-strelonam-indelonxelonr").start();
 
-    if (EarlybirdConfig.consumeUserScrubGeoEvents()) {
-      LOG.info("Starting to run UserScrubGeoEventKafkaConsumer");
-      new Thread(userScrubGeoEventStreamIndexer::run,
-          "userScrubGeoEvent-stream-indexer").start();
+    if (elonarlybirdConfig.consumelonUselonrScrubGelonoelonvelonnts()) {
+      LOG.info("Starting to run UselonrScrubGelonoelonvelonntKafkaConsumelonr");
+      nelonw Threlonad(uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr::run,
+          "uselonrScrubGelonoelonvelonnt-strelonam-indelonxelonr").start();
     }
   }
 
-  private static List<ArchiveTimeSlice> truncateSegmentList(List<ArchiveTimeSlice> segmentList,
-                                                            int maxNumSegments) {
-    // Maybe cut-off the beginning of the sorted list of IDs.
-    if (maxNumSegments > 0 && maxNumSegments < segmentList.size()) {
-      return segmentList.subList(segmentList.size() - maxNumSegments, segmentList.size());
-    } else {
-      return segmentList;
+  privatelon static List<ArchivelonTimelonSlicelon> truncatelonSelongmelonntList(List<ArchivelonTimelonSlicelon> selongmelonntList,
+                                                            int maxNumSelongmelonnts) {
+    // Maybelon cut-off thelon belonginning of thelon sortelond list of IDs.
+    if (maxNumSelongmelonnts > 0 && maxNumSelongmelonnts < selongmelonntList.sizelon()) {
+      relonturn selongmelonntList.subList(selongmelonntList.sizelon() - maxNumSelongmelonnts, selongmelonntList.sizelon());
+    } elonlselon {
+      relonturn selongmelonntList;
     }
   }
 
 
-  @Override
-  protected void indexingLoop(boolean firstLoop) throws Exception {
+  @Ovelonrridelon
+  protelonctelond void indelonxingLoop(boolelonan firstLoop) throws elonxcelonption {
     if (firstLoop) {
-      EarlybirdStatus.beginEvent(
-          INDEX_CURRENT_SEGMENT, getSearchIndexingMetricSet().startupInCurrentSegment);
+      elonarlybirdStatus.belonginelonvelonnt(
+          INDelonX_CURRelonNT_SelonGMelonNT, gelontSelonarchIndelonxingMelontricSelont().startupInCurrelonntSelongmelonnt);
     }
 
-    List<ArchiveTimeSlice> timeSlices = timeSlicer.getTimeSlicesInTierRange();
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    timeSlices = truncateSegmentList(timeSlices, curPartitionConfig.getMaxEnabledLocalSegments());
+    List<ArchivelonTimelonSlicelon> timelonSlicelons = timelonSlicelonr.gelontTimelonSlicelonsInTielonrRangelon();
+    PartitionConfig curPartitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
+    timelonSlicelons = truncatelonSelongmelonntList(timelonSlicelons, curPartitionConfig.gelontMaxelonnablelondLocalSelongmelonnts());
 
-    for (final ArchiveTimeSlice timeSlice : timeSlices) {
-      // If any timeslice build failed, do not try to build timeslice after that to prevent
-      // possible holes between timeslices.
+    for (final ArchivelonTimelonSlicelon timelonSlicelon : timelonSlicelons) {
+      // If any timelonslicelon build failelond, do not try to build timelonslicelon aftelonr that to prelonvelonnt
+      // possiblelon holelons belontwelonelonn timelonslicelons.
       try {
-        if (!processArchiveTimeSlice(timeSlice)) {
-          LOG.warn("Building timeslice {} has failed, stopping future builds.",
-              timeSlice.getDescription());
-          indexingMetricSet.archiveTimeSliceBuildFailedCounter.increment();
-          return;
+        if (!procelonssArchivelonTimelonSlicelon(timelonSlicelon)) {
+          LOG.warn("Building timelonslicelon {} has failelond, stopping futurelon builds.",
+              timelonSlicelon.gelontDelonscription());
+          indelonxingMelontricSelont.archivelonTimelonSlicelonBuildFailelondCountelonr.increlonmelonnt();
+          relonturn;
         }
-      } catch (CoordinatedEarlybirdActionLockFailed e) {
-        // If the timeslice build failed because of lock coordination, we can wait for the next
-        // iteration to build again.
-        return;
+      } catch (CoordinatelondelonarlybirdActionLockFailelond elon) {
+        // If thelon timelonslicelon build failelond beloncauselon of lock coordination, welon can wait for thelon nelonxt
+        // itelonration to build again.
+        relonturn;
       }
     }
 
     if (firstLoop) {
-      EarlybirdStatus.endEvent(
-          INDEX_CURRENT_SEGMENT, getSearchIndexingMetricSet().startupInCurrentSegment);
-      LOG.info("First indexing loop complete. Setting up query cache...");
-      EarlybirdStatus.beginEvent(
-          SETUP_QUERY_CACHE, getSearchIndexingMetricSet().startupInQueryCacheUpdates);
+      elonarlybirdStatus.elonndelonvelonnt(
+          INDelonX_CURRelonNT_SelonGMelonNT, gelontSelonarchIndelonxingMelontricSelont().startupInCurrelonntSelongmelonnt);
+      LOG.info("First indelonxing loop complelontelon. Selontting up quelonry cachelon...");
+      elonarlybirdStatus.belonginelonvelonnt(
+          SelonTUP_QUelonRY_CACHelon, gelontSelonarchIndelonxingMelontricSelont().startupInQuelonryCachelonUpdatelons);
     }
-    setupQueryCacheIfNeeded();
+    selontupQuelonryCachelonIfNelonelondelond();
 
-    if (EarlybirdStatus.isStarting() && queryCacheManager.allTasksRan()) {
-      LOG.info("Query cache setup complete. Becoming current now...");
-      EarlybirdStatus.endEvent(
-          SETUP_QUERY_CACHE, getSearchIndexingMetricSet().startupInQueryCacheUpdates);
+    if (elonarlybirdStatus.isStarting() && quelonryCachelonManagelonr.allTasksRan()) {
+      LOG.info("Quelonry cachelon selontup complelontelon. Beloncoming currelonnt now...");
+      elonarlybirdStatus.elonndelonvelonnt(
+          SelonTUP_QUelonRY_CACHelon, gelontSelonarchIndelonxingMelontricSelont().startupInQuelonryCachelonUpdatelons);
 
-      becomeCurrent();
-      EarlybirdStatus.recordEarlybirdEvent("Archive Earlybird is current");
+      beloncomelonCurrelonnt();
+      elonarlybirdStatus.reloncordelonarlybirdelonvelonnt("Archivelon elonarlybird is currelonnt");
     }
 
-    updateIndexFreshnessStats(timeSlices);
+    updatelonIndelonxFrelonshnelonssStats(timelonSlicelons);
   }
 
-  @VisibleForTesting
-  protected boolean processArchiveTimeSlice(final ArchiveTimeSlice timeSlice)
-      throws CoordinatedEarlybirdActionLockFailed, IOException {
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    long minStatusID = timeSlice.getMinStatusID(curPartitionConfig.getIndexingHashPartitionID());
-    SegmentInfo segmentInfo = segmentManager.getSegmentInfo(minStatusID);
-    if (segmentInfo == null) {
-      return indexSegmentFromScratch(timeSlice);
-    } else if (existingSegmentNeedsUpdating(timeSlice, segmentInfo)) {
-      return indexNewDayAndAppendExistingSegment(timeSlice, segmentInfo);
+  @VisiblelonForTelonsting
+  protelonctelond boolelonan procelonssArchivelonTimelonSlicelon(final ArchivelonTimelonSlicelon timelonSlicelon)
+      throws CoordinatelondelonarlybirdActionLockFailelond, IOelonxcelonption {
+    PartitionConfig curPartitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
+    long minStatusID = timelonSlicelon.gelontMinStatusID(curPartitionConfig.gelontIndelonxingHashPartitionID());
+    SelongmelonntInfo selongmelonntInfo = selongmelonntManagelonr.gelontSelongmelonntInfo(minStatusID);
+    if (selongmelonntInfo == null) {
+      relonturn indelonxSelongmelonntFromScratch(timelonSlicelon);
+    } elonlselon if (elonxistingSelongmelonntNelonelondsUpdating(timelonSlicelon, selongmelonntInfo)) {
+      relonturn indelonxNelonwDayAndAppelonndelonxistingSelongmelonnt(timelonSlicelon, selongmelonntInfo);
     }
-    return true;
+    relonturn truelon;
   }
 
 
-  @VisibleForTesting
-  SegmentInfo newSegmentInfo(ArchiveTimeSlice timeSlice) throws IOException {
-    return new SegmentInfo(segmentDataProvider.newArchiveSegment(timeSlice),
-        segmentManager.getEarlybirdSegmentFactory(), segmentSyncConfig);
+  @VisiblelonForTelonsting
+  SelongmelonntInfo nelonwSelongmelonntInfo(ArchivelonTimelonSlicelon timelonSlicelon) throws IOelonxcelonption {
+    relonturn nelonw SelongmelonntInfo(selongmelonntDataProvidelonr.nelonwArchivelonSelongmelonnt(timelonSlicelon),
+        selongmelonntManagelonr.gelontelonarlybirdSelongmelonntFactory(), selongmelonntSyncConfig);
   }
 
-  private boolean indexNewDayAndAppendExistingSegment(final ArchiveTimeSlice timeSlice,
-                                                      SegmentInfo segmentInfo)
-      throws CoordinatedEarlybirdActionLockFailed, IOException {
+  privatelon boolelonan indelonxNelonwDayAndAppelonndelonxistingSelongmelonnt(final ArchivelonTimelonSlicelon timelonSlicelon,
+                                                      SelongmelonntInfo selongmelonntInfo)
+      throws CoordinatelondelonarlybirdActionLockFailelond, IOelonxcelonption {
 
-    LOG.info("Updating segment: {}; new endDate will be {} segmentInfo: {}",
-        segmentInfo.getSegment().getTimeSliceID(), timeSlice.getEndDate(), segmentInfo);
+    LOG.info("Updating selongmelonnt: {}; nelonw elonndDatelon will belon {} selongmelonntInfo: {}",
+        selongmelonntInfo.gelontSelongmelonnt().gelontTimelonSlicelonID(), timelonSlicelon.gelontelonndDatelon(), selongmelonntInfo);
 
-    // Create another new SegmentInfo for indexing
-    final SegmentInfo newSegmentInfoForIndexing = newSegmentInfo(timeSlice);
-    // make a final reference of the old segment info to be passed into closure.
-    final SegmentInfo oldSegmentInfo = segmentInfo;
+    // Crelonatelon anothelonr nelonw SelongmelonntInfo for indelonxing
+    final SelongmelonntInfo nelonwSelongmelonntInfoForIndelonxing = nelonwSelongmelonntInfo(timelonSlicelon);
+    // makelon a final relonfelonrelonncelon of thelon old selongmelonnt info to belon passelond into closurelon.
+    final SelongmelonntInfo oldSelongmelonntInfo = selongmelonntInfo;
 
-    // Sanity check: the old and new segment should not share the same lucene directory.
-    Preconditions.checkState(
-        !newSegmentInfoForIndexing.getSyncInfo().getLocalLuceneSyncDir().equals(
-            oldSegmentInfo.getSyncInfo().getLocalLuceneSyncDir()));
+    // Sanity chelonck: thelon old and nelonw selongmelonnt should not sharelon thelon samelon lucelonnelon direlonctory.
+    Prelonconditions.chelonckStatelon(
+        !nelonwSelongmelonntInfoForIndelonxing.gelontSyncInfo().gelontLocalLucelonnelonSyncDir().elonquals(
+            oldSelongmelonntInfo.gelontSyncInfo().gelontLocalLucelonnelonSyncDir()));
 
-    Preconditions.checkState(
-        !newSegmentInfoForIndexing.getSyncInfo().getLocalSyncDir().equals(
-            oldSegmentInfo.getSyncInfo().getLocalSyncDir()));
+    Prelonconditions.chelonckStatelon(
+        !nelonwSelongmelonntInfoForIndelonxing.gelontSyncInfo().gelontLocalSyncDir().elonquals(
+            oldSelongmelonntInfo.gelontSyncInfo().gelontLocalSyncDir()));
 
-    final ArchiveSegment oldSegment = (ArchiveSegment) segmentInfo.getSegment();
+    final ArchivelonSelongmelonnt oldSelongmelonnt = (ArchivelonSelongmelonnt) selongmelonntInfo.gelontSelongmelonnt();
 
-    return indexSegment(newSegmentInfoForIndexing, oldSegmentInfo, input -> {
-      // we're updating the segment - only index days after the old end date, but only if
-      // we're in the on-disk archive, and we're sure that the previous days have already
-      // been indexed.
-      return !earlybirdIndexConfig.isIndexStoredOnDisk()
-          // First time around, and the segment has not been indexed and optimized yet,
-          // we will want to add all the days
-          || !oldSegmentInfo.isOptimized()
-          || oldSegmentInfo.getIndexSegment().getIndexStats().getStatusCount() == 0
-          || !oldSegment.getDataEndDate().before(timeSlice.getEndDate())
-          // Index any new days
-          || input.after(oldSegment.getDataEndDate());
+    relonturn indelonxSelongmelonnt(nelonwSelongmelonntInfoForIndelonxing, oldSelongmelonntInfo, input -> {
+      // welon'relon updating thelon selongmelonnt - only indelonx days aftelonr thelon old elonnd datelon, but only if
+      // welon'relon in thelon on-disk archivelon, and welon'relon surelon that thelon prelonvious days havelon alrelonady
+      // belonelonn indelonxelond.
+      relonturn !elonarlybirdIndelonxConfig.isIndelonxStorelondOnDisk()
+          // First timelon around, and thelon selongmelonnt has not belonelonn indelonxelond and optimizelond yelont,
+          // welon will want to add all thelon days
+          || !oldSelongmelonntInfo.isOptimizelond()
+          || oldSelongmelonntInfo.gelontIndelonxSelongmelonnt().gelontIndelonxStats().gelontStatusCount() == 0
+          || !oldSelongmelonnt.gelontDataelonndDatelon().belonforelon(timelonSlicelon.gelontelonndDatelon())
+          // Indelonx any nelonw days
+          || input.aftelonr(oldSelongmelonnt.gelontDataelonndDatelon());
     });
   }
 
-  private boolean existingSegmentNeedsUpdating(ArchiveTimeSlice timeSlice,
-                                               SegmentInfo segmentInfo) {
-    return ((ArchiveSegment) segmentInfo.getSegment())
-        .getDataEndDate().before(timeSlice.getEndDate())
-        // First time around, the end date is the same as the timeSlice end date, but
-        // the segment has not been indexed and optimized yet
-        || (!segmentInfo.isOptimized() && !segmentInfo.wasIndexed())
-        // If indexing failed, this index will not be marked as complete, and we will want
-        // to reindex
-        || !segmentInfo.isComplete();
+  privatelon boolelonan elonxistingSelongmelonntNelonelondsUpdating(ArchivelonTimelonSlicelon timelonSlicelon,
+                                               SelongmelonntInfo selongmelonntInfo) {
+    relonturn ((ArchivelonSelongmelonnt) selongmelonntInfo.gelontSelongmelonnt())
+        .gelontDataelonndDatelon().belonforelon(timelonSlicelon.gelontelonndDatelon())
+        // First timelon around, thelon elonnd datelon is thelon samelon as thelon timelonSlicelon elonnd datelon, but
+        // thelon selongmelonnt has not belonelonn indelonxelond and optimizelond yelont
+        || (!selongmelonntInfo.isOptimizelond() && !selongmelonntInfo.wasIndelonxelond())
+        // If indelonxing failelond, this indelonx will not belon markelond as complelontelon, and welon will want
+        // to relonindelonx
+        || !selongmelonntInfo.isComplelontelon();
   }
 
-  private boolean indexSegmentFromScratch(ArchiveTimeSlice timeSlice) throws
-      CoordinatedEarlybirdActionLockFailed, IOException {
+  privatelon boolelonan indelonxSelongmelonntFromScratch(ArchivelonTimelonSlicelon timelonSlicelon) throws
+      CoordinatelondelonarlybirdActionLockFailelond, IOelonxcelonption {
 
-    SegmentInfo segmentInfo = newSegmentInfo(timeSlice);
-    LOG.info("Creating segment: " + segmentInfo.getSegment().getTimeSliceID()
-        + "; new endDate will be " + timeSlice.getEndDate() + " segmentInfo: " + segmentInfo);
+    SelongmelonntInfo selongmelonntInfo = nelonwSelongmelonntInfo(timelonSlicelon);
+    LOG.info("Crelonating selongmelonnt: " + selongmelonntInfo.gelontSelongmelonnt().gelontTimelonSlicelonID()
+        + "; nelonw elonndDatelon will belon " + timelonSlicelon.gelontelonndDatelon() + " selongmelonntInfo: " + selongmelonntInfo);
 
-    return indexSegment(segmentInfo, null, ArchiveSegment.MATCH_ALL_DATE_PREDICATE);
+    relonturn indelonxSelongmelonnt(selongmelonntInfo, null, ArchivelonSelongmelonnt.MATCH_ALL_DATelon_PRelonDICATelon);
   }
 
-  private void updateIndexFreshnessStats(List<ArchiveTimeSlice> timeSlices) {
-    if (!timeSlices.isEmpty()) {
-      ArchiveTimeSlice lastTimeslice = timeSlices.get(timeSlices.size() - 1);
+  privatelon void updatelonIndelonxFrelonshnelonssStats(List<ArchivelonTimelonSlicelon> timelonSlicelons) {
+    if (!timelonSlicelons.iselonmpty()) {
+      ArchivelonTimelonSlicelon lastTimelonslicelon = timelonSlicelons.gelont(timelonSlicelons.sizelon() - 1);
 
-      // Add ~24 hours to start of end date to estimate freshest tweet time.
-      indexingMetricSet.freshestTweetTimeMillis.set(
-          lastTimeslice.getEndDate().getTime() + ONE_DAY_MILLIS);
+      // Add ~24 hours to start of elonnd datelon to elonstimatelon frelonshelonst twelonelont timelon.
+      indelonxingMelontricSelont.frelonshelonstTwelonelontTimelonMillis.selont(
+          lastTimelonslicelon.gelontelonndDatelon().gelontTimelon() + ONelon_DAY_MILLIS);
 
-      PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-      long maxStatusId = lastTimeslice.getMaxStatusID(
-          curPartitionConfig.getIndexingHashPartitionID());
-      if (maxStatusId > indexingMetricSet.highestStatusId.get()) {
-        indexingMetricSet.highestStatusId.set(maxStatusId);
+      PartitionConfig curPartitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
+      long maxStatusId = lastTimelonslicelon.gelontMaxStatusID(
+          curPartitionConfig.gelontIndelonxingHashPartitionID());
+      if (maxStatusId > indelonxingMelontricSelont.highelonstStatusId.gelont()) {
+        indelonxingMelontricSelont.highelonstStatusId.selont(maxStatusId);
       }
     }
   }
 
-  @Override
-  public void shutDownIndexing() {
+  @Ovelonrridelon
+  public void shutDownIndelonxing() {
     LOG.info("Shutting down.");
-    userUpdatesStreamIndexer.close();
-    userScrubGeoEventStreamIndexer.close();
-    LOG.info("Closed User Event Kafka Consumers. Now Shutting down reader set.");
-    getSegmentDataProvider().getSegmentDataReaderSet().stopAll();
+    uselonrUpdatelonsStrelonamIndelonxelonr.closelon();
+    uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr.closelon();
+    LOG.info("Closelond Uselonr elonvelonnt Kafka Consumelonrs. Now Shutting down relonadelonr selont.");
+    gelontSelongmelonntDataProvidelonr().gelontSelongmelonntDataRelonadelonrSelont().stopAll();
   }
 
   /**
-   * Attempts to index new days of data into the provided segment, indexing only the days that
-   * match the "dateFilter" predicate.
-   * @return true iff indexing succeeded, false otherwise.
+   * Attelonmpts to indelonx nelonw days of data into thelon providelond selongmelonnt, indelonxing only thelon days that
+   * match thelon "datelonFiltelonr" prelondicatelon.
+   * @relonturn truelon iff indelonxing succelonelondelond, falselon othelonrwiselon.
    */
-  @VisibleForTesting
-  protected boolean indexSegment(final SegmentInfo segmentInfo,
-                                 @Nullable final SegmentInfo segmentToAppend,
-                                 final Predicate<Date> dateFilter)
-      throws CoordinatedEarlybirdActionLockFailed, IOException {
-    // Don't coordinate while we're starting up
-    if (!EarlybirdStatus.isStarting()) {
-      return coordinatedDailyUpdate.execute(segmentInfo.getSegmentName(),
-          isCoordinated -> innerIndexSegment(segmentInfo, segmentToAppend, dateFilter));
-    } else {
-      return innerIndexSegment(segmentInfo, segmentToAppend, dateFilter);
+  @VisiblelonForTelonsting
+  protelonctelond boolelonan indelonxSelongmelonnt(final SelongmelonntInfo selongmelonntInfo,
+                                 @Nullablelon final SelongmelonntInfo selongmelonntToAppelonnd,
+                                 final Prelondicatelon<Datelon> datelonFiltelonr)
+      throws CoordinatelondelonarlybirdActionLockFailelond, IOelonxcelonption {
+    // Don't coordinatelon whilelon welon'relon starting up
+    if (!elonarlybirdStatus.isStarting()) {
+      relonturn coordinatelondDailyUpdatelon.elonxeloncutelon(selongmelonntInfo.gelontSelongmelonntNamelon(),
+          isCoordinatelond -> innelonrIndelonxSelongmelonnt(selongmelonntInfo, selongmelonntToAppelonnd, datelonFiltelonr));
+    } elonlselon {
+      relonturn innelonrIndelonxSelongmelonnt(selongmelonntInfo, selongmelonntToAppelonnd, datelonFiltelonr);
     }
   }
 
-  private boolean innerIndexSegment(SegmentInfo segmentInfo,
-                                    @Nullable SegmentInfo segmentToAppend,
-                                    Predicate<Date> dateFilter)
-      throws IOException {
+  privatelon boolelonan innelonrIndelonxSelongmelonnt(SelongmelonntInfo selongmelonntInfo,
+                                    @Nullablelon SelongmelonntInfo selongmelonntToAppelonnd,
+                                    Prelondicatelon<Datelon> datelonFiltelonr)
+      throws IOelonxcelonption {
 
-    // First try to load the new day from HDFS / Local disk
-    if (new SegmentLoader(segmentSyncConfig, criticalExceptionHandler).load(segmentInfo)) {
-      LOG.info("Successful loaded segment for new day: " + segmentInfo);
-      segmentManager.putSegmentInfo(segmentInfo);
-      gcAfterIndexing.increment();
+    // First try to load thelon nelonw day from HDFS / Local disk
+    if (nelonw SelongmelonntLoadelonr(selongmelonntSyncConfig, criticalelonxcelonptionHandlelonr).load(selongmelonntInfo)) {
+      LOG.info("Succelonssful loadelond selongmelonnt for nelonw day: " + selongmelonntInfo);
+      selongmelonntManagelonr.putSelongmelonntInfo(selongmelonntInfo);
+      gcAftelonrIndelonxing.increlonmelonnt();
       GCUtil.runGC();
-      return true;
+      relonturn truelon;
     }
 
-    LOG.info("Failed to load segment for new day. Will index segment: " + segmentInfo);
-    RecordReader<TweetDocument> tweetReader = ((ArchiveSegment) segmentInfo.getSegment())
-        .getStatusRecordReader(earlybirdIndexConfig.createDocumentFactory(), dateFilter);
+    LOG.info("Failelond to load selongmelonnt for nelonw day. Will indelonx selongmelonnt: " + selongmelonntInfo);
+    ReloncordRelonadelonr<TwelonelontDocumelonnt> twelonelontRelonadelonr = ((ArchivelonSelongmelonnt) selongmelonntInfo.gelontSelongmelonnt())
+        .gelontStatusReloncordRelonadelonr(elonarlybirdIndelonxConfig.crelonatelonDocumelonntFactory(), datelonFiltelonr);
     try {
-      // Read and index the statuses
-      boolean success = newSimpleSegmentIndexer(tweetReader, segmentToAppend)
-          .indexSegment(segmentInfo);
-      if (!success) {
-        return false;
+      // Relonad and indelonx thelon statuselons
+      boolelonan succelonss = nelonwSimplelonSelongmelonntIndelonxelonr(twelonelontRelonadelonr, selongmelonntToAppelonnd)
+          .indelonxSelongmelonnt(selongmelonntInfo);
+      if (!succelonss) {
+        relonturn falselon;
       }
     } finally {
-      tweetReader.stop();
+      twelonelontRelonadelonr.stop();
     }
 
-    if (!SegmentOptimizer.optimize(segmentInfo)) {
-      // We consider the whole indexing event as failed if we fail to optimize.
-      LOG.error("Failed to optimize segment: " + segmentInfo);
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return false;
+    if (!SelongmelonntOptimizelonr.optimizelon(selongmelonntInfo)) {
+      // Welon considelonr thelon wholelon indelonxing elonvelonnt as failelond if welon fail to optimizelon.
+      LOG.elonrror("Failelond to optimizelon selongmelonnt: " + selongmelonntInfo);
+      selongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
+      relonturn falselon;
     }
 
-    if (!segmentWarmer.warmSegmentIfNecessary(segmentInfo)) {
-      // We consider the whole indexing event as failed if we failed to warm (because we open
-      // index readers in the warmer).
-      LOG.error("Failed to warm segment: " + segmentInfo);
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return false;
+    if (!selongmelonntWarmelonr.warmSelongmelonntIfNeloncelonssary(selongmelonntInfo)) {
+      // Welon considelonr thelon wholelon indelonxing elonvelonnt as failelond if welon failelond to warm (beloncauselon welon opelonn
+      // indelonx relonadelonrs in thelon warmelonr).
+      LOG.elonrror("Failelond to warm selongmelonnt: " + selongmelonntInfo);
+      selongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
+      relonturn falselon;
     }
 
-    // Flush and upload segment to HDFS. If this fails, we just log a warning and return true.
-    boolean success = new SegmentHdfsFlusher(zkTryLockFactory, segmentSyncConfig)
-        .flushSegmentToDiskAndHDFS(segmentInfo);
-    if (!success) {
-      LOG.warn("Failed to flush segment to HDFS: " + segmentInfo);
+    // Flush and upload selongmelonnt to HDFS. If this fails, welon just log a warning and relonturn truelon.
+    boolelonan succelonss = nelonw SelongmelonntHdfsFlushelonr(zkTryLockFactory, selongmelonntSyncConfig)
+        .flushSelongmelonntToDiskAndHDFS(selongmelonntInfo);
+    if (!succelonss) {
+      LOG.warn("Failelond to flush selongmelonnt to HDFS: " + selongmelonntInfo);
     }
 
-    segmentManager.putSegmentInfo(segmentInfo);
-    gcAfterIndexing.increment();
+    selongmelonntManagelonr.putSelongmelonntInfo(selongmelonntInfo);
+    gcAftelonrIndelonxing.increlonmelonnt();
     GCUtil.runGC();
-    return true;
+    relonturn truelon;
   }
 
-  @VisibleForTesting
-  protected SimpleSegmentIndexer newSimpleSegmentIndexer(
-      RecordReader<TweetDocument> tweetReader, SegmentInfo segmentToAppend) {
-    return new SimpleSegmentIndexer(tweetReader, indexingMetricSet, segmentToAppend);
+  @VisiblelonForTelonsting
+  protelonctelond SimplelonSelongmelonntIndelonxelonr nelonwSimplelonSelongmelonntIndelonxelonr(
+      ReloncordRelonadelonr<TwelonelontDocumelonnt> twelonelontRelonadelonr, SelongmelonntInfo selongmelonntToAppelonnd) {
+    relonturn nelonw SimplelonSelongmelonntIndelonxelonr(twelonelontRelonadelonr, indelonxingMelontricSelont, selongmelonntToAppelonnd);
   }
 
-  @Override
-  public boolean isCaughtUpForTests() {
-    return EarlybirdStatus.getStatusCode() == EarlybirdStatusCode.CURRENT;
+  @Ovelonrridelon
+  public boolelonan isCaughtUpForTelonsts() {
+    relonturn elonarlybirdStatus.gelontStatusCodelon() == elonarlybirdStatusCodelon.CURRelonNT;
   }
 
-  public CoordinatedEarlybirdActionInterface getCoordinatedOptimizer() {
-    return this.coordinatedDailyUpdate;
+  public CoordinatelondelonarlybirdActionIntelonrfacelon gelontCoordinatelondOptimizelonr() {
+    relonturn this.coordinatelondDailyUpdatelon;
   }
 
-  public ArchiveTimeSlicer getTimeSlicer() {
-    return timeSlicer;
+  public ArchivelonTimelonSlicelonr gelontTimelonSlicelonr() {
+    relonturn timelonSlicelonr;
   }
 }

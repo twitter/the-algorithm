@@ -1,73 +1,73 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendation
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndation
 
-// These are broken into their own union
-// because we can have features that are
-// complex flavors of these (such as Seq)
-union PrimitiveFeatureValue {
-    1: i32 intValue
-    2: i64 longValue
-    3: string strValue
-    4: bool boolValue
+// Thelonselon arelon brokelonn into thelonir own union
+// beloncauselon welon can havelon felonaturelons that arelon
+// complelonx flavors of thelonselon (such as Selonq)
+union PrimitivelonFelonaturelonValuelon {
+    1: i32 intValuelon
+    2: i64 longValuelon
+    3: string strValuelon
+    4: bool boolValuelon
 }
 
-union FeatureValue {
-    1: PrimitiveFeatureValue primitiveValue
+union FelonaturelonValuelon {
+    1: PrimitivelonFelonaturelonValuelon primitivelonValuelon
 }
 
-struct DebugParams {
-    1: optional map<string, FeatureValue> featureOverrides
-    2: optional i64 randomizationSeed
-    3: optional bool includeDebugInfoInResults
+struct DelonbugParams {
+    1: optional map<string, FelonaturelonValuelon> felonaturelonOvelonrridelons
+    2: optional i64 randomizationSelonelond
+    3: optional bool includelonDelonbugInfoInRelonsults
     4: optional bool doNotLog
 }
 
-enum DebugCandidateSourceIdentifier {
-  UTT_INTERESTS_RELATED_USERS_SOURCE = 0
-  UTT_PRODUCER_EXPANSION_SOURCE = 1
-  UTT_SEED_ACCOUNT_SOURCE = 2
-  BYF_USER_FOLLOW_CLUSTER_SIMS_SOURCE = 3
-  BYF_USER_FOLLOW_CLUSTER_SOURCE = 4
-  USER_FOLLOW_CLUSTER_SOURCE = 5
-  RECENT_SEARCH_BASED_SOURCE = 6
-  PEOPLE_ACTIVITY_RECENT_ENGAGEMENT_SOURCE = 7
-  PEOPLE_ACTIVITY_RECENT_ENGAGEMENT_SIMS_SOURCE = 8,
-  REVERSE_PHONE_BOOK_SOURCE = 9,
-  REVERSE_EMAIL_BOOK_SOURCE = 10,
-  SIMS_DEBUG_STORE = 11,
-  UTT_PRODUCER_ONLINE_MBCG_SOURCE = 12,
-  BONUS_FOLLOW_CONDITIONAL_ENGAGEMENT_STORE = 13,
-  // 14 (BONUS_FOLLOW_PMI_STORE) was deleted as it's not used anymore
-  FOLLOW2VEC_NEAREST_NEIGHBORS_STORE = 15,
-  OFFLINE_STP = 16,
-  OFFLINE_STP_BIG = 17,
-  OFFLINE_MUTUAL_FOLLOW_EXPANSION = 18,
-  REPEATED_PROFILE_VISITS = 19,
-  TIME_DECAY_FOLLOW2VEC_NEAREST_NEIGHBORS_STORE = 20,
-  LINEAR_REGRESSION_FOLLOW2VEC_NEAREST_NEIGHBORS_STORE = 21,
-  REAL_GRAPH_EXPANSION_SOURCE = 22,
-  RELATABLE_ACCOUNTS_BY_INTEREST = 23,
-  EMAIL_TWEET_CLICK = 24,
-  GOOD_TWEET_CLICK_ENGAGEMENTS = 25,
-  ENGAGED_FOLLOWER_RATIO = 26,
-  TWEET_SHARE_ENGAGEMENTS = 27,
-  BULK_FRIEND_FOLLOWS = 28,
-  REAL_GRAPH_OON_V2_SOURCE = 30,
-  CROWD_SEARCH_ACCOUNTS = 31,
-  POP_GEOHASH = 32,
+elonnum DelonbugCandidatelonSourcelonIdelonntifielonr {
+  UTT_INTelonRelonSTS_RelonLATelonD_USelonRS_SOURCelon = 0
+  UTT_PRODUCelonR_elonXPANSION_SOURCelon = 1
+  UTT_SelonelonD_ACCOUNT_SOURCelon = 2
+  BYF_USelonR_FOLLOW_CLUSTelonR_SIMS_SOURCelon = 3
+  BYF_USelonR_FOLLOW_CLUSTelonR_SOURCelon = 4
+  USelonR_FOLLOW_CLUSTelonR_SOURCelon = 5
+  RelonCelonNT_SelonARCH_BASelonD_SOURCelon = 6
+  PelonOPLelon_ACTIVITY_RelonCelonNT_elonNGAGelonMelonNT_SOURCelon = 7
+  PelonOPLelon_ACTIVITY_RelonCelonNT_elonNGAGelonMelonNT_SIMS_SOURCelon = 8,
+  RelonVelonRSelon_PHONelon_BOOK_SOURCelon = 9,
+  RelonVelonRSelon_elonMAIL_BOOK_SOURCelon = 10,
+  SIMS_DelonBUG_STORelon = 11,
+  UTT_PRODUCelonR_ONLINelon_MBCG_SOURCelon = 12,
+  BONUS_FOLLOW_CONDITIONAL_elonNGAGelonMelonNT_STORelon = 13,
+  // 14 (BONUS_FOLLOW_PMI_STORelon) was delonlelontelond as it's not uselond anymorelon
+  FOLLOW2VelonC_NelonARelonST_NelonIGHBORS_STORelon = 15,
+  OFFLINelon_STP = 16,
+  OFFLINelon_STP_BIG = 17,
+  OFFLINelon_MUTUAL_FOLLOW_elonXPANSION = 18,
+  RelonPelonATelonD_PROFILelon_VISITS = 19,
+  TIMelon_DelonCAY_FOLLOW2VelonC_NelonARelonST_NelonIGHBORS_STORelon = 20,
+  LINelonAR_RelonGRelonSSION_FOLLOW2VelonC_NelonARelonST_NelonIGHBORS_STORelon = 21,
+  RelonAL_GRAPH_elonXPANSION_SOURCelon = 22,
+  RelonLATABLelon_ACCOUNTS_BY_INTelonRelonST = 23,
+  elonMAIL_TWelonelonT_CLICK = 24,
+  GOOD_TWelonelonT_CLICK_elonNGAGelonMelonNTS = 25,
+  elonNGAGelonD_FOLLOWelonR_RATIO = 26,
+  TWelonelonT_SHARelon_elonNGAGelonMelonNTS = 27,
+  BULK_FRIelonND_FOLLOWS = 28,
+  RelonAL_GRAPH_OON_V2_SOURCelon = 30,
+  CROWD_SelonARCH_ACCOUNTS = 31,
+  POP_GelonOHASH = 32,
   POP_COUNTRY = 33,
   POP_COUNTRY_BACKFILL = 34,
-  TWEET_SHARER_TO_SHARE_RECIPIENT_ENGAGEMENTS = 35,
-  TWEET_AUTHOR_TO_SHARE_RECIPIENT_ENGAGEMENTS = 36,
-  BULK_FRIEND_FOLLOWS_NEW_USER = 37,
-  ONLINE_STP_EPSCORER = 38,
+  TWelonelonT_SHARelonR_TO_SHARelon_RelonCIPIelonNT_elonNGAGelonMelonNTS = 35,
+  TWelonelonT_AUTHOR_TO_SHARelon_RelonCIPIelonNT_elonNGAGelonMelonNTS = 36,
+  BULK_FRIelonND_FOLLOWS_NelonW_USelonR = 37,
+  ONLINelon_STP_elonPSCORelonR = 38,
   ORGANIC_FOLLOW_ACCOUNTS = 39,
   NUX_LO_HISTORY = 40,
   TRAFFIC_ATTRIBUTION_ACCOUNTS = 41,
-  ONLINE_STP_RAW_ADDRESS_BOOK = 42,
-  POP_GEOHASH_QUALITY_FOLLOW = 43,
-  NOTIFICATION_ENGAGEMENT = 44,
-  EFR_BY_WORLDWIDE_PICTURE_PRODUCER = 45,
-  POP_GEOHASH_REAL_GRAPH = 46,
+  ONLINelon_STP_RAW_ADDRelonSS_BOOK = 42,
+  POP_GelonOHASH_QUALITY_FOLLOW = 43,
+  NOTIFICATION_elonNGAGelonMelonNT = 44,
+  elonFR_BY_WORLDWIDelon_PICTURelon_PRODUCelonR = 45,
+  POP_GelonOHASH_RelonAL_GRAPH = 46,
 }

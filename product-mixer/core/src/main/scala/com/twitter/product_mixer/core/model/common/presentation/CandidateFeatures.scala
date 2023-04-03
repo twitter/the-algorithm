@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.model.common.presentation
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import scala.collection.immutable.ListSet
-
-/**
- * A list set of all the candidate pipelines a candidate originated from. This is typically a
- * single element set, but merging candidates across pipelines using
- * [[com.twitter.product_mixer.component_library.selector.CombineFeatureMapsCandidateMerger]]
- * will merge sets for the candidate. The last element of the set is the first pipeline identifier
- * as we prepend new ones since we want O(1) access for the last element.
- */
-object CandidatePipelines extends Feature[UniversalNoun[Any], ListSet[CandidatePipelineIdentifier]]
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import scala.collelonction.immutablelon.ListSelont
 
 /**
- * A list set of all the candidate sources a candidate originated from. This is typically a
- * single element set, but merging candidates across pipelines using
- * [[com.twitter.product_mixer.component_library.selector.CombineFeatureMapsCandidateMerger]]
- * will merge sets for the candidate. The last element of the set is the first source identifier
- * as we prepend new ones since we want O(1) access for the last element.
+ * A list selont of all thelon candidatelon pipelonlinelons a candidatelon originatelond from. This is typically a
+ * singlelon elonlelonmelonnt selont, but melonrging candidatelons across pipelonlinelons using
+ * [[com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.CombinelonFelonaturelonMapsCandidatelonMelonrgelonr]]
+ * will melonrgelon selonts for thelon candidatelon. Thelon last elonlelonmelonnt of thelon selont is thelon first pipelonlinelon idelonntifielonr
+ * as welon prelonpelonnd nelonw onelons sincelon welon want O(1) accelonss for thelon last elonlelonmelonnt.
  */
-object CandidateSources extends Feature[UniversalNoun[Any], ListSet[CandidateSourceIdentifier]]
+objelonct CandidatelonPipelonlinelons elonxtelonnds Felonaturelon[UnivelonrsalNoun[Any], ListSelont[CandidatelonPipelonlinelonIdelonntifielonr]]
 
 /**
- * The source position relative to all candidates the originating candidate source a candidate
- * came from. When merged with other candidates, the position from the first candidate source
- * takes priority.
+ * A list selont of all thelon candidatelon sourcelons a candidatelon originatelond from. This is typically a
+ * singlelon elonlelonmelonnt selont, but melonrging candidatelons across pipelonlinelons using
+ * [[com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.CombinelonFelonaturelonMapsCandidatelonMelonrgelonr]]
+ * will melonrgelon selonts for thelon candidatelon. Thelon last elonlelonmelonnt of thelon selont is thelon first sourcelon idelonntifielonr
+ * as welon prelonpelonnd nelonw onelons sincelon welon want O(1) accelonss for thelon last elonlelonmelonnt.
  */
-object CandidateSourcePosition extends Feature[UniversalNoun[Any], Int]
+objelonct CandidatelonSourcelons elonxtelonnds Felonaturelon[UnivelonrsalNoun[Any], ListSelont[CandidatelonSourcelonIdelonntifielonr]]
+
+/**
+ * Thelon sourcelon position relonlativelon to all candidatelons thelon originating candidatelon sourcelon a candidatelon
+ * camelon from. Whelonn melonrgelond with othelonr candidatelons, thelon position from thelon first candidatelon sourcelon
+ * takelons priority.
+ */
+objelonct CandidatelonSourcelonPosition elonxtelonnds Felonaturelon[UnivelonrsalNoun[Any], Int]

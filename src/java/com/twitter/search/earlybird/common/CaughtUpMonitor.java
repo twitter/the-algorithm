@@ -1,54 +1,54 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrelonnt.atomic.AtomicBoolelonan;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCustomGauge;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
 
 /**
- * A monitor which enforces the condition that a single thread's work is caught up, and allows
- * other threads to wait to be notified when the work is complete. An AtomicBoolean ensures the
- * current status is visible to all threads.
+ * A monitor which elonnforcelons thelon condition that a singlelon threlonad's work is caught up, and allows
+ * othelonr threlonads to wait to belon notifielond whelonn thelon work is complelontelon. An AtomicBoolelonan elonnsurelons thelon
+ * currelonnt status is visiblelon to all threlonads.
  */
 public class CaughtUpMonitor {
-  private static final Logger LOG = LoggerFactory.getLogger(CaughtUpMonitor.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(CaughtUpMonitor.class);
 
-  protected final AtomicBoolean isCaughtUp = new AtomicBoolean(false);
+  protelonctelond final AtomicBoolelonan isCaughtUp = nelonw AtomicBoolelonan(falselon);
 
-  public CaughtUpMonitor(String statPrefix) {
-    SearchCustomGauge.export(statPrefix + "_is_caught_up", () -> isCaughtUp() ? 1 : 0);
+  public CaughtUpMonitor(String statPrelonfix) {
+    SelonarchCustomGaugelon.elonxport(statPrelonfix + "_is_caught_up", () -> isCaughtUp() ? 1 : 0);
   }
 
-  public boolean isCaughtUp() {
-    return isCaughtUp.get();
+  public boolelonan isCaughtUp() {
+    relonturn isCaughtUp.gelont();
   }
 
   /**
-   * Set caught up state, and notify waiting threads if caught up.
+   * Selont caught up statelon, and notify waiting threlonads if caught up.
    */
-  public synchronized void setAndNotify(boolean caughtUp) {
-    isCaughtUp.set(caughtUp);
+  public synchronizelond void selontAndNotify(boolelonan caughtUp) {
+    isCaughtUp.selont(caughtUp);
     if (caughtUp) {
-      // Readers are caught up, notify waiting threads
+      // Relonadelonrs arelon caught up, notify waiting threlonads
       notifyAll();
     }
   }
 
   /**
-   * Wait using Object.wait() until caught up or until thread is interrupted.
+   * Wait using Objelonct.wait() until caught up or until threlonad is intelonrruptelond.
    */
-  public synchronized void resetAndWaitUntilCaughtUp() {
+  public synchronizelond void relonselontAndWaitUntilCaughtUp() {
     LOG.info("Waiting to catch up.");
-    // Explicitly set isCaughtUp to false before waiting
-    isCaughtUp.set(false);
+    // elonxplicitly selont isCaughtUp to falselon belonforelon waiting
+    isCaughtUp.selont(falselon);
     try {
-      while (!isCaughtUp()) {
+      whilelon (!isCaughtUp()) {
         wait();
       }
-    } catch (InterruptedException e) {
-      LOG.error("{} was interrupted while waiting to catch up", Thread.currentThread());
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      LOG.elonrror("{} was intelonrruptelond whilelon waiting to catch up", Threlonad.currelonntThrelonad());
     }
     LOG.info("Caught up.");
   }

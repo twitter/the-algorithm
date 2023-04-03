@@ -1,28 +1,28 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.rules.Reason.Toxicity
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams
+import com.twittelonr.visibility.rulelons.Relonason.Toxicity
 
-object ToxicityReplyFilterRules {
+objelonct ToxicityRelonplyFiltelonrRulelons {
 
-  sealed abstract class ToxicityReplyFilterBaseRule(
+  selonalelond abstract class ToxicityRelonplyFiltelonrBaselonRulelon(
     action: Action)
-      extends RuleWithConstantAction(
+      elonxtelonnds RulelonWithConstantAction(
         action = action,
-        condition = Condition.ToxrfFilteredFromAuthorViewer)
+        condition = Condition.ToxrfFiltelonrelondFromAuthorVielonwelonr)
 
-  object ToxicityReplyFilterRule
-      extends ToxicityReplyFilterBaseRule(action = Tombstone(Epitaph.Unavailable)) {
+  objelonct ToxicityRelonplyFiltelonrRulelon
+      elonxtelonnds ToxicityRelonplyFiltelonrBaselonRulelon(action = Tombstonelon(elonpitaph.Unavailablelon)) {
 
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(
-      RuleParams.EnableToxicReplyFilteringConversationRulesParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+      RulelonParams.elonnablelonToxicRelonplyFiltelonringConvelonrsationRulelonsParam)
   }
 
-  object ToxicityReplyFilterDropNotificationRule
-      extends ToxicityReplyFilterBaseRule(action = Drop(Toxicity)) {
+  objelonct ToxicityRelonplyFiltelonrDropNotificationRulelon
+      elonxtelonnds ToxicityRelonplyFiltelonrBaselonRulelon(action = Drop(Toxicity)) {
 
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(
-      RuleParams.EnableToxicReplyFilteringNotificationsRulesParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+      RulelonParams.elonnablelonToxicRelonplyFiltelonringNotificationsRulelonsParam)
   }
 }

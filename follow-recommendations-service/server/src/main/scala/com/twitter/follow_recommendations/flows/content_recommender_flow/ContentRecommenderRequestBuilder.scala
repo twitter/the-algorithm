@@ -1,120 +1,120 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+packagelon com.twittelonr.follow_reloncommelonndations.flows.contelonnt_reloncommelonndelonr_flow
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.clients.geoduck.UserLocationFetcher
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.clients.user_state.UserStateClient
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueOptionalWithStats
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStatsWithin
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.stitch.Stitch
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.gelonoduck.UselonrLocationFelontchelonr
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph.SocialGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.uselonr_statelon.UselonrStatelonClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.utils.RelonscuelonWithStatsUtils.relonscuelonOptionalWithStats
+import com.twittelonr.follow_reloncommelonndations.common.utils.RelonscuelonWithStatsUtils.relonscuelonWithStats
+import com.twittelonr.follow_reloncommelonndations.common.utils.RelonscuelonWithStatsUtils.relonscuelonWithStatsWithin
+import com.twittelonr.follow_reloncommelonndations.products.common.ProductRelonquelonst
+import com.twittelonr.stitch.Stitch
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ContentRecommenderRequestBuilder @Inject() (
-  socialGraph: SocialGraphClient,
-  userLocationFetcher: UserLocationFetcher,
-  userStateClient: UserStateClient,
-  statsReceiver: StatsReceiver) {
+@Singlelonton
+class ContelonntReloncommelonndelonrRelonquelonstBuildelonr @Injelonct() (
+  socialGraph: SocialGraphClielonnt,
+  uselonrLocationFelontchelonr: UselonrLocationFelontchelonr,
+  uselonrStatelonClielonnt: UselonrStatelonClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  val stats: StatsReceiver = statsReceiver.scope("content_recommender_request_builder")
-  val invalidRelationshipUsersStats: StatsReceiver = stats.scope("invalidRelationshipUserIds")
-  private val invalidRelationshipUsersMaxSizeCounter =
-    invalidRelationshipUsersStats.counter("maxSize")
-  private val invalidRelationshipUsersNotMaxSizeCounter =
-    invalidRelationshipUsersStats.counter("notMaxSize")
+  val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("contelonnt_reloncommelonndelonr_relonquelonst_buildelonr")
+  val invalidRelonlationshipUselonrsStats: StatsReloncelonivelonr = stats.scopelon("invalidRelonlationshipUselonrIds")
+  privatelon val invalidRelonlationshipUselonrsMaxSizelonCountelonr =
+    invalidRelonlationshipUselonrsStats.countelonr("maxSizelon")
+  privatelon val invalidRelonlationshipUselonrsNotMaxSizelonCountelonr =
+    invalidRelonlationshipUselonrsStats.countelonr("notMaxSizelon")
 
-  def build(req: ProductRequest): Stitch[ContentRecommenderRequest] = {
-    val userStateStitch = Stitch
-      .collect(req.recommendationRequest.clientContext.userId.map(userId =>
-        userStateClient.getUserState(userId))).map(_.flatten)
-    val recentFollowedUserIdsStitch =
+  delonf build(relonq: ProductRelonquelonst): Stitch[ContelonntReloncommelonndelonrRelonquelonst] = {
+    val uselonrStatelonStitch = Stitch
+      .collelonct(relonq.reloncommelonndationRelonquelonst.clielonntContelonxt.uselonrId.map(uselonrId =>
+        uselonrStatelonClielonnt.gelontUselonrStatelon(uselonrId))).map(_.flattelonn)
+    val reloncelonntFollowelondUselonrIdsStitch =
       Stitch
-        .collect(req.recommendationRequest.clientContext.userId.map { userId =>
-          rescueWithStatsWithin(
-            socialGraph.getRecentFollowedUserIds(userId),
+        .collelonct(relonq.reloncommelonndationRelonquelonst.clielonntContelonxt.uselonrId.map { uselonrId =>
+          relonscuelonWithStatsWithin(
+            socialGraph.gelontReloncelonntFollowelondUselonrIds(uselonrId),
             stats,
-            "recentFollowedUserIds",
-            req
+            "reloncelonntFollowelondUselonrIds",
+            relonq
               .params(
-                ContentRecommenderParams.RecentFollowingPredicateBudgetInMillisecond).millisecond
+                ContelonntReloncommelonndelonrParams.ReloncelonntFollowingPrelondicatelonBudgelontInMilliseloncond).milliseloncond
           )
         })
-    val recentFollowedByUserIdsStitch =
-      if (req.params(ContentRecommenderParams.GetFollowersFromSgs)) {
+    val reloncelonntFollowelondByUselonrIdsStitch =
+      if (relonq.params(ContelonntReloncommelonndelonrParams.GelontFollowelonrsFromSgs)) {
         Stitch
-          .collect(
-            req.recommendationRequest.clientContext.userId.map(userId =>
-              rescueWithStatsWithin(
-                socialGraph.getRecentFollowedByUserIdsFromCachedColumn(userId),
+          .collelonct(
+            relonq.reloncommelonndationRelonquelonst.clielonntContelonxt.uselonrId.map(uselonrId =>
+              relonscuelonWithStatsWithin(
+                socialGraph.gelontReloncelonntFollowelondByUselonrIdsFromCachelondColumn(uselonrId),
                 stats,
-                "recentFollowedByUserIds",
-                req
-                  .params(ContentRecommenderParams.RecentFollowingPredicateBudgetInMillisecond)
-                  .millisecond
+                "reloncelonntFollowelondByUselonrIds",
+                relonq
+                  .params(ContelonntReloncommelonndelonrParams.ReloncelonntFollowingPrelondicatelonBudgelontInMilliseloncond)
+                  .milliseloncond
               )))
-      } else Stitch.None
-    val invalidRelationshipUserIdsStitch: Stitch[Option[Seq[Long]]] =
-      if (req.params(ContentRecommenderParams.EnableInvalidRelationshipPredicate)) {
+      } elonlselon Stitch.Nonelon
+    val invalidRelonlationshipUselonrIdsStitch: Stitch[Option[Selonq[Long]]] =
+      if (relonq.params(ContelonntReloncommelonndelonrParams.elonnablelonInvalidRelonlationshipPrelondicatelon)) {
         Stitch
-          .collect(
-            req.recommendationRequest.clientContext.userId.map { userId =>
-              rescueWithStats(
+          .collelonct(
+            relonq.reloncommelonndationRelonquelonst.clielonntContelonxt.uselonrId.map { uselonrId =>
+              relonscuelonWithStats(
                 socialGraph
-                  .getInvalidRelationshipUserIdsFromCachedColumn(userId)
-                  .onSuccess(ids =>
-                    if (ids.size >= SocialGraphClient.MaxNumInvalidRelationship) {
-                      invalidRelationshipUsersMaxSizeCounter.incr()
-                    } else {
-                      invalidRelationshipUsersNotMaxSizeCounter.incr()
+                  .gelontInvalidRelonlationshipUselonrIdsFromCachelondColumn(uselonrId)
+                  .onSuccelonss(ids =>
+                    if (ids.sizelon >= SocialGraphClielonnt.MaxNumInvalidRelonlationship) {
+                      invalidRelonlationshipUselonrsMaxSizelonCountelonr.incr()
+                    } elonlselon {
+                      invalidRelonlationshipUselonrsNotMaxSizelonCountelonr.incr()
                     }),
                 stats,
-                "invalidRelationshipUserIds"
+                "invalidRelonlationshipUselonrIds"
               )
             }
           )
-      } else {
-        Stitch.None
+      } elonlselon {
+        Stitch.Nonelon
       }
     val locationStitch =
-      rescueOptionalWithStats(
-        userLocationFetcher.getGeohashAndCountryCode(
-          req.recommendationRequest.clientContext.userId,
-          req.recommendationRequest.clientContext.ipAddress
+      relonscuelonOptionalWithStats(
+        uselonrLocationFelontchelonr.gelontGelonohashAndCountryCodelon(
+          relonq.reloncommelonndationRelonquelonst.clielonntContelonxt.uselonrId,
+          relonq.reloncommelonndationRelonquelonst.clielonntContelonxt.ipAddrelonss
         ),
         stats,
-        "userLocation"
+        "uselonrLocation"
       )
     Stitch
       .join(
-        recentFollowedUserIdsStitch,
-        recentFollowedByUserIdsStitch,
-        invalidRelationshipUserIdsStitch,
+        reloncelonntFollowelondUselonrIdsStitch,
+        reloncelonntFollowelondByUselonrIdsStitch,
+        invalidRelonlationshipUselonrIdsStitch,
         locationStitch,
-        userStateStitch)
+        uselonrStatelonStitch)
       .map {
-        case (
-              recentFollowedUserIds,
-              recentFollowedByUserIds,
-              invalidRelationshipUserIds,
+        caselon (
+              reloncelonntFollowelondUselonrIds,
+              reloncelonntFollowelondByUselonrIds,
+              invalidRelonlationshipUselonrIds,
               location,
-              userState) =>
-          ContentRecommenderRequest(
-            req.params,
-            req.recommendationRequest.clientContext,
-            req.recommendationRequest.excludedIds.getOrElse(Nil),
-            recentFollowedUserIds,
-            recentFollowedByUserIds,
-            invalidRelationshipUserIds.map(_.toSet),
-            req.recommendationRequest.displayLocation,
-            req.recommendationRequest.maxResults,
-            req.recommendationRequest.debugParams.flatMap(_.debugOptions),
+              uselonrStatelon) =>
+          ContelonntReloncommelonndelonrRelonquelonst(
+            relonq.params,
+            relonq.reloncommelonndationRelonquelonst.clielonntContelonxt,
+            relonq.reloncommelonndationRelonquelonst.elonxcludelondIds.gelontOrelonlselon(Nil),
+            reloncelonntFollowelondUselonrIds,
+            reloncelonntFollowelondByUselonrIds,
+            invalidRelonlationshipUselonrIds.map(_.toSelont),
+            relonq.reloncommelonndationRelonquelonst.displayLocation,
+            relonq.reloncommelonndationRelonquelonst.maxRelonsults,
+            relonq.reloncommelonndationRelonquelonst.delonbugParams.flatMap(_.delonbugOptions),
             location,
-            userState
+            uselonrStatelon
           )
       }
   }

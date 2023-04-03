@@ -1,25 +1,25 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi._
+import com.twittelonr.timelonlinelons.configapi._
 
-object RealGraphInParams {
-  object EnableSourceGraphParam
-      extends FSParam[Boolean](
-        name = "graph_realgraphin_enable_source",
-        default = false
+objelonct RelonalGraphInParams {
+  objelonct elonnablelonSourcelonGraphParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "graph_relonalgraphin_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceGraphParam,
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonSourcelonGraphParam,
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceGraphParam
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonSourcelonGraphParam
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
       .build()
   }
 }

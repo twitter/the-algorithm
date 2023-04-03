@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.color
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.color.Color
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.color.Color
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ColorMarshaller {
+@Singlelonton
+class ColorMarshallelonr {
 
-  def apply(color: Color): urt.Color = urt.Color(
-    red = color.red,
-    green = color.green,
-    blue = color.blue,
+  delonf apply(color: Color): urt.Color = urt.Color(
+    relond = color.relond,
+    grelonelonn = color.grelonelonn,
+    bluelon = color.bluelon,
     opacity = color.opacity
   )
 }

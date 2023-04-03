@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Stitch
 
-/** Base trait for all `pipeline` implementations */
-trait Pipeline[-Query, Result] extends Component {
+/** Baselon trait for all `pipelonlinelon` implelonmelonntations */
+trait Pipelonlinelon[-Quelonry, Relonsult] elonxtelonnds Componelonnt {
 
-  /** The [[PipelineConfig]] that was used to create this [[Pipeline]] */
-  private[core] val config: PipelineConfig
+  /** Thelon [[PipelonlinelonConfig]] that was uselond to crelonatelon this [[Pipelonlinelon]] */
+  privatelon[corelon] val config: PipelonlinelonConfig
 
-  /** Returns the underlying arrow that represents the pipeline. This is a val because we want to ensure
-   * that the arrow is long-lived and consistent, not generated per-request.
+  /** Relonturns thelon undelonrlying arrow that relonprelonselonnts thelon pipelonlinelon. This is a val beloncauselon welon want to elonnsurelon
+   * that thelon arrow is long-livelond and consistelonnt, not gelonnelonratelond pelonr-relonquelonst.
    *
-   * Directly using this arrow allows you to combine it with other arrows efficiently.
+   * Direlonctly using this arrow allows you to combinelon it with othelonr arrows elonfficielonntly.
    */
-  val arrow: Arrow[Query, PipelineResult[Result]]
+  val arrow: Arrow[Quelonry, PipelonlinelonRelonsult[Relonsult]]
 
-  /** all child [[Component]]s that this [[Pipeline]] contains which will be registered and monitored */
-  val children: Seq[Component]
+  /** all child [[Componelonnt]]s that this [[Pipelonlinelon]] contains which will belon relongistelonrelond and monitorelond */
+  val childrelonn: Selonq[Componelonnt]
 
   /**
-   * A helper for executing a single query.
+   * A helonlpelonr for elonxeloncuting a singlelon quelonry.
    *
-   * toResultTry and lowerFromTry has the end result of adapting PipelineResult into either a
-   * successful result or a Stitch exception, which is a common use-case for callers,
-   * particularly in the case of [[com.twitter.product_mixer.core.pipeline.product.ProductPipeline]].
+   * toRelonsultTry and lowelonrFromTry has thelon elonnd relonsult of adapting PipelonlinelonRelonsult into elonithelonr a
+   * succelonssful relonsult or a Stitch elonxcelonption, which is a common uselon-caselon for callelonrs,
+   * particularly in thelon caselon of [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelon]].
    */
-  def process(query: Query): Stitch[Result] = arrow(query).map(_.toResultTry).lowerFromTry
+  delonf procelonss(quelonry: Quelonry): Stitch[Relonsult] = arrow(quelonry).map(_.toRelonsultTry).lowelonrFromTry
 
-  final override def toString = s"Pipeline(identifier=$identifier)"
+  final ovelonrridelon delonf toString = s"Pipelonlinelon(idelonntifielonr=$idelonntifielonr)"
 
   /**
-   * [[Pipeline]]s are equal to one another if they were generated from the same [[PipelineConfig]],
-   * we check this by doing a reference checks first then comparing the [[PipelineConfig]] instances.
+   * [[Pipelonlinelon]]s arelon elonqual to onelon anothelonr if thelony welonrelon gelonnelonratelond from thelon samelon [[PipelonlinelonConfig]],
+   * welon chelonck this by doing a relonfelonrelonncelon cheloncks first thelonn comparing thelon [[PipelonlinelonConfig]] instancelons.
    *
-   * We can skip additional checks because the other fields (e.g. [[identifier]] and [[children]])
-   * are derived from the [[PipelineConfig]].
+   * Welon can skip additional cheloncks beloncauselon thelon othelonr fielonlds (elon.g. [[idelonntifielonr]] and [[childrelonn]])
+   * arelon delonrivelond from thelon [[PipelonlinelonConfig]].
    */
-  final override def equals(obj: Any): Boolean = obj match {
-    case pipeline: Pipeline[_, _] =>
-      pipeline.eq(this) || pipeline.config.eq(config) || pipeline.config == config
-    case _ => false
+  final ovelonrridelon delonf elonquals(obj: Any): Boolelonan = obj match {
+    caselon pipelonlinelon: Pipelonlinelon[_, _] =>
+      pipelonlinelon.elonq(this) || pipelonlinelon.config.elonq(config) || pipelonlinelon.config == config
+    caselon _ => falselon
   }
 }

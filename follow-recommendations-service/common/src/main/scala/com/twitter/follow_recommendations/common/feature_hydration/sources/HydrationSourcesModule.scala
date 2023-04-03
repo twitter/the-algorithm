@@ -1,152 +1,152 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.stitch.Stitch
-import com.twitter.storage.client.manhattan.bijections.Bijections.BinaryCompactScalaInjection
-import com.twitter.storage.client.manhattan.bijections.Bijections.LongInjection
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClient
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpoint
-import com.twitter.storage.client.manhattan.kv.ManhattanKVEndpointBuilder
-import com.twitter.storage.client.manhattan.kv.impl.Component
-import com.twitter.storage.client.manhattan.kv.impl.Component0
-import com.twitter.storage.client.manhattan.kv.impl.KeyDescriptor
-import com.twitter.storage.client.manhattan.kv.impl.ValueDescriptor
-import com.twitter.strato.generated.client.ml.featureStore.McUserCountingOnUserClientColumn
-import com.twitter.strato.generated.client.ml.featureStore.onboarding.TimelinesAuthorFeaturesOnUserClientColumn
-import com.twitter.timelines.author_features.v1.thriftscala.AuthorFeatures
-import com.twitter.conversions.DurationOps._
-import com.twitter.onboarding.relevance.features.thriftscala.MCUserCountingFeatures
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.elonschelonrbird.util.stitchcachelon.StitchCachelon
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.storagelon.clielonnt.manhattan.bijelonctions.Bijelonctions.BinaryCompactScalaInjelonction
+import com.twittelonr.storagelon.clielonnt.manhattan.bijelonctions.Bijelonctions.LongInjelonction
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.Guarantelonelon
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonnt
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVelonndpoint
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVelonndpointBuildelonr
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.Componelonnt
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.Componelonnt0
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.KelonyDelonscriptor
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.impl.ValuelonDelonscriptor
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.ml.felonaturelonStorelon.McUselonrCountingOnUselonrClielonntColumn
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.ml.felonaturelonStorelon.onboarding.TimelonlinelonsAuthorFelonaturelonsOnUselonrClielonntColumn
+import com.twittelonr.timelonlinelons.author_felonaturelons.v1.thriftscala.AuthorFelonaturelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.onboarding.relonlelonvancelon.felonaturelons.thriftscala.MCUselonrCountingFelonaturelons
 import java.lang.{Long => JLong}
 import scala.util.Random
 
-object HydrationSourcesModule extends TwitterModule {
+objelonct HydrationSourcelonsModulelon elonxtelonnds TwittelonrModulelon {
 
-  val readFromManhattan = flag(
-    "feature_hydration_enable_reading_from_manhattan",
-    false,
-    "Whether to read the data from Manhattan or Strato")
+  val relonadFromManhattan = flag(
+    "felonaturelon_hydration_elonnablelon_relonading_from_manhattan",
+    falselon,
+    "Whelonthelonr to relonad thelon data from Manhattan or Strato")
 
   val manhattanAppId =
-    flag("frs_readonly.appId", "ml_features_athena", "RO App Id used by the RO FRS service")
-  val manhattanDestName = flag(
-    "frs_readonly.destName",
-    "/s/manhattan/athena.native-thrift",
-    "manhattan Dest Name used by the RO FRS service")
+    flag("frs_relonadonly.appId", "ml_felonaturelons_athelonna", "RO App Id uselond by thelon RO FRS selonrvicelon")
+  val manhattanDelonstNamelon = flag(
+    "frs_relonadonly.delonstNamelon",
+    "/s/manhattan/athelonna.nativelon-thrift",
+    "manhattan Delonst Namelon uselond by thelon RO FRS selonrvicelon")
 
-  @Provides
-  @Singleton
-  def providesAthenaManhattanClient(
-    serviceIdentifier: ServiceIdentifier
-  ): ManhattanKVEndpoint = {
-    val client = ManhattanKVClient(
+  @Providelons
+  @Singlelonton
+  delonf providelonsAthelonnaManhattanClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): ManhattanKVelonndpoint = {
+    val clielonnt = ManhattanKVClielonnt(
       manhattanAppId(),
-      manhattanDestName(),
-      ManhattanKVClientMtlsParams(serviceIdentifier)
+      manhattanDelonstNamelon(),
+      ManhattanKVClielonntMtlsParams(selonrvicelonIdelonntifielonr)
     )
-    ManhattanKVEndpointBuilder(client)
-      .defaultGuarantee(Guarantee.Weak)
+    ManhattanKVelonndpointBuildelonr(clielonnt)
+      .delonfaultGuarantelonelon(Guarantelonelon.Welonak)
       .build()
   }
 
-  val manhattanAuthorDataset = "timelines_author_features"
-  private val defaultCacheMaxKeys = 60000
-  private val cacheTTL = 12.hours
-  private val earlyExpiration = 0.2
+  val manhattanAuthorDataselont = "timelonlinelons_author_felonaturelons"
+  privatelon val delonfaultCachelonMaxKelonys = 60000
+  privatelon val cachelonTTL = 12.hours
+  privatelon val elonarlyelonxpiration = 0.2
 
-  val authorKeyDesc = KeyDescriptor(Component(LongInjection), Component0)
-  val authorDatasetKey = authorKeyDesc.withDataset(manhattanAuthorDataset)
-  val authorValDesc = ValueDescriptor(BinaryCompactScalaInjection(AuthorFeatures))
+  val authorKelonyDelonsc = KelonyDelonscriptor(Componelonnt(LongInjelonction), Componelonnt0)
+  val authorDataselontKelony = authorKelonyDelonsc.withDataselont(manhattanAuthorDataselont)
+  val authorValDelonsc = ValuelonDelonscriptor(BinaryCompactScalaInjelonction(AuthorFelonaturelons))
 
-  @Provides
-  @Singleton
-  def timelinesAuthorStitchCache(
-    manhattanReadOnlyEndpoint: ManhattanKVEndpoint,
-    timelinesAuthorFeaturesColumn: TimelinesAuthorFeaturesOnUserClientColumn,
-    stats: StatsReceiver
-  ): StitchCache[JLong, Option[AuthorFeatures]] = {
+  @Providelons
+  @Singlelonton
+  delonf timelonlinelonsAuthorStitchCachelon(
+    manhattanRelonadOnlyelonndpoint: ManhattanKVelonndpoint,
+    timelonlinelonsAuthorFelonaturelonsColumn: TimelonlinelonsAuthorFelonaturelonsOnUselonrClielonntColumn,
+    stats: StatsReloncelonivelonr
+  ): StitchCachelon[JLong, Option[AuthorFelonaturelons]] = {
 
-    val stitchCacheStats =
+    val stitchCachelonStats =
       stats
-        .scope("direct_ds_source_feature_hydration_module").scope("timelines_author")
+        .scopelon("direlonct_ds_sourcelon_felonaturelon_hydration_modulelon").scopelon("timelonlinelons_author")
 
-    val stStat = stitchCacheStats.counter("readFromStrato-each")
-    val mhtStat = stitchCacheStats.counter("readFromManhattan-each")
+    val stStat = stitchCachelonStats.countelonr("relonadFromStrato-elonach")
+    val mhtStat = stitchCachelonStats.countelonr("relonadFromManhattan-elonach")
 
-    val timelinesAuthorUnderlyingCall = if (readFromManhattan()) {
-      stitchCacheStats.counter("readFromManhattan").incr()
-      val authorCacheUnderlyingManhattanCall: JLong => Stitch[Option[AuthorFeatures]] = id => {
+    val timelonlinelonsAuthorUndelonrlyingCall = if (relonadFromManhattan()) {
+      stitchCachelonStats.countelonr("relonadFromManhattan").incr()
+      val authorCachelonUndelonrlyingManhattanCall: JLong => Stitch[Option[AuthorFelonaturelons]] = id => {
         mhtStat.incr()
-        val key = authorDatasetKey.withPkey(id)
-        manhattanReadOnlyEndpoint
-          .get(key = key, valueDesc = authorValDesc).map(_.map(value =>
-            clearUnsedFieldsForAuthorFeature(value.contents)))
+        val kelony = authorDataselontKelony.withPkelony(id)
+        manhattanRelonadOnlyelonndpoint
+          .gelont(kelony = kelony, valuelonDelonsc = authorValDelonsc).map(_.map(valuelon =>
+            clelonarUnselondFielonldsForAuthorFelonaturelon(valuelon.contelonnts)))
       }
-      authorCacheUnderlyingManhattanCall
-    } else {
-      stitchCacheStats.counter("readFromStrato").incr()
-      val authorCacheUnderlyingStratoCall: JLong => Stitch[Option[AuthorFeatures]] = id => {
+      authorCachelonUndelonrlyingManhattanCall
+    } elonlselon {
+      stitchCachelonStats.countelonr("relonadFromStrato").incr()
+      val authorCachelonUndelonrlyingStratoCall: JLong => Stitch[Option[AuthorFelonaturelons]] = id => {
         stStat.incr()
-        val timelinesAuthorFeaturesFetcher = timelinesAuthorFeaturesColumn.fetcher
-        timelinesAuthorFeaturesFetcher
-          .fetch(id).map(result => result.v.map(clearUnsedFieldsForAuthorFeature))
+        val timelonlinelonsAuthorFelonaturelonsFelontchelonr = timelonlinelonsAuthorFelonaturelonsColumn.felontchelonr
+        timelonlinelonsAuthorFelonaturelonsFelontchelonr
+          .felontch(id).map(relonsult => relonsult.v.map(clelonarUnselondFielonldsForAuthorFelonaturelon))
       }
-      authorCacheUnderlyingStratoCall
+      authorCachelonUndelonrlyingStratoCall
     }
 
-    StitchCache[JLong, Option[AuthorFeatures]](
-      underlyingCall = timelinesAuthorUnderlyingCall,
-      maxCacheSize = defaultCacheMaxKeys,
-      ttl = randomizedTTL(cacheTTL.inSeconds).seconds,
-      statsReceiver = stitchCacheStats
+    StitchCachelon[JLong, Option[AuthorFelonaturelons]](
+      undelonrlyingCall = timelonlinelonsAuthorUndelonrlyingCall,
+      maxCachelonSizelon = delonfaultCachelonMaxKelonys,
+      ttl = randomizelondTTL(cachelonTTL.inSelonconds).selonconds,
+      statsReloncelonivelonr = stitchCachelonStats
     )
 
   }
 
-  // Not adding manhattan since it didn't seem useful for Author Data, we can add in another phab
-  // if deemed helpful
-  @Provides
-  @Singleton
-  def metricCenterUserCountingStitchCache(
-    mcUserCountingFeaturesColumn: McUserCountingOnUserClientColumn,
-    stats: StatsReceiver
-  ): StitchCache[JLong, Option[MCUserCountingFeatures]] = {
+  // Not adding manhattan sincelon it didn't selonelonm uselonful for Author Data, welon can add in anothelonr phab
+  // if delonelonmelond helonlpful
+  @Providelons
+  @Singlelonton
+  delonf melontricCelonntelonrUselonrCountingStitchCachelon(
+    mcUselonrCountingFelonaturelonsColumn: McUselonrCountingOnUselonrClielonntColumn,
+    stats: StatsReloncelonivelonr
+  ): StitchCachelon[JLong, Option[MCUselonrCountingFelonaturelons]] = {
 
-    val stitchCacheStats =
+    val stitchCachelonStats =
       stats
-        .scope("direct_ds_source_feature_hydration_module").scope("mc_user_counting")
+        .scopelon("direlonct_ds_sourcelon_felonaturelon_hydration_modulelon").scopelon("mc_uselonr_counting")
 
-    val stStat = stitchCacheStats.counter("readFromStrato-each")
-    stitchCacheStats.counter("readFromStrato").incr()
+    val stStat = stitchCachelonStats.countelonr("relonadFromStrato-elonach")
+    stitchCachelonStats.countelonr("relonadFromStrato").incr()
 
-    val mcUserCountingCacheUnderlyingCall: JLong => Stitch[Option[MCUserCountingFeatures]] = id => {
+    val mcUselonrCountingCachelonUndelonrlyingCall: JLong => Stitch[Option[MCUselonrCountingFelonaturelons]] = id => {
       stStat.incr()
-      val mcUserCountingFeaturesFetcher = mcUserCountingFeaturesColumn.fetcher
-      mcUserCountingFeaturesFetcher.fetch(id).map(_.v)
+      val mcUselonrCountingFelonaturelonsFelontchelonr = mcUselonrCountingFelonaturelonsColumn.felontchelonr
+      mcUselonrCountingFelonaturelonsFelontchelonr.felontch(id).map(_.v)
     }
 
-    StitchCache[JLong, Option[MCUserCountingFeatures]](
-      underlyingCall = mcUserCountingCacheUnderlyingCall,
-      maxCacheSize = defaultCacheMaxKeys,
-      ttl = randomizedTTL(cacheTTL.inSeconds).seconds,
-      statsReceiver = stitchCacheStats
+    StitchCachelon[JLong, Option[MCUselonrCountingFelonaturelons]](
+      undelonrlyingCall = mcUselonrCountingCachelonUndelonrlyingCall,
+      maxCachelonSizelon = delonfaultCachelonMaxKelonys,
+      ttl = randomizelondTTL(cachelonTTL.inSelonconds).selonconds,
+      statsReloncelonivelonr = stitchCachelonStats
     )
 
   }
 
-  // clear out fields we don't need to save cache space
-  private def clearUnsedFieldsForAuthorFeature(entry: AuthorFeatures): AuthorFeatures = {
-    entry.unsetUserTopics.unsetUserHealth.unsetAuthorCountryCodeAggregates.unsetOriginalAuthorCountryCodeAggregates
+  // clelonar out fielonlds welon don't nelonelond to savelon cachelon spacelon
+  privatelon delonf clelonarUnselondFielonldsForAuthorFelonaturelon(elonntry: AuthorFelonaturelons): AuthorFelonaturelons = {
+    elonntry.unselontUselonrTopics.unselontUselonrHelonalth.unselontAuthorCountryCodelonAggrelongatelons.unselontOriginalAuthorCountryCodelonAggrelongatelons
   }
 
-  // To avoid a cache stampede. See https://en.wikipedia.org/wiki/Cache_stampede
-  private def randomizedTTL(ttl: Long): Long = {
-    (ttl - ttl * earlyExpiration * Random.nextDouble()).toLong
+  // To avoid a cachelon stampelondelon. Selonelon https://elonn.wikipelondia.org/wiki/Cachelon_stampelondelon
+  privatelon delonf randomizelondTTL(ttl: Long): Long = {
+    (ttl - ttl * elonarlyelonxpiration * Random.nelonxtDoublelon()).toLong
   }
 }

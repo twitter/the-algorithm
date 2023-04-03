@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.twitter_list
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.twittelonr_list
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.List
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.ListTile
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.ListWithPin
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.ListWithSubscribe
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twittelonr_list.List
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twittelonr_list.ListTilelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twittelonr_list.ListWithPin
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twittelonr_list.ListWithSubscribelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twittelonr_list.TwittelonrListDisplayTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TwitterListDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class TwittelonrListDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(twitterListDisplayType: TwitterListDisplayType): urt.TwitterListDisplayType =
-    twitterListDisplayType match {
-      case List => urt.TwitterListDisplayType.List
-      case ListTile => urt.TwitterListDisplayType.ListTile
-      case ListWithPin => urt.TwitterListDisplayType.ListWithPin
-      case ListWithSubscribe => urt.TwitterListDisplayType.ListWithSubscribe
+  delonf apply(twittelonrListDisplayTypelon: TwittelonrListDisplayTypelon): urt.TwittelonrListDisplayTypelon =
+    twittelonrListDisplayTypelon match {
+      caselon List => urt.TwittelonrListDisplayTypelon.List
+      caselon ListTilelon => urt.TwittelonrListDisplayTypelon.ListTilelon
+      caselon ListWithPin => urt.TwittelonrListDisplayTypelon.ListWithPin
+      caselon ListWithSubscribelon => urt.TwittelonrListDisplayTypelon.ListWithSubscribelon
     }
 }

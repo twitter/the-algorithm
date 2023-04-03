@@ -1,39 +1,39 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType.ExperimentalNudge
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType.SemanticCoreMisinformation
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType.UnsafeUrl
-import com.twitter.visibility.common.LocalizedNudgeSource
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.ExperimentalNudgeSafetyLabelReason
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.SemanticCoreMisinformationLabelReason
-import com.twitter.visibility.common.actions.TweetVisibilityNudgeReason.UnsafeURLLabelReason
-import com.twitter.visibility.rules.LocalizedNudge
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlTypelon
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlTypelon.elonxpelonrimelonntalNudgelon
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlTypelon.SelonmanticCorelonMisinformation
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlTypelon.UnsafelonUrl
+import com.twittelonr.visibility.common.LocalizelondNudgelonSourcelon
+import com.twittelonr.visibility.common.actions.TwelonelontVisibilityNudgelonRelonason
+import com.twittelonr.visibility.common.actions.TwelonelontVisibilityNudgelonRelonason.elonxpelonrimelonntalNudgelonSafelontyLabelonlRelonason
+import com.twittelonr.visibility.common.actions.TwelonelontVisibilityNudgelonRelonason.SelonmanticCorelonMisinformationLabelonlRelonason
+import com.twittelonr.visibility.common.actions.TwelonelontVisibilityNudgelonRelonason.UnsafelonURLLabelonlRelonason
+import com.twittelonr.visibility.rulelons.LocalizelondNudgelon
 
-class TweetVisibilityNudgeSourceWrapper(localizedNudgeSource: LocalizedNudgeSource) {
+class TwelonelontVisibilityNudgelonSourcelonWrappelonr(localizelondNudgelonSourcelon: LocalizelondNudgelonSourcelon) {
 
-  def getLocalizedNudge(
-    reason: TweetVisibilityNudgeReason,
-    languageCode: String,
-    countryCode: Option[String]
-  ): Option[LocalizedNudge] =
-    reason match {
-      case ExperimentalNudgeSafetyLabelReason =>
-        fetchNudge(ExperimentalNudge, languageCode, countryCode)
-      case SemanticCoreMisinformationLabelReason =>
-        fetchNudge(SemanticCoreMisinformation, languageCode, countryCode)
-      case UnsafeURLLabelReason =>
-        fetchNudge(UnsafeUrl, languageCode, countryCode)
+  delonf gelontLocalizelondNudgelon(
+    relonason: TwelonelontVisibilityNudgelonRelonason,
+    languagelonCodelon: String,
+    countryCodelon: Option[String]
+  ): Option[LocalizelondNudgelon] =
+    relonason match {
+      caselon elonxpelonrimelonntalNudgelonSafelontyLabelonlRelonason =>
+        felontchNudgelon(elonxpelonrimelonntalNudgelon, languagelonCodelon, countryCodelon)
+      caselon SelonmanticCorelonMisinformationLabelonlRelonason =>
+        felontchNudgelon(SelonmanticCorelonMisinformation, languagelonCodelon, countryCodelon)
+      caselon UnsafelonURLLabelonlRelonason =>
+        felontchNudgelon(UnsafelonUrl, languagelonCodelon, countryCodelon)
     }
 
-  private def fetchNudge(
-    safetyLabel: SafetyLabelType,
-    languageCode: String,
-    countryCode: Option[String]
-  ): Option[LocalizedNudge] = {
-    localizedNudgeSource
-      .fetch(safetyLabel, languageCode, countryCode)
-      .map(LocalizedNudge.fromStratoThrift)
+  privatelon delonf felontchNudgelon(
+    safelontyLabelonl: SafelontyLabelonlTypelon,
+    languagelonCodelon: String,
+    countryCodelon: Option[String]
+  ): Option[LocalizelondNudgelon] = {
+    localizelondNudgelonSourcelon
+      .felontch(safelontyLabelonl, languagelonCodelon, countryCodelon)
+      .map(LocalizelondNudgelon.fromStratoThrift)
   }
 }

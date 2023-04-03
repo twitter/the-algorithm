@@ -1,133 +1,133 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-sealed trait FilterReason {
-  def reason: String
+selonalelond trait FiltelonrRelonason {
+  delonf relonason: String
 }
 
-object FilterReason {
+objelonct FiltelonrRelonason {
 
-  case object NoReason extends FilterReason {
-    override val reason: String = "no_reason"
+  caselon objelonct NoRelonason elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "no_relonason"
   }
 
-  case class ParamReason(paramName: String) extends FilterReason {
-    override val reason: String = s"param_$paramName"
+  caselon class ParamRelonason(paramNamelon: String) elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = s"param_$paramNamelon"
   }
 
-  case object ExcludedId extends FilterReason {
-    override val reason: String = "excluded_id_from_request"
+  caselon objelonct elonxcludelondId elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "elonxcludelond_id_from_relonquelonst"
   }
 
-  case object ProfileSidebarBlacklist extends FilterReason {
-    override val reason: String = "profile_sidebar_blacklisted_id"
+  caselon objelonct ProfilelonSidelonbarBlacklist elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "profilelon_sidelonbar_blacklistelond_id"
   }
 
-  case object CuratedAccountsCompetitorList extends FilterReason {
-    override val reason: String = "curated_blacklisted_id"
+  caselon objelonct CuratelondAccountsCompelontitorList elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "curatelond_blacklistelond_id"
   }
 
-  case class InvalidRelationshipTypes(relationshipTypes: String) extends FilterReason {
-    override val reason: String = s"invalid_relationship_types $relationshipTypes"
+  caselon class InvalidRelonlationshipTypelons(relonlationshipTypelons: String) elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = s"invalid_relonlationship_typelons $relonlationshipTypelons"
   }
 
-  case object ProfileId extends FilterReason {
-    override val reason: String = "candidate_has_same_id_as_profile"
+  caselon objelonct ProfilelonId elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "candidatelon_has_samelon_id_as_profilelon"
   }
 
-  case object DismissedId extends FilterReason {
-    override val reason: String = s"dismissed_candidate"
+  caselon objelonct DismisselondId elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = s"dismisselond_candidatelon"
   }
 
-  case object OptedOutId extends FilterReason {
-    override val reason: String = s"candidate_opted_out_from_criteria_in_request"
+  caselon objelonct OptelondOutId elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = s"candidatelon_optelond_out_from_critelonria_in_relonquelonst"
   }
 
-  // gizmoduck predicates
-  case object NoUser extends FilterReason {
-    override val reason: String = "no_user_result_from_gizmoduck"
+  // gizmoduck prelondicatelons
+  caselon objelonct NoUselonr elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "no_uselonr_relonsult_from_gizmoduck"
   }
 
-  case object AddressBookUndiscoverable extends FilterReason {
-    override val reason: String = "not_discoverable_via_address_book"
+  caselon objelonct AddrelonssBookUndiscovelonrablelon elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "not_discovelonrablelon_via_addrelonss_book"
   }
 
-  case object PhoneBookUndiscoverable extends FilterReason {
-    override val reason: String = "not_discoverable_via_phone_book"
+  caselon objelonct PhonelonBookUndiscovelonrablelon elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "not_discovelonrablelon_via_phonelon_book"
   }
 
-  case object Deactivated extends FilterReason {
-    override val reason: String = "deactivated"
+  caselon objelonct Delonactivatelond elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "delonactivatelond"
   }
 
-  case object Suspended extends FilterReason {
-    override val reason: String = "suspended"
+  caselon objelonct Suspelonndelond elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "suspelonndelond"
   }
 
-  case object Restricted extends FilterReason {
-    override val reason: String = "restricted"
+  caselon objelonct Relonstrictelond elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "relonstrictelond"
   }
 
-  case object NsfwUser extends FilterReason {
-    override val reason: String = "nsfwUser"
+  caselon objelonct NsfwUselonr elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "nsfwUselonr"
   }
 
-  case object NsfwAdmin extends FilterReason {
-    override val reason: String = "nsfwAdmin"
+  caselon objelonct NsfwAdmin elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "nsfwAdmin"
   }
 
-  case object HssSignal extends FilterReason {
-    override val reason: String = "hssSignal"
+  caselon objelonct HssSignal elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "hssSignal"
   }
 
-  case object IsProtected extends FilterReason {
-    override val reason: String = "isProtected"
+  caselon objelonct IsProtelonctelond elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "isProtelonctelond"
   }
 
-  case class CountryTakedown(countryCode: String) extends FilterReason {
-    override val reason: String = s"takedown_in_$countryCode"
+  caselon class CountryTakelondown(countryCodelon: String) elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = s"takelondown_in_$countryCodelon"
   }
 
-  case object Blink extends FilterReason {
-    override val reason: String = "blink"
+  caselon objelonct Blink elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "blink"
   }
 
-  case object AlreadyFollowed extends FilterReason {
-    override val reason: String = "already_followed"
+  caselon objelonct AlrelonadyFollowelond elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "alrelonady_followelond"
   }
 
-  case object InvalidRelationship extends FilterReason {
-    override val reason: String = "invalid_relationship"
+  caselon objelonct InvalidRelonlationship elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "invalid_relonlationship"
   }
 
-  case object NotFollowingTargetUser extends FilterReason {
-    override val reason: String = "not_following_target_user"
+  caselon objelonct NotFollowingTargelontUselonr elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "not_following_targelont_uselonr"
   }
 
-  case object CandidateSideHoldback extends FilterReason {
-    override val reason: String = "candidate_side_holdback"
+  caselon objelonct CandidatelonSidelonHoldback elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "candidatelon_sidelon_holdback"
   }
 
-  case object Inactive extends FilterReason {
-    override val reason: String = "inactive"
+  caselon objelonct Inactivelon elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "inactivelon"
   }
 
-  case object MissingRecommendabilityData extends FilterReason {
-    override val reason: String = "missing_recommendability_data"
+  caselon objelonct MissingReloncommelonndabilityData elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "missing_reloncommelonndability_data"
   }
 
-  case object HighTweetVelocity extends FilterReason {
-    override val reason: String = "high_tweet_velocity"
+  caselon objelonct HighTwelonelontVelonlocity elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "high_twelonelont_velonlocity"
   }
 
-  case object AlreadyRecommended extends FilterReason {
-    override val reason: String = "already_recommended"
+  caselon objelonct AlrelonadyReloncommelonndelond elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "alrelonady_reloncommelonndelond"
   }
 
-  case object MinStateNotMet extends FilterReason {
-    override val reason: String = "min_state_user_not_met"
+  caselon objelonct MinStatelonNotMelont elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "min_statelon_uselonr_not_melont"
   }
 
-  case object FailOpen extends FilterReason {
-    override val reason: String = "fail_open"
+  caselon objelonct FailOpelonn elonxtelonnds FiltelonrRelonason {
+    ovelonrridelon val relonason: String = "fail_opelonn"
   }
 }

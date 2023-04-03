@@ -1,21 +1,21 @@
-package com.twitter.home_mixer.marshaller.timelines
+packagelon com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelons
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.timelineservice.{thriftscala => t}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.BottomCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.GapCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.TopCursor
+import com.twittelonr.timelonlinelonselonrvicelon.{thriftscala => t}
 
-object TimelineServiceCursorMarshaller {
+objelonct TimelonlinelonSelonrvicelonCursorMarshallelonr {
 
-  def apply(cursor: UrtOrderedCursor): Option[t.Cursor2] = {
+  delonf apply(cursor: UrtOrdelonrelondCursor): Option[t.Cursor2] = {
     val id = cursor.id.map(_.toString)
     val gapBoundaryId = cursor.gapBoundaryId.map(_.toString)
-    cursor.cursorType match {
-      case Some(TopCursor) => Some(t.Cursor2(bottom = id))
-      case Some(BottomCursor) => Some(t.Cursor2(top = id))
-      case Some(GapCursor) => Some(t.Cursor2(top = id, bottom = gapBoundaryId))
-      case _ => None
+    cursor.cursorTypelon match {
+      caselon Somelon(TopCursor) => Somelon(t.Cursor2(bottom = id))
+      caselon Somelon(BottomCursor) => Somelon(t.Cursor2(top = id))
+      caselon Somelon(GapCursor) => Somelon(t.Cursor2(top = id, bottom = gapBoundaryId))
+      caselon _ => Nonelon
     }
   }
 }

@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.model.common.identifier
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.JsonSerializer
-import com.fasterxml.jackson.databind.SerializerProvider
+import com.fastelonrxml.jackson.corelon.JsonGelonnelonrator
+import com.fastelonrxml.jackson.databind.JsonSelonrializelonr
+import com.fastelonrxml.jackson.databind.SelonrializelonrProvidelonr
 
-private[identifier] class ComponentIdentifierSerializer()
-    extends JsonSerializer[ComponentIdentifier] {
+privatelon[idelonntifielonr] class ComponelonntIdelonntifielonrSelonrializelonr()
+    elonxtelonnds JsonSelonrializelonr[ComponelonntIdelonntifielonr] {
 
-  private case class SerializableComponentIdentifier(
-    identifier: String,
-    sourceFile: String)
+  privatelon caselon class SelonrializablelonComponelonntIdelonntifielonr(
+    idelonntifielonr: String,
+    sourcelonFilelon: String)
 
-  override def serialize(
-    componentIdentifier: ComponentIdentifier,
-    gen: JsonGenerator,
-    serializers: SerializerProvider
-  ): Unit = serializers.defaultSerializeValue(
-    SerializableComponentIdentifier(componentIdentifier.toString, componentIdentifier.file.value),
-    gen)
+  ovelonrridelon delonf selonrializelon(
+    componelonntIdelonntifielonr: ComponelonntIdelonntifielonr,
+    gelonn: JsonGelonnelonrator,
+    selonrializelonrs: SelonrializelonrProvidelonr
+  ): Unit = selonrializelonrs.delonfaultSelonrializelonValuelon(
+    SelonrializablelonComponelonntIdelonntifielonr(componelonntIdelonntifielonr.toString, componelonntIdelonntifielonr.filelon.valuelon),
+    gelonn)
 }

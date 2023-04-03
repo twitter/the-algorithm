@@ -1,382 +1,382 @@
-package com.twitter.simclusters_v2.scalding.mbcg
+packagelon com.twittelonr.simclustelonrs_v2.scalding.mbcg
 
-import com.twitter.ann.common.EntityEmbedding
-import com.twitter.ann.common.Cosine
-import com.twitter.ann.common.CosineDistance
-import com.twitter.ann.common.InnerProduct
-import com.twitter.ann.common.InnerProductDistance
-import com.twitter.ann.common.ReadWriteFuturePool
-import com.twitter.ann.hnsw.TypedHnswIndex
-import com.twitter.ann.util.IndexBuilderUtils
-import com.twitter.conversions.DurationOps._
-import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngineConfig
-import com.twitter.cortex.ml.embeddings.common.TweetKind
-import com.twitter.cortex.ml.embeddings.common.UserKind
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.iesource.common.util.InteractionEventUtils
-import com.twitter.iesource.processing.events.batch.ServerEngagementsScalaDataset
-import com.twitter.iesource.thriftscala.InteractionDetails
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.FeatureUtil
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.embedding.EmbeddingSerDe
-import com.twitter.ml.api.thriftscala
-import com.twitter.ml.api.thriftscala.{GeneralTensor => ThriftGeneralTensor}
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.ml.featurestore.lib.TweetId
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.job.FutureHelper
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.BatchWidth
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.search.common.file.FileUtils
-import com.twitter.simclusters_v2.scalding.common.LogFavBasedPersistentTweetEmbeddingMhExportSource
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.tweetsource.common.thriftscala.MediaType
-import com.twitter.tweetsource.public_tweets.PublicTweetsScalaDataset
-import com.twitter.tweetsource.public_tweets.thriftscala.PublicTweet
-import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor
-import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor.ScaldingThreadingConfig
-import com.twitter.util.FuturePool
-import com.twitter.util.logging.Logger
-import java.util.TimeZone
-import java.util.concurrent.Executors
+import com.twittelonr.ann.common.elonntityelonmbelondding
+import com.twittelonr.ann.common.Cosinelon
+import com.twittelonr.ann.common.CosinelonDistancelon
+import com.twittelonr.ann.common.InnelonrProduct
+import com.twittelonr.ann.common.InnelonrProductDistancelon
+import com.twittelonr.ann.common.RelonadWritelonFuturelonPool
+import com.twittelonr.ann.hnsw.TypelondHnswIndelonx
+import com.twittelonr.ann.util.IndelonxBuildelonrUtils
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cortelonx.delonelonpbird.runtimelon.prelondiction_elonnginelon.TelonnsorflowPrelondictionelonnginelonConfig
+import com.twittelonr.cortelonx.ml.elonmbelonddings.common.TwelonelontKind
+import com.twittelonr.cortelonx.ml.elonmbelonddings.common.UselonrKind
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.ielonsourcelon.common.util.IntelonractionelonvelonntUtils
+import com.twittelonr.ielonsourcelon.procelonssing.elonvelonnts.batch.SelonrvelonrelonngagelonmelonntsScalaDataselont
+import com.twittelonr.ielonsourcelon.thriftscala.IntelonractionDelontails
+import com.twittelonr.ml.api.elonmbelondding.elonmbelondding
+import com.twittelonr.ml.api.FelonaturelonUtil
+import com.twittelonr.ml.api.constant.SharelondFelonaturelons
+import com.twittelonr.ml.api.elonmbelondding.elonmbelonddingSelonrDelon
+import com.twittelonr.ml.api.thriftscala
+import com.twittelonr.ml.api.thriftscala.{GelonnelonralTelonnsor => ThriftGelonnelonralTelonnsor}
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.ml.api.util.ScalaToJavaDataReloncordConvelonrsions
+import com.twittelonr.ml.felonaturelonstorelon.lib.TwelonelontId
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonmbelondding.elonmbelonddingWithelonntity
+import com.twittelonr.scalding.Args
+import com.twittelonr.scalding.DatelonParselonr
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossDC
+import com.twittelonr.scalding_intelonrnal.job.FuturelonHelonlpelonr
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.AnalyticsBatchelonxeloncution
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.AnalyticsBatchelonxeloncutionArgs
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchDelonscription
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchFirstTimelon
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchIncrelonmelonnt
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchWidth
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.TwittelonrSchelondulelondelonxeloncutionApp
+import com.twittelonr.selonarch.common.filelon.FilelonUtils
+import com.twittelonr.simclustelonrs_v2.scalding.common.LogFavBaselondPelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelonntSimClustelonrselonmbelondding
+import com.twittelonr.twelonelontsourcelon.common.thriftscala.MelondiaTypelon
+import com.twittelonr.twelonelontsourcelon.public_twelonelonts.PublicTwelonelontsScalaDataselont
+import com.twittelonr.twelonelontsourcelon.public_twelonelonts.thriftscala.PublicTwelonelont
+import com.twittelonr.twml.runtimelon.scalding.TelonnsorflowBatchPrelondictor
+import com.twittelonr.twml.runtimelon.scalding.TelonnsorflowBatchPrelondictor.ScaldingThrelonadingConfig
+import com.twittelonr.util.FuturelonPool
+import com.twittelonr.util.logging.Loggelonr
+import java.util.TimelonZonelon
+import java.util.concurrelonnt.elonxeloncutors
 
 /*
-This class does the following:
-1) Get tweet simcluster features from LogFavBasedPersistentTweetEmbeddingMhExportSource
-2) Filter them down to English media tweets that aren't replies or quote tweets using TweetSource
-3) Convert the remaining tweets into DataRecords using TweetSimclusterRecordAdapter
-4) Run inference using a TF model exported with a DataRecord compatible serving signature
-5) Create an ANN index from the generated tweet embeddings
+This class doelons thelon following:
+1) Gelont twelonelont simclustelonr felonaturelons from LogFavBaselondPelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon
+2) Filtelonr thelonm down to elonnglish melondia twelonelonts that arelonn't relonplielons or quotelon twelonelonts using TwelonelontSourcelon
+3) Convelonrt thelon relonmaining twelonelonts into DataReloncords using TwelonelontSimclustelonrReloncordAdaptelonr
+4) Run infelonrelonncelon using a TF modelonl elonxportelond with a DataReloncord compatiblelon selonrving signaturelon
+5) Crelonatelon an ANN indelonx from thelon gelonnelonratelond twelonelont elonmbelonddings
  */
-trait TweetEmbeddingGenerationTrait {
-  implicit val tz: TimeZone = DateOps.UTC
-  implicit val dp: DateParser = DateParser.default
-  implicit val updateHours = 4
+trait TwelonelontelonmbelonddingGelonnelonrationTrait {
+  implicit val tz: TimelonZonelon = DatelonOps.UTC
+  implicit val dp: DatelonParselonr = DatelonParselonr.delonfault
+  implicit val updatelonHours = 4
 
-  private val inputNodeName = "request:0"
-  private val outputNodeName = "response:0"
-  private val functionSignatureName = "serve"
-  private val predictionRequestTimeout = 5.seconds
-  private val SupportedLanguages = Set("en")
-  private val tweetSourceLookback = Days(2)
+  privatelon val inputNodelonNamelon = "relonquelonst:0"
+  privatelon val outputNodelonNamelon = "relonsponselon:0"
+  privatelon val functionSignaturelonNamelon = "selonrvelon"
+  privatelon val prelondictionRelonquelonstTimelonout = 5.selonconds
+  privatelon val SupportelondLanguagelons = Selont("elonn")
+  privatelon val twelonelontSourcelonLookback = Days(2)
 
-  private val DEFAULT_F2V_VECTOR: Embedding[Float] = Embedding(Array.fill[Float](200)(0.0f))
+  privatelon val DelonFAULT_F2V_VelonCTOR: elonmbelondding[Float] = elonmbelondding(Array.fill[Float](200)(0.0f))
 
-  def getPredictionEngine(modelName: String, modelPath: String): TensorflowBatchPredictor = {
-    val config = TensorflowPredictionEngineConfig(
-      modelName = modelName,
-      modelSource = modelPath,
-      threadingConfig = Some(ScaldingThreadingConfig),
-      defaultInputNode = inputNodeName,
-      defaultOutputNode = outputNodeName,
-      functionSignatureName = functionSignatureName,
-      statsReceiver = NullStatsReceiver
+  delonf gelontPrelondictionelonnginelon(modelonlNamelon: String, modelonlPath: String): TelonnsorflowBatchPrelondictor = {
+    val config = TelonnsorflowPrelondictionelonnginelonConfig(
+      modelonlNamelon = modelonlNamelon,
+      modelonlSourcelon = modelonlPath,
+      threlonadingConfig = Somelon(ScaldingThrelonadingConfig),
+      delonfaultInputNodelon = inputNodelonNamelon,
+      delonfaultOutputNodelon = outputNodelonNamelon,
+      functionSignaturelonNamelon = functionSignaturelonNamelon,
+      statsReloncelonivelonr = NullStatsReloncelonivelonr
     )
-    TensorflowBatchPredictor(config, predictionRequestTimeout)
+    TelonnsorflowBatchPrelondictor(config, prelondictionRelonquelonstTimelonout)
   }
 
-  def getEmbeddingWithEntity(tweetEmbeddingTensor: ThriftGeneralTensor, tweetId: Long) = {
-    tweetEmbeddingTensor match {
-      case ThriftGeneralTensor.RawTypedTensor(rawTensor) =>
-        val embedding = EmbeddingSerDe.floatEmbeddingSerDe.fromThrift(
-          thriftscala.Embedding(Some(rawTensor))
+  delonf gelontelonmbelonddingWithelonntity(twelonelontelonmbelonddingTelonnsor: ThriftGelonnelonralTelonnsor, twelonelontId: Long) = {
+    twelonelontelonmbelonddingTelonnsor match {
+      caselon ThriftGelonnelonralTelonnsor.RawTypelondTelonnsor(rawTelonnsor) =>
+        val elonmbelondding = elonmbelonddingSelonrDelon.floatelonmbelonddingSelonrDelon.fromThrift(
+          thriftscala.elonmbelondding(Somelon(rawTelonnsor))
         )
-        EmbeddingWithEntity[TweetId](TweetId(tweetId), embedding)
-      case _ => throw new IllegalArgumentException("tensor is wrong type!")
+        elonmbelonddingWithelonntity[TwelonelontId](TwelonelontId(twelonelontId), elonmbelondding)
+      caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption("telonnsor is wrong typelon!")
     }
   }
 
-  def buildAnnIndex(
-    pipe: TypedPipe[EmbeddingWithEntity[TweetId]],
+  delonf buildAnnIndelonx(
+    pipelon: TypelondPipelon[elonmbelonddingWithelonntity[TwelonelontId]],
     args: Args
-  ): Execution[Unit] = {
-    def embeddingDimension: Int = args.int("embedding_dimension", 128)
-    def efConstruction: Int = args.int("ef_construction", 800)
-    def maxM: Int = args.int("max_M", 40)
-    val log: Logger = Logger(getClass)
+  ): elonxeloncution[Unit] = {
+    delonf elonmbelonddingDimelonnsion: Int = args.int("elonmbelondding_dimelonnsion", 128)
+    delonf elonfConstruction: Int = args.int("elonf_construction", 800)
+    delonf maxM: Int = args.int("max_M", 40)
+    val log: Loggelonr = Loggelonr(gelontClass)
     val annOutputPath: String = args("ann_output_path")
 
-    val embeddingWithEntity = pipe.map {
-      case EmbeddingWithEntity(tweetId, embedding) =>
-        EntityEmbedding[TweetId](tweetId, embedding)
+    val elonmbelonddingWithelonntity = pipelon.map {
+      caselon elonmbelonddingWithelonntity(twelonelontId, elonmbelondding) =>
+        elonntityelonmbelondding[TwelonelontId](twelonelontId, elonmbelondding)
     }
-    val concurrencyLevel = args.int("concurrency_level", 60)
-    val expectedElements = args.int("expected_elements", 30000000)
-    val threadPool = Executors.newFixedThreadPool(concurrencyLevel)
-    val hnswIndex = TypedHnswIndex.serializableIndex[TweetId, InnerProductDistance](
-      embeddingDimension,
-      InnerProduct,
-      efConstruction,
+    val concurrelonncyLelonvelonl = args.int("concurrelonncy_lelonvelonl", 60)
+    val elonxpelonctelondelonlelonmelonnts = args.int("elonxpelonctelond_elonlelonmelonnts", 30000000)
+    val threlonadPool = elonxeloncutors.nelonwFixelondThrelonadPool(concurrelonncyLelonvelonl)
+    val hnswIndelonx = TypelondHnswIndelonx.selonrializablelonIndelonx[TwelonelontId, InnelonrProductDistancelon](
+      elonmbelonddingDimelonnsion,
+      InnelonrProduct,
+      elonfConstruction,
       maxM,
-      expectedElements,
-      TweetKind.byteInjection,
-      ReadWriteFuturePool(FuturePool.apply(threadPool))
+      elonxpelonctelondelonlelonmelonnts,
+      TwelonelontKind.bytelonInjelonction,
+      RelonadWritelonFuturelonPool(FuturelonPool.apply(threlonadPool))
     )
 
-    // Create a timestamped directory to use for recovery in case of index corruption
-    val timeStampedAnnOutputPath: String = annOutputPath + "/" + (System.currentTimeMillis() / 1000)
-    val timeStampedAnnOutputDirectory = FileUtils.getFileHandle(timeStampedAnnOutputPath)
+    // Crelonatelon a timelonstampelond direlonctory to uselon for reloncovelonry in caselon of indelonx corruption
+    val timelonStampelondAnnOutputPath: String = annOutputPath + "/" + (Systelonm.currelonntTimelonMillis() / 1000)
+    val timelonStampelondAnnOutputDirelonctory = FilelonUtils.gelontFilelonHandlelon(timelonStampelondAnnOutputPath)
 
-    embeddingWithEntity.toIterableExecution
-      .flatMap { annEmbeddings =>
-        val future =
-          IndexBuilderUtils.addToIndex(hnswIndex, annEmbeddings.toStream, concurrencyLevel)
-        val result = future.map { numberUpdates =>
-          log.info(s"Performed $numberUpdates updates")
-          hnswIndex.toDirectory(timeStampedAnnOutputDirectory)
-          log.info(s"Finished writing to timestamped index directory - " +
-            s"$timeStampedAnnOutputDirectory")
+    elonmbelonddingWithelonntity.toItelonrablelonelonxeloncution
+      .flatMap { annelonmbelonddings =>
+        val futurelon =
+          IndelonxBuildelonrUtils.addToIndelonx(hnswIndelonx, annelonmbelonddings.toStrelonam, concurrelonncyLelonvelonl)
+        val relonsult = futurelon.map { numbelonrUpdatelons =>
+          log.info(s"Pelonrformelond $numbelonrUpdatelons updatelons")
+          hnswIndelonx.toDirelonctory(timelonStampelondAnnOutputDirelonctory)
+          log.info(s"Finishelond writing to timelonstampelond indelonx direlonctory - " +
+            s"$timelonStampelondAnnOutputDirelonctory")
         }
-        FutureHelper.executionFrom(result).unit
-      }.onComplete { _ =>
-        threadPool.shutdown()
+        FuturelonHelonlpelonr.elonxeloncutionFrom(relonsult).unit
+      }.onComplelontelon { _ =>
+        threlonadPool.shutdown()
         Unit
       }
   }
 
-  def getTweetSimclusterFeatures(
+  delonf gelontTwelonelontSimclustelonrFelonaturelons(
     args: Args
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, PersistentSimClustersEmbedding)] = {
-    val serviceIdEnv = args.getOrElse("sIdEnv", "prod")
-    val serviceIdRole = args.getOrElse("sIdRole", "cassowary")
-    val serviceIdZone = args.getOrElse("sIdZone", "atla")
-    val serviceIdName = args
-      .getOrElse("sIdName", "tweet-embedding-generation-batch-job")
-    val serviceId = ServiceIdentifier(
-      role = serviceIdRole,
-      service = serviceIdName,
-      environment = serviceIdEnv,
-      zone = serviceIdZone)
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(Long, PelonrsistelonntSimClustelonrselonmbelondding)] = {
+    val selonrvicelonIdelonnv = args.gelontOrelonlselon("sIdelonnv", "prod")
+    val selonrvicelonIdRolelon = args.gelontOrelonlselon("sIdRolelon", "cassowary")
+    val selonrvicelonIdZonelon = args.gelontOrelonlselon("sIdZonelon", "atla")
+    val selonrvicelonIdNamelon = args
+      .gelontOrelonlselon("sIdNamelon", "twelonelont-elonmbelondding-gelonnelonration-batch-job")
+    val selonrvicelonId = SelonrvicelonIdelonntifielonr(
+      rolelon = selonrvicelonIdRolelon,
+      selonrvicelon = selonrvicelonIdNamelon,
+      elonnvironmelonnt = selonrvicelonIdelonnv,
+      zonelon = selonrvicelonIdZonelon)
 
-    val logFavBasedPersistentTweetEmbeddingSource =
-      new LogFavBasedPersistentTweetEmbeddingMhExportSource(
-        range = dateRange.prepend(Hours(24)),
-        serviceIdentifier = serviceId)
-    val tweetSimclusterEmbeddingTypedPipe = TypedPipe
-      .from(logFavBasedPersistentTweetEmbeddingSource)
-      .collect {
-        case (
-              (tweetId, timestamp),
-              simclusterEmbedding: PersistentSimClustersEmbedding
-            ) if timestamp == 1L => // 1L corresponds to the LongestL2Norm simcluster embedding
-          (tweetId.toLong, simclusterEmbedding)
+    val logFavBaselondPelonrsistelonntTwelonelontelonmbelonddingSourcelon =
+      nelonw LogFavBaselondPelonrsistelonntTwelonelontelonmbelonddingMhelonxportSourcelon(
+        rangelon = datelonRangelon.prelonpelonnd(Hours(24)),
+        selonrvicelonIdelonntifielonr = selonrvicelonId)
+    val twelonelontSimclustelonrelonmbelonddingTypelondPipelon = TypelondPipelon
+      .from(logFavBaselondPelonrsistelonntTwelonelontelonmbelonddingSourcelon)
+      .collelonct {
+        caselon (
+              (twelonelontId, timelonstamp),
+              simclustelonrelonmbelondding: PelonrsistelonntSimClustelonrselonmbelondding
+            ) if timelonstamp == 1L => // 1L correlonsponds to thelon LongelonstL2Norm simclustelonr elonmbelondding
+          (twelonelontId.toLong, simclustelonrelonmbelondding)
       }
 
-    tweetSimclusterEmbeddingTypedPipe
+    twelonelontSimclustelonrelonmbelonddingTypelondPipelon
   }
 
-  def getTweetSource()(implicit dateRange: DateRange): TypedPipe[PublicTweet] = {
-    val recentTweets = DAL
-      .read(PublicTweetsScalaDataset, dateRange.prepend(tweetSourceLookback))
-      .toTypedPipe
+  delonf gelontTwelonelontSourcelon()(implicit datelonRangelon: DatelonRangelon): TypelondPipelon[PublicTwelonelont] = {
+    val reloncelonntTwelonelonts = DAL
+      .relonad(PublicTwelonelontsScalaDataselont, datelonRangelon.prelonpelonnd(twelonelontSourcelonLookback))
+      .toTypelondPipelon
 
-    recentTweets
+    reloncelonntTwelonelonts
   }
 
-  def isVideoTweet(tweet: PublicTweet): Boolean = {
-    tweet.media.exists { mediaSeq =>
-      mediaSeq.exists { e =>
-        e.mediaType.contains(MediaType.Video)
+  delonf isVidelonoTwelonelont(twelonelont: PublicTwelonelont): Boolelonan = {
+    twelonelont.melondia.elonxists { melondiaSelonq =>
+      melondiaSelonq.elonxists { elon =>
+        elon.melondiaTypelon.contains(MelondiaTypelon.Videlono)
       }
     }
   }
 
-  def getEngagementFilteredTweets(
+  delonf gelontelonngagelonmelonntFiltelonrelondTwelonelonts(
     minFavCount: Long
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, Int)] = {
-    val engagementFilteredTweetsPipe = DAL
-      .read(ServerEngagementsScalaDataset, dateRange.prepend(Days(2))).withRemoteReadPolicy(
-        AllowCrossDC).toTypedPipe
-      .collect {
-        case event if InteractionEventUtils.isTweetType(event) =>
-          val targetTweetId = event.targetId
-          event.details match {
-            case InteractionDetails.Favorite(_) => (targetTweetId, 1)
-            case _ => (targetTweetId, 0)
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(Long, Int)] = {
+    val elonngagelonmelonntFiltelonrelondTwelonelontsPipelon = DAL
+      .relonad(SelonrvelonrelonngagelonmelonntsScalaDataselont, datelonRangelon.prelonpelonnd(Days(2))).withRelonmotelonRelonadPolicy(
+        AllowCrossDC).toTypelondPipelon
+      .collelonct {
+        caselon elonvelonnt if IntelonractionelonvelonntUtils.isTwelonelontTypelon(elonvelonnt) =>
+          val targelontTwelonelontId = elonvelonnt.targelontId
+          elonvelonnt.delontails match {
+            caselon IntelonractionDelontails.Favoritelon(_) => (targelontTwelonelontId, 1)
+            caselon _ => (targelontTwelonelontId, 0)
           }
       }
-      .sumByKey
+      .sumByKelony
       .map {
-        case (tweetId, count) => (tweetId, count)
+        caselon (twelonelontId, count) => (twelonelontId, count)
       }
-      .filter(_._2 >= minFavCount)
+      .filtelonr(_._2 >= minFavCount)
 
-    engagementFilteredTweetsPipe
+    elonngagelonmelonntFiltelonrelondTwelonelontsPipelon
   }
 
-  def run(args: Args)(implicit dateRange: DateRange, idx: UniqueID) = {
+  delonf run(args: Args)(implicit datelonRangelon: DatelonRangelon, idx: UniquelonID) = {
     val minFavCount = args.int("minFavCount", 32)
-    val indexAllTweets = args.boolean("indexAllTweets")
+    val indelonxAllTwelonelonts = args.boolelonan("indelonxAllTwelonelonts")
 
-    val tweetSimclusterDataset = getTweetSimclusterFeatures(args)
-    val tweetSourceDataset = getTweetSource()
-    val engagementFilteredTweetsPipe = getEngagementFilteredTweets(minFavCount)
-    val inputEmbeddingFormat = UserKind.parser
-      .getEmbeddingFormat(args, "f2v_input", Some(dateRange.prepend(Days(14))))
-    val f2vProducerEmbeddings = inputEmbeddingFormat.getEmbeddings
+    val twelonelontSimclustelonrDataselont = gelontTwelonelontSimclustelonrFelonaturelons(args)
+    val twelonelontSourcelonDataselont = gelontTwelonelontSourcelon()
+    val elonngagelonmelonntFiltelonrelondTwelonelontsPipelon = gelontelonngagelonmelonntFiltelonrelondTwelonelonts(minFavCount)
+    val inputelonmbelonddingFormat = UselonrKind.parselonr
+      .gelontelonmbelonddingFormat(args, "f2v_input", Somelon(datelonRangelon.prelonpelonnd(Days(14))))
+    val f2vProducelonrelonmbelonddings = inputelonmbelonddingFormat.gelontelonmbelonddings
       .map {
-        case EmbeddingWithEntity(userId, embedding) => (userId.userId, embedding)
+        caselon elonmbelonddingWithelonntity(uselonrId, elonmbelondding) => (uselonrId.uselonrId, elonmbelondding)
       }
 
-    val engagementFilteredTweetInfoPipe = tweetSourceDataset
-      .groupBy(_.tweetId)
-      .join(engagementFilteredTweetsPipe.groupBy(_._1))
+    val elonngagelonmelonntFiltelonrelondTwelonelontInfoPipelon = twelonelontSourcelonDataselont
+      .groupBy(_.twelonelontId)
+      .join(elonngagelonmelonntFiltelonrelondTwelonelontsPipelon.groupBy(_._1))
       .map {
-        case (tweetId, (tweetInfo, tweetFavCount)) =>
-          (tweetId, tweetInfo)
+        caselon (twelonelontId, (twelonelontInfo, twelonelontFavCount)) =>
+          (twelonelontId, twelonelontInfo)
       }
 
-    val filteredSimclustersPipe = tweetSimclusterDataset
+    val filtelonrelondSimclustelonrsPipelon = twelonelontSimclustelonrDataselont
       .groupBy(_._1)
-      .join(engagementFilteredTweetInfoPipe.groupBy(_._1))
+      .join(elonngagelonmelonntFiltelonrelondTwelonelontInfoPipelon.groupBy(_._1))
       .map {
-        case (tweetId, ((_, simclusterEmbedding), (_, tweetInfo))) =>
-          (tweetId, simclusterEmbedding, tweetInfo)
+        caselon (twelonelontId, ((_, simclustelonrelonmbelondding), (_, twelonelontInfo))) =>
+          (twelonelontId, simclustelonrelonmbelondding, twelonelontInfo)
       }
-      .filter {
-        case (_, _, tweetInfo) =>
-          tweetInfo.quotedTweetTweetId.isEmpty &&
-            tweetInfo.inReplyToTweetId.isEmpty &&
-            tweetInfo.language.exists(SupportedLanguages.contains) &&
-            (indexAllTweets || (!tweetInfo.media.exists(_.isEmpty) && isVideoTweet(tweetInfo))) &&
-            !tweetInfo.nsfwAdmin &&
-            !tweetInfo.nsfwUser
+      .filtelonr {
+        caselon (_, _, twelonelontInfo) =>
+          twelonelontInfo.quotelondTwelonelontTwelonelontId.iselonmpty &&
+            twelonelontInfo.inRelonplyToTwelonelontId.iselonmpty &&
+            twelonelontInfo.languagelon.elonxists(SupportelondLanguagelons.contains) &&
+            (indelonxAllTwelonelonts || (!twelonelontInfo.melondia.elonxists(_.iselonmpty) && isVidelonoTwelonelont(twelonelontInfo))) &&
+            !twelonelontInfo.nsfwAdmin &&
+            !twelonelontInfo.nsfwUselonr
       }
       .map {
-        case (tweetId, simclusterEmbedding, tweetInfo) =>
-          (tweetInfo.userId, tweetId, simclusterEmbedding)
+        caselon (twelonelontId, simclustelonrelonmbelondding, twelonelontInfo) =>
+          (twelonelontInfo.uselonrId, twelonelontId, simclustelonrelonmbelondding)
       }
 
-    val dataRecordsPipe = filteredSimclustersPipe
+    val dataReloncordsPipelon = filtelonrelondSimclustelonrsPipelon
       .groupBy(_._1)
-      .leftJoin(f2vProducerEmbeddings.groupBy(_._1))
-      .values
+      .lelonftJoin(f2vProducelonrelonmbelonddings.groupBy(_._1))
+      .valuelons
       .map {
-        case ((authorId1, tweetId, simclusterEmbedding), Some((authorId2, f2vEmbedding))) =>
-          TweetSimclusterRecordAdapter.adaptToDataRecord(
-            (tweetId, simclusterEmbedding, f2vEmbedding))
-        case ((authorId, tweetId, simclusterEmbedding), None) =>
-          TweetSimclusterRecordAdapter.adaptToDataRecord(
-            (tweetId, simclusterEmbedding, DEFAULT_F2V_VECTOR))
+        caselon ((authorId1, twelonelontId, simclustelonrelonmbelondding), Somelon((authorId2, f2velonmbelondding))) =>
+          TwelonelontSimclustelonrReloncordAdaptelonr.adaptToDataReloncord(
+            (twelonelontId, simclustelonrelonmbelondding, f2velonmbelondding))
+        caselon ((authorId, twelonelontId, simclustelonrelonmbelondding), Nonelon) =>
+          TwelonelontSimclustelonrReloncordAdaptelonr.adaptToDataReloncord(
+            (twelonelontId, simclustelonrelonmbelondding, DelonFAULT_F2V_VelonCTOR))
       }
 
-    val modelPath = args.getOrElse("model_path", "")
-    val batchPredictor = getPredictionEngine(modelName = "tweet_model", modelPath = modelPath)
-    val tweetIdFeature = SharedFeatures.TWEET_ID
-    val tweetEmbeddingName = args.getOrElse("tweet_embedding_name", "output")
+    val modelonlPath = args.gelontOrelonlselon("modelonl_path", "")
+    val batchPrelondictor = gelontPrelondictionelonnginelon(modelonlNamelon = "twelonelont_modelonl", modelonlPath = modelonlPath)
+    val twelonelontIdFelonaturelon = SharelondFelonaturelons.TWelonelonT_ID
+    val twelonelontelonmbelonddingNamelon = args.gelontOrelonlselon("twelonelont_elonmbelondding_namelon", "output")
 
-    val outputPipe = batchPredictor.predict(dataRecordsPipe).map {
-      case (originalDataRecord, predictedDataRecord) =>
-        val tweetId = originalDataRecord.getFeatureValue(tweetIdFeature)
-        val scalaPredictedDataRecord =
-          ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord(predictedDataRecord)
-        val tweetEmbeddingTensor =
-          scalaPredictedDataRecord.tensors.get(FeatureUtil.featureIdForName(tweetEmbeddingName))
-        val tweetEmbeddingWithEntity = getEmbeddingWithEntity(tweetEmbeddingTensor, tweetId)
-        tweetEmbeddingWithEntity
+    val outputPipelon = batchPrelondictor.prelondict(dataReloncordsPipelon).map {
+      caselon (originalDataReloncord, prelondictelondDataReloncord) =>
+        val twelonelontId = originalDataReloncord.gelontFelonaturelonValuelon(twelonelontIdFelonaturelon)
+        val scalaPrelondictelondDataReloncord =
+          ScalaToJavaDataReloncordConvelonrsions.javaDataReloncord2ScalaDataReloncord(prelondictelondDataReloncord)
+        val twelonelontelonmbelonddingTelonnsor =
+          scalaPrelondictelondDataReloncord.telonnsors.gelont(FelonaturelonUtil.felonaturelonIdForNamelon(twelonelontelonmbelonddingNamelon))
+        val twelonelontelonmbelonddingWithelonntity = gelontelonmbelonddingWithelonntity(twelonelontelonmbelonddingTelonnsor, twelonelontId)
+        twelonelontelonmbelonddingWithelonntity
     }
 
-    buildAnnIndex(outputPipe, args)
+    buildAnnIndelonx(outputPipelon, args)
   }
 }
 
-object TweetEmbeddingGenerationAdhocJob
-    extends TwitterExecutionApp
-    with TweetEmbeddingGenerationTrait {
+objelonct TwelonelontelonmbelonddingGelonnelonrationAdhocJob
+    elonxtelonnds TwittelonrelonxeloncutionApp
+    with TwelonelontelonmbelonddingGelonnelonrationTrait {
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val dateRange: DateRange = DateRange.parse(args.list("dateRange"))
+  ovelonrridelon delonf job: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uid =>
+      elonxeloncution.withArgs { args =>
+        implicit val datelonRangelon: DatelonRangelon = DatelonRangelon.parselon(args.list("datelonRangelon"))
         run(args)
       }
     }
 }
 
-object TweetEmbeddingGenerationBatchJob
-    extends TwitterScheduledExecutionApp
-    with TweetEmbeddingGenerationTrait {
+objelonct TwelonelontelonmbelonddingGelonnelonrationBatchJob
+    elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp
+    with TwelonelontelonmbelonddingGelonnelonrationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2021-10-28")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
-          batchDesc = BatchDescription(getClass.getName),
-          firstTime = batchFirstTime,
-          batchIncrement = BatchIncrement(Hours(updateHours)),
-          batchWidth = Some(BatchWidth(Hours(updateHours)))
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uid =>
+      elonxeloncution.withArgs { args =>
+        implicit val tz: TimelonZonelon = DatelonOps.UTC
+        val batchFirstTimelon = BatchFirstTimelon(RichDatelon("2021-10-28")(tz, DatelonParselonr.delonfault))
+        val analyticsArgs = AnalyticsBatchelonxeloncutionArgs(
+          batchDelonsc = BatchDelonscription(gelontClass.gelontNamelon),
+          firstTimelon = batchFirstTimelon,
+          batchIncrelonmelonnt = BatchIncrelonmelonnt(Hours(updatelonHours)),
+          batchWidth = Somelon(BatchWidth(Hours(updatelonHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchelonxeloncution(analyticsArgs) { implicit datelonRangelon =>
           run(args)
         }
       }
     }
 }
 
-object TweetEmbeddingGenerationBatchJobAlternate
-    extends TwitterScheduledExecutionApp
-    with TweetEmbeddingGenerationTrait {
+objelonct TwelonelontelonmbelonddingGelonnelonrationBatchJobAltelonrnatelon
+    elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp
+    with TwelonelontelonmbelonddingGelonnelonrationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2022-03-28")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
-          batchDesc = BatchDescription(getClass.getName),
-          firstTime = batchFirstTime,
-          batchIncrement = BatchIncrement(Hours(updateHours)),
-          batchWidth = Some(BatchWidth(Hours(updateHours)))
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uid =>
+      elonxeloncution.withArgs { args =>
+        implicit val tz: TimelonZonelon = DatelonOps.UTC
+        val batchFirstTimelon = BatchFirstTimelon(RichDatelon("2022-03-28")(tz, DatelonParselonr.delonfault))
+        val analyticsArgs = AnalyticsBatchelonxeloncutionArgs(
+          batchDelonsc = BatchDelonscription(gelontClass.gelontNamelon),
+          firstTimelon = batchFirstTimelon,
+          batchIncrelonmelonnt = BatchIncrelonmelonnt(Hours(updatelonHours)),
+          batchWidth = Somelon(BatchWidth(Hours(updatelonHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchelonxeloncution(analyticsArgs) { implicit datelonRangelon =>
           run(args)
         }
       }
     }
 }
 
-object TweetEmbeddingGenerationBatchJobExperimental
-    extends TwitterScheduledExecutionApp
-    with TweetEmbeddingGenerationTrait {
+objelonct TwelonelontelonmbelonddingGelonnelonrationBatchJobelonxpelonrimelonntal
+    elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp
+    with TwelonelontelonmbelonddingGelonnelonrationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2021-12-12")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
-          batchDesc = BatchDescription(getClass.getName),
-          firstTime = batchFirstTime,
-          batchIncrement = BatchIncrement(Hours(updateHours)),
-          batchWidth = Some(BatchWidth(Hours(updateHours)))
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uid =>
+      elonxeloncution.withArgs { args =>
+        implicit val tz: TimelonZonelon = DatelonOps.UTC
+        val batchFirstTimelon = BatchFirstTimelon(RichDatelon("2021-12-12")(tz, DatelonParselonr.delonfault))
+        val analyticsArgs = AnalyticsBatchelonxeloncutionArgs(
+          batchDelonsc = BatchDelonscription(gelontClass.gelontNamelon),
+          firstTimelon = batchFirstTimelon,
+          batchIncrelonmelonnt = BatchIncrelonmelonnt(Hours(updatelonHours)),
+          batchWidth = Somelon(BatchWidth(Hours(updatelonHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchelonxeloncution(analyticsArgs) { implicit datelonRangelon =>
           run(args)
         }
       }

@@ -1,16 +1,16 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = ["**/*.thrift"],
+crelonatelon_thrift_librarielons(
+    baselon_namelon = "thrift",
+    sourcelons = ["**/*.thrift"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "finatra-internal/thrift/src/main/thrift",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncy_roots = [
+        "finatra-intelonrnal/thrift/src/main/thrift",
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift",
     ],
-    generate_languages = [
+    gelonnelonratelon_languagelons = [
         "java",
         "scala",
     ],
-    provides_java_name = "simclusters-ann-thrift-java",
-    provides_scala_name = "simclusters-ann-thrift-scala",
+    providelons_java_namelon = "simclustelonrs-ann-thrift-java",
+    providelons_scala_namelon = "simclustelonrs-ann-thrift-scala",
 )

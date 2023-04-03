@@ -1,489 +1,489 @@
-package com.twitter.cr_mixer.logging
+packagelon com.twittelonr.cr_mixelonr.logging
 
-import com.google.common.base.CaseFormat
-import com.twitter.abdecider.ScribingABDeciderUtil
-import com.twitter.scribelib.marshallers.ClientDataProvider
-import com.twitter.scribelib.marshallers.ScribeSerialization
-import com.twitter.timelines.clientevent.MinimalClientDataProvider
-import com.twitter.cr_mixer.model.BlendedCandidate
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.logging.ScribeLoggerUtils._
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderConstants
-import com.twitter.cr_mixer.scribe.ScribeCategories
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetRequest
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetResponse
-import com.twitter.cr_mixer.thriftscala.FetchCandidatesResult
-import com.twitter.cr_mixer.thriftscala.FetchSignalSourcesResult
-import com.twitter.cr_mixer.thriftscala.GetTweetsRecommendationsScribe
-import com.twitter.cr_mixer.thriftscala.InterleaveResult
-import com.twitter.cr_mixer.thriftscala.PerformanceMetrics
-import com.twitter.cr_mixer.thriftscala.PreRankFilterResult
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.cr_mixer.thriftscala.RankResult
-import com.twitter.cr_mixer.thriftscala.Result
-import com.twitter.cr_mixer.thriftscala.SourceSignal
-import com.twitter.cr_mixer.thriftscala.TopLevelApiResult
-import com.twitter.cr_mixer.thriftscala.TweetCandidateWithMetadata
-import com.twitter.cr_mixer.thriftscala.VITTweetCandidateScribe
-import com.twitter.cr_mixer.thriftscala.VITTweetCandidatesScribe
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.util.CandidateGenerationKeyUtil
-import com.twitter.cr_mixer.util.MetricTagUtil
-import com.twitter.decider.SimpleRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finatra.kafka.producers.KafkaProducerBase
-import com.twitter.logging.Logger
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import com.twitter.util.Time
+import com.googlelon.common.baselon.CaselonFormat
+import com.twittelonr.abdeloncidelonr.ScribingABDeloncidelonrUtil
+import com.twittelonr.scribelonlib.marshallelonrs.ClielonntDataProvidelonr
+import com.twittelonr.scribelonlib.marshallelonrs.ScribelonSelonrialization
+import com.twittelonr.timelonlinelons.clielonntelonvelonnt.MinimalClielonntDataProvidelonr
+import com.twittelonr.cr_mixelonr.modelonl.BlelonndelondCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.CrCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.RankelondCandidatelon
+import com.twittelonr.cr_mixelonr.logging.ScribelonLoggelonrUtils._
+import com.twittelonr.cr_mixelonr.modelonl.GraphSourcelonInfo
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.CrMixelonrDeloncidelonr
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.DeloncidelonrConstants
+import com.twittelonr.cr_mixelonr.scribelon.ScribelonCatelongorielons
+import com.twittelonr.cr_mixelonr.thriftscala.CrMixelonrTwelonelontRelonquelonst
+import com.twittelonr.cr_mixelonr.thriftscala.CrMixelonrTwelonelontRelonsponselon
+import com.twittelonr.cr_mixelonr.thriftscala.FelontchCandidatelonsRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.FelontchSignalSourcelonsRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.GelontTwelonelontsReloncommelonndationsScribelon
+import com.twittelonr.cr_mixelonr.thriftscala.IntelonrlelonavelonRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.PelonrformancelonMelontrics
+import com.twittelonr.cr_mixelonr.thriftscala.PrelonRankFiltelonrRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.Product
+import com.twittelonr.cr_mixelonr.thriftscala.RankRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.Relonsult
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonSignal
+import com.twittelonr.cr_mixelonr.thriftscala.TopLelonvelonlApiRelonsult
+import com.twittelonr.cr_mixelonr.thriftscala.TwelonelontCandidatelonWithMelontadata
+import com.twittelonr.cr_mixelonr.thriftscala.VITTwelonelontCandidatelonScribelon
+import com.twittelonr.cr_mixelonr.thriftscala.VITTwelonelontCandidatelonsScribelon
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.util.CandidatelonGelonnelonrationKelonyUtil
+import com.twittelonr.cr_mixelonr.util.MelontricTagUtil
+import com.twittelonr.deloncidelonr.SimplelonReloncipielonnt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.finatra.kafka.producelonrs.KafkaProducelonrBaselon
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Stopwatch
+import com.twittelonr.util.Timelon
 
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 import scala.util.Random
 
-@Singleton
-case class CrMixerScribeLogger @Inject() (
-  decider: CrMixerDecider,
-  statsReceiver: StatsReceiver,
-  @Named(ModuleNames.TweetRecsLogger) tweetRecsScribeLogger: Logger,
-  @Named(ModuleNames.BlueVerifiedTweetRecsLogger) blueVerifiedTweetRecsScribeLogger: Logger,
-  @Named(ModuleNames.TopLevelApiDdgMetricsLogger) ddgMetricsLogger: Logger,
-  kafkaProducer: KafkaProducerBase[String, GetTweetsRecommendationsScribe]) {
+@Singlelonton
+caselon class CrMixelonrScribelonLoggelonr @Injelonct() (
+  deloncidelonr: CrMixelonrDeloncidelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  @Namelond(ModulelonNamelons.TwelonelontReloncsLoggelonr) twelonelontReloncsScribelonLoggelonr: Loggelonr,
+  @Namelond(ModulelonNamelons.BluelonVelonrifielondTwelonelontReloncsLoggelonr) bluelonVelonrifielondTwelonelontReloncsScribelonLoggelonr: Loggelonr,
+  @Namelond(ModulelonNamelons.TopLelonvelonlApiDdgMelontricsLoggelonr) ddgMelontricsLoggelonr: Loggelonr,
+  kafkaProducelonr: KafkaProducelonrBaselon[String, GelontTwelonelontsReloncommelonndationsScribelon]) {
 
-  import CrMixerScribeLogger._
+  import CrMixelonrScribelonLoggelonr._
 
-  private val scopedStats = statsReceiver.scope("CrMixerScribeLogger")
-  private val topLevelApiStats = scopedStats.scope("TopLevelApi")
-  private val upperFunnelsStats = scopedStats.scope("UpperFunnels")
-  private val kafkaMessagesStats = scopedStats.scope("KafkaMessages")
-  private val topLevelApiDdgMetricsStats = scopedStats.scope("TopLevelApiDdgMetrics")
-  private val blueVerifiedTweetCandidatesStats = scopedStats.scope("BlueVerifiedTweetCandidates")
+  privatelon val scopelondStats = statsReloncelonivelonr.scopelon("CrMixelonrScribelonLoggelonr")
+  privatelon val topLelonvelonlApiStats = scopelondStats.scopelon("TopLelonvelonlApi")
+  privatelon val uppelonrFunnelonlsStats = scopelondStats.scopelon("UppelonrFunnelonls")
+  privatelon val kafkaMelonssagelonsStats = scopelondStats.scopelon("KafkaMelonssagelons")
+  privatelon val topLelonvelonlApiDdgMelontricsStats = scopelondStats.scopelon("TopLelonvelonlApiDdgMelontrics")
+  privatelon val bluelonVelonrifielondTwelonelontCandidatelonsStats = scopelondStats.scopelon("BluelonVelonrifielondTwelonelontCandidatelons")
 
-  private val serialization = new ScribeSerialization {}
+  privatelon val selonrialization = nelonw ScribelonSelonrialization {}
 
-  def scribeSignalSources(
-    query: CrCandidateGeneratorQuery,
-    getResultFn: => Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])]
-  ): Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertFetchSignalSourcesResult
+  delonf scribelonSignalSourcelons(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry,
+    gelontRelonsultFn: => Futurelon[(Selont[SourcelonInfo], Map[String, Option[GraphSourcelonInfo]])]
+  ): Futurelon[(Selont[SourcelonInfo], Map[String, Option[GraphSourcelonInfo]])] = {
+    scribelonRelonsultsAndPelonrformancelonMelontrics(
+      ScribelonMelontadata.from(quelonry),
+      gelontRelonsultFn,
+      convelonrtToRelonsultFn = convelonrtFelontchSignalSourcelonsRelonsult
     )
   }
 
-  def scribeInitialCandidates(
-    query: CrCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[Seq[InitialCandidate]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertFetchCandidatesResult
+  delonf scribelonInitialCandidatelons(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry,
+    gelontRelonsultFn: => Futurelon[Selonq[Selonq[InitialCandidatelon]]]
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    scribelonRelonsultsAndPelonrformancelonMelontrics(
+      ScribelonMelontadata.from(quelonry),
+      gelontRelonsultFn,
+      convelonrtToRelonsultFn = convelonrtFelontchCandidatelonsRelonsult
     )
   }
 
-  def scribePreRankFilterCandidates(
-    query: CrCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[Seq[InitialCandidate]]]
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertPreRankFilterResult
+  delonf scribelonPrelonRankFiltelonrCandidatelons(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry,
+    gelontRelonsultFn: => Futurelon[Selonq[Selonq[InitialCandidatelon]]]
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    scribelonRelonsultsAndPelonrformancelonMelontrics(
+      ScribelonMelontadata.from(quelonry),
+      gelontRelonsultFn,
+      convelonrtToRelonsultFn = convelonrtPrelonRankFiltelonrRelonsult
     )
   }
 
-  def scribeInterleaveCandidates(
-    query: CrCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[BlendedCandidate]]
-  ): Future[Seq[BlendedCandidate]] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertInterleaveResult,
-      enableKafkaScribe = true
+  delonf scribelonIntelonrlelonavelonCandidatelons(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry,
+    gelontRelonsultFn: => Futurelon[Selonq[BlelonndelondCandidatelon]]
+  ): Futurelon[Selonq[BlelonndelondCandidatelon]] = {
+    scribelonRelonsultsAndPelonrformancelonMelontrics(
+      ScribelonMelontadata.from(quelonry),
+      gelontRelonsultFn,
+      convelonrtToRelonsultFn = convelonrtIntelonrlelonavelonRelonsult,
+      elonnablelonKafkaScribelon = truelon
     )
   }
 
-  def scribeRankedCandidates(
-    query: CrCandidateGeneratorQuery,
-    getResultFn: => Future[Seq[RankedCandidate]]
-  ): Future[Seq[RankedCandidate]] = {
-    scribeResultsAndPerformanceMetrics(
-      ScribeMetadata.from(query),
-      getResultFn,
-      convertToResultFn = convertRankResult
+  delonf scribelonRankelondCandidatelons(
+    quelonry: CrCandidatelonGelonnelonratorQuelonry,
+    gelontRelonsultFn: => Futurelon[Selonq[RankelondCandidatelon]]
+  ): Futurelon[Selonq[RankelondCandidatelon]] = {
+    scribelonRelonsultsAndPelonrformancelonMelontrics(
+      ScribelonMelontadata.from(quelonry),
+      gelontRelonsultFn,
+      convelonrtToRelonsultFn = convelonrtRankRelonsult
     )
   }
 
   /**
-   * Scribe Top Level API Request / Response and performance metrics
-   * for the getTweetRecommendations() endpoint.
+   * Scribelon Top Lelonvelonl API Relonquelonst / Relonsponselon and pelonrformancelon melontrics
+   * for thelon gelontTwelonelontReloncommelonndations() elonndpoint.
    */
-  def scribeGetTweetRecommendations(
-    request: CrMixerTweetRequest,
-    startTime: Long,
-    scribeMetadata: ScribeMetadata,
-    getResultFn: => Future[CrMixerTweetResponse]
-  ): Future[CrMixerTweetResponse] = {
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { response =>
-      val latencyMs = timer().inMilliseconds
-      val result = convertTopLevelAPIResult(request, response, startTime)
-      val traceId = Trace.id.traceId.toLong
-      val scribeMsg = buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
+  delonf scribelonGelontTwelonelontReloncommelonndations(
+    relonquelonst: CrMixelonrTwelonelontRelonquelonst,
+    startTimelon: Long,
+    scribelonMelontadata: ScribelonMelontadata,
+    gelontRelonsultFn: => Futurelon[CrMixelonrTwelonelontRelonsponselon]
+  ): Futurelon[CrMixelonrTwelonelontRelonsponselon] = {
+    val timelonr = Stopwatch.start()
+    gelontRelonsultFn.onSuccelonss { relonsponselon =>
+      val latelonncyMs = timelonr().inMilliselonconds
+      val relonsult = convelonrtTopLelonvelonlAPIRelonsult(relonquelonst, relonsponselon, startTimelon)
+      val tracelonId = Tracelon.id.tracelonId.toLong
+      val scribelonMsg = buildScribelonMelonssagelon(relonsult, scribelonMelontadata, latelonncyMs, tracelonId)
 
-      // We use upperFunnelPerStepScribeRate to cover TopLevelApi scribe logs
-      if (decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.upperFunnelPerStepScribeRate)) {
-        topLevelApiStats.counter(scribeMetadata.product.originalName).incr()
-        scribeResult(scribeMsg)
+      // Welon uselon uppelonrFunnelonlPelonrStelonpScribelonRatelon to covelonr TopLelonvelonlApi scribelon logs
+      if (deloncidelonr.isAvailablelonForId(
+          scribelonMelontadata.uselonrId,
+          DeloncidelonrConstants.uppelonrFunnelonlPelonrStelonpScribelonRatelon)) {
+        topLelonvelonlApiStats.countelonr(scribelonMelontadata.product.originalNamelon).incr()
+        scribelonRelonsult(scribelonMsg)
       }
-      if (decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.topLevelApiDdgMetricsScribeRate)) {
-        topLevelApiDdgMetricsStats.counter(scribeMetadata.product.originalName).incr()
-        val topLevelDdgMetricsMetadata = TopLevelDdgMetricsMetadata.from(request)
-        publishTopLevelDdgMetrics(
-          logger = ddgMetricsLogger,
-          topLevelDdgMetricsMetadata = topLevelDdgMetricsMetadata,
-          latencyMs = latencyMs,
-          candidateSize = response.tweets.length)
+      if (deloncidelonr.isAvailablelonForId(
+          scribelonMelontadata.uselonrId,
+          DeloncidelonrConstants.topLelonvelonlApiDdgMelontricsScribelonRatelon)) {
+        topLelonvelonlApiDdgMelontricsStats.countelonr(scribelonMelontadata.product.originalNamelon).incr()
+        val topLelonvelonlDdgMelontricsMelontadata = TopLelonvelonlDdgMelontricsMelontadata.from(relonquelonst)
+        publishTopLelonvelonlDdgMelontrics(
+          loggelonr = ddgMelontricsLoggelonr,
+          topLelonvelonlDdgMelontricsMelontadata = topLelonvelonlDdgMelontricsMelontadata,
+          latelonncyMs = latelonncyMs,
+          candidatelonSizelon = relonsponselon.twelonelonts.lelonngth)
       }
     }
   }
 
   /**
-   * Scribe all of the Blue Verified tweets that are candidates from cr-mixer
-   * from the getTweetRecommendations() endpoint for stats tracking/debugging purposes.
+   * Scribelon all of thelon Bluelon Velonrifielond twelonelonts that arelon candidatelons from cr-mixelonr
+   * from thelon gelontTwelonelontReloncommelonndations() elonndpoint for stats tracking/delonbugging purposelons.
    */
-  def scribeGetTweetRecommendationsForBlueVerified(
-    scribeMetadata: ScribeMetadata,
-    getResultFn: => Future[Seq[RankedCandidate]]
-  ): Future[Seq[RankedCandidate]] = {
-    getResultFn.onSuccess { rankedCandidates =>
-      if (decider.isAvailable(DeciderConstants.enableScribeForBlueVerifiedTweetCandidates)) {
-        blueVerifiedTweetCandidatesStats.counter("process_request").incr()
+  delonf scribelonGelontTwelonelontReloncommelonndationsForBluelonVelonrifielond(
+    scribelonMelontadata: ScribelonMelontadata,
+    gelontRelonsultFn: => Futurelon[Selonq[RankelondCandidatelon]]
+  ): Futurelon[Selonq[RankelondCandidatelon]] = {
+    gelontRelonsultFn.onSuccelonss { rankelondCandidatelons =>
+      if (deloncidelonr.isAvailablelon(DeloncidelonrConstants.elonnablelonScribelonForBluelonVelonrifielondTwelonelontCandidatelons)) {
+        bluelonVelonrifielondTwelonelontCandidatelonsStats.countelonr("procelonss_relonquelonst").incr()
 
-        val blueVerifiedTweetCandidates = rankedCandidates.filter { tweet =>
-          tweet.tweetInfo.hasBlueVerifiedAnnotation.contains(true)
+        val bluelonVelonrifielondTwelonelontCandidatelons = rankelondCandidatelons.filtelonr { twelonelont =>
+          twelonelont.twelonelontInfo.hasBluelonVelonrifielondAnnotation.contains(truelon)
         }
 
-        val impressedBuckets = getImpressedBuckets(blueVerifiedTweetCandidatesStats).getOrElse(Nil)
+        val imprelonsselondBuckelonts = gelontImprelonsselondBuckelonts(bluelonVelonrifielondTwelonelontCandidatelonsStats).gelontOrelonlselon(Nil)
 
-        val blueVerifiedCandidateScribes = blueVerifiedTweetCandidates.map { candidate =>
-          blueVerifiedTweetCandidatesStats
-            .scope(scribeMetadata.product.name).counter(
-              candidate.tweetInfo.authorId.toString).incr()
-          VITTweetCandidateScribe(
-            tweetId = candidate.tweetId,
-            authorId = candidate.tweetInfo.authorId,
-            score = candidate.predictionScore,
-            metricTags = MetricTagUtil.buildMetricTags(candidate)
+        val bluelonVelonrifielondCandidatelonScribelons = bluelonVelonrifielondTwelonelontCandidatelons.map { candidatelon =>
+          bluelonVelonrifielondTwelonelontCandidatelonsStats
+            .scopelon(scribelonMelontadata.product.namelon).countelonr(
+              candidatelon.twelonelontInfo.authorId.toString).incr()
+          VITTwelonelontCandidatelonScribelon(
+            twelonelontId = candidatelon.twelonelontId,
+            authorId = candidatelon.twelonelontInfo.authorId,
+            scorelon = candidatelon.prelondictionScorelon,
+            melontricTags = MelontricTagUtil.buildMelontricTags(candidatelon)
           )
         }
 
-        val blueVerifiedScribe =
-          VITTweetCandidatesScribe(
-            uuid = scribeMetadata.requestUUID,
-            userId = scribeMetadata.userId,
-            candidates = blueVerifiedCandidateScribes,
-            product = scribeMetadata.product,
-            impressedBuckets = impressedBuckets
+        val bluelonVelonrifielondScribelon =
+          VITTwelonelontCandidatelonsScribelon(
+            uuid = scribelonMelontadata.relonquelonstUUID,
+            uselonrId = scribelonMelontadata.uselonrId,
+            candidatelons = bluelonVelonrifielondCandidatelonScribelons,
+            product = scribelonMelontadata.product,
+            imprelonsselondBuckelonts = imprelonsselondBuckelonts
           )
 
         publish(
-          logger = blueVerifiedTweetRecsScribeLogger,
-          codec = VITTweetCandidatesScribe,
-          message = blueVerifiedScribe)
+          loggelonr = bluelonVelonrifielondTwelonelontReloncsScribelonLoggelonr,
+          codelonc = VITTwelonelontCandidatelonsScribelon,
+          melonssagelon = bluelonVelonrifielondScribelon)
       }
     }
   }
 
   /**
-   * Scribe Per-step intermediate results and performance metrics
-   * for each step: fetch signals, fetch candidates, filters, ranker, etc
+   * Scribelon Pelonr-stelonp intelonrmelondiatelon relonsults and pelonrformancelon melontrics
+   * for elonach stelonp: felontch signals, felontch candidatelons, filtelonrs, rankelonr, elontc
    */
-  private[logging] def scribeResultsAndPerformanceMetrics[T](
-    scribeMetadata: ScribeMetadata,
-    getResultFn: => Future[T],
-    convertToResultFn: (T, UserId) => Result,
-    enableKafkaScribe: Boolean = false
-  ): Future[T] = {
-    val timer = Stopwatch.start()
-    getResultFn.onSuccess { input =>
-      val latencyMs = timer().inMilliseconds
-      val result = convertToResultFn(input, scribeMetadata.userId)
-      val traceId = Trace.id.traceId.toLong
-      val scribeMsg = buildScribeMessage(result, scribeMetadata, latencyMs, traceId)
+  privatelon[logging] delonf scribelonRelonsultsAndPelonrformancelonMelontrics[T](
+    scribelonMelontadata: ScribelonMelontadata,
+    gelontRelonsultFn: => Futurelon[T],
+    convelonrtToRelonsultFn: (T, UselonrId) => Relonsult,
+    elonnablelonKafkaScribelon: Boolelonan = falselon
+  ): Futurelon[T] = {
+    val timelonr = Stopwatch.start()
+    gelontRelonsultFn.onSuccelonss { input =>
+      val latelonncyMs = timelonr().inMilliselonconds
+      val relonsult = convelonrtToRelonsultFn(input, scribelonMelontadata.uselonrId)
+      val tracelonId = Tracelon.id.tracelonId.toLong
+      val scribelonMsg = buildScribelonMelonssagelon(relonsult, scribelonMelontadata, latelonncyMs, tracelonId)
 
-      if (decider.isAvailableForId(
-          scribeMetadata.userId,
-          DeciderConstants.upperFunnelPerStepScribeRate)) {
-        upperFunnelsStats.counter(scribeMetadata.product.originalName).incr()
-        scribeResult(scribeMsg)
+      if (deloncidelonr.isAvailablelonForId(
+          scribelonMelontadata.uselonrId,
+          DeloncidelonrConstants.uppelonrFunnelonlPelonrStelonpScribelonRatelon)) {
+        uppelonrFunnelonlsStats.countelonr(scribelonMelontadata.product.originalNamelon).incr()
+        scribelonRelonsult(scribelonMsg)
       }
 
-      // forks the scribe as a Kafka message for async feature hydration
-      if (enableKafkaScribe && shouldScribeKafkaMessage(
-          scribeMetadata.userId,
-          scribeMetadata.product)) {
-        kafkaMessagesStats.counter(scribeMetadata.product.originalName).incr()
+      // forks thelon scribelon as a Kafka melonssagelon for async felonaturelon hydration
+      if (elonnablelonKafkaScribelon && shouldScribelonKafkaMelonssagelon(
+          scribelonMelontadata.uselonrId,
+          scribelonMelontadata.product)) {
+        kafkaMelonssagelonsStats.countelonr(scribelonMelontadata.product.originalNamelon).incr()
 
-        val batchedKafkaMessages = downsampleKafkaMessage(scribeMsg)
-        batchedKafkaMessages.foreach { kafkaMessage =>
-          kafkaProducer.send(
-            topic = ScribeCategories.TweetsRecs.scribeCategory,
-            key = traceId.toString,
-            value = kafkaMessage,
-            timestamp = Time.now.inMilliseconds
+        val batchelondKafkaMelonssagelons = downsamplelonKafkaMelonssagelon(scribelonMsg)
+        batchelondKafkaMelonssagelons.forelonach { kafkaMelonssagelon =>
+          kafkaProducelonr.selonnd(
+            topic = ScribelonCatelongorielons.TwelonelontsReloncs.scribelonCatelongory,
+            kelony = tracelonId.toString,
+            valuelon = kafkaMelonssagelon,
+            timelonstamp = Timelon.now.inMilliselonconds
           )
         }
       }
     }
   }
 
-  private def convertTopLevelAPIResult(
-    request: CrMixerTweetRequest,
-    response: CrMixerTweetResponse,
-    startTime: Long
-  ): Result = {
-    Result.TopLevelApiResult(
-      TopLevelApiResult(
-        timestamp = startTime,
-        request = request,
-        response = response
+  privatelon delonf convelonrtTopLelonvelonlAPIRelonsult(
+    relonquelonst: CrMixelonrTwelonelontRelonquelonst,
+    relonsponselon: CrMixelonrTwelonelontRelonsponselon,
+    startTimelon: Long
+  ): Relonsult = {
+    Relonsult.TopLelonvelonlApiRelonsult(
+      TopLelonvelonlApiRelonsult(
+        timelonstamp = startTimelon,
+        relonquelonst = relonquelonst,
+        relonsponselon = relonsponselon
       ))
   }
 
-  private def convertFetchSignalSourcesResult(
-    sourceInfoSetTuple: (Set[SourceInfo], Map[String, Option[GraphSourceInfo]]),
-    requestUserId: UserId
-  ): Result = {
-    val sourceSignals = sourceInfoSetTuple._1.map { sourceInfo =>
-      SourceSignal(id = Some(sourceInfo.internalId))
+  privatelon delonf convelonrtFelontchSignalSourcelonsRelonsult(
+    sourcelonInfoSelontTuplelon: (Selont[SourcelonInfo], Map[String, Option[GraphSourcelonInfo]]),
+    relonquelonstUselonrId: UselonrId
+  ): Relonsult = {
+    val sourcelonSignals = sourcelonInfoSelontTuplelon._1.map { sourcelonInfo =>
+      SourcelonSignal(id = Somelon(sourcelonInfo.intelonrnalId))
     }
-    // For source graphs, we pass in requestUserId as a placeholder
-    val sourceGraphs = sourceInfoSetTuple._2.map {
-      case (_, _) =>
-        SourceSignal(id = Some(InternalId.UserId(requestUserId)))
+    // For sourcelon graphs, welon pass in relonquelonstUselonrId as a placelonholdelonr
+    val sourcelonGraphs = sourcelonInfoSelontTuplelon._2.map {
+      caselon (_, _) =>
+        SourcelonSignal(id = Somelon(IntelonrnalId.UselonrId(relonquelonstUselonrId)))
     }
-    Result.FetchSignalSourcesResult(
-      FetchSignalSourcesResult(
-        signals = Some(sourceSignals ++ sourceGraphs)
+    Relonsult.FelontchSignalSourcelonsRelonsult(
+      FelontchSignalSourcelonsRelonsult(
+        signals = Somelon(sourcelonSignals ++ sourcelonGraphs)
       ))
   }
 
-  private def convertFetchCandidatesResult(
-    candidatesSeq: Seq[Seq[InitialCandidate]],
-    requestUserId: UserId
-  ): Result = {
-    val tweetCandidatesWithMetadata = candidatesSeq.flatMap { candidates =>
-      candidates.map { candidate =>
-        TweetCandidateWithMetadata(
-          tweetId = candidate.tweetId,
-          candidateGenerationKey = Some(
-            CandidateGenerationKeyUtil.toThrift(candidate.candidateGenerationInfo, requestUserId)),
-          score = Some(candidate.getSimilarityScore),
-          numCandidateGenerationKeys = None // not populated yet
+  privatelon delonf convelonrtFelontchCandidatelonsRelonsult(
+    candidatelonsSelonq: Selonq[Selonq[InitialCandidatelon]],
+    relonquelonstUselonrId: UselonrId
+  ): Relonsult = {
+    val twelonelontCandidatelonsWithMelontadata = candidatelonsSelonq.flatMap { candidatelons =>
+      candidatelons.map { candidatelon =>
+        TwelonelontCandidatelonWithMelontadata(
+          twelonelontId = candidatelon.twelonelontId,
+          candidatelonGelonnelonrationKelony = Somelon(
+            CandidatelonGelonnelonrationKelonyUtil.toThrift(candidatelon.candidatelonGelonnelonrationInfo, relonquelonstUselonrId)),
+          scorelon = Somelon(candidatelon.gelontSimilarityScorelon),
+          numCandidatelonGelonnelonrationKelonys = Nonelon // not populatelond yelont
         )
       }
     }
-    Result.FetchCandidatesResult(FetchCandidatesResult(Some(tweetCandidatesWithMetadata)))
+    Relonsult.FelontchCandidatelonsRelonsult(FelontchCandidatelonsRelonsult(Somelon(twelonelontCandidatelonsWithMelontadata)))
   }
 
-  private def convertPreRankFilterResult(
-    candidatesSeq: Seq[Seq[InitialCandidate]],
-    requestUserId: UserId
-  ): Result = {
-    val tweetCandidatesWithMetadata = candidatesSeq.flatMap { candidates =>
-      candidates.map { candidate =>
-        TweetCandidateWithMetadata(
-          tweetId = candidate.tweetId,
-          candidateGenerationKey = Some(
-            CandidateGenerationKeyUtil.toThrift(candidate.candidateGenerationInfo, requestUserId)),
-          score = Some(candidate.getSimilarityScore),
-          numCandidateGenerationKeys = None // not populated yet
+  privatelon delonf convelonrtPrelonRankFiltelonrRelonsult(
+    candidatelonsSelonq: Selonq[Selonq[InitialCandidatelon]],
+    relonquelonstUselonrId: UselonrId
+  ): Relonsult = {
+    val twelonelontCandidatelonsWithMelontadata = candidatelonsSelonq.flatMap { candidatelons =>
+      candidatelons.map { candidatelon =>
+        TwelonelontCandidatelonWithMelontadata(
+          twelonelontId = candidatelon.twelonelontId,
+          candidatelonGelonnelonrationKelony = Somelon(
+            CandidatelonGelonnelonrationKelonyUtil.toThrift(candidatelon.candidatelonGelonnelonrationInfo, relonquelonstUselonrId)),
+          scorelon = Somelon(candidatelon.gelontSimilarityScorelon),
+          numCandidatelonGelonnelonrationKelonys = Nonelon // not populatelond yelont
         )
       }
     }
-    Result.PreRankFilterResult(PreRankFilterResult(Some(tweetCandidatesWithMetadata)))
+    Relonsult.PrelonRankFiltelonrRelonsult(PrelonRankFiltelonrRelonsult(Somelon(twelonelontCandidatelonsWithMelontadata)))
   }
 
-  // We take InterleaveResult for Unconstrained dataset ML ranker training
-  private def convertInterleaveResult(
-    blendedCandidates: Seq[BlendedCandidate],
-    requestUserId: UserId
-  ): Result = {
-    val tweetCandidatesWithMetadata = blendedCandidates.map { blendedCandidate =>
-      val candidateGenerationKey =
-        CandidateGenerationKeyUtil.toThrift(blendedCandidate.reasonChosen, requestUserId)
-      TweetCandidateWithMetadata(
-        tweetId = blendedCandidate.tweetId,
-        candidateGenerationKey = Some(candidateGenerationKey),
-        authorId = Some(blendedCandidate.tweetInfo.authorId), // for ML pipeline training
-        score = Some(blendedCandidate.getSimilarityScore),
-        numCandidateGenerationKeys = Some(blendedCandidate.potentialReasons.size)
-      ) // hydrate fields for light ranking training data
+  // Welon takelon IntelonrlelonavelonRelonsult for Unconstrainelond dataselont ML rankelonr training
+  privatelon delonf convelonrtIntelonrlelonavelonRelonsult(
+    blelonndelondCandidatelons: Selonq[BlelonndelondCandidatelon],
+    relonquelonstUselonrId: UselonrId
+  ): Relonsult = {
+    val twelonelontCandidatelonsWithMelontadata = blelonndelondCandidatelons.map { blelonndelondCandidatelon =>
+      val candidatelonGelonnelonrationKelony =
+        CandidatelonGelonnelonrationKelonyUtil.toThrift(blelonndelondCandidatelon.relonasonChoselonn, relonquelonstUselonrId)
+      TwelonelontCandidatelonWithMelontadata(
+        twelonelontId = blelonndelondCandidatelon.twelonelontId,
+        candidatelonGelonnelonrationKelony = Somelon(candidatelonGelonnelonrationKelony),
+        authorId = Somelon(blelonndelondCandidatelon.twelonelontInfo.authorId), // for ML pipelonlinelon training
+        scorelon = Somelon(blelonndelondCandidatelon.gelontSimilarityScorelon),
+        numCandidatelonGelonnelonrationKelonys = Somelon(blelonndelondCandidatelon.potelonntialRelonasons.sizelon)
+      ) // hydratelon fielonlds for light ranking training data
     }
-    Result.InterleaveResult(InterleaveResult(Some(tweetCandidatesWithMetadata)))
+    Relonsult.IntelonrlelonavelonRelonsult(IntelonrlelonavelonRelonsult(Somelon(twelonelontCandidatelonsWithMelontadata)))
   }
 
-  private def convertRankResult(
-    rankedCandidates: Seq[RankedCandidate],
-    requestUserId: UserId
-  ): Result = {
-    val tweetCandidatesWithMetadata = rankedCandidates.map { rankedCandidate =>
-      val candidateGenerationKey =
-        CandidateGenerationKeyUtil.toThrift(rankedCandidate.reasonChosen, requestUserId)
-      TweetCandidateWithMetadata(
-        tweetId = rankedCandidate.tweetId,
-        candidateGenerationKey = Some(candidateGenerationKey),
-        score = Some(rankedCandidate.getSimilarityScore),
-        numCandidateGenerationKeys = Some(rankedCandidate.potentialReasons.size)
+  privatelon delonf convelonrtRankRelonsult(
+    rankelondCandidatelons: Selonq[RankelondCandidatelon],
+    relonquelonstUselonrId: UselonrId
+  ): Relonsult = {
+    val twelonelontCandidatelonsWithMelontadata = rankelondCandidatelons.map { rankelondCandidatelon =>
+      val candidatelonGelonnelonrationKelony =
+        CandidatelonGelonnelonrationKelonyUtil.toThrift(rankelondCandidatelon.relonasonChoselonn, relonquelonstUselonrId)
+      TwelonelontCandidatelonWithMelontadata(
+        twelonelontId = rankelondCandidatelon.twelonelontId,
+        candidatelonGelonnelonrationKelony = Somelon(candidatelonGelonnelonrationKelony),
+        scorelon = Somelon(rankelondCandidatelon.gelontSimilarityScorelon),
+        numCandidatelonGelonnelonrationKelonys = Somelon(rankelondCandidatelon.potelonntialRelonasons.sizelon)
       )
     }
-    Result.RankResult(RankResult(Some(tweetCandidatesWithMetadata)))
+    Relonsult.RankRelonsult(RankRelonsult(Somelon(twelonelontCandidatelonsWithMelontadata)))
   }
 
-  private def buildScribeMessage(
-    result: Result,
-    scribeMetadata: ScribeMetadata,
-    latencyMs: Long,
-    traceId: Long
-  ): GetTweetsRecommendationsScribe = {
-    GetTweetsRecommendationsScribe(
-      uuid = scribeMetadata.requestUUID,
-      userId = scribeMetadata.userId,
-      result = result,
-      traceId = Some(traceId),
-      performanceMetrics = Some(PerformanceMetrics(Some(latencyMs))),
-      impressedBuckets = getImpressedBuckets(scopedStats)
+  privatelon delonf buildScribelonMelonssagelon(
+    relonsult: Relonsult,
+    scribelonMelontadata: ScribelonMelontadata,
+    latelonncyMs: Long,
+    tracelonId: Long
+  ): GelontTwelonelontsReloncommelonndationsScribelon = {
+    GelontTwelonelontsReloncommelonndationsScribelon(
+      uuid = scribelonMelontadata.relonquelonstUUID,
+      uselonrId = scribelonMelontadata.uselonrId,
+      relonsult = relonsult,
+      tracelonId = Somelon(tracelonId),
+      pelonrformancelonMelontrics = Somelon(PelonrformancelonMelontrics(Somelon(latelonncyMs))),
+      imprelonsselondBuckelonts = gelontImprelonsselondBuckelonts(scopelondStats)
     )
   }
 
-  private def scribeResult(
-    scribeMsg: GetTweetsRecommendationsScribe
+  privatelon delonf scribelonRelonsult(
+    scribelonMsg: GelontTwelonelontsReloncommelonndationsScribelon
   ): Unit = {
     publish(
-      logger = tweetRecsScribeLogger,
-      codec = GetTweetsRecommendationsScribe,
-      message = scribeMsg)
+      loggelonr = twelonelontReloncsScribelonLoggelonr,
+      codelonc = GelontTwelonelontsReloncommelonndationsScribelon,
+      melonssagelon = scribelonMsg)
   }
 
   /**
-   * Gate for producing messages to Kafka for async feature hydration
+   * Gatelon for producing melonssagelons to Kafka for async felonaturelon hydration
    */
-  private def shouldScribeKafkaMessage(
-    userId: UserId,
+  privatelon delonf shouldScribelonKafkaMelonssagelon(
+    uselonrId: UselonrId,
     product: Product
-  ): Boolean = {
-    val isEligibleUser = decider.isAvailable(
-      DeciderConstants.kafkaMessageScribeSampleRate,
-      Some(SimpleRecipient(userId)))
-    val isHomeProduct = (product == Product.Home)
-    isEligibleUser && isHomeProduct
+  ): Boolelonan = {
+    val iselonligiblelonUselonr = deloncidelonr.isAvailablelon(
+      DeloncidelonrConstants.kafkaMelonssagelonScribelonSamplelonRatelon,
+      Somelon(SimplelonReloncipielonnt(uselonrId)))
+    val isHomelonProduct = (product == Product.Homelon)
+    iselonligiblelonUselonr && isHomelonProduct
   }
 
   /**
-   * Due to size limits of Strato (see SD-19028), each Kafka message must be downsampled
+   * Duelon to sizelon limits of Strato (selonelon SD-19028), elonach Kafka melonssagelon must belon downsamplelond
    */
-  private[logging] def downsampleKafkaMessage(
-    scribeMsg: GetTweetsRecommendationsScribe
-  ): Seq[GetTweetsRecommendationsScribe] = {
-    val sampledResultSeq: Seq[Result] = scribeMsg.result match {
-      case Result.InterleaveResult(interleaveResult) =>
-        val sampledTweetsSeq = interleaveResult.tweets
-          .map { tweets =>
+  privatelon[logging] delonf downsamplelonKafkaMelonssagelon(
+    scribelonMsg: GelontTwelonelontsReloncommelonndationsScribelon
+  ): Selonq[GelontTwelonelontsReloncommelonndationsScribelon] = {
+    val samplelondRelonsultSelonq: Selonq[Relonsult] = scribelonMsg.relonsult match {
+      caselon Relonsult.IntelonrlelonavelonRelonsult(intelonrlelonavelonRelonsult) =>
+        val samplelondTwelonelontsSelonq = intelonrlelonavelonRelonsult.twelonelonts
+          .map { twelonelonts =>
             Random
-              .shuffle(tweets).take(KafkaMaxTweetsPerMessage)
-              .grouped(BatchSize).toSeq
-          }.getOrElse(Seq.empty)
+              .shufflelon(twelonelonts).takelon(KafkaMaxTwelonelontsPelonrMelonssagelon)
+              .groupelond(BatchSizelon).toSelonq
+          }.gelontOrelonlselon(Selonq.elonmpty)
 
-        sampledTweetsSeq.map { sampledTweets =>
-          Result.InterleaveResult(InterleaveResult(Some(sampledTweets)))
+        samplelondTwelonelontsSelonq.map { samplelondTwelonelonts =>
+          Relonsult.IntelonrlelonavelonRelonsult(IntelonrlelonavelonRelonsult(Somelon(samplelondTwelonelonts)))
         }
 
-      // if it's an unrecognized type, err on the side of sending no candidates
-      case _ =>
-        kafkaMessagesStats.counter("InvalidKafkaMessageResultType").incr()
-        Seq(Result.InterleaveResult(InterleaveResult(None)))
+      // if it's an unreloncognizelond typelon, elonrr on thelon sidelon of selonnding no candidatelons
+      caselon _ =>
+        kafkaMelonssagelonsStats.countelonr("InvalidKafkaMelonssagelonRelonsultTypelon").incr()
+        Selonq(Relonsult.IntelonrlelonavelonRelonsult(IntelonrlelonavelonRelonsult(Nonelon)))
     }
 
-    sampledResultSeq.map { sampledResult =>
-      GetTweetsRecommendationsScribe(
-        uuid = scribeMsg.uuid,
-        userId = scribeMsg.userId,
-        result = sampledResult,
-        traceId = scribeMsg.traceId,
-        performanceMetrics = None,
-        impressedBuckets = None
+    samplelondRelonsultSelonq.map { samplelondRelonsult =>
+      GelontTwelonelontsReloncommelonndationsScribelon(
+        uuid = scribelonMsg.uuid,
+        uselonrId = scribelonMsg.uselonrId,
+        relonsult = samplelondRelonsult,
+        tracelonId = scribelonMsg.tracelonId,
+        pelonrformancelonMelontrics = Nonelon,
+        imprelonsselondBuckelonts = Nonelon
       )
     }
   }
 
   /**
-   * Handles client_event serialization to log data into DDG metrics
+   * Handlelons clielonnt_elonvelonnt selonrialization to log data into DDG melontrics
    */
-  private[logging] def publishTopLevelDdgMetrics(
-    logger: Logger,
-    topLevelDdgMetricsMetadata: TopLevelDdgMetricsMetadata,
-    candidateSize: Long,
-    latencyMs: Long,
+  privatelon[logging] delonf publishTopLelonvelonlDdgMelontrics(
+    loggelonr: Loggelonr,
+    topLelonvelonlDdgMelontricsMelontadata: TopLelonvelonlDdgMelontricsMelontadata,
+    candidatelonSizelon: Long,
+    latelonncyMs: Long,
   ): Unit = {
     val data = Map[Any, Any](
-      "latency_ms" -> latencyMs,
-      "event_value" -> candidateSize
+      "latelonncy_ms" -> latelonncyMs,
+      "elonvelonnt_valuelon" -> candidatelonSizelon
     )
-    val label: (String, String) = ("tweetrec", "")
-    val namespace = getNamespace(topLevelDdgMetricsMetadata, label) + ("action" -> "candidates")
-    val message =
-      serialization
-        .serializeClientEvent(namespace, getClientData(topLevelDdgMetricsMetadata), data)
-    logger.info(message)
+    val labelonl: (String, String) = ("twelonelontrelonc", "")
+    val namelonspacelon = gelontNamelonspacelon(topLelonvelonlDdgMelontricsMelontadata, labelonl) + ("action" -> "candidatelons")
+    val melonssagelon =
+      selonrialization
+        .selonrializelonClielonntelonvelonnt(namelonspacelon, gelontClielonntData(topLelonvelonlDdgMelontricsMelontadata), data)
+    loggelonr.info(melonssagelon)
   }
 
-  private def getClientData(
-    topLevelDdgMetricsMetadata: TopLevelDdgMetricsMetadata
-  ): ClientDataProvider =
-    MinimalClientDataProvider(
-      userId = topLevelDdgMetricsMetadata.userId,
-      guestId = None,
-      clientApplicationId = topLevelDdgMetricsMetadata.clientApplicationId,
-      countryCode = topLevelDdgMetricsMetadata.countryCode
+  privatelon delonf gelontClielonntData(
+    topLelonvelonlDdgMelontricsMelontadata: TopLelonvelonlDdgMelontricsMelontadata
+  ): ClielonntDataProvidelonr =
+    MinimalClielonntDataProvidelonr(
+      uselonrId = topLelonvelonlDdgMelontricsMelontadata.uselonrId,
+      guelonstId = Nonelon,
+      clielonntApplicationId = topLelonvelonlDdgMelontricsMelontadata.clielonntApplicationId,
+      countryCodelon = topLelonvelonlDdgMelontricsMelontadata.countryCodelon
     )
 
-  private def getNamespace(
-    topLevelDdgMetricsMetadata: TopLevelDdgMetricsMetadata,
-    label: (String, String)
+  privatelon delonf gelontNamelonspacelon(
+    topLelonvelonlDdgMelontricsMelontadata: TopLelonvelonlDdgMelontricsMelontadata,
+    labelonl: (String, String)
   ): Map[String, String] = {
-    val productName =
-      CaseFormat.UPPER_CAMEL
-        .to(CaseFormat.LOWER_UNDERSCORE, topLevelDdgMetricsMetadata.product.originalName)
+    val productNamelon =
+      CaselonFormat.UPPelonR_CAMelonL
+        .to(CaselonFormat.LOWelonR_UNDelonRSCORelon, topLelonvelonlDdgMelontricsMelontadata.product.originalNamelon)
 
     Map(
-      "client" -> ScribingABDeciderUtil.clientForAppId(
-        topLevelDdgMetricsMetadata.clientApplicationId),
-      "page" -> "cr-mixer",
-      "section" -> productName,
-      "component" -> label._1,
-      "element" -> label._2
+      "clielonnt" -> ScribingABDeloncidelonrUtil.clielonntForAppId(
+        topLelonvelonlDdgMelontricsMelontadata.clielonntApplicationId),
+      "pagelon" -> "cr-mixelonr",
+      "selonction" -> productNamelon,
+      "componelonnt" -> labelonl._1,
+      "elonlelonmelonnt" -> labelonl._2
     )
   }
 }
 
-object CrMixerScribeLogger {
-  val KafkaMaxTweetsPerMessage: Int = 200
-  val BatchSize: Int = 20
+objelonct CrMixelonrScribelonLoggelonr {
+  val KafkaMaxTwelonelontsPelonrMelonssagelon: Int = 200
+  val BatchSizelon: Int = 20
 }

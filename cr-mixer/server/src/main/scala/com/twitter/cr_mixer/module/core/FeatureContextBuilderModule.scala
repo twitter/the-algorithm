@@ -1,16 +1,16 @@
-package com.twitter.cr_mixer.module.core
+packagelon com.twittelonr.cr_mixelonr.modulelon.corelon
 
-import com.google.inject.Provides
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.discovelonry.common.configapi.FelonaturelonContelonxtBuildelonr
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import javax.injelonct.Singlelonton
 
-object FeatureContextBuilderModule extends TwitterModule {
+objelonct FelonaturelonContelonxtBuildelonrModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  def providesFeatureContextBuilder(featureSwitches: FeatureSwitches): FeatureContextBuilder = {
-    FeatureContextBuilder(featureSwitches)
+  @Providelons
+  @Singlelonton
+  delonf providelonsFelonaturelonContelonxtBuildelonr(felonaturelonSwitchelons: FelonaturelonSwitchelons): FelonaturelonContelonxtBuildelonr = {
+    FelonaturelonContelonxtBuildelonr(felonaturelonSwitchelons)
   }
 }

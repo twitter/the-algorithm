@@ -1,101 +1,101 @@
-package com.twitter.follow_recommendations.services
+packagelon com.twittelonr.follow_reloncommelonndations.selonrvicelons
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.thrift.routing.ThriftWarmup
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService.GetRecommendations
-import com.twitter.follow_recommendations.thriftscala.ClientContext
-import com.twitter.follow_recommendations.thriftscala.DebugParams
-import com.twitter.follow_recommendations.thriftscala.DisplayContext
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.follow_recommendations.thriftscala.Profile
-import com.twitter.follow_recommendations.thriftscala.RecommendationRequest
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.scrooge.Request
-import com.twitter.scrooge.Response
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finatra.thrift.routing.ThriftWarmup
+import com.twittelonr.follow_reloncommelonndations.thriftscala.FollowReloncommelonndationsThriftSelonrvicelon.GelontReloncommelonndations
+import com.twittelonr.follow_reloncommelonndations.thriftscala.ClielonntContelonxt
+import com.twittelonr.follow_reloncommelonndations.thriftscala.DelonbugParams
+import com.twittelonr.follow_reloncommelonndations.thriftscala.DisplayContelonxt
+import com.twittelonr.follow_reloncommelonndations.thriftscala.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.thriftscala.Profilelon
+import com.twittelonr.follow_reloncommelonndations.thriftscala.ReloncommelonndationRelonquelonst
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.injelonct.utils.Handlelonr
+import com.twittelonr.scroogelon.Relonquelonst
+import com.twittelonr.scroogelon.Relonsponselon
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FollowRecommendationsServiceWarmupHandler @Inject() (warmup: ThriftWarmup)
-    extends Handler
+@Singlelonton
+class FollowReloncommelonndationsSelonrvicelonWarmupHandlelonr @Injelonct() (warmup: ThriftWarmup)
+    elonxtelonnds Handlelonr
     with Logging {
 
-  private val clientId = ClientId("thrift-warmup-client")
+  privatelon val clielonntId = ClielonntId("thrift-warmup-clielonnt")
 
-  override def handle(): Unit = {
-    val testIds = Seq(1L)
-    def warmupQuery(userId: Long, displayLocation: DisplayLocation): RecommendationRequest = {
-      val clientContext = ClientContext(
-        userId = Some(userId),
-        guestId = None,
-        appId = Some(258901L),
-        ipAddress = Some("0.0.0.0"),
-        userAgent = Some("FAKE_USER_AGENT_FOR_WARMUPS"),
-        countryCode = Some("US"),
-        languageCode = Some("en"),
-        isTwoffice = None,
-        userRoles = None,
-        deviceId = Some("FAKE_DEVICE_ID_FOR_WARMUPS")
+  ovelonrridelon delonf handlelon(): Unit = {
+    val telonstIds = Selonq(1L)
+    delonf warmupQuelonry(uselonrId: Long, displayLocation: DisplayLocation): ReloncommelonndationRelonquelonst = {
+      val clielonntContelonxt = ClielonntContelonxt(
+        uselonrId = Somelon(uselonrId),
+        guelonstId = Nonelon,
+        appId = Somelon(258901L),
+        ipAddrelonss = Somelon("0.0.0.0"),
+        uselonrAgelonnt = Somelon("FAKelon_USelonR_AGelonNT_FOR_WARMUPS"),
+        countryCodelon = Somelon("US"),
+        languagelonCodelon = Somelon("elonn"),
+        isTwofficelon = Nonelon,
+        uselonrRolelons = Nonelon,
+        delonvicelonId = Somelon("FAKelon_DelonVICelon_ID_FOR_WARMUPS")
       )
-      RecommendationRequest(
-        clientContext = clientContext,
+      ReloncommelonndationRelonquelonst(
+        clielonntContelonxt = clielonntContelonxt,
         displayLocation = displayLocation,
-        displayContext = None,
-        maxResults = Some(3),
-        fetchPromotedContent = Some(false),
-        debugParams = Some(DebugParams(doNotLog = Some(true)))
+        displayContelonxt = Nonelon,
+        maxRelonsults = Somelon(3),
+        felontchPromotelondContelonnt = Somelon(falselon),
+        delonbugParams = Somelon(DelonbugParams(doNotLog = Somelon(truelon)))
       )
     }
 
-    // Add FRS display locations here if they should be targeted for warm-up
-    // when FRS is starting from a fresh state after a deploy
-    val displayLocationsToWarmUp: Seq[DisplayLocation] = Seq(
-      DisplayLocation.HomeTimeline,
-      DisplayLocation.HomeTimelineReverseChron,
-      DisplayLocation.ProfileSidebar,
-      DisplayLocation.NuxInterests,
+    // Add FRS display locations helonrelon if thelony should belon targelontelond for warm-up
+    // whelonn FRS is starting from a frelonsh statelon aftelonr a delonploy
+    val displayLocationsToWarmUp: Selonq[DisplayLocation] = Selonq(
+      DisplayLocation.HomelonTimelonlinelon,
+      DisplayLocation.HomelonTimelonlinelonRelonvelonrselonChron,
+      DisplayLocation.ProfilelonSidelonbar,
+      DisplayLocation.NuxIntelonrelonsts,
       DisplayLocation.NuxPymk
     )
 
     try {
-      clientId.asCurrent {
-        // Iterate over each user ID created for testing
-        testIds foreach { id =>
-          // Iterate over each display location targeted for warm-up
-          displayLocationsToWarmUp foreach { displayLocation =>
-            val warmupReq = warmupQuery(id, displayLocation)
-            info(s"Sending warm-up request to service with query: $warmupReq")
-            warmup.sendRequest(
-              method = GetRecommendations,
-              req = Request(GetRecommendations.Args(warmupReq)))(assertWarmupResponse)
-            // send the request one more time so that it goes through cache hits
-            warmup.sendRequest(
-              method = GetRecommendations,
-              req = Request(GetRecommendations.Args(warmupReq)))(assertWarmupResponse)
+      clielonntId.asCurrelonnt {
+        // Itelonratelon ovelonr elonach uselonr ID crelonatelond for telonsting
+        telonstIds forelonach { id =>
+          // Itelonratelon ovelonr elonach display location targelontelond for warm-up
+          displayLocationsToWarmUp forelonach { displayLocation =>
+            val warmupRelonq = warmupQuelonry(id, displayLocation)
+            info(s"Selonnding warm-up relonquelonst to selonrvicelon with quelonry: $warmupRelonq")
+            warmup.selonndRelonquelonst(
+              melonthod = GelontReloncommelonndations,
+              relonq = Relonquelonst(GelontReloncommelonndations.Args(warmupRelonq)))(asselonrtWarmupRelonsponselon)
+            // selonnd thelon relonquelonst onelon morelon timelon so that it goelons through cachelon hits
+            warmup.selonndRelonquelonst(
+              melonthod = GelontReloncommelonndations,
+              relonq = Relonquelonst(GelontReloncommelonndations.Args(warmupRelonq)))(asselonrtWarmupRelonsponselon)
           }
         }
       }
     } catch {
-      case e: Throwable =>
-        // we don't want a warmup failure to prevent start-up
-        error(e.getMessage, e)
+      caselon elon: Throwablelon =>
+        // welon don't want a warmup failurelon to prelonvelonnt start-up
+        elonrror(elon.gelontMelonssagelon, elon)
     }
-    info("Warm-up done.")
+    info("Warm-up donelon.")
   }
 
-  /* Private */
+  /* Privatelon */
 
-  private def assertWarmupResponse(result: Try[Response[GetRecommendations.SuccessType]]): Unit = {
-    // we collect and log any exceptions from the result.
-    result match {
-      case Return(_) => // ok
-      case Throw(exception) =>
+  privatelon delonf asselonrtWarmupRelonsponselon(relonsult: Try[Relonsponselon[GelontReloncommelonndations.SuccelonssTypelon]]): Unit = {
+    // welon collelonct and log any elonxcelonptions from thelon relonsult.
+    relonsult match {
+      caselon Relonturn(_) => // ok
+      caselon Throw(elonxcelonption) =>
         warn()
-        error(s"Error performing warm-up request: ${exception.getMessage}", exception)
+        elonrror(s"elonrror pelonrforming warm-up relonquelonst: ${elonxcelonption.gelontMelonssagelon}", elonxcelonption)
     }
   }
 }

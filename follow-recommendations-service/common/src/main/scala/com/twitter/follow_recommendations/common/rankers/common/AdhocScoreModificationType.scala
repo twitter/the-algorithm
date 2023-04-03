@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.rankers.common
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common
 
 /**
- * To manage the extent of adhoc score modifications, we set a hard limit that from each of the
- * types below *ONLY ONE* adhoc scorer can be applied to candidates' scores. More details about the
- * usage is available in [[AdhocRanker]]
+ * To managelon thelon elonxtelonnt of adhoc scorelon modifications, welon selont a hard limit that from elonach of thelon
+ * typelons belonlow *ONLY ONelon* adhoc scorelonr can belon applielond to candidatelons' scorelons. Morelon delontails about thelon
+ * usagelon is availablelon in [[AdhocRankelonr]]
  */
 
-object AdhocScoreModificationType extends Enumeration {
-  type AdhocScoreModificationType = Value
+objelonct AdhocScorelonModificationTypelon elonxtelonnds elonnumelonration {
+  typelon AdhocScorelonModificationTypelon = Valuelon
 
-  // This type of scorer increases the score of a subset of candidates through various policies.
-  val BoostingScorer: AdhocScoreModificationType = Value("boosting")
+  // This typelon of scorelonr increlonaselons thelon scorelon of a subselont of candidatelons through various policielons.
+  val BoostingScorelonr: AdhocScorelonModificationTypelon = Valuelon("boosting")
 
-  // This type of scorer shuffles candidates randomly according to some distribution.
-  val WeightedRandomSamplingScorer: AdhocScoreModificationType = Value("weighted_random_sampling")
+  // This typelon of scorelonr shufflelons candidatelons randomly according to somelon distribution.
+  val WelonightelondRandomSamplingScorelonr: AdhocScorelonModificationTypelon = Valuelon("welonightelond_random_sampling")
 
-  // This is added solely for testing purposes and should not be used in production.
-  val InvalidAdhocScorer: AdhocScoreModificationType = Value("invalid_adhoc_scorer")
+  // This is addelond solelonly for telonsting purposelons and should not belon uselond in production.
+  val InvalidAdhocScorelonr: AdhocScorelonModificationTypelon = Valuelon("invalid_adhoc_scorelonr")
 }

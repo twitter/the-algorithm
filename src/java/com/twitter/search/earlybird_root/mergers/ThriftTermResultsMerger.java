@@ -1,472 +1,472 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.Collelonction;
+import java.util.Collelonctions;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.earlybird.FacetsResultsUtils;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.elonarlybird.FacelontsRelonsultsUtils;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftHistogramSelonttings;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmStatisticsRelonsults;
 
 /**
- * Takes multiple successful EarlybirdResponses and merges them.
+ * Takelons multiplelon succelonssful elonarlybirdRelonsponselons and melonrgelons thelonm.
  */
-public class ThriftTermResultsMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(ThriftTermResultsMerger.class);
+public class ThriftTelonrmRelonsultsMelonrgelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ThriftTelonrmRelonsultsMelonrgelonr.class);
 
-  private static final SearchCounter BIN_ID_GAP_COUNTER =
-      SearchCounter.export("thrift_term_results_merger_found_gap_in_bin_ids");
-  private static final SearchCounter MIN_COMPLETE_BIN_ID_ADJUSTED_NULL =
-      SearchCounter.export("thrift_term_results_merger_min_complete_bin_id_adjusted_null");
-  private static final SearchCounter MIN_COMPLETE_BIN_ID_NULL_WITHOUT_BINS =
-      SearchCounter.export("thrift_term_results_merger_min_complete_bin_id_null_without_bins");
-  private static final SearchCounter MIN_COMPLETE_BIN_ID_OUT_OF_RANGE =
-      SearchCounter.export("thrift_term_results_merger_min_complete_bin_id_out_of_range");
-  private static final SearchCounter RESPONSE_WITHOUT_DRIVING_QUERY_HIT =
-      SearchCounter.export("response_without_driving_query_hit");
+  privatelon static final SelonarchCountelonr BIN_ID_GAP_COUNTelonR =
+      SelonarchCountelonr.elonxport("thrift_telonrm_relonsults_melonrgelonr_found_gap_in_bin_ids");
+  privatelon static final SelonarchCountelonr MIN_COMPLelonTelon_BIN_ID_ADJUSTelonD_NULL =
+      SelonarchCountelonr.elonxport("thrift_telonrm_relonsults_melonrgelonr_min_complelontelon_bin_id_adjustelond_null");
+  privatelon static final SelonarchCountelonr MIN_COMPLelonTelon_BIN_ID_NULL_WITHOUT_BINS =
+      SelonarchCountelonr.elonxport("thrift_telonrm_relonsults_melonrgelonr_min_complelontelon_bin_id_null_without_bins");
+  privatelon static final SelonarchCountelonr MIN_COMPLelonTelon_BIN_ID_OUT_OF_RANGelon =
+      SelonarchCountelonr.elonxport("thrift_telonrm_relonsults_melonrgelonr_min_complelontelon_bin_id_out_of_rangelon");
+  privatelon static final SelonarchCountelonr RelonSPONSelon_WITHOUT_DRIVING_QUelonRY_HIT =
+      SelonarchCountelonr.elonxport("relonsponselon_without_driving_quelonry_hit");
 
-  private static final ThriftTermRequest GLOBAL_COUNT_REQUEST =
-      new ThriftTermRequest().setFieldName("").setTerm("");
+  privatelon static final ThriftTelonrmRelonquelonst GLOBAL_COUNT_RelonQUelonST =
+      nelonw ThriftTelonrmRelonquelonst().selontFielonldNamelon("").selontTelonrm("");
 
   /**
-   * Sorted list of the most recent (and contiguous) numBins binIds across all responses.
-   * Expected to be an empty list if this request did not ask for histograms, or if it
+   * Sortelond list of thelon most reloncelonnt (and contiguous) numBins binIds across all relonsponselons.
+   * elonxpelonctelond to belon an elonmpty list if this relonquelonst did not ask for histograms, or if it
    * did ask for histograms for 0 numBins.
    */
   @Nonnull
-  private final List<Integer> mostRecentBinIds;
+  privatelon final List<Intelongelonr> mostReloncelonntBinIds;
   /**
-   * The first binId in the {@link #mostRecentBinIds} list. This value is not meant to be used in
-   * case mostRecentBinIds is an empty list.
+   * Thelon first binId in thelon {@link #mostReloncelonntBinIds} list. This valuelon is not melonant to belon uselond in
+   * caselon mostReloncelonntBinIds is an elonmpty list.
    */
-  private final int firstBinId;
+  privatelon final int firstBinId;
 
   /**
-   * For each unique ThriftTermRequest, stores an array of the total counts for all the binIds
-   * that we will return, summed up across all earlybird responses.
+   * For elonach uniquelon ThriftTelonrmRelonquelonst, storelons an array of thelon total counts for all thelon binIds
+   * that welon will relonturn, summelond up across all elonarlybird relonsponselons.
    *
-   * The values in each totalCounts array correspond to the binIds in the
-   * {@link #mostRecentBinIds} list.
+   * Thelon valuelons in elonach totalCounts array correlonspond to thelon binIds in thelon
+   * {@link #mostReloncelonntBinIds} list.
    *
-   * Key: thrift term request.
-   * Value: array of the total counts summed up across all earlybird responses for the key's
-   * term request, corresponding to the binIds in {@link #mostRecentBinIds}.
+   * Kelony: thrift telonrm relonquelonst.
+   * Valuelon: array of thelon total counts summelond up across all elonarlybird relonsponselons for thelon kelony's
+   * telonrm relonquelonst, correlonsponding to thelon binIds in {@link #mostReloncelonntBinIds}.
    */
-  private final Map<ThriftTermRequest, int[]> mergedTermRequestTotalCounts = Maps.newHashMap();
+  privatelon final Map<ThriftTelonrmRelonquelonst, int[]> melonrgelondTelonrmRelonquelonstTotalCounts = Maps.nelonwHashMap();
   /**
-   * The set of all unique binIds that we are merging.
+   * Thelon selont of all uniquelon binIds that welon arelon melonrging.
    */
-  private final Map<ThriftTermRequest, ThriftTermResults> termResultsMap = Maps.newHashMap();
-  private final ThriftHistogramSettings histogramSettings;
-
-  /**
-   * Only relevant for merging responses with histogram settings.
-   * This will be null either if (1) the request is not asking for histograms at all, or if
-   * (2) numBins was set to 0 (and no bin can be considered complete).
-   * If not null, the minCompleteBinId will be computed as the max over all merged responses'
-   * minCompleteBinId's.
-   */
-  @Nullable
-  private final Integer minCompleteBinId;
+  privatelon final Map<ThriftTelonrmRelonquelonst, ThriftTelonrmRelonsults> telonrmRelonsultsMap = Maps.nelonwHashMap();
+  privatelon final ThriftHistogramSelonttings histogramSelonttings;
 
   /**
-   * Create merger with collections of results to merge
+   * Only relonlelonvant for melonrging relonsponselons with histogram selonttings.
+   * This will belon null elonithelonr if (1) thelon relonquelonst is not asking for histograms at all, or if
+   * (2) numBins was selont to 0 (and no bin can belon considelonrelond complelontelon).
+   * If not null, thelon minComplelontelonBinId will belon computelond as thelon max ovelonr all melonrgelond relonsponselons'
+   * minComplelontelonBinId's.
    */
-  public ThriftTermResultsMerger(Collection<EarlybirdResponse> termStatsResults,
-                                 ThriftHistogramSettings histogramSettings) {
-    this.histogramSettings = histogramSettings;
+  @Nullablelon
+  privatelon final Intelongelonr minComplelontelonBinId;
 
-    Collection<EarlybirdResponse> filteredTermStatsResults =
-        filterOutEmptyEarlybirdResponses(termStatsResults);
+  /**
+   * Crelonatelon melonrgelonr with collelonctions of relonsults to melonrgelon
+   */
+  public ThriftTelonrmRelonsultsMelonrgelonr(Collelonction<elonarlybirdRelonsponselon> telonrmStatsRelonsults,
+                                 ThriftHistogramSelonttings histogramSelonttings) {
+    this.histogramSelonttings = histogramSelonttings;
 
-    this.mostRecentBinIds = findMostRecentBinIds(histogramSettings, filteredTermStatsResults);
-    this.firstBinId = mostRecentBinIds.isEmpty()
-        ? Integer.MAX_VALUE // Should not be used if mostRecentBinIds is empty.
-        : mostRecentBinIds.get(0);
+    Collelonction<elonarlybirdRelonsponselon> filtelonrelondTelonrmStatsRelonsults =
+        filtelonrOutelonmptyelonarlybirdRelonsponselons(telonrmStatsRelonsults);
 
-    List<Integer> minCompleteBinIds =
-        Lists.newArrayListWithCapacity(filteredTermStatsResults.size());
-    for (EarlybirdResponse response : filteredTermStatsResults) {
-      Preconditions.checkState(response.getResponseCode() == EarlybirdResponseCode.SUCCESS,
-          "Unsuccessful responses should not be given to ThriftTermResultsMerger.");
-      Preconditions.checkState(response.getTermStatisticsResults() != null,
-          "Response given to ThriftTermResultsMerger has no termStatisticsResults.");
+    this.mostReloncelonntBinIds = findMostReloncelonntBinIds(histogramSelonttings, filtelonrelondTelonrmStatsRelonsults);
+    this.firstBinId = mostReloncelonntBinIds.iselonmpty()
+        ? Intelongelonr.MAX_VALUelon // Should not belon uselond if mostReloncelonntBinIds is elonmpty.
+        : mostReloncelonntBinIds.gelont(0);
 
-      ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
-      List<Integer> binIds = termStatisticsResults.getBinIds();
+    List<Intelongelonr> minComplelontelonBinIds =
+        Lists.nelonwArrayListWithCapacity(filtelonrelondTelonrmStatsRelonsults.sizelon());
+    for (elonarlybirdRelonsponselon relonsponselon : filtelonrelondTelonrmStatsRelonsults) {
+      Prelonconditions.chelonckStatelon(relonsponselon.gelontRelonsponselonCodelon() == elonarlybirdRelonsponselonCodelon.SUCCelonSS,
+          "Unsuccelonssful relonsponselons should not belon givelonn to ThriftTelonrmRelonsultsMelonrgelonr.");
+      Prelonconditions.chelonckStatelon(relonsponselon.gelontTelonrmStatisticsRelonsults() != null,
+          "Relonsponselon givelonn to ThriftTelonrmRelonsultsMelonrgelonr has no telonrmStatisticsRelonsults.");
 
-      for (Map.Entry<ThriftTermRequest, ThriftTermResults> entry
-          : termStatisticsResults.getTermResults().entrySet()) {
-        ThriftTermRequest termRequest = entry.getKey();
-        ThriftTermResults termResults = entry.getValue();
+      ThriftTelonrmStatisticsRelonsults telonrmStatisticsRelonsults = relonsponselon.gelontTelonrmStatisticsRelonsults();
+      List<Intelongelonr> binIds = telonrmStatisticsRelonsults.gelontBinIds();
 
-        adjustTotalCount(termResults, binIds);
-        addTotalCountData(termRequest, termResults);
+      for (Map.elonntry<ThriftTelonrmRelonquelonst, ThriftTelonrmRelonsults> elonntry
+          : telonrmStatisticsRelonsults.gelontTelonrmRelonsults().elonntrySelont()) {
+        ThriftTelonrmRelonquelonst telonrmRelonquelonst = elonntry.gelontKelony();
+        ThriftTelonrmRelonsults telonrmRelonsults = elonntry.gelontValuelon();
 
-        if (histogramSettings != null) {
-          Preconditions.checkState(termStatisticsResults.isSetBinIds());
-          addHistogramData(termRequest, termResults, termStatisticsResults.getBinIds());
+        adjustTotalCount(telonrmRelonsults, binIds);
+        addTotalCountData(telonrmRelonquelonst, telonrmRelonsults);
+
+        if (histogramSelonttings != null) {
+          Prelonconditions.chelonckStatelon(telonrmStatisticsRelonsults.isSelontBinIds());
+          addHistogramData(telonrmRelonquelonst, telonrmRelonsults, telonrmStatisticsRelonsults.gelontBinIds());
         }
       }
 
-      if (histogramSettings != null) {
-        addMinCompleteBinId(minCompleteBinIds, response);
+      if (histogramSelonttings != null) {
+        addMinComplelontelonBinId(minComplelontelonBinIds, relonsponselon);
       }
     }
 
-    minCompleteBinId = minCompleteBinIds.isEmpty() ? null : Collections.max(minCompleteBinIds);
+    minComplelontelonBinId = minComplelontelonBinIds.iselonmpty() ? null : Collelonctions.max(minComplelontelonBinIds);
   }
 
   /**
-   * Take out any earlybird responses that we know did not match anything relevant to the query,
-   * and may have erroneous binIds.
+   * Takelon out any elonarlybird relonsponselons that welon know did not match anything relonlelonvant to thelon quelonry,
+   * and may havelon elonrronelonous binIds.
    */
-  private Collection<EarlybirdResponse> filterOutEmptyEarlybirdResponses(
-      Collection<EarlybirdResponse> termStatsResults) {
-    List<EarlybirdResponse> emptyResponses = Lists.newArrayList();
-    List<EarlybirdResponse> nonEmptyResponses = Lists.newArrayList();
-    for (EarlybirdResponse response : termStatsResults) {
-      // Guard against erroneously merging and returning 0 counts when we actually have data to
-      // return from other partitions.
-      // When a query doesn't match anything at all on an earlybird, the binIds that are returned
-      // do not correspond at all to the actual query, and are just based on the data range on the
-      // earlybird itself.
-      // We can identify these responses as (1) being non-early terminated, and (2) having 0
-      // hits processed.
-      if (isTermStatResponseEmpty(response)) {
-        emptyResponses.add(response);
-      } else {
-        nonEmptyResponses.add(response);
+  privatelon Collelonction<elonarlybirdRelonsponselon> filtelonrOutelonmptyelonarlybirdRelonsponselons(
+      Collelonction<elonarlybirdRelonsponselon> telonrmStatsRelonsults) {
+    List<elonarlybirdRelonsponselon> elonmptyRelonsponselons = Lists.nelonwArrayList();
+    List<elonarlybirdRelonsponselon> nonelonmptyRelonsponselons = Lists.nelonwArrayList();
+    for (elonarlybirdRelonsponselon relonsponselon : telonrmStatsRelonsults) {
+      // Guard against elonrronelonously melonrging and relonturning 0 counts whelonn welon actually havelon data to
+      // relonturn from othelonr partitions.
+      // Whelonn a quelonry doelonsn't match anything at all on an elonarlybird, thelon binIds that arelon relonturnelond
+      // do not correlonspond at all to thelon actual quelonry, and arelon just baselond on thelon data rangelon on thelon
+      // elonarlybird itselonlf.
+      // Welon can idelonntify thelonselon relonsponselons as (1) beloning non-elonarly telonrminatelond, and (2) having 0
+      // hits procelonsselond.
+      if (isTelonrmStatRelonsponselonelonmpty(relonsponselon)) {
+        elonmptyRelonsponselons.add(relonsponselon);
+      } elonlselon {
+        nonelonmptyRelonsponselons.add(relonsponselon);
       }
     }
 
-    // If all responses were "empty", we will just use those to merge into a new set of empty
-    // responses, using the binIds provided.
-    return nonEmptyResponses.isEmpty() ? emptyResponses : nonEmptyResponses;
+    // If all relonsponselons welonrelon "elonmpty", welon will just uselon thoselon to melonrgelon into a nelonw selont of elonmpty
+    // relonsponselons, using thelon binIds providelond.
+    relonturn nonelonmptyRelonsponselons.iselonmpty() ? elonmptyRelonsponselons : nonelonmptyRelonsponselons;
   }
 
-  private boolean isTermStatResponseEmpty(EarlybirdResponse response) {
-    return response.isSetSearchResults()
-        && (response.getSearchResults().getNumHitsProcessed() == 0
-            || drivingQueryHasNoHits(response))
-        && response.isSetEarlyTerminationInfo()
-        && !response.getEarlyTerminationInfo().isEarlyTerminated();
+  privatelon boolelonan isTelonrmStatRelonsponselonelonmpty(elonarlybirdRelonsponselon relonsponselon) {
+    relonturn relonsponselon.isSelontSelonarchRelonsults()
+        && (relonsponselon.gelontSelonarchRelonsults().gelontNumHitsProcelonsselond() == 0
+            || drivingQuelonryHasNoHits(relonsponselon))
+        && relonsponselon.isSelontelonarlyTelonrminationInfo()
+        && !relonsponselon.gelontelonarlyTelonrminationInfo().iselonarlyTelonrminatelond();
   }
 
   /**
-   * If the global count bins are all 0, then we know the driving query has no hits.
-   * This check is added as a short term solution for SEARCH-5476. This short term fix requires
-   * the client to set the includeGlobalCounts to kick in.
+   * If thelon global count bins arelon all 0, thelonn welon know thelon driving quelonry has no hits.
+   * This chelonck is addelond as a short telonrm solution for SelonARCH-5476. This short telonrm fix relonquirelons
+   * thelon clielonnt to selont thelon includelonGlobalCounts to kick in.
    */
-  private boolean drivingQueryHasNoHits(EarlybirdResponse response) {
-    ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
-    if (termStatisticsResults == null || termStatisticsResults.getTermResults() == null) {
-      // If there's no term stats response, be conservative and return false.
-      return false;
-    } else {
-      ThriftTermResults globalCounts =
-          termStatisticsResults.getTermResults().get(GLOBAL_COUNT_REQUEST);
+  privatelon boolelonan drivingQuelonryHasNoHits(elonarlybirdRelonsponselon relonsponselon) {
+    ThriftTelonrmStatisticsRelonsults telonrmStatisticsRelonsults = relonsponselon.gelontTelonrmStatisticsRelonsults();
+    if (telonrmStatisticsRelonsults == null || telonrmStatisticsRelonsults.gelontTelonrmRelonsults() == null) {
+      // If thelonrelon's no telonrm stats relonsponselon, belon conselonrvativelon and relonturn falselon.
+      relonturn falselon;
+    } elonlselon {
+      ThriftTelonrmRelonsults globalCounts =
+          telonrmStatisticsRelonsults.gelontTelonrmRelonsults().gelont(GLOBAL_COUNT_RelonQUelonST);
       if (globalCounts == null) {
-        // We cannot tell if driving query has no hits, be conservative and return false.
-        return false;
-      } else {
-        for (Integer i : globalCounts.getHistogramBins()) {
+        // Welon cannot telonll if driving quelonry has no hits, belon conselonrvativelon and relonturn falselon.
+        relonturn falselon;
+      } elonlselon {
+        for (Intelongelonr i : globalCounts.gelontHistogramBins()) {
           if (i > 0) {
-            return false;
+            relonturn falselon;
           }
         }
-        RESPONSE_WITHOUT_DRIVING_QUERY_HIT.increment();
-        return true;
+        RelonSPONSelon_WITHOUT_DRIVING_QUelonRY_HIT.increlonmelonnt();
+        relonturn truelon;
       }
     }
   }
 
-  private static List<Integer> findMostRecentBinIds(
-      ThriftHistogramSettings histogramSettings,
-      Collection<EarlybirdResponse> filteredTermStatsResults) {
-    Integer largestFirstBinId = null;
-    List<Integer> binIdsToUse = null;
+  privatelon static List<Intelongelonr> findMostReloncelonntBinIds(
+      ThriftHistogramSelonttings histogramSelonttings,
+      Collelonction<elonarlybirdRelonsponselon> filtelonrelondTelonrmStatsRelonsults) {
+    Intelongelonr largelonstFirstBinId = null;
+    List<Intelongelonr> binIdsToUselon = null;
 
-    if (histogramSettings != null) {
-      int numBins = histogramSettings.getNumBins();
-      for (EarlybirdResponse response : filteredTermStatsResults) {
-        ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
-        Preconditions.checkState(termStatisticsResults.getBinIds().size() == numBins,
-            "expected all results to have the same numBins. "
-                + "request numBins: %s, response numBins: %s",
-            numBins, termStatisticsResults.getBinIds().size());
+    if (histogramSelonttings != null) {
+      int numBins = histogramSelonttings.gelontNumBins();
+      for (elonarlybirdRelonsponselon relonsponselon : filtelonrelondTelonrmStatsRelonsults) {
+        ThriftTelonrmStatisticsRelonsults telonrmStatisticsRelonsults = relonsponselon.gelontTelonrmStatisticsRelonsults();
+        Prelonconditions.chelonckStatelon(telonrmStatisticsRelonsults.gelontBinIds().sizelon() == numBins,
+            "elonxpelonctelond all relonsults to havelon thelon samelon numBins. "
+                + "relonquelonst numBins: %s, relonsponselon numBins: %s",
+            numBins, telonrmStatisticsRelonsults.gelontBinIds().sizelon());
 
-        if (termStatisticsResults.getBinIds().size() > 0) {
-          Integer firstBinId = termStatisticsResults.getBinIds().get(0);
-          if (largestFirstBinId == null
-              || largestFirstBinId.intValue() < firstBinId.intValue()) {
-            largestFirstBinId = firstBinId;
-            binIdsToUse = termStatisticsResults.getBinIds();
+        if (telonrmStatisticsRelonsults.gelontBinIds().sizelon() > 0) {
+          Intelongelonr firstBinId = telonrmStatisticsRelonsults.gelontBinIds().gelont(0);
+          if (largelonstFirstBinId == null
+              || largelonstFirstBinId.intValuelon() < firstBinId.intValuelon()) {
+            largelonstFirstBinId = firstBinId;
+            binIdsToUselon = telonrmStatisticsRelonsults.gelontBinIds();
           }
         }
       }
     }
-    return binIdsToUse == null
-        ? Collections.<Integer>emptyList()
-        // Just in case, make a copy of the binIds so that we don't reuse the same list from one
-        // of the responses we're merging.
-        : Lists.newArrayList(binIdsToUse);
+    relonturn binIdsToUselon == null
+        ? Collelonctions.<Intelongelonr>elonmptyList()
+        // Just in caselon, makelon a copy of thelon binIds so that welon don't relonuselon thelon samelon list from onelon
+        // of thelon relonsponselons welon'relon melonrging.
+        : Lists.nelonwArrayList(binIdsToUselon);
   }
 
-  private void addMinCompleteBinId(List<Integer> minCompleteBinIds,
-                                   EarlybirdResponse response) {
-    Preconditions.checkNotNull(histogramSettings);
-    ThriftTermStatisticsResults termStatisticsResults = response.getTermStatisticsResults();
+  privatelon void addMinComplelontelonBinId(List<Intelongelonr> minComplelontelonBinIds,
+                                   elonarlybirdRelonsponselon relonsponselon) {
+    Prelonconditions.chelonckNotNull(histogramSelonttings);
+    ThriftTelonrmStatisticsRelonsults telonrmStatisticsRelonsults = relonsponselon.gelontTelonrmStatisticsRelonsults();
 
-    if (termStatisticsResults.isSetMinCompleteBinId()) {
-      // This is the base case. Early terminated or not, this is the proper minCompleteBinId
-      // that we're told to use for this response.
-      minCompleteBinIds.add(termStatisticsResults.getMinCompleteBinId());
-    } else if (termStatisticsResults.getBinIds().size() > 0) {
-      // This is the case where no bins were complete. For the purposes of merging, we need to
-      // mark all the binIds in this response as non-complete by marking the "max(binId)+1" as the
-      // last complete bin.
-      // When returning the merged response, we still have a guard for the resulting
-      // minCompleteBinId being outside of the binIds range, and will set the returned
-      // minCompleteBinId value to null, if this response's binIds end up being used as the most
-      // recent ones, and we need to signify that none of the bins are complete.
-      int binSize = termStatisticsResults.getBinIds().size();
-      Integer maxBinId = termStatisticsResults.getBinIds().get(binSize - 1);
-      minCompleteBinIds.add(maxBinId + 1);
+    if (telonrmStatisticsRelonsults.isSelontMinComplelontelonBinId()) {
+      // This is thelon baselon caselon. elonarly telonrminatelond or not, this is thelon propelonr minComplelontelonBinId
+      // that welon'relon told to uselon for this relonsponselon.
+      minComplelontelonBinIds.add(telonrmStatisticsRelonsults.gelontMinComplelontelonBinId());
+    } elonlselon if (telonrmStatisticsRelonsults.gelontBinIds().sizelon() > 0) {
+      // This is thelon caselon whelonrelon no bins welonrelon complelontelon. For thelon purposelons of melonrging, welon nelonelond to
+      // mark all thelon binIds in this relonsponselon as non-complelontelon by marking thelon "max(binId)+1" as thelon
+      // last complelontelon bin.
+      // Whelonn relonturning thelon melonrgelond relonsponselon, welon still havelon a guard for thelon relonsulting
+      // minComplelontelonBinId beloning outsidelon of thelon binIds rangelon, and will selont thelon relonturnelond
+      // minComplelontelonBinId valuelon to null, if this relonsponselon's binIds elonnd up beloning uselond as thelon most
+      // reloncelonnt onelons, and welon nelonelond to signify that nonelon of thelon bins arelon complelontelon.
+      int binSizelon = telonrmStatisticsRelonsults.gelontBinIds().sizelon();
+      Intelongelonr maxBinId = telonrmStatisticsRelonsults.gelontBinIds().gelont(binSizelon - 1);
+      minComplelontelonBinIds.add(maxBinId + 1);
 
-      LOG.debug("Adjusting null minCompleteBinId for response: {}, histogramSettings {}",
-          response, histogramSettings);
-      MIN_COMPLETE_BIN_ID_ADJUSTED_NULL.increment();
-    } else {
-      // This should only happen in the case where numBins is set to 0.
-      Preconditions.checkState(histogramSettings.getNumBins() == 0,
-          "Expected numBins set to 0. response: %s", response);
-      Preconditions.checkState(minCompleteBinIds.isEmpty(),
-          "minCompleteBinIds: %s", minCompleteBinIds);
+      LOG.delonbug("Adjusting null minComplelontelonBinId for relonsponselon: {}, histogramSelonttings {}",
+          relonsponselon, histogramSelonttings);
+      MIN_COMPLelonTelon_BIN_ID_ADJUSTelonD_NULL.increlonmelonnt();
+    } elonlselon {
+      // This should only happelonn in thelon caselon whelonrelon numBins is selont to 0.
+      Prelonconditions.chelonckStatelon(histogramSelonttings.gelontNumBins() == 0,
+          "elonxpelonctelond numBins selont to 0. relonsponselon: %s", relonsponselon);
+      Prelonconditions.chelonckStatelon(minComplelontelonBinIds.iselonmpty(),
+          "minComplelontelonBinIds: %s", minComplelontelonBinIds);
 
-      LOG.debug("Got null minCompleteBinId with no bins for response: {}, histogramSettings {}",
-          response, histogramSettings);
-      MIN_COMPLETE_BIN_ID_NULL_WITHOUT_BINS.increment();
+      LOG.delonbug("Got null minComplelontelonBinId with no bins for relonsponselon: {}, histogramSelonttings {}",
+          relonsponselon, histogramSelonttings);
+      MIN_COMPLelonTelon_BIN_ID_NULL_WITHOUT_BINS.increlonmelonnt();
     }
   }
 
-  private void addTotalCountData(ThriftTermRequest request, ThriftTermResults results) {
-    ThriftTermResults termResults = termResultsMap.get(request);
-    if (termResults == null) {
-      termResultsMap.put(request, results);
-    } else {
-      termResults.setTotalCount(termResults.getTotalCount() + results.getTotalCount());
-      if (termResults.isSetMetadata()) {
-        termResults.setMetadata(
-            FacetsResultsUtils.mergeFacetMetadata(termResults.getMetadata(),
-                results.getMetadata(), null));
+  privatelon void addTotalCountData(ThriftTelonrmRelonquelonst relonquelonst, ThriftTelonrmRelonsults relonsults) {
+    ThriftTelonrmRelonsults telonrmRelonsults = telonrmRelonsultsMap.gelont(relonquelonst);
+    if (telonrmRelonsults == null) {
+      telonrmRelonsultsMap.put(relonquelonst, relonsults);
+    } elonlselon {
+      telonrmRelonsults.selontTotalCount(telonrmRelonsults.gelontTotalCount() + relonsults.gelontTotalCount());
+      if (telonrmRelonsults.isSelontMelontadata()) {
+        telonrmRelonsults.selontMelontadata(
+            FacelontsRelonsultsUtils.melonrgelonFacelontMelontadata(telonrmRelonsults.gelontMelontadata(),
+                relonsults.gelontMelontadata(), null));
       }
     }
   }
 
   /**
-   * Set results.totalCount to the sum of hits in only the bins that will be returned in
-   * the merged response.
+   * Selont relonsults.totalCount to thelon sum of hits in only thelon bins that will belon relonturnelond in
+   * thelon melonrgelond relonsponselon.
    */
-  private void adjustTotalCount(ThriftTermResults results, List<Integer> binIds) {
-    int adjustedTotalCount = 0;
-    List<Integer> histogramBins = results.getHistogramBins();
+  privatelon void adjustTotalCount(ThriftTelonrmRelonsults relonsults, List<Intelongelonr> binIds) {
+    int adjustelondTotalCount = 0;
+    List<Intelongelonr> histogramBins = relonsults.gelontHistogramBins();
     if ((binIds != null) && (histogramBins != null)) {
-      Preconditions.checkState(
-          histogramBins.size() == binIds.size(),
-          "Expected ThriftTermResults to have the same number of histogramBins as binIds set in "
-          + " ThriftTermStatisticsResults. ThriftTermResults.histogramBins: %s, "
-          + " ThriftTermStatisticsResults.binIds: %s.",
+      Prelonconditions.chelonckStatelon(
+          histogramBins.sizelon() == binIds.sizelon(),
+          "elonxpelonctelond ThriftTelonrmRelonsults to havelon thelon samelon numbelonr of histogramBins as binIds selont in "
+          + " ThriftTelonrmStatisticsRelonsults. ThriftTelonrmRelonsults.histogramBins: %s, "
+          + " ThriftTelonrmStatisticsRelonsults.binIds: %s.",
           histogramBins, binIds);
-      for (int i = 0; i < binIds.size(); ++i) {
-        if (binIds.get(i) >= firstBinId) {
-          adjustedTotalCount += histogramBins.get(i);
+      for (int i = 0; i < binIds.sizelon(); ++i) {
+        if (binIds.gelont(i) >= firstBinId) {
+          adjustelondTotalCount += histogramBins.gelont(i);
         }
       }
     }
 
-    results.setTotalCount(adjustedTotalCount);
+    relonsults.selontTotalCount(adjustelondTotalCount);
   }
 
-  private void addHistogramData(ThriftTermRequest request,
-                                ThriftTermResults results,
-                                List<Integer> binIds) {
+  privatelon void addHistogramData(ThriftTelonrmRelonquelonst relonquelonst,
+                                ThriftTelonrmRelonsults relonsults,
+                                List<Intelongelonr> binIds) {
 
-    int[] requestTotalCounts = mergedTermRequestTotalCounts.get(request);
-    if (requestTotalCounts == null) {
-      requestTotalCounts = new int[mostRecentBinIds.size()];
-      mergedTermRequestTotalCounts.put(request, requestTotalCounts);
+    int[] relonquelonstTotalCounts = melonrgelondTelonrmRelonquelonstTotalCounts.gelont(relonquelonst);
+    if (relonquelonstTotalCounts == null) {
+      relonquelonstTotalCounts = nelonw int[mostReloncelonntBinIds.sizelon()];
+      melonrgelondTelonrmRelonquelonstTotalCounts.put(relonquelonst, relonquelonstTotalCounts);
     }
 
-    // Only consider these results if they fall into the mostRecentBinIds range.
+    // Only considelonr thelonselon relonsults if thelony fall into thelon mostReloncelonntBinIds rangelon.
     //
-    // The list of returned binIds is expected to be both sorted (in ascending order), and
-    // contiguous, which allows us to use firstBinId to check if it overlaps with the
-    // mostRecentBinIds range.
-    if (binIds.size() > 0 && binIds.get(binIds.size() - 1) >= firstBinId) {
-      int firstBinIndex;
-      if (binIds.get(0) == firstBinId) {
-        // This should be the common case when all partitions have the same binIds,
-        // no need to do a binary search.
-        firstBinIndex = 0;
-      } else {
-        // The firstBinId must be in the binIds range. We can find it using binary search since
-        // binIds are sorted.
-        firstBinIndex = Collections.binarySearch(binIds, firstBinId);
-        Preconditions.checkState(firstBinIndex >= 0,
-            "Expected to find firstBinId (%s) in the result binIds: %s, "
-                + "histogramSettings: %s, termRequest: %s",
-            firstBinId, binIds, histogramSettings, request);
+    // Thelon list of relonturnelond binIds is elonxpelonctelond to belon both sortelond (in ascelonnding ordelonr), and
+    // contiguous, which allows us to uselon firstBinId to chelonck if it ovelonrlaps with thelon
+    // mostReloncelonntBinIds rangelon.
+    if (binIds.sizelon() > 0 && binIds.gelont(binIds.sizelon() - 1) >= firstBinId) {
+      int firstBinIndelonx;
+      if (binIds.gelont(0) == firstBinId) {
+        // This should belon thelon common caselon whelonn all partitions havelon thelon samelon binIds,
+        // no nelonelond to do a binary selonarch.
+        firstBinIndelonx = 0;
+      } elonlselon {
+        // Thelon firstBinId must belon in thelon binIds rangelon. Welon can find it using binary selonarch sincelon
+        // binIds arelon sortelond.
+        firstBinIndelonx = Collelonctions.binarySelonarch(binIds, firstBinId);
+        Prelonconditions.chelonckStatelon(firstBinIndelonx >= 0,
+            "elonxpelonctelond to find firstBinId (%s) in thelon relonsult binIds: %s, "
+                + "histogramSelonttings: %s, telonrmRelonquelonst: %s",
+            firstBinId, binIds, histogramSelonttings, relonquelonst);
       }
 
-      // Skip binIds that are before the smallest binId that we will use in the merged results.
-      for (int i = firstBinIndex; i < binIds.size(); i++) {
-        final Integer currentBinValue = results.getHistogramBins().get(i);
-        requestTotalCounts[i - firstBinIndex] += currentBinValue.intValue();
+      // Skip binIds that arelon belonforelon thelon smallelonst binId that welon will uselon in thelon melonrgelond relonsults.
+      for (int i = firstBinIndelonx; i < binIds.sizelon(); i++) {
+        final Intelongelonr currelonntBinValuelon = relonsults.gelontHistogramBins().gelont(i);
+        relonquelonstTotalCounts[i - firstBinIndelonx] += currelonntBinValuelon.intValuelon();
       }
     }
   }
 
   /**
-   * Return a new ThriftTermStatisticsResults with the total counts merged, and if enabled,
-   * histogram bins merged.
+   * Relonturn a nelonw ThriftTelonrmStatisticsRelonsults with thelon total counts melonrgelond, and if elonnablelond,
+   * histogram bins melonrgelond.
    */
-  public ThriftTermStatisticsResults merge() {
-    ThriftTermStatisticsResults results = new ThriftTermStatisticsResults(termResultsMap);
+  public ThriftTelonrmStatisticsRelonsults melonrgelon() {
+    ThriftTelonrmStatisticsRelonsults relonsults = nelonw ThriftTelonrmStatisticsRelonsults(telonrmRelonsultsMap);
 
-    if (histogramSettings != null) {
-      mergeHistogramBins(results);
+    if (histogramSelonttings != null) {
+      melonrgelonHistogramBins(relonsults);
     }
 
-    return results;
+    relonturn relonsults;
   }
 
 
   /**
-   * Takes multiple histogram results and merges them so:
-   * 1) Counts for the same binId (represents the time) and term are summed
-   * 2) All results are re-indexed to use the most recent bins found from the union of all bins
+   * Takelons multiplelon histogram relonsults and melonrgelons thelonm so:
+   * 1) Counts for thelon samelon binId (relonprelonselonnts thelon timelon) and telonrm arelon summelond
+   * 2) All relonsults arelon relon-indelonxelond to uselon thelon most reloncelonnt bins found from thelon union of all bins
    */
-  private void mergeHistogramBins(ThriftTermStatisticsResults mergedResults) {
+  privatelon void melonrgelonHistogramBins(ThriftTelonrmStatisticsRelonsults melonrgelondRelonsults) {
 
-    mergedResults.setBinIds(mostRecentBinIds);
-    mergedResults.setHistogramSettings(histogramSettings);
+    melonrgelondRelonsults.selontBinIds(mostReloncelonntBinIds);
+    melonrgelondRelonsults.selontHistogramSelonttings(histogramSelonttings);
 
-    setMinCompleteBinId(mergedResults);
+    selontMinComplelontelonBinId(melonrgelondRelonsults);
 
-    useMostRecentBinsForEachThriftTermResults();
+    uselonMostReloncelonntBinsForelonachThriftTelonrmRelonsults();
   }
 
-  private void setMinCompleteBinId(ThriftTermStatisticsResults mergedResults) {
-    if (mostRecentBinIds.isEmpty()) {
-      Preconditions.checkState(minCompleteBinId == null);
-      // This is the case where the requested numBins is set to 0. We don't have any binIds,
-      // and the minCompleteBinId has to be unset.
-      LOG.debug("Empty binIds returned for mergedResults: {}", mergedResults);
-    } else {
-      Preconditions.checkNotNull(minCompleteBinId);
+  privatelon void selontMinComplelontelonBinId(ThriftTelonrmStatisticsRelonsults melonrgelondRelonsults) {
+    if (mostReloncelonntBinIds.iselonmpty()) {
+      Prelonconditions.chelonckStatelon(minComplelontelonBinId == null);
+      // This is thelon caselon whelonrelon thelon relonquelonstelond numBins is selont to 0. Welon don't havelon any binIds,
+      // and thelon minComplelontelonBinId has to belon unselont.
+      LOG.delonbug("elonmpty binIds relonturnelond for melonrgelondRelonsults: {}", melonrgelondRelonsults);
+    } elonlselon {
+      Prelonconditions.chelonckNotNull(minComplelontelonBinId);
 
-      Integer maxBinId = mostRecentBinIds.get(mostRecentBinIds.size() - 1);
-      if (minCompleteBinId <= maxBinId) {
-        mergedResults.setMinCompleteBinId(minCompleteBinId);
-      } else {
-        // Leaving the minCompleteBinId unset as it is outside the range of the returned binIds.
-        LOG.debug("Computed minCompleteBinId: {} is out of maxBinId: {} for mergedResults: {}",
-            minCompleteBinId, mergedResults);
-        MIN_COMPLETE_BIN_ID_OUT_OF_RANGE.increment();
+      Intelongelonr maxBinId = mostReloncelonntBinIds.gelont(mostReloncelonntBinIds.sizelon() - 1);
+      if (minComplelontelonBinId <= maxBinId) {
+        melonrgelondRelonsults.selontMinComplelontelonBinId(minComplelontelonBinId);
+      } elonlselon {
+        // Lelonaving thelon minComplelontelonBinId unselont as it is outsidelon thelon rangelon of thelon relonturnelond binIds.
+        LOG.delonbug("Computelond minComplelontelonBinId: {} is out of maxBinId: {} for melonrgelondRelonsults: {}",
+            minComplelontelonBinId, melonrgelondRelonsults);
+        MIN_COMPLelonTelon_BIN_ID_OUT_OF_RANGelon.increlonmelonnt();
       }
     }
   }
 
   /**
-   * Check that the binIds we are using are contiguous. Increment the provided stat if we find
-   * a gap, as we don't expect to find any.
-   * See: SEARCH-4362
+   * Chelonck that thelon binIds welon arelon using arelon contiguous. Increlonmelonnt thelon providelond stat if welon find
+   * a gap, as welon don't elonxpelonct to find any.
+   * Selonelon: SelonARCH-4362
    *
-   * @param sortedBinIds most recent numBins sorted binIds.
-   * @param binIdGapCounter stat to increment if we see a gap in the binId range.
+   * @param sortelondBinIds most reloncelonnt numBins sortelond binIds.
+   * @param binIdGapCountelonr stat to increlonmelonnt if welon selonelon a gap in thelon binId rangelon.
    */
-  @VisibleForTesting
-  static void checkForBinIdGaps(List<Integer> sortedBinIds, SearchCounter binIdGapCounter) {
-    for (int i = sortedBinIds.size() - 1; i > 0; i--) {
-      final Integer currentBinId = sortedBinIds.get(i);
-      final Integer previousBinId = sortedBinIds.get(i - 1);
+  @VisiblelonForTelonsting
+  static void chelonckForBinIdGaps(List<Intelongelonr> sortelondBinIds, SelonarchCountelonr binIdGapCountelonr) {
+    for (int i = sortelondBinIds.sizelon() - 1; i > 0; i--) {
+      final Intelongelonr currelonntBinId = sortelondBinIds.gelont(i);
+      final Intelongelonr prelonviousBinId = sortelondBinIds.gelont(i - 1);
 
-      if (previousBinId < currentBinId - 1) {
-        binIdGapCounter.increment();
-        break;
+      if (prelonviousBinId < currelonntBinId - 1) {
+        binIdGapCountelonr.increlonmelonnt();
+        brelonak;
       }
     }
   }
 
   /**
-   * Returns a view containing only the last N items from the list
+   * Relonturns a vielonw containing only thelon last N itelonms from thelon list
    */
-  private static <E> List<E> takeLastN(List<E> lst, int n) {
-    Preconditions.checkArgument(n <= lst.size(),
-        "Attempting to take more elements than the list has. List size: %s, n: %s", lst.size(), n);
-    return lst.subList(lst.size() - n, lst.size());
+  privatelon static <elon> List<elon> takelonLastN(List<elon> lst, int n) {
+    Prelonconditions.chelonckArgumelonnt(n <= lst.sizelon(),
+        "Attelonmpting to takelon morelon elonlelonmelonnts than thelon list has. List sizelon: %s, n: %s", lst.sizelon(), n);
+    relonturn lst.subList(lst.sizelon() - n, lst.sizelon());
   }
 
-  private void useMostRecentBinsForEachThriftTermResults() {
-    for (Map.Entry<ThriftTermRequest, ThriftTermResults> entry : termResultsMap.entrySet()) {
-      ThriftTermRequest request = entry.getKey();
-      ThriftTermResults results = entry.getValue();
+  privatelon void uselonMostReloncelonntBinsForelonachThriftTelonrmRelonsults() {
+    for (Map.elonntry<ThriftTelonrmRelonquelonst, ThriftTelonrmRelonsults> elonntry : telonrmRelonsultsMap.elonntrySelont()) {
+      ThriftTelonrmRelonquelonst relonquelonst = elonntry.gelontKelony();
+      ThriftTelonrmRelonsults relonsults = elonntry.gelontValuelon();
 
-      List<Integer> histogramBins = Lists.newArrayList();
-      results.setHistogramBins(histogramBins);
+      List<Intelongelonr> histogramBins = Lists.nelonwArrayList();
+      relonsults.selontHistogramBins(histogramBins);
 
-      int[] requestTotalCounts = mergedTermRequestTotalCounts.get(request);
-      Preconditions.checkNotNull(requestTotalCounts);
+      int[] relonquelonstTotalCounts = melonrgelondTelonrmRelonquelonstTotalCounts.gelont(relonquelonst);
+      Prelonconditions.chelonckNotNull(relonquelonstTotalCounts);
 
-      for (int totalCount : requestTotalCounts) {
+      for (int totalCount : relonquelonstTotalCounts) {
         histogramBins.add(totalCount);
       }
     }
   }
 
   /**
-   * Merges search stats from several earlybird responses and puts them in
-   * {@link ThriftSearchResults} structure.
+   * Melonrgelons selonarch stats from selonvelonral elonarlybird relonsponselons and puts thelonm in
+   * {@link ThriftSelonarchRelonsults} structurelon.
    *
-   * @param responses earlybird responses to merge the search stats from
-   * @return merged search stats inside of {@link ThriftSearchResults} structure
+   * @param relonsponselons elonarlybird relonsponselons to melonrgelon thelon selonarch stats from
+   * @relonturn melonrgelond selonarch stats insidelon of {@link ThriftSelonarchRelonsults} structurelon
    */
-  public static ThriftSearchResults mergeSearchStats(Collection<EarlybirdResponse> responses) {
-    int numHitsProcessed = 0;
-    int numPartitionsEarlyTerminated = 0;
+  public static ThriftSelonarchRelonsults melonrgelonSelonarchStats(Collelonction<elonarlybirdRelonsponselon> relonsponselons) {
+    int numHitsProcelonsselond = 0;
+    int numPartitionselonarlyTelonrminatelond = 0;
 
-    for (EarlybirdResponse response : responses) {
-      ThriftSearchResults searchResults = response.getSearchResults();
+    for (elonarlybirdRelonsponselon relonsponselon : relonsponselons) {
+      ThriftSelonarchRelonsults selonarchRelonsults = relonsponselon.gelontSelonarchRelonsults();
 
-      if (searchResults != null) {
-        numHitsProcessed += searchResults.getNumHitsProcessed();
-        numPartitionsEarlyTerminated += searchResults.getNumPartitionsEarlyTerminated();
+      if (selonarchRelonsults != null) {
+        numHitsProcelonsselond += selonarchRelonsults.gelontNumHitsProcelonsselond();
+        numPartitionselonarlyTelonrminatelond += selonarchRelonsults.gelontNumPartitionselonarlyTelonrminatelond();
       }
     }
 
-    ThriftSearchResults searchResults = new ThriftSearchResults(new ArrayList<>());
-    searchResults.setNumHitsProcessed(numHitsProcessed);
-    searchResults.setNumPartitionsEarlyTerminated(numPartitionsEarlyTerminated);
-    return searchResults;
+    ThriftSelonarchRelonsults selonarchRelonsults = nelonw ThriftSelonarchRelonsults(nelonw ArrayList<>());
+    selonarchRelonsults.selontNumHitsProcelonsselond(numHitsProcelonsselond);
+    selonarchRelonsults.selontNumPartitionselonarlyTelonrminatelond(numPartitionselonarlyTelonrminatelond);
+    relonturn selonarchRelonsults;
   }
 }

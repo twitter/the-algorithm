@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PrelonrollMelontadata
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PrerollMetadataMarshaller @Inject() (
-  prerollMarshaller: PrerollMarshaller) {
-  def apply(prerollMetadata: PrerollMetadata): urt.PrerollMetadata =
-    urt.PrerollMetadata(
-      preroll = prerollMetadata.preroll.map(prerollMarshaller(_)),
-      videoAnalyticsScribePassthrough = prerollMetadata.videoAnalyticsScribePassthrough
+@Singlelonton
+class PrelonrollMelontadataMarshallelonr @Injelonct() (
+  prelonrollMarshallelonr: PrelonrollMarshallelonr) {
+  delonf apply(prelonrollMelontadata: PrelonrollMelontadata): urt.PrelonrollMelontadata =
+    urt.PrelonrollMelontadata(
+      prelonroll = prelonrollMelontadata.prelonroll.map(prelonrollMarshallelonr(_)),
+      videlonoAnalyticsScribelonPassthrough = prelonrollMelontadata.videlonoAnalyticsScribelonPassthrough
     )
 }

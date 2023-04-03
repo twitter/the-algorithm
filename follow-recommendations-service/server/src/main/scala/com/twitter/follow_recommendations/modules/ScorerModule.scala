@@ -1,39 +1,39 @@
-package com.twitter.follow_recommendations.modules
+packagelon com.twittelonr.follow_reloncommelonndations.modulelons
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.inject.TwitterModule
-import com.twitter.relevance.ep_model.common.CommonConstants
-import com.twitter.relevance.ep_model.scorer.EPScorer
-import com.twitter.relevance.ep_model.scorer.EPScorerBuilder
-import java.io.File
-import java.io.FileOutputStream
-import scala.language.postfixOps
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.relonlelonvancelon.elonp_modelonl.common.CommonConstants
+import com.twittelonr.relonlelonvancelon.elonp_modelonl.scorelonr.elonPScorelonr
+import com.twittelonr.relonlelonvancelon.elonp_modelonl.scorelonr.elonPScorelonrBuildelonr
+import java.io.Filelon
+import java.io.FilelonOutputStrelonam
+import scala.languagelon.postfixOps
 
-object ScorerModule extends TwitterModule {
-  private val STPScorerPath = "/quality/stp_models/20141223"
+objelonct ScorelonrModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon val STPScorelonrPath = "/quality/stp_modelonls/20141223"
 
-  private def fileFromResource(resource: String): File = {
-    val inputStream = getClass.getResourceAsStream(resource)
-    val file = File.createTempFile(resource, "temp")
-    val fos = new FileOutputStream(file)
-    Iterator
-      .continually(inputStream.read)
-      .takeWhile(-1 !=)
-      .foreach(fos.write)
-    file
+  privatelon delonf filelonFromRelonsourcelon(relonsourcelon: String): Filelon = {
+    val inputStrelonam = gelontClass.gelontRelonsourcelonAsStrelonam(relonsourcelon)
+    val filelon = Filelon.crelonatelonTelonmpFilelon(relonsourcelon, "telonmp")
+    val fos = nelonw FilelonOutputStrelonam(filelon)
+    Itelonrator
+      .continually(inputStrelonam.relonad)
+      .takelonWhilelon(-1 !=)
+      .forelonach(fos.writelon)
+    filelon
   }
 
-  @Provides
-  @Singleton
-  def provideEpScorer: EPScorer = {
-    val modelPath =
-      fileFromResource(STPScorerPath + "/" + CommonConstants.EP_MODEL_FILE_NAME).getAbsolutePath
+  @Providelons
+  @Singlelonton
+  delonf providelonelonpScorelonr: elonPScorelonr = {
+    val modelonlPath =
+      filelonFromRelonsourcelon(STPScorelonrPath + "/" + CommonConstants.elonP_MODelonL_FILelon_NAMelon).gelontAbsolutelonPath
     val trainingConfigPath =
-      fileFromResource(STPScorerPath + "/" + CommonConstants.TRAINING_CONFIG).getAbsolutePath
-    val epScorer = new EPScorerBuilder
-    epScorer
-      .withModelPath(modelPath)
+      filelonFromRelonsourcelon(STPScorelonrPath + "/" + CommonConstants.TRAINING_CONFIG).gelontAbsolutelonPath
+    val elonpScorelonr = nelonw elonPScorelonrBuildelonr
+    elonpScorelonr
+      .withModelonlPath(modelonlPath)
       .withTrainingConfig(trainingConfigPath)
       .build()
   }

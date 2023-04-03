@@ -1,105 +1,105 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidFollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SGSValidLikedByUserIdsFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FavoritelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FollowelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SGSValidFollowelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SGSValidLikelondByUselonrIdsFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.socialgraph.{thriftscala => sg}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.socialgraph.SocialGraph
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * This hydrator takes liked-by and followed-by user ids and checks via SGS that the viewer is
- * following the engager, that the viewer is not blocking the engager, that the engager is not
- * blocking the viewer, and that the viewer has not muted the engager.
+ * This hydrator takelons likelond-by and followelond-by uselonr ids and cheloncks via SGS that thelon vielonwelonr is
+ * following thelon elonngagelonr, that thelon vielonwelonr is not blocking thelon elonngagelonr, that thelon elonngagelonr is not
+ * blocking thelon vielonwelonr, and that thelon vielonwelonr has not mutelond thelon elonngagelonr.
  */
-@Singleton
-class SGSValidSocialContextFeatureHydrator @Inject() (
+@Singlelonton
+class SGSValidSocialContelonxtFelonaturelonHydrator @Injelonct() (
   socialGraph: SocialGraph)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("SGSValidSocialContext")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("SGSValidSocialContelonxt")
 
-  override val features: Set[Feature[_, _]] = Set(
-    SGSValidFollowedByUserIdsFeature,
-    SGSValidLikedByUserIdsFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    SGSValidFollowelondByUselonrIdsFelonaturelon,
+    SGSValidLikelondByUselonrIdsFelonaturelon
   )
 
-  private val MaxCountUsers = 10
+  privatelon val MaxCountUselonrs = 10
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
 
-    val allSocialContextUserIds =
-      candidates.flatMap { candidate =>
-        candidate.features.getOrElse(FavoritedByUserIdsFeature, Nil).take(MaxCountUsers) ++
-          candidate.features.getOrElse(FollowedByUserIdsFeature, Nil).take(MaxCountUsers)
+    val allSocialContelonxtUselonrIds =
+      candidatelons.flatMap { candidatelon =>
+        candidatelon.felonaturelons.gelontOrelonlselon(FavoritelondByUselonrIdsFelonaturelon, Nil).takelon(MaxCountUselonrs) ++
+          candidatelon.felonaturelons.gelontOrelonlselon(FollowelondByUselonrIdsFelonaturelon, Nil).takelon(MaxCountUselonrs)
       }.distinct
 
-    getValidUserIds(query.getRequiredUserId, allSocialContextUserIds).map { validUserIds =>
-      candidates.map { candidate =>
-        val sgsFilteredLikedByUserIds =
-          candidate.features
-            .getOrElse(FavoritedByUserIdsFeature, Nil).take(MaxCountUsers)
-            .filter(validUserIds.contains)
+    gelontValidUselonrIds(quelonry.gelontRelonquirelondUselonrId, allSocialContelonxtUselonrIds).map { validUselonrIds =>
+      candidatelons.map { candidatelon =>
+        val sgsFiltelonrelondLikelondByUselonrIds =
+          candidatelon.felonaturelons
+            .gelontOrelonlselon(FavoritelondByUselonrIdsFelonaturelon, Nil).takelon(MaxCountUselonrs)
+            .filtelonr(validUselonrIds.contains)
 
-        val sgsFilteredFollowedByUserIds =
-          candidate.features
-            .getOrElse(FollowedByUserIdsFeature, Nil).take(MaxCountUsers)
-            .filter(validUserIds.contains)
+        val sgsFiltelonrelondFollowelondByUselonrIds =
+          candidatelon.felonaturelons
+            .gelontOrelonlselon(FollowelondByUselonrIdsFelonaturelon, Nil).takelon(MaxCountUselonrs)
+            .filtelonr(validUselonrIds.contains)
 
-        FeatureMapBuilder()
-          .add(SGSValidFollowedByUserIdsFeature, sgsFilteredFollowedByUserIds)
-          .add(SGSValidLikedByUserIdsFeature, sgsFilteredLikedByUserIds)
+        FelonaturelonMapBuildelonr()
+          .add(SGSValidFollowelondByUselonrIdsFelonaturelon, sgsFiltelonrelondFollowelondByUselonrIds)
+          .add(SGSValidLikelondByUselonrIdsFelonaturelon, sgsFiltelonrelondLikelondByUselonrIds)
           .build()
       }
     }
   }
 
-  private def getValidUserIds(
-    viewerId: Long,
-    socialProofUserIds: Seq[Long]
-  ): Stitch[Seq[Long]] = {
-    if (socialProofUserIds.nonEmpty) {
-      val request = sg.IdsRequest(
-        relationships = Seq(
-          sg.SrcRelationship(
-            viewerId,
-            sg.RelationshipType.Following,
-            targets = Some(socialProofUserIds),
-            hasRelationship = true),
-          sg.SrcRelationship(
-            viewerId,
-            sg.RelationshipType.Blocking,
-            targets = Some(socialProofUserIds),
-            hasRelationship = false),
-          sg.SrcRelationship(
-            viewerId,
-            sg.RelationshipType.BlockedBy,
-            targets = Some(socialProofUserIds),
-            hasRelationship = false),
-          sg.SrcRelationship(
-            viewerId,
-            sg.RelationshipType.Muting,
-            targets = Some(socialProofUserIds),
-            hasRelationship = false)
+  privatelon delonf gelontValidUselonrIds(
+    vielonwelonrId: Long,
+    socialProofUselonrIds: Selonq[Long]
+  ): Stitch[Selonq[Long]] = {
+    if (socialProofUselonrIds.nonelonmpty) {
+      val relonquelonst = sg.IdsRelonquelonst(
+        relonlationships = Selonq(
+          sg.SrcRelonlationship(
+            vielonwelonrId,
+            sg.RelonlationshipTypelon.Following,
+            targelonts = Somelon(socialProofUselonrIds),
+            hasRelonlationship = truelon),
+          sg.SrcRelonlationship(
+            vielonwelonrId,
+            sg.RelonlationshipTypelon.Blocking,
+            targelonts = Somelon(socialProofUselonrIds),
+            hasRelonlationship = falselon),
+          sg.SrcRelonlationship(
+            vielonwelonrId,
+            sg.RelonlationshipTypelon.BlockelondBy,
+            targelonts = Somelon(socialProofUselonrIds),
+            hasRelonlationship = falselon),
+          sg.SrcRelonlationship(
+            vielonwelonrId,
+            sg.RelonlationshipTypelon.Muting,
+            targelonts = Somelon(socialProofUselonrIds),
+            hasRelonlationship = falselon)
         ),
-        pageRequest = Some(sg.PageRequest(selectAll = Some(true)))
+        pagelonRelonquelonst = Somelon(sg.PagelonRelonquelonst(selonlelonctAll = Somelon(truelon)))
       )
-      socialGraph.ids(request).map(_.ids)
-    } else Stitch.Nil
+      socialGraph.ids(relonquelonst).map(_.ids)
+    } elonlselon Stitch.Nil
   }
 }

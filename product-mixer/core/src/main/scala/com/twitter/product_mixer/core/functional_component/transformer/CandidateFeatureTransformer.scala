@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.functional_component.transformer
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr
 
 /**
- * Populates a [[com.twitter.product_mixer.core.feature.featuremap.FeatureMap]] with Features
- * that are available in the [[CandidateSourceResult]]
+ * Populatelons a [[com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap]] with Felonaturelons
+ * that arelon availablelon in thelon [[CandidatelonSourcelonRelonsult]]
  */
-trait CandidateFeatureTransformer[-CandidateSourceResult]
-    extends FeatureTransformer[CandidateSourceResult]
+trait CandidatelonFelonaturelonTransformelonr[-CandidatelonSourcelonRelonsult]
+    elonxtelonnds FelonaturelonTransformelonr[CandidatelonSourcelonRelonsult]

@@ -1,53 +1,53 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion
 
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims.SwitchingSimsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.relonal_timelon_relonal_graph.RelonalTimelonRelonalGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
-import javax.inject.Inject
+import javax.injelonct.Injelonct
 
-@Singleton
-class RecentStrongEngagementDirectFollowSimilarUsersSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient,
-  switchingSimsSource: SwitchingSimsSource)
-    extends SimsExpansionBasedCandidateSource[HasClientContext with HasParams](
-      switchingSimsSource) {
+@Singlelonton
+class ReloncelonntStrongelonngagelonmelonntDirelonctFollowSimilarUselonrsSourcelon @Injelonct() (
+  relonalTimelonRelonalGraphClielonnt: RelonalTimelonRelonalGraphClielonnt,
+  switchingSimsSourcelon: SwitchingSimsSourcelon)
+    elonxtelonnds SimselonxpansionBaselondCandidatelonSourcelon[HasClielonntContelonxt with HasParams](
+      switchingSimsSourcelon) {
 
-  val identifier = RecentStrongEngagementDirectFollowSimilarUsersSource.Identifier
+  val idelonntifielonr = ReloncelonntStrongelonngagelonmelonntDirelonctFollowSimilarUselonrsSourcelon.Idelonntifielonr
 
-  override def firstDegreeNodes(
-    request: HasClientContext with HasParams
-  ): Stitch[Seq[CandidateUser]] = request.getOptionalUserId
-    .map { userId =>
-      realTimeRealGraphClient
-        .getUsersRecentlyEngagedWith(
-          userId,
-          RealTimeRealGraphClient.StrongEngagementScoreMap,
-          includeDirectFollowCandidates = true,
-          includeNonDirectFollowCandidates = false
-        ).map(_.take(RecentStrongEngagementDirectFollowSimilarUsersSource.MaxFirstDegreeNodes))
-    }.getOrElse(Stitch.Nil)
+  ovelonrridelon delonf firstDelongrelonelonNodelons(
+    relonquelonst: HasClielonntContelonxt with HasParams
+  ): Stitch[Selonq[CandidatelonUselonr]] = relonquelonst.gelontOptionalUselonrId
+    .map { uselonrId =>
+      relonalTimelonRelonalGraphClielonnt
+        .gelontUselonrsReloncelonntlyelonngagelondWith(
+          uselonrId,
+          RelonalTimelonRelonalGraphClielonnt.StrongelonngagelonmelonntScorelonMap,
+          includelonDirelonctFollowCandidatelons = truelon,
+          includelonNonDirelonctFollowCandidatelons = falselon
+        ).map(_.takelon(ReloncelonntStrongelonngagelonmelonntDirelonctFollowSimilarUselonrsSourcelon.MaxFirstDelongrelonelonNodelons))
+    }.gelontOrelonlselon(Stitch.Nil)
 
-  override def maxSecondaryDegreeNodes(request: HasClientContext with HasParams): Int = Int.MaxValue
+  ovelonrridelon delonf maxSeloncondaryDelongrelonelonNodelons(relonquelonst: HasClielonntContelonxt with HasParams): Int = Int.MaxValuelon
 
-  override def maxResults(request: HasClientContext with HasParams): Int =
-    RecentStrongEngagementDirectFollowSimilarUsersSource.MaxResults
+  ovelonrridelon delonf maxRelonsults(relonquelonst: HasClielonntContelonxt with HasParams): Int =
+    ReloncelonntStrongelonngagelonmelonntDirelonctFollowSimilarUselonrsSourcelon.MaxRelonsults
 
-  override def scoreCandidate(sourceScore: Double, similarToScore: Double): Double = {
-    sourceScore * similarToScore
+  ovelonrridelon delonf scorelonCandidatelon(sourcelonScorelon: Doublelon, similarToScorelon: Doublelon): Doublelon = {
+    sourcelonScorelon * similarToScorelon
   }
 
-  override def calibrateDivisor(req: HasClientContext with HasParams): Double = 1.0d
+  ovelonrridelon delonf calibratelonDivisor(relonq: HasClielonntContelonxt with HasParams): Doublelon = 1.0d
 }
 
-object RecentStrongEngagementDirectFollowSimilarUsersSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RecentStrongEngagementSimilarUser.toString)
-  val MaxFirstDegreeNodes = 10
-  val MaxResults = 200
+objelonct ReloncelonntStrongelonngagelonmelonntDirelonctFollowSimilarUselonrsSourcelon {
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.ReloncelonntStrongelonngagelonmelonntSimilarUselonr.toString)
+  val MaxFirstDelongrelonelonNodelons = 10
+  val MaxRelonsults = 200
 }

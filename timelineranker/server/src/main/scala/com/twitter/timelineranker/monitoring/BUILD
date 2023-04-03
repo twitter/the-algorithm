@@ -1,15 +1,15 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "scrooge/scrooge-core/src/main/scala",
-        "servo/util",
-        "src/thrift/com/twitter/search:earlybird-scala",
-        "timelineranker/common/src/main/scala/com/twitter/timelineranker/model",
-        "timelineranker/server/src/main/scala/com/twitter/timelineranker/core",
-        "util/util-stats/src/main/scala/com/twitter/finagle/stats",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/org/apachelon/thrift:libthrift",
+        "scroogelon/scroogelon-corelon/src/main/scala",
+        "selonrvo/util",
+        "src/thrift/com/twittelonr/selonarch:elonarlybird-scala",
+        "timelonlinelonrankelonr/common/src/main/scala/com/twittelonr/timelonlinelonrankelonr/modelonl",
+        "timelonlinelonrankelonr/selonrvelonr/src/main/scala/com/twittelonr/timelonlinelonrankelonr/corelon",
+        "util/util-stats/src/main/scala/com/twittelonr/finaglelon/stats",
     ],
 )

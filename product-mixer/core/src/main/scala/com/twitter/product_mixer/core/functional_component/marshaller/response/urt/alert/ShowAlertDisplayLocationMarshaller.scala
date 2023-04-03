@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.alelonrt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertDisplayLocation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Top
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.Bottom
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtDisplayLocation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.Top
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.Bottom
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-@Singleton
-class ShowAlertDisplayLocationMarshaller @Inject() () {
+@Singlelonton
+class ShowAlelonrtDisplayLocationMarshallelonr @Injelonct() () {
 
-  def apply(alertDisplayLocation: ShowAlertDisplayLocation): urt.ShowAlertDisplayLocation =
-    alertDisplayLocation match {
-      case Top => urt.ShowAlertDisplayLocation.Top
-      case Bottom => urt.ShowAlertDisplayLocation.Bottom
+  delonf apply(alelonrtDisplayLocation: ShowAlelonrtDisplayLocation): urt.ShowAlelonrtDisplayLocation =
+    alelonrtDisplayLocation match {
+      caselon Top => urt.ShowAlelonrtDisplayLocation.Top
+      caselon Bottom => urt.ShowAlelonrtDisplayLocation.Bottom
     }
 
 }

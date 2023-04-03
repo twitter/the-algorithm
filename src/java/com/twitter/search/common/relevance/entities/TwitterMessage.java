@@ -1,1267 +1,1267 @@
-package com.twitter.search.common.relevance.entities;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons;
 
-import java.text.DateFormat;
+import java.telonxt.DatelonFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
+import java.util.Collelonction;
+import java.util.Collelonctions;
+import java.util.Datelon;
+import java.util.HashSelont;
+import java.util.LinkelondHashMap;
 import java.util.List;
-import java.util.Locale;
+import java.util.Localelon;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
+import java.util.Selont;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ComparisonChain;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ComparisonChain;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.lucene.analysis.TokenStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.StringUtils;
+import org.apachelon.commons.lang3.buildelonr.elonqualsBuildelonr;
+import org.apachelon.commons.lang3.buildelonr.HashCodelonBuildelonr;
+import org.apachelon.commons.lang3.buildelonr.ToStringBuildelonr;
+import org.apachelon.lucelonnelon.analysis.TokelonnStrelonam;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.common.text.pipeline.TwitterLanguageIdentifier;
-import com.twitter.common.text.token.TokenizedCharSequence;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.relevance.features.TweetFeatures;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
-import com.twitter.search.common.relevance.features.TweetUserFeatures;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.tweetypie.thriftjava.ComposerSource;
-import com.twitter.util.TwitterDateFormat;
+import com.twittelonr.common.telonxt.languagelon.LocalelonUtil;
+import com.twittelonr.common.telonxt.pipelonlinelon.TwittelonrLanguagelonIdelonntifielonr;
+import com.twittelonr.common.telonxt.tokelonn.TokelonnizelondCharSelonquelonncelon;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.cuad.nelonr.plain.thriftjava.Namelondelonntity;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftelonxpandelondUrl;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontFelonaturelons;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontTelonxtFelonaturelons;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontTelonxtQuality;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontUselonrFelonaturelons;
+import com.twittelonr.selonarch.common.util.telonxt.NormalizelonrHelonlpelonr;
+import com.twittelonr.selonrvicelon.spidelonrduck.gelonn.MelondiaTypelons;
+import com.twittelonr.twelonelontypielon.thriftjava.ComposelonrSourcelon;
+import com.twittelonr.util.TwittelonrDatelonFormat;
 
 /**
- * A representation of tweets used as an intermediate object during ingestion. As we proceed
- * in ingestion, we fill this object with data. We then convert it to ThriftVersionedEvents (which
- * itself represents a single tweet too, in different penguin versions potentially).
+ * A relonprelonselonntation of twelonelonts uselond as an intelonrmelondiatelon objelonct during ingelonstion. As welon procelonelond
+ * in ingelonstion, welon fill this objelonct with data. Welon thelonn convelonrt it to ThriftVelonrsionelondelonvelonnts (which
+ * itselonlf relonprelonselonnts a singlelon twelonelont too, in diffelonrelonnt pelonnguin velonrsions potelonntially).
  */
-public class TwitterMessage {
-  private static final Logger LOG = LoggerFactory.getLogger(TwitterMessage.class);
+public class TwittelonrMelonssagelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwittelonrMelonssagelon.class);
 
-  public static class EscherbirdAnnotation implements Comparable<EscherbirdAnnotation> {
+  public static class elonschelonrbirdAnnotation implelonmelonnts Comparablelon<elonschelonrbirdAnnotation> {
     public final long groupId;
     public final long domainId;
-    public final long entityId;
+    public final long elonntityId;
 
-    public EscherbirdAnnotation(long groupId, long domainId, long entityId) {
+    public elonschelonrbirdAnnotation(long groupId, long domainId, long elonntityId) {
       this.groupId = groupId;
       this.domainId = domainId;
-      this.entityId = entityId;
+      this.elonntityId = elonntityId;
     }
 
-    @Override
-    public boolean equals(Object o2) {
-      if (o2 instanceof EscherbirdAnnotation) {
-        EscherbirdAnnotation a2 = (EscherbirdAnnotation) o2;
-        return groupId == a2.groupId && domainId == a2.domainId && entityId == a2.entityId;
+    @Ovelonrridelon
+    public boolelonan elonquals(Objelonct o2) {
+      if (o2 instancelonof elonschelonrbirdAnnotation) {
+        elonschelonrbirdAnnotation a2 = (elonschelonrbirdAnnotation) o2;
+        relonturn groupId == a2.groupId && domainId == a2.domainId && elonntityId == a2.elonntityId;
       }
-      return false;
+      relonturn falselon;
     }
 
-    @Override
-    public int hashCode() {
-      return new HashCodeBuilder()
-          .append(groupId)
-          .append(domainId)
-          .append(entityId)
-          .toHashCode();
+    @Ovelonrridelon
+    public int hashCodelon() {
+      relonturn nelonw HashCodelonBuildelonr()
+          .appelonnd(groupId)
+          .appelonnd(domainId)
+          .appelonnd(elonntityId)
+          .toHashCodelon();
     }
 
-    @Override
-    public int compareTo(EscherbirdAnnotation o) {
-      return ComparisonChain.start()
-          .compare(this.groupId, o.groupId)
-          .compare(this.domainId, o.domainId)
-          .compare(this.entityId, o.entityId)
-          .result();
-    }
-  }
-
-  private final List<EscherbirdAnnotation> escherbirdAnnotations = Lists.newArrayList();
-
-  // tweet features for multiple penguin versions
-  private static class VersionedTweetFeatures {
-    // TweetFeatures populated by relevance classifiers, structure defined
-    // in src/main/thrift/classifier.thrift.
-    private TweetFeatures tweetFeatures = new TweetFeatures();
-    private TokenizedCharSequence tokenizedCharSequence = null;
-    private Set<String> normalizedHashtags = Sets.newHashSet();
-
-    public TweetFeatures getTweetFeatures() {
-      return this.tweetFeatures;
-    }
-
-    public void setTweetFeatures(final TweetFeatures tweetFeatures) {
-      this.tweetFeatures = tweetFeatures;
-    }
-
-    public TweetTextQuality getTweetTextQuality() {
-      return this.tweetFeatures.getTweetTextQuality();
-    }
-
-    public TweetTextFeatures getTweetTextFeatures() {
-      return this.tweetFeatures.getTweetTextFeatures();
-    }
-
-    public TweetUserFeatures getTweetUserFeatures() {
-      return this.tweetFeatures.getTweetUserFeatures();
-    }
-
-    public TokenizedCharSequence getTokenizedCharSequence() {
-      return this.tokenizedCharSequence;
-    }
-
-    public void setTokenizedCharSequence(TokenizedCharSequence sequence) {
-      this.tokenizedCharSequence = sequence;
-    }
-
-    public Set<String> getNormalizedHashtags() {
-      return this.normalizedHashtags;
-    }
-
-    public void addNormalizedHashtags(String normalizedHashtag) {
-      this.normalizedHashtags.add(normalizedHashtag);
+    @Ovelonrridelon
+    public int comparelonTo(elonschelonrbirdAnnotation o) {
+      relonturn ComparisonChain.start()
+          .comparelon(this.groupId, o.groupId)
+          .comparelon(this.domainId, o.domainId)
+          .comparelon(this.elonntityId, o.elonntityId)
+          .relonsult();
     }
   }
 
-  public static final int INT_FIELD_NOT_PRESENT = -1;
-  public static final long LONG_FIELD_NOT_PRESENT = -1;
-  public static final double DOUBLE_FIELD_NOT_PRESENT = -1;
-  public static final int MAX_USER_REPUTATION = 100;
+  privatelon final List<elonschelonrbirdAnnotation> elonschelonrbirdAnnotations = Lists.nelonwArrayList();
 
-  private final long tweetId;
+  // twelonelont felonaturelons for multiplelon pelonnguin velonrsions
+  privatelon static class VelonrsionelondTwelonelontFelonaturelons {
+    // TwelonelontFelonaturelons populatelond by relonlelonvancelon classifielonrs, structurelon delonfinelond
+    // in src/main/thrift/classifielonr.thrift.
+    privatelon TwelonelontFelonaturelons twelonelontFelonaturelons = nelonw TwelonelontFelonaturelons();
+    privatelon TokelonnizelondCharSelonquelonncelon tokelonnizelondCharSelonquelonncelon = null;
+    privatelon Selont<String> normalizelondHashtags = Selonts.nelonwHashSelont();
 
-  private String text;
+    public TwelonelontFelonaturelons gelontTwelonelontFelonaturelons() {
+      relonturn this.twelonelontFelonaturelons;
+    }
 
-  private Date date;
+    public void selontTwelonelontFelonaturelons(final TwelonelontFelonaturelons twelonelontFelonaturelons) {
+      this.twelonelontFelonaturelons = twelonelontFelonaturelons;
+    }
+
+    public TwelonelontTelonxtQuality gelontTwelonelontTelonxtQuality() {
+      relonturn this.twelonelontFelonaturelons.gelontTwelonelontTelonxtQuality();
+    }
+
+    public TwelonelontTelonxtFelonaturelons gelontTwelonelontTelonxtFelonaturelons() {
+      relonturn this.twelonelontFelonaturelons.gelontTwelonelontTelonxtFelonaturelons();
+    }
+
+    public TwelonelontUselonrFelonaturelons gelontTwelonelontUselonrFelonaturelons() {
+      relonturn this.twelonelontFelonaturelons.gelontTwelonelontUselonrFelonaturelons();
+    }
+
+    public TokelonnizelondCharSelonquelonncelon gelontTokelonnizelondCharSelonquelonncelon() {
+      relonturn this.tokelonnizelondCharSelonquelonncelon;
+    }
+
+    public void selontTokelonnizelondCharSelonquelonncelon(TokelonnizelondCharSelonquelonncelon selonquelonncelon) {
+      this.tokelonnizelondCharSelonquelonncelon = selonquelonncelon;
+    }
+
+    public Selont<String> gelontNormalizelondHashtags() {
+      relonturn this.normalizelondHashtags;
+    }
+
+    public void addNormalizelondHashtags(String normalizelondHashtag) {
+      this.normalizelondHashtags.add(normalizelondHashtag);
+    }
+  }
+
+  public static final int INT_FIelonLD_NOT_PRelonSelonNT = -1;
+  public static final long LONG_FIelonLD_NOT_PRelonSelonNT = -1;
+  public static final doublelon DOUBLelon_FIelonLD_NOT_PRelonSelonNT = -1;
+  public static final int MAX_USelonR_RelonPUTATION = 100;
+
+  privatelon final long twelonelontId;
+
+  privatelon String telonxt;
+
+  privatelon Datelon datelon;
   @Nonnull
-  private Optional<TwitterMessageUser> optionalFromUser = Optional.empty();
+  privatelon Optional<TwittelonrMelonssagelonUselonr> optionalFromUselonr = Optional.elonmpty();
   @Nonnull
-  private Optional<TwitterMessageUser> optionalToUser = Optional.empty();
-  private Locale locale = null;
-  private Locale linkLocale = null;
+  privatelon Optional<TwittelonrMelonssagelonUselonr> optionalToUselonr = Optional.elonmpty();
+  privatelon Localelon localelon = null;
+  privatelon Localelon linkLocalelon = null;
 
-  // Original source text.
-  private String origSource;
-  // Source with HTML tags removed and truncated.
-  private String strippedSource;
+  // Original sourcelon telonxt.
+  privatelon String origSourcelon;
+  // Sourcelon with HTML tags relonmovelond and truncatelond.
+  privatelon String strippelondSourcelon;
 
-  // Original location text.
-  private String origLocation;
+  // Original location telonxt.
+  privatelon String origLocation;
 
-  // Location truncated for mysql field-width reasons (see TwitterMessageUtil.java).
-  private String truncatedNormalizedLocation;
+  // Location truncatelond for mysql fielonld-width relonasons (selonelon TwittelonrMelonssagelonUtil.java).
+  privatelon String truncatelondNormalizelondLocation;
 
-  // User's country
-  private String fromUserLocCountry;
+  // Uselonr's country
+  privatelon String fromUselonrLocCountry;
 
-  private Integer followersCount = INT_FIELD_NOT_PRESENT;
-  private boolean deleted = false;
+  privatelon Intelongelonr followelonrsCount = INT_FIelonLD_NOT_PRelonSelonNT;
+  privatelon boolelonan delonlelontelond = falselon;
 
-  // Fields extracted from entities (in the JSON object)
-  private List<TwitterMessageUser> mentions = new ArrayList<>();
-  private Set<String> hashtags = Sets.newHashSet();
-  // Lat/lon and region accuracy tuples extracted from tweet text, or null.
-  private GeoObject geoLocation = null;
-  private boolean uncodeableLocation = false;
-  // This is set if the tweet is geotagged. (i.e. "geo" or "coordinate" section is present
-  // in the json)
-  // This field has only a getter but no setter --- it is filled in when the json is parsed.
-  private GeoObject geoTaggedLocation = null;
+  // Fielonlds elonxtractelond from elonntitielons (in thelon JSON objelonct)
+  privatelon List<TwittelonrMelonssagelonUselonr> melonntions = nelonw ArrayList<>();
+  privatelon Selont<String> hashtags = Selonts.nelonwHashSelont();
+  // Lat/lon and relongion accuracy tuplelons elonxtractelond from twelonelont telonxt, or null.
+  privatelon GelonoObjelonct gelonoLocation = null;
+  privatelon boolelonan uncodelonablelonLocation = falselon;
+  // This is selont if thelon twelonelont is gelonotaggelond. (i.elon. "gelono" or "coordinatelon" selonction is prelonselonnt
+  // in thelon json)
+  // This fielonld has only a gelonttelonr but no selonttelonr --- it is fillelond in whelonn thelon json is parselond.
+  privatelon GelonoObjelonct gelonoTaggelondLocation = null;
 
-  private double userReputation = DOUBLE_FIELD_NOT_PRESENT;
-  private boolean geocodeRequired = false;
-  private boolean sensitiveContent = false;
-  private boolean userProtected;
-  private boolean userVerified;
-  private boolean userBlueVerified;
-  private TwitterRetweetMessage retweetMessage;
-  private TwitterQuotedMessage quotedMessage;
-  private List<String> places;
-  // maps from original url (the t.co url) to ThriftExpandedUrl, which contains the
-  // expanded url and the spiderduck response (canoicalLastHopUrl and mediatype)
-  private final Map<String, ThriftExpandedUrl> expandedUrls;
-  // maps the photo status id to the media url
-  private Map<Long, String> photoUrls;
-  private Optional<Long> inReplyToStatusId = Optional.empty();
-  private Optional<Long> directedAtUserId = Optional.empty();
+  privatelon doublelon uselonrRelonputation = DOUBLelon_FIelonLD_NOT_PRelonSelonNT;
+  privatelon boolelonan gelonocodelonRelonquirelond = falselon;
+  privatelon boolelonan selonnsitivelonContelonnt = falselon;
+  privatelon boolelonan uselonrProtelonctelond;
+  privatelon boolelonan uselonrVelonrifielond;
+  privatelon boolelonan uselonrBluelonVelonrifielond;
+  privatelon TwittelonrRelontwelonelontMelonssagelon relontwelonelontMelonssagelon;
+  privatelon TwittelonrQuotelondMelonssagelon quotelondMelonssagelon;
+  privatelon List<String> placelons;
+  // maps from original url (thelon t.co url) to ThriftelonxpandelondUrl, which contains thelon
+  // elonxpandelond url and thelon spidelonrduck relonsponselon (canoicalLastHopUrl and melondiatypelon)
+  privatelon final Map<String, ThriftelonxpandelondUrl> elonxpandelondUrls;
+  // maps thelon photo status id to thelon melondia url
+  privatelon Map<Long, String> photoUrls;
+  privatelon Optional<Long> inRelonplyToStatusId = Optional.elonmpty();
+  privatelon Optional<Long> direlonctelondAtUselonrId = Optional.elonmpty();
 
-  private long conversationId = -1;
+  privatelon long convelonrsationId = -1;
 
-  // True if tweet is nullcasted.
-  private boolean nullcast = false;
+  // Truelon if twelonelont is nullcastelond.
+  privatelon boolelonan nullcast = falselon;
 
-  // True if tweet is a self-threaded tweet
-  private boolean selfThread = false;
+  // Truelon if twelonelont is a selonlf-threlonadelond twelonelont
+  privatelon boolelonan selonlfThrelonad = falselon;
 
-  // If the tweet is a part of an exclusive conversation, the author who started
-  // that conversation.
-  private Optional<Long> exclusiveConversationAuthorId = Optional.empty();
+  // If thelon twelonelont is a part of an elonxclusivelon convelonrsation, thelon author who startelond
+  // that convelonrsation.
+  privatelon Optional<Long> elonxclusivelonConvelonrsationAuthorId = Optional.elonmpty();
 
-  // tweet features map for multiple versions of penguin
-  private Map<PenguinVersion, VersionedTweetFeatures> versionedTweetFeaturesMap;
+  // twelonelont felonaturelons map for multiplelon velonrsions of pelonnguin
+  privatelon Map<PelonnguinVelonrsion, VelonrsionelondTwelonelontFelonaturelons> velonrsionelondTwelonelontFelonaturelonsMap;
 
-  // Engagments count: favorites, retweets and replies
-  private int numFavorites = 0;
-  private int numRetweets = 0;
-  private int numReplies = 0;
+  // elonngagmelonnts count: favoritelons, relontwelonelonts and relonplielons
+  privatelon int numFavoritelons = 0;
+  privatelon int numRelontwelonelonts = 0;
+  privatelon int numRelonplielons = 0;
 
   // Card information
-  private String cardName;
-  private String cardDomain;
-  private String cardTitle;
-  private String cardDescription;
-  private String cardLang;
-  private String cardUrl;
+  privatelon String cardNamelon;
+  privatelon String cardDomain;
+  privatelon String cardTitlelon;
+  privatelon String cardDelonscription;
+  privatelon String cardLang;
+  privatelon String cardUrl;
 
-  private String placeId;
-  private String placeFullName;
-  private String placeCountryCode;
+  privatelon String placelonId;
+  privatelon String placelonFullNamelon;
+  privatelon String placelonCountryCodelon;
 
-  private Set<NamedEntity> namedEntities = Sets.newHashSet();
+  privatelon Selont<Namelondelonntity> namelondelonntitielons = Selonts.nelonwHashSelont();
 
-  // Spaces data
-  private Set<String> spaceIds = Sets.newHashSet();
-  private Set<TwitterMessageUser> spaceAdmins = Sets.newHashSet();
-  private String spaceTitle;
+  // Spacelons data
+  privatelon Selont<String> spacelonIds = Selonts.nelonwHashSelont();
+  privatelon Selont<TwittelonrMelonssagelonUselonr> spacelonAdmins = Selonts.nelonwHashSelont();
+  privatelon String spacelonTitlelon;
 
-  private Optional<ComposerSource> composerSource = Optional.empty();
+  privatelon Optional<ComposelonrSourcelon> composelonrSourcelon = Optional.elonmpty();
 
-  private final List<PotentialLocationObject> potentialLocations = Lists.newArrayList();
+  privatelon final List<PotelonntialLocationObjelonct> potelonntialLocations = Lists.nelonwArrayList();
 
-  // one or two penguin versions supported by this system
-  private final List<PenguinVersion> supportedPenguinVersions;
+  // onelon or two pelonnguin velonrsions supportelond by this systelonm
+  privatelon final List<PelonnguinVelonrsion> supportelondPelonnguinVelonrsions;
 
-  public TwitterMessage(Long tweetId, List<PenguinVersion> supportedPenguinVersions) {
-    this.tweetId = tweetId;
-    this.places = new ArrayList<>();
-    this.expandedUrls = new LinkedHashMap<>();
-    // make sure we support at least one, but no more than two versions of penguin
-    this.supportedPenguinVersions = supportedPenguinVersions;
-    this.versionedTweetFeaturesMap = getVersionedTweetFeaturesMap();
-    Preconditions.checkArgument(this.supportedPenguinVersions.size() <= 2
-        && this.supportedPenguinVersions.size() > 0);
+  public TwittelonrMelonssagelon(Long twelonelontId, List<PelonnguinVelonrsion> supportelondPelonnguinVelonrsions) {
+    this.twelonelontId = twelonelontId;
+    this.placelons = nelonw ArrayList<>();
+    this.elonxpandelondUrls = nelonw LinkelondHashMap<>();
+    // makelon surelon welon support at lelonast onelon, but no morelon than two velonrsions of pelonnguin
+    this.supportelondPelonnguinVelonrsions = supportelondPelonnguinVelonrsions;
+    this.velonrsionelondTwelonelontFelonaturelonsMap = gelontVelonrsionelondTwelonelontFelonaturelonsMap();
+    Prelonconditions.chelonckArgumelonnt(this.supportelondPelonnguinVelonrsions.sizelon() <= 2
+        && this.supportelondPelonnguinVelonrsions.sizelon() > 0);
   }
 
   /**
-   * Replace to-user with in-reply-to user if needed.
+   * Relonplacelon to-uselonr with in-relonply-to uselonr if nelonelondelond.
    */
-  public void replaceToUserWithInReplyToUserIfNeeded(
-      String inReplyToScreenName, long inReplyToUserId) {
-    if (shouldUseReplyUserAsToUser(optionalToUser, inReplyToUserId)) {
-      TwitterMessageUser replyUser =
-          TwitterMessageUser.createWithNamesAndId(inReplyToScreenName, "", inReplyToUserId);
-      optionalToUser = Optional.of(replyUser);
+  public void relonplacelonToUselonrWithInRelonplyToUselonrIfNelonelondelond(
+      String inRelonplyToScrelonelonnNamelon, long inRelonplyToUselonrId) {
+    if (shouldUselonRelonplyUselonrAsToUselonr(optionalToUselonr, inRelonplyToUselonrId)) {
+      TwittelonrMelonssagelonUselonr relonplyUselonr =
+          TwittelonrMelonssagelonUselonr.crelonatelonWithNamelonsAndId(inRelonplyToScrelonelonnNamelon, "", inRelonplyToUselonrId);
+      optionalToUselonr = Optional.of(relonplyUselonr);
     }
   }
 
-  // To-user could have been inferred from the mention at the position 0.
-  // But if there is an explicit in-reply-to user, we might need to use it as to-user instead.
-  private static boolean shouldUseReplyUserAsToUser(
-      Optional<TwitterMessageUser> currentToUser,
-      long inReplyToUserId) {
-    if (!currentToUser.isPresent()) {
-      // There is no mention in the tweet that qualifies as to-user.
-      return true;
+  // To-uselonr could havelon belonelonn infelonrrelond from thelon melonntion at thelon position 0.
+  // But if thelonrelon is an elonxplicit in-relonply-to uselonr, welon might nelonelond to uselon it as to-uselonr instelonad.
+  privatelon static boolelonan shouldUselonRelonplyUselonrAsToUselonr(
+      Optional<TwittelonrMelonssagelonUselonr> currelonntToUselonr,
+      long inRelonplyToUselonrId) {
+    if (!currelonntToUselonr.isPrelonselonnt()) {
+      // Thelonrelon is no melonntion in thelon twelonelont that qualifielons as to-uselonr.
+      relonturn truelon;
     }
 
-    // We already have a mention in the tweet that qualifies as to-user.
-    TwitterMessageUser toUser = currentToUser.get();
-    if (!toUser.getId().isPresent()) {
-      // The to-user from the mention is a stub.
-      return true;
+    // Welon alrelonady havelon a melonntion in thelon twelonelont that qualifielons as to-uselonr.
+    TwittelonrMelonssagelonUselonr toUselonr = currelonntToUselonr.gelont();
+    if (!toUselonr.gelontId().isPrelonselonnt()) {
+      // Thelon to-uselonr from thelon melonntion is a stub.
+      relonturn truelon;
     }
 
-    long toUserId = toUser.getId().get();
-    if (toUserId != inReplyToUserId) {
-      // The to-user from the mention is different that the in-reply-to user,
-      // use in-reply-to user instead.
-      return true;
+    long toUselonrId = toUselonr.gelontId().gelont();
+    if (toUselonrId != inRelonplyToUselonrId) {
+      // Thelon to-uselonr from thelon melonntion is diffelonrelonnt that thelon in-relonply-to uselonr,
+      // uselon in-relonply-to uselonr instelonad.
+      relonturn truelon;
     }
 
-    return false;
+    relonturn falselon;
   }
 
-  public double getUserReputation() {
-    return userReputation;
+  public doublelon gelontUselonrRelonputation() {
+    relonturn uselonrRelonputation;
   }
 
   /**
-   * Sets the user reputation.
+   * Selonts thelon uselonr relonputation.
    */
-  public TwitterMessage setUserReputation(double newUserReputation) {
-    if (newUserReputation > MAX_USER_REPUTATION) {
-      LOG.warn("Out of bounds user reputation {} for status id {}", newUserReputation, tweetId);
-      this.userReputation = (float) MAX_USER_REPUTATION;
-    } else {
-      this.userReputation = newUserReputation;
+  public TwittelonrMelonssagelon selontUselonrRelonputation(doublelon nelonwUselonrRelonputation) {
+    if (nelonwUselonrRelonputation > MAX_USelonR_RelonPUTATION) {
+      LOG.warn("Out of bounds uselonr relonputation {} for status id {}", nelonwUselonrRelonputation, twelonelontId);
+      this.uselonrRelonputation = (float) MAX_USelonR_RelonPUTATION;
+    } elonlselon {
+      this.uselonrRelonputation = nelonwUselonrRelonputation;
     }
-    return this;
+    relonturn this;
   }
 
-  public String getText() {
-    return text;
+  public String gelontTelonxt() {
+    relonturn telonxt;
   }
 
-  public Optional<TwitterMessageUser> getOptionalToUser() {
-    return optionalToUser;
+  public Optional<TwittelonrMelonssagelonUselonr> gelontOptionalToUselonr() {
+    relonturn optionalToUselonr;
   }
 
-  public void setOptionalToUser(Optional<TwitterMessageUser> optionalToUser) {
-    this.optionalToUser = optionalToUser;
+  public void selontOptionalToUselonr(Optional<TwittelonrMelonssagelonUselonr> optionalToUselonr) {
+    this.optionalToUselonr = optionalToUselonr;
   }
 
-  public void setText(String text) {
-    this.text = text;
+  public void selontTelonxt(String telonxt) {
+    this.telonxt = telonxt;
   }
 
-  public Date getDate() {
-    return date;
+  public Datelon gelontDatelon() {
+    relonturn datelon;
   }
 
-  public void setDate(Date date) {
-    this.date = date;
+  public void selontDatelon(Datelon datelon) {
+    this.datelon = datelon;
   }
 
-  public void setFromUser(@Nonnull TwitterMessageUser fromUser) {
-    Preconditions.checkNotNull(fromUser, "Don't set a null fromUser");
-    optionalFromUser = Optional.of(fromUser);
+  public void selontFromUselonr(@Nonnull TwittelonrMelonssagelonUselonr fromUselonr) {
+    Prelonconditions.chelonckNotNull(fromUselonr, "Don't selont a null fromUselonr");
+    optionalFromUselonr = Optional.of(fromUselonr);
   }
 
-  public Optional<String> getFromUserScreenName() {
-    return optionalFromUser.isPresent()
-        ? optionalFromUser.get().getScreenName()
-        : Optional.empty();
-  }
-
-  /**
-   * Sets the fromUserScreenName.
-   */
-  public void setFromUserScreenName(@Nonnull String fromUserScreenName) {
-    TwitterMessageUser newFromUser = optionalFromUser.isPresent()
-        ? optionalFromUser.get().copyWithScreenName(fromUserScreenName)
-        : TwitterMessageUser.createWithScreenName(fromUserScreenName);
-
-    optionalFromUser = Optional.of(newFromUser);
-  }
-
-  public Optional<TokenStream> getTokenizedFromUserScreenName() {
-    return optionalFromUser.flatMap(TwitterMessageUser::getTokenizedScreenName);
-  }
-
-  public Optional<String> getFromUserDisplayName() {
-    return optionalFromUser.flatMap(TwitterMessageUser::getDisplayName);
+  public Optional<String> gelontFromUselonrScrelonelonnNamelon() {
+    relonturn optionalFromUselonr.isPrelonselonnt()
+        ? optionalFromUselonr.gelont().gelontScrelonelonnNamelon()
+        : Optional.elonmpty();
   }
 
   /**
-   * Sets the fromUserDisplayName.
+   * Selonts thelon fromUselonrScrelonelonnNamelon.
    */
-  public void setFromUserDisplayName(@Nonnull String fromUserDisplayName) {
-    TwitterMessageUser newFromUser = optionalFromUser.isPresent()
-        ? optionalFromUser.get().copyWithDisplayName(fromUserDisplayName)
-        : TwitterMessageUser.createWithDisplayName(fromUserDisplayName);
+  public void selontFromUselonrScrelonelonnNamelon(@Nonnull String fromUselonrScrelonelonnNamelon) {
+    TwittelonrMelonssagelonUselonr nelonwFromUselonr = optionalFromUselonr.isPrelonselonnt()
+        ? optionalFromUselonr.gelont().copyWithScrelonelonnNamelon(fromUselonrScrelonelonnNamelon)
+        : TwittelonrMelonssagelonUselonr.crelonatelonWithScrelonelonnNamelon(fromUselonrScrelonelonnNamelon);
 
-    optionalFromUser = Optional.of(newFromUser);
+    optionalFromUselonr = Optional.of(nelonwFromUselonr);
   }
 
-  public Optional<Long> getFromUserTwitterId() {
-    return optionalFromUser.flatMap(TwitterMessageUser::getId);
+  public Optional<TokelonnStrelonam> gelontTokelonnizelondFromUselonrScrelonelonnNamelon() {
+    relonturn optionalFromUselonr.flatMap(TwittelonrMelonssagelonUselonr::gelontTokelonnizelondScrelonelonnNamelon);
+  }
+
+  public Optional<String> gelontFromUselonrDisplayNamelon() {
+    relonturn optionalFromUselonr.flatMap(TwittelonrMelonssagelonUselonr::gelontDisplayNamelon);
   }
 
   /**
-   * Sets the fromUserId.
+   * Selonts thelon fromUselonrDisplayNamelon.
    */
-  public void setFromUserId(long fromUserId) {
-    TwitterMessageUser newFromUser = optionalFromUser.isPresent()
-        ? optionalFromUser.get().copyWithId(fromUserId)
-        : TwitterMessageUser.createWithId(fromUserId);
+  public void selontFromUselonrDisplayNamelon(@Nonnull String fromUselonrDisplayNamelon) {
+    TwittelonrMelonssagelonUselonr nelonwFromUselonr = optionalFromUselonr.isPrelonselonnt()
+        ? optionalFromUselonr.gelont().copyWithDisplayNamelon(fromUselonrDisplayNamelon)
+        : TwittelonrMelonssagelonUselonr.crelonatelonWithDisplayNamelon(fromUselonrDisplayNamelon);
 
-    optionalFromUser = Optional.of(newFromUser);
+    optionalFromUselonr = Optional.of(nelonwFromUselonr);
   }
 
-  public long getConversationId() {
-    return conversationId;
-  }
-
-  public void setConversationId(long conversationId) {
-    this.conversationId = conversationId;
-  }
-
-  public boolean isUserProtected() {
-    return this.userProtected;
-  }
-
-  public void setUserProtected(boolean userProtected) {
-    this.userProtected = userProtected;
-  }
-
-  public boolean isUserVerified() {
-    return this.userVerified;
-  }
-
-  public void setUserVerified(boolean userVerified) {
-    this.userVerified = userVerified;
-  }
-
-  public boolean isUserBlueVerified() {
-    return this.userBlueVerified;
-  }
-
-  public void setUserBlueVerified(boolean userBlueVerified) {
-    this.userBlueVerified = userBlueVerified;
-  }
-
-  public void setIsSensitiveContent(boolean isSensitiveContent) {
-    this.sensitiveContent = isSensitiveContent;
-  }
-
-  public boolean isSensitiveContent() {
-    return this.sensitiveContent;
-  }
-
-  public Optional<TwitterMessageUser> getToUserObject() {
-    return optionalToUser;
-  }
-
-  public void setToUserObject(@Nonnull TwitterMessageUser user) {
-    Preconditions.checkNotNull(user, "Don't set a null to-user");
-    optionalToUser = Optional.of(user);
-  }
-
-  public Optional<Long> getToUserTwitterId() {
-    return optionalToUser.flatMap(TwitterMessageUser::getId);
+  public Optional<Long> gelontFromUselonrTwittelonrId() {
+    relonturn optionalFromUselonr.flatMap(TwittelonrMelonssagelonUselonr::gelontId);
   }
 
   /**
-   * Sets toUserId.
+   * Selonts thelon fromUselonrId.
    */
-  public void setToUserTwitterId(long toUserId) {
-    TwitterMessageUser newToUser = optionalToUser.isPresent()
-        ? optionalToUser.get().copyWithId(toUserId)
-        : TwitterMessageUser.createWithId(toUserId);
+  public void selontFromUselonrId(long fromUselonrId) {
+    TwittelonrMelonssagelonUselonr nelonwFromUselonr = optionalFromUselonr.isPrelonselonnt()
+        ? optionalFromUselonr.gelont().copyWithId(fromUselonrId)
+        : TwittelonrMelonssagelonUselonr.crelonatelonWithId(fromUselonrId);
 
-    optionalToUser = Optional.of(newToUser);
+    optionalFromUselonr = Optional.of(nelonwFromUselonr);
   }
 
-  public Optional<String> getToUserLowercasedScreenName() {
-    return optionalToUser.flatMap(TwitterMessageUser::getScreenName).map(String::toLowerCase);
+  public long gelontConvelonrsationId() {
+    relonturn convelonrsationId;
   }
 
-  public Optional<String> getToUserScreenName() {
-    return optionalToUser.flatMap(TwitterMessageUser::getScreenName);
+  public void selontConvelonrsationId(long convelonrsationId) {
+    this.convelonrsationId = convelonrsationId;
+  }
+
+  public boolelonan isUselonrProtelonctelond() {
+    relonturn this.uselonrProtelonctelond;
+  }
+
+  public void selontUselonrProtelonctelond(boolelonan uselonrProtelonctelond) {
+    this.uselonrProtelonctelond = uselonrProtelonctelond;
+  }
+
+  public boolelonan isUselonrVelonrifielond() {
+    relonturn this.uselonrVelonrifielond;
+  }
+
+  public void selontUselonrVelonrifielond(boolelonan uselonrVelonrifielond) {
+    this.uselonrVelonrifielond = uselonrVelonrifielond;
+  }
+
+  public boolelonan isUselonrBluelonVelonrifielond() {
+    relonturn this.uselonrBluelonVelonrifielond;
+  }
+
+  public void selontUselonrBluelonVelonrifielond(boolelonan uselonrBluelonVelonrifielond) {
+    this.uselonrBluelonVelonrifielond = uselonrBluelonVelonrifielond;
+  }
+
+  public void selontIsSelonnsitivelonContelonnt(boolelonan isSelonnsitivelonContelonnt) {
+    this.selonnsitivelonContelonnt = isSelonnsitivelonContelonnt;
+  }
+
+  public boolelonan isSelonnsitivelonContelonnt() {
+    relonturn this.selonnsitivelonContelonnt;
+  }
+
+  public Optional<TwittelonrMelonssagelonUselonr> gelontToUselonrObjelonct() {
+    relonturn optionalToUselonr;
+  }
+
+  public void selontToUselonrObjelonct(@Nonnull TwittelonrMelonssagelonUselonr uselonr) {
+    Prelonconditions.chelonckNotNull(uselonr, "Don't selont a null to-uselonr");
+    optionalToUselonr = Optional.of(uselonr);
+  }
+
+  public Optional<Long> gelontToUselonrTwittelonrId() {
+    relonturn optionalToUselonr.flatMap(TwittelonrMelonssagelonUselonr::gelontId);
   }
 
   /**
-   * Sets toUserScreenName.
+   * Selonts toUselonrId.
    */
-  public void setToUserScreenName(@Nonnull String screenName) {
-    Preconditions.checkNotNull(screenName, "Don't set a null to-user screenname");
+  public void selontToUselonrTwittelonrId(long toUselonrId) {
+    TwittelonrMelonssagelonUselonr nelonwToUselonr = optionalToUselonr.isPrelonselonnt()
+        ? optionalToUselonr.gelont().copyWithId(toUselonrId)
+        : TwittelonrMelonssagelonUselonr.crelonatelonWithId(toUselonrId);
 
-    TwitterMessageUser newToUser = optionalToUser.isPresent()
-        ? optionalToUser.get().copyWithScreenName(screenName)
-        : TwitterMessageUser.createWithScreenName(screenName);
-
-    optionalToUser = Optional.of(newToUser);
+    optionalToUselonr = Optional.of(nelonwToUselonr);
   }
 
-  // to use from TweetEventParseHelper
-  public void setDirectedAtUserId(Optional<Long> directedAtUserId) {
-    this.directedAtUserId = directedAtUserId;
+  public Optional<String> gelontToUselonrLowelonrcaselondScrelonelonnNamelon() {
+    relonturn optionalToUselonr.flatMap(TwittelonrMelonssagelonUselonr::gelontScrelonelonnNamelon).map(String::toLowelonrCaselon);
   }
 
-  @VisibleForTesting
-  public Optional<Long> getDirectedAtUserId() {
-    return directedAtUserId;
+  public Optional<String> gelontToUselonrScrelonelonnNamelon() {
+    relonturn optionalToUselonr.flatMap(TwittelonrMelonssagelonUselonr::gelontScrelonelonnNamelon);
   }
 
   /**
-   * Returns the referenceAuthorId.
+   * Selonts toUselonrScrelonelonnNamelon.
    */
-  public Optional<Long> getReferenceAuthorId() {
-    // The semantics of reference-author-id:
-    // - if the tweet is a retweet, it should be the user id of the author of the original tweet
-    // - else, if the tweet is directed at a user, it should be the id of the user it's directed at.
-    // - else, if the tweet is a reply in a root self-thread, directed-at is not set, so it's
-    //   the id of the user who started the self-thread.
+  public void selontToUselonrScrelonelonnNamelon(@Nonnull String screlonelonnNamelon) {
+    Prelonconditions.chelonckNotNull(screlonelonnNamelon, "Don't selont a null to-uselonr screlonelonnnamelon");
+
+    TwittelonrMelonssagelonUselonr nelonwToUselonr = optionalToUselonr.isPrelonselonnt()
+        ? optionalToUselonr.gelont().copyWithScrelonelonnNamelon(screlonelonnNamelon)
+        : TwittelonrMelonssagelonUselonr.crelonatelonWithScrelonelonnNamelon(screlonelonnNamelon);
+
+    optionalToUselonr = Optional.of(nelonwToUselonr);
+  }
+
+  // to uselon from TwelonelontelonvelonntParselonHelonlpelonr
+  public void selontDirelonctelondAtUselonrId(Optional<Long> direlonctelondAtUselonrId) {
+    this.direlonctelondAtUselonrId = direlonctelondAtUselonrId;
+  }
+
+  @VisiblelonForTelonsting
+  public Optional<Long> gelontDirelonctelondAtUselonrId() {
+    relonturn direlonctelondAtUselonrId;
+  }
+
+  /**
+   * Relonturns thelon relonfelonrelonncelonAuthorId.
+   */
+  public Optional<Long> gelontRelonfelonrelonncelonAuthorId() {
+    // Thelon selonmantics of relonfelonrelonncelon-author-id:
+    // - if thelon twelonelont is a relontwelonelont, it should belon thelon uselonr id of thelon author of thelon original twelonelont
+    // - elonlselon, if thelon twelonelont is direlonctelond at a uselonr, it should belon thelon id of thelon uselonr it's direlonctelond at.
+    // - elonlselon, if thelon twelonelont is a relonply in a root selonlf-threlonad, direlonctelond-at is not selont, so it's
+    //   thelon id of thelon uselonr who startelond thelon selonlf-threlonad.
     //
-    // For definitive info on replies and directed-at, take a look at go/replies. To view these
-    // for a certain tweet, use http://go/t.
+    // For delonfinitivelon info on relonplielons and direlonctelond-at, takelon a look at go/relonplielons. To vielonw thelonselon
+    // for a celonrtain twelonelont, uselon http://go/t.
     //
-    // Note that if directed-at is set, reply is always set.
-    // If reply is set, directed-at is not necessarily set.
-    if (isRetweet() && retweetMessage.hasSharedUserTwitterId()) {
-      long retweetedUserId = retweetMessage.getSharedUserTwitterId();
-      return Optional.of(retweetedUserId);
-    } else if (directedAtUserId.isPresent()) {
-      // Why not replace directedAtUserId with reply and make this function depend
-      // on the "reply" field of TweetCoreData?
-      // Well, verified by counters, it seems for ~1% of tweets, which contain both directed-at
-      // and reply, directed-at-user is different than the reply-to-user id. This happens in the
-      // following case:
+    // Notelon that if direlonctelond-at is selont, relonply is always selont.
+    // If relonply is selont, direlonctelond-at is not neloncelonssarily selont.
+    if (isRelontwelonelont() && relontwelonelontMelonssagelon.hasSharelondUselonrTwittelonrId()) {
+      long relontwelonelontelondUselonrId = relontwelonelontMelonssagelon.gelontSharelondUselonrTwittelonrId();
+      relonturn Optional.of(relontwelonelontelondUselonrId);
+    } elonlselon if (direlonctelondAtUselonrId.isPrelonselonnt()) {
+      // Why not relonplacelon direlonctelondAtUselonrId with relonply and makelon this function delonpelonnd
+      // on thelon "relonply" fielonld of TwelonelontCorelonData?
+      // Welonll, velonrifielond by countelonrs, it selonelonms for ~1% of twelonelonts, which contain both direlonctelond-at
+      // and relonply, direlonctelond-at-uselonr is diffelonrelonnt than thelon relonply-to-uselonr id. This happelonns in thelon
+      // following caselon:
       //
-      //       author / reply-to / directed-at
+      //       author / relonply-to / direlonctelond-at
       //  T1   A        -          -
       //  T2   B        A          A
       //  T3   B        B          A
       //
-      //  T2 is a reply to T1, T3 is a reply to T2.
+      //  T2 is a relonply to T1, T3 is a relonply to T2.
       //
-      // It's up to us to decide who this tweet is "referencing", but with the current code,
-      // we choose that T3 is referencing user A.
-      return directedAtUserId;
-    } else {
-      // This is the case of a root self-thread reply. directed-at is not set.
-      Optional<Long> fromUserId = this.getFromUserTwitterId();
-      Optional<Long> toUserId = this.getToUserTwitterId();
+      // It's up to us to deloncidelon who this twelonelont is "relonfelonrelonncing", but with thelon currelonnt codelon,
+      // welon chooselon that T3 is relonfelonrelonncing uselonr A.
+      relonturn direlonctelondAtUselonrId;
+    } elonlselon {
+      // This is thelon caselon of a root selonlf-threlonad relonply. direlonctelond-at is not selont.
+      Optional<Long> fromUselonrId = this.gelontFromUselonrTwittelonrId();
+      Optional<Long> toUselonrId = this.gelontToUselonrTwittelonrId();
 
-      if (fromUserId.isPresent() && fromUserId.equals(toUserId)) {
-        return fromUserId;
+      if (fromUselonrId.isPrelonselonnt() && fromUselonrId.elonquals(toUselonrId)) {
+        relonturn fromUselonrId;
       }
     }
-    return Optional.empty();
+    relonturn Optional.elonmpty();
   }
 
-  public void setNumFavorites(int numFavorites) {
-    this.numFavorites = numFavorites;
+  public void selontNumFavoritelons(int numFavoritelons) {
+    this.numFavoritelons = numFavoritelons;
   }
 
-  public void setNumRetweets(int numRetweets) {
-    this.numRetweets = numRetweets;
+  public void selontNumRelontwelonelonts(int numRelontwelonelonts) {
+    this.numRelontwelonelonts = numRelontwelonelonts;
   }
 
-  public void setNumReplies(int numRepliess) {
-    this.numReplies = numRepliess;
+  public void selontNumRelonplielons(int numRelonplielonss) {
+    this.numRelonplielons = numRelonplielonss;
   }
 
-  public void addEscherbirdAnnotation(EscherbirdAnnotation annotation) {
-    escherbirdAnnotations.add(annotation);
+  public void addelonschelonrbirdAnnotation(elonschelonrbirdAnnotation annotation) {
+    elonschelonrbirdAnnotations.add(annotation);
   }
 
-  public List<EscherbirdAnnotation> getEscherbirdAnnotations() {
-    return escherbirdAnnotations;
+  public List<elonschelonrbirdAnnotation> gelontelonschelonrbirdAnnotations() {
+    relonturn elonschelonrbirdAnnotations;
   }
 
-  public List<PotentialLocationObject> getPotentialLocations() {
-    return potentialLocations;
+  public List<PotelonntialLocationObjelonct> gelontPotelonntialLocations() {
+    relonturn potelonntialLocations;
   }
 
-  public void setPotentialLocations(Collection<PotentialLocationObject> potentialLocations) {
-    this.potentialLocations.clear();
-    this.potentialLocations.addAll(potentialLocations);
+  public void selontPotelonntialLocations(Collelonction<PotelonntialLocationObjelonct> potelonntialLocations) {
+    this.potelonntialLocations.clelonar();
+    this.potelonntialLocations.addAll(potelonntialLocations);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+    relonturn ToStringBuildelonr.relonflelonctionToString(this);
   }
 
-  // Tweet language related getters and setters.
+  // Twelonelont languagelon relonlatelond gelonttelonrs and selonttelonrs.
 
   /**
-   * Returns the locale.
+   * Relonturns thelon localelon.
    * <p>
-   * Note the getLocale() will never return null, this is for the convenience of text related
-   * processing in the ingester. If you want the real locale, you need to check isSetLocale()
-   * first to see if we really have any information about the locale of this tweet.
+   * Notelon thelon gelontLocalelon() will nelonvelonr relonturn null, this is for thelon convelonnielonncelon of telonxt relonlatelond
+   * procelonssing in thelon ingelonstelonr. If you want thelon relonal localelon, you nelonelond to chelonck isSelontLocalelon()
+   * first to selonelon if welon relonally havelon any information about thelon localelon of this twelonelont.
    */
-  public Locale getLocale() {
-    if (locale == null) {
-      return TwitterLanguageIdentifier.UNKNOWN;
-    } else {
-      return locale;
+  public Localelon gelontLocalelon() {
+    if (localelon == null) {
+      relonturn TwittelonrLanguagelonIdelonntifielonr.UNKNOWN;
+    } elonlselon {
+      relonturn localelon;
     }
   }
 
-  public void setLocale(Locale locale) {
-    this.locale = locale;
+  public void selontLocalelon(Localelon localelon) {
+    this.localelon = localelon;
   }
 
   /**
-   * Determines if the locate is set.
+   * Delontelonrminelons if thelon locatelon is selont.
    */
-  public boolean isSetLocale() {
-    return locale != null;
+  public boolelonan isSelontLocalelon() {
+    relonturn localelon != null;
   }
 
   /**
-   * Returns the language of the locale. E.g. zh
+   * Relonturns thelon languagelon of thelon localelon. elon.g. zh
    */
-  public String getLanguage() {
-    if (isSetLocale()) {
-      return getLocale().getLanguage();
-    } else {
-      return null;
+  public String gelontLanguagelon() {
+    if (isSelontLocalelon()) {
+      relonturn gelontLocalelon().gelontLanguagelon();
+    } elonlselon {
+      relonturn null;
     }
   }
 
   /**
-   * Returns the IETF BCP 47 Language Tag of the locale. E.g. zh-CN
+   * Relonturns thelon IelonTF BCP 47 Languagelon Tag of thelon localelon. elon.g. zh-CN
    */
-  public String getBCP47LanguageTag() {
-    if (isSetLocale()) {
-      return getLocale().toLanguageTag();
-    } else {
-      return null;
+  public String gelontBCP47LanguagelonTag() {
+    if (isSelontLocalelon()) {
+      relonturn gelontLocalelon().toLanguagelonTag();
+    } elonlselon {
+      relonturn null;
     }
   }
 
-  public void setLanguage(String language) {
-    if (language != null) {
-      locale = LocaleUtil.getLocaleOf(language);
+  public void selontLanguagelon(String languagelon) {
+    if (languagelon != null) {
+      localelon = LocalelonUtil.gelontLocalelonOf(languagelon);
     }
   }
 
-  // Tweet link language related getters and setters.
-  public Locale getLinkLocale() {
-    return linkLocale;
+  // Twelonelont link languagelon relonlatelond gelonttelonrs and selonttelonrs.
+  public Localelon gelontLinkLocalelon() {
+    relonturn linkLocalelon;
   }
 
-  public void setLinkLocale(Locale linkLocale) {
-    this.linkLocale = linkLocale;
+  public void selontLinkLocalelon(Localelon linkLocalelon) {
+    this.linkLocalelon = linkLocalelon;
   }
 
   /**
-   * Returns the language of the link locale.
+   * Relonturns thelon languagelon of thelon link localelon.
    */
-  public String getLinkLanguage() {
-    if (this.linkLocale == null) {
-      return null;
-    } else {
-      return this.linkLocale.getLanguage();
+  public String gelontLinkLanguagelon() {
+    if (this.linkLocalelon == null) {
+      relonturn null;
+    } elonlselon {
+      relonturn this.linkLocalelon.gelontLanguagelon();
     }
   }
 
-  public String getOrigSource() {
-    return origSource;
+  public String gelontOrigSourcelon() {
+    relonturn origSourcelon;
   }
 
-  public void setOrigSource(String origSource) {
-    this.origSource = origSource;
+  public void selontOrigSourcelon(String origSourcelon) {
+    this.origSourcelon = origSourcelon;
   }
 
-  public String getStrippedSource() {
-    return strippedSource;
+  public String gelontStrippelondSourcelon() {
+    relonturn strippelondSourcelon;
   }
 
-  public void setStrippedSource(String strippedSource) {
-    this.strippedSource = strippedSource;
+  public void selontStrippelondSourcelon(String strippelondSourcelon) {
+    this.strippelondSourcelon = strippelondSourcelon;
   }
 
-  public String getOrigLocation() {
-    return origLocation;
+  public String gelontOrigLocation() {
+    relonturn origLocation;
   }
 
-  public String getLocation() {
-    return truncatedNormalizedLocation;
+  public String gelontLocation() {
+    relonturn truncatelondNormalizelondLocation;
   }
 
-  public void setOrigLocation(String origLocation) {
+  public void selontOrigLocation(String origLocation) {
     this.origLocation = origLocation;
   }
 
-  public void setTruncatedNormalizedLocation(String truncatedNormalizedLocation) {
-    this.truncatedNormalizedLocation = truncatedNormalizedLocation;
+  public void selontTruncatelondNormalizelondLocation(String truncatelondNormalizelondLocation) {
+    this.truncatelondNormalizelondLocation = truncatelondNormalizelondLocation;
   }
 
-  public boolean hasFromUserLocCountry() {
-    return fromUserLocCountry != null;
+  public boolelonan hasFromUselonrLocCountry() {
+    relonturn fromUselonrLocCountry != null;
   }
 
-  public String getFromUserLocCountry() {
-    return fromUserLocCountry;
+  public String gelontFromUselonrLocCountry() {
+    relonturn fromUselonrLocCountry;
   }
 
-  public void setFromUserLocCountry(String fromUserLocCountry) {
-    this.fromUserLocCountry = fromUserLocCountry;
+  public void selontFromUselonrLocCountry(String fromUselonrLocCountry) {
+    this.fromUselonrLocCountry = fromUselonrLocCountry;
   }
 
-  public String getTruncatedNormalizedLocation() {
-    return truncatedNormalizedLocation;
+  public String gelontTruncatelondNormalizelondLocation() {
+    relonturn truncatelondNormalizelondLocation;
   }
 
-  public Integer getFollowersCount() {
-    return followersCount;
+  public Intelongelonr gelontFollowelonrsCount() {
+    relonturn followelonrsCount;
   }
 
-  public void setFollowersCount(Integer followersCount) {
-    this.followersCount = followersCount;
+  public void selontFollowelonrsCount(Intelongelonr followelonrsCount) {
+    this.followelonrsCount = followelonrsCount;
   }
 
-  public boolean hasFollowersCount() {
-    return followersCount != INT_FIELD_NOT_PRESENT;
+  public boolelonan hasFollowelonrsCount() {
+    relonturn followelonrsCount != INT_FIelonLD_NOT_PRelonSelonNT;
   }
 
-  public boolean isDeleted() {
-    return deleted;
+  public boolelonan isDelonlelontelond() {
+    relonturn delonlelontelond;
   }
 
-  public void setDeleted(boolean deleted) {
-    this.deleted = deleted;
+  public void selontDelonlelontelond(boolelonan delonlelontelond) {
+    this.delonlelontelond = delonlelontelond;
   }
 
-  public boolean hasCard() {
-    return !StringUtils.isBlank(getCardName());
+  public boolelonan hasCard() {
+    relonturn !StringUtils.isBlank(gelontCardNamelon());
   }
 
-  @Override
-  public int hashCode() {
-    return ((Long) getId()).hashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn ((Long) gelontId()).hashCodelon();
   }
 
   /**
-   * Parses the given date using the TwitterDateFormat.
+   * Parselons thelon givelonn datelon using thelon TwittelonrDatelonFormat.
    */
-  public static Date parseDate(String date) {
-    DateFormat parser = TwitterDateFormat.apply("EEE MMM d HH:mm:ss Z yyyy");
+  public static Datelon parselonDatelon(String datelon) {
+    DatelonFormat parselonr = TwittelonrDatelonFormat.apply("elonelonelon MMM d HH:mm:ss Z yyyy");
     try {
-      return parser.parse(date);
-    } catch (Exception e) {
-      return null;
+      relonturn parselonr.parselon(datelon);
+    } catch (elonxcelonption elon) {
+      relonturn null;
     }
   }
 
-  public boolean hasGeoLocation() {
-    return geoLocation != null;
+  public boolelonan hasGelonoLocation() {
+    relonturn gelonoLocation != null;
   }
 
-  public void setGeoLocation(GeoObject location) {
-    this.geoLocation = location;
+  public void selontGelonoLocation(GelonoObjelonct location) {
+    this.gelonoLocation = location;
   }
 
-  public GeoObject getGeoLocation() {
-    return geoLocation;
+  public GelonoObjelonct gelontGelonoLocation() {
+    relonturn gelonoLocation;
   }
 
-  public String getPlaceId() {
-    return placeId;
+  public String gelontPlacelonId() {
+    relonturn placelonId;
   }
 
-  public void setPlaceId(String placeId) {
-    this.placeId = placeId;
+  public void selontPlacelonId(String placelonId) {
+    this.placelonId = placelonId;
   }
 
-  public String getPlaceFullName() {
-    return placeFullName;
+  public String gelontPlacelonFullNamelon() {
+    relonturn placelonFullNamelon;
   }
 
-  public void setPlaceFullName(String placeFullName) {
-    this.placeFullName = placeFullName;
+  public void selontPlacelonFullNamelon(String placelonFullNamelon) {
+    this.placelonFullNamelon = placelonFullNamelon;
   }
 
-  public String getPlaceCountryCode() {
-    return placeCountryCode;
+  public String gelontPlacelonCountryCodelon() {
+    relonturn placelonCountryCodelon;
   }
 
-  public void setPlaceCountryCode(String placeCountryCode) {
-    this.placeCountryCode = placeCountryCode;
+  public void selontPlacelonCountryCodelon(String placelonCountryCodelon) {
+    this.placelonCountryCodelon = placelonCountryCodelon;
   }
 
-  public void setGeoTaggedLocation(GeoObject geoTaggedLocation) {
-    this.geoTaggedLocation = geoTaggedLocation;
+  public void selontGelonoTaggelondLocation(GelonoObjelonct gelonoTaggelondLocation) {
+    this.gelonoTaggelondLocation = gelonoTaggelondLocation;
   }
 
-  public GeoObject getGeoTaggedLocation() {
-    return geoTaggedLocation;
+  public GelonoObjelonct gelontGelonoTaggelondLocation() {
+    relonturn gelonoTaggelondLocation;
   }
 
-  public void setLatLon(double latitude, double longitude) {
-    geoLocation = new GeoObject(latitude, longitude, null);
+  public void selontLatLon(doublelon latitudelon, doublelon longitudelon) {
+    gelonoLocation = nelonw GelonoObjelonct(latitudelon, longitudelon, null);
   }
 
-  public Double getLatitude() {
-    return hasGeoLocation() ? geoLocation.getLatitude() : null;
+  public Doublelon gelontLatitudelon() {
+    relonturn hasGelonoLocation() ? gelonoLocation.gelontLatitudelon() : null;
   }
 
-  public Double getLongitude() {
-    return hasGeoLocation() ? geoLocation.getLongitude() : null;
+  public Doublelon gelontLongitudelon() {
+    relonturn hasGelonoLocation() ? gelonoLocation.gelontLongitudelon() : null;
   }
 
-  public boolean isUncodeableLocation() {
-    return uncodeableLocation;
+  public boolelonan isUncodelonablelonLocation() {
+    relonturn uncodelonablelonLocation;
   }
 
-  public void setUncodeableLocation() {
-    uncodeableLocation = true;
+  public void selontUncodelonablelonLocation() {
+    uncodelonablelonLocation = truelon;
   }
 
-  public void setGeocodeRequired() {
-    this.geocodeRequired = true;
+  public void selontGelonocodelonRelonquirelond() {
+    this.gelonocodelonRelonquirelond = truelon;
   }
 
-  public boolean isGeocodeRequired() {
-    return geocodeRequired;
+  public boolelonan isGelonocodelonRelonquirelond() {
+    relonturn gelonocodelonRelonquirelond;
   }
 
-  public Map<Long, String> getPhotoUrls() {
-    return photoUrls;
+  public Map<Long, String> gelontPhotoUrls() {
+    relonturn photoUrls;
   }
 
   /**
-   * Associates the given mediaUrl with the given photoStatusId.
+   * Associatelons thelon givelonn melondiaUrl with thelon givelonn photoStatusId.
    */
-  public void addPhotoUrl(long photoStatusId, String mediaUrl) {
+  public void addPhotoUrl(long photoStatusId, String melondiaUrl) {
     if (photoUrls == null) {
-      photoUrls = new LinkedHashMap<>();
+      photoUrls = nelonw LinkelondHashMap<>();
     }
-    photoUrls.putIfAbsent(photoStatusId, mediaUrl);
+    photoUrls.putIfAbselonnt(photoStatusId, melondiaUrl);
   }
 
-  public Map<String, ThriftExpandedUrl> getExpandedUrlMap() {
-    return expandedUrls;
+  public Map<String, ThriftelonxpandelondUrl> gelontelonxpandelondUrlMap() {
+    relonturn elonxpandelondUrls;
   }
 
-  public int getExpandedUrlMapSize() {
-    return expandedUrls.size();
-  }
-
-  /**
-   * Associates the given originalUrl with the given expanderUrl.
-   */
-  public void addExpandedUrl(String originalUrl, ThriftExpandedUrl expandedUrl) {
-    this.expandedUrls.put(originalUrl, expandedUrl);
+  public int gelontelonxpandelondUrlMapSizelon() {
+    relonturn elonxpandelondUrls.sizelon();
   }
 
   /**
-   * Replaces urls with resolved ones.
+   * Associatelons thelon givelonn originalUrl with thelon givelonn elonxpandelonrUrl.
    */
-  public String getTextReplacedWithResolvedURLs() {
-    String retText = text;
-    for (Map.Entry<String, ThriftExpandedUrl> entry : expandedUrls.entrySet()) {
-      ThriftExpandedUrl urlInfo = entry.getValue();
-      String resolvedUrl;
-      String canonicalLastHopUrl = urlInfo.getCanonicalLastHopUrl();
-      String expandedUrl = urlInfo.getExpandedUrl();
+  public void addelonxpandelondUrl(String originalUrl, ThriftelonxpandelondUrl elonxpandelondUrl) {
+    this.elonxpandelondUrls.put(originalUrl, elonxpandelondUrl);
+  }
+
+  /**
+   * Relonplacelons urls with relonsolvelond onelons.
+   */
+  public String gelontTelonxtRelonplacelondWithRelonsolvelondURLs() {
+    String relontTelonxt = telonxt;
+    for (Map.elonntry<String, ThriftelonxpandelondUrl> elonntry : elonxpandelondUrls.elonntrySelont()) {
+      ThriftelonxpandelondUrl urlInfo = elonntry.gelontValuelon();
+      String relonsolvelondUrl;
+      String canonicalLastHopUrl = urlInfo.gelontCanonicalLastHopUrl();
+      String elonxpandelondUrl = urlInfo.gelontelonxpandelondUrl();
       if (canonicalLastHopUrl != null) {
-        resolvedUrl = canonicalLastHopUrl;
-        LOG.debug("{} has canonical last hop url set", urlInfo);
-      } else if (expandedUrl != null) {
-        LOG.debug("{} has no canonical last hop url set, using expanded url instead", urlInfo);
-        resolvedUrl = expandedUrl;
-      } else {
-        LOG.debug("{} has no canonical last hop url or expanded url set, skipping", urlInfo);
-        continue;
+        relonsolvelondUrl = canonicalLastHopUrl;
+        LOG.delonbug("{} has canonical last hop url selont", urlInfo);
+      } elonlselon if (elonxpandelondUrl != null) {
+        LOG.delonbug("{} has no canonical last hop url selont, using elonxpandelond url instelonad", urlInfo);
+        relonsolvelondUrl = elonxpandelondUrl;
+      } elonlselon {
+        LOG.delonbug("{} has no canonical last hop url or elonxpandelond url selont, skipping", urlInfo);
+        continuelon;
       }
-      retText = retText.replace(entry.getKey(), resolvedUrl);
+      relontTelonxt = relontTelonxt.relonplacelon(elonntry.gelontKelony(), relonsolvelondUrl);
     }
-    return retText;
+    relonturn relontTelonxt;
   }
 
-  public long getId() {
-    return tweetId;
+  public long gelontId() {
+    relonturn twelonelontId;
   }
 
-  public boolean isRetweet() {
-    return retweetMessage != null;
+  public boolelonan isRelontwelonelont() {
+    relonturn relontwelonelontMelonssagelon != null;
   }
 
-  public boolean hasQuote() {
-    return quotedMessage != null;
+  public boolelonan hasQuotelon() {
+    relonturn quotelondMelonssagelon != null;
   }
 
-  public boolean isReply() {
-    return getToUserScreenName().isPresent()
-        || getToUserTwitterId().isPresent()
-        || getInReplyToStatusId().isPresent();
+  public boolelonan isRelonply() {
+    relonturn gelontToUselonrScrelonelonnNamelon().isPrelonselonnt()
+        || gelontToUselonrTwittelonrId().isPrelonselonnt()
+        || gelontInRelonplyToStatusId().isPrelonselonnt();
   }
 
-  public boolean isReplyToTweet() {
-    return getInReplyToStatusId().isPresent();
+  public boolelonan isRelonplyToTwelonelont() {
+    relonturn gelontInRelonplyToStatusId().isPrelonselonnt();
   }
 
-  public TwitterRetweetMessage getRetweetMessage() {
-    return retweetMessage;
+  public TwittelonrRelontwelonelontMelonssagelon gelontRelontwelonelontMelonssagelon() {
+    relonturn relontwelonelontMelonssagelon;
   }
 
-  public void setRetweetMessage(TwitterRetweetMessage retweetMessage) {
-    this.retweetMessage = retweetMessage;
+  public void selontRelontwelonelontMelonssagelon(TwittelonrRelontwelonelontMelonssagelon relontwelonelontMelonssagelon) {
+    this.relontwelonelontMelonssagelon = relontwelonelontMelonssagelon;
   }
 
-  public TwitterQuotedMessage getQuotedMessage() {
-    return quotedMessage;
+  public TwittelonrQuotelondMelonssagelon gelontQuotelondMelonssagelon() {
+    relonturn quotelondMelonssagelon;
   }
 
-  public void setQuotedMessage(TwitterQuotedMessage quotedMessage) {
-    this.quotedMessage = quotedMessage;
+  public void selontQuotelondMelonssagelon(TwittelonrQuotelondMelonssagelon quotelondMelonssagelon) {
+    this.quotelondMelonssagelon = quotelondMelonssagelon;
   }
 
-  public List<String> getPlaces() {
-    return places;
+  public List<String> gelontPlacelons() {
+    relonturn placelons;
   }
 
-  public void addPlace(String place) {
-    // Places are used for earlybird serialization
-    places.add(place);
+  public void addPlacelon(String placelon) {
+    // Placelons arelon uselond for elonarlybird selonrialization
+    placelons.add(placelon);
   }
 
-  public Optional<Long> getInReplyToStatusId() {
-    return inReplyToStatusId;
+  public Optional<Long> gelontInRelonplyToStatusId() {
+    relonturn inRelonplyToStatusId;
   }
 
-  public void setInReplyToStatusId(long inReplyToStatusId) {
-    Preconditions.checkArgument(inReplyToStatusId > 0, "In-reply-to status ID should be positive");
-    this.inReplyToStatusId = Optional.of(inReplyToStatusId);
+  public void selontInRelonplyToStatusId(long inRelonplyToStatusId) {
+    Prelonconditions.chelonckArgumelonnt(inRelonplyToStatusId > 0, "In-relonply-to status ID should belon positivelon");
+    this.inRelonplyToStatusId = Optional.of(inRelonplyToStatusId);
   }
 
-  public boolean getNullcast() {
-    return nullcast;
+  public boolelonan gelontNullcast() {
+    relonturn nullcast;
   }
 
-  public void setNullcast(boolean nullcast) {
+  public void selontNullcast(boolelonan nullcast) {
     this.nullcast = nullcast;
   }
 
-  public List<PenguinVersion> getSupportedPenguinVersions() {
-    return supportedPenguinVersions;
+  public List<PelonnguinVelonrsion> gelontSupportelondPelonnguinVelonrsions() {
+    relonturn supportelondPelonnguinVelonrsions;
   }
 
-  private VersionedTweetFeatures getVersionedTweetFeatures(PenguinVersion penguinVersion) {
-    VersionedTweetFeatures versionedTweetFeatures = versionedTweetFeaturesMap.get(penguinVersion);
-    return Preconditions.checkNotNull(versionedTweetFeatures);
+  privatelon VelonrsionelondTwelonelontFelonaturelons gelontVelonrsionelondTwelonelontFelonaturelons(PelonnguinVelonrsion pelonnguinVelonrsion) {
+    VelonrsionelondTwelonelontFelonaturelons velonrsionelondTwelonelontFelonaturelons = velonrsionelondTwelonelontFelonaturelonsMap.gelont(pelonnguinVelonrsion);
+    relonturn Prelonconditions.chelonckNotNull(velonrsionelondTwelonelontFelonaturelons);
   }
 
-  public TweetFeatures getTweetFeatures(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetFeatures();
+  public TwelonelontFelonaturelons gelontTwelonelontFelonaturelons(PelonnguinVelonrsion pelonnguinVelonrsion) {
+    relonturn gelontVelonrsionelondTwelonelontFelonaturelons(pelonnguinVelonrsion).gelontTwelonelontFelonaturelons();
   }
 
-  @VisibleForTesting
-  // only used in Tests
-  public void setTweetFeatures(PenguinVersion penguinVersion, TweetFeatures tweetFeatures) {
-    versionedTweetFeaturesMap.get(penguinVersion).setTweetFeatures(tweetFeatures);
+  @VisiblelonForTelonsting
+  // only uselond in Telonsts
+  public void selontTwelonelontFelonaturelons(PelonnguinVelonrsion pelonnguinVelonrsion, TwelonelontFelonaturelons twelonelontFelonaturelons) {
+    velonrsionelondTwelonelontFelonaturelonsMap.gelont(pelonnguinVelonrsion).selontTwelonelontFelonaturelons(twelonelontFelonaturelons);
   }
 
-  public int getTweetSignature(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextFeatures().getSignature();
+  public int gelontTwelonelontSignaturelon(PelonnguinVelonrsion pelonnguinVelonrsion) {
+    relonturn gelontVelonrsionelondTwelonelontFelonaturelons(pelonnguinVelonrsion).gelontTwelonelontTelonxtFelonaturelons().gelontSignaturelon();
   }
 
-  public TweetTextQuality getTweetTextQuality(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextQuality();
+  public TwelonelontTelonxtQuality gelontTwelonelontTelonxtQuality(PelonnguinVelonrsion pelonnguinVelonrsion) {
+    relonturn gelontVelonrsionelondTwelonelontFelonaturelons(pelonnguinVelonrsion).gelontTwelonelontTelonxtQuality();
   }
 
-  public TweetTextFeatures getTweetTextFeatures(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetTextFeatures();
+  public TwelonelontTelonxtFelonaturelons gelontTwelonelontTelonxtFelonaturelons(PelonnguinVelonrsion pelonnguinVelonrsion) {
+    relonturn gelontVelonrsionelondTwelonelontFelonaturelons(pelonnguinVelonrsion).gelontTwelonelontTelonxtFelonaturelons();
   }
 
-  public TweetUserFeatures getTweetUserFeatures(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTweetUserFeatures();
+  public TwelonelontUselonrFelonaturelons gelontTwelonelontUselonrFelonaturelons(PelonnguinVelonrsion pelonnguinVelonrsion) {
+    relonturn gelontVelonrsionelondTwelonelontFelonaturelons(pelonnguinVelonrsion).gelontTwelonelontUselonrFelonaturelons();
   }
 
-  public TokenizedCharSequence getTokenizedCharSequence(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getTokenizedCharSequence();
+  public TokelonnizelondCharSelonquelonncelon gelontTokelonnizelondCharSelonquelonncelon(PelonnguinVelonrsion pelonnguinVelonrsion) {
+    relonturn gelontVelonrsionelondTwelonelontFelonaturelons(pelonnguinVelonrsion).gelontTokelonnizelondCharSelonquelonncelon();
   }
 
-  public void setTokenizedCharSequence(PenguinVersion penguinVersion,
-                                       TokenizedCharSequence sequence) {
-    getVersionedTweetFeatures(penguinVersion).setTokenizedCharSequence(sequence);
+  public void selontTokelonnizelondCharSelonquelonncelon(PelonnguinVelonrsion pelonnguinVelonrsion,
+                                       TokelonnizelondCharSelonquelonncelon selonquelonncelon) {
+    gelontVelonrsionelondTwelonelontFelonaturelons(pelonnguinVelonrsion).selontTokelonnizelondCharSelonquelonncelon(selonquelonncelon);
   }
 
-  // True if the features contain multiple hash tags or multiple trends.
-  // This is intended as an anti-trend-spam measure.
-  public static boolean hasMultipleHashtagsOrTrends(TweetTextFeatures textFeatures) {
-    // Allow at most 1 trend and 2 hashtags.
-    return textFeatures.getTrendingTermsSize() > 1 || textFeatures.getHashtagsSize() > 2;
-  }
-
-  /**
-   * Returns the expanded URLs.
-   */
-  public Collection<ThriftExpandedUrl> getExpandedUrls() {
-    return expandedUrls.values();
+  // Truelon if thelon felonaturelons contain multiplelon hash tags or multiplelon trelonnds.
+  // This is intelonndelond as an anti-trelonnd-spam melonasurelon.
+  public static boolelonan hasMultiplelonHashtagsOrTrelonnds(TwelonelontTelonxtFelonaturelons telonxtFelonaturelons) {
+    // Allow at most 1 trelonnd and 2 hashtags.
+    relonturn telonxtFelonaturelons.gelontTrelonndingTelonrmsSizelon() > 1 || telonxtFelonaturelons.gelontHashtagsSizelon() > 2;
   }
 
   /**
-   * Returns the canonical last hop URLs.
+   * Relonturns thelon elonxpandelond URLs.
    */
-  public Set<String> getCanonicalLastHopUrls() {
-    Set<String> result = new HashSet<>(expandedUrls.size());
-    for (ThriftExpandedUrl url : expandedUrls.values()) {
-      result.add(url.getCanonicalLastHopUrl());
+  public Collelonction<ThriftelonxpandelondUrl> gelontelonxpandelondUrls() {
+    relonturn elonxpandelondUrls.valuelons();
+  }
+
+  /**
+   * Relonturns thelon canonical last hop URLs.
+   */
+  public Selont<String> gelontCanonicalLastHopUrls() {
+    Selont<String> relonsult = nelonw HashSelont<>(elonxpandelondUrls.sizelon());
+    for (ThriftelonxpandelondUrl url : elonxpandelondUrls.valuelons()) {
+      relonsult.add(url.gelontCanonicalLastHopUrl());
     }
-    return result;
+    relonturn relonsult;
   }
 
-  public String getCardName() {
-    return cardName;
+  public String gelontCardNamelon() {
+    relonturn cardNamelon;
   }
 
-  public void setCardName(String cardName) {
-    this.cardName = cardName;
+  public void selontCardNamelon(String cardNamelon) {
+    this.cardNamelon = cardNamelon;
   }
 
-  public String getCardDomain() {
-    return cardDomain;
+  public String gelontCardDomain() {
+    relonturn cardDomain;
   }
 
-  public void setCardDomain(String cardDomain) {
+  public void selontCardDomain(String cardDomain) {
     this.cardDomain = cardDomain;
   }
 
-  public String getCardTitle() {
-    return cardTitle;
+  public String gelontCardTitlelon() {
+    relonturn cardTitlelon;
   }
 
-  public void setCardTitle(String cardTitle) {
-    this.cardTitle = cardTitle;
+  public void selontCardTitlelon(String cardTitlelon) {
+    this.cardTitlelon = cardTitlelon;
   }
 
-  public String getCardDescription() {
-    return cardDescription;
+  public String gelontCardDelonscription() {
+    relonturn cardDelonscription;
   }
 
-  public void setCardDescription(String cardDescription) {
-    this.cardDescription = cardDescription;
+  public void selontCardDelonscription(String cardDelonscription) {
+    this.cardDelonscription = cardDelonscription;
   }
 
-  public String getCardLang() {
-    return cardLang;
+  public String gelontCardLang() {
+    relonturn cardLang;
   }
 
-  public void setCardLang(String cardLang) {
+  public void selontCardLang(String cardLang) {
     this.cardLang = cardLang;
   }
 
-  public String getCardUrl() {
-    return cardUrl;
+  public String gelontCardUrl() {
+    relonturn cardUrl;
   }
 
-  public void setCardUrl(String cardUrl) {
+  public void selontCardUrl(String cardUrl) {
     this.cardUrl = cardUrl;
   }
 
-  public List<TwitterMessageUser> getMentions() {
-    return this.mentions;
+  public List<TwittelonrMelonssagelonUselonr> gelontMelonntions() {
+    relonturn this.melonntions;
   }
 
-  public void setMentions(List<TwitterMessageUser> mentions) {
-    this.mentions = mentions;
+  public void selontMelonntions(List<TwittelonrMelonssagelonUselonr> melonntions) {
+    this.melonntions = melonntions;
   }
 
-  public List<String> getLowercasedMentions() {
-    return Lists.transform(getMentions(), user -> {
-      // This condition is also checked in addUserToMentions().
-      Preconditions.checkState(user.getScreenName().isPresent(), "Invalid mention");
-      return user.getScreenName().get().toLowerCase();
+  public List<String> gelontLowelonrcaselondMelonntions() {
+    relonturn Lists.transform(gelontMelonntions(), uselonr -> {
+      // This condition is also chelonckelond in addUselonrToMelonntions().
+      Prelonconditions.chelonckStatelon(uselonr.gelontScrelonelonnNamelon().isPrelonselonnt(), "Invalid melonntion");
+      relonturn uselonr.gelontScrelonelonnNamelon().gelont().toLowelonrCaselon();
     });
   }
 
-  public Set<String> getHashtags() {
-    return this.hashtags;
+  public Selont<String> gelontHashtags() {
+    relonturn this.hashtags;
   }
 
-  public Set<String> getNormalizedHashtags(PenguinVersion penguinVersion) {
-    return getVersionedTweetFeatures(penguinVersion).getNormalizedHashtags();
+  public Selont<String> gelontNormalizelondHashtags(PelonnguinVelonrsion pelonnguinVelonrsion) {
+    relonturn gelontVelonrsionelondTwelonelontFelonaturelons(pelonnguinVelonrsion).gelontNormalizelondHashtags();
   }
 
-  public void addNormalizedHashtag(String normalizedHashtag, PenguinVersion penguinVersion) {
-    getVersionedTweetFeatures(penguinVersion).addNormalizedHashtags(normalizedHashtag);
+  public void addNormalizelondHashtag(String normalizelondHashtag, PelonnguinVelonrsion pelonnguinVelonrsion) {
+    gelontVelonrsionelondTwelonelontFelonaturelons(pelonnguinVelonrsion).addNormalizelondHashtags(normalizelondHashtag);
   }
 
-  public Optional<ComposerSource> getComposerSource() {
-    return composerSource;
+  public Optional<ComposelonrSourcelon> gelontComposelonrSourcelon() {
+    relonturn composelonrSourcelon;
   }
 
-  public void setComposerSource(ComposerSource composerSource) {
-    Preconditions.checkNotNull(composerSource, "composerSource should not be null");
-    this.composerSource = Optional.of(composerSource);
+  public void selontComposelonrSourcelon(ComposelonrSourcelon composelonrSourcelon) {
+    Prelonconditions.chelonckNotNull(composelonrSourcelon, "composelonrSourcelon should not belon null");
+    this.composelonrSourcelon = Optional.of(composelonrSourcelon);
   }
 
-  public boolean isSelfThread() {
-    return selfThread;
+  public boolelonan isSelonlfThrelonad() {
+    relonturn selonlfThrelonad;
   }
 
-  public void setSelfThread(boolean selfThread) {
-    this.selfThread = selfThread;
+  public void selontSelonlfThrelonad(boolelonan selonlfThrelonad) {
+    this.selonlfThrelonad = selonlfThrelonad;
   }
 
-  public boolean isExclusive() {
-    return exclusiveConversationAuthorId.isPresent();
+  public boolelonan iselonxclusivelon() {
+    relonturn elonxclusivelonConvelonrsationAuthorId.isPrelonselonnt();
   }
 
-  public long getExclusiveConversationAuthorId() {
-    return exclusiveConversationAuthorId.get();
+  public long gelontelonxclusivelonConvelonrsationAuthorId() {
+    relonturn elonxclusivelonConvelonrsationAuthorId.gelont();
   }
 
-  public void setExclusiveConversationAuthorId(long exclusiveConversationAuthorId) {
-    this.exclusiveConversationAuthorId = Optional.of(exclusiveConversationAuthorId);
+  public void selontelonxclusivelonConvelonrsationAuthorId(long elonxclusivelonConvelonrsationAuthorId) {
+    this.elonxclusivelonConvelonrsationAuthorId = Optional.of(elonxclusivelonConvelonrsationAuthorId);
   }
 
   /**
-   * Adds an expanded media url based on the given parameters.
+   * Adds an elonxpandelond melondia url baselond on thelon givelonn paramelontelonrs.
    */
-  public void addExpandedMediaUrl(String originalUrl,
-                                  String expandedUrl,
-                                  @Nullable MediaTypes mediaType) {
-    if (!StringUtils.isBlank(originalUrl) && !StringUtils.isBlank(expandedUrl)) {
-      ThriftExpandedUrl thriftExpandedUrl = new ThriftExpandedUrl();
-      if (mediaType != null) {
-        thriftExpandedUrl.setMediaType(mediaType);
+  public void addelonxpandelondMelondiaUrl(String originalUrl,
+                                  String elonxpandelondUrl,
+                                  @Nullablelon MelondiaTypelons melondiaTypelon) {
+    if (!StringUtils.isBlank(originalUrl) && !StringUtils.isBlank(elonxpandelondUrl)) {
+      ThriftelonxpandelondUrl thriftelonxpandelondUrl = nelonw ThriftelonxpandelondUrl();
+      if (melondiaTypelon != null) {
+        thriftelonxpandelondUrl.selontMelondiaTypelon(melondiaTypelon);
       }
-      thriftExpandedUrl.setOriginalUrl(originalUrl);
-      thriftExpandedUrl.setExpandedUrl(expandedUrl);  // This will be tokenized and indexed
-      // Note that the mediaURL is not indexed. We could also index it, but it is not indexed
-      // to reduce RAM usage.
-      thriftExpandedUrl.setCanonicalLastHopUrl(expandedUrl); // This will be tokenized and indexed
-      addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(true);
+      thriftelonxpandelondUrl.selontOriginalUrl(originalUrl);
+      thriftelonxpandelondUrl.selontelonxpandelondUrl(elonxpandelondUrl);  // This will belon tokelonnizelond and indelonxelond
+      // Notelon that thelon melondiaURL is not indelonxelond. Welon could also indelonx it, but it is not indelonxelond
+      // to relonducelon RAM usagelon.
+      thriftelonxpandelondUrl.selontCanonicalLastHopUrl(elonxpandelondUrl); // This will belon tokelonnizelond and indelonxelond
+      addelonxpandelondUrl(originalUrl, thriftelonxpandelondUrl);
+      thriftelonxpandelondUrl.selontConsumelonrMelondia(truelon);
     }
   }
 
   /**
-   * Adds an expanded non-media url based on the given parameters.
+   * Adds an elonxpandelond non-melondia url baselond on thelon givelonn paramelontelonrs.
    */
-  public void addExpandedNonMediaUrl(String originalUrl, String expandedUrl) {
+  public void addelonxpandelondNonMelondiaUrl(String originalUrl, String elonxpandelondUrl) {
     if (!StringUtils.isBlank(originalUrl)) {
-      ThriftExpandedUrl thriftExpandedUrl = new ThriftExpandedUrl(originalUrl);
-      if (!StringUtils.isBlank(expandedUrl)) {
-        thriftExpandedUrl.setExpandedUrl(expandedUrl);
+      ThriftelonxpandelondUrl thriftelonxpandelondUrl = nelonw ThriftelonxpandelondUrl(originalUrl);
+      if (!StringUtils.isBlank(elonxpandelondUrl)) {
+        thriftelonxpandelondUrl.selontelonxpandelondUrl(elonxpandelondUrl);
       }
-      addExpandedUrl(originalUrl, thriftExpandedUrl);
-      thriftExpandedUrl.setConsumerMedia(false);
+      addelonxpandelondUrl(originalUrl, thriftelonxpandelondUrl);
+      thriftelonxpandelondUrl.selontConsumelonrMelondia(falselon);
     }
   }
 
   /**
-   * Only used in tests.
+   * Only uselond in telonsts.
    *
-   * Simulates resolving compressed URLs, which is usually done by ResolveCompressedUrlsStage.
+   * Simulatelons relonsolving comprelonsselond URLs, which is usually donelon by RelonsolvelonComprelonsselondUrlsStagelon.
    */
-  @VisibleForTesting
-  public void replaceUrlsWithResolvedUrls(Map<String, String> resolvedUrls) {
-    for (Map.Entry<String, ThriftExpandedUrl> urlEntry : expandedUrls.entrySet()) {
-      String tcoUrl = urlEntry.getKey();
-      if (resolvedUrls.containsKey(tcoUrl)) {
-        ThriftExpandedUrl expandedUrl = urlEntry.getValue();
-        expandedUrl.setCanonicalLastHopUrl(resolvedUrls.get(tcoUrl));
+  @VisiblelonForTelonsting
+  public void relonplacelonUrlsWithRelonsolvelondUrls(Map<String, String> relonsolvelondUrls) {
+    for (Map.elonntry<String, ThriftelonxpandelondUrl> urlelonntry : elonxpandelondUrls.elonntrySelont()) {
+      String tcoUrl = urlelonntry.gelontKelony();
+      if (relonsolvelondUrls.containsKelony(tcoUrl)) {
+        ThriftelonxpandelondUrl elonxpandelondUrl = urlelonntry.gelontValuelon();
+        elonxpandelondUrl.selontCanonicalLastHopUrl(relonsolvelondUrls.gelont(tcoUrl));
       }
     }
   }
 
   /**
-   * Adds a mention for a user with the given screen name.
+   * Adds a melonntion for a uselonr with thelon givelonn screlonelonn namelon.
    */
-  public void addMention(String screenName) {
-    TwitterMessageUser user = TwitterMessageUser.createWithScreenName(screenName);
-    addUserToMentions(user);
+  public void addMelonntion(String screlonelonnNamelon) {
+    TwittelonrMelonssagelonUselonr uselonr = TwittelonrMelonssagelonUselonr.crelonatelonWithScrelonelonnNamelon(screlonelonnNamelon);
+    addUselonrToMelonntions(uselonr);
   }
 
   /**
-   * Adds the given user to mentions.
+   * Adds thelon givelonn uselonr to melonntions.
    */
-  public void addUserToMentions(TwitterMessageUser user) {
-    Preconditions.checkArgument(user.getScreenName().isPresent(), "Don't add invalid mentions");
-    this.mentions.add(user);
+  public void addUselonrToMelonntions(TwittelonrMelonssagelonUselonr uselonr) {
+    Prelonconditions.chelonckArgumelonnt(uselonr.gelontScrelonelonnNamelon().isPrelonselonnt(), "Don't add invalid melonntions");
+    this.melonntions.add(uselonr);
   }
 
   /**
-   * Adds the given hashtag.
+   * Adds thelon givelonn hashtag.
    */
   public void addHashtag(String hashtag) {
     this.hashtags.add(hashtag);
-    for (PenguinVersion penguinVersion : supportedPenguinVersions) {
-      addNormalizedHashtag(NormalizerHelper.normalize(hashtag, getLocale(), penguinVersion),
-          penguinVersion);
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : supportelondPelonnguinVelonrsions) {
+      addNormalizelondHashtag(NormalizelonrHelonlpelonr.normalizelon(hashtag, gelontLocalelon(), pelonnguinVelonrsion),
+          pelonnguinVelonrsion);
     }
   }
 
-  private Map<PenguinVersion, VersionedTweetFeatures> getVersionedTweetFeaturesMap() {
-    Map<PenguinVersion, VersionedTweetFeatures> versionedMap =
-        Maps.newEnumMap(PenguinVersion.class);
-    for (PenguinVersion penguinVersion : getSupportedPenguinVersions()) {
-      versionedMap.put(penguinVersion, new VersionedTweetFeatures());
+  privatelon Map<PelonnguinVelonrsion, VelonrsionelondTwelonelontFelonaturelons> gelontVelonrsionelondTwelonelontFelonaturelonsMap() {
+    Map<PelonnguinVelonrsion, VelonrsionelondTwelonelontFelonaturelons> velonrsionelondMap =
+        Maps.nelonwelonnumMap(PelonnguinVelonrsion.class);
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : gelontSupportelondPelonnguinVelonrsions()) {
+      velonrsionelondMap.put(pelonnguinVelonrsion, nelonw VelonrsionelondTwelonelontFelonaturelons());
     }
 
-    return versionedMap;
+    relonturn velonrsionelondMap;
   }
 
-  public int getNumFavorites() {
-    return numFavorites;
+  public int gelontNumFavoritelons() {
+    relonturn numFavoritelons;
   }
 
-  public int getNumRetweets() {
-    return numRetweets;
+  public int gelontNumRelontwelonelonts() {
+    relonturn numRelontwelonelonts;
   }
 
-  public int getNumReplies() {
-    return numReplies;
+  public int gelontNumRelonplielons() {
+    relonturn numRelonplielons;
   }
 
-  public Set<NamedEntity> getNamedEntities() {
-    return namedEntities;
+  public Selont<Namelondelonntity> gelontNamelondelonntitielons() {
+    relonturn namelondelonntitielons;
   }
 
-  public void addNamedEntity(NamedEntity namedEntity) {
-    namedEntities.add(namedEntity);
+  public void addNamelondelonntity(Namelondelonntity namelondelonntity) {
+    namelondelonntitielons.add(namelondelonntity);
   }
 
-  public Set<String> getSpaceIds() {
-    return spaceIds;
+  public Selont<String> gelontSpacelonIds() {
+    relonturn spacelonIds;
   }
 
-  public void setSpaceIds(Set<String> spaceIds) {
-    this.spaceIds = Sets.newHashSet(spaceIds);
+  public void selontSpacelonIds(Selont<String> spacelonIds) {
+    this.spacelonIds = Selonts.nelonwHashSelont(spacelonIds);
   }
 
-  public Set<TwitterMessageUser> getSpaceAdmins() {
-    return spaceAdmins;
+  public Selont<TwittelonrMelonssagelonUselonr> gelontSpacelonAdmins() {
+    relonturn spacelonAdmins;
   }
 
-  public void addSpaceAdmin(TwitterMessageUser admin) {
-    spaceAdmins.add(admin);
+  public void addSpacelonAdmin(TwittelonrMelonssagelonUselonr admin) {
+    spacelonAdmins.add(admin);
   }
 
-  public String getSpaceTitle() {
-    return spaceTitle;
+  public String gelontSpacelonTitlelon() {
+    relonturn spacelonTitlelon;
   }
 
-  public void setSpaceTitle(String spaceTitle) {
-    this.spaceTitle = spaceTitle;
+  public void selontSpacelonTitlelon(String spacelonTitlelon) {
+    this.spacelonTitlelon = spacelonTitlelon;
   }
 
-  private static boolean equals(List<EscherbirdAnnotation> l1, List<EscherbirdAnnotation> l2) {
-    EscherbirdAnnotation[] arr1 = l1.toArray(new EscherbirdAnnotation[l1.size()]);
+  privatelon static boolelonan elonquals(List<elonschelonrbirdAnnotation> l1, List<elonschelonrbirdAnnotation> l2) {
+    elonschelonrbirdAnnotation[] arr1 = l1.toArray(nelonw elonschelonrbirdAnnotation[l1.sizelon()]);
     Arrays.sort(arr1);
-    EscherbirdAnnotation[] arr2 = l1.toArray(new EscherbirdAnnotation[l2.size()]);
+    elonschelonrbirdAnnotation[] arr2 = l1.toArray(nelonw elonschelonrbirdAnnotation[l2.sizelon()]);
     Arrays.sort(arr2);
-    return Arrays.equals(arr1, arr2);
+    relonturn Arrays.elonquals(arr1, arr2);
   }
 
   /**
-   * Compares the given messages using reflection and determines if they're approximately equal.
+   * Comparelons thelon givelonn melonssagelons using relonflelonction and delontelonrminelons if thelony'relon approximatelonly elonqual.
    */
-  public static boolean reflectionApproxEquals(
-      TwitterMessage a,
-      TwitterMessage b,
-      List<String> additionalExcludeFields) {
-    List<String> excludeFields = Lists.newArrayList(
-        "versionedTweetFeaturesMap",
-        "geoLocation",
-        "geoTaggedLocation",
-        "escherbirdAnnotations"
+  public static boolelonan relonflelonctionApproxelonquals(
+      TwittelonrMelonssagelon a,
+      TwittelonrMelonssagelon b,
+      List<String> additionalelonxcludelonFielonlds) {
+    List<String> elonxcludelonFielonlds = Lists.nelonwArrayList(
+        "velonrsionelondTwelonelontFelonaturelonsMap",
+        "gelonoLocation",
+        "gelonoTaggelondLocation",
+        "elonschelonrbirdAnnotations"
     );
-    excludeFields.addAll(additionalExcludeFields);
+    elonxcludelonFielonlds.addAll(additionalelonxcludelonFielonlds);
 
-    return EqualsBuilder.reflectionEquals(a, b, excludeFields)
-        && GeoObject.approxEquals(a.getGeoLocation(), b.getGeoLocation())
-        && GeoObject.approxEquals(a.getGeoTaggedLocation(), b.getGeoTaggedLocation())
-        && equals(a.getEscherbirdAnnotations(), b.getEscherbirdAnnotations());
+    relonturn elonqualsBuildelonr.relonflelonctionelonquals(a, b, elonxcludelonFielonlds)
+        && GelonoObjelonct.approxelonquals(a.gelontGelonoLocation(), b.gelontGelonoLocation())
+        && GelonoObjelonct.approxelonquals(a.gelontGelonoTaggelondLocation(), b.gelontGelonoTaggelondLocation())
+        && elonquals(a.gelontelonschelonrbirdAnnotations(), b.gelontelonschelonrbirdAnnotations());
   }
 
-  public static boolean reflectionApproxEquals(TwitterMessage a, TwitterMessage b) {
-    return reflectionApproxEquals(a, b, Collections.emptyList());
+  public static boolelonan relonflelonctionApproxelonquals(TwittelonrMelonssagelon a, TwittelonrMelonssagelon b) {
+    relonturn relonflelonctionApproxelonquals(a, b, Collelonctions.elonmptyList());
   }
 }

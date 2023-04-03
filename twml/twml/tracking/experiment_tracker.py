@@ -1,543 +1,543 @@
 """
-This module contains the experiment tracker for tracking training in ML Metastore
+This modulelon contains thelon elonxpelonrimelonnt trackelonr for tracking training in ML Melontastorelon
 """
-from contextlib import contextmanager
-from datetime import datetime
-import getpass
+from contelonxtlib import contelonxtmanagelonr
+from datelontimelon import datelontimelon
+import gelontpass
 import hashlib
 import os
-import re
+import relon
 import sys
-import time
+import timelon
 
 from absl import logging
-import tensorflow.compat.v1 as tf
-from twml.hooks import MetricsUpdateHook
+import telonnsorflow.compat.v1 as tf
+from twml.hooks import MelontricsUpdatelonHook
 
 
 try:
-  from urllib import quote as encode_url
-except ImportError:
-  from urllib.parse import quote as encode_url
+  from urllib import quotelon as elonncodelon_url
+elonxcelonpt Importelonrror:
+  from urllib.parselon import quotelon as elonncodelon_url
 
 
 try:
-  # ML Metastore packages might not be available on GCP.
-  # If they are not found, tracking is disabled
-  import requests
-  from com.twitter.mlmetastore.modelrepo.client import ModelRepoClient
-  from com.twitter.mlmetastore.modelrepo.core.path import (
-    check_valid_id, get_components_from_id, generate_id)
-  from com.twitter.mlmetastore.modelrepo.core import (
-    DeepbirdRun, Experiment, FeatureConfig, FeatureConfigFeature, Model, ProgressReport, Project, StatusUpdate)
-except ImportError:
-  ModelRepoClient = None
+  # ML Melontastorelon packagelons might not belon availablelon on GCP.
+  # If thelony arelon not found, tracking is disablelond
+  import relonquelonsts
+  from com.twittelonr.mlmelontastorelon.modelonlrelonpo.clielonnt import ModelonlRelonpoClielonnt
+  from com.twittelonr.mlmelontastorelon.modelonlrelonpo.corelon.path import (
+    chelonck_valid_id, gelont_componelonnts_from_id, gelonnelonratelon_id)
+  from com.twittelonr.mlmelontastorelon.modelonlrelonpo.corelon import (
+    DelonelonpbirdRun, elonxpelonrimelonnt, FelonaturelonConfig, FelonaturelonConfigFelonaturelon, Modelonl, ProgrelonssRelonport, Projelonct, StatusUpdatelon)
+elonxcelonpt Importelonrror:
+  ModelonlRelonpoClielonnt = Nonelon
 
 
-class ExperimentTracker(object):
+class elonxpelonrimelonntTrackelonr(objelonct):
   """
-  A tracker that records twml runs in ML Metastore.
+  A trackelonr that reloncords twml runs in ML Melontastorelon.
   """
 
-  def __init__(self, params, run_config, save_dir):
+  delonf __init__(selonlf, params, run_config, savelon_dir):
     """
 
     Args:
       params (python dict):
-        The trainer params. ExperimentTracker uses `params.experiment_tracking_path` (String) and
-        `params.disable_experiment_tracking`.
-        If `experiment_tracking_path` is set to None, the tracker tries to guess a path with
-        save_dir.
-        If `disable_experiment_tracking` is True, the tracker is disabled.
-      run_config (tf.estimator.RunConfig):
-        The run config used by the estimator.
-      save_dir (str):
-        save_dir of the trainer
+        Thelon trainelonr params. elonxpelonrimelonntTrackelonr uselons `params.elonxpelonrimelonnt_tracking_path` (String) and
+        `params.disablelon_elonxpelonrimelonnt_tracking`.
+        If `elonxpelonrimelonnt_tracking_path` is selont to Nonelon, thelon trackelonr trielons to guelonss a path with
+        savelon_dir.
+        If `disablelon_elonxpelonrimelonnt_tracking` is Truelon, thelon trackelonr is disablelond.
+      run_config (tf.elonstimator.RunConfig):
+        Thelon run config uselond by thelon elonstimator.
+      savelon_dir (str):
+        savelon_dir of thelon trainelonr
     """
-    if isinstance(params, dict):
-      self._params = params
-    else:
-      # preserving backward compatibility for people still using HParams
-      logging.warning("Please stop using HParams and use python dicts. HParams are removed in TF 2")
-      self._params = dict((k, v) for k, v in params.values().items() if v != 'null')
-    self._run_config = run_config
-    self._graceful_shutdown_port = self._params.get('health_port')
+    if isinstancelon(params, dict):
+      selonlf._params = params
+    elonlselon:
+      # prelonselonrving backward compatibility for pelonoplelon still using HParams
+      logging.warning("Plelonaselon stop using HParams and uselon python dicts. HParams arelon relonmovelond in TF 2")
+      selonlf._params = dict((k, v) for k, v in params.valuelons().itelonms() if v != 'null')
+    selonlf._run_config = run_config
+    selonlf._gracelonful_shutdown_port = selonlf._params.gelont('helonalth_port')
 
-    self.tracking_path = self._params.get('experiment_tracking_path')
-    is_tracking_path_too_long = self.tracking_path is not None and len(self.tracking_path) > 256
+    selonlf.tracking_path = selonlf._params.gelont('elonxpelonrimelonnt_tracking_path')
+    is_tracking_path_too_long = selonlf.tracking_path is not Nonelon and lelonn(selonlf.tracking_path) > 256
 
     if is_tracking_path_too_long:
-      raise ValueError("Experiment Tracking Path longer than 256 characters")
+      raiselon Valuelonelonrror("elonxpelonrimelonnt Tracking Path longelonr than 256 charactelonrs")
 
-    self.disabled = (
-      self._params.get('disable_experiment_tracking', False) or
-      not self._is_env_eligible_for_tracking() or
-      ModelRepoClient is None
+    selonlf.disablelond = (
+      selonlf._params.gelont('disablelon_elonxpelonrimelonnt_tracking', Falselon) or
+      not selonlf._is_elonnv_elonligiblelon_for_tracking() or
+      ModelonlRelonpoClielonnt is Nonelon
     )
 
-    self._is_hogwild = bool(os.environ.get('TWML_HOGWILD_PORTS'))
+    selonlf._is_hogwild = bool(os.elonnviron.gelont('TWML_HOGWILD_PORTS'))
 
-    self._is_distributed = bool(os.environ.get('TF_CONFIG'))
+    selonlf._is_distributelond = bool(os.elonnviron.gelont('TF_CONFIG'))
 
-    self._client = None if self.disabled else ModelRepoClient()
+    selonlf._clielonnt = Nonelon if selonlf.disablelond elonlselon ModelonlRelonpoClielonnt()
 
-    run_name_from_environ = self.run_name_from_environ()
-    run_name_can_be_inferred = (
-      self.tracking_path is not None or run_name_from_environ is not None)
+    run_namelon_from_elonnviron = selonlf.run_namelon_from_elonnviron()
+    run_namelon_can_belon_infelonrrelond = (
+      selonlf.tracking_path is not Nonelon or run_namelon_from_elonnviron is not Nonelon)
 
-    # Turn the flags off as needed in hogwild / distributed
-    if self._is_hogwild or self._is_distributed:
-      self._env_eligible_for_recording_experiment = (
-        self._run_config.task_type == "evaluator")
-      if run_name_can_be_inferred:
-        self._env_eligible_for_recording_export_metadata = (
-          self._run_config.task_type == "chief")
-      else:
+    # Turn thelon flags off as nelonelondelond in hogwild / distributelond
+    if selonlf._is_hogwild or selonlf._is_distributelond:
+      selonlf._elonnv_elonligiblelon_for_reloncording_elonxpelonrimelonnt = (
+        selonlf._run_config.task_typelon == "elonvaluator")
+      if run_namelon_can_belon_infelonrrelond:
+        selonlf._elonnv_elonligiblelon_for_reloncording_elonxport_melontadata = (
+          selonlf._run_config.task_typelon == "chielonf")
+      elonlselon:
         logging.info(
-          'experiment_tracking_path is not set and can not be inferred. '
-          'Recording export metadata is disabled because the chief node and eval node '
-          'are setting different experiment tracking paths.')
-        self._env_eligible_for_recording_export_metadata = False
-    else:
-      # Defaults to True
-      self._env_eligible_for_recording_experiment = True
-      self._env_eligible_for_recording_export_metadata = True
+          'elonxpelonrimelonnt_tracking_path is not selont and can not belon infelonrrelond. '
+          'Reloncording elonxport melontadata is disablelond beloncauselon thelon chielonf nodelon and elonval nodelon '
+          'arelon selontting diffelonrelonnt elonxpelonrimelonnt tracking paths.')
+        selonlf._elonnv_elonligiblelon_for_reloncording_elonxport_melontadata = Falselon
+    elonlselon:
+      # Delonfaults to Truelon
+      selonlf._elonnv_elonligiblelon_for_reloncording_elonxpelonrimelonnt = Truelon
+      selonlf._elonnv_elonligiblelon_for_reloncording_elonxport_melontadata = Truelon
 
-    if not self.disabled:
-      # Sanitize passed in experiment tracking paths. e.g. own:proJ:exp:Run.Name
-      # -> own:proj:exp:Run_Name
-      if self.tracking_path:
+    if not selonlf.disablelond:
+      # Sanitizelon passelond in elonxpelonrimelonnt tracking paths. elon.g. own:proJ:elonxp:Run.Namelon
+      # -> own:proj:elonxp:Run_Namelon
+      if selonlf.tracking_path:
         try:
-          check_valid_id(self.tracking_path)
-        except ValueError as err:
-          logging.error(f'Invalid experiment tracking path provided. Sanitizing: {self.tracking_path}\nError: {err}')
-          self.tracking_path = generate_id(
-            owner=self.path['owner'],
-            project_name=self.path['project_name'],
-            experiment_name=self.path['experiment_name'],
-            run_name=self.path['run_name']
+          chelonck_valid_id(selonlf.tracking_path)
+        elonxcelonpt Valuelonelonrror as elonrr:
+          logging.elonrror(f'Invalid elonxpelonrimelonnt tracking path providelond. Sanitizing: {selonlf.tracking_path}\nelonrror: {elonrr}')
+          selonlf.tracking_path = gelonnelonratelon_id(
+            ownelonr=selonlf.path['ownelonr'],
+            projelonct_namelon=selonlf.path['projelonct_namelon'],
+            elonxpelonrimelonnt_namelon=selonlf.path['elonxpelonrimelonnt_namelon'],
+            run_namelon=selonlf.path['run_namelon']
           )
-          logging.error(f'Generated sanitized experiment tracking path: {self.tracking_path}')
-      else:
+          logging.elonrror(f'Gelonnelonratelond sanitizelond elonxpelonrimelonnt tracking path: {selonlf.tracking_path}')
+      elonlselon:
         logging.info(
-          'No experiment_tracking_path set. Experiment Tracker will try to guess a path')
-        self.tracking_path = self.guess_path(save_dir, run_name_from_environ)
-        logging.info('Guessed path: %s', self.tracking_path)
+          'No elonxpelonrimelonnt_tracking_path selont. elonxpelonrimelonnt Trackelonr will try to guelonss a path')
+        selonlf.tracking_path = selonlf.guelonss_path(savelon_dir, run_namelon_from_elonnviron)
+        logging.info('Guelonsselond path: %s', selonlf.tracking_path)
 
-      # additional check to see if generated path is valid
+      # additional chelonck to selonelon if gelonnelonratelond path is valid
       try:
-        check_valid_id(self.tracking_path)
-      except ValueError as err:
-        logging.error(
-          'Could not generate valid experiment tracking path. Disabling tracking. ' +
-          'Error:\n{}'.format(err)
+        chelonck_valid_id(selonlf.tracking_path)
+      elonxcelonpt Valuelonelonrror as elonrr:
+        logging.elonrror(
+          'Could not gelonnelonratelon valid elonxpelonrimelonnt tracking path. Disabling tracking. ' +
+          'elonrror:\n{}'.format(elonrr)
         )
-        self.disabled = True
+        selonlf.disablelond = Truelon
 
-    self.project_id = None if self.disabled else '{}:{}'.format(
-      self.path['owner'], self.path['project_name'])
-    self.base_run_id = None if self.disabled else self.tracking_path
-    self._current_run_name_suffix = None
+    selonlf.projelonct_id = Nonelon if selonlf.disablelond elonlselon '{}:{}'.format(
+      selonlf.path['ownelonr'], selonlf.path['projelonct_namelon'])
+    selonlf.baselon_run_id = Nonelon if selonlf.disablelond elonlselon selonlf.tracking_path
+    selonlf._currelonnt_run_namelon_suffix = Nonelon
 
-    self._current_tracker_hook = None
+    selonlf._currelonnt_trackelonr_hook = Nonelon
 
-    if self.disabled:
-      logging.info('Experiment Tracker is disabled')
-    else:
-      logging.info('Experiment Tracker initialized with base run id: %s', self.base_run_id)
+    if selonlf.disablelond:
+      logging.info('elonxpelonrimelonnt Trackelonr is disablelond')
+    elonlselon:
+      logging.info('elonxpelonrimelonnt Trackelonr initializelond with baselon run id: %s', selonlf.baselon_run_id)
 
-  @contextmanager
-  def track_experiment(self, eval_hooks, get_estimator_spec_fn, name=None):
+  @contelonxtmanagelonr
+  delonf track_elonxpelonrimelonnt(selonlf, elonval_hooks, gelont_elonstimator_spelonc_fn, namelon=Nonelon):
     """
-    A context manager for tracking experiment. It should wrap the training loop.
-    An experiment tracker eval hook is appended to eval_hooks to collect metrics.
+    A contelonxt managelonr for tracking elonxpelonrimelonnt. It should wrap thelon training loop.
+    An elonxpelonrimelonnt trackelonr elonval hook is appelonndelond to elonval_hooks to collelonct melontrics.
 
     Args:
-      eval_hooks (list):
-        The list of eval_hooks to be used. When it's not None, and does not contain any ,
-        MetricsUpdateHook an experiment tracker eval hook is appended to it. When it contains
-        any MetricsUpdateHook, this tracker is disabled to avoid conflict with legacy Model Repo
-        tracker (`TrackRun`).
-      get_estimator_spec_fn (func):
-        A function to get the current EstimatorSpec of the trainer, used by the eval hook.
-      name (str);
-        Name of this training or evaluation. Used as a suffix of the run_id.
+      elonval_hooks (list):
+        Thelon list of elonval_hooks to belon uselond. Whelonn it's not Nonelon, and doelons not contain any ,
+        MelontricsUpdatelonHook an elonxpelonrimelonnt trackelonr elonval hook is appelonndelond to it. Whelonn it contains
+        any MelontricsUpdatelonHook, this trackelonr is disablelond to avoid conflict with lelongacy Modelonl Relonpo
+        trackelonr (`TrackRun`).
+      gelont_elonstimator_spelonc_fn (func):
+        A function to gelont thelon currelonnt elonstimatorSpelonc of thelon trainelonr, uselond by thelon elonval hook.
+      namelon (str);
+        Namelon of this training or elonvaluation. Uselond as a suffix of thelon run_id.
 
-    Returns:
-      The tracker's eval hook which is appended to eval_hooks.
+    Relonturns:
+      Thelon trackelonr's elonval hook which is appelonndelond to elonval_hooks.
     """
 
-    # disable this tracker if legacy TrackRun hook is present
-    # TODO: remove this once we completely deprecate the old TrackRun interface
-    if eval_hooks is not None:
-      self.disabled = self.disabled or any(isinstance(x, MetricsUpdateHook) for x in eval_hooks)
+    # disablelon this trackelonr if lelongacy TrackRun hook is prelonselonnt
+    # TODO: relonmovelon this oncelon welon complelontelonly delonpreloncatelon thelon old TrackRun intelonrfacelon
+    if elonval_hooks is not Nonelon:
+      selonlf.disablelond = selonlf.disablelond or any(isinstancelon(x, MelontricsUpdatelonHook) for x in elonval_hooks)
 
-    logging.info('Is environment eligible for recording experiment: %s',
-                 self._env_eligible_for_recording_experiment)
+    logging.info('Is elonnvironmelonnt elonligiblelon for reloncording elonxpelonrimelonnt: %s',
+                 selonlf._elonnv_elonligiblelon_for_reloncording_elonxpelonrimelonnt)
 
-    if self._env_eligible_for_recording_experiment and self._graceful_shutdown_port:
-      requests.post('http://localhost:{}/track_training_start'.format(
-        self._graceful_shutdown_port
+    if selonlf._elonnv_elonligiblelon_for_reloncording_elonxpelonrimelonnt and selonlf._gracelonful_shutdown_port:
+      relonquelonsts.post('http://localhost:{}/track_training_start'.format(
+        selonlf._gracelonful_shutdown_port
       ))
 
-    if self.disabled or eval_hooks is None:
-      yield None
-    else:
-      assert self._current_tracker_hook is None, 'experiment tracking has been started already'
+    if selonlf.disablelond or elonval_hooks is Nonelon:
+      yielonld Nonelon
+    elonlselon:
+      asselonrt selonlf._currelonnt_trackelonr_hook is Nonelon, 'elonxpelonrimelonnt tracking has belonelonn startelond alrelonady'
 
-      if name is not None:
-        self._current_run_name_suffix = '_' + name
+      if namelon is not Nonelon:
+        selonlf._currelonnt_run_namelon_suffix = '_' + namelon
 
-      logging.info('Starting experiment tracking. Path: %s', self._current_run_id)
-      logging.info('Is environment eligible for recording export metadata: %s',
-                   self._env_eligible_for_recording_export_metadata)
-      logging.info('This run will be available at: http://go/mldash/experiments/%s',
-                   encode_url(self.experiment_id))
+      logging.info('Starting elonxpelonrimelonnt tracking. Path: %s', selonlf._currelonnt_run_id)
+      logging.info('Is elonnvironmelonnt elonligiblelon for reloncording elonxport melontadata: %s',
+                   selonlf._elonnv_elonligiblelon_for_reloncording_elonxport_melontadata)
+      logging.info('This run will belon availablelon at: http://go/mldash/elonxpelonrimelonnts/%s',
+                   elonncodelon_url(selonlf.elonxpelonrimelonnt_id))
 
       try:
-        self._record_run()
-        self._add_run_status(StatusUpdate(self._current_run_id, status='RUNNING'))
-        self._register_for_graceful_shutdown()
+        selonlf._reloncord_run()
+        selonlf._add_run_status(StatusUpdatelon(selonlf._currelonnt_run_id, status='RUNNING'))
+        selonlf._relongistelonr_for_gracelonful_shutdown()
 
-        self._current_tracker_hook = self.create_eval_hook(get_estimator_spec_fn)
-      except Exception as err:
-        logging.error(
-          'Failed to record run. This experiment will not be tracked. Error: %s', str(err))
-        self._current_tracker_hook = None
+        selonlf._currelonnt_trackelonr_hook = selonlf.crelonatelon_elonval_hook(gelont_elonstimator_spelonc_fn)
+      elonxcelonpt elonxcelonption as elonrr:
+        logging.elonrror(
+          'Failelond to reloncord run. This elonxpelonrimelonnt will not belon trackelond. elonrror: %s', str(elonrr))
+        selonlf._currelonnt_trackelonr_hook = Nonelon
 
-      if self._current_tracker_hook is None:
-        yield None
-      else:
+      if selonlf._currelonnt_trackelonr_hook is Nonelon:
+        yielonld Nonelon
+      elonlselon:
         try:
-          eval_hooks.append(self._current_tracker_hook)
-          yield self._current_tracker_hook
-        except Exception as err:
-          self._add_run_status(
-            StatusUpdate(self._current_run_id, status='FAILED', description=str(err)))
-          self._deregister_for_graceful_shutdown()
-          self._current_tracker_hook = None
-          self._current_run_name_suffix = None
-          logging.error('Experiment tracking done. Experiment failed.')
-          raise
+          elonval_hooks.appelonnd(selonlf._currelonnt_trackelonr_hook)
+          yielonld selonlf._currelonnt_trackelonr_hook
+        elonxcelonpt elonxcelonption as elonrr:
+          selonlf._add_run_status(
+            StatusUpdatelon(selonlf._currelonnt_run_id, status='FAILelonD', delonscription=str(elonrr)))
+          selonlf._delonrelongistelonr_for_gracelonful_shutdown()
+          selonlf._currelonnt_trackelonr_hook = Nonelon
+          selonlf._currelonnt_run_namelon_suffix = Nonelon
+          logging.elonrror('elonxpelonrimelonnt tracking donelon. elonxpelonrimelonnt failelond.')
+          raiselon
 
         try:
-          if self._current_tracker_hook.metric_values:
-            self._record_update(self._current_tracker_hook.metric_values)
-          self._add_run_status(StatusUpdate(self._current_run_id, status='SUCCESS'))
-          logging.info('Experiment tracking done. Experiment succeeded.')
-        except Exception as err:
-          logging.error(
-            'Failed to update mark run as successful. Error: %s', str(err))
+          if selonlf._currelonnt_trackelonr_hook.melontric_valuelons:
+            selonlf._reloncord_updatelon(selonlf._currelonnt_trackelonr_hook.melontric_valuelons)
+          selonlf._add_run_status(StatusUpdatelon(selonlf._currelonnt_run_id, status='SUCCelonSS'))
+          logging.info('elonxpelonrimelonnt tracking donelon. elonxpelonrimelonnt succelonelondelond.')
+        elonxcelonpt elonxcelonption as elonrr:
+          logging.elonrror(
+            'Failelond to updatelon mark run as succelonssful. elonrror: %s', str(elonrr))
         finally:
-          self._deregister_for_graceful_shutdown()
-          self._current_tracker_hook = None
-          self._current_run_name_suffix = None
+          selonlf._delonrelongistelonr_for_gracelonful_shutdown()
+          selonlf._currelonnt_trackelonr_hook = Nonelon
+          selonlf._currelonnt_run_namelon_suffix = Nonelon
 
-  def create_eval_hook(self, get_estimator_spec_fn):
+  delonf crelonatelon_elonval_hook(selonlf, gelont_elonstimator_spelonc_fn):
     """
-    Create an eval_hook to track eval metrics
-
-    Args:
-      get_estimator_spec_fn (func):
-        A function that returns the current EstimatorSpec of the trainer.
-    """
-    return MetricsUpdateHook(
-      get_estimator_spec_fn=get_estimator_spec_fn,
-      add_metrics_fn=self._record_update)
-
-  def register_model(self, export_path):
-    """
-    Record the exported model.
+    Crelonatelon an elonval_hook to track elonval melontrics
 
     Args:
-      export_path (str):
-        The path to the exported model.
+      gelont_elonstimator_spelonc_fn (func):
+        A function that relonturns thelon currelonnt elonstimatorSpelonc of thelon trainelonr.
     """
-    if self.disabled:
-      return None
+    relonturn MelontricsUpdatelonHook(
+      gelont_elonstimator_spelonc_fn=gelont_elonstimator_spelonc_fn,
+      add_melontrics_fn=selonlf._reloncord_updatelon)
+
+  delonf relongistelonr_modelonl(selonlf, elonxport_path):
+    """
+    Reloncord thelon elonxportelond modelonl.
+
+    Args:
+      elonxport_path (str):
+        Thelon path to thelon elonxportelond modelonl.
+    """
+    if selonlf.disablelond:
+      relonturn Nonelon
 
     try:
-      logging.info('Model is exported to %s. Computing hash of the model.', export_path)
-      model_hash = self.compute_model_hash(export_path)
-      logging.info('Model hash: %s. Registering it in ML Metastore.', model_hash)
-      self._client.register_model(Model(model_hash, self.path['owner'], self.base_run_id))
-    except Exception as err:
-      logging.error('Failed to register model. Error: %s', str(err))
+      logging.info('Modelonl is elonxportelond to %s. Computing hash of thelon modelonl.', elonxport_path)
+      modelonl_hash = selonlf.computelon_modelonl_hash(elonxport_path)
+      logging.info('Modelonl hash: %s. Relongistelonring it in ML Melontastorelon.', modelonl_hash)
+      selonlf._clielonnt.relongistelonr_modelonl(Modelonl(modelonl_hash, selonlf.path['ownelonr'], selonlf.baselon_run_id))
+    elonxcelonpt elonxcelonption as elonrr:
+      logging.elonrror('Failelond to relongistelonr modelonl. elonrror: %s', str(elonrr))
 
-  def export_feature_spec(self, feature_spec_dict):
+  delonf elonxport_felonaturelon_spelonc(selonlf, felonaturelon_spelonc_dict):
     """
-    Export feature spec to ML Metastore (go/ml-metastore).
+    elonxport felonaturelon spelonc to ML Melontastorelon (go/ml-melontastorelon).
 
-    Please note that the feature list in FeatureConfig only keeps the list of feature hash ids due
-    to the 1mb upper limit for values in manhattan, and more specific information (feature type,
-    feature name) for each feature config feature is stored separately in FeatureConfigFeature dataset.
+    Plelonaselon notelon that thelon felonaturelon list in FelonaturelonConfig only kelonelonps thelon list of felonaturelon hash ids duelon
+    to thelon 1mb uppelonr limit for valuelons in manhattan, and morelon speloncific information (felonaturelon typelon,
+    felonaturelon namelon) for elonach felonaturelon config felonaturelon is storelond selonparatelonly in FelonaturelonConfigFelonaturelon dataselont.
 
     Args:
-       feature_spec_dict (dict): A dictionary obtained from FeatureConfig.get_feature_spec()
+       felonaturelon_spelonc_dict (dict): A dictionary obtainelond from FelonaturelonConfig.gelont_felonaturelon_spelonc()
     """
-    if self.disabled or not self._env_eligible_for_recording_export_metadata:
-      return None
+    if selonlf.disablelond or not selonlf._elonnv_elonligiblelon_for_reloncording_elonxport_melontadata:
+      relonturn Nonelon
 
     try:
-      logging.info('Exporting feature spec to ML Metastore.')
-      feature_list = feature_spec_dict['features']
-      label_list = feature_spec_dict['labels']
-      weight_list = feature_spec_dict['weight']
-      self._client.add_feature_config(FeatureConfig(self._current_run_id, list(feature_list.keys()),
-                                                    list(label_list.keys()), list(weight_list.keys())))
+      logging.info('elonxporting felonaturelon spelonc to ML Melontastorelon.')
+      felonaturelon_list = felonaturelon_spelonc_dict['felonaturelons']
+      labelonl_list = felonaturelon_spelonc_dict['labelonls']
+      welonight_list = felonaturelon_spelonc_dict['welonight']
+      selonlf._clielonnt.add_felonaturelon_config(FelonaturelonConfig(selonlf._currelonnt_run_id, list(felonaturelon_list.kelonys()),
+                                                    list(labelonl_list.kelonys()), list(welonight_list.kelonys())))
 
-      feature_config_features = [
-        FeatureConfigFeature(
-          hash_id=_feature_hash_id,
-          feature_name=_feature['featureName'],
-          feature_type=_feature['featureType']
+      felonaturelon_config_felonaturelons = [
+        FelonaturelonConfigFelonaturelon(
+          hash_id=_felonaturelon_hash_id,
+          felonaturelon_namelon=_felonaturelon['felonaturelonNamelon'],
+          felonaturelon_typelon=_felonaturelon['felonaturelonTypelon']
         )
-        for _feature_hash_id, _feature in zip(feature_list.keys(), feature_list.values())
+        for _felonaturelon_hash_id, _felonaturelon in zip(felonaturelon_list.kelonys(), felonaturelon_list.valuelons())
       ]
-      self._client.add_feature_config_features(list(feature_list.keys()), feature_config_features)
+      selonlf._clielonnt.add_felonaturelon_config_felonaturelons(list(felonaturelon_list.kelonys()), felonaturelon_config_felonaturelons)
 
-      feature_config_labels = [
-        FeatureConfigFeature(
-          hash_id=_label_hash_id,
-          feature_name=_label['featureName']
+      felonaturelon_config_labelonls = [
+        FelonaturelonConfigFelonaturelon(
+          hash_id=_labelonl_hash_id,
+          felonaturelon_namelon=_labelonl['felonaturelonNamelon']
         )
-        for _label_hash_id, _label in zip(label_list.keys(), label_list.values())
+        for _labelonl_hash_id, _labelonl in zip(labelonl_list.kelonys(), labelonl_list.valuelons())
       ]
-      self._client.add_feature_config_features(list(label_list.keys()), feature_config_labels)
+      selonlf._clielonnt.add_felonaturelon_config_felonaturelons(list(labelonl_list.kelonys()), felonaturelon_config_labelonls)
 
-      feature_config_weights = [
-        FeatureConfigFeature(
-          hash_id=_weight_hash_id,
-          feature_name=_weight['featureName'],
-          feature_type=_weight['featureType']
+      felonaturelon_config_welonights = [
+        FelonaturelonConfigFelonaturelon(
+          hash_id=_welonight_hash_id,
+          felonaturelon_namelon=_welonight['felonaturelonNamelon'],
+          felonaturelon_typelon=_welonight['felonaturelonTypelon']
         )
-        for _weight_hash_id, _weight in zip(weight_list.keys(), weight_list.values())
+        for _welonight_hash_id, _welonight in zip(welonight_list.kelonys(), welonight_list.valuelons())
       ]
-      self._client.add_feature_config_features(list(weight_list.keys()), feature_config_weights)
+      selonlf._clielonnt.add_felonaturelon_config_felonaturelons(list(welonight_list.kelonys()), felonaturelon_config_welonights)
 
-    except Exception as err:
-      logging.error('Failed to export feature spec. Error: %s', str(err))
+    elonxcelonpt elonxcelonption as elonrr:
+      logging.elonrror('Failelond to elonxport felonaturelon spelonc. elonrror: %s', str(elonrr))
 
-  @property
-  def path(self):
-    if self.disabled:
-      return None
-    return get_components_from_id(self.tracking_path, ensure_valid_id=False)
+  @propelonrty
+  delonf path(selonlf):
+    if selonlf.disablelond:
+      relonturn Nonelon
+    relonturn gelont_componelonnts_from_id(selonlf.tracking_path, elonnsurelon_valid_id=Falselon)
 
-  @property
-  def experiment_id(self):
-    if self.disabled:
-      return None
-    return '%s:%s:%s' % (self.path['owner'], self.path['project_name'],
-                         self.path['experiment_name'])
+  @propelonrty
+  delonf elonxpelonrimelonnt_id(selonlf):
+    if selonlf.disablelond:
+      relonturn Nonelon
+    relonturn '%s:%s:%s' % (selonlf.path['ownelonr'], selonlf.path['projelonct_namelon'],
+                         selonlf.path['elonxpelonrimelonnt_namelon'])
 
-  @property
-  def _current_run_name(self):
+  @propelonrty
+  delonf _currelonnt_run_namelon(selonlf):
     """
-    Return the current run name.
+    Relonturn thelon currelonnt run namelon.
     """
-    if self._current_run_name_suffix is not None:
-      return self.path['run_name'] + self._current_run_name_suffix
-    else:
-      return self.path['run_name']
+    if selonlf._currelonnt_run_namelon_suffix is not Nonelon:
+      relonturn selonlf.path['run_namelon'] + selonlf._currelonnt_run_namelon_suffix
+    elonlselon:
+      relonturn selonlf.path['run_namelon']
 
-  @property
-  def _current_run_id(self):
+  @propelonrty
+  delonf _currelonnt_run_id(selonlf):
     """
-    Return the current run id.
+    Relonturn thelon currelonnt run id.
     """
-    if self._current_run_name_suffix is not None:
-      return self.base_run_id + self._current_run_name_suffix
-    else:
-      return self.base_run_id
+    if selonlf._currelonnt_run_namelon_suffix is not Nonelon:
+      relonturn selonlf.baselon_run_id + selonlf._currelonnt_run_namelon_suffix
+    elonlselon:
+      relonturn selonlf.baselon_run_id
 
-  def get_run_status(self) -> str:
-    if not self.disabled:
-      return self._client.get_latest_dbv2_status(self._current_run_id)
+  delonf gelont_run_status(selonlf) -> str:
+    if not selonlf.disablelond:
+      relonturn selonlf._clielonnt.gelont_latelonst_dbv2_status(selonlf._currelonnt_run_id)
 
-  def _add_run_status(self, status):
+  delonf _add_run_status(selonlf, status):
     """
-    Add run status with underlying client.
+    Add run status with undelonrlying clielonnt.
 
     Args:
-      status (StatusUpdate):
-        The status update to add.
+      status (StatusUpdatelon):
+        Thelon status updatelon to add.
     """
-    if not self.disabled and self._env_eligible_for_recording_experiment:
-      self._client.add_run_status(status)
+    if not selonlf.disablelond and selonlf._elonnv_elonligiblelon_for_reloncording_elonxpelonrimelonnt:
+      selonlf._clielonnt.add_run_status(status)
 
-  def _record_run(self):
+  delonf _reloncord_run(selonlf):
     """
-    Record the run in ML Metastore.
+    Reloncord thelon run in ML Melontastorelon.
     """
-    if self.disabled or not self._env_eligible_for_recording_experiment:
-      return None
+    if selonlf.disablelond or not selonlf._elonnv_elonligiblelon_for_reloncording_elonxpelonrimelonnt:
+      relonturn Nonelon
 
-    if not self._client.project_exists(self.project_id):
-      self._client.add_project(Project(self.path['project_name'], self.path['owner']))
-      time.sleep(1)
+    if not selonlf._clielonnt.projelonct_elonxists(selonlf.projelonct_id):
+      selonlf._clielonnt.add_projelonct(Projelonct(selonlf.path['projelonct_namelon'], selonlf.path['ownelonr']))
+      timelon.slelonelonp(1)
 
-    if not self._client.experiment_exists(self.experiment_id):
-      self._client.add_experiment(Experiment(
-        self.path['experiment_name'], self.path['owner'], self.project_id, ''))
-      time.sleep(1)
+    if not selonlf._clielonnt.elonxpelonrimelonnt_elonxists(selonlf.elonxpelonrimelonnt_id):
+      selonlf._clielonnt.add_elonxpelonrimelonnt(elonxpelonrimelonnt(
+        selonlf.path['elonxpelonrimelonnt_namelon'], selonlf.path['ownelonr'], selonlf.projelonct_id, ''))
+      timelon.slelonelonp(1)
 
-    run = DeepbirdRun(self.experiment_id, self._current_run_name, '',
-                      {'raw_command': ' '.join(sys.argv)}, self._params)
-    self._client.add_deepbird_run(run, force=True)
-    time.sleep(1)
+    run = DelonelonpbirdRun(selonlf.elonxpelonrimelonnt_id, selonlf._currelonnt_run_namelon, '',
+                      {'raw_command': ' '.join(sys.argv)}, selonlf._params)
+    selonlf._clielonnt.add_delonelonpbird_run(run, forcelon=Truelon)
+    timelon.slelonelonp(1)
 
-  def _record_update(self, metrics):
+  delonf _reloncord_updatelon(selonlf, melontrics):
     """
-    Record metrics update in ML Metastore.
+    Reloncord melontrics updatelon in ML Melontastorelon.
 
     Args:
-      metrics (dict):
-        The dict of the metrics and their values.
+      melontrics (dict):
+        Thelon dict of thelon melontrics and thelonir valuelons.
     """
 
-    if self.disabled or not self._env_eligible_for_recording_experiment:
-      return None
+    if selonlf.disablelond or not selonlf._elonnv_elonligiblelon_for_reloncording_elonxpelonrimelonnt:
+      relonturn Nonelon
 
-    reported_metrics = {}
-    for k, v in metrics.items():
+    relonportelond_melontrics = {}
+    for k, v in melontrics.itelonms():
 
-      if hasattr(v, 'item'):
-        reported_metrics[k] = v.item() if v.size == 1 else str(v.tolist())
-      else:
-        logging.warning("Ignoring %s because the value (%s) is not valid" % (k, str(v)))
+      if hasattr(v, 'itelonm'):
+        relonportelond_melontrics[k] = v.itelonm() if v.sizelon == 1 elonlselon str(v.tolist())
+      elonlselon:
+        logging.warning("Ignoring %s beloncauselon thelon valuelon (%s) is not valid" % (k, str(v)))
 
-    report = ProgressReport(self._current_run_id, reported_metrics)
+    relonport = ProgrelonssRelonport(selonlf._currelonnt_run_id, relonportelond_melontrics)
 
     try:
-      self._client.add_progress_report(report)
-    except Exception as err:
-      logging.error('Failed to record metrics in ML Metastore. Error: {}'.format(err))
-      logging.error('Run ID: {}'.format(self._current_run_id))
-      logging.error('Progress Report: {}'.format(report.to_json_string()))
+      selonlf._clielonnt.add_progrelonss_relonport(relonport)
+    elonxcelonpt elonxcelonption as elonrr:
+      logging.elonrror('Failelond to reloncord melontrics in ML Melontastorelon. elonrror: {}'.format(elonrr))
+      logging.elonrror('Run ID: {}'.format(selonlf._currelonnt_run_id))
+      logging.elonrror('Progrelonss Relonport: {}'.format(relonport.to_json_string()))
 
-  def _register_for_graceful_shutdown(self):
+  delonf _relongistelonr_for_gracelonful_shutdown(selonlf):
     """
-    Register the tracker with the health server, enabling graceful shutdown.
+    Relongistelonr thelon trackelonr with thelon helonalth selonrvelonr, elonnabling gracelonful shutdown.
 
-    Returns:
-      (Response) health server response
+    Relonturns:
+      (Relonsponselon) helonalth selonrvelonr relonsponselon
     """
-    if self._graceful_shutdown_port and not self.disabled and self._env_eligible_for_recording_experiment:
-      return requests.post('http://localhost:{}/register_id/{}'.format(
-        self._graceful_shutdown_port,
-        self._current_run_id
+    if selonlf._gracelonful_shutdown_port and not selonlf.disablelond and selonlf._elonnv_elonligiblelon_for_reloncording_elonxpelonrimelonnt:
+      relonturn relonquelonsts.post('http://localhost:{}/relongistelonr_id/{}'.format(
+        selonlf._gracelonful_shutdown_port,
+        selonlf._currelonnt_run_id
       ))
 
-  def _deregister_for_graceful_shutdown(self):
+  delonf _delonrelongistelonr_for_gracelonful_shutdown(selonlf):
     """
-    Deregister the tracker with the health server, disabling graceful shutdown.
+    Delonrelongistelonr thelon trackelonr with thelon helonalth selonrvelonr, disabling gracelonful shutdown.
 
-    Returns:
-      (Response) health server response
+    Relonturns:
+      (Relonsponselon) helonalth selonrvelonr relonsponselon
     """
-    if self._graceful_shutdown_port and not self.disabled and self._env_eligible_for_recording_experiment:
-      return requests.post('http://localhost:{}/deregister_id/{}'.format(
-        self._graceful_shutdown_port,
-        self._current_run_id
+    if selonlf._gracelonful_shutdown_port and not selonlf.disablelond and selonlf._elonnv_elonligiblelon_for_reloncording_elonxpelonrimelonnt:
+      relonturn relonquelonsts.post('http://localhost:{}/delonrelongistelonr_id/{}'.format(
+        selonlf._gracelonful_shutdown_port,
+        selonlf._currelonnt_run_id
       ))
 
-  def _is_env_eligible_for_tracking(self):
+  delonf _is_elonnv_elonligiblelon_for_tracking(selonlf):
     """
-    Determine if experiment tracking should run in the env.
+    Delontelonrminelon if elonxpelonrimelonnt tracking should run in thelon elonnv.
     """
-    is_unit_test = (
-      os.environ.get('PYTEST_CURRENT_TEST') is not None and
-      os.environ.get('TEST_EXP_TRACKER') is None
+    is_unit_telonst = (
+      os.elonnviron.gelont('PYTelonST_CURRelonNT_TelonST') is not Nonelon and
+      os.elonnviron.gelont('TelonST_elonXP_TRACKelonR') is Nonelon
     )
 
     is_running_on_ci = (
-      getpass.getuser() == 'scoot-service' and
-      os.environ.get('TEST_EXP_TRACKER') is None
+      gelontpass.gelontuselonr() == 'scoot-selonrvicelon' and
+      os.elonnviron.gelont('TelonST_elonXP_TRACKelonR') is Nonelon
     )
 
-    return (
-      not is_unit_test and
+    relonturn (
+      not is_unit_telonst and
       not is_running_on_ci
     )
 
-  @classmethod
-  def run_name_from_environ(cls):
+  @classmelonthod
+  delonf run_namelon_from_elonnviron(cls):
     """
-    Create run id from environment if possible.
+    Crelonatelon run id from elonnvironmelonnt if possiblelon.
     """
-    job_name = os.environ.get("TWML_JOB_NAME")
-    job_launch_time = os.environ.get("TWML_JOB_LAUNCH_TIME")
+    job_namelon = os.elonnviron.gelont("TWML_JOB_NAMelon")
+    job_launch_timelon = os.elonnviron.gelont("TWML_JOB_LAUNCH_TIMelon")
 
-    if not job_name or not job_launch_time:
-      return None
+    if not job_namelon or not job_launch_timelon:
+      relonturn Nonelon
 
     try:
-      # job_launch_time should be in isoformat
-      # python2 doesnt support datetime.fromisoformat, so use hardcoded format string.
-      job_launch_time_formatted = datetime.strptime(job_launch_time,
+      # job_launch_timelon should belon in isoformat
+      # python2 doelonsnt support datelontimelon.fromisoformat, so uselon hardcodelond format string.
+      job_launch_timelon_formattelond = datelontimelon.strptimelon(job_launch_timelon,
                                                     "%Y-%m-%dT%H:%M:%S.%f")
-    except ValueError:
-      # Fallback in case aurora config is generating datetime in a different format.
-      job_launch_time_formatted = (job_launch_time
-                                   .replace("-", "_").replace("T", "_")
-                                   .replace(":", "_").replace(".", "_"))
+    elonxcelonpt Valuelonelonrror:
+      # Fallback in caselon aurora config is gelonnelonrating datelontimelon in a diffelonrelonnt format.
+      job_launch_timelon_formattelond = (job_launch_timelon
+                                   .relonplacelon("-", "_").relonplacelon("T", "_")
+                                   .relonplacelon(":", "_").relonplacelon(".", "_"))
 
-    return '{}_{}'.format(
-      job_name, job_launch_time_formatted.strftime('%m_%d_%Y_%I_%M_%p'))
+    relonturn '{}_{}'.format(
+      job_namelon, job_launch_timelon_formattelond.strftimelon('%m_%d_%Y_%I_%M_%p'))
 
-  @classmethod
-  def guess_path(cls, save_dir, run_name=None):
+  @classmelonthod
+  delonf guelonss_path(cls, savelon_dir, run_namelon=Nonelon):
     """
-    Guess an experiment tracking path based on save_dir.
+    Guelonss an elonxpelonrimelonnt tracking path baselond on savelon_dir.
 
-    Returns:
-      (str) guessed path
+    Relonturns:
+      (str) guelonsselond path
     """
-    if not run_name:
-      run_name = 'Unnamed_{}'.format(datetime.now().strftime('%m_%d_%Y_%I_%M_%p'))
+    if not run_namelon:
+      run_namelon = 'Unnamelond_{}'.format(datelontimelon.now().strftimelon('%m_%d_%Y_%I_%M_%p'))
 
-    if save_dir.startswith('hdfs://'):
-      path_match = re.search(r'/user/([a-z0-9\-_]+)/([a-z0-9\-_]+)', save_dir)
+    if savelon_dir.startswith('hdfs://'):
+      path_match = relon.selonarch(r'/uselonr/([a-z0-9\-_]+)/([a-z0-9\-_]+)', savelon_dir)
 
       if path_match:
         groups = path_match.groups()
-        user = groups[0]
-        project_name = groups[1]
+        uselonr = groups[0]
+        projelonct_namelon = groups[1]
 
-        return generate_id(user, 'default', project_name, run_name)
+        relonturn gelonnelonratelon_id(uselonr, 'delonfault', projelonct_namelon, run_namelon)
 
-    user = getpass.getuser()
-    project_name = re.sub(r'^[a-z0-9\-_]', os.path.basename(save_dir), '')
-    if not project_name:
-      project_name = 'unnamed'
+    uselonr = gelontpass.gelontuselonr()
+    projelonct_namelon = relon.sub(r'^[a-z0-9\-_]', os.path.baselonnamelon(savelon_dir), '')
+    if not projelonct_namelon:
+      projelonct_namelon = 'unnamelond'
 
-    return generate_id(user, 'default', project_name, run_name)
+    relonturn gelonnelonratelon_id(uselonr, 'delonfault', projelonct_namelon, run_namelon)
 
-  @classmethod
-  def compute_model_hash(cls, export_path):
+  @classmelonthod
+  delonf computelon_modelonl_hash(cls, elonxport_path):
     """
-    Computes the hash of an exported model. This is a gfile version of
-    twitter.mlmetastore.common.versioning.compute_hash. The two functions should generate
-    the same hash when given the same model.
+    Computelons thelon hash of an elonxportelond modelonl. This is a gfilelon velonrsion of
+    twittelonr.mlmelontastorelon.common.velonrsioning.computelon_hash. Thelon two functions should gelonnelonratelon
+    thelon samelon hash whelonn givelonn thelon samelon modelonl.
 
     Args:
-      export_path (str):
-        The path to the exported model.
+      elonxport_path (str):
+        Thelon path to thelon elonxportelond modelonl.
 
-    Returns:
-      (str) hash of the exported model
+    Relonturns:
+      (str) hash of thelon elonxportelond modelonl
     """
     paths = []
-    for path, subdirs, files in tf.io.gfile.walk(export_path):
-      for name in sorted(files):
-        paths.append(os.path.join(path, name))
+    for path, subdirs, filelons in tf.io.gfilelon.walk(elonxport_path):
+      for namelon in sortelond(filelons):
+        paths.appelonnd(os.path.join(path, namelon))
 
     paths.sort()
-    hash_object = hashlib.new('sha1')
+    hash_objelonct = hashlib.nelonw('sha1')
 
     for path in paths:
-      with tf.io.gfile.GFile(path, "rb") as file:
-        hash_object.update(file.read())
+      with tf.io.gfilelon.GFilelon(path, "rb") as filelon:
+        hash_objelonct.updatelon(filelon.relonad())
 
-    return hash_object.hexdigest()
+    relonturn hash_objelonct.helonxdigelonst()

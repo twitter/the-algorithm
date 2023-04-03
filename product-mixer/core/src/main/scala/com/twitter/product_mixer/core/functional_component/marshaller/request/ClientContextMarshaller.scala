@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.request
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonquelonst
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.{thriftscala => t}
 
-object ClientContextMarshaller {
+objelonct ClielonntContelonxtMarshallelonr {
 
-  def apply(clientContext: ClientContext): t.ClientContext = {
-    t.ClientContext(
-      userId = clientContext.userId,
-      guestId = clientContext.guestId,
-      appId = clientContext.appId,
-      ipAddress = clientContext.ipAddress,
-      userAgent = clientContext.userAgent,
-      countryCode = clientContext.countryCode,
-      languageCode = clientContext.languageCode,
-      isTwoffice = clientContext.isTwoffice,
-      userRoles = clientContext.userRoles,
-      deviceId = clientContext.deviceId,
-      mobileDeviceId = clientContext.mobileDeviceId,
-      mobileDeviceAdId = clientContext.mobileDeviceAdId,
-      limitAdTracking = clientContext.limitAdTracking,
-      guestIdAds = clientContext.guestIdAds,
-      guestIdMarketing = clientContext.guestIdMarketing
+  delonf apply(clielonntContelonxt: ClielonntContelonxt): t.ClielonntContelonxt = {
+    t.ClielonntContelonxt(
+      uselonrId = clielonntContelonxt.uselonrId,
+      guelonstId = clielonntContelonxt.guelonstId,
+      appId = clielonntContelonxt.appId,
+      ipAddrelonss = clielonntContelonxt.ipAddrelonss,
+      uselonrAgelonnt = clielonntContelonxt.uselonrAgelonnt,
+      countryCodelon = clielonntContelonxt.countryCodelon,
+      languagelonCodelon = clielonntContelonxt.languagelonCodelon,
+      isTwofficelon = clielonntContelonxt.isTwofficelon,
+      uselonrRolelons = clielonntContelonxt.uselonrRolelons,
+      delonvicelonId = clielonntContelonxt.delonvicelonId,
+      mobilelonDelonvicelonId = clielonntContelonxt.mobilelonDelonvicelonId,
+      mobilelonDelonvicelonAdId = clielonntContelonxt.mobilelonDelonvicelonAdId,
+      limitAdTracking = clielonntContelonxt.limitAdTracking,
+      guelonstIdAds = clielonntContelonxt.guelonstIdAds,
+      guelonstIdMarkelonting = clielonntContelonxt.guelonstIdMarkelonting
     )
   }
 }

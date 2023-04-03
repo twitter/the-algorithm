@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urp.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageBody
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PagelonBody
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PagelonHelonadelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PagelonNavBar
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonScribelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Trait for our builder which given a query and page info will return an `Option[TimelineScribeConfig]`
+ * Trait for our buildelonr which givelonn a quelonry and pagelon info will relonturn an `Option[TimelonlinelonScribelonConfig]`
  *
- * @tparam Query
+ * @tparam Quelonry
  */
-trait TimelineScribeConfigBuilder[-Query <: PipelineQuery] {
+trait TimelonlinelonScribelonConfigBuildelonr[-Quelonry <: PipelonlinelonQuelonry] {
 
-  def build(
-    query: Query,
-    pageBody: PageBody,
-    pageHeader: Option[PageHeader],
-    pageNavBar: Option[PageNavBar]
-  ): Option[TimelineScribeConfig]
+  delonf build(
+    quelonry: Quelonry,
+    pagelonBody: PagelonBody,
+    pagelonHelonadelonr: Option[PagelonHelonadelonr],
+    pagelonNavBar: Option[PagelonNavBar]
+  ): Option[TimelonlinelonScribelonConfig]
 }

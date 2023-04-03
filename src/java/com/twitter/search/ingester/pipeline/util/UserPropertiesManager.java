@@ -1,446 +1,446 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.Collelonction;
+import java.util.Collelonctions;
+import java.util.HashSelont;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import javax.annotation.Nullable;
+import java.util.Selont;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.thrift.TBase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.thrift.TBaselon;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common_internal.analytics.test_user_filter.TestUserFilter;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.metastore.client_v2.MetastoreClient;
-import com.twitter.metastore.data.MetastoreColumn;
-import com.twitter.metastore.data.MetastoreException;
-import com.twitter.metastore.data.MetastoreRow;
-import com.twitter.metastore.data.MetastoreValue;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchRequestStats;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.RelevanceSignalConstants;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.service.metastore.gen.ResponseCode;
-import com.twitter.service.metastore.gen.TweepCred;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.common_intelonrnal.analytics.telonst_uselonr_filtelonr.TelonstUselonrFiltelonr;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.melontastorelon.clielonnt_v2.MelontastorelonClielonnt;
+import com.twittelonr.melontastorelon.data.MelontastorelonColumn;
+import com.twittelonr.melontastorelon.data.Melontastorelonelonxcelonption;
+import com.twittelonr.melontastorelon.data.MelontastorelonRow;
+import com.twittelonr.melontastorelon.data.MelontastorelonValuelon;
+import com.twittelonr.selonarch.common.melontrics.RelonlelonvancelonStats;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRelonquelonstStats;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.RelonlelonvancelonSignalConstants;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonrvicelon.melontastorelon.gelonn.RelonsponselonCodelon;
+import com.twittelonr.selonrvicelon.melontastorelon.gelonn.TwelonelonpCrelond;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
-public class UserPropertiesManager {
-  private static final Logger LOG = LoggerFactory.getLogger(UserPropertiesManager.class);
+public class UselonrPropelonrtielonsManagelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(UselonrPropelonrtielonsManagelonr.class);
 
-  @VisibleForTesting
-  protected static final List<MetastoreColumn<? extends TBase<?, ?>>> COLUMNS =
-      ImmutableList.of(MetastoreColumn.TWEEPCRED);           // contains tweepcred value
+  @VisiblelonForTelonsting
+  protelonctelond static final List<MelontastorelonColumn<? elonxtelonnds TBaselon<?, ?>>> COLUMNS =
+      ImmutablelonList.of(MelontastorelonColumn.TWelonelonPCRelonD);           // contains twelonelonpcrelond valuelon
 
-  // same spam threshold that is use in tweeypie to spread user level spam to tweets, all tweets
-  // from user with spam score above such are marked so and removed from search results
-  @VisibleForTesting
-  public static final double SPAM_SCORE_THRESHOLD = 4.5;
+  // samelon spam threlonshold that is uselon in twelonelonypielon to sprelonad uselonr lelonvelonl spam to twelonelonts, all twelonelonts
+  // from uselonr with spam scorelon abovelon such arelon markelond so and relonmovelond from selonarch relonsults
+  @VisiblelonForTelonsting
+  public static final doublelon SPAM_SCORelon_THRelonSHOLD = 4.5;
 
-  @VisibleForTesting
-  static final SearchRequestStats MANHATTAN_METASTORE_STATS =
-      SearchRequestStats.export("manhattan_metastore_get", true);
+  @VisiblelonForTelonsting
+  static final SelonarchRelonquelonstStats MANHATTAN_MelonTASTORelon_STATS =
+      SelonarchRelonquelonstStats.elonxport("manhattan_melontastorelon_gelont", truelon);
 
-  private static final MetastoreGetColumnStats GET_TWEEP_CRED
-      = new MetastoreGetColumnStats("tweep_cred");
+  privatelon static final MelontastorelonGelontColumnStats GelonT_TWelonelonP_CRelonD
+      = nelonw MelontastorelonGelontColumnStats("twelonelonp_crelond");
 
-  @VisibleForTesting
-  static final SearchRateCounter MISSING_REPUTATION_COUNTER = RelevanceStats.exportRate(
-      "num_missing_reputation");
-  @VisibleForTesting
-  static final SearchRateCounter INVALID_REPUTATION_COUNTER = RelevanceStats.exportRate(
-      "num_invalid_reputation");
-  @VisibleForTesting
-  static final SearchRateCounter ACCEPTED_REPUTATION_COUNTER = RelevanceStats.exportRate(
-      "num_accepted_reputation");
-  @VisibleForTesting
-  static final SearchRateCounter SKIPPED_REPUTATION_CHECK_COUNTER = RelevanceStats.exportRate(
-      "num_skipped_reputation_check_for_test_user");
-  @VisibleForTesting
-  static final SearchCounter DEFAULT_REPUTATION_COUNTER = SearchCounter.export(
-      "messages_default_reputation_count");
-  @VisibleForTesting
-  static final SearchCounter MESSAGE_FROM_TEST_USER =
-      SearchCounter.export("messages_from_test_user");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr MISSING_RelonPUTATION_COUNTelonR = RelonlelonvancelonStats.elonxportRatelon(
+      "num_missing_relonputation");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr INVALID_RelonPUTATION_COUNTelonR = RelonlelonvancelonStats.elonxportRatelon(
+      "num_invalid_relonputation");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr ACCelonPTelonD_RelonPUTATION_COUNTelonR = RelonlelonvancelonStats.elonxportRatelon(
+      "num_accelonptelond_relonputation");
+  @VisiblelonForTelonsting
+  static final SelonarchRatelonCountelonr SKIPPelonD_RelonPUTATION_CHelonCK_COUNTelonR = RelonlelonvancelonStats.elonxportRatelon(
+      "num_skippelond_relonputation_chelonck_for_telonst_uselonr");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr DelonFAULT_RelonPUTATION_COUNTelonR = SelonarchCountelonr.elonxport(
+      "melonssagelons_delonfault_relonputation_count");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr MelonSSAGelon_FROM_TelonST_USelonR =
+      SelonarchCountelonr.elonxport("melonssagelons_from_telonst_uselonr");
 
-  // User level bits that are spread onto tweets
-  private static final SearchRateCounter IS_USER_NSFW_COUNTER = RelevanceStats.exportRate(
+  // Uselonr lelonvelonl bits that arelon sprelonad onto twelonelonts
+  privatelon static final SelonarchRatelonCountelonr IS_USelonR_NSFW_COUNTelonR = RelonlelonvancelonStats.elonxportRatelon(
       "num_is_nsfw");
-  private static final SearchRateCounter IS_USER_SPAM_COUNTER = RelevanceStats.exportRate(
+  privatelon static final SelonarchRatelonCountelonr IS_USelonR_SPAM_COUNTelonR = RelonlelonvancelonStats.elonxportRatelon(
       "num_is_spam");
 
-  // count how many tweets has "possibly_sensitive" set to true in the original json message
-  private static final SearchRateCounter IS_SENSITIVE_FROM_JSON_COUNTER = RelevanceStats.exportRate(
-      "num_is_sensitive_in_json");
+  // count how many twelonelonts has "possibly_selonnsitivelon" selont to truelon in thelon original json melonssagelon
+  privatelon static final SelonarchRatelonCountelonr IS_SelonNSITIVelon_FROM_JSON_COUNTelonR = RelonlelonvancelonStats.elonxportRatelon(
+      "num_is_selonnsitivelon_in_json");
 
-  private static final SearchCounter SENSITIVE_BITS_COUNTER =
-      SearchCounter.export("messages_sensitive_bits_set_count");
+  privatelon static final SelonarchCountelonr SelonNSITIVelon_BITS_COUNTelonR =
+      SelonarchCountelonr.elonxport("melonssagelons_selonnsitivelon_bits_selont_count");
 
-  private final MetastoreClient metastoreClient;
-  private final UserPropertiesManager.MetastoreGetColumnStats tweepCredStats;
+  privatelon final MelontastorelonClielonnt melontastorelonClielonnt;
+  privatelon final UselonrPropelonrtielonsManagelonr.MelontastorelonGelontColumnStats twelonelonpCrelondStats;
 
   /**
-   * Stats for keeping track of multiGet requests to metastore for a specific data column.
+   * Stats for kelonelonping track of multiGelont relonquelonsts to melontastorelon for a speloncific data column.
    */
-  @VisibleForTesting static class MetastoreGetColumnStats {
+  @VisiblelonForTelonsting static class MelontastorelonGelontColumnStats {
     /**
-     * No data was returned from metastore for a specific user.
+     * No data was relonturnelond from melontastorelon for a speloncific uselonr.
      */
-    private final SearchCounter notReturned;
+    privatelon final SelonarchCountelonr notRelonturnelond;
     /**
-     * Metastore returned a successful OK response.
+     * Melontastorelon relonturnelond a succelonssful OK relonsponselon.
      */
-    private final SearchCounter metastoreSuccess;
+    privatelon final SelonarchCountelonr melontastorelonSuccelonss;
     /**
-     * Metastore returned a NOT_FOUND response for a user.
+     * Melontastorelon relonturnelond a NOT_FOUND relonsponselon for a uselonr.
      */
-    private final SearchCounter metastoreNotFound;
+    privatelon final SelonarchCountelonr melontastorelonNotFound;
     /**
-     * Metastore returned a BAD_INPUT response for a user.
+     * Melontastorelon relonturnelond a BAD_INPUT relonsponselon for a uselonr.
      */
-    private final SearchCounter metastoreBadInput;
+    privatelon final SelonarchCountelonr melontastorelonBadInput;
     /**
-     * Metastore returned a TRANSIENT_ERROR response for a user.
+     * Melontastorelon relonturnelond a TRANSIelonNT_elonRROR relonsponselon for a uselonr.
      */
-    private final SearchCounter metastoreTransientError;
+    privatelon final SelonarchCountelonr melontastorelonTransielonntelonrror;
     /**
-     * Metastore returned a PERMANENT_ERROR response for a user.
+     * Melontastorelon relonturnelond a PelonRMANelonNT_elonRROR relonsponselon for a uselonr.
      */
-    private final SearchCounter metastorePermanentError;
+    privatelon final SelonarchCountelonr melontastorelonPelonrmanelonntelonrror;
     /**
-     * Metastore returned an unknown response code for a user.
+     * Melontastorelon relonturnelond an unknown relonsponselon codelon for a uselonr.
      */
-    private final SearchCounter metastoreUnknownResponseCode;
+    privatelon final SelonarchCountelonr melontastorelonUnknownRelonsponselonCodelon;
     /**
-     * Total number of users that we asked data for in metastore.
+     * Total numbelonr of uselonrs that welon askelond data for in melontastorelon.
      */
-    private final SearchCounter totalRequests;
+    privatelon final SelonarchCountelonr totalRelonquelonsts;
 
-    @VisibleForTesting MetastoreGetColumnStats(String columnName) {
-      String prefix = "manhattan_metastore_get_" + columnName;
-      notReturned = SearchCounter.export(prefix + "_response_not_returned");
-      metastoreSuccess = SearchCounter.export(prefix + "_response_success");
-      metastoreNotFound = SearchCounter.export(prefix + "_response_not_found");
-      metastoreBadInput = SearchCounter.export(prefix + "_response_bad_input");
-      metastoreTransientError = SearchCounter.export(prefix + "_response_transient_error");
-      metastorePermanentError = SearchCounter.export(prefix + "_response_permanent_error");
-      metastoreUnknownResponseCode =
-          SearchCounter.export(prefix + "_response_unknown_response_code");
-      // Have a distinguishable prefix for the total requests stat so that we can use it to get
-      // a viz rate against wild-carded "prefix_response_*" stats.
-      totalRequests = SearchCounter.export(prefix + "_requests");
+    @VisiblelonForTelonsting MelontastorelonGelontColumnStats(String columnNamelon) {
+      String prelonfix = "manhattan_melontastorelon_gelont_" + columnNamelon;
+      notRelonturnelond = SelonarchCountelonr.elonxport(prelonfix + "_relonsponselon_not_relonturnelond");
+      melontastorelonSuccelonss = SelonarchCountelonr.elonxport(prelonfix + "_relonsponselon_succelonss");
+      melontastorelonNotFound = SelonarchCountelonr.elonxport(prelonfix + "_relonsponselon_not_found");
+      melontastorelonBadInput = SelonarchCountelonr.elonxport(prelonfix + "_relonsponselon_bad_input");
+      melontastorelonTransielonntelonrror = SelonarchCountelonr.elonxport(prelonfix + "_relonsponselon_transielonnt_elonrror");
+      melontastorelonPelonrmanelonntelonrror = SelonarchCountelonr.elonxport(prelonfix + "_relonsponselon_pelonrmanelonnt_elonrror");
+      melontastorelonUnknownRelonsponselonCodelon =
+          SelonarchCountelonr.elonxport(prelonfix + "_relonsponselon_unknown_relonsponselon_codelon");
+      // Havelon a distinguishablelon prelonfix for thelon total relonquelonsts stat so that welon can uselon it to gelont
+      // a viz ratelon against wild-cardelond "prelonfix_relonsponselon_*" stats.
+      totalRelonquelonsts = SelonarchCountelonr.elonxport(prelonfix + "_relonquelonsts");
     }
 
     /**
-     * Tracks metastore get column stats for an individual user's response.
-     * @param responseCode the response code received from metastore. Expected to be null if no
-     *        response came back at all.
+     * Tracks melontastorelon gelont column stats for an individual uselonr's relonsponselon.
+     * @param relonsponselonCodelon thelon relonsponselon codelon reloncelonivelond from melontastorelon. elonxpelonctelond to belon null if no
+     *        relonsponselon camelon back at all.
      */
-    private void trackMetastoreResponseCode(@Nullable ResponseCode responseCode) {
-      totalRequests.increment();
+    privatelon void trackMelontastorelonRelonsponselonCodelon(@Nullablelon RelonsponselonCodelon relonsponselonCodelon) {
+      totalRelonquelonsts.increlonmelonnt();
 
-      if (responseCode == null) {
-        notReturned.increment();
-      } else if (responseCode == ResponseCode.OK) {
-        metastoreSuccess.increment();
-      } else if (responseCode == ResponseCode.NOT_FOUND) {
-        metastoreNotFound.increment();
-      } else if (responseCode == ResponseCode.BAD_INPUT) {
-        metastoreBadInput.increment();
-      } else if (responseCode == ResponseCode.TRANSIENT_ERROR) {
-        metastoreTransientError.increment();
-      } else if (responseCode == ResponseCode.PERMANENT_ERROR) {
-        metastorePermanentError.increment();
-      } else {
-        metastoreUnknownResponseCode.increment();
+      if (relonsponselonCodelon == null) {
+        notRelonturnelond.increlonmelonnt();
+      } elonlselon if (relonsponselonCodelon == RelonsponselonCodelon.OK) {
+        melontastorelonSuccelonss.increlonmelonnt();
+      } elonlselon if (relonsponselonCodelon == RelonsponselonCodelon.NOT_FOUND) {
+        melontastorelonNotFound.increlonmelonnt();
+      } elonlselon if (relonsponselonCodelon == RelonsponselonCodelon.BAD_INPUT) {
+        melontastorelonBadInput.increlonmelonnt();
+      } elonlselon if (relonsponselonCodelon == RelonsponselonCodelon.TRANSIelonNT_elonRROR) {
+        melontastorelonTransielonntelonrror.increlonmelonnt();
+      } elonlselon if (relonsponselonCodelon == RelonsponselonCodelon.PelonRMANelonNT_elonRROR) {
+        melontastorelonPelonrmanelonntelonrror.increlonmelonnt();
+      } elonlselon {
+        melontastorelonUnknownRelonsponselonCodelon.increlonmelonnt();
       }
     }
 
-    @VisibleForTesting long getTotalRequests() {
-      return totalRequests.get();
+    @VisiblelonForTelonsting long gelontTotalRelonquelonsts() {
+      relonturn totalRelonquelonsts.gelont();
     }
 
-    @VisibleForTesting long getNotReturnedCount() {
-      return notReturned.get();
+    @VisiblelonForTelonsting long gelontNotRelonturnelondCount() {
+      relonturn notRelonturnelond.gelont();
     }
 
-    @VisibleForTesting long getMetastoreSuccessCount() {
-      return metastoreSuccess.get();
+    @VisiblelonForTelonsting long gelontMelontastorelonSuccelonssCount() {
+      relonturn melontastorelonSuccelonss.gelont();
     }
 
-    @VisibleForTesting long getMetastoreNotFoundCount() {
-      return metastoreNotFound.get();
+    @VisiblelonForTelonsting long gelontMelontastorelonNotFoundCount() {
+      relonturn melontastorelonNotFound.gelont();
     }
 
-    @VisibleForTesting long getMetastoreBadInputCount() {
-      return metastoreBadInput.get();
+    @VisiblelonForTelonsting long gelontMelontastorelonBadInputCount() {
+      relonturn melontastorelonBadInput.gelont();
     }
 
-    @VisibleForTesting long getMetastoreTransientErrorCount() {
-      return metastoreTransientError.get();
+    @VisiblelonForTelonsting long gelontMelontastorelonTransielonntelonrrorCount() {
+      relonturn melontastorelonTransielonntelonrror.gelont();
     }
 
-    @VisibleForTesting long getMetastorePermanentErrorCount() {
-      return metastorePermanentError.get();
+    @VisiblelonForTelonsting long gelontMelontastorelonPelonrmanelonntelonrrorCount() {
+      relonturn melontastorelonPelonrmanelonntelonrror.gelont();
     }
 
-    @VisibleForTesting long getMetastoreUnknownResponseCodeCount() {
-      return metastoreUnknownResponseCode.get();
-    }
-  }
-
-  /** Class that holds all user properties from Manhattan. */
-  @VisibleForTesting
-  protected static class ManhattanUserProperties {
-    private double spamScore = 0;
-    private float tweepcred = RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL;   // default
-
-    public ManhattanUserProperties setSpamScore(double newSpamScore) {
-      this.spamScore = newSpamScore;
-      return this;
-    }
-
-    public float getTweepcred() {
-      return tweepcred;
-    }
-
-    public ManhattanUserProperties setTweepcred(float newTweepcred) {
-      this.tweepcred = newTweepcred;
-      return this;
+    @VisiblelonForTelonsting long gelontMelontastorelonUnknownRelonsponselonCodelonCount() {
+      relonturn melontastorelonUnknownRelonsponselonCodelon.gelont();
     }
   }
 
-  public UserPropertiesManager(MetastoreClient metastoreClient) {
-    this(metastoreClient, GET_TWEEP_CRED);
+  /** Class that holds all uselonr propelonrtielons from Manhattan. */
+  @VisiblelonForTelonsting
+  protelonctelond static class ManhattanUselonrPropelonrtielons {
+    privatelon doublelon spamScorelon = 0;
+    privatelon float twelonelonpcrelond = RelonlelonvancelonSignalConstants.UNSelonT_RelonPUTATION_SelonNTINelonL;   // delonfault
+
+    public ManhattanUselonrPropelonrtielons selontSpamScorelon(doublelon nelonwSpamScorelon) {
+      this.spamScorelon = nelonwSpamScorelon;
+      relonturn this;
+    }
+
+    public float gelontTwelonelonpcrelond() {
+      relonturn twelonelonpcrelond;
+    }
+
+    public ManhattanUselonrPropelonrtielons selontTwelonelonpcrelond(float nelonwTwelonelonpcrelond) {
+      this.twelonelonpcrelond = nelonwTwelonelonpcrelond;
+      relonturn this;
+    }
   }
 
-  @VisibleForTesting
-  UserPropertiesManager(
-      MetastoreClient metastoreClient,
-      MetastoreGetColumnStats tweepCredStats) {
-    this.metastoreClient = metastoreClient;
-    this.tweepCredStats = tweepCredStats;
+  public UselonrPropelonrtielonsManagelonr(MelontastorelonClielonnt melontastorelonClielonnt) {
+    this(melontastorelonClielonnt, GelonT_TWelonelonP_CRelonD);
+  }
+
+  @VisiblelonForTelonsting
+  UselonrPropelonrtielonsManagelonr(
+      MelontastorelonClielonnt melontastorelonClielonnt,
+      MelontastorelonGelontColumnStats twelonelonpCrelondStats) {
+    this.melontastorelonClielonnt = melontastorelonClielonnt;
+    this.twelonelonpCrelondStats = twelonelonpCrelondStats;
   }
 
   /**
-   * Gets user properties including TWEEPCRED, SpamScore values/flags from metastore for the
-   * given userids.
+   * Gelonts uselonr propelonrtielons including TWelonelonPCRelonD, SpamScorelon valuelons/flags from melontastorelon for thelon
+   * givelonn uselonrids.
    *
-   * @param userIds the list of users for which to get the properties.
-   * @return mapping from userId to UserProperties. If a user's twepcred score is not present in the
-   * metastore, of if there was a problem retrieving it, that user's score will not be set in the
-   * returned map.
+   * @param uselonrIds thelon list of uselonrs for which to gelont thelon propelonrtielons.
+   * @relonturn mapping from uselonrId to UselonrPropelonrtielons. If a uselonr's twelonpcrelond scorelon is not prelonselonnt in thelon
+   * melontastorelon, of if thelonrelon was a problelonm relontrielonving it, that uselonr's scorelon will not belon selont in thelon
+   * relonturnelond map.
    */
-  @VisibleForTesting
-  Future<Map<Long, ManhattanUserProperties>> getManhattanUserProperties(final List<Long> userIds) {
-    Preconditions.checkArgument(userIds != null);
-    if (metastoreClient == null || userIds.isEmpty()) {
-      return Future.value(Collections.emptyMap());
+  @VisiblelonForTelonsting
+  Futurelon<Map<Long, ManhattanUselonrPropelonrtielons>> gelontManhattanUselonrPropelonrtielons(final List<Long> uselonrIds) {
+    Prelonconditions.chelonckArgumelonnt(uselonrIds != null);
+    if (melontastorelonClielonnt == null || uselonrIds.iselonmpty()) {
+      relonturn Futurelon.valuelon(Collelonctions.elonmptyMap());
     }
 
-    final long start = System.currentTimeMillis();
+    final long start = Systelonm.currelonntTimelonMillis();
 
-    return metastoreClient.multiGet(userIds, COLUMNS)
-        .map(new Function<Map<Long, MetastoreRow>, Map<Long, ManhattanUserProperties>>() {
-          @Override
-          public Map<Long, ManhattanUserProperties> apply(Map<Long, MetastoreRow> response) {
-            long latencyMs = System.currentTimeMillis() - start;
-            Map<Long, ManhattanUserProperties> resultMap =
-                Maps.newHashMapWithExpectedSize(userIds.size());
+    relonturn melontastorelonClielonnt.multiGelont(uselonrIds, COLUMNS)
+        .map(nelonw Function<Map<Long, MelontastorelonRow>, Map<Long, ManhattanUselonrPropelonrtielons>>() {
+          @Ovelonrridelon
+          public Map<Long, ManhattanUselonrPropelonrtielons> apply(Map<Long, MelontastorelonRow> relonsponselon) {
+            long latelonncyMs = Systelonm.currelonntTimelonMillis() - start;
+            Map<Long, ManhattanUselonrPropelonrtielons> relonsultMap =
+                Maps.nelonwHashMapWithelonxpelonctelondSizelon(uselonrIds.sizelon());
 
-            for (Long userId : userIds) {
-              MetastoreRow row = response.get(userId);
-              processTweepCredColumn(userId, row, resultMap);
+            for (Long uselonrId : uselonrIds) {
+              MelontastorelonRow row = relonsponselon.gelont(uselonrId);
+              procelonssTwelonelonpCrelondColumn(uselonrId, row, relonsultMap);
             }
 
-            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, resultMap.size(), true);
-            return resultMap;
+            MANHATTAN_MelonTASTORelon_STATS.relonquelonstComplelontelon(latelonncyMs, relonsultMap.sizelon(), truelon);
+            relonturn relonsultMap;
           }
         })
-        .handle(new Function<Throwable, Map<Long, ManhattanUserProperties>>() {
-          @Override
-          public Map<Long, ManhattanUserProperties> apply(Throwable t) {
-            long latencyMs = System.currentTimeMillis() - start;
-            LOG.error("Exception talking to metastore after " + latencyMs + " ms.", t);
+        .handlelon(nelonw Function<Throwablelon, Map<Long, ManhattanUselonrPropelonrtielons>>() {
+          @Ovelonrridelon
+          public Map<Long, ManhattanUselonrPropelonrtielons> apply(Throwablelon t) {
+            long latelonncyMs = Systelonm.currelonntTimelonMillis() - start;
+            LOG.elonrror("elonxcelonption talking to melontastorelon aftelonr " + latelonncyMs + " ms.", t);
 
-            MANHATTAN_METASTORE_STATS.requestComplete(latencyMs, 0, false);
-            return Collections.emptyMap();
+            MANHATTAN_MelonTASTORelon_STATS.relonquelonstComplelontelon(latelonncyMs, 0, falselon);
+            relonturn Collelonctions.elonmptyMap();
           }
         });
   }
 
 
   /**
-   * Process the TweepCred column data returned from metastore, takes TweepCred, fills in the
-   * the resultMap as appropriate.
+   * Procelonss thelon TwelonelonpCrelond column data relonturnelond from melontastorelon, takelons TwelonelonpCrelond, fills in thelon
+   * thelon relonsultMap as appropriatelon.
    */
-  private void processTweepCredColumn(
-      Long userId,
-      MetastoreRow metastoreRow,
-      Map<Long, ManhattanUserProperties> resultMap) {
-    MetastoreValue<TweepCred> tweepCredValue =
-        metastoreRow == null ? null : metastoreRow.getValue(MetastoreColumn.TWEEPCRED);
-    ResponseCode responseCode = tweepCredValue == null ? null : tweepCredValue.getResponseCode();
-    tweepCredStats.trackMetastoreResponseCode(responseCode);
+  privatelon void procelonssTwelonelonpCrelondColumn(
+      Long uselonrId,
+      MelontastorelonRow melontastorelonRow,
+      Map<Long, ManhattanUselonrPropelonrtielons> relonsultMap) {
+    MelontastorelonValuelon<TwelonelonpCrelond> twelonelonpCrelondValuelon =
+        melontastorelonRow == null ? null : melontastorelonRow.gelontValuelon(MelontastorelonColumn.TWelonelonPCRelonD);
+    RelonsponselonCodelon relonsponselonCodelon = twelonelonpCrelondValuelon == null ? null : twelonelonpCrelondValuelon.gelontRelonsponselonCodelon();
+    twelonelonpCrelondStats.trackMelontastorelonRelonsponselonCodelon(relonsponselonCodelon);
 
-    if (responseCode == ResponseCode.OK) {
+    if (relonsponselonCodelon == RelonsponselonCodelon.OK) {
       try {
-        TweepCred tweepCred = tweepCredValue.getValue();
-        if (tweepCred != null && tweepCred.isSetScore()) {
-          ManhattanUserProperties manhattanUserProperties =
-              getOrCreateManhattanUserProperties(userId, resultMap);
-          manhattanUserProperties.setTweepcred(tweepCred.getScore());
+        TwelonelonpCrelond twelonelonpCrelond = twelonelonpCrelondValuelon.gelontValuelon();
+        if (twelonelonpCrelond != null && twelonelonpCrelond.isSelontScorelon()) {
+          ManhattanUselonrPropelonrtielons manhattanUselonrPropelonrtielons =
+              gelontOrCrelonatelonManhattanUselonrPropelonrtielons(uselonrId, relonsultMap);
+          manhattanUselonrPropelonrtielons.selontTwelonelonpcrelond(twelonelonpCrelond.gelontScorelon());
         }
-      } catch (MetastoreException e) {
-        // guaranteed not to be thrown if ResponseCode.OK
-        LOG.warn("Unexpected MetastoreException parsing userinfo column!", e);
+      } catch (Melontastorelonelonxcelonption elon) {
+        // guarantelonelond not to belon thrown if RelonsponselonCodelon.OK
+        LOG.warn("Unelonxpelonctelond Melontastorelonelonxcelonption parsing uselonrinfo column!", elon);
       }
     }
   }
 
-  private static ManhattanUserProperties getOrCreateManhattanUserProperties(
-      Long userId, Map<Long, ManhattanUserProperties> resultMap) {
+  privatelon static ManhattanUselonrPropelonrtielons gelontOrCrelonatelonManhattanUselonrPropelonrtielons(
+      Long uselonrId, Map<Long, ManhattanUselonrPropelonrtielons> relonsultMap) {
 
-    ManhattanUserProperties manhattanUserProperties = resultMap.get(userId);
-    if (manhattanUserProperties == null) {
-      manhattanUserProperties = new ManhattanUserProperties();
-      resultMap.put(userId, manhattanUserProperties);
+    ManhattanUselonrPropelonrtielons manhattanUselonrPropelonrtielons = relonsultMap.gelont(uselonrId);
+    if (manhattanUselonrPropelonrtielons == null) {
+      manhattanUselonrPropelonrtielons = nelonw ManhattanUselonrPropelonrtielons();
+      relonsultMap.put(uselonrId, manhattanUselonrPropelonrtielons);
     }
 
-    return manhattanUserProperties;
+    relonturn manhattanUselonrPropelonrtielons;
   }
 
   /**
-   * Populates the user properties from the given batch.
+   * Populatelons thelon uselonr propelonrtielons from thelon givelonn batch.
    */
-  public  Future<Collection<IngesterTwitterMessage>> populateUserProperties(
-      Collection<IngesterTwitterMessage> batch) {
-    Set<Long> userIds = new HashSet<>();
-    for (IngesterTwitterMessage message : batch) {
-      if ((message.getUserReputation() == IngesterTwitterMessage.DOUBLE_FIELD_NOT_PRESENT)
-          && !message.isDeleted()) {
-        Optional<Long> userId = message.getFromUserTwitterId();
-        if (userId.isPresent()) {
-          userIds.add(userId.get());
-        } else {
-          LOG.error("No user id present for tweet {}", message.getId());
+  public  Futurelon<Collelonction<IngelonstelonrTwittelonrMelonssagelon>> populatelonUselonrPropelonrtielons(
+      Collelonction<IngelonstelonrTwittelonrMelonssagelon> batch) {
+    Selont<Long> uselonrIds = nelonw HashSelont<>();
+    for (IngelonstelonrTwittelonrMelonssagelon melonssagelon : batch) {
+      if ((melonssagelon.gelontUselonrRelonputation() == IngelonstelonrTwittelonrMelonssagelon.DOUBLelon_FIelonLD_NOT_PRelonSelonNT)
+          && !melonssagelon.isDelonlelontelond()) {
+        Optional<Long> uselonrId = melonssagelon.gelontFromUselonrTwittelonrId();
+        if (uselonrId.isPrelonselonnt()) {
+          uselonrIds.add(uselonrId.gelont());
+        } elonlselon {
+          LOG.elonrror("No uselonr id prelonselonnt for twelonelont {}", melonssagelon.gelontId());
         }
       }
     }
-    List<Long> uniqIds = Lists.newArrayList(userIds);
-    Collections.sort(uniqIds);   // for testing predictability
+    List<Long> uniqIds = Lists.nelonwArrayList(uselonrIds);
+    Collelonctions.sort(uniqIds);   // for telonsting prelondictability
 
-    Future<Map<Long, ManhattanUserProperties>> manhattanUserPropertiesMap =
-        getManhattanUserProperties(uniqIds);
+    Futurelon<Map<Long, ManhattanUselonrPropelonrtielons>> manhattanUselonrPropelonrtielonsMap =
+        gelontManhattanUselonrPropelonrtielons(uniqIds);
 
-    return manhattanUserPropertiesMap.map(Function.func(map -> {
-      for (IngesterTwitterMessage message : batch) {
-        if (((message.getUserReputation() != IngesterTwitterMessage.DOUBLE_FIELD_NOT_PRESENT)
-            && RelevanceSignalConstants.isValidUserReputation(
-            (int) Math.floor(message.getUserReputation())))
-            || message.isDeleted()) {
-          continue;
+    relonturn manhattanUselonrPropelonrtielonsMap.map(Function.func(map -> {
+      for (IngelonstelonrTwittelonrMelonssagelon melonssagelon : batch) {
+        if (((melonssagelon.gelontUselonrRelonputation() != IngelonstelonrTwittelonrMelonssagelon.DOUBLelon_FIelonLD_NOT_PRelonSelonNT)
+            && RelonlelonvancelonSignalConstants.isValidUselonrRelonputation(
+            (int) Math.floor(melonssagelon.gelontUselonrRelonputation())))
+            || melonssagelon.isDelonlelontelond()) {
+          continuelon;
         }
-        Optional<Long> optionalUserId = message.getFromUserTwitterId();
-        if (optionalUserId.isPresent()) {
-          long userId = optionalUserId.get();
-          ManhattanUserProperties manhattanUserProperties =  map.get(userId);
+        Optional<Long> optionalUselonrId = melonssagelon.gelontFromUselonrTwittelonrId();
+        if (optionalUselonrId.isPrelonselonnt()) {
+          long uselonrId = optionalUselonrId.gelont();
+          ManhattanUselonrPropelonrtielons manhattanUselonrPropelonrtielons =  map.gelont(uselonrId);
 
-          final boolean isTestUser = TestUserFilter.isTestUserId(userId);
-          if (isTestUser) {
-            MESSAGE_FROM_TEST_USER.increment();
+          final boolelonan isTelonstUselonr = TelonstUselonrFiltelonr.isTelonstUselonrId(uselonrId);
+          if (isTelonstUselonr) {
+            MelonSSAGelon_FROM_TelonST_USelonR.increlonmelonnt();
           }
 
-          // legacy setting of tweepcred
-          setTweepCred(isTestUser, manhattanUserProperties, message);
+          // lelongacy selontting of twelonelonpcrelond
+          selontTwelonelonpCrelond(isTelonstUselonr, manhattanUselonrPropelonrtielons, melonssagelon);
 
-          // set additional fields
-          if (setSensitiveBits(manhattanUserProperties, message)) {
-            SENSITIVE_BITS_COUNTER.increment();
+          // selont additional fielonlds
+          if (selontSelonnsitivelonBits(manhattanUselonrPropelonrtielons, melonssagelon)) {
+            SelonNSITIVelon_BITS_COUNTelonR.increlonmelonnt();
           }
         }
       }
-      return batch;
+      relonturn batch;
     }));
   }
 
-  // good old tweepcred
-  private void setTweepCred(
-      boolean isTestUser,
-      ManhattanUserProperties manhattanUserProperties,
-      TwitterMessage message) {
-    float score = RelevanceSignalConstants.UNSET_REPUTATION_SENTINEL;
-    if (manhattanUserProperties == null) {
-      if (isTestUser) {
-        SKIPPED_REPUTATION_CHECK_COUNTER.increment();
-      } else {
-        MISSING_REPUTATION_COUNTER.increment();
-        DEFAULT_REPUTATION_COUNTER.increment();
+  // good old twelonelonpcrelond
+  privatelon void selontTwelonelonpCrelond(
+      boolelonan isTelonstUselonr,
+      ManhattanUselonrPropelonrtielons manhattanUselonrPropelonrtielons,
+      TwittelonrMelonssagelon melonssagelon) {
+    float scorelon = RelonlelonvancelonSignalConstants.UNSelonT_RelonPUTATION_SelonNTINelonL;
+    if (manhattanUselonrPropelonrtielons == null) {
+      if (isTelonstUselonr) {
+        SKIPPelonD_RelonPUTATION_CHelonCK_COUNTelonR.increlonmelonnt();
+      } elonlselon {
+        MISSING_RelonPUTATION_COUNTelonR.increlonmelonnt();
+        DelonFAULT_RelonPUTATION_COUNTelonR.increlonmelonnt();
       }
-    } else if (!RelevanceSignalConstants.isValidUserReputation(
-        (int) Math.floor(manhattanUserProperties.tweepcred))) {
-      if (!isTestUser) {
-        INVALID_REPUTATION_COUNTER.increment();
-        DEFAULT_REPUTATION_COUNTER.increment();
+    } elonlselon if (!RelonlelonvancelonSignalConstants.isValidUselonrRelonputation(
+        (int) Math.floor(manhattanUselonrPropelonrtielons.twelonelonpcrelond))) {
+      if (!isTelonstUselonr) {
+        INVALID_RelonPUTATION_COUNTelonR.increlonmelonnt();
+        DelonFAULT_RelonPUTATION_COUNTelonR.increlonmelonnt();
       }
-    } else {
-      score = manhattanUserProperties.tweepcred;
-      ACCEPTED_REPUTATION_COUNTER.increment();
+    } elonlselon {
+      scorelon = manhattanUselonrPropelonrtielons.twelonelonpcrelond;
+      ACCelonPTelonD_RelonPUTATION_COUNTelonR.increlonmelonnt();
     }
-    message.setUserReputation(score);
+    melonssagelon.selontUselonrRelonputation(scorelon);
   }
 
-  // Sets sensitive content, nsfw, and spam flags in TwitterMessage, further
-  // sets the following bits in encoded features:
-  // EarlybirdFeatureConfiguration.IS_SENSITIVE_FLAG
-  // EarlybirdFeatureConfiguration.IS_USER_NSFW_FLAG
-  // EarlybirdFeatureConfiguration.IS_USER_SPAM_FLAG
-  private boolean setSensitiveBits(
-      ManhattanUserProperties manhattanUserProperties,
-      TwitterMessage message) {
-    if (manhattanUserProperties == null) {
-      return false;
+  // Selonts selonnsitivelon contelonnt, nsfw, and spam flags in TwittelonrMelonssagelon, furthelonr
+  // selonts thelon following bits in elonncodelond felonaturelons:
+  // elonarlybirdFelonaturelonConfiguration.IS_SelonNSITIVelon_FLAG
+  // elonarlybirdFelonaturelonConfiguration.IS_USelonR_NSFW_FLAG
+  // elonarlybirdFelonaturelonConfiguration.IS_USelonR_SPAM_FLAG
+  privatelon boolelonan selontSelonnsitivelonBits(
+      ManhattanUselonrPropelonrtielons manhattanUselonrPropelonrtielons,
+      TwittelonrMelonssagelon melonssagelon) {
+    if (manhattanUselonrPropelonrtielons == null) {
+      relonturn falselon;
     }
 
-    final boolean isUserSpam = manhattanUserProperties.spamScore > SPAM_SCORE_THRESHOLD;
-    // SEARCH-17413: Compute the field with gizmoduck data.
-    final boolean isUserNSFW = false;
-    final boolean anySensitiveBitSet = isUserSpam || isUserNSFW;
+    final boolelonan isUselonrSpam = manhattanUselonrPropelonrtielons.spamScorelon > SPAM_SCORelon_THRelonSHOLD;
+    // SelonARCH-17413: Computelon thelon fielonld with gizmoduck data.
+    final boolelonan isUselonrNSFW = falselon;
+    final boolelonan anySelonnsitivelonBitSelont = isUselonrSpam || isUselonrNSFW;
 
-    if (message.isSensitiveContent()) {
-      // original json has possibly_sensitive = true, count it
-      IS_SENSITIVE_FROM_JSON_COUNTER.increment();
+    if (melonssagelon.isSelonnsitivelonContelonnt()) {
+      // original json has possibly_selonnsitivelon = truelon, count it
+      IS_SelonNSITIVelon_FROM_JSON_COUNTelonR.increlonmelonnt();
     }
 
-    if (isUserNSFW) {
-      // set EarlybirdFeatureConfiguration.IS_USER_NSFW_FLAG
-      for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-        message.getTweetUserFeatures(penguinVersion).setNsfw(isUserNSFW);
+    if (isUselonrNSFW) {
+      // selont elonarlybirdFelonaturelonConfiguration.IS_USelonR_NSFW_FLAG
+      for (PelonnguinVelonrsion pelonnguinVelonrsion : melonssagelon.gelontSupportelondPelonnguinVelonrsions()) {
+        melonssagelon.gelontTwelonelontUselonrFelonaturelons(pelonnguinVelonrsion).selontNsfw(isUselonrNSFW);
       }
-      IS_USER_NSFW_COUNTER.increment();
+      IS_USelonR_NSFW_COUNTelonR.increlonmelonnt();
     }
-    if (isUserSpam) {
-      // set EarlybirdFeatureConfiguration.IS_USER_SPAM_FLAG
-      for (PenguinVersion penguinVersion : message.getSupportedPenguinVersions()) {
-        message.getTweetUserFeatures(penguinVersion).setSpam(isUserSpam);
+    if (isUselonrSpam) {
+      // selont elonarlybirdFelonaturelonConfiguration.IS_USelonR_SPAM_FLAG
+      for (PelonnguinVelonrsion pelonnguinVelonrsion : melonssagelon.gelontSupportelondPelonnguinVelonrsions()) {
+        melonssagelon.gelontTwelonelontUselonrFelonaturelons(pelonnguinVelonrsion).selontSpam(isUselonrSpam);
       }
-      IS_USER_SPAM_COUNTER.increment();
+      IS_USelonR_SPAM_COUNTelonR.increlonmelonnt();
     }
 
-    // if any of the sensitive bits are set, we return true
-    return anySensitiveBitSet;
+    // if any of thelon selonnsitivelon bits arelon selont, welon relonturn truelon
+    relonturn anySelonnsitivelonBitSelont;
   }
 }

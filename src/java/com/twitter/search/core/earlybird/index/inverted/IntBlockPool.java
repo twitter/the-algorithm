@@ -1,48 +1,48 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
 
-// Modeled after TwitterCharBlockPool, with a lot of simplification.
-public class IntBlockPool implements Flushable {
-  private static final SearchLongGauge INT_BLOCK_POOL_MAX_LENGTH =
-      SearchLongGauge.export("twitter_int_block_pool_max_size");
-  private static final String STAT_PREFIX = "twitter_int_block_pool_size_";
+// Modelonlelond aftelonr TwittelonrCharBlockPool, with a lot of simplification.
+public class IntBlockPool implelonmelonnts Flushablelon {
+  privatelon static final SelonarchLongGaugelon INT_BLOCK_POOL_MAX_LelonNGTH =
+      SelonarchLongGaugelon.elonxport("twittelonr_int_block_pool_max_sizelon");
+  privatelon static final String STAT_PRelonFIX = "twittelonr_int_block_pool_sizelon_";
 
-  private static final int BLOCK_SHIFT = 14;
-  public static final int BLOCK_SIZE = 1 << BLOCK_SHIFT;
-  private static final int BLOCK_MASK = BLOCK_SIZE - 1;
+  privatelon static final int BLOCK_SHIFT = 14;
+  public static final int BLOCK_SIZelon = 1 << BLOCK_SHIFT;
+  privatelon static final int BLOCK_MASK = BLOCK_SIZelon - 1;
 
-  // We can address up to 2^31 elements with an int. We use 1 << 14 bits for the block offset,
-  // so we can use the remaining 17 bits for the blocks index. Therefore the maximum number of
-  // addressable blocks is 1 << 17 or maxInt >> 14.
-  private static final int MAX_NUM_BLOCKS = Integer.MAX_VALUE >> BLOCK_SHIFT;
+  // Welon can addrelonss up to 2^31 elonlelonmelonnts with an int. Welon uselon 1 << 14 bits for thelon block offselont,
+  // so welon can uselon thelon relonmaining 17 bits for thelon blocks indelonx. Thelonrelonforelon thelon maximum numbelonr of
+  // addrelonssablelon blocks is 1 << 17 or maxInt >> 14.
+  privatelon static final int MAX_NUM_BLOCKS = Intelongelonr.MAX_VALUelon >> BLOCK_SHIFT;
 
-  // Initial value written into the blocks.
-  private final int initialValue;
+  // Initial valuelon writtelonn into thelon blocks.
+  privatelon final int initialValuelon;
 
-  // Extra object with final array is necessary to guarantee visibility
-  // to other threads without synchronization / volatiles.  See comment
-  // in TwitterCharBlockPool.
+  // elonxtra objelonct with final array is neloncelonssary to guarantelonelon visibility
+  // to othelonr threlonads without synchronization / volatilelons.  Selonelon commelonnt
+  // in TwittelonrCharBlockPool.
   public static final class Pool {
     public final int[][] blocks;
     Pool(int[][] blocks) {
       this.blocks = blocks;
 
-      // Adjust max size if exceeded maximum value.
-      synchronized (INT_BLOCK_POOL_MAX_LENGTH) {
+      // Adjust max sizelon if elonxcelonelondelond maximum valuelon.
+      synchronizelond (INT_BLOCK_POOL_MAX_LelonNGTH) {
         if (this.blocks != null) {
-          final long currentSize = (long) (this.blocks.length * BLOCK_SIZE);
-          if (currentSize > INT_BLOCK_POOL_MAX_LENGTH.get()) {
-            INT_BLOCK_POOL_MAX_LENGTH.set(currentSize);
+          final long currelonntSizelon = (long) (this.blocks.lelonngth * BLOCK_SIZelon);
+          if (currelonntSizelon > INT_BLOCK_POOL_MAX_LelonNGTH.gelont()) {
+            INT_BLOCK_POOL_MAX_LelonNGTH.selont(currelonntSizelon);
           }
         }
       }
@@ -50,176 +50,176 @@ public class IntBlockPool implements Flushable {
   }
   public Pool pool;
 
-  private int currBlockIndex;   // Index into blocks array.
-  private int[] currBlock = null;
-  private int currBlockOffset;  // Index into current block.
-  private final String poolName;
-  private final SearchLongGauge sizeGauge;
+  privatelon int currBlockIndelonx;   // Indelonx into blocks array.
+  privatelon int[] currBlock = null;
+  privatelon int currBlockOffselont;  // Indelonx into currelonnt block.
+  privatelon final String poolNamelon;
+  privatelon final SelonarchLongGaugelon sizelonGaugelon;
 
-  public IntBlockPool(String poolName) {
-    this(0, poolName);
+  public IntBlockPool(String poolNamelon) {
+    this(0, poolNamelon);
   }
 
-  public IntBlockPool(int initialValue, String poolName) {
-    // Start with room for 16 initial blocks (does not allocate these blocks).
-    this.pool = new Pool(new int[16][]);
-    this.initialValue = initialValue;
+  public IntBlockPool(int initialValuelon, String poolNamelon) {
+    // Start with room for 16 initial blocks (doelons not allocatelon thelonselon blocks).
+    this.pool = nelonw Pool(nelonw int[16][]);
+    this.initialValuelon = initialValuelon;
 
-    // Start at the end of a previous, non-existent blocks.
-    this.currBlockIndex = -1;
+    // Start at thelon elonnd of a prelonvious, non-elonxistelonnt blocks.
+    this.currBlockIndelonx = -1;
     this.currBlock = null;
-    this.currBlockOffset = BLOCK_SIZE;
-    this.poolName = poolName;
-    this.sizeGauge = createGauge(poolName, pool);
+    this.currBlockOffselont = BLOCK_SIZelon;
+    this.poolNamelon = poolNamelon;
+    this.sizelonGaugelon = crelonatelonGaugelon(poolNamelon, pool);
   }
 
-  // Constructor for FlushHandler.
-  protected IntBlockPool(
-      int currBlockIndex,
-      int currBlockOffset,
+  // Constructor for FlushHandlelonr.
+  protelonctelond IntBlockPool(
+      int currBlockIndelonx,
+      int currBlockOffselont,
       int[][]blocks,
-      String poolName) {
-    this.initialValue = 0;
-    this.pool = new Pool(blocks);
-    this.currBlockIndex = currBlockIndex;
-    this.currBlockOffset = currBlockOffset;
-    if (currBlockIndex >= 0) {
-      this.currBlock = this.pool.blocks[currBlockIndex];
+      String poolNamelon) {
+    this.initialValuelon = 0;
+    this.pool = nelonw Pool(blocks);
+    this.currBlockIndelonx = currBlockIndelonx;
+    this.currBlockOffselont = currBlockOffselont;
+    if (currBlockIndelonx >= 0) {
+      this.currBlock = this.pool.blocks[currBlockIndelonx];
     }
-    this.poolName = poolName;
-    this.sizeGauge = createGauge(poolName, pool);
+    this.poolNamelon = poolNamelon;
+    this.sizelonGaugelon = crelonatelonGaugelon(poolNamelon, pool);
   }
 
-  private static SearchLongGauge createGauge(String suffix, Pool pool) {
-    SearchLongGauge gauge = SearchLongGauge.export(STAT_PREFIX + suffix);
+  privatelon static SelonarchLongGaugelon crelonatelonGaugelon(String suffix, Pool pool) {
+    SelonarchLongGaugelon gaugelon = SelonarchLongGaugelon.elonxport(STAT_PRelonFIX + suffix);
     if (pool.blocks != null) {
-      gauge.set(pool.blocks.length * BLOCK_SIZE);
+      gaugelon.selont(pool.blocks.lelonngth * BLOCK_SIZelon);
     }
-    return gauge;
+    relonturn gaugelon;
   }
 
   /**
-   * Adds an int to the current block and returns it's overall index.
+   * Adds an int to thelon currelonnt block and relonturns it's ovelonrall indelonx.
    */
-  public int add(int value) {
-    if (currBlockOffset == BLOCK_SIZE) {
-      newBlock();
+  public int add(int valuelon) {
+    if (currBlockOffselont == BLOCK_SIZelon) {
+      nelonwBlock();
     }
-    currBlock[currBlockOffset++] = value;
-    return (currBlockIndex << BLOCK_SHIFT) + currBlockOffset - 1;
+    currBlock[currBlockOffselont++] = valuelon;
+    relonturn (currBlockIndelonx << BLOCK_SHIFT) + currBlockOffselont - 1;
   }
 
-  // Returns number of ints in this blocks
-  public int length() {
-    return currBlockOffset + currBlockIndex * BLOCK_SIZE;
+  // Relonturns numbelonr of ints in this blocks
+  public int lelonngth() {
+    relonturn currBlockOffselont + currBlockIndelonx * BLOCK_SIZelon;
   }
 
-  // Gets an int from the specified index.
-  public final int get(int index) {
-    return getBlock(index)[getOffsetInBlock(index)];
+  // Gelonts an int from thelon speloncifielond indelonx.
+  public final int gelont(int indelonx) {
+    relonturn gelontBlock(indelonx)[gelontOffselontInBlock(indelonx)];
   }
 
-  public static int getBlockStart(int index) {
-    return (index >>> BLOCK_SHIFT) * BLOCK_SIZE;
+  public static int gelontBlockStart(int indelonx) {
+    relonturn (indelonx >>> BLOCK_SHIFT) * BLOCK_SIZelon;
   }
 
-  public static int getOffsetInBlock(int index) {
-    return index & BLOCK_MASK;
+  public static int gelontOffselontInBlock(int indelonx) {
+    relonturn indelonx & BLOCK_MASK;
   }
 
-  public final int[] getBlock(int index) {
-    final int blockIndex = index >>> BLOCK_SHIFT;
-    return pool.blocks[blockIndex];
+  public final int[] gelontBlock(int indelonx) {
+    final int blockIndelonx = indelonx >>> BLOCK_SHIFT;
+    relonturn pool.blocks[blockIndelonx];
   }
 
-  // Sets an int value at the specified index.
-  public void set(int index, int value) {
-    final int blockIndex = index >>> BLOCK_SHIFT;
-    final int offset = index & BLOCK_MASK;
-    pool.blocks[blockIndex][offset] = value;
+  // Selonts an int valuelon at thelon speloncifielond indelonx.
+  public void selont(int indelonx, int valuelon) {
+    final int blockIndelonx = indelonx >>> BLOCK_SHIFT;
+    final int offselont = indelonx & BLOCK_MASK;
+    pool.blocks[blockIndelonx][offselont] = valuelon;
   }
 
   /**
-   * Evaluates whether two instances of IntBlockPool are equal by value. It is
-   * slow because it has to check every element in the pool.
+   * elonvaluatelons whelonthelonr two instancelons of IntBlockPool arelon elonqual by valuelon. It is
+   * slow beloncauselon it has to chelonck elonvelonry elonlelonmelonnt in thelon pool.
    */
-  @VisibleForTesting
-  public boolean verySlowEqualsForTests(IntBlockPool that) {
-    if (length() != that.length()) {
-      return false;
+  @VisiblelonForTelonsting
+  public boolelonan velonrySlowelonqualsForTelonsts(IntBlockPool that) {
+    if (lelonngth() != that.lelonngth()) {
+      relonturn falselon;
     }
 
-    for (int i = 0; i < length(); i++) {
-      if (get(i) != that.get(i)) {
-        return false;
+    for (int i = 0; i < lelonngth(); i++) {
+      if (gelont(i) != that.gelont(i)) {
+        relonturn falselon;
       }
     }
 
-    return true;
+    relonturn truelon;
   }
 
-  private void newBlock() {
-    final int newBlockIndex = 1 + currBlockIndex;
-    if (newBlockIndex >= MAX_NUM_BLOCKS) {
-      throw new RuntimeException(
-          "Too many blocks, would overflow int index for blocks " + poolName);
+  privatelon void nelonwBlock() {
+    final int nelonwBlockIndelonx = 1 + currBlockIndelonx;
+    if (nelonwBlockIndelonx >= MAX_NUM_BLOCKS) {
+      throw nelonw Runtimelonelonxcelonption(
+          "Too many blocks, would ovelonrflow int indelonx for blocks " + poolNamelon);
     }
-    if (newBlockIndex == pool.blocks.length) {
-      // Blocks array is too small to add a new block.  Resize.
-      int[][] newBlocks = new int[pool.blocks.length * 2][];
-      System.arraycopy(pool.blocks, 0, newBlocks, 0, pool.blocks.length);
-      pool = new Pool(newBlocks);
+    if (nelonwBlockIndelonx == pool.blocks.lelonngth) {
+      // Blocks array is too small to add a nelonw block.  Relonsizelon.
+      int[][] nelonwBlocks = nelonw int[pool.blocks.lelonngth * 2][];
+      Systelonm.arraycopy(pool.blocks, 0, nelonwBlocks, 0, pool.blocks.lelonngth);
+      pool = nelonw Pool(nelonwBlocks);
 
-      sizeGauge.set(pool.blocks.length * BLOCK_SIZE);
+      sizelonGaugelon.selont(pool.blocks.lelonngth * BLOCK_SIZelon);
     }
 
-    currBlock = pool.blocks[newBlockIndex] = allocateBlock();
-    currBlockOffset = 0;
-    currBlockIndex = newBlockIndex;
+    currBlock = pool.blocks[nelonwBlockIndelonx] = allocatelonBlock();
+    currBlockOffselont = 0;
+    currBlockIndelonx = nelonwBlockIndelonx;
   }
 
-  private int[] allocateBlock() {
-    int[] block = new int[BLOCK_SIZE];
-    Arrays.fill(block, initialValue);
-    return block;
+  privatelon int[] allocatelonBlock() {
+    int[] block = nelonw int[BLOCK_SIZelon];
+    Arrays.fill(block, initialValuelon);
+    relonturn block;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SupprelonssWarnings("unchelonckelond")
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<IntBlockPool> {
-    private static final String CURRENT_BLOCK_INDEX_PROP_NAME = "currentBlockIndex";
-    private static final String CURRENT_BLOCK_OFFSET_PROP_NAME = "currentBlockOffset";
-    private static final String POOL_NAME = "poolName";
+  public static final class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<IntBlockPool> {
+    privatelon static final String CURRelonNT_BLOCK_INDelonX_PROP_NAMelon = "currelonntBlockIndelonx";
+    privatelon static final String CURRelonNT_BLOCK_OFFSelonT_PROP_NAMelon = "currelonntBlockOffselont";
+    privatelon static final String POOL_NAMelon = "poolNamelon";
 
-    public FlushHandler() {
-      super();
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    public FlushHandler(IntBlockPool objToFlush) {
-      super(objToFlush);
+    public FlushHandlelonr(IntBlockPool objToFlush) {
+      supelonr(objToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      IntBlockPool pool = getObjectToFlush();
-      flushInfo.addIntProperty(CURRENT_BLOCK_INDEX_PROP_NAME, pool.currBlockIndex);
-      flushInfo.addIntProperty(CURRENT_BLOCK_OFFSET_PROP_NAME, pool.currBlockOffset);
-      flushInfo.addStringProperty(POOL_NAME, pool.poolName);
-      out.writeIntArray2D(pool.pool.blocks, pool.currBlockIndex + 1);
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      IntBlockPool pool = gelontObjelonctToFlush();
+      flushInfo.addIntPropelonrty(CURRelonNT_BLOCK_INDelonX_PROP_NAMelon, pool.currBlockIndelonx);
+      flushInfo.addIntPropelonrty(CURRelonNT_BLOCK_OFFSelonT_PROP_NAMelon, pool.currBlockOffselont);
+      flushInfo.addStringPropelonrty(POOL_NAMelon, pool.poolNamelon);
+      out.writelonIntArray2D(pool.pool.blocks, pool.currBlockIndelonx + 1);
     }
 
-    @Override
-    protected IntBlockPool doLoad(FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      String poolName = flushInfo.getStringProperty(POOL_NAME);
-      return new IntBlockPool(
-          flushInfo.getIntProperty(CURRENT_BLOCK_INDEX_PROP_NAME),
-          flushInfo.getIntProperty(CURRENT_BLOCK_OFFSET_PROP_NAME),
-          in.readIntArray2D(),
-          poolName);
+    @Ovelonrridelon
+    protelonctelond IntBlockPool doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in) throws IOelonxcelonption {
+      String poolNamelon = flushInfo.gelontStringPropelonrty(POOL_NAMelon);
+      relonturn nelonw IntBlockPool(
+          flushInfo.gelontIntPropelonrty(CURRelonNT_BLOCK_INDelonX_PROP_NAMelon),
+          flushInfo.gelontIntPropelonrty(CURRelonNT_BLOCK_OFFSelonT_PROP_NAMelon),
+          in.relonadIntArray2D(),
+          poolNamelon);
     }
   }
 }

@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+import com.twittelonr.follow_reloncommelonndations.thriftscala.FollowReloncommelonndationsThriftSelonrvicelon
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.convelonrsions.PelonrcelonntOps._
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.util.Duration
 
-object FollowRecommenderServiceModule
-    extends ThriftMethodBuilderClientModule[
-      FollowRecommendationsThriftService.ServicePerEndpoint,
-      FollowRecommendationsThriftService.MethodPerEndpoint
+objelonct FollowReloncommelonndelonrSelonrvicelonModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      FollowReloncommelonndationsThriftSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      FollowReloncommelonndationsThriftSelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override val label: String = "follow-recommendations-service"
+  ovelonrridelon val labelonl: String = "follow-reloncommelonndations-selonrvicelon"
 
-  override val dest: String = "/s/follow-recommendations/follow-recos-service"
+  ovelonrridelon val delonst: String = "/s/follow-reloncommelonndations/follow-reloncos-selonrvicelon"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(400.millis)
-      .withTimeoutTotal(800.millis)
-      .idempotent(5.percent)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = {
+    melonthodBuildelonr
+      .withTimelonoutPelonrRelonquelonst(400.millis)
+      .withTimelonoutTotal(800.millis)
+      .idelonmpotelonnt(5.pelonrcelonnt)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 500.milliselonconds
 }

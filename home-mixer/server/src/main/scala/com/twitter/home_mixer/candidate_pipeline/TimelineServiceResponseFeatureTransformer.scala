@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.candidate_pipeline
+packagelon com.twittelonr.homelon_mixelonr.candidatelon_pipelonlinelon
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.{thriftscala => t}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InRelonplyToTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonUselonrIdFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
+import com.twittelonr.timelonlinelonselonrvicelon.{thriftscala => t}
 
-object TimelineServiceResponseFeatureTransformer extends CandidateFeatureTransformer[t.Tweet] {
+objelonct TimelonlinelonSelonrvicelonRelonsponselonFelonaturelonTransformelonr elonxtelonnds CandidatelonFelonaturelonTransformelonr[t.Twelonelont] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("TimelineServiceResponse")
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr = TransformelonrIdelonntifielonr("TimelonlinelonSelonrvicelonRelonsponselon")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    InReplyToTweetIdFeature,
-    IsRetweetFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    AuthorIdFelonaturelon,
+    InRelonplyToTwelonelontIdFelonaturelon,
+    IsRelontwelonelontFelonaturelon,
+    SourcelonTwelonelontIdFelonaturelon,
+    SourcelonUselonrIdFelonaturelon,
   )
 
-  override def transform(candidate: t.Tweet): FeatureMap = FeatureMapBuilder()
-    .add(AuthorIdFeature, candidate.userId)
-    .add(InReplyToTweetIdFeature, candidate.inReplyToStatusId)
-    .add(IsRetweetFeature, candidate.sourceStatusId.isDefined)
-    .add(SourceTweetIdFeature, candidate.sourceStatusId)
-    .add(SourceUserIdFeature, candidate.sourceUserId)
+  ovelonrridelon delonf transform(candidatelon: t.Twelonelont): FelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(AuthorIdFelonaturelon, candidatelon.uselonrId)
+    .add(InRelonplyToTwelonelontIdFelonaturelon, candidatelon.inRelonplyToStatusId)
+    .add(IsRelontwelonelontFelonaturelon, candidatelon.sourcelonStatusId.isDelonfinelond)
+    .add(SourcelonTwelonelontIdFelonaturelon, candidatelon.sourcelonStatusId)
+    .add(SourcelonUselonrIdFelonaturelon, candidatelon.sourcelonUselonrId)
     .build()
 }

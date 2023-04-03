@@ -1,36 +1,36 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-public class FilteredScorer extends Scorer {
-  protected final Scorer inner;
+public class FiltelonrelondScorelonr elonxtelonnds Scorelonr {
+  protelonctelond final Scorelonr innelonr;
 
-  public FilteredScorer(Weight weight, Scorer inner) {
-    super(weight);
-    this.inner = inner;
+  public FiltelonrelondScorelonr(Welonight welonight, Scorelonr innelonr) {
+    supelonr(welonight);
+    this.innelonr = innelonr;
   }
 
-  @Override
-  public float score() throws IOException {
-    return inner.score();
+  @Ovelonrridelon
+  public float scorelon() throws IOelonxcelonption {
+    relonturn innelonr.scorelon();
   }
 
-  @Override
+  @Ovelonrridelon
   public int docID() {
-    return inner.docID();
+    relonturn innelonr.docID();
   }
 
-  @Override
-  public DocIdSetIterator iterator() {
-    return inner.iterator();
+  @Ovelonrridelon
+  public DocIdSelontItelonrator itelonrator() {
+    relonturn innelonr.itelonrator();
   }
 
-  @Override
-  public float getMaxScore(int upTo) throws IOException {
-    return inner.getMaxScore(upTo);
+  @Ovelonrridelon
+  public float gelontMaxScorelon(int upTo) throws IOelonxcelonption {
+    relonturn innelonr.gelontMaxScorelon(upTo);
   }
 }

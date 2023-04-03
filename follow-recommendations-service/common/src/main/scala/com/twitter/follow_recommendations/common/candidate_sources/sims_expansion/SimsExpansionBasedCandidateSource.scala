@@ -1,114 +1,114 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.TwoHopExpansionCandidateSource
-import com.twitter.follow_recommendations.common.candidate_sources.sims.SwitchingSimsSource
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.TwoHopelonxpansionCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims.SwitchingSimsSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasSimilarToContelonxt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.SimilarToProof
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 import scala.math._
 
-case class SimilarUser(candidateId: Long, similarTo: Long, score: Double)
+caselon class SimilarUselonr(candidatelonId: Long, similarTo: Long, scorelon: Doublelon)
 
-abstract class SimsExpansionBasedCandidateSource[-Target <: HasParams](
-  switchingSimsSource: SwitchingSimsSource)
-    extends TwoHopExpansionCandidateSource[Target, CandidateUser, SimilarUser, CandidateUser] {
+abstract class SimselonxpansionBaselondCandidatelonSourcelon[-Targelont <: HasParams](
+  switchingSimsSourcelon: SwitchingSimsSourcelon)
+    elonxtelonnds TwoHopelonxpansionCandidatelonSourcelon[Targelont, CandidatelonUselonr, SimilarUselonr, CandidatelonUselonr] {
 
-  // max number secondary degree nodes per first degree node
-  def maxSecondaryDegreeNodes(req: Target): Int
+  // max numbelonr seloncondary delongrelonelon nodelons pelonr first delongrelonelon nodelon
+  delonf maxSeloncondaryDelongrelonelonNodelons(relonq: Targelont): Int
 
-  // max number output results
-  def maxResults(req: Target): Int
+  // max numbelonr output relonsults
+  delonf maxRelonsults(relonq: Targelont): Int
 
-  // scorer to score candidate based on first and second degree node scores
-  def scoreCandidate(source: Double, similarToScore: Double): Double
+  // scorelonr to scorelon candidatelon baselond on first and seloncond delongrelonelon nodelon scorelons
+  delonf scorelonCandidatelon(sourcelon: Doublelon, similarToScorelon: Doublelon): Doublelon
 
-  def calibrateDivisor(req: Target): Double
+  delonf calibratelonDivisor(relonq: Targelont): Doublelon
 
-  def calibrateScore(candidateScore: Double, req: Target): Double = {
-    candidateScore / calibrateDivisor(req)
+  delonf calibratelonScorelon(candidatelonScorelon: Doublelon, relonq: Targelont): Doublelon = {
+    candidatelonScorelon / calibratelonDivisor(relonq)
   }
 
-  override def secondaryDegreeNodes(req: Target, node: CandidateUser): Stitch[Seq[SimilarUser]] = {
-    switchingSimsSource(new HasParams with HasSimilarToContext {
-      override val similarToUserIds = Seq(node.id)
-      override val params = (req.params)
-    }).map(_.take(maxSecondaryDegreeNodes(req)).map { candidate =>
-      SimilarUser(
-        candidate.id,
-        node.id,
-        (node.score, candidate.score) match {
-          // only calibrated sims expanded candidates scores
-          case (Some(nodeScore), Some(candidateScore)) =>
-            calibrateScore(scoreCandidate(nodeScore, candidateScore), req)
-          case (Some(nodeScore), _) => nodeScore
-          // NewFollowingSimilarUser will enter this case
-          case _ => calibrateScore(candidate.score.getOrElse(0.0), req)
+  ovelonrridelon delonf seloncondaryDelongrelonelonNodelons(relonq: Targelont, nodelon: CandidatelonUselonr): Stitch[Selonq[SimilarUselonr]] = {
+    switchingSimsSourcelon(nelonw HasParams with HasSimilarToContelonxt {
+      ovelonrridelon val similarToUselonrIds = Selonq(nodelon.id)
+      ovelonrridelon val params = (relonq.params)
+    }).map(_.takelon(maxSeloncondaryDelongrelonelonNodelons(relonq)).map { candidatelon =>
+      SimilarUselonr(
+        candidatelon.id,
+        nodelon.id,
+        (nodelon.scorelon, candidatelon.scorelon) match {
+          // only calibratelond sims elonxpandelond candidatelons scorelons
+          caselon (Somelon(nodelonScorelon), Somelon(candidatelonScorelon)) =>
+            calibratelonScorelon(scorelonCandidatelon(nodelonScorelon, candidatelonScorelon), relonq)
+          caselon (Somelon(nodelonScorelon), _) => nodelonScorelon
+          // NelonwFollowingSimilarUselonr will elonntelonr this caselon
+          caselon _ => calibratelonScorelon(candidatelon.scorelon.gelontOrelonlselon(0.0), relonq)
         }
       )
     })
   }
 
-  override def aggregateAndScore(
-    request: Target,
-    firstDegreeToSecondDegreeNodesMap: Map[CandidateUser, Seq[SimilarUser]]
-  ): Stitch[Seq[CandidateUser]] = {
+  ovelonrridelon delonf aggrelongatelonAndScorelon(
+    relonquelonst: Targelont,
+    firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap: Map[CandidatelonUselonr, Selonq[SimilarUselonr]]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
 
-    val inputNodes = firstDegreeToSecondDegreeNodesMap.keys.map(_.id).toSet
-    val aggregator = request.params(SimsExpansionSourceParams.Aggregator) match {
-      case SimsExpansionSourceAggregatorId.Max =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Max
-      case SimsExpansionSourceAggregatorId.Sum =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.Sum
-      case SimsExpansionSourceAggregatorId.MultiDecay =>
-        SimsExpansionBasedCandidateSource.ScoreAggregator.MultiDecay
+    val inputNodelons = firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap.kelonys.map(_.id).toSelont
+    val aggrelongator = relonquelonst.params(SimselonxpansionSourcelonParams.Aggrelongator) match {
+      caselon SimselonxpansionSourcelonAggrelongatorId.Max =>
+        SimselonxpansionBaselondCandidatelonSourcelon.ScorelonAggrelongator.Max
+      caselon SimselonxpansionSourcelonAggrelongatorId.Sum =>
+        SimselonxpansionBaselondCandidatelonSourcelon.ScorelonAggrelongator.Sum
+      caselon SimselonxpansionSourcelonAggrelongatorId.MultiDeloncay =>
+        SimselonxpansionBaselondCandidatelonSourcelon.ScorelonAggrelongator.MultiDeloncay
     }
 
-    val groupedCandidates = firstDegreeToSecondDegreeNodesMap.values.flatten
-      .filterNot(c => inputNodes.contains(c.candidateId))
-      .groupBy(_.candidateId)
+    val groupelondCandidatelons = firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap.valuelons.flattelonn
+      .filtelonrNot(c => inputNodelons.contains(c.candidatelonId))
+      .groupBy(_.candidatelonId)
       .map {
-        case (id, candidates) =>
-          // Different aggregators for final score
-          val finalScore = aggregator(candidates.map(_.score).toSeq)
-          val proofs = candidates.map(_.similarTo).toSet
+        caselon (id, candidatelons) =>
+          // Diffelonrelonnt aggrelongators for final scorelon
+          val finalScorelon = aggrelongator(candidatelons.map(_.scorelon).toSelonq)
+          val proofs = candidatelons.map(_.similarTo).toSelont
 
-          CandidateUser(
+          CandidatelonUselonr(
             id = id,
-            score = Some(finalScore),
-            reason =
-              Some(Reason(Some(AccountProof(similarToProof = Some(SimilarToProof(proofs.toSeq))))))
-          ).withCandidateSource(identifier)
+            scorelon = Somelon(finalScorelon),
+            relonason =
+              Somelon(Relonason(Somelon(AccountProof(similarToProof = Somelon(SimilarToProof(proofs.toSelonq))))))
+          ).withCandidatelonSourcelon(idelonntifielonr)
       }
-      .toSeq
-      .sortBy(-_.score.getOrElse(0.0d))
-      .take(maxResults(request))
+      .toSelonq
+      .sortBy(-_.scorelon.gelontOrelonlselon(0.0d))
+      .takelon(maxRelonsults(relonquelonst))
 
-    Stitch.value(groupedCandidates)
+    Stitch.valuelon(groupelondCandidatelons)
   }
 }
 
-object SimsExpansionBasedCandidateSource {
-  object ScoreAggregator {
-    val Max: Seq[Double] => Double = (candidateScores: Seq[Double]) => {
-      if (candidateScores.size > 0) candidateScores.max else 0.0
+objelonct SimselonxpansionBaselondCandidatelonSourcelon {
+  objelonct ScorelonAggrelongator {
+    val Max: Selonq[Doublelon] => Doublelon = (candidatelonScorelons: Selonq[Doublelon]) => {
+      if (candidatelonScorelons.sizelon > 0) candidatelonScorelons.max elonlselon 0.0
     }
-    val Sum: Seq[Double] => Double = (candidateScores: Seq[Double]) => {
-      candidateScores.sum
+    val Sum: Selonq[Doublelon] => Doublelon = (candidatelonScorelons: Selonq[Doublelon]) => {
+      candidatelonScorelons.sum
     }
-    val MultiDecay: Seq[Double] => Double = (candidateScores: Seq[Double]) => {
+    val MultiDeloncay: Selonq[Doublelon] => Doublelon = (candidatelonScorelons: Selonq[Doublelon]) => {
       val alpha = 0.1
-      val beta = 0.1
+      val belonta = 0.1
       val gamma = 0.8
-      val decay_scores: Seq[Double] =
-        candidateScores
-          .sorted(Ordering[Double].reverse)
-          .zipWithIndex
+      val deloncay_scorelons: Selonq[Doublelon] =
+        candidatelonScorelons
+          .sortelond(Ordelonring[Doublelon].relonvelonrselon)
+          .zipWithIndelonx
           .map(x => x._1 * pow(gamma, x._2))
-      alpha * candidateScores.max + decay_scores.sum + beta * candidateScores.size
+      alpha * candidatelonScorelons.max + deloncay_scorelons.sum + belonta * candidatelonScorelons.sizelon
     }
   }
 }

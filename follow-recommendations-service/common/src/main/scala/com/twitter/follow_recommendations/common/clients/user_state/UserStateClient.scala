@@ -1,83 +1,83 @@
-package com.twitter.follow_recommendations.common.clients.user_state
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.uselonr_statelon
 
-import com.google.inject.name.Named
-import com.twitter.conversions.DurationOps._
-import com.twitter.core_workflows.user_model.thriftscala.CondensedUserState
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.clients.cache.MemcacheClient
-import com.twitter.follow_recommendations.common.clients.cache.ThriftEnumOptionBijection
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.CondelonnselondUselonrStatelon
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.RandomReloncipielonnt
+import com.twittelonr.finaglelon.Melonmcachelond.Clielonnt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.StatsUtil
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.cachelon.MelonmcachelonClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.cachelon.ThriftelonnumOptionBijelonction
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs.DeloncidelonrKelony
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.util.Duration
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 import java.lang.{Long => JLong}
 
-@Singleton
-class UserStateClient @Inject() (
-  @Named(GuiceNamedConstants.USER_STATE_FETCHER) userStateFetcher: Fetcher[
+@Singlelonton
+class UselonrStatelonClielonnt @Injelonct() (
+  @Namelond(GuicelonNamelondConstants.USelonR_STATelon_FelonTCHelonR) uselonrStatelonFelontchelonr: Felontchelonr[
     Long,
     Unit,
-    CondensedUserState
+    CondelonnselondUselonrStatelon
   ],
-  client: Client,
-  statsReceiver: StatsReceiver,
-  decider: Decider = Decider.False) {
+  clielonnt: Clielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  deloncidelonr: Deloncidelonr = Deloncidelonr.Falselon) {
 
-  private val stats: StatsReceiver = statsReceiver.scope("user_state_client")
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("uselonr_statelon_clielonnt")
 
-  // client to memcache cluster
-  val bijection = new ThriftEnumOptionBijection[UserState](UserState.apply)
-  val memcacheClient = MemcacheClient[Option[UserState]](
-    client = client,
-    dest = "/s/cache/follow_recos_service:twemcaches",
-    valueBijection = bijection,
-    ttl = UserStateClient.CacheTTL,
-    statsReceiver = stats.scope("twemcache")
+  // clielonnt to melonmcachelon clustelonr
+  val bijelonction = nelonw ThriftelonnumOptionBijelonction[UselonrStatelon](UselonrStatelon.apply)
+  val melonmcachelonClielonnt = MelonmcachelonClielonnt[Option[UselonrStatelon]](
+    clielonnt = clielonnt,
+    delonst = "/s/cachelon/follow_reloncos_selonrvicelon:twelonmcachelons",
+    valuelonBijelonction = bijelonction,
+    ttl = UselonrStatelonClielonnt.CachelonTTL,
+    statsReloncelonivelonr = stats.scopelon("twelonmcachelon")
   )
 
-  def getUserState(userId: Long): Stitch[Option[UserState]] = {
-    val deciderKey: String = DeciderKey.EnableDistributedCaching.toString
-    val enableDistributedCaching: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
-    val userStateStitch: Stitch[Option[UserState]] = 
-      enableDistributedCaching match {
-        // read from memcache
-        case true => memcacheClient.readThrough(
-          // add a key prefix to address cache key collisions
-          key = "UserStateClient" + userId.toString,
-          underlyingCall = () => fetchUserState(userId)
+  delonf gelontUselonrStatelon(uselonrId: Long): Stitch[Option[UselonrStatelon]] = {
+    val deloncidelonrKelony: String = DeloncidelonrKelony.elonnablelonDistributelondCaching.toString
+    val elonnablelonDistributelondCaching: Boolelonan = deloncidelonr.isAvailablelon(deloncidelonrKelony, Somelon(RandomReloncipielonnt))
+    val uselonrStatelonStitch: Stitch[Option[UselonrStatelon]] =
+      elonnablelonDistributelondCaching match {
+        // relonad from melonmcachelon
+        caselon truelon => melonmcachelonClielonnt.relonadThrough(
+          // add a kelony prelonfix to addrelonss cachelon kelony collisions
+          kelony = "UselonrStatelonClielonnt" + uselonrId.toString,
+          undelonrlyingCall = () => felontchUselonrStatelon(uselonrId)
         )
-        case false => fetchUserState(userId)
+        caselon falselon => felontchUselonrStatelon(uselonrId)
       }
-    val userStateStitchWithTimeout: Stitch[Option[UserState]] = 
-      userStateStitch
-        // set a 150ms timeout limit for user state fetches
-        .within(150.milliseconds)(DefaultTimer)
-        .rescue {
-          case e: Exception =>
-            stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-            Stitch(None)
+    val uselonrStatelonStitchWithTimelonout: Stitch[Option[UselonrStatelon]] =
+      uselonrStatelonStitch
+        // selont a 150ms timelonout limit for uselonr statelon felontchelons
+        .within(150.milliselonconds)(DelonfaultTimelonr)
+        .relonscuelon {
+          caselon elon: elonxcelonption =>
+            stats.scopelon("relonscuelond").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+            Stitch(Nonelon)
         }
-    // profile the latency of stitch call and return the result
-    StatsUtil.profileStitch(
-      userStateStitchWithTimeout,
-      stats.scope("getUserState")
+    // profilelon thelon latelonncy of stitch call and relonturn thelon relonsult
+    StatsUtil.profilelonStitch(
+      uselonrStatelonStitchWithTimelonout,
+      stats.scopelon("gelontUselonrStatelon")
     )
   }
 
-  def fetchUserState(userId: JLong): Stitch[Option[UserState]] = {
-    userStateFetcher.fetch(userId).map(_.v.flatMap(_.userState))
+  delonf felontchUselonrStatelon(uselonrId: JLong): Stitch[Option[UselonrStatelon]] = {
+    uselonrStatelonFelontchelonr.felontch(uselonrId).map(_.v.flatMap(_.uselonrStatelon))
   }
 }
 
-object UserStateClient {
-  val CacheTTL: Duration = Duration.fromHours(6)
+objelonct UselonrStatelonClielonnt {
+  val CachelonTTL: Duration = Duration.fromHours(6)
 }

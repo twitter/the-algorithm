@@ -1,79 +1,79 @@
-package com.twitter.timelineranker.parameters.recap
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap
 
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelines.util.bounds.BoundsWithDefault
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelons.util.bounds.BoundsWithDelonfault
 
-object RecapQueryContext {
-  val MaxFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](1, 3000, 1000)
-  val MaxCountMultiplier: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.1, 2.0, 2.0)
-  val MaxRealGraphAndFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](0, 2000, 1000)
+objelonct ReloncapQuelonryContelonxt {
+  val MaxFollowelondUselonrs: BoundsWithDelonfault[Int] = BoundsWithDelonfault[Int](1, 3000, 1000)
+  val MaxCountMultiplielonr: BoundsWithDelonfault[Doublelon] = BoundsWithDelonfault[Doublelon](0.1, 2.0, 2.0)
+  val MaxRelonalGraphAndFollowelondUselonrs: BoundsWithDelonfault[Int] = BoundsWithDelonfault[Int](0, 2000, 1000)
 
-  def getDefaultContext(query: RecapQuery): RecapQueryContext = {
-    new RecapQueryContextImpl(
-      query,
-      getEnableHydrationUsingTweetyPie = () => false,
-      getMaxFollowedUsers = () => MaxFollowedUsers.default,
-      getMaxCountMultiplier = () => MaxCountMultiplier.default,
-      getEnableRealGraphUsers = () => false,
-      getOnlyRealGraphUsers = () => false,
-      getMaxRealGraphAndFollowedUsers = () => MaxRealGraphAndFollowedUsers.default,
-      getEnableTextFeatureHydration = () => false
+  delonf gelontDelonfaultContelonxt(quelonry: ReloncapQuelonry): ReloncapQuelonryContelonxt = {
+    nelonw ReloncapQuelonryContelonxtImpl(
+      quelonry,
+      gelontelonnablelonHydrationUsingTwelonelontyPielon = () => falselon,
+      gelontMaxFollowelondUselonrs = () => MaxFollowelondUselonrs.delonfault,
+      gelontMaxCountMultiplielonr = () => MaxCountMultiplielonr.delonfault,
+      gelontelonnablelonRelonalGraphUselonrs = () => falselon,
+      gelontOnlyRelonalGraphUselonrs = () => falselon,
+      gelontMaxRelonalGraphAndFollowelondUselonrs = () => MaxRelonalGraphAndFollowelondUselonrs.delonfault,
+      gelontelonnablelonTelonxtFelonaturelonHydration = () => falselon
     )
   }
 }
 
-// Note that methods that return parameter value always use () to indicate that
-// side effects may be involved in their invocation.
-trait RecapQueryContext {
-  def query: RecapQuery
+// Notelon that melonthods that relonturn paramelontelonr valuelon always uselon () to indicatelon that
+// sidelon elonffeloncts may belon involvelond in thelonir invocation.
+trait ReloncapQuelonryContelonxt {
+  delonf quelonry: ReloncapQuelonry
 
-  // If true, tweet hydration are performed by calling TweetyPie.
-  // Otherwise, tweets are partially hydrated based on information in ThriftSearchResult.
-  def enableHydrationUsingTweetyPie(): Boolean
+  // If truelon, twelonelont hydration arelon pelonrformelond by calling TwelonelontyPielon.
+  // Othelonrwiselon, twelonelonts arelon partially hydratelond baselond on information in ThriftSelonarchRelonsult.
+  delonf elonnablelonHydrationUsingTwelonelontyPielon(): Boolelonan
 
-  // Maximum number of followed user accounts to use when fetching recap tweets.
-  def maxFollowedUsers(): Int
+  // Maximum numbelonr of followelond uselonr accounts to uselon whelonn felontching reloncap twelonelonts.
+  delonf maxFollowelondUselonrs(): Int
 
-  // We multiply maxCount (caller supplied value) by this multiplier and fetch those many
-  // candidates from search so that we are left with sufficient number of candidates after
-  // hydration and filtering.
-  def maxCountMultiplier(): Double
+  // Welon multiply maxCount (callelonr supplielond valuelon) by this multiplielonr and felontch thoselon many
+  // candidatelons from selonarch so that welon arelon lelonft with sufficielonnt numbelonr of candidatelons aftelonr
+  // hydration and filtelonring.
+  delonf maxCountMultiplielonr(): Doublelon
 
-  // Only used if user follows >= 1000.
-  // If true, fetches recap/recycled tweets using author seedset mixing with real graph users and followed users.
-  // Otherwise, fetches recap/recycled tweets only using followed users
-  def enableRealGraphUsers(): Boolean
+  // Only uselond if uselonr follows >= 1000.
+  // If truelon, felontchelons reloncap/reloncyclelond twelonelonts using author selonelondselont mixing with relonal graph uselonrs and followelond uselonrs.
+  // Othelonrwiselon, felontchelons reloncap/reloncyclelond twelonelonts only using followelond uselonrs
+  delonf elonnablelonRelonalGraphUselonrs(): Boolelonan
 
-  // Only used if enableRealGraphUsers is true.
-  // If true, user seedset only contains real graph users.
-  // Otherwise, user seedset contains real graph users and recent followed users.
-  def onlyRealGraphUsers(): Boolean
+  // Only uselond if elonnablelonRelonalGraphUselonrs is truelon.
+  // If truelon, uselonr selonelondselont only contains relonal graph uselonrs.
+  // Othelonrwiselon, uselonr selonelondselont contains relonal graph uselonrs and reloncelonnt followelond uselonrs.
+  delonf onlyRelonalGraphUselonrs(): Boolelonan
 
-  // Only used if enableRealGraphUsers is true and onlyRealGraphUsers is false.
-  // Maximum number of real graph users and recent followed users when mixing recent/real-graph users.
-  def maxRealGraphAndFollowedUsers(): Int
+  // Only uselond if elonnablelonRelonalGraphUselonrs is truelon and onlyRelonalGraphUselonrs is falselon.
+  // Maximum numbelonr of relonal graph uselonrs and reloncelonnt followelond uselonrs whelonn mixing reloncelonnt/relonal-graph uselonrs.
+  delonf maxRelonalGraphAndFollowelondUselonrs(): Int
 
-  // If true, text features are hydrated for prediction.
-  // Otherwise those feature values are not set at all.
-  def enableTextFeatureHydration(): Boolean
+  // If truelon, telonxt felonaturelons arelon hydratelond for prelondiction.
+  // Othelonrwiselon thoselon felonaturelon valuelons arelon not selont at all.
+  delonf elonnablelonTelonxtFelonaturelonHydration(): Boolelonan
 }
 
-class RecapQueryContextImpl(
-  override val query: RecapQuery,
-  getEnableHydrationUsingTweetyPie: () => Boolean,
-  getMaxFollowedUsers: () => Int,
-  getMaxCountMultiplier: () => Double,
-  getEnableRealGraphUsers: () => Boolean,
-  getOnlyRealGraphUsers: () => Boolean,
-  getMaxRealGraphAndFollowedUsers: () => Int,
-  getEnableTextFeatureHydration: () => Boolean)
-    extends RecapQueryContext {
+class ReloncapQuelonryContelonxtImpl(
+  ovelonrridelon val quelonry: ReloncapQuelonry,
+  gelontelonnablelonHydrationUsingTwelonelontyPielon: () => Boolelonan,
+  gelontMaxFollowelondUselonrs: () => Int,
+  gelontMaxCountMultiplielonr: () => Doublelon,
+  gelontelonnablelonRelonalGraphUselonrs: () => Boolelonan,
+  gelontOnlyRelonalGraphUselonrs: () => Boolelonan,
+  gelontMaxRelonalGraphAndFollowelondUselonrs: () => Int,
+  gelontelonnablelonTelonxtFelonaturelonHydration: () => Boolelonan)
+    elonxtelonnds ReloncapQuelonryContelonxt {
 
-  override def enableHydrationUsingTweetyPie(): Boolean = { getEnableHydrationUsingTweetyPie() }
-  override def maxFollowedUsers(): Int = { getMaxFollowedUsers() }
-  override def maxCountMultiplier(): Double = { getMaxCountMultiplier() }
-  override def enableRealGraphUsers(): Boolean = { getEnableRealGraphUsers() }
-  override def onlyRealGraphUsers(): Boolean = { getOnlyRealGraphUsers() }
-  override def maxRealGraphAndFollowedUsers(): Int = { getMaxRealGraphAndFollowedUsers() }
-  override def enableTextFeatureHydration(): Boolean = { getEnableTextFeatureHydration() }
+  ovelonrridelon delonf elonnablelonHydrationUsingTwelonelontyPielon(): Boolelonan = { gelontelonnablelonHydrationUsingTwelonelontyPielon() }
+  ovelonrridelon delonf maxFollowelondUselonrs(): Int = { gelontMaxFollowelondUselonrs() }
+  ovelonrridelon delonf maxCountMultiplielonr(): Doublelon = { gelontMaxCountMultiplielonr() }
+  ovelonrridelon delonf elonnablelonRelonalGraphUselonrs(): Boolelonan = { gelontelonnablelonRelonalGraphUselonrs() }
+  ovelonrridelon delonf onlyRelonalGraphUselonrs(): Boolelonan = { gelontOnlyRelonalGraphUselonrs() }
+  ovelonrridelon delonf maxRelonalGraphAndFollowelondUselonrs(): Int = { gelontMaxRelonalGraphAndFollowelondUselonrs() }
+  ovelonrridelon delonf elonnablelonTelonxtFelonaturelonHydration(): Boolelonan = { gelontelonnablelonTelonxtFelonaturelonHydration() }
 }

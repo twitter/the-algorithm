@@ -1,146 +1,146 @@
-# Adhoc SimClusters Cluster-to-tweet Index Generation Jobs
-## Build and bundle the binaries
+# Adhoc SimClustelonrs Clustelonr-to-twelonelont Indelonx Gelonnelonration Jobs
+## Build and bundlelon thelon binarielons
 
 ```
- bazel bundle src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/...
+ bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/...
 ```
 
-## Run the adhoc jobs
-### To run fav based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/fav-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/fav-based-cluster-to-tweet-index-generation-adhoc-job-bundle/fav-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="fav-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:fav-based-cluster-to-tweet-index-generation-adhoc-job"
+## Run thelon adhoc jobs
+### To run fav baselond clustelonr-to-twelonelont indelonx gelonnelonration job (adhoc):
+bin/d6w crelonatelon \
+  twttr-reloncos-ml-prod/us-celonntral1/fav-baselond-indelonx-gelonnelonration-adhoc-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --jar dist/fav-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job-bundlelon/fav-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job.jar \
+  --bind=profilelon.uselonr_namelon=your_ldap \
+  --bind=profilelon.datelon="2022-07-15" \
+  --bind=profilelon.frelonquelonncy="PT1H" \
+  --bind=profilelon.elonnvironmelonnt=delonv \
+  --bind=profilelon.job_namelon="fav-baselond-indelonx-gelonnelonration-adhoc-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:fav-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job"
 
-### To run VideoView based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/video-view-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/video-view-based-cluster-to-tweet-index-generation-adhoc-job-bundle/video-view-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="video-view-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:video-view-based-cluster-to-tweet-index-generation-adhoc-job"
+### To run VidelonoVielonw baselond clustelonr-to-twelonelont indelonx gelonnelonration job (adhoc):
+bin/d6w crelonatelon \
+  twttr-reloncos-ml-prod/us-celonntral1/videlono-vielonw-baselond-indelonx-gelonnelonration-adhoc-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --jar dist/videlono-vielonw-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job-bundlelon/videlono-vielonw-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job.jar \
+  --bind=profilelon.uselonr_namelon=your_ldap \
+  --bind=profilelon.datelon="2022-07-15" \
+  --bind=profilelon.frelonquelonncy="PT1H" \
+  --bind=profilelon.elonnvironmelonnt=delonv \
+  --bind=profilelon.job_namelon="videlono-vielonw-baselond-indelonx-gelonnelonration-adhoc-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:videlono-vielonw-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job"
 
-### To run retweet based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/retweet-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/retweet-based-cluster-to-tweet-index-generation-adhoc-job-bundle/retweet-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="retweet-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:retweet-based-cluster-to-tweet-index-generation-adhoc-job"
+### To run relontwelonelont baselond clustelonr-to-twelonelont indelonx gelonnelonration job (adhoc):
+bin/d6w crelonatelon \
+  twttr-reloncos-ml-prod/us-celonntral1/relontwelonelont-baselond-indelonx-gelonnelonration-adhoc-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --jar dist/relontwelonelont-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job-bundlelon/relontwelonelont-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job.jar \
+  --bind=profilelon.uselonr_namelon=your_ldap \
+  --bind=profilelon.datelon="2022-07-15" \
+  --bind=profilelon.frelonquelonncy="PT1H" \
+  --bind=profilelon.elonnvironmelonnt=delonv \
+  --bind=profilelon.job_namelon="relontwelonelont-baselond-indelonx-gelonnelonration-adhoc-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:relontwelonelont-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job"
 
-### To run reply based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/reply-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/reply-based-cluster-to-tweet-index-generation-adhoc-job-bundle/reply-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-07-15" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="reply-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:reply-based-cluster-to-tweet-index-generation-adhoc-job"
+### To run relonply baselond clustelonr-to-twelonelont indelonx gelonnelonration job (adhoc):
+bin/d6w crelonatelon \
+  twttr-reloncos-ml-prod/us-celonntral1/relonply-baselond-indelonx-gelonnelonration-adhoc-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --jar dist/relonply-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job-bundlelon/relonply-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job.jar \
+  --bind=profilelon.uselonr_namelon=your_ldap \
+  --bind=profilelon.datelon="2022-07-15" \
+  --bind=profilelon.frelonquelonncy="PT1H" \
+  --bind=profilelon.elonnvironmelonnt=delonv \
+  --bind=profilelon.job_namelon="relonply-baselond-indelonx-gelonnelonration-adhoc-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:relonply-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job"
 
-### To run push open based cluster-to-tweet index generation job (adhoc):
-bin/d6w create \
-  twttr-recos-ml-prod/us-central1/push-open-based-index-generation-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --jar dist/push-open-based-cluster-to-tweet-index-generation-adhoc-job-bundle/push-open-based-cluster-to-tweet-index-generation-adhoc-job.jar \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-10-06" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.environment=dev \
-  --bind=profile.job_name="push-open-based-index-generation-adhoc-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:push-open-based-cluster-to-tweet-index-generation-adhoc-job"
+### To run push opelonn baselond clustelonr-to-twelonelont indelonx gelonnelonration job (adhoc):
+bin/d6w crelonatelon \
+  twttr-reloncos-ml-prod/us-celonntral1/push-opelonn-baselond-indelonx-gelonnelonration-adhoc-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --jar dist/push-opelonn-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job-bundlelon/push-opelonn-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job.jar \
+  --bind=profilelon.uselonr_namelon=your_ldap \
+  --bind=profilelon.datelon="2022-10-06" \
+  --bind=profilelon.frelonquelonncy="PT1H" \
+  --bind=profilelon.elonnvironmelonnt=delonv \
+  --bind=profilelon.job_namelon="push-opelonn-baselond-indelonx-gelonnelonration-adhoc-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:push-opelonn-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-adhoc-job"
 
-# For prod scheduled Cluster-to-tweet Index Generation Jobs
-### To run Fav based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/fav-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="fav-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:fav-based-cluster-to-tweet-index-generation-batch-job"
+# For prod schelondulelond Clustelonr-to-twelonelont Indelonx Gelonnelonration Jobs
+### To run Fav baselond clustelonr-to-twelonelont indelonx gelonnelonration job (batch):
+ bin/d6w schelondulelon \
+  twttr-reloncos-ml-prod/us-celonntral1/fav-baselond-indelonx-gelonnelonration-batch-job  \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.elonnvironmelonnt=prod \
+  --bind=profilelon.datelon="2022-07-19" \
+  --bind=profilelon.frelonquelonncy="PT1H" \
+  --bind=profilelon.job_namelon="fav-baselond-indelonx-gelonnelonration-batch-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:fav-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-batch-job"
 
-### To run VideoView based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/video-view-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="video-view-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:video-view-based-cluster-to-tweet-index-generation-batch-job"
+### To run VidelonoVielonw baselond clustelonr-to-twelonelont indelonx gelonnelonration job (batch):
+ bin/d6w schelondulelon \
+  twttr-reloncos-ml-prod/us-celonntral1/videlono-vielonw-baselond-indelonx-gelonnelonration-batch-job  \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.elonnvironmelonnt=prod \
+  --bind=profilelon.datelon="2022-07-19" \
+  --bind=profilelon.frelonquelonncy="PT1H" \
+  --bind=profilelon.job_namelon="videlono-vielonw-baselond-indelonx-gelonnelonration-batch-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:videlono-vielonw-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-batch-job"
 
-### To run Retweet based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/retweet-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="retweet-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:retweet-based-cluster-to-tweet-index-generation-batch-job"
+### To run Relontwelonelont baselond clustelonr-to-twelonelont indelonx gelonnelonration job (batch):
+ bin/d6w schelondulelon \
+  twttr-reloncos-ml-prod/us-celonntral1/relontwelonelont-baselond-indelonx-gelonnelonration-batch-job  \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.elonnvironmelonnt=prod \
+  --bind=profilelon.datelon="2022-07-19" \
+  --bind=profilelon.frelonquelonncy="PT1H" \
+  --bind=profilelon.job_namelon="relontwelonelont-baselond-indelonx-gelonnelonration-batch-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:relontwelonelont-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-batch-job"
 
-### To run Reply based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/reply-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-07-19" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="reply-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:reply-based-cluster-to-tweet-index-generation-batch-job"
+### To run Relonply baselond clustelonr-to-twelonelont indelonx gelonnelonration job (batch):
+ bin/d6w schelondulelon \
+  twttr-reloncos-ml-prod/us-celonntral1/relonply-baselond-indelonx-gelonnelonration-batch-job  \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.elonnvironmelonnt=prod \
+  --bind=profilelon.datelon="2022-07-19" \
+  --bind=profilelon.frelonquelonncy="PT1H" \
+  --bind=profilelon.job_namelon="relonply-baselond-indelonx-gelonnelonration-batch-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:relonply-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-batch-job"
 
-### To run Push open based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/push-open-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-10-06" \
-  --bind=profile.frequency="PT1H" \
-  --bind=profile.job_name="push-open-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:push-open-based-cluster-to-tweet-index-generation-batch-job"
+### To run Push opelonn baselond clustelonr-to-twelonelont indelonx gelonnelonration job (batch):
+ bin/d6w schelondulelon \
+  twttr-reloncos-ml-prod/us-celonntral1/push-opelonn-baselond-indelonx-gelonnelonration-batch-job  \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.elonnvironmelonnt=prod \
+  --bind=profilelon.datelon="2022-10-06" \
+  --bind=profilelon.frelonquelonncy="PT1H" \
+  --bind=profilelon.job_namelon="push-opelonn-baselond-indelonx-gelonnelonration-batch-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:push-opelonn-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-batch-job"
 
-### To run Ads Fav based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/ads-fav-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-10-06" \
-  --bind=profile.frequency="PT3H" \
-  --bind=profile.job_name="ads-fav-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:ads-fav-based-cluster-to-tweet-index-generation-batch-job"
+### To run Ads Fav baselond clustelonr-to-twelonelont indelonx gelonnelonration job (batch):
+ bin/d6w schelondulelon \
+  twttr-reloncos-ml-prod/us-celonntral1/ads-fav-baselond-indelonx-gelonnelonration-batch-job  \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.elonnvironmelonnt=prod \
+  --bind=profilelon.datelon="2022-10-06" \
+  --bind=profilelon.frelonquelonncy="PT3H" \
+  --bind=profilelon.job_namelon="ads-fav-baselond-indelonx-gelonnelonration-batch-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:ads-fav-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-batch-job"
 
-### To run Ads Fav Click based cluster-to-tweet index generation job (batch):
- bin/d6w schedule \
-  twttr-recos-ml-prod/us-central1/ads-fav-click-based-index-generation-batch-job  \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation/engagement-event-based-simclusters-index-generation-job.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.environment=prod \
-  --bind=profile.date="2022-12-09" \
-  --bind=profile.frequency="PT3H" \
-  --bind=profile.job_name="ads-fav-click-based-index-generation-batch-job" \
-  --bind=profile.build_target="src/scala/com/twitter/simclusters_v2/scio/bq_generation/simclusters_index_generation:ads-fav-click-based-cluster-to-tweet-index-generation-batch-job"
+### To run Ads Fav Click baselond clustelonr-to-twelonelont indelonx gelonnelonration job (batch):
+ bin/d6w schelondulelon \
+  twttr-reloncos-ml-prod/us-celonntral1/ads-fav-click-baselond-indelonx-gelonnelonration-batch-job  \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration/elonngagelonmelonnt-elonvelonnt-baselond-simclustelonrs-indelonx-gelonnelonration-job.d6w \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.elonnvironmelonnt=prod \
+  --bind=profilelon.datelon="2022-12-09" \
+  --bind=profilelon.frelonquelonncy="PT3H" \
+  --bind=profilelon.job_namelon="ads-fav-click-baselond-indelonx-gelonnelonration-batch-job" \
+  --bind=profilelon.build_targelont="src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/simclustelonrs_indelonx_gelonnelonration:ads-fav-click-baselond-clustelonr-to-twelonelont-indelonx-gelonnelonration-batch-job"
 

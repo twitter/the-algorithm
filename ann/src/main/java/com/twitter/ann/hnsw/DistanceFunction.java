@@ -1,8 +1,8 @@
-package com.twitter.ann.hnsw;
+packagelon com.twittelonr.ann.hnsw;
 
-public interface DistanceFunction<T, Q> {
+public intelonrfacelon DistancelonFunction<T, Q> {
   /**
-   * Distance between two items.
+   * Distancelon belontwelonelonn two itelonms.
    */
-  float distance(T t, Q q);
+  float distancelon(T t, Q q);
 }

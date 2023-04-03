@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt
 
 /**
- * Represents the different ways to display the Relevance Prompt in a timeline.
+ * Relonprelonselonnts thelon diffelonrelonnt ways to display thelon Relonlelonvancelon Prompt in a timelonlinelon.
  *
- * URT API Reference: https://docbird.twitter.biz/unified_rich_timelines_urt/gen/com/twitter/timelines/render/thriftscala/RelevancePromptDisplayType.html
+ * URT API Relonfelonrelonncelon: https://docbird.twittelonr.biz/unifielond_rich_timelonlinelons_urt/gelonn/com/twittelonr/timelonlinelons/relonndelonr/thriftscala/RelonlelonvancelonPromptDisplayTypelon.html
  */
-sealed trait RelevancePromptDisplayType
+selonalelond trait RelonlelonvancelonPromptDisplayTypelon
 
-case object Normal extends RelevancePromptDisplayType
-case object Compact extends RelevancePromptDisplayType
-case object Large extends RelevancePromptDisplayType
-case object ThumbsUpAndDown extends RelevancePromptDisplayType
+caselon objelonct Normal elonxtelonnds RelonlelonvancelonPromptDisplayTypelon
+caselon objelonct Compact elonxtelonnds RelonlelonvancelonPromptDisplayTypelon
+caselon objelonct Largelon elonxtelonnds RelonlelonvancelonPromptDisplayTypelon
+caselon objelonct ThumbsUpAndDown elonxtelonnds RelonlelonvancelonPromptDisplayTypelon

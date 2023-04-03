@@ -1,29 +1,29 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.source_signal.FrsStore
-import com.twitter.cr_mixer.source_signal.FrsStore.FrsQueryResult
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.follow_recommendations.thriftscala.FollowRecommendationsThriftService
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.storehaus.ReadableStore
-import javax.inject.Named
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.CrMixelonrDeloncidelonr
+import com.twittelonr.cr_mixelonr.sourcelon_signal.FrsStorelon
+import com.twittelonr.cr_mixelonr.sourcelon_signal.FrsStorelon.FrsQuelonryRelonsult
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.follow_reloncommelonndations.thriftscala.FollowReloncommelonndationsThriftSelonrvicelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import javax.injelonct.Namelond
 
-object FrsStoreModule extends TwitterModule {
+objelonct FrsStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.FrsStore)
-  def providesFrsStore(
-    frsClient: FollowRecommendationsThriftService.MethodPerEndpoint,
-    statsReceiver: StatsReceiver,
-    decider: CrMixerDecider
-  ): ReadableStore[FrsStore.Query, Seq[FrsQueryResult]] = {
-    ObservedReadableStore(FrsStore(frsClient, statsReceiver, decider))(
-      statsReceiver.scope("follow_recommendations_store"))
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.FrsStorelon)
+  delonf providelonsFrsStorelon(
+    frsClielonnt: FollowReloncommelonndationsThriftSelonrvicelon.MelonthodPelonrelonndpoint,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    deloncidelonr: CrMixelonrDeloncidelonr
+  ): RelonadablelonStorelon[FrsStorelon.Quelonry, Selonq[FrsQuelonryRelonsult]] = {
+    ObselonrvelondRelonadablelonStorelon(FrsStorelon(frsClielonnt, statsReloncelonivelonr, deloncidelonr))(
+      statsReloncelonivelonr.scopelon("follow_reloncommelonndations_storelon"))
   }
 }

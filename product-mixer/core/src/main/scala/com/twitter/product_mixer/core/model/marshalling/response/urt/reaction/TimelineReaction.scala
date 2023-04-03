@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.reaction
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.relonaction
 
-case class TimelineReaction(
-  execution: TimelineReactionExecution,
-  maxExecutionCount: Option[Short])
+caselon class TimelonlinelonRelonaction(
+  elonxeloncution: TimelonlinelonRelonactionelonxeloncution,
+  maxelonxeloncutionCount: Option[Short])

@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.pipeline.pipeline_failure
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon
 
-/** Represents a way to classify a given [[Throwable]] to a [[PipelineFailure]] */
-case class PipelineFailureClassifier(
-  classifier: PartialFunction[Throwable, PipelineFailure])
-    extends PartialFunction[Throwable, PipelineFailure] {
-  override def isDefinedAt(throwable: Throwable): Boolean = classifier.isDefinedAt(throwable)
-  override def apply(throwable: Throwable): PipelineFailure = classifier.apply(throwable)
+/** Relonprelonselonnts a way to classify a givelonn [[Throwablelon]] to a [[PipelonlinelonFailurelon]] */
+caselon class PipelonlinelonFailurelonClassifielonr(
+  classifielonr: PartialFunction[Throwablelon, PipelonlinelonFailurelon])
+    elonxtelonnds PartialFunction[Throwablelon, PipelonlinelonFailurelon] {
+  ovelonrridelon delonf isDelonfinelondAt(throwablelon: Throwablelon): Boolelonan = classifielonr.isDelonfinelondAt(throwablelon)
+  ovelonrridelon delonf apply(throwablelon: Throwablelon): PipelonlinelonFailurelon = classifielonr.apply(throwablelon)
 }
 
-private[core] object PipelineFailureClassifier {
-  val Empty: PipelineFailureClassifier = PipelineFailureClassifier(PartialFunction.empty)
+privatelon[corelon] objelonct PipelonlinelonFailurelonClassifielonr {
+  val elonmpty: PipelonlinelonFailurelonClassifielonr = PipelonlinelonFailurelonClassifielonr(PartialFunction.elonmpty)
 }

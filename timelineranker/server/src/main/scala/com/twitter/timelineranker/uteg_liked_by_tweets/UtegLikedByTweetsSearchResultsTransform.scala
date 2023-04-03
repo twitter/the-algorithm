@@ -1,36 +1,36 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.utelong_likelond_by_twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.common.RecapHydrationSearchResultsTransformBase
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.timelonlinelonrankelonr.common.ReloncapHydrationSelonarchRelonsultsTransformBaselon
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelons.clielonnts.relonlelonvancelon_selonarch.SelonarchClielonnt
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.util.Futurelon
 
-class UtegLikedByTweetsSearchResultsTransform(
-  override protected val searchClient: SearchClient,
-  override protected val statsReceiver: StatsReceiver,
-  relevanceSearchProvider: DependencyProvider[Boolean])
-    extends RecapHydrationSearchResultsTransformBase {
+class UtelongLikelondByTwelonelontsSelonarchRelonsultsTransform(
+  ovelonrridelon protelonctelond val selonarchClielonnt: SelonarchClielonnt,
+  ovelonrridelon protelonctelond val statsReloncelonivelonr: StatsReloncelonivelonr,
+  relonlelonvancelonSelonarchProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan])
+    elonxtelonnds ReloncapHydrationSelonarchRelonsultsTransformBaselon {
 
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
+  privatelon[this] val numRelonsultsFromSelonarchStat = statsReloncelonivelonr.stat("numRelonsultsFromSelonarch")
 
-  override def tweetIdsToHydrate(envelope: CandidateEnvelope): Seq[TweetId] =
-    envelope.utegResults.keys.toSeq
+  ovelonrridelon delonf twelonelontIdsToHydratelon(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Selonq[TwelonelontId] =
+    elonnvelonlopelon.utelongRelonsults.kelonys.toSelonq
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    searchClient
-      .getTweetsScoredForRecap(
-        userId = envelope.query.userId,
-        tweetIds = tweetIdsToHydrate(envelope),
-        earlybirdOptions = envelope.query.earlybirdOptions,
-        logSearchDebugInfo = false,
-        searchClientId = None,
-        relevanceSearch = relevanceSearchProvider(envelope.query)
-      ).map { results =>
-        numResultsFromSearchStat.add(results.size)
-        envelope.copy(searchResults = results)
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    selonarchClielonnt
+      .gelontTwelonelontsScorelondForReloncap(
+        uselonrId = elonnvelonlopelon.quelonry.uselonrId,
+        twelonelontIds = twelonelontIdsToHydratelon(elonnvelonlopelon),
+        elonarlybirdOptions = elonnvelonlopelon.quelonry.elonarlybirdOptions,
+        logSelonarchDelonbugInfo = falselon,
+        selonarchClielonntId = Nonelon,
+        relonlelonvancelonSelonarch = relonlelonvancelonSelonarchProvidelonr(elonnvelonlopelon.quelonry)
+      ).map { relonsults =>
+        numRelonsultsFromSelonarchStat.add(relonsults.sizelon)
+        elonnvelonlopelon.copy(selonarchRelonsults = relonsults)
       }
   }
 }

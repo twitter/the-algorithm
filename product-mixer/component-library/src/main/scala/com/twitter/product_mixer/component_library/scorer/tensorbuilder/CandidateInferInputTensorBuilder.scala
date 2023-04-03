@@ -1,70 +1,70 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.telonnsorbuildelonr
 
-import com.twitter.ml.api.thriftscala.FloatTensor
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.ModelFeatureName
-import com.twitter.product_mixer.core.feature.featuremap.featurestorev1.FeatureStoreV1FeatureMap._
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+import com.twittelonr.ml.api.thriftscala.FloatTelonnsor
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.ModelonlFelonaturelonNamelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.felonaturelonstorelonv1.FelonaturelonStorelonV1FelonaturelonMap._
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.FelonaturelonStorelonV1CandidatelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.FelonaturelonStorelonV1QuelonryFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst.InfelonrInputTelonnsor
 
-class CandidateInferInputTensorBuilder[-Candidate <: UniversalNoun[Any], +Value](
-  builder: InferInputTensorBuilder[Value],
-  features: Set[_ <: Feature[Candidate, _] with ModelFeatureName]) {
-  def apply(
-    candidates: Seq[CandidateWithFeatures[Candidate]],
-  ): Seq[InferInputTensor] = {
-    features.flatMap { feature =>
-      val featureValues: Seq[Value] = feature match {
-        case feature: FeatureStoreV1CandidateFeature[_, Candidate, _, Value] =>
-          candidates.map(_.features.getFeatureStoreV1CandidateFeature(feature))
-        case feature: FeatureStoreV1QueryFeature[_, _, _] =>
-          throw new UnexpectedFeatureTypeException(feature)
-        case feature: FeatureWithDefaultOnFailure[Candidate, Value] =>
-          candidates.map(_.features.getTry(feature).toOption.getOrElse(feature.defaultValue))
-        case feature: Feature[Candidate, Value] =>
-          candidates.map(_.features.get(feature))
+class CandidatelonInfelonrInputTelonnsorBuildelonr[-Candidatelon <: UnivelonrsalNoun[Any], +Valuelon](
+  buildelonr: InfelonrInputTelonnsorBuildelonr[Valuelon],
+  felonaturelons: Selont[_ <: Felonaturelon[Candidatelon, _] with ModelonlFelonaturelonNamelon]) {
+  delonf apply(
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]],
+  ): Selonq[InfelonrInputTelonnsor] = {
+    felonaturelons.flatMap { felonaturelon =>
+      val felonaturelonValuelons: Selonq[Valuelon] = felonaturelon match {
+        caselon felonaturelon: FelonaturelonStorelonV1CandidatelonFelonaturelon[_, Candidatelon, _, Valuelon] =>
+          candidatelons.map(_.felonaturelons.gelontFelonaturelonStorelonV1CandidatelonFelonaturelon(felonaturelon))
+        caselon felonaturelon: FelonaturelonStorelonV1QuelonryFelonaturelon[_, _, _] =>
+          throw nelonw UnelonxpelonctelondFelonaturelonTypelonelonxcelonption(felonaturelon)
+        caselon felonaturelon: FelonaturelonWithDelonfaultOnFailurelon[Candidatelon, Valuelon] =>
+          candidatelons.map(_.felonaturelons.gelontTry(felonaturelon).toOption.gelontOrelonlselon(felonaturelon.delonfaultValuelon))
+        caselon felonaturelon: Felonaturelon[Candidatelon, Valuelon] =>
+          candidatelons.map(_.felonaturelons.gelont(felonaturelon))
       }
-      builder.apply(feature.featureName, featureValues)
-    }.toSeq
+      buildelonr.apply(felonaturelon.felonaturelonNamelon, felonaturelonValuelons)
+    }.toSelonq
   }
 }
 
-case class CandidateBooleanInferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, Boolean] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, Boolean](
-      BooleanInferInputTensorBuilder,
-      features)
+caselon class CandidatelonBoolelonanInfelonrInputTelonnsorBuildelonr[-Candidatelon <: UnivelonrsalNoun[Any]](
+  felonaturelons: Selont[_ <: Felonaturelon[Candidatelon, Boolelonan] with ModelonlFelonaturelonNamelon])
+    elonxtelonnds CandidatelonInfelonrInputTelonnsorBuildelonr[Candidatelon, Boolelonan](
+      BoolelonanInfelonrInputTelonnsorBuildelonr,
+      felonaturelons)
 
-case class CandidateBytesInferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, String] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, String](
-      BytesInferInputTensorBuilder,
-      features)
+caselon class CandidatelonBytelonsInfelonrInputTelonnsorBuildelonr[-Candidatelon <: UnivelonrsalNoun[Any]](
+  felonaturelons: Selont[_ <: Felonaturelon[Candidatelon, String] with ModelonlFelonaturelonNamelon])
+    elonxtelonnds CandidatelonInfelonrInputTelonnsorBuildelonr[Candidatelon, String](
+      BytelonsInfelonrInputTelonnsorBuildelonr,
+      felonaturelons)
 
-case class CandidateFloat32InferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, _ <: AnyVal] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, AnyVal](
-      Float32InferInputTensorBuilder,
-      features)
+caselon class CandidatelonFloat32InfelonrInputTelonnsorBuildelonr[-Candidatelon <: UnivelonrsalNoun[Any]](
+  felonaturelons: Selont[_ <: Felonaturelon[Candidatelon, _ <: AnyVal] with ModelonlFelonaturelonNamelon])
+    elonxtelonnds CandidatelonInfelonrInputTelonnsorBuildelonr[Candidatelon, AnyVal](
+      Float32InfelonrInputTelonnsorBuildelonr,
+      felonaturelons)
 
-case class CandidateFloatTensorInferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, FloatTensor] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, FloatTensor](
-      FloatTensorInferInputTensorBuilder,
-      features)
+caselon class CandidatelonFloatTelonnsorInfelonrInputTelonnsorBuildelonr[-Candidatelon <: UnivelonrsalNoun[Any]](
+  felonaturelons: Selont[_ <: Felonaturelon[Candidatelon, FloatTelonnsor] with ModelonlFelonaturelonNamelon])
+    elonxtelonnds CandidatelonInfelonrInputTelonnsorBuildelonr[Candidatelon, FloatTelonnsor](
+      FloatTelonnsorInfelonrInputTelonnsorBuildelonr,
+      felonaturelons)
 
-case class CandidateInt64InferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, _ <: AnyVal] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, AnyVal](
-      Int64InferInputTensorBuilder,
-      features)
+caselon class CandidatelonInt64InfelonrInputTelonnsorBuildelonr[-Candidatelon <: UnivelonrsalNoun[Any]](
+  felonaturelons: Selont[_ <: Felonaturelon[Candidatelon, _ <: AnyVal] with ModelonlFelonaturelonNamelon])
+    elonxtelonnds CandidatelonInfelonrInputTelonnsorBuildelonr[Candidatelon, AnyVal](
+      Int64InfelonrInputTelonnsorBuildelonr,
+      felonaturelons)
 
-case class CandidateSparseMapInferInputTensorBuilder[-Candidate <: UniversalNoun[Any]](
-  features: Set[_ <: Feature[Candidate, Option[Map[Int, Double]]] with ModelFeatureName])
-    extends CandidateInferInputTensorBuilder[Candidate, Option[Map[Int, Double]]](
-      SparseMapInferInputTensorBuilder,
-      features)
+caselon class CandidatelonSparselonMapInfelonrInputTelonnsorBuildelonr[-Candidatelon <: UnivelonrsalNoun[Any]](
+  felonaturelons: Selont[_ <: Felonaturelon[Candidatelon, Option[Map[Int, Doublelon]]] with ModelonlFelonaturelonNamelon])
+    elonxtelonnds CandidatelonInfelonrInputTelonnsorBuildelonr[Candidatelon, Option[Map[Int, Doublelon]]](
+      SparselonMapInfelonrInputTelonnsorBuildelonr,
+      felonaturelons)

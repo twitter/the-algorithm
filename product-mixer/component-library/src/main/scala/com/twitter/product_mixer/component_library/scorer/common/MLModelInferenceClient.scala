@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.scorer.common
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.common
 
-import com.twitter.stitch.Stitch
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse
+import com.twittelonr.stitch.Stitch
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonsponselon
 
 /**
- * MLModelInferenceClient for calling different Inference Service such as ManagedModelClient or NaviModelClient.
+ * MLModelonlInfelonrelonncelonClielonnt for calling diffelonrelonnt Infelonrelonncelon Selonrvicelon such as ManagelondModelonlClielonnt or NaviModelonlClielonnt.
  */
-trait MLModelInferenceClient {
-  def score(request: ModelInferRequest): Stitch[ModelInferResponse]
+trait MLModelonlInfelonrelonncelonClielonnt {
+  delonf scorelon(relonquelonst: ModelonlInfelonrRelonquelonst): Stitch[ModelonlInfelonrRelonsponselon]
 }

@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.highlight
 
-case class HighlightedSection(startIndex: Int, endIndex: Int)
+caselon class HighlightelondSelonction(startIndelonx: Int, elonndIndelonx: Int)

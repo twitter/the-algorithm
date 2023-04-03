@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ClientEventInfoMarshaller @Inject() (
-  clientEventDetailsMarshaller: ClientEventDetailsMarshaller) {
+@Singlelonton
+class ClielonntelonvelonntInfoMarshallelonr @Injelonct() (
+  clielonntelonvelonntDelontailsMarshallelonr: ClielonntelonvelonntDelontailsMarshallelonr) {
 
-  def apply(clientEventInfo: ClientEventInfo): urt.ClientEventInfo = {
-    urt.ClientEventInfo(
-      component = clientEventInfo.component,
-      element = clientEventInfo.element,
-      details = clientEventInfo.details.map(clientEventDetailsMarshaller(_)),
-      action = clientEventInfo.action,
-      entityToken = clientEventInfo.entityToken
+  delonf apply(clielonntelonvelonntInfo: ClielonntelonvelonntInfo): urt.ClielonntelonvelonntInfo = {
+    urt.ClielonntelonvelonntInfo(
+      componelonnt = clielonntelonvelonntInfo.componelonnt,
+      elonlelonmelonnt = clielonntelonvelonntInfo.elonlelonmelonnt,
+      delontails = clielonntelonvelonntInfo.delontails.map(clielonntelonvelonntDelontailsMarshallelonr(_)),
+      action = clielonntelonvelonntInfo.action,
+      elonntityTokelonn = clielonntelonvelonntInfo.elonntityTokelonn
     )
   }
 }

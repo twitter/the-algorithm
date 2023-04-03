@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.quelonry.cr_ml_rankelonr
 
-import com.twitter.cr_ml_ranker.{thriftscala => t}
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.cr_ml_rankelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object CrMlRankerCommonFeatures extends Feature[PipelineQuery, t.CommonFeatures]
-object CrMlRankerRankingConfig extends Feature[PipelineQuery, t.RankingConfig]
+objelonct CrMlRankelonrCommonFelonaturelons elonxtelonnds Felonaturelon[PipelonlinelonQuelonry, t.CommonFelonaturelons]
+objelonct CrMlRankelonrRankingConfig elonxtelonnds Felonaturelon[PipelonlinelonQuelonry, t.RankingConfig]
 
-private[cr_ml_ranker] class CrMlRankerCommonQueryFeatureHydrator(
-  crMlRanker: t.CrMLRanker.MethodPerEndpoint,
-  rankingConfigSelector: RankingConfigBuilder)
-    extends QueryFeatureHydrator[PipelineQuery] {
+privatelon[cr_ml_rankelonr] class CrMlRankelonrCommonQuelonryFelonaturelonHydrator(
+  crMlRankelonr: t.CrMLRankelonr.MelonthodPelonrelonndpoint,
+  rankingConfigSelonlelonctor: RankingConfigBuildelonr)
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("CrMlRanker")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("CrMlRankelonr")
 
-  override val features: Set[Feature[_, _]] =
-    Set(CrMlRankerCommonFeatures, CrMlRankerRankingConfig)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] =
+    Selont(CrMlRankelonrCommonFelonaturelons, CrMlRankelonrRankingConfig)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val rankingConfig = rankingConfigSelector.apply(query)
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    val rankingConfig = rankingConfigSelonlelonctor.apply(quelonry)
     Stitch
-      .callFuture(
-        crMlRanker.getCommonFeatures(
-          t.RankingRequestContext(query.getRequiredUserId, rankingConfig))).map { commonFeatures =>
-        FeatureMapBuilder()
-          .add(CrMlRankerRankingConfig, rankingConfig)
-          .add(CrMlRankerCommonFeatures, commonFeatures)
+      .callFuturelon(
+        crMlRankelonr.gelontCommonFelonaturelons(
+          t.RankingRelonquelonstContelonxt(quelonry.gelontRelonquirelondUselonrId, rankingConfig))).map { commonFelonaturelons =>
+        FelonaturelonMapBuildelonr()
+          .add(CrMlRankelonrRankingConfig, rankingConfig)
+          .add(CrMlRankelonrCommonFelonaturelons, commonFelonaturelons)
           .build()
       }
   }

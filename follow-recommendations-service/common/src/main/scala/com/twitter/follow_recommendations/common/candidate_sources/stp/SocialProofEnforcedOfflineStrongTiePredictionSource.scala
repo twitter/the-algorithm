@@ -1,28 +1,28 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.base.SocialProofEnforcedCandidateSource
-import com.twitter.follow_recommendations.common.transforms.modify_social_proof.ModifySocialProof
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import javax.inject.Inject
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.SocialProofelonnforcelondCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.transforms.modify_social_proof.ModifySocialProof
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import javax.injelonct.Injelonct
 
-@Singleton
-class SocialProofEnforcedOfflineStrongTiePredictionSource @Inject() (
-  offlineStrongTiePredictionSource: OfflineStrongTiePredictionSource,
+@Singlelonton
+class SocialProofelonnforcelondOfflinelonStrongTielonPrelondictionSourcelon @Injelonct() (
+  offlinelonStrongTielonPrelondictionSourcelon: OfflinelonStrongTielonPrelondictionSourcelon,
   modifySocialProof: ModifySocialProof,
-  statsReceiver: StatsReceiver)
-    extends SocialProofEnforcedCandidateSource(
-      offlineStrongTiePredictionSource,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds SocialProofelonnforcelondCandidatelonSourcelon(
+      offlinelonStrongTielonPrelondictionSourcelon,
       modifySocialProof,
-      SocialProofEnforcedOfflineStrongTiePredictionSource.MinNumSocialProofsRequired,
-      SocialProofEnforcedOfflineStrongTiePredictionSource.Identifier,
-      statsReceiver)
+      SocialProofelonnforcelondOfflinelonStrongTielonPrelondictionSourcelon.MinNumSocialProofsRelonquirelond,
+      SocialProofelonnforcelondOfflinelonStrongTielonPrelondictionSourcelon.Idelonntifielonr,
+      statsReloncelonivelonr)
 
-object SocialProofEnforcedOfflineStrongTiePredictionSource {
-  val Identifier = CandidateSourceIdentifier(
-    Algorithm.StrongTiePredictionRecWithSocialProof.toString)
+objelonct SocialProofelonnforcelondOfflinelonStrongTielonPrelondictionSourcelon {
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.StrongTielonPrelondictionReloncWithSocialProof.toString)
 
-  val MinNumSocialProofsRequired = 1
+  val MinNumSocialProofsRelonquirelond = 1
 }

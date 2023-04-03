@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.forward_pivot
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.forward_pivot
 
-sealed trait ForwardPivotDisplayType
+selonalelond trait ForwardPivotDisplayTypelon
 
-case object LiveEvent extends ForwardPivotDisplayType
-case object SoftIntervention extends ForwardPivotDisplayType
-case object CommunityNotes extends ForwardPivotDisplayType
+caselon objelonct Livelonelonvelonnt elonxtelonnds ForwardPivotDisplayTypelon
+caselon objelonct SoftIntelonrvelonntion elonxtelonnds ForwardPivotDisplayTypelon
+caselon objelonct CommunityNotelons elonxtelonnds ForwardPivotDisplayTypelon

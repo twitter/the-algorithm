@@ -1,190 +1,190 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.BaseTermsEnum;
-import org.apache.lucene.index.ImpactsEnum;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.SlowImpactsEnum;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.packed.PackedInts;
+import org.apachelon.lucelonnelon.indelonx.BaselonTelonrmselonnum;
+import org.apachelon.lucelonnelon.indelonx.Impactselonnum;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.SlowImpactselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.apachelon.lucelonnelon.util.packelond.PackelondInts;
 
-import com.twitter.search.common.util.hash.BDZAlgorithm;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.util.hash.BDZAlgorithm;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
-public class MPHTermDictionary implements TermDictionary, Flushable {
-  private final BDZAlgorithm termsHashFunction;
-  private final PackedInts.Reader termPointers;
-  private final ByteBlockPool termPool;
-  private final TermPointerEncoding termPointerEncoding;
-  private final int numTerms;
+public class MPHTelonrmDictionary implelonmelonnts TelonrmDictionary, Flushablelon {
+  privatelon final BDZAlgorithm telonrmsHashFunction;
+  privatelon final PackelondInts.Relonadelonr telonrmPointelonrs;
+  privatelon final BytelonBlockPool telonrmPool;
+  privatelon final TelonrmPointelonrelonncoding telonrmPointelonrelonncoding;
+  privatelon final int numTelonrms;
 
-  MPHTermDictionary(int numTerms, BDZAlgorithm termsHashFunction,
-      PackedInts.Reader termPointers, ByteBlockPool termPool,
-      TermPointerEncoding termPointerEncoding) {
-    this.numTerms = numTerms;
-    this.termsHashFunction = termsHashFunction;
-    this.termPointers = termPointers;
-    this.termPool = termPool;
-    this.termPointerEncoding = termPointerEncoding;
+  MPHTelonrmDictionary(int numTelonrms, BDZAlgorithm telonrmsHashFunction,
+      PackelondInts.Relonadelonr telonrmPointelonrs, BytelonBlockPool telonrmPool,
+      TelonrmPointelonrelonncoding telonrmPointelonrelonncoding) {
+    this.numTelonrms = numTelonrms;
+    this.telonrmsHashFunction = telonrmsHashFunction;
+    this.telonrmPointelonrs = telonrmPointelonrs;
+    this.telonrmPool = telonrmPool;
+    this.telonrmPointelonrelonncoding = telonrmPointelonrelonncoding;
   }
 
-  @Override
-  public int getNumTerms() {
-    return numTerms;
+  @Ovelonrridelon
+  public int gelontNumTelonrms() {
+    relonturn numTelonrms;
   }
 
-  @Override
-  public int lookupTerm(BytesRef term) {
-    int termID = termsHashFunction.lookup(term);
-    if (termID >= getNumTerms() || termID < 0) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+  @Ovelonrridelon
+  public int lookupTelonrm(BytelonsRelonf telonrm) {
+    int telonrmID = telonrmsHashFunction.lookup(telonrm);
+    if (telonrmID >= gelontNumTelonrms() || telonrmID < 0) {
+      relonturn elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
     }
 
-    if (ByteTermUtils.postingEquals(termPool, termPointerEncoding
-            .getTextStart((int) termPointers.get(termID)), term)) {
-      return termID;
-    } else {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+    if (BytelonTelonrmUtils.postingelonquals(telonrmPool, telonrmPointelonrelonncoding
+            .gelontTelonxtStart((int) telonrmPointelonrs.gelont(telonrmID)), telonrm)) {
+      relonturn telonrmID;
+    } elonlselon {
+      relonturn elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
     }
   }
 
-  @Override
-  public boolean getTerm(int termID, BytesRef text, BytesRef termPayload) {
-    int termPointer = (int) termPointers.get(termID);
-    boolean hasTermPayload = termPointerEncoding.hasPayload(termPointer);
-    int textStart = termPointerEncoding.getTextStart(termPointer);
-    // setBytesRef sets the passed in BytesRef "text" to the term in the termPool.
-    // As a side effect it returns the offset of the next entry in the pool after the term,
-    // which may optionally be used if this term has a payload.
-    int termPayloadStart = ByteTermUtils.setBytesRef(termPool, text, textStart);
-    if (termPayload != null && hasTermPayload) {
-      ByteTermUtils.setBytesRef(termPool, termPayload, termPayloadStart);
+  @Ovelonrridelon
+  public boolelonan gelontTelonrm(int telonrmID, BytelonsRelonf telonxt, BytelonsRelonf telonrmPayload) {
+    int telonrmPointelonr = (int) telonrmPointelonrs.gelont(telonrmID);
+    boolelonan hasTelonrmPayload = telonrmPointelonrelonncoding.hasPayload(telonrmPointelonr);
+    int telonxtStart = telonrmPointelonrelonncoding.gelontTelonxtStart(telonrmPointelonr);
+    // selontBytelonsRelonf selonts thelon passelond in BytelonsRelonf "telonxt" to thelon telonrm in thelon telonrmPool.
+    // As a sidelon elonffelonct it relonturns thelon offselont of thelon nelonxt elonntry in thelon pool aftelonr thelon telonrm,
+    // which may optionally belon uselond if this telonrm has a payload.
+    int telonrmPayloadStart = BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, telonxt, telonxtStart);
+    if (telonrmPayload != null && hasTelonrmPayload) {
+      BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, telonrmPayload, telonrmPayloadStart);
     }
 
-    return hasTermPayload;
+    relonturn hasTelonrmPayload;
   }
 
-  @Override
-  public TermsEnum createTermsEnum(OptimizedMemoryIndex index) {
-    return new MPHTermsEnum(index);
+  @Ovelonrridelon
+  public Telonrmselonnum crelonatelonTelonrmselonnum(OptimizelondMelonmoryIndelonx indelonx) {
+    relonturn nelonw MPHTelonrmselonnum(indelonx);
   }
 
-  public static class MPHTermsEnum extends BaseTermsEnum {
-    private int termID;
-    private final BytesRef bytesRef = new BytesRef();
-    private final OptimizedMemoryIndex index;
+  public static class MPHTelonrmselonnum elonxtelonnds BaselonTelonrmselonnum {
+    privatelon int telonrmID;
+    privatelon final BytelonsRelonf bytelonsRelonf = nelonw BytelonsRelonf();
+    privatelon final OptimizelondMelonmoryIndelonx indelonx;
 
-    MPHTermsEnum(OptimizedMemoryIndex index) {
-      this.index = index;
+    MPHTelonrmselonnum(OptimizelondMelonmoryIndelonx indelonx) {
+      this.indelonx = indelonx;
     }
 
-    @Override
-    public int docFreq() {
-      return index.getDF(termID);
+    @Ovelonrridelon
+    public int docFrelonq() {
+      relonturn indelonx.gelontDF(telonrmID);
     }
 
-    @Override
-    public PostingsEnum postings(PostingsEnum reuse, int flags) throws IOException {
-      int postingsPointer = index.getPostingListPointer(termID);
-      int numPostings = index.getNumPostings(termID);
-      return index.getPostingLists().postings(postingsPointer, numPostings, flags);
+    @Ovelonrridelon
+    public Postingselonnum postings(Postingselonnum relonuselon, int flags) throws IOelonxcelonption {
+      int postingsPointelonr = indelonx.gelontPostingListPointelonr(telonrmID);
+      int numPostings = indelonx.gelontNumPostings(telonrmID);
+      relonturn indelonx.gelontPostingLists().postings(postingsPointelonr, numPostings, flags);
     }
 
-    @Override
-    public ImpactsEnum impacts(int flags) throws IOException {
-      return new SlowImpactsEnum(postings(null, flags));
+    @Ovelonrridelon
+    public Impactselonnum impacts(int flags) throws IOelonxcelonption {
+      relonturn nelonw SlowImpactselonnum(postings(null, flags));
     }
 
-    @Override
-    public SeekStatus seekCeil(BytesRef text) throws IOException {
-      termID = index.lookupTerm(text);
+    @Ovelonrridelon
+    public SelonelonkStatus selonelonkCelonil(BytelonsRelonf telonxt) throws IOelonxcelonption {
+      telonrmID = indelonx.lookupTelonrm(telonxt);
 
-      if (termID == -1) {
-        return SeekStatus.END;
-      } else {
-        return SeekStatus.FOUND;
+      if (telonrmID == -1) {
+        relonturn SelonelonkStatus.elonND;
+      } elonlselon {
+        relonturn SelonelonkStatus.FOUND;
       }
     }
 
-    @Override
-    public BytesRef next() {
-      return null;
+    @Ovelonrridelon
+    public BytelonsRelonf nelonxt() {
+      relonturn null;
     }
 
-    @Override
+    @Ovelonrridelon
     public long ord() {
-      return termID;
+      relonturn telonrmID;
     }
 
-    @Override
-    public void seekExact(long ord) {
-      if (ord < index.getNumTerms()) {
-        termID = (int) ord;
-        index.getTerm(termID, bytesRef, null);
+    @Ovelonrridelon
+    public void selonelonkelonxact(long ord) {
+      if (ord < indelonx.gelontNumTelonrms()) {
+        telonrmID = (int) ord;
+        indelonx.gelontTelonrm(telonrmID, bytelonsRelonf, null);
       }
     }
 
-    @Override
-    public BytesRef term() {
-      return bytesRef;
+    @Ovelonrridelon
+    public BytelonsRelonf telonrm() {
+      relonturn bytelonsRelonf;
     }
 
-    @Override
-    public long totalTermFreq() {
-      return docFreq();
+    @Ovelonrridelon
+    public long totalTelonrmFrelonq() {
+      relonturn docFrelonq();
     }
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SupprelonssWarnings("unchelonckelond")
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static class FlushHandler extends Flushable.Handler<MPHTermDictionary> {
-    static final String NUM_TERMS_PROP_NAME = "numTerms";
-    private final TermPointerEncoding termPointerEncoding;
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<MPHTelonrmDictionary> {
+    static final String NUM_TelonRMS_PROP_NAMelon = "numTelonrms";
+    privatelon final TelonrmPointelonrelonncoding telonrmPointelonrelonncoding;
 
-    public FlushHandler(TermPointerEncoding termPointerEncoding) {
-      super();
-      this.termPointerEncoding = termPointerEncoding;
+    public FlushHandlelonr(TelonrmPointelonrelonncoding telonrmPointelonrelonncoding) {
+      supelonr();
+      this.telonrmPointelonrelonncoding = telonrmPointelonrelonncoding;
     }
 
-    public FlushHandler(MPHTermDictionary objectToFlush) {
-      super(objectToFlush);
-      this.termPointerEncoding = objectToFlush.termPointerEncoding;
+    public FlushHandlelonr(MPHTelonrmDictionary objelonctToFlush) {
+      supelonr(objelonctToFlush);
+      this.telonrmPointelonrelonncoding = objelonctToFlush.telonrmPointelonrelonncoding;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      MPHTermDictionary objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(NUM_TERMS_PROP_NAME, objectToFlush.getNumTerms());
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out)
+        throws IOelonxcelonption {
+      MPHTelonrmDictionary objelonctToFlush = gelontObjelonctToFlush();
+      flushInfo.addIntPropelonrty(NUM_TelonRMS_PROP_NAMelon, objelonctToFlush.gelontNumTelonrms());
 
-      out.writePackedInts(objectToFlush.termPointers);
-      objectToFlush.termPool.getFlushHandler().flush(flushInfo.newSubProperties("termPool"), out);
-      objectToFlush.termsHashFunction.getFlushHandler()
-              .flush(flushInfo.newSubProperties("termsHashFunction"), out);
+      out.writelonPackelondInts(objelonctToFlush.telonrmPointelonrs);
+      objelonctToFlush.telonrmPool.gelontFlushHandlelonr().flush(flushInfo.nelonwSubPropelonrtielons("telonrmPool"), out);
+      objelonctToFlush.telonrmsHashFunction.gelontFlushHandlelonr()
+              .flush(flushInfo.nelonwSubPropelonrtielons("telonrmsHashFunction"), out);
     }
 
-    @Override
-    protected MPHTermDictionary doLoad(FlushInfo flushInfo,
-        DataDeserializer in) throws IOException {
-      int numTerms = flushInfo.getIntProperty(NUM_TERMS_PROP_NAME);
-      PackedInts.Reader termPointers = in.readPackedInts();
-      ByteBlockPool termPool = (new ByteBlockPool.FlushHandler()).load(
-              flushInfo.getSubProperties("termPool"), in);
-      BDZAlgorithm termsHashFunction = (new BDZAlgorithm.FlushHandler()).load(
-              flushInfo.getSubProperties("termsHashFunction"), in);
+    @Ovelonrridelon
+    protelonctelond MPHTelonrmDictionary doLoad(FlushInfo flushInfo,
+        DataDelonselonrializelonr in) throws IOelonxcelonption {
+      int numTelonrms = flushInfo.gelontIntPropelonrty(NUM_TelonRMS_PROP_NAMelon);
+      PackelondInts.Relonadelonr telonrmPointelonrs = in.relonadPackelondInts();
+      BytelonBlockPool telonrmPool = (nelonw BytelonBlockPool.FlushHandlelonr()).load(
+              flushInfo.gelontSubPropelonrtielons("telonrmPool"), in);
+      BDZAlgorithm telonrmsHashFunction = (nelonw BDZAlgorithm.FlushHandlelonr()).load(
+              flushInfo.gelontSubPropelonrtielons("telonrmsHashFunction"), in);
 
-      return new MPHTermDictionary(numTerms, termsHashFunction, termPointers,
-              termPool, termPointerEncoding);
+      relonturn nelonw MPHTelonrmDictionary(numTelonrms, telonrmsHashFunction, telonrmPointelonrs,
+              telonrmPool, telonrmPointelonrelonncoding);
     }
   }
 }

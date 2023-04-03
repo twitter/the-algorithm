@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Classic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ClassicNoDivider
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ContextEmphasis
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeaderDisplayType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.Classic
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ClassicNoDividelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.Contelonxtelonmphasis
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonHelonadelonrDisplayTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ModuleHeaderDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class ModulelonHelonadelonrDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(displayType: ModuleHeaderDisplayType): urt.ModuleHeaderDisplayType =
-    displayType match {
-      case Classic => urt.ModuleHeaderDisplayType.Classic
-      case ContextEmphasis => urt.ModuleHeaderDisplayType.ContextEmphasis
-      case ClassicNoDivider => urt.ModuleHeaderDisplayType.ClassicNoDivider
+  delonf apply(displayTypelon: ModulelonHelonadelonrDisplayTypelon): urt.ModulelonHelonadelonrDisplayTypelon =
+    displayTypelon match {
+      caselon Classic => urt.ModulelonHelonadelonrDisplayTypelon.Classic
+      caselon Contelonxtelonmphasis => urt.ModulelonHelonadelonrDisplayTypelon.Contelonxtelonmphasis
+      caselon ClassicNoDividelonr => urt.ModulelonHelonadelonrDisplayTypelon.ClassicNoDividelonr
     }
 
 }

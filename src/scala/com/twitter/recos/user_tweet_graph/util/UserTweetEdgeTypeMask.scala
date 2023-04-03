@@ -1,77 +1,77 @@
-package com.twitter.recos.user_tweet_graph.util
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_graph.util
 
-import com.twitter.graphjet.bipartite.api.EdgeTypeMask
-import com.twitter.recos.util.Action
+import com.twittelonr.graphjelont.bipartitelon.api.elondgelonTypelonMask
+import com.twittelonr.reloncos.util.Action
 
 /**
- * The bit mask is used to encode edge types in the top bits of an integer,
- * e.g. favorite, retweet, reply and click. Under current segment configuration, each segment
- * stores up to 128M edges. Assuming that each node on one side is unique, each segment
- * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
- * The following implementation utilizes the top four bits and leaves one free bit out.
+ * Thelon bit mask is uselond to elonncodelon elondgelon typelons in thelon top bits of an intelongelonr,
+ * elon.g. favoritelon, relontwelonelont, relonply and click. Undelonr currelonnt selongmelonnt configuration, elonach selongmelonnt
+ * storelons up to 128M elondgelons. Assuming that elonach nodelon on onelon sidelon is uniquelon, elonach selongmelonnt
+ * storelons up to 128M uniquelon nodelons on onelon sidelon, which occupielons thelon lowelonr 27 bits of an intelongelonr.
+ * This lelonavelons fivelon bits to elonncodelon thelon elondgelon typelons, which at max can storelon 32 elondgelon typelons.
+ * Thelon following implelonmelonntation utilizelons thelon top four bits and lelonavelons onelon frelonelon bit out.
  */
-class UserTweetEdgeTypeMask extends EdgeTypeMask {
-  import UserTweetEdgeTypeMask._
+class UselonrTwelonelontelondgelonTypelonMask elonxtelonnds elondgelonTypelonMask {
+  import UselonrTwelonelontelondgelonTypelonMask._
 
-  override def encode(node: Int, edgeType: Byte): Int = {
-    if (edgeType < 0 || edgeType > SIZE || edgeType == Click.id.toByte) {
-      throw new IllegalArgumentException("encode: Illegal edge type argument " + edgeType)
-    } else {
-      node | (edgeType << 28)
+  ovelonrridelon delonf elonncodelon(nodelon: Int, elondgelonTypelon: Bytelon): Int = {
+    if (elondgelonTypelon < 0 || elondgelonTypelon > SIZelon || elondgelonTypelon == Click.id.toBytelon) {
+      throw nelonw IllelongalArgumelonntelonxcelonption("elonncodelon: Illelongal elondgelon typelon argumelonnt " + elondgelonTypelon)
+    } elonlselon {
+      nodelon | (elondgelonTypelon << 28)
     }
   }
 
-  override def edgeType(node: Int): Byte = {
-    (node >>> 28).toByte
+  ovelonrridelon delonf elondgelonTypelon(nodelon: Int): Bytelon = {
+    (nodelon >>> 28).toBytelon
   }
 
-  override def restore(node: Int): Int = {
-    node & MASK
+  ovelonrridelon delonf relonstorelon(nodelon: Int): Int = {
+    nodelon & MASK
   }
 }
 
-object UserTweetEdgeTypeMask extends Enumeration {
+objelonct UselonrTwelonelontelondgelonTypelonMask elonxtelonnds elonnumelonration {
 
-  type UserTweetEdgeTypeMask = Value
-
-  /**
-   * Byte values corresponding to the action taken on a tweet, which will be encoded in the
-   * top 4 bits in a tweet Id
-   * NOTE: THERE CAN ONLY BE UP TO 16 TYPES
-   */
-  val Click: UserTweetEdgeTypeMask = Value(0)
-  val Favorite: UserTweetEdgeTypeMask = Value(1)
-  val Retweet: UserTweetEdgeTypeMask = Value(2)
-  val Reply: UserTweetEdgeTypeMask = Value(3)
-  val Tweet: UserTweetEdgeTypeMask = Value(4)
-  val IsMentioned: UserTweetEdgeTypeMask = Value(5)
-  val IsMediatagged: UserTweetEdgeTypeMask = Value(6)
-  val Quote: UserTweetEdgeTypeMask = Value(7)
-  val Unfavorite: UserTweetEdgeTypeMask = Value(8)
+  typelon UselonrTwelonelontelondgelonTypelonMask = Valuelon
 
   /**
-   * Reserve the top four bits of each integer to encode the edge type information.
+   * Bytelon valuelons correlonsponding to thelon action takelonn on a twelonelont, which will belon elonncodelond in thelon
+   * top 4 bits in a twelonelont Id
+   * NOTelon: THelonRelon CAN ONLY Belon UP TO 16 TYPelonS
    */
-  val MASK: Int = Integer.parseInt("00001111111111111111111111111111", 2)
-  val SIZE: Int = this.values.size
+  val Click: UselonrTwelonelontelondgelonTypelonMask = Valuelon(0)
+  val Favoritelon: UselonrTwelonelontelondgelonTypelonMask = Valuelon(1)
+  val Relontwelonelont: UselonrTwelonelontelondgelonTypelonMask = Valuelon(2)
+  val Relonply: UselonrTwelonelontelondgelonTypelonMask = Valuelon(3)
+  val Twelonelont: UselonrTwelonelontelondgelonTypelonMask = Valuelon(4)
+  val IsMelonntionelond: UselonrTwelonelontelondgelonTypelonMask = Valuelon(5)
+  val IsMelondiataggelond: UselonrTwelonelontelondgelonTypelonMask = Valuelon(6)
+  val Quotelon: UselonrTwelonelontelondgelonTypelonMask = Valuelon(7)
+  val Unfavoritelon: UselonrTwelonelontelondgelonTypelonMask = Valuelon(8)
 
   /**
-   * Converts the action byte in the RecosHoseMessage into GraphJet internal byte mapping
+   * Relonselonrvelon thelon top four bits of elonach intelongelonr to elonncodelon thelon elondgelon typelon information.
    */
-  def actionTypeToEdgeType(actionByte: Byte): Byte = {
-    val edgeType = Action(actionByte) match {
-      case Action.Favorite => Favorite.id
-      case Action.Retweet => Retweet.id
-      case Action.Reply => Reply.id
-      case Action.Tweet => Tweet.id
-      case Action.IsMentioned => IsMentioned.id
-      case Action.IsMediaTagged => IsMediatagged.id
-      case Action.Quote => Quote.id
-      case Action.Unfavorite => Unfavorite.id
-      case _ =>
-        throw new IllegalArgumentException("getEdgeType: Illegal edge type argument " + actionByte)
+  val MASK: Int = Intelongelonr.parselonInt("00001111111111111111111111111111", 2)
+  val SIZelon: Int = this.valuelons.sizelon
+
+  /**
+   * Convelonrts thelon action bytelon in thelon ReloncosHoselonMelonssagelon into GraphJelont intelonrnal bytelon mapping
+   */
+  delonf actionTypelonToelondgelonTypelon(actionBytelon: Bytelon): Bytelon = {
+    val elondgelonTypelon = Action(actionBytelon) match {
+      caselon Action.Favoritelon => Favoritelon.id
+      caselon Action.Relontwelonelont => Relontwelonelont.id
+      caselon Action.Relonply => Relonply.id
+      caselon Action.Twelonelont => Twelonelont.id
+      caselon Action.IsMelonntionelond => IsMelonntionelond.id
+      caselon Action.IsMelondiaTaggelond => IsMelondiataggelond.id
+      caselon Action.Quotelon => Quotelon.id
+      caselon Action.Unfavoritelon => Unfavoritelon.id
+      caselon _ =>
+        throw nelonw IllelongalArgumelonntelonxcelonption("gelontelondgelonTypelon: Illelongal elondgelon typelon argumelonnt " + actionBytelon)
     }
-    edgeType.toByte
+    elondgelonTypelon.toBytelon
   }
 }

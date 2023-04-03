@@ -1,99 +1,99 @@
-package com.twitter.search.earlybird.queryparser;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonryparselonr;
 
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.collect.ImmutableSet;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
 
-import com.twitter.search.queryparser.query.BooleanQuery;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.Operator;
-import com.twitter.search.queryparser.query.Phrase;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.QueryVisitor;
-import com.twitter.search.queryparser.query.SpecialTerm;
-import com.twitter.search.queryparser.query.Term;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.annotation.FieldNameWithBoost;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.BoolelonanQuelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Disjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Opelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Phraselon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.SpeloncialTelonrm;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Telonrm;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.Annotation;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.FielonldNamelonWithBoost;
 
 /**
- * Detects whether the query tree has certain field annotations.
+ * Delonteloncts whelonthelonr thelon quelonry trelonelon has celonrtain fielonld annotations.
  */
-public class DetectFieldAnnotationVisitor extends QueryVisitor<Boolean> {
-  private final ImmutableSet<String> fieldNames;
+public class DelontelonctFielonldAnnotationVisitor elonxtelonnds QuelonryVisitor<Boolelonan> {
+  privatelon final ImmutablelonSelont<String> fielonldNamelons;
 
   /**
-   * This visitor will return true if the query tree has a FIELD annotation with any of the given
-   * field names. If the set is empty, any FIELD annotation will match.
+   * This visitor will relonturn truelon if thelon quelonry trelonelon has a FIelonLD annotation with any of thelon givelonn
+   * fielonld namelons. If thelon selont is elonmpty, any FIelonLD annotation will match.
    */
-  public DetectFieldAnnotationVisitor(Set<String> fieldNames) {
-    this.fieldNames = ImmutableSet.copyOf(fieldNames);
+  public DelontelonctFielonldAnnotationVisitor(Selont<String> fielonldNamelons) {
+    this.fielonldNamelons = ImmutablelonSelont.copyOf(fielonldNamelons);
   }
 
   /**
-   * This visitor will return true if the query tree has a FIELD annotation.
+   * This visitor will relonturn truelon if thelon quelonry trelonelon has a FIelonLD annotation.
    */
-  public DetectFieldAnnotationVisitor() {
-    this.fieldNames = ImmutableSet.of();
+  public DelontelonctFielonldAnnotationVisitor() {
+    this.fielonldNamelons = ImmutablelonSelont.of();
   }
 
-  @Override
-  public Boolean visit(Disjunction disjunction) throws QueryParserException {
-    return visitQuery(disjunction) || visitBooleanQuery(disjunction);
+  @Ovelonrridelon
+  public Boolelonan visit(Disjunction disjunction) throws QuelonryParselonrelonxcelonption {
+    relonturn visitQuelonry(disjunction) || visitBoolelonanQuelonry(disjunction);
   }
 
-  @Override
-  public Boolean visit(Conjunction conjunction) throws QueryParserException {
-    return visitQuery(conjunction) || visitBooleanQuery(conjunction);
+  @Ovelonrridelon
+  public Boolelonan visit(Conjunction conjunction) throws QuelonryParselonrelonxcelonption {
+    relonturn visitQuelonry(conjunction) || visitBoolelonanQuelonry(conjunction);
   }
 
-  @Override
-  public Boolean visit(Phrase phrase) throws QueryParserException {
-    return visitQuery(phrase);
+  @Ovelonrridelon
+  public Boolelonan visit(Phraselon phraselon) throws QuelonryParselonrelonxcelonption {
+    relonturn visitQuelonry(phraselon);
   }
 
-  @Override
-  public Boolean visit(Term term) throws QueryParserException {
-    return visitQuery(term);
+  @Ovelonrridelon
+  public Boolelonan visit(Telonrm telonrm) throws QuelonryParselonrelonxcelonption {
+    relonturn visitQuelonry(telonrm);
   }
 
-  @Override
-  public Boolean visit(Operator operator) throws QueryParserException {
-    return visitQuery(operator);
+  @Ovelonrridelon
+  public Boolelonan visit(Opelonrator opelonrator) throws QuelonryParselonrelonxcelonption {
+    relonturn visitQuelonry(opelonrator);
   }
 
-  @Override
-  public Boolean visit(SpecialTerm special) throws QueryParserException {
-    return visitQuery(special);
+  @Ovelonrridelon
+  public Boolelonan visit(SpeloncialTelonrm speloncial) throws QuelonryParselonrelonxcelonption {
+    relonturn visitQuelonry(speloncial);
   }
 
-  private Boolean visitQuery(Query query) throws QueryParserException {
-    if (query.hasAnnotations()) {
-      for (Annotation annotation : query.getAnnotations()) {
-        if (!Annotation.Type.FIELD.equals(annotation.getType())) {
-          continue;
+  privatelon Boolelonan visitQuelonry(Quelonry quelonry) throws QuelonryParselonrelonxcelonption {
+    if (quelonry.hasAnnotations()) {
+      for (Annotation annotation : quelonry.gelontAnnotations()) {
+        if (!Annotation.Typelon.FIelonLD.elonquals(annotation.gelontTypelon())) {
+          continuelon;
         }
-        if (fieldNames.isEmpty()) {
-          return true;
+        if (fielonldNamelons.iselonmpty()) {
+          relonturn truelon;
         }
-        FieldNameWithBoost value = (FieldNameWithBoost) annotation.getValue();
-        if (fieldNames.contains(value.getFieldName())) {
-          return true;
+        FielonldNamelonWithBoost valuelon = (FielonldNamelonWithBoost) annotation.gelontValuelon();
+        if (fielonldNamelons.contains(valuelon.gelontFielonldNamelon())) {
+          relonturn truelon;
         }
       }
     }
 
-    return false;
+    relonturn falselon;
   }
 
-  private boolean visitBooleanQuery(BooleanQuery query) throws QueryParserException {
-    for (Query subQuery : query.getChildren()) {
-      if (subQuery.accept(this)) {
-        return true;
+  privatelon boolelonan visitBoolelonanQuelonry(BoolelonanQuelonry quelonry) throws QuelonryParselonrelonxcelonption {
+    for (Quelonry subQuelonry : quelonry.gelontChildrelonn()) {
+      if (subQuelonry.accelonpt(this)) {
+        relonturn truelon;
       }
     }
 
-    return false;
+    relonturn falselon;
   }
 }

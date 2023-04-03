@@ -1,59 +1,59 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Retrieve Candidates from the Query
+ * Relontrielonvelon Candidatelons from thelon Quelonry
  */
-trait CandidateExtractor[-Request, +Candidate] {
+trait Candidatelonelonxtractor[-Relonquelonst, +Candidatelon] {
 
-  def apply(query: Request): Seq[Candidate]
+  delonf apply(quelonry: Relonquelonst): Selonq[Candidatelon]
 }
 
 /**
- * Identity extractor for returning the Request as a Seq of candidates
+ * Idelonntity elonxtractor for relonturning thelon Relonquelonst as a Selonq of candidatelons
  */
-case class IdentityCandidateExtractor[Request]() extends CandidateExtractor[Request, Request] {
+caselon class IdelonntityCandidatelonelonxtractor[Relonquelonst]() elonxtelonnds Candidatelonelonxtractor[Relonquelonst, Relonquelonst] {
 
-  def apply(candidate: Request): Seq[Request] = Seq(candidate)
+  delonf apply(candidatelon: Relonquelonst): Selonq[Relonquelonst] = Selonq(candidatelon)
 }
 
 /**
- * Retrieve Candidates from a [[Feature]] on the [[PipelineQuery]]'s FeatureMap. This extractor
- * supports a transform if the Feature value and the Seq of [[Candidate]] types do not match
+ * Relontrielonvelon Candidatelons from a [[Felonaturelon]] on thelon [[PipelonlinelonQuelonry]]'s FelonaturelonMap. This elonxtractor
+ * supports a transform if thelon Felonaturelon valuelon and thelon Selonq of [[Candidatelon]] typelons do not match
  */
-trait QueryFeatureCandidateExtractor[-Query <: PipelineQuery, FeatureValue, +Candidate]
-    extends CandidateExtractor[Query, Candidate] {
+trait QuelonryFelonaturelonCandidatelonelonxtractor[-Quelonry <: PipelonlinelonQuelonry, FelonaturelonValuelon, +Candidatelon]
+    elonxtelonnds Candidatelonelonxtractor[Quelonry, Candidatelon] {
 
-  def feature: Feature[Query, FeatureValue]
+  delonf felonaturelon: Felonaturelon[Quelonry, FelonaturelonValuelon]
 
-  override def apply(query: Query): Seq[Candidate] =
-    query.features.map(featureMap => transform(featureMap.get(feature))).getOrElse(Seq.empty)
+  ovelonrridelon delonf apply(quelonry: Quelonry): Selonq[Candidatelon] =
+    quelonry.felonaturelons.map(felonaturelonMap => transform(felonaturelonMap.gelont(felonaturelon))).gelontOrelonlselon(Selonq.elonmpty)
 
-  def transform(featureValue: FeatureValue): Seq[Candidate]
+  delonf transform(felonaturelonValuelon: FelonaturelonValuelon): Selonq[Candidatelon]
 }
 
 /**
- * Retrieve Candidates from a [[Feature]] on the [[PipelineQuery]]'s FeatureMap. This extractor can
- * be used with a single [[Feature]] if the Feature value and the Seq of [[Candidate]] types match.
+ * Relontrielonvelon Candidatelons from a [[Felonaturelon]] on thelon [[PipelonlinelonQuelonry]]'s FelonaturelonMap. This elonxtractor can
+ * belon uselond with a singlelon [[Felonaturelon]] if thelon Felonaturelon valuelon and thelon Selonq of [[Candidatelon]] typelons match.
  */
-case class CandidateQueryFeatureCandidateExtractor[-Query <: PipelineQuery, Candidate](
-  override val feature: Feature[Query, Seq[Candidate]])
-    extends QueryFeatureCandidateExtractor[Query, Seq[Candidate], Candidate] {
+caselon class CandidatelonQuelonryFelonaturelonCandidatelonelonxtractor[-Quelonry <: PipelonlinelonQuelonry, Candidatelon](
+  ovelonrridelon val felonaturelon: Felonaturelon[Quelonry, Selonq[Candidatelon]])
+    elonxtelonnds QuelonryFelonaturelonCandidatelonelonxtractor[Quelonry, Selonq[Candidatelon], Candidatelon] {
 
-  override def transform(featureValue: Seq[Candidate]): Seq[Candidate] = featureValue
+  ovelonrridelon delonf transform(felonaturelonValuelon: Selonq[Candidatelon]): Selonq[Candidatelon] = felonaturelonValuelon
 }
 
 /**
- * A [[CandidateSource]] that retrieves candidates from the Request via a [[CandidateExtractor]]
+ * A [[CandidatelonSourcelon]] that relontrielonvelons candidatelons from thelon Relonquelonst via a [[Candidatelonelonxtractor]]
  */
-case class PassthroughCandidateSource[-Request, +Candidate](
-  override val identifier: CandidateSourceIdentifier,
-  candidateExtractor: CandidateExtractor[Request, Candidate])
-    extends CandidateSource[Request, Candidate] {
+caselon class PassthroughCandidatelonSourcelon[-Relonquelonst, +Candidatelon](
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr,
+  candidatelonelonxtractor: Candidatelonelonxtractor[Relonquelonst, Candidatelon])
+    elonxtelonnds CandidatelonSourcelon[Relonquelonst, Candidatelon] {
 
-  def apply(query: Request): Stitch[Seq[Candidate]] = Stitch.value(candidateExtractor(query))
+  delonf apply(quelonry: Relonquelonst): Stitch[Selonq[Candidatelon]] = Stitch.valuelon(candidatelonelonxtractor(quelonry))
 }

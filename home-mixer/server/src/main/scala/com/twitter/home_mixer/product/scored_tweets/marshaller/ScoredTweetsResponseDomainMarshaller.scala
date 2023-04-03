@@ -1,64 +1,64 @@
-package com.twitter.home_mixer.product.scored_tweets.marshaller
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.marshallelonr
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweet
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsResponse
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.TopicContextFunctionalityTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelont
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsRelonsponselon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.TopicContelonxtFunctionalityTypelonMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DomainMarshallelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
 
 /**
- * Creates a domain model of the Scored Tweets product response from the set of candidates selected
+ * Crelonatelons a domain modelonl of thelon Scorelond Twelonelonts product relonsponselon from thelon selont of candidatelons selonlelonctelond
  */
-object ScoredTweetsResponseDomainMarshaller
-    extends DomainMarshaller[ScoredTweetsQuery, ScoredTweetsResponse] {
+objelonct ScorelondTwelonelontsRelonsponselonDomainMarshallelonr
+    elonxtelonnds DomainMarshallelonr[ScorelondTwelonelontsQuelonry, ScorelondTwelonelontsRelonsponselon] {
 
-  override val identifier: DomainMarshallerIdentifier =
-    DomainMarshallerIdentifier("ScoredTweetsResponse")
+  ovelonrridelon val idelonntifielonr: DomainMarshallelonrIdelonntifielonr =
+    DomainMarshallelonrIdelonntifielonr("ScorelondTwelonelontsRelonsponselon")
 
-  override def apply(
-    query: ScoredTweetsQuery,
-    selections: Seq[CandidateWithDetails]
-  ): ScoredTweetsResponse = ScoredTweetsResponse(
-    scoredTweets = selections.collect {
-      case ItemCandidateWithDetails(candidate: TweetCandidate, _, features) =>
-        Seq(mkScoredTweet(candidate.id, features))
-      case ModuleCandidateWithDetails(candidates, _, _) =>
-        candidates.map { candidate => mkScoredTweet(candidate.candidateIdLong, candidate.features) }
-    }.flatten
+  ovelonrridelon delonf apply(
+    quelonry: ScorelondTwelonelontsQuelonry,
+    selonlelonctions: Selonq[CandidatelonWithDelontails]
+  ): ScorelondTwelonelontsRelonsponselon = ScorelondTwelonelontsRelonsponselon(
+    scorelondTwelonelonts = selonlelonctions.collelonct {
+      caselon ItelonmCandidatelonWithDelontails(candidatelon: TwelonelontCandidatelon, _, felonaturelons) =>
+        Selonq(mkScorelondTwelonelont(candidatelon.id, felonaturelons))
+      caselon ModulelonCandidatelonWithDelontails(candidatelons, _, _) =>
+        candidatelons.map { candidatelon => mkScorelondTwelonelont(candidatelon.candidatelonIdLong, candidatelon.felonaturelons) }
+    }.flattelonn
   )
 
-  private def mkScoredTweet(tweetId: Long, features: FeatureMap): ScoredTweet = {
-    val topicFunctionalityType = features
-      .getOrElse(TopicContextFunctionalityTypeFeature, None)
-      .map(TopicContextFunctionalityTypeMarshaller(_))
+  privatelon delonf mkScorelondTwelonelont(twelonelontId: Long, felonaturelons: FelonaturelonMap): ScorelondTwelonelont = {
+    val topicFunctionalityTypelon = felonaturelons
+      .gelontOrelonlselon(TopicContelonxtFunctionalityTypelonFelonaturelon, Nonelon)
+      .map(TopicContelonxtFunctionalityTypelonMarshallelonr(_))
 
-    ScoredTweet(
-      tweetId = tweetId,
-      authorId = features.get(AuthorIdFeature).get,
-      score = features.get(ScoreFeature),
-      suggestType = features.get(SuggestTypeFeature).get,
-      sourceTweetId = features.getOrElse(SourceTweetIdFeature, None),
-      sourceUserId = features.getOrElse(SourceUserIdFeature, None),
-      quotedTweetId = features.getOrElse(QuotedTweetIdFeature, None),
-      quotedUserId = features.getOrElse(QuotedUserIdFeature, None),
-      inReplyToTweetId = features.getOrElse(InReplyToTweetIdFeature, None),
-      inReplyToUserId = features.getOrElse(InReplyToUserIdFeature, None),
-      directedAtUserId = features.getOrElse(DirectedAtUserIdFeature, None),
-      inNetwork = Some(features.getOrElse(InNetworkFeature, false)),
-      favoritedByUserIds = Some(features.getOrElse(FavoritedByUserIdsFeature, Seq.empty)),
-      followedByUserIds = Some(features.getOrElse(FollowedByUserIdsFeature, Seq.empty)),
-      topicId = features.getOrElse(TopicIdSocialContextFeature, None),
-      topicFunctionalityType = topicFunctionalityType,
-      ancestors = Some(features.getOrElse(AncestorsFeature, Seq.empty)),
-      isReadFromCache = Some(features.getOrElse(IsReadFromCacheFeature, false)),
-      streamToKafka = Some(features.getOrElse(StreamToKafkaFeature, false))
+    ScorelondTwelonelont(
+      twelonelontId = twelonelontId,
+      authorId = felonaturelons.gelont(AuthorIdFelonaturelon).gelont,
+      scorelon = felonaturelons.gelont(ScorelonFelonaturelon),
+      suggelonstTypelon = felonaturelons.gelont(SuggelonstTypelonFelonaturelon).gelont,
+      sourcelonTwelonelontId = felonaturelons.gelontOrelonlselon(SourcelonTwelonelontIdFelonaturelon, Nonelon),
+      sourcelonUselonrId = felonaturelons.gelontOrelonlselon(SourcelonUselonrIdFelonaturelon, Nonelon),
+      quotelondTwelonelontId = felonaturelons.gelontOrelonlselon(QuotelondTwelonelontIdFelonaturelon, Nonelon),
+      quotelondUselonrId = felonaturelons.gelontOrelonlselon(QuotelondUselonrIdFelonaturelon, Nonelon),
+      inRelonplyToTwelonelontId = felonaturelons.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon),
+      inRelonplyToUselonrId = felonaturelons.gelontOrelonlselon(InRelonplyToUselonrIdFelonaturelon, Nonelon),
+      direlonctelondAtUselonrId = felonaturelons.gelontOrelonlselon(DirelonctelondAtUselonrIdFelonaturelon, Nonelon),
+      inNelontwork = Somelon(felonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, falselon)),
+      favoritelondByUselonrIds = Somelon(felonaturelons.gelontOrelonlselon(FavoritelondByUselonrIdsFelonaturelon, Selonq.elonmpty)),
+      followelondByUselonrIds = Somelon(felonaturelons.gelontOrelonlselon(FollowelondByUselonrIdsFelonaturelon, Selonq.elonmpty)),
+      topicId = felonaturelons.gelontOrelonlselon(TopicIdSocialContelonxtFelonaturelon, Nonelon),
+      topicFunctionalityTypelon = topicFunctionalityTypelon,
+      ancelonstors = Somelon(felonaturelons.gelontOrelonlselon(AncelonstorsFelonaturelon, Selonq.elonmpty)),
+      isRelonadFromCachelon = Somelon(felonaturelons.gelontOrelonlselon(IsRelonadFromCachelonFelonaturelon, falselon)),
+      strelonamToKafka = Somelon(felonaturelons.gelontOrelonlselon(StrelonamToKafkaFelonaturelon, falselon))
     )
   }
 }

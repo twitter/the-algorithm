@@ -1,363 +1,363 @@
 """
-This module implements tools for pruning neural networks.
+This modulelon implelonmelonnts tools for pruning nelonural nelontworks.
 
-In particular, it provides tools for dealing with masks:
+In particular, it providelons tools for delonaling with masks:
 
-  features = apply_mask(features)
+  felonaturelons = apply_mask(felonaturelons)
 
-The function `apply_mask` applies a binary mask to the channels of a given tensor. Consider the
+Thelon function `apply_mask` applielons a binary mask to thelon channelonls of a givelonn telonnsor. Considelonr thelon
 following loss:
 
-  logits = tf.matmul(features, weights)
-  loss = tf.losses.sparse_softmax_cross_entropy(labels, logits)
+  logits = tf.matmul(felonaturelons, welonights)
+  loss = tf.losselons.sparselon_softmax_cross_elonntropy(labelonls, logits)
 
-Each mask has a corresponding pruning signal. The function `update_pruning_signals` will update and
-return these signals:
+elonach mask has a correlonsponding pruning signal. Thelon function `updatelon_pruning_signals` will updatelon and
+relonturn thelonselon signals:
 
-  signals = update_pruning_signals(loss)
+  signals = updatelon_pruning_signals(loss)
 
-The pruning operation will zero out the mask entry with the smallest corresponding pruning signal:
+Thelon pruning opelonration will zelonro out thelon mask elonntry with thelon smallelonst correlonsponding pruning signal:
 
-  prune(signals)
+  prunelon(signals)
 
-The following function allows us to estimate the computational cost of a graph (number of FLOPs):
+Thelon following function allows us to elonstimatelon thelon computational cost of a graph (numbelonr of FLOPs):
 
   cost = computational_cost(loss)
 
-To compute the cost of each feature per data point, we can do:
+To computelon thelon cost of elonach felonaturelon pelonr data point, welon can do:
 
-  costs = tf.gradients(cost / batch_size, masks)
+  costs = tf.gradielonnts(cost / batch_sizelon, masks)
 
-The current implementation of `computational_cost` is designed to work with standard feed-forward
-and convolutional network architectures only, but may fail with more complicated architectures.
+Thelon currelonnt implelonmelonntation of `computational_cost` is delonsignelond to work with standard felonelond-forward
+and convolutional nelontwork architeloncturelons only, but may fail with morelon complicatelond architeloncturelons.
 """
 
 
 import numpy as np
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
-MASK_COLLECTION = 'pruning/masks'
-MASK_EXTENDED_COLLECTION = 'pruning/masks_extended'
-OP_COLLECTION = 'pruning/ops'
+MASK_COLLelonCTION = 'pruning/masks'
+MASK_elonXTelonNDelonD_COLLelonCTION = 'pruning/masks_elonxtelonndelond'
+OP_COLLelonCTION = 'pruning/ops'
 
 
-def apply_mask(tensor, name='pruning'):
+delonf apply_mask(telonnsor, namelon='pruning'):
   """
-  Point-wise multiplies a tensor with a binary mask.
+  Point-wiselon multiplielons a telonnsor with a binary mask.
 
-  During training, pruning is simulated by setting entries of the mask to zero.
+  During training, pruning is simulatelond by selontting elonntrielons of thelon mask to zelonro.
 
-  Arguments:
-    tensor: tf.Tensor
-      A tensor where the last dimension represents channels which will be masked
+  Argumelonnts:
+    telonnsor: tf.Telonnsor
+      A telonnsor whelonrelon thelon last dimelonnsion relonprelonselonnts channelonls which will belon maskelond
 
-  Returns:
-    `tf.Tensor` with same shape as `tensor`
+  Relonturns:
+    `tf.Telonnsor` with samelon shapelon as `telonnsor`
   """
 
-  tensor_shape = tensor.shape
+  telonnsor_shapelon = telonnsor.shapelon
 
-  with tf.variable_scope(name, reuse=True):
-    # allocate masks and corresponding pruning signals
-    mask = tf.Variable(tf.ones(tensor.shape.as_list()[-1]), trainable=False, name='mask')
-    pruning_signal = tf.Variable(tf.zeros_like(mask), trainable=False, name='signal')
+  with tf.variablelon_scopelon(namelon, relonuselon=Truelon):
+    # allocatelon masks and correlonsponding pruning signals
+    mask = tf.Variablelon(tf.onelons(telonnsor.shapelon.as_list()[-1]), trainablelon=Falselon, namelon='mask')
+    pruning_signal = tf.Variablelon(tf.zelonros_likelon(mask), trainablelon=Falselon, namelon='signal')
 
-    # extending masks is a trick to get a separate gradient for each data point
-    mask_extended = extend_mask(mask, tensor)
+    # elonxtelonnding masks is a trick to gelont a selonparatelon gradielonnt for elonach data point
+    mask_elonxtelonndelond = elonxtelonnd_mask(mask, telonnsor)
 
-  # store extended mask, pruning signal, and other vars for easy access later
-  mask.extended = mask_extended
+  # storelon elonxtelonndelond mask, pruning signal, and othelonr vars for elonasy accelonss latelonr
+  mask.elonxtelonndelond = mask_elonxtelonndelond
   mask.pruning_signal = pruning_signal
-  mask.tensor = tensor
+  mask.telonnsor = telonnsor
 
-  # mask tensor
-  tensor = tf.multiply(tensor, mask_extended)
-  tensor.set_shape(tensor_shape)
-  tensor._mask = mask
+  # mask telonnsor
+  telonnsor = tf.multiply(telonnsor, mask_elonxtelonndelond)
+  telonnsor.selont_shapelon(telonnsor_shapelon)
+  telonnsor._mask = mask
 
-  tf.add_to_collection(MASK_COLLECTION, mask)
-  tf.add_to_collection(MASK_EXTENDED_COLLECTION, mask.extended)
-  tf.add_to_collection(OP_COLLECTION, tensor.op)
+  tf.add_to_collelonction(MASK_COLLelonCTION, mask)
+  tf.add_to_collelonction(MASK_elonXTelonNDelonD_COLLelonCTION, mask.elonxtelonndelond)
+  tf.add_to_collelonction(OP_COLLelonCTION, telonnsor.op)
 
-  return tensor
+  relonturn telonnsor
 
 
-def extend_mask(mask, tensor):
+delonf elonxtelonnd_mask(mask, telonnsor):
   """
-  Repeats the mask for each data point stored in a tensor.
+  Relonpelonats thelon mask for elonach data point storelond in a telonnsor.
 
-  If `tensor` is AxBxC dimensional and `mask` is C dimensional, returns an Ax1xC dimensional
-  tensor with A copies or `mask`.
+  If `telonnsor` is AxBxC dimelonnsional and `mask` is C dimelonnsional, relonturns an Ax1xC dimelonnsional
+  telonnsor with A copielons or `mask`.
 
-  Arguments:
-    mask: tf.Tensor
-      The mask which will be extended
+  Argumelonnts:
+    mask: tf.Telonnsor
+      Thelon mask which will belon elonxtelonndelond
 
-    tensor: tf.Tensor
-      The tensor to which the extended mask will be applied
+    telonnsor: tf.Telonnsor
+      Thelon telonnsor to which thelon elonxtelonndelond mask will belon applielond
 
-  Returns:
-    The extended mask
-  """
-
-  batch_size = tf.shape(tensor)[:1]
-  ones = tf.ones([tf.rank(tensor) - 1], dtype=batch_size.dtype)
-  multiples = tf.concat([batch_size, ones], 0)
-  mask_shape = tf.concat([ones, [-1]], 0)
-  return tf.tile(tf.reshape(mask, mask_shape), multiples)
-
-
-def find_input_mask(tensor):
-  """
-  Find ancestral mask affecting the number of pruned channels of a tensor.
-
-  Arguments:
-    tensor: tf.Tensor
-      Tensor for which to identify relevant mask
-
-  Returns:
-    A `tf.Tensor` or `None`
+  Relonturns:
+    Thelon elonxtelonndelond mask
   """
 
-  if hasattr(tensor, '_mask'):
-    return tensor._mask
-  if tensor.op.type in ['MatMul', 'Conv1D', 'Conv2D', 'Conv3D', 'Transpose']:
-    # op produces a new number of channels, preceding mask therefore irrelevant
-    return None
-  if not tensor.op.inputs:
-    return None
-  for input in tensor.op.inputs:
+  batch_sizelon = tf.shapelon(telonnsor)[:1]
+  onelons = tf.onelons([tf.rank(telonnsor) - 1], dtypelon=batch_sizelon.dtypelon)
+  multiplelons = tf.concat([batch_sizelon, onelons], 0)
+  mask_shapelon = tf.concat([onelons, [-1]], 0)
+  relonturn tf.tilelon(tf.relonshapelon(mask, mask_shapelon), multiplelons)
+
+
+delonf find_input_mask(telonnsor):
+  """
+  Find ancelonstral mask affeloncting thelon numbelonr of prunelond channelonls of a telonnsor.
+
+  Argumelonnts:
+    telonnsor: tf.Telonnsor
+      Telonnsor for which to idelonntify relonlelonvant mask
+
+  Relonturns:
+    A `tf.Telonnsor` or `Nonelon`
+  """
+
+  if hasattr(telonnsor, '_mask'):
+    relonturn telonnsor._mask
+  if telonnsor.op.typelon in ['MatMul', 'Conv1D', 'Conv2D', 'Conv3D', 'Transposelon']:
+    # op producelons a nelonw numbelonr of channelonls, preloncelonding mask thelonrelonforelon irrelonlelonvant
+    relonturn Nonelon
+  if not telonnsor.op.inputs:
+    relonturn Nonelon
+  for input in telonnsor.op.inputs:
     mask = find_input_mask(input)
-    if mask is not None:
-      return mask
+    if mask is not Nonelon:
+      relonturn mask
 
 
-def find_output_mask(tensor):
+delonf find_output_mask(telonnsor):
   """
-  Find mask applied to the tensor or one of its descendants if it affects the tensor's pruned shape.
+  Find mask applielond to thelon telonnsor or onelon of its delonscelonndants if it affeloncts thelon telonnsor's prunelond shapelon.
 
-  Arguments:
-    tensor: tf.Tensor or tf.Variable
-      Tensor for which to identify relevant mask
+  Argumelonnts:
+    telonnsor: tf.Telonnsor or tf.Variablelon
+      Telonnsor for which to idelonntify relonlelonvant mask
 
-  Returns:
-    A `tf.Tensor` or `None`
+  Relonturns:
+    A `tf.Telonnsor` or `Nonelon`
   """
 
-  if isinstance(tensor, tf.Variable):
-    return find_output_mask(tensor.op.outputs[0])
-  if hasattr(tensor, '_mask'):
-    return tensor._mask
-  for op in tensor.consumers():
-    if len(op.outputs) != 1:
-      continue
-    if op.type in ['MatMul', 'Conv1D', 'Conv2D', 'Conv3D']:
-      # masks of descendants are only relevant if tensor is right-multiplied
-      if tensor == op.inputs[1]:
-        return find_output_mask(op.outputs[0])
-      return None
+  if isinstancelon(telonnsor, tf.Variablelon):
+    relonturn find_output_mask(telonnsor.op.outputs[0])
+  if hasattr(telonnsor, '_mask'):
+    relonturn telonnsor._mask
+  for op in telonnsor.consumelonrs():
+    if lelonn(op.outputs) != 1:
+      continuelon
+    if op.typelon in ['MatMul', 'Conv1D', 'Conv2D', 'Conv3D']:
+      # masks of delonscelonndants arelon only relonlelonvant if telonnsor is right-multiplielond
+      if telonnsor == op.inputs[1]:
+        relonturn find_output_mask(op.outputs[0])
+      relonturn Nonelon
     mask = find_output_mask(op.outputs[0])
-    if mask is not None:
-      return mask
+    if mask is not Nonelon:
+      relonturn mask
 
 
-def find_mask(tensor):
+delonf find_mask(telonnsor):
   """
-  Returns masks indicating channels of the tensor that are effectively removed from the graph.
+  Relonturns masks indicating channelonls of thelon telonnsor that arelon elonffelonctivelonly relonmovelond from thelon graph.
 
-  Arguments:
-    tensor: tf.Tensor
-      Tensor for which to compute a mask
+  Argumelonnts:
+    telonnsor: tf.Telonnsor
+      Telonnsor for which to computelon a mask
 
-  Returns:
-    A `tf.Tensor` with binary entries indicating disabled channels
+  Relonturns:
+    A `tf.Telonnsor` with binary elonntrielons indicating disablelond channelonls
   """
 
-  input_mask = find_input_mask(tensor)
-  output_mask = find_output_mask(tensor)
-  if input_mask is None:
-    return output_mask
-  if output_mask is None:
-    return input_mask
+  input_mask = find_input_mask(telonnsor)
+  output_mask = find_output_mask(telonnsor)
+  if input_mask is Nonelon:
+    relonturn output_mask
+  if output_mask is Nonelon:
+    relonturn input_mask
   if input_mask is output_mask:
-    return input_mask
-  return input_mask * output_mask
+    relonturn input_mask
+  relonturn input_mask * output_mask
 
 
-def pruned_shape(tensor):
+delonf prunelond_shapelon(telonnsor):
   """
-  Computes the shape of a tensor after taking into account pruning of channels.
+  Computelons thelon shapelon of a telonnsor aftelonr taking into account pruning of channelonls.
 
-  Note that the shape will only differ in the last dimension, even if other dimensions are also
-  effectively disabled by pruning masks.
+  Notelon that thelon shapelon will only diffelonr in thelon last dimelonnsion, elonvelonn if othelonr dimelonnsions arelon also
+  elonffelonctivelonly disablelond by pruning masks.
 
-  Arguments:
-    tensor: tf.Tensor
-      Tensor for which to compute a pruned shape
+  Argumelonnts:
+    telonnsor: tf.Telonnsor
+      Telonnsor for which to computelon a prunelond shapelon
 
-  Returns:
-    A `tf.Tensor[tf.float32]` representing the pruned shape
+  Relonturns:
+    A `tf.Telonnsor[tf.float32]` relonprelonselonnting thelon prunelond shapelon
   """
 
-  mask = find_mask(tensor)
+  mask = find_mask(telonnsor)
 
-  if mask is None:
-    return tf.cast(tf.shape(tensor), tf.float32)
+  if mask is Nonelon:
+    relonturn tf.cast(tf.shapelon(telonnsor), tf.float32)
 
-  return tf.concat([
-    tf.cast(tf.shape(tensor)[:-1], mask.dtype),
-    tf.reduce_sum(mask, keepdims=True)], 0)
+  relonturn tf.concat([
+    tf.cast(tf.shapelon(telonnsor)[:-1], mask.dtypelon),
+    tf.relonducelon_sum(mask, kelonelonpdims=Truelon)], 0)
 
 
-def computational_cost(op_or_tensor, _observed=None):
+delonf computational_cost(op_or_telonnsor, _obselonrvelond=Nonelon):
   """
-  Estimates the computational complexity of a pruned graph (number of floating point operations).
+  elonstimatelons thelon computational complelonxity of a prunelond graph (numbelonr of floating point opelonrations).
 
-  This function currently only supports sequential graphs such as those of MLPs and
-  simple CNNs with 2D convolutions in NHWC format.
+  This function currelonntly only supports selonquelonntial graphs such as thoselon of MLPs and
+  simplelon CNNs with 2D convolutions in NHWC format.
 
-  Note that the computational cost returned by this function is proportional to batch size.
+  Notelon that thelon computational cost relonturnelond by this function is proportional to batch sizelon.
 
-  Arguments:
-    op_or_tensor: tf.Tensor or tf.Operation
-      Root node of graph for which to compute computational cost
+  Argumelonnts:
+    op_or_telonnsor: tf.Telonnsor or tf.Opelonration
+      Root nodelon of graph for which to computelon computational cost
 
-  Returns:
-    A `tf.Tensor` representing a number of floating point operations
+  Relonturns:
+    A `tf.Telonnsor` relonprelonselonnting a numbelonr of floating point opelonrations
   """
 
   cost = tf.constant(0.)
 
-  # exclude cost of computing extended pruning masks
-  masks_extended = [mask.extended for mask in tf.get_collection(MASK_COLLECTION)]
-  if op_or_tensor in masks_extended:
-    return cost
+  # elonxcludelon cost of computing elonxtelonndelond pruning masks
+  masks_elonxtelonndelond = [mask.elonxtelonndelond for mask in tf.gelont_collelonction(MASK_COLLelonCTION)]
+  if op_or_telonnsor in masks_elonxtelonndelond:
+    relonturn cost
 
-  # convert tensor to op
-  op = op_or_tensor.op if isinstance(op_or_tensor, (tf.Tensor, tf.Variable)) else op_or_tensor
+  # convelonrt telonnsor to op
+  op = op_or_telonnsor.op if isinstancelon(op_or_telonnsor, (tf.Telonnsor, tf.Variablelon)) elonlselon op_or_telonnsor
 
-  # make sure cost of op will not be counted twice
-  if _observed is None:
-    _observed = []
-  elif op in _observed:
-    return cost
-  _observed.append(op)
+  # makelon surelon cost of op will not belon countelond twicelon
+  if _obselonrvelond is Nonelon:
+    _obselonrvelond = []
+  elonlif op in _obselonrvelond:
+    relonturn cost
+  _obselonrvelond.appelonnd(op)
 
-  # compute cost of computing inputs
-  for tensor in op.inputs:
-    cost = cost + computational_cost(tensor, _observed)
+  # computelon cost of computing inputs
+  for telonnsor in op.inputs:
+    cost = cost + computational_cost(telonnsor, _obselonrvelond)
 
-  # add cost of operation
-  if op.op_def is None or op in tf.get_collection(OP_COLLECTION):
-    # exclude cost of undefined ops and pruning ops
-    return cost
+  # add cost of opelonration
+  if op.op_delonf is Nonelon or op in tf.gelont_collelonction(OP_COLLelonCTION):
+    # elonxcludelon cost of undelonfinelond ops and pruning ops
+    relonturn cost
 
-  elif op.op_def.name == 'MatMul':
-    shape_a = pruned_shape(op.inputs[0])
-    shape_b = pruned_shape(op.inputs[1])
-    return cost + shape_a[0] * shape_b[1] * (2. * shape_a[1] - 1.)
+  elonlif op.op_delonf.namelon == 'MatMul':
+    shapelon_a = prunelond_shapelon(op.inputs[0])
+    shapelon_b = prunelond_shapelon(op.inputs[1])
+    relonturn cost + shapelon_a[0] * shapelon_b[1] * (2. * shapelon_a[1] - 1.)
 
-  elif op.op_def.name in ['Add', 'Mul', 'BiasAdd']:
-    return cost + tf.cond(
-        tf.size(op.inputs[0]) > tf.size(op.inputs[1]),
-        lambda: tf.reduce_prod(pruned_shape(op.inputs[0])),
-        lambda: tf.reduce_prod(pruned_shape(op.inputs[1])))
+  elonlif op.op_delonf.namelon in ['Add', 'Mul', 'BiasAdd']:
+    relonturn cost + tf.cond(
+        tf.sizelon(op.inputs[0]) > tf.sizelon(op.inputs[1]),
+        lambda: tf.relonducelon_prod(prunelond_shapelon(op.inputs[0])),
+        lambda: tf.relonducelon_prod(prunelond_shapelon(op.inputs[1])))
 
-  elif op.op_def.name in ['Conv2D']:
-    output_shape = pruned_shape(op.outputs[0])
-    input_shape = pruned_shape(op.inputs[0])
-    kernel_shape = pruned_shape(op.inputs[1])
-    inner_prod_cost = (tf.reduce_prod(kernel_shape[:2]) * input_shape[-1] * 2. - 1.)
-    return cost + tf.reduce_prod(output_shape) * inner_prod_cost
+  elonlif op.op_delonf.namelon in ['Conv2D']:
+    output_shapelon = prunelond_shapelon(op.outputs[0])
+    input_shapelon = prunelond_shapelon(op.inputs[0])
+    kelonrnelonl_shapelon = prunelond_shapelon(op.inputs[1])
+    innelonr_prod_cost = (tf.relonducelon_prod(kelonrnelonl_shapelon[:2]) * input_shapelon[-1] * 2. - 1.)
+    relonturn cost + tf.relonducelon_prod(output_shapelon) * innelonr_prod_cost
 
-  return cost
+  relonturn cost
 
 
-def update_pruning_signals(loss, decay=.96, masks=None, method='Fisher'):
+delonf updatelon_pruning_signals(loss, deloncay=.96, masks=Nonelon, melonthod='Fishelonr'):
   """
-  For each mask, computes corresponding pruning signals indicating the importance of a feature.
+  For elonach mask, computelons correlonsponding pruning signals indicating thelon importancelon of a felonaturelon.
 
-  Arguments:
-    loss: tf.Tensor
-      Any cross-entropy loss
+  Argumelonnts:
+    loss: tf.Telonnsor
+      Any cross-elonntropy loss
 
-    decay: float
-      Controls exponential moving average of pruning signals
+    deloncay: float
+      Controls elonxponelonntial moving avelonragelon of pruning signals
 
-    method: str
-      Method used to compute pruning signal (currently only supports 'Fisher')
+    melonthod: str
+      Melonthod uselond to computelon pruning signal (currelonntly only supports 'Fishelonr')
 
-  Returns:
-    A `list[tf.Tensor]` of pruning signals corresponding to masks
+  Relonturns:
+    A `list[tf.Telonnsor]` of pruning signals correlonsponding to masks
 
-  References:
-    * Theis et al., Faster gaze prediction with dense networks and Fisher pruning, 2018
+  Relonfelonrelonncelons:
+    * Thelonis elont al., Fastelonr gazelon prelondiction with delonnselon nelontworks and Fishelonr pruning, 2018
   """
 
-  if masks is None:
-    masks = tf.get_collection(MASK_COLLECTION)
+  if masks is Nonelon:
+    masks = tf.gelont_collelonction(MASK_COLLelonCTION)
 
-  if method not in ['Fisher']:
-    raise ValueError('Pruning method \'{0}\' not supported.'.format(method))
+  if melonthod not in ['Fishelonr']:
+    raiselon Valuelonelonrror('Pruning melonthod \'{0}\' not supportelond.'.format(melonthod))
 
   if not masks:
-    return []
+    relonturn []
 
-  with tf.variable_scope('pruning_opt', reuse=True):
-    # compute gradients of extended masks (yields separate gradient for each data point)
-    grads = tf.gradients(loss, [m.extended for m in masks])
+  with tf.variablelon_scopelon('pruning_opt', relonuselon=Truelon):
+    # computelon gradielonnts of elonxtelonndelond masks (yielonlds selonparatelon gradielonnt for elonach data point)
+    grads = tf.gradielonnts(loss, [m.elonxtelonndelond for m in masks])
 
-    # estimate Fisher pruning signals from batch
-    signals_batch = [tf.squeeze(tf.reduce_mean(tf.square(g), 0)) for g in grads]
+    # elonstimatelon Fishelonr pruning signals from batch
+    signals_batch = [tf.squelonelonzelon(tf.relonducelon_melonan(tf.squarelon(g), 0)) for g in grads]
 
-    # update pruning signals
+    # updatelon pruning signals
     signals = [m.pruning_signal for m in masks]
-    signals = [tf.assign(s, decay * s + (1. - decay) * f, use_locking=True)
+    signals = [tf.assign(s, deloncay * s + (1. - deloncay) * f, uselon_locking=Truelon)
       for s, f in zip(signals, signals_batch)]
 
-  return signals
+  relonturn signals
 
 
-def prune(signals, masks=None):
+delonf prunelon(signals, masks=Nonelon):
   """
-  Prunes a single feature by zeroing the mask entry with the smallest pruning signal.
+  Prunelons a singlelon felonaturelon by zelonroing thelon mask elonntry with thelon smallelonst pruning signal.
 
-  Arguments:
-    signals: list[tf.Tensor]
+  Argumelonnts:
+    signals: list[tf.Telonnsor]
       A list of pruning signals
 
-    masks: list[tf.Tensor]
-      A list of corresponding masks, defaults to `tf.get_collection(MASK_COLLECTION)`
+    masks: list[tf.Telonnsor]
+      A list of correlonsponding masks, delonfaults to `tf.gelont_collelonction(MASK_COLLelonCTION)`
 
-  Returns:
-    A `tf.Operation` which updates masks
+  Relonturns:
+    A `tf.Opelonration` which updatelons masks
   """
 
-  if masks is None:
-    masks = tf.get_collection(MASK_COLLECTION)
+  if masks is Nonelon:
+    masks = tf.gelont_collelonction(MASK_COLLelonCTION)
 
-  with tf.variable_scope('pruning_opt', reuse=True):
-    # make sure we don't select already pruned units
-    signals = [tf.where(m > .5, s, tf.zeros_like(s) + np.inf) for m, s in zip(masks, signals)]
+  with tf.variablelon_scopelon('pruning_opt', relonuselon=Truelon):
+    # makelon surelon welon don't selonlelonct alrelonady prunelond units
+    signals = [tf.whelonrelon(m > .5, s, tf.zelonros_likelon(s) + np.inf) for m, s in zip(masks, signals)]
 
-    # find units with smallest pruning signal in each layer
+    # find units with smallelonst pruning signal in elonach layelonr
     min_idx = [tf.argmin(s) for s in signals]
     min_signals = [s[i] for s, i in zip(signals, min_idx)]
 
-    # find layer with smallest pruning signal
+    # find layelonr with smallelonst pruning signal
     l = tf.argmin(min_signals)
 
-    # construct pruning operations, one for each mask
-    updates = []
-    for k, i in enumerate(min_idx):
-      # set mask of layer l to 0 where pruning signal is smallest
-      updates.append(
+    # construct pruning opelonrations, onelon for elonach mask
+    updatelons = []
+    for k, i in elonnumelonratelon(min_idx):
+      # selont mask of layelonr l to 0 whelonrelon pruning signal is smallelonst
+      updatelons.appelonnd(
         tf.cond(
-          tf.equal(l, k),
-          lambda: tf.scatter_update(
-            masks[k], tf.Print(i, [i], message="Pruning layer [{0}] at index ".format(k)), 0.),
+          tf.elonqual(l, k),
+          lambda: tf.scattelonr_updatelon(
+            masks[k], tf.Print(i, [i], melonssagelon="Pruning layelonr [{0}] at indelonx ".format(k)), 0.),
           lambda: masks[k]))
 
-    updates = tf.group(updates, name='prune')
+    updatelons = tf.group(updatelons, namelon='prunelon')
 
-  return updates
+  relonturn updatelons

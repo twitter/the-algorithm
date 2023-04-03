@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.transforms.ranker_id
+packagelon com.twittelonr.follow_reloncommelonndations.common.transforms.rankelonr_id
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.common.base.GatedTransform
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.common.baselon.GatelondTransform
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Scorelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
 /**
- * This class appends each candidate's rankerIds with the RandomRankerId.
- * This is primarily for determining if a candidate was generated via random shuffling.
+ * This class appelonnds elonach candidatelon's rankelonrIds with thelon RandomRankelonrId.
+ * This is primarily for delontelonrmining if a candidatelon was gelonnelonratelond via random shuffling.
  */
-@Singleton
-class RandomRankerIdTransform @Inject() () extends GatedTransform[HasParams, CandidateUser] {
+@Singlelonton
+class RandomRankelonrIdTransform @Injelonct() () elonxtelonnds GatelondTransform[HasParams, CandidatelonUselonr] {
 
-  override def transform(
-    target: HasParams,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Seq[CandidateUser]] = {
-    Stitch.value(candidates.map(_.addScore(Score.RandomScore)))
+  ovelonrridelon delonf transform(
+    targelont: HasParams,
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    Stitch.valuelon(candidatelons.map(_.addScorelon(Scorelon.RandomScorelon)))
   }
 }

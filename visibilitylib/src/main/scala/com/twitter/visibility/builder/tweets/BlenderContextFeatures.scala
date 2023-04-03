@@ -1,45 +1,45 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.SearchCandidateCount
-import com.twitter.visibility.features.SearchQueryHasUser
-import com.twitter.visibility.features.SearchQuerySource
-import com.twitter.visibility.features.SearchResultsPageNumber
-import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContext
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonarch.common.constants.thriftscala.ThriftQuelonrySourcelon
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.felonaturelons.SelonarchCandidatelonCount
+import com.twittelonr.visibility.felonaturelons.SelonarchQuelonryHasUselonr
+import com.twittelonr.visibility.felonaturelons.SelonarchQuelonrySourcelon
+import com.twittelonr.visibility.felonaturelons.SelonarchRelonsultsPagelonNumbelonr
+import com.twittelonr.visibility.intelonrfacelons.common.blelonndelonr.BlelonndelonrVFRelonquelonstContelonxt
 
-@Deprecated
-class BlenderContextFeatures(
-  statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("blender_context_features")
-  private[this] val requests = scopedStatsReceiver.counter("requests")
-  private[this] val searchResultsPageNumber =
-    scopedStatsReceiver.scope(SearchResultsPageNumber.name).counter("requests")
-  private[this] val searchCandidateCount =
-    scopedStatsReceiver.scope(SearchCandidateCount.name).counter("requests")
-  private[this] val searchQuerySource =
-    scopedStatsReceiver.scope(SearchQuerySource.name).counter("requests")
-  private[this] val searchQueryHasUser =
-    scopedStatsReceiver.scope(SearchQueryHasUser.name).counter("requests")
+@Delonpreloncatelond
+class BlelonndelonrContelonxtFelonaturelons(
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("blelonndelonr_contelonxt_felonaturelons")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
+  privatelon[this] val selonarchRelonsultsPagelonNumbelonr =
+    scopelondStatsReloncelonivelonr.scopelon(SelonarchRelonsultsPagelonNumbelonr.namelon).countelonr("relonquelonsts")
+  privatelon[this] val selonarchCandidatelonCount =
+    scopelondStatsReloncelonivelonr.scopelon(SelonarchCandidatelonCount.namelon).countelonr("relonquelonsts")
+  privatelon[this] val selonarchQuelonrySourcelon =
+    scopelondStatsReloncelonivelonr.scopelon(SelonarchQuelonrySourcelon.namelon).countelonr("relonquelonsts")
+  privatelon[this] val selonarchQuelonryHasUselonr =
+    scopelondStatsReloncelonivelonr.scopelon(SelonarchQuelonryHasUselonr.namelon).countelonr("relonquelonsts")
 
-  def forBlenderContext(
-    blenderContext: BlenderVFRequestContext
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    searchResultsPageNumber.incr()
-    searchCandidateCount.incr()
-    searchQuerySource.incr()
-    searchQueryHasUser.incr()
+  delonf forBlelonndelonrContelonxt(
+    blelonndelonrContelonxt: BlelonndelonrVFRelonquelonstContelonxt
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
+    selonarchRelonsultsPagelonNumbelonr.incr()
+    selonarchCandidatelonCount.incr()
+    selonarchQuelonrySourcelon.incr()
+    selonarchQuelonryHasUselonr.incr()
 
-    _.withConstantFeature(SearchResultsPageNumber, blenderContext.resultsPageNumber)
-      .withConstantFeature(SearchCandidateCount, blenderContext.candidateCount)
-      .withConstantFeature(
-        SearchQuerySource,
-        blenderContext.querySourceOption match {
-          case Some(querySource) => querySource
-          case _ => ThriftQuerySource.Unknown
+    _.withConstantFelonaturelon(SelonarchRelonsultsPagelonNumbelonr, blelonndelonrContelonxt.relonsultsPagelonNumbelonr)
+      .withConstantFelonaturelon(SelonarchCandidatelonCount, blelonndelonrContelonxt.candidatelonCount)
+      .withConstantFelonaturelon(
+        SelonarchQuelonrySourcelon,
+        blelonndelonrContelonxt.quelonrySourcelonOption match {
+          caselon Somelon(quelonrySourcelon) => quelonrySourcelon
+          caselon _ => ThriftQuelonrySourcelon.Unknown
         })
-      .withConstantFeature(SearchQueryHasUser, blenderContext.queryHasUser)
+      .withConstantFelonaturelon(SelonarchQuelonryHasUselonr, blelonndelonrContelonxt.quelonryHasUselonr)
   }
 }

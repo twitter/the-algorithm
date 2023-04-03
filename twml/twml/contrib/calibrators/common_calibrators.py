@@ -1,707 +1,707 @@
-# pylint: disable=invalid-name, no-member, unused-argument
+# pylint: disablelon=invalid-namelon, no-melonmbelonr, unuselond-argumelonnt
 """
-This module contains common calibrate and export functions for calibrators.
+This modulelon contains common calibratelon and elonxport functions for calibrators.
 """
 
-# These 3 TODO are encapsulated by CX-11446
-# TODO: many of these functions hardcode datarecords yet don't allow passing a parse_fn.
-# TODO: provide more generic (non DataRecord specific) functions
-# TODO: many of these functions aren't common at all.
-#       For example, Discretizer functions should be moved to PercentileDiscretizer.
+# Thelonselon 3 TODO arelon elonncapsulatelond by CX-11446
+# TODO: many of thelonselon functions hardcodelon datareloncords yelont don't allow passing a parselon_fn.
+# TODO: providelon morelon gelonnelonric (non DataReloncord speloncific) functions
+# TODO: many of thelonselon functions arelonn't common at all.
+#       For elonxamplelon, Discrelontizelonr functions should belon movelond to PelonrcelonntilelonDiscrelontizelonr.
 
 import copy
 import os
-import time
+import timelon
 
 from absl import logging
-import tensorflow.compat.v1 as tf
-import tensorflow_hub as hub
+import telonnsorflow.compat.v1 as tf
+import telonnsorflow_hub as hub
 import twml
-from twml.argument_parser import SortingHelpFormatter
-from twml.input_fns import data_record_input_fn
-from twml.util import list_files_by_datetime, sanitize_hdfs_path
+from twml.argumelonnt_parselonr import SortingHelonlpFormattelonr
+from twml.input_fns import data_reloncord_input_fn
+from twml.util import list_filelons_by_datelontimelon, sanitizelon_hdfs_path
 from twml.contrib.calibrators.isotonic import IsotonicCalibrator
 
 
-def calibrator_arguments(parser):
+delonf calibrator_argumelonnts(parselonr):
   """
-  Calibrator Parameters to add to relevant parameters to the DataRecordTrainerParser.
-  Otherwise, if alone in a file, it just creates its own default parser.
-  Arguments:
-    parser:
-      Parser with the options to the model
+  Calibrator Paramelontelonrs to add to relonlelonvant paramelontelonrs to thelon DataReloncordTrainelonrParselonr.
+  Othelonrwiselon, if alonelon in a filelon, it just crelonatelons its own delonfault parselonr.
+  Argumelonnts:
+    parselonr:
+      Parselonr with thelon options to thelon modelonl
   """
-  parser.add_argument("--calibrator.save_dir", type=str,
-    dest="calibrator_save_dir",
-    help="Path to save or load calibrator calibration")
-  parser.add_argument("--calibrator_batch_size", type=int, default=128,
-    dest="calibrator_batch_size",
-    help="calibrator batch size")
-  parser.add_argument("--calibrator_parts_downsampling_rate", type=float, default=1,
-    dest="calibrator_parts_downsampling_rate",
-    help="Parts downsampling rate")
-  parser.add_argument("--calibrator_max_steps", type=int, default=None,
-    dest="calibrator_max_steps",
-    help="Max Steps taken by calibrator to accumulate samples")
-  parser.add_argument("--calibrator_num_bins", type=int, default=22,
-    dest="calibrator_num_bins",
-    help="Num bins of calibrator")
-  parser.add_argument("--isotonic_calibrator", dest='isotonic_calibrator', action='store_true',
-    help="Isotonic Calibrator present")
-  parser.add_argument("--calibrator_keep_rate", type=float, default=1.0,
-    dest="calibrator_keep_rate",
-    help="Keep rate")
-  return parser
+  parselonr.add_argumelonnt("--calibrator.savelon_dir", typelon=str,
+    delonst="calibrator_savelon_dir",
+    helonlp="Path to savelon or load calibrator calibration")
+  parselonr.add_argumelonnt("--calibrator_batch_sizelon", typelon=int, delonfault=128,
+    delonst="calibrator_batch_sizelon",
+    helonlp="calibrator batch sizelon")
+  parselonr.add_argumelonnt("--calibrator_parts_downsampling_ratelon", typelon=float, delonfault=1,
+    delonst="calibrator_parts_downsampling_ratelon",
+    helonlp="Parts downsampling ratelon")
+  parselonr.add_argumelonnt("--calibrator_max_stelonps", typelon=int, delonfault=Nonelon,
+    delonst="calibrator_max_stelonps",
+    helonlp="Max Stelonps takelonn by calibrator to accumulatelon samplelons")
+  parselonr.add_argumelonnt("--calibrator_num_bins", typelon=int, delonfault=22,
+    delonst="calibrator_num_bins",
+    helonlp="Num bins of calibrator")
+  parselonr.add_argumelonnt("--isotonic_calibrator", delonst='isotonic_calibrator', action='storelon_truelon',
+    helonlp="Isotonic Calibrator prelonselonnt")
+  parselonr.add_argumelonnt("--calibrator_kelonelonp_ratelon", typelon=float, delonfault=1.0,
+    delonst="calibrator_kelonelonp_ratelon",
+    helonlp="Kelonelonp ratelon")
+  relonturn parselonr
 
 
-def _generate_files_by_datetime(params):
+delonf _gelonnelonratelon_filelons_by_datelontimelon(params):
 
-  files = list_files_by_datetime(
-    base_path=sanitize_hdfs_path(params.train_data_dir),
-    start_datetime=params.train_start_datetime,
-    end_datetime=params.train_end_datetime,
-    datetime_prefix_format=params.datetime_format,
-    extension="lzo",
-    parallelism=1,
-    hour_resolution=params.hour_resolution,
-    sort=True)
+  filelons = list_filelons_by_datelontimelon(
+    baselon_path=sanitizelon_hdfs_path(params.train_data_dir),
+    start_datelontimelon=params.train_start_datelontimelon,
+    elonnd_datelontimelon=params.train_elonnd_datelontimelon,
+    datelontimelon_prelonfix_format=params.datelontimelon_format,
+    elonxtelonnsion="lzo",
+    parallelonlism=1,
+    hour_relonsolution=params.hour_relonsolution,
+    sort=Truelon)
 
-  return files
+  relonturn filelons
 
 
-def get_calibrate_input_fn(parse_fn, params):
+delonf gelont_calibratelon_input_fn(parselon_fn, params):
   """
-  Default input function used for the calibrator.
-  Arguments:
-    parse_fn:
-      Parse_fn
+  Delonfault input function uselond for thelon calibrator.
+  Argumelonnts:
+    parselon_fn:
+      Parselon_fn
     params:
-      Parameters
-  Returns:
+      Paramelontelonrs
+  Relonturns:
     input_fn
   """
 
-  return lambda: data_record_input_fn(
-    files=_generate_files_by_datetime(params),
-    batch_size=params.calibrator_batch_size,
-    parse_fn=parse_fn,
-    num_threads=1,
-    repeat=False,
-    keep_rate=params.calibrator_keep_rate,
-    parts_downsampling_rate=params.calibrator_parts_downsampling_rate,
-    shards=None,
-    shard_index=None,
-    shuffle=True,
-    shuffle_files=True,
-    interleave=True)
+  relonturn lambda: data_reloncord_input_fn(
+    filelons=_gelonnelonratelon_filelons_by_datelontimelon(params),
+    batch_sizelon=params.calibrator_batch_sizelon,
+    parselon_fn=parselon_fn,
+    num_threlonads=1,
+    relonpelonat=Falselon,
+    kelonelonp_ratelon=params.calibrator_kelonelonp_ratelon,
+    parts_downsampling_ratelon=params.calibrator_parts_downsampling_ratelon,
+    shards=Nonelon,
+    shard_indelonx=Nonelon,
+    shufflelon=Truelon,
+    shufflelon_filelons=Truelon,
+    intelonrlelonavelon=Truelon)
 
 
-def get_discretize_input_fn(parse_fn, params):
+delonf gelont_discrelontizelon_input_fn(parselon_fn, params):
   """
-  Default input function used for the calibrator.
-  Arguments:
-    parse_fn:
-      Parse_fn
+  Delonfault input function uselond for thelon calibrator.
+  Argumelonnts:
+    parselon_fn:
+      Parselon_fn
     params:
-      Parameters
-  Returns:
+      Paramelontelonrs
+  Relonturns:
     input_fn
   """
 
-  return lambda: data_record_input_fn(
-    files=_generate_files_by_datetime(params),
-    batch_size=params.discretizer_batch_size,
-    parse_fn=parse_fn,
-    num_threads=1,
-    repeat=False,
-    keep_rate=params.discretizer_keep_rate,
-    parts_downsampling_rate=params.discretizer_parts_downsampling_rate,
-    shards=None,
-    shard_index=None,
-    shuffle=True,
-    shuffle_files=True,
-    interleave=True)
+  relonturn lambda: data_reloncord_input_fn(
+    filelons=_gelonnelonratelon_filelons_by_datelontimelon(params),
+    batch_sizelon=params.discrelontizelonr_batch_sizelon,
+    parselon_fn=parselon_fn,
+    num_threlonads=1,
+    relonpelonat=Falselon,
+    kelonelonp_ratelon=params.discrelontizelonr_kelonelonp_ratelon,
+    parts_downsampling_ratelon=params.discrelontizelonr_parts_downsampling_ratelon,
+    shards=Nonelon,
+    shard_indelonx=Nonelon,
+    shufflelon=Truelon,
+    shufflelon_filelons=Truelon,
+    intelonrlelonavelon=Truelon)
 
 
-def discretizer_arguments(parser=None):
+delonf discrelontizelonr_argumelonnts(parselonr=Nonelon):
   """
-  Discretizer Parameters to add to relevant parameters to the DataRecordTrainerParser.
-  Otherwise, if alone in a file, it just creates its own default parser.
-  Arguments:
-    parser:
-      Parser with the options to the model. Defaults to None
+  Discrelontizelonr Paramelontelonrs to add to relonlelonvant paramelontelonrs to thelon DataReloncordTrainelonrParselonr.
+  Othelonrwiselon, if alonelon in a filelon, it just crelonatelons its own delonfault parselonr.
+  Argumelonnts:
+    parselonr:
+      Parselonr with thelon options to thelon modelonl. Delonfaults to Nonelon
   """
 
-  if parser is None:
-    parser = twml.DefaultSubcommandArgParse(formatter_class=SortingHelpFormatter)
-    parser.add_argument(
-      "--overwrite_save_dir", dest="overwrite_save_dir", action="store_true",
-      help="Delete the contents of the current save_dir if it exists")
-    parser.add_argument(
-      "--train.data_dir", "--train_data_dir", type=str, default=None,
-      dest="train_data_dir",
-      help="Path to the training data directory."
-           "Supports local and HDFS (hdfs://default/<path> ) paths.")
-    parser.add_argument(
-      "--train.start_date", "--train_start_datetime",
-      type=str, default=None,
-      dest="train_start_datetime",
-      help="Starting date for training inside the train data dir."
-           "The start datetime is inclusive."
-           "e.g. 2019/01/15")
-    parser.add_argument(
-      "--train.end_date", "--train_end_datetime", type=str, default=None,
-      dest="train_end_datetime",
-      help="Ending date for training inside the train data dir."
-           "The end datetime is inclusive."
-           "e.g. 2019/01/15")
-    parser.add_argument(
-      "--datetime_format", type=str, default="%Y/%m/%d",
-      help="Date format for training and evaluation datasets."
-           "Has to be a format that is understood by python datetime."
-           "e.g. %Y/%m/%d for 2019/01/15."
-           "Used only if {train/eval}.{start/end}_date are provided.")
-    parser.add_argument(
-      "--hour_resolution", type=int, default=None,
-      help="Specify the hourly resolution of the stored data.")
-    parser.add_argument(
-      "--tensorboard_port", type=int, default=None,
-      help="Port for tensorboard to run on.")
-    parser.add_argument(
-      "--stats_port", type=int, default=None,
-      help="Port for stats server to run on.")
-    parser.add_argument(
-      "--health_port", type=int, default=None,
-      help="Port to listen on for health-related endpoints (e.g. graceful shutdown)."
-           "Not user-facing as it is set automatically by the twml_cli."
+  if parselonr is Nonelon:
+    parselonr = twml.DelonfaultSubcommandArgParselon(formattelonr_class=SortingHelonlpFormattelonr)
+    parselonr.add_argumelonnt(
+      "--ovelonrwritelon_savelon_dir", delonst="ovelonrwritelon_savelon_dir", action="storelon_truelon",
+      helonlp="Delonlelontelon thelon contelonnts of thelon currelonnt savelon_dir if it elonxists")
+    parselonr.add_argumelonnt(
+      "--train.data_dir", "--train_data_dir", typelon=str, delonfault=Nonelon,
+      delonst="train_data_dir",
+      helonlp="Path to thelon training data direlonctory."
+           "Supports local and HDFS (hdfs://delonfault/<path> ) paths.")
+    parselonr.add_argumelonnt(
+      "--train.start_datelon", "--train_start_datelontimelon",
+      typelon=str, delonfault=Nonelon,
+      delonst="train_start_datelontimelon",
+      helonlp="Starting datelon for training insidelon thelon train data dir."
+           "Thelon start datelontimelon is inclusivelon."
+           "elon.g. 2019/01/15")
+    parselonr.add_argumelonnt(
+      "--train.elonnd_datelon", "--train_elonnd_datelontimelon", typelon=str, delonfault=Nonelon,
+      delonst="train_elonnd_datelontimelon",
+      helonlp="elonnding datelon for training insidelon thelon train data dir."
+           "Thelon elonnd datelontimelon is inclusivelon."
+           "elon.g. 2019/01/15")
+    parselonr.add_argumelonnt(
+      "--datelontimelon_format", typelon=str, delonfault="%Y/%m/%d",
+      helonlp="Datelon format for training and elonvaluation dataselonts."
+           "Has to belon a format that is undelonrstood by python datelontimelon."
+           "elon.g. %Y/%m/%d for 2019/01/15."
+           "Uselond only if {train/elonval}.{start/elonnd}_datelon arelon providelond.")
+    parselonr.add_argumelonnt(
+      "--hour_relonsolution", typelon=int, delonfault=Nonelon,
+      helonlp="Speloncify thelon hourly relonsolution of thelon storelond data.")
+    parselonr.add_argumelonnt(
+      "--telonnsorboard_port", typelon=int, delonfault=Nonelon,
+      helonlp="Port for telonnsorboard to run on.")
+    parselonr.add_argumelonnt(
+      "--stats_port", typelon=int, delonfault=Nonelon,
+      helonlp="Port for stats selonrvelonr to run on.")
+    parselonr.add_argumelonnt(
+      "--helonalth_port", typelon=int, delonfault=Nonelon,
+      helonlp="Port to listelonn on for helonalth-relonlatelond elonndpoints (elon.g. gracelonful shutdown)."
+           "Not uselonr-facing as it is selont automatically by thelon twml_cli."
     )
-    parser.add_argument(
-      "--data_spec", type=str, default=None,
-      help="Path to data specification JSON file. This file is used to decode DataRecords")
-  parser.add_argument("--discretizer.save_dir", type=str,
-    dest="discretizer_save_dir",
-    help="Path to save or load discretizer calibration")
-  parser.add_argument("--discretizer_batch_size", type=int, default=128,
-    dest="discretizer_batch_size",
-    help="Discretizer batch size")
-  parser.add_argument("--discretizer_keep_rate", type=float, default=0.0008,
-    dest="discretizer_keep_rate",
-    help="Keep rate")
-  parser.add_argument("--discretizer_parts_downsampling_rate", type=float, default=0.2,
-    dest="discretizer_parts_downsampling_rate",
-    help="Parts downsampling rate")
-  parser.add_argument("--discretizer_max_steps", type=int, default=None,
-    dest="discretizer_max_steps",
-    help="Max Steps taken by discretizer to accumulate samples")
-  return parser
+    parselonr.add_argumelonnt(
+      "--data_spelonc", typelon=str, delonfault=Nonelon,
+      helonlp="Path to data speloncification JSON filelon. This filelon is uselond to deloncodelon DataReloncords")
+  parselonr.add_argumelonnt("--discrelontizelonr.savelon_dir", typelon=str,
+    delonst="discrelontizelonr_savelon_dir",
+    helonlp="Path to savelon or load discrelontizelonr calibration")
+  parselonr.add_argumelonnt("--discrelontizelonr_batch_sizelon", typelon=int, delonfault=128,
+    delonst="discrelontizelonr_batch_sizelon",
+    helonlp="Discrelontizelonr batch sizelon")
+  parselonr.add_argumelonnt("--discrelontizelonr_kelonelonp_ratelon", typelon=float, delonfault=0.0008,
+    delonst="discrelontizelonr_kelonelonp_ratelon",
+    helonlp="Kelonelonp ratelon")
+  parselonr.add_argumelonnt("--discrelontizelonr_parts_downsampling_ratelon", typelon=float, delonfault=0.2,
+    delonst="discrelontizelonr_parts_downsampling_ratelon",
+    helonlp="Parts downsampling ratelon")
+  parselonr.add_argumelonnt("--discrelontizelonr_max_stelonps", typelon=int, delonfault=Nonelon,
+    delonst="discrelontizelonr_max_stelonps",
+    helonlp="Max Stelonps takelonn by discrelontizelonr to accumulatelon samplelons")
+  relonturn parselonr
 
 
-def calibrate(trainer, params, build_graph, input_fn, debug=False):
+delonf calibratelon(trainelonr, params, build_graph, input_fn, delonbug=Falselon):
   """
-  Calibrate Isotonic Calibration
-  Arguments:
-    trainer:
-      Trainer
+  Calibratelon Isotonic Calibration
+  Argumelonnts:
+    trainelonr:
+      Trainelonr
     params:
-      Parameters
+      Paramelontelonrs
     build_graph:
-      Build Graph used to be the input to the calibrator
+      Build Graph uselond to belon thelon input to thelon calibrator
     input_fn:
-      Input Function specified by the user
-    debug:
-      Defaults to False. Returns the calibrator
+      Input Function speloncifielond by thelon uselonr
+    delonbug:
+      Delonfaults to Falselon. Relonturns thelon calibrator
   """
 
-  if trainer._estimator.config.is_chief:
+  if trainelonr._elonstimator.config.is_chielonf:
 
-    # overwrite the current save_dir
-    if params.overwrite_save_dir and tf.io.gfile.exists(params.calibrator_save_dir):
-      logging.info("Trainer overwriting existing save directory: %s (params.overwrite_save_dir)"
-                   % params.calibrator_save_dir)
-      tf.io.gfile.rmtree(params.calibrator_save_dir)
+    # ovelonrwritelon thelon currelonnt savelon_dir
+    if params.ovelonrwritelon_savelon_dir and tf.io.gfilelon.elonxists(params.calibrator_savelon_dir):
+      logging.info("Trainelonr ovelonrwriting elonxisting savelon direlonctory: %s (params.ovelonrwritelon_savelon_dir)"
+                   % params.calibrator_savelon_dir)
+      tf.io.gfilelon.rmtrelonelon(params.calibrator_savelon_dir)
 
     calibrator = IsotonicCalibrator(params.calibrator_num_bins)
 
-    # chief trains discretizer
-    logging.info("Chief training calibrator")
+    # chielonf trains discrelontizelonr
+    logging.info("Chielonf training calibrator")
 
-    # Accumulate the features for each calibrator
-    features, labels = input_fn()
-    if 'weights' not in features:
-      raise ValueError("Weights need to be returned as part of the parse_fn")
-    weights = features.pop('weights')
+    # Accumulatelon thelon felonaturelons for elonach calibrator
+    felonaturelons, labelonls = input_fn()
+    if 'welonights' not in felonaturelons:
+      raiselon Valuelonelonrror("Welonights nelonelond to belon relonturnelond as part of thelon parselon_fn")
+    welonights = felonaturelons.pop('welonights')
 
-    preds = build_graph(features=features, label=None, mode='infer', params=params, config=None)
-    init = tf.global_variables_initializer()
-    table_init = tf.tables_initializer()
-    with tf.Session() as sess:
-      sess.run(init)
-      sess.run(table_init)
+    prelonds = build_graph(felonaturelons=felonaturelons, labelonl=Nonelon, modelon='infelonr', params=params, config=Nonelon)
+    init = tf.global_variablelons_initializelonr()
+    tablelon_init = tf.tablelons_initializelonr()
+    with tf.Selonssion() as selonss:
+      selonss.run(init)
+      selonss.run(tablelon_init)
       count = 0
-      max_steps = params.calibrator_max_steps or -1
-      while max_steps <= 0 or count <= max_steps:
+      max_stelonps = params.calibrator_max_stelonps or -1
+      whilelon max_stelonps <= 0 or count <= max_stelonps:
         try:
-          weights_vals, labels_vals, preds_vals = sess.run([weights, labels, preds['output']])
-          calibrator.accumulate(preds_vals, labels_vals, weights_vals.flatten())
-        except tf.errors.OutOfRangeError:
-          break
+          welonights_vals, labelonls_vals, prelonds_vals = selonss.run([welonights, labelonls, prelonds['output']])
+          calibrator.accumulatelon(prelonds_vals, labelonls_vals, welonights_vals.flattelonn())
+        elonxcelonpt tf.elonrrors.OutOfRangelonelonrror:
+          brelonak
         count += 1
 
-    calibrator.calibrate()
-    calibrator.save(params.calibrator_save_dir)
-    trainer.estimator._params.isotonic_calibrator = True
+    calibrator.calibratelon()
+    calibrator.savelon(params.calibrator_savelon_dir)
+    trainelonr.elonstimator._params.isotonic_calibrator = Truelon
 
-    if debug:
-      return calibrator
+    if delonbug:
+      relonturn calibrator
 
-  else:
-    calibrator_save_dir = twml.util.sanitize_hdfs_path(params.calibrator_save_dir)
-    # workers wait for calibration to be ready
-    while not tf.io.gfile.exists(calibrator_save_dir + os.path.sep + "tfhub_module.pb"):
-      logging.info("Worker waiting for calibration at %s" % calibrator_save_dir)
-      time.sleep(60)
+  elonlselon:
+    calibrator_savelon_dir = twml.util.sanitizelon_hdfs_path(params.calibrator_savelon_dir)
+    # workelonrs wait for calibration to belon relonady
+    whilelon not tf.io.gfilelon.elonxists(calibrator_savelon_dir + os.path.selonp + "tfhub_modulelon.pb"):
+      logging.info("Workelonr waiting for calibration at %s" % calibrator_savelon_dir)
+      timelon.slelonelonp(60)
 
 
-def discretize(params, feature_config, input_fn, debug=False):
+delonf discrelontizelon(params, felonaturelon_config, input_fn, delonbug=Falselon):
   """
-  Discretizes continuous features
-  Arguments:
+  Discrelontizelons continuous felonaturelons
+  Argumelonnts:
     params:
-      Parameters
+      Paramelontelonrs
     input_fn:
-      Input Function specified by the user
-    debug:
-      Defaults to False. Returns the calibrator
+      Input Function speloncifielond by thelon uselonr
+    delonbug:
+      Delonfaults to Falselon. Relonturns thelon calibrator
   """
 
-  if (os.environ.get("TWML_HOGWILD_TASK_TYPE") == "chief" or "num_workers" not in params or
-    params.num_workers is None):
+  if (os.elonnviron.gelont("TWML_HOGWILD_TASK_TYPelon") == "chielonf" or "num_workelonrs" not in params or
+    params.num_workelonrs is Nonelon):
 
-    # overwrite the current save_dir
-    if params.overwrite_save_dir and tf.io.gfile.exists(params.discretizer_save_dir):
-      logging.info("Trainer overwriting existing save directory: %s (params.overwrite_save_dir)"
-                   % params.discretizer_save_dir)
-      tf.io.gfile.rmtree(params.discretizer_save_dir)
+    # ovelonrwritelon thelon currelonnt savelon_dir
+    if params.ovelonrwritelon_savelon_dir and tf.io.gfilelon.elonxists(params.discrelontizelonr_savelon_dir):
+      logging.info("Trainelonr ovelonrwriting elonxisting savelon direlonctory: %s (params.ovelonrwritelon_savelon_dir)"
+                   % params.discrelontizelonr_savelon_dir)
+      tf.io.gfilelon.rmtrelonelon(params.discrelontizelonr_savelon_dir)
 
-    config_map = feature_config()
-    discretize_dict = config_map['discretize_config']
+    config_map = felonaturelon_config()
+    discrelontizelon_dict = config_map['discrelontizelon_config']
 
-    # chief trains discretizer
-    logging.info("Chief training discretizer")
+    # chielonf trains discrelontizelonr
+    logging.info("Chielonf training discrelontizelonr")
 
     batch = input_fn()
-    # Accumulate the features for each calibrator
-    with tf.Session() as sess:
+    # Accumulatelon thelon felonaturelons for elonach calibrator
+    with tf.Selonssion() as selonss:
       count = 0
-      max_steps = params.discretizer_max_steps or -1
-      while max_steps <= 0 or count <= max_steps:
+      max_stelonps = params.discrelontizelonr_max_stelonps or -1
+      whilelon max_stelonps <= 0 or count <= max_stelonps:
         try:
-          inputs = sess.run(batch)
-          for name, clbrt in discretize_dict.items():
-            clbrt.accumulate_features(inputs[0], name)
-        except tf.errors.OutOfRangeError:
-          break
+          inputs = selonss.run(batch)
+          for namelon, clbrt in discrelontizelon_dict.itelonms():
+            clbrt.accumulatelon_felonaturelons(inputs[0], namelon)
+        elonxcelonpt tf.elonrrors.OutOfRangelonelonrror:
+          brelonak
         count += 1
 
-    # This module allows for the calibrator to save be saved as part of
-    # Tensorflow Hub (this will allow it to be used in further steps)
-    def calibrator_module():
-      # Note that this is usually expecting a sparse_placeholder
-      for name, clbrt in discretize_dict.items():
-        clbrt.calibrate()
-        clbrt.add_hub_signatures(name)
+    # This modulelon allows for thelon calibrator to savelon belon savelond as part of
+    # Telonnsorflow Hub (this will allow it to belon uselond in furthelonr stelonps)
+    delonf calibrator_modulelon():
+      # Notelon that this is usually elonxpeloncting a sparselon_placelonholdelonr
+      for namelon, clbrt in discrelontizelon_dict.itelonms():
+        clbrt.calibratelon()
+        clbrt.add_hub_signaturelons(namelon)
 
-    # exports the module to the save_dir
-    spec = hub.create_module_spec(calibrator_module)
-    with tf.Graph().as_default():
-      module = hub.Module(spec)
-      with tf.Session() as session:
-        module.export(params.discretizer_save_dir, session)
+    # elonxports thelon modulelon to thelon savelon_dir
+    spelonc = hub.crelonatelon_modulelon_spelonc(calibrator_modulelon)
+    with tf.Graph().as_delonfault():
+      modulelon = hub.Modulelon(spelonc)
+      with tf.Selonssion() as selonssion:
+        modulelon.elonxport(params.discrelontizelonr_savelon_dir, selonssion)
 
-    for name, clbrt in discretize_dict.items():
-      clbrt.write_summary_json(params.discretizer_save_dir, name)
+    for namelon, clbrt in discrelontizelon_dict.itelonms():
+      clbrt.writelon_summary_json(params.discrelontizelonr_savelon_dir, namelon)
 
-    if debug:
-      return discretize_dict
+    if delonbug:
+      relonturn discrelontizelon_dict
 
-  else:
-    # wait for the file to be removed (if necessary)
-    # should be removed after an actual fix applied
-    time.sleep(60)
-    discretizer_save_dir = twml.util.sanitize_hdfs_path(params.discretizer_save_dir)
-    # workers wait for calibration to be ready
-    while not tf.io.gfile.exists(discretizer_save_dir + os.path.sep + "tfhub_module.pb"):
-      logging.info("Worker waiting for calibration at %s" % discretizer_save_dir)
-      time.sleep(60)
+  elonlselon:
+    # wait for thelon filelon to belon relonmovelond (if neloncelonssary)
+    # should belon relonmovelond aftelonr an actual fix applielond
+    timelon.slelonelonp(60)
+    discrelontizelonr_savelon_dir = twml.util.sanitizelon_hdfs_path(params.discrelontizelonr_savelon_dir)
+    # workelonrs wait for calibration to belon relonady
+    whilelon not tf.io.gfilelon.elonxists(discrelontizelonr_savelon_dir + os.path.selonp + "tfhub_modulelon.pb"):
+      logging.info("Workelonr waiting for calibration at %s" % discrelontizelonr_savelon_dir)
+      timelon.slelonelonp(60)
 
 
-def add_discretizer_arguments(parser):
+delonf add_discrelontizelonr_argumelonnts(parselonr):
   """
-  Add discretizer-specific command-line arguments to a Trainer parser.
+  Add discrelontizelonr-speloncific command-linelon argumelonnts to a Trainelonr parselonr.
 
-  Arguments:
-    parser: argparse.ArgumentParser instance obtained from Trainer.get_trainer_parser
+  Argumelonnts:
+    parselonr: argparselon.ArgumelonntParselonr instancelon obtainelond from Trainelonr.gelont_trainelonr_parselonr
 
-  Returns:
-    argparse.ArgumentParser instance with discretizer-specific arguments added
+  Relonturns:
+    argparselon.ArgumelonntParselonr instancelon with discrelontizelonr-speloncific argumelonnts addelond
   """
 
-  parser.add_argument("--discretizer.save_dir", type=str,
-                      dest="discretizer_save_dir",
-                      help="Path to save or load discretizer calibration")
-  parser.add_argument("--discretizer.batch_size", type=int, default=128,
-                      dest="discretizer_batch_size",
-                      help="Discretizer batch size")
-  parser.add_argument("--discretizer.keep_rate", type=float, default=0.0008,
-                      dest="discretizer_keep_rate",
-                      help="Keep rate")
-  parser.add_argument("--discretizer.parts_downsampling_rate", type=float, default=0.2,
-                      dest="discretizer_parts_downsampling_rate",
-                      help="Parts downsampling rate")
-  parser.add_argument("--discretizer.num_bins", type=int, default=20,
-                      dest="discretizer_num_bins",
-                      help="Number of bins per feature")
-  parser.add_argument("--discretizer.output_size_bits", type=int, default=22,
-                      dest="discretizer_output_size_bits",
-                      help="Number of bits allocated to the output size")
-  return parser
+  parselonr.add_argumelonnt("--discrelontizelonr.savelon_dir", typelon=str,
+                      delonst="discrelontizelonr_savelon_dir",
+                      helonlp="Path to savelon or load discrelontizelonr calibration")
+  parselonr.add_argumelonnt("--discrelontizelonr.batch_sizelon", typelon=int, delonfault=128,
+                      delonst="discrelontizelonr_batch_sizelon",
+                      helonlp="Discrelontizelonr batch sizelon")
+  parselonr.add_argumelonnt("--discrelontizelonr.kelonelonp_ratelon", typelon=float, delonfault=0.0008,
+                      delonst="discrelontizelonr_kelonelonp_ratelon",
+                      helonlp="Kelonelonp ratelon")
+  parselonr.add_argumelonnt("--discrelontizelonr.parts_downsampling_ratelon", typelon=float, delonfault=0.2,
+                      delonst="discrelontizelonr_parts_downsampling_ratelon",
+                      helonlp="Parts downsampling ratelon")
+  parselonr.add_argumelonnt("--discrelontizelonr.num_bins", typelon=int, delonfault=20,
+                      delonst="discrelontizelonr_num_bins",
+                      helonlp="Numbelonr of bins pelonr felonaturelon")
+  parselonr.add_argumelonnt("--discrelontizelonr.output_sizelon_bits", typelon=int, delonfault=22,
+                      delonst="discrelontizelonr_output_sizelon_bits",
+                      helonlp="Numbelonr of bits allocatelond to thelon output sizelon")
+  relonturn parselonr
 
 
-def add_isotonic_calibrator_arguments(parser):
+delonf add_isotonic_calibrator_argumelonnts(parselonr):
   """
-  Add discretizer-specific command-line arguments to a Trainer parser.
+  Add discrelontizelonr-speloncific command-linelon argumelonnts to a Trainelonr parselonr.
 
-  Arguments:
-    parser: argparse.ArgumentParser instance obtained from Trainer.get_trainer_parser
+  Argumelonnts:
+    parselonr: argparselon.ArgumelonntParselonr instancelon obtainelond from Trainelonr.gelont_trainelonr_parselonr
 
-  Returns:
-    argparse.ArgumentParser instance with discretizer-specific arguments added
+  Relonturns:
+    argparselon.ArgumelonntParselonr instancelon with discrelontizelonr-speloncific argumelonnts addelond
   """
-  parser.add_argument("--calibrator.num_bins", type=int,
-    default=25000, dest="calibrator_num_bins",
-    help="number of bins for isotonic calibration")
-  parser.add_argument("--calibrator.parts_downsampling_rate", type=float, default=0.1,
-    dest="calibrator_parts_downsampling_rate", help="Parts downsampling rate")
-  parser.add_argument("--calibrator.save_dir", type=str,
-    dest="calibrator_save_dir", help="Path to save or load calibrator output")
-  parser.add_argument("--calibrator.load_tensorflow_module", type=str, default=None,
-    dest="calibrator_load_tensorflow_module",
-    help="Location from where to load a pretrained graph from. \
-                           Typically, this is where the MLP graph is saved")
-  parser.add_argument("--calibrator.export_mlp_module_name", type=str, default='tf_hub_mlp',
-    help="Name for loaded hub signature",
-    dest="export_mlp_module_name")
-  parser.add_argument("--calibrator.export_isotonic_module_name",
-    type=str, default="tf_hub_isotonic",
-    dest="calibrator_export_module_name",
-    help="export module name")
-  parser.add_argument("--calibrator.final_evaluation_steps", type=int,
-    dest="calibrator_final_evaluation_steps", default=None,
-    help="number of steps for final evaluation")
-  parser.add_argument("--calibrator.train_steps", type=int, default=-1,
-    dest="calibrator_train_steps",
-    help="number of steps for calibration")
-  parser.add_argument("--calibrator.batch_size", type=int, default=1024,
-    dest="calibrator_batch_size",
-    help="Calibrator batch size")
-  parser.add_argument("--calibrator.is_calibrating", action='store_true',
-    dest="is_calibrating",
-    help="Dummy argument to allow running in chief worker")
-  return parser
+  parselonr.add_argumelonnt("--calibrator.num_bins", typelon=int,
+    delonfault=25000, delonst="calibrator_num_bins",
+    helonlp="numbelonr of bins for isotonic calibration")
+  parselonr.add_argumelonnt("--calibrator.parts_downsampling_ratelon", typelon=float, delonfault=0.1,
+    delonst="calibrator_parts_downsampling_ratelon", helonlp="Parts downsampling ratelon")
+  parselonr.add_argumelonnt("--calibrator.savelon_dir", typelon=str,
+    delonst="calibrator_savelon_dir", helonlp="Path to savelon or load calibrator output")
+  parselonr.add_argumelonnt("--calibrator.load_telonnsorflow_modulelon", typelon=str, delonfault=Nonelon,
+    delonst="calibrator_load_telonnsorflow_modulelon",
+    helonlp="Location from whelonrelon to load a prelontrainelond graph from. \
+                           Typically, this is whelonrelon thelon MLP graph is savelond")
+  parselonr.add_argumelonnt("--calibrator.elonxport_mlp_modulelon_namelon", typelon=str, delonfault='tf_hub_mlp',
+    helonlp="Namelon for loadelond hub signaturelon",
+    delonst="elonxport_mlp_modulelon_namelon")
+  parselonr.add_argumelonnt("--calibrator.elonxport_isotonic_modulelon_namelon",
+    typelon=str, delonfault="tf_hub_isotonic",
+    delonst="calibrator_elonxport_modulelon_namelon",
+    helonlp="elonxport modulelon namelon")
+  parselonr.add_argumelonnt("--calibrator.final_elonvaluation_stelonps", typelon=int,
+    delonst="calibrator_final_elonvaluation_stelonps", delonfault=Nonelon,
+    helonlp="numbelonr of stelonps for final elonvaluation")
+  parselonr.add_argumelonnt("--calibrator.train_stelonps", typelon=int, delonfault=-1,
+    delonst="calibrator_train_stelonps",
+    helonlp="numbelonr of stelonps for calibration")
+  parselonr.add_argumelonnt("--calibrator.batch_sizelon", typelon=int, delonfault=1024,
+    delonst="calibrator_batch_sizelon",
+    helonlp="Calibrator batch sizelon")
+  parselonr.add_argumelonnt("--calibrator.is_calibrating", action='storelon_truelon',
+    delonst="is_calibrating",
+    helonlp="Dummy argumelonnt to allow running in chielonf workelonr")
+  relonturn parselonr
 
 
-def calibrate_calibrator_and_export(name, calibrator, build_graph_fn, params, feature_config,
-                                    run_eval=True, input_fn=None, metric_fn=None,
-                                    export_task_type_overrider=None):
+delonf calibratelon_calibrator_and_elonxport(namelon, calibrator, build_graph_fn, params, felonaturelon_config,
+                                    run_elonval=Truelon, input_fn=Nonelon, melontric_fn=Nonelon,
+                                    elonxport_task_typelon_ovelonrridelonr=Nonelon):
   """
-  Pre-set `isotonic calibrator` calibrator.
+  Prelon-selont `isotonic calibrator` calibrator.
   Args:
-    name:
-      scope name used for the calibrator
+    namelon:
+      scopelon namelon uselond for thelon calibrator
     calibrator:
-      calibrator that will be calibrated and exported.
+      calibrator that will belon calibratelond and elonxportelond.
     build_graph_fn:
-      build graph function for the calibrator
+      build graph function for thelon calibrator
     params:
-      params passed to the calibrator
-    feature_config:
-      feature config which will be passed to the trainer
-    export_task_type_overrider:
-      the task type for exporting the calibrator
-      if specified, this will override the default export task type in trainer.hub_export(..)
+      params passelond to thelon calibrator
+    felonaturelon_config:
+      felonaturelon config which will belon passelond to thelon trainelonr
+    elonxport_task_typelon_ovelonrridelonr:
+      thelon task typelon for elonxporting thelon calibrator
+      if speloncifielond, this will ovelonrridelon thelon delonfault elonxport task typelon in trainelonr.hub_elonxport(..)
   """
 
-  # create calibrator params
-  params_c = copy.deepcopy(params)
-  params_c.data_threads = 1
-  params_c.num_workers = 1
-  params_c.continue_from_checkpoint = True
-  params_c.overwrite_save_dir = False
-  params_c.stats_port = None
+  # crelonatelon calibrator params
+  params_c = copy.delonelonpcopy(params)
+  params_c.data_threlonads = 1
+  params_c.num_workelonrs = 1
+  params_c.continuelon_from_chelonckpoint = Truelon
+  params_c.ovelonrwritelon_savelon_dir = Falselon
+  params_c.stats_port = Nonelon
 
-  # Automatically load from the saved Tensorflow Hub module if not specified.
-  if params_c.calibrator_load_tensorflow_module is None:
-    path_saved_tensorflow_model = os.path.join(params.save_dir, params.export_mlp_module_name)
-    params_c.calibrator_load_tensorflow_module = path_saved_tensorflow_model
+  # Automatically load from thelon savelond Telonnsorflow Hub modulelon if not speloncifielond.
+  if params_c.calibrator_load_telonnsorflow_modulelon is Nonelon:
+    path_savelond_telonnsorflow_modelonl = os.path.join(params.savelon_dir, params.elonxport_mlp_modulelon_namelon)
+    params_c.calibrator_load_telonnsorflow_modulelon = path_savelond_telonnsorflow_modelonl
 
-  if "calibrator_parts_downsampling_rate" in params_c:
-    params_c.train_parts_downsampling_rate = params_c.calibrator_parts_downsampling_rate
-  if "calibrator_save_dir" in params_c:
-    params_c.save_dir = params_c.calibrator_save_dir
-  if "calibrator_batch_size" in params_c:
-    params_c.train_batch_size = params_c.calibrator_batch_size
-    params_c.eval_batch_size = params_c.calibrator_batch_size
-  # TODO: Deprecate this option. It is not actually used. Calibrator
-  #       simply iterates until the end of input_fn.
-  if "calibrator_train_steps" in params_c:
-    params_c.train_steps = params_c.calibrator_train_steps
+  if "calibrator_parts_downsampling_ratelon" in params_c:
+    params_c.train_parts_downsampling_ratelon = params_c.calibrator_parts_downsampling_ratelon
+  if "calibrator_savelon_dir" in params_c:
+    params_c.savelon_dir = params_c.calibrator_savelon_dir
+  if "calibrator_batch_sizelon" in params_c:
+    params_c.train_batch_sizelon = params_c.calibrator_batch_sizelon
+    params_c.elonval_batch_sizelon = params_c.calibrator_batch_sizelon
+  # TODO: Delonpreloncatelon this option. It is not actually uselond. Calibrator
+  #       simply itelonratelons until thelon elonnd of input_fn.
+  if "calibrator_train_stelonps" in params_c:
+    params_c.train_stelonps = params_c.calibrator_train_stelonps
 
-  if metric_fn is None:
-    metric_fn = twml.metrics.get_multi_binary_class_metric_fn(None)
+  if melontric_fn is Nonelon:
+    melontric_fn = twml.melontrics.gelont_multi_binary_class_melontric_fn(Nonelon)
 
-  # Common Trainer which will also be used by all workers
-  trainer = twml.trainers.DataRecordTrainer(
-    name=name,
+  # Common Trainelonr which will also belon uselond by all workelonrs
+  trainelonr = twml.trainelonrs.DataReloncordTrainelonr(
+    namelon=namelon,
     params=params_c,
-    feature_config=feature_config,
+    felonaturelon_config=felonaturelon_config,
     build_graph_fn=build_graph_fn,
-    save_dir=params_c.save_dir,
-    metric_fn=metric_fn
+    savelon_dir=params_c.savelon_dir,
+    melontric_fn=melontric_fn
   )
 
-  if trainer._estimator.config.is_chief:
+  if trainelonr._elonstimator.config.is_chielonf:
 
-    # Chief trains calibrator
-    logging.info("Chief training calibrator")
+    # Chielonf trains calibrator
+    logging.info("Chielonf training calibrator")
 
-    # Disregard hogwild config
-    os_twml_hogwild_ports = os.environ.get("TWML_HOGWILD_PORTS")
-    os.environ["TWML_HOGWILD_PORTS"] = ""
+    # Disrelongard hogwild config
+    os_twml_hogwild_ports = os.elonnviron.gelont("TWML_HOGWILD_PORTS")
+    os.elonnviron["TWML_HOGWILD_PORTS"] = ""
 
-    hooks = None
-    if params_c.calibrator_train_steps > 0:
-      hooks = [twml.hooks.StepProgressHook(params_c.calibrator_train_steps)]
+    hooks = Nonelon
+    if params_c.calibrator_train_stelonps > 0:
+      hooks = [twml.hooks.StelonpProgrelonssHook(params_c.calibrator_train_stelonps)]
 
-    def parse_fn(input_x):
-      fc_parse_fn = feature_config.get_parse_fn()
-      features, labels = fc_parse_fn(input_x)
-      features['labels'] = labels
-      return features, labels
+    delonf parselon_fn(input_x):
+      fc_parselon_fn = felonaturelon_config.gelont_parselon_fn()
+      felonaturelons, labelonls = fc_parselon_fn(input_x)
+      felonaturelons['labelonls'] = labelonls
+      relonturn felonaturelons, labelonls
 
-    if input_fn is None:
-      input_fn = trainer.get_train_input_fn(parse_fn=parse_fn, repeat=False)
+    if input_fn is Nonelon:
+      input_fn = trainelonr.gelont_train_input_fn(parselon_fn=parselon_fn, relonpelonat=Falselon)
 
-    # Calibrate stage
-    trainer.estimator._params.mode = 'calibrate'
-    trainer.calibrate(calibrator=calibrator,
+    # Calibratelon stagelon
+    trainelonr.elonstimator._params.modelon = 'calibratelon'
+    trainelonr.calibratelon(calibrator=calibrator,
                       input_fn=input_fn,
-                      steps=params_c.calibrator_train_steps,
+                      stelonps=params_c.calibrator_train_stelonps,
                       hooks=hooks)
 
-    # Save Checkpoint
-    # We need to train for 1 step, to save the graph to checkpoint.
-    # This is done just by the chief.
-    # We need to set the mode to evaluate to save the graph that will be consumed
-    # In the final evaluation
-    trainer.estimator._params.mode = 'evaluate'
-    trainer.train(input_fn=input_fn, steps=1)
+    # Savelon Chelonckpoint
+    # Welon nelonelond to train for 1 stelonp, to savelon thelon graph to chelonckpoint.
+    # This is donelon just by thelon chielonf.
+    # Welon nelonelond to selont thelon modelon to elonvaluatelon to savelon thelon graph that will belon consumelond
+    # In thelon final elonvaluation
+    trainelonr.elonstimator._params.modelon = 'elonvaluatelon'
+    trainelonr.train(input_fn=input_fn, stelonps=1)
 
-    # Restore hogwild setup
-    if os_twml_hogwild_ports is not None:
-      os.environ["TWML_HOGWILD_PORTS"] = os_twml_hogwild_ports
-  else:
-    # Workers wait for calibration to be ready
-    final_calibrator_path = os.path.join(params_c.calibrator_save_dir,
-                                         params_c.calibrator_export_module_name)
+    # Relonstorelon hogwild selontup
+    if os_twml_hogwild_ports is not Nonelon:
+      os.elonnviron["TWML_HOGWILD_PORTS"] = os_twml_hogwild_ports
+  elonlselon:
+    # Workelonrs wait for calibration to belon relonady
+    final_calibrator_path = os.path.join(params_c.calibrator_savelon_dir,
+                                         params_c.calibrator_elonxport_modulelon_namelon)
 
-    final_calibrator_path = twml.util.sanitize_hdfs_path(final_calibrator_path)
+    final_calibrator_path = twml.util.sanitizelon_hdfs_path(final_calibrator_path)
 
-    while not tf.io.gfile.exists(final_calibrator_path + os.path.sep + "tfhub_module.pb"):
-      logging.info("Worker waiting for calibration at %s" % final_calibrator_path)
-      time.sleep(60)
+    whilelon not tf.io.gfilelon.elonxists(final_calibrator_path + os.path.selonp + "tfhub_modulelon.pb"):
+      logging.info("Workelonr waiting for calibration at %s" % final_calibrator_path)
+      timelon.slelonelonp(60)
 
-  # Evaluate stage
-  if run_eval:
-    trainer.estimator._params.mode = 'evaluate'
-    # This will allow the Evaluate method to be run in Hogwild
-    # trainer.estimator._params.continue_from_checkpoint = True
-    trainer.evaluate(name='test', input_fn=input_fn, steps=params_c.calibrator_final_evaluation_steps)
+  # elonvaluatelon stagelon
+  if run_elonval:
+    trainelonr.elonstimator._params.modelon = 'elonvaluatelon'
+    # This will allow thelon elonvaluatelon melonthod to belon run in Hogwild
+    # trainelonr.elonstimator._params.continuelon_from_chelonckpoint = Truelon
+    trainelonr.elonvaluatelon(namelon='telonst', input_fn=input_fn, stelonps=params_c.calibrator_final_elonvaluation_stelonps)
 
-  trainer.hub_export(name=params_c.calibrator_export_module_name,
-    export_task_type_overrider=export_task_type_overrider,
-    serving_input_receiver_fn=feature_config.get_serving_input_receiver_fn())
+  trainelonr.hub_elonxport(namelon=params_c.calibrator_elonxport_modulelon_namelon,
+    elonxport_task_typelon_ovelonrridelonr=elonxport_task_typelon_ovelonrridelonr,
+    selonrving_input_reloncelonivelonr_fn=felonaturelon_config.gelont_selonrving_input_reloncelonivelonr_fn())
 
-  return trainer
+  relonturn trainelonr
 
 
-def calibrate_discretizer_and_export(name, calibrator, build_graph_fn, params, feature_config):
+delonf calibratelon_discrelontizelonr_and_elonxport(namelon, calibrator, build_graph_fn, params, felonaturelon_config):
   """
-  Pre-set percentile discretizer calibrator.
+  Prelon-selont pelonrcelonntilelon discrelontizelonr calibrator.
   Args:
-    name:
-      scope name used for the calibrator
+    namelon:
+      scopelon namelon uselond for thelon calibrator
     calibrator:
-      calibrator that will be calibrated and exported.
+      calibrator that will belon calibratelond and elonxportelond.
     build_graph_fn:
-      build graph function for the calibrator
+      build graph function for thelon calibrator
     params:
-      params passed to the calibrator
-    feature_config:
-      feature config or input_fn which will be passed to the trainer.
+      params passelond to thelon calibrator
+    felonaturelon_config:
+      felonaturelon config or input_fn which will belon passelond to thelon trainelonr.
   """
 
-  if (os.environ.get("TWML_HOGWILD_TASK_TYPE") == "chief" or "num_workers" not in params or
-        params.num_workers is None):
+  if (os.elonnviron.gelont("TWML_HOGWILD_TASK_TYPelon") == "chielonf" or "num_workelonrs" not in params or
+        params.num_workelonrs is Nonelon):
 
-    # chief trains discretizer
-    logging.info("Chief training discretizer")
+    # chielonf trains discrelontizelonr
+    logging.info("Chielonf training discrelontizelonr")
 
-    # disregard hogwild config
-    os_twml_hogwild_ports = os.environ.get("TWML_HOGWILD_PORTS")
-    os.environ["TWML_HOGWILD_PORTS"] = ""
+    # disrelongard hogwild config
+    os_twml_hogwild_ports = os.elonnviron.gelont("TWML_HOGWILD_PORTS")
+    os.elonnviron["TWML_HOGWILD_PORTS"] = ""
 
-    # create discretizer params
-    params_c = copy.deepcopy(params)
-    params_c.data_threads = 1
-    params_c.train_steps = -1
-    params_c.train_max_steps = None
-    params_c.eval_steps = -1
-    params_c.num_workers = 1
-    params_c.tensorboard_port = None
-    params_c.stats_port = None
+    # crelonatelon discrelontizelonr params
+    params_c = copy.delonelonpcopy(params)
+    params_c.data_threlonads = 1
+    params_c.train_stelonps = -1
+    params_c.train_max_stelonps = Nonelon
+    params_c.elonval_stelonps = -1
+    params_c.num_workelonrs = 1
+    params_c.telonnsorboard_port = Nonelon
+    params_c.stats_port = Nonelon
 
-    if "discretizer_batch_size" in params_c:
-      params_c.train_batch_size = params_c.discretizer_batch_size
-      params_c.eval_batch_size = params_c.discretizer_batch_size
-    if "discretizer_keep_rate" in params_c:
-      params_c.train_keep_rate = params_c.discretizer_keep_rate
-    if "discretizer_parts_downsampling_rate" in params_c:
-      params_c.train_parts_downsampling_rate = params_c.discretizer_parts_downsampling_rate
-    if "discretizer_save_dir" in params_c:
-      params_c.save_dir = params_c.discretizer_save_dir
+    if "discrelontizelonr_batch_sizelon" in params_c:
+      params_c.train_batch_sizelon = params_c.discrelontizelonr_batch_sizelon
+      params_c.elonval_batch_sizelon = params_c.discrelontizelonr_batch_sizelon
+    if "discrelontizelonr_kelonelonp_ratelon" in params_c:
+      params_c.train_kelonelonp_ratelon = params_c.discrelontizelonr_kelonelonp_ratelon
+    if "discrelontizelonr_parts_downsampling_ratelon" in params_c:
+      params_c.train_parts_downsampling_ratelon = params_c.discrelontizelonr_parts_downsampling_ratelon
+    if "discrelontizelonr_savelon_dir" in params_c:
+      params_c.savelon_dir = params_c.discrelontizelonr_savelon_dir
 
-    # train discretizer
-    trainer = twml.trainers.DataRecordTrainer(
-      name=name,
+    # train discrelontizelonr
+    trainelonr = twml.trainelonrs.DataReloncordTrainelonr(
+      namelon=namelon,
       params=params_c,
       build_graph_fn=build_graph_fn,
-      save_dir=params_c.save_dir,
+      savelon_dir=params_c.savelon_dir,
     )
 
-    if isinstance(feature_config, twml.feature_config.FeatureConfig):
-      parse_fn = twml.parsers.get_continuous_parse_fn(feature_config)
-      input_fn = trainer.get_train_input_fn(parse_fn=parse_fn, repeat=False)
-    elif callable(feature_config):
-      input_fn = feature_config
-    else:
-      got_type = type(feature_config).__name__
-      raise ValueError(
-        "Expecting feature_config to be FeatureConfig or function got %s" % got_type)
+    if isinstancelon(felonaturelon_config, twml.felonaturelon_config.FelonaturelonConfig):
+      parselon_fn = twml.parselonrs.gelont_continuous_parselon_fn(felonaturelon_config)
+      input_fn = trainelonr.gelont_train_input_fn(parselon_fn=parselon_fn, relonpelonat=Falselon)
+    elonlif callablelon(felonaturelon_config):
+      input_fn = felonaturelon_config
+    elonlselon:
+      got_typelon = typelon(felonaturelon_config).__namelon__
+      raiselon Valuelonelonrror(
+        "elonxpeloncting felonaturelon_config to belon FelonaturelonConfig or function got %s" % got_typelon)
 
-    hooks = None
-    if params_c.train_steps > 0:
-      hooks = [twml.hooks.StepProgressHook(params_c.train_steps)]
+    hooks = Nonelon
+    if params_c.train_stelonps > 0:
+      hooks = [twml.hooks.StelonpProgrelonssHook(params_c.train_stelonps)]
 
-    trainer.calibrate(calibrator=calibrator, input_fn=input_fn,
-                      steps=params_c.train_steps, hooks=hooks)
-    # restore hogwild setup
-    if os_twml_hogwild_ports is not None:
-      os.environ["TWML_HOGWILD_PORTS"] = os_twml_hogwild_ports
-  else:
-    discretizer_save_dir = twml.util.sanitize_hdfs_path(params.discretizer_save_dir)
-    # workers wait for calibration to be ready
-    while not tf.io.gfile.exists(discretizer_save_dir + os.path.sep + "tfhub_module.pb"):
-      logging.info("Worker waiting for calibration at %s" % discretizer_save_dir)
-      time.sleep(60)
+    trainelonr.calibratelon(calibrator=calibrator, input_fn=input_fn,
+                      stelonps=params_c.train_stelonps, hooks=hooks)
+    # relonstorelon hogwild selontup
+    if os_twml_hogwild_ports is not Nonelon:
+      os.elonnviron["TWML_HOGWILD_PORTS"] = os_twml_hogwild_ports
+  elonlselon:
+    discrelontizelonr_savelon_dir = twml.util.sanitizelon_hdfs_path(params.discrelontizelonr_savelon_dir)
+    # workelonrs wait for calibration to belon relonady
+    whilelon not tf.io.gfilelon.elonxists(discrelontizelonr_savelon_dir + os.path.selonp + "tfhub_modulelon.pb"):
+      logging.info("Workelonr waiting for calibration at %s" % discrelontizelonr_savelon_dir)
+      timelon.slelonelonp(60)
 
 
-def build_percentile_discretizer_graph(features, label, mode, params, config=None):
+delonf build_pelonrcelonntilelon_discrelontizelonr_graph(felonaturelons, labelonl, modelon, params, config=Nonelon):
   """
-  Pre-set Percentile Discretizer Build Graph
-  Follows the same signature as build_graph
+  Prelon-selont Pelonrcelonntilelon Discrelontizelonr Build Graph
+  Follows thelon samelon signaturelon as build_graph
   """
-  sparse_tf = twml.util.convert_to_sparse(features, params.input_size_bits)
-  weights = tf.reshape(features['weights'], tf.reshape(features['batch_size'], [1]))
-  if isinstance(sparse_tf, tf.SparseTensor):
-    indices = sparse_tf.indices[:, 1]
-    ids = sparse_tf.indices[:, 0]
-  elif isinstance(sparse_tf, twml.SparseTensor):
-    indices = sparse_tf.indices
-    ids = sparse_tf.ids
+  sparselon_tf = twml.util.convelonrt_to_sparselon(felonaturelons, params.input_sizelon_bits)
+  welonights = tf.relonshapelon(felonaturelons['welonights'], tf.relonshapelon(felonaturelons['batch_sizelon'], [1]))
+  if isinstancelon(sparselon_tf, tf.SparselonTelonnsor):
+    indicelons = sparselon_tf.indicelons[:, 1]
+    ids = sparselon_tf.indicelons[:, 0]
+  elonlif isinstancelon(sparselon_tf, twml.SparselonTelonnsor):
+    indicelons = sparselon_tf.indicelons
+    ids = sparselon_tf.ids
 
-  # Return weights, feature_ids, feature_values
-  weights = tf.gather(params=weights, indices=ids)
-  feature_ids = indices
-  feature_values = sparse_tf.values
-  # Update train_op and assign dummy_loss
-  train_op = tf.assign_add(tf.train.get_global_step(), 1)
+  # Relonturn welonights, felonaturelon_ids, felonaturelon_valuelons
+  welonights = tf.gathelonr(params=welonights, indicelons=ids)
+  felonaturelon_ids = indicelons
+  felonaturelon_valuelons = sparselon_tf.valuelons
+  # Updatelon train_op and assign dummy_loss
+  train_op = tf.assign_add(tf.train.gelont_global_stelonp(), 1)
   loss = tf.constant(1)
-  if mode == 'train':
-    return {'train_op': train_op, 'loss': loss}
-  return {'feature_ids': feature_ids, 'feature_values': feature_values, 'weights': weights}
+  if modelon == 'train':
+    relonturn {'train_op': train_op, 'loss': loss}
+  relonturn {'felonaturelon_ids': felonaturelon_ids, 'felonaturelon_valuelons': felonaturelon_valuelons, 'welonights': welonights}
 
 
-def isotonic_module(mode, params):
+delonf isotonic_modulelon(modelon, params):
   """
-  Common Isotonic Calibrator module for Hub Export
+  Common Isotonic Calibrator modulelon for Hub elonxport
   """
-  inputs = tf.sparse_placeholder(tf.float32, name="sparse_input")
-  mlp = hub.Module(params.calibrator_load_tensorflow_module)
-  logits = mlp(inputs, signature=params.export_mlp_module_name)
-  isotonic_calibrator = hub.Module(params.save_dir)
-  output = isotonic_calibrator(logits, signature="isotonic_calibrator")
-  hub.add_signature(inputs={"sparse_input": inputs},
-    outputs={"default": output},
-    name=params.calibrator_export_module_name)
+  inputs = tf.sparselon_placelonholdelonr(tf.float32, namelon="sparselon_input")
+  mlp = hub.Modulelon(params.calibrator_load_telonnsorflow_modulelon)
+  logits = mlp(inputs, signaturelon=params.elonxport_mlp_modulelon_namelon)
+  isotonic_calibrator = hub.Modulelon(params.savelon_dir)
+  output = isotonic_calibrator(logits, signaturelon="isotonic_calibrator")
+  hub.add_signaturelon(inputs={"sparselon_input": inputs},
+    outputs={"delonfault": output},
+    namelon=params.calibrator_elonxport_modulelon_namelon)
 
 
-def build_isotonic_graph_from_inputs(inputs, features, label, mode, params, config=None, isotonic_fn=None):
+delonf build_isotonic_graph_from_inputs(inputs, felonaturelons, labelonl, modelon, params, config=Nonelon, isotonic_fn=Nonelon):
   """
-  Helper function to build_isotonic_graph
-  Pre-set Isotonic Calibrator Build Graph
-  Follows the same signature as build_graph
+  Helonlpelonr function to build_isotonic_graph
+  Prelon-selont Isotonic Calibrator Build Graph
+  Follows thelon samelon signaturelon as build_graph
   """
-  if params.mode == 'calibrate':
-    mlp = hub.Module(params.calibrator_load_tensorflow_module)
-    logits = mlp(inputs, signature=params.export_mlp_module_name)
-    weights = tf.reshape(features['weights'], tf.reshape(features['batch_size'], [1]))
-    # Update train_op and assign dummy_loss
-    train_op = tf.assign_add(tf.train.get_global_step(), 1)
+  if params.modelon == 'calibratelon':
+    mlp = hub.Modulelon(params.calibrator_load_telonnsorflow_modulelon)
+    logits = mlp(inputs, signaturelon=params.elonxport_mlp_modulelon_namelon)
+    welonights = tf.relonshapelon(felonaturelons['welonights'], tf.relonshapelon(felonaturelons['batch_sizelon'], [1]))
+    # Updatelon train_op and assign dummy_loss
+    train_op = tf.assign_add(tf.train.gelont_global_stelonp(), 1)
     loss = tf.constant(1)
-    if mode == 'train':
-      return {'train_op': train_op, 'loss': loss}
-    return {'predictions': logits, 'targets': features['labels'], 'weights': weights}
-  else:
-    if isotonic_fn is None:
-      isotonic_spec = twml.util.create_module_spec(mlp_fn=isotonic_module, mode=mode, params=params)
-    else:
-      isotonic_spec = twml.util.create_module_spec(mlp_fn=isotonic_fn, mode=mode, params=params)
-    output_hub = hub.Module(isotonic_spec,
-      name=params.calibrator_export_module_name)
-    hub.register_module_for_export(output_hub, params.calibrator_export_module_name)
-    output = output_hub(inputs, signature=params.calibrator_export_module_name)
-    output = tf.clip_by_value(output, 0, 1)
-    loss = tf.reduce_sum(tf.stop_gradient(output))
-    train_op = tf.assign_add(tf.train.get_global_step(), 1)
-    return {'train_op': train_op, 'loss': loss, 'output': output}
+    if modelon == 'train':
+      relonturn {'train_op': train_op, 'loss': loss}
+    relonturn {'prelondictions': logits, 'targelonts': felonaturelons['labelonls'], 'welonights': welonights}
+  elonlselon:
+    if isotonic_fn is Nonelon:
+      isotonic_spelonc = twml.util.crelonatelon_modulelon_spelonc(mlp_fn=isotonic_modulelon, modelon=modelon, params=params)
+    elonlselon:
+      isotonic_spelonc = twml.util.crelonatelon_modulelon_spelonc(mlp_fn=isotonic_fn, modelon=modelon, params=params)
+    output_hub = hub.Modulelon(isotonic_spelonc,
+      namelon=params.calibrator_elonxport_modulelon_namelon)
+    hub.relongistelonr_modulelon_for_elonxport(output_hub, params.calibrator_elonxport_modulelon_namelon)
+    output = output_hub(inputs, signaturelon=params.calibrator_elonxport_modulelon_namelon)
+    output = tf.clip_by_valuelon(output, 0, 1)
+    loss = tf.relonducelon_sum(tf.stop_gradielonnt(output))
+    train_op = tf.assign_add(tf.train.gelont_global_stelonp(), 1)
+    relonturn {'train_op': train_op, 'loss': loss, 'output': output}
 
 
-def build_isotonic_graph(features, label, mode, params, config=None, export_discretizer=True):
+delonf build_isotonic_graph(felonaturelons, labelonl, modelon, params, config=Nonelon, elonxport_discrelontizelonr=Truelon):
   """
-  Pre-set Isotonic Calibrator Build Graph
-  Follows the same signature as build_graph
-  This assumes that MLP already contains all modules (include percentile
-  discretizer); if export_discretizer is set
-  then it does not export the MDL phase.
+  Prelon-selont Isotonic Calibrator Build Graph
+  Follows thelon samelon signaturelon as build_graph
+  This assumelons that MLP alrelonady contains all modulelons (includelon pelonrcelonntilelon
+  discrelontizelonr); if elonxport_discrelontizelonr is selont
+  thelonn it doelons not elonxport thelon MDL phaselon.
   """
-  sparse_tf = twml.util.convert_to_sparse(features, params.input_size_bits)
-  if export_discretizer:
-    return build_isotonic_graph_from_inputs(sparse_tf, features, label, mode, params, config)
-  discretizer = hub.Module(params.discretizer_path)
+  sparselon_tf = twml.util.convelonrt_to_sparselon(felonaturelons, params.input_sizelon_bits)
+  if elonxport_discrelontizelonr:
+    relonturn build_isotonic_graph_from_inputs(sparselon_tf, felonaturelons, labelonl, modelon, params, config)
+  discrelontizelonr = hub.Modulelon(params.discrelontizelonr_path)
 
-  if params.discretizer_signature is None:
-    discretizer_signature = "percentile_discretizer_calibrator"
-  else:
-    discretizer_signature = params.discretizer_signature
-  input_sparse = discretizer(sparse_tf, signature=discretizer_signature)
-  return build_isotonic_graph_from_inputs(input_sparse, features, label, mode, params, config)
+  if params.discrelontizelonr_signaturelon is Nonelon:
+    discrelontizelonr_signaturelon = "pelonrcelonntilelon_discrelontizelonr_calibrator"
+  elonlselon:
+    discrelontizelonr_signaturelon = params.discrelontizelonr_signaturelon
+  input_sparselon = discrelontizelonr(sparselon_tf, signaturelon=discrelontizelonr_signaturelon)
+  relonturn build_isotonic_graph_from_inputs(input_sparselon, felonaturelons, labelonl, modelon, params, config)

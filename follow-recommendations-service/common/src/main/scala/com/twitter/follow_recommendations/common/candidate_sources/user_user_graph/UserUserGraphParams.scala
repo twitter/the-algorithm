@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.uselonr_uselonr_graph
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object UserUserGraphParams {
+objelonct UselonrUselonrGraphParams {
 
-  // max number of candidates to return in total, 50 is the default param used in MagicRecs
-  object MaxCandidatesToReturn extends Param[Int](default = 50)
+  // max numbelonr of candidatelons to relonturn in total, 50 is thelon delonfault param uselond in MagicReloncs
+  objelonct MaxCandidatelonsToRelonturn elonxtelonnds Param[Int](delonfault = 50)
 
-  // whether or not to include UserUserGraph candidate source in the weighted blending step
-  case object UserUserGraphCandidateSourceEnabledInWeightMap
-      extends FSParam[Boolean]("user_user_graph_candidate_source_enabled_in_weight_map", true)
+  // whelonthelonr or not to includelon UselonrUselonrGraph candidatelon sourcelon in thelon welonightelond blelonnding stelonp
+  caselon objelonct UselonrUselonrGraphCandidatelonSourcelonelonnablelondInWelonightMap
+      elonxtelonnds FSParam[Boolelonan]("uselonr_uselonr_graph_candidatelon_sourcelon_elonnablelond_in_welonight_map", truelon)
 
-  // whether or not to include UserUserGraph candidate source in the final transform step
-  case object UserUserGraphCandidateSourceEnabledInTransform
-      extends FSParam[Boolean]("user_user_graph_candidate_source_enabled_in_transform", true)
+  // whelonthelonr or not to includelon UselonrUselonrGraph candidatelon sourcelon in thelon final transform stelonp
+  caselon objelonct UselonrUselonrGraphCandidatelonSourcelonelonnablelondInTransform
+      elonxtelonnds FSParam[Boolelonan]("uselonr_uselonr_graph_candidatelon_sourcelon_elonnablelond_in_transform", truelon)
 
 }

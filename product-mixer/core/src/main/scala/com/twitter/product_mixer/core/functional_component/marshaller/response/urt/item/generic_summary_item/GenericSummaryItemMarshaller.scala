@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.generic_summary_item
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.gelonnelonric_summary_itelonm
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media.MediaMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melondia.MelondiaMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond.PromotelondMelontadataMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.gelonnelonric_summary.GelonnelonricSummaryItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GenericSummaryItemMarshaller @Inject() (
-  genericSummaryDisplayTypeMarshaller: GenericSummaryDisplayTypeMarshaller,
-  genericSummaryContextMarshaller: GenericSummaryContextMarshaller,
-  genericSummaryActionMarshaller: GenericSummaryActionMarshaller,
-  mediaMarshaller: MediaMarshaller,
-  promotedMetadataMarshaller: PromotedMetadataMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@Singlelonton
+class GelonnelonricSummaryItelonmMarshallelonr @Injelonct() (
+  gelonnelonricSummaryDisplayTypelonMarshallelonr: GelonnelonricSummaryDisplayTypelonMarshallelonr,
+  gelonnelonricSummaryContelonxtMarshallelonr: GelonnelonricSummaryContelonxtMarshallelonr,
+  gelonnelonricSummaryActionMarshallelonr: GelonnelonricSummaryActionMarshallelonr,
+  melondiaMarshallelonr: MelondiaMarshallelonr,
+  promotelondMelontadataMarshallelonr: PromotelondMelontadataMarshallelonr,
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr) {
 
-  def apply(genericSummaryItem: GenericSummaryItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.GenericSummary(
-      urt.GenericSummary(
-        headline = richTextMarshaller(genericSummaryItem.headline),
-        displayType = genericSummaryDisplayTypeMarshaller(genericSummaryItem.displayType),
-        userAttributionIds = genericSummaryItem.userAttributionIds,
-        media = genericSummaryItem.media.map(mediaMarshaller(_)),
-        context = genericSummaryItem.context.map(genericSummaryContextMarshaller(_)),
-        timestamp = genericSummaryItem.timestamp.map(_.inMilliseconds),
-        onClickAction = genericSummaryItem.onClickAction.map(genericSummaryActionMarshaller(_)),
-        promotedMetadata = genericSummaryItem.promotedMetadata.map(promotedMetadataMarshaller(_))
+  delonf apply(gelonnelonricSummaryItelonm: GelonnelonricSummaryItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.GelonnelonricSummary(
+      urt.GelonnelonricSummary(
+        helonadlinelon = richTelonxtMarshallelonr(gelonnelonricSummaryItelonm.helonadlinelon),
+        displayTypelon = gelonnelonricSummaryDisplayTypelonMarshallelonr(gelonnelonricSummaryItelonm.displayTypelon),
+        uselonrAttributionIds = gelonnelonricSummaryItelonm.uselonrAttributionIds,
+        melondia = gelonnelonricSummaryItelonm.melondia.map(melondiaMarshallelonr(_)),
+        contelonxt = gelonnelonricSummaryItelonm.contelonxt.map(gelonnelonricSummaryContelonxtMarshallelonr(_)),
+        timelonstamp = gelonnelonricSummaryItelonm.timelonstamp.map(_.inMilliselonconds),
+        onClickAction = gelonnelonricSummaryItelonm.onClickAction.map(gelonnelonricSummaryActionMarshallelonr(_)),
+        promotelondMelontadata = gelonnelonricSummaryItelonm.promotelondMelontadata.map(promotelondMelontadataMarshallelonr(_))
       )
     )
 }

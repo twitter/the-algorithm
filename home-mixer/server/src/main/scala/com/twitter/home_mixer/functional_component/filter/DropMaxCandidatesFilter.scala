@@ -1,27 +1,27 @@
-package com.twitter.home_mixer.functional_component.filter
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.FSBoundedParam
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
 
-case class DropMaxCandidatesFilter[Candidate <: UniversalNoun[Any]](
-  maxCandidatesParam: FSBoundedParam[Int])
-    extends Filter[PipelineQuery, Candidate] {
+caselon class DropMaxCandidatelonsFiltelonr[Candidatelon <: UnivelonrsalNoun[Any]](
+  maxCandidatelonsParam: FSBoundelondParam[Int])
+    elonxtelonnds Filtelonr[PipelonlinelonQuelonry, Candidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("DropMaxCandidates")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("DropMaxCandidatelons")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val maxCandidates = query.params(maxCandidatesParam)
-    val (kept, removed) = candidates.map(_.candidate).splitAt(maxCandidates)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
+    val maxCandidatelons = quelonry.params(maxCandidatelonsParam)
+    val (kelonpt, relonmovelond) = candidatelons.map(_.candidatelon).splitAt(maxCandidatelons)
 
-    Stitch.value(FilterResult(kept, removed))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt, relonmovelond))
   }
 }

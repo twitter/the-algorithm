@@ -1,22 +1,22 @@
-package com.twitter.search.ingester.model;
+packagelon com.twittelonr.selonarch.ingelonstelonr.modelonl;
 
 /**
- * The raw data in a Kafka record.
+ * Thelon raw data in a Kafka reloncord.
  */
-public class KafkaRawRecord {
-  private final byte[] data;
-  private final long readAtTimestampMs;
+public class KafkaRawReloncord {
+  privatelon final bytelon[] data;
+  privatelon final long relonadAtTimelonstampMs;
 
-  public KafkaRawRecord(byte[] data, long readAtTimestampMs) {
+  public KafkaRawReloncord(bytelon[] data, long relonadAtTimelonstampMs) {
     this.data = data;
-    this.readAtTimestampMs = readAtTimestampMs;
+    this.relonadAtTimelonstampMs = relonadAtTimelonstampMs;
   }
 
-  public byte[] getData() {
-    return data;
+  public bytelon[] gelontData() {
+    relonturn data;
   }
 
-  public long getReadAtTimestampMs() {
-    return readAtTimestampMs;
+  public long gelontRelonadAtTimelonstampMs() {
+    relonturn relonadAtTimelonstampMs;
   }
 }

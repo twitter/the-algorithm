@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.param.decider
+packagelon com.twittelonr.cr_mixelonr.param.deloncidelonr
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.decider.Recipient
-import com.twitter.decider.SimpleRecipient
-import com.twitter.simclusters_v2.common.DeciderGateBuilderWithIdHashing
-import javax.inject.Inject
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.RandomReloncipielonnt
+import com.twittelonr.deloncidelonr.Reloncipielonnt
+import com.twittelonr.deloncidelonr.SimplelonReloncipielonnt
+import com.twittelonr.simclustelonrs_v2.common.DeloncidelonrGatelonBuildelonrWithIdHashing
+import javax.injelonct.Injelonct
 
-case class CrMixerDecider @Inject() (decider: Decider) {
+caselon class CrMixelonrDeloncidelonr @Injelonct() (deloncidelonr: Deloncidelonr) {
 
-  def isAvailable(feature: String, recipient: Option[Recipient]): Boolean = {
-    decider.isAvailable(feature, recipient)
+  delonf isAvailablelon(felonaturelon: String, reloncipielonnt: Option[Reloncipielonnt]): Boolelonan = {
+    deloncidelonr.isAvailablelon(felonaturelon, reloncipielonnt)
   }
 
-  lazy val deciderGateBuilder = new DeciderGateBuilderWithIdHashing(decider)
+  lazy val deloncidelonrGatelonBuildelonr = nelonw DeloncidelonrGatelonBuildelonrWithIdHashing(deloncidelonr)
 
   /**
-   * When useRandomRecipient is set to false, the decider is either completely on or off.
-   * When useRandomRecipient is set to true, the decider is on for the specified % of traffic.
+   * Whelonn uselonRandomReloncipielonnt is selont to falselon, thelon deloncidelonr is elonithelonr complelontelonly on or off.
+   * Whelonn uselonRandomReloncipielonnt is selont to truelon, thelon deloncidelonr is on for thelon speloncifielond % of traffic.
    */
-  def isAvailable(feature: String, useRandomRecipient: Boolean = true): Boolean = {
-    if (useRandomRecipient) isAvailable(feature, Some(RandomRecipient))
-    else isAvailable(feature, None)
+  delonf isAvailablelon(felonaturelon: String, uselonRandomReloncipielonnt: Boolelonan = truelon): Boolelonan = {
+    if (uselonRandomReloncipielonnt) isAvailablelon(felonaturelon, Somelon(RandomReloncipielonnt))
+    elonlselon isAvailablelon(felonaturelon, Nonelon)
   }
 
   /***
-   * Decide whether the decider is available for a specific id using SimpleRecipient(id).
+   * Deloncidelon whelonthelonr thelon deloncidelonr is availablelon for a speloncific id using SimplelonReloncipielonnt(id).
    */
-  def isAvailableForId(
+  delonf isAvailablelonForId(
     id: Long,
-    deciderConstants: String
-  ): Boolean = {
-    // Note: SimpleRecipient does expose a `val isUser = true` field which is not correct if the Id is not a user Id.
-    // However this field does not appear to be used anywhere in source.
-    decider.isAvailable(deciderConstants, Some(SimpleRecipient(id)))
+    deloncidelonrConstants: String
+  ): Boolelonan = {
+    // Notelon: SimplelonReloncipielonnt doelons elonxposelon a `val isUselonr = truelon` fielonld which is not correlonct if thelon Id is not a uselonr Id.
+    // Howelonvelonr this fielonld doelons not appelonar to belon uselond anywhelonrelon in sourcelon.
+    deloncidelonr.isAvailablelon(deloncidelonrConstants, Somelon(SimplelonReloncipielonnt(id)))
   }
 
 }

@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.ml_rankelonr.ranking
 
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.RankelonrId
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
 /**
- * When adding Producer side experiments, make sure to register the FS Key in [[ProducerFeatureFilter]]
- * in [[FeatureSwitchesModule]], otherwise, the FS will not work.
+ * Whelonn adding Producelonr sidelon elonxpelonrimelonnts, makelon surelon to relongistelonr thelon FS Kelony in [[ProducelonrFelonaturelonFiltelonr]]
+ * in [[FelonaturelonSwitchelonsModulelon]], othelonrwiselon, thelon FS will not work.
  */
-object MlRankerParams {
-  // which ranker to use by default for the given request
-  case object RequestScorerIdParam
-      extends FSEnumParam[RankerId.type](
-        name = "post_nux_ml_flow_ml_ranker_id",
-        default = RankerId.PostNuxProdRanker,
-        enum = RankerId
+objelonct MlRankelonrParams {
+  // which rankelonr to uselon by delonfault for thelon givelonn relonquelonst
+  caselon objelonct RelonquelonstScorelonrIdParam
+      elonxtelonnds FSelonnumParam[RankelonrId.typelon](
+        namelon = "post_nux_ml_flow_ml_rankelonr_id",
+        delonfault = RankelonrId.PostNuxProdRankelonr,
+        elonnum = RankelonrId
       )
 
-  // which ranker to use for the given candidate
-  case object CandidateScorerIdParam
-      extends FSEnumParam[RankerId.type](
-        name = "post_nux_ml_flow_candidate_user_scorer_id",
-        default = RankerId.None,
-        enum = RankerId
+  // which rankelonr to uselon for thelon givelonn candidatelon
+  caselon objelonct CandidatelonScorelonrIdParam
+      elonxtelonnds FSelonnumParam[RankelonrId.typelon](
+        namelon = "post_nux_ml_flow_candidatelon_uselonr_scorelonr_id",
+        delonfault = RankelonrId.Nonelon,
+        elonnum = RankelonrId
       )
 
-  case object ScribeRankingInfoInMlRanker
-      extends FSParam[Boolean]("post_nux_ml_flow_scribe_ranking_info_in_ml_ranker", true)
+  caselon objelonct ScribelonRankingInfoInMlRankelonr
+      elonxtelonnds FSParam[Boolelonan]("post_nux_ml_flow_scribelon_ranking_info_in_ml_rankelonr", truelon)
 }

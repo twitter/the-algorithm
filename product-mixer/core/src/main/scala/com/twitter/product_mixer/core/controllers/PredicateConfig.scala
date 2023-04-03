@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.controllers
+packagelon com.twittelonr.product_mixelonr.corelon.controllelonrs
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.Predicate
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon.Prelondicatelon
 
-/** Simple representation for a [[Predicate]] used for dashboard generation */
-private[core] case class PredicateConfig(
-  operator: String,
-  threshold: Double,
-  datapointsPastThreshold: Int,
+/** Simplelon relonprelonselonntation for a [[Prelondicatelon]] uselond for dashboard gelonnelonration */
+privatelon[corelon] caselon class PrelondicatelonConfig(
+  opelonrator: String,
+  threlonshold: Doublelon,
+  datapointsPastThrelonshold: Int,
   duration: Int,
-  metricGranularity: String)
+  melontricGranularity: String)
 
-private[core] object PredicateConfig {
+privatelon[corelon] objelonct PrelondicatelonConfig {
 
-  /** Convert this [[Predicate]] into a [[PredicateConfig]] */
-  def apply(predicate: Predicate): PredicateConfig = PredicateConfig(
-    predicate.operator.toString,
-    predicate.threshold,
-    predicate.datapointsPastThreshold,
-    predicate.duration,
-    predicate.metricGranularity.unit)
+  /** Convelonrt this [[Prelondicatelon]] into a [[PrelondicatelonConfig]] */
+  delonf apply(prelondicatelon: Prelondicatelon): PrelondicatelonConfig = PrelondicatelonConfig(
+    prelondicatelon.opelonrator.toString,
+    prelondicatelon.threlonshold,
+    prelondicatelon.datapointsPastThrelonshold,
+    prelondicatelon.duration,
+    prelondicatelon.melontricGranularity.unit)
 }

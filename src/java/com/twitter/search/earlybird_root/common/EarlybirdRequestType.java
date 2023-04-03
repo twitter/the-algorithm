@@ -1,68 +1,68 @@
-package com.twitter.search.earlybird_root.common;
+packagelon com.twittelonr.selonarch.elonarlybird_root.common;
 
 import javax.annotation.Nonnull;
 
-import com.twitter.search.common.constants.thriftjava.ThriftQuerySource;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftQuelonrySourcelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRankingModelon;
 
 /**
- * Earlybird roots distinguish these types of requests and treat them differently.
+ * elonarlybird roots distinguish thelonselon typelons of relonquelonsts and trelonat thelonm diffelonrelonntly.
  */
-public enum EarlybirdRequestType {
-  FACETS,
-  RECENCY,
-  RELEVANCE,
-  STRICT_RECENCY,
-  TERM_STATS,
-  TOP_TWEETS;
+public elonnum elonarlybirdRelonquelonstTypelon {
+  FACelonTS,
+  RelonCelonNCY,
+  RelonLelonVANCelon,
+  STRICT_RelonCelonNCY,
+  TelonRM_STATS,
+  TOP_TWelonelonTS;
 
   /**
-   * Returns the type of the given requests.
+   * Relonturns thelon typelon of thelon givelonn relonquelonsts.
    */
   @Nonnull
-  public static EarlybirdRequestType of(EarlybirdRequest request) {
-    if (request.isSetFacetRequest()) {
-      return FACETS;
-    } else if (request.isSetTermStatisticsRequest()) {
-      return TERM_STATS;
-    } else if (request.isSetSearchQuery() && request.getSearchQuery().isSetRankingMode()) {
-      ThriftSearchRankingMode rankingMode = request.getSearchQuery().getRankingMode();
-      switch (rankingMode) {
-        case RECENCY:
-          if (shouldUseStrictRecency(request)) {
-            return STRICT_RECENCY;
-          } else {
-            return RECENCY;
+  public static elonarlybirdRelonquelonstTypelon of(elonarlybirdRelonquelonst relonquelonst) {
+    if (relonquelonst.isSelontFacelontRelonquelonst()) {
+      relonturn FACelonTS;
+    } elonlselon if (relonquelonst.isSelontTelonrmStatisticsRelonquelonst()) {
+      relonturn TelonRM_STATS;
+    } elonlselon if (relonquelonst.isSelontSelonarchQuelonry() && relonquelonst.gelontSelonarchQuelonry().isSelontRankingModelon()) {
+      ThriftSelonarchRankingModelon rankingModelon = relonquelonst.gelontSelonarchQuelonry().gelontRankingModelon();
+      switch (rankingModelon) {
+        caselon RelonCelonNCY:
+          if (shouldUselonStrictReloncelonncy(relonquelonst)) {
+            relonturn STRICT_RelonCelonNCY;
+          } elonlselon {
+            relonturn RelonCelonNCY;
           }
-        case RELEVANCE:
-          return RELEVANCE;
-        case TOPTWEETS:
-          return TOP_TWEETS;
-        default:
-          throw new IllegalArgumentException();
+        caselon RelonLelonVANCelon:
+          relonturn RelonLelonVANCelon;
+        caselon TOPTWelonelonTS:
+          relonturn TOP_TWelonelonTS;
+        delonfault:
+          throw nelonw IllelongalArgumelonntelonxcelonption();
       }
-    } else {
-      throw new UnsupportedOperationException();
+    } elonlselon {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption();
     }
   }
 
-  private static boolean shouldUseStrictRecency(EarlybirdRequest request) {
-    // For now, we decide to do strict merging solely based on the QuerySource, and only for GNIP.
-    return request.isSetQuerySource() && request.getQuerySource() == ThriftQuerySource.GNIP;
+  privatelon static boolelonan shouldUselonStrictReloncelonncy(elonarlybirdRelonquelonst relonquelonst) {
+    // For now, welon deloncidelon to do strict melonrging solelonly baselond on thelon QuelonrySourcelon, and only for GNIP.
+    relonturn relonquelonst.isSelontQuelonrySourcelon() && relonquelonst.gelontQuelonrySourcelon() == ThriftQuelonrySourcelon.GNIP;
   }
 
-  private final String normalizedName;
+  privatelon final String normalizelondNamelon;
 
-  EarlybirdRequestType() {
-    this.normalizedName = name().toLowerCase();
+  elonarlybirdRelonquelonstTypelon() {
+    this.normalizelondNamelon = namelon().toLowelonrCaselon();
   }
 
   /**
-   * Returns the "normalized" name of this request type, that can be used for stat and decider
-   * names.
+   * Relonturns thelon "normalizelond" namelon of this relonquelonst typelon, that can belon uselond for stat and deloncidelonr
+   * namelons.
    */
-  public String getNormalizedName() {
-    return normalizedName;
+  public String gelontNormalizelondNamelon() {
+    relonturn normalizelondNamelon;
   }
 }

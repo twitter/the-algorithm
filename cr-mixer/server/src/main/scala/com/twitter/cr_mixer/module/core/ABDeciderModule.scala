@@ -1,33 +1,33 @@
-package com.twitter.cr_mixer.module.core
+packagelon com.twittelonr.cr_mixelonr.modulelon.corelon
 
-import com.google.inject.Provides
-import com.google.inject.name.Named
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.logging.Logger
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.abdeloncidelonr.ABDeloncidelonrFactory
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.logging.Loggelonr
+import javax.injelonct.Singlelonton
 
-object ABDeciderModule extends TwitterModule {
+objelonct ABDeloncidelonrModulelon elonxtelonnds TwittelonrModulelon {
 
   flag(
-    name = "abdecider.path",
-    default = "/usr/local/config/abdecider/abdecider.yml",
-    help = "path to the abdecider Yml file location"
+    namelon = "abdeloncidelonr.path",
+    delonfault = "/usr/local/config/abdeloncidelonr/abdeloncidelonr.yml",
+    helonlp = "path to thelon abdeloncidelonr Yml filelon location"
   )
 
-  @Provides
-  @Singleton
-  def provideABDecider(
-    @Flag("abdecider.path") abDeciderYmlPath: String,
-    @Named(ModuleNames.AbDeciderLogger) scribeLogger: Logger
-  ): LoggingABDecider = {
-    ABDeciderFactory(
-      abDeciderYmlPath = abDeciderYmlPath,
-      scribeLogger = Some(scribeLogger),
-      environment = Some("production")
+  @Providelons
+  @Singlelonton
+  delonf providelonABDeloncidelonr(
+    @Flag("abdeloncidelonr.path") abDeloncidelonrYmlPath: String,
+    @Namelond(ModulelonNamelons.AbDeloncidelonrLoggelonr) scribelonLoggelonr: Loggelonr
+  ): LoggingABDeloncidelonr = {
+    ABDeloncidelonrFactory(
+      abDeloncidelonrYmlPath = abDeloncidelonrYmlPath,
+      scribelonLoggelonr = Somelon(scribelonLoggelonr),
+      elonnvironmelonnt = Somelon("production")
     ).buildWithLogging()
   }
 }

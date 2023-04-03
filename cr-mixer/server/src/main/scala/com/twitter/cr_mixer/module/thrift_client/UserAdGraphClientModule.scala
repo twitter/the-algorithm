@@ -1,47 +1,47 @@
-package com.twitter.cr_mixer.module.thrift_client
+packagelon com.twittelonr.cr_mixelonr.modulelon.thrift_clielonnt
 
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.module.core.TimeoutConfigModule.UserAdGraphClientTimeoutFlagName
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.recos.user_ad_graph.thriftscala.UserAdGraph
-import com.twitter.util.Duration
-import com.twitter.util.Throw
+import com.twittelonr.app.Flag
+import com.twittelonr.cr_mixelonr.modulelon.corelon.TimelonoutConfigModulelon.UselonrAdGraphClielonntTimelonoutFlagNamelon
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt.MtlsThriftMuxClielonntSyntax
+import com.twittelonr.finaglelon.mux.ClielonntDiscardelondRelonquelonstelonxcelonption
+import com.twittelonr.finaglelon.selonrvicelon.RelonqRelonp
+import com.twittelonr.finaglelon.selonrvicelon.RelonsponselonClass
+import com.twittelonr.finaglelon.selonrvicelon.RelontryBudgelont
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.reloncos.uselonr_ad_graph.thriftscala.UselonrAdGraph
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Throw
 
-object UserAdGraphClientModule
-    extends ThriftMethodBuilderClientModule[
-      UserAdGraph.ServicePerEndpoint,
-      UserAdGraph.MethodPerEndpoint
+objelonct UselonrAdGraphClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      UselonrAdGraph.SelonrvicelonPelonrelonndpoint,
+      UselonrAdGraph.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override val label = "user-ad-graph"
-  override val dest = "/s/user-tweet-graph/user-ad-graph"
-  private val userAdGraphClientTimeout: Flag[Duration] =
-    flag[Duration](UserAdGraphClientTimeoutFlagName, "userAdGraph client timeout")
-  override def requestTimeout: Duration = userAdGraphClientTimeout()
+  ovelonrridelon val labelonl = "uselonr-ad-graph"
+  ovelonrridelon val delonst = "/s/uselonr-twelonelont-graph/uselonr-ad-graph"
+  privatelon val uselonrAdGraphClielonntTimelonout: Flag[Duration] =
+    flag[Duration](UselonrAdGraphClielonntTimelonoutFlagNamelon, "uselonrAdGraph clielonnt timelonout")
+  ovelonrridelon delonf relonquelonstTimelonout: Duration = uselonrAdGraphClielonntTimelonout()
 
-  override def retryBudget: RetryBudget = RetryBudget.Empty
+  ovelonrridelon delonf relontryBudgelont: RelontryBudgelont = RelontryBudgelont.elonmpty
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
-    super
-      .configureThriftMuxClient(injector, client)
-      .withMutualTls(injector.instance[ServiceIdentifier])
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("clnt"))
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+  ovelonrridelon delonf configurelonThriftMuxClielonnt(
+    injelonctor: Injelonctor,
+    clielonnt: ThriftMux.Clielonnt
+  ): ThriftMux.Clielonnt =
+    supelonr
+      .configurelonThriftMuxClielonnt(injelonctor, clielonnt)
+      .withMutualTls(injelonctor.instancelon[SelonrvicelonIdelonntifielonr])
+      .withStatsReloncelonivelonr(injelonctor.instancelon[StatsReloncelonivelonr].scopelon("clnt"))
+      .withRelonsponselonClassifielonr {
+        caselon RelonqRelonp(_, Throw(_: ClielonntDiscardelondRelonquelonstelonxcelonption)) => RelonsponselonClass.Ignorablelon
       }
 
 }

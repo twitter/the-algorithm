@@ -1,104 +1,104 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.escherbird.{thriftscala => esb}
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.content.ContentFeatureAdapter
-import com.twitter.home_mixer.model.HomeFeatures.MediaUnderstandingAnnotationIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceTweetIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TweetypieContentRepository
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.home_mixer.util.tweetypie.content.FeatureExtractionHelper
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.util.OffloadFuturePools
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.common.util.MediaUnderstandingAnnotations
-import com.twitter.tweetypie.{thriftscala => tp}
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+import com.twittelonr.elonschelonrbird.{thriftscala => elonsb}
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.contelonnt.ContelonntFelonaturelonAdaptelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.MelondiaUndelonrstandingAnnotationIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TwelonelontypielonContelonntRelonpository
+import com.twittelonr.homelon_mixelonr.util.ObselonrvelondKelonyValuelonRelonsultHandlelonr
+import com.twittelonr.homelon_mixelonr.util.twelonelontypielon.contelonnt.FelonaturelonelonxtractionHelonlpelonr
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.util.OffloadFuturelonPools
+import com.twittelonr.selonrvo.kelonyvaluelon.KelonyValuelonRelonsult
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonpository
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.prelondiction.common.util.MelondiaUndelonrstandingAnnotations
+import com.twittelonr.twelonelontypielon.{thriftscala => tp}
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object TweetypieContentDataRecordFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct TwelonelontypielonContelonntDataReloncordFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class TweetypieContentFeatureHydrator @Inject() (
-  @Named(TweetypieContentRepository) client: KeyValueRepository[Seq[Long], Long, tp.Tweet],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+@Singlelonton
+class TwelonelontypielonContelonntFelonaturelonHydrator @Injelonct() (
+  @Namelond(TwelonelontypielonContelonntRelonpository) clielonnt: KelonyValuelonRelonpository[Selonq[Long], Long, tp.Twelonelont],
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon]
+    with ObselonrvelondKelonyValuelonRelonsultHandlelonr {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetypieContent")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("TwelonelontypielonContelonnt")
 
-  override val features: Set[Feature[_, _]] = Set(
-    MediaUnderstandingAnnotationIdsFeature,
-    TweetypieContentDataRecordFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    MelondiaUndelonrstandingAnnotationIdsFelonaturelon,
+    TwelonelontypielonContelonntDataReloncordFelonaturelon
   )
 
-  override val statScope: String = identifier.toString
+  ovelonrridelon val statScopelon: String = idelonntifielonr.toString
 
-  private val bulkRequestLatencyStat =
-    statsReceiver.scope(statScope).scope("bulkRequest").stat("latency_ms")
-  private val postTransformerLatencyStat =
-    statsReceiver.scope(statScope).scope("postTransformer").stat("latency_ms")
-  private val bulkPostTransformerLatencyStat =
-    statsReceiver.scope(statScope).scope("bulkPostTransformer").stat("latency_ms")
+  privatelon val bulkRelonquelonstLatelonncyStat =
+    statsReloncelonivelonr.scopelon(statScopelon).scopelon("bulkRelonquelonst").stat("latelonncy_ms")
+  privatelon val postTransformelonrLatelonncyStat =
+    statsReloncelonivelonr.scopelon(statScopelon).scopelon("postTransformelonr").stat("latelonncy_ms")
+  privatelon val bulkPostTransformelonrLatelonncyStat =
+    statsReloncelonivelonr.scopelon(statScopelon).scopelon("bulkPostTransformelonr").stat("latelonncy_ms")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    Stitch.callFuture {
-      val tweetIdsToHydrate = candidates.map(getCandidateOriginalTweetId).distinct
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    Stitch.callFuturelon {
+      val twelonelontIdsToHydratelon = candidatelons.map(gelontCandidatelonOriginalTwelonelontId).distinct
 
-      val response: Future[KeyValueResult[Long, tp.Tweet]] =
-        Stat.timeFuture(bulkRequestLatencyStat)(
-          if (tweetIdsToHydrate.isEmpty) {
-            Future.value(KeyValueResult.empty)
-          } else {
-            client(tweetIdsToHydrate)
+      val relonsponselon: Futurelon[KelonyValuelonRelonsult[Long, tp.Twelonelont]] =
+        Stat.timelonFuturelon(bulkRelonquelonstLatelonncyStat)(
+          if (twelonelontIdsToHydratelon.iselonmpty) {
+            Futurelon.valuelon(KelonyValuelonRelonsult.elonmpty)
+          } elonlselon {
+            clielonnt(twelonelontIdsToHydratelon)
           }
         )
 
-      response.flatMap { result =>
-        Stat.timeFuture(bulkPostTransformerLatencyStat) {
-          OffloadFuturePools
-            .parallelize[CandidateWithFeatures[TweetCandidate], Try[(Seq[Long], DataRecord)]](
-              candidates,
-              parTransformer(result, _),
-              parallelism = 32,
-              default = Return((Seq.empty, new DataRecord))
+      relonsponselon.flatMap { relonsult =>
+        Stat.timelonFuturelon(bulkPostTransformelonrLatelonncyStat) {
+          OffloadFuturelonPools
+            .parallelonlizelon[CandidatelonWithFelonaturelons[TwelonelontCandidatelon], Try[(Selonq[Long], DataReloncord)]](
+              candidatelons,
+              parTransformelonr(relonsult, _),
+              parallelonlism = 32,
+              delonfault = Relonturn((Selonq.elonmpty, nelonw DataReloncord))
             ).map {
               _.map {
-                case Return(result) =>
-                  FeatureMapBuilder()
-                    .add(MediaUnderstandingAnnotationIdsFeature, result._1)
-                    .add(TweetypieContentDataRecordFeature, result._2)
+                caselon Relonturn(relonsult) =>
+                  FelonaturelonMapBuildelonr()
+                    .add(MelondiaUndelonrstandingAnnotationIdsFelonaturelon, relonsult._1)
+                    .add(TwelonelontypielonContelonntDataReloncordFelonaturelon, relonsult._2)
                     .build()
-                case Throw(e) =>
-                  FeatureMapBuilder()
-                    .add(MediaUnderstandingAnnotationIdsFeature, Throw(e))
-                    .add(TweetypieContentDataRecordFeature, Throw(e))
+                caselon Throw(elon) =>
+                  FelonaturelonMapBuildelonr()
+                    .add(MelondiaUndelonrstandingAnnotationIdsFelonaturelon, Throw(elon))
+                    .add(TwelonelontypielonContelonntDataReloncordFelonaturelon, Throw(elon))
                     .build()
               }
             }
@@ -107,43 +107,43 @@ class TweetypieContentFeatureHydrator @Inject() (
     }
   }
 
-  private def parTransformer(
-    result: KeyValueResult[Long, tp.Tweet],
-    candidate: CandidateWithFeatures[TweetCandidate]
-  ): Try[(Seq[Long], DataRecord)] = {
-    val originalTweetId = Some(getCandidateOriginalTweetId(candidate))
+  privatelon delonf parTransformelonr(
+    relonsult: KelonyValuelonRelonsult[Long, tp.Twelonelont],
+    candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon]
+  ): Try[(Selonq[Long], DataReloncord)] = {
+    val originalTwelonelontId = Somelon(gelontCandidatelonOriginalTwelonelontId(candidatelon))
 
-    val value = observedGet(key = originalTweetId, keyValueResult = result)
-    Stat.time(postTransformerLatencyStat)(postTransformer(value))
+    val valuelon = obselonrvelondGelont(kelony = originalTwelonelontId, kelonyValuelonRelonsult = relonsult)
+    Stat.timelon(postTransformelonrLatelonncyStat)(postTransformelonr(valuelon))
   }
 
-  private def postTransformer(
-    result: Try[Option[tp.Tweet]]
-  ): Try[(Seq[Long], DataRecord)] = {
-    result.map { tweet =>
-      val transformedValue = tweet.map(FeatureExtractionHelper.extractFeatures)
-      val semanticAnnotations = transformedValue
-        .flatMap { contentFeatures =>
-          contentFeatures.semanticCoreAnnotations.map {
-            getNonSensitiveHighRecallMediaUnderstandingAnnotationEntityIds
+  privatelon delonf postTransformelonr(
+    relonsult: Try[Option[tp.Twelonelont]]
+  ): Try[(Selonq[Long], DataReloncord)] = {
+    relonsult.map { twelonelont =>
+      val transformelondValuelon = twelonelont.map(FelonaturelonelonxtractionHelonlpelonr.elonxtractFelonaturelons)
+      val selonmanticAnnotations = transformelondValuelon
+        .flatMap { contelonntFelonaturelons =>
+          contelonntFelonaturelons.selonmanticCorelonAnnotations.map {
+            gelontNonSelonnsitivelonHighReloncallMelondiaUndelonrstandingAnnotationelonntityIds
           }
-        }.getOrElse(Seq.empty)
-      val dataRecord = ContentFeatureAdapter.adaptToDataRecords(transformedValue).asScala.head
-      (semanticAnnotations, dataRecord)
+        }.gelontOrelonlselon(Selonq.elonmpty)
+      val dataReloncord = ContelonntFelonaturelonAdaptelonr.adaptToDataReloncords(transformelondValuelon).asScala.helonad
+      (selonmanticAnnotations, dataReloncord)
     }
   }
 
-  private def getCandidateOriginalTweetId(
-    candidate: CandidateWithFeatures[TweetCandidate]
+  privatelon delonf gelontCandidatelonOriginalTwelonelontId(
+    candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon]
   ): Long = {
-    candidate.features
-      .getOrElse(SourceTweetIdFeature, None).getOrElse(candidate.candidate.id)
+    candidatelon.felonaturelons
+      .gelontOrelonlselon(SourcelonTwelonelontIdFelonaturelon, Nonelon).gelontOrelonlselon(candidatelon.candidatelon.id)
   }
 
-  private def getNonSensitiveHighRecallMediaUnderstandingAnnotationEntityIds(
-    semanticCoreAnnotations: Seq[esb.TweetEntityAnnotation]
-  ): Seq[Long] =
-    semanticCoreAnnotations
-      .filter(MediaUnderstandingAnnotations.isEligibleNonSensitiveHighRecallMUAnnotation)
-      .map(_.entityId)
+  privatelon delonf gelontNonSelonnsitivelonHighReloncallMelondiaUndelonrstandingAnnotationelonntityIds(
+    selonmanticCorelonAnnotations: Selonq[elonsb.TwelonelontelonntityAnnotation]
+  ): Selonq[Long] =
+    selonmanticCorelonAnnotations
+      .filtelonr(MelondiaUndelonrstandingAnnotations.iselonligiblelonNonSelonnsitivelonHighReloncallMUAnnotation)
+      .map(_.elonntityId)
 }

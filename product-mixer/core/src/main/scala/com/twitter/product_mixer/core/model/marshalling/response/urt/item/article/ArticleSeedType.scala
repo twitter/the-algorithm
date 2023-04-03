@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.article
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon
 
-sealed trait ArticleSeedType
-
-/**
- * Seed UTEG with a user's following list (1st degree network)
- */
-case object FollowingListSeed extends ArticleSeedType
+selonalelond trait ArticlelonSelonelondTypelon
 
 /**
- * Seed UTEG with a user's friends of friends (follow graph + 1) list
+ * Selonelond UTelonG with a uselonr's following list (1st delongrelonelon nelontwork)
  */
-case object FriendsOfFriendsSeed extends ArticleSeedType
+caselon objelonct FollowingListSelonelond elonxtelonnds ArticlelonSelonelondTypelon
 
 /**
- * Seed UTEG with a given lists' members
+ * Selonelond UTelonG with a uselonr's frielonnds of frielonnds (follow graph + 1) list
  */
-case object ListIdSeed extends ArticleSeedType
+caselon objelonct FrielonndsOfFrielonndsSelonelond elonxtelonnds ArticlelonSelonelondTypelon
+
+/**
+ * Selonelond UTelonG with a givelonn lists' melonmbelonrs
+ */
+caselon objelonct ListIdSelonelond elonxtelonnds ArticlelonSelonelondTypelon

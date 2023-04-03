@@ -1,260 +1,260 @@
-package com.twitter.visibility.interfaces.conversations
+packagelon com.twittelonr.visibility.intelonrfacelons.convelonrsations
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.servo.util.Gate
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.spam.rtf.thriftscala.SafetyLabelValue
-import com.twitter.stitch.Stitch
-import com.twitter.util.Future
-import com.twitter.util.Return
-import com.twitter.util.Stopwatch
-import com.twitter.util.Try
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.tweets.TweetIdFeatures
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.VerdictLogger
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.tweets.FosnrPefetchedLabelsRelationshipFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.features.AuthorUserLabels
-import com.twitter.visibility.features.ConversationRootAuthorIsVerified
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.features.HasInnerCircleOfFriendsRelationship
-import com.twitter.visibility.features.TweetConversationId
-import com.twitter.visibility.features.TweetParentId
-import com.twitter.visibility.logging.thriftscala.VFLibType
-import com.twitter.visibility.models.ContentId.TweetId
-import com.twitter.visibility.models.SafetyLevel.TimelineConversationsDownranking
-import com.twitter.visibility.models.SafetyLevel.TimelineConversationsDownrankingMinimal
-import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.UnitOfDiversion
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.Labelonl
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonsult
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonl
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlTypelon
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlValuelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Stopwatch
+import com.twittelonr.util.Try
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.twelonelonts.TwelonelontIdFelonaturelons
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.buildelonr.VelonrdictLoggelonr
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.twelonelonts.FosnrPelonfelontchelondLabelonlsRelonlationshipFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrGatelons
+import com.twittelonr.visibility.felonaturelons.AuthorUselonrLabelonls
+import com.twittelonr.visibility.felonaturelons.ConvelonrsationRootAuthorIsVelonrifielond
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.felonaturelons.HasInnelonrCirclelonOfFrielonndsRelonlationship
+import com.twittelonr.visibility.felonaturelons.TwelonelontConvelonrsationId
+import com.twittelonr.visibility.felonaturelons.TwelonelontParelonntId
+import com.twittelonr.visibility.logging.thriftscala.VFLibTypelon
+import com.twittelonr.visibility.modelonls.ContelonntId.TwelonelontId
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonConvelonrsationsDownranking
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.TimelonlinelonConvelonrsationsDownrankingMinimal
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.toThrift
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonl
+import com.twittelonr.visibility.modelonls.UnitOfDivelonrsion
 
-object TimelineConversationsVisibilityLibrary {
-  type Type =
-    TimelineConversationsVisibilityRequest => Stitch[TimelineConversationsVisibilityResponse]
+objelonct TimelonlinelonConvelonrsationsVisibilityLibrary {
+  typelon Typelon =
+    TimelonlinelonConvelonrsationsVisibilityRelonquelonst => Stitch[TimelonlinelonConvelonrsationsVisibilityRelonsponselon]
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    batchSafetyLabelRepository: BatchSafetyLabelRepository,
-    decider: Decider,
-    userRelationshipSource: UserRelationshipSource = UserRelationshipSource.empty,
-    userSource: UserSource = UserSource.empty
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val tweetIdFeatures = new TweetIdFeatures(
-      statsReceiver = libraryStatsReceiver,
-      enableStitchProfiling = Gate.False
+    batchSafelontyLabelonlRelonpository: BatchSafelontyLabelonlRelonpository,
+    deloncidelonr: Deloncidelonr,
+    uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon = UselonrRelonlationshipSourcelon.elonmpty,
+    uselonrSourcelon: UselonrSourcelon = UselonrSourcelon.elonmpty
+  ): Typelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr
+    val twelonelontIdFelonaturelons = nelonw TwelonelontIdFelonaturelons(
+      statsReloncelonivelonr = libraryStatsReloncelonivelonr,
+      elonnablelonStitchProfiling = Gatelon.Falselon
     )
-    val tweetIdFeaturesMinimal = new TweetIdFeatures(
-      statsReceiver = libraryStatsReceiver,
-      enableStitchProfiling = Gate.False
+    val twelonelontIdFelonaturelonsMinimal = nelonw TwelonelontIdFelonaturelons(
+      statsReloncelonivelonr = libraryStatsReloncelonivelonr,
+      elonnablelonStitchProfiling = Gatelon.Falselon
     )
-    val vfLatencyOverallStat = libraryStatsReceiver.stat("vf_latency_overall")
-    val vfLatencyStitchBuildStat = libraryStatsReceiver.stat("vf_latency_stitch_build")
-    val vfLatencyStitchRunStat = libraryStatsReceiver.stat("vf_latency_stitch_run")
+    val vfLatelonncyOvelonrallStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_ovelonrall")
+    val vfLatelonncyStitchBuildStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_stitch_build")
+    val vfLatelonncyStitchRunStat = libraryStatsReloncelonivelonr.stat("vf_latelonncy_stitch_run")
 
-    val visibilityDeciderGates = VisibilityDeciderGates(decider)
-    val verdictLogger =
-      createVerdictLogger(
-        visibilityDeciderGates.enableVerdictLoggerTCVL,
-        decider,
-        libraryStatsReceiver)
+    val visibilityDeloncidelonrGatelons = VisibilityDeloncidelonrGatelons(deloncidelonr)
+    val velonrdictLoggelonr =
+      crelonatelonVelonrdictLoggelonr(
+        visibilityDeloncidelonrGatelons.elonnablelonVelonrdictLoggelonrTCVL,
+        deloncidelonr,
+        libraryStatsReloncelonivelonr)
 
-    request: TimelineConversationsVisibilityRequest =>
-      val elapsed = Stopwatch.start()
+    relonquelonst: TimelonlinelonConvelonrsationsVisibilityRelonquelonst =>
+      val elonlapselond = Stopwatch.start()
       var runStitchStartMs = 0L
 
-      val future = request.prefetchedSafetyLabels match {
-        case Some(labels) => Future.value(labels)
-        case _ =>
-          batchSafetyLabelRepository((request.conversationId, request.tweetIds))
+      val futurelon = relonquelonst.prelonfelontchelondSafelontyLabelonls match {
+        caselon Somelon(labelonls) => Futurelon.valuelon(labelonls)
+        caselon _ =>
+          batchSafelontyLabelonlRelonpository((relonquelonst.convelonrsationId, relonquelonst.twelonelontIds))
       }
 
-      val fosnrPefetchedLabelsRelationshipFeatures =
-        new FosnrPefetchedLabelsRelationshipFeatures(
-          userRelationshipSource = userRelationshipSource,
-          statsReceiver = libraryStatsReceiver)
+      val fosnrPelonfelontchelondLabelonlsRelonlationshipFelonaturelons =
+        nelonw FosnrPelonfelontchelondLabelonlsRelonlationshipFelonaturelons(
+          uselonrRelonlationshipSourcelon = uselonrRelonlationshipSourcelon,
+          statsReloncelonivelonr = libraryStatsReloncelonivelonr)
 
-      val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
+      val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
 
-      Stitch.callFuture(future).flatMap {
-        kvr: KeyValueResult[Long, scala.collection.Map[SafetyLabelType, SafetyLabel]] =>
-          val featureMapProvider: (ContentId, SafetyLevel) => FeatureMap = {
-            case (TweetId(tweetId), safetyLevel) =>
-              val constantTweetSafetyLabels: Seq[TweetSafetyLabel] =
-                kvr.found.getOrElse(tweetId, Map.empty).toSeq.map {
-                  case (safetyLabelType, safetyLabel) =>
-                    TweetSafetyLabel.fromThrift(SafetyLabelValue(safetyLabelType, safetyLabel))
+      Stitch.callFuturelon(futurelon).flatMap {
+        kvr: KelonyValuelonRelonsult[Long, scala.collelonction.Map[SafelontyLabelonlTypelon, SafelontyLabelonl]] =>
+          val felonaturelonMapProvidelonr: (ContelonntId, SafelontyLelonvelonl) => FelonaturelonMap = {
+            caselon (TwelonelontId(twelonelontId), safelontyLelonvelonl) =>
+              val constantTwelonelontSafelontyLabelonls: Selonq[TwelonelontSafelontyLabelonl] =
+                kvr.found.gelontOrelonlselon(twelonelontId, Map.elonmpty).toSelonq.map {
+                  caselon (safelontyLabelonlTypelon, safelontyLabelonl) =>
+                    TwelonelontSafelontyLabelonl.fromThrift(SafelontyLabelonlValuelon(safelontyLabelonlTypelon, safelontyLabelonl))
                 }
 
-              val replyAuthor = request.tweetAuthors.flatMap {
-                _(tweetId) match {
-                  case Return(Some(userId)) => Some(userId)
-                  case _ => None
+              val relonplyAuthor = relonquelonst.twelonelontAuthors.flatMap {
+                _(twelonelontId) match {
+                  caselon Relonturn(Somelon(uselonrId)) => Somelon(uselonrId)
+                  caselon _ => Nonelon
                 }
               }
 
-              val fosnrPefetchedLabelsRelationshipFeatureConf = replyAuthor match {
-                case Some(authorId) if visibilityLibrary.isReleaseCandidateEnabled =>
-                  fosnrPefetchedLabelsRelationshipFeatures
-                    .forTweetWithSafetyLabelsAndAuthorId(
-                      safetyLabels = constantTweetSafetyLabels,
+              val fosnrPelonfelontchelondLabelonlsRelonlationshipFelonaturelonConf = relonplyAuthor match {
+                caselon Somelon(authorId) if visibilityLibrary.isRelonlelonaselonCandidatelonelonnablelond =>
+                  fosnrPelonfelontchelondLabelonlsRelonlationshipFelonaturelons
+                    .forTwelonelontWithSafelontyLabelonlsAndAuthorId(
+                      safelontyLabelonls = constantTwelonelontSafelontyLabelonls,
                       authorId = authorId,
-                      viewerId = request.viewerContext.userId)
-                case _ => fosnrPefetchedLabelsRelationshipFeatures.forNonFosnr()
+                      vielonwelonrId = relonquelonst.vielonwelonrContelonxt.uselonrId)
+                caselon _ => fosnrPelonfelontchelondLabelonlsRelonlationshipFelonaturelons.forNonFosnr()
               }
 
-              val authorFeatureConf = replyAuthor match {
-                case Some(authorId) if visibilityLibrary.isReleaseCandidateEnabled =>
-                  authorFeatures.forAuthorId(authorId)
-                case _ => authorFeatures.forNoAuthor()
+              val authorFelonaturelonConf = relonplyAuthor match {
+                caselon Somelon(authorId) if visibilityLibrary.isRelonlelonaselonCandidatelonelonnablelond =>
+                  authorFelonaturelons.forAuthorId(authorId)
+                caselon _ => authorFelonaturelons.forNoAuthor()
               }
 
-              val baseBuilderArguments = (safetyLevel match {
-                case TimelineConversationsDownranking =>
-                  Seq(tweetIdFeatures.forTweetId(tweetId, constantTweetSafetyLabels))
-                case TimelineConversationsDownrankingMinimal =>
-                  Seq(tweetIdFeaturesMinimal.forTweetId(tweetId, constantTweetSafetyLabels))
-                case _ => Nil
-              }) :+ fosnrPefetchedLabelsRelationshipFeatureConf :+ authorFeatureConf
+              val baselonBuildelonrArgumelonnts = (safelontyLelonvelonl match {
+                caselon TimelonlinelonConvelonrsationsDownranking =>
+                  Selonq(twelonelontIdFelonaturelons.forTwelonelontId(twelonelontId, constantTwelonelontSafelontyLabelonls))
+                caselon TimelonlinelonConvelonrsationsDownrankingMinimal =>
+                  Selonq(twelonelontIdFelonaturelonsMinimal.forTwelonelontId(twelonelontId, constantTwelonelontSafelontyLabelonls))
+                caselon _ => Nil
+              }) :+ fosnrPelonfelontchelondLabelonlsRelonlationshipFelonaturelonConf :+ authorFelonaturelonConf
 
-              val tweetAuthorUserLabels: Option[Seq[Label]] =
-                request.prefetchedTweetAuthorUserLabels.flatMap {
-                  _.apply(tweetId) match {
-                    case Return(Some(labelMap)) =>
-                      Some(labelMap.values.toSeq)
-                    case _ =>
-                      None
+              val twelonelontAuthorUselonrLabelonls: Option[Selonq[Labelonl]] =
+                relonquelonst.prelonfelontchelondTwelonelontAuthorUselonrLabelonls.flatMap {
+                  _.apply(twelonelontId) match {
+                    caselon Relonturn(Somelon(labelonlMap)) =>
+                      Somelon(labelonlMap.valuelons.toSelonq)
+                    caselon _ =>
+                      Nonelon
                   }
                 }
 
-              val hasInnerCircleOfFriendsRelationship: Boolean =
-                request.innerCircleOfFriendsRelationships match {
-                  case Some(keyValueResult) =>
-                    keyValueResult(tweetId) match {
-                      case Return(Some(true)) => true
-                      case _ => false
+              val hasInnelonrCirclelonOfFrielonndsRelonlationship: Boolelonan =
+                relonquelonst.innelonrCirclelonOfFrielonndsRelonlationships match {
+                  caselon Somelon(kelonyValuelonRelonsult) =>
+                    kelonyValuelonRelonsult(twelonelontId) match {
+                      caselon Relonturn(Somelon(truelon)) => truelon
+                      caselon _ => falselon
                     }
-                  case None => false
+                  caselon Nonelon => falselon
                 }
 
-              val builderArguments: Seq[FeatureMapBuilder => FeatureMapBuilder] =
-                tweetAuthorUserLabels match {
-                  case Some(labels) =>
-                    baseBuilderArguments :+ { (fmb: FeatureMapBuilder) =>
-                      fmb.withConstantFeature(AuthorUserLabels, labels)
+              val buildelonrArgumelonnts: Selonq[FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr] =
+                twelonelontAuthorUselonrLabelonls match {
+                  caselon Somelon(labelonls) =>
+                    baselonBuildelonrArgumelonnts :+ { (fmb: FelonaturelonMapBuildelonr) =>
+                      fmb.withConstantFelonaturelon(AuthorUselonrLabelonls, labelonls)
                     }
 
-                  case None =>
-                    baseBuilderArguments :+ { (fmb: FeatureMapBuilder) =>
-                      fmb.withConstantFeature(AuthorUserLabels, Seq.empty)
+                  caselon Nonelon =>
+                    baselonBuildelonrArgumelonnts :+ { (fmb: FelonaturelonMapBuildelonr) =>
+                      fmb.withConstantFelonaturelon(AuthorUselonrLabelonls, Selonq.elonmpty)
                     }
-                  case _ =>
-                    baseBuilderArguments
+                  caselon _ =>
+                    baselonBuildelonrArgumelonnts
                 }
 
-              val tweetParentIdOpt: Option[Long] =
-                request.tweetParentIdMap.flatMap(tweetParentIdMap => tweetParentIdMap(tweetId))
+              val twelonelontParelonntIdOpt: Option[Long] =
+                relonquelonst.twelonelontParelonntIdMap.flatMap(twelonelontParelonntIdMap => twelonelontParelonntIdMap(twelonelontId))
 
-              visibilityLibrary.featureMapBuilder(builderArguments :+ { (fmb: FeatureMapBuilder) =>
-                fmb.withConstantFeature(
-                  HasInnerCircleOfFriendsRelationship,
-                  hasInnerCircleOfFriendsRelationship)
-                fmb.withConstantFeature(TweetConversationId, request.conversationId)
-                fmb.withConstantFeature(TweetParentId, tweetParentIdOpt)
-                fmb.withConstantFeature(
-                  ConversationRootAuthorIsVerified,
-                  request.rootAuthorIsVerified)
+              visibilityLibrary.felonaturelonMapBuildelonr(buildelonrArgumelonnts :+ { (fmb: FelonaturelonMapBuildelonr) =>
+                fmb.withConstantFelonaturelon(
+                  HasInnelonrCirclelonOfFrielonndsRelonlationship,
+                  hasInnelonrCirclelonOfFrielonndsRelonlationship)
+                fmb.withConstantFelonaturelon(TwelonelontConvelonrsationId, relonquelonst.convelonrsationId)
+                fmb.withConstantFelonaturelon(TwelonelontParelonntId, twelonelontParelonntIdOpt)
+                fmb.withConstantFelonaturelon(
+                  ConvelonrsationRootAuthorIsVelonrifielond,
+                  relonquelonst.rootAuthorIsVelonrifielond)
               })
-            case _ =>
-              visibilityLibrary.featureMapBuilder(Nil)
+            caselon _ =>
+              visibilityLibrary.felonaturelonMapBuildelonr(Nil)
           }
-          val safetyLevel =
-            if (request.minimalSectioningOnly) TimelineConversationsDownrankingMinimal
-            else TimelineConversationsDownranking
+          val safelontyLelonvelonl =
+            if (relonquelonst.minimalSelonctioningOnly) TimelonlinelonConvelonrsationsDownrankingMinimal
+            elonlselon TimelonlinelonConvelonrsationsDownranking
 
-          val evaluationContextBuilder = visibilityLibrary
-            .evaluationContextBuilder(request.viewerContext)
-            .withUnitOfDiversion(UnitOfDiversion.ConversationId(request.conversationId))
+          val elonvaluationContelonxtBuildelonr = visibilityLibrary
+            .elonvaluationContelonxtBuildelonr(relonquelonst.vielonwelonrContelonxt)
+            .withUnitOfDivelonrsion(UnitOfDivelonrsion.ConvelonrsationId(relonquelonst.convelonrsationId))
 
           visibilityLibrary
-            .runRuleEngineBatch(
-              request.tweetIds.map(TweetId),
-              featureMapProvider,
-              evaluationContextBuilder,
-              safetyLevel
+            .runRulelonelonnginelonBatch(
+              relonquelonst.twelonelontIds.map(TwelonelontId),
+              felonaturelonMapProvidelonr,
+              elonvaluationContelonxtBuildelonr,
+              safelontyLelonvelonl
             )
-            .map { results: Seq[Try[VisibilityResult]] =>
-              val (succeededRequests, _) = results.partition(_.exists(_.finished))
-              val visibilityResultMap = succeededRequests.flatMap {
-                case Return(result) =>
-                  scribeVisibilityVerdict(
-                    result,
-                    visibilityDeciderGates.enableVerdictScribingTCVL,
-                    verdictLogger,
-                    request.viewerContext.userId,
-                    safetyLevel)
-                  result.contentId match {
-                    case TweetId(id) => Some((id, result))
-                    case _ => None
+            .map { relonsults: Selonq[Try[VisibilityRelonsult]] =>
+              val (succelonelondelondRelonquelonsts, _) = relonsults.partition(_.elonxists(_.finishelond))
+              val visibilityRelonsultMap = succelonelondelondRelonquelonsts.flatMap {
+                caselon Relonturn(relonsult) =>
+                  scribelonVisibilityVelonrdict(
+                    relonsult,
+                    visibilityDeloncidelonrGatelons.elonnablelonVelonrdictScribingTCVL,
+                    velonrdictLoggelonr,
+                    relonquelonst.vielonwelonrContelonxt.uselonrId,
+                    safelontyLelonvelonl)
+                  relonsult.contelonntId match {
+                    caselon TwelonelontId(id) => Somelon((id, relonsult))
+                    caselon _ => Nonelon
                   }
-                case _ => None
+                caselon _ => Nonelon
               }.toMap
-              val failedTweetIds = request.tweetIds diff visibilityResultMap.keys.toSeq
-              val response = TimelineConversationsVisibilityResponse(
-                visibilityResults = visibilityResultMap,
-                failedTweetIds = failedTweetIds
+              val failelondTwelonelontIds = relonquelonst.twelonelontIds diff visibilityRelonsultMap.kelonys.toSelonq
+              val relonsponselon = TimelonlinelonConvelonrsationsVisibilityRelonsponselon(
+                visibilityRelonsults = visibilityRelonsultMap,
+                failelondTwelonelontIds = failelondTwelonelontIds
               )
 
-              runStitchStartMs = elapsed().inMilliseconds
-              val buildStitchStatMs = elapsed().inMilliseconds
-              vfLatencyStitchBuildStat.add(buildStitchStatMs)
+              runStitchStartMs = elonlapselond().inMilliselonconds
+              val buildStitchStatMs = elonlapselond().inMilliselonconds
+              vfLatelonncyStitchBuildStat.add(buildStitchStatMs)
 
-              response
+              relonsponselon
             }
-            .onSuccess(_ => {
-              val overallStatMs = elapsed().inMilliseconds
-              vfLatencyOverallStat.add(overallStatMs)
-              val runStitchEndMs = elapsed().inMilliseconds
-              vfLatencyStitchRunStat.add(runStitchEndMs - runStitchStartMs)
+            .onSuccelonss(_ => {
+              val ovelonrallStatMs = elonlapselond().inMilliselonconds
+              vfLatelonncyOvelonrallStat.add(ovelonrallStatMs)
+              val runStitchelonndMs = elonlapselond().inMilliselonconds
+              vfLatelonncyStitchRunStat.add(runStitchelonndMs - runStitchStartMs)
             })
       }
   }
 
-  def scribeVisibilityVerdict(
-    visibilityResult: VisibilityResult,
-    enableVerdictScribing: Gate[Unit],
-    verdictLogger: VerdictLogger,
-    viewerId: Option[Long],
-    safetyLevel: SafetyLevel
-  ): Unit = if (enableVerdictScribing()) {
-    verdictLogger.scribeVerdict(
-      visibilityResult = visibilityResult,
-      viewerId = viewerId,
-      safetyLevel = toThrift(safetyLevel),
-      vfLibType = VFLibType.TimelineConversationsVisibilityLibrary)
+  delonf scribelonVisibilityVelonrdict(
+    visibilityRelonsult: VisibilityRelonsult,
+    elonnablelonVelonrdictScribing: Gatelon[Unit],
+    velonrdictLoggelonr: VelonrdictLoggelonr,
+    vielonwelonrId: Option[Long],
+    safelontyLelonvelonl: SafelontyLelonvelonl
+  ): Unit = if (elonnablelonVelonrdictScribing()) {
+    velonrdictLoggelonr.scribelonVelonrdict(
+      visibilityRelonsult = visibilityRelonsult,
+      vielonwelonrId = vielonwelonrId,
+      safelontyLelonvelonl = toThrift(safelontyLelonvelonl),
+      vfLibTypelon = VFLibTypelon.TimelonlinelonConvelonrsationsVisibilityLibrary)
   }
 
-  def createVerdictLogger(
-    enableVerdictLogger: Gate[Unit],
-    decider: Decider,
-    statsReceiver: StatsReceiver
-  ): VerdictLogger = {
-    if (enableVerdictLogger()) {
-      VerdictLogger(statsReceiver, decider)
-    } else {
-      VerdictLogger.Empty
+  delonf crelonatelonVelonrdictLoggelonr(
+    elonnablelonVelonrdictLoggelonr: Gatelon[Unit],
+    deloncidelonr: Deloncidelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): VelonrdictLoggelonr = {
+    if (elonnablelonVelonrdictLoggelonr()) {
+      VelonrdictLoggelonr(statsReloncelonivelonr, deloncidelonr)
+    } elonlselon {
+      VelonrdictLoggelonr.elonmpty
     }
   }
 }

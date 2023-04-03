@@ -1,80 +1,80 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.AuthorListForStatsParam
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.CandidatelonSourcelonIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InRelonplyToTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.AuthorListForStatsParam
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ServedStatsSideEffect @Inject() (statsReceiver: StatsReceiver)
-    extends PipelineResultSideEffect[PipelineQuery, Timeline] {
+@Singlelonton
+class SelonrvelondStatsSidelonelonffelonct @Injelonct() (statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[PipelonlinelonQuelonry, Timelonlinelon] {
 
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier("ServedStats")
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr = SidelonelonffelonctIdelonntifielonr("SelonrvelondStats")
 
-  private val baseStatsReceiver = statsReceiver.scope(identifier.toString)
-  private val authorStatsReceiver = baseStatsReceiver.scope("Author")
-  private val candidateSourceStatsReceiver = baseStatsReceiver.scope("CandidateSource")
-  private val contentBalanceStatsReceiver = baseStatsReceiver.scope("ContentBalance")
-  private val inNetworkStatsCounter = contentBalanceStatsReceiver.counter("InNetwork")
-  private val outOfNetworkStatsCounter = contentBalanceStatsReceiver.counter("OutOfNetwork")
+  privatelon val baselonStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(idelonntifielonr.toString)
+  privatelon val authorStatsReloncelonivelonr = baselonStatsReloncelonivelonr.scopelon("Author")
+  privatelon val candidatelonSourcelonStatsReloncelonivelonr = baselonStatsReloncelonivelonr.scopelon("CandidatelonSourcelon")
+  privatelon val contelonntBalancelonStatsReloncelonivelonr = baselonStatsReloncelonivelonr.scopelon("ContelonntBalancelon")
+  privatelon val inNelontworkStatsCountelonr = contelonntBalancelonStatsReloncelonivelonr.countelonr("InNelontwork")
+  privatelon val outOfNelontworkStatsCountelonr = contelonntBalancelonStatsReloncelonivelonr.countelonr("OutOfNelontwork")
 
-  override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery, Timeline]
+  ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[PipelonlinelonQuelonry, Timelonlinelon]
   ): Stitch[Unit] = {
-    val tweetCandidates = CandidatesUtil
-      .getItemCandidates(inputs.selectedCandidates).filter(_.isCandidateType[TweetCandidate]())
+    val twelonelontCandidatelons = CandidatelonsUtil
+      .gelontItelonmCandidatelons(inputs.selonlelonctelondCandidatelons).filtelonr(_.isCandidatelonTypelon[TwelonelontCandidatelon]())
 
-    recordAuthorStats(tweetCandidates, inputs.query.params(AuthorListForStatsParam))
-    recordCandidateSourceStats(tweetCandidates)
-    recordContentBalanceStats(tweetCandidates)
+    reloncordAuthorStats(twelonelontCandidatelons, inputs.quelonry.params(AuthorListForStatsParam))
+    reloncordCandidatelonSourcelonStats(twelonelontCandidatelons)
+    reloncordContelonntBalancelonStats(twelonelontCandidatelons)
     Stitch.Unit
   }
 
-  def recordAuthorStats(candidates: Seq[CandidateWithDetails], authors: Set[Long]): Unit = {
-    candidates
-      .filter { candidate =>
-        candidate.features.getOrElse(AuthorIdFeature, None).exists(authors.contains) &&
-        // Only include original tweets
-        (!candidate.features.getOrElse(IsRetweetFeature, false)) &&
-        candidate.features.getOrElse(InReplyToTweetIdFeature, None).isEmpty
+  delonf reloncordAuthorStats(candidatelons: Selonq[CandidatelonWithDelontails], authors: Selont[Long]): Unit = {
+    candidatelons
+      .filtelonr { candidatelon =>
+        candidatelon.felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon).elonxists(authors.contains) &&
+        // Only includelon original twelonelonts
+        (!candidatelon.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)) &&
+        candidatelon.felonaturelons.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon).iselonmpty
       }
-      .groupBy { candidate =>
-        (getCandidateSourceId(candidate), candidate.features.get(AuthorIdFeature).get)
+      .groupBy { candidatelon =>
+        (gelontCandidatelonSourcelonId(candidatelon), candidatelon.felonaturelons.gelont(AuthorIdFelonaturelon).gelont)
       }
-      .foreach {
-        case ((candidateSourceId, authorId), authorCandidates) =>
-          authorStatsReceiver
-            .scope(authorId.toString).counter(candidateSourceId).incr(authorCandidates.size)
+      .forelonach {
+        caselon ((candidatelonSourcelonId, authorId), authorCandidatelons) =>
+          authorStatsReloncelonivelonr
+            .scopelon(authorId.toString).countelonr(candidatelonSourcelonId).incr(authorCandidatelons.sizelon)
       }
   }
 
-  def recordCandidateSourceStats(candidates: Seq[ItemCandidateWithDetails]): Unit = {
-    candidates.groupBy(getCandidateSourceId).foreach {
-      case (candidateSourceId, candidateSourceCandidates) =>
-        candidateSourceStatsReceiver.counter(candidateSourceId).incr(candidateSourceCandidates.size)
+  delonf reloncordCandidatelonSourcelonStats(candidatelons: Selonq[ItelonmCandidatelonWithDelontails]): Unit = {
+    candidatelons.groupBy(gelontCandidatelonSourcelonId).forelonach {
+      caselon (candidatelonSourcelonId, candidatelonSourcelonCandidatelons) =>
+        candidatelonSourcelonStatsReloncelonivelonr.countelonr(candidatelonSourcelonId).incr(candidatelonSourcelonCandidatelons.sizelon)
     }
   }
 
-  def recordContentBalanceStats(candidates: Seq[ItemCandidateWithDetails]): Unit = {
-    val (in, oon) = candidates.partition(_.features.getOrElse(InNetworkFeature, true))
-    inNetworkStatsCounter.incr(in.size)
-    outOfNetworkStatsCounter.incr(oon.size)
+  delonf reloncordContelonntBalancelonStats(candidatelons: Selonq[ItelonmCandidatelonWithDelontails]): Unit = {
+    val (in, oon) = candidatelons.partition(_.felonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, truelon))
+    inNelontworkStatsCountelonr.incr(in.sizelon)
+    outOfNelontworkStatsCountelonr.incr(oon.sizelon)
   }
 
-  private def getCandidateSourceId(candidate: CandidateWithDetails): String =
-    candidate.features.getOrElse(CandidateSourceIdFeature, None).map(_.name).getOrElse("None")
+  privatelon delonf gelontCandidatelonSourcelonId(candidatelon: CandidatelonWithDelontails): String =
+    candidatelon.felonaturelons.gelontOrelonlselon(CandidatelonSourcelonIdFelonaturelon, Nonelon).map(_.namelon).gelontOrelonlselon("Nonelon")
 }

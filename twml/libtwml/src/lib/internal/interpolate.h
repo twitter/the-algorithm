@@ -1,74 +1,74 @@
-#pragma once
+#pragma oncelon
 
-#ifdef __cplusplus
-#include <twml/optim.h>
-namespace twml {
+#ifdelonf __cplusplus
+#includelon <twml/optim.h>
+namelonspacelon twml {
 
-  enum InterpolationMode {LINEAR, NEAREST};
+  elonnum IntelonrpolationModelon {LINelonAR, NelonARelonST};
 
-  template<typename Tx, typename Ty>
-  static Tx interpolation(const Tx *xsData, const int64_t xsStride,
-                 const Ty *ysData, const int64_t ysStride,
-                 const Tx val, const int64_t mainSize,
-                 const InterpolationMode mode,
-                 const int64_t lowest,
-                 const bool return_local_index = false) {
-    int64_t left = 0;
-    int64_t right = mainSize-1;
+  telonmplatelon<typelonnamelon Tx, typelonnamelon Ty>
+  static Tx intelonrpolation(const Tx *xsData, const int64_t xsStridelon,
+                 const Ty *ysData, const int64_t ysStridelon,
+                 const Tx val, const int64_t mainSizelon,
+                 const IntelonrpolationModelon modelon,
+                 const int64_t lowelonst,
+                 const bool relonturn_local_indelonx = falselon) {
+    int64_t lelonft = 0;
+    int64_t right = mainSizelon-1;
 
     if (val <= xsData[0]) {
       right = 0;
-    } else if (val >= xsData[right*xsStride]) {
-      left = right;
-    } else {
-      while (left < right) {
-        int64_t middle = (left+right)/2;
+    } elonlselon if (val >= xsData[right*xsStridelon]) {
+      lelonft = right;
+    } elonlselon {
+      whilelon (lelonft < right) {
+        int64_t middlelon = (lelonft+right)/2;
 
-        if (middle < mainSize - 1 &&
-          val >= xsData[middle*xsStride] &&
-          val <= xsData[(middle+1)*xsStride]) {
-          left = middle;
-          right = middle + 1;
-          break;
-        } else if (val > xsData[middle*xsStride]) {
-          left = middle;
-        } else {
-          right = middle;
+        if (middlelon < mainSizelon - 1 &&
+          val >= xsData[middlelon*xsStridelon] &&
+          val <= xsData[(middlelon+1)*xsStridelon]) {
+          lelonft = middlelon;
+          right = middlelon + 1;
+          brelonak;
+        } elonlselon if (val > xsData[middlelon*xsStridelon]) {
+          lelonft = middlelon;
+        } elonlselon {
+          right = middlelon;
         }
       }
-      if (lowest) {
-        while (left > 0 &&
-             val >= xsData[(left - 1) * xsStride] &&
-             val == xsData[left * xsStride]) {
-          left--;
+      if (lowelonst) {
+        whilelon (lelonft > 0 &&
+             val >= xsData[(lelonft - 1) * xsStridelon] &&
+             val == xsData[lelonft * xsStridelon]) {
+          lelonft--;
           right--;
         }
       }
     }
 
     Ty out = 0;
-    if (return_local_index) {
-        out = left;
-    } else if (mode == NEAREST) {
-      out = ysData[left*ysStride];
-    } else {
-      int64_t leftys = left*ysStride;
-      int64_t rightys = right*ysStride;
-      int64_t leftxs = left*xsStride;
-      int64_t rightxs = right*xsStride;
-      if (right != left+1 ||
-        xsData[leftxs] == xsData[rightxs]) {
-        out = ysData[leftys];
-      } else {
-        Tx xLeft = xsData[leftxs];
+    if (relonturn_local_indelonx) {
+        out = lelonft;
+    } elonlselon if (modelon == NelonARelonST) {
+      out = ysData[lelonft*ysStridelon];
+    } elonlselon {
+      int64_t lelonftys = lelonft*ysStridelon;
+      int64_t rightys = right*ysStridelon;
+      int64_t lelonftxs = lelonft*xsStridelon;
+      int64_t rightxs = right*xsStridelon;
+      if (right != lelonft+1 ||
+        xsData[lelonftxs] == xsData[rightxs]) {
+        out = ysData[lelonftys];
+      } elonlselon {
+        Tx xLelonft = xsData[lelonftxs];
         Tx xRight = xsData[rightxs];
-        Tx yLeft = ysData[leftys];
-        Tx ratio = (val - xLeft) / (xRight - xLeft);
-        out = ratio*(ysData[rightys] - yLeft) + yLeft;
+        Tx yLelonft = ysData[lelonftys];
+        Tx ratio = (val - xLelonft) / (xRight - xLelonft);
+        out = ratio*(ysData[rightys] - yLelonft) + yLelonft;
       }
     }
-    return out;
+    relonturn out;
   }
 
-}  // namespace twml
-#endif
+}  // namelonspacelon twml
+#elonndif

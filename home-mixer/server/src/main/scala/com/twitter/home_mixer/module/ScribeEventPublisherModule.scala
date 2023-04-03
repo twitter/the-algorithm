@@ -1,125 +1,125 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.clientapp.{thriftscala => ca}
-import com.twitter.home_mixer.param.HomeMixerFlagName.ScribeClientEventsFlag
-import com.twitter.home_mixer.param.HomeMixerFlagName.ScribeServedCommonFeaturesAndCandidateFeaturesFlag
-import com.twitter.home_mixer.param.HomeMixerFlagName.ScribeServedEntriesFlag
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.CandidateFeaturesScribeEventPublisher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.CommonFeaturesScribeEventPublisher
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.MinimumFeaturesScribeEventPublisher
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.logpipeline.client.EventPublisherManager
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.logpipeline.client.serializers.EventLogMsgTBinarySerializer
-import com.twitter.logpipeline.client.serializers.EventLogMsgThriftStructSerializer
-import com.twitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
-import com.twitter.timelines.timeline_logging.{thriftscala => tl}
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.clielonntapp.{thriftscala => ca}
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrFlagNamelon.ScribelonClielonntelonvelonntsFlag
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrFlagNamelon.ScribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsFlag
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrFlagNamelon.ScribelonSelonrvelondelonntrielonsFlag
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.CandidatelonFelonaturelonsScribelonelonvelonntPublishelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.CommonFelonaturelonsScribelonelonvelonntPublishelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.MinimumFelonaturelonsScribelonelonvelonntPublishelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.logpipelonlinelon.clielonnt.elonvelonntPublishelonrManagelonr
+import com.twittelonr.logpipelonlinelon.clielonnt.common.elonvelonntPublishelonr
+import com.twittelonr.logpipelonlinelon.clielonnt.selonrializelonrs.elonvelonntLogMsgTBinarySelonrializelonr
+import com.twittelonr.logpipelonlinelon.clielonnt.selonrializelonrs.elonvelonntLogMsgThriftStructSelonrializelonr
+import com.twittelonr.timelonlinelons.suggelonsts.common.poly_data_reloncord.{thriftjava => pldr}
+import com.twittelonr.timelonlinelons.timelonlinelon_logging.{thriftscala => tl}
 
-import javax.inject.Named
-import javax.inject.Singleton
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object ScribeEventPublisherModule extends TwitterModule {
+objelonct ScribelonelonvelonntPublishelonrModulelon elonxtelonnds TwittelonrModulelon {
 
-  val InMemoryBufferSize = 10000
-  val ClientEventLogCategory = "client_event"
-  val ServedEntriesLogCategory = "home_timeline_served_entries"
-  val ServedCommonFeaturesLogCategory = "tq_served_common_features_offline"
-  val ServedCandidateFeaturesLogCategory = "tq_served_candidate_features_offline"
-  val ServedMinimumFeaturesLogCategory = "tq_served_minimum_features_offline"
+  val InMelonmoryBuffelonrSizelon = 10000
+  val ClielonntelonvelonntLogCatelongory = "clielonnt_elonvelonnt"
+  val SelonrvelondelonntrielonsLogCatelongory = "homelon_timelonlinelon_selonrvelond_elonntrielons"
+  val SelonrvelondCommonFelonaturelonsLogCatelongory = "tq_selonrvelond_common_felonaturelons_offlinelon"
+  val SelonrvelondCandidatelonFelonaturelonsLogCatelongory = "tq_selonrvelond_candidatelon_felonaturelons_offlinelon"
+  val SelonrvelondMinimumFelonaturelonsLogCatelongory = "tq_selonrvelond_minimum_felonaturelons_offlinelon"
 
-  @Provides
-  @Singleton
-  def providesClientEventsScribeEventPublisher(
-    @Flag(ScribeClientEventsFlag) sendToScribe: Boolean
-  ): EventPublisher[ca.LogEvent] = {
-    val serializer = EventLogMsgThriftStructSerializer.getNewSerializer[ca.LogEvent]()
+  @Providelons
+  @Singlelonton
+  delonf providelonsClielonntelonvelonntsScribelonelonvelonntPublishelonr(
+    @Flag(ScribelonClielonntelonvelonntsFlag) selonndToScribelon: Boolelonan
+  ): elonvelonntPublishelonr[ca.Logelonvelonnt] = {
+    val selonrializelonr = elonvelonntLogMsgThriftStructSelonrializelonr.gelontNelonwSelonrializelonr[ca.Logelonvelonnt]()
 
-    if (sendToScribe)
-      EventPublisherManager.buildScribeLogPipelinePublisher(ClientEventLogCategory, serializer)
-    else
-      EventPublisherManager.buildInMemoryPublisher(
-        ClientEventLogCategory,
-        serializer,
-        InMemoryBufferSize
+    if (selonndToScribelon)
+      elonvelonntPublishelonrManagelonr.buildScribelonLogPipelonlinelonPublishelonr(ClielonntelonvelonntLogCatelongory, selonrializelonr)
+    elonlselon
+      elonvelonntPublishelonrManagelonr.buildInMelonmoryPublishelonr(
+        ClielonntelonvelonntLogCatelongory,
+        selonrializelonr,
+        InMelonmoryBuffelonrSizelon
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(CommonFeaturesScribeEventPublisher)
-  def providesCommonFeaturesScribeEventPublisher(
-    @Flag(ScribeServedCommonFeaturesAndCandidateFeaturesFlag) sendToScribe: Boolean
-  ): EventPublisher[pldr.PolyDataRecord] = {
-    val serializer = EventLogMsgTBinarySerializer.getNewSerializer
+  @Providelons
+  @Singlelonton
+  @Namelond(CommonFelonaturelonsScribelonelonvelonntPublishelonr)
+  delonf providelonsCommonFelonaturelonsScribelonelonvelonntPublishelonr(
+    @Flag(ScribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsFlag) selonndToScribelon: Boolelonan
+  ): elonvelonntPublishelonr[pldr.PolyDataReloncord] = {
+    val selonrializelonr = elonvelonntLogMsgTBinarySelonrializelonr.gelontNelonwSelonrializelonr
 
-    if (sendToScribe)
-      EventPublisherManager.buildScribeLogPipelinePublisher(
-        ServedCommonFeaturesLogCategory,
-        serializer)
-    else
-      EventPublisherManager.buildInMemoryPublisher(
-        ServedCommonFeaturesLogCategory,
-        serializer,
-        InMemoryBufferSize
+    if (selonndToScribelon)
+      elonvelonntPublishelonrManagelonr.buildScribelonLogPipelonlinelonPublishelonr(
+        SelonrvelondCommonFelonaturelonsLogCatelongory,
+        selonrializelonr)
+    elonlselon
+      elonvelonntPublishelonrManagelonr.buildInMelonmoryPublishelonr(
+        SelonrvelondCommonFelonaturelonsLogCatelongory,
+        selonrializelonr,
+        InMelonmoryBuffelonrSizelon
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(CandidateFeaturesScribeEventPublisher)
-  def providesCandidateFeaturesScribeEventPublisher(
-    @Flag(ScribeServedCommonFeaturesAndCandidateFeaturesFlag) sendToScribe: Boolean
-  ): EventPublisher[pldr.PolyDataRecord] = {
-    val serializer = EventLogMsgTBinarySerializer.getNewSerializer
+  @Providelons
+  @Singlelonton
+  @Namelond(CandidatelonFelonaturelonsScribelonelonvelonntPublishelonr)
+  delonf providelonsCandidatelonFelonaturelonsScribelonelonvelonntPublishelonr(
+    @Flag(ScribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsFlag) selonndToScribelon: Boolelonan
+  ): elonvelonntPublishelonr[pldr.PolyDataReloncord] = {
+    val selonrializelonr = elonvelonntLogMsgTBinarySelonrializelonr.gelontNelonwSelonrializelonr
 
-    if (sendToScribe)
-      EventPublisherManager.buildScribeLogPipelinePublisher(
-        ServedCandidateFeaturesLogCategory,
-        serializer)
-    else
-      EventPublisherManager.buildInMemoryPublisher(
-        ServedCandidateFeaturesLogCategory,
-        serializer,
-        InMemoryBufferSize
+    if (selonndToScribelon)
+      elonvelonntPublishelonrManagelonr.buildScribelonLogPipelonlinelonPublishelonr(
+        SelonrvelondCandidatelonFelonaturelonsLogCatelongory,
+        selonrializelonr)
+    elonlselon
+      elonvelonntPublishelonrManagelonr.buildInMelonmoryPublishelonr(
+        SelonrvelondCandidatelonFelonaturelonsLogCatelongory,
+        selonrializelonr,
+        InMelonmoryBuffelonrSizelon
       )
   }
 
-  @Provides
-  @Singleton
-  @Named(MinimumFeaturesScribeEventPublisher)
-  def providesMinimumFeaturesScribeEventPublisher(
-    @Flag(ScribeServedCommonFeaturesAndCandidateFeaturesFlag) sendToScribe: Boolean
-  ): EventPublisher[pldr.PolyDataRecord] = {
-    val serializer = EventLogMsgTBinarySerializer.getNewSerializer
+  @Providelons
+  @Singlelonton
+  @Namelond(MinimumFelonaturelonsScribelonelonvelonntPublishelonr)
+  delonf providelonsMinimumFelonaturelonsScribelonelonvelonntPublishelonr(
+    @Flag(ScribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsFlag) selonndToScribelon: Boolelonan
+  ): elonvelonntPublishelonr[pldr.PolyDataReloncord] = {
+    val selonrializelonr = elonvelonntLogMsgTBinarySelonrializelonr.gelontNelonwSelonrializelonr
 
-    if (sendToScribe)
-      EventPublisherManager.buildScribeLogPipelinePublisher(
-        ServedMinimumFeaturesLogCategory,
-        serializer)
-    else
-      EventPublisherManager.buildInMemoryPublisher(
-        ServedMinimumFeaturesLogCategory,
-        serializer,
-        InMemoryBufferSize
+    if (selonndToScribelon)
+      elonvelonntPublishelonrManagelonr.buildScribelonLogPipelonlinelonPublishelonr(
+        SelonrvelondMinimumFelonaturelonsLogCatelongory,
+        selonrializelonr)
+    elonlselon
+      elonvelonntPublishelonrManagelonr.buildInMelonmoryPublishelonr(
+        SelonrvelondMinimumFelonaturelonsLogCatelongory,
+        selonrializelonr,
+        InMelonmoryBuffelonrSizelon
       )
   }
 
-  @Provides
-  @Singleton
-  def providesServedEntriesScribeEventPublisher(
-    @Flag(ScribeServedEntriesFlag) sendToScribe: Boolean
-  ): EventPublisher[tl.Timeline] = {
-    val serializer = EventLogMsgThriftStructSerializer.getNewSerializer[tl.Timeline]()
+  @Providelons
+  @Singlelonton
+  delonf providelonsSelonrvelondelonntrielonsScribelonelonvelonntPublishelonr(
+    @Flag(ScribelonSelonrvelondelonntrielonsFlag) selonndToScribelon: Boolelonan
+  ): elonvelonntPublishelonr[tl.Timelonlinelon] = {
+    val selonrializelonr = elonvelonntLogMsgThriftStructSelonrializelonr.gelontNelonwSelonrializelonr[tl.Timelonlinelon]()
 
-    if (sendToScribe)
-      EventPublisherManager.buildScribeLogPipelinePublisher(ServedEntriesLogCategory, serializer)
-    else
-      EventPublisherManager.buildInMemoryPublisher(
-        ServedEntriesLogCategory,
-        serializer,
-        InMemoryBufferSize
+    if (selonndToScribelon)
+      elonvelonntPublishelonrManagelonr.buildScribelonLogPipelonlinelonPublishelonr(SelonrvelondelonntrielonsLogCatelongory, selonrializelonr)
+    elonlselon
+      elonvelonntPublishelonrManagelonr.buildInMelonmoryPublishelonr(
+        SelonrvelondelonntrielonsLogCatelongory,
+        selonrializelonr,
+        InMelonmoryBuffelonrSizelon
       )
   }
 }

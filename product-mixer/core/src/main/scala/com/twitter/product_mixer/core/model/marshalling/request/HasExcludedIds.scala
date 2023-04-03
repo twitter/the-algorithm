@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
 
 /**
- * Allow clients to pass in a set of IDs that would be excluded from the results.
+ * Allow clielonnts to pass in a selont of IDs that would belon elonxcludelond from thelon relonsults.
  */
-trait HasExcludedIds {
-  val excludedIds: Set[Long] = Set.empty
+trait HaselonxcludelondIds {
+  val elonxcludelondIds: Selont[Long] = Selont.elonmpty
 }

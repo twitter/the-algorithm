@@ -1,108 +1,108 @@
-package com.twitter.visibility.interfaces.tweets
+packagelon com.twittelonr.visibility.intelonrfacelons.twelonelonts
 
-import com.twitter.spam.rtf.{thriftscala => t}
-import com.twitter.context.TwitterContext
-import com.twitter.context.thriftscala.Viewer
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.thrift.ScroogeConvImplicits._
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.tweets.TweetVisibilityResultMapper
-import com.twitter.visibility.models.SafetyLevel.toThrift
-import com.twitter.visibility.models.ViewerContext
-import com.twitter.visibility.thriftscala.TweetVisibilityResult
+import com.twittelonr.spam.rtf.{thriftscala => t}
+import com.twittelonr.contelonxt.TwittelonrContelonxt
+import com.twittelonr.contelonxt.thriftscala.Vielonwelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.catalog.Felontch
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.common.twelonelonts.TwelonelontVisibilityRelonsultMappelonr
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl.toThrift
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
+import com.twittelonr.visibility.thriftscala.TwelonelontVisibilityRelonsult
 
-class TweetVisibilityLibraryParityTest(statsReceiver: StatsReceiver, stratoClient: Client) {
+class TwelonelontVisibilityLibraryParityTelonst(statsReloncelonivelonr: StatsReloncelonivelonr, stratoClielonnt: Clielonnt) {
 
-  private val parityTestScope = statsReceiver.scope("tweet_visibility_library_parity")
-  private val requests = parityTestScope.counter("requests")
-  private val equal = parityTestScope.counter("equal")
-  private val incorrect = parityTestScope.counter("incorrect")
-  private val empty = parityTestScope.counter("empty")
-  private val failures = parityTestScope.counter("failures")
+  privatelon val parityTelonstScopelon = statsReloncelonivelonr.scopelon("twelonelont_visibility_library_parity")
+  privatelon val relonquelonsts = parityTelonstScopelon.countelonr("relonquelonsts")
+  privatelon val elonqual = parityTelonstScopelon.countelonr("elonqual")
+  privatelon val incorrelonct = parityTelonstScopelon.countelonr("incorrelonct")
+  privatelon val elonmpty = parityTelonstScopelon.countelonr("elonmpty")
+  privatelon val failurelons = parityTelonstScopelon.countelonr("failurelons")
 
-  private val fetcher: Fetcher[Long, t.SafetyLevel, TweetVisibilityResult] =
-    stratoClient.fetcher[Long, t.SafetyLevel, TweetVisibilityResult](
-      "visibility/service/TweetVisibilityResult.Tweet"
+  privatelon val felontchelonr: Felontchelonr[Long, t.SafelontyLelonvelonl, TwelonelontVisibilityRelonsult] =
+    stratoClielonnt.felontchelonr[Long, t.SafelontyLelonvelonl, TwelonelontVisibilityRelonsult](
+      "visibility/selonrvicelon/TwelonelontVisibilityRelonsult.Twelonelont"
     )
 
-  def runParityTest(
-    req: TweetVisibilityRequest,
-    resp: VisibilityResult
+  delonf runParityTelonst(
+    relonq: TwelonelontVisibilityRelonquelonst,
+    relonsp: VisibilityRelonsult
   ): Stitch[Unit] = {
-    requests.incr()
+    relonquelonsts.incr()
 
-    val twitterContext = TwitterContext(TwitterContextPermit)
+    val twittelonrContelonxt = TwittelonrContelonxt(TwittelonrContelonxtPelonrmit)
 
-    val viewer: Option[Viewer] = {
+    val vielonwelonr: Option[Vielonwelonr] = {
 
-      val remoteViewerContext = ViewerContext.fromContext
+      val relonmotelonVielonwelonrContelonxt = VielonwelonrContelonxt.fromContelonxt
 
-      if (remoteViewerContext != req.viewerContext) {
-        val updatedRemoteViewerContext = remoteViewerContext.copy(
-          userId = req.viewerContext.userId
+      if (relonmotelonVielonwelonrContelonxt != relonq.vielonwelonrContelonxt) {
+        val updatelondRelonmotelonVielonwelonrContelonxt = relonmotelonVielonwelonrContelonxt.copy(
+          uselonrId = relonq.vielonwelonrContelonxt.uselonrId
         )
 
-        if (updatedRemoteViewerContext == req.viewerContext) {
-          twitterContext() match {
-            case None =>
-              Some(Viewer(userId = req.viewerContext.userId))
-            case Some(v) =>
-              Some(v.copy(userId = req.viewerContext.userId))
+        if (updatelondRelonmotelonVielonwelonrContelonxt == relonq.vielonwelonrContelonxt) {
+          twittelonrContelonxt() match {
+            caselon Nonelon =>
+              Somelon(Vielonwelonr(uselonrId = relonq.vielonwelonrContelonxt.uselonrId))
+            caselon Somelon(v) =>
+              Somelon(v.copy(uselonrId = relonq.vielonwelonrContelonxt.uselonrId))
           }
-        } else {
-          None
+        } elonlselon {
+          Nonelon
         }
-      } else {
-        None
+      } elonlselon {
+        Nonelon
       }
     }
 
-    val tweetypieContext = TweetypieContext(
-      isQuotedTweet = req.isInnerQuotedTweet,
-      isRetweet = req.isRetweet,
-      hydrateConversationControl = req.hydrateConversationControl
+    val twelonelontypielonContelonxt = TwelonelontypielonContelonxt(
+      isQuotelondTwelonelont = relonq.isInnelonrQuotelondTwelonelont,
+      isRelontwelonelont = relonq.isRelontwelonelont,
+      hydratelonConvelonrsationControl = relonq.hydratelonConvelonrsationControl
     )
 
-    val parityCheck: Stitch[Fetch.Result[TweetVisibilityResult]] = {
-      Stitch.callFuture {
-        TweetypieContext.let(tweetypieContext) {
-          viewer match {
-            case Some(viewer) =>
-              twitterContext.let(viewer) {
-                Stitch.run(fetcher.fetch(req.tweet.id, toThrift(req.safetyLevel)))
+    val parityChelonck: Stitch[Felontch.Relonsult[TwelonelontVisibilityRelonsult]] = {
+      Stitch.callFuturelon {
+        TwelonelontypielonContelonxt.lelont(twelonelontypielonContelonxt) {
+          vielonwelonr match {
+            caselon Somelon(vielonwelonr) =>
+              twittelonrContelonxt.lelont(vielonwelonr) {
+                Stitch.run(felontchelonr.felontch(relonq.twelonelont.id, toThrift(relonq.safelontyLelonvelonl)))
               }
-            case None =>
-              Stitch.run(fetcher.fetch(req.tweet.id, toThrift(req.safetyLevel)))
+            caselon Nonelon =>
+              Stitch.run(felontchelonr.felontch(relonq.twelonelont.id, toThrift(relonq.safelontyLelonvelonl)))
           }
         }
       }
     }
 
-    parityCheck
-      .flatMap { parityResponse =>
-        val tvr = TweetVisibilityResultMapper.fromAction(resp.verdict.toActionThrift())
+    parityChelonck
+      .flatMap { parityRelonsponselon =>
+        val tvr = TwelonelontVisibilityRelonsultMappelonr.fromAction(relonsp.velonrdict.toActionThrift())
 
-        parityResponse.v match {
-          case Some(ptvr) =>
+        parityRelonsponselon.v match {
+          caselon Somelon(ptvr) =>
             if (tvr == ptvr) {
-              equal.incr()
-            } else {
-              incorrect.incr()
+              elonqual.incr()
+            } elonlselon {
+              incorrelonct.incr()
             }
 
-          case None =>
-            empty.incr()
+          caselon Nonelon =>
+            elonmpty.incr()
         }
 
-        Stitch.Done
-      }.rescue {
-        case t: Throwable =>
-          failures.incr()
-          Stitch.Done
+        Stitch.Donelon
+      }.relonscuelon {
+        caselon t: Throwablelon =>
+          failurelons.incr()
+          Stitch.Donelon
 
       }.unit
   }

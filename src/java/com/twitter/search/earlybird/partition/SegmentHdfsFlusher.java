@@ -1,247 +1,247 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.io.Filelon;
+import java.io.IOelonxcelonption;
+import java.util.concurrelonnt.TimelonUnit;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.FSDirectory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.io.FilelonUtils;
+import org.apachelon.hadoop.fs.FilelonSystelonm;
+import org.apachelon.hadoop.fs.Path;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
+import org.apachelon.lucelonnelon.storelon.FSDirelonctory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.base.Command;
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.Timer;
-import com.twitter.search.common.util.io.flushable.PersistentFile;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
+import com.twittelonr.common.baselon.Command;
+import com.twittelonr.common.quantity.Amount;
+import com.twittelonr.common.quantity.Timelon;
+import com.twittelonr.selonarch.common.databaselon.DatabaselonConfig;
+import com.twittelonr.selonarch.common.melontrics.Timelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.PelonrsistelonntFilelon;
+import com.twittelonr.selonarch.common.util.zktrylock.TryLock;
+import com.twittelonr.selonarch.common.util.zktrylock.ZooKelonelonpelonrTryLockFactory;
 
 /**
- * Flush segments to disk and upload them to HDFS.
+ * Flush selongmelonnts to disk and upload thelonm to HDFS.
  */
-public class SegmentHdfsFlusher {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentHdfsFlusher.class);
-  private static final Amount<Long, Time> HDFS_UPLOADER_TRY_LOCK_NODE_EXPIRATION_TIME_MILLIS =
-      Amount.of(1L, Time.HOURS);
+public class SelongmelonntHdfsFlushelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SelongmelonntHdfsFlushelonr.class);
+  privatelon static final Amount<Long, Timelon> HDFS_UPLOADelonR_TRY_LOCK_NODelon_elonXPIRATION_TIMelon_MILLIS =
+      Amount.of(1L, Timelon.HOURS);
 
-  private final SegmentSyncConfig sync;
-  private final boolean holdLockWhileUploading;
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
+  privatelon final SelongmelonntSyncConfig sync;
+  privatelon final boolelonan holdLockWhilelonUploading;
+  privatelon final ZooKelonelonpelonrTryLockFactory zkTryLockFactory;
 
-  public SegmentHdfsFlusher(ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-                            SegmentSyncConfig sync,
-                            boolean holdLockWhileUploading) {
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
+  public SelongmelonntHdfsFlushelonr(ZooKelonelonpelonrTryLockFactory zooKelonelonpelonrTryLockFactory,
+                            SelongmelonntSyncConfig sync,
+                            boolelonan holdLockWhilelonUploading) {
+    this.zkTryLockFactory = zooKelonelonpelonrTryLockFactory;
     this.sync = sync;
-    this.holdLockWhileUploading = holdLockWhileUploading;
+    this.holdLockWhilelonUploading = holdLockWhilelonUploading;
   }
 
-  public SegmentHdfsFlusher(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      SegmentSyncConfig sync) {
-    this(zooKeeperTryLockFactory, sync, true);
+  public SelongmelonntHdfsFlushelonr(
+      ZooKelonelonpelonrTryLockFactory zooKelonelonpelonrTryLockFactory,
+      SelongmelonntSyncConfig sync) {
+    this(zooKelonelonpelonrTryLockFactory, sync, truelon);
   }
 
-  private boolean shouldFlushSegment(SegmentInfo segmentInfo) {
-    return segmentInfo.isEnabled()
-        && !segmentInfo.getSyncInfo().isFlushed()
-        && segmentInfo.isComplete()
-        && segmentInfo.isOptimized()
-        && !segmentInfo.isFailedOptimize()
-        && !segmentInfo.getSyncInfo().isLoaded();
+  privatelon boolelonan shouldFlushSelongmelonnt(SelongmelonntInfo selongmelonntInfo) {
+    relonturn selongmelonntInfo.iselonnablelond()
+        && !selongmelonntInfo.gelontSyncInfo().isFlushelond()
+        && selongmelonntInfo.isComplelontelon()
+        && selongmelonntInfo.isOptimizelond()
+        && !selongmelonntInfo.isFailelondOptimizelon()
+        && !selongmelonntInfo.gelontSyncInfo().isLoadelond();
   }
 
   /**
-   * Flushes a segment to local disk and to HDFS.
+   * Flushelons a selongmelonnt to local disk and to HDFS.
    */
-  public boolean flushSegmentToDiskAndHDFS(SegmentInfo segmentInfo) {
-    if (!shouldFlushSegment(segmentInfo)) {
-      return false;
+  public boolelonan flushSelongmelonntToDiskAndHDFS(SelongmelonntInfo selongmelonntInfo) {
+    if (!shouldFlushSelongmelonnt(selongmelonntInfo)) {
+      relonturn falselon;
     }
     try {
-      if (segmentInfo.isIndexing()) {
-        LOG.error("Tried to flush current segment!");
-        return false;
+      if (selongmelonntInfo.isIndelonxing()) {
+        LOG.elonrror("Trielond to flush currelonnt selongmelonnt!");
+        relonturn falselon;
       }
 
-      // Check-and-set the beingUploaded flag from false to true. If the CAS fails, it means the
-      // segment is being flushed already, or being deleted. In this case, we can just return false.
-      if (!segmentInfo.casBeingUploaded(false, true)) {
-        LOG.warn("Tried to flush a segment that's being flushed or deleted.");
-        return false;
+      // Chelonck-and-selont thelon beloningUploadelond flag from falselon to truelon. If thelon CAS fails, it melonans thelon
+      // selongmelonnt is beloning flushelond alrelonady, or beloning delonlelontelond. In this caselon, welon can just relonturn falselon.
+      if (!selongmelonntInfo.casBeloningUploadelond(falselon, truelon)) {
+        LOG.warn("Trielond to flush a selongmelonnt that's beloning flushelond or delonlelontelond.");
+        relonturn falselon;
       }
 
-      // At this point, the above CAS must have returned false. This mean the beingUploaded flag
-      // was false, and set to true now. We can proceed with flushing the segment.
+      // At this point, thelon abovelon CAS must havelon relonturnelond falselon. This melonan thelon beloningUploadelond flag
+      // was falselon, and selont to truelon now. Welon can procelonelond with flushing thelon selongmelonnt.
       try {
-        checkAndFlushSegmentToHdfs(segmentInfo);
+        chelonckAndFlushSelongmelonntToHdfs(selongmelonntInfo);
       } finally {
-        segmentInfo.setBeingUploaded(false);
+        selongmelonntInfo.selontBeloningUploadelond(falselon);
       }
-      return true;
-    } catch (Exception e) {
-      LOG.error("Exception while flushing IndexSegment to "
-          + segmentInfo.getSyncInfo().getHdfsFlushDir(), e);
-      return false;
+      relonturn truelon;
+    } catch (elonxcelonption elon) {
+      LOG.elonrror("elonxcelonption whilelon flushing IndelonxSelongmelonnt to "
+          + selongmelonntInfo.gelontSyncInfo().gelontHdfsFlushDir(), elon);
+      relonturn falselon;
     }
   }
 
   /**
-   * First try to acquire a lock in Zookeeper for this segment, so multiple Earlybirds in the same
-   * partition don't flush or upload the segment at the same time. When the lock is acquired, check
-   * for the segment in HDFS. If the data already exists, don't flush to disk.
+   * First try to acquirelon a lock in Zookelonelonpelonr for this selongmelonnt, so multiplelon elonarlybirds in thelon samelon
+   * partition don't flush or upload thelon selongmelonnt at thelon samelon timelon. Whelonn thelon lock is acquirelond, chelonck
+   * for thelon selongmelonnt in HDFS. If thelon data alrelonady elonxists, don't flush to disk.
    */
-  private void checkAndFlushSegmentToHdfs(final SegmentInfo segment) {
-    LOG.info("Checking and flushing segment {}", segment);
+  privatelon void chelonckAndFlushSelongmelonntToHdfs(final SelongmelonntInfo selongmelonnt) {
+    LOG.info("Cheloncking and flushing selongmelonnt {}", selongmelonnt);
 
     try {
-      // Always flush the segment locally.
-      Directory dir = FSDirectory.open(createFlushDir(segment).toPath());
-      segment.flush(dir);
-      LOG.info("Completed local flush of segment {}. Flush to HDFS enabled: {}",
-               segment, sync.isFlushToHdfsEnabled());
-    } catch (IOException e) {
-      LOG.error("Failed to flush segment " + segment + " locally", e);
-      return;
+      // Always flush thelon selongmelonnt locally.
+      Direlonctory dir = FSDirelonctory.opelonn(crelonatelonFlushDir(selongmelonnt).toPath());
+      selongmelonnt.flush(dir);
+      LOG.info("Complelontelond local flush of selongmelonnt {}. Flush to HDFS elonnablelond: {}",
+               selongmelonnt, sync.isFlushToHdfselonnablelond());
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("Failelond to flush selongmelonnt " + selongmelonnt + " locally", elon);
+      relonturn;
     }
 
-    if (!holdLockWhileUploading) {
-      flushToHdfsIfNecessary(segment);
-    } else {
-      TryLock lock = zkTryLockFactory.createTryLock(
-          DatabaseConfig.getLocalHostname(),
-          sync.getZooKeeperSyncFullPath(),
-          sync.getVersionedName(segment.getSegment()),
-          HDFS_UPLOADER_TRY_LOCK_NODE_EXPIRATION_TIME_MILLIS
+    if (!holdLockWhilelonUploading) {
+      flushToHdfsIfNeloncelonssary(selongmelonnt);
+    } elonlselon {
+      TryLock lock = zkTryLockFactory.crelonatelonTryLock(
+          DatabaselonConfig.gelontLocalHostnamelon(),
+          sync.gelontZooKelonelonpelonrSyncFullPath(),
+          sync.gelontVelonrsionelondNamelon(selongmelonnt.gelontSelongmelonnt()),
+          HDFS_UPLOADelonR_TRY_LOCK_NODelon_elonXPIRATION_TIMelon_MILLIS
       );
 
-      boolean gotLock = lock.tryWithLock((Command) () -> flushToHdfsIfNecessary(segment));
+      boolelonan gotLock = lock.tryWithLock((Command) () -> flushToHdfsIfNeloncelonssary(selongmelonnt));
       if (!gotLock) {
-        LOG.info("Failed to get zk upload lock for segment {}", segment);
+        LOG.info("Failelond to gelont zk upload lock for selongmelonnt {}", selongmelonnt);
       }
     }
   }
 
   /**
-   * Check whether the segment has already been flushed to HDFS. If not, flush the segment to disk
-   * and upload the files to HDFS.
+   * Chelonck whelonthelonr thelon selongmelonnt has alrelonady belonelonn flushelond to HDFS. If not, flush thelon selongmelonnt to disk
+   * and upload thelon filelons to HDFS.
    *
-   * If the ZK lock isn't used, there is a race between the existence check and the upload (in
-   * which another Earlybird can sneak in and upload the segment), so we will potentially upload
-   * the same segment from different hosts. Thus, the Earlybird hostname is part of the segment's
+   * If thelon ZK lock isn't uselond, thelonrelon is a racelon belontwelonelonn thelon elonxistelonncelon chelonck and thelon upload (in
+   * which anothelonr elonarlybird can snelonak in and upload thelon selongmelonnt), so welon will potelonntially upload
+   * thelon samelon selongmelonnt from diffelonrelonnt hosts. Thus, thelon elonarlybird hostnamelon is part of thelon selongmelonnt's
    * path on HDFS.
    */
-  private void flushToHdfsIfNecessary(SegmentInfo segmentInfo) {
-    Timer timer = new Timer(TimeUnit.MILLISECONDS);
-    String status = "flushed";
-    try (FileSystem fs = HdfsUtil.getHdfsFileSystem()) {
-      // If we can't load segments from HDFS, don't bother checking HDFS for the segment
-      if (sync.isSegmentLoadFromHdfsEnabled()
-          && (segmentInfo.getSyncInfo().isFlushed()
-              || HdfsUtil.segmentExistsOnHdfs(fs, segmentInfo))) {
-        status = "existing";
-      } else if (sync.isFlushToHdfsEnabled()) {
-        copyLocalFilesToHdfs(fs, segmentInfo);
-        status = "uploaded";
+  privatelon void flushToHdfsIfNeloncelonssary(SelongmelonntInfo selongmelonntInfo) {
+    Timelonr timelonr = nelonw Timelonr(TimelonUnit.MILLISelonCONDS);
+    String status = "flushelond";
+    try (FilelonSystelonm fs = HdfsUtil.gelontHdfsFilelonSystelonm()) {
+      // If welon can't load selongmelonnts from HDFS, don't bothelonr cheloncking HDFS for thelon selongmelonnt
+      if (sync.isSelongmelonntLoadFromHdfselonnablelond()
+          && (selongmelonntInfo.gelontSyncInfo().isFlushelond()
+              || HdfsUtil.selongmelonntelonxistsOnHdfs(fs, selongmelonntInfo))) {
+        status = "elonxisting";
+      } elonlselon if (sync.isFlushToHdfselonnablelond()) {
+        copyLocalFilelonsToHdfs(fs, selongmelonntInfo);
+        status = "uploadelond";
       }
 
-      // whether we uploaded, or someone else did, this segment should now be on HDFS. If
-      // uploading to HDFS is disabled, we still consider it complete.
-      segmentInfo.getSyncInfo().setFlushed(true);
-    } catch (IOException e) {
-      LOG.error("Failed copying segment {} to HDFS after {} ms", segmentInfo, timer.stop(), e);
-      status = "exception";
+      // whelonthelonr welon uploadelond, or somelononelon elonlselon did, this selongmelonnt should now belon on HDFS. If
+      // uploading to HDFS is disablelond, welon still considelonr it complelontelon.
+      selongmelonntInfo.gelontSyncInfo().selontFlushelond(truelon);
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("Failelond copying selongmelonnt {} to HDFS aftelonr {} ms", selongmelonntInfo, timelonr.stop(), elon);
+      status = "elonxcelonption";
     } finally {
-      if (timer.running()) {
-        timer.stop();
+      if (timelonr.running()) {
+        timelonr.stop();
       }
-      LOG.info("Flush of segment {} to HDFS completed in {} milliseconds. Status: {}",
-          segmentInfo, timer.getElapsed(), status);
+      LOG.info("Flush of selongmelonnt {} to HDFS complelontelond in {} milliselonconds. Status: {}",
+          selongmelonntInfo, timelonr.gelontelonlapselond(), status);
     }
   }
 
   /**
-   * Copy local segment files to HDFS. Files are first copied into a temporary directory
-   * in the form <hostname>_<segmentname> and when all the files are written out to HDFS,
-   * the dir is renamed to <segmentname>_<hostname>, where it is accessible to other Earlybirds.
+   * Copy local selongmelonnt filelons to HDFS. Filelons arelon first copielond into a telonmporary direlonctory
+   * in thelon form <hostnamelon>_<selongmelonntnamelon> and whelonn all thelon filelons arelon writtelonn out to HDFS,
+   * thelon dir is relonnamelond to <selongmelonntnamelon>_<hostnamelon>, whelonrelon it is accelonssiblelon to othelonr elonarlybirds.
    */
-  private void copyLocalFilesToHdfs(FileSystem fs, SegmentInfo segment) throws IOException {
-    String hdfsTempBaseDir = segment.getSyncInfo().getHdfsTempFlushDir();
+  privatelon void copyLocalFilelonsToHdfs(FilelonSystelonm fs, SelongmelonntInfo selongmelonnt) throws IOelonxcelonption {
+    String hdfsTelonmpBaselonDir = selongmelonnt.gelontSyncInfo().gelontHdfsTelonmpFlushDir();
 
-    // If the temp dir already exists on HDFS, a prior flush must have been interrupted.
-    // Delete it and start fresh.
-    removeHdfsTempDir(fs, hdfsTempBaseDir);
+    // If thelon telonmp dir alrelonady elonxists on HDFS, a prior flush must havelon belonelonn intelonrruptelond.
+    // Delonlelontelon it and start frelonsh.
+    relonmovelonHdfsTelonmpDir(fs, hdfsTelonmpBaselonDir);
 
-    for (String fileName : sync.getAllSyncFileNames(segment)) {
-      String hdfsFileName = hdfsTempBaseDir + "/" + fileName;
-      String localBaseDir = segment.getSyncInfo().getLocalSyncDir();
-      String localFileName = localBaseDir + "/" + fileName;
+    for (String filelonNamelon : sync.gelontAllSyncFilelonNamelons(selongmelonnt)) {
+      String hdfsFilelonNamelon = hdfsTelonmpBaselonDir + "/" + filelonNamelon;
+      String localBaselonDir = selongmelonnt.gelontSyncInfo().gelontLocalSyncDir();
+      String localFilelonNamelon = localBaselonDir + "/" + filelonNamelon;
 
-      LOG.debug("About to start copying {} to HDFS, from {} to {}",
-          fileName, localFileName, hdfsFileName);
-      Timer timer = new Timer(TimeUnit.MILLISECONDS);
-      fs.copyFromLocalFile(new Path(localFileName), new Path(hdfsFileName));
-      LOG.debug("Completed copying {} to HDFS, from {} to {}, in {} ms",
-          fileName, localFileName, hdfsFileName, timer.stop());
+      LOG.delonbug("About to start copying {} to HDFS, from {} to {}",
+          filelonNamelon, localFilelonNamelon, hdfsFilelonNamelon);
+      Timelonr timelonr = nelonw Timelonr(TimelonUnit.MILLISelonCONDS);
+      fs.copyFromLocalFilelon(nelonw Path(localFilelonNamelon), nelonw Path(hdfsFilelonNamelon));
+      LOG.delonbug("Complelontelond copying {} to HDFS, from {} to {}, in {} ms",
+          filelonNamelon, localFilelonNamelon, hdfsFilelonNamelon, timelonr.stop());
     }
 
-    // now let's rename the dir into its proper form.
-    String hdfsBaseDir = segment.getSyncInfo().getHdfsFlushDir();
-    if (fs.rename(new Path(hdfsTempBaseDir), new Path(hdfsBaseDir))) {
-      LOG.info("Renamed segment dir on HDFS from {} to {}", hdfsTempBaseDir, hdfsBaseDir);
-    } else {
-      String errorMessage = String.format("Failed to rename segment dir on HDFS from %s to %s",
-          hdfsTempBaseDir, hdfsBaseDir);
-      LOG.error(errorMessage);
+    // now lelont's relonnamelon thelon dir into its propelonr form.
+    String hdfsBaselonDir = selongmelonnt.gelontSyncInfo().gelontHdfsFlushDir();
+    if (fs.relonnamelon(nelonw Path(hdfsTelonmpBaselonDir), nelonw Path(hdfsBaselonDir))) {
+      LOG.info("Relonnamelond selongmelonnt dir on HDFS from {} to {}", hdfsTelonmpBaselonDir, hdfsBaselonDir);
+    } elonlselon {
+      String elonrrorMelonssagelon = String.format("Failelond to relonnamelon selongmelonnt dir on HDFS from %s to %s",
+          hdfsTelonmpBaselonDir, hdfsBaselonDir);
+      LOG.elonrror(elonrrorMelonssagelon);
 
-      removeHdfsTempDir(fs, hdfsTempBaseDir);
+      relonmovelonHdfsTelonmpDir(fs, hdfsTelonmpBaselonDir);
 
-      // Throw an IOException so the calling code knows that the copy failed
-      throw new IOException(errorMessage);
+      // Throw an IOelonxcelonption so thelon calling codelon knows that thelon copy failelond
+      throw nelonw IOelonxcelonption(elonrrorMelonssagelon);
     }
   }
 
-  private void removeHdfsTempDir(FileSystem fs, String tempDir) throws IOException {
-    Path tempDirPath = new Path(tempDir);
-    if (fs.exists(tempDirPath)) {
-      LOG.info("Found existing temporary flush dir {} on HDFS, removing", tempDir);
-      if (!fs.delete(tempDirPath, true /* recursive */)) {
-        LOG.error("Failed to delete temp dir {}", tempDir);
+  privatelon void relonmovelonHdfsTelonmpDir(FilelonSystelonm fs, String telonmpDir) throws IOelonxcelonption {
+    Path telonmpDirPath = nelonw Path(telonmpDir);
+    if (fs.elonxists(telonmpDirPath)) {
+      LOG.info("Found elonxisting telonmporary flush dir {} on HDFS, relonmoving", telonmpDir);
+      if (!fs.delonlelontelon(telonmpDirPath, truelon /* reloncursivelon */)) {
+        LOG.elonrror("Failelond to delonlelontelon telonmp dir {}", telonmpDir);
       }
     }
   }
 
-  // Create or replace the local flush directory
-  private File createFlushDir(SegmentInfo segmentInfo) throws IOException {
-    final String flushDirStr = segmentInfo.getSyncInfo().getLocalSyncDir();
+  // Crelonatelon or relonplacelon thelon local flush direlonctory
+  privatelon Filelon crelonatelonFlushDir(SelongmelonntInfo selongmelonntInfo) throws IOelonxcelonption {
+    final String flushDirStr = selongmelonntInfo.gelontSyncInfo().gelontLocalSyncDir();
 
-    File flushDir = new File(flushDirStr);
-    if (flushDir.exists()) {
-      // Delete just the flushed persistent files if they are there.
-      // We may also have the lucene on-disk indexed in the same dir here,
-      // that we do not want to delete.
-      for (String persistentFile : sync.getPersistentFileNames(segmentInfo)) {
-        for (String fileName : PersistentFile.getAllFileNames(persistentFile)) {
-          File file = new File(flushDir, fileName);
-          if (file.exists()) {
-            LOG.info("Deleting incomplete flush file {}", file.getAbsolutePath());
-            FileUtils.forceDelete(file);
+    Filelon flushDir = nelonw Filelon(flushDirStr);
+    if (flushDir.elonxists()) {
+      // Delonlelontelon just thelon flushelond pelonrsistelonnt filelons if thelony arelon thelonrelon.
+      // Welon may also havelon thelon lucelonnelon on-disk indelonxelond in thelon samelon dir helonrelon,
+      // that welon do not want to delonlelontelon.
+      for (String pelonrsistelonntFilelon : sync.gelontPelonrsistelonntFilelonNamelons(selongmelonntInfo)) {
+        for (String filelonNamelon : PelonrsistelonntFilelon.gelontAllFilelonNamelons(pelonrsistelonntFilelon)) {
+          Filelon filelon = nelonw Filelon(flushDir, filelonNamelon);
+          if (filelon.elonxists()) {
+            LOG.info("Delonlelonting incomplelontelon flush filelon {}", filelon.gelontAbsolutelonPath());
+            FilelonUtils.forcelonDelonlelontelon(filelon);
           }
         }
       }
-      return flushDir;
+      relonturn flushDir;
     }
 
-    // Try to create the flush directory
+    // Try to crelonatelon thelon flush direlonctory
     if (!flushDir.mkdirs()) {
-      throw new IOException("Not able to create segment flush directory \"" + flushDirStr + "\"");
+      throw nelonw IOelonxcelonption("Not ablelon to crelonatelon selongmelonnt flush direlonctory \"" + flushDirStr + "\"");
     }
 
-    return flushDir;
+    relonturn flushDir;
   }
 }

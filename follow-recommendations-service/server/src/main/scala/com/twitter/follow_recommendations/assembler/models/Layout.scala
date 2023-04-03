@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.assembler.models
+packagelon com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls
 
-sealed trait Layout
+selonalelond trait Layout
 
-case class UserListLayout(
-  header: Option[HeaderConfig],
-  userListOptions: UserListOptions,
-  socialProofs: Option[Seq[SocialProof]],
-  footer: Option[FooterConfig])
-    extends Layout
+caselon class UselonrListLayout(
+  helonadelonr: Option[HelonadelonrConfig],
+  uselonrListOptions: UselonrListOptions,
+  socialProofs: Option[Selonq[SocialProof]],
+  footelonr: Option[FootelonrConfig])
+    elonxtelonnds Layout
 
-case class CarouselLayout(
-  header: Option[HeaderConfig],
-  carouselOptions: CarouselOptions,
-  socialProofs: Option[Seq[SocialProof]])
-    extends Layout
+caselon class CarouselonlLayout(
+  helonadelonr: Option[HelonadelonrConfig],
+  carouselonlOptions: CarouselonlOptions,
+  socialProofs: Option[Selonq[SocialProof]])
+    elonxtelonnds Layout

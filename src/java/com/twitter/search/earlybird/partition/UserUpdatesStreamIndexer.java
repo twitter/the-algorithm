@@ -1,89 +1,89 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.util.Date;
+import java.util.Datelon;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncord;
+import org.apachelon.kafka.clielonnts.consumelonr.KafkaConsumelonr;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.indexing.thriftjava.AntisocialUserUpdate;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.util.io.kafka.CompactThriftDeserializer;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.common.userupdates.UserUpdate;
-import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.AntisocialUselonrUpdatelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonr;
+import com.twittelonr.selonarch.common.util.io.kafka.CompactThriftDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.kafka.FinaglelonKafkaClielonntUtils;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrUpdatelon;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.MissingKafkaTopicelonxcelonption;
 
-public class UserUpdatesStreamIndexer extends SimpleStreamIndexer<Long, AntisocialUserUpdate> {
-  private static final Logger LOG = LoggerFactory.getLogger(UserUpdatesStreamIndexer.class);
+public class UselonrUpdatelonsStrelonamIndelonxelonr elonxtelonnds SimplelonStrelonamIndelonxelonr<Long, AntisocialUselonrUpdatelon> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(UselonrUpdatelonsStrelonamIndelonxelonr.class);
 
-  private static final SearchCounter NUM_CORRUPT_DATA_ERRORS =
-      SearchCounter.export("num_user_updates_kafka_consumer_corrupt_data_errors");
-  protected static String kafkaClientId = "";
+  privatelon static final SelonarchCountelonr NUM_CORRUPT_DATA_elonRRORS =
+      SelonarchCountelonr.elonxport("num_uselonr_updatelons_kafka_consumelonr_corrupt_data_elonrrors");
+  protelonctelond static String kafkaClielonntId = "";
 
-  private final SegmentManager segmentManager;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
 
-  public UserUpdatesStreamIndexer(KafkaConsumer<Long, AntisocialUserUpdate> kafkaConsumer,
+  public UselonrUpdatelonsStrelonamIndelonxelonr(KafkaConsumelonr<Long, AntisocialUselonrUpdatelon> kafkaConsumelonr,
                                   String topic,
-                                  SearchIndexingMetricSet searchIndexingMetricSet,
-                                  SegmentManager segmentManager)
-      throws MissingKafkaTopicException {
-    super(kafkaConsumer, topic);
-    this.segmentManager = segmentManager;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+                                  SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+                                  SelongmelonntManagelonr selongmelonntManagelonr)
+      throws MissingKafkaTopicelonxcelonption {
+    supelonr(kafkaConsumelonr, topic);
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
 
-    indexingSuccesses = SearchRateCounter.export("user_update_indexing_successes");
-    indexingFailures = SearchRateCounter.export("user_update_indexing_failures");
+    indelonxingSuccelonsselons = SelonarchRatelonCountelonr.elonxport("uselonr_updatelon_indelonxing_succelonsselons");
+    indelonxingFailurelons = SelonarchRatelonCountelonr.elonxport("uselonr_updatelon_indelonxing_failurelons");
   }
 
   /**
-   * Provides user updates kafka consumer to EarlybirdWireModule.
-   * @return
+   * Providelons uselonr updatelons kafka consumelonr to elonarlybirdWirelonModulelon.
+   * @relonturn
    */
-  public static KafkaConsumer<Long, AntisocialUserUpdate> provideKafkaConsumer() {
-    return FinagleKafkaClientUtils.newKafkaConsumerForAssigning(
-        EarlybirdProperty.KAFKA_PATH.get(),
-        new CompactThriftDeserializer<>(AntisocialUserUpdate.class),
-        kafkaClientId,
-        MAX_POLL_RECORDS);
+  public static KafkaConsumelonr<Long, AntisocialUselonrUpdatelon> providelonKafkaConsumelonr() {
+    relonturn FinaglelonKafkaClielonntUtils.nelonwKafkaConsumelonrForAssigning(
+        elonarlybirdPropelonrty.KAFKA_PATH.gelont(),
+        nelonw CompactThriftDelonselonrializelonr<>(AntisocialUselonrUpdatelon.class),
+        kafkaClielonntId,
+        MAX_POLL_RelonCORDS);
   }
 
-  UserUpdate convertToUserInfoUpdate(AntisocialUserUpdate update) {
-    return new UserUpdate(
-        update.getUserID(),
-        update.getType(),
-        update.isValue() ? 1 : 0,
-        new Date(update.getUpdatedAt()));
+  UselonrUpdatelon convelonrtToUselonrInfoUpdatelon(AntisocialUselonrUpdatelon updatelon) {
+    relonturn nelonw UselonrUpdatelon(
+        updatelon.gelontUselonrID(),
+        updatelon.gelontTypelon(),
+        updatelon.isValuelon() ? 1 : 0,
+        nelonw Datelon(updatelon.gelontUpdatelondAt()));
   }
 
-  @VisibleForTesting
-  protected void validateAndIndexRecord(ConsumerRecord<Long, AntisocialUserUpdate> record) {
-    AntisocialUserUpdate update = record.value();
-    if (update == null) {
-      LOG.warn("null value returned from poll");
-      return;
+  @VisiblelonForTelonsting
+  protelonctelond void validatelonAndIndelonxReloncord(ConsumelonrReloncord<Long, AntisocialUselonrUpdatelon> reloncord) {
+    AntisocialUselonrUpdatelon updatelon = reloncord.valuelon();
+    if (updatelon == null) {
+      LOG.warn("null valuelon relonturnelond from poll");
+      relonturn;
     }
-    if (update.getType() == null) {
-      LOG.error("User update does not have type set: " + update);
-      NUM_CORRUPT_DATA_ERRORS.increment();
-      return;
+    if (updatelon.gelontTypelon() == null) {
+      LOG.elonrror("Uselonr updatelon doelons not havelon typelon selont: " + updatelon);
+      NUM_CORRUPT_DATA_elonRRORS.increlonmelonnt();
+      relonturn;
     }
 
-    SearchTimer timer = searchIndexingMetricSet.userUpdateIndexingStats.startNewTimer();
-    boolean isUpdateIndexed = segmentManager.indexUserUpdate(
-        convertToUserInfoUpdate(update));
-    searchIndexingMetricSet.userUpdateIndexingStats.stopTimerAndIncrement(timer);
+    SelonarchTimelonr timelonr = selonarchIndelonxingMelontricSelont.uselonrUpdatelonIndelonxingStats.startNelonwTimelonr();
+    boolelonan isUpdatelonIndelonxelond = selongmelonntManagelonr.indelonxUselonrUpdatelon(
+        convelonrtToUselonrInfoUpdatelon(updatelon));
+    selonarchIndelonxingMelontricSelont.uselonrUpdatelonIndelonxingStats.stopTimelonrAndIncrelonmelonnt(timelonr);
 
-    if (isUpdateIndexed) {
-      indexingSuccesses.increment();
-    } else {
-      indexingFailures.increment();
+    if (isUpdatelonIndelonxelond) {
+      indelonxingSuccelonsselons.increlonmelonnt();
+    } elonlselon {
+      indelonxingFailurelons.increlonmelonnt();
     }
   }
 }

@@ -1,338 +1,338 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.Selont;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.concurrelonnt.atomic.AtomicLong;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.strelonam.Collelonctors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.lang.mutable.MutableLong;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.Terms;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.mutablelon.MutablelonLong;
+import org.apachelon.lucelonnelon.indelonx.IndelonxOptions;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
+import com.twittelonr.selonarch.common.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelonFactory;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSinglelonSelongmelonntSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr;
 
 /**
- * A background task that periodically gets and exports the number of terms per field that are
- * indexed on this earlybird, averaged over all segments.
- * Specifically used for making sure that we are not missing terms for any fields in the search
- * archives.
- * The task loops though all the segments that are indexed by this earlybird, and for each segment
- * looks at the term counts for all fields in that segment.
+ * A background task that pelonriodically gelonts and elonxports thelon numbelonr of telonrms pelonr fielonld that arelon
+ * indelonxelond on this elonarlybird, avelonragelond ovelonr all selongmelonnts.
+ * Speloncifically uselond for making surelon that welon arelon not missing telonrms for any fielonlds in thelon selonarch
+ * archivelons.
+ * Thelon task loops though all thelon selongmelonnts that arelon indelonxelond by this elonarlybird, and for elonach selongmelonnt
+ * looks at thelon telonrm counts for all fielonlds in that selongmelonnt.
  *
- * Also keeps track of the number of fields that do not have any term counts (or below the specified
- * threshold) in the data that is indexed on this earlybird.
+ * Also kelonelonps track of thelon numbelonr of fielonlds that do not havelon any telonrm counts (or belonlow thelon speloncifielond
+ * threlonshold) in thelon data that is indelonxelond on this elonarlybird.
  */
-public class TermCountMonitor extends OneTaskScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(TermCountMonitor.class);
+public class TelonrmCountMonitor elonxtelonnds OnelonTaskSchelondulelondelonxeloncutorManagelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TelonrmCountMonitor.class);
 
-  private static final String THREAD_NAME_FORMAT = "TermCountMonitor-%d";
-  private static final boolean THREAD_IS_DAEMON = true;
+  privatelon static final String THRelonAD_NAMelon_FORMAT = "TelonrmCountMonitor-%d";
+  privatelon static final boolelonan THRelonAD_IS_DAelonMON = truelon;
 
-  public static final String RUN_INTERVAL_MINUTES_CONFIG_NAME =
-      "term_count_monitor_run_interval_minutes";
+  public static final String RUN_INTelonRVAL_MINUTelonS_CONFIG_NAMelon =
+      "telonrm_count_monitor_run_intelonrval_minutelons";
 
-  private static Function<String, String> termStatNameFunc =
-      field -> "term_count_on_field_" + field;
-  private static Function<String, String> tokenStatNameFunc =
-      field -> "token_count_on_field_" + field;
-  private static Function<String, String> missingFieldStatNameFunc =
-      field -> "term_count_monitor_missing_field_" + field;
+  privatelon static Function<String, String> telonrmStatNamelonFunc =
+      fielonld -> "telonrm_count_on_fielonld_" + fielonld;
+  privatelon static Function<String, String> tokelonnStatNamelonFunc =
+      fielonld -> "tokelonn_count_on_fielonld_" + fielonld;
+  privatelon static Function<String, String> missingFielonldStatNamelonFunc =
+      fielonld -> "telonrm_count_monitor_missing_fielonld_" + fielonld;
 
-  private static class RawFieldCounter {
-    private MutableLong numTerms = new MutableLong(0L);
-    private MutableLong numTokens = new MutableLong(0L);
+  privatelon static class RawFielonldCountelonr {
+    privatelon MutablelonLong numTelonrms = nelonw MutablelonLong(0L);
+    privatelon MutablelonLong numTokelonns = nelonw MutablelonLong(0L);
   }
 
-  @VisibleForTesting
-  static class ExportedFieldCounter {
-    private final AtomicLong numTerms;
-    private final AtomicLong numTokens;
+  @VisiblelonForTelonsting
+  static class elonxportelondFielonldCountelonr {
+    privatelon final AtomicLong numTelonrms;
+    privatelon final AtomicLong numTokelonns;
 
-    ExportedFieldCounter(RawFieldCounter rawCounter) {
-      this.numTerms = new AtomicLong(rawCounter.numTerms.longValue());
-      this.numTokens = new AtomicLong(rawCounter.numTokens.longValue());
+    elonxportelondFielonldCountelonr(RawFielonldCountelonr rawCountelonr) {
+      this.numTelonrms = nelonw AtomicLong(rawCountelonr.numTelonrms.longValuelon());
+      this.numTokelonns = nelonw AtomicLong(rawCountelonr.numTokelonns.longValuelon());
     }
 
-    ExportedFieldCounter(long numInitialTerms, long numInitialTokens) {
-      this.numTerms = new AtomicLong(numInitialTerms);
-      this.numTokens = new AtomicLong(numInitialTokens);
+    elonxportelondFielonldCountelonr(long numInitialTelonrms, long numInitialTokelonns) {
+      this.numTelonrms = nelonw AtomicLong(numInitialTelonrms);
+      this.numTokelonns = nelonw AtomicLong(numInitialTokelonns);
     }
 
-    @VisibleForTesting
-    long getNumTerms() {
-      return numTerms.longValue();
+    @VisiblelonForTelonsting
+    long gelontNumTelonrms() {
+      relonturn numTelonrms.longValuelon();
     }
 
-    @VisibleForTesting
-    long getNumTokens() {
-      return numTokens.longValue();
+    @VisiblelonForTelonsting
+    long gelontNumTokelonns() {
+      relonturn numTokelonns.longValuelon();
     }
   }
 
-  private final int fieldMinTermCount =
-      EarlybirdConfig.getInt("term_count_monitor_min_count", 0);
+  privatelon final int fielonldMinTelonrmCount =
+      elonarlybirdConfig.gelontInt("telonrm_count_monitor_min_count", 0);
 
-  private final SegmentManager segmentManager;
-  private final Map<String, SearchLongGauge> missingFields;
-  private final Map<String, SearchLongGauge> termStats;
-  private final Map<String, SearchLongGauge> tokenStats;
-  private final Map<String, ExportedFieldCounter> exportedCounts;
-  private final SearchLongGauge termCountOnAllFields;
-  private final SearchLongGauge tokenCountOnAllFields;
-  private final SearchLongGauge fieldsWithNoTermCountStat;
-  private final SearchLongGauge isRunningStat;
-  private final SearchTimerStats checkTimeStat;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final Map<String, SelonarchLongGaugelon> missingFielonlds;
+  privatelon final Map<String, SelonarchLongGaugelon> telonrmStats;
+  privatelon final Map<String, SelonarchLongGaugelon> tokelonnStats;
+  privatelon final Map<String, elonxportelondFielonldCountelonr> elonxportelondCounts;
+  privatelon final SelonarchLongGaugelon telonrmCountOnAllFielonlds;
+  privatelon final SelonarchLongGaugelon tokelonnCountOnAllFielonlds;
+  privatelon final SelonarchLongGaugelon fielonldsWithNoTelonrmCountStat;
+  privatelon final SelonarchLongGaugelon isRunningStat;
+  privatelon final SelonarchTimelonrStats chelonckTimelonStat;
 
-  @Override
-  protected void runOneIteration() {
-    LOG.info("Starting to get per-field term counts");
-    isRunningStat.set(1);
-    final SearchTimer timer = checkTimeStat.startNewTimer();
+  @Ovelonrridelon
+  protelonctelond void runOnelonItelonration() {
+    LOG.info("Starting to gelont pelonr-fielonld telonrm counts");
+    isRunningStat.selont(1);
+    final SelonarchTimelonr timelonr = chelonckTimelonStat.startNelonwTimelonr();
     try {
-      updateFieldTermCounts();
-    } catch (Exception ex) {
-      LOG.error("Unexpected exception while getting per-field term counts", ex);
+      updatelonFielonldTelonrmCounts();
+    } catch (elonxcelonption elonx) {
+      LOG.elonrror("Unelonxpelonctelond elonxcelonption whilelon gelontting pelonr-fielonld telonrm counts", elonx);
     } finally {
       LOG.info(
-          "Done getting per-field term counts. Fields with low term counts: {}",
-          getFieldsWithLowTermCount());
-      isRunningStat.set(0);
-      checkTimeStat.stopTimerAndIncrement(timer);
+          "Donelon gelontting pelonr-fielonld telonrm counts. Fielonlds with low telonrm counts: {}",
+          gelontFielonldsWithLowTelonrmCount());
+      isRunningStat.selont(0);
+      chelonckTimelonStat.stopTimelonrAndIncrelonmelonnt(timelonr);
     }
   }
 
   /**
-   * Create a term count monitor which monitors the number of terms in segments
-   * managed by the given segment manager.
+   * Crelonatelon a telonrm count monitor which monitors thelon numbelonr of telonrms in selongmelonnts
+   * managelond by thelon givelonn selongmelonnt managelonr.
    */
-  public TermCountMonitor(
-      SegmentManager segmentManager,
-      ScheduledExecutorServiceFactory executorServiceFactory,
+  public TelonrmCountMonitor(
+      SelongmelonntManagelonr selongmelonntManagelonr,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory elonxeloncutorSelonrvicelonFactory,
       long shutdownWaitDuration,
-      TimeUnit shutdownWaitUnit,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(
-      executorServiceFactory,
-      THREAD_NAME_FORMAT,
-      THREAD_IS_DAEMON,
-      PeriodicActionParams.atFixedRate(
-        EarlybirdConfig.getInt(RUN_INTERVAL_MINUTES_CONFIG_NAME, -1),
-        TimeUnit.MINUTES),
-      new ShutdownWaitTimeParams(
+      TimelonUnit shutdownWaitUnit,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    supelonr(
+      elonxeloncutorSelonrvicelonFactory,
+      THRelonAD_NAMelon_FORMAT,
+      THRelonAD_IS_DAelonMON,
+      PelonriodicActionParams.atFixelondRatelon(
+        elonarlybirdConfig.gelontInt(RUN_INTelonRVAL_MINUTelonS_CONFIG_NAMelon, -1),
+        TimelonUnit.MINUTelonS),
+      nelonw ShutdownWaitTimelonParams(
         shutdownWaitDuration,
         shutdownWaitUnit
       ),
-      searchStatsReceiver,
-        criticalExceptionHandler);
-    this.segmentManager = segmentManager;
-    this.missingFields = new HashMap<>();
-    this.termStats = new HashMap<>();
-    this.tokenStats = new HashMap<>();
-    this.exportedCounts = new HashMap<>();
-    this.termCountOnAllFields = getSearchStatsReceiver().getLongGauge("term_count_on_all_fields");
-    this.tokenCountOnAllFields = getSearchStatsReceiver().getLongGauge("token_count_on_all_fields");
-    this.fieldsWithNoTermCountStat =
-        getSearchStatsReceiver().getLongGauge("fields_with_low_term_counts");
+      selonarchStatsReloncelonivelonr,
+        criticalelonxcelonptionHandlelonr);
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.missingFielonlds = nelonw HashMap<>();
+    this.telonrmStats = nelonw HashMap<>();
+    this.tokelonnStats = nelonw HashMap<>();
+    this.elonxportelondCounts = nelonw HashMap<>();
+    this.telonrmCountOnAllFielonlds = gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon("telonrm_count_on_all_fielonlds");
+    this.tokelonnCountOnAllFielonlds = gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon("tokelonn_count_on_all_fielonlds");
+    this.fielonldsWithNoTelonrmCountStat =
+        gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon("fielonlds_with_low_telonrm_counts");
     this.isRunningStat =
-        getSearchStatsReceiver().getLongGauge("term_count_monitor_is_running");
-    this.checkTimeStat =
-        getSearchStatsReceiver().getTimerStats(
-            "term_count_monitor_check_time", TimeUnit.MILLISECONDS, true, true, false);
+        gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon("telonrm_count_monitor_is_running");
+    this.chelonckTimelonStat =
+        gelontSelonarchStatsReloncelonivelonr().gelontTimelonrStats(
+            "telonrm_count_monitor_chelonck_timelon", TimelonUnit.MILLISelonCONDS, truelon, truelon, falselon);
   }
 
-  private SearchLongGauge getOrCreateLongGauge(
-      Map<String, SearchLongGauge> gauges, String field, Function<String, String> nameSupplier) {
-    SearchLongGauge stat = gauges.get(field);
+  privatelon SelonarchLongGaugelon gelontOrCrelonatelonLongGaugelon(
+      Map<String, SelonarchLongGaugelon> gaugelons, String fielonld, Function<String, String> namelonSupplielonr) {
+    SelonarchLongGaugelon stat = gaugelons.gelont(fielonld);
 
     if (stat == null) {
-      stat = getSearchStatsReceiver().getLongGauge(nameSupplier.apply(field));
-      gauges.put(field, stat);
+      stat = gelontSelonarchStatsReloncelonivelonr().gelontLongGaugelon(namelonSupplielonr.apply(fielonld));
+      gaugelons.put(fielonld, stat);
     }
 
-    return stat;
+    relonturn stat;
   }
 
-  private void updateFieldTermCounts() {
-    // 0. Get the current per-field term counts
-    Map<String, RawFieldCounter> newCounts = getFieldStats();
-    LOG.info("Computed field stats for all segments");
+  privatelon void updatelonFielonldTelonrmCounts() {
+    // 0. Gelont thelon currelonnt pelonr-fielonld telonrm counts
+    Map<String, RawFielonldCountelonr> nelonwCounts = gelontFielonldStats();
+    LOG.info("Computelond fielonld stats for all selongmelonnts");
 
-    // 1. Update all existing keys
-    for (Map.Entry<String, ExportedFieldCounter> exportedCount : exportedCounts.entrySet()) {
-      String field = exportedCount.getKey();
-      ExportedFieldCounter exportedCountValue = exportedCount.getValue();
+    // 1. Updatelon all elonxisting kelonys
+    for (Map.elonntry<String, elonxportelondFielonldCountelonr> elonxportelondCount : elonxportelondCounts.elonntrySelont()) {
+      String fielonld = elonxportelondCount.gelontKelony();
+      elonxportelondFielonldCountelonr elonxportelondCountValuelon = elonxportelondCount.gelontValuelon();
 
-      RawFieldCounter newCount = newCounts.get(field);
-      if (newCount == null) {
-        exportedCountValue.numTerms.set(0L);
-        exportedCountValue.numTokens.set(0L);
-      } else {
-        exportedCountValue.numTerms.set(newCount.numTerms.longValue());
-        exportedCountValue.numTokens.set(newCount.numTokens.longValue());
+      RawFielonldCountelonr nelonwCount = nelonwCounts.gelont(fielonld);
+      if (nelonwCount == null) {
+        elonxportelondCountValuelon.numTelonrms.selont(0L);
+        elonxportelondCountValuelon.numTokelonns.selont(0L);
+      } elonlselon {
+        elonxportelondCountValuelon.numTelonrms.selont(nelonwCount.numTelonrms.longValuelon());
+        elonxportelondCountValuelon.numTokelonns.selont(nelonwCount.numTokelonns.longValuelon());
 
-        // clean up so that we don't check this field again when we look for new field
-        newCounts.remove(field);
+        // clelonan up so that welon don't chelonck this fielonld again whelonn welon look for nelonw fielonld
+        nelonwCounts.relonmovelon(fielonld);
       }
     }
 
-    // 2. Add and export all new fields' term counts
-    for (Map.Entry<String, RawFieldCounter> newCount: newCounts.entrySet()) {
-      String field = newCount.getKey();
-      Preconditions.checkState(!exportedCounts.containsKey(field),
-          "Should have already processed and removed existing fields: " + field);
+    // 2. Add and elonxport all nelonw fielonlds' telonrm counts
+    for (Map.elonntry<String, RawFielonldCountelonr> nelonwCount: nelonwCounts.elonntrySelont()) {
+      String fielonld = nelonwCount.gelontKelony();
+      Prelonconditions.chelonckStatelon(!elonxportelondCounts.containsKelony(fielonld),
+          "Should havelon alrelonady procelonsselond and relonmovelond elonxisting fielonlds: " + fielonld);
 
-      ExportedFieldCounter newStat = new ExportedFieldCounter(newCount.getValue());
-      exportedCounts.put(field, newStat);
+      elonxportelondFielonldCountelonr nelonwStat = nelonw elonxportelondFielonldCountelonr(nelonwCount.gelontValuelon());
+      elonxportelondCounts.put(fielonld, nelonwStat);
     }
 
-    // 3. Export as a stat the term counts for all the known fields.
-    for (Map.Entry<String, ExportedFieldCounter> exportedCount : exportedCounts.entrySet()) {
-      String field = exportedCount.getKey();
-      ExportedFieldCounter counter = exportedCount.getValue();
+    // 3. elonxport as a stat thelon telonrm counts for all thelon known fielonlds.
+    for (Map.elonntry<String, elonxportelondFielonldCountelonr> elonxportelondCount : elonxportelondCounts.elonntrySelont()) {
+      String fielonld = elonxportelondCount.gelontKelony();
+      elonxportelondFielonldCountelonr countelonr = elonxportelondCount.gelontValuelon();
 
-      getOrCreateLongGauge(termStats, field, termStatNameFunc).set(counter.numTerms.get());
-      getOrCreateLongGauge(tokenStats, field, tokenStatNameFunc).set(counter.numTokens.get());
+      gelontOrCrelonatelonLongGaugelon(telonrmStats, fielonld, telonrmStatNamelonFunc).selont(countelonr.numTelonrms.gelont());
+      gelontOrCrelonatelonLongGaugelon(tokelonnStats, fielonld, tokelonnStatNamelonFunc).selont(countelonr.numTokelonns.gelont());
     }
 
-    // 4. Export as a stat, number of fields not having enough term counts (i.e. <= 0)
-    int fieldsWithNoTermCounts = 0;
-    for (Map.Entry<String, ExportedFieldCounter> fieldTermCount : exportedCounts.entrySet()) {
-      String field = fieldTermCount.getKey();
-      AtomicLong exportedCountValue = fieldTermCount.getValue().numTerms;
-      if (exportedCountValue.get() <= fieldMinTermCount) {
+    // 4. elonxport as a stat, numbelonr of fielonlds not having elonnough telonrm counts (i.elon. <= 0)
+    int fielonldsWithNoTelonrmCounts = 0;
+    for (Map.elonntry<String, elonxportelondFielonldCountelonr> fielonldTelonrmCount : elonxportelondCounts.elonntrySelont()) {
+      String fielonld = fielonldTelonrmCount.gelontKelony();
+      AtomicLong elonxportelondCountValuelon = fielonldTelonrmCount.gelontValuelon().numTelonrms;
+      if (elonxportelondCountValuelon.gelont() <= fielonldMinTelonrmCount) {
         LOG.warn(
-            "Found a field with too few term counts. Field: {} count: {}",
-            field, exportedCountValue);
-        fieldsWithNoTermCounts++;
+            "Found a fielonld with too felonw telonrm counts. Fielonld: {} count: {}",
+            fielonld, elonxportelondCountValuelon);
+        fielonldsWithNoTelonrmCounts++;
       }
     }
-    this.fieldsWithNoTermCountStat.set(fieldsWithNoTermCounts);
+    this.fielonldsWithNoTelonrmCountStat.selont(fielonldsWithNoTelonrmCounts);
   }
 
   /**
-   * Loops through all segments, and for each field gets the average term/token count.
-   * Based on that, returns a map from each field to its term/token count (average per segment).
+   * Loops through all selongmelonnts, and for elonach fielonld gelonts thelon avelonragelon telonrm/tokelonn count.
+   * Baselond on that, relonturns a map from elonach fielonld to its telonrm/tokelonn count (avelonragelon pelonr selongmelonnt).
    */
-  private Map<String, RawFieldCounter> getFieldStats() {
-    Iterable<SegmentInfo> segmentInfos = segmentManager.getSegmentInfos(
-        SegmentManager.Filter.Enabled, SegmentManager.Order.NEW_TO_OLD);
-    Map<String, RawFieldCounter> rawCounts = new HashMap<>();
+  privatelon Map<String, RawFielonldCountelonr> gelontFielonldStats() {
+    Itelonrablelon<SelongmelonntInfo> selongmelonntInfos = selongmelonntManagelonr.gelontSelongmelonntInfos(
+        SelongmelonntManagelonr.Filtelonr.elonnablelond, SelongmelonntManagelonr.Ordelonr.NelonW_TO_OLD);
+    Map<String, RawFielonldCountelonr> rawCounts = nelonw HashMap<>();
 
-    ImmutableSchemaInterface schemaSnapshot =
-        segmentManager.getEarlybirdIndexConfig().getSchema().getSchemaSnapshot();
-    Set<String> missingFieldsCandidates = schemaSnapshot
-        .getFieldInfos()
-        .stream()
-        .filter(fieldInfo -> fieldInfo.getFieldType().indexOptions() != IndexOptions.NONE)
-        .map(Schema.FieldInfo::getName)
-        .collect(Collectors.toSet());
-    int segmentCount = 0;
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      segmentCount++;
+    ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot =
+        selongmelonntManagelonr.gelontelonarlybirdIndelonxConfig().gelontSchelonma().gelontSchelonmaSnapshot();
+    Selont<String> missingFielonldsCandidatelons = schelonmaSnapshot
+        .gelontFielonldInfos()
+        .strelonam()
+        .filtelonr(fielonldInfo -> fielonldInfo.gelontFielonldTypelon().indelonxOptions() != IndelonxOptions.NONelon)
+        .map(Schelonma.FielonldInfo::gelontNamelon)
+        .collelonct(Collelonctors.toSelont());
+    int selongmelonntCount = 0;
+    for (SelongmelonntInfo selongmelonntInfo : selongmelonntInfos) {
+      selongmelonntCount++;
       try {
-        EarlybirdSingleSegmentSearcher searcher = segmentManager.getSearcher(
-            segmentInfo.getTimeSliceID(), schemaSnapshot);
-        if (searcher != null) {
-          EarlybirdIndexSegmentAtomicReader reader = searcher.getTwitterIndexReader();
-          for (Schema.FieldInfo fieldInfo : schemaSnapshot.getFieldInfos()) {
-            if (fieldInfo.getFieldType().indexOptions() == IndexOptions.NONE) {
-              continue;
+        elonarlybirdSinglelonSelongmelonntSelonarchelonr selonarchelonr = selongmelonntManagelonr.gelontSelonarchelonr(
+            selongmelonntInfo.gelontTimelonSlicelonID(), schelonmaSnapshot);
+        if (selonarchelonr != null) {
+          elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr = selonarchelonr.gelontTwittelonrIndelonxRelonadelonr();
+          for (Schelonma.FielonldInfo fielonldInfo : schelonmaSnapshot.gelontFielonldInfos()) {
+            if (fielonldInfo.gelontFielonldTypelon().indelonxOptions() == IndelonxOptions.NONelon) {
+              continuelon;
             }
 
-            String fieldName = fieldInfo.getName();
-            RawFieldCounter count = rawCounts.get(fieldName);
+            String fielonldNamelon = fielonldInfo.gelontNamelon();
+            RawFielonldCountelonr count = rawCounts.gelont(fielonldNamelon);
             if (count == null) {
-              count = new RawFieldCounter();
-              rawCounts.put(fieldName, count);
+              count = nelonw RawFielonldCountelonr();
+              rawCounts.put(fielonldNamelon, count);
             }
-            Terms terms = reader.terms(fieldName);
-            if (terms != null) {
-              missingFieldsCandidates.remove(fieldName);
-              count.numTerms.add(terms.size());
-              long sumTotalTermFreq = terms.getSumTotalTermFreq();
-              if (sumTotalTermFreq != -1) {
-                count.numTokens.add(sumTotalTermFreq);
+            Telonrms telonrms = relonadelonr.telonrms(fielonldNamelon);
+            if (telonrms != null) {
+              missingFielonldsCandidatelons.relonmovelon(fielonldNamelon);
+              count.numTelonrms.add(telonrms.sizelon());
+              long sumTotalTelonrmFrelonq = telonrms.gelontSumTotalTelonrmFrelonq();
+              if (sumTotalTelonrmFrelonq != -1) {
+                count.numTokelonns.add(sumTotalTelonrmFrelonq);
               }
             }
           }
         }
-      } catch (Exception e) {
-        LOG.error("Exception getting average term count per field: " + segmentInfo, e);
+      } catch (elonxcelonption elon) {
+        LOG.elonrror("elonxcelonption gelontting avelonragelon telonrm count pelonr fielonld: " + selongmelonntInfo, elon);
       }
     }
 
-    // Update missing fields stats.
-    missingFieldsCandidates.forEach(
-        field -> getOrCreateLongGauge(missingFields, field, missingFieldStatNameFunc).set(1));
-    missingFields.keySet().stream()
-        .filter(
-            field -> !missingFieldsCandidates.contains(field))
-        .forEach(
-            field -> getOrCreateLongGauge(missingFields, field, missingFieldStatNameFunc).set(0));
+    // Updatelon missing fielonlds stats.
+    missingFielonldsCandidatelons.forelonach(
+        fielonld -> gelontOrCrelonatelonLongGaugelon(missingFielonlds, fielonld, missingFielonldStatNamelonFunc).selont(1));
+    missingFielonlds.kelonySelont().strelonam()
+        .filtelonr(
+            fielonld -> !missingFielonldsCandidatelons.contains(fielonld))
+        .forelonach(
+            fielonld -> gelontOrCrelonatelonLongGaugelon(missingFielonlds, fielonld, missingFielonldStatNamelonFunc).selont(0));
 
-    long totalTermCount = 0;
-    long totalTokenCount = 0;
-    if (segmentCount == 0) {
-      LOG.error("No segments are found to calculate per-field term counts.");
-    } else {
-      LOG.debug("TermCountMonitor.getPerFieldTermCount.segmentCount = {}", segmentCount);
-      LOG.debug("  field: term count (average per segment)");
-      for (Map.Entry<String, RawFieldCounter> entry : rawCounts.entrySet()) {
-        String field = entry.getKey();
-        final long averageTermCount = entry.getValue().numTerms.longValue() / segmentCount;
-        final long averageTokenCount = entry.getValue().numTokens.longValue() / segmentCount;
-        totalTermCount += entry.getValue().numTerms.longValue();
-        totalTokenCount += entry.getValue().numTokens.longValue();
+    long totalTelonrmCount = 0;
+    long totalTokelonnCount = 0;
+    if (selongmelonntCount == 0) {
+      LOG.elonrror("No selongmelonnts arelon found to calculatelon pelonr-fielonld telonrm counts.");
+    } elonlselon {
+      LOG.delonbug("TelonrmCountMonitor.gelontPelonrFielonldTelonrmCount.selongmelonntCount = {}", selongmelonntCount);
+      LOG.delonbug("  fielonld: telonrm count (avelonragelon pelonr selongmelonnt)");
+      for (Map.elonntry<String, RawFielonldCountelonr> elonntry : rawCounts.elonntrySelont()) {
+        String fielonld = elonntry.gelontKelony();
+        final long avelonragelonTelonrmCount = elonntry.gelontValuelon().numTelonrms.longValuelon() / selongmelonntCount;
+        final long avelonragelonTokelonnCount = elonntry.gelontValuelon().numTokelonns.longValuelon() / selongmelonntCount;
+        totalTelonrmCount += elonntry.gelontValuelon().numTelonrms.longValuelon();
+        totalTokelonnCount += elonntry.gelontValuelon().numTokelonns.longValuelon();
 
-        LOG.debug("  '{} term': {}", field, averageTermCount);
-        LOG.debug("  '{} token': {}", field, averageTokenCount);
+        LOG.delonbug("  '{} telonrm': {}", fielonld, avelonragelonTelonrmCount);
+        LOG.delonbug("  '{} tokelonn': {}", fielonld, avelonragelonTokelonnCount);
 
-        entry.getValue().numTerms.setValue(averageTermCount);
-        entry.getValue().numTokens.setValue(averageTokenCount);
+        elonntry.gelontValuelon().numTelonrms.selontValuelon(avelonragelonTelonrmCount);
+        elonntry.gelontValuelon().numTokelonns.selontValuelon(avelonragelonTokelonnCount);
       }
     }
-    LOG.info("Total term count: {}", totalTermCount);
-    LOG.info("Total token count: {}", totalTokenCount);
-    this.termCountOnAllFields.set(totalTermCount);
-    this.tokenCountOnAllFields.set(totalTokenCount);
+    LOG.info("Total telonrm count: {}", totalTelonrmCount);
+    LOG.info("Total tokelonn count: {}", totalTokelonnCount);
+    this.telonrmCountOnAllFielonlds.selont(totalTelonrmCount);
+    this.tokelonnCountOnAllFielonlds.selont(totalTokelonnCount);
 
-    return rawCounts;
+    relonturn rawCounts;
   }
 
-  @VisibleForTesting
-  Map<String, ExportedFieldCounter> getExportedCounts() {
-    return Collections.unmodifiableMap(this.exportedCounts);
+  @VisiblelonForTelonsting
+  Map<String, elonxportelondFielonldCountelonr> gelontelonxportelondCounts() {
+    relonturn Collelonctions.unmodifiablelonMap(this.elonxportelondCounts);
   }
 
-  @VisibleForTesting
-  long getFieldsWithLowTermCount() {
-    return fieldsWithNoTermCountStat.get();
+  @VisiblelonForTelonsting
+  long gelontFielonldsWithLowTelonrmCount() {
+    relonturn fielonldsWithNoTelonrmCountStat.gelont();
   }
 
-  @VisibleForTesting
-  Map<String, SearchLongGauge> getMissingFields() {
-    return missingFields;
+  @VisiblelonForTelonsting
+  Map<String, SelonarchLongGaugelon> gelontMissingFielonlds() {
+    relonturn missingFielonlds;
   }
 }

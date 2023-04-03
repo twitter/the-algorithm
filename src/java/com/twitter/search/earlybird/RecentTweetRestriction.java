@@ -1,60 +1,60 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
 import scala.Option;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import com.twitter.decider.Decider;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
 
-public final class RecentTweetRestriction {
-  private static final String RECENT_TWEETS_THRESHOLD = "recent_tweets_threshold";
-  private static final String QUERY_CACHE_UNTIL_TIME = "query_cache_until_time";
+public final class ReloncelonntTwelonelontRelonstriction {
+  privatelon static final String RelonCelonNT_TWelonelonTS_THRelonSHOLD = "reloncelonnt_twelonelonts_threlonshold";
+  privatelon static final String QUelonRY_CACHelon_UNTIL_TIMelon = "quelonry_cachelon_until_timelon";
 
-  @VisibleForTesting
-  public static final int DEFAULT_RECENT_TWEET_SECONDS = 15;
+  @VisiblelonForTelonsting
+  public static final int DelonFAULT_RelonCelonNT_TWelonelonT_SelonCONDS = 15;
 
-  private RecentTweetRestriction() {
+  privatelon ReloncelonntTwelonelontRelonstriction() {
   }
 
   /**
-   * Returns the point in time (in seconds past the unix epoch) before which all tweets will be
-   * completely indexed. This is required by some clients, because they rely on Earlybird monotonically
-   * indexing tweets by ID and that tweets are completely indexed when they see them.
+   * Relonturns thelon point in timelon (in selonconds past thelon unix elonpoch) belonforelon which all twelonelonts will belon
+   * complelontelonly indelonxelond. This is relonquirelond by somelon clielonnts, beloncauselon thelony relonly on elonarlybird monotonically
+   * indelonxing twelonelonts by ID and that twelonelonts arelon complelontelonly indelonxelond whelonn thelony selonelon thelonm.
    *
-   * @param lastTime The time at which the most recent tweet was indexed, in seconds since the unix
-   * epoch.
+   * @param lastTimelon Thelon timelon at which thelon most reloncelonnt twelonelont was indelonxelond, in selonconds sincelon thelon unix
+   * elonpoch.
    */
-  public static int recentTweetsUntilTime(Decider decider, int lastTime) {
-    return untilTimeSeconds(decider, lastTime, RECENT_TWEETS_THRESHOLD);
+  public static int reloncelonntTwelonelontsUntilTimelon(Deloncidelonr deloncidelonr, int lastTimelon) {
+    relonturn untilTimelonSelonconds(deloncidelonr, lastTimelon, RelonCelonNT_TWelonelonTS_THRelonSHOLD);
   }
 
   /**
-   * Returns the point in time (in seconds past the unix epoch) before which all tweets will be
-   * completely indexed. This is required by some clients, because they rely on Earlybird monotonically
-   * indexing tweets by ID and that tweets are completely indexed when they see them.
+   * Relonturns thelon point in timelon (in selonconds past thelon unix elonpoch) belonforelon which all twelonelonts will belon
+   * complelontelonly indelonxelond. This is relonquirelond by somelon clielonnts, beloncauselon thelony relonly on elonarlybird monotonically
+   * indelonxing twelonelonts by ID and that twelonelonts arelon complelontelonly indelonxelond whelonn thelony selonelon thelonm.
    *
-   * @param lastTime The time at which the most recent tweet was indexed, in seconds since the unix
-   * epoch.
+   * @param lastTimelon Thelon timelon at which thelon most reloncelonnt twelonelont was indelonxelond, in selonconds sincelon thelon unix
+   * elonpoch.
    */
-  public static int queryCacheUntilTime(Decider decider, int lastTime) {
-    return untilTimeSeconds(decider, lastTime, QUERY_CACHE_UNTIL_TIME);
+  public static int quelonryCachelonUntilTimelon(Deloncidelonr deloncidelonr, int lastTimelon) {
+    relonturn untilTimelonSelonconds(deloncidelonr, lastTimelon, QUelonRY_CACHelon_UNTIL_TIMelon);
   }
 
-  private static int untilTimeSeconds(Decider decider, int lastTime, String deciderKey) {
-    int recentTweetSeconds = getRecentTweetSeconds(decider, deciderKey);
+  privatelon static int untilTimelonSelonconds(Deloncidelonr deloncidelonr, int lastTimelon, String deloncidelonrKelony) {
+    int reloncelonntTwelonelontSelonconds = gelontReloncelonntTwelonelontSelonconds(deloncidelonr, deloncidelonrKelony);
 
-    if (recentTweetSeconds == 0) {
-      return 0;
+    if (reloncelonntTwelonelontSelonconds == 0) {
+      relonturn 0;
     }
 
-    return lastTime - recentTweetSeconds;
+    relonturn lastTimelon - reloncelonntTwelonelontSelonconds;
   }
 
-  private static int getRecentTweetSeconds(Decider decider, String deciderKey) {
-    Option<Object> deciderValue = decider.getAvailability(deciderKey);
-    if (deciderValue.isDefined()) {
-      return (int) deciderValue.get();
+  privatelon static int gelontReloncelonntTwelonelontSelonconds(Deloncidelonr deloncidelonr, String deloncidelonrKelony) {
+    Option<Objelonct> deloncidelonrValuelon = deloncidelonr.gelontAvailability(deloncidelonrKelony);
+    if (deloncidelonrValuelon.isDelonfinelond()) {
+      relonturn (int) deloncidelonrValuelon.gelont();
     }
-    return DEFAULT_RECENT_TWEET_SECONDS;
+    relonturn DelonFAULT_RelonCelonNT_TWelonelonT_SelonCONDS;
   }
 }

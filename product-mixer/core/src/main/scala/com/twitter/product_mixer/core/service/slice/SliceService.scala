@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.service.slice
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.slicelon
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineRequest
-import com.twitter.product_mixer.core.product.registry.ProductPipelineRegistry
-import com.twitter.stitch.Stitch
-import com.twitter.strato.graphql.thriftscala.SliceResult
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.product.relongistry.ProductPipelonlinelonRelongistry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.graphql.thriftscala.SlicelonRelonsult
+import com.twittelonr.timelonlinelons.configapi.Params
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.reflect.runtime.universe.TypeTag
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.relonflelonct.runtimelon.univelonrselon.TypelonTag
 
 /**
- * Look up and execute Slice products in the [[ProductPipelineRegistry]]
+ * Look up and elonxeloncutelon Slicelon products in thelon [[ProductPipelonlinelonRelongistry]]
  */
-@Singleton
-class SliceService @Inject() (productPipelineRegistry: ProductPipelineRegistry) {
+@Singlelonton
+class SlicelonSelonrvicelon @Injelonct() (productPipelonlinelonRelongistry: ProductPipelonlinelonRelongistry) {
 
-  def getSliceResponse[RequestType <: Request](
-    request: RequestType,
+  delonf gelontSlicelonRelonsponselon[RelonquelonstTypelon <: Relonquelonst](
+    relonquelonst: RelonquelonstTypelon,
     params: Params
   )(
-    implicit requestTypeTag: TypeTag[RequestType]
-  ): Stitch[SliceResult] =
-    productPipelineRegistry
-      .getProductPipeline[RequestType, SliceResult](request.product)
-      .process(ProductPipelineRequest(request, params))
+    implicit relonquelonstTypelonTag: TypelonTag[RelonquelonstTypelon]
+  ): Stitch[SlicelonRelonsult] =
+    productPipelonlinelonRelongistry
+      .gelontProductPipelonlinelon[RelonquelonstTypelon, SlicelonRelonsult](relonquelonst.product)
+      .procelonss(ProductPipelonlinelonRelonquelonst(relonquelonst, params))
 }

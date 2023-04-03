@@ -1,231 +1,231 @@
-package com.twitter.simclusters_v2.summingbird.storm
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storm
 
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.SimClustersTweetProfile
-import com.twitter.simclusters_v2.summingbird.common.Configs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.summingbird.common.SimClustersHashUtil
-import com.twitter.simclusters_v2.summingbird.common.SimClustersInterestedInUtil
-import com.twitter.simclusters_v2.summingbird.common.StatsUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.summingbird._
-import com.twitter.summingbird.option.JobId
-import com.twitter.timelineservice.thriftscala.Event
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelineservice.thriftscala.EventAliases.FavoriteAlias
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions._
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.SimClustelonrsTwelonelontProfilelon
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Configs
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsHashUtil
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsIntelonrelonstelondInUtil
+import com.twittelonr.simclustelonrs_v2.summingbird.common.StatsUtil
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.summingbird._
+import com.twittelonr.summingbird.option.JobId
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.elonvelonnt
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.elonvelonntAliaselons.FavoritelonAlias
 
-object TweetJob {
+objelonct TwelonelontJob {
 
   import Implicits._
   import StatsUtil._
 
-  object NodeName {
-    final val TweetClusterScoreFlatMapNodeName: String = "TweetClusterScoreFlatMap"
-    final val TweetClusterUpdatedScoresFlatMapNodeName: String = "TweetClusterUpdatedScoreFlatMap"
-    final val TweetClusterScoreSummerNodeName: String = "TweetClusterScoreSummer"
-    final val TweetTopKNodeName: String = "TweetTopKSummer"
-    final val ClusterTopKTweetsNodeName: String = "ClusterTopKTweetsSummer"
-    final val ClusterTopKTweetsLightNodeName: String = "ClusterTopKTweetsLightSummer"
+  objelonct NodelonNamelon {
+    final val TwelonelontClustelonrScorelonFlatMapNodelonNamelon: String = "TwelonelontClustelonrScorelonFlatMap"
+    final val TwelonelontClustelonrUpdatelondScorelonsFlatMapNodelonNamelon: String = "TwelonelontClustelonrUpdatelondScorelonFlatMap"
+    final val TwelonelontClustelonrScorelonSummelonrNodelonNamelon: String = "TwelonelontClustelonrScorelonSummelonr"
+    final val TwelonelontTopKNodelonNamelon: String = "TwelonelontTopKSummelonr"
+    final val ClustelonrTopKTwelonelontsNodelonNamelon: String = "ClustelonrTopKTwelonelontsSummelonr"
+    final val ClustelonrTopKTwelonelontsLightNodelonNamelon: String = "ClustelonrTopKTwelonelontsLightSummelonr"
   }
 
-  def generate[P <: Platform[P]](
-    profile: SimClustersTweetProfile,
-    timelineEventSource: Producer[P, Event],
-    userInterestedInService: P#Service[Long, ClustersUserIsInterestedIn],
-    tweetClusterScoreStore: P#Store[(SimClusterEntity, FullClusterIdBucket), ClustersWithScores],
-    tweetTopKClustersStore: P#Store[EntityWithVersion, TopKClustersWithScores],
-    clusterTopKTweetsStore: P#Store[FullClusterId, TopKTweetsWithScores],
-    clusterTopKTweetsLightStore: Option[P#Store[FullClusterId, TopKTweetsWithScores]]
+  delonf gelonnelonratelon[P <: Platform[P]](
+    profilelon: SimClustelonrsTwelonelontProfilelon,
+    timelonlinelonelonvelonntSourcelon: Producelonr[P, elonvelonnt],
+    uselonrIntelonrelonstelondInSelonrvicelon: P#Selonrvicelon[Long, ClustelonrsUselonrIsIntelonrelonstelondIn],
+    twelonelontClustelonrScorelonStorelon: P#Storelon[(SimClustelonrelonntity, FullClustelonrIdBuckelont), ClustelonrsWithScorelons],
+    twelonelontTopKClustelonrsStorelon: P#Storelon[elonntityWithVelonrsion, TopKClustelonrsWithScorelons],
+    clustelonrTopKTwelonelontsStorelon: P#Storelon[FullClustelonrId, TopKTwelonelontsWithScorelons],
+    clustelonrTopKTwelonelontsLightStorelon: Option[P#Storelon[FullClustelonrId, TopKTwelonelontsWithScorelons]]
   )(
     implicit jobId: JobId
-  ): TailProducer[P, Any] = {
+  ): TailProducelonr[P, Any] = {
 
-    val userInterestNonEmptyCount = Counter(Group(jobId.get), Name("num_user_interests_non_empty"))
-    val userInterestEmptyCount = Counter(Group(jobId.get), Name("num_user_interests_empty"))
+    val uselonrIntelonrelonstNonelonmptyCount = Countelonr(Group(jobId.gelont), Namelon("num_uselonr_intelonrelonsts_non_elonmpty"))
+    val uselonrIntelonrelonstelonmptyCount = Countelonr(Group(jobId.gelont), Namelon("num_uselonr_intelonrelonsts_elonmpty"))
 
-    val numClustersCount = Counter(Group(jobId.get), Name("num_clusters"))
+    val numClustelonrsCount = Countelonr(Group(jobId.gelont), Namelon("num_clustelonrs"))
 
-    val entityClusterPairCount = Counter(Group(jobId.get), Name("num_entity_cluster_pairs_emitted"))
+    val elonntityClustelonrPairCount = Countelonr(Group(jobId.gelont), Namelon("num_elonntity_clustelonr_pairs_elonmittelond"))
 
     // Fav QPS is around 6K
-    val qualifiedFavEvents = timelineEventSource
-      .collect {
-        case Event.Favorite(favEvent)
-            if favEvent.userId != favEvent.tweetUserId && !isTweetTooOld(favEvent) =>
-          (favEvent.userId, favEvent)
+    val qualifielondFavelonvelonnts = timelonlinelonelonvelonntSourcelon
+      .collelonct {
+        caselon elonvelonnt.Favoritelon(favelonvelonnt)
+            if favelonvelonnt.uselonrId != favelonvelonnt.twelonelontUselonrId && !isTwelonelontTooOld(favelonvelonnt) =>
+          (favelonvelonnt.uselonrId, favelonvelonnt)
       }
-      .observe("num_qualified_favorite_events")
+      .obselonrvelon("num_qualifielond_favoritelon_elonvelonnts")
 
-    val entityWithSimClustersProducer = qualifiedFavEvents
-      .leftJoin(userInterestedInService)
+    val elonntityWithSimClustelonrsProducelonr = qualifielondFavelonvelonnts
+      .lelonftJoin(uselonrIntelonrelonstelondInSelonrvicelon)
       .map {
-        case (_, (favEvent, userInterestOpt)) =>
-          (favEvent.tweetId, (favEvent, userInterestOpt))
+        caselon (_, (favelonvelonnt, uselonrIntelonrelonstOpt)) =>
+          (favelonvelonnt.twelonelontId, (favelonvelonnt, uselonrIntelonrelonstOpt))
       }
       .flatMap {
-        case (_, (favEvent, Some(userInterests))) =>
-          userInterestNonEmptyCount.incr()
+        caselon (_, (favelonvelonnt, Somelon(uselonrIntelonrelonsts))) =>
+          uselonrIntelonrelonstNonelonmptyCount.incr()
 
-          val timestamp = favEvent.eventTimeMs
+          val timelonstamp = favelonvelonnt.elonvelonntTimelonMs
 
-          val clustersWithScores = SimClustersInterestedInUtil.topClustersWithScores(userInterests)
+          val clustelonrsWithScorelons = SimClustelonrsIntelonrelonstelondInUtil.topClustelonrsWithScorelons(uselonrIntelonrelonsts)
 
-          // clusters.size is around 25 in average
-          numClustersCount.incrBy(clustersWithScores.size)
+          // clustelonrs.sizelon is around 25 in avelonragelon
+          numClustelonrsCount.incrBy(clustelonrsWithScorelons.sizelon)
 
-          val simClusterScoresByHashBucket = clustersWithScores.groupBy {
-            case (clusterId, _) => SimClustersHashUtil.clusterIdToBucket(clusterId)
+          val simClustelonrScorelonsByHashBuckelont = clustelonrsWithScorelons.groupBy {
+            caselon (clustelonrId, _) => SimClustelonrsHashUtil.clustelonrIdToBuckelont(clustelonrId)
           }
 
           for {
-            (hashBucket, scores) <- simClusterScoresByHashBucket
-          } yield {
-            entityClusterPairCount.incr()
+            (hashBuckelont, scorelons) <- simClustelonrScorelonsByHashBuckelont
+          } yielonld {
+            elonntityClustelonrPairCount.incr()
 
-            val clusterBucket = FullClusterIdBucket(userInterests.knownForModelVersion, hashBucket)
+            val clustelonrBuckelont = FullClustelonrIdBuckelont(uselonrIntelonrelonsts.knownForModelonlVelonrsion, hashBuckelont)
 
-            val tweetId: SimClusterEntity = SimClusterEntity.TweetId(favEvent.tweetId)
+            val twelonelontId: SimClustelonrelonntity = SimClustelonrelonntity.TwelonelontId(favelonvelonnt.twelonelontId)
 
-            (tweetId, clusterBucket) -> SimClustersInterestedInUtil
-              .buildClusterWithScores(
-                scores,
-                timestamp,
-                profile.favScoreThresholdForUserInterest
+            (twelonelontId, clustelonrBuckelont) -> SimClustelonrsIntelonrelonstelondInUtil
+              .buildClustelonrWithScorelons(
+                scorelons,
+                timelonstamp,
+                profilelon.favScorelonThrelonsholdForUselonrIntelonrelonst
               )
           }
-        case _ =>
-          userInterestEmptyCount.incr()
-          None
+        caselon _ =>
+          uselonrIntelonrelonstelonmptyCount.incr()
+          Nonelon
       }
-      .observe("entity_cluster_delta_scores")
-      .name(NodeName.TweetClusterScoreFlatMapNodeName)
-      .sumByKey(tweetClusterScoreStore)(clustersWithScoreMonoid)
-      .name(NodeName.TweetClusterScoreSummerNodeName)
+      .obselonrvelon("elonntity_clustelonr_delonlta_scorelons")
+      .namelon(NodelonNamelon.TwelonelontClustelonrScorelonFlatMapNodelonNamelon)
+      .sumByKelony(twelonelontClustelonrScorelonStorelon)(clustelonrsWithScorelonMonoid)
+      .namelon(NodelonNamelon.TwelonelontClustelonrScorelonSummelonrNodelonNamelon)
       .map {
-        case ((simClusterEntity, clusterBucket), (oldValueOpt, deltaValue)) =>
-          val updatedClusterIds = deltaValue.clustersToScore.map(_.keySet).getOrElse(Set.empty[Int])
+        caselon ((simClustelonrelonntity, clustelonrBuckelont), (oldValuelonOpt, delonltaValuelon)) =>
+          val updatelondClustelonrIds = delonltaValuelon.clustelonrsToScorelon.map(_.kelonySelont).gelontOrelonlselon(Selont.elonmpty[Int])
 
-          (simClusterEntity, clusterBucket) -> clustersWithScoreMonoid.plus(
-            oldValueOpt
-              .map { oldValue =>
-                oldValue.copy(
-                  clustersToScore =
-                    oldValue.clustersToScore.map(_.filterKeys(updatedClusterIds.contains))
+          (simClustelonrelonntity, clustelonrBuckelont) -> clustelonrsWithScorelonMonoid.plus(
+            oldValuelonOpt
+              .map { oldValuelon =>
+                oldValuelon.copy(
+                  clustelonrsToScorelon =
+                    oldValuelon.clustelonrsToScorelon.map(_.filtelonrKelonys(updatelondClustelonrIds.contains))
                 )
-              }.getOrElse(clustersWithScoreMonoid.zero),
-            deltaValue
+              }.gelontOrelonlselon(clustelonrsWithScorelonMonoid.zelonro),
+            delonltaValuelon
           )
       }
-      .observe("entity_cluster_updated_scores")
-      .name(NodeName.TweetClusterUpdatedScoresFlatMapNodeName)
+      .obselonrvelon("elonntity_clustelonr_updatelond_scorelons")
+      .namelon(NodelonNamelon.TwelonelontClustelonrUpdatelondScorelonsFlatMapNodelonNamelon)
 
-    val tweetTopK = entityWithSimClustersProducer
+    val twelonelontTopK = elonntityWithSimClustelonrsProducelonr
       .flatMap {
-        case ((simClusterEntity, FullClusterIdBucket(modelVersion, _)), clusterWithScores)
-            if simClusterEntity.isInstanceOf[SimClusterEntity.TweetId] =>
-          clusterWithScores.clustersToScore
-            .map { clustersToScores =>
-              val topClustersWithFavScores = clustersToScores.mapValues { scores: Scores =>
-                Scores(
-                  favClusterNormalized8HrHalfLifeScore =
-                    scores.favClusterNormalized8HrHalfLifeScore.filter(
-                      _.value >= Configs.scoreThresholdForTweetTopKClustersCache
+        caselon ((simClustelonrelonntity, FullClustelonrIdBuckelont(modelonlVelonrsion, _)), clustelonrWithScorelons)
+            if simClustelonrelonntity.isInstancelonOf[SimClustelonrelonntity.TwelonelontId] =>
+          clustelonrWithScorelons.clustelonrsToScorelon
+            .map { clustelonrsToScorelons =>
+              val topClustelonrsWithFavScorelons = clustelonrsToScorelons.mapValuelons { scorelons: Scorelons =>
+                Scorelons(
+                  favClustelonrNormalizelond8HrHalfLifelonScorelon =
+                    scorelons.favClustelonrNormalizelond8HrHalfLifelonScorelon.filtelonr(
+                      _.valuelon >= Configs.scorelonThrelonsholdForTwelonelontTopKClustelonrsCachelon
                     )
                 )
               }
 
               (
-                EntityWithVersion(simClusterEntity, modelVersion),
-                TopKClustersWithScores(Some(topClustersWithFavScores), None)
+                elonntityWithVelonrsion(simClustelonrelonntity, modelonlVelonrsion),
+                TopKClustelonrsWithScorelons(Somelon(topClustelonrsWithFavScorelons), Nonelon)
               )
             }
-        case _ =>
-          None
+        caselon _ =>
+          Nonelon
 
       }
-      .observe("tweet_topk_updates")
-      .sumByKey(tweetTopKClustersStore)(topKClustersWithScoresMonoid)
-      .name(NodeName.TweetTopKNodeName)
+      .obselonrvelon("twelonelont_topk_updatelons")
+      .sumByKelony(twelonelontTopKClustelonrsStorelon)(topKClustelonrsWithScorelonsMonoid)
+      .namelon(NodelonNamelon.TwelonelontTopKNodelonNamelon)
 
-    val clusterTopKTweets = entityWithSimClustersProducer
+    val clustelonrTopKTwelonelonts = elonntityWithSimClustelonrsProducelonr
       .flatMap {
-        case ((simClusterEntity, FullClusterIdBucket(modelVersion, _)), clusterWithScores) =>
-          simClusterEntity match {
-            case SimClusterEntity.TweetId(tweetId) =>
-              clusterWithScores.clustersToScore
-                .map { clustersToScores =>
-                  clustersToScores.toSeq.map {
-                    case (clusterId, scores) =>
-                      val topTweetsByFavScore = Map(
-                        tweetId -> Scores(favClusterNormalized8HrHalfLifeScore =
-                          scores.favClusterNormalized8HrHalfLifeScore.filter(_.value >=
-                            Configs.scoreThresholdForClusterTopKTweetsCache)))
+        caselon ((simClustelonrelonntity, FullClustelonrIdBuckelont(modelonlVelonrsion, _)), clustelonrWithScorelons) =>
+          simClustelonrelonntity match {
+            caselon SimClustelonrelonntity.TwelonelontId(twelonelontId) =>
+              clustelonrWithScorelons.clustelonrsToScorelon
+                .map { clustelonrsToScorelons =>
+                  clustelonrsToScorelons.toSelonq.map {
+                    caselon (clustelonrId, scorelons) =>
+                      val topTwelonelontsByFavScorelon = Map(
+                        twelonelontId -> Scorelons(favClustelonrNormalizelond8HrHalfLifelonScorelon =
+                          scorelons.favClustelonrNormalizelond8HrHalfLifelonScorelon.filtelonr(_.valuelon >=
+                            Configs.scorelonThrelonsholdForClustelonrTopKTwelonelontsCachelon)))
 
                       (
-                        FullClusterId(modelVersion, clusterId),
-                        TopKTweetsWithScores(Some(topTweetsByFavScore), None)
+                        FullClustelonrId(modelonlVelonrsion, clustelonrId),
+                        TopKTwelonelontsWithScorelons(Somelon(topTwelonelontsByFavScorelon), Nonelon)
                       )
                   }
-                }.getOrElse(Nil)
-            case _ =>
+                }.gelontOrelonlselon(Nil)
+            caselon _ =>
               Nil
           }
       }
-      .observe("cluster_topk_tweets_updates")
-      .sumByKey(clusterTopKTweetsStore)(topKTweetsWithScoresMonoid)
-      .name(NodeName.ClusterTopKTweetsNodeName)
+      .obselonrvelon("clustelonr_topk_twelonelonts_updatelons")
+      .sumByKelony(clustelonrTopKTwelonelontsStorelon)(topKTwelonelontsWithScorelonsMonoid)
+      .namelon(NodelonNamelon.ClustelonrTopKTwelonelontsNodelonNamelon)
 
-    val clusterTopKTweetsLight = clusterTopKTweetsLightStore.map { lightStore =>
-      entityWithSimClustersProducer
+    val clustelonrTopKTwelonelontsLight = clustelonrTopKTwelonelontsLightStorelon.map { lightStorelon =>
+      elonntityWithSimClustelonrsProducelonr
         .flatMap {
-          case ((simClusterEntity, FullClusterIdBucket(modelVersion, _)), clusterWithScores) =>
-            simClusterEntity match {
-              case SimClusterEntity.TweetId(tweetId) if isTweetTooOldForLight(tweetId) =>
-                clusterWithScores.clustersToScore
-                  .map { clustersToScores =>
-                    clustersToScores.toSeq.map {
-                      case (clusterId, scores) =>
-                        val topTweetsByFavScore = Map(
-                          tweetId -> Scores(favClusterNormalized8HrHalfLifeScore =
-                            scores.favClusterNormalized8HrHalfLifeScore.filter(_.value >=
-                              Configs.scoreThresholdForClusterTopKTweetsCache)))
+          caselon ((simClustelonrelonntity, FullClustelonrIdBuckelont(modelonlVelonrsion, _)), clustelonrWithScorelons) =>
+            simClustelonrelonntity match {
+              caselon SimClustelonrelonntity.TwelonelontId(twelonelontId) if isTwelonelontTooOldForLight(twelonelontId) =>
+                clustelonrWithScorelons.clustelonrsToScorelon
+                  .map { clustelonrsToScorelons =>
+                    clustelonrsToScorelons.toSelonq.map {
+                      caselon (clustelonrId, scorelons) =>
+                        val topTwelonelontsByFavScorelon = Map(
+                          twelonelontId -> Scorelons(favClustelonrNormalizelond8HrHalfLifelonScorelon =
+                            scorelons.favClustelonrNormalizelond8HrHalfLifelonScorelon.filtelonr(_.valuelon >=
+                              Configs.scorelonThrelonsholdForClustelonrTopKTwelonelontsCachelon)))
 
                         (
-                          FullClusterId(modelVersion, clusterId),
-                          TopKTweetsWithScores(Some(topTweetsByFavScore), None)
+                          FullClustelonrId(modelonlVelonrsion, clustelonrId),
+                          TopKTwelonelontsWithScorelons(Somelon(topTwelonelontsByFavScorelon), Nonelon)
                         )
                     }
-                  }.getOrElse(Nil)
-              case _ =>
+                  }.gelontOrelonlselon(Nil)
+              caselon _ =>
                 Nil
             }
         }
-        .observe("cluster_topk_tweets_updates")
-        .sumByKey(lightStore)(topKTweetsWithScoresLightMonoid)
-        .name(NodeName.ClusterTopKTweetsLightNodeName)
+        .obselonrvelon("clustelonr_topk_twelonelonts_updatelons")
+        .sumByKelony(lightStorelon)(topKTwelonelontsWithScorelonsLightMonoid)
+        .namelon(NodelonNamelon.ClustelonrTopKTwelonelontsLightNodelonNamelon)
     }
 
-    clusterTopKTweetsLight match {
-      case Some(lightNode) =>
-        tweetTopK.also(clusterTopKTweets).also(lightNode)
-      case None =>
-        tweetTopK.also(clusterTopKTweets)
+    clustelonrTopKTwelonelontsLight match {
+      caselon Somelon(lightNodelon) =>
+        twelonelontTopK.also(clustelonrTopKTwelonelonts).also(lightNodelon)
+      caselon Nonelon =>
+        twelonelontTopK.also(clustelonrTopKTwelonelonts)
     }
   }
 
-  // Boolean check to see if the tweet is too old
-  private def isTweetTooOld(favEvent: FavoriteAlias): Boolean = {
-    favEvent.tweet.forall { tweet =>
-      SnowflakeId.unixTimeMillisOptFromId(tweet.id).exists { millis =>
-        System.currentTimeMillis() - millis >= Configs.OldestTweetFavEventTimeInMillis
+  // Boolelonan chelonck to selonelon if thelon twelonelont is too old
+  privatelon delonf isTwelonelontTooOld(favelonvelonnt: FavoritelonAlias): Boolelonan = {
+    favelonvelonnt.twelonelont.forall { twelonelont =>
+      SnowflakelonId.unixTimelonMillisOptFromId(twelonelont.id).elonxists { millis =>
+        Systelonm.currelonntTimelonMillis() - millis >= Configs.OldelonstTwelonelontFavelonvelonntTimelonInMillis
       }
     }
   }
 
-  private def isTweetTooOldForLight(tweetId: Long): Boolean = {
-    SnowflakeId.unixTimeMillisOptFromId(tweetId).exists { millis =>
-      System.currentTimeMillis() - millis >= Configs.OldestTweetInLightIndexInMillis
+  privatelon delonf isTwelonelontTooOldForLight(twelonelontId: Long): Boolelonan = {
+    SnowflakelonId.unixTimelonMillisOptFromId(twelonelontId).elonxists { millis =>
+      Systelonm.currelonntTimelonMillis() - millis >= Configs.OldelonstTwelonelontInLightIndelonxInMillis
     }
   }
 

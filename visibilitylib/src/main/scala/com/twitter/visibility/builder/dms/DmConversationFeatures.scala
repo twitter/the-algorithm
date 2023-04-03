@@ -1,196 +1,196 @@
-package com.twitter.visibility.builder.dms
+packagelon com.twittelonr.visibility.buildelonr.dms
 
-import com.twitter.convosvc.thriftscala.ConversationQuery
-import com.twitter.convosvc.thriftscala.ConversationQueryOptions
-import com.twitter.convosvc.thriftscala.ConversationType
-import com.twitter.convosvc.thriftscala.TimelineLookupState
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.DmConversationId
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.dm_sources.DmConversationSource
-import com.twitter.visibility.features._
+import com.twittelonr.convosvc.thriftscala.ConvelonrsationQuelonry
+import com.twittelonr.convosvc.thriftscala.ConvelonrsationQuelonryOptions
+import com.twittelonr.convosvc.thriftscala.ConvelonrsationTypelon
+import com.twittelonr.convosvc.thriftscala.TimelonlinelonLookupStatelon
+import com.twittelonr.stitch.NotFound
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.common.DmConvelonrsationId
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.visibility.common.dm_sourcelons.DmConvelonrsationSourcelon
+import com.twittelonr.visibility.felonaturelons._
 
-case class InvalidDmConversationFeatureException(message: String) extends Exception(message)
+caselon class InvalidDmConvelonrsationFelonaturelonelonxcelonption(melonssagelon: String) elonxtelonnds elonxcelonption(melonssagelon)
 
-class DmConversationFeatures(
-  dmConversationSource: DmConversationSource,
-  authorFeatures: AuthorFeatures) {
+class DmConvelonrsationFelonaturelons(
+  dmConvelonrsationSourcelon: DmConvelonrsationSourcelon,
+  authorFelonaturelons: AuthorFelonaturelons) {
 
-  def forDmConversationId(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    _.withFeature(
-      DmConversationIsOneToOneConversation,
-      dmConversationIsOneToOneConversation(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationHasEmptyTimeline,
-        dmConversationHasEmptyTimeline(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationHasValidLastReadableEventId,
-        dmConversationHasValidLastReadableEventId(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationInfoExists,
-        dmConversationInfoExists(dmConversationId, viewerIdOpt))
-      .withFeature(
-        DmConversationTimelineExists,
-        dmConversationTimelineExists(dmConversationId, viewerIdOpt))
-      .withFeature(
-        AuthorIsSuspended,
-        dmConversationHasSuspendedParticipant(dmConversationId, viewerIdOpt))
-      .withFeature(
-        AuthorIsDeactivated,
-        dmConversationHasDeactivatedParticipant(dmConversationId, viewerIdOpt))
-      .withFeature(
-        AuthorIsErased,
-        dmConversationHasErasedParticipant(dmConversationId, viewerIdOpt))
-      .withFeature(
-        ViewerIsDmConversationParticipant,
-        viewerIsDmConversationParticipant(dmConversationId, viewerIdOpt))
+  delonf forDmConvelonrsationId(
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr =
+    _.withFelonaturelon(
+      DmConvelonrsationIsOnelonToOnelonConvelonrsation,
+      dmConvelonrsationIsOnelonToOnelonConvelonrsation(dmConvelonrsationId, vielonwelonrIdOpt))
+      .withFelonaturelon(
+        DmConvelonrsationHaselonmptyTimelonlinelon,
+        dmConvelonrsationHaselonmptyTimelonlinelon(dmConvelonrsationId, vielonwelonrIdOpt))
+      .withFelonaturelon(
+        DmConvelonrsationHasValidLastRelonadablelonelonvelonntId,
+        dmConvelonrsationHasValidLastRelonadablelonelonvelonntId(dmConvelonrsationId, vielonwelonrIdOpt))
+      .withFelonaturelon(
+        DmConvelonrsationInfoelonxists,
+        dmConvelonrsationInfoelonxists(dmConvelonrsationId, vielonwelonrIdOpt))
+      .withFelonaturelon(
+        DmConvelonrsationTimelonlinelonelonxists,
+        dmConvelonrsationTimelonlinelonelonxists(dmConvelonrsationId, vielonwelonrIdOpt))
+      .withFelonaturelon(
+        AuthorIsSuspelonndelond,
+        dmConvelonrsationHasSuspelonndelondParticipant(dmConvelonrsationId, vielonwelonrIdOpt))
+      .withFelonaturelon(
+        AuthorIsDelonactivatelond,
+        dmConvelonrsationHasDelonactivatelondParticipant(dmConvelonrsationId, vielonwelonrIdOpt))
+      .withFelonaturelon(
+        AuthorIselonraselond,
+        dmConvelonrsationHaselonraselondParticipant(dmConvelonrsationId, vielonwelonrIdOpt))
+      .withFelonaturelon(
+        VielonwelonrIsDmConvelonrsationParticipant,
+        vielonwelonrIsDmConvelonrsationParticipant(dmConvelonrsationId, vielonwelonrIdOpt))
 
-  def dmConversationIsOneToOneConversation(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource.getConversationType(dmConversationId, viewerId).flatMap {
-          case Some(ConversationType.OneToOneDm | ConversationType.SecretOneToOneDm) =>
-            Stitch.True
-          case None =>
-            Stitch.exception(InvalidDmConversationFeatureException("Conversation type not found"))
-          case _ => Stitch.False
+  delonf dmConvelonrsationIsOnelonToOnelonConvelonrsation(
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): Stitch[Boolelonan] =
+    vielonwelonrIdOpt match {
+      caselon Somelon(vielonwelonrId) =>
+        dmConvelonrsationSourcelon.gelontConvelonrsationTypelon(dmConvelonrsationId, vielonwelonrId).flatMap {
+          caselon Somelon(ConvelonrsationTypelon.OnelonToOnelonDm | ConvelonrsationTypelon.SeloncrelontOnelonToOnelonDm) =>
+            Stitch.Truelon
+          caselon Nonelon =>
+            Stitch.elonxcelonption(InvalidDmConvelonrsationFelonaturelonelonxcelonption("Convelonrsation typelon not found"))
+          caselon _ => Stitch.Falselon
         }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      caselon _ => Stitch.elonxcelonption(InvalidDmConvelonrsationFelonaturelonelonxcelonption("Vielonwelonr id missing"))
     }
 
-  private[dms] def dmConversationHasEmptyTimeline(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    dmConversationSource
-      .getConversationTimelineEntries(
-        dmConversationId,
-        ConversationQuery(
-          conversationId = Some(dmConversationId),
-          options = Some(
-            ConversationQueryOptions(
-              perspectivalUserId = viewerIdOpt,
-              hydrateEvents = Some(false),
-              supportsReactions = Some(true)
+  privatelon[dms] delonf dmConvelonrsationHaselonmptyTimelonlinelon(
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): Stitch[Boolelonan] =
+    dmConvelonrsationSourcelon
+      .gelontConvelonrsationTimelonlinelonelonntrielons(
+        dmConvelonrsationId,
+        ConvelonrsationQuelonry(
+          convelonrsationId = Somelon(dmConvelonrsationId),
+          options = Somelon(
+            ConvelonrsationQuelonryOptions(
+              pelonrspelonctivalUselonrId = vielonwelonrIdOpt,
+              hydratelonelonvelonnts = Somelon(falselon),
+              supportsRelonactions = Somelon(truelon)
             )
           ),
           maxCount = 10
         )
-      ).map(_.forall(entries => entries.isEmpty))
+      ).map(_.forall(elonntrielons => elonntrielons.iselonmpty))
 
-  private[dms] def dmConversationHasValidLastReadableEventId(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getConversationLastReadableEventId(dmConversationId, viewerId).map(_.exists(id =>
+  privatelon[dms] delonf dmConvelonrsationHasValidLastRelonadablelonelonvelonntId(
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): Stitch[Boolelonan] =
+    vielonwelonrIdOpt match {
+      caselon Somelon(vielonwelonrId) =>
+        dmConvelonrsationSourcelon
+          .gelontConvelonrsationLastRelonadablelonelonvelonntId(dmConvelonrsationId, vielonwelonrId).map(_.elonxists(id =>
             id > 0L))
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      caselon _ => Stitch.elonxcelonption(InvalidDmConvelonrsationFelonaturelonelonxcelonption("Vielonwelonr id missing"))
     }
 
-  private[dms] def dmConversationInfoExists(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getDmConversationInfo(dmConversationId, viewerId).map(_.isDefined)
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+  privatelon[dms] delonf dmConvelonrsationInfoelonxists(
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): Stitch[Boolelonan] =
+    vielonwelonrIdOpt match {
+      caselon Somelon(vielonwelonrId) =>
+        dmConvelonrsationSourcelon
+          .gelontDmConvelonrsationInfo(dmConvelonrsationId, vielonwelonrId).map(_.isDelonfinelond)
+      caselon _ => Stitch.elonxcelonption(InvalidDmConvelonrsationFelonaturelonelonxcelonption("Vielonwelonr id missing"))
     }
 
-  private[dms] def dmConversationTimelineExists(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    dmConversationSource
-      .getConversationTimelineState(
-        dmConversationId,
-        ConversationQuery(
-          conversationId = Some(dmConversationId),
-          options = Some(
-            ConversationQueryOptions(
-              perspectivalUserId = viewerIdOpt,
-              hydrateEvents = Some(false),
-              supportsReactions = Some(true)
+  privatelon[dms] delonf dmConvelonrsationTimelonlinelonelonxists(
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): Stitch[Boolelonan] =
+    dmConvelonrsationSourcelon
+      .gelontConvelonrsationTimelonlinelonStatelon(
+        dmConvelonrsationId,
+        ConvelonrsationQuelonry(
+          convelonrsationId = Somelon(dmConvelonrsationId),
+          options = Somelon(
+            ConvelonrsationQuelonryOptions(
+              pelonrspelonctivalUselonrId = vielonwelonrIdOpt,
+              hydratelonelonvelonnts = Somelon(falselon),
+              supportsRelonactions = Somelon(truelon)
             )
           ),
           maxCount = 1
         )
       ).map {
-        case Some(TimelineLookupState.NotFound) | None => false
-        case _ => true
+        caselon Somelon(TimelonlinelonLookupStatelon.NotFound) | Nonelon => falselon
+        caselon _ => truelon
       }
 
-  private[dms] def anyConversationParticipantMatchesCondition(
-    condition: UserId => Stitch[Boolean],
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getConversationParticipantIds(dmConversationId, viewerId).flatMap {
-            case Some(participants) =>
+  privatelon[dms] delonf anyConvelonrsationParticipantMatchelonsCondition(
+    condition: UselonrId => Stitch[Boolelonan],
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): Stitch[Boolelonan] =
+    vielonwelonrIdOpt match {
+      caselon Somelon(vielonwelonrId) =>
+        dmConvelonrsationSourcelon
+          .gelontConvelonrsationParticipantIds(dmConvelonrsationId, vielonwelonrId).flatMap {
+            caselon Somelon(participants) =>
               Stitch
-                .collect(participants.map(condition)).map(_.contains(true)).rescue {
-                  case NotFound =>
-                    Stitch.exception(InvalidDmConversationFeatureException("User not found"))
+                .collelonct(participants.map(condition)).map(_.contains(truelon)).relonscuelon {
+                  caselon NotFound =>
+                    Stitch.elonxcelonption(InvalidDmConvelonrsationFelonaturelonelonxcelonption("Uselonr not found"))
                 }
-            case _ => Stitch.False
+            caselon _ => Stitch.Falselon
           }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      caselon _ => Stitch.elonxcelonption(InvalidDmConvelonrsationFelonaturelonelonxcelonption("Vielonwelonr id missing"))
     }
 
-  def dmConversationHasSuspendedParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    anyConversationParticipantMatchesCondition(
-      participant => authorFeatures.authorIsSuspended(participant),
-      dmConversationId,
-      viewerIdOpt)
+  delonf dmConvelonrsationHasSuspelonndelondParticipant(
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): Stitch[Boolelonan] =
+    anyConvelonrsationParticipantMatchelonsCondition(
+      participant => authorFelonaturelons.authorIsSuspelonndelond(participant),
+      dmConvelonrsationId,
+      vielonwelonrIdOpt)
 
-  def dmConversationHasDeactivatedParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    anyConversationParticipantMatchesCondition(
-      participant => authorFeatures.authorIsDeactivated(participant),
-      dmConversationId,
-      viewerIdOpt)
+  delonf dmConvelonrsationHasDelonactivatelondParticipant(
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): Stitch[Boolelonan] =
+    anyConvelonrsationParticipantMatchelonsCondition(
+      participant => authorFelonaturelons.authorIsDelonactivatelond(participant),
+      dmConvelonrsationId,
+      vielonwelonrIdOpt)
 
-  def dmConversationHasErasedParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    anyConversationParticipantMatchesCondition(
-      participant => authorFeatures.authorIsErased(participant),
-      dmConversationId,
-      viewerIdOpt)
+  delonf dmConvelonrsationHaselonraselondParticipant(
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): Stitch[Boolelonan] =
+    anyConvelonrsationParticipantMatchelonsCondition(
+      participant => authorFelonaturelons.authorIselonraselond(participant),
+      dmConvelonrsationId,
+      vielonwelonrIdOpt)
 
-  def viewerIsDmConversationParticipant(
-    dmConversationId: DmConversationId,
-    viewerIdOpt: Option[UserId]
-  ): Stitch[Boolean] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        dmConversationSource
-          .getConversationParticipantIds(dmConversationId, viewerId).map {
-            case Some(participants) => participants.contains(viewerId)
-            case _ => false
+  delonf vielonwelonrIsDmConvelonrsationParticipant(
+    dmConvelonrsationId: DmConvelonrsationId,
+    vielonwelonrIdOpt: Option[UselonrId]
+  ): Stitch[Boolelonan] =
+    vielonwelonrIdOpt match {
+      caselon Somelon(vielonwelonrId) =>
+        dmConvelonrsationSourcelon
+          .gelontConvelonrsationParticipantIds(dmConvelonrsationId, vielonwelonrId).map {
+            caselon Somelon(participants) => participants.contains(vielonwelonrId)
+            caselon _ => falselon
           }
-      case _ => Stitch.exception(InvalidDmConversationFeatureException("Viewer id missing"))
+      caselon _ => Stitch.elonxcelonption(InvalidDmConvelonrsationFelonaturelonelonxcelonption("Vielonwelonr id missing"))
     }
 }

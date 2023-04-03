@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.labelonl
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.label._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.labelonl._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class LabelDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class LabelonlDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(labelDisplayType: LabelDisplayType): urt.LabelDisplayType = labelDisplayType match {
-    case InlineHeaderLabelDisplayType => urt.LabelDisplayType.InlineHeader
-    case OtherRepliesSectionHeaderLabelDisplayType => urt.LabelDisplayType.OtherRepliesSectionHeader
+  delonf apply(labelonlDisplayTypelon: LabelonlDisplayTypelon): urt.LabelonlDisplayTypelon = labelonlDisplayTypelon match {
+    caselon InlinelonHelonadelonrLabelonlDisplayTypelon => urt.LabelonlDisplayTypelon.InlinelonHelonadelonr
+    caselon OthelonrRelonplielonsSelonctionHelonadelonrLabelonlDisplayTypelon => urt.LabelonlDisplayTypelon.OthelonrRelonplielonsSelonctionHelonadelonr
   }
 }

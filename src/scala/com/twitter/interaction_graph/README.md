@@ -1,19 +1,19 @@
-## Real Graph (bqe)
+## Relonal Graph (bqelon)
 
-This project builds a machine learning model using a gradient boosting tree classifier to predict the likelihood of a Twitter user interacting with another user.
+This projelonct builds a machinelon lelonarning modelonl using a gradielonnt boosting trelonelon classifielonr to prelondict thelon likelonlihood of a Twittelonr uselonr intelonracting with anothelonr uselonr.
 
-The algorithm works by first creating a labeled dataset of user interactions from a graph of Twitter users. This graph is represented in a BigQuery table where each row represents a directed edge between two users, along with various features such as the number of tweets, follows, favorites, and other metrics related to user behavior.
+Thelon algorithm works by first crelonating a labelonlelond dataselont of uselonr intelonractions from a graph of Twittelonr uselonrs. This graph is relonprelonselonntelond in a BigQuelonry tablelon whelonrelon elonach row relonprelonselonnts a direlonctelond elondgelon belontwelonelonn two uselonrs, along with various felonaturelons such as thelon numbelonr of twelonelonts, follows, favoritelons, and othelonr melontrics relonlatelond to uselonr belonhavior.
 
-To create the labeled dataset, the algorithm first selects a set of candidate interactions by identifying all edges that were active during a certain time period. It then joins this candidate set with a set of labeled interactions that occurred one day after the candidate period. Positive interactions are labeled as "1" and negative interactions are labeled as "0". The resulting labeled dataset is then used to train a boosted tree classifier model.
+To crelonatelon thelon labelonlelond dataselont, thelon algorithm first selonleloncts a selont of candidatelon intelonractions by idelonntifying all elondgelons that welonrelon activelon during a celonrtain timelon pelonriod. It thelonn joins this candidatelon selont with a selont of labelonlelond intelonractions that occurrelond onelon day aftelonr thelon candidatelon pelonriod. Positivelon intelonractions arelon labelonlelond as "1" and nelongativelon intelonractions arelon labelonlelond as "0". Thelon relonsulting labelonlelond dataselont is thelonn uselond to train a boostelond trelonelon classifielonr modelonl.
 
-The model is trained using the labeled dataset and various hyperparameters, including the maximum number of iterations and the subsample rate. The algorithm splits the labeled dataset into training and testing sets based on the source user's ID, using a custom data split method.
+Thelon modelonl is trainelond using thelon labelonlelond dataselont and various hypelonrparamelontelonrs, including thelon maximum numbelonr of itelonrations and thelon subsamplelon ratelon. Thelon algorithm splits thelon labelonlelond dataselont into training and telonsting selonts baselond on thelon sourcelon uselonr's ID, using a custom data split melonthod.
 
-Once the model is trained, it can be used to generate a score estimating the probability of a user interacting with another user.
+Oncelon thelon modelonl is trainelond, it can belon uselond to gelonnelonratelon a scorelon elonstimating thelon probability of a uselonr intelonracting with anothelonr uselonr.
 
-## Real Graph (scio)
+## Relonal Graph (scio)
 
-This project aggregates the number of interactions between pairs of users on Twitter. On a daily basis, there are multiple dataflow jobs that perform this aggregation, which includes public engagements like favorites, retweets, follows, etc. as well as private engagements like profile views, tweet clicks, and whether or not a user has another user in their address book (given a user opt-in to share address book).
+This projelonct aggrelongatelons thelon numbelonr of intelonractions belontwelonelonn pairs of uselonrs on Twittelonr. On a daily basis, thelonrelon arelon multiplelon dataflow jobs that pelonrform this aggrelongation, which includelons public elonngagelonmelonnts likelon favoritelons, relontwelonelonts, follows, elontc. as welonll as privatelon elonngagelonmelonnts likelon profilelon vielonws, twelonelont clicks, and whelonthelonr or not a uselonr has anothelonr uselonr in thelonir addrelonss book (givelonn a uselonr opt-in to sharelon addrelonss book).
 
-After the daily aggregation of interactions, there is a rollup job that aggregates yesterday's aggregation with today's interactions. The rollup job outputs several results, including the daily count of interactions per interaction types between a pair of users, the daily incoming interactions made on a user per interaction type, the rollup aggregation of interactions as a decayed sum between a pair of users, and the rollup aggregation of incoming interactions made on a user.
+Aftelonr thelon daily aggrelongation of intelonractions, thelonrelon is a rollup job that aggrelongatelons yelonstelonrday's aggrelongation with today's intelonractions. Thelon rollup job outputs selonvelonral relonsults, including thelon daily count of intelonractions pelonr intelonraction typelons belontwelonelonn a pair of uselonrs, thelon daily incoming intelonractions madelon on a uselonr pelonr intelonraction typelon, thelon rollup aggrelongation of intelonractions as a deloncayelond sum belontwelonelonn a pair of uselonrs, and thelon rollup aggrelongation of incoming intelonractions madelon on a uselonr.
 
-Finally, the rollup job outputs the ML predicted interaction score between the pair of users alongside the rollup aggregation of interactions as a decayed sum between them.
+Finally, thelon rollup job outputs thelon ML prelondictelond intelonraction scorelon belontwelonelonn thelon pair of uselonrs alongsidelon thelon rollup aggrelongation of intelonractions as a deloncayelond sum belontwelonelonn thelonm.

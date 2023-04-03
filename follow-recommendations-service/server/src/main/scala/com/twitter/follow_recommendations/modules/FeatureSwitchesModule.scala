@@ -1,85 +1,85 @@
-package com.twitter.follow_recommendations.modules
+packagelon com.twittelonr.follow_reloncommelonndations.modulelons
 
-import com.google.inject.Provides
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.featureswitches.v2.Feature
-import com.twitter.featureswitches.v2.FeatureFilter
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants.PRODUCER_SIDE_FEATURE_SWITCHES
-import com.twitter.inject.TwitterModule
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.felonaturelonswitchelons.v2.Felonaturelon
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonFiltelonr
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.felonaturelonswitchelons.v2.buildelonr.FelonaturelonSwitchelonsBuildelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants.PRODUCelonR_SIDelon_FelonATURelon_SWITCHelonS
+import com.twittelonr.injelonct.TwittelonrModulelon
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object FeaturesSwitchesModule extends TwitterModule {
-  private val DefaultConfigRepoPath = "/usr/local/config"
-  private val FeaturesPath = "/features/onboarding/follow-recommendations-service/main"
-  val isLocal = flag("configrepo.local", false, "Is the server running locally or in a DC")
-  val localConfigRepoPath = flag(
-    "local.configrepo",
-    System.getProperty("user.home") + "/workspace/config",
-    "Path to your local config repo"
+objelonct FelonaturelonsSwitchelonsModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon val DelonfaultConfigRelonpoPath = "/usr/local/config"
+  privatelon val FelonaturelonsPath = "/felonaturelons/onboarding/follow-reloncommelonndations-selonrvicelon/main"
+  val isLocal = flag("configrelonpo.local", falselon, "Is thelon selonrvelonr running locally or in a DC")
+  val localConfigRelonpoPath = flag(
+    "local.configrelonpo",
+    Systelonm.gelontPropelonrty("uselonr.homelon") + "/workspacelon/config",
+    "Path to your local config relonpo"
   )
 
-  @Provides
-  @Singleton
-  def providesFeatureSwitches(
-    abDecider: LoggingABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches = {
-    val configRepoPath = if (isLocal()) {
-      localConfigRepoPath()
-    } else {
-      DefaultConfigRepoPath
+  @Providelons
+  @Singlelonton
+  delonf providelonsFelonaturelonSwitchelons(
+    abDeloncidelonr: LoggingABDeloncidelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): FelonaturelonSwitchelons = {
+    val configRelonpoPath = if (isLocal()) {
+      localConfigRelonpoPath()
+    } elonlselon {
+      DelonfaultConfigRelonpoPath
     }
 
-    FeatureSwitchesBuilder
-      .createDefault(FeaturesPath, abDecider, Some(statsReceiver))
-      .configRepoAbsPath(configRepoPath)
-      .serviceDetailsFromAurora()
+    FelonaturelonSwitchelonsBuildelonr
+      .crelonatelonDelonfault(FelonaturelonsPath, abDeloncidelonr, Somelon(statsReloncelonivelonr))
+      .configRelonpoAbsPath(configRelonpoPath)
+      .selonrvicelonDelontailsFromAurora()
       .build()
   }
 
-  @Provides
-  @Singleton
-  @Named(PRODUCER_SIDE_FEATURE_SWITCHES)
-  def providesProducerFeatureSwitches(
-    abDecider: LoggingABDecider,
-    statsReceiver: StatsReceiver
-  ): FeatureSwitches = {
-    val configRepoPath = if (isLocal()) {
-      localConfigRepoPath()
-    } else {
-      DefaultConfigRepoPath
+  @Providelons
+  @Singlelonton
+  @Namelond(PRODUCelonR_SIDelon_FelonATURelon_SWITCHelonS)
+  delonf providelonsProducelonrFelonaturelonSwitchelons(
+    abDeloncidelonr: LoggingABDeloncidelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): FelonaturelonSwitchelons = {
+    val configRelonpoPath = if (isLocal()) {
+      localConfigRelonpoPath()
+    } elonlselon {
+      DelonfaultConfigRelonpoPath
     }
 
     /**
-     * Feature Switches evaluate all tied FS Keys on Params construction time, which is very inefficient
-     * for producer/candidate side holdbacks because we have 100s of candidates, and 100s of FS which result
-     * in 10,000 FS evaluations when we want 1 per candidate (100 total), so we create a new FS Client
-     * which has a [[ProducerFeatureFilter]] set for feature filter to reduce the FS Keys we evaluate.
+     * Felonaturelon Switchelons elonvaluatelon all tielond FS Kelonys on Params construction timelon, which is velonry inelonfficielonnt
+     * for producelonr/candidatelon sidelon holdbacks beloncauselon welon havelon 100s of candidatelons, and 100s of FS which relonsult
+     * in 10,000 FS elonvaluations whelonn welon want 1 pelonr candidatelon (100 total), so welon crelonatelon a nelonw FS Clielonnt
+     * which has a [[ProducelonrFelonaturelonFiltelonr]] selont for felonaturelon filtelonr to relonducelon thelon FS Kelonys welon elonvaluatelon.
      */
-    FeatureSwitchesBuilder
-      .createDefault(FeaturesPath, abDecider, Some(statsReceiver.scope("producer_side_fs")))
-      .configRepoAbsPath(configRepoPath)
-      .serviceDetailsFromAurora()
-      .addFeatureFilter(ProducerFeatureFilter)
+    FelonaturelonSwitchelonsBuildelonr
+      .crelonatelonDelonfault(FelonaturelonsPath, abDeloncidelonr, Somelon(statsReloncelonivelonr.scopelon("producelonr_sidelon_fs")))
+      .configRelonpoAbsPath(configRelonpoPath)
+      .selonrvicelonDelontailsFromAurora()
+      .addFelonaturelonFiltelonr(ProducelonrFelonaturelonFiltelonr)
       .build()
   }
 }
 
-case object ProducerFeatureFilter extends FeatureFilter {
-  private val AllowedKeys = Set(
-    "post_nux_ml_flow_candidate_user_scorer_id",
-    "frs_receiver_holdback_keep_social_user_candidate",
-    "frs_receiver_holdback_keep_user_candidate")
+caselon objelonct ProducelonrFelonaturelonFiltelonr elonxtelonnds FelonaturelonFiltelonr {
+  privatelon val AllowelondKelonys = Selont(
+    "post_nux_ml_flow_candidatelon_uselonr_scorelonr_id",
+    "frs_reloncelonivelonr_holdback_kelonelonp_social_uselonr_candidatelon",
+    "frs_reloncelonivelonr_holdback_kelonelonp_uselonr_candidatelon")
 
-  override def filter(feature: Feature): Option[Feature] = {
-    if (AllowedKeys.exists(feature.parameters.contains)) {
-      Some(feature)
-    } else {
-      None
+  ovelonrridelon delonf filtelonr(felonaturelon: Felonaturelon): Option[Felonaturelon] = {
+    if (AllowelondKelonys.elonxists(felonaturelon.paramelontelonrs.contains)) {
+      Somelon(felonaturelon)
+    } elonlselon {
+      Nonelon
     }
   }
 }

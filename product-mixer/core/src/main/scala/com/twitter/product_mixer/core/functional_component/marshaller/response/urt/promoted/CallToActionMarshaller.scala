@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.CallToAction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.CallToAction
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CallToActionMarshaller {
-  def apply(callToAction: CallToAction): urt.CallToAction = {
+@Singlelonton
+class CallToActionMarshallelonr {
+  delonf apply(callToAction: CallToAction): urt.CallToAction = {
     urt.CallToAction(
-      callToActionType = callToAction.callToActionType,
+      callToActionTypelon = callToAction.callToActionTypelon,
       url = callToAction.url
     )
   }

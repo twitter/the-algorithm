@@ -1,85 +1,85 @@
-package com.twitter.home_mixer.product.following.param
+packagelon com.twittelonr.homelon_mixelonr.product.following.param
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module.WhoToFollowModuleDisplayType
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon.WhoToFollowModulelonDisplayTypelon
+import com.twittelonr.timelonlinelons.configapi.DurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.util.Duration
 
-object FollowingParam {
-  val SupportedClientFSName = "following_supported_client"
+objelonct FollowingParam {
+  val SupportelondClielonntFSNamelon = "following_supportelond_clielonnt"
 
-  object ServerMaxResultsParam
-      extends FSBoundedParam[Int](
-        name = "following_server_max_results",
-        default = 100,
+  objelonct SelonrvelonrMaxRelonsultsParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "following_selonrvelonr_max_relonsults",
+        delonfault = 100,
         min = 1,
         max = 500
       )
 
-  object EnableWhoToFollowCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "following_enable_who_to_follow",
-        default = true
+  objelonct elonnablelonWhoToFollowCandidatelonPipelonlinelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "following_elonnablelon_who_to_follow",
+        delonfault = truelon
       )
 
-  object EnableAdsCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "following_enable_ads",
-        default = true
+  objelonct elonnablelonAdsCandidatelonPipelonlinelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "following_elonnablelon_ads",
+        delonfault = truelon
       )
 
-  object EnableFlipInjectionModuleCandidatePipelineParam
-      extends FSParam[Boolean](
-        name = "following_enable_flip_inline_injection_module",
-        default = true
+  objelonct elonnablelonFlipInjelonctionModulelonCandidatelonPipelonlinelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "following_elonnablelon_flip_inlinelon_injelonction_modulelon",
+        delonfault = truelon
       )
 
-  object FlipInlineInjectionModulePosition
-      extends FSBoundedParam[Int](
-        name = "following_flip_inline_injection_module_position",
-        default = 0,
+  objelonct FlipInlinelonInjelonctionModulelonPosition
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "following_flip_inlinelon_injelonction_modulelon_position",
+        delonfault = 0,
         min = 0,
         max = 1000
       )
 
-  object WhoToFollowPositionParam
-      extends FSBoundedParam[Int](
-        name = "following_who_to_follow_position",
-        default = 5,
+  objelonct WhoToFollowPositionParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "following_who_to_follow_position",
+        delonfault = 5,
         min = 0,
         max = 99
       )
 
-  object WhoToFollowMinInjectionIntervalParam
-      extends FSBoundedParam[Duration](
-        "following_who_to_follow_min_injection_interval_in_minutes",
-        default = 1800.minutes,
-        min = 0.minutes,
-        max = 6000.minutes)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMinutes
+  objelonct WhoToFollowMinInjelonctionIntelonrvalParam
+      elonxtelonnds FSBoundelondParam[Duration](
+        "following_who_to_follow_min_injelonction_intelonrval_in_minutelons",
+        delonfault = 1800.minutelons,
+        min = 0.minutelons,
+        max = 6000.minutelons)
+      with HasDurationConvelonrsion {
+    ovelonrridelon val durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromMinutelons
   }
 
-  object WhoToFollowDisplayTypeIdParam
-      extends FSEnumParam[WhoToFollowModuleDisplayType.type](
-        name = "following_enable_who_to_follow_display_type_id",
-        default = WhoToFollowModuleDisplayType.Vertical,
-        enum = WhoToFollowModuleDisplayType
+  objelonct WhoToFollowDisplayTypelonIdParam
+      elonxtelonnds FSelonnumParam[WhoToFollowModulelonDisplayTypelon.typelon](
+        namelon = "following_elonnablelon_who_to_follow_display_typelon_id",
+        delonfault = WhoToFollowModulelonDisplayTypelon.Velonrtical,
+        elonnum = WhoToFollowModulelonDisplayTypelon
       )
 
-  object WhoToFollowDisplayLocationParam
-      extends FSParam[String](
-        name = "following_who_to_follow_display_location",
-        default = "timeline_reverse_chron"
+  objelonct WhoToFollowDisplayLocationParam
+      elonxtelonnds FSParam[String](
+        namelon = "following_who_to_follow_display_location",
+        delonfault = "timelonlinelon_relonvelonrselon_chron"
       )
 
-  object EnableFastAds
-      extends FSParam[Boolean](
-        name = "following_enable_fast_ads",
-        default = true
+  objelonct elonnablelonFastAds
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "following_elonnablelon_fast_ads",
+        delonfault = truelon
       )
 }

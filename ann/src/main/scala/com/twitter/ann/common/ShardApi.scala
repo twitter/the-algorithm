@@ -1,86 +1,86 @@
-package com.twitter.ann.common
+packagelon com.twittelonr.ann.common
 
-import com.twitter.ann.common.EmbeddingType.EmbeddingVector
-import com.twitter.util.Future
+import com.twittelonr.ann.common.elonmbelonddingTypelon.elonmbelonddingVelonctor
+import com.twittelonr.util.Futurelon
 import scala.util.Random
 
 trait ShardFunction[T] {
 
   /**
-   * Shard function to shard embedding based on total shards and embedding data.
+   * Shard function to shard elonmbelondding baselond on total shards and elonmbelondding data.
    * @param shards
-   * @param entity
-   * @return Shard index, from 0(Inclusive) to shards(Exclusive))
+   * @param elonntity
+   * @relonturn Shard indelonx, from 0(Inclusivelon) to shards(elonxclusivelon))
    */
-  def apply(shards: Int, entity: EntityEmbedding[T]): Int
+  delonf apply(shards: Int, elonntity: elonntityelonmbelondding[T]): Int
 }
 
 /**
- * Randomly shards the embeddings based on number of total shards.
+ * Randomly shards thelon elonmbelonddings baselond on numbelonr of total shards.
  */
-class RandomShardFunction[T] extends ShardFunction[T] {
-  def apply(shards: Int, entity: EntityEmbedding[T]): Int = {
-    Random.nextInt(shards)
+class RandomShardFunction[T] elonxtelonnds ShardFunction[T] {
+  delonf apply(shards: Int, elonntity: elonntityelonmbelondding[T]): Int = {
+    Random.nelonxtInt(shards)
   }
 }
 
 /**
- * Sharded appendable to shard the embedding into different appendable indices
- * @param indices: Sequence of appendable indices
- * @param shardFn: Shard function to shard data into different indices
+ * Shardelond appelonndablelon to shard thelon elonmbelondding into diffelonrelonnt appelonndablelon indicelons
+ * @param indicelons: Selonquelonncelon of appelonndablelon indicelons
+ * @param shardFn: Shard function to shard data into diffelonrelonnt indicelons
  * @param shards: Total shards
- * @tparam T: Type of id.
+ * @tparam T: Typelon of id.
  */
-class ShardedAppendable[T, P <: RuntimeParams, D <: Distance[D]](
-  indices: Seq[Appendable[T, P, D]],
+class ShardelondAppelonndablelon[T, P <: RuntimelonParams, D <: Distancelon[D]](
+  indicelons: Selonq[Appelonndablelon[T, P, D]],
   shardFn: ShardFunction[T],
   shards: Int)
-    extends Appendable[T, P, D] {
-  override def append(entity: EntityEmbedding[T]): Future[Unit] = {
-    val shard = shardFn(shards, entity)
-    val index = indices(shard)
-    index.append(entity)
+    elonxtelonnds Appelonndablelon[T, P, D] {
+  ovelonrridelon delonf appelonnd(elonntity: elonntityelonmbelondding[T]): Futurelon[Unit] = {
+    val shard = shardFn(shards, elonntity)
+    val indelonx = indicelons(shard)
+    indelonx.appelonnd(elonntity)
   }
 
-  override def toQueryable: Queryable[T, P, D] = {
-    new ComposedQueryable[T, P, D](indices.map(_.toQueryable))
+  ovelonrridelon delonf toQuelonryablelon: Quelonryablelon[T, P, D] = {
+    nelonw ComposelondQuelonryablelon[T, P, D](indicelons.map(_.toQuelonryablelon))
   }
 }
 
 /**
- * Composition of sequence of queryable indices, it queries all the indices,
- * and merges the result in memory to return the K nearest neighbours
- * @param indices: Sequence of queryable indices
- * @tparam T: Type of id
- * @tparam P: Type of runtime param
- * @tparam D: Type of distance metric
+ * Composition of selonquelonncelon of quelonryablelon indicelons, it quelonrielons all thelon indicelons,
+ * and melonrgelons thelon relonsult in melonmory to relonturn thelon K nelonarelonst nelonighbours
+ * @param indicelons: Selonquelonncelon of quelonryablelon indicelons
+ * @tparam T: Typelon of id
+ * @tparam P: Typelon of runtimelon param
+ * @tparam D: Typelon of distancelon melontric
  */
-class ComposedQueryable[T, P <: RuntimeParams, D <: Distance[D]](
-  indices: Seq[Queryable[T, P, D]])
-    extends Queryable[T, P, D] {
-  private[this] val ordering =
-    Ordering.by[NeighborWithDistance[T, D], D](_.distance)
-  override def query(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[T]] = {
-    val neighbours = queryWithDistance(embedding, numOfNeighbors, runtimeParams)
-    neighbours.map(list => list.map(nn => nn.neighbor))
+class ComposelondQuelonryablelon[T, P <: RuntimelonParams, D <: Distancelon[D]](
+  indicelons: Selonq[Quelonryablelon[T, P, D]])
+    elonxtelonnds Quelonryablelon[T, P, D] {
+  privatelon[this] val ordelonring =
+    Ordelonring.by[NelonighborWithDistancelon[T, D], D](_.distancelon)
+  ovelonrridelon delonf quelonry(
+    elonmbelondding: elonmbelonddingVelonctor,
+    numOfNelonighbors: Int,
+    runtimelonParams: P
+  ): Futurelon[List[T]] = {
+    val nelonighbours = quelonryWithDistancelon(elonmbelondding, numOfNelonighbors, runtimelonParams)
+    nelonighbours.map(list => list.map(nn => nn.nelonighbor))
   }
 
-  override def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[NeighborWithDistance[T, D]]] = {
-    val futures = Future.collect(
-      indices.map(index => index.queryWithDistance(embedding, numOfNeighbors, runtimeParams))
+  ovelonrridelon delonf quelonryWithDistancelon(
+    elonmbelondding: elonmbelonddingVelonctor,
+    numOfNelonighbors: Int,
+    runtimelonParams: P
+  ): Futurelon[List[NelonighborWithDistancelon[T, D]]] = {
+    val futurelons = Futurelon.collelonct(
+      indicelons.map(indelonx => indelonx.quelonryWithDistancelon(elonmbelondding, numOfNelonighbors, runtimelonParams))
     )
-    futures.map { list =>
-      list.flatten
-        .sorted(ordering)
-        .take(numOfNeighbors)
+    futurelons.map { list =>
+      list.flattelonn
+        .sortelond(ordelonring)
+        .takelon(numOfNelonighbors)
         .toList
     }
   }

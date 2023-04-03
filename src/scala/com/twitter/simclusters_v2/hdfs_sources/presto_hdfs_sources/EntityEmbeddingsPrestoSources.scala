@@ -1,10 +1,10 @@
-package com.twitter.simclusters_v2.hdfs_sources.presto_hdfs_sources
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.prelonsto_hdfs_sourcelons
 
-object EntityEmbeddingsPrestoSources {
+objelonct elonntityelonmbelonddingsPrelonstoSourcelons {
 
-  final val SemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    SemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset
+  final val SelonmanticCorelonPelonrLanguagelonSimClustelonrselonmbelonddingsDataselont =
+    SelonmanticCorelonPelonrLanguagelonSimclustelonrselonmbelonddingsPrelonstoScalaDataselont
 
-  final val ReverseIndexSemanticCorePerLanguageSimClustersEmbeddingsDataset =
-    ReverseIndexSemanticCorePerLanguageSimclustersEmbeddingsPrestoScalaDataset
+  final val RelonvelonrselonIndelonxSelonmanticCorelonPelonrLanguagelonSimClustelonrselonmbelonddingsDataselont =
+    RelonvelonrselonIndelonxSelonmanticCorelonPelonrLanguagelonSimclustelonrselonmbelonddingsPrelonstoScalaDataselont
 }

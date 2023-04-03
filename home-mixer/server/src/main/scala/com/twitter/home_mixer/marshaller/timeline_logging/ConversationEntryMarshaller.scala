@@ -1,16 +1,16 @@
-package com.twitter.home_mixer.marshaller.timeline_logging
+packagelon com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelon_logging
 
-import com.twitter.home_mixer.model.HomeFeatures.ScoreFeature
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.timelines.timeline_logging.{thriftscala => thriftlog}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScorelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.timelonlinelons.timelonlinelon_logging.{thriftscala => thriftlog}
 
-object ConversationEntryMarshaller {
+objelonct ConvelonrsationelonntryMarshallelonr {
 
-  def apply(entry: TweetItem, candidate: ItemCandidateWithDetails): thriftlog.ConversationEntry =
-    thriftlog.ConversationEntry(
-      displayedTweetId = entry.id,
-      displayType = Some(entry.displayType.toString),
-      score = candidate.features.getOrElse(ScoreFeature, None)
+  delonf apply(elonntry: TwelonelontItelonm, candidatelon: ItelonmCandidatelonWithDelontails): thriftlog.Convelonrsationelonntry =
+    thriftlog.Convelonrsationelonntry(
+      displayelondTwelonelontId = elonntry.id,
+      displayTypelon = Somelon(elonntry.displayTypelon.toString),
+      scorelon = candidatelon.felonaturelons.gelontOrelonlselon(ScorelonFelonaturelon, Nonelon)
     )
 }

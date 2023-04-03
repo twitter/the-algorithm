@@ -1,21 +1,21 @@
-package com.twitter.simclusters_v2.common.clustering
+packagelon com.twittelonr.simclustelonrs_v2.common.clustelonring
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.NelonighborWithWelonights
 
-class MaxFavScoreRepresentativeSelectionMethod[T] extends ClusterRepresentativeSelectionMethod[T] {
+class MaxFavScorelonRelonprelonselonntativelonSelonlelonctionMelonthod[T] elonxtelonnds ClustelonrRelonprelonselonntativelonSelonlelonctionMelonthod[T] {
 
   /**
-   * Identify the member with largest favScoreHalfLife100Days and return it.
+   * Idelonntify thelon melonmbelonr with largelonst favScorelonHalfLifelon100Days and relonturn it.
    *
-   * @param cluster A set of NeighborWithWeights.
-   * @param embeddings A map of producer ID -> embedding.
+   * @param clustelonr A selont of NelonighborWithWelonights.
+   * @param elonmbelonddings A map of producelonr ID -> elonmbelondding.
    */
-  def selectClusterRepresentative(
-    cluster: Set[NeighborWithWeights],
-    embeddings: Map[UserId, T],
-  ): UserId = {
-    val key = cluster.maxBy { x: NeighborWithWeights => x.favScoreHalfLife100Days.getOrElse(0.0) }
-    key.neighborId
+  delonf selonlelonctClustelonrRelonprelonselonntativelon(
+    clustelonr: Selont[NelonighborWithWelonights],
+    elonmbelonddings: Map[UselonrId, T],
+  ): UselonrId = {
+    val kelony = clustelonr.maxBy { x: NelonighborWithWelonights => x.favScorelonHalfLifelon100Days.gelontOrelonlselon(0.0) }
+    kelony.nelonighborId
   }
 }

@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.component_library.candidate_source.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.ads
 
-import com.twitter.adserver.thriftscala.AdImpression
-import com.twitter.adserver.thriftscala.AdRequestParams
-import com.twitter.adserver.thriftscala.NewAdServer
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.adselonrvelonr.thriftscala.AdImprelonssion
+import com.twittelonr.adselonrvelonr.thriftscala.AdRelonquelonstParams
+import com.twittelonr.adselonrvelonr.thriftscala.NelonwAdSelonrvelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class AdsProdThriftCandidateSource @Inject() (
-  adServerClient: NewAdServer.MethodPerEndpoint)
-    extends CandidateSource[AdRequestParams, AdImpression] {
+@Singlelonton
+class AdsProdThriftCandidatelonSourcelon @Injelonct() (
+  adSelonrvelonrClielonnt: NelonwAdSelonrvelonr.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelon[AdRelonquelonstParams, AdImprelonssion] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("AdsProdThrift")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr("AdsProdThrift")
 
-  override def apply(request: AdRequestParams): Stitch[Seq[AdImpression]] =
-    Stitch.callFuture(adServerClient.makeAdRequest(request)).map(_.impressions)
+  ovelonrridelon delonf apply(relonquelonst: AdRelonquelonstParams): Stitch[Selonq[AdImprelonssion]] =
+    Stitch.callFuturelon(adSelonrvelonrClielonnt.makelonAdRelonquelonst(relonquelonst)).map(_.imprelonssions)
 }

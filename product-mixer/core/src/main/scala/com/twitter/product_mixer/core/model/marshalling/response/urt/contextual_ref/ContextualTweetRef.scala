@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf
 
-case class ContextualTweetRef(
+caselon class ContelonxtualTwelonelontRelonf(
   id: Long,
-  hydrationContext: Option[TweetHydrationContext])
+  hydrationContelonxt: Option[TwelonelontHydrationContelonxt])

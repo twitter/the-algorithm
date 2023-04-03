@@ -1,65 +1,65 @@
-package com.twitter.search.common.search.termination;
+packagelon com.twittelonr.selonarch.common.selonarch.telonrmination;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.search.DocIdTracker;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.common.search.TerminationTracker;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.selonarch.DocIdTrackelonr;
+import com.twittelonr.selonarch.common.selonarch.elonarlyTelonrminationStatelon;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
 
 /**
- * QueryTimeoutImpl provides a method for early termination of queries based on time.
+ * QuelonryTimelonoutImpl providelons a melonthod for elonarly telonrmination of quelonrielons baselond on timelon.
  */
-public class QueryTimeoutImpl implements QueryTimeout {
-  private final String clientId;
-  private final TerminationTracker tracker;
-  private final Clock clock;
+public class QuelonryTimelonoutImpl implelonmelonnts QuelonryTimelonout {
+  privatelon final String clielonntId;
+  privatelon final TelonrminationTrackelonr trackelonr;
+  privatelon final Clock clock;
 
-  private final SearchRateCounter shouldTerminateCounter;
+  privatelon final SelonarchRatelonCountelonr shouldTelonrminatelonCountelonr;
 
-  public QueryTimeoutImpl(String clientId, TerminationTracker tracker, Clock clock) {
-    this.clientId = Preconditions.checkNotNull(clientId);
-    this.tracker = Preconditions.checkNotNull(tracker);
-    this.clock = Preconditions.checkNotNull(clock);
-    shouldTerminateCounter =
-        SearchRateCounter.export("query_timeout_should_terminate_" + clientId);
+  public QuelonryTimelonoutImpl(String clielonntId, TelonrminationTrackelonr trackelonr, Clock clock) {
+    this.clielonntId = Prelonconditions.chelonckNotNull(clielonntId);
+    this.trackelonr = Prelonconditions.chelonckNotNull(trackelonr);
+    this.clock = Prelonconditions.chelonckNotNull(clock);
+    shouldTelonrminatelonCountelonr =
+        SelonarchRatelonCountelonr.elonxport("quelonry_timelonout_should_telonrminatelon_" + clielonntId);
   }
 
   /**
-   * Returns true when the clock's time has met or exceeded the tracker's timeout end.
+   * Relonturns truelon whelonn thelon clock's timelon has melont or elonxcelonelondelond thelon trackelonr's timelonout elonnd.
    */
-  public boolean shouldExit() {
-    if (clock.nowMillis() >= tracker.getTimeoutEndTimeWithReservation()) {
-      tracker.setEarlyTerminationState(EarlyTerminationState.TERMINATED_TIME_OUT_EXCEEDED);
-      shouldTerminateCounter.increment();
-      return true;
+  public boolelonan shouldelonxit() {
+    if (clock.nowMillis() >= trackelonr.gelontTimelonoutelonndTimelonWithRelonselonrvation()) {
+      trackelonr.selontelonarlyTelonrminationStatelon(elonarlyTelonrminationStatelon.TelonRMINATelonD_TIMelon_OUT_elonXCelonelonDelonD);
+      shouldTelonrminatelonCountelonr.increlonmelonnt();
+      relonturn truelon;
     }
-    return false;
+    relonturn falselon;
   }
 
-  @Override
-  public void registerDocIdTracker(DocIdTracker docIdTracker) {
-    tracker.addDocIdTracker(docIdTracker);
+  @Ovelonrridelon
+  public void relongistelonrDocIdTrackelonr(DocIdTrackelonr docIdTrackelonr) {
+    trackelonr.addDocIdTrackelonr(docIdTrackelonr);
   }
 
-  @Override
-  public String getClientId() {
-    return clientId;
+  @Ovelonrridelon
+  public String gelontClielonntId() {
+    relonturn clielonntId;
   }
 
-  @Override
-  public int hashCode() {
-    return clientId.hashCode() * 13 + tracker.hashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn clielonntId.hashCodelon() * 13 + trackelonr.hashCodelon();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof QueryTimeoutImpl)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof QuelonryTimelonoutImpl)) {
+      relonturn falselon;
     }
 
-    QueryTimeoutImpl queryTimeout = QueryTimeoutImpl.class.cast(obj);
-    return clientId.equals(queryTimeout.clientId) && tracker.equals(queryTimeout.tracker);
+    QuelonryTimelonoutImpl quelonryTimelonout = QuelonryTimelonoutImpl.class.cast(obj);
+    relonturn clielonntId.elonquals(quelonryTimelonout.clielonntId) && trackelonr.elonquals(quelonryTimelonout.trackelonr);
   }
 }

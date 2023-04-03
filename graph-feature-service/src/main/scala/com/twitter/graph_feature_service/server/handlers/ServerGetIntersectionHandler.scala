@@ -1,137 +1,137 @@
-package com.twitter.graph_feature_service.server.handlers
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.handlelonrs
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.server.handlers.ServerGetIntersectionHandler.GetIntersectionRequest
-import com.twitter.graph_feature_service.server.stores.FeatureTypesEncoder
-import com.twitter.graph_feature_service.server.stores.GetIntersectionStore.GetIntersectionQuery
-import com.twitter.graph_feature_service.thriftscala.PresetFeatureTypes
-import com.twitter.graph_feature_service.thriftscala._
-import com.twitter.graph_feature_service.util.FeatureTypesCalculator
-import com.twitter.servo.request.RequestHandler
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import com.twitter.util.Memoize
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.handlelonrs.SelonrvelonrGelontIntelonrselonctionHandlelonr.GelontIntelonrselonctionRelonquelonst
+import com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.storelons.FelonaturelonTypelonselonncodelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.storelons.GelontIntelonrselonctionStorelon.GelontIntelonrselonctionQuelonry
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.PrelonselontFelonaturelonTypelons
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala._
+import com.twittelonr.graph_felonaturelon_selonrvicelon.util.FelonaturelonTypelonsCalculator
+import com.twittelonr.selonrvo.relonquelonst.RelonquelonstHandlelonr
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Melonmoizelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ServerGetIntersectionHandler @Inject() (
-  @Named("ReadThroughGetIntersectionStore")
-  readThroughStore: ReadableStore[GetIntersectionQuery, CachedIntersectionResult],
-  @Named("BypassCacheGetIntersectionStore")
-  readOnlyStore: ReadableStore[GetIntersectionQuery, CachedIntersectionResult]
+@Singlelonton
+class SelonrvelonrGelontIntelonrselonctionHandlelonr @Injelonct() (
+  @Namelond("RelonadThroughGelontIntelonrselonctionStorelon")
+  relonadThroughStorelon: RelonadablelonStorelon[GelontIntelonrselonctionQuelonry, CachelondIntelonrselonctionRelonsult],
+  @Namelond("BypassCachelonGelontIntelonrselonctionStorelon")
+  relonadOnlyStorelon: RelonadablelonStorelon[GelontIntelonrselonctionQuelonry, CachelondIntelonrselonctionRelonsult]
 )(
-  implicit statsReceiver: StatsReceiver)
-    extends RequestHandler[GetIntersectionRequest, GfsIntersectionResponse] {
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstHandlelonr[GelontIntelonrselonctionRelonquelonst, GfsIntelonrselonctionRelonsponselon] {
 
-  import ServerGetIntersectionHandler._
+  import SelonrvelonrGelontIntelonrselonctionHandlelonr._
 
-  // TODO: Track all the stats based on PresetFeatureType and update the dashboard
-  private val stats: StatsReceiver = statsReceiver.scope("srv").scope("get_intersection")
-  private val numCandidatesCount = stats.counter("total_num_candidates")
-  private val numCandidatesStat = stats.stat("num_candidates")
-  private val numFeaturesStat = stats.stat("num_features")
-  private val userEmptyCount = stats.counter("user_empty_count")
-  private val candidateEmptyRateStat = stats.stat("candidate_empty_rate")
-  private val candidateNumEmptyStat = stats.stat("candidate_num_empty")
-  private val missedRateStat = stats.stat("miss_rate")
-  private val numMissedStat = stats.stat("num_missed")
+  // TODO: Track all thelon stats baselond on PrelonselontFelonaturelonTypelon and updatelon thelon dashboard
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("srv").scopelon("gelont_intelonrselonction")
+  privatelon val numCandidatelonsCount = stats.countelonr("total_num_candidatelons")
+  privatelon val numCandidatelonsStat = stats.stat("num_candidatelons")
+  privatelon val numFelonaturelonsStat = stats.stat("num_felonaturelons")
+  privatelon val uselonrelonmptyCount = stats.countelonr("uselonr_elonmpty_count")
+  privatelon val candidatelonelonmptyRatelonStat = stats.stat("candidatelon_elonmpty_ratelon")
+  privatelon val candidatelonNumelonmptyStat = stats.stat("candidatelon_num_elonmpty")
+  privatelon val misselondRatelonStat = stats.stat("miss_ratelon")
+  privatelon val numMisselondStat = stats.stat("num_misselond")
 
-  // Assume the order from HTL doesn't change. Only log the HTL query now.
-  private val featureStatMap = FeatureTypesCalculator.presetFeatureTypes.map { feature =>
-    val featureString = s"${feature.leftEdgeType.name}_${feature.rightEdgeType.name}"
-    feature -> Array(
-      stats.counter(s"feature_type_${featureString}_total"),
-      stats.counter(s"feature_type_${featureString}_count_zero"),
-      stats.counter(s"feature_type_${featureString}_left_zero"),
-      stats.counter(s"feature_type_${featureString}_right_zero")
+  // Assumelon thelon ordelonr from HTL doelonsn't changelon. Only log thelon HTL quelonry now.
+  privatelon val felonaturelonStatMap = FelonaturelonTypelonsCalculator.prelonselontFelonaturelonTypelons.map { felonaturelon =>
+    val felonaturelonString = s"${felonaturelon.lelonftelondgelonTypelon.namelon}_${felonaturelon.rightelondgelonTypelon.namelon}"
+    felonaturelon -> Array(
+      stats.countelonr(s"felonaturelon_typelon_${felonaturelonString}_total"),
+      stats.countelonr(s"felonaturelon_typelon_${felonaturelonString}_count_zelonro"),
+      stats.countelonr(s"felonaturelon_typelon_${felonaturelonString}_lelonft_zelonro"),
+      stats.countelonr(s"felonaturelon_typelon_${felonaturelonString}_right_zelonro")
     )
   }.toMap
 
-  private val sourceCandidateNumStats = Memoize[PresetFeatureTypes, Stat] { presetFeature =>
-    stats.stat(s"source_candidate_num_${presetFeature.name}")
+  privatelon val sourcelonCandidatelonNumStats = Melonmoizelon[PrelonselontFelonaturelonTypelons, Stat] { prelonselontFelonaturelon =>
+    stats.stat(s"sourcelon_candidatelon_num_${prelonselontFelonaturelon.namelon}")
   }
 
-  override def apply(request: GetIntersectionRequest): Future[GfsIntersectionResponse] = {
-    val featureTypes = request.calculatedFeatureTypes
-    val numCandidates = request.candidateUserIds.length
-    val numFeatures = featureTypes.length
+  ovelonrridelon delonf apply(relonquelonst: GelontIntelonrselonctionRelonquelonst): Futurelon[GfsIntelonrselonctionRelonsponselon] = {
+    val felonaturelonTypelons = relonquelonst.calculatelondFelonaturelonTypelons
+    val numCandidatelons = relonquelonst.candidatelonUselonrIds.lelonngth
+    val numFelonaturelons = felonaturelonTypelons.lelonngth
 
-    numCandidatesCount.incr(numCandidates)
-    numCandidatesStat.add(numCandidates)
-    numFeaturesStat.add(numFeatures)
-    sourceCandidateNumStats(request.presetFeatureTypes).add(numCandidates)
+    numCandidatelonsCount.incr(numCandidatelons)
+    numCandidatelonsStat.add(numCandidatelons)
+    numFelonaturelonsStat.add(numFelonaturelons)
+    sourcelonCandidatelonNumStats(relonquelonst.prelonselontFelonaturelonTypelons).add(numCandidatelons)
 
-    // Note: do not change the orders of features and candidates.
-    val candidateIds = request.candidateUserIds
+    // Notelon: do not changelon thelon ordelonrs of felonaturelons and candidatelons.
+    val candidatelonIds = relonquelonst.candidatelonUselonrIds
 
-    if (featureTypes.isEmpty || candidateIds.isEmpty) {
-      Future.value(DefaultGfsIntersectionResponse)
-    } else {
-      Future
-        .collect {
-          val getIntersectionStore = if (request.cacheable) readThroughStore else readOnlyStore
-          getIntersectionStore.multiGet(GetIntersectionQuery.buildQueries(request))
-        }.map { responses =>
-          val results = responses.collect {
-            case (query, Some(result)) =>
-              query.candidateId -> GfsIntersectionResult(
-                query.candidateId,
-                query.calculatedFeatureTypes.zip(result.values).map {
-                  case (featureType, value) =>
-                    IntersectionValue(
-                      featureType,
-                      Some(value.count),
-                      if (value.intersectionIds.isEmpty) None else Some(value.intersectionIds),
-                      Some(value.leftNodeDegree),
-                      Some(value.rightNodeDegree)
+    if (felonaturelonTypelons.iselonmpty || candidatelonIds.iselonmpty) {
+      Futurelon.valuelon(DelonfaultGfsIntelonrselonctionRelonsponselon)
+    } elonlselon {
+      Futurelon
+        .collelonct {
+          val gelontIntelonrselonctionStorelon = if (relonquelonst.cachelonablelon) relonadThroughStorelon elonlselon relonadOnlyStorelon
+          gelontIntelonrselonctionStorelon.multiGelont(GelontIntelonrselonctionQuelonry.buildQuelonrielons(relonquelonst))
+        }.map { relonsponselons =>
+          val relonsults = relonsponselons.collelonct {
+            caselon (quelonry, Somelon(relonsult)) =>
+              quelonry.candidatelonId -> GfsIntelonrselonctionRelonsult(
+                quelonry.candidatelonId,
+                quelonry.calculatelondFelonaturelonTypelons.zip(relonsult.valuelons).map {
+                  caselon (felonaturelonTypelon, valuelon) =>
+                    IntelonrselonctionValuelon(
+                      felonaturelonTypelon,
+                      Somelon(valuelon.count),
+                      if (valuelon.intelonrselonctionIds.iselonmpty) Nonelon elonlselon Somelon(valuelon.intelonrselonctionIds),
+                      Somelon(valuelon.lelonftNodelonDelongrelonelon),
+                      Somelon(valuelon.rightNodelonDelongrelonelon)
                     )
                 }
               )
           }
 
-          // Keep the response order same as input
-          val processedResults = candidateIds.map { candidateId =>
-            results.getOrElse(candidateId, GfsIntersectionResult(candidateId, List.empty))
+          // Kelonelonp thelon relonsponselon ordelonr samelon as input
+          val procelonsselondRelonsults = candidatelonIds.map { candidatelonId =>
+            relonsults.gelontOrelonlselon(candidatelonId, GfsIntelonrselonctionRelonsult(candidatelonId, List.elonmpty))
           }
 
-          val candidateEmptyNum =
-            processedResults.count(
-              _.intersectionValues.exists(value => isZero(value.rightNodeDegree)))
+          val candidatelonelonmptyNum =
+            procelonsselondRelonsults.count(
+              _.intelonrselonctionValuelons.elonxists(valuelon => isZelonro(valuelon.rightNodelonDelongrelonelon)))
 
-          val numMissed = processedResults.count(_.intersectionValues.size != numFeatures)
+          val numMisselond = procelonsselondRelonsults.count(_.intelonrselonctionValuelons.sizelon != numFelonaturelons)
 
-          if (processedResults.exists(
-              _.intersectionValues.forall(value => isZero(value.leftNodeDegree)))) {
-            userEmptyCount.incr()
+          if (procelonsselondRelonsults.elonxists(
+              _.intelonrselonctionValuelons.forall(valuelon => isZelonro(valuelon.lelonftNodelonDelongrelonelon)))) {
+            uselonrelonmptyCount.incr()
           }
 
-          candidateNumEmptyStat.add(candidateEmptyNum)
-          candidateEmptyRateStat.add(candidateEmptyNum.toFloat / numCandidates)
-          numMissedStat.add(numMissed)
-          missedRateStat.add(numMissed.toFloat / numCandidates)
+          candidatelonNumelonmptyStat.add(candidatelonelonmptyNum)
+          candidatelonelonmptyRatelonStat.add(candidatelonelonmptyNum.toFloat / numCandidatelons)
+          numMisselondStat.add(numMisselond)
+          misselondRatelonStat.add(numMisselond.toFloat / numCandidatelons)
 
-          processedResults.foreach { result =>
-            result.intersectionValues.zip(featureTypes).foreach {
-              case (value, featureType) =>
-                featureStatMap.get(featureType).foreach { statsArray =>
-                  statsArray(TotalIndex).incr()
-                  if (isZero(value.count)) {
-                    statsArray(CountIndex).incr()
+          procelonsselondRelonsults.forelonach { relonsult =>
+            relonsult.intelonrselonctionValuelons.zip(felonaturelonTypelons).forelonach {
+              caselon (valuelon, felonaturelonTypelon) =>
+                felonaturelonStatMap.gelont(felonaturelonTypelon).forelonach { statsArray =>
+                  statsArray(TotalIndelonx).incr()
+                  if (isZelonro(valuelon.count)) {
+                    statsArray(CountIndelonx).incr()
                   }
-                  if (isZero(value.leftNodeDegree)) {
-                    statsArray(LeftIndex).incr()
+                  if (isZelonro(valuelon.lelonftNodelonDelongrelonelon)) {
+                    statsArray(LelonftIndelonx).incr()
                   }
-                  if (isZero(value.rightNodeDegree)) {
-                    statsArray(RightIndex).incr()
+                  if (isZelonro(valuelon.rightNodelonDelongrelonelon)) {
+                    statsArray(RightIndelonx).incr()
                   }
                 }
             }
           }
 
-          GfsIntersectionResponse(processedResults)
+          GfsIntelonrselonctionRelonsponselon(procelonsselondRelonsults)
         }
     }
 
@@ -139,60 +139,60 @@ class ServerGetIntersectionHandler @Inject() (
 
 }
 
-private[graph_feature_service] object ServerGetIntersectionHandler {
+privatelon[graph_felonaturelon_selonrvicelon] objelonct SelonrvelonrGelontIntelonrselonctionHandlelonr {
 
-  case class GetIntersectionRequest(
-    userId: Long,
-    candidateUserIds: Seq[Long],
-    featureTypes: Seq[FeatureType],
-    presetFeatureTypes: PresetFeatureTypes,
-    intersectionIdLimit: Option[Int],
-    cacheable: Boolean) {
+  caselon class GelontIntelonrselonctionRelonquelonst(
+    uselonrId: Long,
+    candidatelonUselonrIds: Selonq[Long],
+    felonaturelonTypelons: Selonq[FelonaturelonTypelon],
+    prelonselontFelonaturelonTypelons: PrelonselontFelonaturelonTypelons,
+    intelonrselonctionIdLimit: Option[Int],
+    cachelonablelon: Boolelonan) {
 
-    lazy val calculatedFeatureTypes: Seq[FeatureType] =
-      FeatureTypesCalculator.getFeatureTypes(presetFeatureTypes, featureTypes)
+    lazy val calculatelondFelonaturelonTypelons: Selonq[FelonaturelonTypelon] =
+      FelonaturelonTypelonsCalculator.gelontFelonaturelonTypelons(prelonselontFelonaturelonTypelons, felonaturelonTypelons)
 
-    lazy val calculatedFeatureTypesString: String =
-      FeatureTypesEncoder(calculatedFeatureTypes)
+    lazy val calculatelondFelonaturelonTypelonsString: String =
+      FelonaturelonTypelonselonncodelonr(calculatelondFelonaturelonTypelons)
   }
 
-  object GetIntersectionRequest {
+  objelonct GelontIntelonrselonctionRelonquelonst {
 
-    def fromGfsIntersectionRequest(
-      request: GfsIntersectionRequest,
-      cacheable: Boolean
-    ): GetIntersectionRequest = {
-      GetIntersectionRequest(
-        request.userId,
-        request.candidateUserIds,
-        request.featureTypes,
-        PresetFeatureTypes.Empty,
-        request.intersectionIdLimit,
-        cacheable)
+    delonf fromGfsIntelonrselonctionRelonquelonst(
+      relonquelonst: GfsIntelonrselonctionRelonquelonst,
+      cachelonablelon: Boolelonan
+    ): GelontIntelonrselonctionRelonquelonst = {
+      GelontIntelonrselonctionRelonquelonst(
+        relonquelonst.uselonrId,
+        relonquelonst.candidatelonUselonrIds,
+        relonquelonst.felonaturelonTypelons,
+        PrelonselontFelonaturelonTypelons.elonmpty,
+        relonquelonst.intelonrselonctionIdLimit,
+        cachelonablelon)
     }
 
-    def fromGfsPresetIntersectionRequest(
-      request: GfsPresetIntersectionRequest,
-      cacheable: Boolean
-    ): GetIntersectionRequest = {
-      GetIntersectionRequest(
-        request.userId,
-        request.candidateUserIds,
-        List.empty,
-        request.presetFeatureTypes,
-        request.intersectionIdLimit,
-        cacheable)
+    delonf fromGfsPrelonselontIntelonrselonctionRelonquelonst(
+      relonquelonst: GfsPrelonselontIntelonrselonctionRelonquelonst,
+      cachelonablelon: Boolelonan
+    ): GelontIntelonrselonctionRelonquelonst = {
+      GelontIntelonrselonctionRelonquelonst(
+        relonquelonst.uselonrId,
+        relonquelonst.candidatelonUselonrIds,
+        List.elonmpty,
+        relonquelonst.prelonselontFelonaturelonTypelons,
+        relonquelonst.intelonrselonctionIdLimit,
+        cachelonablelon)
     }
   }
 
-  private val DefaultGfsIntersectionResponse = GfsIntersectionResponse()
+  privatelon val DelonfaultGfsIntelonrselonctionRelonsponselon = GfsIntelonrselonctionRelonsponselon()
 
-  private val TotalIndex = 0
-  private val CountIndex = 1
-  private val LeftIndex = 2
-  private val RightIndex = 3
+  privatelon val TotalIndelonx = 0
+  privatelon val CountIndelonx = 1
+  privatelon val LelonftIndelonx = 2
+  privatelon val RightIndelonx = 3
 
-  def isZero(opt: Option[Int]): Boolean = {
-    !opt.exists(_ != 0)
+  delonf isZelonro(opt: Option[Int]): Boolelonan = {
+    !opt.elonxists(_ != 0)
   }
 }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.service.candidate_pipeline_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_pipelonlinelon_elonxeloncutor
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineResult
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonRelonsult
 
-case class CandidatePipelineExecutorResult(
-  candidatePipelineResults: Seq[CandidatePipelineResult],
-  queryFeatureMap: FeatureMap)
+caselon class CandidatelonPipelonlinelonelonxeloncutorRelonsult(
+  candidatelonPipelonlinelonRelonsults: Selonq[CandidatelonPipelonlinelonRelonsult],
+  quelonryFelonaturelonMap: FelonaturelonMap)

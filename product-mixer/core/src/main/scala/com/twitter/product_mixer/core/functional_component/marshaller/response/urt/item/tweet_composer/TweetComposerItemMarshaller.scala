@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.twelonelont_composelonr
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont_composelonr.TwelonelontComposelonrItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TweetComposerItemMarshaller @Inject() (
-  tweetComposerDisplayTypeMarshaller: TweetComposerDisplayTypeMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class TwelonelontComposelonrItelonmMarshallelonr @Injelonct() (
+  twelonelontComposelonrDisplayTypelonMarshallelonr: TwelonelontComposelonrDisplayTypelonMarshallelonr,
+  urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(tweetComposer: TweetComposerItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.TweetComposer(
-      urt.TweetComposer(
-        displayType = tweetComposerDisplayTypeMarshaller(tweetComposer.displayType),
-        text = tweetComposer.text,
-        url = urlMarshaller(tweetComposer.url)
+  delonf apply(twelonelontComposelonr: TwelonelontComposelonrItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.TwelonelontComposelonr(
+      urt.TwelonelontComposelonr(
+        displayTypelon = twelonelontComposelonrDisplayTypelonMarshallelonr(twelonelontComposelonr.displayTypelon),
+        telonxt = twelonelontComposelonr.telonxt,
+        url = urlMarshallelonr(twelonelontComposelonr.url)
       )
     )
 }

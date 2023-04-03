@@ -1,13 +1,13 @@
-package com.twitter.timelineranker.config
+packagelon com.twittelonr.timelonlinelonrankelonr.config
 
-import com.twitter.timelines.util.stats.RequestScope
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstScopelon
 
-object RequestScopes {
-  val HomeTimelineMaterialization: RequestScope = RequestScope("homeMaterialization")
-  val InNetworkTweetSource: RequestScope = RequestScope("inNetworkTweet")
-  val RecapHydrationSource: RequestScope = RequestScope("recapHydration")
-  val RecapAuthorSource: RequestScope = RequestScope("recapAuthor")
-  val ReverseChronHomeTimelineSource: RequestScope = RequestScope("reverseChronHomeTimelineSource")
-  val EntityTweetsSource: RequestScope = RequestScope("entityTweets")
-  val UtegLikedByTweetsSource: RequestScope = RequestScope("utegLikedByTweets")
+objelonct RelonquelonstScopelons {
+  val HomelonTimelonlinelonMatelonrialization: RelonquelonstScopelon = RelonquelonstScopelon("homelonMatelonrialization")
+  val InNelontworkTwelonelontSourcelon: RelonquelonstScopelon = RelonquelonstScopelon("inNelontworkTwelonelont")
+  val ReloncapHydrationSourcelon: RelonquelonstScopelon = RelonquelonstScopelon("reloncapHydration")
+  val ReloncapAuthorSourcelon: RelonquelonstScopelon = RelonquelonstScopelon("reloncapAuthor")
+  val RelonvelonrselonChronHomelonTimelonlinelonSourcelon: RelonquelonstScopelon = RelonquelonstScopelon("relonvelonrselonChronHomelonTimelonlinelonSourcelon")
+  val elonntityTwelonelontsSourcelon: RelonquelonstScopelon = RelonquelonstScopelon("elonntityTwelonelonts")
+  val UtelongLikelondByTwelonelontsSourcelon: RelonquelonstScopelon = RelonquelonstScopelon("utelongLikelondByTwelonelonts")
 }

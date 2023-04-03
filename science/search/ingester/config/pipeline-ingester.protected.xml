@@ -1,202 +1,202 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml velonrsion="1.0" elonncoding="UTF-8"?>
 
 
-<!-- Ingesters process tweet create events from TweetyPie and write them to a queue for Earlybird
-to index. -->
-<pipeline>
-  <property
-      propName="validator"
-      className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-  <listener
-      className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-  <driverFactory
-      className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
+<!-- Ingelonstelonrs procelonss twelonelont crelonatelon elonvelonnts from TwelonelontyPielon and writelon thelonm to a quelonuelon for elonarlybird
+to indelonx. -->
+<pipelonlinelon>
+  <propelonrty
+      propNamelon="validator"
+      classNamelon="org.apachelon.commons.pipelonlinelon.validation.SimplelonPipelonlinelonValidator"/>
+  <listelonnelonr
+      classNamelon="org.apachelon.commons.pipelonlinelon.listelonnelonr.ObjelonctProcelonsselondelonvelonntCountelonr"/>
+  <drivelonrFactory
+      classNamelon="org.apachelon.commons.pipelonlinelon.drivelonr.DelondicatelondThrelonadStagelonDrivelonrFactory"
       id="kafka">
 
-    <property
-        propName="queueFactory"
-        className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
+    <propelonrty
+        propNamelon="quelonuelonFactory"
+        classNamelon="org.apachelon.commons.pipelonlinelon.util.BlockingQuelonuelonFactory$ArrayBlockingQuelonuelonFactory"
         capacity="1000"
-        fair="false"/>
-  </driverFactory>
+        fair="falselon"/>
+  </drivelonrFactory>
 
-  <!-- Read tweets from the thrift kafka queue. The reader loops forever. -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.kafka.KafkaRawRecordConsumerStage"
-      kafkaClusterPath=""
-      kafkaClientId=""
-      kafkaTopicName=""
-      kafkaConsumerGroupId=""
-      maxPollRecords="1"
-      pollTimeoutMs="1000"
-      partitioned="false"
-      deciderKey=""
-      driverFactoryId="kafka"/>
+  <!-- Relonad twelonelonts from thelon thrift kafka quelonuelon. Thelon relonadelonr loops forelonvelonr. -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.kafka.KafkaRawReloncordConsumelonrStagelon"
+      kafkaClustelonrPath=""
+      kafkaClielonntId=""
+      kafkaTopicNamelon=""
+      kafkaConsumelonrGroupId=""
+      maxPollReloncords="1"
+      pollTimelonoutMs="1000"
+      partitionelond="falselon"
+      deloncidelonrKelony=""
+      drivelonrFactoryId="kafka"/>
 
-  <!-- Deserialize the bytes into TweetData -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TweetEventDeserializerStage"
-      driverFactoryId="kafka"/>
+  <!-- Delonselonrializelon thelon bytelons into TwelonelontData -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.TwelonelontelonvelonntDelonselonrializelonrStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- Filter to only have the safetytype for this cluster -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.FilterEventsBySafetyTypeStage"
-      tweetCreateLatencyLogThresholdMillis="5000"
-      safetyType="PROTECTED"
-      driverFactoryId="kafka"/>
+  <!-- Filtelonr to only havelon thelon safelontytypelon for this clustelonr -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.FiltelonrelonvelonntsBySafelontyTypelonStagelon"
+      twelonelontCrelonatelonLatelonncyLogThrelonsholdMillis="5000"
+      safelontyTypelon="PROTelonCTelonD"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- Parse to TwitterMessage -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ThriftTweetParserStage"
-      tweetDeleteEventBranchNames="kafka_update_events_delete"
-      driverFactoryId="kafka"/>
+  <!-- Parselon to TwittelonrMelonssagelon -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.ThriftTwelonelontParselonrStagelon"
+      twelonelontDelonlelontelonelonvelonntBranchNamelons="kafka_updatelon_elonvelonnts_delonlelontelon"
+      drivelonrFactoryId="kafka"/>
 
   <branch>
-    <pipeline key="kafka_update_events_delete">
-      <property
-          propName="validator"
-          className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-      <listener
-          className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-      <driverFactory
-          className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
-          id="kafka_update_events_delete">
+    <pipelonlinelon kelony="kafka_updatelon_elonvelonnts_delonlelontelon">
+      <propelonrty
+          propNamelon="validator"
+          classNamelon="org.apachelon.commons.pipelonlinelon.validation.SimplelonPipelonlinelonValidator"/>
+      <listelonnelonr
+          classNamelon="org.apachelon.commons.pipelonlinelon.listelonnelonr.ObjelonctProcelonsselondelonvelonntCountelonr"/>
+      <drivelonrFactory
+          classNamelon="org.apachelon.commons.pipelonlinelon.drivelonr.DelondicatelondThrelonadStagelonDrivelonrFactory"
+          id="kafka_updatelon_elonvelonnts_delonlelontelon">
 
-        <!-- we are willing to queue more deletes than other stages,
-             to make sure we don't slow down the incoming tweets -->
-        <property
-            propName="queueFactory"
-            className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
+        <!-- welon arelon willing to quelonuelon morelon delonlelontelons than othelonr stagelons,
+             to makelon surelon welon don't slow down thelon incoming twelonelonts -->
+        <propelonrty
+            propNamelon="quelonuelonFactory"
+            classNamelon="org.apachelon.commons.pipelonlinelon.util.BlockingQuelonuelonFactory$ArrayBlockingQuelonuelonFactory"
             capacity="1000"
-            fair="false"/>
-      </driverFactory>
+            fair="falselon"/>
+      </drivelonrFactory>
 
-      <stage
-          className="com.twitter.search.ingester.pipeline.twitter.kafka.DeleteUpdateEventsKafkaProducerStage"
-          kafkaClusterPath=""
-          kafkaClientId=""
-          kafkaTopicName=""
-          driverFactoryId="kafka_update_events_delete"/>
-    </pipeline>
+      <stagelon
+          classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.kafka.DelonlelontelonUpdatelonelonvelonntsKafkaProducelonrStagelon"
+          kafkaClustelonrPath=""
+          kafkaClielonntId=""
+          kafkaTopicNamelon=""
+          drivelonrFactoryId="kafka_updatelon_elonvelonnts_delonlelontelon"/>
+    </pipelonlinelon>
   </branch>
 
 
-  <!-- filters out messages that are not formatted correctly -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.FilterTwitterMessageStage"
-      driverFactoryId="kafka"/>
+  <!-- filtelonrs out melonssagelons that arelon not formattelond correlonctly -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.FiltelonrTwittelonrMelonssagelonStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- retrieves space ids from space urls if the tweet has space urls -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveSpaceIdsStage"
-      driverFactoryId="kafka"/>
+  <!-- relontrielonvelons spacelon ids from spacelon urls if thelon twelonelont has spacelon urls -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.RelontrielonvelonSpacelonIdsStagelon"
+      drivelonrFactoryId="kafka"/>
 
 
-  <!-- looks up user reputation scores for each message -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.LookupUserPropertiesBatchedStage"
-      driverFactoryId="kafka"/>
+  <!-- looks up uselonr relonputation scorelons for elonach melonssagelon -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.LookupUselonrPropelonrtielonsBatchelondStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- extract text features of the message -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextFeatureExtractionWorkersStage"
-      driverFactoryId="kafka"/>
+  <!-- elonxtract telonxt felonaturelons of thelon melonssagelon -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.TelonxtFelonaturelonelonxtractionWorkelonrsStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- compute text quality score of the message -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextQualityEvaluationWorkerStage"
-      driverFactoryId="kafka"/>
+  <!-- computelon telonxt quality scorelon of thelon melonssagelon -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.TelonxtQualityelonvaluationWorkelonrStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- Extract lat/lon pairs from the text, and geocode them -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.SingleTweetExtractAndGeocodeLatLonStage"
-      driverFactoryId="kafka"/>
+  <!-- elonxtract lat/lon pairs from thelon telonxt, and gelonocodelon thelonm -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.SinglelonTwelonelontelonxtractAndGelonocodelonLatLonStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- adds coded locations -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.PopulateCodedLocationsBatchedStage"
-      driverFactoryId="kafka"/>
+  <!-- adds codelond locations -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.PopulatelonCodelondLocationsBatchelondStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- Parse the TwitterMessages into ThriftStatuses -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ConvertMessageToThriftStage"
-      thriftVersionedEventsBranchName="kafka_base_tweets"
-      driverFactoryId="kafka"/>
+  <!-- Parselon thelon TwittelonrMelonssagelons into ThriftStatuselons -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.ConvelonrtMelonssagelonToThriftStagelon"
+      thriftVelonrsionelondelonvelonntsBranchNamelon="kafka_baselon_twelonelonts"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- Branch for tweets -->
+  <!-- Branch for twelonelonts -->
   <branch>
-    <pipeline key="kafka_base_tweets">
-      <property
-          propName="validator"
-          className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-      <listener
-          className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-      <driverFactory
-          className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
-          id="kafka_base_tweets">
+    <pipelonlinelon kelony="kafka_baselon_twelonelonts">
+      <propelonrty
+          propNamelon="validator"
+          classNamelon="org.apachelon.commons.pipelonlinelon.validation.SimplelonPipelonlinelonValidator"/>
+      <listelonnelonr
+          classNamelon="org.apachelon.commons.pipelonlinelon.listelonnelonr.ObjelonctProcelonsselondelonvelonntCountelonr"/>
+      <drivelonrFactory
+          classNamelon="org.apachelon.commons.pipelonlinelon.drivelonr.DelondicatelondThrelonadStagelonDrivelonrFactory"
+          id="kafka_baselon_twelonelonts">
 
-        <property
-            propName="queueFactory"
-            className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
+        <propelonrty
+            propNamelon="quelonuelonFactory"
+            classNamelon="org.apachelon.commons.pipelonlinelon.util.BlockingQuelonuelonFactory$ArrayBlockingQuelonuelonFactory"
             capacity="1000"
-            fair="false"/>
-      </driverFactory>
+            fair="falselon"/>
+      </drivelonrFactory>
 
-      <stage
-          className="com.twitter.search.ingester.pipeline.twitter.kafka.TweetThriftVersionedEventsKafkaProducerStage"
-          kafkaClusterPath=""
-          kafkaClientId="search_ingester_indexing_events"
-          kafkaTopicName="search_ingester_indexing_events_protected_prod"
-          driverFactoryId="kafka_base_tweets"/>
-    </pipeline>
+      <stagelon
+          classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.kafka.TwelonelontThriftVelonrsionelondelonvelonntsKafkaProducelonrStagelon"
+          kafkaClustelonrPath=""
+          kafkaClielonntId="selonarch_ingelonstelonr_indelonxing_elonvelonnts"
+          kafkaTopicNamelon="selonarch_ingelonstelonr_indelonxing_elonvelonnts_protelonctelond_prod"
+          drivelonrFactoryId="kafka_baselon_twelonelonts"/>
+    </pipelonlinelon>
   </branch>
 
-  <!-- Resolve compressed URL via Pink -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ResolveCompressedUrlsBatchedStage"
-      pinkClientId="INGESTER"
-      batchedStageBatchSize="10"
-      tweetMaxAgeToResolve="10000"
-      driverFactoryId="kafka"/>
+  <!-- Relonsolvelon comprelonsselond URL via Pink -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.RelonsolvelonComprelonsselondUrlsBatchelondStagelon"
+      pinkClielonntId="INGelonSTelonR"
+      batchelondStagelonBatchSizelon="10"
+      twelonelontMaxAgelonToRelonsolvelon="10000"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- Retrieve card information -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveCardBatchedStage"
-      tweetypieClientId="ingester.prod"
-      filterProtected="false"
-      internalBatchSize="50"
-      driverFactoryId="kafka"/>
+  <!-- Relontrielonvelon card information -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.RelontrielonvelonCardBatchelondStagelon"
+      twelonelontypielonClielonntId="ingelonstelonr.prod"
+      filtelonrProtelonctelond="falselon"
+      intelonrnalBatchSizelon="50"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- Retrieve named entities -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveNamedEntitiesSingleTweetStage"
-      driverFactoryId="kafka"/>
+  <!-- Relontrielonvelon namelond elonntitielons -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.RelontrielonvelonNamelondelonntitielonsSinglelonTwelonelontStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- retrieves space admins and title for a tweet if the tweet has space urls -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.RetrieveSpaceAdminsAndTitleStage"
-      driverFactoryId="kafka"/>
+  <!-- relontrielonvelons spacelon admins and titlelon for a twelonelont if thelon twelonelont has spacelon urls -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.RelontrielonvelonSpacelonAdminsAndTitlelonStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- extract text features of the message -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.TextUrlsFeatureExtractionStage"
-      driverFactoryId="kafka"/>
+  <!-- elonxtract telonxt felonaturelons of thelon melonssagelon -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.TelonxtUrlsFelonaturelonelonxtractionStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- Compute the tweet signature -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ComputeTweetSignatureStage"
-      driverFactoryId="kafka"/>
+  <!-- Computelon thelon twelonelont signaturelon -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.ComputelonTwelonelontSignaturelonStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <!-- Parse the TwitterMessages into ThriftStatuses -->
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.ConvertDelayedMessageToThriftStage"
-      driverFactoryId="kafka"/>
+  <!-- Parselon thelon TwittelonrMelonssagelons into ThriftStatuselons -->
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.ConvelonrtDelonlayelondMelonssagelonToThriftStagelon"
+      drivelonrFactoryId="kafka"/>
 
-  <stage
-      className="com.twitter.search.ingester.pipeline.twitter.kafka.TweetThriftVersionedEventsKafkaProducerStage"
-      kafkaClusterPath=""
-      stageName="UpdateEvents"
-      kafkaClientId=""
-      kafkaTopicName=""
-      driverFactoryId="kafka"/>
-</pipeline>
+  <stagelon
+      classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.kafka.TwelonelontThriftVelonrsionelondelonvelonntsKafkaProducelonrStagelon"
+      kafkaClustelonrPath=""
+      stagelonNamelon="Updatelonelonvelonnts"
+      kafkaClielonntId=""
+      kafkaTopicNamelon=""
+      drivelonrFactoryId="kafka"/>
+</pipelonlinelon>

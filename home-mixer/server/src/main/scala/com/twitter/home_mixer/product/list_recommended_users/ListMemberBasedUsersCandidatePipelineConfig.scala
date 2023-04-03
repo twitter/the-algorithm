@@ -1,89 +1,89 @@
-package com.twitter.home_mixer.product.list_recommended_users
+packagelon com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs
 
-import com.twitter.hermit.candidate.{thriftscala => t}
-import com.twitter.home_mixer.functional_component.candidate_source.SimilarityBasedUsersCandidateSource
-import com.twitter.home_mixer.functional_component.feature_hydrator.ListMembersFeature
-import com.twitter.home_mixer.functional_component.filter.PredicateFeatureFilter
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.GizmoduckUserFeatureHydrator
-import com.twitter.home_mixer.product.list_recommended_users.feature_hydrator.IsListMemberFeatureHydrator
-import com.twitter.home_mixer.product.list_recommended_users.filter.DropMaxCandidatesByScoreFilter
-import com.twitter.home_mixer.product.list_recommended_users.filter.PreviouslyServedUsersFilter
-import com.twitter.home_mixer.product.list_recommended_users.model.ListFeatures.IsListMemberFeature
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.product_mixer.component_library.decorator.urt.UrtItemCandidateDecorator
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.user.UserCandidateUrtItemBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.metadata.ClientEventInfoBuilder
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
+import com.twittelonr.helonrmit.candidatelon.{thriftscala => t}
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.candidatelon_sourcelon.SimilarityBaselondUselonrsCandidatelonSourcelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.ListMelonmbelonrsFelonaturelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr.PrelondicatelonFelonaturelonFiltelonr
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.felonaturelon_hydrator.GizmoduckUselonrFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.felonaturelon_hydrator.IsListMelonmbelonrFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.filtelonr.DropMaxCandidatelonsByScorelonFiltelonr
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.filtelonr.PrelonviouslySelonrvelondUselonrsFiltelonr
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.modelonl.ListFelonaturelons.IsListMelonmbelonrFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.modelonl.ListReloncommelonndelondUselonrsQuelonry
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.UrtItelonmCandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.uselonr.UselonrCandidatelonUrtItelonmBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.melontadata.ClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.BaselonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ListMemberBasedUsersCandidatePipelineConfig @Inject() (
-  similarityBasedUsersCandidateSource: SimilarityBasedUsersCandidateSource,
-  gizmoduckUserFeatureHydrator: GizmoduckUserFeatureHydrator,
-  isListMemberFeatureHydrator: IsListMemberFeatureHydrator)
-    extends CandidatePipelineConfig[
-      ListRecommendedUsersQuery,
-      Seq[Long],
-      t.Candidate,
-      UserCandidate
+@Singlelonton
+class ListMelonmbelonrBaselondUselonrsCandidatelonPipelonlinelonConfig @Injelonct() (
+  similarityBaselondUselonrsCandidatelonSourcelon: SimilarityBaselondUselonrsCandidatelonSourcelon,
+  gizmoduckUselonrFelonaturelonHydrator: GizmoduckUselonrFelonaturelonHydrator,
+  isListMelonmbelonrFelonaturelonHydrator: IsListMelonmbelonrFelonaturelonHydrator)
+    elonxtelonnds CandidatelonPipelonlinelonConfig[
+      ListReloncommelonndelondUselonrsQuelonry,
+      Selonq[Long],
+      t.Candidatelon,
+      UselonrCandidatelon
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("ListMemberBasedUsers")
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr =
+    CandidatelonPipelonlinelonIdelonntifielonr("ListMelonmbelonrBaselondUselonrs")
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[ListRecommendedUsersQuery, Seq[
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[ListReloncommelonndelondUselonrsQuelonry, Selonq[
     Long
-  ]] = { query =>
-    query.features.map(_.getOrElse(ListMembersFeature, Seq.empty)).getOrElse(Seq.empty)
+  ]] = { quelonry =>
+    quelonry.felonaturelons.map(_.gelontOrelonlselon(ListMelonmbelonrsFelonaturelon, Selonq.elonmpty)).gelontOrelonlselon(Selonq.elonmpty)
   }
 
-  override val candidateSource: BaseCandidateSource[Seq[Long], t.Candidate] =
-    similarityBasedUsersCandidateSource
+  ovelonrridelon val candidatelonSourcelon: BaselonCandidatelonSourcelon[Selonq[Long], t.Candidatelon] =
+    similarityBaselondUselonrsCandidatelonSourcelon
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.Candidate]
-  ] = Seq(ListMemberBasedUsersResponseFeatureTransfromer)
+  ovelonrridelon val felonaturelonsFromCandidatelonSourcelonTransformelonrs: Selonq[
+    CandidatelonFelonaturelonTransformelonr[t.Candidatelon]
+  ] = Selonq(ListMelonmbelonrBaselondUselonrsRelonsponselonFelonaturelonTransfromelonr)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.Candidate,
-    UserCandidate
-  ] = { candidate =>
-    UserCandidate(id = candidate.userId)
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[
+    t.Candidatelon,
+    UselonrCandidatelon
+  ] = { candidatelon =>
+    UselonrCandidatelon(id = candidatelon.uselonrId)
   }
 
-  override val preFilterFeatureHydrationPhase1: Seq[
-    BaseCandidateFeatureHydrator[ListRecommendedUsersQuery, UserCandidate, _]
-  ] = Seq(isListMemberFeatureHydrator)
+  ovelonrridelon val prelonFiltelonrFelonaturelonHydrationPhaselon1: Selonq[
+    BaselonCandidatelonFelonaturelonHydrator[ListReloncommelonndelondUselonrsQuelonry, UselonrCandidatelon, _]
+  ] = Selonq(isListMelonmbelonrFelonaturelonHydrator)
 
-  override val filters: Seq[Filter[ListRecommendedUsersQuery, UserCandidate]] =
-    Seq(
-      PreviouslyServedUsersFilter,
-      PredicateFeatureFilter.fromPredicate(
-        FilterIdentifier("IsListMember"),
-        shouldKeepCandidate = { features => !features.getOrElse(IsListMemberFeature, false) }
+  ovelonrridelon val filtelonrs: Selonq[Filtelonr[ListReloncommelonndelondUselonrsQuelonry, UselonrCandidatelon]] =
+    Selonq(
+      PrelonviouslySelonrvelondUselonrsFiltelonr,
+      PrelondicatelonFelonaturelonFiltelonr.fromPrelondicatelon(
+        FiltelonrIdelonntifielonr("IsListMelonmbelonr"),
+        shouldKelonelonpCandidatelon = { felonaturelons => !felonaturelons.gelontOrelonlselon(IsListMelonmbelonrFelonaturelon, falselon) }
       ),
-      DropMaxCandidatesByScoreFilter
+      DropMaxCandidatelonsByScorelonFiltelonr
     )
 
-  override val postFilterFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[ListRecommendedUsersQuery, UserCandidate, _]
-  ] = Seq(gizmoduckUserFeatureHydrator)
+  ovelonrridelon val postFiltelonrFelonaturelonHydration: Selonq[
+    BaselonCandidatelonFelonaturelonHydrator[ListReloncommelonndelondUselonrsQuelonry, UselonrCandidatelon, _]
+  ] = Selonq(gizmoduckUselonrFelonaturelonHydrator)
 
-  override val decorator: Option[CandidateDecorator[ListRecommendedUsersQuery, UserCandidate]] = {
-    val clientEventInfoBuilder = ClientEventInfoBuilder("user")
-    val userItemBuilder = UserCandidateUrtItemBuilder(clientEventInfoBuilder)
-    Some(UrtItemCandidateDecorator(userItemBuilder))
+  ovelonrridelon val deloncorator: Option[CandidatelonDeloncorator[ListReloncommelonndelondUselonrsQuelonry, UselonrCandidatelon]] = {
+    val clielonntelonvelonntInfoBuildelonr = ClielonntelonvelonntInfoBuildelonr("uselonr")
+    val uselonrItelonmBuildelonr = UselonrCandidatelonUrtItelonmBuildelonr(clielonntelonvelonntInfoBuildelonr)
+    Somelon(UrtItelonmCandidatelonDeloncorator(uselonrItelonmBuildelonr))
   }
 }

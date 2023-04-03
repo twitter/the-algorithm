@@ -1,245 +1,245 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.Safety
-import com.twitter.gizmoduck.thriftscala.UniversalQualityFiltering
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features._
-import com.twitter.visibility.interfaces.common.blender.BlenderVFRequestContext
-import com.twitter.visibility.interfaces.common.search.SearchVFRequestContext
-import com.twitter.visibility.models.UserAge
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.finaglelon.stats.Countelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.Labelonl
+import com.twittelonr.gizmoduck.thriftscala.Safelonty
+import com.twittelonr.gizmoduck.thriftscala.UnivelonrsalQualityFiltelonring
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.gizmoduck.thriftscala.UselonrTypelon
+import com.twittelonr.stitch.NotFound
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.intelonrfacelons.common.blelonndelonr.BlelonndelonrVFRelonquelonstContelonxt
+import com.twittelonr.visibility.intelonrfacelons.common.selonarch.SelonarchVFRelonquelonstContelonxt
+import com.twittelonr.visibility.modelonls.UselonrAgelon
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-class ViewerFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("viewer_features")
+class VielonwelonrFelonaturelons(uselonrSourcelon: UselonrSourcelon, statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("vielonwelonr_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val viewerIdCount =
-    scopedStatsReceiver.scope(ViewerId.name).counter("requests")
-  private[this] val requestCountryCode =
-    scopedStatsReceiver.scope(RequestCountryCode.name).counter("requests")
-  private[this] val requestIsVerifiedCrawler =
-    scopedStatsReceiver.scope(RequestIsVerifiedCrawler.name).counter("requests")
-  private[this] val viewerUserLabels =
-    scopedStatsReceiver.scope(ViewerUserLabels.name).counter("requests")
-  private[this] val viewerIsDeactivated =
-    scopedStatsReceiver.scope(ViewerIsDeactivated.name).counter("requests")
-  private[this] val viewerIsProtected =
-    scopedStatsReceiver.scope(ViewerIsProtected.name).counter("requests")
-  private[this] val viewerIsSuspended =
-    scopedStatsReceiver.scope(ViewerIsSuspended.name).counter("requests")
-  private[this] val viewerRoles =
-    scopedStatsReceiver.scope(ViewerRoles.name).counter("requests")
-  private[this] val viewerCountryCode =
-    scopedStatsReceiver.scope(ViewerCountryCode.name).counter("requests")
-  private[this] val viewerAge =
-    scopedStatsReceiver.scope(ViewerAge.name).counter("requests")
-  private[this] val viewerHasUniversalQualityFilterEnabled =
-    scopedStatsReceiver.scope(ViewerHasUniversalQualityFilterEnabled.name).counter("requests")
-  private[this] val viewerIsSoftUserCtr =
-    scopedStatsReceiver.scope(ViewerIsSoftUser.name).counter("requests")
+  privatelon[this] val vielonwelonrIdCount =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrId.namelon).countelonr("relonquelonsts")
+  privatelon[this] val relonquelonstCountryCodelon =
+    scopelondStatsReloncelonivelonr.scopelon(RelonquelonstCountryCodelon.namelon).countelonr("relonquelonsts")
+  privatelon[this] val relonquelonstIsVelonrifielondCrawlelonr =
+    scopelondStatsReloncelonivelonr.scopelon(RelonquelonstIsVelonrifielondCrawlelonr.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrUselonrLabelonls =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrUselonrLabelonls.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrIsDelonactivatelond =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrIsDelonactivatelond.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrIsProtelonctelond =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrIsProtelonctelond.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrIsSuspelonndelond =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrIsSuspelonndelond.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrRolelons =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrRolelons.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrCountryCodelon =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrCountryCodelon.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrAgelon =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrAgelon.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrHasUnivelonrsalQualityFiltelonrelonnablelond =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrHasUnivelonrsalQualityFiltelonrelonnablelond.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrIsSoftUselonrCtr =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrIsSoftUselonr.namelon).countelonr("relonquelonsts")
 
-  def forViewerBlenderContext(
-    blenderContext: BlenderVFRequestContext,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    forViewerContext(viewerContext)
-      .andThen(
-        _.withConstantFeature(
-          ViewerOptInBlocking,
-          blenderContext.userSearchSafetySettings.optInBlocking)
-          .withConstantFeature(
-            ViewerOptInFiltering,
-            blenderContext.userSearchSafetySettings.optInFiltering)
+  delonf forVielonwelonrBlelonndelonrContelonxt(
+    blelonndelonrContelonxt: BlelonndelonrVFRelonquelonstContelonxt,
+    vielonwelonrContelonxt: VielonwelonrContelonxt
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr =
+    forVielonwelonrContelonxt(vielonwelonrContelonxt)
+      .andThelonn(
+        _.withConstantFelonaturelon(
+          VielonwelonrOptInBlocking,
+          blelonndelonrContelonxt.uselonrSelonarchSafelontySelonttings.optInBlocking)
+          .withConstantFelonaturelon(
+            VielonwelonrOptInFiltelonring,
+            blelonndelonrContelonxt.uselonrSelonarchSafelontySelonttings.optInFiltelonring)
       )
 
-  def forViewerSearchContext(
-    searchContext: SearchVFRequestContext,
-    viewerContext: ViewerContext
-  ): FeatureMapBuilder => FeatureMapBuilder =
-    forViewerContext(viewerContext)
-      .andThen(
-        _.withConstantFeature(
-          ViewerOptInBlocking,
-          searchContext.userSearchSafetySettings.optInBlocking)
-          .withConstantFeature(
-            ViewerOptInFiltering,
-            searchContext.userSearchSafetySettings.optInFiltering)
+  delonf forVielonwelonrSelonarchContelonxt(
+    selonarchContelonxt: SelonarchVFRelonquelonstContelonxt,
+    vielonwelonrContelonxt: VielonwelonrContelonxt
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr =
+    forVielonwelonrContelonxt(vielonwelonrContelonxt)
+      .andThelonn(
+        _.withConstantFelonaturelon(
+          VielonwelonrOptInBlocking,
+          selonarchContelonxt.uselonrSelonarchSafelontySelonttings.optInBlocking)
+          .withConstantFelonaturelon(
+            VielonwelonrOptInFiltelonring,
+            selonarchContelonxt.uselonrSelonarchSafelontySelonttings.optInFiltelonring)
       )
 
-  def forViewerContext(viewerContext: ViewerContext): FeatureMapBuilder => FeatureMapBuilder =
-    forViewerId(viewerContext.userId)
-      .andThen(
-        _.withConstantFeature(RequestCountryCode, requestCountryCode(viewerContext))
-      ).andThen(
-        _.withConstantFeature(RequestIsVerifiedCrawler, requestIsVerifiedCrawler(viewerContext))
+  delonf forVielonwelonrContelonxt(vielonwelonrContelonxt: VielonwelonrContelonxt): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr =
+    forVielonwelonrId(vielonwelonrContelonxt.uselonrId)
+      .andThelonn(
+        _.withConstantFelonaturelon(RelonquelonstCountryCodelon, relonquelonstCountryCodelon(vielonwelonrContelonxt))
+      ).andThelonn(
+        _.withConstantFelonaturelon(RelonquelonstIsVelonrifielondCrawlelonr, relonquelonstIsVelonrifielondCrawlelonr(vielonwelonrContelonxt))
       )
 
-  def forViewerId(viewerId: Option[UserId]): FeatureMapBuilder => FeatureMapBuilder = { builder =>
-    requests.incr()
+  delonf forVielonwelonrId(vielonwelonrId: Option[UselonrId]): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = { buildelonr =>
+    relonquelonsts.incr()
 
-    val builderWithFeatures = builder
-      .withConstantFeature(ViewerId, viewerId)
-      .withFeature(ViewerIsProtected, viewerIsProtected(viewerId))
-      .withFeature(
-        ViewerHasUniversalQualityFilterEnabled,
-        viewerHasUniversalQualityFilterEnabled(viewerId)
+    val buildelonrWithFelonaturelons = buildelonr
+      .withConstantFelonaturelon(VielonwelonrId, vielonwelonrId)
+      .withFelonaturelon(VielonwelonrIsProtelonctelond, vielonwelonrIsProtelonctelond(vielonwelonrId))
+      .withFelonaturelon(
+        VielonwelonrHasUnivelonrsalQualityFiltelonrelonnablelond,
+        vielonwelonrHasUnivelonrsalQualityFiltelonrelonnablelond(vielonwelonrId)
       )
-      .withFeature(ViewerIsSuspended, viewerIsSuspended(viewerId))
-      .withFeature(ViewerIsDeactivated, viewerIsDeactivated(viewerId))
-      .withFeature(ViewerUserLabels, viewerUserLabels(viewerId))
-      .withFeature(ViewerRoles, viewerRoles(viewerId))
-      .withFeature(ViewerAge, viewerAgeInYears(viewerId))
-      .withFeature(ViewerIsSoftUser, viewerIsSoftUser(viewerId))
+      .withFelonaturelon(VielonwelonrIsSuspelonndelond, vielonwelonrIsSuspelonndelond(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrIsDelonactivatelond, vielonwelonrIsDelonactivatelond(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrUselonrLabelonls, vielonwelonrUselonrLabelonls(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrRolelons, vielonwelonrRolelons(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrAgelon, vielonwelonrAgelonInYelonars(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrIsSoftUselonr, vielonwelonrIsSoftUselonr(vielonwelonrId))
 
-    viewerId match {
-      case Some(_) =>
-        viewerIdCount.incr()
-        builderWithFeatures
-          .withFeature(ViewerCountryCode, viewerCountryCode(viewerId))
+    vielonwelonrId match {
+      caselon Somelon(_) =>
+        vielonwelonrIdCount.incr()
+        buildelonrWithFelonaturelons
+          .withFelonaturelon(VielonwelonrCountryCodelon, vielonwelonrCountryCodelon(vielonwelonrId))
 
-      case _ =>
-        builderWithFeatures
+      caselon _ =>
+        buildelonrWithFelonaturelons
     }
   }
 
-  def forViewerNoDefaults(viewerOpt: Option[User]): FeatureMapBuilder => FeatureMapBuilder = {
-    builder =>
-      requests.incr()
+  delonf forVielonwelonrNoDelonfaults(vielonwelonrOpt: Option[Uselonr]): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    buildelonr =>
+      relonquelonsts.incr()
 
-      viewerOpt match {
-        case Some(viewer) =>
-          builder
-            .withConstantFeature(ViewerId, viewer.id)
-            .withConstantFeature(ViewerIsProtected, viewerIsProtectedOpt(viewer))
-            .withConstantFeature(ViewerIsSuspended, viewerIsSuspendedOpt(viewer))
-            .withConstantFeature(ViewerIsDeactivated, viewerIsDeactivatedOpt(viewer))
-            .withConstantFeature(ViewerCountryCode, viewerCountryCode(viewer))
-        case None =>
-          builder
-            .withConstantFeature(ViewerIsProtected, false)
-            .withConstantFeature(ViewerIsSuspended, false)
-            .withConstantFeature(ViewerIsDeactivated, false)
+      vielonwelonrOpt match {
+        caselon Somelon(vielonwelonr) =>
+          buildelonr
+            .withConstantFelonaturelon(VielonwelonrId, vielonwelonr.id)
+            .withConstantFelonaturelon(VielonwelonrIsProtelonctelond, vielonwelonrIsProtelonctelondOpt(vielonwelonr))
+            .withConstantFelonaturelon(VielonwelonrIsSuspelonndelond, vielonwelonrIsSuspelonndelondOpt(vielonwelonr))
+            .withConstantFelonaturelon(VielonwelonrIsDelonactivatelond, vielonwelonrIsDelonactivatelondOpt(vielonwelonr))
+            .withConstantFelonaturelon(VielonwelonrCountryCodelon, vielonwelonrCountryCodelon(vielonwelonr))
+        caselon Nonelon =>
+          buildelonr
+            .withConstantFelonaturelon(VielonwelonrIsProtelonctelond, falselon)
+            .withConstantFelonaturelon(VielonwelonrIsSuspelonndelond, falselon)
+            .withConstantFelonaturelon(VielonwelonrIsDelonactivatelond, falselon)
       }
   }
 
-  private def checkSafetyValue(
-    viewerId: Option[UserId],
-    safetyCheck: Safety => Boolean,
-    featureCounter: Counter
-  ): Stitch[Boolean] =
-    viewerId match {
-      case Some(id) =>
-        userSource.getSafety(id).map(safetyCheck).ensure {
-          featureCounter.incr()
+  privatelon delonf chelonckSafelontyValuelon(
+    vielonwelonrId: Option[UselonrId],
+    safelontyChelonck: Safelonty => Boolelonan,
+    felonaturelonCountelonr: Countelonr
+  ): Stitch[Boolelonan] =
+    vielonwelonrId match {
+      caselon Somelon(id) =>
+        uselonrSourcelon.gelontSafelonty(id).map(safelontyChelonck).elonnsurelon {
+          felonaturelonCountelonr.incr()
         }
-      case None => Stitch.False
+      caselon Nonelon => Stitch.Falselon
     }
 
-  private def checkSafetyValue(
-    viewer: User,
-    safetyCheck: Safety => Boolean
-  ): Boolean = {
-    viewer.safety.exists(safetyCheck)
+  privatelon delonf chelonckSafelontyValuelon(
+    vielonwelonr: Uselonr,
+    safelontyChelonck: Safelonty => Boolelonan
+  ): Boolelonan = {
+    vielonwelonr.safelonty.elonxists(safelontyChelonck)
   }
 
-  def viewerIsProtected(viewerId: Option[UserId]): Stitch[Boolean] =
-    checkSafetyValue(viewerId, s => s.isProtected, viewerIsProtected)
+  delonf vielonwelonrIsProtelonctelond(vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    chelonckSafelontyValuelon(vielonwelonrId, s => s.isProtelonctelond, vielonwelonrIsProtelonctelond)
 
-  def viewerIsProtected(viewer: User): Boolean =
-    checkSafetyValue(viewer, s => s.isProtected)
+  delonf vielonwelonrIsProtelonctelond(vielonwelonr: Uselonr): Boolelonan =
+    chelonckSafelontyValuelon(vielonwelonr, s => s.isProtelonctelond)
 
-  def viewerIsProtectedOpt(viewer: User): Option[Boolean] =
-    viewer.safety.map(_.isProtected)
+  delonf vielonwelonrIsProtelonctelondOpt(vielonwelonr: Uselonr): Option[Boolelonan] =
+    vielonwelonr.safelonty.map(_.isProtelonctelond)
 
-  def viewerIsDeactivated(viewerId: Option[UserId]): Stitch[Boolean] =
-    checkSafetyValue(viewerId, s => s.deactivated, viewerIsDeactivated)
+  delonf vielonwelonrIsDelonactivatelond(vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    chelonckSafelontyValuelon(vielonwelonrId, s => s.delonactivatelond, vielonwelonrIsDelonactivatelond)
 
-  def viewerIsDeactivated(viewer: User): Boolean =
-    checkSafetyValue(viewer, s => s.deactivated)
+  delonf vielonwelonrIsDelonactivatelond(vielonwelonr: Uselonr): Boolelonan =
+    chelonckSafelontyValuelon(vielonwelonr, s => s.delonactivatelond)
 
-  def viewerIsDeactivatedOpt(viewer: User): Option[Boolean] =
-    viewer.safety.map(_.deactivated)
+  delonf vielonwelonrIsDelonactivatelondOpt(vielonwelonr: Uselonr): Option[Boolelonan] =
+    vielonwelonr.safelonty.map(_.delonactivatelond)
 
-  def viewerHasUniversalQualityFilterEnabled(viewerId: Option[UserId]): Stitch[Boolean] =
-    checkSafetyValue(
-      viewerId,
-      s => s.universalQualityFiltering == UniversalQualityFiltering.Enabled,
-      viewerHasUniversalQualityFilterEnabled
+  delonf vielonwelonrHasUnivelonrsalQualityFiltelonrelonnablelond(vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] =
+    chelonckSafelontyValuelon(
+      vielonwelonrId,
+      s => s.univelonrsalQualityFiltelonring == UnivelonrsalQualityFiltelonring.elonnablelond,
+      vielonwelonrHasUnivelonrsalQualityFiltelonrelonnablelond
     )
 
-  def viewerUserLabels(viewerIdOpt: Option[UserId]): Stitch[Seq[Label]] =
-    viewerIdOpt match {
-      case Some(viewerId) =>
-        userSource
-          .getLabels(viewerId).map(_.labels)
-          .handle {
-            case NotFound => Seq.empty
-          }.ensure {
-            viewerUserLabels.incr()
+  delonf vielonwelonrUselonrLabelonls(vielonwelonrIdOpt: Option[UselonrId]): Stitch[Selonq[Labelonl]] =
+    vielonwelonrIdOpt match {
+      caselon Somelon(vielonwelonrId) =>
+        uselonrSourcelon
+          .gelontLabelonls(vielonwelonrId).map(_.labelonls)
+          .handlelon {
+            caselon NotFound => Selonq.elonmpty
+          }.elonnsurelon {
+            vielonwelonrUselonrLabelonls.incr()
           }
-      case _ => Stitch.value(Seq.empty)
+      caselon _ => Stitch.valuelon(Selonq.elonmpty)
     }
 
-  def viewerAgeInYears(viewerId: Option[UserId]): Stitch[UserAge] =
-    (viewerId match {
-      case Some(id) =>
-        userSource
-          .getExtendedProfile(id).map(_.ageInYears)
-          .handle {
-            case NotFound => None
-          }.ensure {
-            viewerAge.incr()
+  delonf vielonwelonrAgelonInYelonars(vielonwelonrId: Option[UselonrId]): Stitch[UselonrAgelon] =
+    (vielonwelonrId match {
+      caselon Somelon(id) =>
+        uselonrSourcelon
+          .gelontelonxtelonndelondProfilelon(id).map(_.agelonInYelonars)
+          .handlelon {
+            caselon NotFound => Nonelon
+          }.elonnsurelon {
+            vielonwelonrAgelon.incr()
           }
-      case _ => Stitch.value(None)
-    }).map(UserAge)
+      caselon _ => Stitch.valuelon(Nonelon)
+    }).map(UselonrAgelon)
 
-  def viewerIsSoftUser(viewerId: Option[UserId]): Stitch[Boolean] = {
-    viewerId match {
-      case Some(id) =>
-        userSource
-          .getUserType(id).map { userType =>
-            userType == UserType.Soft
-          }.ensure {
-            viewerIsSoftUserCtr.incr()
+  delonf vielonwelonrIsSoftUselonr(vielonwelonrId: Option[UselonrId]): Stitch[Boolelonan] = {
+    vielonwelonrId match {
+      caselon Somelon(id) =>
+        uselonrSourcelon
+          .gelontUselonrTypelon(id).map { uselonrTypelon =>
+            uselonrTypelon == UselonrTypelon.Soft
+          }.elonnsurelon {
+            vielonwelonrIsSoftUselonrCtr.incr()
           }
-      case _ => Stitch.False
+      caselon _ => Stitch.Falselon
     }
   }
 
-  def requestCountryCode(viewerContext: ViewerContext): Option[String] = {
-    requestCountryCode.incr()
-    viewerContext.requestCountryCode
+  delonf relonquelonstCountryCodelon(vielonwelonrContelonxt: VielonwelonrContelonxt): Option[String] = {
+    relonquelonstCountryCodelon.incr()
+    vielonwelonrContelonxt.relonquelonstCountryCodelon
   }
 
-  def requestIsVerifiedCrawler(viewerContext: ViewerContext): Boolean = {
-    requestIsVerifiedCrawler.incr()
-    viewerContext.isVerifiedCrawler
+  delonf relonquelonstIsVelonrifielondCrawlelonr(vielonwelonrContelonxt: VielonwelonrContelonxt): Boolelonan = {
+    relonquelonstIsVelonrifielondCrawlelonr.incr()
+    vielonwelonrContelonxt.isVelonrifielondCrawlelonr
   }
 
-  def viewerCountryCode(viewerId: Option[UserId]): Stitch[String] =
-    viewerId match {
-      case Some(id) =>
-        userSource
-          .getAccount(id).map(_.countryCode).flatMap {
-            case Some(countryCode) => Stitch.value(countryCode.toLowerCase)
-            case _ => Stitch.NotFound
-          }.ensure {
-            viewerCountryCode.incr()
+  delonf vielonwelonrCountryCodelon(vielonwelonrId: Option[UselonrId]): Stitch[String] =
+    vielonwelonrId match {
+      caselon Somelon(id) =>
+        uselonrSourcelon
+          .gelontAccount(id).map(_.countryCodelon).flatMap {
+            caselon Somelon(countryCodelon) => Stitch.valuelon(countryCodelon.toLowelonrCaselon)
+            caselon _ => Stitch.NotFound
+          }.elonnsurelon {
+            vielonwelonrCountryCodelon.incr()
           }
 
-      case _ => Stitch.NotFound
+      caselon _ => Stitch.NotFound
     }
 
-  def viewerCountryCode(viewer: User): Option[String] =
-    viewer.account.flatMap(_.countryCode)
+  delonf vielonwelonrCountryCodelon(vielonwelonr: Uselonr): Option[String] =
+    vielonwelonr.account.flatMap(_.countryCodelon)
 }

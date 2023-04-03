@@ -1,22 +1,22 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.visibility.thriftscala.UserVisibilityResult
-import com.twitter.visibility.util.NamingUtils
+import com.twittelonr.visibility.thriftscala.UselonrVisibilityRelonsult
+import com.twittelonr.visibility.util.NamingUtils
 
-sealed trait UserUnavailableStateEnum {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+selonalelond trait UselonrUnavailablelonStatelonelonnum {
+  lazy val namelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
 }
-object UserUnavailableStateEnum {
-  case object Deleted extends UserUnavailableStateEnum
-  case object BounceDeleted extends UserUnavailableStateEnum
-  case object Deactivated extends UserUnavailableStateEnum
-  case object Offboarded extends UserUnavailableStateEnum
-  case object Erased extends UserUnavailableStateEnum
-  case object Suspended extends UserUnavailableStateEnum
-  case object Protected extends UserUnavailableStateEnum
-  case object AuthorBlocksViewer extends UserUnavailableStateEnum
-  case object ViewerBlocksAuthor extends UserUnavailableStateEnum
-  case object ViewerMutesAuthor extends UserUnavailableStateEnum
-  case class Filtered(result: UserVisibilityResult) extends UserUnavailableStateEnum
-  case object Unavailable extends UserUnavailableStateEnum
+objelonct UselonrUnavailablelonStatelonelonnum {
+  caselon objelonct Delonlelontelond elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon objelonct BouncelonDelonlelontelond elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon objelonct Delonactivatelond elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon objelonct Offboardelond elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon objelonct elonraselond elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon objelonct Suspelonndelond elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon objelonct Protelonctelond elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon objelonct AuthorBlocksVielonwelonr elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon objelonct VielonwelonrBlocksAuthor elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon objelonct VielonwelonrMutelonsAuthor elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon class Filtelonrelond(relonsult: UselonrVisibilityRelonsult) elonxtelonnds UselonrUnavailablelonStatelonelonnum
+  caselon objelonct Unavailablelon elonxtelonnds UselonrUnavailablelonStatelonelonnum
 }

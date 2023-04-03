@@ -1,8 +1,8 @@
-package com.twitter.cr_mixer.model
+packagelon com.twittelonr.cr_mixelonr.modelonl
 
-import com.twitter.simclusters_v2.common.TweetId
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
 
 /***
- * Bind a tweetId with a raw score generated from one single Similarity Engine
+ * Bind a twelonelontId with a raw scorelon gelonnelonratelond from onelon singlelon Similarity elonnginelon
  */
-case class TweetWithScore(tweetId: TweetId, score: Double)
+caselon class TwelonelontWithScorelon(twelonelontId: TwelonelontId, scorelon: Doublelon)

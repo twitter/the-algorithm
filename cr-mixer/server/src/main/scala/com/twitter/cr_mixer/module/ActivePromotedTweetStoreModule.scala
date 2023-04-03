@@ -1,134 +1,134 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.bijection.thrift.CompactThriftCodec
-import com.twitter.ads.entities.db.thriftscala.LineItemObjective
-import com.twitter.bijection.Injection
-import com.twitter.conversions.DurationOps._
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.thriftscala.LineItemInfo
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataType
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.GeneralTensor
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.relevance_platform.common.injection.LZ4Injection
-import com.twitter.relevance_platform.common.injection.SeqObjectInjection
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.manhattan.Revenue
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import com.twitter.util.Future
-import javax.inject.Named
-import scala.collection.JavaConverters._
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.bijelonction.thrift.CompactThriftCodelonc
+import com.twittelonr.ads.elonntitielons.db.thriftscala.LinelonItelonmObjelonctivelon
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.thriftscala.LinelonItelonmInfo
+import com.twittelonr.finaglelon.melonmcachelond.{Clielonnt => MelonmcachelondClielonnt}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondCachelondRelonadablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondMelonmcachelondRelonadablelonStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.DataTypelon
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.GelonnelonralTelonnsor
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.relonlelonvancelon_platform.common.injelonction.LZ4Injelonction
+import com.twittelonr.relonlelonvancelon_platform.common.injelonction.SelonqObjelonctInjelonction
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanRO
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanROConfig
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.Relonvelonnuelon
+import com.twittelonr.storelonhaus_intelonrnal.util.ApplicationID
+import com.twittelonr.storelonhaus_intelonrnal.util.DataselontNamelon
+import com.twittelonr.storelonhaus_intelonrnal.util.HDFSPath
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Namelond
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object ActivePromotedTweetStoreModule extends TwitterModule {
+objelonct ActivelonPromotelondTwelonelontStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  case class ActivePromotedTweetStore(
-    activePromotedTweetMHStore: ReadableStore[String, DataRecord],
-    statsReceiver: StatsReceiver)
-      extends ReadableStore[TweetId, Seq[LineItemInfo]] {
-    override def get(tweetId: TweetId): Future[Option[Seq[LineItemInfo]]] = {
-      activePromotedTweetMHStore.get(tweetId.toString).map {
-        _.map { dataRecord =>
-          val richDataRecord = new RichDataRecord(dataRecord)
-          val lineItemIdsFeature: Feature[GeneralTensor] =
-            new Feature.Tensor("active_promoted_tweets.line_item_ids", DataType.INT64)
+  caselon class ActivelonPromotelondTwelonelontStorelon(
+    activelonPromotelondTwelonelontMHStorelon: RelonadablelonStorelon[String, DataReloncord],
+    statsReloncelonivelonr: StatsReloncelonivelonr)
+      elonxtelonnds RelonadablelonStorelon[TwelonelontId, Selonq[LinelonItelonmInfo]] {
+    ovelonrridelon delonf gelont(twelonelontId: TwelonelontId): Futurelon[Option[Selonq[LinelonItelonmInfo]]] = {
+      activelonPromotelondTwelonelontMHStorelon.gelont(twelonelontId.toString).map {
+        _.map { dataReloncord =>
+          val richDataReloncord = nelonw RichDataReloncord(dataReloncord)
+          val linelonItelonmIdsFelonaturelon: Felonaturelon[GelonnelonralTelonnsor] =
+            nelonw Felonaturelon.Telonnsor("activelon_promotelond_twelonelonts.linelon_itelonm_ids", DataTypelon.INT64)
 
-          val lineItemObjectivesFeature: Feature[GeneralTensor] =
-            new Feature.Tensor("active_promoted_tweets.line_item_objectives", DataType.INT64)
+          val linelonItelonmObjelonctivelonsFelonaturelon: Felonaturelon[GelonnelonralTelonnsor] =
+            nelonw Felonaturelon.Telonnsor("activelon_promotelond_twelonelonts.linelon_itelonm_objelonctivelons", DataTypelon.INT64)
 
-          val lineItemIdsTensor: GeneralTensor = richDataRecord.getFeatureValue(lineItemIdsFeature)
-          val lineItemObjectivesTensor: GeneralTensor =
-            richDataRecord.getFeatureValue(lineItemObjectivesFeature)
+          val linelonItelonmIdsTelonnsor: GelonnelonralTelonnsor = richDataReloncord.gelontFelonaturelonValuelon(linelonItelonmIdsFelonaturelon)
+          val linelonItelonmObjelonctivelonsTelonnsor: GelonnelonralTelonnsor =
+            richDataReloncord.gelontFelonaturelonValuelon(linelonItelonmObjelonctivelonsFelonaturelon)
 
-          val lineItemIds: Seq[Long] =
-            if (lineItemIdsTensor.getSetField == GeneralTensor._Fields.INT64_TENSOR && lineItemIdsTensor.getInt64Tensor.isSetLongs) {
-              lineItemIdsTensor.getInt64Tensor.getLongs.asScala.map(_.toLong)
-            } else Seq.empty
+          val linelonItelonmIds: Selonq[Long] =
+            if (linelonItelonmIdsTelonnsor.gelontSelontFielonld == GelonnelonralTelonnsor._Fielonlds.INT64_TelonNSOR && linelonItelonmIdsTelonnsor.gelontInt64Telonnsor.isSelontLongs) {
+              linelonItelonmIdsTelonnsor.gelontInt64Telonnsor.gelontLongs.asScala.map(_.toLong)
+            } elonlselon Selonq.elonmpty
 
-          val lineItemObjectives: Seq[LineItemObjective] =
-            if (lineItemObjectivesTensor.getSetField == GeneralTensor._Fields.INT64_TENSOR && lineItemObjectivesTensor.getInt64Tensor.isSetLongs) {
-              lineItemObjectivesTensor.getInt64Tensor.getLongs.asScala.map(objective =>
-                LineItemObjective(objective.toInt))
-            } else Seq.empty
+          val linelonItelonmObjelonctivelons: Selonq[LinelonItelonmObjelonctivelon] =
+            if (linelonItelonmObjelonctivelonsTelonnsor.gelontSelontFielonld == GelonnelonralTelonnsor._Fielonlds.INT64_TelonNSOR && linelonItelonmObjelonctivelonsTelonnsor.gelontInt64Telonnsor.isSelontLongs) {
+              linelonItelonmObjelonctivelonsTelonnsor.gelontInt64Telonnsor.gelontLongs.asScala.map(objelonctivelon =>
+                LinelonItelonmObjelonctivelon(objelonctivelon.toInt))
+            } elonlselon Selonq.elonmpty
 
-          val lineItemInfo =
-            if (lineItemIds.size == lineItemObjectives.size) {
-              lineItemIds.zipWithIndex.map {
-                case (lineItemId, index) =>
-                  LineItemInfo(
-                    lineItemId = lineItemId,
-                    lineItemObjective = lineItemObjectives(index)
+          val linelonItelonmInfo =
+            if (linelonItelonmIds.sizelon == linelonItelonmObjelonctivelons.sizelon) {
+              linelonItelonmIds.zipWithIndelonx.map {
+                caselon (linelonItelonmId, indelonx) =>
+                  LinelonItelonmInfo(
+                    linelonItelonmId = linelonItelonmId,
+                    linelonItelonmObjelonctivelon = linelonItelonmObjelonctivelons(indelonx)
                   )
               }
-            } else Seq.empty
+            } elonlselon Selonq.elonmpty
 
-          lineItemInfo
+          linelonItelonmInfo
         }
       }
     }
   }
 
-  @Provides
-  @Singleton
-  def providesActivePromotedTweetStore(
-    manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
-    @Named(ModuleNames.UnifiedCache) crMixerUnifiedCacheClient: MemcachedClient,
-    crMixerStatsReceiver: StatsReceiver
-  ): ReadableStore[TweetId, Seq[LineItemInfo]] = {
+  @Providelons
+  @Singlelonton
+  delonf providelonsActivelonPromotelondTwelonelontStorelon(
+    manhattanKVClielonntMtlsParams: ManhattanKVClielonntMtlsParams,
+    @Namelond(ModulelonNamelons.UnifielondCachelon) crMixelonrUnifielondCachelonClielonnt: MelonmcachelondClielonnt,
+    crMixelonrStatsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadablelonStorelon[TwelonelontId, Selonq[LinelonItelonmInfo]] = {
 
-    val mhConfig = new ManhattanROConfig {
+    val mhConfig = nelonw ManhattanROConfig {
       val hdfsPath = HDFSPath("")
-      val applicationID = ApplicationID("ads_bigquery_features")
-      val datasetName = DatasetName("active_promoted_tweets")
-      val cluster = Revenue
+      val applicationID = ApplicationID("ads_bigquelonry_felonaturelons")
+      val dataselontNamelon = DataselontNamelon("activelon_promotelond_twelonelonts")
+      val clustelonr = Relonvelonnuelon
 
-      override def statsReceiver: StatsReceiver =
-        crMixerStatsReceiver.scope("active_promoted_tweets_mh")
+      ovelonrridelon delonf statsReloncelonivelonr: StatsReloncelonivelonr =
+        crMixelonrStatsReloncelonivelonr.scopelon("activelon_promotelond_twelonelonts_mh")
     }
-    val mhStore: ReadableStore[String, DataRecord] =
+    val mhStorelon: RelonadablelonStorelon[String, DataReloncord] =
       ManhattanRO
-        .getReadableStoreWithMtls[String, DataRecord](
+        .gelontRelonadablelonStorelonWithMtls[String, DataReloncord](
           mhConfig,
-          manhattanKVClientMtlsParams
+          manhattanKVClielonntMtlsParams
         )(
-          implicitly[Injection[String, Array[Byte]]],
-          CompactThriftCodec[DataRecord]
+          implicitly[Injelonction[String, Array[Bytelon]]],
+          CompactThriftCodelonc[DataReloncord]
         )
 
-    val underlyingStore =
-      ActivePromotedTweetStore(mhStore, crMixerStatsReceiver.scope("ActivePromotedTweetStore"))
-    val memcachedStore = ObservedMemcachedReadableStore.fromCacheClient(
-      backingStore = underlyingStore,
-      cacheClient = crMixerUnifiedCacheClient,
-      ttl = 60.minutes,
-      asyncUpdate = false
+    val undelonrlyingStorelon =
+      ActivelonPromotelondTwelonelontStorelon(mhStorelon, crMixelonrStatsReloncelonivelonr.scopelon("ActivelonPromotelondTwelonelontStorelon"))
+    val melonmcachelondStorelon = ObselonrvelondMelonmcachelondRelonadablelonStorelon.fromCachelonClielonnt(
+      backingStorelon = undelonrlyingStorelon,
+      cachelonClielonnt = crMixelonrUnifielondCachelonClielonnt,
+      ttl = 60.minutelons,
+      asyncUpdatelon = falselon
     )(
-      valueInjection = LZ4Injection.compose(SeqObjectInjection[LineItemInfo]()),
-      statsReceiver = crMixerStatsReceiver.scope("memCachedActivePromotedTweetStore"),
-      keyToString = { k: TweetId => s"apt/$k" }
+      valuelonInjelonction = LZ4Injelonction.composelon(SelonqObjelonctInjelonction[LinelonItelonmInfo]()),
+      statsReloncelonivelonr = crMixelonrStatsReloncelonivelonr.scopelon("melonmCachelondActivelonPromotelondTwelonelontStorelon"),
+      kelonyToString = { k: TwelonelontId => s"apt/$k" }
     )
 
-    ObservedCachedReadableStore.from(
-      memcachedStore,
-      ttl = 30.minutes,
-      maxKeys = 250000, // size of promoted tweet is around 200,000
-      windowSize = 10000L,
-      cacheName = "active_promoted_tweet_cache",
-      maxMultiGetSize = 20
-    )(crMixerStatsReceiver.scope("inMemoryCachedActivePromotedTweetStore"))
+    ObselonrvelondCachelondRelonadablelonStorelon.from(
+      melonmcachelondStorelon,
+      ttl = 30.minutelons,
+      maxKelonys = 250000, // sizelon of promotelond twelonelont is around 200,000
+      windowSizelon = 10000L,
+      cachelonNamelon = "activelon_promotelond_twelonelont_cachelon",
+      maxMultiGelontSizelon = 20
+    )(crMixelonrStatsReloncelonivelonr.scopelon("inMelonmoryCachelondActivelonPromotelondTwelonelontStorelon"))
 
   }
 

@@ -1,105 +1,105 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.collection.mutable
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import scala.collelonction.mutablelon
 
 /**
- * Select candidates and add them according to the `pattern`.
- * The pattern is repeated until all candidates contained in the pattern are added to the `result`.
- * If the candidates for a specific [[Bucket]] in the pattern are exhausted, that [[Bucket]] will be
- * skipped on subsequent iterations.
- * If a candidate has a [[Bucket]] that isn't in the pattern it is added to the end of the `result`.
- * The end result is all candidates from all [[candidatePipelines]]s provided will end up in the result.
+ * Selonlelonct candidatelons and add thelonm according to thelon `pattelonrn`.
+ * Thelon pattelonrn is relonpelonatelond until all candidatelons containelond in thelon pattelonrn arelon addelond to thelon `relonsult`.
+ * If thelon candidatelons for a speloncific [[Buckelont]] in thelon pattelonrn arelon elonxhaustelond, that [[Buckelont]] will belon
+ * skippelond on subselonquelonnt itelonrations.
+ * If a candidatelon has a [[Buckelont]] that isn't in thelon pattelonrn it is addelond to thelon elonnd of thelon `relonsult`.
+ * Thelon elonnd relonsult is all candidatelons from all [[candidatelonPipelonlinelons]]s providelond will elonnd up in thelon relonsult.
  *
- * @example If there are no more candidates from a given `CandidatePipeline` then it is skipped, so
- *          with the pattern `Seq(A, A, B, C)`, if there are no more candidates from `B` then it is
- *          effectively the same as `Seq(A, A, C)`. The `result` will contain all candidates from all
- *          `CandidatePipeline`s who's `Bucket` is in the `pattern`.
+ * @elonxamplelon If thelonrelon arelon no morelon candidatelons from a givelonn `CandidatelonPipelonlinelon` thelonn it is skippelond, so
+ *          with thelon pattelonrn `Selonq(A, A, B, C)`, if thelonrelon arelon no morelon candidatelons from `B` thelonn it is
+ *          elonffelonctivelonly thelon samelon as `Selonq(A, A, C)`. Thelon `relonsult` will contain all candidatelons from all
+ *          `CandidatelonPipelonlinelon`s who's `Buckelont` is in thelon `pattelonrn`.
  *
- * @example If the pattern is `Seq(A, A, B, C)` and the remaining candidates
- *          from the provided `candidatePipelines` are:
+ * @elonxamplelon If thelon pattelonrn is `Selonq(A, A, B, C)` and thelon relonmaining candidatelons
+ *          from thelon providelond `candidatelonPipelonlinelons` arelon:
  *          - 5 `A`s
  *          - 2 `B`s
  *          - 1 `C`
  *          - 1 `D`s
  *
- *          then the resulting output for each iteration over the pattern is
- *          - `Seq(A, A, B, C)`
- *          - `Seq(A, A, B)` since there's no more `C`s
- *          - `Seq(A)` since there are no more `B`s or `C`s
- *          - `Seq(D)` since it wasn't in the pattern but is from one of the provided
- *            `candidatePipelines`, it's appended at the end
+ *          thelonn thelon relonsulting output for elonach itelonration ovelonr thelon pattelonrn is
+ *          - `Selonq(A, A, B, C)`
+ *          - `Selonq(A, A, B)` sincelon thelonrelon's no morelon `C`s
+ *          - `Selonq(A)` sincelon thelonrelon arelon no morelon `B`s or `C`s
+ *          - `Selonq(D)` sincelon it wasn't in thelon pattelonrn but is from onelon of thelon providelond
+ *            `candidatelonPipelonlinelons`, it's appelonndelond at thelon elonnd
  *
- *          so the `result` that's returned would be `Seq(A, A, B, C, A, A, B, A, D)`
+ *          so thelon `relonsult` that's relonturnelond would belon `Selonq(A, A, B, C, A, A, B, A, D)`
  */
-case class InsertAppendPatternResults[-Query <: PipelineQuery, Bucket](
-  candidatePipelines: Set[CandidatePipelineIdentifier],
-  bucketer: Bucketer[Bucket],
-  pattern: Seq[Bucket])
-    extends Selector[Query] {
+caselon class InselonrtAppelonndPattelonrnRelonsults[-Quelonry <: PipelonlinelonQuelonry, Buckelont](
+  candidatelonPipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr],
+  buckelontelonr: Buckelontelonr[Buckelont],
+  pattelonrn: Selonq[Buckelont])
+    elonxtelonnds Selonlelonctor[Quelonry] {
 
-  require(pattern.nonEmpty, "`pattern` must be non-empty")
+  relonquirelon(pattelonrn.nonelonmpty, "`pattelonrn` must belon non-elonmpty")
 
-  override val pipelineScope: CandidateScope = SpecificPipelines(candidatePipelines)
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = SpeloncificPipelonlinelons(candidatelonPipelonlinelons)
 
-  private sealed trait PatternResult
-  private case object NotASelectedCandidatePipeline extends PatternResult
-  private case object NotABucketInThePattern extends PatternResult
-  private case class Bucketed(bucket: Bucket) extends PatternResult
+  privatelon selonalelond trait PattelonrnRelonsult
+  privatelon caselon objelonct NotASelonlelonctelondCandidatelonPipelonlinelon elonxtelonnds PattelonrnRelonsult
+  privatelon caselon objelonct NotABuckelontInThelonPattelonrn elonxtelonnds PattelonrnRelonsult
+  privatelon caselon class Buckelontelond(buckelont: Buckelont) elonxtelonnds PattelonrnRelonsult
 
-  private val allBucketsInPattern = pattern.toSet
+  privatelon val allBuckelontsInPattelonrn = pattelonrn.toSelont
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val groupedCandidates: Map[PatternResult, Seq[CandidateWithDetails]] =
-      remainingCandidates.groupBy { candidateWithDetails =>
-        if (pipelineScope.contains(candidateWithDetails)) {
-          // if a candidate's Bucket doesnt appear in the pattern it's backfilled at the end
-          val bucket = bucketer(candidateWithDetails)
-          if (allBucketsInPattern.contains(bucket)) {
-            Bucketed(bucket)
-          } else {
-            NotABucketInThePattern
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val groupelondCandidatelons: Map[PattelonrnRelonsult, Selonq[CandidatelonWithDelontails]] =
+      relonmainingCandidatelons.groupBy { candidatelonWithDelontails =>
+        if (pipelonlinelonScopelon.contains(candidatelonWithDelontails)) {
+          // if a candidatelon's Buckelont doelonsnt appelonar in thelon pattelonrn it's backfillelond at thelon elonnd
+          val buckelont = buckelontelonr(candidatelonWithDelontails)
+          if (allBuckelontsInPattelonrn.contains(buckelont)) {
+            Buckelontelond(buckelont)
+          } elonlselon {
+            NotABuckelontInThelonPattelonrn
           }
-        } else {
-          NotASelectedCandidatePipeline
+        } elonlselon {
+          NotASelonlelonctelondCandidatelonPipelonlinelon
         }
       }
 
-    val otherCandidates =
-      groupedCandidates.getOrElse(NotASelectedCandidatePipeline, Seq.empty)
+    val othelonrCandidatelons =
+      groupelondCandidatelons.gelontOrelonlselon(NotASelonlelonctelondCandidatelonPipelonlinelon, Selonq.elonmpty)
 
-    val notABucketInThePattern =
-      groupedCandidates.getOrElse(NotABucketInThePattern, Seq.empty)
+    val notABuckelontInThelonPattelonrn =
+      groupelondCandidatelons.gelontOrelonlselon(NotABuckelontInThelonPattelonrn, Selonq.elonmpty)
 
-    // mutable so we can remove finished iterators to optimize when looping for large patterns
-    val groupedBucketsIterators = mutable.HashMap(groupedCandidates.collect {
-      case (Bucketed(bucket), candidatesWithDetails) => (bucket, candidatesWithDetails.iterator)
-    }.toSeq: _*)
+    // mutablelon so welon can relonmovelon finishelond itelonrators to optimizelon whelonn looping for largelon pattelonrns
+    val groupelondBuckelontsItelonrators = mutablelon.HashMap(groupelondCandidatelons.collelonct {
+      caselon (Buckelontelond(buckelont), candidatelonsWithDelontails) => (buckelont, candidatelonsWithDelontails.itelonrator)
+    }.toSelonq: _*)
 
-    val patternIterator = Iterator.continually(pattern).flatten
+    val pattelonrnItelonrator = Itelonrator.continually(pattelonrn).flattelonn
 
-    val newResult = new mutable.ArrayBuffer[CandidateWithDetails]()
-    while (groupedBucketsIterators.nonEmpty) {
-      val bucket = patternIterator.next()
-      groupedBucketsIterators.get(bucket) match {
-        case Some(iterator) if iterator.nonEmpty => newResult += iterator.next()
-        case Some(_) => groupedBucketsIterators.remove(bucket)
-        case None =>
+    val nelonwRelonsult = nelonw mutablelon.ArrayBuffelonr[CandidatelonWithDelontails]()
+    whilelon (groupelondBuckelontsItelonrators.nonelonmpty) {
+      val buckelont = pattelonrnItelonrator.nelonxt()
+      groupelondBuckelontsItelonrators.gelont(buckelont) match {
+        caselon Somelon(itelonrator) if itelonrator.nonelonmpty => nelonwRelonsult += itelonrator.nelonxt()
+        caselon Somelon(_) => groupelondBuckelontsItelonrators.relonmovelon(buckelont)
+        caselon Nonelon =>
       }
     }
 
-    SelectorResult(
-      remainingCandidates = otherCandidates,
-      result = result ++ newResult ++ notABucketInThePattern)
+    SelonlelonctorRelonsult(
+      relonmainingCandidatelons = othelonrCandidatelons,
+      relonsult = relonsult ++ nelonwRelonsult ++ notABuckelontInThelonPattelonrn)
   }
 }

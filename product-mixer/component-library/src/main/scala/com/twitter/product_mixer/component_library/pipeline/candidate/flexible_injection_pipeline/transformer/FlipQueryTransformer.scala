@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr
 
-import com.twitter.onboarding.task.service.thriftscala.PromptType
-import com.twitter.onboarding.task.service.{thriftscala => flip}
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.onboarding.task.selonrvicelon.thriftscala.PromptTypelon
+import com.twittelonr.onboarding.task.selonrvicelon.{thriftscala => flip}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object FlipQueryTransformer
-    extends CandidatePipelineQueryTransformer[
-      PipelineQuery with HasFlipInjectionParams,
-      flip.GetInjectionsRequest
+objelonct FlipQuelonryTransformelonr
+    elonxtelonnds CandidatelonPipelonlinelonQuelonryTransformelonr[
+      PipelonlinelonQuelonry with HasFlipInjelonctionParams,
+      flip.GelontInjelonctionsRelonquelonst
     ] {
 
-  val SUPPORTED_PROMPT_TYPES: Set[PromptType] = Set(
-    PromptType.InlinePrompt,
-    PromptType.FullCover,
-    PromptType.HalfCover,
-    PromptType.TileCarousel,
-    PromptType.RelevancePrompt)
+  val SUPPORTelonD_PROMPT_TYPelonS: Selont[PromptTypelon] = Selont(
+    PromptTypelon.InlinelonPrompt,
+    PromptTypelon.FullCovelonr,
+    PromptTypelon.HalfCovelonr,
+    PromptTypelon.TilelonCarouselonl,
+    PromptTypelon.RelonlelonvancelonPrompt)
 
-  override def transform(
-    query: PipelineQuery with HasFlipInjectionParams
-  ): flip.GetInjectionsRequest = {
-    val clientContext = flip.ClientContext(
-      userId = query.clientContext.userId,
-      guestId = query.clientContext.guestId,
-      clientApplicationId = query.clientContext.appId,
-      deviceId = query.clientContext.deviceId,
-      countryCode = query.clientContext.countryCode,
-      languageCode = query.clientContext.languageCode,
-      userAgent = query.clientContext.userAgent,
-      guestIdMarketing = query.clientContext.guestIdMarketing,
-      guestIdAds = query.clientContext.guestIdAds,
-      isInternalOrTwoffice = query.clientContext.isTwoffice,
-      ipAddress = query.clientContext.ipAddress
+  ovelonrridelon delonf transform(
+    quelonry: PipelonlinelonQuelonry with HasFlipInjelonctionParams
+  ): flip.GelontInjelonctionsRelonquelonst = {
+    val clielonntContelonxt = flip.ClielonntContelonxt(
+      uselonrId = quelonry.clielonntContelonxt.uselonrId,
+      guelonstId = quelonry.clielonntContelonxt.guelonstId,
+      clielonntApplicationId = quelonry.clielonntContelonxt.appId,
+      delonvicelonId = quelonry.clielonntContelonxt.delonvicelonId,
+      countryCodelon = quelonry.clielonntContelonxt.countryCodelon,
+      languagelonCodelon = quelonry.clielonntContelonxt.languagelonCodelon,
+      uselonrAgelonnt = quelonry.clielonntContelonxt.uselonrAgelonnt,
+      guelonstIdMarkelonting = quelonry.clielonntContelonxt.guelonstIdMarkelonting,
+      guelonstIdAds = quelonry.clielonntContelonxt.guelonstIdAds,
+      isIntelonrnalOrTwofficelon = quelonry.clielonntContelonxt.isTwofficelon,
+      ipAddrelonss = quelonry.clielonntContelonxt.ipAddrelonss
     )
-    val displayContext: flip.DisplayContext =
-      flip.DisplayContext(
-        displayLocation = query.displayLocation,
-        timelineId = query.clientContext.userId
+    val displayContelonxt: flip.DisplayContelonxt =
+      flip.DisplayContelonxt(
+        displayLocation = quelonry.displayLocation,
+        timelonlinelonId = quelonry.clielonntContelonxt.uselonrId
       )
 
-    val requestTargetingContext: flip.RequestTargetingContext =
-      flip.RequestTargetingContext(
-        rankingDisablerWithLatestControlsAvaliable =
-          query.rankingDisablerWithLatestControlsAvailable,
-        reactivePromptContext = None,
-        isEmptyState = query.isEmptyState,
-        isFirstRequestAfterSignup = query.isFirstRequestAfterSignup,
-        isEndOfTimeline = query.isEndOfTimeline
+    val relonquelonstTargelontingContelonxt: flip.RelonquelonstTargelontingContelonxt =
+      flip.RelonquelonstTargelontingContelonxt(
+        rankingDisablelonrWithLatelonstControlsAvaliablelon =
+          quelonry.rankingDisablelonrWithLatelonstControlsAvailablelon,
+        relonactivelonPromptContelonxt = Nonelon,
+        iselonmptyStatelon = quelonry.iselonmptyStatelon,
+        isFirstRelonquelonstAftelonrSignup = quelonry.isFirstRelonquelonstAftelonrSignup,
+        iselonndOfTimelonlinelon = quelonry.iselonndOfTimelonlinelon
       )
 
-    flip.GetInjectionsRequest(
-      clientContext = clientContext,
-      displayContext = displayContext,
-      requestTargetingContext = Some(requestTargetingContext),
-      userRoles = query.clientContext.userRoles,
-      timelineContext = None,
-      supportedPromptTypes = Some(SUPPORTED_PROMPT_TYPES)
+    flip.GelontInjelonctionsRelonquelonst(
+      clielonntContelonxt = clielonntContelonxt,
+      displayContelonxt = displayContelonxt,
+      relonquelonstTargelontingContelonxt = Somelon(relonquelonstTargelontingContelonxt),
+      uselonrRolelons = quelonry.clielonntContelonxt.uselonrRolelons,
+      timelonlinelonContelonxt = Nonelon,
+      supportelondPromptTypelons = Somelon(SUPPORTelonD_PROMPT_TYPelonS)
     )
   }
 }

@@ -1,33 +1,33 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.inject.TwitterModule
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import javax.inject.Named
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrsann.thriftscala.SimClustelonrsANNSelonrvicelon
+import javax.injelonct.Namelond
 
-object SimClustersANNServiceNameToClientMapper extends TwitterModule {
+objelonct SimClustelonrsANNSelonrvicelonNamelonToClielonntMappelonr elonxtelonnds TwittelonrModulelon {
 
-  @Provides
-  @Singleton
-  def providesSimClustersANNServiceNameToClientMapping(
-    @Named(ModuleNames.ProdSimClustersANNServiceClientName) simClustersANNServiceProd: SimClustersANNService.MethodPerEndpoint,
-    @Named(ModuleNames.ExperimentalSimClustersANNServiceClientName) simClustersANNServiceExperimental: SimClustersANNService.MethodPerEndpoint,
-    @Named(ModuleNames.SimClustersANNServiceClientName1) simClustersANNService1: SimClustersANNService.MethodPerEndpoint,
-    @Named(ModuleNames.SimClustersANNServiceClientName2) simClustersANNService2: SimClustersANNService.MethodPerEndpoint,
-    @Named(ModuleNames.SimClustersANNServiceClientName3) simClustersANNService3: SimClustersANNService.MethodPerEndpoint,
-    @Named(ModuleNames.SimClustersANNServiceClientName5) simClustersANNService5: SimClustersANNService.MethodPerEndpoint,
-    @Named(ModuleNames.SimClustersANNServiceClientName4) simClustersANNService4: SimClustersANNService.MethodPerEndpoint
-  ): Map[String, SimClustersANNService.MethodPerEndpoint] = {
-    Map[String, SimClustersANNService.MethodPerEndpoint](
-      "simclusters-ann" -> simClustersANNServiceProd,
-      "simclusters-ann-experimental" -> simClustersANNServiceExperimental,
-      "simclusters-ann-1" -> simClustersANNService1,
-      "simclusters-ann-2" -> simClustersANNService2,
-      "simclusters-ann-3" -> simClustersANNService3,
-      "simclusters-ann-5" -> simClustersANNService5,
-      "simclusters-ann-4" -> simClustersANNService4
+  @Providelons
+  @Singlelonton
+  delonf providelonsSimClustelonrsANNSelonrvicelonNamelonToClielonntMapping(
+    @Namelond(ModulelonNamelons.ProdSimClustelonrsANNSelonrvicelonClielonntNamelon) simClustelonrsANNSelonrvicelonProd: SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint,
+    @Namelond(ModulelonNamelons.elonxpelonrimelonntalSimClustelonrsANNSelonrvicelonClielonntNamelon) simClustelonrsANNSelonrvicelonelonxpelonrimelonntal: SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint,
+    @Namelond(ModulelonNamelons.SimClustelonrsANNSelonrvicelonClielonntNamelon1) simClustelonrsANNSelonrvicelon1: SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint,
+    @Namelond(ModulelonNamelons.SimClustelonrsANNSelonrvicelonClielonntNamelon2) simClustelonrsANNSelonrvicelon2: SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint,
+    @Namelond(ModulelonNamelons.SimClustelonrsANNSelonrvicelonClielonntNamelon3) simClustelonrsANNSelonrvicelon3: SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint,
+    @Namelond(ModulelonNamelons.SimClustelonrsANNSelonrvicelonClielonntNamelon5) simClustelonrsANNSelonrvicelon5: SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint,
+    @Namelond(ModulelonNamelons.SimClustelonrsANNSelonrvicelonClielonntNamelon4) simClustelonrsANNSelonrvicelon4: SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint
+  ): Map[String, SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint] = {
+    Map[String, SimClustelonrsANNSelonrvicelon.MelonthodPelonrelonndpoint](
+      "simclustelonrs-ann" -> simClustelonrsANNSelonrvicelonProd,
+      "simclustelonrs-ann-elonxpelonrimelonntal" -> simClustelonrsANNSelonrvicelonelonxpelonrimelonntal,
+      "simclustelonrs-ann-1" -> simClustelonrsANNSelonrvicelon1,
+      "simclustelonrs-ann-2" -> simClustelonrsANNSelonrvicelon2,
+      "simclustelonrs-ann-3" -> simClustelonrsANNSelonrvicelon3,
+      "simclustelonrs-ann-5" -> simClustelonrsANNSelonrvicelon5,
+      "simclustelonrs-ann-4" -> simClustelonrsANNSelonrvicelon4
     )
   }
 }

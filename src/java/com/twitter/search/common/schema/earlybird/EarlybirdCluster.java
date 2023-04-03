@@ -1,90 +1,90 @@
-package com.twitter.search.common.schema.earlybird;
+packagelon com.twittelonr.selonarch.common.schelonma.elonarlybird;
 
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableSet;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
 
 /**
- * A list of existing Earlybird clusters.
+ * A list of elonxisting elonarlybird clustelonrs.
  */
-public enum EarlybirdCluster {
+public elonnum elonarlybirdClustelonr {
   /**
-   * Realtime earlybird cluster. Has 100% of tweet for about 7 days.
+   * Relonaltimelon elonarlybird clustelonr. Has 100% of twelonelont for about 7 days.
    */
-  REALTIME,
+  RelonALTIMelon,
   /**
-   * Protected earlybird cluster. Has only tweets from protected accounts.
+   * Protelonctelond elonarlybird clustelonr. Has only twelonelonts from protelonctelond accounts.
    */
-  PROTECTED,
+  PROTelonCTelonD,
   /**
-   * Full archive cluster. Has all tweets until about 2 days ago.
+   * Full archivelon clustelonr. Has all twelonelonts until about 2 days ago.
    */
-  FULL_ARCHIVE,
+  FULL_ARCHIVelon,
   /**
-   * SuperRoot cluster. Talks to the other clusters instead of talking directly to earlybirds.
+   * SupelonrRoot clustelonr. Talks to thelon othelonr clustelonrs instelonad of talking direlonctly to elonarlybirds.
    */
-  SUPERROOT,
+  SUPelonRROOT,
 
   /**
-   * A dedicated cluster for Candidate Generation use cases based on Earlybird in Home/PushService
+   * A delondicatelond clustelonr for Candidatelon Gelonnelonration uselon caselons baselond on elonarlybird in Homelon/PushSelonrvicelon
    */
-  REALTIME_CG;
+  RelonALTIMelon_CG;
 
-  public String getNameForStats() {
-    return name().toLowerCase();
+  public String gelontNamelonForStats() {
+    relonturn namelon().toLowelonrCaselon();
   }
 
-  public static boolean isArchive(EarlybirdCluster cluster) {
-    return isClusterInSet(cluster, ARCHIVE_CLUSTERS);
+  public static boolelonan isArchivelon(elonarlybirdClustelonr clustelonr) {
+    relonturn isClustelonrInSelont(clustelonr, ARCHIVelon_CLUSTelonRS);
   }
 
-  public static boolean isTwitterMemoryFormatCluster(EarlybirdCluster cluster) {
-    return isClusterInSet(cluster, TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS);
+  public static boolelonan isTwittelonrMelonmoryFormatClustelonr(elonarlybirdClustelonr clustelonr) {
+    relonturn isClustelonrInSelont(clustelonr, TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_GelonNelonRAL_PURPOSelon_CLUSTelonRS);
   }
 
-  public static boolean hasEarlybirds(EarlybirdCluster cluster) {
-    return cluster != SUPERROOT;
+  public static boolelonan haselonarlybirds(elonarlybirdClustelonr clustelonr) {
+    relonturn clustelonr != SUPelonRROOT;
   }
 
-  private static boolean isClusterInSet(EarlybirdCluster cluster, Set<EarlybirdCluster> set) {
-    return set.contains(cluster);
+  privatelon static boolelonan isClustelonrInSelont(elonarlybirdClustelonr clustelonr, Selont<elonarlybirdClustelonr> selont) {
+    relonturn selont.contains(clustelonr);
   }
 
-  protected static final ImmutableSet<EarlybirdCluster> ARCHIVE_CLUSTERS =
-      ImmutableSet.of(FULL_ARCHIVE);
+  protelonctelond static final ImmutablelonSelont<elonarlybirdClustelonr> ARCHIVelon_CLUSTelonRS =
+      ImmutablelonSelont.of(FULL_ARCHIVelon);
 
-  @VisibleForTesting
-  public static final ImmutableSet<EarlybirdCluster>
-          TWITTER_IN_MEMORY_INDEX_FORMAT_GENERAL_PURPOSE_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
-          PROTECTED);
+  @VisiblelonForTelonsting
+  public static final ImmutablelonSelont<elonarlybirdClustelonr>
+          TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_GelonNelonRAL_PURPOSelon_CLUSTelonRS =
+      ImmutablelonSelont.of(
+          RelonALTIMelon,
+          PROTelonCTelonD);
 
-  @VisibleForTesting
-  public static final ImmutableSet<EarlybirdCluster> TWITTER_IN_MEMORY_INDEX_FORMAT_ALL_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
-          PROTECTED,
-          REALTIME_CG);
+  @VisiblelonForTelonsting
+  public static final ImmutablelonSelont<elonarlybirdClustelonr> TWITTelonR_IN_MelonMORY_INDelonX_FORMAT_ALL_CLUSTelonRS =
+      ImmutablelonSelont.of(
+          RelonALTIMelon,
+          PROTelonCTelonD,
+          RelonALTIMelon_CG);
 
   /**
-   * Constant for field used in general purpose clusters,
-   * Note that GENERAL_PURPOSE_CLUSTERS does not include REALTIME_CG. If you wish to include REALTIME_CG,
-   * please use ALL_CLUSTERS
+   * Constant for fielonld uselond in gelonnelonral purposelon clustelonrs,
+   * Notelon that GelonNelonRAL_PURPOSelon_CLUSTelonRS doelons not includelon RelonALTIMelon_CG. If you wish to includelon RelonALTIMelon_CG,
+   * plelonaselon uselon ALL_CLUSTelonRS
    */
-  protected static final ImmutableSet<EarlybirdCluster> GENERAL_PURPOSE_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
-          PROTECTED,
-          FULL_ARCHIVE,
-          SUPERROOT);
+  protelonctelond static final ImmutablelonSelont<elonarlybirdClustelonr> GelonNelonRAL_PURPOSelon_CLUSTelonRS =
+      ImmutablelonSelont.of(
+          RelonALTIMelon,
+          PROTelonCTelonD,
+          FULL_ARCHIVelon,
+          SUPelonRROOT);
 
-  protected static final ImmutableSet<EarlybirdCluster> ALL_CLUSTERS =
-      ImmutableSet.of(
-          REALTIME,
-          PROTECTED,
-          FULL_ARCHIVE,
-          SUPERROOT,
-          REALTIME_CG);
+  protelonctelond static final ImmutablelonSelont<elonarlybirdClustelonr> ALL_CLUSTelonRS =
+      ImmutablelonSelont.of(
+          RelonALTIMelon,
+          PROTelonCTelonD,
+          FULL_ARCHIVelon,
+          SUPelonRROOT,
+          RelonALTIMelon_CG);
 }

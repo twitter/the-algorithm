@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.convelonrsation_annotation
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichText
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxt
 
-case class ConversationAnnotation(
-  conversationAnnotationType: ConversationAnnotationType,
-  header: Option[RichText],
-  description: Option[RichText])
+caselon class ConvelonrsationAnnotation(
+  convelonrsationAnnotationTypelon: ConvelonrsationAnnotationTypelon,
+  helonadelonr: Option[RichTelonxt],
+  delonscription: Option[RichTelonxt])

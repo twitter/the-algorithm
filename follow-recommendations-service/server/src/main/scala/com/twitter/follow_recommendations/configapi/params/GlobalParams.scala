@@ -1,35 +1,35 @@
-package com.twitter.follow_recommendations.configapi.params
+packagelon com.twittelonr.follow_reloncommelonndations.configapi.params
 
-import com.twitter.follow_recommendations.models.CandidateSourceType
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.follow_reloncommelonndations.modelonls.CandidatelonSourcelonTypelon
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
 /**
- * When adding Producer side experiments, make sure to register the FS Key in [[ProducerFeatureFilter]]
- * in [[FeatureSwitchesModule]], otherwise, the FS will not work.
+ * Whelonn adding Producelonr sidelon elonxpelonrimelonnts, makelon surelon to relongistelonr thelon FS Kelony in [[ProducelonrFelonaturelonFiltelonr]]
+ * in [[FelonaturelonSwitchelonsModulelon]], othelonrwiselon, thelon FS will not work.
  */
-object GlobalParams {
+objelonct GlobalParams {
 
-  object EnableCandidateParamHydrations
-      extends FSParam[Boolean]("frs_receiver_enable_candidate_params", false)
+  objelonct elonnablelonCandidatelonParamHydrations
+      elonxtelonnds FSParam[Boolelonan]("frs_reloncelonivelonr_elonnablelon_candidatelon_params", falselon)
 
-  object KeepUserCandidate
-      extends FSParam[Boolean]("frs_receiver_holdback_keep_user_candidate", true)
+  objelonct KelonelonpUselonrCandidatelon
+      elonxtelonnds FSParam[Boolelonan]("frs_reloncelonivelonr_holdback_kelonelonp_uselonr_candidatelon", truelon)
 
-  object KeepSocialUserCandidate
-      extends FSParam[Boolean]("frs_receiver_holdback_keep_social_user_candidate", true)
+  objelonct KelonelonpSocialUselonrCandidatelon
+      elonxtelonnds FSParam[Boolelonan]("frs_reloncelonivelonr_holdback_kelonelonp_social_uselonr_candidatelon", truelon)
 
-  case object EnableGFSSocialProofTransform
-      extends FSParam("social_proof_transform_use_graph_feature_service", true)
+  caselon objelonct elonnablelonGFSSocialProofTransform
+      elonxtelonnds FSParam("social_proof_transform_uselon_graph_felonaturelon_selonrvicelon", truelon)
 
-  case object EnableWhoToFollowProducts extends FSParam("who_to_follow_product_enabled", true)
+  caselon objelonct elonnablelonWhoToFollowProducts elonxtelonnds FSParam("who_to_follow_product_elonnablelond", truelon)
 
-  case object CandidateSourcesToFilter
-      extends FSEnumParam[CandidateSourceType.type](
-        "candidate_sources_type_filter_id",
-        CandidateSourceType.None,
-        CandidateSourceType)
+  caselon objelonct CandidatelonSourcelonsToFiltelonr
+      elonxtelonnds FSelonnumParam[CandidatelonSourcelonTypelon.typelon](
+        "candidatelon_sourcelons_typelon_filtelonr_id",
+        CandidatelonSourcelonTypelon.Nonelon,
+        CandidatelonSourcelonTypelon)
 
-  object EnableRecommendationFlowLogs
-      extends FSParam[Boolean]("frs_recommendation_flow_logs_enabled", false)
+  objelonct elonnablelonReloncommelonndationFlowLogs
+      elonxtelonnds FSParam[Boolelonan]("frs_reloncommelonndation_flow_logs_elonnablelond", falselon)
 }

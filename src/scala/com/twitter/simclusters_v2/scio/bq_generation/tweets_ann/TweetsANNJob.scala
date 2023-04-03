@@ -1,119 +1,119 @@
-package com.twitter.simclusters_v2.scio.bq_generation
-package tweets_ann
+packagelon com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration
+packagelon twelonelonts_ann
 
-import com.google.api.services.bigquery.model.TimePartitioning
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getMTSConsumerEmbeddingsFav90P20MSQL
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQGenerationUtil.getInterestedIn2020SQL
-import com.twitter.simclusters_v2.scio.bq_generation.tweets_ann.TweetsANNFromBQ.getTweetRecommendationsBQ
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl0El15ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El15ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El50ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
-import com.twitter.simclusters_v2.scio.bq_generation.common.BQTableDetails
-import com.twitter.simclusters_v2.thriftscala.CandidateTweets
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.tcdc.bqblaster.beam.syntax.BigQueryIOHelpers
-import com.twitter.tcdc.bqblaster.beam.BQBlasterIO.AvroConverter
-import com.twitter.tcdc.bqblaster.core.avro.TypedProjection
-import com.twitter.tcdc.bqblaster.core.transform.RootTransform
-import java.time.Instant
-import org.apache.beam.sdk.io.gcp.bigquery.BigQueryIO
-import org.joda.time.DateTime
+import com.googlelon.api.selonrvicelons.bigquelonry.modelonl.TimelonPartitioning
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.codelonrs.Codelonr
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.fs.multiformat.PathLayout
+import com.twittelonr.belonam.job.DatelonRangelonOptions
+import com.twittelonr.convelonrsions.DurationOps.richDurationFromInt
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scio_intelonrnal.codelonrs.ThriftStructLazyBinaryScroogelonCodelonr
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQGelonnelonrationUtil.gelontMTSConsumelonrelonmbelonddingsFav90P20MSQL
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQGelonnelonrationUtil.gelontIntelonrelonstelondIn2020SQL
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.twelonelonts_ann.TwelonelontsANNFromBQ.gelontTwelonelontReloncommelonndationsBQ
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020ScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020Hl0elonl15ScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020Hl2elonl15ScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020Hl2elonl50ScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020Hl8elonl50ScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.OfflinelonTwelonelontReloncommelonndationsFromMtsConsumelonrelonmbelonddingsScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scio.bq_gelonnelonration.common.BQTablelonDelontails
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelonts
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList
+import com.twittelonr.tcdc.bqblastelonr.belonam.syntax.BigQuelonryIOHelonlpelonrs
+import com.twittelonr.tcdc.bqblastelonr.belonam.BQBlastelonrIO.AvroConvelonrtelonr
+import com.twittelonr.tcdc.bqblastelonr.corelon.avro.TypelondProjelonction
+import com.twittelonr.tcdc.bqblastelonr.corelon.transform.RootTransform
+import java.timelon.Instant
+import org.apachelon.belonam.sdk.io.gcp.bigquelonry.BigQuelonryIO
+import org.joda.timelon.DatelonTimelon
 
-trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
-  // Configs to set for different type of embeddings and jobs
-  val isAdhoc: Boolean
-  val getConsumerEmbeddingsSQLFunc: (DateTime, Int) => String
-  val outputTable: BQTableDetails
-  val keyValDatasetOutputPath: String
-  val tweetRecommentationsSnapshotDataset: KeyValDALDataset[KeyVal[Long, CandidateTweetsList]]
-  val tweetEmbeddingsGenerationHalfLife: Int = Config.SimClustersTweetEmbeddingsGenerationHalfLife
-  val tweetEmbeddingsGenerationEmbeddingLength: Int =
-    Config.SimClustersTweetEmbeddingsGenerationEmbeddingLength
+trait TwelonelontsANNJob elonxtelonnds ScioBelonamJob[DatelonRangelonOptions] {
+  // Configs to selont for diffelonrelonnt typelon of elonmbelonddings and jobs
+  val isAdhoc: Boolelonan
+  val gelontConsumelonrelonmbelonddingsSQLFunc: (DatelonTimelon, Int) => String
+  val outputTablelon: BQTablelonDelontails
+  val kelonyValDataselontOutputPath: String
+  val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[KelonyVal[Long, CandidatelonTwelonelontsList]]
+  val twelonelontelonmbelonddingsGelonnelonrationHalfLifelon: Int = Config.SimClustelonrsTwelonelontelonmbelonddingsGelonnelonrationHalfLifelon
+  val twelonelontelonmbelonddingsGelonnelonrationelonmbelonddingLelonngth: Int =
+    Config.SimClustelonrsTwelonelontelonmbelonddingsGelonnelonrationelonmbelonddingLelonngth
 
-  // Base configs
-  val projectId = "twttr-recos-ml-prod"
-  val environment: DAL.Env = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+  // Baselon configs
+  val projelonctId = "twttr-reloncos-ml-prod"
+  val elonnvironmelonnt: DAL.elonnv = if (isAdhoc) DAL.elonnvironmelonnt.Delonv elonlselon DAL.elonnvironmelonnt.Prod
 
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+  ovelonrridelon implicit delonf scroogelonCodelonr[T <: ThriftStruct: Manifelonst]: Codelonr[T] =
+    ThriftStructLazyBinaryScroogelonCodelonr.scroogelonCodelonr
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // The time when the job is scheduled
-    val queryTimestamp = opts.interval.getEnd
+  ovelonrridelon delonf configurelonPipelonlinelon(sc: ScioContelonxt, opts: DatelonRangelonOptions): Unit = {
+    // Thelon timelon whelonn thelon job is schelondulelond
+    val quelonryTimelonstamp = opts.intelonrval.gelontelonnd
 
-    // Read consumer embeddings SQL
-    val consumerEmbeddingsSQL = getConsumerEmbeddingsSQLFunc(queryTimestamp, 14)
+    // Relonad consumelonr elonmbelonddings SQL
+    val consumelonrelonmbelonddingsSQL = gelontConsumelonrelonmbelonddingsSQLFunc(quelonryTimelonstamp, 14)
 
-    // Generate tweet embeddings and tweet ANN results
-    val tweetRecommendations =
-      getTweetRecommendationsBQ(
+    // Gelonnelonratelon twelonelont elonmbelonddings and twelonelont ANN relonsults
+    val twelonelontReloncommelonndations =
+      gelontTwelonelontReloncommelonndationsBQ(
         sc,
-        queryTimestamp,
-        consumerEmbeddingsSQL,
-        tweetEmbeddingsGenerationHalfLife,
-        tweetEmbeddingsGenerationEmbeddingLength
+        quelonryTimelonstamp,
+        consumelonrelonmbelonddingsSQL,
+        twelonelontelonmbelonddingsGelonnelonrationHalfLifelon,
+        twelonelontelonmbelonddingsGelonnelonrationelonmbelonddingLelonngth
       )
 
-    // Setup BQ writer
-    val ingestionTime = opts.getDate().value.getEnd.toDate
-    val bqFieldsTransform = RootTransform
-      .Builder()
-      .withPrependedFields("ingestionTime" -> TypedProjection.fromConstant(ingestionTime))
-    val timePartitioning = new TimePartitioning()
-      .setType("HOUR").setField("ingestionTime").setExpirationMs(3.days.inMilliseconds)
-    val bqWriter = BigQueryIO
-      .write[CandidateTweets]
-      .to(outputTable.toString)
-      .withExtendedErrorInfo()
-      .withTimePartitioning(timePartitioning)
-      .withLoadJobProjectId(projectId)
-      .withThriftSupport(bqFieldsTransform.build(), AvroConverter.Legacy)
-      .withCreateDisposition(BigQueryIO.Write.CreateDisposition.CREATE_IF_NEEDED)
-      .withWriteDisposition(BigQueryIO.Write.WriteDisposition.WRITE_APPEND)
+    // Selontup BQ writelonr
+    val ingelonstionTimelon = opts.gelontDatelon().valuelon.gelontelonnd.toDatelon
+    val bqFielonldsTransform = RootTransform
+      .Buildelonr()
+      .withPrelonpelonndelondFielonlds("ingelonstionTimelon" -> TypelondProjelonction.fromConstant(ingelonstionTimelon))
+    val timelonPartitioning = nelonw TimelonPartitioning()
+      .selontTypelon("HOUR").selontFielonld("ingelonstionTimelon").selontelonxpirationMs(3.days.inMilliselonconds)
+    val bqWritelonr = BigQuelonryIO
+      .writelon[CandidatelonTwelonelonts]
+      .to(outputTablelon.toString)
+      .withelonxtelonndelondelonrrorInfo()
+      .withTimelonPartitioning(timelonPartitioning)
+      .withLoadJobProjelonctId(projelonctId)
+      .withThriftSupport(bqFielonldsTransform.build(), AvroConvelonrtelonr.Lelongacy)
+      .withCrelonatelonDisposition(BigQuelonryIO.Writelon.CrelonatelonDisposition.CRelonATelon_IF_NelonelonDelonD)
+      .withWritelonDisposition(BigQuelonryIO.Writelon.WritelonDisposition.WRITelon_APPelonND)
 
-    // Save Tweet ANN results to BQ
-    tweetRecommendations
-      .map { userToTweetRecommendations =>
+    // Savelon Twelonelont ANN relonsults to BQ
+    twelonelontReloncommelonndations
+      .map { uselonrToTwelonelontReloncommelonndations =>
         {
-          CandidateTweets(
-            targetUserId = userToTweetRecommendations.userId,
-            recommendedTweets = userToTweetRecommendations.tweetCandidates)
+          CandidatelonTwelonelonts(
+            targelontUselonrId = uselonrToTwelonelontReloncommelonndations.uselonrId,
+            reloncommelonndelondTwelonelonts = uselonrToTwelonelontReloncommelonndations.twelonelontCandidatelons)
         }
       }
-      .saveAsCustomOutput(s"WriteToBQTable - ${outputTable}", bqWriter)
+      .savelonAsCustomOutput(s"WritelonToBQTablelon - ${outputTablelon}", bqWritelonr)
 
-    // Save Tweet ANN results as KeyValSnapshotDataset
-    tweetRecommendations
-      .map { userToTweetRecommendations =>
-        KeyVal(
-          userToTweetRecommendations.userId,
-          CandidateTweetsList(userToTweetRecommendations.tweetCandidates))
-      }.saveAsCustomOutput(
-        name = "WriteTweetRecommendationsToKeyValDataset",
-        DAL.writeVersionedKeyVal(
-          tweetRecommentationsSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
+    // Savelon Twelonelont ANN relonsults as KelonyValSnapshotDataselont
+    twelonelontReloncommelonndations
+      .map { uselonrToTwelonelontReloncommelonndations =>
+        KelonyVal(
+          uselonrToTwelonelontReloncommelonndations.uselonrId,
+          CandidatelonTwelonelontsList(uselonrToTwelonelontReloncommelonndations.twelonelontCandidatelons))
+      }.savelonAsCustomOutput(
+        namelon = "WritelonTwelonelontReloncommelonndationsToKelonyValDataselont",
+        DAL.writelonVelonrsionelondKelonyVal(
+          twelonelontReloncommelonntationsSnapshotDataselont,
+          PathLayout.VelonrsionelondPath(prelonfix =
             ((if (!isAdhoc)
                 Config.RootMHPath
-              else
+              elonlselon
                 Config.AdhocRootPath)
-              + keyValDatasetOutputPath)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = environment,
+              + kelonyValDataselontOutputPath)),
+          instant = Instant.ofelonpochMilli(opts.intelonrval.gelontelonndMillis - 1L),
+          elonnvironmelonntOvelonrridelon = elonnvironmelonnt,
         )
       )
   }
@@ -121,177 +121,177 @@ trait TweetsANNJob extends ScioBeamJob[DateRangeOptions] {
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from IIKF 2020
+ * Scio job for adhoc run for twelonelont reloncommelonndations from IIKF 2020
  */
-object IIKF2020TweetsANNBQAdhocJob extends TweetsANNJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
-    "twttr-recos-ml-prod",
-    "multi_type_simclusters",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_adhoc")
-  override val keyValDatasetOutputPath = Config.IIKFANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+objelonct IIKF2020TwelonelontsANNBQAdhocJob elonxtelonnds TwelonelontsANNJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val outputTablelon = BQTablelonDelontails(
+    "twttr-reloncos-ml-prod",
+    "multi_typelon_simclustelonrs",
+    "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_adhoc")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFANNOutputPath
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
+    OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020ScalaDataselont
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from IIKF 2020 with
- * - Half life = 8hrs
- * - Embedding Length = 50
+ * Scio job for adhoc run for twelonelont reloncommelonndations from IIKF 2020 with
+ * - Half lifelon = 8hrs
+ * - elonmbelondding Lelonngth = 50
  */
-object IIKF2020Hl8El50TweetsANNBQAdhocJob extends TweetsANNJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
-    "twttr-recos-ml-prod",
-    "multi_type_simclusters",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50_adhoc")
-  override val keyValDatasetOutputPath = Config.IIKFHL8EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+objelonct IIKF2020Hl8elonl50TwelonelontsANNBQAdhocJob elonxtelonnds TwelonelontsANNJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val outputTablelon = BQTablelonDelontails(
+    "twttr-reloncos-ml-prod",
+    "multi_typelon_simclustelonrs",
+    "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_8_elonL_50_adhoc")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFHL8elonL50ANNOutputPath
+  ovelonrridelon val twelonelontelonmbelonddingsGelonnelonrationelonmbelonddingLelonngth: Int = 50
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] = {
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
+    OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020Hl8elonl50ScalaDataselont
   }
 }
 
 /**
- * Scio job for adhoc run for tweet recommendations from MTS Consumer Embeddings
+ * Scio job for adhoc run for twelonelont reloncommelonndations from MTS Consumelonr elonmbelonddings
  */
-object MTSConsumerEmbeddingsTweetsANNBQAdhocJob extends TweetsANNJob {
-  override val isAdhoc = true
-  override val getConsumerEmbeddingsSQLFunc = getMTSConsumerEmbeddingsFav90P20MSQL
-  override val outputTable = BQTableDetails(
-    "twttr-recos-ml-prod",
-    "multi_type_simclusters",
-    "offline_tweet_recommendations_from_mts_consumer_embeddings_adhoc")
-  override val keyValDatasetOutputPath = Config.MTSConsumerEmbeddingsANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+objelonct MTSConsumelonrelonmbelonddingsTwelonelontsANNBQAdhocJob elonxtelonnds TwelonelontsANNJob {
+  ovelonrridelon val isAdhoc = truelon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontMTSConsumelonrelonmbelonddingsFav90P20MSQL
+  ovelonrridelon val outputTablelon = BQTablelonDelontails(
+    "twttr-reloncos-ml-prod",
+    "multi_typelon_simclustelonrs",
+    "offlinelon_twelonelont_reloncommelonndations_from_mts_consumelonr_elonmbelonddings_adhoc")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.MTSConsumelonrelonmbelonddingsANNOutputPath
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
+    OfflinelonTwelonelontReloncommelonndationsFromMtsConsumelonrelonmbelonddingsScalaDataselont
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020
-The schedule cmd needs to be run only if there is any change in the config
+Scio job for batch run for twelonelont reloncommelonndations from IIKF 2020
+Thelon schelondulelon cmd nelonelonds to belon run only if thelonrelon is any changelon in thelon config
  */
-object IIKF2020TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+objelonct IIKF2020TwelonelontsANNBQBatchJob elonxtelonnds TwelonelontsANNJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val outputTablelon = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020")
-  override val keyValDatasetOutputPath = Config.IIKFANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "uselonr",
+    "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFANNOutputPath
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020ScalaDataset
+    OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020ScalaDataselont
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: None, no decay, direct sum
- - Embedding Length: 15
-The schedule cmd needs to be run only if there is any change in the config
+Scio job for batch run for twelonelont reloncommelonndations from IIKF 2020 with paramelontelonr selontup:
+ - Half Lifelon: Nonelon, no deloncay, direlonct sum
+ - elonmbelondding Lelonngth: 15
+Thelon schelondulelon cmd nelonelonds to belon run only if thelonrelon is any changelon in thelon config
  */
-object IIKF2020Hl0El15TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+objelonct IIKF2020Hl0elonl15TwelonelontsANNBQBatchJob elonxtelonnds TwelonelontsANNJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val outputTablelon = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_0_EL_15")
-  override val keyValDatasetOutputPath = Config.IIKFHL0EL15ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = -1
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "uselonr",
+    "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_0_elonL_15")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFHL0elonL15ANNOutputPath
+  ovelonrridelon val twelonelontelonmbelonddingsGelonnelonrationHalfLifelon: Int = -1
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl0El15ScalaDataset
+    OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020Hl0elonl15ScalaDataselont
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 2hrs
- - Embedding Length: 15
-The schedule cmd needs to be run only if there is any change in the config
+Scio job for batch run for twelonelont reloncommelonndations from IIKF 2020 with paramelontelonr selontup:
+ - Half Lifelon: 2hrs
+ - elonmbelondding Lelonngth: 15
+Thelon schelondulelon cmd nelonelonds to belon run only if thelonrelon is any changelon in thelon config
  */
-object IIKF2020Hl2El15TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+objelonct IIKF2020Hl2elonl15TwelonelontsANNBQBatchJob elonxtelonnds TwelonelontsANNJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val outputTablelon = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_15")
-  override val keyValDatasetOutputPath = Config.IIKFHL2EL15ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = 7200000 // 2hrs in ms
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "uselonr",
+    "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_2_elonL_15")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFHL2elonL15ANNOutputPath
+  ovelonrridelon val twelonelontelonmbelonddingsGelonnelonrationHalfLifelon: Int = 7200000 // 2hrs in ms
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El15ScalaDataset
+    OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020Hl2elonl15ScalaDataselont
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 2hrs
- - Embedding Length: 50
-The schedule cmd needs to be run only if there is any change in the config
+Scio job for batch run for twelonelont reloncommelonndations from IIKF 2020 with paramelontelonr selontup:
+ - Half Lifelon: 2hrs
+ - elonmbelondding Lelonngth: 50
+Thelon schelondulelon cmd nelonelonds to belon run only if thelonrelon is any changelon in thelon config
  */
-object IIKF2020Hl2El50TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+objelonct IIKF2020Hl2elonl50TwelonelontsANNBQBatchJob elonxtelonnds TwelonelontsANNJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val outputTablelon = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_2_EL_50")
-  override val keyValDatasetOutputPath = Config.IIKFHL2EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationHalfLife: Int = 7200000 // 2hrs in ms
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "uselonr",
+    "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_2_elonL_50")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFHL2elonL50ANNOutputPath
+  ovelonrridelon val twelonelontelonmbelonddingsGelonnelonrationHalfLifelon: Int = 7200000 // 2hrs in ms
+  ovelonrridelon val twelonelontelonmbelonddingsGelonnelonrationelonmbelonddingLelonngth: Int = 50
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl2El50ScalaDataset
+    OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020Hl2elonl50ScalaDataselont
 }
 
 /**
-Scio job for batch run for tweet recommendations from IIKF 2020 with parameter setup:
- - Half Life: 8hrs
- - Embedding Length: 50
-The schedule cmd needs to be run only if there is any change in the config
+Scio job for batch run for twelonelont reloncommelonndations from IIKF 2020 with paramelontelonr selontup:
+ - Half Lifelon: 8hrs
+ - elonmbelondding Lelonngth: 50
+Thelon schelondulelon cmd nelonelonds to belon run only if thelonrelon is any changelon in thelon config
  */
-object IIKF2020Hl8El50TweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getInterestedIn2020SQL
-  override val outputTable = BQTableDetails(
+objelonct IIKF2020Hl8elonl50TwelonelontsANNBQBatchJob elonxtelonnds TwelonelontsANNJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontIntelonrelonstelondIn2020SQL
+  ovelonrridelon val outputTablelon = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_interested_in_20M_145K_2020_HL_8_EL_50")
-  override val keyValDatasetOutputPath = Config.IIKFHL8EL50ANNOutputPath
-  override val tweetEmbeddingsGenerationEmbeddingLength: Int = 50
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "uselonr",
+    "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelond_in_20M_145K_2020_HL_8_elonL_50")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.IIKFHL8elonL50ANNOutputPath
+  ovelonrridelon val twelonelontelonmbelonddingsGelonnelonrationelonmbelonddingLelonngth: Int = 50
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFromInterestedIn20M145K2020Hl8El50ScalaDataset
+    OfflinelonTwelonelontReloncommelonndationsFromIntelonrelonstelondIn20M145K2020Hl8elonl50ScalaDataselont
 }
 
 /**
-Scio job for batch run for tweet recommendations from MTS Consumer Embeddings
-The schedule cmd needs to be run only if there is any change in the config
+Scio job for batch run for twelonelont reloncommelonndations from MTS Consumelonr elonmbelonddings
+Thelon schelondulelon cmd nelonelonds to belon run only if thelonrelon is any changelon in thelon config
  */
-object MTSConsumerEmbeddingsTweetsANNBQBatchJob extends TweetsANNJob {
-  override val isAdhoc = false
-  override val getConsumerEmbeddingsSQLFunc = getMTSConsumerEmbeddingsFav90P20MSQL
-  override val outputTable = BQTableDetails(
+objelonct MTSConsumelonrelonmbelonddingsTwelonelontsANNBQBatchJob elonxtelonnds TwelonelontsANNJob {
+  ovelonrridelon val isAdhoc = falselon
+  ovelonrridelon val gelontConsumelonrelonmbelonddingsSQLFunc = gelontMTSConsumelonrelonmbelonddingsFav90P20MSQL
+  ovelonrridelon val outputTablelon = BQTablelonDelontails(
     "twttr-bq-cassowary-prod",
-    "user",
-    "offline_tweet_recommendations_from_mts_consumer_embeddings")
-  override val keyValDatasetOutputPath = Config.MTSConsumerEmbeddingsANNOutputPath
-  override val tweetRecommentationsSnapshotDataset: KeyValDALDataset[
-    KeyVal[Long, CandidateTweetsList]
+    "uselonr",
+    "offlinelon_twelonelont_reloncommelonndations_from_mts_consumelonr_elonmbelonddings")
+  ovelonrridelon val kelonyValDataselontOutputPath = Config.MTSConsumelonrelonmbelonddingsANNOutputPath
+  ovelonrridelon val twelonelontReloncommelonntationsSnapshotDataselont: KelonyValDALDataselont[
+    KelonyVal[Long, CandidatelonTwelonelontsList]
   ] =
-    OfflineTweetRecommendationsFromMtsConsumerEmbeddingsScalaDataset
+    OfflinelonTwelonelontReloncommelonndationsFromMtsConsumelonrelonmbelonddingsScalaDataselont
 }

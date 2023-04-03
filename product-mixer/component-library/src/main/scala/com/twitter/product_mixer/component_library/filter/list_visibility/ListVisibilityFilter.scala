@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.component_library.filter.list_visibility
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr.list_visibility
 
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.thriftscala.SocialgraphList
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Fetch
-import com.twitter.strato.generated.client.lists.reads.CoreOnListClientColumn
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwittelonrListCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.socialgraph.thriftscala.SocialgraphList
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.catalog.Felontch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.lists.relonads.CorelonOnListClielonntColumn
 
-/* This Filter queries the core.List.strato column
- * on Strato, and filters out any lists that are not
- * returned. core.List.strato performs an authorization
- * check, and does not return lists the viewer is not authorized
- * to have access to. */
-class ListVisibilityFilter[Candidate <: UniversalNoun[Long]](
-  listsColumn: CoreOnListClientColumn)
-    extends Filter[PipelineQuery, Candidate] {
+/* This Filtelonr quelonrielons thelon corelon.List.strato column
+ * on Strato, and filtelonrs out any lists that arelon not
+ * relonturnelond. corelon.List.strato pelonrforms an authorization
+ * chelonck, and doelons not relonturn lists thelon vielonwelonr is not authorizelond
+ * to havelon accelonss to. */
+class ListVisibilityFiltelonr[Candidatelon <: UnivelonrsalNoun[Long]](
+  listsColumn: CorelonOnListClielonntColumn)
+    elonxtelonnds Filtelonr[PipelonlinelonQuelonry, Candidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("ListVisibility")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("ListVisibility")
 
-  def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
 
-    val listCandidates = candidates.collect {
-      case CandidateWithFeatures(candidate: TwitterListCandidate, _) => candidate
+    val listCandidatelons = candidatelons.collelonct {
+      caselon CandidatelonWithFelonaturelons(candidatelon: TwittelonrListCandidatelon, _) => candidatelon
     }
 
     Stitch
-      .traverse(
-        listCandidates.map(_.id)
+      .travelonrselon(
+        listCandidatelons.map(_.id)
       ) { listId =>
-        listsColumn.fetcher.fetch(listId)
-      }.map { fetchResults =>
-        fetchResults.collect {
-          case Fetch.Result(Some(list: SocialgraphList), _) => list.id
+        listsColumn.felontchelonr.felontch(listId)
+      }.map { felontchRelonsults =>
+        felontchRelonsults.collelonct {
+          caselon Felontch.Relonsult(Somelon(list: SocialgraphList), _) => list.id
         }
-      }.map { allowedListIds =>
-        val (kept, excluded) = candidates.map(_.candidate).partition {
-          case candidate: TwitterListCandidate => allowedListIds.contains(candidate.id)
-          case _ => true
+      }.map { allowelondListIds =>
+        val (kelonpt, elonxcludelond) = candidatelons.map(_.candidatelon).partition {
+          caselon candidatelon: TwittelonrListCandidatelon => allowelondListIds.contains(candidatelon.id)
+          caselon _ => truelon
         }
-        FilterResult(kept, excluded)
+        FiltelonrRelonsult(kelonpt, elonxcludelond)
       }
   }
 }

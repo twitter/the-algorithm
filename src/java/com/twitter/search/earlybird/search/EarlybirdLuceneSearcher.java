@@ -1,98 +1,98 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Map;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.IndexSearcher;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.earlybird.EarlybirdSearcher;
-import com.twitter.search.earlybird.search.facets.AbstractFacetTermCollector;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector.TermStatisticsSearchResults;
-import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.AbstractFacelontTelonrmCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.FacelontRelonsultsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.TelonrmStatisticsCollelonctor.TelonrmStatisticsSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.TelonrmStatisticsRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontCount;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontFielonldRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmStatisticsRelonsults;
 
-public abstract class EarlybirdLuceneSearcher extends IndexSearcher {
-  public EarlybirdLuceneSearcher(IndexReader r) {
-    super(r);
+public abstract class elonarlybirdLucelonnelonSelonarchelonr elonxtelonnds IndelonxSelonarchelonr {
+  public elonarlybirdLucelonnelonSelonarchelonr(IndelonxRelonadelonr r) {
+    supelonr(r);
   }
 
   /**
-   * Fills facet information for all given search results.
+   * Fills facelont information for all givelonn selonarch relonsults.
    *
-   * @param collector A collector that knows how collect facet information.
-   * @param searchResults The search results.
+   * @param collelonctor A collelonctor that knows how collelonct facelont information.
+   * @param selonarchRelonsults Thelon selonarch relonsults.
    */
-  public abstract void fillFacetResults(
-      AbstractFacetTermCollector collector, ThriftSearchResults searchResults)
-      throws IOException;
+  public abstract void fillFacelontRelonsults(
+      AbstractFacelontTelonrmCollelonctor collelonctor, ThriftSelonarchRelonsults selonarchRelonsults)
+      throws IOelonxcelonption;
 
   /**
-   * Fills metadata for all given facet results.
+   * Fills melontadata for all givelonn facelont relonsults.
    *
-   * @param facetResults The facet results.
-   * @param schema The earlybird schema.
-   * @param debugMode The debug mode for the request that yielded these results.
+   * @param facelontRelonsults Thelon facelont relonsults.
+   * @param schelonma Thelon elonarlybird schelonma.
+   * @param delonbugModelon Thelon delonbug modelon for thelon relonquelonst that yielonldelond thelonselon relonsults.
    */
-  public abstract void fillFacetResultMetadata(
-      Map<Term, ThriftFacetCount> facetResults,
-      ImmutableSchemaInterface schema,
-      byte debugMode) throws IOException;
+  public abstract void fillFacelontRelonsultMelontadata(
+      Map<Telonrm, ThriftFacelontCount> facelontRelonsults,
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      bytelon delonbugModelon) throws IOelonxcelonption;
 
   /**
-   * Fills metadata for all given term stats results.
+   * Fills melontadata for all givelonn telonrm stats relonsults.
    *
-   * @param termStatsResults The term stats results.
-   * @param schema The earlybird schema.
-   * @param debugMode The debug mode for the request that yielded these results.
+   * @param telonrmStatsRelonsults Thelon telonrm stats relonsults.
+   * @param schelonma Thelon elonarlybird schelonma.
+   * @param delonbugModelon Thelon delonbug modelon for thelon relonquelonst that yielonldelond thelonselon relonsults.
    */
-  public abstract void fillTermStatsMetadata(
-      ThriftTermStatisticsResults termStatsResults,
-      ImmutableSchemaInterface schema,
-      byte debugMode) throws IOException;
+  public abstract void fillTelonrmStatsMelontadata(
+      ThriftTelonrmStatisticsRelonsults telonrmStatsRelonsults,
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      bytelon delonbugModelon) throws IOelonxcelonption;
 
   /**
-   * Returns the results for the given term stats request.
+   * Relonturns thelon relonsults for thelon givelonn telonrm stats relonquelonst.
    *
-   * @param searchRequestInfo Stores the original term stats request and some other useful request
+   * @param selonarchRelonquelonstInfo Storelons thelon original telonrm stats relonquelonst and somelon othelonr uselonful relonquelonst
    *                          information.
-   * @param searcher The searcher that should be used to execute the request.
-   * @param requestDebugMode The debug mode for this request.
-   * @return The term stats results for the given request.
+   * @param selonarchelonr Thelon selonarchelonr that should belon uselond to elonxeloncutelon thelon relonquelonst.
+   * @param relonquelonstDelonbugModelon Thelon delonbug modelon for this relonquelonst.
+   * @relonturn Thelon telonrm stats relonsults for thelon givelonn relonquelonst.
    */
-  public abstract TermStatisticsSearchResults collectTermStatistics(
-      TermStatisticsRequestInfo searchRequestInfo,
-      EarlybirdSearcher searcher,
-      int requestDebugMode) throws IOException;
+  public abstract TelonrmStatisticsSelonarchRelonsults collelonctTelonrmStatistics(
+      TelonrmStatisticsRelonquelonstInfo selonarchRelonquelonstInfo,
+      elonarlybirdSelonarchelonr selonarchelonr,
+      int relonquelonstDelonbugModelon) throws IOelonxcelonption;
 
   /**
-   * Writes an explanation for the given hits into the given ThriftSearchResults instance.
+   * Writelons an elonxplanation for thelon givelonn hits into thelon givelonn ThriftSelonarchRelonsults instancelon.
    *
-   * @param searchRequestInfo Stores the original request and some other useful request context.
-   * @param hits The hits.
-   * @param searchResults The ThriftSearchResults where the explanation for the given hits will be
-   *                      stored.
+   * @param selonarchRelonquelonstInfo Storelons thelon original relonquelonst and somelon othelonr uselonful relonquelonst contelonxt.
+   * @param hits Thelon hits.
+   * @param selonarchRelonsults Thelon ThriftSelonarchRelonsults whelonrelon thelon elonxplanation for thelon givelonn hits will belon
+   *                      storelond.
    */
-  // Writes explanations into the searchResults thrift.
-  public abstract void explainSearchResults(SearchRequestInfo searchRequestInfo,
-                                            SimpleSearchResults hits,
-                                            ThriftSearchResults searchResults) throws IOException;
+  // Writelons elonxplanations into thelon selonarchRelonsults thrift.
+  public abstract void elonxplainSelonarchRelonsults(SelonarchRelonquelonstInfo selonarchRelonquelonstInfo,
+                                            SimplelonSelonarchRelonsults hits,
+                                            ThriftSelonarchRelonsults selonarchRelonsults) throws IOelonxcelonption;
 
-  public static class FacetSearchResults extends SearchResultsInfo {
-    private FacetResultsCollector collector;
+  public static class FacelontSelonarchRelonsults elonxtelonnds SelonarchRelonsultsInfo {
+    privatelon FacelontRelonsultsCollelonctor collelonctor;
 
-    public FacetSearchResults(FacetResultsCollector collector) {
-      this.collector = collector;
+    public FacelontSelonarchRelonsults(FacelontRelonsultsCollelonctor collelonctor) {
+      this.collelonctor = collelonctor;
     }
 
-    public ThriftFacetFieldResults getFacetResults(String facetName, int topK) {
-      return collector.getFacetResults(facetName, topK);
+    public ThriftFacelontFielonldRelonsults gelontFacelontRelonsults(String facelontNamelon, int topK) {
+      relonturn collelonctor.gelontFacelontRelonsults(facelontNamelon, topK);
     }
   }
 }

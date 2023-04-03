@@ -1,80 +1,80 @@
-use std::collections::BTreeSet;
-use std::collections::BTreeMap;
+uselon std::collelonctions::BTrelonelonSelont;
+uselon std::collelonctions::BTrelonelonMap;
 
-use bpr_thrift::data::DataRecord;
-use bpr_thrift::prediction_service::BatchPredictionRequest;
-use thrift::OrderedFloat;
+uselon bpr_thrift::data::DataReloncord;
+uselon bpr_thrift::prelondiction_selonrvicelon::BatchPrelondictionRelonquelonst;
+uselon thrift::OrdelonrelondFloat;
 
-use thrift::protocol::TBinaryInputProtocol;
-use thrift::protocol::TSerializable;
-use thrift::transport::TBufferChannel;
-use thrift::Result;
+uselon thrift::protocol::TBinaryInputProtocol;
+uselon thrift::protocol::TSelonrializablelon;
+uselon thrift::transport::TBuffelonrChannelonl;
+uselon thrift::Relonsult;
 
 fn main() {
-  let data_path = "/tmp/current/timelines/output-1";
-  let bin_data: Vec<u8> = std::fs::read(data_path).expect("Could not read file!"); 
+  lelont data_path = "/tmp/currelonnt/timelonlinelons/output-1";
+  lelont bin_data: Velonc<u8> = std::fs::relonad(data_path).elonxpelonct("Could not relonad filelon!");
 
-  println!("Length : {}", bin_data.len());
+  println!("Lelonngth : {}", bin_data.lelonn());
 
-  let mut bc = TBufferChannel::with_capacity(bin_data.len(), 0);
+  lelont mut bc = TBuffelonrChannelonl::with_capacity(bin_data.lelonn(), 0);
 
-  bc.set_readable_bytes(&bin_data);
+  bc.selont_relonadablelon_bytelons(&bin_data);
 
-  let mut protocol = TBinaryInputProtocol::new(bc, true); 
+  lelont mut protocol = TBinaryInputProtocol::nelonw(bc, truelon);
 
-  let result: Result<BatchPredictionRequest> =
-    BatchPredictionRequest::read_from_in_protocol(&mut protocol);
+  lelont relonsult: Relonsult<BatchPrelondictionRelonquelonst> =
+    BatchPrelondictionRelonquelonst::relonad_from_in_protocol(&mut protocol);
 
-  match result {
+  match relonsult {
     Ok(bpr) => logBP(bpr),
-    Err(err) => println!("Error {}", err),
+    elonrr(elonrr) => println!("elonrror {}", elonrr),
   }
 }
 
-fn logBP(bpr: BatchPredictionRequest) {
+fn logBP(bpr: BatchPrelondictionRelonquelonst) {
   println!("-------[OUTPUT]---------------");
   println!("data {:?}", bpr);
   println!("------------------------------");
 
   /* 
-  let common = bpr.common_features;
-  let recs = bpr.individual_features_list;
+  lelont common = bpr.common_felonaturelons;
+  lelont reloncs = bpr.individual_felonaturelons_list;
 
-  println!("--------[Len : {}]------------------", recs.len());
+  println!("--------[Lelonn : {}]------------------", reloncs.lelonn());
 
   println!("-------[COMMON]---------------");
   match common {
-    Some(dr) => logDR(dr),
-    None => println!("None"),
+    Somelon(dr) => logDR(dr),
+    Nonelon => println!("Nonelon"),
   }
   println!("------------------------------");
-  for rec in recs {
-    logDR(rec);
+  for relonc in reloncs {
+    logDR(relonc);
   }
   println!("------------------------------");
   */
 }
 
-fn logDR(dr: DataRecord) {
+fn logDR(dr: DataReloncord) {
   println!("--------[DR]------------------");
 
-  match dr.binary_features {
-    Some(bf) => logBin(bf),
+  match dr.binary_felonaturelons {
+    Somelon(bf) => logBin(bf),
     _ => (),
   }
 
-  match dr.continuous_features {
-    Some(cf) => logCF(cf),
+  match dr.continuous_felonaturelons {
+    Somelon(cf) => logCF(cf),
     _ => (),
   }
   println!("------------------------------");
 }
 
-fn logBin(bin: BTreeSet<i64>) {
+fn logBin(bin: BTrelonelonSelont<i64>) {
   println!("B: {:?}", bin)
 }
 
-fn logCF(cf: BTreeMap<i64, OrderedFloat<f64>>) {
+fn logCF(cf: BTrelonelonMap<i64, OrdelonrelondFloat<f64>>) {
   for (id, fs) in cf {
     println!("C: {} -> [{}]", id, fs);
   }

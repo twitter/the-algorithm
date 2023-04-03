@@ -1,133 +1,133 @@
-package com.twitter.simclusters_v2.scalding.embedding.producer
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.producelonr
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.hdfs_sources.{
-  AggregatableProducerSimclustersEmbeddingsByFavScoreScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScoreThriftScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScore2020ScalaDataset,
-  AggregatableProducerSimclustersEmbeddingsByFavScore2020ThriftScalaDataset
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scalding_intelonrnal.sourcelon.lzo_scroogelon.FixelondPathLzoScroogelon
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.{
+  AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFavScorelonScalaDataselont,
+  AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFavScorelonThriftScalaDataselont,
+  AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFavScorelon2020ScalaDataselont,
+  AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFavScorelon2020ThriftScalaDataselont
 }
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.wtf.scalding.jobs.common.{AdhocExecutionApp, ScheduledExecutionApp}
-import java.util.TimeZone
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.wtf.scalding.jobs.common.{AdhocelonxeloncutionApp, SchelondulelondelonxeloncutionApp}
+import java.util.TimelonZonelon
 
 /**
- * See AggregatableProducerEmbeddingsBaseApp for an explanation of this job.
+ * Selonelon AggrelongatablelonProducelonrelonmbelonddingsBaselonApp for an elonxplanation of this job.
  *
  * Production job:
-capesospy-v2 update aggregatable_producer_embeddings_by_fav_score src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon aggrelongatablelon_producelonr_elonmbelonddings_by_fav_scorelon src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object AggregatableFavBasedProducerEmbeddingsScheduledApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+objelonct AggrelongatablelonFavBaselondProducelonrelonmbelonddingsSchelondulelondApp
+    elonxtelonnds AggrelongatablelonFavBaselondProducelonrelonmbelonddingsBaselonApp
+    with SchelondulelondelonxeloncutionApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  // Not using the EmbeddingUtil.getHdfsPath to preserve the previous functionality.
-  private val outputPath: String =
-    "/user/cassowary/manhattan_sequence_files/producer_simclusters_aggregatable_embeddings_by_fav_score"
+  ovelonrridelon val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kUpdatelond
+  // Not using thelon elonmbelonddingUtil.gelontHdfsPath to prelonselonrvelon thelon prelonvious functionality.
+  privatelon val outputPath: String =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_fav_scorelon"
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  privatelon val outputPathThrift: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = falselon,
+    isManhattanKelonyVal = falselon,
+    modelonlVelonrsion = modelonlVelonrsion,
+    pathSuffix = "producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_fav_scorelon_thrift"
   )
 
-  override def firstTime: RichDate = RichDate("2020-05-11")
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2020-05-11")
 
-  override def batchIncrement: Duration = Days(7)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Days(7)
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  ovelonrridelon delonf writelonToManhattan(
+    output: TypelondPipelon[KelonyVal[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .writeDALVersionedKeyValExecution(
-        AggregatableProducerSimclustersEmbeddingsByFavScoreScalaDataset,
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFavScorelonScalaDataselont,
         D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+        velonrsion = elonxplicitelonndTimelon(datelonRangelon.elonnd)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  ovelonrridelon delonf writelonToThrift(
+    output: TypelondPipelon[SimClustelonrselonmbelonddingWithId]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .writeDALSnapshotExecution(
-        dataset = AggregatableProducerSimclustersEmbeddingsByFavScoreThriftScalaDataset,
-        updateStep = D.Daily,
+      .writelonDALSnapshotelonxeloncution(
+        dataselont = AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFavScorelonThriftScalaDataselont,
+        updatelonStelonp = D.Daily,
         pathLayout = D.Suffix(outputPathThrift),
-        fmt = D.Parquet,
-        endDate = dateRange.end
+        fmt = D.Parquelont,
+        elonndDatelon = datelonRangelon.elonnd
       )
   }
 }
 
 /**
  * Production job:
-capesospy-v2 update --build_locally --start_cron aggregatable_producer_embeddings_by_fav_score_2020 src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron aggrelongatablelon_producelonr_elonmbelonddings_by_fav_scorelon_2020 src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with ScheduledExecutionApp {
+objelonct AggrelongatablelonFavBaselondProducelonrelonmbelonddings2020SchelondulelondApp
+    elonxtelonnds AggrelongatablelonFavBaselondProducelonrelonmbelonddingsBaselonApp
+    with SchelondulelondelonxeloncutionApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  // Not using the EmbeddingUtil.getHdfsPath to preserve the previous functionality.
-  private val outputPath: String =
-    "/user/cassowary/manhattan_sequence_files/producer_simclusters_aggregatable_embeddings_by_fav_score_20m145k2020"
+  ovelonrridelon val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
+  // Not using thelon elonmbelonddingUtil.gelontHdfsPath to prelonselonrvelon thelon prelonvious functionality.
+  privatelon val outputPath: String =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_fav_scorelon_20m145k2020"
 
-  // getHdfsPath appends model version str to the pathSuffix
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  // gelontHdfsPath appelonnds modelonl velonrsion str to thelon pathSuffix
+  privatelon val outputPathThrift: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = falselon,
+    isManhattanKelonyVal = falselon,
+    modelonlVelonrsion = modelonlVelonrsion,
+    pathSuffix = "producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_fav_scorelon_thrift"
   )
 
-  override def firstTime: RichDate = RichDate("2021-03-04")
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2021-03-04")
 
-  override def batchIncrement: Duration = Days(7)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Days(7)
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  ovelonrridelon delonf writelonToManhattan(
+    output: TypelondPipelon[KelonyVal[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .writeDALVersionedKeyValExecution(
-        AggregatableProducerSimclustersEmbeddingsByFavScore2020ScalaDataset,
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFavScorelon2020ScalaDataselont,
         D.Suffix(outputPath),
-        version = ExplicitEndTime(dateRange.end)
+        velonrsion = elonxplicitelonndTimelon(datelonRangelon.elonnd)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  ovelonrridelon delonf writelonToThrift(
+    output: TypelondPipelon[SimClustelonrselonmbelonddingWithId]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .writeDALSnapshotExecution(
-        dataset = AggregatableProducerSimclustersEmbeddingsByFavScore2020ThriftScalaDataset,
-        updateStep = D.Daily,
+      .writelonDALSnapshotelonxeloncution(
+        dataselont = AggrelongatablelonProducelonrSimclustelonrselonmbelonddingsByFavScorelon2020ThriftScalaDataselont,
+        updatelonStelonp = D.Daily,
         pathLayout = D.Suffix(outputPathThrift),
-        fmt = D.Parquet,
-        endDate = dateRange.end
+        fmt = D.Parquelont,
+        elonndDatelon = datelonRangelon.elonnd
       )
   }
 }
@@ -135,144 +135,144 @@ object AggregatableFavBasedProducerEmbeddings2020ScheduledApp
 /***
  * Adhoc job:
 
-scalding remote run --user recos-platform \
---main-class com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddingsAdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job-adhoc \
--- --date 2020-05-11
+scalding relonmotelon run --uselonr reloncos-platform \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.producelonr.AggrelongatablelonFavBaselondProducelonrelonmbelonddingsAdhocApp \
+--targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/producelonr:aggrelongatablelon_fav_baselond_producelonr_elonmbelonddings_job-adhoc \
+-- --datelon 2020-05-11
 
  */
-object AggregatableFavBasedProducerEmbeddingsAdhocApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with AdhocExecutionApp {
+objelonct AggrelongatablelonFavBaselondProducelonrelonmbelonddingsAdhocApp
+    elonxtelonnds AggrelongatablelonFavBaselondProducelonrelonmbelonddingsBaselonApp
+    with AdhocelonxeloncutionApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145kUpdated
-  private val outputPath: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = true,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score"
+  ovelonrridelon val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145kUpdatelond
+  privatelon val outputPath: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = falselon,
+    isManhattanKelonyVal = truelon,
+    modelonlVelonrsion = modelonlVelonrsion,
+    pathSuffix = "producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_fav_scorelon"
   )
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  privatelon val outputPathThrift: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = falselon,
+    isManhattanKelonyVal = falselon,
+    modelonlVelonrsion = modelonlVelonrsion,
+    pathSuffix = "producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_fav_scorelon_thrift"
   )
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  ovelonrridelon delonf writelonToManhattan(
+    output: TypelondPipelon[KelonyVal[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .flatMap { keyVal =>
-        keyVal.value.embedding.map { simClusterWithScore =>
+      .flatMap { kelonyVal =>
+        kelonyVal.valuelon.elonmbelondding.map { simClustelonrWithScorelon =>
           (
-            keyVal.key.embeddingType,
-            keyVal.key.modelVersion,
-            keyVal.key.internalId,
-            simClusterWithScore.clusterId,
-            simClusterWithScore.score
+            kelonyVal.kelony.elonmbelonddingTypelon,
+            kelonyVal.kelony.modelonlVelonrsion,
+            kelonyVal.kelony.intelonrnalId,
+            simClustelonrWithScorelon.clustelonrId,
+            simClustelonrWithScorelon.scorelon
           )
         }
       }
-      .writeExecution(
-        // Write to TSV for easier debugging of the adhoc job.
-        TypedTsv(outputPath)
+      .writelonelonxeloncution(
+        // Writelon to TSV for elonasielonr delonbugging of thelon adhoc job.
+        TypelondTsv(outputPath)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  ovelonrridelon delonf writelonToThrift(
+    output: TypelondPipelon[SimClustelonrselonmbelonddingWithId]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .writeExecution(
-        new FixedPathLzoScrooge(outputPathThrift, SimClustersEmbeddingWithId)
+      .writelonelonxeloncution(
+        nelonw FixelondPathLzoScroogelon(outputPathThrift, SimClustelonrselonmbelonddingWithId)
       )
   }
 }
 
 /**
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job_2020-adhoc
-scalding remote run \
---user cassowary \
---keytab /var/lib/tss/keys/fluffy/keytabs/client/cassowary.keytab \
---principal service_acoount@TWITTER.BIZ \
---cluster bluebird-qus1 \
---main-class com.twitter.simclusters_v2.scalding.embedding.producer.AggregatableFavBasedProducerEmbeddings2020AdhocApp \
---target src/scala/com/twitter/simclusters_v2/scalding/embedding/producer:aggregatable_fav_based_producer_embeddings_job_2020-adhoc \
---hadoop-properties "scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=4000" \
--- --date 2020-06-28
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/producelonr:aggrelongatablelon_fav_baselond_producelonr_elonmbelonddings_job_2020-adhoc
+scalding relonmotelon run \
+--uselonr cassowary \
+--kelonytab /var/lib/tss/kelonys/fluffy/kelonytabs/clielonnt/cassowary.kelonytab \
+--principal selonrvicelon_acoount@TWITTelonR.BIZ \
+--clustelonr bluelonbird-qus1 \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.producelonr.AggrelongatablelonFavBaselondProducelonrelonmbelonddings2020AdhocApp \
+--targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/elonmbelondding/producelonr:aggrelongatablelon_fav_baselond_producelonr_elonmbelonddings_job_2020-adhoc \
+--hadoop-propelonrtielons "scalding.with.relonducelonrs.selont.elonxplicitly=truelon maprelonducelon.job.relonducelons=4000" \
+-- --datelon 2020-06-28
  */
-object AggregatableFavBasedProducerEmbeddings2020AdhocApp
-    extends AggregatableFavBasedProducerEmbeddingsBaseApp
-    with AdhocExecutionApp {
+objelonct AggrelongatablelonFavBaselondProducelonrelonmbelonddings2020AdhocApp
+    elonxtelonnds AggrelongatablelonFavBaselondProducelonrelonmbelonddingsBaselonApp
+    with AdhocelonxeloncutionApp {
 
-  override val modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-  private val outputPath: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = true,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score"
+  ovelonrridelon val modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
+  privatelon val outputPath: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = falselon,
+    isManhattanKelonyVal = truelon,
+    modelonlVelonrsion = modelonlVelonrsion,
+    pathSuffix = "producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_fav_scorelon"
   )
 
-  private val outputPathThrift: String = EmbeddingUtil.getHdfsPath(
-    isAdhoc = false,
-    isManhattanKeyVal = false,
-    modelVersion = modelVersion,
-    pathSuffix = "producer_simclusters_aggregatable_embeddings_by_fav_score_thrift"
+  privatelon val outputPathThrift: String = elonmbelonddingUtil.gelontHdfsPath(
+    isAdhoc = falselon,
+    isManhattanKelonyVal = falselon,
+    modelonlVelonrsion = modelonlVelonrsion,
+    pathSuffix = "producelonr_simclustelonrs_aggrelongatablelon_elonmbelonddings_by_fav_scorelon_thrift"
   )
 
-  override def writeToManhattan(
-    output: TypedPipe[KeyVal[SimClustersEmbeddingId, SimClustersEmbedding]]
+  ovelonrridelon delonf writelonToManhattan(
+    output: TypelondPipelon[KelonyVal[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding]]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .flatMap { keyVal =>
-        keyVal.value.embedding.map { simClusterWithScore =>
+      .flatMap { kelonyVal =>
+        kelonyVal.valuelon.elonmbelondding.map { simClustelonrWithScorelon =>
           (
-            keyVal.key.embeddingType,
-            keyVal.key.modelVersion,
-            keyVal.key.internalId,
-            simClusterWithScore.clusterId,
-            simClusterWithScore.score
+            kelonyVal.kelony.elonmbelonddingTypelon,
+            kelonyVal.kelony.modelonlVelonrsion,
+            kelonyVal.kelony.intelonrnalId,
+            simClustelonrWithScorelon.clustelonrId,
+            simClustelonrWithScorelon.scorelon
           )
         }
       }
-      .writeExecution(
-        // Write to TSV for easier debugging of the adhoc job.
-        TypedTsv(outputPath)
+      .writelonelonxeloncution(
+        // Writelon to TSV for elonasielonr delonbugging of thelon adhoc job.
+        TypelondTsv(outputPath)
       )
   }
 
-  override def writeToThrift(
-    output: TypedPipe[SimClustersEmbeddingWithId]
+  ovelonrridelon delonf writelonToThrift(
+    output: TypelondPipelon[SimClustelonrselonmbelonddingWithId]
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
     output
-      .writeExecution(
-        new FixedPathLzoScrooge(outputPathThrift, SimClustersEmbeddingWithId)
+      .writelonelonxeloncution(
+        nelonw FixelondPathLzoScroogelon(outputPathThrift, SimClustelonrselonmbelonddingWithId)
       )
   }
 }
 
-trait AggregatableFavBasedProducerEmbeddingsBaseApp extends AggregatableProducerEmbeddingsBaseApp {
-  override val userToProducerScoringFn: NeighborWithWeights => Double =
-    _.favScoreHalfLife100Days.getOrElse(0.0)
-  override val userToClusterScoringFn: UserToInterestedInClusterScores => Double =
-    _.favScore.getOrElse(0.0)
-  override val embeddingType: EmbeddingType = EmbeddingType.AggregatableFavBasedProducer
+trait AggrelongatablelonFavBaselondProducelonrelonmbelonddingsBaselonApp elonxtelonnds AggrelongatablelonProducelonrelonmbelonddingsBaselonApp {
+  ovelonrridelon val uselonrToProducelonrScoringFn: NelonighborWithWelonights => Doublelon =
+    _.favScorelonHalfLifelon100Days.gelontOrelonlselon(0.0)
+  ovelonrridelon val uselonrToClustelonrScoringFn: UselonrToIntelonrelonstelondInClustelonrScorelons => Doublelon =
+    _.favScorelon.gelontOrelonlselon(0.0)
+  ovelonrridelon val elonmbelonddingTypelon: elonmbelonddingTypelon = elonmbelonddingTypelon.AggrelongatablelonFavBaselondProducelonr
 }

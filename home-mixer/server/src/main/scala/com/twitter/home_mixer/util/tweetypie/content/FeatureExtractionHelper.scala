@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.util.tweetypie.content
+packagelon com.twittelonr.homelon_mixelonr.util.twelonelontypielon.contelonnt
 
-import com.twitter.home_mixer.model.ContentFeatures
-import com.twitter.tweetypie.{thriftscala => tp}
+import com.twittelonr.homelon_mixelonr.modelonl.ContelonntFelonaturelons
+import com.twittelonr.twelonelontypielon.{thriftscala => tp}
 
-object FeatureExtractionHelper {
+objelonct FelonaturelonelonxtractionHelonlpelonr {
 
-  def extractFeatures(
-    tweet: tp.Tweet
-  ): ContentFeatures = {
-    val contentFeaturesFromTweet = ContentFeatures.Empty.copy(
-      selfThreadMetadata = tweet.selfThreadMetadata
+  delonf elonxtractFelonaturelons(
+    twelonelont: tp.Twelonelont
+  ): ContelonntFelonaturelons = {
+    val contelonntFelonaturelonsFromTwelonelont = ContelonntFelonaturelons.elonmpty.copy(
+      selonlfThrelonadMelontadata = twelonelont.selonlfThrelonadMelontadata
     )
 
-    val contentFeaturesWithText = TweetTextFeaturesExtractor.addTextFeaturesFromTweet(
-      contentFeaturesFromTweet,
-      tweet
+    val contelonntFelonaturelonsWithTelonxt = TwelonelontTelonxtFelonaturelonselonxtractor.addTelonxtFelonaturelonsFromTwelonelont(
+      contelonntFelonaturelonsFromTwelonelont,
+      twelonelont
     )
-    val contentFeaturesWithMedia = TweetMediaFeaturesExtractor.addMediaFeaturesFromTweet(
-      contentFeaturesWithText,
-      tweet
+    val contelonntFelonaturelonsWithMelondia = TwelonelontMelondiaFelonaturelonselonxtractor.addMelondiaFelonaturelonsFromTwelonelont(
+      contelonntFelonaturelonsWithTelonxt,
+      twelonelont
     )
 
-    contentFeaturesWithMedia.copy(
-      conversationControl = tweet.conversationControl,
-      semanticCoreAnnotations = tweet.escherbirdEntityAnnotations.map(_.entityAnnotations)
+    contelonntFelonaturelonsWithMelondia.copy(
+      convelonrsationControl = twelonelont.convelonrsationControl,
+      selonmanticCorelonAnnotations = twelonelont.elonschelonrbirdelonntityAnnotations.map(_.elonntityAnnotations)
     )
   }
 }

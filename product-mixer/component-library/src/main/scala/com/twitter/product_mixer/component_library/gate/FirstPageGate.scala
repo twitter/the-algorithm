@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.component_library.gate
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.gatelon
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Gate used in first page. Use request cursor to determine if the gate should be open or closed.
+ * Gatelon uselond in first pagelon. Uselon relonquelonst cursor to delontelonrminelon if thelon gatelon should belon opelonn or closelond.
  */
-object FirstPageGate extends Gate[PipelineQuery with HasPipelineCursor[_]] {
+objelonct FirstPagelonGatelon elonxtelonnds Gatelon[PipelonlinelonQuelonry with HasPipelonlinelonCursor[_]] {
 
-  override val identifier: GateIdentifier = GateIdentifier("FirstPage")
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr("FirstPagelon")
 
-  // If cursor is first page, then gate should return continue, otherwise return stop
-  override def shouldContinue(query: PipelineQuery with HasPipelineCursor[_]): Stitch[Boolean] =
-    Stitch.value(query.isFirstPage)
+  // If cursor is first pagelon, thelonn gatelon should relonturn continuelon, othelonrwiselon relonturn stop
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[_]): Stitch[Boolelonan] =
+    Stitch.valuelon(quelonry.isFirstPagelon)
 }

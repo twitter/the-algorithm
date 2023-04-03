@@ -1,39 +1,39 @@
-package com.twitter.recos.decider
+packagelon com.twittelonr.reloncos.deloncidelonr
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.util.Future
-import scala.util.control.NoStackTrace
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.RandomReloncipielonnt
+import com.twittelonr.util.Futurelon
+import scala.util.control.NoStackTracelon
 
 /*
-  Provides deciders-controlled load shedding for a given endpoint.
-  The format of the decider keys is:
+  Providelons deloncidelonrs-controllelond load shelondding for a givelonn elonndpoint.
+  Thelon format of thelon deloncidelonr kelonys is:
 
-    enable_loadshedding_<graphNamePrefix>_<endpoint name>
-  E.g.:
-    enable_loadshedding_user-tweet-graph_relatedTweets
+    elonnablelon_loadshelondding_<graphNamelonPrelonfix>_<elonndpoint namelon>
+  elon.g.:
+    elonnablelon_loadshelondding_uselonr-twelonelont-graph_relonlatelondTwelonelonts
 
-  Deciders are fractional, so a value of 50.00 will drop 50% of responses. If a decider key is not
-  defined for a particular endpoint, those requests will always be
-  served.
+  Deloncidelonrs arelon fractional, so a valuelon of 50.00 will drop 50% of relonsponselons. If a deloncidelonr kelony is not
+  delonfinelond for a particular elonndpoint, thoselon relonquelonsts will always belon
+  selonrvelond.
 
-  We should therefore aim to define keys for the endpoints we care most about in decider.yml,
-  so that we can control them during incidents.
+  Welon should thelonrelonforelon aim to delonfinelon kelonys for thelon elonndpoints welon carelon most about in deloncidelonr.yml,
+  so that welon can control thelonm during incidelonnts.
  */
-class EndpointLoadShedder(
-  decider: GraphDecider) {
-  import EndpointLoadShedder._
+class elonndpointLoadShelonddelonr(
+  deloncidelonr: GraphDeloncidelonr) {
+  import elonndpointLoadShelonddelonr._
 
-  private val keyPrefix = "enable_loadshedding"
+  privatelon val kelonyPrelonfix = "elonnablelon_loadshelondding"
 
-  def apply[T](endpointName: String)(serve: => Future[T]): Future[T] = {
-    val key = s"${keyPrefix}_${decider.graphNamePrefix}_${endpointName}"
-    if (decider.isAvailable(key, recipient = Some(RandomRecipient)))
-      Future.exception(LoadSheddingException)
-    else serve
+  delonf apply[T](elonndpointNamelon: String)(selonrvelon: => Futurelon[T]): Futurelon[T] = {
+    val kelony = s"${kelonyPrelonfix}_${deloncidelonr.graphNamelonPrelonfix}_${elonndpointNamelon}"
+    if (deloncidelonr.isAvailablelon(kelony, reloncipielonnt = Somelon(RandomReloncipielonnt)))
+      Futurelon.elonxcelonption(LoadShelonddingelonxcelonption)
+    elonlselon selonrvelon
   }
 }
 
-object EndpointLoadShedder {
-  object LoadSheddingException extends Exception with NoStackTrace
+objelonct elonndpointLoadShelonddelonr {
+  objelonct LoadShelonddingelonxcelonption elonxtelonnds elonxcelonption with NoStackTracelon
 }

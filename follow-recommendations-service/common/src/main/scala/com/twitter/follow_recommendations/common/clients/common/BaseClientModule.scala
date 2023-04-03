@@ -1,20 +1,20 @@
-package com.twitter.follow_recommendations.common.clients.common
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.common
 
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.thrift.Protocols
-import com.twitter.follow_recommendations.common.constants.ServiceConstants._
-import com.twitter.inject.thrift.modules.ThriftClientModule
-import scala.reflect.ClassTag
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.thrift.Protocols
+import com.twittelonr.follow_reloncommelonndations.common.constants.SelonrvicelonConstants._
+import com.twittelonr.injelonct.thrift.modulelons.ThriftClielonntModulelon
+import scala.relonflelonct.ClassTag
 
 /**
- * basic client configurations that we apply for all of our clients go in here
+ * basic clielonnt configurations that welon apply for all of our clielonnts go in helonrelon
  */
-abstract class BaseClientModule[T: ClassTag] extends ThriftClientModule[T] {
-  def configureThriftMuxClient(client: ThriftMux.Client): ThriftMux.Client = {
-    client
+abstract class BaselonClielonntModulelon[T: ClassTag] elonxtelonnds ThriftClielonntModulelon[T] {
+  delonf configurelonThriftMuxClielonnt(clielonnt: ThriftMux.Clielonnt): ThriftMux.Clielonnt = {
+    clielonnt
       .withProtocolFactory(
         Protocols.binaryFactory(
-          stringLengthLimit = StringLengthLimit,
-          containerLengthLimit = ContainerLengthLimit))
+          stringLelonngthLimit = StringLelonngthLimit,
+          containelonrLelonngthLimit = ContainelonrLelonngthLimit))
   }
 }

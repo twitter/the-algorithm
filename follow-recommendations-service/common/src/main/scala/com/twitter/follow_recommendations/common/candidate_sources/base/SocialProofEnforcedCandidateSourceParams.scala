@@ -1,56 +1,56 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.timelonlinelons.configapi.DurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.util.Duration
 
-object SocialProofEnforcedCandidateSourceParams {
-  case object MustCallSgs
-      extends FSParam[Boolean]("social_proof_enforced_candidate_source_must_call_sgs", true)
+objelonct SocialProofelonnforcelondCandidatelonSourcelonParams {
+  caselon objelonct MustCallSgs
+      elonxtelonnds FSParam[Boolelonan]("social_proof_elonnforcelond_candidatelon_sourcelon_must_call_sgs", truelon)
 
-  case object CallSgsCachedColumn
-      extends FSParam[Boolean](
-        "social_proof_enforced_candidate_source_call_sgs_cached_column",
-        false)
+  caselon objelonct CallSgsCachelondColumn
+      elonxtelonnds FSParam[Boolelonan](
+        "social_proof_elonnforcelond_candidatelon_sourcelon_call_sgs_cachelond_column",
+        falselon)
 
-  case object QueryIntersectionIdsNum
-      extends FSBoundedParam[Int](
-        name = "social_proof_enforced_candidate_source_query_intersection_ids_num",
-        default = 3,
+  caselon objelonct QuelonryIntelonrselonctionIdsNum
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "social_proof_elonnforcelond_candidatelon_sourcelon_quelonry_intelonrselonction_ids_num",
+        delonfault = 3,
         min = 0,
-        max = Integer.MAX_VALUE)
+        max = Intelongelonr.MAX_VALUelon)
 
-  case object MaxNumCandidatesToAnnotate
-      extends FSBoundedParam[Int](
-        name = "social_proof_enforced_candidate_source_max_num_candidates_to_annotate",
-        default = 50,
+  caselon objelonct MaxNumCandidatelonsToAnnotatelon
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "social_proof_elonnforcelond_candidatelon_sourcelon_max_num_candidatelons_to_annotatelon",
+        delonfault = 50,
         min = 0,
-        max = Integer.MAX_VALUE)
+        max = Intelongelonr.MAX_VALUelon)
 
-  case object GfsIntersectionIdsNum
-      extends FSBoundedParam[Int](
-        name = "social_proof_enforced_candidate_source_gfs_intersection_ids_num",
-        default = 3,
+  caselon objelonct GfsIntelonrselonctionIdsNum
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "social_proof_elonnforcelond_candidatelon_sourcelon_gfs_intelonrselonction_ids_num",
+        delonfault = 3,
         min = 0,
-        max = Integer.MAX_VALUE)
+        max = Intelongelonr.MAX_VALUelon)
 
-  case object SgsIntersectionIdsNum
-      extends FSBoundedParam[Int](
-        name = "social_proof_enforced_candidate_source_sgs_intersection_ids_num",
-        default = 10,
+  caselon objelonct SgsIntelonrselonctionIdsNum
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "social_proof_elonnforcelond_candidatelon_sourcelon_sgs_intelonrselonction_ids_num",
+        delonfault = 10,
         min = 0,
-        max = Integer.MAX_VALUE)
+        max = Intelongelonr.MAX_VALUelon)
 
-  case object GfsLagDurationInDays
-      extends FSBoundedParam[Duration](
-        name = "social_proof_enforced_candidate_source_gfs_lag_duration_in_days",
-        default = 14.days,
+  caselon objelonct GfsLagDurationInDays
+      elonxtelonnds FSBoundelondParam[Duration](
+        namelon = "social_proof_elonnforcelond_candidatelon_sourcelon_gfs_lag_duration_in_days",
+        delonfault = 14.days,
         min = 1.days,
         max = 60.days)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromDays
+      with HasDurationConvelonrsion {
+    ovelonrridelon val durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromDays
   }
 }

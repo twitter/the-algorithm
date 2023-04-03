@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_ranker
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.timelonlinelon_rankelonr
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => t}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelineRankerRecapCandidateSource @Inject() (
-  timelineRankerClient: t.TimelineRanker.MethodPerEndpoint)
-    extends CandidateSource[t.RecapQuery, t.CandidateTweet] {
+@Singlelonton
+class TimelonlinelonRankelonrReloncapCandidatelonSourcelon @Injelonct() (
+  timelonlinelonRankelonrClielonnt: t.TimelonlinelonRankelonr.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelon[t.ReloncapQuelonry, t.CandidatelonTwelonelont] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineRankerRecap")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr("TimelonlinelonRankelonrReloncap")
 
-  override def apply(
-    request: t.RecapQuery
-  ): Stitch[Seq[t.CandidateTweet]] = {
+  ovelonrridelon delonf apply(
+    relonquelonst: t.ReloncapQuelonry
+  ): Stitch[Selonq[t.CandidatelonTwelonelont]] = {
     Stitch
-      .callFuture(timelineRankerClient.getRecapCandidatesFromAuthors(Seq(request)))
-      .map { response: Seq[t.GetCandidateTweetsResponse] =>
-        response.headOption.flatMap(_.candidates).getOrElse(Seq.empty).filter(_.tweet.nonEmpty)
+      .callFuturelon(timelonlinelonRankelonrClielonnt.gelontReloncapCandidatelonsFromAuthors(Selonq(relonquelonst)))
+      .map { relonsponselon: Selonq[t.GelontCandidatelonTwelonelontsRelonsponselon] =>
+        relonsponselon.helonadOption.flatMap(_.candidatelons).gelontOrelonlselon(Selonq.elonmpty).filtelonr(_.twelonelont.nonelonmpty)
       }
   }
 }

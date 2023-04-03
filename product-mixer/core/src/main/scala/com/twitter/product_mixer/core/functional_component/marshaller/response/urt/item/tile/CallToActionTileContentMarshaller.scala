@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.tilelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button.CtaButtonMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.CallToActionTileContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.button.CtaButtonMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tilelon.CallToActionTilelonContelonnt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CallToActionTileContentMarshaller @Inject() (
-  ctaButtonMarshaller: CtaButtonMarshaller,
-  richTextMarshaller: RichTextMarshaller) {
+@Singlelonton
+class CallToActionTilelonContelonntMarshallelonr @Injelonct() (
+  ctaButtonMarshallelonr: CtaButtonMarshallelonr,
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr) {
 
-  def apply(callToActionTileContent: CallToActionTileContent): urt.TileContentCallToAction =
-    urt.TileContentCallToAction(
-      text = callToActionTileContent.text,
-      richText = callToActionTileContent.richText.map(richTextMarshaller(_)),
-      ctaButton = callToActionTileContent.ctaButton.map(ctaButtonMarshaller(_))
+  delonf apply(callToActionTilelonContelonnt: CallToActionTilelonContelonnt): urt.TilelonContelonntCallToAction =
+    urt.TilelonContelonntCallToAction(
+      telonxt = callToActionTilelonContelonnt.telonxt,
+      richTelonxt = callToActionTilelonContelonnt.richTelonxt.map(richTelonxtMarshallelonr(_)),
+      ctaButton = callToActionTilelonContelonnt.ctaButton.map(ctaButtonMarshallelonr(_))
     )
 }

@@ -1,59 +1,59 @@
-package com.twitter.recos.graph_common
+packagelon com.twittelonr.reloncos.graph_common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.recos_common.thriftscala.{
-  SocialProofType,
-  GetRecentEdgesRequest,
-  GetRecentEdgesResponse,
-  NodeInfo,
-  RecentEdge
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.reloncos_common.thriftscala.{
+  SocialProofTypelon,
+  GelontReloncelonntelondgelonsRelonquelonst,
+  GelontReloncelonntelondgelonsRelonsponselon,
+  NodelonInfo,
+  Reloncelonntelondgelon
 }
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request._
-import com.twitter.util.Future
+import com.twittelonr.reloncos.util.Stats._
+import com.twittelonr.selonrvo.relonquelonst._
+import com.twittelonr.util.Futurelon
 
 /**
- * Implementation of the Thrift-defined service interface.
+ * Implelonmelonntation of thelon Thrift-delonfinelond selonrvicelon intelonrfacelon.
  */
-class LeftNodeEdgesHandler(graphHelper: BipartiteGraphHelper, statsReceiver: StatsReceiver)
-    extends RequestHandler[GetRecentEdgesRequest, GetRecentEdgesResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+class LelonftNodelonelondgelonsHandlelonr(graphHelonlpelonr: BipartitelonGraphHelonlpelonr, statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstHandlelonr[GelontReloncelonntelondgelonsRelonquelonst, GelontReloncelonntelondgelonsRelonsponselon] {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  private val CLICK = 0
-  private val FAVORITE = 1
-  private val RETWEET = 2
-  private val REPLY = 3
-  private val TWEET = 4
+  privatelon val CLICK = 0
+  privatelon val FAVORITelon = 1
+  privatelon val RelonTWelonelonT = 2
+  privatelon val RelonPLY = 3
+  privatelon val TWelonelonT = 4
 
-  override def apply(request: GetRecentEdgesRequest): Future[GetRecentEdgesResponse] = {
-    trackFutureBlockStats(stats) {
-      val recentEdges = graphHelper.getLeftNodeEdges(request.requestId).flatMap {
-        case (node, engagementType) if engagementType == CLICK =>
-          Some(RecentEdge(node, SocialProofType.Click))
-        case (node, engagementType) if engagementType == FAVORITE =>
-          Some(RecentEdge(node, SocialProofType.Favorite))
-        case (node, engagementType) if engagementType == RETWEET =>
-          Some(RecentEdge(node, SocialProofType.Retweet))
-        case (node, engagementType) if engagementType == REPLY =>
-          Some(RecentEdge(node, SocialProofType.Reply))
-        case (node, engagementType) if engagementType == TWEET =>
-          Some(RecentEdge(node, SocialProofType.Tweet))
-        case _ =>
-          None
+  ovelonrridelon delonf apply(relonquelonst: GelontReloncelonntelondgelonsRelonquelonst): Futurelon[GelontReloncelonntelondgelonsRelonsponselon] = {
+    trackFuturelonBlockStats(stats) {
+      val reloncelonntelondgelons = graphHelonlpelonr.gelontLelonftNodelonelondgelons(relonquelonst.relonquelonstId).flatMap {
+        caselon (nodelon, elonngagelonmelonntTypelon) if elonngagelonmelonntTypelon == CLICK =>
+          Somelon(Reloncelonntelondgelon(nodelon, SocialProofTypelon.Click))
+        caselon (nodelon, elonngagelonmelonntTypelon) if elonngagelonmelonntTypelon == FAVORITelon =>
+          Somelon(Reloncelonntelondgelon(nodelon, SocialProofTypelon.Favoritelon))
+        caselon (nodelon, elonngagelonmelonntTypelon) if elonngagelonmelonntTypelon == RelonTWelonelonT =>
+          Somelon(Reloncelonntelondgelon(nodelon, SocialProofTypelon.Relontwelonelont))
+        caselon (nodelon, elonngagelonmelonntTypelon) if elonngagelonmelonntTypelon == RelonPLY =>
+          Somelon(Reloncelonntelondgelon(nodelon, SocialProofTypelon.Relonply))
+        caselon (nodelon, elonngagelonmelonntTypelon) if elonngagelonmelonntTypelon == TWelonelonT =>
+          Somelon(Reloncelonntelondgelon(nodelon, SocialProofTypelon.Twelonelont))
+        caselon _ =>
+          Nonelon
       }
-      Future.value(GetRecentEdgesResponse(recentEdges))
+      Futurelon.valuelon(GelontReloncelonntelondgelonsRelonsponselon(reloncelonntelondgelons))
     }
   }
 }
 
-class RightNodeInfoHandler(graphHelper: BipartiteGraphHelper, statsReceiver: StatsReceiver)
-    extends RequestHandler[Long, NodeInfo] {
-  private[this] val stats = statsReceiver.scope(this.getClass.getSimpleName)
+class RightNodelonInfoHandlelonr(graphHelonlpelonr: BipartitelonGraphHelonlpelonr, statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstHandlelonr[Long, NodelonInfo] {
+  privatelon[this] val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  override def apply(rightNode: Long): Future[NodeInfo] = {
-    trackFutureBlockStats(stats) {
-      val edges = graphHelper.getRightNodeEdges(rightNode)
-      Future.value(NodeInfo(edges = edges))
+  ovelonrridelon delonf apply(rightNodelon: Long): Futurelon[NodelonInfo] = {
+    trackFuturelonBlockStats(stats) {
+      val elondgelons = graphHelonlpelonr.gelontRightNodelonelondgelons(rightNodelon)
+      Futurelon.valuelon(NodelonInfo(elondgelons = elondgelons))
     }
   }
 }

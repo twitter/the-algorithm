@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddToModuleTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddToModulelonTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class AddToModuleInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddToModuleTimelineInstruction] {
+caselon class AddToModulelonInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon)
+    elonxtelonnds UrtInstructionBuildelonr[Quelonry, AddToModulelonTimelonlinelonInstruction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddToModuleTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val moduleEntries = entries.collect {
-        case module: TimelineModule => module
+  ovelonrridelon delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Selonq[AddToModulelonTimelonlinelonInstruction] = {
+    if (includelonInstruction(quelonry, elonntrielons)) {
+      val modulelonelonntrielons = elonntrielons.collelonct {
+        caselon modulelon: TimelonlinelonModulelon => modulelon
       }
-      if (moduleEntries.nonEmpty) {
-        assert(moduleEntries.size == 1, "Currently we only support appending to one module")
-        moduleEntries.headOption.map { moduleEntry =>
-          AddToModuleTimelineInstruction(
-            moduleItems = moduleEntry.items,
-            moduleEntryId = moduleEntry.entryIdentifier,
-            // Currently configuring moduleItemEntryId and prepend fields are not supported.
-            moduleItemEntryId = None,
-            prepend = None
+      if (modulelonelonntrielons.nonelonmpty) {
+        asselonrt(modulelonelonntrielons.sizelon == 1, "Currelonntly welon only support appelonnding to onelon modulelon")
+        modulelonelonntrielons.helonadOption.map { modulelonelonntry =>
+          AddToModulelonTimelonlinelonInstruction(
+            modulelonItelonms = modulelonelonntry.itelonms,
+            modulelonelonntryId = modulelonelonntry.elonntryIdelonntifielonr,
+            // Currelonntly configuring modulelonItelonmelonntryId and prelonpelonnd fielonlds arelon not supportelond.
+            modulelonItelonmelonntryId = Nonelon,
+            prelonpelonnd = Nonelon
           )
         }
-      }.toSeq
-      else Seq.empty
-    } else {
-      Seq.empty
+      }.toSelonq
+      elonlselon Selonq.elonmpty
+    } elonlselon {
+      Selonq.elonmpty
     }
   }
 }

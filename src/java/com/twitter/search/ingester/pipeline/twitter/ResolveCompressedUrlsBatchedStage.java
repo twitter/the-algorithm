@@ -1,387 +1,387 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Locale;
+import java.nelont.URI;
+import java.nelont.URISyntaxelonxcelonption;
+import java.util.Collelonction;
+import java.util.Collelonctions;
+import java.util.HashSelont;
+import java.util.Localelon;
 import java.util.Map;
-import java.util.Set;
-import javax.naming.NamingException;
+import java.util.Selont;
+import javax.naming.Namingelonxcelonption;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Sets;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+import org.apachelon.commons.lang.StringUtils;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.BatchedElement;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
-import com.twitter.search.ingester.pipeline.wire.WireModule;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.util.Duration;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.common.telonxt.languagelon.LocalelonUtil;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftelonxpandelondUrl;
+import com.twittelonr.selonarch.common.melontrics.Pelonrcelonntilelon;
+import com.twittelonr.selonarch.common.melontrics.PelonrcelonntilelonUtil;
+import com.twittelonr.selonarch.common.melontrics.RelonlelonvancelonStats;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.Batchelondelonlelonmelonnt;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonelonxcelonption;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.wirelon.WirelonModulelon;
+import com.twittelonr.selonrvicelon.spidelonrduck.gelonn.MelondiaTypelons;
+import com.twittelonr.util.Duration;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class ResolveCompressedUrlsBatchedStage extends TwitterBatchedBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class RelonsolvelonComprelonsselondUrlsBatchelondStagelon elonxtelonnds TwittelonrBatchelondBaselonStagelon
+    <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> {
 
-  private static final int PINK_REQUEST_TIMEOUT_MILLIS = 500;
-  private static final int PINK_REQUEST_RETRIES = 2;
-  private static final String PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY = "pink_requests_batch_size";
-  private AsyncPinkUrlsResolver urlResolver;
-  private int resolveUrlPercentage = 100;
-  private String pinkClientId;
-  private SearchDecider searchDecider;
+  privatelon static final int PINK_RelonQUelonST_TIMelonOUT_MILLIS = 500;
+  privatelon static final int PINK_RelonQUelonST_RelonTRIelonS = 2;
+  privatelon static final String PINK_RelonQUelonSTS_BATCH_SIZelon_DelonCIDelonR_KelonY = "pink_relonquelonsts_batch_sizelon";
+  privatelon AsyncPinkUrlsRelonsolvelonr urlRelonsolvelonr;
+  privatelon int relonsolvelonUrlPelonrcelonntagelon = 100;
+  privatelon String pinkClielonntId;
+  privatelon SelonarchDeloncidelonr selonarchDeloncidelonr;
 
-  // The number of URLs that we attempted to resolve.
-  private SearchRateCounter linksAttempted;
-  // The number of URLs that were successfully resolved.
-  private SearchRateCounter linksSucceeded;
-  // The number of URLs ignored because they are too long.
-  private SearchRateCounter linksTooLong;
-  // The number of URLs truncated because they are too long.
-  private SearchRateCounter linksTruncated;
+  // Thelon numbelonr of URLs that welon attelonmptelond to relonsolvelon.
+  privatelon SelonarchRatelonCountelonr linksAttelonmptelond;
+  // Thelon numbelonr of URLs that welonrelon succelonssfully relonsolvelond.
+  privatelon SelonarchRatelonCountelonr linksSuccelonelondelond;
+  // Thelon numbelonr of URLs ignorelond beloncauselon thelony arelon too long.
+  privatelon SelonarchRatelonCountelonr linksTooLong;
+  // Thelon numbelonr of URLs truncatelond beloncauselon thelony arelon too long.
+  privatelon SelonarchRatelonCountelonr linksTruncatelond;
 
-  // The number of resolved URLs without a media type.
-  private SearchRateCounter urlsWithoutMediaType;
-  // The number of resolved URLs with a specific media type.
-  private final Map<MediaTypes, SearchRateCounter> urlsWithMediaTypeMap =
-      Maps.newEnumMap(MediaTypes.class);
+  // Thelon numbelonr of relonsolvelond URLs without a melondia typelon.
+  privatelon SelonarchRatelonCountelonr urlsWithoutMelondiaTypelon;
+  // Thelon numbelonr of relonsolvelond URLs with a speloncific melondia typelon.
+  privatelon final Map<MelondiaTypelons, SelonarchRatelonCountelonr> urlsWithMelondiaTypelonMap =
+      Maps.nelonwelonnumMap(MelondiaTypelons.class);
 
-  // The number of tweets for which all URLs were resolved.
-  private SearchRateCounter tweetsWithResolvedURLs;
-  // The number of tweets for which some URLs were not resolved.
-  private SearchRateCounter tweetsWithUnresolvedURLs;
+  // Thelon numbelonr of twelonelonts for which all URLs welonrelon relonsolvelond.
+  privatelon SelonarchRatelonCountelonr twelonelontsWithRelonsolvelondURLs;
+  // Thelon numbelonr of twelonelonts for which somelon URLs welonrelon not relonsolvelond.
+  privatelon SelonarchRatelonCountelonr twelonelontsWithUnrelonsolvelondURLs;
 
-  // How long it takes to fully resolve all URLs in a tweet.
-  private Percentile<Long> millisToResolveAllTweetURLs;
+  // How long it takelons to fully relonsolvelon all URLs in a twelonelont.
+  privatelon Pelonrcelonntilelon<Long> millisToRelonsolvelonAllTwelonelontURLs;
 
-  // max age that a tweet can be before passed down the pipeline
-  private long tweetMaxAgeToResolve;
+  // max agelon that a twelonelont can belon belonforelon passelond down thelon pipelonlinelon
+  privatelon long twelonelontMaxAgelonToRelonsolvelon;
 
-  // number of times an element is within quota.
-  private SearchRateCounter numberOfElementsWithinQuota;
+  // numbelonr of timelons an elonlelonmelonnt is within quota.
+  privatelon SelonarchRatelonCountelonr numbelonrOfelonlelonmelonntsWithinQuota;
 
-  // number of times element is not within quota. If element not within quota, we dont batch.
-  private SearchRateCounter numberOfElementsNotWithinQuota;
+  // numbelonr of timelons elonlelonmelonnt is not within quota. If elonlelonmelonnt not within quota, welon dont batch.
+  privatelon SelonarchRatelonCountelonr numbelonrOfelonlelonmelonntsNotWithinQuota;
 
-  // number of times element has urls.
-  private SearchRateCounter numberOfElementsWithUrls;
+  // numbelonr of timelons elonlelonmelonnt has urls.
+  privatelon SelonarchRatelonCountelonr numbelonrOfelonlelonmelonntsWithUrls;
 
-  // number of times element does not have urls. If element does not have URL, we dont batch.
-  private SearchRateCounter numberOfElementsWithoutUrls;
+  // numbelonr of timelons elonlelonmelonnt doelons not havelon urls. If elonlelonmelonnt doelons not havelon URL, welon dont batch.
+  privatelon SelonarchRatelonCountelonr numbelonrOfelonlelonmelonntsWithoutUrls;
 
-  // number of calls to needsToBeBatched method.
-  private SearchRateCounter numberOfCallsToNeedsToBeBatched;
+  // numbelonr of calls to nelonelondsToBelonBatchelond melonthod.
+  privatelon SelonarchRatelonCountelonr numbelonrOfCallsToNelonelondsToBelonBatchelond;
 
 
-  public void setTweetMaxAgeToResolve(long tweetMaxAgeToResolve) {
-    this.tweetMaxAgeToResolve = tweetMaxAgeToResolve;
+  public void selontTwelonelontMaxAgelonToRelonsolvelon(long twelonelontMaxAgelonToRelonsolvelon) {
+    this.twelonelontMaxAgelonToRelonsolvelon = twelonelontMaxAgelonToRelonsolvelon;
   }
 
-  @Override
-  protected Class<IngesterTwitterMessage> getQueueObjectType() {
-    return IngesterTwitterMessage.class;
+  @Ovelonrridelon
+  protelonctelond Class<IngelonstelonrTwittelonrMelonssagelon> gelontQuelonuelonObjelonctTypelon() {
+    relonturn IngelonstelonrTwittelonrMelonssagelon.class;
   }
 
-  @Override
-  protected boolean needsToBeBatched(IngesterTwitterMessage element) {
-    numberOfCallsToNeedsToBeBatched.increment();
-    boolean isWithinQuota = (element.getId() % 100) < resolveUrlPercentage;
+  @Ovelonrridelon
+  protelonctelond boolelonan nelonelondsToBelonBatchelond(IngelonstelonrTwittelonrMelonssagelon elonlelonmelonnt) {
+    numbelonrOfCallsToNelonelondsToBelonBatchelond.increlonmelonnt();
+    boolelonan isWithinQuota = (elonlelonmelonnt.gelontId() % 100) < relonsolvelonUrlPelonrcelonntagelon;
 
     if (isWithinQuota) {
-      this.numberOfElementsWithinQuota.increment();
-    } else {
-      this.numberOfElementsNotWithinQuota.increment();
+      this.numbelonrOfelonlelonmelonntsWithinQuota.increlonmelonnt();
+    } elonlselon {
+      this.numbelonrOfelonlelonmelonntsNotWithinQuota.increlonmelonnt();
     }
 
-    boolean hasUrls = !element.getExpandedUrlMap().isEmpty();
+    boolelonan hasUrls = !elonlelonmelonnt.gelontelonxpandelondUrlMap().iselonmpty();
 
     if (hasUrls) {
-      this.numberOfElementsWithUrls.increment();
-    } else {
-      this.numberOfElementsWithoutUrls.increment();
+      this.numbelonrOfelonlelonmelonntsWithUrls.increlonmelonnt();
+    } elonlselon {
+      this.numbelonrOfelonlelonmelonntsWithoutUrls.increlonmelonnt();
     }
 
-    return hasUrls && isWithinQuota;
+    relonturn hasUrls && isWithinQuota;
   }
 
-  // Identity transformation. T and U types are the same
-  @Override
-  protected IngesterTwitterMessage transform(IngesterTwitterMessage element) {
-    return element;
+  // Idelonntity transformation. T and U typelons arelon thelon samelon
+  @Ovelonrridelon
+  protelonctelond IngelonstelonrTwittelonrMelonssagelon transform(IngelonstelonrTwittelonrMelonssagelon elonlelonmelonnt) {
+    relonturn elonlelonmelonnt;
   }
 
-  @Override
+  @Ovelonrridelon
   public void initStats() {
-    super.initStats();
-    commonInnerSetupStats();
+    supelonr.initStats();
+    commonInnelonrSelontupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    super.innerSetupStats();
-    commonInnerSetupStats();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    supelonr.innelonrSelontupStats();
+    commonInnelonrSelontupStats();
   }
 
-  private void commonInnerSetupStats() {
-    linksAttempted = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_attempted");
-    linksSucceeded = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_succeeded");
-    linksTooLong = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_toolong");
-    linksTruncated = RelevanceStats.exportRate(getStageNamePrefix() + "_num_links_truncated");
+  privatelon void commonInnelonrSelontupStats() {
+    linksAttelonmptelond = RelonlelonvancelonStats.elonxportRatelon(gelontStagelonNamelonPrelonfix() + "_num_links_attelonmptelond");
+    linksSuccelonelondelond = RelonlelonvancelonStats.elonxportRatelon(gelontStagelonNamelonPrelonfix() + "_num_links_succelonelondelond");
+    linksTooLong = RelonlelonvancelonStats.elonxportRatelon(gelontStagelonNamelonPrelonfix() + "_num_links_toolong");
+    linksTruncatelond = RelonlelonvancelonStats.elonxportRatelon(gelontStagelonNamelonPrelonfix() + "_num_links_truncatelond");
 
-    urlsWithoutMediaType = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_urls_without_media_type");
+    urlsWithoutMelondiaTypelon = RelonlelonvancelonStats.elonxportRatelon(
+        gelontStagelonNamelonPrelonfix() + "_urls_without_melondia_typelon");
 
-    for (MediaTypes mediaType : MediaTypes.values()) {
-      urlsWithMediaTypeMap.put(
-          mediaType,
-          RelevanceStats.exportRate(
-              getStageNamePrefix() + "_urls_with_media_type_" + mediaType.name().toLowerCase()));
+    for (MelondiaTypelons melondiaTypelon : MelondiaTypelons.valuelons()) {
+      urlsWithMelondiaTypelonMap.put(
+          melondiaTypelon,
+          RelonlelonvancelonStats.elonxportRatelon(
+              gelontStagelonNamelonPrelonfix() + "_urls_with_melondia_typelon_" + melondiaTypelon.namelon().toLowelonrCaselon()));
     }
 
-    tweetsWithResolvedURLs = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_num_tweets_with_resolved_urls");
-    tweetsWithUnresolvedURLs = RelevanceStats.exportRate(
-        getStageNamePrefix() + "_num_tweets_with_unresolved_urls");
+    twelonelontsWithRelonsolvelondURLs = RelonlelonvancelonStats.elonxportRatelon(
+        gelontStagelonNamelonPrelonfix() + "_num_twelonelonts_with_relonsolvelond_urls");
+    twelonelontsWithUnrelonsolvelondURLs = RelonlelonvancelonStats.elonxportRatelon(
+        gelontStagelonNamelonPrelonfix() + "_num_twelonelonts_with_unrelonsolvelond_urls");
 
-    millisToResolveAllTweetURLs = PercentileUtil.createPercentile(
-        getStageNamePrefix() + "_millis_to_resolve_all_tweet_urls");
+    millisToRelonsolvelonAllTwelonelontURLs = PelonrcelonntilelonUtil.crelonatelonPelonrcelonntilelon(
+        gelontStagelonNamelonPrelonfix() + "_millis_to_relonsolvelon_all_twelonelont_urls");
 
-    numberOfCallsToNeedsToBeBatched = SearchRateCounter.export(getStageNamePrefix()
-        + "_calls_to_needsToBeBatched");
+    numbelonrOfCallsToNelonelondsToBelonBatchelond = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix()
+        + "_calls_to_nelonelondsToBelonBatchelond");
 
-    numberOfElementsWithinQuota = SearchRateCounter.export(getStageNamePrefix()
+    numbelonrOfelonlelonmelonntsWithinQuota = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix()
         + "_is_within_quota");
 
-    numberOfElementsNotWithinQuota = SearchRateCounter.export(getStageNamePrefix()
+    numbelonrOfelonlelonmelonntsNotWithinQuota = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix()
         + "_is_not_within_quota");
 
-    numberOfElementsWithUrls = SearchRateCounter.export(getStageNamePrefix()
+    numbelonrOfelonlelonmelonntsWithUrls = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix()
         + "_has_urls");
 
-    numberOfElementsWithoutUrls = SearchRateCounter.export(getStageNamePrefix()
-        + "_does_not_have_urls");
+    numbelonrOfelonlelonmelonntsWithoutUrls = SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix()
+        + "_doelons_not_havelon_urls");
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    searchDecider = new SearchDecider(decider);
-    // We need to call this after assigning searchDecider because our updateBatchSize function
-    // depends on the searchDecider.
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    selonarchDeloncidelonr = nelonw SelonarchDeloncidelonr(deloncidelonr);
+    // Welon nelonelond to call this aftelonr assigning selonarchDeloncidelonr beloncauselon our updatelonBatchSizelon function
+    // delonpelonnds on thelon selonarchDeloncidelonr.
+    supelonr.doInnelonrPrelonprocelonss();
+    commonInnelonrSelontup();
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    searchDecider = new SearchDecider(decider);
-    // We need to call this after assigning searchDecider because our updateBatchSize function
-    // depends on the searchDecider.
-    super.innerSetup();
-    commonInnerSetup();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() throws PipelonlinelonStagelonelonxcelonption, Namingelonxcelonption {
+    selonarchDeloncidelonr = nelonw SelonarchDeloncidelonr(deloncidelonr);
+    // Welon nelonelond to call this aftelonr assigning selonarchDeloncidelonr beloncauselon our updatelonBatchSizelon function
+    // delonpelonnds on thelon selonarchDeloncidelonr.
+    supelonr.innelonrSelontup();
+    commonInnelonrSelontup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    Preconditions.checkNotNull(pinkClientId);
-    urlResolver = new AsyncPinkUrlsResolver(
-        WireModule
-            .getWireModule()
-            .getStorer(Duration.fromMilliseconds(PINK_REQUEST_TIMEOUT_MILLIS),
-                PINK_REQUEST_RETRIES),
-        pinkClientId);
+  privatelon void commonInnelonrSelontup() throws Namingelonxcelonption {
+    Prelonconditions.chelonckNotNull(pinkClielonntId);
+    urlRelonsolvelonr = nelonw AsyncPinkUrlsRelonsolvelonr(
+        WirelonModulelon
+            .gelontWirelonModulelon()
+            .gelontStorelonr(Duration.fromMilliselonconds(PINK_RelonQUelonST_TIMelonOUT_MILLIS),
+                PINK_RelonQUelonST_RelonTRIelonS),
+        pinkClielonntId);
   }
 
-  @Override
-  protected Future<Collection<IngesterTwitterMessage>> innerProcessBatch(Collection<BatchedElement
-      <IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
+  @Ovelonrridelon
+  protelonctelond Futurelon<Collelonction<IngelonstelonrTwittelonrMelonssagelon>> innelonrProcelonssBatch(Collelonction<Batchelondelonlelonmelonnt
+      <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon>> batch) {
     // Batch urls
-    Map<String, Set<IngesterTwitterMessage>> urlToTweetsMap = createUrlToTweetMap(batch);
+    Map<String, Selont<IngelonstelonrTwittelonrMelonssagelon>> urlToTwelonelontsMap = crelonatelonUrlToTwelonelontMap(batch);
 
-    Set<String> urlsToResolve = urlToTweetsMap.keySet();
+    Selont<String> urlsToRelonsolvelon = urlToTwelonelontsMap.kelonySelont();
 
-    updateBatchSize();
+    updatelonBatchSizelon();
 
-    linksAttempted.increment(batch.size());
-    // Do the lookup
-    return urlResolver.resolveUrls(urlsToResolve).map(processResolvedUrlsFunction(batch));
+    linksAttelonmptelond.increlonmelonnt(batch.sizelon());
+    // Do thelon lookup
+    relonturn urlRelonsolvelonr.relonsolvelonUrls(urlsToRelonsolvelon).map(procelonssRelonsolvelondUrlsFunction(batch));
   }
 
-  @Override
-  protected void updateBatchSize() {
-    // update batch based on decider
-    int decidedBatchSize = searchDecider.featureExists(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
-        ? searchDecider.getAvailability(PINK_REQUESTS_BATCH_SIZE_DECIDER_KEY)
-        : batchSize;
+  @Ovelonrridelon
+  protelonctelond void updatelonBatchSizelon() {
+    // updatelon batch baselond on deloncidelonr
+    int deloncidelondBatchSizelon = selonarchDeloncidelonr.felonaturelonelonxists(PINK_RelonQUelonSTS_BATCH_SIZelon_DelonCIDelonR_KelonY)
+        ? selonarchDeloncidelonr.gelontAvailability(PINK_RelonQUelonSTS_BATCH_SIZelon_DelonCIDelonR_KelonY)
+        : batchSizelon;
 
-    setBatchedStageBatchSize(decidedBatchSize);
+    selontBatchelondStagelonBatchSizelon(deloncidelondBatchSizelon);
   }
 
-  //if not all urls for a message where resolved re-enqueue until maxAge is reached
-  private Function<Map<String, ResolveCompressedUrlsUtils.UrlInfo>,
-      Collection<IngesterTwitterMessage>>
-  processResolvedUrlsFunction(Collection<BatchedElement<IngesterTwitterMessage,
-      IngesterTwitterMessage>> batch) {
-    return Function.func(resolvedUrls -> {
-      linksSucceeded.increment(resolvedUrls.size());
+  //if not all urls for a melonssagelon whelonrelon relonsolvelond relon-elonnquelonuelon until maxAgelon is relonachelond
+  privatelon Function<Map<String, RelonsolvelonComprelonsselondUrlsUtils.UrlInfo>,
+      Collelonction<IngelonstelonrTwittelonrMelonssagelon>>
+  procelonssRelonsolvelondUrlsFunction(Collelonction<Batchelondelonlelonmelonnt<IngelonstelonrTwittelonrMelonssagelon,
+      IngelonstelonrTwittelonrMelonssagelon>> batch) {
+    relonturn Function.func(relonsolvelondUrls -> {
+      linksSuccelonelondelond.increlonmelonnt(relonsolvelondUrls.sizelon());
 
-      for (ResolveCompressedUrlsUtils.UrlInfo urlInfo : resolvedUrls.values()) {
-        if (urlInfo.mediaType != null) {
-          urlsWithMediaTypeMap.get(urlInfo.mediaType).increment();
-        } else {
-          urlsWithoutMediaType.increment();
+      for (RelonsolvelonComprelonsselondUrlsUtils.UrlInfo urlInfo : relonsolvelondUrls.valuelons()) {
+        if (urlInfo.melondiaTypelon != null) {
+          urlsWithMelondiaTypelonMap.gelont(urlInfo.melondiaTypelon).increlonmelonnt();
+        } elonlselon {
+          urlsWithoutMelondiaTypelon.increlonmelonnt();
         }
       }
 
-      Set<IngesterTwitterMessage> successfulTweets = Sets.newHashSet();
+      Selont<IngelonstelonrTwittelonrMelonssagelon> succelonssfulTwelonelonts = Selonts.nelonwHashSelont();
 
-      for (BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage> batchedElement : batch) {
-        IngesterTwitterMessage message = batchedElement.getItem();
-        Set<String> tweetUrls = message.getExpandedUrlMap().keySet();
+      for (Batchelondelonlelonmelonnt<IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> batchelondelonlelonmelonnt : batch) {
+        IngelonstelonrTwittelonrMelonssagelon melonssagelon = batchelondelonlelonmelonnt.gelontItelonm();
+        Selont<String> twelonelontUrls = melonssagelon.gelontelonxpandelondUrlMap().kelonySelont();
 
-        int resolvedUrlCounter = 0;
+        int relonsolvelondUrlCountelonr = 0;
 
-        for (String url : tweetUrls) {
-          ResolveCompressedUrlsUtils.UrlInfo urlInfo = resolvedUrls.get(url);
+        for (String url : twelonelontUrls) {
+          RelonsolvelonComprelonsselondUrlsUtils.UrlInfo urlInfo = relonsolvelondUrls.gelont(url);
 
-          // if the url didn't resolve move on to the next one, this might trigger a re-enqueue
-          // if the tweet is still kind of new. But we want to process the rest for when that
-          // is not the case and we are going to end up passing it to the next stage
+          // if thelon url didn't relonsolvelon movelon on to thelon nelonxt onelon, this might triggelonr a relon-elonnquelonuelon
+          // if thelon twelonelont is still kind of nelonw. But welon want to procelonss thelon relonst for whelonn that
+          // is not thelon caselon and welon arelon going to elonnd up passing it to thelon nelonxt stagelon
           if (urlInfo == null) {
-            continue;
+            continuelon;
           }
 
-          String resolvedUrl = urlInfo.resolvedUrl;
-          Locale locale = urlInfo.language == null ? null
-              : LocaleUtil.getLocaleOf(urlInfo.language);
+          String relonsolvelondUrl = urlInfo.relonsolvelondUrl;
+          Localelon localelon = urlInfo.languagelon == null ? null
+              : LocalelonUtil.gelontLocalelonOf(urlInfo.languagelon);
 
-          if (StringUtils.isNotBlank(resolvedUrl)) {
-            ThriftExpandedUrl expandedUrl = message.getExpandedUrlMap().get(url);
-            resolvedUrlCounter += 1;
-            enrichTweetWithUrlInfo(message, expandedUrl, urlInfo, locale);
+          if (StringUtils.isNotBlank(relonsolvelondUrl)) {
+            ThriftelonxpandelondUrl elonxpandelondUrl = melonssagelon.gelontelonxpandelondUrlMap().gelont(url);
+            relonsolvelondUrlCountelonr += 1;
+            elonnrichTwelonelontWithUrlInfo(melonssagelon, elonxpandelondUrl, urlInfo, localelon);
           }
         }
-        long tweetMessageAge = clock.nowMillis() - message.getDate().getTime();
+        long twelonelontMelonssagelonAgelon = clock.nowMillis() - melonssagelon.gelontDatelon().gelontTimelon();
 
-        if (resolvedUrlCounter == tweetUrls.size()) {
-          millisToResolveAllTweetURLs.record(tweetMessageAge);
-          tweetsWithResolvedURLs.increment();
-          successfulTweets.add(message);
-        } else if (tweetMessageAge > tweetMaxAgeToResolve) {
-          tweetsWithUnresolvedURLs.increment();
-          successfulTweets.add(message);
-        } else {
-          //re-enqueue if all urls weren't resolved and the tweet is younger than maxAge
-          reEnqueueAndRetry(batchedElement);
+        if (relonsolvelondUrlCountelonr == twelonelontUrls.sizelon()) {
+          millisToRelonsolvelonAllTwelonelontURLs.reloncord(twelonelontMelonssagelonAgelon);
+          twelonelontsWithRelonsolvelondURLs.increlonmelonnt();
+          succelonssfulTwelonelonts.add(melonssagelon);
+        } elonlselon if (twelonelontMelonssagelonAgelon > twelonelontMaxAgelonToRelonsolvelon) {
+          twelonelontsWithUnrelonsolvelondURLs.increlonmelonnt();
+          succelonssfulTwelonelonts.add(melonssagelon);
+        } elonlselon {
+          //relon-elonnquelonuelon if all urls welonrelonn't relonsolvelond and thelon twelonelont is youngelonr than maxAgelon
+          relonelonnquelonuelonAndRelontry(batchelondelonlelonmelonnt);
         }
       }
-      return successfulTweets;
+      relonturn succelonssfulTwelonelonts;
     });
   }
 
-  private Map<String, Set<IngesterTwitterMessage>> createUrlToTweetMap(
-      Collection<BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage>> batch) {
-    Map<String, Set<IngesterTwitterMessage>> urlToTweetsMap = Maps.newHashMap();
-    for (BatchedElement<IngesterTwitterMessage, IngesterTwitterMessage> batchedElement : batch) {
-      IngesterTwitterMessage message = batchedElement.getItem();
-      for (String originalUrl : message.getExpandedUrlMap().keySet()) {
-        Set<IngesterTwitterMessage> messages = urlToTweetsMap.get(originalUrl);
-        if (messages == null) {
-          messages = new HashSet<>();
-          urlToTweetsMap.put(originalUrl, messages);
+  privatelon Map<String, Selont<IngelonstelonrTwittelonrMelonssagelon>> crelonatelonUrlToTwelonelontMap(
+      Collelonction<Batchelondelonlelonmelonnt<IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon>> batch) {
+    Map<String, Selont<IngelonstelonrTwittelonrMelonssagelon>> urlToTwelonelontsMap = Maps.nelonwHashMap();
+    for (Batchelondelonlelonmelonnt<IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> batchelondelonlelonmelonnt : batch) {
+      IngelonstelonrTwittelonrMelonssagelon melonssagelon = batchelondelonlelonmelonnt.gelontItelonm();
+      for (String originalUrl : melonssagelon.gelontelonxpandelondUrlMap().kelonySelont()) {
+        Selont<IngelonstelonrTwittelonrMelonssagelon> melonssagelons = urlToTwelonelontsMap.gelont(originalUrl);
+        if (melonssagelons == null) {
+          melonssagelons = nelonw HashSelont<>();
+          urlToTwelonelontsMap.put(originalUrl, melonssagelons);
         }
-        messages.add(message);
+        melonssagelons.add(melonssagelon);
       }
     }
-    return Collections.unmodifiableMap(urlToTweetsMap);
+    relonturn Collelonctions.unmodifiablelonMap(urlToTwelonelontsMap);
   }
 
-  // enrich the twitterMessage with the resolvedCounter Urls.
-  private void enrichTweetWithUrlInfo(IngesterTwitterMessage message,
-                                      ThriftExpandedUrl expandedUrl,
-                                      ResolveCompressedUrlsUtils.UrlInfo urlInfo,
-                                      Locale locale) {
-    String truncatedUrl = maybeTruncate(urlInfo.resolvedUrl);
-    if (truncatedUrl == null) {
-      return;
+  // elonnrich thelon twittelonrMelonssagelon with thelon relonsolvelondCountelonr Urls.
+  privatelon void elonnrichTwelonelontWithUrlInfo(IngelonstelonrTwittelonrMelonssagelon melonssagelon,
+                                      ThriftelonxpandelondUrl elonxpandelondUrl,
+                                      RelonsolvelonComprelonsselondUrlsUtils.UrlInfo urlInfo,
+                                      Localelon localelon) {
+    String truncatelondUrl = maybelonTruncatelon(urlInfo.relonsolvelondUrl);
+    if (truncatelondUrl == null) {
+      relonturn;
     }
 
-    expandedUrl.setCanonicalLastHopUrl(truncatedUrl);
-    if (urlInfo.mediaType != null) {
-      // Overwrite url media type with media type from resolved url only if the media type from
-      // resolved url is not Unknown
-      if (!expandedUrl.isSetMediaType() || urlInfo.mediaType != MediaTypes.UNKNOWN) {
-        expandedUrl.setMediaType(urlInfo.mediaType);
+    elonxpandelondUrl.selontCanonicalLastHopUrl(truncatelondUrl);
+    if (urlInfo.melondiaTypelon != null) {
+      // Ovelonrwritelon url melondia typelon with melondia typelon from relonsolvelond url only if thelon melondia typelon from
+      // relonsolvelond url is not Unknown
+      if (!elonxpandelondUrl.isSelontMelondiaTypelon() || urlInfo.melondiaTypelon != MelondiaTypelons.UNKNOWN) {
+        elonxpandelondUrl.selontMelondiaTypelon(urlInfo.melondiaTypelon);
       }
     }
-    if (urlInfo.linkCategory != null) {
-      expandedUrl.setLinkCategory(urlInfo.linkCategory);
+    if (urlInfo.linkCatelongory != null) {
+      elonxpandelondUrl.selontLinkCatelongory(urlInfo.linkCatelongory);
     }
-    // Note that if there are multiple links in one tweet message, the language of the
-    // link that got examined later in this for loop will overwrite the values that were
-    // written before. This is not an optimal design but considering most tweets have
-    // only one link, or same-language links, this shouldn't be a big issue.
-    if (locale != null) {
-      message.setLinkLocale(locale);
-    }
-
-    if (urlInfo.description != null) {
-      expandedUrl.setDescription(urlInfo.description);
+    // Notelon that if thelonrelon arelon multiplelon links in onelon twelonelont melonssagelon, thelon languagelon of thelon
+    // link that got elonxaminelond latelonr in this for loop will ovelonrwritelon thelon valuelons that welonrelon
+    // writtelonn belonforelon. This is not an optimal delonsign but considelonring most twelonelonts havelon
+    // only onelon link, or samelon-languagelon links, this shouldn't belon a big issuelon.
+    if (localelon != null) {
+      melonssagelon.selontLinkLocalelon(localelon);
     }
 
-    if (urlInfo.title != null) {
-      expandedUrl.setTitle(urlInfo.title);
+    if (urlInfo.delonscription != null) {
+      elonxpandelondUrl.selontDelonscription(urlInfo.delonscription);
+    }
+
+    if (urlInfo.titlelon != null) {
+      elonxpandelondUrl.selontTitlelon(urlInfo.titlelon);
     }
   }
 
-  // test methods
-  public void setResolveUrlPercentage(int percentage) {
-    this.resolveUrlPercentage = percentage;
+  // telonst melonthods
+  public void selontRelonsolvelonUrlPelonrcelonntagelon(int pelonrcelonntagelon) {
+    this.relonsolvelonUrlPelonrcelonntagelon = pelonrcelonntagelon;
   }
 
-  public void setPinkClientId(String pinkClientId) {
-    this.pinkClientId = pinkClientId;
+  public void selontPinkClielonntId(String pinkClielonntId) {
+    this.pinkClielonntId = pinkClielonntId;
   }
 
-  public static final int MAX_URL_LENGTH = 1000;
+  public static final int MAX_URL_LelonNGTH = 1000;
 
-  private String maybeTruncate(String fullUrl) {
-    if (fullUrl.length() <= MAX_URL_LENGTH) {
-      return fullUrl;
+  privatelon String maybelonTruncatelon(String fullUrl) {
+    if (fullUrl.lelonngth() <= MAX_URL_LelonNGTH) {
+      relonturn fullUrl;
     }
 
     try {
-      URI parsed = new URI(fullUrl);
+      URI parselond = nelonw URI(fullUrl);
 
-      // Create a URL with an empty query and fragment.
-      String simplified = new URI(parsed.getScheme(),
-          parsed.getAuthority(),
-          parsed.getPath(),
+      // Crelonatelon a URL with an elonmpty quelonry and fragmelonnt.
+      String simplifielond = nelonw URI(parselond.gelontSchelonmelon(),
+          parselond.gelontAuthority(),
+          parselond.gelontPath(),
           null,
           null).toString();
-      if (simplified.length() < MAX_URL_LENGTH) {
-        linksTruncated.increment();
-        return simplified;
+      if (simplifielond.lelonngth() < MAX_URL_LelonNGTH) {
+        linksTruncatelond.increlonmelonnt();
+        relonturn simplifielond;
       }
-    } catch (URISyntaxException e) {
+    } catch (URISyntaxelonxcelonption elon) {
     }
 
-    linksTooLong.increment();
-    return null;
+    linksTooLong.increlonmelonnt();
+    relonturn null;
   }
 }

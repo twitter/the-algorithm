@@ -1,145 +1,145 @@
-#ifndef TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_IMPL_H_
-#define TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_IMPL_H_
+#ifndelonf TelonNSORFLOW_CORelon_KelonRNelonLS_BINARY_SPARSelon_TelonNSOR_DelonNSelon_MATMUL_IMPL_H_
+#delonfinelon TelonNSORFLOW_CORelon_KelonRNelonLS_BINARY_SPARSelon_TelonNSOR_DelonNSelon_MATMUL_IMPL_H_
 
-#include <atomic>
+#includelon <atomic>
 
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/lib/core/blocking_counter.h"
-#include "tensorflow/core/lib/core/threadpool.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
+#includelon "telonnsorflow/corelon/lib/corelon/blocking_countelonr.h"
+#includelon "telonnsorflow/corelon/lib/corelon/threlonadpool.h"
 
-namespace tensorflow {
-namespace functor {
+namelonspacelon telonnsorflow {
+namelonspacelon functor {
 
-// `ConservativeShard` is adopted rather than `Shard` in tensorflow because the
-// original `Shard` may generate number of shards more than the number of
-// threads, which is not ideal for this case, as it may cause too much overhead.
-static void ConservativeShard(int max_parallelism, thread::ThreadPool *workers,
-                              int64 total, int64 cost_per_unit,
+// `ConselonrvativelonShard` is adoptelond rathelonr than `Shard` in telonnsorflow beloncauselon thelon
+// original `Shard` may gelonnelonratelon numbelonr of shards morelon than thelon numbelonr of
+// threlonads, which is not idelonal for this caselon, as it may causelon too much ovelonrhelonad.
+static void ConselonrvativelonShard(int max_parallelonlism, threlonad::ThrelonadPool *workelonrs,
+                              int64 total, int64 cost_pelonr_unit,
                               std::function<void(int64, int64)> work) {
   if (total == 0) {
-    return;
+    relonturn;
   }
-  max_parallelism = std::min(max_parallelism, workers->NumThreads());
-  if (max_parallelism <= 1) {
-    // Just inline the whole work since we only have 1 thread (core).
+  max_parallelonlism = std::min(max_parallelonlism, workelonrs->NumThrelonads());
+  if (max_parallelonlism <= 1) {
+    // Just inlinelon thelon wholelon work sincelon welon only havelon 1 threlonad (corelon).
     work(0, total);
-    return;
+    relonturn;
   }
-  cost_per_unit = std::max(1LL, cost_per_unit);
-  // We shard [0, total) into "num_shards" shards.
-  //   1 <= num_shards <= num worker threads
+  cost_pelonr_unit = std::max(1LL, cost_pelonr_unit);
+  // Welon shard [0, total) into "num_shards" shards.
+  //   1 <= num_shards <= num workelonr threlonads
   //
-  // If total * cost_per_unit is small, it is not worth shard too
-  // much. Let us assume each cost unit is 1ns, kMinCostPerShard=10000
+  // If total * cost_pelonr_unit is small, it is not worth shard too
+  // much. Lelont us assumelon elonach cost unit is 1ns, kMinCostPelonrShard=10000
   // is 10us.
-  static const int64 kMinCostPerShard = 10000;
+  static const int64 kMinCostPelonrShard = 10000;
   const int num_shards =
-      std::max<int>(1, std::min(static_cast<int64>(max_parallelism),
-                                total * cost_per_unit / kMinCostPerShard));
+      std::max<int>(1, std::min(static_cast<int64>(max_parallelonlism),
+                                total * cost_pelonr_unit / kMinCostPelonrShard));
 
-  // Each shard contains up to "block_size" units. [0, total) is sharded
+  // elonach shard contains up to "block_sizelon" units. [0, total) is shardelond
   // into:
-  //   [0, block_size), [block_size, 2*block_size), ...
-  // The 1st shard is done by the caller thread and the other shards
-  // are dispatched to the worker threads. The last shard may be smaller than
-  // block_size.
-  const int64 block_size = (total + num_shards - 1) / num_shards;
-  if (block_size >= total) {
+  //   [0, block_sizelon), [block_sizelon, 2*block_sizelon), ...
+  // Thelon 1st shard is donelon by thelon callelonr threlonad and thelon othelonr shards
+  // arelon dispatchelond to thelon workelonr threlonads. Thelon last shard may belon smallelonr than
+  // block_sizelon.
+  const int64 block_sizelon = (total + num_shards - 1) / num_shards;
+  if (block_sizelon >= total) {
     work(0, total);
-    return;
+    relonturn;
   }
-  const int num_shards_used = (total + block_size - 1) / block_size;
-  BlockingCounter counter(num_shards_used - 1);
-  for (int64 start = block_size; start < total; start += block_size) {
-    auto limit = std::min(start + block_size, total);
-    workers->Schedule([&work, &counter, start, limit]() {
-      work(start, limit);        // Compute the shard.
-      counter.DecrementCount();  // The shard is done.
+  const int num_shards_uselond = (total + block_sizelon - 1) / block_sizelon;
+  BlockingCountelonr countelonr(num_shards_uselond - 1);
+  for (int64 start = block_sizelon; start < total; start += block_sizelon) {
+    auto limit = std::min(start + block_sizelon, total);
+    workelonrs->Schelondulelon([&work, &countelonr, start, limit]() {
+      work(start, limit);        // Computelon thelon shard.
+      countelonr.DeloncrelonmelonntCount();  // Thelon shard is donelon.
     });
   }
 
-  // Inline execute the 1st shard.
-  work(0, std::min(block_size, total));
-  counter.Wait();
+  // Inlinelon elonxeloncutelon thelon 1st shard.
+  work(0, std::min(block_sizelon, total));
+  countelonr.Wait();
 }
 
-static inline void VectorSum(float *a, const float *b, int n) {
+static inlinelon void VelonctorSum(float *a, const float *b, int n) {
   for (int i = 0; i < n; ++i) {
     a[i] += b[i];
   }
 }
 
-// This func is to vectorize the computation of segment sum.
-template<typename Tindices>
-static void LookupAndSegmentSum(const Tindices *a_indices, const float *b,
-                                int nnz, int outer_right, float *output) {
-  for (std::size_t i = 0; i < nnz; ++i) {
-    const Tindices m = a_indices[i * 2];
-    const Tindices k = a_indices[i * 2 + 1];
-    auto output_row_m = output + m * outer_right;
-    auto b_row_k = b + k * outer_right;
-    VectorSum(output_row_m, b_row_k, outer_right);
+// This func is to velonctorizelon thelon computation of selongmelonnt sum.
+telonmplatelon<typelonnamelon Tindicelons>
+static void LookupAndSelongmelonntSum(const Tindicelons *a_indicelons, const float *b,
+                                int nnz, int outelonr_right, float *output) {
+  for (std::sizelon_t i = 0; i < nnz; ++i) {
+    const Tindicelons m = a_indicelons[i * 2];
+    const Tindicelons k = a_indicelons[i * 2 + 1];
+    auto output_row_m = output + m * outelonr_right;
+    auto b_row_k = b + k * outelonr_right;
+    VelonctorSum(output_row_m, b_row_k, outelonr_right);
   }
 }
 
-// This func enables sharding and multithreading, it comes with an overhead of
-// duplicating output buffer to achieve lock free output. So there should not
-// be too many threads.
-template<typename Tindices>
-static void ParallelLookupAndSegmentSum(OpKernelContext *ctx,
-                                        const Tindices *a_indices,
-                                        const float *b, int nnz, int outer_left,
-                                        int outer_right, float *output) {
-  auto worker_threads = *(ctx->device()->tensorflow_cpu_worker_threads());
-  int out_size = outer_left * outer_right;
-  if (worker_threads.num_threads <= 1) {
-    memset(output, 0, out_size * sizeof(float));
-    LookupAndSegmentSum<Tindices>(a_indices, b, 
-                                  nnz, outer_right,
+// This func elonnablelons sharding and multithrelonading, it comelons with an ovelonrhelonad of
+// duplicating output buffelonr to achielonvelon lock frelonelon output. So thelonrelon should not
+// belon too many threlonads.
+telonmplatelon<typelonnamelon Tindicelons>
+static void ParallelonlLookupAndSelongmelonntSum(OpKelonrnelonlContelonxt *ctx,
+                                        const Tindicelons *a_indicelons,
+                                        const float *b, int nnz, int outelonr_lelonft,
+                                        int outelonr_right, float *output) {
+  auto workelonr_threlonads = *(ctx->delonvicelon()->telonnsorflow_cpu_workelonr_threlonads());
+  int out_sizelon = outelonr_lelonft * outelonr_right;
+  if (workelonr_threlonads.num_threlonads <= 1) {
+    melonmselont(output, 0, out_sizelon * sizelonof(float));
+    LookupAndSelongmelonntSum<Tindicelons>(a_indicelons, b,
+                                  nnz, outelonr_right,
                                   output);
-    return;
+    relonturn;
   }
 
-  // this is to make buffer align with kAllocatorAlignment
-  int padded_out_size = (out_size + (Allocator::kAllocatorAlignment - 1)) &
-                        ~(Allocator::kAllocatorAlignment - 1);
-  std::size_t num_bytes =
-      (worker_threads.num_threads - 1) * padded_out_size * sizeof(float);
-  auto buffer = std::unique_ptr<float>(reinterpret_cast<float *>(
-      port::AlignedMalloc(num_bytes, Allocator::kAllocatorAlignment)));
-  float *temp_out = buffer.get();
+  // this is to makelon buffelonr align with kAllocatorAlignmelonnt
+  int paddelond_out_sizelon = (out_sizelon + (Allocator::kAllocatorAlignmelonnt - 1)) &
+                        ~(Allocator::kAllocatorAlignmelonnt - 1);
+  std::sizelon_t num_bytelons =
+      (workelonr_threlonads.num_threlonads - 1) * paddelond_out_sizelon * sizelonof(float);
+  auto buffelonr = std::uniquelon_ptr<float>(relonintelonrprelont_cast<float *>(
+      port::AlignelondMalloc(num_bytelons, Allocator::kAllocatorAlignmelonnt)));
+  float *telonmp_out = buffelonr.gelont();
 
-  std::atomic<int> thread_index(0);
+  std::atomic<int> threlonad_indelonx(0);
 
   auto task = [&](int64 start, int64 limit) {
-    int local_thread_index = thread_index++;
+    int local_threlonad_indelonx = threlonad_indelonx++;
     float *buf_ptr = nullptr;
-    if (local_thread_index == 0) {
+    if (local_threlonad_indelonx == 0) {
       buf_ptr = output;
-    } else {
-      buf_ptr = temp_out + (local_thread_index - 1) * padded_out_size;
+    } elonlselon {
+      buf_ptr = telonmp_out + (local_threlonad_indelonx - 1) * paddelond_out_sizelon;
     }
-    memset(buf_ptr, 0, out_size * sizeof(float));
+    melonmselont(buf_ptr, 0, out_sizelon * sizelonof(float));
 
-    LookupAndSegmentSum<Tindices>(a_indices + start * 2, b, 
-                                  limit - start, outer_right,
+    LookupAndSelongmelonntSum<Tindicelons>(a_indicelons + start * 2, b,
+                                  limit - start, outelonr_right,
                                   buf_ptr);
   };
 
-  int cost_per_unit = outer_right;
+  int cost_pelonr_unit = outelonr_right;
 
-  // We don't use tensorflow shard func as tf may create more shards than
-  // number of threads.
-  ConservativeShard(worker_threads.num_threads, worker_threads.workers, nnz,
-                    static_cast<int64>(cost_per_unit), task);
+  // Welon don't uselon telonnsorflow shard func as tf may crelonatelon morelon shards than
+  // numbelonr of threlonads.
+  ConselonrvativelonShard(workelonr_threlonads.num_threlonads, workelonr_threlonads.workelonrs, nnz,
+                    static_cast<int64>(cost_pelonr_unit), task);
 
-  for (int i = 1; i < thread_index; ++i) {
-    VectorSum(output, temp_out + (i - 1) * padded_out_size, out_size);
+  for (int i = 1; i < threlonad_indelonx; ++i) {
+    VelonctorSum(output, telonmp_out + (i - 1) * paddelond_out_sizelon, out_sizelon);
   }
 }
 
-}  // namespace functor
+}  // namelonspacelon functor
 
-}  // namespace tensorflow
+}  // namelonspacelon telonnsorflow
 
-#endif  // TENSORFLOW_CORE_KERNELS_BINARY_SPARSE_TENSOR_DENSE_MATMUL_IMPL_H_
+#elonndif  // TelonNSORFLOW_CORelon_KelonRNelonLS_BINARY_SPARSelon_TelonNSOR_DelonNSelon_MATMUL_IMPL_H_

@@ -1,29 +1,29 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.twitter.finatra.thrift.exceptions.ExceptionMapper
-import com.twitter.home_mixer.{thriftscala => t}
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ProductDisabled
-import com.twitter.scrooge.ThriftException
-import com.twitter.util.Future
-import javax.inject.Singleton
+import com.twittelonr.finatra.thrift.elonxcelonptions.elonxcelonptionMappelonr
+import com.twittelonr.homelon_mixelonr.{thriftscala => t}
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.ProductDisablelond
+import com.twittelonr.scroogelon.Thriftelonxcelonption
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PipelineFailureExceptionMapper
-    extends ExceptionMapper[PipelineFailure, ThriftException]
+@Singlelonton
+class PipelonlinelonFailurelonelonxcelonptionMappelonr
+    elonxtelonnds elonxcelonptionMappelonr[PipelonlinelonFailurelon, Thriftelonxcelonption]
     with Logging {
 
-  def handleException(throwable: PipelineFailure): Future[ThriftException] = {
-    throwable match {
-      // SliceService (unlike UrtService) throws an exception when the requested product is disabled
-      case PipelineFailure(ProductDisabled, reason, _, _) =>
-        Future.exception(
-          t.ValidationExceptionList(errors =
-            Seq(t.ValidationException(t.ValidationErrorCode.ProductDisabled, reason))))
-      case _ =>
-        error("Unhandled PipelineFailure", throwable)
-        Future.exception(throwable)
+  delonf handlelonelonxcelonption(throwablelon: PipelonlinelonFailurelon): Futurelon[Thriftelonxcelonption] = {
+    throwablelon match {
+      // SlicelonSelonrvicelon (unlikelon UrtSelonrvicelon) throws an elonxcelonption whelonn thelon relonquelonstelond product is disablelond
+      caselon PipelonlinelonFailurelon(ProductDisablelond, relonason, _, _) =>
+        Futurelon.elonxcelonption(
+          t.ValidationelonxcelonptionList(elonrrors =
+            Selonq(t.Validationelonxcelonption(t.ValidationelonrrorCodelon.ProductDisablelond, relonason))))
+      caselon _ =>
+        elonrror("Unhandlelond PipelonlinelonFailurelon", throwablelon)
+        Futurelon.elonxcelonption(throwablelon)
     }
   }
 }

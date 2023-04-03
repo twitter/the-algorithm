@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.conversation_annotation
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.convelonrsation_annotation
 
-sealed trait ConversationAnnotationType
+selonalelond trait ConvelonrsationAnnotationTypelon
 
-case object Political extends ConversationAnnotationType
-case object Large extends ConversationAnnotationType
+caselon objelonct Political elonxtelonnds ConvelonrsationAnnotationTypelon
+caselon objelonct Largelon elonxtelonnds ConvelonrsationAnnotationTypelon

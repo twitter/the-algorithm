@@ -1,47 +1,47 @@
-package com.twitter.search.earlybird.factory;
+packagelon com.twittelonr.selonarch.elonarlybird.factory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.config.TierConfig;
-import com.twitter.search.earlybird.config.TierInfo;
-import com.twitter.search.earlybird.partition.PartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrConfig;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfig;
 
 public final class PartitionConfigUtil {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionConfigUtil.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(PartitionConfigUtil.class);
 
-  private PartitionConfigUtil() {
+  privatelon PartitionConfigUtil() {
   }
 
   /**
-   * Initiate PartitionConfig for earlybirds running on Aurora
+   * Initiatelon PartitionConfig for elonarlybirds running on Aurora
    */
-  public static PartitionConfig initPartitionConfigForAurora(int numOfInstances) {
-    String tier = EarlybirdProperty.EARLYBIRD_TIER.get();
-    int partitionId = EarlybirdProperty.PARTITION_ID.get();
-    int replicaId = EarlybirdProperty.REPLICA_ID.get();
-    if (tier.equals(PartitionConfig.DEFAULT_TIER_NAME)) {
-      // realtime or protected earlybird
-      return new PartitionConfig(
+  public static PartitionConfig initPartitionConfigForAurora(int numOfInstancelons) {
+    String tielonr = elonarlybirdPropelonrty.elonARLYBIRD_TIelonR.gelont();
+    int partitionId = elonarlybirdPropelonrty.PARTITION_ID.gelont();
+    int relonplicaId = elonarlybirdPropelonrty.RelonPLICA_ID.gelont();
+    if (tielonr.elonquals(PartitionConfig.DelonFAULT_TIelonR_NAMelon)) {
+      // relonaltimelon or protelonctelond elonarlybird
+      relonturn nelonw PartitionConfig(
           partitionId,
-          EarlybirdProperty.SERVING_TIMESLICES.get(),
-          replicaId,
-          numOfInstances,
-          EarlybirdProperty.NUM_PARTITIONS.get());
-    } else {
-      // archive earlybird
-      TierInfo tierInfo = TierConfig.getTierInfo(tier);
-      return new PartitionConfig(tier, tierInfo.getDataStartDate(), tierInfo.getDataEndDate(),
-          partitionId, tierInfo.getMaxTimeslices(), replicaId, numOfInstances,
-          tierInfo.getNumPartitions());
+          elonarlybirdPropelonrty.SelonRVING_TIMelonSLICelonS.gelont(),
+          relonplicaId,
+          numOfInstancelons,
+          elonarlybirdPropelonrty.NUM_PARTITIONS.gelont());
+    } elonlselon {
+      // archivelon elonarlybird
+      TielonrInfo tielonrInfo = TielonrConfig.gelontTielonrInfo(tielonr);
+      relonturn nelonw PartitionConfig(tielonr, tielonrInfo.gelontDataStartDatelon(), tielonrInfo.gelontDataelonndDatelon(),
+          partitionId, tielonrInfo.gelontMaxTimelonslicelons(), relonplicaId, numOfInstancelons,
+          tielonrInfo.gelontNumPartitions());
     }
   }
 
   /**
-   * Tries to create a new PartitionConfig instance based on the Aurora flags
+   * Trielons to crelonatelon a nelonw PartitionConfig instancelon baselond on thelon Aurora flags
    */
   public static PartitionConfig initPartitionConfig() {
-    return initPartitionConfigForAurora(EarlybirdProperty.NUM_INSTANCES.get());
+    relonturn initPartitionConfigForAurora(elonarlybirdPropelonrty.NUM_INSTANCelonS.gelont());
   }
 }

@@ -1,225 +1,225 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.io.IOException;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.Selont;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
 /**
- * A pairing of a query and a filter. The hits traversal is driven by the query's DocIdSetIterator,
- * and the filter is used only to do post-filtering. In other words, the filter is never used to
- * find the next doc ID: it's only used to filter out the doc IDs returned by the query's
- * DocIdSetIterator. This is useful when we need to have a conjunction between a query that can
- * quickly iterate through doc IDs (eg. a posting list), and an expensive filter (eg. a filter based
- * on the values stored in a CSF).
+ * A pairing of a quelonry and a filtelonr. Thelon hits travelonrsal is drivelonn by thelon quelonry's DocIdSelontItelonrator,
+ * and thelon filtelonr is uselond only to do post-filtelonring. In othelonr words, thelon filtelonr is nelonvelonr uselond to
+ * find thelon nelonxt doc ID: it's only uselond to filtelonr out thelon doc IDs relonturnelond by thelon quelonry's
+ * DocIdSelontItelonrator. This is uselonful whelonn welon nelonelond to havelon a conjunction belontwelonelonn a quelonry that can
+ * quickly itelonratelon through doc IDs (elong. a posting list), and an elonxpelonnsivelon filtelonr (elong. a filtelonr baselond
+ * on thelon valuelons storelond in a CSF).
  *
- * For example, let say we want to build a query that returns all docs that have at least 100 faves.
- *   1. One option is to go with the [min_faves 100] query. This would be very expensive though,
- *      because this query would have to walk through every doc in the segment and for each one of
- *      them it would have to extract the number of faves from the forward index.
- *   2. Another option is to go with a conjunction between this query and the HAS_ENGAGEMENT filter:
- *      (+[min_faves 100] +[cached_filter has_engagements]). The HAS_ENGAGEMENT filter could
- *      traverse the doc ID space faster (if it's backed by a posting list). But this approach would
- *      still be slow, because as soon as the HAS_ENGAGEMENT filter finds a doc ID, the conjunction
- *      scorer would trigger an advance(docID) call on the min_faves part of the query, which has
- *      the same problem as the first option.
- *   3. Finally, a better option for this particular case would be to drive by the HAS_ENGAGEMENT
- *      filter (because it can quickly jump over all docs that do not have any engagement), and use
- *      the min_faves filter as a post-processing step, on a much smaller set of docs.
+ * For elonxamplelon, lelont say welon want to build a quelonry that relonturns all docs that havelon at lelonast 100 favelons.
+ *   1. Onelon option is to go with thelon [min_favelons 100] quelonry. This would belon velonry elonxpelonnsivelon though,
+ *      beloncauselon this quelonry would havelon to walk through elonvelonry doc in thelon selongmelonnt and for elonach onelon of
+ *      thelonm it would havelon to elonxtract thelon numbelonr of favelons from thelon forward indelonx.
+ *   2. Anothelonr option is to go with a conjunction belontwelonelonn this quelonry and thelon HAS_elonNGAGelonMelonNT filtelonr:
+ *      (+[min_favelons 100] +[cachelond_filtelonr has_elonngagelonmelonnts]). Thelon HAS_elonNGAGelonMelonNT filtelonr could
+ *      travelonrselon thelon doc ID spacelon fastelonr (if it's backelond by a posting list). But this approach would
+ *      still belon slow, beloncauselon as soon as thelon HAS_elonNGAGelonMelonNT filtelonr finds a doc ID, thelon conjunction
+ *      scorelonr would triggelonr an advancelon(docID) call on thelon min_favelons part of thelon quelonry, which has
+ *      thelon samelon problelonm as thelon first option.
+ *   3. Finally, a belonttelonr option for this particular caselon would belon to drivelon by thelon HAS_elonNGAGelonMelonNT
+ *      filtelonr (beloncauselon it can quickly jump ovelonr all docs that do not havelon any elonngagelonmelonnt), and uselon
+ *      thelon min_favelons filtelonr as a post-procelonssing stelonp, on a much smallelonr selont of docs.
  */
-public class FilteredQuery extends Query {
+public class FiltelonrelondQuelonry elonxtelonnds Quelonry {
   /**
-   * A doc ID predicate that determines if the given doc ID should be accepted.
+   * A doc ID prelondicatelon that delontelonrminelons if thelon givelonn doc ID should belon accelonptelond.
    */
-  @FunctionalInterface
-  public static interface DocIdFilter {
+  @FunctionalIntelonrfacelon
+  public static intelonrfacelon DocIdFiltelonr {
     /**
-     * Determines if the given doc ID should be accepted.
+     * Delontelonrminelons if thelon givelonn doc ID should belon accelonptelond.
      */
-    boolean accept(int docId) throws IOException;
+    boolelonan accelonpt(int docId) throws IOelonxcelonption;
   }
 
   /**
-   * A factory for creating DocIdFilter instances based on a given LeafReaderContext instance.
+   * A factory for crelonating DocIdFiltelonr instancelons baselond on a givelonn LelonafRelonadelonrContelonxt instancelon.
    */
-  @FunctionalInterface
-  public static interface DocIdFilterFactory {
+  @FunctionalIntelonrfacelon
+  public static intelonrfacelon DocIdFiltelonrFactory {
     /**
-     * Returns a DocIdFilter instance for the given LeafReaderContext instance.
+     * Relonturns a DocIdFiltelonr instancelon for thelon givelonn LelonafRelonadelonrContelonxt instancelon.
      */
-    DocIdFilter getDocIdFilter(LeafReaderContext context) throws IOException;
+    DocIdFiltelonr gelontDocIdFiltelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption;
   }
 
-  private static class FilteredQueryDocIdSetIterator extends DocIdSetIterator {
-    private final DocIdSetIterator queryScorerIterator;
-    private final DocIdFilter docIdFilter;
+  privatelon static class FiltelonrelondQuelonryDocIdSelontItelonrator elonxtelonnds DocIdSelontItelonrator {
+    privatelon final DocIdSelontItelonrator quelonryScorelonrItelonrator;
+    privatelon final DocIdFiltelonr docIdFiltelonr;
 
-    public FilteredQueryDocIdSetIterator(
-        DocIdSetIterator queryScorerIterator, DocIdFilter docIdFilter) {
-      this.queryScorerIterator = Preconditions.checkNotNull(queryScorerIterator);
-      this.docIdFilter = Preconditions.checkNotNull(docIdFilter);
+    public FiltelonrelondQuelonryDocIdSelontItelonrator(
+        DocIdSelontItelonrator quelonryScorelonrItelonrator, DocIdFiltelonr docIdFiltelonr) {
+      this.quelonryScorelonrItelonrator = Prelonconditions.chelonckNotNull(quelonryScorelonrItelonrator);
+      this.docIdFiltelonr = Prelonconditions.chelonckNotNull(docIdFiltelonr);
     }
 
-    @Override
+    @Ovelonrridelon
     public int docID() {
-      return queryScorerIterator.docID();
+      relonturn quelonryScorelonrItelonrator.docID();
     }
 
-    @Override
-    public int nextDoc() throws IOException {
+    @Ovelonrridelon
+    public int nelonxtDoc() throws IOelonxcelonption {
       int docId;
       do {
-        docId = queryScorerIterator.nextDoc();
-      } while (docId != NO_MORE_DOCS && !docIdFilter.accept(docId));
-      return docId;
+        docId = quelonryScorelonrItelonrator.nelonxtDoc();
+      } whilelon (docId != NO_MORelon_DOCS && !docIdFiltelonr.accelonpt(docId));
+      relonturn docId;
     }
 
-    @Override
-    public int advance(int target) throws IOException {
-      int docId = queryScorerIterator.advance(target);
-      if (docId == NO_MORE_DOCS || docIdFilter.accept(docId)) {
-        return docId;
+    @Ovelonrridelon
+    public int advancelon(int targelont) throws IOelonxcelonption {
+      int docId = quelonryScorelonrItelonrator.advancelon(targelont);
+      if (docId == NO_MORelon_DOCS || docIdFiltelonr.accelonpt(docId)) {
+        relonturn docId;
       }
-      return nextDoc();
+      relonturn nelonxtDoc();
     }
 
-    @Override
+    @Ovelonrridelon
     public long cost() {
-      return queryScorerIterator.cost();
+      relonturn quelonryScorelonrItelonrator.cost();
     }
   }
 
-  private static class FilteredQueryScorer extends Scorer {
-    private final Scorer queryScorer;
-    private final DocIdFilter docIdFilter;
+  privatelon static class FiltelonrelondQuelonryScorelonr elonxtelonnds Scorelonr {
+    privatelon final Scorelonr quelonryScorelonr;
+    privatelon final DocIdFiltelonr docIdFiltelonr;
 
-    public FilteredQueryScorer(Weight weight, Scorer queryScorer, DocIdFilter docIdFilter) {
-      super(weight);
-      this.queryScorer = Preconditions.checkNotNull(queryScorer);
-      this.docIdFilter = Preconditions.checkNotNull(docIdFilter);
+    public FiltelonrelondQuelonryScorelonr(Welonight welonight, Scorelonr quelonryScorelonr, DocIdFiltelonr docIdFiltelonr) {
+      supelonr(welonight);
+      this.quelonryScorelonr = Prelonconditions.chelonckNotNull(quelonryScorelonr);
+      this.docIdFiltelonr = Prelonconditions.chelonckNotNull(docIdFiltelonr);
     }
 
-    @Override
+    @Ovelonrridelon
     public int docID() {
-      return queryScorer.docID();
+      relonturn quelonryScorelonr.docID();
     }
 
-    @Override
-    public float score() throws IOException {
-      return queryScorer.score();
+    @Ovelonrridelon
+    public float scorelon() throws IOelonxcelonption {
+      relonturn quelonryScorelonr.scorelon();
     }
 
-    @Override
-    public DocIdSetIterator iterator() {
-      return new FilteredQueryDocIdSetIterator(queryScorer.iterator(), docIdFilter);
+    @Ovelonrridelon
+    public DocIdSelontItelonrator itelonrator() {
+      relonturn nelonw FiltelonrelondQuelonryDocIdSelontItelonrator(quelonryScorelonr.itelonrator(), docIdFiltelonr);
     }
 
-    @Override
-    public float getMaxScore(int upTo) throws IOException {
-      return queryScorer.getMaxScore(upTo);
+    @Ovelonrridelon
+    public float gelontMaxScorelon(int upTo) throws IOelonxcelonption {
+      relonturn quelonryScorelonr.gelontMaxScorelon(upTo);
     }
   }
 
-  private static class FilteredQueryWeight extends Weight {
-    private final Weight queryWeight;
-    private final DocIdFilterFactory docIdFilterFactory;
+  privatelon static class FiltelonrelondQuelonryWelonight elonxtelonnds Welonight {
+    privatelon final Welonight quelonryWelonight;
+    privatelon final DocIdFiltelonrFactory docIdFiltelonrFactory;
 
-    public FilteredQueryWeight(
-        FilteredQuery query, Weight queryWeight, DocIdFilterFactory docIdFilterFactory) {
-      super(query);
-      this.queryWeight = Preconditions.checkNotNull(queryWeight);
-      this.docIdFilterFactory = Preconditions.checkNotNull(docIdFilterFactory);
+    public FiltelonrelondQuelonryWelonight(
+        FiltelonrelondQuelonry quelonry, Welonight quelonryWelonight, DocIdFiltelonrFactory docIdFiltelonrFactory) {
+      supelonr(quelonry);
+      this.quelonryWelonight = Prelonconditions.chelonckNotNull(quelonryWelonight);
+      this.docIdFiltelonrFactory = Prelonconditions.chelonckNotNull(docIdFiltelonrFactory);
     }
 
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      queryWeight.extractTerms(terms);
+    @Ovelonrridelon
+    public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
+      quelonryWelonight.elonxtractTelonrms(telonrms);
     }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return queryWeight.explain(context, doc);
+    @Ovelonrridelon
+    public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc) throws IOelonxcelonption {
+      relonturn quelonryWelonight.elonxplain(contelonxt, doc);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      Scorer queryScorer = queryWeight.scorer(context);
-      if (queryScorer == null) {
-        return null;
+    @Ovelonrridelon
+    public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+      Scorelonr quelonryScorelonr = quelonryWelonight.scorelonr(contelonxt);
+      if (quelonryScorelonr == null) {
+        relonturn null;
       }
 
-      return new FilteredQueryScorer(this, queryScorer, docIdFilterFactory.getDocIdFilter(context));
+      relonturn nelonw FiltelonrelondQuelonryScorelonr(this, quelonryScorelonr, docIdFiltelonrFactory.gelontDocIdFiltelonr(contelonxt));
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return queryWeight.isCacheable(ctx);
+    @Ovelonrridelon
+    public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+      relonturn quelonryWelonight.isCachelonablelon(ctx);
     }
   }
 
-  private final Query query;
-  private final DocIdFilterFactory docIdFilterFactory;
+  privatelon final Quelonry quelonry;
+  privatelon final DocIdFiltelonrFactory docIdFiltelonrFactory;
 
-  public FilteredQuery(Query query, DocIdFilterFactory docIdFilterFactory) {
-    this.query = Preconditions.checkNotNull(query);
-    this.docIdFilterFactory = Preconditions.checkNotNull(docIdFilterFactory);
+  public FiltelonrelondQuelonry(Quelonry quelonry, DocIdFiltelonrFactory docIdFiltelonrFactory) {
+    this.quelonry = Prelonconditions.chelonckNotNull(quelonry);
+    this.docIdFiltelonrFactory = Prelonconditions.chelonckNotNull(docIdFiltelonrFactory);
   }
 
-  public Query getQuery() {
-    return query;
+  public Quelonry gelontQuelonry() {
+    relonturn quelonry;
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewrittenQuery = query.rewrite(reader);
-    if (rewrittenQuery != query) {
-      return new FilteredQuery(rewrittenQuery, docIdFilterFactory);
+  @Ovelonrridelon
+  public Quelonry relonwritelon(IndelonxRelonadelonr relonadelonr) throws IOelonxcelonption {
+    Quelonry relonwrittelonnQuelonry = quelonry.relonwritelon(relonadelonr);
+    if (relonwrittelonnQuelonry != quelonry) {
+      relonturn nelonw FiltelonrelondQuelonry(relonwrittelonnQuelonry, docIdFiltelonrFactory);
     }
-    return this;
+    relonturn this;
   }
 
-  @Override
-  public int hashCode() {
-    return query.hashCode() * 13 + docIdFilterFactory.hashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn quelonry.hashCodelon() * 13 + docIdFiltelonrFactory.hashCodelon();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof FilteredQuery)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof FiltelonrelondQuelonry)) {
+      relonturn falselon;
     }
 
-    FilteredQuery filteredQuery = FilteredQuery.class.cast(obj);
-    return query.equals(filteredQuery.query)
-        && docIdFilterFactory.equals(filteredQuery.docIdFilterFactory);
+    FiltelonrelondQuelonry filtelonrelondQuelonry = FiltelonrelondQuelonry.class.cast(obj);
+    relonturn quelonry.elonquals(filtelonrelondQuelonry.quelonry)
+        && docIdFiltelonrFactory.elonquals(filtelonrelondQuelonry.docIdFiltelonrFactory);
   }
 
-  @Override
-  public String toString(String field) {
-    StringBuilder sb = new StringBuilder();
-    sb.append("FilteredQuery(")
-        .append(query)
-        .append(" -> ")
-        .append(docIdFilterFactory)
-        .append(")");
-    return sb.toString();
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    StringBuildelonr sb = nelonw StringBuildelonr();
+    sb.appelonnd("FiltelonrelondQuelonry(")
+        .appelonnd(quelonry)
+        .appelonnd(" -> ")
+        .appelonnd(docIdFiltelonrFactory)
+        .appelonnd(")");
+    relonturn sb.toString();
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    Weight queryWeight = Preconditions.checkNotNull(query.createWeight(searcher, scoreMode, boost));
-    return new FilteredQueryWeight(this, queryWeight, docIdFilterFactory);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost)
+      throws IOelonxcelonption {
+    Welonight quelonryWelonight = Prelonconditions.chelonckNotNull(quelonry.crelonatelonWelonight(selonarchelonr, scorelonModelon, boost));
+    relonturn nelonw FiltelonrelondQuelonryWelonight(this, quelonryWelonight, docIdFiltelonrFactory);
   }
 }

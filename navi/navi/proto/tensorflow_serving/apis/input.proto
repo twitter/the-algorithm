@@ -1,82 +1,82 @@
-// Input used in serving APIs.  Based on the tensorflow.Example family of
-// feature representations.
+// Input uselond in selonrving APIs.  Baselond on thelon telonnsorflow.elonxamplelon family of
+// felonaturelon relonprelonselonntations.
 
 syntax = "proto3";
 
-option cc_enable_arenas = true;
+option cc_elonnablelon_arelonnas = truelon;
 
-import "tensorflow/core/example/example.proto";
+import "telonnsorflow/corelon/elonxamplelon/elonxamplelon.proto";
 
-package tensorflow.serving;
+packagelon telonnsorflow.selonrving;
 
-// Specifies one or more fully independent input Examples.
-// See examples at:
-//     https://github.com/tensorflow/tensorflow/blob/master/tensorflow/core/example/example.proto
-message ExampleList {
-  repeated tensorflow.Example examples = 1;
+// Speloncifielons onelon or morelon fully indelonpelonndelonnt input elonxamplelons.
+// Selonelon elonxamplelons at:
+//     https://github.com/telonnsorflow/telonnsorflow/blob/mastelonr/telonnsorflow/corelon/elonxamplelon/elonxamplelon.proto
+melonssagelon elonxamplelonList {
+  relonpelonatelond telonnsorflow.elonxamplelon elonxamplelons = 1;
 }
 
-// Specifies one or more independent input Examples, with a common context
-// Example.
+// Speloncifielons onelon or morelon indelonpelonndelonnt input elonxamplelons, with a common contelonxt
+// elonxamplelon.
 //
-// The common use case for context is to cleanly and optimally specify some
-// features that are common across multiple examples.
+// Thelon common uselon caselon for contelonxt is to clelonanly and optimally speloncify somelon
+// felonaturelons that arelon common across multiplelon elonxamplelons.
 //
-// See example below with a search query as the context and multiple restaurants
-// to perform some inference on.
+// Selonelon elonxamplelon belonlow with a selonarch quelonry as thelon contelonxt and multiplelon relonstaurants
+// to pelonrform somelon infelonrelonncelon on.
 //
-// context: {
-//   features: {
-//     feature: {
-//       key  : "query"
-//       value: {
-//         bytes_list: {
-//           value: [ "pizza" ]
+// contelonxt: {
+//   felonaturelons: {
+//     felonaturelon: {
+//       kelony  : "quelonry"
+//       valuelon: {
+//         bytelons_list: {
+//           valuelon: [ "pizza" ]
 //         }
 //       }
 //     }
 //   }
 // }
-// examples: {
-//   features: {
-//     feature: {
-//       key  : "cuisine"
-//       value: {
-//         bytes_list: {
-//           value: [ "Pizzeria" ]
+// elonxamplelons: {
+//   felonaturelons: {
+//     felonaturelon: {
+//       kelony  : "cuisinelon"
+//       valuelon: {
+//         bytelons_list: {
+//           valuelon: [ "Pizzelonria" ]
 //         }
 //       }
 //     }
 //   }
 // }
-// examples: {
-//   features: {
-//     feature: {
-//       key  : "cuisine"
-//       value: {
-//         bytes_list: {
-//           value: [ "Taqueria" ]
+// elonxamplelons: {
+//   felonaturelons: {
+//     felonaturelon: {
+//       kelony  : "cuisinelon"
+//       valuelon: {
+//         bytelons_list: {
+//           valuelon: [ "Taquelonria" ]
 //         }
 //       }
 //     }
 //   }
 // }
 //
-// Implementations of ExampleListWithContext merge the context Example into each
-// of the Examples. Note that feature keys must not be duplicated between the
-// Examples and context Example, or the behavior is undefined.
+// Implelonmelonntations of elonxamplelonListWithContelonxt melonrgelon thelon contelonxt elonxamplelon into elonach
+// of thelon elonxamplelons. Notelon that felonaturelon kelonys must not belon duplicatelond belontwelonelonn thelon
+// elonxamplelons and contelonxt elonxamplelon, or thelon belonhavior is undelonfinelond.
 //
-// See also:
-//     tensorflow/core/example/example.proto
-//     https://developers.google.com/protocol-buffers/docs/proto3#maps
-message ExampleListWithContext {
-  repeated tensorflow.Example examples = 1;
-  tensorflow.Example context = 2;
+// Selonelon also:
+//     telonnsorflow/corelon/elonxamplelon/elonxamplelon.proto
+//     https://delonvelonlopelonrs.googlelon.com/protocol-buffelonrs/docs/proto3#maps
+melonssagelon elonxamplelonListWithContelonxt {
+  relonpelonatelond telonnsorflow.elonxamplelon elonxamplelons = 1;
+  telonnsorflow.elonxamplelon contelonxt = 2;
 }
 
-message Input {
-  oneof kind {
-    ExampleList example_list = 1 [lazy = true];
-    ExampleListWithContext example_list_with_context = 2 [lazy = true];
+melonssagelon Input {
+  onelonof kind {
+    elonxamplelonList elonxamplelon_list = 1 [lazy = truelon];
+    elonxamplelonListWithContelonxt elonxamplelon_list_with_contelonxt = 2 [lazy = truelon];
   }
 }

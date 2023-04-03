@@ -1,102 +1,102 @@
-package com.twitter.search.core.earlybird.index.column;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
-import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2IntOpelonnHashMap;
 
-public class ColumnStrideMultiIntIndex extends AbstractColumnStrideMultiIntIndex {
-  private final Int2IntOpenHashMap[] values;
-  private final int maxSize;
+public class ColumnStridelonMultiIntIndelonx elonxtelonnds AbstractColumnStridelonMultiIntIndelonx {
+  privatelon final Int2IntOpelonnHashMap[] valuelons;
+  privatelon final int maxSizelon;
 
-  public ColumnStrideMultiIntIndex(String name, int maxSize, int numIntsPerField) {
-    super(name, numIntsPerField);
-    values = new Int2IntOpenHashMap[numIntsPerField];
-    for (int i = 0; i < numIntsPerField; i++) {
-      values[i] = new Int2IntOpenHashMap(maxSize);  // default unset value is 0
+  public ColumnStridelonMultiIntIndelonx(String namelon, int maxSizelon, int numIntsPelonrFielonld) {
+    supelonr(namelon, numIntsPelonrFielonld);
+    valuelons = nelonw Int2IntOpelonnHashMap[numIntsPelonrFielonld];
+    for (int i = 0; i < numIntsPelonrFielonld; i++) {
+      valuelons[i] = nelonw Int2IntOpelonnHashMap(maxSizelon);  // delonfault unselont valuelon is 0
     }
-    this.maxSize = maxSize;
+    this.maxSizelon = maxSizelon;
   }
 
-  public ColumnStrideMultiIntIndex(String name, Int2IntOpenHashMap[] values, int maxSize) {
-    super(name, values.length);
-    this.values = values;
-    this.maxSize = maxSize;
+  public ColumnStridelonMultiIntIndelonx(String namelon, Int2IntOpelonnHashMap[] valuelons, int maxSizelon) {
+    supelonr(namelon, valuelons.lelonngth);
+    this.valuelons = valuelons;
+    this.maxSizelon = maxSizelon;
   }
 
-  @Override
-  public void setValue(int docID, int valueIndex, int value) {
-    values[valueIndex].put(docID, value);
+  @Ovelonrridelon
+  public void selontValuelon(int docID, int valuelonIndelonx, int valuelon) {
+    valuelons[valuelonIndelonx].put(docID, valuelon);
   }
 
-  @Override
-  public int get(int docID, int valueIndex) {
-    return values[valueIndex].get(docID);
+  @Ovelonrridelon
+  public int gelont(int docID, int valuelonIndelonx) {
+    relonturn valuelons[valuelonIndelonx].gelont(docID);
   }
 
-  @Override
-  public ColumnStrideFieldIndex optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    return new OptimizedColumnStrideMultiIntIndex(
-        this, originalTweetIdMapper, optimizedTweetIdMapper);
+  @Ovelonrridelon
+  public ColumnStridelonFielonldIndelonx optimizelon(
+      DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+      DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption {
+    relonturn nelonw OptimizelondColumnStridelonMultiIntIndelonx(
+        this, originalTwelonelontIdMappelonr, optimizelondTwelonelontIdMappelonr);
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<ColumnStrideMultiIntIndex> {
-    private static final String NAME_PROP_NAME = "fieldName";
-    private static final String MAX_SIZE_PROP = "maxSize";
+  public static final class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<ColumnStridelonMultiIntIndelonx> {
+    privatelon static final String NAMelon_PROP_NAMelon = "fielonldNamelon";
+    privatelon static final String MAX_SIZelon_PROP = "maxSizelon";
 
-    public FlushHandler() {
-      super();
-    }
-
-    public FlushHandler(ColumnStrideMultiIntIndex objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      ColumnStrideMultiIntIndex index = getObjectToFlush();
-      flushInfo.addStringProperty(NAME_PROP_NAME, index.getName());
-      flushInfo.addIntProperty(MAX_SIZE_PROP, index.maxSize);
+    public FlushHandlelonr(ColumnStridelonMultiIntIndelonx objelonctToFlush) {
+      supelonr(objelonctToFlush);
+    }
 
-      out.writeInt(index.values.length);
-      for (int i = 0; i < index.values.length; i++) {
-        Int2IntOpenHashMap map = index.values[i];
-        out.writeInt(map.size());
-        for (Int2IntOpenHashMap.Entry entry : map.int2IntEntrySet()) {
-          out.writeInt(entry.getIntKey());
-          out.writeInt(entry.getIntValue());
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      ColumnStridelonMultiIntIndelonx indelonx = gelontObjelonctToFlush();
+      flushInfo.addStringPropelonrty(NAMelon_PROP_NAMelon, indelonx.gelontNamelon());
+      flushInfo.addIntPropelonrty(MAX_SIZelon_PROP, indelonx.maxSizelon);
+
+      out.writelonInt(indelonx.valuelons.lelonngth);
+      for (int i = 0; i < indelonx.valuelons.lelonngth; i++) {
+        Int2IntOpelonnHashMap map = indelonx.valuelons[i];
+        out.writelonInt(map.sizelon());
+        for (Int2IntOpelonnHashMap.elonntry elonntry : map.int2IntelonntrySelont()) {
+          out.writelonInt(elonntry.gelontIntKelony());
+          out.writelonInt(elonntry.gelontIntValuelon());
         }
       }
     }
 
-    @Override
-    protected ColumnStrideMultiIntIndex doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      int numIntsPerField = in.readInt();
-      int maxSize = flushInfo.getIntProperty(MAX_SIZE_PROP);
-      Int2IntOpenHashMap[] values = new Int2IntOpenHashMap[numIntsPerField];
-      for (int i = 0; i < numIntsPerField; i++) {
-        int size = in.readInt();
-        Int2IntOpenHashMap map = new Int2IntOpenHashMap(maxSize);
-        for (int j = 0; j < size; j++) {
-          map.put(in.readInt(), in.readInt());
+    @Ovelonrridelon
+    protelonctelond ColumnStridelonMultiIntIndelonx doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
+      int numIntsPelonrFielonld = in.relonadInt();
+      int maxSizelon = flushInfo.gelontIntPropelonrty(MAX_SIZelon_PROP);
+      Int2IntOpelonnHashMap[] valuelons = nelonw Int2IntOpelonnHashMap[numIntsPelonrFielonld];
+      for (int i = 0; i < numIntsPelonrFielonld; i++) {
+        int sizelon = in.relonadInt();
+        Int2IntOpelonnHashMap map = nelonw Int2IntOpelonnHashMap(maxSizelon);
+        for (int j = 0; j < sizelon; j++) {
+          map.put(in.relonadInt(), in.relonadInt());
         }
-        values[i] = map;
+        valuelons[i] = map;
       }
-      return new ColumnStrideMultiIntIndex(
-          flushInfo.getStringProperty(NAME_PROP_NAME), values, maxSize);
+      relonturn nelonw ColumnStridelonMultiIntIndelonx(
+          flushInfo.gelontStringPropelonrty(NAMelon_PROP_NAMelon), valuelons, maxSizelon);
     }
   }
 }

@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.contelonxtual_relonf
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.ContextualTweetRef
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.TweetHydrationContext
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf.ContelonxtualTwelonelontRelonf
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf.TwelonelontHydrationContelonxt
 
-case class ContextualTweetRefBuilder[-Candidate <: BaseTweetCandidate](
-  tweetHydrationContext: TweetHydrationContext) {
+caselon class ContelonxtualTwelonelontRelonfBuildelonr[-Candidatelon <: BaselonTwelonelontCandidatelon](
+  twelonelontHydrationContelonxt: TwelonelontHydrationContelonxt) {
 
-  def apply(candidate: Candidate): Option[ContextualTweetRef] =
-    Some(ContextualTweetRef(candidate.id, Some(tweetHydrationContext)))
+  delonf apply(candidatelon: Candidatelon): Option[ContelonxtualTwelonelontRelonf] =
+    Somelon(ContelonxtualTwelonelontRelonf(candidatelon.id, Somelon(twelonelontHydrationContelonxt)))
 }

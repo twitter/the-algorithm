@@ -1,221 +1,221 @@
-package com.twitter.recos.user_user_graph
+packagelon com.twittelonr.reloncos.uselonr_uselonr_graph
 
 import java.util.Random
-import com.google.common.collect.Lists
-import com.twitter.concurrent.AsyncQueue
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse
-import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountForUser
-import com.twitter.graphjet.algorithms.counting.user.TopSecondDegreeByCountRequestForUser
-import com.twitter.graphjet.algorithms.counting.user.UserRecommendationInfo
-import com.twitter.graphjet.algorithms.ConnectingUsersWithMetadata
-import com.twitter.graphjet.algorithms.filters._
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph
-import com.twitter.logging.Logger
-import com.twitter.recos.decider.UserUserGraphDecider
-import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.model.SalsaQueryRunner.SalsaRunnerConfig
-import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
-import com.twitter.recos.user_user_graph.thriftscala._
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request.RequestHandler
-import com.twitter.util.Future
-import com.twitter.util.Try
-import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet
-import scala.collection.JavaConverters._
+import com.googlelon.common.collelonct.Lists
+import com.twittelonr.concurrelonnt.AsyncQuelonuelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graphjelont.algorithms.counting.TopSeloncondDelongrelonelonByCountRelonsponselon
+import com.twittelonr.graphjelont.algorithms.counting.uselonr.TopSeloncondDelongrelonelonByCountForUselonr
+import com.twittelonr.graphjelont.algorithms.counting.uselonr.TopSeloncondDelongrelonelonByCountRelonquelonstForUselonr
+import com.twittelonr.graphjelont.algorithms.counting.uselonr.UselonrReloncommelonndationInfo
+import com.twittelonr.graphjelont.algorithms.ConnelonctingUselonrsWithMelontadata
+import com.twittelonr.graphjelont.algorithms.filtelonrs._
+import com.twittelonr.graphjelont.bipartitelon.NodelonMelontadataLelonftIndelonxelondPowelonrLawMultiSelongmelonntBipartitelonGraph
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.reloncos.deloncidelonr.UselonrUselonrGraphDeloncidelonr
+import com.twittelonr.reloncos.graph_common.FinaglelonStatsReloncelonivelonrWrappelonr
+import com.twittelonr.reloncos.modelonl.SalsaQuelonryRunnelonr.SalsaRunnelonrConfig
+import com.twittelonr.reloncos.reloncos_common.thriftscala.UselonrSocialProofTypelon
+import com.twittelonr.reloncos.uselonr_uselonr_graph.thriftscala._
+import com.twittelonr.reloncos.util.Stats._
+import com.twittelonr.selonrvo.relonquelonst.RelonquelonstHandlelonr
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Try
+import it.unimi.dsi.fastutil.longs.Long2DoublelonOpelonnHashMap
+import it.unimi.dsi.fastutil.longs.LongOpelonnHashSelont
+import scala.collelonction.JavaConvelonrtelonrs._
 
-trait RecommendUsersHandler extends RequestHandler[RecommendUserRequest, RecommendUserResponse]
+trait ReloncommelonndUselonrsHandlelonr elonxtelonnds RelonquelonstHandlelonr[ReloncommelonndUselonrRelonquelonst, ReloncommelonndUselonrRelonsponselon]
 
 /**
- * Computes user recommendations based on a RecommendUserRequest by using
- * TopSecondDegree algorithm in GraphJet.
+ * Computelons uselonr reloncommelonndations baselond on a ReloncommelonndUselonrRelonquelonst by using
+ * TopSeloncondDelongrelonelon algorithm in GraphJelont.
  */
-case class RecommendUsersHandlerImpl(
-  bipartiteGraph: NodeMetadataLeftIndexedPowerLawMultiSegmentBipartiteGraph,
-  salsaRunnerConfig: SalsaRunnerConfig,
-  decider: UserUserGraphDecider,
-  statsReceiverWrapper: FinagleStatsReceiverWrapper)
-    extends RecommendUsersHandler {
+caselon class ReloncommelonndUselonrsHandlelonrImpl(
+  bipartitelonGraph: NodelonMelontadataLelonftIndelonxelondPowelonrLawMultiSelongmelonntBipartitelonGraph,
+  salsaRunnelonrConfig: SalsaRunnelonrConfig,
+  deloncidelonr: UselonrUselonrGraphDeloncidelonr,
+  statsReloncelonivelonrWrappelonr: FinaglelonStatsReloncelonivelonrWrappelonr)
+    elonxtelonnds ReloncommelonndUselonrsHandlelonr {
 
-  private val log: Logger = Logger(this.getClass.getSimpleName)
-  private val stats = statsReceiverWrapper.statsReceiver.scope(this.getClass.getSimpleName)
-  private val failureCounter = stats.counter("failure")
-  private val recsStat = stats.stat("recs_count")
-  private val emptyCounter = stats.counter("empty")
-  private val pollCounter = stats.counter("poll")
-  private val pollTimeoutCounter = stats.counter("pollTimeout")
-  private val offerCounter = stats.counter("offer")
-  private val pollLatencyStat = stats.stat("pollLatency")
-  private val graphJetQueue = new AsyncQueue[TopSecondDegreeByCountForUser]
-  (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
-    graphJetQueue.offer(
-      new TopSecondDegreeByCountForUser(
-        bipartiteGraph,
-        salsaRunnerConfig.expectedNodesToHitInSalsa,
-        statsReceiverWrapper.scope(this.getClass.getSimpleName)
+  privatelon val log: Loggelonr = Loggelonr(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val stats = statsReloncelonivelonrWrappelonr.statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val failurelonCountelonr = stats.countelonr("failurelon")
+  privatelon val reloncsStat = stats.stat("reloncs_count")
+  privatelon val elonmptyCountelonr = stats.countelonr("elonmpty")
+  privatelon val pollCountelonr = stats.countelonr("poll")
+  privatelon val pollTimelonoutCountelonr = stats.countelonr("pollTimelonout")
+  privatelon val offelonrCountelonr = stats.countelonr("offelonr")
+  privatelon val pollLatelonncyStat = stats.stat("pollLatelonncy")
+  privatelon val graphJelontQuelonuelon = nelonw AsyncQuelonuelon[TopSeloncondDelongrelonelonByCountForUselonr]
+  (0 until salsaRunnelonrConfig.numSalsaRunnelonrs).forelonach { _ =>
+    graphJelontQuelonuelon.offelonr(
+      nelonw TopSeloncondDelongrelonelonByCountForUselonr(
+        bipartitelonGraph,
+        salsaRunnelonrConfig.elonxpelonctelondNodelonsToHitInSalsa,
+        statsReloncelonivelonrWrappelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
       )
     )
   }
 
   /**
-   * Given a user_user_graph request, make it conform to GraphJet's request format
+   * Givelonn a uselonr_uselonr_graph relonquelonst, makelon it conform to GraphJelont's relonquelonst format
    */
-  private def convertRequestToJava(
-    request: RecommendUserRequest
-  ): TopSecondDegreeByCountRequestForUser = {
-    val queryNode = request.requesterId
-    val leftSeedNodesWithWeight = new Long2DoubleOpenHashMap(
-      request.seedsWithWeights.keys.toArray,
-      request.seedsWithWeights.values.toArray
+  privatelon delonf convelonrtRelonquelonstToJava(
+    relonquelonst: ReloncommelonndUselonrRelonquelonst
+  ): TopSeloncondDelongrelonelonByCountRelonquelonstForUselonr = {
+    val quelonryNodelon = relonquelonst.relonquelonstelonrId
+    val lelonftSelonelondNodelonsWithWelonight = nelonw Long2DoublelonOpelonnHashMap(
+      relonquelonst.selonelondsWithWelonights.kelonys.toArray,
+      relonquelonst.selonelondsWithWelonights.valuelons.toArray
     )
-    val toBeFiltered = new LongOpenHashSet(request.excludedUserIds.getOrElse(Nil).toArray)
-    val maxNumResults = request.maxNumResults.getOrElse(DefaultRequestParams.MaxNumResults)
+    val toBelonFiltelonrelond = nelonw LongOpelonnHashSelont(relonquelonst.elonxcludelondUselonrIds.gelontOrelonlselon(Nil).toArray)
+    val maxNumRelonsults = relonquelonst.maxNumRelonsults.gelontOrelonlselon(DelonfaultRelonquelonstParams.MaxNumRelonsults)
     val maxNumSocialProofs =
-      request.maxNumSocialProofs.getOrElse(DefaultRequestParams.MaxNumSocialProofs)
-    val minUserPerSocialProof = convertMinUserPerSocialProofToJava(request.minUserPerSocialProof)
-    val socialProofTypes =
-      UserEdgeTypeMask.getUserUserGraphSocialProofTypes(request.socialProofTypes)
-    val maxRightNodeAgeInMillis = DefaultRequestParams.MaxRightNodeAgeThreshold
-    val maxEdgeEngagementAgeInMillis =
-      request.maxEdgeEngagementAgeInMillis.getOrElse(DefaultRequestParams.MaxEdgeAgeThreshold)
-    val resultFilterChain = new ResultFilterChain(
-      Lists.newArrayList(
-        new SocialProofTypesFilter(statsReceiverWrapper),
-        new RequestedSetFilter(statsReceiverWrapper)
+      relonquelonst.maxNumSocialProofs.gelontOrelonlselon(DelonfaultRelonquelonstParams.MaxNumSocialProofs)
+    val minUselonrPelonrSocialProof = convelonrtMinUselonrPelonrSocialProofToJava(relonquelonst.minUselonrPelonrSocialProof)
+    val socialProofTypelons =
+      UselonrelondgelonTypelonMask.gelontUselonrUselonrGraphSocialProofTypelons(relonquelonst.socialProofTypelons)
+    val maxRightNodelonAgelonInMillis = DelonfaultRelonquelonstParams.MaxRightNodelonAgelonThrelonshold
+    val maxelondgelonelonngagelonmelonntAgelonInMillis =
+      relonquelonst.maxelondgelonelonngagelonmelonntAgelonInMillis.gelontOrelonlselon(DelonfaultRelonquelonstParams.MaxelondgelonAgelonThrelonshold)
+    val relonsultFiltelonrChain = nelonw RelonsultFiltelonrChain(
+      Lists.nelonwArrayList(
+        nelonw SocialProofTypelonsFiltelonr(statsReloncelonivelonrWrappelonr),
+        nelonw RelonquelonstelondSelontFiltelonr(statsReloncelonivelonrWrappelonr)
       )
     )
 
-    new TopSecondDegreeByCountRequestForUser(
-      queryNode,
-      leftSeedNodesWithWeight,
-      toBeFiltered,
-      maxNumResults,
+    nelonw TopSeloncondDelongrelonelonByCountRelonquelonstForUselonr(
+      quelonryNodelon,
+      lelonftSelonelondNodelonsWithWelonight,
+      toBelonFiltelonrelond,
+      maxNumRelonsults,
       maxNumSocialProofs,
-      UserEdgeTypeMask.SIZE.toInt,
-      minUserPerSocialProof,
-      socialProofTypes,
-      maxRightNodeAgeInMillis,
-      maxEdgeEngagementAgeInMillis,
-      resultFilterChain
+      UselonrelondgelonTypelonMask.SIZelon.toInt,
+      minUselonrPelonrSocialProof,
+      socialProofTypelons,
+      maxRightNodelonAgelonInMillis,
+      maxelondgelonelonngagelonmelonntAgelonInMillis,
+      relonsultFiltelonrChain
     )
   }
 
   /**
-   * Converts the thrift scala type to the Java equivalent
+   * Convelonrts thelon thrift scala typelon to thelon Java elonquivalelonnt
    */
-  private def convertMinUserPerSocialProofToJava(
-    socialProofInScala: Option[scala.collection.Map[UserSocialProofType, Int]]
-  ): java.util.Map[java.lang.Byte, java.lang.Integer] = {
+  privatelon delonf convelonrtMinUselonrPelonrSocialProofToJava(
+    socialProofInScala: Option[scala.collelonction.Map[UselonrSocialProofTypelon, Int]]
+  ): java.util.Map[java.lang.Bytelon, java.lang.Intelongelonr] = {
     socialProofInScala
       .map {
         _.map {
-          case (key: UserSocialProofType, value: Int) =>
-            (new java.lang.Byte(key.getValue.toByte), new java.lang.Integer(value))
+          caselon (kelony: UselonrSocialProofTypelon, valuelon: Int) =>
+            (nelonw java.lang.Bytelon(kelony.gelontValuelon.toBytelon), nelonw java.lang.Intelongelonr(valuelon))
         }
       }
-      .getOrElse(Map.empty[java.lang.Byte, java.lang.Integer])
+      .gelontOrelonlselon(Map.elonmpty[java.lang.Bytelon, java.lang.Intelongelonr])
       .asJava
   }
 
   /**
-   * Converts a byte-array format of social proofs in Java to its Scala equivalent
+   * Convelonrts a bytelon-array format of social proofs in Java to its Scala elonquivalelonnt
    */
-  private def convertSocialProofsToScala(
-    socialProofs: java.util.Map[java.lang.Byte, ConnectingUsersWithMetadata]
-  ): scala.collection.mutable.Map[UserSocialProofType, scala.Seq[Long]] = {
+  privatelon delonf convelonrtSocialProofsToScala(
+    socialProofs: java.util.Map[java.lang.Bytelon, ConnelonctingUselonrsWithMelontadata]
+  ): scala.collelonction.mutablelon.Map[UselonrSocialProofTypelon, scala.Selonq[Long]] = {
     socialProofs.asScala.map {
-      case (socialProofByte, socialProof) =>
-        val proofType = UserSocialProofType(socialProofByte.toByte)
-        val ids = socialProof.getConnectingUsers.asScala.map(_.toLong)
-        (proofType, ids)
+      caselon (socialProofBytelon, socialProof) =>
+        val proofTypelon = UselonrSocialProofTypelon(socialProofBytelon.toBytelon)
+        val ids = socialProof.gelontConnelonctingUselonrs.asScala.map(_.toLong)
+        (proofTypelon, ids)
     }
   }
 
   /**
-   * Converts Java recommendation results to its Scala equivalent
+   * Convelonrts Java reloncommelonndation relonsults to its Scala elonquivalelonnt
    */
-  private def convertResponseToScala(
-    responseOpt: Option[TopSecondDegreeByCountResponse]
-  ): RecommendUserResponse = {
-    responseOpt match {
-      case Some(rawResponse) =>
-        val userSeq = rawResponse.getRankedRecommendations.asScala.toSeq.flatMap {
-          case userRecs: UserRecommendationInfo =>
-            Some(
-              RecommendedUser(
-                userRecs.getRecommendation,
-                userRecs.getWeight,
-                convertSocialProofsToScala(userRecs.getSocialProof)
+  privatelon delonf convelonrtRelonsponselonToScala(
+    relonsponselonOpt: Option[TopSeloncondDelongrelonelonByCountRelonsponselon]
+  ): ReloncommelonndUselonrRelonsponselon = {
+    relonsponselonOpt match {
+      caselon Somelon(rawRelonsponselon) =>
+        val uselonrSelonq = rawRelonsponselon.gelontRankelondReloncommelonndations.asScala.toSelonq.flatMap {
+          caselon uselonrReloncs: UselonrReloncommelonndationInfo =>
+            Somelon(
+              ReloncommelonndelondUselonr(
+                uselonrReloncs.gelontReloncommelonndation,
+                uselonrReloncs.gelontWelonight,
+                convelonrtSocialProofsToScala(uselonrReloncs.gelontSocialProof)
               )
             )
-          case _ =>
-            None
+          caselon _ =>
+            Nonelon
         }
-        recsStat.add(userSeq.size)
-        if (userSeq.isEmpty) {
-          emptyCounter.incr()
+        reloncsStat.add(uselonrSelonq.sizelon)
+        if (uselonrSelonq.iselonmpty) {
+          elonmptyCountelonr.incr()
         }
-        RecommendUserResponse(userSeq)
-      case None =>
-        emptyCounter.incr()
-        RecommendUserResponse(Nil)
+        ReloncommelonndUselonrRelonsponselon(uselonrSelonq)
+      caselon Nonelon =>
+        elonmptyCountelonr.incr()
+        ReloncommelonndUselonrRelonsponselon(Nil)
     }
   }
 
-  private def getGraphJetResponse(
-    graphJet: TopSecondDegreeByCountForUser,
-    request: TopSecondDegreeByCountRequestForUser,
+  privatelon delonf gelontGraphJelontRelonsponselon(
+    graphJelont: TopSeloncondDelongrelonelonByCountForUselonr,
+    relonquelonst: TopSeloncondDelongrelonelonByCountRelonquelonstForUselonr,
     random: Random
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Option[TopSecondDegreeByCountResponse] = {
+    implicit statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Option[TopSeloncondDelongrelonelonByCountRelonsponselon] = {
     trackBlockStats(stats) {
-      // compute recs -- need to catch and print exceptions here otherwise they are swallowed
-      val recAttempt = Try(graphJet.computeRecommendations(request, random)).onFailure { e =>
-        failureCounter.incr()
-        log.error(e, "GraphJet computation failed")
+      // computelon reloncs -- nelonelond to catch and print elonxcelonptions helonrelon othelonrwiselon thelony arelon swallowelond
+      val reloncAttelonmpt = Try(graphJelont.computelonReloncommelonndations(relonquelonst, random)).onFailurelon { elon =>
+        failurelonCountelonr.incr()
+        log.elonrror(elon, "GraphJelont computation failelond")
       }
-      recAttempt.toOption
+      reloncAttelonmpt.toOption
     }
   }
 
-  override def apply(request: RecommendUserRequest): Future[RecommendUserResponse] = {
-    val random = new Random()
-    val graphJetRequest = convertRequestToJava(request)
-    pollCounter.incr()
-    val t0 = System.currentTimeMillis
-    graphJetQueue.poll().map { graphJetRunner =>
-      val pollTime = System.currentTimeMillis - t0
-      pollLatencyStat.add(pollTime)
-      val response = Try {
-        if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
-          convertResponseToScala(
-            getGraphJetResponse(
-              graphJetRunner,
-              graphJetRequest,
+  ovelonrridelon delonf apply(relonquelonst: ReloncommelonndUselonrRelonquelonst): Futurelon[ReloncommelonndUselonrRelonsponselon] = {
+    val random = nelonw Random()
+    val graphJelontRelonquelonst = convelonrtRelonquelonstToJava(relonquelonst)
+    pollCountelonr.incr()
+    val t0 = Systelonm.currelonntTimelonMillis
+    graphJelontQuelonuelon.poll().map { graphJelontRunnelonr =>
+      val pollTimelon = Systelonm.currelonntTimelonMillis - t0
+      pollLatelonncyStat.add(pollTimelon)
+      val relonsponselon = Try {
+        if (pollTimelon < salsaRunnelonrConfig.timelonoutSalsaRunnelonr) {
+          convelonrtRelonsponselonToScala(
+            gelontGraphJelontRelonsponselon(
+              graphJelontRunnelonr,
+              graphJelontRelonquelonst,
               random
-            )(statsReceiverWrapper.statsReceiver)
+            )(statsReloncelonivelonrWrappelonr.statsReloncelonivelonr)
           )
-        } else {
-          // if we did not get a runner in time, then fail fast here and immediately put it back
-          log.warning("GraphJet Queue polling timeout")
-          pollTimeoutCounter.incr()
-          throw new RuntimeException("GraphJet poll timeout")
-          RecommendUserResponse(Nil)
+        } elonlselon {
+          // if welon did not gelont a runnelonr in timelon, thelonn fail fast helonrelon and immelondiatelonly put it back
+          log.warning("GraphJelont Quelonuelon polling timelonout")
+          pollTimelonoutCountelonr.incr()
+          throw nelonw Runtimelonelonxcelonption("GraphJelont poll timelonout")
+          ReloncommelonndUselonrRelonsponselon(Nil)
         }
-      } ensure {
-        graphJetQueue.offer(graphJetRunner)
-        offerCounter.incr()
+      } elonnsurelon {
+        graphJelontQuelonuelon.offelonr(graphJelontRunnelonr)
+        offelonrCountelonr.incr()
       }
-      response.toOption.getOrElse(RecommendUserResponse(Nil))
+      relonsponselon.toOption.gelontOrelonlselon(ReloncommelonndUselonrRelonsponselon(Nil))
     }
   }
 
-  object DefaultRequestParams {
-    val MaxNumResults = 100
+  objelonct DelonfaultRelonquelonstParams {
+    val MaxNumRelonsults = 100
     val MaxNumSocialProofs = 100
-    val MaxRightNodeAgeThreshold: Long = Long.MaxValue
-    val MaxEdgeAgeThreshold: Long = Long.MaxValue
+    val MaxRightNodelonAgelonThrelonshold: Long = Long.MaxValuelon
+    val MaxelondgelonAgelonThrelonshold: Long = Long.MaxValuelon
   }
 }

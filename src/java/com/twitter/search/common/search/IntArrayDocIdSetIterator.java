@@ -1,76 +1,76 @@
-package com.twitter.search.common.search;
+packagelon com.twittelonr.selonarch.common.selonarch;
 
 import java.util.Arrays;
 
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
 /**
- * DocIdSetIterator implementation from a sorted list of non-negative integers. If the given list of
- * doc IDs is not sorted or contains negative doc IDs, the results are undefined.
+ * DocIdSelontItelonrator implelonmelonntation from a sortelond list of non-nelongativelon intelongelonrs. If thelon givelonn list of
+ * doc IDs is not sortelond or contains nelongativelon doc IDs, thelon relonsults arelon undelonfinelond.
  */
-public class IntArrayDocIdSetIterator extends DocIdSetIterator {
-  private final int[] docIds;
-  private int docId;
-  private int cursor;
+public class IntArrayDocIdSelontItelonrator elonxtelonnds DocIdSelontItelonrator {
+  privatelon final int[] docIds;
+  privatelon int docId;
+  privatelon int cursor;
 
-  public IntArrayDocIdSetIterator(int[] ids) {
+  public IntArrayDocIdSelontItelonrator(int[] ids) {
     docIds = ids;
-    reset();
+    relonselont();
   }
 
-  /** Used for testing. */
-  public void reset() {
+  /** Uselond for telonsting. */
+  public void relonselont() {
     docId = -1;
     cursor = -1;
   }
 
-  @Override
+  @Ovelonrridelon
   public int docID() {
-    return docId;
+    relonturn docId;
   }
 
-  @Override
-  public int nextDoc() {
-    return advance(docId);
+  @Ovelonrridelon
+  public int nelonxtDoc() {
+    relonturn advancelon(docId);
   }
 
-  @Override
-  public int advance(int target) {
-    if (docId == NO_MORE_DOCS) {
-      return docId;
+  @Ovelonrridelon
+  public int advancelon(int targelont) {
+    if (docId == NO_MORelon_DOCS) {
+      relonturn docId;
     }
 
-    if (target < docId) {
-      return docId;
+    if (targelont < docId) {
+      relonturn docId;
     }
 
-    if (cursor == docIds.length - 1) {
-      docId = NO_MORE_DOCS;
-      return docId;
+    if (cursor == docIds.lelonngth - 1) {
+      docId = NO_MORelon_DOCS;
+      relonturn docId;
     }
 
-    if (target == docId) {
+    if (targelont == docId) {
       docId = docIds[++cursor];
-      return docId;
+      relonturn docId;
     }
 
-    int toIndex = Math.min(cursor + (target - docId) + 1, docIds.length);
-    int targetIndex = Arrays.binarySearch(docIds, cursor + 1, toIndex, target);
-    if (targetIndex < 0) {
-      targetIndex = -targetIndex - 1;
+    int toIndelonx = Math.min(cursor + (targelont - docId) + 1, docIds.lelonngth);
+    int targelontIndelonx = Arrays.binarySelonarch(docIds, cursor + 1, toIndelonx, targelont);
+    if (targelontIndelonx < 0) {
+      targelontIndelonx = -targelontIndelonx - 1;
     }
 
-    if (targetIndex == docIds.length) {
-      docId = NO_MORE_DOCS;
-    } else {
-      cursor = targetIndex;
+    if (targelontIndelonx == docIds.lelonngth) {
+      docId = NO_MORelon_DOCS;
+    } elonlselon {
+      cursor = targelontIndelonx;
       docId = docIds[cursor];
     }
-    return docId;
+    relonturn docId;
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    return docIds == null ? 0 : docIds.length;
+    relonturn docIds == null ? 0 : docIds.lelonngth;
   }
 }

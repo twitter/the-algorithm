@@ -1,14 +1,14 @@
-package com.twitter.interaction_graph.injection
+packagelon com.twittelonr.intelonraction_graph.injelonction
 
-import com.twitter.user_session_store.thriftscala.UserSession
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
+import com.twittelonr.uselonr_selonssion_storelon.thriftscala.UselonrSelonssion
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.ScalaCompactThrift
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.Long2Bigelonndian
 
-object UserSessionInjection {
-  final val injection: KeyValInjection[Long, UserSession] =
-    KeyValInjection(
-      Long2BigEndian,
-      ScalaCompactThrift(UserSession)
+objelonct UselonrSelonssionInjelonction {
+  final val injelonction: KelonyValInjelonction[Long, UselonrSelonssion] =
+    KelonyValInjelonction(
+      Long2Bigelonndian,
+      ScalaCompactThrift(UselonrSelonssion)
     )
 }

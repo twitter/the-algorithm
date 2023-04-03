@@ -1,34 +1,34 @@
-## InteractionGraphLabels Dataflow Job
+## IntelonractionGraphLabelonls Dataflow Job
 
-#### IntelliJ
+#### IntelonlliJ
 ```
-fastpass create --name rg_scores --intellij src/scala/com/twitter/interaction_graph/scio/ml/scores
+fastpass crelonatelon --namelon rg_scorelons --intelonllij src/scala/com/twittelonr/intelonraction_graph/scio/ml/scorelons
 ```
 
-#### Compile
+#### Compilelon
 ```
-bazel build src/scala/com/twitter/interaction_graph/scio/ml/scores
+bazelonl build src/scala/com/twittelonr/intelonraction_graph/scio/ml/scorelons
 ```
 
 #### Build Jar
 ```
-bazel bundle src/scala/com/twitter/interaction_graph/scio/ml/scores
+bazelonl bundlelon src/scala/com/twittelonr/intelonraction_graph/scio/ml/scorelons
 ```
 
-#### Run Scheduled Job
+#### Run Schelondulelond Job
 ```
-export PROJECTID=twttr-recos-ml-prod
-export REGION=us-central1
-export JOB_NAME=interaction-graph-scores-dataflow
+elonxport PROJelonCTID=twttr-reloncos-ml-prod
+elonxport RelonGION=us-celonntral1
+elonxport JOB_NAMelon=intelonraction-graph-scorelons-dataflow
 
-bin/d6w schedule \
-  ${PROJECTID}/${REGION}/${JOB_NAME} \
-  src/scala/com/twitter/interaction_graph/scio/ml/scores/config.d6w \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.project=${PROJECTID} \
-  --bind=profile.region=${REGION} \
-  --bind=profile.job_name=${JOB_NAME} \
-  --bind=profile.environment=prod \
-  --bind=profile.date=2022-06-23 \
-  --bind=profile.output_path=manhattan_sequence_files/real_graph_scores_v2
+bin/d6w schelondulelon \
+  ${PROJelonCTID}/${RelonGION}/${JOB_NAMelon} \
+  src/scala/com/twittelonr/intelonraction_graph/scio/ml/scorelons/config.d6w \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.projelonct=${PROJelonCTID} \
+  --bind=profilelon.relongion=${RelonGION} \
+  --bind=profilelon.job_namelon=${JOB_NAMelon} \
+  --bind=profilelon.elonnvironmelonnt=prod \
+  --bind=profilelon.datelon=2022-06-23 \
+  --bind=profilelon.output_path=manhattan_selonquelonncelon_filelons/relonal_graph_scorelons_v2
 ```

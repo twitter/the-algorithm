@@ -1,96 +1,96 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
-import com.google.inject.Provides;
+import com.googlelon.injelonct.Providelons;
 
-import com.twitter.finagle.memcached.JavaClient;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.stats.StatsReceiver;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.caching.Cache;
-import com.twitter.search.common.caching.EarlybirdCacheSerializer;
-import com.twitter.search.common.caching.SearchCacheBuilder;
-import com.twitter.search.common.caching.SearchMemcacheClientConfig;
-import com.twitter.search.common.caching.SearchMemcacheClientFactory;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.caching.CacheCommonUtil;
-import com.twitter.search.earlybird_root.caching.CacheStats;
-import com.twitter.search.earlybird_root.caching.DefaultForcedCacheMissDecider;
-import com.twitter.search.earlybird_root.filters.PostCacheRequestTypeCountFilter;
-import com.twitter.util.Duration;
+import com.twittelonr.finaglelon.melonmcachelond.JavaClielonnt;
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr;
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.selonarch.common.caching.Cachelon;
+import com.twittelonr.selonarch.common.caching.elonarlybirdCachelonSelonrializelonr;
+import com.twittelonr.selonarch.common.caching.SelonarchCachelonBuildelonr;
+import com.twittelonr.selonarch.common.caching.SelonarchMelonmcachelonClielonntConfig;
+import com.twittelonr.selonarch.common.caching.SelonarchMelonmcachelonClielonntFactory;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.caching.CachelonCommonUtil;
+import com.twittelonr.selonarch.elonarlybird_root.caching.CachelonStats;
+import com.twittelonr.selonarch.elonarlybird_root.caching.DelonfaultForcelondCachelonMissDeloncidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.PostCachelonRelonquelonstTypelonCountFiltelonr;
+import com.twittelonr.util.Duration;
 
 /**
- * Provides common bindings for cache related modules.
+ * Providelons common bindings for cachelon relonlatelond modulelons.
  */
-public class EarlybirdCacheCommonModule extends TwitterModule {
-  private static final String CACHE_VERSION = "1";
+public class elonarlybirdCachelonCommonModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon static final String CACHelon_VelonRSION = "1";
 
-  @Override
-  public void configure() {
-    bind(PostCacheRequestTypeCountFilter.class).in(Singleton.class);
-    bind(DefaultForcedCacheMissDecider.class).in(Singleton.class);
+  @Ovelonrridelon
+  public void configurelon() {
+    bind(PostCachelonRelonquelonstTypelonCountFiltelonr.class).in(Singlelonton.class);
+    bind(DelonfaultForcelondCachelonMissDeloncidelonr.class).in(Singlelonton.class);
   }
 
-  @Provides
-  @Singleton
-  @Named(CacheCommonUtil.NAMED_MAX_CACHE_RESULTS)
-  Integer provideMaxCacheResults() {
-    return 100;
+  @Providelons
+  @Singlelonton
+  @Namelond(CachelonCommonUtil.NAMelonD_MAX_CACHelon_RelonSULTS)
+  Intelongelonr providelonMaxCachelonRelonsults() {
+    relonturn 100;
   }
 
-  @Provides
-  @Singleton
-  JavaClient provideMemCacheClient(
-      StatsReceiver statsReceiver, ServiceIdentifier serviceIdentifier) {
-    SearchMemcacheClientConfig config = new SearchMemcacheClientConfig();
-    config.connectTimeoutMs = Duration.fromMilliseconds(100);
-    config.requestTimeoutMs = Duration.fromMilliseconds(100);
-    config.failureAccrualFailuresNumber = 150;
-    config.failureAccrualFailuresDurationMillis = 30000;
-    config.failureAccrualDuration = Duration.fromMilliseconds(60000);
+  @Providelons
+  @Singlelonton
+  JavaClielonnt providelonMelonmCachelonClielonnt(
+      StatsReloncelonivelonr statsReloncelonivelonr, SelonrvicelonIdelonntifielonr selonrvicelonIdelonntifielonr) {
+    SelonarchMelonmcachelonClielonntConfig config = nelonw SelonarchMelonmcachelonClielonntConfig();
+    config.connelonctTimelonoutMs = Duration.fromMilliselonconds(100);
+    config.relonquelonstTimelonoutMs = Duration.fromMilliselonconds(100);
+    config.failurelonAccrualFailurelonsNumbelonr = 150;
+    config.failurelonAccrualFailurelonsDurationMillis = 30000;
+    config.failurelonAccrualDuration = Duration.fromMilliselonconds(60000);
 
-    return SearchMemcacheClientFactory.createMtlsClient(
+    relonturn SelonarchMelonmcachelonClielonntFactory.crelonatelonMtlsClielonnt(
         "",
-        "earlybird_root",
-        statsReceiver,
+        "elonarlybird_root",
+        statsReloncelonivelonr,
         config,
-        serviceIdentifier
+        selonrvicelonIdelonntifielonr
     );
   }
 
   /**
-   * Create a new Earlybird cache.
+   * Crelonatelon a nelonw elonarlybird cachelon.
    *
-   * @param client the memcache client to use.
-   * @param decider the decider to use for the cache.
-   * @param cachePrefix the common cache prefix for the cache type.
-   * @param serializedKeyPrefix the common cache prefix for the cluster.
-   * @param cacheExpiryMillis cache entry ttl in milliseconds.
+   * @param clielonnt thelon melonmcachelon clielonnt to uselon.
+   * @param deloncidelonr thelon deloncidelonr to uselon for thelon cachelon.
+   * @param cachelonPrelonfix thelon common cachelon prelonfix for thelon cachelon typelon.
+   * @param selonrializelondKelonyPrelonfix thelon common cachelon prelonfix for thelon clustelonr.
+   * @param cachelonelonxpiryMillis cachelon elonntry ttl in milliselonconds.
    */
-  static Cache<EarlybirdRequest, EarlybirdResponse> createCache(
-      JavaClient client,
-      DefaultForcedCacheMissDecider decider,
-      String cachePrefix,
-      String serializedKeyPrefix,
-      long cacheExpiryMillis,
-      int cacheKeyMaxBytes,
-      int cacheValueMaxBytes) {
-    return new SearchCacheBuilder<EarlybirdRequest, EarlybirdResponse>(
-        CACHE_VERSION,
-        client,
-        cachePrefix,
-        serializedKeyPrefix,
-        cacheExpiryMillis)
-        .withMaxKeyBytes(cacheKeyMaxBytes)
-        .withMaxValueBytes(cacheValueMaxBytes)
-        .withRequestTimeoutCounter(CacheStats.REQUEST_TIMEOUT_COUNTER)
-        .withRequestFailedCounter(CacheStats.REQUEST_FAILED_COUNTER)
-        .withCacheSerializer(new EarlybirdCacheSerializer())
-        .withForceCacheMissDecider(decider)
-        .withInProcessCache()
+  static Cachelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> crelonatelonCachelon(
+      JavaClielonnt clielonnt,
+      DelonfaultForcelondCachelonMissDeloncidelonr deloncidelonr,
+      String cachelonPrelonfix,
+      String selonrializelondKelonyPrelonfix,
+      long cachelonelonxpiryMillis,
+      int cachelonKelonyMaxBytelons,
+      int cachelonValuelonMaxBytelons) {
+    relonturn nelonw SelonarchCachelonBuildelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon>(
+        CACHelon_VelonRSION,
+        clielonnt,
+        cachelonPrelonfix,
+        selonrializelondKelonyPrelonfix,
+        cachelonelonxpiryMillis)
+        .withMaxKelonyBytelons(cachelonKelonyMaxBytelons)
+        .withMaxValuelonBytelons(cachelonValuelonMaxBytelons)
+        .withRelonquelonstTimelonoutCountelonr(CachelonStats.RelonQUelonST_TIMelonOUT_COUNTelonR)
+        .withRelonquelonstFailelondCountelonr(CachelonStats.RelonQUelonST_FAILelonD_COUNTelonR)
+        .withCachelonSelonrializelonr(nelonw elonarlybirdCachelonSelonrializelonr())
+        .withForcelonCachelonMissDeloncidelonr(deloncidelonr)
+        .withInProcelonssCachelon()
         .build();
   }
 }

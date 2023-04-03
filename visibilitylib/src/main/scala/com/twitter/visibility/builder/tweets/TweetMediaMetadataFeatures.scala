@@ -1,130 +1,130 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.mediaservices.commons.mediainformation.thriftscala.AdditionalMetadata
-import com.twitter.mediaservices.media_util.GenericMediaKey
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TweetMediaMetadataSource
-import com.twitter.visibility.features.HasDmcaMediaFeature
-import com.twitter.visibility.features.MediaGeoRestrictionsAllowList
-import com.twitter.visibility.features.MediaGeoRestrictionsDenyList
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.melondiaselonrvicelons.commons.melondiainformation.thriftscala.AdditionalMelontadata
+import com.twittelonr.melondiaselonrvicelons.melondia_util.GelonnelonricMelondiaKelony
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.TwelonelontMelondiaMelontadataSourcelon
+import com.twittelonr.visibility.felonaturelons.HasDmcaMelondiaFelonaturelon
+import com.twittelonr.visibility.felonaturelons.MelondiaGelonoRelonstrictionsAllowList
+import com.twittelonr.visibility.felonaturelons.MelondiaGelonoRelonstrictionsDelonnyList
 
-class TweetMediaMetadataFeatures(
-  mediaMetadataSource: TweetMediaMetadataSource,
-  statsReceiver: StatsReceiver) {
+class TwelonelontMelondiaMelontadataFelonaturelons(
+  melondiaMelontadataSourcelon: TwelonelontMelondiaMelontadataSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("tweet_media_metadata_features")
-  private[this] val reportedStats = scopedStatsReceiver.scope("dmcaStats")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("twelonelont_melondia_melontadata_felonaturelons")
+  privatelon[this] val relonportelondStats = scopelondStatsReloncelonivelonr.scopelon("dmcaStats")
 
-  def forTweet(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ): FeatureMapBuilder => FeatureMapBuilder = { featureMapBuilder =>
-    featureMapBuilder.withFeature(
-      HasDmcaMediaFeature,
-      mediaIsDmca(tweet, mediaKeys, enableFetchMediaMetadata))
-    featureMapBuilder.withFeature(
-      MediaGeoRestrictionsAllowList,
-      allowlist(tweet, mediaKeys, enableFetchMediaMetadata))
-    featureMapBuilder.withFeature(
-      MediaGeoRestrictionsDenyList,
-      denylist(tweet, mediaKeys, enableFetchMediaMetadata))
+  delonf forTwelonelont(
+    twelonelont: Twelonelont,
+    melondiaKelonys: Selonq[GelonnelonricMelondiaKelony],
+    elonnablelonFelontchMelondiaMelontadata: Boolelonan
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = { felonaturelonMapBuildelonr =>
+    felonaturelonMapBuildelonr.withFelonaturelon(
+      HasDmcaMelondiaFelonaturelon,
+      melondiaIsDmca(twelonelont, melondiaKelonys, elonnablelonFelontchMelondiaMelontadata))
+    felonaturelonMapBuildelonr.withFelonaturelon(
+      MelondiaGelonoRelonstrictionsAllowList,
+      allowlist(twelonelont, melondiaKelonys, elonnablelonFelontchMelondiaMelontadata))
+    felonaturelonMapBuildelonr.withFelonaturelon(
+      MelondiaGelonoRelonstrictionsDelonnyList,
+      delonnylist(twelonelont, melondiaKelonys, elonnablelonFelontchMelondiaMelontadata))
   }
 
-  private def mediaIsDmca(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ) = getMediaAdditionalMetadata(tweet, mediaKeys, enableFetchMediaMetadata)
-    .map(_.exists(_.restrictions.exists(_.isDmca)))
+  privatelon delonf melondiaIsDmca(
+    twelonelont: Twelonelont,
+    melondiaKelonys: Selonq[GelonnelonricMelondiaKelony],
+    elonnablelonFelontchMelondiaMelontadata: Boolelonan
+  ) = gelontMelondiaAdditionalMelontadata(twelonelont, melondiaKelonys, elonnablelonFelontchMelondiaMelontadata)
+    .map(_.elonxists(_.relonstrictions.elonxists(_.isDmca)))
 
-  private def allowlist(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ) = getMediaGeoRestrictions(tweet, mediaKeys, enableFetchMediaMetadata)
-    .map(_.flatMap(_.whitelistedCountryCodes))
+  privatelon delonf allowlist(
+    twelonelont: Twelonelont,
+    melondiaKelonys: Selonq[GelonnelonricMelondiaKelony],
+    elonnablelonFelontchMelondiaMelontadata: Boolelonan
+  ) = gelontMelondiaGelonoRelonstrictions(twelonelont, melondiaKelonys, elonnablelonFelontchMelondiaMelontadata)
+    .map(_.flatMap(_.whitelonlistelondCountryCodelons))
 
-  private def denylist(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ) = getMediaGeoRestrictions(tweet, mediaKeys, enableFetchMediaMetadata)
-    .map(_.flatMap(_.blacklistedCountryCodes))
+  privatelon delonf delonnylist(
+    twelonelont: Twelonelont,
+    melondiaKelonys: Selonq[GelonnelonricMelondiaKelony],
+    elonnablelonFelontchMelondiaMelontadata: Boolelonan
+  ) = gelontMelondiaGelonoRelonstrictions(twelonelont, melondiaKelonys, elonnablelonFelontchMelondiaMelontadata)
+    .map(_.flatMap(_.blacklistelondCountryCodelons))
 
-  private def getMediaGeoRestrictions(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
+  privatelon delonf gelontMelondiaGelonoRelonstrictions(
+    twelonelont: Twelonelont,
+    melondiaKelonys: Selonq[GelonnelonricMelondiaKelony],
+    elonnablelonFelontchMelondiaMelontadata: Boolelonan
   ) = {
-    getMediaAdditionalMetadata(tweet, mediaKeys, enableFetchMediaMetadata)
-      .map(additionalMetadatasSeq => {
+    gelontMelondiaAdditionalMelontadata(twelonelont, melondiaKelonys, elonnablelonFelontchMelondiaMelontadata)
+      .map(additionalMelontadatasSelonq => {
         for {
-          additionalMetadata <- additionalMetadatasSeq
-          restrictions <- additionalMetadata.restrictions
-          geoRestrictions <- restrictions.geoRestrictions
-        } yield {
-          geoRestrictions
+          additionalMelontadata <- additionalMelontadatasSelonq
+          relonstrictions <- additionalMelontadata.relonstrictions
+          gelonoRelonstrictions <- relonstrictions.gelonoRelonstrictions
+        } yielonld {
+          gelonoRelonstrictions
         }
       })
   }
 
-  private def getMediaAdditionalMetadata(
-    tweet: Tweet,
-    mediaKeys: Seq[GenericMediaKey],
-    enableFetchMediaMetadata: Boolean
-  ): Stitch[Seq[AdditionalMetadata]] = {
-    if (mediaKeys.isEmpty) {
-      reportedStats.counter("empty").incr()
-      Stitch.value(Seq.empty)
-    } else {
-      tweet.media.flatMap { mediaEntities =>
-        val alreadyHydratedMetadata = mediaEntities
-          .filter(_.mediaKey.isDefined)
-          .flatMap(_.additionalMetadata)
+  privatelon delonf gelontMelondiaAdditionalMelontadata(
+    twelonelont: Twelonelont,
+    melondiaKelonys: Selonq[GelonnelonricMelondiaKelony],
+    elonnablelonFelontchMelondiaMelontadata: Boolelonan
+  ): Stitch[Selonq[AdditionalMelontadata]] = {
+    if (melondiaKelonys.iselonmpty) {
+      relonportelondStats.countelonr("elonmpty").incr()
+      Stitch.valuelon(Selonq.elonmpty)
+    } elonlselon {
+      twelonelont.melondia.flatMap { melondiaelonntitielons =>
+        val alrelonadyHydratelondMelontadata = melondiaelonntitielons
+          .filtelonr(_.melondiaKelony.isDelonfinelond)
+          .flatMap(_.additionalMelontadata)
 
-        if (alreadyHydratedMetadata.nonEmpty) {
-          Some(alreadyHydratedMetadata)
-        } else {
-          None
+        if (alrelonadyHydratelondMelontadata.nonelonmpty) {
+          Somelon(alrelonadyHydratelondMelontadata)
+        } elonlselon {
+          Nonelon
         }
       } match {
-        case Some(additionalMetadata) =>
-          reportedStats.counter("already_hydrated").incr()
-          Stitch.value(additionalMetadata)
-        case None =>
+        caselon Somelon(additionalMelontadata) =>
+          relonportelondStats.countelonr("alrelonady_hydratelond").incr()
+          Stitch.valuelon(additionalMelontadata)
+        caselon Nonelon =>
           Stitch
-            .collect(
-              mediaKeys.map(fetchAdditionalMetadata(tweet.id, _, enableFetchMediaMetadata))
-            ).map(maybeMetadatas => {
-              maybeMetadatas
-                .filter(_.isDefined)
-                .map(_.get)
+            .collelonct(
+              melondiaKelonys.map(felontchAdditionalMelontadata(twelonelont.id, _, elonnablelonFelontchMelondiaMelontadata))
+            ).map(maybelonMelontadatas => {
+              maybelonMelontadatas
+                .filtelonr(_.isDelonfinelond)
+                .map(_.gelont)
             })
       }
     }
   }
 
-  private def fetchAdditionalMetadata(
-    tweetId: Long,
-    genericMediaKey: GenericMediaKey,
-    enableFetchMediaMetadata: Boolean
-  ): Stitch[Option[AdditionalMetadata]] =
-    if (enableFetchMediaMetadata) {
-      genericMediaKey.toThriftMediaKey() match {
-        case Some(mediaKey) =>
-          reportedStats.counter("request").incr()
-          mediaMetadataSource.fetch(tweetId, mediaKey)
-        case None =>
-          reportedStats.counter("empty_key").incr()
-          Stitch.None
+  privatelon delonf felontchAdditionalMelontadata(
+    twelonelontId: Long,
+    gelonnelonricMelondiaKelony: GelonnelonricMelondiaKelony,
+    elonnablelonFelontchMelondiaMelontadata: Boolelonan
+  ): Stitch[Option[AdditionalMelontadata]] =
+    if (elonnablelonFelontchMelondiaMelontadata) {
+      gelonnelonricMelondiaKelony.toThriftMelondiaKelony() match {
+        caselon Somelon(melondiaKelony) =>
+          relonportelondStats.countelonr("relonquelonst").incr()
+          melondiaMelontadataSourcelon.felontch(twelonelontId, melondiaKelony)
+        caselon Nonelon =>
+          relonportelondStats.countelonr("elonmpty_kelony").incr()
+          Stitch.Nonelon
       }
-    } else {
-      reportedStats.counter("light_request").incr()
-      Stitch.None
+    } elonlselon {
+      relonportelondStats.countelonr("light_relonquelonst").incr()
+      Stitch.Nonelon
     }
 
 }

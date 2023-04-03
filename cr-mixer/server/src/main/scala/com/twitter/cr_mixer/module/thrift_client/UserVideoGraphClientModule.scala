@@ -1,46 +1,46 @@
-package com.twitter.cr_mixer.module.thrift_client
+packagelon com.twittelonr.cr_mixelonr.modulelon.thrift_clielonnt
 
-import com.twitter.app.Flag
-import com.twitter.cr_mixer.module.core.TimeoutConfigModule.UserVideoGraphClientTimeoutFlagName
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.service.RetryBudget
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.recos.user_video_graph.thriftscala.UserVideoGraph
-import com.twitter.util.Duration
-import com.twitter.util.Throw
+import com.twittelonr.app.Flag
+import com.twittelonr.cr_mixelonr.modulelon.corelon.TimelonoutConfigModulelon.UselonrVidelonoGraphClielonntTimelonoutFlagNamelon
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.mux.ClielonntDiscardelondRelonquelonstelonxcelonption
+import com.twittelonr.finaglelon.selonrvicelon.RelonqRelonp
+import com.twittelonr.finaglelon.selonrvicelon.RelonsponselonClass
+import com.twittelonr.finaglelon.selonrvicelon.RelontryBudgelont
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.reloncos.uselonr_videlono_graph.thriftscala.UselonrVidelonoGraph
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Throw
 
-object UserVideoGraphClientModule
-    extends ThriftMethodBuilderClientModule[
-      UserVideoGraph.ServicePerEndpoint,
-      UserVideoGraph.MethodPerEndpoint
+objelonct UselonrVidelonoGraphClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      UselonrVidelonoGraph.SelonrvicelonPelonrelonndpoint,
+      UselonrVidelonoGraph.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override val label = "user-video-graph"
-  override val dest = "/s/user-tweet-graph/user-video-graph"
-  private val userVideoGraphClientTimeout: Flag[Duration] =
+  ovelonrridelon val labelonl = "uselonr-videlono-graph"
+  ovelonrridelon val delonst = "/s/uselonr-twelonelont-graph/uselonr-videlono-graph"
+  privatelon val uselonrVidelonoGraphClielonntTimelonout: Flag[Duration] =
     flag[Duration](
-      UserVideoGraphClientTimeoutFlagName,
-      "userVideoGraph client timeout"
+      UselonrVidelonoGraphClielonntTimelonoutFlagNamelon,
+      "uselonrVidelonoGraph clielonnt timelonout"
     )
-  override def requestTimeout: Duration = userVideoGraphClientTimeout()
+  ovelonrridelon delonf relonquelonstTimelonout: Duration = uselonrVidelonoGraphClielonntTimelonout()
 
-  override def retryBudget: RetryBudget = RetryBudget.Empty
+  ovelonrridelon delonf relontryBudgelont: RelontryBudgelont = RelontryBudgelont.elonmpty
 
-  override def configureThriftMuxClient(
-    injector: Injector,
-    client: ThriftMux.Client
-  ): ThriftMux.Client =
-    super
-      .configureThriftMuxClient(injector, client)
-      .withStatsReceiver(injector.instance[StatsReceiver].scope("clnt"))
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
+  ovelonrridelon delonf configurelonThriftMuxClielonnt(
+    injelonctor: Injelonctor,
+    clielonnt: ThriftMux.Clielonnt
+  ): ThriftMux.Clielonnt =
+    supelonr
+      .configurelonThriftMuxClielonnt(injelonctor, clielonnt)
+      .withStatsReloncelonivelonr(injelonctor.instancelon[StatsReloncelonivelonr].scopelon("clnt"))
+      .withRelonsponselonClassifielonr {
+        caselon RelonqRelonp(_, Throw(_: ClielonntDiscardelondRelonquelonstelonxcelonption)) => RelonsponselonClass.Ignorablelon
       }
 }

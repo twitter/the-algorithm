@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.models
+packagelon com.twittelonr.follow_reloncommelonndations.modelonls
 
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.ClielonntContelonxtConvelonrtelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
 
-case class RecommendationRequest(
-  clientContext: ClientContext,
+caselon class ReloncommelonndationRelonquelonst(
+  clielonntContelonxt: ClielonntContelonxt,
   displayLocation: DisplayLocation,
-  displayContext: Option[DisplayContext],
-  maxResults: Option[Int],
+  displayContelonxt: Option[DisplayContelonxt],
+  maxRelonsults: Option[Int],
   cursor: Option[String],
-  excludedIds: Option[Seq[Long]],
-  fetchPromotedContent: Option[Boolean],
-  debugParams: Option[DebugParams] = None,
-  userLocationState: Option[String] = None,
-  isSoftUser: Boolean = false) {
-  def toOfflineThrift: offline.OfflineRecommendationRequest = offline.OfflineRecommendationRequest(
-    ClientContextConverter.toFRSOfflineClientContextThrift(clientContext),
-    displayLocation.toOfflineThrift,
-    displayContext.map(_.toOfflineThrift),
-    maxResults,
+  elonxcludelondIds: Option[Selonq[Long]],
+  felontchPromotelondContelonnt: Option[Boolelonan],
+  delonbugParams: Option[DelonbugParams] = Nonelon,
+  uselonrLocationStatelon: Option[String] = Nonelon,
+  isSoftUselonr: Boolelonan = falselon) {
+  delonf toOfflinelonThrift: offlinelon.OfflinelonReloncommelonndationRelonquelonst = offlinelon.OfflinelonReloncommelonndationRelonquelonst(
+    ClielonntContelonxtConvelonrtelonr.toFRSOfflinelonClielonntContelonxtThrift(clielonntContelonxt),
+    displayLocation.toOfflinelonThrift,
+    displayContelonxt.map(_.toOfflinelonThrift),
+    maxRelonsults,
     cursor,
-    excludedIds,
-    fetchPromotedContent,
-    debugParams.map(DebugParams.toOfflineThrift)
+    elonxcludelondIds,
+    felontchPromotelondContelonnt,
+    delonbugParams.map(DelonbugParams.toOfflinelonThrift)
   )
 }

@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt
 
-trait ReferenceObject
+trait RelonfelonrelonncelonObjelonct
 
-case class RichTextUser(id: Long) extends ReferenceObject
-case class RichTextMention(id: Long, screenName: String) extends ReferenceObject
-case class RichTextHashtag(text: String) extends ReferenceObject
-case class RichTextCashtag(text: String) extends ReferenceObject
-case class RichTextList(id: Long, url: String) extends ReferenceObject
+caselon class RichTelonxtUselonr(id: Long) elonxtelonnds RelonfelonrelonncelonObjelonct
+caselon class RichTelonxtMelonntion(id: Long, screlonelonnNamelon: String) elonxtelonnds RelonfelonrelonncelonObjelonct
+caselon class RichTelonxtHashtag(telonxt: String) elonxtelonnds RelonfelonrelonncelonObjelonct
+caselon class RichTelonxtCashtag(telonxt: String) elonxtelonnds RelonfelonrelonncelonObjelonct
+caselon class RichTelonxtList(id: Long, url: String) elonxtelonnds RelonfelonrelonncelonObjelonct

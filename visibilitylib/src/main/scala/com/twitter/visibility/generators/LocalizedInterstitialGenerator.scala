@@ -1,151 +1,151 @@
-package com.twitter.visibility.generators
+packagelon com.twittelonr.visibility.gelonnelonrators
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.common.actions.LocalizedMessage
-import com.twitter.visibility.common.actions.MessageLink
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.results.richtext.PublicInterestReasonToRichText
-import com.twitter.visibility.results.translation.LearnMoreLink
-import com.twitter.visibility.results.translation.Resource
-import com.twitter.visibility.results.translation.SafetyResultReasonToResource
-import com.twitter.visibility.results.translation.Translator
-import com.twitter.visibility.rules.EmergencyDynamicInterstitial
-import com.twitter.visibility.rules.Interstitial
-import com.twitter.visibility.rules.InterstitialLimitedEngagements
-import com.twitter.visibility.rules.PublicInterest
-import com.twitter.visibility.rules.Reason
-import com.twitter.visibility.rules.TweetInterstitial
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.common.actions.LocalizelondMelonssagelon
+import com.twittelonr.visibility.common.actions.MelonssagelonLink
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrGatelons
+import com.twittelonr.visibility.relonsults.richtelonxt.PublicIntelonrelonstRelonasonToRichTelonxt
+import com.twittelonr.visibility.relonsults.translation.LelonarnMorelonLink
+import com.twittelonr.visibility.relonsults.translation.Relonsourcelon
+import com.twittelonr.visibility.relonsults.translation.SafelontyRelonsultRelonasonToRelonsourcelon
+import com.twittelonr.visibility.relonsults.translation.Translator
+import com.twittelonr.visibility.rulelons.elonmelonrgelonncyDynamicIntelonrstitial
+import com.twittelonr.visibility.rulelons.Intelonrstitial
+import com.twittelonr.visibility.rulelons.IntelonrstitialLimitelondelonngagelonmelonnts
+import com.twittelonr.visibility.rulelons.PublicIntelonrelonst
+import com.twittelonr.visibility.rulelons.Relonason
+import com.twittelonr.visibility.rulelons.TwelonelontIntelonrstitial
 
-object LocalizedInterstitialGenerator {
-  def apply(
-    visibilityDecider: Decider,
-    baseStatsReceiver: StatsReceiver,
-  ): LocalizedInterstitialGenerator = {
-    new LocalizedInterstitialGenerator(visibilityDecider, baseStatsReceiver)
+objelonct LocalizelondIntelonrstitialGelonnelonrator {
+  delonf apply(
+    visibilityDeloncidelonr: Deloncidelonr,
+    baselonStatsReloncelonivelonr: StatsReloncelonivelonr,
+  ): LocalizelondIntelonrstitialGelonnelonrator = {
+    nelonw LocalizelondIntelonrstitialGelonnelonrator(visibilityDeloncidelonr, baselonStatsReloncelonivelonr)
   }
 }
 
-class LocalizedInterstitialGenerator private (
-  val visibilityDecider: Decider,
-  val baseStatsReceiver: StatsReceiver) {
+class LocalizelondIntelonrstitialGelonnelonrator privatelon (
+  val visibilityDeloncidelonr: Deloncidelonr,
+  val baselonStatsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private val visibilityDeciderGates = VisibilityDeciderGates(visibilityDecider)
-  private val localizationStatsReceiver = baseStatsReceiver.scope("interstitial_localization")
-  private val publicInterestInterstitialStats =
-    localizationStatsReceiver.scope("public_interest_copy")
-  private val emergencyDynamicInterstitialStats =
-    localizationStatsReceiver.scope("emergency_dynamic_copy")
-  private val regularInterstitialStats = localizationStatsReceiver.scope("interstitial_copy")
+  privatelon val visibilityDeloncidelonrGatelons = VisibilityDeloncidelonrGatelons(visibilityDeloncidelonr)
+  privatelon val localizationStatsReloncelonivelonr = baselonStatsReloncelonivelonr.scopelon("intelonrstitial_localization")
+  privatelon val publicIntelonrelonstIntelonrstitialStats =
+    localizationStatsReloncelonivelonr.scopelon("public_intelonrelonst_copy")
+  privatelon val elonmelonrgelonncyDynamicIntelonrstitialStats =
+    localizationStatsReloncelonivelonr.scopelon("elonmelonrgelonncy_dynamic_copy")
+  privatelon val relongularIntelonrstitialStats = localizationStatsReloncelonivelonr.scopelon("intelonrstitial_copy")
 
-  def apply(visibilityResult: VisibilityResult, languageTag: String): VisibilityResult = {
-    if (!visibilityDeciderGates.enableLocalizedInterstitialGenerator()) {
-      return visibilityResult
+  delonf apply(visibilityRelonsult: VisibilityRelonsult, languagelonTag: String): VisibilityRelonsult = {
+    if (!visibilityDeloncidelonrGatelons.elonnablelonLocalizelondIntelonrstitialGelonnelonrator()) {
+      relonturn visibilityRelonsult
     }
 
-    visibilityResult.verdict match {
-      case ipi: InterstitialLimitedEngagements if PublicInterest.Reasons.contains(ipi.reason) =>
-        visibilityResult.copy(
-          verdict = ipi.copy(
-            localizedMessage = Some(localizePublicInterestCopyInResult(ipi, languageTag))
+    visibilityRelonsult.velonrdict match {
+      caselon ipi: IntelonrstitialLimitelondelonngagelonmelonnts if PublicIntelonrelonst.Relonasons.contains(ipi.relonason) =>
+        visibilityRelonsult.copy(
+          velonrdict = ipi.copy(
+            localizelondMelonssagelon = Somelon(localizelonPublicIntelonrelonstCopyInRelonsult(ipi, languagelonTag))
           ))
-      case edi: EmergencyDynamicInterstitial =>
-        visibilityResult.copy(
-          verdict = EmergencyDynamicInterstitial(
-            edi.copy,
-            edi.linkOpt,
-            Some(localizeEmergencyDynamicCopyInResult(edi, languageTag))
+      caselon elondi: elonmelonrgelonncyDynamicIntelonrstitial =>
+        visibilityRelonsult.copy(
+          velonrdict = elonmelonrgelonncyDynamicIntelonrstitial(
+            elondi.copy,
+            elondi.linkOpt,
+            Somelon(localizelonelonmelonrgelonncyDynamicCopyInRelonsult(elondi, languagelonTag))
           ))
-      case interstitial: Interstitial =>
-        visibilityResult.copy(
-          verdict = interstitial.copy(
-            localizedMessage = localizeInterstitialCopyInResult(interstitial, languageTag)
+      caselon intelonrstitial: Intelonrstitial =>
+        visibilityRelonsult.copy(
+          velonrdict = intelonrstitial.copy(
+            localizelondMelonssagelon = localizelonIntelonrstitialCopyInRelonsult(intelonrstitial, languagelonTag)
           ))
-      case tweetInterstitial: TweetInterstitial if tweetInterstitial.interstitial.isDefined =>
-        tweetInterstitial.interstitial.get match {
-          case ipi: InterstitialLimitedEngagements if PublicInterest.Reasons.contains(ipi.reason) =>
-            visibilityResult.copy(
-              verdict = tweetInterstitial.copy(
-                interstitial = Some(
+      caselon twelonelontIntelonrstitial: TwelonelontIntelonrstitial if twelonelontIntelonrstitial.intelonrstitial.isDelonfinelond =>
+        twelonelontIntelonrstitial.intelonrstitial.gelont match {
+          caselon ipi: IntelonrstitialLimitelondelonngagelonmelonnts if PublicIntelonrelonst.Relonasons.contains(ipi.relonason) =>
+            visibilityRelonsult.copy(
+              velonrdict = twelonelontIntelonrstitial.copy(
+                intelonrstitial = Somelon(
                   ipi.copy(
-                    localizedMessage = Some(localizePublicInterestCopyInResult(ipi, languageTag))
+                    localizelondMelonssagelon = Somelon(localizelonPublicIntelonrelonstCopyInRelonsult(ipi, languagelonTag))
                   ))
               ))
-          case edi: EmergencyDynamicInterstitial =>
-            visibilityResult.copy(
-              verdict = tweetInterstitial.copy(
-                interstitial = Some(
-                  EmergencyDynamicInterstitial(
-                    edi.copy,
-                    edi.linkOpt,
-                    Some(localizeEmergencyDynamicCopyInResult(edi, languageTag))
+          caselon elondi: elonmelonrgelonncyDynamicIntelonrstitial =>
+            visibilityRelonsult.copy(
+              velonrdict = twelonelontIntelonrstitial.copy(
+                intelonrstitial = Somelon(
+                  elonmelonrgelonncyDynamicIntelonrstitial(
+                    elondi.copy,
+                    elondi.linkOpt,
+                    Somelon(localizelonelonmelonrgelonncyDynamicCopyInRelonsult(elondi, languagelonTag))
                   ))
               ))
-          case interstitial: Interstitial =>
-            visibilityResult.copy(
-              verdict = tweetInterstitial.copy(
-                interstitial = Some(
-                  interstitial.copy(
-                    localizedMessage = localizeInterstitialCopyInResult(interstitial, languageTag)
+          caselon intelonrstitial: Intelonrstitial =>
+            visibilityRelonsult.copy(
+              velonrdict = twelonelontIntelonrstitial.copy(
+                intelonrstitial = Somelon(
+                  intelonrstitial.copy(
+                    localizelondMelonssagelon = localizelonIntelonrstitialCopyInRelonsult(intelonrstitial, languagelonTag)
                   ))
               ))
-          case _ => visibilityResult
+          caselon _ => visibilityRelonsult
         }
-      case _ => visibilityResult
+      caselon _ => visibilityRelonsult
     }
   }
 
-  private def localizeEmergencyDynamicCopyInResult(
-    edi: EmergencyDynamicInterstitial,
-    languageTag: String
-  ): LocalizedMessage = {
-    val text = edi.linkOpt
-      .map(_ => s"${edi.copy} {${Resource.LearnMorePlaceholder}}")
-      .getOrElse(edi.copy)
+  privatelon delonf localizelonelonmelonrgelonncyDynamicCopyInRelonsult(
+    elondi: elonmelonrgelonncyDynamicIntelonrstitial,
+    languagelonTag: String
+  ): LocalizelondMelonssagelon = {
+    val telonxt = elondi.linkOpt
+      .map(_ => s"${elondi.copy} {${Relonsourcelon.LelonarnMorelonPlacelonholdelonr}}")
+      .gelontOrelonlselon(elondi.copy)
 
-    val messageLinks = edi.linkOpt
+    val melonssagelonLinks = elondi.linkOpt
       .map { link =>
-        val learnMoreText = Translator.translate(LearnMoreLink, languageTag)
-        Seq(MessageLink(Resource.LearnMorePlaceholder, learnMoreText, link))
-      }.getOrElse(Seq.empty)
+        val lelonarnMorelonTelonxt = Translator.translatelon(LelonarnMorelonLink, languagelonTag)
+        Selonq(MelonssagelonLink(Relonsourcelon.LelonarnMorelonPlacelonholdelonr, lelonarnMorelonTelonxt, link))
+      }.gelontOrelonlselon(Selonq.elonmpty)
 
-    emergencyDynamicInterstitialStats.counter("localized").incr()
-    LocalizedMessage(text, languageTag, messageLinks)
+    elonmelonrgelonncyDynamicIntelonrstitialStats.countelonr("localizelond").incr()
+    LocalizelondMelonssagelon(telonxt, languagelonTag, melonssagelonLinks)
   }
 
-  private def localizePublicInterestCopyInResult(
-    ipi: InterstitialLimitedEngagements,
-    languageTag: String
-  ): LocalizedMessage = {
-    val safetyResultReason = PublicInterest.ReasonToSafetyResultReason(ipi.reason)
-    val text = Translator.translate(
-      SafetyResultReasonToResource.resource(safetyResultReason),
-      languageTag,
+  privatelon delonf localizelonPublicIntelonrelonstCopyInRelonsult(
+    ipi: IntelonrstitialLimitelondelonngagelonmelonnts,
+    languagelonTag: String
+  ): LocalizelondMelonssagelon = {
+    val safelontyRelonsultRelonason = PublicIntelonrelonst.RelonasonToSafelontyRelonsultRelonason(ipi.relonason)
+    val telonxt = Translator.translatelon(
+      SafelontyRelonsultRelonasonToRelonsourcelon.relonsourcelon(safelontyRelonsultRelonason),
+      languagelonTag,
     )
 
-    val learnMoreLink = PublicInterestReasonToRichText.toLearnMoreLink(safetyResultReason)
-    val learnMoreText = Translator.translate(LearnMoreLink, languageTag)
-    val messageLinks = Seq(MessageLink(Resource.LearnMorePlaceholder, learnMoreText, learnMoreLink))
+    val lelonarnMorelonLink = PublicIntelonrelonstRelonasonToRichTelonxt.toLelonarnMorelonLink(safelontyRelonsultRelonason)
+    val lelonarnMorelonTelonxt = Translator.translatelon(LelonarnMorelonLink, languagelonTag)
+    val melonssagelonLinks = Selonq(MelonssagelonLink(Relonsourcelon.LelonarnMorelonPlacelonholdelonr, lelonarnMorelonTelonxt, lelonarnMorelonLink))
 
-    publicInterestInterstitialStats.counter("localized").incr()
-    LocalizedMessage(text, languageTag, messageLinks)
+    publicIntelonrelonstIntelonrstitialStats.countelonr("localizelond").incr()
+    LocalizelondMelonssagelon(telonxt, languagelonTag, melonssagelonLinks)
   }
 
-  private def localizeInterstitialCopyInResult(
-    interstitial: Interstitial,
-    languageTag: String
-  ): Option[LocalizedMessage] = {
-    val localizedMessageOpt = Reason
-      .toInterstitialReason(interstitial.reason)
-      .flatMap(InterstitialReasonToLocalizedMessage(_, languageTag))
+  privatelon delonf localizelonIntelonrstitialCopyInRelonsult(
+    intelonrstitial: Intelonrstitial,
+    languagelonTag: String
+  ): Option[LocalizelondMelonssagelon] = {
+    val localizelondMelonssagelonOpt = Relonason
+      .toIntelonrstitialRelonason(intelonrstitial.relonason)
+      .flatMap(IntelonrstitialRelonasonToLocalizelondMelonssagelon(_, languagelonTag))
 
-    if (localizedMessageOpt.isDefined) {
-      regularInterstitialStats.counter("localized").incr()
-      localizedMessageOpt
-    } else {
-      regularInterstitialStats.counter("empty").incr()
-      None
+    if (localizelondMelonssagelonOpt.isDelonfinelond) {
+      relongularIntelonrstitialStats.countelonr("localizelond").incr()
+      localizelondMelonssagelonOpt
+    } elonlselon {
+      relongularIntelonrstitialStats.countelonr("elonmpty").incr()
+      Nonelon
     }
   }
 }

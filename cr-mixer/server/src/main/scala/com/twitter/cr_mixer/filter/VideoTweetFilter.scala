@@ -1,81 +1,81 @@
-package com.twitter.cr_mixer.filter
+packagelon com.twittelonr.cr_mixelonr.filtelonr
 
-import com.twitter.cr_mixer.filter.VideoTweetFilter.FilterConfig
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.CrCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.RelatedTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.model.RelatedVideoTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.param.VideoTweetFilterParams
-import com.twitter.util.Future
-import javax.inject.Singleton
+import com.twittelonr.cr_mixelonr.filtelonr.VidelonoTwelonelontFiltelonr.FiltelonrConfig
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.CrCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.RelonlatelondTwelonelontCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.param.VidelonoTwelonelontFiltelonrParams
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class VideoTweetFilter() extends FilterBase {
-  override val name: String = this.getClass.getCanonicalName
+@Singlelonton
+caselon class VidelonoTwelonelontFiltelonr() elonxtelonnds FiltelonrBaselon {
+  ovelonrridelon val namelon: String = this.gelontClass.gelontCanonicalNamelon
 
-  override type ConfigType = FilterConfig
+  ovelonrridelon typelon ConfigTypelon = FiltelonrConfig
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]] = {
-    Future.value(candidates.map {
+  ovelonrridelon delonf filtelonr(
+    candidatelons: Selonq[Selonq[InitialCandidatelon]],
+    config: ConfigTypelon
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
+    Futurelon.valuelon(candidatelons.map {
       _.flatMap {
-        candidate =>
-          if (!config.enableVideoTweetFilter) {
-            Some(candidate)
-          } else {
-            // if hasVideo is true, hasImage, hasGif should be false
-            val hasVideo = checkTweetInfoAttribute(candidate.tweetInfo.hasVideo)
-            val isHighMediaResolution =
-              checkTweetInfoAttribute(candidate.tweetInfo.isHighMediaResolution)
-            val isQuoteTweet = checkTweetInfoAttribute(candidate.tweetInfo.isQuoteTweet)
-            val isReply = checkTweetInfoAttribute(candidate.tweetInfo.isReply)
-            val hasMultipleMedia = checkTweetInfoAttribute(candidate.tweetInfo.hasMultipleMedia)
-            val hasUrl = checkTweetInfoAttribute(candidate.tweetInfo.hasUrl)
+        candidatelon =>
+          if (!config.elonnablelonVidelonoTwelonelontFiltelonr) {
+            Somelon(candidatelon)
+          } elonlselon {
+            // if hasVidelono is truelon, hasImagelon, hasGif should belon falselon
+            val hasVidelono = chelonckTwelonelontInfoAttributelon(candidatelon.twelonelontInfo.hasVidelono)
+            val isHighMelondiaRelonsolution =
+              chelonckTwelonelontInfoAttributelon(candidatelon.twelonelontInfo.isHighMelondiaRelonsolution)
+            val isQuotelonTwelonelont = chelonckTwelonelontInfoAttributelon(candidatelon.twelonelontInfo.isQuotelonTwelonelont)
+            val isRelonply = chelonckTwelonelontInfoAttributelon(candidatelon.twelonelontInfo.isRelonply)
+            val hasMultiplelonMelondia = chelonckTwelonelontInfoAttributelon(candidatelon.twelonelontInfo.hasMultiplelonMelondia)
+            val hasUrl = chelonckTwelonelontInfoAttributelon(candidatelon.twelonelontInfo.hasUrl)
 
-            if (hasVideo && isHighMediaResolution && !isQuoteTweet &&
-              !isReply && !hasMultipleMedia && !hasUrl) {
-              Some(candidate)
-            } else {
-              None
+            if (hasVidelono && isHighMelondiaRelonsolution && !isQuotelonTwelonelont &&
+              !isRelonply && !hasMultiplelonMelondia && !hasUrl) {
+              Somelon(candidatelon)
+            } elonlselon {
+              Nonelon
             }
           }
       }
     })
   }
 
-  def checkTweetInfoAttribute(attributeOpt: => Option[Boolean]): Boolean = {
-    if (attributeOpt.isDefined)
-      attributeOpt.get
-    else {
-      // takes Quoted Tweet (TweetInfo.isQuoteTweet) as an example,
-      // if the attributeOpt is None, we by default say it is not a quoted tweet
-      // similarly, if TweetInfo.hasVideo is a None,
-      // we say it does not have video.
-      false
+  delonf chelonckTwelonelontInfoAttributelon(attributelonOpt: => Option[Boolelonan]): Boolelonan = {
+    if (attributelonOpt.isDelonfinelond)
+      attributelonOpt.gelont
+    elonlselon {
+      // takelons Quotelond Twelonelont (TwelonelontInfo.isQuotelonTwelonelont) as an elonxamplelon,
+      // if thelon attributelonOpt is Nonelon, welon by delonfault say it is not a quotelond twelonelont
+      // similarly, if TwelonelontInfo.hasVidelono is a Nonelon,
+      // welon say it doelons not havelon videlono.
+      falselon
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    query: CGQueryType
-  ): FilterConfig = {
-    val enableVideoTweetFilter = query match {
-      case _: CrCandidateGeneratorQuery | _: RelatedTweetCandidateGeneratorQuery |
-          _: RelatedVideoTweetCandidateGeneratorQuery =>
-        query.params(VideoTweetFilterParams.EnableVideoTweetFilterParam)
-      case _ => false // e.g., GetRelatedTweets()
+  ovelonrridelon delonf relonquelonstToConfig[CGQuelonryTypelon <: CandidatelonGelonnelonratorQuelonry](
+    quelonry: CGQuelonryTypelon
+  ): FiltelonrConfig = {
+    val elonnablelonVidelonoTwelonelontFiltelonr = quelonry match {
+      caselon _: CrCandidatelonGelonnelonratorQuelonry | _: RelonlatelondTwelonelontCandidatelonGelonnelonratorQuelonry |
+          _: RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonratorQuelonry =>
+        quelonry.params(VidelonoTwelonelontFiltelonrParams.elonnablelonVidelonoTwelonelontFiltelonrParam)
+      caselon _ => falselon // elon.g., GelontRelonlatelondTwelonelonts()
     }
-    FilterConfig(
-      enableVideoTweetFilter = enableVideoTweetFilter
+    FiltelonrConfig(
+      elonnablelonVidelonoTwelonelontFiltelonr = elonnablelonVidelonoTwelonelontFiltelonr
     )
   }
 }
 
-object VideoTweetFilter {
-  // extend the filterConfig to add more flags if needed.
-  // now they are hardcoded according to the prod setting
-  case class FilterConfig(
-    enableVideoTweetFilter: Boolean)
+objelonct VidelonoTwelonelontFiltelonr {
+  // elonxtelonnd thelon filtelonrConfig to add morelon flags if nelonelondelond.
+  // now thelony arelon hardcodelond according to thelon prod selontting
+  caselon class FiltelonrConfig(
+    elonnablelonVidelonoTwelonelontFiltelonr: Boolelonan)
 }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.component_library.model.presentation.urt
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt
 
-import com.twitter.product_mixer.core.model.common.presentation.urt.BaseUrtModulePresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt.BaselonUrtModulelonPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
 
-final case class UrtModulePresentation(
-  override val timelineModule: TimelineModule)
-    extends BaseUrtModulePresentation
+final caselon class UrtModulelonPrelonselonntation(
+  ovelonrridelon val timelonlinelonModulelon: TimelonlinelonModulelon)
+    elonxtelonnds BaselonUrtModulelonPrelonselonntation

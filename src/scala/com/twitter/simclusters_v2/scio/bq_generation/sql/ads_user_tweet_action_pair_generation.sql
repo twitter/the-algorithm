@@ -1,38 +1,38 @@
 WITH
   vars AS (
-    SELECT
-      TIMESTAMP("{START_TIME}") AS start_date,
-      TIMESTAMP("{END_TIME}") AS end_date
+    SelonLelonCT
+      TIMelonSTAMP("{START_TIMelon}") AS start_datelon,
+      TIMelonSTAMP("{elonND_TIMelon}") AS elonnd_datelon
   ),
 
-  ads_engagement AS (
-    SELECT
-        userId64 as userId,
-        promotedTweetId as tweetId,
-        UNIX_MILLIS(timestamp) AS tsMillis,
-        lineItemId
-    FROM `twttr-rev-core-data-prod.core_served_impressions.spend`, vars
-    WHERE TIMESTAMP(_batchEnd) >= vars.start_date AND TIMESTAMP(_batchEnd) <= vars.end_date
+  ads_elonngagelonmelonnt AS (
+    SelonLelonCT
+        uselonrId64 as uselonrId,
+        promotelondTwelonelontId as twelonelontId,
+        UNIX_MILLIS(timelonstamp) AS tsMillis,
+        linelonItelonmId
+    FROM `twttr-relonv-corelon-data-prod.corelon_selonrvelond_imprelonssions.spelonnd`, vars
+    WHelonRelon TIMelonSTAMP(_batchelonnd) >= vars.start_datelon AND TIMelonSTAMP(_batchelonnd) <= vars.elonnd_datelon
     AND
-      engagementType IN ({CONTRIBUTING_ACTION_TYPES_STR})
-      AND lineItemObjective != 9 -- not pre-roll ads
+      elonngagelonmelonntTypelon IN ({CONTRIBUTING_ACTION_TYPelonS_STR})
+      AND linelonItelonmObjelonctivelon != 9 -- not prelon-roll ads
   ),
 
-  line_items AS (
-      SELECT
-        id AS lineItemId,
-        end_time.posixTime AS endTime
+  linelon_itelonms AS (
+      SelonLelonCT
+        id AS linelonItelonmId,
+        elonnd_timelon.posixTimelon AS elonndTimelon
       FROM
-        `twttr-rev-core-data-prod.rev_ads_production.line_items`
+        `twttr-relonv-corelon-data-prod.relonv_ads_production.linelon_itelonms`
   )
 
 
-SELECT
-  userId,
-  tweetId,
+SelonLelonCT
+  uselonrId,
+  twelonelontId,
   tsMillis
-FROM ads_engagement JOIN line_items USING(lineItemId), vars
-WHERE
-  line_items.endTime IS NULL
-  OR TIMESTAMP_MILLIS(line_items.endTime) >= vars.end_date
+FROM ads_elonngagelonmelonnt JOIN linelon_itelonms USING(linelonItelonmId), vars
+WHelonRelon
+  linelon_itelonms.elonndTimelon IS NULL
+  OR TIMelonSTAMP_MILLIS(linelon_itelonms.elonndTimelon) >= vars.elonnd_datelon
 

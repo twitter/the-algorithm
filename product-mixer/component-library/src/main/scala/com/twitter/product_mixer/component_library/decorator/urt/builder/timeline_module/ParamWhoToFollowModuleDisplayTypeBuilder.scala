@@ -1,53 +1,53 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.timeline_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module.BaseModuleDisplayTypeBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Carousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.CompactCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ConversationTree
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.GridCarousel
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.Vertical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalConversation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalGrid
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.VerticalWithContextLine
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.StaticParam
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon.BaselonModulelonDisplayTypelonBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.Carouselonl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.CompactCarouselonl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ConvelonrsationTrelonelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.GridCarouselonl
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.Velonrtical
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.VelonrticalConvelonrsation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.VelonrticalGrid
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.VelonrticalWithContelonxtLinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object WhoToFollowModuleDisplayType extends Enumeration {
-  type ModuleDisplayType = Value
+objelonct WhoToFollowModulelonDisplayTypelon elonxtelonnds elonnumelonration {
+  typelon ModulelonDisplayTypelon = Valuelon
 
-  val Carousel = Value
-  val CompactCarousel = Value
-  val ConversationTree = Value
-  val GridCarousel = Value
-  val Vertical = Value
-  val VerticalConversation = Value
-  val VerticalGrid = Value
-  val VerticalWithContextLine = Value
+  val Carouselonl = Valuelon
+  val CompactCarouselonl = Valuelon
+  val ConvelonrsationTrelonelon = Valuelon
+  val GridCarouselonl = Valuelon
+  val Velonrtical = Valuelon
+  val VelonrticalConvelonrsation = Valuelon
+  val VelonrticalGrid = Valuelon
+  val VelonrticalWithContelonxtLinelon = Valuelon
 }
 
-case class ParamWhoToFollowModuleDisplayTypeBuilder(
-  displayTypeParam: Param[WhoToFollowModuleDisplayType.Value] =
-    StaticParam(WhoToFollowModuleDisplayType.Vertical))
-    extends BaseModuleDisplayTypeBuilder[PipelineQuery, UniversalNoun[Any]] {
+caselon class ParamWhoToFollowModulelonDisplayTypelonBuildelonr(
+  displayTypelonParam: Param[WhoToFollowModulelonDisplayTypelon.Valuelon] =
+    StaticParam(WhoToFollowModulelonDisplayTypelon.Velonrtical))
+    elonxtelonnds BaselonModulelonDisplayTypelonBuildelonr[PipelonlinelonQuelonry, UnivelonrsalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UniversalNoun[Any]]]
-  ): ModuleDisplayType = {
-    val displayType = query.params(displayTypeParam)
-    displayType match {
-      case WhoToFollowModuleDisplayType.Carousel => Carousel
-      case WhoToFollowModuleDisplayType.CompactCarousel => CompactCarousel
-      case WhoToFollowModuleDisplayType.ConversationTree => ConversationTree
-      case WhoToFollowModuleDisplayType.GridCarousel => GridCarousel
-      case WhoToFollowModuleDisplayType.Vertical => Vertical
-      case WhoToFollowModuleDisplayType.VerticalConversation => VerticalConversation
-      case WhoToFollowModuleDisplayType.VerticalGrid => VerticalGrid
-      case WhoToFollowModuleDisplayType.VerticalWithContextLine => VerticalWithContextLine
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[UnivelonrsalNoun[Any]]]
+  ): ModulelonDisplayTypelon = {
+    val displayTypelon = quelonry.params(displayTypelonParam)
+    displayTypelon match {
+      caselon WhoToFollowModulelonDisplayTypelon.Carouselonl => Carouselonl
+      caselon WhoToFollowModulelonDisplayTypelon.CompactCarouselonl => CompactCarouselonl
+      caselon WhoToFollowModulelonDisplayTypelon.ConvelonrsationTrelonelon => ConvelonrsationTrelonelon
+      caselon WhoToFollowModulelonDisplayTypelon.GridCarouselonl => GridCarouselonl
+      caselon WhoToFollowModulelonDisplayTypelon.Velonrtical => Velonrtical
+      caselon WhoToFollowModulelonDisplayTypelon.VelonrticalConvelonrsation => VelonrticalConvelonrsation
+      caselon WhoToFollowModulelonDisplayTypelon.VelonrticalGrid => VelonrticalGrid
+      caselon WhoToFollowModulelonDisplayTypelon.VelonrticalWithContelonxtLinelon => VelonrticalWithContelonxtLinelon
     }
   }
 }

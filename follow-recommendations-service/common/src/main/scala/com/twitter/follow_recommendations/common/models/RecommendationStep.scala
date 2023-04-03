@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
 
-case class RecommendationStep(
-  recommendations: Seq[FlowRecommendation],
-  followedUserIds: Set[Long]) {
+caselon class ReloncommelonndationStelonp(
+  reloncommelonndations: Selonq[FlowReloncommelonndation],
+  followelondUselonrIds: Selont[Long]) {
 
-  def toThrift: t.RecommendationStep = t.RecommendationStep(
-    recommendations = recommendations.map(_.toThrift),
-    followedUserIds = followedUserIds
+  delonf toThrift: t.ReloncommelonndationStelonp = t.ReloncommelonndationStelonp(
+    reloncommelonndations = reloncommelonndations.map(_.toThrift),
+    followelondUselonrIds = followelondUselonrIds
   )
 
-  def toOfflineThrift: offline.OfflineRecommendationStep =
-    offline.OfflineRecommendationStep(
-      recommendations = recommendations.map(_.toOfflineThrift),
-      followedUserIds = followedUserIds)
+  delonf toOfflinelonThrift: offlinelon.OfflinelonReloncommelonndationStelonp =
+    offlinelon.OfflinelonReloncommelonndationStelonp(
+      reloncommelonndations = reloncommelonndations.map(_.toOfflinelonThrift),
+      followelondUselonrIds = followelondUselonrIds)
 
 }
 
-object RecommendationStep {
+objelonct ReloncommelonndationStelonp {
 
-  def fromThrift(recommendationStep: t.RecommendationStep): RecommendationStep = {
-    RecommendationStep(
-      recommendations = recommendationStep.recommendations.map(FlowRecommendation.fromThrift),
-      followedUserIds = recommendationStep.followedUserIds.toSet)
+  delonf fromThrift(reloncommelonndationStelonp: t.ReloncommelonndationStelonp): ReloncommelonndationStelonp = {
+    ReloncommelonndationStelonp(
+      reloncommelonndations = reloncommelonndationStelonp.reloncommelonndations.map(FlowReloncommelonndation.fromThrift),
+      followelondUselonrIds = reloncommelonndationStelonp.followelondUselonrIds.toSelont)
   }
 
 }

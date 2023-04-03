@@ -1,78 +1,78 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.functional_component.feature_hydrator.adapters.twhin_embeddings.TwhinUserEngagementEmbeddingsAdapter
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TwhinUserEngagementFeatureRepository
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.ml.api.{thriftscala => ml}
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.twhin_elonmbelonddings.TwhinUselonrelonngagelonmelonntelonmbelonddingsAdaptelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TwhinUselonrelonngagelonmelonntFelonaturelonRelonpository
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.ml.api.util.ScalaToJavaDataReloncordConvelonrsions
+import com.twittelonr.ml.api.{thriftscala => ml}
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonpository
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object TwhinUserEngagementFeature
-    extends DataRecordInAFeature[PipelineQuery]
-    with FeatureWithDefaultOnFailure[PipelineQuery, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct TwhinUselonrelonngagelonmelonntFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[PipelonlinelonQuelonry]
+    with FelonaturelonWithDelonfaultOnFailurelon[PipelonlinelonQuelonry, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class TwhinUserEngagementQueryFeatureHydrator @Inject() (
-  @Named(TwhinUserEngagementFeatureRepository)
-  client: KeyValueRepository[Seq[Long], Long, ml.FloatTensor],
-  statsReceiver: StatsReceiver)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@Singlelonton
+class TwhinUselonrelonngagelonmelonntQuelonryFelonaturelonHydrator @Injelonct() (
+  @Namelond(TwhinUselonrelonngagelonmelonntFelonaturelonRelonpository)
+  clielonnt: KelonyValuelonRelonpository[Selonq[Long], Long, ml.FloatTelonnsor],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TwhinUserEngagement")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("TwhinUselonrelonngagelonmelonnt")
 
-  override val features: Set[Feature[_, _]] = Set(TwhinUserEngagementFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(TwhinUselonrelonngagelonmelonntFelonaturelon)
 
-  private val scopedStatsReceiver = statsReceiver.scope(getClass.getSimpleName)
-  private val keyFoundCounter = scopedStatsReceiver.counter("key/found")
-  private val keyLossCounter = scopedStatsReceiver.counter("key/loss")
-  private val keyFailureCounter = scopedStatsReceiver.counter("key/failure")
+  privatelon val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(gelontClass.gelontSimplelonNamelon)
+  privatelon val kelonyFoundCountelonr = scopelondStatsReloncelonivelonr.countelonr("kelony/found")
+  privatelon val kelonyLossCountelonr = scopelondStatsReloncelonivelonr.countelonr("kelony/loss")
+  privatelon val kelonyFailurelonCountelonr = scopelondStatsReloncelonivelonr.countelonr("kelony/failurelon")
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
-    Stitch.callFuture {
-      client(Seq(userId)).map { results =>
-        val embedding: Option[ml.FloatTensor] = results(userId) match {
-          case Return(value) =>
-            if (value.exists(_.floats.nonEmpty)) keyFoundCounter.incr()
-            else keyLossCounter.incr()
-            value
-          case Throw(_) =>
-            keyFailureCounter.incr()
-            None
-          case _ =>
-            None
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    val uselonrId = quelonry.gelontRelonquirelondUselonrId
+    Stitch.callFuturelon {
+      clielonnt(Selonq(uselonrId)).map { relonsults =>
+        val elonmbelondding: Option[ml.FloatTelonnsor] = relonsults(uselonrId) match {
+          caselon Relonturn(valuelon) =>
+            if (valuelon.elonxists(_.floats.nonelonmpty)) kelonyFoundCountelonr.incr()
+            elonlselon kelonyLossCountelonr.incr()
+            valuelon
+          caselon Throw(_) =>
+            kelonyFailurelonCountelonr.incr()
+            Nonelon
+          caselon _ =>
+            Nonelon
         }
-        val dataRecord =
-          new RichDataRecord(new DataRecord, TwhinUserEngagementEmbeddingsAdapter.getFeatureContext)
-        embedding.foreach { floatTensor =>
-          dataRecord.setFeatureValue(
-            TwhinUserEngagementEmbeddingsAdapter.twhinEmbeddingsFeature,
-            ScalaToJavaDataRecordConversions.scalaTensor2Java(
-              ml.GeneralTensor.FloatTensor(floatTensor))
+        val dataReloncord =
+          nelonw RichDataReloncord(nelonw DataReloncord, TwhinUselonrelonngagelonmelonntelonmbelonddingsAdaptelonr.gelontFelonaturelonContelonxt)
+        elonmbelondding.forelonach { floatTelonnsor =>
+          dataReloncord.selontFelonaturelonValuelon(
+            TwhinUselonrelonngagelonmelonntelonmbelonddingsAdaptelonr.twhinelonmbelonddingsFelonaturelon,
+            ScalaToJavaDataReloncordConvelonrsions.scalaTelonnsor2Java(
+              ml.GelonnelonralTelonnsor.FloatTelonnsor(floatTelonnsor))
           )
         }
 
-        FeatureMapBuilder()
-          .add(TwhinUserEngagementFeature, dataRecord.getRecord)
+        FelonaturelonMapBuildelonr()
+          .add(TwhinUselonrelonngagelonmelonntFelonaturelon, dataReloncord.gelontReloncord)
           .build()
       }
     }

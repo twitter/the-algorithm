@@ -1,389 +1,389 @@
-package com.twitter.visibility.configapi.configs
+packagelon com.twittelonr.visibility.configapi.configs
 
-import com.twitter.decider.Recipient
-import com.twitter.decider.SimpleRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.BaseRequestContext
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.configapi.WithGuestId
-import com.twitter.timelines.configapi.WithUserId
-import com.twitter.timelines.configapi.decider.DeciderSwitchOverrideValue
-import com.twitter.timelines.configapi.decider.GuestRecipient
-import com.twitter.timelines.configapi.decider.RecipientBuilder
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.TimelineConversationsDownrankingSpecificParams
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.models.SafetyLevel._
+import com.twittelonr.deloncidelonr.Reloncipielonnt
+import com.twittelonr.deloncidelonr.SimplelonReloncipielonnt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonRelonquelonstContelonxt
+import com.twittelonr.timelonlinelons.configapi.Config
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.WithGuelonstId
+import com.twittelonr.timelonlinelons.configapi.WithUselonrId
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.DeloncidelonrSwitchOvelonrridelonValuelon
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.GuelonstReloncipielonnt
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.ReloncipielonntBuildelonr
+import com.twittelonr.visibility.configapi.params.RulelonParams
+import com.twittelonr.visibility.configapi.params.TimelonlinelonConvelonrsationsDownrankingSpeloncificParams
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl._
 
-private[visibility] object VisibilityDeciders {
-  val SafetyLevelToDeciderMap: Map[SafetyLevel, DeciderKey.Value] = Map(
-    AllSubscribedLists -> DeciderKey.EnableAllSubscribedListsSafetyLevel,
-    AccessInternalPromotedContent -> DeciderKey.EnableAccessInternalPromotedContentSafetyLevel,
-    AdsBusinessSettings -> DeciderKey.EnableAdsBusinessSettingsSafetyLevel,
-    AdsCampaign -> DeciderKey.EnableAdsCampaignSafetyLevel,
-    AdsManager -> DeciderKey.EnableAdsManagerSafetyLevel,
-    AdsReportingDashboard -> DeciderKey.EnableAdsReportingDashboardSafetyLevel,
-    Appeals -> DeciderKey.EnableAppealsSafetyLevel,
-    ArticleTweetTimeline -> DeciderKey.EnableArticleTweetTimelineSafetyLevel,
-    BaseQig -> DeciderKey.EnableBaseQig,
-    BirdwatchNoteAuthor -> DeciderKey.EnableBirdwatchNoteAuthorSafetyLevel,
-    BirdwatchNoteTweetsTimeline -> DeciderKey.EnableBirdwatchNoteTweetsTimelineSafetyLevel,
-    BirdwatchNeedsYourHelpNotifications -> DeciderKey.EnableBirdwatchNeedsYourHelpNotificationsSafetyLevel,
-    BlockMuteUsersTimeline -> DeciderKey.EnableBlockMuteUsersTimelineSafetyLevel,
-    BrandSafety -> DeciderKey.EnableBrandSafetySafetyLevel,
-    CardPollVoting -> DeciderKey.EnableCardPollVotingSafetyLevel,
-    CardsService -> DeciderKey.EnableCardsServiceSafetyLevel,
-    Communities -> DeciderKey.EnableCommunitiesSafetyLevel,
-    ContentControlToolInstall -> DeciderKey.EnableContentControlToolInstallSafetyLevel,
-    ConversationFocalPrehydration -> DeciderKey.EnableConversationFocalPrehydrationSafetyLevel,
-    ConversationFocalTweet -> DeciderKey.EnableConversationFocalTweetSafetyLevel,
-    ConversationInjectedTweet -> DeciderKey.EnableConversationInjectedTweetSafetyLevel,
-    ConversationReply -> DeciderKey.EnableConversationReplySafetyLevel,
-    CuratedTrendsRepresentativeTweet -> DeciderKey.EnableCuratedTrendsRepresentativeTweet,
-    CurationPolicyViolations -> DeciderKey.EnableCurationPolicyViolations,
-    DeprecatedSafetyLevel -> DeciderKey.EnableDeprecatedSafetyLevelSafetyLevel,
-    DevPlatformGetListTweets -> DeciderKey.EnableDevPlatformGetListTweetsSafetyLevel,
-    DesFollowingAndFollowersUserList -> DeciderKey.EnableDesFollowingAndFollowersUserListSafetyLevel,
-    DesHomeTimeline -> DeciderKey.EnableDesHomeTimelineSafetyLevel,
-    DesQuoteTweetTimeline -> DeciderKey.EnableDesQuoteTweetTimelineSafetyLevel,
-    DesRealtime -> DeciderKey.EnableDesRealtimeSafetyLevel,
-    DesRealtimeSpamEnrichment -> DeciderKey.EnableDesRealtimeSpamEnrichmentSafetyLevel,
-    DesRealtimeTweetFilter -> DeciderKey.EnableDesRealtimeTweetFilterSafetyLevel,
-    DesRetweetingUsers -> DeciderKey.EnableDesRetweetingUsersSafetyLevel,
-    DesTweetDetail -> DeciderKey.EnableDesTweetDetailSafetyLevel,
-    DesTweetLikingUsers -> DeciderKey.EnableDesTweetLikingUsersSafetyLevel,
-    DesUserBookmarks -> DeciderKey.EnableDesUserBookmarksSafetyLevel,
-    DesUserLikedTweets -> DeciderKey.EnableDesUserLikedTweetsSafetyLevel,
-    DesUserMentions -> DeciderKey.EnableDesUserMentionsSafetyLevel,
-    DesUserTweets -> DeciderKey.EnableDesUserTweetsSafetyLevel,
-    DevPlatformComplianceStream -> DeciderKey.EnableDevPlatformComplianceStreamSafetyLevel,
-    DirectMessages -> DeciderKey.EnableDirectMessagesSafetyLevel,
-    DirectMessagesConversationList -> DeciderKey.EnableDirectMessagesConversationListSafetyLevel,
-    DirectMessagesConversationTimeline -> DeciderKey.EnableDirectMessagesConversationTimelineSafetyLevel,
-    DirectMessagesInbox -> DeciderKey.EnableDirectMessagesInboxSafetyLevel,
-    DirectMessagesMutedUsers -> DeciderKey.EnableDirectMessagesMutedUsersSafetyLevel,
-    DirectMessagesPinned -> DeciderKey.EnableDirectMessagesPinnedSafetyLevel,
-    DirectMessagesSearch -> DeciderKey.EnableDirectMessagesSearchSafetyLevel,
-    EditHistoryTimeline -> DeciderKey.EnableEditHistoryTimelineSafetyLevel,
-    ElevatedQuoteTweetTimeline -> DeciderKey.EnableElevatedQuoteTweetTimelineSafetyLevel,
-    EmbeddedTweet -> DeciderKey.EnableEmbeddedTweetSafetyLevel,
-    EmbedsPublicInterestNotice -> DeciderKey.EnableEmbedsPublicInterestNoticeSafetyLevel,
-    EmbedTweetMarkup -> DeciderKey.EnableEmbedTweetMarkupSafetyLevel,
-    FilterAll -> DeciderKey.EnableFilterAllSafetyLevel,
-    FilterAllPlaceholder -> DeciderKey.EnableFilterAllPlaceholderSafetyLevel,
-    FilterNone -> DeciderKey.EnableFilterNoneSafetyLevel,
-    FilterDefault -> DeciderKey.EnableFilterDefaultSafetyLevel,
-    FollowedTopicsTimeline -> DeciderKey.EnableFollowedTopicsTimelineSafetyLevel,
-    FollowerConnections -> DeciderKey.EnableFollowerConnectionsSafetyLevel,
-    FollowingAndFollowersUserList -> DeciderKey.EnableFollowingAndFollowersUserListSafetyLevel,
-    ForDevelopmentOnly -> DeciderKey.EnableForDevelopmentOnlySafetyLevel,
-    FriendsFollowingList -> DeciderKey.EnableFriendsFollowingListSafetyLevel,
-    GraphqlDefault -> DeciderKey.EnableGraphqlDefaultSafetyLevel,
-    GryphonDecksAndColumns -> DeciderKey.EnableGryphonDecksAndColumnsSafetyLevel,
-    HumanizationNudge -> DeciderKey.EnableHumanizationNudgeSafetyLevel,
-    KitchenSinkDevelopment -> DeciderKey.EnableKitchenSinkDevelopmentSafetyLevel,
-    ListHeader -> DeciderKey.EnableListHeaderSafetyLevel,
-    ListMemberships -> DeciderKey.EnableListMembershipsSafetyLevel,
-    ListOwnerships -> DeciderKey.EnableListOwnershipsSafetyLevel,
-    ListRecommendations -> DeciderKey.EnableListRecommendationsSafetyLevel,
-    ListSearch -> DeciderKey.EnableListSearchSafetyLevel,
-    ListSubscriptions -> DeciderKey.EnableListSubscriptionsSafetyLevel,
-    LiveVideoTimeline -> DeciderKey.EnableLiveVideoTimelineSafetyLevel,
-    LivePipelineEngagementCounts -> DeciderKey.EnableLivePipelineEngagementCountsSafetyLevel,
-    MagicRecs -> DeciderKey.EnableMagicRecsSafetyLevel,
-    MagicRecsAggressive -> DeciderKey.EnableMagicRecsAggressiveSafetyLevel,
-    MagicRecsAggressiveV2 -> DeciderKey.EnableMagicRecsAggressiveV2SafetyLevel,
-    MagicRecsV2 -> DeciderKey.EnableMagicRecsV2SafetyLevel,
-    Minimal -> DeciderKey.EnableMinimalSafetyLevel,
-    ModeratedTweetsTimeline -> DeciderKey.EnableModeratedTweetsTimelineSafetyLevel,
-    Moments -> DeciderKey.EnableMomentsSafetyLevel,
-    NearbyTimeline -> DeciderKey.EnableNearbyTimelineSafetyLevel,
-    NewUserExperience -> DeciderKey.EnableNewUserExperienceSafetyLevel,
-    NotificationsIbis -> DeciderKey.EnableNotificationsIbisSafetyLevel,
-    NotificationsPlatform -> DeciderKey.EnableNotificationsPlatformSafetyLevel,
-    NotificationsPlatformPush -> DeciderKey.EnableNotificationsPlatformPushSafetyLevel,
-    NotificationsQig -> DeciderKey.EnableNotificationsQig,
-    NotificationsRead -> DeciderKey.EnableNotificationsReadSafetyLevel,
-    NotificationsTimelineDeviceFollow -> DeciderKey.EnableNotificationsTimelineDeviceFollowSafetyLevel,
-    NotificationsWrite -> DeciderKey.EnableNotificationsWriteSafetyLevel,
-    NotificationsWriterV2 -> DeciderKey.EnableNotificationsWriterV2SafetyLevel,
-    NotificationsWriterTweetHydrator -> DeciderKey.EnableNotificationsWriterTweetHydratorSafetyLevel,
-    ProfileMixerMedia -> DeciderKey.EnableProfileMixeMediaSafetyLevel,
-    ProfileMixerFavorites -> DeciderKey.EnableProfileMixerFavoritesSafetyLevel,
-    QuickPromoteTweetEligibility -> DeciderKey.EnableQuickPromoteTweetEligibilitySafetyLevel,
-    QuoteTweetTimeline -> DeciderKey.EnableQuoteTweetTimelineSafetyLevel,
-    QuotedTweetRules -> DeciderKey.EnableQuotedTweetRulesSafetyLevel,
-    Recommendations -> DeciderKey.EnableRecommendationsSafetyLevel,
-    RecosVideo -> DeciderKey.EnableRecosVideoSafetyLevel,
-    RecosWritePath -> DeciderKey.EnableRecosWritePathSafetyLevel,
-    RepliesGrouping -> DeciderKey.EnableRepliesGroupingSafetyLevel,
-    ReportCenter -> DeciderKey.EnableReportCenterSafetyLevel,
-    ReturningUserExperience -> DeciderKey.EnableReturningUserExperienceSafetyLevel,
-    ReturningUserExperienceFocalTweet -> DeciderKey.EnableReturningUserExperienceFocalTweetSafetyLevel,
-    Revenue -> DeciderKey.EnableRevenueSafetyLevel,
-    RitoActionedTweetTimeline -> DeciderKey.EnableRitoActionedTweetTimelineSafetyLevel,
-    SafeSearchMinimal -> DeciderKey.EnableSafeSearchMinimalSafetyLevel,
-    SafeSearchStrict -> DeciderKey.EnableSafeSearchStrictSafetyLevel,
-    SearchMixerSrpMinimal -> DeciderKey.EnableSearchMixerSrpMinimalSafetyLevel,
-    SearchMixerSrpStrict -> DeciderKey.EnableSearchMixerSrpStrictSafetyLevel,
-    SearchHydration -> DeciderKey.EnableSearchHydration,
-    SearchLatest -> DeciderKey.EnableSearchLatest,
-    SearchPeopleSrp -> DeciderKey.EnableSearchPeopleSrp,
-    SearchPeopleTypeahead -> DeciderKey.EnableSearchPeopleTypeahead,
-    SearchPhoto -> DeciderKey.EnableSearchPhoto,
-    SearchTrendTakeoverPromotedTweet -> DeciderKey.EnableSearchTrendTakeoverPromotedTweet,
-    SearchTop -> DeciderKey.EnableSearchTop,
-    SearchTopQig -> DeciderKey.EnableSearchTopQig,
-    SearchVideo -> DeciderKey.EnableSearchVideo,
-    SearchBlenderUserRules -> DeciderKey.EnableSearchLatestUserRules,
-    SearchLatestUserRules -> DeciderKey.EnableSearchLatestUserRules,
-    ShoppingManagerSpyMode -> DeciderKey.EnableShoppingManagerSpyModeSafetyLevel,
-    SignalsReactions -> DeciderKey.EnableSignalsReactions,
-    SignalsTweetReactingUsers -> DeciderKey.EnableSignalsTweetReactingUsers,
-    SocialProof -> DeciderKey.EnableSocialProof,
-    SoftInterventionPivot -> DeciderKey.EnableSoftInterventionPivot,
-    SpaceFleetline -> DeciderKey.EnableSpaceFleetlineSafetyLevel,
-    SpaceHomeTimelineUpranking -> DeciderKey.EnableSpaceHomeTimelineUprankingSafetyLevel,
-    SpaceJoinScreen -> DeciderKey.EnableSpaceJoinScreenSafetyLevel,
-    SpaceNotifications -> DeciderKey.EnableSpaceNotificationsSafetyLevel,
-    Spaces -> DeciderKey.EnableSpacesSafetyLevel,
-    SpacesParticipants -> DeciderKey.EnableSpacesParticipantsSafetyLevel,
-    SpacesSellerApplicationStatus -> DeciderKey.EnableSpacesSellerApplicationStatus,
-    SpacesSharing -> DeciderKey.EnableSpacesSharingSafetyLevel,
-    SpaceTweetAvatarHomeTimeline -> DeciderKey.EnableSpaceTweetAvatarHomeTimelineSafetyLevel,
-    StickersTimeline -> DeciderKey.EnableStickersTimelineSafetyLevel,
-    StratoExtLimitedEngagements -> DeciderKey.EnableStratoExtLimitedEngagementsSafetyLevel,
-    StreamServices -> DeciderKey.EnableStreamServicesSafetyLevel,
-    SuperFollowerConnections -> DeciderKey.EnableSuperFollowerConnectionsSafetyLevel,
-    SuperLike -> DeciderKey.EnableSuperLikeSafetyLevel,
-    Test -> DeciderKey.EnableTestSafetyLevel,
-    TimelineContentControls -> DeciderKey.EnableTimelineContentControlsSafetyLevel,
-    TimelineConversations -> DeciderKey.EnableTimelineConversationsSafetyLevel,
-    TimelineConversationsDownranking -> DeciderKey.EnableTimelineConversationsDownrankingSafetyLevel,
-    TimelineConversationsDownrankingMinimal -> DeciderKey.EnableTimelineConversationsDownrankingMinimalSafetyLevel,
-    TimelineFollowingActivity -> DeciderKey.EnableTimelineFollowingActivitySafetyLevel,
-    TimelineHome -> DeciderKey.EnableTimelineHomeSafetyLevel,
-    TimelineHomeCommunities -> DeciderKey.EnableTimelineHomeCommunitiesSafetyLevel,
-    TimelineHomeHydration -> DeciderKey.EnableTimelineHomeHydrationSafetyLevel,
-    TimelineHomePromotedHydration -> DeciderKey.EnableTimelineHomePromotedHydrationSafetyLevel,
-    TimelineHomeRecommendations -> DeciderKey.EnableTimelineHomeRecommendationsSafetyLevel,
-    TimelineHomeTopicFollowRecommendations -> DeciderKey.EnableTimelineHomeTopicFollowRecommendationsSafetyLevel,
-    TimelineScorer -> DeciderKey.EnableTimelineScorerSafetyLevel,
-    TopicsLandingPageTopicRecommendations -> DeciderKey.EnableTopicsLandingPageTopicRecommendationsSafetyLevel,
-    ExploreRecommendations -> DeciderKey.EnableExploreRecommendationsSafetyLevel,
-    TimelineInjection -> DeciderKey.EnableTimelineInjectionSafetyLevel,
-    TimelineMentions -> DeciderKey.EnableTimelineMentionsSafetyLevel,
-    TimelineModeratedTweetsHydration -> DeciderKey.EnableTimelineModeratedTweetsHydrationSafetyLevel,
-    TimelineHomeLatest -> DeciderKey.EnableTimelineHomeLatestSafetyLevel,
-    TimelineLikedBy -> DeciderKey.EnableTimelineLikedBySafetyLevel,
-    TimelineRetweetedBy -> DeciderKey.EnableTimelineRetweetedBySafetyLevel,
-    TimelineSuperLikedBy -> DeciderKey.EnableTimelineSuperLikedBySafetyLevel,
-    TimelineBookmark -> DeciderKey.EnableTimelineBookmarkSafetyLevel,
-    TimelineMedia -> DeciderKey.EnableTimelineMediaSafetyLevel,
-    TimelineReactiveBlending -> DeciderKey.EnableTimelineReactiveBlendingSafetyLevel,
-    TimelineFavorites -> DeciderKey.EnableTimelineFavoritesSafetyLevel,
-    TimelineFavoritesSelfView -> DeciderKey.EnableSelfViewTimelineFavoritesSafetyLevel,
-    TimelineLists -> DeciderKey.EnableTimelineListsSafetyLevel,
-    TimelineProfile -> DeciderKey.EnableTimelineProfileSafetyLevel,
-    TimelineProfileAll -> DeciderKey.EnableTimelineProfileAllSafetyLevel,
-    TimelineProfileSpaces -> DeciderKey.EnableTimelineProfileSpacesSafetyLevel,
-    TimelineProfileSuperFollows -> DeciderKey.EnableTimelineProfileSuperFollowsSafetyLevel,
-    TimelineFocalTweet -> DeciderKey.EnableTweetTimelineFocalTweetSafetyLevel,
-    TweetDetailWithInjectionsHydration -> DeciderKey.EnableTweetDetailWithInjectionsHydrationSafetyLevel,
-    Tombstoning -> DeciderKey.EnableTombstoningSafetyLevel,
-    TopicRecommendations -> DeciderKey.EnableTopicRecommendationsSafetyLevel,
-    TrendsRepresentativeTweet -> DeciderKey.EnableTrendsRepresentativeTweetSafetyLevel,
-    TrustedFriendsUserList -> DeciderKey.EnableTrustedFriendsUserListSafetyLevel,
-    TweetDetail -> DeciderKey.EnableTweetDetailSafetyLevel,
-    TweetDetailNonToo -> DeciderKey.EnableTweetDetailNonTooSafetyLevel,
-    TweetEngagers -> DeciderKey.EnableTweetEngagersSafetyLevel,
-    TweetReplyNudge -> DeciderKey.EnableTweetReplyNudgeSafetyLevel,
-    TweetScopedTimeline -> DeciderKey.EnableTweetScopedTimelineSafetyLevel,
-    TweetWritesApi -> DeciderKey.EnableTweetWritesApiSafetyLevel,
-    TwitterArticleCompose -> DeciderKey.EnableTwitterArticleComposeSafetyLevel,
-    TwitterArticleProfileTab -> DeciderKey.EnableTwitterArticleProfileTabSafetyLevel,
-    TwitterArticleRead -> DeciderKey.EnableTwitterArticleReadSafetyLevel,
-    UserProfileHeader -> DeciderKey.EnableUserProfileHeaderSafetyLevel,
-    UserMilestoneRecommendation -> DeciderKey.EnableUserMilestoneRecommendationSafetyLevel,
-    UserScopedTimeline -> DeciderKey.EnableUserScopedTimelineSafetyLevel,
-    UserSearchSrp -> DeciderKey.EnableUserSearchSrpSafetyLevel,
-    UserSearchTypeahead -> DeciderKey.EnableUserSearchTypeaheadSafetyLevel,
-    UserSelfViewOnly -> DeciderKey.EnableUserSelfViewOnlySafetyLevel,
-    UserSettings -> DeciderKey.EnableUserSettingsSafetyLevel,
-    VideoAds -> DeciderKey.EnableVideoAdsSafetyLevel,
-    WritePathLimitedActionsEnforcement -> DeciderKey.EnableWritePathLimitedActionsEnforcementSafetyLevel,
-    ZipbirdConsumerArchives -> DeciderKey.EnableZipbirdConsumerArchivesSafetyLevel,
-    TweetAward -> DeciderKey.EnableTweetAwardSafetyLevel,
+privatelon[visibility] objelonct VisibilityDeloncidelonrs {
+  val SafelontyLelonvelonlToDeloncidelonrMap: Map[SafelontyLelonvelonl, DeloncidelonrKelony.Valuelon] = Map(
+    AllSubscribelondLists -> DeloncidelonrKelony.elonnablelonAllSubscribelondListsSafelontyLelonvelonl,
+    AccelonssIntelonrnalPromotelondContelonnt -> DeloncidelonrKelony.elonnablelonAccelonssIntelonrnalPromotelondContelonntSafelontyLelonvelonl,
+    AdsBusinelonssSelonttings -> DeloncidelonrKelony.elonnablelonAdsBusinelonssSelonttingsSafelontyLelonvelonl,
+    AdsCampaign -> DeloncidelonrKelony.elonnablelonAdsCampaignSafelontyLelonvelonl,
+    AdsManagelonr -> DeloncidelonrKelony.elonnablelonAdsManagelonrSafelontyLelonvelonl,
+    AdsRelonportingDashboard -> DeloncidelonrKelony.elonnablelonAdsRelonportingDashboardSafelontyLelonvelonl,
+    Appelonals -> DeloncidelonrKelony.elonnablelonAppelonalsSafelontyLelonvelonl,
+    ArticlelonTwelonelontTimelonlinelon -> DeloncidelonrKelony.elonnablelonArticlelonTwelonelontTimelonlinelonSafelontyLelonvelonl,
+    BaselonQig -> DeloncidelonrKelony.elonnablelonBaselonQig,
+    BirdwatchNotelonAuthor -> DeloncidelonrKelony.elonnablelonBirdwatchNotelonAuthorSafelontyLelonvelonl,
+    BirdwatchNotelonTwelonelontsTimelonlinelon -> DeloncidelonrKelony.elonnablelonBirdwatchNotelonTwelonelontsTimelonlinelonSafelontyLelonvelonl,
+    BirdwatchNelonelondsYourHelonlpNotifications -> DeloncidelonrKelony.elonnablelonBirdwatchNelonelondsYourHelonlpNotificationsSafelontyLelonvelonl,
+    BlockMutelonUselonrsTimelonlinelon -> DeloncidelonrKelony.elonnablelonBlockMutelonUselonrsTimelonlinelonSafelontyLelonvelonl,
+    BrandSafelonty -> DeloncidelonrKelony.elonnablelonBrandSafelontySafelontyLelonvelonl,
+    CardPollVoting -> DeloncidelonrKelony.elonnablelonCardPollVotingSafelontyLelonvelonl,
+    CardsSelonrvicelon -> DeloncidelonrKelony.elonnablelonCardsSelonrvicelonSafelontyLelonvelonl,
+    Communitielons -> DeloncidelonrKelony.elonnablelonCommunitielonsSafelontyLelonvelonl,
+    ContelonntControlToolInstall -> DeloncidelonrKelony.elonnablelonContelonntControlToolInstallSafelontyLelonvelonl,
+    ConvelonrsationFocalPrelonhydration -> DeloncidelonrKelony.elonnablelonConvelonrsationFocalPrelonhydrationSafelontyLelonvelonl,
+    ConvelonrsationFocalTwelonelont -> DeloncidelonrKelony.elonnablelonConvelonrsationFocalTwelonelontSafelontyLelonvelonl,
+    ConvelonrsationInjelonctelondTwelonelont -> DeloncidelonrKelony.elonnablelonConvelonrsationInjelonctelondTwelonelontSafelontyLelonvelonl,
+    ConvelonrsationRelonply -> DeloncidelonrKelony.elonnablelonConvelonrsationRelonplySafelontyLelonvelonl,
+    CuratelondTrelonndsRelonprelonselonntativelonTwelonelont -> DeloncidelonrKelony.elonnablelonCuratelondTrelonndsRelonprelonselonntativelonTwelonelont,
+    CurationPolicyViolations -> DeloncidelonrKelony.elonnablelonCurationPolicyViolations,
+    DelonpreloncatelondSafelontyLelonvelonl -> DeloncidelonrKelony.elonnablelonDelonpreloncatelondSafelontyLelonvelonlSafelontyLelonvelonl,
+    DelonvPlatformGelontListTwelonelonts -> DeloncidelonrKelony.elonnablelonDelonvPlatformGelontListTwelonelontsSafelontyLelonvelonl,
+    DelonsFollowingAndFollowelonrsUselonrList -> DeloncidelonrKelony.elonnablelonDelonsFollowingAndFollowelonrsUselonrListSafelontyLelonvelonl,
+    DelonsHomelonTimelonlinelon -> DeloncidelonrKelony.elonnablelonDelonsHomelonTimelonlinelonSafelontyLelonvelonl,
+    DelonsQuotelonTwelonelontTimelonlinelon -> DeloncidelonrKelony.elonnablelonDelonsQuotelonTwelonelontTimelonlinelonSafelontyLelonvelonl,
+    DelonsRelonaltimelon -> DeloncidelonrKelony.elonnablelonDelonsRelonaltimelonSafelontyLelonvelonl,
+    DelonsRelonaltimelonSpamelonnrichmelonnt -> DeloncidelonrKelony.elonnablelonDelonsRelonaltimelonSpamelonnrichmelonntSafelontyLelonvelonl,
+    DelonsRelonaltimelonTwelonelontFiltelonr -> DeloncidelonrKelony.elonnablelonDelonsRelonaltimelonTwelonelontFiltelonrSafelontyLelonvelonl,
+    DelonsRelontwelonelontingUselonrs -> DeloncidelonrKelony.elonnablelonDelonsRelontwelonelontingUselonrsSafelontyLelonvelonl,
+    DelonsTwelonelontDelontail -> DeloncidelonrKelony.elonnablelonDelonsTwelonelontDelontailSafelontyLelonvelonl,
+    DelonsTwelonelontLikingUselonrs -> DeloncidelonrKelony.elonnablelonDelonsTwelonelontLikingUselonrsSafelontyLelonvelonl,
+    DelonsUselonrBookmarks -> DeloncidelonrKelony.elonnablelonDelonsUselonrBookmarksSafelontyLelonvelonl,
+    DelonsUselonrLikelondTwelonelonts -> DeloncidelonrKelony.elonnablelonDelonsUselonrLikelondTwelonelontsSafelontyLelonvelonl,
+    DelonsUselonrMelonntions -> DeloncidelonrKelony.elonnablelonDelonsUselonrMelonntionsSafelontyLelonvelonl,
+    DelonsUselonrTwelonelonts -> DeloncidelonrKelony.elonnablelonDelonsUselonrTwelonelontsSafelontyLelonvelonl,
+    DelonvPlatformCompliancelonStrelonam -> DeloncidelonrKelony.elonnablelonDelonvPlatformCompliancelonStrelonamSafelontyLelonvelonl,
+    DirelonctMelonssagelons -> DeloncidelonrKelony.elonnablelonDirelonctMelonssagelonsSafelontyLelonvelonl,
+    DirelonctMelonssagelonsConvelonrsationList -> DeloncidelonrKelony.elonnablelonDirelonctMelonssagelonsConvelonrsationListSafelontyLelonvelonl,
+    DirelonctMelonssagelonsConvelonrsationTimelonlinelon -> DeloncidelonrKelony.elonnablelonDirelonctMelonssagelonsConvelonrsationTimelonlinelonSafelontyLelonvelonl,
+    DirelonctMelonssagelonsInbox -> DeloncidelonrKelony.elonnablelonDirelonctMelonssagelonsInboxSafelontyLelonvelonl,
+    DirelonctMelonssagelonsMutelondUselonrs -> DeloncidelonrKelony.elonnablelonDirelonctMelonssagelonsMutelondUselonrsSafelontyLelonvelonl,
+    DirelonctMelonssagelonsPinnelond -> DeloncidelonrKelony.elonnablelonDirelonctMelonssagelonsPinnelondSafelontyLelonvelonl,
+    DirelonctMelonssagelonsSelonarch -> DeloncidelonrKelony.elonnablelonDirelonctMelonssagelonsSelonarchSafelontyLelonvelonl,
+    elonditHistoryTimelonlinelon -> DeloncidelonrKelony.elonnablelonelonditHistoryTimelonlinelonSafelontyLelonvelonl,
+    elonlelonvatelondQuotelonTwelonelontTimelonlinelon -> DeloncidelonrKelony.elonnablelonelonlelonvatelondQuotelonTwelonelontTimelonlinelonSafelontyLelonvelonl,
+    elonmbelonddelondTwelonelont -> DeloncidelonrKelony.elonnablelonelonmbelonddelondTwelonelontSafelontyLelonvelonl,
+    elonmbelondsPublicIntelonrelonstNoticelon -> DeloncidelonrKelony.elonnablelonelonmbelondsPublicIntelonrelonstNoticelonSafelontyLelonvelonl,
+    elonmbelondTwelonelontMarkup -> DeloncidelonrKelony.elonnablelonelonmbelondTwelonelontMarkupSafelontyLelonvelonl,
+    FiltelonrAll -> DeloncidelonrKelony.elonnablelonFiltelonrAllSafelontyLelonvelonl,
+    FiltelonrAllPlacelonholdelonr -> DeloncidelonrKelony.elonnablelonFiltelonrAllPlacelonholdelonrSafelontyLelonvelonl,
+    FiltelonrNonelon -> DeloncidelonrKelony.elonnablelonFiltelonrNonelonSafelontyLelonvelonl,
+    FiltelonrDelonfault -> DeloncidelonrKelony.elonnablelonFiltelonrDelonfaultSafelontyLelonvelonl,
+    FollowelondTopicsTimelonlinelon -> DeloncidelonrKelony.elonnablelonFollowelondTopicsTimelonlinelonSafelontyLelonvelonl,
+    FollowelonrConnelonctions -> DeloncidelonrKelony.elonnablelonFollowelonrConnelonctionsSafelontyLelonvelonl,
+    FollowingAndFollowelonrsUselonrList -> DeloncidelonrKelony.elonnablelonFollowingAndFollowelonrsUselonrListSafelontyLelonvelonl,
+    ForDelonvelonlopmelonntOnly -> DeloncidelonrKelony.elonnablelonForDelonvelonlopmelonntOnlySafelontyLelonvelonl,
+    FrielonndsFollowingList -> DeloncidelonrKelony.elonnablelonFrielonndsFollowingListSafelontyLelonvelonl,
+    GraphqlDelonfault -> DeloncidelonrKelony.elonnablelonGraphqlDelonfaultSafelontyLelonvelonl,
+    GryphonDeloncksAndColumns -> DeloncidelonrKelony.elonnablelonGryphonDeloncksAndColumnsSafelontyLelonvelonl,
+    HumanizationNudgelon -> DeloncidelonrKelony.elonnablelonHumanizationNudgelonSafelontyLelonvelonl,
+    KitchelonnSinkDelonvelonlopmelonnt -> DeloncidelonrKelony.elonnablelonKitchelonnSinkDelonvelonlopmelonntSafelontyLelonvelonl,
+    ListHelonadelonr -> DeloncidelonrKelony.elonnablelonListHelonadelonrSafelontyLelonvelonl,
+    ListMelonmbelonrships -> DeloncidelonrKelony.elonnablelonListMelonmbelonrshipsSafelontyLelonvelonl,
+    ListOwnelonrships -> DeloncidelonrKelony.elonnablelonListOwnelonrshipsSafelontyLelonvelonl,
+    ListReloncommelonndations -> DeloncidelonrKelony.elonnablelonListReloncommelonndationsSafelontyLelonvelonl,
+    ListSelonarch -> DeloncidelonrKelony.elonnablelonListSelonarchSafelontyLelonvelonl,
+    ListSubscriptions -> DeloncidelonrKelony.elonnablelonListSubscriptionsSafelontyLelonvelonl,
+    LivelonVidelonoTimelonlinelon -> DeloncidelonrKelony.elonnablelonLivelonVidelonoTimelonlinelonSafelontyLelonvelonl,
+    LivelonPipelonlinelonelonngagelonmelonntCounts -> DeloncidelonrKelony.elonnablelonLivelonPipelonlinelonelonngagelonmelonntCountsSafelontyLelonvelonl,
+    MagicReloncs -> DeloncidelonrKelony.elonnablelonMagicReloncsSafelontyLelonvelonl,
+    MagicReloncsAggrelonssivelon -> DeloncidelonrKelony.elonnablelonMagicReloncsAggrelonssivelonSafelontyLelonvelonl,
+    MagicReloncsAggrelonssivelonV2 -> DeloncidelonrKelony.elonnablelonMagicReloncsAggrelonssivelonV2SafelontyLelonvelonl,
+    MagicReloncsV2 -> DeloncidelonrKelony.elonnablelonMagicReloncsV2SafelontyLelonvelonl,
+    Minimal -> DeloncidelonrKelony.elonnablelonMinimalSafelontyLelonvelonl,
+    ModelonratelondTwelonelontsTimelonlinelon -> DeloncidelonrKelony.elonnablelonModelonratelondTwelonelontsTimelonlinelonSafelontyLelonvelonl,
+    Momelonnts -> DeloncidelonrKelony.elonnablelonMomelonntsSafelontyLelonvelonl,
+    NelonarbyTimelonlinelon -> DeloncidelonrKelony.elonnablelonNelonarbyTimelonlinelonSafelontyLelonvelonl,
+    NelonwUselonrelonxpelonrielonncelon -> DeloncidelonrKelony.elonnablelonNelonwUselonrelonxpelonrielonncelonSafelontyLelonvelonl,
+    NotificationsIbis -> DeloncidelonrKelony.elonnablelonNotificationsIbisSafelontyLelonvelonl,
+    NotificationsPlatform -> DeloncidelonrKelony.elonnablelonNotificationsPlatformSafelontyLelonvelonl,
+    NotificationsPlatformPush -> DeloncidelonrKelony.elonnablelonNotificationsPlatformPushSafelontyLelonvelonl,
+    NotificationsQig -> DeloncidelonrKelony.elonnablelonNotificationsQig,
+    NotificationsRelonad -> DeloncidelonrKelony.elonnablelonNotificationsRelonadSafelontyLelonvelonl,
+    NotificationsTimelonlinelonDelonvicelonFollow -> DeloncidelonrKelony.elonnablelonNotificationsTimelonlinelonDelonvicelonFollowSafelontyLelonvelonl,
+    NotificationsWritelon -> DeloncidelonrKelony.elonnablelonNotificationsWritelonSafelontyLelonvelonl,
+    NotificationsWritelonrV2 -> DeloncidelonrKelony.elonnablelonNotificationsWritelonrV2SafelontyLelonvelonl,
+    NotificationsWritelonrTwelonelontHydrator -> DeloncidelonrKelony.elonnablelonNotificationsWritelonrTwelonelontHydratorSafelontyLelonvelonl,
+    ProfilelonMixelonrMelondia -> DeloncidelonrKelony.elonnablelonProfilelonMixelonMelondiaSafelontyLelonvelonl,
+    ProfilelonMixelonrFavoritelons -> DeloncidelonrKelony.elonnablelonProfilelonMixelonrFavoritelonsSafelontyLelonvelonl,
+    QuickPromotelonTwelonelontelonligibility -> DeloncidelonrKelony.elonnablelonQuickPromotelonTwelonelontelonligibilitySafelontyLelonvelonl,
+    QuotelonTwelonelontTimelonlinelon -> DeloncidelonrKelony.elonnablelonQuotelonTwelonelontTimelonlinelonSafelontyLelonvelonl,
+    QuotelondTwelonelontRulelons -> DeloncidelonrKelony.elonnablelonQuotelondTwelonelontRulelonsSafelontyLelonvelonl,
+    Reloncommelonndations -> DeloncidelonrKelony.elonnablelonReloncommelonndationsSafelontyLelonvelonl,
+    ReloncosVidelono -> DeloncidelonrKelony.elonnablelonReloncosVidelonoSafelontyLelonvelonl,
+    ReloncosWritelonPath -> DeloncidelonrKelony.elonnablelonReloncosWritelonPathSafelontyLelonvelonl,
+    RelonplielonsGrouping -> DeloncidelonrKelony.elonnablelonRelonplielonsGroupingSafelontyLelonvelonl,
+    RelonportCelonntelonr -> DeloncidelonrKelony.elonnablelonRelonportCelonntelonrSafelontyLelonvelonl,
+    RelonturningUselonrelonxpelonrielonncelon -> DeloncidelonrKelony.elonnablelonRelonturningUselonrelonxpelonrielonncelonSafelontyLelonvelonl,
+    RelonturningUselonrelonxpelonrielonncelonFocalTwelonelont -> DeloncidelonrKelony.elonnablelonRelonturningUselonrelonxpelonrielonncelonFocalTwelonelontSafelontyLelonvelonl,
+    Relonvelonnuelon -> DeloncidelonrKelony.elonnablelonRelonvelonnuelonSafelontyLelonvelonl,
+    RitoActionelondTwelonelontTimelonlinelon -> DeloncidelonrKelony.elonnablelonRitoActionelondTwelonelontTimelonlinelonSafelontyLelonvelonl,
+    SafelonSelonarchMinimal -> DeloncidelonrKelony.elonnablelonSafelonSelonarchMinimalSafelontyLelonvelonl,
+    SafelonSelonarchStrict -> DeloncidelonrKelony.elonnablelonSafelonSelonarchStrictSafelontyLelonvelonl,
+    SelonarchMixelonrSrpMinimal -> DeloncidelonrKelony.elonnablelonSelonarchMixelonrSrpMinimalSafelontyLelonvelonl,
+    SelonarchMixelonrSrpStrict -> DeloncidelonrKelony.elonnablelonSelonarchMixelonrSrpStrictSafelontyLelonvelonl,
+    SelonarchHydration -> DeloncidelonrKelony.elonnablelonSelonarchHydration,
+    SelonarchLatelonst -> DeloncidelonrKelony.elonnablelonSelonarchLatelonst,
+    SelonarchPelonoplelonSrp -> DeloncidelonrKelony.elonnablelonSelonarchPelonoplelonSrp,
+    SelonarchPelonoplelonTypelonahelonad -> DeloncidelonrKelony.elonnablelonSelonarchPelonoplelonTypelonahelonad,
+    SelonarchPhoto -> DeloncidelonrKelony.elonnablelonSelonarchPhoto,
+    SelonarchTrelonndTakelonovelonrPromotelondTwelonelont -> DeloncidelonrKelony.elonnablelonSelonarchTrelonndTakelonovelonrPromotelondTwelonelont,
+    SelonarchTop -> DeloncidelonrKelony.elonnablelonSelonarchTop,
+    SelonarchTopQig -> DeloncidelonrKelony.elonnablelonSelonarchTopQig,
+    SelonarchVidelono -> DeloncidelonrKelony.elonnablelonSelonarchVidelono,
+    SelonarchBlelonndelonrUselonrRulelons -> DeloncidelonrKelony.elonnablelonSelonarchLatelonstUselonrRulelons,
+    SelonarchLatelonstUselonrRulelons -> DeloncidelonrKelony.elonnablelonSelonarchLatelonstUselonrRulelons,
+    ShoppingManagelonrSpyModelon -> DeloncidelonrKelony.elonnablelonShoppingManagelonrSpyModelonSafelontyLelonvelonl,
+    SignalsRelonactions -> DeloncidelonrKelony.elonnablelonSignalsRelonactions,
+    SignalsTwelonelontRelonactingUselonrs -> DeloncidelonrKelony.elonnablelonSignalsTwelonelontRelonactingUselonrs,
+    SocialProof -> DeloncidelonrKelony.elonnablelonSocialProof,
+    SoftIntelonrvelonntionPivot -> DeloncidelonrKelony.elonnablelonSoftIntelonrvelonntionPivot,
+    SpacelonFlelonelontlinelon -> DeloncidelonrKelony.elonnablelonSpacelonFlelonelontlinelonSafelontyLelonvelonl,
+    SpacelonHomelonTimelonlinelonUpranking -> DeloncidelonrKelony.elonnablelonSpacelonHomelonTimelonlinelonUprankingSafelontyLelonvelonl,
+    SpacelonJoinScrelonelonn -> DeloncidelonrKelony.elonnablelonSpacelonJoinScrelonelonnSafelontyLelonvelonl,
+    SpacelonNotifications -> DeloncidelonrKelony.elonnablelonSpacelonNotificationsSafelontyLelonvelonl,
+    Spacelons -> DeloncidelonrKelony.elonnablelonSpacelonsSafelontyLelonvelonl,
+    SpacelonsParticipants -> DeloncidelonrKelony.elonnablelonSpacelonsParticipantsSafelontyLelonvelonl,
+    SpacelonsSelonllelonrApplicationStatus -> DeloncidelonrKelony.elonnablelonSpacelonsSelonllelonrApplicationStatus,
+    SpacelonsSharing -> DeloncidelonrKelony.elonnablelonSpacelonsSharingSafelontyLelonvelonl,
+    SpacelonTwelonelontAvatarHomelonTimelonlinelon -> DeloncidelonrKelony.elonnablelonSpacelonTwelonelontAvatarHomelonTimelonlinelonSafelontyLelonvelonl,
+    StickelonrsTimelonlinelon -> DeloncidelonrKelony.elonnablelonStickelonrsTimelonlinelonSafelontyLelonvelonl,
+    StratoelonxtLimitelondelonngagelonmelonnts -> DeloncidelonrKelony.elonnablelonStratoelonxtLimitelondelonngagelonmelonntsSafelontyLelonvelonl,
+    StrelonamSelonrvicelons -> DeloncidelonrKelony.elonnablelonStrelonamSelonrvicelonsSafelontyLelonvelonl,
+    SupelonrFollowelonrConnelonctions -> DeloncidelonrKelony.elonnablelonSupelonrFollowelonrConnelonctionsSafelontyLelonvelonl,
+    SupelonrLikelon -> DeloncidelonrKelony.elonnablelonSupelonrLikelonSafelontyLelonvelonl,
+    Telonst -> DeloncidelonrKelony.elonnablelonTelonstSafelontyLelonvelonl,
+    TimelonlinelonContelonntControls -> DeloncidelonrKelony.elonnablelonTimelonlinelonContelonntControlsSafelontyLelonvelonl,
+    TimelonlinelonConvelonrsations -> DeloncidelonrKelony.elonnablelonTimelonlinelonConvelonrsationsSafelontyLelonvelonl,
+    TimelonlinelonConvelonrsationsDownranking -> DeloncidelonrKelony.elonnablelonTimelonlinelonConvelonrsationsDownrankingSafelontyLelonvelonl,
+    TimelonlinelonConvelonrsationsDownrankingMinimal -> DeloncidelonrKelony.elonnablelonTimelonlinelonConvelonrsationsDownrankingMinimalSafelontyLelonvelonl,
+    TimelonlinelonFollowingActivity -> DeloncidelonrKelony.elonnablelonTimelonlinelonFollowingActivitySafelontyLelonvelonl,
+    TimelonlinelonHomelon -> DeloncidelonrKelony.elonnablelonTimelonlinelonHomelonSafelontyLelonvelonl,
+    TimelonlinelonHomelonCommunitielons -> DeloncidelonrKelony.elonnablelonTimelonlinelonHomelonCommunitielonsSafelontyLelonvelonl,
+    TimelonlinelonHomelonHydration -> DeloncidelonrKelony.elonnablelonTimelonlinelonHomelonHydrationSafelontyLelonvelonl,
+    TimelonlinelonHomelonPromotelondHydration -> DeloncidelonrKelony.elonnablelonTimelonlinelonHomelonPromotelondHydrationSafelontyLelonvelonl,
+    TimelonlinelonHomelonReloncommelonndations -> DeloncidelonrKelony.elonnablelonTimelonlinelonHomelonReloncommelonndationsSafelontyLelonvelonl,
+    TimelonlinelonHomelonTopicFollowReloncommelonndations -> DeloncidelonrKelony.elonnablelonTimelonlinelonHomelonTopicFollowReloncommelonndationsSafelontyLelonvelonl,
+    TimelonlinelonScorelonr -> DeloncidelonrKelony.elonnablelonTimelonlinelonScorelonrSafelontyLelonvelonl,
+    TopicsLandingPagelonTopicReloncommelonndations -> DeloncidelonrKelony.elonnablelonTopicsLandingPagelonTopicReloncommelonndationsSafelontyLelonvelonl,
+    elonxplorelonReloncommelonndations -> DeloncidelonrKelony.elonnablelonelonxplorelonReloncommelonndationsSafelontyLelonvelonl,
+    TimelonlinelonInjelonction -> DeloncidelonrKelony.elonnablelonTimelonlinelonInjelonctionSafelontyLelonvelonl,
+    TimelonlinelonMelonntions -> DeloncidelonrKelony.elonnablelonTimelonlinelonMelonntionsSafelontyLelonvelonl,
+    TimelonlinelonModelonratelondTwelonelontsHydration -> DeloncidelonrKelony.elonnablelonTimelonlinelonModelonratelondTwelonelontsHydrationSafelontyLelonvelonl,
+    TimelonlinelonHomelonLatelonst -> DeloncidelonrKelony.elonnablelonTimelonlinelonHomelonLatelonstSafelontyLelonvelonl,
+    TimelonlinelonLikelondBy -> DeloncidelonrKelony.elonnablelonTimelonlinelonLikelondBySafelontyLelonvelonl,
+    TimelonlinelonRelontwelonelontelondBy -> DeloncidelonrKelony.elonnablelonTimelonlinelonRelontwelonelontelondBySafelontyLelonvelonl,
+    TimelonlinelonSupelonrLikelondBy -> DeloncidelonrKelony.elonnablelonTimelonlinelonSupelonrLikelondBySafelontyLelonvelonl,
+    TimelonlinelonBookmark -> DeloncidelonrKelony.elonnablelonTimelonlinelonBookmarkSafelontyLelonvelonl,
+    TimelonlinelonMelondia -> DeloncidelonrKelony.elonnablelonTimelonlinelonMelondiaSafelontyLelonvelonl,
+    TimelonlinelonRelonactivelonBlelonnding -> DeloncidelonrKelony.elonnablelonTimelonlinelonRelonactivelonBlelonndingSafelontyLelonvelonl,
+    TimelonlinelonFavoritelons -> DeloncidelonrKelony.elonnablelonTimelonlinelonFavoritelonsSafelontyLelonvelonl,
+    TimelonlinelonFavoritelonsSelonlfVielonw -> DeloncidelonrKelony.elonnablelonSelonlfVielonwTimelonlinelonFavoritelonsSafelontyLelonvelonl,
+    TimelonlinelonLists -> DeloncidelonrKelony.elonnablelonTimelonlinelonListsSafelontyLelonvelonl,
+    TimelonlinelonProfilelon -> DeloncidelonrKelony.elonnablelonTimelonlinelonProfilelonSafelontyLelonvelonl,
+    TimelonlinelonProfilelonAll -> DeloncidelonrKelony.elonnablelonTimelonlinelonProfilelonAllSafelontyLelonvelonl,
+    TimelonlinelonProfilelonSpacelons -> DeloncidelonrKelony.elonnablelonTimelonlinelonProfilelonSpacelonsSafelontyLelonvelonl,
+    TimelonlinelonProfilelonSupelonrFollows -> DeloncidelonrKelony.elonnablelonTimelonlinelonProfilelonSupelonrFollowsSafelontyLelonvelonl,
+    TimelonlinelonFocalTwelonelont -> DeloncidelonrKelony.elonnablelonTwelonelontTimelonlinelonFocalTwelonelontSafelontyLelonvelonl,
+    TwelonelontDelontailWithInjelonctionsHydration -> DeloncidelonrKelony.elonnablelonTwelonelontDelontailWithInjelonctionsHydrationSafelontyLelonvelonl,
+    Tombstoning -> DeloncidelonrKelony.elonnablelonTombstoningSafelontyLelonvelonl,
+    TopicReloncommelonndations -> DeloncidelonrKelony.elonnablelonTopicReloncommelonndationsSafelontyLelonvelonl,
+    TrelonndsRelonprelonselonntativelonTwelonelont -> DeloncidelonrKelony.elonnablelonTrelonndsRelonprelonselonntativelonTwelonelontSafelontyLelonvelonl,
+    TrustelondFrielonndsUselonrList -> DeloncidelonrKelony.elonnablelonTrustelondFrielonndsUselonrListSafelontyLelonvelonl,
+    TwelonelontDelontail -> DeloncidelonrKelony.elonnablelonTwelonelontDelontailSafelontyLelonvelonl,
+    TwelonelontDelontailNonToo -> DeloncidelonrKelony.elonnablelonTwelonelontDelontailNonTooSafelontyLelonvelonl,
+    Twelonelontelonngagelonrs -> DeloncidelonrKelony.elonnablelonTwelonelontelonngagelonrsSafelontyLelonvelonl,
+    TwelonelontRelonplyNudgelon -> DeloncidelonrKelony.elonnablelonTwelonelontRelonplyNudgelonSafelontyLelonvelonl,
+    TwelonelontScopelondTimelonlinelon -> DeloncidelonrKelony.elonnablelonTwelonelontScopelondTimelonlinelonSafelontyLelonvelonl,
+    TwelonelontWritelonsApi -> DeloncidelonrKelony.elonnablelonTwelonelontWritelonsApiSafelontyLelonvelonl,
+    TwittelonrArticlelonComposelon -> DeloncidelonrKelony.elonnablelonTwittelonrArticlelonComposelonSafelontyLelonvelonl,
+    TwittelonrArticlelonProfilelonTab -> DeloncidelonrKelony.elonnablelonTwittelonrArticlelonProfilelonTabSafelontyLelonvelonl,
+    TwittelonrArticlelonRelonad -> DeloncidelonrKelony.elonnablelonTwittelonrArticlelonRelonadSafelontyLelonvelonl,
+    UselonrProfilelonHelonadelonr -> DeloncidelonrKelony.elonnablelonUselonrProfilelonHelonadelonrSafelontyLelonvelonl,
+    UselonrMilelonstonelonReloncommelonndation -> DeloncidelonrKelony.elonnablelonUselonrMilelonstonelonReloncommelonndationSafelontyLelonvelonl,
+    UselonrScopelondTimelonlinelon -> DeloncidelonrKelony.elonnablelonUselonrScopelondTimelonlinelonSafelontyLelonvelonl,
+    UselonrSelonarchSrp -> DeloncidelonrKelony.elonnablelonUselonrSelonarchSrpSafelontyLelonvelonl,
+    UselonrSelonarchTypelonahelonad -> DeloncidelonrKelony.elonnablelonUselonrSelonarchTypelonahelonadSafelontyLelonvelonl,
+    UselonrSelonlfVielonwOnly -> DeloncidelonrKelony.elonnablelonUselonrSelonlfVielonwOnlySafelontyLelonvelonl,
+    UselonrSelonttings -> DeloncidelonrKelony.elonnablelonUselonrSelonttingsSafelontyLelonvelonl,
+    VidelonoAds -> DeloncidelonrKelony.elonnablelonVidelonoAdsSafelontyLelonvelonl,
+    WritelonPathLimitelondActionselonnforcelonmelonnt -> DeloncidelonrKelony.elonnablelonWritelonPathLimitelondActionselonnforcelonmelonntSafelontyLelonvelonl,
+    ZipbirdConsumelonrArchivelons -> DeloncidelonrKelony.elonnablelonZipbirdConsumelonrArchivelonsSafelontyLelonvelonl,
+    TwelonelontAward -> DeloncidelonrKelony.elonnablelonTwelonelontAwardSafelontyLelonvelonl,
   )
 
-  val BoolToDeciderMap: Map[Param[Boolean], DeciderKey.Value] = Map(
-    RuleParams.TweetConversationControlEnabledParam ->
-      DeciderKey.EnableTweetConversationControlRules,
-    RuleParams.CommunityTweetsEnabledParam ->
-      DeciderKey.EnableCommunityTweetsControlRules,
-    RuleParams.DropCommunityTweetWithUndefinedCommunityRuleEnabledParam ->
-      DeciderKey.EnableDropCommunityTweetWithUndefinedCommunityRule,
-    TimelineConversationsDownrankingSpecificParams.EnablePSpammyTweetDownrankConvosLowQualityParam ->
-      DeciderKey.EnablePSpammyTweetDownrankConvosLowQuality,
-    RuleParams.EnableHighPSpammyTweetScoreSearchTweetLabelDropRuleParam ->
-      DeciderKey.EnableHighPSpammyTweetScoreSearchTweetLabelDropRule,
-    TimelineConversationsDownrankingSpecificParams.EnableRitoActionedTweetDownrankConvosLowQualityParam ->
-      DeciderKey.EnableRitoActionedTweetDownrankConvosLowQuality,
-    RuleParams.EnableSmyteSpamTweetRuleParam ->
-      DeciderKey.EnableSmyteSpamTweetRule,
-    RuleParams.EnableHighSpammyTweetContentScoreSearchLatestTweetLabelDropRuleParam ->
-      DeciderKey.EnableHighSpammyTweetContentScoreSearchLatestTweetLabelDropRule,
-    RuleParams.EnableHighSpammyTweetContentScoreSearchTopTweetLabelDropRuleParam ->
-      DeciderKey.EnableHighSpammyTweetContentScoreSearchTopTweetLabelDropRule,
-    RuleParams.EnableHighSpammyTweetContentScoreTrendsTopTweetLabelDropRuleParam ->
-      DeciderKey.EnableHighSpammyTweetContentScoreTrendsTopTweetLabelDropRule,
-    RuleParams.EnableHighSpammyTweetContentScoreTrendsLatestTweetLabelDropRuleParam ->
-      DeciderKey.EnableHighSpammyTweetContentScoreTrendsLatestTweetLabelDropRule,
-    TimelineConversationsDownrankingSpecificParams.EnableHighSpammyTweetContentScoreConvoDownrankAbusiveQualityRuleParam ->
-      DeciderKey.EnableHighSpammyTweetContentScoreConvoDownrankAbusiveQualityRule,
-    TimelineConversationsDownrankingSpecificParams.EnableHighCryptospamScoreConvoDownrankAbusiveQualityRuleParam ->
-      DeciderKey.EnableHighCryptospamScoreConvoDownrankAbusiveQualityRule,
-    RuleParams.EnableGoreAndViolenceTopicHighRecallTweetLabelRule ->
-      DeciderKey.EnableGoreAndViolenceTopicHighRecallTweetLabelRule,
-    RuleParams.EnableLimitRepliesFollowersConversationRule ->
-      DeciderKey.EnableLimitRepliesFollowersConversationRule,
-    RuleParams.EnableSearchBasicBlockMuteRulesParam -> DeciderKey.EnableSearchBasicBlockMuteRules,
-    RuleParams.EnableBlinkBadDownrankingRuleParam ->
-      DeciderKey.EnableBlinkBadDownrankingRule,
-    RuleParams.EnableBlinkWorstDownrankingRuleParam ->
-      DeciderKey.EnableBlinkWorstDownrankingRule,
-    RuleParams.EnableCopypastaSpamDownrankConvosAbusiveQualityRule ->
-      DeciderKey.EnableCopypastaSpamDownrankConvosAbusiveQualityRule,
-    RuleParams.EnableCopypastaSpamSearchDropRule ->
-      DeciderKey.EnableCopypastaSpamSearchDropRule,
-    RuleParams.EnableSpammyUserModelTweetDropRuleParam ->
-      DeciderKey.EnableSpammyUserModelHighPrecisionDropTweetRule,
-    RuleParams.EnableAvoidNsfwRulesParam ->
-      DeciderKey.EnableAvoidNsfwRules,
-    RuleParams.EnableReportedTweetInterstitialRule ->
-      DeciderKey.EnableReportedTweetInterstitialRule,
-    RuleParams.EnableReportedTweetInterstitialSearchRule ->
-      DeciderKey.EnableReportedTweetInterstitialSearchRule,
-    RuleParams.EnableDropExclusiveTweetContentRule ->
-      DeciderKey.EnableDropExclusiveTweetContentRule,
-    RuleParams.EnableDropExclusiveTweetContentRuleFailClosed ->
-      DeciderKey.EnableDropExclusiveTweetContentRuleFailClosed,
-    RuleParams.EnableTombstoneExclusiveQtProfileTimelineParam ->
-      DeciderKey.EnableTombstoneExclusiveQtProfileTimelineParam,
-    RuleParams.EnableDropAllExclusiveTweetsRuleParam -> DeciderKey.EnableDropAllExclusiveTweetsRule,
-    RuleParams.EnableDropAllExclusiveTweetsRuleFailClosedParam -> DeciderKey.EnableDropAllExclusiveTweetsRuleFailClosed,
-    RuleParams.EnableDownrankSpamReplySectioningRuleParam ->
-      DeciderKey.EnableDownrankSpamReplySectioningRule,
-    RuleParams.EnableNsfwTextSectioningRuleParam ->
-      DeciderKey.EnableNsfwTextSectioningRule,
-    RuleParams.EnableSearchIpiSafeSearchWithoutUserInQueryDropRule -> DeciderKey.EnableSearchIpiSafeSearchWithoutUserInQueryDropRule,
-    RuleParams.EnableTimelineHomePromotedTweetHealthEnforcementRules -> DeciderKey.EnableTimelineHomePromotedTweetHealthEnforcementRules,
-    RuleParams.EnableMutedKeywordFilteringSpaceTitleNotificationsRuleParam -> DeciderKey.EnableMutedKeywordFilteringSpaceTitleNotificationsRule,
-    RuleParams.EnableDropTweetsWithGeoRestrictedMediaRuleParam -> DeciderKey.EnableDropTweetsWithGeoRestrictedMediaRule,
-    RuleParams.EnableDropAllTrustedFriendsTweetsRuleParam -> DeciderKey.EnableDropAllTrustedFriendsTweetsRule,
-    RuleParams.EnableDropTrustedFriendsTweetContentRuleParam -> DeciderKey.EnableDropTrustedFriendsTweetContentRule,
-    RuleParams.EnableDropAllCollabInvitationTweetsRuleParam -> DeciderKey.EnableDropCollabInvitationTweetsRule,
-    RuleParams.EnableNsfwTextTopicsDropRuleParam -> DeciderKey.EnableNsfwTextTopicsDropRule,
-    RuleParams.EnableLikelyIvsUserLabelDropRule -> DeciderKey.EnableLikelyIvsUserLabelDropRule,
-    RuleParams.EnableCardUriRootDomainCardDenylistRule -> DeciderKey.EnableCardUriRootDomainDenylistRule,
-    RuleParams.EnableCommunityNonMemberPollCardRule -> DeciderKey.EnableCommunityNonMemberPollCardRule,
-    RuleParams.EnableCommunityNonMemberPollCardRuleFailClosed -> DeciderKey.EnableCommunityNonMemberPollCardRuleFailClosed,
-    RuleParams.EnableExperimentalNudgeEnabledParam -> DeciderKey.EnableExperimentalNudgeLabelRule,
-    RuleParams.NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam -> DeciderKey.NsfwHighPrecisionUserLabelAvoidTweetRuleEnabledParam,
-    RuleParams.EnableNewAdAvoidanceRulesParam -> DeciderKey.EnableNewAdAvoidanceRules,
-    RuleParams.EnableNsfaHighRecallAdAvoidanceParam -> DeciderKey.EnableNsfaHighRecallAdAvoidanceParam,
-    RuleParams.EnableNsfaKeywordsHighPrecisionAdAvoidanceParam -> DeciderKey.EnableNsfaKeywordsHighPrecisionAdAvoidanceParam,
-    RuleParams.EnableStaleTweetDropRuleParam -> DeciderKey.EnableStaleTweetDropRuleParam,
-    RuleParams.EnableStaleTweetDropRuleFailClosedParam -> DeciderKey.EnableStaleTweetDropRuleFailClosedParam,
-    RuleParams.EnableDeleteStateTweetRulesParam -> DeciderKey.EnableDeleteStateTweetRules,
-    RuleParams.EnableSpacesSharingNsfwDropRulesParam -> DeciderKey.EnableSpacesSharingNsfwDropRulesParam,
-    RuleParams.EnableViewerIsSoftUserDropRuleParam -> DeciderKey.EnableViewerIsSoftUserDropRuleParam,
-    RuleParams.EnablePdnaQuotedTweetTombstoneRuleParam -> DeciderKey.EnablePdnaQuotedTweetTombstoneRule,
-    RuleParams.EnableSpamQuotedTweetTombstoneRuleParam -> DeciderKey.EnableSpamQuotedTweetTombstoneRule,
-    RuleParams.EnableNsfwHpQuotedTweetDropRuleParam -> DeciderKey.EnableNsfwHpQuotedTweetDropRule,
-    RuleParams.EnableNsfwHpQuotedTweetTombstoneRuleParam -> DeciderKey.EnableNsfwHpQuotedTweetTombstoneRule,
-    RuleParams.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam -> DeciderKey.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRule,
-    RuleParams.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam -> DeciderKey.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRule,
-    RuleParams.EnableToxicReplyFilteringConversationRulesParam -> DeciderKey.VisibilityLibraryEnableToxicReplyFilterConversation,
-    RuleParams.EnableToxicReplyFilteringNotificationsRulesParam -> DeciderKey.VisibilityLibraryEnableToxicReplyFilterNotifications,
-    RuleParams.EnableLegacySensitiveMediaHomeTimelineRulesParam -> DeciderKey.EnableLegacySensitiveMediaRulesHomeTimeline,
-    RuleParams.EnableNewSensitiveMediaSettingsInterstitialsHomeTimelineRulesParam -> DeciderKey.EnableNewSensitiveMediaSettingsInterstitialRulesHomeTimeline,
-    RuleParams.EnableLegacySensitiveMediaConversationRulesParam -> DeciderKey.EnableLegacySensitiveMediaRulesConversation,
-    RuleParams.EnableNewSensitiveMediaSettingsInterstitialsConversationRulesParam -> DeciderKey.EnableNewSensitiveMediaSettingsInterstitialRulesConversation,
-    RuleParams.EnableLegacySensitiveMediaProfileTimelineRulesParam -> DeciderKey.EnableLegacySensitiveMediaRulesProfileTimeline,
-    RuleParams.EnableNewSensitiveMediaSettingsInterstitialsProfileTimelineRulesParam -> DeciderKey.EnableNewSensitiveMediaSettingsInterstitialRulesProfileTimeline,
-    RuleParams.EnableLegacySensitiveMediaTweetDetailRulesParam -> DeciderKey.EnableLegacySensitiveMediaRulesTweetDetail,
-    RuleParams.EnableNewSensitiveMediaSettingsInterstitialsTweetDetailRulesParam -> DeciderKey.EnableNewSensitiveMediaSettingsInterstitialRulesTweetDetail,
-    RuleParams.EnableLegacySensitiveMediaDirectMessagesRulesParam -> DeciderKey.EnableLegacySensitiveMediaRulesDirectMessages,
-    RuleParams.EnableAbusiveBehaviorDropRuleParam -> DeciderKey.EnableAbusiveBehaviorDropRule,
-    RuleParams.EnableAbusiveBehaviorInterstitialRuleParam -> DeciderKey.EnableAbusiveBehaviorInterstitialRule,
-    RuleParams.EnableAbusiveBehaviorLimitedEngagementsRuleParam -> DeciderKey.EnableAbusiveBehaviorLimitedEngagementsRule,
-    RuleParams.EnableNotGraduatedDownrankConvosAbusiveQualityRuleParam -> DeciderKey.EnableNotGraduatedDownrankConvosAbusiveQualityRule,
-    RuleParams.EnableNotGraduatedSearchDropRuleParam -> DeciderKey.EnableNotGraduatedSearchDropRule,
-    RuleParams.EnableNotGraduatedDropRuleParam -> DeciderKey.EnableNotGraduatedDropRule,
-    RuleParams.EnableFosnrRuleParam -> DeciderKey.EnableFosnrRules,
-    RuleParams.EnableAuthorBlocksViewerDropRuleParam -> DeciderKey.EnableAuthorBlocksViewerDropRule
+  val BoolToDeloncidelonrMap: Map[Param[Boolelonan], DeloncidelonrKelony.Valuelon] = Map(
+    RulelonParams.TwelonelontConvelonrsationControlelonnablelondParam ->
+      DeloncidelonrKelony.elonnablelonTwelonelontConvelonrsationControlRulelons,
+    RulelonParams.CommunityTwelonelontselonnablelondParam ->
+      DeloncidelonrKelony.elonnablelonCommunityTwelonelontsControlRulelons,
+    RulelonParams.DropCommunityTwelonelontWithUndelonfinelondCommunityRulelonelonnablelondParam ->
+      DeloncidelonrKelony.elonnablelonDropCommunityTwelonelontWithUndelonfinelondCommunityRulelon,
+    TimelonlinelonConvelonrsationsDownrankingSpeloncificParams.elonnablelonPSpammyTwelonelontDownrankConvosLowQualityParam ->
+      DeloncidelonrKelony.elonnablelonPSpammyTwelonelontDownrankConvosLowQuality,
+    RulelonParams.elonnablelonHighPSpammyTwelonelontScorelonSelonarchTwelonelontLabelonlDropRulelonParam ->
+      DeloncidelonrKelony.elonnablelonHighPSpammyTwelonelontScorelonSelonarchTwelonelontLabelonlDropRulelon,
+    TimelonlinelonConvelonrsationsDownrankingSpeloncificParams.elonnablelonRitoActionelondTwelonelontDownrankConvosLowQualityParam ->
+      DeloncidelonrKelony.elonnablelonRitoActionelondTwelonelontDownrankConvosLowQuality,
+    RulelonParams.elonnablelonSmytelonSpamTwelonelontRulelonParam ->
+      DeloncidelonrKelony.elonnablelonSmytelonSpamTwelonelontRulelon,
+    RulelonParams.elonnablelonHighSpammyTwelonelontContelonntScorelonSelonarchLatelonstTwelonelontLabelonlDropRulelonParam ->
+      DeloncidelonrKelony.elonnablelonHighSpammyTwelonelontContelonntScorelonSelonarchLatelonstTwelonelontLabelonlDropRulelon,
+    RulelonParams.elonnablelonHighSpammyTwelonelontContelonntScorelonSelonarchTopTwelonelontLabelonlDropRulelonParam ->
+      DeloncidelonrKelony.elonnablelonHighSpammyTwelonelontContelonntScorelonSelonarchTopTwelonelontLabelonlDropRulelon,
+    RulelonParams.elonnablelonHighSpammyTwelonelontContelonntScorelonTrelonndsTopTwelonelontLabelonlDropRulelonParam ->
+      DeloncidelonrKelony.elonnablelonHighSpammyTwelonelontContelonntScorelonTrelonndsTopTwelonelontLabelonlDropRulelon,
+    RulelonParams.elonnablelonHighSpammyTwelonelontContelonntScorelonTrelonndsLatelonstTwelonelontLabelonlDropRulelonParam ->
+      DeloncidelonrKelony.elonnablelonHighSpammyTwelonelontContelonntScorelonTrelonndsLatelonstTwelonelontLabelonlDropRulelon,
+    TimelonlinelonConvelonrsationsDownrankingSpeloncificParams.elonnablelonHighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityRulelonParam ->
+      DeloncidelonrKelony.elonnablelonHighSpammyTwelonelontContelonntScorelonConvoDownrankAbusivelonQualityRulelon,
+    TimelonlinelonConvelonrsationsDownrankingSpeloncificParams.elonnablelonHighCryptospamScorelonConvoDownrankAbusivelonQualityRulelonParam ->
+      DeloncidelonrKelony.elonnablelonHighCryptospamScorelonConvoDownrankAbusivelonQualityRulelon,
+    RulelonParams.elonnablelonGorelonAndViolelonncelonTopicHighReloncallTwelonelontLabelonlRulelon ->
+      DeloncidelonrKelony.elonnablelonGorelonAndViolelonncelonTopicHighReloncallTwelonelontLabelonlRulelon,
+    RulelonParams.elonnablelonLimitRelonplielonsFollowelonrsConvelonrsationRulelon ->
+      DeloncidelonrKelony.elonnablelonLimitRelonplielonsFollowelonrsConvelonrsationRulelon,
+    RulelonParams.elonnablelonSelonarchBasicBlockMutelonRulelonsParam -> DeloncidelonrKelony.elonnablelonSelonarchBasicBlockMutelonRulelons,
+    RulelonParams.elonnablelonBlinkBadDownrankingRulelonParam ->
+      DeloncidelonrKelony.elonnablelonBlinkBadDownrankingRulelon,
+    RulelonParams.elonnablelonBlinkWorstDownrankingRulelonParam ->
+      DeloncidelonrKelony.elonnablelonBlinkWorstDownrankingRulelon,
+    RulelonParams.elonnablelonCopypastaSpamDownrankConvosAbusivelonQualityRulelon ->
+      DeloncidelonrKelony.elonnablelonCopypastaSpamDownrankConvosAbusivelonQualityRulelon,
+    RulelonParams.elonnablelonCopypastaSpamSelonarchDropRulelon ->
+      DeloncidelonrKelony.elonnablelonCopypastaSpamSelonarchDropRulelon,
+    RulelonParams.elonnablelonSpammyUselonrModelonlTwelonelontDropRulelonParam ->
+      DeloncidelonrKelony.elonnablelonSpammyUselonrModelonlHighPreloncisionDropTwelonelontRulelon,
+    RulelonParams.elonnablelonAvoidNsfwRulelonsParam ->
+      DeloncidelonrKelony.elonnablelonAvoidNsfwRulelons,
+    RulelonParams.elonnablelonRelonportelondTwelonelontIntelonrstitialRulelon ->
+      DeloncidelonrKelony.elonnablelonRelonportelondTwelonelontIntelonrstitialRulelon,
+    RulelonParams.elonnablelonRelonportelondTwelonelontIntelonrstitialSelonarchRulelon ->
+      DeloncidelonrKelony.elonnablelonRelonportelondTwelonelontIntelonrstitialSelonarchRulelon,
+    RulelonParams.elonnablelonDropelonxclusivelonTwelonelontContelonntRulelon ->
+      DeloncidelonrKelony.elonnablelonDropelonxclusivelonTwelonelontContelonntRulelon,
+    RulelonParams.elonnablelonDropelonxclusivelonTwelonelontContelonntRulelonFailCloselond ->
+      DeloncidelonrKelony.elonnablelonDropelonxclusivelonTwelonelontContelonntRulelonFailCloselond,
+    RulelonParams.elonnablelonTombstonelonelonxclusivelonQtProfilelonTimelonlinelonParam ->
+      DeloncidelonrKelony.elonnablelonTombstonelonelonxclusivelonQtProfilelonTimelonlinelonParam,
+    RulelonParams.elonnablelonDropAllelonxclusivelonTwelonelontsRulelonParam -> DeloncidelonrKelony.elonnablelonDropAllelonxclusivelonTwelonelontsRulelon,
+    RulelonParams.elonnablelonDropAllelonxclusivelonTwelonelontsRulelonFailCloselondParam -> DeloncidelonrKelony.elonnablelonDropAllelonxclusivelonTwelonelontsRulelonFailCloselond,
+    RulelonParams.elonnablelonDownrankSpamRelonplySelonctioningRulelonParam ->
+      DeloncidelonrKelony.elonnablelonDownrankSpamRelonplySelonctioningRulelon,
+    RulelonParams.elonnablelonNsfwTelonxtSelonctioningRulelonParam ->
+      DeloncidelonrKelony.elonnablelonNsfwTelonxtSelonctioningRulelon,
+    RulelonParams.elonnablelonSelonarchIpiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon -> DeloncidelonrKelony.elonnablelonSelonarchIpiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon,
+    RulelonParams.elonnablelonTimelonlinelonHomelonPromotelondTwelonelontHelonalthelonnforcelonmelonntRulelons -> DeloncidelonrKelony.elonnablelonTimelonlinelonHomelonPromotelondTwelonelontHelonalthelonnforcelonmelonntRulelons,
+    RulelonParams.elonnablelonMutelondKelonywordFiltelonringSpacelonTitlelonNotificationsRulelonParam -> DeloncidelonrKelony.elonnablelonMutelondKelonywordFiltelonringSpacelonTitlelonNotificationsRulelon,
+    RulelonParams.elonnablelonDropTwelonelontsWithGelonoRelonstrictelondMelondiaRulelonParam -> DeloncidelonrKelony.elonnablelonDropTwelonelontsWithGelonoRelonstrictelondMelondiaRulelon,
+    RulelonParams.elonnablelonDropAllTrustelondFrielonndsTwelonelontsRulelonParam -> DeloncidelonrKelony.elonnablelonDropAllTrustelondFrielonndsTwelonelontsRulelon,
+    RulelonParams.elonnablelonDropTrustelondFrielonndsTwelonelontContelonntRulelonParam -> DeloncidelonrKelony.elonnablelonDropTrustelondFrielonndsTwelonelontContelonntRulelon,
+    RulelonParams.elonnablelonDropAllCollabInvitationTwelonelontsRulelonParam -> DeloncidelonrKelony.elonnablelonDropCollabInvitationTwelonelontsRulelon,
+    RulelonParams.elonnablelonNsfwTelonxtTopicsDropRulelonParam -> DeloncidelonrKelony.elonnablelonNsfwTelonxtTopicsDropRulelon,
+    RulelonParams.elonnablelonLikelonlyIvsUselonrLabelonlDropRulelon -> DeloncidelonrKelony.elonnablelonLikelonlyIvsUselonrLabelonlDropRulelon,
+    RulelonParams.elonnablelonCardUriRootDomainCardDelonnylistRulelon -> DeloncidelonrKelony.elonnablelonCardUriRootDomainDelonnylistRulelon,
+    RulelonParams.elonnablelonCommunityNonMelonmbelonrPollCardRulelon -> DeloncidelonrKelony.elonnablelonCommunityNonMelonmbelonrPollCardRulelon,
+    RulelonParams.elonnablelonCommunityNonMelonmbelonrPollCardRulelonFailCloselond -> DeloncidelonrKelony.elonnablelonCommunityNonMelonmbelonrPollCardRulelonFailCloselond,
+    RulelonParams.elonnablelonelonxpelonrimelonntalNudgelonelonnablelondParam -> DeloncidelonrKelony.elonnablelonelonxpelonrimelonntalNudgelonLabelonlRulelon,
+    RulelonParams.NsfwHighPreloncisionUselonrLabelonlAvoidTwelonelontRulelonelonnablelondParam -> DeloncidelonrKelony.NsfwHighPreloncisionUselonrLabelonlAvoidTwelonelontRulelonelonnablelondParam,
+    RulelonParams.elonnablelonNelonwAdAvoidancelonRulelonsParam -> DeloncidelonrKelony.elonnablelonNelonwAdAvoidancelonRulelons,
+    RulelonParams.elonnablelonNsfaHighReloncallAdAvoidancelonParam -> DeloncidelonrKelony.elonnablelonNsfaHighReloncallAdAvoidancelonParam,
+    RulelonParams.elonnablelonNsfaKelonywordsHighPreloncisionAdAvoidancelonParam -> DeloncidelonrKelony.elonnablelonNsfaKelonywordsHighPreloncisionAdAvoidancelonParam,
+    RulelonParams.elonnablelonStalelonTwelonelontDropRulelonParam -> DeloncidelonrKelony.elonnablelonStalelonTwelonelontDropRulelonParam,
+    RulelonParams.elonnablelonStalelonTwelonelontDropRulelonFailCloselondParam -> DeloncidelonrKelony.elonnablelonStalelonTwelonelontDropRulelonFailCloselondParam,
+    RulelonParams.elonnablelonDelonlelontelonStatelonTwelonelontRulelonsParam -> DeloncidelonrKelony.elonnablelonDelonlelontelonStatelonTwelonelontRulelons,
+    RulelonParams.elonnablelonSpacelonsSharingNsfwDropRulelonsParam -> DeloncidelonrKelony.elonnablelonSpacelonsSharingNsfwDropRulelonsParam,
+    RulelonParams.elonnablelonVielonwelonrIsSoftUselonrDropRulelonParam -> DeloncidelonrKelony.elonnablelonVielonwelonrIsSoftUselonrDropRulelonParam,
+    RulelonParams.elonnablelonPdnaQuotelondTwelonelontTombstonelonRulelonParam -> DeloncidelonrKelony.elonnablelonPdnaQuotelondTwelonelontTombstonelonRulelon,
+    RulelonParams.elonnablelonSpamQuotelondTwelonelontTombstonelonRulelonParam -> DeloncidelonrKelony.elonnablelonSpamQuotelondTwelonelontTombstonelonRulelon,
+    RulelonParams.elonnablelonNsfwHpQuotelondTwelonelontDropRulelonParam -> DeloncidelonrKelony.elonnablelonNsfwHpQuotelondTwelonelontDropRulelon,
+    RulelonParams.elonnablelonNsfwHpQuotelondTwelonelontTombstonelonRulelonParam -> DeloncidelonrKelony.elonnablelonNsfwHpQuotelondTwelonelontTombstonelonRulelon,
+    RulelonParams.elonnablelonInnelonrQuotelondTwelonelontVielonwelonrBlocksAuthorIntelonrstitialRulelonParam -> DeloncidelonrKelony.elonnablelonInnelonrQuotelondTwelonelontVielonwelonrBlocksAuthorIntelonrstitialRulelon,
+    RulelonParams.elonnablelonInnelonrQuotelondTwelonelontVielonwelonrMutelonsAuthorIntelonrstitialRulelonParam -> DeloncidelonrKelony.elonnablelonInnelonrQuotelondTwelonelontVielonwelonrMutelonsAuthorIntelonrstitialRulelon,
+    RulelonParams.elonnablelonToxicRelonplyFiltelonringConvelonrsationRulelonsParam -> DeloncidelonrKelony.VisibilityLibraryelonnablelonToxicRelonplyFiltelonrConvelonrsation,
+    RulelonParams.elonnablelonToxicRelonplyFiltelonringNotificationsRulelonsParam -> DeloncidelonrKelony.VisibilityLibraryelonnablelonToxicRelonplyFiltelonrNotifications,
+    RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaHomelonTimelonlinelonRulelonsParam -> DeloncidelonrKelony.elonnablelonLelongacySelonnsitivelonMelondiaRulelonsHomelonTimelonlinelon,
+    RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsHomelonTimelonlinelonRulelonsParam -> DeloncidelonrKelony.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialRulelonsHomelonTimelonlinelon,
+    RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaConvelonrsationRulelonsParam -> DeloncidelonrKelony.elonnablelonLelongacySelonnsitivelonMelondiaRulelonsConvelonrsation,
+    RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsConvelonrsationRulelonsParam -> DeloncidelonrKelony.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialRulelonsConvelonrsation,
+    RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaProfilelonTimelonlinelonRulelonsParam -> DeloncidelonrKelony.elonnablelonLelongacySelonnsitivelonMelondiaRulelonsProfilelonTimelonlinelon,
+    RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsProfilelonTimelonlinelonRulelonsParam -> DeloncidelonrKelony.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialRulelonsProfilelonTimelonlinelon,
+    RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaTwelonelontDelontailRulelonsParam -> DeloncidelonrKelony.elonnablelonLelongacySelonnsitivelonMelondiaRulelonsTwelonelontDelontail,
+    RulelonParams.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialsTwelonelontDelontailRulelonsParam -> DeloncidelonrKelony.elonnablelonNelonwSelonnsitivelonMelondiaSelonttingsIntelonrstitialRulelonsTwelonelontDelontail,
+    RulelonParams.elonnablelonLelongacySelonnsitivelonMelondiaDirelonctMelonssagelonsRulelonsParam -> DeloncidelonrKelony.elonnablelonLelongacySelonnsitivelonMelondiaRulelonsDirelonctMelonssagelons,
+    RulelonParams.elonnablelonAbusivelonBelonhaviorDropRulelonParam -> DeloncidelonrKelony.elonnablelonAbusivelonBelonhaviorDropRulelon,
+    RulelonParams.elonnablelonAbusivelonBelonhaviorIntelonrstitialRulelonParam -> DeloncidelonrKelony.elonnablelonAbusivelonBelonhaviorIntelonrstitialRulelon,
+    RulelonParams.elonnablelonAbusivelonBelonhaviorLimitelondelonngagelonmelonntsRulelonParam -> DeloncidelonrKelony.elonnablelonAbusivelonBelonhaviorLimitelondelonngagelonmelonntsRulelon,
+    RulelonParams.elonnablelonNotGraduatelondDownrankConvosAbusivelonQualityRulelonParam -> DeloncidelonrKelony.elonnablelonNotGraduatelondDownrankConvosAbusivelonQualityRulelon,
+    RulelonParams.elonnablelonNotGraduatelondSelonarchDropRulelonParam -> DeloncidelonrKelony.elonnablelonNotGraduatelondSelonarchDropRulelon,
+    RulelonParams.elonnablelonNotGraduatelondDropRulelonParam -> DeloncidelonrKelony.elonnablelonNotGraduatelondDropRulelon,
+    RulelonParams.elonnablelonFosnrRulelonParam -> DeloncidelonrKelony.elonnablelonFosnrRulelons,
+    RulelonParams.elonnablelonAuthorBlocksVielonwelonrDropRulelonParam -> DeloncidelonrKelony.elonnablelonAuthorBlocksVielonwelonrDropRulelon
   )
 
-  def config(
-    deciderGateBuilder: DeciderGateBuilder,
-    logger: Logger,
-    statsReceiver: StatsReceiver,
-    SafetyLevel: SafetyLevel
+  delonf config(
+    deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr,
+    loggelonr: Loggelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    SafelontyLelonvelonl: SafelontyLelonvelonl
   ): Config = {
 
-    object UserOrGuestOrRequest extends RecipientBuilder {
-      private val scopedStats = statsReceiver.scope("decider_recipient")
-      private val userIdDefinedCounter = scopedStats.counter("user_id_defined")
-      private val userIdNotDefinedCounter = scopedStats.counter("user_id_undefined")
-      private val guestIdDefinedCounter = scopedStats.counter("guest_id_defined")
-      private val guestIdNotDefinedCounter = scopedStats.counter("guest_id_undefined")
-      private val noIdCounter = scopedStats.counter("no_id_defined")
+    objelonct UselonrOrGuelonstOrRelonquelonst elonxtelonnds ReloncipielonntBuildelonr {
+      privatelon val scopelondStats = statsReloncelonivelonr.scopelon("deloncidelonr_reloncipielonnt")
+      privatelon val uselonrIdDelonfinelondCountelonr = scopelondStats.countelonr("uselonr_id_delonfinelond")
+      privatelon val uselonrIdNotDelonfinelondCountelonr = scopelondStats.countelonr("uselonr_id_undelonfinelond")
+      privatelon val guelonstIdDelonfinelondCountelonr = scopelondStats.countelonr("guelonst_id_delonfinelond")
+      privatelon val guelonstIdNotDelonfinelondCountelonr = scopelondStats.countelonr("guelonst_id_undelonfinelond")
+      privatelon val noIdCountelonr = scopelondStats.countelonr("no_id_delonfinelond")
 
-      def apply(requestContext: BaseRequestContext): Option[Recipient] = requestContext match {
-        case c: WithUserId if c.userId.isDefined =>
-          userIdDefinedCounter.incr()
-          c.userId.map(SimpleRecipient)
-        case c: WithGuestId if c.guestId.isDefined =>
-          guestIdDefinedCounter.incr()
-          c.guestId.map(GuestRecipient)
-        case c: WithGuestId =>
-          guestIdNotDefinedCounter.incr()
-          RecipientBuilder.Request(c)
-        case _: WithUserId =>
-          userIdNotDefinedCounter.incr()
-          None
-        case _ =>
-          logger.warning("Request Context with no user or guest id trait found: " + requestContext)
-          noIdCounter.incr()
-          None
+      delonf apply(relonquelonstContelonxt: BaselonRelonquelonstContelonxt): Option[Reloncipielonnt] = relonquelonstContelonxt match {
+        caselon c: WithUselonrId if c.uselonrId.isDelonfinelond =>
+          uselonrIdDelonfinelondCountelonr.incr()
+          c.uselonrId.map(SimplelonReloncipielonnt)
+        caselon c: WithGuelonstId if c.guelonstId.isDelonfinelond =>
+          guelonstIdDelonfinelondCountelonr.incr()
+          c.guelonstId.map(GuelonstReloncipielonnt)
+        caselon c: WithGuelonstId =>
+          guelonstIdNotDelonfinelondCountelonr.incr()
+          ReloncipielonntBuildelonr.Relonquelonst(c)
+        caselon _: WithUselonrId =>
+          uselonrIdNotDelonfinelondCountelonr.incr()
+          Nonelon
+        caselon _ =>
+          loggelonr.warning("Relonquelonst Contelonxt with no uselonr or guelonst id trait found: " + relonquelonstContelonxt)
+          noIdCountelonr.incr()
+          Nonelon
       }
     }
 
-    val boolOverrides = BoolToDeciderMap.map {
-      case (param, deciderKey) =>
-        param.optionalOverrideValue(
-          DeciderSwitchOverrideValue(
-            feature = deciderGateBuilder.keyToFeature(deciderKey),
-            enabledValue = true,
-            disabledValueOption = Some(false),
-            recipientBuilder = UserOrGuestOrRequest
+    val boolOvelonrridelons = BoolToDeloncidelonrMap.map {
+      caselon (param, deloncidelonrKelony) =>
+        param.optionalOvelonrridelonValuelon(
+          DeloncidelonrSwitchOvelonrridelonValuelon(
+            felonaturelon = deloncidelonrGatelonBuildelonr.kelonyToFelonaturelon(deloncidelonrKelony),
+            elonnablelondValuelon = truelon,
+            disablelondValuelonOption = Somelon(falselon),
+            reloncipielonntBuildelonr = UselonrOrGuelonstOrRelonquelonst
           )
         )
-    }.toSeq
+    }.toSelonq
 
-    val safetyLevelOverride = SafetyLevel.enabledParam.optionalOverrideValue(
-      DeciderSwitchOverrideValue(
-        feature = deciderGateBuilder.keyToFeature(SafetyLevelToDeciderMap(SafetyLevel)),
-        enabledValue = true,
-        recipientBuilder = UserOrGuestOrRequest
+    val safelontyLelonvelonlOvelonrridelon = SafelontyLelonvelonl.elonnablelondParam.optionalOvelonrridelonValuelon(
+      DeloncidelonrSwitchOvelonrridelonValuelon(
+        felonaturelon = deloncidelonrGatelonBuildelonr.kelonyToFelonaturelon(SafelontyLelonvelonlToDeloncidelonrMap(SafelontyLelonvelonl)),
+        elonnablelondValuelon = truelon,
+        reloncipielonntBuildelonr = UselonrOrGuelonstOrRelonquelonst
       )
     )
 
-    BaseConfigBuilder(boolOverrides :+ safetyLevelOverride).build("VisibilityDeciders")
+    BaselonConfigBuildelonr(boolOvelonrridelons :+ safelontyLelonvelonlOvelonrridelon).build("VisibilityDeloncidelonrs")
   }
 }

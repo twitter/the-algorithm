@@ -1,85 +1,85 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.parameters.recap.RecapParams
-import com.twitter.timelineranker.parameters.uteg_liked_by_tweets.UtegLikedByTweetsParams
-import com.twitter.timelineranker.util.TweetFilters
-import com.twitter.timelines.common.model.TweetKindOption
-import com.twitter.util.Future
-import scala.collection.mutable
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap.ReloncapParams
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.utelong_likelond_by_twelonelonts.UtelongLikelondByTwelonelontsParams
+import com.twittelonr.timelonlinelonrankelonr.util.TwelonelontFiltelonrs
+import com.twittelonr.timelonlinelons.common.modelonl.TwelonelontKindOption
+import com.twittelonr.util.Futurelon
+import scala.collelonction.mutablelon
 
-object TweetKindOptionHydratedTweetsFilterTransform {
-  private[common] val enableExpandedExtendedRepliesGate: Gate[RecapQuery] =
-    RecapQuery.paramGate(RecapParams.EnableExpandedExtendedRepliesFilterParam)
+objelonct TwelonelontKindOptionHydratelondTwelonelontsFiltelonrTransform {
+  privatelon[common] val elonnablelonelonxpandelondelonxtelonndelondRelonplielonsGatelon: Gatelon[ReloncapQuelonry] =
+    ReloncapQuelonry.paramGatelon(ReloncapParams.elonnablelonelonxpandelondelonxtelonndelondRelonplielonsFiltelonrParam)
 
-  private[common] val excludeRecommendedRepliesToNonFollowedUsersGate: Gate[RecapQuery] =
-    RecapQuery.paramGate(
-      UtegLikedByTweetsParams.UTEGRecommendationsFilter.ExcludeRecommendedRepliesToNonFollowedUsersParam)
+  privatelon[common] val elonxcludelonReloncommelonndelondRelonplielonsToNonFollowelondUselonrsGatelon: Gatelon[ReloncapQuelonry] =
+    ReloncapQuelonry.paramGatelon(
+      UtelongLikelondByTwelonelontsParams.UTelonGReloncommelonndationsFiltelonr.elonxcludelonReloncommelonndelondRelonplielonsToNonFollowelondUselonrsParam)
 }
 
 /**
- * Filter hydrated tweets dynamically based on TweetKindOptions in the query.
+ * Filtelonr hydratelond twelonelonts dynamically baselond on TwelonelontKindOptions in thelon quelonry.
  */
-class TweetKindOptionHydratedTweetsFilterTransform(
-  useFollowGraphData: Boolean,
-  useSourceTweets: Boolean,
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  import TweetKindOptionHydratedTweetsFilterTransform._
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filters = convertToFilters(envelope)
+class TwelonelontKindOptionHydratelondTwelonelontsFiltelonrTransform(
+  uselonFollowGraphData: Boolelonan,
+  uselonSourcelonTwelonelonts: Boolelonan,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
+  import TwelonelontKindOptionHydratelondTwelonelontsFiltelonrTransform._
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val filtelonrs = convelonrtToFiltelonrs(elonnvelonlopelon)
 
-    val filterTransform = if (filters == TweetFilters.ValueSet.empty) {
-      FutureArrow.identity[CandidateEnvelope]
-    } else {
-      new HydratedTweetsFilterTransform(
-        outerFilters = filters,
-        innerFilters = TweetFilters.None,
-        useFollowGraphData = useFollowGraphData,
-        useSourceTweets = useSourceTweets,
-        statsReceiver = statsReceiver,
-        numRetweetsAllowed = HydratedTweetsFilterTransform.NumDuplicateRetweetsAllowed
+    val filtelonrTransform = if (filtelonrs == TwelonelontFiltelonrs.ValuelonSelont.elonmpty) {
+      FuturelonArrow.idelonntity[Candidatelonelonnvelonlopelon]
+    } elonlselon {
+      nelonw HydratelondTwelonelontsFiltelonrTransform(
+        outelonrFiltelonrs = filtelonrs,
+        innelonrFiltelonrs = TwelonelontFiltelonrs.Nonelon,
+        uselonFollowGraphData = uselonFollowGraphData,
+        uselonSourcelonTwelonelonts = uselonSourcelonTwelonelonts,
+        statsReloncelonivelonr = statsReloncelonivelonr,
+        numRelontwelonelontsAllowelond = HydratelondTwelonelontsFiltelonrTransform.NumDuplicatelonRelontwelonelontsAllowelond
       )
     }
 
-    filterTransform.apply(envelope)
+    filtelonrTransform.apply(elonnvelonlopelon)
   }
 
   /**
-   * Converts the given query options to equivalent TweetFilter values.
+   * Convelonrts thelon givelonn quelonry options to elonquivalelonnt TwelonelontFiltelonr valuelons.
    *
-   * Note:
-   * -- The semantic of TweetKindOption is opposite of that of TweetFilters.
-   *    TweetKindOption values are of the form IncludeX. That is, they result in X being added.
-   *    TweetFilters values specify what to exclude.
-   * -- IncludeExtendedReplies requires IncludeReplies to be also specified to be effective.
+   * Notelon:
+   * -- Thelon selonmantic of TwelonelontKindOption is oppositelon of that of TwelonelontFiltelonrs.
+   *    TwelonelontKindOption valuelons arelon of thelon form IncludelonX. That is, thelony relonsult in X beloning addelond.
+   *    TwelonelontFiltelonrs valuelons speloncify what to elonxcludelon.
+   * -- IncludelonelonxtelonndelondRelonplielons relonquirelons IncludelonRelonplielons to belon also speloncifielond to belon elonffelonctivelon.
    */
-  private[common] def convertToFilters(envelope: CandidateEnvelope): TweetFilters.ValueSet = {
-    val queryOptions = envelope.query.options
-    val filters = mutable.Set.empty[TweetFilters.Value]
-    if (queryOptions.contains(TweetKindOption.IncludeReplies)) {
-      if (excludeRecommendedRepliesToNonFollowedUsersGate(
-          envelope.query) && envelope.query.utegLikedByTweetsOptions.isDefined) {
-        filters += TweetFilters.RecommendedRepliesToNotFollowedUsers
-      } else if (queryOptions.contains(TweetKindOption.IncludeExtendedReplies)) {
-        if (enableExpandedExtendedRepliesGate(envelope.query)) {
-          filters += TweetFilters.NotValidExpandedExtendedReplies
-        } else {
-          filters += TweetFilters.NotQualifiedExtendedReplies
+  privatelon[common] delonf convelonrtToFiltelonrs(elonnvelonlopelon: Candidatelonelonnvelonlopelon): TwelonelontFiltelonrs.ValuelonSelont = {
+    val quelonryOptions = elonnvelonlopelon.quelonry.options
+    val filtelonrs = mutablelon.Selont.elonmpty[TwelonelontFiltelonrs.Valuelon]
+    if (quelonryOptions.contains(TwelonelontKindOption.IncludelonRelonplielons)) {
+      if (elonxcludelonReloncommelonndelondRelonplielonsToNonFollowelondUselonrsGatelon(
+          elonnvelonlopelon.quelonry) && elonnvelonlopelon.quelonry.utelongLikelondByTwelonelontsOptions.isDelonfinelond) {
+        filtelonrs += TwelonelontFiltelonrs.ReloncommelonndelondRelonplielonsToNotFollowelondUselonrs
+      } elonlselon if (quelonryOptions.contains(TwelonelontKindOption.IncludelonelonxtelonndelondRelonplielons)) {
+        if (elonnablelonelonxpandelondelonxtelonndelondRelonplielonsGatelon(elonnvelonlopelon.quelonry)) {
+          filtelonrs += TwelonelontFiltelonrs.NotValidelonxpandelondelonxtelonndelondRelonplielons
+        } elonlselon {
+          filtelonrs += TwelonelontFiltelonrs.NotQualifielondelonxtelonndelondRelonplielons
         }
-      } else {
-        filters += TweetFilters.ExtendedReplies
+      } elonlselon {
+        filtelonrs += TwelonelontFiltelonrs.elonxtelonndelondRelonplielons
       }
-    } else {
-      filters += TweetFilters.Replies
+    } elonlselon {
+      filtelonrs += TwelonelontFiltelonrs.Relonplielons
     }
-    if (!queryOptions.contains(TweetKindOption.IncludeRetweets)) {
-      filters += TweetFilters.Retweets
+    if (!quelonryOptions.contains(TwelonelontKindOption.IncludelonRelontwelonelonts)) {
+      filtelonrs += TwelonelontFiltelonrs.Relontwelonelonts
     }
-    TweetFilters.ValueSet.empty ++ filters
+    TwelonelontFiltelonrs.ValuelonSelont.elonmpty ++ filtelonrs
   }
 }

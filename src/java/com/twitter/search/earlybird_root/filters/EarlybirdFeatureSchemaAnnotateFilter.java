@@ -1,57 +1,57 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.List;
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaSpecifier;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
-public class EarlybirdFeatureSchemaAnnotateFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+public class elonarlybirdFelonaturelonSchelonmaAnnotatelonFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  private final EarlybirdFeatureSchemaMerger schemaMerger;
+  privatelon final elonarlybirdFelonaturelonSchelonmaMelonrgelonr schelonmaMelonrgelonr;
 
-  @Inject
-  public EarlybirdFeatureSchemaAnnotateFilter(EarlybirdFeatureSchemaMerger merger) {
-    this.schemaMerger = merger;
+  @Injelonct
+  public elonarlybirdFelonaturelonSchelonmaAnnotatelonFiltelonr(elonarlybirdFelonaturelonSchelonmaMelonrgelonr melonrgelonr) {
+    this.schelonmaMelonrgelonr = melonrgelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    return service.apply(annotateRequestContext(requestContext));
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    relonturn selonrvicelon.apply(annotatelonRelonquelonstContelonxt(relonquelonstContelonxt));
   }
 
   /**
-   * Annotate the request to indicate the available features schemas before sending to earlybird.
+   * Annotatelon thelon relonquelonst to indicatelon thelon availablelon felonaturelons schelonmas belonforelon selonnding to elonarlybird.
    *
-   * @param requestContext the earlybird request context
+   * @param relonquelonstContelonxt thelon elonarlybird relonquelonst contelonxt
    */
-  private EarlybirdRequestContext annotateRequestContext(EarlybirdRequestContext requestContext) {
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.isSetSearchQuery()
-        && request.getSearchQuery().isSetResultMetadataOptions()
-        && request.getSearchQuery().getResultMetadataOptions().isReturnSearchResultFeatures()) {
-      // Remember the available client side cached features schema in the context and prepare to
-      // reset it something new.
-      List<ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient =
-          request.getSearchQuery().getResultMetadataOptions().getFeatureSchemasAvailableInClient();
+  privatelon elonarlybirdRelonquelonstContelonxt annotatelonRelonquelonstContelonxt(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    if (relonquelonst.isSelontSelonarchQuelonry()
+        && relonquelonst.gelontSelonarchQuelonry().isSelontRelonsultMelontadataOptions()
+        && relonquelonst.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions().isRelonturnSelonarchRelonsultFelonaturelons()) {
+      // Relonmelonmbelonr thelon availablelon clielonnt sidelon cachelond felonaturelons schelonma in thelon contelonxt and prelonparelon to
+      // relonselont it somelonthing nelonw.
+      List<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr> felonaturelonSchelonmasAvailablelonInClielonnt =
+          relonquelonst.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions().gelontFelonaturelonSchelonmasAvailablelonInClielonnt();
 
-      return EarlybirdRequestContext.newContext(
-          request,
-          requestContext,
-          schemaMerger.getAvailableSchemaList(),  // Set the available feature schemas based on
-                                                  // what is cached in the current root.
-          featureSchemasAvailableInClient);
-    } else {
-      return requestContext;
+      relonturn elonarlybirdRelonquelonstContelonxt.nelonwContelonxt(
+          relonquelonst,
+          relonquelonstContelonxt,
+          schelonmaMelonrgelonr.gelontAvailablelonSchelonmaList(),  // Selont thelon availablelon felonaturelon schelonmas baselond on
+                                                  // what is cachelond in thelon currelonnt root.
+          felonaturelonSchelonmasAvailablelonInClielonnt);
+    } elonlselon {
+      relonturn relonquelonstContelonxt;
     }
   }
 }

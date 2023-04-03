@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Predicate which will be applied to each candidate. True indicates that the candidate will be
- * @tparam Candidate - the type of the candidate
+ * Prelondicatelon which will belon applielond to elonach candidatelon. Truelon indicatelons that thelon candidatelon will belon
+ * @tparam Candidatelon - thelon typelon of thelon candidatelon
  */
-trait ShouldKeepCandidate[Candidate] {
-  def apply(candidate: Candidate): Boolean
+trait ShouldKelonelonpCandidatelon[Candidatelon] {
+  delonf apply(candidatelon: Candidatelon): Boolelonan
 }
 
-object PredicateFilter {
+objelonct PrelondicatelonFiltelonr {
 
   /**
-   * Builds a simple Filter out of a predicate function from the candidate to a boolean. For clarity,
-   * we recommend including the name of the shouldKeepCandidate parameter.
+   * Builds a simplelon Filtelonr out of a prelondicatelon function from thelon candidatelon to a boolelonan. For clarity,
+   * welon reloncommelonnd including thelon namelon of thelon shouldKelonelonpCandidatelon paramelontelonr.
    *
    *  {{{
-   *  Filter.fromPredicate(
-   *    FilterIdentifier("SomeFilter"),
-   *    shouldKeepCandidate = { candidate: UserCandidate => candidate.id % 2 == 0L }
+   *  Filtelonr.fromPrelondicatelon(
+   *    FiltelonrIdelonntifielonr("SomelonFiltelonr"),
+   *    shouldKelonelonpCandidatelon = { candidatelon: UselonrCandidatelon => candidatelon.id % 2 == 0L }
    *  )
    *  }}}
    *
-   * @param identifier A FilterIdentifier for the new filter
-   * @param shouldKeepCandidate A predicate function from the candidate. Candidates will be kept
-   *                            when this function returns True.
+   * @param idelonntifielonr A FiltelonrIdelonntifielonr for thelon nelonw filtelonr
+   * @param shouldKelonelonpCandidatelon A prelondicatelon function from thelon candidatelon. Candidatelons will belon kelonpt
+   *                            whelonn this function relonturns Truelon.
    */
-  def fromPredicate[Candidate <: UniversalNoun[Any]](
-    identifier: FilterIdentifier,
-    shouldKeepCandidate: ShouldKeepCandidate[Candidate]
-  ): Filter[PipelineQuery, Candidate] = {
-    val i = identifier
+  delonf fromPrelondicatelon[Candidatelon <: UnivelonrsalNoun[Any]](
+    idelonntifielonr: FiltelonrIdelonntifielonr,
+    shouldKelonelonpCandidatelon: ShouldKelonelonpCandidatelon[Candidatelon]
+  ): Filtelonr[PipelonlinelonQuelonry, Candidatelon] = {
+    val i = idelonntifielonr
 
-    new Filter[PipelineQuery, Candidate] {
-      override val identifier: FilterIdentifier = i
+    nelonw Filtelonr[PipelonlinelonQuelonry, Candidatelon] {
+      ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = i
 
       /**
-       * Filter the list of candidates
+       * Filtelonr thelon list of candidatelons
        *
-       * @return a FilterResult including both the list of kept candidate and the list of removed candidates
+       * @relonturn a FiltelonrRelonsult including both thelon list of kelonpt candidatelon and thelon list of relonmovelond candidatelons
        */
-      override def apply(
-        query: PipelineQuery,
-        candidates: Seq[CandidateWithFeatures[Candidate]]
-      ): Stitch[FilterResult[Candidate]] = {
-        val (keptCandidates, removedCandidates) = candidates.map(_.candidate).partition {
-          filterCandidate =>
-            shouldKeepCandidate(filterCandidate)
+      ovelonrridelon delonf apply(
+        quelonry: PipelonlinelonQuelonry,
+        candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+      ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
+        val (kelonptCandidatelons, relonmovelondCandidatelons) = candidatelons.map(_.candidatelon).partition {
+          filtelonrCandidatelon =>
+            shouldKelonelonpCandidatelon(filtelonrCandidatelon)
         }
 
-        Stitch.value(FilterResult(kept = keptCandidates, removed = removedCandidates))
+        Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonptCandidatelons, relonmovelond = relonmovelondCandidatelons))
       }
     }
   }

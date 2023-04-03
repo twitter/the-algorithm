@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.service.scoring_pipeline_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.scoring_pipelonlinelon_elonxeloncutor
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineResult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring.ScoringPipelonlinelonRelonsult
 
-case class ScoringPipelineExecutorResult[Candidate <: UniversalNoun[Any]](
-  result: Seq[ItemCandidateWithDetails],
-  individualPipelineResults: Seq[ScoringPipelineResult[Candidate]])
+caselon class ScoringPipelonlinelonelonxeloncutorRelonsult[Candidatelon <: UnivelonrsalNoun[Any]](
+  relonsult: Selonq[ItelonmCandidatelonWithDelontails],
+  individualPipelonlinelonRelonsults: Selonq[ScoringPipelonlinelonRelonsult[Candidatelon]])

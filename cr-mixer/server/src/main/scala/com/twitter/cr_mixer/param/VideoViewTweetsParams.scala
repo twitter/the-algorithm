@@ -1,63 +1,63 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
-import com.twitter.usersignalservice.thriftscala.SignalType
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.SignalTypelon
 
-object VideoViewTweetsParams {
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "signal_videoviewtweets_enable_source",
-        default = false
+objelonct VidelonoVielonwTwelonelontsParams {
+  objelonct elonnablelonSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "signal_videlonovielonwtwelonelonts_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  object EnableSourceImpressionParam
-      extends FSParam[Boolean](
-        name = "signal_videoviewtweets_enableimpression_source",
-        default = false
+  objelonct elonnablelonSourcelonImprelonssionParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "signal_videlonovielonwtwelonelonts_elonnablelonimprelonssion_sourcelon",
+        delonfault = falselon
       )
 
-  object VideoViewTweetType extends Enumeration {
-    protected case class SignalTypeValue(signalType: SignalType) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToSignalTypeValue(x: Value): SignalTypeValue =
-      x.asInstanceOf[SignalTypeValue]
+  objelonct VidelonoVielonwTwelonelontTypelon elonxtelonnds elonnumelonration {
+    protelonctelond caselon class SignalTypelonValuelon(signalTypelon: SignalTypelon) elonxtelonnds supelonr.Val
+    import scala.languagelon.implicitConvelonrsions
+    implicit delonf valuelonToSignalTypelonValuelon(x: Valuelon): SignalTypelonValuelon =
+      x.asInstancelonOf[SignalTypelonValuelon]
 
-    val VideoTweetQualityView: SignalTypeValue = SignalTypeValue(SignalType.VideoView90dQualityV1)
-    val VideoTweetPlayback50: SignalTypeValue = SignalTypeValue(SignalType.VideoView90dPlayback50V1)
+    val VidelonoTwelonelontQualityVielonw: SignalTypelonValuelon = SignalTypelonValuelon(SignalTypelon.VidelonoVielonw90dQualityV1)
+    val VidelonoTwelonelontPlayback50: SignalTypelonValuelon = SignalTypelonValuelon(SignalTypelon.VidelonoVielonw90dPlayback50V1)
   }
 
-  object VideoViewTweetTypeParam
-      extends FSEnumParam[VideoViewTweetType.type](
-        name = "signal_videoviewtweets_videoviewtype_id",
-        default = VideoViewTweetType.VideoTweetQualityView,
-        enum = VideoViewTweetType
+  objelonct VidelonoVielonwTwelonelontTypelonParam
+      elonxtelonnds FSelonnumParam[VidelonoVielonwTwelonelontTypelon.typelon](
+        namelon = "signal_videlonovielonwtwelonelonts_videlonovielonwtypelon_id",
+        delonfault = VidelonoVielonwTwelonelontTypelon.VidelonoTwelonelontQualityVielonw,
+        elonnum = VidelonoVielonwTwelonelontTypelon
       )
 
-  val AllParams: Seq[Param[_] with FSName] =
-    Seq(EnableSourceParam, EnableSourceImpressionParam, VideoViewTweetTypeParam)
+  val AllParams: Selonq[Param[_] with FSNamelon] =
+    Selonq(elonnablelonSourcelonParam, elonnablelonSourcelonImprelonssionParam, VidelonoVielonwTwelonelontTypelonParam)
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam,
-      EnableSourceImpressionParam,
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonSourcelonParam,
+      elonnablelonSourcelonImprelonssionParam,
     )
-    val enumOverrides =
-      FeatureSwitchOverrideUtil.getEnumFSOverrides(
-        NullStatsReceiver,
-        Logger(getClass),
-        VideoViewTweetTypeParam)
+    val elonnumOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(
+        NullStatsReloncelonivelonr,
+        Loggelonr(gelontClass),
+        VidelonoVielonwTwelonelontTypelonParam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(enumOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(elonnumOvelonrridelons: _*)
       .build()
   }
 

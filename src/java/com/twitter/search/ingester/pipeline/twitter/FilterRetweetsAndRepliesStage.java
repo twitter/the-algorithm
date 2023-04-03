@@ -1,79 +1,79 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelondTypelons;
 
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.PipelineStageRuntimeException;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonRuntimelonelonxcelonption;
 
 /**
- * Filters out tweets that are not retweets or replies.
+ * Filtelonrs out twelonelonts that arelon not relontwelonelonts or relonplielons.
  */
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducedTypes(IngesterTwitterMessage.class)
-public class FilterRetweetsAndRepliesStage extends TwitterBaseStage
-    <IngesterTwitterMessage, IngesterTwitterMessage> {
-  private static final String EMIT_RETWEET_AND_REPLY_ENGAGEMENTS_DECIDER_KEY =
-      "ingester_realtime_emit_retweet_and_reply_engagements";
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+public class FiltelonrRelontwelonelontsAndRelonplielonsStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <IngelonstelonrTwittelonrMelonssagelon, IngelonstelonrTwittelonrMelonssagelon> {
+  privatelon static final String elonMIT_RelonTWelonelonT_AND_RelonPLY_elonNGAGelonMelonNTS_DelonCIDelonR_KelonY =
+      "ingelonstelonr_relonaltimelon_elonmit_relontwelonelont_and_relonply_elonngagelonmelonnts";
 
-  private SearchRateCounter filteredRetweetsCount;
-  private SearchRateCounter filteredRepliesToTweetsCount;
-  private SearchRateCounter incomingRetweetsAndRepliesToTweetsCount;
+  privatelon SelonarchRatelonCountelonr filtelonrelondRelontwelonelontsCount;
+  privatelon SelonarchRatelonCountelonr filtelonrelondRelonplielonsToTwelonelontsCount;
+  privatelon SelonarchRatelonCountelonr incomingRelontwelonelontsAndRelonplielonsToTwelonelontsCount;
 
-  @Override
+  @Ovelonrridelon
   public void initStats() {
-    super.initStats();
-    innerSetupStats();
+    supelonr.initStats();
+    innelonrSelontupStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    filteredRetweetsCount =
-        SearchRateCounter.export(getStageNamePrefix() + "_filtered_retweets_count");
-    filteredRepliesToTweetsCount =
-        SearchRateCounter.export(getStageNamePrefix() + "_filtered_replies_to_tweets_count");
-    incomingRetweetsAndRepliesToTweetsCount =
-        SearchRateCounter.export(
-            getStageNamePrefix() + "_incoming_retweets_and_replies_to_tweets_count");
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    filtelonrelondRelontwelonelontsCount =
+        SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_filtelonrelond_relontwelonelonts_count");
+    filtelonrelondRelonplielonsToTwelonelontsCount =
+        SelonarchRatelonCountelonr.elonxport(gelontStagelonNamelonPrelonfix() + "_filtelonrelond_relonplielons_to_twelonelonts_count");
+    incomingRelontwelonelontsAndRelonplielonsToTwelonelontsCount =
+        SelonarchRatelonCountelonr.elonxport(
+            gelontStagelonNamelonPrelonfix() + "_incoming_relontwelonelonts_and_relonplielons_to_twelonelonts_count");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not an IngelonstelonrTwittelonrMelonssagelon: " + obj);
     }
 
-    IngesterTwitterMessage status = (IngesterTwitterMessage) obj;
-    if (tryToFilter(status)) {
-      emitAndCount(status);
+    IngelonstelonrTwittelonrMelonssagelon status = (IngelonstelonrTwittelonrMelonssagelon) obj;
+    if (tryToFiltelonr(status)) {
+      elonmitAndCount(status);
     }
   }
 
-  @Override
-  public IngesterTwitterMessage runStageV2(IngesterTwitterMessage message) {
-    if (!tryToFilter(message)) {
-      throw new PipelineStageRuntimeException("Does not have to pass to the next stage.");
+  @Ovelonrridelon
+  public IngelonstelonrTwittelonrMelonssagelon runStagelonV2(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    if (!tryToFiltelonr(melonssagelon)) {
+      throw nelonw PipelonlinelonStagelonRuntimelonelonxcelonption("Doelons not havelon to pass to thelon nelonxt stagelon.");
     }
-    return message;
+    relonturn melonssagelon;
   }
 
-  private boolean tryToFilter(IngesterTwitterMessage status) {
-    boolean shouldEmit = false;
-    if (status.isRetweet() || status.isReplyToTweet()) {
-      incomingRetweetsAndRepliesToTweetsCount.increment();
-      if (DeciderUtil.isAvailableForRandomRecipient(
-          decider, EMIT_RETWEET_AND_REPLY_ENGAGEMENTS_DECIDER_KEY)) {
-        if (status.isRetweet()) {
-          filteredRetweetsCount.increment();
-        } else {
-          filteredRepliesToTweetsCount.increment();
+  privatelon boolelonan tryToFiltelonr(IngelonstelonrTwittelonrMelonssagelon status) {
+    boolelonan shouldelonmit = falselon;
+    if (status.isRelontwelonelont() || status.isRelonplyToTwelonelont()) {
+      incomingRelontwelonelontsAndRelonplielonsToTwelonelontsCount.increlonmelonnt();
+      if (DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(
+          deloncidelonr, elonMIT_RelonTWelonelonT_AND_RelonPLY_elonNGAGelonMelonNTS_DelonCIDelonR_KelonY)) {
+        if (status.isRelontwelonelont()) {
+          filtelonrelondRelontwelonelontsCount.increlonmelonnt();
+        } elonlselon {
+          filtelonrelondRelonplielonsToTwelonelontsCount.increlonmelonnt();
         }
-        shouldEmit = true;
+        shouldelonmit = truelon;
       }
     }
-    return shouldEmit;
+    relonturn shouldelonmit;
   }
 }

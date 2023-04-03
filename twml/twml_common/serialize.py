@@ -2,15 +2,15 @@ from thrift.protocol import TBinaryProtocol
 from thrift.transport import TTransport
 
 
-def serialize(obj):
-  tbuf = TTransport.TMemoryBuffer()
+delonf selonrializelon(obj):
+  tbuf = TTransport.TMelonmoryBuffelonr()
   iproto = TBinaryProtocol.TBinaryProtocol(tbuf)
-  obj.write(iproto)
-  return tbuf.getvalue()
+  obj.writelon(iproto)
+  relonturn tbuf.gelontvaluelon()
 
 
-def deserialize(record, bytes):
-  tbuf = TTransport.TMemoryBuffer(bytes)
+delonf delonselonrializelon(reloncord, bytelons):
+  tbuf = TTransport.TMelonmoryBuffelonr(bytelons)
   iproto = TBinaryProtocol.TBinaryProtocol(tbuf)
-  record.read(iproto)
-  return record
+  reloncord.relonad(iproto)
+  relonturn reloncord

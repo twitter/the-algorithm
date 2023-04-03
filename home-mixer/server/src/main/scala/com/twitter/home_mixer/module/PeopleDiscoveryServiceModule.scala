@@ -1,35 +1,35 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.peoplediscovery.api.thriftscala.ThriftPeopleDiscoveryService
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.pelonoplelondiscovelonry.api.thriftscala.ThriftPelonoplelonDiscovelonrySelonrvicelon
+import com.twittelonr.util.Duration
 
 /**
- * Copy of com.twitter.product_mixer.component_library.module.PeopleDiscoveryServiceModule
+ * Copy of com.twittelonr.product_mixelonr.componelonnt_library.modulelon.PelonoplelonDiscovelonrySelonrvicelonModulelon
  */
-object PeopleDiscoveryServiceModule
-    extends ThriftMethodBuilderClientModule[
-      ThriftPeopleDiscoveryService.ServicePerEndpoint,
-      ThriftPeopleDiscoveryService.MethodPerEndpoint
+objelonct PelonoplelonDiscovelonrySelonrvicelonModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      ThriftPelonoplelonDiscovelonrySelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      ThriftPelonoplelonDiscovelonrySelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override val label: String = "people-discovery-api"
+  ovelonrridelon val labelonl: String = "pelonoplelon-discovelonry-api"
 
-  override val dest: String = "/s/people-discovery-api/people-discovery-api:thrift"
+  ovelonrridelon val delonst: String = "/s/pelonoplelon-discovelonry-api/pelonoplelon-discovelonry-api:thrift"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(350.millis)
-      .withTimeoutTotal(350.millis)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = {
+    melonthodBuildelonr
+      .withTimelonoutPelonrRelonquelonst(350.millis)
+      .withTimelonoutTotal(350.millis)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 500.milliselonconds
 }

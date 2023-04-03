@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
 
-case class HydratorCandidateResult[+Candidate <: UniversalNoun[Any]](
-  override val candidate: Candidate,
-  override val features: FeatureMap)
-    extends CandidateWithFeatures[Candidate]
+caselon class HydratorCandidatelonRelonsult[+Candidatelon <: UnivelonrsalNoun[Any]](
+  ovelonrridelon val candidatelon: Candidatelon,
+  ovelonrridelon val felonaturelons: FelonaturelonMap)
+    elonxtelonnds CandidatelonWithFelonaturelons[Candidatelon]

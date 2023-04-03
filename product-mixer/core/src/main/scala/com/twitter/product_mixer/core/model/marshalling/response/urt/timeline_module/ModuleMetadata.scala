@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon
 
-object ModuleMetadata {
-  def isConversationModule(moduleMetadata: Option[ModuleMetadata]): Boolean =
-    moduleMetadata.map(_.conversationMetadata).isDefined
+objelonct ModulelonMelontadata {
+  delonf isConvelonrsationModulelon(modulelonMelontadata: Option[ModulelonMelontadata]): Boolelonan =
+    modulelonMelontadata.map(_.convelonrsationMelontadata).isDelonfinelond
 }
 
-case class ModuleMetadata(
-  adsMetadata: Option[AdsMetadata],
-  conversationMetadata: Option[ModuleConversationMetadata],
-  gridCarouselMetadata: Option[GridCarouselMetadata])
+caselon class ModulelonMelontadata(
+  adsMelontadata: Option[AdsMelontadata],
+  convelonrsationMelontadata: Option[ModulelonConvelonrsationMelontadata],
+  gridCarouselonlMelontadata: Option[GridCarouselonlMelontadata])

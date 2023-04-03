@@ -1,65 +1,65 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.collectors.RelevanceMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRankingModelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.collelonctors.RelonlelonvancelonMelonrgelonCollelonctor;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Merger class to merge toptweets EarlybirdResponse objects
+ * Melonrgelonr class to melonrgelon toptwelonelonts elonarlybirdRelonsponselon objeloncts
  */
-public class TopTweetsResponseMerger extends EarlybirdResponseMerger {
+public class TopTwelonelontsRelonsponselonMelonrgelonr elonxtelonnds elonarlybirdRelonsponselonMelonrgelonr {
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.9;
+  privatelon static final doublelon SUCCelonSSFUL_RelonSPONSelon_THRelonSHOLD = 0.9;
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_top_tweets", TimeUnit.NANOSECONDS, false, true);
+  privatelon static final SelonarchTimelonrStats TIMelonR =
+      SelonarchTimelonrStats.elonxport("melonrgelon_top_twelonelonts", TimelonUnit.NANOSelonCONDS, falselon, truelon);
 
-  public TopTweetsResponseMerger(EarlybirdRequestContext requestContext,
-                                 List<Future<EarlybirdResponse>> responses,
-                                 ResponseAccumulator mode) {
-    super(requestContext, responses, mode);
+  public TopTwelonelontsRelonsponselonMelonrgelonr(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                                 List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons,
+                                 RelonsponselonAccumulator modelon) {
+    supelonr(relonquelonstContelonxt, relonsponselons, modelon);
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @Ovelonrridelon
+  protelonctelond SelonarchTimelonrStats gelontMelonrgelondRelonsponselonTimelonr() {
+    relonturn TIMelonR;
   }
 
-  @Override
-  protected double getDefaultSuccessResponseThreshold() {
-    return SUCCESSFUL_RESPONSE_THRESHOLD;
+  @Ovelonrridelon
+  protelonctelond doublelon gelontDelonfaultSuccelonssRelonsponselonThrelonshold() {
+    relonturn SUCCelonSSFUL_RelonSPONSelon_THRelonSHOLD;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    final ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
+  @Ovelonrridelon
+  protelonctelond elonarlybirdRelonsponselon intelonrnalMelonrgelon(elonarlybirdRelonsponselon melonrgelondRelonsponselon) {
+    final ThriftSelonarchQuelonry selonarchQuelonry = relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry();
 
-    Preconditions.checkNotNull(searchQuery);
-    Preconditions.checkState(searchQuery.isSetRankingMode());
-    Preconditions.checkState(searchQuery.getRankingMode() == ThriftSearchRankingMode.TOPTWEETS);
+    Prelonconditions.chelonckNotNull(selonarchQuelonry);
+    Prelonconditions.chelonckStatelon(selonarchQuelonry.isSelontRankingModelon());
+    Prelonconditions.chelonckStatelon(selonarchQuelonry.gelontRankingModelon() == ThriftSelonarchRankingModelon.TOPTWelonelonTS);
 
-    int numResultsRequested = computeNumResultsToKeep();
+    int numRelonsultsRelonquelonstelond = computelonNumRelonsultsToKelonelonp();
 
-    RelevanceMergeCollector collector = new RelevanceMergeCollector(responses.size());
+    RelonlelonvancelonMelonrgelonCollelonctor collelonctor = nelonw RelonlelonvancelonMelonrgelonCollelonctor(relonsponselons.sizelon());
 
-    addResponsesToCollector(collector);
-    ThriftSearchResults searchResults = collector.getAllSearchResults();
-    if (numResultsRequested < searchResults.getResults().size()) {
-      searchResults.setResults(searchResults.getResults().subList(0, numResultsRequested));
+    addRelonsponselonsToCollelonctor(collelonctor);
+    ThriftSelonarchRelonsults selonarchRelonsults = collelonctor.gelontAllSelonarchRelonsults();
+    if (numRelonsultsRelonquelonstelond < selonarchRelonsults.gelontRelonsults().sizelon()) {
+      selonarchRelonsults.selontRelonsults(selonarchRelonsults.gelontRelonsults().subList(0, numRelonsultsRelonquelonstelond));
     }
 
-    mergedResponse.setSearchResults(searchResults);
+    melonrgelondRelonsponselon.selontSelonarchRelonsults(selonarchRelonsults);
 
-    return mergedResponse;
+    relonturn melonrgelondRelonsponselon;
   }
 }

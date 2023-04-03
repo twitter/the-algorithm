@@ -1,45 +1,45 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+packagelon com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.util.Duration
-import com.twitter.conversions.DurationOps._
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasDurationConversion
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.timelonlinelons.configapi.DurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
 
-object PostNuxMlRequestBuilderParams {
-  case object TopicIdFetchBudget
-      extends FSBoundedParam[Duration](
-        name = "post_nux_ml_request_builder_topic_id_fetch_budget_millis",
-        default = 200.millisecond,
-        min = 80.millisecond,
-        max = 400.millisecond)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMillis
+objelonct PostNuxMlRelonquelonstBuildelonrParams {
+  caselon objelonct TopicIdFelontchBudgelont
+      elonxtelonnds FSBoundelondParam[Duration](
+        namelon = "post_nux_ml_relonquelonst_buildelonr_topic_id_felontch_budgelont_millis",
+        delonfault = 200.milliseloncond,
+        min = 80.milliseloncond,
+        max = 400.milliseloncond)
+      with HasDurationConvelonrsion {
+    ovelonrridelon val durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromMillis
   }
 
-  case object DismissedIdScanBudget
-      extends FSBoundedParam[Duration](
-        name = "post_nux_ml_request_builder_dismissed_id_scan_budget_millis",
-        default = 200.millisecond,
-        min = 80.millisecond,
-        max = 400.millisecond)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMillis
+  caselon objelonct DismisselondIdScanBudgelont
+      elonxtelonnds FSBoundelondParam[Duration](
+        namelon = "post_nux_ml_relonquelonst_buildelonr_dismisselond_id_scan_budgelont_millis",
+        delonfault = 200.milliseloncond,
+        min = 80.milliseloncond,
+        max = 400.milliseloncond)
+      with HasDurationConvelonrsion {
+    ovelonrridelon val durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromMillis
   }
 
-  case object WTFImpressionsScanBudget
-      extends FSBoundedParam[Duration](
-        name = "post_nux_ml_request_builder_wtf_impressions_scan_budget_millis",
-        default = 200.millisecond,
-        min = 80.millisecond,
-        max = 400.millisecond)
-      with HasDurationConversion {
-    override val durationConversion: DurationConversion = DurationConversion.FromMillis
+  caselon objelonct WTFImprelonssionsScanBudgelont
+      elonxtelonnds FSBoundelondParam[Duration](
+        namelon = "post_nux_ml_relonquelonst_buildelonr_wtf_imprelonssions_scan_budgelont_millis",
+        delonfault = 200.milliseloncond,
+        min = 80.milliseloncond,
+        max = 400.milliseloncond)
+      with HasDurationConvelonrsion {
+    ovelonrridelon val durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromMillis
   }
 
-  case object EnableInvalidRelationshipPredicate
-      extends FSParam[Boolean](
-        name = "post_nux_ml_request_builder_enable_invalid_relationship_predicate",
-        false)
+  caselon objelonct elonnablelonInvalidRelonlationshipPrelondicatelon
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "post_nux_ml_relonquelonst_buildelonr_elonnablelon_invalid_relonlationship_prelondicatelon",
+        falselon)
 }

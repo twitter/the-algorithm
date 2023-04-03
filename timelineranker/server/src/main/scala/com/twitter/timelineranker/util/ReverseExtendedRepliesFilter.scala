@@ -1,32 +1,32 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.tweet.HydratedTweet
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
 
-object ReverseExtendedRepliesFilter {
-  private[util] def isQualifiedReverseExtendedReply(
-    tweet: HydratedTweet,
-    currentUserId: UserId,
-    followedUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId],
-    sourceTweetsById: Map[TweetId, HydratedTweet]
-  ): Boolean = {
-    // tweet author is out of the current user's network
-    !followedUserIds.contains(tweet.userId) &&
-    // tweet author is not muted
-    !mutedUserIds.contains(tweet.userId) &&
-    // tweet is not a retweet
-    !tweet.isRetweet &&
-    // there must be a source tweet
-    tweet.inReplyToTweetId
-      .flatMap(sourceTweetsById.get)
-      .filter { sourceTweet =>
-        (!sourceTweet.isRetweet) && // and it's not a retweet
-        (!sourceTweet.hasReply) && // and it's not a reply
-        (sourceTweet.userId != 0) && // and the author's id must be non zero
-        followedUserIds.contains(sourceTweet.userId) // and the author is followed
-      } // and the author has not been muted
-      .exists(sourceTweet => !mutedUserIds.contains(sourceTweet.userId))
+objelonct RelonvelonrselonelonxtelonndelondRelonplielonsFiltelonr {
+  privatelon[util] delonf isQualifielondRelonvelonrselonelonxtelonndelondRelonply(
+    twelonelont: HydratelondTwelonelont,
+    currelonntUselonrId: UselonrId,
+    followelondUselonrIds: Selonq[UselonrId],
+    mutelondUselonrIds: Selont[UselonrId],
+    sourcelonTwelonelontsById: Map[TwelonelontId, HydratelondTwelonelont]
+  ): Boolelonan = {
+    // twelonelont author is out of thelon currelonnt uselonr's nelontwork
+    !followelondUselonrIds.contains(twelonelont.uselonrId) &&
+    // twelonelont author is not mutelond
+    !mutelondUselonrIds.contains(twelonelont.uselonrId) &&
+    // twelonelont is not a relontwelonelont
+    !twelonelont.isRelontwelonelont &&
+    // thelonrelon must belon a sourcelon twelonelont
+    twelonelont.inRelonplyToTwelonelontId
+      .flatMap(sourcelonTwelonelontsById.gelont)
+      .filtelonr { sourcelonTwelonelont =>
+        (!sourcelonTwelonelont.isRelontwelonelont) && // and it's not a relontwelonelont
+        (!sourcelonTwelonelont.hasRelonply) && // and it's not a relonply
+        (sourcelonTwelonelont.uselonrId != 0) && // and thelon author's id must belon non zelonro
+        followelondUselonrIds.contains(sourcelonTwelonelont.uselonrId) // and thelon author is followelond
+      } // and thelon author has not belonelonn mutelond
+      .elonxists(sourcelonTwelonelont => !mutelondUselonrIds.contains(sourcelonTwelonelont.uselonrId))
   }
 }

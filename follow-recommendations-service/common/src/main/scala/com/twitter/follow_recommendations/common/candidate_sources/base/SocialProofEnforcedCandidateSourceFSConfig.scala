@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SocialProofEnforcedCandidateSourceFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] =
-    Seq(
-      SocialProofEnforcedCandidateSourceParams.MustCallSgs,
-      SocialProofEnforcedCandidateSourceParams.CallSgsCachedColumn,
+@Singlelonton
+class SocialProofelonnforcelondCandidatelonSourcelonFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[Param[Boolelonan] with FSNamelon] =
+    Selonq(
+      SocialProofelonnforcelondCandidatelonSourcelonParams.MustCallSgs,
+      SocialProofelonnforcelondCandidatelonSourcelonParams.CallSgsCachelondColumn,
     )
-  override val intFSParams: Seq[FSBoundedParam[Int]] =
-    Seq(
-      SocialProofEnforcedCandidateSourceParams.QueryIntersectionIdsNum,
-      SocialProofEnforcedCandidateSourceParams.MaxNumCandidatesToAnnotate,
-      SocialProofEnforcedCandidateSourceParams.GfsIntersectionIdsNum,
-      SocialProofEnforcedCandidateSourceParams.SgsIntersectionIdsNum,
+  ovelonrridelon val intFSParams: Selonq[FSBoundelondParam[Int]] =
+    Selonq(
+      SocialProofelonnforcelondCandidatelonSourcelonParams.QuelonryIntelonrselonctionIdsNum,
+      SocialProofelonnforcelondCandidatelonSourcelonParams.MaxNumCandidatelonsToAnnotatelon,
+      SocialProofelonnforcelondCandidatelonSourcelonParams.GfsIntelonrselonctionIdsNum,
+      SocialProofelonnforcelondCandidatelonSourcelonParams.SgsIntelonrselonctionIdsNum,
     )
 
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    SocialProofEnforcedCandidateSourceParams.GfsLagDurationInDays
+  ovelonrridelon val durationFSParams: Selonq[FSBoundelondParam[Duration] with HasDurationConvelonrsion] = Selonq(
+    SocialProofelonnforcelondCandidatelonSourcelonParams.GfsLagDurationInDays
   )
 }

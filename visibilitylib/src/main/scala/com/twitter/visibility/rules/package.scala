@@ -1,5 +1,5 @@
-package com.twitter.visibility
+packagelon com.twittelonr.visibility
 
-package object rules {
-  type LabelTypeId = Short
+packagelon objelonct rulelons {
+  typelon LabelonlTypelonId = Short
 }

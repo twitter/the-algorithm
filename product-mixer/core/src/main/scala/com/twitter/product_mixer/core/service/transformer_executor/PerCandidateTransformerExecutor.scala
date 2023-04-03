@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.service.transformer_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.transformelonr_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.transformer.Transformer
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.Transformelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.util.Try
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * For wrapping [[Transformer]]s that are applied per-candidate
+ * For wrapping [[Transformelonr]]s that arelon applielond pelonr-candidatelon
  *
- * Records a single span for running all the components,
- * but stats per-component.
+ * Reloncords a singlelon span for running all thelon componelonnts,
+ * but stats pelonr-componelonnt.
  */
-@Singleton
-class PerCandidateTransformerExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
+@Singlelonton
+class PelonrCandidatelonTransformelonrelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor {
 
-  def arrow[In, Out](
-    transformer: Transformer[In, Out],
-    context: Executor.Context,
-  ): Arrow[Seq[In], Seq[Try[Out]]] = {
-    val perCandidateArrow = wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing(
-      context,
-      transformer.identifier
-    )(Arrow.map(transformer.transform)).liftToTry
+  delonf arrow[In, Out](
+    transformelonr: Transformelonr[In, Out],
+    contelonxt: elonxeloncutor.Contelonxt,
+  ): Arrow[Selonq[In], Selonq[Try[Out]]] = {
+    val pelonrCandidatelonArrow = wrapPelonrCandidatelonComponelonntWithelonxeloncutorBookkelonelonpingWithoutTracing(
+      contelonxt,
+      transformelonr.idelonntifielonr
+    )(Arrow.map(transformelonr.transform)).liftToTry
 
-    wrapComponentsWithTracingOnly(
-      context,
-      transformer.identifier
-    )(Arrow.sequence(perCandidateArrow))
+    wrapComponelonntsWithTracingOnly(
+      contelonxt,
+      transformelonr.idelonntifielonr
+    )(Arrow.selonquelonncelon(pelonrCandidatelonArrow))
   }
 }

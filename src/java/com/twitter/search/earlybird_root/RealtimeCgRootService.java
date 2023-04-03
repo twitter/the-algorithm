@@ -1,132 +1,132 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.mtls.authorization.server.MtlsServerSessionTrackerFilter;
-import com.twitter.search.common.clientstats.FinagleClientStatsFilter;
-import com.twitter.search.common.root.LoggingFilter;
-import com.twitter.search.common.root.RequestValidationFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusResponse;
-import com.twitter.search.earlybird_root.caching.FacetsCacheFilter;
-import com.twitter.search.earlybird_root.caching.RecencyCacheFilter;
-import com.twitter.search.earlybird_root.caching.RelevanceCacheFilter;
-import com.twitter.search.earlybird_root.caching.RelevanceZeroResultsCacheFilter;
-import com.twitter.search.earlybird_root.caching.StrictRecencyCacheFilter;
-import com.twitter.search.earlybird_root.caching.TermStatsCacheFilter;
-import com.twitter.search.earlybird_root.caching.TopTweetsCacheFilter;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.filters.ClientIdQuotaFilter;
-import com.twitter.search.earlybird_root.filters.ClientIdTrackingFilter;
-import com.twitter.search.earlybird_root.filters.ClientRequestTimeFilter;
-import com.twitter.search.earlybird_root.filters.DeadlineTimeoutStatsFilter;
-import com.twitter.search.earlybird_root.filters.DropAllProtectedOperatorFilter;
-import com.twitter.search.earlybird_root.filters.EarlybirdFeatureSchemaAnnotateFilter;
-import com.twitter.search.earlybird_root.filters.InitializeRequestContextFilter;
-import com.twitter.search.earlybird_root.filters.MetadataTrackingFilter;
-import com.twitter.search.earlybird_root.filters.NullcastTrackingFilter;
-import com.twitter.search.earlybird_root.filters.PostCacheRequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.PreCacheRequestTypeCountFilter;
-import com.twitter.search.earlybird_root.filters.QueryLangStatFilter;
-import com.twitter.search.earlybird_root.filters.QueryOperatorStatFilter;
-import com.twitter.search.earlybird_root.filters.RequestResultStatsFilter;
-import com.twitter.search.earlybird_root.filters.ResponseCodeStatFilter;
-import com.twitter.search.earlybird_root.filters.SearchPayloadSizeLocalContextFilter;
-import com.twitter.search.earlybird_root.filters.StratoAttributionClientIdFilter;
-import com.twitter.search.earlybird_root.filters.TopLevelExceptionHandlingFilter;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.mtls.authorization.selonrvelonr.MtlsSelonrvelonrSelonssionTrackelonrFiltelonr;
+import com.twittelonr.selonarch.common.clielonntstats.FinaglelonClielonntStatsFiltelonr;
+import com.twittelonr.selonarch.common.root.LoggingFiltelonr;
+import com.twittelonr.selonarch.common.root.RelonquelonstValidationFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdStatusRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.caching.FacelontsCachelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.caching.ReloncelonncyCachelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.caching.RelonlelonvancelonCachelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.caching.RelonlelonvancelonZelonroRelonsultsCachelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.caching.StrictReloncelonncyCachelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.caching.TelonrmStatsCachelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.caching.TopTwelonelontsCachelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.ClielonntIdQuotaFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.ClielonntIdTrackingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.ClielonntRelonquelonstTimelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.DelonadlinelonTimelonoutStatsFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.DropAllProtelonctelondOpelonratorFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.elonarlybirdFelonaturelonSchelonmaAnnotatelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.InitializelonRelonquelonstContelonxtFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.MelontadataTrackingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.NullcastTrackingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.PostCachelonRelonquelonstTypelonCountFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.PrelonCachelonRelonquelonstTypelonCountFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.QuelonryLangStatFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.QuelonryOpelonratorStatFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.RelonquelonstRelonsultStatsFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.RelonsponselonCodelonStatFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.SelonarchPayloadSizelonLocalContelonxtFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.StratoAttributionClielonntIdFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.TopLelonvelonlelonxcelonptionHandlingFiltelonr;
+import com.twittelonr.util.Futurelon;
 
-@Singleton
-public class RealtimeCgRootService implements EarlybirdService.ServiceIface {
+@Singlelonton
+public class RelonaltimelonCgRootSelonrvicelon implelonmelonnts elonarlybirdSelonrvicelon.SelonrvicelonIfacelon {
 
-  private final Service<EarlybirdRequest, EarlybirdResponse> allFiltersAndService;
+  privatelon final Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> allFiltelonrsAndSelonrvicelon;
 
-  @Inject
-  public RealtimeCgRootService(
-      TopLevelExceptionHandlingFilter topLevelExceptionHandlingFilter,
-      ResponseCodeStatFilter responseCodeStatFilter,
-      LoggingFilter<EarlybirdRequest, EarlybirdResponse> loggingFilter,
-      RequestValidationFilter<EarlybirdRequest, EarlybirdResponse> validationFilter,
-      MtlsServerSessionTrackerFilter<EarlybirdRequest, EarlybirdResponse> mtlsFilter,
-      FinagleClientStatsFilter<EarlybirdRequest, EarlybirdResponse> finagleStatsFilter,
-      InitializeFilter initializeFilter,
-      InitializeRequestContextFilter initializeRequestContextFilter,
-      QueryLangStatFilter queryLangStatFilter,
-      DropAllProtectedOperatorFilter dropAllProtectedOperatorFilter,
-      QueryOperatorStatFilter queryOperatorStatFilter,
-      RequestResultStatsFilter requestResultStatsFilter,
-      PreCacheRequestTypeCountFilter preCacheCountFilter,
-      RecencyCacheFilter recencyCacheFilter,
-      RelevanceCacheFilter relevanceCacheFilter,
-      RelevanceZeroResultsCacheFilter relevanceZeroResultsCacheFilter,
-      StrictRecencyCacheFilter strictRecencyCacheFilter,
-      FacetsCacheFilter facetsCacheFilter,
-      TermStatsCacheFilter termStatsCacheFilter,
-      TopTweetsCacheFilter topTweetsCacheFilter,
-      PostCacheRequestTypeCountFilter postCacheCountFilter,
-      ClientIdTrackingFilter clientIdTrackingFilter,
-      ClientIdQuotaFilter quotaFilter,
-      MetadataTrackingFilter metadataTrackingFilter,
-      NullcastTrackingFilter nullcastTrackingFilter,
-      ClientRequestTimeFilter clientRequestTimeFilter,
-      DeadlineTimeoutStatsFilter deadlineTimeoutStatsFilter,
-      EarlybirdFeatureSchemaAnnotateFilter featureSchemaAnnotateFilter,
-      SearchPayloadSizeLocalContextFilter searchPayloadSizeLocalContextFilter,
-      @Named(ProtectedScatterGatherModule.NAMED_SCATTER_GATHER_SERVICE)
-          Service<EarlybirdRequestContext, EarlybirdResponse> scatterGatherService,
-      StratoAttributionClientIdFilter stratoAttributionClientIdFilter) {
-    this.allFiltersAndService =
-        loggingFilter
-            .andThen(topLevelExceptionHandlingFilter)
-            .andThen(stratoAttributionClientIdFilter)
-            .andThen(clientRequestTimeFilter)
-            .andThen(searchPayloadSizeLocalContextFilter)
-            .andThen(responseCodeStatFilter)
-            .andThen(requestResultStatsFilter)
-            .andThen(validationFilter)
-            .andThen(mtlsFilter)
-            .andThen(finagleStatsFilter)
-            .andThen(clientIdTrackingFilter)
-            .andThen(quotaFilter)
-            .andThen(metadataTrackingFilter)
-            .andThen(initializeFilter)
-            .andThen(initializeRequestContextFilter)
-            .andThen(deadlineTimeoutStatsFilter)
-            .andThen(queryLangStatFilter)
-            .andThen(nullcastTrackingFilter)
-            .andThen(dropAllProtectedOperatorFilter)
-            .andThen(queryOperatorStatFilter)
-            .andThen(preCacheCountFilter)
-            .andThen(recencyCacheFilter)
-            .andThen(relevanceCacheFilter)
-            .andThen(relevanceZeroResultsCacheFilter)
-            .andThen(strictRecencyCacheFilter)
-            .andThen(facetsCacheFilter)
-            .andThen(termStatsCacheFilter)
-            .andThen(topTweetsCacheFilter)
-            .andThen(postCacheCountFilter)
-            .andThen(featureSchemaAnnotateFilter)
-            .andThen(scatterGatherService);
+  @Injelonct
+  public RelonaltimelonCgRootSelonrvicelon(
+      TopLelonvelonlelonxcelonptionHandlingFiltelonr topLelonvelonlelonxcelonptionHandlingFiltelonr,
+      RelonsponselonCodelonStatFiltelonr relonsponselonCodelonStatFiltelonr,
+      LoggingFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> loggingFiltelonr,
+      RelonquelonstValidationFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> validationFiltelonr,
+      MtlsSelonrvelonrSelonssionTrackelonrFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> mtlsFiltelonr,
+      FinaglelonClielonntStatsFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> finaglelonStatsFiltelonr,
+      InitializelonFiltelonr initializelonFiltelonr,
+      InitializelonRelonquelonstContelonxtFiltelonr initializelonRelonquelonstContelonxtFiltelonr,
+      QuelonryLangStatFiltelonr quelonryLangStatFiltelonr,
+      DropAllProtelonctelondOpelonratorFiltelonr dropAllProtelonctelondOpelonratorFiltelonr,
+      QuelonryOpelonratorStatFiltelonr quelonryOpelonratorStatFiltelonr,
+      RelonquelonstRelonsultStatsFiltelonr relonquelonstRelonsultStatsFiltelonr,
+      PrelonCachelonRelonquelonstTypelonCountFiltelonr prelonCachelonCountFiltelonr,
+      ReloncelonncyCachelonFiltelonr reloncelonncyCachelonFiltelonr,
+      RelonlelonvancelonCachelonFiltelonr relonlelonvancelonCachelonFiltelonr,
+      RelonlelonvancelonZelonroRelonsultsCachelonFiltelonr relonlelonvancelonZelonroRelonsultsCachelonFiltelonr,
+      StrictReloncelonncyCachelonFiltelonr strictReloncelonncyCachelonFiltelonr,
+      FacelontsCachelonFiltelonr facelontsCachelonFiltelonr,
+      TelonrmStatsCachelonFiltelonr telonrmStatsCachelonFiltelonr,
+      TopTwelonelontsCachelonFiltelonr topTwelonelontsCachelonFiltelonr,
+      PostCachelonRelonquelonstTypelonCountFiltelonr postCachelonCountFiltelonr,
+      ClielonntIdTrackingFiltelonr clielonntIdTrackingFiltelonr,
+      ClielonntIdQuotaFiltelonr quotaFiltelonr,
+      MelontadataTrackingFiltelonr melontadataTrackingFiltelonr,
+      NullcastTrackingFiltelonr nullcastTrackingFiltelonr,
+      ClielonntRelonquelonstTimelonFiltelonr clielonntRelonquelonstTimelonFiltelonr,
+      DelonadlinelonTimelonoutStatsFiltelonr delonadlinelonTimelonoutStatsFiltelonr,
+      elonarlybirdFelonaturelonSchelonmaAnnotatelonFiltelonr felonaturelonSchelonmaAnnotatelonFiltelonr,
+      SelonarchPayloadSizelonLocalContelonxtFiltelonr selonarchPayloadSizelonLocalContelonxtFiltelonr,
+      @Namelond(ProtelonctelondScattelonrGathelonrModulelon.NAMelonD_SCATTelonR_GATHelonR_SelonRVICelon)
+          Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> scattelonrGathelonrSelonrvicelon,
+      StratoAttributionClielonntIdFiltelonr stratoAttributionClielonntIdFiltelonr) {
+    this.allFiltelonrsAndSelonrvicelon =
+        loggingFiltelonr
+            .andThelonn(topLelonvelonlelonxcelonptionHandlingFiltelonr)
+            .andThelonn(stratoAttributionClielonntIdFiltelonr)
+            .andThelonn(clielonntRelonquelonstTimelonFiltelonr)
+            .andThelonn(selonarchPayloadSizelonLocalContelonxtFiltelonr)
+            .andThelonn(relonsponselonCodelonStatFiltelonr)
+            .andThelonn(relonquelonstRelonsultStatsFiltelonr)
+            .andThelonn(validationFiltelonr)
+            .andThelonn(mtlsFiltelonr)
+            .andThelonn(finaglelonStatsFiltelonr)
+            .andThelonn(clielonntIdTrackingFiltelonr)
+            .andThelonn(quotaFiltelonr)
+            .andThelonn(melontadataTrackingFiltelonr)
+            .andThelonn(initializelonFiltelonr)
+            .andThelonn(initializelonRelonquelonstContelonxtFiltelonr)
+            .andThelonn(delonadlinelonTimelonoutStatsFiltelonr)
+            .andThelonn(quelonryLangStatFiltelonr)
+            .andThelonn(nullcastTrackingFiltelonr)
+            .andThelonn(dropAllProtelonctelondOpelonratorFiltelonr)
+            .andThelonn(quelonryOpelonratorStatFiltelonr)
+            .andThelonn(prelonCachelonCountFiltelonr)
+            .andThelonn(reloncelonncyCachelonFiltelonr)
+            .andThelonn(relonlelonvancelonCachelonFiltelonr)
+            .andThelonn(relonlelonvancelonZelonroRelonsultsCachelonFiltelonr)
+            .andThelonn(strictReloncelonncyCachelonFiltelonr)
+            .andThelonn(facelontsCachelonFiltelonr)
+            .andThelonn(telonrmStatsCachelonFiltelonr)
+            .andThelonn(topTwelonelontsCachelonFiltelonr)
+            .andThelonn(postCachelonCountFiltelonr)
+            .andThelonn(felonaturelonSchelonmaAnnotatelonFiltelonr)
+            .andThelonn(scattelonrGathelonrSelonrvicelon);
   }
 
-  @Override
-  public Future<String> getName() {
-    return Future.value("realtime_cg root");
+  @Ovelonrridelon
+  public Futurelon<String> gelontNamelon() {
+    relonturn Futurelon.valuelon("relonaltimelon_cg root");
   }
 
-  @Override
-  public Future<EarlybirdStatusResponse> getStatus() {
-    throw new UnsupportedOperationException("not supported");
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdStatusRelonsponselon> gelontStatus() {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("not supportelond");
   }
 
-  @Override
-  public Future<EarlybirdResponse> search(EarlybirdRequest request) {
-    return allFiltersAndService.apply(request);
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> selonarch(elonarlybirdRelonquelonst relonquelonst) {
+    relonturn allFiltelonrsAndSelonrvicelon.apply(relonquelonst);
   }
 }

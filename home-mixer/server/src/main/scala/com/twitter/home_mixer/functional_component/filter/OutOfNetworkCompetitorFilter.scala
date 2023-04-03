@@ -1,38 +1,38 @@
-package com.twitter.home_mixer.functional_component.filter
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam.CompetitorSetParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParam.CompelontitorSelontParam
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object OutOfNetworkCompetitorFilter extends Filter[PipelineQuery, TweetCandidate] {
+objelonct OutOfNelontworkCompelontitorFiltelonr elonxtelonnds Filtelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("OutOfNetworkCompetitor")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("OutOfNelontworkCompelontitor")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val competitorAuthors = query.params(CompetitorSetParam)
-    val (removed, kept) =
-      candidates.partition(isOutOfNetworkTweetFromCompetitor(_, competitorAuthors))
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[TwelonelontCandidatelon]] = {
+    val compelontitorAuthors = quelonry.params(CompelontitorSelontParam)
+    val (relonmovelond, kelonpt) =
+      candidatelons.partition(isOutOfNelontworkTwelonelontFromCompelontitor(_, compelontitorAuthors))
 
-    Stitch.value(FilterResult(kept = kept.map(_.candidate), removed = removed.map(_.candidate)))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonpt.map(_.candidatelon), relonmovelond = relonmovelond.map(_.candidatelon)))
   }
 
-  def isOutOfNetworkTweetFromCompetitor(
-    candidate: CandidateWithFeatures[TweetCandidate],
-    competitorAuthors: Set[Long]
-  ): Boolean = {
-    !candidate.features.getOrElse(InNetworkFeature, true) &&
-    !candidate.features.getOrElse(IsRetweetFeature, false) &&
-    candidate.features.getOrElse(AuthorIdFeature, None).exists(competitorAuthors.contains)
+  delonf isOutOfNelontworkTwelonelontFromCompelontitor(
+    candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon],
+    compelontitorAuthors: Selont[Long]
+  ): Boolelonan = {
+    !candidatelon.felonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, truelon) &&
+    !candidatelon.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon) &&
+    candidatelon.felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon).elonxists(compelontitorAuthors.contains)
   }
 }

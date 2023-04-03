@@ -1,61 +1,61 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.follow_recommendations.common.clients.socialgraph.RecentEdgesQuery
-import com.twitter.follow_recommendations.common.clients.socialgraph.SocialGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
-import javax.inject.Singleton
-import javax.inject.Inject
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph.ReloncelonntelondgelonsQuelonry
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph.SocialGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.socialgraph.thriftscala.RelonlationshipTypelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.StrongTielonPrelondictionFelonaturelonsOnUselonrClielonntColumn
+import javax.injelonct.Singlelonton
+import javax.injelonct.Injelonct
 
 /**
- * Returns mutual follows. It first gets mutual follows from recent 100 follows and followers, and then unions this
- * with mutual follows from STP features dataset.
+ * Relonturns mutual follows. It first gelonts mutual follows from reloncelonnt 100 follows and followelonrs, and thelonn unions this
+ * with mutual follows from STP felonaturelons dataselont.
  */
-@Singleton
-class MutualFollowStrongTiePredictionSource @Inject() (
-  sgsClient: SocialGraphClient,
-  strongTiePredictionFeaturesOnUserClientColumn: StrongTiePredictionFeaturesOnUserClientColumn)
-    extends CandidateSource[HasClientContext with HasRecentFollowedUserIds, CandidateUser] {
-  val identifier: CandidateSourceIdentifier =
-    MutualFollowStrongTiePredictionSource.Identifier
+@Singlelonton
+class MutualFollowStrongTielonPrelondictionSourcelon @Injelonct() (
+  sgsClielonnt: SocialGraphClielonnt,
+  strongTielonPrelondictionFelonaturelonsOnUselonrClielonntColumn: StrongTielonPrelondictionFelonaturelonsOnUselonrClielonntColumn)
+    elonxtelonnds CandidatelonSourcelon[HasClielonntContelonxt with HasReloncelonntFollowelondUselonrIds, CandidatelonUselonr] {
+  val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    MutualFollowStrongTielonPrelondictionSourcelon.Idelonntifielonr
 
-  override def apply(
-    target: HasClientContext with HasRecentFollowedUserIds
-  ): Stitch[Seq[CandidateUser]] = {
-    target.getOptionalUserId match {
-      case Some(userId) =>
-        val newFollowings = target.recentFollowedUserIds
-          .getOrElse(Nil)
-          .take(MutualFollowStrongTiePredictionSource.NumOfRecentFollowings)
-        val newFollowersStitch =
-          sgsClient
-            .getRecentEdges(RecentEdgesQuery(userId, Seq(RelationshipType.FollowedBy))).map(
-              _.take(MutualFollowStrongTiePredictionSource.NumOfRecentFollowers))
+  ovelonrridelon delonf apply(
+    targelont: HasClielonntContelonxt with HasReloncelonntFollowelondUselonrIds
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
+    targelont.gelontOptionalUselonrId match {
+      caselon Somelon(uselonrId) =>
+        val nelonwFollowings = targelont.reloncelonntFollowelondUselonrIds
+          .gelontOrelonlselon(Nil)
+          .takelon(MutualFollowStrongTielonPrelondictionSourcelon.NumOfReloncelonntFollowings)
+        val nelonwFollowelonrsStitch =
+          sgsClielonnt
+            .gelontReloncelonntelondgelons(ReloncelonntelondgelonsQuelonry(uselonrId, Selonq(RelonlationshipTypelon.FollowelondBy))).map(
+              _.takelon(MutualFollowStrongTielonPrelondictionSourcelon.NumOfReloncelonntFollowelonrs))
         val mutualFollowsStitch =
-          strongTiePredictionFeaturesOnUserClientColumn.fetcher
-            .fetch(userId).map(_.v.flatMap(_.topMutualFollows.map(_.map(_.userId))).getOrElse(Nil))
+          strongTielonPrelondictionFelonaturelonsOnUselonrClielonntColumn.felontchelonr
+            .felontch(uselonrId).map(_.v.flatMap(_.topMutualFollows.map(_.map(_.uselonrId))).gelontOrelonlselon(Nil))
 
-        Stitch.join(newFollowersStitch, mutualFollowsStitch).map {
-          case (newFollowers, mutualFollows) => {
-            (newFollowings.intersect(newFollowers) ++ mutualFollows).distinct
-              .map(id => CandidateUser(id, Some(CandidateUser.DefaultCandidateScore)))
+        Stitch.join(nelonwFollowelonrsStitch, mutualFollowsStitch).map {
+          caselon (nelonwFollowelonrs, mutualFollows) => {
+            (nelonwFollowings.intelonrselonct(nelonwFollowelonrs) ++ mutualFollows).distinct
+              .map(id => CandidatelonUselonr(id, Somelon(CandidatelonUselonr.DelonfaultCandidatelonScorelon)))
           }
         }
-      case _ => Stitch.Nil
+      caselon _ => Stitch.Nil
     }
   }
 }
 
-object MutualFollowStrongTiePredictionSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
+objelonct MutualFollowStrongTielonPrelondictionSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
     Algorithm.MutualFollowSTP.toString)
-  val NumOfRecentFollowings = 100
-  val NumOfRecentFollowers = 100
+  val NumOfReloncelonntFollowings = 100
+  val NumOfReloncelonntFollowelonrs = 100
 }

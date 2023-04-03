@@ -1,15 +1,15 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import scala.language.implicitConversions
+import scala.languagelon.implicitConvelonrsions
 
-object UnifiedSETweetCombinationMethod extends Enumeration {
+objelonct UnifielondSelonTwelonelontCombinationMelonthod elonxtelonnds elonnumelonration {
 
-  protected case class CombinationType(s: String) extends super.Val
+  protelonctelond caselon class CombinationTypelon(s: String) elonxtelonnds supelonr.Val
 
-  implicit def valueToCombinationType(x: Value): CombinationType = x.asInstanceOf[CombinationType]
+  implicit delonf valuelonToCombinationTypelon(x: Valuelon): CombinationTypelon = x.asInstancelonOf[CombinationTypelon]
 
-  val Default: Value = CombinationType("")
-  val Interleave: Value = CombinationType("Interleave")
-  val Frontload: Value = CombinationType("Frontload")
-  val Backfill: Value = CombinationType("Backfill")
+  val Delonfault: Valuelon = CombinationTypelon("")
+  val Intelonrlelonavelon: Valuelon = CombinationTypelon("Intelonrlelonavelon")
+  val Frontload: Valuelon = CombinationTypelon("Frontload")
+  val Backfill: Valuelon = CombinationTypelon("Backfill")
 }

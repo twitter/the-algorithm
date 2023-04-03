@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.gate
+packagelon com.twittelonr.product_mixelonr.corelon.gatelon
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Param
 
-case class ParamGate(name: String, param: Param[Boolean])(implicit file: sourcecode.File)
-    extends Gate[PipelineQuery] {
+caselon class ParamGatelon(namelon: String, param: Param[Boolelonan])(implicit filelon: sourceloncodelon.Filelon)
+    elonxtelonnds Gatelon[PipelonlinelonQuelonry] {
 
-  // From a customer-perspective, it's more useful to see the file that created the ParamGate
-  override val identifier: GateIdentifier = GateIdentifier(name)(file)
+  // From a customelonr-pelonrspelonctivelon, it's morelon uselonful to selonelon thelon filelon that crelonatelond thelon ParamGatelon
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr(namelon)(filelon)
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
-    Stitch.value(query.params(param))
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry): Stitch[Boolelonan] =
+    Stitch.valuelon(quelonry.params(param))
 }
 
-object ParamGate {
-  val EnabledGateSuffix = "Enabled"
-  val SupportedClientGateSuffix = "SupportedClient"
+objelonct ParamGatelon {
+  val elonnablelondGatelonSuffix = "elonnablelond"
+  val SupportelondClielonntGatelonSuffix = "SupportelondClielonnt"
 }

@@ -1,62 +1,62 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.relonlelonvancelon_prompt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.relevance_prompt.RelevancePromptCandidateUrtItemStringCenterBuilder.RelevancePromptClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.RelevancePromptCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.PromptItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.prompt.RelevancePromptFollowUpFeedbackType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Callback
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.relonlelonvancelon_prompt.RelonlelonvancelonPromptCandidatelonUrtItelonmStringCelonntelonrBuildelonr.RelonlelonvancelonPromptClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.RelonlelonvancelonPromptCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonStr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt.PromptItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt.RelonlelonvancelonPromptContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt.RelonlelonvancelonPromptDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.prompt.RelonlelonvancelonPromptFollowUpFelonelondbackTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Callback
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object RelevancePromptCandidateUrtItemStringCenterBuilder {
-  val RelevancePromptClientEventInfoElement: String = "relevance_prompt"
+objelonct RelonlelonvancelonPromptCandidatelonUrtItelonmStringCelonntelonrBuildelonr {
+  val RelonlelonvancelonPromptClielonntelonvelonntInfoelonlelonmelonnt: String = "relonlelonvancelon_prompt"
 }
 
-case class RelevancePromptCandidateUrtItemStringCenterBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, RelevancePromptCandidate],
-  titleTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  confirmationTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  isRelevantTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  notRelevantTextBuilder: BaseStr[Query, RelevancePromptCandidate],
-  displayType: RelevancePromptDisplayType,
-  isRelevantCallback: Callback,
-  notRelevantCallback: Callback,
-  isRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType] = None,
-  notRelevantFollowUp: Option[RelevancePromptFollowUpFeedbackType] = None,
-  impressionCallbacks: Option[List[Callback]] = None)
-    extends CandidateUrtEntryBuilder[Query, RelevancePromptCandidate, PromptItem] {
+caselon class RelonlelonvancelonPromptCandidatelonUrtItelonmStringCelonntelonrBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, RelonlelonvancelonPromptCandidatelon],
+  titlelonTelonxtBuildelonr: BaselonStr[Quelonry, RelonlelonvancelonPromptCandidatelon],
+  confirmationTelonxtBuildelonr: BaselonStr[Quelonry, RelonlelonvancelonPromptCandidatelon],
+  isRelonlelonvantTelonxtBuildelonr: BaselonStr[Quelonry, RelonlelonvancelonPromptCandidatelon],
+  notRelonlelonvantTelonxtBuildelonr: BaselonStr[Quelonry, RelonlelonvancelonPromptCandidatelon],
+  displayTypelon: RelonlelonvancelonPromptDisplayTypelon,
+  isRelonlelonvantCallback: Callback,
+  notRelonlelonvantCallback: Callback,
+  isRelonlelonvantFollowUp: Option[RelonlelonvancelonPromptFollowUpFelonelondbackTypelon] = Nonelon,
+  notRelonlelonvantFollowUp: Option[RelonlelonvancelonPromptFollowUpFelonelondbackTypelon] = Nonelon,
+  imprelonssionCallbacks: Option[List[Callback]] = Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, RelonlelonvancelonPromptCandidatelon, PromptItelonm] {
 
-  override def apply(
-    query: Query,
-    relevancePromptCandidate: RelevancePromptCandidate,
-    candidateFeatures: FeatureMap
-  ): PromptItem =
-    PromptItem(
-      id = relevancePromptCandidate.id,
-      sortIndex = None,
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        relevancePromptCandidate,
-        candidateFeatures,
-        Some(RelevancePromptClientEventInfoElement)),
-      feedbackActionInfo = None,
-      content = RelevancePromptContent(
-        title = titleTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        confirmation = confirmationTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        isRelevantText = isRelevantTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        notRelevantText =
-          notRelevantTextBuilder(query, relevancePromptCandidate, candidateFeatures),
-        isRelevantCallback = isRelevantCallback,
-        notRelevantCallback = notRelevantCallback,
-        displayType = displayType,
-        isRelevantFollowUp = isRelevantFollowUp,
-        notRelevantFollowUp = notRelevantFollowUp,
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    relonlelonvancelonPromptCandidatelon: RelonlelonvancelonPromptCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): PromptItelonm =
+    PromptItelonm(
+      id = relonlelonvancelonPromptCandidatelon.id,
+      sortIndelonx = Nonelon,
+      clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+        quelonry,
+        relonlelonvancelonPromptCandidatelon,
+        candidatelonFelonaturelons,
+        Somelon(RelonlelonvancelonPromptClielonntelonvelonntInfoelonlelonmelonnt)),
+      felonelondbackActionInfo = Nonelon,
+      contelonnt = RelonlelonvancelonPromptContelonnt(
+        titlelon = titlelonTelonxtBuildelonr(quelonry, relonlelonvancelonPromptCandidatelon, candidatelonFelonaturelons),
+        confirmation = confirmationTelonxtBuildelonr(quelonry, relonlelonvancelonPromptCandidatelon, candidatelonFelonaturelons),
+        isRelonlelonvantTelonxt = isRelonlelonvantTelonxtBuildelonr(quelonry, relonlelonvancelonPromptCandidatelon, candidatelonFelonaturelons),
+        notRelonlelonvantTelonxt =
+          notRelonlelonvantTelonxtBuildelonr(quelonry, relonlelonvancelonPromptCandidatelon, candidatelonFelonaturelons),
+        isRelonlelonvantCallback = isRelonlelonvantCallback,
+        notRelonlelonvantCallback = notRelonlelonvantCallback,
+        displayTypelon = displayTypelon,
+        isRelonlelonvantFollowUp = isRelonlelonvantFollowUp,
+        notRelonlelonvantFollowUp = notRelonlelonvantFollowUp,
       ),
-      impressionCallbacks = impressionCallbacks
+      imprelonssionCallbacks = imprelonssionCallbacks
     )
 }

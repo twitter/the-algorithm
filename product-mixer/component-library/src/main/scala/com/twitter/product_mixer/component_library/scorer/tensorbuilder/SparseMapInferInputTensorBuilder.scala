@@ -1,61 +1,61 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.telonnsorbuildelonr
 
-import inference.GrpcService.InferTensorContents
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+import infelonrelonncelon.GrpcSelonrvicelon.InfelonrTelonnsorContelonnts
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst.InfelonrInputTelonnsor
 
-case object SparseMapInferInputTensorBuilder
-    extends InferInputTensorBuilder[Option[Map[Int, Double]]] {
+caselon objelonct SparselonMapInfelonrInputTelonnsorBuildelonr
+    elonxtelonnds InfelonrInputTelonnsorBuildelonr[Option[Map[Int, Doublelon]]] {
 
-  private final val batchFeatureNameSuffix: String = "batch"
-  private final val keyFeatureNameSuffix: String = "key"
-  private final val valueFeatureNameSuffix: String = "value"
+  privatelon final val batchFelonaturelonNamelonSuffix: String = "batch"
+  privatelon final val kelonyFelonaturelonNamelonSuffix: String = "kelony"
+  privatelon final val valuelonFelonaturelonNamelonSuffix: String = "valuelon"
 
-  def apply(
-    featureName: String,
-    featureValues: Seq[Option[Map[Int, Double]]]
-  ): Seq[InferInputTensor] = {
-    val batchIdsTensorContents = InferTensorContents.newBuilder()
-    val sparseKeysTensorContents = InferTensorContents.newBuilder()
-    val sparseValuesTensorContents = InferTensorContents.newBuilder()
-    featureValues.zipWithIndex.foreach {
-      case (featureValueOption, batchIndex) =>
-        featureValueOption.foreach { featureValue =>
-          featureValue.foreach {
-            case (sparseKey, sparseValue) =>
-              batchIdsTensorContents.addInt64Contents(batchIndex.toLong)
-              sparseKeysTensorContents.addInt64Contents(sparseKey.toLong)
-              sparseValuesTensorContents.addFp32Contents(sparseValue.floatValue)
+  delonf apply(
+    felonaturelonNamelon: String,
+    felonaturelonValuelons: Selonq[Option[Map[Int, Doublelon]]]
+  ): Selonq[InfelonrInputTelonnsor] = {
+    val batchIdsTelonnsorContelonnts = InfelonrTelonnsorContelonnts.nelonwBuildelonr()
+    val sparselonKelonysTelonnsorContelonnts = InfelonrTelonnsorContelonnts.nelonwBuildelonr()
+    val sparselonValuelonsTelonnsorContelonnts = InfelonrTelonnsorContelonnts.nelonwBuildelonr()
+    felonaturelonValuelons.zipWithIndelonx.forelonach {
+      caselon (felonaturelonValuelonOption, batchIndelonx) =>
+        felonaturelonValuelonOption.forelonach { felonaturelonValuelon =>
+          felonaturelonValuelon.forelonach {
+            caselon (sparselonKelony, sparselonValuelon) =>
+              batchIdsTelonnsorContelonnts.addInt64Contelonnts(batchIndelonx.toLong)
+              sparselonKelonysTelonnsorContelonnts.addInt64Contelonnts(sparselonKelony.toLong)
+              sparselonValuelonsTelonnsorContelonnts.addFp32Contelonnts(sparselonValuelon.floatValuelon)
           }
         }
     }
 
-    val batchIdsInputTensor = InferInputTensor
-      .newBuilder()
-      .setName(Seq(featureName, batchFeatureNameSuffix).mkString("_"))
-      .addShape(batchIdsTensorContents.getInt64ContentsCount)
-      .addShape(1)
-      .setDatatype("INT64")
-      .setContents(batchIdsTensorContents)
+    val batchIdsInputTelonnsor = InfelonrInputTelonnsor
+      .nelonwBuildelonr()
+      .selontNamelon(Selonq(felonaturelonNamelon, batchFelonaturelonNamelonSuffix).mkString("_"))
+      .addShapelon(batchIdsTelonnsorContelonnts.gelontInt64ContelonntsCount)
+      .addShapelon(1)
+      .selontDatatypelon("INT64")
+      .selontContelonnts(batchIdsTelonnsorContelonnts)
       .build()
 
-    val sparseKeysInputTensor = InferInputTensor
-      .newBuilder()
-      .setName(Seq(featureName, keyFeatureNameSuffix).mkString("_"))
-      .addShape(sparseKeysTensorContents.getInt64ContentsCount)
-      .addShape(1)
-      .setDatatype("INT64")
-      .setContents(sparseKeysTensorContents)
+    val sparselonKelonysInputTelonnsor = InfelonrInputTelonnsor
+      .nelonwBuildelonr()
+      .selontNamelon(Selonq(felonaturelonNamelon, kelonyFelonaturelonNamelonSuffix).mkString("_"))
+      .addShapelon(sparselonKelonysTelonnsorContelonnts.gelontInt64ContelonntsCount)
+      .addShapelon(1)
+      .selontDatatypelon("INT64")
+      .selontContelonnts(sparselonKelonysTelonnsorContelonnts)
       .build()
 
-    val sparseValuesInputTensor = InferInputTensor
-      .newBuilder()
-      .setName(Seq(featureName, valueFeatureNameSuffix).mkString("_"))
-      .addShape(sparseValuesTensorContents.getFp32ContentsCount)
-      .addShape(1)
-      .setDatatype("FP32")
-      .setContents(sparseValuesTensorContents)
+    val sparselonValuelonsInputTelonnsor = InfelonrInputTelonnsor
+      .nelonwBuildelonr()
+      .selontNamelon(Selonq(felonaturelonNamelon, valuelonFelonaturelonNamelonSuffix).mkString("_"))
+      .addShapelon(sparselonValuelonsTelonnsorContelonnts.gelontFp32ContelonntsCount)
+      .addShapelon(1)
+      .selontDatatypelon("FP32")
+      .selontContelonnts(sparselonValuelonsTelonnsorContelonnts)
       .build()
 
-    Seq(batchIdsInputTensor, sparseKeysInputTensor, sparseValuesInputTensor)
+    Selonq(batchIdsInputTelonnsor, sparselonKelonysInputTelonnsor, sparselonValuelonsInputTelonnsor)
   }
 }

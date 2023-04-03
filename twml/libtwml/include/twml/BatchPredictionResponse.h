@@ -1,58 +1,58 @@
-#pragma once
+#pragma oncelon
 
-#include <twml/Tensor.h>
-#include <twml/RawTensor.h>
-#include <twml/ThriftWriter.h>
+#includelon <twml/Telonnsor.h>
+#includelon <twml/RawTelonnsor.h>
+#includelon <twml/ThriftWritelonr.h>
 
-namespace twml {
+namelonspacelon twml {
 
-    // Encodes a batch of model predictions as a list of Thrift DataRecord
-    // objects inside a Thrift BatchPredictionResponse object. Prediction
-    // values are continousFeatures inside each DataRecord.
+    // elonncodelons a batch of modelonl prelondictions as a list of Thrift DataReloncord
+    // objeloncts insidelon a Thrift BatchPrelondictionRelonsponselon objelonct. Prelondiction
+    // valuelons arelon continousFelonaturelons insidelon elonach DataReloncord.
     //
-    // The BatchPredictionResponseWriter TensorFlow operator uses this class
-    // to determine the size of the output tensor to allocate. The operator
-    // then allocates memory for the output tensor and uses this class to
-    // write binary Thrift to the output tensor.
+    // Thelon BatchPrelondictionRelonsponselonWritelonr TelonnsorFlow opelonrator uselons this class
+    // to delontelonrminelon thelon sizelon of thelon output telonnsor to allocatelon. Thelon opelonrator
+    // thelonn allocatelons melonmory for thelon output telonnsor and uselons this class to
+    // writelon binary Thrift to thelon output telonnsor.
     //
-    class BatchPredictionResponse {
-    private:
-      uint64_t batch_size_;
-      const Tensor &keys_;
-      const Tensor &values_;  // prediction values (batch_size * num_keys)
-      const Tensor &dense_keys_;
-      const std::vector<RawTensor> &dense_values_;
+    class BatchPrelondictionRelonsponselon {
+    privatelon:
+      uint64_t batch_sizelon_;
+      const Telonnsor &kelonys_;
+      const Telonnsor &valuelons_;  // prelondiction valuelons (batch_sizelon * num_kelonys)
+      const Telonnsor &delonnselon_kelonys_;
+      const std::velonctor<RawTelonnsor> &delonnselon_valuelons_;
 
-      inline uint64_t getBatchSize() { return batch_size_; }
-      inline bool hasContinuous() { return keys_.getNumDims() > 0; }
-      inline bool hasDenseTensors() { return dense_keys_.getNumDims() > 0; }
+      inlinelon uint64_t gelontBatchSizelon() { relonturn batch_sizelon_; }
+      inlinelon bool hasContinuous() { relonturn kelonys_.gelontNumDims() > 0; }
+      inlinelon bool hasDelonnselonTelonnsors() { relonturn delonnselon_kelonys_.gelontNumDims() > 0; }
 
-      inline uint64_t getPredictionSize() {
-        return values_.getNumDims() > 1 ? values_.getDim(1) : 1;
+      inlinelon uint64_t gelontPrelondictionSizelon() {
+        relonturn valuelons_.gelontNumDims() > 1 ? valuelons_.gelontDim(1) : 1;
       };
 
-      void encode(twml::ThriftWriter &thrift_writer);
+      void elonncodelon(twml::ThriftWritelonr &thrift_writelonr);
 
-      template <typename T>
-      void serializePredictions(twml::ThriftWriter &thrift_writer);
+      telonmplatelon <typelonnamelon T>
+      void selonrializelonPrelondictions(twml::ThriftWritelonr &thrift_writelonr);
 
     public:
-      // keys:         'continuousFeatures' prediction keys
-      // values:       'continuousFeatures' prediction values (batch_size * num_keys)
-      // dense_keys:   'tensors' prediction keys
-      // dense_values: 'tensors' prediction values (batch_size * num_keys)
-      BatchPredictionResponse(
-        const Tensor &keys, const Tensor &values,
-        const Tensor &dense_keys, const std::vector<RawTensor> &dense_values);
+      // kelonys:         'continuousFelonaturelons' prelondiction kelonys
+      // valuelons:       'continuousFelonaturelons' prelondiction valuelons (batch_sizelon * num_kelonys)
+      // delonnselon_kelonys:   'telonnsors' prelondiction kelonys
+      // delonnselon_valuelons: 'telonnsors' prelondiction valuelons (batch_sizelon * num_kelonys)
+      BatchPrelondictionRelonsponselon(
+        const Telonnsor &kelonys, const Telonnsor &valuelons,
+        const Telonnsor &delonnselon_kelonys, const std::velonctor<RawTelonnsor> &delonnselon_valuelons);
 
-      // Calculate the size of the Thrift encoded output (but do not encode).
-      // The BatchPredictionResponseWriter TensorFlow operator uses this value
-      // to allocate the output tensor.
-      uint64_t encodedSize();
+      // Calculatelon thelon sizelon of thelon Thrift elonncodelond output (but do not elonncodelon).
+      // Thelon BatchPrelondictionRelonsponselonWritelonr TelonnsorFlow opelonrator uselons this valuelon
+      // to allocatelon thelon output telonnsor.
+      uint64_t elonncodelondSizelon();
 
-      // Write the BatchPredictionResponse as binary Thrift. The
-      // BatchPredictionResponseWriter operator uses this method to populate
-      // the output tensor.
-      void write(Tensor &result);
+      // Writelon thelon BatchPrelondictionRelonsponselon as binary Thrift. Thelon
+      // BatchPrelondictionRelonsponselonWritelonr opelonrator uselons this melonthod to populatelon
+      // thelon output telonnsor.
+      void writelon(Telonnsor &relonsult);
     };
 }

@@ -1,2 +1,2 @@
 #!/bin/sh
-PEX_INTERPRETER=1 "$PYTHON_ENV" "$LIBTWML_HOME"/src/ops/scripts/get_inc.py
+PelonX_INTelonRPRelonTelonR=1 "$PYTHON_elonNV" "$LIBTWML_HOMelon"/src/ops/scripts/gelont_inc.py

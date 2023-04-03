@@ -1,27 +1,27 @@
-package com.twitter.follow_recommendations.common.rankers.common
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common
 
-object RankerId extends Enumeration {
-  type RankerId = Value
+objelonct RankelonrId elonxtelonnds elonnumelonration {
+  typelon RankelonrId = Valuelon
 
-  val RandomRanker: RankerId = Value("random")
-  // The production PostNUX ML warm-start auto-retraining model ranker
-  val PostNuxProdRanker: RankerId = Value("postnux_prod")
-  val None: RankerId = Value("none")
+  val RandomRankelonr: RankelonrId = Valuelon("random")
+  // Thelon production PostNUX ML warm-start auto-relontraining modelonl rankelonr
+  val PostNuxProdRankelonr: RankelonrId = Valuelon("postnux_prod")
+  val Nonelon: RankelonrId = Valuelon("nonelon")
 
-  // Sampling from the Placket-Luce distribution. Applied after ranker step. Its ranker id is mainly used for logging.
-  val PlacketLuceSamplingTransformer: RankerId = Value("placket_luce_sampling_transformer")
+  // Sampling from thelon Plackelont-Lucelon distribution. Applielond aftelonr rankelonr stelonp. Its rankelonr id is mainly uselond for logging.
+  val PlackelontLucelonSamplingTransformelonr: RankelonrId = Valuelon("plackelont_lucelon_sampling_transformelonr")
 
-  def getRankerByName(name: String): Option[RankerId] =
-    RankerId.values.toSeq.find(_.equals(Value(name)))
+  delonf gelontRankelonrByNamelon(namelon: String): Option[RankelonrId] =
+    RankelonrId.valuelons.toSelonq.find(_.elonquals(Valuelon(namelon)))
 
 }
 
 /**
- * ML model based heavy ranker ids.
+ * ML modelonl baselond helonavy rankelonr ids.
  */
-object ModelBasedHeavyRankerId {
-  import RankerId._
-  val HeavyRankerIds: Set[String] = Set(
-    PostNuxProdRanker.toString,
+objelonct ModelonlBaselondHelonavyRankelonrId {
+  import RankelonrId._
+  val HelonavyRankelonrIds: Selont[String] = Selont(
+    PostNuxProdRankelonr.toString,
   )
 }

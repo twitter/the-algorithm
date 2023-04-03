@@ -1,121 +1,121 @@
-package com.twitter.follow_recommendations.utils
+packagelon com.twittelonr.follow_reloncommelonndations.utils
 
-import com.twitter.follow_recommendations.common.base.RecommendationFlow
-import com.twitter.follow_recommendations.common.base.SideEffectsUtil
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.stitch.Stitch
+import com.twittelonr.follow_reloncommelonndations.common.baselon.ReloncommelonndationFlow
+import com.twittelonr.follow_reloncommelonndations.common.baselon.SidelonelonffelonctsUtil
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.stitch.Stitch
 
-trait RecommendationFlowBaseSideEffectsUtil[Target <: HasClientContext, Candidate <: CandidateUser]
-    extends SideEffectsUtil[Target, Candidate] {
-  recommendationFlow: RecommendationFlow[Target, Candidate] =>
+trait ReloncommelonndationFlowBaselonSidelonelonffelonctsUtil[Targelont <: HasClielonntContelonxt, Candidatelon <: CandidatelonUselonr]
+    elonxtelonnds SidelonelonffelonctsUtil[Targelont, Candidatelon] {
+  reloncommelonndationFlow: ReloncommelonndationFlow[Targelont, Candidatelon] =>
 
-  override def applySideEffects(
-    target: Target,
-    candidateSources: Seq[CandidateSource[Target, Candidate]],
-    candidatesFromCandidateSources: Seq[Candidate],
-    mergedCandidates: Seq[Candidate],
-    filteredCandidates: Seq[Candidate],
-    rankedCandidates: Seq[Candidate],
-    transformedCandidates: Seq[Candidate],
-    truncatedCandidates: Seq[Candidate],
-    results: Seq[Candidate]
+  ovelonrridelon delonf applySidelonelonffeloncts(
+    targelont: Targelont,
+    candidatelonSourcelons: Selonq[CandidatelonSourcelon[Targelont, Candidatelon]],
+    candidatelonsFromCandidatelonSourcelons: Selonq[Candidatelon],
+    melonrgelondCandidatelons: Selonq[Candidatelon],
+    filtelonrelondCandidatelons: Selonq[Candidatelon],
+    rankelondCandidatelons: Selonq[Candidatelon],
+    transformelondCandidatelons: Selonq[Candidatelon],
+    truncatelondCandidatelons: Selonq[Candidatelon],
+    relonsults: Selonq[Candidatelon]
   ): Stitch[Unit] = {
     Stitch.async(
-      Stitch.collect(
-        Seq(
-          applySideEffectsCandidateSourceCandidates(
-            target,
-            candidateSources,
-            candidatesFromCandidateSources),
-          applySideEffectsMergedCandidates(target, mergedCandidates),
-          applySideEffectsFilteredCandidates(target, filteredCandidates),
-          applySideEffectsRankedCandidates(target, rankedCandidates),
-          applySideEffectsTransformedCandidates(target, transformedCandidates),
-          applySideEffectsTruncatedCandidates(target, truncatedCandidates),
-          applySideEffectsResults(target, results)
+      Stitch.collelonct(
+        Selonq(
+          applySidelonelonffelonctsCandidatelonSourcelonCandidatelons(
+            targelont,
+            candidatelonSourcelons,
+            candidatelonsFromCandidatelonSourcelons),
+          applySidelonelonffelonctsMelonrgelondCandidatelons(targelont, melonrgelondCandidatelons),
+          applySidelonelonffelonctsFiltelonrelondCandidatelons(targelont, filtelonrelondCandidatelons),
+          applySidelonelonffelonctsRankelondCandidatelons(targelont, rankelondCandidatelons),
+          applySidelonelonffelonctsTransformelondCandidatelons(targelont, transformelondCandidatelons),
+          applySidelonelonffelonctsTruncatelondCandidatelons(targelont, truncatelondCandidatelons),
+          applySidelonelonffelonctsRelonsults(targelont, relonsults)
         )
       ))
   }
 
   /*
-  In subclasses, override functions below to apply custom side effects at each step in pipeline.
-  Call super.applySideEffectsXYZ to scribe basic scribes implemented in this parent class
+  In subclasselons, ovelonrridelon functions belonlow to apply custom sidelon elonffeloncts at elonach stelonp in pipelonlinelon.
+  Call supelonr.applySidelonelonffelonctsXYZ to scribelon basic scribelons implelonmelonntelond in this parelonnt class
    */
-  def applySideEffectsCandidateSourceCandidates(
-    target: Target,
-    candidateSources: Seq[CandidateSource[Target, Candidate]],
-    candidatesFromCandidateSources: Seq[Candidate]
+  delonf applySidelonelonffelonctsCandidatelonSourcelonCandidatelons(
+    targelont: Targelont,
+    candidatelonSourcelons: Selonq[CandidatelonSourcelon[Targelont, Candidatelon]],
+    candidatelonsFromCandidatelonSourcelons: Selonq[Candidatelon]
   ): Stitch[Unit] = {
-    val candidatesGroupedByCandidateSources =
-      candidatesFromCandidateSources.groupBy(
-        _.getPrimaryCandidateSource.getOrElse(CandidateSourceIdentifier("NoCandidateSource")))
+    val candidatelonsGroupelondByCandidatelonSourcelons =
+      candidatelonsFromCandidatelonSourcelons.groupBy(
+        _.gelontPrimaryCandidatelonSourcelon.gelontOrelonlselon(CandidatelonSourcelonIdelonntifielonr("NoCandidatelonSourcelon")))
 
-    target.getOptionalUserId match {
-      case Some(userId) =>
-        val userAgeOpt = SnowflakeId.timeFromIdOpt(userId).map(_.untilNow.inDays)
-        userAgeOpt match {
-          case Some(userAge) if userAge <= 30 =>
-            candidateSources.map { candidateSource =>
+    targelont.gelontOptionalUselonrId match {
+      caselon Somelon(uselonrId) =>
+        val uselonrAgelonOpt = SnowflakelonId.timelonFromIdOpt(uselonrId).map(_.untilNow.inDays)
+        uselonrAgelonOpt match {
+          caselon Somelon(uselonrAgelon) if uselonrAgelon <= 30 =>
+            candidatelonSourcelons.map { candidatelonSourcelon =>
               {
-                val candidateSourceStats = statsReceiver.scope(candidateSource.identifier.name)
+                val candidatelonSourcelonStats = statsReloncelonivelonr.scopelon(candidatelonSourcelon.idelonntifielonr.namelon)
 
-                val isEmpty =
-                  !candidatesGroupedByCandidateSources.keySet.contains(candidateSource.identifier)
+                val iselonmpty =
+                  !candidatelonsGroupelondByCandidatelonSourcelons.kelonySelont.contains(candidatelonSourcelon.idelonntifielonr)
 
-                if (userAge <= 1)
-                  candidateSourceStats
-                    .scope("user_age", "1", "empty").counter(isEmpty.toString).incr()
-                if (userAge <= 7)
-                  candidateSourceStats
-                    .scope("user_age", "7", "empty").counter(isEmpty.toString).incr()
-                if (userAge <= 30)
-                  candidateSourceStats
-                    .scope("user_age", "30", "empty").counter(isEmpty.toString).incr()
+                if (uselonrAgelon <= 1)
+                  candidatelonSourcelonStats
+                    .scopelon("uselonr_agelon", "1", "elonmpty").countelonr(iselonmpty.toString).incr()
+                if (uselonrAgelon <= 7)
+                  candidatelonSourcelonStats
+                    .scopelon("uselonr_agelon", "7", "elonmpty").countelonr(iselonmpty.toString).incr()
+                if (uselonrAgelon <= 30)
+                  candidatelonSourcelonStats
+                    .scopelon("uselonr_agelon", "30", "elonmpty").countelonr(iselonmpty.toString).incr()
               }
             }
-          case _ => Nil
+          caselon _ => Nil
         }
-      case None => Nil
+      caselon Nonelon => Nil
     }
     Stitch.Unit
   }
 
-  def applySideEffectsBaseCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
+  delonf applySidelonelonffelonctsBaselonCandidatelons(
+    targelont: Targelont,
+    candidatelons: Selonq[Candidatelon]
   ): Stitch[Unit] = Stitch.Unit
 
-  def applySideEffectsMergedCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  delonf applySidelonelonffelonctsMelonrgelondCandidatelons(
+    targelont: Targelont,
+    candidatelons: Selonq[Candidatelon]
+  ): Stitch[Unit] = applySidelonelonffelonctsBaselonCandidatelons(targelont, candidatelons)
 
-  def applySideEffectsFilteredCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  delonf applySidelonelonffelonctsFiltelonrelondCandidatelons(
+    targelont: Targelont,
+    candidatelons: Selonq[Candidatelon]
+  ): Stitch[Unit] = applySidelonelonffelonctsBaselonCandidatelons(targelont, candidatelons)
 
-  def applySideEffectsRankedCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  delonf applySidelonelonffelonctsRankelondCandidatelons(
+    targelont: Targelont,
+    candidatelons: Selonq[Candidatelon]
+  ): Stitch[Unit] = applySidelonelonffelonctsBaselonCandidatelons(targelont, candidatelons)
 
-  def applySideEffectsTransformedCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  delonf applySidelonelonffelonctsTransformelondCandidatelons(
+    targelont: Targelont,
+    candidatelons: Selonq[Candidatelon]
+  ): Stitch[Unit] = applySidelonelonffelonctsBaselonCandidatelons(targelont, candidatelons)
 
-  def applySideEffectsTruncatedCandidates(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  delonf applySidelonelonffelonctsTruncatelondCandidatelons(
+    targelont: Targelont,
+    candidatelons: Selonq[Candidatelon]
+  ): Stitch[Unit] = applySidelonelonffelonctsBaselonCandidatelons(targelont, candidatelons)
 
-  def applySideEffectsResults(
-    target: Target,
-    candidates: Seq[Candidate]
-  ): Stitch[Unit] = applySideEffectsBaseCandidates(target, candidates)
+  delonf applySidelonelonffelonctsRelonsults(
+    targelont: Targelont,
+    candidatelons: Selonq[Candidatelon]
+  ): Stitch[Unit] = applySidelonelonffelonctsBaselonCandidatelons(targelont, candidatelons)
 }

@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
-import com.fasterxml.jackson.annotation.JsonSubTypes
-import com.fasterxml.jackson.annotation.JsonTypeInfo
+import com.fastelonrxml.jackson.annotation.JsonSubTypelons
+import com.fastelonrxml.jackson.annotation.JsonTypelonInfo
 
 /**
- * where the metric originates from, such as from the server or from a client
+ * whelonrelon thelon melontric originatelons from, such as from thelon selonrvelonr or from a clielonnt
  *
- * @note implementations must be simple case classes with unique structures for serialization
+ * @notelon implelonmelonntations must belon simplelon caselon classelons with uniquelon structurelons for selonrialization
  */
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.PROPERTY)
-@JsonSubTypes(
+@JsonTypelonInfo(uselon = JsonTypelonInfo.Id.NAMelon, includelon = JsonTypelonInfo.As.PROPelonRTY)
+@JsonSubTypelons(
   Array(
-    new JsonSubTypes.Type(value = classOf[Server], name = "Server"),
-    new JsonSubTypes.Type(value = classOf[Strato], name = "Strato"),
-    new JsonSubTypes.Type(value = classOf[GenericClient], name = "GenericClient")
+    nelonw JsonSubTypelons.Typelon(valuelon = classOf[Selonrvelonr], namelon = "Selonrvelonr"),
+    nelonw JsonSubTypelons.Typelon(valuelon = classOf[Strato], namelon = "Strato"),
+    nelonw JsonSubTypelons.Typelon(valuelon = classOf[GelonnelonricClielonnt], namelon = "GelonnelonricClielonnt")
   )
 )
-sealed trait Source
+selonalelond trait Sourcelon
 
-/** metrics for the Product Mixer server */
-case class Server() extends Source
+/** melontrics for thelon Product Mixelonr selonrvelonr */
+caselon class Selonrvelonr() elonxtelonnds Sourcelon
 
-/** metrics from the perspective of a Strato column */
-case class Strato(stratoColumnPath: String, stratoColumnOp: String) extends Source
+/** melontrics from thelon pelonrspelonctivelon of a Strato column */
+caselon class Strato(stratoColumnPath: String, stratoColumnOp: String) elonxtelonnds Sourcelon
 
 /**
- * metrics from the perspective of a generic client
+ * melontrics from thelon pelonrspelonctivelon of a gelonnelonric clielonnt
  *
- * @param displayName human readable name for the client
- * @param service service referenced in the query, of the form <role>.<env>.<job>
- * @param metricSource the source of the metric query, usually of the form sd.<role>.<env>.<job>
- * @param failureMetric the name of the metric indicating a client failure
- * @param requestMetric the name of the metric indicating a request has been made
- * @param latencyMetric the name of the metric measuring a request's latency
+ * @param displayNamelon human relonadablelon namelon for thelon clielonnt
+ * @param selonrvicelon selonrvicelon relonfelonrelonncelond in thelon quelonry, of thelon form <rolelon>.<elonnv>.<job>
+ * @param melontricSourcelon thelon sourcelon of thelon melontric quelonry, usually of thelon form sd.<rolelon>.<elonnv>.<job>
+ * @param failurelonMelontric thelon namelon of thelon melontric indicating a clielonnt failurelon
+ * @param relonquelonstMelontric thelon namelon of thelon melontric indicating a relonquelonst has belonelonn madelon
+ * @param latelonncyMelontric thelon namelon of thelon melontric melonasuring a relonquelonst's latelonncy
  *
- * @note We strongly recommend the use of [[Strato]] where possible. [[GenericClient]] is provided as a
- *       catch-all source for teams that have unusual legacy call paths (such as Macaw).
+ * @notelon Welon strongly reloncommelonnd thelon uselon of [[Strato]] whelonrelon possiblelon. [[GelonnelonricClielonnt]] is providelond as a
+ *       catch-all sourcelon for telonams that havelon unusual lelongacy call paths (such as Macaw).
  */
-case class GenericClient(
-  displayName: String,
-  service: String,
-  metricSource: String,
-  failureMetric: String,
-  requestMetric: String,
-  latencyMetric: String)
-    extends Source
+caselon class GelonnelonricClielonnt(
+  displayNamelon: String,
+  selonrvicelon: String,
+  melontricSourcelon: String,
+  failurelonMelontric: String,
+  relonquelonstMelontric: String,
+  latelonncyMelontric: String)
+    elonxtelonnds Sourcelon

@@ -1,25 +1,25 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-import com.twitter.finagle.Failure;
-import com.twitter.util.AbstractMonitor;
+import com.twittelonr.finaglelon.Failurelon;
+import com.twittelonr.util.AbstractMonitor;
 
-public class EarlybirdFinagleServerMonitor extends AbstractMonitor {
-  private final CriticalExceptionHandler criticalExceptionHandler;
+public class elonarlybirdFinaglelonSelonrvelonrMonitor elonxtelonnds AbstractMonitor {
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
 
-  public EarlybirdFinagleServerMonitor(CriticalExceptionHandler criticalExceptionHandler) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
+  public elonarlybirdFinaglelonSelonrvelonrMonitor(CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
   }
 
-  @Override
-  public boolean handle(Throwable e) {
-    if (e instanceof Failure) {
-      // skip Finagle failure
-      return true;
+  @Ovelonrridelon
+  public boolelonan handlelon(Throwablelon elon) {
+    if (elon instancelonof Failurelon) {
+      // skip Finaglelon failurelon
+      relonturn truelon;
     }
 
-    criticalExceptionHandler.handle(this, e);
+    criticalelonxcelonptionHandlelonr.handlelon(this, elon);
 
-    // We return true here because we handle all exceptions.
-    return true;
+    // Welon relonturn truelon helonrelon beloncauselon welon handlelon all elonxcelonptions.
+    relonturn truelon;
   }
 }

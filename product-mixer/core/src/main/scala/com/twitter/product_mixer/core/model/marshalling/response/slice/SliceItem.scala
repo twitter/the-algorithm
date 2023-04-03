@@ -1,84 +1,84 @@
-package com.twitter.product_mixer.core.model.marshalling.response.slice
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.slicelon
 
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
 
 /**
- * These are the Ad Types exposed on AdUnits
+ * Thelonselon arelon thelon Ad Typelons elonxposelond on AdUnits
  *
- * They are to be kept in sync with strato/config/src/thrift/com/twitter/strato/graphql/hubble.thrift
+ * Thelony arelon to belon kelonpt in sync with strato/config/src/thrift/com/twittelonr/strato/graphql/hubblelon.thrift
  */
-sealed trait AdType
-object AdType {
-  case object Tweet extends AdType
-  case object Account extends AdType
-  case object InStreamVideo extends AdType
-  case object DisplayCreative extends AdType
-  case object Trend extends AdType
-  case object Spotlight extends AdType
-  case object Takeover extends AdType
+selonalelond trait AdTypelon
+objelonct AdTypelon {
+  caselon objelonct Twelonelont elonxtelonnds AdTypelon
+  caselon objelonct Account elonxtelonnds AdTypelon
+  caselon objelonct InStrelonamVidelono elonxtelonnds AdTypelon
+  caselon objelonct DisplayCrelonativelon elonxtelonnds AdTypelon
+  caselon objelonct Trelonnd elonxtelonnds AdTypelon
+  caselon objelonct Spotlight elonxtelonnds AdTypelon
+  caselon objelonct Takelonovelonr elonxtelonnds AdTypelon
 }
 
-trait SliceItem
-case class TweetItem(id: Long) extends SliceItem
-case class UserItem(id: Long) extends SliceItem
-case class TwitterListItem(id: Long) extends SliceItem
-case class DMConvoSearchItem(id: String, lastReadableEventId: Option[Long]) extends SliceItem
-case class DMEventItem(id: Long) extends SliceItem
-case class DMConvoItem(id: String, lastReadableEventId: Option[Long]) extends SliceItem
-case class DMMessageSearchItem(id: Long) extends SliceItem
-case class TopicItem(id: Long) extends SliceItem
-case class TypeaheadEventItem(eventId: Long, metadata: Option[TypeaheadMetadata]) extends SliceItem
-case class TypeaheadQuerySuggestionItem(query: String, metadata: Option[TypeaheadMetadata])
-    extends SliceItem
-case class TypeaheadUserItem(
-  userId: Long,
-  metadata: Option[TypeaheadMetadata],
-  badges: Seq[UserBadge])
-    extends SliceItem
-case class AdItem(adUnitId: Long, adAccountId: Long) extends SliceItem
-case class AdCreativeItem(creativeId: Long, adType: AdType, adAccountId: Long) extends SliceItem
-case class AdGroupItem(adGroupId: Long, adAccountId: Long) extends SliceItem
-case class CampaignItem(campaignId: Long, adAccountId: Long) extends SliceItem
-case class FundingSourceItem(fundingSourceId: Long, adAccountId: Long) extends SliceItem
+trait SlicelonItelonm
+caselon class TwelonelontItelonm(id: Long) elonxtelonnds SlicelonItelonm
+caselon class UselonrItelonm(id: Long) elonxtelonnds SlicelonItelonm
+caselon class TwittelonrListItelonm(id: Long) elonxtelonnds SlicelonItelonm
+caselon class DMConvoSelonarchItelonm(id: String, lastRelonadablelonelonvelonntId: Option[Long]) elonxtelonnds SlicelonItelonm
+caselon class DMelonvelonntItelonm(id: Long) elonxtelonnds SlicelonItelonm
+caselon class DMConvoItelonm(id: String, lastRelonadablelonelonvelonntId: Option[Long]) elonxtelonnds SlicelonItelonm
+caselon class DMMelonssagelonSelonarchItelonm(id: Long) elonxtelonnds SlicelonItelonm
+caselon class TopicItelonm(id: Long) elonxtelonnds SlicelonItelonm
+caselon class TypelonahelonadelonvelonntItelonm(elonvelonntId: Long, melontadata: Option[TypelonahelonadMelontadata]) elonxtelonnds SlicelonItelonm
+caselon class TypelonahelonadQuelonrySuggelonstionItelonm(quelonry: String, melontadata: Option[TypelonahelonadMelontadata])
+    elonxtelonnds SlicelonItelonm
+caselon class TypelonahelonadUselonrItelonm(
+  uselonrId: Long,
+  melontadata: Option[TypelonahelonadMelontadata],
+  badgelons: Selonq[UselonrBadgelon])
+    elonxtelonnds SlicelonItelonm
+caselon class AdItelonm(adUnitId: Long, adAccountId: Long) elonxtelonnds SlicelonItelonm
+caselon class AdCrelonativelonItelonm(crelonativelonId: Long, adTypelon: AdTypelon, adAccountId: Long) elonxtelonnds SlicelonItelonm
+caselon class AdGroupItelonm(adGroupId: Long, adAccountId: Long) elonxtelonnds SlicelonItelonm
+caselon class CampaignItelonm(campaignId: Long, adAccountId: Long) elonxtelonnds SlicelonItelonm
+caselon class FundingSourcelonItelonm(fundingSourcelonId: Long, adAccountId: Long) elonxtelonnds SlicelonItelonm
 
-sealed trait CursorType
-case object PreviousCursor extends CursorType
-case object NextCursor extends CursorType
-@deprecated(
-  "GapCursors are not supported by Product Mixer Slice marshallers, if you need support for these reach out to #product-mixer")
-case object GapCursor extends CursorType
+selonalelond trait CursorTypelon
+caselon objelonct PrelonviousCursor elonxtelonnds CursorTypelon
+caselon objelonct NelonxtCursor elonxtelonnds CursorTypelon
+@delonpreloncatelond(
+  "GapCursors arelon not supportelond by Product Mixelonr Slicelon marshallelonrs, if you nelonelond support for thelonselon relonach out to #product-mixelonr")
+caselon objelonct GapCursor elonxtelonnds CursorTypelon
 
-// CursorItem extends SliceItem to enable support for GapCursors
-case class CursorItem(value: String, cursorType: CursorType) extends SliceItem
+// CursorItelonm elonxtelonnds SlicelonItelonm to elonnablelon support for GapCursors
+caselon class CursorItelonm(valuelon: String, cursorTypelon: CursorTypelon) elonxtelonnds SlicelonItelonm
 
-case class SliceInfo(
-  previousCursor: Option[String],
-  nextCursor: Option[String])
+caselon class SlicelonInfo(
+  prelonviousCursor: Option[String],
+  nelonxtCursor: Option[String])
 
-case class Slice(
-  items: Seq[SliceItem],
-  sliceInfo: SliceInfo)
-    extends HasMarshalling
+caselon class Slicelon(
+  itelonms: Selonq[SlicelonItelonm],
+  slicelonInfo: SlicelonInfo)
+    elonxtelonnds HasMarshalling
 
-sealed trait TypeaheadResultContextType
-case object You extends TypeaheadResultContextType
-case object Location extends TypeaheadResultContextType
-case object NumFollowers extends TypeaheadResultContextType
-case object FollowRelationship extends TypeaheadResultContextType
-case object Bio extends TypeaheadResultContextType
-case object NumTweets extends TypeaheadResultContextType
-case object Trending extends TypeaheadResultContextType
-case object HighlightedLabel extends TypeaheadResultContextType
+selonalelond trait TypelonahelonadRelonsultContelonxtTypelon
+caselon objelonct You elonxtelonnds TypelonahelonadRelonsultContelonxtTypelon
+caselon objelonct Location elonxtelonnds TypelonahelonadRelonsultContelonxtTypelon
+caselon objelonct NumFollowelonrs elonxtelonnds TypelonahelonadRelonsultContelonxtTypelon
+caselon objelonct FollowRelonlationship elonxtelonnds TypelonahelonadRelonsultContelonxtTypelon
+caselon objelonct Bio elonxtelonnds TypelonahelonadRelonsultContelonxtTypelon
+caselon objelonct NumTwelonelonts elonxtelonnds TypelonahelonadRelonsultContelonxtTypelon
+caselon objelonct Trelonnding elonxtelonnds TypelonahelonadRelonsultContelonxtTypelon
+caselon objelonct HighlightelondLabelonl elonxtelonnds TypelonahelonadRelonsultContelonxtTypelon
 
-case class TypeaheadResultContext(
-  contextType: TypeaheadResultContextType,
+caselon class TypelonahelonadRelonsultContelonxt(
+  contelonxtTypelon: TypelonahelonadRelonsultContelonxtTypelon,
   displayString: String,
   iconUrl: Option[String])
 
-case class TypeaheadMetadata(
-  score: Double,
-  source: Option[String],
-  context: Option[TypeaheadResultContext])
+caselon class TypelonahelonadMelontadata(
+  scorelon: Doublelon,
+  sourcelon: Option[String],
+  contelonxt: Option[TypelonahelonadRelonsultContelonxt])
 
-// Used to render badges in Typeahead, such as Business-affiliated badges
-case class UserBadge(badgeType: String, badgeUrl: String, description: String)
+// Uselond to relonndelonr badgelons in Typelonahelonad, such as Businelonss-affiliatelond badgelons
+caselon class UselonrBadgelon(badgelonTypelon: String, badgelonUrl: String, delonscription: String)

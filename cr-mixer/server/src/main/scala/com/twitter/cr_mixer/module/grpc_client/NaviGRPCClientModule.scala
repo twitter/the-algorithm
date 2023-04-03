@@ -1,89 +1,89 @@
-package com.twitter.cr_mixer.module.grpc_client
+packagelon com.twittelonr.cr_mixelonr.modulelon.grpc_clielonnt
 
-import com.google.inject.Provides
-import com.twitter.cr_mixer.config.TimeoutConfig
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.Http
-import com.twitter.finagle.grpc.FinagleChannelBuilder
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsStackClientSyntax
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
-import io.grpc.ManagedChannel
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.cr_mixelonr.config.TimelonoutConfig
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.finaglelon.Http
+import com.twittelonr.finaglelon.grpc.FinaglelonChannelonlBuildelonr
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt.MtlsStackClielonntSyntax
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.util.Duration
+import io.grpc.ManagelondChannelonl
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object NaviGRPCClientModule extends TwitterModule {
+objelonct NaviGRPCClielonntModulelon elonxtelonnds TwittelonrModulelon {
 
-  val maxRetryAttempts = 3
+  val maxRelontryAttelonmpts = 3
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.HomeNaviGRPCClient)
-  def providesHomeNaviGRPCClient(
-    serviceIdentifier: ServiceIdentifier,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): ManagedChannel = {
-    val label = "navi-wals-recommended-tweets-home-client"
-    val dest = "/s/ads-prediction/navi-wals-recommended-tweets-home"
-    buildClient(serviceIdentifier, timeoutConfig, statsReceiver, dest, label)
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.HomelonNaviGRPCClielonnt)
+  delonf providelonsHomelonNaviGRPCClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): ManagelondChannelonl = {
+    val labelonl = "navi-wals-reloncommelonndelond-twelonelonts-homelon-clielonnt"
+    val delonst = "/s/ads-prelondiction/navi-wals-reloncommelonndelond-twelonelonts-homelon"
+    buildClielonnt(selonrvicelonIdelonntifielonr, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.AdsFavedNaviGRPCClient)
-  def providesAdsFavedNaviGRPCClient(
-    serviceIdentifier: ServiceIdentifier,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): ManagedChannel = {
-    val label = "navi-wals-ads-faved-tweets"
-    val dest = "/s/ads-prediction/navi-wals-ads-faved-tweets"
-    buildClient(serviceIdentifier, timeoutConfig, statsReceiver, dest, label)
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.AdsFavelondNaviGRPCClielonnt)
+  delonf providelonsAdsFavelondNaviGRPCClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): ManagelondChannelonl = {
+    val labelonl = "navi-wals-ads-favelond-twelonelonts"
+    val delonst = "/s/ads-prelondiction/navi-wals-ads-favelond-twelonelonts"
+    buildClielonnt(selonrvicelonIdelonntifielonr, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.AdsMonetizableNaviGRPCClient)
-  def providesAdsMonetizableNaviGRPCClient(
-    serviceIdentifier: ServiceIdentifier,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-  ): ManagedChannel = {
-    val label = "navi-wals-ads-monetizable-tweets"
-    val dest = "/s/ads-prediction/navi-wals-ads-monetizable-tweets"
-    buildClient(serviceIdentifier, timeoutConfig, statsReceiver, dest, label)
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.AdsMonelontizablelonNaviGRPCClielonnt)
+  delonf providelonsAdsMonelontizablelonNaviGRPCClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): ManagelondChannelonl = {
+    val labelonl = "navi-wals-ads-monelontizablelon-twelonelonts"
+    val delonst = "/s/ads-prelondiction/navi-wals-ads-monelontizablelon-twelonelonts"
+    buildClielonnt(selonrvicelonIdelonntifielonr, timelonoutConfig, statsReloncelonivelonr, delonst, labelonl)
   }
 
-  private def buildClient(
-    serviceIdentifier: ServiceIdentifier,
-    timeoutConfig: TimeoutConfig,
-    statsReceiver: StatsReceiver,
-    dest: String,
-    label: String
-  ): ManagedChannel = {
+  privatelon delonf buildClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    timelonoutConfig: TimelonoutConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    delonst: String,
+    labelonl: String
+  ): ManagelondChannelonl = {
 
-    val stats = statsReceiver.scope("clnt").scope(label)
+    val stats = statsReloncelonivelonr.scopelon("clnt").scopelon(labelonl)
 
-    val client = Http.client
-      .withLabel(label)
-      .withMutualTls(serviceIdentifier)
-      .withRequestTimeout(timeoutConfig.naviRequestTimeout)
-      .withTransport.connectTimeout(Duration.fromMilliseconds(10000))
-      .withSession.acquisitionTimeout(Duration.fromMilliseconds(20000))
-      .withStatsReceiver(stats)
+    val clielonnt = Http.clielonnt
+      .withLabelonl(labelonl)
+      .withMutualTls(selonrvicelonIdelonntifielonr)
+      .withRelonquelonstTimelonout(timelonoutConfig.naviRelonquelonstTimelonout)
+      .withTransport.connelonctTimelonout(Duration.fromMilliselonconds(10000))
+      .withSelonssion.acquisitionTimelonout(Duration.fromMilliselonconds(20000))
+      .withStatsReloncelonivelonr(stats)
       .withHttpStats
 
-    FinagleChannelBuilder
-      .forTarget(dest)
-      .overrideAuthority("rustserving")
-      .maxRetryAttempts(maxRetryAttempts)
-      .enableRetryForStatus(io.grpc.Status.RESOURCE_EXHAUSTED)
-      .enableRetryForStatus(io.grpc.Status.UNKNOWN)
-      .enableUnsafeFullyBufferingMode()
-      .httpClient(client)
+    FinaglelonChannelonlBuildelonr
+      .forTargelont(delonst)
+      .ovelonrridelonAuthority("rustselonrving")
+      .maxRelontryAttelonmpts(maxRelontryAttelonmpts)
+      .elonnablelonRelontryForStatus(io.grpc.Status.RelonSOURCelon_elonXHAUSTelonD)
+      .elonnablelonRelontryForStatus(io.grpc.Status.UNKNOWN)
+      .elonnablelonUnsafelonFullyBuffelonringModelon()
+      .httpClielonnt(clielonnt)
       .build()
 
   }

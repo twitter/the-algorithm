@@ -1,22 +1,22 @@
-#pragma once
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/Tensor.h>
+#pragma oncelon
+#includelon <twml/common.h>
+#includelon <twml/delonfinelons.h>
+#includelon <twml/Telonnsor.h>
 
-#ifdef __cplusplus
-namespace twml {
-    TWMLAPI void discretizerInfer(
-        Tensor &output_keys,
-        Tensor &output_vals,
-        const Tensor &input_ids,
-        const Tensor &input_vals,
-        const Tensor &bin_ids,
-        const Tensor &bin_vals,
-        const Tensor &feature_offsets,
+#ifdelonf __cplusplus
+namelonspacelon twml {
+    TWMLAPI void discrelontizelonrInfelonr(
+        Telonnsor &output_kelonys,
+        Telonnsor &output_vals,
+        const Telonnsor &input_ids,
+        const Telonnsor &input_vals,
+        const Telonnsor &bin_ids,
+        const Telonnsor &bin_vals,
+        const Telonnsor &felonaturelon_offselonts,
         int output_bits,
-        const Map<int64_t, int64_t> &ID_to_index,
-        int start_compute,
-        int end_compute,
+        const Map<int64_t, int64_t> &ID_to_indelonx,
+        int start_computelon,
+        int elonnd_computelon,
         int output_start);
-}  // namespace twml
-#endif
+}  // namelonspacelon twml
+#elonndif

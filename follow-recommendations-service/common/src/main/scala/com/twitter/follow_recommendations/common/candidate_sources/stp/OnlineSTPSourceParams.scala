@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object OnlineSTPSourceParams {
-  // This replaces the old scorer module, located at EpStpScorer.scala, with the new scorer, located
-  // at Dbv2StpScorer.scala.
-  case object UseDBv2Scorer
-      extends FSParam[Boolean]("online_stp_source_dbv2_scorer_enabled", default = false)
+objelonct OnlinelonSTPSourcelonParams {
+  // This relonplacelons thelon old scorelonr modulelon, locatelond at elonpStpScorelonr.scala, with thelon nelonw scorelonr, locatelond
+  // at Dbv2StpScorelonr.scala.
+  caselon objelonct UselonDBv2Scorelonr
+      elonxtelonnds FSParam[Boolelonan]("onlinelon_stp_sourcelon_dbv2_scorelonr_elonnablelond", delonfault = falselon)
 
-  // For experiments that test the impact of an improved OnlineSTP source, this controls the usage
-  // of the PostNux heavy-ranker. Note that this FS should *NOT* trigger bucket impressions.
-  case object DisableHeavyRanker
-      extends FSParam[Boolean]("online_stp_source_disable_heavy_ranker", default = false)
+  // For elonxpelonrimelonnts that telonst thelon impact of an improvelond OnlinelonSTP sourcelon, this controls thelon usagelon
+  // of thelon PostNux helonavy-rankelonr. Notelon that this FS should *NOT* triggelonr buckelont imprelonssions.
+  caselon objelonct DisablelonHelonavyRankelonr
+      elonxtelonnds FSParam[Boolelonan]("onlinelon_stp_sourcelon_disablelon_helonavy_rankelonr", delonfault = falselon)
 
-  case object SetPredictionDetails extends Param[Boolean](default = false)
+  caselon objelonct SelontPrelondictionDelontails elonxtelonnds Param[Boolelonan](delonfault = falselon)
 
 }

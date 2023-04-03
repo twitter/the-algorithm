@@ -1,12 +1,12 @@
-package com.twitter.search.feature_update_service;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon;
 
-final class FeatureUpdateServiceThriftServerMain {
-  private FeatureUpdateServiceThriftServerMain() {
-    // Private constructor to satisfy checkstyle error:
-    // "Utility classes should not have a public or default constructor)."
+final class FelonaturelonUpdatelonSelonrvicelonThriftSelonrvelonrMain {
+  privatelon FelonaturelonUpdatelonSelonrvicelonThriftSelonrvelonrMain() {
+    // Privatelon constructor to satisfy chelonckstylelon elonrror:
+    // "Utility classelons should not havelon a public or delonfault constructor)."
   }
 
   public static void main(String[] args) {
-    new FeatureUpdateServiceThriftServer(args).main(args);
+    nelonw FelonaturelonUpdatelonSelonrvicelonThriftSelonrvelonr(args).main(args);
   }
 }

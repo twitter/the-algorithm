@@ -1,150 +1,150 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Sets;
-import com.google.common.collect.Table;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.HashBaselondTablelon;
+import com.googlelon.common.collelonct.Selonts;
+import com.googlelon.common.collelonct.Tablelon;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.SchemaBuilder;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeaturesUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.schelonma.SchelonmaBuildelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdelonncodelondFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdelonncodelondFelonaturelonsUtil;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonld;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
 
 /**
- * This class exports counts of fields that are present on processed tweets. It is used to ensure
- * that we are not missing important fields. It is not threadsafe.
+ * This class elonxports counts of fielonlds that arelon prelonselonnt on procelonsselond twelonelonts. It is uselond to elonnsurelon
+ * that welon arelon not missing important fielonlds. It is not threlonadsafelon.
  */
-public class FieldStatExporter {
-  private static final String STAT_FORMAT = "%s_penguin_%d_documents_with_field_%s";
-  private static final String UNKNOWN_FIELD = "%s_penguin_%d_documents_with_unknown_field_%d";
-  private final String statPrefix;
-  private final Schema schema;
-  private final Table<PenguinVersion, Integer, SearchRateCounter> fieldCounters
-      = HashBasedTable.create();
-  private final Set<EarlybirdFieldConstant> encodedTweetFeaturesFields;
-  private final Set<EarlybirdFieldConstant> extendedEncodedTweetFeaturesFields;
+public class FielonldStatelonxportelonr {
+  privatelon static final String STAT_FORMAT = "%s_pelonnguin_%d_documelonnts_with_fielonld_%s";
+  privatelon static final String UNKNOWN_FIelonLD = "%s_pelonnguin_%d_documelonnts_with_unknown_fielonld_%d";
+  privatelon final String statPrelonfix;
+  privatelon final Schelonma schelonma;
+  privatelon final Tablelon<PelonnguinVelonrsion, Intelongelonr, SelonarchRatelonCountelonr> fielonldCountelonrs
+      = HashBaselondTablelon.crelonatelon();
+  privatelon final Selont<elonarlybirdFielonldConstant> elonncodelondTwelonelontFelonaturelonsFielonlds;
+  privatelon final Selont<elonarlybirdFielonldConstant> elonxtelonndelondelonncodelondTwelonelontFelonaturelonsFielonlds;
 
-  private List<PenguinVersion> penguinVersions;
+  privatelon List<PelonnguinVelonrsion> pelonnguinVelonrsions;
 
-  FieldStatExporter(String statPrefix, Schema schema, List<PenguinVersion> penguinVersions) {
-    this.statPrefix = statPrefix;
-    this.schema = schema;
-    this.penguinVersions = penguinVersions;
-    this.encodedTweetFeaturesFields =
-        getEncodedTweetFeaturesFields(EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD);
-    this.extendedEncodedTweetFeaturesFields =
-        getEncodedTweetFeaturesFields(EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD);
+  FielonldStatelonxportelonr(String statPrelonfix, Schelonma schelonma, List<PelonnguinVelonrsion> pelonnguinVelonrsions) {
+    this.statPrelonfix = statPrelonfix;
+    this.schelonma = schelonma;
+    this.pelonnguinVelonrsions = pelonnguinVelonrsions;
+    this.elonncodelondTwelonelontFelonaturelonsFielonlds =
+        gelontelonncodelondTwelonelontFelonaturelonsFielonlds(elonarlybirdFielonldConstant.elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD);
+    this.elonxtelonndelondelonncodelondTwelonelontFelonaturelonsFielonlds =
+        gelontelonncodelondTwelonelontFelonaturelonsFielonlds(elonarlybirdFielonldConstant.elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD);
 
-    for (PenguinVersion version : penguinVersions) {
-      for (Schema.FieldInfo info : schema.getFieldInfos()) {
-        String name =
-            String.format(STAT_FORMAT, statPrefix, version.getByteValue(), info.getName());
-        SearchRateCounter counter = SearchRateCounter.export(name);
-        fieldCounters.put(version, info.getFieldId(), counter);
+    for (PelonnguinVelonrsion velonrsion : pelonnguinVelonrsions) {
+      for (Schelonma.FielonldInfo info : schelonma.gelontFielonldInfos()) {
+        String namelon =
+            String.format(STAT_FORMAT, statPrelonfix, velonrsion.gelontBytelonValuelon(), info.gelontNamelon());
+        SelonarchRatelonCountelonr countelonr = SelonarchRatelonCountelonr.elonxport(namelon);
+        fielonldCountelonrs.put(velonrsion, info.gelontFielonldId(), countelonr);
       }
     }
   }
 
   /**
-   * Exports stats counting the number of fields that are present on each document.
+   * elonxports stats counting thelon numbelonr of fielonlds that arelon prelonselonnt on elonach documelonnt.
    */
-  public void addFieldStats(ThriftVersionedEvents event) {
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      byte version = penguinVersion.getByteValue();
-      ThriftIndexingEvent indexingEvent = event.getVersionedEvents().get(version);
-      Preconditions.checkNotNull(indexingEvent);
+  public void addFielonldStats(ThriftVelonrsionelondelonvelonnts elonvelonnt) {
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : pelonnguinVelonrsions) {
+      bytelon velonrsion = pelonnguinVelonrsion.gelontBytelonValuelon();
+      ThriftIndelonxingelonvelonnt indelonxingelonvelonnt = elonvelonnt.gelontVelonrsionelondelonvelonnts().gelont(velonrsion);
+      Prelonconditions.chelonckNotNull(indelonxingelonvelonnt);
 
-      // We only want to count each field once per tweet.
-      Set<Integer> seenFields = Sets.newHashSet();
-      for (ThriftField field : indexingEvent.getDocument().getFields()) {
-        int fieldId = field.getFieldConfigId();
-        if (seenFields.add(fieldId)) {
-          if (fieldId == EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldId()) {
-            exportEncodedFeaturesStats(EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD,
-                                       encodedTweetFeaturesFields,
-                                       penguinVersion,
-                                       field);
-          } else if (fieldId
-                     == EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldId()) {
-            exportEncodedFeaturesStats(EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD,
-                                       extendedEncodedTweetFeaturesFields,
-                                       penguinVersion,
-                                       field);
-          } else if (isFeatureField(field)) {
-            updateCounterForFeatureField(
-                field.getFieldConfigId(), field.getFieldData().getIntValue(), penguinVersion);
-          } else {
-            SearchRateCounter counter = fieldCounters.get(penguinVersion, fieldId);
-            if (counter == null) {
-              counter = SearchRateCounter.export(
-                  String.format(UNKNOWN_FIELD, statPrefix, version, fieldId));
-              fieldCounters.put(penguinVersion, fieldId, counter);
+      // Welon only want to count elonach fielonld oncelon pelonr twelonelont.
+      Selont<Intelongelonr> selonelonnFielonlds = Selonts.nelonwHashSelont();
+      for (ThriftFielonld fielonld : indelonxingelonvelonnt.gelontDocumelonnt().gelontFielonlds()) {
+        int fielonldId = fielonld.gelontFielonldConfigId();
+        if (selonelonnFielonlds.add(fielonldId)) {
+          if (fielonldId == elonarlybirdFielonldConstant.elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD.gelontFielonldId()) {
+            elonxportelonncodelondFelonaturelonsStats(elonarlybirdFielonldConstant.elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD,
+                                       elonncodelondTwelonelontFelonaturelonsFielonlds,
+                                       pelonnguinVelonrsion,
+                                       fielonld);
+          } elonlselon if (fielonldId
+                     == elonarlybirdFielonldConstant.elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD.gelontFielonldId()) {
+            elonxportelonncodelondFelonaturelonsStats(elonarlybirdFielonldConstant.elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD,
+                                       elonxtelonndelondelonncodelondTwelonelontFelonaturelonsFielonlds,
+                                       pelonnguinVelonrsion,
+                                       fielonld);
+          } elonlselon if (isFelonaturelonFielonld(fielonld)) {
+            updatelonCountelonrForFelonaturelonFielonld(
+                fielonld.gelontFielonldConfigId(), fielonld.gelontFielonldData().gelontIntValuelon(), pelonnguinVelonrsion);
+          } elonlselon {
+            SelonarchRatelonCountelonr countelonr = fielonldCountelonrs.gelont(pelonnguinVelonrsion, fielonldId);
+            if (countelonr == null) {
+              countelonr = SelonarchRatelonCountelonr.elonxport(
+                  String.format(UNKNOWN_FIelonLD, statPrelonfix, velonrsion, fielonldId));
+              fielonldCountelonrs.put(pelonnguinVelonrsion, fielonldId, countelonr);
             }
-            counter.increment();
+            countelonr.increlonmelonnt();
           }
         }
       }
     }
   }
 
-  private boolean isFeatureField(ThriftField field) {
-    String fieldName =
-        EarlybirdFieldConstants.getFieldConstant(field.getFieldConfigId()).getFieldName();
-    return fieldName.startsWith(EarlybirdFieldConstants.ENCODED_TWEET_FEATURES_FIELD_NAME
-                                + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR)
-        || fieldName.startsWith(EarlybirdFieldConstants.EXTENDED_ENCODED_TWEET_FEATURES_FIELD_NAME
-                                + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR);
+  privatelon boolelonan isFelonaturelonFielonld(ThriftFielonld fielonld) {
+    String fielonldNamelon =
+        elonarlybirdFielonldConstants.gelontFielonldConstant(fielonld.gelontFielonldConfigId()).gelontFielonldNamelon();
+    relonturn fielonldNamelon.startsWith(elonarlybirdFielonldConstants.elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon
+                                + SchelonmaBuildelonr.CSF_VIelonW_NAMelon_SelonPARATOR)
+        || fielonldNamelon.startsWith(elonarlybirdFielonldConstants.elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD_NAMelon
+                                + SchelonmaBuildelonr.CSF_VIelonW_NAMelon_SelonPARATOR);
   }
 
-  private Set<EarlybirdFieldConstant> getEncodedTweetFeaturesFields(
-      EarlybirdFieldConstant featuresField) {
-    Set<EarlybirdFieldConstant> schemaFeatureFields = Sets.newHashSet();
-    String baseFieldNamePrefix =
-        featuresField.getFieldName() + SchemaBuilder.CSF_VIEW_NAME_SEPARATOR;
-    for (EarlybirdFieldConstant field : EarlybirdFieldConstant.values()) {
-      if (field.getFieldName().startsWith(baseFieldNamePrefix)) {
-        schemaFeatureFields.add(field);
+  privatelon Selont<elonarlybirdFielonldConstant> gelontelonncodelondTwelonelontFelonaturelonsFielonlds(
+      elonarlybirdFielonldConstant felonaturelonsFielonld) {
+    Selont<elonarlybirdFielonldConstant> schelonmaFelonaturelonFielonlds = Selonts.nelonwHashSelont();
+    String baselonFielonldNamelonPrelonfix =
+        felonaturelonsFielonld.gelontFielonldNamelon() + SchelonmaBuildelonr.CSF_VIelonW_NAMelon_SelonPARATOR;
+    for (elonarlybirdFielonldConstant fielonld : elonarlybirdFielonldConstant.valuelons()) {
+      if (fielonld.gelontFielonldNamelon().startsWith(baselonFielonldNamelonPrelonfix)) {
+        schelonmaFelonaturelonFielonlds.add(fielonld);
       }
     }
-    return schemaFeatureFields;
+    relonturn schelonmaFelonaturelonFielonlds;
   }
 
-  private void exportEncodedFeaturesStats(EarlybirdFieldConstant featuresField,
-                                          Set<EarlybirdFieldConstant> schemaFeatureFields,
-                                          PenguinVersion penguinVersion,
-                                          ThriftField thriftField) {
-    byte[] encodedFeaturesBytes = thriftField.getFieldData().getBytesValue();
-    EarlybirdEncodedFeatures encodedTweetFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-        schema.getSchemaSnapshot(), featuresField, encodedFeaturesBytes, 0);
-    for (EarlybirdFieldConstant field : schemaFeatureFields) {
-      updateCounterForFeatureField(
-          field.getFieldId(), encodedTweetFeatures.getFeatureValue(field), penguinVersion);
+  privatelon void elonxportelonncodelondFelonaturelonsStats(elonarlybirdFielonldConstant felonaturelonsFielonld,
+                                          Selont<elonarlybirdFielonldConstant> schelonmaFelonaturelonFielonlds,
+                                          PelonnguinVelonrsion pelonnguinVelonrsion,
+                                          ThriftFielonld thriftFielonld) {
+    bytelon[] elonncodelondFelonaturelonsBytelons = thriftFielonld.gelontFielonldData().gelontBytelonsValuelon();
+    elonarlybirdelonncodelondFelonaturelons elonncodelondTwelonelontFelonaturelons = elonarlybirdelonncodelondFelonaturelonsUtil.fromBytelons(
+        schelonma.gelontSchelonmaSnapshot(), felonaturelonsFielonld, elonncodelondFelonaturelonsBytelons, 0);
+    for (elonarlybirdFielonldConstant fielonld : schelonmaFelonaturelonFielonlds) {
+      updatelonCountelonrForFelonaturelonFielonld(
+          fielonld.gelontFielonldId(), elonncodelondTwelonelontFelonaturelons.gelontFelonaturelonValuelon(fielonld), pelonnguinVelonrsion);
     }
   }
 
-  private void updateCounterForFeatureField(int fieldId, int value, PenguinVersion penguinVersion) {
-    if (value != 0) {
-      SearchRateCounter counter = fieldCounters.get(penguinVersion, fieldId);
-      if (counter == null) {
-        counter = SearchRateCounter.export(
-            String.format(UNKNOWN_FIELD, statPrefix, penguinVersion, fieldId));
-        fieldCounters.put(penguinVersion, fieldId, counter);
+  privatelon void updatelonCountelonrForFelonaturelonFielonld(int fielonldId, int valuelon, PelonnguinVelonrsion pelonnguinVelonrsion) {
+    if (valuelon != 0) {
+      SelonarchRatelonCountelonr countelonr = fielonldCountelonrs.gelont(pelonnguinVelonrsion, fielonldId);
+      if (countelonr == null) {
+        countelonr = SelonarchRatelonCountelonr.elonxport(
+            String.format(UNKNOWN_FIelonLD, statPrelonfix, pelonnguinVelonrsion, fielonldId));
+        fielonldCountelonrs.put(pelonnguinVelonrsion, fielonldId, countelonr);
       }
-      counter.increment();
+      countelonr.increlonmelonnt();
     }
   }
 
-  public void updatePenguinVersions(List<PenguinVersion> updatedPenguinVersions) {
-    penguinVersions = updatedPenguinVersions;
+  public void updatelonPelonnguinVelonrsions(List<PelonnguinVelonrsion> updatelondPelonnguinVelonrsions) {
+    pelonnguinVelonrsions = updatelondPelonnguinVelonrsions;
   }
 }

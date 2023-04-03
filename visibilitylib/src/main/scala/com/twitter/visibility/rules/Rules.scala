@@ -1,315 +1,315 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams.EnableAuthorBlocksViewerDropRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableTimelineHomePromotedTweetHealthEnforcementRules
-import com.twitter.visibility.configapi.params.RuleParams.EnableViewerIsSoftUserDropRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.PromotedTweetHealthEnforcementHoldback
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.IsQuotedInnerTweet
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.Retweet
-import com.twitter.visibility.rules.Condition.SoftViewer
-import com.twitter.visibility.rules.Reason._
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonAuthorBlocksVielonwelonrDropRulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonInnelonrQuotelondTwelonelontVielonwelonrBlocksAuthorIntelonrstitialRulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonInnelonrQuotelondTwelonelontVielonwelonrMutelonsAuthorIntelonrstitialRulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonTimelonlinelonHomelonPromotelondTwelonelontHelonalthelonnforcelonmelonntRulelons
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonVielonwelonrIsSoftUselonrDropRulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.PromotelondTwelonelontHelonalthelonnforcelonmelonntHoldback
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.IsQuotelondInnelonrTwelonelont
+import com.twittelonr.visibility.rulelons.Condition.NonAuthorVielonwelonr
+import com.twittelonr.visibility.rulelons.Condition.Not
+import com.twittelonr.visibility.rulelons.Condition.Relontwelonelont
+import com.twittelonr.visibility.rulelons.Condition.SoftVielonwelonr
+import com.twittelonr.visibility.rulelons.Relonason._
 
-object DropAllRule
-    extends AlwaysActRule(
-      Drop(Unspecified)
+objelonct DropAllRulelon
+    elonxtelonnds AlwaysActRulelon(
+      Drop(Unspeloncifielond)
     )
 
-object AllowAllRule
-    extends AlwaysActRule(
+objelonct AllowAllRulelon
+    elonxtelonnds AlwaysActRulelon(
       Allow
     )
 
-object TestRule
-    extends AlwaysActRule(
-      Drop(Unspecified)
+objelonct TelonstRulelon
+    elonxtelonnds AlwaysActRulelon(
+      Drop(Unspeloncifielond)
     )
 
-object DeactivatedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(DeactivatedAuthor),
-      Condition.DeactivatedAuthor
+objelonct DelonactivatelondAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(DelonactivatelondAuthor),
+      Condition.DelonactivatelondAuthor
     )
 
-object ErasedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(ErasedAuthor),
-      Condition.ErasedAuthor
+objelonct elonraselondAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(elonraselondAuthor),
+      Condition.elonraselondAuthor
     )
 
-object OffboardedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(OffboardedAuthor),
-      Condition.OffboardedAuthor
+objelonct OffboardelondAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(OffboardelondAuthor),
+      Condition.OffboardelondAuthor
     )
 
-object DropNsfwUserAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
+objelonct DropNsfwUselonrAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
       Drop(Nsfw),
-      Condition.NsfwUserAuthor
+      Condition.NsfwUselonrAuthor
     )
 
-object DropNsfwUserAuthorViewerOptInFilteringOnSearchRule
-    extends ViewerOptInFilteringOnSearchRule(
+objelonct DropNsfwUselonrAuthorVielonwelonrOptInFiltelonringOnSelonarchRulelon
+    elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchRulelon(
       Drop(Nsfw),
-      Condition.NsfwUserAuthor
+      Condition.NsfwUselonrAuthor
     )
 
-object InterstitialNsfwUserAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Nsfw),
-      Condition.NsfwUserAuthor
+objelonct IntelonrstitialNsfwUselonrAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Intelonrstitial(Nsfw),
+      Condition.NsfwUselonrAuthor
     )
 
-object DropNsfwAdminAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Nsfw),
-      Condition.NsfwAdminAuthor
-    )
-
-object DropNsfwAdminAuthorViewerOptInFilteringOnSearchRule
-    extends ViewerOptInFilteringOnSearchRule(
+objelonct DropNsfwAdminAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
       Drop(Nsfw),
       Condition.NsfwAdminAuthor
     )
 
-object InterstitialNsfwAdminAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Nsfw),
+objelonct DropNsfwAdminAuthorVielonwelonrOptInFiltelonringOnSelonarchRulelon
+    elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchRulelon(
+      Drop(Nsfw),
       Condition.NsfwAdminAuthor
     )
 
-object ProtectedAuthorDropRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ProtectedAuthor),
-      And(Condition.LoggedOutOrViewerNotFollowingAuthor, Condition.ProtectedAuthor)
+objelonct IntelonrstitialNsfwAdminAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Intelonrstitial(Nsfw),
+      Condition.NsfwAdminAuthor
     )
 
-object ProtectedAuthorTombstoneRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Protected),
-      And(Condition.LoggedOutOrViewerNotFollowingAuthor, Condition.ProtectedAuthor)
+objelonct ProtelonctelondAuthorDropRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.ProtelonctelondAuthor),
+      And(Condition.LoggelondOutOrVielonwelonrNotFollowingAuthor, Condition.ProtelonctelondAuthor)
     )
 
-object DropAllProtectedAuthorRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ProtectedAuthor),
-      Condition.ProtectedAuthor
+objelonct ProtelonctelondAuthorTombstonelonRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Tombstonelon(elonpitaph.Protelonctelond),
+      And(Condition.LoggelondOutOrVielonwelonrNotFollowingAuthor, Condition.ProtelonctelondAuthor)
+    )
+
+objelonct DropAllProtelonctelondAuthorRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.ProtelonctelondAuthor),
+      Condition.ProtelonctelondAuthor
     ) {
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  ovelonrridelon delonf elonnablelonFailCloselond: Selonq[RulelonParam[Boolelonan]] = Selonq(RulelonParams.Truelon)
 }
 
-object ProtectedQuoteTweetAuthorRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ProtectedAuthor),
-      And(Condition.OuterAuthorNotFollowingAuthor, Condition.ProtectedAuthor)
+objelonct ProtelonctelondQuotelonTwelonelontAuthorRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.ProtelonctelondAuthor),
+      And(Condition.OutelonrAuthorNotFollowingAuthor, Condition.ProtelonctelondAuthor)
     )
 
-object DropProtectedViewerIfPresentRule
-    extends RuleWithConstantAction(
-      Drop(Reason.Unspecified),
-      And(Condition.LoggedInViewer, Condition.ProtectedViewer)
+objelonct DropProtelonctelondVielonwelonrIfPrelonselonntRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.Unspeloncifielond),
+      And(Condition.LoggelondInVielonwelonr, Condition.ProtelonctelondVielonwelonr)
     ) {
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  ovelonrridelon delonf elonnablelonFailCloselond: Selonq[RulelonParam[Boolelonan]] = Selonq(RulelonParams.Truelon)
 }
 
-object SuspendedAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(SuspendedAuthor),
-      Condition.SuspendedAuthor
+objelonct SuspelonndelondAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(SuspelonndelondAuthor),
+      Condition.SuspelonndelondAuthor
     )
 
-object SuspendedViewerRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Unspecified),
-      Condition.SuspendedViewer
+objelonct SuspelonndelondVielonwelonrRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Unspeloncifielond),
+      Condition.SuspelonndelondVielonwelonr
     )
 
-object DeactivatedViewerRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Unspecified),
-      Condition.DeactivatedViewer
+objelonct DelonactivatelondVielonwelonrRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Unspeloncifielond),
+      Condition.DelonactivatelondVielonwelonr
     )
 
-object ViewerIsUnmentionedRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerIsUnmentioned),
-      Condition.ViewerIsUnmentioned
+objelonct VielonwelonrIsUnmelonntionelondRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.VielonwelonrIsUnmelonntionelond),
+      Condition.VielonwelonrIsUnmelonntionelond
     )
 
-abstract class AuthorBlocksViewerRule(override val action: Action)
-    extends OnlyWhenNotAuthorViewerRule(
+abstract class AuthorBlocksVielonwelonrRulelon(ovelonrridelon val action: Action)
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
       action,
-      Condition.AuthorBlocksViewer
+      Condition.AuthorBlocksVielonwelonr
     )
 
-object AuthorBlocksViewerDropRule
-    extends AuthorBlocksViewerRule(
-      Drop(Reason.AuthorBlocksViewer)
+objelonct AuthorBlocksVielonwelonrDropRulelon
+    elonxtelonnds AuthorBlocksVielonwelonrRulelon(
+      Drop(Relonason.AuthorBlocksVielonwelonr)
     )
 
-object DeciderableAuthorBlocksViewerDropRule
-    extends AuthorBlocksViewerRule(
-      Drop(Reason.AuthorBlocksViewer)
+objelonct DeloncidelonrablelonAuthorBlocksVielonwelonrDropRulelon
+    elonxtelonnds AuthorBlocksVielonwelonrRulelon(
+      Drop(Relonason.AuthorBlocksVielonwelonr)
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableAuthorBlocksViewerDropRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonAuthorBlocksVielonwelonrDropRulelonParam)
 }
 
-object AuthorBlocksViewerTombstoneRule
-    extends AuthorBlocksViewerRule(
-      Tombstone(Epitaph.BlockedBy)
+objelonct AuthorBlocksVielonwelonrTombstonelonRulelon
+    elonxtelonnds AuthorBlocksVielonwelonrRulelon(
+      Tombstonelon(elonpitaph.BlockelondBy)
     )
 
-object ViewerBlocksAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+objelonct VielonwelonrBlocksAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.VielonwelonrBlocksAuthor),
+      Condition.VielonwelonrBlocksAuthor
     )
 
-object ViewerBlocksAuthorViewerOptInBlockingOnSearchRule
-    extends ViewerOptInBlockingOnSearchRule(
-      Drop(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+objelonct VielonwelonrBlocksAuthorVielonwelonrOptInBlockingOnSelonarchRulelon
+    elonxtelonnds VielonwelonrOptInBlockingOnSelonarchRulelon(
+      Drop(Relonason.VielonwelonrBlocksAuthor),
+      Condition.VielonwelonrBlocksAuthor
     )
 
-object ViewerMutesAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+objelonct VielonwelonrMutelonsAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.VielonwelonrMutelonsAuthor),
+      Condition.VielonwelonrMutelonsAuthor
     )
 
-object ViewerMutesAuthorViewerOptInBlockingOnSearchRule
-    extends ViewerOptInBlockingOnSearchRule(
-      Drop(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+objelonct VielonwelonrMutelonsAuthorVielonwelonrOptInBlockingOnSelonarchRulelon
+    elonxtelonnds VielonwelonrOptInBlockingOnSelonarchRulelon(
+      Drop(Relonason.VielonwelonrMutelonsAuthor),
+      Condition.VielonwelonrMutelonsAuthor
     )
 
-object AuthorBlocksOuterAuthorRule
-    extends RuleWithConstantAction(
-      Drop(Reason.AuthorBlocksViewer),
-      And(Not(Condition.IsSelfQuote), Condition.AuthorBlocksOuterAuthor)
+objelonct AuthorBlocksOutelonrAuthorRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.AuthorBlocksVielonwelonr),
+      And(Not(Condition.IsSelonlfQuotelon), Condition.AuthorBlocksOutelonrAuthor)
     )
 
-object ViewerMutesAndDoesNotFollowAuthorRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerHardMutedAuthor),
-      And(Condition.ViewerMutesAuthor, Not(Condition.ViewerDoesFollowAuthor))
+objelonct VielonwelonrMutelonsAndDoelonsNotFollowAuthorRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.VielonwelonrHardMutelondAuthor),
+      And(Condition.VielonwelonrMutelonsAuthor, Not(Condition.VielonwelonrDoelonsFollowAuthor))
     )
 
-object AuthorBlocksViewerUnspecifiedRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.Unspecified),
-      Condition.AuthorBlocksViewer
+objelonct AuthorBlocksVielonwelonrUnspeloncifielondRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.Unspeloncifielond),
+      Condition.AuthorBlocksVielonwelonr
     )
 
-object ViewerHasMatchingMutedKeywordForNotificationsRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForNotifications
+objelonct VielonwelonrHasMatchingMutelondKelonywordForNotificationsRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.MutelondKelonyword),
+      Condition.VielonwelonrHasMatchingKelonywordForNotifications
     )
 
-object ViewerHasMatchingMutedKeywordForHomeTimelineRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForHomeTimeline
+objelonct VielonwelonrHasMatchingMutelondKelonywordForHomelonTimelonlinelonRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.MutelondKelonyword),
+      Condition.VielonwelonrHasMatchingKelonywordForHomelonTimelonlinelon
     )
 
-trait HasPromotedTweetHealthEnforcement extends WithGate {
-  override def holdbacks: Seq[RuleParam[Boolean]] = Seq(PromotedTweetHealthEnforcementHoldback)
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableTimelineHomePromotedTweetHealthEnforcementRules)
+trait HasPromotelondTwelonelontHelonalthelonnforcelonmelonnt elonxtelonnds WithGatelon {
+  ovelonrridelon delonf holdbacks: Selonq[RulelonParam[Boolelonan]] = Selonq(PromotelondTwelonelontHelonalthelonnforcelonmelonntHoldback)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonTimelonlinelonHomelonPromotelondTwelonelontHelonalthelonnforcelonmelonntRulelons)
 }
 
-object ViewerHasMatchingMutedKeywordForHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForHomeTimeline
+objelonct VielonwelonrHasMatchingMutelondKelonywordForHomelonTimelonlinelonPromotelondTwelonelontRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.MutelondKelonyword),
+      Condition.VielonwelonrHasMatchingKelonywordForHomelonTimelonlinelon
     )
-    with HasPromotedTweetHealthEnforcement
+    with HasPromotelondTwelonelontHelonalthelonnforcelonmelonnt
 
-object ViewerHasMatchingMutedKeywordForTweetRepliesRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForTweetReplies
-    )
-
-object MutedKeywordForTweetRepliesInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.MutedKeyword),
-      Condition.ViewerHasMatchingKeywordForTweetReplies
+objelonct VielonwelonrHasMatchingMutelondKelonywordForTwelonelontRelonplielonsRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.MutelondKelonyword),
+      Condition.VielonwelonrHasMatchingKelonywordForTwelonelontRelonplielons
     )
 
-object MutedKeywordForQuotedTweetTweetDetailInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.MutedKeyword),
-      And(Condition.IsQuotedInnerTweet, Condition.ViewerHasMatchingKeywordForTweetReplies)
+objelonct MutelondKelonywordForTwelonelontRelonplielonsIntelonrstitialRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Intelonrstitial(Relonason.MutelondKelonyword),
+      Condition.VielonwelonrHasMatchingKelonywordForTwelonelontRelonplielons
     )
 
-object ViewerMutesAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+objelonct MutelondKelonywordForQuotelondTwelonelontTwelonelontDelontailIntelonrstitialRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Intelonrstitial(Relonason.MutelondKelonyword),
+      And(Condition.IsQuotelondInnelonrTwelonelont, Condition.VielonwelonrHasMatchingKelonywordForTwelonelontRelonplielons)
     )
 
-object ViewerMutesAuthorInnerQuotedTweetInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerMutesAuthor),
-      And(Condition.ViewerMutesAuthor, IsQuotedInnerTweet)
+objelonct VielonwelonrMutelonsAuthorIntelonrstitialRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Intelonrstitial(Relonason.VielonwelonrMutelonsAuthor),
+      Condition.VielonwelonrMutelonsAuthor
+    )
+
+objelonct VielonwelonrMutelonsAuthorInnelonrQuotelondTwelonelontIntelonrstitialRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Intelonrstitial(Relonason.VielonwelonrMutelonsAuthor),
+      And(Condition.VielonwelonrMutelonsAuthor, IsQuotelondInnelonrTwelonelont)
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableInnerQuotedTweetViewerMutesAuthorInterstitialRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonInnelonrQuotelondTwelonelontVielonwelonrMutelonsAuthorIntelonrstitialRulelonParam)
 }
 
-object ViewerMutesAuthorHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerMutesAuthor),
-      Condition.ViewerMutesAuthor
+objelonct VielonwelonrMutelonsAuthorHomelonTimelonlinelonPromotelondTwelonelontRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.VielonwelonrMutelonsAuthor),
+      Condition.VielonwelonrMutelonsAuthor
     )
-    with HasPromotedTweetHealthEnforcement
+    with HasPromotelondTwelonelontHelonalthelonnforcelonmelonnt
 
-object ViewerBlocksAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+objelonct VielonwelonrBlocksAuthorIntelonrstitialRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Intelonrstitial(Relonason.VielonwelonrBlocksAuthor),
+      Condition.VielonwelonrBlocksAuthor
     )
 
-object ViewerBlocksAuthorInnerQuotedTweetInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerBlocksAuthor),
-      And(Condition.ViewerBlocksAuthor, IsQuotedInnerTweet)
+objelonct VielonwelonrBlocksAuthorInnelonrQuotelondTwelonelontIntelonrstitialRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Intelonrstitial(Relonason.VielonwelonrBlocksAuthor),
+      And(Condition.VielonwelonrBlocksAuthor, IsQuotelondInnelonrTwelonelont)
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableInnerQuotedTweetViewerBlocksAuthorInterstitialRuleParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonInnelonrQuotelondTwelonelontVielonwelonrBlocksAuthorIntelonrstitialRulelonParam)
 }
 
-object ViewerBlocksAuthorHomeTimelinePromotedTweetRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Drop(Reason.ViewerBlocksAuthor),
-      Condition.ViewerBlocksAuthor
+objelonct VielonwelonrBlocksAuthorHomelonTimelonlinelonPromotelondTwelonelontRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Drop(Relonason.VielonwelonrBlocksAuthor),
+      Condition.VielonwelonrBlocksAuthor
     )
-    with HasPromotedTweetHealthEnforcement
+    with HasPromotelondTwelonelontHelonalthelonnforcelonmelonnt
 
-object ViewerReportsAuthorInterstitialRule
-    extends OnlyWhenNotAuthorViewerRule(
-      Interstitial(Reason.ViewerReportedAuthor),
-      Condition.ViewerReportsAuthor
+objelonct VielonwelonrRelonportsAuthorIntelonrstitialRulelon
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
+      Intelonrstitial(Relonason.VielonwelonrRelonportelondAuthor),
+      Condition.VielonwelonrRelonportsAuthor
     )
 
-object ViewerIsAuthorDropRule
-    extends RuleWithConstantAction(Drop(Unspecified), Not(NonAuthorViewer))
+objelonct VielonwelonrIsAuthorDropRulelon
+    elonxtelonnds RulelonWithConstantAction(Drop(Unspeloncifielond), Not(NonAuthorVielonwelonr))
 
-object ViewerIsNotAuthorDropRule extends RuleWithConstantAction(Drop(Unspecified), NonAuthorViewer)
+objelonct VielonwelonrIsNotAuthorDropRulelon elonxtelonnds RulelonWithConstantAction(Drop(Unspeloncifielond), NonAuthorVielonwelonr)
 
-object RetweetDropRule extends RuleWithConstantAction(Drop(Unspecified), Retweet)
+objelonct RelontwelonelontDropRulelon elonxtelonnds RulelonWithConstantAction(Drop(Unspeloncifielond), Relontwelonelont)
 
-object ViewerIsSoftUserDropRule extends RuleWithConstantAction(Drop(ViewerIsSoftUser), SoftViewer) {
+objelonct VielonwelonrIsSoftUselonrDropRulelon elonxtelonnds RulelonWithConstantAction(Drop(VielonwelonrIsSoftUselonr), SoftVielonwelonr) {
 
-  override val enabled: Seq[RuleParam[Boolean]] = Seq(EnableViewerIsSoftUserDropRuleParam)
+  ovelonrridelon val elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonVielonwelonrIsSoftUselonrDropRulelonParam)
 }

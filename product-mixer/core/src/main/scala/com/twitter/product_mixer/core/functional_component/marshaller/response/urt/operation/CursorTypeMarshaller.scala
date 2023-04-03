@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.operation
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.opelonration
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CursorTypeMarshaller @Inject() () {
+@Singlelonton
+class CursorTypelonMarshallelonr @Injelonct() () {
 
-  def apply(cursorType: CursorType): urt.CursorType = cursorType match {
-    case TopCursor => urt.CursorType.Top
-    case BottomCursor => urt.CursorType.Bottom
-    case GapCursor => urt.CursorType.Gap
-    case PivotCursor => urt.CursorType.Pivot
-    case SubBranchCursor => urt.CursorType.Subbranch
-    case ShowMoreCursor => urt.CursorType.ShowMore
-    case ShowMoreThreadsCursor => urt.CursorType.ShowMoreThreads
-    case ShowMoreThreadsPromptCursor => urt.CursorType.ShowMoreThreadsPrompt
-    case SecondRepliesSectionCursor => urt.CursorType.SecondRepliesSection
-    case ThirdRepliesSectionCursor => urt.CursorType.ThirdRepliesSection
+  delonf apply(cursorTypelon: CursorTypelon): urt.CursorTypelon = cursorTypelon match {
+    caselon TopCursor => urt.CursorTypelon.Top
+    caselon BottomCursor => urt.CursorTypelon.Bottom
+    caselon GapCursor => urt.CursorTypelon.Gap
+    caselon PivotCursor => urt.CursorTypelon.Pivot
+    caselon SubBranchCursor => urt.CursorTypelon.Subbranch
+    caselon ShowMorelonCursor => urt.CursorTypelon.ShowMorelon
+    caselon ShowMorelonThrelonadsCursor => urt.CursorTypelon.ShowMorelonThrelonads
+    caselon ShowMorelonThrelonadsPromptCursor => urt.CursorTypelon.ShowMorelonThrelonadsPrompt
+    caselon SeloncondRelonplielonsSelonctionCursor => urt.CursorTypelon.SeloncondRelonplielonsSelonction
+    caselon ThirdRelonplielonsSelonctionCursor => urt.CursorTypelon.ThirdRelonplielonsSelonction
   }
 
-  def unmarshall(cursorType: urt.CursorType): CursorType = cursorType match {
-    case urt.CursorType.Top => TopCursor
-    case urt.CursorType.Bottom => BottomCursor
-    case urt.CursorType.Gap => GapCursor
-    case urt.CursorType.Pivot => PivotCursor
-    case urt.CursorType.Subbranch => SubBranchCursor
-    case urt.CursorType.ShowMore => ShowMoreCursor
-    case urt.CursorType.ShowMoreThreads => ShowMoreThreadsCursor
-    case urt.CursorType.ShowMoreThreadsPrompt => ShowMoreThreadsPromptCursor
-    case urt.CursorType.SecondRepliesSection => SecondRepliesSectionCursor
-    case urt.CursorType.ThirdRepliesSection => ThirdRepliesSectionCursor
-    case urt.CursorType.EnumUnknownCursorType(id) =>
-      throw new UnsupportedOperationException(s"Unexpected cursor enum field: $id")
+  delonf unmarshall(cursorTypelon: urt.CursorTypelon): CursorTypelon = cursorTypelon match {
+    caselon urt.CursorTypelon.Top => TopCursor
+    caselon urt.CursorTypelon.Bottom => BottomCursor
+    caselon urt.CursorTypelon.Gap => GapCursor
+    caselon urt.CursorTypelon.Pivot => PivotCursor
+    caselon urt.CursorTypelon.Subbranch => SubBranchCursor
+    caselon urt.CursorTypelon.ShowMorelon => ShowMorelonCursor
+    caselon urt.CursorTypelon.ShowMorelonThrelonads => ShowMorelonThrelonadsCursor
+    caselon urt.CursorTypelon.ShowMorelonThrelonadsPrompt => ShowMorelonThrelonadsPromptCursor
+    caselon urt.CursorTypelon.SeloncondRelonplielonsSelonction => SeloncondRelonplielonsSelonctionCursor
+    caselon urt.CursorTypelon.ThirdRelonplielonsSelonction => ThirdRelonplielonsSelonctionCursor
+    caselon urt.CursorTypelon.elonnumUnknownCursorTypelon(id) =>
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unelonxpelonctelond cursor elonnum fielonld: $id")
   }
 }

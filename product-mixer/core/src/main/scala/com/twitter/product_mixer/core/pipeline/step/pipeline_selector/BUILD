@@ -1,26 +1,26 @@
 scala_library(
-    sources = [
+    sourcelons = [
         "*.scala",
     ],
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "finatra/inject/inject-core/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala/com/twitter/inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline:query",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/state",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/javax/injelonct:javax.injelonct",
+        "finatra/injelonct/injelonct-corelon/src/main/scala",
+        "finatra/injelonct/injelonct-corelon/src/main/scala/com/twittelonr/injelonct",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/common",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon:quelonry",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon/statelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon/stelonp",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/selonrvicelon",
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline:query",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/state",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/step",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/service",
+    elonxports = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/common",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon:quelonry",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon/statelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon/stelonp",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/selonrvicelon",
     ],
 )

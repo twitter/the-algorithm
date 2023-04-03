@@ -1,248 +1,248 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import scala.reflect.runtime.universe._
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import scala.relonflelonct.runtimelon.univelonrselon._
 
-object FeatureValueSorter {
+objelonct FelonaturelonValuelonSortelonr {
 
   /**
-   * Sort by a feature value ascending. If the feature failed or is missing, use an inferred default
-   * based on the type of [[FeatureValue]]. For Numeric values this is the MinValue
-   * (e.g. Long.MinValue, Double.MinValue).
+   * Sort by a felonaturelon valuelon ascelonnding. If thelon felonaturelon failelond or is missing, uselon an infelonrrelond delonfault
+   * baselond on thelon typelon of [[FelonaturelonValuelon]]. For Numelonric valuelons this is thelon MinValuelon
+   * (elon.g. Long.MinValuelon, Doublelon.MinValuelon).
    *
-   * @param feature feature with value to sort by
-   * @param dummyImplicit due to type erasure, implicit used to disambiguate `def ascending()`
-   *                      between def with param `feature: Feature[Candidate, FeatureValue]`
-   *                      from def with param `feature: Feature[Candidate, Option[FeatureValue]]`
-   * @param typeTag allows for inferring default value from the FeatureValue type.
-   *                See [[featureValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon felonaturelon with valuelon to sort by
+   * @param dummyImplicit duelon to typelon elonrasurelon, implicit uselond to disambiguatelon `delonf ascelonnding()`
+   *                      belontwelonelonn delonf with param `felonaturelon: Felonaturelon[Candidatelon, FelonaturelonValuelon]`
+   *                      from delonf with param `felonaturelon: Felonaturelon[Candidatelon, Option[FelonaturelonValuelon]]`
+   * @param typelonTag allows for infelonrring delonfault valuelon from thelon FelonaturelonValuelon typelon.
+   *                Selonelon [[felonaturelonValuelonSortDelonfaultValuelon]]
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, FeatureValue]
+  delonf ascelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: Felonaturelon[Candidatelon, FelonaturelonValuelon]
   )(
     implicit dummyImplicit: DummyImplicit,
-    typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Ascending)
+    typelonTag: TypelonTag[FelonaturelonValuelon]
+  ): SortelonrProvidelonr = {
+    val delonfaultFelonaturelonValuelon: FelonaturelonValuelon = felonaturelonValuelonSortDelonfaultValuelon(felonaturelon, Ascelonnding)
 
-    ascending(feature, defaultFeatureValue)
+    ascelonnding(felonaturelon, delonfaultFelonaturelonValuelon)
   }
 
   /**
-   * Sort by a feature value ascending. If the feature failed or is missing, use the provided
-   * default.
+   * Sort by a felonaturelon valuelon ascelonnding. If thelon felonaturelon failelond or is missing, uselon thelon providelond
+   * delonfault.
    *
-   * @param feature feature with value to sort by
-   * @param dummyImplicit due to type erasure, implicit used to disambiguate `def ascending()`
-   *                      between def with param `feature: Feature[Candidate, FeatureValue]`
-   *                      from def with param `feature: Feature[Candidate, Option[FeatureValue]]`
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon felonaturelon with valuelon to sort by
+   * @param dummyImplicit duelon to typelon elonrasurelon, implicit uselond to disambiguatelon `delonf ascelonnding()`
+   *                      belontwelonelonn delonf with param `felonaturelon: Felonaturelon[Candidatelon, FelonaturelonValuelon]`
+   *                      from delonf with param `felonaturelon: Felonaturelon[Candidatelon, Option[FelonaturelonValuelon]]`
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, FeatureValue],
-    defaultFeatureValue: FeatureValue
+  delonf ascelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: Felonaturelon[Candidatelon, FelonaturelonValuelon],
+    delonfaultFelonaturelonValuelon: FelonaturelonValuelon
   )(
     implicit dummyImplicit: DummyImplicit
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
-      _.features.getOrElse(feature, defaultFeatureValue))
+  ): SortelonrProvidelonr = {
+    val ordelonring = Ordelonring.by[CandidatelonWithDelontails, FelonaturelonValuelon](
+      _.felonaturelons.gelontOrelonlselon(felonaturelon, delonfaultFelonaturelonValuelon))
 
-    SorterFromOrdering(ordering, Ascending)
+    SortelonrFromOrdelonring(ordelonring, Ascelonnding)
   }
 
   /**
-   * Sort by an optional feature value ascending. If the feature failed or is missing, use an
-   * inferred default based on the type of [[FeatureValue]]. For Numeric values this is the MinValue
-   * (e.g. Long.MinValue, Double.MinValue).
+   * Sort by an optional felonaturelon valuelon ascelonnding. If thelon felonaturelon failelond or is missing, uselon an
+   * infelonrrelond delonfault baselond on thelon typelon of [[FelonaturelonValuelon]]. For Numelonric valuelons this is thelon MinValuelon
+   * (elon.g. Long.MinValuelon, Doublelon.MinValuelon).
    *
-   * @param feature feature with value to sort by
-   * @param typeTag allows for inferring default value from the FeatureValue type.
-   *                See [[featureOptionalValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon felonaturelon with valuelon to sort by
+   * @param typelonTag allows for infelonrring delonfault valuelon from thelon FelonaturelonValuelon typelon.
+   *                Selonelon [[felonaturelonOptionalValuelonSortDelonfaultValuelon]]
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, Option[FeatureValue]]
+  delonf ascelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: Felonaturelon[Candidatelon, Option[FelonaturelonValuelon]]
   )(
-    implicit typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue = featureOptionalValueSortDefaultValue(feature, Ascending)
+    implicit typelonTag: TypelonTag[FelonaturelonValuelon]
+  ): SortelonrProvidelonr = {
+    val delonfaultFelonaturelonValuelon: FelonaturelonValuelon = felonaturelonOptionalValuelonSortDelonfaultValuelon(felonaturelon, Ascelonnding)
 
-    ascending(feature, defaultFeatureValue)
+    ascelonnding(felonaturelon, delonfaultFelonaturelonValuelon)
   }
 
   /**
-   * Sort by an optional feature value ascending. If the feature failed or is missing, use the
-   * provided default.
+   * Sort by an optional felonaturelon valuelon ascelonnding. If thelon felonaturelon failelond or is missing, uselon thelon
+   * providelond delonfault.
    *
-   * @param feature feature with value to sort by
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon felonaturelon with valuelon to sort by
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, Option[FeatureValue]],
-    defaultFeatureValue: FeatureValue
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
-      _.features.getOrElse(feature, None).getOrElse(defaultFeatureValue))
+  delonf ascelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: Felonaturelon[Candidatelon, Option[FelonaturelonValuelon]],
+    delonfaultFelonaturelonValuelon: FelonaturelonValuelon
+  ): SortelonrProvidelonr = {
+    val ordelonring = Ordelonring.by[CandidatelonWithDelontails, FelonaturelonValuelon](
+      _.felonaturelons.gelontOrelonlselon(felonaturelon, Nonelon).gelontOrelonlselon(delonfaultFelonaturelonValuelon))
 
-    SorterFromOrdering(ordering, Ascending)
+    SortelonrFromOrdelonring(ordelonring, Ascelonnding)
   }
 
   /**
-   * Sort by a feature value descending. If the feature failed or is missing, use an inferred
-   * default based on the type of [[FeatureValue]]. For Numeric values this is the MaxValue
-   * (e.g. Long.MaxValue, Double.MaxValue).
+   * Sort by a felonaturelon valuelon delonscelonnding. If thelon felonaturelon failelond or is missing, uselon an infelonrrelond
+   * delonfault baselond on thelon typelon of [[FelonaturelonValuelon]]. For Numelonric valuelons this is thelon MaxValuelon
+   * (elon.g. Long.MaxValuelon, Doublelon.MaxValuelon).
    *
-   * @param feature feature with value to sort by
-   * @param dummyImplicit due to type erasure, implicit used to disambiguate `def descending()`
-   *                      between def with param `feature: Feature[Candidate, FeatureValue]`
-   *                      from def with param `feature: Feature[Candidate, Option[FeatureValue]]`
-   * @param typeTag allows for inferring default value from the FeatureValue type.
-   *                See [[featureValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon felonaturelon with valuelon to sort by
+   * @param dummyImplicit duelon to typelon elonrasurelon, implicit uselond to disambiguatelon `delonf delonscelonnding()`
+   *                      belontwelonelonn delonf with param `felonaturelon: Felonaturelon[Candidatelon, FelonaturelonValuelon]`
+   *                      from delonf with param `felonaturelon: Felonaturelon[Candidatelon, Option[FelonaturelonValuelon]]`
+   * @param typelonTag allows for infelonrring delonfault valuelon from thelon FelonaturelonValuelon typelon.
+   *                Selonelon [[felonaturelonValuelonSortDelonfaultValuelon]]
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, FeatureValue]
+  delonf delonscelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: Felonaturelon[Candidatelon, FelonaturelonValuelon]
   )(
     implicit dummyImplicit: DummyImplicit,
-    typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Descending)
+    typelonTag: TypelonTag[FelonaturelonValuelon]
+  ): SortelonrProvidelonr = {
+    val delonfaultFelonaturelonValuelon: FelonaturelonValuelon = felonaturelonValuelonSortDelonfaultValuelon(felonaturelon, Delonscelonnding)
 
-    descending(feature, defaultFeatureValue)
+    delonscelonnding(felonaturelon, delonfaultFelonaturelonValuelon)
   }
 
   /**
-   * Sort by a feature value descending. If the feature failed or is missing, use the provided
-   * default.
+   * Sort by a felonaturelon valuelon delonscelonnding. If thelon felonaturelon failelond or is missing, uselon thelon providelond
+   * delonfault.
    *
-   * @param feature feature with value to sort by
-   * @param dummyImplicit due to type erasure, implicit used to disambiguate `def descending()`
-   *                      between def with param `feature: Feature[Candidate, FeatureValue]`
-   *                      from def with param `feature: Feature[Candidate, Option[FeatureValue]]`
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon felonaturelon with valuelon to sort by
+   * @param dummyImplicit duelon to typelon elonrasurelon, implicit uselond to disambiguatelon `delonf delonscelonnding()`
+   *                      belontwelonelonn delonf with param `felonaturelon: Felonaturelon[Candidatelon, FelonaturelonValuelon]`
+   *                      from delonf with param `felonaturelon: Felonaturelon[Candidatelon, Option[FelonaturelonValuelon]]`
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, FeatureValue],
-    defaultFeatureValue: FeatureValue
+  delonf delonscelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: Felonaturelon[Candidatelon, FelonaturelonValuelon],
+    delonfaultFelonaturelonValuelon: FelonaturelonValuelon
   )(
     implicit dummyImplicit: DummyImplicit
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
-      _.features.getOrElse(feature, defaultFeatureValue))
+  ): SortelonrProvidelonr = {
+    val ordelonring = Ordelonring.by[CandidatelonWithDelontails, FelonaturelonValuelon](
+      _.felonaturelons.gelontOrelonlselon(felonaturelon, delonfaultFelonaturelonValuelon))
 
-    SorterFromOrdering(ordering, Descending)
+    SortelonrFromOrdelonring(ordelonring, Delonscelonnding)
   }
 
   /**
-   * Sort by an optional feature value descending. If the feature failed or is missing, use an
-   * inferred default based on the type of [[FeatureValue]]. For Numeric values this is the MaxValue
-   * (e.g. Long.MaxValue, Double.MaxValue).
+   * Sort by an optional felonaturelon valuelon delonscelonnding. If thelon felonaturelon failelond or is missing, uselon an
+   * infelonrrelond delonfault baselond on thelon typelon of [[FelonaturelonValuelon]]. For Numelonric valuelons this is thelon MaxValuelon
+   * (elon.g. Long.MaxValuelon, Doublelon.MaxValuelon).
    *
-   * @param feature feature with value to sort by
-   * @param typeTag allows for inferring default value from the FeatureValue type.
-   *                See [[featureOptionalValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon felonaturelon with valuelon to sort by
+   * @param typelonTag allows for infelonrring delonfault valuelon from thelon FelonaturelonValuelon typelon.
+   *                Selonelon [[felonaturelonOptionalValuelonSortDelonfaultValuelon]]
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, Option[FeatureValue]]
+  delonf delonscelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: Felonaturelon[Candidatelon, Option[FelonaturelonValuelon]]
   )(
-    implicit typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue =
-      featureOptionalValueSortDefaultValue(feature, Descending)
+    implicit typelonTag: TypelonTag[FelonaturelonValuelon]
+  ): SortelonrProvidelonr = {
+    val delonfaultFelonaturelonValuelon: FelonaturelonValuelon =
+      felonaturelonOptionalValuelonSortDelonfaultValuelon(felonaturelon, Delonscelonnding)
 
-    descending(feature, defaultFeatureValue)
+    delonscelonnding(felonaturelon, delonfaultFelonaturelonValuelon)
   }
 
   /**
-   * Sort by an optional feature value descending. If the feature failed or is missing, use the
-   * provided default.
+   * Sort by an optional felonaturelon valuelon delonscelonnding. If thelon felonaturelon failelond or is missing, uselon thelon
+   * providelond delonfault.
    *
-   * @param feature feature with value to sort by
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon felonaturelon with valuelon to sort by
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: Feature[Candidate, Option[FeatureValue]],
-    defaultFeatureValue: FeatureValue
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
-      _.features.getOrElse(feature, None).getOrElse(defaultFeatureValue))
+  delonf delonscelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: Felonaturelon[Candidatelon, Option[FelonaturelonValuelon]],
+    delonfaultFelonaturelonValuelon: FelonaturelonValuelon
+  ): SortelonrProvidelonr = {
+    val ordelonring = Ordelonring.by[CandidatelonWithDelontails, FelonaturelonValuelon](
+      _.felonaturelons.gelontOrelonlselon(felonaturelon, Nonelon).gelontOrelonlselon(delonfaultFelonaturelonValuelon))
 
-    SorterFromOrdering(ordering, Descending)
+    SortelonrFromOrdelonring(ordelonring, Delonscelonnding)
   }
 
-  private[sorter] def featureValueSortDefaultValue[FeatureValue: Ordering](
-    feature: Feature[_, FeatureValue],
-    sortOrder: SortOrder
+  privatelon[sortelonr] delonf felonaturelonValuelonSortDelonfaultValuelon[FelonaturelonValuelon: Ordelonring](
+    felonaturelon: Felonaturelon[_, FelonaturelonValuelon],
+    sortOrdelonr: SortOrdelonr
   )(
-    implicit typeTag: TypeTag[FeatureValue]
-  ): FeatureValue = {
-    val defaultValue = sortOrder match {
-      case Descending =>
-        typeOf[FeatureValue] match {
-          case t if t <:< typeOf[Short] => Short.MinValue
-          case t if t <:< typeOf[Int] => Int.MinValue
-          case t if t <:< typeOf[Long] => Long.MinValue
-          case t if t <:< typeOf[Double] => Double.MinValue
-          case t if t <:< typeOf[Float] => Float.MinValue
-          case _ =>
-            throw new UnsupportedOperationException(s"Default value not supported for $feature")
+    implicit typelonTag: TypelonTag[FelonaturelonValuelon]
+  ): FelonaturelonValuelon = {
+    val delonfaultValuelon = sortOrdelonr match {
+      caselon Delonscelonnding =>
+        typelonOf[FelonaturelonValuelon] match {
+          caselon t if t <:< typelonOf[Short] => Short.MinValuelon
+          caselon t if t <:< typelonOf[Int] => Int.MinValuelon
+          caselon t if t <:< typelonOf[Long] => Long.MinValuelon
+          caselon t if t <:< typelonOf[Doublelon] => Doublelon.MinValuelon
+          caselon t if t <:< typelonOf[Float] => Float.MinValuelon
+          caselon _ =>
+            throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Delonfault valuelon not supportelond for $felonaturelon")
         }
-      case Ascending =>
-        typeOf[FeatureValue] match {
-          case t if t <:< typeOf[Short] => Short.MaxValue
-          case t if t <:< typeOf[Int] => Int.MaxValue
-          case t if t <:< typeOf[Long] => Long.MaxValue
-          case t if t <:< typeOf[Double] => Double.MaxValue
-          case t if t <:< typeOf[Float] => Float.MaxValue
-          case _ =>
-            throw new UnsupportedOperationException(s"Default value not supported for $feature")
+      caselon Ascelonnding =>
+        typelonOf[FelonaturelonValuelon] match {
+          caselon t if t <:< typelonOf[Short] => Short.MaxValuelon
+          caselon t if t <:< typelonOf[Int] => Int.MaxValuelon
+          caselon t if t <:< typelonOf[Long] => Long.MaxValuelon
+          caselon t if t <:< typelonOf[Doublelon] => Doublelon.MaxValuelon
+          caselon t if t <:< typelonOf[Float] => Float.MaxValuelon
+          caselon _ =>
+            throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Delonfault valuelon not supportelond for $felonaturelon")
         }
     }
 
-    defaultValue.asInstanceOf[FeatureValue]
+    delonfaultValuelon.asInstancelonOf[FelonaturelonValuelon]
   }
 
-  private[sorter] def featureOptionalValueSortDefaultValue[FeatureValue: Ordering](
-    feature: Feature[_, Option[FeatureValue]],
-    sortOrder: SortOrder
+  privatelon[sortelonr] delonf felonaturelonOptionalValuelonSortDelonfaultValuelon[FelonaturelonValuelon: Ordelonring](
+    felonaturelon: Felonaturelon[_, Option[FelonaturelonValuelon]],
+    sortOrdelonr: SortOrdelonr
   )(
-    implicit typeTag: TypeTag[FeatureValue]
-  ): FeatureValue = {
-    val defaultValue = sortOrder match {
-      case Descending =>
-        typeOf[Option[FeatureValue]] match {
-          case t if t <:< typeOf[Option[Short]] => Short.MinValue
-          case t if t <:< typeOf[Option[Int]] => Int.MinValue
-          case t if t <:< typeOf[Option[Long]] => Long.MinValue
-          case t if t <:< typeOf[Option[Double]] => Double.MinValue
-          case t if t <:< typeOf[Option[Float]] => Float.MinValue
-          case _ =>
-            throw new UnsupportedOperationException(s"Default value not supported for $feature")
+    implicit typelonTag: TypelonTag[FelonaturelonValuelon]
+  ): FelonaturelonValuelon = {
+    val delonfaultValuelon = sortOrdelonr match {
+      caselon Delonscelonnding =>
+        typelonOf[Option[FelonaturelonValuelon]] match {
+          caselon t if t <:< typelonOf[Option[Short]] => Short.MinValuelon
+          caselon t if t <:< typelonOf[Option[Int]] => Int.MinValuelon
+          caselon t if t <:< typelonOf[Option[Long]] => Long.MinValuelon
+          caselon t if t <:< typelonOf[Option[Doublelon]] => Doublelon.MinValuelon
+          caselon t if t <:< typelonOf[Option[Float]] => Float.MinValuelon
+          caselon _ =>
+            throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Delonfault valuelon not supportelond for $felonaturelon")
         }
-      case Ascending =>
-        typeOf[Option[FeatureValue]] match {
-          case t if t <:< typeOf[Option[Short]] => Short.MaxValue
-          case t if t <:< typeOf[Option[Int]] => Int.MaxValue
-          case t if t <:< typeOf[Option[Long]] => Long.MaxValue
-          case t if t <:< typeOf[Option[Double]] => Double.MaxValue
-          case t if t <:< typeOf[Option[Float]] => Float.MaxValue
-          case _ =>
-            throw new UnsupportedOperationException(s"Default value not supported for $feature")
+      caselon Ascelonnding =>
+        typelonOf[Option[FelonaturelonValuelon]] match {
+          caselon t if t <:< typelonOf[Option[Short]] => Short.MaxValuelon
+          caselon t if t <:< typelonOf[Option[Int]] => Int.MaxValuelon
+          caselon t if t <:< typelonOf[Option[Long]] => Long.MaxValuelon
+          caselon t if t <:< typelonOf[Option[Doublelon]] => Doublelon.MaxValuelon
+          caselon t if t <:< typelonOf[Option[Float]] => Float.MaxValuelon
+          caselon _ =>
+            throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Delonfault valuelon not supportelond for $felonaturelon")
         }
     }
 
-    defaultValue.asInstanceOf[FeatureValue]
+    delonfaultValuelon.asInstancelonOf[FelonaturelonValuelon]
   }
 }

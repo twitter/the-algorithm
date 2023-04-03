@@ -1,30 +1,30 @@
 jvm_binary(
-    name = "bin",
-    basename = "home-mixer",
-    main = "com.twitter.home_mixer.HomeMixerServerMain",
-    runtime_platform = "java11",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    namelon = "bin",
+    baselonnamelon = "homelon-mixelonr",
+    main = "com.twittelonr.homelon_mixelonr.HomelonMixelonrSelonrvelonrMain",
+    runtimelon_platform = "java11",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         "3rdparty/jvm/ch/qos/logback:logback-classic",
-        "finagle/finagle-zipkin-scribe/src/main/scala",
-        "finatra/inject/inject-logback/src/main/scala",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer",
-        "loglens/loglens-logback/src/main/scala/com/twitter/loglens/logback",
-        "twitter-server-internal/src/main/scala",
-        "twitter-server/logback-classic/src/main/scala",
+        "finaglelon/finaglelon-zipkin-scribelon/src/main/scala",
+        "finatra/injelonct/injelonct-logback/src/main/scala",
+        "homelon-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/homelon_mixelonr",
+        "loglelonns/loglelonns-logback/src/main/scala/com/twittelonr/loglelonns/logback",
+        "twittelonr-selonrvelonr-intelonrnal/src/main/scala",
+        "twittelonr-selonrvelonr/logback-classic/src/main/scala",
     ],
 )
 
-#  Aurora Workflows build phase convention requires a jvm_app named with home-mixer-app
+#  Aurora Workflows build phaselon convelonntion relonquirelons a jvm_app namelond with homelon-mixelonr-app
 jvm_app(
-    name = "home-mixer-app",
-    archive = "zip",
+    namelon = "homelon-mixelonr-app",
+    archivelon = "zip",
     binary = ":bin",
-    bundles = [
-        bundle(
-            fileset = ["config/**/*"],
-            owning_target = "home-mixer/config:files",
+    bundlelons = [
+        bundlelon(
+            filelonselont = ["config/**/*"],
+            owning_targelont = "homelon-mixelonr/config:filelons",
         ),
     ],
-    tags = ["bazel-compatible"],
+    tags = ["bazelonl-compatiblelon"],
 )

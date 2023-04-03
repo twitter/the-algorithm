@@ -1,18 +1,18 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.google.common.base.Optional;
+import com.googlelon.common.baselon.Optional;
 
-import com.twitter.search.common.caching.FacetsCacheUtil;
-import com.twitter.search.common.caching.filter.CacheRequestNormalizer;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.common.caching.FacelontsCachelonUtil;
+import com.twittelonr.selonarch.common.caching.filtelonr.CachelonRelonquelonstNormalizelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public class FacetsCacheRequestNormalizer extends
-    CacheRequestNormalizer<EarlybirdRequestContext, EarlybirdRequest> {
+public class FacelontsCachelonRelonquelonstNormalizelonr elonxtelonnds
+    CachelonRelonquelonstNormalizelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonquelonst> {
 
-  @Override
-  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
-    return Optional.fromNullable(FacetsCacheUtil.normalizeRequestForCache(
-        requestContext.getRequest()));
+  @Ovelonrridelon
+  public Optional<elonarlybirdRelonquelonst> normalizelonRelonquelonst(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    relonturn Optional.fromNullablelon(FacelontsCachelonUtil.normalizelonRelonquelonstForCachelon(
+        relonquelonstContelonxt.gelontRelonquelonst()));
   }
 }

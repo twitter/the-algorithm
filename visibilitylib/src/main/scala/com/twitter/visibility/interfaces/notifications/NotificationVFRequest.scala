@@ -1,9 +1,9 @@
-package com.twitter.visibility.interfaces.notifications
+packagelon com.twittelonr.visibility.intelonrfacelons.notifications
 
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.models.SafetyLevel
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
 
-case class NotificationVFRequest(
-  recipientId: Long,
-  subject: ContentId.UserId,
-  safetyLevel: SafetyLevel)
+caselon class NotificationVFRelonquelonst(
+  reloncipielonntId: Long,
+  subjelonct: ContelonntId.UselonrId,
+  safelontyLelonvelonl: SafelontyLelonvelonl)

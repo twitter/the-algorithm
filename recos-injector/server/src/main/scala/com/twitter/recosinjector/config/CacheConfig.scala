@@ -1,23 +1,23 @@
-package com.twitter.recosinjector.config
+packagelon com.twittelonr.reloncosinjelonctor.config
 
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus_internal.memcache.MemcacheStore
-import com.twitter.storehaus_internal.util.{ClientName, ZkEndPoint}
+import com.twittelonr.finaglelon.melonmcachelond.Clielonnt
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.storelonhaus_intelonrnal.melonmcachelon.MelonmcachelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.util.{ClielonntNamelon, ZkelonndPoint}
 
-trait CacheConfig {
-  implicit def statsReceiver: StatsReceiver
+trait CachelonConfig {
+  implicit delonf statsReloncelonivelonr: StatsReloncelonivelonr
 
-  def serviceIdentifier: ServiceIdentifier
+  delonf selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
 
-  def recosInjectorCoreSvcsCacheDest: String
+  delonf reloncosInjelonctorCorelonSvcsCachelonDelonst: String
 
-  val recosInjectorCoreSvcsCacheClient: Client = MemcacheStore.memcachedClient(
-    name = ClientName("memcache-recos-injector"),
-    dest = ZkEndPoint(recosInjectorCoreSvcsCacheDest),
-    statsReceiver = statsReceiver,
-    serviceIdentifier = serviceIdentifier
+  val reloncosInjelonctorCorelonSvcsCachelonClielonnt: Clielonnt = MelonmcachelonStorelon.melonmcachelondClielonnt(
+    namelon = ClielonntNamelon("melonmcachelon-reloncos-injelonctor"),
+    delonst = ZkelonndPoint(reloncosInjelonctorCorelonSvcsCachelonDelonst),
+    statsReloncelonivelonr = statsReloncelonivelonr,
+    selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr
   )
 
 }

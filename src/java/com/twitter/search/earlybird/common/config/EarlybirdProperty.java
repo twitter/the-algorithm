@@ -1,390 +1,390 @@
-package com.twitter.search.earlybird.common.config;
+packagelon com.twittelonr.selonarch.elonarlybird.common.config;
 
-import java.lang.reflect.Modifier;
+import java.lang.relonflelonct.Modifielonr;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.stream.Collectors;
+import java.util.strelonam.Collelonctors;
 
-import com.google.common.collect.ImmutableList;
+import com.googlelon.common.collelonct.ImmutablelonList;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.app.Flags;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
+import com.twittelonr.app.Flag;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.app.Flags;
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr;
 
 /**
- * Stateless class that represents an Earlybird property that can be specified by a command line
+ * Statelonlelonss class that relonprelonselonnts an elonarlybird propelonrty that can belon speloncifielond by a command linelon
  * flag.
  * <p>
- * This is a regular Java class instead of enum to have a generic type.
+ * This is a relongular Java class instelonad of elonnum to havelon a gelonnelonric typelon.
  *
  * @param <T>
  */
-public final class EarlybirdProperty<T> {
+public final class elonarlybirdPropelonrty<T> {
 
-  private static final class PropertyType<T> {
+  privatelon static final class PropelonrtyTypelon<T> {
 
-    private static final PropertyType<Boolean> BOOLEAN = new PropertyType<>(
-        Flaggable.ofJavaBoolean(), EarlybirdConfig::getBool, EarlybirdConfig::getBool);
+    privatelon static final PropelonrtyTypelon<Boolelonan> BOOLelonAN = nelonw PropelonrtyTypelon<>(
+        Flaggablelon.ofJavaBoolelonan(), elonarlybirdConfig::gelontBool, elonarlybirdConfig::gelontBool);
 
-    private static final PropertyType<Integer> INT = new PropertyType<>(
-        Flaggable.ofJavaInteger(), EarlybirdConfig::getInt, EarlybirdConfig::getInt);
+    privatelon static final PropelonrtyTypelon<Intelongelonr> INT = nelonw PropelonrtyTypelon<>(
+        Flaggablelon.ofJavaIntelongelonr(), elonarlybirdConfig::gelontInt, elonarlybirdConfig::gelontInt);
 
-    private static final PropertyType<String> STRING = new PropertyType<>(
-        Flaggable.ofString(), EarlybirdConfig::getString, EarlybirdConfig::getString);
+    privatelon static final PropelonrtyTypelon<String> STRING = nelonw PropelonrtyTypelon<>(
+        Flaggablelon.ofString(), elonarlybirdConfig::gelontString, elonarlybirdConfig::gelontString);
 
-    private final Flaggable<T> flaggable;
-    private final Function<String, T> getter;
-    private final BiFunction<String, T, T> getterWithDefault;
+    privatelon final Flaggablelon<T> flaggablelon;
+    privatelon final Function<String, T> gelonttelonr;
+    privatelon final BiFunction<String, T, T> gelonttelonrWithDelonfault;
 
-    private PropertyType(Flaggable<T> flaggable, Function<String, T> getter,
-                         BiFunction<String, T, T> getterWithDefault) {
-      this.flaggable = flaggable;
-      this.getter = getter;
-      this.getterWithDefault = getterWithDefault;
+    privatelon PropelonrtyTypelon(Flaggablelon<T> flaggablelon, Function<String, T> gelonttelonr,
+                         BiFunction<String, T, T> gelonttelonrWithDelonfault) {
+      this.flaggablelon = flaggablelon;
+      this.gelonttelonr = gelonttelonr;
+      this.gelonttelonrWithDelonfault = gelonttelonrWithDelonfault;
     }
   }
 
-  public static final EarlybirdProperty<String> PENGUIN_VERSION =
-      new EarlybirdProperty<>(
-          "penguin_version",
-          "The penguin version to index.",
-          PropertyType.STRING,
-          false);
+  public static final elonarlybirdPropelonrty<String> PelonNGUIN_VelonRSION =
+      nelonw elonarlybirdPropelonrty<>(
+          "pelonnguin_velonrsion",
+          "Thelon pelonnguin velonrsion to indelonx.",
+          PropelonrtyTypelon.STRING,
+          falselon);
 
-  public static final EarlybirdProperty<Integer> THRIFT_PORT = new EarlybirdProperty<>(
+  public static final elonarlybirdPropelonrty<Intelongelonr> THRIFT_PORT = nelonw elonarlybirdPropelonrty<>(
       "thrift_port",
-      "override thrift port from config file",
-      PropertyType.INT,
-      false);
+      "ovelonrridelon thrift port from config filelon",
+      PropelonrtyTypelon.INT,
+      falselon);
 
-  public static final EarlybirdProperty<Integer> WARMUP_THRIFT_PORT = new EarlybirdProperty<>(
+  public static final elonarlybirdPropelonrty<Intelongelonr> WARMUP_THRIFT_PORT = nelonw elonarlybirdPropelonrty<>(
       "warmup_thrift_port",
-      "override warmup thrift port from config file",
-      PropertyType.INT,
-      false);
+      "ovelonrridelon warmup thrift port from config filelon",
+      PropelonrtyTypelon.INT,
+      falselon);
 
-  public static final EarlybirdProperty<Integer> SEARCHER_THREADS = new EarlybirdProperty<>(
-      "searcher_threads",
-      "override number of searcher threads from config file",
-      PropertyType.INT,
-      false);
+  public static final elonarlybirdPropelonrty<Intelongelonr> SelonARCHelonR_THRelonADS = nelonw elonarlybirdPropelonrty<>(
+      "selonarchelonr_threlonads",
+      "ovelonrridelon numbelonr of selonarchelonr threlonads from config filelon",
+      PropelonrtyTypelon.INT,
+      falselon);
 
-  public static final EarlybirdProperty<String> EARLYBIRD_TIER = new EarlybirdProperty<>(
-      "earlybird_tier",
-      "the earlybird tier (e.g. tier1), used on Aurora",
-      PropertyType.STRING,
-      true);
+  public static final elonarlybirdPropelonrty<String> elonARLYBIRD_TIelonR = nelonw elonarlybirdPropelonrty<>(
+      "elonarlybird_tielonr",
+      "thelon elonarlybird tielonr (elon.g. tielonr1), uselond on Aurora",
+      PropelonrtyTypelon.STRING,
+      truelon);
 
-  public static final EarlybirdProperty<Integer> REPLICA_ID = new EarlybirdProperty<>(
-      "replica_id",
-      "the ID in a partition, used on Aurora",
-      PropertyType.INT,
-      true);
+  public static final elonarlybirdPropelonrty<Intelongelonr> RelonPLICA_ID = nelonw elonarlybirdPropelonrty<>(
+      "relonplica_id",
+      "thelon ID in a partition, uselond on Aurora",
+      PropelonrtyTypelon.INT,
+      truelon);
 
-  public static final EarlybirdProperty<Integer> PARTITION_ID = new EarlybirdProperty<>(
+  public static final elonarlybirdPropelonrty<Intelongelonr> PARTITION_ID = nelonw elonarlybirdPropelonrty<>(
       "partition_id",
-      "partition ID, used on Aurora",
-      PropertyType.INT,
-      true);
+      "partition ID, uselond on Aurora",
+      PropelonrtyTypelon.INT,
+      truelon);
 
-  public static final EarlybirdProperty<Integer> NUM_PARTITIONS = new EarlybirdProperty<>(
+  public static final elonarlybirdPropelonrty<Intelongelonr> NUM_PARTITIONS = nelonw elonarlybirdPropelonrty<>(
       "num_partitions",
-      "number of partitions, used on Aurora",
-      PropertyType.INT,
-      true);
+      "numbelonr of partitions, uselond on Aurora",
+      PropelonrtyTypelon.INT,
+      truelon);
 
-  public static final EarlybirdProperty<Integer> NUM_INSTANCES = new EarlybirdProperty<>(
-      "num_instances",
-      "number of instances in the job, used on Aurora",
-      PropertyType.INT,
-      true);
+  public static final elonarlybirdPropelonrty<Intelongelonr> NUM_INSTANCelonS = nelonw elonarlybirdPropelonrty<>(
+      "num_instancelons",
+      "numbelonr of instancelons in thelon job, uselond on Aurora",
+      PropelonrtyTypelon.INT,
+      truelon);
 
-  public static final EarlybirdProperty<Integer> SERVING_TIMESLICES = new EarlybirdProperty<>(
-      "serving_timeslices",
-      "number of time slices to serve, used on Aurora",
-      PropertyType.INT,
-      true);
+  public static final elonarlybirdPropelonrty<Intelongelonr> SelonRVING_TIMelonSLICelonS = nelonw elonarlybirdPropelonrty<>(
+      "selonrving_timelonslicelons",
+      "numbelonr of timelon slicelons to selonrvelon, uselond on Aurora",
+      PropelonrtyTypelon.INT,
+      truelon);
 
-  public static final EarlybirdProperty<String> ROLE = new EarlybirdProperty<>(
-      "role",
-      "Role in the service path of Earlybird",
-      PropertyType.STRING,
-      true,
-      true);
+  public static final elonarlybirdPropelonrty<String> ROLelon = nelonw elonarlybirdPropelonrty<>(
+      "rolelon",
+      "Rolelon in thelon selonrvicelon path of elonarlybird",
+      PropelonrtyTypelon.STRING,
+      truelon,
+      truelon);
 
-  public static final EarlybirdProperty<String> EARLYBIRD_NAME = new EarlybirdProperty<>(
-      "earlybird_name",
-      "Name in the service path of Earlybird without hash partition suffix",
-      PropertyType.STRING,
-      true,
-      true);
+  public static final elonarlybirdPropelonrty<String> elonARLYBIRD_NAMelon = nelonw elonarlybirdPropelonrty<>(
+      "elonarlybird_namelon",
+      "Namelon in thelon selonrvicelon path of elonarlybird without hash partition suffix",
+      PropelonrtyTypelon.STRING,
+      truelon,
+      truelon);
 
-  public static final EarlybirdProperty<String> ENV = new EarlybirdProperty<>(
-      "env",
-      "Environment in the service path of Earlybird",
-      PropertyType.STRING,
-      true,
-      true);
+  public static final elonarlybirdPropelonrty<String> elonNV = nelonw elonarlybirdPropelonrty<>(
+      "elonnv",
+      "elonnvironmelonnt in thelon selonrvicelon path of elonarlybird",
+      PropelonrtyTypelon.STRING,
+      truelon,
+      truelon);
 
-  public static final EarlybirdProperty<String> ZONE = new EarlybirdProperty<>(
-      "zone",
-      "Zone (data center) in the service path of Earlybird",
-      PropertyType.STRING,
-      true,
-      true);
+  public static final elonarlybirdPropelonrty<String> ZONelon = nelonw elonarlybirdPropelonrty<>(
+      "zonelon",
+      "Zonelon (data celonntelonr) in thelon selonrvicelon path of elonarlybird",
+      PropelonrtyTypelon.STRING,
+      truelon,
+      truelon);
 
-  public static final EarlybirdProperty<String> DL_URI = new EarlybirdProperty<>(
+  public static final elonarlybirdPropelonrty<String> DL_URI = nelonw elonarlybirdPropelonrty<>(
       "dl_uri",
-      "DistributedLog URI for default DL reader",
-      PropertyType.STRING,
-      false);
+      "DistributelondLog URI for delonfault DL relonadelonr",
+      PropelonrtyTypelon.STRING,
+      falselon);
 
-  public static final EarlybirdProperty<String> USER_UPDATES_DL_URI = new EarlybirdProperty<>(
-      "user_updates_dl_uri",
-      "DistributedLog URI for user updates DL reader",
-      PropertyType.STRING,
-      false);
+  public static final elonarlybirdPropelonrty<String> USelonR_UPDATelonS_DL_URI = nelonw elonarlybirdPropelonrty<>(
+      "uselonr_updatelons_dl_uri",
+      "DistributelondLog URI for uselonr updatelons DL relonadelonr",
+      PropelonrtyTypelon.STRING,
+      falselon);
 
-  public static final EarlybirdProperty<String> ANTISOCIAL_USERUPDATES_DL_STREAM =
-      new EarlybirdProperty<>(
-          "antisocial_userupdates_dl_stream",
-          "DL stream name for antisocial user updates without DL version suffix",
-          PropertyType.STRING,
-          false);
+  public static final elonarlybirdPropelonrty<String> ANTISOCIAL_USelonRUPDATelonS_DL_STRelonAM =
+      nelonw elonarlybirdPropelonrty<>(
+          "antisocial_uselonrupdatelons_dl_strelonam",
+          "DL strelonam namelon for antisocial uselonr updatelons without DL velonrsion suffix",
+          PropelonrtyTypelon.STRING,
+          falselon);
 
-  public static final EarlybirdProperty<String> ZK_APP_ROOT = new EarlybirdProperty<>(
+  public static final elonarlybirdPropelonrty<String> ZK_APP_ROOT = nelonw elonarlybirdPropelonrty<>(
       "zk_app_root",
-      "SZooKeeper base root path for this application",
-      PropertyType.STRING,
-      true);
+      "SZooKelonelonpelonr baselon root path for this application",
+      PropelonrtyTypelon.STRING,
+      truelon);
 
-  public static final EarlybirdProperty<Boolean> SEGMENT_LOAD_FROM_HDFS_ENABLED =
-      new EarlybirdProperty<>(
-          "segment_load_from_hdfs_enabled",
-          "Whether to load segment data from HDFS",
-          PropertyType.BOOLEAN,
-          false);
+  public static final elonarlybirdPropelonrty<Boolelonan> SelonGMelonNT_LOAD_FROM_HDFS_elonNABLelonD =
+      nelonw elonarlybirdPropelonrty<>(
+          "selongmelonnt_load_from_hdfs_elonnablelond",
+          "Whelonthelonr to load selongmelonnt data from HDFS",
+          PropelonrtyTypelon.BOOLelonAN,
+          falselon);
 
-  public static final EarlybirdProperty<Boolean> SEGMENT_FLUSH_TO_HDFS_ENABLED =
-      new EarlybirdProperty<>(
-          "segment_flush_to_hdfs_enabled",
-          "Whether to flush segment data to HDFS",
-          PropertyType.BOOLEAN,
-          false);
+  public static final elonarlybirdPropelonrty<Boolelonan> SelonGMelonNT_FLUSH_TO_HDFS_elonNABLelonD =
+      nelonw elonarlybirdPropelonrty<>(
+          "selongmelonnt_flush_to_hdfs_elonnablelond",
+          "Whelonthelonr to flush selongmelonnt data to HDFS",
+          PropelonrtyTypelon.BOOLelonAN,
+          falselon);
 
-  public static final EarlybirdProperty<String> HDFS_SEGMENT_SYNC_DIR = new EarlybirdProperty<>(
-      "hdfs_segment_sync_dir",
-      "HDFS directory to sync segment data",
-      PropertyType.STRING,
-      false);
+  public static final elonarlybirdPropelonrty<String> HDFS_SelonGMelonNT_SYNC_DIR = nelonw elonarlybirdPropelonrty<>(
+      "hdfs_selongmelonnt_sync_dir",
+      "HDFS direlonctory to sync selongmelonnt data",
+      PropelonrtyTypelon.STRING,
+      falselon);
 
-  public static final EarlybirdProperty<String> HDFS_SEGMENT_UPLOAD_DIR = new EarlybirdProperty<>(
-      "hdfs_segment_upload_dir",
-      "HDFS directory to upload segment data",
-      PropertyType.STRING,
-      false);
+  public static final elonarlybirdPropelonrty<String> HDFS_SelonGMelonNT_UPLOAD_DIR = nelonw elonarlybirdPropelonrty<>(
+      "hdfs_selongmelonnt_upload_dir",
+      "HDFS direlonctory to upload selongmelonnt data",
+      PropelonrtyTypelon.STRING,
+      falselon);
 
-  public static final EarlybirdProperty<Boolean> ARCHIVE_DAILY_STATUS_BATCH_FLUSHING_ENABLED =
-      new EarlybirdProperty<>(
-          "archive_daily_status_batch_flushing_enabled",
-          "Whether to enable archive daily status batch flushing",
-          PropertyType.BOOLEAN,
-          false);
+  public static final elonarlybirdPropelonrty<Boolelonan> ARCHIVelon_DAILY_STATUS_BATCH_FLUSHING_elonNABLelonD =
+      nelonw elonarlybirdPropelonrty<>(
+          "archivelon_daily_status_batch_flushing_elonnablelond",
+          "Whelonthelonr to elonnablelon archivelon daily status batch flushing",
+          PropelonrtyTypelon.BOOLelonAN,
+          falselon);
 
-  public static final EarlybirdProperty<String> HDFS_INDEX_SYNC_DIR = new EarlybirdProperty<>(
-      "hdfs_index_sync_dir",
-      "HDFS directory to sync index data",
-      PropertyType.STRING,
-      true);
+  public static final elonarlybirdPropelonrty<String> HDFS_INDelonX_SYNC_DIR = nelonw elonarlybirdPropelonrty<>(
+      "hdfs_indelonx_sync_dir",
+      "HDFS direlonctory to sync indelonx data",
+      PropelonrtyTypelon.STRING,
+      truelon);
 
-  public static final EarlybirdProperty<Boolean> READ_INDEX_FROM_PROD_LOCATION =
-      new EarlybirdProperty<>(
-      "read_index_from_prod_location",
-      "Read index from prod to speed up startup on staging / loadtest",
-      PropertyType.BOOLEAN,
-      false);
+  public static final elonarlybirdPropelonrty<Boolelonan> RelonAD_INDelonX_FROM_PROD_LOCATION =
+      nelonw elonarlybirdPropelonrty<>(
+      "relonad_indelonx_from_prod_location",
+      "Relonad indelonx from prod to spelonelond up startup on staging / loadtelonst",
+      PropelonrtyTypelon.BOOLelonAN,
+      falselon);
 
-  public static final EarlybirdProperty<Boolean> USE_DECIDER_OVERLAY = new EarlybirdProperty<>(
-      "use_decider_overlay",
-      "Whether to use decider overlay",
-      PropertyType.BOOLEAN,
-      false);
+  public static final elonarlybirdPropelonrty<Boolelonan> USelon_DelonCIDelonR_OVelonRLAY = nelonw elonarlybirdPropelonrty<>(
+      "uselon_deloncidelonr_ovelonrlay",
+      "Whelonthelonr to uselon deloncidelonr ovelonrlay",
+      PropelonrtyTypelon.BOOLelonAN,
+      falselon);
 
-  public static final EarlybirdProperty<String> DECIDER_OVERLAY_CONFIG = new EarlybirdProperty<>(
-      "decider_overlay_config",
-      "Path to decider overlay config",
-      PropertyType.STRING,
-      false);
+  public static final elonarlybirdPropelonrty<String> DelonCIDelonR_OVelonRLAY_CONFIG = nelonw elonarlybirdPropelonrty<>(
+      "deloncidelonr_ovelonrlay_config",
+      "Path to deloncidelonr ovelonrlay config",
+      PropelonrtyTypelon.STRING,
+      falselon);
 
-  public static final EarlybirdProperty<Integer> MAX_CONCURRENT_SEGMENT_INDEXERS =
-      new EarlybirdProperty<>(
-        "max_concurrent_segment_indexers",
-        "Maximum number of segments indexed concurrently",
-        PropertyType.INT,
-        false);
+  public static final elonarlybirdPropelonrty<Intelongelonr> MAX_CONCURRelonNT_SelonGMelonNT_INDelonXelonRS =
+      nelonw elonarlybirdPropelonrty<>(
+        "max_concurrelonnt_selongmelonnt_indelonxelonrs",
+        "Maximum numbelonr of selongmelonnts indelonxelond concurrelonntly",
+        PropelonrtyTypelon.INT,
+        falselon);
 
-  public static final EarlybirdProperty<Boolean> TF_MODELS_ENABLED =
-      new EarlybirdProperty<>(
-        "tf_models_enabled",
-        "Whether tensorflow models should be loaded",
-        PropertyType.BOOLEAN,
-        false);
+  public static final elonarlybirdPropelonrty<Boolelonan> TF_MODelonLS_elonNABLelonD =
+      nelonw elonarlybirdPropelonrty<>(
+        "tf_modelonls_elonnablelond",
+        "Whelonthelonr telonnsorflow modelonls should belon loadelond",
+        PropelonrtyTypelon.BOOLelonAN,
+        falselon);
 
-  public static final EarlybirdProperty<String> TF_MODELS_CONFIG_PATH =
-      new EarlybirdProperty<>(
-        "tf_models_config_path",
-        "The configuration path of the yaml file containing the list of tensorflow models to load.",
-        PropertyType.STRING,
-        false);
+  public static final elonarlybirdPropelonrty<String> TF_MODelonLS_CONFIG_PATH =
+      nelonw elonarlybirdPropelonrty<>(
+        "tf_modelonls_config_path",
+        "Thelon configuration path of thelon yaml filelon containing thelon list of telonnsorflow modelonls to load.",
+        PropelonrtyTypelon.STRING,
+        falselon);
 
-  public static final EarlybirdProperty<Integer> TF_INTER_OP_THREADS =
-      new EarlybirdProperty<>(
-        "tf_inter_op_threads",
-        "How many tensorflow inter op threads to use. See TF documentation for more information.",
-        PropertyType.INT,
-        false);
+  public static final elonarlybirdPropelonrty<Intelongelonr> TF_INTelonR_OP_THRelonADS =
+      nelonw elonarlybirdPropelonrty<>(
+        "tf_intelonr_op_threlonads",
+        "How many telonnsorflow intelonr op threlonads to uselon. Selonelon TF documelonntation for morelon information.",
+        PropelonrtyTypelon.INT,
+        falselon);
 
-  public static final EarlybirdProperty<Integer> TF_INTRA_OP_THREADS =
-      new EarlybirdProperty<>(
-        "tf_intra_op_threads",
-        "How many tensorflow intra op threads to use. See TF documentation for more information.",
-        PropertyType.INT,
-        false);
+  public static final elonarlybirdPropelonrty<Intelongelonr> TF_INTRA_OP_THRelonADS =
+      nelonw elonarlybirdPropelonrty<>(
+        "tf_intra_op_threlonads",
+        "How many telonnsorflow intra op threlonads to uselon. Selonelon TF documelonntation for morelon information.",
+        PropelonrtyTypelon.INT,
+        falselon);
 
-  public static final EarlybirdProperty<Integer> MAX_ALLOWED_REPLICAS_NOT_IN_SERVER_SET =
-      new EarlybirdProperty<>(
-          "max_allowed_replicas_not_in_server_set",
-          "How many replicas are allowed to be missing from the Earlybird server set.",
-          PropertyType.INT,
-          false);
+  public static final elonarlybirdPropelonrty<Intelongelonr> MAX_ALLOWelonD_RelonPLICAS_NOT_IN_SelonRVelonR_SelonT =
+      nelonw elonarlybirdPropelonrty<>(
+          "max_allowelond_relonplicas_not_in_selonrvelonr_selont",
+          "How many relonplicas arelon allowelond to belon missing from thelon elonarlybird selonrvelonr selont.",
+          PropelonrtyTypelon.INT,
+          falselon);
 
-  public static final EarlybirdProperty<Boolean> CHECK_NUM_REPLICAS_IN_SERVER_SET =
-      new EarlybirdProperty<>(
-          "check_num_replicas_in_server_set",
-          "Whether CoordinatedEarlybirdActions should check the number of alive replicas",
-          PropertyType.BOOLEAN,
-          false);
+  public static final elonarlybirdPropelonrty<Boolelonan> CHelonCK_NUM_RelonPLICAS_IN_SelonRVelonR_SelonT =
+      nelonw elonarlybirdPropelonrty<>(
+          "chelonck_num_relonplicas_in_selonrvelonr_selont",
+          "Whelonthelonr CoordinatelondelonarlybirdActions should chelonck thelon numbelonr of alivelon relonplicas",
+          PropelonrtyTypelon.BOOLelonAN,
+          falselon);
 
-  public static final EarlybirdProperty<Integer> MAX_QUEUE_SIZE =
-      new EarlybirdProperty<>(
-          "max_queue_size",
-          "Maximum size of searcher worker executor queue. If <= 0 queue is unbounded.",
-          PropertyType.INT,
-          false);
+  public static final elonarlybirdPropelonrty<Intelongelonr> MAX_QUelonUelon_SIZelon =
+      nelonw elonarlybirdPropelonrty<>(
+          "max_quelonuelon_sizelon",
+          "Maximum sizelon of selonarchelonr workelonr elonxeloncutor quelonuelon. If <= 0 quelonuelon is unboundelond.",
+          PropelonrtyTypelon.INT,
+          falselon);
 
-  public static final EarlybirdProperty<String> KAFKA_ENV =
-      new EarlybirdProperty<>(
-          "kafka_env",
-          "The environment to use for kafka topics.",
-          PropertyType.STRING,
-          false);
-  public static final EarlybirdProperty<String> KAFKA_PATH =
-      new EarlybirdProperty<>(
+  public static final elonarlybirdPropelonrty<String> KAFKA_elonNV =
+      nelonw elonarlybirdPropelonrty<>(
+          "kafka_elonnv",
+          "Thelon elonnvironmelonnt to uselon for kafka topics.",
+          PropelonrtyTypelon.STRING,
+          falselon);
+  public static final elonarlybirdPropelonrty<String> KAFKA_PATH =
+      nelonw elonarlybirdPropelonrty<>(
           "kafka_path",
-          "Wily path to the Search kafka cluster.",
-          PropertyType.STRING,
-          false);
-  public static final EarlybirdProperty<String> TWEET_EVENTS_KAFKA_PATH =
-      new EarlybirdProperty<>(
-          "tweet_events_kafka_path",
-          "Wily path to the tweet-events kafka cluster.",
-          PropertyType.STRING,
-          false);
-  public static final EarlybirdProperty<String> USER_UPDATES_KAFKA_TOPIC =
-      new EarlybirdProperty<>(
-          "user_updates_topic",
-          "Name of the Kafka topic that contain user updates.",
-          PropertyType.STRING,
-          false);
-  public static final EarlybirdProperty<String> USER_SCRUB_GEO_KAFKA_TOPIC =
-      new EarlybirdProperty<>(
-          "user_scrub_geo_topic",
-          "Name of the Kafka topic that contain UserScrubGeoEvents.",
-          PropertyType.STRING,
-          false);
-  public static final EarlybirdProperty<String> EARLYBIRD_SCRUB_GEN =
-      new EarlybirdProperty<>(
-          "earlybird_scrub_gen",
-          "SCRUB_GEN TO DEPLOY",
-          PropertyType.STRING,
-          false);
-  public static final EarlybirdProperty<Boolean> CONSUME_GEO_SCRUB_EVENTS =
-      new EarlybirdProperty<>(
-        "consume_geo_scrub_events",
-        "Whether to consume user scrub geo events or not",
-        PropertyType.BOOLEAN,
-        false);
+          "Wily path to thelon Selonarch kafka clustelonr.",
+          PropelonrtyTypelon.STRING,
+          falselon);
+  public static final elonarlybirdPropelonrty<String> TWelonelonT_elonVelonNTS_KAFKA_PATH =
+      nelonw elonarlybirdPropelonrty<>(
+          "twelonelont_elonvelonnts_kafka_path",
+          "Wily path to thelon twelonelont-elonvelonnts kafka clustelonr.",
+          PropelonrtyTypelon.STRING,
+          falselon);
+  public static final elonarlybirdPropelonrty<String> USelonR_UPDATelonS_KAFKA_TOPIC =
+      nelonw elonarlybirdPropelonrty<>(
+          "uselonr_updatelons_topic",
+          "Namelon of thelon Kafka topic that contain uselonr updatelons.",
+          PropelonrtyTypelon.STRING,
+          falselon);
+  public static final elonarlybirdPropelonrty<String> USelonR_SCRUB_GelonO_KAFKA_TOPIC =
+      nelonw elonarlybirdPropelonrty<>(
+          "uselonr_scrub_gelono_topic",
+          "Namelon of thelon Kafka topic that contain UselonrScrubGelonoelonvelonnts.",
+          PropelonrtyTypelon.STRING,
+          falselon);
+  public static final elonarlybirdPropelonrty<String> elonARLYBIRD_SCRUB_GelonN =
+      nelonw elonarlybirdPropelonrty<>(
+          "elonarlybird_scrub_gelonn",
+          "SCRUB_GelonN TO DelonPLOY",
+          PropelonrtyTypelon.STRING,
+          falselon);
+  public static final elonarlybirdPropelonrty<Boolelonan> CONSUMelon_GelonO_SCRUB_elonVelonNTS =
+      nelonw elonarlybirdPropelonrty<>(
+        "consumelon_gelono_scrub_elonvelonnts",
+        "Whelonthelonr to consumelon uselonr scrub gelono elonvelonnts or not",
+        PropelonrtyTypelon.BOOLelonAN,
+        falselon);
 
-  private static final List<EarlybirdProperty<?>> ALL_PROPERTIES =
-      Arrays.stream(EarlybirdProperty.class.getDeclaredFields())
-          .filter(field ->
-              (field.getModifiers() & Modifier.STATIC) > 0
-                && field.getType() == EarlybirdProperty.class)
-          .map(field -> {
+  privatelon static final List<elonarlybirdPropelonrty<?>> ALL_PROPelonRTIelonS =
+      Arrays.strelonam(elonarlybirdPropelonrty.class.gelontDelonclarelondFielonlds())
+          .filtelonr(fielonld ->
+              (fielonld.gelontModifielonrs() & Modifielonr.STATIC) > 0
+                && fielonld.gelontTypelon() == elonarlybirdPropelonrty.class)
+          .map(fielonld -> {
             try {
-              return (EarlybirdProperty<?>) field.get(EarlybirdProperty.class);
-            } catch (Exception e) {
-              throw new RuntimeException(e);
+              relonturn (elonarlybirdPropelonrty<?>) fielonld.gelont(elonarlybirdPropelonrty.class);
+            } catch (elonxcelonption elon) {
+              throw nelonw Runtimelonelonxcelonption(elon);
             }
           })
-          .collect(Collectors.collectingAndThen(Collectors.toList(), ImmutableList::copyOf));
+          .collelonct(Collelonctors.collelonctingAndThelonn(Collelonctors.toList(), ImmutablelonList::copyOf));
 
-  public static ServiceIdentifier getServiceIdentifier() {
-    return new ServiceIdentifier(
-        ROLE.get(),
-        EARLYBIRD_NAME.get(),
-        ENV.get(),
-        ZONE.get());
+  public static SelonrvicelonIdelonntifielonr gelontSelonrvicelonIdelonntifielonr() {
+    relonturn nelonw SelonrvicelonIdelonntifielonr(
+        ROLelon.gelont(),
+        elonARLYBIRD_NAMelon.gelont(),
+        elonNV.gelont(),
+        ZONelon.gelont());
   }
 
-  private final String name;
-  private final String help;
-  private final PropertyType<T> type;
-  private final boolean requiredOnAurora;
-  private final boolean requiredOnDedicated;
+  privatelon final String namelon;
+  privatelon final String helonlp;
+  privatelon final PropelonrtyTypelon<T> typelon;
+  privatelon final boolelonan relonquirelondOnAurora;
+  privatelon final boolelonan relonquirelondOnDelondicatelond;
 
-  private EarlybirdProperty(String name, String help, PropertyType<T> type,
-                            boolean requiredOnAurora) {
-    this(name, help, type, requiredOnAurora, false);
+  privatelon elonarlybirdPropelonrty(String namelon, String helonlp, PropelonrtyTypelon<T> typelon,
+                            boolelonan relonquirelondOnAurora) {
+    this(namelon, helonlp, typelon, relonquirelondOnAurora, falselon);
   }
 
-  private EarlybirdProperty(String name, String help, PropertyType<T> type,
-                            boolean requiredOnAurora, boolean requiredOnDedicated) {
-    this.name = name;
-    this.help = help;
-    this.type = type;
-    this.requiredOnAurora = requiredOnAurora;
-    this.requiredOnDedicated = requiredOnDedicated;
+  privatelon elonarlybirdPropelonrty(String namelon, String helonlp, PropelonrtyTypelon<T> typelon,
+                            boolelonan relonquirelondOnAurora, boolelonan relonquirelondOnDelondicatelond) {
+    this.namelon = namelon;
+    this.helonlp = helonlp;
+    this.typelon = typelon;
+    this.relonquirelondOnAurora = relonquirelondOnAurora;
+    this.relonquirelondOnDelondicatelond = relonquirelondOnDelondicatelond;
   }
 
-  public String name() {
-    return name;
+  public String namelon() {
+    relonturn namelon;
   }
 
-  public boolean isRequiredOnAurora() {
-    return requiredOnAurora;
+  public boolelonan isRelonquirelondOnAurora() {
+    relonturn relonquirelondOnAurora;
   }
 
-  public boolean isRequiredOnDedicated() {
-    return requiredOnDedicated;
+  public boolelonan isRelonquirelondOnDelondicatelond() {
+    relonturn relonquirelondOnDelondicatelond;
   }
 
-  public Flag<T> createFlag(Flags flags) {
-    return flags.createMandatory(name, help, null, type.flaggable);
+  public Flag<T> crelonatelonFlag(Flags flags) {
+    relonturn flags.crelonatelonMandatory(namelon, helonlp, null, typelon.flaggablelon);
   }
 
-  public T get() {
-    return type.getter.apply(name);
+  public T gelont() {
+    relonturn typelon.gelonttelonr.apply(namelon);
   }
 
-  public T get(T devaultValue) {
-    return type.getterWithDefault.apply(name, devaultValue);
+  public T gelont(T delonvaultValuelon) {
+    relonturn typelon.gelonttelonrWithDelonfault.apply(namelon, delonvaultValuelon);
   }
 
-  public static EarlybirdProperty[] values() {
-    return ALL_PROPERTIES.toArray(new EarlybirdProperty[0]);
+  public static elonarlybirdPropelonrty[] valuelons() {
+    relonturn ALL_PROPelonRTIelonS.toArray(nelonw elonarlybirdPropelonrty[0]);
   }
 }

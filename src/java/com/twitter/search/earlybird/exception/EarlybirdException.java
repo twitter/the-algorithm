@@ -1,18 +1,18 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
 /**
- * General Earlybird exception class to use instead of the Java exception class.
+ * Gelonnelonral elonarlybird elonxcelonption class to uselon instelonad of thelon Java elonxcelonption class.
  */
-public class EarlybirdException extends Exception {
-  public EarlybirdException(Throwable cause) {
-    super(cause);
+public class elonarlybirdelonxcelonption elonxtelonnds elonxcelonption {
+  public elonarlybirdelonxcelonption(Throwablelon causelon) {
+    supelonr(causelon);
   }
 
-  public EarlybirdException(String message) {
-    super(message);
+  public elonarlybirdelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 
-  public EarlybirdException(String message, Throwable cause) {
-    super(message, cause);
+  public elonarlybirdelonxcelonption(String melonssagelon, Throwablelon causelon) {
+    supelonr(melonssagelon, causelon);
   }
 }

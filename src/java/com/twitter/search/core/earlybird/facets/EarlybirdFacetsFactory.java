@@ -1,48 +1,48 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import org.apache.lucene.facet.Facets;
-import org.apache.lucene.facet.FacetsCollector;
+import org.apachelon.lucelonnelon.facelont.Facelonts;
+import org.apachelon.lucelonnelon.facelont.FacelontsCollelonctor;
 
-import com.twitter.search.common.facets.CountFacetSearchParam;
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.FacetsFactory;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.facelonts.CountFacelontSelonarchParam;
+import com.twittelonr.selonarch.common.facelonts.FacelontSelonarchParam;
+import com.twittelonr.selonarch.common.facelonts.FacelontsFactory;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * Factory for EarlybirdFacets
+ * Factory for elonarlybirdFacelonts
  */
-public class EarlybirdFacetsFactory implements FacetsFactory {
-  private final EarlybirdIndexSegmentAtomicReader reader;
+public class elonarlybirdFacelontsFactory implelonmelonnts FacelontsFactory {
+  privatelon final elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr;
 
-  public EarlybirdFacetsFactory(EarlybirdIndexSegmentAtomicReader reader) {
-    this.reader = reader;
+  public elonarlybirdFacelontsFactory(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr) {
+    this.relonadelonr = relonadelonr;
   }
 
-  @Override
-  public Facets create(
-      List<FacetSearchParam> facetSearchParams,
-      FacetsCollector facetsCollector) throws IOException {
+  @Ovelonrridelon
+  public Facelonts crelonatelon(
+      List<FacelontSelonarchParam> facelontSelonarchParams,
+      FacelontsCollelonctor facelontsCollelonctor) throws IOelonxcelonption {
 
-    return new EarlybirdFacets(facetSearchParams, facetsCollector, reader);
+    relonturn nelonw elonarlybirdFacelonts(facelontSelonarchParams, facelontsCollelonctor, relonadelonr);
   }
 
-  @Override
-  public boolean accept(FacetSearchParam facetSearchParam) {
-    if (!(facetSearchParam instanceof CountFacetSearchParam)
-        || (facetSearchParam.getFacetFieldRequest().getPath() != null
-            && !facetSearchParam.getFacetFieldRequest().getPath().isEmpty())) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan accelonpt(FacelontSelonarchParam facelontSelonarchParam) {
+    if (!(facelontSelonarchParam instancelonof CountFacelontSelonarchParam)
+        || (facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontPath() != null
+            && !facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontPath().iselonmpty())) {
+      relonturn falselon;
     }
 
-    String field = facetSearchParam.getFacetFieldRequest().getField();
-    Schema.FieldInfo facetInfo = reader.getSegmentData().getSchema()
-            .getFacetFieldByFacetName(field);
+    String fielonld = facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontFielonld();
+    Schelonma.FielonldInfo facelontInfo = relonadelonr.gelontSelongmelonntData().gelontSchelonma()
+            .gelontFacelontFielonldByFacelontNamelon(fielonld);
 
-    return facetInfo != null
-        && reader.getSegmentData().getPerFieldMap().containsKey(facetInfo.getName());
+    relonturn facelontInfo != null
+        && relonadelonr.gelontSelongmelonntData().gelontPelonrFielonldMap().containsKelony(facelontInfo.gelontNamelon());
   }
 }

@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DcmUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.UnknownUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.UrlOverrideType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DcmUrlOvelonrridelonTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.UnknownUrlOvelonrridelonTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.UrlOvelonrridelonTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UrlOverrideTypeMarshaller @Inject() () {
+@Singlelonton
+class UrlOvelonrridelonTypelonMarshallelonr @Injelonct() () {
 
-  def apply(urlOverrideType: UrlOverrideType): urt.UrlOverrideType = urlOverrideType match {
-    case UnknownUrlOverrideType => urt.UrlOverrideType.Unknown
-    case DcmUrlOverrideType => urt.UrlOverrideType.Dcm
+  delonf apply(urlOvelonrridelonTypelon: UrlOvelonrridelonTypelon): urt.UrlOvelonrridelonTypelon = urlOvelonrridelonTypelon match {
+    caselon UnknownUrlOvelonrridelonTypelon => urt.UrlOvelonrridelonTypelon.Unknown
+    caselon DcmUrlOvelonrridelonTypelon => urt.UrlOvelonrridelonTypelon.Dcm
   }
 }

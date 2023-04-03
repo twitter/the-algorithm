@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
 
-public class SegmentWarmer {
-  private static final Logger LOG = LoggerFactory.getLogger(SegmentWarmer.class);
+public class SelongmelonntWarmelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SelongmelonntWarmelonr.class);
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
 
-  public SegmentWarmer(CriticalExceptionHandler criticalExceptionHandler) {
-    this.criticalExceptionHandler = criticalExceptionHandler;
+  public SelongmelonntWarmelonr(CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
   }
 
-  private boolean shouldWarmSegment(SegmentInfo segmentInfo) {
-    return segmentInfo.isEnabled()
-        && segmentInfo.isComplete()
-        && segmentInfo.isOptimized()
-        && !segmentInfo.isIndexing();
+  privatelon boolelonan shouldWarmSelongmelonnt(SelongmelonntInfo selongmelonntInfo) {
+    relonturn selongmelonntInfo.iselonnablelond()
+        && selongmelonntInfo.isComplelontelon()
+        && selongmelonntInfo.isOptimizelond()
+        && !selongmelonntInfo.isIndelonxing();
   }
 
   /**
-   * Warms a segment if it is ready to be warmed. Only has an affect on Archive Lucene segments.
+   * Warms a selongmelonnt if it is relonady to belon warmelond. Only has an affelonct on Archivelon Lucelonnelon selongmelonnts.
    */
-  public boolean warmSegmentIfNecessary(SegmentInfo segmentInfo) {
-    if (!shouldWarmSegment(segmentInfo)) {
-      return false;
+  public boolelonan warmSelongmelonntIfNeloncelonssary(SelongmelonntInfo selongmelonntInfo) {
+    if (!shouldWarmSelongmelonnt(selongmelonntInfo)) {
+      relonturn falselon;
     }
     try {
-      segmentInfo.getIndexSegment().warmSegment();
-      return true;
-    } catch (IOException e) {
-      // This is a bad situation, as earlybird can't search a segment that hasn't been warmed up
-      // So we delete the bad segment, and restart the earlybird if it's in starting phrase,
-      // otherwise alert.
-      LOG.error("Failed to warmup segment " + segmentInfo.getSegmentName()
-          + ". Will destroy local unreadable segment.", e);
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
+      selongmelonntInfo.gelontIndelonxSelongmelonnt().warmSelongmelonnt();
+      relonturn truelon;
+    } catch (IOelonxcelonption elon) {
+      // This is a bad situation, as elonarlybird can't selonarch a selongmelonnt that hasn't belonelonn warmelond up
+      // So welon delonlelontelon thelon bad selongmelonnt, and relonstart thelon elonarlybird if it's in starting phraselon,
+      // othelonrwiselon alelonrt.
+      LOG.elonrror("Failelond to warmup selongmelonnt " + selongmelonntInfo.gelontSelongmelonntNamelon()
+          + ". Will delonstroy local unrelonadablelon selongmelonnt.", elon);
+      selongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
 
-      criticalExceptionHandler.handle(this, e);
+      criticalelonxcelonptionHandlelonr.handlelon(this, elon);
 
-      return false;
+      relonturn falselon;
     }
   }
 }

@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.moment
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.momelonnt
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.moment.MomentAnnotationCandidateUrtItemBuilder.MomentAnnotationItemClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.MomentAnnotationCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.moment.MomentAnnotationItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.momelonnt.MomelonntAnnotationCandidatelonUrtItelonmBuildelonr.MomelonntAnnotationItelonmClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.MomelonntAnnotationCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.richtelonxt.BaselonRichTelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.momelonnt.MomelonntAnnotationItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object MomentAnnotationCandidateUrtItemBuilder {
-  val MomentAnnotationItemClientEventInfoElement = "metadata"
+objelonct MomelonntAnnotationCandidatelonUrtItelonmBuildelonr {
+  val MomelonntAnnotationItelonmClielonntelonvelonntInfoelonlelonmelonnt = "melontadata"
 }
 
-case class MomentAnnotationCandidateUrtItemBuilder[Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, MomentAnnotationCandidate],
-  annotationTextRichTextBuilder: BaseRichTextBuilder[Query, MomentAnnotationCandidate],
-  annotationHeaderRichTextBuilder: BaseRichTextBuilder[Query, MomentAnnotationCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, MomentAnnotationCandidate]
-  ] = None,
-) extends CandidateUrtEntryBuilder[Query, MomentAnnotationCandidate, MomentAnnotationItem] {
+caselon class MomelonntAnnotationCandidatelonUrtItelonmBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, MomelonntAnnotationCandidatelon],
+  annotationTelonxtRichTelonxtBuildelonr: BaselonRichTelonxtBuildelonr[Quelonry, MomelonntAnnotationCandidatelon],
+  annotationHelonadelonrRichTelonxtBuildelonr: BaselonRichTelonxtBuildelonr[Quelonry, MomelonntAnnotationCandidatelon],
+  felonelondbackActionInfoBuildelonr: Option[
+    BaselonFelonelondbackActionInfoBuildelonr[Quelonry, MomelonntAnnotationCandidatelon]
+  ] = Nonelon,
+) elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, MomelonntAnnotationCandidatelon, MomelonntAnnotationItelonm] {
 
-  override def apply(
-    query: Query,
-    candidate: MomentAnnotationCandidate,
-    candidateFeatures: FeatureMap
-  ): MomentAnnotationItem = MomentAnnotationItem(
-    id = candidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      candidate,
-      candidateFeatures,
-      Some(MomentAnnotationItemClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-    isPinned = None,
-    text =
-      candidate.text.map(_ => annotationTextRichTextBuilder(query, candidate, candidateFeatures)),
-    header = candidate.header.map(_ =>
-      annotationHeaderRichTextBuilder(query, candidate, candidateFeatures)),
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: MomelonntAnnotationCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): MomelonntAnnotationItelonm = MomelonntAnnotationItelonm(
+    id = candidatelon.id,
+    sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+    clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+      quelonry,
+      candidatelon,
+      candidatelonFelonaturelons,
+      Somelon(MomelonntAnnotationItelonmClielonntelonvelonntInfoelonlelonmelonnt)),
+    felonelondbackActionInfo =
+      felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, candidatelon, candidatelonFelonaturelons)),
+    isPinnelond = Nonelon,
+    telonxt =
+      candidatelon.telonxt.map(_ => annotationTelonxtRichTelonxtBuildelonr(quelonry, candidatelon, candidatelonFelonaturelons)),
+    helonadelonr = candidatelon.helonadelonr.map(_ =>
+      annotationHelonadelonrRichTelonxtBuildelonr(quelonry, candidatelon, candidatelonFelonaturelons)),
   )
 }

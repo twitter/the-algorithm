@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.service.Retries
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.ssl.OpportunisticTls
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.BatchedStratoClientWithModerateTimeout
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.client.Client
-import com.twitter.strato.client.Strato
-import com.twitter.util.Try
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.selonrvicelon.Relontrielons
+import com.twittelonr.finaglelon.selonrvicelon.RelontryPolicy
+import com.twittelonr.finaglelon.ssl.OpportunisticTls
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.BatchelondStratoClielonntWithModelonratelonTimelonout
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.strato.clielonnt.Strato
+import com.twittelonr.util.Try
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object OptimizedStratoClientModule extends TwitterModule {
+objelonct OptimizelondStratoClielonntModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val ModerateStratoServerClientRequestTimeout = 150.millis
+  privatelon val ModelonratelonStratoSelonrvelonrClielonntRelonquelonstTimelonout = 150.millis
 
-  private val DefaultRetryPartialFunction: PartialFunction[Try[Nothing], Boolean] =
-    RetryPolicy.TimeoutAndWriteExceptionsOnly
-      .orElse(RetryPolicy.ChannelClosedExceptionsOnly)
+  privatelon val DelonfaultRelontryPartialFunction: PartialFunction[Try[Nothing], Boolelonan] =
+    RelontryPolicy.TimelonoutAndWritelonelonxcelonptionsOnly
+      .orelonlselon(RelontryPolicy.ChannelonlCloselondelonxcelonptionsOnly)
 
-  protected def mkRetryPolicy(tries: Int): RetryPolicy[Try[Nothing]] =
-    RetryPolicy.tries(tries, DefaultRetryPartialFunction)
+  protelonctelond delonf mkRelontryPolicy(trielons: Int): RelontryPolicy[Try[Nothing]] =
+    RelontryPolicy.trielons(trielons, DelonfaultRelontryPartialFunction)
 
-  @Singleton
-  @Provides
-  @Named(BatchedStratoClientWithModerateTimeout)
-  def providesStratoClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): Client = {
-    Strato.client
-      .withMutualTls(serviceIdentifier, opportunisticLevel = OpportunisticTls.Required)
-      .withSession.acquisitionTimeout(150.milliseconds)
-      .withRequestTimeout(ModerateStratoServerClientRequestTimeout)
-      .withPerRequestTimeout(ModerateStratoServerClientRequestTimeout)
-      .withRpcBatchSize(5)
-      .configured(Retries.Policy(mkRetryPolicy(1)))
-      .withStatsReceiver(statsReceiver.scope("strato_client"))
+  @Singlelonton
+  @Providelons
+  @Namelond(BatchelondStratoClielonntWithModelonratelonTimelonout)
+  delonf providelonsStratoClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Clielonnt = {
+    Strato.clielonnt
+      .withMutualTls(selonrvicelonIdelonntifielonr, opportunisticLelonvelonl = OpportunisticTls.Relonquirelond)
+      .withSelonssion.acquisitionTimelonout(150.milliselonconds)
+      .withRelonquelonstTimelonout(ModelonratelonStratoSelonrvelonrClielonntRelonquelonstTimelonout)
+      .withPelonrRelonquelonstTimelonout(ModelonratelonStratoSelonrvelonrClielonntRelonquelonstTimelonout)
+      .withRpcBatchSizelon(5)
+      .configurelond(Relontrielons.Policy(mkRelontryPolicy(1)))
+      .withStatsReloncelonivelonr(statsReloncelonivelonr.scopelon("strato_clielonnt"))
       .build()
   }
 }

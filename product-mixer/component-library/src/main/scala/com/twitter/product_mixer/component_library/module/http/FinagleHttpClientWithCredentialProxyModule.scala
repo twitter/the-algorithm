@@ -1,75 +1,75 @@
-package com.twitter.product_mixer.component_library.module.http
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http
 
-import com.google.inject.Provides
-import com.twitter.finagle.Http
-import com.twitter.finagle.http.ProxyCredentials
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientAcquisitionTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientConnectTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientModule.HttpClientRequestTimeout
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemoteHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyRemotePort
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterHost
-import com.twitter.product_mixer.component_library.module.http.FinagleHttpClientWithProxyModule.HttpClientWithProxyTwitterPort
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientWithProxyBuilder.buildFinagleHttpClientWithCredentialProxy
-import com.twitter.product_mixer.shared_library.http_client.HttpHostPort
-import com.twitter.util.Duration
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finaglelon.Http
+import com.twittelonr.finaglelon.http.ProxyCrelondelonntials
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon.HttpClielonntAcquisitionTimelonout
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon.HttpClielonntConnelonctTimelonout
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntModulelon.HttpClielonntRelonquelonstTimelonout
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntWithProxyModulelon.HttpClielonntWithProxyRelonmotelonHost
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntWithProxyModulelon.HttpClielonntWithProxyRelonmotelonPort
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntWithProxyModulelon.HttpClielonntWithProxyTwittelonrHost
+import com.twittelonr.product_mixelonr.componelonnt_library.modulelon.http.FinaglelonHttpClielonntWithProxyModulelon.HttpClielonntWithProxyTwittelonrPort
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.SelonrvicelonLocal
+import com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt.FinaglelonHttpClielonntWithProxyBuildelonr.buildFinaglelonHttpClielonntWithCrelondelonntialProxy
+import com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt.HttpHostPort
+import com.twittelonr.util.Duration
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object FinagleHttpClientWithCredentialProxyModule extends TwitterModule {
+objelonct FinaglelonHttpClielonntWithCrelondelonntialProxyModulelon elonxtelonnds TwittelonrModulelon {
 
-  final val FinagleHttpClientWithCredentialProxy = "FinagleHttpClientWithCredentialProxy"
+  final val FinaglelonHttpClielonntWithCrelondelonntialProxy = "FinaglelonHttpClielonntWithCrelondelonntialProxy"
 
   /**
-   * Provide a Finagle HTTP client with Egress Proxy support using Credentials
+   * Providelon a Finaglelon HTTP clielonnt with elongrelonss Proxy support using Crelondelonntials
    *
-   * Note that the timeouts configured in this module are meant to be a reasonable starting point
-   * only. To further tuning the settings, either override the flags or create local copy of the module.
+   * Notelon that thelon timelonouts configurelond in this modulelon arelon melonant to belon a relonasonablelon starting point
+   * only. To furthelonr tuning thelon selonttings, elonithelonr ovelonrridelon thelon flags or crelonatelon local copy of thelon modulelon.
    *
-   * @param proxyTwitterHost       Twitter egress proxy host
-   * @param proxyTwitterPort       Twitter egress proxy port
-   * @param proxyRemoteHost        Remote proxy host
-   * @param proxyRemotePort        Remote proxy port
-   * @param requestTimeout         HTTP client request timeout
-   * @param connectTimeout         HTTP client transport connect timeout
-   * @param acquisitionTimeout     HTTP client session acquisition timeout
-   * @param isServiceLocal         If this is a Local deployment for testing
-   * @param proxyCredentials       Proxy credentials
-   * @param statsReceiver          Stats
+   * @param proxyTwittelonrHost       Twittelonr elongrelonss proxy host
+   * @param proxyTwittelonrPort       Twittelonr elongrelonss proxy port
+   * @param proxyRelonmotelonHost        Relonmotelon proxy host
+   * @param proxyRelonmotelonPort        Relonmotelon proxy port
+   * @param relonquelonstTimelonout         HTTP clielonnt relonquelonst timelonout
+   * @param connelonctTimelonout         HTTP clielonnt transport connelonct timelonout
+   * @param acquisitionTimelonout     HTTP clielonnt selonssion acquisition timelonout
+   * @param isSelonrvicelonLocal         If this is a Local delonploymelonnt for telonsting
+   * @param proxyCrelondelonntials       Proxy crelondelonntials
+   * @param statsReloncelonivelonr          Stats
    *
-   * @return Finagle HTTP client with Egress Proxy support using Credentials
+   * @relonturn Finaglelon HTTP clielonnt with elongrelonss Proxy support using Crelondelonntials
    */
-  @Provides
-  @Singleton
-  @Named(FinagleHttpClientWithCredentialProxy)
-  def providesFinagleHttpClientWithCredentialProxy(
-    @Flag(HttpClientWithProxyTwitterHost) proxyTwitterHost: String,
-    @Flag(HttpClientWithProxyTwitterPort) proxyTwitterPort: Int,
-    @Flag(HttpClientWithProxyRemoteHost) proxyRemoteHost: String,
-    @Flag(HttpClientWithProxyRemotePort) proxyRemotePort: Int,
-    @Flag(HttpClientRequestTimeout) requestTimeout: Duration,
-    @Flag(HttpClientConnectTimeout) connectTimeout: Duration,
-    @Flag(HttpClientAcquisitionTimeout) acquisitionTimeout: Duration,
-    @Flag(ServiceLocal) isServiceLocal: Boolean,
-    proxyCredentials: ProxyCredentials,
-    statsReceiver: StatsReceiver
-  ): Http.Client = {
+  @Providelons
+  @Singlelonton
+  @Namelond(FinaglelonHttpClielonntWithCrelondelonntialProxy)
+  delonf providelonsFinaglelonHttpClielonntWithCrelondelonntialProxy(
+    @Flag(HttpClielonntWithProxyTwittelonrHost) proxyTwittelonrHost: String,
+    @Flag(HttpClielonntWithProxyTwittelonrPort) proxyTwittelonrPort: Int,
+    @Flag(HttpClielonntWithProxyRelonmotelonHost) proxyRelonmotelonHost: String,
+    @Flag(HttpClielonntWithProxyRelonmotelonPort) proxyRelonmotelonPort: Int,
+    @Flag(HttpClielonntRelonquelonstTimelonout) relonquelonstTimelonout: Duration,
+    @Flag(HttpClielonntConnelonctTimelonout) connelonctTimelonout: Duration,
+    @Flag(HttpClielonntAcquisitionTimelonout) acquisitionTimelonout: Duration,
+    @Flag(SelonrvicelonLocal) isSelonrvicelonLocal: Boolelonan,
+    proxyCrelondelonntials: ProxyCrelondelonntials,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Http.Clielonnt = {
 
-    val twitterProxyHostPort = HttpHostPort(proxyTwitterHost, proxyTwitterPort)
-    val remoteProxyHostPort = HttpHostPort(proxyRemoteHost, proxyRemotePort)
+    val twittelonrProxyHostPort = HttpHostPort(proxyTwittelonrHost, proxyTwittelonrPort)
+    val relonmotelonProxyHostPort = HttpHostPort(proxyRelonmotelonHost, proxyRelonmotelonPort)
 
-    buildFinagleHttpClientWithCredentialProxy(
-      twitterProxyHostPort = twitterProxyHostPort,
-      remoteProxyHostPort = remoteProxyHostPort,
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      proxyCredentials = proxyCredentials,
-      statsReceiver = statsReceiver
+    buildFinaglelonHttpClielonntWithCrelondelonntialProxy(
+      twittelonrProxyHostPort = twittelonrProxyHostPort,
+      relonmotelonProxyHostPort = relonmotelonProxyHostPort,
+      relonquelonstTimelonout = relonquelonstTimelonout,
+      connelonctTimelonout = connelonctTimelonout,
+      acquisitionTimelonout = acquisitionTimelonout,
+      proxyCrelondelonntials = proxyCrelondelonntials,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
   }
 }

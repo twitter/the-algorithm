@@ -1,64 +1,64 @@
-package com.twitter.visibility.builder
+packagelon com.twittelonr.visibility.buildelonr
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.features._
-import com.twitter.visibility.common.stitch.StitchHelpers
-import scala.collection.mutable
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.common.stitch.StitchHelonlpelonrs
+import scala.collelonction.mutablelon
 
-object FeatureMapBuilder {
-  type Build = Seq[FeatureMapBuilder => FeatureMapBuilder] => FeatureMap
+objelonct FelonaturelonMapBuildelonr {
+  typelon Build = Selonq[FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr] => FelonaturelonMap
 
-  def apply(
-    statsReceiver: StatsReceiver = NullStatsReceiver,
-    enableStitchProfiling: Gate[Unit] = Gate.False
+  delonf apply(
+    statsReloncelonivelonr: StatsReloncelonivelonr = NullStatsReloncelonivelonr,
+    elonnablelonStitchProfiling: Gatelon[Unit] = Gatelon.Falselon
   ): Build =
     fns =>
       Function
         .chain(fns).apply(
-          new FeatureMapBuilder(statsReceiver, enableStitchProfiling)
+          nelonw FelonaturelonMapBuildelonr(statsReloncelonivelonr, elonnablelonStitchProfiling)
         ).build
 }
 
-class FeatureMapBuilder private[builder] (
-  statsReceiver: StatsReceiver,
-  enableStitchProfiling: Gate[Unit] = Gate.False) {
+class FelonaturelonMapBuildelonr privatelon[buildelonr] (
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  elonnablelonStitchProfiling: Gatelon[Unit] = Gatelon.Falselon) {
 
-  private[this] val hydratedScope =
-    statsReceiver.scope("visibility_result_builder").scope("hydrated")
+  privatelon[this] val hydratelondScopelon =
+    statsReloncelonivelonr.scopelon("visibility_relonsult_buildelonr").scopelon("hydratelond")
 
-  val mapBuilder: mutable.Builder[(Feature[_], Stitch[_]), Map[Feature[_], Stitch[_]]] =
-    Map.newBuilder[Feature[_], Stitch[_]]
+  val mapBuildelonr: mutablelon.Buildelonr[(Felonaturelon[_], Stitch[_]), Map[Felonaturelon[_], Stitch[_]]] =
+    Map.nelonwBuildelonr[Felonaturelon[_], Stitch[_]]
 
-  val constantMapBuilder: mutable.Builder[(Feature[_], Any), Map[Feature[_], Any]] =
-    Map.newBuilder[Feature[_], Any]
+  val constantMapBuildelonr: mutablelon.Buildelonr[(Felonaturelon[_], Any), Map[Felonaturelon[_], Any]] =
+    Map.nelonwBuildelonr[Felonaturelon[_], Any]
 
-  def build: FeatureMap = new FeatureMap(mapBuilder.result(), constantMapBuilder.result())
+  delonf build: FelonaturelonMap = nelonw FelonaturelonMap(mapBuildelonr.relonsult(), constantMapBuildelonr.relonsult())
 
-  def withConstantFeature[T](feature: Feature[T], value: T): FeatureMapBuilder = {
-    val anyValue: Any = value.asInstanceOf[Any]
-    constantMapBuilder += (feature -> anyValue)
+  delonf withConstantFelonaturelon[T](felonaturelon: Felonaturelon[T], valuelon: T): FelonaturelonMapBuildelonr = {
+    val anyValuelon: Any = valuelon.asInstancelonOf[Any]
+    constantMapBuildelonr += (felonaturelon -> anyValuelon)
     this
   }
 
-  def withFeature[T](feature: Feature[T], stitch: Stitch[T]): FeatureMapBuilder = {
-    val profiledStitch = if (enableStitchProfiling()) {
-      val featureScope = hydratedScope.scope(feature.name)
-      StitchHelpers.profileStitch(stitch, Seq(hydratedScope, featureScope))
-    } else {
+  delonf withFelonaturelon[T](felonaturelon: Felonaturelon[T], stitch: Stitch[T]): FelonaturelonMapBuildelonr = {
+    val profilelondStitch = if (elonnablelonStitchProfiling()) {
+      val felonaturelonScopelon = hydratelondScopelon.scopelon(felonaturelon.namelon)
+      StitchHelonlpelonrs.profilelonStitch(stitch, Selonq(hydratelondScopelon, felonaturelonScopelon))
+    } elonlselon {
       stitch
     }
 
-    val featureStitchRef = Stitch.ref(profiledStitch)
+    val felonaturelonStitchRelonf = Stitch.relonf(profilelondStitch)
 
-    mapBuilder += FeatureMap.rescueFeatureTuple(feature -> featureStitchRef)
+    mapBuildelonr += FelonaturelonMap.relonscuelonFelonaturelonTuplelon(felonaturelon -> felonaturelonStitchRelonf)
 
     this
   }
 
-  def withConstantFeature[T](feature: Feature[T], option: Option[T]): FeatureMapBuilder = {
-    option.map(withConstantFeature(feature, _)).getOrElse(this)
+  delonf withConstantFelonaturelon[T](felonaturelon: Felonaturelon[T], option: Option[T]): FelonaturelonMapBuildelonr = {
+    option.map(withConstantFelonaturelon(felonaturelon, _)).gelontOrelonlselon(this)
   }
 }

@@ -1,18 +1,18 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.clustering
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.clustelonring
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
 /**
- * Struct that represents an ordered list of producer clusters.
- * The list is meant to be ordered by decreasing cluster size.
+ * Struct that relonprelonselonnts an ordelonrelond list of producelonr clustelonrs.
+ * Thelon list is melonant to belon ordelonrelond by deloncrelonasing clustelonr sizelon.
  **/
-struct OrderedClustersAndMembers {
-  1: required list<set<i64>> orderedClustersAndMembers (personalDataType = 'UserId')
-  // work around BQ not supporting nested struct such as list<set>
-  2: optional list<ClusterMembers> orderedClustersAndMembersStruct (personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+struct OrdelonrelondClustelonrsAndMelonmbelonrs {
+  1: relonquirelond list<selont<i64>> ordelonrelondClustelonrsAndMelonmbelonrs (pelonrsonalDataTypelon = 'UselonrId')
+  // work around BQ not supporting nelonstelond struct such as list<selont>
+  2: optional list<ClustelonrMelonmbelonrs> ordelonrelondClustelonrsAndMelonmbelonrsStruct (pelonrsonalDataTypelon = 'UselonrId')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct ClusterMembers {
-  1: required set<i64> clusterMembers (personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+struct ClustelonrMelonmbelonrs {
+  1: relonquirelond selont<i64> clustelonrMelonmbelonrs (pelonrsonalDataTypelon = 'UselonrId')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')

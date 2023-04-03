@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.model.marshalling.response.urp.SegmentedTimelinesPageBody
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.pagelons.relonndelonr.{thriftscala => urp}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.SelongmelonntelondTimelonlinelonsPagelonBody
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class SegmentedTimelinesMarshaller @Inject() (
-  segmentedTimelineMarshaller: SegmentedTimelineMarshaller) {
+@Singlelonton
+class SelongmelonntelondTimelonlinelonsMarshallelonr @Injelonct() (
+  selongmelonntelondTimelonlinelonMarshallelonr: SelongmelonntelondTimelonlinelonMarshallelonr) {
 
-  def apply(segmentedTimelinesPageBody: SegmentedTimelinesPageBody): urp.SegmentedTimelines =
-    urp.SegmentedTimelines(
-      initialTimeline = segmentedTimelineMarshaller(segmentedTimelinesPageBody.initialTimeline),
-      timelines = segmentedTimelinesPageBody.timelines.map(segmentedTimelineMarshaller(_))
+  delonf apply(selongmelonntelondTimelonlinelonsPagelonBody: SelongmelonntelondTimelonlinelonsPagelonBody): urp.SelongmelonntelondTimelonlinelons =
+    urp.SelongmelonntelondTimelonlinelons(
+      initialTimelonlinelon = selongmelonntelondTimelonlinelonMarshallelonr(selongmelonntelondTimelonlinelonsPagelonBody.initialTimelonlinelon),
+      timelonlinelons = selongmelonntelondTimelonlinelonsPagelonBody.timelonlinelons.map(selongmelonntelondTimelonlinelonMarshallelonr(_))
     )
 }

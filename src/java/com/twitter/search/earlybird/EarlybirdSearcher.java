@@ -1,1918 +1,1918 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.Itelonrator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Selont;
+import java.util.strelonam.Collelonctors;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Joiner;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Lists;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Joinelonr;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.Query;
-import org.apache.thrift.TException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.StringUtils;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.quelonryparselonr.classic.Parselonelonxcelonption;
+import org.apachelon.lucelonnelon.quelonryparselonr.classic.QuelonryParselonr;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon.Occur;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.thrift.Telonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.query.MappableField;
-import com.twitter.search.common.query.QueryHitAttributeHelper;
-import com.twitter.search.common.query.thriftjava.CollectorParams;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftScoringFunctionType;
-import com.twitter.search.common.results.thriftjava.FieldHitList;
-import com.twitter.search.common.schema.SchemaUtil;
-import com.twitter.search.common.schema.SearchWhitespaceAnalyzer;
-import com.twitter.search.common.schema.base.FieldWeightDefault;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.search.TwitterEarlyTerminationCollector;
-import com.twitter.search.common.search.termination.QueryTimeoutFactory;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.common.util.thrift.ThriftUtils;
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.ClientException;
-import com.twitter.search.earlybird.exception.TransientException;
-import com.twitter.search.earlybird.index.facets.FacetSkipList;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.partition.AudioSpaceTable;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.querycache.QueryCacheConversionRules;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.queryparser.DetectFieldAnnotationVisitor;
-import com.twitter.search.earlybird.queryparser.EarlybirdLuceneQueryVisitor;
-import com.twitter.search.earlybird.queryparser.HighFrequencyTermPairRewriteVisitor;
-import com.twitter.search.earlybird.queryparser.LuceneRelevanceQueryVisitor;
-import com.twitter.search.earlybird.queryparser.ProtectedOperatorQueryRewriter;
-import com.twitter.search.earlybird.search.AbstractResultsCollector;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.queries.BadUserRepFilter;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.search.EarlybirdMultiSegmentSearcher;
-import com.twitter.search.earlybird.search.queries.MatchAllDocsQuery;
-import com.twitter.search.earlybird.search.queries.RequiredStatusIDsFilter;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.search.SearchResultsCollector;
-import com.twitter.search.earlybird.search.SearchResultsInfo;
-import com.twitter.search.earlybird.search.SimpleSearchResults;
-import com.twitter.search.earlybird.search.SocialFilter;
-import com.twitter.search.earlybird.search.SocialSearchResultsCollector;
-import com.twitter.search.earlybird.search.queries.UserFlagsExcludeFilter;
-import com.twitter.search.earlybird.search.queries.UserIdMultiSegmentQuery;
-import com.twitter.search.earlybird.search.facets.EntityAnnotationCollector;
-import com.twitter.search.earlybird.search.facets.ExpandedUrlCollector;
-import com.twitter.search.earlybird.search.facets.ExplainFacetResultsCollector;
-import com.twitter.search.earlybird.search.facets.FacetRankingModule;
-import com.twitter.search.earlybird.search.facets.FacetResultsCollector;
-import com.twitter.search.earlybird.search.facets.FacetSearchRequestInfo;
-import com.twitter.search.earlybird.search.facets.NamedEntityCollector;
-import com.twitter.search.earlybird.search.facets.SpaceFacetCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsCollector;
-import com.twitter.search.earlybird.search.facets.TermStatisticsRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.collectors.AbstractRelevanceCollector;
-import com.twitter.search.earlybird.search.relevance.collectors.BatchRelevanceTopCollector;
-import com.twitter.search.earlybird.search.relevance.collectors.RelevanceAllCollector;
-import com.twitter.search.earlybird.search.relevance.collectors.RelevanceTopCollector;
-import com.twitter.search.earlybird.search.relevance.scoring.RelevanceQuery;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider;
-import com.twitter.search.earlybird.search.relevance.scoring.TensorflowBasedScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdRPCStats;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.EarlybirdDebugInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldRequest;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetRequest;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsResults;
-import com.twitter.search.earlybird.util.EarlybirdSearchResultUtil;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Disjunction;
-import com.twitter.search.queryparser.query.QueryNodeUtils;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.annotation.Annotation;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.query.search.SearchOperatorConstants;
-import com.twitter.search.queryparser.util.IdTimeRanges;
-import com.twitter.search.queryparser.visitors.ConversionVisitor;
-import com.twitter.search.queryparser.visitors.DetectPositiveOperatorVisitor;
-import com.twitter.search.queryparser.visitors.NamedDisjunctionVisitor;
-import com.twitter.search.queryparser.visitors.ProximityGroupRewriteVisitor;
-import com.twitter.search.queryparser.visitors.StripAnnotationsVisitor;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.databaselon.DatabaselonConfig;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonma;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonr;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.common.quelonry.MappablelonFielonld;
+import com.twittelonr.selonarch.common.quelonry.QuelonryHitAttributelonHelonlpelonr;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorParams;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorTelonrminationParams;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.elonarlyTelonrminationInfo;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftRankingParams;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftScoringFunctionTypelon;
+import com.twittelonr.selonarch.common.relonsults.thriftjava.FielonldHitList;
+import com.twittelonr.selonarch.common.schelonma.SchelonmaUtil;
+import com.twittelonr.selonarch.common.schelonma.SelonarchWhitelonspacelonAnalyzelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldWelonightDelonfault;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.common.selonarch.TwittelonrelonarlyTelonrminationCollelonctor;
+import com.twittelonr.selonarch.common.selonarch.telonrmination.QuelonryTimelonoutFactory;
+import com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonUtil;
+import com.twittelonr.selonarch.common.util.ml.telonnsorflow_elonnginelon.TelonnsorflowModelonlsManagelonr;
+import com.twittelonr.selonarch.common.util.thrift.ThriftUtils;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountStatelon;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.Clielonntelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.Transielonntelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.indelonx.facelonts.FacelontSkipList;
+import com.twittelonr.selonarch.elonarlybird.ml.ScoringModelonlsManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.AudioSpacelonTablelon;
+import com.twittelonr.selonarch.elonarlybird.partition.MultiSelongmelonntTelonrmDictionaryManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr;
+import com.twittelonr.selonarch.elonarlybird.quelonrycachelon.QuelonryCachelonConvelonrsionRulelons;
+import com.twittelonr.selonarch.elonarlybird.quelonrycachelon.QuelonryCachelonManagelonr;
+import com.twittelonr.selonarch.elonarlybird.quelonryparselonr.DelontelonctFielonldAnnotationVisitor;
+import com.twittelonr.selonarch.elonarlybird.quelonryparselonr.elonarlybirdLucelonnelonQuelonryVisitor;
+import com.twittelonr.selonarch.elonarlybird.quelonryparselonr.HighFrelonquelonncyTelonrmPairRelonwritelonVisitor;
+import com.twittelonr.selonarch.elonarlybird.quelonryparselonr.LucelonnelonRelonlelonvancelonQuelonryVisitor;
+import com.twittelonr.selonarch.elonarlybird.quelonryparselonr.ProtelonctelondOpelonratorQuelonryRelonwritelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AbstractRelonsultsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AntiGamingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.BadUselonrRelonpFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.elonarlybirdLucelonnelonSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.elonarlybirdMultiSelongmelonntSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.MatchAllDocsQuelonry;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.RelonquirelondStatusIDsFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SelonarchRelonsultsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SelonarchRelonsultsInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SimplelonSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SocialFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SocialSelonarchRelonsultsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.UselonrFlagselonxcludelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons.UselonrIdMultiSelongmelonntQuelonry;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.elonntityAnnotationCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.elonxpandelondUrlCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.elonxplainFacelontRelonsultsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.FacelontRankingModulelon;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.FacelontRelonsultsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.FacelontSelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.NamelondelonntityCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.SpacelonFacelontCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.TelonrmStatisticsCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.facelonts.TelonrmStatisticsRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonSelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.collelonctors.AbstractRelonlelonvancelonCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.collelonctors.BatchRelonlelonvancelonTopCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.collelonctors.RelonlelonvancelonAllCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.collelonctors.RelonlelonvancelonTopCollelonctor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.RelonlelonvancelonQuelonry;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunction;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunctionProvidelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.TelonnsorflowBaselondScoringFunction;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdRPCStats;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdDelonbugInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontCount;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontCountMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontFielonldRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontFielonldRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRankingModelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonlelonvancelonOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultelonxtraMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadataOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmStatisticsRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmStatisticsRelonsults;
+import com.twittelonr.selonarch.elonarlybird.util.elonarlybirdSelonarchRelonsultUtil;
+import com.twittelonr.selonarch.quelonryparselonr.parselonr.SelonrializelondQuelonryParselonr;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Disjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryNodelonUtils;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.Annotation;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonratorConstants;
+import com.twittelonr.selonarch.quelonryparselonr.util.IdTimelonRangelons;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.ConvelonrsionVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.DelontelonctPositivelonOpelonratorVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.NamelondDisjunctionVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.ProximityGroupRelonwritelonVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.StripAnnotationsVisitor;
 
-import static com.twitter.search.queryparser.query.search.SearchOperator.Type.UNTIL_TIME;
+import static com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator.Typelon.UNTIL_TIMelon;
 
 /**
- * This class provides the basic search() method:
- * - converts the thrift request object into what lucene expects.
- * - gets the segment.
- * - handles all errors, and prepares the response in case of error.
+ * This class providelons thelon basic selonarch() melonthod:
+ * - convelonrts thelon thrift relonquelonst objelonct into what lucelonnelon elonxpeloncts.
+ * - gelonts thelon selongmelonnt.
+ * - handlelons all elonrrors, and prelonparelons thelon relonsponselon in caselon of elonrror.
  *
- * We have one instance of this class per search received.
+ * Welon havelon onelon instancelon of this class pelonr selonarch reloncelonivelond.
  */
-public class EarlybirdSearcher {
-  public enum QueryMode {
-    // Please think before adding more query modes: can this be implemented in a general way?
-    RECENCY(new EarlybirdRPCStats("search_recency")),
-    FACETS(new EarlybirdRPCStats("search_facets")),
-    TERM_STATS(new EarlybirdRPCStats("search_termstats")),
-    RELEVANCE(new EarlybirdRPCStats("search_relevance")),
-    TOP_TWEETS(new EarlybirdRPCStats("search_toptweets"));
+public class elonarlybirdSelonarchelonr {
+  public elonnum QuelonryModelon {
+    // Plelonaselon think belonforelon adding morelon quelonry modelons: can this belon implelonmelonntelond in a gelonnelonral way?
+    RelonCelonNCY(nelonw elonarlybirdRPCStats("selonarch_reloncelonncy")),
+    FACelonTS(nelonw elonarlybirdRPCStats("selonarch_facelonts")),
+    TelonRM_STATS(nelonw elonarlybirdRPCStats("selonarch_telonrmstats")),
+    RelonLelonVANCelon(nelonw elonarlybirdRPCStats("selonarch_relonlelonvancelon")),
+    TOP_TWelonelonTS(nelonw elonarlybirdRPCStats("selonarch_toptwelonelonts"));
 
-    private final EarlybirdRPCStats requestStats;
+    privatelon final elonarlybirdRPCStats relonquelonstStats;
 
-    QueryMode(EarlybirdRPCStats requestStats) {
-      this.requestStats = requestStats;
+    QuelonryModelon(elonarlybirdRPCStats relonquelonstStats) {
+      this.relonquelonstStats = relonquelonstStats;
     }
 
-    public EarlybirdRPCStats getRequestStats() {
-      return requestStats;
+    public elonarlybirdRPCStats gelontRelonquelonstStats() {
+      relonturn relonquelonstStats;
     }
   }
 
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdSearcher.class);
-  private static final String MATCH_ALL_SERIALIZED_QUERY = "(* )";
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdSelonarchelonr.class);
+  privatelon static final String MATCH_ALL_SelonRIALIZelonD_QUelonRY = "(* )";
   /**
-   * generic field annotations can be mapped to a concrete field in the index using this mapping
-   * via {@link com.twitter.search.queryparser.query.annotation.Annotation.Type#MAPPABLE_FIELD}
+   * gelonnelonric fielonld annotations can belon mappelond to a concrelontelon fielonld in thelon indelonx using this mapping
+   * via {@link com.twittelonr.selonarch.quelonryparselonr.quelonry.annotation.Annotation.Typelon#MAPPABLelon_FIelonLD}
    */
-  private static final Map<MappableField, String> MAPPABLE_FIELD_MAP =
-      ImmutableMap.of(
-          MappableField.URL,
-          EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName());
+  privatelon static final Map<MappablelonFielonld, String> MAPPABLelon_FIelonLD_MAP =
+      ImmutablelonMap.of(
+          MappablelonFielonld.URL,
+          elonarlybirdFielonldConstant.RelonSOLVelonD_LINKS_TelonXT_FIelonLD.gelontFielonldNamelon());
 
-  private static final String ALLOW_QUERY_SPECIFIC_SIGNAL_DECIDER_KEY
-      = "allow_query_specific_score_adjustments";
+  privatelon static final String ALLOW_QUelonRY_SPelonCIFIC_SIGNAL_DelonCIDelonR_KelonY
+      = "allow_quelonry_speloncific_scorelon_adjustmelonnts";
 
-  @VisibleForTesting
-  public static final String ALLOW_AUTHOR_SPECIFIC_SIGNAL_DECIDER_KEY
-      = "allow_author_specific_score_adjustments";
+  @VisiblelonForTelonsting
+  public static final String ALLOW_AUTHOR_SPelonCIFIC_SIGNAL_DelonCIDelonR_KelonY
+      = "allow_author_speloncific_scorelon_adjustmelonnts";
 
-  private static final String USE_MULTI_TERM_DISJUNCTION_FOR_LIKED_BY_USER_IDS_DECIDER_KEY
-      = "use_multi_term_disjunction_for_liked_by_user_ids";
+  privatelon static final String USelon_MULTI_TelonRM_DISJUNCTION_FOR_LIKelonD_BY_USelonR_IDS_DelonCIDelonR_KelonY
+      = "uselon_multi_telonrm_disjunction_for_likelond_by_uselonr_ids";
 
-  private static final String ALLOW_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX
-      = "allow_camelcase_username_field_weight_override_in_";
+  privatelon static final String ALLOW_CAMelonLCASelon_USelonRNAMelon_FIelonLD_WelonIGHT_OVelonRRIDelon_DelonCIDelonR_KelonY_PRelonFIX
+      = "allow_camelonlcaselon_uselonrnamelon_fielonld_welonight_ovelonrridelon_in_";
 
-  private static final String ALLOW_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX
-      = "allow_tokenized_display_name_field_weight_override_in_";
+  privatelon static final String ALLOW_TOKelonNIZelonD_DISPLAY_NAMelon_FIelonLD_WelonIGHT_OVelonRRIDelon_DelonCIDelonR_KelonY_PRelonFIX
+      = "allow_tokelonnizelond_display_namelon_fielonld_welonight_ovelonrridelon_in_";
 
-  private static final boolean ALLOW_QUERY_SPECIFIC_SIGNAL_CONFIG
-      = EarlybirdConfig.getBool("allow_query_specific_score_adjustments", false);
+  privatelon static final boolelonan ALLOW_QUelonRY_SPelonCIFIC_SIGNAL_CONFIG
+      = elonarlybirdConfig.gelontBool("allow_quelonry_speloncific_scorelon_adjustmelonnts", falselon);
 
-  private static final boolean ALLOW_AUTHOR_SPECIFIC_SIGNAL_CONFIG
-      = EarlybirdConfig.getBool("allow_author_specific_score_adjustments", false);
+  privatelon static final boolelonan ALLOW_AUTHOR_SPelonCIFIC_SIGNAL_CONFIG
+      = elonarlybirdConfig.gelontBool("allow_author_speloncific_scorelon_adjustmelonnts", falselon);
 
-  public static final int DEFAULT_NUM_FACET_RESULTS = 100;
+  public static final int DelonFAULT_NUM_FACelonT_RelonSULTS = 100;
 
-  private final ImmutableSchemaInterface schemaSnapshot;
-  private final EarlybirdCluster cluster;
+  privatelon final ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot;
+  privatelon final elonarlybirdClustelonr clustelonr;
 
-  private final Clock clock;
-  private final Decider decider;
+  privatelon final Clock clock;
+  privatelon final Deloncidelonr deloncidelonr;
 
-  // The actual request thrift.
-  private final EarlybirdRequest request;
+  // Thelon actual relonquelonst thrift.
+  privatelon final elonarlybirdRelonquelonst relonquelonst;
 
-  // searchQuery from inside the request.
-  private final ThriftSearchQuery searchQuery;
+  // selonarchQuelonry from insidelon thelon relonquelonst.
+  privatelon final ThriftSelonarchQuelonry selonarchQuelonry;
 
-  // CollectorParams from inside the searchQuery;
-  private final CollectorParams collectorParams;
+  // CollelonctorParams from insidelon thelon selonarchQuelonry;
+  privatelon final CollelonctorParams collelonctorParams;
 
-  // Parsed query (parsed from serialized query string in request).
-  private com.twitter.search.queryparser.query.Query parsedQuery;
-  private boolean parsedQueryAllowNullcast;
-  private IdTimeRanges idTimeRanges;
+  // Parselond quelonry (parselond from selonrializelond quelonry string in relonquelonst).
+  privatelon com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry parselondQuelonry;
+  privatelon boolelonan parselondQuelonryAllowNullcast;
+  privatelon IdTimelonRangelons idTimelonRangelons;
 
-  // Lucene version of the above.  This is what we will actually be executing.
-  private org.apache.lucene.search.Query luceneQuery;
+  // Lucelonnelon velonrsion of thelon abovelon.  This is what welon will actually belon elonxeloncuting.
+  privatelon org.apachelon.lucelonnelon.selonarch.Quelonry lucelonnelonQuelonry;
 
-  // Used for queries where we want to collect per-field hit attribution
-  @Nullable
-  private QueryHitAttributeHelper hitAttributeHelper;
+  // Uselond for quelonrielons whelonrelon welon want to collelonct pelonr-fielonld hit attribution
+  @Nullablelon
+  privatelon QuelonryHitAttributelonHelonlpelonr hitAttributelonHelonlpelonr;
 
-  // Debugging info can be appended to this buffer.
-  private final StringBuilder messageBuffer = new StringBuilder(1024);
-  private final EarlybirdDebugInfo debugInfo = new EarlybirdDebugInfo();
+  // Delonbugging info can belon appelonndelond to this buffelonr.
+  privatelon final StringBuildelonr melonssagelonBuffelonr = nelonw StringBuildelonr(1024);
+  privatelon final elonarlybirdDelonbugInfo delonbugInfo = nelonw elonarlybirdDelonbugInfo();
 
-  // The segment we are searching, or null for the multi-searcher.
-  private Segment segment = null;
+  // Thelon selongmelonnt welon arelon selonarching, or null for thelon multi-selonarchelonr.
+  privatelon Selongmelonnt selongmelonnt = null;
 
-  // True iff we are searching all segments (multi-searcher).
-  private final boolean searchAllSegments;
+  // Truelon iff welon arelon selonarching all selongmelonnts (multi-selonarchelonr).
+  privatelon final boolelonan selonarchAllSelongmelonnts;
 
-  // Tracking termination criteria for this query
-  private final TerminationTracker terminationTracker;
+  // Tracking telonrmination critelonria for this quelonry
+  privatelon final TelonrminationTrackelonr telonrminationTrackelonr;
 
-  private EarlybirdLuceneSearcher searcher = null;
+  privatelon elonarlybirdLucelonnelonSelonarchelonr selonarchelonr = null;
 
-  private final SegmentManager segmentManager;
-  private final QueryCacheManager queryCacheManager;
-  private final ScoringModelsManager scoringModelsManager;
-  private final TensorflowModelsManager tensorflowModelsManager;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final QuelonryCachelonManagelonr quelonryCachelonManagelonr;
+  privatelon final ScoringModelonlsManagelonr scoringModelonlsManagelonr;
+  privatelon final TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr;
 
-  private AntiGamingFilter antiGamingFilter = null;
+  privatelon AntiGamingFiltelonr antiGamingFiltelonr = null;
 
-  private final boolean searchHighFrequencyTermPairs =
-      EarlybirdConfig.getBool("search_high_frequency_term_pairs", false);
+  privatelon final boolelonan selonarchHighFrelonquelonncyTelonrmPairs =
+      elonarlybirdConfig.gelontBool("selonarch_high_frelonquelonncy_telonrm_pairs", falselon);
 
-  // How long to allow post-termination when enforcing query timeout
-  private final int enforceQueryTimeoutBufferMillis =
-      EarlybirdConfig.getInt("enforce_query_timeout_buffer_millis", 50);
+  // How long to allow post-telonrmination whelonn elonnforcing quelonry timelonout
+  privatelon final int elonnforcelonQuelonryTimelonoutBuffelonrMillis =
+      elonarlybirdConfig.gelontInt("elonnforcelon_quelonry_timelonout_buffelonr_millis", 50);
 
-  private EarlybirdRPCStats requestStats;
+  privatelon elonarlybirdRPCStats relonquelonstStats;
 
-  private QueryTimeoutFactory queryTimeoutFactory;
+  privatelon QuelonryTimelonoutFactory quelonryTimelonoutFactory;
 
-  // Exported stats
-  private final EarlybirdSearcherStats searcherStats;
+  // elonxportelond stats
+  privatelon final elonarlybirdSelonarchelonrStats selonarchelonrStats;
 
-  @VisibleForTesting
-  public static final SearchCounter FIELD_WEIGHT_OVERRIDE_MAP_NON_NULL_COUNT =
-      SearchCounter.export("field_weight_override_map_non_null_count");
-  @VisibleForTesting
-  public static final SearchCounter DROPPED_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE =
-      SearchCounter.export("dropped_camelcase_username_field_weight_override");
-  @VisibleForTesting
-  public static final SearchCounter DROPPED_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE =
-      SearchCounter.export("dropped_tokenized_display_name_field_weight_override");
+  @VisiblelonForTelonsting
+  public static final SelonarchCountelonr FIelonLD_WelonIGHT_OVelonRRIDelon_MAP_NON_NULL_COUNT =
+      SelonarchCountelonr.elonxport("fielonld_welonight_ovelonrridelon_map_non_null_count");
+  @VisiblelonForTelonsting
+  public static final SelonarchCountelonr DROPPelonD_CAMelonLCASelon_USelonRNAMelon_FIelonLD_WelonIGHT_OVelonRRIDelon =
+      SelonarchCountelonr.elonxport("droppelond_camelonlcaselon_uselonrnamelon_fielonld_welonight_ovelonrridelon");
+  @VisiblelonForTelonsting
+  public static final SelonarchCountelonr DROPPelonD_TOKelonNIZelonD_DISPLAY_NAMelon_FIelonLD_WelonIGHT_OVelonRRIDelon =
+      SelonarchCountelonr.elonxport("droppelond_tokelonnizelond_display_namelon_fielonld_welonight_ovelonrridelon");
 
-  private static final SearchCounter RESPONSE_HAS_NO_THRIFT_SEARCH_RESULTS =
-      SearchCounter.export("tweets_earlybird_searcher_response_has_no_thrift_search_results");
-  private static final SearchCounter CLIENT_HAS_FEATURE_SCHEMA_COUNTER =
-      SearchCounter.export("tweets_earlybird_searcher_client_has_feature_schema");
-  private static final SearchCounter CLIENT_DOESNT_HAVE_FEATURE_SCHEMA_COUNTER =
-      SearchCounter.export("tweet_earlybird_searcher_client_doesnt_have_feature_schema");
-  private static final SearchCounter COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_NOT_SET_COUNTER =
-      SearchCounter.export("collector_params_max_hits_to_process_not_set");
-  private static final SearchCounter POSITIVE_PROTECTED_OPERATOR_DETECTED_COUNTER =
-      SearchCounter.export("positive_protected_operator_detected_counter");
+  privatelon static final SelonarchCountelonr RelonSPONSelon_HAS_NO_THRIFT_SelonARCH_RelonSULTS =
+      SelonarchCountelonr.elonxport("twelonelonts_elonarlybird_selonarchelonr_relonsponselon_has_no_thrift_selonarch_relonsults");
+  privatelon static final SelonarchCountelonr CLIelonNT_HAS_FelonATURelon_SCHelonMA_COUNTelonR =
+      SelonarchCountelonr.elonxport("twelonelonts_elonarlybird_selonarchelonr_clielonnt_has_felonaturelon_schelonma");
+  privatelon static final SelonarchCountelonr CLIelonNT_DOelonSNT_HAVelon_FelonATURelon_SCHelonMA_COUNTelonR =
+      SelonarchCountelonr.elonxport("twelonelont_elonarlybird_selonarchelonr_clielonnt_doelonsnt_havelon_felonaturelon_schelonma");
+  privatelon static final SelonarchCountelonr COLLelonCTOR_PARAMS_MAX_HITS_TO_PROCelonSS_NOT_SelonT_COUNTelonR =
+      SelonarchCountelonr.elonxport("collelonctor_params_max_hits_to_procelonss_not_selont");
+  privatelon static final SelonarchCountelonr POSITIVelon_PROTelonCTelonD_OPelonRATOR_DelonTelonCTelonD_COUNTelonR =
+      SelonarchCountelonr.elonxport("positivelon_protelonctelond_opelonrator_delontelonctelond_countelonr");
 
-  // Query mode we are executing.
-  private final QueryMode queryMode;
+  // Quelonry modelon welon arelon elonxeloncuting.
+  privatelon final QuelonryModelon quelonryModelon;
 
-  // facetRequest from inside the request (or null).
-  private final ThriftFacetRequest facetRequest;
+  // facelontRelonquelonst from insidelon thelon relonquelonst (or null).
+  privatelon final ThriftFacelontRelonquelonst facelontRelonquelonst;
 
-  // termStatisticsRequest from inside the request (or null).
-  private final ThriftTermStatisticsRequest termStatisticsRequest;
+  // telonrmStatisticsRelonquelonst from insidelon thelon relonquelonst (or null).
+  privatelon final ThriftTelonrmStatisticsRelonquelonst telonrmStatisticsRelonquelonst;
 
-  // Results fields filled in during searchInternal().
-  private ThriftSearchResults searchResults = null;
-  private ThriftFacetResults facetResults = null;
-  private ThriftTermStatisticsResults termStatisticsResults = null;
-  private EarlyTerminationInfo earlyTerminationInfo = null;
+  // Relonsults fielonlds fillelond in during selonarchIntelonrnal().
+  privatelon ThriftSelonarchRelonsults selonarchRelonsults = null;
+  privatelon ThriftFacelontRelonsults facelontRelonsults = null;
+  privatelon ThriftTelonrmStatisticsRelonsults telonrmStatisticsRelonsults = null;
+  privatelon elonarlyTelonrminationInfo elonarlyTelonrminationInfo = null;
 
-  // Partition config used to fill in debugging info.
-  // If null, no debug info is written into results.
-  @Nullable
-  private final PartitionConfig partitionConfig;
+  // Partition config uselond to fill in delonbugging info.
+  // If null, no delonbug info is writtelonn into relonsults.
+  @Nullablelon
+  privatelon final PartitionConfig partitionConfig;
 
-  private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
+  privatelon final MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr;
 
-  private final QualityFactor qualityFactor;
+  privatelon final QualityFactor qualityFactor;
 
-  private Set<String> queriedFields;
-  private final AudioSpaceTable audioSpaceTable;
+  privatelon Selont<String> quelonrielondFielonlds;
+  privatelon final AudioSpacelonTablelon audioSpacelonTablelon;
 
-  public EarlybirdSearcher(
-      EarlybirdRequest request,
-      SegmentManager segmentManager,
-      AudioSpaceTable audioSpaceTable,
-      QueryCacheManager queryCacheManager,
-      ImmutableSchemaInterface schema,
-      EarlybirdCluster cluster,
-      @Nullable PartitionConfig partitionConfig,
-      Decider decider,
-      EarlybirdSearcherStats searcherStats,
-      ScoringModelsManager scoringModelsManager,
-      TensorflowModelsManager tensorflowModelsManager,
+  public elonarlybirdSelonarchelonr(
+      elonarlybirdRelonquelonst relonquelonst,
+      SelongmelonntManagelonr selongmelonntManagelonr,
+      AudioSpacelonTablelon audioSpacelonTablelon,
+      QuelonryCachelonManagelonr quelonryCachelonManagelonr,
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      elonarlybirdClustelonr clustelonr,
+      @Nullablelon PartitionConfig partitionConfig,
+      Deloncidelonr deloncidelonr,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
+      ScoringModelonlsManagelonr scoringModelonlsManagelonr,
+      TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr,
       Clock clock,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      QueryTimeoutFactory queryTimeoutFactory,
+      MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr,
+      QuelonryTimelonoutFactory quelonryTimelonoutFactory,
       QualityFactor qualityFactor) {
-    this.queryMode = getQueryMode(request);
-    this.schemaSnapshot = schema.getSchemaSnapshot();
-    // set the request stats as early as possible, so that we can track errors that happen
-    // early on in query processing.
-    this.requestStats = queryMode.getRequestStats();
-    this.facetRequest = request.isSetFacetRequest() ? request.getFacetRequest() : null;
-    this.termStatisticsRequest = request.isSetTermStatisticsRequest()
-        ? request.getTermStatisticsRequest() : null;
+    this.quelonryModelon = gelontQuelonryModelon(relonquelonst);
+    this.schelonmaSnapshot = schelonma.gelontSchelonmaSnapshot();
+    // selont thelon relonquelonst stats as elonarly as possiblelon, so that welon can track elonrrors that happelonn
+    // elonarly on in quelonry procelonssing.
+    this.relonquelonstStats = quelonryModelon.gelontRelonquelonstStats();
+    this.facelontRelonquelonst = relonquelonst.isSelontFacelontRelonquelonst() ? relonquelonst.gelontFacelontRelonquelonst() : null;
+    this.telonrmStatisticsRelonquelonst = relonquelonst.isSelontTelonrmStatisticsRelonquelonst()
+        ? relonquelonst.gelontTelonrmStatisticsRelonquelonst() : null;
     this.partitionConfig = partitionConfig;
-    this.searcherStats = searcherStats;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
+    this.selonarchelonrStats = selonarchelonrStats;
+    this.multiSelongmelonntTelonrmDictionaryManagelonr = multiSelongmelonntTelonrmDictionaryManagelonr;
     this.clock = clock;
-    this.decider = decider;
-    this.request = request;
-    this.segmentManager = segmentManager;
-    this.queryCacheManager = queryCacheManager;
-    this.cluster = cluster;
-    this.scoringModelsManager = scoringModelsManager;
-    this.tensorflowModelsManager = tensorflowModelsManager;
-    this.audioSpaceTable = audioSpaceTable;
-    // Note: we're deferring the validation/nullchecks until validateRequest()
-    // for more contained exception handling
-    this.searchQuery = request.getSearchQuery();
-    this.collectorParams = this.searchQuery == null ? null : this.searchQuery.getCollectorParams();
-    // Search all segments if searchSegmentId is unset.
-    this.searchAllSegments = !request.isSetSearchSegmentId();
-    if (this.collectorParams == null
-        || !this.collectorParams.isSetTerminationParams()) {
-      this.terminationTracker = new TerminationTracker(clock);
-    } else if (request.isSetClientRequestTimeMs()) {
-      this.terminationTracker = new TerminationTracker(collectorParams.getTerminationParams(),
-          request.getClientRequestTimeMs(), clock,
-          getPostTerminationOverheadMillis(collectorParams.getTerminationParams()));
-    } else {
-      this.terminationTracker = new TerminationTracker(
-          collectorParams.getTerminationParams(), clock,
-          getPostTerminationOverheadMillis(collectorParams.getTerminationParams()));
+    this.deloncidelonr = deloncidelonr;
+    this.relonquelonst = relonquelonst;
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.quelonryCachelonManagelonr = quelonryCachelonManagelonr;
+    this.clustelonr = clustelonr;
+    this.scoringModelonlsManagelonr = scoringModelonlsManagelonr;
+    this.telonnsorflowModelonlsManagelonr = telonnsorflowModelonlsManagelonr;
+    this.audioSpacelonTablelon = audioSpacelonTablelon;
+    // Notelon: welon'relon delonfelonrring thelon validation/nullcheloncks until validatelonRelonquelonst()
+    // for morelon containelond elonxcelonption handling
+    this.selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
+    this.collelonctorParams = this.selonarchQuelonry == null ? null : this.selonarchQuelonry.gelontCollelonctorParams();
+    // Selonarch all selongmelonnts if selonarchSelongmelonntId is unselont.
+    this.selonarchAllSelongmelonnts = !relonquelonst.isSelontSelonarchSelongmelonntId();
+    if (this.collelonctorParams == null
+        || !this.collelonctorParams.isSelontTelonrminationParams()) {
+      this.telonrminationTrackelonr = nelonw TelonrminationTrackelonr(clock);
+    } elonlselon if (relonquelonst.isSelontClielonntRelonquelonstTimelonMs()) {
+      this.telonrminationTrackelonr = nelonw TelonrminationTrackelonr(collelonctorParams.gelontTelonrminationParams(),
+          relonquelonst.gelontClielonntRelonquelonstTimelonMs(), clock,
+          gelontPostTelonrminationOvelonrhelonadMillis(collelonctorParams.gelontTelonrminationParams()));
+    } elonlselon {
+      this.telonrminationTrackelonr = nelonw TelonrminationTrackelonr(
+          collelonctorParams.gelontTelonrminationParams(), clock,
+          gelontPostTelonrminationOvelonrhelonadMillis(collelonctorParams.gelontTelonrminationParams()));
     }
-    this.queryTimeoutFactory = queryTimeoutFactory;
+    this.quelonryTimelonoutFactory = quelonryTimelonoutFactory;
     this.qualityFactor = qualityFactor;
   }
 
-  private int getPostTerminationOverheadMillis(CollectorTerminationParams terminationParams) {
-    // If enforcing timeouts, set the post-termination buffer to the smaller of the timeout or the
-    // configured buffer. This ensures that timeout >= buffer, and a request with a smaller timeout
-    // should just time out immediately (because timeout == buffer).
-    return (terminationParams.isEnforceQueryTimeout() && terminationParams.getTimeoutMs() > 0)
-        ? Math.min(enforceQueryTimeoutBufferMillis, terminationParams.getTimeoutMs()) : 0;
+  privatelon int gelontPostTelonrminationOvelonrhelonadMillis(CollelonctorTelonrminationParams telonrminationParams) {
+    // If elonnforcing timelonouts, selont thelon post-telonrmination buffelonr to thelon smallelonr of thelon timelonout or thelon
+    // configurelond buffelonr. This elonnsurelons that timelonout >= buffelonr, and a relonquelonst with a smallelonr timelonout
+    // should just timelon out immelondiatelonly (beloncauselon timelonout == buffelonr).
+    relonturn (telonrminationParams.iselonnforcelonQuelonryTimelonout() && telonrminationParams.gelontTimelonoutMs() > 0)
+        ? Math.min(elonnforcelonQuelonryTimelonoutBuffelonrMillis, telonrminationParams.gelontTimelonoutMs()) : 0;
   }
 
-  // Appends a debug string to the buffer.
-  private void appendMessage(String message) {
-    messageBuffer.append(message).append("\n");
+  // Appelonnds a delonbug string to thelon buffelonr.
+  privatelon void appelonndMelonssagelon(String melonssagelon) {
+    melonssagelonBuffelonr.appelonnd(melonssagelon).appelonnd("\n");
   }
 
   /**
-   * Processes an Earlybird search request.
-   * @return the earlybird response for this search request.
+   * Procelonsselons an elonarlybird selonarch relonquelonst.
+   * @relonturn thelon elonarlybird relonsponselon for this selonarch relonquelonst.
    */
-  public EarlybirdResponse search() {
+  public elonarlybirdRelonsponselon selonarch() {
     try {
-      debugInfo.setHost(DatabaseConfig.getLocalHostname());
+      delonbugInfo.selontHost(DatabaselonConfig.gelontLocalHostnamelon());
 
-      // Throws transient exception for invalid requests.
-      validateRequest();
+      // Throws transielonnt elonxcelonption for invalid relonquelonsts.
+      validatelonRelonquelonst();
 
-      // Throws client exception for bad queries,
-      parseEarlybirdRequest();
+      // Throws clielonnt elonxcelonption for bad quelonrielons,
+      parselonelonarlybirdRelonquelonst();
 
-      // Modify the Lucene query if necessary.
-      luceneQuery = postLuceneQueryProcess(luceneQuery);
+      // Modify thelon Lucelonnelon quelonry if neloncelonssary.
+      lucelonnelonQuelonry = postLucelonnelonQuelonryProcelonss(lucelonnelonQuelonry);
 
-      // Might return PARTITION_NOT_FOUND or PARTITION_DISABLED.
-      EarlybirdResponseCode code = initSearcher();
-      if (code != EarlybirdResponseCode.SUCCESS) {
-        return respondError(code);
+      // Might relonturn PARTITION_NOT_FOUND or PARTITION_DISABLelonD.
+      elonarlybirdRelonsponselonCodelon codelon = initSelonarchelonr();
+      if (codelon != elonarlybirdRelonsponselonCodelon.SUCCelonSS) {
+        relonturn relonspondelonrror(codelon);
       }
 
-      return searchInternal();
+      relonturn selonarchIntelonrnal();
 
-    } catch (TransientException e) {
-      LOG.error(String.format("Transient exception in search() for EarlybirdRequest:\n%s", request),
-                e);
-      appendMessage(e.getMessage());
-      return respondError(EarlybirdResponseCode.TRANSIENT_ERROR);
-    } catch (ClientException e) {
-      LOG.warn(String.format("Client exception in search() %s for EarlybirdRequest:\n %s",
-          e, request));
-      appendMessage(e.getMessage());
-      return respondError(EarlybirdResponseCode.CLIENT_ERROR);
-    } catch (Exception e) {
-      LOG.warn(String.format("Uncaught exception in search() for EarlybirdRequest:\n%s", request),
-               e);
-      appendMessage(e.getMessage());
-      return respondError(EarlybirdResponseCode.TRANSIENT_ERROR);
-    } catch (AssertionError e) {
-      LOG.warn(String.format("Assertion error in search() for EarlybirdRequest:\n%s", request), e);
-      appendMessage(e.getMessage());
-      return respondError(EarlybirdResponseCode.TRANSIENT_ERROR);
-    } catch (Error e) {
-      // SEARCH-33166: If we got here, it means what was thrown was not an Exception, or anything
-      // we know how to handle. Log the Error for diagnostic purposes and propagate it.
-      LOG.error("Re-throwing uncaught error", e);
-      throw e;
+    } catch (Transielonntelonxcelonption elon) {
+      LOG.elonrror(String.format("Transielonnt elonxcelonption in selonarch() for elonarlybirdRelonquelonst:\n%s", relonquelonst),
+                elon);
+      appelonndMelonssagelon(elon.gelontMelonssagelon());
+      relonturn relonspondelonrror(elonarlybirdRelonsponselonCodelon.TRANSIelonNT_elonRROR);
+    } catch (Clielonntelonxcelonption elon) {
+      LOG.warn(String.format("Clielonnt elonxcelonption in selonarch() %s for elonarlybirdRelonquelonst:\n %s",
+          elon, relonquelonst));
+      appelonndMelonssagelon(elon.gelontMelonssagelon());
+      relonturn relonspondelonrror(elonarlybirdRelonsponselonCodelon.CLIelonNT_elonRROR);
+    } catch (elonxcelonption elon) {
+      LOG.warn(String.format("Uncaught elonxcelonption in selonarch() for elonarlybirdRelonquelonst:\n%s", relonquelonst),
+               elon);
+      appelonndMelonssagelon(elon.gelontMelonssagelon());
+      relonturn relonspondelonrror(elonarlybirdRelonsponselonCodelon.TRANSIelonNT_elonRROR);
+    } catch (Asselonrtionelonrror elon) {
+      LOG.warn(String.format("Asselonrtion elonrror in selonarch() for elonarlybirdRelonquelonst:\n%s", relonquelonst), elon);
+      appelonndMelonssagelon(elon.gelontMelonssagelon());
+      relonturn relonspondelonrror(elonarlybirdRelonsponselonCodelon.TRANSIelonNT_elonRROR);
+    } catch (elonrror elon) {
+      // SelonARCH-33166: If welon got helonrelon, it melonans what was thrown was not an elonxcelonption, or anything
+      // welon know how to handlelon. Log thelon elonrror for diagnostic purposelons and propagatelon it.
+      LOG.elonrror("Relon-throwing uncaught elonrror", elon);
+      throw elon;
     }
   }
 
-  public EarlybirdRPCStats getRequestStats() {
-    return requestStats;
+  public elonarlybirdRPCStats gelontRelonquelonstStats() {
+    relonturn relonquelonstStats;
   }
 
   /**
-   * Wraps the given query with the provided filter queries.
+   * Wraps thelon givelonn quelonry with thelon providelond filtelonr quelonrielons.
    *
-   * @param query the query to wrap with filters.
-   * @param filters the filters to wrap the query with.
-   * @return a BooleanQuery wrapped with filters
+   * @param quelonry thelon quelonry to wrap with filtelonrs.
+   * @param filtelonrs thelon filtelonrs to wrap thelon quelonry with.
+   * @relonturn a BoolelonanQuelonry wrappelond with filtelonrs
    */
-  public static Query wrapFilters(Query query, Query... filters) {
-    boolean filtersEmpty = filters == null || filters.length == 0;
+  public static Quelonry wrapFiltelonrs(Quelonry quelonry, Quelonry... filtelonrs) {
+    boolelonan filtelonrselonmpty = filtelonrs == null || filtelonrs.lelonngth == 0;
 
-    if (!filtersEmpty) {
-      filtersEmpty = true;
-      for (Query f : filters) {
+    if (!filtelonrselonmpty) {
+      filtelonrselonmpty = truelon;
+      for (Quelonry f : filtelonrs) {
         if (f != null) {
-          filtersEmpty = false;
-          break;
+          filtelonrselonmpty = falselon;
+          brelonak;
         }
       }
     }
 
-    if (filtersEmpty) {
-      if (query == null) {
-        return new MatchAllDocsQuery();
-      } else {
-        return query;
+    if (filtelonrselonmpty) {
+      if (quelonry == null) {
+        relonturn nelonw MatchAllDocsQuelonry();
+      } elonlselon {
+        relonturn quelonry;
       }
     }
 
-    BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-    if (query != null) {
-      bqBuilder.add(query, Occur.MUST);
+    BoolelonanQuelonry.Buildelonr bqBuildelonr = nelonw BoolelonanQuelonry.Buildelonr();
+    if (quelonry != null) {
+      bqBuildelonr.add(quelonry, Occur.MUST);
     }
-    for (Query f : filters) {
+    for (Quelonry f : filtelonrs) {
       if (f != null) {
-        bqBuilder.add(f, Occur.FILTER);
+        bqBuildelonr.add(f, Occur.FILTelonR);
       }
     }
-    return bqBuilder.build();
+    relonturn bqBuildelonr.build();
   }
 
-  // Examine all fields in the request for sanity.
-  private void validateRequest() throws TransientException, ClientException {
-    // First try thrift's internal validate.  Should always succeed.
+  // elonxaminelon all fielonlds in thelon relonquelonst for sanity.
+  privatelon void validatelonRelonquelonst() throws Transielonntelonxcelonption, Clielonntelonxcelonption {
+    // First try thrift's intelonrnal validatelon.  Should always succelonelond.
     try {
-      request.validate();
-    } catch (TException e) {
-      throw new TransientException(e.getMessage(), e);
+      relonquelonst.validatelon();
+    } catch (Telonxcelonption elon) {
+      throw nelonw Transielonntelonxcelonption(elon.gelontMelonssagelon(), elon);
     }
 
-    if (searchQuery == null) {
-      throw new TransientException("No ThriftSearchQuery specified");
+    if (selonarchQuelonry == null) {
+      throw nelonw Transielonntelonxcelonption("No ThriftSelonarchQuelonry speloncifielond");
     }
 
-    if (collectorParams == null) {
-      throw new TransientException("No CollectorParams specified");
+    if (collelonctorParams == null) {
+      throw nelonw Transielonntelonxcelonption("No CollelonctorParams speloncifielond");
     }
 
-    validateTermStatsRequest();
+    validatelonTelonrmStatsRelonquelonst();
 
-    if (!searchAllSegments) {
-      if (request.getSearchSegmentId() <= 0) {
-        String msg = "Bad time slice ID: " + request.getSearchSegmentId();
-        throw new TransientException(msg);
+    if (!selonarchAllSelongmelonnts) {
+      if (relonquelonst.gelontSelonarchSelongmelonntId() <= 0) {
+        String msg = "Bad timelon slicelon ID: " + relonquelonst.gelontSelonarchSelongmelonntId();
+        throw nelonw Transielonntelonxcelonption(msg);
       }
 
-      // Initialize the segment.
-      SegmentInfo segmentInfo = this.segmentManager.getSegmentInfo(request.getSearchSegmentId());
-      segment = segmentInfo != null ? segmentInfo.getSegment() : null;
+      // Initializelon thelon selongmelonnt.
+      SelongmelonntInfo selongmelonntInfo = this.selongmelonntManagelonr.gelontSelongmelonntInfo(relonquelonst.gelontSelonarchSelongmelonntId());
+      selongmelonnt = selongmelonntInfo != null ? selongmelonntInfo.gelontSelongmelonnt() : null;
     }
 
-    if (collectorParams.getNumResultsToReturn() < 0) {
-      String msg = "Invalid numResults: " + collectorParams.getNumResultsToReturn();
-      throw new TransientException(msg);
+    if (collelonctorParams.gelontNumRelonsultsToRelonturn() < 0) {
+      String msg = "Invalid numRelonsults: " + collelonctorParams.gelontNumRelonsultsToRelonturn();
+      throw nelonw Transielonntelonxcelonption(msg);
     }
 
-    if (searchQuery.getNamedDisjunctionMapSize() > 0 && searchQuery.isSetLuceneQuery()) {
-      throw new ClientException("namedMultiTermDisjunctionMap does not support with luceneQuery");
+    if (selonarchQuelonry.gelontNamelondDisjunctionMapSizelon() > 0 && selonarchQuelonry.isSelontLucelonnelonQuelonry()) {
+      throw nelonw Clielonntelonxcelonption("namelondMultiTelonrmDisjunctionMap doelons not support with lucelonnelonQuelonry");
     }
   }
 
-  private void validateTermStatsRequest() throws ClientException {
-    // Validate the field names and values for all ThriftTermRequests.
-    if (request.isSetTermStatisticsRequest()
-        && request.getTermStatisticsRequest().isSetTermRequests()) {
-      for (ThriftTermRequest termRequest : request.getTermStatisticsRequest().getTermRequests()) {
-        // If termRequest.fieldName is not set, it defaults to 'text', which is a string field,
-        // so we don't need to check the term.
-        if (termRequest.isSetFieldName()) {
-          String fieldName = termRequest.getFieldName();
-          Schema.FieldInfo facetFieldInfo = schemaSnapshot.getFacetFieldByFacetName(fieldName);
-          if (facetFieldInfo != null) {
-            // Facet fields are string fields, so we don't need to check the term.
-            continue;
+  privatelon void validatelonTelonrmStatsRelonquelonst() throws Clielonntelonxcelonption {
+    // Validatelon thelon fielonld namelons and valuelons for all ThriftTelonrmRelonquelonsts.
+    if (relonquelonst.isSelontTelonrmStatisticsRelonquelonst()
+        && relonquelonst.gelontTelonrmStatisticsRelonquelonst().isSelontTelonrmRelonquelonsts()) {
+      for (ThriftTelonrmRelonquelonst telonrmRelonquelonst : relonquelonst.gelontTelonrmStatisticsRelonquelonst().gelontTelonrmRelonquelonsts()) {
+        // If telonrmRelonquelonst.fielonldNamelon is not selont, it delonfaults to 'telonxt', which is a string fielonld,
+        // so welon don't nelonelond to chelonck thelon telonrm.
+        if (telonrmRelonquelonst.isSelontFielonldNamelon()) {
+          String fielonldNamelon = telonrmRelonquelonst.gelontFielonldNamelon();
+          Schelonma.FielonldInfo facelontFielonldInfo = schelonmaSnapshot.gelontFacelontFielonldByFacelontNamelon(fielonldNamelon);
+          if (facelontFielonldInfo != null) {
+            // Facelont fielonlds arelon string fielonlds, so welon don't nelonelond to chelonck thelon telonrm.
+            continuelon;
           }
 
-          Schema.FieldInfo fieldInfo = schemaSnapshot.getFieldInfo(fieldName);
-          if (fieldInfo == null) {
-            throw new ClientException("Field " + fieldName + " is not present in the schema.");
+          Schelonma.FielonldInfo fielonldInfo = schelonmaSnapshot.gelontFielonldInfo(fielonldNamelon);
+          if (fielonldInfo == null) {
+            throw nelonw Clielonntelonxcelonption("Fielonld " + fielonldNamelon + " is not prelonselonnt in thelon schelonma.");
           }
 
           try {
-            SchemaUtil.toBytesRef(fieldInfo, termRequest.getTerm());
-          } catch (UnsupportedOperationException e) {
-            throw new ClientException("Term " + termRequest.getTerm() + " is not compatible with "
-                                      + "the type of field " + fieldName);
+            SchelonmaUtil.toBytelonsRelonf(fielonldInfo, telonrmRelonquelonst.gelontTelonrm());
+          } catch (UnsupportelondOpelonrationelonxcelonption elon) {
+            throw nelonw Clielonntelonxcelonption("Telonrm " + telonrmRelonquelonst.gelontTelonrm() + " is not compatiblelon with "
+                                      + "thelon typelon of fielonld " + fielonldNamelon);
           }
         }
       }
     }
   }
 
-  private void setQueriesInDebugInfo(
-      com.twitter.search.queryparser.query.Query parsedQ,
-      org.apache.lucene.search.Query luceneQ) {
-    debugInfo.setParsedQuery(parsedQ == null ? null : parsedQ.serialize());
-    debugInfo.setLuceneQuery(luceneQ == null ? null : luceneQ.toString());
+  privatelon void selontQuelonrielonsInDelonbugInfo(
+      com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry parselondQ,
+      org.apachelon.lucelonnelon.selonarch.Quelonry lucelonnelonQ) {
+    delonbugInfo.selontParselondQuelonry(parselondQ == null ? null : parselondQ.selonrializelon());
+    delonbugInfo.selontLucelonnelonQuelonry(lucelonnelonQ == null ? null : lucelonnelonQ.toString());
   }
 
   /**
-   * Takes the EarlybirdRequest that came into the service and after various parsing and processing
-   * steps ultimately produces a Lucene query.
+   * Takelons thelon elonarlybirdRelonquelonst that camelon into thelon selonrvicelon and aftelonr various parsing and procelonssing
+   * stelonps ultimatelonly producelons a Lucelonnelon quelonry.
    */
-  private void parseEarlybirdRequest() throws ClientException {
-    SerializedQueryParser parser = new SerializedQueryParser(EarlybirdConfig.getPenguinVersion());
+  privatelon void parselonelonarlybirdRelonquelonst() throws Clielonntelonxcelonption {
+    SelonrializelondQuelonryParselonr parselonr = nelonw SelonrializelondQuelonryParselonr(elonarlybirdConfig.gelontPelonnguinVelonrsion());
 
     try {
-      // if the deprecated iterativeQueries field is set, return an error to the client
-      // indicating that support for it has been removed.
-      if (searchQuery.isSetDeprecated_iterativeQueries()) {
-        throw new ClientException("Invalid request: iterativeQueries feature has been removed");
+      // if thelon delonpreloncatelond itelonrativelonQuelonrielons fielonld is selont, relonturn an elonrror to thelon clielonnt
+      // indicating that support for it has belonelonn relonmovelond.
+      if (selonarchQuelonry.isSelontDelonpreloncatelond_itelonrativelonQuelonrielons()) {
+        throw nelonw Clielonntelonxcelonption("Invalid relonquelonst: itelonrativelonQuelonrielons felonaturelon has belonelonn relonmovelond");
       }
 
-      // we parse the actual query from the user, if any
-      luceneQuery = null;
-      parsedQuery = null;  // this will be set by parseQueryHelper()
+      // welon parselon thelon actual quelonry from thelon uselonr, if any
+      lucelonnelonQuelonry = null;
+      parselondQuelonry = null;  // this will belon selont by parselonQuelonryHelonlpelonr()
 
-      if (searchQuery.getLikedByUserIDFilter64Size() > 0
-          && searchQuery.isSetLuceneQuery()) {
-        throw new ClientException("likedByUserIDFilter64 does not support with luceneQuery");
+      if (selonarchQuelonry.gelontLikelondByUselonrIDFiltelonr64Sizelon() > 0
+          && selonarchQuelonry.isSelontLucelonnelonQuelonry()) {
+        throw nelonw Clielonntelonxcelonption("likelondByUselonrIDFiltelonr64 doelons not support with lucelonnelonQuelonry");
       }
 
-      if (!StringUtils.isBlank(request.getSearchQuery().getSerializedQuery())) {
-        searcherStats.thriftQueryWithSerializedQuery.increment();
-        luceneQuery = parseSerializedQuery(searchQuery.getSerializedQuery(), parser, true);
-      } else if (!StringUtils.isBlank(request.getSearchQuery().getLuceneQuery())) {
-        searcherStats.thriftQueryWithLuceneQuery.increment();
-        luceneQuery = parseLuceneQuery(searchQuery.getLuceneQuery());
-        LOG.info("lucene query: {}", searchQuery.getLuceneQuery());
-        if (luceneQuery != null) {
-          LOG.info("Using lucene query directly from the request: " + luceneQuery.toString());
+      if (!StringUtils.isBlank(relonquelonst.gelontSelonarchQuelonry().gelontSelonrializelondQuelonry())) {
+        selonarchelonrStats.thriftQuelonryWithSelonrializelondQuelonry.increlonmelonnt();
+        lucelonnelonQuelonry = parselonSelonrializelondQuelonry(selonarchQuelonry.gelontSelonrializelondQuelonry(), parselonr, truelon);
+      } elonlselon if (!StringUtils.isBlank(relonquelonst.gelontSelonarchQuelonry().gelontLucelonnelonQuelonry())) {
+        selonarchelonrStats.thriftQuelonryWithLucelonnelonQuelonry.increlonmelonnt();
+        lucelonnelonQuelonry = parselonLucelonnelonQuelonry(selonarchQuelonry.gelontLucelonnelonQuelonry());
+        LOG.info("lucelonnelon quelonry: {}", selonarchQuelonry.gelontLucelonnelonQuelonry());
+        if (lucelonnelonQuelonry != null) {
+          LOG.info("Using lucelonnelon quelonry direlonctly from thelon relonquelonst: " + lucelonnelonQuelonry.toString());
         }
-      } else {
-        searcherStats.thriftQueryWithoutTextQuery.increment();
-        luceneQuery = parseSerializedQuery(
-            MATCH_ALL_SERIALIZED_QUERY,
-            parser,
-            queryMode != QueryMode.TERM_STATS);
+      } elonlselon {
+        selonarchelonrStats.thriftQuelonryWithoutTelonxtQuelonry.increlonmelonnt();
+        lucelonnelonQuelonry = parselonSelonrializelondQuelonry(
+            MATCH_ALL_SelonRIALIZelonD_QUelonRY,
+            parselonr,
+            quelonryModelon != QuelonryModelon.TelonRM_STATS);
       }
-    } catch (QueryParserException | BooleanQuery.TooManyClauses e) {
-      LOG.info("Exception parsing query during search", e);
-      appendMessage(e.getMessage());
-      throw new ClientException(e);
+    } catch (QuelonryParselonrelonxcelonption | BoolelonanQuelonry.TooManyClauselons elon) {
+      LOG.info("elonxcelonption parsing quelonry during selonarch", elon);
+      appelonndMelonssagelon(elon.gelontMelonssagelon());
+      throw nelonw Clielonntelonxcelonption(elon);
     }
   }
 
   /**
-   * Parses a serialized query and creates a Lucene query out of it.
+   * Parselons a selonrializelond quelonry and crelonatelons a Lucelonnelon quelonry out of it.
    *
-   * To see how serialized queries look like, go to go/searchsyntax.
+   * To selonelon how selonrializelond quelonrielons look likelon, go to go/selonarchsyntax.
    */
-  private Query parseSerializedQuery(
-      String serializedQuery,
-      SerializedQueryParser parser,
-      boolean shouldAdjustQueryBasedOnRequestParameters) throws QueryParserException {
-    // Parse the serialized query.
-    parsedQuery = parser.parse(serializedQuery);
-    if (parsedQuery == null) {
-      return null;
+  privatelon Quelonry parselonSelonrializelondQuelonry(
+      String selonrializelondQuelonry,
+      SelonrializelondQuelonryParselonr parselonr,
+      boolelonan shouldAdjustQuelonryBaselondOnRelonquelonstParamelontelonrs) throws QuelonryParselonrelonxcelonption {
+    // Parselon thelon selonrializelond quelonry.
+    parselondQuelonry = parselonr.parselon(selonrializelondQuelonry);
+    if (parselondQuelonry == null) {
+      relonturn null;
     }
 
-    // rewrite query if positive 'protected' operator is detected
-    if (parsedQuery.accept(new DetectPositiveOperatorVisitor(SearchOperatorConstants.PROTECTED))) {
-      POSITIVE_PROTECTED_OPERATOR_DETECTED_COUNTER.increment();
-      ProtectedOperatorQueryRewriter rewriter = new ProtectedOperatorQueryRewriter();
-      parsedQuery = rewriter.rewrite(
-          parsedQuery,
-          request.followedUserIds,
-          segmentManager.getUserTable());
+    // relonwritelon quelonry if positivelon 'protelonctelond' opelonrator is delontelonctelond
+    if (parselondQuelonry.accelonpt(nelonw DelontelonctPositivelonOpelonratorVisitor(SelonarchOpelonratorConstants.PROTelonCTelonD))) {
+      POSITIVelon_PROTelonCTelonD_OPelonRATOR_DelonTelonCTelonD_COUNTelonR.increlonmelonnt();
+      ProtelonctelondOpelonratorQuelonryRelonwritelonr relonwritelonr = nelonw ProtelonctelondOpelonratorQuelonryRelonwritelonr();
+      parselondQuelonry = relonwritelonr.relonwritelon(
+          parselondQuelonry,
+          relonquelonst.followelondUselonrIds,
+          selongmelonntManagelonr.gelontUselonrTablelon());
     }
 
-    ThriftSearchRelevanceOptions options = searchQuery.getRelevanceOptions();
-    if (shouldAdjustQueryBasedOnRequestParameters) {
-      // If likedByUserIDFilter64 is set, combine it with query
-      // Note: we deal with likedByUserIDFilter64 here instead of in postLuceneQueryProcess as we
-      // want annotate query with ranks.
-      if (searchQuery.isSetLikedByUserIDFilter64()
-          && searchQuery.getLikedByUserIDFilter64Size() > 0) {
-        parsedQuery = combineWithLikedByUserIdFilter64(
-            parsedQuery, searchQuery.getLikedByUserIDFilter64());
+    ThriftSelonarchRelonlelonvancelonOptions options = selonarchQuelonry.gelontRelonlelonvancelonOptions();
+    if (shouldAdjustQuelonryBaselondOnRelonquelonstParamelontelonrs) {
+      // If likelondByUselonrIDFiltelonr64 is selont, combinelon it with quelonry
+      // Notelon: welon delonal with likelondByUselonrIDFiltelonr64 helonrelon instelonad of in postLucelonnelonQuelonryProcelonss as welon
+      // want annotatelon quelonry with ranks.
+      if (selonarchQuelonry.isSelontLikelondByUselonrIDFiltelonr64()
+          && selonarchQuelonry.gelontLikelondByUselonrIDFiltelonr64Sizelon() > 0) {
+        parselondQuelonry = combinelonWithLikelondByUselonrIdFiltelonr64(
+            parselondQuelonry, selonarchQuelonry.gelontLikelondByUselonrIDFiltelonr64());
       }
 
-      // If namedListMap field is set, replace the named lists in the serialized query.
-      if (searchQuery.getNamedDisjunctionMapSize() > 0) {
-        parsedQuery = parsedQuery.accept(
-            new NamedDisjunctionVisitor(searchQuery.getNamedDisjunctionMap()));
+      // If namelondListMap fielonld is selont, relonplacelon thelon namelond lists in thelon selonrializelond quelonry.
+      if (selonarchQuelonry.gelontNamelondDisjunctionMapSizelon() > 0) {
+        parselondQuelonry = parselondQuelonry.accelonpt(
+            nelonw NamelondDisjunctionVisitor(selonarchQuelonry.gelontNamelondDisjunctionMap()));
       }
 
-      if (searchQuery.isSetRelevanceOptions()
-          && searchQuery.getRelevanceOptions().isCollectFieldHitAttributions()) {
-        // NOTE: Before we do any modifications to the serialized query tree, annotate the query
-        // nodes with their node rank in the original query.
-        this.hitAttributeHelper =
-            QueryHitAttributeHelper.from(parsedQuery, schemaSnapshot);
-        parsedQuery = hitAttributeHelper.getAnnotatedQuery();
+      if (selonarchQuelonry.isSelontRelonlelonvancelonOptions()
+          && selonarchQuelonry.gelontRelonlelonvancelonOptions().isCollelonctFielonldHitAttributions()) {
+        // NOTelon: Belonforelon welon do any modifications to thelon selonrializelond quelonry trelonelon, annotatelon thelon quelonry
+        // nodelons with thelonir nodelon rank in thelon original quelonry.
+        this.hitAttributelonHelonlpelonr =
+            QuelonryHitAttributelonHelonlpelonr.from(parselondQuelonry, schelonmaSnapshot);
+        parselondQuelonry = hitAttributelonHelonlpelonr.gelontAnnotatelondQuelonry();
       }
 
-      // Currently antisocial/nullcast tweets are dropped when we build index, but some tweets may
-      // become antisocial with realtime updates. For consistency, we should always filter out
-      // antisocial/nullcast tweets if the user is not explicitly including it.
-      final boolean allowAntisocial =
-          parsedQuery.accept(new DetectPositiveOperatorVisitor(SearchOperatorConstants.ANTISOCIAL));
+      // Currelonntly antisocial/nullcast twelonelonts arelon droppelond whelonn welon build indelonx, but somelon twelonelonts may
+      // beloncomelon antisocial with relonaltimelon updatelons. For consistelonncy, welon should always filtelonr out
+      // antisocial/nullcast twelonelonts if thelon uselonr is not elonxplicitly including it.
+      final boolelonan allowAntisocial =
+          parselondQuelonry.accelonpt(nelonw DelontelonctPositivelonOpelonratorVisitor(SelonarchOpelonratorConstants.ANTISOCIAL));
       if (!allowAntisocial) {
-        parsedQuery = QueryNodeUtils.appendAsConjunction(
-            parsedQuery,
-            QueryCacheConversionRules.CACHED_EXCLUDE_ANTISOCIAL);
+        parselondQuelonry = QuelonryNodelonUtils.appelonndAsConjunction(
+            parselondQuelonry,
+            QuelonryCachelonConvelonrsionRulelons.CACHelonD_elonXCLUDelon_ANTISOCIAL);
       }
-      parsedQueryAllowNullcast =
-          parsedQuery.accept(new DetectPositiveOperatorVisitor(SearchOperatorConstants.NULLCAST));
-      if (!parsedQueryAllowNullcast) {
-        parsedQuery = QueryNodeUtils.appendAsConjunction(
-            parsedQuery, new SearchOperator("filter", SearchOperatorConstants.NULLCAST).negate());
+      parselondQuelonryAllowNullcast =
+          parselondQuelonry.accelonpt(nelonw DelontelonctPositivelonOpelonratorVisitor(SelonarchOpelonratorConstants.NULLCAST));
+      if (!parselondQuelonryAllowNullcast) {
+        parselondQuelonry = QuelonryNodelonUtils.appelonndAsConjunction(
+            parselondQuelonry, nelonw SelonarchOpelonrator("filtelonr", SelonarchOpelonratorConstants.NULLCAST).nelongatelon());
       }
 
-      // Strip all annotations from the filters that will be converted to query cache filters.
-      // See SEARCH-15552.
-      parsedQuery = parsedQuery.accept(
-          new StripAnnotationsVisitor(QueryCacheConversionRules.STRIP_ANNOTATIONS_QUERIES));
+      // Strip all annotations from thelon filtelonrs that will belon convelonrtelond to quelonry cachelon filtelonrs.
+      // Selonelon SelonARCH-15552.
+      parselondQuelonry = parselondQuelonry.accelonpt(
+          nelonw StripAnnotationsVisitor(QuelonryCachelonConvelonrsionRulelons.STRIP_ANNOTATIONS_QUelonRIelonS));
 
-      // Convert certain filters into cached filters, also consolidate them.
-      parsedQuery = parsedQuery.accept(
-          new ConversionVisitor(QueryCacheConversionRules.DEFAULT_RULES));
+      // Convelonrt celonrtain filtelonrs into cachelond filtelonrs, also consolidatelon thelonm.
+      parselondQuelonry = parselondQuelonry.accelonpt(
+          nelonw ConvelonrsionVisitor(QuelonryCachelonConvelonrsionRulelons.DelonFAULT_RULelonS));
 
-      // add proximity if needed
+      // add proximity if nelonelondelond
       if (options != null
           && options.isProximityScoring()
-          && searchQuery.getRankingMode() != ThriftSearchRankingMode.RECENCY) {
-        parsedQuery = parsedQuery.accept(new ProximityGroupRewriteVisitor()).simplify();
+          && selonarchQuelonry.gelontRankingModelon() != ThriftSelonarchRankingModelon.RelonCelonNCY) {
+        parselondQuelonry = parselondQuelonry.accelonpt(nelonw ProximityGroupRelonwritelonVisitor()).simplify();
       }
     }
 
-    if (request.isSkipVeryRecentTweets()) {
-      parsedQuery = restrictQueryToFullyIndexedTweets(parsedQuery);
+    if (relonquelonst.isSkipVelonryReloncelonntTwelonelonts()) {
+      parselondQuelonry = relonstrictQuelonryToFullyIndelonxelondTwelonelonts(parselondQuelonry);
     }
 
-    parsedQuery = parsedQuery.simplify();
-    debugInfo.setParsedQuery(parsedQuery.serialize());
+    parselondQuelonry = parselondQuelonry.simplify();
+    delonbugInfo.selontParselondQuelonry(parselondQuelonry.selonrializelon());
 
-    // Extract top-level since-id for pagination optimizations.
-    idTimeRanges = IdTimeRanges.fromQuery(parsedQuery);
+    // elonxtract top-lelonvelonl sincelon-id for pagination optimizations.
+    idTimelonRangelons = IdTimelonRangelons.fromQuelonry(parselondQuelonry);
 
-    // Does any final processing specific to EarlybirdSearch class.
-    parsedQuery = preLuceneQueryProcess(parsedQuery);
+    // Doelons any final procelonssing speloncific to elonarlybirdSelonarch class.
+    parselondQuelonry = prelonLucelonnelonQuelonryProcelonss(parselondQuelonry);
 
-    // Convert to a lucene query.
-    EarlybirdLuceneQueryVisitor luceneVisitor = getLuceneVisitor(
-        options == null ? null : options.getFieldWeightMapOverride());
+    // Convelonrt to a lucelonnelon quelonry.
+    elonarlybirdLucelonnelonQuelonryVisitor lucelonnelonVisitor = gelontLucelonnelonVisitor(
+        options == null ? null : options.gelontFielonldWelonightMapOvelonrridelon());
 
     if (options != null) {
-      luceneVisitor
-          .setProximityPhraseWeight((float) options.getProximityPhraseWeight())
-          .setProximityPhraseSlop(options.getProximityPhraseSlop());
+      lucelonnelonVisitor
+          .selontProximityPhraselonWelonight((float) options.gelontProximityPhraselonWelonight())
+          .selontProximityPhraselonSlop(options.gelontProximityPhraselonSlop());
     }
 
-    // Propagate hit attribute helper to the lucene visitor if it has been setup.
-    luceneVisitor.setFieldHitAttributeHelper(this.hitAttributeHelper);
+    // Propagatelon hit attributelon helonlpelonr to thelon lucelonnelon visitor if it has belonelonn selontup.
+    lucelonnelonVisitor.selontFielonldHitAttributelonHelonlpelonr(this.hitAttributelonHelonlpelonr);
 
-    org.apache.lucene.search.Query query = parsedQuery.accept(luceneVisitor);
-    if (query != null) {
-      debugInfo.setLuceneQuery(query.toString());
+    org.apachelon.lucelonnelon.selonarch.Quelonry quelonry = parselondQuelonry.accelonpt(lucelonnelonVisitor);
+    if (quelonry != null) {
+      delonbugInfo.selontLucelonnelonQuelonry(quelonry.toString());
     }
 
-    queriedFields = luceneVisitor.getQueriedFields();
+    quelonrielondFielonlds = lucelonnelonVisitor.gelontQuelonrielondFielonlds();
 
-    return query;
+    relonturn quelonry;
   }
 
-  private Query parseLuceneQuery(String query) {
-    QueryParser parser = new QueryParser(
-        EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-        new SearchWhitespaceAnalyzer());
-    parser.setSplitOnWhitespace(true);
+  privatelon Quelonry parselonLucelonnelonQuelonry(String quelonry) {
+    QuelonryParselonr parselonr = nelonw QuelonryParselonr(
+        elonarlybirdFielonldConstant.TelonXT_FIelonLD.gelontFielonldNamelon(),
+        nelonw SelonarchWhitelonspacelonAnalyzelonr());
+    parselonr.selontSplitOnWhitelonspacelon(truelon);
     try {
-      return parser.parse(query);
-    } catch (ParseException e) {
-      LOG.error("Cannot parse raw lucene query: " + query, e);
-    } catch (NullPointerException e) {
-      LOG.error("NullPointerException while parsing raw lucene query: " + query
-          + ", probably your grammar is wrong.\n", e);
+      relonturn parselonr.parselon(quelonry);
+    } catch (Parselonelonxcelonption elon) {
+      LOG.elonrror("Cannot parselon raw lucelonnelon quelonry: " + quelonry, elon);
+    } catch (NullPointelonrelonxcelonption elon) {
+      LOG.elonrror("NullPointelonrelonxcelonption whilelon parsing raw lucelonnelon quelonry: " + quelonry
+          + ", probably your grammar is wrong.\n", elon);
     }
-    return null;
+    relonturn null;
   }
 
-  private com.twitter.search.queryparser.query.Query combineWithLikedByUserIdFilter64(
-      com.twitter.search.queryparser.query.Query query,
-      List<Long> ids) throws QueryParserException {
-    return QueryNodeUtils.appendAsConjunction(query, getLikedByUserIdQuery(ids));
+  privatelon com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry combinelonWithLikelondByUselonrIdFiltelonr64(
+      com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry quelonry,
+      List<Long> ids) throws QuelonryParselonrelonxcelonption {
+    relonturn QuelonryNodelonUtils.appelonndAsConjunction(quelonry, gelontLikelondByUselonrIdQuelonry(ids));
   }
 
   /**
-   * initSearcher initializes the segmentSearcher, and returns SUCCESS if OK
-   * or some other response code it not OK.
+   * initSelonarchelonr initializelons thelon selongmelonntSelonarchelonr, and relonturns SUCCelonSS if OK
+   * or somelon othelonr relonsponselon codelon it not OK.
    */
-  private EarlybirdResponseCode initSearcher() throws IOException {
-    searcher = null;
-    if (searchAllSegments) {
-      return initMultiSegmentSearcher();
-    } else {
-      return initSingleSegmentSearcher();
+  privatelon elonarlybirdRelonsponselonCodelon initSelonarchelonr() throws IOelonxcelonption {
+    selonarchelonr = null;
+    if (selonarchAllSelongmelonnts) {
+      relonturn initMultiSelongmelonntSelonarchelonr();
+    } elonlselon {
+      relonturn initSinglelonSelongmelonntSelonarchelonr();
     }
   }
 
-  private EarlybirdResponseCode initSingleSegmentSearcher() throws IOException {
-    if (segment == null) {
-      String message = "Segment not found for time slice: " + request.getSearchSegmentId();
-      LOG.warn(message);
-      appendMessage(message);
-      return EarlybirdResponseCode.PARTITION_NOT_FOUND;
+  privatelon elonarlybirdRelonsponselonCodelon initSinglelonSelongmelonntSelonarchelonr() throws IOelonxcelonption {
+    if (selongmelonnt == null) {
+      String melonssagelon = "Selongmelonnt not found for timelon slicelon: " + relonquelonst.gelontSelonarchSelongmelonntId();
+      LOG.warn(melonssagelon);
+      appelonndMelonssagelon(melonssagelon);
+      relonturn elonarlybirdRelonsponselonCodelon.PARTITION_NOT_FOUND;
     }
 
-    EarlybirdResponseCode code = this.segmentManager.checkSegment(segment);
-    if (code != EarlybirdResponseCode.SUCCESS) {
-      String message = "Segment " + segment + " either disabled or dropped";
-      LOG.warn(message);
-      appendMessage(message);
-      return code;
+    elonarlybirdRelonsponselonCodelon codelon = this.selongmelonntManagelonr.chelonckSelongmelonnt(selongmelonnt);
+    if (codelon != elonarlybirdRelonsponselonCodelon.SUCCelonSS) {
+      String melonssagelon = "Selongmelonnt " + selongmelonnt + " elonithelonr disablelond or droppelond";
+      LOG.warn(melonssagelon);
+      appelonndMelonssagelon(melonssagelon);
+      relonturn codelon;
     }
 
-    searcher = segmentManager.getSearcher(segment, schemaSnapshot);
-    if (searcher == null) {
-      String message = "Could not construct searcher for segment " + segment;
-      LOG.error(message);
-      appendMessage(message);
-      return EarlybirdResponseCode.PERSISTENT_ERROR;
-    } else {
-      appendMessage("Searching segment: " + segment);
-      return EarlybirdResponseCode.SUCCESS;
+    selonarchelonr = selongmelonntManagelonr.gelontSelonarchelonr(selongmelonnt, schelonmaSnapshot);
+    if (selonarchelonr == null) {
+      String melonssagelon = "Could not construct selonarchelonr for selongmelonnt " + selongmelonnt;
+      LOG.elonrror(melonssagelon);
+      appelonndMelonssagelon(melonssagelon);
+      relonturn elonarlybirdRelonsponselonCodelon.PelonRSISTelonNT_elonRROR;
+    } elonlselon {
+      appelonndMelonssagelon("Selonarching selongmelonnt: " + selongmelonnt);
+      relonturn elonarlybirdRelonsponselonCodelon.SUCCelonSS;
     }
   }
 
-  private EarlybirdResponseCode initMultiSegmentSearcher() throws IOException {
-    EarlybirdMultiSegmentSearcher multiSearcher =
-        segmentManager.getMultiSearcher(schemaSnapshot);
-    searcher = multiSearcher;
-    Preconditions.checkNotNull(searcher);
+  privatelon elonarlybirdRelonsponselonCodelon initMultiSelongmelonntSelonarchelonr() throws IOelonxcelonption {
+    elonarlybirdMultiSelongmelonntSelonarchelonr multiSelonarchelonr =
+        selongmelonntManagelonr.gelontMultiSelonarchelonr(schelonmaSnapshot);
+    selonarchelonr = multiSelonarchelonr;
+    Prelonconditions.chelonckNotNull(selonarchelonr);
 
-    // Set a top level since id to skip entire segments when possible.
-    multiSearcher.setIdTimeRanges(idTimeRanges);
-    return EarlybirdResponseCode.SUCCESS;
+    // Selont a top lelonvelonl sincelon id to skip elonntirelon selongmelonnts whelonn possiblelon.
+    multiSelonarchelonr.selontIdTimelonRangelons(idTimelonRangelons);
+    relonturn elonarlybirdRelonsponselonCodelon.SUCCelonSS;
   }
 
-  private com.twitter.search.queryparser.query.Query
-  restrictQueryToFullyIndexedTweets(com.twitter.search.queryparser.query.Query query) {
-    long untilTimeSeconds =
-        RecentTweetRestriction.recentTweetsUntilTime(decider, (int) (clock.nowMillis() / 1000));
-    if (untilTimeSeconds == 0) {
-      return query;
+  privatelon com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry
+  relonstrictQuelonryToFullyIndelonxelondTwelonelonts(com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry quelonry) {
+    long untilTimelonSelonconds =
+        ReloncelonntTwelonelontRelonstriction.reloncelonntTwelonelontsUntilTimelon(deloncidelonr, (int) (clock.nowMillis() / 1000));
+    if (untilTimelonSelonconds == 0) {
+      relonturn quelonry;
     }
 
-    SearchOperator timeLimit = new SearchOperator(UNTIL_TIME, untilTimeSeconds);
-    return new Conjunction(query, timeLimit);
+    SelonarchOpelonrator timelonLimit = nelonw SelonarchOpelonrator(UNTIL_TIMelon, untilTimelonSelonconds);
+    relonturn nelonw Conjunction(quelonry, timelonLimit);
   }
 
-  private EarlybirdResponse newResponse(EarlybirdResponseCode code, boolean setDebugInfo) {
-    EarlybirdResponse response = new EarlybirdResponse();
-    response.setResponseCode(code);
-    if (setDebugInfo) {
-      response.setDebugInfo(debugInfo);
-      if (messageBuffer.length() > 0) {
-        response.setDebugString(DatabaseConfig.getLocalHostname()
-                                + ":\n" + messageBuffer.toString());
+  privatelon elonarlybirdRelonsponselon nelonwRelonsponselon(elonarlybirdRelonsponselonCodelon codelon, boolelonan selontDelonbugInfo) {
+    elonarlybirdRelonsponselon relonsponselon = nelonw elonarlybirdRelonsponselon();
+    relonsponselon.selontRelonsponselonCodelon(codelon);
+    if (selontDelonbugInfo) {
+      relonsponselon.selontDelonbugInfo(delonbugInfo);
+      if (melonssagelonBuffelonr.lelonngth() > 0) {
+        relonsponselon.selontDelonbugString(DatabaselonConfig.gelontLocalHostnamelon()
+                                + ":\n" + melonssagelonBuffelonr.toString());
       }
     }
-    return response;
+    relonturn relonsponselon;
   }
 
-  private EarlybirdResponse respondError(EarlybirdResponseCode code) {
-    appendMessage("Responding with error code " + code);
-    // Always respond with an error message, even when request.debug is false
-    return newResponse(code, true);
+  privatelon elonarlybirdRelonsponselon relonspondelonrror(elonarlybirdRelonsponselonCodelon codelon) {
+    appelonndMelonssagelon("Relonsponding with elonrror codelon " + codelon);
+    // Always relonspond with an elonrror melonssagelon, elonvelonn whelonn relonquelonst.delonbug is falselon
+    relonturn nelonwRelonsponselon(codelon, truelon);
   }
 
-  @VisibleForTesting
-  public TerminationTracker getTerminationTracker() {
-    return terminationTracker;
+  @VisiblelonForTelonsting
+  public TelonrminationTrackelonr gelontTelonrminationTrackelonr() {
+    relonturn telonrminationTrackelonr;
   }
 
-  public void maybeSetCollectorDebugInfo(TwitterEarlyTerminationCollector collector) {
-    if (request.isSetDebugOptions() && request.getDebugOptions().isIncludeCollectorDebugInfo()) {
-      debugInfo.setCollectorDebugInfo(collector.getDebugInfo());
+  public void maybelonSelontCollelonctorDelonbugInfo(TwittelonrelonarlyTelonrminationCollelonctor collelonctor) {
+    if (relonquelonst.isSelontDelonbugOptions() && relonquelonst.gelontDelonbugOptions().isIncludelonCollelonctorDelonbugInfo()) {
+      delonbugInfo.selontCollelonctorDelonbugInfo(collelonctor.gelontDelonbugInfo());
     }
   }
 
-  public void setTermStatisticsDebugInfo(List<String> termStatisticsDebugInfo) {
-    debugInfo.setTermStatisticsDebugInfo(termStatisticsDebugInfo);
+  public void selontTelonrmStatisticsDelonbugInfo(List<String> telonrmStatisticsDelonbugInfo) {
+    delonbugInfo.selontTelonrmStatisticsDelonbugInfo(telonrmStatisticsDelonbugInfo);
   }
 
-  private EarlybirdResponse searchInternal() throws TransientException, ClientException {
-    searchResults = new ThriftSearchResults();
+  privatelon elonarlybirdRelonsponselon selonarchIntelonrnal() throws Transielonntelonxcelonption, Clielonntelonxcelonption {
+    selonarchRelonsults = nelonw ThriftSelonarchRelonsults();
 
-    SearchResultsInfo searchResultsInfo;
+    SelonarchRelonsultsInfo selonarchRelonsultsInfo;
     try {
-      switch (queryMode) {
-        case RECENCY:
-          searchResultsInfo = processRealtimeQuery();
-          break;
-        case RELEVANCE:
-          // Relevance search and Model-based search differ only on the scoring function used.
-          SearchTimer timer = searcherStats.createTimer();
-          timer.start();
-          searchResultsInfo = processRelevanceQuery();
-          timer.stop();
-          searcherStats.recordRelevanceStats(timer, request);
-          break;
-        case FACETS:
-          searchResultsInfo = processFacetsQuery();
-          break;
-        case TERM_STATS:
-          searchResultsInfo = processTermStatsQuery();
-          break;
-        case TOP_TWEETS:
-          searchResultsInfo = processTopTweetsQuery();
-          break;
-        default:
-          throw new TransientException("Unknown query mode " + queryMode);
+      switch (quelonryModelon) {
+        caselon RelonCelonNCY:
+          selonarchRelonsultsInfo = procelonssRelonaltimelonQuelonry();
+          brelonak;
+        caselon RelonLelonVANCelon:
+          // Relonlelonvancelon selonarch and Modelonl-baselond selonarch diffelonr only on thelon scoring function uselond.
+          SelonarchTimelonr timelonr = selonarchelonrStats.crelonatelonTimelonr();
+          timelonr.start();
+          selonarchRelonsultsInfo = procelonssRelonlelonvancelonQuelonry();
+          timelonr.stop();
+          selonarchelonrStats.reloncordRelonlelonvancelonStats(timelonr, relonquelonst);
+          brelonak;
+        caselon FACelonTS:
+          selonarchRelonsultsInfo = procelonssFacelontsQuelonry();
+          brelonak;
+        caselon TelonRM_STATS:
+          selonarchRelonsultsInfo = procelonssTelonrmStatsQuelonry();
+          brelonak;
+        caselon TOP_TWelonelonTS:
+          selonarchRelonsultsInfo = procelonssTopTwelonelontsQuelonry();
+          brelonak;
+        delonfault:
+          throw nelonw Transielonntelonxcelonption("Unknown quelonry modelon " + quelonryModelon);
       }
 
-      return respondSuccess(searchResults, facetResults, termStatisticsResults,
-          earlyTerminationInfo, searchResultsInfo);
-    } catch (IOException e) {
-      throw new TransientException(e.getMessage(), e);
+      relonturn relonspondSuccelonss(selonarchRelonsults, facelontRelonsults, telonrmStatisticsRelonsults,
+          elonarlyTelonrminationInfo, selonarchRelonsultsInfo);
+    } catch (IOelonxcelonption elon) {
+      throw nelonw Transielonntelonxcelonption(elon.gelontMelonssagelon(), elon);
     }
   }
 
   /**
-   * Helper method to process facets query.
+   * Helonlpelonr melonthod to procelonss facelonts quelonry.
    */
-  private SearchResultsInfo processFacetsQuery() throws ClientException, IOException {
-    // figure out which fields we need to count
-    FacetCountState facetCountState = newFacetCountState();
+  privatelon SelonarchRelonsultsInfo procelonssFacelontsQuelonry() throws Clielonntelonxcelonption, IOelonxcelonption {
+    // figurelon out which fielonlds welon nelonelond to count
+    FacelontCountStatelon facelontCountStatelon = nelonwFacelontCountStatelon();
 
-    // Additionally wrap our query into a skip list boolean query for faster counting.
-    if (!facetRequest.isUsingQueryCache()) {
-      // Only if all fields to be counted use skip lists, then we can add a required clause
-      // that filters out all results that do not contain those fields
-      boolean cannotAddRequiredClause = facetCountState.hasFieldToCountWithoutSkipList();
-      final Query facetSkipListFilter =
-          cannotAddRequiredClause ? null : FacetSkipList.getSkipListQuery(facetCountState);
-      final Query antisocialFilter = UserFlagsExcludeFilter.getUserFlagsExcludeFilter(
-          segmentManager.getUserTable(), true, true, false);
-      luceneQuery = wrapFilters(luceneQuery,
-          facetSkipListFilter,
-          antisocialFilter);
+    // Additionally wrap our quelonry into a skip list boolelonan quelonry for fastelonr counting.
+    if (!facelontRelonquelonst.isUsingQuelonryCachelon()) {
+      // Only if all fielonlds to belon countelond uselon skip lists, thelonn welon can add a relonquirelond clauselon
+      // that filtelonrs out all relonsults that do not contain thoselon fielonlds
+      boolelonan cannotAddRelonquirelondClauselon = facelontCountStatelon.hasFielonldToCountWithoutSkipList();
+      final Quelonry facelontSkipListFiltelonr =
+          cannotAddRelonquirelondClauselon ? null : FacelontSkipList.gelontSkipListQuelonry(facelontCountStatelon);
+      final Quelonry antisocialFiltelonr = UselonrFlagselonxcludelonFiltelonr.gelontUselonrFlagselonxcludelonFiltelonr(
+          selongmelonntManagelonr.gelontUselonrTablelon(), truelon, truelon, falselon);
+      lucelonnelonQuelonry = wrapFiltelonrs(lucelonnelonQuelonry,
+          facelontSkipListFiltelonr,
+          antisocialFiltelonr);
     }
 
-    facetResults = new ThriftFacetResults(new HashMap<>());
+    facelontRelonsults = nelonw ThriftFacelontRelonsults(nelonw HashMap<>());
 
-    FacetSearchRequestInfo searchRequestInfo =
-        new FacetSearchRequestInfo(searchQuery, facetRequest.getFacetRankingOptions(),
-            luceneQuery, facetCountState, terminationTracker);
-    searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    if (searchQuery.getMaxHitsPerUser() > 0) {
-      antiGamingFilter = new AntiGamingFilter(
-          searchQuery.getMaxHitsPerUser(),
-          searchQuery.getMaxTweepcredForAntiGaming(),
-          luceneQuery);
+    FacelontSelonarchRelonquelonstInfo selonarchRelonquelonstInfo =
+        nelonw FacelontSelonarchRelonquelonstInfo(selonarchQuelonry, facelontRelonquelonst.gelontFacelontRankingOptions(),
+            lucelonnelonQuelonry, facelontCountStatelon, telonrminationTrackelonr);
+    selonarchRelonquelonstInfo.selontIdTimelonRangelons(idTimelonRangelons);
+    if (selonarchQuelonry.gelontMaxHitsPelonrUselonr() > 0) {
+      antiGamingFiltelonr = nelonw AntiGamingFiltelonr(
+          selonarchQuelonry.gelontMaxHitsPelonrUselonr(),
+          selonarchQuelonry.gelontMaxTwelonelonpcrelondForAntiGaming(),
+          lucelonnelonQuelonry);
     }
 
-    AbstractResultsCollector<
-        FacetSearchRequestInfo, EarlybirdLuceneSearcher.FacetSearchResults> collector;
-    if (request.getDebugMode() > 2) {
-      collector = new ExplainFacetResultsCollector(schemaSnapshot,
-          searchRequestInfo, antiGamingFilter, searcherStats, clock, request.debugMode);
-    } else {
-      collector = new FacetResultsCollector(schemaSnapshot,
-          searchRequestInfo, antiGamingFilter, searcherStats, clock, request.debugMode);
+    AbstractRelonsultsCollelonctor<
+        FacelontSelonarchRelonquelonstInfo, elonarlybirdLucelonnelonSelonarchelonr.FacelontSelonarchRelonsults> collelonctor;
+    if (relonquelonst.gelontDelonbugModelon() > 2) {
+      collelonctor = nelonw elonxplainFacelontRelonsultsCollelonctor(schelonmaSnapshot,
+          selonarchRelonquelonstInfo, antiGamingFiltelonr, selonarchelonrStats, clock, relonquelonst.delonbugModelon);
+    } elonlselon {
+      collelonctor = nelonw FacelontRelonsultsCollelonctor(schelonmaSnapshot,
+          selonarchRelonquelonstInfo, antiGamingFiltelonr, selonarchelonrStats, clock, relonquelonst.delonbugModelon);
     }
 
-    setQueriesInDebugInfo(parsedQuery, searchRequestInfo.getLuceneQuery());
-    searcher.search(searchRequestInfo.getLuceneQuery(), collector);
-    EarlybirdLuceneSearcher.FacetSearchResults hits = collector.getResults();
+    selontQuelonrielonsInDelonbugInfo(parselondQuelonry, selonarchRelonquelonstInfo.gelontLucelonnelonQuelonry());
+    selonarchelonr.selonarch(selonarchRelonquelonstInfo.gelontLucelonnelonQuelonry(), collelonctor);
+    elonarlybirdLucelonnelonSelonarchelonr.FacelontSelonarchRelonsults hits = collelonctor.gelontRelonsults();
 
-    EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
-    earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
-    Set<Long> userIDWhitelist =
-        antiGamingFilter != null ? antiGamingFilter.getUserIDWhitelist() : null;
-    prepareFacetResults(facetResults, hits, facetCountState, userIDWhitelist,
-        request.getDebugMode());
-    facetResults.setUserIDWhitelist(userIDWhitelist);
+    elonarlybirdSelonarchRelonsultUtil.selontRelonsultStatistics(selonarchRelonsults, hits);
+    elonarlyTelonrminationInfo = elonarlybirdSelonarchRelonsultUtil.prelonparelonelonarlyTelonrminationInfo(hits);
+    Selont<Long> uselonrIDWhitelonlist =
+        antiGamingFiltelonr != null ? antiGamingFiltelonr.gelontUselonrIDWhitelonlist() : null;
+    prelonparelonFacelontRelonsults(facelontRelonsults, hits, facelontCountStatelon, uselonrIDWhitelonlist,
+        relonquelonst.gelontDelonbugModelon());
+    facelontRelonsults.selontUselonrIDWhitelonlist(uselonrIDWhitelonlist);
 
-    maybeSetCollectorDebugInfo(collector);
+    maybelonSelontCollelonctorDelonbugInfo(collelonctor);
 
-    if (collector instanceof ExplainFacetResultsCollector) {
-      ((ExplainFacetResultsCollector) collector).setExplanations(facetResults);
+    if (collelonctor instancelonof elonxplainFacelontRelonsultsCollelonctor) {
+      ((elonxplainFacelontRelonsultsCollelonctor) collelonctor).selontelonxplanations(facelontRelonsults);
     }
 
-    return hits;
+    relonturn hits;
   }
 
   /**
-   * Helper method to process term-stats query.
+   * Helonlpelonr melonthod to procelonss telonrm-stats quelonry.
    */
-  private SearchResultsInfo processTermStatsQuery() throws IOException {
-    // first extract the terms that we need to count
-    TermStatisticsRequestInfo searchRequestInfo =
-        new TermStatisticsRequestInfo(searchQuery, luceneQuery, termStatisticsRequest,
-            terminationTracker);
-    searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    setQueriesInDebugInfo(parsedQuery, searchRequestInfo.getLuceneQuery());
-    TermStatisticsCollector.TermStatisticsSearchResults hits =
-        searcher.collectTermStatistics(searchRequestInfo, this, request.getDebugMode());
-    EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
-    earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
-    if (hits.results != null) {
-      termStatisticsResults = new ThriftTermStatisticsResults();
-      prepareTermStatisticsResults(termStatisticsResults, hits, request.getDebugMode());
+  privatelon SelonarchRelonsultsInfo procelonssTelonrmStatsQuelonry() throws IOelonxcelonption {
+    // first elonxtract thelon telonrms that welon nelonelond to count
+    TelonrmStatisticsRelonquelonstInfo selonarchRelonquelonstInfo =
+        nelonw TelonrmStatisticsRelonquelonstInfo(selonarchQuelonry, lucelonnelonQuelonry, telonrmStatisticsRelonquelonst,
+            telonrminationTrackelonr);
+    selonarchRelonquelonstInfo.selontIdTimelonRangelons(idTimelonRangelons);
+    selontQuelonrielonsInDelonbugInfo(parselondQuelonry, selonarchRelonquelonstInfo.gelontLucelonnelonQuelonry());
+    TelonrmStatisticsCollelonctor.TelonrmStatisticsSelonarchRelonsults hits =
+        selonarchelonr.collelonctTelonrmStatistics(selonarchRelonquelonstInfo, this, relonquelonst.gelontDelonbugModelon());
+    elonarlybirdSelonarchRelonsultUtil.selontRelonsultStatistics(selonarchRelonsults, hits);
+    elonarlyTelonrminationInfo = elonarlybirdSelonarchRelonsultUtil.prelonparelonelonarlyTelonrminationInfo(hits);
+    if (hits.relonsults != null) {
+      telonrmStatisticsRelonsults = nelonw ThriftTelonrmStatisticsRelonsults();
+      prelonparelonTelonrmStatisticsRelonsults(telonrmStatisticsRelonsults, hits, relonquelonst.gelontDelonbugModelon());
     }
 
-    return hits;
+    relonturn hits;
   }
 
   /**
-   * Helper method to process realtime query.
+   * Helonlpelonr melonthod to procelonss relonaltimelon quelonry.
    */
-  private SearchResultsInfo processRealtimeQuery() throws IOException, ClientException {
-    // Disable maxHitsToProcess.
-    if (!collectorParams.isSetTerminationParams()) {
-      collectorParams.setTerminationParams(new CollectorTerminationParams());
-      collectorParams.getTerminationParams().setMaxHitsToProcess(-1);
-      COLLECTOR_PARAMS_MAX_HITS_TO_PROCESS_NOT_SET_COUNTER.increment();
+  privatelon SelonarchRelonsultsInfo procelonssRelonaltimelonQuelonry() throws IOelonxcelonption, Clielonntelonxcelonption {
+    // Disablelon maxHitsToProcelonss.
+    if (!collelonctorParams.isSelontTelonrminationParams()) {
+      collelonctorParams.selontTelonrminationParams(nelonw CollelonctorTelonrminationParams());
+      collelonctorParams.gelontTelonrminationParams().selontMaxHitsToProcelonss(-1);
+      COLLelonCTOR_PARAMS_MAX_HITS_TO_PROCelonSS_NOT_SelonT_COUNTelonR.increlonmelonnt();
     }
 
-    SearchRequestInfo searchRequestInfo = new SearchRequestInfo(
-      searchQuery, luceneQuery, terminationTracker);
-    searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    searchRequestInfo.setHitAttributeHelper(hitAttributeHelper);
-    searchRequestInfo.setTimestamp(getQueryTimestamp(searchQuery));
+    SelonarchRelonquelonstInfo selonarchRelonquelonstInfo = nelonw SelonarchRelonquelonstInfo(
+      selonarchQuelonry, lucelonnelonQuelonry, telonrminationTrackelonr);
+    selonarchRelonquelonstInfo.selontIdTimelonRangelons(idTimelonRangelons);
+    selonarchRelonquelonstInfo.selontHitAttributelonHelonlpelonr(hitAttributelonHelonlpelonr);
+    selonarchRelonquelonstInfo.selontTimelonstamp(gelontQuelonryTimelonstamp(selonarchQuelonry));
 
-    AbstractResultsCollector<SearchRequestInfo, SimpleSearchResults> collector;
-    if (searchQuery.isSetSocialFilterType()) {
-      if (!searchRequestInfo.getSearchQuery().isSetDirectFollowFilter()
-          || !searchRequestInfo.getSearchQuery().isSetTrustedFilter()) {
-        searcherStats.unsetFiltersForSocialFilterTypeQuery.increment();
-        throw new ClientException(
-            "SocialFilterType specified without a TrustedFilter or DirectFollowFilter");
+    AbstractRelonsultsCollelonctor<SelonarchRelonquelonstInfo, SimplelonSelonarchRelonsults> collelonctor;
+    if (selonarchQuelonry.isSelontSocialFiltelonrTypelon()) {
+      if (!selonarchRelonquelonstInfo.gelontSelonarchQuelonry().isSelontDirelonctFollowFiltelonr()
+          || !selonarchRelonquelonstInfo.gelontSelonarchQuelonry().isSelontTrustelondFiltelonr()) {
+        selonarchelonrStats.unselontFiltelonrsForSocialFiltelonrTypelonQuelonry.increlonmelonnt();
+        throw nelonw Clielonntelonxcelonption(
+            "SocialFiltelonrTypelon speloncifielond without a TrustelondFiltelonr or DirelonctFollowFiltelonr");
       }
-      SocialFilter socialFilter = new SocialFilter(
-          searchQuery.getSocialFilterType(),
-          searchRequestInfo.getSearchQuery().getSearcherId(),
-          searchRequestInfo.getSearchQuery().getTrustedFilter(),
-          searchRequestInfo.getSearchQuery().getDirectFollowFilter());
-      collector = new SocialSearchResultsCollector(
-          schemaSnapshot,
-          searchRequestInfo,
-          socialFilter,
-          searcherStats,
-          cluster,
-          segmentManager.getUserTable(),
-          request.getDebugMode());
-    } else {
-      collector = new SearchResultsCollector(
-          schemaSnapshot,
-          searchRequestInfo,
+      SocialFiltelonr socialFiltelonr = nelonw SocialFiltelonr(
+          selonarchQuelonry.gelontSocialFiltelonrTypelon(),
+          selonarchRelonquelonstInfo.gelontSelonarchQuelonry().gelontSelonarchelonrId(),
+          selonarchRelonquelonstInfo.gelontSelonarchQuelonry().gelontTrustelondFiltelonr(),
+          selonarchRelonquelonstInfo.gelontSelonarchQuelonry().gelontDirelonctFollowFiltelonr());
+      collelonctor = nelonw SocialSelonarchRelonsultsCollelonctor(
+          schelonmaSnapshot,
+          selonarchRelonquelonstInfo,
+          socialFiltelonr,
+          selonarchelonrStats,
+          clustelonr,
+          selongmelonntManagelonr.gelontUselonrTablelon(),
+          relonquelonst.gelontDelonbugModelon());
+    } elonlselon {
+      collelonctor = nelonw SelonarchRelonsultsCollelonctor(
+          schelonmaSnapshot,
+          selonarchRelonquelonstInfo,
           clock,
-          searcherStats,
-          cluster,
-          segmentManager.getUserTable(),
-          request.getDebugMode());
+          selonarchelonrStats,
+          clustelonr,
+          selongmelonntManagelonr.gelontUselonrTablelon(),
+          relonquelonst.gelontDelonbugModelon());
     }
 
-    setQueriesInDebugInfo(parsedQuery, luceneQuery);
-    searcher.search(luceneQuery, collector);
+    selontQuelonrielonsInDelonbugInfo(parselondQuelonry, lucelonnelonQuelonry);
+    selonarchelonr.selonarch(lucelonnelonQuelonry, collelonctor);
 
-    SimpleSearchResults hits = collector.getResults();
+    SimplelonSelonarchRelonsults hits = collelonctor.gelontRelonsults();
 
-    EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
-    earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
-    EarlybirdSearchResultUtil.prepareResultsArray(
-        searchResults.getResults(), hits, request.debugMode > 0 ? partitionConfig : null);
-    searchResults.setHitCounts(collector.getHitCountMap());
+    elonarlybirdSelonarchRelonsultUtil.selontRelonsultStatistics(selonarchRelonsults, hits);
+    elonarlyTelonrminationInfo = elonarlybirdSelonarchRelonsultUtil.prelonparelonelonarlyTelonrminationInfo(hits);
+    elonarlybirdSelonarchRelonsultUtil.prelonparelonRelonsultsArray(
+        selonarchRelonsults.gelontRelonsults(), hits, relonquelonst.delonbugModelon > 0 ? partitionConfig : null);
+    selonarchRelonsults.selontHitCounts(collelonctor.gelontHitCountMap());
 
-    maybeSetCollectorDebugInfo(collector);
+    maybelonSelontCollelonctorDelonbugInfo(collelonctor);
 
-    addResultPayloads();
+    addRelonsultPayloads();
 
-    return hits;
+    relonturn hits;
   }
 
   /**
-   * Helper method to process relevance query.
+   * Helonlpelonr melonthod to procelonss relonlelonvancelon quelonry.
    */
-  private SearchResultsInfo processRelevanceQuery() throws IOException, ClientException {
-    if (!searchQuery.isSetRelevanceOptions()) {
-      LOG.warn("Relevance query with no relevance options!");
-      searchQuery.setRelevanceOptions(new ThriftSearchRelevanceOptions());
+  privatelon SelonarchRelonsultsInfo procelonssRelonlelonvancelonQuelonry() throws IOelonxcelonption, Clielonntelonxcelonption {
+    if (!selonarchQuelonry.isSelontRelonlelonvancelonOptions()) {
+      LOG.warn("Relonlelonvancelon quelonry with no relonlelonvancelon options!");
+      selonarchQuelonry.selontRelonlelonvancelonOptions(nelonw ThriftSelonarchRelonlelonvancelonOptions());
     }
 
-    // Note: today the assumption is that if you specify hasSpecifiedTweets,
-    // you really do want all tweets scored and returned.
-    final boolean hasSpecifiedTweets = searchQuery.getSearchStatusIdsSize() > 0;
-    if (hasSpecifiedTweets) {
-      collectorParams.setNumResultsToReturn(searchQuery.getSearchStatusIdsSize());
+    // Notelon: today thelon assumption is that if you speloncify hasSpeloncifielondTwelonelonts,
+    // you relonally do want all twelonelonts scorelond and relonturnelond.
+    final boolelonan hasSpeloncifielondTwelonelonts = selonarchQuelonry.gelontSelonarchStatusIdsSizelon() > 0;
+    if (hasSpeloncifielondTwelonelonts) {
+      collelonctorParams.selontNumRelonsultsToRelonturn(selonarchQuelonry.gelontSelonarchStatusIdsSizelon());
     }
-    // If we have explicit user ids, we will want to look at all results from those users, and will
-    // not need to use the AntiGamingFilter.
-    final boolean hasSpecifiedFromUserIds = searchQuery.getFromUserIDFilter64Size() > 0;
+    // If welon havelon elonxplicit uselonr ids, welon will want to look at all relonsults from thoselon uselonrs, and will
+    // not nelonelond to uselon thelon AntiGamingFiltelonr.
+    final boolelonan hasSpeloncifielondFromUselonrIds = selonarchQuelonry.gelontFromUselonrIDFiltelonr64Sizelon() > 0;
 
-    createRelevanceAntiGamingFilter(hasSpecifiedTweets, hasSpecifiedFromUserIds);
+    crelonatelonRelonlelonvancelonAntiGamingFiltelonr(hasSpeloncifielondTwelonelonts, hasSpeloncifielondFromUselonrIds);
 
-    if (searchQuery.getRelevanceOptions().isSetRankingParams()) {
-      ThriftRankingParams rankingParams = searchQuery.getRelevanceOptions().getRankingParams();
+    if (selonarchQuelonry.gelontRelonlelonvancelonOptions().isSelontRankingParams()) {
+      ThriftRankingParams rankingParams = selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontRankingParams();
 
-      // The score adjustment signals that are passed in the request are disabled for the archive
-      // cluster or when the features are decidered off. If the request provides those fields,
-      // we unset them since checking the hashmap when scoring can cause a slight bump in
-      // latency.
+      // Thelon scorelon adjustmelonnt signals that arelon passelond in thelon relonquelonst arelon disablelond for thelon archivelon
+      // clustelonr or whelonn thelon felonaturelons arelon deloncidelonrelond off. If thelon relonquelonst providelons thoselon fielonlds,
+      // welon unselont thelonm sincelon cheloncking thelon hashmap whelonn scoring can causelon a slight bump in
+      // latelonncy.
       //
-      // Verify that the signal query specific scores for tweets signal is enabled
-      if (rankingParams.isSetQuerySpecificScoreAdjustments()) {
-        if (ALLOW_QUERY_SPECIFIC_SIGNAL_CONFIG
-            && DeciderUtil.isAvailableForRandomRecipient(
-            decider, ALLOW_QUERY_SPECIFIC_SIGNAL_DECIDER_KEY)) {
-          searcherStats.querySpecificSignalQueriesUsed.increment();
-          searcherStats.querySpecificSignalMapTotalSize.add(
-              rankingParams.getQuerySpecificScoreAdjustmentsSize());
-        } else {
-          searchQuery.getRelevanceOptions().getRankingParams().unsetQuerySpecificScoreAdjustments();
-          searcherStats.querySpecificSignalQueriesErased.increment();
+      // Velonrify that thelon signal quelonry speloncific scorelons for twelonelonts signal is elonnablelond
+      if (rankingParams.isSelontQuelonrySpeloncificScorelonAdjustmelonnts()) {
+        if (ALLOW_QUelonRY_SPelonCIFIC_SIGNAL_CONFIG
+            && DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(
+            deloncidelonr, ALLOW_QUelonRY_SPelonCIFIC_SIGNAL_DelonCIDelonR_KelonY)) {
+          selonarchelonrStats.quelonrySpeloncificSignalQuelonrielonsUselond.increlonmelonnt();
+          selonarchelonrStats.quelonrySpeloncificSignalMapTotalSizelon.add(
+              rankingParams.gelontQuelonrySpeloncificScorelonAdjustmelonntsSizelon());
+        } elonlselon {
+          selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontRankingParams().unselontQuelonrySpeloncificScorelonAdjustmelonnts();
+          selonarchelonrStats.quelonrySpeloncificSignalQuelonrielonselonraselond.increlonmelonnt();
         }
       }
 
-      // Verify that the signal author specific scores signal is enabled
-      if (rankingParams.isSetAuthorSpecificScoreAdjustments()) {
-        if (ALLOW_AUTHOR_SPECIFIC_SIGNAL_CONFIG
-            && DeciderUtil.isAvailableForRandomRecipient(
-            decider, ALLOW_AUTHOR_SPECIFIC_SIGNAL_DECIDER_KEY)) {
-          searcherStats.authorSpecificSignalQueriesUsed.increment();
-          searcherStats.authorSpecificSignalMapTotalSize.add(
-              rankingParams.getAuthorSpecificScoreAdjustmentsSize());
-        } else {
-          searchQuery.getRelevanceOptions().getRankingParams()
-              .unsetAuthorSpecificScoreAdjustments();
-          searcherStats.authorSpecificSignalQueriesErased.increment();
+      // Velonrify that thelon signal author speloncific scorelons signal is elonnablelond
+      if (rankingParams.isSelontAuthorSpeloncificScorelonAdjustmelonnts()) {
+        if (ALLOW_AUTHOR_SPelonCIFIC_SIGNAL_CONFIG
+            && DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(
+            deloncidelonr, ALLOW_AUTHOR_SPelonCIFIC_SIGNAL_DelonCIDelonR_KelonY)) {
+          selonarchelonrStats.authorSpeloncificSignalQuelonrielonsUselond.increlonmelonnt();
+          selonarchelonrStats.authorSpeloncificSignalMapTotalSizelon.add(
+              rankingParams.gelontAuthorSpeloncificScorelonAdjustmelonntsSizelon());
+        } elonlselon {
+          selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontRankingParams()
+              .unselontAuthorSpeloncificScorelonAdjustmelonnts();
+          selonarchelonrStats.authorSpeloncificSignalQuelonrielonselonraselond.increlonmelonnt();
         }
       }
     }
 
     ScoringFunction scoringFunction =
-        new ScoringFunctionProvider.DefaultScoringFunctionProvider(
-            request, schemaSnapshot, searchQuery, antiGamingFilter,
-            segmentManager.getUserTable(), hitAttributeHelper,
-            parsedQuery, scoringModelsManager, tensorflowModelsManager)
-            .getScoringFunction();
-    scoringFunction.setDebugMode(request.getDebugMode());
+        nelonw ScoringFunctionProvidelonr.DelonfaultScoringFunctionProvidelonr(
+            relonquelonst, schelonmaSnapshot, selonarchQuelonry, antiGamingFiltelonr,
+            selongmelonntManagelonr.gelontUselonrTablelon(), hitAttributelonHelonlpelonr,
+            parselondQuelonry, scoringModelonlsManagelonr, telonnsorflowModelonlsManagelonr)
+            .gelontScoringFunction();
+    scoringFunction.selontDelonbugModelon(relonquelonst.gelontDelonbugModelon());
 
-    RelevanceQuery relevanceQuery = new RelevanceQuery(luceneQuery, scoringFunction);
-    RelevanceSearchRequestInfo searchRequestInfo =
-        new RelevanceSearchRequestInfo(
-            searchQuery, relevanceQuery, terminationTracker, qualityFactor);
-    searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    searchRequestInfo.setHitAttributeHelper(hitAttributeHelper);
-    searchRequestInfo.setTimestamp(getQueryTimestamp(searchQuery));
+    RelonlelonvancelonQuelonry relonlelonvancelonQuelonry = nelonw RelonlelonvancelonQuelonry(lucelonnelonQuelonry, scoringFunction);
+    RelonlelonvancelonSelonarchRelonquelonstInfo selonarchRelonquelonstInfo =
+        nelonw RelonlelonvancelonSelonarchRelonquelonstInfo(
+            selonarchQuelonry, relonlelonvancelonQuelonry, telonrminationTrackelonr, qualityFactor);
+    selonarchRelonquelonstInfo.selontIdTimelonRangelons(idTimelonRangelons);
+    selonarchRelonquelonstInfo.selontHitAttributelonHelonlpelonr(hitAttributelonHelonlpelonr);
+    selonarchRelonquelonstInfo.selontTimelonstamp(gelontQuelonryTimelonstamp(selonarchQuelonry));
 
-    if (shouldUseTensorFlowCollector()
-        && searchQuery.getRelevanceOptions().isUseRelevanceAllCollector()) {
-      throw new ClientException("Tensorflow scoring does not work with the RelevanceAllCollector");
+    if (shouldUselonTelonnsorFlowCollelonctor()
+        && selonarchQuelonry.gelontRelonlelonvancelonOptions().isUselonRelonlelonvancelonAllCollelonctor()) {
+      throw nelonw Clielonntelonxcelonption("Telonnsorflow scoring doelons not work with thelon RelonlelonvancelonAllCollelonctor");
     }
 
-    final AbstractRelevanceCollector collector;
-    // First check if the Tensorflow results collector should be used, because the
-    // TensorflowBasedScoringFunction only works with the BatchRelevanceTopCollector
-    if (shouldUseTensorFlowCollector()) {
-      // Collect top numResults.
-      collector = new BatchRelevanceTopCollector(
-          schemaSnapshot,
-          searchRequestInfo,
+    final AbstractRelonlelonvancelonCollelonctor collelonctor;
+    // First chelonck if thelon Telonnsorflow relonsults collelonctor should belon uselond, beloncauselon thelon
+    // TelonnsorflowBaselondScoringFunction only works with thelon BatchRelonlelonvancelonTopCollelonctor
+    if (shouldUselonTelonnsorFlowCollelonctor()) {
+      // Collelonct top numRelonsults.
+      collelonctor = nelonw BatchRelonlelonvancelonTopCollelonctor(
+          schelonmaSnapshot,
+          selonarchRelonquelonstInfo,
           scoringFunction,
-          searcherStats,
-          cluster,
-          segmentManager.getUserTable(),
+          selonarchelonrStats,
+          clustelonr,
+          selongmelonntManagelonr.gelontUselonrTablelon(),
           clock,
-          request.getDebugMode());
-    } else if (hasSpecifiedTweets
-        || searchQuery.getRelevanceOptions().isUseRelevanceAllCollector()) {
-      // Collect all.
-      collector = new RelevanceAllCollector(
-          schemaSnapshot,
-          searchRequestInfo,
+          relonquelonst.gelontDelonbugModelon());
+    } elonlselon if (hasSpeloncifielondTwelonelonts
+        || selonarchQuelonry.gelontRelonlelonvancelonOptions().isUselonRelonlelonvancelonAllCollelonctor()) {
+      // Collelonct all.
+      collelonctor = nelonw RelonlelonvancelonAllCollelonctor(
+          schelonmaSnapshot,
+          selonarchRelonquelonstInfo,
           scoringFunction,
-          searcherStats,
-          cluster,
-          segmentManager.getUserTable(),
+          selonarchelonrStats,
+          clustelonr,
+          selongmelonntManagelonr.gelontUselonrTablelon(),
           clock,
-          request.getDebugMode());
-    } else {
-      // Collect top numResults.
-      collector = new RelevanceTopCollector(
-          schemaSnapshot,
-          searchRequestInfo,
+          relonquelonst.gelontDelonbugModelon());
+    } elonlselon {
+      // Collelonct top numRelonsults.
+      collelonctor = nelonw RelonlelonvancelonTopCollelonctor(
+          schelonmaSnapshot,
+          selonarchRelonquelonstInfo,
           scoringFunction,
-          searcherStats,
-          cluster,
-          segmentManager.getUserTable(),
+          selonarchelonrStats,
+          clustelonr,
+          selongmelonntManagelonr.gelontUselonrTablelon(),
           clock,
-          request.getDebugMode());
+          relonquelonst.gelontDelonbugModelon());
     }
 
-    // Make sure that the Tensorflow scoring function and the Tensorflow results collector are
-    // always used together. If this fails it will result in a TRANSIENT_ERROR response.
-    Preconditions.checkState((collector instanceof BatchRelevanceTopCollector)
-        == (scoringFunction instanceof TensorflowBasedScoringFunction));
+    // Makelon surelon that thelon Telonnsorflow scoring function and thelon Telonnsorflow relonsults collelonctor arelon
+    // always uselond togelonthelonr. If this fails it will relonsult in a TRANSIelonNT_elonRROR relonsponselon.
+    Prelonconditions.chelonckStatelon((collelonctor instancelonof BatchRelonlelonvancelonTopCollelonctor)
+        == (scoringFunction instancelonof TelonnsorflowBaselondScoringFunction));
 
-    setQueriesInDebugInfo(parsedQuery, searchRequestInfo.getLuceneQuery());
-    searcher.search(searchRequestInfo.getLuceneQuery(), collector);
+    selontQuelonrielonsInDelonbugInfo(parselondQuelonry, selonarchRelonquelonstInfo.gelontLucelonnelonQuelonry());
+    selonarchelonr.selonarch(selonarchRelonquelonstInfo.gelontLucelonnelonQuelonry(), collelonctor);
 
-    RelevanceSearchResults hits = collector.getResults();
-    EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
-    searchResults.setScoringTimeNanos(hits.getScoringTimeNanos());
+    RelonlelonvancelonSelonarchRelonsults hits = collelonctor.gelontRelonsults();
+    elonarlybirdSelonarchRelonsultUtil.selontRelonsultStatistics(selonarchRelonsults, hits);
+    selonarchRelonsults.selontScoringTimelonNanos(hits.gelontScoringTimelonNanos());
 
-    earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
-    EarlybirdSearchResultUtil.setLanguageHistogram(searchResults, collector.getLanguageHistogram());
-    EarlybirdSearchResultUtil.prepareRelevanceResultsArray(
-        searchResults.getResults(),
+    elonarlyTelonrminationInfo = elonarlybirdSelonarchRelonsultUtil.prelonparelonelonarlyTelonrminationInfo(hits);
+    elonarlybirdSelonarchRelonsultUtil.selontLanguagelonHistogram(selonarchRelonsults, collelonctor.gelontLanguagelonHistogram());
+    elonarlybirdSelonarchRelonsultUtil.prelonparelonRelonlelonvancelonRelonsultsArray(
+        selonarchRelonsults.gelontRelonsults(),
         hits,
-        antiGamingFilter != null ? antiGamingFilter.getUserIDWhitelist() : null,
-        request.getDebugMode() > 0 ? partitionConfig : null);
+        antiGamingFiltelonr != null ? antiGamingFiltelonr.gelontUselonrIDWhitelonlist() : null,
+        relonquelonst.gelontDelonbugModelon() > 0 ? partitionConfig : null);
 
-    searchResults.setHitCounts(collector.getHitCountMap());
-    searchResults.setRelevanceStats(hits.getRelevanceStats());
+    selonarchRelonsults.selontHitCounts(collelonctor.gelontHitCountMap());
+    selonarchRelonsults.selontRelonlelonvancelonStats(hits.gelontRelonlelonvancelonStats());
 
-    maybeSetCollectorDebugInfo(collector);
+    maybelonSelontCollelonctorDelonbugInfo(collelonctor);
 
-    if (explanationsEnabled(request.getDebugMode())) {
-      searcher.explainSearchResults(searchRequestInfo, hits, searchResults);
+    if (elonxplanationselonnablelond(relonquelonst.gelontDelonbugModelon())) {
+      selonarchelonr.elonxplainSelonarchRelonsults(selonarchRelonquelonstInfo, hits, selonarchRelonsults);
     }
 
-    addResultPayloads();
+    addRelonsultPayloads();
 
-    return hits;
+    relonturn hits;
   }
 
-  public static boolean explanationsEnabled(int debugLevel) {
-    return debugLevel > 1;
+  public static boolelonan elonxplanationselonnablelond(int delonbugLelonvelonl) {
+    relonturn delonbugLelonvelonl > 1;
   }
 
-  private boolean shouldUseTensorFlowCollector() {
-    return tensorflowModelsManager.isEnabled()
-        && searchQuery.getRelevanceOptions().isSetRankingParams()
-        && searchQuery.getRelevanceOptions().getRankingParams().isSetType()
-        && searchQuery.getRelevanceOptions().getRankingParams().getType()
-        == ThriftScoringFunctionType.TENSORFLOW_BASED;
+  privatelon boolelonan shouldUselonTelonnsorFlowCollelonctor() {
+    relonturn telonnsorflowModelonlsManagelonr.iselonnablelond()
+        && selonarchQuelonry.gelontRelonlelonvancelonOptions().isSelontRankingParams()
+        && selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontRankingParams().isSelontTypelon()
+        && selonarchQuelonry.gelontRelonlelonvancelonOptions().gelontRankingParams().gelontTypelon()
+        == ThriftScoringFunctionTypelon.TelonNSORFLOW_BASelonD;
   }
   /**
-   * Optionally, if requested and needed, will create a new AntiGamingFilter. Otherwize, no
-   * AntiGamingFilter will be used for this query.
-   * @param hasSpecifiedTweets whether the request has searchStatusIds specified.
-   * @param hasSpecifiedFromUserIds whether the request has fromUserIDFilter64 specified.
+   * Optionally, if relonquelonstelond and nelonelondelond, will crelonatelon a nelonw AntiGamingFiltelonr. Othelonrwizelon, no
+   * AntiGamingFiltelonr will belon uselond for this quelonry.
+   * @param hasSpeloncifielondTwelonelonts whelonthelonr thelon relonquelonst has selonarchStatusIds speloncifielond.
+   * @param hasSpeloncifielondFromUselonrIds whelonthelonr thelon relonquelonst has fromUselonrIDFiltelonr64 speloncifielond.
    */
-  private void createRelevanceAntiGamingFilter(
-      boolean hasSpecifiedTweets, boolean hasSpecifiedFromUserIds) {
+  privatelon void crelonatelonRelonlelonvancelonAntiGamingFiltelonr(
+      boolelonan hasSpeloncifielondTwelonelonts, boolelonan hasSpeloncifielondFromUselonrIds) {
 
-    // Anti-gaming filter (turned off for specified tweets mode, or when you're explicitly asking
-    // for specific users' tweets).
-    if (searchQuery.getMaxHitsPerUser() > 0 && !hasSpecifiedTweets && !hasSpecifiedFromUserIds) {
-      searcherStats.relevanceAntiGamingFilterUsed.increment();
-      antiGamingFilter = new AntiGamingFilter(
-          searchQuery.getMaxHitsPerUser(),
-          searchQuery.getMaxTweepcredForAntiGaming(),
-          luceneQuery);
-    } else if (searchQuery.getMaxHitsPerUser() <= 0) {
-      searcherStats.relevanceAntiGamingFilterNotRequested.increment();
-    } else if (hasSpecifiedTweets && hasSpecifiedFromUserIds) {
-      searcherStats.relevanceAntiGamingFilterSpecifiedTweetsAndFromUserIds.increment();
-    } else if (hasSpecifiedTweets) {
-      searcherStats.relevanceAntiGamingFilterSpecifiedTweets.increment();
-    } else if (hasSpecifiedFromUserIds) {
-      searcherStats.relevanceAntiGamingFilterSpecifiedFromUserIds.increment();
+    // Anti-gaming filtelonr (turnelond off for speloncifielond twelonelonts modelon, or whelonn you'relon elonxplicitly asking
+    // for speloncific uselonrs' twelonelonts).
+    if (selonarchQuelonry.gelontMaxHitsPelonrUselonr() > 0 && !hasSpeloncifielondTwelonelonts && !hasSpeloncifielondFromUselonrIds) {
+      selonarchelonrStats.relonlelonvancelonAntiGamingFiltelonrUselond.increlonmelonnt();
+      antiGamingFiltelonr = nelonw AntiGamingFiltelonr(
+          selonarchQuelonry.gelontMaxHitsPelonrUselonr(),
+          selonarchQuelonry.gelontMaxTwelonelonpcrelondForAntiGaming(),
+          lucelonnelonQuelonry);
+    } elonlselon if (selonarchQuelonry.gelontMaxHitsPelonrUselonr() <= 0) {
+      selonarchelonrStats.relonlelonvancelonAntiGamingFiltelonrNotRelonquelonstelond.increlonmelonnt();
+    } elonlselon if (hasSpeloncifielondTwelonelonts && hasSpeloncifielondFromUselonrIds) {
+      selonarchelonrStats.relonlelonvancelonAntiGamingFiltelonrSpeloncifielondTwelonelontsAndFromUselonrIds.increlonmelonnt();
+    } elonlselon if (hasSpeloncifielondTwelonelonts) {
+      selonarchelonrStats.relonlelonvancelonAntiGamingFiltelonrSpeloncifielondTwelonelonts.increlonmelonnt();
+    } elonlselon if (hasSpeloncifielondFromUselonrIds) {
+      selonarchelonrStats.relonlelonvancelonAntiGamingFiltelonrSpeloncifielondFromUselonrIds.increlonmelonnt();
     }
   }
 
   /**
-   * Check to make sure that there are no nullcast documents in results.  If there exists nullcasts
-   * in results, we should log error and increment counters correspondingly.
+   * Chelonck to makelon surelon that thelonrelon arelon no nullcast documelonnts in relonsults.  If thelonrelon elonxists nullcasts
+   * in relonsults, welon should log elonrror and increlonmelonnt countelonrs correlonspondingly.
    */
-  @VisibleForTesting
-  public void logAndIncrementStatsIfNullcastInResults(ThriftSearchResults thriftSearchResults) {
-    if (!thriftSearchResults.isSetResults()) {
-      return;
+  @VisiblelonForTelonsting
+  public void logAndIncrelonmelonntStatsIfNullcastInRelonsults(ThriftSelonarchRelonsults thriftSelonarchRelonsults) {
+    if (!thriftSelonarchRelonsults.isSelontRelonsults()) {
+      relonturn;
     }
 
-    Set<Long> unexpectedNullcastStatusIds =
-        EarlybirdResponseUtil.findUnexpectedNullcastStatusIds(thriftSearchResults, request);
+    Selont<Long> unelonxpelonctelondNullcastStatusIds =
+        elonarlybirdRelonsponselonUtil.findUnelonxpelonctelondNullcastStatusIds(thriftSelonarchRelonsults, relonquelonst);
 
-    if (!unexpectedNullcastStatusIds.isEmpty()) {
-      searcherStats.nullcastUnexpectedQueries.increment();
-      searcherStats.nullcastUnexpectedResults.add(unexpectedNullcastStatusIds.size());
+    if (!unelonxpelonctelondNullcastStatusIds.iselonmpty()) {
+      selonarchelonrStats.nullcastUnelonxpelonctelondQuelonrielons.increlonmelonnt();
+      selonarchelonrStats.nullcastUnelonxpelonctelondRelonsults.add(unelonxpelonctelondNullcastStatusIds.sizelon());
 
-      String base64Request;
+      String baselon64Relonquelonst;
       try {
-        base64Request = ThriftUtils.toBase64EncodedString(request);
-      } catch (TException e) {
-        base64Request = "Failed to parse base 64 request";
+        baselon64Relonquelonst = ThriftUtils.toBaselon64elonncodelondString(relonquelonst);
+      } catch (Telonxcelonption elon) {
+        baselon64Relonquelonst = "Failelond to parselon baselon 64 relonquelonst";
       }
-      LOG.error(
-          "Found unexpected nullcast tweets: {} | parsedQuery: {} | request: {} | response: {} | "
-              + "request base 64: {}",
-          Joiner.on(",").join(unexpectedNullcastStatusIds),
-          parsedQuery.serialize(),
-          request,
-          thriftSearchResults,
-          base64Request);
+      LOG.elonrror(
+          "Found unelonxpelonctelond nullcast twelonelonts: {} | parselondQuelonry: {} | relonquelonst: {} | relonsponselon: {} | "
+              + "relonquelonst baselon 64: {}",
+          Joinelonr.on(",").join(unelonxpelonctelondNullcastStatusIds),
+          parselondQuelonry.selonrializelon(),
+          relonquelonst,
+          thriftSelonarchRelonsults,
+          baselon64Relonquelonst);
     }
   }
 
-  private void addResultPayloads() throws IOException {
-    if (searchQuery.getResultMetadataOptions() != null) {
-      if (searchQuery.getResultMetadataOptions().isGetTweetUrls()) {
-        searcher.fillFacetResults(new ExpandedUrlCollector(), searchResults);
+  privatelon void addRelonsultPayloads() throws IOelonxcelonption {
+    if (selonarchQuelonry.gelontRelonsultMelontadataOptions() != null) {
+      if (selonarchQuelonry.gelontRelonsultMelontadataOptions().isGelontTwelonelontUrls()) {
+        selonarchelonr.fillFacelontRelonsults(nelonw elonxpandelondUrlCollelonctor(), selonarchRelonsults);
       }
 
-      if (searchQuery.getResultMetadataOptions().isGetNamedEntities()) {
-        searcher.fillFacetResults(new NamedEntityCollector(), searchResults);
+      if (selonarchQuelonry.gelontRelonsultMelontadataOptions().isGelontNamelondelonntitielons()) {
+        selonarchelonr.fillFacelontRelonsults(nelonw NamelondelonntityCollelonctor(), selonarchRelonsults);
       }
 
-      if (searchQuery.getResultMetadataOptions().isGetEntityAnnotations()) {
-        searcher.fillFacetResults(new EntityAnnotationCollector(), searchResults);
+      if (selonarchQuelonry.gelontRelonsultMelontadataOptions().isGelontelonntityAnnotations()) {
+        selonarchelonr.fillFacelontRelonsults(nelonw elonntityAnnotationCollelonctor(), selonarchRelonsults);
       }
 
-      if (searchQuery.getResultMetadataOptions().isGetSpaces()) {
-        searcher.fillFacetResults(new SpaceFacetCollector(audioSpaceTable), searchResults);
+      if (selonarchQuelonry.gelontRelonsultMelontadataOptions().isGelontSpacelons()) {
+        selonarchelonr.fillFacelontRelonsults(nelonw SpacelonFacelontCollelonctor(audioSpacelonTablelon), selonarchRelonsults);
       }
     }
   }
 
   /**
-   * Helper method to process top tweets query.
+   * Helonlpelonr melonthod to procelonss top twelonelonts quelonry.
    */
-  private SearchResultsInfo processTopTweetsQuery() throws IOException, ClientException {
-    // set dummy relevance options if it's not available, but this shouldn't happen in prod
-    if (!searchQuery.isSetRelevanceOptions()) {
-      searchQuery.setRelevanceOptions(new ThriftSearchRelevanceOptions());
+  privatelon SelonarchRelonsultsInfo procelonssTopTwelonelontsQuelonry() throws IOelonxcelonption, Clielonntelonxcelonption {
+    // selont dummy relonlelonvancelon options if it's not availablelon, but this shouldn't happelonn in prod
+    if (!selonarchQuelonry.isSelontRelonlelonvancelonOptions()) {
+      selonarchQuelonry.selontRelonlelonvancelonOptions(nelonw ThriftSelonarchRelonlelonvancelonOptions());
     }
-    if (!searchQuery.getRelevanceOptions().isSetRankingParams()) {
-      searchQuery.getRelevanceOptions().setRankingParams(
-          // this is important, or it's gonna pick DefaultScoringFunction which pretty much
-          // does nothing.
-          new ThriftRankingParams().setType(ThriftScoringFunctionType.TOPTWEETS));
+    if (!selonarchQuelonry.gelontRelonlelonvancelonOptions().isSelontRankingParams()) {
+      selonarchQuelonry.gelontRelonlelonvancelonOptions().selontRankingParams(
+          // this is important, or it's gonna pick DelonfaultScoringFunction which prelontty much
+          // doelons nothing.
+          nelonw ThriftRankingParams().selontTypelon(ThriftScoringFunctionTypelon.TOPTWelonelonTS));
     }
-    ScoringFunction scoringFunction = new ScoringFunctionProvider.DefaultScoringFunctionProvider(
-        request, schemaSnapshot, searchQuery, null,
-        segmentManager.getUserTable(), hitAttributeHelper, parsedQuery,
-        scoringModelsManager, tensorflowModelsManager)
-        .getScoringFunction();
-    scoringFunction.setDebugMode(request.getDebugMode());
+    ScoringFunction scoringFunction = nelonw ScoringFunctionProvidelonr.DelonfaultScoringFunctionProvidelonr(
+        relonquelonst, schelonmaSnapshot, selonarchQuelonry, null,
+        selongmelonntManagelonr.gelontUselonrTablelon(), hitAttributelonHelonlpelonr, parselondQuelonry,
+        scoringModelonlsManagelonr, telonnsorflowModelonlsManagelonr)
+        .gelontScoringFunction();
+    scoringFunction.selontDelonbugModelon(relonquelonst.gelontDelonbugModelon());
 
-    RelevanceQuery relevanceQuery = new RelevanceQuery(luceneQuery, scoringFunction);
-    RelevanceSearchRequestInfo searchRequestInfo =
-        new RelevanceSearchRequestInfo(
-            searchQuery, relevanceQuery, terminationTracker, qualityFactor);
-    searchRequestInfo.setIdTimeRanges(idTimeRanges);
-    searchRequestInfo.setTimestamp(getQueryTimestamp(searchQuery));
+    RelonlelonvancelonQuelonry relonlelonvancelonQuelonry = nelonw RelonlelonvancelonQuelonry(lucelonnelonQuelonry, scoringFunction);
+    RelonlelonvancelonSelonarchRelonquelonstInfo selonarchRelonquelonstInfo =
+        nelonw RelonlelonvancelonSelonarchRelonquelonstInfo(
+            selonarchQuelonry, relonlelonvancelonQuelonry, telonrminationTrackelonr, qualityFactor);
+    selonarchRelonquelonstInfo.selontIdTimelonRangelons(idTimelonRangelons);
+    selonarchRelonquelonstInfo.selontTimelonstamp(gelontQuelonryTimelonstamp(selonarchQuelonry));
 
-    final AbstractRelevanceCollector collector =
-        new RelevanceTopCollector(
-            schemaSnapshot,
-            searchRequestInfo,
+    final AbstractRelonlelonvancelonCollelonctor collelonctor =
+        nelonw RelonlelonvancelonTopCollelonctor(
+            schelonmaSnapshot,
+            selonarchRelonquelonstInfo,
             scoringFunction,
-            searcherStats,
-            cluster,
-            segmentManager.getUserTable(),
+            selonarchelonrStats,
+            clustelonr,
+            selongmelonntManagelonr.gelontUselonrTablelon(),
             clock,
-            request.getDebugMode());
+            relonquelonst.gelontDelonbugModelon());
 
-    setQueriesInDebugInfo(parsedQuery, searchRequestInfo.getLuceneQuery());
-    searcher.search(searchRequestInfo.getLuceneQuery(), collector);
+    selontQuelonrielonsInDelonbugInfo(parselondQuelonry, selonarchRelonquelonstInfo.gelontLucelonnelonQuelonry());
+    selonarchelonr.selonarch(selonarchRelonquelonstInfo.gelontLucelonnelonQuelonry(), collelonctor);
 
-    RelevanceSearchResults hits = collector.getResults();
-    EarlybirdSearchResultUtil.setResultStatistics(searchResults, hits);
-    searchResults.setScoringTimeNanos(hits.getScoringTimeNanos());
-    earlyTerminationInfo = EarlybirdSearchResultUtil.prepareEarlyTerminationInfo(hits);
-    EarlybirdSearchResultUtil.setLanguageHistogram(
-        searchResults,
-        collector.getLanguageHistogram());
-    EarlybirdSearchResultUtil.prepareRelevanceResultsArray(
-        searchResults.getResults(),
+    RelonlelonvancelonSelonarchRelonsults hits = collelonctor.gelontRelonsults();
+    elonarlybirdSelonarchRelonsultUtil.selontRelonsultStatistics(selonarchRelonsults, hits);
+    selonarchRelonsults.selontScoringTimelonNanos(hits.gelontScoringTimelonNanos());
+    elonarlyTelonrminationInfo = elonarlybirdSelonarchRelonsultUtil.prelonparelonelonarlyTelonrminationInfo(hits);
+    elonarlybirdSelonarchRelonsultUtil.selontLanguagelonHistogram(
+        selonarchRelonsults,
+        collelonctor.gelontLanguagelonHistogram());
+    elonarlybirdSelonarchRelonsultUtil.prelonparelonRelonlelonvancelonRelonsultsArray(
+        selonarchRelonsults.gelontRelonsults(),
         hits,
         null,
-        request.getDebugMode() > 0 ? partitionConfig : null);
+        relonquelonst.gelontDelonbugModelon() > 0 ? partitionConfig : null);
 
-    searchResults.setHitCounts(collector.getHitCountMap());
-    searchResults.setRelevanceStats(hits.getRelevanceStats());
+    selonarchRelonsults.selontHitCounts(collelonctor.gelontHitCountMap());
+    selonarchRelonsults.selontRelonlelonvancelonStats(hits.gelontRelonlelonvancelonStats());
 
-    maybeSetCollectorDebugInfo(collector);
+    maybelonSelontCollelonctorDelonbugInfo(collelonctor);
 
-    if (explanationsEnabled(request.getDebugMode())
-        && searchQuery.isSetRelevanceOptions()
-        && searchQuery.getRelevanceOptions().isSetRankingParams()) {
-      searcher.explainSearchResults(searchRequestInfo, hits, searchResults);
+    if (elonxplanationselonnablelond(relonquelonst.gelontDelonbugModelon())
+        && selonarchQuelonry.isSelontRelonlelonvancelonOptions()
+        && selonarchQuelonry.gelontRelonlelonvancelonOptions().isSelontRankingParams()) {
+      selonarchelonr.elonxplainSelonarchRelonsults(selonarchRelonquelonstInfo, hits, selonarchRelonsults);
     }
 
-    addResultPayloads();
+    addRelonsultPayloads();
 
-    return hits;
+    relonturn hits;
   }
 
-  private FacetCountState newFacetCountState() throws ClientException {
-    int minNumFacetResults = DEFAULT_NUM_FACET_RESULTS;
-    if (facetRequest.isSetFacetRankingOptions()
-        && facetRequest.getFacetRankingOptions().isSetNumCandidatesFromEarlybird()) {
-      minNumFacetResults = facetRequest.getFacetRankingOptions().getNumCandidatesFromEarlybird();
+  privatelon FacelontCountStatelon nelonwFacelontCountStatelon() throws Clielonntelonxcelonption {
+    int minNumFacelontRelonsults = DelonFAULT_NUM_FACelonT_RelonSULTS;
+    if (facelontRelonquelonst.isSelontFacelontRankingOptions()
+        && facelontRelonquelonst.gelontFacelontRankingOptions().isSelontNumCandidatelonsFromelonarlybird()) {
+      minNumFacelontRelonsults = facelontRelonquelonst.gelontFacelontRankingOptions().gelontNumCandidatelonsFromelonarlybird();
     }
 
-    // figure out which fields we need to count
-    FacetCountState facetCountState = new FacetCountState(schemaSnapshot, minNumFacetResults);
+    // figurelon out which fielonlds welon nelonelond to count
+    FacelontCountStatelon facelontCountStatelon = nelonw FacelontCountStatelon(schelonmaSnapshot, minNumFacelontRelonsults);
 
-    // all categories if none!
-    if (facetRequest.getFacetFields() == null || facetRequest.getFacetFields().isEmpty()) {
-      for (Schema.FieldInfo facetField : schemaSnapshot.getFacetFields()) {
-        facetCountState.addFacet(
-            facetField.getFieldType().getFacetName(), DEFAULT_NUM_FACET_RESULTS);
+    // all catelongorielons if nonelon!
+    if (facelontRelonquelonst.gelontFacelontFielonlds() == null || facelontRelonquelonst.gelontFacelontFielonlds().iselonmpty()) {
+      for (Schelonma.FielonldInfo facelontFielonld : schelonmaSnapshot.gelontFacelontFielonlds()) {
+        facelontCountStatelon.addFacelont(
+            facelontFielonld.gelontFielonldTypelon().gelontFacelontNamelon(), DelonFAULT_NUM_FACelonT_RelonSULTS);
       }
-    } else {
-      Iterator<ThriftFacetFieldRequest> it = facetRequest.getFacetFieldsIterator();
-      while (it.hasNext()) {
-        ThriftFacetFieldRequest facetFieldRequest = it.next();
-        Schema.FieldInfo facet = schemaSnapshot.getFacetFieldByFacetName(
-            facetFieldRequest.getFieldName());
-        if (facet != null) {
-          facetCountState.addFacet(
-              facet.getFieldType().getFacetName(), facetFieldRequest.getNumResults());
-        } else {
-          throw new ClientException("Unknown facet field: " + facetFieldRequest.getFieldName());
+    } elonlselon {
+      Itelonrator<ThriftFacelontFielonldRelonquelonst> it = facelontRelonquelonst.gelontFacelontFielonldsItelonrator();
+      whilelon (it.hasNelonxt()) {
+        ThriftFacelontFielonldRelonquelonst facelontFielonldRelonquelonst = it.nelonxt();
+        Schelonma.FielonldInfo facelont = schelonmaSnapshot.gelontFacelontFielonldByFacelontNamelon(
+            facelontFielonldRelonquelonst.gelontFielonldNamelon());
+        if (facelont != null) {
+          facelontCountStatelon.addFacelont(
+              facelont.gelontFielonldTypelon().gelontFacelontNamelon(), facelontFielonldRelonquelonst.gelontNumRelonsults());
+        } elonlselon {
+          throw nelonw Clielonntelonxcelonption("Unknown facelont fielonld: " + facelontFielonldRelonquelonst.gelontFielonldNamelon());
         }
       }
     }
-    return facetCountState;
+    relonturn facelontCountStatelon;
   }
 
-  private com.twitter.search.queryparser.query.Query preLuceneQueryProcess(
-      com.twitter.search.queryparser.query.Query twitterQuery) throws QueryParserException {
+  privatelon com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry prelonLucelonnelonQuelonryProcelonss(
+      com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry twittelonrQuelonry) throws QuelonryParselonrelonxcelonption {
 
-    com.twitter.search.queryparser.query.Query query = twitterQuery;
-    if (searchHighFrequencyTermPairs && !includesCardField(searchQuery, query)) {
-      // Process high frequency term pairs. Works best when query is as flat as possible.
-      query = HighFrequencyTermPairRewriteVisitor.safeRewrite(
-          query,
-          DeciderUtil.isAvailableForRandomRecipient(
-              decider, "enable_hf_term_pair_negative_disjunction_rewrite"));
+    com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry quelonry = twittelonrQuelonry;
+    if (selonarchHighFrelonquelonncyTelonrmPairs && !includelonsCardFielonld(selonarchQuelonry, quelonry)) {
+      // Procelonss high frelonquelonncy telonrm pairs. Works belonst whelonn quelonry is as flat as possiblelon.
+      quelonry = HighFrelonquelonncyTelonrmPairRelonwritelonVisitor.safelonRelonwritelon(
+          quelonry,
+          DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(
+              deloncidelonr, "elonnablelon_hf_telonrm_pair_nelongativelon_disjunction_relonwritelon"));
     }
-    return query.simplify();
+    relonturn quelonry.simplify();
   }
 
-  private Query postLuceneQueryProcess(final Query query) throws ClientException {
-    if (StringUtils.isBlank(request.getSearchQuery().getSerializedQuery())
-        && StringUtils.isBlank(request.getSearchQuery().getLuceneQuery())) {
-      searcherStats.numRequestsWithBlankQuery.get(queryMode).increment();
-      if (searchQuery.getSearchStatusIdsSize() == 0
-          && searchQuery.getFromUserIDFilter64Size() == 0
-          && searchQuery.getLikedByUserIDFilter64Size() == 0) {
-        // No query or ids to search.  This is only allowed in some modes.
-        if (queryMode == QueryMode.RECENCY
-            || queryMode == QueryMode.RELEVANCE
-            || queryMode == QueryMode.TOP_TWEETS) {
-          throw new ClientException(
-              "No query or status ids for " + queryMode.toString().toLowerCase() + " query");
+  privatelon Quelonry postLucelonnelonQuelonryProcelonss(final Quelonry quelonry) throws Clielonntelonxcelonption {
+    if (StringUtils.isBlank(relonquelonst.gelontSelonarchQuelonry().gelontSelonrializelondQuelonry())
+        && StringUtils.isBlank(relonquelonst.gelontSelonarchQuelonry().gelontLucelonnelonQuelonry())) {
+      selonarchelonrStats.numRelonquelonstsWithBlankQuelonry.gelont(quelonryModelon).increlonmelonnt();
+      if (selonarchQuelonry.gelontSelonarchStatusIdsSizelon() == 0
+          && selonarchQuelonry.gelontFromUselonrIDFiltelonr64Sizelon() == 0
+          && selonarchQuelonry.gelontLikelondByUselonrIDFiltelonr64Sizelon() == 0) {
+        // No quelonry or ids to selonarch.  This is only allowelond in somelon modelons.
+        if (quelonryModelon == QuelonryModelon.RelonCelonNCY
+            || quelonryModelon == QuelonryModelon.RelonLelonVANCelon
+            || quelonryModelon == QuelonryModelon.TOP_TWelonelonTS) {
+          throw nelonw Clielonntelonxcelonption(
+              "No quelonry or status ids for " + quelonryModelon.toString().toLowelonrCaselon() + " quelonry");
         }
       }
     }
 
-    // Wrap the query as needed with additional query filters.
-    List<Query> filters = Lists.newArrayList();
+    // Wrap thelon quelonry as nelonelondelond with additional quelonry filtelonrs.
+    List<Quelonry> filtelonrs = Lists.nelonwArrayList();
 
-    // Min tweep cred filter.
-    if (searchQuery.isSetMinTweepCredFilter()) {
-      searcherStats.addedFilterBadUserRep.increment();
-      filters.add(BadUserRepFilter.getBadUserRepFilter(searchQuery.getMinTweepCredFilter()));
+    // Min twelonelonp crelond filtelonr.
+    if (selonarchQuelonry.isSelontMinTwelonelonpCrelondFiltelonr()) {
+      selonarchelonrStats.addelondFiltelonrBadUselonrRelonp.increlonmelonnt();
+      filtelonrs.add(BadUselonrRelonpFiltelonr.gelontBadUselonrRelonpFiltelonr(selonarchQuelonry.gelontMinTwelonelonpCrelondFiltelonr()));
     }
 
-    if (searchQuery.getFromUserIDFilter64Size() > 0) {
-      this.queriedFields.add(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName());
-      this.searcherStats.addedFilterFromUserIds.increment();
+    if (selonarchQuelonry.gelontFromUselonrIDFiltelonr64Sizelon() > 0) {
+      this.quelonrielondFielonlds.add(elonarlybirdFielonldConstant.FROM_USelonR_ID_FIelonLD.gelontFielonldNamelon());
+      this.selonarchelonrStats.addelondFiltelonrFromUselonrIds.increlonmelonnt();
       try {
-        filters.add(UserIdMultiSegmentQuery.createIdDisjunctionQuery(
-            "from_user_id_filter",
-            searchQuery.getFromUserIDFilter64(),
-            EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
-            schemaSnapshot,
-            multiSegmentTermDictionaryManager,
-            decider,
-            cluster,
-            Lists.newArrayList(),
+        filtelonrs.add(UselonrIdMultiSelongmelonntQuelonry.crelonatelonIdDisjunctionQuelonry(
+            "from_uselonr_id_filtelonr",
+            selonarchQuelonry.gelontFromUselonrIDFiltelonr64(),
+            elonarlybirdFielonldConstant.FROM_USelonR_ID_FIelonLD.gelontFielonldNamelon(),
+            schelonmaSnapshot,
+            multiSelongmelonntTelonrmDictionaryManagelonr,
+            deloncidelonr,
+            clustelonr,
+            Lists.nelonwArrayList(),
             null,
-            queryTimeoutFactory.createQueryTimeout(request, terminationTracker, clock)));
-      } catch (QueryParserException e) {
-        throw new ClientException(e);
+            quelonryTimelonoutFactory.crelonatelonQuelonryTimelonout(relonquelonst, telonrminationTrackelonr, clock)));
+      } catch (QuelonryParselonrelonxcelonption elon) {
+        throw nelonw Clielonntelonxcelonption(elon);
       }
     }
 
-    // Wrap the lucene query with these filters.
-    Query wrappedQuery = wrapFilters(query, filters.toArray(new Query[filters.size()]));
+    // Wrap thelon lucelonnelon quelonry with thelonselon filtelonrs.
+    Quelonry wrappelondQuelonry = wrapFiltelonrs(quelonry, filtelonrs.toArray(nelonw Quelonry[filtelonrs.sizelon()]));
 
-    // If searchStatusIds is set, additionally modify the query to search exactly these
-    // ids, using the luceneQuery only for scoring.
-    if (searchQuery.getSearchStatusIdsSize() > 0) {
-      this.searcherStats.addedFilterTweetIds.increment();
+    // If selonarchStatusIds is selont, additionally modify thelon quelonry to selonarch elonxactly thelonselon
+    // ids, using thelon lucelonnelonQuelonry only for scoring.
+    if (selonarchQuelonry.gelontSelonarchStatusIdsSizelon() > 0) {
+      this.selonarchelonrStats.addelondFiltelonrTwelonelontIds.increlonmelonnt();
 
-      final Query queryForScoring = wrappedQuery;
-      final Query queryForRetrieval =
-          RequiredStatusIDsFilter.getRequiredStatusIDsQuery(searchQuery.getSearchStatusIds());
+      final Quelonry quelonryForScoring = wrappelondQuelonry;
+      final Quelonry quelonryForRelontrielonval =
+          RelonquirelondStatusIDsFiltelonr.gelontRelonquirelondStatusIDsQuelonry(selonarchQuelonry.gelontSelonarchStatusIds());
 
-      return new BooleanQuery.Builder()
-          .add(queryForRetrieval, Occur.MUST)
-          .add(queryForScoring, Occur.SHOULD)
+      relonturn nelonw BoolelonanQuelonry.Buildelonr()
+          .add(quelonryForRelontrielonval, Occur.MUST)
+          .add(quelonryForScoring, Occur.SHOULD)
           .build();
     }
 
-    return wrappedQuery;
+    relonturn wrappelondQuelonry;
   }
 
-  private com.twitter.search.queryparser.query.Query getLikedByUserIdQuery(
-      List<Long> ids) throws QueryParserException {
-    if (DeciderUtil.isAvailableForRandomRecipient(
-        decider, USE_MULTI_TERM_DISJUNCTION_FOR_LIKED_BY_USER_IDS_DECIDER_KEY)) {
-      // rewrite LikedByUserIdFilter64 to a multi_term_disjuntion query
-      return createMultiTermDisjunctionQueryForLikedByUserIds(ids);
-    } else {
-      // rewrite LikedByUserIdFilter64 to a disjunction of multiple liked_by_user_ids query
-      return createDisjunctionQueryForLikedByUserIds(ids);
+  privatelon com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry gelontLikelondByUselonrIdQuelonry(
+      List<Long> ids) throws QuelonryParselonrelonxcelonption {
+    if (DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(
+        deloncidelonr, USelon_MULTI_TelonRM_DISJUNCTION_FOR_LIKelonD_BY_USelonR_IDS_DelonCIDelonR_KelonY)) {
+      // relonwritelon LikelondByUselonrIdFiltelonr64 to a multi_telonrm_disjuntion quelonry
+      relonturn crelonatelonMultiTelonrmDisjunctionQuelonryForLikelondByUselonrIds(ids);
+    } elonlselon {
+      // relonwritelon LikelondByUselonrIdFiltelonr64 to a disjunction of multiplelon likelond_by_uselonr_ids quelonry
+      relonturn crelonatelonDisjunctionQuelonryForLikelondByUselonrIds(ids);
     }
   }
 
   /**
-   * Returns the Lucene query visitor that should be applied to the original request.
+   * Relonturns thelon Lucelonnelon quelonry visitor that should belon applielond to thelon original relonquelonst.
    *
-   * @param fieldWeightMapOverride The per-field weight overrides.
+   * @param fielonldWelonightMapOvelonrridelon Thelon pelonr-fielonld welonight ovelonrridelons.
    */
-  @VisibleForTesting
-  public EarlybirdLuceneQueryVisitor getLuceneVisitor(
-      Map<String, Double> fieldWeightMapOverride) {
-    String clusterName = cluster.getNameForStats();
-    // Iff in relevance mode _and_ intepreteSinceId is false, we turn off since_id
-    // operator by using LuceneRelevanceQueryVisitor.
+  @VisiblelonForTelonsting
+  public elonarlybirdLucelonnelonQuelonryVisitor gelontLucelonnelonVisitor(
+      Map<String, Doublelon> fielonldWelonightMapOvelonrridelon) {
+    String clustelonrNamelon = clustelonr.gelontNamelonForStats();
+    // Iff in relonlelonvancelon modelon _and_ intelonprelontelonSincelonId is falselon, welon turn off sincelon_id
+    // opelonrator by using LucelonnelonRelonlelonvancelonQuelonryVisitor.
 
-    if (searchQuery.getRankingMode() == ThriftSearchRankingMode.RELEVANCE
-        && searchQuery.getRelevanceOptions() != null
-        && !searchQuery.getRelevanceOptions().isInterpretSinceId()) {
-      // hack!  reset top level since id, which is the same thing LuceneRelevanceVisitor
+    if (selonarchQuelonry.gelontRankingModelon() == ThriftSelonarchRankingModelon.RelonLelonVANCelon
+        && selonarchQuelonry.gelontRelonlelonvancelonOptions() != null
+        && !selonarchQuelonry.gelontRelonlelonvancelonOptions().isIntelonrprelontSincelonId()) {
+      // hack!  relonselont top lelonvelonl sincelon id, which is thelon samelon thing LucelonnelonRelonlelonvancelonVisitor
       // is doing.
-      idTimeRanges = null;
-      return new LuceneRelevanceQueryVisitor(
-          schemaSnapshot,
-          queryCacheManager,
-          segmentManager.getUserTable(),
-          segmentManager.getUserScrubGeoMap(),
-          terminationTracker,
-          FieldWeightDefault.overrideFieldWeightMap(
-              schemaSnapshot.getFieldWeightMap(),
-              dropBadFieldWeightOverrides(fieldWeightMapOverride, decider, clusterName)),
-          MAPPABLE_FIELD_MAP,
-          multiSegmentTermDictionaryManager,
-          decider,
-          cluster,
-          queryTimeoutFactory.createQueryTimeout(
-              request, terminationTracker, clock));
-    } else {
-      return new EarlybirdLuceneQueryVisitor(
-          schemaSnapshot,
-          queryCacheManager,
-          segmentManager.getUserTable(),
-          segmentManager.getUserScrubGeoMap(),
-          terminationTracker,
-          FieldWeightDefault.overrideFieldWeightMap(
-              schemaSnapshot.getFieldWeightMap(),
-              dropBadFieldWeightOverrides(fieldWeightMapOverride, decider, clusterName)),
-          MAPPABLE_FIELD_MAP,
-          multiSegmentTermDictionaryManager,
-          decider,
-          cluster,
-          queryTimeoutFactory.createQueryTimeout(
-              request, terminationTracker, clock));
+      idTimelonRangelons = null;
+      relonturn nelonw LucelonnelonRelonlelonvancelonQuelonryVisitor(
+          schelonmaSnapshot,
+          quelonryCachelonManagelonr,
+          selongmelonntManagelonr.gelontUselonrTablelon(),
+          selongmelonntManagelonr.gelontUselonrScrubGelonoMap(),
+          telonrminationTrackelonr,
+          FielonldWelonightDelonfault.ovelonrridelonFielonldWelonightMap(
+              schelonmaSnapshot.gelontFielonldWelonightMap(),
+              dropBadFielonldWelonightOvelonrridelons(fielonldWelonightMapOvelonrridelon, deloncidelonr, clustelonrNamelon)),
+          MAPPABLelon_FIelonLD_MAP,
+          multiSelongmelonntTelonrmDictionaryManagelonr,
+          deloncidelonr,
+          clustelonr,
+          quelonryTimelonoutFactory.crelonatelonQuelonryTimelonout(
+              relonquelonst, telonrminationTrackelonr, clock));
+    } elonlselon {
+      relonturn nelonw elonarlybirdLucelonnelonQuelonryVisitor(
+          schelonmaSnapshot,
+          quelonryCachelonManagelonr,
+          selongmelonntManagelonr.gelontUselonrTablelon(),
+          selongmelonntManagelonr.gelontUselonrScrubGelonoMap(),
+          telonrminationTrackelonr,
+          FielonldWelonightDelonfault.ovelonrridelonFielonldWelonightMap(
+              schelonmaSnapshot.gelontFielonldWelonightMap(),
+              dropBadFielonldWelonightOvelonrridelons(fielonldWelonightMapOvelonrridelon, deloncidelonr, clustelonrNamelon)),
+          MAPPABLelon_FIelonLD_MAP,
+          multiSelongmelonntTelonrmDictionaryManagelonr,
+          deloncidelonr,
+          clustelonr,
+          quelonryTimelonoutFactory.crelonatelonQuelonryTimelonout(
+              relonquelonst, telonrminationTrackelonr, clock));
     }
   }
 
-  private void prepareFacetResults(ThriftFacetResults thriftFacetResults,
-                                     EarlybirdLuceneSearcher.FacetSearchResults hits,
-                                     FacetCountState<ThriftFacetFieldResults> facetCountState,
-                                     Set<Long> userIDWhitelist,
-                                     byte debugMode) throws IOException {
-    for (FacetRankingModule rankingModule : FacetRankingModule.REGISTERED_RANKING_MODULES) {
-      rankingModule.prepareResults(hits, facetCountState);
+  privatelon void prelonparelonFacelontRelonsults(ThriftFacelontRelonsults thriftFacelontRelonsults,
+                                     elonarlybirdLucelonnelonSelonarchelonr.FacelontSelonarchRelonsults hits,
+                                     FacelontCountStatelon<ThriftFacelontFielonldRelonsults> facelontCountStatelon,
+                                     Selont<Long> uselonrIDWhitelonlist,
+                                     bytelon delonbugModelon) throws IOelonxcelonption {
+    for (FacelontRankingModulelon rankingModulelon : FacelontRankingModulelon.RelonGISTelonRelonD_RANKING_MODULelonS) {
+      rankingModulelon.prelonparelonRelonsults(hits, facelontCountStatelon);
     }
 
-    Map<Term, ThriftFacetCount> allFacetResults = new HashMap<>();
+    Map<Telonrm, ThriftFacelontCount> allFacelontRelonsults = nelonw HashMap<>();
 
-    Iterator<FacetCountState.FacetFieldResults<ThriftFacetFieldResults>> fieldResultsIterator =
-        facetCountState.getFacetFieldResultsIterator();
-    while (fieldResultsIterator.hasNext()) {
+    Itelonrator<FacelontCountStatelon.FacelontFielonldRelonsults<ThriftFacelontFielonldRelonsults>> fielonldRelonsultsItelonrator =
+        facelontCountStatelon.gelontFacelontFielonldRelonsultsItelonrator();
+    whilelon (fielonldRelonsultsItelonrator.hasNelonxt()) {
 
-      FacetCountState.FacetFieldResults<ThriftFacetFieldResults> facetFieldResults =
-          fieldResultsIterator.next();
+      FacelontCountStatelon.FacelontFielonldRelonsults<ThriftFacelontFielonldRelonsults> facelontFielonldRelonsults =
+          fielonldRelonsultsItelonrator.nelonxt();
 
-      if (facetFieldResults.results == null) {
-        // return empty resultset for this facet
-        List<ThriftFacetCount> emptyList = new ArrayList<>();
-        facetFieldResults.results = new ThriftFacetFieldResults(emptyList, 0);
+      if (facelontFielonldRelonsults.relonsults == null) {
+        // relonturn elonmpty relonsultselont for this facelont
+        List<ThriftFacelontCount> elonmptyList = nelonw ArrayList<>();
+        facelontFielonldRelonsults.relonsults = nelonw ThriftFacelontFielonldRelonsults(elonmptyList, 0);
       }
-      thriftFacetResults.putToFacetFields(facetFieldResults.facetName,
-          facetFieldResults.results);
+      thriftFacelontRelonsults.putToFacelontFielonlds(facelontFielonldRelonsults.facelontNamelon,
+          facelontFielonldRelonsults.relonsults);
 
-      Schema.FieldInfo field = schemaSnapshot.getFacetFieldByFacetName(
-          facetFieldResults.facetName);
+      Schelonma.FielonldInfo fielonld = schelonmaSnapshot.gelontFacelontFielonldByFacelontNamelon(
+          facelontFielonldRelonsults.facelontNamelon);
 
-      for (ThriftFacetCount result : facetFieldResults.results.topFacets) {
-        if (result.facetLabel != null) {
-          allFacetResults.put(new Term(field.getName(), result.facetLabel), result);
-        } else {
-          LOG.warn("Null facetLabel, field: {}, result: {}", field.getName(), result);
+      for (ThriftFacelontCount relonsult : facelontFielonldRelonsults.relonsults.topFacelonts) {
+        if (relonsult.facelontLabelonl != null) {
+          allFacelontRelonsults.put(nelonw Telonrm(fielonld.gelontNamelon(), relonsult.facelontLabelonl), relonsult);
+        } elonlselon {
+          LOG.warn("Null facelontLabelonl, fielonld: {}, relonsult: {}", fielonld.gelontNamelon(), relonsult);
         }
       }
     }
 
-    searcher.fillFacetResultMetadata(allFacetResults, schemaSnapshot, debugMode);
+    selonarchelonr.fillFacelontRelonsultMelontadata(allFacelontRelonsults, schelonmaSnapshot, delonbugModelon);
 
-    if (userIDWhitelist != null) {
-      for (ThriftFacetCount facetCount : allFacetResults.values()) {
-        ThriftFacetCountMetadata metadata = facetCount.getMetadata();
-        if (metadata != null) {
-          metadata.setDontFilterUser(userIDWhitelist.contains(metadata.getTwitterUserId()));
+    if (uselonrIDWhitelonlist != null) {
+      for (ThriftFacelontCount facelontCount : allFacelontRelonsults.valuelons()) {
+        ThriftFacelontCountMelontadata melontadata = facelontCount.gelontMelontadata();
+        if (melontadata != null) {
+          melontadata.selontDontFiltelonrUselonr(uselonrIDWhitelonlist.contains(melontadata.gelontTwittelonrUselonrId()));
         }
       }
     }
   }
 
-  private void prepareTermStatisticsResults(
-      ThriftTermStatisticsResults termStatistics,
-      TermStatisticsCollector.TermStatisticsSearchResults hits,
-      byte debugMode) throws IOException {
+  privatelon void prelonparelonTelonrmStatisticsRelonsults(
+      ThriftTelonrmStatisticsRelonsults telonrmStatistics,
+      TelonrmStatisticsCollelonctor.TelonrmStatisticsSelonarchRelonsults hits,
+      bytelon delonbugModelon) throws IOelonxcelonption {
 
-    termStatistics.setBinIds(hits.binIds);
-    termStatistics.setHistogramSettings(termStatisticsRequest.getHistogramSettings());
-    termStatistics.setTermResults(hits.results);
-    setTermStatisticsDebugInfo(hits.getTermStatisticsDebugInfo());
+    telonrmStatistics.selontBinIds(hits.binIds);
+    telonrmStatistics.selontHistogramSelonttings(telonrmStatisticsRelonquelonst.gelontHistogramSelonttings());
+    telonrmStatistics.selontTelonrmRelonsults(hits.relonsults);
+    selontTelonrmStatisticsDelonbugInfo(hits.gelontTelonrmStatisticsDelonbugInfo());
 
-    if (hits.lastCompleteBinId != -1) {
-      termStatistics.setMinCompleteBinId(hits.lastCompleteBinId);
-    } else {
-      SearchRateCounter.export(String.format(
-          "term_stats_%s_unset_min_complete_bin_id", request.getClientId())).increment();
+    if (hits.lastComplelontelonBinId != -1) {
+      telonrmStatistics.selontMinComplelontelonBinId(hits.lastComplelontelonBinId);
+    } elonlselon {
+      SelonarchRatelonCountelonr.elonxport(String.format(
+          "telonrm_stats_%s_unselont_min_complelontelon_bin_id", relonquelonst.gelontClielonntId())).increlonmelonnt();
     }
 
-    if (idTimeRanges != null
-        && idTimeRanges.getUntilTimeExclusive().isPresent()
-        && hits.getMinSearchedTime() > idTimeRanges.getUntilTimeExclusive().get()) {
-      SearchRateCounter.export(String.format(
-          "term_stats_%s_min_searched_time_after_until_time", request.getClientId())).increment();
+    if (idTimelonRangelons != null
+        && idTimelonRangelons.gelontUntilTimelonelonxclusivelon().isPrelonselonnt()
+        && hits.gelontMinSelonarchelondTimelon() > idTimelonRangelons.gelontUntilTimelonelonxclusivelon().gelont()) {
+      SelonarchRatelonCountelonr.elonxport(String.format(
+          "telonrm_stats_%s_min_selonarchelond_timelon_aftelonr_until_timelon", relonquelonst.gelontClielonntId())).increlonmelonnt();
     }
 
-    searcher.fillTermStatsMetadata(termStatistics, schemaSnapshot, debugMode);
+    selonarchelonr.fillTelonrmStatsMelontadata(telonrmStatistics, schelonmaSnapshot, delonbugModelon);
   }
 
-  private EarlybirdResponse respondSuccess(
-      ThriftSearchResults thriftSearchResults,
-      ThriftFacetResults thriftFacetResults,
-      ThriftTermStatisticsResults termStatisticResults,
-      @Nonnull EarlyTerminationInfo earlyTerminationState,
-      @Nonnull SearchResultsInfo searchResultsInfo) {
+  privatelon elonarlybirdRelonsponselon relonspondSuccelonss(
+      ThriftSelonarchRelonsults thriftSelonarchRelonsults,
+      ThriftFacelontRelonsults thriftFacelontRelonsults,
+      ThriftTelonrmStatisticsRelonsults telonrmStatisticRelonsults,
+      @Nonnull elonarlyTelonrminationInfo elonarlyTelonrminationStatelon,
+      @Nonnull SelonarchRelonsultsInfo selonarchRelonsultsInfo) {
 
-    Preconditions.checkNotNull(earlyTerminationState);
-    Preconditions.checkNotNull(searchResultsInfo);
+    Prelonconditions.chelonckNotNull(elonarlyTelonrminationStatelon);
+    Prelonconditions.chelonckNotNull(selonarchRelonsultsInfo);
 
-    exportEarlyTerminationStats(earlyTerminationState);
+    elonxportelonarlyTelonrminationStats(elonarlyTelonrminationStatelon);
 
-    EarlybirdResponse response =
-        newResponse(EarlybirdResponseCode.SUCCESS, request.getDebugMode() > 0);
-    response.setEarlyTerminationInfo(earlyTerminationState);
-    response.setNumSearchedSegments(searchResultsInfo.getNumSearchedSegments());
+    elonarlybirdRelonsponselon relonsponselon =
+        nelonwRelonsponselon(elonarlybirdRelonsponselonCodelon.SUCCelonSS, relonquelonst.gelontDelonbugModelon() > 0);
+    relonsponselon.selontelonarlyTelonrminationInfo(elonarlyTelonrminationStatelon);
+    relonsponselon.selontNumSelonarchelondSelongmelonnts(selonarchRelonsultsInfo.gelontNumSelonarchelondSelongmelonnts());
 
-    if (thriftSearchResults != null) {
-      // Nullcast check is only used when parsed query is available: if there is no parsed query,
-      // we would not add possible exclude nullcast filter.
-      if (parsedQuery != null && !parsedQueryAllowNullcast) {
-        logAndIncrementStatsIfNullcastInResults(thriftSearchResults);
+    if (thriftSelonarchRelonsults != null) {
+      // Nullcast chelonck is only uselond whelonn parselond quelonry is availablelon: if thelonrelon is no parselond quelonry,
+      // welon would not add possiblelon elonxcludelon nullcast filtelonr.
+      if (parselondQuelonry != null && !parselondQuelonryAllowNullcast) {
+        logAndIncrelonmelonntStatsIfNullcastInRelonsults(thriftSelonarchRelonsults);
       }
-      response.setSearchResults(thriftSearchResults);
-    } else {
-      RESPONSE_HAS_NO_THRIFT_SEARCH_RESULTS.increment();
+      relonsponselon.selontSelonarchRelonsults(thriftSelonarchRelonsults);
+    } elonlselon {
+      RelonSPONSelon_HAS_NO_THRIFT_SelonARCH_RelonSULTS.increlonmelonnt();
     }
-    if (thriftFacetResults != null) {
-      response.setFacetResults(thriftFacetResults);
+    if (thriftFacelontRelonsults != null) {
+      relonsponselon.selontFacelontRelonsults(thriftFacelontRelonsults);
     }
-    if (termStatisticResults != null) {
-      response.setTermStatisticsResults(termStatisticResults);
+    if (telonrmStatisticRelonsults != null) {
+      relonsponselon.selontTelonrmStatisticsRelonsults(telonrmStatisticRelonsults);
     }
 
-    appendFeatureSchemaIfNeeded(response);
+    appelonndFelonaturelonSchelonmaIfNelonelondelond(relonsponselon);
 
-    appendLikedByUserIdsIfNeeded(response);
+    appelonndLikelondByUselonrIdsIfNelonelondelond(relonsponselon);
 
-    return response;
+    relonturn relonsponselon;
   }
 
-  private void exportEarlyTerminationStats(@Nonnull EarlyTerminationInfo earlyTerminationState) {
-    if (earlyTerminationState.isSetEarlyTerminationReason()) {
-      SearchRateCounter.export(String.format("early_termination_%s_%s",
-          ClientIdUtil.formatClientId(request.getClientId()),
-          earlyTerminationState.getEarlyTerminationReason())).increment();
-      SearchRateCounter.export(String.format("early_termination_%s_%s",
-          ClientIdUtil.formatClientIdAndRequestType(
-              request.getClientId(), queryMode.name().toLowerCase()),
-          earlyTerminationState.getEarlyTerminationReason())).increment();
+  privatelon void elonxportelonarlyTelonrminationStats(@Nonnull elonarlyTelonrminationInfo elonarlyTelonrminationStatelon) {
+    if (elonarlyTelonrminationStatelon.isSelontelonarlyTelonrminationRelonason()) {
+      SelonarchRatelonCountelonr.elonxport(String.format("elonarly_telonrmination_%s_%s",
+          ClielonntIdUtil.formatClielonntId(relonquelonst.gelontClielonntId()),
+          elonarlyTelonrminationStatelon.gelontelonarlyTelonrminationRelonason())).increlonmelonnt();
+      SelonarchRatelonCountelonr.elonxport(String.format("elonarly_telonrmination_%s_%s",
+          ClielonntIdUtil.formatClielonntIdAndRelonquelonstTypelon(
+              relonquelonst.gelontClielonntId(), quelonryModelon.namelon().toLowelonrCaselon()),
+          elonarlyTelonrminationStatelon.gelontelonarlyTelonrminationRelonason())).increlonmelonnt();
     }
   }
 
   /**
-   * Builds a rank -> userId map for liked_by_user_id queries that request hit attribution, and
-   * appends the resulting map to the response.
+   * Builds a rank -> uselonrId map for likelond_by_uselonr_id quelonrielons that relonquelonst hit attribution, and
+   * appelonnds thelon relonsulting map to thelon relonsponselon.
    */
-  private void appendLikedByUserIdsIfNeeded(EarlybirdResponse response) {
-    // Check if user asked for likedByUserIds list in response
-    ThriftSearchRelevanceOptions resultRelevanceOptions =
-        request.getSearchQuery().getRelevanceOptions();
-    if ((resultRelevanceOptions == null)
-        || !resultRelevanceOptions.isCollectFieldHitAttributions()) {
-      return;
+  privatelon void appelonndLikelondByUselonrIdsIfNelonelondelond(elonarlybirdRelonsponselon relonsponselon) {
+    // Chelonck if uselonr askelond for likelondByUselonrIds list in relonsponselon
+    ThriftSelonarchRelonlelonvancelonOptions relonsultRelonlelonvancelonOptions =
+        relonquelonst.gelontSelonarchQuelonry().gelontRelonlelonvancelonOptions();
+    if ((relonsultRelonlelonvancelonOptions == null)
+        || !relonsultRelonlelonvancelonOptions.isCollelonctFielonldHitAttributions()) {
+      relonturn;
     }
 
-    // Make sure we have results in response and hit attribution helper is set up correctly
-    if (!response.isSetSearchResults() || hitAttributeHelper == null) {
-      return;
+    // Makelon surelon welon havelon relonsults in relonsponselon and hit attribution helonlpelonr is selont up correlonctly
+    if (!relonsponselon.isSelontSelonarchRelonsults() || hitAttributelonHelonlpelonr == null) {
+      relonturn;
     }
 
-    // Get rank to node map
-    Map<com.twitter.search.queryparser.query.Query, Integer> nodeToRankMap =
-        Preconditions.checkNotNull(hitAttributeHelper.getNodeToRankMap());
+    // Gelont rank to nodelon map
+    Map<com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry, Intelongelonr> nodelonToRankMap =
+        Prelonconditions.chelonckNotNull(hitAttributelonHelonlpelonr.gelontNodelonToRankMap());
 
-    Map<com.twitter.search.queryparser.query.Query, List<Integer>> expandedNodeToRankMap =
-        Preconditions.checkNotNull(hitAttributeHelper.getExpandedNodeToRankMap());
+    Map<com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry, List<Intelongelonr>> elonxpandelondNodelonToRankMap =
+        Prelonconditions.chelonckNotNull(hitAttributelonHelonlpelonr.gelontelonxpandelondNodelonToRankMap());
 
     // Build a rank to id map
-    ImmutableMap.Builder<Integer, Long> builder = ImmutableMap.builder();
-    for (com.twitter.search.queryparser.query.Query query : nodeToRankMap.keySet()) {
-      if (query instanceof SearchOperator) {
-        SearchOperator op = (SearchOperator) query;
-        if (expandedNodeToRankMap.containsKey(query)) {
-          // for multi_term_disjunction case
-          List<Integer> ranks = expandedNodeToRankMap.get(op);
-          Preconditions.checkArgument(op.getNumOperands() == ranks.size() + 1);
-          for (int i = 0; i < ranks.size(); ++i) {
-            builder.put(ranks.get(i), Long.valueOf(op.getOperands().get(i + 1)));
+    ImmutablelonMap.Buildelonr<Intelongelonr, Long> buildelonr = ImmutablelonMap.buildelonr();
+    for (com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry quelonry : nodelonToRankMap.kelonySelont()) {
+      if (quelonry instancelonof SelonarchOpelonrator) {
+        SelonarchOpelonrator op = (SelonarchOpelonrator) quelonry;
+        if (elonxpandelondNodelonToRankMap.containsKelony(quelonry)) {
+          // for multi_telonrm_disjunction caselon
+          List<Intelongelonr> ranks = elonxpandelondNodelonToRankMap.gelont(op);
+          Prelonconditions.chelonckArgumelonnt(op.gelontNumOpelonrands() == ranks.sizelon() + 1);
+          for (int i = 0; i < ranks.sizelon(); ++i) {
+            buildelonr.put(ranks.gelont(i), Long.valuelonOf(op.gelontOpelonrands().gelont(i + 1)));
           }
-        } else if (op.getOperatorType() == SearchOperator.Type.LIKED_BY_USER_ID) {
-          // for liked_by_user_id case
-          Preconditions.checkArgument(op.getAnnotationOf(Annotation.Type.NODE_RANK).isPresent());
-          builder.put(
-              (Integer) op.getAnnotationOf(Annotation.Type.NODE_RANK).get().getValue(),
-              Long.valueOf(op.getOperands().get(0)));
+        } elonlselon if (op.gelontOpelonratorTypelon() == SelonarchOpelonrator.Typelon.LIKelonD_BY_USelonR_ID) {
+          // for likelond_by_uselonr_id caselon
+          Prelonconditions.chelonckArgumelonnt(op.gelontAnnotationOf(Annotation.Typelon.NODelon_RANK).isPrelonselonnt());
+          buildelonr.put(
+              (Intelongelonr) op.gelontAnnotationOf(Annotation.Typelon.NODelon_RANK).gelont().gelontValuelon(),
+              Long.valuelonOf(op.gelontOpelonrands().gelont(0)));
         }
       }
     }
-    Map<Integer, Long> rankToIdMap = builder.build();
+    Map<Intelongelonr, Long> rankToIdMap = buildelonr.build();
 
-    // Append liked_by_user_id filed into result
-    for (ThriftSearchResult result : response.getSearchResults().getResults()) {
-      if (result.isSetMetadata()
-          && result.getMetadata().isSetFieldHitAttribution()
-          && result.getMetadata().getFieldHitAttribution().isSetHitMap()) {
+    // Appelonnd likelond_by_uselonr_id filelond into relonsult
+    for (ThriftSelonarchRelonsult relonsult : relonsponselon.gelontSelonarchRelonsults().gelontRelonsults()) {
+      if (relonsult.isSelontMelontadata()
+          && relonsult.gelontMelontadata().isSelontFielonldHitAttribution()
+          && relonsult.gelontMelontadata().gelontFielonldHitAttribution().isSelontHitMap()) {
 
-        List<Long> likedByUserIdList = Lists.newArrayList();
+        List<Long> likelondByUselonrIdList = Lists.nelonwArrayList();
 
-        Map<Integer, FieldHitList> hitMap =
-            result.getMetadata().getFieldHitAttribution().getHitMap();
-        // iterate hit attributions
-        for (int rank : hitMap.keySet()) {
-          if (rankToIdMap.containsKey(rank)) {
-            likedByUserIdList.add(rankToIdMap.get(rank));
+        Map<Intelongelonr, FielonldHitList> hitMap =
+            relonsult.gelontMelontadata().gelontFielonldHitAttribution().gelontHitMap();
+        // itelonratelon hit attributions
+        for (int rank : hitMap.kelonySelont()) {
+          if (rankToIdMap.containsKelony(rank)) {
+            likelondByUselonrIdList.add(rankToIdMap.gelont(rank));
           }
         }
-        if (!result.getMetadata().isSetExtraMetadata()) {
-          result.getMetadata().setExtraMetadata(new ThriftSearchResultExtraMetadata());
+        if (!relonsult.gelontMelontadata().isSelontelonxtraMelontadata()) {
+          relonsult.gelontMelontadata().selontelonxtraMelontadata(nelonw ThriftSelonarchRelonsultelonxtraMelontadata());
         }
-        result.getMetadata().getExtraMetadata().setLikedByUserIds(likedByUserIdList);
+        relonsult.gelontMelontadata().gelontelonxtraMelontadata().selontLikelondByUselonrIds(likelondByUselonrIdList);
       }
     }
   }
 
-  private void appendFeatureSchemaIfNeeded(EarlybirdResponse response) {
-    // Do not append the schema if the client didn't request it.
-    ThriftSearchResultMetadataOptions resultMetadataOptions =
-        request.getSearchQuery().getResultMetadataOptions();
-    if ((resultMetadataOptions == null) || !resultMetadataOptions.isReturnSearchResultFeatures()) {
-      return;
+  privatelon void appelonndFelonaturelonSchelonmaIfNelonelondelond(elonarlybirdRelonsponselon relonsponselon) {
+    // Do not appelonnd thelon schelonma if thelon clielonnt didn't relonquelonst it.
+    ThriftSelonarchRelonsultMelontadataOptions relonsultMelontadataOptions =
+        relonquelonst.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions();
+    if ((relonsultMelontadataOptions == null) || !relonsultMelontadataOptions.isRelonturnSelonarchRelonsultFelonaturelons()) {
+      relonturn;
     }
 
-    if (!response.isSetSearchResults()) {
-      return;
+    if (!relonsponselon.isSelontSelonarchRelonsults()) {
+      relonturn;
     }
 
-    ThriftSearchFeatureSchema featureSchema = schemaSnapshot.getSearchFeatureSchema();
-    Preconditions.checkState(
-        featureSchema.isSetSchemaSpecifier(),
-        "The feature schema doesn't have a schema specifier set: {}", featureSchema);
+    ThriftSelonarchFelonaturelonSchelonma felonaturelonSchelonma = schelonmaSnapshot.gelontSelonarchFelonaturelonSchelonma();
+    Prelonconditions.chelonckStatelon(
+        felonaturelonSchelonma.isSelontSchelonmaSpeloncifielonr(),
+        "Thelon felonaturelon schelonma doelonsn't havelon a schelonma speloncifielonr selont: {}", felonaturelonSchelonma);
 
-    // If the client has this schema, we only need to return the schema version.
-    // If the client doesn't have this schema, we need to return the schema entries too.
-    if (resultMetadataOptions.isSetFeatureSchemasAvailableInClient()
-        && resultMetadataOptions.getFeatureSchemasAvailableInClient().contains(
-        featureSchema.getSchemaSpecifier())) {
-      CLIENT_HAS_FEATURE_SCHEMA_COUNTER.increment();
-      ThriftSearchFeatureSchema responseFeatureSchema = new ThriftSearchFeatureSchema();
-      responseFeatureSchema.setSchemaSpecifier(featureSchema.getSchemaSpecifier());
-      response.getSearchResults().setFeatureSchema(responseFeatureSchema);
-    } else {
-      CLIENT_DOESNT_HAVE_FEATURE_SCHEMA_COUNTER.increment();
-      Preconditions.checkState(featureSchema.isSetEntries(),
-          "Entries are not set in the feature schema: " + featureSchema);
-      response.getSearchResults().setFeatureSchema(featureSchema);
+    // If thelon clielonnt has this schelonma, welon only nelonelond to relonturn thelon schelonma velonrsion.
+    // If thelon clielonnt doelonsn't havelon this schelonma, welon nelonelond to relonturn thelon schelonma elonntrielons too.
+    if (relonsultMelontadataOptions.isSelontFelonaturelonSchelonmasAvailablelonInClielonnt()
+        && relonsultMelontadataOptions.gelontFelonaturelonSchelonmasAvailablelonInClielonnt().contains(
+        felonaturelonSchelonma.gelontSchelonmaSpeloncifielonr())) {
+      CLIelonNT_HAS_FelonATURelon_SCHelonMA_COUNTelonR.increlonmelonnt();
+      ThriftSelonarchFelonaturelonSchelonma relonsponselonFelonaturelonSchelonma = nelonw ThriftSelonarchFelonaturelonSchelonma();
+      relonsponselonFelonaturelonSchelonma.selontSchelonmaSpeloncifielonr(felonaturelonSchelonma.gelontSchelonmaSpeloncifielonr());
+      relonsponselon.gelontSelonarchRelonsults().selontFelonaturelonSchelonma(relonsponselonFelonaturelonSchelonma);
+    } elonlselon {
+      CLIelonNT_DOelonSNT_HAVelon_FelonATURelon_SCHelonMA_COUNTelonR.increlonmelonnt();
+      Prelonconditions.chelonckStatelon(felonaturelonSchelonma.isSelontelonntrielons(),
+          "elonntrielons arelon not selont in thelon felonaturelon schelonma: " + felonaturelonSchelonma);
+      relonsponselon.gelontSelonarchRelonsults().selontFelonaturelonSchelonma(felonaturelonSchelonma);
     }
   }
 
-  private static long getQueryTimestamp(ThriftSearchQuery query) {
-    return query != null && query.isSetTimestampMsecs() ? query.getTimestampMsecs() : 0;
+  privatelon static long gelontQuelonryTimelonstamp(ThriftSelonarchQuelonry quelonry) {
+    relonturn quelonry != null && quelonry.isSelontTimelonstampMseloncs() ? quelonry.gelontTimelonstampMseloncs() : 0;
   }
 
-  private static boolean includesCardField(ThriftSearchQuery searchQuery,
-                                           com.twitter.search.queryparser.query.Query query)
-      throws QueryParserException {
+  privatelon static boolelonan includelonsCardFielonld(ThriftSelonarchQuelonry selonarchQuelonry,
+                                           com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry quelonry)
+      throws QuelonryParselonrelonxcelonption {
 
-    if (searchQuery.isSetRelevanceOptions()) {
-      ThriftSearchRelevanceOptions options = searchQuery.getRelevanceOptions();
-      if (options.isSetFieldWeightMapOverride()
-          && (options.getFieldWeightMapOverride().containsKey(
-              EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName())
-          || options.getFieldWeightMapOverride()
-          .containsKey(EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName()))) {
+    if (selonarchQuelonry.isSelontRelonlelonvancelonOptions()) {
+      ThriftSelonarchRelonlelonvancelonOptions options = selonarchQuelonry.gelontRelonlelonvancelonOptions();
+      if (options.isSelontFielonldWelonightMapOvelonrridelon()
+          && (options.gelontFielonldWelonightMapOvelonrridelon().containsKelony(
+              elonarlybirdFielonldConstant.CARD_TITLelon_FIelonLD.gelontFielonldNamelon())
+          || options.gelontFielonldWelonightMapOvelonrridelon()
+          .containsKelony(elonarlybirdFielonldConstant.CARD_DelonSCRIPTION_FIelonLD.gelontFielonldNamelon()))) {
 
-        return true;
+        relonturn truelon;
       }
     }
 
-    return query.accept(new DetectFieldAnnotationVisitor(ImmutableSet.of(
-        EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(),
-        EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName())));
+    relonturn quelonry.accelonpt(nelonw DelontelonctFielonldAnnotationVisitor(ImmutablelonSelont.of(
+        elonarlybirdFielonldConstant.CARD_TITLelon_FIelonLD.gelontFielonldNamelon(),
+        elonarlybirdFielonldConstant.CARD_DelonSCRIPTION_FIelonLD.gelontFielonldNamelon())));
   }
 
-  private static QueryMode getQueryMode(EarlybirdRequest request) {
-    if (request.isSetFacetRequest()) {
-      return QueryMode.FACETS;
-    } else if (request.isSetTermStatisticsRequest()) {
-      return QueryMode.TERM_STATS;
+  privatelon static QuelonryModelon gelontQuelonryModelon(elonarlybirdRelonquelonst relonquelonst) {
+    if (relonquelonst.isSelontFacelontRelonquelonst()) {
+      relonturn QuelonryModelon.FACelonTS;
+    } elonlselon if (relonquelonst.isSelontTelonrmStatisticsRelonquelonst()) {
+      relonturn QuelonryModelon.TelonRM_STATS;
     }
 
-    // Recency mode until we determine otherwise.
-    QueryMode queryMode = QueryMode.RECENCY;
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
-    if (searchQuery != null) {
-      switch (searchQuery.getRankingMode()) {
-        case RECENCY:
-          queryMode = QueryMode.RECENCY;
-          break;
-        case RELEVANCE:
-          queryMode = QueryMode.RELEVANCE;
-          break;
-        case TOPTWEETS:
-          queryMode = QueryMode.TOP_TWEETS;
-          break;
-        default:
-          break;
+    // Reloncelonncy modelon until welon delontelonrminelon othelonrwiselon.
+    QuelonryModelon quelonryModelon = QuelonryModelon.RelonCelonNCY;
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
+    if (selonarchQuelonry != null) {
+      switch (selonarchQuelonry.gelontRankingModelon()) {
+        caselon RelonCelonNCY:
+          quelonryModelon = QuelonryModelon.RelonCelonNCY;
+          brelonak;
+        caselon RelonLelonVANCelon:
+          quelonryModelon = QuelonryModelon.RelonLelonVANCelon;
+          brelonak;
+        caselon TOPTWelonelonTS:
+          quelonryModelon = QuelonryModelon.TOP_TWelonelonTS;
+          brelonak;
+        delonfault:
+          brelonak;
       }
     }
 
-    if (searchQuery == null
-        || !searchQuery.isSetSerializedQuery()
-        || searchQuery.getSerializedQuery().isEmpty()) {
-      LOG.debug("Search query was empty, query mode was " + queryMode);
+    if (selonarchQuelonry == null
+        || !selonarchQuelonry.isSelontSelonrializelondQuelonry()
+        || selonarchQuelonry.gelontSelonrializelondQuelonry().iselonmpty()) {
+      LOG.delonbug("Selonarch quelonry was elonmpty, quelonry modelon was " + quelonryModelon);
     }
 
-    return queryMode;
+    relonturn quelonryModelon;
   }
 
-  private static <V> ImmutableMap<String, V> dropBadFieldWeightOverrides(
-      Map<String, V> map, Decider decider, String clusterName) {
+  privatelon static <V> ImmutablelonMap<String, V> dropBadFielonldWelonightOvelonrridelons(
+      Map<String, V> map, Deloncidelonr deloncidelonr, String clustelonrNamelon) {
 
     if (map == null) {
-      return null;
+      relonturn null;
     }
 
-    FIELD_WEIGHT_OVERRIDE_MAP_NON_NULL_COUNT.increment();
-    ImmutableMap.Builder<String, V> builder = ImmutableMap.builder();
+    FIelonLD_WelonIGHT_OVelonRRIDelon_MAP_NON_NULL_COUNT.increlonmelonnt();
+    ImmutablelonMap.Buildelonr<String, V> buildelonr = ImmutablelonMap.buildelonr();
 
-    for (Map.Entry<String, V> entry : map.entrySet()) {
-      if (EarlybirdFieldConstant.CAMELCASE_USER_HANDLE_FIELD.getFieldName().equals(entry.getKey())
-          && !isAllowedCamelcaseUsernameFieldWeightOverride(decider, clusterName)) {
-        DROPPED_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE.increment();
-      } else if (EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName().equals(
-                     entry.getKey())
-          && !isAllowedTokenizedScreenNameFieldWeightOverride(decider, clusterName)) {
-        DROPPED_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE.increment();
-      } else {
-        builder.put(entry.getKey(), entry.getValue());
+    for (Map.elonntry<String, V> elonntry : map.elonntrySelont()) {
+      if (elonarlybirdFielonldConstant.CAMelonLCASelon_USelonR_HANDLelon_FIelonLD.gelontFielonldNamelon().elonquals(elonntry.gelontKelony())
+          && !isAllowelondCamelonlcaselonUselonrnamelonFielonldWelonightOvelonrridelon(deloncidelonr, clustelonrNamelon)) {
+        DROPPelonD_CAMelonLCASelon_USelonRNAMelon_FIelonLD_WelonIGHT_OVelonRRIDelon.increlonmelonnt();
+      } elonlselon if (elonarlybirdFielonldConstant.TOKelonNIZelonD_USelonR_NAMelon_FIelonLD.gelontFielonldNamelon().elonquals(
+                     elonntry.gelontKelony())
+          && !isAllowelondTokelonnizelondScrelonelonnNamelonFielonldWelonightOvelonrridelon(deloncidelonr, clustelonrNamelon)) {
+        DROPPelonD_TOKelonNIZelonD_DISPLAY_NAMelon_FIelonLD_WelonIGHT_OVelonRRIDelon.increlonmelonnt();
+      } elonlselon {
+        buildelonr.put(elonntry.gelontKelony(), elonntry.gelontValuelon());
       }
     }
 
-    return builder.build();
+    relonturn buildelonr.build();
   }
 
-  private static boolean isAllowedCamelcaseUsernameFieldWeightOverride(
-      Decider decider, String clusterName) {
-    return DeciderUtil.isAvailableForRandomRecipient(decider,
-        ALLOW_CAMELCASE_USERNAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX + clusterName);
+  privatelon static boolelonan isAllowelondCamelonlcaselonUselonrnamelonFielonldWelonightOvelonrridelon(
+      Deloncidelonr deloncidelonr, String clustelonrNamelon) {
+    relonturn DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr,
+        ALLOW_CAMelonLCASelon_USelonRNAMelon_FIelonLD_WelonIGHT_OVelonRRIDelon_DelonCIDelonR_KelonY_PRelonFIX + clustelonrNamelon);
   }
 
-  private static boolean isAllowedTokenizedScreenNameFieldWeightOverride(
-      Decider decider, String clusterName) {
-    return DeciderUtil.isAvailableForRandomRecipient(decider,
-        ALLOW_TOKENIZED_DISPLAY_NAME_FIELD_WEIGHT_OVERRIDE_DECIDER_KEY_PREFIX + clusterName);
+  privatelon static boolelonan isAllowelondTokelonnizelondScrelonelonnNamelonFielonldWelonightOvelonrridelon(
+      Deloncidelonr deloncidelonr, String clustelonrNamelon) {
+    relonturn DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr,
+        ALLOW_TOKelonNIZelonD_DISPLAY_NAMelon_FIelonLD_WelonIGHT_OVelonRRIDelon_DelonCIDelonR_KelonY_PRelonFIX + clustelonrNamelon);
   }
 
-  private static com.twitter.search.queryparser.query.Query
-  createMultiTermDisjunctionQueryForLikedByUserIds(List<Long> ids) throws QueryParserException {
-    List<String> operands = new ArrayList<>(ids.size() + 1);
-    operands.add(EarlybirdFieldConstant.LIKED_BY_USER_ID_FIELD.getFieldName());
+  privatelon static com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry
+  crelonatelonMultiTelonrmDisjunctionQuelonryForLikelondByUselonrIds(List<Long> ids) throws QuelonryParselonrelonxcelonption {
+    List<String> opelonrands = nelonw ArrayList<>(ids.sizelon() + 1);
+    opelonrands.add(elonarlybirdFielonldConstant.LIKelonD_BY_USelonR_ID_FIelonLD.gelontFielonldNamelon());
     for (long id : ids) {
-      operands.add(String.valueOf(id));
+      opelonrands.add(String.valuelonOf(id));
     }
-    return new SearchOperator(SearchOperator.Type.MULTI_TERM_DISJUNCTION, operands)
+    relonturn nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.MULTI_TelonRM_DISJUNCTION, opelonrands)
         .simplify();
   }
 
-  private static com.twitter.search.queryparser.query.Query createDisjunctionQueryForLikedByUserIds(
-      List<Long> ids) throws QueryParserException {
-    return new Disjunction(
-        ids.stream()
-            .map(id -> new SearchOperator(SearchOperator.Type.LIKED_BY_USER_ID, id))
-            .collect(Collectors.toList()))
+  privatelon static com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry crelonatelonDisjunctionQuelonryForLikelondByUselonrIds(
+      List<Long> ids) throws QuelonryParselonrelonxcelonption {
+    relonturn nelonw Disjunction(
+        ids.strelonam()
+            .map(id -> nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.LIKelonD_BY_USelonR_ID, id))
+            .collelonct(Collelonctors.toList()))
         .simplify();
   }
 
-  public com.twitter.search.queryparser.query.Query getParsedQuery() {
-    return parsedQuery;
+  public com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry gelontParselondQuelonry() {
+    relonturn parselondQuelonry;
   }
 
   /**
-   * Get the index fields that were queried after this searcher completed its job.
-   * @return
+   * Gelont thelon indelonx fielonlds that welonrelon quelonrielond aftelonr this selonarchelonr complelontelond its job.
+   * @relonturn
    */
-  public Set<String> getQueriedFields() {
-    return queriedFields;
+  public Selont<String> gelontQuelonrielondFielonlds() {
+    relonturn quelonrielondFielonlds;
   }
 
-  public Query getLuceneQuery() {
-    return luceneQuery;
+  public Quelonry gelontLucelonnelonQuelonry() {
+    relonturn lucelonnelonQuelonry;
   }
 }

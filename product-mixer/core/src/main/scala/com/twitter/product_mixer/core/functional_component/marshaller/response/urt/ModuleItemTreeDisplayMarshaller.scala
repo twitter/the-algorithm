@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleDisplayTypeMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItemTreeDisplay
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon.ModulelonDisplayTypelonMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ModulelonItelonmTrelonelonDisplay
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ModuleItemTreeDisplayMarshaller @Inject() (
-  moduleDisplayTypeMarshaller: ModuleDisplayTypeMarshaller) {
+@Singlelonton
+class ModulelonItelonmTrelonelonDisplayMarshallelonr @Injelonct() (
+  modulelonDisplayTypelonMarshallelonr: ModulelonDisplayTypelonMarshallelonr) {
 
-  def apply(moduleItemTreeDisplay: ModuleItemTreeDisplay): urt.ModuleItemTreeDisplay =
-    urt.ModuleItemTreeDisplay(
-      parentModuleItemEntryId = moduleItemTreeDisplay.parentModuleEntryItemId,
-      indentFromParent = moduleItemTreeDisplay.indentFromParent,
-      displayType = moduleItemTreeDisplay.displayType.map(moduleDisplayTypeMarshaller(_)),
-      isAnchorChild = moduleItemTreeDisplay.isAnchorChild
+  delonf apply(modulelonItelonmTrelonelonDisplay: ModulelonItelonmTrelonelonDisplay): urt.ModulelonItelonmTrelonelonDisplay =
+    urt.ModulelonItelonmTrelonelonDisplay(
+      parelonntModulelonItelonmelonntryId = modulelonItelonmTrelonelonDisplay.parelonntModulelonelonntryItelonmId,
+      indelonntFromParelonnt = modulelonItelonmTrelonelonDisplay.indelonntFromParelonnt,
+      displayTypelon = modulelonItelonmTrelonelonDisplay.displayTypelon.map(modulelonDisplayTypelonMarshallelonr(_)),
+      isAnchorChild = modulelonItelonmTrelonelonDisplay.isAnchorChild
     )
 }

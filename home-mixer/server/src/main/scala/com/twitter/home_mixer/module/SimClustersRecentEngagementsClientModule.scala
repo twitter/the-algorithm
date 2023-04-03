@@ -1,23 +1,23 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.BatchedStratoClientWithModerateTimeout
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.client.Client
-import com.twitter.timelines.clients.strato.twistly.SimClustersRecentEngagementSimilarityClient
-import com.twitter.timelines.clients.strato.twistly.SimClustersRecentEngagementSimilarityClientImpl
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.BatchelondStratoClielonntWithModelonratelonTimelonout
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.timelonlinelons.clielonnts.strato.twistly.SimClustelonrsReloncelonntelonngagelonmelonntSimilarityClielonnt
+import com.twittelonr.timelonlinelons.clielonnts.strato.twistly.SimClustelonrsReloncelonntelonngagelonmelonntSimilarityClielonntImpl
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object SimClustersRecentEngagementsClientModule extends TwitterModule {
-  @Singleton
-  @Provides
-  def providesSimilarityClient(
-    @Named(BatchedStratoClientWithModerateTimeout)
-    stratoClient: Client,
-    statsReceiver: StatsReceiver
-  ): SimClustersRecentEngagementSimilarityClient = {
-    new SimClustersRecentEngagementSimilarityClientImpl(stratoClient, statsReceiver)
+objelonct SimClustelonrsReloncelonntelonngagelonmelonntsClielonntModulelon elonxtelonnds TwittelonrModulelon {
+  @Singlelonton
+  @Providelons
+  delonf providelonsSimilarityClielonnt(
+    @Namelond(BatchelondStratoClielonntWithModelonratelonTimelonout)
+    stratoClielonnt: Clielonnt,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): SimClustelonrsReloncelonntelonngagelonmelonntSimilarityClielonnt = {
+    nelonw SimClustelonrsReloncelonntelonngagelonmelonntSimilarityClielonntImpl(stratoClielonnt, statsReloncelonivelonr)
   }
 }

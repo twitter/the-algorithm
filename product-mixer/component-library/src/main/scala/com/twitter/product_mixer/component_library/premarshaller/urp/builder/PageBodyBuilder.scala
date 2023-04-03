@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urp.buildelonr
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageBody
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PagelonBody
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Trait for our builder which given a query and selections will return a `PageBody`
+ * Trait for our buildelonr which givelonn a quelonry and selonlelonctions will relonturn a `PagelonBody`
  *
- * @tparam Query
+ * @tparam Quelonry
  */
-trait PageBodyBuilder[-Query <: PipelineQuery] {
+trait PagelonBodyBuildelonr[-Quelonry <: PipelonlinelonQuelonry] {
 
-  def build(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): PageBody
+  delonf build(
+    quelonry: Quelonry,
+    selonlelonctions: Selonq[CandidatelonWithDelontails]
+  ): PagelonBody
 }

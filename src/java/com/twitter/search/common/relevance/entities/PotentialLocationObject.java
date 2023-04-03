@@ -1,122 +1,122 @@
-package com.twitter.search.common.relevance.entities;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons;
 
-import java.util.Locale;
+import java.util.Localelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.lang.StringUtils;
+import org.apachelon.commons.lang.StringUtils;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.PotentialLocation;
-import com.twitter.search.common.util.text.LanguageIdentifierHelper;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.text.TokenizerHelper;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.PotelonntialLocation;
+import com.twittelonr.selonarch.common.util.telonxt.LanguagelonIdelonntifielonrHelonlpelonr;
+import com.twittelonr.selonarch.common.util.telonxt.NormalizelonrHelonlpelonr;
+import com.twittelonr.selonarch.common.util.telonxt.TokelonnizelonrHelonlpelonr;
 
 /**
- * An immutable tuple to wrap a country code, region and locality. Based on the PotentialLocation
+ * An immutablelon tuplelon to wrap a country codelon, relongion and locality. Baselond on thelon PotelonntialLocation
  * struct in status.thrift.
  */
-public class PotentialLocationObject {
-  private final String countryCode;
-  private final String region;
-  private final String locality;
+public class PotelonntialLocationObjelonct {
+  privatelon final String countryCodelon;
+  privatelon final String relongion;
+  privatelon final String locality;
 
   /**
-   * Creates a new PotentialLocationObject instance.
+   * Crelonatelons a nelonw PotelonntialLocationObjelonct instancelon.
    *
-   * @param countryCode The country code.
-   * @param region The region.
-   * @param locality The locality.
+   * @param countryCodelon Thelon country codelon.
+   * @param relongion Thelon relongion.
+   * @param locality Thelon locality.
    */
-  public PotentialLocationObject(String countryCode, String region, String locality) {
-    this.countryCode = countryCode;
-    this.region = region;
+  public PotelonntialLocationObjelonct(String countryCodelon, String relongion, String locality) {
+    this.countryCodelon = countryCodelon;
+    this.relongion = relongion;
     this.locality = locality;
   }
 
-  public String getCountryCode() {
-    return countryCode;
+  public String gelontCountryCodelon() {
+    relonturn countryCodelon;
   }
 
-  public String getRegion() {
-    return region;
+  public String gelontRelongion() {
+    relonturn relongion;
   }
 
-  public String getLocality() {
-    return locality;
+  public String gelontLocality() {
+    relonturn locality;
   }
 
   /**
-   * Converts this PotentialLocationObject instance to a PotentialLocation thrift struct.
+   * Convelonrts this PotelonntialLocationObjelonct instancelon to a PotelonntialLocation thrift struct.
    *
-   * @param penguinVersion The penguin version to use for normalization and tokenization.
+   * @param pelonnguinVelonrsion Thelon pelonnguin velonrsion to uselon for normalization and tokelonnization.
    */
-  public PotentialLocation toThriftPotentialLocation(PenguinVersion penguinVersion) {
-    Preconditions.checkNotNull(penguinVersion);
+  public PotelonntialLocation toThriftPotelonntialLocation(PelonnguinVelonrsion pelonnguinVelonrsion) {
+    Prelonconditions.chelonckNotNull(pelonnguinVelonrsion);
 
-    String normalizedCountryCode = null;
-    if (countryCode != null) {
-      Locale countryCodeLocale = LanguageIdentifierHelper.identifyLanguage(countryCode);
-      normalizedCountryCode =
-          NormalizerHelper.normalize(countryCode, countryCodeLocale, penguinVersion);
+    String normalizelondCountryCodelon = null;
+    if (countryCodelon != null) {
+      Localelon countryCodelonLocalelon = LanguagelonIdelonntifielonrHelonlpelonr.idelonntifyLanguagelon(countryCodelon);
+      normalizelondCountryCodelon =
+          NormalizelonrHelonlpelonr.normalizelon(countryCodelon, countryCodelonLocalelon, pelonnguinVelonrsion);
     }
 
-    String tokenizedRegion = null;
-    if (region != null) {
-      Locale regionLocale = LanguageIdentifierHelper.identifyLanguage(region);
-      String normalizedRegion = NormalizerHelper.normalize(region, regionLocale, penguinVersion);
-      tokenizedRegion = StringUtils.join(
-          TokenizerHelper.tokenizeQuery(normalizedRegion, regionLocale, penguinVersion), " ");
+    String tokelonnizelondRelongion = null;
+    if (relongion != null) {
+      Localelon relongionLocalelon = LanguagelonIdelonntifielonrHelonlpelonr.idelonntifyLanguagelon(relongion);
+      String normalizelondRelongion = NormalizelonrHelonlpelonr.normalizelon(relongion, relongionLocalelon, pelonnguinVelonrsion);
+      tokelonnizelondRelongion = StringUtils.join(
+          TokelonnizelonrHelonlpelonr.tokelonnizelonQuelonry(normalizelondRelongion, relongionLocalelon, pelonnguinVelonrsion), " ");
     }
 
-    String tokenizedLocality = null;
+    String tokelonnizelondLocality = null;
     if (locality != null) {
-      Locale localityLocale = LanguageIdentifierHelper.identifyLanguage(locality);
-      String normalizedLocality =
-          NormalizerHelper.normalize(locality, localityLocale, penguinVersion);
-      tokenizedLocality =
-          StringUtils.join(TokenizerHelper.tokenizeQuery(
-                               normalizedLocality, localityLocale, penguinVersion), " ");
+      Localelon localityLocalelon = LanguagelonIdelonntifielonrHelonlpelonr.idelonntifyLanguagelon(locality);
+      String normalizelondLocality =
+          NormalizelonrHelonlpelonr.normalizelon(locality, localityLocalelon, pelonnguinVelonrsion);
+      tokelonnizelondLocality =
+          StringUtils.join(TokelonnizelonrHelonlpelonr.tokelonnizelonQuelonry(
+                               normalizelondLocality, localityLocalelon, pelonnguinVelonrsion), " ");
     }
 
-    return new PotentialLocation()
-        .setCountryCode(normalizedCountryCode)
-        .setRegion(tokenizedRegion)
-        .setLocality(tokenizedLocality);
+    relonturn nelonw PotelonntialLocation()
+        .selontCountryCodelon(normalizelondCountryCodelon)
+        .selontRelongion(tokelonnizelondRelongion)
+        .selontLocality(tokelonnizelondLocality);
   }
 
-  @Override
-  public int hashCode() {
-    return ((countryCode == null) ? 0 : countryCode.hashCode())
-        + 13 * ((region == null) ? 0 : region.hashCode())
-        + 19 * ((locality == null) ? 0 : locality.hashCode());
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn ((countryCodelon == null) ? 0 : countryCodelon.hashCodelon())
+        + 13 * ((relongion == null) ? 0 : relongion.hashCodelon())
+        + 19 * ((locality == null) ? 0 : locality.hashCodelon());
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof PotentialLocationObject)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof PotelonntialLocationObjelonct)) {
+      relonturn falselon;
     }
 
-    PotentialLocationObject entry = (PotentialLocationObject) obj;
-    return (countryCode == null
-            ? entry.countryCode == null
-            : countryCode.equals(entry.countryCode))
-        && (region == null
-            ? entry.region == null
-            : region.equals(entry.region))
+    PotelonntialLocationObjelonct elonntry = (PotelonntialLocationObjelonct) obj;
+    relonturn (countryCodelon == null
+            ? elonntry.countryCodelon == null
+            : countryCodelon.elonquals(elonntry.countryCodelon))
+        && (relongion == null
+            ? elonntry.relongion == null
+            : relongion.elonquals(elonntry.relongion))
         && (locality == null
-            ? entry.locality == null
-            : locality.equals(entry.locality));
+            ? elonntry.locality == null
+            : locality.elonquals(elonntry.locality));
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return new StringBuilder("PotentialLocationObject {")
-        .append("countryCode=").append(countryCode)
-        .append(", region=").append(region)
-        .append(", locality=").append(locality)
-        .append("}")
+    relonturn nelonw StringBuildelonr("PotelonntialLocationObjelonct {")
+        .appelonnd("countryCodelon=").appelonnd(countryCodelon)
+        .appelonnd(", relongion=").appelonnd(relongion)
+        .appelonnd(", locality=").appelonnd(locality)
+        .appelonnd("}")
         .toString();
   }
 }

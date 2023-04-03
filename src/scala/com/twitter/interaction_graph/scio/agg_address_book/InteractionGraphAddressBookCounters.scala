@@ -1,34 +1,34 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+packagelon com.twittelonr.intelonraction_graph.scio.agg_addrelonss_book
 
-import com.spotify.scio.ScioMetrics
-import org.apache.beam.sdk.metrics.Counter
+import com.spotify.scio.ScioMelontrics
+import org.apachelon.belonam.sdk.melontrics.Countelonr
 
-trait InteractionGraphAddressBookCountersTrait {
-  val Namespace = "Interaction Graph Address Book"
+trait IntelonractionGraphAddrelonssBookCountelonrsTrait {
+  val Namelonspacelon = "Intelonraction Graph Addrelonss Book"
 
-  def emailFeatureInc(): Unit
+  delonf elonmailFelonaturelonInc(): Unit
 
-  def phoneFeatureInc(): Unit
+  delonf phonelonFelonaturelonInc(): Unit
 
-  def bothFeatureInc(): Unit
+  delonf bothFelonaturelonInc(): Unit
 }
 
 /**
- * SCIO counters are used to gather run time statistics
+ * SCIO countelonrs arelon uselond to gathelonr run timelon statistics
  */
-case object InteractionGraphAddressBookCounters extends InteractionGraphAddressBookCountersTrait {
-  val emailFeatureCounter: Counter =
-    ScioMetrics.counter(Namespace, "Email Feature")
+caselon objelonct IntelonractionGraphAddrelonssBookCountelonrs elonxtelonnds IntelonractionGraphAddrelonssBookCountelonrsTrait {
+  val elonmailFelonaturelonCountelonr: Countelonr =
+    ScioMelontrics.countelonr(Namelonspacelon, "elonmail Felonaturelon")
 
-  val phoneFeatureCounter: Counter =
-    ScioMetrics.counter(Namespace, "Phone Feature")
+  val phonelonFelonaturelonCountelonr: Countelonr =
+    ScioMelontrics.countelonr(Namelonspacelon, "Phonelon Felonaturelon")
 
-  val bothFeatureCounter: Counter =
-    ScioMetrics.counter(Namespace, "Both Feature")
+  val bothFelonaturelonCountelonr: Countelonr =
+    ScioMelontrics.countelonr(Namelonspacelon, "Both Felonaturelon")
 
-  override def emailFeatureInc(): Unit = emailFeatureCounter.inc()
+  ovelonrridelon delonf elonmailFelonaturelonInc(): Unit = elonmailFelonaturelonCountelonr.inc()
 
-  override def phoneFeatureInc(): Unit = phoneFeatureCounter.inc()
+  ovelonrridelon delonf phonelonFelonaturelonInc(): Unit = phonelonFelonaturelonCountelonr.inc()
 
-  override def bothFeatureInc(): Unit = bothFeatureCounter.inc()
+  ovelonrridelon delonf bothFelonaturelonInc(): Unit = bothFelonaturelonCountelonr.inc()
 }

@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.TimelineScribeConfigMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urp.Page
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.pagelons.relonndelonr.{thriftscala => urp}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.TimelonlinelonScribelonConfigMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransportMarshallelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.Pagelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UrpTransportMarshaller @Inject() (
-  pageBodyMarshaller: PageBodyMarshaller,
-  timelineScribeConfigMarshaller: TimelineScribeConfigMarshaller,
-  pageHeaderMarshaller: PageHeaderMarshaller,
-  pageNavBarMarshaller: PageNavBarMarshaller)
-    extends TransportMarshaller[Page, urp.Page] {
+@Singlelonton
+class UrpTransportMarshallelonr @Injelonct() (
+  pagelonBodyMarshallelonr: PagelonBodyMarshallelonr,
+  timelonlinelonScribelonConfigMarshallelonr: TimelonlinelonScribelonConfigMarshallelonr,
+  pagelonHelonadelonrMarshallelonr: PagelonHelonadelonrMarshallelonr,
+  pagelonNavBarMarshallelonr: PagelonNavBarMarshallelonr)
+    elonxtelonnds TransportMarshallelonr[Pagelon, urp.Pagelon] {
 
-  override val identifier: TransportMarshallerIdentifier =
-    TransportMarshallerIdentifier("UnifiedRichPage")
+  ovelonrridelon val idelonntifielonr: TransportMarshallelonrIdelonntifielonr =
+    TransportMarshallelonrIdelonntifielonr("UnifielondRichPagelon")
 
-  override def apply(page: Page): urp.Page = urp.Page(
-    id = page.id,
-    pageBody = pageBodyMarshaller(page.pageBody),
-    scribeConfig = page.scribeConfig.map(timelineScribeConfigMarshaller(_)),
-    pageHeader = page.pageHeader.map(pageHeaderMarshaller(_)),
-    pageNavBar = page.pageNavBar.map(pageNavBarMarshaller(_))
+  ovelonrridelon delonf apply(pagelon: Pagelon): urp.Pagelon = urp.Pagelon(
+    id = pagelon.id,
+    pagelonBody = pagelonBodyMarshallelonr(pagelon.pagelonBody),
+    scribelonConfig = pagelon.scribelonConfig.map(timelonlinelonScribelonConfigMarshallelonr(_)),
+    pagelonHelonadelonr = pagelon.pagelonHelonadelonr.map(pagelonHelonadelonrMarshallelonr(_)),
+    pagelonNavBar = pagelon.pagelonNavBar.map(pagelonNavBarMarshallelonr(_))
   )
 }

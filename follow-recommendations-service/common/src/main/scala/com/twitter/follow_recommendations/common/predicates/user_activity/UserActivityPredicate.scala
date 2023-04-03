@@ -1,161 +1,161 @@
-package com.twitter.follow_recommendations.common.predicates.user_activity
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.uselonr_activity
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.clients.cache.MemcacheClient
-import com.twitter.follow_recommendations.common.clients.cache.ThriftEnumOptionBijection
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.UserRecommendabilityWithLongKeysOnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.RandomReloncipielonnt
+import com.twittelonr.finaglelon.Melonmcachelond.Clielonnt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.baselon.StatsUtil
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.cachelon.MelonmcachelonClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.cachelon.ThriftelonnumOptionBijelonction
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
+import com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs.DeloncidelonrKelony
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.UselonrReloncommelonndabilityWithLongKelonysOnUselonrClielonntColumn
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-abstract case class UserStateActivityPredicate(
-  userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
-  validCandidateStates: Set[UserState],
-  client: Client,
-  statsReceiver: StatsReceiver,
-  decider: Decider = Decider.False)
-    extends Predicate[(HasParams with HasClientContext, CandidateUser)] {
+abstract caselon class UselonrStatelonActivityPrelondicatelon(
+  uselonrReloncommelonndabilityClielonnt: UselonrReloncommelonndabilityWithLongKelonysOnUselonrClielonntColumn,
+  validCandidatelonStatelons: Selont[UselonrStatelon],
+  clielonnt: Clielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  deloncidelonr: Deloncidelonr = Deloncidelonr.Falselon)
+    elonxtelonnds Prelondicatelon[(HasParams with HasClielonntContelonxt, CandidatelonUselonr)] {
 
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  // client to memcache cluster
-  val bijection = new ThriftEnumOptionBijection[UserState](UserState.apply)
-  val memcacheClient = MemcacheClient[Option[UserState]](
-    client = client,
-    dest = "/s/cache/follow_recos_service:twemcaches",
-    valueBijection = bijection,
-    ttl = UserActivityPredicateParams.CacheTTL,
-    statsReceiver = stats.scope("twemcache")
+  // clielonnt to melonmcachelon clustelonr
+  val bijelonction = nelonw ThriftelonnumOptionBijelonction[UselonrStatelon](UselonrStatelon.apply)
+  val melonmcachelonClielonnt = MelonmcachelonClielonnt[Option[UselonrStatelon]](
+    clielonnt = clielonnt,
+    delonst = "/s/cachelon/follow_reloncos_selonrvicelon:twelonmcachelons",
+    valuelonBijelonction = bijelonction,
+    ttl = UselonrActivityPrelondicatelonParams.CachelonTTL,
+    statsReloncelonivelonr = stats.scopelon("twelonmcachelon")
   )
 
-  override def apply(
-    targetAndCandidate: (HasParams with HasClientContext, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val userRecommendabilityFetcher = userRecommendabilityClient.fetcher
-    val (_, candidate) = targetAndCandidate
+  ovelonrridelon delonf apply(
+    targelontAndCandidatelon: (HasParams with HasClielonntContelonxt, CandidatelonUselonr)
+  ): Stitch[PrelondicatelonRelonsult] = {
+    val uselonrReloncommelonndabilityFelontchelonr = uselonrReloncommelonndabilityClielonnt.felontchelonr
+    val (_, candidatelon) = targelontAndCandidatelon
 
-    val deciderKey: String = DeciderKey.EnableExperimentalCaching.toString
-    val enableDistributedCaching: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
-    val userStateStitch: Stitch[Option[UserState]] = 
-      enableDistributedCaching match {
-        case true => {
-          memcacheClient.readThrough(
-            // add a key prefix to address cache key collisions
-            key = "UserActivityPredicate" + candidate.id.toString,
-            underlyingCall = () => queryUserRecommendable(candidate.id)
+    val deloncidelonrKelony: String = DeloncidelonrKelony.elonnablelonelonxpelonrimelonntalCaching.toString
+    val elonnablelonDistributelondCaching: Boolelonan = deloncidelonr.isAvailablelon(deloncidelonrKelony, Somelon(RandomReloncipielonnt))
+    val uselonrStatelonStitch: Stitch[Option[UselonrStatelon]] =
+      elonnablelonDistributelondCaching match {
+        caselon truelon => {
+          melonmcachelonClielonnt.relonadThrough(
+            // add a kelony prelonfix to addrelonss cachelon kelony collisions
+            kelony = "UselonrActivityPrelondicatelon" + candidatelon.id.toString,
+            undelonrlyingCall = () => quelonryUselonrReloncommelonndablelon(candidatelon.id)
           )
         }
-        case false => queryUserRecommendable(candidate.id)
+        caselon falselon => quelonryUselonrReloncommelonndablelon(candidatelon.id)
       }
-    val resultStitch: Stitch[PredicateResult] = 
-      userStateStitch.map { userStateOpt =>
-        userStateOpt match {
-          case Some(userState) => {
-            if (validCandidateStates.contains(userState)) {
-              PredicateResult.Valid
-            } else {
-              PredicateResult.Invalid(Set(FilterReason.MinStateNotMet))
+    val relonsultStitch: Stitch[PrelondicatelonRelonsult] =
+      uselonrStatelonStitch.map { uselonrStatelonOpt =>
+        uselonrStatelonOpt match {
+          caselon Somelon(uselonrStatelon) => {
+            if (validCandidatelonStatelons.contains(uselonrStatelon)) {
+              PrelondicatelonRelonsult.Valid
+            } elonlselon {
+              PrelondicatelonRelonsult.Invalid(Selont(FiltelonrRelonason.MinStatelonNotMelont))
             }
           }
-          case None => {
-            PredicateResult.Invalid(Set(FilterReason.MissingRecommendabilityData))
+          caselon Nonelon => {
+            PrelondicatelonRelonsult.Invalid(Selont(FiltelonrRelonason.MissingReloncommelonndabilityData))
           }
         }
       }
     
-    StatsUtil.profileStitch(resultStitch, stats.scope("apply"))
-      .rescue {
-        case e: Exception =>
-          stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FilterReason.FailOpen)))
+    StatsUtil.profilelonStitch(relonsultStitch, stats.scopelon("apply"))
+      .relonscuelon {
+        caselon elon: elonxcelonption =>
+          stats.scopelon("relonscuelond").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          Stitch(PrelondicatelonRelonsult.Invalid(Selont(FiltelonrRelonason.FailOpelonn)))
       }
   }
 
-  def queryUserRecommendable(
-    userId: Long
-  ): Stitch[Option[UserState]] = {
-    val userRecommendabilityFetcher = userRecommendabilityClient.fetcher
-    userRecommendabilityFetcher.fetch(userId).map { userCandidate => 
-      userCandidate.v.flatMap(_.userState)
+  delonf quelonryUselonrReloncommelonndablelon(
+    uselonrId: Long
+  ): Stitch[Option[UselonrStatelon]] = {
+    val uselonrReloncommelonndabilityFelontchelonr = uselonrReloncommelonndabilityClielonnt.felontchelonr
+    uselonrReloncommelonndabilityFelontchelonr.felontch(uselonrId).map { uselonrCandidatelon =>
+      uselonrCandidatelon.v.flatMap(_.uselonrStatelon)
     }
   }
 }
 
-@Singleton
-class MinStateUserActivityPredicate @Inject() (
-  userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
-  client: Client,
-  statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
-      userRecommendabilityClient,
-      Set(
-        UserState.Light,
-        UserState.HeavyNonTweeter,
-        UserState.MediumNonTweeter,
-        UserState.HeavyTweeter,
-        UserState.MediumTweeter
+@Singlelonton
+class MinStatelonUselonrActivityPrelondicatelon @Injelonct() (
+  uselonrReloncommelonndabilityClielonnt: UselonrReloncommelonndabilityWithLongKelonysOnUselonrClielonntColumn,
+  clielonnt: Clielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds UselonrStatelonActivityPrelondicatelon(
+      uselonrReloncommelonndabilityClielonnt,
+      Selont(
+        UselonrStatelon.Light,
+        UselonrStatelon.HelonavyNonTwelonelontelonr,
+        UselonrStatelon.MelondiumNonTwelonelontelonr,
+        UselonrStatelon.HelonavyTwelonelontelonr,
+        UselonrStatelon.MelondiumTwelonelontelonr
       ),
-      client,
-      statsReceiver
+      clielonnt,
+      statsReloncelonivelonr
     )
 
-@Singleton
-class AllTweeterUserActivityPredicate @Inject() (
-  userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
-  client: Client,
-  statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
-      userRecommendabilityClient,
-      Set(
-        UserState.HeavyTweeter,
-        UserState.MediumTweeter
+@Singlelonton
+class AllTwelonelontelonrUselonrActivityPrelondicatelon @Injelonct() (
+  uselonrReloncommelonndabilityClielonnt: UselonrReloncommelonndabilityWithLongKelonysOnUselonrClielonntColumn,
+  clielonnt: Clielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds UselonrStatelonActivityPrelondicatelon(
+      uselonrReloncommelonndabilityClielonnt,
+      Selont(
+        UselonrStatelon.HelonavyTwelonelontelonr,
+        UselonrStatelon.MelondiumTwelonelontelonr
       ),
-      client,
-      statsReceiver
+      clielonnt,
+      statsReloncelonivelonr
     )
 
-@Singleton
-class HeavyTweeterUserActivityPredicate @Inject() (
-  userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
-  client: Client,
-  statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
-      userRecommendabilityClient,
-      Set(
-        UserState.HeavyTweeter
+@Singlelonton
+class HelonavyTwelonelontelonrUselonrActivityPrelondicatelon @Injelonct() (
+  uselonrReloncommelonndabilityClielonnt: UselonrReloncommelonndabilityWithLongKelonysOnUselonrClielonntColumn,
+  clielonnt: Clielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds UselonrStatelonActivityPrelondicatelon(
+      uselonrReloncommelonndabilityClielonnt,
+      Selont(
+        UselonrStatelon.HelonavyTwelonelontelonr
       ),
-      client,
-      statsReceiver
+      clielonnt,
+      statsReloncelonivelonr
     )
 
-@Singleton
-class NonNearZeroUserActivityPredicate @Inject() (
-  userRecommendabilityClient: UserRecommendabilityWithLongKeysOnUserClientColumn,
-  client: Client,
-  statsReceiver: StatsReceiver)
-    extends UserStateActivityPredicate(
-      userRecommendabilityClient,
-      Set(
-        UserState.New,
-        UserState.VeryLight,
-        UserState.Light,
-        UserState.MediumNonTweeter,
-        UserState.MediumTweeter,
-        UserState.HeavyNonTweeter,
-        UserState.HeavyTweeter
+@Singlelonton
+class NonNelonarZelonroUselonrActivityPrelondicatelon @Injelonct() (
+  uselonrReloncommelonndabilityClielonnt: UselonrReloncommelonndabilityWithLongKelonysOnUselonrClielonntColumn,
+  clielonnt: Clielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds UselonrStatelonActivityPrelondicatelon(
+      uselonrReloncommelonndabilityClielonnt,
+      Selont(
+        UselonrStatelon.Nelonw,
+        UselonrStatelon.VelonryLight,
+        UselonrStatelon.Light,
+        UselonrStatelon.MelondiumNonTwelonelontelonr,
+        UselonrStatelon.MelondiumTwelonelontelonr,
+        UselonrStatelon.HelonavyNonTwelonelontelonr,
+        UselonrStatelon.HelonavyTwelonelontelonr
       ),
-      client,
-      statsReceiver
+      clielonnt,
+      statsReloncelonivelonr
     )

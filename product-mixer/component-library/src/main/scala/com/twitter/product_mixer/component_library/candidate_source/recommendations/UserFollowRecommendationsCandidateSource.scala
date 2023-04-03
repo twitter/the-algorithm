@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.candidate_source.recommendations
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.reloncommelonndations
 
-import com.twitter.follow_recommendations.{thriftscala => fr}
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.follow_recommendations_service.GetRecommendationsClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => fr}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyVielonwFelontchelonrSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.follow_reloncommelonndations_selonrvicelon.GelontReloncommelonndationsClielonntColumn
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Returns a list of FollowRecommendations as [[fr.UserRecommendation]]s fetched from Strato
+ * Relonturns a list of FollowReloncommelonndations as [[fr.UselonrReloncommelonndation]]s felontchelond from Strato
  */
-@Singleton
-class UserFollowRecommendationsCandidateSource @Inject() (
-  getRecommendationsClientColumn: GetRecommendationsClientColumn)
-    extends StratoKeyViewFetcherSource[
-      fr.RecommendationRequest,
+@Singlelonton
+class UselonrFollowReloncommelonndationsCandidatelonSourcelon @Injelonct() (
+  gelontReloncommelonndationsClielonntColumn: GelontReloncommelonndationsClielonntColumn)
+    elonxtelonnds StratoKelonyVielonwFelontchelonrSourcelon[
+      fr.ReloncommelonndationRelonquelonst,
       Unit,
-      fr.RecommendationResponse,
-      fr.UserRecommendation
+      fr.ReloncommelonndationRelonsponselon,
+      fr.UselonrReloncommelonndation
     ] {
 
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "FollowRecommendationsService")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    "FollowReloncommelonndationsSelonrvicelon")
 
-  override val fetcher: Fetcher[fr.RecommendationRequest, Unit, fr.RecommendationResponse] =
-    getRecommendationsClientColumn.fetcher
+  ovelonrridelon val felontchelonr: Felontchelonr[fr.ReloncommelonndationRelonquelonst, Unit, fr.ReloncommelonndationRelonsponselon] =
+    gelontReloncommelonndationsClielonntColumn.felontchelonr
 
-  override def stratoResultTransformer(
-    stratoKey: fr.RecommendationRequest,
-    stratoResult: fr.RecommendationResponse
-  ): Seq[fr.UserRecommendation] = {
-    stratoResult.recommendations.map {
-      case fr.Recommendation.User(userRec: fr.UserRecommendation) =>
-        userRec
-      case _ =>
-        throw new Exception("Invalid recommendation type returned from FRS")
+  ovelonrridelon delonf stratoRelonsultTransformelonr(
+    stratoKelony: fr.ReloncommelonndationRelonquelonst,
+    stratoRelonsult: fr.ReloncommelonndationRelonsponselon
+  ): Selonq[fr.UselonrReloncommelonndation] = {
+    stratoRelonsult.reloncommelonndations.map {
+      caselon fr.Reloncommelonndation.Uselonr(uselonrRelonc: fr.UselonrReloncommelonndation) =>
+        uselonrRelonc
+      caselon _ =>
+        throw nelonw elonxcelonption("Invalid reloncommelonndation typelon relonturnelond from FRS")
     }
   }
 }

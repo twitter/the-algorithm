@@ -1,22 +1,22 @@
-package com.twitter.cr_mixer
-package logging
+packagelon com.twittelonr.cr_mixelonr
+packagelon logging
 
-import com.twitter.cr_mixer.thriftscala.CrMixerTweetRequest
-import com.twitter.cr_mixer.thriftscala.Product
+import com.twittelonr.cr_mixelonr.thriftscala.CrMixelonrTwelonelontRelonquelonst
+import com.twittelonr.cr_mixelonr.thriftscala.Product
 
-case class TopLevelDdgMetricsMetadata(
-  userId: Option[Long],
+caselon class TopLelonvelonlDdgMelontricsMelontadata(
+  uselonrId: Option[Long],
   product: Product,
-  clientApplicationId: Option[Long],
-  countryCode: Option[String])
+  clielonntApplicationId: Option[Long],
+  countryCodelon: Option[String])
 
-object TopLevelDdgMetricsMetadata {
-  def from(request: CrMixerTweetRequest): TopLevelDdgMetricsMetadata = {
-    TopLevelDdgMetricsMetadata(
-      userId = request.clientContext.userId,
-      product = request.product,
-      clientApplicationId = request.clientContext.appId,
-      countryCode = request.clientContext.countryCode
+objelonct TopLelonvelonlDdgMelontricsMelontadata {
+  delonf from(relonquelonst: CrMixelonrTwelonelontRelonquelonst): TopLelonvelonlDdgMelontricsMelontadata = {
+    TopLelonvelonlDdgMelontricsMelontadata(
+      uselonrId = relonquelonst.clielonntContelonxt.uselonrId,
+      product = relonquelonst.product,
+      clielonntApplicationId = relonquelonst.clielonntContelonxt.appId,
+      countryCodelon = relonquelonst.clielonntContelonxt.countryCodelon
     )
   }
 }

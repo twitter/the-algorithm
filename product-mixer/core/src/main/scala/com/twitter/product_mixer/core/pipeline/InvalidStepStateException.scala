@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.pipeline
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon
 
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
 
-case class InvalidStepStateException(step: PipelineStepIdentifier, missingData: String)
-    extends Exception(
-      s"Invalid Step State: Step $step requires $missingData"
+caselon class InvalidStelonpStatelonelonxcelonption(stelonp: PipelonlinelonStelonpIdelonntifielonr, missingData: String)
+    elonxtelonnds elonxcelonption(
+      s"Invalid Stelonp Statelon: Stelonp $stelonp relonquirelons $missingData"
     )

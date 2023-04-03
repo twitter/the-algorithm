@@ -1,61 +1,61 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.relonal_timelon_aggrelongatelons
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.UserAuthorEngagementCache
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.prediction.common.aggregates.real_time.TimelinesOnlineAggregationFeaturesOnlyConfig._
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.UselonrAuthorelonngagelonmelonntCachelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.cachelon.RelonadCachelon
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongatelonGroup
+import com.twittelonr.timelonlinelons.prelondiction.common.aggrelongatelons.relonal_timelon.TimelonlinelonsOnlinelonAggrelongationFelonaturelonsOnlyConfig._
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object UserAuthorEngagementRealTimeAggregateFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct UselonrAuthorelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class UserAuthorEngagementRealTimeAggregateFeatureHydrator @Inject() (
-  @Named(UserAuthorEngagementCache) override val client: ReadCache[(Long, Long), DataRecord],
-  override val statsReceiver: StatsReceiver)
-    extends BaseRealTimeAggregateBulkCandidateFeatureHydrator[(Long, Long)] {
+@Singlelonton
+class UselonrAuthorelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator @Injelonct() (
+  @Namelond(UselonrAuthorelonngagelonmelonntCachelon) ovelonrridelon val clielonnt: RelonadCachelon[(Long, Long), DataReloncord],
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BaselonRelonalTimelonAggrelongatelonBulkCandidatelonFelonaturelonHydrator[(Long, Long)] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("UserAuthorEngagementRealTimeAggregate")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("UselonrAuthorelonngagelonmelonntRelonalTimelonAggrelongatelon")
 
-  override val outputFeature: DataRecordInAFeature[TweetCandidate] =
-    UserAuthorEngagementRealTimeAggregateFeature
+  ovelonrridelon val outputFelonaturelon: DataReloncordInAFelonaturelon[TwelonelontCandidatelon] =
+    UselonrAuthorelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelon
 
-  override val aggregateGroups: Seq[AggregateGroup] = Seq(
-    userAuthorEngagementRealTimeAggregatesProd,
-    userAuthorShareEngagementsRealTimeAggregates
+  ovelonrridelon val aggrelongatelonGroups: Selonq[AggrelongatelonGroup] = Selonq(
+    uselonrAuthorelonngagelonmelonntRelonalTimelonAggrelongatelonsProd,
+    uselonrAuthorSharelonelonngagelonmelonntsRelonalTimelonAggrelongatelons
   )
 
-  override val aggregateGroupToPrefix: Map[AggregateGroup, String] = Map(
-    userAuthorEngagementRealTimeAggregatesProd -> "user-author.timelines.user_author_engagement_real_time_aggregates.",
-    userAuthorShareEngagementsRealTimeAggregates -> "user-author.timelines.user_author_share_engagements_real_time_aggregates."
+  ovelonrridelon val aggrelongatelonGroupToPrelonfix: Map[AggrelongatelonGroup, String] = Map(
+    uselonrAuthorelonngagelonmelonntRelonalTimelonAggrelongatelonsProd -> "uselonr-author.timelonlinelons.uselonr_author_elonngagelonmelonnt_relonal_timelon_aggrelongatelons.",
+    uselonrAuthorSharelonelonngagelonmelonntsRelonalTimelonAggrelongatelons -> "uselonr-author.timelonlinelons.uselonr_author_sharelon_elonngagelonmelonnts_relonal_timelon_aggrelongatelons."
   )
 
-  override def keysFromQueryAndCandidates(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[(Long, Long)]] = {
-    val userId = query.getRequiredUserId
-    candidates.map { candidate =>
-      candidate.features
-        .getTry(AuthorIdFeature)
+  ovelonrridelon delonf kelonysFromQuelonryAndCandidatelons(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Selonq[Option[(Long, Long)]] = {
+    val uselonrId = quelonry.gelontRelonquirelondUselonrId
+    candidatelons.map { candidatelon =>
+      candidatelon.felonaturelons
+        .gelontTry(AuthorIdFelonaturelon)
         .toOption
-        .flatten
-        .map((userId, _))
+        .flattelonn
+        .map((uselonrId, _))
     }
   }
 }

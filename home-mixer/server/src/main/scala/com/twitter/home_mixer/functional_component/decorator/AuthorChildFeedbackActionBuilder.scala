@@ -1,33 +1,33 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.product.following.model.HomeMixerExternalStrings
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ChildFeedbackAction
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.timelines.service.{thriftscala => t}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScrelonelonnNamelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SuggelonstTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.HomelonMixelonrelonxtelonrnalStrings
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ChildFelonelondbackAction
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import com.twittelonr.timelonlinelons.selonrvicelon.{thriftscala => t}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class AuthorChildFeedbackActionBuilder @Inject() (
-  @ProductScoped stringCenter: StringCenter,
-  externalStrings: HomeMixerExternalStrings) {
+@Singlelonton
+caselon class AuthorChildFelonelondbackActionBuildelonr @Injelonct() (
+  @ProductScopelond stringCelonntelonr: StringCelonntelonr,
+  elonxtelonrnalStrings: HomelonMixelonrelonxtelonrnalStrings) {
 
-  def apply(candidateFeatures: FeatureMap): Option[ChildFeedbackAction] = {
-    CandidatesUtil.getOriginalAuthorId(candidateFeatures).flatMap { authorId =>
-      FeedbackUtil.buildUserSeeFewerChildFeedbackAction(
-        userId = authorId,
-        namesByUserId = candidateFeatures.getOrElse(ScreenNamesFeature, Map.empty[Long, String]),
-        promptExternalString = externalStrings.showFewerTweetsString,
-        confirmationExternalString = externalStrings.showFewerTweetsConfirmationString,
-        engagementType = t.FeedbackEngagementType.Tweet,
-        stringCenter = stringCenter,
-        injectionType = candidateFeatures.getOrElse(SuggestTypeFeature, None)
+  delonf apply(candidatelonFelonaturelons: FelonaturelonMap): Option[ChildFelonelondbackAction] = {
+    CandidatelonsUtil.gelontOriginalAuthorId(candidatelonFelonaturelons).flatMap { authorId =>
+      FelonelondbackUtil.buildUselonrSelonelonFelonwelonrChildFelonelondbackAction(
+        uselonrId = authorId,
+        namelonsByUselonrId = candidatelonFelonaturelons.gelontOrelonlselon(ScrelonelonnNamelonsFelonaturelon, Map.elonmpty[Long, String]),
+        promptelonxtelonrnalString = elonxtelonrnalStrings.showFelonwelonrTwelonelontsString,
+        confirmationelonxtelonrnalString = elonxtelonrnalStrings.showFelonwelonrTwelonelontsConfirmationString,
+        elonngagelonmelonntTypelon = t.FelonelondbackelonngagelonmelonntTypelon.Twelonelont,
+        stringCelonntelonr = stringCelonntelonr,
+        injelonctionTypelon = candidatelonFelonaturelons.gelontOrelonlselon(SuggelonstTypelonFelonaturelon, Nonelon)
       )
     }
   }

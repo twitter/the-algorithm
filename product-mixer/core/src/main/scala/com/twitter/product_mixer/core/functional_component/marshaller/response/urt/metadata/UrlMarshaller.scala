@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UrlMarshaller @Inject() (
-  urlTypeMarshaller: UrlTypeMarshaller,
-  urtEndpointOptionsMarshaller: UrtEndpointOptionsMarshaller) {
+@Singlelonton
+class UrlMarshallelonr @Injelonct() (
+  urlTypelonMarshallelonr: UrlTypelonMarshallelonr,
+  urtelonndpointOptionsMarshallelonr: UrtelonndpointOptionsMarshallelonr) {
 
-  def apply(url: Url): urt.Url = urt.Url(
-    urlType = urlTypeMarshaller(url.urlType),
+  delonf apply(url: Url): urt.Url = urt.Url(
+    urlTypelon = urlTypelonMarshallelonr(url.urlTypelon),
     url = url.url,
-    urtEndpointOptions = url.urtEndpointOptions.map(urtEndpointOptionsMarshaller(_))
+    urtelonndpointOptions = url.urtelonndpointOptions.map(urtelonndpointOptionsMarshallelonr(_))
   )
 }

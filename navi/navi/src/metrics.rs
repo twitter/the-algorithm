@@ -1,290 +1,290 @@
-use log::error;
-use prometheus::{
-    CounterVec, HistogramOpts, HistogramVec, IntCounter, IntCounterVec, IntGauge, IntGaugeVec,
-    Opts, Registry,
+uselon log::elonrror;
+uselon promelonthelonus::{
+    CountelonrVelonc, HistogramOpts, HistogramVelonc, IntCountelonr, IntCountelonrVelonc, IntGaugelon, IntGaugelonVelonc,
+    Opts, Relongistry,
 };
-use warp::{Rejection, Reply};
-use crate::{NAME, VERSION};
+uselon warp::{Relonjelonction, Relonply};
+uselon cratelon::{NAMelon, VelonRSION};
 
 lazy_static! {
-    pub static ref REGISTRY: Registry = Registry::new();
-    pub static ref NUM_REQUESTS_RECEIVED: IntCounter =
-        IntCounter::new(":navi:num_requests", "Number of Requests Received")
-            .expect("metric can be created");
-    pub static ref NUM_REQUESTS_FAILED: IntCounter = IntCounter::new(
-        ":navi:num_requests_failed",
-        "Number of Request Inference Failed"
+    pub static relonf RelonGISTRY: Relongistry = Relongistry::nelonw();
+    pub static relonf NUM_RelonQUelonSTS_RelonCelonIVelonD: IntCountelonr =
+        IntCountelonr::nelonw(":navi:num_relonquelonsts", "Numbelonr of Relonquelonsts Reloncelonivelond")
+            .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_RelonQUelonSTS_FAILelonD: IntCountelonr = IntCountelonr::nelonw(
+        ":navi:num_relonquelonsts_failelond",
+        "Numbelonr of Relonquelonst Infelonrelonncelon Failelond"
     )
-    .expect("metric can be created");
-    pub static ref NUM_REQUESTS_DROPPED: IntCounter = IntCounter::new(
-        ":navi:num_requests_dropped",
-        "Number of Oneshot Receivers Dropped"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_RelonQUelonSTS_DROPPelonD: IntCountelonr = IntCountelonr::nelonw(
+        ":navi:num_relonquelonsts_droppelond",
+        "Numbelonr of Onelonshot Reloncelonivelonrs Droppelond"
     )
-    .expect("metric can be created");
-    pub static ref NUM_BATCHES_DROPPED: IntCounter = IntCounter::new(
-        ":navi:num_batches_dropped",
-        "Number of Batches Proactively Dropped"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_BATCHelonS_DROPPelonD: IntCountelonr = IntCountelonr::nelonw(
+        ":navi:num_batchelons_droppelond",
+        "Numbelonr of Batchelons Proactivelonly Droppelond"
     )
-    .expect("metric can be created");
-    pub static ref NUM_BATCH_PREDICTION: IntCounter =
-        IntCounter::new(":navi:num_batch_prediction", "Number of batch prediction")
-            .expect("metric can be created");
-    pub static ref BATCH_SIZE: IntGauge =
-        IntGauge::new(":navi:batch_size", "Size of current batch").expect("metric can be created");
-    pub static ref NAVI_VERSION: IntGauge =
-        IntGauge::new(":navi:navi_version", "navi's current version")
-            .expect("metric can be created");
-    pub static ref RESPONSE_TIME_COLLECTOR: HistogramVec = HistogramVec::new(
-        HistogramOpts::new(":navi:response_time", "Response Time in ms").buckets(Vec::from(&[
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_BATCH_PRelonDICTION: IntCountelonr =
+        IntCountelonr::nelonw(":navi:num_batch_prelondiction", "Numbelonr of batch prelondiction")
+            .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf BATCH_SIZelon: IntGaugelon =
+        IntGaugelon::nelonw(":navi:batch_sizelon", "Sizelon of currelonnt batch").elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NAVI_VelonRSION: IntGaugelon =
+        IntGaugelon::nelonw(":navi:navi_velonrsion", "navi's currelonnt velonrsion")
+            .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf RelonSPONSelon_TIMelon_COLLelonCTOR: HistogramVelonc = HistogramVelonc::nelonw(
+        HistogramOpts::nelonw(":navi:relonsponselon_timelon", "Relonsponselon Timelon in ms").buckelonts(Velonc::from(&[
             0.0, 10.0, 20.0, 30.0, 40.0, 50.0, 60.0, 70.0, 80.0, 90.0, 100.0, 110.0, 120.0, 130.0,
             140.0, 150.0, 160.0, 170.0, 180.0, 190.0, 200.0, 250.0, 300.0, 500.0, 1000.0
         ]
             as &'static [f64])),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_PREDICTIONS: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_predictions",
-            "Number of predictions made by model"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_PRelonDICTIONS: IntCountelonrVelonc = IntCountelonrVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:num_prelondictions",
+            "Numbelonr of prelondictions madelon by modelonl"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref PREDICTION_SCORE_SUM: CounterVec = CounterVec::new(
-        Opts::new(
-            ":navi:prediction_score_sum",
-            "Sum of prediction score made by model"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf PRelonDICTION_SCORelon_SUM: CountelonrVelonc = CountelonrVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:prelondiction_scorelon_sum",
+            "Sum of prelondiction scorelon madelon by modelonl"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref NEW_MODEL_SNAPSHOT: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:new_model_snapshot",
-            "Load a new version of model snapshot"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NelonW_MODelonL_SNAPSHOT: IntCountelonrVelonc = IntCountelonrVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:nelonw_modelonl_snapshot",
+            "Load a nelonw velonrsion of modelonl snapshot"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref MODEL_SNAPSHOT_VERSION: IntGaugeVec = IntGaugeVec::new(
-        Opts::new(
-            ":navi:model_snapshot_version",
-            "Record model snapshot version"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf MODelonL_SNAPSHOT_VelonRSION: IntGaugelonVelonc = IntGaugelonVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:modelonl_snapshot_velonrsion",
+            "Reloncord modelonl snapshot velonrsion"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_REQUESTS_RECEIVED_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_requests_by_model",
-            "Number of Requests Received by model"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_RelonQUelonSTS_RelonCelonIVelonD_BY_MODelonL: IntCountelonrVelonc = IntCountelonrVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:num_relonquelonsts_by_modelonl",
+            "Numbelonr of Relonquelonsts Reloncelonivelond by modelonl"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_REQUESTS_FAILED_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_requests_failed_by_model",
-            "Number of Request Inference Failed by model"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_RelonQUelonSTS_FAILelonD_BY_MODelonL: IntCountelonrVelonc = IntCountelonrVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:num_relonquelonsts_failelond_by_modelonl",
+            "Numbelonr of Relonquelonst Infelonrelonncelon Failelond by modelonl"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_REQUESTS_DROPPED_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_requests_dropped_by_model",
-            "Number of Oneshot Receivers Dropped by model"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_RelonQUelonSTS_DROPPelonD_BY_MODelonL: IntCountelonrVelonc = IntCountelonrVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:num_relonquelonsts_droppelond_by_modelonl",
+            "Numbelonr of Onelonshot Reloncelonivelonrs Droppelond by modelonl"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_BATCHES_DROPPED_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_batches_dropped_by_model",
-            "Number of Batches Proactively Dropped by model"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_BATCHelonS_DROPPelonD_BY_MODelonL: IntCountelonrVelonc = IntCountelonrVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:num_batchelons_droppelond_by_modelonl",
+            "Numbelonr of Batchelons Proactivelonly Droppelond by modelonl"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref INFERENCE_FAILED_REQUESTS_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:inference_failed_requests_by_model",
-            "Number of failed inference requests by model"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf INFelonRelonNCelon_FAILelonD_RelonQUelonSTS_BY_MODelonL: IntCountelonrVelonc = IntCountelonrVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:infelonrelonncelon_failelond_relonquelonsts_by_modelonl",
+            "Numbelonr of failelond infelonrelonncelon relonquelonsts by modelonl"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_PREDICTION_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_prediction_by_model",
-            "Number of prediction by model"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_PRelonDICTION_BY_MODelonL: IntCountelonrVelonc = IntCountelonrVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:num_prelondiction_by_modelonl",
+            "Numbelonr of prelondiction by modelonl"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref NUM_BATCH_PREDICTION_BY_MODEL: IntCounterVec = IntCounterVec::new(
-        Opts::new(
-            ":navi:num_batch_prediction_by_model",
-            "Number of batch prediction by model"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf NUM_BATCH_PRelonDICTION_BY_MODelonL: IntCountelonrVelonc = IntCountelonrVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:num_batch_prelondiction_by_modelonl",
+            "Numbelonr of batch prelondiction by modelonl"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref BATCH_SIZE_BY_MODEL: IntGaugeVec = IntGaugeVec::new(
-        Opts::new(
-            ":navi:batch_size_by_model",
-            "Size of current batch by model"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf BATCH_SIZelon_BY_MODelonL: IntGaugelonVelonc = IntGaugelonVelonc::nelonw(
+        Opts::nelonw(
+            ":navi:batch_sizelon_by_modelonl",
+            "Sizelon of currelonnt batch by modelonl"
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref CUSTOMOP_VERSION: IntGauge =
-        IntGauge::new(":navi:customop_version", "The hashed Custom OP Version")
-            .expect("metric can be created");
-    pub static ref MPSC_CHANNEL_SIZE: IntGauge =
-        IntGauge::new(":navi:mpsc_channel_size", "The mpsc channel's request size")
-            .expect("metric can be created");
-    pub static ref BLOCKING_REQUEST_NUM: IntGauge = IntGauge::new(
-        ":navi:blocking_request_num",
-        "The (batch) request waiting or being executed"
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf CUSTOMOP_VelonRSION: IntGaugelon =
+        IntGaugelon::nelonw(":navi:customop_velonrsion", "Thelon hashelond Custom OP Velonrsion")
+            .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf MPSC_CHANNelonL_SIZelon: IntGaugelon =
+        IntGaugelon::nelonw(":navi:mpsc_channelonl_sizelon", "Thelon mpsc channelonl's relonquelonst sizelon")
+            .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf BLOCKING_RelonQUelonST_NUM: IntGaugelon = IntGaugelon::nelonw(
+        ":navi:blocking_relonquelonst_num",
+        "Thelon (batch) relonquelonst waiting or beloning elonxeloncutelond"
     )
-    .expect("metric can be created");
-    pub static ref MODEL_INFERENCE_TIME_COLLECTOR: HistogramVec = HistogramVec::new(
-        HistogramOpts::new(":navi:model_inference_time", "Model inference time in ms").buckets(
-            Vec::from(&[
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf MODelonL_INFelonRelonNCelon_TIMelon_COLLelonCTOR: HistogramVelonc = HistogramVelonc::nelonw(
+        HistogramOpts::nelonw(":navi:modelonl_infelonrelonncelon_timelon", "Modelonl infelonrelonncelon timelon in ms").buckelonts(
+            Velonc::from(&[
                 0.0, 5.0, 10.0, 15.0, 20.0, 25.0, 30.0, 35.0, 40.0, 45.0, 50.0, 55.0, 60.0, 65.0,
                 70.0, 75.0, 80.0, 85.0, 90.0, 100.0, 110.0, 120.0, 130.0, 140.0, 150.0, 160.0,
                 170.0, 180.0, 190.0, 200.0, 250.0, 300.0, 500.0, 1000.0
             ] as &'static [f64])
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
-    pub static ref CONVERTER_TIME_COLLECTOR: HistogramVec = HistogramVec::new(
-        HistogramOpts::new(":navi:converter_time", "converter time in microseconds").buckets(
-            Vec::from(&[
+    .elonxpelonct("melontric can belon crelonatelond");
+    pub static relonf CONVelonRTelonR_TIMelon_COLLelonCTOR: HistogramVelonc = HistogramVelonc::nelonw(
+        HistogramOpts::nelonw(":navi:convelonrtelonr_timelon", "convelonrtelonr timelon in microselonconds").buckelonts(
+            Velonc::from(&[
                 0.0, 500.0, 1000.0, 1500.0, 2000.0, 2500.0, 3000.0, 3500.0, 4000.0, 4500.0, 5000.0,
                 5500.0, 6000.0, 6500.0, 7000.0, 20000.0
             ] as &'static [f64])
         ),
-        &["model_name"]
+        &["modelonl_namelon"]
     )
-    .expect("metric can be created");
+    .elonxpelonct("melontric can belon crelonatelond");
 }
 
-pub fn register_custom_metrics() {
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_RECEIVED.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_FAILED.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_DROPPED.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(RESPONSE_TIME_COLLECTOR.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NAVI_VERSION.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(BATCH_SIZE.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_BATCH_PREDICTION.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_BATCHES_DROPPED.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_PREDICTIONS.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(PREDICTION_SCORE_SUM.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NEW_MODEL_SNAPSHOT.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(MODEL_SNAPSHOT_VERSION.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_RECEIVED_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_FAILED_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_REQUESTS_DROPPED_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_BATCHES_DROPPED_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(INFERENCE_FAILED_REQUESTS_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_PREDICTION_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(NUM_BATCH_PREDICTION_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(BATCH_SIZE_BY_MODEL.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(CUSTOMOP_VERSION.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(MPSC_CHANNEL_SIZE.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(BLOCKING_REQUEST_NUM.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(MODEL_INFERENCE_TIME_COLLECTOR.clone()))
-        .expect("collector can be registered");
-    REGISTRY
-        .register(Box::new(CONVERTER_TIME_COLLECTOR.clone()))
-        .expect("collector can be registered");
+pub fn relongistelonr_custom_melontrics() {
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_RelonQUelonSTS_RelonCelonIVelonD.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_RelonQUelonSTS_FAILelonD.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_RelonQUelonSTS_DROPPelonD.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(RelonSPONSelon_TIMelon_COLLelonCTOR.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NAVI_VelonRSION.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(BATCH_SIZelon.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_BATCH_PRelonDICTION.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_BATCHelonS_DROPPelonD.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_PRelonDICTIONS.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(PRelonDICTION_SCORelon_SUM.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NelonW_MODelonL_SNAPSHOT.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(MODelonL_SNAPSHOT_VelonRSION.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_RelonQUelonSTS_RelonCelonIVelonD_BY_MODelonL.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_RelonQUelonSTS_FAILelonD_BY_MODelonL.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_RelonQUelonSTS_DROPPelonD_BY_MODelonL.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_BATCHelonS_DROPPelonD_BY_MODelonL.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(INFelonRelonNCelon_FAILelonD_RelonQUelonSTS_BY_MODelonL.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_PRelonDICTION_BY_MODelonL.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(NUM_BATCH_PRelonDICTION_BY_MODelonL.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(BATCH_SIZelon_BY_MODelonL.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(CUSTOMOP_VelonRSION.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(MPSC_CHANNelonL_SIZelon.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(BLOCKING_RelonQUelonST_NUM.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(MODelonL_INFelonRelonNCelon_TIMelon_COLLelonCTOR.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(CONVelonRTelonR_TIMelon_COLLelonCTOR.clonelon()))
+        .elonxpelonct("collelonctor can belon relongistelonrelond");
 }
 
-pub fn register_dynamic_metrics(c: &HistogramVec) {
-    REGISTRY
-        .register(Box::new(c.clone()))
-        .expect("dynamic metric collector cannot be registered");
+pub fn relongistelonr_dynamic_melontrics(c: &HistogramVelonc) {
+    RelonGISTRY
+        .relongistelonr(Box::nelonw(c.clonelon()))
+        .elonxpelonct("dynamic melontric collelonctor cannot belon relongistelonrelond");
 }
 
-pub async fn metrics_handler() -> Result<impl Reply, Rejection> {
-    use prometheus::Encoder;
-    let encoder = prometheus::TextEncoder::new();
+pub async fn melontrics_handlelonr() -> Relonsult<impl Relonply, Relonjelonction> {
+    uselon promelonthelonus::elonncodelonr;
+    lelont elonncodelonr = promelonthelonus::Telonxtelonncodelonr::nelonw();
 
-    let mut buffer = Vec::new();
-    if let Err(e) = encoder.encode(&REGISTRY.gather(), &mut buffer) {
-        error!("could not encode custom metrics: {}", e);
+    lelont mut buffelonr = Velonc::nelonw();
+    if lelont elonrr(elon) = elonncodelonr.elonncodelon(&RelonGISTRY.gathelonr(), &mut buffelonr) {
+        elonrror!("could not elonncodelon custom melontrics: {}", elon);
     };
-    let mut res = match String::from_utf8(buffer) {
-        Ok(v) => format!("#{}:{}\n{}", NAME, VERSION, v),
-        Err(e) => {
-            error!("custom metrics could not be from_utf8'd: {}", e);
-            String::default()
+    lelont mut relons = match String::from_utf8(buffelonr) {
+        Ok(v) => format!("#{}:{}\n{}", NAMelon, VelonRSION, v),
+        elonrr(elon) => {
+            elonrror!("custom melontrics could not belon from_utf8'd: {}", elon);
+            String::delonfault()
         }
     };
 
-    buffer = Vec::new();
-    if let Err(e) = encoder.encode(&prometheus::gather(), &mut buffer) {
-        error!("could not encode prometheus metrics: {}", e);
+    buffelonr = Velonc::nelonw();
+    if lelont elonrr(elon) = elonncodelonr.elonncodelon(&promelonthelonus::gathelonr(), &mut buffelonr) {
+        elonrror!("could not elonncodelon promelonthelonus melontrics: {}", elon);
     };
-    let res_custom = match String::from_utf8(buffer) {
+    lelont relons_custom = match String::from_utf8(buffelonr) {
         Ok(v) => v,
-        Err(e) => {
-            error!("prometheus metrics could not be from_utf8'd: {}", e);
-            String::default()
+        elonrr(elon) => {
+            elonrror!("promelonthelonus melontrics could not belon from_utf8'd: {}", elon);
+            String::delonfault()
         }
     };
 
-    res.push_str(&res_custom);
-    Ok(res)
+    relons.push_str(&relons_custom);
+    Ok(relons)
 }

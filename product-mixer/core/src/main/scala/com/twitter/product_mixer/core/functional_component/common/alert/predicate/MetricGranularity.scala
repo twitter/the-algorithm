@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon
 
 /**
- * Specifies the metric granularity
+ * Speloncifielons thelon melontric granularity
  *
- * @see [[https://docbird.twitter.biz/mon/reference.html#predicate DURATION]]
+ * @selonelon [[https://docbird.twittelonr.biz/mon/relonfelonrelonncelon.html#prelondicatelon DURATION]]
  */
-sealed trait MetricGranularity { val unit: String }
+selonalelond trait MelontricGranularity { val unit: String }
 
 /**
- * Use minutely metrics and have alert durations in terms of minutes
+ * Uselon minutelonly melontrics and havelon alelonrt durations in telonrms of minutelons
  *
- * i.e. for a [[Predicate]] if [[Predicate.datapointsPastThreshold]] = 5 and [[Predicate.duration]] = 10
- * then the alert will trigger if there are at least 5 '''minutely''' metric points that are past the threshold
- * in any 10 '''minute''' period
+ * i.elon. for a [[Prelondicatelon]] if [[Prelondicatelon.datapointsPastThrelonshold]] = 5 and [[Prelondicatelon.duration]] = 10
+ * thelonn thelon alelonrt will triggelonr if thelonrelon arelon at lelonast 5 '''minutelonly''' melontric points that arelon past thelon threlonshold
+ * in any 10 '''minutelon''' pelonriod
  */
-case object Minutes extends MetricGranularity { override val unit: String = "m" }
+caselon objelonct Minutelons elonxtelonnds MelontricGranularity { ovelonrridelon val unit: String = "m" }
 
 /**
- * Use hourly metrics and have alert durations in terms of hours
+ * Uselon hourly melontrics and havelon alelonrt durations in telonrms of hours
  *
- * i.e. for a [[Predicate]] if [[Predicate.datapointsPastThreshold]] = 5 and [[Predicate.duration]] = 10
- * then the alert will trigger if there are at least 5 '''hourly''' metric points that are past the threshold
- * in any 10 '''hour''' period
+ * i.elon. for a [[Prelondicatelon]] if [[Prelondicatelon.datapointsPastThrelonshold]] = 5 and [[Prelondicatelon.duration]] = 10
+ * thelonn thelon alelonrt will triggelonr if thelonrelon arelon at lelonast 5 '''hourly''' melontric points that arelon past thelon threlonshold
+ * in any 10 '''hour''' pelonriod
  */
-case object Hours extends MetricGranularity { override val unit: String = "h" }
+caselon objelonct Hours elonxtelonnds MelontricGranularity { ovelonrridelon val unit: String = "h" }
 
 /**
- * Use daily metrics and have alert durations in terms of days
+ * Uselon daily melontrics and havelon alelonrt durations in telonrms of days
  *
- * i.e. for a [[Predicate]] if [[Predicate.datapointsPastThreshold]] = 5 and [[Predicate.duration]] = 10
- * then the alert will trigger if there are at least 5 '''daily''' metric points that are past the threshold
- * in any 10 '''day''' period
+ * i.elon. for a [[Prelondicatelon]] if [[Prelondicatelon.datapointsPastThrelonshold]] = 5 and [[Prelondicatelon.duration]] = 10
+ * thelonn thelon alelonrt will triggelonr if thelonrelon arelon at lelonast 5 '''daily''' melontric points that arelon past thelon threlonshold
+ * in any 10 '''day''' pelonriod
  */
-case object Days extends MetricGranularity { override val unit: String = "d" }
+caselon objelonct Days elonxtelonnds MelontricGranularity { ovelonrridelon val unit: String = "d" }

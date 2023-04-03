@@ -1,24 +1,24 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
 
-/** A top level filter for handling exceptions. */
-public class TopLevelExceptionHandlingFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private final EarlybirdResponseExceptionHandler exceptionHandler;
+/** A top lelonvelonl filtelonr for handling elonxcelonptions. */
+public class TopLelonvelonlelonxcelonptionHandlingFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon final elonarlybirdRelonsponselonelonxcelonptionHandlelonr elonxcelonptionHandlelonr;
 
-  /** Creates a new TopLevelExceptionHandlingFilter instance. */
-  public TopLevelExceptionHandlingFilter() {
-    this.exceptionHandler = new EarlybirdResponseExceptionHandler("top_level");
+  /** Crelonatelons a nelonw TopLelonvelonlelonxcelonptionHandlingFiltelonr instancelon. */
+  public TopLelonvelonlelonxcelonptionHandlingFiltelonr() {
+    this.elonxcelonptionHandlelonr = nelonw elonarlybirdRelonsponselonelonxcelonptionHandlelonr("top_lelonvelonl");
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    return exceptionHandler.handleException(request, service.apply(request));
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
+    relonturn elonxcelonptionHandlelonr.handlelonelonxcelonption(relonquelonst, selonrvicelon.apply(relonquelonst));
   }
 }

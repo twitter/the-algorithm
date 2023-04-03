@@ -1,23 +1,23 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.spam.rtf.{thriftscala => s}
+import com.twittelonr.spam.rtf.{thriftscala => s}
 
-case class TweetModelMetadata(
-  version: Option[Int] = None,
-  calibratedLanguage: Option[String] = None)
+caselon class TwelonelontModelonlMelontadata(
+  velonrsion: Option[Int] = Nonelon,
+  calibratelondLanguagelon: Option[String] = Nonelon)
 
-object TweetModelMetadata {
+objelonct TwelonelontModelonlMelontadata {
 
-  def fromThrift(metadata: s.ModelMetadata): Option[TweetModelMetadata] = {
-    metadata match {
-      case s.ModelMetadata.ModelMetadataV1(s.ModelMetadataV1(version, calibratedLanguage)) =>
-        Some(TweetModelMetadata(version, calibratedLanguage))
-      case _ => None
+  delonf fromThrift(melontadata: s.ModelonlMelontadata): Option[TwelonelontModelonlMelontadata] = {
+    melontadata match {
+      caselon s.ModelonlMelontadata.ModelonlMelontadataV1(s.ModelonlMelontadataV1(velonrsion, calibratelondLanguagelon)) =>
+        Somelon(TwelonelontModelonlMelontadata(velonrsion, calibratelondLanguagelon))
+      caselon _ => Nonelon
     }
   }
 
-  def toThrift(metadata: TweetModelMetadata): s.ModelMetadata = {
-    s.ModelMetadata.ModelMetadataV1(
-      s.ModelMetadataV1(metadata.version, metadata.calibratedLanguage))
+  delonf toThrift(melontadata: TwelonelontModelonlMelontadata): s.ModelonlMelontadata = {
+    s.ModelonlMelontadata.ModelonlMelontadataV1(
+      s.ModelonlMelontadataV1(melontadata.velonrsion, melontadata.calibratelondLanguagelon))
   }
 }

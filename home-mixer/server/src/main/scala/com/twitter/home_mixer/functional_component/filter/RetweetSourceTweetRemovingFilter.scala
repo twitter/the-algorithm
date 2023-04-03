@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.functional_component.filter
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.EarlybirdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InReplyToTweetIdFeature
-import com.twitter.home_mixer.util.ReplyRetweetUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.elonarlybirdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InRelonplyToTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.util.RelonplyRelontwelonelontUtil
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * This filter removes source tweets of retweets, added via second EB call in TLR
+ * This filtelonr relonmovelons sourcelon twelonelonts of relontwelonelonts, addelond via seloncond elonB call in TLR
  */
-object RetweetSourceTweetRemovingFilter extends Filter[PipelineQuery, TweetCandidate] {
+objelonct RelontwelonelontSourcelonTwelonelontRelonmovingFiltelonr elonxtelonnds Filtelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("RetweetSourceTweetRemoving")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("RelontwelonelontSourcelonTwelonelontRelonmoving")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    val (kept, removed) =
-      candidates.partition(
-        _.features.getOrElse(EarlybirdFeature, None).exists(_.isSourceTweet)) match {
-        case (sourceTweets, nonSourceTweets) =>
-          val inReplyToTweetIds: Set[Long] =
-            nonSourceTweets
-              .filter(ReplyRetweetUtil.isEligibleReply(_)).flatMap(
-                _.features.getOrElse(InReplyToTweetIdFeature, None)).toSet
-          val (keptSourceTweets, removedSourceTweets) = sourceTweets
-            .map(_.candidate)
-            .partition(candidate => inReplyToTweetIds.contains(candidate.id))
-          (nonSourceTweets.map(_.candidate) ++ keptSourceTweets, removedSourceTweets)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[TwelonelontCandidatelon]] = {
+    val (kelonpt, relonmovelond) =
+      candidatelons.partition(
+        _.felonaturelons.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.isSourcelonTwelonelont)) match {
+        caselon (sourcelonTwelonelonts, nonSourcelonTwelonelonts) =>
+          val inRelonplyToTwelonelontIds: Selont[Long] =
+            nonSourcelonTwelonelonts
+              .filtelonr(RelonplyRelontwelonelontUtil.iselonligiblelonRelonply(_)).flatMap(
+                _.felonaturelons.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon)).toSelont
+          val (kelonptSourcelonTwelonelonts, relonmovelondSourcelonTwelonelonts) = sourcelonTwelonelonts
+            .map(_.candidatelon)
+            .partition(candidatelon => inRelonplyToTwelonelontIds.contains(candidatelon.id))
+          (nonSourcelonTwelonelonts.map(_.candidatelon) ++ kelonptSourcelonTwelonelonts, relonmovelondSourcelonTwelonelonts)
       }
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonpt, relonmovelond = relonmovelond))
   }
 }

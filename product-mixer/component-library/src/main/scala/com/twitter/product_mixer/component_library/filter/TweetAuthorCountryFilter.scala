@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * A [[filter]] that filters candidates based on a country code feature
+ * A [[filtelonr]] that filtelonrs candidatelons baselond on a country codelon felonaturelon
  *
- * @param countryCodeFeature the feature to filter candidates on
+ * @param countryCodelonFelonaturelon thelon felonaturelon to filtelonr candidatelons on
  */
-case class TweetAuthorCountryFilter[Candidate <: BaseTweetCandidate](
-  countryCodeFeature: Feature[Candidate, Option[String]])
-    extends Filter[PipelineQuery, Candidate] {
+caselon class TwelonelontAuthorCountryFiltelonr[Candidatelon <: BaselonTwelonelontCandidatelon](
+  countryCodelonFelonaturelon: Felonaturelon[Candidatelon, Option[String]])
+    elonxtelonnds Filtelonr[PipelonlinelonQuelonry, Candidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetAuthorCountry")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("TwelonelontAuthorCountry")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
 
-    val userCountry = query.getCountryCode
+    val uselonrCountry = quelonry.gelontCountryCodelon
 
-    val (keptCandidates, removedCandidates) = candidates.partition { filteredCandidate =>
-      val authorCountry = filteredCandidate.features.get(countryCodeFeature)
+    val (kelonptCandidatelons, relonmovelondCandidatelons) = candidatelons.partition { filtelonrelondCandidatelon =>
+      val authorCountry = filtelonrelondCandidatelon.felonaturelons.gelont(countryCodelonFelonaturelon)
 
-      (authorCountry, userCountry) match {
-        case (Some(authorCountryCode), Some(userCountryCode)) =>
-          authorCountryCode.equalsIgnoreCase(userCountryCode)
-        case _ => true
+      (authorCountry, uselonrCountry) match {
+        caselon (Somelon(authorCountryCodelon), Somelon(uselonrCountryCodelon)) =>
+          authorCountryCodelon.elonqualsIgnorelonCaselon(uselonrCountryCodelon)
+        caselon _ => truelon
       }
     }
 
-    Stitch.value(
-      FilterResult(
-        kept = keptCandidates.map(_.candidate),
-        removed = removedCandidates.map(_.candidate)
+    Stitch.valuelon(
+      FiltelonrRelonsult(
+        kelonpt = kelonptCandidatelons.map(_.candidatelon),
+        relonmovelond = relonmovelondCandidatelons.map(_.candidatelon)
       )
     )
   }

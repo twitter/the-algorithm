@@ -1,91 +1,91 @@
-package com.twitter.recos.user_video_graph.relatedTweetHandlers
+packagelon com.twittelonr.reloncos.uselonr_videlono_graph.relonlatelondTwelonelontHandlelonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.recos.features.tweet.thriftscala.GraphFeaturesForQuery
-import com.twitter.recos.user_video_graph.thriftscala._
-import com.twitter.recos.user_video_graph.util.FilterUtil
-import com.twitter.recos.user_video_graph.util.FetchRHSTweetsUtil
-import com.twitter.recos.user_video_graph.util.GetRelatedTweetCandidatesUtil
-import com.twitter.recos.user_video_graph.util.GetAllInternalTweetIdsUtil
-import com.twitter.recos.user_video_graph.util.SampleLHSUsersUtil
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import scala.concurrent.duration.HOURS
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graphjelont.bipartitelon.api.BipartitelonGraph
+import com.twittelonr.reloncos.felonaturelons.twelonelont.thriftscala.GraphFelonaturelonsForQuelonry
+import com.twittelonr.reloncos.uselonr_videlono_graph.thriftscala._
+import com.twittelonr.reloncos.uselonr_videlono_graph.util.FiltelonrUtil
+import com.twittelonr.reloncos.uselonr_videlono_graph.util.FelontchRHSTwelonelontsUtil
+import com.twittelonr.reloncos.uselonr_videlono_graph.util.GelontRelonlatelondTwelonelontCandidatelonsUtil
+import com.twittelonr.reloncos.uselonr_videlono_graph.util.GelontAllIntelonrnalTwelonelontIdsUtil
+import com.twittelonr.reloncos.uselonr_videlono_graph.util.SamplelonLHSUselonrsUtil
+import com.twittelonr.reloncos.util.Stats._
+import com.twittelonr.selonrvo.relonquelonst._
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import scala.concurrelonnt.duration.HOURS
 
 /**
- * Implementation of the Thrift-defined service interface for tweetBasedRelatedTweets.
+ * Implelonmelonntation of thelon Thrift-delonfinelond selonrvicelon intelonrfacelon for twelonelontBaselondRelonlatelondTwelonelonts.
  *
  */
-class TweetBasedRelatedTweetsHandler(bipartiteGraph: BipartiteGraph, statsReceiver: StatsReceiver)
-    extends RequestHandler[TweetBasedRelatedTweetRequest, RelatedTweetResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+class TwelonelontBaselondRelonlatelondTwelonelontsHandlelonr(bipartitelonGraph: BipartitelonGraph, statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstHandlelonr[TwelonelontBaselondRelonlatelondTwelonelontRelonquelonst, RelonlatelondTwelonelontRelonsponselon] {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  override def apply(request: TweetBasedRelatedTweetRequest): Future[RelatedTweetResponse] = {
-    trackFutureBlockStats(stats) {
-      val internalQueryTweetIds =
-        GetAllInternalTweetIdsUtil.getAllInternalTweetIds(request.tweetId, bipartiteGraph)
+  ovelonrridelon delonf apply(relonquelonst: TwelonelontBaselondRelonlatelondTwelonelontRelonquelonst): Futurelon[RelonlatelondTwelonelontRelonsponselon] = {
+    trackFuturelonBlockStats(stats) {
+      val intelonrnalQuelonryTwelonelontIds =
+        GelontAllIntelonrnalTwelonelontIdsUtil.gelontAllIntelonrnalTwelonelontIds(relonquelonst.twelonelontId, bipartitelonGraph)
 
-      val response = internalQueryTweetIds match {
-        case head +: Nil => getRelatedTweets(request, head)
-        case _ => RelatedTweetResponse()
+      val relonsponselon = intelonrnalQuelonryTwelonelontIds match {
+        caselon helonad +: Nil => gelontRelonlatelondTwelonelonts(relonquelonst, helonad)
+        caselon _ => RelonlatelondTwelonelontRelonsponselon()
       }
-      Future.value(response)
+      Futurelon.valuelon(relonsponselon)
     }
   }
 
-  private def getRelatedTweets(
-    request: TweetBasedRelatedTweetRequest,
-    maskedTweetId: Long
-  ): RelatedTweetResponse = {
+  privatelon delonf gelontRelonlatelondTwelonelonts(
+    relonquelonst: TwelonelontBaselondRelonlatelondTwelonelontRelonquelonst,
+    maskelondTwelonelontId: Long
+  ): RelonlatelondTwelonelontRelonsponselon = {
 
-    val maxNumSamplesPerNeighbor = request.maxNumSamplesPerNeighbor.getOrElse(100)
-    val maxResults = request.maxResults.getOrElse(200)
-    val minScore = request.minScore.getOrElse(0.5)
-    val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
-    val minResultDegree = request.minResultDegree.getOrElse(50)
-    val minQueryDegree = request.minQueryDegree.getOrElse(10)
-    val minCooccurrence = request.minCooccurrence.getOrElse(3)
-    val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
+    val maxNumSamplelonsPelonrNelonighbor = relonquelonst.maxNumSamplelonsPelonrNelonighbor.gelontOrelonlselon(100)
+    val maxRelonsults = relonquelonst.maxRelonsults.gelontOrelonlselon(200)
+    val minScorelon = relonquelonst.minScorelon.gelontOrelonlselon(0.5)
+    val maxTwelonelontAgelon = relonquelonst.maxTwelonelontAgelonInHours.gelontOrelonlselon(48)
+    val minRelonsultDelongrelonelon = relonquelonst.minRelonsultDelongrelonelon.gelontOrelonlselon(50)
+    val minQuelonryDelongrelonelon = relonquelonst.minQuelonryDelongrelonelon.gelontOrelonlselon(10)
+    val minCooccurrelonncelon = relonquelonst.minCooccurrelonncelon.gelontOrelonlselon(3)
+    val elonxcludelonTwelonelontIds = relonquelonst.elonxcludelonTwelonelontIds.gelontOrelonlselon(Selonq.elonmpty).toSelont
 
-    val queryTweetDegree = bipartiteGraph.getRightNodeDegree(maskedTweetId)
-    stats.stat("queryTweetDegree").add(queryTweetDegree)
+    val quelonryTwelonelontDelongrelonelon = bipartitelonGraph.gelontRightNodelonDelongrelonelon(maskelondTwelonelontId)
+    stats.stat("quelonryTwelonelontDelongrelonelon").add(quelonryTwelonelontDelongrelonelon)
 
-    if (queryTweetDegree < minQueryDegree) {
-      stats.counter("queryTweetDegreeLessThanMinQueryDegree").incr()
-      RelatedTweetResponse()
-    } else {
+    if (quelonryTwelonelontDelongrelonelon < minQuelonryDelongrelonelon) {
+      stats.countelonr("quelonryTwelonelontDelongrelonelonLelonssThanMinQuelonryDelongrelonelon").incr()
+      RelonlatelondTwelonelontRelonsponselon()
+    } elonlselon {
 
-      val sampledLHSuserIds =
-        SampleLHSUsersUtil.sampleLHSUsers(maskedTweetId, maxNumSamplesPerNeighbor, bipartiteGraph)
+      val samplelondLHSuselonrIds =
+        SamplelonLHSUselonrsUtil.samplelonLHSUselonrs(maskelondTwelonelontId, maxNumSamplelonsPelonrNelonighbor, bipartitelonGraph)
 
-      val rHStweetIds = FetchRHSTweetsUtil.fetchRHSTweets(
-        sampledLHSuserIds,
-        bipartiteGraph,
+      val rHStwelonelontIds = FelontchRHSTwelonelontsUtil.felontchRHSTwelonelonts(
+        samplelondLHSuselonrIds,
+        bipartitelonGraph,
       )
 
-      val scorePreFactor =
-        queryTweetDegree / math.log(queryTweetDegree) / sampledLHSuserIds.distinct.size
-      val relatedTweetCandidates = GetRelatedTweetCandidatesUtil.getRelatedTweetCandidates(
-        rHStweetIds,
-        minCooccurrence,
-        minResultDegree,
-        scorePreFactor,
-        bipartiteGraph)
+      val scorelonPrelonFactor =
+        quelonryTwelonelontDelongrelonelon / math.log(quelonryTwelonelontDelongrelonelon) / samplelondLHSuselonrIds.distinct.sizelon
+      val relonlatelondTwelonelontCandidatelons = GelontRelonlatelondTwelonelontCandidatelonsUtil.gelontRelonlatelondTwelonelontCandidatelons(
+        rHStwelonelontIds,
+        minCooccurrelonncelon,
+        minRelonsultDelongrelonelon,
+        scorelonPrelonFactor,
+        bipartitelonGraph)
 
-      val relatedTweets = relatedTweetCandidates
-        .filter(relatedTweet =>
-          FilterUtil.tweetAgeFilter(
-            relatedTweet.tweetId,
-            Duration(maxTweetAge, HOURS)) && (relatedTweet.score > minScore) && (!excludeTweetIds
-            .contains(relatedTweet.tweetId))).take(maxResults)
+      val relonlatelondTwelonelonts = relonlatelondTwelonelontCandidatelons
+        .filtelonr(relonlatelondTwelonelont =>
+          FiltelonrUtil.twelonelontAgelonFiltelonr(
+            relonlatelondTwelonelont.twelonelontId,
+            Duration(maxTwelonelontAgelon, HOURS)) && (relonlatelondTwelonelont.scorelon > minScorelon) && (!elonxcludelonTwelonelontIds
+            .contains(relonlatelondTwelonelont.twelonelontId))).takelon(maxRelonsults)
 
-      stats.stat("response_size").add(relatedTweets.size)
-      RelatedTweetResponse(
-        tweets = relatedTweets,
-        queryTweetGraphFeatures = Some(GraphFeaturesForQuery(degree = Some(queryTweetDegree))))
+      stats.stat("relonsponselon_sizelon").add(relonlatelondTwelonelonts.sizelon)
+      RelonlatelondTwelonelontRelonsponselon(
+        twelonelonts = relonlatelondTwelonelonts,
+        quelonryTwelonelontGraphFelonaturelons = Somelon(GraphFelonaturelonsForQuelonry(delongrelonelon = Somelon(quelonryTwelonelontDelongrelonelon))))
     }
   }
 }

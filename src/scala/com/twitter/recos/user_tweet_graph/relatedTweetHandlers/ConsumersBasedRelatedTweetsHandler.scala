@@ -1,68 +1,68 @@
-package com.twitter.recos.user_tweet_graph.relatedTweetHandlers
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_graph.relonlatelondTwelonelontHandlelonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.api.BipartiteGraph
-import com.twitter.recos.user_tweet_graph.thriftscala._
-import com.twitter.recos.user_tweet_graph.util.FetchRHSTweetsUtil
-import com.twitter.recos.user_tweet_graph.util.FilterUtil
-import com.twitter.recos.user_tweet_graph.util.GetRelatedTweetCandidatesUtil
-import com.twitter.recos.util.Action
-import com.twitter.recos.util.Stats._
-import com.twitter.servo.request._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import scala.concurrent.duration.HOURS
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graphjelont.bipartitelon.api.BipartitelonGraph
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.thriftscala._
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.util.FelontchRHSTwelonelontsUtil
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.util.FiltelonrUtil
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.util.GelontRelonlatelondTwelonelontCandidatelonsUtil
+import com.twittelonr.reloncos.util.Action
+import com.twittelonr.reloncos.util.Stats._
+import com.twittelonr.selonrvo.relonquelonst._
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import scala.concurrelonnt.duration.HOURS
 
 /**
- * Implementation of the Thrift-defined service interface for consumersTweetBasedRelatedTweets.
- * given a list of consumer userIds, find the tweets they co-engaged with (we're treating input userIds as consumers therefore "consumersTweetBasedRelatedTweets" )
- * example use case: given a list of user's contacts in their address book, find tweets those contacts engaged with
+ * Implelonmelonntation of thelon Thrift-delonfinelond selonrvicelon intelonrfacelon for consumelonrsTwelonelontBaselondRelonlatelondTwelonelonts.
+ * givelonn a list of consumelonr uselonrIds, find thelon twelonelonts thelony co-elonngagelond with (welon'relon trelonating input uselonrIds as consumelonrs thelonrelonforelon "consumelonrsTwelonelontBaselondRelonlatelondTwelonelonts" )
+ * elonxamplelon uselon caselon: givelonn a list of uselonr's contacts in thelonir addrelonss book, find twelonelonts thoselon contacts elonngagelond with
  */
-class ConsumersBasedRelatedTweetsHandler(
-  bipartiteGraph: BipartiteGraph,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[ConsumersBasedRelatedTweetRequest, RelatedTweetResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+class ConsumelonrsBaselondRelonlatelondTwelonelontsHandlelonr(
+  bipartitelonGraph: BipartitelonGraph,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstHandlelonr[ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst, RelonlatelondTwelonelontRelonsponselon] {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  override def apply(request: ConsumersBasedRelatedTweetRequest): Future[RelatedTweetResponse] = {
-    trackFutureBlockStats(stats) {
+  ovelonrridelon delonf apply(relonquelonst: ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst): Futurelon[RelonlatelondTwelonelontRelonsponselon] = {
+    trackFuturelonBlockStats(stats) {
 
-      val maxResults = request.maxResults.getOrElse(200)
-      val minScore = request.minScore.getOrElse(0.0)
-      val maxTweetAge = request.maxTweetAgeInHours.getOrElse(48)
-      val minResultDegree = request.minResultDegree.getOrElse(50)
-      val minCooccurrence = request.minCooccurrence.getOrElse(3)
-      val excludeTweetIds = request.excludeTweetIds.getOrElse(Seq.empty).toSet
+      val maxRelonsults = relonquelonst.maxRelonsults.gelontOrelonlselon(200)
+      val minScorelon = relonquelonst.minScorelon.gelontOrelonlselon(0.0)
+      val maxTwelonelontAgelon = relonquelonst.maxTwelonelontAgelonInHours.gelontOrelonlselon(48)
+      val minRelonsultDelongrelonelon = relonquelonst.minRelonsultDelongrelonelon.gelontOrelonlselon(50)
+      val minCooccurrelonncelon = relonquelonst.minCooccurrelonncelon.gelontOrelonlselon(3)
+      val elonxcludelonTwelonelontIds = relonquelonst.elonxcludelonTwelonelontIds.gelontOrelonlselon(Selonq.elonmpty).toSelont
 
-      val consumerSeedSet = request.consumerSeedSet.distinct.filter { userId =>
-        val userDegree = bipartiteGraph.getLeftNodeDegree(userId)
-        // constrain to users that have <100 engagements to avoid spammy behavior
-        userDegree < 100
+      val consumelonrSelonelondSelont = relonquelonst.consumelonrSelonelondSelont.distinct.filtelonr { uselonrId =>
+        val uselonrDelongrelonelon = bipartitelonGraph.gelontLelonftNodelonDelongrelonelon(uselonrId)
+        // constrain to uselonrs that havelon <100 elonngagelonmelonnts to avoid spammy belonhavior
+        uselonrDelongrelonelon < 100
       }
 
-      val rhsTweetIds = FetchRHSTweetsUtil.fetchRHSTweets(
-        consumerSeedSet,
-        bipartiteGraph,
-        Set(Action.Favorite, Action.Retweet)
+      val rhsTwelonelontIds = FelontchRHSTwelonelontsUtil.felontchRHSTwelonelonts(
+        consumelonrSelonelondSelont,
+        bipartitelonGraph,
+        Selont(Action.Favoritelon, Action.Relontwelonelont)
       )
 
-      val scorePreFactor = 1000.0 / consumerSeedSet.size
-      val relatedTweetCandidates = GetRelatedTweetCandidatesUtil.getRelatedTweetCandidates(
-        rhsTweetIds,
-        minCooccurrence,
-        minResultDegree,
-        scorePreFactor,
-        bipartiteGraph)
+      val scorelonPrelonFactor = 1000.0 / consumelonrSelonelondSelont.sizelon
+      val relonlatelondTwelonelontCandidatelons = GelontRelonlatelondTwelonelontCandidatelonsUtil.gelontRelonlatelondTwelonelontCandidatelons(
+        rhsTwelonelontIds,
+        minCooccurrelonncelon,
+        minRelonsultDelongrelonelon,
+        scorelonPrelonFactor,
+        bipartitelonGraph)
 
-      val relatedTweets = relatedTweetCandidates
-        .filter(relatedTweet =>
-          FilterUtil.tweetAgeFilter(
-            relatedTweet.tweetId,
-            Duration(maxTweetAge, HOURS)) && (relatedTweet.score > minScore) && (!excludeTweetIds
-            .contains(relatedTweet.tweetId))).take(maxResults)
+      val relonlatelondTwelonelonts = relonlatelondTwelonelontCandidatelons
+        .filtelonr(relonlatelondTwelonelont =>
+          FiltelonrUtil.twelonelontAgelonFiltelonr(
+            relonlatelondTwelonelont.twelonelontId,
+            Duration(maxTwelonelontAgelon, HOURS)) && (relonlatelondTwelonelont.scorelon > minScorelon) && (!elonxcludelonTwelonelontIds
+            .contains(relonlatelondTwelonelont.twelonelontId))).takelon(maxRelonsults)
 
-      stats.stat("response_size").add(relatedTweets.size)
-      Future.value(RelatedTweetResponse(tweets = relatedTweets))
+      stats.stat("relonsponselon_sizelon").add(relonlatelondTwelonelonts.sizelon)
+      Futurelon.valuelon(RelonlatelondTwelonelontRelonsponselon(twelonelonts = relonlatelondTwelonelonts))
     }
   }
 }

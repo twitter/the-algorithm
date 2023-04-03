@@ -1,59 +1,59 @@
-package com.twitter.home_mixer.product.scored_tweets.param
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.scored_tweets.param.ScoredTweetsParam._
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
+import com.twittelonr.homelon_mixelonr.param.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.param.ScorelondTwelonelontsParam._
+import com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyNamelon
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ScoredTweetsParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableScoredTweetsProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@Singlelonton
+class ScorelondTwelonelontsParamConfig @Injelonct() () elonxtelonnds ProductParamConfig {
+  ovelonrridelon val elonnablelondDeloncidelonrKelony: DeloncidelonrKelonyNamelon = DeloncidelonrKelony.elonnablelonScorelondTwelonelontsProduct
+  ovelonrridelon val supportelondClielonntFSNamelon: String = SupportelondClielonntFSNamelon
 
-  override val booleanDeciderOverrides = Seq(
-    CrMixerSource.EnableCandidatePipelineParam,
-    FrsTweetSource.EnableCandidatePipelineParam,
-    InNetworkSource.EnableCandidatePipelineParam,
-    UtegSource.EnableCandidatePipelineParam,
-    ScoredTweetsParam.EnableSimClustersSimilarityFeatureHydrationDeciderParam
+  ovelonrridelon val boolelonanDeloncidelonrOvelonrridelons = Selonq(
+    CrMixelonrSourcelon.elonnablelonCandidatelonPipelonlinelonParam,
+    FrsTwelonelontSourcelon.elonnablelonCandidatelonPipelonlinelonParam,
+    InNelontworkSourcelon.elonnablelonCandidatelonPipelonlinelonParam,
+    UtelongSourcelon.elonnablelonCandidatelonPipelonlinelonParam,
+    ScorelondTwelonelontsParam.elonnablelonSimClustelonrsSimilarityFelonaturelonHydrationDeloncidelonrParam
   )
 
-  override val boundedIntFSOverrides = Seq(
-    CachedScoredTweets.MinCachedTweetsParam,
-    QualityFactor.CrMixerMaxTweetsToScoreParam,
-    QualityFactor.MaxTweetsToScoreParam,
-    ServerMaxResultsParam
+  ovelonrridelon val boundelondIntFSOvelonrridelons = Selonq(
+    CachelondScorelondTwelonelonts.MinCachelondTwelonelontsParam,
+    QualityFactor.CrMixelonrMaxTwelonelontsToScorelonParam,
+    QualityFactor.MaxTwelonelontsToScorelonParam,
+    SelonrvelonrMaxRelonsultsParam
   )
 
-  override val boundedDurationFSOverrides = Seq(
-    CachedScoredTweets.TTLParam
+  ovelonrridelon val boundelondDurationFSOvelonrridelons = Selonq(
+    CachelondScorelondTwelonelonts.TTLParam
   )
 
-  override val stringFSOverrides = Seq(
-    Scoring.HomeModelParam
+  ovelonrridelon val stringFSOvelonrridelons = Selonq(
+    Scoring.HomelonModelonlParam
   )
 
-  override val boundedDoubleFSOverrides = Seq(
-    Scoring.ModelWeights.FavParam,
-    Scoring.ModelWeights.ReplyParam,
-    Scoring.ModelWeights.RetweetParam,
-    Scoring.ModelWeights.GoodClickParam,
-    Scoring.ModelWeights.GoodClickV2Param,
-    Scoring.ModelWeights.GoodProfileClickParam,
-    Scoring.ModelWeights.ReplyEngagedByAuthorParam,
-    Scoring.ModelWeights.VideoPlayback50Param,
-    Scoring.ModelWeights.ReportParam,
-    Scoring.ModelWeights.NegativeFeedbackV2Param,
+  ovelonrridelon val boundelondDoublelonFSOvelonrridelons = Selonq(
+    Scoring.ModelonlWelonights.FavParam,
+    Scoring.ModelonlWelonights.RelonplyParam,
+    Scoring.ModelonlWelonights.RelontwelonelontParam,
+    Scoring.ModelonlWelonights.GoodClickParam,
+    Scoring.ModelonlWelonights.GoodClickV2Param,
+    Scoring.ModelonlWelonights.GoodProfilelonClickParam,
+    Scoring.ModelonlWelonights.RelonplyelonngagelondByAuthorParam,
+    Scoring.ModelonlWelonights.VidelonoPlayback50Param,
+    Scoring.ModelonlWelonights.RelonportParam,
+    Scoring.ModelonlWelonights.NelongativelonFelonelondbackV2Param,
   )
 
-  override val longSetFSOverrides = Seq(
-    CompetitorSetParam,
+  ovelonrridelon val longSelontFSOvelonrridelons = Selonq(
+    CompelontitorSelontParam,
   )
 
-  override val stringSeqFSOverrides = Seq(
-    CompetitorURLSeqParam
+  ovelonrridelon val stringSelonqFSOvelonrridelons = Selonq(
+    CompelontitorURLSelonqParam
   )
 }

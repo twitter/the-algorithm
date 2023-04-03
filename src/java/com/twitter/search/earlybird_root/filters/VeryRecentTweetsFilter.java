@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
 
-public class VeryRecentTweetsFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final String DECIDER_KEY = "enable_very_recent_tweets";
-  private static final SearchRateCounter VERY_RECENT_TWEETS_NOT_MODIFIED =
-      SearchRateCounter.export("very_recent_tweets_not_modified");
-  private static final SearchRateCounter VERY_RECENT_TWEETS_ENABLED =
-      SearchRateCounter.export("very_recent_tweets_enabled");
+public class VelonryReloncelonntTwelonelontsFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon static final String DelonCIDelonR_KelonY = "elonnablelon_velonry_reloncelonnt_twelonelonts";
+  privatelon static final SelonarchRatelonCountelonr VelonRY_RelonCelonNT_TWelonelonTS_NOT_MODIFIelonD =
+      SelonarchRatelonCountelonr.elonxport("velonry_reloncelonnt_twelonelonts_not_modifielond");
+  privatelon static final SelonarchRatelonCountelonr VelonRY_RelonCelonNT_TWelonelonTS_elonNABLelonD =
+      SelonarchRatelonCountelonr.elonxport("velonry_reloncelonnt_twelonelonts_elonnablelond");
 
-  private final SearchDecider decider;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
 
-  @Inject
-  public VeryRecentTweetsFilter(
-      SearchDecider decider
+  @Injelonct
+  public VelonryReloncelonntTwelonelontsFiltelonr(
+      SelonarchDeloncidelonr deloncidelonr
   ) {
-    this.decider = decider;
+    this.deloncidelonr = deloncidelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request,
-      Service<EarlybirdRequest, EarlybirdResponse> service
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonst relonquelonst,
+      Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon
   ) {
-    if (decider.isAvailable(DECIDER_KEY)) {
-      VERY_RECENT_TWEETS_ENABLED.increment();
-      request.setSkipVeryRecentTweets(false);
-    } else {
-      VERY_RECENT_TWEETS_NOT_MODIFIED.increment();
+    if (deloncidelonr.isAvailablelon(DelonCIDelonR_KelonY)) {
+      VelonRY_RelonCelonNT_TWelonelonTS_elonNABLelonD.increlonmelonnt();
+      relonquelonst.selontSkipVelonryReloncelonntTwelonelonts(falselon);
+    } elonlselon {
+      VelonRY_RelonCelonNT_TWelonelonTS_NOT_MODIFIelonD.increlonmelonnt();
     }
 
-    return service.apply(request);
+    relonturn selonrvicelon.apply(relonquelonst);
   }
 }

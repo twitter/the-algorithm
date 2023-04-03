@@ -1,13 +1,13 @@
- SELECT DISTINCT tweetId
-    FROM `twttr-bq-tweetsource-prod.user.unhydrated_flat`, UNNEST(entity_annotations) AS ea
-    WHERE
-      (DATE(_PARTITIONTIME) >= DATE("{START_TIME}") AND DATE(_PARTITIONTIME) <= DATE("{END_TIME}")) AND
-       timestamp_millis((1288834974657 +
-        ((tweetId  & 9223372036850581504) >> 22))) >= TIMESTAMP("{START_TIME}")
-        AND timestamp_millis((1288834974657 +
-      ((tweetId  & 9223372036850581504) >> 22))) <= TIMESTAMP("{END_TIME}")
+ SelonLelonCT DISTINCT twelonelontId
+    FROM `twttr-bq-twelonelontsourcelon-prod.uselonr.unhydratelond_flat`, UNNelonST(elonntity_annotations) AS elona
+    WHelonRelon
+      (DATelon(_PARTITIONTIMelon) >= DATelon("{START_TIMelon}") AND DATelon(_PARTITIONTIMelon) <= DATelon("{elonND_TIMelon}")) AND
+       timelonstamp_millis((1288834974657 +
+        ((twelonelontId  & 9223372036850581504) >> 22))) >= TIMelonSTAMP("{START_TIMelon}")
+        AND timelonstamp_millis((1288834974657 +
+      ((twelonelontId  & 9223372036850581504) >> 22))) <= TIMelonSTAMP("{elonND_TIMelon}")
       AND (
-        ea.entityId IN (
+        elona.elonntityId IN (
           883054128338878464,
           1453131634669019141,
           1470464132432347136,
@@ -19,24 +19,24 @@
           1047106191829028865
         )
       OR (
-        ea.groupId IN (34, 35) # Cortex media understanding
-        AND ea.entityId IN (
+        elona.groupId IN (34, 35) # Cortelonx melondia undelonrstanding
+        AND elona.elonntityId IN (
           1072916828484038657,
           1133752108212035585,
           1072916828488327170
           )
       )
       OR (
-        ea.groupId IN (14) # Agatha Tweet Health Annotations
-        AND ea.entityId IN (
+        elona.groupId IN (14) # Agatha Twelonelont Helonalth Annotations
+        AND elona.elonntityId IN (
           1242898721278324736,
           1230229436697473026,
           1230229470050603008
           )
       )
       OR (
-        ea.groupId IN (10)
-        AND ea.entityId IN (
+        elona.groupId IN (10)
+        AND elona.elonntityId IN (
           953701302608961536
           )
       )

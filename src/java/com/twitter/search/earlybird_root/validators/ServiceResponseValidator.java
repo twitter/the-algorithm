@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird_root.validators;
+packagelon com.twittelonr.selonarch.elonarlybird_root.validators;
 
-import com.twitter.util.Future;
+import com.twittelonr.util.Futurelon;
 
-public interface ServiceResponseValidator<R> {
+public intelonrfacelon SelonrvicelonRelonsponselonValidator<R> {
   /**
-   * Interface for validating Service responses
+   * Intelonrfacelon for validating Selonrvicelon relonsponselons
    */
-  Future<R> validate(R response);
+  Futurelon<R> validatelon(R relonsponselon);
 }

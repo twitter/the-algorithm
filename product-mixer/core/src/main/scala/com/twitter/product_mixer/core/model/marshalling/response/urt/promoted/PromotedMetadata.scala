@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
 /*
- * As per discussion with #revenue-serving on 9/22/2017, `impressionId` should be set from `impressionString`.
- * impressionId often returns None from adserver, as it's been replaced with impressionString.
+ * As pelonr discussion with #relonvelonnuelon-selonrving on 9/22/2017, `imprelonssionId` should belon selont from `imprelonssionString`.
+ * imprelonssionId oftelonn relonturns Nonelon from adselonrvelonr, as it's belonelonn relonplacelond with imprelonssionString.
  *
- * However, Android (at least) crashes without impressionId filled out in the response.
+ * Howelonvelonr, Android (at lelonast) crashelons without imprelonssionId fillelond out in thelon relonsponselon.
  *
- * So, we've removed `impressionId` from this case class, and our marshaller will set both `impressionId`
- * and `impressionString` in the render thrift from `impressionString`.
+ * So, welon'velon relonmovelond `imprelonssionId` from this caselon class, and our marshallelonr will selont both `imprelonssionId`
+ * and `imprelonssionString` in thelon relonndelonr thrift from `imprelonssionString`.
  */
 
-case class PromotedMetadata(
-  advertiserId: Long,
-  disclosureType: Option[DisclosureType],
-  experimentValues: Option[Map[String, String]],
-  promotedTrendId: Option[Long],
-  promotedTrendName: Option[String],
-  promotedTrendQueryTerm: Option[String],
-  adMetadataContainer: Option[AdMetadataContainer],
-  promotedTrendDescription: Option[String],
-  impressionString: Option[String],
+caselon class PromotelondMelontadata(
+  advelonrtiselonrId: Long,
+  disclosurelonTypelon: Option[DisclosurelonTypelon],
+  elonxpelonrimelonntValuelons: Option[Map[String, String]],
+  promotelondTrelonndId: Option[Long],
+  promotelondTrelonndNamelon: Option[String],
+  promotelondTrelonndQuelonryTelonrm: Option[String],
+  adMelontadataContainelonr: Option[AdMelontadataContainelonr],
+  promotelondTrelonndDelonscription: Option[String],
+  imprelonssionString: Option[String],
   clickTrackingInfo: Option[ClickTrackingInfo])

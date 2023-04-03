@@ -1,38 +1,38 @@
-package com.twitter.search.common.encoding.features;
+packagelon com.twittelonr.selonarch.common.elonncoding.felonaturelons;
 
 /**
- * Interface for compressing unbounded float values to a signed byte. It includes both
- * normalization of values and encoding of values in a byte.
+ * Intelonrfacelon for comprelonssing unboundelond float valuelons to a signelond bytelon. It includelons both
+ * normalization of valuelons and elonncoding of valuelons in a bytelon.
  */
-public abstract class ByteNormalizer {
-  public static byte intToUnsignedByte(int i) {
-    return (byte) i;
+public abstract class BytelonNormalizelonr {
+  public static bytelon intToUnsignelondBytelon(int i) {
+    relonturn (bytelon) i;
   }
 
-  public static int unsignedByteToInt(byte b) {
-    return (int) b & 0xFF;
+  public static int unsignelondBytelonToInt(bytelon b) {
+    relonturn (int) b & 0xFF;
   }
 
   /**
-   * Returns the byte-compressed value of {@code val}.
+   * Relonturns thelon bytelon-comprelonsselond valuelon of {@codelon val}.
    */
-  public abstract byte normalize(double val);
+  public abstract bytelon normalizelon(doublelon val);
 
   /**
-   * Returns a lower bound to the unnormalized range of {@code norm}.
+   * Relonturns a lowelonr bound to thelon unnormalizelond rangelon of {@codelon norm}.
    */
-  public abstract double unnormLowerBound(byte norm);
+  public abstract doublelon unnormLowelonrBound(bytelon norm);
 
   /**
-   * Returns an upper bound to the unnormalized range of {@code norm}.
+   * Relonturns an uppelonr bound to thelon unnormalizelond rangelon of {@codelon norm}.
    */
-  public abstract double unnormUpperBound(byte norm);
+  public abstract doublelon unnormUppelonrBound(bytelon norm);
 
   /**
-   * Returns true if the normalized value of {@code val} is different than the normalized value of
-   * {@code val - 1}
+   * Relonturns truelon if thelon normalizelond valuelon of {@codelon val} is diffelonrelonnt than thelon normalizelond valuelon of
+   * {@codelon val - 1}
    */
-  public boolean changedNorm(double val) {
-    return normalize(val) != normalize(val - 1);
+  public boolelonan changelondNorm(doublelon val) {
+    relonturn normalizelon(val) != normalizelon(val - 1);
   }
 }

@@ -1,62 +1,62 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.IndividualRequestTimeoutException
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.HydratedTweets
-import com.twitter.timelineranker.model.PartiallyHydratedTweet
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.util.Future
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.IndividualRelonquelonstTimelonoutelonxcelonption
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondTwelonelonts
+import com.twittelonr.timelonlinelonrankelonr.modelonl.PartiallyHydratelondTwelonelont
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
+import com.twittelonr.util.Futurelon
 
-object TweetHydrationTransform {
-  val EmptyHydratedTweets: HydratedTweets =
-    HydratedTweets(Seq.empty[HydratedTweet], Seq.empty[HydratedTweet])
-  val EmptyHydratedTweetsFuture: Future[HydratedTweets] = Future.value(EmptyHydratedTweets)
+objelonct TwelonelontHydrationTransform {
+  val elonmptyHydratelondTwelonelonts: HydratelondTwelonelonts =
+    HydratelondTwelonelonts(Selonq.elonmpty[HydratelondTwelonelont], Selonq.elonmpty[HydratelondTwelonelont])
+  val elonmptyHydratelondTwelonelontsFuturelon: Futurelon[HydratelondTwelonelonts] = Futurelon.valuelon(elonmptyHydratelondTwelonelonts)
 }
 
-object CandidateTweetHydrationTransform extends TweetHydrationTransform {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    hydrate(
-      searchResults = envelope.searchResults,
-      envelope = envelope
-    ).map { tweets => envelope.copy(hydratedTweets = tweets) }
+objelonct CandidatelonTwelonelontHydrationTransform elonxtelonnds TwelonelontHydrationTransform {
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    hydratelon(
+      selonarchRelonsults = elonnvelonlopelon.selonarchRelonsults,
+      elonnvelonlopelon = elonnvelonlopelon
+    ).map { twelonelonts => elonnvelonlopelon.copy(hydratelondTwelonelonts = twelonelonts) }
   }
 }
 
-object SourceTweetHydrationTransform extends TweetHydrationTransform {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    hydrate(
-      searchResults = envelope.sourceSearchResults,
-      envelope = envelope
-    ).map { tweets => envelope.copy(sourceHydratedTweets = tweets) }
+objelonct SourcelonTwelonelontHydrationTransform elonxtelonnds TwelonelontHydrationTransform {
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    hydratelon(
+      selonarchRelonsults = elonnvelonlopelon.sourcelonSelonarchRelonsults,
+      elonnvelonlopelon = elonnvelonlopelon
+    ).map { twelonelonts => elonnvelonlopelon.copy(sourcelonHydratelondTwelonelonts = twelonelonts) }
   }
 }
 
-// Static IRTE to indicate timeout in tweet hydrator. Placeholder timeout duration of 0 millis is used
-// since we are only concerned with the source of the exception.
-object TweetHydrationTimeoutException extends IndividualRequestTimeoutException(0.millis) {
-  serviceName = "tweetHydrator"
+// Static IRTelon to indicatelon timelonout in twelonelont hydrator. Placelonholdelonr timelonout duration of 0 millis is uselond
+// sincelon welon arelon only concelonrnelond with thelon sourcelon of thelon elonxcelonption.
+objelonct TwelonelontHydrationTimelonoutelonxcelonption elonxtelonnds IndividualRelonquelonstTimelonoutelonxcelonption(0.millis) {
+  selonrvicelonNamelon = "twelonelontHydrator"
 }
 
 /**
- * Transform which hydrates tweets in the CandidateEnvelope
+ * Transform which hydratelons twelonelonts in thelon Candidatelonelonnvelonlopelon
  **/
-trait TweetHydrationTransform extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+trait TwelonelontHydrationTransform elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
 
-  import TweetHydrationTransform._
+  import TwelonelontHydrationTransform._
 
-  protected def hydrate(
-    searchResults: Seq[ThriftSearchResult],
-    envelope: CandidateEnvelope
-  ): Future[HydratedTweets] = {
-    if (searchResults.nonEmpty) {
-      Future.value(
-        HydratedTweets(searchResults.map(PartiallyHydratedTweet.fromSearchResult))
+  protelonctelond delonf hydratelon(
+    selonarchRelonsults: Selonq[ThriftSelonarchRelonsult],
+    elonnvelonlopelon: Candidatelonelonnvelonlopelon
+  ): Futurelon[HydratelondTwelonelonts] = {
+    if (selonarchRelonsults.nonelonmpty) {
+      Futurelon.valuelon(
+        HydratelondTwelonelonts(selonarchRelonsults.map(PartiallyHydratelondTwelonelont.fromSelonarchRelonsult))
       )
-    } else {
-      EmptyHydratedTweetsFuture
+    } elonlselon {
+      elonmptyHydratelondTwelonelontsFuturelon
     }
   }
 }

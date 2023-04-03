@@ -1,92 +1,92 @@
-package com.twitter.product_mixer.core.service.candidate_feature_transformer_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_felonaturelon_transformelonr_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor._
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor._
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CandidateFeatureTransformerExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
-  def arrow[Result](
-    transformers: Seq[CandidateFeatureTransformer[Result]],
-    context: Executor.Context
-  ): Arrow[Seq[Result], CandidateFeatureTransformerExecutorResult] = {
-    if (transformers.isEmpty) {
-      // must always return a Seq of FeatureMaps, even if there are no Transformers
-      Arrow.map[Seq[Result], CandidateFeatureTransformerExecutorResult] { candidates =>
-        CandidateFeatureTransformerExecutorResult(candidates.map(_ => FeatureMap.empty), Seq.empty)
+@Singlelonton
+class CandidatelonFelonaturelonTransformelonrelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor {
+  delonf arrow[Relonsult](
+    transformelonrs: Selonq[CandidatelonFelonaturelonTransformelonr[Relonsult]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Selonq[Relonsult], CandidatelonFelonaturelonTransformelonrelonxeloncutorRelonsult] = {
+    if (transformelonrs.iselonmpty) {
+      // must always relonturn a Selonq of FelonaturelonMaps, elonvelonn if thelonrelon arelon no Transformelonrs
+      Arrow.map[Selonq[Relonsult], CandidatelonFelonaturelonTransformelonrelonxeloncutorRelonsult] { candidatelons =>
+        CandidatelonFelonaturelonTransformelonrelonxeloncutorRelonsult(candidatelons.map(_ => FelonaturelonMap.elonmpty), Selonq.elonmpty)
       }
-    } else {
-      val transformerArrows: Seq[Arrow[Seq[Result], Seq[(TransformerIdentifier, FeatureMap)]]] =
-        transformers.map { transformer =>
-          val transformerContext = context.pushToComponentStack(transformer.identifier)
+    } elonlselon {
+      val transformelonrArrows: Selonq[Arrow[Selonq[Relonsult], Selonq[(TransformelonrIdelonntifielonr, FelonaturelonMap)]]] =
+        transformelonrs.map { transformelonr =>
+          val transformelonrContelonxt = contelonxt.pushToComponelonntStack(transformelonr.idelonntifielonr)
 
-          val liftNonValidationFailuresToFailedFeatures =
-            Arrow.handle[FeatureMap, FeatureMap] {
-              case NotAMisconfiguredFeatureMapFailure(e) =>
-                featureMapWithFailuresForFeatures(transformer.features, e, transformerContext)
+          val liftNonValidationFailurelonsToFailelondFelonaturelons =
+            Arrow.handlelon[FelonaturelonMap, FelonaturelonMap] {
+              caselon NotAMisconfigurelondFelonaturelonMapFailurelon(elon) =>
+                felonaturelonMapWithFailurelonsForFelonaturelons(transformelonr.felonaturelons, elon, transformelonrContelonxt)
             }
 
-          val underlyingArrow = Arrow
-            .map(transformer.transform)
-            .map(validateFeatureMap(transformer.features, _, transformerContext))
+          val undelonrlyingArrow = Arrow
+            .map(transformelonr.transform)
+            .map(validatelonFelonaturelonMap(transformelonr.felonaturelons, _, transformelonrContelonxt))
 
-          val observedArrowWithoutTracing =
-            wrapPerCandidateComponentWithExecutorBookkeepingWithoutTracing(
-              context,
-              transformer.identifier)(underlyingArrow)
+          val obselonrvelondArrowWithoutTracing =
+            wrapPelonrCandidatelonComponelonntWithelonxeloncutorBookkelonelonpingWithoutTracing(
+              contelonxt,
+              transformelonr.idelonntifielonr)(undelonrlyingArrow)
 
-          val seqArrow =
-            Arrow.sequence(
-              observedArrowWithoutTracing
-                .andThen(liftNonValidationFailuresToFailedFeatures)
-                .map(transformer.identifier -> _)
+          val selonqArrow =
+            Arrow.selonquelonncelon(
+              obselonrvelondArrowWithoutTracing
+                .andThelonn(liftNonValidationFailurelonsToFailelondFelonaturelons)
+                .map(transformelonr.idelonntifielonr -> _)
             )
 
-          wrapComponentsWithTracingOnly(context, transformer.identifier)(seqArrow)
+          wrapComponelonntsWithTracingOnly(contelonxt, transformelonr.idelonntifielonr)(selonqArrow)
         }
 
-      Arrow.collect(transformerArrows).map { results =>
+      Arrow.collelonct(transformelonrArrows).map { relonsults =>
         /**
-         * Inner Seqs are a given Transformer applied to all the candidates
+         * Innelonr Selonqs arelon a givelonn Transformelonr applielond to all thelon candidatelons
          *
-         * We want to merge the FeatureMaps for each candidate
-         * from all the Transformers. We do this by merging all the FeatureMaps at
-         * each index `i` of each Seq in `results` by `transpose`-ing the `results`
-         * so the inner Seq becomes all the FeatureMaps for Candidate
-         * at index `i` in the input Seq.
+         * Welon want to melonrgelon thelon FelonaturelonMaps for elonach candidatelon
+         * from all thelon Transformelonrs. Welon do this by melonrging all thelon FelonaturelonMaps at
+         * elonach indelonx `i` of elonach Selonq in `relonsults` by `transposelon`-ing thelon `relonsults`
+         * so thelon innelonr Selonq beloncomelons all thelon FelonaturelonMaps for Candidatelon
+         * at indelonx `i` in thelon input Selonq.
          *
          * {{{
-         *  Seq(
-         *    Seq(transformer1FeatureMapCandidate1, ..., transformer1FeatureMapCandidateN),
+         *  Selonq(
+         *    Selonq(transformelonr1FelonaturelonMapCandidatelon1, ..., transformelonr1FelonaturelonMapCandidatelonN),
          *    ...,
-         *    Seq(transformerMFeatureMapCandidate1, ..., transformerMFeatureMapCandidateN)
-         *  ).transpose == Seq(
-         *    Seq(transformer1FeatureMapCandidate1, ..., transformerMFeatureMapCandidate1),
+         *    Selonq(transformelonrMFelonaturelonMapCandidatelon1, ..., transformelonrMFelonaturelonMapCandidatelonN)
+         *  ).transposelon == Selonq(
+         *    Selonq(transformelonr1FelonaturelonMapCandidatelon1, ..., transformelonrMFelonaturelonMapCandidatelon1),
          *    ...,
-         *    Seq(transformer1FeatureMapCandidateN, ..., transformerMFeatureMapCandidateN)
+         *    Selonq(transformelonr1FelonaturelonMapCandidatelonN, ..., transformelonrMFelonaturelonMapCandidatelonN)
          *  )
          * }}}
          *
-         * we could avoid the transpose if we ran each candidate through all the transformers
-         * one-after-the-other, but then we couldn't have a single tracing span for all applications
-         * of a Transformer, so instead we apply each transformer to all candidates together, then
-         * move onto the next transformer.
+         * welon could avoid thelon transposelon if welon ran elonach candidatelon through all thelon transformelonrs
+         * onelon-aftelonr-thelon-othelonr, but thelonn welon couldn't havelon a singlelon tracing span for all applications
+         * of a Transformelonr, so instelonad welon apply elonach transformelonr to all candidatelons togelonthelonr, thelonn
+         * movelon onto thelon nelonxt transformelonr.
          *
-         * It's worth noting that the outer Seq is bounded by the number of Transformers that are
-         * applied which will typically be small.
+         * It's worth noting that thelon outelonr Selonq is boundelond by thelon numbelonr of Transformelonrs that arelon
+         * applielond which will typically belon small.
          */
-        val transposed = results.transpose
-        val combinedMaps = transposed.map(featureMapsForSingleCandidate =>
-          FeatureMap.merge(featureMapsForSingleCandidate.map { case (_, maps) => maps }))
+        val transposelond = relonsults.transposelon
+        val combinelondMaps = transposelond.map(felonaturelonMapsForSinglelonCandidatelon =>
+          FelonaturelonMap.melonrgelon(felonaturelonMapsForSinglelonCandidatelon.map { caselon (_, maps) => maps }))
 
-        CandidateFeatureTransformerExecutorResult(combinedMaps, transposed.map(_.toMap))
+        CandidatelonFelonaturelonTransformelonrelonxeloncutorRelonsult(combinelondMaps, transposelond.map(_.toMap))
       }
     }
   }

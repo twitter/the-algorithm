@@ -1,15 +1,15 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "configapi/configapi-core",
-        "cr-mixer/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/pipeline/product",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product/registry",
-        "stitch/stitch-core",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/javax/injelonct:javax.injelonct",
+        "configapi/configapi-corelon",
+        "cr-mixelonr/thrift/src/main/thrift:thrift-scala",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/pipelonlinelon/product",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/product",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/product/relongistry",
+        "stitch/stitch-corelon",
     ],
 )

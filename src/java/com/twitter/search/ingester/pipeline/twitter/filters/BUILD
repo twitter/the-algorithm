@@ -1,13 +1,13 @@
 java_library(
-    sources = ["*.java"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.java"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "decider/src/main/scala",
-        "src/java/com/twitter/search/common/decider",
-        "src/java/com/twitter/search/common/relevance:entities_and_filters",
-        "util/util-core:scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/codelon/findbugs:jsr305",
+        "deloncidelonr/src/main/scala",
+        "src/java/com/twittelonr/selonarch/common/deloncidelonr",
+        "src/java/com/twittelonr/selonarch/common/relonlelonvancelon:elonntitielons_and_filtelonrs",
+        "util/util-corelon:scala",
     ],
 )

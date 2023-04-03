@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.relonal_timelon_aggrelongatelons
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.model.HomeFeatures.TopicIdSocialContextFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TopicEngagementCache
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.prediction.common.aggregates.real_time.TimelinesOnlineAggregationFeaturesOnlyConfig._
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.TopicIdSocialContelonxtFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TopicelonngagelonmelonntCachelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.cachelon.RelonadCachelon
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongatelonGroup
+import com.twittelonr.timelonlinelons.prelondiction.common.aggrelongatelons.relonal_timelon.TimelonlinelonsOnlinelonAggrelongationFelonaturelonsOnlyConfig._
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object TopicEngagementRealTimeAggregateFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct TopicelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class TopicEngagementRealTimeAggregateFeatureHydrator @Inject() (
-  @Named(TopicEngagementCache) override val client: ReadCache[Long, DataRecord],
-  override val statsReceiver: StatsReceiver)
-    extends BaseRealTimeAggregateBulkCandidateFeatureHydrator[Long] {
+@Singlelonton
+class TopicelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelonHydrator @Injelonct() (
+  @Namelond(TopicelonngagelonmelonntCachelon) ovelonrridelon val clielonnt: RelonadCachelon[Long, DataReloncord],
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BaselonRelonalTimelonAggrelongatelonBulkCandidatelonFelonaturelonHydrator[Long] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("TopicEngagementRealTimeAggregate")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("TopicelonngagelonmelonntRelonalTimelonAggrelongatelon")
 
-  override val outputFeature: DataRecordInAFeature[TweetCandidate] =
-    TopicEngagementRealTimeAggregateFeature
+  ovelonrridelon val outputFelonaturelon: DataReloncordInAFelonaturelon[TwelonelontCandidatelon] =
+    TopicelonngagelonmelonntRelonalTimelonAggrelongatelonFelonaturelon
 
-  override val aggregateGroups: Seq[AggregateGroup] = Seq(
-    topicEngagementRealTimeAggregatesProd
+  ovelonrridelon val aggrelongatelonGroups: Selonq[AggrelongatelonGroup] = Selonq(
+    topicelonngagelonmelonntRelonalTimelonAggrelongatelonsProd
   )
 
-  override def keysFromQueryAndCandidates(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Seq[Option[Long]] = {
-    candidates.map { candidate =>
-      candidate.features
-        .getTry(TopicIdSocialContextFeature)
+  ovelonrridelon delonf kelonysFromQuelonryAndCandidatelons(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Selonq[Option[Long]] = {
+    candidatelons.map { candidatelon =>
+      candidatelon.felonaturelons
+        .gelontTry(TopicIdSocialContelonxtFelonaturelon)
         .toOption
-        .flatten
+        .flattelonn
     }
   }
 }

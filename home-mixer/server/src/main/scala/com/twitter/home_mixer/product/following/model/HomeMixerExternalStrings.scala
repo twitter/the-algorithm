@@ -1,66 +1,66 @@
-package com.twitter.home_mixer.product.following.model
+packagelon com.twittelonr.homelon_mixelonr.product.following.modelonl
 
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import javax.inject.Inject
-import javax.inject.Provider
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.stringcelonntelonr.clielonnt.elonxtelonrnalStringRelongistry
+import javax.injelonct.Injelonct
+import javax.injelonct.Providelonr
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HomeMixerExternalStrings @Inject() (
-  @ProductScoped externalStringRegistryProvider: Provider[ExternalStringRegistry]) {
-  val seeNewTweetsString =
-    externalStringRegistryProvider.get().createProdString("SeeNewTweets")
-  val tweetedString =
-    externalStringRegistryProvider.get().createProdString("Tweeted")
-  val muteUserString =
-    externalStringRegistryProvider.get().createProdString("Feedback.muteUser")
-  val blockUserString = externalStringRegistryProvider.get().createProdString("Feedback.blockUser")
-  val unfollowUserString =
-    externalStringRegistryProvider.get().createProdString("Feedback.unfollowUser")
-  val unfollowUserConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.unfollowUserConfirmation")
-  val reportTweetString =
-    externalStringRegistryProvider.get().createProdString("Feedback.reportTweet")
-  val dontLikeString = externalStringRegistryProvider.get().createProdString("Feedback.dontLike")
-  val dontLikeConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.dontLikeConfirmation")
-  val showFewerTweetsString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerTweets")
-  val showFewerTweetsConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerTweetsConfirmation")
-  val showFewerRetweetsString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerRetweets")
-  val showFewerRetweetsConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.showFewerRetweetsConfirmation")
-  val notRelevantString =
-    externalStringRegistryProvider.get().createProdString("Feedback.notRelevant")
-  val notRelevantConfirmationString =
-    externalStringRegistryProvider.get().createProdString("Feedback.notRelevantConfirmation")
+@Singlelonton
+class HomelonMixelonrelonxtelonrnalStrings @Injelonct() (
+  @ProductScopelond elonxtelonrnalStringRelongistryProvidelonr: Providelonr[elonxtelonrnalStringRelongistry]) {
+  val selonelonNelonwTwelonelontsString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SelonelonNelonwTwelonelonts")
+  val twelonelontelondString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Twelonelontelond")
+  val mutelonUselonrString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.mutelonUselonr")
+  val blockUselonrString = elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.blockUselonr")
+  val unfollowUselonrString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.unfollowUselonr")
+  val unfollowUselonrConfirmationString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.unfollowUselonrConfirmation")
+  val relonportTwelonelontString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.relonportTwelonelont")
+  val dontLikelonString = elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.dontLikelon")
+  val dontLikelonConfirmationString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.dontLikelonConfirmation")
+  val showFelonwelonrTwelonelontsString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.showFelonwelonrTwelonelonts")
+  val showFelonwelonrTwelonelontsConfirmationString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.showFelonwelonrTwelonelontsConfirmation")
+  val showFelonwelonrRelontwelonelontsString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.showFelonwelonrRelontwelonelonts")
+  val showFelonwelonrRelontwelonelontsConfirmationString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.showFelonwelonrRelontwelonelontsConfirmation")
+  val notRelonlelonvantString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.notRelonlelonvant")
+  val notRelonlelonvantConfirmationString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("Felonelondback.notRelonlelonvantConfirmation")
 
-  val socialContextOneUserLikedString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.oneUserLiked")
-  val socialContextTwoUsersLikedString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.twoUsersLiked")
-  val socialContextMoreUsersLikedString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.moreUsersLiked")
-  val socialContextLikedByTimelineTitle =
-    externalStringRegistryProvider.get().createProdString("SocialContext.likedByTimelineTitle")
+  val socialContelonxtOnelonUselonrLikelondString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.onelonUselonrLikelond")
+  val socialContelonxtTwoUselonrsLikelondString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.twoUselonrsLikelond")
+  val socialContelonxtMorelonUselonrsLikelondString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.morelonUselonrsLikelond")
+  val socialContelonxtLikelondByTimelonlinelonTitlelon =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.likelondByTimelonlinelonTitlelon")
 
-  val socialContextOneUserFollowsString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.oneUserFollows")
-  val socialContextTwoUsersFollowString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.twoUsersFollow")
-  val socialContextMoreUsersFollowString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.moreUsersFollow")
-  val socialContextFollowedByTimelineTitle =
-    externalStringRegistryProvider.get().createProdString("SocialContext.followedByTimelineTitle")
+  val socialContelonxtOnelonUselonrFollowsString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.onelonUselonrFollows")
+  val socialContelonxtTwoUselonrsFollowString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.twoUselonrsFollow")
+  val socialContelonxtMorelonUselonrsFollowString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.morelonUselonrsFollow")
+  val socialContelonxtFollowelondByTimelonlinelonTitlelon =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.followelondByTimelonlinelonTitlelon")
 
-  val socialContextYouMightLikeString =
-    externalStringRegistryProvider.get().createProdString("SocialContext.youMightLike")
+  val socialContelonxtYouMightLikelonString =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.youMightLikelon")
 
-  val socialContextExtendedReply =
-    externalStringRegistryProvider.get().createProdString("SocialContext.extendedReply")
-  val socialContextReceivedReply =
-    externalStringRegistryProvider.get().createProdString("SocialContext.receivedReply")
+  val socialContelonxtelonxtelonndelondRelonply =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.elonxtelonndelondRelonply")
+  val socialContelonxtReloncelonivelondRelonply =
+    elonxtelonrnalStringRelongistryProvidelonr.gelont().crelonatelonProdString("SocialContelonxt.reloncelonivelondRelonply")
 }

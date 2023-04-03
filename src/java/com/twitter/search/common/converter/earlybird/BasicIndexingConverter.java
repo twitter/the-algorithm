@@ -1,647 +1,647 @@
-package com.twitter.search.common.converter.earlybird;
+packagelon com.twittelonr.selonarch.common.convelonrtelonr.elonarlybird;
 
-import java.io.IOException;
-import java.util.Date;
+import java.io.IOelonxcelonption;
+import java.util.Datelon;
 import java.util.List;
 import java.util.Optional;
-import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrelonnt.NotThrelonadSafelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.collections.CollectionUtils;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.collelonctions.CollelonctionUtils;
+import org.joda.timelon.DatelonTimelon;
+import org.joda.timelon.DatelonTimelonZonelon;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.converter.earlybird.EncodedFeatureBuilder.TweetFeatureWithEncodeFeatures;
-import com.twitter.search.common.indexing.thriftjava.Place;
-import com.twitter.search.common.indexing.thriftjava.PotentialLocation;
-import com.twitter.search.common.indexing.thriftjava.ProfileGeoEnrichment;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.indexing.thriftjava.VersionedTweetFeatures;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.entities.TwitterQuotedMessage;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentBuilder;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.tweetypie.thriftjava.ComposerSource;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.convelonrtelonr.elonarlybird.elonncodelondFelonaturelonBuildelonr.TwelonelontFelonaturelonWithelonncodelonFelonaturelons;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.Placelon;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.PotelonntialLocation;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ProfilelonGelonoelonnrichmelonnt;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.VelonrsionelondTwelonelontFelonaturelons;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.GelonoObjelonct;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrQuotelondMelonssagelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdelonncodelondFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdThriftDocumelonntBuildelonr;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonntTypelon;
+import com.twittelonr.selonarch.common.util.spatial.GelonoUtil;
+import com.twittelonr.selonarch.common.util.telonxt.NormalizelonrHelonlpelonr;
+import com.twittelonr.twelonelontypielon.thriftjava.ComposelonrSourcelon;
 
 /**
- * Converts a TwitterMessage into a ThriftVersionedEvents. This is only responsible for data that
- * is available immediately when a Tweet is created. Some data, like URL data, isn't available
- * immediately, and so it is processed later, in the DelayedIndexingConverter and sent as an
- * update. In order to achieve this we create the document in 2 passes:
+ * Convelonrts a TwittelonrMelonssagelon into a ThriftVelonrsionelondelonvelonnts. This is only relonsponsiblelon for data that
+ * is availablelon immelondiatelonly whelonn a Twelonelont is crelonatelond. Somelon data, likelon URL data, isn't availablelon
+ * immelondiatelonly, and so it is procelonsselond latelonr, in thelon DelonlayelondIndelonxingConvelonrtelonr and selonnt as an
+ * updatelon. In ordelonr to achielonvelon this welon crelonatelon thelon documelonnt in 2 passelons:
  *
- * 1. BasicIndexingConverter builds thriftVersionedEvents with the fields that do not require
- * external services.
+ * 1. BasicIndelonxingConvelonrtelonr builds thriftVelonrsionelondelonvelonnts with thelon fielonlds that do not relonquirelon
+ * elonxtelonrnal selonrvicelons.
  *
- * 2. DelayedIndexingConverter builds all the document fields depending on external services, once
- * those services have processed the relevant Tweet and we have retrieved that data.
+ * 2. DelonlayelondIndelonxingConvelonrtelonr builds all thelon documelonnt fielonlds delonpelonnding on elonxtelonrnal selonrvicelons, oncelon
+ * thoselon selonrvicelons havelon procelonsselond thelon relonlelonvant Twelonelont and welon havelon relontrielonvelond that data.
  */
-@NotThreadSafe
-public class BasicIndexingConverter {
-  private static final Logger LOG = LoggerFactory.getLogger(BasicIndexingConverter.class);
+@NotThrelonadSafelon
+public class BasicIndelonxingConvelonrtelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(BasicIndelonxingConvelonrtelonr.class);
 
-  private static final SearchCounter NUM_NULLCAST_FEATURE_FLAG_SET_TWEETS =
-      SearchCounter.export("num_nullcast_feature_flag_set_tweets");
-  private static final SearchCounter NUM_NULLCAST_TWEETS =
-      SearchCounter.export("num_nullcast_tweets");
-  private static final SearchCounter NUM_NON_NULLCAST_TWEETS =
-      SearchCounter.export("num_non_nullcast_tweets");
-  private static final SearchCounter ADJUSTED_BAD_CREATED_AT_COUNTER =
-      SearchCounter.export("adjusted_incorrect_created_at_timestamp");
-  private static final SearchCounter INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS =
-      SearchCounter.export("inconsistent_tweet_id_and_created_at_ms");
-  private static final SearchCounter NUM_SELF_THREAD_TWEETS =
-      SearchCounter.export("num_self_thread_tweets");
-  private static final SearchCounter NUM_EXCLUSIVE_TWEETS =
-      SearchCounter.export("num_exclusive_tweets");
+  privatelon static final SelonarchCountelonr NUM_NULLCAST_FelonATURelon_FLAG_SelonT_TWelonelonTS =
+      SelonarchCountelonr.elonxport("num_nullcast_felonaturelon_flag_selont_twelonelonts");
+  privatelon static final SelonarchCountelonr NUM_NULLCAST_TWelonelonTS =
+      SelonarchCountelonr.elonxport("num_nullcast_twelonelonts");
+  privatelon static final SelonarchCountelonr NUM_NON_NULLCAST_TWelonelonTS =
+      SelonarchCountelonr.elonxport("num_non_nullcast_twelonelonts");
+  privatelon static final SelonarchCountelonr ADJUSTelonD_BAD_CRelonATelonD_AT_COUNTelonR =
+      SelonarchCountelonr.elonxport("adjustelond_incorrelonct_crelonatelond_at_timelonstamp");
+  privatelon static final SelonarchCountelonr INCONSISTelonNT_TWelonelonT_ID_AND_CRelonATelonD_AT_MS =
+      SelonarchCountelonr.elonxport("inconsistelonnt_twelonelont_id_and_crelonatelond_at_ms");
+  privatelon static final SelonarchCountelonr NUM_SelonLF_THRelonAD_TWelonelonTS =
+      SelonarchCountelonr.elonxport("num_selonlf_threlonad_twelonelonts");
+  privatelon static final SelonarchCountelonr NUM_elonXCLUSIVelon_TWelonelonTS =
+      SelonarchCountelonr.elonxport("num_elonxclusivelon_twelonelonts");
 
-  // If a tweet carries a timestamp smaller than this timestamp, we consider the timestamp invalid,
-  // because twitter does not even exist back then before: Sun, 01 Jan 2006 00:00:00 GMT
-  private static final long VALID_CREATION_TIME_THRESHOLD_MILLIS =
-      new DateTime(2006, 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis();
+  // If a twelonelont carrielons a timelonstamp smallelonr than this timelonstamp, welon considelonr thelon timelonstamp invalid,
+  // beloncauselon twittelonr doelons not elonvelonn elonxist back thelonn belonforelon: Sun, 01 Jan 2006 00:00:00 GMT
+  privatelon static final long VALID_CRelonATION_TIMelon_THRelonSHOLD_MILLIS =
+      nelonw DatelonTimelon(2006, 1, 1, 0, 0, 0, DatelonTimelonZonelon.UTC).gelontMillis();
 
-  private final EncodedFeatureBuilder featureBuilder;
-  private final Schema schema;
-  private final EarlybirdCluster cluster;
+  privatelon final elonncodelondFelonaturelonBuildelonr felonaturelonBuildelonr;
+  privatelon final Schelonma schelonma;
+  privatelon final elonarlybirdClustelonr clustelonr;
 
-  public BasicIndexingConverter(Schema schema, EarlybirdCluster cluster) {
-    this.featureBuilder = new EncodedFeatureBuilder();
-    this.schema = schema;
-    this.cluster = cluster;
+  public BasicIndelonxingConvelonrtelonr(Schelonma schelonma, elonarlybirdClustelonr clustelonr) {
+    this.felonaturelonBuildelonr = nelonw elonncodelondFelonaturelonBuildelonr();
+    this.schelonma = schelonma;
+    this.clustelonr = clustelonr;
   }
 
   /**
-   * This function converts TwitterMessage to ThriftVersionedEvents, which is a generic data
-   * structure that can be consumed by Earlybird directly.
+   * This function convelonrts TwittelonrMelonssagelon to ThriftVelonrsionelondelonvelonnts, which is a gelonnelonric data
+   * structurelon that can belon consumelond by elonarlybird direlonctly.
    */
-  public ThriftVersionedEvents convertMessageToThrift(
-      TwitterMessage message,
-      boolean strict,
-      List<PenguinVersion> penguinVersions) throws IOException {
-    Preconditions.checkNotNull(message);
-    Preconditions.checkNotNull(penguinVersions);
+  public ThriftVelonrsionelondelonvelonnts convelonrtMelonssagelonToThrift(
+      TwittelonrMelonssagelon melonssagelon,
+      boolelonan strict,
+      List<PelonnguinVelonrsion> pelonnguinVelonrsions) throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(melonssagelon);
+    Prelonconditions.chelonckNotNull(pelonnguinVelonrsions);
 
-    ThriftVersionedEvents versionedEvents = new ThriftVersionedEvents()
-        .setId(message.getId());
+    ThriftVelonrsionelondelonvelonnts velonrsionelondelonvelonnts = nelonw ThriftVelonrsionelondelonvelonnts()
+        .selontId(melonssagelon.gelontId());
 
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+    ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot = schelonma.gelontSchelonmaSnapshot();
 
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      ThriftDocument document =
-          buildDocumentForPenguinVersion(schemaSnapshot, message, strict, penguinVersion);
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : pelonnguinVelonrsions) {
+      ThriftDocumelonnt documelonnt =
+          buildDocumelonntForPelonnguinVelonrsion(schelonmaSnapshot, melonssagelon, strict, pelonnguinVelonrsion);
 
-      ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-          .setDocument(document)
-          .setEventType(ThriftIndexingEventType.INSERT)
-          .setSortId(message.getId());
-      message.getFromUserTwitterId().map(thriftIndexingEvent::setUid);
-      versionedEvents.putToVersionedEvents(penguinVersion.getByteValue(), thriftIndexingEvent);
+      ThriftIndelonxingelonvelonnt thriftIndelonxingelonvelonnt = nelonw ThriftIndelonxingelonvelonnt()
+          .selontDocumelonnt(documelonnt)
+          .selontelonvelonntTypelon(ThriftIndelonxingelonvelonntTypelon.INSelonRT)
+          .selontSortId(melonssagelon.gelontId());
+      melonssagelon.gelontFromUselonrTwittelonrId().map(thriftIndelonxingelonvelonnt::selontUid);
+      velonrsionelondelonvelonnts.putToVelonrsionelondelonvelonnts(pelonnguinVelonrsion.gelontBytelonValuelon(), thriftIndelonxingelonvelonnt);
     }
 
-    return versionedEvents;
+    relonturn velonrsionelondelonvelonnts;
   }
 
-  private ThriftDocument buildDocumentForPenguinVersion(
-      ImmutableSchemaInterface schemaSnapshot,
-      TwitterMessage message,
-      boolean strict,
-      PenguinVersion penguinVersion) throws IOException {
-    TweetFeatureWithEncodeFeatures tweetFeature =
-        featureBuilder.createTweetFeaturesFromTwitterMessage(
-            message, penguinVersion, schemaSnapshot);
+  privatelon ThriftDocumelonnt buildDocumelonntForPelonnguinVelonrsion(
+      ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot,
+      TwittelonrMelonssagelon melonssagelon,
+      boolelonan strict,
+      PelonnguinVelonrsion pelonnguinVelonrsion) throws IOelonxcelonption {
+    TwelonelontFelonaturelonWithelonncodelonFelonaturelons twelonelontFelonaturelon =
+        felonaturelonBuildelonr.crelonatelonTwelonelontFelonaturelonsFromTwittelonrMelonssagelon(
+            melonssagelon, pelonnguinVelonrsion, schelonmaSnapshot);
 
-    EarlybirdThriftDocumentBuilder builder =
-        buildBasicFields(message, schemaSnapshot, cluster, tweetFeature);
+    elonarlybirdThriftDocumelonntBuildelonr buildelonr =
+        buildBasicFielonlds(melonssagelon, schelonmaSnapshot, clustelonr, twelonelontFelonaturelon);
 
-    buildUserFields(builder, message, tweetFeature.versionedFeatures, penguinVersion);
-    buildGeoFields(builder, message, tweetFeature.versionedFeatures);
-    buildRetweetAndReplyFields(builder, message, strict);
-    buildQuotesFields(builder, message);
-    buildVersionedFeatureFields(builder, tweetFeature.versionedFeatures);
-    buildAnnotationFields(builder, message);
-    buildNormalizedMinEngagementFields(builder, tweetFeature.encodedFeatures, cluster);
-    buildDirectedAtFields(builder, message);
+    buildUselonrFielonlds(buildelonr, melonssagelon, twelonelontFelonaturelon.velonrsionelondFelonaturelons, pelonnguinVelonrsion);
+    buildGelonoFielonlds(buildelonr, melonssagelon, twelonelontFelonaturelon.velonrsionelondFelonaturelons);
+    buildRelontwelonelontAndRelonplyFielonlds(buildelonr, melonssagelon, strict);
+    buildQuotelonsFielonlds(buildelonr, melonssagelon);
+    buildVelonrsionelondFelonaturelonFielonlds(buildelonr, twelonelontFelonaturelon.velonrsionelondFelonaturelons);
+    buildAnnotationFielonlds(buildelonr, melonssagelon);
+    buildNormalizelondMinelonngagelonmelonntFielonlds(buildelonr, twelonelontFelonaturelon.elonncodelondFelonaturelons, clustelonr);
+    buildDirelonctelondAtFielonlds(buildelonr, melonssagelon);
 
-    builder.withSpaceIdFields(message.getSpaceIds());
+    buildelonr.withSpacelonIdFielonlds(melonssagelon.gelontSpacelonIds());
 
-    return builder.build();
+    relonturn buildelonr.build();
   }
 
   /**
-   * Build the basic fields for a tweet.
+   * Build thelon basic fielonlds for a twelonelont.
    */
-  public static EarlybirdThriftDocumentBuilder buildBasicFields(
-      TwitterMessage message,
-      ImmutableSchemaInterface schemaSnapshot,
-      EarlybirdCluster cluster,
-      TweetFeatureWithEncodeFeatures tweetFeature) {
-    EarlybirdEncodedFeatures extendedEncodedFeatures = tweetFeature.extendedEncodedFeatures;
-    if (extendedEncodedFeatures == null && EarlybirdCluster.isTwitterMemoryFormatCluster(cluster)) {
-      extendedEncodedFeatures = EarlybirdEncodedFeatures.newEncodedTweetFeatures(
-          schemaSnapshot, EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD);
+  public static elonarlybirdThriftDocumelonntBuildelonr buildBasicFielonlds(
+      TwittelonrMelonssagelon melonssagelon,
+      ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot,
+      elonarlybirdClustelonr clustelonr,
+      TwelonelontFelonaturelonWithelonncodelonFelonaturelons twelonelontFelonaturelon) {
+    elonarlybirdelonncodelondFelonaturelons elonxtelonndelondelonncodelondFelonaturelons = twelonelontFelonaturelon.elonxtelonndelondelonncodelondFelonaturelons;
+    if (elonxtelonndelondelonncodelondFelonaturelons == null && elonarlybirdClustelonr.isTwittelonrMelonmoryFormatClustelonr(clustelonr)) {
+      elonxtelonndelondelonncodelondFelonaturelons = elonarlybirdelonncodelondFelonaturelons.nelonwelonncodelondTwelonelontFelonaturelons(
+          schelonmaSnapshot, elonarlybirdFielonldConstant.elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD);
     }
-    EarlybirdThriftDocumentBuilder builder = new EarlybirdThriftDocumentBuilder(
-        tweetFeature.encodedFeatures,
-        extendedEncodedFeatures,
-        new EarlybirdFieldConstants(),
-        schemaSnapshot);
+    elonarlybirdThriftDocumelonntBuildelonr buildelonr = nelonw elonarlybirdThriftDocumelonntBuildelonr(
+        twelonelontFelonaturelon.elonncodelondFelonaturelons,
+        elonxtelonndelondelonncodelondFelonaturelons,
+        nelonw elonarlybirdFielonldConstants(),
+        schelonmaSnapshot);
 
-    builder.withID(message.getId());
+    buildelonr.withID(melonssagelon.gelontId());
 
-    final Date createdAt = message.getDate();
-    long createdAtMs = createdAt == null ? 0L : createdAt.getTime();
+    final Datelon crelonatelondAt = melonssagelon.gelontDatelon();
+    long crelonatelondAtMs = crelonatelondAt == null ? 0L : crelonatelondAt.gelontTimelon();
 
-    createdAtMs = fixCreatedAtTimeStampIfNecessary(message.getId(), createdAtMs);
+    crelonatelondAtMs = fixCrelonatelondAtTimelonStampIfNeloncelonssary(melonssagelon.gelontId(), crelonatelondAtMs);
 
-    if (createdAtMs > 0L) {
-      builder.withCreatedAt((int) (createdAtMs / 1000));
+    if (crelonatelondAtMs > 0L) {
+      buildelonr.withCrelonatelondAt((int) (crelonatelondAtMs / 1000));
     }
 
-    builder.withTweetSignature(tweetFeature.versionedFeatures.getTweetSignature());
+    buildelonr.withTwelonelontSignaturelon(twelonelontFelonaturelon.velonrsionelondFelonaturelons.gelontTwelonelontSignaturelon());
 
-    if (message.getConversationId() > 0) {
-      long conversationId = message.getConversationId();
-      builder.withLongField(
-          EarlybirdFieldConstant.CONVERSATION_ID_CSF.getFieldName(), conversationId);
-      // We only index conversation ID when it is different from the tweet ID.
-      if (message.getId() != conversationId) {
-        builder.withLongField(
-            EarlybirdFieldConstant.CONVERSATION_ID_FIELD.getFieldName(), conversationId);
+    if (melonssagelon.gelontConvelonrsationId() > 0) {
+      long convelonrsationId = melonssagelon.gelontConvelonrsationId();
+      buildelonr.withLongFielonld(
+          elonarlybirdFielonldConstant.CONVelonRSATION_ID_CSF.gelontFielonldNamelon(), convelonrsationId);
+      // Welon only indelonx convelonrsation ID whelonn it is diffelonrelonnt from thelon twelonelont ID.
+      if (melonssagelon.gelontId() != convelonrsationId) {
+        buildelonr.withLongFielonld(
+            elonarlybirdFielonldConstant.CONVelonRSATION_ID_FIelonLD.gelontFielonldNamelon(), convelonrsationId);
       }
     }
 
-    if (message.getComposerSource().isPresent()) {
-      ComposerSource composerSource = message.getComposerSource().get();
-      builder.withIntField(
-          EarlybirdFieldConstant.COMPOSER_SOURCE.getFieldName(), composerSource.getValue());
-      if (composerSource == ComposerSource.CAMERA) {
-        builder.withCameraComposerSourceFlag();
+    if (melonssagelon.gelontComposelonrSourcelon().isPrelonselonnt()) {
+      ComposelonrSourcelon composelonrSourcelon = melonssagelon.gelontComposelonrSourcelon().gelont();
+      buildelonr.withIntFielonld(
+          elonarlybirdFielonldConstant.COMPOSelonR_SOURCelon.gelontFielonldNamelon(), composelonrSourcelon.gelontValuelon());
+      if (composelonrSourcelon == ComposelonrSourcelon.CAMelonRA) {
+        buildelonr.withCamelonraComposelonrSourcelonFlag();
       }
     }
 
-    EarlybirdEncodedFeatures encodedFeatures = tweetFeature.encodedFeatures;
-    if (encodedFeatures.isFlagSet(EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG)) {
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.VERIFIED_FILTER_TERM);
+    elonarlybirdelonncodelondFelonaturelons elonncodelondFelonaturelons = twelonelontFelonaturelon.elonncodelondFelonaturelons;
+    if (elonncodelondFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.FROM_VelonRIFIelonD_ACCOUNT_FLAG)) {
+      buildelonr.addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.VelonRIFIelonD_FILTelonR_TelonRM);
     }
-    if (encodedFeatures.isFlagSet(EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG)) {
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.BLUE_VERIFIED_FILTER_TERM);
-    }
-
-    if (encodedFeatures.isFlagSet(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG)) {
-      builder.withOffensiveFlag();
+    if (elonncodelondFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.FROM_BLUelon_VelonRIFIelonD_ACCOUNT_FLAG)) {
+      buildelonr.addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.BLUelon_VelonRIFIelonD_FILTelonR_TelonRM);
     }
 
-    if (message.getNullcast()) {
-      NUM_NULLCAST_TWEETS.increment();
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.NULLCAST_FILTER_TERM);
-    } else {
-      NUM_NON_NULLCAST_TWEETS.increment();
-    }
-    if (encodedFeatures.isFlagSet(EarlybirdFieldConstant.IS_NULLCAST_FLAG)) {
-      NUM_NULLCAST_FEATURE_FLAG_SET_TWEETS.increment();
-    }
-    if (message.isSelfThread()) {
-      builder.addFilterInternalFieldTerm(
-          EarlybirdFieldConstant.SELF_THREAD_FILTER_TERM);
-      NUM_SELF_THREAD_TWEETS.increment();
+    if (elonncodelondFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_OFFelonNSIVelon_FLAG)) {
+      buildelonr.withOffelonnsivelonFlag();
     }
 
-    if (message.isExclusive()) {
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.EXCLUSIVE_FILTER_TERM);
-      builder.withLongField(
-          EarlybirdFieldConstant.EXCLUSIVE_CONVERSATION_AUTHOR_ID_CSF.getFieldName(),
-          message.getExclusiveConversationAuthorId());
-      NUM_EXCLUSIVE_TWEETS.increment();
+    if (melonssagelon.gelontNullcast()) {
+      NUM_NULLCAST_TWelonelonTS.increlonmelonnt();
+      buildelonr.addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.NULLCAST_FILTelonR_TelonRM);
+    } elonlselon {
+      NUM_NON_NULLCAST_TWelonelonTS.increlonmelonnt();
+    }
+    if (elonncodelondFelonaturelons.isFlagSelont(elonarlybirdFielonldConstant.IS_NULLCAST_FLAG)) {
+      NUM_NULLCAST_FelonATURelon_FLAG_SelonT_TWelonelonTS.increlonmelonnt();
+    }
+    if (melonssagelon.isSelonlfThrelonad()) {
+      buildelonr.addFiltelonrIntelonrnalFielonldTelonrm(
+          elonarlybirdFielonldConstant.SelonLF_THRelonAD_FILTelonR_TelonRM);
+      NUM_SelonLF_THRelonAD_TWelonelonTS.increlonmelonnt();
     }
 
-    builder.withLanguageCodes(message.getLanguage(), message.getBCP47LanguageTag());
+    if (melonssagelon.iselonxclusivelon()) {
+      buildelonr.addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.elonXCLUSIVelon_FILTelonR_TelonRM);
+      buildelonr.withLongFielonld(
+          elonarlybirdFielonldConstant.elonXCLUSIVelon_CONVelonRSATION_AUTHOR_ID_CSF.gelontFielonldNamelon(),
+          melonssagelon.gelontelonxclusivelonConvelonrsationAuthorId());
+      NUM_elonXCLUSIVelon_TWelonelonTS.increlonmelonnt();
+    }
 
-    return builder;
+    buildelonr.withLanguagelonCodelons(melonssagelon.gelontLanguagelon(), melonssagelon.gelontBCP47LanguagelonTag());
+
+    relonturn buildelonr;
   }
 
   /**
-   * Build the user fields.
+   * Build thelon uselonr fielonlds.
    */
-  public static void buildUserFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      VersionedTweetFeatures versionedTweetFeatures,
-      PenguinVersion penguinVersion) {
-    // 1. Set all the from user fields.
-    if (message.getFromUserTwitterId().isPresent()) {
-      builder.withLongField(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(),
-          message.getFromUserTwitterId().get())
+  public static void buildUselonrFielonlds(
+      elonarlybirdThriftDocumelonntBuildelonr buildelonr,
+      TwittelonrMelonssagelon melonssagelon,
+      VelonrsionelondTwelonelontFelonaturelons velonrsionelondTwelonelontFelonaturelons,
+      PelonnguinVelonrsion pelonnguinVelonrsion) {
+    // 1. Selont all thelon from uselonr fielonlds.
+    if (melonssagelon.gelontFromUselonrTwittelonrId().isPrelonselonnt()) {
+      buildelonr.withLongFielonld(elonarlybirdFielonldConstant.FROM_USelonR_ID_FIelonLD.gelontFielonldNamelon(),
+          melonssagelon.gelontFromUselonrTwittelonrId().gelont())
       // CSF
-      .withLongField(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName(),
-          message.getFromUserTwitterId().get());
-    } else {
-      LOG.warn("fromUserTwitterId is not set in TwitterMessage! Status id: " + message.getId());
+      .withLongFielonld(elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF.gelontFielonldNamelon(),
+          melonssagelon.gelontFromUselonrTwittelonrId().gelont());
+    } elonlselon {
+      LOG.warn("fromUselonrTwittelonrId is not selont in TwittelonrMelonssagelon! Status id: " + melonssagelon.gelontId());
     }
 
-    if (message.getFromUserScreenName().isPresent()) {
-      String fromUser = message.getFromUserScreenName().get();
-      String normalizedFromUser =
-          NormalizerHelper.normalizeWithUnknownLocale(fromUser, penguinVersion);
+    if (melonssagelon.gelontFromUselonrScrelonelonnNamelon().isPrelonselonnt()) {
+      String fromUselonr = melonssagelon.gelontFromUselonrScrelonelonnNamelon().gelont();
+      String normalizelondFromUselonr =
+          NormalizelonrHelonlpelonr.normalizelonWithUnknownLocalelon(fromUselonr, pelonnguinVelonrsion);
 
-      builder
-          .withWhiteSpaceTokenizedScreenNameField(
-              EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(),
-              normalizedFromUser)
-          .withStringField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(),
-              normalizedFromUser);
+      buildelonr
+          .withWhitelonSpacelonTokelonnizelondScrelonelonnNamelonFielonld(
+              elonarlybirdFielonldConstant.TOKelonNIZelonD_FROM_USelonR_FIelonLD.gelontFielonldNamelon(),
+              normalizelondFromUselonr)
+          .withStringFielonld(elonarlybirdFielonldConstant.FROM_USelonR_FIelonLD.gelontFielonldNamelon(),
+              normalizelondFromUselonr);
 
-      if (message.getTokenizedFromUserScreenName().isPresent()) {
-        builder.withCamelCaseTokenizedScreenNameField(
-            EarlybirdFieldConstant.CAMELCASE_USER_HANDLE_FIELD.getFieldName(),
-            fromUser,
-            normalizedFromUser,
-            message.getTokenizedFromUserScreenName().get());
+      if (melonssagelon.gelontTokelonnizelondFromUselonrScrelonelonnNamelon().isPrelonselonnt()) {
+        buildelonr.withCamelonlCaselonTokelonnizelondScrelonelonnNamelonFielonld(
+            elonarlybirdFielonldConstant.CAMelonLCASelon_USelonR_HANDLelon_FIelonLD.gelontFielonldNamelon(),
+            fromUselonr,
+            normalizelondFromUselonr,
+            melonssagelon.gelontTokelonnizelondFromUselonrScrelonelonnNamelon().gelont());
       }
     }
 
-    Optional<String> toUserScreenName = message.getToUserLowercasedScreenName();
-    if (toUserScreenName.isPresent() && !toUserScreenName.get().isEmpty()) {
-      builder.withStringField(
-          EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(),
-          NormalizerHelper.normalizeWithUnknownLocale(toUserScreenName.get(), penguinVersion));
+    Optional<String> toUselonrScrelonelonnNamelon = melonssagelon.gelontToUselonrLowelonrcaselondScrelonelonnNamelon();
+    if (toUselonrScrelonelonnNamelon.isPrelonselonnt() && !toUselonrScrelonelonnNamelon.gelont().iselonmpty()) {
+      buildelonr.withStringFielonld(
+          elonarlybirdFielonldConstant.TO_USelonR_FIelonLD.gelontFielonldNamelon(),
+          NormalizelonrHelonlpelonr.normalizelonWithUnknownLocalelon(toUselonrScrelonelonnNamelon.gelont(), pelonnguinVelonrsion));
     }
 
-    if (versionedTweetFeatures.isSetUserDisplayNameTokenStreamText()) {
-      builder.withTokenStreamField(EarlybirdFieldConstant.TOKENIZED_USER_NAME_FIELD.getFieldName(),
-          versionedTweetFeatures.getUserDisplayNameTokenStreamText(),
-          versionedTweetFeatures.getUserDisplayNameTokenStream());
+    if (velonrsionelondTwelonelontFelonaturelons.isSelontUselonrDisplayNamelonTokelonnStrelonamTelonxt()) {
+      buildelonr.withTokelonnStrelonamFielonld(elonarlybirdFielonldConstant.TOKelonNIZelonD_USelonR_NAMelon_FIelonLD.gelontFielonldNamelon(),
+          velonrsionelondTwelonelontFelonaturelons.gelontUselonrDisplayNamelonTokelonnStrelonamTelonxt(),
+          velonrsionelondTwelonelontFelonaturelons.gelontUselonrDisplayNamelonTokelonnStrelonam());
     }
   }
 
   /**
-   * Build the geo fields.
+   * Build thelon gelono fielonlds.
    */
-  public static void buildGeoFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      VersionedTweetFeatures versionedTweetFeatures) {
-    double lat = GeoUtil.ILLEGAL_LATLON;
-    double lon = GeoUtil.ILLEGAL_LATLON;
-    if (message.getGeoLocation() != null) {
-      GeoObject location = message.getGeoLocation();
-      builder.withGeoField(EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(),
-          location.getLatitude(), location.getLongitude(), location.getAccuracy());
+  public static void buildGelonoFielonlds(
+      elonarlybirdThriftDocumelonntBuildelonr buildelonr,
+      TwittelonrMelonssagelon melonssagelon,
+      VelonrsionelondTwelonelontFelonaturelons velonrsionelondTwelonelontFelonaturelons) {
+    doublelon lat = GelonoUtil.ILLelonGAL_LATLON;
+    doublelon lon = GelonoUtil.ILLelonGAL_LATLON;
+    if (melonssagelon.gelontGelonoLocation() != null) {
+      GelonoObjelonct location = melonssagelon.gelontGelonoLocation();
+      buildelonr.withGelonoFielonld(elonarlybirdFielonldConstant.GelonO_HASH_FIelonLD.gelontFielonldNamelon(),
+          location.gelontLatitudelon(), location.gelontLongitudelon(), location.gelontAccuracy());
 
-      if (location.getSource() != null) {
-        builder.withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-            EarlybirdFieldConstants.formatGeoType(location.getSource()));
+      if (location.gelontSourcelon() != null) {
+        buildelonr.withStringFielonld(elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
+            elonarlybirdFielonldConstants.formatGelonoTypelon(location.gelontSourcelon()));
       }
 
-      if (GeoUtil.validateGeoCoordinates(location.getLatitude(), location.getLongitude())) {
-        lat = location.getLatitude();
-        lon = location.getLongitude();
-      }
-    }
-
-    // See SEARCH-14317 for investigation on how much space geo filed is used in archive cluster.
-    // In lucene archives, this CSF is needed regardless of whether geoLocation is set.
-    builder.withLatLonCSF(lat, lon);
-
-    if (versionedTweetFeatures.isSetTokenizedPlace()) {
-      Place place = versionedTweetFeatures.getTokenizedPlace();
-      Preconditions.checkArgument(place.isSetId(), "Place ID not set for tweet "
-          + message.getId());
-      Preconditions.checkArgument(place.isSetFullName(),
-          "Place full name not set for tweet " + message.getId());
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.PLACE_ID_FIELD.getFieldName());
-      builder
-          .withStringField(EarlybirdFieldConstant.PLACE_ID_FIELD.getFieldName(), place.getId())
-          .withStringField(EarlybirdFieldConstant.PLACE_FULL_NAME_FIELD.getFieldName(),
-              place.getFullName());
-      if (place.isSetCountryCode()) {
-        builder.withStringField(EarlybirdFieldConstant.PLACE_COUNTRY_CODE_FIELD.getFieldName(),
-            place.getCountryCode());
+      if (GelonoUtil.validatelonGelonoCoordinatelons(location.gelontLatitudelon(), location.gelontLongitudelon())) {
+        lat = location.gelontLatitudelon();
+        lon = location.gelontLongitudelon();
       }
     }
 
-    if (versionedTweetFeatures.isSetTokenizedProfileGeoEnrichment()) {
-      ProfileGeoEnrichment profileGeoEnrichment =
-          versionedTweetFeatures.getTokenizedProfileGeoEnrichment();
-      Preconditions.checkArgument(
-          profileGeoEnrichment.isSetPotentialLocations(),
-          "ProfileGeoEnrichment.potentialLocations not set for tweet "
-              + message.getId());
-      List<PotentialLocation> potentialLocations = profileGeoEnrichment.getPotentialLocations();
-      Preconditions.checkArgument(
-          !potentialLocations.isEmpty(),
-          "Found tweet with an empty ProfileGeoEnrichment.potentialLocations: "
-              + message.getId());
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.PROFILE_GEO_FILTER_TERM);
-      for (PotentialLocation potentialLocation : potentialLocations) {
-        if (potentialLocation.isSetCountryCode()) {
-          builder.withStringField(
-              EarlybirdFieldConstant.PROFILE_GEO_COUNTRY_CODE_FIELD.getFieldName(),
-              potentialLocation.getCountryCode());
+    // Selonelon SelonARCH-14317 for invelonstigation on how much spacelon gelono filelond is uselond in archivelon clustelonr.
+    // In lucelonnelon archivelons, this CSF is nelonelondelond relongardlelonss of whelonthelonr gelonoLocation is selont.
+    buildelonr.withLatLonCSF(lat, lon);
+
+    if (velonrsionelondTwelonelontFelonaturelons.isSelontTokelonnizelondPlacelon()) {
+      Placelon placelon = velonrsionelondTwelonelontFelonaturelons.gelontTokelonnizelondPlacelon();
+      Prelonconditions.chelonckArgumelonnt(placelon.isSelontId(), "Placelon ID not selont for twelonelont "
+          + melonssagelon.gelontId());
+      Prelonconditions.chelonckArgumelonnt(placelon.isSelontFullNamelon(),
+          "Placelon full namelon not selont for twelonelont " + melonssagelon.gelontId());
+      buildelonr.addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.PLACelon_ID_FIelonLD.gelontFielonldNamelon());
+      buildelonr
+          .withStringFielonld(elonarlybirdFielonldConstant.PLACelon_ID_FIelonLD.gelontFielonldNamelon(), placelon.gelontId())
+          .withStringFielonld(elonarlybirdFielonldConstant.PLACelon_FULL_NAMelon_FIelonLD.gelontFielonldNamelon(),
+              placelon.gelontFullNamelon());
+      if (placelon.isSelontCountryCodelon()) {
+        buildelonr.withStringFielonld(elonarlybirdFielonldConstant.PLACelon_COUNTRY_CODelon_FIelonLD.gelontFielonldNamelon(),
+            placelon.gelontCountryCodelon());
+      }
+    }
+
+    if (velonrsionelondTwelonelontFelonaturelons.isSelontTokelonnizelondProfilelonGelonoelonnrichmelonnt()) {
+      ProfilelonGelonoelonnrichmelonnt profilelonGelonoelonnrichmelonnt =
+          velonrsionelondTwelonelontFelonaturelons.gelontTokelonnizelondProfilelonGelonoelonnrichmelonnt();
+      Prelonconditions.chelonckArgumelonnt(
+          profilelonGelonoelonnrichmelonnt.isSelontPotelonntialLocations(),
+          "ProfilelonGelonoelonnrichmelonnt.potelonntialLocations not selont for twelonelont "
+              + melonssagelon.gelontId());
+      List<PotelonntialLocation> potelonntialLocations = profilelonGelonoelonnrichmelonnt.gelontPotelonntialLocations();
+      Prelonconditions.chelonckArgumelonnt(
+          !potelonntialLocations.iselonmpty(),
+          "Found twelonelont with an elonmpty ProfilelonGelonoelonnrichmelonnt.potelonntialLocations: "
+              + melonssagelon.gelontId());
+      buildelonr.addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.PROFILelon_GelonO_FILTelonR_TelonRM);
+      for (PotelonntialLocation potelonntialLocation : potelonntialLocations) {
+        if (potelonntialLocation.isSelontCountryCodelon()) {
+          buildelonr.withStringFielonld(
+              elonarlybirdFielonldConstant.PROFILelon_GelonO_COUNTRY_CODelon_FIelonLD.gelontFielonldNamelon(),
+              potelonntialLocation.gelontCountryCodelon());
         }
-        if (potentialLocation.isSetRegion()) {
-          builder.withStringField(EarlybirdFieldConstant.PROFILE_GEO_REGION_FIELD.getFieldName(),
-              potentialLocation.getRegion());
+        if (potelonntialLocation.isSelontRelongion()) {
+          buildelonr.withStringFielonld(elonarlybirdFielonldConstant.PROFILelon_GelonO_RelonGION_FIelonLD.gelontFielonldNamelon(),
+              potelonntialLocation.gelontRelongion());
         }
-        if (potentialLocation.isSetLocality()) {
-          builder.withStringField(EarlybirdFieldConstant.PROFILE_GEO_LOCALITY_FIELD.getFieldName(),
-              potentialLocation.getLocality());
+        if (potelonntialLocation.isSelontLocality()) {
+          buildelonr.withStringFielonld(elonarlybirdFielonldConstant.PROFILelon_GelonO_LOCALITY_FIelonLD.gelontFielonldNamelon(),
+              potelonntialLocation.gelontLocality());
         }
       }
     }
 
-    builder.withPlacesField(message.getPlaces());
+    buildelonr.withPlacelonsFielonld(melonssagelon.gelontPlacelons());
   }
 
   /**
-   * Build the retweet and reply fields.
+   * Build thelon relontwelonelont and relonply fielonlds.
    */
-  public static void buildRetweetAndReplyFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message,
-      boolean strict) {
-    long retweetUserIdVal = -1;
-    long sharedStatusIdVal = -1;
-    if (message.getRetweetMessage() != null) {
-      if (message.getRetweetMessage().getSharedId() != null) {
-        sharedStatusIdVal = message.getRetweetMessage().getSharedId();
+  public static void buildRelontwelonelontAndRelonplyFielonlds(
+      elonarlybirdThriftDocumelonntBuildelonr buildelonr,
+      TwittelonrMelonssagelon melonssagelon,
+      boolelonan strict) {
+    long relontwelonelontUselonrIdVal = -1;
+    long sharelondStatusIdVal = -1;
+    if (melonssagelon.gelontRelontwelonelontMelonssagelon() != null) {
+      if (melonssagelon.gelontRelontwelonelontMelonssagelon().gelontSharelondId() != null) {
+        sharelondStatusIdVal = melonssagelon.gelontRelontwelonelontMelonssagelon().gelontSharelondId();
       }
-      if (message.getRetweetMessage().hasSharedUserTwitterId()) {
-        retweetUserIdVal = message.getRetweetMessage().getSharedUserTwitterId();
-      }
-    }
-
-    long inReplyToStatusIdVal = -1;
-    long inReplyToUserIdVal = -1;
-    if (message.isReply()) {
-      if (message.getInReplyToStatusId().isPresent()) {
-        inReplyToStatusIdVal = message.getInReplyToStatusId().get();
-      }
-      if (message.getToUserTwitterId().isPresent()) {
-        inReplyToUserIdVal = message.getToUserTwitterId().get();
+      if (melonssagelon.gelontRelontwelonelontMelonssagelon().hasSharelondUselonrTwittelonrId()) {
+        relontwelonelontUselonrIdVal = melonssagelon.gelontRelontwelonelontMelonssagelon().gelontSharelondUselonrTwittelonrId();
       }
     }
 
-    buildRetweetAndReplyFields(
-        retweetUserIdVal,
-        sharedStatusIdVal,
-        inReplyToStatusIdVal,
-        inReplyToUserIdVal,
+    long inRelonplyToStatusIdVal = -1;
+    long inRelonplyToUselonrIdVal = -1;
+    if (melonssagelon.isRelonply()) {
+      if (melonssagelon.gelontInRelonplyToStatusId().isPrelonselonnt()) {
+        inRelonplyToStatusIdVal = melonssagelon.gelontInRelonplyToStatusId().gelont();
+      }
+      if (melonssagelon.gelontToUselonrTwittelonrId().isPrelonselonnt()) {
+        inRelonplyToUselonrIdVal = melonssagelon.gelontToUselonrTwittelonrId().gelont();
+      }
+    }
+
+    buildRelontwelonelontAndRelonplyFielonlds(
+        relontwelonelontUselonrIdVal,
+        sharelondStatusIdVal,
+        inRelonplyToStatusIdVal,
+        inRelonplyToUselonrIdVal,
         strict,
-        builder);
+        buildelonr);
   }
 
   /**
-   * Build the quotes fields.
+   * Build thelon quotelons fielonlds.
    */
-  public static void buildQuotesFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message) {
-    if (message.getQuotedMessage() != null) {
-      TwitterQuotedMessage quoted = message.getQuotedMessage();
-      if (quoted != null && quoted.getQuotedStatusId() > 0 && quoted.getQuotedUserId() > 0) {
-        builder.withQuote(quoted.getQuotedStatusId(), quoted.getQuotedUserId());
+  public static void buildQuotelonsFielonlds(
+      elonarlybirdThriftDocumelonntBuildelonr buildelonr,
+      TwittelonrMelonssagelon melonssagelon) {
+    if (melonssagelon.gelontQuotelondMelonssagelon() != null) {
+      TwittelonrQuotelondMelonssagelon quotelond = melonssagelon.gelontQuotelondMelonssagelon();
+      if (quotelond != null && quotelond.gelontQuotelondStatusId() > 0 && quotelond.gelontQuotelondUselonrId() > 0) {
+        buildelonr.withQuotelon(quotelond.gelontQuotelondStatusId(), quotelond.gelontQuotelondUselonrId());
       }
     }
   }
 
   /**
-   * Build directed at field.
+   * Build direlonctelond at fielonld.
    */
-  public static void buildDirectedAtFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message) {
-    if (message.getDirectedAtUserId().isPresent() && message.getDirectedAtUserId().get() > 0) {
-      builder.withDirectedAtUser(message.getDirectedAtUserId().get());
-      builder.addFilterInternalFieldTerm(EarlybirdFieldConstant.DIRECTED_AT_FILTER_TERM);
+  public static void buildDirelonctelondAtFielonlds(
+      elonarlybirdThriftDocumelonntBuildelonr buildelonr,
+      TwittelonrMelonssagelon melonssagelon) {
+    if (melonssagelon.gelontDirelonctelondAtUselonrId().isPrelonselonnt() && melonssagelon.gelontDirelonctelondAtUselonrId().gelont() > 0) {
+      buildelonr.withDirelonctelondAtUselonr(melonssagelon.gelontDirelonctelondAtUselonrId().gelont());
+      buildelonr.addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.DIRelonCTelonD_AT_FILTelonR_TelonRM);
     }
   }
 
   /**
-   * Build the versioned features for a tweet.
+   * Build thelon velonrsionelond felonaturelons for a twelonelont.
    */
-  public static void buildVersionedFeatureFields(
-      EarlybirdThriftDocumentBuilder builder,
-      VersionedTweetFeatures versionedTweetFeatures) {
-    builder
-        .withHashtagsField(versionedTweetFeatures.getHashtags())
-        .withMentionsField(versionedTweetFeatures.getMentions())
-        .withStocksFields(versionedTweetFeatures.getStocks())
-        .withResolvedLinksText(versionedTweetFeatures.getNormalizedResolvedUrlText())
-        .withTokenStreamField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-            versionedTweetFeatures.getTweetTokenStreamText(),
-            versionedTweetFeatures.isSetTweetTokenStream()
-                ? versionedTweetFeatures.getTweetTokenStream() : null)
-        .withStringField(EarlybirdFieldConstant.SOURCE_FIELD.getFieldName(),
-            versionedTweetFeatures.getSource())
-        .withStringField(EarlybirdFieldConstant.NORMALIZED_SOURCE_FIELD.getFieldName(),
-            versionedTweetFeatures.getNormalizedSource());
+  public static void buildVelonrsionelondFelonaturelonFielonlds(
+      elonarlybirdThriftDocumelonntBuildelonr buildelonr,
+      VelonrsionelondTwelonelontFelonaturelons velonrsionelondTwelonelontFelonaturelons) {
+    buildelonr
+        .withHashtagsFielonld(velonrsionelondTwelonelontFelonaturelons.gelontHashtags())
+        .withMelonntionsFielonld(velonrsionelondTwelonelontFelonaturelons.gelontMelonntions())
+        .withStocksFielonlds(velonrsionelondTwelonelontFelonaturelons.gelontStocks())
+        .withRelonsolvelondLinksTelonxt(velonrsionelondTwelonelontFelonaturelons.gelontNormalizelondRelonsolvelondUrlTelonxt())
+        .withTokelonnStrelonamFielonld(elonarlybirdFielonldConstant.TelonXT_FIelonLD.gelontFielonldNamelon(),
+            velonrsionelondTwelonelontFelonaturelons.gelontTwelonelontTokelonnStrelonamTelonxt(),
+            velonrsionelondTwelonelontFelonaturelons.isSelontTwelonelontTokelonnStrelonam()
+                ? velonrsionelondTwelonelontFelonaturelons.gelontTwelonelontTokelonnStrelonam() : null)
+        .withStringFielonld(elonarlybirdFielonldConstant.SOURCelon_FIelonLD.gelontFielonldNamelon(),
+            velonrsionelondTwelonelontFelonaturelons.gelontSourcelon())
+        .withStringFielonld(elonarlybirdFielonldConstant.NORMALIZelonD_SOURCelon_FIelonLD.gelontFielonldNamelon(),
+            velonrsionelondTwelonelontFelonaturelons.gelontNormalizelondSourcelon());
 
-    // Internal fields for smileys and question marks
-    if (versionedTweetFeatures.hasPositiveSmiley) {
-      builder.withStringField(
-          EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-          EarlybirdFieldConstant.HAS_POSITIVE_SMILEY);
+    // Intelonrnal fielonlds for smilelonys and quelonstion marks
+    if (velonrsionelondTwelonelontFelonaturelons.hasPositivelonSmilelony) {
+      buildelonr.withStringFielonld(
+          elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
+          elonarlybirdFielonldConstant.HAS_POSITIVelon_SMILelonY);
     }
-    if (versionedTweetFeatures.hasNegativeSmiley) {
-      builder.withStringField(
-          EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-          EarlybirdFieldConstant.HAS_NEGATIVE_SMILEY);
+    if (velonrsionelondTwelonelontFelonaturelons.hasNelongativelonSmilelony) {
+      buildelonr.withStringFielonld(
+          elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
+          elonarlybirdFielonldConstant.HAS_NelonGATIVelon_SMILelonY);
     }
-    if (versionedTweetFeatures.hasQuestionMark) {
-      builder.withStringField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-          EarlybirdThriftDocumentBuilder.QUESTION_MARK);
+    if (velonrsionelondTwelonelontFelonaturelons.hasQuelonstionMark) {
+      buildelonr.withStringFielonld(elonarlybirdFielonldConstant.TelonXT_FIelonLD.gelontFielonldNamelon(),
+          elonarlybirdThriftDocumelonntBuildelonr.QUelonSTION_MARK);
     }
   }
 
   /**
-   * Build the escherbird annotations for a tweet.
+   * Build thelon elonschelonrbird annotations for a twelonelont.
    */
-  public static void buildAnnotationFields(
-      EarlybirdThriftDocumentBuilder builder,
-      TwitterMessage message) {
-    List<TwitterMessage.EscherbirdAnnotation> escherbirdAnnotations =
-        message.getEscherbirdAnnotations();
-    if (CollectionUtils.isEmpty(escherbirdAnnotations)) {
-      return;
+  public static void buildAnnotationFielonlds(
+      elonarlybirdThriftDocumelonntBuildelonr buildelonr,
+      TwittelonrMelonssagelon melonssagelon) {
+    List<TwittelonrMelonssagelon.elonschelonrbirdAnnotation> elonschelonrbirdAnnotations =
+        melonssagelon.gelontelonschelonrbirdAnnotations();
+    if (CollelonctionUtils.iselonmpty(elonschelonrbirdAnnotations)) {
+      relonturn;
     }
 
-    builder.addFacetSkipList(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName());
+    buildelonr.addFacelontSkipList(elonarlybirdFielonldConstant.elonNTITY_ID_FIelonLD.gelontFielonldNamelon());
 
-    for (TwitterMessage.EscherbirdAnnotation annotation : escherbirdAnnotations) {
-      String groupDomainEntity = String.format("%d.%d.%d",
-          annotation.groupId, annotation.domainId, annotation.entityId);
-      String domainEntity = String.format("%d.%d", annotation.domainId, annotation.entityId);
-      String entity = String.format("%d", annotation.entityId);
+    for (TwittelonrMelonssagelon.elonschelonrbirdAnnotation annotation : elonschelonrbirdAnnotations) {
+      String groupDomainelonntity = String.format("%d.%d.%d",
+          annotation.groupId, annotation.domainId, annotation.elonntityId);
+      String domainelonntity = String.format("%d.%d", annotation.domainId, annotation.elonntityId);
+      String elonntity = String.format("%d", annotation.elonntityId);
 
-      builder.withStringField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(),
-          groupDomainEntity);
-      builder.withStringField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(),
-          domainEntity);
-      builder.withStringField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(),
-          entity);
+      buildelonr.withStringFielonld(elonarlybirdFielonldConstant.elonNTITY_ID_FIelonLD.gelontFielonldNamelon(),
+          groupDomainelonntity);
+      buildelonr.withStringFielonld(elonarlybirdFielonldConstant.elonNTITY_ID_FIelonLD.gelontFielonldNamelon(),
+          domainelonntity);
+      buildelonr.withStringFielonld(elonarlybirdFielonldConstant.elonNTITY_ID_FIelonLD.gelontFielonldNamelon(),
+          elonntity);
     }
   }
 
   /**
-   * Build the correct ThriftIndexingEvent's fields based on retweet and reply status.
+   * Build thelon correlonct ThriftIndelonxingelonvelonnt's fielonlds baselond on relontwelonelont and relonply status.
    */
-  public static void buildRetweetAndReplyFields(
-      long retweetUserIdVal,
-      long sharedStatusIdVal,
-      long inReplyToStatusIdVal,
-      long inReplyToUserIdVal,
-      boolean strict,
-      EarlybirdThriftDocumentBuilder builder) {
-    Optional<Long> retweetUserId = Optional.of(retweetUserIdVal).filter(x -> x > 0);
-    Optional<Long> sharedStatusId = Optional.of(sharedStatusIdVal).filter(x -> x > 0);
-    Optional<Long> inReplyToUserId = Optional.of(inReplyToUserIdVal).filter(x -> x > 0);
-    Optional<Long> inReplyToStatusId = Optional.of(inReplyToStatusIdVal).filter(x -> x > 0);
+  public static void buildRelontwelonelontAndRelonplyFielonlds(
+      long relontwelonelontUselonrIdVal,
+      long sharelondStatusIdVal,
+      long inRelonplyToStatusIdVal,
+      long inRelonplyToUselonrIdVal,
+      boolelonan strict,
+      elonarlybirdThriftDocumelonntBuildelonr buildelonr) {
+    Optional<Long> relontwelonelontUselonrId = Optional.of(relontwelonelontUselonrIdVal).filtelonr(x -> x > 0);
+    Optional<Long> sharelondStatusId = Optional.of(sharelondStatusIdVal).filtelonr(x -> x > 0);
+    Optional<Long> inRelonplyToUselonrId = Optional.of(inRelonplyToUselonrIdVal).filtelonr(x -> x > 0);
+    Optional<Long> inRelonplyToStatusId = Optional.of(inRelonplyToStatusIdVal).filtelonr(x -> x > 0);
 
-    // We have six combinations here. A tweet can be
-    //   1) a reply to another tweet (then it has both in-reply-to-user-id and
-    //      in-reply-to-status-id set),
-    //   2) directed-at a user (then it only has in-reply-to-user-id set),
-    //   3) not a reply at all.
-    // Additionally, it may or may not be a retweet (if it is, then it has retweet-user-id and
-    // retweet-status-id set).
+    // Welon havelon six combinations helonrelon. A twelonelont can belon
+    //   1) a relonply to anothelonr twelonelont (thelonn it has both in-relonply-to-uselonr-id and
+    //      in-relonply-to-status-id selont),
+    //   2) direlonctelond-at a uselonr (thelonn it only has in-relonply-to-uselonr-id selont),
+    //   3) not a relonply at all.
+    // Additionally, it may or may not belon a relontwelonelont (if it is, thelonn it has relontwelonelont-uselonr-id and
+    // relontwelonelont-status-id selont).
     //
-    // We want to set some fields unconditionally, and some fields (reference-author-id and
-    // shared-status-id) depending on the reply/retweet combination.
+    // Welon want to selont somelon fielonlds unconditionally, and somelon fielonlds (relonfelonrelonncelon-author-id and
+    // sharelond-status-id) delonpelonnding on thelon relonply/relontwelonelont combination.
     //
-    // 1. Normal tweet (not a reply, not a retweet). None of the fields should be set.
+    // 1. Normal twelonelont (not a relonply, not a relontwelonelont). Nonelon of thelon fielonlds should belon selont.
     //
-    // 2. Reply to a tweet (both in-reply-to-user-id and in-reply-to-status-id set).
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to in-reply-to-status-id
-    //   IS_REPLY_FLAG                should be set
+    // 2. Relonply to a twelonelont (both in-relonply-to-uselonr-id and in-relonply-to-status-id selont).
+    //   IN_RelonPLY_TO_USelonR_ID_FIelonLD    should belon selont to in-relonply-to-uselonr-id
+    //   SHARelonD_STATUS_ID_CSF         should belon selont to in-relonply-to-status-id
+    //   IS_RelonPLY_FLAG                should belon selont
     //
-    // 3. Directed-at a user (only in-reply-to-user-id is set).
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   IS_REPLY_FLAG                should be set
+    // 3. Direlonctelond-at a uselonr (only in-relonply-to-uselonr-id is selont).
+    //   IN_RelonPLY_TO_USelonR_ID_FIelonLD    should belon selont to in-relonply-to-uselonr-id
+    //   IS_RelonPLY_FLAG                should belon selont
     //
-    // 4. Retweet of a normal tweet (retweet-user-id and retweet-status-id are set).
-    //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id
-    //   IS_RETWEET_FLAG              should be set
+    // 4. Relontwelonelont of a normal twelonelont (relontwelonelont-uselonr-id and relontwelonelont-status-id arelon selont).
+    //   RelonTWelonelonT_SOURCelon_USelonR_ID_FIelonLD should belon selont to relontwelonelont-uselonr-id
+    //   SHARelonD_STATUS_ID_CSF         should belon selont to relontwelonelont-status-id
+    //   IS_RelonTWelonelonT_FLAG              should belon selont
     //
-    // 5. Retweet of a reply (both in-reply-to-user-id and in-reply-to-status-id set,
-    // retweet-user-id and retweet-status-id are set).
-    //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id (retweet beats reply!)
-    //   IS_RETWEET_FLAG              should be set
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   IS_REPLY_FLAG                should NOT be set
+    // 5. Relontwelonelont of a relonply (both in-relonply-to-uselonr-id and in-relonply-to-status-id selont,
+    // relontwelonelont-uselonr-id and relontwelonelont-status-id arelon selont).
+    //   RelonTWelonelonT_SOURCelon_USelonR_ID_FIelonLD should belon selont to relontwelonelont-uselonr-id
+    //   SHARelonD_STATUS_ID_CSF         should belon selont to relontwelonelont-status-id (relontwelonelont belonats relonply!)
+    //   IS_RelonTWelonelonT_FLAG              should belon selont
+    //   IN_RelonPLY_TO_USelonR_ID_FIelonLD    should belon selont to in-relonply-to-uselonr-id
+    //   IS_RelonPLY_FLAG                should NOT belon selont
     //
-    // 6. Retweet of a directed-at tweet (only in-reply-to-user-id is set,
-    // retweet-user-id and retweet-status-id are set).
-    //   RETWEET_SOURCE_USER_ID_FIELD should be set to retweet-user-id
-    //   SHARED_STATUS_ID_CSF         should be set to retweet-status-id
-    //   IS_RETWEET_FLAG              should be set
-    //   IN_REPLY_TO_USER_ID_FIELD    should be set to in-reply-to-user-id
-    //   IS_REPLY_FLAG                should NOT be set
+    // 6. Relontwelonelont of a direlonctelond-at twelonelont (only in-relonply-to-uselonr-id is selont,
+    // relontwelonelont-uselonr-id and relontwelonelont-status-id arelon selont).
+    //   RelonTWelonelonT_SOURCelon_USelonR_ID_FIelonLD should belon selont to relontwelonelont-uselonr-id
+    //   SHARelonD_STATUS_ID_CSF         should belon selont to relontwelonelont-status-id
+    //   IS_RelonTWelonelonT_FLAG              should belon selont
+    //   IN_RelonPLY_TO_USelonR_ID_FIelonLD    should belon selont to in-relonply-to-uselonr-id
+    //   IS_RelonPLY_FLAG                should NOT belon selont
     //
-    // In other words:
-    // SHARED_STATUS_ID_CSF logic: if this is a retweet SHARED_STATUS_ID_CSF should be set to
-    // retweet-status-id, otherwise if it's a reply to a tweet, it should be set to
-    // in-reply-to-status-id.
+    // In othelonr words:
+    // SHARelonD_STATUS_ID_CSF logic: if this is a relontwelonelont SHARelonD_STATUS_ID_CSF should belon selont to
+    // relontwelonelont-status-id, othelonrwiselon if it's a relonply to a twelonelont, it should belon selont to
+    // in-relonply-to-status-id.
 
-    Preconditions.checkState(retweetUserId.isPresent() == sharedStatusId.isPresent());
+    Prelonconditions.chelonckStatelon(relontwelonelontUselonrId.isPrelonselonnt() == sharelondStatusId.isPrelonselonnt());
 
-    if (retweetUserId.isPresent()) {
-      builder.withNativeRetweet(retweetUserId.get(), sharedStatusId.get());
+    if (relontwelonelontUselonrId.isPrelonselonnt()) {
+      buildelonr.withNativelonRelontwelonelont(relontwelonelontUselonrId.gelont(), sharelondStatusId.gelont());
 
-      if (inReplyToUserId.isPresent()) {
-        // Set IN_REPLY_TO_USER_ID_FIELD even if this is a retweet of a reply.
-        builder.withInReplyToUserID(inReplyToUserId.get());
+      if (inRelonplyToUselonrId.isPrelonselonnt()) {
+        // Selont IN_RelonPLY_TO_USelonR_ID_FIelonLD elonvelonn if this is a relontwelonelont of a relonply.
+        buildelonr.withInRelonplyToUselonrID(inRelonplyToUselonrId.gelont());
       }
-    } else {
-      // If this is a retweet of a reply, we don't want to mark it as a reply, or override fields
-      // set by the retweet logic.
-      // If we are in this branch, this is not a retweet. Potentially, we set the reply flag,
-      // and override shared-status-id and reference-author-id.
+    } elonlselon {
+      // If this is a relontwelonelont of a relonply, welon don't want to mark it as a relonply, or ovelonrridelon fielonlds
+      // selont by thelon relontwelonelont logic.
+      // If welon arelon in this branch, this is not a relontwelonelont. Potelonntially, welon selont thelon relonply flag,
+      // and ovelonrridelon sharelond-status-id and relonfelonrelonncelon-author-id.
 
-      if (inReplyToStatusId.isPresent()) {
+      if (inRelonplyToStatusId.isPrelonselonnt()) {
         if (strict) {
-          // Enforcing that if this is a reply to a tweet, then it also has a replied-to user.
-          Preconditions.checkState(inReplyToUserId.isPresent());
+          // elonnforcing that if this is a relonply to a twelonelont, thelonn it also has a relonplielond-to uselonr.
+          Prelonconditions.chelonckStatelon(inRelonplyToUselonrId.isPrelonselonnt());
         }
-        builder.withReplyFlag();
-        builder.withLongField(
-            EarlybirdFieldConstant.SHARED_STATUS_ID_CSF.getFieldName(),
-            inReplyToStatusId.get());
-        builder.withLongField(
-            EarlybirdFieldConstant.IN_REPLY_TO_TWEET_ID_FIELD.getFieldName(),
-            inReplyToStatusId.get());
+        buildelonr.withRelonplyFlag();
+        buildelonr.withLongFielonld(
+            elonarlybirdFielonldConstant.SHARelonD_STATUS_ID_CSF.gelontFielonldNamelon(),
+            inRelonplyToStatusId.gelont());
+        buildelonr.withLongFielonld(
+            elonarlybirdFielonldConstant.IN_RelonPLY_TO_TWelonelonT_ID_FIelonLD.gelontFielonldNamelon(),
+            inRelonplyToStatusId.gelont());
       }
-      if (inReplyToUserId.isPresent()) {
-        builder.withReplyFlag();
-        builder.withInReplyToUserID(inReplyToUserId.get());
+      if (inRelonplyToUselonrId.isPrelonselonnt()) {
+        buildelonr.withRelonplyFlag();
+        buildelonr.withInRelonplyToUselonrID(inRelonplyToUselonrId.gelont());
       }
     }
   }
 
   /**
-   * Build the engagement fields.
+   * Build thelon elonngagelonmelonnt fielonlds.
    */
-  public static void buildNormalizedMinEngagementFields(
-      EarlybirdThriftDocumentBuilder builder,
-      EarlybirdEncodedFeatures encodedFeatures,
-      EarlybirdCluster cluster) throws IOException {
-    if (EarlybirdCluster.isArchive(cluster)) {
-      int favoriteCount = encodedFeatures.getFeatureValue(EarlybirdFieldConstant.FAVORITE_COUNT);
-      int retweetCount = encodedFeatures.getFeatureValue(EarlybirdFieldConstant.RETWEET_COUNT);
-      int replyCount = encodedFeatures.getFeatureValue(EarlybirdFieldConstant.REPLY_COUNT);
-      builder
-          .withNormalizedMinEngagementField(
-              EarlybirdFieldConstant.NORMALIZED_FAVORITE_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD
-                  .getFieldName(),
-              favoriteCount);
-      builder
-          .withNormalizedMinEngagementField(
-              EarlybirdFieldConstant.NORMALIZED_RETWEET_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD
-                  .getFieldName(),
-              retweetCount);
-      builder
-          .withNormalizedMinEngagementField(
-              EarlybirdFieldConstant.NORMALIZED_REPLY_COUNT_GREATER_THAN_OR_EQUAL_TO_FIELD
-                  .getFieldName(),
-              replyCount);
+  public static void buildNormalizelondMinelonngagelonmelonntFielonlds(
+      elonarlybirdThriftDocumelonntBuildelonr buildelonr,
+      elonarlybirdelonncodelondFelonaturelons elonncodelondFelonaturelons,
+      elonarlybirdClustelonr clustelonr) throws IOelonxcelonption {
+    if (elonarlybirdClustelonr.isArchivelon(clustelonr)) {
+      int favoritelonCount = elonncodelondFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.FAVORITelon_COUNT);
+      int relontwelonelontCount = elonncodelondFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.RelonTWelonelonT_COUNT);
+      int relonplyCount = elonncodelondFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.RelonPLY_COUNT);
+      buildelonr
+          .withNormalizelondMinelonngagelonmelonntFielonld(
+              elonarlybirdFielonldConstant.NORMALIZelonD_FAVORITelon_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD
+                  .gelontFielonldNamelon(),
+              favoritelonCount);
+      buildelonr
+          .withNormalizelondMinelonngagelonmelonntFielonld(
+              elonarlybirdFielonldConstant.NORMALIZelonD_RelonTWelonelonT_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD
+                  .gelontFielonldNamelon(),
+              relontwelonelontCount);
+      buildelonr
+          .withNormalizelondMinelonngagelonmelonntFielonld(
+              elonarlybirdFielonldConstant.NORMALIZelonD_RelonPLY_COUNT_GRelonATelonR_THAN_OR_elonQUAL_TO_FIelonLD
+                  .gelontFielonldNamelon(),
+              relonplyCount);
     }
   }
 
   /**
-   * As seen in SEARCH-5617, we sometimes have incorrect createdAt. This method tries to fix them
-   * by extracting creation time from snowflake when possible.
+   * As selonelonn in SelonARCH-5617, welon somelontimelons havelon incorrelonct crelonatelondAt. This melonthod trielons to fix thelonm
+   * by elonxtracting crelonation timelon from snowflakelon whelonn possiblelon.
    */
-  public static long fixCreatedAtTimeStampIfNecessary(long id, long createdAtMs) {
-    if (createdAtMs < VALID_CREATION_TIME_THRESHOLD_MILLIS
-        && id > SnowflakeIdParser.SNOWFLAKE_ID_LOWER_BOUND) {
-      // This tweet has a snowflake ID, and we can extract timestamp from the ID.
-      ADJUSTED_BAD_CREATED_AT_COUNTER.increment();
-      return SnowflakeIdParser.getTimestampFromTweetId(id);
-    } else if (!SnowflakeIdParser.isTweetIDAndCreatedAtConsistent(id, createdAtMs)) {
-      LOG.error(
-          "Found inconsistent tweet ID and created at timestamp: [statusID={}], [createdAtMs={}]",
-          id, createdAtMs);
-      INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS.increment();
+  public static long fixCrelonatelondAtTimelonStampIfNeloncelonssary(long id, long crelonatelondAtMs) {
+    if (crelonatelondAtMs < VALID_CRelonATION_TIMelon_THRelonSHOLD_MILLIS
+        && id > SnowflakelonIdParselonr.SNOWFLAKelon_ID_LOWelonR_BOUND) {
+      // This twelonelont has a snowflakelon ID, and welon can elonxtract timelonstamp from thelon ID.
+      ADJUSTelonD_BAD_CRelonATelonD_AT_COUNTelonR.increlonmelonnt();
+      relonturn SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(id);
+    } elonlselon if (!SnowflakelonIdParselonr.isTwelonelontIDAndCrelonatelondAtConsistelonnt(id, crelonatelondAtMs)) {
+      LOG.elonrror(
+          "Found inconsistelonnt twelonelont ID and crelonatelond at timelonstamp: [statusID={}], [crelonatelondAtMs={}]",
+          id, crelonatelondAtMs);
+      INCONSISTelonNT_TWelonelonT_ID_AND_CRelonATelonD_AT_MS.increlonmelonnt();
     }
 
-    return createdAtMs;
+    relonturn crelonatelondAtMs;
   }
 }

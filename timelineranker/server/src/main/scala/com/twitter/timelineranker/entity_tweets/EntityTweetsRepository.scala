@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.entity_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.elonntity_twelonelonts
 
-import com.twitter.timelineranker.model.CandidateTweetsResult
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelonrankelonr.modelonl.CandidatelonTwelonelontsRelonsult
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.util.Futurelon
 
 /**
- * A repository of entity tweets candidates.
+ * A relonpository of elonntity twelonelonts candidatelons.
  *
- * For now, it does not cache any results therefore forwards all calls to the underlying source.
+ * For now, it doelons not cachelon any relonsults thelonrelonforelon forwards all calls to thelon undelonrlying sourcelon.
  */
-class EntityTweetsRepository(source: EntityTweetsSource) {
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    source.get(query)
+class elonntityTwelonelontsRelonpository(sourcelon: elonntityTwelonelontsSourcelon) {
+  delonf gelont(quelonry: ReloncapQuelonry): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    sourcelon.gelont(quelonry)
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    source.get(queries)
+  delonf gelont(quelonrielons: Selonq[ReloncapQuelonry]): Futurelon[Selonq[CandidatelonTwelonelontsRelonsult]] = {
+    sourcelon.gelont(quelonrielons)
   }
 }

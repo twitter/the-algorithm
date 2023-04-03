@@ -1,12 +1,12 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/model",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/util",
-        "home-mixer/thrift/src/main/thrift:thrift-scala",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "homelon-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/homelon_mixelonr/modelonl",
+        "homelon-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/homelon_mixelonr/util",
+        "homelon-mixelonr/thrift/src/main/thrift:thrift-scala",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/product",
     ],
 )

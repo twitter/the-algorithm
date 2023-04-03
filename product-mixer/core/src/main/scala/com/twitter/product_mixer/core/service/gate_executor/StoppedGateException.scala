@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.service.gate_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor
 
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureClassifier
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonCatelongory
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonClassifielonr
 
-import scala.util.control.NoStackTrace
+import scala.util.control.NoStackTracelon
 
-case class StoppedGateException(identifier: GateIdentifier)
-    extends Exception("Closed gate stopped execution of the pipeline")
-    with NoStackTrace {
-  override def toString: String = s"StoppedGateException($identifier)"
+caselon class StoppelondGatelonelonxcelonption(idelonntifielonr: GatelonIdelonntifielonr)
+    elonxtelonnds elonxcelonption("Closelond gatelon stoppelond elonxeloncution of thelon pipelonlinelon")
+    with NoStackTracelon {
+  ovelonrridelon delonf toString: String = s"StoppelondGatelonelonxcelonption($idelonntifielonr)"
 }
 
-object StoppedGateException {
+objelonct StoppelondGatelonelonxcelonption {
 
   /**
-   * Creates a [[PipelineFailureClassifier]] that is used as the default for classifying failures
-   * in a pipeline by mapping [[StoppedGateException]] to a [[PipelineFailure]] with the provided
-   * [[PipelineFailureCategory]]
+   * Crelonatelons a [[PipelonlinelonFailurelonClassifielonr]] that is uselond as thelon delonfault for classifying failurelons
+   * in a pipelonlinelon by mapping [[StoppelondGatelonelonxcelonption]] to a [[PipelonlinelonFailurelon]] with thelon providelond
+   * [[PipelonlinelonFailurelonCatelongory]]
    */
-  def classifier(
-    category: PipelineFailureCategory
-  ): PipelineFailureClassifier = PipelineFailureClassifier {
-    case stoppedGateException: StoppedGateException =>
-      PipelineFailure(category, stoppedGateException.getMessage, Some(stoppedGateException))
+  delonf classifielonr(
+    catelongory: PipelonlinelonFailurelonCatelongory
+  ): PipelonlinelonFailurelonClassifielonr = PipelonlinelonFailurelonClassifielonr {
+    caselon stoppelondGatelonelonxcelonption: StoppelondGatelonelonxcelonption =>
+      PipelonlinelonFailurelon(catelongory, stoppelondGatelonelonxcelonption.gelontMelonssagelon, Somelon(stoppelondGatelonelonxcelonption))
   }
 }

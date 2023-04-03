@@ -1,40 +1,40 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.google.common.base.Optional;
+import com.googlelon.common.baselon.Optional;
 
-import com.twitter.search.common.caching.CacheUtil;
-import com.twitter.search.common.caching.filter.CacheRequestNormalizer;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.common.caching.CachelonUtil;
+import com.twittelonr.selonarch.common.caching.filtelonr.CachelonRelonquelonstNormalizelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public class RelevanceCacheRequestNormalizer extends
-    CacheRequestNormalizer<EarlybirdRequestContext, EarlybirdRequest> {
-  private static final SearchCounter RELEVANCE_FORCE_CACHED_LOGGED_IN_REQUEST =
-      SearchCounter.export("relevance_force_cached_logged_in_request");
+public class RelonlelonvancelonCachelonRelonquelonstNormalizelonr elonxtelonnds
+    CachelonRelonquelonstNormalizelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonquelonst> {
+  privatelon static final SelonarchCountelonr RelonLelonVANCelon_FORCelon_CACHelonD_LOGGelonD_IN_RelonQUelonST =
+      SelonarchCountelonr.elonxport("relonlelonvancelon_forcelon_cachelond_loggelond_in_relonquelonst");
 
-  private final SearchDecider decider;
-  private final String relevanceStripPersonalizationFieldsDeciderKey;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final String relonlelonvancelonStripPelonrsonalizationFielonldsDeloncidelonrKelony;
 
-  public RelevanceCacheRequestNormalizer(
-      SearchDecider decider,
-      String normalizedSearchRootName) {
-    this.decider = decider;
-    this.relevanceStripPersonalizationFieldsDeciderKey =
-        String.format("relevance_%s_force_cache_logged_in_requests", normalizedSearchRootName);
+  public RelonlelonvancelonCachelonRelonquelonstNormalizelonr(
+      SelonarchDeloncidelonr deloncidelonr,
+      String normalizelondSelonarchRootNamelon) {
+    this.deloncidelonr = deloncidelonr;
+    this.relonlelonvancelonStripPelonrsonalizationFielonldsDeloncidelonrKelony =
+        String.format("relonlelonvancelon_%s_forcelon_cachelon_loggelond_in_relonquelonsts", normalizelondSelonarchRootNamelon);
   }
 
-  @Override
-  public Optional<EarlybirdRequest> normalizeRequest(EarlybirdRequestContext requestContext) {
-    boolean cacheLoggedInRequest =
-        decider.isAvailable(relevanceStripPersonalizationFieldsDeciderKey);
+  @Ovelonrridelon
+  public Optional<elonarlybirdRelonquelonst> normalizelonRelonquelonst(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    boolelonan cachelonLoggelondInRelonquelonst =
+        deloncidelonr.isAvailablelon(relonlelonvancelonStripPelonrsonalizationFielonldsDeloncidelonrKelony);
 
-    if (cacheLoggedInRequest) {
-      RELEVANCE_FORCE_CACHED_LOGGED_IN_REQUEST.increment();
+    if (cachelonLoggelondInRelonquelonst) {
+      RelonLelonVANCelon_FORCelon_CACHelonD_LOGGelonD_IN_RelonQUelonST.increlonmelonnt();
     }
 
-    return Optional.fromNullable(CacheUtil.normalizeRequestForCache(
-                                     requestContext.getRequest(), cacheLoggedInRequest));
+    relonturn Optional.fromNullablelon(CachelonUtil.normalizelonRelonquelonstForCachelon(
+                                     relonquelonstContelonxt.gelontRelonquelonst(), cachelonLoggelondInRelonquelonst));
   }
 }

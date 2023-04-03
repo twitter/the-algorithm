@@ -1,31 +1,31 @@
-package com.twitter.search.earlybird_root.caching;
+packagelon com.twittelonr.selonarch.elonarlybird_root.caching;
 
-import com.twitter.search.common.caching.filter.QueryCachePredicate;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird.common.EarlybirdRequestUtil;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
+import com.twittelonr.selonarch.common.caching.filtelonr.QuelonryCachelonPrelondicatelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.elonarlybird.common.elonarlybirdRelonquelonstUtil;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
 
-public class RelevanceZeroResultsQueryCachePredicate
-    extends QueryCachePredicate<EarlybirdRequestContext> {
-  private final SearchDecider decider;
-  private final String relevanceCacheEnabledDeciderKey;
-  private final String relevanceZeroResultsCacheEnabledDeciderKey;
+public class RelonlelonvancelonZelonroRelonsultsQuelonryCachelonPrelondicatelon
+    elonxtelonnds QuelonryCachelonPrelondicatelon<elonarlybirdRelonquelonstContelonxt> {
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final String relonlelonvancelonCachelonelonnablelondDeloncidelonrKelony;
+  privatelon final String relonlelonvancelonZelonroRelonsultsCachelonelonnablelondDeloncidelonrKelony;
 
-  public RelevanceZeroResultsQueryCachePredicate(
-      SearchDecider decider, String normalizedSearchRootName) {
-    this.decider = decider;
-    this.relevanceCacheEnabledDeciderKey =
-        "relevance_cache_enabled_" + normalizedSearchRootName;
-    this.relevanceZeroResultsCacheEnabledDeciderKey =
-        "relevance_zero_results_cache_enabled_" + normalizedSearchRootName;
+  public RelonlelonvancelonZelonroRelonsultsQuelonryCachelonPrelondicatelon(
+      SelonarchDeloncidelonr deloncidelonr, String normalizelondSelonarchRootNamelon) {
+    this.deloncidelonr = deloncidelonr;
+    this.relonlelonvancelonCachelonelonnablelondDeloncidelonrKelony =
+        "relonlelonvancelon_cachelon_elonnablelond_" + normalizelondSelonarchRootNamelon;
+    this.relonlelonvancelonZelonroRelonsultsCachelonelonnablelondDeloncidelonrKelony =
+        "relonlelonvancelon_zelonro_relonsults_cachelon_elonnablelond_" + normalizelondSelonarchRootNamelon;
   }
 
-  @Override
-  public Boolean shouldQueryCache(EarlybirdRequestContext requestContext) {
-    return EarlybirdRequestType.RELEVANCE == requestContext.getEarlybirdRequestType()
-        && EarlybirdRequestUtil.isCachingAllowed(requestContext.getRequest())
-        && decider.isAvailable(relevanceCacheEnabledDeciderKey)
-        && decider.isAvailable(relevanceZeroResultsCacheEnabledDeciderKey);
+  @Ovelonrridelon
+  public Boolelonan shouldQuelonryCachelon(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt) {
+    relonturn elonarlybirdRelonquelonstTypelon.RelonLelonVANCelon == relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon()
+        && elonarlybirdRelonquelonstUtil.isCachingAllowelond(relonquelonstContelonxt.gelontRelonquelonst())
+        && deloncidelonr.isAvailablelon(relonlelonvancelonCachelonelonnablelondDeloncidelonrKelony)
+        && deloncidelonr.isAvailablelon(relonlelonvancelonZelonroRelonsultsCachelonelonnablelondDeloncidelonrKelony);
   }
 }

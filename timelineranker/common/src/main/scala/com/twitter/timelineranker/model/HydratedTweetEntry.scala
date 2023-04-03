@@ -1,21 +1,21 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.tweetypie.{thriftscala => tweetypie}
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
+import com.twittelonr.twelonelontypielon.{thriftscala => twelonelontypielon}
 
 /**
- * Enables HydratedTweet entries to be included in a Timeline.
+ * elonnablelons HydratelondTwelonelont elonntrielons to belon includelond in a Timelonlinelon.
  */
-class HydratedTweetEntry(tweet: tweetypie.Tweet) extends HydratedTweet(tweet) with TimelineEntry {
+class HydratelondTwelonelontelonntry(twelonelont: twelonelontypielon.Twelonelont) elonxtelonnds HydratelondTwelonelont(twelonelont) with Timelonlinelonelonntry {
 
-  def this(hydratedTweet: HydratedTweet) = this(hydratedTweet.tweet)
+  delonf this(hydratelondTwelonelont: HydratelondTwelonelont) = this(hydratelondTwelonelont.twelonelont)
 
-  override def toTimelineEntryThrift: thrift.TimelineEntry = {
-    thrift.TimelineEntry.TweetypieTweet(tweet)
+  ovelonrridelon delonf toTimelonlinelonelonntryThrift: thrift.Timelonlinelonelonntry = {
+    thrift.Timelonlinelonelonntry.TwelonelontypielonTwelonelont(twelonelont)
   }
 
-  override def throwIfInvalid(): Unit = {
-    // No validation performed.
+  ovelonrridelon delonf throwIfInvalid(): Unit = {
+    // No validation pelonrformelond.
   }
 }

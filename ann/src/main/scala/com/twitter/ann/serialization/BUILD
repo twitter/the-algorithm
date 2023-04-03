@@ -1,14 +1,14 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/twitter/bijection:core",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/thrift/com/twitter/ann/serialization:serialization-scala",
-        "mediaservices/commons",
-        "scrooge/scrooge-core",
-        "src/scala/com/twitter/scalding_internal/multiformat/format",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/twittelonr/bijelonction:corelon",
+        "ann/src/main/scala/com/twittelonr/ann/common",
+        "ann/src/main/thrift/com/twittelonr/ann/selonrialization:selonrialization-scala",
+        "melondiaselonrvicelons/commons",
+        "scroogelon/scroogelon-corelon",
+        "src/scala/com/twittelonr/scalding_intelonrnal/multiformat/format",
     ],
 )

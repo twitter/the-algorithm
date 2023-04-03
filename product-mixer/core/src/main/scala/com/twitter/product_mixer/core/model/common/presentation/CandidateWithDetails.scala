@@ -1,140 +1,140 @@
-package com.twitter.product_mixer.core.model.common.presentation
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import scala.collection.immutable.ListSet
-import scala.reflect.ClassTag
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.UnelonxpelonctelondCandidatelonRelonsult
+import scala.collelonction.immutablelon.ListSelont
+import scala.relonflelonct.ClassTag
 
-sealed trait CandidateWithDetails { self =>
-  def presentation: Option[UniversalPresentation]
-  def features: FeatureMap
+selonalelond trait CandidatelonWithDelontails { selonlf =>
+  delonf prelonselonntation: Option[UnivelonrsalPrelonselonntation]
+  delonf felonaturelons: FelonaturelonMap
 
-  // last of the set because in ListSet, the last element is the first inserted one with O(1)
-  // access
-  lazy val source: CandidatePipelineIdentifier = features.get(CandidatePipelines).last
-  lazy val sourcePosition: Int = features.get(CandidateSourcePosition)
+  // last of thelon selont beloncauselon in ListSelont, thelon last elonlelonmelonnt is thelon first inselonrtelond onelon with O(1)
+  // accelonss
+  lazy val sourcelon: CandidatelonPipelonlinelonIdelonntifielonr = felonaturelons.gelont(CandidatelonPipelonlinelons).last
+  lazy val sourcelonPosition: Int = felonaturelons.gelont(CandidatelonSourcelonPosition)
 
   /**
-   * @see [[getCandidateId]]
+   * @selonelon [[gelontCandidatelonId]]
    */
-  def candidateIdLong: Long = getCandidateId[Long]
+  delonf candidatelonIdLong: Long = gelontCandidatelonId[Long]
 
   /**
-   * @see [[getCandidateId]]
+   * @selonelon [[gelontCandidatelonId]]
    */
-  def candidateIdString: String = getCandidateId[String]
+  delonf candidatelonIdString: String = gelontCandidatelonId[String]
 
   /**
-   * Convenience method for retrieving a candidate ID off of the base [[CandidateWithDetails]] trait
-   * without manually pattern matching.
+   * Convelonnielonncelon melonthod for relontrielonving a candidatelon ID off of thelon baselon [[CandidatelonWithDelontails]] trait
+   * without manually pattelonrn matching.
    *
-   * @throws PipelineFailure if CandidateIdType does not match the expected Item Candidate Id type,
-   *                         or if invoked on a Module Candidate
+   * @throws PipelonlinelonFailurelon if CandidatelonIdTypelon doelons not match thelon elonxpelonctelond Itelonm Candidatelon Id typelon,
+   *                         or if invokelond on a Modulelon Candidatelon
    */
-  def getCandidateId[CandidateIdType](
+  delonf gelontCandidatelonId[CandidatelonIdTypelon](
   )(
-    implicit tag: ClassTag[CandidateIdType]
-  ): CandidateIdType =
-    self match {
-      case item: ItemCandidateWithDetails =>
-        item.candidate.id match {
-          case id: CandidateIdType => id
-          case _ =>
-            throw PipelineFailure(
-              UnexpectedCandidateResult,
-              s"Invalid Item Candidate ID type expected $tag for Item Candidate type ${item.candidate.getClass}")
+    implicit tag: ClassTag[CandidatelonIdTypelon]
+  ): CandidatelonIdTypelon =
+    selonlf match {
+      caselon itelonm: ItelonmCandidatelonWithDelontails =>
+        itelonm.candidatelon.id match {
+          caselon id: CandidatelonIdTypelon => id
+          caselon _ =>
+            throw PipelonlinelonFailurelon(
+              UnelonxpelonctelondCandidatelonRelonsult,
+              s"Invalid Itelonm Candidatelon ID typelon elonxpelonctelond $tag for Itelonm Candidatelon typelon ${itelonm.candidatelon.gelontClass}")
         }
-      case _: ModuleCandidateWithDetails =>
-        throw PipelineFailure(
-          UnexpectedCandidateResult,
-          "Cannot retrieve Item Candidate ID for a Module")
+      caselon _: ModulelonCandidatelonWithDelontails =>
+        throw PipelonlinelonFailurelon(
+          UnelonxpelonctelondCandidatelonRelonsult,
+          "Cannot relontrielonvelon Itelonm Candidatelon ID for a Modulelon")
     }
 
   /**
-   * Convenience method for retrieving a candidate off of the base [[CandidateWithDetails]] trait
-   * without manually pattern matching.
+   * Convelonnielonncelon melonthod for relontrielonving a candidatelon off of thelon baselon [[CandidatelonWithDelontails]] trait
+   * without manually pattelonrn matching.
    *
-   * @throws PipelineFailure if CandidateType does not match the expected Item Candidate type, or
-   *                         if invoked on a Module Candidate
+   * @throws PipelonlinelonFailurelon if CandidatelonTypelon doelons not match thelon elonxpelonctelond Itelonm Candidatelon typelon, or
+   *                         if invokelond on a Modulelon Candidatelon
    */
-  def getCandidate[CandidateType <: UniversalNoun[_]](
+  delonf gelontCandidatelon[CandidatelonTypelon <: UnivelonrsalNoun[_]](
   )(
-    implicit tag: ClassTag[CandidateType]
-  ): CandidateType =
-    self match {
-      case ItemCandidateWithDetails(candidate: CandidateType, _, _) => candidate
-      case item: ItemCandidateWithDetails =>
-        throw PipelineFailure(
-          UnexpectedCandidateResult,
-          s"Invalid Item Candidate type expected $tag for Item Candidate type ${item.candidate.getClass}")
-      case _: ModuleCandidateWithDetails =>
-        throw PipelineFailure(
-          UnexpectedCandidateResult,
-          "Cannot retrieve Item Candidate for a Module")
+    implicit tag: ClassTag[CandidatelonTypelon]
+  ): CandidatelonTypelon =
+    selonlf match {
+      caselon ItelonmCandidatelonWithDelontails(candidatelon: CandidatelonTypelon, _, _) => candidatelon
+      caselon itelonm: ItelonmCandidatelonWithDelontails =>
+        throw PipelonlinelonFailurelon(
+          UnelonxpelonctelondCandidatelonRelonsult,
+          s"Invalid Itelonm Candidatelon typelon elonxpelonctelond $tag for Itelonm Candidatelon typelon ${itelonm.candidatelon.gelontClass}")
+      caselon _: ModulelonCandidatelonWithDelontails =>
+        throw PipelonlinelonFailurelon(
+          UnelonxpelonctelondCandidatelonRelonsult,
+          "Cannot relontrielonvelon Itelonm Candidatelon for a Modulelon")
     }
 
   /**
-   * Convenience method for checking if this contains a certain candidate type
+   * Convelonnielonncelon melonthod for cheloncking if this contains a celonrtain candidatelon typelon
    *
-   * @throws PipelineFailure if CandidateType does not match the expected Item Candidate type, or
-   *                         if invoked on a Module Candidate
+   * @throws PipelonlinelonFailurelon if CandidatelonTypelon doelons not match thelon elonxpelonctelond Itelonm Candidatelon typelon, or
+   *                         if invokelond on a Modulelon Candidatelon
    */
-  def isCandidateType[CandidateType <: UniversalNoun[_]](
+  delonf isCandidatelonTypelon[CandidatelonTypelon <: UnivelonrsalNoun[_]](
   )(
-    implicit tag: ClassTag[CandidateType]
-  ): Boolean = self match {
-    case ItemCandidateWithDetails(_: CandidateType, _, _) => true
-    case _ => false
+    implicit tag: ClassTag[CandidatelonTypelon]
+  ): Boolelonan = selonlf match {
+    caselon ItelonmCandidatelonWithDelontails(_: CandidatelonTypelon, _, _) => truelon
+    caselon _ => falselon
   }
 }
 
-case class ItemCandidateWithDetails(
-  override val candidate: UniversalNoun[Any],
-  presentation: Option[UniversalPresentation],
-  override val features: FeatureMap)
-    extends CandidateWithDetails
-    with CandidateWithFeatures[UniversalNoun[Any]]
+caselon class ItelonmCandidatelonWithDelontails(
+  ovelonrridelon val candidatelon: UnivelonrsalNoun[Any],
+  prelonselonntation: Option[UnivelonrsalPrelonselonntation],
+  ovelonrridelon val felonaturelons: FelonaturelonMap)
+    elonxtelonnds CandidatelonWithDelontails
+    with CandidatelonWithFelonaturelons[UnivelonrsalNoun[Any]]
 
-case class ModuleCandidateWithDetails(
-  candidates: Seq[ItemCandidateWithDetails],
-  presentation: Option[ModulePresentation],
-  override val features: FeatureMap)
-    extends CandidateWithDetails
+caselon class ModulelonCandidatelonWithDelontails(
+  candidatelons: Selonq[ItelonmCandidatelonWithDelontails],
+  prelonselonntation: Option[ModulelonPrelonselonntation],
+  ovelonrridelon val felonaturelons: FelonaturelonMap)
+    elonxtelonnds CandidatelonWithDelontails
 
-object ItemCandidateWithDetails {
-  def apply(
-    candidate: UniversalNoun[Any],
-    presentation: Option[UniversalPresentation],
-    source: CandidatePipelineIdentifier,
-    sourcePosition: Int,
-    features: FeatureMap
-  ): ItemCandidateWithDetails = {
-    val newFeatureMap =
-      FeatureMapBuilder()
-        .add(CandidateSourcePosition, sourcePosition)
-        .add(CandidatePipelines, ListSet.empty + source).build() ++ features
-    ItemCandidateWithDetails(candidate, presentation, newFeatureMap)
+objelonct ItelonmCandidatelonWithDelontails {
+  delonf apply(
+    candidatelon: UnivelonrsalNoun[Any],
+    prelonselonntation: Option[UnivelonrsalPrelonselonntation],
+    sourcelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    sourcelonPosition: Int,
+    felonaturelons: FelonaturelonMap
+  ): ItelonmCandidatelonWithDelontails = {
+    val nelonwFelonaturelonMap =
+      FelonaturelonMapBuildelonr()
+        .add(CandidatelonSourcelonPosition, sourcelonPosition)
+        .add(CandidatelonPipelonlinelons, ListSelont.elonmpty + sourcelon).build() ++ felonaturelons
+    ItelonmCandidatelonWithDelontails(candidatelon, prelonselonntation, nelonwFelonaturelonMap)
   }
 }
 
-object ModuleCandidateWithDetails {
-  def apply(
-    candidates: Seq[ItemCandidateWithDetails],
-    presentation: Option[ModulePresentation],
-    source: CandidatePipelineIdentifier,
-    sourcePosition: Int,
-    features: FeatureMap
-  ): ModuleCandidateWithDetails = {
-    val newFeatureMap =
-      FeatureMapBuilder()
-        .add(CandidateSourcePosition, sourcePosition)
-        .add(CandidatePipelines, ListSet.empty + source).build() ++ features
+objelonct ModulelonCandidatelonWithDelontails {
+  delonf apply(
+    candidatelons: Selonq[ItelonmCandidatelonWithDelontails],
+    prelonselonntation: Option[ModulelonPrelonselonntation],
+    sourcelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    sourcelonPosition: Int,
+    felonaturelons: FelonaturelonMap
+  ): ModulelonCandidatelonWithDelontails = {
+    val nelonwFelonaturelonMap =
+      FelonaturelonMapBuildelonr()
+        .add(CandidatelonSourcelonPosition, sourcelonPosition)
+        .add(CandidatelonPipelonlinelons, ListSelont.elonmpty + sourcelon).build() ++ felonaturelons
 
-    ModuleCandidateWithDetails(candidates, presentation, newFeatureMap)
+    ModulelonCandidatelonWithDelontails(candidatelons, prelonselonntation, nelonwFelonaturelonMap)
   }
 }

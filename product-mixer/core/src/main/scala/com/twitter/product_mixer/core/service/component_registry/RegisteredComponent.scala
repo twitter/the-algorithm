@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.service.component_registry
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.componelonnt_relongistry
 
-import com.twitter.product_mixer.core.model.common.Component
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Componelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
 
-object RegisteredComponent {
-  // Sort by ComponentIdentifier which has its own implicit ordering defined
-  implicit val ordering: Ordering[RegisteredComponent] =
-    Ordering.by[RegisteredComponent, ComponentIdentifier](_.component.identifier)
+objelonct RelongistelonrelondComponelonnt {
+  // Sort by ComponelonntIdelonntifielonr which has its own implicit ordelonring delonfinelond
+  implicit val ordelonring: Ordelonring[RelongistelonrelondComponelonnt] =
+    Ordelonring.by[RelongistelonrelondComponelonnt, ComponelonntIdelonntifielonr](_.componelonnt.idelonntifielonr)
 }
 
-case class RegisteredComponent(
-  identifier: ComponentIdentifier,
-  component: Component,
-  sourceFile: String)
+caselon class RelongistelonrelondComponelonnt(
+  idelonntifielonr: ComponelonntIdelonntifielonr,
+  componelonnt: Componelonnt,
+  sourcelonFilelon: String)

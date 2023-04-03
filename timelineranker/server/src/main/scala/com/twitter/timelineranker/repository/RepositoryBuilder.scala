@@ -1,17 +1,17 @@
-package com.twitter.timelineranker.repository
+packagelon com.twittelonr.timelonlinelonrankelonr.relonpository
 
-import com.twitter.timelines.visibility.model.VisibilityRule
+import com.twittelonr.timelonlinelons.visibility.modelonl.VisibilityRulelon
 
-object RepositoryBuilder {
-  val VisibilityRules: Set[VisibilityRule.Value] = Set(
-    VisibilityRule.Blocked,
-    VisibilityRule.BlockedBy,
-    VisibilityRule.Muted,
-    VisibilityRule.Protected,
-    VisibilityRule.AccountStatus
+objelonct RelonpositoryBuildelonr {
+  val VisibilityRulelons: Selont[VisibilityRulelon.Valuelon] = Selont(
+    VisibilityRulelon.Blockelond,
+    VisibilityRulelon.BlockelondBy,
+    VisibilityRulelon.Mutelond,
+    VisibilityRulelon.Protelonctelond,
+    VisibilityRulelon.AccountStatus
   )
 }
 
-trait RepositoryBuilder {
-  val VisibilityRules: Set[VisibilityRule.Value] = RepositoryBuilder.VisibilityRules
+trait RelonpositoryBuildelonr {
+  val VisibilityRulelons: Selont[VisibilityRulelon.Valuelon] = RelonpositoryBuildelonr.VisibilityRulelons
 }

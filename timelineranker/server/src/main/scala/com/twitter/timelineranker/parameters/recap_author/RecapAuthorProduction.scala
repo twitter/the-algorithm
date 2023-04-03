@@ -1,46 +1,46 @@
-package com.twitter.timelineranker.parameters.recap_author
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap_author
 
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.servo.decider.DeciderKeyName
-import com.twitter.timelineranker.decider.DeciderKey
-import com.twitter.timelineranker.parameters.recap_author.RecapAuthorParams._
-import com.twitter.timelineranker.parameters.util.ConfigHelper
-import com.twitter.timelines.configapi._
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyNamelon
+import com.twittelonr.timelonlinelonrankelonr.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap_author.ReloncapAuthorParams._
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.util.ConfigHelonlpelonr
+import com.twittelonr.timelonlinelons.configapi._
 
-object RecapAuthorProduction {
-  val deciderByParam: Map[Param[_], DeciderKeyName] = Map[Param[_], DeciderKeyName](
-    EnableContentFeaturesHydrationParam -> DeciderKey.RecapAuthorEnableContentFeaturesHydration
+objelonct ReloncapAuthorProduction {
+  val deloncidelonrByParam: Map[Param[_], DeloncidelonrKelonyNamelon] = Map[Param[_], DeloncidelonrKelonyNamelon](
+    elonnablelonContelonntFelonaturelonsHydrationParam -> DeloncidelonrKelony.ReloncapAuthorelonnablelonContelonntFelonaturelonsHydration
   )
 
-  val booleanParams: Seq[EnableContentFeaturesHydrationParam.type] = Seq(
-    EnableContentFeaturesHydrationParam
+  val boolelonanParams: Selonq[elonnablelonContelonntFelonaturelonsHydrationParam.typelon] = Selonq(
+    elonnablelonContelonntFelonaturelonsHydrationParam
   )
 
-  val booleanFeatureSwitchParams: Seq[FSParam[Boolean]] = Seq(
-    EnableTokensInContentFeaturesHydrationParam,
-    EnableTweetTextInContentFeaturesHydrationParam,
-    EnableConversationControlInContentFeaturesHydrationParam,
-    EnableTweetMediaHydrationParam,
-    EnableEarlybirdRealtimeCgMigrationParam
+  val boolelonanFelonaturelonSwitchParams: Selonq[FSParam[Boolelonan]] = Selonq(
+    elonnablelonTokelonnsInContelonntFelonaturelonsHydrationParam,
+    elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsHydrationParam,
+    elonnablelonConvelonrsationControlInContelonntFelonaturelonsHydrationParam,
+    elonnablelonTwelonelontMelondiaHydrationParam,
+    elonnablelonelonarlybirdRelonaltimelonCgMigrationParam
   )
 }
 
-class RecapAuthorProduction(deciderGateBuilder: DeciderGateBuilder) {
-  val configHelper: ConfigHelper =
-    new ConfigHelper(RecapAuthorProduction.deciderByParam, deciderGateBuilder)
-  val booleanOverrides: Seq[OptionalOverride[Boolean]] =
-    configHelper.createDeciderBasedBooleanOverrides(RecapAuthorProduction.booleanParams)
+class ReloncapAuthorProduction(deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr) {
+  val configHelonlpelonr: ConfigHelonlpelonr =
+    nelonw ConfigHelonlpelonr(ReloncapAuthorProduction.deloncidelonrByParam, deloncidelonrGatelonBuildelonr)
+  val boolelonanOvelonrridelons: Selonq[OptionalOvelonrridelon[Boolelonan]] =
+    configHelonlpelonr.crelonatelonDeloncidelonrBaselondBoolelonanOvelonrridelons(ReloncapAuthorProduction.boolelonanParams)
 
-  val booleanFeatureSwitchOverrides: Seq[OptionalOverride[Boolean]] =
-    FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      RecapAuthorProduction.booleanFeatureSwitchParams: _*
+  val boolelonanFelonaturelonSwitchOvelonrridelons: Selonq[OptionalOvelonrridelon[Boolelonan]] =
+    FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      ReloncapAuthorProduction.boolelonanFelonaturelonSwitchParams: _*
     )
 
-  val config: BaseConfig = new BaseConfigBuilder()
-    .set(
-      booleanOverrides: _*
-    ).set(
-      booleanFeatureSwitchOverrides: _*
+  val config: BaselonConfig = nelonw BaselonConfigBuildelonr()
+    .selont(
+      boolelonanOvelonrridelons: _*
+    ).selont(
+      boolelonanFelonaturelonSwitchOvelonrridelons: _*
     )
-    .build(RecapAuthorProduction.getClass.getSimpleName)
+    .build(ReloncapAuthorProduction.gelontClass.gelontSimplelonNamelon)
 }

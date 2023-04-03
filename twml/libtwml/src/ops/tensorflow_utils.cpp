@@ -1,87 +1,87 @@
-#include "tensorflow_utils.h"
-#include <string>
-#include <vector>
+#includelon "telonnsorflow_utils.h"
+#includelon <string>
+#includelon <velonctor>
 
-twml::Tensor TFTensor_to_twml_tensor(Tensor &input) {
+twml::Telonnsor TFTelonnsor_to_twml_telonnsor(Telonnsor &input) {
   int ndims = input.dims();
-  std::vector<uint64_t> dims(ndims);
-  std::vector<uint64_t> strides(ndims);
+  std::velonctor<uint64_t> dims(ndims);
+  std::velonctor<uint64_t> stridelons(ndims);
   for (int i = 0; i < ndims; i++) {
-    dims[i] = input.dim_size(i);
+    dims[i] = input.dim_sizelon(i);
   }
-  uint64_t stride = 1;
+  uint64_t stridelon = 1;
   for (int i = ndims-1; i >= 0; i--) {
-    strides[i] = stride;
-    stride *= dims[i];
+    stridelons[i] = stridelon;
+    stridelon *= dims[i];
   }
 
-  switch (input.dtype()) {
-    case DT_INT8:
-      return twml::Tensor(input.flat<int8>().data(), dims, strides, TWML_TYPE_INT8);
-    case DT_UINT8:
-      return twml::Tensor(input.flat<uint8>().data(), dims, strides, TWML_TYPE_UINT8);
-    case DT_INT32:
-      return twml::Tensor(input.flat<int32>().data(), dims, strides, TWML_TYPE_INT32);
-    case DT_INT64:
-      return twml::Tensor(input.flat<int64>().data(), dims, strides, TWML_TYPE_INT64);
-    case DT_FLOAT:
-      return twml::Tensor(input.flat<float>().data(), dims, strides, TWML_TYPE_FLOAT);
-    case DT_DOUBLE:
-      return twml::Tensor(input.flat<double>().data(), dims, strides, TWML_TYPE_DOUBLE);
-    case DT_BOOL:
-      return twml::Tensor(input.flat<bool>().data(), dims, strides, TWML_TYPE_BOOL);
-    case DT_STRING:
-      return twml::Tensor(input.flat<string>().data(), dims, strides, TWML_TYPE_STRING);
-    default:
-      throw twml::Error(TWML_ERR_TYPE, "Unknown tensor data type.");
-      break;
+  switch (input.dtypelon()) {
+    caselon DT_INT8:
+      relonturn twml::Telonnsor(input.flat<int8>().data(), dims, stridelons, TWML_TYPelon_INT8);
+    caselon DT_UINT8:
+      relonturn twml::Telonnsor(input.flat<uint8>().data(), dims, stridelons, TWML_TYPelon_UINT8);
+    caselon DT_INT32:
+      relonturn twml::Telonnsor(input.flat<int32>().data(), dims, stridelons, TWML_TYPelon_INT32);
+    caselon DT_INT64:
+      relonturn twml::Telonnsor(input.flat<int64>().data(), dims, stridelons, TWML_TYPelon_INT64);
+    caselon DT_FLOAT:
+      relonturn twml::Telonnsor(input.flat<float>().data(), dims, stridelons, TWML_TYPelon_FLOAT);
+    caselon DT_DOUBLelon:
+      relonturn twml::Telonnsor(input.flat<doublelon>().data(), dims, stridelons, TWML_TYPelon_DOUBLelon);
+    caselon DT_BOOL:
+      relonturn twml::Telonnsor(input.flat<bool>().data(), dims, stridelons, TWML_TYPelon_BOOL);
+    caselon DT_STRING:
+      relonturn twml::Telonnsor(input.flat<string>().data(), dims, stridelons, TWML_TYPelon_STRING);
+    delonfault:
+      throw twml::elonrror(TWML_elonRR_TYPelon, "Unknown telonnsor data typelon.");
+      brelonak;
   }
 }
 
-const twml::Tensor TFTensor_to_twml_tensor(const Tensor &input) {
-  // TODO: define some type of constant tensor, which should be used for inputs to force not
+const twml::Telonnsor TFTelonnsor_to_twml_telonnsor(const Telonnsor &input) {
+  // TODO: delonfinelon somelon typelon of constant telonnsor, which should belon uselond for inputs to forcelon not
   // changing
-  return TFTensor_to_twml_tensor(const_cast<Tensor&>(input));
+  relonturn TFTelonnsor_to_twml_telonnsor(const_cast<Telonnsor&>(input));
 }
 
-twml::RawTensor TFTensor_to_twml_raw_tensor(Tensor &input) {
+twml::RawTelonnsor TFTelonnsor_to_twml_raw_telonnsor(Telonnsor &input) {
   int ndims = input.dims();
-  std::vector<uint64_t> dims(ndims);
-  std::vector<uint64_t> strides(ndims);
+  std::velonctor<uint64_t> dims(ndims);
+  std::velonctor<uint64_t> stridelons(ndims);
   for (int i = 0; i < ndims; i++) {
-    dims[i] = input.dim_size(i);
+    dims[i] = input.dim_sizelon(i);
   }
-  uint64_t stride = 1;
+  uint64_t stridelon = 1;
   for (int i = ndims-1; i >= 0; i--) {
-    strides[i] = stride;
-    stride *= dims[i];
+    stridelons[i] = stridelon;
+    stridelon *= dims[i];
   }
 
-  switch (input.dtype()) {
-    case DT_INT8:
-      return twml::RawTensor(input.flat<int8>().data(), dims, strides, TWML_TYPE_INT8, false, input.flat<int8>().size());
-    case DT_UINT8:
-      return twml::RawTensor(input.flat<uint8>().data(), dims, strides, TWML_TYPE_UINT8, false, input.flat<uint8>().size());
-    case DT_INT32:
-      return twml::RawTensor(input.flat<int32>().data(), dims, strides, TWML_TYPE_INT32, false, input.flat<int32>().size());
-    case DT_INT64:
-      return twml::RawTensor(input.flat<int64>().data(), dims, strides, TWML_TYPE_INT64, false, input.flat<int64>().size());
-    case DT_FLOAT:
-      return twml::RawTensor(input.flat<float>().data(), dims, strides, TWML_TYPE_FLOAT, false, input.flat<float>().size());
-    case DT_DOUBLE:
-      return twml::RawTensor(input.flat<double>().data(), dims, strides, TWML_TYPE_DOUBLE, false, input.flat<double>().size());
-    case DT_BOOL:
-      return twml::RawTensor(input.flat<bool>().data(), dims, strides, TWML_TYPE_BOOL, false, input.flat<bool>().size());
-    case DT_STRING:
-      return twml::RawTensor(input.flat<string>().data(), dims, strides, TWML_TYPE_STRING, false, input.flat<string>().size());
-    default:
-      throw twml::Error(TWML_ERR_TYPE, "Unknown tensor data type.");
-      break;
+  switch (input.dtypelon()) {
+    caselon DT_INT8:
+      relonturn twml::RawTelonnsor(input.flat<int8>().data(), dims, stridelons, TWML_TYPelon_INT8, falselon, input.flat<int8>().sizelon());
+    caselon DT_UINT8:
+      relonturn twml::RawTelonnsor(input.flat<uint8>().data(), dims, stridelons, TWML_TYPelon_UINT8, falselon, input.flat<uint8>().sizelon());
+    caselon DT_INT32:
+      relonturn twml::RawTelonnsor(input.flat<int32>().data(), dims, stridelons, TWML_TYPelon_INT32, falselon, input.flat<int32>().sizelon());
+    caselon DT_INT64:
+      relonturn twml::RawTelonnsor(input.flat<int64>().data(), dims, stridelons, TWML_TYPelon_INT64, falselon, input.flat<int64>().sizelon());
+    caselon DT_FLOAT:
+      relonturn twml::RawTelonnsor(input.flat<float>().data(), dims, stridelons, TWML_TYPelon_FLOAT, falselon, input.flat<float>().sizelon());
+    caselon DT_DOUBLelon:
+      relonturn twml::RawTelonnsor(input.flat<doublelon>().data(), dims, stridelons, TWML_TYPelon_DOUBLelon, falselon, input.flat<doublelon>().sizelon());
+    caselon DT_BOOL:
+      relonturn twml::RawTelonnsor(input.flat<bool>().data(), dims, stridelons, TWML_TYPelon_BOOL, falselon, input.flat<bool>().sizelon());
+    caselon DT_STRING:
+      relonturn twml::RawTelonnsor(input.flat<string>().data(), dims, stridelons, TWML_TYPelon_STRING, falselon, input.flat<string>().sizelon());
+    delonfault:
+      throw twml::elonrror(TWML_elonRR_TYPelon, "Unknown telonnsor data typelon.");
+      brelonak;
   }
 }
 
-const twml::RawTensor TFTensor_to_twml_raw_tensor(const Tensor &input) {
-  // TODO: define some type of constant tensor, which should be used for inputs to force not
+const twml::RawTelonnsor TFTelonnsor_to_twml_raw_telonnsor(const Telonnsor &input) {
+  // TODO: delonfinelon somelon typelon of constant telonnsor, which should belon uselond for inputs to forcelon not
   // changing
-  return TFTensor_to_twml_raw_tensor(const_cast<Tensor&>(input));
+  relonturn TFTelonnsor_to_twml_raw_telonnsor(const_cast<Telonnsor&>(input));
 }

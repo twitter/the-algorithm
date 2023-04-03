@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.article
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon
 
-sealed trait ArticleDisplayType
+selonalelond trait ArticlelonDisplayTypelon
 
-case object Default extends ArticleDisplayType
+caselon objelonct Delonfault elonxtelonnds ArticlelonDisplayTypelon

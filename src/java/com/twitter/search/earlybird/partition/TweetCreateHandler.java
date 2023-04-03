@@ -1,526 +1,526 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
-import java.util.Iterator;
+import java.io.IOelonxcelonption;
+import java.util.Itelonrator;
 
-import scala.runtime.BoxedUnit;
+import scala.runtimelon.BoxelondUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.base.Verify;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Stopwatch;
+import com.googlelon.common.baselon.Velonrify;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.OutOfOrderRealtimeTweetIDMapper;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.util.CoordinatedEarlybirdActionInterface;
-import com.twitter.util.Await;
-import com.twitter.util.Duration;
-import com.twitter.util.Future;
-import com.twitter.util.TimeoutException;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonr;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.util.GCUtil;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdStatus;
+import com.twittelonr.selonarch.elonarlybird.common.CaughtUpMonitor;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.elonarlybird.quelonrycachelon.QuelonryCachelonManagelonr;
+import com.twittelonr.selonarch.elonarlybird.util.CoordinatelondelonarlybirdActionIntelonrfacelon;
+import com.twittelonr.util.Await;
+import com.twittelonr.util.Duration;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Timelonoutelonxcelonption;
 
 /**
- * This class handles incoming new Tweets. It is responsible for creating segments for the incoming
- * Tweets when necessary, triggering optimization on those segments, and writing Tweets to the
- * correct segment.
+ * This class handlelons incoming nelonw Twelonelonts. It is relonsponsiblelon for crelonating selongmelonnts for thelon incoming
+ * Twelonelonts whelonn neloncelonssary, triggelonring optimization on thoselon selongmelonnts, and writing Twelonelonts to thelon
+ * correlonct selongmelonnt.
  */
-public class TweetCreateHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetCreateHandler.class);
+public class TwelonelontCrelonatelonHandlelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwelonelontCrelonatelonHandlelonr.class);
 
-  public static final long LATE_TWEET_TIME_BUFFER_MS = Duration.fromMinutes(1).inMilliseconds();
+  public static final long LATelon_TWelonelonT_TIMelon_BUFFelonR_MS = Duration.fromMinutelons(1).inMilliselonconds();
 
-  private static final String STATS_PREFIX = "tweet_create_handler_";
+  privatelon static final String STATS_PRelonFIX = "twelonelont_crelonatelon_handlelonr_";
 
-  // To get a better idea of which of these succeeded and so on, see stats in SegmentManager.
-  private IndexingResultCounts indexingResultCounts;
-  private static final SearchRateCounter TWEETS_IN_WRONG_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "tweets_in_wrong_segment");
-  private static final SearchRateCounter SEGMENTS_CLOSED_EARLY =
-      SearchRateCounter.export(STATS_PREFIX + "segments_closed_early");
-  private static final SearchRateCounter INSERTED_IN_CURRENT_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "inserted_in_current_segment");
-  private static final SearchRateCounter INSERTED_IN_PREVIOUS_SEGMENT =
-      SearchRateCounter.export(STATS_PREFIX + "inserted_in_previous_segment");
-  private static final NewSegmentStats NEW_SEGMENT_STATS = new NewSegmentStats();
-  private static final SearchCounter CREATED_SEGMENTS =
-      SearchCounter.export(STATS_PREFIX + "created_segments");
-  private static final SearchRateCounter INCOMING_TWEETS =
-          SearchRateCounter.export(STATS_PREFIX + "incoming_tweets");
-  private static final SearchRateCounter INDEXING_SUCCESS =
-          SearchRateCounter.export(STATS_PREFIX + "indexing_success");
-  private static final SearchRateCounter INDEXING_FAILURE =
-          SearchRateCounter.export(STATS_PREFIX + "indexing_failure");
+  // To gelont a belonttelonr idelona of which of thelonselon succelonelondelond and so on, selonelon stats in SelongmelonntManagelonr.
+  privatelon IndelonxingRelonsultCounts indelonxingRelonsultCounts;
+  privatelon static final SelonarchRatelonCountelonr TWelonelonTS_IN_WRONG_SelonGMelonNT =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "twelonelonts_in_wrong_selongmelonnt");
+  privatelon static final SelonarchRatelonCountelonr SelonGMelonNTS_CLOSelonD_elonARLY =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "selongmelonnts_closelond_elonarly");
+  privatelon static final SelonarchRatelonCountelonr INSelonRTelonD_IN_CURRelonNT_SelonGMelonNT =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "inselonrtelond_in_currelonnt_selongmelonnt");
+  privatelon static final SelonarchRatelonCountelonr INSelonRTelonD_IN_PRelonVIOUS_SelonGMelonNT =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "inselonrtelond_in_prelonvious_selongmelonnt");
+  privatelon static final NelonwSelongmelonntStats NelonW_SelonGMelonNT_STATS = nelonw NelonwSelongmelonntStats();
+  privatelon static final SelonarchCountelonr CRelonATelonD_SelonGMelonNTS =
+      SelonarchCountelonr.elonxport(STATS_PRelonFIX + "crelonatelond_selongmelonnts");
+  privatelon static final SelonarchRatelonCountelonr INCOMING_TWelonelonTS =
+          SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "incoming_twelonelonts");
+  privatelon static final SelonarchRatelonCountelonr INDelonXING_SUCCelonSS =
+          SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "indelonxing_succelonss");
+  privatelon static final SelonarchRatelonCountelonr INDelonXING_FAILURelon =
+          SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "indelonxing_failurelon");
 
-  // Various stats and logging around creation of new segments, put in this
-  // class so that the code is not watered down too much by this.
-  private static class NewSegmentStats {
-    private static final String NEW_SEGMENT_STATS_PREFIX =
-      STATS_PREFIX + "new_segment_";
+  // Various stats and logging around crelonation of nelonw selongmelonnts, put in this
+  // class so that thelon codelon is not watelonrelond down too much by this.
+  privatelon static class NelonwSelongmelonntStats {
+    privatelon static final String NelonW_SelonGMelonNT_STATS_PRelonFIX =
+      STATS_PRelonFIX + "nelonw_selongmelonnt_";
 
-    private static final SearchCounter START_NEW_AFTER_REACHING_LIMIT =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "start_after_reaching_limit");
-    private static final SearchCounter START_NEW_AFTER_EXCEEDING_MAX_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "start_after_exceeding_max_id");
-    private static final SearchCounter TIMESLICE_SET_TO_CURRENT_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "timeslice_set_to_current_id");
-    private static final SearchCounter TIMESLICE_SET_TO_MAX_ID =
-        SearchCounter.export(NEW_SEGMENT_STATS_PREFIX + "timeslice_set_to_max_id");
-    private static final SearchLongGauge TIMESPAN_BETWEEN_MAX_AND_CURRENT =
-        SearchLongGauge.export(NEW_SEGMENT_STATS_PREFIX + "timespan_between_id_and_max");
+    privatelon static final SelonarchCountelonr START_NelonW_AFTelonR_RelonACHING_LIMIT =
+        SelonarchCountelonr.elonxport(NelonW_SelonGMelonNT_STATS_PRelonFIX + "start_aftelonr_relonaching_limit");
+    privatelon static final SelonarchCountelonr START_NelonW_AFTelonR_elonXCelonelonDING_MAX_ID =
+        SelonarchCountelonr.elonxport(NelonW_SelonGMelonNT_STATS_PRelonFIX + "start_aftelonr_elonxcelonelonding_max_id");
+    privatelon static final SelonarchCountelonr TIMelonSLICelon_SelonT_TO_CURRelonNT_ID =
+        SelonarchCountelonr.elonxport(NelonW_SelonGMelonNT_STATS_PRelonFIX + "timelonslicelon_selont_to_currelonnt_id");
+    privatelon static final SelonarchCountelonr TIMelonSLICelon_SelonT_TO_MAX_ID =
+        SelonarchCountelonr.elonxport(NelonW_SelonGMelonNT_STATS_PRelonFIX + "timelonslicelon_selont_to_max_id");
+    privatelon static final SelonarchLongGaugelon TIMelonSPAN_BelonTWelonelonN_MAX_AND_CURRelonNT =
+        SelonarchLongGaugelon.elonxport(NelonW_SelonGMelonNT_STATS_PRelonFIX + "timelonspan_belontwelonelonn_id_and_max");
 
-    void recordCreateNewSegment() {
-      CREATED_SEGMENTS.increment();
+    void reloncordCrelonatelonNelonwSelongmelonnt() {
+      CRelonATelonD_SelonGMelonNTS.increlonmelonnt();
     }
 
-    void recordStartAfterReachingTweetsLimit(int numDocs, int numDocsCutoff,
-                                             int maxSegmentSize, int lateTweetBuffer) {
-      START_NEW_AFTER_REACHING_LIMIT.increment();
+    void reloncordStartAftelonrRelonachingTwelonelontsLimit(int numDocs, int numDocsCutoff,
+                                             int maxSelongmelonntSizelon, int latelonTwelonelontBuffelonr) {
+      START_NelonW_AFTelonR_RelonACHING_LIMIT.increlonmelonnt();
       LOG.info(String.format(
-          "Will create new segment: numDocs=%,d, numDocsCutoff=%,d"
-              + " | maxSegmentSize=%,d, lateTweetBuffer=%,d",
-          numDocs, numDocsCutoff, maxSegmentSize, lateTweetBuffer));
+          "Will crelonatelon nelonw selongmelonnt: numDocs=%,d, numDocsCutoff=%,d"
+              + " | maxSelongmelonntSizelon=%,d, latelonTwelonelontBuffelonr=%,d",
+          numDocs, numDocsCutoff, maxSelongmelonntSizelon, latelonTwelonelontBuffelonr));
     }
 
-    void recordStartAfterExceedingLargestValidTweetId(long tweetId, long largestValidTweetId) {
-      START_NEW_AFTER_EXCEEDING_MAX_ID.increment();
+    void reloncordStartAftelonrelonxcelonelondingLargelonstValidTwelonelontId(long twelonelontId, long largelonstValidTwelonelontId) {
+      START_NelonW_AFTelonR_elonXCelonelonDING_MAX_ID.increlonmelonnt();
       LOG.info(String.format(
-          "Will create new segment: tweetDd=%,d, largestValidTweetID for segment=%,d",
-          tweetId, largestValidTweetId));
+          "Will crelonatelon nelonw selongmelonnt: twelonelontDd=%,d, largelonstValidTwelonelontID for selongmelonnt=%,d",
+          twelonelontId, largelonstValidTwelonelontId));
     }
 
-    void recordSettingTimesliceToCurrentTweet(long tweetID) {
-      TIMESLICE_SET_TO_CURRENT_ID.increment();
-      LOG.info("Creating new segment: tweet that triggered it has the largest id we've seen. "
-          + " id={}", tweetID);
+    void reloncordSelonttingTimelonslicelonToCurrelonntTwelonelont(long twelonelontID) {
+      TIMelonSLICelon_SelonT_TO_CURRelonNT_ID.increlonmelonnt();
+      LOG.info("Crelonating nelonw selongmelonnt: twelonelont that triggelonrelond it has thelon largelonst id welon'velon selonelonn. "
+          + " id={}", twelonelontID);
     }
 
-    void recordSettingTimesliceToMaxTweetId(long tweetID, long maxTweetID) {
-      TIMESLICE_SET_TO_MAX_ID.increment();
-      LOG.info("Creating new segment: tweet that triggered it doesn't have the largest id"
-          + " we've seen. tweetId={}, maxTweetId={}",
-          tweetID, maxTweetID);
-      long timeDifference =
-          SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(maxTweetID, tweetID);
-      LOG.info("Time difference between max seen and last seen: {} ms", timeDifference);
-      TIMESPAN_BETWEEN_MAX_AND_CURRENT.set(timeDifference);
+    void reloncordSelonttingTimelonslicelonToMaxTwelonelontId(long twelonelontID, long maxTwelonelontID) {
+      TIMelonSLICelon_SelonT_TO_MAX_ID.increlonmelonnt();
+      LOG.info("Crelonating nelonw selongmelonnt: twelonelont that triggelonrelond it doelonsn't havelon thelon largelonst id"
+          + " welon'velon selonelonn. twelonelontId={}, maxTwelonelontId={}",
+          twelonelontID, maxTwelonelontID);
+      long timelonDiffelonrelonncelon =
+          SnowflakelonIdParselonr.gelontTimelonDiffelonrelonncelonBelontwelonelonnTwelonelontIDs(maxTwelonelontID, twelonelontID);
+      LOG.info("Timelon diffelonrelonncelon belontwelonelonn max selonelonn and last selonelonn: {} ms", timelonDiffelonrelonncelon);
+      TIMelonSPAN_BelonTWelonelonN_MAX_AND_CURRelonNT.selont(timelonDiffelonrelonncelon);
     }
 
-    void wrapNewSegmentCreation(long tweetID, long maxTweetID,
-                                long currentSegmentTimesliceBoundary,
-                                long largestValidTweetIDForCurrentSegment) {
-      long timeDifferenceStartToMax = SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(
-          largestValidTweetIDForCurrentSegment,
-          currentSegmentTimesliceBoundary);
-      LOG.info("Time between timeslice boundary and largest valid tweet id: {} ms",
-          timeDifferenceStartToMax);
+    void wrapNelonwSelongmelonntCrelonation(long twelonelontID, long maxTwelonelontID,
+                                long currelonntSelongmelonntTimelonslicelonBoundary,
+                                long largelonstValidTwelonelontIDForCurrelonntSelongmelonnt) {
+      long timelonDiffelonrelonncelonStartToMax = SnowflakelonIdParselonr.gelontTimelonDiffelonrelonncelonBelontwelonelonnTwelonelontIDs(
+          largelonstValidTwelonelontIDForCurrelonntSelongmelonnt,
+          currelonntSelongmelonntTimelonslicelonBoundary);
+      LOG.info("Timelon belontwelonelonn timelonslicelon boundary and largelonst valid twelonelont id: {} ms",
+          timelonDiffelonrelonncelonStartToMax);
 
-      LOG.info("Created new segment: (tweetId={}, maxTweetId={}, maxTweetId-tweetId={} "
-              + " | currentSegmentTimesliceBoundary={}, largestValidTweetIDForSegment={})",
-          tweetID, maxTweetID, maxTweetID - tweetID, currentSegmentTimesliceBoundary,
-          largestValidTweetIDForCurrentSegment);
+      LOG.info("Crelonatelond nelonw selongmelonnt: (twelonelontId={}, maxTwelonelontId={}, maxTwelonelontId-twelonelontId={} "
+              + " | currelonntSelongmelonntTimelonslicelonBoundary={}, largelonstValidTwelonelontIDForSelongmelonnt={})",
+          twelonelontID, maxTwelonelontID, maxTwelonelontID - twelonelontID, currelonntSelongmelonntTimelonslicelonBoundary,
+          largelonstValidTwelonelontIDForCurrelonntSelongmelonnt);
     }
   }
 
 
-  private final SegmentManager segmentManager;
-  private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final int maxSegmentSize;
-  private final int lateTweetBuffer;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr;
+  privatelon final int maxSelongmelonntSizelon;
+  privatelon final int latelonTwelonelontBuffelonr;
 
-  private long maxTweetID = Long.MIN_VALUE;
+  privatelon long maxTwelonelontID = Long.MIN_VALUelon;
 
-  private long largestValidTweetIDForCurrentSegment;
-  private long currentSegmentTimesliceBoundary;
-  private OptimizingSegmentWriter currentSegment;
-  private OptimizingSegmentWriter previousSegment;
-  private final QueryCacheManager queryCacheManager;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final CoordinatedEarlybirdActionInterface postOptimizationRebuildsAction;
-  private final CoordinatedEarlybirdActionInterface gcAction;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
-  private final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock;
+  privatelon long largelonstValidTwelonelontIDForCurrelonntSelongmelonnt;
+  privatelon long currelonntSelongmelonntTimelonslicelonBoundary;
+  privatelon OptimizingSelongmelonntWritelonr currelonntSelongmelonnt;
+  privatelon OptimizingSelongmelonntWritelonr prelonviousSelongmelonnt;
+  privatelon final QuelonryCachelonManagelonr quelonryCachelonManagelonr;
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
+  privatelon final CoordinatelondelonarlybirdActionIntelonrfacelon postOptimizationRelonbuildsAction;
+  privatelon final CoordinatelondelonarlybirdActionIntelonrfacelon gcAction;
+  privatelon final CaughtUpMonitor indelonxCaughtUpMonitor;
+  privatelon final OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock;
 
-  public TweetCreateHandler(
-      SegmentManager segmentManager,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      QueryCacheManager queryCacheManager,
-      CoordinatedEarlybirdActionInterface postOptimizationRebuildsAction,
-      CoordinatedEarlybirdActionInterface gcAction,
-      int lateTweetBuffer,
-      int maxSegmentSize,
-      CaughtUpMonitor indexCaughtUpMonitor,
+  public TwelonelontCrelonatelonHandlelonr(
+      SelongmelonntManagelonr selongmelonntManagelonr,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
+      MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr,
+      QuelonryCachelonManagelonr quelonryCachelonManagelonr,
+      CoordinatelondelonarlybirdActionIntelonrfacelon postOptimizationRelonbuildsAction,
+      CoordinatelondelonarlybirdActionIntelonrfacelon gcAction,
+      int latelonTwelonelontBuffelonr,
+      int maxSelongmelonntSizelon,
+      CaughtUpMonitor indelonxCaughtUpMonitor,
       OptimizationAndFlushingCoordinationLock optimizationAndFlushingCoordinationLock
   ) {
-    this.segmentManager = segmentManager;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.queryCacheManager = queryCacheManager;
-    this.indexingResultCounts = new IndexingResultCounts();
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.postOptimizationRebuildsAction = postOptimizationRebuildsAction;
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
+    this.multiSelongmelonntTelonrmDictionaryManagelonr = multiSelongmelonntTelonrmDictionaryManagelonr;
+    this.quelonryCachelonManagelonr = quelonryCachelonManagelonr;
+    this.indelonxingRelonsultCounts = nelonw IndelonxingRelonsultCounts();
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
+    this.postOptimizationRelonbuildsAction = postOptimizationRelonbuildsAction;
     this.gcAction = gcAction;
-    this.indexCaughtUpMonitor = indexCaughtUpMonitor;
+    this.indelonxCaughtUpMonitor = indelonxCaughtUpMonitor;
 
-    Preconditions.checkState(lateTweetBuffer < maxSegmentSize);
-    this.lateTweetBuffer = lateTweetBuffer;
-    this.maxSegmentSize = maxSegmentSize;
+    Prelonconditions.chelonckStatelon(latelonTwelonelontBuffelonr < maxSelongmelonntSizelon);
+    this.latelonTwelonelontBuffelonr = latelonTwelonelontBuffelonr;
+    this.maxSelongmelonntSizelon = maxSelongmelonntSizelon;
     this.optimizationAndFlushingCoordinationLock = optimizationAndFlushingCoordinationLock;
   }
 
-  void prepareAfterStartingWithIndex(long maxIndexedTweetId) {
-    LOG.info("Preparing after starting with an index.");
+  void prelonparelonAftelonrStartingWithIndelonx(long maxIndelonxelondTwelonelontId) {
+    LOG.info("Prelonparing aftelonr starting with an indelonx.");
 
-    Iterator<SegmentInfo> segmentInfosIterator =
-        segmentManager
-            .getSegmentInfos(SegmentManager.Filter.All, SegmentManager.Order.NEW_TO_OLD)
-            .iterator();
+    Itelonrator<SelongmelonntInfo> selongmelonntInfosItelonrator =
+        selongmelonntManagelonr
+            .gelontSelongmelonntInfos(SelongmelonntManagelonr.Filtelonr.All, SelongmelonntManagelonr.Ordelonr.NelonW_TO_OLD)
+            .itelonrator();
 
-    // Setup the last segment.
-    Verify.verify(segmentInfosIterator.hasNext(), "at least one segment expected");
-    ISegmentWriter lastWriter = segmentManager.getSegmentWriterForID(
-        segmentInfosIterator.next().getTimeSliceID());
-    Verify.verify(lastWriter != null);
+    // Selontup thelon last selongmelonnt.
+    Velonrify.velonrify(selongmelonntInfosItelonrator.hasNelonxt(), "at lelonast onelon selongmelonnt elonxpelonctelond");
+    ISelongmelonntWritelonr lastWritelonr = selongmelonntManagelonr.gelontSelongmelonntWritelonrForID(
+        selongmelonntInfosItelonrator.nelonxt().gelontTimelonSlicelonID());
+    Velonrify.velonrify(lastWritelonr != null);
 
-    LOG.info("TweetCreateHandler found last writer: {}", lastWriter.getSegmentInfo().toString());
-    this.currentSegmentTimesliceBoundary = lastWriter.getSegmentInfo().getTimeSliceID();
-    this.largestValidTweetIDForCurrentSegment =
-        OutOfOrderRealtimeTweetIDMapper.calculateMaxTweetID(currentSegmentTimesliceBoundary);
-    this.currentSegment = (OptimizingSegmentWriter) lastWriter;
+    LOG.info("TwelonelontCrelonatelonHandlelonr found last writelonr: {}", lastWritelonr.gelontSelongmelonntInfo().toString());
+    this.currelonntSelongmelonntTimelonslicelonBoundary = lastWritelonr.gelontSelongmelonntInfo().gelontTimelonSlicelonID();
+    this.largelonstValidTwelonelontIDForCurrelonntSelongmelonnt =
+        OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr.calculatelonMaxTwelonelontID(currelonntSelongmelonntTimelonslicelonBoundary);
+    this.currelonntSelongmelonnt = (OptimizingSelongmelonntWritelonr) lastWritelonr;
 
-    if (maxIndexedTweetId == -1) {
-      maxTweetID = lastWriter.getSegmentInfo().getIndexSegment().getMaxTweetId();
-      LOG.info("Max tweet id = {}", maxTweetID);
-    } else {
-      // See SEARCH-31032
-      maxTweetID = maxIndexedTweetId;
+    if (maxIndelonxelondTwelonelontId == -1) {
+      maxTwelonelontID = lastWritelonr.gelontSelongmelonntInfo().gelontIndelonxSelongmelonnt().gelontMaxTwelonelontId();
+      LOG.info("Max twelonelont id = {}", maxTwelonelontID);
+    } elonlselon {
+      // Selonelon SelonARCH-31032
+      maxTwelonelontID = maxIndelonxelondTwelonelontId;
     }
 
-    // If we have a previous segment that's not optimized, set it up too, we still need to pick
-    // it up for optimization and we might still be able to add tweets to it.
-    if (segmentInfosIterator.hasNext()) {
-      SegmentInfo previousSegmentInfo = segmentInfosIterator.next();
-      if (!previousSegmentInfo.isOptimized()) {
-        ISegmentWriter previousSegmentWriter = segmentManager.getSegmentWriterForID(
-            previousSegmentInfo.getTimeSliceID());
+    // If welon havelon a prelonvious selongmelonnt that's not optimizelond, selont it up too, welon still nelonelond to pick
+    // it up for optimization and welon might still belon ablelon to add twelonelonts to it.
+    if (selongmelonntInfosItelonrator.hasNelonxt()) {
+      SelongmelonntInfo prelonviousSelongmelonntInfo = selongmelonntInfosItelonrator.nelonxt();
+      if (!prelonviousSelongmelonntInfo.isOptimizelond()) {
+        ISelongmelonntWritelonr prelonviousSelongmelonntWritelonr = selongmelonntManagelonr.gelontSelongmelonntWritelonrForID(
+            prelonviousSelongmelonntInfo.gelontTimelonSlicelonID());
 
-        if (previousSegmentWriter != null) {
-          LOG.info("Picked previous segment");
-          this.previousSegment = (OptimizingSegmentWriter) previousSegmentWriter;
-        } else {
-          // Should not happen.
-          LOG.error("Not found previous segment writer");
+        if (prelonviousSelongmelonntWritelonr != null) {
+          LOG.info("Pickelond prelonvious selongmelonnt");
+          this.prelonviousSelongmelonnt = (OptimizingSelongmelonntWritelonr) prelonviousSelongmelonntWritelonr;
+        } elonlselon {
+          // Should not happelonn.
+          LOG.elonrror("Not found prelonvious selongmelonnt writelonr");
         }
-      } else {
-        LOG.info("Previous segment info is optimized");
+      } elonlselon {
+        LOG.info("Prelonvious selongmelonnt info is optimizelond");
       }
-    } else {
-      LOG.info("Previous segment info not found, we only have one segment");
+    } elonlselon {
+      LOG.info("Prelonvious selongmelonnt info not found, welon only havelon onelon selongmelonnt");
     }
   }
 
-  private void updateIndexFreshness() {
-    searchIndexingMetricSet.highestStatusId.set(maxTweetID);
+  privatelon void updatelonIndelonxFrelonshnelonss() {
+    selonarchIndelonxingMelontricSelont.highelonstStatusId.selont(maxTwelonelontID);
 
-    long tweetTimestamp = SnowflakeIdParser.getTimestampFromTweetId(
-        searchIndexingMetricSet.highestStatusId.get());
-    searchIndexingMetricSet.freshestTweetTimeMillis.set(tweetTimestamp);
+    long twelonelontTimelonstamp = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(
+        selonarchIndelonxingMelontricSelont.highelonstStatusId.gelont());
+    selonarchIndelonxingMelontricSelont.frelonshelonstTwelonelontTimelonMillis.selont(twelonelontTimelonstamp);
   }
 
   /**
-   * Index a new TVE representing a Tweet create event.
+   * Indelonx a nelonw TVelon relonprelonselonnting a Twelonelont crelonatelon elonvelonnt.
    */
-  public void handleTweetCreate(ThriftVersionedEvents tve) throws IOException {
-    INCOMING_TWEETS.increment();
-    long id = tve.getId();
-    maxTweetID = Math.max(id, maxTweetID);
+  public void handlelonTwelonelontCrelonatelon(ThriftVelonrsionelondelonvelonnts tvelon) throws IOelonxcelonption {
+    INCOMING_TWelonelonTS.increlonmelonnt();
+    long id = tvelon.gelontId();
+    maxTwelonelontID = Math.max(id, maxTwelonelontID);
 
-    updateIndexFreshness();
+    updatelonIndelonxFrelonshnelonss();
 
-    boolean shouldCreateNewSegment = false;
+    boolelonan shouldCrelonatelonNelonwSelongmelonnt = falselon;
 
-    if (currentSegment == null) {
-      shouldCreateNewSegment = true;
-      LOG.info("Will create new segment: current segment is null");
-    } else {
-      int numDocs = currentSegment.getSegmentInfo().getIndexSegment().getNumDocs();
-      int numDocsCutoff = maxSegmentSize - lateTweetBuffer;
+    if (currelonntSelongmelonnt == null) {
+      shouldCrelonatelonNelonwSelongmelonnt = truelon;
+      LOG.info("Will crelonatelon nelonw selongmelonnt: currelonnt selongmelonnt is null");
+    } elonlselon {
+      int numDocs = currelonntSelongmelonnt.gelontSelongmelonntInfo().gelontIndelonxSelongmelonnt().gelontNumDocs();
+      int numDocsCutoff = maxSelongmelonntSizelon - latelonTwelonelontBuffelonr;
       if (numDocs >= numDocsCutoff) {
-        NEW_SEGMENT_STATS.recordStartAfterReachingTweetsLimit(numDocs, numDocsCutoff,
-            maxSegmentSize, lateTweetBuffer);
-        shouldCreateNewSegment = true;
-      } else if (id > largestValidTweetIDForCurrentSegment) {
-        NEW_SEGMENT_STATS.recordStartAfterExceedingLargestValidTweetId(id,
-            largestValidTweetIDForCurrentSegment);
-        shouldCreateNewSegment = true;
+        NelonW_SelonGMelonNT_STATS.reloncordStartAftelonrRelonachingTwelonelontsLimit(numDocs, numDocsCutoff,
+            maxSelongmelonntSizelon, latelonTwelonelontBuffelonr);
+        shouldCrelonatelonNelonwSelongmelonnt = truelon;
+      } elonlselon if (id > largelonstValidTwelonelontIDForCurrelonntSelongmelonnt) {
+        NelonW_SelonGMelonNT_STATS.reloncordStartAftelonrelonxcelonelondingLargelonstValidTwelonelontId(id,
+            largelonstValidTwelonelontIDForCurrelonntSelongmelonnt);
+        shouldCrelonatelonNelonwSelongmelonnt = truelon;
       }
     }
 
-    if (shouldCreateNewSegment) {
-      createNewSegment(id);
+    if (shouldCrelonatelonNelonwSelongmelonnt) {
+      crelonatelonNelonwSelongmelonnt(id);
     }
 
-    if (previousSegment != null) {
-      // Inserts and some updates can't be applied to an optimized segment, so we want to wait at
-      // least LATE_TWEET_TIME_BUFFER between when we created the new segment and when we optimize
-      // the previous segment, in case there are late tweets.
-      // We leave a large (150k, typically) buffer in the segment so that we don't have to close
-      // the previousSegment before LATE_TWEET_TIME_BUFFER has passed, but if we index
-      // lateTweetBuffer Tweets before optimizing, then we must optimize,
-      // so that we don't insert more than max segment size tweets into the previous segment.
-      long relativeTweetAgeMs =
-          SnowflakeIdParser.getTimeDifferenceBetweenTweetIDs(id, currentSegmentTimesliceBoundary);
+    if (prelonviousSelongmelonnt != null) {
+      // Inselonrts and somelon updatelons can't belon applielond to an optimizelond selongmelonnt, so welon want to wait at
+      // lelonast LATelon_TWelonelonT_TIMelon_BUFFelonR belontwelonelonn whelonn welon crelonatelond thelon nelonw selongmelonnt and whelonn welon optimizelon
+      // thelon prelonvious selongmelonnt, in caselon thelonrelon arelon latelon twelonelonts.
+      // Welon lelonavelon a largelon (150k, typically) buffelonr in thelon selongmelonnt so that welon don't havelon to closelon
+      // thelon prelonviousSelongmelonnt belonforelon LATelon_TWelonelonT_TIMelon_BUFFelonR has passelond, but if welon indelonx
+      // latelonTwelonelontBuffelonr Twelonelonts belonforelon optimizing, thelonn welon must optimizelon,
+      // so that welon don't inselonrt morelon than max selongmelonnt sizelon twelonelonts into thelon prelonvious selongmelonnt.
+      long relonlativelonTwelonelontAgelonMs =
+          SnowflakelonIdParselonr.gelontTimelonDiffelonrelonncelonBelontwelonelonnTwelonelontIDs(id, currelonntSelongmelonntTimelonslicelonBoundary);
 
-      boolean needToOptimize = false;
-      int numDocs = previousSegment.getSegmentInfo().getIndexSegment().getNumDocs();
-      String previousSegmentName = previousSegment.getSegmentInfo().getSegmentName();
-      if (numDocs >= maxSegmentSize) {
-        LOG.info(String.format("Previous segment (%s) reached maxSegmentSize, need to optimize it."
-            + " numDocs=%,d, maxSegmentSize=%,d", previousSegmentName, numDocs, maxSegmentSize));
-        needToOptimize = true;
-      } else if (relativeTweetAgeMs > LATE_TWEET_TIME_BUFFER_MS) {
-        LOG.info(String.format("Previous segment (%s) is old enough, we can optimize it."
-            + " Got tweet past time buffer of %,d ms by: %,d ms", previousSegmentName,
-            LATE_TWEET_TIME_BUFFER_MS, relativeTweetAgeMs - LATE_TWEET_TIME_BUFFER_MS));
-        needToOptimize = true;
+      boolelonan nelonelondToOptimizelon = falselon;
+      int numDocs = prelonviousSelongmelonnt.gelontSelongmelonntInfo().gelontIndelonxSelongmelonnt().gelontNumDocs();
+      String prelonviousSelongmelonntNamelon = prelonviousSelongmelonnt.gelontSelongmelonntInfo().gelontSelongmelonntNamelon();
+      if (numDocs >= maxSelongmelonntSizelon) {
+        LOG.info(String.format("Prelonvious selongmelonnt (%s) relonachelond maxSelongmelonntSizelon, nelonelond to optimizelon it."
+            + " numDocs=%,d, maxSelongmelonntSizelon=%,d", prelonviousSelongmelonntNamelon, numDocs, maxSelongmelonntSizelon));
+        nelonelondToOptimizelon = truelon;
+      } elonlselon if (relonlativelonTwelonelontAgelonMs > LATelon_TWelonelonT_TIMelon_BUFFelonR_MS) {
+        LOG.info(String.format("Prelonvious selongmelonnt (%s) is old elonnough, welon can optimizelon it."
+            + " Got twelonelont past timelon buffelonr of %,d ms by: %,d ms", prelonviousSelongmelonntNamelon,
+            LATelon_TWelonelonT_TIMelon_BUFFelonR_MS, relonlativelonTwelonelontAgelonMs - LATelon_TWelonelonT_TIMelon_BUFFelonR_MS));
+        nelonelondToOptimizelon = truelon;
       }
 
-      if (needToOptimize) {
-        optimizePreviousSegment();
+      if (nelonelondToOptimizelon) {
+        optimizelonPrelonviousSelongmelonnt();
       }
     }
 
-    ISegmentWriter segmentWriter;
-    if (id >= currentSegmentTimesliceBoundary) {
-      INSERTED_IN_CURRENT_SEGMENT.increment();
-      segmentWriter = currentSegment;
-    } else if (previousSegment != null) {
-      INSERTED_IN_PREVIOUS_SEGMENT.increment();
-      segmentWriter = previousSegment;
-    } else {
-      TWEETS_IN_WRONG_SEGMENT.increment();
-      LOG.info("Inserting TVE ({}) into the current segment ({}) even though it should have gone "
-          + "in a previous segment.", id, currentSegmentTimesliceBoundary);
-      segmentWriter = currentSegment;
+    ISelongmelonntWritelonr selongmelonntWritelonr;
+    if (id >= currelonntSelongmelonntTimelonslicelonBoundary) {
+      INSelonRTelonD_IN_CURRelonNT_SelonGMelonNT.increlonmelonnt();
+      selongmelonntWritelonr = currelonntSelongmelonnt;
+    } elonlselon if (prelonviousSelongmelonnt != null) {
+      INSelonRTelonD_IN_PRelonVIOUS_SelonGMelonNT.increlonmelonnt();
+      selongmelonntWritelonr = prelonviousSelongmelonnt;
+    } elonlselon {
+      TWelonelonTS_IN_WRONG_SelonGMelonNT.increlonmelonnt();
+      LOG.info("Inselonrting TVelon ({}) into thelon currelonnt selongmelonnt ({}) elonvelonn though it should havelon gonelon "
+          + "in a prelonvious selongmelonnt.", id, currelonntSelongmelonntTimelonslicelonBoundary);
+      selongmelonntWritelonr = currelonntSelongmelonnt;
     }
 
-    SearchTimer timer = searchIndexingMetricSet.statusStats.startNewTimer();
-    ISegmentWriter.Result result = segmentWriter.indexThriftVersionedEvents(tve);
-    searchIndexingMetricSet.statusStats.stopTimerAndIncrement(timer);
+    SelonarchTimelonr timelonr = selonarchIndelonxingMelontricSelont.statusStats.startNelonwTimelonr();
+    ISelongmelonntWritelonr.Relonsult relonsult = selongmelonntWritelonr.indelonxThriftVelonrsionelondelonvelonnts(tvelon);
+    selonarchIndelonxingMelontricSelont.statusStats.stopTimelonrAndIncrelonmelonnt(timelonr);
 
-    if (result == ISegmentWriter.Result.SUCCESS) {
-      INDEXING_SUCCESS.increment();
-    } else {
-      INDEXING_FAILURE.increment();
+    if (relonsult == ISelongmelonntWritelonr.Relonsult.SUCCelonSS) {
+      INDelonXING_SUCCelonSS.increlonmelonnt();
+    } elonlselon {
+      INDelonXING_FAILURelon.increlonmelonnt();
     }
 
-    indexingResultCounts.countResult(result);
+    indelonxingRelonsultCounts.countRelonsult(relonsult);
   }
 
   /**
-   * Many tests need to verify behavior with segments optimized & unoptimized, so we need to expose
+   * Many telonsts nelonelond to velonrify belonhavior with selongmelonnts optimizelond & unoptimizelond, so welon nelonelond to elonxposelon
    * this.
    */
-  @VisibleForTesting
-  public Future<SegmentInfo> optimizePreviousSegment() {
-    String segmentName = previousSegment.getSegmentInfo().getSegmentName();
-    previousSegment.getSegmentInfo().setIndexing(false);
-    LOG.info("Optimizing previous segment: {}", segmentName);
-    segmentManager.logState("Starting optimization for segment: " + segmentName);
+  @VisiblelonForTelonsting
+  public Futurelon<SelongmelonntInfo> optimizelonPrelonviousSelongmelonnt() {
+    String selongmelonntNamelon = prelonviousSelongmelonnt.gelontSelongmelonntInfo().gelontSelongmelonntNamelon();
+    prelonviousSelongmelonnt.gelontSelongmelonntInfo().selontIndelonxing(falselon);
+    LOG.info("Optimizing prelonvious selongmelonnt: {}", selongmelonntNamelon);
+    selongmelonntManagelonr.logStatelon("Starting optimization for selongmelonnt: " + selongmelonntNamelon);
 
-    Future<SegmentInfo> future = previousSegment
+    Futurelon<SelongmelonntInfo> futurelon = prelonviousSelongmelonnt
         .startOptimization(gcAction, optimizationAndFlushingCoordinationLock)
-        .map(this::postOptimizationSteps)
-        .onFailure(t -> {
-          criticalExceptionHandler.handle(this, t);
-          return BoxedUnit.UNIT;
+        .map(this::postOptimizationStelonps)
+        .onFailurelon(t -> {
+          criticalelonxcelonptionHandlelonr.handlelon(this, t);
+          relonturn BoxelondUnit.UNIT;
         });
 
-    waitForOptimizationIfInTest(future);
+    waitForOptimizationIfInTelonst(futurelon);
 
-    previousSegment = null;
-    return future;
+    prelonviousSelongmelonnt = null;
+    relonturn futurelon;
   }
 
   /**
-   * In tests, it's easier if when a segment starts optimizing, we know that it will finish
-   * optimizing. This way we have no race condition where we're surprised that something that
-   * started optimizing is not ready.
+   * In telonsts, it's elonasielonr if whelonn a selongmelonnt starts optimizing, welon know that it will finish
+   * optimizing. This way welon havelon no racelon condition whelonrelon welon'relon surpriselond that somelonthing that
+   * startelond optimizing is not relonady.
    *
-   * In prod we don't have this problem. Segments run for 10 hours and optimization is 20 minutes
-   * so there's no need for extra synchronization.
+   * In prod welon don't havelon this problelonm. Selongmelonnts run for 10 hours and optimization is 20 minutelons
+   * so thelonrelon's no nelonelond for elonxtra synchronization.
    */
-  private void waitForOptimizationIfInTest(Future<SegmentInfo> future) {
-    if (Config.environmentIsTest()) {
+  privatelon void waitForOptimizationIfInTelonst(Futurelon<SelongmelonntInfo> futurelon) {
+    if (Config.elonnvironmelonntIsTelonst()) {
       try {
-        Await.ready(future);
-        LOG.info("Optimizing is done");
-      } catch (InterruptedException | TimeoutException ex) {
-        LOG.info("Exception while optimizing", ex);
+        Await.relonady(futurelon);
+        LOG.info("Optimizing is donelon");
+      } catch (Intelonrruptelondelonxcelonption | Timelonoutelonxcelonption elonx) {
+        LOG.info("elonxcelonption whilelon optimizing", elonx);
       }
     }
   }
 
-  private SegmentInfo postOptimizationSteps(SegmentInfo optimizedSegmentInfo) {
-    segmentManager.updateStats();
-    // See SEARCH-32175
-    optimizedSegmentInfo.setComplete(true);
+  privatelon SelongmelonntInfo postOptimizationStelonps(SelongmelonntInfo optimizelondSelongmelonntInfo) {
+    selongmelonntManagelonr.updatelonStats();
+    // Selonelon SelonARCH-32175
+    optimizelondSelongmelonntInfo.selontComplelontelon(truelon);
 
-    String segmentName = optimizedSegmentInfo.getSegmentName();
-    LOG.info("Finished optimization for segment: " + segmentName);
-    segmentManager.logState(
-            "Finished optimization for segment: " + segmentName);
+    String selongmelonntNamelon = optimizelondSelongmelonntInfo.gelontSelongmelonntNamelon();
+    LOG.info("Finishelond optimization for selongmelonnt: " + selongmelonntNamelon);
+    selongmelonntManagelonr.logStatelon(
+            "Finishelond optimization for selongmelonnt: " + selongmelonntNamelon);
 
     /*
-     * Building the multi segment term dictionary causes GC pauses. The reason for this is because
-     * it's pretty big (possible ~15GB). When it's allocated, we have to copy a lot of data from
-     * survivor space to old gen. That causes several GC pauses. See SEARCH-33544
+     * Building thelon multi selongmelonnt telonrm dictionary causelons GC pauselons. Thelon relonason for this is beloncauselon
+     * it's prelontty big (possiblelon ~15GB). Whelonn it's allocatelond, welon havelon to copy a lot of data from
+     * survivor spacelon to old gelonn. That causelons selonvelonral GC pauselons. Selonelon SelonARCH-33544
      *
-     * GC pauses are in general not fatal, but since all instances finish a segment at roughly the
-     * same time, they might happen at the same time and then it's a problem.
+     * GC pauselons arelon in gelonnelonral not fatal, but sincelon all instancelons finish a selongmelonnt at roughly thelon
+     * samelon timelon, thelony might happelonn at thelon samelon timelon and thelonn it's a problelonm.
      *
-     * Some possible solutions to this problem would be to build this dictionary in some data
-     * structures that are pre-allocated or to build only the part for the last segment, as
-     * everything else doesn't change. These solutions are a bit difficult to implement and this
-     * here is an easy workaround.
+     * Somelon possiblelon solutions to this problelonm would belon to build this dictionary in somelon data
+     * structurelons that arelon prelon-allocatelond or to build only thelon part for thelon last selongmelonnt, as
+     * elonvelonrything elonlselon doelonsn't changelon. Thelonselon solutions arelon a bit difficult to implelonmelonnt and this
+     * helonrelon is an elonasy workaround.
      *
-     * Note that we might finish optimizing a segment and then it might take ~60+ minutes until it's
-     * a particular Earlybird's turn to run this code. The effect of this is going to be that we
-     * are not going to use the multi segment dictionary for the last two segments, one of which is
-     * still pretty small. That's not terrible, since right before optimization we're not using
-     * the dictionary for the last segment anyways, since it's still not optimized.
+     * Notelon that welon might finish optimizing a selongmelonnt and thelonn it might takelon ~60+ minutelons until it's
+     * a particular elonarlybird's turn to run this codelon. Thelon elonffelonct of this is going to belon that welon
+     * arelon not going to uselon thelon multi selongmelonnt dictionary for thelon last two selongmelonnts, onelon of which is
+     * still prelontty small. That's not telonrriblelon, sincelon right belonforelon optimization welon'relon not using
+     * thelon dictionary for thelon last selongmelonnt anyways, sincelon it's still not optimizelond.
      */
     try {
-      LOG.info("Acquire coordination lock before beginning post_optimization_rebuilds action.");
+      LOG.info("Acquirelon coordination lock belonforelon belonginning post_optimization_relonbuilds action.");
       optimizationAndFlushingCoordinationLock.lock();
-      LOG.info("Successfully acquired coordination lock for post_optimization_rebuilds action.");
-      postOptimizationRebuildsAction.retryActionUntilRan(
-          "post optimization rebuilds", () -> {
-            Stopwatch stopwatch = Stopwatch.createStarted();
-            LOG.info("Starting to build multi term dictionary for {}", segmentName);
-            boolean result = multiSegmentTermDictionaryManager.buildDictionary();
-            LOG.info("Done building multi term dictionary for {} in {}, result: {}",
-                segmentName, stopwatch, result);
-            queryCacheManager.rebuildQueryCachesAfterSegmentOptimization(
-                optimizedSegmentInfo);
+      LOG.info("Succelonssfully acquirelond coordination lock for post_optimization_relonbuilds action.");
+      postOptimizationRelonbuildsAction.relontryActionUntilRan(
+          "post optimization relonbuilds", () -> {
+            Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
+            LOG.info("Starting to build multi telonrm dictionary for {}", selongmelonntNamelon);
+            boolelonan relonsult = multiSelongmelonntTelonrmDictionaryManagelonr.buildDictionary();
+            LOG.info("Donelon building multi telonrm dictionary for {} in {}, relonsult: {}",
+                selongmelonntNamelon, stopwatch, relonsult);
+            quelonryCachelonManagelonr.relonbuildQuelonryCachelonsAftelonrSelongmelonntOptimization(
+                optimizelondSelongmelonntInfo);
 
-            // This is a serial full GC and it defragments the memory so things can run smoothly
-            // until the next segment rolls. What we have observed is that if we don't do that
-            // later on some earlybirds can have promotion failures on an old gen that hasn't
-            // reached the initiating occupancy limit and these promotions failures can trigger a
-            // long (1.5 min) full GC. That usually happens because of fragmentation issues.
+            // This is a selonrial full GC and it delonfragmelonnts thelon melonmory so things can run smoothly
+            // until thelon nelonxt selongmelonnt rolls. What welon havelon obselonrvelond is that if welon don't do that
+            // latelonr on somelon elonarlybirds can havelon promotion failurelons on an old gelonn that hasn't
+            // relonachelond thelon initiating occupancy limit and thelonselon promotions failurelons can triggelonr a
+            // long (1.5 min) full GC. That usually happelonns beloncauselon of fragmelonntation issuelons.
             GCUtil.runGC();
-            // Wait for indexing to catch up before rejoining the serverset. We only need to do
-            // this if the host has already finished startup.
-            if (EarlybirdStatus.hasStarted()) {
-              indexCaughtUpMonitor.resetAndWaitUntilCaughtUp();
+            // Wait for indelonxing to catch up belonforelon relonjoining thelon selonrvelonrselont. Welon only nelonelond to do
+            // this if thelon host has alrelonady finishelond startup.
+            if (elonarlybirdStatus.hasStartelond()) {
+              indelonxCaughtUpMonitor.relonselontAndWaitUntilCaughtUp();
             }
           });
     } finally {
-      LOG.info("Finished post_optimization_rebuilds action. Releasing coordination lock.");
+      LOG.info("Finishelond post_optimization_relonbuilds action. Relonlelonasing coordination lock.");
       optimizationAndFlushingCoordinationLock.unlock();
     }
 
-    return optimizedSegmentInfo;
+    relonturn optimizelondSelongmelonntInfo;
   }
 
   /**
-   * Many tests rely on precise segment boundaries, so we expose this to allow them to create a
-   * particular segment.
+   * Many telonsts relonly on prelonciselon selongmelonnt boundarielons, so welon elonxposelon this to allow thelonm to crelonatelon a
+   * particular selongmelonnt.
    */
-  @VisibleForTesting
-  public void createNewSegment(long tweetID) throws IOException {
-    NEW_SEGMENT_STATS.recordCreateNewSegment();
+  @VisiblelonForTelonsting
+  public void crelonatelonNelonwSelongmelonnt(long twelonelontID) throws IOelonxcelonption {
+    NelonW_SelonGMelonNT_STATS.reloncordCrelonatelonNelonwSelongmelonnt();
 
-    if (previousSegment != null) {
-      // We shouldn't have more than one unoptimized segment, so if we get to this point and the
-      // previousSegment has not been optimized and set to null, start optimizing it before
-      // creating the next one. Note that this is a weird case and would only happen if we get
-      // Tweets with drastically different IDs than we expect, or there is a large amount of time
-      // where no Tweets are created in this partition.
-      LOG.error("Creating new segment for Tweet {} when the previous segment {} was not sealed. "
-          + "Current segment: {}. Documents: {}. largestValidTweetIDForSegment: {}.",
-          tweetID,
-          previousSegment.getSegmentInfo().getTimeSliceID(),
-          currentSegment.getSegmentInfo().getTimeSliceID(),
-          currentSegment.getSegmentInfo().getIndexSegment().getNumDocs(),
-          largestValidTweetIDForCurrentSegment);
-      optimizePreviousSegment();
-      SEGMENTS_CLOSED_EARLY.increment();
+    if (prelonviousSelongmelonnt != null) {
+      // Welon shouldn't havelon morelon than onelon unoptimizelond selongmelonnt, so if welon gelont to this point and thelon
+      // prelonviousSelongmelonnt has not belonelonn optimizelond and selont to null, start optimizing it belonforelon
+      // crelonating thelon nelonxt onelon. Notelon that this is a welonird caselon and would only happelonn if welon gelont
+      // Twelonelonts with drastically diffelonrelonnt IDs than welon elonxpelonct, or thelonrelon is a largelon amount of timelon
+      // whelonrelon no Twelonelonts arelon crelonatelond in this partition.
+      LOG.elonrror("Crelonating nelonw selongmelonnt for Twelonelont {} whelonn thelon prelonvious selongmelonnt {} was not selonalelond. "
+          + "Currelonnt selongmelonnt: {}. Documelonnts: {}. largelonstValidTwelonelontIDForSelongmelonnt: {}.",
+          twelonelontID,
+          prelonviousSelongmelonnt.gelontSelongmelonntInfo().gelontTimelonSlicelonID(),
+          currelonntSelongmelonnt.gelontSelongmelonntInfo().gelontTimelonSlicelonID(),
+          currelonntSelongmelonnt.gelontSelongmelonntInfo().gelontIndelonxSelongmelonnt().gelontNumDocs(),
+          largelonstValidTwelonelontIDForCurrelonntSelongmelonnt);
+      optimizelonPrelonviousSelongmelonnt();
+      SelonGMelonNTS_CLOSelonD_elonARLY.increlonmelonnt();
     }
 
-    previousSegment = currentSegment;
+    prelonviousSelongmelonnt = currelonntSelongmelonnt;
 
-    // We have two cases:
+    // Welon havelon two caselons:
     //
-    // Case 1:
-    // If the greatest Tweet ID we have seen is tweetID, then when we want to create a new segment
-    // with that ID, so the Tweet being processed goes into the new segment.
+    // Caselon 1:
+    // If thelon grelonatelonst Twelonelont ID welon havelon selonelonn is twelonelontID, thelonn whelonn welon want to crelonatelon a nelonw selongmelonnt
+    // with that ID, so thelon Twelonelont beloning procelonsselond goelons into thelon nelonw selongmelonnt.
     //
-    // Case 2:
-    // If the tweetID is bigger than the max tweetID, then this method is being called directly from
-    // tests, so we didn't update the maxTweetID, so we can create a new segment with the new
-    // Tweet ID.
+    // Caselon 2:
+    // If thelon twelonelontID is biggelonr than thelon max twelonelontID, thelonn this melonthod is beloning callelond direlonctly from
+    // telonsts, so welon didn't updatelon thelon maxTwelonelontID, so welon can crelonatelon a nelonw selongmelonnt with thelon nelonw
+    // Twelonelont ID.
     //
-    // Case 3:
-    // If it's not the greatest Tweet ID we have seen, then we don't want to create a
-    // segment boundary that is lower than any Tweet IDs in the current segment, because then
-    // some tweets from the previous segment would be in the wrong segment, so create a segment
-    // that has a greater ID than any Tweets that we have seen.
+    // Caselon 3:
+    // If it's not thelon grelonatelonst Twelonelont ID welon havelon selonelonn, thelonn welon don't want to crelonatelon a
+    // selongmelonnt boundary that is lowelonr than any Twelonelont IDs in thelon currelonnt selongmelonnt, beloncauselon thelonn
+    // somelon twelonelonts from thelon prelonvious selongmelonnt would belon in thelon wrong selongmelonnt, so crelonatelon a selongmelonnt
+    // that has a grelonatelonr ID than any Twelonelonts that welon havelon selonelonn.
     //
-    //   Example:
-    //     - We have seen tweets 3, 10, 5, 6.
-    //     - We now see tweet 7 and we decide it's time to create a new segment.
-    //     - The new segment will start at tweet 11. It can't start at tweet 7, because
-    //       tweet 10 will be in the wrong segment.
-    //     - Tweet 7 that we just saw will end up in the previous segment.
-    if (maxTweetID <= tweetID) {
-      currentSegmentTimesliceBoundary = tweetID;
-      NEW_SEGMENT_STATS.recordSettingTimesliceToCurrentTweet(tweetID);
-    } else {
-      currentSegmentTimesliceBoundary = maxTweetID + 1;
-      NEW_SEGMENT_STATS.recordSettingTimesliceToMaxTweetId(tweetID, maxTweetID);
+    //   elonxamplelon:
+    //     - Welon havelon selonelonn twelonelonts 3, 10, 5, 6.
+    //     - Welon now selonelon twelonelont 7 and welon deloncidelon it's timelon to crelonatelon a nelonw selongmelonnt.
+    //     - Thelon nelonw selongmelonnt will start at twelonelont 11. It can't start at twelonelont 7, beloncauselon
+    //       twelonelont 10 will belon in thelon wrong selongmelonnt.
+    //     - Twelonelont 7 that welon just saw will elonnd up in thelon prelonvious selongmelonnt.
+    if (maxTwelonelontID <= twelonelontID) {
+      currelonntSelongmelonntTimelonslicelonBoundary = twelonelontID;
+      NelonW_SelonGMelonNT_STATS.reloncordSelonttingTimelonslicelonToCurrelonntTwelonelont(twelonelontID);
+    } elonlselon {
+      currelonntSelongmelonntTimelonslicelonBoundary = maxTwelonelontID + 1;
+      NelonW_SelonGMelonNT_STATS.reloncordSelonttingTimelonslicelonToMaxTwelonelontId(twelonelontID, maxTwelonelontID);
     }
-    currentSegment = segmentManager.createAndPutOptimizingSegmentWriter(
-        currentSegmentTimesliceBoundary);
+    currelonntSelongmelonnt = selongmelonntManagelonr.crelonatelonAndPutOptimizingSelongmelonntWritelonr(
+        currelonntSelongmelonntTimelonslicelonBoundary);
 
-    currentSegment.getSegmentInfo().setIndexing(true);
+    currelonntSelongmelonnt.gelontSelongmelonntInfo().selontIndelonxing(truelon);
 
-    largestValidTweetIDForCurrentSegment =
-        OutOfOrderRealtimeTweetIDMapper.calculateMaxTweetID(currentSegmentTimesliceBoundary);
+    largelonstValidTwelonelontIDForCurrelonntSelongmelonnt =
+        OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr.calculatelonMaxTwelonelontID(currelonntSelongmelonntTimelonslicelonBoundary);
 
-    NEW_SEGMENT_STATS.wrapNewSegmentCreation(tweetID, maxTweetID,
-        currentSegmentTimesliceBoundary, largestValidTweetIDForCurrentSegment);
+    NelonW_SelonGMelonNT_STATS.wrapNelonwSelongmelonntCrelonation(twelonelontID, maxTwelonelontID,
+        currelonntSelongmelonntTimelonslicelonBoundary, largelonstValidTwelonelontIDForCurrelonntSelongmelonnt);
 
-    segmentManager.removeExcessSegments();
+    selongmelonntManagelonr.relonmovelonelonxcelonssSelongmelonnts();
   }
 
-  void logState() {
-    LOG.info("TweetCreateHandler:");
-    LOG.info(String.format("  tweets sent for indexing: %,d",
-        indexingResultCounts.getIndexingCalls()));
-    LOG.info(String.format("  non-retriable failure: %,d",
-        indexingResultCounts.getFailureNotRetriable()));
-    LOG.info(String.format("  retriable failure: %,d",
-        indexingResultCounts.getFailureRetriable()));
-    LOG.info(String.format("  successfully indexed: %,d",
-        indexingResultCounts.getIndexingSuccess()));
-    LOG.info(String.format("  tweets in wrong segment: %,d", TWEETS_IN_WRONG_SEGMENT.getCount()));
-    LOG.info(String.format("  segments closed early: %,d", SEGMENTS_CLOSED_EARLY.getCount()));
+  void logStatelon() {
+    LOG.info("TwelonelontCrelonatelonHandlelonr:");
+    LOG.info(String.format("  twelonelonts selonnt for indelonxing: %,d",
+        indelonxingRelonsultCounts.gelontIndelonxingCalls()));
+    LOG.info(String.format("  non-relontriablelon failurelon: %,d",
+        indelonxingRelonsultCounts.gelontFailurelonNotRelontriablelon()));
+    LOG.info(String.format("  relontriablelon failurelon: %,d",
+        indelonxingRelonsultCounts.gelontFailurelonRelontriablelon()));
+    LOG.info(String.format("  succelonssfully indelonxelond: %,d",
+        indelonxingRelonsultCounts.gelontIndelonxingSuccelonss()));
+    LOG.info(String.format("  twelonelonts in wrong selongmelonnt: %,d", TWelonelonTS_IN_WRONG_SelonGMelonNT.gelontCount()));
+    LOG.info(String.format("  selongmelonnts closelond elonarly: %,d", SelonGMelonNTS_CLOSelonD_elonARLY.gelontCount()));
   }
 }

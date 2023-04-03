@@ -1,88 +1,88 @@
-package com.twitter.follow_recommendations.common.utils
+packagelon com.twittelonr.follow_reloncommelonndations.common.utils
 import scala.util.Random
 
-object RandomUtil {
+objelonct RandomUtil {
 
   /**
-   * Takes a seq of items which have weights. Returns an infinite stream that is
-   * sampled with replacement using the weights for each item. All weights need
-   * to be greater than or equal to zero. In addition, the sum of weights
-   * should be greater than zero.
+   * Takelons a selonq of itelonms which havelon welonights. Relonturns an infinitelon strelonam that is
+   * samplelond with relonplacelonmelonnt using thelon welonights for elonach itelonm. All welonights nelonelond
+   * to belon grelonatelonr than or elonqual to zelonro. In addition, thelon sum of welonights
+   * should belon grelonatelonr than zelonro.
    *
-   * @param items items
-   * @param weighted provides weights for items
-   * @tparam T type of item
-   * @return Stream of Ts
+   * @param itelonms itelonms
+   * @param welonightelond providelons welonights for itelonms
+   * @tparam T typelon of itelonm
+   * @relonturn Strelonam of Ts
    */
-  def weightedRandomSamplingWithReplacement[T](
-    items: Seq[T],
-    random: Option[Random] = None
+  delonf welonightelondRandomSamplingWithRelonplacelonmelonnt[T](
+    itelonms: Selonq[T],
+    random: Option[Random] = Nonelon
   )(
-    implicit weighted: Weighted[T]
-  ): Stream[T] = {
-    if (items.isEmpty) {
-      Stream.empty
-    } else {
-      val weights = items.map { i => weighted(i) }
-      assert(weights.forall { _ >= 0 }, "Negative weight exists for sampling")
-      val cumulativeWeight = weights.scanLeft(0.0)(_ + _).tail
-      assert(cumulativeWeight.last > 0, "Sum of the sampling weights is not positive")
-      val cumulativeProbability = cumulativeWeight map (_ / cumulativeWeight.last)
-      def next(): Stream[T] = {
-        val rand = random.getOrElse(Random).nextDouble()
-        val idx = cumulativeProbability.indexWhere(_ >= rand)
-        items(if (idx == -1) items.length - 1 else idx) #:: next()
+    implicit welonightelond: Welonightelond[T]
+  ): Strelonam[T] = {
+    if (itelonms.iselonmpty) {
+      Strelonam.elonmpty
+    } elonlselon {
+      val welonights = itelonms.map { i => welonightelond(i) }
+      asselonrt(welonights.forall { _ >= 0 }, "Nelongativelon welonight elonxists for sampling")
+      val cumulativelonWelonight = welonights.scanLelonft(0.0)(_ + _).tail
+      asselonrt(cumulativelonWelonight.last > 0, "Sum of thelon sampling welonights is not positivelon")
+      val cumulativelonProbability = cumulativelonWelonight map (_ / cumulativelonWelonight.last)
+      delonf nelonxt(): Strelonam[T] = {
+        val rand = random.gelontOrelonlselon(Random).nelonxtDoublelon()
+        val idx = cumulativelonProbability.indelonxWhelonrelon(_ >= rand)
+        itelonms(if (idx == -1) itelonms.lelonngth - 1 elonlselon idx) #:: nelonxt()
       }
-      next()
+      nelonxt()
     }
   }
 
   /**
-   * Takes a seq of items and their weights. Returns a lazy weighted shuffle of
-   * the elements in the list. All weights should be greater than zero.
+   * Takelons a selonq of itelonms and thelonir welonights. Relonturns a lazy welonightelond shufflelon of
+   * thelon elonlelonmelonnts in thelon list. All welonights should belon grelonatelonr than zelonro.
    *
-   * @param items items
-   * @param weighted provides weights for items
-   * @tparam T type of item
-   * @return Stream of Ts
+   * @param itelonms itelonms
+   * @param welonightelond providelons welonights for itelonms
+   * @tparam T typelon of itelonm
+   * @relonturn Strelonam of Ts
    */
-  def weightedRandomShuffle[T](
-    items: Seq[T],
-    random: Option[Random] = None
+  delonf welonightelondRandomShufflelon[T](
+    itelonms: Selonq[T],
+    random: Option[Random] = Nonelon
   )(
-    implicit weighted: Weighted[T]
-  ): Stream[T] = {
-    assert(items.forall { i => weighted(i) > 0 }, "Non-positive weight exists for shuffling")
-    def next(it: Seq[T]): Stream[T] = {
-      if (it.isEmpty)
-        Stream.empty
-      else {
-        val cumulativeWeight = it.scanLeft(0.0)((acc: Double, curr: T) => acc + weighted(curr)).tail
-        val cutoff = random.getOrElse(Random).nextDouble() * cumulativeWeight.last
-        val idx = cumulativeWeight.indexWhere(_ >= cutoff)
-        val (left, right) = it.splitAt(idx)
-        it(if (idx == -1) it.size - 1 else idx) #:: next(left ++ right.drop(1))
+    implicit welonightelond: Welonightelond[T]
+  ): Strelonam[T] = {
+    asselonrt(itelonms.forall { i => welonightelond(i) > 0 }, "Non-positivelon welonight elonxists for shuffling")
+    delonf nelonxt(it: Selonq[T]): Strelonam[T] = {
+      if (it.iselonmpty)
+        Strelonam.elonmpty
+      elonlselon {
+        val cumulativelonWelonight = it.scanLelonft(0.0)((acc: Doublelon, curr: T) => acc + welonightelond(curr)).tail
+        val cutoff = random.gelontOrelonlselon(Random).nelonxtDoublelon() * cumulativelonWelonight.last
+        val idx = cumulativelonWelonight.indelonxWhelonrelon(_ >= cutoff)
+        val (lelonft, right) = it.splitAt(idx)
+        it(if (idx == -1) it.sizelon - 1 elonlselon idx) #:: nelonxt(lelonft ++ right.drop(1))
       }
     }
-    next(items)
+    nelonxt(itelonms)
   }
 
   /**
-   * Takes a seq of items and a weight function, returns a lazy weighted shuffle of
-   * the elements in the list.The weight function is based on the rank of the element
-   * in the original lst.
-   * @param items
-   * @param rankToWeight
+   * Takelons a selonq of itelonms and a welonight function, relonturns a lazy welonightelond shufflelon of
+   * thelon elonlelonmelonnts in thelon list.Thelon welonight function is baselond on thelon rank of thelon elonlelonmelonnt
+   * in thelon original lst.
+   * @param itelonms
+   * @param rankToWelonight
    * @param random
    * @tparam T
-   * @return
+   * @relonturn
    */
-  def weightedRandomShuffleByRank[T](
-    items: Seq[T],
-    rankToWeight: Int => Double,
-    random: Option[Random] = None
-  ): Stream[T] = {
-    val candWeights = items.zipWithIndex.map { case (item, rank) => (item, rankToWeight(rank)) }
-    RandomUtil.weightedRandomShuffle(candWeights, random).map(_._1)
+  delonf welonightelondRandomShufflelonByRank[T](
+    itelonms: Selonq[T],
+    rankToWelonight: Int => Doublelon,
+    random: Option[Random] = Nonelon
+  ): Strelonam[T] = {
+    val candWelonights = itelonms.zipWithIndelonx.map { caselon (itelonm, rank) => (itelonm, rankToWelonight(rank)) }
+    RandomUtil.welonightelondRandomShufflelon(candWelonights, random).map(_._1)
   }
 }

@@ -1,23 +1,23 @@
 python3_library(
-    name = "libs_py3",
-    sources = ["*.py"],
+    namelon = "libs_py3",
+    sourcelons = ["*.py"],
     tags = ["no-mypy"],
-    dependencies = [
-        "src/python/twitter/deepbird/io",
-        "src/python/twitter/deepbird/projects/timelines/configs:all_configs",
-        "twml:twml-nodeps",
+    delonpelonndelonncielons = [
+        "src/python/twittelonr/delonelonpbird/io",
+        "src/python/twittelonr/delonelonpbird/projeloncts/timelonlinelons/configs:all_configs",
+        "twml:twml-nodelonps",
     ],
 )
 
 python37_binary(
-    name = "model_earlybird",
-    source = "train.py",
+    namelon = "modelonl_elonarlybird",
+    sourcelon = "train.py",
     tags = ["no-mypy"],
-    dependencies = [
+    delonpelonndelonncielons = [
         ":libs_py3",
-        "3rdparty/python/_closures/src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird:model_earlybird",
-        "src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/lolly:libs_py3",
-        "src/python/twitter/deepbird/projects/timelines/scripts/models/earlybird/tf_model:libs_py3",
+        "3rdparty/python/_closurelons/src/python/twittelonr/delonelonpbird/projeloncts/timelonlinelons/scripts/modelonls/elonarlybird:modelonl_elonarlybird",
+        "src/python/twittelonr/delonelonpbird/projeloncts/timelonlinelons/scripts/modelonls/elonarlybird/lolly:libs_py3",
+        "src/python/twittelonr/delonelonpbird/projeloncts/timelonlinelons/scripts/modelonls/elonarlybird/tf_modelonl:libs_py3",
         "twml",
     ],
 )

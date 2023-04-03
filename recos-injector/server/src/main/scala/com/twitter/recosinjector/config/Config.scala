@@ -1,41 +1,41 @@
-package com.twitter.recosinjector.config
+packagelon com.twittelonr.reloncosinjelonctor.config
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.frigate.common.store.TweetCreationTimeMHStore
-import com.twitter.frigate.common.util.UrlInfo
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.recosinjector.decider.RecosInjectorDecider
-import com.twitter.socialgraph.thriftscala.{IdsRequest, IdsResult}
-import com.twitter.stitch.tweetypie.TweetyPie.TweetyPieResult
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.frigatelon.common.storelon.TwelonelontCrelonationTimelonMHStorelon
+import com.twittelonr.frigatelon.common.util.UrlInfo
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.reloncosinjelonctor.deloncidelonr.ReloncosInjelonctorDeloncidelonr
+import com.twittelonr.socialgraph.thriftscala.{IdsRelonquelonst, IdsRelonsult}
+import com.twittelonr.stitch.twelonelontypielon.TwelonelontyPielon.TwelonelontyPielonRelonsult
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
 
-trait Config { self =>
-  implicit def statsReceiver: StatsReceiver
+trait Config { selonlf =>
+  implicit delonf statsReloncelonivelonr: StatsReloncelonivelonr
 
-  // ReadableStores
-  def tweetyPieStore: ReadableStore[Long, TweetyPieResult]
+  // RelonadablelonStorelons
+  delonf twelonelontyPielonStorelon: RelonadablelonStorelon[Long, TwelonelontyPielonRelonsult]
 
-  def userStore: ReadableStore[Long, User]
+  delonf uselonrStorelon: RelonadablelonStorelon[Long, Uselonr]
 
-  def socialGraphIdStore: ReadableStore[IdsRequest, IdsResult]
+  delonf socialGraphIdStorelon: RelonadablelonStorelon[IdsRelonquelonst, IdsRelonsult]
 
-  def urlInfoStore: ReadableStore[String, UrlInfo]
+  delonf urlInfoStorelon: RelonadablelonStorelon[String, UrlInfo]
 
-  // Manhattan stores
-  def tweetCreationStore: TweetCreationTimeMHStore
+  // Manhattan storelons
+  delonf twelonelontCrelonationStorelon: TwelonelontCrelonationTimelonMHStorelon
 
-  // Decider
-  def recosInjectorDecider: RecosInjectorDecider
+  // Deloncidelonr
+  delonf reloncosInjelonctorDeloncidelonr: ReloncosInjelonctorDeloncidelonr
 
   // Constants
-  def recosInjectorThriftClientId: ClientId
+  delonf reloncosInjelonctorThriftClielonntId: ClielonntId
 
-  def serviceIdentifier: ServiceIdentifier
+  delonf selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
 
-  def outputKafkaTopicPrefix: String
+  delonf outputKafkaTopicPrelonfix: String
 
-  def init(): Future[Unit] = Future.Done
+  delonf init(): Futurelon[Unit] = Futurelon.Donelon
 }

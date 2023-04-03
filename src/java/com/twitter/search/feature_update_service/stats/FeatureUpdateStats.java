@@ -1,111 +1,111 @@
-package com.twitter.search.feature_update_service.stats;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.stats;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
+import java.util.concurrelonnt.ConcurrelonntMap;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonsponselonCodelon;
 
-/** Stat tracking for the feature update ingester service. */
-public class FeatureUpdateStats {
-  public static final String PREFIX = "feature_update_service_";
+/** Stat tracking for thelon felonaturelon updatelon ingelonstelonr selonrvicelon. */
+public class FelonaturelonUpdatelonStats {
+  public static final String PRelonFIX = "felonaturelon_updatelon_selonrvicelon_";
 
-  private final SearchRateCounter requestRate = SearchRateCounter.export(
-      PREFIX + "requests");
+  privatelon final SelonarchRatelonCountelonr relonquelonstRatelon = SelonarchRatelonCountelonr.elonxport(
+      PRelonFIX + "relonquelonsts");
 
-  private ConcurrentMap<String, SearchRateCounter> perClientRequestRate =
-      new ConcurrentHashMap<>();
+  privatelon ConcurrelonntMap<String, SelonarchRatelonCountelonr> pelonrClielonntRelonquelonstRatelon =
+      nelonw ConcurrelonntHashMap<>();
 
-  private ConcurrentMap<String, SearchRateCounter> responseCodeRate =
-      new ConcurrentHashMap<>();
+  privatelon ConcurrelonntMap<String, SelonarchRatelonCountelonr> relonsponselonCodelonRatelon =
+      nelonw ConcurrelonntHashMap<>();
 
-  private ConcurrentMap<String, SearchRateCounter> preClientResponseCodeRate =
-      new ConcurrentHashMap<>();
+  privatelon ConcurrelonntMap<String, SelonarchRatelonCountelonr> prelonClielonntRelonsponselonCodelonRatelon =
+      nelonw ConcurrelonntHashMap<>();
 
   /**
-   * Record metrics for a single incoming request.
+   * Reloncord melontrics for a singlelon incoming relonquelonst.
    */
-  public void clientRequest(String clientID) {
-    // 1. Track total request rate. It's better to precompute than compute the per client sum at
-    // query time.
-    requestRate.increment();
+  public void clielonntRelonquelonst(String clielonntID) {
+    // 1. Track total relonquelonst ratelon. It's belonttelonr to preloncomputelon than computelon thelon pelonr clielonnt sum at
+    // quelonry timelon.
+    relonquelonstRatelon.increlonmelonnt();
 
-    // 2. Track request rate per client.
-    incrementPerClientCounter(perClientRequestRate, clientRequestRateKey(clientID));
+    // 2. Track relonquelonst ratelon pelonr clielonnt.
+    increlonmelonntPelonrClielonntCountelonr(pelonrClielonntRelonquelonstRatelon, clielonntRelonquelonstRatelonKelony(clielonntID));
   }
 
   /**
-   * Record metrics for a single response.
+   * Reloncord melontrics for a singlelon relonsponselon.
    */
-  public void clientResponse(String clientID, FeatureUpdateResponseCode responseCode) {
-    String code = responseCode.toString().toLowerCase();
+  public void clielonntRelonsponselon(String clielonntID, FelonaturelonUpdatelonRelonsponselonCodelon relonsponselonCodelon) {
+    String codelon = relonsponselonCodelon.toString().toLowelonrCaselon();
 
-    // 1. Track rates per response code.
-    incrementPerClientCounter(responseCodeRate, responseCodeKey(code));
+    // 1. Track ratelons pelonr relonsponselon codelon.
+    increlonmelonntPelonrClielonntCountelonr(relonsponselonCodelonRatelon, relonsponselonCodelonKelony(codelon));
 
-    // 2. Track rates per client per response code.
-    incrementPerClientCounter(preClientResponseCodeRate, clientResponseCodeKey(clientID, code));
+    // 2. Track ratelons pelonr clielonnt pelonr relonsponselon codelon.
+    increlonmelonntPelonrClielonntCountelonr(prelonClielonntRelonsponselonCodelonRatelon, clielonntRelonsponselonCodelonKelony(clielonntID, codelon));
   }
 
   /**
-   * Returns the total number of requests.
+   * Relonturns thelon total numbelonr of relonquelonsts.
    */
-  public long getRequestRateCount() {
-    return requestRate.getCount();
+  public long gelontRelonquelonstRatelonCount() {
+    relonturn relonquelonstRatelon.gelontCount();
   }
 
   /**
-   * Returns the total number of requests for the specified client.
+   * Relonturns thelon total numbelonr of relonquelonsts for thelon speloncifielond clielonnt.
    */
-  public long getClientRequestCount(String clientID)  {
-    String key = clientRequestRateKey(clientID);
-    if (perClientRequestRate.containsKey(key)) {
-      return perClientRequestRate.get(key).getCount();
+  public long gelontClielonntRelonquelonstCount(String clielonntID)  {
+    String kelony = clielonntRelonquelonstRatelonKelony(clielonntID);
+    if (pelonrClielonntRelonquelonstRatelon.containsKelony(kelony)) {
+      relonturn pelonrClielonntRelonquelonstRatelon.gelont(kelony).gelontCount();
     }
-    return 0;
+    relonturn 0;
   }
 
   /**
-   * Returns the total number of responses with the specified code.
+   * Relonturns thelon total numbelonr of relonsponselons with thelon speloncifielond codelon.
    */
-  public long getResponseCodeCount(FeatureUpdateResponseCode responseCode) {
-    String code = responseCode.toString().toLowerCase();
-    String key = responseCodeKey(code);
-    if (responseCodeRate.containsKey(key)) {
-      return responseCodeRate.get(key).getCount();
+  public long gelontRelonsponselonCodelonCount(FelonaturelonUpdatelonRelonsponselonCodelon relonsponselonCodelon) {
+    String codelon = relonsponselonCodelon.toString().toLowelonrCaselon();
+    String kelony = relonsponselonCodelonKelony(codelon);
+    if (relonsponselonCodelonRatelon.containsKelony(kelony)) {
+      relonturn relonsponselonCodelonRatelon.gelont(kelony).gelontCount();
     }
-    return 0;
+    relonturn 0;
   }
 
   /**
-   * Returns the total number of responses to the specified client with the specified code.
+   * Relonturns thelon total numbelonr of relonsponselons to thelon speloncifielond clielonnt with thelon speloncifielond codelon.
    */
-  public long getClientResponseCodeCount(String clientID, FeatureUpdateResponseCode responseCode) {
-    String code = responseCode.toString().toLowerCase();
-    String key = clientResponseCodeKey(clientID, code);
-    if (preClientResponseCodeRate.containsKey(key)) {
-      return preClientResponseCodeRate.get(key).getCount();
+  public long gelontClielonntRelonsponselonCodelonCount(String clielonntID, FelonaturelonUpdatelonRelonsponselonCodelon relonsponselonCodelon) {
+    String codelon = relonsponselonCodelon.toString().toLowelonrCaselon();
+    String kelony = clielonntRelonsponselonCodelonKelony(clielonntID, codelon);
+    if (prelonClielonntRelonsponselonCodelonRatelon.containsKelony(kelony)) {
+      relonturn prelonClielonntRelonsponselonCodelonRatelon.gelont(kelony).gelontCount();
     }
-    return 0;
+    relonturn 0;
   }
 
-  private static String clientRequestRateKey(String clientID) {
-    return String.format(PREFIX + "requests_for_client_id_%s", clientID);
+  privatelon static String clielonntRelonquelonstRatelonKelony(String clielonntID) {
+    relonturn String.format(PRelonFIX + "relonquelonsts_for_clielonnt_id_%s", clielonntID);
   }
 
-  private static String responseCodeKey(String responseCode) {
-    return String.format(PREFIX + "response_code_%s", responseCode);
+  privatelon static String relonsponselonCodelonKelony(String relonsponselonCodelon) {
+    relonturn String.format(PRelonFIX + "relonsponselon_codelon_%s", relonsponselonCodelon);
   }
 
-  private static String clientResponseCodeKey(String clientID, String responseCode) {
-    return String.format(PREFIX + "response_for_client_id_%s_code_%s", clientID, responseCode);
+  privatelon static String clielonntRelonsponselonCodelonKelony(String clielonntID, String relonsponselonCodelon) {
+    relonturn String.format(PRelonFIX + "relonsponselon_for_clielonnt_id_%s_codelon_%s", clielonntID, relonsponselonCodelon);
   }
 
-  private void incrementPerClientCounter(
-      ConcurrentMap<String, SearchRateCounter> rates,
-      String key
+  privatelon void increlonmelonntPelonrClielonntCountelonr(
+      ConcurrelonntMap<String, SelonarchRatelonCountelonr> ratelons,
+      String kelony
   ) {
-    rates.putIfAbsent(key, SearchRateCounter.export(key));
-    rates.get(key).increment();
+    ratelons.putIfAbselonnt(kelony, SelonarchRatelonCountelonr.elonxport(kelony));
+    ratelons.gelont(kelony).increlonmelonnt();
   }
 }

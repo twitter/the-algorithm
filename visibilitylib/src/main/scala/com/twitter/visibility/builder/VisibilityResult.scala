@@ -1,112 +1,112 @@
-package com.twitter.visibility.builder
+packagelon com.twittelonr.visibility.buildelonr
 
-import com.twitter.spam.rtf.thriftscala.SafetyResult
-import com.twitter.visibility.common.actions.converter.scala.DropReasonConverter
-import com.twitter.visibility.rules.ComposableActions._
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId
-import com.twitter.visibility.rules._
-import com.twitter.visibility.{thriftscala => t}
+import com.twittelonr.spam.rtf.thriftscala.SafelontyRelonsult
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.DropRelonasonConvelonrtelonr
+import com.twittelonr.visibility.rulelons.ComposablelonActions._
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.modelonls.ContelonntId
+import com.twittelonr.visibility.rulelons._
+import com.twittelonr.visibility.{thriftscala => t}
 
-case class VisibilityResult(
-  contentId: ContentId,
-  featureMap: FeatureMap = FeatureMap.empty,
-  ruleResultMap: Map[Rule, RuleResult] = Map.empty,
-  verdict: Action = Allow,
-  finished: Boolean = false,
-  actingRule: Option[Rule] = None,
-  secondaryActingRules: Seq[Rule] = Seq(),
-  secondaryVerdicts: Seq[Action] = Seq(),
-  resolvedFeatureMap: Map[Feature[_], Any] = Map.empty) {
+caselon class VisibilityRelonsult(
+  contelonntId: ContelonntId,
+  felonaturelonMap: FelonaturelonMap = FelonaturelonMap.elonmpty,
+  rulelonRelonsultMap: Map[Rulelon, RulelonRelonsult] = Map.elonmpty,
+  velonrdict: Action = Allow,
+  finishelond: Boolelonan = falselon,
+  actingRulelon: Option[Rulelon] = Nonelon,
+  seloncondaryActingRulelons: Selonq[Rulelon] = Selonq(),
+  seloncondaryVelonrdicts: Selonq[Action] = Selonq(),
+  relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any] = Map.elonmpty) {
 
-  def getSafetyResult: SafetyResult =
-    verdict match {
-      case InterstitialLimitedEngagements(reason: Reason, _, _, _)
-          if PublicInterest.Reasons
-            .contains(reason) =>
-        SafetyResult(
-          Some(PublicInterest.ReasonToSafetyResultReason(reason)),
-          verdict.toActionThrift()
+  delonf gelontSafelontyRelonsult: SafelontyRelonsult =
+    velonrdict match {
+      caselon IntelonrstitialLimitelondelonngagelonmelonnts(relonason: Relonason, _, _, _)
+          if PublicIntelonrelonst.Relonasons
+            .contains(relonason) =>
+        SafelontyRelonsult(
+          Somelon(PublicIntelonrelonst.RelonasonToSafelontyRelonsultRelonason(relonason)),
+          velonrdict.toActionThrift()
         )
-      case ComposableActionsWithInterstitialLimitedEngagements(tweetInterstitial)
-          if PublicInterest.Reasons.contains(tweetInterstitial.reason) =>
-        SafetyResult(
-          Some(PublicInterest.ReasonToSafetyResultReason(tweetInterstitial.reason)),
-          verdict.toActionThrift()
+      caselon ComposablelonActionsWithIntelonrstitialLimitelondelonngagelonmelonnts(twelonelontIntelonrstitial)
+          if PublicIntelonrelonst.Relonasons.contains(twelonelontIntelonrstitial.relonason) =>
+        SafelontyRelonsult(
+          Somelon(PublicIntelonrelonst.RelonasonToSafelontyRelonsultRelonason(twelonelontIntelonrstitial.relonason)),
+          velonrdict.toActionThrift()
         )
-      case FreedomOfSpeechNotReachReason(appealableReason) =>
-        SafetyResult(
-          Some(FreedomOfSpeechNotReach.reasonToSafetyResultReason(appealableReason)),
-          verdict.toActionThrift()
+      caselon FrelonelondomOfSpelonelonchNotRelonachRelonason(appelonalablelonRelonason) =>
+        SafelontyRelonsult(
+          Somelon(FrelonelondomOfSpelonelonchNotRelonach.relonasonToSafelontyRelonsultRelonason(appelonalablelonRelonason)),
+          velonrdict.toActionThrift()
         )
-      case _ => SafetyResult(None, verdict.toActionThrift())
+      caselon _ => SafelontyRelonsult(Nonelon, velonrdict.toActionThrift())
     }
 
-  def getUserVisibilityResult: Option[t.UserVisibilityResult] =
-    (verdict match {
-      case Drop(reason, _) =>
-        Some(
-          t.UserAction.Drop(t.Drop(Reason.toDropReason(reason).map(DropReasonConverter.toThrift))))
-      case _ => None
-    }).map(userAction => t.UserVisibilityResult(Some(userAction)))
+  delonf gelontUselonrVisibilityRelonsult: Option[t.UselonrVisibilityRelonsult] =
+    (velonrdict match {
+      caselon Drop(relonason, _) =>
+        Somelon(
+          t.UselonrAction.Drop(t.Drop(Relonason.toDropRelonason(relonason).map(DropRelonasonConvelonrtelonr.toThrift))))
+      caselon _ => Nonelon
+    }).map(uselonrAction => t.UselonrVisibilityRelonsult(Somelon(uselonrAction)))
 }
 
-object VisibilityResult {
-  class Builder {
-    var featureMap: FeatureMap = FeatureMap.empty
-    var ruleResultMap: Map[Rule, RuleResult] = Map.empty
-    var verdict: Action = Allow
-    var finished: Boolean = false
-    var actingRule: Option[Rule] = None
-    var secondaryActingRules: Seq[Rule] = Seq()
-    var secondaryVerdicts: Seq[Action] = Seq()
-    var resolvedFeatureMap: Map[Feature[_], Any] = Map.empty
+objelonct VisibilityRelonsult {
+  class Buildelonr {
+    var felonaturelonMap: FelonaturelonMap = FelonaturelonMap.elonmpty
+    var rulelonRelonsultMap: Map[Rulelon, RulelonRelonsult] = Map.elonmpty
+    var velonrdict: Action = Allow
+    var finishelond: Boolelonan = falselon
+    var actingRulelon: Option[Rulelon] = Nonelon
+    var seloncondaryActingRulelons: Selonq[Rulelon] = Selonq()
+    var seloncondaryVelonrdicts: Selonq[Action] = Selonq()
+    var relonsolvelondFelonaturelonMap: Map[Felonaturelon[_], Any] = Map.elonmpty
 
-    def withFeatureMap(featureMapBld: FeatureMap) = {
-      featureMap = featureMapBld
+    delonf withFelonaturelonMap(felonaturelonMapBld: FelonaturelonMap) = {
+      felonaturelonMap = felonaturelonMapBld
       this
     }
 
-    def withRuleResultMap(ruleResultMapBld: Map[Rule, RuleResult]) = {
-      ruleResultMap = ruleResultMapBld
+    delonf withRulelonRelonsultMap(rulelonRelonsultMapBld: Map[Rulelon, RulelonRelonsult]) = {
+      rulelonRelonsultMap = rulelonRelonsultMapBld
       this
     }
 
-    def withVerdict(verdictBld: Action) = {
-      verdict = verdictBld
+    delonf withVelonrdict(velonrdictBld: Action) = {
+      velonrdict = velonrdictBld
       this
     }
 
-    def withFinished(finishedBld: Boolean) = {
-      finished = finishedBld
+    delonf withFinishelond(finishelondBld: Boolelonan) = {
+      finishelond = finishelondBld
       this
     }
 
-    def withActingRule(actingRuleBld: Option[Rule]) = {
-      actingRule = actingRuleBld
+    delonf withActingRulelon(actingRulelonBld: Option[Rulelon]) = {
+      actingRulelon = actingRulelonBld
       this
     }
 
-    def withSecondaryActingRules(secondaryActingRulesBld: Seq[Rule]) = {
-      secondaryActingRules = secondaryActingRulesBld
+    delonf withSeloncondaryActingRulelons(seloncondaryActingRulelonsBld: Selonq[Rulelon]) = {
+      seloncondaryActingRulelons = seloncondaryActingRulelonsBld
       this
     }
 
-    def withSecondaryVerdicts(secondaryVerdictsBld: Seq[Action]) = {
-      secondaryVerdicts = secondaryVerdictsBld
+    delonf withSeloncondaryVelonrdicts(seloncondaryVelonrdictsBld: Selonq[Action]) = {
+      seloncondaryVelonrdicts = seloncondaryVelonrdictsBld
       this
     }
 
-    def build(contentId: ContentId) = VisibilityResult(
-      contentId,
-      featureMap,
-      ruleResultMap,
-      verdict,
-      finished,
-      actingRule,
-      secondaryActingRules,
-      secondaryVerdicts,
-      resolvedFeatureMap)
+    delonf build(contelonntId: ContelonntId) = VisibilityRelonsult(
+      contelonntId,
+      felonaturelonMap,
+      rulelonRelonsultMap,
+      velonrdict,
+      finishelond,
+      actingRulelon,
+      seloncondaryActingRulelons,
+      seloncondaryVelonrdicts,
+      relonsolvelondFelonaturelonMap)
   }
 }

@@ -1,73 +1,73 @@
 scala_library(
-    name = "assemble-multi-type-graph-scio-lib",
-    sources = [
+    namelon = "asselonmblelon-multi-typelon-graph-scio-lib",
+    sourcelons = [
         "*.scala",
     ],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":full_multi_type_graph_scio-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":full_multi_typelon_graph_scio-scala",
         ":top_k_right_nouns_mh_scio-scala",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/beam/io/manhattan",
-        "beam-internal/src/main/scala/com/twitter/beam/job",
-        "beam-internal/src/main/scala/com/twitter/beam/transform",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources",
-        "src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph",
-        "src/scala/com/twitter/simclusters_v2/scio/common",
-        "src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/common",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/io/dal",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/io/manhattan",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/job",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/transform",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/runnelonr/dataflow",
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scalding/multi_typelon_graph/asselonmblelon_multi_typelon_graph",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scio/common",
+        "src/scala/com/twittelonr/simclustelonrs_v2/scio/multi_typelon_graph/common",
     ],
 )
 
 jvm_binary(
-    name = "assemble-multi-type-graph-scio-adhoc-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.AssembleMultiTypeGraphScioAdhocApp",
+    namelon = "asselonmblelon-multi-typelon-graph-scio-adhoc-app",
+    main = "com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.asselonmblelon_multi_typelon_graph.AsselonmblelonMultiTypelonGraphScioAdhocApp",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":assemble-multi-type-graph-scio-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":asselonmblelon-multi-typelon-graph-scio-lib",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/runnelonr/dataflow",
     ],
 )
 
 jvm_binary(
-    name = "assemble-multi-type-graph-scio-batch-app",
-    main = "com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.AssembleMultiTypeGraphScioBatchApp",
+    namelon = "asselonmblelon-multi-typelon-graph-scio-batch-app",
+    main = "com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.asselonmblelon_multi_typelon_graph.AsselonmblelonMultiTypelonGraphScioBatchApp",
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":assemble-multi-type-graph-scio-lib",
-        "beam-internal/src/main/scala/com/twitter/beam/runner/dataflow",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":asselonmblelon-multi-typelon-graph-scio-lib",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/runnelonr/dataflow",
     ],
 )
 
-create_datasets(
-    base_name = "full_multi_type_graph_scio",
-    java_schema = "com.twitter.simclusters_v2.thriftjava.MultiTypeGraphEdge",
+crelonatelon_dataselonts(
+    baselon_namelon = "full_multi_typelon_graph_scio",
+    java_schelonma = "com.twittelonr.simclustelonrs_v2.thriftjava.MultiTypelonGraphelondgelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.thriftscala.MultiTypelonGraphelondgelon",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift-scala",
     ],
 )
 
-create_datasets(
-    base_name = "top_k_right_nouns_mh_scio",
-    key_type = "com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct",
+crelonatelon_dataselonts(
+    baselon_namelon = "top_k_right_nouns_mh_scio",
+    kelony_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonTypelonStruct",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.simclusters_v2.hdfs_sources.injections.MultiTypeGraphInjections.topKRightNounListInjection",
-    segment_type = "snapshot",
-    tags = ["bazel-compatible"],
-    val_type = "com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList",
-    scala_dependencies = [
-        "src/scala/com/twitter/simclusters_v2/hdfs_sources/injections",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions.MultiTypelonGraphInjelonctions.topKRightNounListInjelonction",
+    selongmelonnt_typelon = "snapshot",
+    tags = ["bazelonl-compatiblelon"],
+    val_typelon = "com.twittelonr.simclustelonrs_v2.thriftscala.NounWithFrelonquelonncyList",
+    scala_delonpelonndelonncielons = [
+        "src/scala/com/twittelonr/simclustelonrs_v2/hdfs_sourcelons/injelonctions",
     ],
 )

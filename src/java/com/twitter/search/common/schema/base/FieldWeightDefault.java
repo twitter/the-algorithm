@@ -1,110 +1,110 @@
-package com.twitter.search.common.schema.base;
+packagelon com.twittelonr.selonarch.common.schelonma.baselon;
 
-import java.util.LinkedHashMap;
+import java.util.LinkelondHashMap;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Maps;
 
-import static com.google.common.base.Preconditions.checkNotNull;
+import static com.googlelon.common.baselon.Prelonconditions.chelonckNotNull;
 
 /**
- * Records whether a field's enabled for search by default and its default weight. Note that these
- * two are decoupled -- a field can have a default weight but not enabled for search by default.
- * In a query it can be enabled by an annotation that does not specify a weight (e.g., ":f:foo"),
- * which would then use the default weight.
+ * Reloncords whelonthelonr a fielonld's elonnablelond for selonarch by delonfault and its delonfault welonight. Notelon that thelonselon
+ * two arelon deloncouplelond -- a fielonld can havelon a delonfault welonight but not elonnablelond for selonarch by delonfault.
+ * In a quelonry it can belon elonnablelond by an annotation that doelons not speloncify a welonight (elon.g., ":f:foo"),
+ * which would thelonn uselon thelon delonfault welonight.
  *
- * Instances are mutable.
+ * Instancelons arelon mutablelon.
  */
-public class FieldWeightDefault {
-  private final boolean enabled;
-  private final float weight;
+public class FielonldWelonightDelonfault {
+  privatelon final boolelonan elonnablelond;
+  privatelon final float welonight;
 
-  public FieldWeightDefault(boolean enabled, float weight) {
-    this.enabled = enabled;
-    this.weight = weight;
+  public FielonldWelonightDelonfault(boolelonan elonnablelond, float welonight) {
+    this.elonnablelond = elonnablelond;
+    this.welonight = welonight;
   }
 
-  public static FieldWeightDefault fromSignedWeight(float signedValue) {
-    return new FieldWeightDefault(signedValue >= 0, Math.abs(signedValue));
+  public static FielonldWelonightDelonfault fromSignelondWelonight(float signelondValuelon) {
+    relonturn nelonw FielonldWelonightDelonfault(signelondValuelon >= 0, Math.abs(signelondValuelon));
   }
 
   /**
-   * Returns an immutable map from field name to default field weights for only enabled fields.
-   * Fields that are not enabled for search by default will not be included.
+   * Relonturns an immutablelon map from fielonld namelon to delonfault fielonld welonights for only elonnablelond fielonlds.
+   * Fielonlds that arelon not elonnablelond for selonarch by delonfault will not belon includelond.
    */
-  public static <T> ImmutableMap<T, Float> getOnlyEnabled(
-      Map<T, FieldWeightDefault> map) {
+  public static <T> ImmutablelonMap<T, Float> gelontOnlyelonnablelond(
+      Map<T, FielonldWelonightDelonfault> map) {
 
-    ImmutableMap.Builder<T, Float> builder = ImmutableMap.builder();
-    for (Map.Entry<T, FieldWeightDefault> entry : map.entrySet()) {
-      if (entry.getValue().isEnabled()) {
-        builder.put(entry.getKey(), entry.getValue().getWeight());
+    ImmutablelonMap.Buildelonr<T, Float> buildelonr = ImmutablelonMap.buildelonr();
+    for (Map.elonntry<T, FielonldWelonightDelonfault> elonntry : map.elonntrySelont()) {
+      if (elonntry.gelontValuelon().iselonnablelond()) {
+        buildelonr.put(elonntry.gelontKelony(), elonntry.gelontValuelon().gelontWelonight());
       }
     }
-    return builder.build();
+    relonturn buildelonr.build();
   }
 
-  public boolean isEnabled() {
-    return enabled;
+  public boolelonan iselonnablelond() {
+    relonturn elonnablelond;
   }
 
-  public float getWeight() {
-    return weight;
+  public float gelontWelonight() {
+    relonturn welonight;
   }
 
   /**
-   * Overlays the base field-weight map with the given one. Since it is an overlay, a
-   * field that does not exist in the base map will never be added. Also, negative value means
-   * the field is not enabled for search by default, but if it is, the absolute value would serve as
-   * the default.
+   * Ovelonrlays thelon baselon fielonld-welonight map with thelon givelonn onelon. Sincelon it is an ovelonrlay, a
+   * fielonld that doelons not elonxist in thelon baselon map will nelonvelonr belon addelond. Also, nelongativelon valuelon melonans
+   * thelon fielonld is not elonnablelond for selonarch by delonfault, but if it is, thelon absolutelon valuelon would selonrvelon as
+   * thelon delonfault.
    */
-  public static ImmutableMap<String, FieldWeightDefault> overrideFieldWeightMap(
-      Map<String, FieldWeightDefault> base,
-      Map<String, Double> fieldWeightMapOverride) {
+  public static ImmutablelonMap<String, FielonldWelonightDelonfault> ovelonrridelonFielonldWelonightMap(
+      Map<String, FielonldWelonightDelonfault> baselon,
+      Map<String, Doublelon> fielonldWelonightMapOvelonrridelon) {
 
-    checkNotNull(base);
-    if (fieldWeightMapOverride == null) {
-      return ImmutableMap.copyOf(base);
+    chelonckNotNull(baselon);
+    if (fielonldWelonightMapOvelonrridelon == null) {
+      relonturn ImmutablelonMap.copyOf(baselon);
     }
 
-    LinkedHashMap<String, FieldWeightDefault> map = Maps.newLinkedHashMap(base);
-    for (Map.Entry<String, Double> entry : fieldWeightMapOverride.entrySet()) {
-      if (base.containsKey(entry.getKey())
-          && entry.getValue() >= -Float.MAX_VALUE
-          && entry.getValue() <= Float.MAX_VALUE) {
+    LinkelondHashMap<String, FielonldWelonightDelonfault> map = Maps.nelonwLinkelondHashMap(baselon);
+    for (Map.elonntry<String, Doublelon> elonntry : fielonldWelonightMapOvelonrridelon.elonntrySelont()) {
+      if (baselon.containsKelony(elonntry.gelontKelony())
+          && elonntry.gelontValuelon() >= -Float.MAX_VALUelon
+          && elonntry.gelontValuelon() <= Float.MAX_VALUelon) {
 
         map.put(
-            entry.getKey(),
-            FieldWeightDefault.fromSignedWeight(entry.getValue().floatValue()));
+            elonntry.gelontKelony(),
+            FielonldWelonightDelonfault.fromSignelondWelonight(elonntry.gelontValuelon().floatValuelon()));
       }
     }
 
-    return ImmutableMap.copyOf(map);
+    relonturn ImmutablelonMap.copyOf(map);
   }
 
   /**
-   * Creates a field-to-FieldWeightDefault map from the given field-to-weight map, where negative
-   * weight means the the field is not enabled for search by default, but if it is (e.g.,
-   * by annotation), the absolute value of the weight shall be used.
+   * Crelonatelons a fielonld-to-FielonldWelonightDelonfault map from thelon givelonn fielonld-to-welonight map, whelonrelon nelongativelon
+   * welonight melonans thelon thelon fielonld is not elonnablelond for selonarch by delonfault, but if it is (elon.g.,
+   * by annotation), thelon absolutelon valuelon of thelon welonight shall belon uselond.
    */
-  public static <T> ImmutableMap<T, FieldWeightDefault> fromSignedWeightMap(
-      Map<T, ? extends Number> signedWeightMap) {
+  public static <T> ImmutablelonMap<T, FielonldWelonightDelonfault> fromSignelondWelonightMap(
+      Map<T, ? elonxtelonnds Numbelonr> signelondWelonightMap) {
 
-    ImmutableMap.Builder<T, FieldWeightDefault> builder = ImmutableMap.builder();
-    for (Map.Entry<T, ? extends Number> entry : signedWeightMap.entrySet()) {
-      // If double to float conversion failed, we will get a float infinity.
-      // See http://stackoverflow.com/a/10075093/716468
-      float floatValue = entry.getValue().floatValue();
-      if (floatValue != Float.NEGATIVE_INFINITY
-          && floatValue != Float.POSITIVE_INFINITY) {
+    ImmutablelonMap.Buildelonr<T, FielonldWelonightDelonfault> buildelonr = ImmutablelonMap.buildelonr();
+    for (Map.elonntry<T, ? elonxtelonnds Numbelonr> elonntry : signelondWelonightMap.elonntrySelont()) {
+      // If doublelon to float convelonrsion failelond, welon will gelont a float infinity.
+      // Selonelon http://stackovelonrflow.com/a/10075093/716468
+      float floatValuelon = elonntry.gelontValuelon().floatValuelon();
+      if (floatValuelon != Float.NelonGATIVelon_INFINITY
+          && floatValuelon != Float.POSITIVelon_INFINITY) {
 
-        builder.put(
-            entry.getKey(),
-            FieldWeightDefault.fromSignedWeight(floatValue));
+        buildelonr.put(
+            elonntry.gelontKelony(),
+            FielonldWelonightDelonfault.fromSignelondWelonight(floatValuelon));
       }
     }
 
-    return builder.build();
+    relonturn buildelonr.build();
   }
 }

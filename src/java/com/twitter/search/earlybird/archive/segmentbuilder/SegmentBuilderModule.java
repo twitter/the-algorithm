@@ -1,58 +1,58 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon.selongmelonntbuildelonr;
 
-import java.io.File;
+import java.io.Filelon;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import com.googlelon.injelonct.Providelons;
+import com.googlelon.injelonct.Singlelonton;
 
-import com.twitter.app.Flaggable;
-import com.twitter.decider.Decider;
-import com.twitter.inject.TwitterModule;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.config.LoggerConfiguration;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.util.EarlybirdDecider;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.injelonct.annotations.Flag;
+import com.twittelonr.selonarch.common.config.LoggelonrConfiguration;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.util.elonarlybirdDeloncidelonr;
 
-public class SegmentBuilderModule extends TwitterModule {
+public class SelongmelonntBuildelonrModulelon elonxtelonnds TwittelonrModulelon {
 
-  private static final String CONFIG_FILE_FLAG_NAME = "config_file";
-  private static final String SEGMENT_LOG_DIR_FLAG_NAME = "segment_log_dir";
+  privatelon static final String CONFIG_FILelon_FLAG_NAMelon = "config_filelon";
+  privatelon static final String SelonGMelonNT_LOG_DIR_FLAG_NAMelon = "selongmelonnt_log_dir";
 
-  public SegmentBuilderModule() {
-    createFlag(CONFIG_FILE_FLAG_NAME,
-            new File("earlybird-search.yml"),
-            "specify config file",
-            Flaggable.ofFile());
+  public SelongmelonntBuildelonrModulelon() {
+    crelonatelonFlag(CONFIG_FILelon_FLAG_NAMelon,
+            nelonw Filelon("elonarlybird-selonarch.yml"),
+            "speloncify config filelon",
+            Flaggablelon.ofFilelon());
 
-    createFlag(SEGMENT_LOG_DIR_FLAG_NAME,
+    crelonatelonFlag(SelonGMelonNT_LOG_DIR_FLAG_NAMelon,
             "",
-            "override log dir from config file",
-            Flaggable.ofString());
+            "ovelonrridelon log dir from config filelon",
+            Flaggablelon.ofString());
   }
 
   /**
-   * Initializes the Earlybird config and the log configuration, and returns an EarlybirdDecider
-   * object, which will be injected into the SegmentBuilder instance.
+   * Initializelons thelon elonarlybird config and thelon log configuration, and relonturns an elonarlybirdDeloncidelonr
+   * objelonct, which will belon injelonctelond into thelon SelongmelonntBuildelonr instancelon.
    *
-   * @param configFile The config file to use to initialize EarlybirdConfig
-   * @param segmentLogDir If not empty, used to override the log directory from the config file
-   * @return An initialized EarlybirdDecider
+   * @param configFilelon Thelon config filelon to uselon to initializelon elonarlybirdConfig
+   * @param selongmelonntLogDir If not elonmpty, uselond to ovelonrridelon thelon log direlonctory from thelon config filelon
+   * @relonturn An initializelond elonarlybirdDeloncidelonr
    */
-  @Provides
-  @Singleton
-  public Decider provideDecider(@Flag(CONFIG_FILE_FLAG_NAME) File configFile,
-                                @Flag(SEGMENT_LOG_DIR_FLAG_NAME) String segmentLogDir) {
-    // By default Guice will build singletons eagerly:
-    //    https://github.com/google/guice/wiki/Scopes#eager-singletons
-    // So in order to ensure that the EarlybirdConfig and LoggerConfiguration initializations occur
-    // before the EarlybirdDecider initialization, we place them here.
-    EarlybirdConfig.init(configFile.getName());
-    if (!segmentLogDir.isEmpty()) {
-      EarlybirdConfig.overrideLogDir(segmentLogDir);
+  @Providelons
+  @Singlelonton
+  public Deloncidelonr providelonDeloncidelonr(@Flag(CONFIG_FILelon_FLAG_NAMelon) Filelon configFilelon,
+                                @Flag(SelonGMelonNT_LOG_DIR_FLAG_NAMelon) String selongmelonntLogDir) {
+    // By delonfault Guicelon will build singlelontons elonagelonrly:
+    //    https://github.com/googlelon/guicelon/wiki/Scopelons#elonagelonr-singlelontons
+    // So in ordelonr to elonnsurelon that thelon elonarlybirdConfig and LoggelonrConfiguration initializations occur
+    // belonforelon thelon elonarlybirdDeloncidelonr initialization, welon placelon thelonm helonrelon.
+    elonarlybirdConfig.init(configFilelon.gelontNamelon());
+    if (!selongmelonntLogDir.iselonmpty()) {
+      elonarlybirdConfig.ovelonrridelonLogDir(selongmelonntLogDir);
     }
-    new LoggerConfiguration(EarlybirdConfig.getLogPropertiesFile(), EarlybirdConfig.getLogDir())
-            .configure();
+    nelonw LoggelonrConfiguration(elonarlybirdConfig.gelontLogPropelonrtielonsFilelon(), elonarlybirdConfig.gelontLogDir())
+            .configurelon();
 
-    return EarlybirdDecider.initialize();
+    relonturn elonarlybirdDeloncidelonr.initializelon();
   }
 }

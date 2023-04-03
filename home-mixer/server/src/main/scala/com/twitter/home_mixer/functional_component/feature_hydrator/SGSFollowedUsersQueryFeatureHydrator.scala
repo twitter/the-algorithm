@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.{SocialGraph => SocialGraphStitchClient}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.socialgraph.{thriftscala => sg}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.socialgraph.{SocialGraph => SocialGraphStitchClielonnt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object SGSFollowedUsersFeature extends Feature[PipelineQuery, Seq[Long]]
+objelonct SGSFollowelondUselonrsFelonaturelon elonxtelonnds Felonaturelon[PipelonlinelonQuelonry, Selonq[Long]]
 
-@Singleton
-case class SGSFollowedUsersQueryFeatureHydrator @Inject() (
-  socialGraphStitchClient: SocialGraphStitchClient)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@Singlelonton
+caselon class SGSFollowelondUselonrsQuelonryFelonaturelonHydrator @Injelonct() (
+  socialGraphStitchClielonnt: SocialGraphStitchClielonnt)
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("SGSFollowedUsers")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("SGSFollowelondUselonrs")
 
-  override val features: Set[Feature[_, _]] = Set(SGSFollowedUsersFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(SGSFollowelondUselonrsFelonaturelon)
 
-  private val SocialGraphLimit = 14999
+  privatelon val SocialGraphLimit = 14999
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    val uselonrId = quelonry.gelontRelonquirelondUselonrId
 
-    val request = sg.IdsRequest(
-      relationships = Seq(
-        sg.SrcRelationship(userId, sg.RelationshipType.Following, hasRelationship = true),
-        sg.SrcRelationship(userId, sg.RelationshipType.Muting, hasRelationship = false)
+    val relonquelonst = sg.IdsRelonquelonst(
+      relonlationships = Selonq(
+        sg.SrcRelonlationship(uselonrId, sg.RelonlationshipTypelon.Following, hasRelonlationship = truelon),
+        sg.SrcRelonlationship(uselonrId, sg.RelonlationshipTypelon.Muting, hasRelonlationship = falselon)
       ),
-      pageRequest = Some(sg.PageRequest(count = Some(SocialGraphLimit)))
+      pagelonRelonquelonst = Somelon(sg.PagelonRelonquelonst(count = Somelon(SocialGraphLimit)))
     )
 
-    socialGraphStitchClient
-      .ids(request).map(_.ids)
-      .map { followedUsers =>
-        FeatureMapBuilder().add(SGSFollowedUsersFeature, followedUsers).build()
+    socialGraphStitchClielonnt
+      .ids(relonquelonst).map(_.ids)
+      .map { followelondUselonrs =>
+        FelonaturelonMapBuildelonr().add(SGSFollowelondUselonrsFelonaturelon, followelondUselonrs).build()
       }
   }
 }

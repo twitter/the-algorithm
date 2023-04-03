@@ -1,85 +1,85 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+packagelon telonnsorflow.selonrving;
 
-import "google/protobuf/any.proto";
-import "tensorflow_serving/config/file_system_storage_path_source.proto";
-import "tensorflow_serving/config/logging_config.proto";
+import "googlelon/protobuf/any.proto";
+import "telonnsorflow_selonrving/config/filelon_systelonm_storagelon_path_sourcelon.proto";
+import "telonnsorflow_selonrving/config/logging_config.proto";
 
-option cc_enable_arenas = true;
+option cc_elonnablelon_arelonnas = truelon;
 
-// The type of model.
-// TODO: DEPRECATED.
-enum ModelType {
-  MODEL_TYPE_UNSPECIFIED = 0 [deprecated = true];
-  TENSORFLOW = 1 [deprecated = true];
-  OTHER = 2 [deprecated = true];
+// Thelon typelon of modelonl.
+// TODO: DelonPRelonCATelonD.
+elonnum ModelonlTypelon {
+  MODelonL_TYPelon_UNSPelonCIFIelonD = 0 [delonpreloncatelond = truelon];
+  TelonNSORFLOW = 1 [delonpreloncatelond = truelon];
+  OTHelonR = 2 [delonpreloncatelond = truelon];
 }
 
-// Common configuration for loading a model being served.
-message ModelConfig {
-  // Name of the model.
-  string name = 1;
+// Common configuration for loading a modelonl beloning selonrvelond.
+melonssagelon ModelonlConfig {
+  // Namelon of thelon modelonl.
+  string namelon = 1;
 
-  // Base path to the model, excluding the version directory.
-  // E.g> for a model at /foo/bar/my_model/123, where 123 is the version, the
-  // base path is /foo/bar/my_model.
+  // Baselon path to thelon modelonl, elonxcluding thelon velonrsion direlonctory.
+  // elon.g> for a modelonl at /foo/bar/my_modelonl/123, whelonrelon 123 is thelon velonrsion, thelon
+  // baselon path is /foo/bar/my_modelonl.
   //
-  // (This can be changed once a model is in serving, *if* the underlying data
-  // remains the same. Otherwise there are no guarantees about whether the old
-  // or new data will be used for model versions currently loaded.)
-  string base_path = 2;
+  // (This can belon changelond oncelon a modelonl is in selonrving, *if* thelon undelonrlying data
+  // relonmains thelon samelon. Othelonrwiselon thelonrelon arelon no guarantelonelons about whelonthelonr thelon old
+  // or nelonw data will belon uselond for modelonl velonrsions currelonntly loadelond.)
+  string baselon_path = 2;
 
-  // Type of model.
-  // TODO: DEPRECATED. Please use 'model_platform' instead.
-  ModelType model_type = 3 [deprecated = true];
+  // Typelon of modelonl.
+  // TODO: DelonPRelonCATelonD. Plelonaselon uselon 'modelonl_platform' instelonad.
+  ModelonlTypelon modelonl_typelon = 3 [delonpreloncatelond = truelon];
 
-  // Type of model (e.g. "tensorflow").
+  // Typelon of modelonl (elon.g. "telonnsorflow").
   //
-  // (This cannot be changed once a model is in serving.)
-  string model_platform = 4;
+  // (This cannot belon changelond oncelon a modelonl is in selonrving.)
+  string modelonl_platform = 4;
 
-  reserved 5, 9;
+  relonselonrvelond 5, 9;
 
-  // Version policy for the model indicating which version(s) of the model to
-  // load and make available for serving simultaneously.
-  // The default option is to serve only the latest version of the model.
+  // Velonrsion policy for thelon modelonl indicating which velonrsion(s) of thelon modelonl to
+  // load and makelon availablelon for selonrving simultanelonously.
+  // Thelon delonfault option is to selonrvelon only thelon latelonst velonrsion of thelon modelonl.
   //
-  // (This can be changed once a model is in serving.)
-  FileSystemStoragePathSourceConfig.ServableVersionPolicy model_version_policy =
+  // (This can belon changelond oncelon a modelonl is in selonrving.)
+  FilelonSystelonmStoragelonPathSourcelonConfig.SelonrvablelonVelonrsionPolicy modelonl_velonrsion_policy =
       7;
 
-  // String labels to associate with versions of the model, allowing inference
-  // queries to refer to versions by label instead of number. Multiple labels
-  // can map to the same version, but not vice-versa.
+  // String labelonls to associatelon with velonrsions of thelon modelonl, allowing infelonrelonncelon
+  // quelonrielons to relonfelonr to velonrsions by labelonl instelonad of numbelonr. Multiplelon labelonls
+  // can map to thelon samelon velonrsion, but not vicelon-velonrsa.
   //
-  // An envisioned use-case for these labels is canarying tentative versions.
-  // For example, one can assign labels "stable" and "canary" to two specific
-  // versions. Perhaps initially "stable" is assigned to version 0 and "canary"
-  // to version 1. Once version 1 passes canary, one can shift the "stable"
-  // label to refer to version 1 (at that point both labels map to the same
-  // version -- version 1 -- which is fine). Later once version 2 is ready to
-  // canary one can move the "canary" label to version 2. And so on.
-  map<string, int64> version_labels = 8;
+  // An elonnvisionelond uselon-caselon for thelonselon labelonls is canarying telonntativelon velonrsions.
+  // For elonxamplelon, onelon can assign labelonls "stablelon" and "canary" to two speloncific
+  // velonrsions. Pelonrhaps initially "stablelon" is assignelond to velonrsion 0 and "canary"
+  // to velonrsion 1. Oncelon velonrsion 1 passelons canary, onelon can shift thelon "stablelon"
+  // labelonl to relonfelonr to velonrsion 1 (at that point both labelonls map to thelon samelon
+  // velonrsion -- velonrsion 1 -- which is finelon). Latelonr oncelon velonrsion 2 is relonady to
+  // canary onelon can movelon thelon "canary" labelonl to velonrsion 2. And so on.
+  map<string, int64> velonrsion_labelonls = 8;
 
-  // Configures logging requests and responses, to the model.
+  // Configurelons logging relonquelonsts and relonsponselons, to thelon modelonl.
   //
-  // (This can be changed once a model is in serving.)
+  // (This can belon changelond oncelon a modelonl is in selonrving.)
   LoggingConfig logging_config = 6;
 }
 
-// Static list of models to be loaded for serving.
-message ModelConfigList {
-  repeated ModelConfig config = 1;
+// Static list of modelonls to belon loadelond for selonrving.
+melonssagelon ModelonlConfigList {
+  relonpelonatelond ModelonlConfig config = 1;
 }
 
-// ModelServer config.
-message ModelServerConfig {
-  // ModelServer takes either a static file-based model config list or an Any
-  // proto representing custom model config that is fetched dynamically at
-  // runtime (through network RPC, custom service, etc.).
-  oneof config {
-    ModelConfigList model_config_list = 1;
-    google.protobuf.Any custom_model_config = 2;
+// ModelonlSelonrvelonr config.
+melonssagelon ModelonlSelonrvelonrConfig {
+  // ModelonlSelonrvelonr takelons elonithelonr a static filelon-baselond modelonl config list or an Any
+  // proto relonprelonselonnting custom modelonl config that is felontchelond dynamically at
+  // runtimelon (through nelontwork RPC, custom selonrvicelon, elontc.).
+  onelonof config {
+    ModelonlConfigList modelonl_config_list = 1;
+    googlelon.protobuf.Any custom_modelonl_config = 2;
   }
 }

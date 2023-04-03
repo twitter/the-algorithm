@@ -1,41 +1,41 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.UserFollowedTopicsCountFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.candidate_source.topics.FollowedTopicsCandidateSource
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyView
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.UselonrFollowelondTopicsCountFelonaturelon
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.topics.FollowelondTopicsCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyVielonw
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class FollowedTopicsQueryFeatureHydrator @Inject() (
-  followedTopicsCandidateSource: FollowedTopicsCandidateSource)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@Singlelonton
+caselon class FollowelondTopicsQuelonryFelonaturelonHydrator @Injelonct() (
+  followelondTopicsCandidatelonSourcelon: FollowelondTopicsCandidatelonSourcelon)
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("FollowedTopics")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("FollowelondTopics")
 
-  override val features: Set[Feature[_, _]] = Set(UserFollowedTopicsCountFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(UselonrFollowelondTopicsCountFelonaturelon)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val request: StratoKeyView[Long, Unit] = StratoKeyView(query.getRequiredUserId, Unit)
-    followedTopicsCandidateSource(request)
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    val relonquelonst: StratoKelonyVielonw[Long, Unit] = StratoKelonyVielonw(quelonry.gelontRelonquirelondUselonrId, Unit)
+    followelondTopicsCandidatelonSourcelon(relonquelonst)
       .map { topics =>
-        FeatureMapBuilder().add(UserFollowedTopicsCountFeature, Some(topics.size)).build()
-      }.handle {
-        case _ => FeatureMapBuilder().add(UserFollowedTopicsCountFeature, None).build()
+        FelonaturelonMapBuildelonr().add(UselonrFollowelondTopicsCountFelonaturelon, Somelon(topics.sizelon)).build()
+      }.handlelon {
+        caselon _ => FelonaturelonMapBuildelonr().add(UselonrFollowelondTopicsCountFelonaturelon, Nonelon).build()
       }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.9),
-    HomeMixerAlertConfig.BusinessHours.defaultLatencyAlert(1500.millis)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.9),
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultLatelonncyAlelonrt(1500.millis)
   )
 }

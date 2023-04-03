@@ -1,147 +1,147 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.reflect.ClassTag
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import scala.relonflelonct.ClassTag
 
-sealed trait SubpoolIncludeTypes
+selonalelond trait SubpoolIncludelonTypelons
 
-trait IncludeInSubpool[-Query <: PipelineQuery] extends SubpoolIncludeTypes {
+trait IncludelonInSubpool[-Quelonry <: PipelonlinelonQuelonry] elonxtelonnds SubpoolIncludelonTypelons {
 
   /**
-   * Given the `query`, current `remainingCandidate`, and the `result`,
-   * returns whether the specific `remainingCandidate` should be passed into the
-   * [[SelectFromSubpoolCandidates]]'s [[SelectFromSubpoolCandidates.selector]]
+   * Givelonn thelon `quelonry`, currelonnt `relonmainingCandidatelon`, and thelon `relonsult`,
+   * relonturns whelonthelonr thelon speloncific `relonmainingCandidatelon` should belon passelond into thelon
+   * [[SelonlelonctFromSubpoolCandidatelons]]'s [[SelonlelonctFromSubpoolCandidatelons.selonlelonctor]]
    *
-   * @note the `result` contains the [[SelectorResult.result]] that was passed into this selector,
-   *       so each `remainingCandidate` will get the same `result` Seq.
+   * @notelon thelon `relonsult` contains thelon [[SelonlelonctorRelonsult.relonsult]] that was passelond into this selonlelonctor,
+   *       so elonach `relonmainingCandidatelon` will gelont thelon samelon `relonsult` Selonq.
    */
-  def apply(
-    query: Query,
-    remainingCandidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
-  ): Boolean
+  delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelon: CandidatelonWithDelontails,
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): Boolelonan
 }
 
-case class IncludeCandidateTypeInSubpool[CandidateType <: UniversalNoun[_]](
+caselon class IncludelonCandidatelonTypelonInSubpool[CandidatelonTypelon <: UnivelonrsalNoun[_]](
 )(
-  implicit tag: ClassTag[CandidateType])
-    extends IncludeInSubpool[PipelineQuery] {
+  implicit tag: ClassTag[CandidatelonTypelon])
+    elonxtelonnds IncludelonInSubpool[PipelonlinelonQuelonry] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidate: CandidateWithDetails,
-    result: Seq[CandidateWithDetails]
-  ): Boolean = remainingCandidate.isCandidateType[CandidateType]()
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelon: CandidatelonWithDelontails,
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): Boolelonan = relonmainingCandidatelon.isCandidatelonTypelon[CandidatelonTypelon]()
 }
 
-trait IncludeSetInSubpool[-Query <: PipelineQuery] extends SubpoolIncludeTypes {
+trait IncludelonSelontInSubpool[-Quelonry <: PipelonlinelonQuelonry] elonxtelonnds SubpoolIncludelonTypelons {
 
   /**
-   * Given the `query`, all `remainingCandidates`` and `results`,
-   * returns a Set of which candidates should be included in the subpool.
+   * Givelonn thelon `quelonry`, all `relonmainingCandidatelons`` and `relonsults`,
+   * relonturns a Selont of which candidatelons should belon includelond in thelon subpool.
    *
-   * @note the returned set is only used to determine subpool membership. Mutating the candidates
-   *       is invalid and won't work. The order of the candidates will be preserved from the current
-   *       order of the remaining candidates sequence.
+   * @notelon thelon relonturnelond selont is only uselond to delontelonrminelon subpool melonmbelonrship. Mutating thelon candidatelons
+   *       is invalid and won't work. Thelon ordelonr of thelon candidatelons will belon prelonselonrvelond from thelon currelonnt
+   *       ordelonr of thelon relonmaining candidatelons selonquelonncelon.
    */
-  def apply(
-    query: Query,
-    remainingCandidate: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): Set[CandidateWithDetails]
+  delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelon: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): Selont[CandidatelonWithDelontails]
 }
 
-sealed trait SubpoolRemainingCandidatesHandler
+selonalelond trait SubpoolRelonmainingCandidatelonsHandlelonr
 
 /**
- * Candidates remaining in the subpool after running the selector will be
- * prepended to the beginning of the [[SelectorResult.remainingCandidates]]
+ * Candidatelons relonmaining in thelon subpool aftelonr running thelon selonlelonctor will belon
+ * prelonpelonndelond to thelon belonginning of thelon [[SelonlelonctorRelonsult.relonmainingCandidatelons]]
  */
-case object PrependToBeginningOfRemainingCandidates extends SubpoolRemainingCandidatesHandler
+caselon objelonct PrelonpelonndToBelonginningOfRelonmainingCandidatelons elonxtelonnds SubpoolRelonmainingCandidatelonsHandlelonr
 
 /**
- * Candidates remaining in the subpool after running the selector will be
- * appended to the end of the [[SelectorResult.remainingCandidates]]
+ * Candidatelons relonmaining in thelon subpool aftelonr running thelon selonlelonctor will belon
+ * appelonndelond to thelon elonnd of thelon [[SelonlelonctorRelonsult.relonmainingCandidatelons]]
  */
-case object AppendToEndOfRemainingCandidates extends SubpoolRemainingCandidatesHandler
+caselon objelonct AppelonndToelonndOfRelonmainingCandidatelons elonxtelonnds SubpoolRelonmainingCandidatelonsHandlelonr
 
 /**
- * Creates a subpool of all `remainingCandidates` for which [[subpoolInclude]] resolves to true
- * (in the same order as the original `remainingCandidates`) and runs the [[selector]] with the
- * subpool passed in as the `remainingCandidates`.
+ * Crelonatelons a subpool of all `relonmainingCandidatelons` for which [[subpoolIncludelon]] relonsolvelons to truelon
+ * (in thelon samelon ordelonr as thelon original `relonmainingCandidatelons`) and runs thelon [[selonlelonctor]] with thelon
+ * subpool passelond in as thelon `relonmainingCandidatelons`.
  *
- * Most customers want to use a IncludeInSubpool that chooses if each candidate should be included
- * in the subpool.
- * Where necessary, IncludeSetInSubpool allows you to define them in bulk w/ a Set.
+ * Most customelonrs want to uselon a IncludelonInSubpool that chooselons if elonach candidatelon should belon includelond
+ * in thelon subpool.
+ * Whelonrelon neloncelonssary, IncludelonSelontInSubpool allows you to delonfinelon thelonm in bulk w/ a Selont.
  *
- * @note any candidates in the subpool which are not added to the [[SelectorResult.result]]
- *       will be treated according to the [[SubpoolRemainingCandidatesHandler]]
+ * @notelon any candidatelons in thelon subpool which arelon not addelond to thelon [[SelonlelonctorRelonsult.relonsult]]
+ *       will belon trelonatelond according to thelon [[SubpoolRelonmainingCandidatelonsHandlelonr]]
  */
-class SelectFromSubpoolCandidates[-Query <: PipelineQuery] private[selector] (
-  val selector: Selector[Query],
-  subpoolInclude: SubpoolIncludeTypes,
-  subpoolRemainingCandidatesHandler: SubpoolRemainingCandidatesHandler =
-    AppendToEndOfRemainingCandidates)
-    extends Selector[Query] {
+class SelonlelonctFromSubpoolCandidatelons[-Quelonry <: PipelonlinelonQuelonry] privatelon[selonlelonctor] (
+  val selonlelonctor: Selonlelonctor[Quelonry],
+  subpoolIncludelon: SubpoolIncludelonTypelons,
+  subpoolRelonmainingCandidatelonsHandlelonr: SubpoolRelonmainingCandidatelonsHandlelonr =
+    AppelonndToelonndOfRelonmainingCandidatelons)
+    elonxtelonnds Selonlelonctor[Quelonry] {
 
-  override val pipelineScope: CandidateScope = selector.pipelineScope
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = selonlelonctor.pipelonlinelonScopelon
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
 
-    val (selectedCandidates, otherCandidates) = subpoolInclude match {
-      case includeInSubpool: IncludeInSubpool[Query] =>
-        remainingCandidates.partition(candidate =>
-          pipelineScope.contains(candidate) && includeInSubpool(query, candidate, result))
-      case includeSetInSubpool: IncludeSetInSubpool[Query] =>
-        val includeSet =
-          includeSetInSubpool(query, remainingCandidates.filter(pipelineScope.contains), result)
-        remainingCandidates.partition(candidate => includeSet.contains(candidate))
+    val (selonlelonctelondCandidatelons, othelonrCandidatelons) = subpoolIncludelon match {
+      caselon includelonInSubpool: IncludelonInSubpool[Quelonry] =>
+        relonmainingCandidatelons.partition(candidatelon =>
+          pipelonlinelonScopelon.contains(candidatelon) && includelonInSubpool(quelonry, candidatelon, relonsult))
+      caselon includelonSelontInSubpool: IncludelonSelontInSubpool[Quelonry] =>
+        val includelonSelont =
+          includelonSelontInSubpool(quelonry, relonmainingCandidatelons.filtelonr(pipelonlinelonScopelon.contains), relonsult)
+        relonmainingCandidatelons.partition(candidatelon => includelonSelont.contains(candidatelon))
     }
 
-    val underlyingSelectorResult = selector.apply(query, selectedCandidates, result)
-    val remainingCandidatesWithSubpoolRemainingCandidates =
-      subpoolRemainingCandidatesHandler match {
-        case AppendToEndOfRemainingCandidates =>
-          otherCandidates ++ underlyingSelectorResult.remainingCandidates
-        case PrependToBeginningOfRemainingCandidates =>
-          underlyingSelectorResult.remainingCandidates ++ otherCandidates
+    val undelonrlyingSelonlelonctorRelonsult = selonlelonctor.apply(quelonry, selonlelonctelondCandidatelons, relonsult)
+    val relonmainingCandidatelonsWithSubpoolRelonmainingCandidatelons =
+      subpoolRelonmainingCandidatelonsHandlelonr match {
+        caselon AppelonndToelonndOfRelonmainingCandidatelons =>
+          othelonrCandidatelons ++ undelonrlyingSelonlelonctorRelonsult.relonmainingCandidatelons
+        caselon PrelonpelonndToBelonginningOfRelonmainingCandidatelons =>
+          undelonrlyingSelonlelonctorRelonsult.relonmainingCandidatelons ++ othelonrCandidatelons
       }
-    underlyingSelectorResult.copy(remainingCandidates =
-      remainingCandidatesWithSubpoolRemainingCandidates)
+    undelonrlyingSelonlelonctorRelonsult.copy(relonmainingCandidatelons =
+      relonmainingCandidatelonsWithSubpoolRelonmainingCandidatelons)
   }
 
-  override def toString: String = s"SelectFromSubpoolCandidates(${selector.toString}))"
+  ovelonrridelon delonf toString: String = s"SelonlelonctFromSubpoolCandidatelons(${selonlelonctor.toString}))"
 }
 
-object SelectFromSubpoolCandidates {
-  def apply[Query <: PipelineQuery](
-    selector: Selector[Query],
-    includeInSubpool: IncludeInSubpool[Query],
-    subpoolRemainingCandidatesHandler: SubpoolRemainingCandidatesHandler =
-      AppendToEndOfRemainingCandidates
-  ) = new SelectFromSubpoolCandidates[Query](
-    selector,
-    includeInSubpool,
-    subpoolRemainingCandidatesHandler
+objelonct SelonlelonctFromSubpoolCandidatelons {
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    selonlelonctor: Selonlelonctor[Quelonry],
+    includelonInSubpool: IncludelonInSubpool[Quelonry],
+    subpoolRelonmainingCandidatelonsHandlelonr: SubpoolRelonmainingCandidatelonsHandlelonr =
+      AppelonndToelonndOfRelonmainingCandidatelons
+  ) = nelonw SelonlelonctFromSubpoolCandidatelons[Quelonry](
+    selonlelonctor,
+    includelonInSubpool,
+    subpoolRelonmainingCandidatelonsHandlelonr
   )
 
-  def includeSet[Query <: PipelineQuery](
-    selector: Selector[Query],
-    includeSetInSubpool: IncludeSetInSubpool[Query],
-    subpoolRemainingCandidatesHandler: SubpoolRemainingCandidatesHandler =
-      AppendToEndOfRemainingCandidates
-  ) = new SelectFromSubpoolCandidates[Query](
-    selector,
-    includeSetInSubpool,
-    subpoolRemainingCandidatesHandler
+  delonf includelonSelont[Quelonry <: PipelonlinelonQuelonry](
+    selonlelonctor: Selonlelonctor[Quelonry],
+    includelonSelontInSubpool: IncludelonSelontInSubpool[Quelonry],
+    subpoolRelonmainingCandidatelonsHandlelonr: SubpoolRelonmainingCandidatelonsHandlelonr =
+      AppelonndToelonndOfRelonmainingCandidatelons
+  ) = nelonw SelonlelonctFromSubpoolCandidatelons[Quelonry](
+    selonlelonctor,
+    includelonSelontInSubpool,
+    subpoolRelonmainingCandidatelonsHandlelonr
   )
 }

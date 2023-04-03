@@ -1,268 +1,268 @@
-package com.twitter.simclusters_v2.scalding.mbcg
+packagelon com.twittelonr.simclustelonrs_v2.scalding.mbcg
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.cortex.deepbird.runtime.prediction_engine.TensorflowPredictionEngineConfig
-import com.twitter.cortex.ml.embeddings.common.UserKind
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.ml.api.FeatureUtil
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.embedding.Embedding
-import com.twitter.ml.api.thriftscala
-import com.twitter.ml.api.thriftscala.{GeneralTensor => ThriftGeneralTensor}
-import com.twitter.ml.api.util.FDsl._
-import com.twitter.ml.api.util.ScalaToJavaDataRecordConversions
-import com.twitter.ml.featurestore.lib.embedding.EmbeddingWithEntity
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Execution
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecution
-import com.twitter.scalding_internal.job.analytics_batch.AnalyticsBatchExecutionArgs
-import com.twitter.scalding_internal.job.analytics_batch.BatchDescription
-import com.twitter.scalding_internal.job.analytics_batch.BatchFirstTime
-import com.twitter.scalding_internal.job.analytics_batch.BatchIncrement
-import com.twitter.scalding_internal.job.analytics_batch.BatchWidth
-import com.twitter.scalding_internal.job.analytics_batch.TwitterScheduledExecutionApp
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.ExploreMbcgUserEmbeddingsKvScalaDataset
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor
-import com.twitter.twml.runtime.scalding.TensorflowBatchPredictor.ScaldingThreadingConfig
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
-import java.util.TimeZone
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.cortelonx.delonelonpbird.runtimelon.prelondiction_elonnginelon.TelonnsorflowPrelondictionelonnginelonConfig
+import com.twittelonr.cortelonx.ml.elonmbelonddings.common.UselonrKind
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.ml.api.FelonaturelonUtil
+import com.twittelonr.ml.api.constant.SharelondFelonaturelons
+import com.twittelonr.ml.api.elonmbelondding.elonmbelondding
+import com.twittelonr.ml.api.thriftscala
+import com.twittelonr.ml.api.thriftscala.{GelonnelonralTelonnsor => ThriftGelonnelonralTelonnsor}
+import com.twittelonr.ml.api.util.FDsl._
+import com.twittelonr.ml.api.util.ScalaToJavaDataReloncordConvelonrsions
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonmbelondding.elonmbelonddingWithelonntity
+import com.twittelonr.scalding.Args
+import com.twittelonr.scalding.DatelonParselonr
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.D
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossDC
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.AnalyticsBatchelonxeloncution
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.AnalyticsBatchelonxeloncutionArgs
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchDelonscription
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchFirstTimelon
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchIncrelonmelonnt
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.BatchWidth
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.TwittelonrSchelondulelondelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AdhocKelonyValSourcelons
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.elonxplorelonMbcgUselonrelonmbelonddingsKvScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
+import com.twittelonr.twml.runtimelon.scalding.TelonnsorflowBatchPrelondictor
+import com.twittelonr.twml.runtimelon.scalding.TelonnsorflowBatchPrelondictor.ScaldingThrelonadingConfig
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import com.twittelonr.uselonrsourcelon.snapshot.flat.thriftscala.FlatUselonr
+import java.util.TimelonZonelon
 
 /*
-This class does the following:
-1) Get user IIAPE Simcluster features that use LogFav scores
-2) Filter them down to users whose accounts are not deactivated or suspended
-3) Convert the remaining user Simclusters into DataRecords using UserSimclusterRecordAdapter
-4) Run inference using a TF model exported with a DataRecord compatible serving signature
-5) Write to MH using a KeyVal format
+This class doelons thelon following:
+1) Gelont uselonr IIAPelon Simclustelonr felonaturelons that uselon LogFav scorelons
+2) Filtelonr thelonm down to uselonrs whoselon accounts arelon not delonactivatelond or suspelonndelond
+3) Convelonrt thelon relonmaining uselonr Simclustelonrs into DataReloncords using UselonrSimclustelonrReloncordAdaptelonr
+4) Run infelonrelonncelon using a TF modelonl elonxportelond with a DataReloncord compatiblelon selonrving signaturelon
+5) Writelon to MH using a KelonyVal format
  */
-trait UserEmbeddingGenerationTrait {
-  implicit val tz: TimeZone = DateOps.UTC
-  implicit val dp: DateParser = DateParser.default
-  implicit val updateHours = 12
+trait UselonrelonmbelonddingGelonnelonrationTrait {
+  implicit val tz: TimelonZonelon = DatelonOps.UTC
+  implicit val dp: DatelonParselonr = DatelonParselonr.delonfault
+  implicit val updatelonHours = 12
 
-  private val inputNodeName = "request:0"
-  private val outputNodeName = "response:0"
-  private val functionSignatureName = "serve"
-  private val predictionRequestTimeout = 5.seconds
-  private val IIAPEHdfsPath: String =
-    "/atla/proc3/user/cassowary/manhattan_sequence_files/interested_in_from_ape/Model20m145k2020"
+  privatelon val inputNodelonNamelon = "relonquelonst:0"
+  privatelon val outputNodelonNamelon = "relonsponselon:0"
+  privatelon val functionSignaturelonNamelon = "selonrvelon"
+  privatelon val prelondictionRelonquelonstTimelonout = 5.selonconds
+  privatelon val IIAPelonHdfsPath: String =
+    "/atla/proc3/uselonr/cassowary/manhattan_selonquelonncelon_filelons/intelonrelonstelond_in_from_apelon/Modelonl20m145k2020"
 
-  private val DEFAULT_F2V_VECTOR: Embedding[Float] = Embedding(Array.fill[Float](200)(0.0f))
+  privatelon val DelonFAULT_F2V_VelonCTOR: elonmbelondding[Float] = elonmbelondding(Array.fill[Float](200)(0.0f))
 
-  def getPredictionEngine(modelName: String, modelPath: String): TensorflowBatchPredictor = {
-    val config = TensorflowPredictionEngineConfig(
-      modelName = modelName,
-      modelSource = modelPath,
-      threadingConfig = Some(ScaldingThreadingConfig),
-      defaultInputNode = inputNodeName,
-      defaultOutputNode = outputNodeName,
-      functionSignatureName = functionSignatureName,
-      statsReceiver = NullStatsReceiver
+  delonf gelontPrelondictionelonnginelon(modelonlNamelon: String, modelonlPath: String): TelonnsorflowBatchPrelondictor = {
+    val config = TelonnsorflowPrelondictionelonnginelonConfig(
+      modelonlNamelon = modelonlNamelon,
+      modelonlSourcelon = modelonlPath,
+      threlonadingConfig = Somelon(ScaldingThrelonadingConfig),
+      delonfaultInputNodelon = inputNodelonNamelon,
+      delonfaultOutputNodelon = outputNodelonNamelon,
+      functionSignaturelonNamelon = functionSignaturelonNamelon,
+      statsReloncelonivelonr = NullStatsReloncelonivelonr
     )
-    TensorflowBatchPredictor(config, predictionRequestTimeout)
+    TelonnsorflowBatchPrelondictor(config, prelondictionRelonquelonstTimelonout)
   }
 
-  def getEmbeddingWithEntity(userEmbeddingTensor: ThriftGeneralTensor, userId: Long) = {
-    userEmbeddingTensor match {
-      case ThriftGeneralTensor.RawTypedTensor(rawTensor) =>
-        val embedding =
-          thriftscala.Embedding(Some(rawTensor))
-        KeyVal(userId, embedding)
-      case _ => throw new IllegalArgumentException("tensor is wrong type!")
+  delonf gelontelonmbelonddingWithelonntity(uselonrelonmbelonddingTelonnsor: ThriftGelonnelonralTelonnsor, uselonrId: Long) = {
+    uselonrelonmbelonddingTelonnsor match {
+      caselon ThriftGelonnelonralTelonnsor.RawTypelondTelonnsor(rawTelonnsor) =>
+        val elonmbelondding =
+          thriftscala.elonmbelondding(Somelon(rawTelonnsor))
+        KelonyVal(uselonrId, elonmbelondding)
+      caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption("telonnsor is wrong typelon!")
     }
   }
 
-  def writeUserEmbedding(
-    result: TypedPipe[KeyVal[Long, thriftscala.Embedding]],
+  delonf writelonUselonrelonmbelondding(
+    relonsult: TypelondPipelon[KelonyVal[Long, thriftscala.elonmbelondding]],
     args: Args
-  ): Execution[Unit] = {
-    result.writeDALVersionedKeyValExecution(
-      ExploreMbcgUserEmbeddingsKvScalaDataset,
+  ): elonxeloncution[Unit] = {
+    relonsult.writelonDALVelonrsionelondKelonyValelonxeloncution(
+      elonxplorelonMbcgUselonrelonmbelonddingsKvScalaDataselont,
       D.Suffix(
-        args.getOrElse("kvs_output_path", "/user/cassowary/explore_mbcg/user_kvs_store/test")
+        args.gelontOrelonlselon("kvs_output_path", "/uselonr/cassowary/elonxplorelon_mbcg/uselonr_kvs_storelon/telonst")
       )
     )
   }
 
-  def getUserSimclusterFeatures(
+  delonf gelontUselonrSimclustelonrFelonaturelons(
     args: Args
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(Long, ClustersUserIsInterestedIn)] = {
-    val userSimclusterEmbeddingTypedPipe = TypedPipe
-      .from(AdhocKeyValSources.interestedInSource(IIAPEHdfsPath))
-      .collect {
-        case (
-              userId,
-              iIAPE: ClustersUserIsInterestedIn
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
+    val uselonrSimclustelonrelonmbelonddingTypelondPipelon = TypelondPipelon
+      .from(AdhocKelonyValSourcelons.intelonrelonstelondInSourcelon(IIAPelonHdfsPath))
+      .collelonct {
+        caselon (
+              uselonrId,
+              iIAPelon: ClustelonrsUselonrIsIntelonrelonstelondIn
             ) =>
-          (userId.toLong, iIAPE)
+          (uselonrId.toLong, iIAPelon)
       }
 
-    userSimclusterEmbeddingTypedPipe
+    uselonrSimclustelonrelonmbelonddingTypelondPipelon
   }
 
-  def getUserSource()(implicit dateRange: DateRange): TypedPipe[FlatUser] = {
-    val userSource =
+  delonf gelontUselonrSourcelon()(implicit datelonRangelon: DatelonRangelon): TypelondPipelon[FlatUselonr] = {
+    val uselonrSourcelon =
       DAL
-        .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7))
-        .withRemoteReadPolicy(AllowCrossDC)
-        .toTypedPipe
+        .relonadMostReloncelonntSnapshotNoOldelonrThan(UselonrsourcelonFlatScalaDataselont, Days(7))
+        .withRelonmotelonRelonadPolicy(AllowCrossDC)
+        .toTypelondPipelon
 
-    userSource
+    uselonrSourcelon
   }
 
-  def run(args: Args)(implicit dateRange: DateRange, id: UniqueID) = {
-    val userSimclusterDataset = getUserSimclusterFeatures(args)
-    val userSourceDataset = getUserSource()
+  delonf run(args: Args)(implicit datelonRangelon: DatelonRangelon, id: UniquelonID) = {
+    val uselonrSimclustelonrDataselont = gelontUselonrSimclustelonrFelonaturelons(args)
+    val uselonrSourcelonDataselont = gelontUselonrSourcelon()
 
-    val inputEmbeddingFormat = UserKind.parser
-      .getEmbeddingFormat(args, "f2v_input", Some(dateRange.prepend(Days(14))))
-    val f2vConsumerEmbeddings = inputEmbeddingFormat.getEmbeddings
+    val inputelonmbelonddingFormat = UselonrKind.parselonr
+      .gelontelonmbelonddingFormat(args, "f2v_input", Somelon(datelonRangelon.prelonpelonnd(Days(14))))
+    val f2vConsumelonrelonmbelonddings = inputelonmbelonddingFormat.gelontelonmbelonddings
       .map {
-        case EmbeddingWithEntity(userId, embedding) => (userId.userId, embedding)
+        caselon elonmbelonddingWithelonntity(uselonrId, elonmbelondding) => (uselonrId.uselonrId, elonmbelondding)
       }
 
-    val filteredUserPipe = userSimclusterDataset
+    val filtelonrelondUselonrPipelon = uselonrSimclustelonrDataselont
       .groupBy(_._1)
-      .join(userSourceDataset.groupBy(_.id.getOrElse(-1L)))
+      .join(uselonrSourcelonDataselont.groupBy(_.id.gelontOrelonlselon(-1L)))
       .map {
-        case (userId, ((_, simclusterEmbedding), userInfo)) =>
-          (userId, simclusterEmbedding, userInfo)
+        caselon (uselonrId, ((_, simclustelonrelonmbelondding), uselonrInfo)) =>
+          (uselonrId, simclustelonrelonmbelondding, uselonrInfo)
       }
-      .filter {
-        case (_, _, userInfo) =>
-          !userInfo.deactivated.contains(true) && !userInfo.suspended
-            .contains(true)
+      .filtelonr {
+        caselon (_, _, uselonrInfo) =>
+          !uselonrInfo.delonactivatelond.contains(truelon) && !uselonrInfo.suspelonndelond
+            .contains(truelon)
       }
       .map {
-        case (userId, simclusterEmbedding, _) =>
-          (userId, simclusterEmbedding)
+        caselon (uselonrId, simclustelonrelonmbelondding, _) =>
+          (uselonrId, simclustelonrelonmbelondding)
       }
 
-    val dataRecordsPipe = filteredUserPipe
+    val dataReloncordsPipelon = filtelonrelondUselonrPipelon
       .groupBy(_._1)
-      .leftJoin(f2vConsumerEmbeddings.groupBy(_._1))
-      .values
+      .lelonftJoin(f2vConsumelonrelonmbelonddings.groupBy(_._1))
+      .valuelons
       .map {
-        case ((userId1, simclusterEmbedding), Some((userId2, f2vEmbedding))) =>
-          UserSimclusterRecordAdapter.adaptToDataRecord(
-            (userId1, simclusterEmbedding, f2vEmbedding))
-        case ((userId, simclusterEmbedding), None) =>
-          UserSimclusterRecordAdapter.adaptToDataRecord(
-            (userId, simclusterEmbedding, DEFAULT_F2V_VECTOR))
+        caselon ((uselonrId1, simclustelonrelonmbelondding), Somelon((uselonrId2, f2velonmbelondding))) =>
+          UselonrSimclustelonrReloncordAdaptelonr.adaptToDataReloncord(
+            (uselonrId1, simclustelonrelonmbelondding, f2velonmbelondding))
+        caselon ((uselonrId, simclustelonrelonmbelondding), Nonelon) =>
+          UselonrSimclustelonrReloncordAdaptelonr.adaptToDataReloncord(
+            (uselonrId, simclustelonrelonmbelondding, DelonFAULT_F2V_VelonCTOR))
       }
 
-    val modelPath = args.getOrElse("model_path", "")
-    val batchPredictor = getPredictionEngine(modelName = "tweet_model", modelPath = modelPath)
-    val userIdFeature = SharedFeatures.USER_ID
-    val userEmbeddingName = args.getOrElse("user_embedding_name", "output")
+    val modelonlPath = args.gelontOrelonlselon("modelonl_path", "")
+    val batchPrelondictor = gelontPrelondictionelonnginelon(modelonlNamelon = "twelonelont_modelonl", modelonlPath = modelonlPath)
+    val uselonrIdFelonaturelon = SharelondFelonaturelons.USelonR_ID
+    val uselonrelonmbelonddingNamelon = args.gelontOrelonlselon("uselonr_elonmbelondding_namelon", "output")
 
-    val outputPipe = batchPredictor.predict(dataRecordsPipe).map {
-      case (originalDataRecord, predictedDataRecord) =>
-        val userId = originalDataRecord.getFeatureValue(userIdFeature)
-        val scalaPredictedDataRecord =
-          ScalaToJavaDataRecordConversions.javaDataRecord2ScalaDataRecord(predictedDataRecord)
-        val userEmbeddingTensor =
-          scalaPredictedDataRecord.tensors.get(FeatureUtil.featureIdForName(userEmbeddingName))
-        val userEmbeddingWithEntity = getEmbeddingWithEntity(userEmbeddingTensor, userId)
-        userEmbeddingWithEntity
+    val outputPipelon = batchPrelondictor.prelondict(dataReloncordsPipelon).map {
+      caselon (originalDataReloncord, prelondictelondDataReloncord) =>
+        val uselonrId = originalDataReloncord.gelontFelonaturelonValuelon(uselonrIdFelonaturelon)
+        val scalaPrelondictelondDataReloncord =
+          ScalaToJavaDataReloncordConvelonrsions.javaDataReloncord2ScalaDataReloncord(prelondictelondDataReloncord)
+        val uselonrelonmbelonddingTelonnsor =
+          scalaPrelondictelondDataReloncord.telonnsors.gelont(FelonaturelonUtil.felonaturelonIdForNamelon(uselonrelonmbelonddingNamelon))
+        val uselonrelonmbelonddingWithelonntity = gelontelonmbelonddingWithelonntity(uselonrelonmbelonddingTelonnsor, uselonrId)
+        uselonrelonmbelonddingWithelonntity
     }
 
-    Util.printCounters(writeUserEmbedding(outputPipe, args))
+    Util.printCountelonrs(writelonUselonrelonmbelondding(outputPipelon, args))
   }
 }
 
-object UserEmbeddingGenerationAdhocJob
-    extends TwitterExecutionApp
-    with UserEmbeddingGenerationTrait {
+objelonct UselonrelonmbelonddingGelonnelonrationAdhocJob
+    elonxtelonnds TwittelonrelonxeloncutionApp
+    with UselonrelonmbelonddingGelonnelonrationTrait {
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val dateRange: DateRange = DateRange.parse(args.list("dateRange"))
+  ovelonrridelon delonf job: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uid =>
+      elonxeloncution.withArgs { args =>
+        implicit val datelonRangelon: DatelonRangelon = DatelonRangelon.parselon(args.list("datelonRangelon"))
         run(args)
       }
     }
 }
 
-object UserEmbeddingGenerationBatchJob
-    extends TwitterScheduledExecutionApp
-    with UserEmbeddingGenerationTrait {
+objelonct UselonrelonmbelonddingGelonnelonrationBatchJob
+    elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp
+    with UselonrelonmbelonddingGelonnelonrationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2021-12-04")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
-          batchDesc = BatchDescription(getClass.getName),
-          firstTime = batchFirstTime,
-          batchIncrement = BatchIncrement(Hours(updateHours)),
-          batchWidth = Some(BatchWidth(Hours(updateHours)))
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uid =>
+      elonxeloncution.withArgs { args =>
+        implicit val tz: TimelonZonelon = DatelonOps.UTC
+        val batchFirstTimelon = BatchFirstTimelon(RichDatelon("2021-12-04")(tz, DatelonParselonr.delonfault))
+        val analyticsArgs = AnalyticsBatchelonxeloncutionArgs(
+          batchDelonsc = BatchDelonscription(gelontClass.gelontNamelon),
+          firstTimelon = batchFirstTimelon,
+          batchIncrelonmelonnt = BatchIncrelonmelonnt(Hours(updatelonHours)),
+          batchWidth = Somelon(BatchWidth(Hours(updatelonHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchelonxeloncution(analyticsArgs) { implicit datelonRangelon =>
           run(args)
         }
       }
     }
 }
 
-object UserEmbeddingGenerationBatchJobAlternate
-    extends TwitterScheduledExecutionApp
-    with UserEmbeddingGenerationTrait {
+objelonct UselonrelonmbelonddingGelonnelonrationBatchJobAltelonrnatelon
+    elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp
+    with UselonrelonmbelonddingGelonnelonrationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2022-03-28")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
-          batchDesc = BatchDescription(getClass.getName),
-          firstTime = batchFirstTime,
-          batchIncrement = BatchIncrement(Hours(updateHours)),
-          batchWidth = Some(BatchWidth(Hours(updateHours)))
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uid =>
+      elonxeloncution.withArgs { args =>
+        implicit val tz: TimelonZonelon = DatelonOps.UTC
+        val batchFirstTimelon = BatchFirstTimelon(RichDatelon("2022-03-28")(tz, DatelonParselonr.delonfault))
+        val analyticsArgs = AnalyticsBatchelonxeloncutionArgs(
+          batchDelonsc = BatchDelonscription(gelontClass.gelontNamelon),
+          firstTimelon = batchFirstTimelon,
+          batchIncrelonmelonnt = BatchIncrelonmelonnt(Hours(updatelonHours)),
+          batchWidth = Somelon(BatchWidth(Hours(updatelonHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchelonxeloncution(analyticsArgs) { implicit datelonRangelon =>
           run(args)
         }
       }
     }
 }
 
-object UserEmbeddingGenerationBatchJobExperimental
-    extends TwitterScheduledExecutionApp
-    with UserEmbeddingGenerationTrait {
+objelonct UselonrelonmbelonddingGelonnelonrationBatchJobelonxpelonrimelonntal
+    elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp
+    with UselonrelonmbelonddingGelonnelonrationTrait {
 
-  override def scheduledJob: Execution[Unit] =
-    Execution.withId { implicit uid =>
-      Execution.withArgs { args =>
-        implicit val tz: TimeZone = DateOps.UTC
-        val batchFirstTime = BatchFirstTime(RichDate("2021-12-12")(tz, DateParser.default))
-        val analyticsArgs = AnalyticsBatchExecutionArgs(
-          batchDesc = BatchDescription(getClass.getName),
-          firstTime = batchFirstTime,
-          batchIncrement = BatchIncrement(Hours(updateHours)),
-          batchWidth = Some(BatchWidth(Hours(updateHours)))
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uid =>
+      elonxeloncution.withArgs { args =>
+        implicit val tz: TimelonZonelon = DatelonOps.UTC
+        val batchFirstTimelon = BatchFirstTimelon(RichDatelon("2021-12-12")(tz, DatelonParselonr.delonfault))
+        val analyticsArgs = AnalyticsBatchelonxeloncutionArgs(
+          batchDelonsc = BatchDelonscription(gelontClass.gelontNamelon),
+          firstTimelon = batchFirstTimelon,
+          batchIncrelonmelonnt = BatchIncrelonmelonnt(Hours(updatelonHours)),
+          batchWidth = Somelon(BatchWidth(Hours(updatelonHours)))
         )
 
-        AnalyticsBatchExecution(analyticsArgs) { implicit dateRange =>
+        AnalyticsBatchelonxeloncution(analyticsArgs) { implicit datelonRangelon =>
           run(args)
         }
       }

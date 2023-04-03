@@ -1,26 +1,26 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.logging.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.logging.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations.logging
 
-include "com/twitter/ads/adserver/adserver_common.thrift"
-include "reasons.thrift"
-include "tracking.thrift"
-include "scoring.thrift"
+includelon "com/twittelonr/ads/adselonrvelonr/adselonrvelonr_common.thrift"
+includelon "relonasons.thrift"
+includelon "tracking.thrift"
+includelon "scoring.thrift"
 
-// Offline equal of UserRecommendation
-struct OfflineUserRecommendation {
-    1: required i64 userId(personalDataType='UserId')
-    // reason for this suggestions, eg: social context
-    2: optional reasons.Reason reason
-    // present if it is a promoted account
-    3: optional adserver_common.AdImpression adImpression
-  // tracking token (unserialized) for attribution
-  4: optional tracking.TrackingToken trackingToken
-    // scoring details
-    5: optional scoring.ScoringDetails scoringDetails
-}(persisted='true', hasPersonalData='true')
+// Offlinelon elonqual of UselonrReloncommelonndation
+struct OfflinelonUselonrReloncommelonndation {
+    1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon='UselonrId')
+    // relonason for this suggelonstions, elong: social contelonxt
+    2: optional relonasons.Relonason relonason
+    // prelonselonnt if it is a promotelond account
+    3: optional adselonrvelonr_common.AdImprelonssion adImprelonssion
+  // tracking tokelonn (unselonrializelond) for attribution
+  4: optional tracking.TrackingTokelonn trackingTokelonn
+    // scoring delontails
+    5: optional scoring.ScoringDelontails scoringDelontails
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-// Offline equal of Recommendation
-union OfflineRecommendation {
-    1: OfflineUserRecommendation user
-}(persisted='true', hasPersonalData='true')
+// Offlinelon elonqual of Reloncommelonndation
+union OfflinelonReloncommelonndation {
+    1: OfflinelonUselonrReloncommelonndation uselonr
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')

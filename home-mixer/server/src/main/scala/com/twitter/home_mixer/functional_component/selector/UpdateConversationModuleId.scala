@@ -1,40 +1,40 @@
-package com.twitter.home_mixer.functional_component.selector
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.selonlelonctor
 
-import com.twitter.product_mixer.component_library.model.presentation.urt.UrtModulePresentation
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.prelonselonntation.urt.UrtModulelonPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon.PartitionelondCandidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * This selector updates the id of the conversation modules to be the head of the module's id.
+ * This selonlelonctor updatelons thelon id of thelon convelonrsation modulelons to belon thelon helonad of thelon modulelon's id.
  */
-case class UpdateConversationModuleId(
-  override val pipelineScope: CandidateScope)
-    extends Selector[PipelineQuery] {
+caselon class UpdatelonConvelonrsationModulelonId(
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon)
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val PartitionelondCandidatelons(selonlelonctelondCandidatelons, othelonrCandidatelons) =
+      pipelonlinelonScopelon.partition(relonmainingCandidatelons)
 
-    val updatedCandidates = selectedCandidates.map {
-      case module @ ModuleCandidateWithDetails(candidates, presentationOpt, _) =>
-        val updatedPresentation = presentationOpt.map {
-          case urtModule @ UrtModulePresentation(timelineModule) =>
-            urtModule.copy(timelineModule =
-              timelineModule.copy(id = candidates.head.candidateIdLong))
+    val updatelondCandidatelons = selonlelonctelondCandidatelons.map {
+      caselon modulelon @ ModulelonCandidatelonWithDelontails(candidatelons, prelonselonntationOpt, _) =>
+        val updatelondPrelonselonntation = prelonselonntationOpt.map {
+          caselon urtModulelon @ UrtModulelonPrelonselonntation(timelonlinelonModulelon) =>
+            urtModulelon.copy(timelonlinelonModulelon =
+              timelonlinelonModulelon.copy(id = candidatelons.helonad.candidatelonIdLong))
         }
-        module.copy(presentation = updatedPresentation)
-      case candidate => candidate
+        modulelon.copy(prelonselonntation = updatelondPrelonselonntation)
+      caselon candidatelon => candidatelon
     }
 
-    SelectorResult(remainingCandidates = updatedCandidates ++ otherCandidates, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = updatelondCandidatelons ++ othelonrCandidatelons, relonsult = relonsult)
   }
 }

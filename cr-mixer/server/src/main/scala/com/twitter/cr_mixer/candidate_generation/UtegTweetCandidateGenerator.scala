@@ -1,179 +1,179 @@
-package com.twitter.cr_mixer.candidate_generation
+packagelon com.twittelonr.cr_mixelonr.candidatelon_gelonnelonration
 
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.cr_mixer.logging.UtegTweetScribeLogger
-import com.twitter.cr_mixer.filter.UtegFilterRunner
-import com.twitter.cr_mixer.model.CandidateGenerationInfo
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.model.RankedCandidate
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScoreAndSocialProof
-import com.twitter.cr_mixer.model.UtegTweetCandidateGeneratorQuery
-import com.twitter.cr_mixer.similarity_engine.UserTweetEntityGraphSimilarityEngine
-import com.twitter.cr_mixer.similarity_engine.StandardSimilarityEngine
-import com.twitter.cr_mixer.source_signal.RealGraphInSourceGraphFetcher
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.contelonntreloncommelonndelonr.thriftscala.TwelonelontInfo
+import com.twittelonr.cr_mixelonr.logging.UtelongTwelonelontScribelonLoggelonr
+import com.twittelonr.cr_mixelonr.filtelonr.UtelongFiltelonrRunnelonr
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonrationInfo
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.modelonl.RankelondCandidatelon
+import com.twittelonr.cr_mixelonr.modelonl.SimilarityelonnginelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelonAndSocialProof
+import com.twittelonr.cr_mixelonr.modelonl.UtelongTwelonelontCandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.UselonrTwelonelontelonntityGraphSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.similarity_elonnginelon.StandardSimilarityelonnginelon
+import com.twittelonr.cr_mixelonr.sourcelon_signal.RelonalGraphInSourcelonGraphFelontchelonr
+import com.twittelonr.cr_mixelonr.sourcelon_signal.SourcelonFelontchelonr.FelontchelonrQuelonry
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UtegTweetCandidateGenerator @Inject() (
-  @Named(ModuleNames.UserTweetEntityGraphSimilarityEngine) userTweetEntityGraphSimilarityEngine: StandardSimilarityEngine[
-    UserTweetEntityGraphSimilarityEngine.Query,
-    TweetWithScoreAndSocialProof
+@Singlelonton
+class UtelongTwelonelontCandidatelonGelonnelonrator @Injelonct() (
+  @Namelond(ModulelonNamelons.UselonrTwelonelontelonntityGraphSimilarityelonnginelon) uselonrTwelonelontelonntityGraphSimilarityelonnginelon: StandardSimilarityelonnginelon[
+    UselonrTwelonelontelonntityGraphSimilarityelonnginelon.Quelonry,
+    TwelonelontWithScorelonAndSocialProof
   ],
-  utegTweetScribeLogger: UtegTweetScribeLogger,
-  tweetInfoStore: ReadableStore[TweetId, TweetInfo],
-  realGraphInSourceGraphFetcher: RealGraphInSourceGraphFetcher,
-  utegFilterRunner: UtegFilterRunner,
-  globalStats: StatsReceiver) {
+  utelongTwelonelontScribelonLoggelonr: UtelongTwelonelontScribelonLoggelonr,
+  twelonelontInfoStorelon: RelonadablelonStorelon[TwelonelontId, TwelonelontInfo],
+  relonalGraphInSourcelonGraphFelontchelonr: RelonalGraphInSourcelonGraphFelontchelonr,
+  utelongFiltelonrRunnelonr: UtelongFiltelonrRunnelonr,
+  globalStats: StatsReloncelonivelonr) {
 
-  private val stats: StatsReceiver = globalStats.scope(this.getClass.getCanonicalName)
-  private val fetchSeedsStats = stats.scope("fetchSeeds")
-  private val fetchCandidatesStats = stats.scope("fetchCandidates")
-  private val utegFilterStats = stats.scope("utegFilter")
-  private val rankStats = stats.scope("rank")
+  privatelon val stats: StatsReloncelonivelonr = globalStats.scopelon(this.gelontClass.gelontCanonicalNamelon)
+  privatelon val felontchSelonelondsStats = stats.scopelon("felontchSelonelonds")
+  privatelon val felontchCandidatelonsStats = stats.scopelon("felontchCandidatelons")
+  privatelon val utelongFiltelonrStats = stats.scopelon("utelongFiltelonr")
+  privatelon val rankStats = stats.scopelon("rank")
 
-  def get(
-    query: UtegTweetCandidateGeneratorQuery
-  ): Future[Seq[TweetWithScoreAndSocialProof]] = {
+  delonf gelont(
+    quelonry: UtelongTwelonelontCandidatelonGelonnelonratorQuelonry
+  ): Futurelon[Selonq[TwelonelontWithScorelonAndSocialProof]] = {
 
-    val allStats = stats.scope("all")
-    val perProductStats = stats.scope("perProduct", query.product.toString)
-    StatsUtil.trackItemsStats(allStats) {
-      StatsUtil.trackItemsStats(perProductStats) {
+    val allStats = stats.scopelon("all")
+    val pelonrProductStats = stats.scopelon("pelonrProduct", quelonry.product.toString)
+    StatsUtil.trackItelonmsStats(allStats) {
+      StatsUtil.trackItelonmsStats(pelonrProductStats) {
 
         /**
-         * The candidate we return in the end needs a social proof field, which isn't
-         * supported by the any existing Candidate type, so we created TweetWithScoreAndSocialProof
-         * instead.
+         * Thelon candidatelon welon relonturn in thelon elonnd nelonelonds a social proof fielonld, which isn't
+         * supportelond by thelon any elonxisting Candidatelon typelon, so welon crelonatelond TwelonelontWithScorelonAndSocialProof
+         * instelonad.
          *
-         * However, filters and light ranker expect Candidate-typed param to work. In order to minimise the
-         * changes to them, we are doing conversions from/to TweetWithScoreAndSocialProof to/from Candidate
-         * in this method.
+         * Howelonvelonr, filtelonrs and light rankelonr elonxpelonct Candidatelon-typelond param to work. In ordelonr to minimiselon thelon
+         * changelons to thelonm, welon arelon doing convelonrsions from/to TwelonelontWithScorelonAndSocialProof to/from Candidatelon
+         * in this melonthod.
          */
         for {
-          realGraphSeeds <- StatsUtil.trackItemMapStats(fetchSeedsStats) {
-            fetchSeeds(query)
+          relonalGraphSelonelonds <- StatsUtil.trackItelonmMapStats(felontchSelonelondsStats) {
+            felontchSelonelonds(quelonry)
           }
-          initialTweets <- StatsUtil.trackItemsStats(fetchCandidatesStats) {
-            fetchCandidates(query, realGraphSeeds)
+          initialTwelonelonts <- StatsUtil.trackItelonmsStats(felontchCandidatelonsStats) {
+            felontchCandidatelons(quelonry, relonalGraphSelonelonds)
           }
-          initialCandidates <- convertToInitialCandidates(initialTweets)
-          filteredCandidates <- StatsUtil.trackItemsStats(utegFilterStats) {
-            utegFilter(query, initialCandidates)
+          initialCandidatelons <- convelonrtToInitialCandidatelons(initialTwelonelonts)
+          filtelonrelondCandidatelons <- StatsUtil.trackItelonmsStats(utelongFiltelonrStats) {
+            utelongFiltelonr(quelonry, initialCandidatelons)
           }
-          rankedCandidates <- StatsUtil.trackItemsStats(rankStats) {
-            rankCandidates(query, filteredCandidates)
+          rankelondCandidatelons <- StatsUtil.trackItelonmsStats(rankStats) {
+            rankCandidatelons(quelonry, filtelonrelondCandidatelons)
           }
-        } yield {
-          val topTweets = rankedCandidates.take(query.maxNumResults)
-          convertToTweets(topTweets, initialTweets.map(tweet => tweet.tweetId -> tweet).toMap)
+        } yielonld {
+          val topTwelonelonts = rankelondCandidatelons.takelon(quelonry.maxNumRelonsults)
+          convelonrtToTwelonelonts(topTwelonelonts, initialTwelonelonts.map(twelonelont => twelonelont.twelonelontId -> twelonelont).toMap)
         }
       }
     }
   }
 
-  private def utegFilter(
-    query: UtegTweetCandidateGeneratorQuery,
-    candidates: Seq[InitialCandidate]
-  ): Future[Seq[InitialCandidate]] = {
-    utegFilterRunner.runSequentialFilters(query, Seq(candidates)).map(_.flatten)
+  privatelon delonf utelongFiltelonr(
+    quelonry: UtelongTwelonelontCandidatelonGelonnelonratorQuelonry,
+    candidatelons: Selonq[InitialCandidatelon]
+  ): Futurelon[Selonq[InitialCandidatelon]] = {
+    utelongFiltelonrRunnelonr.runSelonquelonntialFiltelonrs(quelonry, Selonq(candidatelons)).map(_.flattelonn)
   }
 
-  private def fetchSeeds(
-    query: UtegTweetCandidateGeneratorQuery
-  ): Future[Map[UserId, Double]] = {
-    realGraphInSourceGraphFetcher
-      .get(FetcherQuery(query.userId, query.product, query.userState, query.params))
-      .map(_.map(_.seedWithScores).getOrElse(Map.empty))
+  privatelon delonf felontchSelonelonds(
+    quelonry: UtelongTwelonelontCandidatelonGelonnelonratorQuelonry
+  ): Futurelon[Map[UselonrId, Doublelon]] = {
+    relonalGraphInSourcelonGraphFelontchelonr
+      .gelont(FelontchelonrQuelonry(quelonry.uselonrId, quelonry.product, quelonry.uselonrStatelon, quelonry.params))
+      .map(_.map(_.selonelondWithScorelons).gelontOrelonlselon(Map.elonmpty))
   }
 
-  private[candidate_generation] def rankCandidates(
-    query: UtegTweetCandidateGeneratorQuery,
-    filteredCandidates: Seq[InitialCandidate],
-  ): Future[Seq[RankedCandidate]] = {
-    val blendedCandidates = filteredCandidates.map(candidate =>
-      candidate.toBlendedCandidate(Seq(candidate.candidateGenerationInfo)))
+  privatelon[candidatelon_gelonnelonration] delonf rankCandidatelons(
+    quelonry: UtelongTwelonelontCandidatelonGelonnelonratorQuelonry,
+    filtelonrelondCandidatelons: Selonq[InitialCandidatelon],
+  ): Futurelon[Selonq[RankelondCandidatelon]] = {
+    val blelonndelondCandidatelons = filtelonrelondCandidatelons.map(candidatelon =>
+      candidatelon.toBlelonndelondCandidatelon(Selonq(candidatelon.candidatelonGelonnelonrationInfo)))
 
-    Future(
-      blendedCandidates.map { candidate =>
-        val score = candidate.getSimilarityScore
-        candidate.toRankedCandidate(score)
+    Futurelon(
+      blelonndelondCandidatelons.map { candidatelon =>
+        val scorelon = candidatelon.gelontSimilarityScorelon
+        candidatelon.toRankelondCandidatelon(scorelon)
       }
     )
 
   }
 
-  def fetchCandidates(
-    query: UtegTweetCandidateGeneratorQuery,
-    realGraphSeeds: Map[UserId, Double],
-  ): Future[Seq[TweetWithScoreAndSocialProof]] = {
-    val engineQuery = UserTweetEntityGraphSimilarityEngine.fromParams(
-      query.userId,
-      realGraphSeeds,
-      Some(query.impressedTweetList.toSeq),
-      query.params
+  delonf felontchCandidatelons(
+    quelonry: UtelongTwelonelontCandidatelonGelonnelonratorQuelonry,
+    relonalGraphSelonelonds: Map[UselonrId, Doublelon],
+  ): Futurelon[Selonq[TwelonelontWithScorelonAndSocialProof]] = {
+    val elonnginelonQuelonry = UselonrTwelonelontelonntityGraphSimilarityelonnginelon.fromParams(
+      quelonry.uselonrId,
+      relonalGraphSelonelonds,
+      Somelon(quelonry.imprelonsselondTwelonelontList.toSelonq),
+      quelonry.params
     )
 
-    utegTweetScribeLogger.scribeInitialCandidates(
-      query,
-      userTweetEntityGraphSimilarityEngine.getCandidates(engineQuery).map(_.toSeq.flatten)
+    utelongTwelonelontScribelonLoggelonr.scribelonInitialCandidatelons(
+      quelonry,
+      uselonrTwelonelontelonntityGraphSimilarityelonnginelon.gelontCandidatelons(elonnginelonQuelonry).map(_.toSelonq.flattelonn)
     )
   }
 
-  private[candidate_generation] def convertToInitialCandidates(
-    candidates: Seq[TweetWithScoreAndSocialProof],
-  ): Future[Seq[InitialCandidate]] = {
-    val tweetIds = candidates.map(_.tweetId).toSet
-    Future.collect(tweetInfoStore.multiGet(tweetIds)).map { tweetInfos =>
+  privatelon[candidatelon_gelonnelonration] delonf convelonrtToInitialCandidatelons(
+    candidatelons: Selonq[TwelonelontWithScorelonAndSocialProof],
+  ): Futurelon[Selonq[InitialCandidatelon]] = {
+    val twelonelontIds = candidatelons.map(_.twelonelontId).toSelont
+    Futurelon.collelonct(twelonelontInfoStorelon.multiGelont(twelonelontIds)).map { twelonelontInfos =>
       /** *
-       * If tweetInfo does not exist, we will filter out this tweet candidate.
+       * If twelonelontInfo doelons not elonxist, welon will filtelonr out this twelonelont candidatelon.
        */
-      candidates.collect {
-        case candidate if tweetInfos.getOrElse(candidate.tweetId, None).isDefined =>
-          val tweetInfo = tweetInfos(candidate.tweetId)
-            .getOrElse(throw new IllegalStateException("Check previous line's condition"))
+      candidatelons.collelonct {
+        caselon candidatelon if twelonelontInfos.gelontOrelonlselon(candidatelon.twelonelontId, Nonelon).isDelonfinelond =>
+          val twelonelontInfo = twelonelontInfos(candidatelon.twelonelontId)
+            .gelontOrelonlselon(throw nelonw IllelongalStatelonelonxcelonption("Chelonck prelonvious linelon's condition"))
 
-          InitialCandidate(
-            tweetId = candidate.tweetId,
-            tweetInfo = tweetInfo,
-            CandidateGenerationInfo(
-              None,
-              SimilarityEngineInfo(
-                similarityEngineType = SimilarityEngineType.Uteg,
-                modelId = None,
-                score = Some(candidate.score)),
-              Seq.empty
+          InitialCandidatelon(
+            twelonelontId = candidatelon.twelonelontId,
+            twelonelontInfo = twelonelontInfo,
+            CandidatelonGelonnelonrationInfo(
+              Nonelon,
+              SimilarityelonnginelonInfo(
+                similarityelonnginelonTypelon = SimilarityelonnginelonTypelon.Utelong,
+                modelonlId = Nonelon,
+                scorelon = Somelon(candidatelon.scorelon)),
+              Selonq.elonmpty
             )
           )
       }
     }
   }
 
-  private[candidate_generation] def convertToTweets(
-    candidates: Seq[RankedCandidate],
-    tweetMap: Map[TweetId, TweetWithScoreAndSocialProof]
-  ): Seq[TweetWithScoreAndSocialProof] = {
-    candidates.map { candidate =>
-      tweetMap
-        .get(candidate.tweetId).map { tweet =>
-          TweetWithScoreAndSocialProof(
-            tweet.tweetId,
-            candidate.predictionScore,
-            tweet.socialProofByType
+  privatelon[candidatelon_gelonnelonration] delonf convelonrtToTwelonelonts(
+    candidatelons: Selonq[RankelondCandidatelon],
+    twelonelontMap: Map[TwelonelontId, TwelonelontWithScorelonAndSocialProof]
+  ): Selonq[TwelonelontWithScorelonAndSocialProof] = {
+    candidatelons.map { candidatelon =>
+      twelonelontMap
+        .gelont(candidatelon.twelonelontId).map { twelonelont =>
+          TwelonelontWithScorelonAndSocialProof(
+            twelonelont.twelonelontId,
+            candidatelon.prelondictionScorelon,
+            twelonelont.socialProofByTypelon
           )
-        // The exception should never be thrown
-        }.getOrElse(throw new Exception("Cannot find ranked candidate in original UTEG tweets"))
+        // Thelon elonxcelonption should nelonvelonr belon thrown
+        }.gelontOrelonlselon(throw nelonw elonxcelonption("Cannot find rankelond candidatelon in original UTelonG twelonelonts"))
     }
   }
 }

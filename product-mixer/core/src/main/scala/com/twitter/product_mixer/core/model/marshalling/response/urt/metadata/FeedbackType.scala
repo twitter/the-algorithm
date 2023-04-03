@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-sealed trait FeedbackType
+selonalelond trait FelonelondbackTypelon
 
-case object Dismiss extends FeedbackType
-case object SeeFewer extends FeedbackType
-case object DontLike extends FeedbackType
-case object NotRelevant extends FeedbackType
-case object SeeMore extends FeedbackType
-case object NotCredible extends FeedbackType
-case object GiveFeedback extends FeedbackType
-case object NotRecent extends FeedbackType
-case object UnfollowEntity extends FeedbackType
-case object Relevant extends FeedbackType
-case object Moderate extends FeedbackType
-case object RichBehavior extends FeedbackType
-case object NotAboutTopic extends FeedbackType
-case object Generic extends FeedbackType
+caselon objelonct Dismiss elonxtelonnds FelonelondbackTypelon
+caselon objelonct SelonelonFelonwelonr elonxtelonnds FelonelondbackTypelon
+caselon objelonct DontLikelon elonxtelonnds FelonelondbackTypelon
+caselon objelonct NotRelonlelonvant elonxtelonnds FelonelondbackTypelon
+caselon objelonct SelonelonMorelon elonxtelonnds FelonelondbackTypelon
+caselon objelonct NotCrelondiblelon elonxtelonnds FelonelondbackTypelon
+caselon objelonct GivelonFelonelondback elonxtelonnds FelonelondbackTypelon
+caselon objelonct NotReloncelonnt elonxtelonnds FelonelondbackTypelon
+caselon objelonct Unfollowelonntity elonxtelonnds FelonelondbackTypelon
+caselon objelonct Relonlelonvant elonxtelonnds FelonelondbackTypelon
+caselon objelonct Modelonratelon elonxtelonnds FelonelondbackTypelon
+caselon objelonct RichBelonhavior elonxtelonnds FelonelondbackTypelon
+caselon objelonct NotAboutTopic elonxtelonnds FelonelondbackTypelon
+caselon objelonct Gelonnelonric elonxtelonnds FelonelondbackTypelon

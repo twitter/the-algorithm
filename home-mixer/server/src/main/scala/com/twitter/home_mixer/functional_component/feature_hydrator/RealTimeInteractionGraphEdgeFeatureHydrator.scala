@@ -1,62 +1,62 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.realtime_interaction_graph.RealTimeInteractionGraphFeaturesAdapter
-import com.twitter.timelines.prediction.features.realtime_interaction_graph.RealTimeInteractionGraphEdgeFeatures
-import com.twitter.util.Time
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.prelondiction.adaptelonrs.relonaltimelon_intelonraction_graph.RelonalTimelonIntelonractionGraphFelonaturelonsAdaptelonr
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.relonaltimelon_intelonraction_graph.RelonalTimelonIntelonractionGraphelondgelonFelonaturelons
+import com.twittelonr.util.Timelon
 
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object RealTimeInteractionGraphEdgeFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct RelonalTimelonIntelonractionGraphelondgelonFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class RealTimeInteractionGraphEdgeFeatureHydrator @Inject() ()
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class RelonalTimelonIntelonractionGraphelondgelonFelonaturelonHydrator @Injelonct() ()
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "RealTimeInteractionGraphEdge")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr(
+    "RelonalTimelonIntelonractionGraphelondgelon")
 
-  override val features: Set[Feature[_, _]] = Set(RealTimeInteractionGraphEdgeFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(RelonalTimelonIntelonractionGraphelondgelonFelonaturelon)
 
-  private val realTimeInteractionGraphFeaturesAdapter = new RealTimeInteractionGraphFeaturesAdapter
+  privatelon val relonalTimelonIntelonractionGraphFelonaturelonsAdaptelonr = nelonw RelonalTimelonIntelonractionGraphFelonaturelonsAdaptelonr
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val userVertex =
-      query.features.flatMap(_.getOrElse(RealTimeInteractionGraphUserVertexQueryFeature, None))
-    val realTimeInteractionGraphFeaturesMap =
-      userVertex.map(RealTimeInteractionGraphEdgeFeatures(_, Time.now))
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val uselonrVelonrtelonx =
+      quelonry.felonaturelons.flatMap(_.gelontOrelonlselon(RelonalTimelonIntelonractionGraphUselonrVelonrtelonxQuelonryFelonaturelon, Nonelon))
+    val relonalTimelonIntelonractionGraphFelonaturelonsMap =
+      uselonrVelonrtelonx.map(RelonalTimelonIntelonractionGraphelondgelonFelonaturelons(_, Timelon.now))
 
-    Stitch.value {
-      candidates.map { candidate =>
-        val feature = candidate.features.getOrElse(AuthorIdFeature, None).flatMap { authorId =>
-          realTimeInteractionGraphFeaturesMap.flatMap(_.get(authorId))
+    Stitch.valuelon {
+      candidatelons.map { candidatelon =>
+        val felonaturelon = candidatelon.felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon).flatMap { authorId =>
+          relonalTimelonIntelonractionGraphFelonaturelonsMap.flatMap(_.gelont(authorId))
         }
 
-        FeatureMapBuilder()
+        FelonaturelonMapBuildelonr()
           .add(
-            RealTimeInteractionGraphEdgeFeature,
-            realTimeInteractionGraphFeaturesAdapter.adaptToDataRecords(feature).asScala.head)
+            RelonalTimelonIntelonractionGraphelondgelonFelonaturelon,
+            relonalTimelonIntelonractionGraphFelonaturelonsAdaptelonr.adaptToDataReloncords(felonaturelon).asScala.helonad)
           .build()
       }
     }

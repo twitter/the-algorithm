@@ -1,55 +1,55 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object ConsumerEmbeddingBasedCandidateGenerationParams {
+objelonct ConsumelonrelonmbelonddingBaselondCandidatelonGelonnelonrationParams {
 
-  object EnableTwHINParam
-      extends FSParam[Boolean](
-        name = "consumer_embedding_based_candidate_generation_enable_twhin",
-        default = false
+  objelonct elonnablelonTwHINParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "consumelonr_elonmbelondding_baselond_candidatelon_gelonnelonration_elonnablelon_twhin",
+        delonfault = falselon
       )
 
-  object EnableTwoTowerParam
-      extends FSParam[Boolean](
-        name = "consumer_embedding_based_candidate_generation_enable_two_tower",
-        default = false
+  objelonct elonnablelonTwoTowelonrParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "consumelonr_elonmbelondding_baselond_candidatelon_gelonnelonration_elonnablelon_two_towelonr",
+        delonfault = falselon
       )
 
-  object EnableLogFavBasedSimClustersTripParam
-      extends FSParam[Boolean](
-        name = "consumer_embedding_based_candidate_generation_enable_logfav_based_simclusters_trip",
-        default = false
+  objelonct elonnablelonLogFavBaselondSimClustelonrsTripParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "consumelonr_elonmbelondding_baselond_candidatelon_gelonnelonration_elonnablelon_logfav_baselond_simclustelonrs_trip",
+        delonfault = falselon
       )
 
-  object EnableFollowBasedSimClustersTripParam
-      extends FSParam[Boolean](
-        name = "consumer_embedding_based_candidate_generation_enable_follow_based_simclusters_trip",
-        default = false
+  objelonct elonnablelonFollowBaselondSimClustelonrsTripParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "consumelonr_elonmbelondding_baselond_candidatelon_gelonnelonration_elonnablelon_follow_baselond_simclustelonrs_trip",
+        delonfault = falselon
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableTwHINParam,
-    EnableTwoTowerParam,
-    EnableFollowBasedSimClustersTripParam,
-    EnableLogFavBasedSimClustersTripParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonTwHINParam,
+    elonnablelonTwoTowelonrParam,
+    elonnablelonFollowBaselondSimClustelonrsTripParam,
+    elonnablelonLogFavBaselondSimClustelonrsTripParam
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableTwHINParam,
-      EnableTwoTowerParam,
-      EnableFollowBasedSimClustersTripParam,
-      EnableLogFavBasedSimClustersTripParam
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonTwHINParam,
+      elonnablelonTwoTowelonrParam,
+      elonnablelonFollowBaselondSimClustelonrsTripParam,
+      elonnablelonLogFavBaselondSimClustelonrsTripParam
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
       .build()
   }
 }

@@ -1,71 +1,71 @@
-package com.twitter.home_mixer.util.earlybird
+packagelon com.twittelonr.homelon_mixelonr.util.elonarlybird
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant
-import com.twitter.search.common.ranking.{thriftscala => scr}
-import com.twitter.search.earlybird.{thriftscala => eb}
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant
+import com.twittelonr.selonarch.common.ranking.{thriftscala => scr}
+import com.twittelonr.selonarch.elonarlybird.{thriftscala => elonb}
 
-object RelevanceSearchUtil {
+objelonct RelonlelonvancelonSelonarchUtil {
 
-  val Mentions: String = EarlybirdFieldConstant.MENTIONS_FACET
-  val Hashtags: String = EarlybirdFieldConstant.HASHTAGS_FACET
-  val FacetsToFetch: Seq[String] = Seq(Mentions, Hashtags)
+  val Melonntions: String = elonarlybirdFielonldConstant.MelonNTIONS_FACelonT
+  val Hashtags: String = elonarlybirdFielonldConstant.HASHTAGS_FACelonT
+  val FacelontsToFelontch: Selonq[String] = Selonq(Melonntions, Hashtags)
 
-  private val RankingParams: scr.ThriftRankingParams = {
+  privatelon val RankingParams: scr.ThriftRankingParams = {
     scr.ThriftRankingParams(
-      `type` = Some(scr.ThriftScoringFunctionType.TensorflowBased),
-      selectedTensorflowModel = Some("timelines_rectweet_replica"),
-      minScore = -1.0e100,
-      retweetCountParams = Some(scr.ThriftLinearFeatureRankingParams(weight = 20.0)),
-      replyCountParams = Some(scr.ThriftLinearFeatureRankingParams(weight = 1.0)),
-      reputationParams = Some(scr.ThriftLinearFeatureRankingParams(weight = 0.2)),
-      luceneScoreParams = Some(scr.ThriftLinearFeatureRankingParams(weight = 2.0)),
-      textScoreParams = Some(scr.ThriftLinearFeatureRankingParams(weight = 0.18)),
-      urlParams = Some(scr.ThriftLinearFeatureRankingParams(weight = 2.0)),
-      isReplyParams = Some(scr.ThriftLinearFeatureRankingParams(weight = 1.0)),
-      favCountParams = Some(scr.ThriftLinearFeatureRankingParams(weight = 30.0)),
-      langEnglishUIBoost = 0.5,
-      langEnglishTweetBoost = 0.2,
-      langDefaultBoost = 0.02,
-      unknownLanguageBoost = 0.05,
-      offensiveBoost = 0.1,
-      inTrustedCircleBoost = 3.0,
-      multipleHashtagsOrTrendsBoost = 0.6,
-      inDirectFollowBoost = 4.0,
-      tweetHasTrendBoost = 1.1,
-      selfTweetBoost = 2.0,
-      tweetHasImageUrlBoost = 2.0,
-      tweetHasVideoUrlBoost = 2.0,
-      useUserLanguageInfo = true,
-      ageDecayParams = Some(scr.ThriftAgeDecayRankingParams(slope = 0.005, base = 1.0)),
-      selectedModels = Some(Map("home_mixer_unified_engagement_prod" -> 1.0)),
-      applyBoosts = false,
+      `typelon` = Somelon(scr.ThriftScoringFunctionTypelon.TelonnsorflowBaselond),
+      selonlelonctelondTelonnsorflowModelonl = Somelon("timelonlinelons_relonctwelonelont_relonplica"),
+      minScorelon = -1.0elon100,
+      relontwelonelontCountParams = Somelon(scr.ThriftLinelonarFelonaturelonRankingParams(welonight = 20.0)),
+      relonplyCountParams = Somelon(scr.ThriftLinelonarFelonaturelonRankingParams(welonight = 1.0)),
+      relonputationParams = Somelon(scr.ThriftLinelonarFelonaturelonRankingParams(welonight = 0.2)),
+      lucelonnelonScorelonParams = Somelon(scr.ThriftLinelonarFelonaturelonRankingParams(welonight = 2.0)),
+      telonxtScorelonParams = Somelon(scr.ThriftLinelonarFelonaturelonRankingParams(welonight = 0.18)),
+      urlParams = Somelon(scr.ThriftLinelonarFelonaturelonRankingParams(welonight = 2.0)),
+      isRelonplyParams = Somelon(scr.ThriftLinelonarFelonaturelonRankingParams(welonight = 1.0)),
+      favCountParams = Somelon(scr.ThriftLinelonarFelonaturelonRankingParams(welonight = 30.0)),
+      langelonnglishUIBoost = 0.5,
+      langelonnglishTwelonelontBoost = 0.2,
+      langDelonfaultBoost = 0.02,
+      unknownLanguagelonBoost = 0.05,
+      offelonnsivelonBoost = 0.1,
+      inTrustelondCirclelonBoost = 3.0,
+      multiplelonHashtagsOrTrelonndsBoost = 0.6,
+      inDirelonctFollowBoost = 4.0,
+      twelonelontHasTrelonndBoost = 1.1,
+      selonlfTwelonelontBoost = 2.0,
+      twelonelontHasImagelonUrlBoost = 2.0,
+      twelonelontHasVidelonoUrlBoost = 2.0,
+      uselonUselonrLanguagelonInfo = truelon,
+      agelonDeloncayParams = Somelon(scr.ThriftAgelonDeloncayRankingParams(slopelon = 0.005, baselon = 1.0)),
+      selonlelonctelondModelonls = Somelon(Map("homelon_mixelonr_unifielond_elonngagelonmelonnt_prod" -> 1.0)),
+      applyBoosts = falselon,
     )
   }
 
-  val MetadataOptions: eb.ThriftSearchResultMetadataOptions = {
-    eb.ThriftSearchResultMetadataOptions(
-      getTweetUrls = true,
-      getResultLocation = false,
-      getLuceneScore = false,
-      getInReplyToStatusId = true,
-      getReferencedTweetAuthorId = true,
-      getMediaBits = true,
-      getAllFeatures = true,
-      returnSearchResultFeatures = true,
-      // Set getExclusiveConversationAuthorId in order to retrieve Exclusive / SuperFollow tweets.
-      getExclusiveConversationAuthorId = true
+  val MelontadataOptions: elonb.ThriftSelonarchRelonsultMelontadataOptions = {
+    elonb.ThriftSelonarchRelonsultMelontadataOptions(
+      gelontTwelonelontUrls = truelon,
+      gelontRelonsultLocation = falselon,
+      gelontLucelonnelonScorelon = falselon,
+      gelontInRelonplyToStatusId = truelon,
+      gelontRelonfelonrelonncelondTwelonelontAuthorId = truelon,
+      gelontMelondiaBits = truelon,
+      gelontAllFelonaturelons = truelon,
+      relonturnSelonarchRelonsultFelonaturelons = truelon,
+      // Selont gelontelonxclusivelonConvelonrsationAuthorId in ordelonr to relontrielonvelon elonxclusivelon / SupelonrFollow twelonelonts.
+      gelontelonxclusivelonConvelonrsationAuthorId = truelon
     )
   }
 
-  val RelevanceOptions: eb.ThriftSearchRelevanceOptions = {
-    eb.ThriftSearchRelevanceOptions(
-      proximityScoring = true,
-      maxConsecutiveSameUser = Some(2),
-      rankingParams = Some(RankingParams),
-      maxHitsToProcess = Some(500),
-      maxUserBlendCount = Some(3),
-      proximityPhraseWeight = 9.0,
-      returnAllResults = Some(true)
+  val RelonlelonvancelonOptions: elonb.ThriftSelonarchRelonlelonvancelonOptions = {
+    elonb.ThriftSelonarchRelonlelonvancelonOptions(
+      proximityScoring = truelon,
+      maxConseloncutivelonSamelonUselonr = Somelon(2),
+      rankingParams = Somelon(RankingParams),
+      maxHitsToProcelonss = Somelon(500),
+      maxUselonrBlelonndCount = Somelon(3),
+      proximityPhraselonWelonight = 9.0,
+      relonturnAllRelonsults = Somelon(truelon)
     )
   }
 }

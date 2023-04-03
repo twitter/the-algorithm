@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-public class PreCacheRequestTypeCountFilter extends RequestTypeCountFilter {
-  @Inject
-  public PreCacheRequestTypeCountFilter() {
-    super("pre_cache");
+public class PrelonCachelonRelonquelonstTypelonCountFiltelonr elonxtelonnds RelonquelonstTypelonCountFiltelonr {
+  @Injelonct
+  public PrelonCachelonRelonquelonstTypelonCountFiltelonr() {
+    supelonr("prelon_cachelon");
   }
 }

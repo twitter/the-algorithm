@@ -1,72 +1,72 @@
-package com.twitter.follow_recommendations.common.candidate_sources.addressbook
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.AddressBookParams.ReadFromABV2Only
-import com.twitter.follow_recommendations.common.clients.addressbook.AddressbookClient
-import com.twitter.follow_recommendations.common.clients.addressbook.models.EdgeType
-import com.twitter.follow_recommendations.common.clients.addressbook.models.RecordIdentifier
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.utils.RescueWithStatsUtils.rescueWithStats
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.ForwardPhoneContactsClientColumn
-import com.twitter.timelines.configapi.HasParams
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.AddrelonssBookParams.RelonadFromABV2Only
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.AddrelonssbookClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.modelonls.elondgelonTypelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.addrelonssbook.modelonls.ReloncordIdelonntifielonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.utils.RelonscuelonWithStatsUtils.relonscuelonWithStats
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.ForwardPhonelonContactsClielonntColumn
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ForwardPhoneBookSource @Inject() (
-  forwardPhoneContactsClientColumn: ForwardPhoneContactsClientColumn,
-  addressBookClient: AddressbookClient,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+@Singlelonton
+class ForwardPhonelonBookSourcelon @Injelonct() (
+  forwardPhonelonContactsClielonntColumn: ForwardPhonelonContactsClielonntColumn,
+  addrelonssBookClielonnt: AddrelonssbookClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr = NullStatsReloncelonivelonr)
+    elonxtelonnds CandidatelonSourcelon[HasParams with HasClielonntContelonxt, CandidatelonUselonr] {
 
-  override val identifier: CandidateSourceIdentifier =
-    ForwardPhoneBookSource.Identifier
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getSimpleName)
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    ForwardPhonelonBookSourcelon.Idelonntifielonr
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
   /**
-   * Generate a list of candidates for the target
+   * Gelonnelonratelon a list of candidatelons for thelon targelont
    */
-  override def apply(target: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    val candidateUsers: Stitch[Seq[Long]] = target.getOptionalUserId
-      .map { userId =>
-        rescueWithStats(
-          addressBookClient.getUsers(
-            userId,
-            identifiers =
-              Seq(RecordIdentifier(userId = Some(userId), email = None, phoneNumber = None)),
-            batchSize = AddressbookClient.AddressBook2BatchSize,
-            edgeType = ForwardPhoneBookSource.DefaultEdgeType,
-            fetcherOption =
-              if (target.params.apply(ReadFromABV2Only)) None
-              else Some(forwardPhoneContactsClientColumn.fetcher),
-            queryOption = AddressbookClient
-              .createQueryOption(
-                edgeType = ForwardPhoneBookSource.DefaultEdgeType,
-                isPhone = ForwardPhoneBookSource.IsPhone)
+  ovelonrridelon delonf apply(targelont: HasParams with HasClielonntContelonxt): Stitch[Selonq[CandidatelonUselonr]] = {
+    val candidatelonUselonrs: Stitch[Selonq[Long]] = targelont.gelontOptionalUselonrId
+      .map { uselonrId =>
+        relonscuelonWithStats(
+          addrelonssBookClielonnt.gelontUselonrs(
+            uselonrId,
+            idelonntifielonrs =
+              Selonq(ReloncordIdelonntifielonr(uselonrId = Somelon(uselonrId), elonmail = Nonelon, phonelonNumbelonr = Nonelon)),
+            batchSizelon = AddrelonssbookClielonnt.AddrelonssBook2BatchSizelon,
+            elondgelonTypelon = ForwardPhonelonBookSourcelon.DelonfaultelondgelonTypelon,
+            felontchelonrOption =
+              if (targelont.params.apply(RelonadFromABV2Only)) Nonelon
+              elonlselon Somelon(forwardPhonelonContactsClielonntColumn.felontchelonr),
+            quelonryOption = AddrelonssbookClielonnt
+              .crelonatelonQuelonryOption(
+                elondgelonTypelon = ForwardPhonelonBookSourcelon.DelonfaultelondgelonTypelon,
+                isPhonelon = ForwardPhonelonBookSourcelon.IsPhonelon)
           ),
           stats,
-          "AddressBookClient"
+          "AddrelonssBookClielonnt"
         )
-      }.getOrElse(Stitch.Nil)
+      }.gelontOrelonlselon(Stitch.Nil)
 
-    candidateUsers
+    candidatelonUselonrs
       .map(
-        _.take(ForwardPhoneBookSource.NumPhoneBookEntries)
-          .map(CandidateUser(_, score = Some(CandidateUser.DefaultCandidateScore))
-            .withCandidateSource(identifier)))
+        _.takelon(ForwardPhonelonBookSourcelon.NumPhonelonBookelonntrielons)
+          .map(CandidatelonUselonr(_, scorelon = Somelon(CandidatelonUselonr.DelonfaultCandidatelonScorelon))
+            .withCandidatelonSourcelon(idelonntifielonr)))
   }
 }
 
-object ForwardPhoneBookSource {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.ForwardPhoneBook.toString)
-  val NumPhoneBookEntries: Int = 1000
-  val IsPhone = true
-  val DefaultEdgeType: EdgeType = EdgeType.Forward
+objelonct ForwardPhonelonBookSourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.ForwardPhonelonBook.toString)
+  val NumPhonelonBookelonntrielons: Int = 1000
+  val IsPhonelon = truelon
+  val DelonfaultelondgelonTypelon: elondgelonTypelon = elondgelonTypelon.Forward
 }

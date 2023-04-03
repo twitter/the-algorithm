@@ -1,112 +1,112 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.home_mixer.model.HomeFeatures.CandidateSourceIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsReadFromCacheFeature
-import com.twitter.home_mixer.model.HomeFeatures.PredictionRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableServedCandidateKafkaPublishingParam
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.component_library.side_effect.KafkaPublishingSideEffect
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.ml.cont_train.common.domain.non_scalding.ServedCandidateFeatureKeysAdapter
-import com.twitter.timelines.ml.cont_train.common.domain.non_scalding.ServedCandidateFeatureKeysFields
-import com.twitter.timelines.ml.kafka.serde.CandidateFeatureKeySerde
-import com.twitter.timelines.ml.kafka.serde.TBaseSerde
-import com.twitter.timelines.served_candidates_logging.{thriftscala => sc}
-import com.twitter.timelines.suggests.common.poly_data_record.{thriftjava => pldr}
-import com.twitter.timelineservice.suggests.{thriftscala => tls}
-import org.apache.kafka.clients.producer.ProducerRecord
-import org.apache.kafka.common.serialization.Serializer
-import scala.collection.JavaConverters._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.CandidatelonSourcelonIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelonadFromCachelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PrelondictionRelonquelonstIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondRelonquelonstIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SuggelonstTypelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.elonnablelonSelonrvelondCandidatelonKafkaPublishingParam
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.sidelon_elonffelonct.KafkaPublishingSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.ml.cont_train.common.domain.non_scalding.SelonrvelondCandidatelonFelonaturelonKelonysAdaptelonr
+import com.twittelonr.timelonlinelons.ml.cont_train.common.domain.non_scalding.SelonrvelondCandidatelonFelonaturelonKelonysFielonlds
+import com.twittelonr.timelonlinelons.ml.kafka.selonrdelon.CandidatelonFelonaturelonKelonySelonrdelon
+import com.twittelonr.timelonlinelons.ml.kafka.selonrdelon.TBaselonSelonrdelon
+import com.twittelonr.timelonlinelons.selonrvelond_candidatelons_logging.{thriftscala => sc}
+import com.twittelonr.timelonlinelons.suggelonsts.common.poly_data_reloncord.{thriftjava => pldr}
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.{thriftscala => tls}
+import org.apachelon.kafka.clielonnts.producelonr.ProducelonrReloncord
+import org.apachelon.kafka.common.selonrialization.Selonrializelonr
+import scala.collelonction.JavaConvelonrtelonrs._
 
 /**
- * Pipeline side-effect that publishes candidate keys to a Kafka topic.
+ * Pipelonlinelon sidelon-elonffelonct that publishelons candidatelon kelonys to a Kafka topic.
  */
-class ServedCandidateFeatureKeysKafkaSideEffect(
+class SelonrvelondCandidatelonFelonaturelonKelonysKafkaSidelonelonffelonct(
   topic: String,
-  sourceIdentifiers: Set[identifier.CandidatePipelineIdentifier])
-    extends KafkaPublishingSideEffect[
-      sc.CandidateFeatureKey,
-      pldr.PolyDataRecord,
-      PipelineQuery,
-      Timeline
+  sourcelonIdelonntifielonrs: Selont[idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr])
+    elonxtelonnds KafkaPublishingSidelonelonffelonct[
+      sc.CandidatelonFelonaturelonKelony,
+      pldr.PolyDataReloncord,
+      PipelonlinelonQuelonry,
+      Timelonlinelon
     ]
-    with PipelineResultSideEffect.Conditionally[PipelineQuery, Timeline] {
+    with PipelonlinelonRelonsultSidelonelonffelonct.Conditionally[PipelonlinelonQuelonry, Timelonlinelon] {
 
-  import ServedCandidateKafkaSideEffect._
+  import SelonrvelondCandidatelonKafkaSidelonelonffelonct._
 
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier("ServedCandidateFeatureKeys")
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr = SidelonelonffelonctIdelonntifielonr("SelonrvelondCandidatelonFelonaturelonKelonys")
 
-  override def onlyIf(
-    query: PipelineQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: Timeline
-  ): Boolean = query.params.getBoolean(EnableServedCandidateKafkaPublishingParam)
+  ovelonrridelon delonf onlyIf(
+    quelonry: PipelonlinelonQuelonry,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: Timelonlinelon
+  ): Boolelonan = quelonry.params.gelontBoolelonan(elonnablelonSelonrvelondCandidatelonKafkaPublishingParam)
 
-  override val bootstrapServer: String = "/s/kafka/timeline:kafka-tls"
+  ovelonrridelon val bootstrapSelonrvelonr: String = "/s/kafka/timelonlinelon:kafka-tls"
 
-  override val keySerde: Serializer[sc.CandidateFeatureKey] =
-    CandidateFeatureKeySerde().serializer()
+  ovelonrridelon val kelonySelonrdelon: Selonrializelonr[sc.CandidatelonFelonaturelonKelony] =
+    CandidatelonFelonaturelonKelonySelonrdelon().selonrializelonr()
 
-  override val valueSerde: Serializer[pldr.PolyDataRecord] =
-    TBaseSerde.Thrift[pldr.PolyDataRecord]().serializer
+  ovelonrridelon val valuelonSelonrdelon: Selonrializelonr[pldr.PolyDataReloncord] =
+    TBaselonSelonrdelon.Thrift[pldr.PolyDataReloncord]().selonrializelonr
 
-  override val clientId: String = "home_mixer_served_candidate_feature_keys_producer"
+  ovelonrridelon val clielonntId: String = "homelon_mixelonr_selonrvelond_candidatelon_felonaturelon_kelonys_producelonr"
 
-  override def buildRecords(
-    query: PipelineQuery,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: Timeline
-  ): Seq[ProducerRecord[sc.CandidateFeatureKey, pldr.PolyDataRecord]] = {
-    val servedRequestIdOpt =
-      query.features.getOrElse(FeatureMap.empty).getOrElse(ServedRequestIdFeature, None)
+  ovelonrridelon delonf buildReloncords(
+    quelonry: PipelonlinelonQuelonry,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: Timelonlinelon
+  ): Selonq[ProducelonrReloncord[sc.CandidatelonFelonaturelonKelony, pldr.PolyDataReloncord]] = {
+    val selonrvelondRelonquelonstIdOpt =
+      quelonry.felonaturelons.gelontOrelonlselon(FelonaturelonMap.elonmpty).gelontOrelonlselon(SelonrvelondRelonquelonstIdFelonaturelon, Nonelon)
 
-    extractCandidates(query, selectedCandidates, sourceIdentifiers).map { candidate =>
-      val isReadFromCache = candidate.features.getOrElse(IsReadFromCacheFeature, false)
-      val servedId = candidate.features.get(ServedIdFeature).get
+    elonxtractCandidatelons(quelonry, selonlelonctelondCandidatelons, sourcelonIdelonntifielonrs).map { candidatelon =>
+      val isRelonadFromCachelon = candidatelon.felonaturelons.gelontOrelonlselon(IsRelonadFromCachelonFelonaturelon, falselon)
+      val selonrvelondId = candidatelon.felonaturelons.gelont(SelonrvelondIdFelonaturelon).gelont
 
-      val key = sc.CandidateFeatureKey(
-        tweetId = candidate.candidateIdLong,
-        viewerId = query.getRequiredUserId,
-        servedId = servedId)
+      val kelony = sc.CandidatelonFelonaturelonKelony(
+        twelonelontId = candidatelon.candidatelonIdLong,
+        vielonwelonrId = quelonry.gelontRelonquirelondUselonrId,
+        selonrvelondId = selonrvelondId)
 
-      val record =
-        ServedCandidateFeatureKeysAdapter
-          .adaptToDataRecords(
-            ServedCandidateFeatureKeysFields(
-              candidateTweetSourceId = candidate.features
-                .getOrElse(CandidateSourceIdFeature, None).map(_.value.toLong).getOrElse(2L),
-              predictionRequestId =
-                candidate.features.getOrElse(PredictionRequestIdFeature, None).get,
-              servedRequestIdOpt = if (isReadFromCache) servedRequestIdOpt else None,
-              servedId = servedId,
-              injectionModuleName = candidate.getClass.getSimpleName,
-              viewerFollowsOriginalAuthor =
-                Some(candidate.features.getOrElse(InNetworkFeature, true)),
-              suggestType = candidate.features
-                .getOrElse(SuggestTypeFeature, None).getOrElse(tls.SuggestType.RankedOrganicTweet),
-              finalPositionIndex = Some(candidate.sourcePosition),
-              isReadFromCache = isReadFromCache
-            )).asScala.head
+      val reloncord =
+        SelonrvelondCandidatelonFelonaturelonKelonysAdaptelonr
+          .adaptToDataReloncords(
+            SelonrvelondCandidatelonFelonaturelonKelonysFielonlds(
+              candidatelonTwelonelontSourcelonId = candidatelon.felonaturelons
+                .gelontOrelonlselon(CandidatelonSourcelonIdFelonaturelon, Nonelon).map(_.valuelon.toLong).gelontOrelonlselon(2L),
+              prelondictionRelonquelonstId =
+                candidatelon.felonaturelons.gelontOrelonlselon(PrelondictionRelonquelonstIdFelonaturelon, Nonelon).gelont,
+              selonrvelondRelonquelonstIdOpt = if (isRelonadFromCachelon) selonrvelondRelonquelonstIdOpt elonlselon Nonelon,
+              selonrvelondId = selonrvelondId,
+              injelonctionModulelonNamelon = candidatelon.gelontClass.gelontSimplelonNamelon,
+              vielonwelonrFollowsOriginalAuthor =
+                Somelon(candidatelon.felonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, truelon)),
+              suggelonstTypelon = candidatelon.felonaturelons
+                .gelontOrelonlselon(SuggelonstTypelonFelonaturelon, Nonelon).gelontOrelonlselon(tls.SuggelonstTypelon.RankelondOrganicTwelonelont),
+              finalPositionIndelonx = Somelon(candidatelon.sourcelonPosition),
+              isRelonadFromCachelon = isRelonadFromCachelon
+            )).asScala.helonad
 
-      new ProducerRecord(topic, key, pldr.PolyDataRecord.dataRecord(record))
+      nelonw ProducelonrReloncord(topic, kelony, pldr.PolyDataReloncord.dataReloncord(reloncord))
     }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(98.5)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(98.5)
   )
 }

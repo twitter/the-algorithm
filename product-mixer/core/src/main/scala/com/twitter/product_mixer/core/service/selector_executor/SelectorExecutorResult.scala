@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.service.selector_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor
 
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.service.ExecutorResult
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
 
-case class SelectorExecutorResult(
-  selectedCandidates: Seq[CandidateWithDetails],
-  remainingCandidates: Seq[CandidateWithDetails],
-  droppedCandidates: Seq[CandidateWithDetails],
-  individualSelectorResults: Seq[SelectorResult])
-    extends ExecutorResult
+caselon class SelonlelonctorelonxeloncutorRelonsult(
+  selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+  relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+  droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+  individualSelonlelonctorRelonsults: Selonq[SelonlelonctorRelonsult])
+    elonxtelonnds elonxeloncutorRelonsult

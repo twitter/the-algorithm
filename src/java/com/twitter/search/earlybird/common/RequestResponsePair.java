@@ -1,44 +1,44 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
-import org.apache.lucene.search.Query;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
 
-public class RequestResponsePair {
-  private final EarlybirdRequest request;
-  private final EarlybirdResponse response;
-  private final org.apache.lucene.search.Query luceneQuery;
+public class RelonquelonstRelonsponselonPair {
+  privatelon final elonarlybirdRelonquelonst relonquelonst;
+  privatelon final elonarlybirdRelonsponselon relonsponselon;
+  privatelon final org.apachelon.lucelonnelon.selonarch.Quelonry lucelonnelonQuelonry;
 
-  // The serialized query in its final form, after various modifications have been applied to it.
-  // As a note, we have some code paths in which this can be null, but I don't really see them
-  // triggered in production right now.
-  private final com.twitter.search.queryparser.query.Query finalSerializedQuery;
+  // Thelon selonrializelond quelonry in its final form, aftelonr various modifications havelon belonelonn applielond to it.
+  // As a notelon, welon havelon somelon codelon paths in which this can belon null, but I don't relonally selonelon thelonm
+  // triggelonrelond in production right now.
+  privatelon final com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry finalSelonrializelondQuelonry;
 
-  public RequestResponsePair(
-      EarlybirdRequest request,
-      com.twitter.search.queryparser.query.Query finalSerializedQuery,
-      org.apache.lucene.search.Query luceneQuery,
-      EarlybirdResponse response) {
-    this.request = request;
-    this.luceneQuery = luceneQuery;
-    this.response = response;
-    this.finalSerializedQuery = finalSerializedQuery;
+  public RelonquelonstRelonsponselonPair(
+      elonarlybirdRelonquelonst relonquelonst,
+      com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry finalSelonrializelondQuelonry,
+      org.apachelon.lucelonnelon.selonarch.Quelonry lucelonnelonQuelonry,
+      elonarlybirdRelonsponselon relonsponselon) {
+    this.relonquelonst = relonquelonst;
+    this.lucelonnelonQuelonry = lucelonnelonQuelonry;
+    this.relonsponselon = relonsponselon;
+    this.finalSelonrializelondQuelonry = finalSelonrializelondQuelonry;
   }
 
-  public String getFinalSerializedQuery() {
-    return finalSerializedQuery != null ? finalSerializedQuery.serialize() : "N/A";
+  public String gelontFinalSelonrializelondQuelonry() {
+    relonturn finalSelonrializelondQuelonry != null ? finalSelonrializelondQuelonry.selonrializelon() : "N/A";
   }
 
-  public EarlybirdRequest getRequest() {
-    return request;
+  public elonarlybirdRelonquelonst gelontRelonquelonst() {
+    relonturn relonquelonst;
   }
 
-  public EarlybirdResponse getResponse() {
-    return response;
+  public elonarlybirdRelonsponselon gelontRelonsponselon() {
+    relonturn relonsponselon;
   }
 
-  public Query getLuceneQuery() {
-    return luceneQuery;
+  public Quelonry gelontLucelonnelonQuelonry() {
+    relonturn lucelonnelonQuelonry;
   }
 }

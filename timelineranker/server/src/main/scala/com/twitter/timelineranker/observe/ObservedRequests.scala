@@ -1,35 +1,35 @@
-package com.twitter.timelineranker.observe
+packagelon com.twittelonr.timelonlinelonrankelonr.obselonrvelon
 
-import com.twitter.timelines.authorization.ReadRequest
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.observe.ObservedAndValidatedRequests
-import com.twitter.timelines.observe.ServiceObserver
-import com.twitter.timelines.observe.ServiceTracer
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelons.authorization.RelonadRelonquelonst
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.obselonrvelon.ObselonrvelondAndValidatelondRelonquelonsts
+import com.twittelonr.timelonlinelons.obselonrvelon.SelonrvicelonObselonrvelonr
+import com.twittelonr.timelonlinelons.obselonrvelon.SelonrvicelonTracelonr
+import com.twittelonr.util.Futurelon
 
-trait ObservedRequests extends ObservedAndValidatedRequests {
+trait ObselonrvelondRelonquelonsts elonxtelonnds ObselonrvelondAndValidatelondRelonquelonsts {
 
-  def observeAndValidate[R, Q](
-    request: Q,
-    viewerIds: Seq[UserId],
-    stats: ServiceObserver.Stats[Q],
-    exceptionHandler: PartialFunction[Throwable, Future[R]]
+  delonf obselonrvelonAndValidatelon[R, Q](
+    relonquelonst: Q,
+    vielonwelonrIds: Selonq[UselonrId],
+    stats: SelonrvicelonObselonrvelonr.Stats[Q],
+    elonxcelonptionHandlelonr: PartialFunction[Throwablelon, Futurelon[R]]
   )(
-    f: Q => Future[R]
-  ): Future[R] = {
-    super.observeAndValidate[Q, R](
-      request,
-      viewerIds,
-      ReadRequest,
-      validateRequest,
-      exceptionHandler,
+    f: Q => Futurelon[R]
+  ): Futurelon[R] = {
+    supelonr.obselonrvelonAndValidatelon[Q, R](
+      relonquelonst,
+      vielonwelonrIds,
+      RelonadRelonquelonst,
+      validatelonRelonquelonst,
+      elonxcelonptionHandlelonr,
       stats,
-      ServiceTracer.identity[Q]
+      SelonrvicelonTracelonr.idelonntity[Q]
     )(f)
   }
 
-  def validateRequest[Q](request: Q): Unit = {
-    // TimelineQuery and its derived classes do not permit invalid instances to be constructed.
-    // Therefore no additional validation is required.
+  delonf validatelonRelonquelonst[Q](relonquelonst: Q): Unit = {
+    // TimelonlinelonQuelonry and its delonrivelond classelons do not pelonrmit invalid instancelons to belon constructelond.
+    // Thelonrelonforelon no additional validation is relonquirelond.
   }
 }

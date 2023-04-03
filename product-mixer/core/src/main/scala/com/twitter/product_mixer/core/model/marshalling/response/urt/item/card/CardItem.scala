@@ -1,28 +1,28 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.card
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.card
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
 
-object CardItem {
-  val CardEntryNamespace = EntryNamespace("card")
+objelonct CardItelonm {
+  val CardelonntryNamelonspacelon = elonntryNamelonspacelon("card")
 }
 
-case class CardItem(
-  override val id: String,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
+caselon class CardItelonm(
+  ovelonrridelon val id: String,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo],
   cardUrl: String,
-  text: Option[String],
-  subtext: Option[String],
+  telonxt: Option[String],
+  subtelonxt: Option[String],
   url: Option[Url],
-  displayType: Option[CardDisplayType])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace = CardItem.CardEntryNamespace
+  displayTypelon: Option[CardDisplayTypelon])
+    elonxtelonnds TimelonlinelonItelonm {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon = CardItelonm.CardelonntryNamelonspacelon
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

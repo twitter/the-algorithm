@@ -1,37 +1,37 @@
-package com.twitter.search.common.relevance.classifiers;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
 
 /**
- * Interface to perform quality evaluation for a single @TwitterMessage
- * object or a group of them.
+ * Intelonrfacelon to pelonrform quality elonvaluation for a singlelon @TwittelonrMelonssagelon
+ * objelonct or a group of thelonm.
  *
  */
-public abstract class TweetEvaluator {
+public abstract class Twelonelontelonvaluator {
   /**
-   * Passed in TwitterMessage is examined and any extractable
-   * features are stored in TweetFeatures field of TwitterMessage.
+   * Passelond in TwittelonrMelonssagelon is elonxaminelond and any elonxtractablelon
+   * felonaturelons arelon storelond in TwelonelontFelonaturelons fielonld of TwittelonrMelonssagelon.
    *
-   * @param tweet TwitterMessage to perform classification on.
+   * @param twelonelont TwittelonrMelonssagelon to pelonrform classification on.
    */
-  public abstract void evaluate(final TwitterMessage tweet);
+  public abstract void elonvaluatelon(final TwittelonrMelonssagelon twelonelont);
 
   /**
-   * Classify a group of TwitterMessages and store the features in their corresponding
-   * TweetFeatures fields.
+   * Classify a group of TwittelonrMelonssagelons and storelon thelon felonaturelons in thelonir correlonsponding
+   * TwelonelontFelonaturelons fielonlds.
    *
-   * This default implementation just iterates through the map and classifies each
-   * individual tweet. Batching for better performance, if applicable, can be implemented by
-   * concrete subclasses.
+   * This delonfault implelonmelonntation just itelonratelons through thelon map and classifielons elonach
+   * individual twelonelont. Batching for belonttelonr pelonrformancelon, if applicablelon, can belon implelonmelonntelond by
+   * concrelontelon subclasselons.
    *
-   * @param tweets TwitterMessages to perform classification on.
+   * @param twelonelonts TwittelonrMelonssagelons to pelonrform classification on.
    */
-   public void evaluate(final Iterable<TwitterMessage> tweets) {
-    Preconditions.checkNotNull(tweets);
-    for (TwitterMessage tweet: tweets) {
-      evaluate(tweet);
+   public void elonvaluatelon(final Itelonrablelon<TwittelonrMelonssagelon> twelonelonts) {
+    Prelonconditions.chelonckNotNull(twelonelonts);
+    for (TwittelonrMelonssagelon twelonelont: twelonelonts) {
+      elonvaluatelon(twelonelont);
     }
   }
 }

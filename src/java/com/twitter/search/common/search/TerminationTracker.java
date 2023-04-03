@@ -1,202 +1,202 @@
-package com.twitter.search.common.search;
+packagelon com.twittelonr.selonarch.common.selonarch;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashSelont;
+import java.util.Selont;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.query.thriftjava.CollectorTerminationParams;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorTelonrminationParams;
 
 /**
- * Used for tracking termination criteria for earlybird queries.
+ * Uselond for tracking telonrmination critelonria for elonarlybird quelonrielons.
  *
- * Currently this tracks the query time out and query cost, if they are set on the
- * {@link com.twitter.search.common.query.thriftjava.CollectorTerminationParams}.
+ * Currelonntly this tracks thelon quelonry timelon out and quelonry cost, if thelony arelon selont on thelon
+ * {@link com.twittelonr.selonarch.common.quelonry.thriftjava.CollelonctorTelonrminationParams}.
  */
-public class TerminationTracker {
-  /** Query start time provided by client. */
-  private final long clientStartTimeMillis;
+public class TelonrminationTrackelonr {
+  /** Quelonry start timelon providelond by clielonnt. */
+  privatelon final long clielonntStartTimelonMillis;
 
-  /** Timeout end times, calculated from {@link #clientStartTimeMillis}. */
-  private final long timeoutEndTimeMillis;
+  /** Timelonout elonnd timelons, calculatelond from {@link #clielonntStartTimelonMillis}. */
+  privatelon final long timelonoutelonndTimelonMillis;
 
-  /** Query start time recorded at earlybird server. */
-  private final long localStartTimeMillis;
+  /** Quelonry start timelon reloncordelond at elonarlybird selonrvelonr. */
+  privatelon final long localStartTimelonMillis;
 
-  /** Tracking query cost */
-  private final double maxQueryCost;
+  /** Tracking quelonry cost */
+  privatelon final doublelon maxQuelonryCost;
 
-  // Sometimes, we want to early terminate before timeoutEndTimeMillis, to reserve time for
-  // work that needs to be done after early termination (E.g. merging results).
-  private final int postTerminationOverheadMillis;
+  // Somelontimelons, welon want to elonarly telonrminatelon belonforelon timelonoutelonndTimelonMillis, to relonselonrvelon timelon for
+  // work that nelonelonds to belon donelon aftelonr elonarly telonrmination (elon.g. melonrging relonsults).
+  privatelon final int postTelonrminationOvelonrhelonadMillis;
 
-  // We don't check for early termination often enough. Some times requests timeout in between
-  // early termination checks. This buffer time is also substracted from deadline.
-  // To illustrate how this is used, let's use a simple example:
-  // If we spent 750ms searching 5 segments, a rough estimate is that we need 150ms to search
-  // one segment. If the timeout is set to 800ms, we should not starting searching the next segment.
-  // In this case, on can set preTerminationSafeBufferTimeMillis to 150ms, so that when early
-  // termination check computes the deadline, this buffer is also subtracted. See SEARCH-29723.
-  private int preTerminationSafeBufferTimeMillis = 0;
+  // Welon don't chelonck for elonarly telonrmination oftelonn elonnough. Somelon timelons relonquelonsts timelonout in belontwelonelonn
+  // elonarly telonrmination cheloncks. This buffelonr timelon is also substractelond from delonadlinelon.
+  // To illustratelon how this is uselond, lelont's uselon a simplelon elonxamplelon:
+  // If welon spelonnt 750ms selonarching 5 selongmelonnts, a rough elonstimatelon is that welon nelonelond 150ms to selonarch
+  // onelon selongmelonnt. If thelon timelonout is selont to 800ms, welon should not starting selonarching thelon nelonxt selongmelonnt.
+  // In this caselon, on can selont prelonTelonrminationSafelonBuffelonrTimelonMillis to 150ms, so that whelonn elonarly
+  // telonrmination chelonck computelons thelon delonadlinelon, this buffelonr is also subtractelond. Selonelon SelonARCH-29723.
+  privatelon int prelonTelonrminationSafelonBuffelonrTimelonMillis = 0;
 
-  private EarlyTerminationState earlyTerminationState = EarlyTerminationState.COLLECTING;
+  privatelon elonarlyTelonrminationStatelon elonarlyTelonrminationStatelon = elonarlyTelonrminationStatelon.COLLelonCTING;
 
-  // This flag determines whether the last searched doc ID trackers should be consulted when a
-  // timeout occurs.
-  private final boolean useLastSearchedDocIdOnTimeout;
+  // This flag delontelonrminelons whelonthelonr thelon last selonarchelond doc ID trackelonrs should belon consultelond whelonn a
+  // timelonout occurs.
+  privatelon final boolelonan uselonLastSelonarchelondDocIdOnTimelonout;
 
-  private final Set<DocIdTracker> lastSearchedDocIdTrackers = new HashSet<>();
+  privatelon final Selont<DocIdTrackelonr> lastSelonarchelondDocIdTrackelonrs = nelonw HashSelont<>();
 
   /**
-   * Creates a new termination tracker that will not specify a timeout or max query cost.
-   * Can be used for queries that explicitly do not want to use a timeout. Meant to be used for
-   * tests, and background queries running for the query cache.
+   * Crelonatelons a nelonw telonrmination trackelonr that will not speloncify a timelonout or max quelonry cost.
+   * Can belon uselond for quelonrielons that elonxplicitly do not want to uselon a timelonout. Melonant to belon uselond for
+   * telonsts, and background quelonrielons running for thelon quelonry cachelon.
    */
-  public TerminationTracker(Clock clock) {
-    this.clientStartTimeMillis = clock.nowMillis();
-    this.localStartTimeMillis = clientStartTimeMillis;
-    this.timeoutEndTimeMillis = Long.MAX_VALUE;
-    this.maxQueryCost = Double.MAX_VALUE;
-    this.postTerminationOverheadMillis = 0;
-    this.useLastSearchedDocIdOnTimeout = false;
+  public TelonrminationTrackelonr(Clock clock) {
+    this.clielonntStartTimelonMillis = clock.nowMillis();
+    this.localStartTimelonMillis = clielonntStartTimelonMillis;
+    this.timelonoutelonndTimelonMillis = Long.MAX_VALUelon;
+    this.maxQuelonryCost = Doublelon.MAX_VALUelon;
+    this.postTelonrminationOvelonrhelonadMillis = 0;
+    this.uselonLastSelonarchelondDocIdOnTimelonout = falselon;
   }
 
   /**
-   * Convenient method overloading for
-   * {@link #TerminationTracker(CollectorTerminationParams, long, Clock, int)}.
+   * Convelonnielonnt melonthod ovelonrloading for
+   * {@link #TelonrminationTrackelonr(CollelonctorTelonrminationParams, long, Clock, int)}.
    */
-  public TerminationTracker(
-      CollectorTerminationParams terminationParams, Clock clock,
-      int postTerminationOverheadMillis) {
-    this(terminationParams, clock.nowMillis(), clock, postTerminationOverheadMillis);
+  public TelonrminationTrackelonr(
+      CollelonctorTelonrminationParams telonrminationParams, Clock clock,
+      int postTelonrminationOvelonrhelonadMillis) {
+    this(telonrminationParams, clock.nowMillis(), clock, postTelonrminationOvelonrhelonadMillis);
   }
 
   /**
-   * Convenient method overloading for
-   * {@link #TerminationTracker(CollectorTerminationParams, long, Clock, int)}.
+   * Convelonnielonnt melonthod ovelonrloading for
+   * {@link #TelonrminationTrackelonr(CollelonctorTelonrminationParams, long, Clock, int)}.
    */
-  public TerminationTracker(
-      CollectorTerminationParams terminationParams, int postTerminationOverheadMillis) {
+  public TelonrminationTrackelonr(
+      CollelonctorTelonrminationParams telonrminationParams, int postTelonrminationOvelonrhelonadMillis) {
     this(
-        terminationParams,
-        System.currentTimeMillis(),
-        Clock.SYSTEM_CLOCK,
-        postTerminationOverheadMillis);
+        telonrminationParams,
+        Systelonm.currelonntTimelonMillis(),
+        Clock.SYSTelonM_CLOCK,
+        postTelonrminationOvelonrhelonadMillis);
   }
 
   /**
-   * Creates a new TerminationTracker instance.
+   * Crelonatelons a nelonw TelonrminationTrackelonr instancelon.
    *
-   * @param terminationParams  CollectorParams.CollectorTerminationParams carrying parameters
-   *                           about early termination.
-   * @param clientStartTimeMillis The query start time (in millis) specified by client. This is used
-   *                              to calculate timeout end time, like {@link #timeoutEndTimeMillis}.
-   * @param clock used to sample {@link #localStartTimeMillis}.
-   * @param postTerminationOverheadMillis How much time should be reserved.  E.g. if request time
-   *                                      out is 800ms, and this is set to 200ms, early termination
+   * @param telonrminationParams  CollelonctorParams.CollelonctorTelonrminationParams carrying paramelontelonrs
+   *                           about elonarly telonrmination.
+   * @param clielonntStartTimelonMillis Thelon quelonry start timelon (in millis) speloncifielond by clielonnt. This is uselond
+   *                              to calculatelon timelonout elonnd timelon, likelon {@link #timelonoutelonndTimelonMillis}.
+   * @param clock uselond to samplelon {@link #localStartTimelonMillis}.
+   * @param postTelonrminationOvelonrhelonadMillis How much timelon should belon relonselonrvelond.  elon.g. if relonquelonst timelon
+   *                                      out is 800ms, and this is selont to 200ms, elonarly telonrmination
    *                                      will kick in at 600ms mark.
    */
-  public TerminationTracker(
-      CollectorTerminationParams terminationParams,
-      long clientStartTimeMillis,
+  public TelonrminationTrackelonr(
+      CollelonctorTelonrminationParams telonrminationParams,
+      long clielonntStartTimelonMillis,
       Clock clock,
-      int postTerminationOverheadMillis) {
-    Preconditions.checkNotNull(terminationParams);
-    Preconditions.checkArgument(postTerminationOverheadMillis >= 0);
+      int postTelonrminationOvelonrhelonadMillis) {
+    Prelonconditions.chelonckNotNull(telonrminationParams);
+    Prelonconditions.chelonckArgumelonnt(postTelonrminationOvelonrhelonadMillis >= 0);
 
-    this.clientStartTimeMillis = clientStartTimeMillis;
-    this.localStartTimeMillis = clock.nowMillis();
+    this.clielonntStartTimelonMillis = clielonntStartTimelonMillis;
+    this.localStartTimelonMillis = clock.nowMillis();
 
-    if (terminationParams.isSetTimeoutMs()
-        && terminationParams.getTimeoutMs() > 0) {
-      Preconditions.checkState(terminationParams.getTimeoutMs() >= postTerminationOverheadMillis);
-      this.timeoutEndTimeMillis = this.clientStartTimeMillis + terminationParams.getTimeoutMs();
-    } else {
-      // Effectively no timeout.
-      this.timeoutEndTimeMillis = Long.MAX_VALUE;
+    if (telonrminationParams.isSelontTimelonoutMs()
+        && telonrminationParams.gelontTimelonoutMs() > 0) {
+      Prelonconditions.chelonckStatelon(telonrminationParams.gelontTimelonoutMs() >= postTelonrminationOvelonrhelonadMillis);
+      this.timelonoutelonndTimelonMillis = this.clielonntStartTimelonMillis + telonrminationParams.gelontTimelonoutMs();
+    } elonlselon {
+      // elonffelonctivelonly no timelonout.
+      this.timelonoutelonndTimelonMillis = Long.MAX_VALUelon;
     }
 
-    // Tracking query cost
-    if (terminationParams.isSetMaxQueryCost()
-        && terminationParams.getMaxQueryCost() > 0) {
-      maxQueryCost = terminationParams.getMaxQueryCost();
-    } else {
-      maxQueryCost = Double.MAX_VALUE;
+    // Tracking quelonry cost
+    if (telonrminationParams.isSelontMaxQuelonryCost()
+        && telonrminationParams.gelontMaxQuelonryCost() > 0) {
+      maxQuelonryCost = telonrminationParams.gelontMaxQuelonryCost();
+    } elonlselon {
+      maxQuelonryCost = Doublelon.MAX_VALUelon;
     }
 
-    this.useLastSearchedDocIdOnTimeout = terminationParams.isEnforceQueryTimeout();
-    this.postTerminationOverheadMillis = postTerminationOverheadMillis;
+    this.uselonLastSelonarchelondDocIdOnTimelonout = telonrminationParams.iselonnforcelonQuelonryTimelonout();
+    this.postTelonrminationOvelonrhelonadMillis = postTelonrminationOvelonrhelonadMillis;
   }
 
   /**
-   * Returns the reserve time to perform post termination work. Return the deadline timestamp
-   * with postTerminationWorkEstimate subtracted.
+   * Relonturns thelon relonselonrvelon timelon to pelonrform post telonrmination work. Relonturn thelon delonadlinelon timelonstamp
+   * with postTelonrminationWorkelonstimatelon subtractelond.
    */
-  public long getTimeoutEndTimeWithReservation() {
-    // Return huge value if time out is disabled.
-    if (timeoutEndTimeMillis == Long.MAX_VALUE) {
-      return timeoutEndTimeMillis;
-    } else {
-      return timeoutEndTimeMillis
-          - postTerminationOverheadMillis
-          - preTerminationSafeBufferTimeMillis;
+  public long gelontTimelonoutelonndTimelonWithRelonselonrvation() {
+    // Relonturn hugelon valuelon if timelon out is disablelond.
+    if (timelonoutelonndTimelonMillis == Long.MAX_VALUelon) {
+      relonturn timelonoutelonndTimelonMillis;
+    } elonlselon {
+      relonturn timelonoutelonndTimelonMillis
+          - postTelonrminationOvelonrhelonadMillis
+          - prelonTelonrminationSafelonBuffelonrTimelonMillis;
     }
   }
 
-  public void setPreTerminationSafeBufferTimeMillis(int preTerminationSafeBufferTimeMillis) {
-    Preconditions.checkArgument(preTerminationSafeBufferTimeMillis >= 0);
+  public void selontPrelonTelonrminationSafelonBuffelonrTimelonMillis(int prelonTelonrminationSafelonBuffelonrTimelonMillis) {
+    Prelonconditions.chelonckArgumelonnt(prelonTelonrminationSafelonBuffelonrTimelonMillis >= 0);
 
-    this.preTerminationSafeBufferTimeMillis = preTerminationSafeBufferTimeMillis;
+    this.prelonTelonrminationSafelonBuffelonrTimelonMillis = prelonTelonrminationSafelonBuffelonrTimelonMillis;
   }
 
-  public long getLocalStartTimeMillis() {
-    return localStartTimeMillis;
+  public long gelontLocalStartTimelonMillis() {
+    relonturn localStartTimelonMillis;
   }
 
-  public long getClientStartTimeMillis() {
-    return clientStartTimeMillis;
+  public long gelontClielonntStartTimelonMillis() {
+    relonturn clielonntStartTimelonMillis;
   }
 
-  public double getMaxQueryCost() {
-    return maxQueryCost;
+  public doublelon gelontMaxQuelonryCost() {
+    relonturn maxQuelonryCost;
   }
 
-  public boolean isEarlyTerminated() {
-    return earlyTerminationState.isTerminated();
+  public boolelonan iselonarlyTelonrminatelond() {
+    relonturn elonarlyTelonrminationStatelon.isTelonrminatelond();
   }
 
-  public EarlyTerminationState getEarlyTerminationState() {
-    return earlyTerminationState;
+  public elonarlyTelonrminationStatelon gelontelonarlyTelonrminationStatelon() {
+    relonturn elonarlyTelonrminationStatelon;
   }
 
-  public void setEarlyTerminationState(EarlyTerminationState earlyTerminationState) {
-    this.earlyTerminationState = earlyTerminationState;
+  public void selontelonarlyTelonrminationStatelon(elonarlyTelonrminationStatelon elonarlyTelonrminationStatelon) {
+    this.elonarlyTelonrminationStatelon = elonarlyTelonrminationStatelon;
   }
 
   /**
-   * Return the minimum searched doc ID amongst all registered trackers, or -1 if there aren't any
-   * trackers. Doc IDs are stored in ascending order, and trackers update their doc IDs as they
-   * search, so the minimum doc ID reflects the most recent fully searched doc ID.
+   * Relonturn thelon minimum selonarchelond doc ID amongst all relongistelonrelond trackelonrs, or -1 if thelonrelon arelonn't any
+   * trackelonrs. Doc IDs arelon storelond in ascelonnding ordelonr, and trackelonrs updatelon thelonir doc IDs as thelony
+   * selonarch, so thelon minimum doc ID relonfleloncts thelon most reloncelonnt fully selonarchelond doc ID.
    */
-  int getLastSearchedDocId() {
-    return lastSearchedDocIdTrackers.stream()
-        .mapToInt(DocIdTracker::getCurrentDocId).min().orElse(-1);
+  int gelontLastSelonarchelondDocId() {
+    relonturn lastSelonarchelondDocIdTrackelonrs.strelonam()
+        .mapToInt(DocIdTrackelonr::gelontCurrelonntDocId).min().orelonlselon(-1);
   }
 
-  void resetDocIdTrackers() {
-    lastSearchedDocIdTrackers.clear();
+  void relonselontDocIdTrackelonrs() {
+    lastSelonarchelondDocIdTrackelonrs.clelonar();
   }
 
   /**
-   * Add a DocIdTracker, to keep track of the last fully-searched doc ID when early termination
+   * Add a DocIdTrackelonr, to kelonelonp track of thelon last fully-selonarchelond doc ID whelonn elonarly telonrmination
    * occurs.
    */
-  public void addDocIdTracker(DocIdTracker docIdTracker) {
-    lastSearchedDocIdTrackers.add(docIdTracker);
+  public void addDocIdTrackelonr(DocIdTrackelonr docIdTrackelonr) {
+    lastSelonarchelondDocIdTrackelonrs.add(docIdTrackelonr);
   }
 
-  public boolean useLastSearchedDocIdOnTimeout() {
-    return useLastSearchedDocIdOnTimeout;
+  public boolelonan uselonLastSelonarchelondDocIdOnTimelonout() {
+    relonturn uselonLastSelonarchelondDocIdOnTimelonout;
   }
 }

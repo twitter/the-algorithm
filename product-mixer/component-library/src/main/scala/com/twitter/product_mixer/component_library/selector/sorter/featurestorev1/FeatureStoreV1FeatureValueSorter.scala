@@ -1,98 +1,98 @@
-package com.twitter.product_mixer.component_library.selector.sorter.featurestorev1
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.felonaturelonstorelonv1
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.product_mixer.component_library.selector.sorter.Ascending
-import com.twitter.product_mixer.component_library.selector.sorter.Descending
-import com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter.featureValueSortDefaultValue
-import com.twitter.product_mixer.component_library.selector.sorter.SorterFromOrdering
-import com.twitter.product_mixer.component_library.selector.sorter.SorterProvider
-import com.twitter.product_mixer.core.feature.featuremap.featurestorev1.FeatureStoreV1FeatureMap._
-import com.twitter.product_mixer.core.feature.featurestorev1.FeatureStoreV1CandidateFeature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import scala.reflect.runtime.universe._
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.Ascelonnding
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.Delonscelonnding
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.FelonaturelonValuelonSortelonr.felonaturelonValuelonSortDelonfaultValuelon
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.SortelonrFromOrdelonring
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.SortelonrProvidelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.felonaturelonstorelonv1.FelonaturelonStorelonV1FelonaturelonMap._
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.FelonaturelonStorelonV1CandidatelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import scala.relonflelonct.runtimelon.univelonrselon._
 
 /**
- * Feature Store v1 version of [[com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter]]
+ * Felonaturelon Storelon v1 velonrsion of [[com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.FelonaturelonValuelonSortelonr]]
  */
-object FeatureStoreV1FeatureValueSorter {
+objelonct FelonaturelonStorelonV1FelonaturelonValuelonSortelonr {
 
   /**
-   * Sort by a Feature Store v1 feature value ascending. If the feature failed or is missing, use an
-   * inferred default based on the type of [[FeatureValue]]. For Numeric values this is the MinValue
-   * (e.g. Long.MinValue, Double.MinValue).
+   * Sort by a Felonaturelon Storelon v1 felonaturelon valuelon ascelonnding. If thelon felonaturelon failelond or is missing, uselon an
+   * infelonrrelond delonfault baselond on thelon typelon of [[FelonaturelonValuelon]]. For Numelonric valuelons this is thelon MinValuelon
+   * (elon.g. Long.MinValuelon, Doublelon.MinValuelon).
    *
-   * @param feature Feature Store v1 feature with value to sort by
-   * @param typeTag allows for inferring default value from the FeatureValue type.
-   *                See [[com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter.featureValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon Felonaturelon Storelon v1 felonaturelon with valuelon to sort by
+   * @param typelonTag allows for infelonrring delonfault valuelon from thelon FelonaturelonValuelon typelon.
+   *                Selonelon [[com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.FelonaturelonValuelonSortelonr.felonaturelonValuelonSortDelonfaultValuelon]]
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: FeatureStoreV1CandidateFeature[PipelineQuery, Candidate, _ <: EntityId, FeatureValue]
+  delonf ascelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: FelonaturelonStorelonV1CandidatelonFelonaturelon[PipelonlinelonQuelonry, Candidatelon, _ <: elonntityId, FelonaturelonValuelon]
   )(
-    implicit typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Ascending)
+    implicit typelonTag: TypelonTag[FelonaturelonValuelon]
+  ): SortelonrProvidelonr = {
+    val delonfaultFelonaturelonValuelon: FelonaturelonValuelon = felonaturelonValuelonSortDelonfaultValuelon(felonaturelon, Ascelonnding)
 
-    ascending(feature, defaultFeatureValue)
+    ascelonnding(felonaturelon, delonfaultFelonaturelonValuelon)
   }
 
   /**
-   * Sort by a Feature Store v1 feature value ascending. If the feature failed or is missing, use
-   * the provided default.
+   * Sort by a Felonaturelon Storelon v1 felonaturelon valuelon ascelonnding. If thelon felonaturelon failelond or is missing, uselon
+   * thelon providelond delonfault.
    *
-   * @param feature Feature Store v1 feature with value to sort by
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon Felonaturelon Storelon v1 felonaturelon with valuelon to sort by
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def ascending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: FeatureStoreV1CandidateFeature[PipelineQuery, Candidate, _ <: EntityId, FeatureValue],
-    defaultFeatureValue: FeatureValue
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
-      _.features.getOrElseFeatureStoreV1CandidateFeature(feature, defaultFeatureValue))
+  delonf ascelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: FelonaturelonStorelonV1CandidatelonFelonaturelon[PipelonlinelonQuelonry, Candidatelon, _ <: elonntityId, FelonaturelonValuelon],
+    delonfaultFelonaturelonValuelon: FelonaturelonValuelon
+  ): SortelonrProvidelonr = {
+    val ordelonring = Ordelonring.by[CandidatelonWithDelontails, FelonaturelonValuelon](
+      _.felonaturelons.gelontOrelonlselonFelonaturelonStorelonV1CandidatelonFelonaturelon(felonaturelon, delonfaultFelonaturelonValuelon))
 
-    SorterFromOrdering(ordering, Ascending)
+    SortelonrFromOrdelonring(ordelonring, Ascelonnding)
   }
 
   /**
-   * Sort by a Feature Store v1 feature value descending. If the feature failed or is missing, use
-   * an inferred default based on the type of [[FeatureValue]]. For Numeric values this is the
-   * MaxValue (e.g. Long.MaxValue, Double.MaxValue).
+   * Sort by a Felonaturelon Storelon v1 felonaturelon valuelon delonscelonnding. If thelon felonaturelon failelond or is missing, uselon
+   * an infelonrrelond delonfault baselond on thelon typelon of [[FelonaturelonValuelon]]. For Numelonric valuelons this is thelon
+   * MaxValuelon (elon.g. Long.MaxValuelon, Doublelon.MaxValuelon).
    *
-   * @param feature Feature Store v1 feature with value to sort by
-   * @param typeTag allows for inferring default value from the FeatureValue type.
-   *                See [[com.twitter.product_mixer.component_library.selector.sorter.FeatureValueSorter.featureValueSortDefaultValue]]
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon Felonaturelon Storelon v1 felonaturelon with valuelon to sort by
+   * @param typelonTag allows for infelonrring delonfault valuelon from thelon FelonaturelonValuelon typelon.
+   *                Selonelon [[com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr.FelonaturelonValuelonSortelonr.felonaturelonValuelonSortDelonfaultValuelon]]
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: FeatureStoreV1CandidateFeature[PipelineQuery, Candidate, _ <: EntityId, FeatureValue]
+  delonf delonscelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: FelonaturelonStorelonV1CandidatelonFelonaturelon[PipelonlinelonQuelonry, Candidatelon, _ <: elonntityId, FelonaturelonValuelon]
   )(
-    implicit typeTag: TypeTag[FeatureValue]
-  ): SorterProvider = {
-    val defaultFeatureValue: FeatureValue = featureValueSortDefaultValue(feature, Descending)
+    implicit typelonTag: TypelonTag[FelonaturelonValuelon]
+  ): SortelonrProvidelonr = {
+    val delonfaultFelonaturelonValuelon: FelonaturelonValuelon = felonaturelonValuelonSortDelonfaultValuelon(felonaturelon, Delonscelonnding)
 
-    descending(feature, defaultFeatureValue)
+    delonscelonnding(felonaturelon, delonfaultFelonaturelonValuelon)
   }
 
   /**
-   * Sort by a Feature Store v1 feature value descending. If the feature failed or is missing, use
-   * the provided default.
+   * Sort by a Felonaturelon Storelon v1 felonaturelon valuelon delonscelonnding. If thelon felonaturelon failelond or is missing, uselon
+   * thelon providelond delonfault.
    *
-   * @param feature Feature Store v1 feature with value to sort by
-   * @tparam Candidate candidate for the feature
-   * @tparam FeatureValue feature value with an [[Ordering]] context bound
+   * @param felonaturelon Felonaturelon Storelon v1 felonaturelon with valuelon to sort by
+   * @tparam Candidatelon candidatelon for thelon felonaturelon
+   * @tparam FelonaturelonValuelon felonaturelon valuelon with an [[Ordelonring]] contelonxt bound
    */
-  def descending[Candidate <: UniversalNoun[Any], FeatureValue: Ordering](
-    feature: FeatureStoreV1CandidateFeature[PipelineQuery, Candidate, _ <: EntityId, FeatureValue],
-    defaultFeatureValue: FeatureValue
-  ): SorterProvider = {
-    val ordering = Ordering.by[CandidateWithDetails, FeatureValue](
-      _.features.getOrElseFeatureStoreV1CandidateFeature(feature, defaultFeatureValue))
+  delonf delonscelonnding[Candidatelon <: UnivelonrsalNoun[Any], FelonaturelonValuelon: Ordelonring](
+    felonaturelon: FelonaturelonStorelonV1CandidatelonFelonaturelon[PipelonlinelonQuelonry, Candidatelon, _ <: elonntityId, FelonaturelonValuelon],
+    delonfaultFelonaturelonValuelon: FelonaturelonValuelon
+  ): SortelonrProvidelonr = {
+    val ordelonring = Ordelonring.by[CandidatelonWithDelontails, FelonaturelonValuelon](
+      _.felonaturelons.gelontOrelonlselonFelonaturelonStorelonV1CandidatelonFelonaturelon(felonaturelon, delonfaultFelonaturelonValuelon))
 
-    SorterFromOrdering(ordering, Descending)
+    SortelonrFromOrdelonring(ordelonring, Delonscelonnding)
   }
 }

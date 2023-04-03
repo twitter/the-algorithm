@@ -1,43 +1,43 @@
-package com.twitter.visibility.configapi
+packagelon com.twittelonr.visibility.configapi
 
-import com.twitter.decider.Decider
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.CompositeConfig
-import com.twitter.timelines.configapi.Config
-import com.twitter.util.Memoize
-import com.twitter.visibility.configapi.configs.VisibilityDeciders
-import com.twitter.visibility.configapi.configs.VisibilityExperimentsConfig
-import com.twitter.visibility.configapi.configs.VisibilityFeatureSwitches
-import com.twitter.visibility.models.SafetyLevel
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.timelonlinelons.configapi.CompositelonConfig
+import com.twittelonr.timelonlinelons.configapi.Config
+import com.twittelonr.util.Melonmoizelon
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrs
+import com.twittelonr.visibility.configapi.configs.VisibilityelonxpelonrimelonntsConfig
+import com.twittelonr.visibility.configapi.configs.VisibilityFelonaturelonSwitchelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
 
-object ConfigBuilder {
+objelonct ConfigBuildelonr {
 
-  def apply(statsReceiver: StatsReceiver, decider: Decider, logger: Logger): ConfigBuilder = {
-    val deciderGateBuilder: DeciderGateBuilder =
-      new DeciderGateBuilder(decider)
+  delonf apply(statsReloncelonivelonr: StatsReloncelonivelonr, deloncidelonr: Deloncidelonr, loggelonr: Loggelonr): ConfigBuildelonr = {
+    val deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr =
+      nelonw DeloncidelonrGatelonBuildelonr(deloncidelonr)
 
-    new ConfigBuilder(
-      deciderGateBuilder,
-      statsReceiver,
-      logger
+    nelonw ConfigBuildelonr(
+      deloncidelonrGatelonBuildelonr,
+      statsReloncelonivelonr,
+      loggelonr
     )
   }
 }
 
-class ConfigBuilder(
-  deciderGateBuilder: DeciderGateBuilder,
-  statsReceiver: StatsReceiver,
-  logger: Logger) {
+class ConfigBuildelonr(
+  deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  loggelonr: Loggelonr) {
 
-  def buildMemoized: SafetyLevel => Config = Memoize(build)
+  delonf buildMelonmoizelond: SafelontyLelonvelonl => Config = Melonmoizelon(build)
 
-  def build(safetyLevel: SafetyLevel): Config = {
-    new CompositeConfig(
-      VisibilityExperimentsConfig.config(safetyLevel) :+
-        VisibilityDeciders.config(deciderGateBuilder, logger, statsReceiver, safetyLevel) :+
-        VisibilityFeatureSwitches.config(statsReceiver, logger)
+  delonf build(safelontyLelonvelonl: SafelontyLelonvelonl): Config = {
+    nelonw CompositelonConfig(
+      VisibilityelonxpelonrimelonntsConfig.config(safelontyLelonvelonl) :+
+        VisibilityDeloncidelonrs.config(deloncidelonrGatelonBuildelonr, loggelonr, statsReloncelonivelonr, safelontyLelonvelonl) :+
+        VisibilityFelonaturelonSwitchelons.config(statsReloncelonivelonr, loggelonr)
     )
   }
 }

@@ -1,13 +1,13 @@
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/inject:guice",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/injelonct:guicelon",
         "3rdparty/jvm/commons-io",
-        "3rdparty/jvm/org/yaml:snakeyaml",
-        "finagle/finagle-core/src/main",
-        "src/java/com/twitter/common/util:system-mocks",
-        "src/java/com/twitter/search/common/util/io/periodic",
+        "3rdparty/jvm/org/yaml:snakelonyaml",
+        "finaglelon/finaglelon-corelon/src/main",
+        "src/java/com/twittelonr/common/util:systelonm-mocks",
+        "src/java/com/twittelonr/selonarch/common/util/io/pelonriodic",
     ],
 )

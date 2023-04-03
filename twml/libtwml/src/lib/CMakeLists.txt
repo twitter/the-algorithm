@@ -1,36 +1,36 @@
-set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR})
-cmake_minimum_required(VERSION 2.8 FATAL_ERROR)
-cmake_policy(VERSION 2.8)
+selont(CMAKelon_MODULelon_PATH ${PROJelonCT_SOURCelon_DIR})
+cmakelon_minimum_relonquirelond(VelonRSION 2.8 FATAL_elonRROR)
+cmakelon_policy(VelonRSION 2.8)
 
 
-set(TWML_VERSION "2.0.0")
-string(REPLACE "." ";" TWML_VERSION_LIST ${TWML_VERSION})
-list(GET TWML_VERSION_LIST 0 TWML_SOVERSION)
+selont(TWML_VelonRSION "2.0.0")
+string(RelonPLACelon "." ";" TWML_VelonRSION_LIST ${TWML_VelonRSION})
+list(GelonT TWML_VelonRSION_LIST 0 TWML_SOVelonRSION)
 
-execute_process(
+elonxeloncutelon_procelonss(
   COMMAND
-  $ENV{LIBTWML_HOME}/src/ops/scripts/get_inc.sh
-  RESULT_VARIABLE
-  TF_RES
-  OUTPUT_VARIABLE
+  $elonNV{LIBTWML_HOMelon}/src/ops/scripts/gelont_inc.sh
+  RelonSULT_VARIABLelon
+  TF_RelonS
+  OUTPUT_VARIABLelon
   TF_INC)
 
-file(GLOB_RECURSE sources *.cpp)
+filelon(GLOB_RelonCURSelon sourcelons *.cpp)
 
-set (CMAKE_CXX_FLAGS "-Wall -std=c++11 ${CMAKE_CXX_FLAGS} -fPIC")
+selont (CMAKelon_CXX_FLAGS "-Wall -std=c++11 ${CMAKelon_CXX_FLAGS} -fPIC")
 
-add_library(twml STATIC ${sources})
+add_library(twml STATIC ${sourcelons})
 
-target_include_directories(
+targelont_includelon_direlonctorielons(
   twml
   PUBLIC
-  ${CMAKE_CURRENT_SOURCE_DIR}/../../include
-  PRIVATE
-  ${CMAKE_CURRENT_SOURCE_DIR}
-  ${TF_INC}  # Absail dependency from tensorflow
+  ${CMAKelon_CURRelonNT_SOURCelon_DIR}/../../includelon
+  PRIVATelon
+  ${CMAKelon_CURRelonNT_SOURCelon_DIR}
+  ${TF_INC}  # Absail delonpelonndelonncy from telonnsorflow
   )
 
-set_target_properties(twml PROPERTIES
-  VERSION "${TWML_VERSION}"
-  SOVERSION "${TWML_SOVERSION}"
+selont_targelont_propelonrtielons(twml PROPelonRTIelonS
+  VelonRSION "${TWML_VelonRSION}"
+  SOVelonRSION "${TWML_SOVelonRSION}"
   )

@@ -1,48 +1,48 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/framework/attr_value.proto";
+import "telonnsorflow/corelon/framelonwork/attr_valuelon.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "KernelDefProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/kernel_def_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "KelonrnelonlDelonfProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/kelonrnelonl_delonf_go_proto";
 
-message KernelDef {
-  // Must match the name of an Op.
+melonssagelon KelonrnelonlDelonf {
+  // Must match thelon namelon of an Op.
   string op = 1;
 
-  // Type of device this kernel runs on.
-  string device_type = 2;
+  // Typelon of delonvicelon this kelonrnelonl runs on.
+  string delonvicelon_typelon = 2;
 
-  message AttrConstraint {
-    // Name of an attr from the Op.
-    string name = 1;
+  melonssagelon AttrConstraint {
+    // Namelon of an attr from thelon Op.
+    string namelon = 1;
 
-    // A list of values that this kernel supports for this attr.
-    // Like OpDef.AttrDef.allowed_values, except for kernels instead of Ops.
-    AttrValue allowed_values = 2;
+    // A list of valuelons that this kelonrnelonl supports for this attr.
+    // Likelon OpDelonf.AttrDelonf.allowelond_valuelons, elonxcelonpt for kelonrnelonls instelonad of Ops.
+    AttrValuelon allowelond_valuelons = 2;
   }
-  repeated AttrConstraint constraint = 3;
+  relonpelonatelond AttrConstraint constraint = 3;
 
-  // Names of the Op's input_/output_args that reside in host memory
-  // instead of device memory.
-  repeated string host_memory_arg = 4;
+  // Namelons of thelon Op's input_/output_args that relonsidelon in host melonmory
+  // instelonad of delonvicelon melonmory.
+  relonpelonatelond string host_melonmory_arg = 4;
 
-  // This allows experimental kernels to be registered for an op that
-  // won't be used unless the user specifies a "_kernel" attr with
-  // value matching this.
-  string label = 5;
+  // This allows elonxpelonrimelonntal kelonrnelonls to belon relongistelonrelond for an op that
+  // won't belon uselond unlelonss thelon uselonr speloncifielons a "_kelonrnelonl" attr with
+  // valuelon matching this.
+  string labelonl = 5;
 
-  // Prioritization of kernel amongst different devices. By default we assume
-  // priority is 0. The higher the priority the better. By default (i.e. if
-  // this is not set), we prefer GPU kernels over CPU.
+  // Prioritization of kelonrnelonl amongst diffelonrelonnt delonvicelons. By delonfault welon assumelon
+  // priority is 0. Thelon highelonr thelon priority thelon belonttelonr. By delonfault (i.elon. if
+  // this is not selont), welon prelonfelonr GPU kelonrnelonls ovelonr CPU.
   int32 priority = 6;
 }
 
-// A collection of KernelDefs
-message KernelList {
-  repeated KernelDef kernel = 1;
+// A collelonction of KelonrnelonlDelonfs
+melonssagelon KelonrnelonlList {
+  relonpelonatelond KelonrnelonlDelonf kelonrnelonl = 1;
 }

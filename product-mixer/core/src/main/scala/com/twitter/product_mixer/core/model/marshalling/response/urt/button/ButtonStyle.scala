@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.button
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button
 
-sealed trait ButtonStyle
+selonalelond trait ButtonStylelon
 
-case object Default extends ButtonStyle
-case object Primary extends ButtonStyle
-case object Secondary extends ButtonStyle
-case object Text extends ButtonStyle
-case object Destructive extends ButtonStyle
-case object Neutral extends ButtonStyle
-case object DestructiveSecondary extends ButtonStyle
-case object DestructiveText extends ButtonStyle
+caselon objelonct Delonfault elonxtelonnds ButtonStylelon
+caselon objelonct Primary elonxtelonnds ButtonStylelon
+caselon objelonct Seloncondary elonxtelonnds ButtonStylelon
+caselon objelonct Telonxt elonxtelonnds ButtonStylelon
+caselon objelonct Delonstructivelon elonxtelonnds ButtonStylelon
+caselon objelonct Nelonutral elonxtelonnds ButtonStylelon
+caselon objelonct DelonstructivelonSeloncondary elonxtelonnds ButtonStylelon
+caselon objelonct DelonstructivelonTelonxt elonxtelonnds ButtonStylelon

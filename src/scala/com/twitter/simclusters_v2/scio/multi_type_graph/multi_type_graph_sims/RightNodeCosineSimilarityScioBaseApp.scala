@@ -1,95 +1,95 @@
-package com.twitter.simclusters_v2.scio
-package multi_type_graph.multi_type_graph_sims
+packagelon com.twittelonr.simclustelonrs_v2.scio
+packagelon multi_typelon_graph.multi_typelon_graph_sims
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.common.util.Clock
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.hdfs_sources.RightNodeSimHashScioScalaDataset
-import com.twitter.simclusters_v2.scio.multi_type_graph.common.MultiTypeGraphUtil
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.util.Duration
-import com.twitter.wtf.dataflow.cosine_similarity.ApproximateMatrixSelfTransposeMultiplicationJob
-import java.time.Instant
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.codelonrs.Codelonr
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.fs.multiformat.PathLayout
+import com.twittelonr.belonam.job.DatelonRangelonOptions
+import com.twittelonr.common.util.Clock
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.dal.clielonnt.dataselont.SnapshotDALDataselont
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scio_intelonrnal.codelonrs.ThriftStructLazyBinaryScroogelonCodelonr
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.RightNodelonSimHashScioScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.common.MultiTypelonGraphUtil
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.util.Duration
+import com.twittelonr.wtf.dataflow.cosinelon_similarity.ApproximatelonMatrixSelonlfTransposelonMultiplicationJob
+import java.timelon.Instant
 
-trait RightNodeCosineSimilarityScioBaseApp
-    extends ScioBeamJob[DateRangeOptions]
-    with ApproximateMatrixSelfTransposeMultiplicationJob[RightNode] {
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
-  override val ordering: Ordering[RightNode] = MultiTypeGraphUtil.rightNodeOrdering
+trait RightNodelonCosinelonSimilarityScioBaselonApp
+    elonxtelonnds ScioBelonamJob[DatelonRangelonOptions]
+    with ApproximatelonMatrixSelonlfTransposelonMultiplicationJob[RightNodelon] {
+  ovelonrridelon implicit delonf scroogelonCodelonr[T <: ThriftStruct: Manifelonst]: Codelonr[T] =
+    ThriftStructLazyBinaryScroogelonCodelonr.scroogelonCodelonr
+  ovelonrridelon val ordelonring: Ordelonring[RightNodelon] = MultiTypelonGraphUtil.rightNodelonOrdelonring
 
-  val isAdhoc: Boolean
-  val cosineSimKeyValSnapshotDataset: KeyValDALDataset[KeyVal[RightNode, SimilarRightNodes]]
-  val rightNodeSimHashSnapshotDataset: SnapshotDALDataset[RightNodeSimHashSketch] =
-    RightNodeSimHashScioScalaDataset
-  val cosineSimJobOutputDirectory: String = Config.cosineSimJobOutputDirectory
+  val isAdhoc: Boolelonan
+  val cosinelonSimKelonyValSnapshotDataselont: KelonyValDALDataselont[KelonyVal[RightNodelon, SimilarRightNodelons]]
+  val rightNodelonSimHashSnapshotDataselont: SnapshotDALDataselont[RightNodelonSimHashSkelontch] =
+    RightNodelonSimHashScioScalaDataselont
+  val cosinelonSimJobOutputDirelonctory: String = Config.cosinelonSimJobOutputDirelonctory
 
-  override def graph(
-    implicit sc: ScioContext,
-    coder: Coder[RightNode]
-  ): SCollection[(Long, RightNode, Double)] =
-    MultiTypeGraphUtil.getTruncatedMultiTypeGraph(noOlderThan = Duration.fromDays(14))
+  ovelonrridelon delonf graph(
+    implicit sc: ScioContelonxt,
+    codelonr: Codelonr[RightNodelon]
+  ): SCollelonction[(Long, RightNodelon, Doublelon)] =
+    MultiTypelonGraphUtil.gelontTruncatelondMultiTypelonGraph(noOldelonrThan = Duration.fromDays(14))
 
-  override def simHashSketches(
-    implicit sc: ScioContext,
-    coder: Coder[RightNode]
-  ): SCollection[(RightNode, Array[Byte])] = {
+  ovelonrridelon delonf simHashSkelontchelons(
+    implicit sc: ScioContelonxt,
+    codelonr: Codelonr[RightNodelon]
+  ): SCollelonction[(RightNodelon, Array[Bytelon])] = {
     sc.customInput(
-        "ReadSimHashSketches",
+        "RelonadSimHashSkelontchelons",
         DAL
-          .readMostRecentSnapshotNoOlderThan(
-            rightNodeSimHashSnapshotDataset,
+          .relonadMostReloncelonntSnapshotNoOldelonrThan(
+            rightNodelonSimHashSnapshotDataselont,
             Duration.fromDays(14),
-            Clock.SYSTEM_CLOCK,
-            DAL.Environment.Prod
+            Clock.SYSTelonM_CLOCK,
+            DAL.elonnvironmelonnt.Prod
           )
-      ).map { sketch =>
-        sketch.rightNode -> sketch.simHashOfEngagers.toArray
+      ).map { skelontch =>
+        skelontch.rightNodelon -> skelontch.simHashOfelonngagelonrs.toArray
       }
   }
 
-  override def configurePipeline(
-    sc: ScioContext,
-    opts: DateRangeOptions
+  ovelonrridelon delonf configurelonPipelonlinelon(
+    sc: ScioContelonxt,
+    opts: DatelonRangelonOptions
   ): Unit = {
-    implicit def scioContext: ScioContext = sc
-    // DAL.Environment variable for WriteExecs
-    val dalEnv = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+    implicit delonf scioContelonxt: ScioContelonxt = sc
+    // DAL.elonnvironmelonnt variablelon for Writelonelonxeloncs
+    val dalelonnv = if (isAdhoc) DAL.elonnvironmelonnt.Delonv elonlselon DAL.elonnvironmelonnt.Prod
 
-    val topKRightNodes: SCollection[(RightNode, SimilarRightNodes)] = topK
-      .collect {
-        case (rightNode, simRightNodes) =>
-          val sims = simRightNodes.collect {
-            case (simRightNode, score) => SimilarRightNode(simRightNode, score)
+    val topKRightNodelons: SCollelonction[(RightNodelon, SimilarRightNodelons)] = topK
+      .collelonct {
+        caselon (rightNodelon, simRightNodelons) =>
+          val sims = simRightNodelons.collelonct {
+            caselon (simRightNodelon, scorelon) => SimilarRightNodelon(simRightNodelon, scorelon)
           }
-          (rightNode, SimilarRightNodes(sims))
+          (rightNodelon, SimilarRightNodelons(sims))
       }
 
-    topKRightNodes
+    topKRightNodelons
       .map {
-        case (rightNode, sims) => KeyVal(rightNode, sims)
-      }.saveAsCustomOutput(
-        name = "WriteRightNodeCosineSimilarityDataset",
-        DAL.writeVersionedKeyVal(
-          cosineSimKeyValSnapshotDataset,
-          PathLayout.VersionedPath(prefix =
+        caselon (rightNodelon, sims) => KelonyVal(rightNodelon, sims)
+      }.savelonAsCustomOutput(
+        namelon = "WritelonRightNodelonCosinelonSimilarityDataselont",
+        DAL.writelonVelonrsionelondKelonyVal(
+          cosinelonSimKelonyValSnapshotDataselont,
+          PathLayout.VelonrsionelondPath(prelonfix =
             ((if (!isAdhoc)
-                MultiTypeGraphUtil.RootMHPath
-              else
-                MultiTypeGraphUtil.AdhocRootPath)
-              + Config.cosineSimJobOutputDirectory)),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = dalEnv,
+                MultiTypelonGraphUtil.RootMHPath
+              elonlselon
+                MultiTypelonGraphUtil.AdhocRootPath)
+              + Config.cosinelonSimJobOutputDirelonctory)),
+          instant = Instant.ofelonpochMilli(opts.intelonrval.gelontelonndMillis - 1L),
+          elonnvironmelonntOvelonrridelon = dalelonnv,
         )
       )
   }

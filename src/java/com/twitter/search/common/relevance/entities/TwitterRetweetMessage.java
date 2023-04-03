@@ -1,80 +1,80 @@
-package com.twitter.search.common.relevance.entities;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons;
 
-import java.util.Date;
+import java.util.Datelon;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apachelon.commons.lang3.buildelonr.elonqualsBuildelonr;
+import org.apachelon.commons.lang3.buildelonr.HashCodelonBuildelonr;
+import org.apachelon.commons.lang3.buildelonr.ToStringBuildelonr;
 
-public class TwitterRetweetMessage {
-  // based on original tweet
-  private Long sharedId;
+public class TwittelonrRelontwelonelontMelonssagelon {
+  // baselond on original twelonelont
+  privatelon Long sharelondId;
 
-  // TwitterMessageUtil checks them
-  private String sharedUserDisplayName;
-  private Long sharedUserTwitterId = TwitterMessage.LONG_FIELD_NOT_PRESENT;
+  // TwittelonrMelonssagelonUtil cheloncks thelonm
+  privatelon String sharelondUselonrDisplayNamelon;
+  privatelon Long sharelondUselonrTwittelonrId = TwittelonrMelonssagelon.LONG_FIelonLD_NOT_PRelonSelonNT;
 
-  private Date sharedDate = null;
+  privatelon Datelon sharelondDatelon = null;
 
-  // based on retweet
-  private Long retweetId;
+  // baselond on relontwelonelont
+  privatelon Long relontwelonelontId;
 
-  public Long getRetweetId() {
-    return retweetId;
+  public Long gelontRelontwelonelontId() {
+    relonturn relontwelonelontId;
   }
 
-  public void setRetweetId(Long retweetId) {
-    this.retweetId = retweetId;
+  public void selontRelontwelonelontId(Long relontwelonelontId) {
+    this.relontwelonelontId = relontwelonelontId;
   }
 
-  public Long getSharedId() {
-    return sharedId;
+  public Long gelontSharelondId() {
+    relonturn sharelondId;
   }
 
-  public void setSharedId(Long sharedId) {
-    this.sharedId = sharedId;
+  public void selontSharelondId(Long sharelondId) {
+    this.sharelondId = sharelondId;
   }
 
-  public String getSharedUserDisplayName() {
-    return sharedUserDisplayName;
+  public String gelontSharelondUselonrDisplayNamelon() {
+    relonturn sharelondUselonrDisplayNamelon;
   }
 
-  public void setSharedUserDisplayName(String sharedUserDisplayName) {
-    this.sharedUserDisplayName = sharedUserDisplayName;
+  public void selontSharelondUselonrDisplayNamelon(String sharelondUselonrDisplayNamelon) {
+    this.sharelondUselonrDisplayNamelon = sharelondUselonrDisplayNamelon;
   }
 
-  public Long getSharedUserTwitterId() {
-    return sharedUserTwitterId;
+  public Long gelontSharelondUselonrTwittelonrId() {
+    relonturn sharelondUselonrTwittelonrId;
   }
 
-  public boolean hasSharedUserTwitterId() {
-    return sharedUserTwitterId != TwitterMessage.LONG_FIELD_NOT_PRESENT;
+  public boolelonan hasSharelondUselonrTwittelonrId() {
+    relonturn sharelondUselonrTwittelonrId != TwittelonrMelonssagelon.LONG_FIelonLD_NOT_PRelonSelonNT;
   }
 
-  public void setSharedUserTwitterId(Long sharedUserTwitterId) {
-    this.sharedUserTwitterId = sharedUserTwitterId;
+  public void selontSharelondUselonrTwittelonrId(Long sharelondUselonrTwittelonrId) {
+    this.sharelondUselonrTwittelonrId = sharelondUselonrTwittelonrId;
   }
 
-  public Date getSharedDate() {
-    return sharedDate;
+  public Datelon gelontSharelondDatelon() {
+    relonturn sharelondDatelon;
   }
 
-  public void setSharedDate(Date sharedDate) {
-    this.sharedDate = sharedDate;
+  public void selontSharelondDatelon(Datelon sharelondDatelon) {
+    this.sharelondDatelon = sharelondDatelon;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    return EqualsBuilder.reflectionEquals(this, o);
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct o) {
+    relonturn elonqualsBuildelonr.relonflelonctionelonquals(this, o);
   }
 
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn HashCodelonBuildelonr.relonflelonctionHashCodelon(this);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+    relonturn ToStringBuildelonr.relonflelonctionToString(this);
   }
 }

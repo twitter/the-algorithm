@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.models
+packagelon com.twittelonr.follow_reloncommelonndations.modelonls
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Reloncommelonndation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
 
-case class RecommendationResponse(recommendations: Seq[Recommendation]) extends HasMarshalling {
-  lazy val toThrift: t.RecommendationResponse =
-    t.RecommendationResponse(recommendations.map(_.toThrift))
+caselon class ReloncommelonndationRelonsponselon(reloncommelonndations: Selonq[Reloncommelonndation]) elonxtelonnds HasMarshalling {
+  lazy val toThrift: t.ReloncommelonndationRelonsponselon =
+    t.ReloncommelonndationRelonsponselon(reloncommelonndations.map(_.toThrift))
 
-  lazy val toOfflineThrift: offline.OfflineRecommendationResponse =
-    offline.OfflineRecommendationResponse(recommendations.map(_.toOfflineThrift))
+  lazy val toOfflinelonThrift: offlinelon.OfflinelonReloncommelonndationRelonsponselon =
+    offlinelon.OfflinelonReloncommelonndationRelonsponselon(reloncommelonndations.map(_.toOfflinelonThrift))
 }

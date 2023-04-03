@@ -1,80 +1,80 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.EnumMap;
+import java.util.elonnumMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultExtraMetadata;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultelonxtraMelontadata;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.FuturelonelonvelonntListelonnelonr;
 
 /**
- * Filter tracks the isUserProtected metadata stats returned from Earlybirds.
+ * Filtelonr tracks thelon isUselonrProtelonctelond melontadata stats relonturnelond from elonarlybirds.
  */
-public class IsUserProtectedMetadataTrackingFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
-  private static final String COUNTER_PREFIX = "is_user_protected_metadata_count_filter_";
-  @VisibleForTesting
-  final Map<EarlybirdRequestType, SearchCounter> totalCounterByRequestTypeMap;
-  @VisibleForTesting
-  final Map<EarlybirdRequestType, SearchCounter> isProtectedCounterByRequestTypeMap;
+public class IsUselonrProtelonctelondMelontadataTrackingFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
+  privatelon static final String COUNTelonR_PRelonFIX = "is_uselonr_protelonctelond_melontadata_count_filtelonr_";
+  @VisiblelonForTelonsting
+  final Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr> totalCountelonrByRelonquelonstTypelonMap;
+  @VisiblelonForTelonsting
+  final Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr> isProtelonctelondCountelonrByRelonquelonstTypelonMap;
 
-  public IsUserProtectedMetadataTrackingFilter() {
-    this.totalCounterByRequestTypeMap = new EnumMap<>(EarlybirdRequestType.class);
-    this.isProtectedCounterByRequestTypeMap = new EnumMap<>(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      this.totalCounterByRequestTypeMap.put(requestType,
-          SearchCounter.export(COUNTER_PREFIX + requestType.getNormalizedName() + "_total"));
-      this.isProtectedCounterByRequestTypeMap.put(requestType,
-          SearchCounter.export(COUNTER_PREFIX + requestType.getNormalizedName() + "_is_protected"));
+  public IsUselonrProtelonctelondMelontadataTrackingFiltelonr() {
+    this.totalCountelonrByRelonquelonstTypelonMap = nelonw elonnumMap<>(elonarlybirdRelonquelonstTypelon.class);
+    this.isProtelonctelondCountelonrByRelonquelonstTypelonMap = nelonw elonnumMap<>(elonarlybirdRelonquelonstTypelon.class);
+    for (elonarlybirdRelonquelonstTypelon relonquelonstTypelon : elonarlybirdRelonquelonstTypelon.valuelons()) {
+      this.totalCountelonrByRelonquelonstTypelonMap.put(relonquelonstTypelon,
+          SelonarchCountelonr.elonxport(COUNTelonR_PRelonFIX + relonquelonstTypelon.gelontNormalizelondNamelon() + "_total"));
+      this.isProtelonctelondCountelonrByRelonquelonstTypelonMap.put(relonquelonstTypelon,
+          SelonarchCountelonr.elonxport(COUNTelonR_PRelonFIX + relonquelonstTypelon.gelontNormalizelondNamelon() + "_is_protelonctelond"));
     }
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext request,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    Future<EarlybirdResponse> response = service.apply(request);
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonst,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    Futurelon<elonarlybirdRelonsponselon> relonsponselon = selonrvicelon.apply(relonquelonst);
 
-    EarlybirdRequestType requestType = request.getEarlybirdRequestType();
-    response.addEventListener(new FutureEventListener<EarlybirdResponse>() {
-      @Override
-      public void onSuccess(EarlybirdResponse response) {
-        if (!response.isSetSearchResults() || response.getSearchResults().getResults().isEmpty()) {
-          return;
+    elonarlybirdRelonquelonstTypelon relonquelonstTypelon = relonquelonst.gelontelonarlybirdRelonquelonstTypelon();
+    relonsponselon.addelonvelonntListelonnelonr(nelonw FuturelonelonvelonntListelonnelonr<elonarlybirdRelonsponselon>() {
+      @Ovelonrridelon
+      public void onSuccelonss(elonarlybirdRelonsponselon relonsponselon) {
+        if (!relonsponselon.isSelontSelonarchRelonsults() || relonsponselon.gelontSelonarchRelonsults().gelontRelonsults().iselonmpty()) {
+          relonturn;
         }
-        List<ThriftSearchResult> searchResults = response.getSearchResults().getResults();
-        int totalCount = searchResults.size();
-        int isUserProtectedCount = 0;
-        for (ThriftSearchResult searchResult : searchResults) {
-          if (searchResult.isSetMetadata() && searchResult.getMetadata().isSetExtraMetadata()) {
-            ThriftSearchResultExtraMetadata extraMetadata =
-                searchResult.getMetadata().getExtraMetadata();
-            if (extraMetadata.isIsUserProtected()) {
-              isUserProtectedCount++;
+        List<ThriftSelonarchRelonsult> selonarchRelonsults = relonsponselon.gelontSelonarchRelonsults().gelontRelonsults();
+        int totalCount = selonarchRelonsults.sizelon();
+        int isUselonrProtelonctelondCount = 0;
+        for (ThriftSelonarchRelonsult selonarchRelonsult : selonarchRelonsults) {
+          if (selonarchRelonsult.isSelontMelontadata() && selonarchRelonsult.gelontMelontadata().isSelontelonxtraMelontadata()) {
+            ThriftSelonarchRelonsultelonxtraMelontadata elonxtraMelontadata =
+                selonarchRelonsult.gelontMelontadata().gelontelonxtraMelontadata();
+            if (elonxtraMelontadata.isIsUselonrProtelonctelond()) {
+              isUselonrProtelonctelondCount++;
             }
           }
         }
-        IsUserProtectedMetadataTrackingFilter.this
-            .totalCounterByRequestTypeMap.get(requestType).add(totalCount);
-        IsUserProtectedMetadataTrackingFilter.this
-            .isProtectedCounterByRequestTypeMap.get(requestType).add(isUserProtectedCount);
+        IsUselonrProtelonctelondMelontadataTrackingFiltelonr.this
+            .totalCountelonrByRelonquelonstTypelonMap.gelont(relonquelonstTypelon).add(totalCount);
+        IsUselonrProtelonctelondMelontadataTrackingFiltelonr.this
+            .isProtelonctelondCountelonrByRelonquelonstTypelonMap.gelont(relonquelonstTypelon).add(isUselonrProtelonctelondCount);
       }
 
-      @Override
-      public void onFailure(Throwable cause) { }
+      @Ovelonrridelon
+      public void onFailurelon(Throwablelon causelon) { }
     });
 
-    return response;
+    relonturn relonsponselon;
   }
 
 }

@@ -1,62 +1,62 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.search.earlybird.thriftscala._
-import com.twitter.timelineranker.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
+import com.twittelonr.selonarch.elonarlybird.thriftscala._
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
 
-object Tweet {
-  def fromThrift(tweet: thrift.Tweet): Tweet = {
-    Tweet(id = tweet.id)
+objelonct Twelonelont {
+  delonf fromThrift(twelonelont: thrift.Twelonelont): Twelonelont = {
+    Twelonelont(id = twelonelont.id)
   }
 }
 
-case class Tweet(
-  id: TweetId,
-  userId: Option[UserId] = None,
-  sourceTweetId: Option[TweetId] = None,
-  sourceUserId: Option[UserId] = None)
-    extends TimelineEntry {
+caselon class Twelonelont(
+  id: TwelonelontId,
+  uselonrId: Option[UselonrId] = Nonelon,
+  sourcelonTwelonelontId: Option[TwelonelontId] = Nonelon,
+  sourcelonUselonrId: Option[UselonrId] = Nonelon)
+    elonxtelonnds Timelonlinelonelonntry {
 
   throwIfInvalid()
 
-  def throwIfInvalid(): Unit = {}
+  delonf throwIfInvalid(): Unit = {}
 
-  def toThrift: thrift.Tweet = {
-    thrift.Tweet(
+  delonf toThrift: thrift.Twelonelont = {
+    thrift.Twelonelont(
       id = id,
-      userId = userId,
-      sourceTweetId = sourceTweetId,
-      sourceUserId = sourceUserId)
+      uselonrId = uselonrId,
+      sourcelonTwelonelontId = sourcelonTwelonelontId,
+      sourcelonUselonrId = sourcelonUselonrId)
   }
 
-  def toTimelineEntryThrift: thrift.TimelineEntry = {
-    thrift.TimelineEntry.Tweet(toThrift)
+  delonf toTimelonlinelonelonntryThrift: thrift.Timelonlinelonelonntry = {
+    thrift.Timelonlinelonelonntry.Twelonelont(toThrift)
   }
 
-  def toThriftSearchResult: ThriftSearchResult = {
-    val metadata = ThriftSearchResultMetadata(
-      resultType = ThriftSearchResultType.Recency,
-      fromUserId = userId match {
-        case Some(id) => id
-        case None => 0L
+  delonf toThriftSelonarchRelonsult: ThriftSelonarchRelonsult = {
+    val melontadata = ThriftSelonarchRelonsultMelontadata(
+      relonsultTypelon = ThriftSelonarchRelonsultTypelon.Reloncelonncy,
+      fromUselonrId = uselonrId match {
+        caselon Somelon(id) => id
+        caselon Nonelon => 0L
       },
-      isRetweet =
-        if (sourceUserId.isDefined || sourceUserId.isDefined) Some(true)
-        else
-          None,
-      sharedStatusId = sourceTweetId match {
-        case Some(id) => id
-        case None => 0L
+      isRelontwelonelont =
+        if (sourcelonUselonrId.isDelonfinelond || sourcelonUselonrId.isDelonfinelond) Somelon(truelon)
+        elonlselon
+          Nonelon,
+      sharelondStatusId = sourcelonTwelonelontId match {
+        caselon Somelon(id) => id
+        caselon Nonelon => 0L
       },
-      referencedTweetAuthorId = sourceUserId match {
-        case Some(id) => id
-        case None => 0L
+      relonfelonrelonncelondTwelonelontAuthorId = sourcelonUselonrId match {
+        caselon Somelon(id) => id
+        caselon Nonelon => 0L
       }
     )
-    ThriftSearchResult(
+    ThriftSelonarchRelonsult(
       id = id,
-      metadata = Some(metadata)
+      melontadata = Somelon(melontadata)
     )
   }
 }

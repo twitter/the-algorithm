@@ -1,19 +1,19 @@
-package com.twitter.home_mixer.marshaller.request
+packagelon com.twittelonr.homelon_mixelonr.marshallelonr.relonquelonst
 
-import com.twitter.home_mixer.model.request.DeviceContext
-import com.twitter.home_mixer.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.DelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class DeviceContextUnmarshaller @Inject() () {
+@Singlelonton
+class DelonvicelonContelonxtUnmarshallelonr @Injelonct() () {
 
-  def apply(deviceContext: t.DeviceContext): DeviceContext = {
-    DeviceContext(
-      isPolling = deviceContext.isPolling,
-      requestContext = deviceContext.requestContext,
-      latestControlAvailable = deviceContext.latestControlAvailable,
-      autoplayEnabled = deviceContext.autoplayEnabled
+  delonf apply(delonvicelonContelonxt: t.DelonvicelonContelonxt): DelonvicelonContelonxt = {
+    DelonvicelonContelonxt(
+      isPolling = delonvicelonContelonxt.isPolling,
+      relonquelonstContelonxt = delonvicelonContelonxt.relonquelonstContelonxt,
+      latelonstControlAvailablelon = delonvicelonContelonxt.latelonstControlAvailablelon,
+      autoplayelonnablelond = delonvicelonContelonxt.autoplayelonnablelond
     )
   }
 }

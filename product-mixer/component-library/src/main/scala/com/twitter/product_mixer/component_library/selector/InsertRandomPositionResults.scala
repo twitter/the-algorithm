@@ -1,139 +1,139 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.component_library.selector.InsertRandomPositionResults.randomIndices
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.configapi.StaticParam
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.InselonrtRandomPositionRelonsults.randomIndicelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon.PartitionelondCandidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.StaticParam
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
-import scala.collection.mutable
+import scala.collelonction.mutablelon
 import scala.util.Random
 
-object InsertRandomPositionResults {
+objelonct InselonrtRandomPositionRelonsults {
 
   /**
-   * Iterator containing random index between `startIndex` and `endIndex` + `n`
-   * where `n` is the number of times `next` has been called on the iterator
+   * Itelonrator containing random indelonx belontwelonelonn `startIndelonx` and `elonndIndelonx` + `n`
+   * whelonrelon `n` is thelon numbelonr of timelons `nelonxt` has belonelonn callelond on thelon itelonrator
    * without duplication
    */
-  private[selector] def randomIndices(
-    resultLength: Int,
-    startIndex: Int,
-    endIndex: Int,
+  privatelon[selonlelonctor] delonf randomIndicelons(
+    relonsultLelonngth: Int,
+    startIndelonx: Int,
+    elonndIndelonx: Int,
     random: Random
-  ): Iterator[Int] = {
+  ): Itelonrator[Int] = {
 
-    /** exclusive because [[Random.nextInt]]'s bound is exclusive */
-    val indexUpperBound = Math.min(endIndex, resultLength)
-
-    /**
-     * keep track of the available indices, `O(n)` space where `n` is `min(endIndex, resultLength) - max(startIndex, 0)`
-     * this ensures fairness which duplicate indices could otherwise skew
-     */
-    val values = mutable.ArrayBuffer(Math.max(0, startIndex) to indexUpperBound: _*)
+    /** elonxclusivelon beloncauselon [[Random.nelonxtInt]]'s bound is elonxclusivelon */
+    val indelonxUppelonrBound = Math.min(elonndIndelonx, relonsultLelonngth)
 
     /**
-     * Iterator that starts at 1 above the last valid index, [[indexUpperBound]] + 1, and increments monotonically
-     * representing the new highest index possible in the results for the next call
+     * kelonelonp track of thelon availablelon indicelons, `O(n)` spacelon whelonrelon `n` is `min(elonndIndelonx, relonsultLelonngth) - max(startIndelonx, 0)`
+     * this elonnsurelons fairnelonss which duplicatelon indicelons could othelonrwiselon skelonw
      */
-    Iterator
-      .from(indexUpperBound + 1)
-      .map { indexUpperBound =>
+    val valuelons = mutablelon.ArrayBuffelonr(Math.max(0, startIndelonx) to indelonxUppelonrBound: _*)
+
+    /**
+     * Itelonrator that starts at 1 abovelon thelon last valid indelonx, [[indelonxUppelonrBound]] + 1, and increlonmelonnts monotonically
+     * relonprelonselonnting thelon nelonw highelonst indelonx possiblelon in thelon relonsults for thelon nelonxt call
+     */
+    Itelonrator
+      .from(indelonxUppelonrBound + 1)
+      .map { indelonxUppelonrBound =>
         /**
-         * pick a random index-to-insert-candidate-into-results from [[values]] replacing the value at
-         * the chosen index with the new highest index from [[indexUpperBound]], this results in
-         * constant time for picking the random index and adding the new highest valid index instead
-         * of removing the item from the middle and appending the new, which would be `O(n)` to shift
-         * all indices after the removal point
+         * pick a random indelonx-to-inselonrt-candidatelon-into-relonsults from [[valuelons]] relonplacing thelon valuelon at
+         * thelon choselonn indelonx with thelon nelonw highelonst indelonx from [[indelonxUppelonrBound]], this relonsults in
+         * constant timelon for picking thelon random indelonx and adding thelon nelonw highelonst valid indelonx instelonad
+         * of relonmoving thelon itelonm from thelon middlelon and appelonnding thelon nelonw, which would belon `O(n)` to shift
+         * all indicelons aftelonr thelon relonmoval point
          */
-        val i = random.nextInt(values.length)
-        val randomIndexToUse = values(i)
-        // override the value at i with the new `upperBoundExclusive` to account for the new index value in the next iteration
-        values(i) = indexUpperBound
+        val i = random.nelonxtInt(valuelons.lelonngth)
+        val randomIndelonxToUselon = valuelons(i)
+        // ovelonrridelon thelon valuelon at i with thelon nelonw `uppelonrBoundelonxclusivelon` to account for thelon nelonw indelonx valuelon in thelon nelonxt itelonration
+        valuelons(i) = indelonxUppelonrBound
 
-        randomIndexToUse
+        randomIndelonxToUselon
       }
   }
 }
 
-sealed trait InsertedCandidateOrder
+selonalelond trait InselonrtelondCandidatelonOrdelonr
 
 /**
- * Candidates from the `remainingCandidates` side will be inserted in a random order into the `result`
+ * Candidatelons from thelon `relonmainingCandidatelons` sidelon will belon inselonrtelond in a random ordelonr into thelon `relonsult`
  *
- * @example if inserting `[ x, y, z ]` into the `result` then the relative positions of `x`, `y` and `z`
- *          to each other is random, e.g. `y` could come before `x` in the result.
+ * @elonxamplelon if inselonrting `[ x, y, z ]` into thelon `relonsult` thelonn thelon relonlativelon positions of `x`, `y` and `z`
+ *          to elonach othelonr is random, elon.g. `y` could comelon belonforelon `x` in thelon relonsult.
  */
-case object UnstableOrderingOfInsertedCandidates extends InsertedCandidateOrder
+caselon objelonct UnstablelonOrdelonringOfInselonrtelondCandidatelons elonxtelonnds InselonrtelondCandidatelonOrdelonr
 
 /**
- * Candidates from the `remainingCandidates` side will be inserted in their original order into the `result`
+ * Candidatelons from thelon `relonmainingCandidatelons` sidelon will belon inselonrtelond in thelonir original ordelonr into thelon `relonsult`
  *
- * @example if inserting `[ x, y, z ]` into the `result` then the relative positions of `x`, `y` and `z`
- *          to each other will remain the same, e.g. `x` is always before `y` is always before `z` in the final result
+ * @elonxamplelon if inselonrting `[ x, y, z ]` into thelon `relonsult` thelonn thelon relonlativelon positions of `x`, `y` and `z`
+ *          to elonach othelonr will relonmain thelon samelon, elon.g. `x` is always belonforelon `y` is always belonforelon `z` in thelon final relonsult
  */
-case object StableOrderingOfInsertedCandidates extends InsertedCandidateOrder
+caselon objelonct StablelonOrdelonringOfInselonrtelondCandidatelons elonxtelonnds InselonrtelondCandidatelonOrdelonr
 
 /**
- * Insert `remainingCandidates` into a random position between the specified indices (inclusive)
+ * Inselonrt `relonmainingCandidatelons` into a random position belontwelonelonn thelon speloncifielond indicelons (inclusivelon)
  *
- * @example let `result` = `[ a, b, c, d ]` and we want to insert randomly `[ x, y, z ]`
- *          with `startIndex` =  1, `endIndex` = 2, and [[UnstableOrderingOfInsertedCandidates]].
- *          We can expect a result that looks like `[ a, ... , d ]` where `...` is
- *          a random insertion of `x`, `y`, and `z` into  `[ b, c ]`. So this could look like
- *          `[ a, y, b, x, c, z, d ]`, note that the inserted elements are randomly distributed
- *          among the elements that were originally between the specified indices.
- *          This functions like taking a slice of the original `result` between the indices,
- *          e.g. `[ b, c ]`, then randomly inserting into the slice, e.g. `[ y, b, x, c, z ]`,
- *          before reassembling the `result`, e.g. `[ a ] ++ [ y, b, x, c, z ] ++ [ d ]`.
+ * @elonxamplelon lelont `relonsult` = `[ a, b, c, d ]` and welon want to inselonrt randomly `[ x, y, z ]`
+ *          with `startIndelonx` =  1, `elonndIndelonx` = 2, and [[UnstablelonOrdelonringOfInselonrtelondCandidatelons]].
+ *          Welon can elonxpelonct a relonsult that looks likelon `[ a, ... , d ]` whelonrelon `...` is
+ *          a random inselonrtion of `x`, `y`, and `z` into  `[ b, c ]`. So this could look likelon
+ *          `[ a, y, b, x, c, z, d ]`, notelon that thelon inselonrtelond elonlelonmelonnts arelon randomly distributelond
+ *          among thelon elonlelonmelonnts that welonrelon originally belontwelonelonn thelon speloncifielond indicelons.
+ *          This functions likelon taking a slicelon of thelon original `relonsult` belontwelonelonn thelon indicelons,
+ *          elon.g. `[ b, c ]`, thelonn randomly inselonrting into thelon slicelon, elon.g. `[ y, b, x, c, z ]`,
+ *          belonforelon relonasselonmbling thelon `relonsult`, elon.g. `[ a ] ++ [ y, b, x, c, z ] ++ [ d ]`.
  *
- * @example let `result` = `[ a, b, c, d ]` and we want to insert randomly `[ x, y, z ]`
- *          with `startIndex` =  1, `endIndex` = 2, and [[StableOrderingOfInsertedCandidates]].
- *          We can expect a result that looks something like `[ a, x, b, y, c, z, d ]`,
- *          where `x` is before `y` which is before `z`
+ * @elonxamplelon lelont `relonsult` = `[ a, b, c, d ]` and welon want to inselonrt randomly `[ x, y, z ]`
+ *          with `startIndelonx` =  1, `elonndIndelonx` = 2, and [[StablelonOrdelonringOfInselonrtelondCandidatelons]].
+ *          Welon can elonxpelonct a relonsult that looks somelonthing likelon `[ a, x, b, y, c, z, d ]`,
+ *          whelonrelon `x` is belonforelon `y` which is belonforelon `z`
  *
- * @param startIndex an inclusive index which starts the range where the candidates will be inserted
- * @param endIndex an inclusive index which ends the range where the candidates will be inserted
+ * @param startIndelonx an inclusivelon indelonx which starts thelon rangelon whelonrelon thelon candidatelons will belon inselonrtelond
+ * @param elonndIndelonx an inclusivelon indelonx which elonnds thelon rangelon whelonrelon thelon candidatelons will belon inselonrtelond
  */
-case class InsertRandomPositionResults[-Query <: PipelineQuery](
-  pipelineScope: CandidateScope,
-  remainingCandidateOrder: InsertedCandidateOrder,
-  startIndex: Param[Int] = StaticParam(0),
-  endIndex: Param[Int] = StaticParam(Int.MaxValue),
-  random: Random = new Random(0))
-    extends Selector[Query] {
+caselon class InselonrtRandomPositionRelonsults[-Quelonry <: PipelonlinelonQuelonry](
+  pipelonlinelonScopelon: CandidatelonScopelon,
+  relonmainingCandidatelonOrdelonr: InselonrtelondCandidatelonOrdelonr,
+  startIndelonx: Param[Int] = StaticParam(0),
+  elonndIndelonx: Param[Int] = StaticParam(Int.MaxValuelon),
+  random: Random = nelonw Random(0))
+    elonxtelonnds Selonlelonctor[Quelonry] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
 
-    val PartitionedCandidates(candidatesInScope, candidatesOutOfScope) =
-      pipelineScope.partition(remainingCandidates)
+    val PartitionelondCandidatelons(candidatelonsInScopelon, candidatelonsOutOfScopelon) =
+      pipelonlinelonScopelon.partition(relonmainingCandidatelons)
 
-    val randomIndexIterator = {
-      val randomIndexIterator =
-        randomIndices(result.length, query.params(startIndex), query.params(endIndex), random)
+    val randomIndelonxItelonrator = {
+      val randomIndelonxItelonrator =
+        randomIndicelons(relonsult.lelonngth, quelonry.params(startIndelonx), quelonry.params(elonndIndelonx), random)
 
-      remainingCandidateOrder match {
-        case StableOrderingOfInsertedCandidates =>
-          randomIndexIterator.take(candidatesInScope.length).toSeq.sorted.iterator
-        case UnstableOrderingOfInsertedCandidates =>
-          randomIndexIterator
+      relonmainingCandidatelonOrdelonr match {
+        caselon StablelonOrdelonringOfInselonrtelondCandidatelons =>
+          randomIndelonxItelonrator.takelon(candidatelonsInScopelon.lelonngth).toSelonq.sortelond.itelonrator
+        caselon UnstablelonOrdelonringOfInselonrtelondCandidatelons =>
+          randomIndelonxItelonrator
       }
     }
 
-    val mergedResult = DynamicPositionSelector.mergeByIndexIntoResult(
-      candidatesToInsertByIndex = randomIndexIterator.zip(candidatesInScope.iterator).toSeq,
-      result = result,
-      DynamicPositionSelector.AbsoluteIndices
+    val melonrgelondRelonsult = DynamicPositionSelonlelonctor.melonrgelonByIndelonxIntoRelonsult(
+      candidatelonsToInselonrtByIndelonx = randomIndelonxItelonrator.zip(candidatelonsInScopelon.itelonrator).toSelonq,
+      relonsult = relonsult,
+      DynamicPositionSelonlelonctor.AbsolutelonIndicelons
     )
 
-    SelectorResult(remainingCandidates = candidatesOutOfScope, result = mergedResult)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = candidatelonsOutOfScopelon, relonsult = melonrgelondRelonsult)
   }
 }

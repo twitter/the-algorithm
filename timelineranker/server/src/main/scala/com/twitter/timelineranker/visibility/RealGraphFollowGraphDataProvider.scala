@@ -1,134 +1,134 @@
-package com.twitter.timelineranker.visibility
+packagelon com.twittelonr.timelonlinelonrankelonr.visibility
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.servo.util.Gate
-import com.twitter.timelineranker.core.FollowGraphData
-import com.twitter.timelineranker.core.FollowGraphDataFuture
-import com.twitter.timelines.clients.socialgraph.SocialGraphClient
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonpository
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.timelonlinelonrankelonr.corelon.FollowGraphData
+import com.twittelonr.timelonlinelonrankelonr.corelon.FollowGraphDataFuturelon
+import com.twittelonr.timelonlinelons.clielonnts.socialgraph.SocialGraphClielonnt
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.util.FailOpelonnHandlelonr
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Stopwatch
+import com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq
 
-object RealGraphFollowGraphDataProvider {
-  val EmptyRealGraphResponse = CandidateSeq(Nil)
+objelonct RelonalGraphFollowGraphDataProvidelonr {
+  val elonmptyRelonalGraphRelonsponselon = CandidatelonSelonq(Nil)
 }
 
 /**
- * Wraps an underlying FollowGraphDataProvider (which in practice will usually be a
- * [[SgsFollowGraphDataProvider]]) and supplements the list of followings provided by the
- * underlying provider with additional followings fetched from RealGraph if it looks like the
- * underlying provider did not get the full list of the user's followings.
+ * Wraps an undelonrlying FollowGraphDataProvidelonr (which in practicelon will usually belon a
+ * [[SgsFollowGraphDataProvidelonr]]) and supplelonmelonnts thelon list of followings providelond by thelon
+ * undelonrlying providelonr with additional followings felontchelond from RelonalGraph if it looks likelon thelon
+ * undelonrlying providelonr did not gelont thelon full list of thelon uselonr's followings.
  *
- * First checks whether the size of the underlying following list is >= the max requested following
- * count, which implies that there were additional followings beyond the max requested count. If so,
- * fetches the full set of followings from RealGraph (go/realgraph), which will be at most 2000.
+ * First cheloncks whelonthelonr thelon sizelon of thelon undelonrlying following list is >= thelon max relonquelonstelond following
+ * count, which implielons that thelonrelon welonrelon additional followings belonyond thelon max relonquelonstelond count. If so,
+ * felontchelons thelon full selont of followings from RelonalGraph (go/relonalgraph), which will belon at most 2000.
  *
- * Because the RealGraph dataset is not realtime and thus can potentially include stale followings,
- * the provider confirms that the followings fetched from RealGraph are valid using SGS's
- * getFollowOverlap method, and then merges the valid RealGraph followings with the underlying
+ * Beloncauselon thelon RelonalGraph dataselont is not relonaltimelon and thus can potelonntially includelon stalelon followings,
+ * thelon providelonr confirms that thelon followings felontchelond from RelonalGraph arelon valid using SGS's
+ * gelontFollowOvelonrlap melonthod, and thelonn melonrgelons thelon valid RelonalGraph followings with thelon undelonrlying
  * followings.
  *
- * Note that this supplementing is expected to be very rare as most users do not have more than
- * the max followings we fetch from SGS. Also note that this class is mainly intended for use
- * in the home timeline materialization path, with the goal of preventing a case where users
- * who follow a very large number of accounts may not see Tweets from their earlier follows if we
- * used SGS-based follow fetching alone.
+ * Notelon that this supplelonmelonnting is elonxpelonctelond to belon velonry rarelon as most uselonrs do not havelon morelon than
+ * thelon max followings welon felontch from SGS. Also notelon that this class is mainly intelonndelond for uselon
+ * in thelon homelon timelonlinelon matelonrialization path, with thelon goal of prelonvelonnting a caselon whelonrelon uselonrs
+ * who follow a velonry largelon numbelonr of accounts may not selonelon Twelonelonts from thelonir elonarlielonr follows if welon
+ * uselond SGS-baselond follow felontching alonelon.
  */
-class RealGraphFollowGraphDataProvider(
-  underlying: FollowGraphDataProvider,
-  realGraphClient: KeyValueRepository[Seq[UserId], UserId, CandidateSeq],
-  socialGraphClient: SocialGraphClient,
-  supplementFollowsWithRealGraphGate: Gate[UserId],
-  statsReceiver: StatsReceiver)
-    extends FollowGraphDataProvider {
-  import RealGraphFollowGraphDataProvider._
+class RelonalGraphFollowGraphDataProvidelonr(
+  undelonrlying: FollowGraphDataProvidelonr,
+  relonalGraphClielonnt: KelonyValuelonRelonpository[Selonq[UselonrId], UselonrId, CandidatelonSelonq],
+  socialGraphClielonnt: SocialGraphClielonnt,
+  supplelonmelonntFollowsWithRelonalGraphGatelon: Gatelon[UselonrId],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds FollowGraphDataProvidelonr {
+  import RelonalGraphFollowGraphDataProvidelonr._
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("realGraphFollowGraphDataProvider")
-  private[this] val requestCounter = scopedStatsReceiver.counter("requests")
-  private[this] val atMaxCounter = scopedStatsReceiver.counter("followsAtMax")
-  private[this] val totalLatencyStat = scopedStatsReceiver.stat("totalLatencyWhenSupplementing")
-  private[this] val supplementLatencyStat = scopedStatsReceiver.stat("supplementFollowsLatency")
-  private[this] val realGraphResponseSizeStat = scopedStatsReceiver.stat("realGraphFollows")
-  private[this] val realGraphEmptyCounter = scopedStatsReceiver.counter("realGraphEmpty")
-  private[this] val nonOverlappingSizeStat = scopedStatsReceiver.stat("nonOverlappingFollows")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("relonalGraphFollowGraphDataProvidelonr")
+  privatelon[this] val relonquelonstCountelonr = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
+  privatelon[this] val atMaxCountelonr = scopelondStatsReloncelonivelonr.countelonr("followsAtMax")
+  privatelon[this] val totalLatelonncyStat = scopelondStatsReloncelonivelonr.stat("totalLatelonncyWhelonnSupplelonmelonnting")
+  privatelon[this] val supplelonmelonntLatelonncyStat = scopelondStatsReloncelonivelonr.stat("supplelonmelonntFollowsLatelonncy")
+  privatelon[this] val relonalGraphRelonsponselonSizelonStat = scopelondStatsReloncelonivelonr.stat("relonalGraphFollows")
+  privatelon[this] val relonalGraphelonmptyCountelonr = scopelondStatsReloncelonivelonr.countelonr("relonalGraphelonmpty")
+  privatelon[this] val nonOvelonrlappingSizelonStat = scopelondStatsReloncelonivelonr.stat("nonOvelonrlappingFollows")
 
-  private[this] val failOpenHandler = new FailOpenHandler(scopedStatsReceiver)
+  privatelon[this] val failOpelonnHandlelonr = nelonw FailOpelonnHandlelonr(scopelondStatsReloncelonivelonr)
 
-  override def get(userId: UserId, maxFollowingCount: Int): Future[FollowGraphData] = {
-    getAsync(userId, maxFollowingCount).get()
+  ovelonrridelon delonf gelont(uselonrId: UselonrId, maxFollowingCount: Int): Futurelon[FollowGraphData] = {
+    gelontAsync(uselonrId, maxFollowingCount).gelont()
   }
 
-  override def getAsync(userId: UserId, maxFollowingCount: Int): FollowGraphDataFuture = {
-    val startTime = Stopwatch.timeMillis()
-    val underlyingResult = underlying.getAsync(userId, maxFollowingCount)
-    if (supplementFollowsWithRealGraphGate(userId)) {
-      val supplementedFollows = underlyingResult.followedUserIdsFuture.flatMap { sgsFollows =>
-        supplementFollowsWithRealGraph(userId, maxFollowingCount, sgsFollows, startTime)
+  ovelonrridelon delonf gelontAsync(uselonrId: UselonrId, maxFollowingCount: Int): FollowGraphDataFuturelon = {
+    val startTimelon = Stopwatch.timelonMillis()
+    val undelonrlyingRelonsult = undelonrlying.gelontAsync(uselonrId, maxFollowingCount)
+    if (supplelonmelonntFollowsWithRelonalGraphGatelon(uselonrId)) {
+      val supplelonmelonntelondFollows = undelonrlyingRelonsult.followelondUselonrIdsFuturelon.flatMap { sgsFollows =>
+        supplelonmelonntFollowsWithRelonalGraph(uselonrId, maxFollowingCount, sgsFollows, startTimelon)
       }
-      underlyingResult.copy(followedUserIdsFuture = supplementedFollows)
-    } else {
-      underlyingResult
+      undelonrlyingRelonsult.copy(followelondUselonrIdsFuturelon = supplelonmelonntelondFollows)
+    } elonlselon {
+      undelonrlyingRelonsult
     }
   }
 
-  override def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]] = {
-    val startTime = Stopwatch.timeMillis()
-    val underlyingFollows = underlying.getFollowing(userId, maxFollowingCount)
-    if (supplementFollowsWithRealGraphGate(userId)) {
-      underlying.getFollowing(userId, maxFollowingCount).flatMap { sgsFollows =>
-        supplementFollowsWithRealGraph(userId, maxFollowingCount, sgsFollows, startTime)
+  ovelonrridelon delonf gelontFollowing(uselonrId: UselonrId, maxFollowingCount: Int): Futurelon[Selonq[UselonrId]] = {
+    val startTimelon = Stopwatch.timelonMillis()
+    val undelonrlyingFollows = undelonrlying.gelontFollowing(uselonrId, maxFollowingCount)
+    if (supplelonmelonntFollowsWithRelonalGraphGatelon(uselonrId)) {
+      undelonrlying.gelontFollowing(uselonrId, maxFollowingCount).flatMap { sgsFollows =>
+        supplelonmelonntFollowsWithRelonalGraph(uselonrId, maxFollowingCount, sgsFollows, startTimelon)
       }
-    } else {
-      underlyingFollows
+    } elonlselon {
+      undelonrlyingFollows
     }
   }
 
-  private[this] def supplementFollowsWithRealGraph(
-    userId: UserId,
+  privatelon[this] delonf supplelonmelonntFollowsWithRelonalGraph(
+    uselonrId: UselonrId,
     maxFollowingCount: Int,
-    sgsFollows: Seq[Long],
-    startTime: Long
-  ): Future[Seq[UserId]] = {
-    requestCounter.incr()
-    if (sgsFollows.size >= maxFollowingCount) {
-      atMaxCounter.incr()
-      val supplementedFollowsFuture = realGraphClient(Seq(userId))
-        .map(_.getOrElse(userId, EmptyRealGraphResponse))
-        .map(_.candidates.map(_.userId))
+    sgsFollows: Selonq[Long],
+    startTimelon: Long
+  ): Futurelon[Selonq[UselonrId]] = {
+    relonquelonstCountelonr.incr()
+    if (sgsFollows.sizelon >= maxFollowingCount) {
+      atMaxCountelonr.incr()
+      val supplelonmelonntelondFollowsFuturelon = relonalGraphClielonnt(Selonq(uselonrId))
+        .map(_.gelontOrelonlselon(uselonrId, elonmptyRelonalGraphRelonsponselon))
+        .map(_.candidatelons.map(_.uselonrId))
         .flatMap {
-          case realGraphFollows if realGraphFollows.nonEmpty =>
-            realGraphResponseSizeStat.add(realGraphFollows.size)
-            // Filter out "stale" follows from realgraph by checking them against SGS
-            val verifiedRealGraphFollows =
-              socialGraphClient.getFollowOverlap(userId, realGraphFollows)
-            verifiedRealGraphFollows.map { follows =>
-              val combinedFollows = (sgsFollows ++ follows).distinct
-              val additionalFollows = combinedFollows.size - sgsFollows.size
-              if (additionalFollows > 0) nonOverlappingSizeStat.add(additionalFollows)
-              combinedFollows
+          caselon relonalGraphFollows if relonalGraphFollows.nonelonmpty =>
+            relonalGraphRelonsponselonSizelonStat.add(relonalGraphFollows.sizelon)
+            // Filtelonr out "stalelon" follows from relonalgraph by cheloncking thelonm against SGS
+            val velonrifielondRelonalGraphFollows =
+              socialGraphClielonnt.gelontFollowOvelonrlap(uselonrId, relonalGraphFollows)
+            velonrifielondRelonalGraphFollows.map { follows =>
+              val combinelondFollows = (sgsFollows ++ follows).distinct
+              val additionalFollows = combinelondFollows.sizelon - sgsFollows.sizelon
+              if (additionalFollows > 0) nonOvelonrlappingSizelonStat.add(additionalFollows)
+              combinelondFollows
             }
-          case _ =>
-            realGraphEmptyCounter.incr()
-            Future.value(sgsFollows)
+          caselon _ =>
+            relonalGraphelonmptyCountelonr.incr()
+            Futurelon.valuelon(sgsFollows)
         }
-        .onSuccess { _ => totalLatencyStat.add(Stopwatch.timeMillis() - startTime) }
+        .onSuccelonss { _ => totalLatelonncyStat.add(Stopwatch.timelonMillis() - startTimelon) }
 
-      Stat.timeFuture(supplementLatencyStat) {
-        failOpenHandler(supplementedFollowsFuture) { _ => Future.value(sgsFollows) }
+      Stat.timelonFuturelon(supplelonmelonntLatelonncyStat) {
+        failOpelonnHandlelonr(supplelonmelonntelondFollowsFuturelon) { _ => Futurelon.valuelon(sgsFollows) }
       }
-    } else {
-      Future.value(sgsFollows)
+    } elonlselon {
+      Futurelon.valuelon(sgsFollows)
     }
   }
 
-  override def getMutuallyFollowingUserIds(
-    userId: UserId,
-    followingIds: Seq[UserId]
-  ): Future[Set[UserId]] = {
-    underlying.getMutuallyFollowingUserIds(userId, followingIds)
+  ovelonrridelon delonf gelontMutuallyFollowingUselonrIds(
+    uselonrId: UselonrId,
+    followingIds: Selonq[UselonrId]
+  ): Futurelon[Selont[UselonrId]] = {
+    undelonrlying.gelontMutuallyFollowingUselonrIds(uselonrId, followingIds)
   }
 }

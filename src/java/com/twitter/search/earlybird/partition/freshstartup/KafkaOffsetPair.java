@@ -1,23 +1,23 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+packagelon com.twittelonr.selonarch.elonarlybird.partition.frelonshstartup;
 
-class KafkaOffsetPair {
-  private final long beginOffset;
-  private final long endOffset;
+class KafkaOffselontPair {
+  privatelon final long belonginOffselont;
+  privatelon final long elonndOffselont;
 
-  public KafkaOffsetPair(long beginOffset, long endOffset) {
-    this.beginOffset = beginOffset;
-    this.endOffset = endOffset;
+  public KafkaOffselontPair(long belonginOffselont, long elonndOffselont) {
+    this.belonginOffselont = belonginOffselont;
+    this.elonndOffselont = elonndOffselont;
   }
 
-  public boolean includes(long offset) {
-    return beginOffset <= offset && offset <= endOffset;
+  public boolelonan includelons(long offselont) {
+    relonturn belonginOffselont <= offselont && offselont <= elonndOffselont;
   }
 
-  public long getBeginOffset() {
-    return beginOffset;
+  public long gelontBelonginOffselont() {
+    relonturn belonginOffselont;
   }
 
-  public long getEndOffset() {
-    return endOffset;
+  public long gelontelonndOffselont() {
+    relonturn elonndOffselont;
   }
 }

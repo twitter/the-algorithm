@@ -1,69 +1,69 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector._
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor._
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object InsertDynamicPositionResults {
-  def apply[Query <: PipelineQuery](
-    candidatePipeline: CandidatePipelineIdentifier,
-    dynamicInsertionPosition: DynamicInsertionPosition[Query],
-  ): InsertDynamicPositionResults[Query] =
-    new InsertDynamicPositionResults(SpecificPipeline(candidatePipeline), dynamicInsertionPosition)
+objelonct InselonrtDynamicPositionRelonsults {
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+    dynamicInselonrtionPosition: DynamicInselonrtionPosition[Quelonry],
+  ): InselonrtDynamicPositionRelonsults[Quelonry] =
+    nelonw InselonrtDynamicPositionRelonsults(SpeloncificPipelonlinelon(candidatelonPipelonlinelon), dynamicInselonrtionPosition)
 
-  def apply[Query <: PipelineQuery](
-    candidatePipelines: Set[CandidatePipelineIdentifier],
-    dynamicInsertionPosition: DynamicInsertionPosition[Query]
-  ): InsertDynamicPositionResults[Query] =
-    new InsertDynamicPositionResults(
-      SpecificPipelines(candidatePipelines),
-      dynamicInsertionPosition)
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    candidatelonPipelonlinelons: Selont[CandidatelonPipelonlinelonIdelonntifielonr],
+    dynamicInselonrtionPosition: DynamicInselonrtionPosition[Quelonry]
+  ): InselonrtDynamicPositionRelonsults[Quelonry] =
+    nelonw InselonrtDynamicPositionRelonsults(
+      SpeloncificPipelonlinelons(candidatelonPipelonlinelons),
+      dynamicInselonrtionPosition)
 }
 
 /**
- * Compute a position for inserting the candidates into result. If a `None` is returned, the
- * Selector using this would not insert the candidates into the result.
+ * Computelon a position for inselonrting thelon candidatelons into relonsult. If a `Nonelon` is relonturnelond, thelon
+ * Selonlelonctor using this would not inselonrt thelon candidatelons into thelon relonsult.
  */
-trait DynamicInsertionPosition[-Query <: PipelineQuery] {
-  def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
+trait DynamicInselonrtionPosition[-Quelonry <: PipelonlinelonQuelonry] {
+  delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
   ): Option[Int]
 }
 
 /**
- * Insert all candidates in a pipeline scope at a 0-indexed dynamic position computed
- * using the provided [[DynamicInsertionPosition]] instance. If the current results are a shorter
- * length than the computed position, then the candidates will be appended to the results.
- * If the [[DynamicInsertionPosition]] returns a `None`, the candidates are not
- * added to the result.
+ * Inselonrt all candidatelons in a pipelonlinelon scopelon at a 0-indelonxelond dynamic position computelond
+ * using thelon providelond [[DynamicInselonrtionPosition]] instancelon. If thelon currelonnt relonsults arelon a shortelonr
+ * lelonngth than thelon computelond position, thelonn thelon candidatelons will belon appelonndelond to thelon relonsults.
+ * If thelon [[DynamicInselonrtionPosition]] relonturns a `Nonelon`, thelon candidatelons arelon not
+ * addelond to thelon relonsult.
  */
-case class InsertDynamicPositionResults[-Query <: PipelineQuery](
-  override val pipelineScope: CandidateScope,
-  dynamicInsertionPosition: DynamicInsertionPosition[Query])
-    extends Selector[Query] {
+caselon class InselonrtDynamicPositionRelonsults[-Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
+  dynamicInselonrtionPosition: DynamicInselonrtionPosition[Quelonry])
+    elonxtelonnds Selonlelonctor[Quelonry] {
 
-  override def apply(
-    query: Query,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    dynamicInsertionPosition(query, remainingCandidates, result) match {
-      case Some(position) =>
-        InsertSelector.insertIntoResultsAtPosition(
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    dynamicInselonrtionPosition(quelonry, relonmainingCandidatelons, relonsult) match {
+      caselon Somelon(position) =>
+        InselonrtSelonlelonctor.inselonrtIntoRelonsultsAtPosition(
           position = position,
-          pipelineScope = pipelineScope,
-          remainingCandidates = remainingCandidates,
-          result = result)
-      case None =>
-        // When a valid position is not provided, do not insert the candidates.
-        // Both the remainingCandidates and result are unchanged.
-        SelectorResult(remainingCandidates = remainingCandidates, result = result)
+          pipelonlinelonScopelon = pipelonlinelonScopelon,
+          relonmainingCandidatelons = relonmainingCandidatelons,
+          relonsult = relonsult)
+      caselon Nonelon =>
+        // Whelonn a valid position is not providelond, do not inselonrt thelon candidatelons.
+        // Both thelon relonmainingCandidatelons and relonsult arelon unchangelond.
+        SelonlelonctorRelonsult(relonmainingCandidatelons = relonmainingCandidatelons, relonsult = relonsult)
     }
   }
 }

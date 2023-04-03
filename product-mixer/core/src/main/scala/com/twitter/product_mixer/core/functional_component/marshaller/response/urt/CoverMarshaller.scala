@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover.CoverContentMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.FullCover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCover
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.covelonr.CovelonrContelonntMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ClielonntelonvelonntInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Covelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.FullCovelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.HalfCovelonr
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CoverMarshaller @Inject() (
-  coverContentMarshaller: CoverContentMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller) {
+@Singlelonton
+class CovelonrMarshallelonr @Injelonct() (
+  covelonrContelonntMarshallelonr: CovelonrContelonntMarshallelonr,
+  clielonntelonvelonntInfoMarshallelonr: ClielonntelonvelonntInfoMarshallelonr) {
 
-  def apply(cover: Cover): urt.ShowCover = cover match {
-    case halfCover: HalfCover =>
-      urt.ShowCover(
-        cover = coverContentMarshaller(halfCover.content),
-        clientEventInfo = cover.clientEventInfo.map(clientEventInfoMarshaller(_)))
-    case fullCover: FullCover =>
-      urt.ShowCover(
-        cover = coverContentMarshaller(fullCover.content),
-        clientEventInfo = cover.clientEventInfo.map(clientEventInfoMarshaller(_)))
+  delonf apply(covelonr: Covelonr): urt.ShowCovelonr = covelonr match {
+    caselon halfCovelonr: HalfCovelonr =>
+      urt.ShowCovelonr(
+        covelonr = covelonrContelonntMarshallelonr(halfCovelonr.contelonnt),
+        clielonntelonvelonntInfo = covelonr.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_)))
+    caselon fullCovelonr: FullCovelonr =>
+      urt.ShowCovelonr(
+        covelonr = covelonrContelonntMarshallelonr(fullCovelonr.contelonnt),
+        clielonntelonvelonntInfo = covelonr.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_)))
   }
 }
 
-class UnsupportedTimelineCoverException(cover: Cover)
-    extends UnsupportedOperationException(
-      "Unsupported timeline cover " + TransportMarshaller.getSimpleName(cover.getClass))
+class UnsupportelondTimelonlinelonCovelonrelonxcelonption(covelonr: Covelonr)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      "Unsupportelond timelonlinelon covelonr " + TransportMarshallelonr.gelontSimplelonNamelon(covelonr.gelontClass))

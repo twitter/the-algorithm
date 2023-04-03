@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.clients.cache
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.cachelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.service.Retries
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.Melonmcachelond
+import com.twittelonr.finaglelon.Melonmcachelond.Clielonnt
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.selonrvicelon.Relontrielons
+import com.twittelonr.finaglelon.selonrvicelon.RelontryPolicy
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import javax.injelonct.Singlelonton
 
-object MemcacheModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def provideMemcacheClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-  ): Client = {
-    Memcached.client
-      .withMutualTls(serviceIdentifier)
-      .withStatsReceiver(statsReceiver.scope("twemcache"))
-      .withTransport.connectTimeout(1.seconds)
-      .withRequestTimeout(1.seconds)
-      .withSession.acquisitionTimeout(10.seconds)
-      .configured(Retries.Policy(RetryPolicy.tries(1)))
+objelonct MelonmcachelonModulelon elonxtelonnds TwittelonrModulelon {
+  @Providelons
+  @Singlelonton
+  delonf providelonMelonmcachelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): Clielonnt = {
+    Melonmcachelond.clielonnt
+      .withMutualTls(selonrvicelonIdelonntifielonr)
+      .withStatsReloncelonivelonr(statsReloncelonivelonr.scopelon("twelonmcachelon"))
+      .withTransport.connelonctTimelonout(1.selonconds)
+      .withRelonquelonstTimelonout(1.selonconds)
+      .withSelonssion.acquisitionTimelonout(10.selonconds)
+      .configurelond(Relontrielons.Policy(RelontryPolicy.trielons(1)))
   }
 }

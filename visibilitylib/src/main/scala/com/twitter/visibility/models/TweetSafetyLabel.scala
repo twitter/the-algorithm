@@ -1,359 +1,359 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.spam.rtf.thriftscala.SafetyLabelSource
-import com.twitter.spam.rtf.{thriftscala => s}
-import com.twitter.util.Time
-import com.twitter.visibility.util.NamingUtils
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlSourcelon
+import com.twittelonr.spam.rtf.{thriftscala => s}
+import com.twittelonr.util.Timelon
+import com.twittelonr.visibility.util.NamingUtils
 
-sealed trait TweetSafetyLabelType extends SafetyLabelType with Product with Serializable {
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+selonalelond trait TwelonelontSafelontyLabelonlTypelon elonxtelonnds SafelontyLabelonlTypelon with Product with Selonrializablelon {
+  lazy val namelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
 }
 
-case class TweetSafetyLabel(
-  labelType: TweetSafetyLabelType,
-  source: Option[LabelSource] = None,
-  applicableUsers: Set[Long] = Set.empty,
-  modelMetadata: Option[TweetModelMetadata] = None,
-  score: Option[Double] = None,
-  safetyLabelSource: Option[SafetyLabelSource] = None)
+caselon class TwelonelontSafelontyLabelonl(
+  labelonlTypelon: TwelonelontSafelontyLabelonlTypelon,
+  sourcelon: Option[LabelonlSourcelon] = Nonelon,
+  applicablelonUselonrs: Selont[Long] = Selont.elonmpty,
+  modelonlMelontadata: Option[TwelonelontModelonlMelontadata] = Nonelon,
+  scorelon: Option[Doublelon] = Nonelon,
+  safelontyLabelonlSourcelon: Option[SafelontyLabelonlSourcelon] = Nonelon)
 
-object TweetSafetyLabelType extends SafetyLabelType {
+objelonct TwelonelontSafelontyLabelonlTypelon elonxtelonnds SafelontyLabelonlTypelon {
 
-  val List: List[TweetSafetyLabelType] = s.SafetyLabelType.list.map(fromThrift)
+  val List: List[TwelonelontSafelontyLabelonlTypelon] = s.SafelontyLabelonlTypelon.list.map(fromThrift)
 
-  val ActiveLabels: List[TweetSafetyLabelType] = List.filter { labelType =>
-    labelType != Unknown && labelType != Deprecated
+  val ActivelonLabelonls: List[TwelonelontSafelontyLabelonlTypelon] = List.filtelonr { labelonlTypelon =>
+    labelonlTypelon != Unknown && labelonlTypelon != Delonpreloncatelond
   }
 
-  private lazy val nameToValueMap: Map[String, TweetSafetyLabelType] =
-    List.map(l => l.name.toLowerCase -> l).toMap
-  def fromName(name: String): Option[TweetSafetyLabelType] = nameToValueMap.get(name.toLowerCase)
+  privatelon lazy val namelonToValuelonMap: Map[String, TwelonelontSafelontyLabelonlTypelon] =
+    List.map(l => l.namelon.toLowelonrCaselon -> l).toMap
+  delonf fromNamelon(namelon: String): Option[TwelonelontSafelontyLabelonlTypelon] = namelonToValuelonMap.gelont(namelon.toLowelonrCaselon)
 
-  private val UnknownThriftSafetyLabelType =
-    s.SafetyLabelType.EnumUnknownSafetyLabelType(UnknownEnumValue)
+  privatelon val UnknownThriftSafelontyLabelonlTypelon =
+    s.SafelontyLabelonlTypelon.elonnumUnknownSafelontyLabelonlTypelon(UnknownelonnumValuelon)
 
-  private lazy val thriftToModelMap: Map[s.SafetyLabelType, TweetSafetyLabelType] = Map(
-    s.SafetyLabelType.Abusive -> Abusive,
-    s.SafetyLabelType.AbusiveBehavior -> AbusiveBehavior,
-    s.SafetyLabelType.AbusiveBehaviorInsults -> AbusiveBehaviorInsults,
-    s.SafetyLabelType.AbusiveBehaviorViolentThreat -> AbusiveBehaviorViolentThreat,
-    s.SafetyLabelType.AbusiveBehaviorMajorAbuse -> AbusiveBehaviorMajorAbuse,
-    s.SafetyLabelType.AbusiveHighRecall -> AbusiveHighRecall,
-    s.SafetyLabelType.AdsManagerDenyList -> AdsManagerDenyList,
-    s.SafetyLabelType.AgathaSpam -> AgathaSpam,
-    s.SafetyLabelType.Automation -> Automation,
-    s.SafetyLabelType.AutomationHighRecall -> AutomationHighRecall,
-    s.SafetyLabelType.Bounce -> Bounce,
-    s.SafetyLabelType.BounceEdits -> BounceEdits,
-    s.SafetyLabelType.BrandSafetyNsfaAggregate -> BrandSafetyNsfaAggregate,
-    s.SafetyLabelType.BrandSafetyExperimental1 -> BrandSafetyExperimental1,
-    s.SafetyLabelType.BrandSafetyExperimental2 -> BrandSafetyExperimental2,
-    s.SafetyLabelType.BrandSafetyExperimental3 -> BrandSafetyExperimental3,
-    s.SafetyLabelType.BrandSafetyExperimental4 -> BrandSafetyExperimental4,
-    s.SafetyLabelType.BystanderAbusive -> BystanderAbusive,
-    s.SafetyLabelType.CopypastaSpam -> CopypastaSpam,
-    s.SafetyLabelType.DoNotAmplify -> DoNotAmplify,
-    s.SafetyLabelType.DownrankSpamReply -> DownrankSpamReply,
-    s.SafetyLabelType.DuplicateContent -> DuplicateContent,
-    s.SafetyLabelType.DuplicateMention -> DuplicateMention,
-    s.SafetyLabelType.DynamicProductAd -> DynamicProductAd,
-    s.SafetyLabelType.EdiDevelopmentOnly -> EdiDevelopmentOnly,
-    s.SafetyLabelType.ExperimentalNudge -> ExperimentalNudge,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal2 -> ExperimentalSensitiveIllegal2,
-    s.SafetyLabelType.ForEmergencyUseOnly -> ForEmergencyUseOnly,
-    s.SafetyLabelType.GoreAndViolence -> GoreAndViolence,
-    s.SafetyLabelType.GoreAndViolenceHighPrecision -> GoreAndViolenceHighPrecision,
-    s.SafetyLabelType.GoreAndViolenceHighRecall -> GoreAndViolenceHighRecall,
-    s.SafetyLabelType.GoreAndViolenceReportedHeuristics -> GoreAndViolenceReportedHeuristics,
-    s.SafetyLabelType.GoreAndViolenceTopicHighRecall -> GoreAndViolenceTopicHighRecall,
-    s.SafetyLabelType.HatefulConduct -> HatefulConduct,
-    s.SafetyLabelType.HatefulConductViolentThreat -> HatefulConductViolentThreat,
-    s.SafetyLabelType.HighCryptospamScore -> HighCryptospamScore,
-    s.SafetyLabelType.HighPReportedTweetScore -> HighPReportedTweetScore,
-    s.SafetyLabelType.HighPSpammyTweetScore -> HighPSpammyTweetScore,
-    s.SafetyLabelType.HighPblockScore -> HighPblockScore,
-    s.SafetyLabelType.HighProactiveTosScore -> HighProactiveTosScore,
-    s.SafetyLabelType.HighSpammyTweetContentScore -> HighSpammyTweetContentScore,
-    s.SafetyLabelType.HighToxicityScore -> HighToxicityScore,
-    s.SafetyLabelType.HighlyReportedAndMidhighToxicityScore -> HighlyReportedAndMidhighToxicityScore,
-    s.SafetyLabelType.HighlyReportedTweet -> HighlyReportedTweet,
-    s.SafetyLabelType.InterstitialDevelopmentOnly -> InterstitialDevelopmentOnly,
-    s.SafetyLabelType.IpiDevelopmentOnly -> IpiDevelopmentOnly,
-    s.SafetyLabelType.LiveLowQuality -> LiveLowQuality,
-    s.SafetyLabelType.LowQuality -> LowQuality,
-    s.SafetyLabelType.LowQualityMention -> LowQualityMention,
-    s.SafetyLabelType.MisinfoCivic -> MisinfoCivic,
-    s.SafetyLabelType.MisinfoCrisis -> MisinfoCrisis,
-    s.SafetyLabelType.MisinfoGeneric -> MisinfoGeneric,
-    s.SafetyLabelType.MisinfoMedical -> MisinfoMedical,
-    s.SafetyLabelType.NsfaHighPrecision -> NsfaHighPrecision,
-    s.SafetyLabelType.NsfaHighRecall -> NsfaHighRecall,
-    s.SafetyLabelType.NsfwCardImage -> NsfwCardImage,
-    s.SafetyLabelType.NsfwHighPrecision -> NsfwHighPrecision,
-    s.SafetyLabelType.NsfwHighRecall -> NsfwHighRecall,
-    s.SafetyLabelType.NsfwReportedHeuristics -> NsfwReportedHeuristics,
-    s.SafetyLabelType.NsfwText -> NsfwText,
-    s.SafetyLabelType.NsfwTextHighPrecision -> NsfwTextHighPrecision,
-    s.SafetyLabelType.NsfwVideo -> NsfwVideo,
-    s.SafetyLabelType.PNegMultimodalHighPrecision -> PNegMultimodalHighPrecision,
-    s.SafetyLabelType.PNegMultimodalHighRecall -> PNegMultimodalHighRecall,
-    s.SafetyLabelType.Pdna -> Pdna,
-    s.SafetyLabelType.RecommendationsLowQuality -> RecommendationsLowQuality,
-    s.SafetyLabelType.RitoActionedTweet -> RitoActionedTweet,
-    s.SafetyLabelType.SafetyCrisis -> SafetyCrisis,
-    s.SafetyLabelType.SearchBlacklist -> SearchBlacklist,
-    s.SafetyLabelType.SearchBlacklistHighRecall -> SearchBlacklistHighRecall,
-    s.SafetyLabelType.SemanticCoreMisinformation -> SemanticCoreMisinformation,
-    s.SafetyLabelType.SmyteSpamTweet -> SmyteSpamTweet,
-    s.SafetyLabelType.Spam -> Spam,
-    s.SafetyLabelType.SpamHighRecall -> SpamHighRecall,
-    s.SafetyLabelType.TombstoneDevelopmentOnly -> TombstoneDevelopmentOnly,
-    s.SafetyLabelType.TweetContainsHatefulConductSlurHighSeverity -> TweetContainsHatefulConductSlurHighSeverity,
-    s.SafetyLabelType.TweetContainsHatefulConductSlurMediumSeverity -> TweetContainsHatefulConductSlurMediumSeverity,
-    s.SafetyLabelType.TweetContainsHatefulConductSlurLowSeverity -> TweetContainsHatefulConductSlurLowSeverity,
-    s.SafetyLabelType.UnsafeUrl -> UnsafeUrl,
-    s.SafetyLabelType.UntrustedUrl -> UntrustedUrl,
-    s.SafetyLabelType.FosnrHatefulConduct -> FosnrHatefulConduct,
-    s.SafetyLabelType.FosnrHatefulConductLowSeveritySlur -> FosnrHatefulConductLowSeveritySlur,
-    s.SafetyLabelType.AbusiveHighRecall2 -> Deprecated,
-    s.SafetyLabelType.AbusiveHighRecall3 -> Deprecated,
-    s.SafetyLabelType.BrazilianPoliticalTweet -> Deprecated,
-    s.SafetyLabelType.BystanderAbusive2 -> Deprecated,
-    s.SafetyLabelType.BystanderAbusive3 -> Deprecated,
-    s.SafetyLabelType.DeprecatedLabel144 -> Deprecated,
-    s.SafetyLabelType.Experimental10Seh -> Deprecated,
-    s.SafetyLabelType.Experimental11Seh -> Deprecated,
-    s.SafetyLabelType.Experimental12Seh -> Deprecated,
-    s.SafetyLabelType.Experimental13Seh -> Deprecated,
-    s.SafetyLabelType.Experimental14Seh -> Deprecated,
-    s.SafetyLabelType.Experimental15Seh -> Deprecated,
-    s.SafetyLabelType.Experimental16Seh -> Deprecated,
-    s.SafetyLabelType.Experimental17Seh -> Deprecated,
-    s.SafetyLabelType.Experimental18Seh -> Deprecated,
-    s.SafetyLabelType.Experimental19Seh -> Deprecated,
-    s.SafetyLabelType.Experimental1Seh -> Deprecated,
-    s.SafetyLabelType.Experimental20Seh -> Deprecated,
-    s.SafetyLabelType.Experimental21Seh -> Deprecated,
-    s.SafetyLabelType.Experimental22Seh -> Deprecated,
-    s.SafetyLabelType.Experimental23Seh -> Deprecated,
-    s.SafetyLabelType.Experimental24Seh -> Deprecated,
-    s.SafetyLabelType.Experimental25Seh -> Deprecated,
-    s.SafetyLabelType.Experimental2Seh -> Deprecated,
-    s.SafetyLabelType.Experimental3Seh -> Deprecated,
-    s.SafetyLabelType.Experimental4Seh -> Deprecated,
-    s.SafetyLabelType.Experimental5Seh -> Deprecated,
-    s.SafetyLabelType.Experimental6Seh -> Deprecated,
-    s.SafetyLabelType.Experimental7Seh -> Deprecated,
-    s.SafetyLabelType.Experimental8Seh -> Deprecated,
-    s.SafetyLabelType.Experimental9Seh -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore1 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore10 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore2 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore3 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore4 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore5 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore6 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore7 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore8 -> Deprecated,
-    s.SafetyLabelType.ExperimentalHighHealthModelScore9 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal1 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal3 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal4 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal5 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSensitiveIllegal6 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSpam1 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSpam2 -> Deprecated,
-    s.SafetyLabelType.ExperimentalSpam3 -> Deprecated,
-    s.SafetyLabelType.Experimentation -> Deprecated,
-    s.SafetyLabelType.Experimentation2 -> Deprecated,
-    s.SafetyLabelType.Experimentation3 -> Deprecated,
-    s.SafetyLabelType.HighlyReportedImage -> Deprecated,
-    s.SafetyLabelType.HighToxicityHoldbackModelScore -> Deprecated,
-    s.SafetyLabelType.LowQualityHighRecall -> Deprecated,
-    s.SafetyLabelType.MagicRecsDenylist -> Deprecated,
-    s.SafetyLabelType.MisinfoCovid19 -> Deprecated,
-    s.SafetyLabelType.MsnfoBrazilianElection -> Deprecated,
-    s.SafetyLabelType.MsnfoCovid19Vaccine -> Deprecated,
-    s.SafetyLabelType.MsnfoFrenchElection -> Deprecated,
-    s.SafetyLabelType.MsnfoPhilippineElection -> Deprecated,
-    s.SafetyLabelType.MsnfoUsElection -> Deprecated,
-    s.SafetyLabelType.NsfwNearPerfect -> Deprecated,
-    s.SafetyLabelType.PersonaNonGrata -> Deprecated,
-    s.SafetyLabelType.PMisinfoCombined15 -> Deprecated,
-    s.SafetyLabelType.PMisinfoCombined30 -> Deprecated,
-    s.SafetyLabelType.PMisinfoCombined50 -> Deprecated,
-    s.SafetyLabelType.PMisinfoDenylist -> Deprecated,
-    s.SafetyLabelType.PMisinfoPVeracityNudge -> Deprecated,
-    s.SafetyLabelType.PoliticalTweetExperimental1 -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecall -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecallContainsSelfHarm -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecallEncourageSelfHarm -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecallEpisodic -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecallEpisodicHatefulConduct -> Deprecated,
-    s.SafetyLabelType.ProactiveTosHighRecallOtherAbusePolicy -> Deprecated,
-    s.SafetyLabelType.ProjectLibra -> Deprecated,
-    s.SafetyLabelType.SearchHighVisibilityDenylist -> Deprecated,
-    s.SafetyLabelType.SearchHighVisibilityHighRecallDenylist -> Deprecated,
-    s.SafetyLabelType.Reserved162 -> Deprecated,
-    s.SafetyLabelType.Reserved163 -> Deprecated,
-    s.SafetyLabelType.Reserved164 -> Deprecated,
-    s.SafetyLabelType.Reserved165 -> Deprecated,
-    s.SafetyLabelType.Reserved166 -> Deprecated,
-    s.SafetyLabelType.Reserved167 -> Deprecated,
-    s.SafetyLabelType.Reserved168 -> Deprecated,
-    s.SafetyLabelType.Reserved169 -> Deprecated,
-    s.SafetyLabelType.Reserved170 -> Deprecated,
+  privatelon lazy val thriftToModelonlMap: Map[s.SafelontyLabelonlTypelon, TwelonelontSafelontyLabelonlTypelon] = Map(
+    s.SafelontyLabelonlTypelon.Abusivelon -> Abusivelon,
+    s.SafelontyLabelonlTypelon.AbusivelonBelonhavior -> AbusivelonBelonhavior,
+    s.SafelontyLabelonlTypelon.AbusivelonBelonhaviorInsults -> AbusivelonBelonhaviorInsults,
+    s.SafelontyLabelonlTypelon.AbusivelonBelonhaviorViolelonntThrelonat -> AbusivelonBelonhaviorViolelonntThrelonat,
+    s.SafelontyLabelonlTypelon.AbusivelonBelonhaviorMajorAbuselon -> AbusivelonBelonhaviorMajorAbuselon,
+    s.SafelontyLabelonlTypelon.AbusivelonHighReloncall -> AbusivelonHighReloncall,
+    s.SafelontyLabelonlTypelon.AdsManagelonrDelonnyList -> AdsManagelonrDelonnyList,
+    s.SafelontyLabelonlTypelon.AgathaSpam -> AgathaSpam,
+    s.SafelontyLabelonlTypelon.Automation -> Automation,
+    s.SafelontyLabelonlTypelon.AutomationHighReloncall -> AutomationHighReloncall,
+    s.SafelontyLabelonlTypelon.Bouncelon -> Bouncelon,
+    s.SafelontyLabelonlTypelon.Bouncelonelondits -> Bouncelonelondits,
+    s.SafelontyLabelonlTypelon.BrandSafelontyNsfaAggrelongatelon -> BrandSafelontyNsfaAggrelongatelon,
+    s.SafelontyLabelonlTypelon.BrandSafelontyelonxpelonrimelonntal1 -> BrandSafelontyelonxpelonrimelonntal1,
+    s.SafelontyLabelonlTypelon.BrandSafelontyelonxpelonrimelonntal2 -> BrandSafelontyelonxpelonrimelonntal2,
+    s.SafelontyLabelonlTypelon.BrandSafelontyelonxpelonrimelonntal3 -> BrandSafelontyelonxpelonrimelonntal3,
+    s.SafelontyLabelonlTypelon.BrandSafelontyelonxpelonrimelonntal4 -> BrandSafelontyelonxpelonrimelonntal4,
+    s.SafelontyLabelonlTypelon.BystandelonrAbusivelon -> BystandelonrAbusivelon,
+    s.SafelontyLabelonlTypelon.CopypastaSpam -> CopypastaSpam,
+    s.SafelontyLabelonlTypelon.DoNotAmplify -> DoNotAmplify,
+    s.SafelontyLabelonlTypelon.DownrankSpamRelonply -> DownrankSpamRelonply,
+    s.SafelontyLabelonlTypelon.DuplicatelonContelonnt -> DuplicatelonContelonnt,
+    s.SafelontyLabelonlTypelon.DuplicatelonMelonntion -> DuplicatelonMelonntion,
+    s.SafelontyLabelonlTypelon.DynamicProductAd -> DynamicProductAd,
+    s.SafelontyLabelonlTypelon.elondiDelonvelonlopmelonntOnly -> elondiDelonvelonlopmelonntOnly,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalNudgelon -> elonxpelonrimelonntalNudgelon,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalSelonnsitivelonIllelongal2 -> elonxpelonrimelonntalSelonnsitivelonIllelongal2,
+    s.SafelontyLabelonlTypelon.ForelonmelonrgelonncyUselonOnly -> ForelonmelonrgelonncyUselonOnly,
+    s.SafelontyLabelonlTypelon.GorelonAndViolelonncelon -> GorelonAndViolelonncelon,
+    s.SafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision -> GorelonAndViolelonncelonHighPreloncision,
+    s.SafelontyLabelonlTypelon.GorelonAndViolelonncelonHighReloncall -> GorelonAndViolelonncelonHighReloncall,
+    s.SafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics -> GorelonAndViolelonncelonRelonportelondHelonuristics,
+    s.SafelontyLabelonlTypelon.GorelonAndViolelonncelonTopicHighReloncall -> GorelonAndViolelonncelonTopicHighReloncall,
+    s.SafelontyLabelonlTypelon.HatelonfulConduct -> HatelonfulConduct,
+    s.SafelontyLabelonlTypelon.HatelonfulConductViolelonntThrelonat -> HatelonfulConductViolelonntThrelonat,
+    s.SafelontyLabelonlTypelon.HighCryptospamScorelon -> HighCryptospamScorelon,
+    s.SafelontyLabelonlTypelon.HighPRelonportelondTwelonelontScorelon -> HighPRelonportelondTwelonelontScorelon,
+    s.SafelontyLabelonlTypelon.HighPSpammyTwelonelontScorelon -> HighPSpammyTwelonelontScorelon,
+    s.SafelontyLabelonlTypelon.HighPblockScorelon -> HighPblockScorelon,
+    s.SafelontyLabelonlTypelon.HighProactivelonTosScorelon -> HighProactivelonTosScorelon,
+    s.SafelontyLabelonlTypelon.HighSpammyTwelonelontContelonntScorelon -> HighSpammyTwelonelontContelonntScorelon,
+    s.SafelontyLabelonlTypelon.HighToxicityScorelon -> HighToxicityScorelon,
+    s.SafelontyLabelonlTypelon.HighlyRelonportelondAndMidhighToxicityScorelon -> HighlyRelonportelondAndMidhighToxicityScorelon,
+    s.SafelontyLabelonlTypelon.HighlyRelonportelondTwelonelont -> HighlyRelonportelondTwelonelont,
+    s.SafelontyLabelonlTypelon.IntelonrstitialDelonvelonlopmelonntOnly -> IntelonrstitialDelonvelonlopmelonntOnly,
+    s.SafelontyLabelonlTypelon.IpiDelonvelonlopmelonntOnly -> IpiDelonvelonlopmelonntOnly,
+    s.SafelontyLabelonlTypelon.LivelonLowQuality -> LivelonLowQuality,
+    s.SafelontyLabelonlTypelon.LowQuality -> LowQuality,
+    s.SafelontyLabelonlTypelon.LowQualityMelonntion -> LowQualityMelonntion,
+    s.SafelontyLabelonlTypelon.MisinfoCivic -> MisinfoCivic,
+    s.SafelontyLabelonlTypelon.MisinfoCrisis -> MisinfoCrisis,
+    s.SafelontyLabelonlTypelon.MisinfoGelonnelonric -> MisinfoGelonnelonric,
+    s.SafelontyLabelonlTypelon.MisinfoMelondical -> MisinfoMelondical,
+    s.SafelontyLabelonlTypelon.NsfaHighPreloncision -> NsfaHighPreloncision,
+    s.SafelontyLabelonlTypelon.NsfaHighReloncall -> NsfaHighReloncall,
+    s.SafelontyLabelonlTypelon.NsfwCardImagelon -> NsfwCardImagelon,
+    s.SafelontyLabelonlTypelon.NsfwHighPreloncision -> NsfwHighPreloncision,
+    s.SafelontyLabelonlTypelon.NsfwHighReloncall -> NsfwHighReloncall,
+    s.SafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics -> NsfwRelonportelondHelonuristics,
+    s.SafelontyLabelonlTypelon.NsfwTelonxt -> NsfwTelonxt,
+    s.SafelontyLabelonlTypelon.NsfwTelonxtHighPreloncision -> NsfwTelonxtHighPreloncision,
+    s.SafelontyLabelonlTypelon.NsfwVidelono -> NsfwVidelono,
+    s.SafelontyLabelonlTypelon.PNelongMultimodalHighPreloncision -> PNelongMultimodalHighPreloncision,
+    s.SafelontyLabelonlTypelon.PNelongMultimodalHighReloncall -> PNelongMultimodalHighReloncall,
+    s.SafelontyLabelonlTypelon.Pdna -> Pdna,
+    s.SafelontyLabelonlTypelon.ReloncommelonndationsLowQuality -> ReloncommelonndationsLowQuality,
+    s.SafelontyLabelonlTypelon.RitoActionelondTwelonelont -> RitoActionelondTwelonelont,
+    s.SafelontyLabelonlTypelon.SafelontyCrisis -> SafelontyCrisis,
+    s.SafelontyLabelonlTypelon.SelonarchBlacklist -> SelonarchBlacklist,
+    s.SafelontyLabelonlTypelon.SelonarchBlacklistHighReloncall -> SelonarchBlacklistHighReloncall,
+    s.SafelontyLabelonlTypelon.SelonmanticCorelonMisinformation -> SelonmanticCorelonMisinformation,
+    s.SafelontyLabelonlTypelon.SmytelonSpamTwelonelont -> SmytelonSpamTwelonelont,
+    s.SafelontyLabelonlTypelon.Spam -> Spam,
+    s.SafelontyLabelonlTypelon.SpamHighReloncall -> SpamHighReloncall,
+    s.SafelontyLabelonlTypelon.TombstonelonDelonvelonlopmelonntOnly -> TombstonelonDelonvelonlopmelonntOnly,
+    s.SafelontyLabelonlTypelon.TwelonelontContainsHatelonfulConductSlurHighSelonvelonrity -> TwelonelontContainsHatelonfulConductSlurHighSelonvelonrity,
+    s.SafelontyLabelonlTypelon.TwelonelontContainsHatelonfulConductSlurMelondiumSelonvelonrity -> TwelonelontContainsHatelonfulConductSlurMelondiumSelonvelonrity,
+    s.SafelontyLabelonlTypelon.TwelonelontContainsHatelonfulConductSlurLowSelonvelonrity -> TwelonelontContainsHatelonfulConductSlurLowSelonvelonrity,
+    s.SafelontyLabelonlTypelon.UnsafelonUrl -> UnsafelonUrl,
+    s.SafelontyLabelonlTypelon.UntrustelondUrl -> UntrustelondUrl,
+    s.SafelontyLabelonlTypelon.FosnrHatelonfulConduct -> FosnrHatelonfulConduct,
+    s.SafelontyLabelonlTypelon.FosnrHatelonfulConductLowSelonvelonritySlur -> FosnrHatelonfulConductLowSelonvelonritySlur,
+    s.SafelontyLabelonlTypelon.AbusivelonHighReloncall2 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.AbusivelonHighReloncall3 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.BrazilianPoliticalTwelonelont -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.BystandelonrAbusivelon2 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.BystandelonrAbusivelon3 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.DelonpreloncatelondLabelonl144 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal10Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal11Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal12Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal13Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal14Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal15Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal16Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal17Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal18Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal19Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal1Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal20Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal21Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal22Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal23Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal24Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal25Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal2Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal3Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal4Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal5Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal6Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal7Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal8Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntal9Selonh -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalHighHelonalthModelonlScorelon1 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalHighHelonalthModelonlScorelon10 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalHighHelonalthModelonlScorelon2 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalHighHelonalthModelonlScorelon3 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalHighHelonalthModelonlScorelon4 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalHighHelonalthModelonlScorelon5 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalHighHelonalthModelonlScorelon6 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalHighHelonalthModelonlScorelon7 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalHighHelonalthModelonlScorelon8 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalHighHelonalthModelonlScorelon9 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalSelonnsitivelonIllelongal1 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalSelonnsitivelonIllelongal3 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalSelonnsitivelonIllelongal4 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalSelonnsitivelonIllelongal5 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalSelonnsitivelonIllelongal6 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalSpam1 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalSpam2 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntalSpam3 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntation -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntation2 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.elonxpelonrimelonntation3 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.HighlyRelonportelondImagelon -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.HighToxicityHoldbackModelonlScorelon -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.LowQualityHighReloncall -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.MagicReloncsDelonnylist -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.MisinfoCovid19 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.MsnfoBrazilianelonlelonction -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.MsnfoCovid19Vaccinelon -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.MsnfoFrelonnchelonlelonction -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.MsnfoPhilippinelonelonlelonction -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.MsnfoUselonlelonction -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.NsfwNelonarPelonrfelonct -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.PelonrsonaNonGrata -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.PMisinfoCombinelond15 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.PMisinfoCombinelond30 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.PMisinfoCombinelond50 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.PMisinfoDelonnylist -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.PMisinfoPVelonracityNudgelon -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.PoliticalTwelonelontelonxpelonrimelonntal1 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.ProactivelonTosHighReloncall -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.ProactivelonTosHighReloncallContainsSelonlfHarm -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.ProactivelonTosHighReloncallelonncouragelonSelonlfHarm -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.ProactivelonTosHighReloncallelonpisodic -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.ProactivelonTosHighReloncallelonpisodicHatelonfulConduct -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.ProactivelonTosHighReloncallOthelonrAbuselonPolicy -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.ProjelonctLibra -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.SelonarchHighVisibilityDelonnylist -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.SelonarchHighVisibilityHighReloncallDelonnylist -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.Relonselonrvelond162 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.Relonselonrvelond163 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.Relonselonrvelond164 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.Relonselonrvelond165 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.Relonselonrvelond166 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.Relonselonrvelond167 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.Relonselonrvelond168 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.Relonselonrvelond169 -> Delonpreloncatelond,
+    s.SafelontyLabelonlTypelon.Relonselonrvelond170 -> Delonpreloncatelond,
   )
 
-  private lazy val modelToThriftMap: Map[TweetSafetyLabelType, s.SafetyLabelType] =
-    (for ((k, v) <- thriftToModelMap) yield (v, k)) ++ Map(
-      Deprecated -> s.SafetyLabelType.EnumUnknownSafetyLabelType(DeprecatedEnumValue),
+  privatelon lazy val modelonlToThriftMap: Map[TwelonelontSafelontyLabelonlTypelon, s.SafelontyLabelonlTypelon] =
+    (for ((k, v) <- thriftToModelonlMap) yielonld (v, k)) ++ Map(
+      Delonpreloncatelond -> s.SafelontyLabelonlTypelon.elonnumUnknownSafelontyLabelonlTypelon(DelonpreloncatelondelonnumValuelon),
     )
 
-  case object Abusive extends TweetSafetyLabelType
-  case object AbusiveBehavior extends TweetSafetyLabelType
-  case object AbusiveBehaviorInsults extends TweetSafetyLabelType
-  case object AbusiveBehaviorViolentThreat extends TweetSafetyLabelType
-  case object AbusiveBehaviorMajorAbuse extends TweetSafetyLabelType
-  case object AbusiveHighRecall extends TweetSafetyLabelType
-  case object Automation extends TweetSafetyLabelType
-  case object AutomationHighRecall extends TweetSafetyLabelType
-  case object Bounce extends TweetSafetyLabelType
-  case object BystanderAbusive extends TweetSafetyLabelType
-  case object NsfaHighRecall extends TweetSafetyLabelType
-  case object DuplicateContent extends TweetSafetyLabelType
-  case object DuplicateMention extends TweetSafetyLabelType
-  case object GoreAndViolence extends TweetSafetyLabelType {
+  caselon objelonct Abusivelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct AbusivelonBelonhavior elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct AbusivelonBelonhaviorInsults elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct AbusivelonBelonhaviorViolelonntThrelonat elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct AbusivelonBelonhaviorMajorAbuselon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct AbusivelonHighReloncall elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct Automation elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct AutomationHighReloncall elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct Bouncelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct BystandelonrAbusivelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct NsfaHighReloncall elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct DuplicatelonContelonnt elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct DuplicatelonMelonntion elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct GorelonAndViolelonncelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon {
 
-    val DeprecatedAt: Time = Time.at("2019-09-12 00:00:00 UTC")
+    val DelonpreloncatelondAt: Timelon = Timelon.at("2019-09-12 00:00:00 UTC")
   }
-  case object GoreAndViolenceHighRecall extends TweetSafetyLabelType
-  case object LiveLowQuality extends TweetSafetyLabelType
-  case object LowQuality extends TweetSafetyLabelType
-  case object LowQualityMention extends TweetSafetyLabelType
-  case object NsfwCardImage extends TweetSafetyLabelType
-  case object NsfwHighRecall extends TweetSafetyLabelType
-  case object NsfwHighPrecision extends TweetSafetyLabelType
-  case object NsfwVideo extends TweetSafetyLabelType
-  case object Pdna extends TweetSafetyLabelType
+  caselon objelonct GorelonAndViolelonncelonHighReloncall elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct LivelonLowQuality elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct LowQuality elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct LowQualityMelonntion elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct NsfwCardImagelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct NsfwHighReloncall elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct NsfwHighPreloncision elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct NsfwVidelono elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct Pdna elonxtelonnds TwelonelontSafelontyLabelonlTypelon
 
-  case object RecommendationsLowQuality extends TweetSafetyLabelType
-  case object SearchBlacklist extends TweetSafetyLabelType
-  case object Spam extends TweetSafetyLabelType
-  case object SpamHighRecall extends TweetSafetyLabelType
-  case object UntrustedUrl extends TweetSafetyLabelType
-  case object HighToxicityScore extends TweetSafetyLabelType
-  case object HighPblockScore extends TweetSafetyLabelType
-  case object SearchBlacklistHighRecall extends TweetSafetyLabelType
-  case object ForEmergencyUseOnly extends TweetSafetyLabelType
-  case object HighProactiveTosScore extends TweetSafetyLabelType
-  case object SafetyCrisis extends TweetSafetyLabelType
-  case object MisinfoCivic extends TweetSafetyLabelType
-  case object MisinfoCrisis extends TweetSafetyLabelType
-  case object MisinfoGeneric extends TweetSafetyLabelType
-  case object MisinfoMedical extends TweetSafetyLabelType
-  case object AdsManagerDenyList extends TweetSafetyLabelType
-  case object GoreAndViolenceHighPrecision extends TweetSafetyLabelType
-  case object NsfwReportedHeuristics extends TweetSafetyLabelType
-  case object GoreAndViolenceReportedHeuristics extends TweetSafetyLabelType
-  case object HighPSpammyTweetScore extends TweetSafetyLabelType
-  case object DoNotAmplify extends TweetSafetyLabelType
-  case object HighlyReportedTweet extends TweetSafetyLabelType
-  case object AgathaSpam extends TweetSafetyLabelType
-  case object SmyteSpamTweet extends TweetSafetyLabelType
-  case object SemanticCoreMisinformation extends TweetSafetyLabelType
-  case object HighPReportedTweetScore extends TweetSafetyLabelType
-  case object HighSpammyTweetContentScore extends TweetSafetyLabelType
-  case object GoreAndViolenceTopicHighRecall extends TweetSafetyLabelType
-  case object CopypastaSpam extends TweetSafetyLabelType
-  case object ExperimentalSensitiveIllegal2 extends TweetSafetyLabelType
-  case object DownrankSpamReply extends TweetSafetyLabelType
-  case object NsfwText extends TweetSafetyLabelType
-  case object HighlyReportedAndMidhighToxicityScore extends TweetSafetyLabelType
-  case object DynamicProductAd extends TweetSafetyLabelType
-  case object TombstoneDevelopmentOnly extends TweetSafetyLabelType
-  case object TweetContainsHatefulConductSlurHighSeverity extends TweetSafetyLabelType
-  case object TweetContainsHatefulConductSlurMediumSeverity extends TweetSafetyLabelType
-  case object TweetContainsHatefulConductSlurLowSeverity extends TweetSafetyLabelType
-  case object RitoActionedTweet extends TweetSafetyLabelType
-  case object ExperimentalNudge extends TweetSafetyLabelType
-  case object PNegMultimodalHighPrecision extends TweetSafetyLabelType
-  case object PNegMultimodalHighRecall extends TweetSafetyLabelType
-  case object BrandSafetyNsfaAggregate extends TweetSafetyLabelType
-  case object HighCryptospamScore extends TweetSafetyLabelType
-  case object IpiDevelopmentOnly extends TweetSafetyLabelType
-  case object BounceEdits extends TweetSafetyLabelType
-  case object UnsafeUrl extends TweetSafetyLabelType
-  case object InterstitialDevelopmentOnly extends TweetSafetyLabelType
-  case object EdiDevelopmentOnly extends TweetSafetyLabelType
-  case object NsfwTextHighPrecision extends TweetSafetyLabelType
-  case object HatefulConduct extends TweetSafetyLabelType
-  case object HatefulConductViolentThreat extends TweetSafetyLabelType
-  case object NsfaHighPrecision extends TweetSafetyLabelType
-  case object BrandSafetyExperimental1 extends TweetSafetyLabelType
-  case object BrandSafetyExperimental2 extends TweetSafetyLabelType
-  case object BrandSafetyExperimental3 extends TweetSafetyLabelType
-  case object BrandSafetyExperimental4 extends TweetSafetyLabelType
+  caselon objelonct ReloncommelonndationsLowQuality elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct SelonarchBlacklist elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct Spam elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct SpamHighReloncall elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct UntrustelondUrl elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HighToxicityScorelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HighPblockScorelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct SelonarchBlacklistHighReloncall elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct ForelonmelonrgelonncyUselonOnly elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HighProactivelonTosScorelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct SafelontyCrisis elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct MisinfoCivic elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct MisinfoCrisis elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct MisinfoGelonnelonric elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct MisinfoMelondical elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct AdsManagelonrDelonnyList elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct GorelonAndViolelonncelonHighPreloncision elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct NsfwRelonportelondHelonuristics elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct GorelonAndViolelonncelonRelonportelondHelonuristics elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HighPSpammyTwelonelontScorelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct DoNotAmplify elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HighlyRelonportelondTwelonelont elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct AgathaSpam elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct SmytelonSpamTwelonelont elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct SelonmanticCorelonMisinformation elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HighPRelonportelondTwelonelontScorelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HighSpammyTwelonelontContelonntScorelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct GorelonAndViolelonncelonTopicHighReloncall elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct CopypastaSpam elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct elonxpelonrimelonntalSelonnsitivelonIllelongal2 elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct DownrankSpamRelonply elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct NsfwTelonxt elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HighlyRelonportelondAndMidhighToxicityScorelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct DynamicProductAd elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct TombstonelonDelonvelonlopmelonntOnly elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct TwelonelontContainsHatelonfulConductSlurHighSelonvelonrity elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct TwelonelontContainsHatelonfulConductSlurMelondiumSelonvelonrity elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct TwelonelontContainsHatelonfulConductSlurLowSelonvelonrity elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct RitoActionelondTwelonelont elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct elonxpelonrimelonntalNudgelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct PNelongMultimodalHighPreloncision elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct PNelongMultimodalHighReloncall elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct BrandSafelontyNsfaAggrelongatelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HighCryptospamScorelon elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct IpiDelonvelonlopmelonntOnly elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct Bouncelonelondits elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct UnsafelonUrl elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct IntelonrstitialDelonvelonlopmelonntOnly elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct elondiDelonvelonlopmelonntOnly elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct NsfwTelonxtHighPreloncision elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HatelonfulConduct elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct HatelonfulConductViolelonntThrelonat elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct NsfaHighPreloncision elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct BrandSafelontyelonxpelonrimelonntal1 elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct BrandSafelontyelonxpelonrimelonntal2 elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct BrandSafelontyelonxpelonrimelonntal3 elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct BrandSafelontyelonxpelonrimelonntal4 elonxtelonnds TwelonelontSafelontyLabelonlTypelon
 
-  case object FosnrHatefulConduct extends TweetSafetyLabelType
-  case object FosnrHatefulConductLowSeveritySlur extends TweetSafetyLabelType
+  caselon objelonct FosnrHatelonfulConduct elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct FosnrHatelonfulConductLowSelonvelonritySlur elonxtelonnds TwelonelontSafelontyLabelonlTypelon
 
-  case object Deprecated extends TweetSafetyLabelType
-  case object Unknown extends TweetSafetyLabelType
+  caselon objelonct Delonpreloncatelond elonxtelonnds TwelonelontSafelontyLabelonlTypelon
+  caselon objelonct Unknown elonxtelonnds TwelonelontSafelontyLabelonlTypelon
 
-  def fromThrift(safetyLabelType: s.SafetyLabelType): TweetSafetyLabelType =
-    thriftToModelMap.get(safetyLabelType) match {
-      case Some(tweetSafetyLabelType) => tweetSafetyLabelType
-      case _ =>
-        safetyLabelType match {
-          case s.SafetyLabelType.EnumUnknownSafetyLabelType(DeprecatedEnumValue) => Deprecated
-          case _ =>
+  delonf fromThrift(safelontyLabelonlTypelon: s.SafelontyLabelonlTypelon): TwelonelontSafelontyLabelonlTypelon =
+    thriftToModelonlMap.gelont(safelontyLabelonlTypelon) match {
+      caselon Somelon(twelonelontSafelontyLabelonlTypelon) => twelonelontSafelontyLabelonlTypelon
+      caselon _ =>
+        safelontyLabelonlTypelon match {
+          caselon s.SafelontyLabelonlTypelon.elonnumUnknownSafelontyLabelonlTypelon(DelonpreloncatelondelonnumValuelon) => Delonpreloncatelond
+          caselon _ =>
             Unknown
         }
     }
 
-  def toThrift(safetyLabelType: TweetSafetyLabelType): s.SafetyLabelType = {
-    modelToThriftMap.getOrElse(safetyLabelType, UnknownThriftSafetyLabelType)
+  delonf toThrift(safelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon): s.SafelontyLabelonlTypelon = {
+    modelonlToThriftMap.gelontOrelonlselon(safelontyLabelonlTypelon, UnknownThriftSafelontyLabelonlTypelon)
   }
 }
 
-object TweetSafetyLabel {
-  def fromThrift(safetyLabelValue: s.SafetyLabelValue): TweetSafetyLabel =
-    fromTuple(safetyLabelValue.labelType, safetyLabelValue.label)
+objelonct TwelonelontSafelontyLabelonl {
+  delonf fromThrift(safelontyLabelonlValuelon: s.SafelontyLabelonlValuelon): TwelonelontSafelontyLabelonl =
+    fromTuplelon(safelontyLabelonlValuelon.labelonlTypelon, safelontyLabelonlValuelon.labelonl)
 
-  def fromTuple(
-    safetyLabelType: s.SafetyLabelType,
-    safetyLabel: s.SafetyLabel
-  ): TweetSafetyLabel = {
-    TweetSafetyLabel(
-      labelType = TweetSafetyLabelType.fromThrift(safetyLabelType),
-      source = safetyLabel.source.flatMap(LabelSource.fromString),
-      safetyLabelSource = safetyLabel.safetyLabelSource,
-      applicableUsers = safetyLabel.applicableUsers
-        .map { perspectivalUsers =>
-          (perspectivalUsers map {
-            _.userId
-          }).toSet
-        }.getOrElse(Set.empty),
-      score = safetyLabel.score,
-      modelMetadata = safetyLabel.modelMetadata.flatMap(TweetModelMetadata.fromThrift)
+  delonf fromTuplelon(
+    safelontyLabelonlTypelon: s.SafelontyLabelonlTypelon,
+    safelontyLabelonl: s.SafelontyLabelonl
+  ): TwelonelontSafelontyLabelonl = {
+    TwelonelontSafelontyLabelonl(
+      labelonlTypelon = TwelonelontSafelontyLabelonlTypelon.fromThrift(safelontyLabelonlTypelon),
+      sourcelon = safelontyLabelonl.sourcelon.flatMap(LabelonlSourcelon.fromString),
+      safelontyLabelonlSourcelon = safelontyLabelonl.safelontyLabelonlSourcelon,
+      applicablelonUselonrs = safelontyLabelonl.applicablelonUselonrs
+        .map { pelonrspelonctivalUselonrs =>
+          (pelonrspelonctivalUselonrs map {
+            _.uselonrId
+          }).toSelont
+        }.gelontOrelonlselon(Selont.elonmpty),
+      scorelon = safelontyLabelonl.scorelon,
+      modelonlMelontadata = safelontyLabelonl.modelonlMelontadata.flatMap(TwelonelontModelonlMelontadata.fromThrift)
     )
   }
 
-  def toThrift(tweetSafetyLabel: TweetSafetyLabel): s.SafetyLabelValue = {
-    s.SafetyLabelValue(
-      labelType = TweetSafetyLabelType.toThrift(tweetSafetyLabel.labelType),
-      label = s.SafetyLabel(
-        applicableUsers = if (tweetSafetyLabel.applicableUsers.nonEmpty) {
-          Some(tweetSafetyLabel.applicableUsers.toSeq.map {
-            s.PerspectivalUser(_)
+  delonf toThrift(twelonelontSafelontyLabelonl: TwelonelontSafelontyLabelonl): s.SafelontyLabelonlValuelon = {
+    s.SafelontyLabelonlValuelon(
+      labelonlTypelon = TwelonelontSafelontyLabelonlTypelon.toThrift(twelonelontSafelontyLabelonl.labelonlTypelon),
+      labelonl = s.SafelontyLabelonl(
+        applicablelonUselonrs = if (twelonelontSafelontyLabelonl.applicablelonUselonrs.nonelonmpty) {
+          Somelon(twelonelontSafelontyLabelonl.applicablelonUselonrs.toSelonq.map {
+            s.PelonrspelonctivalUselonr(_)
           })
-        } else {
-          None
+        } elonlselon {
+          Nonelon
         },
-        source = tweetSafetyLabel.source.map(_.name),
-        score = tweetSafetyLabel.score,
-        modelMetadata = tweetSafetyLabel.modelMetadata.map(TweetModelMetadata.toThrift)
+        sourcelon = twelonelontSafelontyLabelonl.sourcelon.map(_.namelon),
+        scorelon = twelonelontSafelontyLabelonl.scorelon,
+        modelonlMelontadata = twelonelontSafelontyLabelonl.modelonlMelontadata.map(TwelonelontModelonlMelontadata.toThrift)
       )
     )
   }

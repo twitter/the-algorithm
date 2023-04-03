@@ -1,137 +1,137 @@
-package com.twitter.recosinjector.clients
+packagelon com.twittelonr.reloncosinjelonctor.clielonnts
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.io.Buf
-import com.twitter.recos.internal.thriftscala.{RecosHoseEntities, RecosHoseEntity}
-import com.twitter.servo.cache.ThriftSerializer
-import com.twitter.util.{Duration, Future, Time}
-import org.apache.thrift.protocol.TBinaryProtocol
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.melonmcachelond.Clielonnt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.io.Buf
+import com.twittelonr.reloncos.intelonrnal.thriftscala.{ReloncosHoselonelonntitielons, ReloncosHoselonelonntity}
+import com.twittelonr.selonrvo.cachelon.ThriftSelonrializelonr
+import com.twittelonr.util.{Duration, Futurelon, Timelon}
+import org.apachelon.thrift.protocol.TBinaryProtocol
 
-case class CacheEntityEntry(
-  cachePrefix: String,
-  hashedEntityId: Int,
-  entity: String) {
-  val fullKey: String = cachePrefix + hashedEntityId
+caselon class Cachelonelonntityelonntry(
+  cachelonPrelonfix: String,
+  hashelondelonntityId: Int,
+  elonntity: String) {
+  val fullKelony: String = cachelonPrelonfix + hashelondelonntityId
 }
 
-object RecosHoseEntitiesCache {
-  val EntityTTL: Duration = 30.hours
-  val EntitiesSerializer =
-    new ThriftSerializer[RecosHoseEntities](RecosHoseEntities, new TBinaryProtocol.Factory())
+objelonct ReloncosHoselonelonntitielonsCachelon {
+  val elonntityTTL: Duration = 30.hours
+  val elonntitielonsSelonrializelonr =
+    nelonw ThriftSelonrializelonr[ReloncosHoselonelonntitielons](ReloncosHoselonelonntitielons, nelonw TBinaryProtocol.Factory())
 
-  val HashtagPrefix: String = "h"
-  val UrlPrefix: String = "u"
+  val HashtagPrelonfix: String = "h"
+  val UrlPrelonfix: String = "u"
 }
 
 /**
- * A cache layer to store entities.
- * Graph services like user_tweet_entity_graph and user_url_graph store user interactions with
- * entities in a tweet, such as HashTags and URLs. These entities are string values that can be
- * potentially very big. Therefore, we instead store a hashed id in the graph edge, and keep a
- * (hashedId -> entity) mapping in this cache. The actual entity values can be recovered
- * by the graph service at serving time using this cache.
+ * A cachelon layelonr to storelon elonntitielons.
+ * Graph selonrvicelons likelon uselonr_twelonelont_elonntity_graph and uselonr_url_graph storelon uselonr intelonractions with
+ * elonntitielons in a twelonelont, such as HashTags and URLs. Thelonselon elonntitielons arelon string valuelons that can belon
+ * potelonntially velonry big. Thelonrelonforelon, welon instelonad storelon a hashelond id in thelon graph elondgelon, and kelonelonp a
+ * (hashelondId -> elonntity) mapping in this cachelon. Thelon actual elonntity valuelons can belon reloncovelonrelond
+ * by thelon graph selonrvicelon at selonrving timelon using this cachelon.
  */
-class RecosHoseEntitiesCache(client: Client) {
-  import RecosHoseEntitiesCache._
+class ReloncosHoselonelonntitielonsCachelon(clielonnt: Clielonnt) {
+  import ReloncosHoselonelonntitielonsCachelon._
 
-  private def isEntityWithinTTL(entity: RecosHoseEntity, ttlInMillis: Long): Boolean = {
-    entity.timestamp.exists(timestamp => Time.now.inMilliseconds - timestamp <= ttlInMillis)
+  privatelon delonf iselonntityWithinTTL(elonntity: ReloncosHoselonelonntity, ttlInMillis: Long): Boolelonan = {
+    elonntity.timelonstamp.elonxists(timelonstamp => Timelon.now.inMilliselonconds - timelonstamp <= ttlInMillis)
   }
 
   /**
-   * Add a new RecosHoseEntity into RecosHoseEntities
+   * Add a nelonw ReloncosHoselonelonntity into ReloncosHoselonelonntitielons
    */
-  private def updateRecosHoseEntities(
-    existingEntitiesOpt: Option[RecosHoseEntities],
-    newEntityString: String,
-    stats: StatsReceiver
-  ): RecosHoseEntities = {
-    val existingEntities = existingEntitiesOpt.map(_.entities).getOrElse(Nil)
+  privatelon delonf updatelonReloncosHoselonelonntitielons(
+    elonxistingelonntitielonsOpt: Option[ReloncosHoselonelonntitielons],
+    nelonwelonntityString: String,
+    stats: StatsReloncelonivelonr
+  ): ReloncosHoselonelonntitielons = {
+    val elonxistingelonntitielons = elonxistingelonntitielonsOpt.map(_.elonntitielons).gelontOrelonlselon(Nil)
 
-    // Discard expired and duplicate existing entities
-    val validExistingEntities = existingEntities
-      .filter(entity => isEntityWithinTTL(entity, EntityTTL.inMillis))
-      .filter(_.entity != newEntityString)
+    // Discard elonxpirelond and duplicatelon elonxisting elonntitielons
+    val validelonxistingelonntitielons = elonxistingelonntitielons
+      .filtelonr(elonntity => iselonntityWithinTTL(elonntity, elonntityTTL.inMillis))
+      .filtelonr(_.elonntity != nelonwelonntityString)
 
-    val newRecosHoseEntity = RecosHoseEntity(newEntityString, Some(Time.now.inMilliseconds))
-    RecosHoseEntities(validExistingEntities :+ newRecosHoseEntity)
+    val nelonwReloncosHoselonelonntity = ReloncosHoselonelonntity(nelonwelonntityString, Somelon(Timelon.now.inMilliselonconds))
+    ReloncosHoselonelonntitielons(validelonxistingelonntitielons :+ nelonwReloncosHoselonelonntity)
   }
 
-  private def getRecosHoseEntitiesCache(
-    cacheEntries: Seq[CacheEntityEntry],
-    stats: StatsReceiver
-  ): Future[Map[String, Option[RecosHoseEntities]]] = {
-    client
-      .get(cacheEntries.map(_.fullKey))
+  privatelon delonf gelontReloncosHoselonelonntitielonsCachelon(
+    cachelonelonntrielons: Selonq[Cachelonelonntityelonntry],
+    stats: StatsReloncelonivelonr
+  ): Futurelon[Map[String, Option[ReloncosHoselonelonntitielons]]] = {
+    clielonnt
+      .gelont(cachelonelonntrielons.map(_.fullKelony))
       .map(_.map {
-        case (cacheKey, buf) =>
-          val recosHoseEntitiesTry = EntitiesSerializer.from(Buf.ByteArray.Owned.extract(buf))
-          if (recosHoseEntitiesTry.isThrow) {
-            stats.counter("cache_get_deserialization_failure").incr()
+        caselon (cachelonKelony, buf) =>
+          val reloncosHoselonelonntitielonsTry = elonntitielonsSelonrializelonr.from(Buf.BytelonArray.Ownelond.elonxtract(buf))
+          if (reloncosHoselonelonntitielonsTry.isThrow) {
+            stats.countelonr("cachelon_gelont_delonselonrialization_failurelon").incr()
           }
-          cacheKey -> recosHoseEntitiesTry.toOption
+          cachelonKelony -> reloncosHoselonelonntitielonsTry.toOption
       })
-      .onSuccess { _ => stats.counter("get_cache_success").incr() }
-      .onFailure { ex =>
-        stats.scope("get_cache_failure").counter(ex.getClass.getSimpleName).incr()
+      .onSuccelonss { _ => stats.countelonr("gelont_cachelon_succelonss").incr() }
+      .onFailurelon { elonx =>
+        stats.scopelon("gelont_cachelon_failurelon").countelonr(elonx.gelontClass.gelontSimplelonNamelon).incr()
       }
   }
 
-  private def putRecosHoseEntitiesCache(
-    cacheKey: String,
-    recosHoseEntities: RecosHoseEntities,
-    stats: StatsReceiver
+  privatelon delonf putReloncosHoselonelonntitielonsCachelon(
+    cachelonKelony: String,
+    reloncosHoselonelonntitielons: ReloncosHoselonelonntitielons,
+    stats: StatsReloncelonivelonr
   ): Unit = {
-    val serialized = EntitiesSerializer.to(recosHoseEntities)
-    if (serialized.isThrow) {
-      stats.counter("cache_put_serialization_failure").incr()
+    val selonrializelond = elonntitielonsSelonrializelonr.to(reloncosHoselonelonntitielons)
+    if (selonrializelond.isThrow) {
+      stats.countelonr("cachelon_put_selonrialization_failurelon").incr()
     }
-    serialized.toOption.map { bytes =>
-      client
-        .set(cacheKey, 0, EntityTTL.fromNow, Buf.ByteArray.Owned(bytes))
-        .onSuccess { _ => stats.counter("put_cache_success").incr() }
-        .onFailure { ex =>
-          stats.scope("put_cache_failure").counter(ex.getClass.getSimpleName).incr()
+    selonrializelond.toOption.map { bytelons =>
+      clielonnt
+        .selont(cachelonKelony, 0, elonntityTTL.fromNow, Buf.BytelonArray.Ownelond(bytelons))
+        .onSuccelonss { _ => stats.countelonr("put_cachelon_succelonss").incr() }
+        .onFailurelon { elonx =>
+          stats.scopelon("put_cachelon_failurelon").countelonr(elonx.gelontClass.gelontSimplelonNamelon).incr()
         }
     }
   }
 
   /**
-   * Store a list of new entities into the cache by their cacheKeys, and remove expired/invalid
-   * values in the existing cache entries at the same time
+   * Storelon a list of nelonw elonntitielons into thelon cachelon by thelonir cachelonKelonys, and relonmovelon elonxpirelond/invalid
+   * valuelons in thelon elonxisting cachelon elonntrielons at thelon samelon timelon
    */
-  def updateEntitiesCache(
-    newCacheEntries: Seq[CacheEntityEntry],
-    stats: StatsReceiver
-  ): Future[Unit] = {
-    stats.counter("update_cache_request").incr()
-    getRecosHoseEntitiesCache(newCacheEntries, stats)
-      .map { existingCacheEntries =>
-        newCacheEntries.foreach { newCacheEntry =>
-          val fullKey = newCacheEntry.fullKey
-          val existingRecosHoseEntities = existingCacheEntries.get(fullKey).flatten
-          stats.stat("num_existing_entities").add(existingRecosHoseEntities.size)
-          if (existingRecosHoseEntities.isEmpty) {
-            stats.counter("existing_entities_empty").incr()
+  delonf updatelonelonntitielonsCachelon(
+    nelonwCachelonelonntrielons: Selonq[Cachelonelonntityelonntry],
+    stats: StatsReloncelonivelonr
+  ): Futurelon[Unit] = {
+    stats.countelonr("updatelon_cachelon_relonquelonst").incr()
+    gelontReloncosHoselonelonntitielonsCachelon(nelonwCachelonelonntrielons, stats)
+      .map { elonxistingCachelonelonntrielons =>
+        nelonwCachelonelonntrielons.forelonach { nelonwCachelonelonntry =>
+          val fullKelony = nelonwCachelonelonntry.fullKelony
+          val elonxistingReloncosHoselonelonntitielons = elonxistingCachelonelonntrielons.gelont(fullKelony).flattelonn
+          stats.stat("num_elonxisting_elonntitielons").add(elonxistingReloncosHoselonelonntitielons.sizelon)
+          if (elonxistingReloncosHoselonelonntitielons.iselonmpty) {
+            stats.countelonr("elonxisting_elonntitielons_elonmpty").incr()
           }
 
-          val updatedRecosHoseEntities = updateRecosHoseEntities(
-            existingRecosHoseEntities,
-            newCacheEntry.entity,
+          val updatelondReloncosHoselonelonntitielons = updatelonReloncosHoselonelonntitielons(
+            elonxistingReloncosHoselonelonntitielons,
+            nelonwCachelonelonntry.elonntity,
             stats
           )
-          stats.stat("num_updated_entities").add(updatedRecosHoseEntities.entities.size)
+          stats.stat("num_updatelond_elonntitielons").add(updatelondReloncosHoselonelonntitielons.elonntitielons.sizelon)
 
-          if (updatedRecosHoseEntities.entities.nonEmpty) {
-            putRecosHoseEntitiesCache(fullKey, updatedRecosHoseEntities, stats)
+          if (updatelondReloncosHoselonelonntitielons.elonntitielons.nonelonmpty) {
+            putReloncosHoselonelonntitielonsCachelon(fullKelony, updatelondReloncosHoselonelonntitielons, stats)
           }
         }
       }
-      .onSuccess { _ => stats.counter("update_cache_success").incr() }
-      .onFailure { ex =>
-        stats.scope("update_cache_failure").counter(ex.getClass.getSimpleName).incr()
+      .onSuccelonss { _ => stats.countelonr("updatelon_cachelon_succelonss").incr() }
+      .onFailurelon { elonx =>
+        stats.scopelon("updatelon_cachelon_failurelon").countelonr(elonx.gelontClass.gelontSimplelonNamelon).incr()
       }
   }
 }

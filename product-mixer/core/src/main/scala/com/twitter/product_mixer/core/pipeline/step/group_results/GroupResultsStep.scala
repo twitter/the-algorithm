@@ -1,67 +1,67 @@
-package com.twitter.product_mixer.core.pipeline.step.group_results
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.group_relonsults
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithDetails
-import com.twitter.product_mixer.core.pipeline.state.HasCandidatesWithFeatures
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutor
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutorInput
-import com.twitter.product_mixer.core.service.group_results_executor.GroupResultsExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasCandidatelonsWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasCandidatelonsWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.group_relonsults_elonxeloncutor.GroupRelonsultselonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.group_relonsults_elonxeloncutor.GroupRelonsultselonxeloncutorInput
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.group_relonsults_elonxeloncutor.GroupRelonsultselonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * A group results step, it takes the input list of candidates and decorations, and assembles
- * properly decorated candidates with details.
+ * A group relonsults stelonp, it takelons thelon input list of candidatelons and deloncorations, and asselonmblelons
+ * propelonrly deloncoratelond candidatelons with delontails.
  *
- * @param groupResultsExecutor Group results executor
- * @tparam Candidate Type of candidates
- * @tparam State The pipeline state domain model.
+ * @param groupRelonsultselonxeloncutor Group relonsults elonxeloncutor
+ * @tparam Candidatelon Typelon of candidatelons
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class GroupResultsStep[
-  Candidate <: UniversalNoun[Any],
-  State <: HasCandidatesWithDetails[State] with HasCandidatesWithFeatures[
-    Candidate,
-    State
-  ]] @Inject() (
-  groupResultsExecutor: GroupResultsExecutor)
-    extends Step[State, CandidatePipelineContext, GroupResultsExecutorInput[
-      Candidate
-    ], GroupResultsExecutorResult] {
+caselon class GroupRelonsultsStelonp[
+  Candidatelon <: UnivelonrsalNoun[Any],
+  Statelon <: HasCandidatelonsWithDelontails[Statelon] with HasCandidatelonsWithFelonaturelons[
+    Candidatelon,
+    Statelon
+  ]] @Injelonct() (
+  groupRelonsultselonxeloncutor: GroupRelonsultselonxeloncutor)
+    elonxtelonnds Stelonp[Statelon, CandidatelonPipelonlinelonContelonxt, GroupRelonsultselonxeloncutorInput[
+      Candidatelon
+    ], GroupRelonsultselonxeloncutorRelonsult] {
 
-  override def isEmpty(config: CandidatePipelineContext): Boolean = false
-  override def adaptInput(
-    state: State,
-    config: CandidatePipelineContext
-  ): GroupResultsExecutorInput[Candidate] = {
-    val presentationMap = state.candidatesWithDetails.flatMap { candidateWithDetails =>
-      candidateWithDetails.presentation
-        .map { presentation =>
-          candidateWithDetails.getCandidate[UniversalNoun[Any]] -> presentation
+  ovelonrridelon delonf iselonmpty(config: CandidatelonPipelonlinelonContelonxt): Boolelonan = falselon
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: CandidatelonPipelonlinelonContelonxt
+  ): GroupRelonsultselonxeloncutorInput[Candidatelon] = {
+    val prelonselonntationMap = statelon.candidatelonsWithDelontails.flatMap { candidatelonWithDelontails =>
+      candidatelonWithDelontails.prelonselonntation
+        .map { prelonselonntation =>
+          candidatelonWithDelontails.gelontCandidatelon[UnivelonrsalNoun[Any]] -> prelonselonntation
         }
     }.toMap
-    GroupResultsExecutorInput(state.candidatesWithFeatures, presentationMap)
+    GroupRelonsultselonxeloncutorInput(statelon.candidatelonsWithFelonaturelons, prelonselonntationMap)
   }
 
-  override def arrow(
-    config: CandidatePipelineContext,
-    context: Executor.Context
-  ): Arrow[GroupResultsExecutorInput[Candidate], GroupResultsExecutorResult] =
-    groupResultsExecutor.arrow(
-      config.candidatePipelineIdentifier,
-      config.candidateSourceIdentifier,
-      context)
+  ovelonrridelon delonf arrow(
+    config: CandidatelonPipelonlinelonContelonxt,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[GroupRelonsultselonxeloncutorInput[Candidatelon], GroupRelonsultselonxeloncutorRelonsult] =
+    groupRelonsultselonxeloncutor.arrow(
+      config.candidatelonPipelonlinelonIdelonntifielonr,
+      config.candidatelonSourcelonIdelonntifielonr,
+      contelonxt)
 
-  override def updateState(
-    state: State,
-    executorResult: GroupResultsExecutorResult,
-    config: CandidatePipelineContext
-  ): State = state.updateCandidatesWithDetails(executorResult.candidatesWithDetails)
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: GroupRelonsultselonxeloncutorRelonsult,
+    config: CandidatelonPipelonlinelonContelonxt
+  ): Statelon = statelon.updatelonCandidatelonsWithDelontails(elonxeloncutorRelonsult.candidatelonsWithDelontails)
 }
 
-case class CandidatePipelineContext(
-  candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  candidateSourceIdentifier: CandidateSourceIdentifier)
+caselon class CandidatelonPipelonlinelonContelonxt(
+  candidatelonPipelonlinelonIdelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr,
+  candidatelonSourcelonIdelonntifielonr: CandidatelonSourcelonIdelonntifielonr)

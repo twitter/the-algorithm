@@ -1,81 +1,81 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("BatchPredictionTensorResponseWriter")
-.Attr("T: list({string, int32, int64, float, double})")
-.Input("keys: int64")
-.Input("values: T")
-.Output("result: uint8")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-  return Status::OK();
+RelonGISTelonR_OP("BatchPrelondictionTelonnsorRelonsponselonWritelonr")
+.Attr("T: list({string, int32, int64, float, doublelon})")
+.Input("kelonys: int64")
+.Input("valuelons: T")
+.Output("relonsult: uint8")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+  relonturn Status::OK();
   }).Doc(R"doc(
 
-A tensorflow OP that packages keys and dense tensors into a BatchPredictionResponse.
+A telonnsorflow OP that packagelons kelonys and delonnselon telonnsors into a BatchPrelondictionRelonsponselon.
 
-values: list of tensors
-keys: feature ids from the original BatchPredictionRequest. (int64)
+valuelons: list of telonnsors
+kelonys: felonaturelon ids from thelon original BatchPrelondictionRelonquelonst. (int64)
 
 Outputs
-  bytes: output BatchPredictionRequest serialized using Thrift into a uint8 tensor.
+  bytelons: output BatchPrelondictionRelonquelonst selonrializelond using Thrift into a uint8 telonnsor.
 )doc");
 
-class BatchPredictionTensorResponseWriter : public OpKernel {
+class BatchPrelondictionTelonnsorRelonsponselonWritelonr : public OpKelonrnelonl {
  public:
-  explicit BatchPredictionTensorResponseWriter(OpKernelConstruction* context)
-  : OpKernel(context) {}
+  elonxplicit BatchPrelondictionTelonnsorRelonsponselonWritelonr(OpKelonrnelonlConstruction* contelonxt)
+  : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
-    const Tensor& keys = context->input(0);
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    const Telonnsor& kelonys = contelonxt->input(0);
 
     try {
-      // set keys as twml::Tensor
-      const twml::Tensor in_keys_ = TFTensor_to_twml_tensor(keys);
+      // selont kelonys as twml::Telonnsor
+      const twml::Telonnsor in_kelonys_ = TFTelonnsor_to_twml_telonnsor(kelonys);
 
-      // check sizes
-      uint64_t num_keys = in_keys_.getNumElements();
-      uint64_t num_values = context->num_inputs() - 1;
+      // chelonck sizelons
+      uint64_t num_kelonys = in_kelonys_.gelontNumelonlelonmelonnts();
+      uint64_t num_valuelons = contelonxt->num_inputs() - 1;
 
-      OP_REQUIRES(context, num_values % num_keys == 0,
-        errors::InvalidArgument("Number of dense tensors not multiple of dense keys"));
+      OP_RelonQUIRelonS(contelonxt, num_valuelons % num_kelonys == 0,
+        elonrrors::InvalidArgumelonnt("Numbelonr of delonnselon telonnsors not multiplelon of delonnselon kelonys"));
 
-      // set dense tensor values
-      std::vector<twml::RawTensor> in_values_;
-      for (int i = 1; i < context->num_inputs(); i++) {
-        in_values_.push_back(TFTensor_to_twml_raw_tensor(context->input(i)));
+      // selont delonnselon telonnsor valuelons
+      std::velonctor<twml::RawTelonnsor> in_valuelons_;
+      for (int i = 1; i < contelonxt->num_inputs(); i++) {
+        in_valuelons_.push_back(TFTelonnsor_to_twml_raw_telonnsor(contelonxt->input(i)));
       }
 
-      // no continuous predictions in this op, only tensors
-      const twml::Tensor dummy_cont_keys_;
-      const twml::Tensor dummy_cont_values_;
+      // no continuous prelondictions in this op, only telonnsors
+      const twml::Telonnsor dummy_cont_kelonys_;
+      const twml::Telonnsor dummy_cont_valuelons_;
 
-      // call constructor BatchPredictionResponse
-      twml::BatchPredictionResponse tempResult(
-        dummy_cont_keys_, dummy_cont_values_, in_keys_, in_values_);
+      // call constructor BatchPrelondictionRelonsponselon
+      twml::BatchPrelondictionRelonsponselon telonmpRelonsult(
+        dummy_cont_kelonys_, dummy_cont_valuelons_, in_kelonys_, in_valuelons_);
 
-      // determine the length of the result
-      int len = tempResult.encodedSize();
-      TensorShape result_shape = {1, len};
+      // delontelonrminelon thelon lelonngth of thelon relonsult
+      int lelonn = telonmpRelonsult.elonncodelondSizelon();
+      TelonnsorShapelon relonsult_shapelon = {1, lelonn};
 
-      // Create an output tensor, the size is determined by the content of input.
-      Tensor* result = NULL;
-      OP_REQUIRES_OK(context, context->allocate_output(0, result_shape,
-                                                       &result));
-      twml::Tensor out_result = TFTensor_to_twml_tensor(*result);
+      // Crelonatelon an output telonnsor, thelon sizelon is delontelonrminelond by thelon contelonnt of input.
+      Telonnsor* relonsult = NULL;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, relonsult_shapelon,
+                                                       &relonsult));
+      twml::Telonnsor out_relonsult = TFTelonnsor_to_twml_telonnsor(*relonsult);
 
-      // Call writer of BatchPredictionResponse
-      tempResult.write(out_result);
-    } catch(const std::exception &e) {
-      context->CtxFailureWithWarning(errors::InvalidArgument(e.what()));
+      // Call writelonr of BatchPrelondictionRelonsponselon
+      telonmpRelonsult.writelon(out_relonsult);
+    } catch(const std::elonxcelonption &elon) {
+      contelonxt->CtxFailurelonWithWarning(elonrrors::InvalidArgumelonnt(elon.what()));
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(
-    Name("BatchPredictionTensorResponseWriter").Device(DEVICE_CPU),
-    BatchPredictionTensorResponseWriter);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(
+    Namelon("BatchPrelondictionTelonnsorRelonsponselonWritelonr").Delonvicelon(DelonVICelon_CPU),
+    BatchPrelondictionTelonnsorRelonsponselonWritelonr);

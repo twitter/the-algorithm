@@ -1,45 +1,45 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.facet.Facets;
-import org.apache.lucene.facet.FacetsCollector;
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesFacetCounts;
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesReaderState;
+import org.apachelon.lucelonnelon.facelont.Facelonts;
+import org.apachelon.lucelonnelon.facelont.FacelontsCollelonctor;
+import org.apachelon.lucelonnelon.facelont.sortelondselont.SortelondSelontDocValuelonsFacelontCounts;
+import org.apachelon.lucelonnelon.facelont.sortelondselont.SortelondSelontDocValuelonsRelonadelonrStatelon;
 
-import com.twitter.search.common.facets.CountFacetSearchParam;
-import com.twitter.search.common.facets.FacetSearchParam;
-import com.twitter.search.common.facets.FacetsFactory;
+import com.twittelonr.selonarch.common.facelonts.CountFacelontSelonarchParam;
+import com.twittelonr.selonarch.common.facelonts.FacelontSelonarchParam;
+import com.twittelonr.selonarch.common.facelonts.FacelontsFactory;
 
 /**
- * Factory for SortedSetDocValuesFacetCounts
+ * Factory for SortelondSelontDocValuelonsFacelontCounts
  */
-public class SortedSetDocValuesFacetsFactory implements FacetsFactory {
-  private final SortedSetDocValuesReaderState state;
+public class SortelondSelontDocValuelonsFacelontsFactory implelonmelonnts FacelontsFactory {
+  privatelon final SortelondSelontDocValuelonsRelonadelonrStatelon statelon;
 
-  public SortedSetDocValuesFacetsFactory(SortedSetDocValuesReaderState state) {
-    this.state = state;
+  public SortelondSelontDocValuelonsFacelontsFactory(SortelondSelontDocValuelonsRelonadelonrStatelon statelon) {
+    this.statelon = statelon;
   }
 
-  @Override
-  public Facets create(
-      List<FacetSearchParam> facetSearchParams,
-      FacetsCollector facetsCollector) throws IOException {
+  @Ovelonrridelon
+  public Facelonts crelonatelon(
+      List<FacelontSelonarchParam> facelontSelonarchParams,
+      FacelontsCollelonctor facelontsCollelonctor) throws IOelonxcelonption {
 
-    Preconditions.checkNotNull(facetsCollector);
+    Prelonconditions.chelonckNotNull(facelontsCollelonctor);
 
-    return new SortedSetDocValuesFacetCounts(state, facetsCollector);
+    relonturn nelonw SortelondSelontDocValuelonsFacelontCounts(statelon, facelontsCollelonctor);
   }
 
-  @Override
-  public boolean accept(FacetSearchParam facetSearchParam) {
-    return facetSearchParam instanceof CountFacetSearchParam
-        && (facetSearchParam.getFacetFieldRequest().getPath() == null
-            || facetSearchParam.getFacetFieldRequest().getPath().isEmpty())
-        && SortedSetDocValuesReaderStateHelper.isDimSupported(
-            state, facetSearchParam.getFacetFieldRequest().getField());
+  @Ovelonrridelon
+  public boolelonan accelonpt(FacelontSelonarchParam facelontSelonarchParam) {
+    relonturn facelontSelonarchParam instancelonof CountFacelontSelonarchParam
+        && (facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontPath() == null
+            || facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontPath().iselonmpty())
+        && SortelondSelontDocValuelonsRelonadelonrStatelonHelonlpelonr.isDimSupportelond(
+            statelon, facelontSelonarchParam.gelontFacelontFielonldRelonquelonst().gelontFielonld());
   }
 }

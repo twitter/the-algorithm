@@ -1,18 +1,18 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/cursor",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "src/thrift/com/twitter/timelineservice/server/internal:thrift-scala",
-        "stitch/stitch-timelineservice/src/main/scala",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/javax/injelonct:javax.injelonct",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/cursor",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/candidatelon_sourcelon",
+        "src/thrift/com/twittelonr/timelonlinelonselonrvicelon/selonrvelonr/intelonrnal:thrift-scala",
+        "stitch/stitch-timelonlinelonselonrvicelon/src/main/scala",
     ],
-    exports = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/cursor",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source",
-        "stitch/stitch-timelineservice/src/main/scala",
+    elonxports = [
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/cursor",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/candidatelon_sourcelon",
+        "stitch/stitch-timelonlinelonselonrvicelon/src/main/scala",
     ],
 )

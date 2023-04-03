@@ -1,193 +1,193 @@
-package com.twitter.follow_recommendations.flows.post_nux_ml
+packagelon com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.IdentityRanker
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Ranker
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.models._
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.fatigue_ranker.ImpressionBasedFatigueRanker
-import com.twitter.follow_recommendations.common.rankers.first_n_ranker.FirstNRanker
-import com.twitter.follow_recommendations.common.rankers.first_n_ranker.FirstNRankerParams
-import com.twitter.follow_recommendations.common.rankers.interleave_ranker.InterleaveRanker
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.HydrateFeaturesTransform
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.MlRanker
-import com.twitter.follow_recommendations.common.rankers.ml_ranker.ranking.MlRankerParams
-import com.twitter.follow_recommendations.common.rankers.weighted_candidate_source_ranker.WeightedCandidateSourceRanker
-import com.twitter.follow_recommendations.configapi.candidates.HydrateCandidateParamsTransform
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.IdelonntityRankelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.IdelonntityTransform
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Rankelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Transform
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.HasPrelonFelontchelondFelonaturelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls._
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.RankelonrId
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.fatiguelon_rankelonr.ImprelonssionBaselondFatiguelonRankelonr
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.first_n_rankelonr.FirstNRankelonr
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.first_n_rankelonr.FirstNRankelonrParams
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.intelonrlelonavelon_rankelonr.IntelonrlelonavelonRankelonr
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.ml_rankelonr.ranking.HydratelonFelonaturelonsTransform
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.ml_rankelonr.ranking.MlRankelonr
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.ml_rankelonr.ranking.MlRankelonrParams
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.welonightelond_candidatelon_sourcelon_rankelonr.WelonightelondCandidatelonSourcelonRankelonr
+import com.twittelonr.follow_reloncommelonndations.configapi.candidatelons.HydratelonCandidatelonParamsTransform
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
 /**
- * Used to build the combined ranker comprising 4 stages of ranking:
- * - weighted sampler
- * - truncating to the top N merged results for ranking
- * - ML ranker
- * - Interleaving ranker for producer-side experiments
- * - impression-based fatigueing
+ * Uselond to build thelon combinelond rankelonr comprising 4 stagelons of ranking:
+ * - welonightelond samplelonr
+ * - truncating to thelon top N melonrgelond relonsults for ranking
+ * - ML rankelonr
+ * - Intelonrlelonaving rankelonr for producelonr-sidelon elonxpelonrimelonnts
+ * - imprelonssion-baselond fatigueloning
  */
-@Singleton
-class PostNuxMlCombinedRankerBuilder[
-  T <: HasParams with HasSimilarToContext with HasClientContext with HasExcludedUserIds with HasDisplayLocation with HasDebugOptions with HasPreFetchedFeature with HasDismissedUserIds with HasQualityFactor] @Inject() (
-  firstNRanker: FirstNRanker[T],
-  hydrateFeaturesTransform: HydrateFeaturesTransform[T],
-  hydrateCandidateParamsTransform: HydrateCandidateParamsTransform[T],
-  mlRanker: MlRanker[T],
-  statsReceiver: StatsReceiver) {
-  private[this] val stats: StatsReceiver = statsReceiver.scope("post_nux_ml_ranker")
+@Singlelonton
+class PostNuxMlCombinelondRankelonrBuildelonr[
+  T <: HasParams with HasSimilarToContelonxt with HasClielonntContelonxt with HaselonxcludelondUselonrIds with HasDisplayLocation with HasDelonbugOptions with HasPrelonFelontchelondFelonaturelon with HasDismisselondUselonrIds with HasQualityFactor] @Injelonct() (
+  firstNRankelonr: FirstNRankelonr[T],
+  hydratelonFelonaturelonsTransform: HydratelonFelonaturelonsTransform[T],
+  hydratelonCandidatelonParamsTransform: HydratelonCandidatelonParamsTransform[T],
+  mlRankelonr: MlRankelonr[T],
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("post_nux_ml_rankelonr")
 
-  // we construct each ranker independently and chain them together
-  def build(
-    request: T,
-    candidateSourceWeights: Map[CandidateSourceIdentifier, Double]
-  ): Ranker[T, CandidateUser] = {
-    val displayLocationStats = stats.scope(request.displayLocation.toString)
-    val weightedRankerStats: StatsReceiver =
-      displayLocationStats.scope("weighted_candidate_source_ranker")
-    val firstNRankerStats: StatsReceiver =
-      displayLocationStats.scope("first_n_ranker")
-    val hydrateCandidateParamsStats =
-      displayLocationStats.scope("hydrate_candidate_params")
-    val fatigueRankerStats = displayLocationStats.scope("fatigue_ranker")
-    val interleaveRankerStats =
-      displayLocationStats.scope("interleave_ranker")
-    val allRankersStats = displayLocationStats.scope("all_rankers")
+  // welon construct elonach rankelonr indelonpelonndelonntly and chain thelonm togelonthelonr
+  delonf build(
+    relonquelonst: T,
+    candidatelonSourcelonWelonights: Map[CandidatelonSourcelonIdelonntifielonr, Doublelon]
+  ): Rankelonr[T, CandidatelonUselonr] = {
+    val displayLocationStats = stats.scopelon(relonquelonst.displayLocation.toString)
+    val welonightelondRankelonrStats: StatsReloncelonivelonr =
+      displayLocationStats.scopelon("welonightelond_candidatelon_sourcelon_rankelonr")
+    val firstNRankelonrStats: StatsReloncelonivelonr =
+      displayLocationStats.scopelon("first_n_rankelonr")
+    val hydratelonCandidatelonParamsStats =
+      displayLocationStats.scopelon("hydratelon_candidatelon_params")
+    val fatiguelonRankelonrStats = displayLocationStats.scopelon("fatiguelon_rankelonr")
+    val intelonrlelonavelonRankelonrStats =
+      displayLocationStats.scopelon("intelonrlelonavelon_rankelonr")
+    val allRankelonrsStats = displayLocationStats.scopelon("all_rankelonrs")
 
-    // Checking if the heavy-ranker is an experimental model.
-    // If it is, InterleaveRanker and candidate parameter hydration are disabled.
-    // *NOTE* that consumer-side experiments should at any time take a small % of traffic, less
-    // than 20% for instance, to leave enough room for producer experiments. Increasing bucket
-    // size for producer experiments lead to other issues and is not a viable option for faster
-    // experiments.
-    val requestRankerId = request.params(MlRankerParams.RequestScorerIdParam)
-    if (requestRankerId != RankerId.PostNuxProdRanker) {
-      hydrateCandidateParamsStats.counter(s"disabled_by_${requestRankerId.toString}").incr()
-      interleaveRankerStats.counter(s"disabled_by_${requestRankerId.toString}").incr()
+    // Cheloncking if thelon helonavy-rankelonr is an elonxpelonrimelonntal modelonl.
+    // If it is, IntelonrlelonavelonRankelonr and candidatelon paramelontelonr hydration arelon disablelond.
+    // *NOTelon* that consumelonr-sidelon elonxpelonrimelonnts should at any timelon takelon a small % of traffic, lelonss
+    // than 20% for instancelon, to lelonavelon elonnough room for producelonr elonxpelonrimelonnts. Increlonasing buckelont
+    // sizelon for producelonr elonxpelonrimelonnts lelonad to othelonr issuelons and is not a viablelon option for fastelonr
+    // elonxpelonrimelonnts.
+    val relonquelonstRankelonrId = relonquelonst.params(MlRankelonrParams.RelonquelonstScorelonrIdParam)
+    if (relonquelonstRankelonrId != RankelonrId.PostNuxProdRankelonr) {
+      hydratelonCandidatelonParamsStats.countelonr(s"disablelond_by_${relonquelonstRankelonrId.toString}").incr()
+      intelonrlelonavelonRankelonrStats.countelonr(s"disablelond_by_${relonquelonstRankelonrId.toString}").incr()
     }
 
-    // weighted ranker that samples from the candidate sources
-    val weightedRanker = WeightedCandidateSourceRanker
+    // welonightelond rankelonr that samplelons from thelon candidatelon sourcelons
+    val welonightelondRankelonr = WelonightelondCandidatelonSourcelonRankelonr
       .build[T](
-        candidateSourceWeights,
-        request.params(PostNuxMlParams.CandidateShuffler).shuffle(request.getRandomizationSeed),
-        randomSeed = request.getRandomizationSeed
-      ).observe(weightedRankerStats)
+        candidatelonSourcelonWelonights,
+        relonquelonst.params(PostNuxMlParams.CandidatelonShufflelonr).shufflelon(relonquelonst.gelontRandomizationSelonelond),
+        randomSelonelond = relonquelonst.gelontRandomizationSelonelond
+      ).obselonrvelon(welonightelondRankelonrStats)
 
-    // ranker that takes the first n results (ie truncates output) while merging duplicates
-    val firstNRankerObs = firstNRanker.observe(firstNRankerStats)
-    // either ML ranker that uses deepbirdv2 to score or no ranking
-    val mainRanker: Ranker[T, CandidateUser] =
-      buildMainRanker(request, requestRankerId == RankerId.PostNuxProdRanker, displayLocationStats)
-    // fatigue ranker that uses wtf impressions to fatigue
-    val fatigueRanker = buildFatigueRanker(request, fatigueRankerStats).observe(fatigueRankerStats)
+    // rankelonr that takelons thelon first n relonsults (ielon truncatelons output) whilelon melonrging duplicatelons
+    val firstNRankelonrObs = firstNRankelonr.obselonrvelon(firstNRankelonrStats)
+    // elonithelonr ML rankelonr that uselons delonelonpbirdv2 to scorelon or no ranking
+    val mainRankelonr: Rankelonr[T, CandidatelonUselonr] =
+      buildMainRankelonr(relonquelonst, relonquelonstRankelonrId == RankelonrId.PostNuxProdRankelonr, displayLocationStats)
+    // fatiguelon rankelonr that uselons wtf imprelonssions to fatiguelon
+    val fatiguelonRankelonr = buildFatiguelonRankelonr(relonquelonst, fatiguelonRankelonrStats).obselonrvelon(fatiguelonRankelonrStats)
 
-    // interleaveRanker combines rankings from several rankers and enforces candidates' ranks in
-    // experiment buckets according to their assigned ranker model.
-    val interleaveRanker =
-      buildInterleaveRanker(
-        request,
-        requestRankerId == RankerId.PostNuxProdRanker,
-        interleaveRankerStats)
-        .observe(interleaveRankerStats)
+    // intelonrlelonavelonRankelonr combinelons rankings from selonvelonral rankelonrs and elonnforcelons candidatelons' ranks in
+    // elonxpelonrimelonnt buckelonts according to thelonir assignelond rankelonr modelonl.
+    val intelonrlelonavelonRankelonr =
+      buildIntelonrlelonavelonRankelonr(
+        relonquelonst,
+        relonquelonstRankelonrId == RankelonrId.PostNuxProdRankelonr,
+        intelonrlelonavelonRankelonrStats)
+        .obselonrvelon(intelonrlelonavelonRankelonrStats)
 
-    weightedRanker
-      .andThen(firstNRankerObs)
-      .andThen(mainRanker)
-      .andThen(fatigueRanker)
-      .andThen(interleaveRanker)
-      .observe(allRankersStats)
+    welonightelondRankelonr
+      .andThelonn(firstNRankelonrObs)
+      .andThelonn(mainRankelonr)
+      .andThelonn(fatiguelonRankelonr)
+      .andThelonn(intelonrlelonavelonRankelonr)
+      .obselonrvelon(allRankelonrsStats)
   }
 
-  def buildMainRanker(
-    request: T,
-    isMainRankerPostNuxProd: Boolean,
-    displayLocationStats: StatsReceiver
-  ): Ranker[T, CandidateUser] = {
+  delonf buildMainRankelonr(
+    relonquelonst: T,
+    isMainRankelonrPostNuxProd: Boolelonan,
+    displayLocationStats: StatsReloncelonivelonr
+  ): Rankelonr[T, CandidatelonUselonr] = {
 
-    // note that we may be disabling heavy ranker for users not bucketed
-    // (due to empty results from the new candidate source)
-    // need a better solution in the future
-    val mlRankerStats = displayLocationStats.scope("ml_ranker")
-    val noMlRankerStats = displayLocationStats.scope("no_ml_ranker")
-    val hydrateFeaturesStats =
-      displayLocationStats.scope("hydrate_features")
-    val hydrateCandidateParamsStats =
-      displayLocationStats.scope("hydrate_candidate_params")
-    val notHydrateCandidateParamsStats =
-      displayLocationStats.scope("not_hydrate_candidate_params")
-    val rankerStats = displayLocationStats.scope("ranker")
-    val mlRankerDisabledByExperimentsCounter =
-      mlRankerStats.counter("disabled_by_experiments")
-    val mlRankerDisabledByQualityFactorCounter =
-      mlRankerStats.counter("disabled_by_quality_factor")
+    // notelon that welon may belon disabling helonavy rankelonr for uselonrs not buckelontelond
+    // (duelon to elonmpty relonsults from thelon nelonw candidatelon sourcelon)
+    // nelonelond a belonttelonr solution in thelon futurelon
+    val mlRankelonrStats = displayLocationStats.scopelon("ml_rankelonr")
+    val noMlRankelonrStats = displayLocationStats.scopelon("no_ml_rankelonr")
+    val hydratelonFelonaturelonsStats =
+      displayLocationStats.scopelon("hydratelon_felonaturelons")
+    val hydratelonCandidatelonParamsStats =
+      displayLocationStats.scopelon("hydratelon_candidatelon_params")
+    val notHydratelonCandidatelonParamsStats =
+      displayLocationStats.scopelon("not_hydratelon_candidatelon_params")
+    val rankelonrStats = displayLocationStats.scopelon("rankelonr")
+    val mlRankelonrDisablelondByelonxpelonrimelonntsCountelonr =
+      mlRankelonrStats.countelonr("disablelond_by_elonxpelonrimelonnts")
+    val mlRankelonrDisablelondByQualityFactorCountelonr =
+      mlRankelonrStats.countelonr("disablelond_by_quality_factor")
 
-    val disabledByQualityFactor = request.qualityFactor
-      .exists(_ <= request.params(PostNuxMlParams.TurnoffMLScorerQFThreshold))
+    val disablelondByQualityFactor = relonquelonst.qualityFactor
+      .elonxists(_ <= relonquelonst.params(PostNuxMlParams.TurnoffMLScorelonrQFThrelonshold))
 
-    if (disabledByQualityFactor)
-      mlRankerDisabledByQualityFactorCounter.incr()
+    if (disablelondByQualityFactor)
+      mlRankelonrDisablelondByQualityFactorCountelonr.incr()
 
-    if (request.params(PostNuxMlParams.UseMlRanker) && !disabledByQualityFactor) {
+    if (relonquelonst.params(PostNuxMlParams.UselonMlRankelonr) && !disablelondByQualityFactor) {
 
-      val hydrateFeatures = hydrateFeaturesTransform
-        .observe(hydrateFeaturesStats)
+      val hydratelonFelonaturelons = hydratelonFelonaturelonsTransform
+        .obselonrvelon(hydratelonFelonaturelonsStats)
 
-      val optionalHydratedParamsTransform: Transform[T, CandidateUser] = {
-        // We disable candidate parameter hydration for experimental heavy-ranker models.
-        if (isMainRankerPostNuxProd &&
-          request.params(PostNuxMlParams.EnableCandidateParamHydration)) {
-          hydrateCandidateParamsTransform
-            .observe(hydrateCandidateParamsStats)
-        } else {
-          new IdentityTransform[T, CandidateUser]()
-            .observe(notHydrateCandidateParamsStats)
+      val optionalHydratelondParamsTransform: Transform[T, CandidatelonUselonr] = {
+        // Welon disablelon candidatelon paramelontelonr hydration for elonxpelonrimelonntal helonavy-rankelonr modelonls.
+        if (isMainRankelonrPostNuxProd &&
+          relonquelonst.params(PostNuxMlParams.elonnablelonCandidatelonParamHydration)) {
+          hydratelonCandidatelonParamsTransform
+            .obselonrvelon(hydratelonCandidatelonParamsStats)
+        } elonlselon {
+          nelonw IdelonntityTransform[T, CandidatelonUselonr]()
+            .obselonrvelon(notHydratelonCandidatelonParamsStats)
         }
       }
-      val candidateSize = request.params(FirstNRankerParams.CandidatesToRank)
-      Ranker
+      val candidatelonSizelon = relonquelonst.params(FirstNRankelonrParams.CandidatelonsToRank)
+      Rankelonr
         .chain(
-          hydrateFeatures.andThen(optionalHydratedParamsTransform),
-          mlRanker.observe(mlRankerStats),
+          hydratelonFelonaturelons.andThelonn(optionalHydratelondParamsTransform),
+          mlRankelonr.obselonrvelon(mlRankelonrStats),
         )
         .within(
-          request.params(PostNuxMlParams.MlRankerBudget),
-          rankerStats.scope(s"n$candidateSize"))
-    } else {
-      new IdentityRanker[T, CandidateUser].observe(noMlRankerStats)
+          relonquelonst.params(PostNuxMlParams.MlRankelonrBudgelont),
+          rankelonrStats.scopelon(s"n$candidatelonSizelon"))
+    } elonlselon {
+      nelonw IdelonntityRankelonr[T, CandidatelonUselonr].obselonrvelon(noMlRankelonrStats)
     }
   }
 
-  def buildInterleaveRanker(
-    request: T,
-    isMainRankerPostNuxProd: Boolean,
-    interleaveRankerStats: StatsReceiver
-  ): Ranker[T, CandidateUser] = {
-    // InterleaveRanker is enabled only for display locations powered by the PostNux heavy-ranker.
-    if (request.params(PostNuxMlParams.EnableInterleaveRanker) &&
-      // InterleaveRanker is disabled for requests with experimental heavy-rankers.
-      isMainRankerPostNuxProd) {
-      new InterleaveRanker[T](interleaveRankerStats)
-    } else {
-      new IdentityRanker[T, CandidateUser]()
+  delonf buildIntelonrlelonavelonRankelonr(
+    relonquelonst: T,
+    isMainRankelonrPostNuxProd: Boolelonan,
+    intelonrlelonavelonRankelonrStats: StatsReloncelonivelonr
+  ): Rankelonr[T, CandidatelonUselonr] = {
+    // IntelonrlelonavelonRankelonr is elonnablelond only for display locations powelonrelond by thelon PostNux helonavy-rankelonr.
+    if (relonquelonst.params(PostNuxMlParams.elonnablelonIntelonrlelonavelonRankelonr) &&
+      // IntelonrlelonavelonRankelonr is disablelond for relonquelonsts with elonxpelonrimelonntal helonavy-rankelonrs.
+      isMainRankelonrPostNuxProd) {
+      nelonw IntelonrlelonavelonRankelonr[T](intelonrlelonavelonRankelonrStats)
+    } elonlselon {
+      nelonw IdelonntityRankelonr[T, CandidatelonUselonr]()
     }
   }
 
-  def buildFatigueRanker(
-    request: T,
-    fatigueRankerStats: StatsReceiver
-  ): Ranker[T, CandidateUser] = {
-    if (request.params(PostNuxMlParams.EnableFatigueRanker)) {
-      ImpressionBasedFatigueRanker
+  delonf buildFatiguelonRankelonr(
+    relonquelonst: T,
+    fatiguelonRankelonrStats: StatsReloncelonivelonr
+  ): Rankelonr[T, CandidatelonUselonr] = {
+    if (relonquelonst.params(PostNuxMlParams.elonnablelonFatiguelonRankelonr)) {
+      ImprelonssionBaselondFatiguelonRankelonr
         .build[T](
-          fatigueRankerStats
-        ).within(request.params(PostNuxMlParams.FatigueRankerBudget), fatigueRankerStats)
-    } else {
-      new IdentityRanker[T, CandidateUser]()
+          fatiguelonRankelonrStats
+        ).within(relonquelonst.params(PostNuxMlParams.FatiguelonRankelonrBudgelont), fatiguelonRankelonrStats)
+    } elonlselon {
+      nelonw IdelonntityRankelonr[T, CandidatelonUselonr]()
     }
   }
 }

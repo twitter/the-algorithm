@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-case class CallToAction(
-  callToActionType: Option[String],
+caselon class CallToAction(
+  callToActionTypelon: Option[String],
   url: Option[String])

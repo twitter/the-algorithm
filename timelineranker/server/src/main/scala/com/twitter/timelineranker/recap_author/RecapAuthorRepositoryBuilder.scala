@@ -1,90 +1,90 @@
-package com.twitter.timelineranker.recap_author
+packagelon com.twittelonr.timelonlinelonrankelonr.reloncap_author
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.timelineranker.config.RequestScopes
-import com.twitter.timelineranker.config.RuntimeConfiguration
-import com.twitter.timelineranker.repository.CandidatesRepositoryBuilder
-import com.twitter.timelineranker.visibility.SgsFollowGraphDataFields
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.timelines.util.stats.RequestScope
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.selonrvicelon.RelontryPolicy
+import com.twittelonr.timelonlinelonrankelonr.config.RelonquelonstScopelons
+import com.twittelonr.timelonlinelonrankelonr.config.RuntimelonConfiguration
+import com.twittelonr.timelonlinelonrankelonr.relonpository.CandidatelonsRelonpositoryBuildelonr
+import com.twittelonr.timelonlinelonrankelonr.visibility.SgsFollowGraphDataFielonlds
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdSelonrvicelon
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstScopelon
+import com.twittelonr.util.Duration
 
-class RecapAuthorRepositoryBuilder(config: RuntimeConfiguration)
-    extends CandidatesRepositoryBuilder(config) {
-  override val clientSubId = "recap_by_author"
-  override val requestScope: RequestScope = RequestScopes.RecapAuthorSource
-  override val followGraphDataFieldsToFetch: SgsFollowGraphDataFields.ValueSet =
-    SgsFollowGraphDataFields.ValueSet(
-      SgsFollowGraphDataFields.FollowedUserIds,
-      SgsFollowGraphDataFields.MutuallyFollowingUserIds,
-      SgsFollowGraphDataFields.MutedUserIds
+class ReloncapAuthorRelonpositoryBuildelonr(config: RuntimelonConfiguration)
+    elonxtelonnds CandidatelonsRelonpositoryBuildelonr(config) {
+  ovelonrridelon val clielonntSubId = "reloncap_by_author"
+  ovelonrridelon val relonquelonstScopelon: RelonquelonstScopelon = RelonquelonstScopelons.ReloncapAuthorSourcelon
+  ovelonrridelon val followGraphDataFielonldsToFelontch: SgsFollowGraphDataFielonlds.ValuelonSelont =
+    SgsFollowGraphDataFielonlds.ValuelonSelont(
+      SgsFollowGraphDataFielonlds.FollowelondUselonrIds,
+      SgsFollowGraphDataFielonlds.MutuallyFollowingUselonrIds,
+      SgsFollowGraphDataFielonlds.MutelondUselonrIds
     )
 
   /**
-   * Budget for processing within the search root cluster for the recap_by_author query.
+   * Budgelont for procelonssing within thelon selonarch root clustelonr for thelon reloncap_by_author quelonry.
    */
-  override val searchProcessingTimeout: Duration = 250.milliseconds
-  private val EarlybirdTimeout = 650.milliseconds
-  private val EarlybirdRequestTimeout = 600.milliseconds
+  ovelonrridelon val selonarchProcelonssingTimelonout: Duration = 250.milliselonconds
+  privatelon val elonarlybirdTimelonout = 650.milliselonconds
+  privatelon val elonarlybirdRelonquelonstTimelonout = 600.milliselonconds
 
-  private val EarlybirdRealtimeCGTimeout = 650.milliseconds
-  private val EarlybirdRealtimeCGRequestTimeout = 600.milliseconds
+  privatelon val elonarlybirdRelonaltimelonCGTimelonout = 650.milliselonconds
+  privatelon val elonarlybirdRelonaltimelonCGRelonquelonstTimelonout = 600.milliselonconds
 
   /**
-   * TLM -> TLR timeout is 1s for candidate retrieval, so make the finagle TLR -> EB timeout
-   * a bit shorter than 1s.
+   * TLM -> TLR timelonout is 1s for candidatelon relontrielonval, so makelon thelon finaglelon TLR -> elonB timelonout
+   * a bit shortelonr than 1s.
    */
-  override def earlybirdClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdClient(
-      scope = scope,
-      requestTimeout = EarlybirdRequestTimeout,
-      // timeout is slight less than timelineranker client timeout in timelinemixer
-      timeout = EarlybirdTimeout,
-      retryPolicy = RetryPolicy.Never
+  ovelonrridelon delonf elonarlybirdClielonnt(scopelon: String): elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint =
+    config.undelonrlyingClielonnts.crelonatelonelonarlybirdClielonnt(
+      scopelon = scopelon,
+      relonquelonstTimelonout = elonarlybirdRelonquelonstTimelonout,
+      // timelonout is slight lelonss than timelonlinelonrankelonr clielonnt timelonout in timelonlinelonmixelonr
+      timelonout = elonarlybirdTimelonout,
+      relontryPolicy = RelontryPolicy.Nelonvelonr
     )
 
-  /** The RealtimeCG clients below are only used for the Earlybird Cluster Migration */
-  private def earlybirdRealtimeCGClient(scope: String): EarlybirdService.MethodPerEndpoint =
-    config.underlyingClients.createEarlybirdRealtimeCgClient(
-      scope = scope,
-      requestTimeout = EarlybirdRealtimeCGRequestTimeout,
-      timeout = EarlybirdRealtimeCGTimeout,
-      retryPolicy = RetryPolicy.Never
+  /** Thelon RelonaltimelonCG clielonnts belonlow arelon only uselond for thelon elonarlybird Clustelonr Migration */
+  privatelon delonf elonarlybirdRelonaltimelonCGClielonnt(scopelon: String): elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint =
+    config.undelonrlyingClielonnts.crelonatelonelonarlybirdRelonaltimelonCgClielonnt(
+      scopelon = scopelon,
+      relonquelonstTimelonout = elonarlybirdRelonaltimelonCGRelonquelonstTimelonout,
+      timelonout = elonarlybirdRelonaltimelonCGTimelonout,
+      relontryPolicy = RelontryPolicy.Nelonvelonr
     )
 
-  private val realtimeCGClientSubId = "realtime_cg_recap_by_author"
-  private lazy val searchRealtimeCGClient =
-    newSearchClient(earlybirdRealtimeCGClient, clientId = realtimeCGClientSubId)
+  privatelon val relonaltimelonCGClielonntSubId = "relonaltimelon_cg_reloncap_by_author"
+  privatelon lazy val selonarchRelonaltimelonCGClielonnt =
+    nelonwSelonarchClielonnt(elonarlybirdRelonaltimelonCGClielonnt, clielonntId = relonaltimelonCGClielonntSubId)
 
-  def apply(): RecapAuthorRepository = {
-    val recapAuthorSource = new RecapAuthorSource(
-      gizmoduckClient,
-      searchClient,
-      tweetyPieLowQoSClient,
-      userMetadataClient,
-      followGraphDataProvider, // Used to early-enforce visibility filtering, even though authorIds is part of query
-      config.underlyingClients.contentFeaturesCache,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.RecapAuthorSource
+  delonf apply(): ReloncapAuthorRelonpository = {
+    val reloncapAuthorSourcelon = nelonw ReloncapAuthorSourcelon(
+      gizmoduckClielonnt,
+      selonarchClielonnt,
+      twelonelontyPielonLowQoSClielonnt,
+      uselonrMelontadataClielonnt,
+      followGraphDataProvidelonr, // Uselond to elonarly-elonnforcelon visibility filtelonring, elonvelonn though authorIds is part of quelonry
+      config.undelonrlyingClielonnts.contelonntFelonaturelonsCachelon,
+      clielonntFactorielons.visibilityelonnforcelonrFactory.apply(
+        VisibilityRulelons,
+        RelonquelonstScopelons.ReloncapAuthorSourcelon
       ),
-      config.statsReceiver
+      config.statsReloncelonivelonr
     )
-    val recapAuthorRealtimeCGSource = new RecapAuthorSource(
-      gizmoduckClient,
-      searchRealtimeCGClient,
-      tweetyPieLowQoSClient,
-      userMetadataClient,
-      followGraphDataProvider, // Used to early-enforce visibility filtering, even though authorIds is part of query
-      config.underlyingClients.contentFeaturesCache,
-      clientFactories.visibilityEnforcerFactory.apply(
-        VisibilityRules,
-        RequestScopes.RecapAuthorSource
+    val reloncapAuthorRelonaltimelonCGSourcelon = nelonw ReloncapAuthorSourcelon(
+      gizmoduckClielonnt,
+      selonarchRelonaltimelonCGClielonnt,
+      twelonelontyPielonLowQoSClielonnt,
+      uselonrMelontadataClielonnt,
+      followGraphDataProvidelonr, // Uselond to elonarly-elonnforcelon visibility filtelonring, elonvelonn though authorIds is part of quelonry
+      config.undelonrlyingClielonnts.contelonntFelonaturelonsCachelon,
+      clielonntFactorielons.visibilityelonnforcelonrFactory.apply(
+        VisibilityRulelons,
+        RelonquelonstScopelons.ReloncapAuthorSourcelon
       ),
-      config.statsReceiver.scope("replacementRealtimeCG")
+      config.statsReloncelonivelonr.scopelon("relonplacelonmelonntRelonaltimelonCG")
     )
 
-    new RecapAuthorRepository(recapAuthorSource, recapAuthorRealtimeCGSource)  
+    nelonw ReloncapAuthorRelonpository(reloncapAuthorSourcelon, reloncapAuthorRelonaltimelonCGSourcelon)
   }
 }

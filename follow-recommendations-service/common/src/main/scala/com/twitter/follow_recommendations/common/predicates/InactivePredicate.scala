@@ -1,121 +1,121 @@
-package com.twitter.follow_recommendations.common.predicates
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons
 
-import com.google.inject.name.Named
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.predicates.InactivePredicateParams._
-import com.twitter.service.metastore.gen.thriftscala.UserRecommendabilityFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.conversions.DurationOps._
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.follow_recommendations.common.predicates.InactivePredicateParams.DefaultInactivityThreshold
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.InactivelonPrelondicatelonParams._
+import com.twittelonr.selonrvicelon.melontastorelon.gelonn.thriftscala.UselonrReloncommelonndabilityFelonaturelons
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.elonschelonrbird.util.stitchcachelon.StitchCachelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasUselonrStatelon
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.InactivelonPrelondicatelonParams.DelonfaultInactivityThrelonshold
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
 
 import java.lang.{Long => JLong}
 
-@Singleton
-case class InactivePredicate @Inject() (
-  statsReceiver: StatsReceiver,
-  @Named(GuiceNamedConstants.USER_RECOMMENDABILITY_FETCHER) userRecommendabilityFetcher: Fetcher[
+@Singlelonton
+caselon class InactivelonPrelondicatelon @Injelonct() (
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  @Namelond(GuicelonNamelondConstants.USelonR_RelonCOMMelonNDABILITY_FelonTCHelonR) uselonrReloncommelonndabilityFelontchelonr: Felontchelonr[
     Long,
     Unit,
-    UserRecommendabilityFeatures
-  ]) extends Predicate[(HasParams with HasClientContext with HasUserState, CandidateUser)] {
+    UselonrReloncommelonndabilityFelonaturelons
+  ]) elonxtelonnds Prelondicatelon[(HasParams with HasClielonntContelonxt with HasUselonrStatelon, CandidatelonUselonr)] {
 
-  private val stats: StatsReceiver = statsReceiver.scope("InactivePredicate")
-  private val cacheStats = stats.scope("cache")
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("InactivelonPrelondicatelon")
+  privatelon val cachelonStats = stats.scopelon("cachelon")
 
-  private def queryUserRecommendable(userId: Long): Stitch[Option[UserRecommendabilityFeatures]] =
-    userRecommendabilityFetcher.fetch(userId).map(_.v)
+  privatelon delonf quelonryUselonrReloncommelonndablelon(uselonrId: Long): Stitch[Option[UselonrReloncommelonndabilityFelonaturelons]] =
+    uselonrReloncommelonndabilityFelontchelonr.felontch(uselonrId).map(_.v)
 
-  private val userRecommendableCache =
-    StitchCache[JLong, Option[UserRecommendabilityFeatures]](
-      maxCacheSize = 100000,
+  privatelon val uselonrReloncommelonndablelonCachelon =
+    StitchCachelon[JLong, Option[UselonrReloncommelonndabilityFelonaturelons]](
+      maxCachelonSizelon = 100000,
       ttl = 12.hours,
-      statsReceiver = cacheStats.scope("UserRecommendable"),
-      underlyingCall = (userId: JLong) => queryUserRecommendable(userId)
+      statsReloncelonivelonr = cachelonStats.scopelon("UselonrReloncommelonndablelon"),
+      undelonrlyingCall = (uselonrId: JLong) => quelonryUselonrReloncommelonndablelon(uselonrId)
     )
 
-  override def apply(
-    targetAndCandidate: (HasParams with HasClientContext with HasUserState, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (target, candidate) = targetAndCandidate
+  ovelonrridelon delonf apply(
+    targelontAndCandidatelon: (HasParams with HasClielonntContelonxt with HasUselonrStatelon, CandidatelonUselonr)
+  ): Stitch[PrelondicatelonRelonsult] = {
+    val (targelont, candidatelon) = targelontAndCandidatelon
 
-    userRecommendableCache
-      .readThrough(candidate.id).map {
-        case recFeaturesFetchResult =>
-          recFeaturesFetchResult match {
-            case None =>
-              PredicateResult.Invalid(Set(FilterReason.MissingRecommendabilityData))
-            case Some(recFeatures) =>
-              if (disableInactivityPredicate(target, target.userState, recFeatures.userState)) {
-                PredicateResult.Valid
-              } else {
-                val defaultInactivityThreshold = target.params(DefaultInactivityThreshold).days
-                val hasBeenActiveRecently = recFeatures.lastStatusUpdateMs
-                  .map(Time.now - Time.fromMilliseconds(_)).getOrElse(
-                    Duration.Top) < defaultInactivityThreshold
+    uselonrReloncommelonndablelonCachelon
+      .relonadThrough(candidatelon.id).map {
+        caselon reloncFelonaturelonsFelontchRelonsult =>
+          reloncFelonaturelonsFelontchRelonsult match {
+            caselon Nonelon =>
+              PrelondicatelonRelonsult.Invalid(Selont(FiltelonrRelonason.MissingReloncommelonndabilityData))
+            caselon Somelon(reloncFelonaturelons) =>
+              if (disablelonInactivityPrelondicatelon(targelont, targelont.uselonrStatelon, reloncFelonaturelons.uselonrStatelon)) {
+                PrelondicatelonRelonsult.Valid
+              } elonlselon {
+                val delonfaultInactivityThrelonshold = targelont.params(DelonfaultInactivityThrelonshold).days
+                val hasBelonelonnActivelonReloncelonntly = reloncFelonaturelons.lastStatusUpdatelonMs
+                  .map(Timelon.now - Timelon.fromMilliselonconds(_)).gelontOrelonlselon(
+                    Duration.Top) < delonfaultInactivityThrelonshold
                 stats
-                  .scope(defaultInactivityThreshold.toString).counter(
-                    if (hasBeenActiveRecently)
-                      "active"
-                    else
-                      "inactive"
+                  .scopelon(delonfaultInactivityThrelonshold.toString).countelonr(
+                    if (hasBelonelonnActivelonReloncelonntly)
+                      "activelon"
+                    elonlselon
+                      "inactivelon"
                   ).incr()
-                if (hasBeenActiveRecently && (!target
-                    .params(UseEggFilter) || recFeatures.isNotEgg.contains(1))) {
-                  PredicateResult.Valid
-                } else {
-                  PredicateResult.Invalid(Set(FilterReason.Inactive))
+                if (hasBelonelonnActivelonReloncelonntly && (!targelont
+                    .params(UselonelonggFiltelonr) || reloncFelonaturelons.isNotelongg.contains(1))) {
+                  PrelondicatelonRelonsult.Valid
+                } elonlselon {
+                  PrelondicatelonRelonsult.Invalid(Selont(FiltelonrRelonason.Inactivelon))
                 }
               }
           }
-      }.rescue {
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch(PredicateResult.Invalid(Set(FilterReason.FailOpen)))
+      }.relonscuelon {
+        caselon elon: elonxcelonption =>
+          stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          Stitch(PrelondicatelonRelonsult.Invalid(Selont(FiltelonrRelonason.FailOpelonn)))
       }
   }
 
-  private[this] def disableInactivityPredicate(
-    target: HasParams,
-    consumerState: Option[UserState],
-    candidateState: Option[UserState]
-  ): Boolean = {
-    target.params(MightBeDisabled) &&
-    consumerState.exists(InactivePredicate.ValidConsumerStates.contains) &&
+  privatelon[this] delonf disablelonInactivityPrelondicatelon(
+    targelont: HasParams,
+    consumelonrStatelon: Option[UselonrStatelon],
+    candidatelonStatelon: Option[UselonrStatelon]
+  ): Boolelonan = {
+    targelont.params(MightBelonDisablelond) &&
+    consumelonrStatelon.elonxists(InactivelonPrelondicatelon.ValidConsumelonrStatelons.contains) &&
     (
       (
-        candidateState.exists(InactivePredicate.ValidCandidateStates.contains) &&
-        !target.params(OnlyDisableForNewUserStateCandidates)
+        candidatelonStatelon.elonxists(InactivelonPrelondicatelon.ValidCandidatelonStatelons.contains) &&
+        !targelont.params(OnlyDisablelonForNelonwUselonrStatelonCandidatelons)
       ) ||
       (
-        candidateState.contains(UserState.New) &&
-        target.params(OnlyDisableForNewUserStateCandidates)
+        candidatelonStatelon.contains(UselonrStatelon.Nelonw) &&
+        targelont.params(OnlyDisablelonForNelonwUselonrStatelonCandidatelons)
       )
     )
   }
 }
 
-object InactivePredicate {
-  val ValidConsumerStates: Set[UserState] = Set(
-    UserState.HeavyNonTweeter,
-    UserState.MediumNonTweeter,
-    UserState.HeavyTweeter,
-    UserState.MediumTweeter
+objelonct InactivelonPrelondicatelon {
+  val ValidConsumelonrStatelons: Selont[UselonrStatelon] = Selont(
+    UselonrStatelon.HelonavyNonTwelonelontelonr,
+    UselonrStatelon.MelondiumNonTwelonelontelonr,
+    UselonrStatelon.HelonavyTwelonelontelonr,
+    UselonrStatelon.MelondiumTwelonelontelonr
   )
-  val ValidCandidateStates: Set[UserState] =
-    Set(UserState.New, UserState.VeryLight, UserState.Light, UserState.NearZero)
+  val ValidCandidatelonStatelons: Selont[UselonrStatelon] =
+    Selont(UselonrStatelon.Nelonw, UselonrStatelon.VelonryLight, UselonrStatelon.Light, UselonrStatelon.NelonarZelonro)
 }

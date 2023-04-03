@@ -1,19 +1,19 @@
-package com.twitter.visibility.interfaces.common.search
+packagelon com.twittelonr.visibility.intelonrfacelons.common.selonarch
 
-import com.twitter.search.blender.services.strato.UserSearchSafetySettings
-import com.twitter.search.common.constants.thriftscala.ThriftQuerySource
+import com.twittelonr.selonarch.blelonndelonr.selonrvicelons.strato.UselonrSelonarchSafelontySelonttings
+import com.twittelonr.selonarch.common.constants.thriftscala.ThriftQuelonrySourcelon
 
-case class SearchVFRequestContext(
-  resultsPageNumber: Int,
-  candidateCount: Int,
-  querySourceOption: Option[ThriftQuerySource],
-  userSearchSafetySettings: UserSearchSafetySettings,
-  queryHasUser: Boolean = false) {
+caselon class SelonarchVFRelonquelonstContelonxt(
+  relonsultsPagelonNumbelonr: Int,
+  candidatelonCount: Int,
+  quelonrySourcelonOption: Option[ThriftQuelonrySourcelon],
+  uselonrSelonarchSafelontySelonttings: UselonrSelonarchSafelontySelonttings,
+  quelonryHasUselonr: Boolelonan = falselon) {
 
-  def this(
-    resultsPageNumber: Int,
-    candidateCount: Int,
-    querySourceOption: Option[ThriftQuerySource],
-    userSearchSafetySettings: UserSearchSafetySettings
-  ) = this(resultsPageNumber, candidateCount, querySourceOption, userSearchSafetySettings, false)
+  delonf this(
+    relonsultsPagelonNumbelonr: Int,
+    candidatelonCount: Int,
+    quelonrySourcelonOption: Option[ThriftQuelonrySourcelon],
+    uselonrSelonarchSafelontySelonttings: UselonrSelonarchSafelontySelonttings
+  ) = this(relonsultsPagelonNumbelonr, candidatelonCount, quelonrySourcelonOption, uselonrSelonarchSafelontySelonttings, falselon)
 }

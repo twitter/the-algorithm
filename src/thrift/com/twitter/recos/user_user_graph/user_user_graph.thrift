@@ -1,45 +1,45 @@
-namespace java com.twitter.recos.user_user_graph.thriftjava
-namespace py gen.twitter.recos.user_user_graph
-#@namespace scala com.twitter.recos.user_user_graph.thriftscala
-#@namespace strato com.twitter.recos.user_user_graph
-namespace rb UserUserGraph
+namelonspacelon java com.twittelonr.reloncos.uselonr_uselonr_graph.thriftjava
+namelonspacelon py gelonn.twittelonr.reloncos.uselonr_uselonr_graph
+#@namelonspacelon scala com.twittelonr.reloncos.uselonr_uselonr_graph.thriftscala
+#@namelonspacelon strato com.twittelonr.reloncos.uselonr_uselonr_graph
+namelonspacelon rb UselonrUselonrGraph
 
-include "com/twitter/recos/recos_common.thrift"
+includelon "com/twittelonr/reloncos/reloncos_common.thrift"
 
-enum RecommendUserDisplayLocation {
-  MagicRecs                 = 0
-  HomeTimeLine              = 1
-  ConnectTab                = 2
+elonnum ReloncommelonndUselonrDisplayLocation {
+  MagicReloncs                 = 0
+  HomelonTimelonLinelon              = 1
+  ConnelonctTab                = 2
 }
 
-struct RecommendUserRequest {
-  1: required i64                                           requesterId                  // user id of the requesting user
-  2: required RecommendUserDisplayLocation                  displayLocation              // display location from the client
-  3: required map<i64,double>                               seedsWithWeights             // seed ids and weights used in left hand side
-  4: optional list<i64>                                     excludedUserIds              // list of users to exclude from response
-  5: optional i32                                           maxNumResults                // number of results to return
-  6: optional i32                                           maxNumSocialProofs           // number of social proofs per recommendation
-  7: optional map<recos_common.UserSocialProofType, i32>    minUserPerSocialProof        // minimum number of users for each social proof type
-  8: optional list<recos_common.UserSocialProofType>        socialProofTypes             // list of required social proof types. Any recommended user
-                                                                                         // must at least have all of these social proof types
-  9: optional i64                                           maxEdgeEngagementAgeInMillis // only events created during this period are counted
+struct ReloncommelonndUselonrRelonquelonst {
+  1: relonquirelond i64                                           relonquelonstelonrId                  // uselonr id of thelon relonquelonsting uselonr
+  2: relonquirelond ReloncommelonndUselonrDisplayLocation                  displayLocation              // display location from thelon clielonnt
+  3: relonquirelond map<i64,doublelon>                               selonelondsWithWelonights             // selonelond ids and welonights uselond in lelonft hand sidelon
+  4: optional list<i64>                                     elonxcludelondUselonrIds              // list of uselonrs to elonxcludelon from relonsponselon
+  5: optional i32                                           maxNumRelonsults                // numbelonr of relonsults to relonturn
+  6: optional i32                                           maxNumSocialProofs           // numbelonr of social proofs pelonr reloncommelonndation
+  7: optional map<reloncos_common.UselonrSocialProofTypelon, i32>    minUselonrPelonrSocialProof        // minimum numbelonr of uselonrs for elonach social proof typelon
+  8: optional list<reloncos_common.UselonrSocialProofTypelon>        socialProofTypelons             // list of relonquirelond social proof typelons. Any reloncommelonndelond uselonr
+                                                                                         // must at lelonast havelon all of thelonselon social proof typelons
+  9: optional i64                                           maxelondgelonelonngagelonmelonntAgelonInMillis // only elonvelonnts crelonatelond during this pelonriod arelon countelond
 }
 
-struct RecommendedUser {
-  1: required i64                                               userId             // user id of recommended user
-  2: required double                                            score              // weight of the recommended user
-  3: required map<recos_common.UserSocialProofType, list<i64>>  socialProofs       // the social proofs of the recommended user
+struct ReloncommelonndelondUselonr {
+  1: relonquirelond i64                                               uselonrId             // uselonr id of reloncommelonndelond uselonr
+  2: relonquirelond doublelon                                            scorelon              // welonight of thelon reloncommelonndelond uselonr
+  3: relonquirelond map<reloncos_common.UselonrSocialProofTypelon, list<i64>>  socialProofs       // thelon social proofs of thelon reloncommelonndelond uselonr
 }
 
-struct RecommendUserResponse {
-  1: required list<RecommendedUser>                             recommendedUsers         // list of recommended users
+struct ReloncommelonndUselonrRelonsponselon {
+  1: relonquirelond list<ReloncommelonndelondUselonr>                             reloncommelonndelondUselonrs         // list of reloncommelonndelond uselonrs
 }
 
 /**
- * The main interface-definition for UserUserGraph.
+ * Thelon main intelonrfacelon-delonfinition for UselonrUselonrGraph.
  */
-service UserUserGraph {
-  // Given a request for recommendations for a specific user,
-  // return a list of candidate users along with their social proofs
-  RecommendUserResponse recommendUsers (RecommendUserRequest request)
+selonrvicelon UselonrUselonrGraph {
+  // Givelonn a relonquelonst for reloncommelonndations for a speloncific uselonr,
+  // relonturn a list of candidatelon uselonrs along with thelonir social proofs
+  ReloncommelonndUselonrRelonsponselon reloncommelonndUselonrs (ReloncommelonndUselonrRelonquelonst relonquelonst)
 }

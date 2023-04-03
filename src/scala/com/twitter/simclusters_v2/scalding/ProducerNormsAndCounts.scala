@@ -1,159 +1,159 @@
-package com.twitter.simclusters_v2.scalding
+packagelon com.twittelonr.simclustelonrs_v2.scalding
 
-import com.twitter.logging.Logger
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.job.analytics_batch._
-import com.twitter.simclusters_v2.hdfs_sources.{
-  NormsAndCountsFixedPathSource,
-  ProducerNormsAndCountsScalaDataset
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.{elonxplicitLocation, ProcAtla}
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch._
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.{
+  NormsAndCountsFixelondPathSourcelon,
+  ProducelonrNormsAndCountsScalaDataselont
 }
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
+import com.twittelonr.simclustelonrs_v2.scalding.common.TypelondRichPipelon._
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.thriftscala.NormsAndCounts
 
-object ProducerNormsAndCounts {
+objelonct ProducelonrNormsAndCounts {
 
-  def getNormsAndCounts(
-    input: TypedPipe[Edge]
+  delonf gelontNormsAndCounts(
+    input: TypelondPipelon[elondgelon]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[NormsAndCounts] = {
-    val numRecordsInNormsAndCounts = Stat("num_records_in_norms_and_counts")
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[NormsAndCounts] = {
+    val numReloncordsInNormsAndCounts = Stat("num_reloncords_in_norms_and_counts")
     input
       .map {
-        case Edge(srcId, destId, isFollowEdge, favWt) =>
-          val followOrNot = if (isFollowEdge) 1 else 0
-          ((srcId, destId), (followOrNot, favWt))
+        caselon elondgelon(srcId, delonstId, isFollowelondgelon, favWt) =>
+          val followOrNot = if (isFollowelondgelon) 1 elonlselon 0
+          ((srcId, delonstId), (followOrNot, favWt))
       }
-      .sumByKey
-      // Uncomment for adhoc job
-      //.withReducers(2500)
+      .sumByKelony
+      // Uncommelonnt for adhoc job
+      //.withRelonducelonrs(2500)
       .map {
-        case ((srcId, destId), (followOrNot, favWt)) =>
-          val favOrNot = if (favWt > 0) 1 else 0
-          val logFavScore = if (favWt > 0) UserUserNormalizedGraph.logTransformation(favWt) else 0.0
+        caselon ((srcId, delonstId), (followOrNot, favWt)) =>
+          val favOrNot = if (favWt > 0) 1 elonlselon 0
+          val logFavScorelon = if (favWt > 0) UselonrUselonrNormalizelondGraph.logTransformation(favWt) elonlselon 0.0
           (
-            destId,
+            delonstId,
             (
               followOrNot,
               favWt * favWt,
               favOrNot,
               favWt,
-              favWt * followOrNot.toDouble,
-              logFavScore * logFavScore,
-              logFavScore,
-              logFavScore * followOrNot.toDouble))
+              favWt * followOrNot.toDoublelon,
+              logFavScorelon * logFavScorelon,
+              logFavScorelon,
+              logFavScorelon * followOrNot.toDoublelon))
       }
-      .sumByKey
-      // Uncomment for adhoc job
-      //.withReducers(500)
+      .sumByKelony
+      // Uncommelonnt for adhoc job
+      //.withRelonducelonrs(500)
       .map {
-        case (
+        caselon (
               id,
               (
                 followCount,
-                favSumSquare,
+                favSumSquarelon,
                 favCount,
-                favSumOnFavEdges,
-                favSumOnFollowEdges,
-                logFavSumSquare,
-                logFavSumOnFavEdges,
-                logFavSumOnFollowEdges)) =>
-          val followerNorm = math.sqrt(followCount)
-          val faverNorm = math.sqrt(favSumSquare)
-          numRecordsInNormsAndCounts.inc()
+                favSumOnFavelondgelons,
+                favSumOnFollowelondgelons,
+                logFavSumSquarelon,
+                logFavSumOnFavelondgelons,
+                logFavSumOnFollowelondgelons)) =>
+          val followelonrNorm = math.sqrt(followCount)
+          val favelonrNorm = math.sqrt(favSumSquarelon)
+          numReloncordsInNormsAndCounts.inc()
           NormsAndCounts(
-            userId = id,
-            followerL2Norm = Some(followerNorm),
-            faverL2Norm = Some(faverNorm),
-            followerCount = Some(followCount),
-            faverCount = Some(favCount),
-            favWeightsOnFavEdgesSum = Some(favSumOnFavEdges),
-            favWeightsOnFollowEdgesSum = Some(favSumOnFollowEdges),
-            logFavL2Norm = Some(math.sqrt(logFavSumSquare)),
-            logFavWeightsOnFavEdgesSum = Some(logFavSumOnFavEdges),
-            logFavWeightsOnFollowEdgesSum = Some(logFavSumOnFollowEdges)
+            uselonrId = id,
+            followelonrL2Norm = Somelon(followelonrNorm),
+            favelonrL2Norm = Somelon(favelonrNorm),
+            followelonrCount = Somelon(followCount),
+            favelonrCount = Somelon(favCount),
+            favWelonightsOnFavelondgelonsSum = Somelon(favSumOnFavelondgelons),
+            favWelonightsOnFollowelondgelonsSum = Somelon(favSumOnFollowelondgelons),
+            logFavL2Norm = Somelon(math.sqrt(logFavSumSquarelon)),
+            logFavWelonightsOnFavelondgelonsSum = Somelon(logFavSumOnFavelondgelons),
+            logFavWelonightsOnFollowelondgelonsSum = Somelon(logFavSumOnFollowelondgelons)
           )
       }
   }
 
-  def run(
-    halfLifeInDaysForFavScore: Int
+  delonf run(
+    halfLifelonInDaysForFavScorelon: Int
   )(
-    implicit uniqueID: UniqueID,
-    date: DateRange
-  ): TypedPipe[NormsAndCounts] = {
+    implicit uniquelonID: UniquelonID,
+    datelon: DatelonRangelon
+  ): TypelondPipelon[NormsAndCounts] = {
     val input =
-      UserUserNormalizedGraph.getFollowEdges.map {
-        case (src, dest) =>
-          Edge(src, dest, isFollowEdge = true, 0.0)
-      } ++ UserUserNormalizedGraph.getFavEdges(halfLifeInDaysForFavScore).map {
-        case (src, dest, wt) =>
-          Edge(src, dest, isFollowEdge = false, wt)
+      UselonrUselonrNormalizelondGraph.gelontFollowelondgelons.map {
+        caselon (src, delonst) =>
+          elondgelon(src, delonst, isFollowelondgelon = truelon, 0.0)
+      } ++ UselonrUselonrNormalizelondGraph.gelontFavelondgelons(halfLifelonInDaysForFavScorelon).map {
+        caselon (src, delonst, wt) =>
+          elondgelon(src, delonst, isFollowelondgelon = falselon, wt)
       }
-    getNormsAndCounts(input)
+    gelontNormsAndCounts(input)
   }
 }
 
-object ProducerNormsAndCountsBatch extends TwitterScheduledExecutionApp {
-  private val firstTime: String = "2018-06-16"
-  implicit val tz = DateOps.UTC
-  implicit val parser = DateParser.default
-  private val batchIncrement: Duration = Days(7)
-  private val firstStartDate = DateRange.parse(firstTime).start
-  private val halfLifeInDaysForFavScore = 100
+objelonct ProducelonrNormsAndCountsBatch elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp {
+  privatelon val firstTimelon: String = "2018-06-16"
+  implicit val tz = DatelonOps.UTC
+  implicit val parselonr = DatelonParselonr.delonfault
+  privatelon val batchIncrelonmelonnt: Duration = Days(7)
+  privatelon val firstStartDatelon = DatelonRangelon.parselon(firstTimelon).start
+  privatelon val halfLifelonInDaysForFavScorelon = 100
 
-  private val outputPath: String = "/user/cassowary/processed/producer_norms_and_counts"
-  private val log = Logger()
+  privatelon val outputPath: String = "/uselonr/cassowary/procelonsselond/producelonr_norms_and_counts"
+  privatelon val log = Loggelonr()
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  privatelon val elonxeloncArgs = AnalyticsBatchelonxeloncutionArgs(
+    batchDelonsc = BatchDelonscription(this.gelontClass.gelontNamelon.relonplacelon("$", "")),
+    firstTimelon = BatchFirstTimelon(RichDatelon(firstTimelon)),
+    lastTimelon = Nonelon,
+    batchIncrelonmelonnt = BatchIncrelonmelonnt(batchIncrelonmelonnt)
   )
 
-  override def scheduledJob: Execution[Unit] = AnalyticsBatchExecution(execArgs) {
-    implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        Execution.withArgs { args =>
-          Util.printCounters(
-            ProducerNormsAndCounts
-              .run(halfLifeInDaysForFavScore)
-              .writeDALSnapshotExecution(
-                ProducerNormsAndCountsScalaDataset,
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] = AnalyticsBatchelonxeloncution(elonxeloncArgs) {
+    implicit datelonRangelon =>
+      elonxeloncution.withId { implicit uniquelonId =>
+        elonxeloncution.withArgs { args =>
+          Util.printCountelonrs(
+            ProducelonrNormsAndCounts
+              .run(halfLifelonInDaysForFavScorelon)
+              .writelonDALSnapshotelonxeloncution(
+                ProducelonrNormsAndCountsScalaDataselont,
                 D.Daily,
                 D.Suffix(outputPath),
-                D.EBLzo(),
-                dateRange.end)
+                D.elonBLzo(),
+                datelonRangelon.elonnd)
           )
         }
       }
   }
 }
 
-object ProducerNormsAndCountsAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
+objelonct ProducelonrNormsAndCountsAdhoc elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  implicit val dp = DatelonParselonr.delonfault
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          implicit val date = DateRange.parse(args.list("date"))
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
+          implicit val datelon = DatelonRangelon.parselon(args.list("datelon"))
 
-          Util.printCounters(
-            ProducerNormsAndCounts
-              .run(halfLifeInDaysForFavScore = 100)
-              .forceToDiskExecution.flatMap { result =>
-                Execution.zip(
-                  result.writeExecution(NormsAndCountsFixedPathSource(args("outputDir"))),
-                  result.printSummary("Producer norms and counts")
+          Util.printCountelonrs(
+            ProducelonrNormsAndCounts
+              .run(halfLifelonInDaysForFavScorelon = 100)
+              .forcelonToDiskelonxeloncution.flatMap { relonsult =>
+                elonxeloncution.zip(
+                  relonsult.writelonelonxeloncution(NormsAndCountsFixelondPathSourcelon(args("outputDir"))),
+                  relonsult.printSummary("Producelonr norms and counts")
                 )
               }
           )
@@ -161,33 +161,33 @@ object ProducerNormsAndCountsAdhoc extends TwitterExecutionApp {
     }
 }
 
-object DumpNormsAndCountsAdhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
+objelonct DumpNormsAndCountsAdhoc elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
 
-          val users = args.list("users").map(_.toLong).toSet
+          val uselonrs = args.list("uselonrs").map(_.toLong).toSelont
           val input = args.optional("inputDir") match {
-            case Some(inputDir) => TypedPipe.from(NormsAndCountsFixedPathSource(inputDir))
-            case None =>
+            caselon Somelon(inputDir) => TypelondPipelon.from(NormsAndCountsFixelondPathSourcelon(inputDir))
+            caselon Nonelon =>
               DAL
-                .readMostRecentSnapshotNoOlderThan(ProducerNormsAndCountsScalaDataset, Days(30))
-                .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-                .toTypedPipe
+                .relonadMostReloncelonntSnapshotNoOldelonrThan(ProducelonrNormsAndCountsScalaDataselont, Days(30))
+                .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+                .toTypelondPipelon
           }
 
-          if (users.isEmpty) {
-            input.printSummary("Producer norms and counts")
-          } else {
+          if (uselonrs.iselonmpty) {
+            input.printSummary("Producelonr norms and counts")
+          } elonlselon {
             input
-              .collect {
-                case rec if users.contains(rec.userId) =>
-                  Util.prettyJsonMapper.writeValueAsString(rec).replaceAll("\n", " ")
+              .collelonct {
+                caselon relonc if uselonrs.contains(relonc.uselonrId) =>
+                  Util.prelonttyJsonMappelonr.writelonValuelonAsString(relonc).relonplacelonAll("\n", " ")
               }
-              .toIterableExecution
+              .toItelonrablelonelonxeloncution
               .map { strings => println(strings.mkString("\n")) }
           }
         }

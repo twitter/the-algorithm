@@ -1,272 +1,272 @@
-package com.twitter.simclusters_v2.scalding
+packagelon com.twittelonr.simclustelonrs_v2.scalding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.logging.Logger
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.{ExplicitLocation, ProcAtla}
-import com.twitter.scalding_internal.job.analytics_batch.{
-  AnalyticsBatchExecution,
-  AnalyticsBatchExecutionArgs,
-  BatchDescription,
-  BatchFirstTime,
-  BatchIncrement,
-  TwitterScheduledExecutionApp
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.{elonxplicitLocation, ProcAtla}
+import com.twittelonr.scalding_intelonrnal.job.analytics_batch.{
+  AnalyticsBatchelonxeloncution,
+  AnalyticsBatchelonxeloncutionArgs,
+  BatchDelonscription,
+  BatchFirstTimelon,
+  BatchIncrelonmelonnt,
+  TwittelonrSchelondulelondelonxeloncutionApp
 }
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.{ClustersUserIsKnownFor, UserToKnownForClusterScores}
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
-import java.util.TimeZone
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.thriftscala.{ClustelonrsUselonrIsKnownFor, UselonrToKnownForClustelonrScorelons}
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import com.twittelonr.uselonrsourcelon.snapshot.flat.thriftscala.FlatUselonr
+import java.util.TimelonZonelon
 
-object KnownForSources {
-  implicit val tz: TimeZone = DateOps.UTC
-  implicit val parser: DateParser = DateParser.default
+objelonct KnownForSourcelons {
+  implicit val tz: TimelonZonelon = DatelonOps.UTC
+  implicit val parselonr: DatelonParselonr = DatelonParselonr.delonfault
 
-  def readDALDataset(
-    d: KeyValDALDataset[KeyVal[Long, ClustersUserIsKnownFor]],
-    noOlderThan: Duration,
-    modelVersionToKeep: String
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    fromKeyVal(
+  delonf relonadDALDataselont(
+    d: KelonyValDALDataselont[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]],
+    noOldelonrThan: Duration,
+    modelonlVelonrsionToKelonelonp: String
+  ): TypelondPipelon[(Long, Array[(Int, Float)])] = {
+    fromKelonyVal(
       DAL
-        .readMostRecentSnapshotNoOlderThan(d, noOlderThan)
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe,
-      modelVersionToKeep
+        .relonadMostReloncelonntSnapshotNoOldelonrThan(d, noOldelonrThan)
+        .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+        .toTypelondPipelon,
+      modelonlVelonrsionToKelonelonp
     )
   }
 
-  def fromKeyVal(
-    in: TypedPipe[KeyVal[Long, ClustersUserIsKnownFor]],
-    modelVersionToKeep: String
-  ): TypedPipe[(Long, Array[(Int, Float)])] = {
-    in.collect {
-      case KeyVal(userId, knownForClusters)
-          if knownForClusters.knownForModelVersion == modelVersionToKeep =>
+  delonf fromKelonyVal(
+    in: TypelondPipelon[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]],
+    modelonlVelonrsionToKelonelonp: String
+  ): TypelondPipelon[(Long, Array[(Int, Float)])] = {
+    in.collelonct {
+      caselon KelonyVal(uselonrId, knownForClustelonrs)
+          if knownForClustelonrs.knownForModelonlVelonrsion == modelonlVelonrsionToKelonelonp =>
         (
-          userId,
-          knownForClusters.clusterIdToScores.toArray
+          uselonrId,
+          knownForClustelonrs.clustelonrIdToScorelons.toArray
             .map {
-              case (clusterId, scores) =>
-                (clusterId, scores.knownForScore.getOrElse(0.0).toFloat)
+              caselon (clustelonrId, scorelons) =>
+                (clustelonrId, scorelons.knownForScorelon.gelontOrelonlselon(0.0).toFloat)
             }
             .sortBy(-_._2))
     }
   }
 
-  def toKeyVal(
-    in: TypedPipe[(Long, Array[(Int, Float)])],
-    modelVersion: String
-  ): TypedPipe[KeyVal[Long, ClustersUserIsKnownFor]] = {
+  delonf toKelonyVal(
+    in: TypelondPipelon[(Long, Array[(Int, Float)])],
+    modelonlVelonrsion: String
+  ): TypelondPipelon[KelonyVal[Long, ClustelonrsUselonrIsKnownFor]] = {
     in.map {
-      case (userId, clustersArray) =>
-        val mappedClusters = clustersArray.map {
-          case (clusterId, score) =>
-            (clusterId, UserToKnownForClusterScores(Some(score)))
+      caselon (uselonrId, clustelonrsArray) =>
+        val mappelondClustelonrs = clustelonrsArray.map {
+          caselon (clustelonrId, scorelon) =>
+            (clustelonrId, UselonrToKnownForClustelonrScorelons(Somelon(scorelon)))
         }.toMap
-        KeyVal(userId, ClustersUserIsKnownFor(modelVersion, mappedClusters))
+        KelonyVal(uselonrId, ClustelonrsUselonrIsKnownFor(modelonlVelonrsion, mappelondClustelonrs))
     }
   }
 
-  val knownFor_20M_Dec11_145K: TypedPipe[(Long, Array[(Int, Float)])] = readDALDataset(
-    SimclustersV2KnownFor20M145KDec11ScalaDataset,
+  val knownFor_20M_Delonc11_145K: TypelondPipelon[(Long, Array[(Int, Float)])] = relonadDALDataselont(
+    SimclustelonrsV2KnownFor20M145KDelonc11ScalaDataselont,
     Days(30),
-    ModelVersions.Model20M145KDec11
+    ModelonlVelonrsions.Modelonl20M145KDelonc11
   )
 
-  val knownFor_20M_145K_updated: TypedPipe[(Long, Array[(Int, Float)])] = readDALDataset(
-    SimclustersV2KnownFor20M145KUpdatedScalaDataset,
+  val knownFor_20M_145K_updatelond: TypelondPipelon[(Long, Array[(Int, Float)])] = relonadDALDataselont(
+    SimclustelonrsV2KnownFor20M145KUpdatelondScalaDataselont,
     Days(30),
-    ModelVersions.Model20M145KUpdated
+    ModelonlVelonrsions.Modelonl20M145KUpdatelond
   )
 
-  val clusterToKnownFor_20M_Dec11_145K: TypedPipe[(Int, List[(Long, Float)])] =
-    transpose(
-      knownFor_20M_Dec11_145K
+  val clustelonrToKnownFor_20M_Delonc11_145K: TypelondPipelon[(Int, List[(Long, Float)])] =
+    transposelon(
+      knownFor_20M_Delonc11_145K
     )
 
-  val clusterToKnownFor_20M_145K_updated: TypedPipe[(Int, List[(Long, Float)])] =
-    transpose(
-      knownFor_20M_145K_updated
+  val clustelonrToKnownFor_20M_145K_updatelond: TypelondPipelon[(Int, List[(Long, Float)])] =
+    transposelon(
+      knownFor_20M_145K_updatelond
     )
 
-  private val log = Logger()
+  privatelon val log = Loggelonr()
 
-  def readKnownFor(textFile: String): TypedPipe[(Long, Array[(Int, Float)])] = {
-    TypedPipe
-      .from(TextLine(textFile))
+  delonf relonadKnownFor(telonxtFilelon: String): TypelondPipelon[(Long, Array[(Int, Float)])] = {
+    TypelondPipelon
+      .from(TelonxtLinelon(telonxtFilelon))
       .flatMap { str =>
         if (!str.startsWith("#")) {
           try {
-            val tokens = str.trim.split("\\s+")
-            val res = Array.newBuilder[(Int, Float)]
-            val userId = tokens(0).toLong
-            for (i <- 1 until tokens.length) {
-              val Array(cIdStr, scoreStr) = tokens(i).split(":")
-              val clusterId = cIdStr.toInt
-              val score = scoreStr.toFloat
-              val newEntry = (clusterId, score)
-              res += newEntry
+            val tokelonns = str.trim.split("\\s+")
+            val relons = Array.nelonwBuildelonr[(Int, Float)]
+            val uselonrId = tokelonns(0).toLong
+            for (i <- 1 until tokelonns.lelonngth) {
+              val Array(cIdStr, scorelonStr) = tokelonns(i).split(":")
+              val clustelonrId = cIdStr.toInt
+              val scorelon = scorelonStr.toFloat
+              val nelonwelonntry = (clustelonrId, scorelon)
+              relons += nelonwelonntry
             }
-            val result = res.result
-            if (result.nonEmpty) {
-              Some((userId, res.result()))
-            } else None
+            val relonsult = relons.relonsult
+            if (relonsult.nonelonmpty) {
+              Somelon((uselonrId, relons.relonsult()))
+            } elonlselon Nonelon
           } catch {
-            case ex: Throwable =>
+            caselon elonx: Throwablelon =>
               log.warning(
-                s"Error while loading knownFor from $textFile for line <$str>: " +
-                  ex.getMessage
+                s"elonrror whilelon loading knownFor from $telonxtFilelon for linelon <$str>: " +
+                  elonx.gelontMelonssagelon
               )
-              None
+              Nonelon
           }
-        } else None
+        } elonlselon Nonelon
       }
   }
 
-  def stringifyKnownFor(
-    input: TypedPipe[(Long, Array[(Int, Float)])]
-  ): TypedPipe[(Long, String)] = {
-    input.mapValues { arr =>
-      arr.map { case (clusterId, score) => "%d:%.2g".format(clusterId, score) }.mkString("\t")
+  delonf stringifyKnownFor(
+    input: TypelondPipelon[(Long, Array[(Int, Float)])]
+  ): TypelondPipelon[(Long, String)] = {
+    input.mapValuelons { arr =>
+      arr.map { caselon (clustelonrId, scorelon) => "%d:%.2g".format(clustelonrId, scorelon) }.mkString("\t")
     }
   }
 
-  def writeKnownForTypedTsv(
-    input: TypedPipe[(Long, Array[(Int, Float)])],
+  delonf writelonKnownForTypelondTsv(
+    input: TypelondPipelon[(Long, Array[(Int, Float)])],
     outputDir: String
-  ): Execution[Unit] = {
-    stringifyKnownFor(input).writeExecution(TypedTsv(outputDir))
+  ): elonxeloncution[Unit] = {
+    stringifyKnownFor(input).writelonelonxeloncution(TypelondTsv(outputDir))
   }
 
-  def makeKnownForTypedTsv(
-    input: TypedPipe[(Long, Array[(Int, Float)])],
+  delonf makelonKnownForTypelondTsv(
+    input: TypelondPipelon[(Long, Array[(Int, Float)])],
     outputDir: String
-  ): Execution[TypedPipe[(Long, Array[(Int, Float)])]] = {
-    Execution.getMode.flatMap { mode =>
+  ): elonxeloncution[TypelondPipelon[(Long, Array[(Int, Float)])]] = {
+    elonxeloncution.gelontModelon.flatMap { modelon =>
       try {
-        val dest = TextLine(outputDir)
-        dest.validateTaps(mode)
-        Execution.from(KnownForSources.readKnownFor(outputDir))
+        val delonst = TelonxtLinelon(outputDir)
+        delonst.validatelonTaps(modelon)
+        elonxeloncution.from(KnownForSourcelons.relonadKnownFor(outputDir))
       } catch {
-        case ivs: InvalidSourceException =>
-          writeKnownForTypedTsv(input, outputDir).map { _ => input }
+        caselon ivs: InvalidSourcelonelonxcelonption =>
+          writelonKnownForTypelondTsv(input, outputDir).map { _ => input }
       }
     }
 
   }
 
-  def transpose(
-    userToCluster: TypedPipe[(Long, Array[(Int, Float)])]
-  ): TypedPipe[(Int, List[(Long, Float)])] = {
-    userToCluster
+  delonf transposelon(
+    uselonrToClustelonr: TypelondPipelon[(Long, Array[(Int, Float)])]
+  ): TypelondPipelon[(Int, List[(Long, Float)])] = {
+    uselonrToClustelonr
       .flatMap {
-        case (userId, clusterWeightPairs) =>
-          clusterWeightPairs.map {
-            case (clusterId, weight) =>
-              (clusterId, List(userId -> weight))
+        caselon (uselonrId, clustelonrWelonightPairs) =>
+          clustelonrWelonightPairs.map {
+            caselon (clustelonrId, welonight) =>
+              (clustelonrId, List(uselonrId -> welonight))
           }
       }
-      .sumByKey
-      .toTypedPipe
+      .sumByKelony
+      .toTypelondPipelon
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron known_for_to_mh \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron known_for_to_mh \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object KnownForToMHBatch extends TwitterScheduledExecutionApp {
+objelonct KnownForToMHBatch elonxtelonnds TwittelonrSchelondulelondelonxeloncutionApp {
 
-  import KnownForSources._
+  import KnownForSourcelons._
 
   /**
-   * A simple update function which updates the source by removing deactivated and suspended users.
-   * This will be eventually replaced by a regular cluster updating method.
+   * A simplelon updatelon function which updatelons thelon sourcelon by relonmoving delonactivatelond and suspelonndelond uselonrs.
+   * This will belon elonvelonntually relonplacelond by a relongular clustelonr updating melonthod.
    */
-  def updateKnownForSource(
-    knownForSource: TypedPipe[(Long, ClustersUserIsKnownFor)],
-    userSource: TypedPipe[FlatUser]
+  delonf updatelonKnownForSourcelon(
+    knownForSourcelon: TypelondPipelon[(Long, ClustelonrsUselonrIsKnownFor)],
+    uselonrSourcelon: TypelondPipelon[FlatUselonr]
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Long, ClustersUserIsKnownFor)] = {
-    val numValidUsers = Stat("num_valid_users")
-    val numInvalidUsers = Stat("num_invalid_users")
-    val numKnownForUsersLeft = Stat("num_known_for_users_left")
-    val numRemovedKnownForUsers = Stat("num_removed_known_for_users")
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[(Long, ClustelonrsUselonrIsKnownFor)] = {
+    val numValidUselonrs = Stat("num_valid_uselonrs")
+    val numInvalidUselonrs = Stat("num_invalid_uselonrs")
+    val numKnownForUselonrsLelonft = Stat("num_known_for_uselonrs_lelonft")
+    val numRelonmovelondKnownForUselonrs = Stat("num_relonmovelond_known_for_uselonrs")
 
-    val validUsers =
-      userSource.flatMap {
-        case flatUser
-            if !flatUser.deactivated.contains(true) && !flatUser.suspended
-              .contains(true)
-              && flatUser.id.nonEmpty =>
-          numValidUsers.inc()
-          flatUser.id
-        case _ =>
-          numInvalidUsers.inc()
-          None
+    val validUselonrs =
+      uselonrSourcelon.flatMap {
+        caselon flatUselonr
+            if !flatUselonr.delonactivatelond.contains(truelon) && !flatUselonr.suspelonndelond
+              .contains(truelon)
+              && flatUselonr.id.nonelonmpty =>
+          numValidUselonrs.inc()
+          flatUselonr.id
+        caselon _ =>
+          numInvalidUselonrs.inc()
+          Nonelon
       }
 
-    knownForSource.leftJoin(validUsers.asKeys).flatMap {
-      case (userId, (clustersWithScore, Some(_))) =>
-        numKnownForUsersLeft.inc()
-        Some((userId, clustersWithScore))
-      case _ =>
-        numRemovedKnownForUsers.inc()
-        None
+    knownForSourcelon.lelonftJoin(validUselonrs.asKelonys).flatMap {
+      caselon (uselonrId, (clustelonrsWithScorelon, Somelon(_))) =>
+        numKnownForUselonrsLelonft.inc()
+        Somelon((uselonrId, clustelonrsWithScorelon))
+      caselon _ =>
+        numRelonmovelondKnownForUselonrs.inc()
+        Nonelon
     }
   }
 
-  // this should happen before InterestedInFromKnownForBatch
-  private val firstTime: String = "2019-03-22"
+  // this should happelonn belonforelon IntelonrelonstelondInFromKnownForBatch
+  privatelon val firstTimelon: String = "2019-03-22"
 
-  private val batchIncrement: Duration = Days(7)
+  privatelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  private val outputPath: String = InternalDataPaths.RawKnownForDec11Path
+  privatelon val outputPath: String = IntelonrnalDataPaths.RawKnownForDelonc11Path
 
-  private val execArgs = AnalyticsBatchExecutionArgs(
-    batchDesc = BatchDescription(this.getClass.getName.replace("$", "")),
-    firstTime = BatchFirstTime(RichDate(firstTime)),
-    lastTime = None,
-    batchIncrement = BatchIncrement(batchIncrement)
+  privatelon val elonxeloncArgs = AnalyticsBatchelonxeloncutionArgs(
+    batchDelonsc = BatchDelonscription(this.gelontClass.gelontNamelon.relonplacelon("$", "")),
+    firstTimelon = BatchFirstTimelon(RichDatelon(firstTimelon)),
+    lastTimelon = Nonelon,
+    batchIncrelonmelonnt = BatchIncrelonmelonnt(batchIncrelonmelonnt)
   )
 
-  override def scheduledJob: Execution[Unit] =
-    AnalyticsBatchExecution(execArgs) { implicit dateRange =>
-      Execution.withId { implicit uniqueId =>
-        val numKnownForUsers = Stat("num_known_for_users")
+  ovelonrridelon delonf schelondulelondJob: elonxeloncution[Unit] =
+    AnalyticsBatchelonxeloncution(elonxeloncArgs) { implicit datelonRangelon =>
+      elonxeloncution.withId { implicit uniquelonId =>
+        val numKnownForUselonrs = Stat("num_known_for_uselonrs")
 
-        val userSource =
+        val uselonrSourcelon =
           DAL
-            .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7))
-            .toTypedPipe
+            .relonadMostReloncelonntSnapshotNoOldelonrThan(UselonrsourcelonFlatScalaDataselont, Days(7))
+            .toTypelondPipelon
 
         val knownForData = DAL
-          .readMostRecentSnapshotNoOlderThan(
-            SimclustersV2RawKnownFor20M145KDec11ScalaDataset,
+          .relonadMostReloncelonntSnapshotNoOldelonrThan(
+            SimclustelonrsV2RawKnownFor20M145KDelonc11ScalaDataselont,
             Days(30))
-          .toTypedPipe
+          .toTypelondPipelon
           .map {
-            case KeyVal(userId, knownForClusters) =>
-              numKnownForUsers.inc()
-              (userId, knownForClusters)
+            caselon KelonyVal(uselonrId, knownForClustelonrs) =>
+              numKnownForUselonrs.inc()
+              (uselonrId, knownForClustelonrs)
           }
 
-        val result = updateKnownForSource(knownForData, userSource).map {
-          case (userId, knownForClusters) =>
-            KeyVal(userId, knownForClusters)
+        val relonsult = updatelonKnownForSourcelon(knownForData, uselonrSourcelon).map {
+          caselon (uselonrId, knownForClustelonrs) =>
+            KelonyVal(uselonrId, knownForClustelonrs)
         }
 
-        Util.printCounters(
-          result.writeDALVersionedKeyValExecution(
-            dataset = SimclustersV2RawKnownFor20M145KDec11ScalaDataset,
+        Util.printCountelonrs(
+          relonsult.writelonDALVelonrsionelondKelonyValelonxeloncution(
+            dataselont = SimclustelonrsV2RawKnownFor20M145KDelonc11ScalaDataselont,
             pathLayout = D.Suffix(outputPath)
           )
         )

@@ -1,65 +1,65 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.kafka;
 
-import javax.naming.NamingException;
+import javax.naming.Namingelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.twitter.ThriftVersionedEventsConverter;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.ThriftVelonrsionelondelonvelonntsConvelonrtelonr;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonelonxcelonption;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-public class DeleteUpdateEventsKafkaProducerStage extends KafkaProducerStage
-    <IngesterTwitterMessage> {
-  private ThriftVersionedEventsConverter converter;
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+public class DelonlelontelonUpdatelonelonvelonntsKafkaProducelonrStagelon elonxtelonnds KafkaProducelonrStagelon
+    <IngelonstelonrTwittelonrMelonssagelon> {
+  privatelon ThriftVelonrsionelondelonvelonntsConvelonrtelonr convelonrtelonr;
 
-  public DeleteUpdateEventsKafkaProducerStage() {
-    super();
+  public DelonlelontelonUpdatelonelonvelonntsKafkaProducelonrStagelon() {
+    supelonr();
   }
 
-  public DeleteUpdateEventsKafkaProducerStage(String topicName, String clientId,
-                                              String clusterPath) {
-    super(topicName, clientId, clusterPath);
+  public DelonlelontelonUpdatelonelonvelonntsKafkaProducelonrStagelon(String topicNamelon, String clielonntId,
+                                              String clustelonrPath) {
+    supelonr(topicNamelon, clielonntId, clustelonrPath);
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
-    commonInnerSetup();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() throws PipelonlinelonStagelonelonxcelonption, Namingelonxcelonption {
+    supelonr.innelonrSelontup();
+    commonInnelonrSelontup();
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    supelonr.doInnelonrPrelonprocelonss();
+    commonInnelonrSelontup();
   }
 
-  private void commonInnerSetup() throws NamingException {
-    converter = new ThriftVersionedEventsConverter(wireModule.getPenguinVersions());
+  privatelon void commonInnelonrSelontup() throws Namingelonxcelonption {
+    convelonrtelonr = nelonw ThriftVelonrsionelondelonvelonntsConvelonrtelonr(wirelonModulelon.gelontPelonnguinVelonrsions());
 
   }
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not an IngesterTwitterMessage: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not an IngelonstelonrTwittelonrMelonssagelon: " + obj);
     }
 
-    IngesterTwitterMessage message = (IngesterTwitterMessage) obj;
-    innerRunFinalStageOfBranchV2(message);
+    IngelonstelonrTwittelonrMelonssagelon melonssagelon = (IngelonstelonrTwittelonrMelonssagelon) obj;
+    innelonrRunFinalStagelonOfBranchV2(melonssagelon);
   }
 
-  @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterTwitterMessage message) {
-    converter.updatePenguinVersions(wireModule.getCurrentlyEnabledPenguinVersions());
+  @Ovelonrridelon
+  protelonctelond void innelonrRunFinalStagelonOfBranchV2(IngelonstelonrTwittelonrMelonssagelon melonssagelon) {
+    convelonrtelonr.updatelonPelonnguinVelonrsions(wirelonModulelon.gelontCurrelonntlyelonnablelondPelonnguinVelonrsions());
 
-    Preconditions.checkArgument(message.getFromUserTwitterId().isPresent(),
-        "Missing user ID.");
+    Prelonconditions.chelonckArgumelonnt(melonssagelon.gelontFromUselonrTwittelonrId().isPrelonselonnt(),
+        "Missing uselonr ID.");
 
-    super.tryToSendEventsToKafka(converter.toDelete(
-        message.getTweetId(), message.getUserId(), message.getDebugEvents()));
+    supelonr.tryToSelonndelonvelonntsToKafka(convelonrtelonr.toDelonlelontelon(
+        melonssagelon.gelontTwelonelontId(), melonssagelon.gelontUselonrId(), melonssagelon.gelontDelonbugelonvelonnts()));
   }
 
 

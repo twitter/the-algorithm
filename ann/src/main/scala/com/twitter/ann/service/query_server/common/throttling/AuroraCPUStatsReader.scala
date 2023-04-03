@@ -1,28 +1,28 @@
-package com.twitter.ann.service.query_server.common.throttling
+packagelon com.twittelonr.ann.selonrvicelon.quelonry_selonrvelonr.common.throttling
 
-import com.twitter.server.filter.CgroupsCpu
+import com.twittelonr.selonrvelonr.filtelonr.CgroupsCpu
 
-class AuroraCPUStatsReader() {
+class AuroraCPUStatsRelonadelonr() {
 
-  val cgroupsCpu = new CgroupsCpu()
+  val cgroupsCpu = nelonw CgroupsCpu()
 
-  def throttledTimeNanos(): Option[Long] = cgroupsCpu.cpuStat.map { cs =>
-    cs.throttledTimeNanos
+  delonf throttlelondTimelonNanos(): Option[Long] = cgroupsCpu.cpuStat.map { cs =>
+    cs.throttlelondTimelonNanos
   }
 
   /**
-   * Read assigned cpu number from Mesos files
+   * Relonad assignelond cpu numbelonr from Melonsos filelons
    *
-   * @return positive number is the number of CPUs (can be fractional).
-   * -1 means file read failed or it's not a valid Mesos environment.
+   * @relonturn positivelon numbelonr is thelon numbelonr of CPUs (can belon fractional).
+   * -1 melonans filelon relonad failelond or it's not a valid Melonsos elonnvironmelonnt.
    */
-  def cpuQuota: Double = cgroupsCpu.cfsPeriodMicros match {
-    case -1L => -1.0
-    case 0L => 0.0 // avoid divide by 0
-    case periodMicros =>
+  delonf cpuQuota: Doublelon = cgroupsCpu.cfsPelonriodMicros match {
+    caselon -1L => -1.0
+    caselon 0L => 0.0 // avoid dividelon by 0
+    caselon pelonriodMicros =>
       cgroupsCpu.cfsQuotaMicros match {
-        case -1L => -1.0
-        case quotaMicros => quotaMicros.toDouble / periodMicros.toDouble
+        caselon -1L => -1.0
+        caselon quotaMicros => quotaMicros.toDoublelon / pelonriodMicros.toDoublelon
       }
   }
 }

@@ -1,54 +1,54 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads
 
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads.AdsQuelonry
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Derive an estimate of the number of organic items from the query. If you need a more precise number,
- * consider switching to [[AdsDependentCandidatePipelineConfig]]
+ * Delonrivelon an elonstimatelon of thelon numbelonr of organic itelonms from thelon quelonry. If you nelonelond a morelon prelonciselon numbelonr,
+ * considelonr switching to [[AdsDelonpelonndelonntCandidatelonPipelonlinelonConfig]]
  */
-trait EstimateNumOrganicItems[Query <: PipelineQuery with AdsQuery] {
+trait elonstimatelonNumOrganicItelonms[Quelonry <: PipelonlinelonQuelonry with AdsQuelonry] {
 
-  def apply(query: Query): Short
+  delonf apply(quelonry: Quelonry): Short
 }
 
 /**
- * Compute the number of organic items from the query and set of previous candidates.
+ * Computelon thelon numbelonr of organic itelonms from thelon quelonry and selont of prelonvious candidatelons.
  *
- * @note the key difference between [[CountNumOrganicItems]] and [[EstimateNumOrganicItems]] is
- *       that for [[EstimateNumOrganicItems]] we don't have any candidates returned yet, so we can
- *       only guess as to the number of organic items in the result set. In contrast,
- *       [[CountNumOrganicItems]] is used on dependant candidate pipelines where we can scan over
- *       the candidate pipelines result set to count the number of organic items.
+ * @notelon thelon kelony diffelonrelonncelon belontwelonelonn [[CountNumOrganicItelonms]] and [[elonstimatelonNumOrganicItelonms]] is
+ *       that for [[elonstimatelonNumOrganicItelonms]] welon don't havelon any candidatelons relonturnelond yelont, so welon can
+ *       only guelonss as to thelon numbelonr of organic itelonms in thelon relonsult selont. In contrast,
+ *       [[CountNumOrganicItelonms]] is uselond on delonpelonndant candidatelon pipelonlinelons whelonrelon welon can scan ovelonr
+ *       thelon candidatelon pipelonlinelons relonsult selont to count thelon numbelonr of organic itelonms.
  */
-trait CountNumOrganicItems[-Query <: PipelineQuery with AdsQuery] {
+trait CountNumOrganicItelonms[-Quelonry <: PipelonlinelonQuelonry with AdsQuelonry] {
 
-  def apply(query: Query, previousCandidates: Seq[CandidateWithDetails]): Short
+  delonf apply(quelonry: Quelonry, prelonviousCandidatelons: Selonq[CandidatelonWithDelontails]): Short
 }
 
 /**
- * Treat all previously retrieved candidates as organic
+ * Trelonat all prelonviously relontrielonvelond candidatelons as organic
  */
-case object CountAllCandidates extends CountNumOrganicItems[PipelineQuery with AdsQuery] {
+caselon objelonct CountAllCandidatelons elonxtelonnds CountNumOrganicItelonms[PipelonlinelonQuelonry with AdsQuelonry] {
 
-  def apply(
-    query: PipelineQuery with AdsQuery,
-    previousCandidates: Seq[CandidateWithDetails]
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry with AdsQuelonry,
+    prelonviousCandidatelons: Selonq[CandidatelonWithDelontails]
   ): Short =
-    previousCandidates.length.toShort
+    prelonviousCandidatelons.lelonngth.toShort
 }
 
 /**
- * Only count candidates from a specific subset of pipelines as organic
+ * Only count candidatelons from a speloncific subselont of pipelonlinelons as organic
  */
-case class CountCandidatesFromPipelines(pipelines: CandidateScope)
-    extends CountNumOrganicItems[PipelineQuery with AdsQuery] {
+caselon class CountCandidatelonsFromPipelonlinelons(pipelonlinelons: CandidatelonScopelon)
+    elonxtelonnds CountNumOrganicItelonms[PipelonlinelonQuelonry with AdsQuelonry] {
 
-  def apply(
-    query: PipelineQuery with AdsQuery,
-    previousCandidates: Seq[CandidateWithDetails]
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry with AdsQuelonry,
+    prelonviousCandidatelons: Selonq[CandidatelonWithDelontails]
   ): Short =
-    previousCandidates.count(pipelines.contains).toShort
+    prelonviousCandidatelons.count(pipelonlinelons.contains).toShort
 }

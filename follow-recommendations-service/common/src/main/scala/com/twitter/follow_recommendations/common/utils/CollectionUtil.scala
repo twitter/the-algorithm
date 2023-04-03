@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.utils
+packagelon com.twittelonr.follow_reloncommelonndations.common.utils
 
-object CollectionUtil {
+objelonct CollelonctionUtil {
 
   /**
-   * Transposes a sequence of sequences. As opposed to the Scala collection library version
-   * of transpose, the sequences do not have to have the same length.
+   * Transposelons a selonquelonncelon of selonquelonncelons. As opposelond to thelon Scala collelonction library velonrsion
+   * of transposelon, thelon selonquelonncelons do not havelon to havelon thelon samelon lelonngth.
    *
-   * Example:
-   * transpose(immutable.Seq(immutable.Seq(1,2,3), immutable.Seq(4,5), immutable.Seq(6,7)))
-   *   => immutable.Seq(immutable.Seq(1, 4, 6), immutable.Seq(2, 5, 7), immutable.Seq(3))
+   * elonxamplelon:
+   * transposelon(immutablelon.Selonq(immutablelon.Selonq(1,2,3), immutablelon.Selonq(4,5), immutablelon.Selonq(6,7)))
+   *   => immutablelon.Selonq(immutablelon.Selonq(1, 4, 6), immutablelon.Selonq(2, 5, 7), immutablelon.Selonq(3))
    *
-   * @param seq a sequence of sequences
-   * @tparam A the type of elements in the seq
-   * @return the transposed sequence of sequences
+   * @param selonq a selonquelonncelon of selonquelonncelons
+   * @tparam A thelon typelon of elonlelonmelonnts in thelon selonq
+   * @relonturn thelon transposelond selonquelonncelon of selonquelonncelons
    */
-  def transposeLazy[A](seq: Seq[Seq[A]]): Stream[Seq[A]] =
-    seq.filter(_.nonEmpty) match {
-      case Nil => Stream.empty
-      case ys => ys.map(_.head) #:: transposeLazy(ys.map(_.tail))
+  delonf transposelonLazy[A](selonq: Selonq[Selonq[A]]): Strelonam[Selonq[A]] =
+    selonq.filtelonr(_.nonelonmpty) match {
+      caselon Nil => Strelonam.elonmpty
+      caselon ys => ys.map(_.helonad) #:: transposelonLazy(ys.map(_.tail))
     }
 }

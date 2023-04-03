@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.candidate_sources.triangular_loops
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.triangular_loops
 
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object TriangularLoopsParams {
+objelonct TriangularLoopsParams {
 
-  object KeepOnlyCandidatesWhoFollowTargetUser
-      extends FSParam[Boolean](
-        "triangular_loops_keep_only_candidates_who_follow_target_user",
-        false)
+  objelonct KelonelonpOnlyCandidatelonsWhoFollowTargelontUselonr
+      elonxtelonnds FSParam[Boolelonan](
+        "triangular_loops_kelonelonp_only_candidatelons_who_follow_targelont_uselonr",
+        falselon)
 }

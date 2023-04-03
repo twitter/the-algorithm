@@ -1,154 +1,154 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
 
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
-public final class TweetIDToInternalIDMap implements Flushable {
-  private final int   size;
-  private final int[] hash;
-  public final int   halfSize;
-  private final int   mask;
+public final class TwelonelontIDToIntelonrnalIDMap implelonmelonnts Flushablelon {
+  privatelon final int   sizelon;
+  privatelon final int[] hash;
+  public final int   halfSizelon;
+  privatelon final int   mask;
   public int         numMappings;
 
-  static final int PRIME_NUMBER = 37;
+  static final int PRIMelon_NUMBelonR = 37;
 
-  // For FlushHandler.load() use only
-  private TweetIDToInternalIDMap(final int[] hash,
+  // For FlushHandlelonr.load() uselon only
+  privatelon TwelonelontIDToIntelonrnalIDMap(final int[] hash,
                                  final int numMappings) {
     this.hash        = hash;
-    this.size        = hash.length;
-    this.halfSize    = size >> 1;
-    this.mask        = size - 1;
+    this.sizelon        = hash.lelonngth;
+    this.halfSizelon    = sizelon >> 1;
+    this.mask        = sizelon - 1;
     this.numMappings = numMappings;
   }
 
-  TweetIDToInternalIDMap(final int size) {
-    this.hash = new int[size];
-    Arrays.fill(hash, DocIDToTweetIDMapper.ID_NOT_FOUND);
-    this.size = size;
-    this.halfSize = size >> 1;
-    this.mask = size - 1;
+  TwelonelontIDToIntelonrnalIDMap(final int sizelon) {
+    this.hash = nelonw int[sizelon];
+    Arrays.fill(hash, DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND);
+    this.sizelon = sizelon;
+    this.halfSizelon = sizelon >> 1;
+    this.mask = sizelon - 1;
     this.numMappings = 0;
   }
 
-  // Slightly different hash function from the one used to partition tweets to Earlybirds.
-  protected static int hashCode(final long tweetID) {
-    long timestamp = SnowflakeIdParser.getTimestampFromTweetId(tweetID);
-    int code = (int) ((timestamp - 1) ^ (timestamp >>> 32));
-    code = PRIME_NUMBER * (int) (tweetID & SnowflakeIdParser.RESERVED_BITS_MASK) + code;
-    return code;
+  // Slightly diffelonrelonnt hash function from thelon onelon uselond to partition twelonelonts to elonarlybirds.
+  protelonctelond static int hashCodelon(final long twelonelontID) {
+    long timelonstamp = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(twelonelontID);
+    int codelon = (int) ((timelonstamp - 1) ^ (timelonstamp >>> 32));
+    codelon = PRIMelon_NUMBelonR * (int) (twelonelontID & SnowflakelonIdParselonr.RelonSelonRVelonD_BITS_MASK) + codelon;
+    relonturn codelon;
   }
 
-  protected static int incrementHashCode(int code) {
-    return ((code >> 8) + code) | 1;
+  protelonctelond static int increlonmelonntHashCodelon(int codelon) {
+    relonturn ((codelon >> 8) + codelon) | 1;
   }
 
-  private int hashPos(int code) {
-    return code & mask;
+  privatelon int hashPos(int codelon) {
+    relonturn codelon & mask;
   }
 
   /**
-   * Associates the given tweet ID with the given internal doc ID.
+   * Associatelons thelon givelonn twelonelont ID with thelon givelonn intelonrnal doc ID.
    *
-   * @param tweetID The tweet ID.
-   * @param internalID The doc ID that should be associated with this tweet ID.
-   * @param inverseMap The map that stores the doc ID to tweet ID associations.
+   * @param twelonelontID Thelon twelonelont ID.
+   * @param intelonrnalID Thelon doc ID that should belon associatelond with this twelonelont ID.
+   * @param invelonrselonMap Thelon map that storelons thelon doc ID to twelonelont ID associations.
    */
-  public void add(final long tweetID, final int internalID, final long[] inverseMap) {
-    int code = hashCode(tweetID);
-    int hashPos = hashPos(code);
-    int value = hash[hashPos];
-    assert inverseMap[internalID] == tweetID;
+  public void add(final long twelonelontID, final int intelonrnalID, final long[] invelonrselonMap) {
+    int codelon = hashCodelon(twelonelontID);
+    int hashPos = hashPos(codelon);
+    int valuelon = hash[hashPos];
+    asselonrt invelonrselonMap[intelonrnalID] == twelonelontID;
 
-    if (value != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      final int inc = incrementHashCode(code);
+    if (valuelon != DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND) {
+      final int inc = increlonmelonntHashCodelon(codelon);
       do {
-        code += inc;
-        hashPos = hashPos(code);
-        value = hash[hashPos];
-      } while (value != DocIDToTweetIDMapper.ID_NOT_FOUND);
+        codelon += inc;
+        hashPos = hashPos(codelon);
+        valuelon = hash[hashPos];
+      } whilelon (valuelon != DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND);
     }
 
-    assert value == DocIDToTweetIDMapper.ID_NOT_FOUND;
+    asselonrt valuelon == DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND;
 
-    hash[hashPos] = internalID;
+    hash[hashPos] = intelonrnalID;
     numMappings++;
   }
 
   /**
-   * Returns the doc ID corresponding to the given tweet ID.
+   * Relonturns thelon doc ID correlonsponding to thelon givelonn twelonelont ID.
    *
-   * @param tweetID The tweet ID.
-   * @param inverseMap The map that stores the doc ID to tweet ID associations.
-   * @return The doc ID corresponding to the given tweet ID.
+   * @param twelonelontID Thelon twelonelont ID.
+   * @param invelonrselonMap Thelon map that storelons thelon doc ID to twelonelont ID associations.
+   * @relonturn Thelon doc ID correlonsponding to thelon givelonn twelonelont ID.
    */
-  public int get(long tweetID, final long[] inverseMap) {
-    int code = hashCode(tweetID);
-    int hashPos = hashPos(code);
-    int value = hash[hashPos];
+  public int gelont(long twelonelontID, final long[] invelonrselonMap) {
+    int codelon = hashCodelon(twelonelontID);
+    int hashPos = hashPos(codelon);
+    int valuelon = hash[hashPos];
 
-    if (value != DocIDToTweetIDMapper.ID_NOT_FOUND && inverseMap[value] != tweetID) {
-      final int inc = incrementHashCode(code);
+    if (valuelon != DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND && invelonrselonMap[valuelon] != twelonelontID) {
+      final int inc = increlonmelonntHashCodelon(codelon);
 
       do {
-        code += inc;
-        hashPos = hashPos(code);
-        value = hash[hashPos];
-      } while (value != DocIDToTweetIDMapper.ID_NOT_FOUND && inverseMap[value] != tweetID);
+        codelon += inc;
+        hashPos = hashPos(codelon);
+        valuelon = hash[hashPos];
+      } whilelon (valuelon != DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND && invelonrselonMap[valuelon] != twelonelontID);
     }
 
     if (hashPos == -1) {
-      return DocIDToTweetIDMapper.ID_NOT_FOUND;
+      relonturn DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND;
     }
-    return hash[hashPos];
+    relonturn hash[hashPos];
   }
 
-  @Override
-  public TweetIDToInternalIDMap.FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Ovelonrridelon
+  public TwelonelontIDToIntelonrnalIDMap.FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public static final class FlushHandler extends Flushable.Handler<TweetIDToInternalIDMap> {
-    public FlushHandler() {
-      super();
+  public static final class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<TwelonelontIDToIntelonrnalIDMap> {
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    private static final String HASH_ARRAY_SIZE_PROP_NAME = "HashArraySize";
-    private static final String MASK_PROP_NAME = "Mask";
-    private static final String NUM_MAPPINGS_PROP_NAME = "NumMappings";
+    privatelon static final String HASH_ARRAY_SIZelon_PROP_NAMelon = "HashArraySizelon";
+    privatelon static final String MASK_PROP_NAMelon = "Mask";
+    privatelon static final String NUM_MAPPINGS_PROP_NAMelon = "NumMappings";
 
-    public FlushHandler(TweetIDToInternalIDMap objectToFlush) {
-      super(objectToFlush);
+    public FlushHandlelonr(TwelonelontIDToIntelonrnalIDMap objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-      throws IOException {
-      TweetIDToInternalIDMap mapper = getObjectToFlush();
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out)
+      throws IOelonxcelonption {
+      TwelonelontIDToIntelonrnalIDMap mappelonr = gelontObjelonctToFlush();
 
       flushInfo
-          .addIntProperty(HASH_ARRAY_SIZE_PROP_NAME, mapper.hash.length)
-          .addIntProperty(MASK_PROP_NAME, mapper.mask)
-          .addIntProperty(NUM_MAPPINGS_PROP_NAME, mapper.numMappings);
+          .addIntPropelonrty(HASH_ARRAY_SIZelon_PROP_NAMelon, mappelonr.hash.lelonngth)
+          .addIntPropelonrty(MASK_PROP_NAMelon, mappelonr.mask)
+          .addIntPropelonrty(NUM_MAPPINGS_PROP_NAMelon, mappelonr.numMappings);
 
-      out.writeIntArray(mapper.hash);
+      out.writelonIntArray(mappelonr.hash);
     }
 
-    @Override
-    protected TweetIDToInternalIDMap doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      final int[] hash = in.readIntArray();
+    @Ovelonrridelon
+    protelonctelond TwelonelontIDToIntelonrnalIDMap doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
+      final int[] hash = in.relonadIntArray();
 
-      final int numMappings = flushInfo.getIntProperty(NUM_MAPPINGS_PROP_NAME);
+      final int numMappings = flushInfo.gelontIntPropelonrty(NUM_MAPPINGS_PROP_NAMelon);
 
-      return new TweetIDToInternalIDMap(hash, numMappings);
+      relonturn nelonw TwelonelontIDToIntelonrnalIDMap(hash, numMappings);
     }
   }
 }

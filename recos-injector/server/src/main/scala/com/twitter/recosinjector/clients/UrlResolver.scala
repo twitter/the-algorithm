@@ -1,104 +1,104 @@
-package com.twitter.recosinjector.clients
+packagelon com.twittelonr.reloncosinjelonctor.clielonnts
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.frigate.common.util.{SnowflakeUtils, UrlInfo}
-import com.twitter.storehaus.{FutureOps, ReadableStore}
-import com.twitter.util.{Duration, Future, Timer}
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.frigatelon.common.util.{SnowflakelonUtils, UrlInfo}
+import com.twittelonr.storelonhaus.{FuturelonOps, RelonadablelonStorelon}
+import com.twittelonr.util.{Duration, Futurelon, Timelonr}
 
-class UrlResolver(
-  urlInfoStore: ReadableStore[String, UrlInfo]
+class UrlRelonsolvelonr(
+  urlInfoStorelon: RelonadablelonStorelon[String, UrlInfo]
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val EmptyFutureMap = Future.value(Map.empty[String, String])
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val twitterResolvedUrlCounter = stats.counter("twitterResolvedUrl")
-  private val resolvedUrlCounter = stats.counter("resolvedUrl")
-  private val noResolvedUrlCounter = stats.counter("noResolvedUrl")
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val elonmptyFuturelonMap = Futurelon.valuelon(Map.elonmpty[String, String])
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val twittelonrRelonsolvelondUrlCountelonr = stats.countelonr("twittelonrRelonsolvelondUrl")
+  privatelon val relonsolvelondUrlCountelonr = stats.countelonr("relonsolvelondUrl")
+  privatelon val noRelonsolvelondUrlCountelonr = stats.countelonr("noRelonsolvelondUrl")
 
-  private val numNoDelayCounter = stats.counter("urlResolver_no_delay")
-  private val numDelayCounter = stats.counter("urlResolver_delay")
+  privatelon val numNoDelonlayCountelonr = stats.countelonr("urlRelonsolvelonr_no_delonlay")
+  privatelon val numDelonlayCountelonr = stats.countelonr("urlRelonsolvelonr_delonlay")
 
-  implicit val timer: Timer = DefaultTimer
+  implicit val timelonr: Timelonr = DelonfaultTimelonr
 
   /**
-   * Get the resolved URL map of the input raw URLs
+   * Gelont thelon relonsolvelond URL map of thelon input raw URLs
    *
-   * @param rawUrls list of raw URLs to query
-   * @return map of raw URL to resolved URL
+   * @param rawUrls list of raw URLs to quelonry
+   * @relonturn map of raw URL to relonsolvelond URL
    */
-  def getResolvedUrls(rawUrls: Set[String]): Future[Map[String, String]] = {
-    FutureOps
-      .mapCollect(urlInfoStore.multiGet[String](rawUrls))
-      .map { resolvedUrlsMap =>
-        resolvedUrlsMap.flatMap {
-          case (
+  delonf gelontRelonsolvelondUrls(rawUrls: Selont[String]): Futurelon[Map[String, String]] = {
+    FuturelonOps
+      .mapCollelonct(urlInfoStorelon.multiGelont[String](rawUrls))
+      .map { relonsolvelondUrlsMap =>
+        relonsolvelondUrlsMap.flatMap {
+          caselon (
                 url,
-                Some(
+                Somelon(
                   UrlInfo(
-                    Some(resolvedUrl),
-                    Some(_),
-                    Some(domain),
+                    Somelon(relonsolvelondUrl),
+                    Somelon(_),
+                    Somelon(domain),
                     _,
                     _,
                     _,
                     _,
-                    Some(_),
+                    Somelon(_),
                     _,
                     _,
                     _,
                     _))) =>
-            if (domain == "Twitter") { // Filter out Twitter based URLs
-              twitterResolvedUrlCounter.incr()
-              None
-            } else {
-              resolvedUrlCounter.incr()
-              Some(url -> resolvedUrl)
+            if (domain == "Twittelonr") { // Filtelonr out Twittelonr baselond URLs
+              twittelonrRelonsolvelondUrlCountelonr.incr()
+              Nonelon
+            } elonlselon {
+              relonsolvelondUrlCountelonr.incr()
+              Somelon(url -> relonsolvelondUrl)
             }
-          case _ =>
-            noResolvedUrlCounter.incr()
-            None
+          caselon _ =>
+            noRelonsolvelondUrlCountelonr.incr()
+            Nonelon
         }
       }
   }
 
   /**
-   *  Get resolved url maps given a list of urls, grouping urls that point to the same webpage
+   *  Gelont relonsolvelond url maps givelonn a list of urls, grouping urls that point to thelon samelon welonbpagelon
    */
-  def getResolvedUrls(urls: Seq[String], tweetId: Long): Future[Map[String, String]] = {
-    if (urls.isEmpty) {
-      EmptyFutureMap
-    } else {
-      Future
-        .sleep(getUrlResolverDelayDuration(tweetId))
-        .before(getResolvedUrls(urls.toSet))
+  delonf gelontRelonsolvelondUrls(urls: Selonq[String], twelonelontId: Long): Futurelon[Map[String, String]] = {
+    if (urls.iselonmpty) {
+      elonmptyFuturelonMap
+    } elonlselon {
+      Futurelon
+        .slelonelonp(gelontUrlRelonsolvelonrDelonlayDuration(twelonelontId))
+        .belonforelon(gelontRelonsolvelondUrls(urls.toSelont))
     }
   }
 
   /**
-   * Given a tweet, return the amount of delay needed before attempting to resolve the Urls
+   * Givelonn a twelonelont, relonturn thelon amount of delonlay nelonelondelond belonforelon attelonmpting to relonsolvelon thelon Urls
    */
-  private def getUrlResolverDelayDuration(
-    tweetId: Long
+  privatelon delonf gelontUrlRelonsolvelonrDelonlayDuration(
+    twelonelontId: Long
   ): Duration = {
-    val urlResolverDelaySinceCreation = 12.seconds
-    val urlResolverDelayDuration = 4.seconds
-    val noDelay = 0.seconds
+    val urlRelonsolvelonrDelonlaySincelonCrelonation = 12.selonconds
+    val urlRelonsolvelonrDelonlayDuration = 4.selonconds
+    val noDelonlay = 0.selonconds
 
-    // Check whether the tweet was created more than the specified delay duration before now.
-    // If the tweet ID is not based on Snowflake, this is false, and the delay is applied.
-    val isCreatedBeforeDelayThreshold = SnowflakeUtils
-      .tweetCreationTime(tweetId)
+    // Chelonck whelonthelonr thelon twelonelont was crelonatelond morelon than thelon speloncifielond delonlay duration belonforelon now.
+    // If thelon twelonelont ID is not baselond on Snowflakelon, this is falselon, and thelon delonlay is applielond.
+    val isCrelonatelondBelonforelonDelonlayThrelonshold = SnowflakelonUtils
+      .twelonelontCrelonationTimelon(twelonelontId)
       .map(_.untilNow)
-      .exists(_ > urlResolverDelaySinceCreation)
+      .elonxists(_ > urlRelonsolvelonrDelonlaySincelonCrelonation)
 
-    if (isCreatedBeforeDelayThreshold) {
-      numNoDelayCounter.incr()
-      noDelay
-    } else {
-      numDelayCounter.incr()
-      urlResolverDelayDuration
+    if (isCrelonatelondBelonforelonDelonlayThrelonshold) {
+      numNoDelonlayCountelonr.incr()
+      noDelonlay
+    } elonlselon {
+      numDelonlayCountelonr.incr()
+      urlRelonsolvelonrDelonlayDuration
     }
   }
 

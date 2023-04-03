@@ -1,59 +1,59 @@
 WITH
-  cluster_top_tweets AS (
-    {CLUSTER_TOP_TWEETS_SQL}
+  clustelonr_top_twelonelonts AS (
+    {CLUSTelonR_TOP_TWelonelonTS_SQL}
   ),
 
-  flatten_cluster_top_tweets AS (
-    SELECT
-      clusterId,
-      tweet.tweetId,
-      tweet.tweetScore,
-    FROM cluster_top_tweets, UNNEST(topKTweetsForClusterKey) AS tweet
+  flattelonn_clustelonr_top_twelonelonts AS (
+    SelonLelonCT
+      clustelonrId,
+      twelonelont.twelonelontId,
+      twelonelont.twelonelontScorelon,
+    FROM clustelonr_top_twelonelonts, UNNelonST(topKTwelonelontsForClustelonrKelony) AS twelonelont
   ),
 
---- There might be delay or skip for the fav-based dataset.
---- This query retrieved the dateHour of the latest partition available.
-  latest_fav_cluster_to_tweet AS (
-    SELECT
-      MAX(dateHour) AS latestTimestamp
+--- Thelonrelon might belon delonlay or skip for thelon fav-baselond dataselont.
+--- This quelonry relontrielonvelond thelon datelonHour of thelon latelonst partition availablelon.
+  latelonst_fav_clustelonr_to_twelonelont AS (
+    SelonLelonCT
+      MAX(datelonHour) AS latelonstTimelonstamp
     FROM
-      `twttr-bq-cassowary-prod.user.simclusters_fav_based_cluster_to_tweet_index`
-    WHERE
-      TIMESTAMP(dateHour) >= TIMESTAMP("{START_TIME}")
-      AND TIMESTAMP(dateHour) <= TIMESTAMP("{END_TIME}")
+      `twttr-bq-cassowary-prod.uselonr.simclustelonrs_fav_baselond_clustelonr_to_twelonelont_indelonx`
+    WHelonRelon
+      TIMelonSTAMP(datelonHour) >= TIMelonSTAMP("{START_TIMelon}")
+      AND TIMelonSTAMP(datelonHour) <= TIMelonSTAMP("{elonND_TIMelon}")
   ),
 
-  flatten_fav_cluster_top_tweets AS (
-    SELECT
-      clusterId.clusterId AS clusterId,
-      tweet.key AS tweetId
+  flattelonn_fav_clustelonr_top_twelonelonts AS (
+    SelonLelonCT
+      clustelonrId.clustelonrId AS clustelonrId,
+      twelonelont.kelony AS twelonelontId
     FROM
-      `twttr-bq-cassowary-prod.user.simclusters_fav_based_cluster_to_tweet_index`,
-      UNNEST(topKTweetsWithScores.topTweetsByFavClusterNormalizedScore) AS tweet,
-      latest_fav_cluster_to_tweet
-    WHERE
-      dateHour=latest_fav_cluster_to_tweet.latestTimestamp
+      `twttr-bq-cassowary-prod.uselonr.simclustelonrs_fav_baselond_clustelonr_to_twelonelont_indelonx`,
+      UNNelonST(topKTwelonelontsWithScorelons.topTwelonelontsByFavClustelonrNormalizelondScorelon) AS twelonelont,
+      latelonst_fav_clustelonr_to_twelonelont
+    WHelonRelon
+      datelonHour=latelonst_fav_clustelonr_to_twelonelont.latelonstTimelonstamp
   ),
 
-  flatten_cluster_top_tweets_intersection AS (
-    SELECT
-      clusterId,
-      flatten_cluster_top_tweets.tweetId,
-      flatten_cluster_top_tweets.tweetScore
+  flattelonn_clustelonr_top_twelonelonts_intelonrselonction AS (
+    SelonLelonCT
+      clustelonrId,
+      flattelonn_clustelonr_top_twelonelonts.twelonelontId,
+      flattelonn_clustelonr_top_twelonelonts.twelonelontScorelon
     FROM
-      flatten_cluster_top_tweets
-    INNER JOIN
-      flatten_fav_cluster_top_tweets
-    USING(clusterId, tweetId)
+      flattelonn_clustelonr_top_twelonelonts
+    INNelonR JOIN
+      flattelonn_fav_clustelonr_top_twelonelonts
+    USING(clustelonrId, twelonelontId)
   ),
 
-  processed_cluster_top_tweets AS (
-    SELECT
-      clusterId,
-      ARRAY_AGG(STRUCT(tweetId, tweetScore) ORDER BY tweetScore LIMIT {CLUSTER_TOP_K_TWEETS}) AS topKTweetsForClusterKey
-    FROM flatten_cluster_top_tweets_intersection
-    GROUP BY clusterId
+  procelonsselond_clustelonr_top_twelonelonts AS (
+    SelonLelonCT
+      clustelonrId,
+      ARRAY_AGG(STRUCT(twelonelontId, twelonelontScorelon) ORDelonR BY twelonelontScorelon LIMIT {CLUSTelonR_TOP_K_TWelonelonTS}) AS topKTwelonelontsForClustelonrKelony
+    FROM flattelonn_clustelonr_top_twelonelonts_intelonrselonction
+    GROUP BY clustelonrId
   )
 
- SELECT *
- FROM processed_cluster_top_tweets
+ SelonLelonCT *
+ FROM procelonsselond_clustelonr_top_twelonelonts

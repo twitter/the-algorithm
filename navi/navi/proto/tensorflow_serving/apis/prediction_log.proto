@@ -1,49 +1,49 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+packagelon telonnsorflow.selonrving;
 
-import "tensorflow_serving/apis/classification.proto";
-import "tensorflow_serving/apis/inference.proto";
-import "tensorflow_serving/apis/logging.proto";
-import "tensorflow_serving/apis/predict.proto";
-import "tensorflow_serving/apis/regression.proto";
-import "tensorflow_serving/apis/session_service.proto";
+import "telonnsorflow_selonrving/apis/classification.proto";
+import "telonnsorflow_selonrving/apis/infelonrelonncelon.proto";
+import "telonnsorflow_selonrving/apis/logging.proto";
+import "telonnsorflow_selonrving/apis/prelondict.proto";
+import "telonnsorflow_selonrving/apis/relongrelonssion.proto";
+import "telonnsorflow_selonrving/apis/selonssion_selonrvicelon.proto";
 
-option cc_enable_arenas = true;
+option cc_elonnablelon_arelonnas = truelon;
 
-message ClassifyLog {
-  ClassificationRequest request = 1;
-  ClassificationResponse response = 2;
+melonssagelon ClassifyLog {
+  ClassificationRelonquelonst relonquelonst = 1;
+  ClassificationRelonsponselon relonsponselon = 2;
 }
 
-message RegressLog {
-  RegressionRequest request = 1;
-  RegressionResponse response = 2;
+melonssagelon RelongrelonssLog {
+  RelongrelonssionRelonquelonst relonquelonst = 1;
+  RelongrelonssionRelonsponselon relonsponselon = 2;
 }
 
-message PredictLog {
-  PredictRequest request = 1;
-  PredictResponse response = 2;
+melonssagelon PrelondictLog {
+  PrelondictRelonquelonst relonquelonst = 1;
+  PrelondictRelonsponselon relonsponselon = 2;
 }
 
-message MultiInferenceLog {
-  MultiInferenceRequest request = 1;
-  MultiInferenceResponse response = 2;
+melonssagelon MultiInfelonrelonncelonLog {
+  MultiInfelonrelonncelonRelonquelonst relonquelonst = 1;
+  MultiInfelonrelonncelonRelonsponselon relonsponselon = 2;
 }
 
-message SessionRunLog {
-  SessionRunRequest request = 1;
-  SessionRunResponse response = 2;
+melonssagelon SelonssionRunLog {
+  SelonssionRunRelonquelonst relonquelonst = 1;
+  SelonssionRunRelonsponselon relonsponselon = 2;
 }
 
-// Logged model inference request.
-message PredictionLog {
-  LogMetadata log_metadata = 1;
-  oneof log_type {
+// Loggelond modelonl infelonrelonncelon relonquelonst.
+melonssagelon PrelondictionLog {
+  LogMelontadata log_melontadata = 1;
+  onelonof log_typelon {
     ClassifyLog classify_log = 2;
-    RegressLog regress_log = 3;
-    PredictLog predict_log = 6;
-    MultiInferenceLog multi_inference_log = 4;
-    SessionRunLog session_run_log = 5;
+    RelongrelonssLog relongrelonss_log = 3;
+    PrelondictLog prelondict_log = 6;
+    MultiInfelonrelonncelonLog multi_infelonrelonncelon_log = 4;
+    SelonssionRunLog selonssion_run_log = 5;
   }
 }

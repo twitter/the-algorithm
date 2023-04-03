@@ -1,88 +1,88 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.model.TweetIdRange
-import com.twitter.timelineranker.parameters.recap.RecapParams
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.relevance_search.SearchClient.TweetTypes
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.modelonl.TwelonelontIdRangelon
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.reloncap.ReloncapParams
+import com.twittelonr.timelonlinelons.clielonnts.relonlelonvancelon_selonarch.SelonarchClielonnt
+import com.twittelonr.timelonlinelons.clielonnts.relonlelonvancelon_selonarch.SelonarchClielonnt.TwelonelontTypelons
+import com.twittelonr.util.Futurelon
 
 /**
- * Fetch recap/recycled search results using the search client
- * and populate them into the CandidateEnvelope
+ * Felontch reloncap/reloncyclelond selonarch relonsults using thelon selonarch clielonnt
+ * and populatelon thelonm into thelon Candidatelonelonnvelonlopelon
  */
-class RecapSearchResultsTransform(
-  searchClient: SearchClient,
-  maxCountProvider: DependencyProvider[Int],
-  returnAllResultsProvider: DependencyProvider[Boolean],
-  relevanceOptionsMaxHitsToProcessProvider: DependencyProvider[Int],
-  enableExcludeSourceTweetIdsProvider: DependencyProvider[Boolean],
-  enableSettingTweetTypesWithTweetKindOptionProvider: DependencyProvider[Boolean],
-  perRequestSearchClientIdProvider: DependencyProvider[Option[String]],
-  relevanceSearchProvider: DependencyProvider[Boolean] =
-    DependencyProvider.from(RecapParams.EnableRelevanceSearchParam),
-  statsReceiver: StatsReceiver,
-  logSearchDebugInfo: Boolean = true)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val maxCountStat = statsReceiver.stat("maxCount")
-  private[this] val numResultsFromSearchStat = statsReceiver.stat("numResultsFromSearch")
-  private[this] val excludedTweetIdsStat = statsReceiver.stat("excludedTweetIds")
+class ReloncapSelonarchRelonsultsTransform(
+  selonarchClielonnt: SelonarchClielonnt,
+  maxCountProvidelonr: DelonpelonndelonncyProvidelonr[Int],
+  relonturnAllRelonsultsProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan],
+  relonlelonvancelonOptionsMaxHitsToProcelonssProvidelonr: DelonpelonndelonncyProvidelonr[Int],
+  elonnablelonelonxcludelonSourcelonTwelonelontIdsProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan],
+  elonnablelonSelonttingTwelonelontTypelonsWithTwelonelontKindOptionProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan],
+  pelonrRelonquelonstSelonarchClielonntIdProvidelonr: DelonpelonndelonncyProvidelonr[Option[String]],
+  relonlelonvancelonSelonarchProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan] =
+    DelonpelonndelonncyProvidelonr.from(ReloncapParams.elonnablelonRelonlelonvancelonSelonarchParam),
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  logSelonarchDelonbugInfo: Boolelonan = truelon)
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
+  privatelon[this] val maxCountStat = statsReloncelonivelonr.stat("maxCount")
+  privatelon[this] val numRelonsultsFromSelonarchStat = statsReloncelonivelonr.stat("numRelonsultsFromSelonarch")
+  privatelon[this] val elonxcludelondTwelonelontIdsStat = statsReloncelonivelonr.stat("elonxcludelondTwelonelontIds")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val maxCount = maxCountProvider(envelope.query)
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val maxCount = maxCountProvidelonr(elonnvelonlopelon.quelonry)
     maxCountStat.add(maxCount)
 
-    val excludedTweetIdsOpt = envelope.query.excludedTweetIds
-    excludedTweetIdsOpt.foreach { excludedTweetIds =>
-      excludedTweetIdsStat.add(excludedTweetIds.size)
+    val elonxcludelondTwelonelontIdsOpt = elonnvelonlopelon.quelonry.elonxcludelondTwelonelontIds
+    elonxcludelondTwelonelontIdsOpt.forelonach { elonxcludelondTwelonelontIds =>
+      elonxcludelondTwelonelontIdsStat.add(elonxcludelondTwelonelontIds.sizelon)
     }
 
-    val tweetIdRange = envelope.query.range
-      .map(TweetIdRange.fromTimelineRange)
-      .getOrElse(TweetIdRange.default)
+    val twelonelontIdRangelon = elonnvelonlopelon.quelonry.rangelon
+      .map(TwelonelontIdRangelon.fromTimelonlinelonRangelon)
+      .gelontOrelonlselon(TwelonelontIdRangelon.delonfault)
 
-    val beforeTweetIdExclusive = tweetIdRange.toId
-    val afterTweetIdExclusive = tweetIdRange.fromId
+    val belonforelonTwelonelontIdelonxclusivelon = twelonelontIdRangelon.toId
+    val aftelonrTwelonelontIdelonxclusivelon = twelonelontIdRangelon.fromId
 
-    val returnAllResults = returnAllResultsProvider(envelope.query)
-    val relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcessProvider(envelope.query)
+    val relonturnAllRelonsults = relonturnAllRelonsultsProvidelonr(elonnvelonlopelon.quelonry)
+    val relonlelonvancelonOptionsMaxHitsToProcelonss = relonlelonvancelonOptionsMaxHitsToProcelonssProvidelonr(elonnvelonlopelon.quelonry)
 
-    Future
+    Futurelon
       .join(
-        envelope.followGraphData.followedUserIdsFuture,
-        envelope.followGraphData.retweetsMutedUserIdsFuture
+        elonnvelonlopelon.followGraphData.followelondUselonrIdsFuturelon,
+        elonnvelonlopelon.followGraphData.relontwelonelontsMutelondUselonrIdsFuturelon
       ).flatMap {
-        case (followedIds, retweetsMutedIds) =>
-          val followedIdsIncludingSelf = followedIds.toSet + envelope.query.userId
+        caselon (followelondIds, relontwelonelontsMutelondIds) =>
+          val followelondIdsIncludingSelonlf = followelondIds.toSelont + elonnvelonlopelon.quelonry.uselonrId
 
-          searchClient
-            .getUsersTweetsForRecap(
-              userId = envelope.query.userId,
-              followedUserIds = followedIdsIncludingSelf,
-              retweetsMutedUserIds = retweetsMutedIds,
+          selonarchClielonnt
+            .gelontUselonrsTwelonelontsForReloncap(
+              uselonrId = elonnvelonlopelon.quelonry.uselonrId,
+              followelondUselonrIds = followelondIdsIncludingSelonlf,
+              relontwelonelontsMutelondUselonrIds = relontwelonelontsMutelondIds,
               maxCount = maxCount,
-              tweetTypes = TweetTypes.fromTweetKindOption(envelope.query.options),
-              searchOperator = envelope.query.searchOperator,
-              beforeTweetIdExclusive = beforeTweetIdExclusive,
-              afterTweetIdExclusive = afterTweetIdExclusive,
-              enableSettingTweetTypesWithTweetKindOption =
-                enableSettingTweetTypesWithTweetKindOptionProvider(envelope.query),
-              excludedTweetIds = excludedTweetIdsOpt,
-              earlybirdOptions = envelope.query.earlybirdOptions,
-              getOnlyProtectedTweets = false,
-              logSearchDebugInfo = logSearchDebugInfo,
-              returnAllResults = returnAllResults,
-              enableExcludeSourceTweetIdsQuery =
-                enableExcludeSourceTweetIdsProvider(envelope.query),
-              relevanceSearch = relevanceSearchProvider(envelope.query),
-              searchClientId = perRequestSearchClientIdProvider(envelope.query),
-              relevanceOptionsMaxHitsToProcess = relevanceOptionsMaxHitsToProcess
-            ).map { results =>
-              numResultsFromSearchStat.add(results.size)
-              envelope.copy(searchResults = results)
+              twelonelontTypelons = TwelonelontTypelons.fromTwelonelontKindOption(elonnvelonlopelon.quelonry.options),
+              selonarchOpelonrator = elonnvelonlopelon.quelonry.selonarchOpelonrator,
+              belonforelonTwelonelontIdelonxclusivelon = belonforelonTwelonelontIdelonxclusivelon,
+              aftelonrTwelonelontIdelonxclusivelon = aftelonrTwelonelontIdelonxclusivelon,
+              elonnablelonSelonttingTwelonelontTypelonsWithTwelonelontKindOption =
+                elonnablelonSelonttingTwelonelontTypelonsWithTwelonelontKindOptionProvidelonr(elonnvelonlopelon.quelonry),
+              elonxcludelondTwelonelontIds = elonxcludelondTwelonelontIdsOpt,
+              elonarlybirdOptions = elonnvelonlopelon.quelonry.elonarlybirdOptions,
+              gelontOnlyProtelonctelondTwelonelonts = falselon,
+              logSelonarchDelonbugInfo = logSelonarchDelonbugInfo,
+              relonturnAllRelonsults = relonturnAllRelonsults,
+              elonnablelonelonxcludelonSourcelonTwelonelontIdsQuelonry =
+                elonnablelonelonxcludelonSourcelonTwelonelontIdsProvidelonr(elonnvelonlopelon.quelonry),
+              relonlelonvancelonSelonarch = relonlelonvancelonSelonarchProvidelonr(elonnvelonlopelon.quelonry),
+              selonarchClielonntId = pelonrRelonquelonstSelonarchClielonntIdProvidelonr(elonnvelonlopelon.quelonry),
+              relonlelonvancelonOptionsMaxHitsToProcelonss = relonlelonvancelonOptionsMaxHitsToProcelonss
+            ).map { relonsults =>
+              numRelonsultsFromSelonarchStat.add(relonsults.sizelon)
+              elonnvelonlopelon.copy(selonarchRelonsults = relonsults)
             }
       }
   }

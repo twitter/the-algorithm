@@ -1,165 +1,165 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
+packagelon com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations
 
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntity
-import com.twitter.recos.entities.thriftscala.SemanticCoreEntityScoreList
-import com.twitter.recos.entities.thriftscala.SemanticEntityScore
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding.Execution
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.Proc2Atla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.hdfs_sources.GeopopularTopTweetImpressedTopicsScalaDataset
-import com.twitter.timelines.per_topic_metrics.thriftscala.PerTopicAggregateEngagementMetric
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import timelines.data_processing.jobs.metrics.per_topic_metrics.PerTopicAggregateEngagementScalaDataset
+import com.twittelonr.bijelonction.Buffelonrablelon
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticCorelonelonntity
+import com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticCorelonelonntityScorelonList
+import com.twittelonr.reloncos.elonntitielons.thriftscala.SelonmanticelonntityScorelon
+import com.twittelonr.scalding.commons.sourcelon.VelonrsionelondKelonyValSourcelon
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.Proc2Atla
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.SelonmanticCorelonelonntityId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.GelonopopularTopTwelonelontImprelonsselondTopicsScalaDataselont
+import com.twittelonr.timelonlinelons.pelonr_topic_melontrics.thriftscala.PelonrTopicAggrelongatelonelonngagelonmelonntMelontric
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
+import timelonlinelons.data_procelonssing.jobs.melontrics.pelonr_topic_melontrics.PelonrTopicAggrelongatelonelonngagelonmelonntScalaDataselont
 
 /**
- scalding remote run \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:geopopular_top_tweets_impressed_topics_adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.GeoPopularTopicsAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com --user recos-platform \
+ scalding relonmotelon run \
+ --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/topic_reloncommelonndations:gelonopopular_top_twelonelonts_imprelonsselond_topics_adhoc \
+ --main-class com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.GelonoPopularTopicsAdhocApp \
+ --submittelonr  hadoopnelonst1.atla.twittelonr.com --uselonr reloncos-platform \
  -- \
- --date 2020-03-28 --output_dir /user/recos-platform/adhoc/your_ldap/topics_country_counts
+ --datelon 2020-03-28 --output_dir /uselonr/reloncos-platform/adhoc/your_ldap/topics_country_counts
  */
-object GeoPopularTopicsAdhocApp extends AdhocExecutionApp {
-  override def runOnDateRange(
+objelonct GelonoPopularTopicsAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxTopicsPerCountry = args.int("maxTopics", 2000)
-    val typedTsv = args.boolean("tsv")
-    implicit val inj: Injection[List[(SemanticCoreEntityId, Double)], Array[Byte]] =
-      Bufferable.injectionOf[List[(SemanticCoreEntityId, Double)]]
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val maxTopicsPelonrCountry = args.int("maxTopics", 2000)
+    val typelondTsv = args.boolelonan("tsv")
+    implicit val inj: Injelonction[List[(SelonmanticCorelonelonntityId, Doublelon)], Array[Bytelon]] =
+      Buffelonrablelon.injelonctionOf[List[(SelonmanticCorelonelonntityId, Doublelon)]]
 
-    val perTopicEngagementLogData = DAL
-      .read(PerTopicAggregateEngagementScalaDataset, dateRange.prepend(Days(7)))
-      .toTypedPipe
-    val topicsWithEngagement =
-      GeoPopularTopicsApp
-        .getPopularTopicsFromLogs(perTopicEngagementLogData, maxTopicsPerCountry)
-        .mapValues(_.toList)
+    val pelonrTopicelonngagelonmelonntLogData = DAL
+      .relonad(PelonrTopicAggrelongatelonelonngagelonmelonntScalaDataselont, datelonRangelon.prelonpelonnd(Days(7)))
+      .toTypelondPipelon
+    val topicsWithelonngagelonmelonnt =
+      GelonoPopularTopicsApp
+        .gelontPopularTopicsFromLogs(pelonrTopicelonngagelonmelonntLogData, maxTopicsPelonrCountry)
+        .mapValuelons(_.toList)
 
-    if (typedTsv) {
-      topicsWithEngagement.writeExecution(
-        TypedTsv(args("/user/recos-platform/adhoc/your_ldap/topics_country_counts_tsv"))
+    if (typelondTsv) {
+      topicsWithelonngagelonmelonnt.writelonelonxeloncution(
+        TypelondTsv(args("/uselonr/reloncos-platform/adhoc/your_ldap/topics_country_counts_tsv"))
       )
-    } else {
-      topicsWithEngagement.writeExecution(
-        VersionedKeyValSource[String, List[(SemanticCoreEntityId, Double)]](args("output_dir"))
+    } elonlselon {
+      topicsWithelonngagelonmelonnt.writelonelonxeloncution(
+        VelonrsionelondKelonyValSourcelon[String, List[(SelonmanticCorelonelonntityId, Doublelon)]](args("output_dir"))
       )
     }
   }
 }
 
 /**
- capesospy-v2 update --build_locally \
- --start_cron popular_topics_per_country \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ capelonsospy-v2 updatelon --build_locally \
+ --start_cron popular_topics_pelonr_country \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object GeoPopularTopicsBatchApp extends ScheduledExecutionApp {
-  override val firstTime: RichDate = RichDate("2020-04-06")
+objelonct GelonoPopularTopicsBatchApp elonxtelonnds SchelondulelondelonxeloncutionApp {
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2020-04-06")
 
-  override val batchIncrement: Duration = Days(1)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(1)
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxTopicsPerCountry = args.int("maxTopics", 2000)
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val maxTopicsPelonrCountry = args.int("maxTopics", 2000)
 
-    val geoPopularTopicsPath: String =
-      "/user/cassowary/manhattan_sequence_files/geo_popular_top_tweet_impressed_topics"
+    val gelonoPopularTopicsPath: String =
+      "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/gelono_popular_top_twelonelont_imprelonsselond_topics"
 
-    // Read engagement logs from the past 7 days
-    val perTopicEngagementLogData = DAL
-      .read(PerTopicAggregateEngagementScalaDataset, dateRange.prepend(Days(7)))
-      .withRemoteReadPolicy(ExplicitLocation(Proc2Atla))
-      .toTypedPipe
+    // Relonad elonngagelonmelonnt logs from thelon past 7 days
+    val pelonrTopicelonngagelonmelonntLogData = DAL
+      .relonad(PelonrTopicAggrelongatelonelonngagelonmelonntScalaDataselont, datelonRangelon.prelonpelonnd(Days(7)))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(Proc2Atla))
+      .toTypelondPipelon
 
-    val topicsWithScores =
-      GeoPopularTopicsApp.getPopularTopicsFromLogs(perTopicEngagementLogData, maxTopicsPerCountry)
+    val topicsWithScorelons =
+      GelonoPopularTopicsApp.gelontPopularTopicsFromLogs(pelonrTopicelonngagelonmelonntLogData, maxTopicsPelonrCountry)
 
-    val topicsWithEntityScores = topicsWithScores
-      .mapValues(_.map {
-        case (topicid, topicScore) =>
-          SemanticEntityScore(SemanticCoreEntity(entityId = topicid), topicScore)
+    val topicsWithelonntityScorelons = topicsWithScorelons
+      .mapValuelons(_.map {
+        caselon (topicid, topicScorelon) =>
+          SelonmanticelonntityScorelon(SelonmanticCorelonelonntity(elonntityId = topicid), topicScorelon)
       })
-      .mapValues(SemanticCoreEntityScoreList(_))
+      .mapValuelons(SelonmanticCorelonelonntityScorelonList(_))
 
-    val writeKeyValResultExec = topicsWithEntityScores
-      .map { case (country, topics) => KeyVal(country, topics) }
-      .writeDALVersionedKeyValExecution(
-        GeopopularTopTweetImpressedTopicsScalaDataset,
-        D.Suffix(geoPopularTopicsPath)
+    val writelonKelonyValRelonsultelonxelonc = topicsWithelonntityScorelons
+      .map { caselon (country, topics) => KelonyVal(country, topics) }
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        GelonopopularTopTwelonelontImprelonsselondTopicsScalaDataselont,
+        D.Suffix(gelonoPopularTopicsPath)
       )
-    writeKeyValResultExec
+    writelonKelonyValRelonsultelonxelonc
   }
 }
 
-object GeoPopularTopicsApp {
+objelonct GelonoPopularTopicsApp {
 
-  def getPopularTopicsFromLogs(
-    engagementLogs: TypedPipe[PerTopicAggregateEngagementMetric],
+  delonf gelontPopularTopicsFromLogs(
+    elonngagelonmelonntLogs: TypelondPipelon[PelonrTopicAggrelongatelonelonngagelonmelonntMelontric],
     maxTopics: Int
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(String, Seq[(SemanticCoreEntityId, Double)])] = {
-    val numTopicEngagementsRead = Stat("num_topic_engagements_read")
-    val intermediate = engagementLogs
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[(String, Selonq[(SelonmanticCorelonelonntityId, Doublelon)])] = {
+    val numTopicelonngagelonmelonntsRelonad = Stat("num_topic_elonngagelonmelonnts_relonad")
+    val intelonrmelondiatelon = elonngagelonmelonntLogs
       .map {
-        case PerTopicAggregateEngagementMetric(
+        caselon PelonrTopicAggrelongatelonelonngagelonmelonntMelontric(
               topicId,
-              dateId,
+              datelonId,
               country,
-              page,
-              item,
-              engagementType,
-              engagementCount,
-              algorithmType,
-              annotationType) =>
-          numTopicEngagementsRead.inc()
+              pagelon,
+              itelonm,
+              elonngagelonmelonntTypelon,
+              elonngagelonmelonntCount,
+              algorithmTypelon,
+              annotationTypelon) =>
+          numTopicelonngagelonmelonntsRelonad.inc()
           (
             topicId,
-            dateId,
+            datelonId,
             country,
-            page,
-            item,
-            engagementType,
-            engagementCount,
-            algorithmType,
-            annotationType)
+            pagelon,
+            itelonm,
+            elonngagelonmelonntTypelon,
+            elonngagelonmelonntCount,
+            algorithmTypelon,
+            annotationTypelon)
       }
 
-    // We want to find the topics with the most impressed tweets in each country
-    // This will ensure that the topics suggested as recommendations also have tweets that can be recommended
-    intermediate
-      .collect {
-        case (topicId, _, Some(country), _, item, engagementType, engagementCount, _, _)
-            if item == "Tweet" && engagementType == "impression" =>
-          ((country, topicId), engagementCount)
+    // Welon want to find thelon topics with thelon most imprelonsselond twelonelonts in elonach country
+    // This will elonnsurelon that thelon topics suggelonstelond as reloncommelonndations also havelon twelonelonts that can belon reloncommelonndelond
+    intelonrmelondiatelon
+      .collelonct {
+        caselon (topicId, _, Somelon(country), _, itelonm, elonngagelonmelonntTypelon, elonngagelonmelonntCount, _, _)
+            if itelonm == "Twelonelont" && elonngagelonmelonntTypelon == "imprelonssion" =>
+          ((country, topicId), elonngagelonmelonntCount)
       }
-      .sumByKey // returns country-wise engagements for topics
+      .sumByKelony // relonturns country-wiselon elonngagelonmelonnts for topics
       .map {
-        case ((country, topicId), totalEngagementCountryCount) =>
-          (country, (topicId, totalEngagementCountryCount.toDouble))
+        caselon ((country, topicId), totalelonngagelonmelonntCountryCount) =>
+          (country, (topicId, totalelonngagelonmelonntCountryCount.toDoublelon))
       }
       .group
-      .sortedReverseTake(maxTopics)(Ordering.by(_._2))
-      .toTypedPipe
+      .sortelondRelonvelonrselonTakelon(maxTopics)(Ordelonring.by(_._2))
+      .toTypelondPipelon
   }
 
 }

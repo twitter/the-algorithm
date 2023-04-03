@@ -1,17 +1,17 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featurestorev1",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featurestorev1/featurevalue",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon/felonaturelonmap",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon/felonaturelonstorelonv1",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon/felonaturelonstorelonv1/felonaturelonvaluelon",
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featuremap",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featurestorev1",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/feature/featurestorev1/featurevalue",
+    elonxports = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon/felonaturelonmap",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon/felonaturelonstorelonv1",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/felonaturelon/felonaturelonstorelonv1/felonaturelonvaluelon",
     ],
 )

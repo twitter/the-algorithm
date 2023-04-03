@@ -1,137 +1,137 @@
-package com.twitter.interaction_graph.scio.agg_client_event_logs
+packagelon com.twittelonr.intelonraction_graph.scio.agg_clielonnt_elonvelonnt_logs
 
-import com.spotify.scio.values.SCollection
-import com.twitter.interaction_graph.scio.common.FeatureGeneratorUtil
-import com.twitter.interaction_graph.scio.common.FeatureKey
-import com.twitter.interaction_graph.scio.common.InteractionGraphRawInput
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionDetails
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionType
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.UserInteraction
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonGelonnelonratorUtil
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonKelony
+import com.twittelonr.intelonraction_graph.scio.common.IntelonractionGraphRawInput
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
+import com.twittelonr.wtf.scalding.clielonnt_elonvelonnt_procelonssing.thriftscala.IntelonractionDelontails
+import com.twittelonr.wtf.scalding.clielonnt_elonvelonnt_procelonssing.thriftscala.IntelonractionTypelon
+import com.twittelonr.wtf.scalding.clielonnt_elonvelonnt_procelonssing.thriftscala.UselonrIntelonraction
 
-object InteractionGraphClientEventLogsUtil {
+objelonct IntelonractionGraphClielonntelonvelonntLogsUtil {
 
-  val DefaultAge = 1
-  val DefaultFeatureValue = 1.0
+  val DelonfaultAgelon = 1
+  val DelonfaultFelonaturelonValuelon = 1.0
 
-  def process(
-    userInteractions: SCollection[UserInteraction],
-    safeUsers: SCollection[Long]
+  delonf procelonss(
+    uselonrIntelonractions: SCollelonction[UselonrIntelonraction],
+    safelonUselonrs: SCollelonction[Long]
   )(
-    implicit jobCounters: InteractionGraphClientEventLogsCountersTrait
-  ): (SCollection[Vertex], SCollection[Edge]) = {
+    implicit jobCountelonrs: IntelonractionGraphClielonntelonvelonntLogsCountelonrsTrait
+  ): (SCollelonction[Velonrtelonx], SCollelonction[elondgelon]) = {
 
-    val unfilteredFeatureInput = userInteractions
+    val unfiltelonrelondFelonaturelonInput = uselonrIntelonractions
       .flatMap {
-        case UserInteraction(
-              userId,
+        caselon UselonrIntelonraction(
+              uselonrId,
               _,
-              interactionType,
-              InteractionDetails.ProfileClickDetails(profileClick))
-            if interactionType == InteractionType.ProfileClicks && userId != profileClick.profileId =>
-          jobCounters.profileViewFeaturesInc()
-          Seq(
-            FeatureKey(
-              userId,
-              profileClick.profileId,
-              FeatureName.NumProfileViews) -> DefaultFeatureValue
+              intelonractionTypelon,
+              IntelonractionDelontails.ProfilelonClickDelontails(profilelonClick))
+            if intelonractionTypelon == IntelonractionTypelon.ProfilelonClicks && uselonrId != profilelonClick.profilelonId =>
+          jobCountelonrs.profilelonVielonwFelonaturelonsInc()
+          Selonq(
+            FelonaturelonKelony(
+              uselonrId,
+              profilelonClick.profilelonId,
+              FelonaturelonNamelon.NumProfilelonVielonws) -> DelonfaultFelonaturelonValuelon
           )
 
-        case UserInteraction(
-              userId,
+        caselon UselonrIntelonraction(
+              uselonrId,
               _,
-              interactionType,
-              InteractionDetails.TweetClickDetails(tweetClick))
-            if interactionType == InteractionType.TweetClicks &&
-              Some(userId) != tweetClick.authorId =>
+              intelonractionTypelon,
+              IntelonractionDelontails.TwelonelontClickDelontails(twelonelontClick))
+            if intelonractionTypelon == IntelonractionTypelon.TwelonelontClicks &&
+              Somelon(uselonrId) != twelonelontClick.authorId =>
           (
             for {
-              authorId <- tweetClick.authorId
-            } yield {
-              jobCounters.tweetClickFeaturesInc()
-              FeatureKey(userId, authorId, FeatureName.NumTweetClicks) -> DefaultFeatureValue
+              authorId <- twelonelontClick.authorId
+            } yielonld {
+              jobCountelonrs.twelonelontClickFelonaturelonsInc()
+              FelonaturelonKelony(uselonrId, authorId, FelonaturelonNamelon.NumTwelonelontClicks) -> DelonfaultFelonaturelonValuelon
 
             }
-          ).toSeq
+          ).toSelonq
 
-        case UserInteraction(
-              userId,
+        caselon UselonrIntelonraction(
+              uselonrId,
               _,
-              interactionType,
-              InteractionDetails.LinkClickDetails(linkClick))
-            if interactionType == InteractionType.LinkClicks &&
-              Some(userId) != linkClick.authorId =>
+              intelonractionTypelon,
+              IntelonractionDelontails.LinkClickDelontails(linkClick))
+            if intelonractionTypelon == IntelonractionTypelon.LinkClicks &&
+              Somelon(uselonrId) != linkClick.authorId =>
           (
             for {
               authorId <- linkClick.authorId
-            } yield {
-              jobCounters.linkOpenFeaturesInc()
-              FeatureKey(userId, authorId, FeatureName.NumLinkClicks) -> DefaultFeatureValue
+            } yielonld {
+              jobCountelonrs.linkOpelonnFelonaturelonsInc()
+              FelonaturelonKelony(uselonrId, authorId, FelonaturelonNamelon.NumLinkClicks) -> DelonfaultFelonaturelonValuelon
             }
-          ).toSeq
+          ).toSelonq
 
-        case UserInteraction(
-              userId,
+        caselon UselonrIntelonraction(
+              uselonrId,
               _,
-              interactionType,
-              InteractionDetails.TweetImpressionDetails(tweetImpression))
-            if interactionType == InteractionType.TweetImpressions &&
-              Some(userId) != tweetImpression.authorId =>
+              intelonractionTypelon,
+              IntelonractionDelontails.TwelonelontImprelonssionDelontails(twelonelontImprelonssion))
+            if intelonractionTypelon == IntelonractionTypelon.TwelonelontImprelonssions &&
+              Somelon(uselonrId) != twelonelontImprelonssion.authorId =>
           (
             for {
-              authorId <- tweetImpression.authorId
-              dwellTime <- tweetImpression.dwellTimeInSec
-            } yield {
-              jobCounters.tweetImpressionFeaturesInc()
-              Seq(
-                FeatureKey(
-                  userId,
+              authorId <- twelonelontImprelonssion.authorId
+              dwelonllTimelon <- twelonelontImprelonssion.dwelonllTimelonInSelonc
+            } yielonld {
+              jobCountelonrs.twelonelontImprelonssionFelonaturelonsInc()
+              Selonq(
+                FelonaturelonKelony(
+                  uselonrId,
                   authorId,
-                  FeatureName.NumInspectedStatuses) -> DefaultFeatureValue,
-                FeatureKey(userId, authorId, FeatureName.TotalDwellTime) -> dwellTime.toDouble
+                  FelonaturelonNamelon.NumInspelonctelondStatuselons) -> DelonfaultFelonaturelonValuelon,
+                FelonaturelonKelony(uselonrId, authorId, FelonaturelonNamelon.TotalDwelonllTimelon) -> dwelonllTimelon.toDoublelon
               )
             }
-          ).getOrElse(Nil)
+          ).gelontOrelonlselon(Nil)
 
-        case _ =>
-          jobCounters.catchAllInc()
+        caselon _ =>
+          jobCountelonrs.catchAllInc()
           Nil
       }
-      .sumByKey
-      .collect {
-        case (FeatureKey(srcId, destId, featureName), featureValue) =>
-          InteractionGraphRawInput(
+      .sumByKelony
+      .collelonct {
+        caselon (FelonaturelonKelony(srcId, delonstId, felonaturelonNamelon), felonaturelonValuelon) =>
+          IntelonractionGraphRawInput(
             src = srcId,
-            dst = destId,
-            name = featureName,
-            age = 1,
-            featureValue = featureValue
+            dst = delonstId,
+            namelon = felonaturelonNamelon,
+            agelon = 1,
+            felonaturelonValuelon = felonaturelonValuelon
           )
       }
 
-    val filteredFeatureInput = filterForSafeUsers(unfilteredFeatureInput, safeUsers)
+    val filtelonrelondFelonaturelonInput = filtelonrForSafelonUselonrs(unfiltelonrelondFelonaturelonInput, safelonUselonrs)
 
-    // Calculate the Features
-    FeatureGeneratorUtil.getFeatures(filteredFeatureInput)
+    // Calculatelon thelon Felonaturelons
+    FelonaturelonGelonnelonratorUtil.gelontFelonaturelons(filtelonrelondFelonaturelonInput)
 
   }
 
-  private def filterForSafeUsers(
-    featureInput: SCollection[InteractionGraphRawInput],
-    safeUsers: SCollection[Long]
-  ): SCollection[InteractionGraphRawInput] = {
+  privatelon delonf filtelonrForSafelonUselonrs(
+    felonaturelonInput: SCollelonction[IntelonractionGraphRawInput],
+    safelonUselonrs: SCollelonction[Long]
+  ): SCollelonction[IntelonractionGraphRawInput] = {
 
-    featureInput
-      .keyBy(_.src)
-      .withName("Filter out unsafe users")
-      .intersectByKey(safeUsers)
-      .values // Fetch only InteractionGraphRawInput
-      .keyBy(_.dst)
-      .withName("Filter out unsafe authors")
-      .intersectByKey(safeUsers)
-      .values // Fetch only InteractionGraphRawInput
+    felonaturelonInput
+      .kelonyBy(_.src)
+      .withNamelon("Filtelonr out unsafelon uselonrs")
+      .intelonrselonctByKelony(safelonUselonrs)
+      .valuelons // Felontch only IntelonractionGraphRawInput
+      .kelonyBy(_.dst)
+      .withNamelon("Filtelonr out unsafelon authors")
+      .intelonrselonctByKelony(safelonUselonrs)
+      .valuelons // Felontch only IntelonractionGraphRawInput
   }
 
 }

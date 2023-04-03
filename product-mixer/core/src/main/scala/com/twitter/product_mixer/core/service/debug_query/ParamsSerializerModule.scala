@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.service.debug_query
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.delonbug_quelonry
 
-import com.fasterxml.jackson.core.JsonGenerator
-import com.fasterxml.jackson.databind.SerializerProvider
-import com.fasterxml.jackson.databind.ser.std.StdSerializer
-import com.twitter.timelines.configapi.Params
-import com.fasterxml.jackson.databind.module.SimpleModule
-import com.twitter.timelines.configapi.Config
+import com.fastelonrxml.jackson.corelon.JsonGelonnelonrator
+import com.fastelonrxml.jackson.databind.SelonrializelonrProvidelonr
+import com.fastelonrxml.jackson.databind.selonr.std.StdSelonrializelonr
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.fastelonrxml.jackson.databind.modulelon.SimplelonModulelon
+import com.twittelonr.timelonlinelons.configapi.Config
 
-object ParamsSerializerModule extends SimpleModule {
-  addSerializer(ParamsConfigSerializer)
-  addSerializer(ParamsStdSerializer)
+objelonct ParamsSelonrializelonrModulelon elonxtelonnds SimplelonModulelon {
+  addSelonrializelonr(ParamsConfigSelonrializelonr)
+  addSelonrializelonr(ParamsStdSelonrializelonr)
 }
 
-object ParamsStdSerializer extends StdSerializer[Params](classOf[Params]) {
-  override def serialize(
-    value: Params,
-    gen: JsonGenerator,
-    provider: SerializerProvider
+objelonct ParamsStdSelonrializelonr elonxtelonnds StdSelonrializelonr[Params](classOf[Params]) {
+  ovelonrridelon delonf selonrializelon(
+    valuelon: Params,
+    gelonn: JsonGelonnelonrator,
+    providelonr: SelonrializelonrProvidelonr
   ): Unit = {
-    gen.writeStartObject()
-    gen.writeObjectField("applied_params", value.allAppliedValues)
-    gen.writeEndObject()
+    gelonn.writelonStartObjelonct()
+    gelonn.writelonObjelonctFielonld("applielond_params", valuelon.allApplielondValuelons)
+    gelonn.writelonelonndObjelonct()
   }
 }
 
-object ParamsConfigSerializer extends StdSerializer[Config](classOf[Config]) {
-  override def serialize(
-    value: Config,
-    gen: JsonGenerator,
-    provider: SerializerProvider
+objelonct ParamsConfigSelonrializelonr elonxtelonnds StdSelonrializelonr[Config](classOf[Config]) {
+  ovelonrridelon delonf selonrializelon(
+    valuelon: Config,
+    gelonn: JsonGelonnelonrator,
+    providelonr: SelonrializelonrProvidelonr
   ): Unit = {
-    gen.writeString(value.simpleName)
+    gelonn.writelonString(valuelon.simplelonNamelon)
   }
 }

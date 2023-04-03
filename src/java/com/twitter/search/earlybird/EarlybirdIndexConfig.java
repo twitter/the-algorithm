@@ -1,190 +1,190 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelondicatelon;
+import com.googlelon.common.baselon.Prelondicatelons;
 
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.indelonx.IndelonxWritelonrConfig;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.schema.base.Schema.SchemaValidationException;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdSchemaCreateTool;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.CloseResourceUtil;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsFactory;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.ThriftIndexingEventDocumentFactory;
-import com.twitter.search.earlybird.document.ThriftIndexingEventUpdateFactory;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentSyncInfo;
-import com.twitter.search.earlybird.partition.UserPartitionUtil;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.schelonma.DynamicSchelonma;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma.SchelonmaValidationelonxcelonption;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdSchelonmaCrelonatelonTool;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.util.CloselonRelonsourcelonUtil;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdIndelonxelonxtelonnsionsFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.DocumelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.ThriftIndelonxingelonvelonntDocumelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.ThriftIndelonxingelonvelonntUpdatelonFactory;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.UselonrPartitionUtil;
 
 /**
- * Collection of required indexing entities that differ in the various Earlybird clusters.
+ * Collelonction of relonquirelond indelonxing elonntitielons that diffelonr in thelon various elonarlybird clustelonrs.
  */
-public abstract class EarlybirdIndexConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdIndexConfig.class);
+public abstract class elonarlybirdIndelonxConfig {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdIndelonxConfig.class);
 
-  private final EarlybirdCluster cluster;
-  private final DynamicSchema schema;
-  private final Decider decider;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  protected final CriticalExceptionHandler criticalExceptionHandler;
+  privatelon final elonarlybirdClustelonr clustelonr;
+  privatelon final DynamicSchelonma schelonma;
+  privatelon final Deloncidelonr deloncidelonr;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
+  protelonctelond final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
 
   /**
-   * Creates a new index config using an applicable schema built for the provided cluster.
+   * Crelonatelons a nelonw indelonx config using an applicablelon schelonma built for thelon providelond clustelonr.
    */
-  protected EarlybirdIndexConfig(
-      EarlybirdCluster cluster, Decider decider, SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(cluster, buildSchema(cluster), decider, searchIndexingMetricSet,
-        criticalExceptionHandler);
+  protelonctelond elonarlybirdIndelonxConfig(
+      elonarlybirdClustelonr clustelonr, Deloncidelonr deloncidelonr, SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    this(clustelonr, buildSchelonma(clustelonr), deloncidelonr, selonarchIndelonxingMelontricSelont,
+        criticalelonxcelonptionHandlelonr);
   }
 
-  @VisibleForTesting
-  protected EarlybirdIndexConfig(
-      EarlybirdCluster cluster,
-      DynamicSchema schema,
-      Decider decider,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this.cluster = cluster;
-    this.schema = schema;
-    this.decider = decider;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    LOG.info("This Earlybird uses index config: " + this.getClass().getSimpleName());
+  @VisiblelonForTelonsting
+  protelonctelond elonarlybirdIndelonxConfig(
+      elonarlybirdClustelonr clustelonr,
+      DynamicSchelonma schelonma,
+      Deloncidelonr deloncidelonr,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    this.clustelonr = clustelonr;
+    this.schelonma = schelonma;
+    this.deloncidelonr = deloncidelonr;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
+    LOG.info("This elonarlybird uselons indelonx config: " + this.gelontClass().gelontSimplelonNamelon());
   }
 
-  private static DynamicSchema buildSchema(EarlybirdCluster cluster) {
+  privatelon static DynamicSchelonma buildSchelonma(elonarlybirdClustelonr clustelonr) {
     try {
-      return EarlybirdSchemaCreateTool.buildSchema(cluster);
-    } catch (SchemaValidationException e) {
-      throw new RuntimeException(e);
+      relonturn elonarlybirdSchelonmaCrelonatelonTool.buildSchelonma(clustelonr);
+    } catch (SchelonmaValidationelonxcelonption elon) {
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 
   /**
-   * Creates the appropriate document factory for this earlybird.
+   * Crelonatelons thelon appropriatelon documelonnt factory for this elonarlybird.
    */
-  public final DocumentFactory<ThriftIndexingEvent> createDocumentFactory() {
-    return new ThriftIndexingEventDocumentFactory(
-        getSchema(), getCluster(), decider, searchIndexingMetricSet,
-        criticalExceptionHandler);
+  public final DocumelonntFactory<ThriftIndelonxingelonvelonnt> crelonatelonDocumelonntFactory() {
+    relonturn nelonw ThriftIndelonxingelonvelonntDocumelonntFactory(
+        gelontSchelonma(), gelontClustelonr(), deloncidelonr, selonarchIndelonxingMelontricSelont,
+        criticalelonxcelonptionHandlelonr);
   }
 
   /**
-   * Creates a document factory for ThriftIndexingEvents that are updates to the index.
+   * Crelonatelons a documelonnt factory for ThriftIndelonxingelonvelonnts that arelon updatelons to thelon indelonx.
    */
-  public final DocumentFactory<ThriftIndexingEvent> createUpdateFactory() {
-    return new ThriftIndexingEventUpdateFactory(
-        getSchema(), getCluster(), decider, criticalExceptionHandler);
+  public final DocumelonntFactory<ThriftIndelonxingelonvelonnt> crelonatelonUpdatelonFactory() {
+    relonturn nelonw ThriftIndelonxingelonvelonntUpdatelonFactory(
+        gelontSchelonma(), gelontClustelonr(), deloncidelonr, criticalelonxcelonptionHandlelonr);
   }
 
   /**
-   * Return the EarlybirdCluster enum identifying the cluster this config is for.
+   * Relonturn thelon elonarlybirdClustelonr elonnum idelonntifying thelon clustelonr this config is for.
    */
-  public final EarlybirdCluster getCluster() {
-    return cluster;
+  public final elonarlybirdClustelonr gelontClustelonr() {
+    relonturn clustelonr;
   }
 
   /**
-   * Return the default filter for UserUpdatesTable - for the archive cluster keep
-   * users that belong to the current partition.
+   * Relonturn thelon delonfault filtelonr for UselonrUpdatelonsTablelon - for thelon archivelon clustelonr kelonelonp
+   * uselonrs that belonlong to thelon currelonnt partition.
    */
-  public final Predicate<Long> getUserTableFilter(PartitionConfig partitionConfig) {
-    if (EarlybirdCluster.isArchive(getCluster())) {
-      return UserPartitionUtil.filterUsersByPartitionPredicate(partitionConfig);
+  public final Prelondicatelon<Long> gelontUselonrTablelonFiltelonr(PartitionConfig partitionConfig) {
+    if (elonarlybirdClustelonr.isArchivelon(gelontClustelonr())) {
+      relonturn UselonrPartitionUtil.filtelonrUselonrsByPartitionPrelondicatelon(partitionConfig);
     }
 
-    return Predicates.alwaysTrue();
+    relonturn Prelondicatelons.alwaysTruelon();
   }
 
   /**
-   * Creates a new Lucene {@link Directory} to be used for indexing documents.
+   * Crelonatelons a nelonw Lucelonnelon {@link Direlonctory} to belon uselond for indelonxing documelonnts.
    */
-  public abstract Directory newLuceneDirectory(SegmentSyncInfo segmentSyncInfo) throws IOException;
+  public abstract Direlonctory nelonwLucelonnelonDirelonctory(SelongmelonntSyncInfo selongmelonntSyncInfo) throws IOelonxcelonption;
 
   /**
-   * Creates a new Lucene IndexWriterConfig that can be used for creating a segment writer for a
-   * new segment.
+   * Crelonatelons a nelonw Lucelonnelon IndelonxWritelonrConfig that can belon uselond for crelonating a selongmelonnt writelonr for a
+   * nelonw selongmelonnt.
    */
-  public abstract IndexWriterConfig newIndexWriterConfig();
+  public abstract IndelonxWritelonrConfig nelonwIndelonxWritelonrConfig();
 
   /**
-   * Creates a new SegmentData object to add documents to.
+   * Crelonatelons a nelonw SelongmelonntData objelonct to add documelonnts to.
    */
-  public abstract EarlybirdIndexSegmentData newSegmentData(
-      int maxSegmentSize,
-      long timeSliceID,
-      Directory dir,
-      EarlybirdIndexExtensionsFactory extensionsFactory);
+  public abstract elonarlybirdIndelonxSelongmelonntData nelonwSelongmelonntData(
+      int maxSelongmelonntSizelon,
+      long timelonSlicelonID,
+      Direlonctory dir,
+      elonarlybirdIndelonxelonxtelonnsionsFactory elonxtelonnsionsFactory);
 
   /**
-   * Loads a flushed index for the given segment.
+   * Loads a flushelond indelonx for thelon givelonn selongmelonnt.
    */
-  public abstract EarlybirdIndexSegmentData loadSegmentData(
+  public abstract elonarlybirdIndelonxSelongmelonntData loadSelongmelonntData(
       FlushInfo flushInfo,
-      DataDeserializer dataInputStream,
-      Directory dir,
-      EarlybirdIndexExtensionsFactory extensionsFactory) throws IOException;
+      DataDelonselonrializelonr dataInputStrelonam,
+      Direlonctory dir,
+      elonarlybirdIndelonxelonxtelonnsionsFactory elonxtelonnsionsFactory) throws IOelonxcelonption;
 
   /**
-   * Creates a new segment optimizer for the given segment data.
+   * Crelonatelons a nelonw selongmelonnt optimizelonr for thelon givelonn selongmelonnt data.
    */
-  public abstract EarlybirdIndexSegmentData optimize(
-      EarlybirdIndexSegmentData earlybirdIndexSegmentData) throws IOException;
+  public abstract elonarlybirdIndelonxSelongmelonntData optimizelon(
+      elonarlybirdIndelonxSelongmelonntData elonarlybirdIndelonxSelongmelonntData) throws IOelonxcelonption;
 
   /**
-   * Whether the index is stored on disk or not. If an index is not on disk, it is presumed to be
-   * in memory.
+   * Whelonthelonr thelon indelonx is storelond on disk or not. If an indelonx is not on disk, it is prelonsumelond to belon
+   * in melonmory.
    */
-  public abstract boolean isIndexStoredOnDisk();
+  public abstract boolelonan isIndelonxStorelondOnDisk();
 
   /**
-   * Whether documents are search in LIFO ordering (RT mode), or default (Lucene) FIFO ordering
+   * Whelonthelonr documelonnts arelon selonarch in LIFO ordelonring (RT modelon), or delonfault (Lucelonnelon) FIFO ordelonring
    */
-  public final boolean isUsingLIFODocumentOrdering() {
-    return !isIndexStoredOnDisk();
+  public final boolelonan isUsingLIFODocumelonntOrdelonring() {
+    relonturn !isIndelonxStorelondOnDisk();
   }
 
   /**
-   * Whether this index supports out-of-order indexing
+   * Whelonthelonr this indelonx supports out-of-ordelonr indelonxing
    */
-  public abstract boolean supportOutOfOrderIndexing();
+  public abstract boolelonan supportOutOfOrdelonrIndelonxing();
 
   /**
-   * Returns a CloseResourceUtil used for closing resources.
+   * Relonturns a CloselonRelonsourcelonUtil uselond for closing relonsourcelons.
    */
-  public abstract CloseResourceUtil getResourceCloser();
+  public abstract CloselonRelonsourcelonUtil gelontRelonsourcelonCloselonr();
 
   /**
-   * Returns the schema for this index configuration.
+   * Relonturns thelon schelonma for this indelonx configuration.
    */
-  public final DynamicSchema getSchema() {
-    return schema;
+  public final DynamicSchelonma gelontSchelonma() {
+    relonturn schelonma;
   }
 
   /**
-   * Returns the decider used by this EarlybirdIndexConfig instance.
+   * Relonturns thelon deloncidelonr uselond by this elonarlybirdIndelonxConfig instancelon.
    */
-  public Decider getDecider() {
-    return decider;
+  public Deloncidelonr gelontDeloncidelonr() {
+    relonturn deloncidelonr;
   }
 
-  public SearchIndexingMetricSet getSearchIndexingMetricSet() {
-    return searchIndexingMetricSet;
+  public SelonarchIndelonxingMelontricSelont gelontSelonarchIndelonxingMelontricSelont() {
+    relonturn selonarchIndelonxingMelontricSelont;
   }
 }

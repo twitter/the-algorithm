@@ -1,150 +1,150 @@
-package com.twitter.recosinjector.event_processors
+packagelon com.twittelonr.reloncosinjelonctor.elonvelonnt_procelonssors
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.recosinjector.clients.Tweetypie
-import com.twitter.recosinjector.decider.RecosInjectorDecider
-import com.twitter.recosinjector.decider.RecosInjectorDeciderConstants
-import com.twitter.recosinjector.edges.TimelineEventToUserTweetEntityGraphBuilder
-import com.twitter.recosinjector.filters.TweetFilter
-import com.twitter.recosinjector.filters.UserFilter
-import com.twitter.recosinjector.publishers.KafkaEventPublisher
-import com.twitter.recosinjector.util.TweetDetails
-import com.twitter.recosinjector.util.TweetFavoriteEventDetails
-import com.twitter.recosinjector.util.UserTweetEngagement
-import com.twitter.scrooge.ThriftStructCodec
-import com.twitter.timelineservice.thriftscala.FavoriteEvent
-import com.twitter.timelineservice.thriftscala.UnfavoriteEvent
-import com.twitter.timelineservice.thriftscala.{Event => TimelineEvent}
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.util.Action
+import com.twittelonr.reloncosinjelonctor.clielonnts.Gizmoduck
+import com.twittelonr.reloncosinjelonctor.clielonnts.Twelonelontypielon
+import com.twittelonr.reloncosinjelonctor.deloncidelonr.ReloncosInjelonctorDeloncidelonr
+import com.twittelonr.reloncosinjelonctor.deloncidelonr.ReloncosInjelonctorDeloncidelonrConstants
+import com.twittelonr.reloncosinjelonctor.elondgelons.TimelonlinelonelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr
+import com.twittelonr.reloncosinjelonctor.filtelonrs.TwelonelontFiltelonr
+import com.twittelonr.reloncosinjelonctor.filtelonrs.UselonrFiltelonr
+import com.twittelonr.reloncosinjelonctor.publishelonrs.KafkaelonvelonntPublishelonr
+import com.twittelonr.reloncosinjelonctor.util.TwelonelontDelontails
+import com.twittelonr.reloncosinjelonctor.util.TwelonelontFavoritelonelonvelonntDelontails
+import com.twittelonr.reloncosinjelonctor.util.UselonrTwelonelontelonngagelonmelonnt
+import com.twittelonr.scroogelon.ThriftStructCodelonc
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.Favoritelonelonvelonnt
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.Unfavoritelonelonvelonnt
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.{elonvelonnt => Timelonlinelonelonvelonnt}
+import com.twittelonr.util.Futurelon
 
 /**
- * Processor for Timeline events, such as Favorite (liking) tweets
+ * Procelonssor for Timelonlinelon elonvelonnts, such as Favoritelon (liking) twelonelonts
  */
-class TimelineEventProcessor(
-  override val eventBusStreamName: String,
-  override val thriftStruct: ThriftStructCodec[TimelineEvent],
-  override val serviceIdentifier: ServiceIdentifier,
-  kafkaEventPublisher: KafkaEventPublisher,
-  userTweetEntityGraphTopic: String,
-  userTweetEntityGraphMessageBuilder: TimelineEventToUserTweetEntityGraphBuilder,
-  decider: RecosInjectorDecider,
+class TimelonlinelonelonvelonntProcelonssor(
+  ovelonrridelon val elonvelonntBusStrelonamNamelon: String,
+  ovelonrridelon val thriftStruct: ThriftStructCodelonc[Timelonlinelonelonvelonnt],
+  ovelonrridelon val selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+  kafkaelonvelonntPublishelonr: KafkaelonvelonntPublishelonr,
+  uselonrTwelonelontelonntityGraphTopic: String,
+  uselonrTwelonelontelonntityGraphMelonssagelonBuildelonr: TimelonlinelonelonvelonntToUselonrTwelonelontelonntityGraphBuildelonr,
+  deloncidelonr: ReloncosInjelonctorDeloncidelonr,
   gizmoduck: Gizmoduck,
-  tweetypie: Tweetypie
+  twelonelontypielon: Twelonelontypielon
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventBusProcessor[TimelineEvent] {
+  ovelonrridelon implicit val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonvelonntBusProcelonssor[Timelonlinelonelonvelonnt] {
 
-  private val processEventDeciderCounter = statsReceiver.counter("num_process_timeline_event")
-  private val numFavoriteEventCounter = statsReceiver.counter("num_favorite_event")
-  private val numUnFavoriteEventCounter = statsReceiver.counter("num_unfavorite_event")
-  private val numNotFavoriteEventCounter = statsReceiver.counter("num_not_favorite_event")
+  privatelon val procelonsselonvelonntDeloncidelonrCountelonr = statsReloncelonivelonr.countelonr("num_procelonss_timelonlinelon_elonvelonnt")
+  privatelon val numFavoritelonelonvelonntCountelonr = statsReloncelonivelonr.countelonr("num_favoritelon_elonvelonnt")
+  privatelon val numUnFavoritelonelonvelonntCountelonr = statsReloncelonivelonr.countelonr("num_unfavoritelon_elonvelonnt")
+  privatelon val numNotFavoritelonelonvelonntCountelonr = statsReloncelonivelonr.countelonr("num_not_favoritelon_elonvelonnt")
 
-  private val numSelfFavoriteCounter = statsReceiver.counter("num_self_favorite_event")
-  private val numNullCastTweetCounter = statsReceiver.counter("num_null_cast_tweet")
-  private val numTweetFailSafetyLevelCounter = statsReceiver.counter("num_fail_tweetypie_safety")
-  private val numFavoriteUserUnsafeCounter = statsReceiver.counter("num_favorite_user_unsafe")
-  private val engageUserFilter = new UserFilter(gizmoduck)(statsReceiver.scope("engage_user"))
-  private val tweetFilter = new TweetFilter(tweetypie)
+  privatelon val numSelonlfFavoritelonCountelonr = statsReloncelonivelonr.countelonr("num_selonlf_favoritelon_elonvelonnt")
+  privatelon val numNullCastTwelonelontCountelonr = statsReloncelonivelonr.countelonr("num_null_cast_twelonelont")
+  privatelon val numTwelonelontFailSafelontyLelonvelonlCountelonr = statsReloncelonivelonr.countelonr("num_fail_twelonelontypielon_safelonty")
+  privatelon val numFavoritelonUselonrUnsafelonCountelonr = statsReloncelonivelonr.countelonr("num_favoritelon_uselonr_unsafelon")
+  privatelon val elonngagelonUselonrFiltelonr = nelonw UselonrFiltelonr(gizmoduck)(statsReloncelonivelonr.scopelon("elonngagelon_uselonr"))
+  privatelon val twelonelontFiltelonr = nelonw TwelonelontFiltelonr(twelonelontypielon)
 
-  private val numProcessFavorite = statsReceiver.counter("num_process_favorite")
-  private val numNoProcessFavorite = statsReceiver.counter("num_no_process_favorite")
+  privatelon val numProcelonssFavoritelon = statsReloncelonivelonr.countelonr("num_procelonss_favoritelon")
+  privatelon val numNoProcelonssFavoritelon = statsReloncelonivelonr.countelonr("num_no_procelonss_favoritelon")
 
-  private def getFavoriteEventDetails(
-    favoriteEvent: FavoriteEvent
-  ): TweetFavoriteEventDetails = {
+  privatelon delonf gelontFavoritelonelonvelonntDelontails(
+    favoritelonelonvelonnt: Favoritelonelonvelonnt
+  ): TwelonelontFavoritelonelonvelonntDelontails = {
 
-    val engagement = UserTweetEngagement(
-      engageUserId = favoriteEvent.userId,
-      engageUser = favoriteEvent.user,
-      action = Action.Favorite,
-      engagementTimeMillis = Some(favoriteEvent.eventTimeMs),
-      tweetId = favoriteEvent.tweetId, // the tweet, or source tweet if target tweet is a retweet
-      tweetDetails = favoriteEvent.tweet.map(TweetDetails) // tweet always exists
+    val elonngagelonmelonnt = UselonrTwelonelontelonngagelonmelonnt(
+      elonngagelonUselonrId = favoritelonelonvelonnt.uselonrId,
+      elonngagelonUselonr = favoritelonelonvelonnt.uselonr,
+      action = Action.Favoritelon,
+      elonngagelonmelonntTimelonMillis = Somelon(favoritelonelonvelonnt.elonvelonntTimelonMs),
+      twelonelontId = favoritelonelonvelonnt.twelonelontId, // thelon twelonelont, or sourcelon twelonelont if targelont twelonelont is a relontwelonelont
+      twelonelontDelontails = favoritelonelonvelonnt.twelonelont.map(TwelonelontDelontails) // twelonelont always elonxists
     )
-    TweetFavoriteEventDetails(userTweetEngagement = engagement)
+    TwelonelontFavoritelonelonvelonntDelontails(uselonrTwelonelontelonngagelonmelonnt = elonngagelonmelonnt)
   }
 
-  private def getUnfavoriteEventDetails(
-    unfavoriteEvent: UnfavoriteEvent
-  ): TweetFavoriteEventDetails = {
-    val engagement = UserTweetEngagement(
-      engageUserId = unfavoriteEvent.userId,
-      engageUser = unfavoriteEvent.user,
-      action = Action.Unfavorite,
-      engagementTimeMillis = Some(unfavoriteEvent.eventTimeMs),
-      tweetId = unfavoriteEvent.tweetId, // the tweet, or source tweet if target tweet is a retweet
-      tweetDetails = unfavoriteEvent.tweet.map(TweetDetails) // tweet always exists
+  privatelon delonf gelontUnfavoritelonelonvelonntDelontails(
+    unfavoritelonelonvelonnt: Unfavoritelonelonvelonnt
+  ): TwelonelontFavoritelonelonvelonntDelontails = {
+    val elonngagelonmelonnt = UselonrTwelonelontelonngagelonmelonnt(
+      elonngagelonUselonrId = unfavoritelonelonvelonnt.uselonrId,
+      elonngagelonUselonr = unfavoritelonelonvelonnt.uselonr,
+      action = Action.Unfavoritelon,
+      elonngagelonmelonntTimelonMillis = Somelon(unfavoritelonelonvelonnt.elonvelonntTimelonMs),
+      twelonelontId = unfavoritelonelonvelonnt.twelonelontId, // thelon twelonelont, or sourcelon twelonelont if targelont twelonelont is a relontwelonelont
+      twelonelontDelontails = unfavoritelonelonvelonnt.twelonelont.map(TwelonelontDelontails) // twelonelont always elonxists
     )
-    TweetFavoriteEventDetails(userTweetEngagement = engagement)
+    TwelonelontFavoritelonelonvelonntDelontails(uselonrTwelonelontelonngagelonmelonnt = elonngagelonmelonnt)
   }
 
-  private def shouldProcessFavoriteEvent(event: TweetFavoriteEventDetails): Future[Boolean] = {
-    val engagement = event.userTweetEngagement
-    val engageUserId = engagement.engageUserId
-    val tweetId = engagement.tweetId
-    val authorIdOpt = engagement.tweetDetails.flatMap(_.authorId)
+  privatelon delonf shouldProcelonssFavoritelonelonvelonnt(elonvelonnt: TwelonelontFavoritelonelonvelonntDelontails): Futurelon[Boolelonan] = {
+    val elonngagelonmelonnt = elonvelonnt.uselonrTwelonelontelonngagelonmelonnt
+    val elonngagelonUselonrId = elonngagelonmelonnt.elonngagelonUselonrId
+    val twelonelontId = elonngagelonmelonnt.twelonelontId
+    val authorIdOpt = elonngagelonmelonnt.twelonelontDelontails.flatMap(_.authorId)
 
-    val isSelfFavorite = authorIdOpt.contains(engageUserId)
-    val isNullCastTweet = engagement.tweetDetails.forall(_.isNullCastTweet)
-    val isEngageUserSafeFut = engageUserFilter.filterByUserId(engageUserId)
-    val isTweetPassSafetyFut = tweetFilter.filterForTweetypieSafetyLevel(tweetId)
+    val isSelonlfFavoritelon = authorIdOpt.contains(elonngagelonUselonrId)
+    val isNullCastTwelonelont = elonngagelonmelonnt.twelonelontDelontails.forall(_.isNullCastTwelonelont)
+    val iselonngagelonUselonrSafelonFut = elonngagelonUselonrFiltelonr.filtelonrByUselonrId(elonngagelonUselonrId)
+    val isTwelonelontPassSafelontyFut = twelonelontFiltelonr.filtelonrForTwelonelontypielonSafelontyLelonvelonl(twelonelontId)
 
-    Future.join(isEngageUserSafeFut, isTweetPassSafetyFut).map {
-      case (isEngageUserSafe, isTweetPassSafety) =>
-        if (isSelfFavorite) numSelfFavoriteCounter.incr()
-        if (isNullCastTweet) numNullCastTweetCounter.incr()
-        if (!isEngageUserSafe) numFavoriteUserUnsafeCounter.incr()
-        if (!isTweetPassSafety) numTweetFailSafetyLevelCounter.incr()
+    Futurelon.join(iselonngagelonUselonrSafelonFut, isTwelonelontPassSafelontyFut).map {
+      caselon (iselonngagelonUselonrSafelon, isTwelonelontPassSafelonty) =>
+        if (isSelonlfFavoritelon) numSelonlfFavoritelonCountelonr.incr()
+        if (isNullCastTwelonelont) numNullCastTwelonelontCountelonr.incr()
+        if (!iselonngagelonUselonrSafelon) numFavoritelonUselonrUnsafelonCountelonr.incr()
+        if (!isTwelonelontPassSafelonty) numTwelonelontFailSafelontyLelonvelonlCountelonr.incr()
 
-        !isSelfFavorite && !isNullCastTweet && isEngageUserSafe && isTweetPassSafety
+        !isSelonlfFavoritelon && !isNullCastTwelonelont && iselonngagelonUselonrSafelon && isTwelonelontPassSafelonty
     }
   }
 
-  private def processFavoriteEvent(favoriteEvent: FavoriteEvent): Future[Unit] = {
-    val eventDetails = getFavoriteEventDetails(favoriteEvent)
-    shouldProcessFavoriteEvent(eventDetails).map {
-      case true =>
-        numProcessFavorite.incr()
-        // Convert the event for UserTweetEntityGraph
-        userTweetEntityGraphMessageBuilder.processEvent(eventDetails).map { edges =>
-          edges.foreach { edge =>
-            kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userTweetEntityGraphTopic)
+  privatelon delonf procelonssFavoritelonelonvelonnt(favoritelonelonvelonnt: Favoritelonelonvelonnt): Futurelon[Unit] = {
+    val elonvelonntDelontails = gelontFavoritelonelonvelonntDelontails(favoritelonelonvelonnt)
+    shouldProcelonssFavoritelonelonvelonnt(elonvelonntDelontails).map {
+      caselon truelon =>
+        numProcelonssFavoritelon.incr()
+        // Convelonrt thelon elonvelonnt for UselonrTwelonelontelonntityGraph
+        uselonrTwelonelontelonntityGraphMelonssagelonBuildelonr.procelonsselonvelonnt(elonvelonntDelontails).map { elondgelons =>
+          elondgelons.forelonach { elondgelon =>
+            kafkaelonvelonntPublishelonr.publish(elondgelon.convelonrtToReloncosHoselonMelonssagelon, uselonrTwelonelontelonntityGraphTopic)
           }
         }
-      case false =>
-        numNoProcessFavorite.incr()
+      caselon falselon =>
+        numNoProcelonssFavoritelon.incr()
     }
   }
 
-  private def processUnFavoriteEvent(unFavoriteEvent: UnfavoriteEvent): Future[Unit] = {
-    if (decider.isAvailable(RecosInjectorDeciderConstants.EnableUnfavoriteEdge)) {
-      val eventDetails = getUnfavoriteEventDetails(unFavoriteEvent)
-      // Convert the event for UserTweetEntityGraph
-      userTweetEntityGraphMessageBuilder.processEvent(eventDetails).map { edges =>
-        edges.foreach { edge =>
-          kafkaEventPublisher.publish(edge.convertToRecosHoseMessage, userTweetEntityGraphTopic)
+  privatelon delonf procelonssUnFavoritelonelonvelonnt(unFavoritelonelonvelonnt: Unfavoritelonelonvelonnt): Futurelon[Unit] = {
+    if (deloncidelonr.isAvailablelon(ReloncosInjelonctorDeloncidelonrConstants.elonnablelonUnfavoritelonelondgelon)) {
+      val elonvelonntDelontails = gelontUnfavoritelonelonvelonntDelontails(unFavoritelonelonvelonnt)
+      // Convelonrt thelon elonvelonnt for UselonrTwelonelontelonntityGraph
+      uselonrTwelonelontelonntityGraphMelonssagelonBuildelonr.procelonsselonvelonnt(elonvelonntDelontails).map { elondgelons =>
+        elondgelons.forelonach { elondgelon =>
+          kafkaelonvelonntPublishelonr.publish(elondgelon.convelonrtToReloncosHoselonMelonssagelon, uselonrTwelonelontelonntityGraphTopic)
         }
       }
-    } else {
-      Future.Unit
+    } elonlselon {
+      Futurelon.Unit
     }
   }
 
-  override def processEvent(event: TimelineEvent): Future[Unit] = {
-    processEventDeciderCounter.incr()
-    event match {
-      case TimelineEvent.Favorite(favoriteEvent: FavoriteEvent) =>
-        numFavoriteEventCounter.incr()
-        processFavoriteEvent(favoriteEvent)
-      case TimelineEvent.Unfavorite(unFavoriteEvent: UnfavoriteEvent) =>
-        numUnFavoriteEventCounter.incr()
-        processUnFavoriteEvent(unFavoriteEvent)
-      case _ =>
-        numNotFavoriteEventCounter.incr()
-        Future.Unit
+  ovelonrridelon delonf procelonsselonvelonnt(elonvelonnt: Timelonlinelonelonvelonnt): Futurelon[Unit] = {
+    procelonsselonvelonntDeloncidelonrCountelonr.incr()
+    elonvelonnt match {
+      caselon Timelonlinelonelonvelonnt.Favoritelon(favoritelonelonvelonnt: Favoritelonelonvelonnt) =>
+        numFavoritelonelonvelonntCountelonr.incr()
+        procelonssFavoritelonelonvelonnt(favoritelonelonvelonnt)
+      caselon Timelonlinelonelonvelonnt.Unfavoritelon(unFavoritelonelonvelonnt: Unfavoritelonelonvelonnt) =>
+        numUnFavoritelonelonvelonntCountelonr.incr()
+        procelonssUnFavoritelonelonvelonnt(unFavoritelonelonvelonnt)
+      caselon _ =>
+        numNotFavoritelonelonvelonntCountelonr.incr()
+        Futurelon.Unit
     }
   }
 }

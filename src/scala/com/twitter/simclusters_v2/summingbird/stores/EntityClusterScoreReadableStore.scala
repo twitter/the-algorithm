@@ -1,62 +1,62 @@
-package com.twitter.simclusters_v2.summingbird.stores
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.simclusters_v2.summingbird.common.Implicits.clustersWithScoreMonoid
-import com.twitter.simclusters_v2.summingbird.common.Implicits.clustersWithScoresCodec
-import com.twitter.storehaus.algebra.MergeableStore
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs
-import com.twitter.simclusters_v2.summingbird.common.Implicits
-import com.twitter.simclusters_v2.thriftscala.ClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.FullClusterIdBucket
-import com.twitter.simclusters_v2.thriftscala.MultiModelClustersWithScores
-import com.twitter.simclusters_v2.thriftscala.SimClusterEntity
-import com.twitter.storehaus.Store
-import com.twitter.storehaus_internal.memcache.Memcache
-import com.twitter.strato.client.Client
-import com.twitter.summingbird.batch.BatchID
-import com.twitter.summingbird_internal.bijection.BatchPairImplicits
-import com.twitter.util.Future
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.frigatelon.common.storelon.strato.StratoStorelon
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits.clustelonrsWithScorelonMonoid
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits.clustelonrsWithScorelonsCodelonc
+import com.twittelonr.storelonhaus.algelonbra.MelonrgelonablelonStorelon
+import com.twittelonr.simclustelonrs_v2.summingbird.common.ClielonntConfigs
+import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsWithScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.FullClustelonrIdBuckelont
+import com.twittelonr.simclustelonrs_v2.thriftscala.MultiModelonlClustelonrsWithScorelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrelonntity
+import com.twittelonr.storelonhaus.Storelon
+import com.twittelonr.storelonhaus_intelonrnal.melonmcachelon.Melonmcachelon
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.summingbird.batch.BatchID
+import com.twittelonr.summingbird_intelonrnal.bijelonction.BatchPairImplicits
+import com.twittelonr.util.Futurelon
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
 
-object EntityClusterScoreReadableStore {
+objelonct elonntityClustelonrScorelonRelonadablelonStorelon {
 
-  private[simclusters_v2] final lazy val onlineMergeableStore: (
+  privatelon[simclustelonrs_v2] final lazy val onlinelonMelonrgelonablelonStorelon: (
     String,
-    ServiceIdentifier
-  ) => MergeableStore[
-    ((SimClusterEntity, FullClusterIdBucket), BatchID),
-    ClustersWithScores
-  ] = { (path: String, serviceIdentifier: ServiceIdentifier) =>
-    Memcache
-      .getMemcacheStore[((SimClusterEntity, FullClusterIdBucket), BatchID), ClustersWithScores](
-        ClientConfigs.entityClusterScoreMemcacheConfig(path, serviceIdentifier)
+    SelonrvicelonIdelonntifielonr
+  ) => MelonrgelonablelonStorelon[
+    ((SimClustelonrelonntity, FullClustelonrIdBuckelont), BatchID),
+    ClustelonrsWithScorelons
+  ] = { (path: String, selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr) =>
+    Melonmcachelon
+      .gelontMelonmcachelonStorelon[((SimClustelonrelonntity, FullClustelonrIdBuckelont), BatchID), ClustelonrsWithScorelons](
+        ClielonntConfigs.elonntityClustelonrScorelonMelonmcachelonConfig(path, selonrvicelonIdelonntifielonr)
       )(
-        BatchPairImplicits.keyInjection[(SimClusterEntity, FullClusterIdBucket)](
-          Implicits.entityWithClusterInjection
+        BatchPairImplicits.kelonyInjelonction[(SimClustelonrelonntity, FullClustelonrIdBuckelont)](
+          Implicits.elonntityWithClustelonrInjelonction
         ),
-        clustersWithScoresCodec,
-        clustersWithScoreMonoid
+        clustelonrsWithScorelonsCodelonc,
+        clustelonrsWithScorelonMonoid
       )
   }
 
 }
 
-object MultiModelEntityClusterScoreReadableStore {
+objelonct MultiModelonlelonntityClustelonrScorelonRelonadablelonStorelon {
 
-  private[simclusters_v2] def MultiModelEntityClusterScoreReadableStore(
-    stratoClient: Client,
+  privatelon[simclustelonrs_v2] delonf MultiModelonlelonntityClustelonrScorelonRelonadablelonStorelon(
+    stratoClielonnt: Clielonnt,
     column: String
-  ): Store[EntityClusterId, MultiModelClustersWithScores] = {
-    StratoStore
-      .withUnitView[(SimClusterEntity, Int), MultiModelClustersWithScores](stratoClient, column)
-      .composeKeyMapping(_.toTuple)
+  ): Storelon[elonntityClustelonrId, MultiModelonlClustelonrsWithScorelons] = {
+    StratoStorelon
+      .withUnitVielonw[(SimClustelonrelonntity, Int), MultiModelonlClustelonrsWithScorelons](stratoClielonnt, column)
+      .composelonKelonyMapping(_.toTuplelon)
   }
 
-  case class EntityClusterId(
-    simClusterEntity: SimClusterEntity,
-    clusterIdBucket: Int) {
-    lazy val toTuple: (SimClusterEntity, Int) =
-      (simClusterEntity, clusterIdBucket)
+  caselon class elonntityClustelonrId(
+    simClustelonrelonntity: SimClustelonrelonntity,
+    clustelonrIdBuckelont: Int) {
+    lazy val toTuplelon: (SimClustelonrelonntity, Int) =
+      (simClustelonrelonntity, clustelonrIdBuckelont)
   }
 }

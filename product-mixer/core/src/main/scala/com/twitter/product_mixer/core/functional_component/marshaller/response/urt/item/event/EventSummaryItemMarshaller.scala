@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.event
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.elonvelonnt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ImagelonVariantMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.elonvelonnt.elonvelonntSummaryItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class EventSummaryItemMarshaller @Inject() (
-  eventSummaryDisplayTypeMarshaller: EventSummaryDisplayTypeMarshaller,
-  imageVariantMarshaller: ImageVariantMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class elonvelonntSummaryItelonmMarshallelonr @Injelonct() (
+  elonvelonntSummaryDisplayTypelonMarshallelonr: elonvelonntSummaryDisplayTypelonMarshallelonr,
+  imagelonVariantMarshallelonr: ImagelonVariantMarshallelonr,
+  urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(eventSummary: EventSummaryItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.EventSummary(
-      urt.EventSummary(
-        id = eventSummary.id,
-        title = eventSummary.title,
-        displayType = eventSummaryDisplayTypeMarshaller(eventSummary.displayType),
-        url = urlMarshaller(eventSummary.url),
-        image = eventSummary.image.map(imageVariantMarshaller(_)),
-        timeString = eventSummary.timeString
+  delonf apply(elonvelonntSummary: elonvelonntSummaryItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.elonvelonntSummary(
+      urt.elonvelonntSummary(
+        id = elonvelonntSummary.id,
+        titlelon = elonvelonntSummary.titlelon,
+        displayTypelon = elonvelonntSummaryDisplayTypelonMarshallelonr(elonvelonntSummary.displayTypelon),
+        url = urlMarshallelonr(elonvelonntSummary.url),
+        imagelon = elonvelonntSummary.imagelon.map(imagelonVariantMarshallelonr(_)),
+        timelonString = elonvelonntSummary.timelonString
       )
     )
 }

@@ -1,119 +1,119 @@
-package com.twitter.product_mixer.component_library.model.candidate.trends_events
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.event.EventSummaryDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.GroupedTrend
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.elonvelonnt.elonvelonntSummaryDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.trelonnd.GroupelondTrelonnd
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonVariant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DisclosurelonTypelon
 
 /**
- * An [[UnifiedTrendEventCandidate]] represents a piece of Event or Trend content.
- * The Event and Trend candidate are represented by different types of keys that Event has a Long
- * eventId while Trend has a String trendName.
+ * An [[UnifielondTrelonndelonvelonntCandidatelon]] relonprelonselonnts a pieloncelon of elonvelonnt or Trelonnd contelonnt.
+ * Thelon elonvelonnt and Trelonnd candidatelon arelon relonprelonselonntelond by diffelonrelonnt typelons of kelonys that elonvelonnt has a Long
+ * elonvelonntId whilelon Trelonnd has a String trelonndNamelon.
  */
-sealed trait UnifiedTrendEventCandidate[+T] extends UniversalNoun[T]
+selonalelond trait UnifielondTrelonndelonvelonntCandidatelon[+T] elonxtelonnds UnivelonrsalNoun[T]
 
-final class UnifiedEventCandidate private (
-  override val id: Long)
-    extends UnifiedTrendEventCandidate[Long] {
+final class UnifielondelonvelonntCandidatelon privatelon (
+  ovelonrridelon val id: Long)
+    elonxtelonnds UnifielondTrelonndelonvelonntCandidatelon[Long] {
 
-  override def canEqual(that: Any): Boolean = this.isInstanceOf[UnifiedEventCandidate]
+  ovelonrridelon delonf canelonqual(that: Any): Boolelonan = this.isInstancelonOf[UnifielondelonvelonntCandidatelon]
 
-  override def equals(that: Any): Boolean = {
+  ovelonrridelon delonf elonquals(that: Any): Boolelonan = {
     that match {
-      case candidate: UnifiedEventCandidate =>
+      caselon candidatelon: UnifielondelonvelonntCandidatelon =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id))
+          (this elonq candidatelon)
+            || ((hashCodelon == candidatelon.hashCodelon)
+              && (id == candidatelon.id))
         )
-      case _ => false
+      caselon _ => falselon
     }
   }
 
-  override val hashCode: Int = id.##
+  ovelonrridelon val hashCodelon: Int = id.##
 }
 
-object UnifiedEventCandidate {
-  def apply(id: Long): UnifiedEventCandidate = new UnifiedEventCandidate(id)
+objelonct UnifielondelonvelonntCandidatelon {
+  delonf apply(id: Long): UnifielondelonvelonntCandidatelon = nelonw UnifielondelonvelonntCandidatelon(id)
 }
 
 /**
- * Text description of an Event. Usually this is extracted from curated Event metadata
+ * Telonxt delonscription of an elonvelonnt. Usually this is elonxtractelond from curatelond elonvelonnt melontadata
  */
-object EventTitleFeature extends Feature[UnifiedEventCandidate, String]
+objelonct elonvelonntTitlelonFelonaturelon elonxtelonnds Felonaturelon[UnifielondelonvelonntCandidatelon, String]
 
 /**
- * Display type of an Event. This will be used for client to differentiate if this Event will be
- * displayed as a normal cell, a hero, etc.
+ * Display typelon of an elonvelonnt. This will belon uselond for clielonnt to diffelonrelonntiatelon if this elonvelonnt will belon
+ * displayelond as a normal celonll, a helonro, elontc.
  */
-object EventDisplayType extends Feature[UnifiedEventCandidate, EventSummaryDisplayType]
+objelonct elonvelonntDisplayTypelon elonxtelonnds Felonaturelon[UnifielondelonvelonntCandidatelon, elonvelonntSummaryDisplayTypelon]
 
 /**
- * URL that servces as the landing page of an Event
+ * URL that selonrvcelons as thelon landing pagelon of an elonvelonnt
  */
-object EventUrl extends Feature[UnifiedEventCandidate, Url]
+objelonct elonvelonntUrl elonxtelonnds Felonaturelon[UnifielondelonvelonntCandidatelon, Url]
 
 /**
- * Use to render an Event cell's editorial image
+ * Uselon to relonndelonr an elonvelonnt celonll's elonditorial imagelon
  */
-object EventImage extends Feature[UnifiedEventCandidate, Option[ImageVariant]]
+objelonct elonvelonntImagelon elonxtelonnds Felonaturelon[UnifielondelonvelonntCandidatelon, Option[ImagelonVariant]]
 
 /**
- * Localized time string like "LIVE" or "Last Night" that is used to render the Event cell
+ * Localizelond timelon string likelon "LIVelon" or "Last Night" that is uselond to relonndelonr thelon elonvelonnt celonll
  */
-object EventTimeString extends Feature[UnifiedEventCandidate, Option[String]]
+objelonct elonvelonntTimelonString elonxtelonnds Felonaturelon[UnifielondelonvelonntCandidatelon, Option[String]]
 
-final class UnifiedTrendCandidate private (
-  override val id: String)
-    extends UnifiedTrendEventCandidate[String] {
+final class UnifielondTrelonndCandidatelon privatelon (
+  ovelonrridelon val id: String)
+    elonxtelonnds UnifielondTrelonndelonvelonntCandidatelon[String] {
 
-  override def canEqual(that: Any): Boolean = this.isInstanceOf[UnifiedTrendCandidate]
+  ovelonrridelon delonf canelonqual(that: Any): Boolelonan = this.isInstancelonOf[UnifielondTrelonndCandidatelon]
 
-  override def equals(that: Any): Boolean = {
+  ovelonrridelon delonf elonquals(that: Any): Boolelonan = {
     that match {
-      case candidate: UnifiedTrendCandidate =>
+      caselon candidatelon: UnifielondTrelonndCandidatelon =>
         (
-          (this eq candidate)
-            || ((hashCode == candidate.hashCode)
-              && (id == candidate.id))
+          (this elonq candidatelon)
+            || ((hashCodelon == candidatelon.hashCodelon)
+              && (id == candidatelon.id))
         )
-      case _ => false
+      caselon _ => falselon
     }
   }
 
-  override val hashCode: Int = id.##
+  ovelonrridelon val hashCodelon: Int = id.##
 }
 
-object UnifiedTrendCandidate {
-  def apply(id: String): UnifiedTrendCandidate = new UnifiedTrendCandidate(id)
+objelonct UnifielondTrelonndCandidatelon {
+  delonf apply(id: String): UnifielondTrelonndCandidatelon = nelonw UnifielondTrelonndCandidatelon(id)
 }
 
-object TrendNormalizedTrendName extends Feature[UnifiedTrendCandidate, String]
+objelonct TrelonndNormalizelondTrelonndNamelon elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, String]
 
-object TrendTrendName extends Feature[UnifiedTrendCandidate, String]
+objelonct TrelonndTrelonndNamelon elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, String]
 
-object TrendUrl extends Feature[UnifiedTrendCandidate, Url]
+objelonct TrelonndUrl elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Url]
 
-object TrendDescription extends Feature[UnifiedTrendCandidate, Option[String]]
+objelonct TrelonndDelonscription elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Option[String]]
 
-object TrendTweetCount extends Feature[UnifiedTrendCandidate, Option[Int]]
+objelonct TrelonndTwelonelontCount elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Option[Int]]
 
-object TrendDomainContext extends Feature[UnifiedTrendCandidate, Option[String]]
+objelonct TrelonndDomainContelonxt elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Option[String]]
 
-object TrendGroupedTrends extends Feature[UnifiedTrendCandidate, Option[Seq[GroupedTrend]]]
+objelonct TrelonndGroupelondTrelonnds elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Option[Selonq[GroupelondTrelonnd]]]
 
-object PromotedTrendNameFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+objelonct PromotelondTrelonndNamelonFelonaturelon elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Option[String]]
 
-object PromotedTrendDescriptionFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+objelonct PromotelondTrelonndDelonscriptionFelonaturelon elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Option[String]]
 
-object PromotedTrendAdvertiserNameFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+objelonct PromotelondTrelonndAdvelonrtiselonrNamelonFelonaturelon elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Option[String]]
 
-object PromotedTrendIdFeature extends Feature[UnifiedTrendCandidate, Option[Long]]
+objelonct PromotelondTrelonndIdFelonaturelon elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Option[Long]]
 
-object PromotedTrendDisclosureTypeFeature
-    extends Feature[UnifiedTrendCandidate, Option[DisclosureType]]
+objelonct PromotelondTrelonndDisclosurelonTypelonFelonaturelon
+    elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Option[DisclosurelonTypelon]]
 
-object PromotedTrendImpressionIdFeature extends Feature[UnifiedTrendCandidate, Option[String]]
+objelonct PromotelondTrelonndImprelonssionIdFelonaturelon elonxtelonnds Felonaturelon[UnifielondTrelonndCandidatelon, Option[String]]

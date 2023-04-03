@@ -1,19 +1,19 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.tweetypie.{thriftscala => tweetypie}
-import com.twitter.timelineranker.recap.model.ContentFeatures
+import com.twittelonr.twelonelontypielon.{thriftscala => twelonelontypielon}
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
 
-object TweetAnnotationFeaturesExtractor {
-  def addAnnotationFeaturesFromTweet(
-    inputFeatures: ContentFeatures,
-    tweet: tweetypie.Tweet,
-    hydrateSemanticCoreFeatures: Boolean
-  ): ContentFeatures = {
-    if (hydrateSemanticCoreFeatures) {
-      val annotations = tweet.escherbirdEntityAnnotations.map(_.entityAnnotations)
-      inputFeatures.copy(semanticCoreAnnotations = annotations)
-    } else {
-      inputFeatures
+objelonct TwelonelontAnnotationFelonaturelonselonxtractor {
+  delonf addAnnotationFelonaturelonsFromTwelonelont(
+    inputFelonaturelons: ContelonntFelonaturelons,
+    twelonelont: twelonelontypielon.Twelonelont,
+    hydratelonSelonmanticCorelonFelonaturelons: Boolelonan
+  ): ContelonntFelonaturelons = {
+    if (hydratelonSelonmanticCorelonFelonaturelons) {
+      val annotations = twelonelont.elonschelonrbirdelonntityAnnotations.map(_.elonntityAnnotations)
+      inputFelonaturelons.copy(selonmanticCorelonAnnotations = annotations)
+    } elonlselon {
+      inputFelonaturelons
     }
   }
 }

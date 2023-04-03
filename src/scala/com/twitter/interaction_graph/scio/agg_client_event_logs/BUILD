@@ -1,61 +1,61 @@
 scala_library(
-    name = "agg_client_event_logs",
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    namelon = "agg_clielonnt_elonvelonnt_logs",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        ":interaction_graph_agg_client_event_logs_edge_daily-scala",
-        ":interaction_graph_agg_client_event_logs_vertex_daily-scala",
-        "beam-internal/src/main/scala/com/twitter/beam/io/dal",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/job",
-        "beam-internal/src/main/scala/com/twitter/scio_internal/runner/dataflow",
-        "consumer-data-tools/src/main/scala/com/twitter/cde/scio/dal_read",
-        "src/scala/com/twitter/interaction_graph/scio/common",
-        "src/scala/com/twitter/wtf/scalding/jobs/client_event_processing:user_interaction-scala",
-        "usersource/snapshot/src/main/scala/com/twitter/usersource/snapshot/combined:usersource-scala",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        ":intelonraction_graph_agg_clielonnt_elonvelonnt_logs_elondgelon_daily-scala",
+        ":intelonraction_graph_agg_clielonnt_elonvelonnt_logs_velonrtelonx_daily-scala",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/belonam/io/dal",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/job",
+        "belonam-intelonrnal/src/main/scala/com/twittelonr/scio_intelonrnal/runnelonr/dataflow",
+        "consumelonr-data-tools/src/main/scala/com/twittelonr/cdelon/scio/dal_relonad",
+        "src/scala/com/twittelonr/intelonraction_graph/scio/common",
+        "src/scala/com/twittelonr/wtf/scalding/jobs/clielonnt_elonvelonnt_procelonssing:uselonr_intelonraction-scala",
+        "uselonrsourcelon/snapshot/src/main/scala/com/twittelonr/uselonrsourcelon/snapshot/combinelond:uselonrsourcelon-scala",
     ],
 )
 
 jvm_binary(
-    name = "interaction_graph_client_event_logs_scio",
-    main = "com.twitter.interaction_graph.scio.agg_client_event_logs.InteractionGraphClientEventLogsJob",
+    namelon = "intelonraction_graph_clielonnt_elonvelonnt_logs_scio",
+    main = "com.twittelonr.intelonraction_graph.scio.agg_clielonnt_elonvelonnt_logs.IntelonractionGraphClielonntelonvelonntLogsJob",
     platform = "java8",
-    dependencies = [
-        ":agg_client_event_logs",
+    delonpelonndelonncielons = [
+        ":agg_clielonnt_elonvelonnt_logs",
     ],
 )
 
-create_datasets(
-    base_name = "interaction_graph_agg_client_event_logs_edge_daily",
-    description = "User-user directed edges with client events features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Edge",
+crelonatelon_dataselonts(
+    baselon_namelon = "intelonraction_graph_agg_clielonnt_elonvelonnt_logs_elondgelon_daily",
+    delonscription = "Uselonr-uselonr direlonctelond elondgelons with clielonnt elonvelonnts felonaturelons",
+    java_schelonma = "com.twittelonr.intelonraction_graph.thriftjava.elondgelon",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Edge",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.intelonraction_graph.thriftscala.elondgelon",
+    selongmelonnt_typelon = "partitionelond",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/intelonraction_graph:intelonraction_graph-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/intelonraction_graph:intelonraction_graph-scala",
     ],
 )
 
-create_datasets(
-    base_name = "interaction_graph_agg_client_event_logs_vertex_daily",
-    description = "User vertex with client events features",
-    java_schema = "com.twitter.interaction_graph.thriftjava.Vertex",
+crelonatelon_dataselonts(
+    baselon_namelon = "intelonraction_graph_agg_clielonnt_elonvelonnt_logs_velonrtelonx_daily",
+    delonscription = "Uselonr velonrtelonx with clielonnt elonvelonnts felonaturelons",
+    java_schelonma = "com.twittelonr.intelonraction_graph.thriftjava.Velonrtelonx",
     platform = "java8",
-    role = "cassowary",
-    scala_schema = "com.twitter.interaction_graph.thriftscala.Vertex",
-    segment_type = "partitioned",
-    tags = ["bazel-compatible"],
-    java_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-java",
+    rolelon = "cassowary",
+    scala_schelonma = "com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx",
+    selongmelonnt_typelon = "partitionelond",
+    tags = ["bazelonl-compatiblelon"],
+    java_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/intelonraction_graph:intelonraction_graph-java",
     ],
-    scala_dependencies = [
-        "src/thrift/com/twitter/interaction_graph:interaction_graph-scala",
+    scala_delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/intelonraction_graph:intelonraction_graph-scala",
     ],
 )

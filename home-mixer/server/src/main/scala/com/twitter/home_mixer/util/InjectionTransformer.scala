@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.util
+packagelon com.twittelonr.homelon_mixelonr.util
 
-import com.twitter.bijection.Injection
-import com.twitter.io.Buf
-import com.twitter.servo.util.Transformer
-import com.twitter.storage.client.manhattan.bijections.Bijections
-import com.twitter.util.Return
-import com.twitter.util.Try
-import java.nio.ByteBuffer
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.io.Buf
+import com.twittelonr.selonrvo.util.Transformelonr
+import com.twittelonr.storagelon.clielonnt.manhattan.bijelonctions.Bijelonctions
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Try
+import java.nio.BytelonBuffelonr
 
-object InjectionTransformerImplicits {
-  implicit class ByteArrayInjectionToByteBufferTransformer[A](baInj: Injection[A, Array[Byte]]) {
+objelonct InjelonctionTransformelonrImplicits {
+  implicit class BytelonArrayInjelonctionToBytelonBuffelonrTransformelonr[A](baInj: Injelonction[A, Array[Bytelon]]) {
 
-    private val bbInj: Injection[A, ByteBuffer] = baInj
-      .andThen(Bijections.byteArray2Buf)
-      .andThen(Bijections.byteBuffer2Buf.inverse)
+    privatelon val bbInj: Injelonction[A, BytelonBuffelonr] = baInj
+      .andThelonn(Bijelonctions.bytelonArray2Buf)
+      .andThelonn(Bijelonctions.bytelonBuffelonr2Buf.invelonrselon)
 
-    def toByteBufferTransformer(): Transformer[A, ByteBuffer] = new InjectionTransformer(bbInj)
-    def toByteArrayTransformer(): Transformer[A, Array[Byte]] = new InjectionTransformer(baInj)
+    delonf toBytelonBuffelonrTransformelonr(): Transformelonr[A, BytelonBuffelonr] = nelonw InjelonctionTransformelonr(bbInj)
+    delonf toBytelonArrayTransformelonr(): Transformelonr[A, Array[Bytelon]] = nelonw InjelonctionTransformelonr(baInj)
   }
 
-  implicit class BufInjectionToByteBufferTransformer[A](bufInj: Injection[A, Buf]) {
+  implicit class BufInjelonctionToBytelonBuffelonrTransformelonr[A](bufInj: Injelonction[A, Buf]) {
 
-    private val bbInj: Injection[A, ByteBuffer] = bufInj.andThen(Bijections.byteBuffer2Buf.inverse)
-    private val baInj: Injection[A, Array[Byte]] = bufInj.andThen(Bijections.byteArray2Buf.inverse)
+    privatelon val bbInj: Injelonction[A, BytelonBuffelonr] = bufInj.andThelonn(Bijelonctions.bytelonBuffelonr2Buf.invelonrselon)
+    privatelon val baInj: Injelonction[A, Array[Bytelon]] = bufInj.andThelonn(Bijelonctions.bytelonArray2Buf.invelonrselon)
 
-    def toByteBufferTransformer(): Transformer[A, ByteBuffer] = new InjectionTransformer(bbInj)
-    def toByteArrayTransformer(): Transformer[A, Array[Byte]] = new InjectionTransformer(baInj)
+    delonf toBytelonBuffelonrTransformelonr(): Transformelonr[A, BytelonBuffelonr] = nelonw InjelonctionTransformelonr(bbInj)
+    delonf toBytelonArrayTransformelonr(): Transformelonr[A, Array[Bytelon]] = nelonw InjelonctionTransformelonr(baInj)
   }
 
-  implicit class ByteBufferInjectionToByteBufferTransformer[A](bbInj: Injection[A, ByteBuffer]) {
+  implicit class BytelonBuffelonrInjelonctionToBytelonBuffelonrTransformelonr[A](bbInj: Injelonction[A, BytelonBuffelonr]) {
 
-    private val baInj: Injection[A, Array[Byte]] = bbInj.andThen(Bijections.bb2ba)
+    privatelon val baInj: Injelonction[A, Array[Bytelon]] = bbInj.andThelonn(Bijelonctions.bb2ba)
 
-    def toByteBufferTransformer(): Transformer[A, ByteBuffer] = new InjectionTransformer(bbInj)
-    def toByteArrayTransformer(): Transformer[A, Array[Byte]] = new InjectionTransformer(baInj)
+    delonf toBytelonBuffelonrTransformelonr(): Transformelonr[A, BytelonBuffelonr] = nelonw InjelonctionTransformelonr(bbInj)
+    delonf toBytelonArrayTransformelonr(): Transformelonr[A, Array[Bytelon]] = nelonw InjelonctionTransformelonr(baInj)
   }
 }
 
-class InjectionTransformer[A, B](inj: Injection[A, B]) extends Transformer[A, B] {
-  override def to(a: A): Try[B] = Return(inj(a))
-  override def from(b: B): Try[A] = Try.fromScala(inj.invert(b))
+class InjelonctionTransformelonr[A, B](inj: Injelonction[A, B]) elonxtelonnds Transformelonr[A, B] {
+  ovelonrridelon delonf to(a: A): Try[B] = Relonturn(inj(a))
+  ovelonrridelon delonf from(b: B): Try[A] = Try.fromScala(inj.invelonrt(b))
 }

@@ -1,55 +1,55 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.NotPinnableReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.PinnableReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.PinnedReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehavior
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorBlockUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorMarkNotInterestedTopic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReplyPinState
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReportList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorReportTweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowTopic
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowTopicV2
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleFollowUser
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteList
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RichFeedbackBehaviorToggleMuteUser
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.NotPinnablelonRelonplyPinStatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.PinnablelonRelonplyPinStatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.PinnelondRelonplyPinStatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhavior
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorBlockUselonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorMarkNotIntelonrelonstelondTopic
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorRelonplyPinStatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorRelonportList
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorRelonportTwelonelont
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorTogglelonFollowTopic
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorTogglelonFollowTopicV2
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorTogglelonFollowUselonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorTogglelonMutelonList
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.RichFelonelondbackBelonhaviorTogglelonMutelonUselonr
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RichFeedbackBehaviorMarshaller @Inject() () {
+@Singlelonton
+class RichFelonelondbackBelonhaviorMarshallelonr @Injelonct() () {
 
-  def apply(richFeedbackBehavior: RichFeedbackBehavior): urt.RichFeedbackBehavior =
-    richFeedbackBehavior match {
-      case RichFeedbackBehaviorReportList(listId, userId) =>
-        urt.RichFeedbackBehavior.ReportList(urt.RichFeedbackBehaviorReportList(listId, userId))
-      case RichFeedbackBehaviorBlockUser(userId) =>
-        urt.RichFeedbackBehavior.BlockUser(urt.RichFeedbackBehaviorBlockUser(userId))
-      case RichFeedbackBehaviorToggleFollowTopic(topicId) =>
-        urt.RichFeedbackBehavior.ToggleFollowTopic(
-          urt.RichFeedbackBehaviorToggleFollowTopic(topicId))
-      case RichFeedbackBehaviorToggleFollowTopicV2(topicId) =>
-        urt.RichFeedbackBehavior.ToggleFollowTopicV2(
-          urt.RichFeedbackBehaviorToggleFollowTopicV2(topicId))
-      case RichFeedbackBehaviorToggleMuteList(listId) =>
-        urt.RichFeedbackBehavior.ToggleMuteList(urt.RichFeedbackBehaviorToggleMuteList(listId))
-      case RichFeedbackBehaviorMarkNotInterestedTopic(topicId) =>
-        urt.RichFeedbackBehavior.MarkNotInterestedTopic(
-          urt.RichFeedbackBehaviorMarkNotInterestedTopic(topicId))
-      case RichFeedbackBehaviorReplyPinState(replyPinState) =>
-        val pinState: urt.ReplyPinState = replyPinState match {
-          case PinnedReplyPinState => urt.ReplyPinState.Pinned
-          case PinnableReplyPinState => urt.ReplyPinState.Pinnable
-          case NotPinnableReplyPinState => urt.ReplyPinState.NotPinnable
+  delonf apply(richFelonelondbackBelonhavior: RichFelonelondbackBelonhavior): urt.RichFelonelondbackBelonhavior =
+    richFelonelondbackBelonhavior match {
+      caselon RichFelonelondbackBelonhaviorRelonportList(listId, uselonrId) =>
+        urt.RichFelonelondbackBelonhavior.RelonportList(urt.RichFelonelondbackBelonhaviorRelonportList(listId, uselonrId))
+      caselon RichFelonelondbackBelonhaviorBlockUselonr(uselonrId) =>
+        urt.RichFelonelondbackBelonhavior.BlockUselonr(urt.RichFelonelondbackBelonhaviorBlockUselonr(uselonrId))
+      caselon RichFelonelondbackBelonhaviorTogglelonFollowTopic(topicId) =>
+        urt.RichFelonelondbackBelonhavior.TogglelonFollowTopic(
+          urt.RichFelonelondbackBelonhaviorTogglelonFollowTopic(topicId))
+      caselon RichFelonelondbackBelonhaviorTogglelonFollowTopicV2(topicId) =>
+        urt.RichFelonelondbackBelonhavior.TogglelonFollowTopicV2(
+          urt.RichFelonelondbackBelonhaviorTogglelonFollowTopicV2(topicId))
+      caselon RichFelonelondbackBelonhaviorTogglelonMutelonList(listId) =>
+        urt.RichFelonelondbackBelonhavior.TogglelonMutelonList(urt.RichFelonelondbackBelonhaviorTogglelonMutelonList(listId))
+      caselon RichFelonelondbackBelonhaviorMarkNotIntelonrelonstelondTopic(topicId) =>
+        urt.RichFelonelondbackBelonhavior.MarkNotIntelonrelonstelondTopic(
+          urt.RichFelonelondbackBelonhaviorMarkNotIntelonrelonstelondTopic(topicId))
+      caselon RichFelonelondbackBelonhaviorRelonplyPinStatelon(relonplyPinStatelon) =>
+        val pinStatelon: urt.RelonplyPinStatelon = relonplyPinStatelon match {
+          caselon PinnelondRelonplyPinStatelon => urt.RelonplyPinStatelon.Pinnelond
+          caselon PinnablelonRelonplyPinStatelon => urt.RelonplyPinStatelon.Pinnablelon
+          caselon NotPinnablelonRelonplyPinStatelon => urt.RelonplyPinStatelon.NotPinnablelon
         }
-        urt.RichFeedbackBehavior.ReplyPinState(urt.RichFeedbackBehaviorReplyPinState(pinState))
-      case RichFeedbackBehaviorToggleMuteUser(userId) =>
-        urt.RichFeedbackBehavior.ToggleMuteUser(urt.RichFeedbackBehaviorToggleMuteUser(userId))
-      case RichFeedbackBehaviorToggleFollowUser(userId) =>
-        urt.RichFeedbackBehavior.ToggleFollowUser(urt.RichFeedbackBehaviorToggleFollowUser(userId))
-      case RichFeedbackBehaviorReportTweet(entryId) =>
-        urt.RichFeedbackBehavior.ReportTweet(urt.RichFeedbackBehaviorReportTweet(entryId))
+        urt.RichFelonelondbackBelonhavior.RelonplyPinStatelon(urt.RichFelonelondbackBelonhaviorRelonplyPinStatelon(pinStatelon))
+      caselon RichFelonelondbackBelonhaviorTogglelonMutelonUselonr(uselonrId) =>
+        urt.RichFelonelondbackBelonhavior.TogglelonMutelonUselonr(urt.RichFelonelondbackBelonhaviorTogglelonMutelonUselonr(uselonrId))
+      caselon RichFelonelondbackBelonhaviorTogglelonFollowUselonr(uselonrId) =>
+        urt.RichFelonelondbackBelonhavior.TogglelonFollowUselonr(urt.RichFelonelondbackBelonhaviorTogglelonFollowUselonr(uselonrId))
+      caselon RichFelonelondbackBelonhaviorRelonportTwelonelont(elonntryId) =>
+        urt.RichFelonelondbackBelonhavior.RelonportTwelonelont(urt.RichFelonelondbackBelonhaviorRelonportTwelonelont(elonntryId))
     }
 }

@@ -1,72 +1,72 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.logging.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.logging.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations.logging
 
-include "client_context.thrift"
-include "debug.thrift"
-include "display_context.thrift"
-include "display_location.thrift"
-include "recommendations.thrift"
+includelon "clielonnt_contelonxt.thrift"
+includelon "delonbug.thrift"
+includelon "display_contelonxt.thrift"
+includelon "display_location.thrift"
+includelon "reloncommelonndations.thrift"
 
-struct OfflineRecommendationRequest {
-    1: required client_context.OfflineClientContext clientContext
-    2: required display_location.OfflineDisplayLocation displayLocation
-    3: optional display_context.OfflineDisplayContext displayContext
-    4: optional i32 maxResults
+struct OfflinelonReloncommelonndationRelonquelonst {
+    1: relonquirelond clielonnt_contelonxt.OfflinelonClielonntContelonxt clielonntContelonxt
+    2: relonquirelond display_location.OfflinelonDisplayLocation displayLocation
+    3: optional display_contelonxt.OfflinelonDisplayContelonxt displayContelonxt
+    4: optional i32 maxRelonsults
     5: optional string cursor
-    6: optional list<i64> excludedIds(personalDataType='UserId')
-    7: optional bool fetchPromotedContent
-    8: optional debug.OfflineDebugParams debugParams
-}(persisted='true', hasPersonalData='true')
+    6: optional list<i64> elonxcludelondIds(pelonrsonalDataTypelon='UselonrId')
+    7: optional bool felontchPromotelondContelonnt
+    8: optional delonbug.OfflinelonDelonbugParams delonbugParams
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineRecommendationResponse {
-    1: required list<recommendations.OfflineRecommendation> recommendations
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonReloncommelonndationRelonsponselon {
+    1: relonquirelond list<reloncommelonndations.OfflinelonReloncommelonndation> reloncommelonndations
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct RecommendationLog {
-    1: required OfflineRecommendationRequest request
-    2: required OfflineRecommendationResponse response
-    3: required i64 timestampMs
-}(persisted='true', hasPersonalData='true')
+struct ReloncommelonndationLog {
+    1: relonquirelond OfflinelonReloncommelonndationRelonquelonst relonquelonst
+    2: relonquirelond OfflinelonReloncommelonndationRelonsponselon relonsponselon
+    3: relonquirelond i64 timelonstampMs
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineScoringUserRequest {
-  1: required client_context.OfflineClientContext clientContext
-  2: required display_location.OfflineDisplayLocation displayLocation
-  3: required list<recommendations.OfflineUserRecommendation> candidates
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonScoringUselonrRelonquelonst {
+  1: relonquirelond clielonnt_contelonxt.OfflinelonClielonntContelonxt clielonntContelonxt
+  2: relonquirelond display_location.OfflinelonDisplayLocation displayLocation
+  3: relonquirelond list<reloncommelonndations.OfflinelonUselonrReloncommelonndation> candidatelons
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineScoringUserResponse {
-  1: required list<recommendations.OfflineUserRecommendation> candidates
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonScoringUselonrRelonsponselon {
+  1: relonquirelond list<reloncommelonndations.OfflinelonUselonrReloncommelonndation> candidatelons
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct ScoredUsersLog {
-  1: required OfflineScoringUserRequest request
-  2: required OfflineScoringUserResponse response
-    3: required i64 timestampMs
-}(persisted='true', hasPersonalData='true')
+struct ScorelondUselonrsLog {
+  1: relonquirelond OfflinelonScoringUselonrRelonquelonst relonquelonst
+  2: relonquirelond OfflinelonScoringUselonrRelonsponselon relonsponselon
+    3: relonquirelond i64 timelonstampMs
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineRecommendationFlowUserMetadata {
-  1: optional i32 userSignupAge(personalDataType = 'AgeOfAccount')
-  2: optional string userState(personalDataType = 'UserState')
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonReloncommelonndationFlowUselonrMelontadata {
+  1: optional i32 uselonrSignupAgelon(pelonrsonalDataTypelon = 'AgelonOfAccount')
+  2: optional string uselonrStatelon(pelonrsonalDataTypelon = 'UselonrStatelon')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineRecommendationFlowSignals {
-  1: optional string countryCode(personalDataType='InferredCountry')
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonReloncommelonndationFlowSignals {
+  1: optional string countryCodelon(pelonrsonalDataTypelon='InfelonrrelondCountry')
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct OfflineRecommendationFlowCandidateSourceCandidates {
-  1: required string candidateSourceName
-  2: required list<i64> candidateUserIds(personalDataType='UserId')
-  3: optional list<double> candidateUserScores
-}(persisted='true', hasPersonalData='true')
+struct OfflinelonReloncommelonndationFlowCandidatelonSourcelonCandidatelons {
+  1: relonquirelond string candidatelonSourcelonNamelon
+  2: relonquirelond list<i64> candidatelonUselonrIds(pelonrsonalDataTypelon='UselonrId')
+  3: optional list<doublelon> candidatelonUselonrScorelons
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 
-struct RecommendationFlowLog {
-  1: required client_context.OfflineClientContext clientContext
-  2: optional OfflineRecommendationFlowUserMetadata userMetadata
-  3: optional OfflineRecommendationFlowSignals signals
-  4: required i64 timestampMs
-  5: required string recommendationFlowIdentifier
-  6: optional list<OfflineRecommendationFlowCandidateSourceCandidates> filteredCandidates
-  7: optional list<OfflineRecommendationFlowCandidateSourceCandidates> rankedCandidates
-  8: optional list<OfflineRecommendationFlowCandidateSourceCandidates> truncatedCandidates
-}(persisted='true', hasPersonalData='true')
+struct ReloncommelonndationFlowLog {
+  1: relonquirelond clielonnt_contelonxt.OfflinelonClielonntContelonxt clielonntContelonxt
+  2: optional OfflinelonReloncommelonndationFlowUselonrMelontadata uselonrMelontadata
+  3: optional OfflinelonReloncommelonndationFlowSignals signals
+  4: relonquirelond i64 timelonstampMs
+  5: relonquirelond string reloncommelonndationFlowIdelonntifielonr
+  6: optional list<OfflinelonReloncommelonndationFlowCandidatelonSourcelonCandidatelons> filtelonrelondCandidatelons
+  7: optional list<OfflinelonReloncommelonndationFlowCandidatelonSourcelonCandidatelons> rankelondCandidatelons
+  8: optional list<OfflinelonReloncommelonndationFlowCandidatelonSourcelonCandidatelons> truncatelondCandidatelons
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')

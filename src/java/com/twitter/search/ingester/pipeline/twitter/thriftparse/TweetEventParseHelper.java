@@ -1,727 +1,727 @@
-package com.twitter.search.ingester.pipeline.twitter.thriftparse;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.thriftparselon;
 
-import java.util.Date;
+import java.util.Datelon;
 import java.util.List;
 import java.util.Optional;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.commons.lang.StringEscapeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.StringelonscapelonUtils;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.dataproducts.enrichments.thriftjava.GeoEntity;
-import com.twitter.dataproducts.enrichments.thriftjava.PotentialLocation;
-import com.twitter.dataproducts.enrichments.thriftjava.ProfileGeoEnrichment;
-import com.twitter.escherbird.thriftjava.TweetEntityAnnotation;
-import com.twitter.expandodo.thriftjava.Card2;
-import com.twitter.gizmoduck.thriftjava.User;
-import com.twitter.mediaservices.commons.tweetmedia.thrift_java.MediaInfo;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.relevance.entities.GeoObject;
-import com.twitter.search.common.relevance.entities.PotentialLocationObject;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.entities.TwitterMessage.EscherbirdAnnotation;
-import com.twitter.search.common.relevance.entities.TwitterMessageUser;
-import com.twitter.search.common.relevance.entities.TwitterMessageUtil;
-import com.twitter.search.common.relevance.entities.TwitterQuotedMessage;
-import com.twitter.search.common.relevance.entities.TwitterRetweetMessage;
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.search.ingester.pipeline.util.CardFieldUtil;
-import com.twitter.service.spiderduck.gen.MediaTypes;
-import com.twitter.tweetypie.thriftjava.DeviceSource;
-import com.twitter.tweetypie.thriftjava.DirectedAtUser;
-import com.twitter.tweetypie.thriftjava.EscherbirdEntityAnnotations;
-import com.twitter.tweetypie.thriftjava.ExclusiveTweetControl;
-import com.twitter.tweetypie.thriftjava.GeoCoordinates;
-import com.twitter.tweetypie.thriftjava.HashtagEntity;
-import com.twitter.tweetypie.thriftjava.MediaEntity;
-import com.twitter.tweetypie.thriftjava.MentionEntity;
-import com.twitter.tweetypie.thriftjava.Place;
-import com.twitter.tweetypie.thriftjava.QuotedTweet;
-import com.twitter.tweetypie.thriftjava.Reply;
-import com.twitter.tweetypie.thriftjava.Tweet;
-import com.twitter.tweetypie.thriftjava.TweetCoreData;
-import com.twitter.tweetypie.thriftjava.TweetCreateEvent;
-import com.twitter.tweetypie.thriftjava.TweetDeleteEvent;
-import com.twitter.tweetypie.thriftjava.UrlEntity;
-import com.twitter.tweetypie.tweettext.PartialHtmlEncoding;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.dataproducts.elonnrichmelonnts.thriftjava.Gelonoelonntity;
+import com.twittelonr.dataproducts.elonnrichmelonnts.thriftjava.PotelonntialLocation;
+import com.twittelonr.dataproducts.elonnrichmelonnts.thriftjava.ProfilelonGelonoelonnrichmelonnt;
+import com.twittelonr.elonschelonrbird.thriftjava.TwelonelontelonntityAnnotation;
+import com.twittelonr.elonxpandodo.thriftjava.Card2;
+import com.twittelonr.gizmoduck.thriftjava.Uselonr;
+import com.twittelonr.melondiaselonrvicelons.commons.twelonelontmelondia.thrift_java.MelondiaInfo;
+import com.twittelonr.selonarch.common.delonbug.thriftjava.Delonbugelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.Pelonrcelonntilelon;
+import com.twittelonr.selonarch.common.melontrics.PelonrcelonntilelonUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.GelonoObjelonct;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.PotelonntialLocationObjelonct;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon.elonschelonrbirdAnnotation;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelonUselonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelonUtil;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrQuotelondMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrRelontwelonelontMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.CardFielonldUtil;
+import com.twittelonr.selonrvicelon.spidelonrduck.gelonn.MelondiaTypelons;
+import com.twittelonr.twelonelontypielon.thriftjava.DelonvicelonSourcelon;
+import com.twittelonr.twelonelontypielon.thriftjava.DirelonctelondAtUselonr;
+import com.twittelonr.twelonelontypielon.thriftjava.elonschelonrbirdelonntityAnnotations;
+import com.twittelonr.twelonelontypielon.thriftjava.elonxclusivelonTwelonelontControl;
+import com.twittelonr.twelonelontypielon.thriftjava.GelonoCoordinatelons;
+import com.twittelonr.twelonelontypielon.thriftjava.Hashtagelonntity;
+import com.twittelonr.twelonelontypielon.thriftjava.Melondiaelonntity;
+import com.twittelonr.twelonelontypielon.thriftjava.Melonntionelonntity;
+import com.twittelonr.twelonelontypielon.thriftjava.Placelon;
+import com.twittelonr.twelonelontypielon.thriftjava.QuotelondTwelonelont;
+import com.twittelonr.twelonelontypielon.thriftjava.Relonply;
+import com.twittelonr.twelonelontypielon.thriftjava.Twelonelont;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontCorelonData;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontCrelonatelonelonvelonnt;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontDelonlelontelonelonvelonnt;
+import com.twittelonr.twelonelontypielon.thriftjava.Urlelonntity;
+import com.twittelonr.twelonelontypielon.twelonelonttelonxt.PartialHtmlelonncoding;
 
 /**
- * This is an utility class for converting Thrift TweetEvent messages sent by TweetyPie
- * into ingester internal representation, IngesterTwitterMessage.
+ * This is an utility class for convelonrting Thrift Twelonelontelonvelonnt melonssagelons selonnt by TwelonelontyPielon
+ * into ingelonstelonr intelonrnal relonprelonselonntation, IngelonstelonrTwittelonrMelonssagelon.
  */
-public final class TweetEventParseHelper {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetEventParseHelper.class);
+public final class TwelonelontelonvelonntParselonHelonlpelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwelonelontelonvelonntParselonHelonlpelonr.class);
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_NULL_TEXT =
-      SearchCounter.export("tweets_with_null_text_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_NULL_TelonXT =
+      SelonarchCountelonr.elonxport("twelonelonts_with_null_telonxt_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter TWEET_SIZE = SearchCounter.export("tweet_size_from_thrift");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr TWelonelonT_SIZelon = SelonarchCountelonr.elonxport("twelonelont_sizelon_from_thrift");
 
-  @VisibleForTesting
-  static final Percentile<Long> TWEET_SIZE_PERCENTILES =
-      PercentileUtil.createPercentile("tweet_size_from_thrift");
+  @VisiblelonForTelonsting
+  static final Pelonrcelonntilelon<Long> TWelonelonT_SIZelon_PelonRCelonNTILelonS =
+      PelonrcelonntilelonUtil.crelonatelonPelonrcelonntilelon("twelonelont_sizelon_from_thrift");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_CONVERSATION_ID =
-      SearchCounter.export("tweets_with_conversation_id_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_CONVelonRSATION_ID =
+      SelonarchCountelonr.elonxport("twelonelonts_with_convelonrsation_id_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_QUOTE =
-      SearchCounter.export("tweets_with_quote_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_QUOTelon =
+      SelonarchCountelonr.elonxport("twelonelonts_with_quotelon_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_ANNOTATIONS =
-      SearchCounter.export("tweets_with_annotation_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_ANNOTATIONS =
+      SelonarchCountelonr.elonxport("twelonelonts_with_annotation_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_ANNOTATIONS_ADDED =
-      SearchCounter.export("num_annotations_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_ANNOTATIONS_ADDelonD =
+      SelonarchCountelonr.elonxport("num_annotations_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_COORDINATE_FIELD =
-      SearchCounter.export("tweets_with_coordinate_field_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_COORDINATelon_FIelonLD =
+      SelonarchCountelonr.elonxport("twelonelonts_with_coordinatelon_fielonld_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_PLACE_ADDED =
-      SearchCounter.export("num_places_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_PLACelon_ADDelonD =
+      SelonarchCountelonr.elonxport("num_placelons_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PLACE_FIELD =
-      SearchCounter.export("tweets_with_place_field_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_PLACelon_FIelonLD =
+      SelonarchCountelonr.elonxport("twelonelonts_with_placelon_fielonld_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PLACE_COUNTRY_CODE =
-      SearchCounter.export("tweets_with_place_country_code_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_PLACelon_COUNTRY_CODelon =
+      SelonarchCountelonr.elonxport("twelonelonts_with_placelon_country_codelon_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_USE_PLACE_FIELD =
-      SearchCounter.export("tweets_use_place_field_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_USelon_PLACelon_FIelonLD =
+      SelonarchCountelonr.elonxport("twelonelonts_uselon_placelon_fielonld_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_CANNOT_PARSE_PLACE_FIELD =
-      SearchCounter.export("tweets_cannot_parse_place_field_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_CANNOT_PARSelon_PLACelon_FIelonLD =
+      SelonarchCountelonr.elonxport("twelonelonts_cannot_parselon_placelon_fielonld_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PROFILE_GEO_ENRICHMENT =
-      SearchCounter.export("tweets_with_profile_geo_enrichment_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_PROFILelon_GelonO_elonNRICHMelonNT =
+      SelonarchCountelonr.elonxport("twelonelonts_with_profilelon_gelono_elonnrichmelonnt_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_MENTIONS =
-      SearchCounter.export("tweets_with_mentions_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_MelonNTIONS =
+      SelonarchCountelonr.elonxport("twelonelonts_with_melonntions_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_MENTIONS_ADDED =
-      SearchCounter.export("num_mentions_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_MelonNTIONS_ADDelonD =
+      SelonarchCountelonr.elonxport("num_melonntions_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_HASHTAGS =
-      SearchCounter.export("tweets_with_hashtags_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_HASHTAGS =
+      SelonarchCountelonr.elonxport("twelonelonts_with_hashtags_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_HASHTAGS_ADDED =
-      SearchCounter.export("num_hashtags_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_HASHTAGS_ADDelonD =
+      SelonarchCountelonr.elonxport("num_hashtags_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_MEDIA_URL =
-      SearchCounter.export("tweets_with_media_url_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_MelonDIA_URL =
+      SelonarchCountelonr.elonxport("twelonelonts_with_melondia_url_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_MEDIA_URLS_ADDED =
-      SearchCounter.export("num_media_urls_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_MelonDIA_URLS_ADDelonD =
+      SelonarchCountelonr.elonxport("num_melondia_urls_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_PHOTO_MEDIA_URL =
-      SearchCounter.export("tweets_with_photo_media_url_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_PHOTO_MelonDIA_URL =
+      SelonarchCountelonr.elonxport("twelonelonts_with_photo_melondia_url_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_VIDEO_MEDIA_URL =
-      SearchCounter.export("tweets_with_video_media_url_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_VIDelonO_MelonDIA_URL =
+      SelonarchCountelonr.elonxport("twelonelonts_with_videlono_melondia_url_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_WITH_NON_MEDIA_URL =
-      SearchCounter.export("tweets_with_non_media_url_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_WITH_NON_MelonDIA_URL =
+      SelonarchCountelonr.elonxport("twelonelonts_with_non_melondia_url_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_NON_MEDIA_URLS_ADDED =
-      SearchCounter.export("num_non_media_urls_from_thrift_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_NON_MelonDIA_URLS_ADDelonD =
+      SelonarchCountelonr.elonxport("num_non_melondia_urls_from_thrift_cnt");
 
-  @VisibleForTesting
-  static final SearchCounter NUM_TWEETS_MISSING_QUOTE_URLS =
-      SearchCounter.export("num_tweets_missing_quote_urls_cnt");
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NUM_TWelonelonTS_MISSING_QUOTelon_URLS =
+      SelonarchCountelonr.elonxport("num_twelonelonts_missing_quotelon_urls_cnt");
 
   // Utility class, disallow instantiation.
-  private TweetEventParseHelper() {
+  privatelon TwelonelontelonvelonntParselonHelonlpelonr() {
   }
 
-  /** Builds an IngesterTwitterMessage instance from a TweetCreateEvent. */
+  /** Builds an IngelonstelonrTwittelonrMelonssagelon instancelon from a TwelonelontCrelonatelonelonvelonnt. */
   @Nonnull
-  public static IngesterTwitterMessage getTwitterMessageFromCreationEvent(
-      @Nonnull TweetCreateEvent createEvent,
-      @Nonnull List<PenguinVersion> supportedPenguinVersions,
-      @Nullable DebugEvents debugEvents) throws ThriftTweetParsingException {
+  public static IngelonstelonrTwittelonrMelonssagelon gelontTwittelonrMelonssagelonFromCrelonationelonvelonnt(
+      @Nonnull TwelonelontCrelonatelonelonvelonnt crelonatelonelonvelonnt,
+      @Nonnull List<PelonnguinVelonrsion> supportelondPelonnguinVelonrsions,
+      @Nullablelon Delonbugelonvelonnts delonbugelonvelonnts) throws ThriftTwelonelontParsingelonxcelonption {
 
-    Tweet tweet = createEvent.getTweet();
-    if (tweet == null) {
-      throw new ThriftTweetParsingException("No tweet field in TweetCreateEvent");
+    Twelonelont twelonelont = crelonatelonelonvelonnt.gelontTwelonelont();
+    if (twelonelont == null) {
+      throw nelonw ThriftTwelonelontParsingelonxcelonption("No twelonelont fielonld in TwelonelontCrelonatelonelonvelonnt");
     }
 
-    TweetCoreData coreData = tweet.getCore_data();
-    if (coreData == null) {
-      throw new ThriftTweetParsingException("No core_data field in Tweet in TweetCreateEvent");
+    TwelonelontCorelonData corelonData = twelonelont.gelontCorelon_data();
+    if (corelonData == null) {
+      throw nelonw ThriftTwelonelontParsingelonxcelonption("No corelon_data fielonld in Twelonelont in TwelonelontCrelonatelonelonvelonnt");
     }
 
-    User user = createEvent.getUser();
-    if (user == null) {
-      throw new ThriftTweetParsingException("No user field in TweetCreateEvent");
+    Uselonr uselonr = crelonatelonelonvelonnt.gelontUselonr();
+    if (uselonr == null) {
+      throw nelonw ThriftTwelonelontParsingelonxcelonption("No uselonr fielonld in TwelonelontCrelonatelonelonvelonnt");
     }
-    if (!user.isSetProfile()) {
-      throw new ThriftTweetParsingException("No profile field in User in TweetCreateEvent");
+    if (!uselonr.isSelontProfilelon()) {
+      throw nelonw ThriftTwelonelontParsingelonxcelonption("No profilelon fielonld in Uselonr in TwelonelontCrelonatelonelonvelonnt");
     }
-    if (!user.isSetSafety()) {
-      throw new ThriftTweetParsingException("No safety field in User in TweetCreateEvent");
-    }
-
-    long twitterId = tweet.getId();
-    IngesterTwitterMessage message = new IngesterTwitterMessage(
-        twitterId,
-        supportedPenguinVersions,
-        debugEvents);
-
-    // Set the creation time based on the tweet ID, because it has millisecond granularity,
-    // and coreData.created_at_secs has only second granularity.
-    message.setDate(new Date(SnowflakeIdParser.getTimestampFromTweetId(twitterId)));
-
-    boolean isNsfw = coreData.isNsfw_admin() || coreData.isNsfw_user();
-    boolean hasMediaOrUrlsOrCards =
-        tweet.getMediaSize() > 0
-            || tweet.getUrlsSize() > 0
-            || tweet.getCardsSize() > 0
-            || tweet.isSetCard2();
-
-    message.setIsSensitiveContent(isNsfw && hasMediaOrUrlsOrCards);
-
-    message.setFromUser(getFromUser(user));
-    if (user.isSetCounts()) {
-      message.setFollowersCount((int) user.getCounts().getFollowers());
-    }
-    message.setUserProtected(user.getSafety().isIs_protected());
-    message.setUserVerified(user.getSafety().isVerified());
-    message.setUserBlueVerified(user.getSafety().isIs_blue_verified());
-
-    if (tweet.isSetLanguage()) {
-      message.setLanguage(tweet.getLanguage().getLanguage()); // language ID like "en"
+    if (!uselonr.isSelontSafelonty()) {
+      throw nelonw ThriftTwelonelontParsingelonxcelonption("No safelonty fielonld in Uselonr in TwelonelontCrelonatelonelonvelonnt");
     }
 
-    if (tweet.isSetSelf_thread_metadata()) {
-      message.setSelfThread(true);
+    long twittelonrId = twelonelont.gelontId();
+    IngelonstelonrTwittelonrMelonssagelon melonssagelon = nelonw IngelonstelonrTwittelonrMelonssagelon(
+        twittelonrId,
+        supportelondPelonnguinVelonrsions,
+        delonbugelonvelonnts);
+
+    // Selont thelon crelonation timelon baselond on thelon twelonelont ID, beloncauselon it has milliseloncond granularity,
+    // and corelonData.crelonatelond_at_seloncs has only seloncond granularity.
+    melonssagelon.selontDatelon(nelonw Datelon(SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(twittelonrId)));
+
+    boolelonan isNsfw = corelonData.isNsfw_admin() || corelonData.isNsfw_uselonr();
+    boolelonan hasMelondiaOrUrlsOrCards =
+        twelonelont.gelontMelondiaSizelon() > 0
+            || twelonelont.gelontUrlsSizelon() > 0
+            || twelonelont.gelontCardsSizelon() > 0
+            || twelonelont.isSelontCard2();
+
+    melonssagelon.selontIsSelonnsitivelonContelonnt(isNsfw && hasMelondiaOrUrlsOrCards);
+
+    melonssagelon.selontFromUselonr(gelontFromUselonr(uselonr));
+    if (uselonr.isSelontCounts()) {
+      melonssagelon.selontFollowelonrsCount((int) uselonr.gelontCounts().gelontFollowelonrs());
+    }
+    melonssagelon.selontUselonrProtelonctelond(uselonr.gelontSafelonty().isIs_protelonctelond());
+    melonssagelon.selontUselonrVelonrifielond(uselonr.gelontSafelonty().isVelonrifielond());
+    melonssagelon.selontUselonrBluelonVelonrifielond(uselonr.gelontSafelonty().isIs_bluelon_velonrifielond());
+
+    if (twelonelont.isSelontLanguagelon()) {
+      melonssagelon.selontLanguagelon(twelonelont.gelontLanguagelon().gelontLanguagelon()); // languagelon ID likelon "elonn"
     }
 
-    ExclusiveTweetControl exclusiveTweetControl = tweet.getExclusive_tweet_control();
-    if (exclusiveTweetControl != null) {
-      if (exclusiveTweetControl.isSetConversation_author_id()) {
-        message.setExclusiveConversationAuthorId(
-            exclusiveTweetControl.getConversation_author_id());
+    if (twelonelont.isSelontSelonlf_threlonad_melontadata()) {
+      melonssagelon.selontSelonlfThrelonad(truelon);
+    }
+
+    elonxclusivelonTwelonelontControl elonxclusivelonTwelonelontControl = twelonelont.gelontelonxclusivelon_twelonelont_control();
+    if (elonxclusivelonTwelonelontControl != null) {
+      if (elonxclusivelonTwelonelontControl.isSelontConvelonrsation_author_id()) {
+        melonssagelon.selontelonxclusivelonConvelonrsationAuthorId(
+            elonxclusivelonTwelonelontControl.gelontConvelonrsation_author_id());
       }
     }
 
-    setDirectedAtUser(message, coreData);
-    addMentionsToMessage(message, tweet);
-    addHashtagsToMessage(message, tweet);
-    addMediaEntitiesToMessage(message, tweet.getId(), tweet.getMedia());
-    addUrlsToMessage(message, tweet.getUrls());
-    addEscherbirdAnnotationsToMessage(message, tweet);
-    message.setNullcast(coreData.isNullcast());
+    selontDirelonctelondAtUselonr(melonssagelon, corelonData);
+    addMelonntionsToMelonssagelon(melonssagelon, twelonelont);
+    addHashtagsToMelonssagelon(melonssagelon, twelonelont);
+    addMelondiaelonntitielonsToMelonssagelon(melonssagelon, twelonelont.gelontId(), twelonelont.gelontMelondia());
+    addUrlsToMelonssagelon(melonssagelon, twelonelont.gelontUrls());
+    addelonschelonrbirdAnnotationsToMelonssagelon(melonssagelon, twelonelont);
+    melonssagelon.selontNullcast(corelonData.isNullcast());
 
-    if (coreData.isSetConversation_id()) {
-      message.setConversationId(coreData.getConversation_id());
-      NUM_TWEETS_WITH_CONVERSATION_ID.increment();
+    if (corelonData.isSelontConvelonrsation_id()) {
+      melonssagelon.selontConvelonrsationId(corelonData.gelontConvelonrsation_id());
+      NUM_TWelonelonTS_WITH_CONVelonRSATION_ID.increlonmelonnt();
     }
 
-    // quotes
-    if (tweet.isSetQuoted_tweet()) {
-      QuotedTweet quotedTweet = tweet.getQuoted_tweet();
-      if (quotedTweet.getTweet_id() > 0 &&  quotedTweet.getUser_id() > 0) {
-        if (quotedTweet.isSetPermalink()) {
-          String quotedURL = quotedTweet.getPermalink().getLong_url();
-          UrlEntity quotedURLEntity = new UrlEntity();
-          quotedURLEntity.setExpanded(quotedURL);
-          quotedURLEntity.setUrl(quotedTweet.getPermalink().getShort_url());
-          quotedURLEntity.setDisplay(quotedTweet.getPermalink().getDisplay_text());
-          addUrlsToMessage(message, Lists.newArrayList(quotedURLEntity));
-        } else {
-          LOG.warn("Tweet {} has quoted tweet, but is missing quoted tweet URL: {}",
-                   tweet.getId(), quotedTweet);
-          NUM_TWEETS_MISSING_QUOTE_URLS.increment();
+    // quotelons
+    if (twelonelont.isSelontQuotelond_twelonelont()) {
+      QuotelondTwelonelont quotelondTwelonelont = twelonelont.gelontQuotelond_twelonelont();
+      if (quotelondTwelonelont.gelontTwelonelont_id() > 0 &&  quotelondTwelonelont.gelontUselonr_id() > 0) {
+        if (quotelondTwelonelont.isSelontPelonrmalink()) {
+          String quotelondURL = quotelondTwelonelont.gelontPelonrmalink().gelontLong_url();
+          Urlelonntity quotelondURLelonntity = nelonw Urlelonntity();
+          quotelondURLelonntity.selontelonxpandelond(quotelondURL);
+          quotelondURLelonntity.selontUrl(quotelondTwelonelont.gelontPelonrmalink().gelontShort_url());
+          quotelondURLelonntity.selontDisplay(quotelondTwelonelont.gelontPelonrmalink().gelontDisplay_telonxt());
+          addUrlsToMelonssagelon(melonssagelon, Lists.nelonwArrayList(quotelondURLelonntity));
+        } elonlselon {
+          LOG.warn("Twelonelont {} has quotelond twelonelont, but is missing quotelond twelonelont URL: {}",
+                   twelonelont.gelontId(), quotelondTwelonelont);
+          NUM_TWelonelonTS_MISSING_QUOTelon_URLS.increlonmelonnt();
         }
-        TwitterQuotedMessage quotedMessage =
-            new TwitterQuotedMessage(
-                quotedTweet.getTweet_id(),
-                quotedTweet.getUser_id());
-        message.setQuotedMessage(quotedMessage);
-        NUM_TWEETS_WITH_QUOTE.increment();
+        TwittelonrQuotelondMelonssagelon quotelondMelonssagelon =
+            nelonw TwittelonrQuotelondMelonssagelon(
+                quotelondTwelonelont.gelontTwelonelont_id(),
+                quotelondTwelonelont.gelontUselonr_id());
+        melonssagelon.selontQuotelondMelonssagelon(quotelondMelonssagelon);
+        NUM_TWelonelonTS_WITH_QUOTelon.increlonmelonnt();
       }
     }
 
-    // card fields
-    if (createEvent.getTweet().isSetCard2()) {
-      Card2 card = createEvent.getTweet().getCard2();
-      message.setCardName(card.getName());
-      message.setCardTitle(
-          CardFieldUtil.extractBindingValue(CardFieldUtil.TITLE_BINDING_KEY, card));
-      message.setCardDescription(
-          CardFieldUtil.extractBindingValue(CardFieldUtil.DESCRIPTION_BINDING_KEY, card));
-      CardFieldUtil.deriveCardLang(message);
-      message.setCardUrl(card.getUrl());
+    // card fielonlds
+    if (crelonatelonelonvelonnt.gelontTwelonelont().isSelontCard2()) {
+      Card2 card = crelonatelonelonvelonnt.gelontTwelonelont().gelontCard2();
+      melonssagelon.selontCardNamelon(card.gelontNamelon());
+      melonssagelon.selontCardTitlelon(
+          CardFielonldUtil.elonxtractBindingValuelon(CardFielonldUtil.TITLelon_BINDING_KelonY, card));
+      melonssagelon.selontCardDelonscription(
+          CardFielonldUtil.elonxtractBindingValuelon(CardFielonldUtil.DelonSCRIPTION_BINDING_KelonY, card));
+      CardFielonldUtil.delonrivelonCardLang(melonssagelon);
+      melonssagelon.selontCardUrl(card.gelontUrl());
     }
 
-    // Some fields should be set based on the "original" tweet. So if this tweet is a retweet,
-    // we want to extract those fields from the retweeted tweet.
-    Tweet retweetOrTweet = tweet;
-    TweetCoreData retweetOrTweetCoreData = coreData;
-    User retweetOrTweetUser = user;
+    // Somelon fielonlds should belon selont baselond on thelon "original" twelonelont. So if this twelonelont is a relontwelonelont,
+    // welon want to elonxtract thoselon fielonlds from thelon relontwelonelontelond twelonelont.
+    Twelonelont relontwelonelontOrTwelonelont = twelonelont;
+    TwelonelontCorelonData relontwelonelontOrTwelonelontCorelonData = corelonData;
+    Uselonr relontwelonelontOrTwelonelontUselonr = uselonr;
 
-    // retweets
-    boolean isRetweet = coreData.isSetShare();
-    if (isRetweet) {
-      retweetOrTweet = createEvent.getSource_tweet();
-      retweetOrTweetCoreData = retweetOrTweet.getCore_data();
-      retweetOrTweetUser = createEvent.getSource_user();
+    // relontwelonelonts
+    boolelonan isRelontwelonelont = corelonData.isSelontSharelon();
+    if (isRelontwelonelont) {
+      relontwelonelontOrTwelonelont = crelonatelonelonvelonnt.gelontSourcelon_twelonelont();
+      relontwelonelontOrTwelonelontCorelonData = relontwelonelontOrTwelonelont.gelontCorelon_data();
+      relontwelonelontOrTwelonelontUselonr = crelonatelonelonvelonnt.gelontSourcelon_uselonr();
 
-      TwitterRetweetMessage retweetMessage = new TwitterRetweetMessage();
-      retweetMessage.setRetweetId(twitterId);
+      TwittelonrRelontwelonelontMelonssagelon relontwelonelontMelonssagelon = nelonw TwittelonrRelontwelonelontMelonssagelon();
+      relontwelonelontMelonssagelon.selontRelontwelonelontId(twittelonrId);
 
-      if (retweetOrTweetUser != null) {
-        if (retweetOrTweetUser.isSetProfile()) {
-          retweetMessage.setSharedUserDisplayName(retweetOrTweetUser.getProfile().getName());
+      if (relontwelonelontOrTwelonelontUselonr != null) {
+        if (relontwelonelontOrTwelonelontUselonr.isSelontProfilelon()) {
+          relontwelonelontMelonssagelon.selontSharelondUselonrDisplayNamelon(relontwelonelontOrTwelonelontUselonr.gelontProfilelon().gelontNamelon());
         }
-        retweetMessage.setSharedUserTwitterId(retweetOrTweetUser.getId());
+        relontwelonelontMelonssagelon.selontSharelondUselonrTwittelonrId(relontwelonelontOrTwelonelontUselonr.gelontId());
       }
 
-      retweetMessage.setSharedDate(new Date(retweetOrTweetCoreData.getCreated_at_secs() * 1000));
-      retweetMessage.setSharedId(retweetOrTweet.getId());
+      relontwelonelontMelonssagelon.selontSharelondDatelon(nelonw Datelon(relontwelonelontOrTwelonelontCorelonData.gelontCrelonatelond_at_seloncs() * 1000));
+      relontwelonelontMelonssagelon.selontSharelondId(relontwelonelontOrTwelonelont.gelontId());
 
-      addMediaEntitiesToMessage(message, retweetOrTweet.getId(), retweetOrTweet.getMedia());
-      addUrlsToMessage(message, retweetOrTweet.getUrls());
+      addMelondiaelonntitielonsToMelonssagelon(melonssagelon, relontwelonelontOrTwelonelont.gelontId(), relontwelonelontOrTwelonelont.gelontMelondia());
+      addUrlsToMelonssagelon(melonssagelon, relontwelonelontOrTwelonelont.gelontUrls());
 
-      // If a tweet's text is longer than 140 characters, the text for any retweet of that tweet
-      // will be truncated. And if the original tweet has hashtags or mentions after character 140,
-      // the Tweetypie event for the retweet will not include those hashtags/mentions, which will
-      // make the retweet unsearchable by those hashtags/mentions. So in order to avoid this
-      // problem, we add to the retweet all hashtags/mentions set on the original tweet.
-      addMentionsToMessage(message, retweetOrTweet);
-      addHashtagsToMessage(message, retweetOrTweet);
+      // If a twelonelont's telonxt is longelonr than 140 charactelonrs, thelon telonxt for any relontwelonelont of that twelonelont
+      // will belon truncatelond. And if thelon original twelonelont has hashtags or melonntions aftelonr charactelonr 140,
+      // thelon Twelonelontypielon elonvelonnt for thelon relontwelonelont will not includelon thoselon hashtags/melonntions, which will
+      // makelon thelon relontwelonelont unselonarchablelon by thoselon hashtags/melonntions. So in ordelonr to avoid this
+      // problelonm, welon add to thelon relontwelonelont all hashtags/melonntions selont on thelon original twelonelont.
+      addMelonntionsToMelonssagelon(melonssagelon, relontwelonelontOrTwelonelont);
+      addHashtagsToMelonssagelon(melonssagelon, relontwelonelontOrTwelonelont);
 
-      message.setRetweetMessage(retweetMessage);
+      melonssagelon.selontRelontwelonelontMelonssagelon(relontwelonelontMelonssagelon);
     }
 
-    // Some fields should be set based on the "original" tweet.
-    // Only set geo fields if this is not a retweet
-    if (!isRetweet) {
-      setGeoFields(message, retweetOrTweetCoreData, retweetOrTweetUser);
-      setPlacesFields(message, retweetOrTweet);
+    // Somelon fielonlds should belon selont baselond on thelon "original" twelonelont.
+    // Only selont gelono fielonlds if this is not a relontwelonelont
+    if (!isRelontwelonelont) {
+      selontGelonoFielonlds(melonssagelon, relontwelonelontOrTwelonelontCorelonData, relontwelonelontOrTwelonelontUselonr);
+      selontPlacelonsFielonlds(melonssagelon, relontwelonelontOrTwelonelont);
     }
-    setText(message, retweetOrTweetCoreData);
-    setInReplyTo(message, retweetOrTweetCoreData, isRetweet);
-    setDeviceSourceField(message, retweetOrTweet);
+    selontTelonxt(melonssagelon, relontwelonelontOrTwelonelontCorelonData);
+    selontInRelonplyTo(melonssagelon, relontwelonelontOrTwelonelontCorelonData, isRelontwelonelont);
+    selontDelonvicelonSourcelonFielonld(melonssagelon, relontwelonelontOrTwelonelont);
 
-    // Profile geo enrichment fields should be set based on this tweet, even if it's a retweet.
-    setProfileGeoEnrichmentFields(message, tweet);
+    // Profilelon gelono elonnrichmelonnt fielonlds should belon selont baselond on this twelonelont, elonvelonn if it's a relontwelonelont.
+    selontProfilelonGelonoelonnrichmelonntFielonlds(melonssagelon, twelonelont);
 
-    // The composer used to create this tweet: standard tweet creator or the camera flow.
-    setComposerSource(message, tweet);
+    // Thelon composelonr uselond to crelonatelon this twelonelont: standard twelonelont crelonator or thelon camelonra flow.
+    selontComposelonrSourcelon(melonssagelon, twelonelont);
 
-    return message;
+    relonturn melonssagelon;
   }
 
-  private static void setGeoFields(
-      TwitterMessage message, TweetCoreData coreData, User user) {
+  privatelon static void selontGelonoFielonlds(
+      TwittelonrMelonssagelon melonssagelon, TwelonelontCorelonData corelonData, Uselonr uselonr) {
 
-    if (coreData.isSetCoordinates()) {
-      NUM_TWEETS_WITH_COORDINATE_FIELD.increment();
-      GeoCoordinates coords = coreData.getCoordinates();
-      message.setGeoTaggedLocation(
-          GeoObject.createForIngester(coords.getLatitude(), coords.getLongitude()));
+    if (corelonData.isSelontCoordinatelons()) {
+      NUM_TWelonelonTS_WITH_COORDINATelon_FIelonLD.increlonmelonnt();
+      GelonoCoordinatelons coords = corelonData.gelontCoordinatelons();
+      melonssagelon.selontGelonoTaggelondLocation(
+          GelonoObjelonct.crelonatelonForIngelonstelonr(coords.gelontLatitudelon(), coords.gelontLongitudelon()));
 
       String location =
-          String.format("GeoAPI:%.4f,%.4f", coords.getLatitude(), coords.getLongitude());
-      TwitterMessageUtil.setAndTruncateLocationOnMessage(message, location);
+          String.format("GelonoAPI:%.4f,%.4f", coords.gelontLatitudelon(), coords.gelontLongitudelon());
+      TwittelonrMelonssagelonUtil.selontAndTruncatelonLocationOnMelonssagelon(melonssagelon, location);
     }
 
-    // If the location was not set from the coordinates.
-    if ((message.getOrigLocation() == null) && (user != null) && user.isSetProfile()) {
-      TwitterMessageUtil.setAndTruncateLocationOnMessage(message, user.getProfile().getLocation());
-    }
-  }
-
-  private static void setPlacesFields(TwitterMessage message, Tweet tweet) {
-    if (!tweet.isSetPlace()) {
-      return;
-    }
-
-    Place place = tweet.getPlace();
-
-    if (place.isSetContainers() && place.getContainersSize() > 0) {
-      NUM_TWEETS_WITH_PLACE_FIELD.increment();
-      NUM_PLACE_ADDED.add(place.getContainersSize());
-
-      for (String placeId : place.getContainers()) {
-        message.addPlace(placeId);
-      }
-    }
-
-    Preconditions.checkArgument(place.isSetId(), "Tweet.Place without id.");
-    message.setPlaceId(place.getId());
-    Preconditions.checkArgument(place.isSetFull_name(), "Tweet.Place without full_name.");
-    message.setPlaceFullName(place.getFull_name());
-    if (place.isSetCountry_code()) {
-      message.setPlaceCountryCode(place.getCountry_code());
-      NUM_TWEETS_WITH_PLACE_COUNTRY_CODE.increment();
-    }
-
-    if (message.getGeoTaggedLocation() == null) {
-      Optional<GeoObject> location = GeoObject.fromPlace(place);
-
-      if (location.isPresent()) {
-        NUM_TWEETS_USE_PLACE_FIELD.increment();
-        message.setGeoTaggedLocation(location.get());
-      } else {
-        NUM_TWEETS_CANNOT_PARSE_PLACE_FIELD.increment();
-      }
+    // If thelon location was not selont from thelon coordinatelons.
+    if ((melonssagelon.gelontOrigLocation() == null) && (uselonr != null) && uselonr.isSelontProfilelon()) {
+      TwittelonrMelonssagelonUtil.selontAndTruncatelonLocationOnMelonssagelon(melonssagelon, uselonr.gelontProfilelon().gelontLocation());
     }
   }
 
-  private static void setText(TwitterMessage message, TweetCoreData coreData) {
+  privatelon static void selontPlacelonsFielonlds(TwittelonrMelonssagelon melonssagelon, Twelonelont twelonelont) {
+    if (!twelonelont.isSelontPlacelon()) {
+      relonturn;
+    }
+
+    Placelon placelon = twelonelont.gelontPlacelon();
+
+    if (placelon.isSelontContainelonrs() && placelon.gelontContainelonrsSizelon() > 0) {
+      NUM_TWelonelonTS_WITH_PLACelon_FIelonLD.increlonmelonnt();
+      NUM_PLACelon_ADDelonD.add(placelon.gelontContainelonrsSizelon());
+
+      for (String placelonId : placelon.gelontContainelonrs()) {
+        melonssagelon.addPlacelon(placelonId);
+      }
+    }
+
+    Prelonconditions.chelonckArgumelonnt(placelon.isSelontId(), "Twelonelont.Placelon without id.");
+    melonssagelon.selontPlacelonId(placelon.gelontId());
+    Prelonconditions.chelonckArgumelonnt(placelon.isSelontFull_namelon(), "Twelonelont.Placelon without full_namelon.");
+    melonssagelon.selontPlacelonFullNamelon(placelon.gelontFull_namelon());
+    if (placelon.isSelontCountry_codelon()) {
+      melonssagelon.selontPlacelonCountryCodelon(placelon.gelontCountry_codelon());
+      NUM_TWelonelonTS_WITH_PLACelon_COUNTRY_CODelon.increlonmelonnt();
+    }
+
+    if (melonssagelon.gelontGelonoTaggelondLocation() == null) {
+      Optional<GelonoObjelonct> location = GelonoObjelonct.fromPlacelon(placelon);
+
+      if (location.isPrelonselonnt()) {
+        NUM_TWelonelonTS_USelon_PLACelon_FIelonLD.increlonmelonnt();
+        melonssagelon.selontGelonoTaggelondLocation(location.gelont());
+      } elonlselon {
+        NUM_TWelonelonTS_CANNOT_PARSelon_PLACelon_FIelonLD.increlonmelonnt();
+      }
+    }
+  }
+
+  privatelon static void selontTelonxt(TwittelonrMelonssagelon melonssagelon, TwelonelontCorelonData corelonData) {
     /**
-     * TweetyPie doesn't do a full HTML escaping of the text, only a partial escaping
-     * so we use their code to unescape it first, then we do
-     * a second unescaping because when the tweet text itself has HTML escape
-     * sequences, we want to index the unescaped version, not the escape sequence itself.
+     * TwelonelontyPielon doelonsn't do a full HTML elonscaping of thelon telonxt, only a partial elonscaping
+     * so welon uselon thelonir codelon to unelonscapelon it first, thelonn welon do
+     * a seloncond unelonscaping beloncauselon whelonn thelon twelonelont telonxt itselonlf has HTML elonscapelon
+     * selonquelonncelons, welon want to indelonx thelon unelonscapelond velonrsion, not thelon elonscapelon selonquelonncelon itselonlf.
      * --
-     * Yes, we *double* unescape html. About 1-2 tweets per second are double escaped,
-     * and we probably want to index the real text and not things like '&#9733;'.
-     * Unescaping already unescaped text seems safe in practice.
+     * Yelons, welon *doublelon* unelonscapelon html. About 1-2 twelonelonts pelonr seloncond arelon doublelon elonscapelond,
+     * and welon probably want to indelonx thelon relonal telonxt and not things likelon '&#9733;'.
+     * Unelonscaping alrelonady unelonscapelond telonxt selonelonms safelon in practicelon.
      * --
      *
-     * This may seem wrong, because one thinks we should index whatever the user posts,
-     * but given punctuation stripping this creates odd behavior:
+     * This may selonelonm wrong, beloncauselon onelon thinks welon should indelonx whatelonvelonr thelon uselonr posts,
+     * but givelonn punctuation stripping this crelonatelons odd belonhavior:
      *
-     * If someone tweets &amp; they won't be able to find it by searching for '&amp;' because
-     * the tweet will be indexed as 'amp'
+     * If somelononelon twelonelonts &amp; thelony won't belon ablelon to find it by selonarching for '&amp;' beloncauselon
+     * thelon twelonelont will belon indelonxelond as 'amp'
      *
-     * It would also prevent some tweets from surfacing for certain searches, for example:
+     * It would also prelonvelonnt somelon twelonelonts from surfacing for celonrtain selonarchelons, for elonxamplelon:
      *
-     * User Tweets: John Mayer &amp; Dave Chappelle
-     * We Unescape To: John Mayer & Dave Chappelle
-     * We Strip/Normalize To: john mayer dave chappelle
+     * Uselonr Twelonelonts: John Mayelonr &amp; Davelon Chappelonllelon
+     * Welon Unelonscapelon To: John Mayelonr & Davelon Chappelonllelon
+     * Welon Strip/Normalizelon To: john mayelonr davelon chappelonllelon
      *
-     * A user searching for 'John Mayer Dave Chappelle' would get the above tweet.
+     * A uselonr selonarching for 'John Mayelonr Davelon Chappelonllelon' would gelont thelon abovelon twelonelont.
      *
-     * If we didn't double unescape
+     * If welon didn't doublelon unelonscapelon
      *
-     * User Tweets: John Mayer &amp; Dave Chappelle
-     * We Strip/Normalize To: john mayer amp dave chappelle
+     * Uselonr Twelonelonts: John Mayelonr &amp; Davelon Chappelonllelon
+     * Welon Strip/Normalizelon To: john mayelonr amp davelon chappelonllelon
      *
-     * A user searching for 'John Mayer Dave Chappelle' would miss the above tweet.
+     * A uselonr selonarching for 'John Mayelonr Davelon Chappelonllelon' would miss thelon abovelon twelonelont.
      *
-     * Second example
+     * Seloncond elonxamplelon
      *
-     * User Tweets: L'Humanit&eacute;
-     * We Unescape To: L'Humanité
-     * We Strip/Normalize To: l humanite
+     * Uselonr Twelonelonts: L'Humanit&elonacutelon;
+     * Welon Unelonscapelon To: L'Humanité
+     * Welon Strip/Normalizelon To: l humanitelon
      *
-     * If we didn't double escape
+     * If welon didn't doublelon elonscapelon
      *
-     * User Tweets: L'Humanit&eacute;
-     * We Strip/Normalize To: l humanit eacute
+     * Uselonr Twelonelonts: L'Humanit&elonacutelon;
+     * Welon Strip/Normalizelon To: l humanit elonacutelon
      *
      */
 
-    String text = coreData.isSetText()
-        ? StringEscapeUtils.unescapeHtml(PartialHtmlEncoding.decode(coreData.getText()))
-        : coreData.getText();
-    message.setText(text);
-    if (text != null) {
-      long tweetLength = text.length();
-      TWEET_SIZE.add(tweetLength);
-      TWEET_SIZE_PERCENTILES.record(tweetLength);
-    } else {
-      NUM_TWEETS_WITH_NULL_TEXT.increment();
+    String telonxt = corelonData.isSelontTelonxt()
+        ? StringelonscapelonUtils.unelonscapelonHtml(PartialHtmlelonncoding.deloncodelon(corelonData.gelontTelonxt()))
+        : corelonData.gelontTelonxt();
+    melonssagelon.selontTelonxt(telonxt);
+    if (telonxt != null) {
+      long twelonelontLelonngth = telonxt.lelonngth();
+      TWelonelonT_SIZelon.add(twelonelontLelonngth);
+      TWelonelonT_SIZelon_PelonRCelonNTILelonS.reloncord(twelonelontLelonngth);
+    } elonlselon {
+      NUM_TWelonelonTS_WITH_NULL_TelonXT.increlonmelonnt();
     }
   }
 
-  private static void setInReplyTo(
-      TwitterMessage message, TweetCoreData coreData, boolean isRetweet) {
-    Reply reply = coreData.getReply();
-    if (!isRetweet && reply != null) {
-      String inReplyToScreenName = reply.getIn_reply_to_screen_name();
-      long inReplyToUserId = reply.getIn_reply_to_user_id();
-      message.replaceToUserWithInReplyToUserIfNeeded(inReplyToScreenName, inReplyToUserId);
+  privatelon static void selontInRelonplyTo(
+      TwittelonrMelonssagelon melonssagelon, TwelonelontCorelonData corelonData, boolelonan isRelontwelonelont) {
+    Relonply relonply = corelonData.gelontRelonply();
+    if (!isRelontwelonelont && relonply != null) {
+      String inRelonplyToScrelonelonnNamelon = relonply.gelontIn_relonply_to_screlonelonn_namelon();
+      long inRelonplyToUselonrId = relonply.gelontIn_relonply_to_uselonr_id();
+      melonssagelon.relonplacelonToUselonrWithInRelonplyToUselonrIfNelonelondelond(inRelonplyToScrelonelonnNamelon, inRelonplyToUselonrId);
     }
 
-    if ((reply != null) && reply.isSetIn_reply_to_status_id()) {
-      message.setInReplyToStatusId(reply.getIn_reply_to_status_id());
+    if ((relonply != null) && relonply.isSelontIn_relonply_to_status_id()) {
+      melonssagelon.selontInRelonplyToStatusId(relonply.gelontIn_relonply_to_status_id());
     }
   }
 
-  private static void setProfileGeoEnrichmentFields(TwitterMessage message, Tweet tweet) {
-    if (!tweet.isSetProfile_geo_enrichment()) {
-      return;
+  privatelon static void selontProfilelonGelonoelonnrichmelonntFielonlds(TwittelonrMelonssagelon melonssagelon, Twelonelont twelonelont) {
+    if (!twelonelont.isSelontProfilelon_gelono_elonnrichmelonnt()) {
+      relonturn;
     }
 
-    ProfileGeoEnrichment profileGeoEnrichment = tweet.getProfile_geo_enrichment();
-    List<PotentialLocation> thriftPotentialLocations =
-        profileGeoEnrichment.getPotential_locations();
-    if (!thriftPotentialLocations.isEmpty()) {
-      NUM_TWEETS_WITH_PROFILE_GEO_ENRICHMENT.increment();
-      List<PotentialLocationObject> potentialLocations = Lists.newArrayList();
-      for (PotentialLocation potentialLocation : thriftPotentialLocations) {
-        GeoEntity geoEntity = potentialLocation.getGeo_entity();
-        potentialLocations.add(new PotentialLocationObject(geoEntity.getCountry_code(),
-                                                           geoEntity.getRegion(),
-                                                           geoEntity.getLocality()));
+    ProfilelonGelonoelonnrichmelonnt profilelonGelonoelonnrichmelonnt = twelonelont.gelontProfilelon_gelono_elonnrichmelonnt();
+    List<PotelonntialLocation> thriftPotelonntialLocations =
+        profilelonGelonoelonnrichmelonnt.gelontPotelonntial_locations();
+    if (!thriftPotelonntialLocations.iselonmpty()) {
+      NUM_TWelonelonTS_WITH_PROFILelon_GelonO_elonNRICHMelonNT.increlonmelonnt();
+      List<PotelonntialLocationObjelonct> potelonntialLocations = Lists.nelonwArrayList();
+      for (PotelonntialLocation potelonntialLocation : thriftPotelonntialLocations) {
+        Gelonoelonntity gelonoelonntity = potelonntialLocation.gelontGelono_elonntity();
+        potelonntialLocations.add(nelonw PotelonntialLocationObjelonct(gelonoelonntity.gelontCountry_codelon(),
+                                                           gelonoelonntity.gelontRelongion(),
+                                                           gelonoelonntity.gelontLocality()));
       }
 
-      message.setPotentialLocations(potentialLocations);
+      melonssagelon.selontPotelonntialLocations(potelonntialLocations);
     }
   }
 
-  private static void setDeviceSourceField(TwitterMessage message, Tweet tweet) {
-    DeviceSource deviceSource = tweet.getDevice_source();
-    TwitterMessageUtil.setSourceOnMessage(message, modifyDeviceSourceWithNofollow(deviceSource));
+  privatelon static void selontDelonvicelonSourcelonFielonld(TwittelonrMelonssagelon melonssagelon, Twelonelont twelonelont) {
+    DelonvicelonSourcelon delonvicelonSourcelon = twelonelont.gelontDelonvicelon_sourcelon();
+    TwittelonrMelonssagelonUtil.selontSourcelonOnMelonssagelon(melonssagelon, modifyDelonvicelonSourcelonWithNofollow(delonvicelonSourcelon));
   }
 
-  /** Builds an IngesterTwitterMessage instance from a TweetDeleteEvent. */
+  /** Builds an IngelonstelonrTwittelonrMelonssagelon instancelon from a TwelonelontDelonlelontelonelonvelonnt. */
   @Nonnull
-  public static IngesterTwitterMessage getTwitterMessageFromDeletionEvent(
-      @Nonnull TweetDeleteEvent deleteEvent,
-      @Nonnull List<PenguinVersion> supportedPenguinVersions,
-      @Nullable DebugEvents debugEvents) throws ThriftTweetParsingException {
+  public static IngelonstelonrTwittelonrMelonssagelon gelontTwittelonrMelonssagelonFromDelonlelontionelonvelonnt(
+      @Nonnull TwelonelontDelonlelontelonelonvelonnt delonlelontelonelonvelonnt,
+      @Nonnull List<PelonnguinVelonrsion> supportelondPelonnguinVelonrsions,
+      @Nullablelon Delonbugelonvelonnts delonbugelonvelonnts) throws ThriftTwelonelontParsingelonxcelonption {
 
-    Tweet tweet = deleteEvent.getTweet();
-    if (tweet == null) {
-      throw new ThriftTweetParsingException("No tweet field in TweetDeleteEvent");
+    Twelonelont twelonelont = delonlelontelonelonvelonnt.gelontTwelonelont();
+    if (twelonelont == null) {
+      throw nelonw ThriftTwelonelontParsingelonxcelonption("No twelonelont fielonld in TwelonelontDelonlelontelonelonvelonnt");
     }
-    long tweetId = tweet.getId();
+    long twelonelontId = twelonelont.gelontId();
 
-    TweetCoreData coreData = tweet.getCore_data();
-    if (coreData == null) {
-      throw new ThriftTweetParsingException("No TweetCoreData in TweetDeleteEvent");
+    TwelonelontCorelonData corelonData = twelonelont.gelontCorelon_data();
+    if (corelonData == null) {
+      throw nelonw ThriftTwelonelontParsingelonxcelonption("No TwelonelontCorelonData in TwelonelontDelonlelontelonelonvelonnt");
     }
-    long userId = coreData.getUser_id();
+    long uselonrId = corelonData.gelontUselonr_id();
 
-    IngesterTwitterMessage message = new IngesterTwitterMessage(
-        tweetId,
-        supportedPenguinVersions,
-        debugEvents);
-    message.setDeleted(true);
-    message.setText("delete");
-    message.setFromUser(TwitterMessageUser.createWithNamesAndId("delete", "delete", userId));
+    IngelonstelonrTwittelonrMelonssagelon melonssagelon = nelonw IngelonstelonrTwittelonrMelonssagelon(
+        twelonelontId,
+        supportelondPelonnguinVelonrsions,
+        delonbugelonvelonnts);
+    melonssagelon.selontDelonlelontelond(truelon);
+    melonssagelon.selontTelonxt("delonlelontelon");
+    melonssagelon.selontFromUselonr(TwittelonrMelonssagelonUselonr.crelonatelonWithNamelonsAndId("delonlelontelon", "delonlelontelon", uselonrId));
 
-    return message;
+    relonturn melonssagelon;
   }
 
-  private static TwitterMessageUser getFromUser(User user) {
-    String screenName = user.getProfile().getScreen_name();
-    long id = user.getId();
-    String displayName = user.getProfile().getName();
-    return TwitterMessageUser.createWithNamesAndId(screenName, displayName, id);
+  privatelon static TwittelonrMelonssagelonUselonr gelontFromUselonr(Uselonr uselonr) {
+    String screlonelonnNamelon = uselonr.gelontProfilelon().gelontScrelonelonn_namelon();
+    long id = uselonr.gelontId();
+    String displayNamelon = uselonr.gelontProfilelon().gelontNamelon();
+    relonturn TwittelonrMelonssagelonUselonr.crelonatelonWithNamelonsAndId(screlonelonnNamelon, displayNamelon, id);
   }
 
-  private static void addMentionsToMessage(IngesterTwitterMessage message, Tweet tweet) {
-    List<MentionEntity> mentions = tweet.getMentions();
-    if (mentions != null) {
-      NUM_TWEETS_WITH_MENTIONS.increment();
-      NUM_MENTIONS_ADDED.add(mentions.size());
-      for (MentionEntity mention : mentions) {
-        addMention(message, mention);
+  privatelon static void addMelonntionsToMelonssagelon(IngelonstelonrTwittelonrMelonssagelon melonssagelon, Twelonelont twelonelont) {
+    List<Melonntionelonntity> melonntions = twelonelont.gelontMelonntions();
+    if (melonntions != null) {
+      NUM_TWelonelonTS_WITH_MelonNTIONS.increlonmelonnt();
+      NUM_MelonNTIONS_ADDelonD.add(melonntions.sizelon());
+      for (Melonntionelonntity melonntion : melonntions) {
+        addMelonntion(melonssagelon, melonntion);
       }
     }
   }
 
-  private static void addMention(IngesterTwitterMessage message, MentionEntity mention) {
-    // Default values. They are weird, but are consistent with JSON parsing behavior.
+  privatelon static void addMelonntion(IngelonstelonrTwittelonrMelonssagelon melonssagelon, Melonntionelonntity melonntion) {
+    // Delonfault valuelons. Thelony arelon welonird, but arelon consistelonnt with JSON parsing belonhavior.
     Optional<Long> id = Optional.of(-1L);
-    Optional<String> screenName = Optional.of("");
-    Optional<String> displayName = Optional.of("");
+    Optional<String> screlonelonnNamelon = Optional.of("");
+    Optional<String> displayNamelon = Optional.of("");
 
-    if (mention.isSetUser_id()) {
-      id = Optional.of(mention.getUser_id());
+    if (melonntion.isSelontUselonr_id()) {
+      id = Optional.of(melonntion.gelontUselonr_id());
     }
 
-    if (mention.isSetScreen_name()) {
-      screenName = Optional.of(mention.getScreen_name());
+    if (melonntion.isSelontScrelonelonn_namelon()) {
+      screlonelonnNamelon = Optional.of(melonntion.gelontScrelonelonn_namelon());
     }
 
-    if (mention.isSetName()) {
-      displayName = Optional.of(mention.getName());
+    if (melonntion.isSelontNamelon()) {
+      displayNamelon = Optional.of(melonntion.gelontNamelon());
     }
 
-    TwitterMessageUser mentionedUser = TwitterMessageUser
-        .createWithOptionalNamesAndId(screenName, displayName, id);
+    TwittelonrMelonssagelonUselonr melonntionelondUselonr = TwittelonrMelonssagelonUselonr
+        .crelonatelonWithOptionalNamelonsAndId(screlonelonnNamelon, displayNamelon, id);
 
-    if (isToUser(mention, message.getToUserObject())) {
-      message.setToUserObject(mentionedUser);
+    if (isToUselonr(melonntion, melonssagelon.gelontToUselonrObjelonct())) {
+      melonssagelon.selontToUselonrObjelonct(melonntionelondUselonr);
     }
-    message.addUserToMentions(mentionedUser);
+    melonssagelon.addUselonrToMelonntions(melonntionelondUselonr);
   }
 
-  private static boolean isToUser(
-      MentionEntity mention, Optional<TwitterMessageUser> optionalToUser) {
-    if (mention.getFrom_index() == 0) {
-      return true;
+  privatelon static boolelonan isToUselonr(
+      Melonntionelonntity melonntion, Optional<TwittelonrMelonssagelonUselonr> optionalToUselonr) {
+    if (melonntion.gelontFrom_indelonx() == 0) {
+      relonturn truelon;
     }
-    if (optionalToUser.isPresent()) {
-      TwitterMessageUser toUser = optionalToUser.get();
-      if (toUser.getId().isPresent()) {
-        long toUserId = toUser.getId().get();
-        return mention.getUser_id() == toUserId;
+    if (optionalToUselonr.isPrelonselonnt()) {
+      TwittelonrMelonssagelonUselonr toUselonr = optionalToUselonr.gelont();
+      if (toUselonr.gelontId().isPrelonselonnt()) {
+        long toUselonrId = toUselonr.gelontId().gelont();
+        relonturn melonntion.gelontUselonr_id() == toUselonrId;
       }
     }
-    return false;
+    relonturn falselon;
   }
 
-  private static void addHashtagsToMessage(IngesterTwitterMessage message, Tweet tweet) {
-    List<HashtagEntity> hashtags = tweet.getHashtags();
+  privatelon static void addHashtagsToMelonssagelon(IngelonstelonrTwittelonrMelonssagelon melonssagelon, Twelonelont twelonelont) {
+    List<Hashtagelonntity> hashtags = twelonelont.gelontHashtags();
     if (hashtags != null) {
-      NUM_TWEETS_WITH_HASHTAGS.increment();
-      NUM_HASHTAGS_ADDED.add(hashtags.size());
-      for (HashtagEntity hashtag : hashtags) {
-        addHashtag(message, hashtag);
+      NUM_TWelonelonTS_WITH_HASHTAGS.increlonmelonnt();
+      NUM_HASHTAGS_ADDelonD.add(hashtags.sizelon());
+      for (Hashtagelonntity hashtag : hashtags) {
+        addHashtag(melonssagelon, hashtag);
       }
     }
   }
 
-  private static void addHashtag(IngesterTwitterMessage message, HashtagEntity hashtag) {
-    String hashtagString = hashtag.getText();
-    message.addHashtag(hashtagString);
+  privatelon static void addHashtag(IngelonstelonrTwittelonrMelonssagelon melonssagelon, Hashtagelonntity hashtag) {
+    String hashtagString = hashtag.gelontTelonxt();
+    melonssagelon.addHashtag(hashtagString);
   }
 
-  /** Add the given media entities to the given message. */
-  public static void addMediaEntitiesToMessage(
-      IngesterTwitterMessage message,
+  /** Add thelon givelonn melondia elonntitielons to thelon givelonn melonssagelon. */
+  public static void addMelondiaelonntitielonsToMelonssagelon(
+      IngelonstelonrTwittelonrMelonssagelon melonssagelon,
       long photoStatusId,
-      @Nullable List<MediaEntity> medias) {
+      @Nullablelon List<Melondiaelonntity> melondias) {
 
-    if (medias != null) {
-      NUM_TWEETS_WITH_MEDIA_URL.increment();
-      NUM_MEDIA_URLS_ADDED.add(medias.size());
+    if (melondias != null) {
+      NUM_TWelonelonTS_WITH_MelonDIA_URL.increlonmelonnt();
+      NUM_MelonDIA_URLS_ADDelonD.add(melondias.sizelon());
 
-      boolean hasPhotoMediaUrl = false;
-      boolean hasVideoMediaUrl = false;
-      for (MediaEntity media : medias) {
-        MediaTypes mediaType = null;
-        if (media.isSetMedia_info()) {
-          MediaInfo mediaInfo = media.getMedia_info();
-          if (mediaInfo != null) {
-            if (mediaInfo.isSet(MediaInfo._Fields.IMAGE_INFO)) {
-              mediaType = MediaTypes.NATIVE_IMAGE;
-              String mediaUrl = media.getMedia_url_https();
-              if (mediaUrl != null) {
-                hasPhotoMediaUrl = true;
-                message.addPhotoUrl(photoStatusId, mediaUrl);
-                // Add this link to the expanded URLs too, so that the HAS_NATIVE_IMAGE_FLAG is set
-                // correctly too. See EncodedFeatureBuilder.updateLinkEncodedFeatures().
+      boolelonan hasPhotoMelondiaUrl = falselon;
+      boolelonan hasVidelonoMelondiaUrl = falselon;
+      for (Melondiaelonntity melondia : melondias) {
+        MelondiaTypelons melondiaTypelon = null;
+        if (melondia.isSelontMelondia_info()) {
+          MelondiaInfo melondiaInfo = melondia.gelontMelondia_info();
+          if (melondiaInfo != null) {
+            if (melondiaInfo.isSelont(MelondiaInfo._Fielonlds.IMAGelon_INFO)) {
+              melondiaTypelon = MelondiaTypelons.NATIVelon_IMAGelon;
+              String melondiaUrl = melondia.gelontMelondia_url_https();
+              if (melondiaUrl != null) {
+                hasPhotoMelondiaUrl = truelon;
+                melonssagelon.addPhotoUrl(photoStatusId, melondiaUrl);
+                // Add this link to thelon elonxpandelond URLs too, so that thelon HAS_NATIVelon_IMAGelon_FLAG is selont
+                // correlonctly too. Selonelon elonncodelondFelonaturelonBuildelonr.updatelonLinkelonncodelondFelonaturelons().
               }
-            } else if (mediaInfo.isSet(MediaInfo._Fields.VIDEO_INFO)) {
-              mediaType = MediaTypes.VIDEO;
-              hasVideoMediaUrl = true;
+            } elonlselon if (melondiaInfo.isSelont(MelondiaInfo._Fielonlds.VIDelonO_INFO)) {
+              melondiaTypelon = MelondiaTypelons.VIDelonO;
+              hasVidelonoMelondiaUrl = truelon;
             }
           }
         }
-        String originalUrl = media.getUrl();
-        String expandedUrl = media.getExpanded_url();
-        message.addExpandedMediaUrl(originalUrl, expandedUrl, mediaType);
+        String originalUrl = melondia.gelontUrl();
+        String elonxpandelondUrl = melondia.gelontelonxpandelond_url();
+        melonssagelon.addelonxpandelondMelondiaUrl(originalUrl, elonxpandelondUrl, melondiaTypelon);
       }
 
-      if (hasPhotoMediaUrl) {
-        NUM_TWEETS_WITH_PHOTO_MEDIA_URL.increment();
+      if (hasPhotoMelondiaUrl) {
+        NUM_TWelonelonTS_WITH_PHOTO_MelonDIA_URL.increlonmelonnt();
       }
-      if (hasVideoMediaUrl) {
-        NUM_TWEETS_WITH_VIDEO_MEDIA_URL.increment();
+      if (hasVidelonoMelondiaUrl) {
+        NUM_TWelonelonTS_WITH_VIDelonO_MelonDIA_URL.increlonmelonnt();
       }
     }
   }
 
-  /** Adds the given urls to the given message. */
-  public static void addUrlsToMessage(
-      IngesterTwitterMessage message,
-      @Nullable List<UrlEntity> urls) {
+  /** Adds thelon givelonn urls to thelon givelonn melonssagelon. */
+  public static void addUrlsToMelonssagelon(
+      IngelonstelonrTwittelonrMelonssagelon melonssagelon,
+      @Nullablelon List<Urlelonntity> urls) {
 
     if (urls != null) {
-      NUM_TWEETS_WITH_NON_MEDIA_URL.increment();
-      NUM_NON_MEDIA_URLS_ADDED.add(urls.size());
-      for (UrlEntity url : urls) {
-        String originalUrl = url.getUrl();
-        String expandedUrl = url.getExpanded();
-        message.addExpandedNonMediaUrl(originalUrl, expandedUrl);
+      NUM_TWelonelonTS_WITH_NON_MelonDIA_URL.increlonmelonnt();
+      NUM_NON_MelonDIA_URLS_ADDelonD.add(urls.sizelon());
+      for (Urlelonntity url : urls) {
+        String originalUrl = url.gelontUrl();
+        String elonxpandelondUrl = url.gelontelonxpandelond();
+        melonssagelon.addelonxpandelondNonMelondiaUrl(originalUrl, elonxpandelondUrl);
       }
     }
   }
 
-  private static void addEscherbirdAnnotationsToMessage(
-      IngesterTwitterMessage message, Tweet tweet) {
-    if (tweet.isSetEscherbird_entity_annotations()) {
-      EscherbirdEntityAnnotations entityAnnotations = tweet.getEscherbird_entity_annotations();
-      if (entityAnnotations.isSetEntity_annotations()) {
-        NUM_TWEETS_WITH_ANNOTATIONS.increment();
-        NUM_ANNOTATIONS_ADDED.add(entityAnnotations.getEntity_annotationsSize());
-        for (TweetEntityAnnotation entityAnnotation : entityAnnotations.getEntity_annotations()) {
-          EscherbirdAnnotation escherbirdAnnotation =
-              new EscherbirdAnnotation(entityAnnotation.getGroupId(),
-                  entityAnnotation.getDomainId(),
-                  entityAnnotation.getEntityId());
-          message.addEscherbirdAnnotation(escherbirdAnnotation);
+  privatelon static void addelonschelonrbirdAnnotationsToMelonssagelon(
+      IngelonstelonrTwittelonrMelonssagelon melonssagelon, Twelonelont twelonelont) {
+    if (twelonelont.isSelontelonschelonrbird_elonntity_annotations()) {
+      elonschelonrbirdelonntityAnnotations elonntityAnnotations = twelonelont.gelontelonschelonrbird_elonntity_annotations();
+      if (elonntityAnnotations.isSelontelonntity_annotations()) {
+        NUM_TWelonelonTS_WITH_ANNOTATIONS.increlonmelonnt();
+        NUM_ANNOTATIONS_ADDelonD.add(elonntityAnnotations.gelontelonntity_annotationsSizelon());
+        for (TwelonelontelonntityAnnotation elonntityAnnotation : elonntityAnnotations.gelontelonntity_annotations()) {
+          elonschelonrbirdAnnotation elonschelonrbirdAnnotation =
+              nelonw elonschelonrbirdAnnotation(elonntityAnnotation.gelontGroupId(),
+                  elonntityAnnotation.gelontDomainId(),
+                  elonntityAnnotation.gelontelonntityId());
+          melonssagelon.addelonschelonrbirdAnnotation(elonschelonrbirdAnnotation);
         }
       }
     }
   }
 
-  private static void setComposerSource(IngesterTwitterMessage message, Tweet tweet) {
-    if (tweet.isSetComposer_source()) {
-      message.setComposerSource(tweet.getComposer_source());
+  privatelon static void selontComposelonrSourcelon(IngelonstelonrTwittelonrMelonssagelon melonssagelon, Twelonelont twelonelont) {
+    if (twelonelont.isSelontComposelonr_sourcelon()) {
+      melonssagelon.selontComposelonrSourcelon(twelonelont.gelontComposelonr_sourcelon());
     }
   }
 
-  private static String modifyDeviceSourceWithNofollow(@Nullable DeviceSource deviceSource) {
-    if (deviceSource != null) {
-      String source = deviceSource.getDisplay();
-      int i = source.indexOf("\">");
+  privatelon static String modifyDelonvicelonSourcelonWithNofollow(@Nullablelon DelonvicelonSourcelon delonvicelonSourcelon) {
+    if (delonvicelonSourcelon != null) {
+      String sourcelon = delonvicelonSourcelon.gelontDisplay();
+      int i = sourcelon.indelonxOf("\">");
       if (i == -1) {
-        return source;
-      } else {
-        return source.substring(0, i) + "\" rel=\"nofollow\">" + source.substring(i + 2);
+        relonturn sourcelon;
+      } elonlselon {
+        relonturn sourcelon.substring(0, i) + "\" relonl=\"nofollow\">" + sourcelon.substring(i + 2);
       }
-    } else {
-      return "<a href=\"http://twitter.com\" rel=\"nofollow\">Twitter</a>";
+    } elonlselon {
+      relonturn "<a hrelonf=\"http://twittelonr.com\" relonl=\"nofollow\">Twittelonr</a>";
     }
   }
 
-  private static void setDirectedAtUser(
-      IngesterTwitterMessage message,
-      TweetCoreData tweetCoreData) {
-    if (!tweetCoreData.isSetDirected_at_user()) {
-      return;
+  privatelon static void selontDirelonctelondAtUselonr(
+      IngelonstelonrTwittelonrMelonssagelon melonssagelon,
+      TwelonelontCorelonData twelonelontCorelonData) {
+    if (!twelonelontCorelonData.isSelontDirelonctelond_at_uselonr()) {
+      relonturn;
     }
 
-    DirectedAtUser directedAtUser = tweetCoreData.getDirected_at_user();
+    DirelonctelondAtUselonr direlonctelondAtUselonr = twelonelontCorelonData.gelontDirelonctelond_at_uselonr();
 
-    if (!directedAtUser.isSetUser_id()) {
-      return;
+    if (!direlonctelondAtUselonr.isSelontUselonr_id()) {
+      relonturn;
     }
 
-    message.setDirectedAtUserId(Optional.of(directedAtUser.getUser_id()));
+    melonssagelon.selontDirelonctelondAtUselonrId(Optional.of(direlonctelondAtUselonr.gelontUselonr_id()));
   }
 }

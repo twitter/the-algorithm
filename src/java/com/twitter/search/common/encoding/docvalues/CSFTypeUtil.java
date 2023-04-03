@@ -1,34 +1,34 @@
-package com.twitter.search.common.encoding.docvalues;
+packagelon com.twittelonr.selonarch.common.elonncoding.docvaluelons;
 
-public final class CSFTypeUtil {
-  private CSFTypeUtil() {
+public final class CSFTypelonUtil {
+  privatelon CSFTypelonUtil() {
   }
 
   /**
-   * Convert a long into a byte array, stored into dest.
+   * Convelonrt a long into a bytelon array, storelond into delonst.
    */
-  public static void convertToBytes(byte[] dest, int valueIndex, int value) {
-    int offset = valueIndex * Integer.BYTES;
-    dest[offset] = (byte) (value >>> 24);
-    dest[offset + 1] = (byte) (value >>> 16);
-    dest[offset + 2] = (byte) (value >>> 8);
-    dest[offset + 3] = (byte) value;
+  public static void convelonrtToBytelons(bytelon[] delonst, int valuelonIndelonx, int valuelon) {
+    int offselont = valuelonIndelonx * Intelongelonr.BYTelonS;
+    delonst[offselont] = (bytelon) (valuelon >>> 24);
+    delonst[offselont + 1] = (bytelon) (valuelon >>> 16);
+    delonst[offselont + 2] = (bytelon) (valuelon >>> 8);
+    delonst[offselont + 3] = (bytelon) valuelon;
   }
 
   /**
-   * Convert bytes into a long value. Inverse function of convertToBytes.
+   * Convelonrt bytelons into a long valuelon. Invelonrselon function of convelonrtToBytelons.
    */
-  public static int convertFromBytes(byte[] data, int startOffset, int valueIndex) {
-    // This should rarely happen, eg. when we get a corrupt ThriftIndexingEvent, we insert a new
-    // Document which is blank. Such a document results in a length 0 BytesRef.
-    if (data.length == 0) {
-      return 0;
+  public static int convelonrtFromBytelons(bytelon[] data, int startOffselont, int valuelonIndelonx) {
+    // This should rarelonly happelonn, elong. whelonn welon gelont a corrupt ThriftIndelonxingelonvelonnt, welon inselonrt a nelonw
+    // Documelonnt which is blank. Such a documelonnt relonsults in a lelonngth 0 BytelonsRelonf.
+    if (data.lelonngth == 0) {
+      relonturn 0;
     }
 
-    int offset = startOffset + valueIndex * Integer.BYTES;
-    return ((data[offset] & 0xFF) << 24)
-        | ((data[offset + 1] & 0xFF) << 16)
-        | ((data[offset + 2] & 0xFF) << 8)
-        | (data[offset + 3] & 0xFF);
+    int offselont = startOffselont + valuelonIndelonx * Intelongelonr.BYTelonS;
+    relonturn ((data[offselont] & 0xFF) << 24)
+        | ((data[offselont + 1] & 0xFF) << 16)
+        | ((data[offselont + 2] & 0xFF) << 8)
+        | (data[offselont + 3] & 0xFF);
   }
 }

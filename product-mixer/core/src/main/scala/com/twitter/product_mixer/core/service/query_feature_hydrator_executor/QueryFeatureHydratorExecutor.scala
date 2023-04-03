@@ -1,217 +1,217 @@
-package com.twitter.product_mixer.core.service.query_feature_hydrator_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.asyncfeaturemap.AsyncFeatureMap
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.Executor._
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.product_mixer.core.service.feature_hydrator_observer.FeatureHydratorObserver
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.AsyncIndividualFeatureHydratorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.BaseIndividualFeatureHydratorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.FeatureHydratorDisabled
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.IndividualFeatureHydratorResult
-import com.twitter.product_mixer.core.service.query_feature_hydrator_executor.QueryFeatureHydratorExecutor.validateAsyncQueryFeatureHydrator
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.fastelonrxml.jackson.databind.annotation.JsonSelonrializelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.asyncfelonaturelonmap.AsyncFelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.AsyncHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonQuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1.FelonaturelonStorelonV1QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor._
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.felonaturelon_hydrator_obselonrvelonr.FelonaturelonHydratorObselonrvelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor.AsyncIndividualFelonaturelonHydratorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor.BaselonIndividualFelonaturelonHydratorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor.FelonaturelonHydratorDisablelond
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor.IndividualFelonaturelonHydratorRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.quelonry_felonaturelon_hydrator_elonxeloncutor.QuelonryFelonaturelonHydratorelonxeloncutor.validatelonAsyncQuelonryFelonaturelonHydrator
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class QueryFeatureHydratorExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
+@Singlelonton
+class QuelonryFelonaturelonHydratorelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor {
 
-  def arrow[Query <: PipelineQuery](
-    hydrators: Seq[BaseQueryFeatureHydrator[Query, _]],
-    validPipelineSteps: Set[PipelineStepIdentifier],
-    context: Executor.Context
-  ): Arrow[Query, QueryFeatureHydratorExecutor.Result] = {
+  delonf arrow[Quelonry <: PipelonlinelonQuelonry](
+    hydrators: Selonq[BaselonQuelonryFelonaturelonHydrator[Quelonry, _]],
+    validPipelonlinelonStelonps: Selont[PipelonlinelonStelonpIdelonntifielonr],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Quelonry, QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult] = {
 
-    val observer = new FeatureHydratorObserver(statsReceiver, hydrators, context)
-    val hydratorsWithErrorHandling =
+    val obselonrvelonr = nelonw FelonaturelonHydratorObselonrvelonr(statsReloncelonivelonr, hydrators, contelonxt)
+    val hydratorsWithelonrrorHandling =
       hydrators.map { hydrator =>
-        val queryFeatureHydratorArrow =
-          getQueryHydratorArrow(hydrator, context, observer)
-        val wrappedWithAsyncHandling =
-          handleAsyncHydrator(hydrator, validPipelineSteps, queryFeatureHydratorArrow)
-        handleConditionally(hydrator, wrappedWithAsyncHandling)
+        val quelonryFelonaturelonHydratorArrow =
+          gelontQuelonryHydratorArrow(hydrator, contelonxt, obselonrvelonr)
+        val wrappelondWithAsyncHandling =
+          handlelonAsyncHydrator(hydrator, validPipelonlinelonStelonps, quelonryFelonaturelonHydratorArrow)
+        handlelonConditionally(hydrator, wrappelondWithAsyncHandling)
       }
 
     Arrow
-      .collect(hydratorsWithErrorHandling)
+      .collelonct(hydratorsWithelonrrorHandling)
       .map {
-        results: Seq[
-          (FeatureHydratorIdentifier, BaseIndividualFeatureHydratorResult)
+        relonsults: Selonq[
+          (FelonaturelonHydratorIdelonntifielonr, BaselonIndividualFelonaturelonHydratorRelonsult)
         ] =>
-          val combinedFeatureMap = FeatureMap.merge(results.collect {
-            case (_, IndividualFeatureHydratorResult(featureMap)) => featureMap
+          val combinelondFelonaturelonMap = FelonaturelonMap.melonrgelon(relonsults.collelonct {
+            caselon (_, IndividualFelonaturelonHydratorRelonsult(felonaturelonMap)) => felonaturelonMap
           })
 
-          val asyncFeatureMaps = results.collect {
-            case (
-                  hydratorIdentifier,
-                  AsyncIndividualFeatureHydratorResult(hydrateBefore, featuresToHydrate, ref)) =>
-              (hydratorIdentifier, hydrateBefore, featuresToHydrate, ref)
+          val asyncFelonaturelonMaps = relonsults.collelonct {
+            caselon (
+                  hydratorIdelonntifielonr,
+                  AsyncIndividualFelonaturelonHydratorRelonsult(hydratelonBelonforelon, felonaturelonsToHydratelon, relonf)) =>
+              (hydratorIdelonntifielonr, hydratelonBelonforelon, felonaturelonsToHydratelon, relonf)
           }
 
-          QueryFeatureHydratorExecutor.Result(
-            individualFeatureMaps = results.toMap,
-            featureMap = combinedFeatureMap,
-            asyncFeatureMap = AsyncFeatureMap.fromFeatureMaps(asyncFeatureMaps)
+          QuelonryFelonaturelonHydratorelonxeloncutor.Relonsult(
+            individualFelonaturelonMaps = relonsults.toMap,
+            felonaturelonMap = combinelondFelonaturelonMap,
+            asyncFelonaturelonMap = AsyncFelonaturelonMap.fromFelonaturelonMaps(asyncFelonaturelonMaps)
           )
       }
   }
 
-  def handleConditionally[Query <: PipelineQuery](
-    hydrator: BaseQueryFeatureHydrator[Query, _],
+  delonf handlelonConditionally[Quelonry <: PipelonlinelonQuelonry](
+    hydrator: BaselonQuelonryFelonaturelonHydrator[Quelonry, _],
     arrow: Arrow[
-      Query,
-      BaseIndividualFeatureHydratorResult
+      Quelonry,
+      BaselonIndividualFelonaturelonHydratorRelonsult
     ]
   ): Arrow[
-    Query,
-    (FeatureHydratorIdentifier, BaseIndividualFeatureHydratorResult)
+    Quelonry,
+    (FelonaturelonHydratorIdelonntifielonr, BaselonIndividualFelonaturelonHydratorRelonsult)
   ] = {
     val conditionallyRunArrow = hydrator match {
-      case hydrator: BaseQueryFeatureHydrator[Query, _] with Conditionally[Query @unchecked] =>
-        Arrow.ifelse[Query, BaseIndividualFeatureHydratorResult](
+      caselon hydrator: BaselonQuelonryFelonaturelonHydrator[Quelonry, _] with Conditionally[Quelonry @unchelonckelond] =>
+        Arrow.ifelonlselon[Quelonry, BaselonIndividualFelonaturelonHydratorRelonsult](
           hydrator.onlyIf,
           arrow,
-          Arrow.value(FeatureHydratorDisabled)
+          Arrow.valuelon(FelonaturelonHydratorDisablelond)
         )
-      case _ => arrow
+      caselon _ => arrow
     }
 
     Arrow.join(
-      Arrow.value(hydrator.identifier),
+      Arrow.valuelon(hydrator.idelonntifielonr),
       conditionallyRunArrow
     )
   }
 
-  def handleAsyncHydrator[Query <: PipelineQuery](
-    hydrator: BaseQueryFeatureHydrator[Query, _],
-    validPipelineSteps: Set[PipelineStepIdentifier],
+  delonf handlelonAsyncHydrator[Quelonry <: PipelonlinelonQuelonry](
+    hydrator: BaselonQuelonryFelonaturelonHydrator[Quelonry, _],
+    validPipelonlinelonStelonps: Selont[PipelonlinelonStelonpIdelonntifielonr],
     arrow: Arrow[
-      Query,
-      IndividualFeatureHydratorResult
+      Quelonry,
+      IndividualFelonaturelonHydratorRelonsult
     ]
-  ): Arrow[Query, BaseIndividualFeatureHydratorResult] = {
+  ): Arrow[Quelonry, BaselonIndividualFelonaturelonHydratorRelonsult] = {
     hydrator match {
-      case hydrator: BaseQueryFeatureHydrator[
-            Query,
+      caselon hydrator: BaselonQuelonryFelonaturelonHydrator[
+            Quelonry,
             _
           ] with AsyncHydrator =>
-        validateAsyncQueryFeatureHydrator(hydrator, validPipelineSteps)
+        validatelonAsyncQuelonryFelonaturelonHydrator(hydrator, validPipelonlinelonStelonps)
 
-        startArrowAsync(arrow.map(_.featureMap))
-          .map { ref =>
-            AsyncIndividualFeatureHydratorResult(
-              hydrator.hydrateBefore,
-              hydrator.features.asInstanceOf[Set[Feature[_, _]]],
-              ref
+        startArrowAsync(arrow.map(_.felonaturelonMap))
+          .map { relonf =>
+            AsyncIndividualFelonaturelonHydratorRelonsult(
+              hydrator.hydratelonBelonforelon,
+              hydrator.felonaturelons.asInstancelonOf[Selont[Felonaturelon[_, _]]],
+              relonf
             )
           }
 
-      case _ => arrow
+      caselon _ => arrow
     }
   }
 
-  def getQueryHydratorArrow[Query <: PipelineQuery](
-    hydrator: BaseQueryFeatureHydrator[Query, _],
-    context: Executor.Context,
-    queryFeatureHydratorObserver: FeatureHydratorObserver
-  ): Arrow[Query, IndividualFeatureHydratorResult] = {
+  delonf gelontQuelonryHydratorArrow[Quelonry <: PipelonlinelonQuelonry](
+    hydrator: BaselonQuelonryFelonaturelonHydrator[Quelonry, _],
+    contelonxt: elonxeloncutor.Contelonxt,
+    quelonryFelonaturelonHydratorObselonrvelonr: FelonaturelonHydratorObselonrvelonr
+  ): Arrow[Quelonry, IndividualFelonaturelonHydratorRelonsult] = {
 
-    val componentExecutorContext = context.pushToComponentStack(hydrator.identifier)
-    val hydratorArrow: Arrow[Query, FeatureMap] =
-      Arrow.flatMap { query: Query => hydrator.hydrate(query) }
+    val componelonntelonxeloncutorContelonxt = contelonxt.pushToComponelonntStack(hydrator.idelonntifielonr)
+    val hydratorArrow: Arrow[Quelonry, FelonaturelonMap] =
+      Arrow.flatMap { quelonry: Quelonry => hydrator.hydratelon(quelonry) }
 
-    val validationFn: FeatureMap => FeatureMap = hydrator match {
-      // Feature store query hydrators store the resulting PredictionRecord and not
-      // the features, so we cannot validate the same way
-      case _: FeatureStoreV1QueryFeatureHydrator[Query] =>
-        identity
-      case _ =>
-        validateFeatureMap(
-          hydrator.features.asInstanceOf[Set[Feature[_, _]]],
+    val validationFn: FelonaturelonMap => FelonaturelonMap = hydrator match {
+      // Felonaturelon storelon quelonry hydrators storelon thelon relonsulting PrelondictionReloncord and not
+      // thelon felonaturelons, so welon cannot validatelon thelon samelon way
+      caselon _: FelonaturelonStorelonV1QuelonryFelonaturelonHydrator[Quelonry] =>
+        idelonntity
+      caselon _ =>
+        validatelonFelonaturelonMap(
+          hydrator.felonaturelons.asInstancelonOf[Selont[Felonaturelon[_, _]]],
           _,
-          componentExecutorContext)
+          componelonntelonxeloncutorContelonxt)
     }
 
-    // record the component-level stats
-    val observedArrow =
-      wrapComponentWithExecutorBookkeeping[Query, FeatureMap](
-        context,
-        hydrator.identifier
+    // reloncord thelon componelonnt-lelonvelonl stats
+    val obselonrvelondArrow =
+      wrapComponelonntWithelonxeloncutorBookkelonelonping[Quelonry, FelonaturelonMap](
+        contelonxt,
+        hydrator.idelonntifielonr
       )(hydratorArrow.map(validationFn))
 
-    // store non-configuration errors in the FeatureMap
-    val liftNonValidationFailuresToFailedFeatures = Arrow.handle[FeatureMap, FeatureMap] {
-      case NotAMisconfiguredFeatureMapFailure(e) =>
-        featureMapWithFailuresForFeatures(
-          hydrator.features.asInstanceOf[Set[Feature[_, _]]],
-          e,
-          componentExecutorContext)
+    // storelon non-configuration elonrrors in thelon FelonaturelonMap
+    val liftNonValidationFailurelonsToFailelondFelonaturelons = Arrow.handlelon[FelonaturelonMap, FelonaturelonMap] {
+      caselon NotAMisconfigurelondFelonaturelonMapFailurelon(elon) =>
+        felonaturelonMapWithFailurelonsForFelonaturelons(
+          hydrator.felonaturelons.asInstancelonOf[Selont[Felonaturelon[_, _]]],
+          elon,
+          componelonntelonxeloncutorContelonxt)
     }
 
-    val observedLiftedAndWrapped = observedArrow
-      .andThen(liftNonValidationFailuresToFailedFeatures)
-      .applyEffect(Arrow.map[FeatureMap, Unit](featureMap =>
-        // record per-feature stats, this is separate from the component stats handled by `wrapWithExecutorBookkeeping`
-        queryFeatureHydratorObserver.observeFeatureSuccessAndFailures(hydrator, Seq(featureMap))))
-      .map(IndividualFeatureHydratorResult)
+    val obselonrvelondLiftelondAndWrappelond = obselonrvelondArrow
+      .andThelonn(liftNonValidationFailurelonsToFailelondFelonaturelons)
+      .applyelonffelonct(Arrow.map[FelonaturelonMap, Unit](felonaturelonMap =>
+        // reloncord pelonr-felonaturelon stats, this is selonparatelon from thelon componelonnt stats handlelond by `wrapWithelonxeloncutorBookkelonelonping`
+        quelonryFelonaturelonHydratorObselonrvelonr.obselonrvelonFelonaturelonSuccelonssAndFailurelons(hydrator, Selonq(felonaturelonMap))))
+      .map(IndividualFelonaturelonHydratorRelonsult)
 
-    observedLiftedAndWrapped
+    obselonrvelondLiftelondAndWrappelond
   }
 }
 
-object QueryFeatureHydratorExecutor {
-  case class Result(
-    individualFeatureMaps: Map[
-      FeatureHydratorIdentifier,
-      BaseIndividualFeatureHydratorResult
+objelonct QuelonryFelonaturelonHydratorelonxeloncutor {
+  caselon class Relonsult(
+    individualFelonaturelonMaps: Map[
+      FelonaturelonHydratorIdelonntifielonr,
+      BaselonIndividualFelonaturelonHydratorRelonsult
     ],
-    featureMap: FeatureMap,
-    asyncFeatureMap: AsyncFeatureMap)
-      extends ExecutorResult
+    felonaturelonMap: FelonaturelonMap,
+    asyncFelonaturelonMap: AsyncFelonaturelonMap)
+      elonxtelonnds elonxeloncutorRelonsult
 
-  sealed trait BaseIndividualFeatureHydratorResult
+  selonalelond trait BaselonIndividualFelonaturelonHydratorRelonsult
 
-  case object FeatureHydratorDisabled extends BaseIndividualFeatureHydratorResult
-  case class IndividualFeatureHydratorResult(featureMap: FeatureMap)
-      extends BaseIndividualFeatureHydratorResult
+  caselon objelonct FelonaturelonHydratorDisablelond elonxtelonnds BaselonIndividualFelonaturelonHydratorRelonsult
+  caselon class IndividualFelonaturelonHydratorRelonsult(felonaturelonMap: FelonaturelonMap)
+      elonxtelonnds BaselonIndividualFelonaturelonHydratorRelonsult
 
-  /** Async result, serializes without the [[Stitch]] field since it's not serializable */
-  @JsonSerialize(using = classOf[AsyncIndividualFeatureHydratorResultSerializer])
-  case class AsyncIndividualFeatureHydratorResult(
-    hydrateBefore: PipelineStepIdentifier,
-    features: Set[Feature[_, _]],
-    ref: Stitch[FeatureMap])
-      extends BaseIndividualFeatureHydratorResult
+  /** Async relonsult, selonrializelons without thelon [[Stitch]] fielonld sincelon it's not selonrializablelon */
+  @JsonSelonrializelon(using = classOf[AsyncIndividualFelonaturelonHydratorRelonsultSelonrializelonr])
+  caselon class AsyncIndividualFelonaturelonHydratorRelonsult(
+    hydratelonBelonforelon: PipelonlinelonStelonpIdelonntifielonr,
+    felonaturelons: Selont[Felonaturelon[_, _]],
+    relonf: Stitch[FelonaturelonMap])
+      elonxtelonnds BaselonIndividualFelonaturelonHydratorRelonsult
 
   /**
-   * Validates whether the [[AsyncHydrator.hydrateBefore]] [[PipelineStepIdentifier]] is valid
+   * Validatelons whelonthelonr thelon [[AsyncHydrator.hydratelonBelonforelon]] [[PipelonlinelonStelonpIdelonntifielonr]] is valid
    *
-   * @param asyncQueryFeatureHydrator the hydrator to validate
-   * @param validPipelineSteps        a Set of [[PipelineStepIdentifier]]s which are valid places to populate async
-   *                                  [[Feature]]s in a [[com.twitter.product_mixer.core.pipeline.Pipeline]]
+   * @param asyncQuelonryFelonaturelonHydrator thelon hydrator to validatelon
+   * @param validPipelonlinelonStelonps        a Selont of [[PipelonlinelonStelonpIdelonntifielonr]]s which arelon valid placelons to populatelon async
+   *                                  [[Felonaturelon]]s in a [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.Pipelonlinelon]]
    */
-  def validateAsyncQueryFeatureHydrator(
-    asyncQueryFeatureHydrator: AsyncHydrator,
-    validPipelineSteps: Set[PipelineStepIdentifier]
+  delonf validatelonAsyncQuelonryFelonaturelonHydrator(
+    asyncQuelonryFelonaturelonHydrator: AsyncHydrator,
+    validPipelonlinelonStelonps: Selont[PipelonlinelonStelonpIdelonntifielonr]
   ): Unit =
-    require(
-      validPipelineSteps.contains(asyncQueryFeatureHydrator.hydrateBefore),
-      s"`AsyncHydrator.hydrateBefore` contained ${asyncQueryFeatureHydrator.hydrateBefore} which was not in the parent pipeline's " +
-        s"`PipelineConfig` Companion object field `stepsAsyncFeatureHydrationCanBeCompletedBy = $validPipelineSteps`."
+    relonquirelon(
+      validPipelonlinelonStelonps.contains(asyncQuelonryFelonaturelonHydrator.hydratelonBelonforelon),
+      s"`AsyncHydrator.hydratelonBelonforelon` containelond ${asyncQuelonryFelonaturelonHydrator.hydratelonBelonforelon} which was not in thelon parelonnt pipelonlinelon's " +
+        s"`PipelonlinelonConfig` Companion objelonct fielonld `stelonpsAsyncFelonaturelonHydrationCanBelonComplelontelondBy = $validPipelonlinelonStelonps`."
     )
 }

@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.tilelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.BadgeMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.BadgelonMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tilelon.StandardTilelonContelonnt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class StandardTileContentMarshaller @Inject() (
-  badgeMarshaller: BadgeMarshaller) {
+@Singlelonton
+class StandardTilelonContelonntMarshallelonr @Injelonct() (
+  badgelonMarshallelonr: BadgelonMarshallelonr) {
 
-  def apply(standardTileContent: StandardTileContent): urt.TileContentStandard =
-    urt.TileContentStandard(
-      title = standardTileContent.title,
-      supportingText = standardTileContent.supportingText,
-      badge = standardTileContent.badge.map(badgeMarshaller(_))
+  delonf apply(standardTilelonContelonnt: StandardTilelonContelonnt): urt.TilelonContelonntStandard =
+    urt.TilelonContelonntStandard(
+      titlelon = standardTilelonContelonnt.titlelon,
+      supportingTelonxt = standardTilelonContelonnt.supportingTelonxt,
+      badgelon = standardTilelonContelonnt.badgelon.map(badgelonMarshallelonr(_))
     )
 }

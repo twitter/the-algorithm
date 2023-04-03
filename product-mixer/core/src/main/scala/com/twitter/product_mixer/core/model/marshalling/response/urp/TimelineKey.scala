@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp
 
-sealed trait TimelineKey
+selonalelond trait TimelonlinelonKelony
 
-case class TopicsLandingTimeline(topicId: Option[String]) extends TimelineKey
+caselon class TopicsLandingTimelonlinelon(topicId: Option[String]) elonxtelonnds TimelonlinelonKelony
 
-case class NoteworthyAccountsTimeline(topicId: Option[String]) extends TimelineKey
+caselon class NotelonworthyAccountsTimelonlinelon(topicId: Option[String]) elonxtelonnds TimelonlinelonKelony
 
-case class TopicsPickerTimeline(topicId: Option[String]) extends TimelineKey
+caselon class TopicsPickelonrTimelonlinelon(topicId: Option[String]) elonxtelonnds TimelonlinelonKelony
 
-case class NotInterestedTopicsMeTimeline() extends TimelineKey
+caselon class NotIntelonrelonstelondTopicsMelonTimelonlinelon() elonxtelonnds TimelonlinelonKelony
 
-case class FollowedTopicsMeTimeline() extends TimelineKey
+caselon class FollowelondTopicsMelonTimelonlinelon() elonxtelonnds TimelonlinelonKelony
 
-case class FollowedTopicsOtherTimeline(userId: Long) extends TimelineKey
+caselon class FollowelondTopicsOthelonrTimelonlinelon(uselonrId: Long) elonxtelonnds TimelonlinelonKelony
 
-case class NuxUserRecommendationsTimeline() extends TimelineKey
+caselon class NuxUselonrReloncommelonndationsTimelonlinelon() elonxtelonnds TimelonlinelonKelony
 
-case class NuxForYouCategoryUserRecommendationsTimeline() extends TimelineKey
+caselon class NuxForYouCatelongoryUselonrReloncommelonndationsTimelonlinelon() elonxtelonnds TimelonlinelonKelony
 
-case class NuxPymkCategoryUserRecommendationsTimeline() extends TimelineKey
+caselon class NuxPymkCatelongoryUselonrReloncommelonndationsTimelonlinelon() elonxtelonnds TimelonlinelonKelony
 
-case class NuxGeoCategoryUserRecommendationsTimeline() extends TimelineKey
+caselon class NuxGelonoCatelongoryUselonrReloncommelonndationsTimelonlinelon() elonxtelonnds TimelonlinelonKelony
 
-case class NuxSingleInterestCategoryUserRecommendationsTimeline(topicId: Option[String])
-    extends TimelineKey
+caselon class NuxSinglelonIntelonrelonstCatelongoryUselonrReloncommelonndationsTimelonlinelon(topicId: Option[String])
+    elonxtelonnds TimelonlinelonKelony
 
-case class ShoppingHomeTimeline() extends TimelineKey
+caselon class ShoppingHomelonTimelonlinelon() elonxtelonnds TimelonlinelonKelony
 
-case class ForYouExploreMixerTimeline() extends TimelineKey
+caselon class ForYouelonxplorelonMixelonrTimelonlinelon() elonxtelonnds TimelonlinelonKelony
 
-case class TrendingExploreMixerTimeline() extends TimelineKey
+caselon class TrelonndingelonxplorelonMixelonrTimelonlinelon() elonxtelonnds TimelonlinelonKelony

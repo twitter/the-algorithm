@@ -1,306 +1,306 @@
-// Protocol messages for describing input data Examples for machine learning
-// model training or inference.
+// Protocol melonssagelons for delonscribing input data elonxamplelons for machinelon lelonarning
+// modelonl training or infelonrelonncelon.
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/example/feature.proto";
+import "telonnsorflow/corelon/elonxamplelon/felonaturelon.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "ExampleProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.example";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/example";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "elonxamplelonProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.elonxamplelon";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/elonxamplelon";
 
-// LINT.IfChange
-// An Example is a mostly-normalized data format for storing data for
-// training and inference.  It contains a key-value store (features); where
-// each key (string) maps to a Feature message (which is oneof packed BytesList,
-// FloatList, or Int64List).  This flexible and compact format allows the
-// storage of large amounts of typed data, but requires that the data shape
-// and use be determined by the configuration files and parsers that are used to
-// read and write this format.  That is, the Example is mostly *not* a
-// self-describing format.  In TensorFlow, Examples are read in row-major
-// format, so any configuration that describes data with rank-2 or above
-// should keep this in mind.  For example, to store an M x N matrix of Bytes,
-// the BytesList must contain M*N bytes, with M rows of N contiguous values
-// each.  That is, the BytesList value must store the matrix as:
+// LINT.IfChangelon
+// An elonxamplelon is a mostly-normalizelond data format for storing data for
+// training and infelonrelonncelon.  It contains a kelony-valuelon storelon (felonaturelons); whelonrelon
+// elonach kelony (string) maps to a Felonaturelon melonssagelon (which is onelonof packelond BytelonsList,
+// FloatList, or Int64List).  This flelonxiblelon and compact format allows thelon
+// storagelon of largelon amounts of typelond data, but relonquirelons that thelon data shapelon
+// and uselon belon delontelonrminelond by thelon configuration filelons and parselonrs that arelon uselond to
+// relonad and writelon this format.  That is, thelon elonxamplelon is mostly *not* a
+// selonlf-delonscribing format.  In TelonnsorFlow, elonxamplelons arelon relonad in row-major
+// format, so any configuration that delonscribelons data with rank-2 or abovelon
+// should kelonelonp this in mind.  For elonxamplelon, to storelon an M x N matrix of Bytelons,
+// thelon BytelonsList must contain M*N bytelons, with M rows of N contiguous valuelons
+// elonach.  That is, thelon BytelonsList valuelon must storelon thelon matrix as:
 //     .... row 0 .... .... row 1 .... // ...........  // ... row M-1 ....
 //
-// An Example for a movie recommendation application:
-//   features {
-//     feature {
-//       key: "age"
-//       value { float_list {
-//         value: 29.0
+// An elonxamplelon for a movielon reloncommelonndation application:
+//   felonaturelons {
+//     felonaturelon {
+//       kelony: "agelon"
+//       valuelon { float_list {
+//         valuelon: 29.0
 //       }}
 //     }
-//     feature {
-//       key: "movie"
-//       value { bytes_list {
-//         value: "The Shawshank Redemption"
-//         value: "Fight Club"
+//     felonaturelon {
+//       kelony: "movielon"
+//       valuelon { bytelons_list {
+//         valuelon: "Thelon Shawshank Relondelonmption"
+//         valuelon: "Fight Club"
 //       }}
 //     }
-//     feature {
-//       key: "movie_ratings"
-//       value { float_list {
-//         value: 9.0
-//         value: 9.7
+//     felonaturelon {
+//       kelony: "movielon_ratings"
+//       valuelon { float_list {
+//         valuelon: 9.0
+//         valuelon: 9.7
 //       }}
 //     }
-//     feature {
-//       key: "suggestion"
-//       value { bytes_list {
-//         value: "Inception"
+//     felonaturelon {
+//       kelony: "suggelonstion"
+//       valuelon { bytelons_list {
+//         valuelon: "Incelonption"
 //       }}
 //     }
-//     # Note that this feature exists to be used as a label in training.
-//     # E.g., if training a logistic regression model to predict purchase
-//     # probability in our learning tool we would set the label feature to
-//     # "suggestion_purchased".
-//     feature {
-//       key: "suggestion_purchased"
-//       value { float_list {
-//         value: 1.0
+//     # Notelon that this felonaturelon elonxists to belon uselond as a labelonl in training.
+//     # elon.g., if training a logistic relongrelonssion modelonl to prelondict purchaselon
+//     # probability in our lelonarning tool welon would selont thelon labelonl felonaturelon to
+//     # "suggelonstion_purchaselond".
+//     felonaturelon {
+//       kelony: "suggelonstion_purchaselond"
+//       valuelon { float_list {
+//         valuelon: 1.0
 //       }}
 //     }
-//     # Similar to "suggestion_purchased" above this feature exists to be used
-//     # as a label in training.
-//     # E.g., if training a linear regression model to predict purchase
-//     # price in our learning tool we would set the label feature to
-//     # "purchase_price".
-//     feature {
-//       key: "purchase_price"
-//       value { float_list {
-//         value: 9.99
+//     # Similar to "suggelonstion_purchaselond" abovelon this felonaturelon elonxists to belon uselond
+//     # as a labelonl in training.
+//     # elon.g., if training a linelonar relongrelonssion modelonl to prelondict purchaselon
+//     # pricelon in our lelonarning tool welon would selont thelon labelonl felonaturelon to
+//     # "purchaselon_pricelon".
+//     felonaturelon {
+//       kelony: "purchaselon_pricelon"
+//       valuelon { float_list {
+//         valuelon: 9.99
 //       }}
 //     }
 //  }
 //
-// A conformant Example data set obeys the following conventions:
-//   - If a Feature K exists in one example with data type T, it must be of
-//       type T in all other examples when present. It may be omitted.
-//   - The number of instances of Feature K list data may vary across examples,
-//       depending on the requirements of the model.
-//   - If a Feature K doesn't exist in an example, a K-specific default will be
-//       used, if configured.
-//   - If a Feature K exists in an example but contains no items, the intent
-//       is considered to be an empty tensor and no default will be used.
+// A conformant elonxamplelon data selont obelonys thelon following convelonntions:
+//   - If a Felonaturelon K elonxists in onelon elonxamplelon with data typelon T, it must belon of
+//       typelon T in all othelonr elonxamplelons whelonn prelonselonnt. It may belon omittelond.
+//   - Thelon numbelonr of instancelons of Felonaturelon K list data may vary across elonxamplelons,
+//       delonpelonnding on thelon relonquirelonmelonnts of thelon modelonl.
+//   - If a Felonaturelon K doelonsn't elonxist in an elonxamplelon, a K-speloncific delonfault will belon
+//       uselond, if configurelond.
+//   - If a Felonaturelon K elonxists in an elonxamplelon but contains no itelonms, thelon intelonnt
+//       is considelonrelond to belon an elonmpty telonnsor and no delonfault will belon uselond.
 
-message Example {
-  Features features = 1;
+melonssagelon elonxamplelon {
+  Felonaturelons felonaturelons = 1;
 }
 
-// A SequenceExample is an Example representing one or more sequences, and
-// some context.  The context contains features which apply to the entire
-// example. The feature_lists contain a key, value map where each key is
-// associated with a repeated set of Features (a FeatureList).
-// A FeatureList thus represents the values of a feature identified by its key
-// over time / frames.
+// A Selonquelonncelonelonxamplelon is an elonxamplelon relonprelonselonnting onelon or morelon selonquelonncelons, and
+// somelon contelonxt.  Thelon contelonxt contains felonaturelons which apply to thelon elonntirelon
+// elonxamplelon. Thelon felonaturelon_lists contain a kelony, valuelon map whelonrelon elonach kelony is
+// associatelond with a relonpelonatelond selont of Felonaturelons (a FelonaturelonList).
+// A FelonaturelonList thus relonprelonselonnts thelon valuelons of a felonaturelon idelonntifielond by its kelony
+// ovelonr timelon / framelons.
 //
-// Below is a SequenceExample for a movie recommendation application recording a
-// sequence of ratings by a user. The time-independent features ("locale",
-// "age", "favorites") describing the user are part of the context. The sequence
-// of movies the user rated are part of the feature_lists. For each movie in the
-// sequence we have information on its name and actors and the user's rating.
-// This information is recorded in three separate feature_list(s).
-// In the example below there are only two movies. All three feature_list(s),
-// namely "movie_ratings", "movie_names", and "actors" have a feature value for
-// both movies. Note, that "actors" is itself a bytes_list with multiple
-// strings per movie.
+// Belonlow is a Selonquelonncelonelonxamplelon for a movielon reloncommelonndation application reloncording a
+// selonquelonncelon of ratings by a uselonr. Thelon timelon-indelonpelonndelonnt felonaturelons ("localelon",
+// "agelon", "favoritelons") delonscribing thelon uselonr arelon part of thelon contelonxt. Thelon selonquelonncelon
+// of movielons thelon uselonr ratelond arelon part of thelon felonaturelon_lists. For elonach movielon in thelon
+// selonquelonncelon welon havelon information on its namelon and actors and thelon uselonr's rating.
+// This information is reloncordelond in threlonelon selonparatelon felonaturelon_list(s).
+// In thelon elonxamplelon belonlow thelonrelon arelon only two movielons. All threlonelon felonaturelon_list(s),
+// namelonly "movielon_ratings", "movielon_namelons", and "actors" havelon a felonaturelon valuelon for
+// both movielons. Notelon, that "actors" is itselonlf a bytelons_list with multiplelon
+// strings pelonr movielon.
 //
-// context: {
-//   feature: {
-//     key  : "locale"
-//     value: {
-//       bytes_list: {
-//         value: [ "pt_BR" ]
+// contelonxt: {
+//   felonaturelon: {
+//     kelony  : "localelon"
+//     valuelon: {
+//       bytelons_list: {
+//         valuelon: [ "pt_BR" ]
 //       }
 //     }
 //   }
-//   feature: {
-//     key  : "age"
-//     value: {
+//   felonaturelon: {
+//     kelony  : "agelon"
+//     valuelon: {
 //       float_list: {
-//         value: [ 19.0 ]
+//         valuelon: [ 19.0 ]
 //       }
 //     }
 //   }
-//   feature: {
-//     key  : "favorites"
-//     value: {
-//       bytes_list: {
-//         value: [ "Majesty Rose", "Savannah Outen", "One Direction" ]
-//       }
-//     }
-//   }
-// }
-// feature_lists: {
-//   feature_list: {
-//     key  : "movie_ratings"
-//     value: {
-//       feature: {
-//         float_list: {
-//           value: [ 4.5 ]
-//         }
-//       }
-//       feature: {
-//         float_list: {
-//           value: [ 5.0 ]
-//         }
-//       }
-//     }
-//   }
-//   feature_list: {
-//     key  : "movie_names"
-//     value: {
-//       feature: {
-//         bytes_list: {
-//           value: [ "The Shawshank Redemption" ]
-//         }
-//       }
-//       feature: {
-//         bytes_list: {
-//           value: [ "Fight Club" ]
-//         }
-//       }
-//     }
-//   }
-//   feature_list: {
-//     key  : "actors"
-//     value: {
-//       feature: {
-//         bytes_list: {
-//           value: [ "Tim Robbins", "Morgan Freeman" ]
-//         }
-//       }
-//       feature: {
-//         bytes_list: {
-//           value: [ "Brad Pitt", "Edward Norton", "Helena Bonham Carter" ]
-//         }
+//   felonaturelon: {
+//     kelony  : "favoritelons"
+//     valuelon: {
+//       bytelons_list: {
+//         valuelon: [ "Majelonsty Roselon", "Savannah Outelonn", "Onelon Direlonction" ]
 //       }
 //     }
 //   }
 // }
+// felonaturelon_lists: {
+//   felonaturelon_list: {
+//     kelony  : "movielon_ratings"
+//     valuelon: {
+//       felonaturelon: {
+//         float_list: {
+//           valuelon: [ 4.5 ]
+//         }
+//       }
+//       felonaturelon: {
+//         float_list: {
+//           valuelon: [ 5.0 ]
+//         }
+//       }
+//     }
+//   }
+//   felonaturelon_list: {
+//     kelony  : "movielon_namelons"
+//     valuelon: {
+//       felonaturelon: {
+//         bytelons_list: {
+//           valuelon: [ "Thelon Shawshank Relondelonmption" ]
+//         }
+//       }
+//       felonaturelon: {
+//         bytelons_list: {
+//           valuelon: [ "Fight Club" ]
+//         }
+//       }
+//     }
+//   }
+//   felonaturelon_list: {
+//     kelony  : "actors"
+//     valuelon: {
+//       felonaturelon: {
+//         bytelons_list: {
+//           valuelon: [ "Tim Robbins", "Morgan Frelonelonman" ]
+//         }
+//       }
+//       felonaturelon: {
+//         bytelons_list: {
+//           valuelon: [ "Brad Pitt", "elondward Norton", "Helonlelonna Bonham Cartelonr" ]
+//         }
+//       }
+//     }
+//   }
+// }
 //
-// A conformant SequenceExample data set obeys the following conventions:
+// A conformant Selonquelonncelonelonxamplelon data selont obelonys thelon following convelonntions:
 //
-// Context:
-//   - All conformant context features K must obey the same conventions as
-//     a conformant Example's features (see above).
-// Feature lists:
-//   - A FeatureList L may be missing in an example; it is up to the
-//     parser configuration to determine if this is allowed or considered
-//     an empty list (zero length).
-//   - If a FeatureList L exists, it may be empty (zero length).
-//   - If a FeatureList L is non-empty, all features within the FeatureList
-//     must have the same data type T. Even across SequenceExamples, the type T
-//     of the FeatureList identified by the same key must be the same. An entry
-//     without any values may serve as an empty feature.
-//   - If a FeatureList L is non-empty, it is up to the parser configuration
-//     to determine if all features within the FeatureList must
-//     have the same size.  The same holds for this FeatureList across multiple
-//     examples.
-//   - For sequence modeling, e.g.:
-//        http://colah.github.io/posts/2015-08-Understanding-LSTMs/
-//        https://github.com/tensorflow/nmt
-//     the feature lists represent a sequence of frames.
-//     In this scenario, all FeatureLists in a SequenceExample have the same
-//     number of Feature messages, so that the ith element in each FeatureList
-//     is part of the ith frame (or time step).
-// Examples of conformant and non-conformant examples' FeatureLists:
+// Contelonxt:
+//   - All conformant contelonxt felonaturelons K must obelony thelon samelon convelonntions as
+//     a conformant elonxamplelon's felonaturelons (selonelon abovelon).
+// Felonaturelon lists:
+//   - A FelonaturelonList L may belon missing in an elonxamplelon; it is up to thelon
+//     parselonr configuration to delontelonrminelon if this is allowelond or considelonrelond
+//     an elonmpty list (zelonro lelonngth).
+//   - If a FelonaturelonList L elonxists, it may belon elonmpty (zelonro lelonngth).
+//   - If a FelonaturelonList L is non-elonmpty, all felonaturelons within thelon FelonaturelonList
+//     must havelon thelon samelon data typelon T. elonvelonn across Selonquelonncelonelonxamplelons, thelon typelon T
+//     of thelon FelonaturelonList idelonntifielond by thelon samelon kelony must belon thelon samelon. An elonntry
+//     without any valuelons may selonrvelon as an elonmpty felonaturelon.
+//   - If a FelonaturelonList L is non-elonmpty, it is up to thelon parselonr configuration
+//     to delontelonrminelon if all felonaturelons within thelon FelonaturelonList must
+//     havelon thelon samelon sizelon.  Thelon samelon holds for this FelonaturelonList across multiplelon
+//     elonxamplelons.
+//   - For selonquelonncelon modelonling, elon.g.:
+//        http://colah.github.io/posts/2015-08-Undelonrstanding-LSTMs/
+//        https://github.com/telonnsorflow/nmt
+//     thelon felonaturelon lists relonprelonselonnt a selonquelonncelon of framelons.
+//     In this scelonnario, all FelonaturelonLists in a Selonquelonncelonelonxamplelon havelon thelon samelon
+//     numbelonr of Felonaturelon melonssagelons, so that thelon ith elonlelonmelonnt in elonach FelonaturelonList
+//     is part of thelon ith framelon (or timelon stelonp).
+// elonxamplelons of conformant and non-conformant elonxamplelons' FelonaturelonLists:
 //
-// Conformant FeatureLists:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Conformant FelonaturelonLists:
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { float_list: { valuelon: [ 4.5 ] } }
+//               felonaturelon: { float_list: { valuelon: [ 5.0 ] } } }
 //    } }
 //
-// Non-conformant FeatureLists (mismatched types):
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { int64_list: { value: [ 5 ] } } }
+// Non-conformant FelonaturelonLists (mismatchelond typelons):
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { float_list: { valuelon: [ 4.5 ] } }
+//               felonaturelon: { int64_list: { valuelon: [ 5 ] } } }
 //    } }
 //
-// Conditionally conformant FeatureLists, the parser configuration determines
-// if the feature sizes must match:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0, 6.0 ] } } }
+// Conditionally conformant FelonaturelonLists, thelon parselonr configuration delontelonrminelons
+// if thelon felonaturelon sizelons must match:
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { float_list: { valuelon: [ 4.5 ] } }
+//               felonaturelon: { float_list: { valuelon: [ 5.0, 6.0 ] } } }
 //    } }
 //
-// Conformant pair of SequenceExample
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Conformant pair of Selonquelonncelonelonxamplelon
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { float_list: { valuelon: [ 4.5 ] } }
+//               felonaturelon: { float_list: { valuelon: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } }
-//               feature: { float_list: { value: [ 2.0 ] } } }
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { float_list: { valuelon: [ 4.5 ] } }
+//               felonaturelon: { float_list: { valuelon: [ 5.0 ] } }
+//               felonaturelon: { float_list: { valuelon: [ 2.0 ] } } }
 //    } }
 //
-// Conformant pair of SequenceExample
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Conformant pair of Selonquelonncelonelonxamplelon
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { float_list: { valuelon: [ 4.5 ] } }
+//               felonaturelon: { float_list: { valuelon: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { }
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { }
 //    } }
 //
-// Conditionally conformant pair of SequenceExample, the parser configuration
-// determines if the second feature_lists is consistent (zero-length) or
-// invalid (missing "movie_ratings"):
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Conditionally conformant pair of Selonquelonncelonelonxamplelon, thelon parselonr configuration
+// delontelonrminelons if thelon seloncond felonaturelon_lists is consistelonnt (zelonro-lelonngth) or
+// invalid (missing "movielon_ratings"):
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { float_list: { valuelon: [ 4.5 ] } }
+//               felonaturelon: { float_list: { valuelon: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { }
+//    felonaturelon_lists: { }
 //
-// Non-conformant pair of SequenceExample (mismatched types)
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Non-conformant pair of Selonquelonncelonelonxamplelon (mismatchelond typelons)
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { float_list: { valuelon: [ 4.5 ] } }
+//               felonaturelon: { float_list: { valuelon: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { int64_list: { value: [ 4 ] } }
-//               feature: { int64_list: { value: [ 5 ] } }
-//               feature: { int64_list: { value: [ 2 ] } } }
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { int64_list: { valuelon: [ 4 ] } }
+//               felonaturelon: { int64_list: { valuelon: [ 5 ] } }
+//               felonaturelon: { int64_list: { valuelon: [ 2 ] } } }
 //    } }
 //
-// Conditionally conformant pair of SequenceExample; the parser configuration
-// determines if the feature sizes must match:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.5 ] } }
-//               feature: { float_list: { value: [ 5.0 ] } } }
+// Conditionally conformant pair of Selonquelonncelonelonxamplelon; thelon parselonr configuration
+// delontelonrminelons if thelon felonaturelon sizelons must match:
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { float_list: { valuelon: [ 4.5 ] } }
+//               felonaturelon: { float_list: { valuelon: [ 5.0 ] } } }
 //    } }
 // and:
-//    feature_lists: { feature_list: {
-//      key: "movie_ratings"
-//      value: { feature: { float_list: { value: [ 4.0 ] } }
-//               feature: { float_list: { value: [ 5.0, 3.0 ] } }
+//    felonaturelon_lists: { felonaturelon_list: {
+//      kelony: "movielon_ratings"
+//      valuelon: { felonaturelon: { float_list: { valuelon: [ 4.0 ] } }
+//               felonaturelon: { float_list: { valuelon: [ 5.0, 3.0 ] } }
 //    } }
 
-message SequenceExample {
-  Features context = 1;
-  FeatureLists feature_lists = 2;
+melonssagelon Selonquelonncelonelonxamplelon {
+  Felonaturelons contelonxt = 1;
+  FelonaturelonLists felonaturelon_lists = 2;
 }
-// LINT.ThenChange(
-//     https://www.tensorflow.org/code/tensorflow/python/training/training.py)
+// LINT.ThelonnChangelon(
+//     https://www.telonnsorflow.org/codelon/telonnsorflow/python/training/training.py)

@@ -1,241 +1,241 @@
-package com.twitter.simclusters_v2.summingbird.storm
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storm
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.heron.util.CommonMetric
-import com.twitter.scalding.Args
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment
-import com.twitter.simclusters_v2.summingbird.stores.EntityClusterScoreReadableStore
-import com.twitter.simclusters_v2.summingbird.stores.TopKClustersForTweetReadableStore
-import com.twitter.simclusters_v2.summingbird.stores.TopKTweetsForClusterReadableStore
-import com.twitter.simclusters_v2.summingbird.stores.UserInterestedInReadableStore
-import com.twitter.simclusters_v2.thriftscala._
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.summingbird.online.option._
-import com.twitter.summingbird.option._
-import com.twitter.summingbird.storm.option.FlatMapStormMetrics
-import com.twitter.summingbird.storm.option.SummerStormMetrics
-import com.twitter.summingbird.storm.Storm
-import com.twitter.summingbird.storm.StormMetric
-import com.twitter.summingbird.Options
-import com.twitter.summingbird.TailProducer
-import com.twitter.summingbird_internal.runner.common.JobName
-import com.twitter.summingbird_internal.runner.common.SBRunConfig
-import com.twitter.summingbird_internal.runner.storm.GenericRunner
-import com.twitter.summingbird_internal.runner.storm.StormConfig
-import com.twitter.tormenta_internal.spout.eventbus.SubscriberId
-import com.twitter.wtf.summingbird.sources.storm.TimelineEventSource
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.helonron.util.CommonMelontric
+import com.twittelonr.scalding.Args
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.AltSelontting
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.elonnvironmelonnt
+import com.twittelonr.simclustelonrs_v2.summingbird.storelons.elonntityClustelonrScorelonRelonadablelonStorelon
+import com.twittelonr.simclustelonrs_v2.summingbird.storelons.TopKClustelonrsForTwelonelontRelonadablelonStorelon
+import com.twittelonr.simclustelonrs_v2.summingbird.storelons.TopKTwelonelontsForClustelonrRelonadablelonStorelon
+import com.twittelonr.simclustelonrs_v2.summingbird.storelons.UselonrIntelonrelonstelondInRelonadablelonStorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.summingbird.onlinelon.option._
+import com.twittelonr.summingbird.option._
+import com.twittelonr.summingbird.storm.option.FlatMapStormMelontrics
+import com.twittelonr.summingbird.storm.option.SummelonrStormMelontrics
+import com.twittelonr.summingbird.storm.Storm
+import com.twittelonr.summingbird.storm.StormMelontric
+import com.twittelonr.summingbird.Options
+import com.twittelonr.summingbird.TailProducelonr
+import com.twittelonr.summingbird_intelonrnal.runnelonr.common.JobNamelon
+import com.twittelonr.summingbird_intelonrnal.runnelonr.common.SBRunConfig
+import com.twittelonr.summingbird_intelonrnal.runnelonr.storm.GelonnelonricRunnelonr
+import com.twittelonr.summingbird_intelonrnal.runnelonr.storm.StormConfig
+import com.twittelonr.tormelonnta_intelonrnal.spout.elonvelonntbus.SubscribelonrId
+import com.twittelonr.wtf.summingbird.sourcelons.storm.TimelonlinelonelonvelonntSourcelon
 import java.lang
-import org.apache.heron.api.{Config => HeronConfig}
-import org.apache.heron.common.basics.ByteAmount
-import org.apache.storm.{Config => BTConfig}
-import scala.collection.JavaConverters._
+import org.apachelon.helonron.api.{Config => HelonronConfig}
+import org.apachelon.helonron.common.basics.BytelonAmount
+import org.apachelon.storm.{Config => BTConfig}
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object TweetJobRunner {
-  def main(args: Array[String]): Unit = {
-    GenericRunner(args, TweetStormJob(_))
+objelonct TwelonelontJobRunnelonr {
+  delonf main(args: Array[String]): Unit = {
+    GelonnelonricRunnelonr(args, TwelonelontStormJob(_))
   }
 }
 
-object TweetStormJob {
+objelonct TwelonelontStormJob {
 
-  import com.twitter.simclusters_v2.summingbird.common.Implicits._
+  import com.twittelonr.simclustelonrs_v2.summingbird.common.Implicits._
 
-  def jLong(num: Long): lang.Long = java.lang.Long.valueOf(num)
-  def jInt(num: Int): Integer = java.lang.Integer.valueOf(num)
-  def apply(args: Args): StormConfig = {
+  delonf jLong(num: Long): lang.Long = java.lang.Long.valuelonOf(num)
+  delonf jInt(num: Int): Intelongelonr = java.lang.Intelongelonr.valuelonOf(num)
+  delonf apply(args: Args): StormConfig = {
 
-    lazy val env: String = args.getOrElse("env", "prod")
-    lazy val zone: String = args.getOrElse("dc", "atla")
+    lazy val elonnv: String = args.gelontOrelonlselon("elonnv", "prod")
+    lazy val zonelon: String = args.gelontOrelonlselon("dc", "atla")
 
-    // The only SimClusters ENV is Alt. Will clean up soon.
-    lazy val profile = SimClustersProfile.fetchTweetJobProfile(Environment(env), AltSetting.Alt)
+    // Thelon only SimClustelonrs elonNV is Alt. Will clelonan up soon.
+    lazy val profilelon = SimClustelonrsProfilelon.felontchTwelonelontJobProfilelon(elonnvironmelonnt(elonnv), AltSelontting.Alt)
 
-    lazy val favoriteEventSource = TimelineEventSource(
-      // Note: do not share the same subsriberId with other jobs. Apply a new one if needed
-      SubscriberId(profile.timelineEventSourceSubscriberId)
-    ).source
+    lazy val favoritelonelonvelonntSourcelon = TimelonlinelonelonvelonntSourcelon(
+      // Notelon: do not sharelon thelon samelon subsribelonrId with othelonr jobs. Apply a nelonw onelon if nelonelondelond
+      SubscribelonrId(profilelon.timelonlinelonelonvelonntSourcelonSubscribelonrId)
+    ).sourcelon
 
-    lazy val commonMetric =
-      StormMetric(new CommonMetric(), CommonMetric.NAME, CommonMetric.POLL_INTERVAL)
-    lazy val flatMapMetrics = FlatMapStormMetrics(Iterable(commonMetric))
-    lazy val summerMetrics = SummerStormMetrics(Iterable(commonMetric))
+    lazy val commonMelontric =
+      StormMelontric(nelonw CommonMelontric(), CommonMelontric.NAMelon, CommonMelontric.POLL_INTelonRVAL)
+    lazy val flatMapMelontrics = FlatMapStormMelontrics(Itelonrablelon(commonMelontric))
+    lazy val summelonrMelontrics = SummelonrStormMelontrics(Itelonrablelon(commonMelontric))
 
-    lazy val entityClusterScoreStore: Storm#Store[
-      (SimClusterEntity, FullClusterIdBucket),
-      ClustersWithScores
+    lazy val elonntityClustelonrScorelonStorelon: Storm#Storelon[
+      (SimClustelonrelonntity, FullClustelonrIdBuckelont),
+      ClustelonrsWithScorelons
     ] = {
-      Storm.store(
-        EntityClusterScoreReadableStore
-          .onlineMergeableStore(profile.entityClusterScorePath, profile.serviceIdentifier(zone)))
+      Storm.storelon(
+        elonntityClustelonrScorelonRelonadablelonStorelon
+          .onlinelonMelonrgelonablelonStorelon(profilelon.elonntityClustelonrScorelonPath, profilelon.selonrvicelonIdelonntifielonr(zonelon)))
     }
 
-    lazy val tweetTopKStore: Storm#Store[EntityWithVersion, TopKClustersWithScores] = {
-      Storm.store(
-        TopKClustersForTweetReadableStore
-          .onlineMergeableStore(profile.tweetTopKClustersPath, profile.serviceIdentifier(zone)))
+    lazy val twelonelontTopKStorelon: Storm#Storelon[elonntityWithVelonrsion, TopKClustelonrsWithScorelons] = {
+      Storm.storelon(
+        TopKClustelonrsForTwelonelontRelonadablelonStorelon
+          .onlinelonMelonrgelonablelonStorelon(profilelon.twelonelontTopKClustelonrsPath, profilelon.selonrvicelonIdelonntifielonr(zonelon)))
     }
 
-    lazy val clusterTopKTweetsStore: Storm#Store[FullClusterId, TopKTweetsWithScores] = {
-      Storm.store(
-        TopKTweetsForClusterReadableStore
-          .onlineMergeableStore(profile.clusterTopKTweetsPath, profile.serviceIdentifier(zone)))
+    lazy val clustelonrTopKTwelonelontsStorelon: Storm#Storelon[FullClustelonrId, TopKTwelonelontsWithScorelons] = {
+      Storm.storelon(
+        TopKTwelonelontsForClustelonrRelonadablelonStorelon
+          .onlinelonMelonrgelonablelonStorelon(profilelon.clustelonrTopKTwelonelontsPath, profilelon.selonrvicelonIdelonntifielonr(zonelon)))
     }
 
-    lazy val clusterTopKTweetsLightStore: Option[
-      Storm#Store[FullClusterId, TopKTweetsWithScores]
+    lazy val clustelonrTopKTwelonelontsLightStorelon: Option[
+      Storm#Storelon[FullClustelonrId, TopKTwelonelontsWithScorelons]
     ] = {
-      profile.clusterTopKTweetsLightPath.map { lightPath =>
-        Storm.store(
-          TopKTweetsForClusterReadableStore
-            .onlineMergeableStore(lightPath, profile.serviceIdentifier(zone)))
+      profilelon.clustelonrTopKTwelonelontsLightPath.map { lightPath =>
+        Storm.storelon(
+          TopKTwelonelontsForClustelonrRelonadablelonStorelon
+            .onlinelonMelonrgelonablelonStorelon(lightPath, profilelon.selonrvicelonIdelonntifielonr(zonelon)))
       }
     }
 
-    lazy val userInterestedInService: Storm#Service[Long, ClustersUserIsInterestedIn] = {
-      Storm.service(
-        UserInterestedInReadableStore.defaultStoreWithMtls(
-          ManhattanKVClientMtlsParams(profile.serviceIdentifier(zone)),
-          modelVersion = profile.modelVersionStr
+    lazy val uselonrIntelonrelonstelondInSelonrvicelon: Storm#Selonrvicelon[Long, ClustelonrsUselonrIsIntelonrelonstelondIn] = {
+      Storm.selonrvicelon(
+        UselonrIntelonrelonstelondInRelonadablelonStorelon.delonfaultStorelonWithMtls(
+          ManhattanKVClielonntMtlsParams(profilelon.selonrvicelonIdelonntifielonr(zonelon)),
+          modelonlVelonrsion = profilelon.modelonlVelonrsionStr
         ))
     }
 
-    new StormConfig {
+    nelonw StormConfig {
 
-      val jobName: JobName = JobName(profile.jobName)
+      val jobNamelon: JobNamelon = JobNamelon(profilelon.jobNamelon)
 
-      implicit val jobID: JobId = JobId(jobName.toString)
+      implicit val jobID: JobId = JobId(jobNamelon.toString)
 
       /**
-       * Add registrars for chill serialization for user-defined types.
+       * Add relongistrars for chill selonrialization for uselonr-delonfinelond typelons.
        */
-      override def registrars =
+      ovelonrridelon delonf relongistrars =
         List(
-          SBRunConfig.register[SimClusterEntity],
-          SBRunConfig.register[FullClusterIdBucket],
-          SBRunConfig.register[ClustersWithScores],
-          SBRunConfig.register[EntityWithVersion],
-          SBRunConfig.register[FullClusterId],
-          SBRunConfig.register[EntityWithVersion],
-          SBRunConfig.register[TopKEntitiesWithScores],
-          SBRunConfig.register[TopKClustersWithScores],
-          SBRunConfig.register[TopKTweetsWithScores]
+          SBRunConfig.relongistelonr[SimClustelonrelonntity],
+          SBRunConfig.relongistelonr[FullClustelonrIdBuckelont],
+          SBRunConfig.relongistelonr[ClustelonrsWithScorelons],
+          SBRunConfig.relongistelonr[elonntityWithVelonrsion],
+          SBRunConfig.relongistelonr[FullClustelonrId],
+          SBRunConfig.relongistelonr[elonntityWithVelonrsion],
+          SBRunConfig.relongistelonr[TopKelonntitielonsWithScorelons],
+          SBRunConfig.relongistelonr[TopKClustelonrsWithScorelons],
+          SBRunConfig.relongistelonr[TopKTwelonelontsWithScorelons]
         )
 
-      /***** Job configuration settings *****/
+      /***** Job configuration selonttings *****/
       /**
-       * Use vmSettings to configure the VM
+       * Uselon vmSelonttings to configurelon thelon VM
        */
-      override def vmSettings: Seq[String] = Seq()
+      ovelonrridelon delonf vmSelonttings: Selonq[String] = Selonq()
 
-      private val SourcePerWorker = 1
-      private val FlatMapPerWorker = 3
-      private val SummerPerWorker = 3
+      privatelon val SourcelonPelonrWorkelonr = 1
+      privatelon val FlatMapPelonrWorkelonr = 3
+      privatelon val SummelonrPelonrWorkelonr = 3
 
-      private val TotalWorker = 150
+      privatelon val TotalWorkelonr = 150
 
       /**
-       * Use transformConfig to set Heron options.
+       * Uselon transformConfig to selont Helonron options.
        */
-      override def transformConfig(config: Map[String, AnyRef]): Map[String, AnyRef] = {
-        val heronConfig = new HeronConfig()
+      ovelonrridelon delonf transformConfig(config: Map[String, AnyRelonf]): Map[String, AnyRelonf] = {
+        val helonronConfig = nelonw HelonronConfig()
 
         /**
-        Component names (subject to change if you add more components, make sure to update this)
-          Source: Tail-FlatMap-FlatMap-Summer-FlatMap-Source
-          FlatMap: Tail-FlatMap-FlatMap-Summer-FlatMap, Tail-FlatMap-FlatMap, Tail-FlatMap-FlatMap,
+        Componelonnt namelons (subjelonct to changelon if you add morelon componelonnts, makelon surelon to updatelon this)
+          Sourcelon: Tail-FlatMap-FlatMap-Summelonr-FlatMap-Sourcelon
+          FlatMap: Tail-FlatMap-FlatMap-Summelonr-FlatMap, Tail-FlatMap-FlatMap, Tail-FlatMap-FlatMap,
           Tail-FlatMap
-          Summer: Tail-FlatMap-FlatMap-Summer * 2, Tail, Tail.2
+          Summelonr: Tail-FlatMap-FlatMap-Summelonr * 2, Tail, Tail.2
          */
-        val sourceName = "Tail-FlatMap-FlatMap-Summer-FlatMap-Source"
-        val flatMapFlatMapSummerFlatMapName = "Tail-FlatMap-FlatMap-Summer-FlatMap"
+        val sourcelonNamelon = "Tail-FlatMap-FlatMap-Summelonr-FlatMap-Sourcelon"
+        val flatMapFlatMapSummelonrFlatMapNamelon = "Tail-FlatMap-FlatMap-Summelonr-FlatMap"
 
-        // 1 CPU per node, 1 for StreamMgr
-        // By default, numCpus per component = totalCPUs / total number of components.
-        // To add more CPUs for a specific component, use heronConfig.setComponentCpu(name, numCPUs)
-        // add 20% more CPUs to address back pressure issue
+        // 1 CPU pelonr nodelon, 1 for StrelonamMgr
+        // By delonfault, numCpus pelonr componelonnt = totalCPUs / total numbelonr of componelonnts.
+        // To add morelon CPUs for a speloncific componelonnt, uselon helonronConfig.selontComponelonntCpu(namelon, numCPUs)
+        // add 20% morelon CPUs to addrelonss back prelonssurelon issuelon
         val TotalCPU = jLong(
-          (1.2 * (SourcePerWorker * 1 + FlatMapPerWorker * 4 + SummerPerWorker * 6 + 1)).ceil.toInt)
-        heronConfig.setContainerCpuRequested(TotalCPU.toDouble)
+          (1.2 * (SourcelonPelonrWorkelonr * 1 + FlatMapPelonrWorkelonr * 4 + SummelonrPelonrWorkelonr * 6 + 1)).celonil.toInt)
+        helonronConfig.selontContainelonrCpuRelonquelonstelond(TotalCPU.toDoublelon)
 
-        // RAM settings
-        val RamPerSourceGB = 8
-        val RamPerSummerFlatMap = 8
-        val RamDefaultPerComponent = 4
+        // RAM selonttings
+        val RamPelonrSourcelonGB = 8
+        val RamPelonrSummelonrFlatMap = 8
+        val RamDelonfaultPelonrComponelonnt = 4
 
-        // The extra 4GB is not explicitly assigned to the StreamMgr, so it gets 2GB by default, and
-        // the remaining 2GB is shared among components. Keeping this configuration for now, since
-        // it seems stable
+        // Thelon elonxtra 4GB is not elonxplicitly assignelond to thelon StrelonamMgr, so it gelonts 2GB by delonfault, and
+        // thelon relonmaining 2GB is sharelond among componelonnts. Kelonelonping this configuration for now, sincelon
+        // it selonelonms stablelon
         val TotalRamRB =
-          RamPerSourceGB * SourcePerWorker * 1 +
-            RamDefaultPerComponent * FlatMapPerWorker * 4 +
-            RamDefaultPerComponent * SummerPerWorker * 6 +
-            4 // reserve 4GB for the StreamMgr
+          RamPelonrSourcelonGB * SourcelonPelonrWorkelonr * 1 +
+            RamDelonfaultPelonrComponelonnt * FlatMapPelonrWorkelonr * 4 +
+            RamDelonfaultPelonrComponelonnt * SummelonrPelonrWorkelonr * 6 +
+            4 // relonselonrvelon 4GB for thelon StrelonamMgr
 
-        // By default, ramGB per component = totalRAM / total number of components.
-        // To adjust RAMs for a specific component, use heronConfig.setComponentRam(name, ramGB)
-        heronConfig.setComponentRam(sourceName, ByteAmount.fromGigabytes(RamPerSourceGB))
-        heronConfig.setComponentRam(
-          flatMapFlatMapSummerFlatMapName,
-          ByteAmount.fromGigabytes(RamPerSummerFlatMap))
-        heronConfig.setContainerRamRequested(ByteAmount.fromGigabytes(TotalRamRB))
+        // By delonfault, ramGB pelonr componelonnt = totalRAM / total numbelonr of componelonnts.
+        // To adjust RAMs for a speloncific componelonnt, uselon helonronConfig.selontComponelonntRam(namelon, ramGB)
+        helonronConfig.selontComponelonntRam(sourcelonNamelon, BytelonAmount.fromGigabytelons(RamPelonrSourcelonGB))
+        helonronConfig.selontComponelonntRam(
+          flatMapFlatMapSummelonrFlatMapNamelon,
+          BytelonAmount.fromGigabytelons(RamPelonrSummelonrFlatMap))
+        helonronConfig.selontContainelonrRamRelonquelonstelond(BytelonAmount.fromGigabytelons(TotalRamRB))
 
-        super.transformConfig(config) ++ List(
-          BTConfig.TOPOLOGY_TEAM_NAME -> "cassowary",
-          BTConfig.TOPOLOGY_TEAM_EMAIL -> "no-reply@twitter.com",
-          BTConfig.TOPOLOGY_WORKERS -> jInt(TotalWorker),
-          BTConfig.TOPOLOGY_ACKER_EXECUTORS -> jInt(0),
-          BTConfig.TOPOLOGY_MESSAGE_TIMEOUT_SECS -> jInt(30),
-          BTConfig.TOPOLOGY_WORKER_CHILDOPTS -> List(
-            "-XX:MaxMetaspaceSize=256M",
-            "-Djava.security.auth.login.config=config/jaas.conf",
-            "-Dsun.security.krb5.debug=true",
-            "-Dcom.twitter.eventbus.client.EnableKafkaSaslTls=true",
-            "-Dcom.twitter.eventbus.client.zoneName=" + zone
+        supelonr.transformConfig(config) ++ List(
+          BTConfig.TOPOLOGY_TelonAM_NAMelon -> "cassowary",
+          BTConfig.TOPOLOGY_TelonAM_elonMAIL -> "no-relonply@twittelonr.com",
+          BTConfig.TOPOLOGY_WORKelonRS -> jInt(TotalWorkelonr),
+          BTConfig.TOPOLOGY_ACKelonR_elonXelonCUTORS -> jInt(0),
+          BTConfig.TOPOLOGY_MelonSSAGelon_TIMelonOUT_SelonCS -> jInt(30),
+          BTConfig.TOPOLOGY_WORKelonR_CHILDOPTS -> List(
+            "-XX:MaxMelontaspacelonSizelon=256M",
+            "-Djava.seloncurity.auth.login.config=config/jaas.conf",
+            "-Dsun.seloncurity.krb5.delonbug=truelon",
+            "-Dcom.twittelonr.elonvelonntbus.clielonnt.elonnablelonKafkaSaslTls=truelon",
+            "-Dcom.twittelonr.elonvelonntbus.clielonnt.zonelonNamelon=" + zonelon
           ).mkString(" "),
-          "storm.job.uniqueId" -> jobID.get
-        ) ++ heronConfig.asScala.toMap
+          "storm.job.uniquelonId" -> jobID.gelont
+        ) ++ helonronConfig.asScala.toMap
       }
 
       /**
-       * Use getNamedOptions to set Summingbird runtime options
-       * The list of available options: com.twitter.summingbird.online.option
+       * Uselon gelontNamelondOptions to selont Summingbird runtimelon options
+       * Thelon list of availablelon options: com.twittelonr.summingbird.onlinelon.option
        */
-      override def getNamedOptions: Map[String, Options] = Map(
-        "DEFAULT" -> Options()
-          .set(FlatMapParallelism(TotalWorker * FlatMapPerWorker))
-          .set(SourceParallelism(TotalWorker))
-          .set(SummerBatchMultiplier(1000))
-          .set(CacheSize(10000))
-          .set(flatMapMetrics)
-          .set(summerMetrics),
-        TweetJob.NodeName.TweetClusterUpdatedScoresFlatMapNodeName -> Options()
-          .set(FlatMapParallelism(TotalWorker * FlatMapPerWorker)),
-        TweetJob.NodeName.TweetClusterScoreSummerNodeName -> Options()
-        // Most expensive step. Double the capacity.
-          .set(SummerParallelism(TotalWorker * SummerPerWorker * 4))
-          .set(FlushFrequency(30.seconds)),
-        TweetJob.NodeName.ClusterTopKTweetsNodeName -> Options()
-          .set(SummerParallelism(TotalWorker * SummerPerWorker))
-          .set(FlushFrequency(30.seconds)),
-        TweetJob.NodeName.ClusterTopKTweetsLightNodeName -> Options()
-          .set(SummerParallelism(TotalWorker * SummerPerWorker))
-          .set(FlushFrequency(30.seconds)),
-        TweetJob.NodeName.TweetTopKNodeName -> Options()
-          .set(SummerParallelism(TotalWorker * SummerPerWorker))
-          .set(FlushFrequency(30.seconds))
+      ovelonrridelon delonf gelontNamelondOptions: Map[String, Options] = Map(
+        "DelonFAULT" -> Options()
+          .selont(FlatMapParallelonlism(TotalWorkelonr * FlatMapPelonrWorkelonr))
+          .selont(SourcelonParallelonlism(TotalWorkelonr))
+          .selont(SummelonrBatchMultiplielonr(1000))
+          .selont(CachelonSizelon(10000))
+          .selont(flatMapMelontrics)
+          .selont(summelonrMelontrics),
+        TwelonelontJob.NodelonNamelon.TwelonelontClustelonrUpdatelondScorelonsFlatMapNodelonNamelon -> Options()
+          .selont(FlatMapParallelonlism(TotalWorkelonr * FlatMapPelonrWorkelonr)),
+        TwelonelontJob.NodelonNamelon.TwelonelontClustelonrScorelonSummelonrNodelonNamelon -> Options()
+        // Most elonxpelonnsivelon stelonp. Doublelon thelon capacity.
+          .selont(SummelonrParallelonlism(TotalWorkelonr * SummelonrPelonrWorkelonr * 4))
+          .selont(FlushFrelonquelonncy(30.selonconds)),
+        TwelonelontJob.NodelonNamelon.ClustelonrTopKTwelonelontsNodelonNamelon -> Options()
+          .selont(SummelonrParallelonlism(TotalWorkelonr * SummelonrPelonrWorkelonr))
+          .selont(FlushFrelonquelonncy(30.selonconds)),
+        TwelonelontJob.NodelonNamelon.ClustelonrTopKTwelonelontsLightNodelonNamelon -> Options()
+          .selont(SummelonrParallelonlism(TotalWorkelonr * SummelonrPelonrWorkelonr))
+          .selont(FlushFrelonquelonncy(30.selonconds)),
+        TwelonelontJob.NodelonNamelon.TwelonelontTopKNodelonNamelon -> Options()
+          .selont(SummelonrParallelonlism(TotalWorkelonr * SummelonrPelonrWorkelonr))
+          .selont(FlushFrelonquelonncy(30.selonconds))
       )
 
-      /** Required job generation call for your job, defined in Job.scala */
-      override def graph: TailProducer[Storm, Any] = TweetJob.generate[Storm](
-        profile,
-        favoriteEventSource,
-        userInterestedInService,
-        entityClusterScoreStore,
-        tweetTopKStore,
-        clusterTopKTweetsStore,
-        clusterTopKTweetsLightStore
+      /** Relonquirelond job gelonnelonration call for your job, delonfinelond in Job.scala */
+      ovelonrridelon delonf graph: TailProducelonr[Storm, Any] = TwelonelontJob.gelonnelonratelon[Storm](
+        profilelon,
+        favoritelonelonvelonntSourcelon,
+        uselonrIntelonrelonstelondInSelonrvicelon,
+        elonntityClustelonrScorelonStorelon,
+        twelonelontTopKStorelon,
+        clustelonrTopKTwelonelontsStorelon,
+        clustelonrTopKTwelonelontsLightStorelon
       )
     }
   }

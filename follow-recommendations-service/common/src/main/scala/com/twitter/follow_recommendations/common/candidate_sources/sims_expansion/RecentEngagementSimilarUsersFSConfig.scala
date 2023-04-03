@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims_expansion
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims_elonxpansion
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RecentEngagementSimilarUsersFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[FSParam[Boolean]] = Seq(
-    RecentEngagementSimilarUsersParams.FirstDegreeSortEnabled
+@Singlelonton
+class ReloncelonntelonngagelonmelonntSimilarUselonrsFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[FSParam[Boolelonan]] = Selonq(
+    ReloncelonntelonngagelonmelonntSimilarUselonrsParams.FirstDelongrelonelonSortelonnablelond
   )
 }

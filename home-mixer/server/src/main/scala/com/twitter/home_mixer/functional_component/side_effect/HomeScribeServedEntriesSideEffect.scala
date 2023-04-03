@@ -1,212 +1,212 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.home_mixer.marshaller.timeline_logging.ConversationEntryMarshaller
-import com.twitter.home_mixer.marshaller.timeline_logging.PromotedTweetEntryMarshaller
-import com.twitter.home_mixer.marshaller.timeline_logging.TweetEntryMarshaller
-import com.twitter.home_mixer.marshaller.timeline_logging.WhoToFollowEntryMarshaller
-import com.twitter.home_mixer.model.HomeFeatures.GetInitialFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetMiddleFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetOlderFeature
-import com.twitter.home_mixer.model.HomeFeatures.HasDarkRequestFeature
-import com.twitter.home_mixer.model.HomeFeatures.RequestJoinIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedRequestIdFeature
-import com.twitter.home_mixer.model.request.DeviceContext.RequestContext
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.BaseUserCandidate
-import com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module.WhoToFollowCandidateDecorator
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ModuleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.timeline_logging.{thriftscala => thrift}
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelon_logging.ConvelonrsationelonntryMarshallelonr
+import com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelon_logging.PromotelondTwelonelontelonntryMarshallelonr
+import com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelon_logging.TwelonelontelonntryMarshallelonr
+import com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelon_logging.WhoToFollowelonntryMarshallelonr
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.GelontInitialFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.GelontMiddlelonFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.GelontNelonwelonrFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.GelontOldelonrFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.HasDarkRelonquelonstFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.RelonquelonstJoinIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondRelonquelonstIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.DelonvicelonContelonxt.RelonquelonstContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasSelonelonnTwelonelontIds
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ForYouProduct
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.logpipelonlinelon.clielonnt.common.elonvelonntPublishelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonUselonrCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon.WhoToFollowCandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddelonntrielonsTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.ModulelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.UselonrItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.timelonlinelon_logging.{thriftscala => thrift}
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Side effect that logs home timeline served entries to Scribe.
+ * Sidelon elonffelonct that logs homelon timelonlinelon selonrvelond elonntrielons to Scribelon.
  */
-@Singleton
-class HomeScribeServedEntriesSideEffect @Inject() (
-  scribeEventPublisher: EventPublisher[thrift.Timeline])
-    extends PipelineResultSideEffect[
-      PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-      Timeline
+@Singlelonton
+class HomelonScribelonSelonrvelondelonntrielonsSidelonelonffelonct @Injelonct() (
+  scribelonelonvelonntPublishelonr: elonvelonntPublishelonr[thrift.Timelonlinelon])
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[
+      PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds with HasDelonvicelonContelonxt,
+      Timelonlinelon
     ] {
 
-  override val identifier: SideEffectIdentifier = SideEffectIdentifier("HomeScribeServedEntries")
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr = SidelonelonffelonctIdelonntifielonr("HomelonScribelonSelonrvelondelonntrielons")
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[
-      PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-      Timeline
+  final ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[
+      PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds with HasDelonvicelonContelonxt,
+      Timelonlinelon
     ]
   ): Stitch[Unit] = {
-    val timelineThrift = buildTimeline(inputs)
-    Stitch.callFuture(scribeEventPublisher.publish(timelineThrift)).unit
+    val timelonlinelonThrift = buildTimelonlinelon(inputs)
+    Stitch.callFuturelon(scribelonelonvelonntPublishelonr.publish(timelonlinelonThrift)).unit
   }
 
-  def buildTimeline(
-    inputs: PipelineResultSideEffect.Inputs[
-      PipelineQuery with HasSeenTweetIds with HasDeviceContext,
-      Timeline
+  delonf buildTimelonlinelon(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[
+      PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds with HasDelonvicelonContelonxt,
+      Timelonlinelon
     ]
-  ): thrift.Timeline = {
-    val timelineType = inputs.query.product match {
-      case FollowingProduct => thrift.TimelineType.HomeLatest
-      case ForYouProduct => thrift.TimelineType.Home
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  ): thrift.Timelonlinelon = {
+    val timelonlinelonTypelon = inputs.quelonry.product match {
+      caselon FollowingProduct => thrift.TimelonlinelonTypelon.HomelonLatelonst
+      caselon ForYouProduct => thrift.TimelonlinelonTypelon.Homelon
+      caselon othelonr => throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $othelonr")
     }
-    val requestProvenance = inputs.query.deviceContext.map { deviceContext =>
-      deviceContext.requestContextValue match {
-        case RequestContext.Foreground => thrift.RequestProvenance.Foreground
-        case RequestContext.Launch => thrift.RequestProvenance.Launch
-        case RequestContext.PullToRefresh => thrift.RequestProvenance.Ptr
-        case _ => thrift.RequestProvenance.Other
+    val relonquelonstProvelonnancelon = inputs.quelonry.delonvicelonContelonxt.map { delonvicelonContelonxt =>
+      delonvicelonContelonxt.relonquelonstContelonxtValuelon match {
+        caselon RelonquelonstContelonxt.Forelonground => thrift.RelonquelonstProvelonnancelon.Forelonground
+        caselon RelonquelonstContelonxt.Launch => thrift.RelonquelonstProvelonnancelon.Launch
+        caselon RelonquelonstContelonxt.PullToRelonfrelonsh => thrift.RelonquelonstProvelonnancelon.Ptr
+        caselon _ => thrift.RelonquelonstProvelonnancelon.Othelonr
       }
     }
-    val queryType = inputs.query.features.map { featureMap =>
-      if (featureMap.getOrElse(GetOlderFeature, false)) thrift.QueryType.GetOlder
-      else if (featureMap.getOrElse(GetNewerFeature, false)) thrift.QueryType.GetNewer
-      else if (featureMap.getOrElse(GetMiddleFeature, false)) thrift.QueryType.GetMiddle
-      else if (featureMap.getOrElse(GetInitialFeature, false)) thrift.QueryType.GetInitial
-      else thrift.QueryType.Other
+    val quelonryTypelon = inputs.quelonry.felonaturelons.map { felonaturelonMap =>
+      if (felonaturelonMap.gelontOrelonlselon(GelontOldelonrFelonaturelon, falselon)) thrift.QuelonryTypelon.GelontOldelonr
+      elonlselon if (felonaturelonMap.gelontOrelonlselon(GelontNelonwelonrFelonaturelon, falselon)) thrift.QuelonryTypelon.GelontNelonwelonr
+      elonlselon if (felonaturelonMap.gelontOrelonlselon(GelontMiddlelonFelonaturelon, falselon)) thrift.QuelonryTypelon.GelontMiddlelon
+      elonlselon if (felonaturelonMap.gelontOrelonlselon(GelontInitialFelonaturelon, falselon)) thrift.QuelonryTypelon.GelontInitial
+      elonlselon thrift.QuelonryTypelon.Othelonr
     }
 
-    val tweetIdToItemCandidateMap: Map[Long, ItemCandidateWithDetails] =
-      inputs.selectedCandidates.flatMap {
-        case item: ItemCandidateWithDetails if item.candidate.isInstanceOf[BaseTweetCandidate] =>
-          Seq((item.candidateIdLong, item))
-        case module: ModuleCandidateWithDetails
-            if module.candidates.headOption.exists(_.candidate.isInstanceOf[BaseTweetCandidate]) =>
-          module.candidates.map(item => (item.candidateIdLong, item))
-        case _ => Seq.empty
+    val twelonelontIdToItelonmCandidatelonMap: Map[Long, ItelonmCandidatelonWithDelontails] =
+      inputs.selonlelonctelondCandidatelons.flatMap {
+        caselon itelonm: ItelonmCandidatelonWithDelontails if itelonm.candidatelon.isInstancelonOf[BaselonTwelonelontCandidatelon] =>
+          Selonq((itelonm.candidatelonIdLong, itelonm))
+        caselon modulelon: ModulelonCandidatelonWithDelontails
+            if modulelon.candidatelons.helonadOption.elonxists(_.candidatelon.isInstancelonOf[BaselonTwelonelontCandidatelon]) =>
+          modulelon.candidatelons.map(itelonm => (itelonm.candidatelonIdLong, itelonm))
+        caselon _ => Selonq.elonmpty
       }.toMap
 
-    val userIdToItemCandidateMap: Map[Long, ItemCandidateWithDetails] =
-      inputs.selectedCandidates.flatMap {
-        case module: ModuleCandidateWithDetails
-            if module.candidates.forall(_.candidate.isInstanceOf[BaseUserCandidate]) =>
-          module.candidates.map { item =>
-            (item.candidateIdLong, item)
+    val uselonrIdToItelonmCandidatelonMap: Map[Long, ItelonmCandidatelonWithDelontails] =
+      inputs.selonlelonctelondCandidatelons.flatMap {
+        caselon modulelon: ModulelonCandidatelonWithDelontails
+            if modulelon.candidatelons.forall(_.candidatelon.isInstancelonOf[BaselonUselonrCandidatelon]) =>
+          modulelon.candidatelons.map { itelonm =>
+            (itelonm.candidatelonIdLong, itelonm)
           }
-        case _ => Seq.empty
+        caselon _ => Selonq.elonmpty
       }.toMap
 
-    val timelineEntries = inputs.response.instructions.zipWithIndex.collect {
-      case (AddEntriesTimelineInstruction(entries), index) =>
-        entries.collect {
-          case entry: TweetItem if entry.promotedMetadata.isDefined =>
-            val promotedTweetEntry = PromotedTweetEntryMarshaller(entry, index)
-            Seq(
-              thrift.TimelineEntry(
-                content = thrift.Content.PromotedTweetEntry(promotedTweetEntry),
-                position = index.shortValue(),
-                entryId = entry.entryIdentifier,
-                entryType = thrift.EntryType.PromotedTweet,
-                sortIndex = entry.sortIndex,
-                verticalSize = Some(1)
+    val timelonlinelonelonntrielons = inputs.relonsponselon.instructions.zipWithIndelonx.collelonct {
+      caselon (AddelonntrielonsTimelonlinelonInstruction(elonntrielons), indelonx) =>
+        elonntrielons.collelonct {
+          caselon elonntry: TwelonelontItelonm if elonntry.promotelondMelontadata.isDelonfinelond =>
+            val promotelondTwelonelontelonntry = PromotelondTwelonelontelonntryMarshallelonr(elonntry, indelonx)
+            Selonq(
+              thrift.Timelonlinelonelonntry(
+                contelonnt = thrift.Contelonnt.PromotelondTwelonelontelonntry(promotelondTwelonelontelonntry),
+                position = indelonx.shortValuelon(),
+                elonntryId = elonntry.elonntryIdelonntifielonr,
+                elonntryTypelon = thrift.elonntryTypelon.PromotelondTwelonelont,
+                sortIndelonx = elonntry.sortIndelonx,
+                velonrticalSizelon = Somelon(1)
               )
             )
-          case entry: TweetItem =>
-            val candidate = tweetIdToItemCandidateMap(entry.id)
-            val tweetEntry = TweetEntryMarshaller(entry, candidate)
-            Seq(
-              thrift.TimelineEntry(
-                content = thrift.Content.TweetEntry(tweetEntry),
-                position = index.shortValue(),
-                entryId = entry.entryIdentifier,
-                entryType = thrift.EntryType.Tweet,
-                sortIndex = entry.sortIndex,
-                verticalSize = Some(1)
+          caselon elonntry: TwelonelontItelonm =>
+            val candidatelon = twelonelontIdToItelonmCandidatelonMap(elonntry.id)
+            val twelonelontelonntry = TwelonelontelonntryMarshallelonr(elonntry, candidatelon)
+            Selonq(
+              thrift.Timelonlinelonelonntry(
+                contelonnt = thrift.Contelonnt.Twelonelontelonntry(twelonelontelonntry),
+                position = indelonx.shortValuelon(),
+                elonntryId = elonntry.elonntryIdelonntifielonr,
+                elonntryTypelon = thrift.elonntryTypelon.Twelonelont,
+                sortIndelonx = elonntry.sortIndelonx,
+                velonrticalSizelon = Somelon(1)
               )
             )
-          case module: TimelineModule
-              if module.entryNamespace.toString == WhoToFollowCandidateDecorator.EntryNamespaceString =>
-            val whoToFollowEntries = module.items.collect {
-              case ModuleItem(entry: UserItem, _, _) =>
-                val candidate = userIdToItemCandidateMap(entry.id)
-                val whoToFollowEntry = WhoToFollowEntryMarshaller(entry, candidate)
-                thrift.AtomicEntry.WtfEntry(whoToFollowEntry)
+          caselon modulelon: TimelonlinelonModulelon
+              if modulelon.elonntryNamelonspacelon.toString == WhoToFollowCandidatelonDeloncorator.elonntryNamelonspacelonString =>
+            val whoToFollowelonntrielons = modulelon.itelonms.collelonct {
+              caselon ModulelonItelonm(elonntry: UselonrItelonm, _, _) =>
+                val candidatelon = uselonrIdToItelonmCandidatelonMap(elonntry.id)
+                val whoToFollowelonntry = WhoToFollowelonntryMarshallelonr(elonntry, candidatelon)
+                thrift.Atomicelonntry.Wtfelonntry(whoToFollowelonntry)
             }
-            Seq(
-              thrift.TimelineEntry(
-                content = thrift.Content.Entries(whoToFollowEntries),
-                position = index.shortValue(),
-                entryId = module.entryIdentifier,
-                entryType = thrift.EntryType.WhoToFollowModule,
-                sortIndex = module.sortIndex
+            Selonq(
+              thrift.Timelonlinelonelonntry(
+                contelonnt = thrift.Contelonnt.elonntrielons(whoToFollowelonntrielons),
+                position = indelonx.shortValuelon(),
+                elonntryId = modulelon.elonntryIdelonntifielonr,
+                elonntryTypelon = thrift.elonntryTypelon.WhoToFollowModulelon,
+                sortIndelonx = modulelon.sortIndelonx
               )
             )
-          case module: TimelineModule
-              if module.sortIndex.isDefined && module.items.headOption.exists(
-                _.item.isInstanceOf[TweetItem]) =>
-            val conversationTweetEntries = module.items.collect {
-              case ModuleItem(entry: TweetItem, _, _) =>
-                val candidate = tweetIdToItemCandidateMap(entry.id)
-                val conversationEntry = ConversationEntryMarshaller(entry, candidate)
-                thrift.AtomicEntry.ConversationEntry(conversationEntry)
+          caselon modulelon: TimelonlinelonModulelon
+              if modulelon.sortIndelonx.isDelonfinelond && modulelon.itelonms.helonadOption.elonxists(
+                _.itelonm.isInstancelonOf[TwelonelontItelonm]) =>
+            val convelonrsationTwelonelontelonntrielons = modulelon.itelonms.collelonct {
+              caselon ModulelonItelonm(elonntry: TwelonelontItelonm, _, _) =>
+                val candidatelon = twelonelontIdToItelonmCandidatelonMap(elonntry.id)
+                val convelonrsationelonntry = ConvelonrsationelonntryMarshallelonr(elonntry, candidatelon)
+                thrift.Atomicelonntry.Convelonrsationelonntry(convelonrsationelonntry)
             }
-            Seq(
-              thrift.TimelineEntry(
-                content = thrift.Content.Entries(conversationTweetEntries),
-                position = index.shortValue(),
-                entryId = module.entryIdentifier,
-                entryType = thrift.EntryType.ConversationModule,
-                sortIndex = module.sortIndex
+            Selonq(
+              thrift.Timelonlinelonelonntry(
+                contelonnt = thrift.Contelonnt.elonntrielons(convelonrsationTwelonelontelonntrielons),
+                position = indelonx.shortValuelon(),
+                elonntryId = modulelon.elonntryIdelonntifielonr,
+                elonntryTypelon = thrift.elonntryTypelon.ConvelonrsationModulelon,
+                sortIndelonx = modulelon.sortIndelonx
               )
             )
-          case _ => Seq.empty
-        }.flatten
-      // Other instructions
-      case _ => Seq.empty[thrift.TimelineEntry]
-    }.flatten
+          caselon _ => Selonq.elonmpty
+        }.flattelonn
+      // Othelonr instructions
+      caselon _ => Selonq.elonmpty[thrift.Timelonlinelonelonntry]
+    }.flattelonn
 
-    thrift.Timeline(
-      timelineEntries = timelineEntries,
-      requestTimeMs = inputs.query.queryTime.inMilliseconds,
-      traceId = Trace.id.traceId.toLong,
-      userId = inputs.query.getOptionalUserId,
-      clientAppId = inputs.query.clientContext.appId,
-      sourceJobInstance = None,
-      hasDarkRequest = inputs.query.features.flatMap(_.getOrElse(HasDarkRequestFeature, None)),
-      parentId = Some(Trace.id.parentId.toLong),
-      spanId = Some(Trace.id.spanId.toLong),
-      timelineType = Some(timelineType),
-      ipAddress = inputs.query.clientContext.ipAddress,
-      userAgent = inputs.query.clientContext.userAgent,
-      queryType = queryType,
-      requestProvenance = requestProvenance,
-      sessionId = None,
-      timeZone = None,
-      browserNotificationPermission = None,
-      lastNonePollingTimeMs = None,
-      languageCode = inputs.query.clientContext.languageCode,
-      countryCode = inputs.query.clientContext.countryCode,
-      requestEndTimeMs = Some(Time.now.inMilliseconds),
-      servedRequestId = inputs.query.features.flatMap(_.getOrElse(ServedRequestIdFeature, None)),
-      requestJoinId = inputs.query.features.flatMap(_.getOrElse(RequestJoinIdFeature, None)),
-      requestSeenTweetIds = inputs.query.seenTweetIds
+    thrift.Timelonlinelon(
+      timelonlinelonelonntrielons = timelonlinelonelonntrielons,
+      relonquelonstTimelonMs = inputs.quelonry.quelonryTimelon.inMilliselonconds,
+      tracelonId = Tracelon.id.tracelonId.toLong,
+      uselonrId = inputs.quelonry.gelontOptionalUselonrId,
+      clielonntAppId = inputs.quelonry.clielonntContelonxt.appId,
+      sourcelonJobInstancelon = Nonelon,
+      hasDarkRelonquelonst = inputs.quelonry.felonaturelons.flatMap(_.gelontOrelonlselon(HasDarkRelonquelonstFelonaturelon, Nonelon)),
+      parelonntId = Somelon(Tracelon.id.parelonntId.toLong),
+      spanId = Somelon(Tracelon.id.spanId.toLong),
+      timelonlinelonTypelon = Somelon(timelonlinelonTypelon),
+      ipAddrelonss = inputs.quelonry.clielonntContelonxt.ipAddrelonss,
+      uselonrAgelonnt = inputs.quelonry.clielonntContelonxt.uselonrAgelonnt,
+      quelonryTypelon = quelonryTypelon,
+      relonquelonstProvelonnancelon = relonquelonstProvelonnancelon,
+      selonssionId = Nonelon,
+      timelonZonelon = Nonelon,
+      browselonrNotificationPelonrmission = Nonelon,
+      lastNonelonPollingTimelonMs = Nonelon,
+      languagelonCodelon = inputs.quelonry.clielonntContelonxt.languagelonCodelon,
+      countryCodelon = inputs.quelonry.clielonntContelonxt.countryCodelon,
+      relonquelonstelonndTimelonMs = Somelon(Timelon.now.inMilliselonconds),
+      selonrvelondRelonquelonstId = inputs.quelonry.felonaturelons.flatMap(_.gelontOrelonlselon(SelonrvelondRelonquelonstIdFelonaturelon, Nonelon)),
+      relonquelonstJoinId = inputs.quelonry.felonaturelons.flatMap(_.gelontOrelonlselon(RelonquelonstJoinIdFelonaturelon, Nonelon)),
+      relonquelonstSelonelonnTwelonelontIds = inputs.quelonry.selonelonnTwelonelontIds
     )
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert()
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt()
   )
 }

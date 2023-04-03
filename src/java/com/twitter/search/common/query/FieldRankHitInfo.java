@@ -1,48 +1,48 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
 /**
- * When a hit (on a part of the query tree) occurs, this class is passed to HitAttributeCollector
- * for collection.
+ * Whelonn a hit (on a part of thelon quelonry trelonelon) occurs, this class is passelond to HitAttributelonCollelonctor
+ * for collelonction.
  *
- * This implementation carries the following info:
+ * This implelonmelonntation carrielons thelon following info:
  * <ul>
- *   <li>The field that matched (the field ID is recorded)</li>
- *   <li>The query node that matched (the query node rank is recorded)</li>
- *   <li>The ID of the last doc that matched this query</li>
+ *   <li>Thelon fielonld that matchelond (thelon fielonld ID is reloncordelond)</li>
+ *   <li>Thelon quelonry nodelon that matchelond (thelon quelonry nodelon rank is reloncordelond)</li>
+ *   <li>Thelon ID of thelon last doc that matchelond this quelonry</li>
  * </ul>
  *
- * Each IdentifiableQuery should be associated with one FieldRankHitInfo, which is passed to a
- * HitAttributeCollector when a hit occurs.
+ * elonach IdelonntifiablelonQuelonry should belon associatelond with onelon FielonldRankHitInfo, which is passelond to a
+ * HitAttributelonCollelonctor whelonn a hit occurs.
  */
-public class FieldRankHitInfo {
-  protected static final int UNSET_DOC_ID = -1;
+public class FielonldRankHitInfo {
+  protelonctelond static final int UNSelonT_DOC_ID = -1;
 
-  private final int fieldId;
-  private final int rank;
-  private int docId = UNSET_DOC_ID;
+  privatelon final int fielonldId;
+  privatelon final int rank;
+  privatelon int docId = UNSelonT_DOC_ID;
 
-  public FieldRankHitInfo(int fieldId, int rank) {
-    this.fieldId = fieldId;
+  public FielonldRankHitInfo(int fielonldId, int rank) {
+    this.fielonldId = fielonldId;
     this.rank = rank;
   }
 
-  public int getFieldId() {
-    return fieldId;
+  public int gelontFielonldId() {
+    relonturn fielonldId;
   }
 
-  public int getRank() {
-    return rank;
+  public int gelontRank() {
+    relonturn rank;
   }
 
-  public int getDocId() {
-    return docId;
+  public int gelontDocId() {
+    relonturn docId;
   }
 
-  public void setDocId(int docId) {
+  public void selontDocId(int docId) {
     this.docId = docId;
   }
 
-  public void resetDocId() {
-    this.docId = UNSET_DOC_ID;
+  public void relonselontDocId() {
+    this.docId = UNSelonT_DOC_ID;
   }
 }

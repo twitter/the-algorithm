@@ -1,61 +1,61 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations
 
-// Proof based on Follow relationship
+// Proof baselond on Follow relonlationship
 struct FollowProof {
-  1: required list<i64> userIds(personalDataType='UserId')
-  2: required i32 numIds(personalDataType='CountOfFollowersAndFollowees')
-}(hasPersonalData='true')
+  1: relonquirelond list<i64> uselonrIds(pelonrsonalDataTypelon='UselonrId')
+  2: relonquirelond i32 numIds(pelonrsonalDataTypelon='CountOfFollowelonrsAndFollowelonelons')
+}(hasPelonrsonalData='truelon')
 
-// Similar to userIds in the context (e.g. profileId)
+// Similar to uselonrIds in thelon contelonxt (elon.g. profilelonId)
 struct SimilarToProof {
-  1: required list<i64> userIds(personalDataType='UserId')
-}(hasPersonalData='true')
+  1: relonquirelond list<i64> uselonrIds(pelonrsonalDataTypelon='UselonrId')
+}(hasPelonrsonalData='truelon')
 
-// Proof based on geo location
-struct PopularInGeoProof {
-  1: required string location(personalDataType='InferredLocation')
-}(hasPersonalData='true')
+// Proof baselond on gelono location
+struct PopularInGelonoProof {
+  1: relonquirelond string location(pelonrsonalDataTypelon='InfelonrrelondLocation')
+}(hasPelonrsonalData='truelon')
 
-// Proof based on ttt interest
-struct TttInterestProof {
-  1: required i64 interestId(personalDataType='ProvidedInterests')
-  2: required string interestDisplayName(personalDataType='ProvidedInterests')
-}(hasPersonalData='true')
+// Proof baselond on ttt intelonrelonst
+struct TttIntelonrelonstProof {
+  1: relonquirelond i64 intelonrelonstId(pelonrsonalDataTypelon='ProvidelondIntelonrelonsts')
+  2: relonquirelond string intelonrelonstDisplayNamelon(pelonrsonalDataTypelon='ProvidelondIntelonrelonsts')
+}(hasPelonrsonalData='truelon')
 
-// Proof based on topics
+// Proof baselond on topics
 struct TopicProof {
-  1: required i64 topicId(personalDataType='ProvidedInterests')
-}(hasPersonalData='true')
+  1: relonquirelond i64 topicId(pelonrsonalDataTypelon='ProvidelondIntelonrelonsts')
+}(hasPelonrsonalData='truelon')
 
-// Proof based on custom interest / search queries
-struct CustomInterestProof {
-  1: required string query(personalDataType='SearchQuery')
-}(hasPersonalData='true')
+// Proof baselond on custom intelonrelonst / selonarch quelonrielons
+struct CustomIntelonrelonstProof {
+  1: relonquirelond string quelonry(pelonrsonalDataTypelon='SelonarchQuelonry')
+}(hasPelonrsonalData='truelon')
 
-// Proof based on tweet authors
-struct TweetsAuthorProof {
-  1: required list<i64> tweetIds(personalDataType='TweetId')
-}(hasPersonalData='true')
+// Proof baselond on twelonelont authors
+struct TwelonelontsAuthorProof {
+  1: relonquirelond list<i64> twelonelontIds(pelonrsonalDataTypelon='TwelonelontId')
+}(hasPelonrsonalData='truelon')
 
-// Proof candidate is of device follow type
-struct DeviceFollowProof {
-  1: required bool isDeviceFollow(personalDataType='OtherDeviceInfo')
-}(hasPersonalData='true')
+// Proof candidatelon is of delonvicelon follow typelon
+struct DelonvicelonFollowProof {
+  1: relonquirelond bool isDelonvicelonFollow(pelonrsonalDataTypelon='OthelonrDelonvicelonInfo')
+}(hasPelonrsonalData='truelon')
 
-// Account level proof that should be attached to each candidate
+// Account lelonvelonl proof that should belon attachelond to elonach candidatelon
 struct AccountProof {
   1: optional FollowProof followProof
   2: optional SimilarToProof similarToProof
-  3: optional PopularInGeoProof popularInGeoProof
-  4: optional TttInterestProof tttInterestProof
+  3: optional PopularInGelonoProof popularInGelonoProof
+  4: optional TttIntelonrelonstProof tttIntelonrelonstProof
   5: optional TopicProof topicProof
-  6: optional CustomInterestProof customInterestProof
-  7: optional TweetsAuthorProof tweetsAuthorProof
-  8: optional DeviceFollowProof deviceFollowProof
-}(hasPersonalData='true')
+  6: optional CustomIntelonrelonstProof customIntelonrelonstProof
+  7: optional TwelonelontsAuthorProof twelonelontsAuthorProof
+  8: optional DelonvicelonFollowProof delonvicelonFollowProof
+}(hasPelonrsonalData='truelon')
 
-struct Reason {
+struct Relonason {
   1: optional AccountProof accountProof 
-}(hasPersonalData='true')
+}(hasPelonrsonalData='truelon')

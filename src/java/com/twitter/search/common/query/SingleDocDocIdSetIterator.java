@@ -1,51 +1,51 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
-public class SingleDocDocIdSetIterator extends DocIdSetIterator {
+public class SinglelonDocDocIdSelontItelonrator elonxtelonnds DocIdSelontItelonrator {
 
-  // the only docid in the list
-  private final int doc;
+  // thelon only docid in thelon list
+  privatelon final int doc;
 
-  private int docid = -1;
+  privatelon int docid = -1;
 
-  public SingleDocDocIdSetIterator(int doc) {
+  public SinglelonDocDocIdSelontItelonrator(int doc) {
     this.doc = doc;
   }
 
-  @Override
+  @Ovelonrridelon
   public int docID() {
-    return docid;
+    relonturn docid;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
+  @Ovelonrridelon
+  public int nelonxtDoc() throws IOelonxcelonption {
     if (docid == -1) {
       docid = doc;
-    } else {
-      docid = NO_MORE_DOCS;
+    } elonlselon {
+      docid = NO_MORelon_DOCS;
     }
-    return docid;
+    relonturn docid;
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    if (docid == NO_MORE_DOCS) {
-      return docid;
-    } else if (doc < target) {
-      docid = NO_MORE_DOCS;
-      return docid;
-    } else {
+  @Ovelonrridelon
+  public int advancelon(int targelont) throws IOelonxcelonption {
+    if (docid == NO_MORelon_DOCS) {
+      relonturn docid;
+    } elonlselon if (doc < targelont) {
+      docid = NO_MORelon_DOCS;
+      relonturn docid;
+    } elonlselon {
       docid = doc;
     }
-    return docid;
+    relonturn docid;
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    return 1;
+    relonturn 1;
   }
 
 }

@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-import metadata.Url
+import melontadata.Url
 
-case class ReaderModeConfig(isReaderModeAvailable: Boolean, landingUrl: Url)
+caselon class RelonadelonrModelonConfig(isRelonadelonrModelonAvailablelon: Boolelonan, landingUrl: Url)

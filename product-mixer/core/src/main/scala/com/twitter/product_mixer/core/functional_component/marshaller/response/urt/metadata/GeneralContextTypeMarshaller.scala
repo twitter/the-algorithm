@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GeneralContextTypeMarshaller @Inject() () {
+@Singlelonton
+class GelonnelonralContelonxtTypelonMarshallelonr @Injelonct() () {
 
-  def apply(generalContextType: GeneralContextType): urt.ContextType = generalContextType match {
-    case LikeGeneralContextType => urt.ContextType.Like
-    case FollowGeneralContextType => urt.ContextType.Follow
-    case MomentGeneralContextType => urt.ContextType.Moment
-    case ReplyGeneralContextType => urt.ContextType.Reply
-    case ConversationGeneralContextType => urt.ContextType.Conversation
-    case PinGeneralContextType => urt.ContextType.Pin
-    case TextOnlyGeneralContextType => urt.ContextType.TextOnly
-    case FacePileGeneralContextType => urt.ContextType.Facepile
-    case MegaPhoneGeneralContextType => urt.ContextType.Megaphone
-    case BirdGeneralContextType => urt.ContextType.Bird
-    case FeedbackGeneralContextType => urt.ContextType.Feedback
-    case TopicGeneralContextType => urt.ContextType.Topic
-    case ListGeneralContextType => urt.ContextType.List
-    case RetweetGeneralContextType => urt.ContextType.Retweet
-    case LocationGeneralContextType => urt.ContextType.Location
-    case CommunityGeneralContextType => urt.ContextType.Community
-    case NewUserGeneralContextType => urt.ContextType.NewUser
-    case SmartblockExpirationGeneralContextType => urt.ContextType.SmartBlockExpiration
-    case TrendingGeneralContextType => urt.ContextType.Trending
-    case SparkleGeneralContextType => urt.ContextType.Sparkle
-    case SpacesGeneralContextType => urt.ContextType.Spaces
-    case ReplyPinGeneralContextType => urt.ContextType.ReplyPin
+  delonf apply(gelonnelonralContelonxtTypelon: GelonnelonralContelonxtTypelon): urt.ContelonxtTypelon = gelonnelonralContelonxtTypelon match {
+    caselon LikelonGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Likelon
+    caselon FollowGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Follow
+    caselon MomelonntGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Momelonnt
+    caselon RelonplyGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Relonply
+    caselon ConvelonrsationGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Convelonrsation
+    caselon PinGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Pin
+    caselon TelonxtOnlyGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.TelonxtOnly
+    caselon FacelonPilelonGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Facelonpilelon
+    caselon MelongaPhonelonGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Melongaphonelon
+    caselon BirdGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Bird
+    caselon FelonelondbackGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Felonelondback
+    caselon TopicGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Topic
+    caselon ListGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.List
+    caselon RelontwelonelontGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Relontwelonelont
+    caselon LocationGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Location
+    caselon CommunityGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Community
+    caselon NelonwUselonrGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.NelonwUselonr
+    caselon SmartblockelonxpirationGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.SmartBlockelonxpiration
+    caselon TrelonndingGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Trelonnding
+    caselon SparklelonGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Sparklelon
+    caselon SpacelonsGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.Spacelons
+    caselon RelonplyPinGelonnelonralContelonxtTypelon => urt.ContelonxtTypelon.RelonplyPin
   }
 }

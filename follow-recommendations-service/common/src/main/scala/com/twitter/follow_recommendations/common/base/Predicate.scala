@@ -1,100 +1,100 @@
-package com.twitter.follow_recommendations.common.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.baselon
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Stitch
 
-trait Predicate[-Q] {
+trait Prelondicatelon[-Q] {
 
-  def apply(item: Q): Stitch[PredicateResult]
-  def arrow: Arrow[Q, PredicateResult] = Arrow.apply(apply)
+  delonf apply(itelonm: Q): Stitch[PrelondicatelonRelonsult]
+  delonf arrow: Arrow[Q, PrelondicatelonRelonsult] = Arrow.apply(apply)
 
-  def map[K](mapper: K => Q): Predicate[K] = Predicate(arrow.contramap(mapper))
+  delonf map[K](mappelonr: K => Q): Prelondicatelon[K] = Prelondicatelon(arrow.contramap(mappelonr))
 
   /**
-   * check the predicate results for a batch of items for convenience.
+   * chelonck thelon prelondicatelon relonsults for a batch of itelonms for convelonnielonncelon.
    *
-   * mark it as final to avoid potential abuse usage
+   * mark it as final to avoid potelonntial abuselon usagelon
    */
-  final def batch(items: Seq[Q]): Stitch[Seq[PredicateResult]] = {
-    this.arrow.traverse(items)
+  final delonf batch(itelonms: Selonq[Q]): Stitch[Selonq[PrelondicatelonRelonsult]] = {
+    this.arrow.travelonrselon(itelonms)
   }
 
   /**
-   * Syntax sugar for functions which take in 2 inputs as a tuple.
+   * Syntax sugar for functions which takelon in 2 inputs as a tuplelon.
    */
-  def apply[Q1, Q2](item1: Q1, item2: Q2)(implicit ev: ((Q1, Q2)) => Q): Stitch[PredicateResult] = {
-    apply((item1, item2))
+  delonf apply[Q1, Q2](itelonm1: Q1, itelonm2: Q2)(implicit elonv: ((Q1, Q2)) => Q): Stitch[PrelondicatelonRelonsult] = {
+    apply((itelonm1, itelonm2))
   }
 
   /**
-   * Runs the predicates in sequence. The returned predicate will return true iff both the predicates return true.
-   * ie. it is an AND operation
+   * Runs thelon prelondicatelons in selonquelonncelon. Thelon relonturnelond prelondicatelon will relonturn truelon iff both thelon prelondicatelons relonturn truelon.
+   * ielon. it is an AND opelonration
    *
-   * We short-circuit the evaluation, ie we don't evaluate the 2nd predicate if the 1st is false
+   * Welon short-circuit thelon elonvaluation, ielon welon don't elonvaluatelon thelon 2nd prelondicatelon if thelon 1st is falselon
    *
-   * @param p predicate to run in sequence
+   * @param p prelondicatelon to run in selonquelonncelon
    *
-   * @return a new predicate object that represents the logical AND of both predicates
+   * @relonturn a nelonw prelondicatelon objelonct that relonprelonselonnts thelon logical AND of both prelondicatelons
    */
-  def andThen[Q1 <: Q](p: Predicate[Q1]): Predicate[Q1] = {
-    Predicate({ query: Q1 =>
-      apply(query).flatMap {
-        case PredicateResult.Valid => p(query)
-        case PredicateResult.Invalid(reasons) => Stitch.value(PredicateResult.Invalid(reasons))
+  delonf andThelonn[Q1 <: Q](p: Prelondicatelon[Q1]): Prelondicatelon[Q1] = {
+    Prelondicatelon({ quelonry: Q1 =>
+      apply(quelonry).flatMap {
+        caselon PrelondicatelonRelonsult.Valid => p(quelonry)
+        caselon PrelondicatelonRelonsult.Invalid(relonasons) => Stitch.valuelon(PrelondicatelonRelonsult.Invalid(relonasons))
       }
     })
   }
 
   /**
-   * Creates a predicate which runs the current & given predicate in sequence.
-   * The returned predicate will return true if either current or given predicate returns true.
-   * That is, given predicate will be only run if current predicate returns false.
+   * Crelonatelons a prelondicatelon which runs thelon currelonnt & givelonn prelondicatelon in selonquelonncelon.
+   * Thelon relonturnelond prelondicatelon will relonturn truelon if elonithelonr currelonnt or givelonn prelondicatelon relonturns truelon.
+   * That is, givelonn prelondicatelon will belon only run if currelonnt prelondicatelon relonturns falselon.
    *
-   * @param p predicate to run in sequence
+   * @param p prelondicatelon to run in selonquelonncelon
    *
-   * @return new predicate object that represents the logical OR of both predicates.
-   *         if both are invalid, the reason would be the set of all invalid reasons.
+   * @relonturn nelonw prelondicatelon objelonct that relonprelonselonnts thelon logical OR of both prelondicatelons.
+   *         if both arelon invalid, thelon relonason would belon thelon selont of all invalid relonasons.
    */
-  def or[Q1 <: Q](p: Predicate[Q1]): Predicate[Q1] = {
-    Predicate({ query: Q1 =>
-      apply(query).flatMap {
-        case PredicateResult.Valid => Stitch.value(PredicateResult.Valid)
-        case PredicateResult.Invalid(reasons) =>
-          p(query).flatMap {
-            case PredicateResult.Valid => Stitch.value(PredicateResult.Valid)
-            case PredicateResult.Invalid(newReasons) =>
-              Stitch.value(PredicateResult.Invalid(reasons ++ newReasons))
+  delonf or[Q1 <: Q](p: Prelondicatelon[Q1]): Prelondicatelon[Q1] = {
+    Prelondicatelon({ quelonry: Q1 =>
+      apply(quelonry).flatMap {
+        caselon PrelondicatelonRelonsult.Valid => Stitch.valuelon(PrelondicatelonRelonsult.Valid)
+        caselon PrelondicatelonRelonsult.Invalid(relonasons) =>
+          p(quelonry).flatMap {
+            caselon PrelondicatelonRelonsult.Valid => Stitch.valuelon(PrelondicatelonRelonsult.Valid)
+            caselon PrelondicatelonRelonsult.Invalid(nelonwRelonasons) =>
+              Stitch.valuelon(PrelondicatelonRelonsult.Invalid(relonasons ++ nelonwRelonasons))
           }
       }
     })
   }
 
   /*
-   * Runs the predicate only if the provided predicate is valid, otherwise returns valid.
+   * Runs thelon prelondicatelon only if thelon providelond prelondicatelon is valid, othelonrwiselon relonturns valid.
    * */
-  def gate[Q1 <: Q](gatingPredicate: Predicate[Q1]): Predicate[Q1] = {
-    Predicate { query: Q1 =>
-      gatingPredicate(query).flatMap { result =>
-        if (result == PredicateResult.Valid) {
-          apply(query)
-        } else {
-          Stitch.value(PredicateResult.Valid)
+  delonf gatelon[Q1 <: Q](gatingPrelondicatelon: Prelondicatelon[Q1]): Prelondicatelon[Q1] = {
+    Prelondicatelon { quelonry: Q1 =>
+      gatingPrelondicatelon(quelonry).flatMap { relonsult =>
+        if (relonsult == PrelondicatelonRelonsult.Valid) {
+          apply(quelonry)
+        } elonlselon {
+          Stitch.valuelon(PrelondicatelonRelonsult.Valid)
         }
       }
     }
   }
 
-  def observe(statsReceiver: StatsReceiver): Predicate[Q] = Predicate(
-    StatsUtil.profilePredicateResult(this.arrow, statsReceiver))
+  delonf obselonrvelon(statsReloncelonivelonr: StatsReloncelonivelonr): Prelondicatelon[Q] = Prelondicatelon(
+    StatsUtil.profilelonPrelondicatelonRelonsult(this.arrow, statsReloncelonivelonr))
 
-  def convertToFailOpenWithResultType(resultType: PredicateResult): Predicate[Q] = {
-    Predicate { query: Q =>
-      apply(query).handle {
-        case _: Exception =>
-          resultType
+  delonf convelonrtToFailOpelonnWithRelonsultTypelon(relonsultTypelon: PrelondicatelonRelonsult): Prelondicatelon[Q] = {
+    Prelondicatelon { quelonry: Q =>
+      apply(quelonry).handlelon {
+        caselon _: elonxcelonption =>
+          relonsultTypelon
       }
 
     }
@@ -102,151 +102,151 @@ trait Predicate[-Q] {
 
 }
 
-class TruePredicate[Q] extends Predicate[Q] {
-  override def apply(item: Q): Stitch[PredicateResult] = Predicate.AlwaysTrueStitch
+class TruelonPrelondicatelon[Q] elonxtelonnds Prelondicatelon[Q] {
+  ovelonrridelon delonf apply(itelonm: Q): Stitch[PrelondicatelonRelonsult] = Prelondicatelon.AlwaysTruelonStitch
 }
 
-class FalsePredicate[Q](reason: FilterReason) extends Predicate[Q] {
-  val InvalidResult = Stitch.value(PredicateResult.Invalid(Set(reason)))
-  override def apply(item: Q): Stitch[PredicateResult] = InvalidResult
+class FalselonPrelondicatelon[Q](relonason: FiltelonrRelonason) elonxtelonnds Prelondicatelon[Q] {
+  val InvalidRelonsult = Stitch.valuelon(PrelondicatelonRelonsult.Invalid(Selont(relonason)))
+  ovelonrridelon delonf apply(itelonm: Q): Stitch[PrelondicatelonRelonsult] = InvalidRelonsult
 }
 
-object Predicate {
+objelonct Prelondicatelon {
 
-  val AlwaysTrueStitch = Stitch.value(PredicateResult.Valid)
+  val AlwaysTruelonStitch = Stitch.valuelon(PrelondicatelonRelonsult.Valid)
 
-  val NumBatchesStat = "num_batches_stats"
-  val NumBatchesCount = "num_batches"
+  val NumBatchelonsStat = "num_batchelons_stats"
+  val NumBatchelonsCount = "num_batchelons"
 
-  def apply[Q](func: Q => Stitch[PredicateResult]): Predicate[Q] = new Predicate[Q] {
-    override def apply(item: Q): Stitch[PredicateResult] = func(item)
+  delonf apply[Q](func: Q => Stitch[PrelondicatelonRelonsult]): Prelondicatelon[Q] = nelonw Prelondicatelon[Q] {
+    ovelonrridelon delonf apply(itelonm: Q): Stitch[PrelondicatelonRelonsult] = func(itelonm)
 
-    override val arrow: Arrow[Q, PredicateResult] = Arrow(func)
+    ovelonrridelon val arrow: Arrow[Q, PrelondicatelonRelonsult] = Arrow(func)
   }
 
-  def apply[Q](outerArrow: Arrow[Q, PredicateResult]): Predicate[Q] = new Predicate[Q] {
-    override def apply(item: Q): Stitch[PredicateResult] = arrow(item)
+  delonf apply[Q](outelonrArrow: Arrow[Q, PrelondicatelonRelonsult]): Prelondicatelon[Q] = nelonw Prelondicatelon[Q] {
+    ovelonrridelon delonf apply(itelonm: Q): Stitch[PrelondicatelonRelonsult] = arrow(itelonm)
 
-    override val arrow: Arrow[Q, PredicateResult] = outerArrow
+    ovelonrridelon val arrow: Arrow[Q, PrelondicatelonRelonsult] = outelonrArrow
   }
 
   /**
-   * Given some items, this function
-   * 1. chunks them up in groups
-   * 2. lazily applies a predicate on each group
-   * 3. filters based on the predicate
-   * 4. takes first numToTake items.
+   * Givelonn somelon itelonms, this function
+   * 1. chunks thelonm up in groups
+   * 2. lazily applielons a prelondicatelon on elonach group
+   * 3. filtelonrs baselond on thelon prelondicatelon
+   * 4. takelons first numToTakelon itelonms.
    *
-   * If numToTake is satisfied, then any later predicates are not called.
+   * If numToTakelon is satisfielond, thelonn any latelonr prelondicatelons arelon not callelond.
    *
-   * @param items     items of type Q
-   * @param predicate predicate that determines whether an item is acceptable
-   * @param batchSize batch size to call the predicate with
-   * @param numToTake max number of items to return
-   * @param stats stats receiver
-   * @tparam Q type of item
+   * @param itelonms     itelonms of typelon Q
+   * @param prelondicatelon prelondicatelon that delontelonrminelons whelonthelonr an itelonm is accelonptablelon
+   * @param batchSizelon batch sizelon to call thelon prelondicatelon with
+   * @param numToTakelon max numbelonr of itelonms to relonturn
+   * @param stats stats reloncelonivelonr
+   * @tparam Q typelon of itelonm
    *
-   * @return a future of K items
+   * @relonturn a futurelon of K itelonms
    */
-  def batchFilterTake[Q](
-    items: Seq[Q],
-    predicate: Predicate[Q],
-    batchSize: Int,
-    numToTake: Int,
-    stats: StatsReceiver
-  ): Stitch[Seq[Q]] = {
+  delonf batchFiltelonrTakelon[Q](
+    itelonms: Selonq[Q],
+    prelondicatelon: Prelondicatelon[Q],
+    batchSizelon: Int,
+    numToTakelon: Int,
+    stats: StatsReloncelonivelonr
+  ): Stitch[Selonq[Q]] = {
 
-    def take(
-      input: Iterator[Stitch[Seq[Q]]],
-      prev: Seq[Q],
-      takeSize: Int,
+    delonf takelon(
+      input: Itelonrator[Stitch[Selonq[Q]]],
+      prelonv: Selonq[Q],
+      takelonSizelon: Int,
       numOfBatch: Int
-    ): Stitch[(Seq[Q], Int)] = {
-      if (input.hasNext) {
-        val currFut = input.next()
+    ): Stitch[(Selonq[Q], Int)] = {
+      if (input.hasNelonxt) {
+        val currFut = input.nelonxt()
         currFut.flatMap { curr =>
-          val taken = curr.take(takeSize)
-          val combined = prev ++ taken
-          if (taken.size < takeSize)
-            take(input, combined, takeSize - taken.size, numOfBatch + 1)
-          else Stitch.value((combined, numOfBatch + 1))
+          val takelonn = curr.takelon(takelonSizelon)
+          val combinelond = prelonv ++ takelonn
+          if (takelonn.sizelon < takelonSizelon)
+            takelon(input, combinelond, takelonSizelon - takelonn.sizelon, numOfBatch + 1)
+          elonlselon Stitch.valuelon((combinelond, numOfBatch + 1))
         }
-      } else {
-        Stitch.value((prev, numOfBatch))
+      } elonlselon {
+        Stitch.valuelon((prelonv, numOfBatch))
       }
     }
 
-    val batchedItems = items.view.grouped(batchSize)
-    val batchedFutures = batchedItems.map { batch =>
-      Stitch.traverse(batch)(predicate.apply).map { conds =>
-        (batch.zip(conds)).withFilter(_._2.value).map(_._1)
+    val batchelondItelonms = itelonms.vielonw.groupelond(batchSizelon)
+    val batchelondFuturelons = batchelondItelonms.map { batch =>
+      Stitch.travelonrselon(batch)(prelondicatelon.apply).map { conds =>
+        (batch.zip(conds)).withFiltelonr(_._2.valuelon).map(_._1)
       }
     }
-    take(batchedFutures, Nil, numToTake, 0).map {
-      case (filtered: Seq[Q], numOfBatch: Int) =>
-        stats.stat(NumBatchesStat).add(numOfBatch)
-        stats.counter(NumBatchesCount).incr(numOfBatch)
-        filtered
+    takelon(batchelondFuturelons, Nil, numToTakelon, 0).map {
+      caselon (filtelonrelond: Selonq[Q], numOfBatch: Int) =>
+        stats.stat(NumBatchelonsStat).add(numOfBatch)
+        stats.countelonr(NumBatchelonsCount).incr(numOfBatch)
+        filtelonrelond
     }
   }
 
   /**
-   * filter a list of items based on the predicate
+   * filtelonr a list of itelonms baselond on thelon prelondicatelon
    *
-   * @param items a list of items
-   * @param predicate predicate of the item
-   * @tparam Q item type
-   * @return the list of items that satisfy the predicate
+   * @param itelonms a list of itelonms
+   * @param prelondicatelon prelondicatelon of thelon itelonm
+   * @tparam Q itelonm typelon
+   * @relonturn thelon list of itelonms that satisfy thelon prelondicatelon
    */
-  def filter[Q](items: Seq[Q], predicate: Predicate[Q]): Stitch[Seq[Q]] = {
-    predicate.batch(items).map { results =>
-      items.zip(results).collect {
-        case (item, PredicateResult.Valid) => item
-      }
-    }
-  }
-
-  /**
-   * filter a list of items based on the predicate given the target
-   *
-   * @param target target item
-   * @param items a list of items
-   * @param predicate predicate of the (target, item) pair
-   * @tparam Q item type
-   * @return the list of items that satisfy the predicate given the target
-   */
-  def filter[T, Q](target: T, items: Seq[Q], predicate: Predicate[(T, Q)]): Stitch[Seq[Q]] = {
-    predicate.batch(items.map(i => (target, i))).map { results =>
-      items.zip(results).collect {
-        case (item, PredicateResult.Valid) => item
+  delonf filtelonr[Q](itelonms: Selonq[Q], prelondicatelon: Prelondicatelon[Q]): Stitch[Selonq[Q]] = {
+    prelondicatelon.batch(itelonms).map { relonsults =>
+      itelonms.zip(relonsults).collelonct {
+        caselon (itelonm, PrelondicatelonRelonsult.Valid) => itelonm
       }
     }
   }
 
   /**
-   * Returns a predicate, where an element is true iff it that element is true for all input predicates.
-   * ie. it is an AND operation
+   * filtelonr a list of itelonms baselond on thelon prelondicatelon givelonn thelon targelont
    *
-   * This is done concurrently.
-   *
-   * @param predicates list of predicates
-   * @tparam Q Type parameter
-   *
-   * @return new predicate object that is the logical "and" of the input predicates
+   * @param targelont targelont itelonm
+   * @param itelonms a list of itelonms
+   * @param prelondicatelon prelondicatelon of thelon (targelont, itelonm) pair
+   * @tparam Q itelonm typelon
+   * @relonturn thelon list of itelonms that satisfy thelon prelondicatelon givelonn thelon targelont
    */
-  def andConcurrently[Q](predicates: Seq[Predicate[Q]]): Predicate[Q] = {
-    Predicate { query: Q =>
-      Stitch.traverse(predicates)(p => p(query)).map { predicateResults =>
-        val allInvalid = predicateResults
-          .collect {
-            case PredicateResult.Invalid(reason) =>
-              reason
+  delonf filtelonr[T, Q](targelont: T, itelonms: Selonq[Q], prelondicatelon: Prelondicatelon[(T, Q)]): Stitch[Selonq[Q]] = {
+    prelondicatelon.batch(itelonms.map(i => (targelont, i))).map { relonsults =>
+      itelonms.zip(relonsults).collelonct {
+        caselon (itelonm, PrelondicatelonRelonsult.Valid) => itelonm
+      }
+    }
+  }
+
+  /**
+   * Relonturns a prelondicatelon, whelonrelon an elonlelonmelonnt is truelon iff it that elonlelonmelonnt is truelon for all input prelondicatelons.
+   * ielon. it is an AND opelonration
+   *
+   * This is donelon concurrelonntly.
+   *
+   * @param prelondicatelons list of prelondicatelons
+   * @tparam Q Typelon paramelontelonr
+   *
+   * @relonturn nelonw prelondicatelon objelonct that is thelon logical "and" of thelon input prelondicatelons
+   */
+  delonf andConcurrelonntly[Q](prelondicatelons: Selonq[Prelondicatelon[Q]]): Prelondicatelon[Q] = {
+    Prelondicatelon { quelonry: Q =>
+      Stitch.travelonrselon(prelondicatelons)(p => p(quelonry)).map { prelondicatelonRelonsults =>
+        val allInvalid = prelondicatelonRelonsults
+          .collelonct {
+            caselon PrelondicatelonRelonsult.Invalid(relonason) =>
+              relonason
           }
-        if (allInvalid.isEmpty) {
-          PredicateResult.Valid
-        } else {
-          val allInvalidReasons = allInvalid.reduce(_ ++ _)
-          PredicateResult.Invalid(allInvalidReasons)
+        if (allInvalid.iselonmpty) {
+          PrelondicatelonRelonsult.Valid
+        } elonlselon {
+          val allInvalidRelonasons = allInvalid.relonducelon(_ ++ _)
+          PrelondicatelonRelonsult.Invalid(allInvalidRelonasons)
         }
       }
     }
@@ -254,27 +254,27 @@ object Predicate {
 }
 
 /**
- * applies the underlying predicate when the param is on.
+ * applielons thelon undelonrlying prelondicatelon whelonn thelon param is on.
  */
-abstract class GatedPredicateBase[Q](
-  underlyingPredicate: Predicate[Q],
-  stats: StatsReceiver = NullStatsReceiver)
-    extends Predicate[Q] {
-  def gate(item: Q): Boolean
+abstract class GatelondPrelondicatelonBaselon[Q](
+  undelonrlyingPrelondicatelon: Prelondicatelon[Q],
+  stats: StatsReloncelonivelonr = NullStatsReloncelonivelonr)
+    elonxtelonnds Prelondicatelon[Q] {
+  delonf gatelon(itelonm: Q): Boolelonan
 
-  val underlyingPredicateTotal = stats.counter("underlying_total")
-  val underlyingPredicateValid = stats.counter("underlying_valid")
-  val underlyingPredicateInvalid = stats.counter("underlying_invalid")
-  val notGatedCounter = stats.counter("not_gated")
+  val undelonrlyingPrelondicatelonTotal = stats.countelonr("undelonrlying_total")
+  val undelonrlyingPrelondicatelonValid = stats.countelonr("undelonrlying_valid")
+  val undelonrlyingPrelondicatelonInvalid = stats.countelonr("undelonrlying_invalid")
+  val notGatelondCountelonr = stats.countelonr("not_gatelond")
 
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
+  val ValidStitch: Stitch[PrelondicatelonRelonsult.Valid.typelon] = Stitch.valuelon(PrelondicatelonRelonsult.Valid)
 
-  override def apply(item: Q): Stitch[PredicateResult] = {
-    if (gate(item)) {
-      underlyingPredicateTotal.incr()
-      underlyingPredicate(item)
-    } else {
-      notGatedCounter.incr()
+  ovelonrridelon delonf apply(itelonm: Q): Stitch[PrelondicatelonRelonsult] = {
+    if (gatelon(itelonm)) {
+      undelonrlyingPrelondicatelonTotal.incr()
+      undelonrlyingPrelondicatelon(itelonm)
+    } elonlselon {
+      notGatelondCountelonr.incr()
       ValidStitch
     }
   }

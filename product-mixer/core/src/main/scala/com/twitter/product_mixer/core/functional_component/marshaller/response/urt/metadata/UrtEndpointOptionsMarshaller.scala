@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.UrtEndpointOptions
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.UrtelonndpointOptions
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UrtEndpointOptionsMarshaller @Inject() () {
+@Singlelonton
+class UrtelonndpointOptionsMarshallelonr @Injelonct() () {
 
-  def apply(urtEndpointOptions: UrtEndpointOptions): urt.UrtEndpointOptions =
-    urt.UrtEndpointOptions(
-      requestParams = urtEndpointOptions.requestParams,
-      title = urtEndpointOptions.title,
-      cacheId = urtEndpointOptions.cacheId,
-      subtitle = urtEndpointOptions.subtitle
+  delonf apply(urtelonndpointOptions: UrtelonndpointOptions): urt.UrtelonndpointOptions =
+    urt.UrtelonndpointOptions(
+      relonquelonstParams = urtelonndpointOptions.relonquelonstParams,
+      titlelon = urtelonndpointOptions.titlelon,
+      cachelonId = urtelonndpointOptions.cachelonId,
+      subtitlelon = urtelonndpointOptions.subtitlelon
     )
 }

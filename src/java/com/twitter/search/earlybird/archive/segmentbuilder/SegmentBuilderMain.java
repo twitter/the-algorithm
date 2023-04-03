@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon.selongmelonntbuildelonr;
 
-public final class SegmentBuilderMain {
+public final class SelongmelonntBuildelonrMain {
 
-  private SegmentBuilderMain() { }
+  privatelon SelongmelonntBuildelonrMain() { }
 
   public static void main(String[] args) {
-    new SegmentBuilderApp().main(args);
+    nelonw SelongmelonntBuildelonrApp().main(args);
   }
 }

@@ -1,38 +1,38 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims
 
-import com.google.inject.Singleton
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.util.Duration
+import com.googlelon.injelonct.Singlelonton
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.util.Duration
 
-import javax.inject.Inject
+import javax.injelonct.Injelonct
 
-@Singleton
-class DBV2SimsStore @Inject() (
-  @Named(GuiceNamedConstants.DBV2_SIMS_FETCHER) fetcher: Fetcher[Long, Unit, Candidates])
-    extends StratoBasedSimsCandidateSourceWithUnitView(
-      fetcher,
-      identifier = DBV2SimsStore.Identifier)
+@Singlelonton
+class DBV2SimsStorelon @Injelonct() (
+  @Namelond(GuicelonNamelondConstants.DBV2_SIMS_FelonTCHelonR) felontchelonr: Felontchelonr[Long, Unit, Candidatelons])
+    elonxtelonnds StratoBaselondSimsCandidatelonSourcelonWithUnitVielonw(
+      felontchelonr,
+      idelonntifielonr = DBV2SimsStorelon.Idelonntifielonr)
 
-@Singleton
-class CachedDBV2SimsStore @Inject() (
-  @Named(GuiceNamedConstants.DBV2_SIMS_FETCHER) fetcher: Fetcher[Long, Unit, Candidates],
-  statsReceiver: StatsReceiver)
-    extends CacheBasedSimsStore(
-      id = DBV2SimsStore.Identifier,
-      fetcher = fetcher,
-      maxCacheSize = DBV2SimsStore.MaxCacheSize,
-      cacheTtl = DBV2SimsStore.CacheTTL,
-      statsReceiver = statsReceiver.scope("CachedDBV2SimsStore", "cache")
+@Singlelonton
+class CachelondDBV2SimsStorelon @Injelonct() (
+  @Namelond(GuicelonNamelondConstants.DBV2_SIMS_FelonTCHelonR) felontchelonr: Felontchelonr[Long, Unit, Candidatelons],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CachelonBaselondSimsStorelon(
+      id = DBV2SimsStorelon.Idelonntifielonr,
+      felontchelonr = felontchelonr,
+      maxCachelonSizelon = DBV2SimsStorelon.MaxCachelonSizelon,
+      cachelonTtl = DBV2SimsStorelon.CachelonTTL,
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("CachelondDBV2SimsStorelon", "cachelon")
     )
 
-object DBV2SimsStore {
-  val Identifier = CandidateSourceIdentifier(Algorithm.Sims.toString)
-  val MaxCacheSize = 1000
-  val CacheTTL: Duration = Duration.fromHours(24)
+objelonct DBV2SimsStorelon {
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.Sims.toString)
+  val MaxCachelonSizelon = 1000
+  val CachelonTTL: Duration = Duration.fromHours(24)
 }

@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherSource
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.StratoFelontchelonrSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.SimilarToProof
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
 
-abstract class StratoBasedSimsCandidateSource[U](
-  fetcher: Fetcher[Long, U, Candidates],
-  view: U,
-  override val identifier: CandidateSourceIdentifier)
-    extends StratoFetcherSource[Long, U, Candidates](fetcher, view, identifier) {
+abstract class StratoBaselondSimsCandidatelonSourcelon[U](
+  felontchelonr: Felontchelonr[Long, U, Candidatelons],
+  vielonw: U,
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr)
+    elonxtelonnds StratoFelontchelonrSourcelon[Long, U, Candidatelons](felontchelonr, vielonw, idelonntifielonr) {
 
-  override def map(target: Long, candidates: Candidates): Seq[CandidateUser] =
-    StratoBasedSimsCandidateSource.map(target, candidates)
+  ovelonrridelon delonf map(targelont: Long, candidatelons: Candidatelons): Selonq[CandidatelonUselonr] =
+    StratoBaselondSimsCandidatelonSourcelon.map(targelont, candidatelons)
 }
 
-object StratoBasedSimsCandidateSource {
-  def map(target: Long, candidates: Candidates): Seq[CandidateUser] = {
+objelonct StratoBaselondSimsCandidatelonSourcelon {
+  delonf map(targelont: Long, candidatelons: Candidatelons): Selonq[CandidatelonUselonr] = {
     for {
-      candidate <- candidates.candidates
-    } yield CandidateUser(
-      id = candidate.userId,
-      score = Some(candidate.score),
-      reason = Some(
-        Reason(
-          Some(
+      candidatelon <- candidatelons.candidatelons
+    } yielonld CandidatelonUselonr(
+      id = candidatelon.uselonrId,
+      scorelon = Somelon(candidatelon.scorelon),
+      relonason = Somelon(
+        Relonason(
+          Somelon(
             AccountProof(
-              similarToProof = Some(SimilarToProof(Seq(target)))
+              similarToProof = Somelon(SimilarToProof(Selonq(targelont)))
             )
           )
         )

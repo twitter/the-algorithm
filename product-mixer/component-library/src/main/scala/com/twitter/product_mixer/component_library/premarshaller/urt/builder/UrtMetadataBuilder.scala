@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineMetadata
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonMelontadata
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import com.twittelonr.stringcelonntelonr.clielonnt.corelon.elonxtelonrnalString
 
-trait BaseUrtMetadataBuilder[-Query <: PipelineQuery] {
-  def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): TimelineMetadata
+trait BaselonUrtMelontadataBuildelonr[-Quelonry <: PipelonlinelonQuelonry] {
+  delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): TimelonlinelonMelontadata
 }
 
-case class UrtMetadataBuilder(
-  title: Option[String] = None,
-  scribeConfigBuilder: Option[TimelineScribeConfigBuilder[PipelineQuery]])
-    extends BaseUrtMetadataBuilder[PipelineQuery] {
+caselon class UrtMelontadataBuildelonr(
+  titlelon: Option[String] = Nonelon,
+  scribelonConfigBuildelonr: Option[TimelonlinelonScribelonConfigBuildelonr[PipelonlinelonQuelonry]])
+    elonxtelonnds BaselonUrtMelontadataBuildelonr[PipelonlinelonQuelonry] {
 
-  override def build(
-    query: PipelineQuery,
-    entries: Seq[TimelineEntry]
-  ): TimelineMetadata = TimelineMetadata(
-    title = title,
-    scribeConfig = scribeConfigBuilder.flatMap(_.build(query, entries))
+  ovelonrridelon delonf build(
+    quelonry: PipelonlinelonQuelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): TimelonlinelonMelontadata = TimelonlinelonMelontadata(
+    titlelon = titlelon,
+    scribelonConfig = scribelonConfigBuildelonr.flatMap(_.build(quelonry, elonntrielons))
   )
 }
 
-case class UrtMetadataStringCenterBuilder(
-  titleKey: ExternalString,
-  scribeConfigBuilder: Option[TimelineScribeConfigBuilder[PipelineQuery]],
-  stringCenter: StringCenter)
-    extends BaseUrtMetadataBuilder[PipelineQuery] {
+caselon class UrtMelontadataStringCelonntelonrBuildelonr(
+  titlelonKelony: elonxtelonrnalString,
+  scribelonConfigBuildelonr: Option[TimelonlinelonScribelonConfigBuildelonr[PipelonlinelonQuelonry]],
+  stringCelonntelonr: StringCelonntelonr)
+    elonxtelonnds BaselonUrtMelontadataBuildelonr[PipelonlinelonQuelonry] {
 
-  override def build(
-    query: PipelineQuery,
-    entries: Seq[TimelineEntry]
-  ): TimelineMetadata = TimelineMetadata(
-    title = Some(stringCenter.prepare(titleKey)),
-    scribeConfig = scribeConfigBuilder.flatMap(_.build(query, entries))
+  ovelonrridelon delonf build(
+    quelonry: PipelonlinelonQuelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): TimelonlinelonMelontadata = TimelonlinelonMelontadata(
+    titlelon = Somelon(stringCelonntelonr.prelonparelon(titlelonKelony)),
+    scribelonConfig = scribelonConfigBuildelonr.flatMap(_.build(quelonry, elonntrielons))
   )
 }

@@ -1,39 +1,39 @@
-package com.twitter.simclusters_v2.hdfs_sources
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons
 
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.simclusters_v2.thriftscala.NormsAndCounts
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import java.util.TimeZone
+import com.twittelonr.scalding.DatelonOps
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.ProcAtla
+import com.twittelonr.simclustelonrs_v2.thriftscala.NormsAndCounts
+import com.twittelonr.simclustelonrs_v2.thriftscala.UselonrAndNelonighbors
+import java.util.TimelonZonelon
 
-object DataSources {
+objelonct DataSourcelons {
 
   /**
-   * Reads production normalized graph data from atla-proc
+   * Relonads production normalizelond graph data from atla-proc
    */
-  def userUserNormalizedGraphSource(implicit dateRange: DateRange): TypedPipe[UserAndNeighbors] = {
+  delonf uselonrUselonrNormalizelondGraphSourcelon(implicit datelonRangelon: DatelonRangelon): TypelondPipelon[UselonrAndNelonighbors] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(UserUserNormalizedGraphScalaDataset, Days(14)(DateOps.UTC))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(UselonrUselonrNormalizelondGraphScalaDataselont, Days(14)(DatelonOps.UTC))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
   }
 
   /**
-   * Reads production user norms and counts data from atla-proc
+   * Relonads production uselonr norms and counts data from atla-proc
    */
-  def userNormsAndCounts(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[NormsAndCounts] = {
+  delonf uselonrNormsAndCounts(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[NormsAndCounts] = {
     DAL
-      .readMostRecentSnapshot(ProducerNormsAndCountsScalaDataset, dateRange.prepend(Days(14)))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .relonadMostReloncelonntSnapshot(ProducelonrNormsAndCountsScalaDataselont, datelonRangelon.prelonpelonnd(Days(14)))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
   }
 
 }

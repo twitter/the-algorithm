@@ -1,43 +1,43 @@
-package com.twitter.search.feature_update_service;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon;
 
-import scala.runtime.AbstractPartialFunction;
+import scala.runtimelon.AbstractPartialFunction;
 
-import com.twitter.finagle.service.ReqRep;
-import com.twitter.finagle.service.ResponseClass;
-import com.twitter.finagle.service.ResponseClassifier;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
-import com.twitter.util.Try;
+import com.twittelonr.finaglelon.selonrvicelon.RelonqRelonp;
+import com.twittelonr.finaglelon.selonrvicelon.RelonsponselonClass;
+import com.twittelonr.finaglelon.selonrvicelon.RelonsponselonClassifielonr;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonsponselon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonsponselonCodelon;
+import com.twittelonr.util.Try;
 
-public class FeatureUpdateResponseClassifier
-    extends AbstractPartialFunction<ReqRep, ResponseClass> {
-  @Override
-  public boolean isDefinedAt(ReqRep tuple) {
-    return true;
+public class FelonaturelonUpdatelonRelonsponselonClassifielonr
+    elonxtelonnds AbstractPartialFunction<RelonqRelonp, RelonsponselonClass> {
+  @Ovelonrridelon
+  public boolelonan isDelonfinelondAt(RelonqRelonp tuplelon) {
+    relonturn truelon;
   }
 
-  @Override
-  public ResponseClass apply(ReqRep reqRep) {
-    Try<Object> finagleResponse = reqRep.response();
-    if (finagleResponse.isThrow()) {
-      return ResponseClassifier.Default().apply(reqRep);
+  @Ovelonrridelon
+  public RelonsponselonClass apply(RelonqRelonp relonqRelonp) {
+    Try<Objelonct> finaglelonRelonsponselon = relonqRelonp.relonsponselon();
+    if (finaglelonRelonsponselon.isThrow()) {
+      relonturn RelonsponselonClassifielonr.Delonfault().apply(relonqRelonp);
     }
-    FeatureUpdateResponse response = (FeatureUpdateResponse) finagleResponse.apply();
-    FeatureUpdateResponseCode responseCode = response.getResponseCode();
-    switch (responseCode) {
-      case TRANSIENT_ERROR:
-      case SERVER_TIMEOUT_ERROR:
-        return ResponseClass.RetryableFailure();
-      case PERSISTENT_ERROR:
-        return ResponseClass.NonRetryableFailure();
-      // Client cancellations don't necessarily mean failures on our end. The client decided to
-      // cancel the request (for example we timed out, so they sent a duplicate request etc.),
-      // so let's treat them as successes.
-      case CLIENT_CANCEL_ERROR:
-      default:
-        // The other response codes are client errors, and success, and in those cases the server
-        // behaved correctly, so we classify it as a success.
-        return ResponseClass.Success();
+    FelonaturelonUpdatelonRelonsponselon relonsponselon = (FelonaturelonUpdatelonRelonsponselon) finaglelonRelonsponselon.apply();
+    FelonaturelonUpdatelonRelonsponselonCodelon relonsponselonCodelon = relonsponselon.gelontRelonsponselonCodelon();
+    switch (relonsponselonCodelon) {
+      caselon TRANSIelonNT_elonRROR:
+      caselon SelonRVelonR_TIMelonOUT_elonRROR:
+        relonturn RelonsponselonClass.RelontryablelonFailurelon();
+      caselon PelonRSISTelonNT_elonRROR:
+        relonturn RelonsponselonClass.NonRelontryablelonFailurelon();
+      // Clielonnt cancelonllations don't neloncelonssarily melonan failurelons on our elonnd. Thelon clielonnt deloncidelond to
+      // cancelonl thelon relonquelonst (for elonxamplelon welon timelond out, so thelony selonnt a duplicatelon relonquelonst elontc.),
+      // so lelont's trelonat thelonm as succelonsselons.
+      caselon CLIelonNT_CANCelonL_elonRROR:
+      delonfault:
+        // Thelon othelonr relonsponselon codelons arelon clielonnt elonrrors, and succelonss, and in thoselon caselons thelon selonrvelonr
+        // belonhavelond correlonctly, so welon classify it as a succelonss.
+        relonturn RelonsponselonClass.Succelonss();
     }
   }
 }

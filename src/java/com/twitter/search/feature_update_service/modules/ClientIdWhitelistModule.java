@@ -1,30 +1,30 @@
-package com.twitter.search.feature_update_service.modules;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons;
 
-import com.google.inject.Provides;
-import com.google.inject.Singleton;
+import com.googlelon.injelonct.Providelons;
+import com.googlelon.injelonct.Singlelonton;
 
-import com.twitter.app.Flaggable;
-import com.twitter.inject.TwitterModule;
-import com.twitter.inject.annotations.Flag;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.injelonct.annotations.Flag;
 
-import com.twitter.search.feature_update_service.whitelist.ClientIdWhitelist;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.whitelonlist.ClielonntIdWhitelonlist;
 
 /**
- * Provides a ClientIdWhitelist, which periodically loads the
- * Feature Update Service client whitelist from ConfigBus
+ * Providelons a ClielonntIdWhitelonlist, which pelonriodically loads thelon
+ * Felonaturelon Updatelon Selonrvicelon clielonnt whitelonlist from ConfigBus
  */
-public class ClientIdWhitelistModule extends TwitterModule {
-  public ClientIdWhitelistModule() {
-    flag("client.whitelist.path", "",
-        "Path to client id white list.", Flaggable.ofString());
-    flag("client.whitelist.enable", true,
-        "Enable client whitelist for production.", Flaggable.ofBoolean());
+public class ClielonntIdWhitelonlistModulelon elonxtelonnds TwittelonrModulelon {
+  public ClielonntIdWhitelonlistModulelon() {
+    flag("clielonnt.whitelonlist.path", "",
+        "Path to clielonnt id whitelon list.", Flaggablelon.ofString());
+    flag("clielonnt.whitelonlist.elonnablelon", truelon,
+        "elonnablelon clielonnt whitelonlist for production.", Flaggablelon.ofBoolelonan());
   }
 
-    @Provides
-    @Singleton
-    public ClientIdWhitelist provideClientWhitelist(
-        @Flag("client.whitelist.path") String clientIdWhiteListPath) throws Exception {
-        return ClientIdWhitelist.initWhitelist(clientIdWhiteListPath);
+    @Providelons
+    @Singlelonton
+    public ClielonntIdWhitelonlist providelonClielonntWhitelonlist(
+        @Flag("clielonnt.whitelonlist.path") String clielonntIdWhitelonListPath) throws elonxcelonption {
+        relonturn ClielonntIdWhitelonlist.initWhitelonlist(clielonntIdWhitelonListPath);
     }
   }

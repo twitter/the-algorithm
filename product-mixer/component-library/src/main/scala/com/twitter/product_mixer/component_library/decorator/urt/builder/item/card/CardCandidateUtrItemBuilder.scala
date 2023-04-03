@@ -1,51 +1,51 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.card
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.card
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.card.CardCandidateUtrItemBuilder.CardClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CardCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.card.CardItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.card.CardCandidatelonUtrItelonmBuildelonr.CardClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CardCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonStr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonUrlBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.card.CardDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.card.CardItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object CardCandidateUtrItemBuilder {
-  val CardClientEventInfoElement: String = "card"
+objelonct CardCandidatelonUtrItelonmBuildelonr {
+  val CardClielonntelonvelonntInfoelonlelonmelonnt: String = "card"
 }
 
-case class CardCandidateUtrItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, CardCandidate],
-  cardUrlBuilder: BaseStr[Query, CardCandidate],
-  textBuilder: Option[BaseStr[Query, CardCandidate]],
-  subtextBuilder: Option[BaseStr[Query, CardCandidate]],
-  urlBuilder: Option[BaseUrlBuilder[Query, CardCandidate]],
-  cardDisplayType: Option[CardDisplayType],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, CardCandidate],
-  ] = None)
-    extends CandidateUrtEntryBuilder[Query, CardCandidate, CardItem] {
+caselon class CardCandidatelonUtrItelonmBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, CardCandidatelon],
+  cardUrlBuildelonr: BaselonStr[Quelonry, CardCandidatelon],
+  telonxtBuildelonr: Option[BaselonStr[Quelonry, CardCandidatelon]],
+  subtelonxtBuildelonr: Option[BaselonStr[Quelonry, CardCandidatelon]],
+  urlBuildelonr: Option[BaselonUrlBuildelonr[Quelonry, CardCandidatelon]],
+  cardDisplayTypelon: Option[CardDisplayTypelon],
+  felonelondbackActionInfoBuildelonr: Option[
+    BaselonFelonelondbackActionInfoBuildelonr[Quelonry, CardCandidatelon],
+  ] = Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, CardCandidatelon, CardItelonm] {
 
-  override def apply(
-    query: Query,
-    cardCandidate: CardCandidate,
-    candidateFeatures: FeatureMap
-  ): CardItem = CardItem(
-    id = cardCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      cardCandidate,
-      candidateFeatures,
-      Some(CardClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, cardCandidate, candidateFeatures)),
-    cardUrl = cardUrlBuilder(query, cardCandidate, candidateFeatures),
-    text = textBuilder.map(_.apply(query, cardCandidate, candidateFeatures)),
-    subtext = textBuilder.map(_.apply(query, cardCandidate, candidateFeatures)),
-    url = urlBuilder.map(_.apply(query, cardCandidate, candidateFeatures)),
-    displayType = cardDisplayType
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    cardCandidatelon: CardCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): CardItelonm = CardItelonm(
+    id = cardCandidatelon.id,
+    sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+    clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+      quelonry,
+      cardCandidatelon,
+      candidatelonFelonaturelons,
+      Somelon(CardClielonntelonvelonntInfoelonlelonmelonnt)),
+    felonelondbackActionInfo =
+      felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, cardCandidatelon, candidatelonFelonaturelons)),
+    cardUrl = cardUrlBuildelonr(quelonry, cardCandidatelon, candidatelonFelonaturelons),
+    telonxt = telonxtBuildelonr.map(_.apply(quelonry, cardCandidatelon, candidatelonFelonaturelons)),
+    subtelonxt = telonxtBuildelonr.map(_.apply(quelonry, cardCandidatelon, candidatelonFelonaturelons)),
+    url = urlBuildelonr.map(_.apply(quelonry, cardCandidatelon, candidatelonFelonaturelons)),
+    displayTypelon = cardDisplayTypelon
   )
 }

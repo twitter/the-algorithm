@@ -1,103 +1,103 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
-import com.twitter.bijection.{Bufferable, Injection}
-import com.twitter.scalding._
-import com.twitter.simclusters_v2.common.{Country, Language, SemanticCoreEntityId, TopicId, UserId}
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ProducerId
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
+packagelon com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations
+import com.twittelonr.bijelonction.{Buffelonrablelon, Injelonction}
+import com.twittelonr.scalding._
+import com.twittelonr.simclustelonrs_v2.common.{Country, Languagelon, SelonmanticCorelonelonntityId, TopicId, UselonrId}
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.SparselonMatrix
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.ProducelonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.UselonrAndNelonighbors
 
-object TopicsForProducersUtils {
+objelonct TopicsForProducelonrsUtils {
 
-  implicit val sparseMatrixInj: Injection[
-    (SemanticCoreEntityId, Option[Language], Option[Country]),
-    Array[Byte]
+  implicit val sparselonMatrixInj: Injelonction[
+    (SelonmanticCorelonelonntityId, Option[Languagelon], Option[Country]),
+    Array[Bytelon]
   ] =
-    Bufferable.injectionOf[(SemanticCoreEntityId, Option[Language], Option[Country])]
+    Buffelonrablelon.injelonctionOf[(SelonmanticCorelonelonntityId, Option[Languagelon], Option[Country])]
 
-  // This function provides the set of 'valid' topics, i.e topics with atleast a certain number of
-  // follows. This helps remove some noisy topic associations to producers in the dataset.
-  def getValidTopics(
-    topicUsers: TypedPipe[((TopicId, Option[Language], Option[Country]), UserId, Double)],
-    minTopicFollowsThreshold: Int
+  // This function providelons thelon selont of 'valid' topics, i.elon topics with atlelonast a celonrtain numbelonr of
+  // follows. This helonlps relonmovelon somelon noisy topic associations to producelonrs in thelon dataselont.
+  delonf gelontValidTopics(
+    topicUselonrs: TypelondPipelon[((TopicId, Option[Languagelon], Option[Country]), UselonrId, Doublelon)],
+    minTopicFollowsThrelonshold: Int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(TopicId, Option[Language], Option[Country])] = {
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[(TopicId, Option[Languagelon], Option[Country])] = {
     val numValidTopics = Stat("num_valid_topics")
-    SparseMatrix(topicUsers).rowNnz.collect {
-      case (topicsWithLocaleKey, numFollows) if numFollows >= minTopicFollowsThreshold =>
+    SparselonMatrix(topicUselonrs).rowNnz.collelonct {
+      caselon (topicsWithLocalelonKelony, numFollows) if numFollows >= minTopicFollowsThrelonshold =>
         numValidTopics.inc()
-        topicsWithLocaleKey
+        topicsWithLocalelonKelony
     }
   }
 
-  // Get the users with atleast minNumUserFollowers following
-  def getValidProducers(
-    userToFollowersEdges: TypedPipe[(UserId, UserId, Double)],
-    minNumUserFollowers: Int
+  // Gelont thelon uselonrs with atlelonast minNumUselonrFollowelonrs following
+  delonf gelontValidProducelonrs(
+    uselonrToFollowelonrselondgelons: TypelondPipelon[(UselonrId, UselonrId, Doublelon)],
+    minNumUselonrFollowelonrs: Int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[ProducerId] = {
-    val numProducersForTopics = Stat("num_producers_for_topics")
-    SparseMatrix(userToFollowersEdges).rowL1Norms.collect {
-      case (userId, l1Norm) if l1Norm >= minNumUserFollowers =>
-        numProducersForTopics.inc()
-        userId
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[ProducelonrId] = {
+    val numProducelonrsForTopics = Stat("num_producelonrs_for_topics")
+    SparselonMatrix(uselonrToFollowelonrselondgelons).rowL1Norms.collelonct {
+      caselon (uselonrId, l1Norm) if l1Norm >= minNumUselonrFollowelonrs =>
+        numProducelonrsForTopics.inc()
+        uselonrId
     }
   }
 
-  // This function returns the User to Followed Topics Matrix
-  def getFollowedTopicsToUserSparseMatrix(
-    followedTopicsToUsers: TypedPipe[(TopicId, UserId)],
-    userCountryAndLanguage: TypedPipe[(UserId, (Country, Language))],
-    userLanguages: TypedPipe[(UserId, Seq[(Language, Double)])],
-    minTopicFollowsThreshold: Int
+  // This function relonturns thelon Uselonr to Followelond Topics Matrix
+  delonf gelontFollowelondTopicsToUselonrSparselonMatrix(
+    followelondTopicsToUselonrs: TypelondPipelon[(TopicId, UselonrId)],
+    uselonrCountryAndLanguagelon: TypelondPipelon[(UselonrId, (Country, Languagelon))],
+    uselonrLanguagelons: TypelondPipelon[(UselonrId, Selonq[(Languagelon, Doublelon)])],
+    minTopicFollowsThrelonshold: Int
   )(
-    implicit uniqueID: UniqueID
-  ): SparseMatrix[(TopicId, Option[Language], Option[Country]), UserId, Double] = {
-    val localeTopicsWithUsers: TypedPipe[
-      ((TopicId, Option[Language], Option[Country]), UserId, Double)
+    implicit uniquelonID: UniquelonID
+  ): SparselonMatrix[(TopicId, Option[Languagelon], Option[Country]), UselonrId, Doublelon] = {
+    val localelonTopicsWithUselonrs: TypelondPipelon[
+      ((TopicId, Option[Languagelon], Option[Country]), UselonrId, Doublelon)
     ] =
-      followedTopicsToUsers
-        .map { case (topic, user) => (user, topic) }
-        .join(userCountryAndLanguage)
-        .join(userLanguages)
-        .withDescription("joining user locale information")
+      followelondTopicsToUselonrs
+        .map { caselon (topic, uselonr) => (uselonr, topic) }
+        .join(uselonrCountryAndLanguagelon)
+        .join(uselonrLanguagelons)
+        .withDelonscription("joining uselonr localelon information")
         .flatMap {
-          case (user, ((topic, (country, _)), scoredLangs)) =>
-            scoredLangs.flatMap {
-              case (lang, score) =>
-                // To compute the top topics with/without language and country level personalization
-                // So the same dataset has 3 keys for each topicId (unless it gets filtered after):
-                // (TopicId, Language, Country), (TopicId, Language, None), (TopicId, None, None)
-                Seq(
-                  ((topic, Some(lang), Some(country)), user, score), // with language and country
-                  ((topic, Some(lang), None), user, score) // with language
+          caselon (uselonr, ((topic, (country, _)), scorelondLangs)) =>
+            scorelondLangs.flatMap {
+              caselon (lang, scorelon) =>
+                // To computelon thelon top topics with/without languagelon and country lelonvelonl pelonrsonalization
+                // So thelon samelon dataselont has 3 kelonys for elonach topicId (unlelonss it gelonts filtelonrelond aftelonr):
+                // (TopicId, Languagelon, Country), (TopicId, Languagelon, Nonelon), (TopicId, Nonelon, Nonelon)
+                Selonq(
+                  ((topic, Somelon(lang), Somelon(country)), uselonr, scorelon), // with languagelon and country
+                  ((topic, Somelon(lang), Nonelon), uselonr, scorelon) // with languagelon
                 )
-            } ++ Seq(((topic, None, None), user, 1.0)) // no locale
+            } ++ Selonq(((topic, Nonelon, Nonelon), uselonr, 1.0)) // no localelon
         }
-    SparseMatrix(localeTopicsWithUsers).filterRowsByMinSum(minTopicFollowsThreshold)
+    SparselonMatrix(localelonTopicsWithUselonrs).filtelonrRowsByMinSum(minTopicFollowsThrelonshold)
   }
 
-  // This function returns the Producers To User Followers Matrix
-  def getProducersToFollowedByUsersSparseMatrix(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    minActiveFollowers: Int,
+  // This function relonturns thelon Producelonrs To Uselonr Followelonrs Matrix
+  delonf gelontProducelonrsToFollowelondByUselonrsSparselonMatrix(
+    uselonrUselonrGraph: TypelondPipelon[UselonrAndNelonighbors],
+    minActivelonFollowelonrs: Int,
   )(
-    implicit uniqueID: UniqueID
-  ): SparseMatrix[ProducerId, UserId, Double] = {
+    implicit uniquelonID: UniquelonID
+  ): SparselonMatrix[ProducelonrId, UselonrId, Doublelon] = {
 
-    val numEdgesFromUsersToFollowers = Stat("num_edges_from_users_to_followers")
+    val numelondgelonsFromUselonrsToFollowelonrs = Stat("num_elondgelons_from_uselonrs_to_followelonrs")
 
-    val userToFollowersEdges: TypedPipe[(UserId, UserId, Double)] =
-      userUserGraph
-        .flatMap { userAndNeighbors =>
-          userAndNeighbors.neighbors
-            .collect {
-              case neighbor if neighbor.isFollowed.getOrElse(false) =>
-                numEdgesFromUsersToFollowers.inc()
-                (neighbor.neighborId, userAndNeighbors.userId, 1.0)
+    val uselonrToFollowelonrselondgelons: TypelondPipelon[(UselonrId, UselonrId, Doublelon)] =
+      uselonrUselonrGraph
+        .flatMap { uselonrAndNelonighbors =>
+          uselonrAndNelonighbors.nelonighbors
+            .collelonct {
+              caselon nelonighbor if nelonighbor.isFollowelond.gelontOrelonlselon(falselon) =>
+                numelondgelonsFromUselonrsToFollowelonrs.inc()
+                (nelonighbor.nelonighborId, uselonrAndNelonighbors.uselonrId, 1.0)
             }
         }
-    SparseMatrix(userToFollowersEdges).filterRowsByMinSum(minActiveFollowers)
+    SparselonMatrix(uselonrToFollowelonrselondgelons).filtelonrRowsByMinSum(minActivelonFollowelonrs)
   }
 }

@@ -1,57 +1,57 @@
-package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.felonaturelon_hydrator
 
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.product.list_recommended_users.model.ListFeatures.GizmoduckUserFeature
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.spam.rtf.{thriftscala => rtf}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.util.Return
+import com.twittelonr.gizmoduck.{thriftscala => gt}
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.modelonl.ListFelonaturelons.GizmoduckUselonrFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.spam.rtf.{thriftscala => rtf}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.gizmoduck.Gizmoduck
+import com.twittelonr.util.Relonturn
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GizmoduckUserFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, UserCandidate] {
+@Singlelonton
+class GizmoduckUselonrFelonaturelonHydrator @Injelonct() (gizmoduck: Gizmoduck)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, UselonrCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("GizmoduckUser")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("GizmoduckUselonr")
 
-  override val features: Set[Feature[_, _]] = Set(GizmoduckUserFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(GizmoduckUselonrFelonaturelon)
 
-  private val queryFields: Set[gt.QueryFields] = Set(gt.QueryFields.Safety)
+  privatelon val quelonryFielonlds: Selont[gt.QuelonryFielonlds] = Selont(gt.QuelonryFielonlds.Safelonty)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val context = gt.LookupContext(
-      forUserId = query.getOptionalUserId,
-      includeProtected = true,
-      safetyLevel = Some(rtf.SafetyLevel.Recommendations)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[UselonrCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val contelonxt = gt.LookupContelonxt(
+      forUselonrId = quelonry.gelontOptionalUselonrId,
+      includelonProtelonctelond = truelon,
+      safelontyLelonvelonl = Somelon(rtf.SafelontyLelonvelonl.Reloncommelonndations)
     )
-    val userIds = candidates.map(_.candidate.id)
+    val uselonrIds = candidatelons.map(_.candidatelon.id)
 
     Stitch
-      .collectToTry(
-        userIds.map(userId => gizmoduck.getUserById(userId, queryFields, context))).map {
-        userResults =>
-          val idToUserMap = userResults
-            .collect {
-              case Return(user) => user
-            }.map(user => user.id -> user).toMap
+      .collelonctToTry(
+        uselonrIds.map(uselonrId => gizmoduck.gelontUselonrById(uselonrId, quelonryFielonlds, contelonxt))).map {
+        uselonrRelonsults =>
+          val idToUselonrMap = uselonrRelonsults
+            .collelonct {
+              caselon Relonturn(uselonr) => uselonr
+            }.map(uselonr => uselonr.id -> uselonr).toMap
 
-          candidates.map { candidate =>
-            FeatureMapBuilder()
-              .add(GizmoduckUserFeature, idToUserMap.get(candidate.candidate.id))
+          candidatelons.map { candidatelon =>
+            FelonaturelonMapBuildelonr()
+              .add(GizmoduckUselonrFelonaturelon, idToUselonrMap.gelont(candidatelon.candidatelon.id))
               .build()
           }
       }

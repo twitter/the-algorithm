@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.functional_component.common.access_policy
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy
 
 /**
- * Controls how access policies are applied to allow/reject a request
+ * Controls how accelonss policielons arelon applielond to allow/relonjelonct a relonquelonst
  */
-object AccessPolicyEvaluator {
-  def evaluate(productAccessPolicies: Set[AccessPolicy], userLdapGroups: Set[String]): Boolean =
-    productAccessPolicies.exists {
-      case AllowedLdapGroups(allowedGroups) => allowedGroups.exists(userLdapGroups.contains)
-      case _: BlockEverything => false
+objelonct AccelonssPolicyelonvaluator {
+  delonf elonvaluatelon(productAccelonssPolicielons: Selont[AccelonssPolicy], uselonrLdapGroups: Selont[String]): Boolelonan =
+    productAccelonssPolicielons.elonxists {
+      caselon AllowelondLdapGroups(allowelondGroups) => allowelondGroups.elonxists(uselonrLdapGroups.contains)
+      caselon _: Blockelonvelonrything => falselon
     }
 }

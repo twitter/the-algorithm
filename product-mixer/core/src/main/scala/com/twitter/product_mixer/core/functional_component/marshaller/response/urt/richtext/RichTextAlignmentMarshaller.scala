@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Center
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.Natural
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextAlignment
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Celonntelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.Natural
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtAlignmelonnt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RichTextAlignmentMarshaller @Inject() () {
+@Singlelonton
+class RichTelonxtAlignmelonntMarshallelonr @Injelonct() () {
 
-  def apply(alignment: RichTextAlignment): urt.RichTextAlignment = alignment match {
-    case Natural => urt.RichTextAlignment.Natural
-    case Center => urt.RichTextAlignment.Center
+  delonf apply(alignmelonnt: RichTelonxtAlignmelonnt): urt.RichTelonxtAlignmelonnt = alignmelonnt match {
+    caselon Natural => urt.RichTelonxtAlignmelonnt.Natural
+    caselon Celonntelonr => urt.RichTelonxtAlignmelonnt.Celonntelonr
   }
 }

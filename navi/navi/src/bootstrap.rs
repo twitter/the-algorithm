@@ -1,299 +1,299 @@
-use anyhow::Result;
-use log::{info, warn};
-use std::collections::HashMap;
-use tokio::time::Instant;
-use tonic::{
-    Request,
-    Response, Status, transport::{Certificate, Identity, Server, ServerTlsConfig},
+uselon anyhow::Relonsult;
+uselon log::{info, warn};
+uselon std::collelonctions::HashMap;
+uselon tokio::timelon::Instant;
+uselon tonic::{
+    Relonquelonst,
+    Relonsponselon, Status, transport::{Celonrtificatelon, Idelonntity, Selonrvelonr, SelonrvelonrTlsConfig},
 };
 
-// protobuf related
-use crate::tf_proto::tensorflow_serving::{
-    ClassificationRequest, ClassificationResponse, GetModelMetadataRequest,
-    GetModelMetadataResponse, MultiInferenceRequest, MultiInferenceResponse, PredictRequest,
-    PredictResponse, RegressionRequest, RegressionResponse,
+// protobuf relonlatelond
+uselon cratelon::tf_proto::telonnsorflow_selonrving::{
+    ClassificationRelonquelonst, ClassificationRelonsponselon, GelontModelonlMelontadataRelonquelonst,
+    GelontModelonlMelontadataRelonsponselon, MultiInfelonrelonncelonRelonquelonst, MultiInfelonrelonncelonRelonsponselon, PrelondictRelonquelonst,
+    PrelondictRelonsponselon, RelongrelonssionRelonquelonst, RelongrelonssionRelonsponselon,
 };
-use crate::{kf_serving::{
-    grpc_inference_service_server::GrpcInferenceService, ModelInferRequest, ModelInferResponse,
-    ModelMetadataRequest, ModelMetadataResponse, ModelReadyRequest, ModelReadyResponse,
-    ServerLiveRequest, ServerLiveResponse, ServerMetadataRequest, ServerMetadataResponse,
-    ServerReadyRequest, ServerReadyResponse,
-}, ModelFactory, tf_proto::tensorflow_serving::prediction_service_server::{
-    PredictionService, PredictionServiceServer,
-}, VERSION, NAME};
+uselon cratelon::{kf_selonrving::{
+    grpc_infelonrelonncelon_selonrvicelon_selonrvelonr::GrpcInfelonrelonncelonSelonrvicelon, ModelonlInfelonrRelonquelonst, ModelonlInfelonrRelonsponselon,
+    ModelonlMelontadataRelonquelonst, ModelonlMelontadataRelonsponselon, ModelonlRelonadyRelonquelonst, ModelonlRelonadyRelonsponselon,
+    SelonrvelonrLivelonRelonquelonst, SelonrvelonrLivelonRelonsponselon, SelonrvelonrMelontadataRelonquelonst, SelonrvelonrMelontadataRelonsponselon,
+    SelonrvelonrRelonadyRelonquelonst, SelonrvelonrRelonadyRelonsponselon,
+}, ModelonlFactory, tf_proto::telonnsorflow_selonrving::prelondiction_selonrvicelon_selonrvelonr::{
+    PrelondictionSelonrvicelon, PrelondictionSelonrvicelonSelonrvelonr,
+}, VelonRSION, NAMelon};
 
-use crate::PredictResult;
-use crate::cli_args::{ARGS, INPUTS, OUTPUTS};
-use crate::metrics::{
-    NAVI_VERSION, NUM_PREDICTIONS, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
-    NUM_REQUESTS_RECEIVED, NUM_REQUESTS_RECEIVED_BY_MODEL, RESPONSE_TIME_COLLECTOR,
+uselon cratelon::PrelondictRelonsult;
+uselon cratelon::cli_args::{ARGS, INPUTS, OUTPUTS};
+uselon cratelon::melontrics::{
+    NAVI_VelonRSION, NUM_PRelonDICTIONS, NUM_RelonQUelonSTS_FAILelonD, NUM_RelonQUelonSTS_FAILelonD_BY_MODelonL,
+    NUM_RelonQUelonSTS_RelonCelonIVelonD, NUM_RelonQUelonSTS_RelonCelonIVelonD_BY_MODelonL, RelonSPONSelon_TIMelon_COLLelonCTOR,
 };
-use crate::predict_service::{Model, PredictService};
-use crate::tf_proto::tensorflow_serving::model_spec::VersionChoice::Version;
-use crate::tf_proto::tensorflow_serving::ModelSpec;
+uselon cratelon::prelondict_selonrvicelon::{Modelonl, PrelondictSelonrvicelon};
+uselon cratelon::tf_proto::telonnsorflow_selonrving::modelonl_spelonc::VelonrsionChoicelon::Velonrsion;
+uselon cratelon::tf_proto::telonnsorflow_selonrving::ModelonlSpelonc;
 
-#[derive(Debug)]
-pub enum TensorInputEnum {
-    String(Vec<Vec<u8>>),
-    Int(Vec<i32>),
-    Int64(Vec<i64>),
-    Float(Vec<f32>),
-    Double(Vec<f64>),
-    Boolean(Vec<bool>),
+#[delonrivelon(Delonbug)]
+pub elonnum TelonnsorInputelonnum {
+    String(Velonc<Velonc<u8>>),
+    Int(Velonc<i32>),
+    Int64(Velonc<i64>),
+    Float(Velonc<f32>),
+    Doublelon(Velonc<f64>),
+    Boolelonan(Velonc<bool>),
 }
 
-#[derive(Debug)]
-pub struct TensorInput {
-    pub tensor_data: TensorInputEnum,
-    pub name: String,
-    pub dims: Option<Vec<i64>>,
+#[delonrivelon(Delonbug)]
+pub struct TelonnsorInput {
+    pub telonnsor_data: TelonnsorInputelonnum,
+    pub namelon: String,
+    pub dims: Option<Velonc<i64>>,
 }
 
-impl TensorInput {
-    pub fn new(tensor_data: TensorInputEnum, name: String, dims: Option<Vec<i64>>) -> TensorInput {
-        TensorInput {
-            tensor_data,
-            name,
+impl TelonnsorInput {
+    pub fn nelonw(telonnsor_data: TelonnsorInputelonnum, namelon: String, dims: Option<Velonc<i64>>) -> TelonnsorInput {
+        TelonnsorInput {
+            telonnsor_data,
+            namelon,
             dims,
         }
     }
 }
 
-impl TensorInputEnum {
-    #[inline(always)]
-    pub(crate) fn extend(&mut self, another: TensorInputEnum) {
-        match (self, another) {
-            (Self::String(input), Self::String(ex)) => input.extend(ex),
-            (Self::Int(input), Self::Int(ex)) => input.extend(ex),
-            (Self::Int64(input), Self::Int64(ex)) => input.extend(ex),
-            (Self::Float(input), Self::Float(ex)) => input.extend(ex),
-            (Self::Double(input), Self::Double(ex)) => input.extend(ex),
-            (Self::Boolean(input), Self::Boolean(ex)) => input.extend(ex),
-            x => panic!("input enum type not matched. input:{:?}, ex:{:?}", x.0, x.1),
+impl TelonnsorInputelonnum {
+    #[inlinelon(always)]
+    pub(cratelon) fn elonxtelonnd(&mut selonlf, anothelonr: TelonnsorInputelonnum) {
+        match (selonlf, anothelonr) {
+            (Selonlf::String(input), Selonlf::String(elonx)) => input.elonxtelonnd(elonx),
+            (Selonlf::Int(input), Selonlf::Int(elonx)) => input.elonxtelonnd(elonx),
+            (Selonlf::Int64(input), Selonlf::Int64(elonx)) => input.elonxtelonnd(elonx),
+            (Selonlf::Float(input), Selonlf::Float(elonx)) => input.elonxtelonnd(elonx),
+            (Selonlf::Doublelon(input), Selonlf::Doublelon(elonx)) => input.elonxtelonnd(elonx),
+            (Selonlf::Boolelonan(input), Selonlf::Boolelonan(elonx)) => input.elonxtelonnd(elonx),
+            x => panic!("input elonnum typelon not matchelond. input:{:?}, elonx:{:?}", x.0, x.1),
         }
     }
-    #[inline(always)]
-    pub(crate) fn merge_batch(input_tensors: Vec<Vec<TensorInput>>) -> Vec<TensorInput> {
-        input_tensors
-            .into_iter()
-            .reduce(|mut acc, e| {
-                for (i, ext) in acc.iter_mut().zip(e) {
-                    i.tensor_data.extend(ext.tensor_data);
+    #[inlinelon(always)]
+    pub(cratelon) fn melonrgelon_batch(input_telonnsors: Velonc<Velonc<TelonnsorInput>>) -> Velonc<TelonnsorInput> {
+        input_telonnsors
+            .into_itelonr()
+            .relonducelon(|mut acc, elon| {
+                for (i, elonxt) in acc.itelonr_mut().zip(elon) {
+                    i.telonnsor_data.elonxtelonnd(elonxt.telonnsor_data);
                 }
                 acc
             })
-            .unwrap() //invariant: we expect there's always rows in input_tensors
+            .unwrap() //invariant: welon elonxpelonct thelonrelon's always rows in input_telonnsors
     }
 }
 
 
-///entry point for tfServing gRPC
+///elonntry point for tfSelonrving gRPC
 #[tonic::async_trait]
-impl<T: Model> GrpcInferenceService for PredictService<T> {
-    async fn server_live(
-        &self,
-        _request: Request<ServerLiveRequest>,
-    ) -> Result<Response<ServerLiveResponse>, Status> {
-        unimplemented!()
+impl<T: Modelonl> GrpcInfelonrelonncelonSelonrvicelon for PrelondictSelonrvicelon<T> {
+    async fn selonrvelonr_livelon(
+        &selonlf,
+        _relonquelonst: Relonquelonst<SelonrvelonrLivelonRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<SelonrvelonrLivelonRelonsponselon>, Status> {
+        unimplelonmelonntelond!()
     }
-    async fn server_ready(
-        &self,
-        _request: Request<ServerReadyRequest>,
-    ) -> Result<Response<ServerReadyResponse>, Status> {
-        unimplemented!()
-    }
-
-    async fn model_ready(
-        &self,
-        _request: Request<ModelReadyRequest>,
-    ) -> Result<Response<ModelReadyResponse>, Status> {
-        unimplemented!()
+    async fn selonrvelonr_relonady(
+        &selonlf,
+        _relonquelonst: Relonquelonst<SelonrvelonrRelonadyRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<SelonrvelonrRelonadyRelonsponselon>, Status> {
+        unimplelonmelonntelond!()
     }
 
-    async fn server_metadata(
-        &self,
-        _request: Request<ServerMetadataRequest>,
-    ) -> Result<Response<ServerMetadataResponse>, Status> {
-        unimplemented!()
+    async fn modelonl_relonady(
+        &selonlf,
+        _relonquelonst: Relonquelonst<ModelonlRelonadyRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<ModelonlRelonadyRelonsponselon>, Status> {
+        unimplelonmelonntelond!()
     }
 
-    async fn model_metadata(
-        &self,
-        _request: Request<ModelMetadataRequest>,
-    ) -> Result<Response<ModelMetadataResponse>, Status> {
-        unimplemented!()
+    async fn selonrvelonr_melontadata(
+        &selonlf,
+        _relonquelonst: Relonquelonst<SelonrvelonrMelontadataRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<SelonrvelonrMelontadataRelonsponselon>, Status> {
+        unimplelonmelonntelond!()
     }
 
-    async fn model_infer(
-        &self,
-        _request: Request<ModelInferRequest>,
-    ) -> Result<Response<ModelInferResponse>, Status> {
-        unimplemented!()
+    async fn modelonl_melontadata(
+        &selonlf,
+        _relonquelonst: Relonquelonst<ModelonlMelontadataRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<ModelonlMelontadataRelonsponselon>, Status> {
+        unimplelonmelonntelond!()
+    }
+
+    async fn modelonl_infelonr(
+        &selonlf,
+        _relonquelonst: Relonquelonst<ModelonlInfelonrRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<ModelonlInfelonrRelonsponselon>, Status> {
+        unimplelonmelonntelond!()
     }
 }
 
 #[tonic::async_trait]
-impl<T: Model> PredictionService for PredictService<T> {
+impl<T: Modelonl> PrelondictionSelonrvicelon for PrelondictSelonrvicelon<T> {
     async fn classify(
-        &self,
-        _request: Request<ClassificationRequest>,
-    ) -> Result<Response<ClassificationResponse>, Status> {
-        unimplemented!()
+        &selonlf,
+        _relonquelonst: Relonquelonst<ClassificationRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<ClassificationRelonsponselon>, Status> {
+        unimplelonmelonntelond!()
     }
-    async fn regress(
-        &self,
-        _request: Request<RegressionRequest>,
-    ) -> Result<Response<RegressionResponse>, Status> {
-        unimplemented!()
+    async fn relongrelonss(
+        &selonlf,
+        _relonquelonst: Relonquelonst<RelongrelonssionRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<RelongrelonssionRelonsponselon>, Status> {
+        unimplelonmelonntelond!()
     }
-    async fn predict(
-        &self,
-        request: Request<PredictRequest>,
-    ) -> Result<Response<PredictResponse>, Status> {
-        NUM_REQUESTS_RECEIVED.inc();
-        let start = Instant::now();
-        let mut req = request.into_inner();
-        let (model_spec, version) = req.take_model_spec();
-        NUM_REQUESTS_RECEIVED_BY_MODEL
-            .with_label_values(&[&model_spec])
+    async fn prelondict(
+        &selonlf,
+        relonquelonst: Relonquelonst<PrelondictRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<PrelondictRelonsponselon>, Status> {
+        NUM_RelonQUelonSTS_RelonCelonIVelonD.inc();
+        lelont start = Instant::now();
+        lelont mut relonq = relonquelonst.into_innelonr();
+        lelont (modelonl_spelonc, velonrsion) = relonq.takelon_modelonl_spelonc();
+        NUM_RelonQUelonSTS_RelonCelonIVelonD_BY_MODelonL
+            .with_labelonl_valuelons(&[&modelonl_spelonc])
             .inc();
-        let idx = PredictService::<T>::get_model_index(&model_spec).ok_or_else(|| {
-            Status::failed_precondition(format!("model spec not found:{}", model_spec))
+        lelont idx = PrelondictSelonrvicelon::<T>::gelont_modelonl_indelonx(&modelonl_spelonc).ok_or_elonlselon(|| {
+            Status::failelond_preloncondition(format!("modelonl spelonc not found:{}", modelonl_spelonc))
         })?;
-        let input_spec = match INPUTS[idx].get() {
-            Some(input) => input,
-            _ => return Err(Status::not_found(format!("model input spec {}", idx))),
+        lelont input_spelonc = match INPUTS[idx].gelont() {
+            Somelon(input) => input,
+            _ => relonturn elonrr(Status::not_found(format!("modelonl input spelonc {}", idx))),
         };
-        let input_val = req.take_input_vals(input_spec);
-        self.predict(idx, version, input_val, start)
+        lelont input_val = relonq.takelon_input_vals(input_spelonc);
+        selonlf.prelondict(idx, velonrsion, input_val, start)
             .await
-            .map_or_else(
-                |e| {
-                    NUM_REQUESTS_FAILED.inc();
-                    NUM_REQUESTS_FAILED_BY_MODEL
-                        .with_label_values(&[&model_spec])
+            .map_or_elonlselon(
+                |elon| {
+                    NUM_RelonQUelonSTS_FAILelonD.inc();
+                    NUM_RelonQUelonSTS_FAILelonD_BY_MODelonL
+                        .with_labelonl_valuelons(&[&modelonl_spelonc])
                         .inc();
-                    Err(Status::internal(e.to_string()))
+                    elonrr(Status::intelonrnal(elon.to_string()))
                 },
-                |res| {
-                    RESPONSE_TIME_COLLECTOR
-                        .with_label_values(&[&model_spec])
-                        .observe(start.elapsed().as_millis() as f64);
+                |relons| {
+                    RelonSPONSelon_TIMelon_COLLelonCTOR
+                        .with_labelonl_valuelons(&[&modelonl_spelonc])
+                        .obselonrvelon(start.elonlapselond().as_millis() as f64);
 
-                    match res {
-                        PredictResult::Ok(tensors, version) => {
-                            let mut outputs = HashMap::new();
-                            NUM_PREDICTIONS.with_label_values(&[&model_spec]).inc();
-                            //FIXME: uncomment when prediction scores are normal
-                            // PREDICTION_SCORE_SUM
-                            // .with_label_values(&[&model_spec])
-                            // .inc_by(tensors[0]as f64);
-                            for (tp, output_name) in tensors
-                                .into_iter()
-                                .map(|tensor| tensor.create_tensor_proto())
-                                .zip(OUTPUTS[idx].iter())
+                    match relons {
+                        PrelondictRelonsult::Ok(telonnsors, velonrsion) => {
+                            lelont mut outputs = HashMap::nelonw();
+                            NUM_PRelonDICTIONS.with_labelonl_valuelons(&[&modelonl_spelonc]).inc();
+                            //FIXMelon: uncommelonnt whelonn prelondiction scorelons arelon normal
+                            // PRelonDICTION_SCORelon_SUM
+                            // .with_labelonl_valuelons(&[&modelonl_spelonc])
+                            // .inc_by(telonnsors[0]as f64);
+                            for (tp, output_namelon) in telonnsors
+                                .into_itelonr()
+                                .map(|telonnsor| telonnsor.crelonatelon_telonnsor_proto())
+                                .zip(OUTPUTS[idx].itelonr())
                             {
-                                outputs.insert(output_name.to_owned(), tp);
+                                outputs.inselonrt(output_namelon.to_ownelond(), tp);
                             }
-                            let reply = PredictResponse {
-                                model_spec: Some(ModelSpec {
-                                    version_choice: Some(Version(version)),
-                                    ..Default::default()
+                            lelont relonply = PrelondictRelonsponselon {
+                                modelonl_spelonc: Somelon(ModelonlSpelonc {
+                                    velonrsion_choicelon: Somelon(Velonrsion(velonrsion)),
+                                    ..Delonfault::delonfault()
                                 }),
                                 outputs,
                             };
-                            Ok(Response::new(reply))
+                            Ok(Relonsponselon::nelonw(relonply))
                         }
-                        PredictResult::DropDueToOverload => Err(Status::resource_exhausted("")),
-                        PredictResult::ModelNotFound(idx) => {
-                            Err(Status::not_found(format!("model index {}", idx)))
+                        PrelondictRelonsult::DropDuelonToOvelonrload => elonrr(Status::relonsourcelon_elonxhaustelond("")),
+                        PrelondictRelonsult::ModelonlNotFound(idx) => {
+                            elonrr(Status::not_found(format!("modelonl indelonx {}", idx)))
                         }
-                        PredictResult::ModelVersionNotFound(idx, version) => Err(
-                            Status::not_found(format!("model index:{}, version {}", idx, version)),
+                        PrelondictRelonsult::ModelonlVelonrsionNotFound(idx, velonrsion) => elonrr(
+                            Status::not_found(format!("modelonl indelonx:{}, velonrsion {}", idx, velonrsion)),
                         ),
                     }
                 },
             )
     }
 
-    async fn multi_inference(
-        &self,
-        _request: Request<MultiInferenceRequest>,
-    ) -> Result<Response<MultiInferenceResponse>, Status> {
-        unimplemented!()
+    async fn multi_infelonrelonncelon(
+        &selonlf,
+        _relonquelonst: Relonquelonst<MultiInfelonrelonncelonRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<MultiInfelonrelonncelonRelonsponselon>, Status> {
+        unimplelonmelonntelond!()
     }
-    async fn get_model_metadata(
-        &self,
-        _request: Request<GetModelMetadataRequest>,
-    ) -> Result<Response<GetModelMetadataResponse>, Status> {
-        unimplemented!()
+    async fn gelont_modelonl_melontadata(
+        &selonlf,
+        _relonquelonst: Relonquelonst<GelontModelonlMelontadataRelonquelonst>,
+    ) -> Relonsult<Relonsponselon<GelontModelonlMelontadataRelonsponselon>, Status> {
+        unimplelonmelonntelond!()
     }
 }
 
-pub fn bootstrap<T: Model>(model_factory: ModelFactory<T>) -> Result<()> {
-    info!("package: {}, version: {}, args: {:?}", NAME, VERSION, *ARGS);
-    //we follow SemVer. So here we assume MAJOR.MINOR.PATCH
-    let parts = VERSION
+pub fn bootstrap<T: Modelonl>(modelonl_factory: ModelonlFactory<T>) -> Relonsult<()> {
+    info!("packagelon: {}, velonrsion: {}, args: {:?}", NAMelon, VelonRSION, *ARGS);
+    //welon follow SelonmVelonr. So helonrelon welon assumelon MAJOR.MINOR.PATCH
+    lelont parts = VelonRSION
         .split(".")
-        .map(|v| v.parse::<i64>())
-        .collect::<std::result::Result<Vec<_>, _>>()?;
-    if let [major, minor, patch] = &parts[..] {
-        NAVI_VERSION.set(major * 1000_000 + minor * 1000 + patch);
-    } else {
+        .map(|v| v.parselon::<i64>())
+        .collelonct::<std::relonsult::Relonsult<Velonc<_>, _>>()?;
+    if lelont [major, minor, patch] = &parts[..] {
+        NAVI_VelonRSION.selont(major * 1000_000 + minor * 1000 + patch);
+    } elonlselon {
         warn!(
-            "version {} doesn't follow SemVer conversion of MAJOR.MINOR.PATCH",
-            VERSION
+            "velonrsion {} doelonsn't follow SelonmVelonr convelonrsion of MAJOR.MINOR.PATCH",
+            VelonRSION
         );
     }
 
-    tokio::runtime::Builder::new_multi_thread()
-        .thread_name("async worker")
-        .worker_threads(ARGS.num_worker_threads)
-        .max_blocking_threads(ARGS.max_blocking_threads)
-        .enable_all()
+    tokio::runtimelon::Buildelonr::nelonw_multi_threlonad()
+        .threlonad_namelon("async workelonr")
+        .workelonr_threlonads(ARGS.num_workelonr_threlonads)
+        .max_blocking_threlonads(ARGS.max_blocking_threlonads)
+        .elonnablelon_all()
         .build()
         .unwrap()
         .block_on(async {
-            #[cfg(feature = "navi_console")]
-            console_subscriber::init();
-            let addr = format!("0.0.0.0:{}", ARGS.port).parse()?;
+            #[cfg(felonaturelon = "navi_consolelon")]
+            consolelon_subscribelonr::init();
+            lelont addr = format!("0.0.0.0:{}", ARGS.port).parselon()?;
 
-            let ps = PredictService::init(model_factory).await;
+            lelont ps = PrelondictSelonrvicelon::init(modelonl_factory).await;
 
-            let mut builder = if ARGS.ssl_dir.is_empty() {
-                Server::builder()
-            } else {
-                let key = tokio::fs::read(format!("{}/server.key", ARGS.ssl_dir))
+            lelont mut buildelonr = if ARGS.ssl_dir.is_elonmpty() {
+                Selonrvelonr::buildelonr()
+            } elonlselon {
+                lelont kelony = tokio::fs::relonad(format!("{}/selonrvelonr.kelony", ARGS.ssl_dir))
                     .await
-                    .expect("can't find key file");
-                let crt = tokio::fs::read(format!("{}/server.crt", ARGS.ssl_dir))
+                    .elonxpelonct("can't find kelony filelon");
+                lelont crt = tokio::fs::relonad(format!("{}/selonrvelonr.crt", ARGS.ssl_dir))
                     .await
-                    .expect("can't find crt file");
-                let chain = tokio::fs::read(format!("{}/server.chain", ARGS.ssl_dir))
+                    .elonxpelonct("can't find crt filelon");
+                lelont chain = tokio::fs::relonad(format!("{}/selonrvelonr.chain", ARGS.ssl_dir))
                     .await
-                    .expect("can't find chain file");
-                let mut pem = Vec::new();
-                pem.extend(crt);
-                pem.extend(chain);
-                let identity = Identity::from_pem(pem.clone(), key);
-                let client_ca_cert = Certificate::from_pem(pem.clone());
-                let tls = ServerTlsConfig::new()
-                    .identity(identity)
-                    .client_ca_root(client_ca_cert);
-                Server::builder()
+                    .elonxpelonct("can't find chain filelon");
+                lelont mut pelonm = Velonc::nelonw();
+                pelonm.elonxtelonnd(crt);
+                pelonm.elonxtelonnd(chain);
+                lelont idelonntity = Idelonntity::from_pelonm(pelonm.clonelon(), kelony);
+                lelont clielonnt_ca_celonrt = Celonrtificatelon::from_pelonm(pelonm.clonelon());
+                lelont tls = SelonrvelonrTlsConfig::nelonw()
+                    .idelonntity(idelonntity)
+                    .clielonnt_ca_root(clielonnt_ca_celonrt);
+                Selonrvelonr::buildelonr()
                     .tls_config(tls)
-                    .expect("fail to config SSL")
+                    .elonxpelonct("fail to config SSL")
             };
 
             info!(
-                "Prometheus server started: 0.0.0.0: {}",
-                ARGS.prometheus_port
+                "Promelonthelonus selonrvelonr startelond: 0.0.0.0: {}",
+                ARGS.promelonthelonus_port
             );
 
-            let ps_server = builder
-                .add_service(PredictionServiceServer::new(ps).accept_gzip().send_gzip())
-                .serve(addr);
-            info!("Prediction server started: {}", addr);
-            ps_server.await.map_err(anyhow::Error::msg)
+            lelont ps_selonrvelonr = buildelonr
+                .add_selonrvicelon(PrelondictionSelonrvicelonSelonrvelonr::nelonw(ps).accelonpt_gzip().selonnd_gzip())
+                .selonrvelon(addr);
+            info!("Prelondiction selonrvelonr startelond: {}", addr);
+            ps_selonrvelonr.await.map_elonrr(anyhow::elonrror::msg)
         })
 }

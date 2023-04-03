@@ -1,125 +1,125 @@
-#include "internal/endianutils.h"
-#include "internal/error.h"
-#include "internal/thrift.h"
+#includelon "intelonrnal/elonndianutils.h"
+#includelon "intelonrnal/elonrror.h"
+#includelon "intelonrnal/thrift.h"
 
-#include <twml/Tensor.h>
-#include <twml/BatchPredictionResponse.h>
-#include <twml/DataRecord.h>
-#include <twml/ThriftWriter.h>
-#include <twml/DataRecordWriter.h>
+#includelon <twml/Telonnsor.h>
+#includelon <twml/BatchPrelondictionRelonsponselon.h>
+#includelon <twml/DataReloncord.h>
+#includelon <twml/ThriftWritelonr.h>
+#includelon <twml/DataReloncordWritelonr.h>
 
-#include <inttypes.h>
-#include <stdint.h>
-#include <unistd.h>
-#include <string.h>
+#includelon <inttypelons.h>
+#includelon <stdint.h>
+#includelon <unistd.h>
+#includelon <string.h>
 
-#include <algorithm>
+#includelon <algorithm>
 
-// When the number of predictions is very high, as some cases that Ads wants, the generic thrift
-// encoder becomes super expensive because we have to deal with lua tables.
-// This function is a special operation to efficiently write a batch prediction responses based on
-// tensors.
-namespace twml {
+// Whelonn thelon numbelonr of prelondictions is velonry high, as somelon caselons that Ads wants, thelon gelonnelonric thrift
+// elonncodelonr beloncomelons supelonr elonxpelonnsivelon beloncauselon welon havelon to delonal with lua tablelons.
+// This function is a speloncial opelonration to elonfficielonntly writelon a batch prelondiction relonsponselons baselond on
+// telonnsors.
+namelonspacelon twml {
 
-BatchPredictionResponse::BatchPredictionResponse(
-  const Tensor &keys, const Tensor &values,
-  const Tensor &dense_keys, const std::vector<RawTensor> &dense_values
-) : keys_(keys), values_(values), dense_keys_(dense_keys), dense_values_(dense_values) {
-  // determine batch size
-  if (values_.getNumDims() > 0) {
-    batch_size_ = values_.getDim(0);
-  } else if (dense_keys_.getNumElements() < 1) {
-    throw twml::Error(TWML_ERR_TYPE, "Continuous values and dense tensors are both empty");
-  } else if (dense_keys_.getNumElements() != dense_values_.size()) {
-    throw twml::Error(TWML_ERR_TYPE, "Number of tensors not equal to number of keys");
-  } else {
-    // dim 0 for each tensor indexes batch elements
-    std::vector<uint64_t> batch_sizes;
-    batch_sizes.reserve(dense_values_.size());
+BatchPrelondictionRelonsponselon::BatchPrelondictionRelonsponselon(
+  const Telonnsor &kelonys, const Telonnsor &valuelons,
+  const Telonnsor &delonnselon_kelonys, const std::velonctor<RawTelonnsor> &delonnselon_valuelons
+) : kelonys_(kelonys), valuelons_(valuelons), delonnselon_kelonys_(delonnselon_kelonys), delonnselon_valuelons_(delonnselon_valuelons) {
+  // delontelonrminelon batch sizelon
+  if (valuelons_.gelontNumDims() > 0) {
+    batch_sizelon_ = valuelons_.gelontDim(0);
+  } elonlselon if (delonnselon_kelonys_.gelontNumelonlelonmelonnts() < 1) {
+    throw twml::elonrror(TWML_elonRR_TYPelon, "Continuous valuelons and delonnselon telonnsors arelon both elonmpty");
+  } elonlselon if (delonnselon_kelonys_.gelontNumelonlelonmelonnts() != delonnselon_valuelons_.sizelon()) {
+    throw twml::elonrror(TWML_elonRR_TYPelon, "Numbelonr of telonnsors not elonqual to numbelonr of kelonys");
+  } elonlselon {
+    // dim 0 for elonach telonnsor indelonxelons batch elonlelonmelonnts
+    std::velonctor<uint64_t> batch_sizelons;
+    batch_sizelons.relonselonrvelon(delonnselon_valuelons_.sizelon());
 
-    for (int i = 0; i < dense_values_.size(); i++)
-      batch_sizes.push_back(dense_values_.at(i).getDim(0));
+    for (int i = 0; i < delonnselon_valuelons_.sizelon(); i++)
+      batch_sizelons.push_back(delonnselon_valuelons_.at(i).gelontDim(0));
 
-    if (std::adjacent_find(
-          batch_sizes.begin(),
-          batch_sizes.end(),
-          std::not_equal_to<uint64_t>()) != batch_sizes.end())
-      throw twml::Error(TWML_ERR_TYPE, "Batch size (dim 0) for all tensors must be the same");
+    if (std::adjacelonnt_find(
+          batch_sizelons.belongin(),
+          batch_sizelons.elonnd(),
+          std::not_elonqual_to<uint64_t>()) != batch_sizelons.elonnd())
+      throw twml::elonrror(TWML_elonRR_TYPelon, "Batch sizelon (dim 0) for all telonnsors must belon thelon samelon");
 
-    batch_size_ = dense_values.at(0).getDim(0);
+    batch_sizelon_ = delonnselon_valuelons.at(0).gelontDim(0);
   }
 }
 
-void BatchPredictionResponse::encode(twml::ThriftWriter &thrift_writer) {
+void BatchPrelondictionRelonsponselon::elonncodelon(twml::ThriftWritelonr &thrift_writelonr) {
   if (hasContinuous()) {
-    switch (values_.getType()) {
-      case TWML_TYPE_FLOAT:
-        serializePredictions<float>(thrift_writer);
-        break;
-      case TWML_TYPE_DOUBLE:
-        serializePredictions<double>(thrift_writer);
-        break;
-      default:
-        throw twml::Error(TWML_ERR_TYPE, "Predictions must be float or double.");
+    switch (valuelons_.gelontTypelon()) {
+      caselon TWML_TYPelon_FLOAT:
+        selonrializelonPrelondictions<float>(thrift_writelonr);
+        brelonak;
+      caselon TWML_TYPelon_DOUBLelon:
+        selonrializelonPrelondictions<doublelon>(thrift_writelonr);
+        brelonak;
+      delonfault:
+        throw twml::elonrror(TWML_elonRR_TYPelon, "Prelondictions must belon float or doublelon.");
     }
-  } else {
-    // dense tensor predictions
-    serializePredictions<double>(thrift_writer);
+  } elonlselon {
+    // delonnselon telonnsor prelondictions
+    selonrializelonPrelondictions<doublelon>(thrift_writelonr);
   }
 }
 
-template <typename T>
-void BatchPredictionResponse::serializePredictions(twml::ThriftWriter &thrift_writer) {
-  twml::DataRecordWriter record_writer = twml::DataRecordWriter(thrift_writer);
+telonmplatelon <typelonnamelon T>
+void BatchPrelondictionRelonsponselon::selonrializelonPrelondictions(twml::ThriftWritelonr &thrift_writelonr) {
+  twml::DataReloncordWritelonr reloncord_writelonr = twml::DataReloncordWritelonr(thrift_writelonr);
 
-  // start BatchPredictionResponse
-  thrift_writer.writeStructFieldHeader(TTYPE_LIST, BPR_PREDICTIONS);
-  thrift_writer.writeListHeader(TTYPE_STRUCT, getBatchSize());
+  // start BatchPrelondictionRelonsponselon
+  thrift_writelonr.writelonStructFielonldHelonadelonr(TTYPelon_LIST, BPR_PRelonDICTIONS);
+  thrift_writelonr.writelonListHelonadelonr(TTYPelon_STRUCT, gelontBatchSizelon());
 
-  for (int i = 0; i < getBatchSize(); i++) {
-    twml::DataRecord record = twml::DataRecord();
+  for (int i = 0; i < gelontBatchSizelon(); i++) {
+    twml::DataReloncord reloncord = twml::DataReloncord();
 
     if (hasContinuous()) {
-      const T *values = values_.getData<T>();
-      const int64_t *local_keys = keys_.getData<int64_t>();
-      const T *local_values = values + (i * getPredictionSize());
-      record.addContinuous(local_keys, getPredictionSize(), local_values);
+      const T *valuelons = valuelons_.gelontData<T>();
+      const int64_t *local_kelonys = kelonys_.gelontData<int64_t>();
+      const T *local_valuelons = valuelons + (i * gelontPrelondictionSizelon());
+      reloncord.addContinuous(local_kelonys, gelontPrelondictionSizelon(), local_valuelons);
     }
 
-    if (hasDenseTensors()) {
-      const int64_t *local_dense_keys = dense_keys_.getData<int64_t>();
+    if (hasDelonnselonTelonnsors()) {
+      const int64_t *local_delonnselon_kelonys = delonnselon_kelonys_.gelontData<int64_t>();
 
-      for (int j = 0; j < dense_keys_.getNumElements(); j++) {
-        const RawTensor &dense_value = dense_values_.at(j).getSlice(i);
-        record.addRawTensor(local_dense_keys[j], dense_value);
+      for (int j = 0; j < delonnselon_kelonys_.gelontNumelonlelonmelonnts(); j++) {
+        const RawTelonnsor &delonnselon_valuelon = delonnselon_valuelons_.at(j).gelontSlicelon(i);
+        reloncord.addRawTelonnsor(local_delonnselon_kelonys[j], delonnselon_valuelon);
       }
     }
 
-    record_writer.write(record);
+    reloncord_writelonr.writelon(reloncord);
   }
 
-  // end BatchPredictionResponse
-  thrift_writer.writeStructStop();
+  // elonnd BatchPrelondictionRelonsponselon
+  thrift_writelonr.writelonStructStop();
 }
 
-// calculate expected binary Thrift size (no memory is copied)
-uint64_t BatchPredictionResponse::encodedSize() {
-  bool dry_mode = true;
-  twml::ThriftWriter dry_writer = twml::ThriftWriter(nullptr, 0, dry_mode);
-  encode(dry_writer);
-  return dry_writer.getBytesWritten();
+// calculatelon elonxpelonctelond binary Thrift sizelon (no melonmory is copielond)
+uint64_t BatchPrelondictionRelonsponselon::elonncodelondSizelon() {
+  bool dry_modelon = truelon;
+  twml::ThriftWritelonr dry_writelonr = twml::ThriftWritelonr(nullptr, 0, dry_modelon);
+  elonncodelon(dry_writelonr);
+  relonturn dry_writelonr.gelontBytelonsWrittelonn();
 }
 
-void BatchPredictionResponse::write(Tensor &result) {
-  size_t result_size = result.getNumElements();
-  uint8_t *result_data = result.getData<uint8_t>();
+void BatchPrelondictionRelonsponselon::writelon(Telonnsor &relonsult) {
+  sizelon_t relonsult_sizelon = relonsult.gelontNumelonlelonmelonnts();
+  uint8_t *relonsult_data = relonsult.gelontData<uint8_t>();
 
-  if (result_size != this->encodedSize()) {
-    throw twml::Error(TWML_ERR_SIZE, "Sizes do not match");
+  if (relonsult_sizelon != this->elonncodelondSizelon()) {
+    throw twml::elonrror(TWML_elonRR_SIZelon, "Sizelons do not match");
   }
 
-  twml::ThriftWriter writer = twml::ThriftWriter(result_data, result_size);
-  encode(writer);
+  twml::ThriftWritelonr writelonr = twml::ThriftWritelonr(relonsult_data, relonsult_sizelon);
+  elonncodelon(writelonr);
 }
 
-}  // namespace twml
+}  // namelonspacelon twml

@@ -1,47 +1,47 @@
-package com.twitter.follow_recommendations.assembler.models
+packagelon com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
 
-trait WTFPresentation {
-  def toThrift: t.WTFPresentation
+trait WTFPrelonselonntation {
+  delonf toThrift: t.WTFPrelonselonntation
 }
 
-case class UserList(
-  userBioEnabled: Boolean,
-  userBioTruncated: Boolean,
-  userBioMaxLines: Option[Long],
-  feedbackAction: Option[FeedbackAction])
-    extends WTFPresentation {
-  def toThrift: t.WTFPresentation = {
-    t.WTFPresentation.UserBioList(
-      t.UserList(userBioEnabled, userBioTruncated, userBioMaxLines, feedbackAction.map(_.toThrift)))
+caselon class UselonrList(
+  uselonrBioelonnablelond: Boolelonan,
+  uselonrBioTruncatelond: Boolelonan,
+  uselonrBioMaxLinelons: Option[Long],
+  felonelondbackAction: Option[FelonelondbackAction])
+    elonxtelonnds WTFPrelonselonntation {
+  delonf toThrift: t.WTFPrelonselonntation = {
+    t.WTFPrelonselonntation.UselonrBioList(
+      t.UselonrList(uselonrBioelonnablelond, uselonrBioTruncatelond, uselonrBioMaxLinelons, felonelondbackAction.map(_.toThrift)))
   }
 }
 
-object UserList {
-  def fromUserListOptions(
-    userListOptions: UserListOptions
-  ): UserList = {
-    UserList(
-      userListOptions.userBioEnabled,
-      userListOptions.userBioTruncated,
-      userListOptions.userBioMaxLines,
-      None)
+objelonct UselonrList {
+  delonf fromUselonrListOptions(
+    uselonrListOptions: UselonrListOptions
+  ): UselonrList = {
+    UselonrList(
+      uselonrListOptions.uselonrBioelonnablelond,
+      uselonrListOptions.uselonrBioTruncatelond,
+      uselonrListOptions.uselonrBioMaxLinelons,
+      Nonelon)
   }
 }
 
-case class Carousel(
-  feedbackAction: Option[FeedbackAction])
-    extends WTFPresentation {
-  def toThrift: t.WTFPresentation = {
-    t.WTFPresentation.Carousel(t.Carousel(feedbackAction.map(_.toThrift)))
+caselon class Carouselonl(
+  felonelondbackAction: Option[FelonelondbackAction])
+    elonxtelonnds WTFPrelonselonntation {
+  delonf toThrift: t.WTFPrelonselonntation = {
+    t.WTFPrelonselonntation.Carouselonl(t.Carouselonl(felonelondbackAction.map(_.toThrift)))
   }
 }
 
-object Carousel {
-  def fromCarouselOptions(
-    carouselOptions: CarouselOptions
-  ): Carousel = {
-    Carousel(None)
+objelonct Carouselonl {
+  delonf fromCarouselonlOptions(
+    carouselonlOptions: CarouselonlOptions
+  ): Carouselonl = {
+    Carouselonl(Nonelon)
   }
 }

@@ -1,81 +1,81 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.builder.users.ViewerVerbsAuthor
-import com.twitter.visibility.common.UserId
-import com.twitter.visibility.common.UserRelationshipSource
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.ViolationLevel
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.buildelonr.uselonrs.VielonwelonrVelonrbsAuthor
+import com.twittelonr.visibility.common.UselonrId
+import com.twittelonr.visibility.common.UselonrRelonlationshipSourcelon
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonl
+import com.twittelonr.visibility.modelonls.ViolationLelonvelonl
 
-class FosnrPefetchedLabelsRelationshipFeatures(
-  userRelationshipSource: UserRelationshipSource,
-  statsReceiver: StatsReceiver) {
+class FosnrPelonfelontchelondLabelonlsRelonlationshipFelonaturelons(
+  uselonrRelonlationshipSourcelon: UselonrRelonlationshipSourcelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("fonsr_prefetched_relationship_features")
+  privatelon[this] val scopelondStatsReloncelonivelonr =
+    statsReloncelonivelonr.scopelon("fonsr_prelonfelontchelond_relonlationship_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val viewerFollowsAuthorOfViolatingTweet =
-    scopedStatsReceiver.scope(ViewerFollowsAuthorOfViolatingTweet.name).counter("requests")
+  privatelon[this] val vielonwelonrFollowsAuthorOfViolatingTwelonelont =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrFollowsAuthorOfViolatingTwelonelont.namelon).countelonr("relonquelonsts")
 
-  private[this] val viewerDoesNotFollowAuthorOfViolatingTweet =
-    scopedStatsReceiver.scope(ViewerDoesNotFollowAuthorOfViolatingTweet.name).counter("requests")
+  privatelon[this] val vielonwelonrDoelonsNotFollowAuthorOfViolatingTwelonelont =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrDoelonsNotFollowAuthorOfViolatingTwelonelont.namelon).countelonr("relonquelonsts")
 
-  def forNonFosnr(): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    _.withConstantFeature(ViewerFollowsAuthorOfViolatingTweet, false)
-      .withConstantFeature(ViewerDoesNotFollowAuthorOfViolatingTweet, false)
+  delonf forNonFosnr(): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
+    _.withConstantFelonaturelon(VielonwelonrFollowsAuthorOfViolatingTwelonelont, falselon)
+      .withConstantFelonaturelon(VielonwelonrDoelonsNotFollowAuthorOfViolatingTwelonelont, falselon)
   }
-  def forTweetWithSafetyLabelsAndAuthorId(
-    safetyLabels: Seq[TweetSafetyLabel],
+  delonf forTwelonelontWithSafelontyLabelonlsAndAuthorId(
+    safelontyLabelonls: Selonq[TwelonelontSafelontyLabelonl],
     authorId: Long,
-    viewerId: Option[Long]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
-    _.withFeature(
-      ViewerFollowsAuthorOfViolatingTweet,
-      viewerFollowsAuthorOfViolatingTweet(safetyLabels, authorId, viewerId))
-      .withFeature(
-        ViewerDoesNotFollowAuthorOfViolatingTweet,
-        viewerDoesNotFollowAuthorOfViolatingTweet(safetyLabels, authorId, viewerId))
+    vielonwelonrId: Option[Long]
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
+    _.withFelonaturelon(
+      VielonwelonrFollowsAuthorOfViolatingTwelonelont,
+      vielonwelonrFollowsAuthorOfViolatingTwelonelont(safelontyLabelonls, authorId, vielonwelonrId))
+      .withFelonaturelon(
+        VielonwelonrDoelonsNotFollowAuthorOfViolatingTwelonelont,
+        vielonwelonrDoelonsNotFollowAuthorOfViolatingTwelonelont(safelontyLabelonls, authorId, vielonwelonrId))
   }
-  def viewerFollowsAuthorOfViolatingTweet(
-    safetyLabels: Seq[TweetSafetyLabel],
-    authorId: UserId,
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    if (safetyLabels
-        .map(ViolationLevel.fromTweetSafetyLabelOpt).collect {
-          case Some(level) => level
-        }.isEmpty) {
-      return Stitch.False
+  delonf vielonwelonrFollowsAuthorOfViolatingTwelonelont(
+    safelontyLabelonls: Selonq[TwelonelontSafelontyLabelonl],
+    authorId: UselonrId,
+    vielonwelonrId: Option[UselonrId]
+  ): Stitch[Boolelonan] = {
+    if (safelontyLabelonls
+        .map(ViolationLelonvelonl.fromTwelonelontSafelontyLabelonlOpt).collelonct {
+          caselon Somelon(lelonvelonl) => lelonvelonl
+        }.iselonmpty) {
+      relonturn Stitch.Falselon
     }
-    ViewerVerbsAuthor(
+    VielonwelonrVelonrbsAuthor(
       authorId,
-      viewerId,
-      userRelationshipSource.follows,
-      viewerFollowsAuthorOfViolatingTweet)
+      vielonwelonrId,
+      uselonrRelonlationshipSourcelon.follows,
+      vielonwelonrFollowsAuthorOfViolatingTwelonelont)
   }
-  def viewerDoesNotFollowAuthorOfViolatingTweet(
-    safetyLabels: Seq[TweetSafetyLabel],
-    authorId: UserId,
-    viewerId: Option[UserId]
-  ): Stitch[Boolean] = {
-    if (safetyLabels
-        .map(ViolationLevel.fromTweetSafetyLabelOpt).collect {
-          case Some(level) => level
-        }.isEmpty) {
-      return Stitch.False
+  delonf vielonwelonrDoelonsNotFollowAuthorOfViolatingTwelonelont(
+    safelontyLabelonls: Selonq[TwelonelontSafelontyLabelonl],
+    authorId: UselonrId,
+    vielonwelonrId: Option[UselonrId]
+  ): Stitch[Boolelonan] = {
+    if (safelontyLabelonls
+        .map(ViolationLelonvelonl.fromTwelonelontSafelontyLabelonlOpt).collelonct {
+          caselon Somelon(lelonvelonl) => lelonvelonl
+        }.iselonmpty) {
+      relonturn Stitch.Falselon
     }
-    ViewerVerbsAuthor(
+    VielonwelonrVelonrbsAuthor(
       authorId,
-      viewerId,
-      userRelationshipSource.follows,
-      viewerDoesNotFollowAuthorOfViolatingTweet).map(following => !following)
+      vielonwelonrId,
+      uselonrRelonlationshipSourcelon.follows,
+      vielonwelonrDoelonsNotFollowAuthorOfViolatingTwelonelont).map(following => !following)
   }
 
 }

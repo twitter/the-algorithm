@@ -1,377 +1,377 @@
-package com.twitter.search.earlybird_root.common;
+packagelon com.twittelonr.selonarch.elonarlybird_root.common;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Selont;
+import java.util.TrelonelonSelont;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import javax.annotation.concurrent.ThreadSafe;
+import javax.annotation.concurrelonnt.ThrelonadSafelon;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.mutablelon.MutablelonInt;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchema;
-import com.twitter.search.common.features.thrift.ThriftSearchFeatureSchemaSpecifier;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonma;
+import com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRankingModelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
 
-@ThreadSafe
-public class EarlybirdFeatureSchemaMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdFeatureSchemaMerger.class);
+@ThrelonadSafelon
+public class elonarlybirdFelonaturelonSchelonmaMelonrgelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdFelonaturelonSchelonmaMelonrgelonr.class);
 
-  private static final SearchLongGauge NUM_FEATURE_SCHEMAS_MAP = SearchLongGauge.export(
-      "earlybird_feature_schema_cached_cnt");
+  privatelon static final SelonarchLongGaugelon NUM_FelonATURelon_SCHelonMAS_MAP = SelonarchLongGaugelon.elonxport(
+      "elonarlybird_felonaturelon_schelonma_cachelond_cnt");
 
-  private class Stats {
-    public final SearchCounter fieldFormatResponses;
-    public final SearchCounter mapFormatResponses;
-    public final SearchCounter mapFormatSavedSchemaResponses;
-    public final SearchCounter mapFormatAllDownstreamMissingSchema;
-    public final SearchCounter mapFormatOneDownstreamMissingSchema;
-    public final SearchCounter mapFormatSchemaCachedMismatch;
-    public final SearchCounter numInvalidRankingModeRequests;
-    public final SearchCounter numEmptyResponses;
+  privatelon class Stats {
+    public final SelonarchCountelonr fielonldFormatRelonsponselons;
+    public final SelonarchCountelonr mapFormatRelonsponselons;
+    public final SelonarchCountelonr mapFormatSavelondSchelonmaRelonsponselons;
+    public final SelonarchCountelonr mapFormatAllDownstrelonamMissingSchelonma;
+    public final SelonarchCountelonr mapFormatOnelonDownstrelonamMissingSchelonma;
+    public final SelonarchCountelonr mapFormatSchelonmaCachelondMismatch;
+    public final SelonarchCountelonr numInvalidRankingModelonRelonquelonsts;
+    public final SelonarchCountelonr numelonmptyRelonsponselons;
 
-    public Stats(String prefix) {
-      this.fieldFormatResponses =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_field_format_feature_responses");
-      this.mapFormatResponses =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_map_format_feature_responses");
-      this.mapFormatSavedSchemaResponses =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_map_format_feature_saved_schema_responses");
-      this.mapFormatAllDownstreamMissingSchema =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
-                  + "_map_format_feature_all_downstream_missing_schema_error");
-      this.mapFormatOneDownstreamMissingSchema =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
-                  + "_map_format_feature_one_downstream_missing_schema_error");
-      this.mapFormatSchemaCachedMismatch =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
-                  + "_map_format_feature_schema_cached_mismatch_error");
-      this.numInvalidRankingModeRequests =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix + "_num_invalid_ranking_mode_requests");
-      this.numEmptyResponses =
-          SearchCounter.export(
-              "earlybird_feature_schema_" + prefix
-                  + "_num_empty_response_without_schema");
+    public Stats(String prelonfix) {
+      this.fielonldFormatRelonsponselons =
+          SelonarchCountelonr.elonxport(
+              "elonarlybird_felonaturelon_schelonma_" + prelonfix + "_fielonld_format_felonaturelon_relonsponselons");
+      this.mapFormatRelonsponselons =
+          SelonarchCountelonr.elonxport(
+              "elonarlybird_felonaturelon_schelonma_" + prelonfix + "_map_format_felonaturelon_relonsponselons");
+      this.mapFormatSavelondSchelonmaRelonsponselons =
+          SelonarchCountelonr.elonxport(
+              "elonarlybird_felonaturelon_schelonma_" + prelonfix + "_map_format_felonaturelon_savelond_schelonma_relonsponselons");
+      this.mapFormatAllDownstrelonamMissingSchelonma =
+          SelonarchCountelonr.elonxport(
+              "elonarlybird_felonaturelon_schelonma_" + prelonfix
+                  + "_map_format_felonaturelon_all_downstrelonam_missing_schelonma_elonrror");
+      this.mapFormatOnelonDownstrelonamMissingSchelonma =
+          SelonarchCountelonr.elonxport(
+              "elonarlybird_felonaturelon_schelonma_" + prelonfix
+                  + "_map_format_felonaturelon_onelon_downstrelonam_missing_schelonma_elonrror");
+      this.mapFormatSchelonmaCachelondMismatch =
+          SelonarchCountelonr.elonxport(
+              "elonarlybird_felonaturelon_schelonma_" + prelonfix
+                  + "_map_format_felonaturelon_schelonma_cachelond_mismatch_elonrror");
+      this.numInvalidRankingModelonRelonquelonsts =
+          SelonarchCountelonr.elonxport(
+              "elonarlybird_felonaturelon_schelonma_" + prelonfix + "_num_invalid_ranking_modelon_relonquelonsts");
+      this.numelonmptyRelonsponselons =
+          SelonarchCountelonr.elonxport(
+              "elonarlybird_felonaturelon_schelonma_" + prelonfix
+                  + "_num_elonmpty_relonsponselon_without_schelonma");
     }
   }
 
-  private final ConcurrentHashMap<ThriftSearchFeatureSchemaSpecifier, ThriftSearchFeatureSchema>
-      featureSchemas = new ConcurrentHashMap<>();
-  private final ConcurrentHashMap<String, Stats> mergeStats = new ConcurrentHashMap<>();
+  privatelon final ConcurrelonntHashMap<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr, ThriftSelonarchFelonaturelonSchelonma>
+      felonaturelonSchelonmas = nelonw ConcurrelonntHashMap<>();
+  privatelon final ConcurrelonntHashMap<String, Stats> melonrgelonStats = nelonw ConcurrelonntHashMap<>();
 
   /**
-   * Get all available cache schema list indicated by the schema specifier.
-   * @return identifiers for all the cached schema
+   * Gelont all availablelon cachelon schelonma list indicatelond by thelon schelonma speloncifielonr.
+   * @relonturn idelonntifielonrs for all thelon cachelond schelonma
    */
-  public List<ThriftSearchFeatureSchemaSpecifier> getAvailableSchemaList() {
-    return ImmutableList.copyOf(featureSchemas.keySet());
+  public List<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr> gelontAvailablelonSchelonmaList() {
+    relonturn ImmutablelonList.copyOf(felonaturelonSchelonmas.kelonySelont());
   }
 
   /**
-   * Iterate all the responses and collect and cache feature schemas from response.
-   * Set the feature schema for the response in searchResults if needed.
-   * (This is done inside earlybird roots)
+   * Itelonratelon all thelon relonsponselons and collelonct and cachelon felonaturelon schelonmas from relonsponselon.
+   * Selont thelon felonaturelon schelonma for thelon relonsponselon in selonarchRelonsults if nelonelondelond.
+   * (This is donelon insidelon elonarlybird roots)
    *
-   * @param searchResults the response
-   * @param requestContext the request, which should record the client cached feature schemas
-   * @param statPrefix the stats prefix string
-   * @param successfulResponses all successfull responses from downstream
+   * @param selonarchRelonsults thelon relonsponselon
+   * @param relonquelonstContelonxt thelon relonquelonst, which should reloncord thelon clielonnt cachelond felonaturelon schelonmas
+   * @param statPrelonfix thelon stats prelonfix string
+   * @param succelonssfulRelonsponselons all succelonssfull relonsponselons from downstrelonam
    */
-  public void collectAndSetFeatureSchemaInResponse(
-      ThriftSearchResults searchResults,
-      EarlybirdRequestContext requestContext,
-      String statPrefix,
-      List<EarlybirdResponse> successfulResponses) {
-    Stats stats = getOrCreateMergeStat(statPrefix);
-    EarlybirdRequest request = requestContext.getRequest();
-    if (!request.isSetSearchQuery()
-          || !request.getSearchQuery().isSetResultMetadataOptions()
-          || !request.getSearchQuery().getResultMetadataOptions().isReturnSearchResultFeatures()) {
-      // If the client does not want to get all features in map format, do not do anything.
-      stats.fieldFormatResponses.increment();
-      return;
+  public void collelonctAndSelontFelonaturelonSchelonmaInRelonsponselon(
+      ThriftSelonarchRelonsults selonarchRelonsults,
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      String statPrelonfix,
+      List<elonarlybirdRelonsponselon> succelonssfulRelonsponselons) {
+    Stats stats = gelontOrCrelonatelonMelonrgelonStat(statPrelonfix);
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    if (!relonquelonst.isSelontSelonarchQuelonry()
+          || !relonquelonst.gelontSelonarchQuelonry().isSelontRelonsultMelontadataOptions()
+          || !relonquelonst.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions().isRelonturnSelonarchRelonsultFelonaturelons()) {
+      // If thelon clielonnt doelons not want to gelont all felonaturelons in map format, do not do anything.
+      stats.fielonldFormatRelonsponselons.increlonmelonnt();
+      relonturn;
     }
 
-    // Find the most occurred schema from per-merge responses and return it in the post-merge
-    // response.
-    ThriftSearchFeatureSchemaSpecifier schemaMostOccurred = findMostOccurredSchema(
-        stats, request, successfulResponses);
-    if (schemaMostOccurred == null) {
-      return;
+    // Find thelon most occurrelond schelonma from pelonr-melonrgelon relonsponselons and relonturn it in thelon post-melonrgelon
+    // relonsponselon.
+    ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr schelonmaMostOccurrelond = findMostOccurrelondSchelonma(
+        stats, relonquelonst, succelonssfulRelonsponselons);
+    if (schelonmaMostOccurrelond == null) {
+      relonturn;
     }
 
-    Set<ThriftSearchFeatureSchemaSpecifier> availableSchemasInClient =
-        requestContext.getFeatureSchemasAvailableInClient();
-    if (availableSchemasInClient != null && availableSchemasInClient.contains(schemaMostOccurred)) {
-      // The client already knows the schema that we used for this response, so we don't need to
-      // send it the full schema, just the ThriftSearchFeatureSchemaSpecifier.
-      ThriftSearchFeatureSchema schema = new ThriftSearchFeatureSchema();
-      schema.setSchemaSpecifier(schemaMostOccurred);
-      searchResults.setFeatureSchema(schema);
-      stats.mapFormatResponses.increment();
-      stats.mapFormatSavedSchemaResponses.increment();
-    } else {
-      ThriftSearchFeatureSchema schema = featureSchemas.get(schemaMostOccurred);
-      if (schema != null) {
-        Preconditions.checkState(schema.isSetEntries());
-        Preconditions.checkState(schema.isSetSchemaSpecifier());
-        searchResults.setFeatureSchema(schema);
-        stats.mapFormatResponses.increment();
-      } else {
-        stats.mapFormatSchemaCachedMismatch.increment();
-        LOG.error("The feature schema cache misses the schema entry {} it should cache for {}",
-            schemaMostOccurred, request);
+    Selont<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr> availablelonSchelonmasInClielonnt =
+        relonquelonstContelonxt.gelontFelonaturelonSchelonmasAvailablelonInClielonnt();
+    if (availablelonSchelonmasInClielonnt != null && availablelonSchelonmasInClielonnt.contains(schelonmaMostOccurrelond)) {
+      // Thelon clielonnt alrelonady knows thelon schelonma that welon uselond for this relonsponselon, so welon don't nelonelond to
+      // selonnd it thelon full schelonma, just thelon ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr.
+      ThriftSelonarchFelonaturelonSchelonma schelonma = nelonw ThriftSelonarchFelonaturelonSchelonma();
+      schelonma.selontSchelonmaSpeloncifielonr(schelonmaMostOccurrelond);
+      selonarchRelonsults.selontFelonaturelonSchelonma(schelonma);
+      stats.mapFormatRelonsponselons.increlonmelonnt();
+      stats.mapFormatSavelondSchelonmaRelonsponselons.increlonmelonnt();
+    } elonlselon {
+      ThriftSelonarchFelonaturelonSchelonma schelonma = felonaturelonSchelonmas.gelont(schelonmaMostOccurrelond);
+      if (schelonma != null) {
+        Prelonconditions.chelonckStatelon(schelonma.isSelontelonntrielons());
+        Prelonconditions.chelonckStatelon(schelonma.isSelontSchelonmaSpeloncifielonr());
+        selonarchRelonsults.selontFelonaturelonSchelonma(schelonma);
+        stats.mapFormatRelonsponselons.increlonmelonnt();
+      } elonlselon {
+        stats.mapFormatSchelonmaCachelondMismatch.increlonmelonnt();
+        LOG.elonrror("Thelon felonaturelon schelonma cachelon misselons thelon schelonma elonntry {} it should cachelon for {}",
+            schelonmaMostOccurrelond, relonquelonst);
       }
     }
   }
 
   /**
-   * Merge the feature schema from each cluster's response and return it to the client.
-   * (This is done inside superroot)
-   * @param requestContext the search request context
-   * @param mergedResponse the merged result inside the superroot
-   * @param realtimeResponse the realtime tier resposne
-   * @param protectedResponse the protected tier response
-   * @param fullArchiveResponse the full archive tier response
-   * @param statsPrefix
+   * Melonrgelon thelon felonaturelon schelonma from elonach clustelonr's relonsponselon and relonturn it to thelon clielonnt.
+   * (This is donelon insidelon supelonrroot)
+   * @param relonquelonstContelonxt thelon selonarch relonquelonst contelonxt
+   * @param melonrgelondRelonsponselon thelon melonrgelond relonsult insidelon thelon supelonrroot
+   * @param relonaltimelonRelonsponselon thelon relonaltimelon tielonr relonsposnelon
+   * @param protelonctelondRelonsponselon thelon protelonctelond tielonr relonsponselon
+   * @param fullArchivelonRelonsponselon thelon full archivelon tielonr relonsponselon
+   * @param statsPrelonfix
    */
-  public void mergeFeatureSchemaAcrossClusters(
-      EarlybirdRequestContext requestContext,
-      EarlybirdResponse mergedResponse,
-      String statsPrefix,
-      EarlybirdResponse realtimeResponse,
-      EarlybirdResponse protectedResponse,
-      EarlybirdResponse fullArchiveResponse) {
-    Stats superrootStats = getOrCreateMergeStat(statsPrefix);
+  public void melonrgelonFelonaturelonSchelonmaAcrossClustelonrs(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      elonarlybirdRelonsponselon melonrgelondRelonsponselon,
+      String statsPrelonfix,
+      elonarlybirdRelonsponselon relonaltimelonRelonsponselon,
+      elonarlybirdRelonsponselon protelonctelondRelonsponselon,
+      elonarlybirdRelonsponselon fullArchivelonRelonsponselon) {
+    Stats supelonrrootStats = gelontOrCrelonatelonMelonrgelonStat(statsPrelonfix);
 
-    // Only try to merge feature schema if there are search results.
-    ThriftSearchResults mergedResults = Preconditions.checkNotNull(
-        mergedResponse.getSearchResults());
-    if (mergedResults.getResults().isEmpty()) {
-      mergedResults.unsetFeatureSchema();
-      superrootStats.numEmptyResponses.increment();
-      return;
+    // Only try to melonrgelon felonaturelon schelonma if thelonrelon arelon selonarch relonsults.
+    ThriftSelonarchRelonsults melonrgelondRelonsults = Prelonconditions.chelonckNotNull(
+        melonrgelondRelonsponselon.gelontSelonarchRelonsults());
+    if (melonrgelondRelonsults.gelontRelonsults().iselonmpty()) {
+      melonrgelondRelonsults.unselontFelonaturelonSchelonma();
+      supelonrrootStats.numelonmptyRelonsponselons.increlonmelonnt();
+      relonturn;
     }
 
-    EarlybirdRequest request = requestContext.getRequest();
-    if (!request.isSetSearchQuery()
-        || !request.getSearchQuery().isSetResultMetadataOptions()
-        || !request.getSearchQuery().getResultMetadataOptions().isReturnSearchResultFeatures()) {
-      mergedResults.unsetFeatureSchema();
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    if (!relonquelonst.isSelontSelonarchQuelonry()
+        || !relonquelonst.gelontSelonarchQuelonry().isSelontRelonsultMelontadataOptions()
+        || !relonquelonst.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions().isRelonturnSelonarchRelonsultFelonaturelons()) {
+      melonrgelondRelonsults.unselontFelonaturelonSchelonma();
 
-      // If the client does not want to get all features in map format, do not do anything.
-      superrootStats.fieldFormatResponses.increment();
-      return;
+      // If thelon clielonnt doelons not want to gelont all felonaturelons in map format, do not do anything.
+      supelonrrootStats.fielonldFormatRelonsponselons.increlonmelonnt();
+      relonturn;
     }
-    if (request.getSearchQuery().getRankingMode() != ThriftSearchRankingMode.RELEVANCE
-        && request.getSearchQuery().getRankingMode() != ThriftSearchRankingMode.TOPTWEETS
-        && request.getSearchQuery().getRankingMode() != ThriftSearchRankingMode.RECENCY) {
-      mergedResults.unsetFeatureSchema();
+    if (relonquelonst.gelontSelonarchQuelonry().gelontRankingModelon() != ThriftSelonarchRankingModelon.RelonLelonVANCelon
+        && relonquelonst.gelontSelonarchQuelonry().gelontRankingModelon() != ThriftSelonarchRankingModelon.TOPTWelonelonTS
+        && relonquelonst.gelontSelonarchQuelonry().gelontRankingModelon() != ThriftSelonarchRankingModelon.RelonCelonNCY) {
+      melonrgelondRelonsults.unselontFelonaturelonSchelonma();
 
-      // Only RELEVANCE, TOPTWEETS and RECENCY requests might need a feature schema in the response.
-      superrootStats.numInvalidRankingModeRequests.increment();
-      LOG.warn("Request asked for feature schema, but has incorrect ranking mode: {}", request);
-      return;
+      // Only RelonLelonVANCelon, TOPTWelonelonTS and RelonCelonNCY relonquelonsts might nelonelond a felonaturelon schelonma in thelon relonsponselon.
+      supelonrrootStats.numInvalidRankingModelonRelonquelonsts.increlonmelonnt();
+      LOG.warn("Relonquelonst askelond for felonaturelon schelonma, but has incorrelonct ranking modelon: {}", relonquelonst);
+      relonturn;
     }
-    superrootStats.mapFormatResponses.increment();
+    supelonrrootStats.mapFormatRelonsponselons.increlonmelonnt();
 
-    ThriftSearchFeatureSchema schema = updateReturnSchemaForClusterResponse(
-        null, realtimeResponse, request, superrootStats);
-    schema = updateReturnSchemaForClusterResponse(
-        schema, protectedResponse, request, superrootStats);
-    schema = updateReturnSchemaForClusterResponse(
-        schema, fullArchiveResponse, request, superrootStats);
+    ThriftSelonarchFelonaturelonSchelonma schelonma = updatelonRelonturnSchelonmaForClustelonrRelonsponselon(
+        null, relonaltimelonRelonsponselon, relonquelonst, supelonrrootStats);
+    schelonma = updatelonRelonturnSchelonmaForClustelonrRelonsponselon(
+        schelonma, protelonctelondRelonsponselon, relonquelonst, supelonrrootStats);
+    schelonma = updatelonRelonturnSchelonmaForClustelonrRelonsponselon(
+        schelonma, fullArchivelonRelonsponselon, relonquelonst, supelonrrootStats);
 
-    if (schema != null) {
-      if (requestContext.getFeatureSchemasAvailableInClient() != null
-          && requestContext.getFeatureSchemasAvailableInClient().contains(
-          schema.getSchemaSpecifier())) {
-        mergedResults.setFeatureSchema(
-            new ThriftSearchFeatureSchema().setSchemaSpecifier(schema.getSchemaSpecifier()));
-      } else {
-        mergedResults.setFeatureSchema(schema);
+    if (schelonma != null) {
+      if (relonquelonstContelonxt.gelontFelonaturelonSchelonmasAvailablelonInClielonnt() != null
+          && relonquelonstContelonxt.gelontFelonaturelonSchelonmasAvailablelonInClielonnt().contains(
+          schelonma.gelontSchelonmaSpeloncifielonr())) {
+        melonrgelondRelonsults.selontFelonaturelonSchelonma(
+            nelonw ThriftSelonarchFelonaturelonSchelonma().selontSchelonmaSpeloncifielonr(schelonma.gelontSchelonmaSpeloncifielonr()));
+      } elonlselon {
+        melonrgelondRelonsults.selontFelonaturelonSchelonma(schelonma);
       }
-    } else {
-      superrootStats.mapFormatAllDownstreamMissingSchema.increment();
-      LOG.error("The response for request {} is missing feature schema from all clusters", request);
+    } elonlselon {
+      supelonrrootStats.mapFormatAllDownstrelonamMissingSchelonma.increlonmelonnt();
+      LOG.elonrror("Thelon relonsponselon for relonquelonst {} is missing felonaturelon schelonma from all clustelonrs", relonquelonst);
     }
   }
 
   /**
-   * Add the schema to both the schema map and and the schema list if it is not there yet.
+   * Add thelon schelonma to both thelon schelonma map and and thelon schelonma list if it is not thelonrelon yelont.
    *
-   * @param schema the feature schema for search results
+   * @param schelonma thelon felonaturelon schelonma for selonarch relonsults
    */
-  private void addNewSchema(ThriftSearchFeatureSchema schema) {
-    if (!schema.isSetEntries()
-        || !schema.isSetSchemaSpecifier()
-        || featureSchemas.containsKey(schema.getSchemaSpecifier())) {
-      return;
+  privatelon void addNelonwSchelonma(ThriftSelonarchFelonaturelonSchelonma schelonma) {
+    if (!schelonma.isSelontelonntrielons()
+        || !schelonma.isSelontSchelonmaSpeloncifielonr()
+        || felonaturelonSchelonmas.containsKelony(schelonma.gelontSchelonmaSpeloncifielonr())) {
+      relonturn;
     }
 
-    synchronized (this) {
-      String oldExportedSchemaName = null;
-      if (!featureSchemas.isEmpty()) {
-        oldExportedSchemaName = getExportSchemasName();
+    synchronizelond (this) {
+      String oldelonxportelondSchelonmaNamelon = null;
+      if (!felonaturelonSchelonmas.iselonmpty()) {
+        oldelonxportelondSchelonmaNamelon = gelontelonxportSchelonmasNamelon();
       }
 
-      if (featureSchemas.putIfAbsent(schema.getSchemaSpecifier(), schema) == null) {
-        LOG.info("Add new feature schema {} into the list", schema);
-        NUM_FEATURE_SCHEMAS_MAP.set(featureSchemas.size());
+      if (felonaturelonSchelonmas.putIfAbselonnt(schelonma.gelontSchelonmaSpeloncifielonr(), schelonma) == null) {
+        LOG.info("Add nelonw felonaturelon schelonma {} into thelon list", schelonma);
+        NUM_FelonATURelon_SCHelonMAS_MAP.selont(felonaturelonSchelonmas.sizelon());
 
-        if (oldExportedSchemaName != null) {
-          SearchLongGauge.export(oldExportedSchemaName).reset();
+        if (oldelonxportelondSchelonmaNamelon != null) {
+          SelonarchLongGaugelon.elonxport(oldelonxportelondSchelonmaNamelon).relonselont();
         }
-        SearchLongGauge.export(getExportSchemasName()).set(1);
-        LOG.info("Expanded feature schema: {}", ImmutableList.copyOf(featureSchemas.keySet()));
+        SelonarchLongGaugelon.elonxport(gelontelonxportSchelonmasNamelon()).selont(1);
+        LOG.info("elonxpandelond felonaturelon schelonma: {}", ImmutablelonList.copyOf(felonaturelonSchelonmas.kelonySelont()));
       }
     }
   }
 
-  private String getExportSchemasName() {
-    StringBuilder builder = new StringBuilder("earlybird_feature_schema_cached");
-    TreeSet<String> exportedVersions = new TreeSet<>();
+  privatelon String gelontelonxportSchelonmasNamelon() {
+    StringBuildelonr buildelonr = nelonw StringBuildelonr("elonarlybird_felonaturelon_schelonma_cachelond");
+    TrelonelonSelont<String> elonxportelondVelonrsions = nelonw TrelonelonSelont<>();
 
-    // We do not need checksum for exported vars as all cached schemas are from the majority of the
-    // responses.
-    featureSchemas.keySet().stream().forEach(key -> exportedVersions.add(key.getVersion()));
-    exportedVersions.stream().forEach(version -> {
-      builder.append('_');
-      builder.append(version);
+    // Welon do not nelonelond cheloncksum for elonxportelond vars as all cachelond schelonmas arelon from thelon majority of thelon
+    // relonsponselons.
+    felonaturelonSchelonmas.kelonySelont().strelonam().forelonach(kelony -> elonxportelondVelonrsions.add(kelony.gelontVelonrsion()));
+    elonxportelondVelonrsions.strelonam().forelonach(velonrsion -> {
+      buildelonr.appelonnd('_');
+      buildelonr.appelonnd(velonrsion);
     });
-    return builder.toString();
+    relonturn buildelonr.toString();
   }
 
-  // Get the updated the feature schema based on the earlybird response from the search cluster.
-  // . If the existingSchema is not null, the function would return the existing schema.  Under the
-  //   situation, we would still check whether the feature in earlybird response is valid.
-  // . Otherwise, the function would extract the feature schema from the earlybird response.
-  private ThriftSearchFeatureSchema updateReturnSchemaForClusterResponse(
-      ThriftSearchFeatureSchema existingSchema,
-      EarlybirdResponse clusterResponse,
-      EarlybirdRequest request,
+  // Gelont thelon updatelond thelon felonaturelon schelonma baselond on thelon elonarlybird relonsponselon from thelon selonarch clustelonr.
+  // . If thelon elonxistingSchelonma is not null, thelon function would relonturn thelon elonxisting schelonma.  Undelonr thelon
+  //   situation, welon would still chelonck whelonthelonr thelon felonaturelon in elonarlybird relonsponselon is valid.
+  // . Othelonrwiselon, thelon function would elonxtract thelon felonaturelon schelonma from thelon elonarlybird relonsponselon.
+  privatelon ThriftSelonarchFelonaturelonSchelonma updatelonRelonturnSchelonmaForClustelonrRelonsponselon(
+      ThriftSelonarchFelonaturelonSchelonma elonxistingSchelonma,
+      elonarlybirdRelonsponselon clustelonrRelonsponselon,
+      elonarlybirdRelonquelonst relonquelonst,
       Stats stats) {
-    // If there is no response or search result for this cluster, do not update returned schema.
-    if ((clusterResponse == null) || !clusterResponse.isSetSearchResults()) {
-      return existingSchema;
+    // If thelonrelon is no relonsponselon or selonarch relonsult for this clustelonr, do not updatelon relonturnelond schelonma.
+    if ((clustelonrRelonsponselon == null) || !clustelonrRelonsponselon.isSelontSelonarchRelonsults()) {
+      relonturn elonxistingSchelonma;
     }
-    ThriftSearchResults results = clusterResponse.getSearchResults();
-    if (results.getResults().isEmpty()) {
-      return existingSchema;
-    }
-
-    if (!results.isSetFeatureSchema() || !results.getFeatureSchema().isSetSchemaSpecifier()) {
-      stats.mapFormatOneDownstreamMissingSchema.increment();
-      LOG.error("The downstream response {} is missing feature schema for request {}",
-          clusterResponse, request);
-      return existingSchema;
+    ThriftSelonarchRelonsults relonsults = clustelonrRelonsponselon.gelontSelonarchRelonsults();
+    if (relonsults.gelontRelonsults().iselonmpty()) {
+      relonturn elonxistingSchelonma;
     }
 
-    ThriftSearchFeatureSchema schema = results.getFeatureSchema();
-
-    // Even if existingSchema is already set, we would still try to cache the returned schema.
-    // In this way, the next time earlybird roots don't have to send the full schema back again.
-    if (schema.isSetEntries()) {
-      addNewSchema(schema);
-    } else if (featureSchemas.containsKey(schema.getSchemaSpecifier())) {
-      stats.mapFormatSavedSchemaResponses.increment();
-    } else {
-      stats.mapFormatSchemaCachedMismatch.increment();
-      LOG.error(
-          "The feature schema cache misses the schema entry {}, it should cache {} in {}",
-          schema.getSchemaSpecifier(), request, clusterResponse);
+    if (!relonsults.isSelontFelonaturelonSchelonma() || !relonsults.gelontFelonaturelonSchelonma().isSelontSchelonmaSpeloncifielonr()) {
+      stats.mapFormatOnelonDownstrelonamMissingSchelonma.increlonmelonnt();
+      LOG.elonrror("Thelon downstrelonam relonsponselon {} is missing felonaturelon schelonma for relonquelonst {}",
+          clustelonrRelonsponselon, relonquelonst);
+      relonturn elonxistingSchelonma;
     }
 
-    ThriftSearchFeatureSchema updatedSchema = existingSchema;
-    if (updatedSchema == null) {
-      updatedSchema = featureSchemas.get(schema.getSchemaSpecifier());
-      if (updatedSchema != null) {
-        Preconditions.checkState(updatedSchema.isSetEntries());
-        Preconditions.checkState(updatedSchema.isSetSchemaSpecifier());
+    ThriftSelonarchFelonaturelonSchelonma schelonma = relonsults.gelontFelonaturelonSchelonma();
+
+    // elonvelonn if elonxistingSchelonma is alrelonady selont, welon would still try to cachelon thelon relonturnelond schelonma.
+    // In this way, thelon nelonxt timelon elonarlybird roots don't havelon to selonnd thelon full schelonma back again.
+    if (schelonma.isSelontelonntrielons()) {
+      addNelonwSchelonma(schelonma);
+    } elonlselon if (felonaturelonSchelonmas.containsKelony(schelonma.gelontSchelonmaSpeloncifielonr())) {
+      stats.mapFormatSavelondSchelonmaRelonsponselons.increlonmelonnt();
+    } elonlselon {
+      stats.mapFormatSchelonmaCachelondMismatch.increlonmelonnt();
+      LOG.elonrror(
+          "Thelon felonaturelon schelonma cachelon misselons thelon schelonma elonntry {}, it should cachelon {} in {}",
+          schelonma.gelontSchelonmaSpeloncifielonr(), relonquelonst, clustelonrRelonsponselon);
+    }
+
+    ThriftSelonarchFelonaturelonSchelonma updatelondSchelonma = elonxistingSchelonma;
+    if (updatelondSchelonma == null) {
+      updatelondSchelonma = felonaturelonSchelonmas.gelont(schelonma.gelontSchelonmaSpeloncifielonr());
+      if (updatelondSchelonma != null) {
+        Prelonconditions.chelonckStatelon(updatelondSchelonma.isSelontelonntrielons());
+        Prelonconditions.chelonckStatelon(updatelondSchelonma.isSelontSchelonmaSpeloncifielonr());
       }
     }
-    return updatedSchema;
+    relonturn updatelondSchelonma;
   }
 
-  private ThriftSearchFeatureSchemaSpecifier findMostOccurredSchema(
+  privatelon ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr findMostOccurrelondSchelonma(
       Stats stats,
-      EarlybirdRequest request,
-      List<EarlybirdResponse> successfulResponses) {
-    boolean hasResults = false;
-    Map<ThriftSearchFeatureSchemaSpecifier, MutableInt> schemaCount =
-        Maps.newHashMapWithExpectedSize(successfulResponses.size());
-    for (EarlybirdResponse response : successfulResponses) {
-      if (!response.isSetSearchResults()
-          || response.getSearchResults().getResultsSize() == 0) {
-        continue;
+      elonarlybirdRelonquelonst relonquelonst,
+      List<elonarlybirdRelonsponselon> succelonssfulRelonsponselons) {
+    boolelonan hasRelonsults = falselon;
+    Map<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr, MutablelonInt> schelonmaCount =
+        Maps.nelonwHashMapWithelonxpelonctelondSizelon(succelonssfulRelonsponselons.sizelon());
+    for (elonarlybirdRelonsponselon relonsponselon : succelonssfulRelonsponselons) {
+      if (!relonsponselon.isSelontSelonarchRelonsults()
+          || relonsponselon.gelontSelonarchRelonsults().gelontRelonsultsSizelon() == 0) {
+        continuelon;
       }
 
-      hasResults = true;
-      if (response.getSearchResults().isSetFeatureSchema()) {
-        ThriftSearchFeatureSchema schema = response.getSearchResults().getFeatureSchema();
-        if (schema.isSetSchemaSpecifier()) {
-          MutableInt cnt = schemaCount.get(schema.getSchemaSpecifier());
+      hasRelonsults = truelon;
+      if (relonsponselon.gelontSelonarchRelonsults().isSelontFelonaturelonSchelonma()) {
+        ThriftSelonarchFelonaturelonSchelonma schelonma = relonsponselon.gelontSelonarchRelonsults().gelontFelonaturelonSchelonma();
+        if (schelonma.isSelontSchelonmaSpeloncifielonr()) {
+          MutablelonInt cnt = schelonmaCount.gelont(schelonma.gelontSchelonmaSpeloncifielonr());
           if (cnt != null) {
-            cnt.increment();
-          } else {
-            schemaCount.put(schema.getSchemaSpecifier(), new MutableInt(1));
+            cnt.increlonmelonnt();
+          } elonlselon {
+            schelonmaCount.put(schelonma.gelontSchelonmaSpeloncifielonr(), nelonw MutablelonInt(1));
           }
 
-          if (schema.isSetEntries()) {
-            addNewSchema(schema);
+          if (schelonma.isSelontelonntrielons()) {
+            addNelonwSchelonma(schelonma);
           }
         }
-      } else {
-        stats.mapFormatOneDownstreamMissingSchema.increment();
-        LOG.error("The downstream response {} is missing feature schema for request {}",
-            response, request);
+      } elonlselon {
+        stats.mapFormatOnelonDownstrelonamMissingSchelonma.increlonmelonnt();
+        LOG.elonrror("Thelon downstrelonam relonsponselon {} is missing felonaturelon schelonma for relonquelonst {}",
+            relonsponselon, relonquelonst);
       }
     }
 
-    int numMostOccurred = 0;
-    ThriftSearchFeatureSchemaSpecifier schemaMostOccurred = null;
-    for (Map.Entry<ThriftSearchFeatureSchemaSpecifier, MutableInt> entry : schemaCount.entrySet()) {
-      if (entry.getValue().toInteger() > numMostOccurred) {
-        numMostOccurred = entry.getValue().toInteger();
-        schemaMostOccurred = entry.getKey();
+    int numMostOccurrelond = 0;
+    ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr schelonmaMostOccurrelond = null;
+    for (Map.elonntry<ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr, MutablelonInt> elonntry : schelonmaCount.elonntrySelont()) {
+      if (elonntry.gelontValuelon().toIntelongelonr() > numMostOccurrelond) {
+        numMostOccurrelond = elonntry.gelontValuelon().toIntelongelonr();
+        schelonmaMostOccurrelond = elonntry.gelontKelony();
       }
     }
 
-    if (schemaMostOccurred == null && hasResults) {
-      stats.mapFormatAllDownstreamMissingSchema.increment();
-      LOG.error("None of the downstream host returned feature schema for {}", request);
+    if (schelonmaMostOccurrelond == null && hasRelonsults) {
+      stats.mapFormatAllDownstrelonamMissingSchelonma.increlonmelonnt();
+      LOG.elonrror("Nonelon of thelon downstrelonam host relonturnelond felonaturelon schelonma for {}", relonquelonst);
     }
-    return schemaMostOccurred;
+    relonturn schelonmaMostOccurrelond;
   }
 
-  private Stats getOrCreateMergeStat(String statPrefix) {
-    Stats stats = mergeStats.get(statPrefix);
+  privatelon Stats gelontOrCrelonatelonMelonrgelonStat(String statPrelonfix) {
+    Stats stats = melonrgelonStats.gelont(statPrelonfix);
     if (stats == null) {
-      Stats newStats = new Stats(statPrefix);
-      stats = mergeStats.putIfAbsent(statPrefix, newStats);
+      Stats nelonwStats = nelonw Stats(statPrelonfix);
+      stats = melonrgelonStats.putIfAbselonnt(statPrelonfix, nelonwStats);
       if (stats == null) {
-        stats = newStats;
+        stats = nelonwStats;
       }
     }
-    return stats;
+    relonturn stats;
   }
 }

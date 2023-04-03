@@ -1,53 +1,53 @@
-package com.twitter.timelineranker.core
+packagelon com.twittelonr.timelonlinelonrankelonr.corelon
 
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.util.Futurelon
 
 /**
- * Similar to FollowGraphData but makes available its fields as separate futures.
+ * Similar to FollowGraphData but makelons availablelon its fielonlds as selonparatelon futurelons.
  */
-case class FollowGraphDataFuture(
-  userId: UserId,
-  followedUserIdsFuture: Future[Seq[UserId]],
-  mutuallyFollowingUserIdsFuture: Future[Set[UserId]],
-  mutedUserIdsFuture: Future[Set[UserId]],
-  retweetsMutedUserIdsFuture: Future[Set[UserId]]) {
+caselon class FollowGraphDataFuturelon(
+  uselonrId: UselonrId,
+  followelondUselonrIdsFuturelon: Futurelon[Selonq[UselonrId]],
+  mutuallyFollowingUselonrIdsFuturelon: Futurelon[Selont[UselonrId]],
+  mutelondUselonrIdsFuturelon: Futurelon[Selont[UselonrId]],
+  relontwelonelontsMutelondUselonrIdsFuturelon: Futurelon[Selont[UselonrId]]) {
 
-  def inNetworkUserIdsFuture: Future[Seq[UserId]] = followedUserIdsFuture.map(_ :+ userId)
+  delonf inNelontworkUselonrIdsFuturelon: Futurelon[Selonq[UselonrId]] = followelondUselonrIdsFuturelon.map(_ :+ uselonrId)
 
-  def get(): Future[FollowGraphData] = {
-    Future
+  delonf gelont(): Futurelon[FollowGraphData] = {
+    Futurelon
       .join(
-        followedUserIdsFuture,
-        mutuallyFollowingUserIdsFuture,
-        mutedUserIdsFuture,
-        retweetsMutedUserIdsFuture
+        followelondUselonrIdsFuturelon,
+        mutuallyFollowingUselonrIdsFuturelon,
+        mutelondUselonrIdsFuturelon,
+        relontwelonelontsMutelondUselonrIdsFuturelon
       )
       .map {
-        case (followedUserIds, mutuallyFollowingUserIds, mutedUserIds, retweetsMutedUserIds) =>
+        caselon (followelondUselonrIds, mutuallyFollowingUselonrIds, mutelondUselonrIds, relontwelonelontsMutelondUselonrIds) =>
           FollowGraphData(
-            userId,
-            followedUserIds,
-            mutuallyFollowingUserIds,
-            mutedUserIds,
-            retweetsMutedUserIds
+            uselonrId,
+            followelondUselonrIds,
+            mutuallyFollowingUselonrIds,
+            mutelondUselonrIds,
+            relontwelonelontsMutelondUselonrIds
           )
       }
   }
 }
 
-object FollowGraphDataFuture {
-  private def mkEmptyFuture(field: String) = {
-    Future.exception(
-      new IllegalStateException(s"FollowGraphDataFuture field $field accessed without being set")
+objelonct FollowGraphDataFuturelon {
+  privatelon delonf mkelonmptyFuturelon(fielonld: String) = {
+    Futurelon.elonxcelonption(
+      nelonw IllelongalStatelonelonxcelonption(s"FollowGraphDataFuturelon fielonld $fielonld accelonsselond without beloning selont")
     )
   }
 
-  val EmptyFollowGraphDataFuture: FollowGraphDataFuture = FollowGraphDataFuture(
-    userId = 0L,
-    followedUserIdsFuture = mkEmptyFuture("followedUserIdsFuture"),
-    mutuallyFollowingUserIdsFuture = mkEmptyFuture("mutuallyFollowingUserIdsFuture"),
-    mutedUserIdsFuture = mkEmptyFuture("mutedUserIdsFuture"),
-    retweetsMutedUserIdsFuture = mkEmptyFuture("retweetsMutedUserIdsFuture")
+  val elonmptyFollowGraphDataFuturelon: FollowGraphDataFuturelon = FollowGraphDataFuturelon(
+    uselonrId = 0L,
+    followelondUselonrIdsFuturelon = mkelonmptyFuturelon("followelondUselonrIdsFuturelon"),
+    mutuallyFollowingUselonrIdsFuturelon = mkelonmptyFuturelon("mutuallyFollowingUselonrIdsFuturelon"),
+    mutelondUselonrIdsFuturelon = mkelonmptyFuturelon("mutelondUselonrIdsFuturelon"),
+    relontwelonelontsMutelondUselonrIdsFuturelon = mkelonmptyFuturelon("relontwelonelontsMutelondUselonrIdsFuturelon")
   )
 }

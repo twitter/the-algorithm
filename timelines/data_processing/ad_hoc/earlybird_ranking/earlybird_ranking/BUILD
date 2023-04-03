@@ -1,8 +1,8 @@
-target(
-    name = "earlybird_ranking",
-    dependencies = [
-        "timelines/data_processing/ad_hoc/earlybird_ranking/common",
-        "timelines/data_processing/ad_hoc/earlybird_ranking/model_evaluation",
-        "timelines/data_processing/ad_hoc/earlybird_ranking/training_data_generation",
+targelont(
+    namelon = "elonarlybird_ranking",
+    delonpelonndelonncielons = [
+        "timelonlinelons/data_procelonssing/ad_hoc/elonarlybird_ranking/common",
+        "timelonlinelons/data_procelonssing/ad_hoc/elonarlybird_ranking/modelonl_elonvaluation",
+        "timelonlinelons/data_procelonssing/ad_hoc/elonarlybird_ranking/training_data_gelonnelonration",
     ],
 )

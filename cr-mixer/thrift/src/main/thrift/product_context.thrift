@@ -1,21 +1,21 @@
-namespace java com.twitter.cr_mixer.thriftjava
-#@namespace scala com.twitter.cr_mixer.thriftscala
-#@namespace strato com.twitter.cr_mixer
+namelonspacelon java com.twittelonr.cr_mixelonr.thriftjava
+#@namelonspacelon scala com.twittelonr.cr_mixelonr.thriftscala
+#@namelonspacelon strato com.twittelonr.cr_mixelonr
 
-struct HomeContext {
-	2: optional i32 maxResults // enabled for QuaityFactor related DDGs only
-} (persisted='true', hasPersonalData='false')
+struct HomelonContelonxt {
+	2: optional i32 maxRelonsults // elonnablelond for QuaityFactor relonlatelond DDGs only
+} (pelonrsistelond='truelon', hasPelonrsonalData='falselon')
 
-struct NotificationsContext {
-	1: optional i32 devNull // not being used. it's a placeholder
-} (persisted='true', hasPersonalData='false')
+struct NotificationsContelonxt {
+	1: optional i32 delonvNull // not beloning uselond. it's a placelonholdelonr
+} (pelonrsistelond='truelon', hasPelonrsonalData='falselon')
 
-struct ExploreContext {
-  1: required bool isVideoOnly
-} (persisted='true', hasPersonalData='false')
+struct elonxplorelonContelonxt {
+  1: relonquirelond bool isVidelonoOnly
+} (pelonrsistelond='truelon', hasPelonrsonalData='falselon')
 
-union ProductContext {
-	1: HomeContext homeContext
-	2: NotificationsContext notificationsContext
-	3: ExploreContext exploreContext
-} (persisted='true', hasPersonalData='false')
+union ProductContelonxt {
+	1: HomelonContelonxt homelonContelonxt
+	2: NotificationsContelonxt notificationsContelonxt
+	3: elonxplorelonContelonxt elonxplorelonContelonxt
+} (pelonrsistelond='truelon', hasPelonrsonalData='falselon')

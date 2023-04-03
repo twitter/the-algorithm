@@ -1,281 +1,281 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.Closeable;
-import java.time.Duration;
+import java.io.Closelonablelon;
+import java.timelon.Duration;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrelonnt.atomic.AtomicBoolelonan;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
-import com.google.common.collect.ImmutableList;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Stopwatch;
+import com.googlelon.common.collelonct.ImmutablelonList;
 
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.ApiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncords;
+import org.apachelon.kafka.clielonnts.consumelonr.KafkaConsumelonr;
+import org.apachelon.kafka.common.TopicPartition;
+import org.apachelon.kafka.common.elonrrors.Apielonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.CaughtUpMonitor;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.WrappedKafkaApiException;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.util.LogFormatUtil;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdStatus;
+import com.twittelonr.selonarch.elonarlybird.common.CaughtUpMonitor;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.WrappelondKafkaApielonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdStatusCodelon;
 
 /**
- * Reads TVEs from Kafka and writes them to a PartitionWriter.
+ * Relonads TVelons from Kafka and writelons thelonm to a PartitionWritelonr.
  */
-public class EarlybirdKafkaConsumer implements Closeable {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdKafkaConsumer.class);
+public class elonarlybirdKafkaConsumelonr implelonmelonnts Closelonablelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdKafkaConsumelonr.class);
 
-  private static final Duration POLL_TIMEOUT = Duration.ofSeconds(1);
-  private static final String STATS_PREFIX = "earlybird_kafka_consumer_";
+  privatelon static final Duration POLL_TIMelonOUT = Duration.ofSelonconds(1);
+  privatelon static final String STATS_PRelonFIX = "elonarlybird_kafka_consumelonr_";
 
-  // See SEARCH-31827
-  private static final SearchCounter INGESTING_DONE =
-      SearchCounter.export(STATS_PREFIX + "ingesting_done");
-  private static final SearchRateCounter POLL_LOOP_EXCEPTIONS =
-      SearchRateCounter.export(STATS_PREFIX + "poll_loop_exceptions");
-  private static final SearchRateCounter FLUSHING_EXCEPTIONS =
-      SearchRateCounter.export(STATS_PREFIX + "flushing_exceptions");
+  // Selonelon SelonARCH-31827
+  privatelon static final SelonarchCountelonr INGelonSTING_DONelon =
+      SelonarchCountelonr.elonxport(STATS_PRelonFIX + "ingelonsting_donelon");
+  privatelon static final SelonarchRatelonCountelonr POLL_LOOP_elonXCelonPTIONS =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "poll_loop_elonxcelonptions");
+  privatelon static final SelonarchRatelonCountelonr FLUSHING_elonXCelonPTIONS =
+      SelonarchRatelonCountelonr.elonxport(STATS_PRelonFIX + "flushing_elonxcelonptions");
 
-  private static final SearchTimerStats TIMED_POLLS =
-      SearchTimerStats.export(STATS_PREFIX + "timed_polls");
-  private static final SearchTimerStats TIMED_INDEX_EVENTS =
-      SearchTimerStats.export(STATS_PREFIX + "timed_index_events");
+  privatelon static final SelonarchTimelonrStats TIMelonD_POLLS =
+      SelonarchTimelonrStats.elonxport(STATS_PRelonFIX + "timelond_polls");
+  privatelon static final SelonarchTimelonrStats TIMelonD_INDelonX_elonVelonNTS =
+      SelonarchTimelonrStats.elonxport(STATS_PRelonFIX + "timelond_indelonx_elonvelonnts");
 
-  private final AtomicBoolean running = new AtomicBoolean(true);
-  private final BalancingKafkaConsumer balancingKafkaConsumer;
-  private final PartitionWriter partitionWriter;
-  protected final TopicPartition tweetTopic;
-  protected final TopicPartition updateTopic;
-  private final KafkaConsumer<Long, ThriftVersionedEvents> underlyingKafkaConsumer;
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final EarlybirdIndexFlusher earlybirdIndexFlusher;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private boolean finishedIngestUntilCurrent;
-  private final CaughtUpMonitor indexCaughtUpMonitor;
+  privatelon final AtomicBoolelonan running = nelonw AtomicBoolelonan(truelon);
+  privatelon final BalancingKafkaConsumelonr balancingKafkaConsumelonr;
+  privatelon final PartitionWritelonr partitionWritelonr;
+  protelonctelond final TopicPartition twelonelontTopic;
+  protelonctelond final TopicPartition updatelonTopic;
+  privatelon final KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> undelonrlyingKafkaConsumelonr;
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
+  privatelon final elonarlybirdIndelonxFlushelonr elonarlybirdIndelonxFlushelonr;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
+  privatelon boolelonan finishelondIngelonstUntilCurrelonnt;
+  privatelon final CaughtUpMonitor indelonxCaughtUpMonitor;
 
-  protected class ConsumeBatchResult {
-    private boolean isCaughtUp;
-    private long readRecordsCount;
+  protelonctelond class ConsumelonBatchRelonsult {
+    privatelon boolelonan isCaughtUp;
+    privatelon long relonadReloncordsCount;
 
-    public ConsumeBatchResult(boolean isCaughtUp, long readRecordsCount) {
+    public ConsumelonBatchRelonsult(boolelonan isCaughtUp, long relonadReloncordsCount) {
       this.isCaughtUp = isCaughtUp;
-      this.readRecordsCount = readRecordsCount;
+      this.relonadReloncordsCount = relonadReloncordsCount;
     }
 
-    public boolean isCaughtUp() {
-      return isCaughtUp;
+    public boolelonan isCaughtUp() {
+      relonturn isCaughtUp;
     }
 
-    public long getReadRecordsCount() {
-      return readRecordsCount;
+    public long gelontRelonadReloncordsCount() {
+      relonturn relonadReloncordsCount;
     }
   }
 
-  public EarlybirdKafkaConsumer(
-      KafkaConsumer<Long, ThriftVersionedEvents> underlyingKafkaConsumer,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler,
-      PartitionWriter partitionWriter,
-      TopicPartition tweetTopic,
-      TopicPartition updateTopic,
-      EarlybirdIndexFlusher earlybirdIndexFlusher,
-      CaughtUpMonitor kafkaIndexCaughtUpMonitor
+  public elonarlybirdKafkaConsumelonr(
+      KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> undelonrlyingKafkaConsumelonr,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
+      PartitionWritelonr partitionWritelonr,
+      TopicPartition twelonelontTopic,
+      TopicPartition updatelonTopic,
+      elonarlybirdIndelonxFlushelonr elonarlybirdIndelonxFlushelonr,
+      CaughtUpMonitor kafkaIndelonxCaughtUpMonitor
   ) {
-    this.partitionWriter = partitionWriter;
-    this.underlyingKafkaConsumer = underlyingKafkaConsumer;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.tweetTopic = tweetTopic;
-    this.updateTopic = updateTopic;
-    this.earlybirdIndexFlusher = earlybirdIndexFlusher;
+    this.partitionWritelonr = partitionWritelonr;
+    this.undelonrlyingKafkaConsumelonr = undelonrlyingKafkaConsumelonr;
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
+    this.twelonelontTopic = twelonelontTopic;
+    this.updatelonTopic = updatelonTopic;
+    this.elonarlybirdIndelonxFlushelonr = elonarlybirdIndelonxFlushelonr;
 
-    LOG.info("Reading from Kafka topics: tweetTopic={}, updateTopic={}", tweetTopic, updateTopic);
-    underlyingKafkaConsumer.assign(ImmutableList.of(updateTopic, tweetTopic));
+    LOG.info("Relonading from Kafka topics: twelonelontTopic={}, updatelonTopic={}", twelonelontTopic, updatelonTopic);
+    undelonrlyingKafkaConsumelonr.assign(ImmutablelonList.of(updatelonTopic, twelonelontTopic));
 
-    this.balancingKafkaConsumer =
-        new BalancingKafkaConsumer(underlyingKafkaConsumer, tweetTopic, updateTopic);
-    this.finishedIngestUntilCurrent = false;
-    this.indexCaughtUpMonitor = kafkaIndexCaughtUpMonitor;
+    this.balancingKafkaConsumelonr =
+        nelonw BalancingKafkaConsumelonr(undelonrlyingKafkaConsumelonr, twelonelontTopic, updatelonTopic);
+    this.finishelondIngelonstUntilCurrelonnt = falselon;
+    this.indelonxCaughtUpMonitor = kafkaIndelonxCaughtUpMonitor;
   }
 
   /**
-   * Run the consumer, indexing from Kafka.
+   * Run thelon consumelonr, indelonxing from Kafka.
    */
-  @VisibleForTesting
+  @VisiblelonForTelonsting
   public void run() {
-    while (isRunning()) {
-      ConsumeBatchResult result = consumeBatch(true);
-      indexCaughtUpMonitor.setAndNotify(result.isCaughtUp());
+    whilelon (isRunning()) {
+      ConsumelonBatchRelonsult relonsult = consumelonBatch(truelon);
+      indelonxCaughtUpMonitor.selontAndNotify(relonsult.isCaughtUp());
     }
   }
 
   /**
-   * Reads from Kafka, starting at the given offsets, and applies the events until we are caught up
-   * with the current streams.
+   * Relonads from Kafka, starting at thelon givelonn offselonts, and applielons thelon elonvelonnts until welon arelon caught up
+   * with thelon currelonnt strelonams.
    */
-  public void ingestUntilCurrent(long tweetOffset, long updateOffset) {
-    Preconditions.checkState(!finishedIngestUntilCurrent);
-    Stopwatch stopwatch = Stopwatch.createStarted();
-    LOG.info("Ingest until current: seeking to Kafka offset {} for tweets and {} for updates.",
-        tweetOffset, updateOffset);
+  public void ingelonstUntilCurrelonnt(long twelonelontOffselont, long updatelonOffselont) {
+    Prelonconditions.chelonckStatelon(!finishelondIngelonstUntilCurrelonnt);
+    Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
+    LOG.info("Ingelonst until currelonnt: selonelonking to Kafka offselont {} for twelonelonts and {} for updatelons.",
+        twelonelontOffselont, updatelonOffselont);
 
     try {
-      underlyingKafkaConsumer.seek(tweetTopic, tweetOffset);
-      underlyingKafkaConsumer.seek(updateTopic, updateOffset);
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException("Can't seek to tweet and update offsets",
-          kafkaApiException);
+      undelonrlyingKafkaConsumelonr.selonelonk(twelonelontTopic, twelonelontOffselont);
+      undelonrlyingKafkaConsumelonr.selonelonk(updatelonTopic, updatelonOffselont);
+    } catch (Apielonxcelonption kafkaApielonxcelonption) {
+      throw nelonw WrappelondKafkaApielonxcelonption("Can't selonelonk to twelonelont and updatelon offselonts",
+          kafkaApielonxcelonption);
     }
 
-    Map<TopicPartition, Long> endOffsets;
+    Map<TopicPartition, Long> elonndOffselonts;
     try {
-      endOffsets = underlyingKafkaConsumer.endOffsets(ImmutableList.of(tweetTopic, updateTopic));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException("Can't find end offsets",
-          kafkaApiException);
+      elonndOffselonts = undelonrlyingKafkaConsumelonr.elonndOffselonts(ImmutablelonList.of(twelonelontTopic, updatelonTopic));
+    } catch (Apielonxcelonption kafkaApielonxcelonption) {
+      throw nelonw WrappelondKafkaApielonxcelonption("Can't find elonnd offselonts",
+          kafkaApielonxcelonption);
     }
 
-    if (endOffsets.size() > 0) {
-      LOG.info(String.format("Records until current: tweets=%,d, updates=%,d",
-          endOffsets.get(tweetTopic) - tweetOffset + 1,
-          endOffsets.get(updateTopic) - updateOffset + 1));
+    if (elonndOffselonts.sizelon() > 0) {
+      LOG.info(String.format("Reloncords until currelonnt: twelonelonts=%,d, updatelons=%,d",
+          elonndOffselonts.gelont(twelonelontTopic) - twelonelontOffselont + 1,
+          elonndOffselonts.gelont(updatelonTopic) - updatelonOffselont + 1));
     }
 
-    consumeBatchesUntilCurrent(true);
+    consumelonBatchelonsUntilCurrelonnt(truelon);
 
-    LOG.info("ingestUntilCurrent finished in {}.", stopwatch);
+    LOG.info("ingelonstUntilCurrelonnt finishelond in {}.", stopwatch);
 
-    partitionWriter.logState();
-    INGESTING_DONE.increment();
-    finishedIngestUntilCurrent = true;
+    partitionWritelonr.logStatelon();
+    INGelonSTING_DONelon.increlonmelonnt();
+    finishelondIngelonstUntilCurrelonnt = truelon;
   }
 
   /**
-   * Consume tweets and updates from streams until we're up to date.
+   * Consumelon twelonelonts and updatelons from strelonams until welon'relon up to datelon.
    *
-   * @return total number of read records.
+   * @relonturn total numbelonr of relonad reloncords.
    */
-  private long consumeBatchesUntilCurrent(boolean flushingEnabled) {
-    long totalRecordsRead = 0;
-    long batchesConsumed = 0;
+  privatelon long consumelonBatchelonsUntilCurrelonnt(boolelonan flushingelonnablelond) {
+    long totalReloncordsRelonad = 0;
+    long batchelonsConsumelond = 0;
 
-    while (isRunning()) {
-      ConsumeBatchResult result = consumeBatch(flushingEnabled);
-      batchesConsumed++;
-      totalRecordsRead += result.getReadRecordsCount();
-      if (isCurrent(result.isCaughtUp())) {
-        break;
+    whilelon (isRunning()) {
+      ConsumelonBatchRelonsult relonsult = consumelonBatch(flushingelonnablelond);
+      batchelonsConsumelond++;
+      totalReloncordsRelonad += relonsult.gelontRelonadReloncordsCount();
+      if (isCurrelonnt(relonsult.isCaughtUp())) {
+        brelonak;
       }
     }
 
-    LOG.info("Processed batches: {}", batchesConsumed);
+    LOG.info("Procelonsselond batchelons: {}", batchelonsConsumelond);
 
-    return totalRecordsRead;
+    relonturn totalReloncordsRelonad;
   }
 
-  // This method is overriden in MockEarlybirdKafkaConsumer.
-  public boolean isCurrent(boolean current) {
-    return current;
+  // This melonthod is ovelonrridelonn in MockelonarlybirdKafkaConsumelonr.
+  public boolelonan isCurrelonnt(boolelonan currelonnt) {
+    relonturn currelonnt;
   }
 
   /**
-   * We don't index during flushing, so after the flush is done, the index is stale.
-   * We need to get to current, before we rejoin the serverset so that upon rejoining we're
-   * not serving a stale index.
+   * Welon don't indelonx during flushing, so aftelonr thelon flush is donelon, thelon indelonx is stalelon.
+   * Welon nelonelond to gelont to currelonnt, belonforelon welon relonjoin thelon selonrvelonrselont so that upon relonjoining welon'relon
+   * not selonrving a stalelon indelonx.
    */
-  @VisibleForTesting
-  void getToCurrentPostFlush() {
-    LOG.info("Getting to current post flush");
-    Stopwatch stopwatch = Stopwatch.createStarted();
+  @VisiblelonForTelonsting
+  void gelontToCurrelonntPostFlush() {
+    LOG.info("Gelontting to currelonnt post flush");
+    Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
 
-    long totalRecordsRead = consumeBatchesUntilCurrent(false);
+    long totalReloncordsRelonad = consumelonBatchelonsUntilCurrelonnt(falselon);
 
-    LOG.info("Post flush, became current in: {}, after reading {} records.",
-        stopwatch, LogFormatUtil.formatInt(totalRecordsRead));
+    LOG.info("Post flush, beloncamelon currelonnt in: {}, aftelonr relonading {} reloncords.",
+        stopwatch, LogFormatUtil.formatInt(totalReloncordsRelonad));
   }
 
   /*
-   * @return true if we are current after indexing this batch.
+   * @relonturn truelon if welon arelon currelonnt aftelonr indelonxing this batch.
    */
-  @VisibleForTesting
-  protected ConsumeBatchResult consumeBatch(boolean flushingEnabled) {
-    long readRecordsCount = 0;
-    boolean isCaughtUp = false;
+  @VisiblelonForTelonsting
+  protelonctelond ConsumelonBatchRelonsult consumelonBatch(boolelonan flushingelonnablelond) {
+    long relonadReloncordsCount = 0;
+    boolelonan isCaughtUp = falselon;
 
     try {
       // Poll.
-      SearchTimer pollTimer = TIMED_POLLS.startNewTimer();
-      ConsumerRecords<Long, ThriftVersionedEvents> records =
-          balancingKafkaConsumer.poll(POLL_TIMEOUT);
-      readRecordsCount += records.count();
-      TIMED_POLLS.stopTimerAndIncrement(pollTimer);
+      SelonarchTimelonr pollTimelonr = TIMelonD_POLLS.startNelonwTimelonr();
+      ConsumelonrReloncords<Long, ThriftVelonrsionelondelonvelonnts> reloncords =
+          balancingKafkaConsumelonr.poll(POLL_TIMelonOUT);
+      relonadReloncordsCount += reloncords.count();
+      TIMelonD_POLLS.stopTimelonrAndIncrelonmelonnt(pollTimelonr);
 
-      // Index.
-      SearchTimer indexTimer = TIMED_INDEX_EVENTS.startNewTimer();
-      isCaughtUp = partitionWriter.indexBatch(records);
-      TIMED_INDEX_EVENTS.stopTimerAndIncrement(indexTimer);
-    } catch (Exception ex) {
-      POLL_LOOP_EXCEPTIONS.increment();
-      LOG.error("Exception in poll loop", ex);
+      // Indelonx.
+      SelonarchTimelonr indelonxTimelonr = TIMelonD_INDelonX_elonVelonNTS.startNelonwTimelonr();
+      isCaughtUp = partitionWritelonr.indelonxBatch(reloncords);
+      TIMelonD_INDelonX_elonVelonNTS.stopTimelonrAndIncrelonmelonnt(indelonxTimelonr);
+    } catch (elonxcelonption elonx) {
+      POLL_LOOP_elonXCelonPTIONS.increlonmelonnt();
+      LOG.elonrror("elonxcelonption in poll loop", elonx);
     }
 
     try {
-      // Possibly flush the index.
-      if (isCaughtUp && flushingEnabled) {
-        long tweetOffset = 0;
-        long updateOffset = 0;
+      // Possibly flush thelon indelonx.
+      if (isCaughtUp && flushingelonnablelond) {
+        long twelonelontOffselont = 0;
+        long updatelonOffselont = 0;
 
         try {
-          tweetOffset = underlyingKafkaConsumer.position(tweetTopic);
-          updateOffset = underlyingKafkaConsumer.position(updateTopic);
-        } catch (ApiException kafkaApiException) {
-          throw new WrappedKafkaApiException("can't get topic positions", kafkaApiException);
+          twelonelontOffselont = undelonrlyingKafkaConsumelonr.position(twelonelontTopic);
+          updatelonOffselont = undelonrlyingKafkaConsumelonr.position(updatelonTopic);
+        } catch (Apielonxcelonption kafkaApielonxcelonption) {
+          throw nelonw WrappelondKafkaApielonxcelonption("can't gelont topic positions", kafkaApielonxcelonption);
         }
 
-        EarlybirdIndexFlusher.FlushAttemptResult flushAttemptResult =
-            earlybirdIndexFlusher.flushIfNecessary(
-                tweetOffset, updateOffset, this::getToCurrentPostFlush);
+        elonarlybirdIndelonxFlushelonr.FlushAttelonmptRelonsult flushAttelonmptRelonsult =
+            elonarlybirdIndelonxFlushelonr.flushIfNeloncelonssary(
+                twelonelontOffselont, updatelonOffselont, this::gelontToCurrelonntPostFlush);
 
-        if (flushAttemptResult == EarlybirdIndexFlusher.FlushAttemptResult.FLUSH_ATTEMPT_MADE) {
-          // Viz might show this as a fairly high number, so we're printing it here to confirm
-          // the value on the server.
-          LOG.info("Finished flushing. Index freshness in ms: {}",
-              LogFormatUtil.formatInt(searchIndexingMetricSet.getIndexFreshnessInMillis()));
+        if (flushAttelonmptRelonsult == elonarlybirdIndelonxFlushelonr.FlushAttelonmptRelonsult.FLUSH_ATTelonMPT_MADelon) {
+          // Viz might show this as a fairly high numbelonr, so welon'relon printing it helonrelon to confirm
+          // thelon valuelon on thelon selonrvelonr.
+          LOG.info("Finishelond flushing. Indelonx frelonshnelonss in ms: {}",
+              LogFormatUtil.formatInt(selonarchIndelonxingMelontricSelont.gelontIndelonxFrelonshnelonssInMillis()));
         }
 
-        if (!finishedIngestUntilCurrent) {
-          LOG.info("Became current on startup. Tried to flush with result: {}",
-              flushAttemptResult);
+        if (!finishelondIngelonstUntilCurrelonnt) {
+          LOG.info("Beloncamelon currelonnt on startup. Trielond to flush with relonsult: {}",
+              flushAttelonmptRelonsult);
         }
       }
-    } catch (Exception ex) {
-      FLUSHING_EXCEPTIONS.increment();
-      LOG.error("Exception while flushing", ex);
+    } catch (elonxcelonption elonx) {
+      FLUSHING_elonXCelonPTIONS.increlonmelonnt();
+      LOG.elonrror("elonxcelonption whilelon flushing", elonx);
     }
 
-    return new ConsumeBatchResult(isCaughtUp, readRecordsCount);
+    relonturn nelonw ConsumelonBatchRelonsult(isCaughtUp, relonadReloncordsCount);
   }
 
-  public boolean isRunning() {
-    return running.get() && EarlybirdStatus.getStatusCode() != EarlybirdStatusCode.STOPPING;
+  public boolelonan isRunning() {
+    relonturn running.gelont() && elonarlybirdStatus.gelontStatusCodelon() != elonarlybirdStatusCodelon.STOPPING;
   }
 
-  public void prepareAfterStartingWithIndex(long maxIndexedTweetId) {
-    partitionWriter.prepareAfterStartingWithIndex(maxIndexedTweetId);
+  public void prelonparelonAftelonrStartingWithIndelonx(long maxIndelonxelondTwelonelontId) {
+    partitionWritelonr.prelonparelonAftelonrStartingWithIndelonx(maxIndelonxelondTwelonelontId);
   }
 
-  public void close() {
-    balancingKafkaConsumer.close();
-    running.set(false);
+  public void closelon() {
+    balancingKafkaConsumelonr.closelon();
+    running.selont(falselon);
   }
 }

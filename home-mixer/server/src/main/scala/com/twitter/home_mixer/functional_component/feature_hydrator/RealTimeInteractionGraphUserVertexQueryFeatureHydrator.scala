@@ -1,47 +1,47 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.google.inject.name.Named
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.RealTimeInteractionGraphUserVertexCache
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.cache.ReadCache
-import com.twitter.stitch.Stitch
-import com.twitter.wtf.real_time_interaction_graph.{thriftscala => ig}
+import com.googlelon.injelonct.namelon.Namelond
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.RelonalTimelonIntelonractionGraphUselonrVelonrtelonxCachelon
+import com.twittelonr.homelon_mixelonr.util.ObselonrvelondKelonyValuelonRelonsultHandlelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.cachelon.RelonadCachelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.wtf.relonal_timelon_intelonraction_graph.{thriftscala => ig}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object RealTimeInteractionGraphUserVertexQueryFeature
-    extends Feature[PipelineQuery, Option[ig.UserVertex]]
+objelonct RelonalTimelonIntelonractionGraphUselonrVelonrtelonxQuelonryFelonaturelon
+    elonxtelonnds Felonaturelon[PipelonlinelonQuelonry, Option[ig.UselonrVelonrtelonx]]
 
-@Singleton
-class RealTimeInteractionGraphUserVertexQueryFeatureHydrator @Inject() (
-  @Named(RealTimeInteractionGraphUserVertexCache) client: ReadCache[Long, ig.UserVertex],
-  override val statsReceiver: StatsReceiver)
-    extends QueryFeatureHydrator[PipelineQuery]
-    with ObservedKeyValueResultHandler {
+@Singlelonton
+class RelonalTimelonIntelonractionGraphUselonrVelonrtelonxQuelonryFelonaturelonHydrator @Injelonct() (
+  @Namelond(RelonalTimelonIntelonractionGraphUselonrVelonrtelonxCachelon) clielonnt: RelonadCachelon[Long, ig.UselonrVelonrtelonx],
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry]
+    with ObselonrvelondKelonyValuelonRelonsultHandlelonr {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("RealTimeInteractionGraphUserVertex")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("RelonalTimelonIntelonractionGraphUselonrVelonrtelonx")
 
-  override val features: Set[Feature[_, _]] = Set(RealTimeInteractionGraphUserVertexQueryFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(RelonalTimelonIntelonractionGraphUselonrVelonrtelonxQuelonryFelonaturelon)
 
-  override val statScope: String = identifier.toString
+  ovelonrridelon val statScopelon: String = idelonntifielonr.toString
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val userId = query.getRequiredUserId
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    val uselonrId = quelonry.gelontRelonquirelondUselonrId
 
-    Stitch.callFuture(
-      client.get(Seq(userId)).map { results =>
-        val feature = observedGet(key = Some(userId), keyValueResult = results)
-        FeatureMapBuilder()
-          .add(RealTimeInteractionGraphUserVertexQueryFeature, feature)
+    Stitch.callFuturelon(
+      clielonnt.gelont(Selonq(uselonrId)).map { relonsults =>
+        val felonaturelon = obselonrvelondGelont(kelony = Somelon(uselonrId), kelonyValuelonRelonsult = relonsults)
+        FelonaturelonMapBuildelonr()
+          .add(RelonalTimelonIntelonractionGraphUselonrVelonrtelonxQuelonryFelonaturelon, felonaturelon)
           .build()
       }
     )

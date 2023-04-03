@@ -1,169 +1,169 @@
-namespace java com.twitter.ann.common.thriftjava
-#@namespace scala com.twitter.ann.common.thriftscala
-#@namespace strato com.twitter.ann.common
-namespace py gen.twitter.ann.common
+namelonspacelon java com.twittelonr.ann.common.thriftjava
+#@namelonspacelon scala com.twittelonr.ann.common.thriftscala
+#@namelonspacelon strato com.twittelonr.ann.common
+namelonspacelon py gelonn.twittelonr.ann.common
 
-include "com/twitter/mediaservices/commons/ServerCommon.thrift"
-include "com/twitter/ml/api/embedding.thrift"
+includelon "com/twittelonr/melondiaselonrvicelons/commons/SelonrvelonrCommon.thrift"
+includelon "com/twittelonr/ml/api/elonmbelondding.thrift"
 
 /**
-* Thrift schema for storing file based Index mapping
+* Thrift schelonma for storing filelon baselond Indelonx mapping
 */
-struct FileBasedIndexIdStore {
-  1: optional map<i64, binary> indexIdMap
+struct FilelonBaselondIndelonxIdStorelon {
+  1: optional map<i64, binary> indelonxIdMap
 }
 
-enum DistanceMetric {
-  L2, Cosine, InnerProduct, 
-  RESERVED_4, RESERVED_5, RESERVED_6, RESERVED_7, EditDistance
-} (persisted = 'true',  strato.graphql.typename='DistanceMetric')
+elonnum DistancelonMelontric {
+  L2, Cosinelon, InnelonrProduct,
+  RelonSelonRVelonD_4, RelonSelonRVelonD_5, RelonSelonRVelonD_6, RelonSelonRVelonD_7, elonditDistancelon
+} (pelonrsistelond = 'truelon',  strato.graphql.typelonnamelon='DistancelonMelontric')
 
-struct AnnoyIndexMetadata {
-  1: i32 dimension
-  2: DistanceMetric distanceMetric
-  3: i32 numOfTrees
-  4: i64 numOfVectorsIndexed
-} (persisted = 'true',  strato.graphql.typename='AnnoyIndexMetadata')
+struct AnnoyIndelonxMelontadata {
+  1: i32 dimelonnsion
+  2: DistancelonMelontric distancelonMelontric
+  3: i32 numOfTrelonelons
+  4: i64 numOfVelonctorsIndelonxelond
+} (pelonrsistelond = 'truelon',  strato.graphql.typelonnamelon='AnnoyIndelonxMelontadata')
 
-struct AnnoyRuntimeParam {
-  /* Number of vectors to evaluate while searching. A larger value will give more accurate results, but will take longer time to return.
-   * Default value would be numberOfTrees*numberOfNeigboursRequested
+struct AnnoyRuntimelonParam {
+  /* Numbelonr of velonctors to elonvaluatelon whilelon selonarching. A largelonr valuelon will givelon morelon accuratelon relonsults, but will takelon longelonr timelon to relonturn.
+   * Delonfault valuelon would belon numbelonrOfTrelonelons*numbelonrOfNelonigboursRelonquelonstelond
    */
-  1: optional i32 numOfNodesToExplore
+  1: optional i32 numOfNodelonsToelonxplorelon
 }
 
-struct HnswRuntimeParam {
-  // More the value of ef better the recall with but at cost of latency.
-  // Set it greater than equal to number of neighbours required.
-  1: i32 ef
+struct HnswRuntimelonParam {
+  // Morelon thelon valuelon of elonf belonttelonr thelon reloncall with but at cost of latelonncy.
+  // Selont it grelonatelonr than elonqual to numbelonr of nelonighbours relonquirelond.
+  1: i32 elonf
 }
 
-// These options are subset of all possible parameters, defined by
-// https://github.com/facebookresearch/faiss/blob/36f2998a6469280cef3b0afcde2036935a29aa1f/faiss/AutoTune.cpp#L444
-// quantizer_ prefix changes IndexIVF.quantizer parameters instead
-struct FaissRuntimeParam {
-  // How many cells to visit in IVFPQ. Higher is slower / more precise.
-  1: optional i32 nprobe
-  // Depth of search in HNSW. Higher is slower / more precise.
-  2: optional i32 quantizer_ef
-  // How many times more neighbours are requested from underlying index by IndexRefine.
-  3: optional i32 quantizer_kfactor_rf
-  // Same as 1: but for quantizer
-  4: optional i32 quantizer_nprobe
-  // Hamming distance threshold to filter neighbours when searching.
+// Thelonselon options arelon subselont of all possiblelon paramelontelonrs, delonfinelond by
+// https://github.com/facelonbookrelonselonarch/faiss/blob/36f2998a6469280celonf3b0afcdelon2036935a29aa1f/faiss/AutoTunelon.cpp#L444
+// quantizelonr_ prelonfix changelons IndelonxIVF.quantizelonr paramelontelonrs instelonad
+struct FaissRuntimelonParam {
+  // How many celonlls to visit in IVFPQ. Highelonr is slowelonr / morelon prelonciselon.
+  1: optional i32 nprobelon
+  // Delonpth of selonarch in HNSW. Highelonr is slowelonr / morelon prelonciselon.
+  2: optional i32 quantizelonr_elonf
+  // How many timelons morelon nelonighbours arelon relonquelonstelond from undelonrlying indelonx by IndelonxRelonfinelon.
+  3: optional i32 quantizelonr_kfactor_rf
+  // Samelon as 1: but for quantizelonr
+  4: optional i32 quantizelonr_nprobelon
+  // Hamming distancelon threlonshold to filtelonr nelonighbours whelonn selonarching.
   5: optional i32 ht
 }
 
-// Every ANN index will have this metadata and it'll be used by the query service for validation.
-struct AnnIndexMetadata {
- 1: optional i64 timestamp
- 2: optional i32 index_size
+// elonvelonry ANN indelonx will havelon this melontadata and it'll belon uselond by thelon quelonry selonrvicelon for validation.
+struct AnnIndelonxMelontadata {
+ 1: optional i64 timelonstamp
+ 2: optional i32 indelonx_sizelon
  3: optional bool withGroups
  4: optional i32 numGroups
-} (persisted = 'true')
+} (pelonrsistelond = 'truelon')
 
-struct HnswIndexMetadata {
- 1: i32 dimension
- 2: DistanceMetric distanceMetric
- 3: i32 numElements
-} (persisted = 'true')
+struct HnswIndelonxMelontadata {
+ 1: i32 dimelonnsion
+ 2: DistancelonMelontric distancelonMelontric
+ 3: i32 numelonlelonmelonnts
+} (pelonrsistelond = 'truelon')
 
-struct HnswInternalIndexMetadata {
- 1: i32 maxLevel
- 2: optional binary entryPoint
- 3: i32 efConstruction
+struct HnswIntelonrnalIndelonxMelontadata {
+ 1: i32 maxLelonvelonl
+ 2: optional binary elonntryPoint
+ 3: i32 elonfConstruction
  4: i32 maxM
- 5: i32 numElements
-} (persisted = 'true')
+ 5: i32 numelonlelonmelonnts
+} (pelonrsistelond = 'truelon')
 
-struct HnswGraphEntry {
-  1: i32 level
-  2: binary key
-  3: list<binary> neighbours
-} (persisted = 'true', strato.graphql.typename='HnswGraphEntry')
+struct HnswGraphelonntry {
+  1: i32 lelonvelonl
+  2: binary kelony
+  3: list<binary> nelonighbours
+} (pelonrsistelond = 'truelon', strato.graphql.typelonnamelon='HnswGraphelonntry')
 
-enum IndexType {
-   TWEET, 
-   USER, 
+elonnum IndelonxTypelon {
+   TWelonelonT,
+   USelonR,
    WORD, 
    LONG, 
    INT, 
    STRING, 
-   RESERVED_7, RESERVED_8, RESERVED_9, RESERVED_10
-} (persisted = 'true',  strato.graphql.typename='IndexType')
+   RelonSelonRVelonD_7, RelonSelonRVelonD_8, RelonSelonRVelonD_9, RelonSelonRVelonD_10
+} (pelonrsistelond = 'truelon',  strato.graphql.typelonnamelon='IndelonxTypelon')
 
-struct CosineDistance {
-  1: required double distance
+struct CosinelonDistancelon {
+  1: relonquirelond doublelon distancelon
 }
 
-struct L2Distance {
-  1: required double distance
+struct L2Distancelon {
+  1: relonquirelond doublelon distancelon
 }
 
-struct InnerProductDistance {
-  1: required double distance
+struct InnelonrProductDistancelon {
+  1: relonquirelond doublelon distancelon
 }
 
-struct EditDistance {
-  1: required i32 distance
+struct elonditDistancelon {
+  1: relonquirelond i32 distancelon
 }
 
-union Distance {
-  1: CosineDistance cosineDistance
-  2: L2Distance l2Distance
-  3: InnerProductDistance innerProductDistance
-  4: EditDistance editDistance
+union Distancelon {
+  1: CosinelonDistancelon cosinelonDistancelon
+  2: L2Distancelon l2Distancelon
+  3: InnelonrProductDistancelon innelonrProductDistancelon
+  4: elonditDistancelon elonditDistancelon
 }
 
-struct NearestNeighbor {
-  1: required binary id
-  2: optional Distance distance
+struct NelonarelonstNelonighbor {
+  1: relonquirelond binary id
+  2: optional Distancelon distancelon
 }
 
-struct NearestNeighborResult {
-  // This list is ordered from nearest to furthest neighbor
-  1: required list<NearestNeighbor> nearestNeighbors
+struct NelonarelonstNelonighborRelonsult {
+  // This list is ordelonrelond from nelonarelonst to furthelonst nelonighbor
+  1: relonquirelond list<NelonarelonstNelonighbor> nelonarelonstNelonighbors
 }
 
-// Different runtime/tuning params while querying for indexes to control accuracy/latency etc..
-union RuntimeParams {
-  1: AnnoyRuntimeParam annoyParam
-  2: HnswRuntimeParam hnswParam
-  3: FaissRuntimeParam faissParam
+// Diffelonrelonnt runtimelon/tuning params whilelon quelonrying for indelonxelons to control accuracy/latelonncy elontc..
+union RuntimelonParams {
+  1: AnnoyRuntimelonParam annoyParam
+  2: HnswRuntimelonParam hnswParam
+  3: FaissRuntimelonParam faissParam
 }
 
-struct NearestNeighborQuery {
-  1: required embedding.Embedding embedding
-  2: required bool with_distance
-  3: required RuntimeParams runtimeParams,
-  4: required i32 numberOfNeighbors,
-  // The purpose of the key here is to load the index in memory as a map of Option[key] to index
-  // If the key is not specified in the query, the map value corresponding to None key will be used
-  // as the queryable index to perform Nearest Neighbor search on
-  5: optional string key
+struct NelonarelonstNelonighborQuelonry {
+  1: relonquirelond elonmbelondding.elonmbelondding elonmbelondding
+  2: relonquirelond bool with_distancelon
+  3: relonquirelond RuntimelonParams runtimelonParams,
+  4: relonquirelond i32 numbelonrOfNelonighbors,
+  // Thelon purposelon of thelon kelony helonrelon is to load thelon indelonx in melonmory as a map of Option[kelony] to indelonx
+  // If thelon kelony is not speloncifielond in thelon quelonry, thelon map valuelon correlonsponding to Nonelon kelony will belon uselond
+  // as thelon quelonryablelon indelonx to pelonrform Nelonarelonst Nelonighbor selonarch on
+  5: optional string kelony
 }
 
-enum BadRequestCode {
-  VECTOR_DIMENSION_MISMATCH,
-  RESERVED_2,
-  RESERVED_3,
-  RESERVED_4,
-  RESERVED_5,
-  RESERVED_6,
-  RESERVED_7,
-  RESERVED_8,
-  RESERVED_9
+elonnum BadRelonquelonstCodelon {
+  VelonCTOR_DIMelonNSION_MISMATCH,
+  RelonSelonRVelonD_2,
+  RelonSelonRVelonD_3,
+  RelonSelonRVelonD_4,
+  RelonSelonRVelonD_5,
+  RelonSelonRVelonD_6,
+  RelonSelonRVelonD_7,
+  RelonSelonRVelonD_8,
+  RelonSelonRVelonD_9
 }
 
-exception BadRequest {
-  1: string message
-  2: required BadRequestCode code
+elonxcelonption BadRelonquelonst {
+  1: string melonssagelon
+  2: relonquirelond BadRelonquelonstCodelon codelon
 }
 
-service AnnQueryService {
+selonrvicelon AnnQuelonrySelonrvicelon {
   /**
-  * Get approximate nearest neighbor for a given vector
+  * Gelont approximatelon nelonarelonst nelonighbor for a givelonn velonctor
   */
-  NearestNeighborResult query(1: NearestNeighborQuery query)
-    throws (1: ServerCommon.ServerError serverError, 2: BadRequest badRequest)
+  NelonarelonstNelonighborRelonsult quelonry(1: NelonarelonstNelonighborQuelonry quelonry)
+    throws (1: SelonrvelonrCommon.Selonrvelonrelonrror selonrvelonrelonrror, 2: BadRelonquelonst badRelonquelonst)
 }

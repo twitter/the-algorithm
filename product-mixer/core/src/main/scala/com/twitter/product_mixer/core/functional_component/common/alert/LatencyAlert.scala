@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.common.alert.predicate.TriggerIfLatencyAbove
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon.TriggelonrIfLatelonncyAbovelon
 
 /**
- * [[GenericClientLatencyAlert]] triggers when the Latency for the component this is used with
- * rises above the [[TriggerIfLatencyAbove]] threshold for the configured amount of time
+ * [[GelonnelonricClielonntLatelonncyAlelonrt]] triggelonrs whelonn thelon Latelonncy for thelon componelonnt this is uselond with
+ * riselons abovelon thelon [[TriggelonrIfLatelonncyAbovelon]] threlonshold for thelon configurelond amount of timelon
  */
-case class LatencyAlert(
-  override val notificationGroup: NotificationGroup,
-  percentile: Percentile,
-  override val warnPredicate: TriggerIfLatencyAbove,
-  override val criticalPredicate: TriggerIfLatencyAbove,
-  override val runbookLink: Option[String] = None)
-    extends Alert
-    with IsObservableFromStrato {
-  override val alertType: AlertType = Latency
+caselon class LatelonncyAlelonrt(
+  ovelonrridelon val notificationGroup: NotificationGroup,
+  pelonrcelonntilelon: Pelonrcelonntilelon,
+  ovelonrridelon val warnPrelondicatelon: TriggelonrIfLatelonncyAbovelon,
+  ovelonrridelon val criticalPrelondicatelon: TriggelonrIfLatelonncyAbovelon,
+  ovelonrridelon val runbookLink: Option[String] = Nonelon)
+    elonxtelonnds Alelonrt
+    with IsObselonrvablelonFromStrato {
+  ovelonrridelon val alelonrtTypelon: AlelonrtTypelon = Latelonncy
 
-  override val metricSuffix: Option[String] = Some(percentile.metricSuffix)
+  ovelonrridelon val melontricSuffix: Option[String] = Somelon(pelonrcelonntilelon.melontricSuffix)
 }

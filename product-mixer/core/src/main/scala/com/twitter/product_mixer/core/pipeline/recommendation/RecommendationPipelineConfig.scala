@@ -1,262 +1,262 @@
-package com.twitter.product_mixer.core.pipeline.recommendation
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.reloncommelonndation
 
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseCandidateFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BaseQueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifierStack
-import com.twitter.product_mixer.core.model.common.identifier.RecommendationPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.PipelineConfigCompanion
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ClosedGate
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
-import com.twitter.product_mixer.core.quality_factor.QualityFactorConfig
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.InselonrtAppelonndRelonsults
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BaselonQuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonrStack
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ReloncommelonndationPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScoringPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.FailOpelonnPolicy
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonConfigCompanion
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.DelonpelonndelonntCandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.CloselondGatelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring.ScoringPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.quality_factor.QualityFactorConfig
 
 /**
- *  This is the configuration necessary to generate a Recommendation Pipeline. Product code should create a
- *  RecommendationPipelineConfig, and then use a RecommendationPipelineBuilder to get the final RecommendationPipeline which can
- *  process requests.
+ *  This is thelon configuration neloncelonssary to gelonnelonratelon a Reloncommelonndation Pipelonlinelon. Product codelon should crelonatelon a
+ *  ReloncommelonndationPipelonlinelonConfig, and thelonn uselon a ReloncommelonndationPipelonlinelonBuildelonr to gelont thelon final ReloncommelonndationPipelonlinelon which can
+ *  procelonss relonquelonsts.
  *
- * @tparam Query - The domain model for the query or request
- * @tparam Candidate - The type of the candidates that the Candidate Pipelines are generating
- * @tparam UnmarshalledResultType - The result type of the pipeline, but before marshalling to a wire protocol like URT
- * @tparam Result - The final result that will be served to users
+ * @tparam Quelonry - Thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam Candidatelon - Thelon typelon of thelon candidatelons that thelon Candidatelon Pipelonlinelons arelon gelonnelonrating
+ * @tparam UnmarshallelondRelonsultTypelon - Thelon relonsult typelon of thelon pipelonlinelon, but belonforelon marshalling to a wirelon protocol likelon URT
+ * @tparam Relonsult - Thelon final relonsult that will belon selonrvelond to uselonrs
  */
-trait RecommendationPipelineConfig[
-  Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  UnmarshalledResultType <: HasMarshalling,
-  Result]
-    extends PipelineConfig {
+trait ReloncommelonndationPipelonlinelonConfig[
+  Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any],
+  UnmarshallelondRelonsultTypelon <: HasMarshalling,
+  Relonsult]
+    elonxtelonnds PipelonlinelonConfig {
 
-  override val identifier: RecommendationPipelineIdentifier
-
-  /**
-   * Recommendation Pipeline Gates will be executed before any other step (including retrieval from candidate
-   * pipelines). They're executed sequentially, and any "Stop" result will prevent pipeline execution.
-   */
-  def gates: Seq[Gate[Query]] = Seq.empty
+  ovelonrridelon val idelonntifielonr: ReloncommelonndationPipelonlinelonIdelonntifielonr
 
   /**
-   * A recommendation pipeline can fetch query-level features before candidate pipelines are executed.
+   * Reloncommelonndation Pipelonlinelon Gatelons will belon elonxeloncutelond belonforelon any othelonr stelonp (including relontrielonval from candidatelon
+   * pipelonlinelons). Thelony'relon elonxeloncutelond selonquelonntially, and any "Stop" relonsult will prelonvelonnt pipelonlinelon elonxeloncution.
    */
-  def fetchQueryFeatures: Seq[BaseQueryFeatureHydrator[Query, _]] = Seq.empty
+  delonf gatelons: Selonq[Gatelon[Quelonry]] = Selonq.elonmpty
 
   /**
-   * Candidate pipelines retrieve candidates for possible inclusion in the result
+   * A reloncommelonndation pipelonlinelon can felontch quelonry-lelonvelonl felonaturelons belonforelon candidatelon pipelonlinelons arelon elonxeloncutelond.
    */
-  def fetchQueryFeaturesPhase2: Seq[BaseQueryFeatureHydrator[Query, _]] = Seq.empty
+  delonf felontchQuelonryFelonaturelons: Selonq[BaselonQuelonryFelonaturelonHydrator[Quelonry, _]] = Selonq.elonmpty
 
   /**
-   * What candidate pipelines should this Recommendations Pipeline get candidate from?
+   * Candidatelon pipelonlinelons relontrielonvelon candidatelons for possiblelon inclusion in thelon relonsult
    */
-  def candidatePipelines: Seq[CandidatePipelineConfig[Query, _, _, _]]
+  delonf felontchQuelonryFelonaturelonsPhaselon2: Selonq[BaselonQuelonryFelonaturelonHydrator[Quelonry, _]] = Selonq.elonmpty
 
   /**
-   * Dependent candidate pipelines to retrieve candidates that depend on the result of [[candidatePipelines]]
-   * [[DependentCandidatePipelineConfig]] have access to the list of previously retrieved & decorated
-   * candidates for use in constructing the query object.
+   * What candidatelon pipelonlinelons should this Reloncommelonndations Pipelonlinelon gelont candidatelon from?
    */
-  def dependentCandidatePipelines: Seq[DependentCandidatePipelineConfig[Query, _, _, _]] = Seq.empty
+  delonf candidatelonPipelonlinelons: Selonq[CandidatelonPipelonlinelonConfig[Quelonry, _, _, _]]
 
   /**
-   * Takes final ranked list of candidates & apply any business logic (e.g, deduplicating and merging
-   * candidates before scoring).
+   * Delonpelonndelonnt candidatelon pipelonlinelons to relontrielonvelon candidatelons that delonpelonnd on thelon relonsult of [[candidatelonPipelonlinelons]]
+   * [[DelonpelonndelonntCandidatelonPipelonlinelonConfig]] havelon accelonss to thelon list of prelonviously relontrielonvelond & deloncoratelond
+   * candidatelons for uselon in constructing thelon quelonry objelonct.
    */
-  def postCandidatePipelinesSelectors: Seq[Selector[Query]] = Seq(InsertAppendResults(AllPipelines))
+  delonf delonpelonndelonntCandidatelonPipelonlinelons: Selonq[DelonpelonndelonntCandidatelonPipelonlinelonConfig[Quelonry, _, _, _]] = Selonq.elonmpty
 
   /**
-   * After selectors are run, you can fetch features for each candidate.
-   * The existing features from previous hydrations are passed in as inputs. You are not expected to
-   * put them into the resulting feature map yourself - they will be merged for you by the platform.
+   * Takelons final rankelond list of candidatelons & apply any businelonss logic (elon.g, delonduplicating and melonrging
+   * candidatelons belonforelon scoring).
    */
-  def postCandidatePipelinesFeatureHydration: Seq[
-    BaseCandidateFeatureHydrator[Query, Candidate, _]
+  delonf postCandidatelonPipelonlinelonsSelonlelonctors: Selonq[Selonlelonctor[Quelonry]] = Selonq(InselonrtAppelonndRelonsults(AllPipelonlinelons))
+
+  /**
+   * Aftelonr selonlelonctors arelon run, you can felontch felonaturelons for elonach candidatelon.
+   * Thelon elonxisting felonaturelons from prelonvious hydrations arelon passelond in as inputs. You arelon not elonxpelonctelond to
+   * put thelonm into thelon relonsulting felonaturelon map yourselonlf - thelony will belon melonrgelond for you by thelon platform.
+   */
+  delonf postCandidatelonPipelonlinelonsFelonaturelonHydration: Selonq[
+    BaselonCandidatelonFelonaturelonHydrator[Quelonry, Candidatelon, _]
   ] =
-    Seq.empty
+    Selonq.elonmpty
 
   /**
-   * Global filters to run on all candidates.
+   * Global filtelonrs to run on all candidatelons.
    */
-  def globalFilters: Seq[Filter[Query, Candidate]] = Seq.empty
+  delonf globalFiltelonrs: Selonq[Filtelonr[Quelonry, Candidatelon]] = Selonq.elonmpty
 
   /**
-   * By default, a Recommendation Pipeline will fail closed - if any candidate or scoring
-   * pipeline fails to return a result, then the Recommendation Pipeline will not return a result.
-   * You can adjust this default policy, or provide specific policies to specific pipelines.
-   * Those specific policies will take priority.
+   * By delonfault, a Reloncommelonndation Pipelonlinelon will fail closelond - if any candidatelon or scoring
+   * pipelonlinelon fails to relonturn a relonsult, thelonn thelon Reloncommelonndation Pipelonlinelon will not relonturn a relonsult.
+   * You can adjust this delonfault policy, or providelon speloncific policielons to speloncific pipelonlinelons.
+   * Thoselon speloncific policielons will takelon priority.
    *
-   * FailOpenPolicy.All will always fail open (the RecommendationPipeline will continue without that pipeline)
-   * FailOpenPolicy.Never will always fail closed (the RecommendationPipeline will fail if that pipeline fails)
+   * FailOpelonnPolicy.All will always fail opelonn (thelon ReloncommelonndationPipelonlinelon will continuelon without that pipelonlinelon)
+   * FailOpelonnPolicy.Nelonvelonr will always fail closelond (thelon ReloncommelonndationPipelonlinelon will fail if that pipelonlinelon fails)
    *
-   * There's a default policy, and a specific Map of policies that takes precedence.
+   * Thelonrelon's a delonfault policy, and a speloncific Map of policielons that takelons preloncelondelonncelon.
    */
-  def defaultFailOpenPolicy: FailOpenPolicy = FailOpenPolicy(Set(ClosedGate))
-  def candidatePipelineFailOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy] =
-    Map.empty
-  def scoringPipelineFailOpenPolicies: Map[ScoringPipelineIdentifier, FailOpenPolicy] = Map.empty
+  delonf delonfaultFailOpelonnPolicy: FailOpelonnPolicy = FailOpelonnPolicy(Selont(CloselondGatelon))
+  delonf candidatelonPipelonlinelonFailOpelonnPolicielons: Map[CandidatelonPipelonlinelonIdelonntifielonr, FailOpelonnPolicy] =
+    Map.elonmpty
+  delonf scoringPipelonlinelonFailOpelonnPolicielons: Map[ScoringPipelonlinelonIdelonntifielonr, FailOpelonnPolicy] = Map.elonmpty
 
   /**
-   ** [[qualityFactorConfigs]] associates [[QualityFactorConfig]]s to specific candidate pipelines
-   * using [[ComponentIdentifier]].
+   ** [[qualityFactorConfigs]] associatelons [[QualityFactorConfig]]s to speloncific candidatelon pipelonlinelons
+   * using [[ComponelonntIdelonntifielonr]].
    */
-  def qualityFactorConfigs: Map[ComponentIdentifier, QualityFactorConfig] =
-    Map.empty
+  delonf qualityFactorConfigs: Map[ComponelonntIdelonntifielonr, QualityFactorConfig] =
+    Map.elonmpty
 
   /**
-   * Scoring pipelines for scoring candidates.
-   * @note These do not drop or re-order candidates, you should do those in the sub-sequent selectors
-   * step based off of the scores on candidates set in those [[ScoringPipeline]]s.
+   * Scoring pipelonlinelons for scoring candidatelons.
+   * @notelon Thelonselon do not drop or relon-ordelonr candidatelons, you should do thoselon in thelon sub-selonquelonnt selonlelonctors
+   * stelonp baselond off of thelon scorelons on candidatelons selont in thoselon [[ScoringPipelonlinelon]]s.
    */
-  def scoringPipelines: Seq[ScoringPipelineConfig[Query, Candidate]]
+  delonf scoringPipelonlinelons: Selonq[ScoringPipelonlinelonConfig[Quelonry, Candidatelon]]
 
   /**
-   * Takes final ranked list of candidates & apply any business logic (e.g, capping number
+   * Takelons final rankelond list of candidatelons & apply any businelonss logic (elon.g, capping numbelonr
    * of ad accounts or pacing ad accounts).
    */
-  def resultSelectors: Seq[Selector[Query]]
+  delonf relonsultSelonlelonctors: Selonq[Selonlelonctor[Quelonry]]
 
   /**
-   * Takes the final selected list of candidates and applies a final list of filters.
-   * Useful for doing very expensive filtering at the end of your pipeline.
+   * Takelons thelon final selonlelonctelond list of candidatelons and applielons a final list of filtelonrs.
+   * Uselonful for doing velonry elonxpelonnsivelon filtelonring at thelon elonnd of your pipelonlinelon.
    */
-  def postSelectionFilters: Seq[Filter[Query, Candidate]] = Seq.empty
+  delonf postSelonlelonctionFiltelonrs: Selonq[Filtelonr[Quelonry, Candidatelon]] = Selonq.elonmpty
 
   /**
-   * Decorators allow for adding Presentations to candidates. While the Presentation can contain any
-   * arbitrary data, Decorators are often used to add a UrtItemPresentation for URT item support. Most
-   * customers will prefer to set a decorator in their respective candidate pipeline, however, a final
-   * global one is available for those that do global decoration as late possible to avoid unnecessary hydrations.
-   * @note This decorator can only return an ItemPresentation.
-   * @note This decorator cannot decorate an already decorated candidate from the prior decorator
-   *       step in candidate pipelines.
+   * Deloncorators allow for adding Prelonselonntations to candidatelons. Whilelon thelon Prelonselonntation can contain any
+   * arbitrary data, Deloncorators arelon oftelonn uselond to add a UrtItelonmPrelonselonntation for URT itelonm support. Most
+   * customelonrs will prelonfelonr to selont a deloncorator in thelonir relonspelonctivelon candidatelon pipelonlinelon, howelonvelonr, a final
+   * global onelon is availablelon for thoselon that do global deloncoration as latelon possiblelon to avoid unneloncelonssary hydrations.
+   * @notelon This deloncorator can only relonturn an ItelonmPrelonselonntation.
+   * @notelon This deloncorator cannot deloncoratelon an alrelonady deloncoratelond candidatelon from thelon prior deloncorator
+   *       stelonp in candidatelon pipelonlinelons.
    */
-  def decorator: Option[CandidateDecorator[Query, Candidate]] = None
+  delonf deloncorator: Option[CandidatelonDeloncorator[Quelonry, Candidatelon]] = Nonelon
 
   /**
-   * Domain marshaller transforms the selections into the model expected by the marshaller
+   * Domain marshallelonr transforms thelon selonlelonctions into thelon modelonl elonxpelonctelond by thelon marshallelonr
    */
-  def domainMarshaller: DomainMarshaller[Query, UnmarshalledResultType]
+  delonf domainMarshallelonr: DomainMarshallelonr[Quelonry, UnmarshallelondRelonsultTypelon]
 
   /**
-   * Mixer result side effects that are executed after selection and domain marshalling
+   * Mixelonr relonsult sidelon elonffeloncts that arelon elonxeloncutelond aftelonr selonlelonction and domain marshalling
    */
-  def resultSideEffects: Seq[PipelineResultSideEffect[Query, UnmarshalledResultType]] = Seq()
+  delonf relonsultSidelonelonffeloncts: Selonq[PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, UnmarshallelondRelonsultTypelon]] = Selonq()
 
   /**
-   * Transport marshaller transforms the model into our line-level API like URT or JSON
+   * Transport marshallelonr transforms thelon modelonl into our linelon-lelonvelonl API likelon URT or JSON
    */
-  def transportMarshaller: TransportMarshaller[UnmarshalledResultType, Result]
+  delonf transportMarshallelonr: TransportMarshallelonr[UnmarshallelondRelonsultTypelon, Relonsult]
 
   /**
-   * A pipeline can define a partial function to rescue failures here. They will be treated as failures
-   * from a monitoring standpoint, and cancellation exceptions will always be propagated (they cannot be caught here).
+   * A pipelonlinelon can delonfinelon a partial function to relonscuelon failurelons helonrelon. Thelony will belon trelonatelond as failurelons
+   * from a monitoring standpoint, and cancelonllation elonxcelonptions will always belon propagatelond (thelony cannot belon caught helonrelon).
    */
-  def failureClassifier: PartialFunction[Throwable, PipelineFailure] = PartialFunction.empty
+  delonf failurelonClassifielonr: PartialFunction[Throwablelon, PipelonlinelonFailurelon] = PartialFunction.elonmpty
 
   /**
-   * Alerts can be used to indicate the pipeline's service level objectives. Alerts and
-   * dashboards will be automatically created based on this information.
+   * Alelonrts can belon uselond to indicatelon thelon pipelonlinelon's selonrvicelon lelonvelonl objelonctivelons. Alelonrts and
+   * dashboards will belon automatically crelonatelond baselond on this information.
    */
-  val alerts: Seq[Alert] = Seq.empty
+  val alelonrts: Selonq[Alelonrt] = Selonq.elonmpty
 
   /**
-   * This method is used by the product mixer framework to build the pipeline.
+   * This melonthod is uselond by thelon product mixelonr framelonwork to build thelon pipelonlinelon.
    */
-  private[core] final def build(
-    parentComponentIdentifierStack: ComponentIdentifierStack,
-    builder: RecommendationPipelineBuilderFactory
-  ): RecommendationPipeline[Query, Candidate, Result] =
-    builder.get.build(parentComponentIdentifierStack, this)
+  privatelon[corelon] final delonf build(
+    parelonntComponelonntIdelonntifielonrStack: ComponelonntIdelonntifielonrStack,
+    buildelonr: ReloncommelonndationPipelonlinelonBuildelonrFactory
+  ): ReloncommelonndationPipelonlinelon[Quelonry, Candidatelon, Relonsult] =
+    buildelonr.gelont.build(parelonntComponelonntIdelonntifielonrStack, this)
 }
 
-object RecommendationPipelineConfig extends PipelineConfigCompanion {
-  val qualityFactorStep: PipelineStepIdentifier = PipelineStepIdentifier("QualityFactor")
-  val gatesStep: PipelineStepIdentifier = PipelineStepIdentifier("Gates")
-  val fetchQueryFeaturesStep: PipelineStepIdentifier = PipelineStepIdentifier("FetchQueryFeatures")
-  val fetchQueryFeaturesPhase2Step: PipelineStepIdentifier = PipelineStepIdentifier(
-    "FetchQueryFeaturesPhase2")
-  val candidatePipelinesStep: PipelineStepIdentifier = PipelineStepIdentifier("CandidatePipelines")
-  val dependentCandidatePipelinesStep: PipelineStepIdentifier =
-    PipelineStepIdentifier("DependentCandidatePipelines")
-  val postCandidatePipelinesSelectorsStep: PipelineStepIdentifier =
-    PipelineStepIdentifier("PostCandidatePipelinesSelectors")
-  val postCandidatePipelinesFeatureHydrationStep: PipelineStepIdentifier =
-    PipelineStepIdentifier("PostCandidatePipelinesFeatureHydration")
-  val globalFiltersStep: PipelineStepIdentifier = PipelineStepIdentifier("GlobalFilters")
-  val scoringPipelinesStep: PipelineStepIdentifier = PipelineStepIdentifier("ScoringPipelines")
-  val resultSelectorsStep: PipelineStepIdentifier = PipelineStepIdentifier("ResultSelectors")
-  val postSelectionFiltersStep: PipelineStepIdentifier = PipelineStepIdentifier(
-    "PostSelectionFilters")
-  val decoratorStep: PipelineStepIdentifier = PipelineStepIdentifier("Decorator")
-  val domainMarshallerStep: PipelineStepIdentifier = PipelineStepIdentifier("DomainMarshaller")
-  val resultSideEffectsStep: PipelineStepIdentifier = PipelineStepIdentifier("ResultSideEffects")
-  val transportMarshallerStep: PipelineStepIdentifier = PipelineStepIdentifier(
-    "TransportMarshaller")
+objelonct ReloncommelonndationPipelonlinelonConfig elonxtelonnds PipelonlinelonConfigCompanion {
+  val qualityFactorStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("QualityFactor")
+  val gatelonsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("Gatelons")
+  val felontchQuelonryFelonaturelonsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("FelontchQuelonryFelonaturelons")
+  val felontchQuelonryFelonaturelonsPhaselon2Stelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr(
+    "FelontchQuelonryFelonaturelonsPhaselon2")
+  val candidatelonPipelonlinelonsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("CandidatelonPipelonlinelons")
+  val delonpelonndelonntCandidatelonPipelonlinelonsStelonp: PipelonlinelonStelonpIdelonntifielonr =
+    PipelonlinelonStelonpIdelonntifielonr("DelonpelonndelonntCandidatelonPipelonlinelons")
+  val postCandidatelonPipelonlinelonsSelonlelonctorsStelonp: PipelonlinelonStelonpIdelonntifielonr =
+    PipelonlinelonStelonpIdelonntifielonr("PostCandidatelonPipelonlinelonsSelonlelonctors")
+  val postCandidatelonPipelonlinelonsFelonaturelonHydrationStelonp: PipelonlinelonStelonpIdelonntifielonr =
+    PipelonlinelonStelonpIdelonntifielonr("PostCandidatelonPipelonlinelonsFelonaturelonHydration")
+  val globalFiltelonrsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("GlobalFiltelonrs")
+  val scoringPipelonlinelonsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("ScoringPipelonlinelons")
+  val relonsultSelonlelonctorsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("RelonsultSelonlelonctors")
+  val postSelonlelonctionFiltelonrsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr(
+    "PostSelonlelonctionFiltelonrs")
+  val deloncoratorStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("Deloncorator")
+  val domainMarshallelonrStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("DomainMarshallelonr")
+  val relonsultSidelonelonffelonctsStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr("RelonsultSidelonelonffeloncts")
+  val transportMarshallelonrStelonp: PipelonlinelonStelonpIdelonntifielonr = PipelonlinelonStelonpIdelonntifielonr(
+    "TransportMarshallelonr")
 
-  /** All the Steps which are executed by a [[RecommendationPipeline]] in the order in which they are run */
-  override val stepsInOrder: Seq[PipelineStepIdentifier] = Seq(
-    qualityFactorStep,
-    gatesStep,
-    fetchQueryFeaturesStep,
-    fetchQueryFeaturesPhase2Step,
-    asyncFeaturesStep(candidatePipelinesStep),
-    candidatePipelinesStep,
-    asyncFeaturesStep(dependentCandidatePipelinesStep),
-    dependentCandidatePipelinesStep,
-    asyncFeaturesStep(postCandidatePipelinesSelectorsStep),
-    postCandidatePipelinesSelectorsStep,
-    asyncFeaturesStep(postCandidatePipelinesFeatureHydrationStep),
-    postCandidatePipelinesFeatureHydrationStep,
-    asyncFeaturesStep(globalFiltersStep),
-    globalFiltersStep,
-    asyncFeaturesStep(scoringPipelinesStep),
-    scoringPipelinesStep,
-    asyncFeaturesStep(resultSelectorsStep),
-    resultSelectorsStep,
-    asyncFeaturesStep(postSelectionFiltersStep),
-    postSelectionFiltersStep,
-    asyncFeaturesStep(decoratorStep),
-    decoratorStep,
-    domainMarshallerStep,
-    asyncFeaturesStep(resultSideEffectsStep),
-    resultSideEffectsStep,
-    transportMarshallerStep
+  /** All thelon Stelonps which arelon elonxeloncutelond by a [[ReloncommelonndationPipelonlinelon]] in thelon ordelonr in which thelony arelon run */
+  ovelonrridelon val stelonpsInOrdelonr: Selonq[PipelonlinelonStelonpIdelonntifielonr] = Selonq(
+    qualityFactorStelonp,
+    gatelonsStelonp,
+    felontchQuelonryFelonaturelonsStelonp,
+    felontchQuelonryFelonaturelonsPhaselon2Stelonp,
+    asyncFelonaturelonsStelonp(candidatelonPipelonlinelonsStelonp),
+    candidatelonPipelonlinelonsStelonp,
+    asyncFelonaturelonsStelonp(delonpelonndelonntCandidatelonPipelonlinelonsStelonp),
+    delonpelonndelonntCandidatelonPipelonlinelonsStelonp,
+    asyncFelonaturelonsStelonp(postCandidatelonPipelonlinelonsSelonlelonctorsStelonp),
+    postCandidatelonPipelonlinelonsSelonlelonctorsStelonp,
+    asyncFelonaturelonsStelonp(postCandidatelonPipelonlinelonsFelonaturelonHydrationStelonp),
+    postCandidatelonPipelonlinelonsFelonaturelonHydrationStelonp,
+    asyncFelonaturelonsStelonp(globalFiltelonrsStelonp),
+    globalFiltelonrsStelonp,
+    asyncFelonaturelonsStelonp(scoringPipelonlinelonsStelonp),
+    scoringPipelonlinelonsStelonp,
+    asyncFelonaturelonsStelonp(relonsultSelonlelonctorsStelonp),
+    relonsultSelonlelonctorsStelonp,
+    asyncFelonaturelonsStelonp(postSelonlelonctionFiltelonrsStelonp),
+    postSelonlelonctionFiltelonrsStelonp,
+    asyncFelonaturelonsStelonp(deloncoratorStelonp),
+    deloncoratorStelonp,
+    domainMarshallelonrStelonp,
+    asyncFelonaturelonsStelonp(relonsultSidelonelonffelonctsStelonp),
+    relonsultSidelonelonffelonctsStelonp,
+    transportMarshallelonrStelonp
   )
 
   /**
-   * All the Steps which an [[com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator AsyncHydrator]]
-   * can be configured to [[com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator.hydrateBefore hydrateBefore]]
+   * All thelon Stelonps which an [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.AsyncHydrator AsyncHydrator]]
+   * can belon configurelond to [[com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.AsyncHydrator.hydratelonBelonforelon hydratelonBelonforelon]]
    */
-  override val stepsAsyncFeatureHydrationCanBeCompletedBy: Set[PipelineStepIdentifier] = Set(
-    candidatePipelinesStep,
-    dependentCandidatePipelinesStep,
-    postCandidatePipelinesSelectorsStep,
-    postCandidatePipelinesFeatureHydrationStep,
-    globalFiltersStep,
-    scoringPipelinesStep,
-    resultSelectorsStep,
-    postSelectionFiltersStep,
-    decoratorStep,
-    resultSideEffectsStep,
+  ovelonrridelon val stelonpsAsyncFelonaturelonHydrationCanBelonComplelontelondBy: Selont[PipelonlinelonStelonpIdelonntifielonr] = Selont(
+    candidatelonPipelonlinelonsStelonp,
+    delonpelonndelonntCandidatelonPipelonlinelonsStelonp,
+    postCandidatelonPipelonlinelonsSelonlelonctorsStelonp,
+    postCandidatelonPipelonlinelonsFelonaturelonHydrationStelonp,
+    globalFiltelonrsStelonp,
+    scoringPipelonlinelonsStelonp,
+    relonsultSelonlelonctorsStelonp,
+    postSelonlelonctionFiltelonrsStelonp,
+    deloncoratorStelonp,
+    relonsultSidelonelonffelonctsStelonp,
   )
 }

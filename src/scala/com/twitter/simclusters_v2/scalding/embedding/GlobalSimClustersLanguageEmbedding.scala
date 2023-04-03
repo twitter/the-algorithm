@@ -1,197 +1,197 @@
-package com.twitter.simclusters_v2.scalding.embedding
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding
 
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding._
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite.ExplicitEndTime
-import com.twitter.scalding_internal.dalv2.DALWrite.WriteExtension
-import com.twitter.scalding_internal.job.RequiredBinaryComparators.ordSer
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.Timestamp
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.InterestedInSources
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.InternalId.ClusterId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.UserToInterestedInClusterScores
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2GlobalLanguageEmbeddingScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2GlobalLanguageEmbeddingThriftScalaDataset
-import com.twitter.simclusters_v2.thriftscala.LanguageToClusters
-import java.util.TimeZone
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.dal.clielonnt.dataselont.SnapshotDALDataselont
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.D
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.elonxplicitelonndTimelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.Writelonelonxtelonnsion
+import com.twittelonr.scalding_intelonrnal.job.RelonquirelondBinaryComparators.ordSelonr
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.Country
+import com.twittelonr.simclustelonrs_v2.common.Languagelon
+import com.twittelonr.simclustelonrs_v2.common.Timelonstamp
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.IntelonrelonstelondInSourcelons
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonxtelonrnalDataSourcelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.UselonrToIntelonrelonstelondInClustelonrScorelons
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SimclustelonrsV2GlobalLanguagelonelonmbelonddingScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SimclustelonrsV2GlobalLanguagelonelonmbelonddingThriftScalaDataselont
+import com.twittelonr.simclustelonrs_v2.thriftscala.LanguagelonToClustelonrs
+import java.util.TimelonZonelon
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron global_simclusters_language_embedding_job \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+  --start_cron global_simclustelonrs_languagelon_elonmbelondding_job \
+  src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object GlobalSimClustersLanguageEmbeddingBatchApp extends ScheduledExecutionApp {
+objelonct GlobalSimClustelonrsLanguagelonelonmbelonddingBatchApp elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  override val firstTime: RichDate = RichDate("2023-03-07")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2023-03-07")
 
-  override val batchIncrement: Duration = Days(1)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(1)
 
-  val outputHdfsDirectory =
-    "/user/cassowary/manhattan_sequence_files/global_simclusters_language_embeddings"
+  val outputHdfsDirelonctory =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/global_simclustelonrs_languagelon_elonmbelonddings"
 
-  val outputThriftHdfsDirectory =
-    "/user/cassowary/processed/global_simclusters_language_embeddings"
+  val outputThriftHdfsDirelonctory =
+    "/uselonr/cassowary/procelonsselond/global_simclustelonrs_languagelon_elonmbelonddings"
 
-  val globalLanguageEmbeddingsKeyValDataset: KeyValDALDataset[
-    KeyVal[String, ClustersUserIsInterestedIn]
-  ] = SimclustersV2GlobalLanguageEmbeddingScalaDataset
+  val globalLanguagelonelonmbelonddingsKelonyValDataselont: KelonyValDALDataselont[
+    KelonyVal[String, ClustelonrsUselonrIsIntelonrelonstelondIn]
+  ] = SimclustelonrsV2GlobalLanguagelonelonmbelonddingScalaDataselont
 
-  val globalLanguageEmbeddingsThriftDataset: SnapshotDALDataset[LanguageToClusters] =
-    SimclustersV2GlobalLanguageEmbeddingThriftScalaDataset
+  val globalLanguagelonelonmbelonddingsThriftDataselont: SnapshotDALDataselont[LanguagelonToClustelonrs] =
+    SimclustelonrsV2GlobalLanguagelonelonmbelonddingThriftScalaDataselont
 
-  val numOfClustersPerLanguage: Int = 400
+  val numOfClustelonrsPelonrLanguagelon: Int = 400
 
-  def getInterestedInFn: (
-    DateRange,
-    TimeZone
-  ) => TypedPipe[(UserId, ClustersUserIsInterestedIn)] =
-    InterestedInSources.simClustersInterestedIn2020Source
+  delonf gelontIntelonrelonstelondInFn: (
+    DatelonRangelon,
+    TimelonZonelon
+  ) => TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)] =
+    IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondIn2020Sourcelon
 
-  def flattenAndFilterUserInterestedIn(
-    interestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)]
-  ): TypedPipe[(UserId, (Int, Double))] = {
-    interestedIn
-    // Get (userId, Seq[(clusterId, scores)]
+  delonf flattelonnAndFiltelonrUselonrIntelonrelonstelondIn(
+    intelonrelonstelondIn: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)]
+  ): TypelondPipelon[(UselonrId, (Int, Doublelon))] = {
+    intelonrelonstelondIn
+    // Gelont (uselonrId, Selonq[(clustelonrId, scorelons)]
       .map {
-        case (user, clusterUserIsInterestedIn) => {
-          (user, clusterUserIsInterestedIn.clusterIdToScores)
+        caselon (uselonr, clustelonrUselonrIsIntelonrelonstelondIn) => {
+          (uselonr, clustelonrUselonrIsIntelonrelonstelondIn.clustelonrIdToScorelons)
         }
       }
-      // Flatten it into (UserId, ClusterId, LogFavScore)
+      // Flattelonn it into (UselonrId, ClustelonrId, LogFavScorelon)
       .flatMap {
-        case (userId, clusterUserIsInterestedIn) => {
-          clusterUserIsInterestedIn.toSeq.map {
-            case (clusterId, scores) => {
-              (userId, (clusterId, scores.logFavScore.getOrElse(0.0)))
+        caselon (uselonrId, clustelonrUselonrIsIntelonrelonstelondIn) => {
+          clustelonrUselonrIsIntelonrelonstelondIn.toSelonq.map {
+            caselon (clustelonrId, scorelons) => {
+              (uselonrId, (clustelonrId, scorelons.logFavScorelon.gelontOrelonlselon(0.0)))
             }
           }
         }
-      }.filter(_._2._2 > 0.0) // Filter out zero scores
+      }.filtelonr(_._2._2 > 0.0) // Filtelonr out zelonro scorelons
   }
 
-  def getGlobalSimClustersEmbeddingPerLanguage(
-    interestedIn: TypedPipe[(UserId, (Int, Double))],
-    favEdges: TypedPipe[(UserId, TweetId, Timestamp)],
-    language: TypedPipe[(UserId, (Country, Language))]
-  ): TypedPipe[(Language, ClustersUserIsInterestedIn)] = {
-    // Engagement fav edges
-    val edges = favEdges.map { case (userId, tweetId, ts) => (userId, (tweetId, ts)) }
+  delonf gelontGlobalSimClustelonrselonmbelonddingPelonrLanguagelon(
+    intelonrelonstelondIn: TypelondPipelon[(UselonrId, (Int, Doublelon))],
+    favelondgelons: TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)],
+    languagelon: TypelondPipelon[(UselonrId, (Country, Languagelon))]
+  ): TypelondPipelon[(Languagelon, ClustelonrsUselonrIsIntelonrelonstelondIn)] = {
+    // elonngagelonmelonnt fav elondgelons
+    val elondgelons = favelondgelons.map { caselon (uselonrId, twelonelontId, ts) => (uselonrId, (twelonelontId, ts)) }
 
-    // Language information for users
-    val userLanguage = language.map {
-      case (userId, (country, lang)) => (userId, lang)
+    // Languagelon information for uselonrs
+    val uselonrLanguagelon = languagelon.map {
+      caselon (uselonrId, (country, lang)) => (uselonrId, lang)
     }
-    val numUsersPerLanguage = userLanguage.map {
-      case (_, lang) => (lang, 1L)
-    }.sumByKey
+    val numUselonrsPelonrLanguagelon = uselonrLanguagelon.map {
+      caselon (_, lang) => (lang, 1L)
+    }.sumByKelony
 
-    val embeddings =
-      interestedIn
-        .join(edges) // Join InterestedIn and user-tweet engagements
+    val elonmbelonddings =
+      intelonrelonstelondIn
+        .join(elondgelons) // Join IntelonrelonstelondIn and uselonr-twelonelont elonngagelonmelonnts
         .map {
-          case (userId, ((clusterId, score), (_, _))) => {
-            (userId, (clusterId, score))
+          caselon (uselonrId, ((clustelonrId, scorelon), (_, _))) => {
+            (uselonrId, (clustelonrId, scorelon))
           }
         }
-        .join(userLanguage) // Join and get cluster scores per language
+        .join(uselonrLanguagelon) // Join and gelont clustelonr scorelons pelonr languagelon
         .map {
-          case (userId, ((clusterId, score), lang)) => {
-            ((lang, clusterId), score)
+          caselon (uselonrId, ((clustelonrId, scorelon), lang)) => {
+            ((lang, clustelonrId), scorelon)
           }
         }
-        .sumByKey // Sum the user embeddings per language based on the engagements
-        .map { case ((lang, clusterId), score) => (lang, (clusterId, score)) }
-        .join(numUsersPerLanguage)
-        // We compute the average cluster scores per language
+        .sumByKelony // Sum thelon uselonr elonmbelonddings pelonr languagelon baselond on thelon elonngagelonmelonnts
+        .map { caselon ((lang, clustelonrId), scorelon) => (lang, (clustelonrId, scorelon)) }
+        .join(numUselonrsPelonrLanguagelon)
+        // Welon computelon thelon avelonragelon clustelonr scorelons pelonr languagelon
         .map {
-          case (lang, ((clusterId, score), count)) => (lang, (clusterId -> score / count))
+          caselon (lang, ((clustelonrId, scorelon), count)) => (lang, (clustelonrId -> scorelon / count))
         }
         .group
-        .sortedReverseTake(numOfClustersPerLanguage)(Ordering
-          .by(_._2)) // Take top 400 clusters per language
+        .sortelondRelonvelonrselonTakelon(numOfClustelonrsPelonrLanguagelon)(Ordelonring
+          .by(_._2)) // Takelon top 400 clustelonrs pelonr languagelon
         .flatMap {
-          case (lang, clusterScores) => {
-            clusterScores.map {
-              case (clusterId, score) => (lang, (clusterId, score))
+          caselon (lang, clustelonrScorelons) => {
+            clustelonrScorelons.map {
+              caselon (clustelonrId, scorelon) => (lang, (clustelonrId, scorelon))
             }
           }
-        }.mapValues { case (clusterId, score) => Map(clusterId -> score) }
+        }.mapValuelons { caselon (clustelonrId, scorelon) => Map(clustelonrId -> scorelon) }
 
-    // Build the final SimClusters embeddings per language
-    embeddings.sumByKey.map {
-      case (lang, clusterToScore) => {
-        val clusterScores = clusterToScore.map {
-          case (clusterId, score) =>
-            clusterId -> UserToInterestedInClusterScores(logFavScore = Some(score))
+    // Build thelon final SimClustelonrs elonmbelonddings pelonr languagelon
+    elonmbelonddings.sumByKelony.map {
+      caselon (lang, clustelonrToScorelon) => {
+        val clustelonrScorelons = clustelonrToScorelon.map {
+          caselon (clustelonrId, scorelon) =>
+            clustelonrId -> UselonrToIntelonrelonstelondInClustelonrScorelons(logFavScorelon = Somelon(scorelon))
         }
-        (lang, ClustersUserIsInterestedIn(ModelVersion.Model20m145k2020.name, clusterScores))
+        (lang, ClustelonrsUselonrIsIntelonrelonstelondIn(ModelonlVelonrsion.Modelonl20m145k2020.namelon, clustelonrScorelons))
       }
     }
   }
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    // Read the most recent InterestedIn snapshot from the past 21 days
-    val interestedIn =
-      InterestedInSources
-        .simClustersInterestedIn2020Source(dateRange.prepend(Days(21)), timeZone).forceToDisk
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    // Relonad thelon most reloncelonnt IntelonrelonstelondIn snapshot from thelon past 21 days
+    val intelonrelonstelondIn =
+      IntelonrelonstelondInSourcelons
+        .simClustelonrsIntelonrelonstelondIn2020Sourcelon(datelonRangelon.prelonpelonnd(Days(21)), timelonZonelon).forcelonToDisk
 
-    // Get the user tweet fav engagement history from the past 2 days
-    val userTweetFavEdges = ExternalDataSources.userTweetFavoritesSource
+    // Gelont thelon uselonr twelonelont fav elonngagelonmelonnt history from thelon past 2 days
+    val uselonrTwelonelontFavelondgelons = elonxtelonrnalDataSourcelons.uselonrTwelonelontFavoritelonsSourcelon
 
-    // Read user language from UserSource
-    val userLanguages = ExternalDataSources.userSource
+    // Relonad uselonr languagelon from UselonrSourcelon
+    val uselonrLanguagelons = elonxtelonrnalDataSourcelons.uselonrSourcelon
 
-    val globalEmbeddings = getGlobalSimClustersEmbeddingPerLanguage(
-      flattenAndFilterUserInterestedIn(interestedIn),
-      userTweetFavEdges,
-      userLanguages)
+    val globalelonmbelonddings = gelontGlobalSimClustelonrselonmbelonddingPelonrLanguagelon(
+      flattelonnAndFiltelonrUselonrIntelonrelonstelondIn(intelonrelonstelondIn),
+      uselonrTwelonelontFavelondgelons,
+      uselonrLanguagelons)
 
-    // Write results as a key-val dataset
-    globalEmbeddings
+    // Writelon relonsults as a kelony-val dataselont
+    globalelonmbelonddings
       .map {
-        case (lang, embeddings) =>
-          KeyVal(lang, embeddings)
+        caselon (lang, elonmbelonddings) =>
+          KelonyVal(lang, elonmbelonddings)
       }
-      .writeDALVersionedKeyValExecution(
-        globalLanguageEmbeddingsKeyValDataset,
-        D.Suffix(outputHdfsDirectory)
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        globalLanguagelonelonmbelonddingsKelonyValDataselont,
+        D.Suffix(outputHdfsDirelonctory)
       )
 
-    // Write results as a thrift dataset
-    globalEmbeddings
+    // Writelon relonsults as a thrift dataselont
+    globalelonmbelonddings
       .map {
-        case (lang, clusterUserIsInterestedIn) =>
-          LanguageToClusters(
+        caselon (lang, clustelonrUselonrIsIntelonrelonstelondIn) =>
+          LanguagelonToClustelonrs(
             lang,
-            clusterUserIsInterestedIn.knownForModelVersion,
-            clusterUserIsInterestedIn.clusterIdToScores
+            clustelonrUselonrIsIntelonrelonstelondIn.knownForModelonlVelonrsion,
+            clustelonrUselonrIsIntelonrelonstelondIn.clustelonrIdToScorelons
           )
       }
-      .writeDALSnapshotExecution(
-        globalLanguageEmbeddingsThriftDataset,
+      .writelonDALSnapshotelonxeloncution(
+        globalLanguagelonelonmbelonddingsThriftDataselont,
         D.Daily,
-        D.Suffix(outputThriftHdfsDirectory),
-        D.Parquet,
-        dateRange.`end`
+        D.Suffix(outputThriftHdfsDirelonctory),
+        D.Parquelont,
+        datelonRangelon.`elonnd`
       )
   }
 }

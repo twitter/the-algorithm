@@ -1,133 +1,133 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestType;
-import com.twitter.search.queryparser.query.Conjunction;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.search.SearchOperator;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.elonarlybird.config.SelonrvingRangelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstTypelon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Conjunction;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator;
 
 /**
- * Adds query filters that filter out tweets outside a tier's serving range. Two tiers might load
- * the same timeslice, so if the filtering is not done, the two tiers might return duplicates. The
- * mergers should know how to handle the duplicates, but this might decrease the number or the
- * quality of the returned results.
+ * Adds quelonry filtelonrs that filtelonr out twelonelonts outsidelon a tielonr's selonrving rangelon. Two tielonrs might load
+ * thelon samelon timelonslicelon, so if thelon filtelonring is not donelon, thelon two tielonrs might relonturn duplicatelons. Thelon
+ * melonrgelonrs should know how to handlelon thelon duplicatelons, but this might deloncrelonaselon thelon numbelonr or thelon
+ * quality of thelon relonturnelond relonsults.
  */
-public class EarlybirdTimeFilterQueryRewriter {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdTimeFilterQueryRewriter.class);
+public class elonarlybirdTimelonFiltelonrQuelonryRelonwritelonr {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(elonarlybirdTimelonFiltelonrQuelonryRelonwritelonr.class);
 
-  private static final Map<EarlybirdRequestType, SearchCounter> NO_QUERY_COUNTS;
+  privatelon static final Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr> NO_QUelonRY_COUNTS;
   static {
-    final Map<EarlybirdRequestType, SearchCounter> tempMap =
-      Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      tempMap.put(requestType, SearchCounter.export(
-          "time_filter_query_rewriter_" + requestType.getNormalizedName() + "_no_query_count"));
+    final Map<elonarlybirdRelonquelonstTypelon, SelonarchCountelonr> telonmpMap =
+      Maps.nelonwelonnumMap(elonarlybirdRelonquelonstTypelon.class);
+    for (elonarlybirdRelonquelonstTypelon relonquelonstTypelon : elonarlybirdRelonquelonstTypelon.valuelons()) {
+      telonmpMap.put(relonquelonstTypelon, SelonarchCountelonr.elonxport(
+          "timelon_filtelonr_quelonry_relonwritelonr_" + relonquelonstTypelon.gelontNormalizelondNamelon() + "_no_quelonry_count"));
     }
-    NO_QUERY_COUNTS = Collections.unmodifiableMap(tempMap);
+    NO_QUelonRY_COUNTS = Collelonctions.unmodifiablelonMap(telonmpMap);
   }
 
-  @VisibleForTesting
-  static final Map<EarlybirdRequestType, String> ADD_SINCE_ID_MAX_ID_DECIDER_KEY_MAP;
+  @VisiblelonForTelonsting
+  static final Map<elonarlybirdRelonquelonstTypelon, String> ADD_SINCelon_ID_MAX_ID_DelonCIDelonR_KelonY_MAP;
   static {
-    final String ADD_SINCE_ID_MAX_ID_DECIDER_KEY_TEMPLATE =
-      "add_since_id_max_id_operators_to_%s_query";
-    final Map<EarlybirdRequestType, String> tempMap = Maps.newEnumMap(EarlybirdRequestType.class);
-    for (EarlybirdRequestType requestType : EarlybirdRequestType.values()) {
-      tempMap.put(
-          requestType,
-          String.format(ADD_SINCE_ID_MAX_ID_DECIDER_KEY_TEMPLATE, requestType.getNormalizedName()));
+    final String ADD_SINCelon_ID_MAX_ID_DelonCIDelonR_KelonY_TelonMPLATelon =
+      "add_sincelon_id_max_id_opelonrators_to_%s_quelonry";
+    final Map<elonarlybirdRelonquelonstTypelon, String> telonmpMap = Maps.nelonwelonnumMap(elonarlybirdRelonquelonstTypelon.class);
+    for (elonarlybirdRelonquelonstTypelon relonquelonstTypelon : elonarlybirdRelonquelonstTypelon.valuelons()) {
+      telonmpMap.put(
+          relonquelonstTypelon,
+          String.format(ADD_SINCelon_ID_MAX_ID_DelonCIDelonR_KelonY_TelonMPLATelon, relonquelonstTypelon.gelontNormalizelondNamelon()));
     }
-    ADD_SINCE_ID_MAX_ID_DECIDER_KEY_MAP = Collections.unmodifiableMap(tempMap);
+    ADD_SINCelon_ID_MAX_ID_DelonCIDelonR_KelonY_MAP = Collelonctions.unmodifiablelonMap(telonmpMap);
   }
 
-  @VisibleForTesting
-  static final String ADD_SINCE_ID_MAX_ID_TO_NULL_SERIALIZED_QUERIES_DECIDER_KEY =
-      "add_since_id_max_id_operators_to_null_serialized_queries";
+  @VisiblelonForTelonsting
+  static final String ADD_SINCelon_ID_MAX_ID_TO_NULL_SelonRIALIZelonD_QUelonRIelonS_DelonCIDelonR_KelonY =
+      "add_sincelon_id_max_id_opelonrators_to_null_selonrializelond_quelonrielons";
 
-  private final SearchDecider decider;
-  private final ServingRangeProvider servingRangeProvider;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final SelonrvingRangelonProvidelonr selonrvingRangelonProvidelonr;
 
-  EarlybirdTimeFilterQueryRewriter(
-      ServingRangeProvider servingRangeProvider,
-      SearchDecider decider) {
+  elonarlybirdTimelonFiltelonrQuelonryRelonwritelonr(
+      SelonrvingRangelonProvidelonr selonrvingRangelonProvidelonr,
+      SelonarchDeloncidelonr deloncidelonr) {
 
-    this.servingRangeProvider = servingRangeProvider;
-    this.decider = decider;
+    this.selonrvingRangelonProvidelonr = selonrvingRangelonProvidelonr;
+    this.deloncidelonr = deloncidelonr;
   }
 
   /**
-   * Add maxId and sinceId fields to the serialized query.
+   * Add maxId and sincelonId fielonlds to thelon selonrializelond quelonry.
    *
-   * This must be done after calculating the IdTimeRanges to prevent interfering with calculating
-   * IdTimeRanges
+   * This must belon donelon aftelonr calculating thelon IdTimelonRangelons to prelonvelonnt intelonrfelonring with calculating
+   * IdTimelonRangelons
    */
-  public EarlybirdRequestContext rewriteRequest(EarlybirdRequestContext requestContext)
-      throws QueryParserException {
-    Query q = requestContext.getParsedQuery();
+  public elonarlybirdRelonquelonstContelonxt relonwritelonRelonquelonst(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt)
+      throws QuelonryParselonrelonxcelonption {
+    Quelonry q = relonquelonstContelonxt.gelontParselondQuelonry();
     if (q == null) {
-      if (requestContext.getEarlybirdRequestType() != EarlybirdRequestType.TERM_STATS) {
-        LOG.warn("Received request without a parsed query: " + requestContext.getRequest());
-        NO_QUERY_COUNTS.get(requestContext.getEarlybirdRequestType()).increment();
+      if (relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon() != elonarlybirdRelonquelonstTypelon.TelonRM_STATS) {
+        LOG.warn("Reloncelonivelond relonquelonst without a parselond quelonry: " + relonquelonstContelonxt.gelontRelonquelonst());
+        NO_QUelonRY_COUNTS.gelont(relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon()).increlonmelonnt();
       }
 
-      if (!decider.isAvailable(ADD_SINCE_ID_MAX_ID_TO_NULL_SERIALIZED_QUERIES_DECIDER_KEY)) {
-        return requestContext;
+      if (!deloncidelonr.isAvailablelon(ADD_SINCelon_ID_MAX_ID_TO_NULL_SelonRIALIZelonD_QUelonRIelonS_DelonCIDelonR_KelonY)) {
+        relonturn relonquelonstContelonxt;
       }
     }
 
-    return addOperators(requestContext, q);
+    relonturn addOpelonrators(relonquelonstContelonxt, q);
   }
 
-  private EarlybirdRequestContext addOperators(
-      EarlybirdRequestContext requestContext,
-      @Nullable Query query) throws QueryParserException {
+  privatelon elonarlybirdRelonquelonstContelonxt addOpelonrators(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      @Nullablelon Quelonry quelonry) throws QuelonryParselonrelonxcelonption {
 
-    // Add the SINCE_ID and MAX_ID operators only if the decider is enabled.
-    if (!decider.isAvailable(
-        ADD_SINCE_ID_MAX_ID_DECIDER_KEY_MAP.get(requestContext.getEarlybirdRequestType()))) {
-      return requestContext;
+    // Add thelon SINCelon_ID and MAX_ID opelonrators only if thelon deloncidelonr is elonnablelond.
+    if (!deloncidelonr.isAvailablelon(
+        ADD_SINCelon_ID_MAX_ID_DelonCIDelonR_KelonY_MAP.gelont(relonquelonstContelonxt.gelontelonarlybirdRelonquelonstTypelon()))) {
+      relonturn relonquelonstContelonxt;
     }
 
-    // Note: can't recompute the search operators because the serving range changes in real time
-    // for the most recent tier.
-    ServingRange servingRange = servingRangeProvider.getServingRange(
-        requestContext, requestContext.useOverrideTierConfig());
+    // Notelon: can't reloncomputelon thelon selonarch opelonrators beloncauselon thelon selonrving rangelon changelons in relonal timelon
+    // for thelon most reloncelonnt tielonr.
+    SelonrvingRangelon selonrvingRangelon = selonrvingRangelonProvidelonr.gelontSelonrvingRangelon(
+        relonquelonstContelonxt, relonquelonstContelonxt.uselonOvelonrridelonTielonrConfig());
 
-    long tierSinceId = servingRange.getServingRangeSinceId();
-    SearchOperator sinceId = new SearchOperator(SearchOperator.Type.SINCE_ID,
-                                                Long.toString(tierSinceId));
+    long tielonrSincelonId = selonrvingRangelon.gelontSelonrvingRangelonSincelonId();
+    SelonarchOpelonrator sincelonId = nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.SINCelon_ID,
+                                                Long.toString(tielonrSincelonId));
 
-    long tierMaxId = servingRange.getServingRangeMaxId();
-    SearchOperator maxId = new SearchOperator(SearchOperator.Type.MAX_ID,
-                                              Long.toString(tierMaxId));
+    long tielonrMaxId = selonrvingRangelon.gelontSelonrvingRangelonMaxId();
+    SelonarchOpelonrator maxId = nelonw SelonarchOpelonrator(SelonarchOpelonrator.Typelon.MAX_ID,
+                                              Long.toString(tielonrMaxId));
 
-    List<Query> conjunctionChildren = (query == null)
-        ? Lists.<Query>newArrayList(sinceId, maxId)
-        : Lists.newArrayList(query, sinceId, maxId);
+    List<Quelonry> conjunctionChildrelonn = (quelonry == null)
+        ? Lists.<Quelonry>nelonwArrayList(sincelonId, maxId)
+        : Lists.nelonwArrayList(quelonry, sincelonId, maxId);
 
-    Query restrictedQuery = new Conjunction(conjunctionChildren).simplify();
+    Quelonry relonstrictelondQuelonry = nelonw Conjunction(conjunctionChildrelonn).simplify();
 
-    EarlybirdRequestContext copiedRequestContext =
-        EarlybirdRequestContext.copyRequestContext(requestContext, restrictedQuery);
+    elonarlybirdRelonquelonstContelonxt copielondRelonquelonstContelonxt =
+        elonarlybirdRelonquelonstContelonxt.copyRelonquelonstContelonxt(relonquelonstContelonxt, relonstrictelondQuelonry);
 
-    return copiedRequestContext;
+    relonturn copielondRelonquelonstContelonxt;
   }
 }

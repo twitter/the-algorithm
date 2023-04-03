@@ -1,78 +1,78 @@
-package com.twitter.home_mixer.product.for_you
+packagelon com.twittelonr.homelon_mixelonr.product.for_you
 
-import com.twitter.timelines.render.{thriftscala => tl}
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.home_mixer.product.for_you.candidate_source.ScoredTweetWithConversationMetadata
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => tl}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.homelon_mixelonr.product.for_you.candidatelon_sourcelon.ScorelondTwelonelontWithConvelonrsationMelontadata
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.BasicTopicContelonxtFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ReloncWithelonducationTopicContelonxtFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ReloncommelonndationTopicContelonxtFunctionalityTypelon
 
-object ForYouScoredTweetsResponseFeatureTransformer
-    extends CandidateFeatureTransformer[ScoredTweetWithConversationMetadata] {
+objelonct ForYouScorelondTwelonelontsRelonsponselonFelonaturelonTransformelonr
+    elonxtelonnds CandidatelonFelonaturelonTransformelonr[ScorelondTwelonelontWithConvelonrsationMelontadata] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ForYouScoredTweetsResponse")
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr =
+    TransformelonrIdelonntifielonr("ForYouScorelondTwelonelontsRelonsponselon")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AncestorsFeature,
-    AuthorIdFeature,
-    ConversationModuleIdFeature,
-    ConversationModuleFocalTweetIdFeature,
-    DirectedAtUserIdFeature,
-    FavoritedByUserIdsFeature,
-    FollowedByUserIdsFeature,
-    InNetworkFeature,
-    InReplyToTweetIdFeature,
-    InReplyToUserIdFeature,
-    IsReadFromCacheFeature,
-    IsRetweetFeature,
-    QuotedTweetIdFeature,
-    QuotedUserIdFeature,
-    ScoreFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
-    StreamToKafkaFeature,
-    SuggestTypeFeature,
-    TopicContextFunctionalityTypeFeature,
-    TopicIdSocialContextFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    AncelonstorsFelonaturelon,
+    AuthorIdFelonaturelon,
+    ConvelonrsationModulelonIdFelonaturelon,
+    ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon,
+    DirelonctelondAtUselonrIdFelonaturelon,
+    FavoritelondByUselonrIdsFelonaturelon,
+    FollowelondByUselonrIdsFelonaturelon,
+    InNelontworkFelonaturelon,
+    InRelonplyToTwelonelontIdFelonaturelon,
+    InRelonplyToUselonrIdFelonaturelon,
+    IsRelonadFromCachelonFelonaturelon,
+    IsRelontwelonelontFelonaturelon,
+    QuotelondTwelonelontIdFelonaturelon,
+    QuotelondUselonrIdFelonaturelon,
+    ScorelonFelonaturelon,
+    SourcelonTwelonelontIdFelonaturelon,
+    SourcelonUselonrIdFelonaturelon,
+    StrelonamToKafkaFelonaturelon,
+    SuggelonstTypelonFelonaturelon,
+    TopicContelonxtFunctionalityTypelonFelonaturelon,
+    TopicIdSocialContelonxtFelonaturelon
   )
 
-  override def transform(input: ScoredTweetWithConversationMetadata): FeatureMap =
-    FeatureMapBuilder()
-      .add(AncestorsFeature, input.ancestors.getOrElse(Seq.empty))
-      .add(AuthorIdFeature, Some(input.authorId))
-      .add(ConversationModuleIdFeature, input.conversationId)
-      .add(ConversationModuleFocalTweetIdFeature, input.conversationFocalTweetId)
-      .add(DirectedAtUserIdFeature, input.directedAtUserId)
-      .add(FavoritedByUserIdsFeature, input.favoritedByUserIds.getOrElse(Seq.empty))
-      .add(FollowedByUserIdsFeature, input.followedByUserIds.getOrElse(Seq.empty))
-      .add(InNetworkFeature, input.inNetwork.getOrElse(false))
-      .add(InReplyToTweetIdFeature, input.inReplyToTweetId)
-      .add(InReplyToUserIdFeature, input.inReplyToUserId)
-      .add(IsReadFromCacheFeature, input.isReadFromCache.getOrElse(false))
-      .add(IsRetweetFeature, input.sourceTweetId.isDefined)
-      .add(QuotedTweetIdFeature, input.quotedTweetId)
-      .add(QuotedUserIdFeature, input.quotedUserId)
-      .add(ScoreFeature, input.score)
-      .add(SourceTweetIdFeature, input.sourceTweetId)
-      .add(SourceUserIdFeature, input.sourceUserId)
-      .add(StreamToKafkaFeature, input.streamToKafka.getOrElse(false))
-      .add(SuggestTypeFeature, input.suggestType)
+  ovelonrridelon delonf transform(input: ScorelondTwelonelontWithConvelonrsationMelontadata): FelonaturelonMap =
+    FelonaturelonMapBuildelonr()
+      .add(AncelonstorsFelonaturelon, input.ancelonstors.gelontOrelonlselon(Selonq.elonmpty))
+      .add(AuthorIdFelonaturelon, Somelon(input.authorId))
+      .add(ConvelonrsationModulelonIdFelonaturelon, input.convelonrsationId)
+      .add(ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon, input.convelonrsationFocalTwelonelontId)
+      .add(DirelonctelondAtUselonrIdFelonaturelon, input.direlonctelondAtUselonrId)
+      .add(FavoritelondByUselonrIdsFelonaturelon, input.favoritelondByUselonrIds.gelontOrelonlselon(Selonq.elonmpty))
+      .add(FollowelondByUselonrIdsFelonaturelon, input.followelondByUselonrIds.gelontOrelonlselon(Selonq.elonmpty))
+      .add(InNelontworkFelonaturelon, input.inNelontwork.gelontOrelonlselon(falselon))
+      .add(InRelonplyToTwelonelontIdFelonaturelon, input.inRelonplyToTwelonelontId)
+      .add(InRelonplyToUselonrIdFelonaturelon, input.inRelonplyToUselonrId)
+      .add(IsRelonadFromCachelonFelonaturelon, input.isRelonadFromCachelon.gelontOrelonlselon(falselon))
+      .add(IsRelontwelonelontFelonaturelon, input.sourcelonTwelonelontId.isDelonfinelond)
+      .add(QuotelondTwelonelontIdFelonaturelon, input.quotelondTwelonelontId)
+      .add(QuotelondUselonrIdFelonaturelon, input.quotelondUselonrId)
+      .add(ScorelonFelonaturelon, input.scorelon)
+      .add(SourcelonTwelonelontIdFelonaturelon, input.sourcelonTwelonelontId)
+      .add(SourcelonUselonrIdFelonaturelon, input.sourcelonUselonrId)
+      .add(StrelonamToKafkaFelonaturelon, input.strelonamToKafka.gelontOrelonlselon(falselon))
+      .add(SuggelonstTypelonFelonaturelon, input.suggelonstTypelon)
       .add(
-        TopicContextFunctionalityTypeFeature,
-        input.topicFunctionalityType.collect {
-          case tl.TopicContextFunctionalityType.Basic => BasicTopicContextFunctionalityType
-          case tl.TopicContextFunctionalityType.Recommendation =>
-            RecommendationTopicContextFunctionalityType
-          case tl.TopicContextFunctionalityType.RecWithEducation =>
-            RecWithEducationTopicContextFunctionalityType
+        TopicContelonxtFunctionalityTypelonFelonaturelon,
+        input.topicFunctionalityTypelon.collelonct {
+          caselon tl.TopicContelonxtFunctionalityTypelon.Basic => BasicTopicContelonxtFunctionalityTypelon
+          caselon tl.TopicContelonxtFunctionalityTypelon.Reloncommelonndation =>
+            ReloncommelonndationTopicContelonxtFunctionalityTypelon
+          caselon tl.TopicContelonxtFunctionalityTypelon.ReloncWithelonducation =>
+            ReloncWithelonducationTopicContelonxtFunctionalityTypelon
         }
       )
-      .add(TopicIdSocialContextFeature, input.topicId)
+      .add(TopicIdSocialContelonxtFelonaturelon, input.topicId)
       .build()
 }

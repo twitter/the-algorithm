@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.candidate_sources.sims
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.sims
 
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.generated.client.recommendations.similarity.SimilarUsersBySimsExperimentalOnUserClientColumn
-import com.twitter.util.Duration
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.reloncommelonndations.similarity.SimilarUselonrsBySimselonxpelonrimelonntalOnUselonrClielonntColumn
+import com.twittelonr.util.Duration
 
-import javax.inject.Inject
+import javax.injelonct.Injelonct
 
-@Singleton
-class SimsExperimentalStore @Inject() (
-  simsExperimentalOnUserClientColumn: SimilarUsersBySimsExperimentalOnUserClientColumn)
-    extends StratoBasedSimsCandidateSourceWithUnitView(
-      fetcher = simsExperimentalOnUserClientColumn.fetcher,
-      identifier = SimsExperimentalStore.Identifier
+@Singlelonton
+class SimselonxpelonrimelonntalStorelon @Injelonct() (
+  simselonxpelonrimelonntalOnUselonrClielonntColumn: SimilarUselonrsBySimselonxpelonrimelonntalOnUselonrClielonntColumn)
+    elonxtelonnds StratoBaselondSimsCandidatelonSourcelonWithUnitVielonw(
+      felontchelonr = simselonxpelonrimelonntalOnUselonrClielonntColumn.felontchelonr,
+      idelonntifielonr = SimselonxpelonrimelonntalStorelon.Idelonntifielonr
     )
 
-@Singleton
-class CachedSimsExperimentalStore @Inject() (
-  simsExperimentalOnUserClientColumn: SimilarUsersBySimsExperimentalOnUserClientColumn,
-  statsReceiver: StatsReceiver)
-    extends CacheBasedSimsStore(
-      id = SimsExperimentalStore.Identifier,
-      fetcher = simsExperimentalOnUserClientColumn.fetcher,
-      maxCacheSize = SimsExperimentalStore.MaxCacheSize,
-      cacheTtl = SimsExperimentalStore.CacheTTL,
-      statsReceiver = statsReceiver.scope("CachedSimsExperimentalStore", "cache")
+@Singlelonton
+class CachelondSimselonxpelonrimelonntalStorelon @Injelonct() (
+  simselonxpelonrimelonntalOnUselonrClielonntColumn: SimilarUselonrsBySimselonxpelonrimelonntalOnUselonrClielonntColumn,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds CachelonBaselondSimsStorelon(
+      id = SimselonxpelonrimelonntalStorelon.Idelonntifielonr,
+      felontchelonr = simselonxpelonrimelonntalOnUselonrClielonntColumn.felontchelonr,
+      maxCachelonSizelon = SimselonxpelonrimelonntalStorelon.MaxCachelonSizelon,
+      cachelonTtl = SimselonxpelonrimelonntalStorelon.CachelonTTL,
+      statsReloncelonivelonr = statsReloncelonivelonr.scopelon("CachelondSimselonxpelonrimelonntalStorelon", "cachelon")
     )
 
-object SimsExperimentalStore {
-  val Identifier = CandidateSourceIdentifier(Algorithm.Sims.toString)
-  val MaxCacheSize = 1000
-  val CacheTTL: Duration = Duration.fromHours(12)
+objelonct SimselonxpelonrimelonntalStorelon {
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.Sims.toString)
+  val MaxCachelonSizelon = 1000
+  val CachelonTTL: Duration = Duration.fromHours(12)
 }

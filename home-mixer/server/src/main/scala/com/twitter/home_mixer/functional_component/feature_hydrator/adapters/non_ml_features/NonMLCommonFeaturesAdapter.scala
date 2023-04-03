@@ -1,48 +1,48 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.adapters.non_ml_features
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.adaptelonrs.non_ml_felonaturelons
 
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.prediction.common.adapters.TimelinesMutatingAdapterBase
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
+import com.twittelonr.ml.api.constant.SharelondFelonaturelons
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.timelonlinelons.prelondiction.common.adaptelonrs.TimelonlinelonsMutatingAdaptelonrBaselon
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.common.TimelonlinelonsSharelondFelonaturelons
 import java.lang.{Long => JLong}
 
-case class NonMLCommonFeatures(
-  userId: Long,
-  predictionRequestId: Option[Long],
-  servedTimestamp: Long,
+caselon class NonMLCommonFelonaturelons(
+  uselonrId: Long,
+  prelondictionRelonquelonstId: Option[Long],
+  selonrvelondTimelonstamp: Long,
 )
 
 /**
- * define non ml features adapter to create a data record which includes many non ml features
- * e.g. predictionRequestId, userId, tweetId to be used as joined key in batch pipeline.
+ * delonfinelon non ml felonaturelons adaptelonr to crelonatelon a data reloncord which includelons many non ml felonaturelons
+ * elon.g. prelondictionRelonquelonstId, uselonrId, twelonelontId to belon uselond as joinelond kelony in batch pipelonlinelon.
  */
-object NonMLCommonFeaturesAdapter extends TimelinesMutatingAdapterBase[NonMLCommonFeatures] {
+objelonct NonMLCommonFelonaturelonsAdaptelonr elonxtelonnds TimelonlinelonsMutatingAdaptelonrBaselon[NonMLCommonFelonaturelons] {
 
-  private val featureContext = new FeatureContext(
-    SharedFeatures.USER_ID,
-    TimelinesSharedFeatures.PREDICTION_REQUEST_ID,
-    TimelinesSharedFeatures.SERVED_TIMESTAMP,
+  privatelon val felonaturelonContelonxt = nelonw FelonaturelonContelonxt(
+    SharelondFelonaturelons.USelonR_ID,
+    TimelonlinelonsSharelondFelonaturelons.PRelonDICTION_RelonQUelonST_ID,
+    TimelonlinelonsSharelondFelonaturelons.SelonRVelonD_TIMelonSTAMP,
   )
 
-  override def getFeatureContext: FeatureContext = featureContext
+  ovelonrridelon delonf gelontFelonaturelonContelonxt: FelonaturelonContelonxt = felonaturelonContelonxt
 
-  override val commonFeatures: Set[Feature[_]] = Set(
-    SharedFeatures.USER_ID,
-    TimelinesSharedFeatures.PREDICTION_REQUEST_ID,
-    TimelinesSharedFeatures.SERVED_TIMESTAMP,
+  ovelonrridelon val commonFelonaturelons: Selont[Felonaturelon[_]] = Selont(
+    SharelondFelonaturelons.USelonR_ID,
+    TimelonlinelonsSharelondFelonaturelons.PRelonDICTION_RelonQUelonST_ID,
+    TimelonlinelonsSharelondFelonaturelons.SelonRVelonD_TIMelonSTAMP,
   )
 
-  override def setFeatures(
-    nonMLCommonFeatures: NonMLCommonFeatures,
-    richDataRecord: RichDataRecord
+  ovelonrridelon delonf selontFelonaturelons(
+    nonMLCommonFelonaturelons: NonMLCommonFelonaturelons,
+    richDataReloncord: RichDataReloncord
   ): Unit = {
-    richDataRecord.setFeatureValue[JLong](SharedFeatures.USER_ID, nonMLCommonFeatures.userId)
-    nonMLCommonFeatures.predictionRequestId.foreach(
-      richDataRecord.setFeatureValue[JLong](TimelinesSharedFeatures.PREDICTION_REQUEST_ID, _))
-    richDataRecord.setFeatureValue[JLong](
-      TimelinesSharedFeatures.SERVED_TIMESTAMP,
-      nonMLCommonFeatures.servedTimestamp)
+    richDataReloncord.selontFelonaturelonValuelon[JLong](SharelondFelonaturelons.USelonR_ID, nonMLCommonFelonaturelons.uselonrId)
+    nonMLCommonFelonaturelons.prelondictionRelonquelonstId.forelonach(
+      richDataReloncord.selontFelonaturelonValuelon[JLong](TimelonlinelonsSharelondFelonaturelons.PRelonDICTION_RelonQUelonST_ID, _))
+    richDataReloncord.selontFelonaturelonValuelon[JLong](
+      TimelonlinelonsSharelondFelonaturelons.SelonRVelonD_TIMelonSTAMP,
+      nonMLCommonFelonaturelons.selonrvelondTimelonstamp)
   }
 }

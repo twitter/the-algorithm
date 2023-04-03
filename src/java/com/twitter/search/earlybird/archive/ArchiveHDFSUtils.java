@@ -1,173 +1,173 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.io.IOelonxcelonption;
+import java.util.Calelonndar;
+import java.util.Datelon;
+import java.util.relongelonx.Matchelonr;
+import java.util.relongelonx.Pattelonrn;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.hadoop.fs.FileStatus;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
+import org.apachelon.commons.io.IOUtils;
+import org.apachelon.hadoop.fs.FilelonStatus;
+import org.apachelon.hadoop.fs.FilelonSystelonm;
+import org.apachelon.hadoop.fs.Path;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.earlybird.partition.HdfsUtil;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.elonarlybird.partition.HdfsUtil;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncConfig;
 
 
-public final class ArchiveHDFSUtils {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveHDFSUtils.class);
+public final class ArchivelonHDFSUtils {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ArchivelonHDFSUtils.class);
 
-  private static final Pattern SEGMENT_NAME_PATTERN =
-      Pattern.compile("_start_([0-9]+)_p_([0-9]+)_of_([0-9]+)_([0-9]{14}+)_");
-  private static final int MATCHER_GROUP_END_DATE = 4;
+  privatelon static final Pattelonrn SelonGMelonNT_NAMelon_PATTelonRN =
+      Pattelonrn.compilelon("_start_([0-9]+)_p_([0-9]+)_of_([0-9]+)_([0-9]{14}+)_");
+  privatelon static final int MATCHelonR_GROUP_elonND_DATelon = 4;
 
-  private ArchiveHDFSUtils() {
+  privatelon ArchivelonHDFSUtils() {
   }
 
   /**
-   * Check if a given segment already has its indices built on hdfs.
-   * @return true if the indices exist on hdfs; otherwise, false.
+   * Chelonck if a givelonn selongmelonnt alrelonady has its indicelons built on hdfs.
+   * @relonturn truelon if thelon indicelons elonxist on hdfs; othelonrwiselon, falselon.
    */
-  public static boolean hasSegmentIndicesOnHDFS(SegmentSyncConfig sync, SegmentInfo segment) {
-    LOG.info("checking segment on hdfs: " + segment
-        + " enabled: " + sync.isSegmentLoadFromHdfsEnabled());
-    FileSystem fs = null;
+  public static boolelonan hasSelongmelonntIndicelonsOnHDFS(SelongmelonntSyncConfig sync, SelongmelonntInfo selongmelonnt) {
+    LOG.info("cheloncking selongmelonnt on hdfs: " + selongmelonnt
+        + " elonnablelond: " + sync.isSelongmelonntLoadFromHdfselonnablelond());
+    FilelonSystelonm fs = null;
     try {
-      fs = HdfsUtil.getHdfsFileSystem();
-      String hdfsBaseDirPrefix = segment.getSyncInfo()
-          .getHdfsSyncDirPrefix();
-      FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-      return statuses != null && statuses.length > 0;
-    } catch (IOException ex) {
-      LOG.error("Failed checking segment on hdfs: " + segment, ex);
-      return false;
+      fs = HdfsUtil.gelontHdfsFilelonSystelonm();
+      String hdfsBaselonDirPrelonfix = selongmelonnt.gelontSyncInfo()
+          .gelontHdfsSyncDirPrelonfix();
+      FilelonStatus[] statuselons = fs.globStatus(nelonw Path(hdfsBaselonDirPrelonfix));
+      relonturn statuselons != null && statuselons.lelonngth > 0;
+    } catch (IOelonxcelonption elonx) {
+      LOG.elonrror("Failelond cheloncking selongmelonnt on hdfs: " + selongmelonnt, elonx);
+      relonturn falselon;
     } finally {
-      IOUtils.closeQuietly(fs);
+      IOUtils.closelonQuielontly(fs);
     }
   }
 
   /**
-   * Delete the segment index directories on the HDFS. If 'deleteCurrentDir' is true, the
-   * index directory with the end date matching 'segment' will be deleted. If 'deleteOlderDirs',
-   * the index directories with the end date earlier than the the segment enddate will be deleted.
+   * Delonlelontelon thelon selongmelonnt indelonx direlonctorielons on thelon HDFS. If 'delonlelontelonCurrelonntDir' is truelon, thelon
+   * indelonx direlonctory with thelon elonnd datelon matching 'selongmelonnt' will belon delonlelontelond. If 'delonlelontelonOldelonrDirs',
+   * thelon indelonx direlonctorielons with thelon elonnd datelon elonarlielonr than thelon thelon selongmelonnt elonnddatelon will belon delonlelontelond.
    *
    */
-  public static void deleteHdfsSegmentDir(SegmentSyncConfig sync, SegmentInfo segment,
-                                          boolean deleteCurrentDir, boolean deleteOlderDirs) {
-    FileSystem fs = null;
+  public static void delonlelontelonHdfsSelongmelonntDir(SelongmelonntSyncConfig sync, SelongmelonntInfo selongmelonnt,
+                                          boolelonan delonlelontelonCurrelonntDir, boolelonan delonlelontelonOldelonrDirs) {
+    FilelonSystelonm fs = null;
     try {
-      fs = HdfsUtil.getHdfsFileSystem();
-      String hdfsFlushDir = segment.getSyncInfo().getHdfsFlushDir();
-      String hdfsBaseDirPrefix = segment.getSyncInfo()
-          .getHdfsSyncDirPrefix();
-      String endDateStr = extractEndDate(hdfsBaseDirPrefix);
-      if (endDateStr != null) {
-        hdfsBaseDirPrefix = hdfsBaseDirPrefix.replace(endDateStr, "*");
+      fs = HdfsUtil.gelontHdfsFilelonSystelonm();
+      String hdfsFlushDir = selongmelonnt.gelontSyncInfo().gelontHdfsFlushDir();
+      String hdfsBaselonDirPrelonfix = selongmelonnt.gelontSyncInfo()
+          .gelontHdfsSyncDirPrelonfix();
+      String elonndDatelonStr = elonxtractelonndDatelon(hdfsBaselonDirPrelonfix);
+      if (elonndDatelonStr != null) {
+        hdfsBaselonDirPrelonfix = hdfsBaselonDirPrelonfix.relonplacelon(elonndDatelonStr, "*");
       }
-      String[] hdfsDirs = {segment.getSyncInfo().getHdfsTempFlushDir(),
-          hdfsBaseDirPrefix};
+      String[] hdfsDirs = {selongmelonnt.gelontSyncInfo().gelontHdfsTelonmpFlushDir(),
+          hdfsBaselonDirPrelonfix};
       for (String hdfsDir : hdfsDirs) {
-        FileStatus[] statuses = fs.globStatus(new Path(hdfsDir));
-        if (statuses != null && statuses.length > 0) {
-          for (FileStatus status : statuses) {
-            if (status.getPath().toString().endsWith(hdfsFlushDir)) {
-              if (deleteCurrentDir) {
-                fs.delete(status.getPath(), true);
-                LOG.info("Deleted segment: " + status.getPath());
+        FilelonStatus[] statuselons = fs.globStatus(nelonw Path(hdfsDir));
+        if (statuselons != null && statuselons.lelonngth > 0) {
+          for (FilelonStatus status : statuselons) {
+            if (status.gelontPath().toString().elonndsWith(hdfsFlushDir)) {
+              if (delonlelontelonCurrelonntDir) {
+                fs.delonlelontelon(status.gelontPath(), truelon);
+                LOG.info("Delonlelontelond selongmelonnt: " + status.gelontPath());
               }
-            } else {
-              if (deleteOlderDirs) {
-                fs.delete(status.getPath(), true);
-                LOG.info("Deleted segment: " + status.getPath());
+            } elonlselon {
+              if (delonlelontelonOldelonrDirs) {
+                fs.delonlelontelon(status.gelontPath(), truelon);
+                LOG.info("Delonlelontelond selongmelonnt: " + status.gelontPath());
               }
             }
           }
         }
       }
-    } catch (IOException e) {
-      LOG.error("Error delete Segment Dir :" + segment, e);
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("elonrror delonlelontelon Selongmelonnt Dir :" + selongmelonnt, elon);
     } finally {
-      IOUtils.closeQuietly(fs);
+      IOUtils.closelonQuielontly(fs);
     }
   }
 
   /**
-   * Given a segment, check if there is any indices built on HDFS; if yes, return the end date
-   * of the index built on HDFS; otherwise, return null.
+   * Givelonn a selongmelonnt, chelonck if thelonrelon is any indicelons built on HDFS; if yelons, relonturn thelon elonnd datelon
+   * of thelon indelonx built on HDFS; othelonrwiselon, relonturn null.
    */
-  public static Date getSegmentEndDateOnHdfs(SegmentSyncConfig sync, SegmentInfo segment) {
-    if (sync.isSegmentLoadFromHdfsEnabled()) {
-      LOG.info("About to check segment on hdfs: " + segment
-          + " enabled: " + sync.isSegmentLoadFromHdfsEnabled());
+  public static Datelon gelontSelongmelonntelonndDatelonOnHdfs(SelongmelonntSyncConfig sync, SelongmelonntInfo selongmelonnt) {
+    if (sync.isSelongmelonntLoadFromHdfselonnablelond()) {
+      LOG.info("About to chelonck selongmelonnt on hdfs: " + selongmelonnt
+          + " elonnablelond: " + sync.isSelongmelonntLoadFromHdfselonnablelond());
 
-      FileSystem fs = null;
+      FilelonSystelonm fs = null;
       try {
-        String hdfsBaseDirPrefix = segment.getSyncInfo()
-            .getHdfsSyncDirPrefix();
-        String endDateStr = extractEndDate(hdfsBaseDirPrefix);
-        if (endDateStr == null) {
-          return null;
+        String hdfsBaselonDirPrelonfix = selongmelonnt.gelontSyncInfo()
+            .gelontHdfsSyncDirPrelonfix();
+        String elonndDatelonStr = elonxtractelonndDatelon(hdfsBaselonDirPrelonfix);
+        if (elonndDatelonStr == null) {
+          relonturn null;
         }
-        hdfsBaseDirPrefix = hdfsBaseDirPrefix.replace(endDateStr, "*");
+        hdfsBaselonDirPrelonfix = hdfsBaselonDirPrelonfix.relonplacelon(elonndDatelonStr, "*");
 
-        fs = HdfsUtil.getHdfsFileSystem();
-        FileStatus[] statuses = fs.globStatus(new Path(hdfsBaseDirPrefix));
-        if (statuses != null && statuses.length > 0) {
-          Path hdfsSyncPath = statuses[statuses.length - 1].getPath();
-          String hdfsSyncPathName = hdfsSyncPath.getName();
-          endDateStr = extractEndDate(hdfsSyncPathName);
-          return Segment.getSegmentEndDate(endDateStr);
+        fs = HdfsUtil.gelontHdfsFilelonSystelonm();
+        FilelonStatus[] statuselons = fs.globStatus(nelonw Path(hdfsBaselonDirPrelonfix));
+        if (statuselons != null && statuselons.lelonngth > 0) {
+          Path hdfsSyncPath = statuselons[statuselons.lelonngth - 1].gelontPath();
+          String hdfsSyncPathNamelon = hdfsSyncPath.gelontNamelon();
+          elonndDatelonStr = elonxtractelonndDatelon(hdfsSyncPathNamelon);
+          relonturn Selongmelonnt.gelontSelongmelonntelonndDatelon(elonndDatelonStr);
         }
-      } catch (Exception ex) {
-        LOG.error("Failed getting segment from hdfs: " + segment, ex);
-        return null;
+      } catch (elonxcelonption elonx) {
+        LOG.elonrror("Failelond gelontting selongmelonnt from hdfs: " + selongmelonnt, elonx);
+        relonturn null;
       } finally {
-        IOUtils.closeQuietly(fs);
+        IOUtils.closelonQuielontly(fs);
       }
     }
-    return null;
+    relonturn null;
   }
 
-  private static String extractEndDate(String segmentDirPattern) {
-    Matcher matcher = SEGMENT_NAME_PATTERN.matcher(segmentDirPattern);
-    if (!matcher.find()) {
-      return null;
+  privatelon static String elonxtractelonndDatelon(String selongmelonntDirPattelonrn) {
+    Matchelonr matchelonr = SelonGMelonNT_NAMelon_PATTelonRN.matchelonr(selongmelonntDirPattelonrn);
+    if (!matchelonr.find()) {
+      relonturn null;
     }
 
     try {
-      return matcher.group(MATCHER_GROUP_END_DATE);
-    } catch (IllegalStateException e) {
-      LOG.error("Match operation failed: " + segmentDirPattern, e);
-      return null;
-    } catch (IndexOutOfBoundsException e) {
-      LOG.error(" No group in the pattern with the given index : " + segmentDirPattern, e);
-      return null;
+      relonturn matchelonr.group(MATCHelonR_GROUP_elonND_DATelon);
+    } catch (IllelongalStatelonelonxcelonption elon) {
+      LOG.elonrror("Match opelonration failelond: " + selongmelonntDirPattelonrn, elon);
+      relonturn null;
+    } catch (IndelonxOutOfBoundselonxcelonption elon) {
+      LOG.elonrror(" No group in thelon pattelonrn with thelon givelonn indelonx : " + selongmelonntDirPattelonrn, elon);
+      relonturn null;
     }
   }
 
   /**
-   * Converts the given date to a path, using the given separator. For example, if the sate is
-   * January 5, 2019, and the separator is "/", this method will return "2019/01/05".
+   * Convelonrts thelon givelonn datelon to a path, using thelon givelonn selonparator. For elonxamplelon, if thelon satelon is
+   * January 5, 2019, and thelon selonparator is "/", this melonthod will relonturn "2019/01/05".
    */
-  public static String dateToPath(Date date, String separator) {
-    StringBuilder builder = new StringBuilder();
-    Calendar cal = Calendar.getInstance();
-    cal.setTime(date);
-    builder.append(cal.get(Calendar.YEAR))
-           .append(separator)
-           .append(padding(cal.get(Calendar.MONTH) + 1, 2))
-           .append(separator)
-           .append(padding(cal.get(Calendar.DAY_OF_MONTH), 2));
-    return builder.toString();
+  public static String datelonToPath(Datelon datelon, String selonparator) {
+    StringBuildelonr buildelonr = nelonw StringBuildelonr();
+    Calelonndar cal = Calelonndar.gelontInstancelon();
+    cal.selontTimelon(datelon);
+    buildelonr.appelonnd(cal.gelont(Calelonndar.YelonAR))
+           .appelonnd(selonparator)
+           .appelonnd(padding(cal.gelont(Calelonndar.MONTH) + 1, 2))
+           .appelonnd(selonparator)
+           .appelonnd(padding(cal.gelont(Calelonndar.DAY_OF_MONTH), 2));
+    relonturn buildelonr.toString();
   }
 
-  private static String padding(int value, int len) {
-    return String.format("%0" + len + "d", value);
+  privatelon static String padding(int valuelon, int lelonn) {
+    relonturn String.format("%0" + lelonn + "d", valuelon);
   }
 }

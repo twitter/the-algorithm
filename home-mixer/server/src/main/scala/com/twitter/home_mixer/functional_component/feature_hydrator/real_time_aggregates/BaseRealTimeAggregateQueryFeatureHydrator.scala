@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.relonal_timelon_aggrelongatelons
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-trait BaseRealTimeAggregateQueryFeatureHydrator[K]
-    extends QueryFeatureHydrator[PipelineQuery]
-    with BaseRealtimeAggregateHydrator[K] {
+trait BaselonRelonalTimelonAggrelongatelonQuelonryFelonaturelonHydrator[K]
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry]
+    with BaselonRelonaltimelonAggrelongatelonHydrator[K] {
 
-  val outputFeature: DataRecordInAFeature[PipelineQuery]
+  val outputFelonaturelon: DataReloncordInAFelonaturelon[PipelonlinelonQuelonry]
 
-  override def features: Set[Feature[_, _]] = Set(outputFeature)
+  ovelonrridelon delonf felonaturelons: Selont[Felonaturelon[_, _]] = Selont(outputFelonaturelon)
 
-  override lazy val statScope: String = identifier.toString
+  ovelonrridelon lazy val statScopelon: String = idelonntifielonr.toString
 
-  def keysFromQueryAndCandidates(
-    query: PipelineQuery
+  delonf kelonysFromQuelonryAndCandidatelons(
+    quelonry: PipelonlinelonQuelonry
   ): Option[K]
 
-  override def hydrate(
-    query: PipelineQuery
-  ): Stitch[FeatureMap] = {
-    val possiblyKeys = keysFromQueryAndCandidates(query)
-    fetchAndConstructDataRecords(Seq(possiblyKeys)).map { dataRecords =>
-      FeatureMapBuilder()
-        .add(outputFeature, dataRecords.head)
+  ovelonrridelon delonf hydratelon(
+    quelonry: PipelonlinelonQuelonry
+  ): Stitch[FelonaturelonMap] = {
+    val possiblyKelonys = kelonysFromQuelonryAndCandidatelons(quelonry)
+    felontchAndConstructDataReloncords(Selonq(possiblyKelonys)).map { dataReloncords =>
+      FelonaturelonMapBuildelonr()
+        .add(outputFelonaturelon, dataReloncords.helonad)
         .build()
     }
   }

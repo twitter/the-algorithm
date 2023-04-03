@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.FeedbackInfoMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ClielonntelonvelonntInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.FelonelondbackInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelineItemMarshaller @Inject() (
-  timelineItemContentMarshaller: TimelineItemContentMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  feedbackInfoMarshaller: FeedbackInfoMarshaller) {
+@Singlelonton
+class TimelonlinelonItelonmMarshallelonr @Injelonct() (
+  timelonlinelonItelonmContelonntMarshallelonr: TimelonlinelonItelonmContelonntMarshallelonr,
+  clielonntelonvelonntInfoMarshallelonr: ClielonntelonvelonntInfoMarshallelonr,
+  felonelondbackInfoMarshallelonr: FelonelondbackInfoMarshallelonr) {
 
-  def apply(item: TimelineItem): urt.TimelineItem = urt.TimelineItem(
-    content = timelineItemContentMarshaller(item),
-    clientEventInfo = item.clientEventInfo.map(clientEventInfoMarshaller(_)),
-    feedbackInfo = item.feedbackActionInfo.map(feedbackInfoMarshaller(_)),
-    prompt = None
+  delonf apply(itelonm: TimelonlinelonItelonm): urt.TimelonlinelonItelonm = urt.TimelonlinelonItelonm(
+    contelonnt = timelonlinelonItelonmContelonntMarshallelonr(itelonm),
+    clielonntelonvelonntInfo = itelonm.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_)),
+    felonelondbackInfo = itelonm.felonelondbackActionInfo.map(felonelondbackInfoMarshallelonr(_)),
+    prompt = Nonelon
   )
 }

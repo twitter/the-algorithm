@@ -1,138 +1,138 @@
-package com.twitter.timelineranker.adapter
+packagelon com.twittelonr.timelonlinelonrankelonr.adaptelonr
 
-import com.twitter.timelineranker.model._
-import com.twitter.timelines.model.tweet.HydratedTweet
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelineservice.model.TimelineId
-import com.twitter.timelineservice.model.core
-import com.twitter.timelineservice.{model => tls}
-import com.twitter.timelineservice.{thriftscala => tlsthrift}
-import com.twitter.timelineservice.model.core._
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.twittelonr.timelonlinelonrankelonr.modelonl._
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TimelonlinelonId
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.corelon
+import com.twittelonr.timelonlinelonselonrvicelon.{modelonl => tls}
+import com.twittelonr.timelonlinelonselonrvicelon.{thriftscala => tlsthrift}
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.corelon._
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
 
 /**
- * Enables TLR model objects to be converted to/from TLS model/thrift objects.
+ * elonnablelons TLR modelonl objeloncts to belon convelonrtelond to/from TLS modelonl/thrift objeloncts.
  */
-object TimelineServiceAdapter {
-  def toTlrQuery(
+objelonct TimelonlinelonSelonrvicelonAdaptelonr {
+  delonf toTlrQuelonry(
     id: Long,
-    tlsRange: tls.TimelineRange,
-    getTweetsFromArchiveIndex: Boolean = true
-  ): ReverseChronTimelineQuery = {
-    val timelineId = TimelineId(id, TimelineKind.home)
-    val maxCount = tlsRange.maxCount
-    val tweetIdRange = tlsRange.cursor.map { cursor =>
-      TweetIdRange(
-        fromId = cursor.tweetIdBounds.bottom,
-        toId = cursor.tweetIdBounds.top
+    tlsRangelon: tls.TimelonlinelonRangelon,
+    gelontTwelonelontsFromArchivelonIndelonx: Boolelonan = truelon
+  ): RelonvelonrselonChronTimelonlinelonQuelonry = {
+    val timelonlinelonId = TimelonlinelonId(id, TimelonlinelonKind.homelon)
+    val maxCount = tlsRangelon.maxCount
+    val twelonelontIdRangelon = tlsRangelon.cursor.map { cursor =>
+      TwelonelontIdRangelon(
+        fromId = cursor.twelonelontIdBounds.bottom,
+        toId = cursor.twelonelontIdBounds.top
       )
     }
-    val options = ReverseChronTimelineQueryOptions(
-      getTweetsFromArchiveIndex = getTweetsFromArchiveIndex
+    val options = RelonvelonrselonChronTimelonlinelonQuelonryOptions(
+      gelontTwelonelontsFromArchivelonIndelonx = gelontTwelonelontsFromArchivelonIndelonx
     )
-    ReverseChronTimelineQuery(timelineId, Some(maxCount), tweetIdRange, Some(options))
+    RelonvelonrselonChronTimelonlinelonQuelonry(timelonlinelonId, Somelon(maxCount), twelonelontIdRangelon, Somelon(options))
   }
 
-  def toTlsQuery(query: ReverseChronTimelineQuery): tls.TimelineQuery = {
-    val tlsRange = toTlsRange(query.range, query.maxCount)
-    tls.TimelineQuery(
-      id = query.id.id,
-      kind = query.id.kind,
-      range = tlsRange
+  delonf toTlsQuelonry(quelonry: RelonvelonrselonChronTimelonlinelonQuelonry): tls.TimelonlinelonQuelonry = {
+    val tlsRangelon = toTlsRangelon(quelonry.rangelon, quelonry.maxCount)
+    tls.TimelonlinelonQuelonry(
+      id = quelonry.id.id,
+      kind = quelonry.id.kind,
+      rangelon = tlsRangelon
     )
   }
 
-  def toTlsRange(range: Option[TimelineRange], maxCount: Option[Int]): tls.TimelineRange = {
-    val cursor = range.map {
-      case tweetIdRange: TweetIdRange =>
-        RequestCursor(
-          top = tweetIdRange.toId.map(CursorState.fromTweetId),
-          bottom = tweetIdRange.fromId.map(core.CursorState.fromTweetId)
+  delonf toTlsRangelon(rangelon: Option[TimelonlinelonRangelon], maxCount: Option[Int]): tls.TimelonlinelonRangelon = {
+    val cursor = rangelon.map {
+      caselon twelonelontIdRangelon: TwelonelontIdRangelon =>
+        RelonquelonstCursor(
+          top = twelonelontIdRangelon.toId.map(CursorStatelon.fromTwelonelontId),
+          bottom = twelonelontIdRangelon.fromId.map(corelon.CursorStatelon.fromTwelonelontId)
         )
-      case _ =>
-        throw new IllegalArgumentException(s"Only TweetIdRange is supported. Found: $range")
+      caselon _ =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(s"Only TwelonelontIdRangelon is supportelond. Found: $rangelon")
     }
     maxCount
-      .map { count => tls.TimelineRange(cursor, count) }
-      .getOrElse(tls.TimelineRange(cursor))
+      .map { count => tls.TimelonlinelonRangelon(cursor, count) }
+      .gelontOrelonlselon(tls.TimelonlinelonRangelon(cursor))
   }
 
   /**
-   * Converts TLS timeline to a Try of TLR timeline.
+   * Convelonrts TLS timelonlinelon to a Try of TLR timelonlinelon.
    *
-   * TLS timeline not only contains timeline entries/attributes but also the retrieval state;
-   * whereas TLR timeline only has entries/attributes. Therefore, the TLS timeline is
-   * mapped to a Try[Timeline] where the Try part captures retrieval state and
-   * Timeline captures entries/attributes.
+   * TLS timelonlinelon not only contains timelonlinelon elonntrielons/attributelons but also thelon relontrielonval statelon;
+   * whelonrelonas TLR timelonlinelon only has elonntrielons/attributelons. Thelonrelonforelon, thelon TLS timelonlinelon is
+   * mappelond to a Try[Timelonlinelon] whelonrelon thelon Try part capturelons relontrielonval statelon and
+   * Timelonlinelon capturelons elonntrielons/attributelons.
    */
-  def toTlrTimelineTry(tlsTimeline: tls.Timeline[tls.TimelineEntry]): Try[Timeline] = {
-    require(
-      tlsTimeline.kind == TimelineKind.home,
-      s"Only home timelines are supported. Found: ${tlsTimeline.kind}"
+  delonf toTlrTimelonlinelonTry(tlsTimelonlinelon: tls.Timelonlinelon[tls.Timelonlinelonelonntry]): Try[Timelonlinelon] = {
+    relonquirelon(
+      tlsTimelonlinelon.kind == TimelonlinelonKind.homelon,
+      s"Only homelon timelonlinelons arelon supportelond. Found: ${tlsTimelonlinelon.kind}"
     )
 
-    tlsTimeline.state match {
-      case Some(TimelineHit) | None =>
-        val tweetEnvelopes = tlsTimeline.entries.map {
-          case tweet: tls.Tweet =>
-            TimelineEntryEnvelope(Tweet(tweet.tweetId))
-          case entry =>
-            throw new Exception(s"Only tweet timelines are supported. Found: $entry")
+    tlsTimelonlinelon.statelon match {
+      caselon Somelon(TimelonlinelonHit) | Nonelon =>
+        val twelonelontelonnvelonlopelons = tlsTimelonlinelon.elonntrielons.map {
+          caselon twelonelont: tls.Twelonelont =>
+            Timelonlinelonelonntryelonnvelonlopelon(Twelonelont(twelonelont.twelonelontId))
+          caselon elonntry =>
+            throw nelonw elonxcelonption(s"Only twelonelont timelonlinelons arelon supportelond. Found: $elonntry")
         }
-        Return(Timeline(TimelineId(tlsTimeline.id, tlsTimeline.kind), tweetEnvelopes))
-      case Some(TimelineNotFound) | Some(TimelineUnavailable) =>
-        Throw(new tls.core.TimelineUnavailableException(tlsTimeline.id, Some(tlsTimeline.kind)))
+        Relonturn(Timelonlinelon(TimelonlinelonId(tlsTimelonlinelon.id, tlsTimelonlinelon.kind), twelonelontelonnvelonlopelons))
+      caselon Somelon(TimelonlinelonNotFound) | Somelon(TimelonlinelonUnavailablelon) =>
+        Throw(nelonw tls.corelon.TimelonlinelonUnavailablelonelonxcelonption(tlsTimelonlinelon.id, Somelon(tlsTimelonlinelon.kind)))
     }
   }
 
-  def toTlsTimeline(timeline: Timeline): tls.Timeline[tls.Tweet] = {
-    val entries = timeline.entries.map { entry =>
-      entry.entry match {
-        case tweet: Tweet => tls.Tweet(tweet.id)
-        case entry: HydratedTweetEntry => tls.Tweet.fromThrift(entry.tweet)
-        case _ =>
-          throw new IllegalArgumentException(
-            s"Only tweet timelines are supported. Found: ${entry.entry}"
+  delonf toTlsTimelonlinelon(timelonlinelon: Timelonlinelon): tls.Timelonlinelon[tls.Twelonelont] = {
+    val elonntrielons = timelonlinelon.elonntrielons.map { elonntry =>
+      elonntry.elonntry match {
+        caselon twelonelont: Twelonelont => tls.Twelonelont(twelonelont.id)
+        caselon elonntry: HydratelondTwelonelontelonntry => tls.Twelonelont.fromThrift(elonntry.twelonelont)
+        caselon _ =>
+          throw nelonw IllelongalArgumelonntelonxcelonption(
+            s"Only twelonelont timelonlinelons arelon supportelond. Found: ${elonntry.elonntry}"
           )
       }
     }
-    tls.Timeline(
-      id = timeline.id.id,
-      kind = timeline.id.kind,
-      entries = entries
+    tls.Timelonlinelon(
+      id = timelonlinelon.id.id,
+      kind = timelonlinelon.id.kind,
+      elonntrielons = elonntrielons
     )
   }
 
-  def toTweetIds(timeline: tlsthrift.Timeline): Seq[TweetId] = {
-    timeline.entries.map {
-      case tlsthrift.TimelineEntry.Tweet(tweet) =>
-        tweet.statusId
-      case entry =>
-        throw new IllegalArgumentException(s"Only tweet timelines are supported. Found: ${entry}")
+  delonf toTwelonelontIds(timelonlinelon: tlsthrift.Timelonlinelon): Selonq[TwelonelontId] = {
+    timelonlinelon.elonntrielons.map {
+      caselon tlsthrift.Timelonlinelonelonntry.Twelonelont(twelonelont) =>
+        twelonelont.statusId
+      caselon elonntry =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(s"Only twelonelont timelonlinelons arelon supportelond. Found: ${elonntry}")
     }
   }
 
-  def toTweetIds(timeline: Timeline): Seq[TweetId] = {
-    timeline.entries.map { entry =>
-      entry.entry match {
-        case tweet: Tweet => tweet.id
-        case entry: HydratedTweetEntry => entry.tweet.id
-        case _ =>
-          throw new IllegalArgumentException(
-            s"Only tweet timelines are supported. Found: ${entry.entry}"
+  delonf toTwelonelontIds(timelonlinelon: Timelonlinelon): Selonq[TwelonelontId] = {
+    timelonlinelon.elonntrielons.map { elonntry =>
+      elonntry.elonntry match {
+        caselon twelonelont: Twelonelont => twelonelont.id
+        caselon elonntry: HydratelondTwelonelontelonntry => elonntry.twelonelont.id
+        caselon _ =>
+          throw nelonw IllelongalArgumelonntelonxcelonption(
+            s"Only twelonelont timelonlinelons arelon supportelond. Found: ${elonntry.elonntry}"
           )
       }
     }
   }
 
-  def toHydratedTweets(timeline: Timeline): Seq[HydratedTweet] = {
-    timeline.entries.map { entry =>
-      entry.entry match {
-        case hydratedTweet: HydratedTweet => hydratedTweet
-        case _ =>
-          throw new IllegalArgumentException(s"Expected hydrated tweet. Found: ${entry.entry}")
+  delonf toHydratelondTwelonelonts(timelonlinelon: Timelonlinelon): Selonq[HydratelondTwelonelont] = {
+    timelonlinelon.elonntrielons.map { elonntry =>
+      elonntry.elonntry match {
+        caselon hydratelondTwelonelont: HydratelondTwelonelont => hydratelondTwelonelont
+        caselon _ =>
+          throw nelonw IllelongalArgumelonntelonxcelonption(s"elonxpelonctelond hydratelond twelonelont. Found: ${elonntry.elonntry}")
       }
     }
   }

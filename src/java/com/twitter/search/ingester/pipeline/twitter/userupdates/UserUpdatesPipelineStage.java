@@ -1,51 +1,51 @@
-package com.twitter.search.ingester.pipeline.twitter.userupdates;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.uselonrupdatelons;
 
-import java.util.function.Supplier;
+import java.util.function.Supplielonr;
 
-import org.apache.commons.pipeline.Pipeline;
-import org.apache.commons.pipeline.StageDriver;
-import org.apache.commons.pipeline.StageException;
+import org.apachelon.commons.pipelonlinelon.Pipelonlinelon;
+import org.apachelon.commons.pipelonlinelon.StagelonDrivelonr;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
 
-import com.twitter.search.ingester.pipeline.twitter.TwitterBaseStage;
-import com.twitter.search.ingester.pipeline.util.PipelineUtil;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.TwittelonrBaselonStagelon;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonUtil;
 
 /**
- * This stage is a shim for the UserUpdatesPipeline.
+ * This stagelon is a shim for thelon UselonrUpdatelonsPipelonlinelon.
  *
- * Eventually the UserUpdatesPipeline will be called directly from a TwitterServer, but this exists
- * as a bridge while we migrate.
+ * elonvelonntually thelon UselonrUpdatelonsPipelonlinelon will belon callelond direlonctly from a TwittelonrSelonrvelonr, but this elonxists
+ * as a bridgelon whilelon welon migratelon.
  */
-public class UserUpdatesPipelineStage extends TwitterBaseStage {
+public class UselonrUpdatelonsPipelonlinelonStagelon elonxtelonnds TwittelonrBaselonStagelon {
   // This is 'prod', 'staging', or 'staging1'.
-  private String environment;
-  private UserUpdatesPipeline userUpdatesPipeline;
+  privatelon String elonnvironmelonnt;
+  privatelon UselonrUpdatelonsPipelonlinelon uselonrUpdatelonsPipelonlinelon;
 
-  @Override
-  protected void doInnerPreprocess() throws StageException {
-    StageDriver driver = ((Pipeline) stageContext).getStageDriver(this);
-    Supplier<Boolean> booleanSupplier = () -> driver.getState() == StageDriver.State.RUNNING;
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption {
+    StagelonDrivelonr drivelonr = ((Pipelonlinelon) stagelonContelonxt).gelontStagelonDrivelonr(this);
+    Supplielonr<Boolelonan> boolelonanSupplielonr = () -> drivelonr.gelontStatelon() == StagelonDrivelonr.Statelon.RUNNING;
     try {
-      userUpdatesPipeline = UserUpdatesPipeline.buildPipeline(
-          environment,
-          wireModule,
-          getStageNamePrefix(),
-          booleanSupplier,
+      uselonrUpdatelonsPipelonlinelon = UselonrUpdatelonsPipelonlinelon.buildPipelonlinelon(
+          elonnvironmelonnt,
+          wirelonModulelon,
+          gelontStagelonNamelonPrelonfix(),
+          boolelonanSupplielonr,
           clock);
 
-    } catch (Exception e) {
-      throw new StageException(this, e);
+    } catch (elonxcelonption elon) {
+      throw nelonw Stagelonelonxcelonption(this, elon);
     }
-    PipelineUtil.feedStartObjectToStage(this);
+    PipelonlinelonUtil.felonelondStartObjelonctToStagelon(this);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    userUpdatesPipeline.run();
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    uselonrUpdatelonsPipelonlinelon.run();
   }
 
-  @SuppressWarnings("unused")  // populated from pipeline config
-  public void setEnvironment(String environment) {
-    this.environment = environment;
+  @SupprelonssWarnings("unuselond")  // populatelond from pipelonlinelon config
+  public void selontelonnvironmelonnt(String elonnvironmelonnt) {
+    this.elonnvironmelonnt = elonnvironmelonnt;
   }
 
 }

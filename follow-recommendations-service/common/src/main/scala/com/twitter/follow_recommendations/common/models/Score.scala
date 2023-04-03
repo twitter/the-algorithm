@@ -1,144 +1,144 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.follow_recommendations.common.rankers.common.RankerId.RankerId
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.RankelonrId
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.RankelonrId.RankelonrId
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
 
 /**
- * Type of Score. This is used to differentiate scores.
+ * Typelon of Scorelon. This is uselond to diffelonrelonntiatelon scorelons.
  *
- * Define it as a trait so it is possible to add more information for different score types.
+ * Delonfinelon it as a trait so it is possiblelon to add morelon information for diffelonrelonnt scorelon typelons.
  */
-sealed trait ScoreType {
-  def getName: String
+selonalelond trait ScorelonTypelon {
+  delonf gelontNamelon: String
 }
 
 /**
- * Existing Score Types
+ * elonxisting Scorelon Typelons
  */
-object ScoreType {
+objelonct ScorelonTypelon {
 
   /**
-   * the score is calculated based on heuristics and most likely not normalized
+   * thelon scorelon is calculatelond baselond on helonuristics and most likelonly not normalizelond
    */
-  case object HeuristicBasedScore extends ScoreType {
-    override def getName: String = "HeuristicBasedScore"
+  caselon objelonct HelonuristicBaselondScorelon elonxtelonnds ScorelonTypelon {
+    ovelonrridelon delonf gelontNamelon: String = "HelonuristicBaselondScorelon"
   }
 
   /**
-   * probability of follow after the candidate is recommended to the user
+   * probability of follow aftelonr thelon candidatelon is reloncommelonndelond to thelon uselonr
    */
-  case object PFollowGivenReco extends ScoreType {
-    override def getName: String = "PFollowGivenReco"
+  caselon objelonct PFollowGivelonnRelonco elonxtelonnds ScorelonTypelon {
+    ovelonrridelon delonf gelontNamelon: String = "PFollowGivelonnRelonco"
   }
 
   /**
-   * probability of engage after the user follows the candidate
+   * probability of elonngagelon aftelonr thelon uselonr follows thelon candidatelon
    */
-  case object PEngagementGivenFollow extends ScoreType {
-    override def getName: String = "PEngagementGivenFollow"
+  caselon objelonct PelonngagelonmelonntGivelonnFollow elonxtelonnds ScorelonTypelon {
+    ovelonrridelon delonf gelontNamelon: String = "PelonngagelonmelonntGivelonnFollow"
   }
 
   /**
-   * probability of engage per tweet impression
+   * probability of elonngagelon pelonr twelonelont imprelonssion
    */
-  case object PEngagementPerImpression extends ScoreType {
-    override def getName: String = "PEngagementPerImpression"
+  caselon objelonct PelonngagelonmelonntPelonrImprelonssion elonxtelonnds ScorelonTypelon {
+    ovelonrridelon delonf gelontNamelon: String = "PelonngagelonmelonntPelonrImprelonssion"
   }
 
   /**
-   * probability of engage per tweet impression
+   * probability of elonngagelon pelonr twelonelont imprelonssion
    */
-  case object PEngagementGivenReco extends ScoreType {
-    override def getName: String = "PEngagementGivenReco"
+  caselon objelonct PelonngagelonmelonntGivelonnRelonco elonxtelonnds ScorelonTypelon {
+    ovelonrridelon delonf gelontNamelon: String = "PelonngagelonmelonntGivelonnRelonco"
   }
 
-  def fromScoreTypeString(scoreTypeName: String): ScoreType = scoreTypeName match {
-    case "HeuristicBasedScore" => HeuristicBasedScore
-    case "PFollowGivenReco" => PFollowGivenReco
-    case "PEngagementGivenFollow" => PEngagementGivenFollow
-    case "PEngagementPerImpression" => PEngagementPerImpression
-    case "PEngagementGivenReco" => PEngagementGivenReco
+  delonf fromScorelonTypelonString(scorelonTypelonNamelon: String): ScorelonTypelon = scorelonTypelonNamelon match {
+    caselon "HelonuristicBaselondScorelon" => HelonuristicBaselondScorelon
+    caselon "PFollowGivelonnRelonco" => PFollowGivelonnRelonco
+    caselon "PelonngagelonmelonntGivelonnFollow" => PelonngagelonmelonntGivelonnFollow
+    caselon "PelonngagelonmelonntPelonrImprelonssion" => PelonngagelonmelonntPelonrImprelonssion
+    caselon "PelonngagelonmelonntGivelonnRelonco" => PelonngagelonmelonntGivelonnRelonco
   }
 }
 
 /**
- * Represent the output from a certain ranker or scorer. All the fields are optional
+ * Relonprelonselonnt thelon output from a celonrtain rankelonr or scorelonr. All thelon fielonlds arelon optional
  *
- * @param value value of the score
- * @param rankerId ranker id
- * @param scoreType score type
+ * @param valuelon valuelon of thelon scorelon
+ * @param rankelonrId rankelonr id
+ * @param scorelonTypelon scorelon typelon
  */
-final case class Score(
-  value: Double,
-  rankerId: Option[RankerId] = None,
-  scoreType: Option[ScoreType] = None) {
+final caselon class Scorelon(
+  valuelon: Doublelon,
+  rankelonrId: Option[RankelonrId] = Nonelon,
+  scorelonTypelon: Option[ScorelonTypelon] = Nonelon) {
 
-  def toThrift: t.Score = t.Score(
-    value = value,
-    rankerId = rankerId.map(_.toString),
-    scoreType = scoreType.map(_.getName)
+  delonf toThrift: t.Scorelon = t.Scorelon(
+    valuelon = valuelon,
+    rankelonrId = rankelonrId.map(_.toString),
+    scorelonTypelon = scorelonTypelon.map(_.gelontNamelon)
   )
 
-  def toOfflineThrift: offline.Score =
-    offline.Score(
-      value = value,
-      rankerId = rankerId.map(_.toString),
-      scoreType = scoreType.map(_.getName)
+  delonf toOfflinelonThrift: offlinelon.Scorelon =
+    offlinelon.Scorelon(
+      valuelon = valuelon,
+      rankelonrId = rankelonrId.map(_.toString),
+      scorelonTypelon = scorelonTypelon.map(_.gelontNamelon)
     )
 }
 
-object Score {
+objelonct Scorelon {
 
-  val RandomScore = Score(0.0d, Some(RankerId.RandomRanker))
+  val RandomScorelon = Scorelon(0.0d, Somelon(RankelonrId.RandomRankelonr))
 
-  def optimusScore(score: Double, scoreType: ScoreType): Score = {
-    Score(value = score, scoreType = Some(scoreType))
+  delonf optimusScorelon(scorelon: Doublelon, scorelonTypelon: ScorelonTypelon): Scorelon = {
+    Scorelon(valuelon = scorelon, scorelonTypelon = Somelon(scorelonTypelon))
   }
 
-  def predictionScore(score: Double, rankerId: RankerId): Score = {
-    Score(value = score, rankerId = Some(rankerId))
+  delonf prelondictionScorelon(scorelon: Doublelon, rankelonrId: RankelonrId): Scorelon = {
+    Scorelon(valuelon = scorelon, rankelonrId = Somelon(rankelonrId))
   }
 
-  def fromThrift(thriftScore: t.Score): Score =
-    Score(
-      value = thriftScore.value,
-      rankerId = thriftScore.rankerId.flatMap(RankerId.getRankerByName),
-      scoreType = thriftScore.scoreType.map(ScoreType.fromScoreTypeString)
+  delonf fromThrift(thriftScorelon: t.Scorelon): Scorelon =
+    Scorelon(
+      valuelon = thriftScorelon.valuelon,
+      rankelonrId = thriftScorelon.rankelonrId.flatMap(RankelonrId.gelontRankelonrByNamelon),
+      scorelonTypelon = thriftScorelon.scorelonTypelon.map(ScorelonTypelon.fromScorelonTypelonString)
     )
 }
 
 /**
- * a list of scores
+ * a list of scorelons
  */
-final case class Scores(
-  scores: Seq[Score],
-  selectedRankerId: Option[RankerId] = None,
-  isInProducerScoringExperiment: Boolean = false) {
+final caselon class Scorelons(
+  scorelons: Selonq[Scorelon],
+  selonlelonctelondRankelonrId: Option[RankelonrId] = Nonelon,
+  isInProducelonrScoringelonxpelonrimelonnt: Boolelonan = falselon) {
 
-  def toThrift: t.Scores =
-    t.Scores(
-      scores = scores.map(_.toThrift),
-      selectedRankerId = selectedRankerId.map(_.toString),
-      isInProducerScoringExperiment = isInProducerScoringExperiment
+  delonf toThrift: t.Scorelons =
+    t.Scorelons(
+      scorelons = scorelons.map(_.toThrift),
+      selonlelonctelondRankelonrId = selonlelonctelondRankelonrId.map(_.toString),
+      isInProducelonrScoringelonxpelonrimelonnt = isInProducelonrScoringelonxpelonrimelonnt
     )
 
-  def toOfflineThrift: offline.Scores =
-    offline.Scores(
-      scores = scores.map(_.toOfflineThrift),
-      selectedRankerId = selectedRankerId.map(_.toString),
-      isInProducerScoringExperiment = isInProducerScoringExperiment
+  delonf toOfflinelonThrift: offlinelon.Scorelons =
+    offlinelon.Scorelons(
+      scorelons = scorelons.map(_.toOfflinelonThrift),
+      selonlelonctelondRankelonrId = selonlelonctelondRankelonrId.map(_.toString),
+      isInProducelonrScoringelonxpelonrimelonnt = isInProducelonrScoringelonxpelonrimelonnt
     )
 }
 
-object Scores {
-  val Empty: Scores = Scores(Nil)
+objelonct Scorelons {
+  val elonmpty: Scorelons = Scorelons(Nil)
 
-  def fromThrift(thriftScores: t.Scores): Scores =
-    Scores(
-      scores = thriftScores.scores.map(Score.fromThrift),
-      selectedRankerId = thriftScores.selectedRankerId.flatMap(RankerId.getRankerByName),
-      isInProducerScoringExperiment = thriftScores.isInProducerScoringExperiment
+  delonf fromThrift(thriftScorelons: t.Scorelons): Scorelons =
+    Scorelons(
+      scorelons = thriftScorelons.scorelons.map(Scorelon.fromThrift),
+      selonlelonctelondRankelonrId = thriftScorelons.selonlelonctelondRankelonrId.flatMap(RankelonrId.gelontRankelonrByNamelon),
+      isInProducelonrScoringelonxpelonrimelonnt = thriftScorelons.isInProducelonrScoringelonxpelonrimelonnt
     )
 }

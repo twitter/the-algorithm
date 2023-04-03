@@ -1,11 +1,11 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations
 
-enum EngagementType {
+elonnum elonngagelonmelonntTypelon {
     Click = 0
-    Like = 1
-    Mention = 2
-    Retweet = 3
-    ProfileView = 4
+    Likelon = 1
+    Melonntion = 2
+    Relontwelonelont = 3
+    ProfilelonVielonw = 4
 }

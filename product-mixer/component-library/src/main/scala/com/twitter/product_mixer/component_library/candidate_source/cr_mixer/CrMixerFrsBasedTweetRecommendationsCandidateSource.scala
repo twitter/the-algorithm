@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.component_library.candidate_source.cr_mixer
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.cr_mixelonr
 
-import com.twitter.cr_mixer.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.cr_mixelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Returns out-of-network Tweet recommendations by using user recommendations
- * from FollowRecommendationService as an input seed-set to Earlybird
+ * Relonturns out-of-nelontwork Twelonelont reloncommelonndations by using uselonr reloncommelonndations
+ * from FollowReloncommelonndationSelonrvicelon as an input selonelond-selont to elonarlybird
  */
-@Singleton
-class CrMixerFrsBasedTweetRecommendationsCandidateSource @Inject() (
-  crMixerClient: t.CrMixer.MethodPerEndpoint)
-    extends CandidateSource[t.FrsTweetRequest, t.FrsTweet] {
+@Singlelonton
+class CrMixelonrFrsBaselondTwelonelontReloncommelonndationsCandidatelonSourcelon @Injelonct() (
+  crMixelonrClielonnt: t.CrMixelonr.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelon[t.FrsTwelonelontRelonquelonst, t.FrsTwelonelont] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("CrMixerFrsBasedTweetRecommendations")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr("CrMixelonrFrsBaselondTwelonelontReloncommelonndations")
 
-  override def apply(request: t.FrsTweetRequest): Stitch[Seq[t.FrsTweet]] = Stitch
-    .callFuture(crMixerClient.getFrsBasedTweetRecommendations(request))
-    .map(_.tweets)
+  ovelonrridelon delonf apply(relonquelonst: t.FrsTwelonelontRelonquelonst): Stitch[Selonq[t.FrsTwelonelont]] = Stitch
+    .callFuturelon(crMixelonrClielonnt.gelontFrsBaselondTwelonelontReloncommelonndations(relonquelonst))
+    .map(_.twelonelonts)
 }

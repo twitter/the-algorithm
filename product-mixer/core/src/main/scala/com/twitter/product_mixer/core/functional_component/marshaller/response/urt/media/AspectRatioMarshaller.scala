@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melondia
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.AspectRatio
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia.AspelonctRatio
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-@Singleton
-class AspectRatioMarshaller @Inject() () {
+@Singlelonton
+class AspelonctRatioMarshallelonr @Injelonct() () {
 
-  def apply(aspectRatio: AspectRatio): urt.AspectRatio = urt.AspectRatio(
-    numerator = aspectRatio.numerator,
-    denominator = aspectRatio.denominator
+  delonf apply(aspelonctRatio: AspelonctRatio): urt.AspelonctRatio = urt.AspelonctRatio(
+    numelonrator = aspelonctRatio.numelonrator,
+    delonnominator = aspelonctRatio.delonnominator
   )
 }

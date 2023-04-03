@@ -1,284 +1,284 @@
-package com.twitter.follow_recommendations.common.predicates.gizmoduck
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.gizmoduck
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.Memcached.Client
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.clients.cache.MemcacheClient
-import com.twitter.follow_recommendations.common.clients.cache.ThriftBijection
-import com.twitter.follow_recommendations.common.models.FilterReason._
-import com.twitter.follow_recommendations.common.models.AddressBookMetadata
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicate._
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicateParams._
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.gizmoduck.thriftscala.LabelValue.BlinkBad
-import com.twitter.gizmoduck.thriftscala.LabelValue.BlinkWorst
-import com.twitter.gizmoduck.thriftscala.LabelValue
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.gizmoduck.thriftscala.UserResult
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.scrooge.CompactThriftSerializer
-import com.twitter.spam.rtf.thriftscala.SafetyLevel
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.logging.Logging
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.RandomReloncipielonnt
+import com.twittelonr.elonschelonrbird.util.stitchcachelon.StitchCachelon
+import com.twittelonr.finaglelon.Melonmcachelond.Clielonnt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.StatsUtil
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.cachelon.MelonmcachelonClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.cachelon.ThriftBijelonction
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason._
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AddrelonssBookMelontadata
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.gizmoduck.GizmoduckPrelondicatelon._
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.gizmoduck.GizmoduckPrelondicatelonParams._
+import com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs.DeloncidelonrKelony
+import com.twittelonr.gizmoduck.thriftscala.LabelonlValuelon.BlinkBad
+import com.twittelonr.gizmoduck.thriftscala.LabelonlValuelon.BlinkWorst
+import com.twittelonr.gizmoduck.thriftscala.LabelonlValuelon
+import com.twittelonr.gizmoduck.thriftscala.LookupContelonxt
+import com.twittelonr.gizmoduck.thriftscala.QuelonryFielonlds
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.gizmoduck.thriftscala.UselonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.scroogelon.CompactThriftSelonrializelonr
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLelonvelonl
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.gizmoduck.Gizmoduck
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.Duration
+import com.twittelonr.util.logging.Logging
 import java.lang.{Long => JLong}
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * In this filter, we want to check 4 categories of conditions:
- *   - if candidate is discoverable given that it's from an address-book/phone-book based source
- *   - if candidate is unsuitable based on it's safety sub-fields in gizmoduck
- *   - if candidate is withheld because of country-specific take-down policies
- *   - if candidate is marked as bad/worst based on blink labels
- * We fail close on the query as this is a product-critical filter
+ * In this filtelonr, welon want to chelonck 4 catelongorielons of conditions:
+ *   - if candidatelon is discovelonrablelon givelonn that it's from an addrelonss-book/phonelon-book baselond sourcelon
+ *   - if candidatelon is unsuitablelon baselond on it's safelonty sub-fielonlds in gizmoduck
+ *   - if candidatelon is withhelonld beloncauselon of country-speloncific takelon-down policielons
+ *   - if candidatelon is markelond as bad/worst baselond on blink labelonls
+ * Welon fail closelon on thelon quelonry as this is a product-critical filtelonr
  */
-@Singleton
-case class GizmoduckPredicate @Inject() (
+@Singlelonton
+caselon class GizmoduckPrelondicatelon @Injelonct() (
   gizmoduck: Gizmoduck,
-  client: Client,
-  statsReceiver: StatsReceiver,
-  decider: Decider = Decider.False)
-    extends Predicate[(HasClientContext with HasParams, CandidateUser)]
+  clielonnt: Clielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  deloncidelonr: Deloncidelonr = Deloncidelonr.Falselon)
+    elonxtelonnds Prelondicatelon[(HasClielonntContelonxt with HasParams, CandidatelonUselonr)]
     with Logging {
-  private val stats: StatsReceiver = statsReceiver.scope(this.getClass.getName)
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon(this.gelontClass.gelontNamelon)
 
-  // track # of Gizmoduck predicate queries that yielded valid & invalid predicate results
-  private val validPredicateResultCounter = stats.counter("predicate_valid")
-  private val invalidPredicateResultCounter = stats.counter("predicate_invalid")
+  // track # of Gizmoduck prelondicatelon quelonrielons that yielonldelond valid & invalid prelondicatelon relonsults
+  privatelon val validPrelondicatelonRelonsultCountelonr = stats.countelonr("prelondicatelon_valid")
+  privatelon val invalidPrelondicatelonRelonsultCountelonr = stats.countelonr("prelondicatelon_invalid")
 
-  // track # of cases where no Gizmoduck user was found
-  private val noGizmoduckUserCounter = stats.counter("no_gizmoduck_user_found")
+  // track # of caselons whelonrelon no Gizmoduck uselonr was found
+  privatelon val noGizmoduckUselonrCountelonr = stats.countelonr("no_gizmoduck_uselonr_found")
 
-  private val gizmoduckCache = StitchCache[JLong, UserResult](
-    maxCacheSize = MaxCacheSize,
-    ttl = CacheTTL,
-    statsReceiver = stats.scope("cache"),
-    underlyingCall = getByUserId
+  privatelon val gizmoduckCachelon = StitchCachelon[JLong, UselonrRelonsult](
+    maxCachelonSizelon = MaxCachelonSizelon,
+    ttl = CachelonTTL,
+    statsReloncelonivelonr = stats.scopelon("cachelon"),
+    undelonrlyingCall = gelontByUselonrId
   )
 
-  // Distributed Twemcache to store UserResult objects keyed on user IDs
-  val bijection = new ThriftBijection[UserResult] {
-    override val serializer = CompactThriftSerializer(UserResult)
+  // Distributelond Twelonmcachelon to storelon UselonrRelonsult objeloncts kelonyelond on uselonr IDs
+  val bijelonction = nelonw ThriftBijelonction[UselonrRelonsult] {
+    ovelonrridelon val selonrializelonr = CompactThriftSelonrializelonr(UselonrRelonsult)
   }
-  val memcacheClient = MemcacheClient[UserResult](
-    client = client,
-    dest = "/s/cache/frs:twemcaches",
-    valueBijection = bijection,
-    ttl = CacheTTL,
-    statsReceiver = stats.scope("twemcache")
+  val melonmcachelonClielonnt = MelonmcachelonClielonnt[UselonrRelonsult](
+    clielonnt = clielonnt,
+    delonst = "/s/cachelon/frs:twelonmcachelons",
+    valuelonBijelonction = bijelonction,
+    ttl = CachelonTTL,
+    statsReloncelonivelonr = stats.scopelon("twelonmcachelon")
   )
 
-  // main method used to apply GizmoduckPredicate to a candidate user
-  override def apply(
-    pair: (HasClientContext with HasParams, CandidateUser)
-  ): Stitch[PredicateResult] = {
-    val (request, candidate) = pair
-    // measure the latency of the getGizmoduckPredicateResult, since this predicate
-    // check is product-critical and relies on querying a core service (Gizmoduck)
-    StatsUtil.profileStitch(
-      getGizmoduckPredicateResult(request, candidate),
-      stats.scope("getGizmoduckPredicateResult")
+  // main melonthod uselond to apply GizmoduckPrelondicatelon to a candidatelon uselonr
+  ovelonrridelon delonf apply(
+    pair: (HasClielonntContelonxt with HasParams, CandidatelonUselonr)
+  ): Stitch[PrelondicatelonRelonsult] = {
+    val (relonquelonst, candidatelon) = pair
+    // melonasurelon thelon latelonncy of thelon gelontGizmoduckPrelondicatelonRelonsult, sincelon this prelondicatelon
+    // chelonck is product-critical and relonlielons on quelonrying a corelon selonrvicelon (Gizmoduck)
+    StatsUtil.profilelonStitch(
+      gelontGizmoduckPrelondicatelonRelonsult(relonquelonst, candidatelon),
+      stats.scopelon("gelontGizmoduckPrelondicatelonRelonsult")
     )
   }
 
-  private def getGizmoduckPredicateResult(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser
-  ): Stitch[PredicateResult] = {
-    val timeout: Duration = request.params(GizmoduckGetTimeout)
+  privatelon delonf gelontGizmoduckPrelondicatelonRelonsult(
+    relonquelonst: HasClielonntContelonxt with HasParams,
+    candidatelon: CandidatelonUselonr
+  ): Stitch[PrelondicatelonRelonsult] = {
+    val timelonout: Duration = relonquelonst.params(GizmoduckGelontTimelonout)
 
-    val deciderKey: String = DeciderKey.EnableGizmoduckCaching.toString
-    val enableDistributedCaching: Boolean = decider.isAvailable(deciderKey, Some(RandomRecipient))
+    val deloncidelonrKelony: String = DeloncidelonrKelony.elonnablelonGizmoduckCaching.toString
+    val elonnablelonDistributelondCaching: Boolelonan = deloncidelonr.isAvailablelon(deloncidelonrKelony, Somelon(RandomReloncipielonnt))
 
-    // try getting an existing UserResult from cache if possible
-    val userResultStitch: Stitch[UserResult] = 
-      enableDistributedCaching match {
-        // read from memcache
-        case true => memcacheClient.readThrough(
-          // add a key prefix to address cache key collisions
-          key = "GizmoduckPredicate" + candidate.id.toString,
-          underlyingCall = () => getByUserId(candidate.id)
+    // try gelontting an elonxisting UselonrRelonsult from cachelon if possiblelon
+    val uselonrRelonsultStitch: Stitch[UselonrRelonsult] =
+      elonnablelonDistributelondCaching match {
+        // relonad from melonmcachelon
+        caselon truelon => melonmcachelonClielonnt.relonadThrough(
+          // add a kelony prelonfix to addrelonss cachelon kelony collisions
+          kelony = "GizmoduckPrelondicatelon" + candidatelon.id.toString,
+          undelonrlyingCall = () => gelontByUselonrId(candidatelon.id)
         )
-        // read from local cache
-        case false => gizmoduckCache.readThrough(candidate.id)
+        // relonad from local cachelon
+        caselon falselon => gizmoduckCachelon.relonadThrough(candidatelon.id)
       }
 
-    val predicateResultStitch = userResultStitch.map {
-      userResult => {
-        val predicateResult = getPredicateResult(request, candidate, userResult)
-        if (enableDistributedCaching) {
-          predicateResult match {
-            case PredicateResult.Valid => 
-              stats.scope("twemcache").counter("predicate_valid").incr()
-            case PredicateResult.Invalid(reasons) => 
-              stats.scope("twemcache").counter("predicate_invalid").incr()
+    val prelondicatelonRelonsultStitch = uselonrRelonsultStitch.map {
+      uselonrRelonsult => {
+        val prelondicatelonRelonsult = gelontPrelondicatelonRelonsult(relonquelonst, candidatelon, uselonrRelonsult)
+        if (elonnablelonDistributelondCaching) {
+          prelondicatelonRelonsult match {
+            caselon PrelondicatelonRelonsult.Valid =>
+              stats.scopelon("twelonmcachelon").countelonr("prelondicatelon_valid").incr()
+            caselon PrelondicatelonRelonsult.Invalid(relonasons) =>
+              stats.scopelon("twelonmcachelon").countelonr("prelondicatelon_invalid").incr()
           }
-          // log metrics to check if local cache value matches distributed cache value  
-          logPredicateResultEquality(
-            request,
-            candidate,
-            predicateResult
+          // log melontrics to chelonck if local cachelon valuelon matchelons distributelond cachelon valuelon
+          logPrelondicatelonRelonsultelonquality(
+            relonquelonst,
+            candidatelon,
+            prelondicatelonRelonsult
           )
-        } else {
-          predicateResult match {
-            case PredicateResult.Valid => 
-              stats.scope("cache").counter("predicate_valid").incr()
-            case PredicateResult.Invalid(reasons) => 
-              stats.scope("cache").counter("predicate_invalid").incr()
+        } elonlselon {
+          prelondicatelonRelonsult match {
+            caselon PrelondicatelonRelonsult.Valid =>
+              stats.scopelon("cachelon").countelonr("prelondicatelon_valid").incr()
+            caselon PrelondicatelonRelonsult.Invalid(relonasons) =>
+              stats.scopelon("cachelon").countelonr("prelondicatelon_invalid").incr()
           }
         }
-        predicateResult
+        prelondicatelonRelonsult
       }
     }
-    predicateResultStitch
-      .within(timeout)(DefaultTimer)
-      .rescue { // fail-open when timeout or exception
-        case e: Exception =>
-          stats.scope("rescued").counter(e.getClass.getSimpleName).incr()
-          invalidPredicateResultCounter.incr()
-          Stitch(PredicateResult.Invalid(Set(FailOpen)))
+    prelondicatelonRelonsultStitch
+      .within(timelonout)(DelonfaultTimelonr)
+      .relonscuelon { // fail-opelonn whelonn timelonout or elonxcelonption
+        caselon elon: elonxcelonption =>
+          stats.scopelon("relonscuelond").countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          invalidPrelondicatelonRelonsultCountelonr.incr()
+          Stitch(PrelondicatelonRelonsult.Invalid(Selont(FailOpelonn)))
       }
   }
 
-  private def logPredicateResultEquality(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser,
-    predicateResult: PredicateResult
+  privatelon delonf logPrelondicatelonRelonsultelonquality(
+    relonquelonst: HasClielonntContelonxt with HasParams,
+    candidatelon: CandidatelonUselonr,
+    prelondicatelonRelonsult: PrelondicatelonRelonsult
   ): Unit = {
-    val localCachedUserResult = Option(gizmoduckCache.cache.getIfPresent(candidate.id))
-    if (localCachedUserResult.isDefined) {
-      val localPredicateResult = getPredicateResult(request, candidate, localCachedUserResult.get)
-      localPredicateResult.equals(predicateResult) match {
-        case true => stats.scope("has_equal_predicate_value").counter("true").incr()
-        case false => stats.scope("has_equal_predicate_value").counter("false").incr()
+    val localCachelondUselonrRelonsult = Option(gizmoduckCachelon.cachelon.gelontIfPrelonselonnt(candidatelon.id))
+    if (localCachelondUselonrRelonsult.isDelonfinelond) {
+      val localPrelondicatelonRelonsult = gelontPrelondicatelonRelonsult(relonquelonst, candidatelon, localCachelondUselonrRelonsult.gelont)
+      localPrelondicatelonRelonsult.elonquals(prelondicatelonRelonsult) match {
+        caselon truelon => stats.scopelon("has_elonqual_prelondicatelon_valuelon").countelonr("truelon").incr()
+        caselon falselon => stats.scopelon("has_elonqual_prelondicatelon_valuelon").countelonr("falselon").incr()
       }
-    } else {
-      stats.scope("has_equal_predicate_value").counter("undefined").incr()
+    } elonlselon {
+      stats.scopelon("has_elonqual_prelondicatelon_valuelon").countelonr("undelonfinelond").incr()
     }
   }
 
-  // method to get PredicateResult from UserResult
-  def getPredicateResult(
-    request: HasClientContext with HasParams,
-    candidate: CandidateUser,
-    userResult: UserResult,
-  ): PredicateResult = {
-    userResult.user match {
-      case Some(user) =>
-        val abPbReasons = getAbPbReason(user, candidate.getAddressBookMetadata)
-        val safetyReasons = getSafetyReasons(user)
-        val countryTakedownReasons = getCountryTakedownReasons(user, request.getCountryCode)
-        val blinkReasons = getBlinkReasons(user)
-        val allReasons =
-          abPbReasons ++ safetyReasons ++ countryTakedownReasons ++ blinkReasons
-        if (allReasons.nonEmpty) {
-          invalidPredicateResultCounter.incr()
-          PredicateResult.Invalid(allReasons)
-        } else {
-          validPredicateResultCounter.incr()
-          PredicateResult.Valid
+  // melonthod to gelont PrelondicatelonRelonsult from UselonrRelonsult
+  delonf gelontPrelondicatelonRelonsult(
+    relonquelonst: HasClielonntContelonxt with HasParams,
+    candidatelon: CandidatelonUselonr,
+    uselonrRelonsult: UselonrRelonsult,
+  ): PrelondicatelonRelonsult = {
+    uselonrRelonsult.uselonr match {
+      caselon Somelon(uselonr) =>
+        val abPbRelonasons = gelontAbPbRelonason(uselonr, candidatelon.gelontAddrelonssBookMelontadata)
+        val safelontyRelonasons = gelontSafelontyRelonasons(uselonr)
+        val countryTakelondownRelonasons = gelontCountryTakelondownRelonasons(uselonr, relonquelonst.gelontCountryCodelon)
+        val blinkRelonasons = gelontBlinkRelonasons(uselonr)
+        val allRelonasons =
+          abPbRelonasons ++ safelontyRelonasons ++ countryTakelondownRelonasons ++ blinkRelonasons
+        if (allRelonasons.nonelonmpty) {
+          invalidPrelondicatelonRelonsultCountelonr.incr()
+          PrelondicatelonRelonsult.Invalid(allRelonasons)
+        } elonlselon {
+          validPrelondicatelonRelonsultCountelonr.incr()
+          PrelondicatelonRelonsult.Valid
         }
-      case None =>
-        noGizmoduckUserCounter.incr()
-        invalidPredicateResultCounter.incr()
-        PredicateResult.Invalid(Set(NoUser))
+      caselon Nonelon =>
+        noGizmoduckUselonrCountelonr.incr()
+        invalidPrelondicatelonRelonsultCountelonr.incr()
+        PrelondicatelonRelonsult.Invalid(Selont(NoUselonr))
     }
   }
 
-  private def getByUserId(userId: JLong): Stitch[UserResult] = {
-    StatsUtil.profileStitch(
-      gizmoduck.getById(userId = userId, queryFields = queryFields, context = lookupContext),
-      stats.scope("getByUserId")
+  privatelon delonf gelontByUselonrId(uselonrId: JLong): Stitch[UselonrRelonsult] = {
+    StatsUtil.profilelonStitch(
+      gizmoduck.gelontById(uselonrId = uselonrId, quelonryFielonlds = quelonryFielonlds, contelonxt = lookupContelonxt),
+      stats.scopelon("gelontByUselonrId")
     )
   }
 }
 
-object GizmoduckPredicate {
+objelonct GizmoduckPrelondicatelon {
 
-  private[gizmoduck] val lookupContext: LookupContext =
-    LookupContext(`includeDeactivated` = true, `safetyLevel` = Some(SafetyLevel.Recommendations))
+  privatelon[gizmoduck] val lookupContelonxt: LookupContelonxt =
+    LookupContelonxt(`includelonDelonactivatelond` = truelon, `safelontyLelonvelonl` = Somelon(SafelontyLelonvelonl.Reloncommelonndations))
 
-  private[gizmoduck] val queryFields: Set[QueryFields] =
-    Set(
-      QueryFields.Discoverability, // needed for Address Book / Phone Book discoverability checks in getAbPbReason
-      QueryFields.Safety, // needed for user state safety checks in getSafetyReasons, getCountryTakedownReasons
-      QueryFields.Labels, // needed for user label checks in getBlinkReasons
-      QueryFields.Takedowns // needed for checking takedown labels for a user in getCountryTakedownReasons
+  privatelon[gizmoduck] val quelonryFielonlds: Selont[QuelonryFielonlds] =
+    Selont(
+      QuelonryFielonlds.Discovelonrability, // nelonelondelond for Addrelonss Book / Phonelon Book discovelonrability cheloncks in gelontAbPbRelonason
+      QuelonryFielonlds.Safelonty, // nelonelondelond for uselonr statelon safelonty cheloncks in gelontSafelontyRelonasons, gelontCountryTakelondownRelonasons
+      QuelonryFielonlds.Labelonls, // nelonelondelond for uselonr labelonl cheloncks in gelontBlinkRelonasons
+      QuelonryFielonlds.Takelondowns // nelonelondelond for cheloncking takelondown labelonls for a uselonr in gelontCountryTakelondownRelonasons
     )
 
-  private[gizmoduck] val BlinkLabels: Set[LabelValue] = Set(BlinkBad, BlinkWorst)
+  privatelon[gizmoduck] val BlinkLabelonls: Selont[LabelonlValuelon] = Selont(BlinkBad, BlinkWorst)
 
-  private[gizmoduck] def getAbPbReason(
-    user: User,
-    abMetadataOpt: Option[AddressBookMetadata]
-  ): Set[FilterReason] = {
+  privatelon[gizmoduck] delonf gelontAbPbRelonason(
+    uselonr: Uselonr,
+    abMelontadataOpt: Option[AddrelonssBookMelontadata]
+  ): Selont[FiltelonrRelonason] = {
     (for {
-      discoverability <- user.discoverability
-      abMetadata <- abMetadataOpt
-    } yield {
-      val AddressBookMetadata(fwdPb, rvPb, fwdAb, rvAb) = abMetadata
-      val abReason: Set[FilterReason] =
-        if ((!discoverability.discoverableByEmail) && (fwdAb || rvAb))
-          Set(AddressBookUndiscoverable)
-        else Set.empty
-      val pbReason: Set[FilterReason] =
-        if ((!discoverability.discoverableByMobilePhone) && (fwdPb || rvPb))
-          Set(PhoneBookUndiscoverable)
-        else Set.empty
-      abReason ++ pbReason
-    }).getOrElse(Set.empty)
+      discovelonrability <- uselonr.discovelonrability
+      abMelontadata <- abMelontadataOpt
+    } yielonld {
+      val AddrelonssBookMelontadata(fwdPb, rvPb, fwdAb, rvAb) = abMelontadata
+      val abRelonason: Selont[FiltelonrRelonason] =
+        if ((!discovelonrability.discovelonrablelonByelonmail) && (fwdAb || rvAb))
+          Selont(AddrelonssBookUndiscovelonrablelon)
+        elonlselon Selont.elonmpty
+      val pbRelonason: Selont[FiltelonrRelonason] =
+        if ((!discovelonrability.discovelonrablelonByMobilelonPhonelon) && (fwdPb || rvPb))
+          Selont(PhonelonBookUndiscovelonrablelon)
+        elonlselon Selont.elonmpty
+      abRelonason ++ pbRelonason
+    }).gelontOrelonlselon(Selont.elonmpty)
   }
 
-  private[gizmoduck] def getSafetyReasons(user: User): Set[FilterReason] = {
-    user.safety
+  privatelon[gizmoduck] delonf gelontSafelontyRelonasons(uselonr: Uselonr): Selont[FiltelonrRelonason] = {
+    uselonr.safelonty
       .map { s =>
-        val deactivatedReason: Set[FilterReason] =
-          if (s.deactivated) Set(Deactivated) else Set.empty
-        val suspendedReason: Set[FilterReason] = if (s.suspended) Set(Suspended) else Set.empty
-        val restrictedReason: Set[FilterReason] = if (s.restricted) Set(Restricted) else Set.empty
-        val nsfwUserReason: Set[FilterReason] = if (s.nsfwUser) Set(NsfwUser) else Set.empty
-        val nsfwAdminReason: Set[FilterReason] = if (s.nsfwAdmin) Set(NsfwAdmin) else Set.empty
-        val isProtectedReason: Set[FilterReason] = if (s.isProtected) Set(IsProtected) else Set.empty
-        deactivatedReason ++ suspendedReason ++ restrictedReason ++ nsfwUserReason ++ nsfwAdminReason ++ isProtectedReason
-      }.getOrElse(Set.empty)
+        val delonactivatelondRelonason: Selont[FiltelonrRelonason] =
+          if (s.delonactivatelond) Selont(Delonactivatelond) elonlselon Selont.elonmpty
+        val suspelonndelondRelonason: Selont[FiltelonrRelonason] = if (s.suspelonndelond) Selont(Suspelonndelond) elonlselon Selont.elonmpty
+        val relonstrictelondRelonason: Selont[FiltelonrRelonason] = if (s.relonstrictelond) Selont(Relonstrictelond) elonlselon Selont.elonmpty
+        val nsfwUselonrRelonason: Selont[FiltelonrRelonason] = if (s.nsfwUselonr) Selont(NsfwUselonr) elonlselon Selont.elonmpty
+        val nsfwAdminRelonason: Selont[FiltelonrRelonason] = if (s.nsfwAdmin) Selont(NsfwAdmin) elonlselon Selont.elonmpty
+        val isProtelonctelondRelonason: Selont[FiltelonrRelonason] = if (s.isProtelonctelond) Selont(IsProtelonctelond) elonlselon Selont.elonmpty
+        delonactivatelondRelonason ++ suspelonndelondRelonason ++ relonstrictelondRelonason ++ nsfwUselonrRelonason ++ nsfwAdminRelonason ++ isProtelonctelondRelonason
+      }.gelontOrelonlselon(Selont.elonmpty)
   }
 
-  private[gizmoduck] def getCountryTakedownReasons(
-    user: User,
-    countryCodeOpt: Option[String]
-  ): Set[FilterReason] = {
+  privatelon[gizmoduck] delonf gelontCountryTakelondownRelonasons(
+    uselonr: Uselonr,
+    countryCodelonOpt: Option[String]
+  ): Selont[FiltelonrRelonason] = {
     (for {
-      safety <- user.safety.toSeq
-      if safety.hasTakedown
-      takedowns <- user.takedowns.toSeq
-      takedownCountry <- takedowns.countryCodes
-      requestingCountry <- countryCodeOpt
-      if takedownCountry.toLowerCase == requestingCountry.toLowerCase
-    } yield Set(CountryTakedown(takedownCountry.toLowerCase))).flatten.toSet
+      safelonty <- uselonr.safelonty.toSelonq
+      if safelonty.hasTakelondown
+      takelondowns <- uselonr.takelondowns.toSelonq
+      takelondownCountry <- takelondowns.countryCodelons
+      relonquelonstingCountry <- countryCodelonOpt
+      if takelondownCountry.toLowelonrCaselon == relonquelonstingCountry.toLowelonrCaselon
+    } yielonld Selont(CountryTakelondown(takelondownCountry.toLowelonrCaselon))).flattelonn.toSelont
   }
 
-  private[gizmoduck] def getBlinkReasons(user: User): Set[FilterReason] = {
-    user.labels
-      .map(_.labels.map(_.labelValue))
-      .getOrElse(Nil)
-      .exists(BlinkLabels.contains)
+  privatelon[gizmoduck] delonf gelontBlinkRelonasons(uselonr: Uselonr): Selont[FiltelonrRelonason] = {
+    uselonr.labelonls
+      .map(_.labelonls.map(_.labelonlValuelon))
+      .gelontOrelonlselon(Nil)
+      .elonxists(BlinkLabelonls.contains)
     for {
-      labels <- user.labels.toSeq
-      label <- labels.labels
-      if (BlinkLabels.contains(label.labelValue))
-    } yield Set(Blink)
-  }.flatten.toSet
+      labelonls <- uselonr.labelonls.toSelonq
+      labelonl <- labelonls.labelonls
+      if (BlinkLabelonls.contains(labelonl.labelonlValuelon))
+    } yielonld Selont(Blink)
+  }.flattelonn.toSelont
 }

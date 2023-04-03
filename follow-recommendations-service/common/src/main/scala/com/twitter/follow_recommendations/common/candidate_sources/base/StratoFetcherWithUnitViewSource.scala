@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
 
-abstract class StratoFetcherWithUnitViewSource[K, V](
-  fetcher: Fetcher[K, Unit, V],
-  override val identifier: CandidateSourceIdentifier)
-    extends StratoFetcherSource[K, Unit, V](fetcher, Unit, identifier)
+abstract class StratoFelontchelonrWithUnitVielonwSourcelon[K, V](
+  felontchelonr: Felontchelonr[K, Unit, V],
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr)
+    elonxtelonnds StratoFelontchelonrSourcelon[K, Unit, V](felontchelonr, Unit, idelonntifielonr)

@@ -1,11 +1,11 @@
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/code/findbugs:jsr305",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/thrift/com/twitter/search/common:schema-java",
-        "src/thrift/com/twitter/search/feature_update_service/thrift:thrift-java",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/codelon/findbugs:jsr305",
+        "src/java/com/twittelonr/selonarch/common/schelonma/baselon",
+        "src/thrift/com/twittelonr/selonarch/common:schelonma-java",
+        "src/thrift/com/twittelonr/selonarch/felonaturelon_updatelon_selonrvicelon/thrift:thrift-java",
     ],
 )

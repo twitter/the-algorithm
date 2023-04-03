@@ -1,313 +1,313 @@
-package com.twitter.follow_recommendations.common.candidate_sources.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultEnableImplicitEngagedExpansion
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultExpansionInputCount
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.DefaultFinalCandidatesReturnedCount
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.EnableNonDirectFollowExpansion
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderParams.EnableSimsExpandSeedAccountsSort
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderRepository.DefaultCandidateBuilder
-import com.twitter.follow_recommendations.common.candidate_sources.base.SimilarUserExpanderRepository.DefaultScore
-import com.twitter.follow_recommendations.common.models.AccountProof
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.EngagementType
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.Reason
-import com.twitter.follow_recommendations.common.models.SimilarToProof
-import com.twitter.follow_recommendations.common.models.UserCandidateSourceDetails
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.SimilarUselonrelonxpandelonrParams.DelonfaultelonnablelonImplicitelonngagelondelonxpansion
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.SimilarUselonrelonxpandelonrParams.DelonfaultelonxpansionInputCount
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.SimilarUselonrelonxpandelonrParams.DelonfaultFinalCandidatelonsRelonturnelondCount
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.SimilarUselonrelonxpandelonrParams.elonnablelonNonDirelonctFollowelonxpansion
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.SimilarUselonrelonxpandelonrParams.elonnablelonSimselonxpandSelonelondAccountsSort
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.SimilarUselonrelonxpandelonrRelonpository.DelonfaultCandidatelonBuildelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.SimilarUselonrelonxpandelonrRelonpository.DelonfaultScorelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.AccountProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.elonngagelonmelonntTypelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FollowProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Relonason
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.SimilarToProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.UselonrCandidatelonSourcelonDelontails
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Params
 
-case class SecondDegreeCandidate(userId: Long, score: Double, socialProof: Option[Seq[Long]])
+caselon class SeloncondDelongrelonelonCandidatelon(uselonrId: Long, scorelon: Doublelon, socialProof: Option[Selonq[Long]])
 
-abstract class SimilarUserExpanderRepository[-Request <: HasParams](
-  override val identifier: CandidateSourceIdentifier,
-  similarToCandidatesFetcher: Fetcher[
+abstract class SimilarUselonrelonxpandelonrRelonpository[-Relonquelonst <: HasParams](
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr,
+  similarToCandidatelonsFelontchelonr: Felontchelonr[
     Long,
     Unit,
-    Candidates
+    Candidatelons
   ],
-  expansionInputSizeParam: FSBoundedParam[Int] = DefaultExpansionInputCount,
-  candidatesReturnedSizeParam: FSBoundedParam[Int] = DefaultFinalCandidatesReturnedCount,
-  enableImplicitEngagedExpansion: FSParam[Boolean] = DefaultEnableImplicitEngagedExpansion,
-  thresholdToAvoidExpansion: Int = 30,
-  maxExpansionPerCandidate: Option[Int] = None,
-  includingOriginalCandidates: Boolean = false,
-  scorer: (Double, Double) => Double = SimilarUserExpanderRepository.DefaultScorer,
-  aggregator: (Seq[Double]) => Double = ScoreAggregator.Max,
-  candidateBuilder: (Long, CandidateSourceIdentifier, Double, CandidateUser) => CandidateUser =
-    DefaultCandidateBuilder)
-    extends TwoHopExpansionCandidateSource[
-      Request,
-      CandidateUser,
-      SecondDegreeCandidate,
-      CandidateUser
+  elonxpansionInputSizelonParam: FSBoundelondParam[Int] = DelonfaultelonxpansionInputCount,
+  candidatelonsRelonturnelondSizelonParam: FSBoundelondParam[Int] = DelonfaultFinalCandidatelonsRelonturnelondCount,
+  elonnablelonImplicitelonngagelondelonxpansion: FSParam[Boolelonan] = DelonfaultelonnablelonImplicitelonngagelondelonxpansion,
+  threlonsholdToAvoidelonxpansion: Int = 30,
+  maxelonxpansionPelonrCandidatelon: Option[Int] = Nonelon,
+  includingOriginalCandidatelons: Boolelonan = falselon,
+  scorelonr: (Doublelon, Doublelon) => Doublelon = SimilarUselonrelonxpandelonrRelonpository.DelonfaultScorelonr,
+  aggrelongator: (Selonq[Doublelon]) => Doublelon = ScorelonAggrelongator.Max,
+  candidatelonBuildelonr: (Long, CandidatelonSourcelonIdelonntifielonr, Doublelon, CandidatelonUselonr) => CandidatelonUselonr =
+    DelonfaultCandidatelonBuildelonr)
+    elonxtelonnds TwoHopelonxpansionCandidatelonSourcelon[
+      Relonquelonst,
+      CandidatelonUselonr,
+      SeloncondDelongrelonelonCandidatelon,
+      CandidatelonUselonr
     ] {
 
-  val originalCandidateSource: CandidateSource[Request, CandidateUser]
-  val backupOriginalCandidateSource: Option[CandidateSource[Request, CandidateUser]] = None
+  val originalCandidatelonSourcelon: CandidatelonSourcelon[Relonquelonst, CandidatelonUselonr]
+  val backupOriginalCandidatelonSourcelon: Option[CandidatelonSourcelon[Relonquelonst, CandidatelonUselonr]] = Nonelon
 
-  override def firstDegreeNodes(request: Request): Stitch[Seq[CandidateUser]] = {
+  ovelonrridelon delonf firstDelongrelonelonNodelons(relonquelonst: Relonquelonst): Stitch[Selonq[CandidatelonUselonr]] = {
 
-    val originalCandidatesStitch: Stitch[Seq[CandidateUser]] =
-      originalCandidateSource(request)
+    val originalCandidatelonsStitch: Stitch[Selonq[CandidatelonUselonr]] =
+      originalCandidatelonSourcelon(relonquelonst)
 
-    val backupCandidatesStitch: Stitch[Seq[CandidateUser]] =
-      if (request.params(EnableNonDirectFollowExpansion)) {
-        backupOriginalCandidateSource.map(_.apply(request)).getOrElse(Stitch.Nil)
-      } else {
+    val backupCandidatelonsStitch: Stitch[Selonq[CandidatelonUselonr]] =
+      if (relonquelonst.params(elonnablelonNonDirelonctFollowelonxpansion)) {
+        backupOriginalCandidatelonSourcelon.map(_.apply(relonquelonst)).gelontOrelonlselon(Stitch.Nil)
+      } elonlselon {
         Stitch.Nil
       }
 
-    val firstDegreeCandidatesCombinedStitch: Stitch[Seq[CandidateUser]] =
+    val firstDelongrelonelonCandidatelonsCombinelondStitch: Stitch[Selonq[CandidatelonUselonr]] =
       Stitch
-        .join(originalCandidatesStitch, backupCandidatesStitch).map {
-          case (firstDegreeOrigCandidates, backupFirstDegreeCandidates) =>
-            if (request.params(EnableSimsExpandSeedAccountsSort)) {
-              firstDegreeOrigCandidates ++ backupFirstDegreeCandidates sortBy {
-                -_.score.getOrElse(DefaultScore)
+        .join(originalCandidatelonsStitch, backupCandidatelonsStitch).map {
+          caselon (firstDelongrelonelonOrigCandidatelons, backupFirstDelongrelonelonCandidatelons) =>
+            if (relonquelonst.params(elonnablelonSimselonxpandSelonelondAccountsSort)) {
+              firstDelongrelonelonOrigCandidatelons ++ backupFirstDelongrelonelonCandidatelons sortBy {
+                -_.scorelon.gelontOrelonlselon(DelonfaultScorelon)
               }
-            } else {
-              firstDegreeOrigCandidates ++ backupFirstDegreeCandidates
+            } elonlselon {
+              firstDelongrelonelonOrigCandidatelons ++ backupFirstDelongrelonelonCandidatelons
             }
         }
 
-    val candidatesAfterImplicitEngagementsRemovalStitch: Stitch[Seq[CandidateUser]] =
-      getCandidatesAfterImplicitEngagementFiltering(
-        request.params,
-        firstDegreeCandidatesCombinedStitch)
+    val candidatelonsAftelonrImplicitelonngagelonmelonntsRelonmovalStitch: Stitch[Selonq[CandidatelonUselonr]] =
+      gelontCandidatelonsAftelonrImplicitelonngagelonmelonntFiltelonring(
+        relonquelonst.params,
+        firstDelongrelonelonCandidatelonsCombinelondStitch)
 
-    val firstDegreeCandidatesCombinedTrimmed = candidatesAfterImplicitEngagementsRemovalStitch.map {
-      candidates: Seq[CandidateUser] =>
-        candidates.take(request.params(expansionInputSizeParam))
+    val firstDelongrelonelonCandidatelonsCombinelondTrimmelond = candidatelonsAftelonrImplicitelonngagelonmelonntsRelonmovalStitch.map {
+      candidatelons: Selonq[CandidatelonUselonr] =>
+        candidatelons.takelon(relonquelonst.params(elonxpansionInputSizelonParam))
     }
 
-    firstDegreeCandidatesCombinedTrimmed.map { firstDegreeResults: Seq[CandidateUser] =>
-      if (firstDegreeResults.nonEmpty && firstDegreeResults.size < thresholdToAvoidExpansion) {
-        firstDegreeResults
-          .groupBy(_.id).mapValues(
-            _.maxBy(_.score)
-          ).values.toSeq
-      } else {
+    firstDelongrelonelonCandidatelonsCombinelondTrimmelond.map { firstDelongrelonelonRelonsults: Selonq[CandidatelonUselonr] =>
+      if (firstDelongrelonelonRelonsults.nonelonmpty && firstDelongrelonelonRelonsults.sizelon < threlonsholdToAvoidelonxpansion) {
+        firstDelongrelonelonRelonsults
+          .groupBy(_.id).mapValuelons(
+            _.maxBy(_.scorelon)
+          ).valuelons.toSelonq
+      } elonlselon {
         Nil
       }
     }
 
   }
 
-  override def secondaryDegreeNodes(
-    request: Request,
-    firstDegreeCandidate: CandidateUser
-  ): Stitch[Seq[SecondDegreeCandidate]] = {
-    similarToCandidatesFetcher.fetch(firstDegreeCandidate.id).map(_.v).map { candidateListOption =>
-      candidateListOption
-        .map { candidatesList =>
-          candidatesList.candidates.map(candidate =>
-            SecondDegreeCandidate(candidate.userId, candidate.score, candidate.socialProof))
-        }.getOrElse(Nil)
+  ovelonrridelon delonf seloncondaryDelongrelonelonNodelons(
+    relonquelonst: Relonquelonst,
+    firstDelongrelonelonCandidatelon: CandidatelonUselonr
+  ): Stitch[Selonq[SeloncondDelongrelonelonCandidatelon]] = {
+    similarToCandidatelonsFelontchelonr.felontch(firstDelongrelonelonCandidatelon.id).map(_.v).map { candidatelonListOption =>
+      candidatelonListOption
+        .map { candidatelonsList =>
+          candidatelonsList.candidatelons.map(candidatelon =>
+            SeloncondDelongrelonelonCandidatelon(candidatelon.uselonrId, candidatelon.scorelon, candidatelon.socialProof))
+        }.gelontOrelonlselon(Nil)
     }
 
   }
 
-  override def aggregateAndScore(
-    req: Request,
-    firstDegreeToSecondDegreeNodesMap: Map[CandidateUser, Seq[SecondDegreeCandidate]]
-  ): Stitch[Seq[CandidateUser]] = {
+  ovelonrridelon delonf aggrelongatelonAndScorelon(
+    relonq: Relonquelonst,
+    firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap: Map[CandidatelonUselonr, Selonq[SeloncondDelongrelonelonCandidatelon]]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
 
-    val similarExpanderResults = firstDegreeToSecondDegreeNodesMap.flatMap {
-      case (firstDegreeCandidate, seqOfSecondDegreeCandidates) =>
-        val sourceScore = firstDegreeCandidate.score.getOrElse(DefaultScore)
-        val results: Seq[CandidateUser] = seqOfSecondDegreeCandidates.map { secondDegreeCandidate =>
-          val score = scorer(sourceScore, secondDegreeCandidate.score)
-          candidateBuilder(secondDegreeCandidate.userId, identifier, score, firstDegreeCandidate)
+    val similarelonxpandelonrRelonsults = firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap.flatMap {
+      caselon (firstDelongrelonelonCandidatelon, selonqOfSeloncondDelongrelonelonCandidatelons) =>
+        val sourcelonScorelon = firstDelongrelonelonCandidatelon.scorelon.gelontOrelonlselon(DelonfaultScorelon)
+        val relonsults: Selonq[CandidatelonUselonr] = selonqOfSeloncondDelongrelonelonCandidatelons.map { seloncondDelongrelonelonCandidatelon =>
+          val scorelon = scorelonr(sourcelonScorelon, seloncondDelongrelonelonCandidatelon.scorelon)
+          candidatelonBuildelonr(seloncondDelongrelonelonCandidatelon.uselonrId, idelonntifielonr, scorelon, firstDelongrelonelonCandidatelon)
         }
-        maxExpansionPerCandidate match {
-          case None => results
-          case Some(limit) => results.sortBy(-_.score.getOrElse(DefaultScore)).take(limit)
+        maxelonxpansionPelonrCandidatelon match {
+          caselon Nonelon => relonsults
+          caselon Somelon(limit) => relonsults.sortBy(-_.scorelon.gelontOrelonlselon(DelonfaultScorelon)).takelon(limit)
         }
-    }.toSeq
+    }.toSelonq
 
-    val allCandidates = {
-      if (includingOriginalCandidates)
-        firstDegreeToSecondDegreeNodesMap.keySet.toSeq
-      else
+    val allCandidatelons = {
+      if (includingOriginalCandidatelons)
+        firstDelongrelonelonToSeloncondDelongrelonelonNodelonsMap.kelonySelont.toSelonq
+      elonlselon
         Nil
-    } ++ similarExpanderResults
+    } ++ similarelonxpandelonrRelonsults
 
-    val groupedCandidates: Seq[CandidateUser] = allCandidates
+    val groupelondCandidatelons: Selonq[CandidatelonUselonr] = allCandidatelons
       .groupBy(_.id)
       .flatMap {
-        case (_, candidates) =>
-          val finalScore = aggregator(candidates.map(_.score.getOrElse(DefaultScore)))
-          val candidateSourceDetailsCombined = aggregateCandidateSourceDetails(candidates)
-          val accountSocialProofcombined = aggregateAccountSocialProof(candidates)
+        caselon (_, candidatelons) =>
+          val finalScorelon = aggrelongator(candidatelons.map(_.scorelon.gelontOrelonlselon(DelonfaultScorelon)))
+          val candidatelonSourcelonDelontailsCombinelond = aggrelongatelonCandidatelonSourcelonDelontails(candidatelons)
+          val accountSocialProofcombinelond = aggrelongatelonAccountSocialProof(candidatelons)
 
-          candidates.headOption.map(
+          candidatelons.helonadOption.map(
             _.copy(
-              score = Some(finalScore),
-              reason = accountSocialProofcombined,
-              userCandidateSourceDetails = candidateSourceDetailsCombined)
-              .withCandidateSource(identifier))
+              scorelon = Somelon(finalScorelon),
+              relonason = accountSocialProofcombinelond,
+              uselonrCandidatelonSourcelonDelontails = candidatelonSourcelonDelontailsCombinelond)
+              .withCandidatelonSourcelon(idelonntifielonr))
       }
-      .toSeq
+      .toSelonq
 
-    Stitch.value(
-      groupedCandidates
-        .sortBy { -_.score.getOrElse(DefaultScore) }.take(req.params(candidatesReturnedSizeParam))
+    Stitch.valuelon(
+      groupelondCandidatelons
+        .sortBy { -_.scorelon.gelontOrelonlselon(DelonfaultScorelon) }.takelon(relonq.params(candidatelonsRelonturnelondSizelonParam))
     )
   }
 
-  def aggregateCandidateSourceDetails(
-    candidates: Seq[CandidateUser]
-  ): Option[UserCandidateSourceDetails] = {
-    candidates
-      .map { candidate =>
-        candidate.userCandidateSourceDetails.map(_.candidateSourceScores).getOrElse(Map.empty)
-      }.reduceLeftOption { (scoreMap1, scoreMap2) =>
-        scoreMap1 ++ scoreMap2
+  delonf aggrelongatelonCandidatelonSourcelonDelontails(
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Option[UselonrCandidatelonSourcelonDelontails] = {
+    candidatelons
+      .map { candidatelon =>
+        candidatelon.uselonrCandidatelonSourcelonDelontails.map(_.candidatelonSourcelonScorelons).gelontOrelonlselon(Map.elonmpty)
+      }.relonducelonLelonftOption { (scorelonMap1, scorelonMap2) =>
+        scorelonMap1 ++ scorelonMap2
       }.map {
-        UserCandidateSourceDetails(primaryCandidateSource = None, _)
+        UselonrCandidatelonSourcelonDelontails(primaryCandidatelonSourcelon = Nonelon, _)
       }
 
   }
 
-  def aggregateAccountSocialProof(candidates: Seq[CandidateUser]): Option[Reason] = {
-    candidates
-      .map { candidate =>
+  delonf aggrelongatelonAccountSocialProof(candidatelons: Selonq[CandidatelonUselonr]): Option[Relonason] = {
+    candidatelons
+      .map { candidatelon =>
         (
-          candidate.reason
-            .flatMap(_.accountProof.flatMap(_.similarToProof.map(_.similarTo))).getOrElse(Nil),
-          candidate.reason
-            .flatMap(_.accountProof.flatMap(_.followProof.map(_.followedBy))).getOrElse(Nil),
-          candidate.reason
-            .flatMap(_.accountProof.flatMap(_.followProof.map(_.numIds))).getOrElse(0)
+          candidatelon.relonason
+            .flatMap(_.accountProof.flatMap(_.similarToProof.map(_.similarTo))).gelontOrelonlselon(Nil),
+          candidatelon.relonason
+            .flatMap(_.accountProof.flatMap(_.followProof.map(_.followelondBy))).gelontOrelonlselon(Nil),
+          candidatelon.relonason
+            .flatMap(_.accountProof.flatMap(_.followProof.map(_.numIds))).gelontOrelonlselon(0)
         )
-      }.reduceLeftOption { (accountProofOne, accountProofTwo) =>
+      }.relonducelonLelonftOption { (accountProofOnelon, accountProofTwo) =>
         (
-          // merge similarToIds
-          accountProofOne._1 ++ accountProofTwo._1,
-          // merge followedByIds
-          accountProofOne._2 ++ accountProofTwo._2,
+          // melonrgelon similarToIds
+          accountProofOnelon._1 ++ accountProofTwo._1,
+          // melonrgelon followelondByIds
+          accountProofOnelon._2 ++ accountProofTwo._2,
           // add numIds
-          accountProofOne._3 + accountProofTwo._3)
+          accountProofOnelon._3 + accountProofTwo._3)
       }.map { proofs =>
-        Reason(accountProof = Some(
+        Relonason(accountProof = Somelon(
           AccountProof(
-            similarToProof = Some(SimilarToProof(proofs._1)),
-            followProof = if (proofs._2.nonEmpty) Some(FollowProof(proofs._2, proofs._3)) else None
+            similarToProof = Somelon(SimilarToProof(proofs._1)),
+            followProof = if (proofs._2.nonelonmpty) Somelon(FollowProof(proofs._2, proofs._3)) elonlselon Nonelon
           )))
       }
   }
 
-  def getCandidatesAfterImplicitEngagementFiltering(
+  delonf gelontCandidatelonsAftelonrImplicitelonngagelonmelonntFiltelonring(
     params: Params,
-    firstDegreeCandidatesStitch: Stitch[Seq[CandidateUser]]
-  ): Stitch[Seq[CandidateUser]] = {
+    firstDelongrelonelonCandidatelonsStitch: Stitch[Selonq[CandidatelonUselonr]]
+  ): Stitch[Selonq[CandidatelonUselonr]] = {
 
-    if (!params(enableImplicitEngagedExpansion)) {
+    if (!params(elonnablelonImplicitelonngagelondelonxpansion)) {
 
       /**
-       * Remove candidates whose engagement types only contain implicit engagements
-       * (e.g. Profile View, Tweet Click) and only expand those candidates who contain explicit
-       * engagements.
+       * Relonmovelon candidatelons whoselon elonngagelonmelonnt typelons only contain implicit elonngagelonmelonnts
+       * (elon.g. Profilelon Vielonw, Twelonelont Click) and only elonxpand thoselon candidatelons who contain elonxplicit
+       * elonngagelonmelonnts.
        */
-      firstDegreeCandidatesStitch.map { candidates =>
-        candidates.filter { cand =>
-          cand.engagements.exists(engage =>
-            engage == EngagementType.Like || engage == EngagementType.Retweet || engage == EngagementType.Mention)
+      firstDelongrelonelonCandidatelonsStitch.map { candidatelons =>
+        candidatelons.filtelonr { cand =>
+          cand.elonngagelonmelonnts.elonxists(elonngagelon =>
+            elonngagelon == elonngagelonmelonntTypelon.Likelon || elonngagelon == elonngagelonmelonntTypelon.Relontwelonelont || elonngagelon == elonngagelonmelonntTypelon.Melonntion)
         }
       }
-    } else {
-      firstDegreeCandidatesStitch
+    } elonlselon {
+      firstDelongrelonelonCandidatelonsStitch
     }
   }
 
 }
 
-object SimilarUserExpanderRepository {
-  val DefaultScorer: (Double, Double) => Double = (sourceScore: Double, similarScore: Double) =>
-    similarScore
-  val MultiplyScorer: (Double, Double) => Double = (sourceScore: Double, similarScore: Double) =>
-    sourceScore * similarScore
-  val SourceScorer: (Double, Double) => Double = (sourceScore: Double, similarScore: Double) =>
-    sourceScore
+objelonct SimilarUselonrelonxpandelonrRelonpository {
+  val DelonfaultScorelonr: (Doublelon, Doublelon) => Doublelon = (sourcelonScorelon: Doublelon, similarScorelon: Doublelon) =>
+    similarScorelon
+  val MultiplyScorelonr: (Doublelon, Doublelon) => Doublelon = (sourcelonScorelon: Doublelon, similarScorelon: Doublelon) =>
+    sourcelonScorelon * similarScorelon
+  val SourcelonScorelonr: (Doublelon, Doublelon) => Doublelon = (sourcelonScorelon: Doublelon, similarScorelon: Doublelon) =>
+    sourcelonScorelon
 
-  val DefaultScore = 0.0d
+  val DelonfaultScorelon = 0.0d
 
-  val DefaultCandidateBuilder: (
+  val DelonfaultCandidatelonBuildelonr: (
     Long,
-    CandidateSourceIdentifier,
-    Double,
-    CandidateUser
-  ) => CandidateUser =
+    CandidatelonSourcelonIdelonntifielonr,
+    Doublelon,
+    CandidatelonUselonr
+  ) => CandidatelonUselonr =
     (
-      userId: Long,
-      _: CandidateSourceIdentifier,
-      score: Double,
-      candidate: CandidateUser
+      uselonrId: Long,
+      _: CandidatelonSourcelonIdelonntifielonr,
+      scorelon: Doublelon,
+      candidatelon: CandidatelonUselonr
     ) => {
-      val originalCandidateSourceDetails =
-        candidate.userCandidateSourceDetails.flatMap { candSourceDetails =>
-          candSourceDetails.primaryCandidateSource.map { primaryCandidateSource =>
-            UserCandidateSourceDetails(
-              primaryCandidateSource = None,
-              candidateSourceScores = Map(primaryCandidateSource -> candidate.score))
+      val originalCandidatelonSourcelonDelontails =
+        candidatelon.uselonrCandidatelonSourcelonDelontails.flatMap { candSourcelonDelontails =>
+          candSourcelonDelontails.primaryCandidatelonSourcelon.map { primaryCandidatelonSourcelon =>
+            UselonrCandidatelonSourcelonDelontails(
+              primaryCandidatelonSourcelon = Nonelon,
+              candidatelonSourcelonScorelons = Map(primaryCandidatelonSourcelon -> candidatelon.scorelon))
           }
         }
-      CandidateUser(
-        id = userId,
-        score = Some(score),
-        userCandidateSourceDetails = originalCandidateSourceDetails,
-        reason =
-          Some(Reason(Some(AccountProof(similarToProof = Some(SimilarToProof(Seq(candidate.id)))))))
+      CandidatelonUselonr(
+        id = uselonrId,
+        scorelon = Somelon(scorelon),
+        uselonrCandidatelonSourcelonDelontails = originalCandidatelonSourcelonDelontails,
+        relonason =
+          Somelon(Relonason(Somelon(AccountProof(similarToProof = Somelon(SimilarToProof(Selonq(candidatelon.id)))))))
       )
     }
 
-  val FollowClusterCandidateBuilder: (
+  val FollowClustelonrCandidatelonBuildelonr: (
     Long,
-    CandidateSourceIdentifier,
-    Double,
-    CandidateUser
-  ) => CandidateUser =
-    (userId: Long, _: CandidateSourceIdentifier, score: Double, candidate: CandidateUser) => {
-      val originalCandidateSourceDetails =
-        candidate.userCandidateSourceDetails.flatMap { candSourceDetails =>
-          candSourceDetails.primaryCandidateSource.map { primaryCandidateSource =>
-            UserCandidateSourceDetails(
-              primaryCandidateSource = None,
-              candidateSourceScores = Map(primaryCandidateSource -> candidate.score))
+    CandidatelonSourcelonIdelonntifielonr,
+    Doublelon,
+    CandidatelonUselonr
+  ) => CandidatelonUselonr =
+    (uselonrId: Long, _: CandidatelonSourcelonIdelonntifielonr, scorelon: Doublelon, candidatelon: CandidatelonUselonr) => {
+      val originalCandidatelonSourcelonDelontails =
+        candidatelon.uselonrCandidatelonSourcelonDelontails.flatMap { candSourcelonDelontails =>
+          candSourcelonDelontails.primaryCandidatelonSourcelon.map { primaryCandidatelonSourcelon =>
+            UselonrCandidatelonSourcelonDelontails(
+              primaryCandidatelonSourcelon = Nonelon,
+              candidatelonSourcelonScorelons = Map(primaryCandidatelonSourcelon -> candidatelon.scorelon))
           }
         }
 
-      val originalFollowCluster = candidate.reason
-        .flatMap(_.accountProof.flatMap(_.followProof.map(_.followedBy)))
+      val originalFollowClustelonr = candidatelon.relonason
+        .flatMap(_.accountProof.flatMap(_.followProof.map(_.followelondBy)))
 
-      CandidateUser(
-        id = userId,
-        score = Some(score),
-        userCandidateSourceDetails = originalCandidateSourceDetails,
-        reason = Some(
-          Reason(
-            Some(
+      CandidatelonUselonr(
+        id = uselonrId,
+        scorelon = Somelon(scorelon),
+        uselonrCandidatelonSourcelonDelontails = originalCandidatelonSourcelonDelontails,
+        relonason = Somelon(
+          Relonason(
+            Somelon(
               AccountProof(
-                similarToProof = Some(SimilarToProof(Seq(candidate.id))),
-                followProof = originalFollowCluster.map(follows =>
-                  FollowProof(follows, follows.size)))))
+                similarToProof = Somelon(SimilarToProof(Selonq(candidatelon.id))),
+                followProof = originalFollowClustelonr.map(follows =>
+                  FollowProof(follows, follows.sizelon)))))
         )
       )
     }
 }
 
-object ScoreAggregator {
-  // aggregate the same candidates with same id by taking the one with largest score
-  val Max: Seq[Double] => Double = (candidateScores: Seq[Double]) => { candidateScores.max }
+objelonct ScorelonAggrelongator {
+  // aggrelongatelon thelon samelon candidatelons with samelon id by taking thelon onelon with largelonst scorelon
+  val Max: Selonq[Doublelon] => Doublelon = (candidatelonScorelons: Selonq[Doublelon]) => { candidatelonScorelons.max }
 
-  // aggregate the same candidates with same id by taking the sum of the scores
-  val Sum: Seq[Double] => Double = (candidateScores: Seq[Double]) => { candidateScores.sum }
+  // aggrelongatelon thelon samelon candidatelons with samelon id by taking thelon sum of thelon scorelons
+  val Sum: Selonq[Doublelon] => Doublelon = (candidatelonScorelons: Selonq[Doublelon]) => { candidatelonScorelons.sum }
 }

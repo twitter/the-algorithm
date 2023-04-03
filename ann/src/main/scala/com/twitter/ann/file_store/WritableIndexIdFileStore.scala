@@ -1,71 +1,71 @@
-package com.twitter.ann.file_store
+packagelon com.twittelonr.ann.filelon_storelon
 
-import com.twitter.ann.common.IndexOutputFile
-import com.twitter.ann.common.thriftscala.FileBasedIndexIdStore
-import com.twitter.bijection.Injection
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.mediaservices.commons.codec.ThriftByteBufferCodec
-import com.twitter.storehaus.Store
-import com.twitter.util.Future
-import java.util.concurrent.{ConcurrentHashMap => JConcurrentHashMap}
-import scala.collection.JavaConverters._
+import com.twittelonr.ann.common.IndelonxOutputFilelon
+import com.twittelonr.ann.common.thriftscala.FilelonBaselondIndelonxIdStorelon
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.melondiaselonrvicelons.commons.codelonc.ArrayBytelonBuffelonrCodelonc
+import com.twittelonr.melondiaselonrvicelons.commons.codelonc.ThriftBytelonBuffelonrCodelonc
+import com.twittelonr.storelonhaus.Storelon
+import com.twittelonr.util.Futurelon
+import java.util.concurrelonnt.{ConcurrelonntHashMap => JConcurrelonntHashMap}
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object WritableIndexIdFileStore {
+objelonct WritablelonIndelonxIdFilelonStorelon {
 
   /**
-   * @param injection: Injection to convert typed Id to bytes.
-   * @tparam V: Type of Id
-   * @return File based Writable Store
+   * @param injelonction: Injelonction to convelonrt typelond Id to bytelons.
+   * @tparam V: Typelon of Id
+   * @relonturn Filelon baselond Writablelon Storelon
    */
-  def apply[V](
-    injection: Injection[V, Array[Byte]]
-  ): WritableIndexIdFileStore[V] = {
-    new WritableIndexIdFileStore[V](
-      new JConcurrentHashMap[Long, Option[V]],
-      injection
+  delonf apply[V](
+    injelonction: Injelonction[V, Array[Bytelon]]
+  ): WritablelonIndelonxIdFilelonStorelon[V] = {
+    nelonw WritablelonIndelonxIdFilelonStorelon[V](
+      nelonw JConcurrelonntHashMap[Long, Option[V]],
+      injelonction
     )
   }
 }
 
-class WritableIndexIdFileStore[V] private (
-  map: JConcurrentHashMap[Long, Option[V]],
-  injection: Injection[V, Array[Byte]])
-    extends Store[Long, V] {
+class WritablelonIndelonxIdFilelonStorelon[V] privatelon (
+  map: JConcurrelonntHashMap[Long, Option[V]],
+  injelonction: Injelonction[V, Array[Bytelon]])
+    elonxtelonnds Storelon[Long, V] {
 
-  private[this] val store = Store.fromJMap(map)
+  privatelon[this] val storelon = Storelon.fromJMap(map)
 
-  override def get(k: Long): Future[Option[V]] = {
-    store.get(k)
+  ovelonrridelon delonf gelont(k: Long): Futurelon[Option[V]] = {
+    storelon.gelont(k)
   }
 
-  override def put(kv: (Long, Option[V])): Future[Unit] = {
-    store.put(kv)
+  ovelonrridelon delonf put(kv: (Long, Option[V])): Futurelon[Unit] = {
+    storelon.put(kv)
   }
 
   /**
-   * Serialize and store the mapping in thrift format
-   * @param file : File path to store serialized long indexId <-> Id mapping
+   * Selonrializelon and storelon thelon mapping in thrift format
+   * @param filelon : Filelon path to storelon selonrializelond long indelonxId <-> Id mapping
    */
-  def save(file: IndexOutputFile): Unit = {
-    saveThrift(toThrift(), file)
+  delonf savelon(filelon: IndelonxOutputFilelon): Unit = {
+    savelonThrift(toThrift(), filelon)
   }
 
-  def getInjection: Injection[V, Array[Byte]] = injection
+  delonf gelontInjelonction: Injelonction[V, Array[Bytelon]] = injelonction
 
-  private[this] def toThrift(): FileBasedIndexIdStore = {
-    val indexIdMap = map.asScala
-      .collect {
-        case (key, Some(value)) => (key, ArrayByteBufferCodec.encode(injection.apply(value)))
+  privatelon[this] delonf toThrift(): FilelonBaselondIndelonxIdStorelon = {
+    val indelonxIdMap = map.asScala
+      .collelonct {
+        caselon (kelony, Somelon(valuelon)) => (kelony, ArrayBytelonBuffelonrCodelonc.elonncodelon(injelonction.apply(valuelon)))
       }
 
-    FileBasedIndexIdStore(Some(indexIdMap))
+    FilelonBaselondIndelonxIdStorelon(Somelon(indelonxIdMap))
   }
 
-  private[this] def saveThrift(thriftObj: FileBasedIndexIdStore, file: IndexOutputFile): Unit = {
-    val codec = new ThriftByteBufferCodec(FileBasedIndexIdStore)
-    val bytes = ArrayByteBufferCodec.decode(codec.encode(thriftObj))
-    val outputStream = file.getOutputStream()
-    outputStream.write(bytes)
-    outputStream.close()
+  privatelon[this] delonf savelonThrift(thriftObj: FilelonBaselondIndelonxIdStorelon, filelon: IndelonxOutputFilelon): Unit = {
+    val codelonc = nelonw ThriftBytelonBuffelonrCodelonc(FilelonBaselondIndelonxIdStorelon)
+    val bytelons = ArrayBytelonBuffelonrCodelonc.deloncodelon(codelonc.elonncodelon(thriftObj))
+    val outputStrelonam = filelon.gelontOutputStrelonam()
+    outputStrelonam.writelon(bytelons)
+    outputStrelonam.closelon()
   }
 }

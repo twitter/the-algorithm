@@ -1,36 +1,36 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.RichDataRecord
-import com.twitter.timelines.suggests.common.dense_data_record.thriftjava.DenseCompactDataRecord
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.RichDataReloncord
+import com.twittelonr.timelonlinelons.suggelonsts.common.delonnselon_data_reloncord.thriftjava.DelonnselonCompactDataReloncord
 
-private[offline_aggregates] object Utils {
+privatelon[offlinelon_aggrelongatelons] objelonct Utils {
 
   /**
-   * Selects only those values in map that correspond to the keys in ids and apply the provided
-   * transform to the selected values. This is a convenience method for use by Timelines Aggregation
-   * Framework based features.
+   * Selonleloncts only thoselon valuelons in map that correlonspond to thelon kelonys in ids and apply thelon providelond
+   * transform to thelon selonlelonctelond valuelons. This is a convelonnielonncelon melonthod for uselon by Timelonlinelons Aggrelongation
+   * Framelonwork baselond felonaturelons.
    *
-   * @param idsToSelect The set of ids to extract values for.
-   * @param transform A transform to apply to the selected values.
-   * @param map Map[Long, DenseCompactDataRecord]
+   * @param idsToSelonlelonct Thelon selont of ids to elonxtract valuelons for.
+   * @param transform A transform to apply to thelon selonlelonctelond valuelons.
+   * @param map Map[Long, DelonnselonCompactDataReloncord]
    */
-  def selectAndTransform(
-    idsToSelect: Seq[Long],
-    transform: DenseCompactDataRecord => DataRecord,
-    map: java.util.Map[java.lang.Long, DenseCompactDataRecord],
-  ): Map[Long, DataRecord] = {
-    val filtered: Seq[(Long, DataRecord)] =
+  delonf selonlelonctAndTransform(
+    idsToSelonlelonct: Selonq[Long],
+    transform: DelonnselonCompactDataReloncord => DataReloncord,
+    map: java.util.Map[java.lang.Long, DelonnselonCompactDataReloncord],
+  ): Map[Long, DataReloncord] = {
+    val filtelonrelond: Selonq[(Long, DataReloncord)] =
       for {
-        id <- idsToSelect if map.containsKey(id)
-      } yield {
-        id -> transform(map.get(id))
+        id <- idsToSelonlelonct if map.containsKelony(id)
+      } yielonld {
+        id -> transform(map.gelont(id))
       }
-    filtered.toMap
+    filtelonrelond.toMap
   }
 
-  def filterDataRecord(dr: DataRecord, featureContext: FeatureContext): Unit = {
-    new RichDataRecord(dr, featureContext).dropUnknownFeatures()
+  delonf filtelonrDataReloncord(dr: DataReloncord, felonaturelonContelonxt: FelonaturelonContelonxt): Unit = {
+    nelonw RichDataReloncord(dr, felonaturelonContelonxt).dropUnknownFelonaturelons()
   }
 }

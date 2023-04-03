@@ -1,211 +1,211 @@
-package com.twitter.simclusters_v2.summingbird.common
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.common
 
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.simclusters_v2.common.ModelVersions._
-import com.twitter.simclusters_v2.summingbird.common.ClientConfigs._
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.Environment.Environment
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.JobType.JobType
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.AltSetting
-import com.twitter.simclusters_v2.summingbird.common.SimClustersProfile.JobType
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions._
+import com.twittelonr.simclustelonrs_v2.summingbird.common.ClielonntConfigs._
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.AltSelontting.AltSelontting
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.elonnvironmelonnt.elonnvironmelonnt
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.JobTypelon.JobTypelon
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.AltSelontting
+import com.twittelonr.simclustelonrs_v2.summingbird.common.SimClustelonrsProfilelon.JobTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
 
-sealed trait SimClustersProfile {
-  val env: Environment
-  val alt: AltSetting
-  val modelVersionStr: String
+selonalelond trait SimClustelonrsProfilelon {
+  val elonnv: elonnvironmelonnt
+  val alt: AltSelontting
+  val modelonlVelonrsionStr: String
 
-  lazy val modelVersion: ModelVersion = modelVersionStr
+  lazy val modelonlVelonrsion: ModelonlVelonrsion = modelonlVelonrsionStr
 }
 
-sealed trait SimClustersJobProfile extends SimClustersProfile {
+selonalelond trait SimClustelonrsJobProfilelon elonxtelonnds SimClustelonrsProfilelon {
 
-  val jobType: JobType
+  val jobTypelon: JobTypelon
 
-  final lazy val jobName: String = {
+  final lazy val jobNamelon: String = {
     alt match {
-      case AltSetting.Alt =>
-        s"simclusters_v2_${jobType}_alt_job_$env"
-      case AltSetting.Esc =>
-        s"simclusters_v2_${jobType}_esc_job_$env"
-      case _ =>
-        s"simclusters_v2_${jobType}_job_$env"
+      caselon AltSelontting.Alt =>
+        s"simclustelonrs_v2_${jobTypelon}_alt_job_$elonnv"
+      caselon AltSelontting.elonsc =>
+        s"simclustelonrs_v2_${jobTypelon}_elonsc_job_$elonnv"
+      caselon _ =>
+        s"simclustelonrs_v2_${jobTypelon}_job_$elonnv"
     }
   }
 
-  // Build the serviceIdentifier by jobType, env and zone(dc)
-  final lazy val serviceIdentifier: String => ServiceIdentifier = { zone =>
-    ServiceIdentifier(Configs.role, s"summingbird_$jobName", env.toString, zone)
+  // Build thelon selonrvicelonIdelonntifielonr by jobTypelon, elonnv and zonelon(dc)
+  final lazy val selonrvicelonIdelonntifielonr: String => SelonrvicelonIdelonntifielonr = { zonelon =>
+    SelonrvicelonIdelonntifielonr(Configs.rolelon, s"summingbird_$jobNamelon", elonnv.toString, zonelon)
   }
 
-  final lazy val favScoreThresholdForUserInterest: Double =
-    Configs.favScoreThresholdForUserInterest(modelVersionStr)
+  final lazy val favScorelonThrelonsholdForUselonrIntelonrelonst: Doublelon =
+    Configs.favScorelonThrelonsholdForUselonrIntelonrelonst(modelonlVelonrsionStr)
 
-  lazy val timelineEventSourceSubscriberId: String = {
-    val jobTypeStr = jobType match {
-      case JobType.MultiModelTweet => "multi_model_tweet_"
-      case JobType.PersistentTweet => "persistent_tweet_"
-      case JobType.Tweet => ""
+  lazy val timelonlinelonelonvelonntSourcelonSubscribelonrId: String = {
+    val jobTypelonStr = jobTypelon match {
+      caselon JobTypelon.MultiModelonlTwelonelont => "multi_modelonl_twelonelont_"
+      caselon JobTypelon.PelonrsistelonntTwelonelont => "pelonrsistelonnt_twelonelont_"
+      caselon JobTypelon.Twelonelont => ""
     }
 
-    val prefix = alt match {
-      case AltSetting.Alt =>
+    val prelonfix = alt match {
+      caselon AltSelontting.Alt =>
         "alt_"
-      case AltSetting.Esc =>
-        "esc_"
-      case _ =>
+      caselon AltSelontting.elonsc =>
+        "elonsc_"
+      caselon _ =>
         ""
     }
 
-    s"simclusters_v2_${jobTypeStr}summingbird_$prefix$env"
+    s"simclustelonrs_v2_${jobTypelonStr}summingbird_$prelonfix$elonnv"
   }
 
 }
 
-object SimClustersProfile {
+objelonct SimClustelonrsProfilelon {
 
-  object JobType extends Enumeration {
-    type JobType = Value
-    val Tweet: JobType = Value("tweet")
-    val PersistentTweet: JobType = Value("persistent_tweet")
-    val MultiModelTweet: JobType = Value("multimodel_tweet")
+  objelonct JobTypelon elonxtelonnds elonnumelonration {
+    typelon JobTypelon = Valuelon
+    val Twelonelont: JobTypelon = Valuelon("twelonelont")
+    val PelonrsistelonntTwelonelont: JobTypelon = Valuelon("pelonrsistelonnt_twelonelont")
+    val MultiModelonlTwelonelont: JobTypelon = Valuelon("multimodelonl_twelonelont")
   }
 
-  object Environment extends Enumeration {
-    type Environment = Value
-    val Prod: Environment = Value("prod")
-    val Devel: Environment = Value("devel")
+  objelonct elonnvironmelonnt elonxtelonnds elonnumelonration {
+    typelon elonnvironmelonnt = Valuelon
+    val Prod: elonnvironmelonnt = Valuelon("prod")
+    val Delonvelonl: elonnvironmelonnt = Valuelon("delonvelonl")
 
-    def apply(setting: String): Environment = {
-      if (setting == Prod.toString) {
+    delonf apply(selontting: String): elonnvironmelonnt = {
+      if (selontting == Prod.toString) {
         Prod
-      } else {
-        Devel
+      } elonlselon {
+        Delonvelonl
       }
     }
   }
 
-  object AltSetting extends Enumeration {
-    type AltSetting = Value
-    val Normal: AltSetting = Value("normal")
-    val Alt: AltSetting = Value("alt")
-    val Esc: AltSetting = Value("esc")
+  objelonct AltSelontting elonxtelonnds elonnumelonration {
+    typelon AltSelontting = Valuelon
+    val Normal: AltSelontting = Valuelon("normal")
+    val Alt: AltSelontting = Valuelon("alt")
+    val elonsc: AltSelontting = Valuelon("elonsc")
 
-    def apply(setting: String): AltSetting = {
+    delonf apply(selontting: String): AltSelontting = {
 
-      setting match {
-        case "alt" => Alt
-        case "esc" => Esc
-        case _ => Normal
+      selontting match {
+        caselon "alt" => Alt
+        caselon "elonsc" => elonsc
+        caselon _ => Normal
       }
     }
   }
 
-  case class SimClustersTweetProfile(
-    env: Environment,
-    alt: AltSetting,
-    modelVersionStr: String,
-    entityClusterScorePath: String,
-    tweetTopKClustersPath: String,
-    clusterTopKTweetsPath: String,
-    coreEmbeddingType: EmbeddingType,
-    clusterTopKTweetsLightPath: Option[String] = None)
-      extends SimClustersJobProfile {
+  caselon class SimClustelonrsTwelonelontProfilelon(
+    elonnv: elonnvironmelonnt,
+    alt: AltSelontting,
+    modelonlVelonrsionStr: String,
+    elonntityClustelonrScorelonPath: String,
+    twelonelontTopKClustelonrsPath: String,
+    clustelonrTopKTwelonelontsPath: String,
+    corelonelonmbelonddingTypelon: elonmbelonddingTypelon,
+    clustelonrTopKTwelonelontsLightPath: Option[String] = Nonelon)
+      elonxtelonnds SimClustelonrsJobProfilelon {
 
-    final val jobType: JobType = JobType.Tweet
+    final val jobTypelon: JobTypelon = JobTypelon.Twelonelont
   }
 
-  case class PersistentTweetProfile(
-    env: Environment,
-    alt: AltSetting,
-    modelVersionStr: String,
-    persistentTweetStratoPath: String,
-    coreEmbeddingType: EmbeddingType)
-      extends SimClustersJobProfile {
-    final val jobType: JobType = JobType.PersistentTweet
+  caselon class PelonrsistelonntTwelonelontProfilelon(
+    elonnv: elonnvironmelonnt,
+    alt: AltSelontting,
+    modelonlVelonrsionStr: String,
+    pelonrsistelonntTwelonelontStratoPath: String,
+    corelonelonmbelonddingTypelon: elonmbelonddingTypelon)
+      elonxtelonnds SimClustelonrsJobProfilelon {
+    final val jobTypelon: JobTypelon = JobTypelon.PelonrsistelonntTwelonelont
   }
 
-  final val AltProdTweetJobProfile = SimClustersTweetProfile(
-    env = Environment.Prod,
-    alt = AltSetting.Alt,
-    modelVersionStr = Model20M145K2020,
-    entityClusterScorePath = simClustersCoreAltCachePath,
-    tweetTopKClustersPath = simClustersCoreAltCachePath,
-    clusterTopKTweetsPath = simClustersCoreAltCachePath,
-    clusterTopKTweetsLightPath = Some(simClustersCoreAltLightCachePath),
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet
+  final val AltProdTwelonelontJobProfilelon = SimClustelonrsTwelonelontProfilelon(
+    elonnv = elonnvironmelonnt.Prod,
+    alt = AltSelontting.Alt,
+    modelonlVelonrsionStr = Modelonl20M145K2020,
+    elonntityClustelonrScorelonPath = simClustelonrsCorelonAltCachelonPath,
+    twelonelontTopKClustelonrsPath = simClustelonrsCorelonAltCachelonPath,
+    clustelonrTopKTwelonelontsPath = simClustelonrsCorelonAltCachelonPath,
+    clustelonrTopKTwelonelontsLightPath = Somelon(simClustelonrsCorelonAltLightCachelonPath),
+    corelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondTwelonelont
   )
 
-  final val AltDevelTweetJobProfile = SimClustersTweetProfile(
-    env = Environment.Devel,
-    alt = AltSetting.Alt,
-    modelVersionStr = Model20M145K2020,
-    // using the same devel cache with job
-    entityClusterScorePath = develSimClustersCoreCachePath,
-    tweetTopKClustersPath = develSimClustersCoreCachePath,
-    clusterTopKTweetsPath = develSimClustersCoreCachePath,
-    clusterTopKTweetsLightPath = Some(develSimClustersCoreLightCachePath),
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet,
+  final val AltDelonvelonlTwelonelontJobProfilelon = SimClustelonrsTwelonelontProfilelon(
+    elonnv = elonnvironmelonnt.Delonvelonl,
+    alt = AltSelontting.Alt,
+    modelonlVelonrsionStr = Modelonl20M145K2020,
+    // using thelon samelon delonvelonl cachelon with job
+    elonntityClustelonrScorelonPath = delonvelonlSimClustelonrsCorelonCachelonPath,
+    twelonelontTopKClustelonrsPath = delonvelonlSimClustelonrsCorelonCachelonPath,
+    clustelonrTopKTwelonelontsPath = delonvelonlSimClustelonrsCorelonCachelonPath,
+    clustelonrTopKTwelonelontsLightPath = Somelon(delonvelonlSimClustelonrsCorelonLightCachelonPath),
+    corelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondTwelonelont,
   )
 
-  final val ProdPersistentTweetProfile = PersistentTweetProfile(
-    env = Environment.Prod,
-    alt = AltSetting.Normal,
-    modelVersionStr = Model20M145K2020,
-    // This profile is used by the persistent tweet embedding job to update the embedding. We
-    // use the uncached column to avoid reading stale data
-    persistentTweetStratoPath = logFavBasedTweet20M145K2020UncachedStratoPath,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet
+  final val ProdPelonrsistelonntTwelonelontProfilelon = PelonrsistelonntTwelonelontProfilelon(
+    elonnv = elonnvironmelonnt.Prod,
+    alt = AltSelontting.Normal,
+    modelonlVelonrsionStr = Modelonl20M145K2020,
+    // This profilelon is uselond by thelon pelonrsistelonnt twelonelont elonmbelondding job to updatelon thelon elonmbelondding. Welon
+    // uselon thelon uncachelond column to avoid relonading stalelon data
+    pelonrsistelonntTwelonelontStratoPath = logFavBaselondTwelonelont20M145K2020UncachelondStratoPath,
+    corelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondTwelonelont
   )
 
-  final val DevelPersistentTweetProfile = PersistentTweetProfile(
-    env = Environment.Devel,
-    alt = AltSetting.Normal,
-    modelVersionStr = Model20M145K2020,
-    persistentTweetStratoPath = develLogFavBasedTweet20M145K2020StratoPath,
-    coreEmbeddingType = EmbeddingType.LogFavBasedTweet
+  final val DelonvelonlPelonrsistelonntTwelonelontProfilelon = PelonrsistelonntTwelonelontProfilelon(
+    elonnv = elonnvironmelonnt.Delonvelonl,
+    alt = AltSelontting.Normal,
+    modelonlVelonrsionStr = Modelonl20M145K2020,
+    pelonrsistelonntTwelonelontStratoPath = delonvelonlLogFavBaselondTwelonelont20M145K2020StratoPath,
+    corelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondTwelonelont
   )
 
-  def fetchTweetJobProfile(
-    env: Environment,
-    alt: AltSetting = AltSetting.Normal
-  ): SimClustersTweetProfile = {
-    (env, alt) match {
-      case (Environment.Prod, AltSetting.Alt) => AltProdTweetJobProfile
-      case (Environment.Devel, AltSetting.Alt) => AltDevelTweetJobProfile
-      case _ => throw new IllegalArgumentException("Invalid env or alt setting")
+  delonf felontchTwelonelontJobProfilelon(
+    elonnv: elonnvironmelonnt,
+    alt: AltSelontting = AltSelontting.Normal
+  ): SimClustelonrsTwelonelontProfilelon = {
+    (elonnv, alt) match {
+      caselon (elonnvironmelonnt.Prod, AltSelontting.Alt) => AltProdTwelonelontJobProfilelon
+      caselon (elonnvironmelonnt.Delonvelonl, AltSelontting.Alt) => AltDelonvelonlTwelonelontJobProfilelon
+      caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption("Invalid elonnv or alt selontting")
     }
   }
 
-  def fetchPersistentJobProfile(
-    env: Environment,
-    alt: AltSetting = AltSetting.Normal
-  ): PersistentTweetProfile = {
-    (env, alt) match {
-      case (Environment.Prod, AltSetting.Normal) => ProdPersistentTweetProfile
-      case (Environment.Devel, AltSetting.Normal) => DevelPersistentTweetProfile
-      case _ => throw new IllegalArgumentException("Invalid env or alt setting")
+  delonf felontchPelonrsistelonntJobProfilelon(
+    elonnv: elonnvironmelonnt,
+    alt: AltSelontting = AltSelontting.Normal
+  ): PelonrsistelonntTwelonelontProfilelon = {
+    (elonnv, alt) match {
+      caselon (elonnvironmelonnt.Prod, AltSelontting.Normal) => ProdPelonrsistelonntTwelonelontProfilelon
+      caselon (elonnvironmelonnt.Delonvelonl, AltSelontting.Normal) => DelonvelonlPelonrsistelonntTwelonelontProfilelon
+      caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption("Invalid elonnv or alt selontting")
     }
   }
 
   /**
-   * For short term, fav based tweet embedding and log fav based tweets embedding exists at the
-   * same time. We want to move to log fav based tweet embedding eventually.
-   * Follow based tweet embeddings exists in both environment.
-   * A uniform tweet embedding API is the future to replace the existing use case.
+   * For short telonrm, fav baselond twelonelont elonmbelondding and log fav baselond twelonelonts elonmbelondding elonxists at thelon
+   * samelon timelon. Welon want to movelon to log fav baselond twelonelont elonmbelondding elonvelonntually.
+   * Follow baselond twelonelont elonmbelonddings elonxists in both elonnvironmelonnt.
+   * A uniform twelonelont elonmbelondding API is thelon futurelon to relonplacelon thelon elonxisting uselon caselon.
    */
-  final lazy val tweetJobProfileMap: Environment => Map[
-    (EmbeddingType, String),
-    SimClustersTweetProfile
+  final lazy val twelonelontJobProfilelonMap: elonnvironmelonnt => Map[
+    (elonmbelonddingTypelon, String),
+    SimClustelonrsTwelonelontProfilelon
   ] = {
-    case Environment.Prod =>
+    caselon elonnvironmelonnt.Prod =>
       Map(
-        (EmbeddingType.LogFavBasedTweet, Model20M145K2020) -> AltProdTweetJobProfile
+        (elonmbelonddingTypelon.LogFavBaselondTwelonelont, Modelonl20M145K2020) -> AltProdTwelonelontJobProfilelon
       )
-    case Environment.Devel =>
+    caselon elonnvironmelonnt.Delonvelonl =>
       Map(
-        (EmbeddingType.LogFavBasedTweet, Model20M145K2020) -> AltDevelTweetJobProfile
+        (elonmbelonddingTypelon.LogFavBaselondTwelonelont, Modelonl20M145K2020) -> AltDelonvelonlTwelonelontJobProfilelon
       )
   }
 

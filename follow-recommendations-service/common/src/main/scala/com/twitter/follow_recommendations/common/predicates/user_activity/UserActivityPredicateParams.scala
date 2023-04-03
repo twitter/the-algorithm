@@ -1,10 +1,10 @@
-package com.twitter.follow_recommendations.common.predicates.user_activity
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.uselonr_activity
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.util.Duration
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.util.Duration
 
-object UserActivityPredicateParams {
-  case object HeavyTweeterEnabled
-      extends FSParam[Boolean]("user_activity_predicate_heavy_tweeter_enabled", false)
-  val CacheTTL: Duration = Duration.fromHours(6)
+objelonct UselonrActivityPrelondicatelonParams {
+  caselon objelonct HelonavyTwelonelontelonrelonnablelond
+      elonxtelonnds FSParam[Boolelonan]("uselonr_activity_prelondicatelon_helonavy_twelonelontelonr_elonnablelond", falselon)
+  val CachelonTTL: Duration = Duration.fromHours(6)
 }

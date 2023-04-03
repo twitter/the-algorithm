@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.modules
-import com.twitter.inject.TwitterModule
+packagelon com.twittelonr.follow_reloncommelonndations.modulelons
+import com.twittelonr.injelonct.TwittelonrModulelon
 
-object FlagsModule extends TwitterModule {
-  flag[Boolean](
-    name = "fetch_prod_promoted_accounts",
-    help = "Whether or not to fetch production promoted accounts (true / false)"
+objelonct FlagsModulelon elonxtelonnds TwittelonrModulelon {
+  flag[Boolelonan](
+    namelon = "felontch_prod_promotelond_accounts",
+    helonlp = "Whelonthelonr or not to felontch production promotelond accounts (truelon / falselon)"
   )
-  flag[Boolean](
-    name = "interests_opt_out_prod_enabled",
-    help = "Whether to fetch intersts opt out data from the prod strato column or not"
+  flag[Boolelonan](
+    namelon = "intelonrelonsts_opt_out_prod_elonnablelond",
+    helonlp = "Whelonthelonr to felontch intelonrsts opt out data from thelon prod strato column or not"
   )
-  flag[Boolean](
-    name = "log_results",
-    default = false,
-    help = "Whether to log results such that we use them for scoring or metrics"
+  flag[Boolelonan](
+    namelon = "log_relonsults",
+    delonfault = falselon,
+    helonlp = "Whelonthelonr to log relonsults such that welon uselon thelonm for scoring or melontrics"
   )
 }

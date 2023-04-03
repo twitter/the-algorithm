@@ -1,8 +1,8 @@
-package com.twitter.search.core.earlybird.index.column;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column;
 
-public interface DocValuesUpdate {
+public intelonrfacelon DocValuelonsUpdatelon {
   /**
-   * Performs an doc values update on the given document.
+   * Pelonrforms an doc valuelons updatelon on thelon givelonn documelonnt.
    */
-  void update(ColumnStrideFieldIndex docValues, int docID);
+  void updatelon(ColumnStridelonFielonldIndelonx docValuelons, int docID);
 }

@@ -1,17 +1,17 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+packagelon com.twittelonr.timelonlinelons.data_procelonssing.ad_hoc.elonarlybird_ranking.common
 
-import com.twitter.ml.api.Feature
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.reloncap.ReloncapFelonaturelons
 
-class EarlybirdTrainingRecapConfiguration extends EarlybirdTrainingConfiguration {
-  override val labels: Map[String, Feature.Binary] = Map(
-    "detail_expanded" -> RecapFeatures.IS_CLICKED,
-    "favorited" -> RecapFeatures.IS_FAVORITED,
-    "open_linked" -> RecapFeatures.IS_OPEN_LINKED,
-    "photo_expanded" -> RecapFeatures.IS_PHOTO_EXPANDED,
-    "profile_clicked" -> RecapFeatures.IS_PROFILE_CLICKED,
-    "replied" -> RecapFeatures.IS_REPLIED,
-    "retweeted" -> RecapFeatures.IS_RETWEETED,
-    "video_playback50" -> RecapFeatures.IS_VIDEO_PLAYBACK_50
+class elonarlybirdTrainingReloncapConfiguration elonxtelonnds elonarlybirdTrainingConfiguration {
+  ovelonrridelon val labelonls: Map[String, Felonaturelon.Binary] = Map(
+    "delontail_elonxpandelond" -> ReloncapFelonaturelons.IS_CLICKelonD,
+    "favoritelond" -> ReloncapFelonaturelons.IS_FAVORITelonD,
+    "opelonn_linkelond" -> ReloncapFelonaturelons.IS_OPelonN_LINKelonD,
+    "photo_elonxpandelond" -> ReloncapFelonaturelons.IS_PHOTO_elonXPANDelonD,
+    "profilelon_clickelond" -> ReloncapFelonaturelons.IS_PROFILelon_CLICKelonD,
+    "relonplielond" -> ReloncapFelonaturelons.IS_RelonPLIelonD,
+    "relontwelonelontelond" -> ReloncapFelonaturelons.IS_RelonTWelonelonTelonD,
+    "videlono_playback50" -> ReloncapFelonaturelons.IS_VIDelonO_PLAYBACK_50
   )
 }

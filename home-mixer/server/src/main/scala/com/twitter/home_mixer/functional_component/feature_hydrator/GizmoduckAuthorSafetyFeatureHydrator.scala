@@ -1,57 +1,57 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIsBlueVerifiedFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableGizmoduckAuthorSafetyFeatureHydratorParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.CandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.gizmoduck.{thriftscala => gt}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIsBluelonVelonrifielondFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.elonnablelonGizmoduckAuthorSafelontyFelonaturelonHydratorParam
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.CandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.gizmoduck.Gizmoduck
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GizmoduckAuthorSafetyFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
-    extends CandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with Conditionally[PipelineQuery] {
+@Singlelonton
+class GizmoduckAuthorSafelontyFelonaturelonHydrator @Injelonct() (gizmoduck: Gizmoduck)
+    elonxtelonnds CandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon]
+    with Conditionally[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("GizmoduckAuthorSafety")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("GizmoduckAuthorSafelonty")
 
-  override val features: Set[Feature[_, _]] = Set(AuthorIsBlueVerifiedFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(AuthorIsBluelonVelonrifielondFelonaturelon)
 
-  override def onlyIf(query: PipelineQuery): Boolean =
-    query.params(EnableGizmoduckAuthorSafetyFeatureHydratorParam)
+  ovelonrridelon delonf onlyIf(quelonry: PipelonlinelonQuelonry): Boolelonan =
+    quelonry.params(elonnablelonGizmoduckAuthorSafelontyFelonaturelonHydratorParam)
 
-  private val queryFields: Set[gt.QueryFields] = Set(gt.QueryFields.Safety)
+  privatelon val quelonryFielonlds: Selont[gt.QuelonryFielonlds] = Selont(gt.QuelonryFielonlds.Safelonty)
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): Stitch[FeatureMap] = {
-    val authorIdOption = existingFeatures.getOrElse(AuthorIdFeature, None)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): Stitch[FelonaturelonMap] = {
+    val authorIdOption = elonxistingFelonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon)
 
-    val blueVerifiedStitch = authorIdOption
+    val bluelonVelonrifielondStitch = authorIdOption
       .map { authorId =>
         gizmoduck
-          .getUserById(
-            userId = authorId,
-            queryFields = queryFields
+          .gelontUselonrById(
+            uselonrId = authorId,
+            quelonryFielonlds = quelonryFielonlds
           )
-          .map { _.safety.flatMap(_.isBlueVerified).getOrElse(false) }
-      }.getOrElse(Stitch.False)
+          .map { _.safelonty.flatMap(_.isBluelonVelonrifielond).gelontOrelonlselon(falselon) }
+      }.gelontOrelonlselon(Stitch.Falselon)
 
-    blueVerifiedStitch.map { isBlueVerified =>
-      FeatureMapBuilder()
-        .add(AuthorIsBlueVerifiedFeature, isBlueVerified)
+    bluelonVelonrifielondStitch.map { isBluelonVelonrifielond =>
+      FelonaturelonMapBuildelonr()
+        .add(AuthorIsBluelonVelonrifielondFelonaturelon, isBluelonVelonrifielond)
         .build()
     }
   }

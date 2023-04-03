@@ -1,106 +1,106 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.search.common.features.thriftscala.ThriftTweetFeatures
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+import com.twittelonr.selonarch.common.felonaturelons.thriftscala.ThriftTwelonelontFelonaturelons
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.util.Futurelon
 
 /**
- * Populates features with tweetId -> thriftTweetFeatures pairs.
+ * Populatelons felonaturelons with twelonelontId -> thriftTwelonelontFelonaturelons pairs.
  *
- * If a tweetId from contentFeatures is from searchResults, its content features are copied to
- * thriftTweetFeatures. If the tweet is a retweet, the original tweet's content features are copied.
+ * If a twelonelontId from contelonntFelonaturelons is from selonarchRelonsults, its contelonnt felonaturelons arelon copielond to
+ * thriftTwelonelontFelonaturelons. If thelon twelonelont is a relontwelonelont, thelon original twelonelont's contelonnt felonaturelons arelon copielond.
  *
- * If the tweetId is not found in searchResults, but is an inReplyToTweet of a searchResult, the
- * tweetId -> thriftTweetFeatures pair is added to features. This is because in TLM, reply tweets
- * have features that are their inReplyToTweets' content features. This also allows scoring
- * inReplyToTweet with content features populated when scoring replies.
+ * If thelon twelonelontId is not found in selonarchRelonsults, but is an inRelonplyToTwelonelont of a selonarchRelonsult, thelon
+ * twelonelontId -> thriftTwelonelontFelonaturelons pair is addelond to felonaturelons. This is beloncauselon in TLM, relonply twelonelonts
+ * havelon felonaturelons that arelon thelonir inRelonplyToTwelonelonts' contelonnt felonaturelons. This also allows scoring
+ * inRelonplyToTwelonelont with contelonnt felonaturelons populatelond whelonn scoring relonplielons.
  */
-object CopyContentFeaturesIntoThriftTweetFeaturesTransform
-    extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+objelonct CopyContelonntFelonaturelonsIntoThriftTwelonelontFelonaturelonsTransform
+    elonxtelonnds FuturelonArrow[
+      HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon,
+      HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
     ] {
 
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
+  ovelonrridelon delonf apply(
+    relonquelonst: HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+  ): Futurelon[HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon] = {
 
-    // Content Features Request Failures are handled in [[TweetypieContentFeaturesProvider]]
-    request.contentFeaturesFuture.map { contentFeaturesMap =>
-      val features = request.features.map {
-        case (tweetId: TweetId, thriftTweetFeatures: ThriftTweetFeatures) =>
-          val contentFeaturesOpt = request.tweetSourceTweetMap
-            .get(tweetId)
-            .orElse(
-              request.inReplyToTweetIds.contains(tweetId) match {
-                case true => Some(tweetId)
-                case false => None
+    // Contelonnt Felonaturelons Relonquelonst Failurelons arelon handlelond in [[TwelonelontypielonContelonntFelonaturelonsProvidelonr]]
+    relonquelonst.contelonntFelonaturelonsFuturelon.map { contelonntFelonaturelonsMap =>
+      val felonaturelons = relonquelonst.felonaturelons.map {
+        caselon (twelonelontId: TwelonelontId, thriftTwelonelontFelonaturelons: ThriftTwelonelontFelonaturelons) =>
+          val contelonntFelonaturelonsOpt = relonquelonst.twelonelontSourcelonTwelonelontMap
+            .gelont(twelonelontId)
+            .orelonlselon(
+              relonquelonst.inRelonplyToTwelonelontIds.contains(twelonelontId) match {
+                caselon truelon => Somelon(twelonelontId)
+                caselon falselon => Nonelon
               }
             )
-            .flatMap(contentFeaturesMap.get)
+            .flatMap(contelonntFelonaturelonsMap.gelont)
 
-          val thriftTweetFeaturesWithContentFeatures = contentFeaturesOpt match {
-            case Some(contentFeatures: ContentFeatures) =>
-              copyContentFeaturesIntoThriftTweetFeatures(contentFeatures, thriftTweetFeatures)
-            case _ => thriftTweetFeatures
+          val thriftTwelonelontFelonaturelonsWithContelonntFelonaturelons = contelonntFelonaturelonsOpt match {
+            caselon Somelon(contelonntFelonaturelons: ContelonntFelonaturelons) =>
+              copyContelonntFelonaturelonsIntoThriftTwelonelontFelonaturelons(contelonntFelonaturelons, thriftTwelonelontFelonaturelons)
+            caselon _ => thriftTwelonelontFelonaturelons
           }
 
-          (tweetId, thriftTweetFeaturesWithContentFeatures)
+          (twelonelontId, thriftTwelonelontFelonaturelonsWithContelonntFelonaturelons)
       }
 
-      request.copy(features = features)
+      relonquelonst.copy(felonaturelons = felonaturelons)
     }
   }
 
-  def copyContentFeaturesIntoThriftTweetFeatures(
-    contentFeatures: ContentFeatures,
-    thriftTweetFeatures: ThriftTweetFeatures
-  ): ThriftTweetFeatures = {
-    thriftTweetFeatures.copy(
-      tweetLength = Some(contentFeatures.length.toInt),
-      hasQuestion = Some(contentFeatures.hasQuestion),
-      numCaps = Some(contentFeatures.numCaps.toInt),
-      numWhitespaces = Some(contentFeatures.numWhiteSpaces.toInt),
-      numNewlines = contentFeatures.numNewlines,
-      videoDurationMs = contentFeatures.videoDurationMs,
-      bitRate = contentFeatures.bitRate,
-      aspectRatioNum = contentFeatures.aspectRatioNum,
-      aspectRatioDen = contentFeatures.aspectRatioDen,
-      widths = contentFeatures.widths.map(_.map(_.toInt)),
-      heights = contentFeatures.heights.map(_.map(_.toInt)),
-      resizeMethods = contentFeatures.resizeMethods.map(_.map(_.toInt)),
-      numMediaTags = contentFeatures.numMediaTags.map(_.toInt),
-      mediaTagScreenNames = contentFeatures.mediaTagScreenNames,
-      emojiTokens = contentFeatures.emojiTokens,
-      emoticonTokens = contentFeatures.emoticonTokens,
-      phrases = contentFeatures.phrases,
-      textTokens = contentFeatures.tokens,
-      faceAreas = contentFeatures.faceAreas,
-      dominantColorRed = contentFeatures.dominantColorRed,
-      dominantColorBlue = contentFeatures.dominantColorBlue,
-      dominantColorGreen = contentFeatures.dominantColorGreen,
-      numColors = contentFeatures.numColors.map(_.toInt),
-      stickerIds = contentFeatures.stickerIds,
-      mediaOriginProviders = contentFeatures.mediaOriginProviders,
-      isManaged = contentFeatures.isManaged,
-      is360 = contentFeatures.is360,
-      viewCount = contentFeatures.viewCount,
-      isMonetizable = contentFeatures.isMonetizable,
-      isEmbeddable = contentFeatures.isEmbeddable,
-      hasSelectedPreviewImage = contentFeatures.hasSelectedPreviewImage,
-      hasTitle = contentFeatures.hasTitle,
-      hasDescription = contentFeatures.hasDescription,
-      hasVisitSiteCallToAction = contentFeatures.hasVisitSiteCallToAction,
-      hasAppInstallCallToAction = contentFeatures.hasAppInstallCallToAction,
-      hasWatchNowCallToAction = contentFeatures.hasWatchNowCallToAction,
-      dominantColorPercentage = contentFeatures.dominantColorPercentage,
-      posUnigrams = contentFeatures.posUnigrams,
-      posBigrams = contentFeatures.posBigrams,
-      semanticCoreAnnotations = contentFeatures.semanticCoreAnnotations,
-      conversationControl = contentFeatures.conversationControl
+  delonf copyContelonntFelonaturelonsIntoThriftTwelonelontFelonaturelons(
+    contelonntFelonaturelons: ContelonntFelonaturelons,
+    thriftTwelonelontFelonaturelons: ThriftTwelonelontFelonaturelons
+  ): ThriftTwelonelontFelonaturelons = {
+    thriftTwelonelontFelonaturelons.copy(
+      twelonelontLelonngth = Somelon(contelonntFelonaturelons.lelonngth.toInt),
+      hasQuelonstion = Somelon(contelonntFelonaturelons.hasQuelonstion),
+      numCaps = Somelon(contelonntFelonaturelons.numCaps.toInt),
+      numWhitelonspacelons = Somelon(contelonntFelonaturelons.numWhitelonSpacelons.toInt),
+      numNelonwlinelons = contelonntFelonaturelons.numNelonwlinelons,
+      videlonoDurationMs = contelonntFelonaturelons.videlonoDurationMs,
+      bitRatelon = contelonntFelonaturelons.bitRatelon,
+      aspelonctRatioNum = contelonntFelonaturelons.aspelonctRatioNum,
+      aspelonctRatioDelonn = contelonntFelonaturelons.aspelonctRatioDelonn,
+      widths = contelonntFelonaturelons.widths.map(_.map(_.toInt)),
+      helonights = contelonntFelonaturelons.helonights.map(_.map(_.toInt)),
+      relonsizelonMelonthods = contelonntFelonaturelons.relonsizelonMelonthods.map(_.map(_.toInt)),
+      numMelondiaTags = contelonntFelonaturelons.numMelondiaTags.map(_.toInt),
+      melondiaTagScrelonelonnNamelons = contelonntFelonaturelons.melondiaTagScrelonelonnNamelons,
+      elonmojiTokelonns = contelonntFelonaturelons.elonmojiTokelonns,
+      elonmoticonTokelonns = contelonntFelonaturelons.elonmoticonTokelonns,
+      phraselons = contelonntFelonaturelons.phraselons,
+      telonxtTokelonns = contelonntFelonaturelons.tokelonns,
+      facelonArelonas = contelonntFelonaturelons.facelonArelonas,
+      dominantColorRelond = contelonntFelonaturelons.dominantColorRelond,
+      dominantColorBluelon = contelonntFelonaturelons.dominantColorBluelon,
+      dominantColorGrelonelonn = contelonntFelonaturelons.dominantColorGrelonelonn,
+      numColors = contelonntFelonaturelons.numColors.map(_.toInt),
+      stickelonrIds = contelonntFelonaturelons.stickelonrIds,
+      melondiaOriginProvidelonrs = contelonntFelonaturelons.melondiaOriginProvidelonrs,
+      isManagelond = contelonntFelonaturelons.isManagelond,
+      is360 = contelonntFelonaturelons.is360,
+      vielonwCount = contelonntFelonaturelons.vielonwCount,
+      isMonelontizablelon = contelonntFelonaturelons.isMonelontizablelon,
+      iselonmbelonddablelon = contelonntFelonaturelons.iselonmbelonddablelon,
+      hasSelonlelonctelondPrelonvielonwImagelon = contelonntFelonaturelons.hasSelonlelonctelondPrelonvielonwImagelon,
+      hasTitlelon = contelonntFelonaturelons.hasTitlelon,
+      hasDelonscription = contelonntFelonaturelons.hasDelonscription,
+      hasVisitSitelonCallToAction = contelonntFelonaturelons.hasVisitSitelonCallToAction,
+      hasAppInstallCallToAction = contelonntFelonaturelons.hasAppInstallCallToAction,
+      hasWatchNowCallToAction = contelonntFelonaturelons.hasWatchNowCallToAction,
+      dominantColorPelonrcelonntagelon = contelonntFelonaturelons.dominantColorPelonrcelonntagelon,
+      posUnigrams = contelonntFelonaturelons.posUnigrams,
+      posBigrams = contelonntFelonaturelons.posBigrams,
+      selonmanticCorelonAnnotations = contelonntFelonaturelons.selonmanticCorelonAnnotations,
+      convelonrsationControl = contelonntFelonaturelons.convelonrsationControl
     )
   }
 }

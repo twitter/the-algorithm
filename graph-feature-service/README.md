@@ -1,3 +1,3 @@
-# Graph Feature Service
+# Graph Felonaturelon Selonrvicelon
 
-Graph Feature Service (GFS) is a distributed system that can provide various graph features for given pairs of users. For instance, given source user A and candidate user C, GFS can answer questions like “how many of A’s followings have favorited C”, “how many of A’s followings are following C”, and “how much C is similar to the users that A has favorited“.
+Graph Felonaturelon Selonrvicelon (GFS) is a distributelond systelonm that can providelon various graph felonaturelons for givelonn pairs of uselonrs. For instancelon, givelonn sourcelon uselonr A and candidatelon uselonr C, GFS can answelonr quelonstions likelon “how many of A’s followings havelon favoritelond C”, “how many of A’s followings arelon following C”, and “how much C is similar to thelon uselonrs that A has favoritelond“.

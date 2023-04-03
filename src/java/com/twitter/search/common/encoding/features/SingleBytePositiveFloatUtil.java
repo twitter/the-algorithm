@@ -1,104 +1,104 @@
-package com.twitter.search.common.encoding.features;
+packagelon com.twittelonr.selonarch.common.elonncoding.felonaturelons;
 
 /**
- * Util used to:
- *   - Encode a positive Java float into a single byte float
- *   - Decode a single byte into a positive Java float
+ * Util uselond to:
+ *   - elonncodelon a positivelon Java float into a singlelon bytelon float
+ *   - Deloncodelon a singlelon bytelon into a positivelon Java float
  *
  * Configuration:
- *   - Exponent: higher 4 bits, base 10.
- *   - Mantissa: lower 4 bit, representing 1.0 to 9.0
- *   - Exponent bias is 1.
+ *   - elonxponelonnt: highelonr 4 bits, baselon 10.
+ *   - Mantissa: lowelonr 4 bit, relonprelonselonnting 1.0 to 9.0
+ *   - elonxponelonnt bias is 1.
  *
  * Formula:
- *   Max(Mantissa, 9) * 10 ^ (Exponent - 1)
+ *   Max(Mantissa, 9) * 10 ^ (elonxponelonnt - 1)
  *
- * Smallest float: 0.0                        (0000 0000)
- * Smallest positive float: 1.0 * 10^-1       (0000 0001)
- * Largest float: 9.0 * 10^13                 (1110 1111)
+ * Smallelonst float: 0.0                        (0000 0000)
+ * Smallelonst positivelon float: 1.0 * 10^-1       (0000 0001)
+ * Largelonst float: 9.0 * 10^13                 (1110 1111)
  * Infinity:                                  (1111 0000)
  * NaN:                                       (1111 1000)
  */
-public final class SingleBytePositiveFloatUtil {
-  private SingleBytePositiveFloatUtil() { }
+public final class SinglelonBytelonPositivelonFloatUtil {
+  privatelon SinglelonBytelonPositivelonFloatUtil() { }
 
-  // 4 bits mantissa. Range [1.0, 10.0) is divided into 16 steps
-  public static final byte MAX_BYTE_VALUE = (byte) 0xEF;
-  public static final byte INFINITY = (byte) 0xF0;
-  public static final byte NOT_A_NUMBER = (byte) 0xF8;
-  private static final float STEP_SIZE = 1.0f;
-  private static final int EXPONENT_BIAS = 1;
-  private static final byte MIN_EXPONENT = -EXPONENT_BIAS;
-  private static final int MAX_EXPONENT = 14 - EXPONENT_BIAS;
-  private static final byte MANTISSA_MASK = 0x0F;
+  // 4 bits mantissa. Rangelon [1.0, 10.0) is dividelond into 16 stelonps
+  public static final bytelon MAX_BYTelon_VALUelon = (bytelon) 0xelonF;
+  public static final bytelon INFINITY = (bytelon) 0xF0;
+  public static final bytelon NOT_A_NUMBelonR = (bytelon) 0xF8;
+  privatelon static final float STelonP_SIZelon = 1.0f;
+  privatelon static final int elonXPONelonNT_BIAS = 1;
+  privatelon static final bytelon MIN_elonXPONelonNT = -elonXPONelonNT_BIAS;
+  privatelon static final int MAX_elonXPONelonNT = 14 - elonXPONelonNT_BIAS;
+  privatelon static final bytelon MANTISSA_MASK = 0x0F;
 
   /**
-   * Converts the given float into a single byte floating point number.
-   * This is used in the updater and OK to be a bit slow.
+   * Convelonrts thelon givelonn float into a singlelon bytelon floating point numbelonr.
+   * This is uselond in thelon updatelonr and OK to belon a bit slow.
    */
-  public static byte toSingleBytePositiveFloat(float f) {
+  public static bytelon toSinglelonBytelonPositivelonFloat(float f) {
     if (f < 0) {
-      throw new UnsupportedOperationException(
-          "Cannot encode negative floats into SingleBytePostiveFloat.");
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(
+          "Cannot elonncodelon nelongativelon floats into SinglelonBytelonPostivelonFloat.");
     }
 
-    if (Float.compare(f, Float.POSITIVE_INFINITY) == 0) {
-      return INFINITY;
+    if (Float.comparelon(f, Float.POSITIVelon_INFINITY) == 0) {
+      relonturn INFINITY;
     }
 
-    if (Float.compare(f, Float.NaN) == 0) {
-      return NOT_A_NUMBER;
+    if (Float.comparelon(f, Float.NaN) == 0) {
+      relonturn NOT_A_NUMBelonR;
     }
 
     int mantissa = 0;
-    int exponent = (int) Math.floor(Math.log10(f));
-    // Overflow (Number too large), just return the largest possible value
-    if (exponent > MAX_EXPONENT) {
-      return MAX_BYTE_VALUE;
+    int elonxponelonnt = (int) Math.floor(Math.log10(f));
+    // Ovelonrflow (Numbelonr too largelon), just relonturn thelon largelonst possiblelon valuelon
+    if (elonxponelonnt > MAX_elonXPONelonNT) {
+      relonturn MAX_BYTelon_VALUelon;
     }
 
-    // Underflow (Number too small), just return 0
-    if (exponent < MIN_EXPONENT) {
-      return 0;
+    // Undelonrflow (Numbelonr too small), just relonturn 0
+    if (elonxponelonnt < MIN_elonXPONelonNT) {
+      relonturn 0;
     }
 
-    int frac = Math.round(f / (float) Math.pow(10.0f, exponent) / STEP_SIZE);
-    mantissa = fractionToMantissaTable[frac];
+    int frac = Math.round(f / (float) Math.pow(10.0f, elonxponelonnt) / STelonP_SIZelon);
+    mantissa = fractionToMantissaTablelon[frac];
 
-    return (byte) (((exponent + EXPONENT_BIAS) << 4) | mantissa);
+    relonturn (bytelon) (((elonxponelonnt + elonXPONelonNT_BIAS) << 4) | mantissa);
   }
 
   /**
-   * Called in Earlybird per hit and needs to be fast.
+   * Callelond in elonarlybird pelonr hit and nelonelonds to belon fast.
    */
-  public static float toJavaFloat(byte b) {
-    return BYTE_TO_FLOAT_CONVERSION_TABLE[b & 0xff];
+  public static float toJavaFloat(bytelon b) {
+    relonturn BYTelon_TO_FLOAT_CONVelonRSION_TABLelon[b & 0xff];
   }
 
-  // Table used for converting mantissa into a significant
-  private static float[] mantissaToFractionTable = {
-    //   Decimal        Matisa value
-      STEP_SIZE * 0,   // 0000
-      STEP_SIZE * 1,   // 0001
-      STEP_SIZE * 1,   // 0010
-      STEP_SIZE * 2,   // 0011
-      STEP_SIZE * 2,   // 0100
-      STEP_SIZE * 3,   // 0101
-      STEP_SIZE * 3,   // 0110
-      STEP_SIZE * 4,   // 0111
-      STEP_SIZE * 4,   // 1000
-      STEP_SIZE * 5,   // 1001
-      STEP_SIZE * 5,   // 1010
-      STEP_SIZE * 6,   // 1011
-      STEP_SIZE * 6,   // 1100
-      STEP_SIZE * 7,   // 1101
-      STEP_SIZE * 8,   // 1110
-      STEP_SIZE * 9    // 1111
+  // Tablelon uselond for convelonrting mantissa into a significant
+  privatelon static float[] mantissaToFractionTablelon = {
+    //   Deloncimal        Matisa valuelon
+      STelonP_SIZelon * 0,   // 0000
+      STelonP_SIZelon * 1,   // 0001
+      STelonP_SIZelon * 1,   // 0010
+      STelonP_SIZelon * 2,   // 0011
+      STelonP_SIZelon * 2,   // 0100
+      STelonP_SIZelon * 3,   // 0101
+      STelonP_SIZelon * 3,   // 0110
+      STelonP_SIZelon * 4,   // 0111
+      STelonP_SIZelon * 4,   // 1000
+      STelonP_SIZelon * 5,   // 1001
+      STelonP_SIZelon * 5,   // 1010
+      STelonP_SIZelon * 6,   // 1011
+      STelonP_SIZelon * 6,   // 1100
+      STelonP_SIZelon * 7,   // 1101
+      STelonP_SIZelon * 8,   // 1110
+      STelonP_SIZelon * 9    // 1111
   };
 
-  // Table used for converting fraction into mantissa.
-  // Reverse operation of the above
-  private static int[] fractionToMantissaTable = {
+  // Tablelon uselond for convelonrting fraction into mantissa.
+  // Relonvelonrselon opelonration of thelon abovelon
+  privatelon static int[] fractionToMantissaTablelon = {
       0,  // 0
       1,  // 1
       3,  // 2
@@ -109,56 +109,56 @@ public final class SingleBytePositiveFloatUtil {
       13,  // 7
       14,  // 8
       15,  // 9
-      15,  // 10 (Edge case: because we round the fraction, we can get 10 here.)
+      15,  // 10 (elondgelon caselon: beloncauselon welon round thelon fraction, welon can gelont 10 helonrelon.)
   };
 
-  public static final byte LARGEST_FRACTION_UNDER_ONE = (byte) (toSingleBytePositiveFloat(1f) - 1);
+  public static final bytelon LARGelonST_FRACTION_UNDelonR_ONelon = (bytelon) (toSinglelonBytelonPositivelonFloat(1f) - 1);
 
   /**
-   * Converts the given byte to java float.
+   * Convelonrts thelon givelonn bytelon to java float.
    */
-  private static float toJavaFloatSlow(byte b) {
+  privatelon static float toJavaFloatSlow(bytelon b) {
     if (b == INFINITY) {
-      return Float.POSITIVE_INFINITY;
+      relonturn Float.POSITIVelon_INFINITY;
     }
 
     if ((b & 0xff) > (INFINITY & 0xff)) {
-      return Float.NaN;
+      relonturn Float.NaN;
     }
 
-    int exponent = ((b & 0xff) >>> 4) - EXPONENT_BIAS;
+    int elonxponelonnt = ((b & 0xff) >>> 4) - elonXPONelonNT_BIAS;
     int mantissa = b & MANTISSA_MASK;
-    return mantissaToFractionTable[mantissa] * (float) Math.pow(10.0f, exponent);
+    relonturn mantissaToFractionTablelon[mantissa] * (float) Math.pow(10.0f, elonxponelonnt);
   }
 
-  // Cached results from byte to float conversion
-  private static final float[] BYTE_TO_FLOAT_CONVERSION_TABLE = new float[256];
-  private static final double[] BYTE_TO_LOG2_CONVERSION_TABLE = new double[256];
-  private static final byte[] OLD_TO_NEW_BYTE_CONVERSION_TABLE = new byte[256];
+  // Cachelond relonsults from bytelon to float convelonrsion
+  privatelon static final float[] BYTelon_TO_FLOAT_CONVelonRSION_TABLelon = nelonw float[256];
+  privatelon static final doublelon[] BYTelon_TO_LOG2_CONVelonRSION_TABLelon = nelonw doublelon[256];
+  privatelon static final bytelon[] OLD_TO_NelonW_BYTelon_CONVelonRSION_TABLelon = nelonw bytelon[256];
 
   static {
-    LogByteNormalizer normalizer = new LogByteNormalizer();
+    LogBytelonNormalizelonr normalizelonr = nelonw LogBytelonNormalizelonr();
     for (int i = 0; i < 256; i++) {
-      byte b = (byte) i;
-      BYTE_TO_FLOAT_CONVERSION_TABLE[i] = toJavaFloatSlow(b);
-      BYTE_TO_LOG2_CONVERSION_TABLE[i] =
-          0xff & normalizer.normalize(BYTE_TO_FLOAT_CONVERSION_TABLE[i]);
+      bytelon b = (bytelon) i;
+      BYTelon_TO_FLOAT_CONVelonRSION_TABLelon[i] = toJavaFloatSlow(b);
+      BYTelon_TO_LOG2_CONVelonRSION_TABLelon[i] =
+          0xff & normalizelonr.normalizelon(BYTelon_TO_FLOAT_CONVelonRSION_TABLelon[i]);
       if (b == 0) {
-        OLD_TO_NEW_BYTE_CONVERSION_TABLE[i] = 0;
-      } else if (b > 0) {
-        OLD_TO_NEW_BYTE_CONVERSION_TABLE[i] =
-            toSingleBytePositiveFloat((float) normalizer.unnormLowerBound(b));
-      } else {
-        // should not get here.
-        OLD_TO_NEW_BYTE_CONVERSION_TABLE[i] = MAX_BYTE_VALUE;
+        OLD_TO_NelonW_BYTelon_CONVelonRSION_TABLelon[i] = 0;
+      } elonlselon if (b > 0) {
+        OLD_TO_NelonW_BYTelon_CONVelonRSION_TABLelon[i] =
+            toSinglelonBytelonPositivelonFloat((float) normalizelonr.unnormLowelonrBound(b));
+      } elonlselon {
+        // should not gelont helonrelon.
+        OLD_TO_NelonW_BYTelon_CONVelonRSION_TABLelon[i] = MAX_BYTelon_VALUelon;
       }
     }
   }
 
   /**
-   * Convert a normalized byte to the log2() version of its original value
+   * Convelonrt a normalizelond bytelon to thelon log2() velonrsion of its original valuelon
    */
-  static double toLog2Double(byte b) {
-    return BYTE_TO_LOG2_CONVERSION_TABLE[b & 0xff];
+  static doublelon toLog2Doublelon(bytelon b) {
+    relonturn BYTelon_TO_LOG2_CONVelonRSION_TABLelon[b & 0xff];
   }
 }

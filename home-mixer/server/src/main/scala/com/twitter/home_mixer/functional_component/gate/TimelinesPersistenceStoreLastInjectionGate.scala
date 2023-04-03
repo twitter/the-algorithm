@@ -1,51 +1,51 @@
-package com.twitter.home_mixer.functional_component.gate
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon
 
-import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelinemixer.injection.store.persistence.TimelinePersistenceUtils
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.util.client_info.ClientPlatform
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.twittelonr.common_intelonrnal.analytics.twittelonr_clielonnt_uselonr_agelonnt_parselonr.UselonrAgelonnt
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonRelonsponselonV3
+import com.twittelonr.timelonlinelonmixelonr.injelonction.storelon.pelonrsistelonncelon.TimelonlinelonPelonrsistelonncelonUtils
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.timelonlinelons.util.clielonnt_info.ClielonntPlatform
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.rich.elonntityIdTypelon
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
 
 /**
- * Gate used to reduce the frequency of injections. Note that the actual interval between injections may be
- * less than the specified minInjectionIntervalParam if data is unavailable or missing. For example, being deleted by
- * the persistence store via a TTL or similar mechanism.
+ * Gatelon uselond to relonducelon thelon frelonquelonncy of injelonctions. Notelon that thelon actual intelonrval belontwelonelonn injelonctions may belon
+ * lelonss than thelon speloncifielond minInjelonctionIntelonrvalParam if data is unavailablelon or missing. For elonxamplelon, beloning delonlelontelond by
+ * thelon pelonrsistelonncelon storelon via a TTL or similar melonchanism.
  *
- * @param minInjectionIntervalParam the desired minimum interval between injections
- * @param persistenceEntriesFeature the feature for retrieving persisted timeline responses
+ * @param minInjelonctionIntelonrvalParam thelon delonsirelond minimum intelonrval belontwelonelonn injelonctions
+ * @param pelonrsistelonncelonelonntrielonsFelonaturelon thelon felonaturelon for relontrielonving pelonrsistelond timelonlinelon relonsponselons
  */
-case class TimelinesPersistenceStoreLastInjectionGate(
-  minInjectionIntervalParam: Param[Duration],
-  persistenceEntriesFeature: Feature[PipelineQuery, Seq[TimelineResponseV3]],
-  entityIdType: EntityIdType.Value)
-    extends Gate[PipelineQuery]
-    with TimelinePersistenceUtils {
+caselon class TimelonlinelonsPelonrsistelonncelonStorelonLastInjelonctionGatelon(
+  minInjelonctionIntelonrvalParam: Param[Duration],
+  pelonrsistelonncelonelonntrielonsFelonaturelon: Felonaturelon[PipelonlinelonQuelonry, Selonq[TimelonlinelonRelonsponselonV3]],
+  elonntityIdTypelon: elonntityIdTypelon.Valuelon)
+    elonxtelonnds Gatelon[PipelonlinelonQuelonry]
+    with TimelonlinelonPelonrsistelonncelonUtils {
 
-  override val identifier: GateIdentifier = GateIdentifier("TimelinesPersistenceStoreLastInjection")
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr("TimelonlinelonsPelonrsistelonncelonStorelonLastInjelonction")
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry): Stitch[Boolelonan] =
     Stitch(
-      query.queryTime.since(getLastInjectionTime(query)) > query.params(minInjectionIntervalParam))
+      quelonry.quelonryTimelon.sincelon(gelontLastInjelonctionTimelon(quelonry)) > quelonry.params(minInjelonctionIntelonrvalParam))
 
-  private def getLastInjectionTime(query: PipelineQuery) = query.features
-    .flatMap { featureMap =>
-      val timelineResponses = featureMap.getOrElse(persistenceEntriesFeature, Seq.empty)
-      val clientPlatform = ClientPlatform.fromQueryOptions(
-        clientAppId = query.clientContext.appId,
-        userAgent = query.clientContext.userAgent.flatMap(UserAgent.fromString)
+  privatelon delonf gelontLastInjelonctionTimelon(quelonry: PipelonlinelonQuelonry) = quelonry.felonaturelons
+    .flatMap { felonaturelonMap =>
+      val timelonlinelonRelonsponselons = felonaturelonMap.gelontOrelonlselon(pelonrsistelonncelonelonntrielonsFelonaturelon, Selonq.elonmpty)
+      val clielonntPlatform = ClielonntPlatform.fromQuelonryOptions(
+        clielonntAppId = quelonry.clielonntContelonxt.appId,
+        uselonrAgelonnt = quelonry.clielonntContelonxt.uselonrAgelonnt.flatMap(UselonrAgelonnt.fromString)
       )
-      val sortedResponses = responseByClient(clientPlatform, timelineResponses)
-      val latestResponseWithEntityIdTypeEntry =
-        sortedResponses.find(_.entries.exists(_.entityIdType == entityIdType))
+      val sortelondRelonsponselons = relonsponselonByClielonnt(clielonntPlatform, timelonlinelonRelonsponselons)
+      val latelonstRelonsponselonWithelonntityIdTypelonelonntry =
+        sortelondRelonsponselons.find(_.elonntrielons.elonxists(_.elonntityIdTypelon == elonntityIdTypelon))
 
-      latestResponseWithEntityIdTypeEntry.map(_.servedTime)
-    }.getOrElse(Time.Bottom)
+      latelonstRelonsponselonWithelonntityIdTypelonelonntry.map(_.selonrvelondTimelon)
+    }.gelontOrelonlselon(Timelon.Bottom)
 }

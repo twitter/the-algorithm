@@ -1,73 +1,73 @@
-package com.twitter.interaction_graph.scio.agg_client_event_logs
+packagelon com.twittelonr.intelonraction_graph.scio.agg_clielonnt_elonvelonnt_logs
 
-import com.spotify.scio.ScioContext
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.interaction_graph.scio.common.UserUtil
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import org.joda.time.Interval
+import com.spotify.scio.ScioContelonxt
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.dal.DAL.DiskFormat
+import com.twittelonr.belonam.io.dal.DAL.WritelonOptions
+import com.twittelonr.belonam.io.fs.multiformat.PathLayout
+import com.twittelonr.belonam.job.SelonrvicelonIdelonntifielonrOptions
+import com.twittelonr.intelonraction_graph.scio.common.UselonrUtil
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.statelonbird.v2.thriftscala.elonnvironmelonnt
+import org.joda.timelon.Intelonrval
 
-object InteractionGraphClientEventLogsJob
-    extends ScioBeamJob[InteractionGraphClientEventLogsOption] {
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphClientEventLogsOption
+objelonct IntelonractionGraphClielonntelonvelonntLogsJob
+    elonxtelonnds ScioBelonamJob[IntelonractionGraphClielonntelonvelonntLogsOption] {
+  ovelonrridelon protelonctelond delonf configurelonPipelonlinelon(
+    scioContelonxt: ScioContelonxt,
+    pipelonlinelonOptions: IntelonractionGraphClielonntelonvelonntLogsOption
   ): Unit = {
 
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val jobCounters: InteractionGraphClientEventLogsCountersTrait =
-      InteractionGraphClientEventLogsCounters
+    @transielonnt
+    implicit lazy val sc: ScioContelonxt = scioContelonxt
+    implicit lazy val jobCountelonrs: IntelonractionGraphClielonntelonvelonntLogsCountelonrsTrait =
+      IntelonractionGraphClielonntelonvelonntLogsCountelonrs
 
-    lazy val dateInterval: Interval = pipelineOptions.interval
+    lazy val datelonIntelonrval: Intelonrval = pipelonlinelonOptions.intelonrval
 
-    val sources = InteractionGraphClientEventLogsSource(pipelineOptions)
+    val sourcelons = IntelonractionGraphClielonntelonvelonntLogsSourcelon(pipelonlinelonOptions)
 
-    val userInteractions = sources.readUserInteractions(dateInterval)
-    val rawUsers = sources.readCombinedUsers()
-    val safeUsers = UserUtil.getValidUsers(rawUsers)
+    val uselonrIntelonractions = sourcelons.relonadUselonrIntelonractions(datelonIntelonrval)
+    val rawUselonrs = sourcelons.relonadCombinelondUselonrs()
+    val safelonUselonrs = UselonrUtil.gelontValidUselonrs(rawUselonrs)
 
-    val (vertex, edges) = InteractionGraphClientEventLogsUtil.process(userInteractions, safeUsers)
+    val (velonrtelonx, elondgelons) = IntelonractionGraphClielonntelonvelonntLogsUtil.procelonss(uselonrIntelonractions, safelonUselonrs)
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
-    } else {
-      dalEnvironment
+    val dalelonnvironmelonnt: String = pipelonlinelonOptions
+      .as(classOf[SelonrvicelonIdelonntifielonrOptions])
+      .gelontelonnvironmelonnt()
+    val dalWritelonelonnvironmelonnt = if (pipelonlinelonOptions.gelontDALWritelonelonnvironmelonnt != null) {
+      pipelonlinelonOptions.gelontDALWritelonelonnvironmelonnt
+    } elonlselon {
+      dalelonnvironmelonnt
     }
 
-    vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.write[Vertex](
-        InteractionGraphAggClientEventLogsVertexDailyScalaDataset,
+    velonrtelonx.savelonAsCustomOutput(
+      "Writelon Velonrtelonx Reloncords",
+      DAL.writelon[Velonrtelonx](
+        IntelonractionGraphAggClielonntelonvelonntLogsVelonrtelonxDailyScalaDataselont,
         PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_client_event_logs_vertex_daily"),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 32.0).ceil.toInt))
+          pipelonlinelonOptions.gelontOutputPath + "/aggrelongatelond_clielonnt_elonvelonnt_logs_velonrtelonx_daily"),
+        datelonIntelonrval,
+        DiskFormat.Parquelont,
+        elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption =
+          WritelonOptions(numOfShards = Somelon((pipelonlinelonOptions.gelontNumbelonrOfShards / 32.0).celonil.toInt))
       )
     )
 
-    edges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.write[Edge](
-        InteractionGraphAggClientEventLogsEdgeDailyScalaDataset,
+    elondgelons.savelonAsCustomOutput(
+      "Writelon elondgelon Reloncords",
+      DAL.writelon[elondgelon](
+        IntelonractionGraphAggClielonntelonvelonntLogselondgelonDailyScalaDataselont,
         PathLayout.DailyPath(
-          pipelineOptions.getOutputPath + "/aggregated_client_event_logs_edge_daily"),
-        dateInterval,
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+          pipelonlinelonOptions.gelontOutputPath + "/aggrelongatelond_clielonnt_elonvelonnt_logs_elondgelon_daily"),
+        datelonIntelonrval,
+        DiskFormat.Parquelont,
+        elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption = WritelonOptions(numOfShards = Somelon(pipelonlinelonOptions.gelontNumbelonrOfShards))
       )
     )
   }

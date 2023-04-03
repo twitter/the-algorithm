@@ -1,8 +1,8 @@
 scala_library(
     platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-only",
     ],
-    dependencies = ["src/scala/com/twitter/storehaus_internal/util"],
+    delonpelonndelonncielons = ["src/scala/com/twittelonr/storelonhaus_intelonrnal/util"],
 )

@@ -1,146 +1,146 @@
-package com.twitter.product_mixer.core.service
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineResult
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.Executor.Context
-import com.twitter.product_mixer.shared_library.observer.Observer
-import com.twitter.product_mixer.shared_library.observer.Observer.Observer
-import com.twitter.product_mixer.shared_library.observer.ResultsStatsObserver.ResultsStatsObserver
-import com.twitter.util.Duration
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor.Contelonxt
+import com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr.Obselonrvelonr
+import com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr.Obselonrvelonr.Obselonrvelonr
+import com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr.RelonsultsStatsObselonrvelonr.RelonsultsStatsObselonrvelonr
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
 
-private[core] object ExecutorObserver {
+privatelon[corelon] objelonct elonxeloncutorObselonrvelonr {
 
-  /** Make a [[ExecutorObserver]] with stats for the [[ComponentIdentifier]] and relative to the parent in the [[Context.componentStack]] */
-  def executorObserver[T](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    statsReceiver: StatsReceiver
-  ): ExecutorObserver[T] = new ExecutorObserver[T](
-    Executor.broadcastStatsReceiver(context, currentComponentIdentifier, statsReceiver))
+  /** Makelon a [[elonxeloncutorObselonrvelonr]] with stats for thelon [[ComponelonntIdelonntifielonr]] and relonlativelon to thelon parelonnt in thelon [[Contelonxt.componelonntStack]] */
+  delonf elonxeloncutorObselonrvelonr[T](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): elonxeloncutorObselonrvelonr[T] = nelonw elonxeloncutorObselonrvelonr[T](
+    elonxeloncutor.broadcastStatsReloncelonivelonr(contelonxt, currelonntComponelonntIdelonntifielonr, statsReloncelonivelonr))
 
-  /** Make a [[ExecutorObserverWithSize]] with stats for the [[ComponentIdentifier]] and relative to the parent in the [[Context.componentStack]] */
-  def executorObserverWithSize(
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    statsReceiver: StatsReceiver
-  ): ExecutorObserverWithSize = new ExecutorObserverWithSize(
-    Executor.broadcastStatsReceiver(context, currentComponentIdentifier, statsReceiver))
+  /** Makelon a [[elonxeloncutorObselonrvelonrWithSizelon]] with stats for thelon [[ComponelonntIdelonntifielonr]] and relonlativelon to thelon parelonnt in thelon [[Contelonxt.componelonntStack]] */
+  delonf elonxeloncutorObselonrvelonrWithSizelon(
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): elonxeloncutorObselonrvelonrWithSizelon = nelonw elonxeloncutorObselonrvelonrWithSizelon(
+    elonxeloncutor.broadcastStatsReloncelonivelonr(contelonxt, currelonntComponelonntIdelonntifielonr, statsReloncelonivelonr))
 
-  /** Make a [[PipelineExecutorObserver]] with stats for the [[ComponentIdentifier]] and relative to the parent in the [[Context.componentStack]] */
-  def pipelineExecutorObserver[T <: PipelineResult[_]](
-    context: Context,
-    currentComponentIdentifier: ComponentIdentifier,
-    statsReceiver: StatsReceiver
-  ): PipelineExecutorObserver[T] = new PipelineExecutorObserver[T](
-    Executor.broadcastStatsReceiver(context, currentComponentIdentifier, statsReceiver))
-
-  /**
-   * Make a [[PipelineExecutorObserver]] specifically for a [[com.twitter.product_mixer.core.pipeline.product.ProductPipeline]]
-   * with no relative stats
-   */
-  def productPipelineExecutorObserver[T <: PipelineResult[_]](
-    currentComponentIdentifier: ProductPipelineIdentifier,
-    statsReceiver: StatsReceiver
-  ): PipelineExecutorObserver[T] =
-    new PipelineExecutorObserver[T](statsReceiver.scope(currentComponentIdentifier.toScopes: _*))
+  /** Makelon a [[PipelonlinelonelonxeloncutorObselonrvelonr]] with stats for thelon [[ComponelonntIdelonntifielonr]] and relonlativelon to thelon parelonnt in thelon [[Contelonxt.componelonntStack]] */
+  delonf pipelonlinelonelonxeloncutorObselonrvelonr[T <: PipelonlinelonRelonsult[_]](
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: ComponelonntIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): PipelonlinelonelonxeloncutorObselonrvelonr[T] = nelonw PipelonlinelonelonxeloncutorObselonrvelonr[T](
+    elonxeloncutor.broadcastStatsReloncelonivelonr(contelonxt, currelonntComponelonntIdelonntifielonr, statsReloncelonivelonr))
 
   /**
-   * Make a [[PipelineExecutorObserver]] with only stats relative to the parent pipeline
-   * for [[com.twitter.product_mixer.core.pipeline.PipelineBuilder.Step]]s
+   * Makelon a [[PipelonlinelonelonxeloncutorObselonrvelonr]] speloncifically for a [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelon]]
+   * with no relonlativelon stats
    */
-  def stepExecutorObserver(
-    context: Context,
-    currentComponentIdentifier: PipelineStepIdentifier,
-    statsReceiver: StatsReceiver
-  ): ExecutorObserver[Unit] = {
-    new ExecutorObserver[Unit](
-      statsReceiver.scope(
-        Executor.buildScopes(context, currentComponentIdentifier).relativeScope: _*))
+  delonf productPipelonlinelonelonxeloncutorObselonrvelonr[T <: PipelonlinelonRelonsult[_]](
+    currelonntComponelonntIdelonntifielonr: ProductPipelonlinelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): PipelonlinelonelonxeloncutorObselonrvelonr[T] =
+    nelonw PipelonlinelonelonxeloncutorObselonrvelonr[T](statsReloncelonivelonr.scopelon(currelonntComponelonntIdelonntifielonr.toScopelons: _*))
+
+  /**
+   * Makelon a [[PipelonlinelonelonxeloncutorObselonrvelonr]] with only stats relonlativelon to thelon parelonnt pipelonlinelon
+   * for [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonBuildelonr.Stelonp]]s
+   */
+  delonf stelonpelonxeloncutorObselonrvelonr(
+    contelonxt: Contelonxt,
+    currelonntComponelonntIdelonntifielonr: PipelonlinelonStelonpIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): elonxeloncutorObselonrvelonr[Unit] = {
+    nelonw elonxeloncutorObselonrvelonr[Unit](
+      statsReloncelonivelonr.scopelon(
+        elonxeloncutor.buildScopelons(contelonxt, currelonntComponelonntIdelonntifielonr).relonlativelonScopelon: _*))
   }
 }
 
 /**
- * An [[Observer]] which is called as a side effect. Unlike the other observers which wrap a computation,
- * this [[Observer]] expects the caller to provide the latency value and wire it in
+ * An [[Obselonrvelonr]] which is callelond as a sidelon elonffelonct. Unlikelon thelon othelonr obselonrvelonrs which wrap a computation,
+ * this [[Obselonrvelonr]] elonxpeloncts thelon callelonr to providelon thelon latelonncy valuelon and wirelon it in
  */
-private[core] sealed class ExecutorObserver[T](
-  override val statsReceiver: StatsReceiver)
-    extends {
+privatelon[corelon] selonalelond class elonxeloncutorObselonrvelonr[T](
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds {
 
   /**
-   * always empty because we expect an already scoped [[com.twitter.finagle.stats.BroadcastStatsReceiver]] to be passed in
-   * @note uses early definitions [[https://docs.scala-lang.org/tutorials/FAQ/initialization-order.html]] to avoid null values for `scopes` in [[Observer]]
+   * always elonmpty beloncauselon welon elonxpelonct an alrelonady scopelond [[com.twittelonr.finaglelon.stats.BroadcastStatsReloncelonivelonr]] to belon passelond in
+   * @notelon uselons elonarly delonfinitions [[https://docs.scala-lang.org/tutorials/FAQ/initialization-ordelonr.html]] to avoid null valuelons for `scopelons` in [[Obselonrvelonr]]
    */
-  override val scopes: Seq[String] = Seq.empty
-} with Observer[T] {
+  ovelonrridelon val scopelons: Selonq[String] = Selonq.elonmpty
+} with Obselonrvelonr[T] {
 
   /**
-   * Serialize the provided [[Throwable]], prefixing [[PipelineFailure]]s with their
-   * [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory.categoryName]] and
-   * [[com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailureCategory.failureName]]
+   * Selonrializelon thelon providelond [[Throwablelon]], prelonfixing [[PipelonlinelonFailurelon]]s with thelonir
+   * [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonCatelongory.catelongoryNamelon]] and
+   * [[com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelonCatelongory.failurelonNamelon]]
    */
-  override def serializeThrowable(throwable: Throwable): Seq[String] = {
-    throwable match {
-      case PipelineFailure(category, _, None, _) =>
-        Seq(category.categoryName, category.failureName)
-      case PipelineFailure(category, _, Some(underlying), _) =>
-        Seq(category.categoryName, category.failureName) ++ serializeThrowable(underlying)
-      case throwable: Throwable => super.serializeThrowable(throwable)
+  ovelonrridelon delonf selonrializelonThrowablelon(throwablelon: Throwablelon): Selonq[String] = {
+    throwablelon match {
+      caselon PipelonlinelonFailurelon(catelongory, _, Nonelon, _) =>
+        Selonq(catelongory.catelongoryNamelon, catelongory.failurelonNamelon)
+      caselon PipelonlinelonFailurelon(catelongory, _, Somelon(undelonrlying), _) =>
+        Selonq(catelongory.catelongoryNamelon, catelongory.failurelonNamelon) ++ selonrializelonThrowablelon(undelonrlying)
+      caselon throwablelon: Throwablelon => supelonr.selonrializelonThrowablelon(throwablelon)
     }
   }
 
-  /** record success, failure, and latency stats based on `t` and `latency` */
-  def apply(t: Try[T], latency: Duration): Unit = observe(t, latency)
+  /** reloncord succelonss, failurelon, and latelonncy stats baselond on `t` and `latelonncy` */
+  delonf apply(t: Try[T], latelonncy: Duration): Unit = obselonrvelon(t, latelonncy)
 }
 
 /**
- * Same as [[ExecutorObserver]] but records a size stat for [[PipelineResult]]s and
- * records a failure counter for the cause of the failure under `failures/$pipelineFailureCategory/$componentType/$componentName`.
+ * Samelon as [[elonxeloncutorObselonrvelonr]] but reloncords a sizelon stat for [[PipelonlinelonRelonsult]]s and
+ * reloncords a failurelon countelonr for thelon causelon of thelon failurelon undelonr `failurelons/$pipelonlinelonFailurelonCatelongory/$componelonntTypelon/$componelonntNamelon`.
  *
- * @example if `GateIdentifier("MyGate")` is at the top of the [[PipelineFailure.componentStack]] then
- *          the resulting metric `failures/ClientFailure/Gate/MyGate` will be incremented.
+ * @elonxamplelon if `GatelonIdelonntifielonr("MyGatelon")` is at thelon top of thelon [[PipelonlinelonFailurelon.componelonntStack]] thelonn
+ *          thelon relonsulting melontric `failurelons/ClielonntFailurelon/Gatelon/MyGatelon` will belon increlonmelonntelond.
  */
-private[core] final class PipelineExecutorObserver[T <: PipelineResult[_]](
-  override val statsReceiver: StatsReceiver)
-    extends ExecutorObserver[T](statsReceiver)
-    with ResultsStatsObserver[T] {
-  override val size: T => Int = _.resultSize()
+privatelon[corelon] final class PipelonlinelonelonxeloncutorObselonrvelonr[T <: PipelonlinelonRelonsult[_]](
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutorObselonrvelonr[T](statsReloncelonivelonr)
+    with RelonsultsStatsObselonrvelonr[T] {
+  ovelonrridelon val sizelon: T => Int = _.relonsultSizelon()
 
-  override def apply(t: Try[T], latency: Duration): Unit = {
-    super.apply(t, latency)
+  ovelonrridelon delonf apply(t: Try[T], latelonncy: Duration): Unit = {
+    supelonr.apply(t, latelonncy)
     t match {
-      case Return(result) => observeResults(result)
-      case Throw(PipelineFailure(category, _, _, Some(componentIdentifierStack))) =>
-        statsReceiver
-          .counter(
-            Seq(
-              Observer.Failures,
-              category.categoryName,
-              category.failureName) ++ componentIdentifierStack.peek.toScopes: _*).incr()
-      case _ =>
+      caselon Relonturn(relonsult) => obselonrvelonRelonsults(relonsult)
+      caselon Throw(PipelonlinelonFailurelon(catelongory, _, _, Somelon(componelonntIdelonntifielonrStack))) =>
+        statsReloncelonivelonr
+          .countelonr(
+            Selonq(
+              Obselonrvelonr.Failurelons,
+              catelongory.catelongoryNamelon,
+              catelongory.failurelonNamelon) ++ componelonntIdelonntifielonrStack.pelonelonk.toScopelons: _*).incr()
+      caselon _ =>
     }
   }
 }
 
-/** Same as [[ExecutorObserver]] but records a size stat */
-private[core] final class ExecutorObserverWithSize(
-  override val statsReceiver: StatsReceiver)
-    extends ExecutorObserver[Int](statsReceiver)
-    with ResultsStatsObserver[Int] {
-  override val size: Int => Int = identity
+/** Samelon as [[elonxeloncutorObselonrvelonr]] but reloncords a sizelon stat */
+privatelon[corelon] final class elonxeloncutorObselonrvelonrWithSizelon(
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutorObselonrvelonr[Int](statsReloncelonivelonr)
+    with RelonsultsStatsObselonrvelonr[Int] {
+  ovelonrridelon val sizelon: Int => Int = idelonntity
 
-  override def apply(t: Try[Int], latency: Duration): Unit = {
-    super.apply(t, latency)
+  ovelonrridelon delonf apply(t: Try[Int], latelonncy: Duration): Unit = {
+    supelonr.apply(t, latelonncy)
     t match {
-      case Return(result) => observeResults(result)
-      case _ =>
+      caselon Relonturn(relonsult) => obselonrvelonRelonsults(relonsult)
+      caselon _ =>
     }
   }
 }

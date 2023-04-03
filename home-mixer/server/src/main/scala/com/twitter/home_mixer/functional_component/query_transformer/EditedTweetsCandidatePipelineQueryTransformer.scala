@@ -1,85 +1,85 @@
-package com.twitter.home_mixer.functional_component.query_transformer
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.quelonry_transformelonr
 
-import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelinemixer.clients.persistence.EntryWithItemIds
-import com.twitter.timelines.persistence.thriftscala.RequestType
-import com.twitter.timelines.util.client_info.ClientPlatform
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
+import com.twittelonr.common_intelonrnal.analytics.twittelonr_clielonnt_uselonr_agelonnt_parselonr.UselonrAgelonnt
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PelonrsistelonncelonelonntrielonsFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.elonntryWithItelonmIds
+import com.twittelonr.timelonlinelons.pelonrsistelonncelon.thriftscala.RelonquelonstTypelon
+import com.twittelonr.timelonlinelons.util.clielonnt_info.ClielonntPlatform
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.rich.elonntityIdTypelon
+import com.twittelonr.util.Timelon
 
-object EditedTweetsCandidatePipelineQueryTransformer
-    extends CandidatePipelineQueryTransformer[PipelineQuery, Seq[Long]] {
+objelonct elonditelondTwelonelontsCandidatelonPipelonlinelonQuelonryTransformelonr
+    elonxtelonnds CandidatelonPipelonlinelonQuelonryTransformelonr[PipelonlinelonQuelonry, Selonq[Long]] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("EditedTweets")
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr = TransformelonrIdelonntifielonr("elonditelondTwelonelonts")
 
-  // The time window for which a tweet remains editable after creation.
-  private val EditTimeWindow = 30.minutes
+  // Thelon timelon window for which a twelonelont relonmains elonditablelon aftelonr crelonation.
+  privatelon val elonditTimelonWindow = 30.minutelons
 
-  override def transform(query: PipelineQuery): Seq[Long] = {
-    val applicableCandidates = getApplicableCandidates(query)
+  ovelonrridelon delonf transform(quelonry: PipelonlinelonQuelonry): Selonq[Long] = {
+    val applicablelonCandidatelons = gelontApplicablelonCandidatelons(quelonry)
 
-    if (applicableCandidates.nonEmpty) {
-      // Include the response corresponding with the Previous Timeline Load (PTL).
-      // Any tweets in it could have become stale since being served.
-      val previousTimelineLoadTime = applicableCandidates.head.servedTime
+    if (applicablelonCandidatelons.nonelonmpty) {
+      // Includelon thelon relonsponselon correlonsponding with thelon Prelonvious Timelonlinelon Load (PTL).
+      // Any twelonelonts in it could havelon beloncomelon stalelon sincelon beloning selonrvelond.
+      val prelonviousTimelonlinelonLoadTimelon = applicablelonCandidatelons.helonad.selonrvelondTimelon
 
-      // The time window for editing a tweet is 30 minutes,
-      // so we ignore responses older than (PTL Time - 30 mins).
-      val inWindowCandidates: Seq[PersistenceStoreEntry] = applicableCandidates
-        .takeWhile(_.servedTime.until(previousTimelineLoadTime) < EditTimeWindow)
+      // Thelon timelon window for elonditing a twelonelont is 30 minutelons,
+      // so welon ignorelon relonsponselons oldelonr than (PTL Timelon - 30 mins).
+      val inWindowCandidatelons: Selonq[PelonrsistelonncelonStorelonelonntry] = applicablelonCandidatelons
+        .takelonWhilelon(_.selonrvelondTimelon.until(prelonviousTimelonlinelonLoadTimelon) < elonditTimelonWindow)
 
-      // Exclude the tweet IDs for which ReplaceEntry instructions have already been sent.
-      val (tweetsAlreadyReplaced, tweetsToCheck) = inWindowCandidates
-        .partition(_.entryWithItemIds.itemIds.exists(_.head.entryIdToReplace.nonEmpty))
+      // elonxcludelon thelon twelonelont IDs for which Relonplacelonelonntry instructions havelon alrelonady belonelonn selonnt.
+      val (twelonelontsAlrelonadyRelonplacelond, twelonelontsToChelonck) = inWindowCandidatelons
+        .partition(_.elonntryWithItelonmIds.itelonmIds.elonxists(_.helonad.elonntryIdToRelonplacelon.nonelonmpty))
 
-      val tweetIdFromEntry: PartialFunction[PersistenceStoreEntry, Long] = {
-        case entry if entry.tweetId.nonEmpty => entry.tweetId.get
+      val twelonelontIdFromelonntry: PartialFunction[PelonrsistelonncelonStorelonelonntry, Long] = {
+        caselon elonntry if elonntry.twelonelontId.nonelonmpty => elonntry.twelonelontId.gelont
       }
 
-      val tweetIdsAlreadyReplaced: Set[Long] = tweetsAlreadyReplaced.collect(tweetIdFromEntry).toSet
-      val tweetIdsToCheck: Seq[Long] = tweetsToCheck.collect(tweetIdFromEntry)
+      val twelonelontIdsAlrelonadyRelonplacelond: Selont[Long] = twelonelontsAlrelonadyRelonplacelond.collelonct(twelonelontIdFromelonntry).toSelont
+      val twelonelontIdsToChelonck: Selonq[Long] = twelonelontsToChelonck.collelonct(twelonelontIdFromelonntry)
 
-      tweetIdsToCheck.filterNot(tweetIdsAlreadyReplaced.contains).distinct
-    } else Seq.empty
+      twelonelontIdsToChelonck.filtelonrNot(twelonelontIdsAlrelonadyRelonplacelond.contains).distinct
+    } elonlselon Selonq.elonmpty
   }
 
-  // The candidates here come from the Timelines Persistence Store, via a query feature
-  private def getApplicableCandidates(query: PipelineQuery): Seq[PersistenceStoreEntry] = {
-    val userAgent = UserAgent.fromString(query.clientContext.userAgent.getOrElse(""))
-    val clientPlatform = ClientPlatform.fromQueryOptions(query.clientContext.appId, userAgent)
+  // Thelon candidatelons helonrelon comelon from thelon Timelonlinelons Pelonrsistelonncelon Storelon, via a quelonry felonaturelon
+  privatelon delonf gelontApplicablelonCandidatelons(quelonry: PipelonlinelonQuelonry): Selonq[PelonrsistelonncelonStorelonelonntry] = {
+    val uselonrAgelonnt = UselonrAgelonnt.fromString(quelonry.clielonntContelonxt.uselonrAgelonnt.gelontOrelonlselon(""))
+    val clielonntPlatform = ClielonntPlatform.fromQuelonryOptions(quelonry.clielonntContelonxt.appId, uselonrAgelonnt)
 
-    val sortedResponses = query.features
-      .getOrElse(FeatureMap.empty)
-      .getOrElse(PersistenceEntriesFeature, Seq.empty)
-      .filter(_.clientPlatform == clientPlatform)
-      .sortBy(-_.servedTime.inMilliseconds)
+    val sortelondRelonsponselons = quelonry.felonaturelons
+      .gelontOrelonlselon(FelonaturelonMap.elonmpty)
+      .gelontOrelonlselon(PelonrsistelonncelonelonntrielonsFelonaturelon, Selonq.elonmpty)
+      .filtelonr(_.clielonntPlatform == clielonntPlatform)
+      .sortBy(-_.selonrvelondTimelon.inMilliselonconds)
 
-    val recentResponses = sortedResponses.indexWhere(_.requestType == RequestType.Initial) match {
-      case -1 => sortedResponses
-      case lastGetInitialIndex => sortedResponses.take(lastGetInitialIndex + 1)
+    val reloncelonntRelonsponselons = sortelondRelonsponselons.indelonxWhelonrelon(_.relonquelonstTypelon == RelonquelonstTypelon.Initial) match {
+      caselon -1 => sortelondRelonsponselons
+      caselon lastGelontInitialIndelonx => sortelondRelonsponselons.takelon(lastGelontInitialIndelonx + 1)
     }
 
-    recentResponses.flatMap { r =>
-      r.entries.collect {
-        case entry if entry.entityIdType == EntityIdType.Tweet =>
-          PersistenceStoreEntry(entry, r.servedTime, r.clientPlatform, r.requestType)
+    reloncelonntRelonsponselons.flatMap { r =>
+      r.elonntrielons.collelonct {
+        caselon elonntry if elonntry.elonntityIdTypelon == elonntityIdTypelon.Twelonelont =>
+          PelonrsistelonncelonStorelonelonntry(elonntry, r.selonrvelondTimelon, r.clielonntPlatform, r.relonquelonstTypelon)
       }
     }.distinct
   }
 }
 
-case class PersistenceStoreEntry(
-  entryWithItemIds: EntryWithItemIds,
-  servedTime: Time,
-  clientPlatform: ClientPlatform,
-  requestType: RequestType) {
+caselon class PelonrsistelonncelonStorelonelonntry(
+  elonntryWithItelonmIds: elonntryWithItelonmIds,
+  selonrvelondTimelon: Timelon,
+  clielonntPlatform: ClielonntPlatform,
+  relonquelonstTypelon: RelonquelonstTypelon) {
 
-  // Timelines Persistence Store currently includes 1 tweet ID per entryWithItemIds for tweets
-  val tweetId: Option[Long] = entryWithItemIds.itemIds.flatMap(_.head.tweetId)
+  // Timelonlinelons Pelonrsistelonncelon Storelon currelonntly includelons 1 twelonelont ID pelonr elonntryWithItelonmIds for twelonelonts
+  val twelonelontId: Option[Long] = elonntryWithItelonmIds.itelonmIds.flatMap(_.helonad.twelonelontId)
 }

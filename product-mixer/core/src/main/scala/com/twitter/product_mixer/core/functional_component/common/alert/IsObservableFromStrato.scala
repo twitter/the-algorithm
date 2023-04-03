@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
 /**
- * Indicates that an [[Alert]] can be passed to [[StratoColumnAlert]]. Not all [[Alert]]s can be
- * Strato alerts since our ability to observe from Strato's perspective is limited by the available
- * metrics.
+ * Indicatelons that an [[Alelonrt]] can belon passelond to [[StratoColumnAlelonrt]]. Not all [[Alelonrt]]s can belon
+ * Strato alelonrts sincelon our ability to obselonrvelon from Strato's pelonrspelonctivelon is limitelond by thelon availablelon
+ * melontrics.
  *
- * @note can only be used in conjunction with [[Alert]]
+ * @notelon can only belon uselond in conjunction with [[Alelonrt]]
  */
-trait IsObservableFromStrato { _: Alert => }
+trait IsObselonrvablelonFromStrato { _: Alelonrt => }

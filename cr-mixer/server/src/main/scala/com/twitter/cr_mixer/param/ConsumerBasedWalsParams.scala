@@ -1,96 +1,96 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.DurationConversion
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps.richDurationFromInt
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.DurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
 
-object ConsumerBasedWalsParams {
+objelonct ConsumelonrBaselondWalsParams {
 
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "consumer_based_wals_enable_source",
-        default = false
+  objelonct elonnablelonSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "consumelonr_baselond_wals_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  object ModelNameParam
-      extends FSParam[String](
-        name = "consumer_based_wals_model_name",
-        default = "model_0"
+  objelonct ModelonlNamelonParam
+      elonxtelonnds FSParam[String](
+        namelon = "consumelonr_baselond_wals_modelonl_namelon",
+        delonfault = "modelonl_0"
       )
 
-  object WilyNsNameParam
-      extends FSParam[String](
-        name = "consumer_based_wals_wily_ns_name",
-        default = ""
+  objelonct WilyNsNamelonParam
+      elonxtelonnds FSParam[String](
+        namelon = "consumelonr_baselond_wals_wily_ns_namelon",
+        delonfault = ""
       )
 
-  object ModelInputNameParam
-      extends FSParam[String](
-        name = "consumer_based_wals_model_input_name",
-        default = "examples"
+  objelonct ModelonlInputNamelonParam
+      elonxtelonnds FSParam[String](
+        namelon = "consumelonr_baselond_wals_modelonl_input_namelon",
+        delonfault = "elonxamplelons"
       )
 
-  object ModelOutputNameParam
-      extends FSParam[String](
-        name = "consumer_based_wals_model_output_name",
-        default = "all_tweet_ids"
+  objelonct ModelonlOutputNamelonParam
+      elonxtelonnds FSParam[String](
+        namelon = "consumelonr_baselond_wals_modelonl_output_namelon",
+        delonfault = "all_twelonelont_ids"
       )
 
-  object ModelSignatureNameParam
-      extends FSParam[String](
-        name = "consumer_based_wals_model_signature_name",
-        default = "serving_default"
+  objelonct ModelonlSignaturelonNamelonParam
+      elonxtelonnds FSParam[String](
+        namelon = "consumelonr_baselond_wals_modelonl_signaturelon_namelon",
+        delonfault = "selonrving_delonfault"
       )
 
-  object MaxTweetSignalAgeHoursParam
-      extends FSBoundedParam[Duration](
-        name = "consumer_based_wals_max_tweet_signal_age_hours",
-        default = 72.hours,
+  objelonct MaxTwelonelontSignalAgelonHoursParam
+      elonxtelonnds FSBoundelondParam[Duration](
+        namelon = "consumelonr_baselond_wals_max_twelonelont_signal_agelon_hours",
+        delonfault = 72.hours,
         min = 1.hours,
         max = 720.hours
       )
-      with HasDurationConversion {
+      with HasDurationConvelonrsion {
 
-    override val durationConversion: DurationConversion = DurationConversion.FromHours
+    ovelonrridelon val durationConvelonrsion: DurationConvelonrsion = DurationConvelonrsion.FromHours
   }
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    ModelNameParam,
-    ModelInputNameParam,
-    ModelOutputNameParam,
-    ModelSignatureNameParam,
-    MaxTweetSignalAgeHoursParam,
-    WilyNsNameParam,
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonSourcelonParam,
+    ModelonlNamelonParam,
+    ModelonlInputNamelonParam,
+    ModelonlOutputNamelonParam,
+    ModelonlSignaturelonNamelonParam,
+    MaxTwelonelontSignalAgelonHoursParam,
+    WilyNsNamelonParam,
   )
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam,
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonSourcelonParam,
     )
-    val stringOverrides = FeatureSwitchOverrideUtil.getStringFSOverrides(
-      ModelNameParam,
-      ModelInputNameParam,
-      ModelOutputNameParam,
-      ModelSignatureNameParam,
-      WilyNsNameParam
+    val stringOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontStringFSOvelonrridelons(
+      ModelonlNamelonParam,
+      ModelonlInputNamelonParam,
+      ModelonlOutputNamelonParam,
+      ModelonlSignaturelonNamelonParam,
+      WilyNsNamelonParam
     )
 
-    val boundedDurationFSOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDurationFSOverrides(MaxTweetSignalAgeHoursParam)
+    val boundelondDurationFSOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDurationFSOvelonrridelons(MaxTwelonelontSignalAgelonHoursParam)
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(stringOverrides: _*)
-      .set(boundedDurationFSOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(stringOvelonrridelons: _*)
+      .selont(boundelondDurationFSOvelonrridelons: _*)
       .build()
   }
 }

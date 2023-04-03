@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.component_library.filter.ParamGatedFilter.IdentifierPrefix
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.componelonnt_library.filtelonr.ParamGatelondFiltelonr.IdelonntifielonrPrelonfix
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * A [[Filter]] with [[Conditionally]] based on a [[Param]]
+ * A [[Filtelonr]] with [[Conditionally]] baselond on a [[Param]]
  *
- * @param enabledParam the param to turn this filter on and off
- * @param filter the underlying filter to run when `enabledParam` is true
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
+ * @param elonnablelondParam thelon param to turn this filtelonr on and off
+ * @param filtelonr thelon undelonrlying filtelonr to run whelonn `elonnablelondParam` is truelon
+ * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam Candidatelon Thelon typelon of thelon candidatelons
  */
-case class ParamGatedFilter[-Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  enabledParam: Param[Boolean],
-  filter: Filter[Query, Candidate])
-    extends Filter[Query, Candidate]
-    with Filter.Conditionally[Query, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier(
-    IdentifierPrefix + filter.identifier.name)
-  override val alerts: Seq[Alert] = filter.alerts
-  override def onlyIf(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): Boolean =
-    Conditionally.and(Filter.Input(query, candidates), filter, query.params(enabledParam))
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = filter.apply(query, candidates)
+caselon class ParamGatelondFiltelonr[-Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+  elonnablelondParam: Param[Boolelonan],
+  filtelonr: Filtelonr[Quelonry, Candidatelon])
+    elonxtelonnds Filtelonr[Quelonry, Candidatelon]
+    with Filtelonr.Conditionally[Quelonry, Candidatelon] {
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr(
+    IdelonntifielonrPrelonfix + filtelonr.idelonntifielonr.namelon)
+  ovelonrridelon val alelonrts: Selonq[Alelonrt] = filtelonr.alelonrts
+  ovelonrridelon delonf onlyIf(quelonry: Quelonry, candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]): Boolelonan =
+    Conditionally.and(Filtelonr.Input(quelonry, candidatelons), filtelonr, quelonry.params(elonnablelondParam))
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = filtelonr.apply(quelonry, candidatelons)
 }
 
-object ParamGatedFilter {
-  val IdentifierPrefix = "ParamGated"
+objelonct ParamGatelondFiltelonr {
+  val IdelonntifielonrPrelonfix = "ParamGatelond"
 }

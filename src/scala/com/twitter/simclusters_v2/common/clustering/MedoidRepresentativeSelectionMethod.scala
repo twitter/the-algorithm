@@ -1,28 +1,28 @@
-package com.twitter.simclusters_v2.common.clustering
+packagelon com.twittelonr.simclustelonrs_v2.common.clustelonring
 
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.NelonighborWithWelonights
 
-class MedoidRepresentativeSelectionMethod[T](
-  producerProducerSimilarityFn: (T, T) => Double)
-    extends ClusterRepresentativeSelectionMethod[T] {
+class MelondoidRelonprelonselonntativelonSelonlelonctionMelonthod[T](
+  producelonrProducelonrSimilarityFn: (T, T) => Doublelon)
+    elonxtelonnds ClustelonrRelonprelonselonntativelonSelonlelonctionMelonthod[T] {
 
   /**
-   * Identify the medoid of a cluster and return it.
+   * Idelonntify thelon melondoid of a clustelonr and relonturn it.
    *
-   * @param cluster A set of NeighborWithWeights.
-   * @param embeddings A map of producer ID -> embedding.
+   * @param clustelonr A selont of NelonighborWithWelonights.
+   * @param elonmbelonddings A map of producelonr ID -> elonmbelondding.
    */
-  def selectClusterRepresentative(
-    cluster: Set[NeighborWithWeights],
-    embeddings: Map[UserId, T],
-  ): UserId = {
-    val key = cluster.maxBy {
-      id1 => // maxBy because we use similarity, which gets larger as we get closer.
-        val v = embeddings(id1.neighborId)
-        cluster
-          .map(id2 => producerProducerSimilarityFn(v, embeddings(id2.neighborId))).sum
+  delonf selonlelonctClustelonrRelonprelonselonntativelon(
+    clustelonr: Selont[NelonighborWithWelonights],
+    elonmbelonddings: Map[UselonrId, T],
+  ): UselonrId = {
+    val kelony = clustelonr.maxBy {
+      id1 => // maxBy beloncauselon welon uselon similarity, which gelonts largelonr as welon gelont closelonr.
+        val v = elonmbelonddings(id1.nelonighborId)
+        clustelonr
+          .map(id2 => producelonrProducelonrSimilarityFn(v, elonmbelonddings(id2.nelonighborId))).sum
     }
-    key.neighborId
+    kelony.nelonighborId
   }
 }

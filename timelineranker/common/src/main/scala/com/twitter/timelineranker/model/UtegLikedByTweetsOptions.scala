@@ -1,8 +1,8 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelines.model.UserId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
 
-case class UtegLikedByTweetsOptions(
-  utegCount: Int,
-  isInNetwork: Boolean,
-  weightedFollowings: Map[UserId, Double])
+caselon class UtelongLikelondByTwelonelontsOptions(
+  utelongCount: Int,
+  isInNelontwork: Boolelonan,
+  welonightelondFollowings: Map[UselonrId, Doublelon])

@@ -1,148 +1,148 @@
-package com.twitter.search.common.schema.earlybird;
+packagelon com.twittelonr.selonarch.common.schelonma.elonarlybird;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.indexing.thriftjava.PackedFeatures;
-import com.twitter.search.common.indexing.thriftjava.VersionedTweetFeatures;
-import com.twitter.search.common.schema.SchemaUtil;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.IntelongelonrelonncodelondFelonaturelons;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.PackelondFelonaturelons;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.VelonrsionelondTwelonelontFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.SchelonmaUtil;
+import com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
 
 /**
- * A class for encoding earlybird features in integers
+ * A class for elonncoding elonarlybird felonaturelons in intelongelonrs
  */
-public abstract class EarlybirdEncodedFeatures extends IntegerEncodedFeatures {
-  private final ImmutableSchemaInterface schema;
-  private final EarlybirdFieldConstant baseField;
+public abstract class elonarlybirdelonncodelondFelonaturelons elonxtelonnds IntelongelonrelonncodelondFelonaturelons {
+  privatelon final ImmutablelonSchelonmaIntelonrfacelon schelonma;
+  privatelon final elonarlybirdFielonldConstant baselonFielonld;
 
-  public EarlybirdEncodedFeatures(ImmutableSchemaInterface schema,
-                                  EarlybirdFieldConstant baseField) {
-    this.schema = schema;
-    this.baseField = baseField;
+  public elonarlybirdelonncodelondFelonaturelons(ImmutablelonSchelonmaIntelonrfacelon schelonma,
+                                  elonarlybirdFielonldConstant baselonFielonld) {
+    this.schelonma = schelonma;
+    this.baselonFielonld = baselonFielonld;
   }
 
   /**
-   * Write this object into packedFeatures of the given VersionedTweetFeatures.
+   * Writelon this objelonct into packelondFelonaturelons of thelon givelonn VelonrsionelondTwelonelontFelonaturelons.
    */
-  public void writeFeaturesToVersionedTweetFeatures(
-      VersionedTweetFeatures versionedTweetFeatures) {
-    if (!versionedTweetFeatures.isSetPackedFeatures()) {
-      versionedTweetFeatures.setPackedFeatures(new PackedFeatures());
+  public void writelonFelonaturelonsToVelonrsionelondTwelonelontFelonaturelons(
+      VelonrsionelondTwelonelontFelonaturelons velonrsionelondTwelonelontFelonaturelons) {
+    if (!velonrsionelondTwelonelontFelonaturelons.isSelontPackelondFelonaturelons()) {
+      velonrsionelondTwelonelontFelonaturelons.selontPackelondFelonaturelons(nelonw PackelondFelonaturelons());
     }
-    copyToPackedFeatures(versionedTweetFeatures.getPackedFeatures());
+    copyToPackelondFelonaturelons(velonrsionelondTwelonelontFelonaturelons.gelontPackelondFelonaturelons());
   }
 
   /**
-   * Write this object into extendedPackedFeatures of the given VersionedTweetFeatures.
+   * Writelon this objelonct into elonxtelonndelondPackelondFelonaturelons of thelon givelonn VelonrsionelondTwelonelontFelonaturelons.
    */
-  public void writeExtendedFeaturesToVersionedTweetFeatures(
-      VersionedTweetFeatures versionedTweetFeatures) {
-    if (!versionedTweetFeatures.isSetExtendedPackedFeatures()) {
-      versionedTweetFeatures.setExtendedPackedFeatures(new PackedFeatures());
+  public void writelonelonxtelonndelondFelonaturelonsToVelonrsionelondTwelonelontFelonaturelons(
+      VelonrsionelondTwelonelontFelonaturelons velonrsionelondTwelonelontFelonaturelons) {
+    if (!velonrsionelondTwelonelontFelonaturelons.isSelontelonxtelonndelondPackelondFelonaturelons()) {
+      velonrsionelondTwelonelontFelonaturelons.selontelonxtelonndelondPackelondFelonaturelons(nelonw PackelondFelonaturelons());
     }
-    copyToPackedFeatures(versionedTweetFeatures.getExtendedPackedFeatures());
+    copyToPackelondFelonaturelons(velonrsionelondTwelonelontFelonaturelons.gelontelonxtelonndelondPackelondFelonaturelons());
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    StringBuilder ret = new StringBuilder();
-    ret.append("Tweet features: \n");
-    for (FeatureConfiguration feature
-        : EarlybirdSchemaCreateTool.FEATURE_CONFIGURATION_MAP.values()) {
-      ret.append(feature.getName()).append(": ").append(getFeatureValue(feature)).append("\n");
+    StringBuildelonr relont = nelonw StringBuildelonr();
+    relont.appelonnd("Twelonelont felonaturelons: \n");
+    for (FelonaturelonConfiguration felonaturelon
+        : elonarlybirdSchelonmaCrelonatelonTool.FelonATURelon_CONFIGURATION_MAP.valuelons()) {
+      relont.appelonnd(felonaturelon.gelontNamelon()).appelonnd(": ").appelonnd(gelontFelonaturelonValuelon(felonaturelon)).appelonnd("\n");
     }
-    return ret.toString();
+    relonturn relont.toString();
   }
 
-  public boolean isFlagSet(EarlybirdFieldConstant field) {
-    return isFlagSet(schema.getFeatureConfigurationById(field.getFieldId()));
+  public boolelonan isFlagSelont(elonarlybirdFielonldConstant fielonld) {
+    relonturn isFlagSelont(schelonma.gelontFelonaturelonConfigurationById(fielonld.gelontFielonldId()));
   }
 
-  public int getFeatureValue(EarlybirdFieldConstant field) {
-    return getFeatureValue(schema.getFeatureConfigurationById(field.getFieldId()));
+  public int gelontFelonaturelonValuelon(elonarlybirdFielonldConstant fielonld) {
+    relonturn gelontFelonaturelonValuelon(schelonma.gelontFelonaturelonConfigurationById(fielonld.gelontFielonldId()));
   }
 
-  public EarlybirdEncodedFeatures setFlag(EarlybirdFieldConstant field) {
-    setFlag(schema.getFeatureConfigurationById(field.getFieldId()));
-    return this;
+  public elonarlybirdelonncodelondFelonaturelons selontFlag(elonarlybirdFielonldConstant fielonld) {
+    selontFlag(schelonma.gelontFelonaturelonConfigurationById(fielonld.gelontFielonldId()));
+    relonturn this;
   }
 
-  public EarlybirdEncodedFeatures clearFlag(EarlybirdFieldConstant field) {
-    clearFlag(schema.getFeatureConfigurationById(field.getFieldId()));
-    return this;
+  public elonarlybirdelonncodelondFelonaturelons clelonarFlag(elonarlybirdFielonldConstant fielonld) {
+    clelonarFlag(schelonma.gelontFelonaturelonConfigurationById(fielonld.gelontFielonldId()));
+    relonturn this;
   }
 
-  public EarlybirdEncodedFeatures setFlagValue(EarlybirdFieldConstant field,
-                                               boolean value) {
-    setFlagValue(schema.getFeatureConfigurationById(field.getFieldId()), value);
-    return this;
+  public elonarlybirdelonncodelondFelonaturelons selontFlagValuelon(elonarlybirdFielonldConstant fielonld,
+                                               boolelonan valuelon) {
+    selontFlagValuelon(schelonma.gelontFelonaturelonConfigurationById(fielonld.gelontFielonldId()), valuelon);
+    relonturn this;
   }
 
-  public EarlybirdEncodedFeatures setFeatureValue(EarlybirdFieldConstant field,
-                                                  int value) {
-    setFeatureValue(schema.getFeatureConfigurationById(field.getFieldId()), value);
-    return this;
+  public elonarlybirdelonncodelondFelonaturelons selontFelonaturelonValuelon(elonarlybirdFielonldConstant fielonld,
+                                                  int valuelon) {
+    selontFelonaturelonValuelon(schelonma.gelontFelonaturelonConfigurationById(fielonld.gelontFielonldId()), valuelon);
+    relonturn this;
   }
 
-  public EarlybirdEncodedFeatures setFeatureValueIfGreater(EarlybirdFieldConstant field,
-                                                           int value) {
-    setFeatureValueIfGreater(schema.getFeatureConfigurationById(field.getFieldId()), value);
-    return this;
+  public elonarlybirdelonncodelondFelonaturelons selontFelonaturelonValuelonIfGrelonatelonr(elonarlybirdFielonldConstant fielonld,
+                                                           int valuelon) {
+    selontFelonaturelonValuelonIfGrelonatelonr(schelonma.gelontFelonaturelonConfigurationById(fielonld.gelontFielonldId()), valuelon);
+    relonturn this;
   }
 
-  public boolean incrementIfNotMaximum(EarlybirdFieldConstant field) {
-    return incrementIfNotMaximum(schema.getFeatureConfigurationById(field.getFieldId()));
+  public boolelonan increlonmelonntIfNotMaximum(elonarlybirdFielonldConstant fielonld) {
+    relonturn increlonmelonntIfNotMaximum(schelonma.gelontFelonaturelonConfigurationById(fielonld.gelontFielonldId()));
   }
 
-  private static final class ArrayEncodedTweetFeatures extends EarlybirdEncodedFeatures {
-    private final int[] encodedInts;
+  privatelon static final class ArrayelonncodelondTwelonelontFelonaturelons elonxtelonnds elonarlybirdelonncodelondFelonaturelons {
+    privatelon final int[] elonncodelondInts;
 
-    private ArrayEncodedTweetFeatures(ImmutableSchemaInterface schema,
-                                      EarlybirdFieldConstant baseField) {
-      super(schema, baseField);
+    privatelon ArrayelonncodelondTwelonelontFelonaturelons(ImmutablelonSchelonmaIntelonrfacelon schelonma,
+                                      elonarlybirdFielonldConstant baselonFielonld) {
+      supelonr(schelonma, baselonFielonld);
 
-      final int numIntegers = SchemaUtil.getCSFFieldFixedLength(schema, baseField.getFieldId());
-      Preconditions.checkState(numIntegers > 0);
-      this.encodedInts = new int[numIntegers];
-    }
-
-    @Override
-    public int getNumInts() {
-      return encodedInts.length;
+      final int numIntelongelonrs = SchelonmaUtil.gelontCSFFielonldFixelondLelonngth(schelonma, baselonFielonld.gelontFielonldId());
+      Prelonconditions.chelonckStatelon(numIntelongelonrs > 0);
+      this.elonncodelondInts = nelonw int[numIntelongelonrs];
     }
 
-    @Override
-    public int getInt(int pos) {
-      return encodedInts[pos];
+    @Ovelonrridelon
+    public int gelontNumInts() {
+      relonturn elonncodelondInts.lelonngth;
     }
 
-    @Override
-    public void setInt(int pos, int value) {
-      encodedInts[pos] = value;
+    @Ovelonrridelon
+    public int gelontInt(int pos) {
+      relonturn elonncodelondInts[pos];
+    }
+
+    @Ovelonrridelon
+    public void selontInt(int pos, int valuelon) {
+      elonncodelondInts[pos] = valuelon;
     }
   }
 
   /**
-   * Create a new {@link EarlybirdEncodedFeatures} object based on schema and base field.
-   * @param schema the schema for all fields
-   * @param baseField base field's constant value
+   * Crelonatelon a nelonw {@link elonarlybirdelonncodelondFelonaturelons} objelonct baselond on schelonma and baselon fielonld.
+   * @param schelonma thelon schelonma for all fielonlds
+   * @param baselonFielonld baselon fielonld's constant valuelon
    */
-  public static EarlybirdEncodedFeatures newEncodedTweetFeatures(
-      ImmutableSchemaInterface schema, EarlybirdFieldConstant baseField) {
-    return new ArrayEncodedTweetFeatures(schema, baseField);
+  public static elonarlybirdelonncodelondFelonaturelons nelonwelonncodelondTwelonelontFelonaturelons(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma, elonarlybirdFielonldConstant baselonFielonld) {
+    relonturn nelonw ArrayelonncodelondTwelonelontFelonaturelons(schelonma, baselonFielonld);
   }
 
   /**
-   * Create a new {@link EarlybirdEncodedFeatures} object based on schema and base field name.
-   * @param schema the schema for all fields
-   * @param baseFieldName base field's name
+   * Crelonatelon a nelonw {@link elonarlybirdelonncodelondFelonaturelons} objelonct baselond on schelonma and baselon fielonld namelon.
+   * @param schelonma thelon schelonma for all fielonlds
+   * @param baselonFielonldNamelon baselon fielonld's namelon
    */
-  public static EarlybirdEncodedFeatures newEncodedTweetFeatures(
-      ImmutableSchemaInterface schema, String baseFieldName) {
-    EarlybirdFieldConstant baseField = EarlybirdFieldConstants.getFieldConstant(baseFieldName);
-    Preconditions.checkNotNull(baseField);
-    return newEncodedTweetFeatures(schema, baseField);
+  public static elonarlybirdelonncodelondFelonaturelons nelonwelonncodelondTwelonelontFelonaturelons(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma, String baselonFielonldNamelon) {
+    elonarlybirdFielonldConstant baselonFielonld = elonarlybirdFielonldConstants.gelontFielonldConstant(baselonFielonldNamelon);
+    Prelonconditions.chelonckNotNull(baselonFielonld);
+    relonturn nelonwelonncodelondTwelonelontFelonaturelons(schelonma, baselonFielonld);
   }
 }

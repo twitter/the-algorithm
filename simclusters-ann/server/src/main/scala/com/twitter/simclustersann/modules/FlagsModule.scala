@@ -1,44 +1,44 @@
-package com.twitter.simclustersann.modules
+packagelon com.twittelonr.simclustelonrsann.modulelons
 
-import com.twitter.inject.TwitterModule
-import com.twitter.simclustersann.common.FlagNames
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrsann.common.FlagNamelons
 
-object FlagsModule extends TwitterModule {
+objelonct FlagsModulelon elonxtelonnds TwittelonrModulelon {
 
   flag[Int](
-    name = FlagNames.ServiceTimeout,
-    default = 40,
-    help = "The threshold of Request Timeout"
+    namelon = FlagNamelons.SelonrvicelonTimelonout,
+    delonfault = 40,
+    helonlp = "Thelon threlonshold of Relonquelonst Timelonout"
   )
 
   flag[String](
-    name = FlagNames.DarkTrafficFilterDeciderKey,
-    default = "dark_traffic_filter",
-    help = "Dark traffic filter decider key"
+    namelon = FlagNamelons.DarkTrafficFiltelonrDeloncidelonrKelony,
+    delonfault = "dark_traffic_filtelonr",
+    helonlp = "Dark traffic filtelonr deloncidelonr kelony"
   )
 
   flag[String](
-    name = FlagNames.CacheDest,
-    default = "/s/cache/content_recommender_unified_v2",
-    help = "Path to memcache service. Currently using CR uniform scoring cache"
+    namelon = FlagNamelons.CachelonDelonst,
+    delonfault = "/s/cachelon/contelonnt_reloncommelonndelonr_unifielond_v2",
+    helonlp = "Path to melonmcachelon selonrvicelon. Currelonntly using CR uniform scoring cachelon"
   )
 
   flag[Int](
-    name = FlagNames.CacheTimeout,
-    default = 15,
-    help = "The threshold of MemCache Timeout"
+    namelon = FlagNamelons.CachelonTimelonout,
+    delonfault = 15,
+    helonlp = "Thelon threlonshold of MelonmCachelon Timelonout"
   )
 
-  flag[Boolean](
-    name = FlagNames.CacheAsyncUpdate,
-    default = false,
-    help = "Whether to enable the async update for the MemCache"
+  flag[Boolelonan](
+    namelon = FlagNamelons.CachelonAsyncUpdatelon,
+    delonfault = falselon,
+    helonlp = "Whelonthelonr to elonnablelon thelon async updatelon for thelon MelonmCachelon"
   )
 
   flag[Int](
-    name = FlagNames.MaxTopTweetPerCluster,
-    default = 200,
-    help = "Maximum number of tweets to take per each simclusters"
+    namelon = FlagNamelons.MaxTopTwelonelontPelonrClustelonr,
+    delonfault = 200,
+    helonlp = "Maximum numbelonr of twelonelonts to takelon pelonr elonach simclustelonrs"
   )
 
 }

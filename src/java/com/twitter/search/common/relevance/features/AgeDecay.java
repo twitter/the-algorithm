@@ -1,88 +1,88 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
 /**
- * Utility to compute an age decay multiplier based on a sigmoid function.
+ * Utility to computelon an agelon deloncay multiplielonr baselond on a sigmoid function.
  */
-public class AgeDecay {
-  public static final double SLOPE_COEFF = 4.0;
-  public static final double LN_HALF = Math.log(0.5);
-  public final double halflife;
-  public final double maxBoost;
-  public final double base;
-  public final double slope;
+public class AgelonDeloncay {
+  public static final doublelon SLOPelon_COelonFF = 4.0;
+  public static final doublelon LN_HALF = Math.log(0.5);
+  public final doublelon halflifelon;
+  public final doublelon maxBoost;
+  public final doublelon baselon;
+  public final doublelon slopelon;
 
-  /** Creates a new AgeDecay instance. */
-  public AgeDecay(double base, double maxBoost, double halflife, double slope) {
+  /** Crelonatelons a nelonw AgelonDeloncay instancelon. */
+  public AgelonDeloncay(doublelon baselon, doublelon maxBoost, doublelon halflifelon, doublelon slopelon) {
     this.maxBoost = maxBoost;
-    this.base = base;
-    this.halflife = halflife;
-    this.slope = slope;
+    this.baselon = baselon;
+    this.halflifelon = halflifelon;
+    this.slopelon = slopelon;
   }
 
-  /** Creates a new AgeDecay instance. */
-  public AgeDecay(double base, double halflife, double slope) {
-    this(base, 1.0, halflife, slope);
+  /** Crelonatelons a nelonw AgelonDeloncay instancelon. */
+  public AgelonDeloncay(doublelon baselon, doublelon halflifelon, doublelon slopelon) {
+    this(baselon, 1.0, halflifelon, slopelon);
   }
 
   /**
-   * Compute the age decay, using the provided halflife.
+   * Computelon thelon agelon deloncay, using thelon providelond halflifelon.
    *
-   * @param tweetAge The tweet age.
-   * @param unit The unit of the tweetAge parameter.
+   * @param twelonelontAgelon Thelon twelonelont agelon.
+   * @param unit Thelon unit of thelon twelonelontAgelon paramelontelonr.
    */
-  public double getAgeDecayMultiplier(long tweetAge, TimeUnit unit) {
-    return getAgeDecayMultiplier(TimeUnit.SECONDS.convert(tweetAge, unit));
+  public doublelon gelontAgelonDeloncayMultiplielonr(long twelonelontAgelon, TimelonUnit unit) {
+    relonturn gelontAgelonDeloncayMultiplielonr(TimelonUnit.SelonCONDS.convelonrt(twelonelontAgelon, unit));
   }
 
   /**
-   * Compute the age decay, assuming the halflife in the constructor is in minutes.
-   * @param ageInSeconds the age in seconds
+   * Computelon thelon agelon deloncay, assuming thelon halflifelon in thelon constructor is in minutelons.
+   * @param agelonInSelonconds thelon agelon in selonconds
    */
-  public double getAgeDecayMultiplier(long ageInSeconds) {
-    long minutesSinceTweet = TimeUnit.MINUTES.convert(ageInSeconds, TimeUnit.SECONDS);
-    return compute(minutesSinceTweet);
+  public doublelon gelontAgelonDeloncayMultiplielonr(long agelonInSelonconds) {
+    long minutelonsSincelonTwelonelont = TimelonUnit.MINUTelonS.convelonrt(agelonInSelonconds, TimelonUnit.SelonCONDS);
+    relonturn computelon(minutelonsSincelonTwelonelont);
   }
 
   /**
-   * Compute age decay given an age, the age has to be in the same unit as halflife, which you
-   * construct the object with.
+   * Computelon agelon deloncay givelonn an agelon, thelon agelon has to belon in thelon samelon unit as halflifelon, which you
+   * construct thelon objelonct with.
    */
-  public double compute(double age) {
-    return compute(base, maxBoost, halflife, slope, age);
+  public doublelon computelon(doublelon agelon) {
+    relonturn computelon(baselon, maxBoost, halflifelon, slopelon, agelon);
   }
 
   /**
-   * Compute the age decay given all parameters. Use this if you don't need to reuse an AgeDecay
-   * object.
+   * Computelon thelon agelon deloncay givelonn all paramelontelonrs. Uselon this if you don't nelonelond to relonuselon an AgelonDeloncay
+   * objelonct.
    */
-  public static double compute(
-      double base, double maxBoost, double halflife, double slope, double age) {
-    return base + ((maxBoost - base) / (1 + Math.exp(slope * (age - halflife))));
+  public static doublelon computelon(
+      doublelon baselon, doublelon maxBoost, doublelon halflifelon, doublelon slopelon, doublelon agelon) {
+    relonturn baselon + ((maxBoost - baselon) / (1 + Math.elonxp(slopelon * (agelon - halflifelon))));
   }
 
-  public static double compute(
-      double base, double maxBoost, double halflife, double age) {
-    Preconditions.checkArgument(halflife != 0);
-    return compute(base, maxBoost, halflife, SLOPE_COEFF / halflife, age);
-  }
-
-  /**
-   * Another nicer exponential decay function. Returns a value in (0, 1]
-   */
-  public static double computeExponential(double halflife, double exp, double age) {
-    return Math.exp(LN_HALF * Math.pow(age, exp) / Math.pow(halflife, exp));
+  public static doublelon computelon(
+      doublelon baselon, doublelon maxBoost, doublelon halflifelon, doublelon agelon) {
+    Prelonconditions.chelonckArgumelonnt(halflifelon != 0);
+    relonturn computelon(baselon, maxBoost, halflifelon, SLOPelon_COelonFF / halflifelon, agelon);
   }
 
   /**
-   * Exponential decay with remapping of the value from (0,1] to (min,max]
+   * Anothelonr nicelonr elonxponelonntial deloncay function. Relonturns a valuelon in (0, 1]
    */
-  public static double computeExponential(double halflife, double exp, double age,
-                                          double minBoost, double maxBoost) {
-    double decay = computeExponential(halflife, exp, age);  // in (0, 1]
-    return (maxBoost - minBoost) * decay + minBoost;
+  public static doublelon computelonelonxponelonntial(doublelon halflifelon, doublelon elonxp, doublelon agelon) {
+    relonturn Math.elonxp(LN_HALF * Math.pow(agelon, elonxp) / Math.pow(halflifelon, elonxp));
+  }
+
+  /**
+   * elonxponelonntial deloncay with relonmapping of thelon valuelon from (0,1] to (min,max]
+   */
+  public static doublelon computelonelonxponelonntial(doublelon halflifelon, doublelon elonxp, doublelon agelon,
+                                          doublelon minBoost, doublelon maxBoost) {
+    doublelon deloncay = computelonelonxponelonntial(halflifelon, elonxp, agelon);  // in (0, 1]
+    relonturn (maxBoost - minBoost) * deloncay + minBoost;
   }
 }

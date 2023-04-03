@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageImage
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ImagelonVariantMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonImagelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class MessageImageMarshaller @Inject() (
-  imageVariantMarshaller: ImageVariantMarshaller) {
+@Singlelonton
+class MelonssagelonImagelonMarshallelonr @Injelonct() (
+  imagelonVariantMarshallelonr: ImagelonVariantMarshallelonr) {
 
-  def apply(messageImage: MessageImage): urt.MessageImage = {
-    urt.MessageImage(
-      imageVariants = messageImage.imageVariants.map(imageVariantMarshaller(_)),
-      backgroundColor = messageImage.backgroundColor
+  delonf apply(melonssagelonImagelon: MelonssagelonImagelon): urt.MelonssagelonImagelon = {
+    urt.MelonssagelonImagelon(
+      imagelonVariants = melonssagelonImagelon.imagelonVariants.map(imagelonVariantMarshallelonr(_)),
+      backgroundColor = melonssagelonImagelon.backgroundColor
     )
   }
 }

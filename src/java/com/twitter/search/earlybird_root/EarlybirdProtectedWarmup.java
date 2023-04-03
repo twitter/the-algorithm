@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.root.WarmupConfig;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.root.WarmupConfig;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
 
-public class EarlybirdProtectedWarmup extends EarlybirdWarmup {
+public class elonarlybirdProtelonctelondWarmup elonxtelonnds elonarlybirdWarmup {
 
-  public EarlybirdProtectedWarmup(Clock clock, WarmupConfig config) {
-    super(clock, config);
+  public elonarlybirdProtelonctelondWarmup(Clock clock, WarmupConfig config) {
+    supelonr(clock, config);
   }
 
   /**
-   * The protected cluster requires all queries to specify a fromUserIdFilter and a searcherId.
+   * Thelon protelonctelond clustelonr relonquirelons all quelonrielons to speloncify a fromUselonrIdFiltelonr and a selonarchelonrId.
    */
-  @Override
-  protected EarlybirdRequest createRequest(int requestId) {
-    EarlybirdRequest request = super.createRequest(requestId);
+  @Ovelonrridelon
+  protelonctelond elonarlybirdRelonquelonst crelonatelonRelonquelonst(int relonquelonstId) {
+    elonarlybirdRelonquelonst relonquelonst = supelonr.crelonatelonRelonquelonst(relonquelonstId);
 
-    Preconditions.checkState(request.isSetSearchQuery());
-    request.getSearchQuery().addToFromUserIDFilter64(requestId);
-    request.getSearchQuery().setSearcherId(0L);
+    Prelonconditions.chelonckStatelon(relonquelonst.isSelontSelonarchQuelonry());
+    relonquelonst.gelontSelonarchQuelonry().addToFromUselonrIDFiltelonr64(relonquelonstId);
+    relonquelonst.gelontSelonarchQuelonry().selontSelonarchelonrId(0L);
 
-    return request;
+    relonturn relonquelonst;
   }
 }

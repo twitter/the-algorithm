@@ -1,789 +1,789 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.HashSelont;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Selont;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
-import org.apache.lucene.analysis.tokenattributes.TermToBytesRefAttribute;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.facet.FacetsConfig;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.FieldInvertState;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.index.IndexableFieldType;
-import org.apache.lucene.search.similarities.Similarity;
-import org.apache.lucene.store.Directory;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.BytesRefHash;
-import org.apache.lucene.util.Version;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
+import org.apachelon.lucelonnelon.analysis.Analyzelonr;
+import org.apachelon.lucelonnelon.analysis.TokelonnStrelonam;
+import org.apachelon.lucelonnelon.analysis.tokelonnattributelons.OffselontAttributelon;
+import org.apachelon.lucelonnelon.analysis.tokelonnattributelons.PositionIncrelonmelonntAttributelon;
+import org.apachelon.lucelonnelon.analysis.tokelonnattributelons.TelonrmToBytelonsRelonfAttributelon;
+import org.apachelon.lucelonnelon.documelonnt.Documelonnt;
+import org.apachelon.lucelonnelon.documelonnt.Fielonld;
+import org.apachelon.lucelonnelon.facelont.FacelontsConfig;
+import org.apachelon.lucelonnelon.indelonx.DocValuelonsTypelon;
+import org.apachelon.lucelonnelon.indelonx.FielonldInvelonrtStatelon;
+import org.apachelon.lucelonnelon.indelonx.IndelonxOptions;
+import org.apachelon.lucelonnelon.indelonx.IndelonxablelonFielonld;
+import org.apachelon.lucelonnelon.indelonx.IndelonxablelonFielonldTypelon;
+import org.apachelon.lucelonnelon.selonarch.similaritielons.Similarity;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
+import org.apachelon.lucelonnelon.util.AttributelonSourcelon;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.apachelon.lucelonnelon.util.BytelonsRelonfHash;
+import org.apachelon.lucelonnelon.util.Velonrsion;
 
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.core.earlybird.facets.FacetCountingArrayWriter;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetUtil;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideByteIndex;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
-import com.twitter.search.core.earlybird.index.inverted.EarlybirdCSFDocValuesProcessor;
-import com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndex;
-import com.twitter.search.core.earlybird.index.inverted.InvertedRealtimeIndexWriter;
-import com.twitter.search.core.earlybird.index.inverted.TermPointerEncoding;
-import com.twitter.search.core.earlybird.index.util.AllDocsIterator;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountingArrayWritelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap.FacelontFielonld;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontUtil;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.ColumnStridelonBytelonIndelonx;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.elonarlybirdCSFDocValuelonsProcelonssor;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondRelonaltimelonIndelonx;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.InvelonrtelondRelonaltimelonIndelonxWritelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.TelonrmPointelonrelonncoding;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.AllDocsItelonrator;
 
 /**
- * EarlybirdIndexWriter implementation that writes realtime in-memory segments.
- * Note that it is used by both Earlybirds and ExpertSearch.
+ * elonarlybirdIndelonxWritelonr implelonmelonntation that writelons relonaltimelon in-melonmory selongmelonnts.
+ * Notelon that it is uselond by both elonarlybirds and elonxpelonrtSelonarch.
  */
-public final class EarlybirdRealtimeIndexSegmentWriter extends EarlybirdIndexSegmentWriter {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(EarlybirdRealtimeIndexSegmentWriter.class);
+public final class elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr elonxtelonnds elonarlybirdIndelonxSelongmelonntWritelonr {
+  privatelon static final Loggelonr LOG =
+    LoggelonrFactory.gelontLoggelonr(elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr.class);
   /**
-   * Maximum tweet length is 10k, setting maximum token position to 25k in case of weird unicode.
+   * Maximum twelonelont lelonngth is 10k, selontting maximum tokelonn position to 25k in caselon of welonird unicodelon.
    */
-  private static final int MAX_POSITION = 25000;
+  privatelon static final int MAX_POSITION = 25000;
 
-  private static final String OUT_OF_ORDER_APPEND_UNSUPPORTED_STATS_PATTERN =
-      "out_of_order_append_unsupported_for_field_%s";
-  private static final ConcurrentHashMap<String, SearchRateCounter>
-      UNSUPPORTED_OUT_OF_ORDER_APPEND_MAP = new ConcurrentHashMap<>();
-  private static final SearchRateCounter NUM_TWEETS_DROPPED =
-      SearchRateCounter.export("EarlybirdRealtimeIndexSegmentWriter_num_tweets_dropped");
+  privatelon static final String OUT_OF_ORDelonR_APPelonND_UNSUPPORTelonD_STATS_PATTelonRN =
+      "out_of_ordelonr_appelonnd_unsupportelond_for_fielonld_%s";
+  privatelon static final ConcurrelonntHashMap<String, SelonarchRatelonCountelonr>
+      UNSUPPORTelonD_OUT_OF_ORDelonR_APPelonND_MAP = nelonw ConcurrelonntHashMap<>();
+  privatelon static final SelonarchRatelonCountelonr NUM_TWelonelonTS_DROPPelonD =
+      SelonarchRatelonCountelonr.elonxport("elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr_num_twelonelonts_droppelond");
 
-  private long nextFieldGen;
+  privatelon long nelonxtFielonldGelonn;
 
-  private HashMap<String, PerField> fields = new HashMap<>();
-  private List<PerField> fieldsInDocument = new ArrayList<>();
+  privatelon HashMap<String, PelonrFielonld> fielonlds = nelonw HashMap<>();
+  privatelon List<PelonrFielonld> fielonldsInDocumelonnt = nelonw ArrayList<>();
 
-  private final EarlybirdCSFDocValuesProcessor docValuesProcessor;
+  privatelon final elonarlybirdCSFDocValuelonsProcelonssor docValuelonsProcelonssor;
 
-  private Map<String, InvertedRealtimeIndexWriter> termHashSync = new HashMap<>();
-  private Set<String> appendedFields = new HashSet<>();
+  privatelon Map<String, InvelonrtelondRelonaltimelonIndelonxWritelonr> telonrmHashSync = nelonw HashMap<>();
+  privatelon Selont<String> appelonndelondFielonlds = nelonw HashSelont<>();
 
-  private final Analyzer analyzer;
-  private final Similarity similarity;
+  privatelon final Analyzelonr analyzelonr;
+  privatelon final Similarity similarity;
 
-  private final EarlybirdRealtimeIndexSegmentData segmentData;
+  privatelon final elonarlybirdRelonaltimelonIndelonxSelongmelonntData selongmelonntData;
 
-  private final Field allDocsField;
+  privatelon final Fielonld allDocsFielonld;
 
-  @Nullable
-  private final FacetCountingArrayWriter facetCountingArrayWriter;
+  @Nullablelon
+  privatelon final FacelontCountingArrayWritelonr facelontCountingArrayWritelonr;
 
   /**
-   * Creates a new writer for a real-time in-memory Earlybird segment.
+   * Crelonatelons a nelonw writelonr for a relonal-timelon in-melonmory elonarlybird selongmelonnt.
    *
-   * Do not add public constructors to this class. EarlybirdRealtimeIndexSegmentWriter instances
-   * should be created only by calling
-   * EarlybirdRealtimeIndexSegmentData.createEarlybirdIndexSegmentWriter(), to make sure everything
-   * is set up properly (such as CSF readers).
+   * Do not add public constructors to this class. elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr instancelons
+   * should belon crelonatelond only by calling
+   * elonarlybirdRelonaltimelonIndelonxSelongmelonntData.crelonatelonelonarlybirdIndelonxSelongmelonntWritelonr(), to makelon surelon elonvelonrything
+   * is selont up propelonrly (such as CSF relonadelonrs).
    */
-  EarlybirdRealtimeIndexSegmentWriter(
-      EarlybirdRealtimeIndexSegmentData segmentData,
-      Analyzer analyzer,
+  elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr(
+      elonarlybirdRelonaltimelonIndelonxSelongmelonntData selongmelonntData,
+      Analyzelonr analyzelonr,
       Similarity similarity) {
-    Preconditions.checkNotNull(segmentData);
-    this.segmentData = segmentData;
-    this.facetCountingArrayWriter = segmentData.createFacetCountingArrayWriter();
-    this.docValuesProcessor = new EarlybirdCSFDocValuesProcessor(segmentData.getDocValuesManager());
-    this.analyzer = analyzer;
+    Prelonconditions.chelonckNotNull(selongmelonntData);
+    this.selongmelonntData = selongmelonntData;
+    this.facelontCountingArrayWritelonr = selongmelonntData.crelonatelonFacelontCountingArrayWritelonr();
+    this.docValuelonsProcelonssor = nelonw elonarlybirdCSFDocValuelonsProcelonssor(selongmelonntData.gelontDocValuelonsManagelonr());
+    this.analyzelonr = analyzelonr;
     this.similarity = similarity;
-    this.allDocsField = buildAllDocsField(segmentData);
+    this.allDocsFielonld = buildAllDocsFielonld(selongmelonntData);
   }
 
-  @Override
-  public EarlybirdRealtimeIndexSegmentData getSegmentData() {
-    return segmentData;
+  @Ovelonrridelon
+  public elonarlybirdRelonaltimelonIndelonxSelongmelonntData gelontSelongmelonntData() {
+    relonturn selongmelonntData;
   }
 
-  @Override
-  public int numDocsNoDelete() {
-    return segmentData.getDocIDToTweetIDMapper().getNumDocs();
+  @Ovelonrridelon
+  public int numDocsNoDelonlelontelon() {
+    relonturn selongmelonntData.gelontDocIDToTwelonelontIDMappelonr().gelontNumDocs();
   }
 
-  @Override
-  public void addDocument(Document doc) throws IOException {
-    // This method should be called only from Expertsearch, not tweets Earlybirds.
-    DocIDToTweetIDMapper docIdToTweetIdMapper = segmentData.getDocIDToTweetIDMapper();
-    Preconditions.checkState(docIdToTweetIdMapper instanceof SequentialDocIDMapper);
+  @Ovelonrridelon
+  public void addDocumelonnt(Documelonnt doc) throws IOelonxcelonption {
+    // This melonthod should belon callelond only from elonxpelonrtselonarch, not twelonelonts elonarlybirds.
+    DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr = selongmelonntData.gelontDocIDToTwelonelontIDMappelonr();
+    Prelonconditions.chelonckStatelon(docIdToTwelonelontIdMappelonr instancelonof SelonquelonntialDocIDMappelonr);
 
-    // Make sure we have space for a new doc in this segment.
-    Preconditions.checkState(docIdToTweetIdMapper.getNumDocs() < segmentData.getMaxSegmentSize(),
-                             "Cannot add a new document to the segment, because it's full.");
+    // Makelon surelon welon havelon spacelon for a nelonw doc in this selongmelonnt.
+    Prelonconditions.chelonckStatelon(docIdToTwelonelontIdMappelonr.gelontNumDocs() < selongmelonntData.gelontMaxSelongmelonntSizelon(),
+                             "Cannot add a nelonw documelonnt to thelon selongmelonnt, beloncauselon it's full.");
 
-    addDocument(doc, docIdToTweetIdMapper.addMapping(-1L), false);
+    addDocumelonnt(doc, docIdToTwelonelontIdMappelonr.addMapping(-1L), falselon);
   }
 
-  @Override
-  public void addTweet(Document doc, long tweetId, boolean docIsOffensive) throws IOException {
-    DocIDToTweetIDMapper docIdToTweetIdMapper = segmentData.getDocIDToTweetIDMapper();
-    Preconditions.checkState(!(docIdToTweetIdMapper instanceof SequentialDocIDMapper));
+  @Ovelonrridelon
+  public void addTwelonelont(Documelonnt doc, long twelonelontId, boolelonan docIsOffelonnsivelon) throws IOelonxcelonption {
+    DocIDToTwelonelontIDMappelonr docIdToTwelonelontIdMappelonr = selongmelonntData.gelontDocIDToTwelonelontIDMappelonr();
+    Prelonconditions.chelonckStatelon(!(docIdToTwelonelontIdMappelonr instancelonof SelonquelonntialDocIDMappelonr));
 
-    // Make sure we have space for a new doc in this segment.
-    Preconditions.checkState(docIdToTweetIdMapper.getNumDocs() < segmentData.getMaxSegmentSize(),
-                             "Cannot add a new document to the segment, because it's full.");
+    // Makelon surelon welon havelon spacelon for a nelonw doc in this selongmelonnt.
+    Prelonconditions.chelonckStatelon(docIdToTwelonelontIdMappelonr.gelontNumDocs() < selongmelonntData.gelontMaxSelongmelonntSizelon(),
+                             "Cannot add a nelonw documelonnt to thelon selongmelonnt, beloncauselon it's full.");
 
-    Preconditions.checkNotNull(doc.getField(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName()));
+    Prelonconditions.chelonckNotNull(doc.gelontFielonld(
+        elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.CRelonATelonD_AT_FIelonLD.gelontFielonldNamelon()));
 
-    addAllDocsField(doc);
+    addAllDocsFielonld(doc);
 
-    int docId = docIdToTweetIdMapper.addMapping(tweetId);
-    // Make sure we successfully assigned a doc ID to the new document/tweet before proceeding.
-    // If the docId is DocIDToTweetIDMapper.ID_NOT_FOUND then either:
-    //  1. the tweet is older than the  OutOfOrderRealtimeTweetIDMapper.segmentBoundaryTimestamp and
-    //    is too old for this segment
-    //  2. the OutOfOrderRealtimeTweetIDMapper does not have any available doc ids left
-    if (docId == DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      LOG.info("Could not assign doc id for tweet. Dropping tweet id " + tweetId
-          + " for segment with timeslice: " + segmentData.getTimeSliceID());
-      NUM_TWEETS_DROPPED.increment();
-      return;
+    int docId = docIdToTwelonelontIdMappelonr.addMapping(twelonelontId);
+    // Makelon surelon welon succelonssfully assignelond a doc ID to thelon nelonw documelonnt/twelonelont belonforelon procelonelonding.
+    // If thelon docId is DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND thelonn elonithelonr:
+    //  1. thelon twelonelont is oldelonr than thelon  OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr.selongmelonntBoundaryTimelonstamp and
+    //    is too old for this selongmelonnt
+    //  2. thelon OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr doelons not havelon any availablelon doc ids lelonft
+    if (docId == DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND) {
+      LOG.info("Could not assign doc id for twelonelont. Dropping twelonelont id " + twelonelontId
+          + " for selongmelonnt with timelonslicelon: " + selongmelonntData.gelontTimelonSlicelonID());
+      NUM_TWelonelonTS_DROPPelonD.increlonmelonnt();
+      relonturn;
     }
 
-    addDocument(doc, docId, docIsOffensive);
+    addDocumelonnt(doc, docId, docIsOffelonnsivelon);
   }
 
-  private void addDocument(Document doc,
+  privatelon void addDocumelonnt(Documelonnt doc,
                            int docId,
-                           boolean docIsOffensive) throws IOException {
-    fieldsInDocument.clear();
+                           boolelonan docIsOffelonnsivelon) throws IOelonxcelonption {
+    fielonldsInDocumelonnt.clelonar();
 
-    long fieldGen = nextFieldGen++;
+    long fielonldGelonn = nelonxtFielonldGelonn++;
 
-    // NOTE: we need two passes here, in case there are
-    // multi-valued fields, because we must process all
-    // instances of a given field at once, since the
-    // analyzer is free to reuse TokenStream across fields
-    // (i.e., we cannot have more than one TokenStream
-    // running "at once"):
+    // NOTelon: welon nelonelond two passelons helonrelon, in caselon thelonrelon arelon
+    // multi-valuelond fielonlds, beloncauselon welon must procelonss all
+    // instancelons of a givelonn fielonld at oncelon, sincelon thelon
+    // analyzelonr is frelonelon to relonuselon TokelonnStrelonam across fielonlds
+    // (i.elon., welon cannot havelon morelon than onelon TokelonnStrelonam
+    // running "at oncelon"):
 
     try {
-      for (IndexableField field : doc) {
-        if (!skipField(field.name())) {
-          processField(docId, field, fieldGen, docIsOffensive);
+      for (IndelonxablelonFielonld fielonld : doc) {
+        if (!skipFielonld(fielonld.namelon())) {
+          procelonssFielonld(docId, fielonld, fielonldGelonn, docIsOffelonnsivelon);
         }
       }
     } finally {
-      // Finish each indexed field name seen in the document:
-      for (PerField field : fieldsInDocument) {
-        field.finish(docId);
+      // Finish elonach indelonxelond fielonld namelon selonelonn in thelon documelonnt:
+      for (PelonrFielonld fielonld : fielonldsInDocumelonnt) {
+        fielonld.finish(docId);
       }
 
-      // When indexing a dummy document for out-of-order updates into a loaded segment, that
-      // document gets docID set as maxSegment size. So we have to make sure that we never
-      // sync backwards in document order.
-      int smallestDocID = Math.min(docId, segmentData.getSyncData().getSmallestDocID());
-      segmentData.updateSmallestDocID(smallestDocID);
+      // Whelonn indelonxing a dummy documelonnt for out-of-ordelonr updatelons into a loadelond selongmelonnt, that
+      // documelonnt gelonts docID selont as maxSelongmelonnt sizelon. So welon havelon to makelon surelon that welon nelonvelonr
+      // sync backwards in documelonnt ordelonr.
+      int smallelonstDocID = Math.min(docId, selongmelonntData.gelontSyncData().gelontSmallelonstDocID());
+      selongmelonntData.updatelonSmallelonstDocID(smallelonstDocID);
     }
   }
 
-  @Override
-  protected void appendOutOfOrder(Document doc, int internalDocID) throws IOException {
-    Preconditions.checkNotNull(doc);
-    fieldsInDocument.clear();
+  @Ovelonrridelon
+  protelonctelond void appelonndOutOfOrdelonr(Documelonnt doc, int intelonrnalDocID) throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(doc);
+    fielonldsInDocumelonnt.clelonar();
 
-    long fieldGen = nextFieldGen++;
+    long fielonldGelonn = nelonxtFielonldGelonn++;
 
     try {
-      for (IndexableField indexableField : doc) {
-        if (!skipField(indexableField.name())) {
-          Schema.FieldInfo fi = segmentData.getSchema().getFieldInfo(indexableField.name());
+      for (IndelonxablelonFielonld indelonxablelonFielonld : doc) {
+        if (!skipFielonld(indelonxablelonFielonld.namelon())) {
+          Schelonma.FielonldInfo fi = selongmelonntData.gelontSchelonma().gelontFielonldInfo(indelonxablelonFielonld.namelon());
           if (fi == null) {
-            LOG.error("FieldInfo for " + indexableField.name() + " is null!");
-            continue;
+            LOG.elonrror("FielonldInfo for " + indelonxablelonFielonld.namelon() + " is null!");
+            continuelon;
           }
-          if (segmentData.isOptimized() && fi.getFieldType().becomesImmutable()) {
-            UNSUPPORTED_OUT_OF_ORDER_APPEND_MAP.computeIfAbsent(
-                indexableField.name(),
-                f -> SearchRateCounter.export(
-                    String.format(OUT_OF_ORDER_APPEND_UNSUPPORTED_STATS_PATTERN, f))
-            ).increment();
-            continue;
+          if (selongmelonntData.isOptimizelond() && fi.gelontFielonldTypelon().beloncomelonsImmutablelon()) {
+            UNSUPPORTelonD_OUT_OF_ORDelonR_APPelonND_MAP.computelonIfAbselonnt(
+                indelonxablelonFielonld.namelon(),
+                f -> SelonarchRatelonCountelonr.elonxport(
+                    String.format(OUT_OF_ORDelonR_APPelonND_UNSUPPORTelonD_STATS_PATTelonRN, f))
+            ).increlonmelonnt();
+            continuelon;
           }
-          processField(internalDocID, indexableField, fieldGen, false);
-          appendedFields.add(indexableField.name());
+          procelonssFielonld(intelonrnalDocID, indelonxablelonFielonld, fielonldGelonn, falselon);
+          appelonndelondFielonlds.add(indelonxablelonFielonld.namelon());
         }
       }
     } finally {
-      // Finish each indexed field name seen in the document:
-      for (PerField field : fieldsInDocument) {
-        field.finish(internalDocID);
+      // Finish elonach indelonxelond fielonld namelon selonelonn in thelon documelonnt:
+      for (PelonrFielonld fielonld : fielonldsInDocumelonnt) {
+        fielonld.finish(intelonrnalDocID);
       }
-      // force sync
-      segmentData.updateSmallestDocID(segmentData.getSyncData().getSmallestDocID());
+      // forcelon sync
+      selongmelonntData.updatelonSmallelonstDocID(selongmelonntData.gelontSyncData().gelontSmallelonstDocID());
     }
   }
 
-  @Override
-  public void addIndexes(Directory... dirs) {
-    throw new UnsupportedOperationException("In realtime mode addIndexes() is currently "
-            + "not supported.");
+  @Ovelonrridelon
+  public void addIndelonxelons(Direlonctory... dirs) {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption("In relonaltimelon modelon addIndelonxelons() is currelonntly "
+            + "not supportelond.");
   }
 
-  @Override
-  public void forceMerge() {
-    // we always have a single segment in realtime-mode
+  @Ovelonrridelon
+  public void forcelonMelonrgelon() {
+    // welon always havelon a singlelon selongmelonnt in relonaltimelon-modelon
   }
 
-  @Override
-  public void close() {
-    // nothing to close
+  @Ovelonrridelon
+  public void closelon() {
+    // nothing to closelon
   }
 
-  private void processField(
+  privatelon void procelonssFielonld(
       int docId,
-      IndexableField field,
-      long fieldGen,
-      boolean currentDocIsOffensive) throws IOException {
-    String fieldName = field.name();
-    IndexableFieldType fieldType = field.fieldType();
+      IndelonxablelonFielonld fielonld,
+      long fielonldGelonn,
+      boolelonan currelonntDocIsOffelonnsivelon) throws IOelonxcelonption {
+    String fielonldNamelon = fielonld.namelon();
+    IndelonxablelonFielonldTypelon fielonldTypelon = fielonld.fielonldTypelon();
 
-    // Invert indexed fields:
-    if (fieldType.indexOptions() != IndexOptions.NONE) {
-      PerField perField = getOrAddField(fieldName, fieldType);
+    // Invelonrt indelonxelond fielonlds:
+    if (fielonldTypelon.indelonxOptions() != IndelonxOptions.NONelon) {
+      PelonrFielonld pelonrFielonld = gelontOrAddFielonld(fielonldNamelon, fielonldTypelon);
 
-      // Whether this is the first time we have seen this field in this document.
-      boolean first = perField.fieldGen != fieldGen;
-      perField.invert(field, docId, first, currentDocIsOffensive);
+      // Whelonthelonr this is thelon first timelon welon havelon selonelonn this fielonld in this documelonnt.
+      boolelonan first = pelonrFielonld.fielonldGelonn != fielonldGelonn;
+      pelonrFielonld.invelonrt(fielonld, docId, first, currelonntDocIsOffelonnsivelon);
 
       if (first) {
-        fieldsInDocument.add(perField);
-        perField.fieldGen = fieldGen;
+        fielonldsInDocumelonnt.add(pelonrFielonld);
+        pelonrFielonld.fielonldGelonn = fielonldGelonn;
       }
-    } else {
-      Schema.FieldInfo facetFieldInfo =
-              segmentData.getSchema().getFacetFieldByFieldName(fieldName);
-      FacetField facetField = facetFieldInfo != null
-              ? segmentData.getFacetIDMap().getFacetField(facetFieldInfo) : null;
-      EarlybirdFieldType facetFieldType = facetFieldInfo != null
-              ? facetFieldInfo.getFieldType() : null;
-      Preconditions.checkState(
-          facetFieldInfo == null || (facetField != null && facetFieldType != null));
-      if (facetField != null && facetFieldType.isUseCSFForFacetCounting()) {
-          segmentData.getFacetLabelProviders().put(
-              facetField.getFacetName(),
-              Preconditions.checkNotNull(
-                      FacetUtil.chooseFacetLabelProvider(facetFieldType, null)));
+    } elonlselon {
+      Schelonma.FielonldInfo facelontFielonldInfo =
+              selongmelonntData.gelontSchelonma().gelontFacelontFielonldByFielonldNamelon(fielonldNamelon);
+      FacelontFielonld facelontFielonld = facelontFielonldInfo != null
+              ? selongmelonntData.gelontFacelontIDMap().gelontFacelontFielonld(facelontFielonldInfo) : null;
+      elonarlybirdFielonldTypelon facelontFielonldTypelon = facelontFielonldInfo != null
+              ? facelontFielonldInfo.gelontFielonldTypelon() : null;
+      Prelonconditions.chelonckStatelon(
+          facelontFielonldInfo == null || (facelontFielonld != null && facelontFielonldTypelon != null));
+      if (facelontFielonld != null && facelontFielonldTypelon.isUselonCSFForFacelontCounting()) {
+          selongmelonntData.gelontFacelontLabelonlProvidelonrs().put(
+              facelontFielonld.gelontFacelontNamelon(),
+              Prelonconditions.chelonckNotNull(
+                      FacelontUtil.chooselonFacelontLabelonlProvidelonr(facelontFielonldTypelon, null)));
        }
     }
 
-    if (fieldType.docValuesType() != DocValuesType.NONE) {
-      StoredFieldsConsumerBuilder consumerBuilder = new StoredFieldsConsumerBuilder(
-              fieldName, (EarlybirdFieldType) fieldType);
-      EarlybirdRealtimeIndexExtensionsData indexExtension = segmentData.getIndexExtensionsData();
-      if (indexExtension != null) {
-        indexExtension.createStoredFieldsConsumer(consumerBuilder);
+    if (fielonldTypelon.docValuelonsTypelon() != DocValuelonsTypelon.NONelon) {
+      StorelondFielonldsConsumelonrBuildelonr consumelonrBuildelonr = nelonw StorelondFielonldsConsumelonrBuildelonr(
+              fielonldNamelon, (elonarlybirdFielonldTypelon) fielonldTypelon);
+      elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData indelonxelonxtelonnsion = selongmelonntData.gelontIndelonxelonxtelonnsionsData();
+      if (indelonxelonxtelonnsion != null) {
+        indelonxelonxtelonnsion.crelonatelonStorelondFielonldsConsumelonr(consumelonrBuildelonr);
       }
-      if (consumerBuilder.isUseDefaultConsumer()) {
-        consumerBuilder.addConsumer(docValuesProcessor);
+      if (consumelonrBuildelonr.isUselonDelonfaultConsumelonr()) {
+        consumelonrBuildelonr.addConsumelonr(docValuelonsProcelonssor);
       }
 
-      StoredFieldsConsumer storedFieldsConsumer = consumerBuilder.build();
-      if (storedFieldsConsumer != null) {
-        storedFieldsConsumer.addField(docId, field);
+      StorelondFielonldsConsumelonr storelondFielonldsConsumelonr = consumelonrBuildelonr.build();
+      if (storelondFielonldsConsumelonr != null) {
+        storelondFielonldsConsumelonr.addFielonld(docId, fielonld);
       }
     }
   }
 
-  /** Returns a previously created {@link PerField}, absorbing the type information from
-   * {@link org.apache.lucene.document.FieldType}, and creates a new {@link PerField} if this field
-   * name wasn't seen yet. */
-  private PerField getOrAddField(String name, IndexableFieldType fieldType) {
-    // Note that this could be a computeIfAbsent, but that allocates a closure in the hot path and
-    // slows down indexing.
-    PerField perField = fields.get(name);
-    if (perField == null) {
-      boolean omitNorms = fieldType.omitNorms() || fieldType.indexOptions() == IndexOptions.NONE;
-      perField = new PerField(this, name, fieldType.indexOptions(), omitNorms);
-      fields.put(name, perField);
+  /** Relonturns a prelonviously crelonatelond {@link PelonrFielonld}, absorbing thelon typelon information from
+   * {@link org.apachelon.lucelonnelon.documelonnt.FielonldTypelon}, and crelonatelons a nelonw {@link PelonrFielonld} if this fielonld
+   * namelon wasn't selonelonn yelont. */
+  privatelon PelonrFielonld gelontOrAddFielonld(String namelon, IndelonxablelonFielonldTypelon fielonldTypelon) {
+    // Notelon that this could belon a computelonIfAbselonnt, but that allocatelons a closurelon in thelon hot path and
+    // slows down indelonxing.
+    PelonrFielonld pelonrFielonld = fielonlds.gelont(namelon);
+    if (pelonrFielonld == null) {
+      boolelonan omitNorms = fielonldTypelon.omitNorms() || fielonldTypelon.indelonxOptions() == IndelonxOptions.NONelon;
+      pelonrFielonld = nelonw PelonrFielonld(this, namelon, fielonldTypelon.indelonxOptions(), omitNorms);
+      fielonlds.put(namelon, pelonrFielonld);
     }
-    return perField;
+    relonturn pelonrFielonld;
   }
 
-  /** NOTE: not static: accesses at least docState, termsHash. */
-  private static final class PerField implements Comparable<PerField> {
+  /** NOTelon: not static: accelonsselons at lelonast docStatelon, telonrmsHash. */
+  privatelon static final class PelonrFielonld implelonmelonnts Comparablelon<PelonrFielonld> {
 
-    private final EarlybirdRealtimeIndexSegmentWriter indexSegmentWriter;
+    privatelon final elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr indelonxSelongmelonntWritelonr;
 
-    private final String fieldName;
-    private final IndexOptions indexOptions;
-    private final boolean omitNorms;
+    privatelon final String fielonldNamelon;
+    privatelon final IndelonxOptions indelonxOptions;
+    privatelon final boolelonan omitNorms;
 
-    private InvertedRealtimeIndex invertedField;
-    private InvertedDocConsumer indexWriter;
+    privatelon InvelonrtelondRelonaltimelonIndelonx invelonrtelondFielonld;
+    privatelon InvelonrtelondDocConsumelonr indelonxWritelonr;
 
-    /** We use this to know when a PerField is seen for the
-     *  first time in the current document. */
-    private long fieldGen = -1;
+    /** Welon uselon this to know whelonn a PelonrFielonld is selonelonn for thelon
+     *  first timelon in thelon currelonnt documelonnt. */
+    privatelon long fielonldGelonn = -1;
 
-    // reused
-    private TokenStream tokenStream;
+    // relonuselond
+    privatelon TokelonnStrelonam tokelonnStrelonam;
 
-    private int currentPosition;
-    private int currentOffset;
-    private int currentLength;
-    private int currentOverlap;
-    private int lastStartOffset;
-    private int lastPosition;
+    privatelon int currelonntPosition;
+    privatelon int currelonntOffselont;
+    privatelon int currelonntLelonngth;
+    privatelon int currelonntOvelonrlap;
+    privatelon int lastStartOffselont;
+    privatelon int lastPosition;
 
-    public PerField(
-        EarlybirdRealtimeIndexSegmentWriter indexSegmentWriter,
-        String fieldName,
-        IndexOptions indexOptions,
-        boolean omitNorms) {
-      this.indexSegmentWriter = indexSegmentWriter;
-      this.fieldName = fieldName;
-      this.indexOptions = indexOptions;
+    public PelonrFielonld(
+        elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr indelonxSelongmelonntWritelonr,
+        String fielonldNamelon,
+        IndelonxOptions indelonxOptions,
+        boolelonan omitNorms) {
+      this.indelonxSelongmelonntWritelonr = indelonxSelongmelonntWritelonr;
+      this.fielonldNamelon = fielonldNamelon;
+      this.indelonxOptions = indelonxOptions;
       this.omitNorms = omitNorms;
 
-      initInvertState();
+      initInvelonrtStatelon();
     }
 
-    void initInvertState() {
-      // it's okay if this is null - in that case TwitterTermHashPerField
-      // will not add it to the facet array
-      final Schema.FieldInfo facetFieldInfo
-          = indexSegmentWriter.segmentData.getSchema().getFacetFieldByFieldName(fieldName);
-      final FacetField facetField = facetFieldInfo != null
-              ? indexSegmentWriter.segmentData.getFacetIDMap().getFacetField(facetFieldInfo) : null;
-      final EarlybirdFieldType facetFieldType
-          = facetFieldInfo != null ? facetFieldInfo.getFieldType() : null;
-      Preconditions.checkState(
-          facetFieldInfo == null || (facetField != null && facetFieldType != null));
+    void initInvelonrtStatelon() {
+      // it's okay if this is null - in that caselon TwittelonrTelonrmHashPelonrFielonld
+      // will not add it to thelon facelont array
+      final Schelonma.FielonldInfo facelontFielonldInfo
+          = indelonxSelongmelonntWritelonr.selongmelonntData.gelontSchelonma().gelontFacelontFielonldByFielonldNamelon(fielonldNamelon);
+      final FacelontFielonld facelontFielonld = facelontFielonldInfo != null
+              ? indelonxSelongmelonntWritelonr.selongmelonntData.gelontFacelontIDMap().gelontFacelontFielonld(facelontFielonldInfo) : null;
+      final elonarlybirdFielonldTypelon facelontFielonldTypelon
+          = facelontFielonldInfo != null ? facelontFielonldInfo.gelontFielonldTypelon() : null;
+      Prelonconditions.chelonckStatelon(
+          facelontFielonldInfo == null || (facelontFielonld != null && facelontFielonldTypelon != null));
 
-      if (facetField != null && facetFieldType.isUseCSFForFacetCounting()) {
-        indexSegmentWriter.segmentData.getFacetLabelProviders().put(
-            facetField.getFacetName(),
-            Preconditions.checkNotNull(
-                FacetUtil.chooseFacetLabelProvider(facetFieldType, null)));
-        return;
+      if (facelontFielonld != null && facelontFielonldTypelon.isUselonCSFForFacelontCounting()) {
+        indelonxSelongmelonntWritelonr.selongmelonntData.gelontFacelontLabelonlProvidelonrs().put(
+            facelontFielonld.gelontFacelontNamelon(),
+            Prelonconditions.chelonckNotNull(
+                FacelontUtil.chooselonFacelontLabelonlProvidelonr(facelontFielonldTypelon, null)));
+        relonturn;
       }
 
-      Schema.FieldInfo fi = indexSegmentWriter.segmentData.getSchema().getFieldInfo(fieldName);
-      final EarlybirdFieldType fieldType = fi.getFieldType();
+      Schelonma.FielonldInfo fi = indelonxSelongmelonntWritelonr.selongmelonntData.gelontSchelonma().gelontFielonldInfo(fielonldNamelon);
+      final elonarlybirdFielonldTypelon fielonldTypelon = fi.gelontFielonldTypelon();
 
-      InvertedDocConsumerBuilder consumerBuilder = new InvertedDocConsumerBuilder(
-          indexSegmentWriter.segmentData, fieldName, fieldType);
-      EarlybirdRealtimeIndexExtensionsData indexExtension =
-          indexSegmentWriter.segmentData.getIndexExtensionsData();
-      if (indexExtension != null) {
-        indexExtension.createInvertedDocConsumer(consumerBuilder);
+      InvelonrtelondDocConsumelonrBuildelonr consumelonrBuildelonr = nelonw InvelonrtelondDocConsumelonrBuildelonr(
+          indelonxSelongmelonntWritelonr.selongmelonntData, fielonldNamelon, fielonldTypelon);
+      elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData indelonxelonxtelonnsion =
+          indelonxSelongmelonntWritelonr.selongmelonntData.gelontIndelonxelonxtelonnsionsData();
+      if (indelonxelonxtelonnsion != null) {
+        indelonxelonxtelonnsion.crelonatelonInvelonrtelondDocConsumelonr(consumelonrBuildelonr);
       }
 
-      if (consumerBuilder.isUseDefaultConsumer()) {
-        if (indexSegmentWriter.segmentData.getPerFieldMap().containsKey(fieldName)) {
-          invertedField = (InvertedRealtimeIndex) indexSegmentWriter
-              .segmentData.getPerFieldMap().get(fieldName);
-        } else {
-          invertedField = new InvertedRealtimeIndex(
-              fieldType,
-              TermPointerEncoding.DEFAULT_ENCODING,
-              fieldName);
+      if (consumelonrBuildelonr.isUselonDelonfaultConsumelonr()) {
+        if (indelonxSelongmelonntWritelonr.selongmelonntData.gelontPelonrFielonldMap().containsKelony(fielonldNamelon)) {
+          invelonrtelondFielonld = (InvelonrtelondRelonaltimelonIndelonx) indelonxSelongmelonntWritelonr
+              .selongmelonntData.gelontPelonrFielonldMap().gelont(fielonldNamelon);
+        } elonlselon {
+          invelonrtelondFielonld = nelonw InvelonrtelondRelonaltimelonIndelonx(
+              fielonldTypelon,
+              TelonrmPointelonrelonncoding.DelonFAULT_elonNCODING,
+              fielonldNamelon);
         }
 
-        InvertedRealtimeIndexWriter fieldWriter = new InvertedRealtimeIndexWriter(
-            invertedField, facetField, indexSegmentWriter.facetCountingArrayWriter);
+        InvelonrtelondRelonaltimelonIndelonxWritelonr fielonldWritelonr = nelonw InvelonrtelondRelonaltimelonIndelonxWritelonr(
+            invelonrtelondFielonld, facelontFielonld, indelonxSelongmelonntWritelonr.facelontCountingArrayWritelonr);
 
-        if (facetField != null) {
-          Map<String, FacetLabelProvider> providerMap =
-              indexSegmentWriter.segmentData.getFacetLabelProviders();
-          if (!providerMap.containsKey(facetField.getFacetName())) {
-            providerMap.put(
-                facetField.getFacetName(),
-                Preconditions.checkNotNull(
-                    FacetUtil.chooseFacetLabelProvider(facetFieldType, invertedField)));
+        if (facelontFielonld != null) {
+          Map<String, FacelontLabelonlProvidelonr> providelonrMap =
+              indelonxSelongmelonntWritelonr.selongmelonntData.gelontFacelontLabelonlProvidelonrs();
+          if (!providelonrMap.containsKelony(facelontFielonld.gelontFacelontNamelon())) {
+            providelonrMap.put(
+                facelontFielonld.gelontFacelontNamelon(),
+                Prelonconditions.chelonckNotNull(
+                    FacelontUtil.chooselonFacelontLabelonlProvidelonr(facelontFielonldTypelon, invelonrtelondFielonld)));
           }
         }
 
-        indexSegmentWriter.segmentData.addField(fieldName, invertedField);
+        indelonxSelongmelonntWritelonr.selongmelonntData.addFielonld(fielonldNamelon, invelonrtelondFielonld);
 
-        if (indexSegmentWriter.appendedFields.contains(fieldName)) {
-          indexSegmentWriter.termHashSync.put(fieldName, fieldWriter);
+        if (indelonxSelongmelonntWritelonr.appelonndelondFielonlds.contains(fielonldNamelon)) {
+          indelonxSelongmelonntWritelonr.telonrmHashSync.put(fielonldNamelon, fielonldWritelonr);
         }
 
-        consumerBuilder.addConsumer(fieldWriter);
+        consumelonrBuildelonr.addConsumelonr(fielonldWritelonr);
       }
 
-      indexWriter = consumerBuilder.build();
+      indelonxWritelonr = consumelonrBuildelonr.build();
     }
 
-    @Override
-    public int compareTo(PerField other) {
-      return this.fieldName.compareTo(other.fieldName);
+    @Ovelonrridelon
+    public int comparelonTo(PelonrFielonld othelonr) {
+      relonturn this.fielonldNamelon.comparelonTo(othelonr.fielonldNamelon);
     }
 
-    @Override
-    public boolean equals(Object other) {
-      if (!(other instanceof PerField)) {
-        return false;
+    @Ovelonrridelon
+    public boolelonan elonquals(Objelonct othelonr) {
+      if (!(othelonr instancelonof PelonrFielonld)) {
+        relonturn falselon;
       }
 
-      return this.fieldName.equals(((PerField) other).fieldName);
+      relonturn this.fielonldNamelon.elonquals(((PelonrFielonld) othelonr).fielonldNamelon);
     }
 
-    @Override
-    public int hashCode() {
-      return fieldName.hashCode();
+    @Ovelonrridelon
+    public int hashCodelon() {
+      relonturn fielonldNamelon.hashCodelon();
     }
 
     public void finish(int docId) {
-      if (indexWriter != null) {
-        indexWriter.finish();
+      if (indelonxWritelonr != null) {
+        indelonxWritelonr.finish();
       }
 
       if (!omitNorms) {
-        FieldInvertState state = new FieldInvertState(
-            Version.LATEST.major,
-            fieldName,
-            indexOptions,
-            currentPosition,
-            currentLength,
-            currentOverlap,
-            currentOffset,
-            0,   // maxTermFrequency
-            0);  // uniqueTermCount
-        ColumnStrideByteIndex normsIndex =
-            indexSegmentWriter.segmentData.createNormIndex(fieldName);
-        if (normsIndex != null) {
-          normsIndex.setValue(docId, (byte) indexSegmentWriter.similarity.computeNorm(state));
+        FielonldInvelonrtStatelon statelon = nelonw FielonldInvelonrtStatelon(
+            Velonrsion.LATelonST.major,
+            fielonldNamelon,
+            indelonxOptions,
+            currelonntPosition,
+            currelonntLelonngth,
+            currelonntOvelonrlap,
+            currelonntOffselont,
+            0,   // maxTelonrmFrelonquelonncy
+            0);  // uniquelonTelonrmCount
+        ColumnStridelonBytelonIndelonx normsIndelonx =
+            indelonxSelongmelonntWritelonr.selongmelonntData.crelonatelonNormIndelonx(fielonldNamelon);
+        if (normsIndelonx != null) {
+          normsIndelonx.selontValuelon(docId, (bytelon) indelonxSelongmelonntWritelonr.similarity.computelonNorm(statelon));
         }
       }
     }
 
-    /** Inverts one field for one document; first is true
-     *  if this is the first time we are seeing this field
-     *  name in this document. */
-    public void invert(IndexableField field,
+    /** Invelonrts onelon fielonld for onelon documelonnt; first is truelon
+     *  if this is thelon first timelon welon arelon seloneloning this fielonld
+     *  namelon in this documelonnt. */
+    public void invelonrt(IndelonxablelonFielonld fielonld,
                        int docId,
-                       boolean first,
-                       boolean currentDocIsOffensive) throws IOException {
-      if (indexWriter == null) {
-        return;
+                       boolelonan first,
+                       boolelonan currelonntDocIsOffelonnsivelon) throws IOelonxcelonption {
+      if (indelonxWritelonr == null) {
+        relonturn;
       }
       if (first) {
-        currentPosition = -1;
-        currentOffset = 0;
+        currelonntPosition = -1;
+        currelonntOffselont = 0;
         lastPosition = 0;
-        lastStartOffset = 0;
+        lastStartOffselont = 0;
 
-        if (invertedField != null) {
-          invertedField.incrementNumDocs();
+        if (invelonrtelondFielonld != null) {
+          invelonrtelondFielonld.increlonmelonntNumDocs();
         }
       }
 
-      IndexableFieldType fieldType = field.fieldType();
-      final boolean analyzed = fieldType.tokenized() && indexSegmentWriter.analyzer != null;
-      boolean succeededInProcessingField = false;
+      IndelonxablelonFielonldTypelon fielonldTypelon = fielonld.fielonldTypelon();
+      final boolelonan analyzelond = fielonldTypelon.tokelonnizelond() && indelonxSelongmelonntWritelonr.analyzelonr != null;
+      boolelonan succelonelondelondInProcelonssingFielonld = falselon;
       try {
-        tokenStream = field.tokenStream(indexSegmentWriter.analyzer, tokenStream);
-        tokenStream.reset();
+        tokelonnStrelonam = fielonld.tokelonnStrelonam(indelonxSelongmelonntWritelonr.analyzelonr, tokelonnStrelonam);
+        tokelonnStrelonam.relonselont();
 
-        PositionIncrementAttribute posIncrAttribute =
-            tokenStream.addAttribute(PositionIncrementAttribute.class);
-        OffsetAttribute offsetAttribute = tokenStream.addAttribute(OffsetAttribute.class);
-        TermToBytesRefAttribute termAtt = tokenStream.addAttribute(TermToBytesRefAttribute.class);
+        PositionIncrelonmelonntAttributelon posIncrAttributelon =
+            tokelonnStrelonam.addAttributelon(PositionIncrelonmelonntAttributelon.class);
+        OffselontAttributelon offselontAttributelon = tokelonnStrelonam.addAttributelon(OffselontAttributelon.class);
+        TelonrmToBytelonsRelonfAttributelon telonrmAtt = tokelonnStrelonam.addAttributelon(TelonrmToBytelonsRelonfAttributelon.class);
 
-        Set<BytesRef> seenTerms = new HashSet<>();
-        indexWriter.start(tokenStream, currentDocIsOffensive);
-        while (tokenStream.incrementToken()) {
-          // If we hit an exception in stream.next below
-          // (which is fairly common, e.g. if analyzer
-          // chokes on a given document), then it's
-          // non-aborting and (above) this one document
-          // will be marked as deleted, but still
-          // consume a docID
+        Selont<BytelonsRelonf> selonelonnTelonrms = nelonw HashSelont<>();
+        indelonxWritelonr.start(tokelonnStrelonam, currelonntDocIsOffelonnsivelon);
+        whilelon (tokelonnStrelonam.increlonmelonntTokelonn()) {
+          // If welon hit an elonxcelonption in strelonam.nelonxt belonlow
+          // (which is fairly common, elon.g. if analyzelonr
+          // chokelons on a givelonn documelonnt), thelonn it's
+          // non-aborting and (abovelon) this onelon documelonnt
+          // will belon markelond as delonlelontelond, but still
+          // consumelon a docID
 
-          int posIncr = posIncrAttribute.getPositionIncrement();
-          currentPosition += posIncr;
-          if (currentPosition < lastPosition) {
+          int posIncr = posIncrAttributelon.gelontPositionIncrelonmelonnt();
+          currelonntPosition += posIncr;
+          if (currelonntPosition < lastPosition) {
             if (posIncr == 0) {
-              throw new IllegalArgumentException(
-                  "first position increment must be > 0 (got 0) for field '" + field.name() + "'");
-            } else if (posIncr < 0) {
-              throw new IllegalArgumentException(
-                  "position increments (and gaps) must be >= 0 (got " + posIncr + ") for field '"
-                  + field.name() + "'");
-            } else {
-              throw new IllegalArgumentException(
-                  "position overflowed Integer.MAX_VALUE (got posIncr=" + posIncr + " lastPosition="
-                  + lastPosition + " position=" + currentPosition + ") for field '" + field.name()
+              throw nelonw IllelongalArgumelonntelonxcelonption(
+                  "first position increlonmelonnt must belon > 0 (got 0) for fielonld '" + fielonld.namelon() + "'");
+            } elonlselon if (posIncr < 0) {
+              throw nelonw IllelongalArgumelonntelonxcelonption(
+                  "position increlonmelonnts (and gaps) must belon >= 0 (got " + posIncr + ") for fielonld '"
+                  + fielonld.namelon() + "'");
+            } elonlselon {
+              throw nelonw IllelongalArgumelonntelonxcelonption(
+                  "position ovelonrflowelond Intelongelonr.MAX_VALUelon (got posIncr=" + posIncr + " lastPosition="
+                  + lastPosition + " position=" + currelonntPosition + ") for fielonld '" + fielonld.namelon()
                   + "'");
             }
-          } else if (currentPosition > MAX_POSITION) {
-            throw new IllegalArgumentException(
-                "position " + currentPosition + " is too large for field '" + field.name()
-                + "': max allowed position is " + MAX_POSITION);
+          } elonlselon if (currelonntPosition > MAX_POSITION) {
+            throw nelonw IllelongalArgumelonntelonxcelonption(
+                "position " + currelonntPosition + " is too largelon for fielonld '" + fielonld.namelon()
+                + "': max allowelond position is " + MAX_POSITION);
           }
-          lastPosition = currentPosition;
+          lastPosition = currelonntPosition;
           if (posIncr == 0) {
-            currentOverlap++;
+            currelonntOvelonrlap++;
           }
 
-          int startOffset = currentOffset + offsetAttribute.startOffset();
-          int endOffset = currentOffset + offsetAttribute.endOffset();
-          if (startOffset < lastStartOffset || endOffset < startOffset) {
-            throw new IllegalArgumentException(
-                "startOffset must be non-negative, and endOffset must be >= startOffset, and "
-                + "offsets must not go backwards startOffset=" + startOffset + ",endOffset="
-                + endOffset + ",lastStartOffset=" + lastStartOffset + " for field '" + field.name()
+          int startOffselont = currelonntOffselont + offselontAttributelon.startOffselont();
+          int elonndOffselont = currelonntOffselont + offselontAttributelon.elonndOffselont();
+          if (startOffselont < lastStartOffselont || elonndOffselont < startOffselont) {
+            throw nelonw IllelongalArgumelonntelonxcelonption(
+                "startOffselont must belon non-nelongativelon, and elonndOffselont must belon >= startOffselont, and "
+                + "offselonts must not go backwards startOffselont=" + startOffselont + ",elonndOffselont="
+                + elonndOffselont + ",lastStartOffselont=" + lastStartOffselont + " for fielonld '" + fielonld.namelon()
                 + "'");
           }
-          lastStartOffset = startOffset;
-          indexWriter.add(docId, currentPosition);
-          currentLength++;
+          lastStartOffselont = startOffselont;
+          indelonxWritelonr.add(docId, currelonntPosition);
+          currelonntLelonngth++;
 
-          BytesRef term = termAtt.getBytesRef();
-          if (seenTerms.add(term) && (invertedField != null)) {
-            invertedField.incrementSumTermDocFreq();
+          BytelonsRelonf telonrm = telonrmAtt.gelontBytelonsRelonf();
+          if (selonelonnTelonrms.add(telonrm) && (invelonrtelondFielonld != null)) {
+            invelonrtelondFielonld.increlonmelonntSumTelonrmDocFrelonq();
           }
         }
 
-        tokenStream.end();
+        tokelonnStrelonam.elonnd();
 
-        currentPosition += posIncrAttribute.getPositionIncrement();
-        currentOffset += offsetAttribute.endOffset();
-        succeededInProcessingField = true;
-      } catch (BytesRefHash.MaxBytesLengthExceededException e) {
-        byte[] prefix = new byte[30];
-        BytesRef bigTerm = tokenStream.getAttribute(TermToBytesRefAttribute.class).getBytesRef();
-        System.arraycopy(bigTerm.bytes, bigTerm.offset, prefix, 0, 30);
-        String msg = "Document contains at least one immense term in field=\"" + fieldName
-                + "\" (whose UTF8 encoding is longer than the max length), all of "
-                + "which were skipped." + "Please correct the analyzer to not produce such terms. "
-                + "The prefix of the first immense term is: '" + Arrays.toString(prefix)
-                + "...', original message: " + e.getMessage();
+        currelonntPosition += posIncrAttributelon.gelontPositionIncrelonmelonnt();
+        currelonntOffselont += offselontAttributelon.elonndOffselont();
+        succelonelondelondInProcelonssingFielonld = truelon;
+      } catch (BytelonsRelonfHash.MaxBytelonsLelonngthelonxcelonelondelondelonxcelonption elon) {
+        bytelon[] prelonfix = nelonw bytelon[30];
+        BytelonsRelonf bigTelonrm = tokelonnStrelonam.gelontAttributelon(TelonrmToBytelonsRelonfAttributelon.class).gelontBytelonsRelonf();
+        Systelonm.arraycopy(bigTelonrm.bytelons, bigTelonrm.offselont, prelonfix, 0, 30);
+        String msg = "Documelonnt contains at lelonast onelon immelonnselon telonrm in fielonld=\"" + fielonldNamelon
+                + "\" (whoselon UTF8 elonncoding is longelonr than thelon max lelonngth), all of "
+                + "which welonrelon skippelond." + "Plelonaselon correlonct thelon analyzelonr to not producelon such telonrms. "
+                + "Thelon prelonfix of thelon first immelonnselon telonrm is: '" + Arrays.toString(prelonfix)
+                + "...', original melonssagelon: " + elon.gelontMelonssagelon();
         LOG.warn(msg);
-        // Document will be deleted above:
-        throw new IllegalArgumentException(msg, e);
+        // Documelonnt will belon delonlelontelond abovelon:
+        throw nelonw IllelongalArgumelonntelonxcelonption(msg, elon);
       } finally {
-        if (!succeededInProcessingField) {
-          LOG.warn("An exception was thrown while processing field " + fieldName);
+        if (!succelonelondelondInProcelonssingFielonld) {
+          LOG.warn("An elonxcelonption was thrown whilelon procelonssing fielonld " + fielonldNamelon);
         }
-        if (tokenStream != null) {
+        if (tokelonnStrelonam != null) {
           try {
-            tokenStream.close();
-          } catch (IOException e) {
-            if (succeededInProcessingField) {
-              // only throw this exception if no other exception already occurred above
-              throw e;
-            } else {
-              LOG.warn("Exception while trying to close TokenStream.", e);
+            tokelonnStrelonam.closelon();
+          } catch (IOelonxcelonption elon) {
+            if (succelonelondelondInProcelonssingFielonld) {
+              // only throw this elonxcelonption if no othelonr elonxcelonption alrelonady occurrelond abovelon
+              throw elon;
+            } elonlselon {
+              LOG.warn("elonxcelonption whilelon trying to closelon TokelonnStrelonam.", elon);
             }
           }
         }
       }
 
-      if (analyzed) {
-        currentPosition += indexSegmentWriter.analyzer.getPositionIncrementGap(fieldName);
-        currentOffset += indexSegmentWriter.analyzer.getOffsetGap(fieldName);
+      if (analyzelond) {
+        currelonntPosition += indelonxSelongmelonntWritelonr.analyzelonr.gelontPositionIncrelonmelonntGap(fielonldNamelon);
+        currelonntOffselont += indelonxSelongmelonntWritelonr.analyzelonr.gelontOffselontGap(fielonldNamelon);
       }
     }
   }
 
-  @Override
+  @Ovelonrridelon
   public int numDocs() {
-    return segmentData.getDocIDToTweetIDMapper().getNumDocs();
+    relonturn selongmelonntData.gelontDocIDToTwelonelontIDMappelonr().gelontNumDocs();
   }
 
-  public interface InvertedDocConsumer {
+  public intelonrfacelon InvelonrtelondDocConsumelonr {
     /**
-     * Called for each document before inversion starts.
+     * Callelond for elonach documelonnt belonforelon invelonrsion starts.
      */
-    void start(AttributeSource attributeSource, boolean currentDocIsOffensive);
+    void start(AttributelonSourcelon attributelonSourcelon, boolelonan currelonntDocIsOffelonnsivelon);
 
     /**
-     * Called for each token in the current document.
-     * @param docID Document id.
-     * @param position Position in the token stream for this document.
+     * Callelond for elonach tokelonn in thelon currelonnt documelonnt.
+     * @param docID Documelonnt id.
+     * @param position Position in thelon tokelonn strelonam for this documelonnt.
      */
-    void add(int docID, int position) throws IOException;
+    void add(int docID, int position) throws IOelonxcelonption;
 
     /**
-     * Called after the last token was added and before the next document is processed.
+     * Callelond aftelonr thelon last tokelonn was addelond and belonforelon thelon nelonxt documelonnt is procelonsselond.
      */
     void finish();
   }
 
-  public interface StoredFieldsConsumer {
+  public intelonrfacelon StorelondFielonldsConsumelonr {
     /**
-     * Adds a new stored fields.
+     * Adds a nelonw storelond fielonlds.
      */
-    void addField(int docID, IndexableField field) throws IOException;
+    void addFielonld(int docID, IndelonxablelonFielonld fielonld) throws IOelonxcelonption;
   }
 
   /**
-   * This Builder allows registering listeners for a particular field of an indexable document.
-   * For each field name any number of listeners can be added.
+   * This Buildelonr allows relongistelonring listelonnelonrs for a particular fielonld of an indelonxablelon documelonnt.
+   * For elonach fielonld namelon any numbelonr of listelonnelonrs can belon addelond.
    *
-   * Using {@link #useDefaultConsumer} it can be specified whether this index writer will use
-   * the default consumer in addition to any additionally registered consumers.
+   * Using {@link #uselonDelonfaultConsumelonr} it can belon speloncifielond whelonthelonr this indelonx writelonr will uselon
+   * thelon delonfault consumelonr in addition to any additionally relongistelonrelond consumelonrs.
    */
-  public abstract static class ConsumerBuilder<T> {
-    private boolean useDefaultConsumer;
-    private final List<T> consumers;
-    private final EarlybirdFieldType fieldType;
-    private final String fieldName;
+  public abstract static class ConsumelonrBuildelonr<T> {
+    privatelon boolelonan uselonDelonfaultConsumelonr;
+    privatelon final List<T> consumelonrs;
+    privatelon final elonarlybirdFielonldTypelon fielonldTypelon;
+    privatelon final String fielonldNamelon;
 
-    private ConsumerBuilder(String fieldName, EarlybirdFieldType fieldType) {
-      useDefaultConsumer = true;
-      consumers = Lists.newArrayList();
-      this.fieldName = fieldName;
-      this.fieldType = fieldType;
+    privatelon ConsumelonrBuildelonr(String fielonldNamelon, elonarlybirdFielonldTypelon fielonldTypelon) {
+      uselonDelonfaultConsumelonr = truelon;
+      consumelonrs = Lists.nelonwArrayList();
+      this.fielonldNamelon = fielonldNamelon;
+      this.fielonldTypelon = fielonldTypelon;
     }
 
-    public String getFieldName() {
-      return fieldName;
+    public String gelontFielonldNamelon() {
+      relonturn fielonldNamelon;
     }
 
-    public EarlybirdFieldType getFieldType() {
-      return fieldType;
-    }
-
-    /**
-     * If set to true, {@link EarlybirdRealtimeIndexSegmentWriter} will use the default consumer
-     * (e.g. build a default inverted index for an inverted field) in addition to any consumers
-     * added via {@link #addConsumer(Object)}.
-     */
-    public void setUseDefaultConsumer(boolean useDefaultConsumer) {
-      this.useDefaultConsumer = useDefaultConsumer;
-    }
-
-    public boolean isUseDefaultConsumer() {
-      return useDefaultConsumer;
+    public elonarlybirdFielonldTypelon gelontFielonldTypelon() {
+      relonturn fielonldTypelon;
     }
 
     /**
-     * Allows registering any number of additional consumers for the field associated with this
-     * builder.
+     * If selont to truelon, {@link elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr} will uselon thelon delonfault consumelonr
+     * (elon.g. build a delonfault invelonrtelond indelonx for an invelonrtelond fielonld) in addition to any consumelonrs
+     * addelond via {@link #addConsumelonr(Objelonct)}.
      */
-    public void addConsumer(T consumer) {
-      consumers.add(consumer);
+    public void selontUselonDelonfaultConsumelonr(boolelonan uselonDelonfaultConsumelonr) {
+      this.uselonDelonfaultConsumelonr = uselonDelonfaultConsumelonr;
+    }
+
+    public boolelonan isUselonDelonfaultConsumelonr() {
+      relonturn uselonDelonfaultConsumelonr;
+    }
+
+    /**
+     * Allows relongistelonring any numbelonr of additional consumelonrs for thelon fielonld associatelond with this
+     * buildelonr.
+     */
+    public void addConsumelonr(T consumelonr) {
+      consumelonrs.add(consumelonr);
     }
 
     T build() {
-      if (consumers.isEmpty()) {
-        return null;
-      } else if (consumers.size() == 1) {
-        return consumers.get(0);
-      } else {
-        return build(consumers);
+      if (consumelonrs.iselonmpty()) {
+        relonturn null;
+      } elonlselon if (consumelonrs.sizelon() == 1) {
+        relonturn consumelonrs.gelont(0);
+      } elonlselon {
+        relonturn build(consumelonrs);
       }
     }
 
-    abstract T build(List<T> consumerList);
+    abstract T build(List<T> consumelonrList);
   }
 
-  public static final class StoredFieldsConsumerBuilder
-          extends ConsumerBuilder<StoredFieldsConsumer> {
-    private StoredFieldsConsumerBuilder(String fieldName, EarlybirdFieldType fieldType) {
-      super(fieldName, fieldType);
+  public static final class StorelondFielonldsConsumelonrBuildelonr
+          elonxtelonnds ConsumelonrBuildelonr<StorelondFielonldsConsumelonr> {
+    privatelon StorelondFielonldsConsumelonrBuildelonr(String fielonldNamelon, elonarlybirdFielonldTypelon fielonldTypelon) {
+      supelonr(fielonldNamelon, fielonldTypelon);
     }
 
-    @Override
-    StoredFieldsConsumer build(final List<StoredFieldsConsumer> consumers) {
-      return (docID, field) -> {
-        for (StoredFieldsConsumer consumer : consumers) {
-          consumer.addField(docID, field);
+    @Ovelonrridelon
+    StorelondFielonldsConsumelonr build(final List<StorelondFielonldsConsumelonr> consumelonrs) {
+      relonturn (docID, fielonld) -> {
+        for (StorelondFielonldsConsumelonr consumelonr : consumelonrs) {
+          consumelonr.addFielonld(docID, fielonld);
         }
       };
     }
   }
 
-  public static final class InvertedDocConsumerBuilder
-      extends ConsumerBuilder<InvertedDocConsumer> {
-    private final EarlybirdIndexSegmentData segmentData;
+  public static final class InvelonrtelondDocConsumelonrBuildelonr
+      elonxtelonnds ConsumelonrBuildelonr<InvelonrtelondDocConsumelonr> {
+    privatelon final elonarlybirdIndelonxSelongmelonntData selongmelonntData;
 
-    private InvertedDocConsumerBuilder(
-        EarlybirdIndexSegmentData segmentData, String fieldName, EarlybirdFieldType fieldType) {
-      super(fieldName, fieldType);
-      this.segmentData = segmentData;
+    privatelon InvelonrtelondDocConsumelonrBuildelonr(
+        elonarlybirdIndelonxSelongmelonntData selongmelonntData, String fielonldNamelon, elonarlybirdFielonldTypelon fielonldTypelon) {
+      supelonr(fielonldNamelon, fielonldTypelon);
+      this.selongmelonntData = selongmelonntData;
     }
 
-    @Override
-    InvertedDocConsumer build(final List<InvertedDocConsumer> consumers) {
-      return new InvertedDocConsumer() {
-        @Override
-        public void start(AttributeSource attributeSource, boolean currentDocIsOffensive) {
-          for (InvertedDocConsumer consumer : consumers) {
-            consumer.start(attributeSource, currentDocIsOffensive);
+    @Ovelonrridelon
+    InvelonrtelondDocConsumelonr build(final List<InvelonrtelondDocConsumelonr> consumelonrs) {
+      relonturn nelonw InvelonrtelondDocConsumelonr() {
+        @Ovelonrridelon
+        public void start(AttributelonSourcelon attributelonSourcelon, boolelonan currelonntDocIsOffelonnsivelon) {
+          for (InvelonrtelondDocConsumelonr consumelonr : consumelonrs) {
+            consumelonr.start(attributelonSourcelon, currelonntDocIsOffelonnsivelon);
           }
         }
 
-        @Override
+        @Ovelonrridelon
         public void finish() {
-          for (InvertedDocConsumer consumer : consumers) {
-            consumer.finish();
+          for (InvelonrtelondDocConsumelonr consumelonr : consumelonrs) {
+            consumelonr.finish();
           }
         }
 
-        @Override
-        public void add(int docID, int position) throws IOException {
-          for (InvertedDocConsumer consumer : consumers) {
-            consumer.add(docID, position);
+        @Ovelonrridelon
+        public void add(int docID, int position) throws IOelonxcelonption {
+          for (InvelonrtelondDocConsumelonr consumelonr : consumelonrs) {
+            consumelonr.add(docID, position);
           }
         }
       };
     }
 
-    public EarlybirdIndexSegmentData getSegmentData() {
-      return segmentData;
+    public elonarlybirdIndelonxSelongmelonntData gelontSelongmelonntData() {
+      relonturn selongmelonntData;
     }
   }
 
   /**
-   * Returns true, if a field should not be indexed.
-   * @deprecated This writer should be able to process all fields in the future.
+   * Relonturns truelon, if a fielonld should not belon indelonxelond.
+   * @delonpreloncatelond This writelonr should belon ablelon to procelonss all fielonlds in thelon futurelon.
    */
-  @Deprecated
-  private static boolean skipField(String fieldName) {
-    // ignore lucene facet fields for realtime index, we are handling it differently for now.
-    return fieldName.startsWith(FacetsConfig.DEFAULT_INDEX_FIELD_NAME);
+  @Delonpreloncatelond
+  privatelon static boolelonan skipFielonld(String fielonldNamelon) {
+    // ignorelon lucelonnelon facelont fielonlds for relonaltimelon indelonx, welon arelon handling it diffelonrelonntly for now.
+    relonturn fielonldNamelon.startsWith(FacelontsConfig.DelonFAULT_INDelonX_FIelonLD_NAMelon);
   }
 
-  private static Field buildAllDocsField(EarlybirdRealtimeIndexSegmentData segmentData) {
-    String fieldName = EarlybirdFieldConstants.EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName();
-    if (segmentData.getSchema().hasField(fieldName)) {
-      Schema.FieldInfo fi = Preconditions.checkNotNull(
-          segmentData.getSchema().getFieldInfo(fieldName));
-      return new Field(fi.getName(), AllDocsIterator.ALL_DOCS_TERM, fi.getFieldType());
+  privatelon static Fielonld buildAllDocsFielonld(elonarlybirdRelonaltimelonIndelonxSelongmelonntData selongmelonntData) {
+    String fielonldNamelon = elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon();
+    if (selongmelonntData.gelontSchelonma().hasFielonld(fielonldNamelon)) {
+      Schelonma.FielonldInfo fi = Prelonconditions.chelonckNotNull(
+          selongmelonntData.gelontSchelonma().gelontFielonldInfo(fielonldNamelon));
+      relonturn nelonw Fielonld(fi.gelontNamelon(), AllDocsItelonrator.ALL_DOCS_TelonRM, fi.gelontFielonldTypelon());
     }
 
-    return null;
+    relonturn null;
   }
 
   /**
-   * Every document must have this field and term, so that we can safely iterate through documents
-   * using {@link AllDocsIterator}. This is to prevent the problem of adding a tweet to the doc ID
-   * mapper, and returning it for a match-all query when the rest of the document hasn't been
-   * published. This could lead to queries returning incorrect results for queries that are only
-   * negations.
+   * elonvelonry documelonnt must havelon this fielonld and telonrm, so that welon can safelonly itelonratelon through documelonnts
+   * using {@link AllDocsItelonrator}. This is to prelonvelonnt thelon problelonm of adding a twelonelont to thelon doc ID
+   * mappelonr, and relonturning it for a match-all quelonry whelonn thelon relonst of thelon documelonnt hasn't belonelonn
+   * publishelond. This could lelonad to quelonrielons relonturning incorrelonct relonsults for quelonrielons that arelon only
+   * nelongations.
    * */
-  private void addAllDocsField(Document doc) {
-    if (allDocsField != null) {
-      doc.add(allDocsField);
+  privatelon void addAllDocsFielonld(Documelonnt doc) {
+    if (allDocsFielonld != null) {
+      doc.add(allDocsFielonld);
     }
   }
 }

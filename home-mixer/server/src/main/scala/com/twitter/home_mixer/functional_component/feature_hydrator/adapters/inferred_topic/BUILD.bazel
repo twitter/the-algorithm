@@ -1,13 +1,13 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/java/com/twitter/ml/api:api-base",
-        "src/scala/com/twitter/ml/api/util",
-        "src/scala/com/twitter/timelines/prediction/common/adapters:base",
-        "src/scala/com/twitter/timelines/prediction/features/common",
-        "src/thrift/com/twitter/ml/api:data-java",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/java/com/twittelonr/ml/api:api-baselon",
+        "src/scala/com/twittelonr/ml/api/util",
+        "src/scala/com/twittelonr/timelonlinelons/prelondiction/common/adaptelonrs:baselon",
+        "src/scala/com/twittelonr/timelonlinelons/prelondiction/felonaturelons/common",
+        "src/thrift/com/twittelonr/ml/api:data-java",
     ],
 )

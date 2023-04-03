@@ -1,182 +1,182 @@
-package com.twitter.interaction_graph.scio.agg_all
+packagelon com.twittelonr.intelonraction_graph.scio.agg_all
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.ReadOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.dal.client.dataset.SnapshotDALDatasetBase
-import com.twitter.dal.client.dataset.TimePartitionedDALDataset
-import com.twitter.interaction_graph.scio.agg_address_book.InteractionGraphAggAddressBookEdgeSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.agg_address_book.InteractionGraphAggAddressBookVertexSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.agg_client_event_logs.InteractionGraphAggClientEventLogsEdgeDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_client_event_logs.InteractionGraphAggClientEventLogsVertexDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_direct_interactions.InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_direct_interactions.InteractionGraphAggDirectInteractionsVertexDailyScalaDataset
-import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockEdgeSnapshotScalaDataset
-import com.twitter.interaction_graph.scio.agg_flock.InteractionGraphAggFlockVertexSnapshotScalaDataset
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
-import com.twitter.util.Duration
-import org.joda.time.Interval
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.dal.DAL.RelonadOptions
+import com.twittelonr.belonam.job.SelonrvicelonIdelonntifielonrOptions
+import com.twittelonr.dal.clielonnt.dataselont.SnapshotDALDataselontBaselon
+import com.twittelonr.dal.clielonnt.dataselont.TimelonPartitionelondDALDataselont
+import com.twittelonr.intelonraction_graph.scio.agg_addrelonss_book.IntelonractionGraphAggAddrelonssBookelondgelonSnapshotScalaDataselont
+import com.twittelonr.intelonraction_graph.scio.agg_addrelonss_book.IntelonractionGraphAggAddrelonssBookVelonrtelonxSnapshotScalaDataselont
+import com.twittelonr.intelonraction_graph.scio.agg_clielonnt_elonvelonnt_logs.IntelonractionGraphAggClielonntelonvelonntLogselondgelonDailyScalaDataselont
+import com.twittelonr.intelonraction_graph.scio.agg_clielonnt_elonvelonnt_logs.IntelonractionGraphAggClielonntelonvelonntLogsVelonrtelonxDailyScalaDataselont
+import com.twittelonr.intelonraction_graph.scio.agg_direlonct_intelonractions.IntelonractionGraphAggDirelonctIntelonractionselondgelonDailyScalaDataselont
+import com.twittelonr.intelonraction_graph.scio.agg_direlonct_intelonractions.IntelonractionGraphAggDirelonctIntelonractionsVelonrtelonxDailyScalaDataselont
+import com.twittelonr.intelonraction_graph.scio.agg_flock.IntelonractionGraphAggFlockelondgelonSnapshotScalaDataselont
+import com.twittelonr.intelonraction_graph.scio.agg_flock.IntelonractionGraphAggFlockVelonrtelonxSnapshotScalaDataselont
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
+import com.twittelonr.statelonbird.v2.thriftscala.elonnvironmelonnt
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import com.twittelonr.uselonrsourcelon.snapshot.flat.thriftscala.FlatUselonr
+import com.twittelonr.util.Duration
+import org.joda.timelon.Intelonrval
 
-case class InteractionGraphAggregationSource(
-  pipelineOptions: InteractionGraphAggregationOption
+caselon class IntelonractionGraphAggrelongationSourcelon(
+  pipelonlinelonOptions: IntelonractionGraphAggrelongationOption
 )(
-  implicit sc: ScioContext) {
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  implicit sc: ScioContelonxt) {
+  val dalelonnvironmelonnt: String = pipelonlinelonOptions
+    .as(classOf[SelonrvicelonIdelonntifielonrOptions])
+    .gelontelonnvironmelonnt()
 
-  def readDALDataset[T: Manifest](
-    dataset: TimePartitionedDALDataset[T],
-    interval: Interval,
-    dalEnvironment: String,
-    projections: Option[Seq[String]] = None
+  delonf relonadDALDataselont[T: Manifelonst](
+    dataselont: TimelonPartitionelondDALDataselont[T],
+    intelonrval: Intelonrval,
+    dalelonnvironmelonnt: String,
+    projelonctions: Option[Selonq[String]] = Nonelon
   )(
-    implicit sc: ScioContext,
-  ): SCollection[T] = {
+    implicit sc: ScioContelonxt,
+  ): SCollelonction[T] = {
     sc.customInput(
-      s"Reading ${dataset.role.name}.${dataset.logicalName}",
-      DAL.read[T](
-        dataset = dataset,
-        interval = interval,
-        environmentOverride = Environment.valueOf(dalEnvironment),
-        readOptions = ReadOptions(projections)
+      s"Relonading ${dataselont.rolelon.namelon}.${dataselont.logicalNamelon}",
+      DAL.relonad[T](
+        dataselont = dataselont,
+        intelonrval = intelonrval,
+        elonnvironmelonntOvelonrridelon = elonnvironmelonnt.valuelonOf(dalelonnvironmelonnt),
+        relonadOptions = RelonadOptions(projelonctions)
       )
     )
   }
 
-  def readMostRecentSnapshotDALDataset[T: Manifest](
-    dataset: SnapshotDALDatasetBase[T],
-    dateInterval: Interval,
-    dalEnvironment: String,
-    projections: Option[Seq[String]] = None
+  delonf relonadMostReloncelonntSnapshotDALDataselont[T: Manifelonst](
+    dataselont: SnapshotDALDataselontBaselon[T],
+    datelonIntelonrval: Intelonrval,
+    dalelonnvironmelonnt: String,
+    projelonctions: Option[Selonq[String]] = Nonelon
   )(
-    implicit sc: ScioContext,
-  ): SCollection[T] = {
+    implicit sc: ScioContelonxt,
+  ): SCollelonction[T] = {
     sc.customInput(
-      s"Reading most recent snapshot ${dataset.role.name}.${dataset.logicalName}",
-      DAL.readMostRecentSnapshot[T](
-        dataset,
-        dateInterval,
-        Environment.valueOf(dalEnvironment),
-        readOptions = ReadOptions(projections)
+      s"Relonading most reloncelonnt snapshot ${dataselont.rolelon.namelon}.${dataselont.logicalNamelon}",
+      DAL.relonadMostReloncelonntSnapshot[T](
+        dataselont,
+        datelonIntelonrval,
+        elonnvironmelonnt.valuelonOf(dalelonnvironmelonnt),
+        relonadOptions = RelonadOptions(projelonctions)
       )
     )
   }
 
-  def readMostRecentSnapshotNoOlderThanDALDataset[T: Manifest](
-    dataset: SnapshotDALDatasetBase[T],
-    noOlderThan: Duration,
-    dalEnvironment: String,
-    projections: Option[Seq[String]] = None
+  delonf relonadMostReloncelonntSnapshotNoOldelonrThanDALDataselont[T: Manifelonst](
+    dataselont: SnapshotDALDataselontBaselon[T],
+    noOldelonrThan: Duration,
+    dalelonnvironmelonnt: String,
+    projelonctions: Option[Selonq[String]] = Nonelon
   )(
-    implicit sc: ScioContext,
-  ): SCollection[T] = {
+    implicit sc: ScioContelonxt,
+  ): SCollelonction[T] = {
     sc.customInput(
-      s"Reading most recent snapshot ${dataset.role.name}.${dataset.logicalName}",
-      DAL.readMostRecentSnapshotNoOlderThan[T](
-        dataset,
-        noOlderThan,
-        environmentOverride = Environment.valueOf(dalEnvironment),
-        readOptions = ReadOptions(projections)
+      s"Relonading most reloncelonnt snapshot ${dataselont.rolelon.namelon}.${dataselont.logicalNamelon}",
+      DAL.relonadMostReloncelonntSnapshotNoOldelonrThan[T](
+        dataselont,
+        noOldelonrThan,
+        elonnvironmelonntOvelonrridelon = elonnvironmelonnt.valuelonOf(dalelonnvironmelonnt),
+        relonadOptions = RelonadOptions(projelonctions)
       )
     )
   }
 
-  def readAddressBookFeatures(): (SCollection[Edge], SCollection[Vertex]) = {
-    val edges = readMostRecentSnapshotNoOlderThanDALDataset[Edge](
-      dataset = InteractionGraphAggAddressBookEdgeSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment,
+  delonf relonadAddrelonssBookFelonaturelons(): (SCollelonction[elondgelon], SCollelonction[Velonrtelonx]) = {
+    val elondgelons = relonadMostReloncelonntSnapshotNoOldelonrThanDALDataselont[elondgelon](
+      dataselont = IntelonractionGraphAggAddrelonssBookelondgelonSnapshotScalaDataselont,
+      noOldelonrThan = Duration.fromDays(5),
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
     )
 
-    val vertex = readMostRecentSnapshotNoOlderThanDALDataset[Vertex](
-      dataset = InteractionGraphAggAddressBookVertexSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment,
+    val velonrtelonx = relonadMostReloncelonntSnapshotNoOldelonrThanDALDataselont[Velonrtelonx](
+      dataselont = IntelonractionGraphAggAddrelonssBookVelonrtelonxSnapshotScalaDataselont,
+      noOldelonrThan = Duration.fromDays(5),
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
     )
 
-    (edges, vertex)
+    (elondgelons, velonrtelonx)
   }
 
-  def readClientEventLogsFeatures(
-    dateInterval: Interval
-  ): (SCollection[Edge], SCollection[Vertex]) = {
-    val edges = readDALDataset[Edge](
-      dataset = InteractionGraphAggClientEventLogsEdgeDailyScalaDataset,
-      dalEnvironment = dalEnvironment,
-      interval = dateInterval
+  delonf relonadClielonntelonvelonntLogsFelonaturelons(
+    datelonIntelonrval: Intelonrval
+  ): (SCollelonction[elondgelon], SCollelonction[Velonrtelonx]) = {
+    val elondgelons = relonadDALDataselont[elondgelon](
+      dataselont = IntelonractionGraphAggClielonntelonvelonntLogselondgelonDailyScalaDataselont,
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
+      intelonrval = datelonIntelonrval
     )
 
-    val vertex = readDALDataset[Vertex](
-      dataset = InteractionGraphAggClientEventLogsVertexDailyScalaDataset,
-      dalEnvironment = dalEnvironment,
-      interval = dateInterval
+    val velonrtelonx = relonadDALDataselont[Velonrtelonx](
+      dataselont = IntelonractionGraphAggClielonntelonvelonntLogsVelonrtelonxDailyScalaDataselont,
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
+      intelonrval = datelonIntelonrval
     )
 
-    (edges, vertex)
+    (elondgelons, velonrtelonx)
   }
 
-  def readDirectInteractionsFeatures(
-    dateInterval: Interval
-  ): (SCollection[Edge], SCollection[Vertex]) = {
-    val edges = readDALDataset[Edge](
-      dataset = InteractionGraphAggDirectInteractionsEdgeDailyScalaDataset,
-      dalEnvironment = dalEnvironment,
-      interval = dateInterval
+  delonf relonadDirelonctIntelonractionsFelonaturelons(
+    datelonIntelonrval: Intelonrval
+  ): (SCollelonction[elondgelon], SCollelonction[Velonrtelonx]) = {
+    val elondgelons = relonadDALDataselont[elondgelon](
+      dataselont = IntelonractionGraphAggDirelonctIntelonractionselondgelonDailyScalaDataselont,
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
+      intelonrval = datelonIntelonrval
     )
 
-    val vertex = readDALDataset[Vertex](
-      dataset = InteractionGraphAggDirectInteractionsVertexDailyScalaDataset,
-      dalEnvironment = dalEnvironment,
-      interval = dateInterval
+    val velonrtelonx = relonadDALDataselont[Velonrtelonx](
+      dataselont = IntelonractionGraphAggDirelonctIntelonractionsVelonrtelonxDailyScalaDataselont,
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
+      intelonrval = datelonIntelonrval
     )
 
-    (edges, vertex)
+    (elondgelons, velonrtelonx)
   }
 
-  def readFlockFeatures(): (SCollection[Edge], SCollection[Vertex]) = {
-    val edges = readMostRecentSnapshotNoOlderThanDALDataset[Edge](
-      dataset = InteractionGraphAggFlockEdgeSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment,
+  delonf relonadFlockFelonaturelons(): (SCollelonction[elondgelon], SCollelonction[Velonrtelonx]) = {
+    val elondgelons = relonadMostReloncelonntSnapshotNoOldelonrThanDALDataselont[elondgelon](
+      dataselont = IntelonractionGraphAggFlockelondgelonSnapshotScalaDataselont,
+      noOldelonrThan = Duration.fromDays(5),
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
     )
 
-    val vertex = readMostRecentSnapshotNoOlderThanDALDataset[Vertex](
-      dataset = InteractionGraphAggFlockVertexSnapshotScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment,
+    val velonrtelonx = relonadMostReloncelonntSnapshotNoOldelonrThanDALDataselont[Velonrtelonx](
+      dataselont = IntelonractionGraphAggFlockVelonrtelonxSnapshotScalaDataselont,
+      noOldelonrThan = Duration.fromDays(5),
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
     )
 
-    (edges, vertex)
+    (elondgelons, velonrtelonx)
   }
 
-  def readAggregatedFeatures(dateInterval: Interval): (SCollection[Edge], SCollection[Vertex]) = {
-    val edges = readMostRecentSnapshotDALDataset[Edge](
-      dataset = InteractionGraphHistoryAggregatedEdgeSnapshotScalaDataset,
-      dalEnvironment = dalEnvironment,
-      dateInterval = dateInterval
+  delonf relonadAggrelongatelondFelonaturelons(datelonIntelonrval: Intelonrval): (SCollelonction[elondgelon], SCollelonction[Velonrtelonx]) = {
+    val elondgelons = relonadMostReloncelonntSnapshotDALDataselont[elondgelon](
+      dataselont = IntelonractionGraphHistoryAggrelongatelondelondgelonSnapshotScalaDataselont,
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
+      datelonIntelonrval = datelonIntelonrval
     )
 
-    val vertex = readMostRecentSnapshotDALDataset[Vertex](
-      dataset = InteractionGraphHistoryAggregatedVertexSnapshotScalaDataset,
-      dalEnvironment = dalEnvironment,
-      dateInterval = dateInterval
+    val velonrtelonx = relonadMostReloncelonntSnapshotDALDataselont[Velonrtelonx](
+      dataselont = IntelonractionGraphHistoryAggrelongatelondVelonrtelonxSnapshotScalaDataselont,
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
+      datelonIntelonrval = datelonIntelonrval
     )
 
-    (edges, vertex)
+    (elondgelons, velonrtelonx)
   }
 
-  def readFlatUsers(): SCollection[FlatUser] =
-    readMostRecentSnapshotNoOlderThanDALDataset[FlatUser](
-      dataset = UsersourceFlatScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment,
-      projections = Some(Seq("id", "valid_user"))
+  delonf relonadFlatUselonrs(): SCollelonction[FlatUselonr] =
+    relonadMostReloncelonntSnapshotNoOldelonrThanDALDataselont[FlatUselonr](
+      dataselont = UselonrsourcelonFlatScalaDataselont,
+      noOldelonrThan = Duration.fromDays(5),
+      dalelonnvironmelonnt = dalelonnvironmelonnt,
+      projelonctions = Somelon(Selonq("id", "valid_uselonr"))
     )
 }

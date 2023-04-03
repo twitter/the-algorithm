@@ -1,328 +1,328 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.Closeable;
+import java.io.Closelonablelon;
 import java.util.Optional;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Stopwatch;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Stopwatch;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.partition.freshstartup.FreshStartupHandler;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdStatus;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.elonarlybirdStartupelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.partition.frelonshstartup.FrelonshStartupHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.quelonrycachelon.QuelonryCachelonManagelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdStatusCodelon;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
 
 /**
- * Handles starting an Earlybird from Kafka topics.
+ * Handlelons starting an elonarlybird from Kafka topics.
  *
- * Currently very unoptimized -- future versions will implement parallel indexing and loading
- * serialized data from HDFS. See http://go/removing-dl-tdd.
+ * Currelonntly velonry unoptimizelond -- futurelon velonrsions will implelonmelonnt parallelonl indelonxing and loading
+ * selonrializelond data from HDFS. Selonelon http://go/relonmoving-dl-tdd.
  */
-public class KafkaStartup implements EarlybirdStartup {
-  private static final Logger LOG = LoggerFactory.getLogger(KafkaStartup.class);
+public class KafkaStartup implelonmelonnts elonarlybirdStartup {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(KafkaStartup.class);
 
-  private final EarlybirdKafkaConsumer earlybirdKafkaConsumer;
-  private final StartupUserEventIndexer startupUserEventIndexer;
-  private final QueryCacheManager queryCacheManager;
-  private final SegmentManager segmentManager;
-  private final EarlybirdIndexLoader earlybirdIndexLoader;
-  private final FreshStartupHandler freshStartupHandler;
-  private final UserUpdatesStreamIndexer userUpdatesStreamIndexer;
-  private final UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final SearchLongGauge loadedIndex;
-  private final SearchLongGauge freshStartup;
-  private final MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager;
-  private final AudioSpaceEventsStreamIndexer audioSpaceEventsStreamIndexer;
-  private final CriticalExceptionHandler earlybirdExceptionHandler;
-  private final SearchDecider decider;
+  privatelon final elonarlybirdKafkaConsumelonr elonarlybirdKafkaConsumelonr;
+  privatelon final StartupUselonrelonvelonntIndelonxelonr startupUselonrelonvelonntIndelonxelonr;
+  privatelon final QuelonryCachelonManagelonr quelonryCachelonManagelonr;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final elonarlybirdIndelonxLoadelonr elonarlybirdIndelonxLoadelonr;
+  privatelon final FrelonshStartupHandlelonr frelonshStartupHandlelonr;
+  privatelon final UselonrUpdatelonsStrelonamIndelonxelonr uselonrUpdatelonsStrelonamIndelonxelonr;
+  privatelon final UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
+  privatelon final SelonarchLongGaugelon loadelondIndelonx;
+  privatelon final SelonarchLongGaugelon frelonshStartup;
+  privatelon final MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr;
+  privatelon final AudioSpacelonelonvelonntsStrelonamIndelonxelonr audioSpacelonelonvelonntsStrelonamIndelonxelonr;
+  privatelon final CriticalelonxcelonptionHandlelonr elonarlybirdelonxcelonptionHandlelonr;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
 
-  private static final String FRESH_STARTUP = "fresh startup";
-  private static final String INGEST_UNTIL_CURRENT = "ingest until current";
-  private static final String LOAD_FLUSHED_INDEX = "load flushed index";
-  private static final String SETUP_QUERY_CACHE = "setting up query cache";
-  private static final String USER_UPDATES_STARTUP = "user updates startup";
-  private static final String AUDIO_SPACES_STARTUP = "audio spaces startup";
-  private static final String BUILD_MULTI_SEGMENT_TERM_DICTIONARY =
-          "build multi segment term dictionary";
+  privatelon static final String FRelonSH_STARTUP = "frelonsh startup";
+  privatelon static final String INGelonST_UNTIL_CURRelonNT = "ingelonst until currelonnt";
+  privatelon static final String LOAD_FLUSHelonD_INDelonX = "load flushelond indelonx";
+  privatelon static final String SelonTUP_QUelonRY_CACHelon = "selontting up quelonry cachelon";
+  privatelon static final String USelonR_UPDATelonS_STARTUP = "uselonr updatelons startup";
+  privatelon static final String AUDIO_SPACelonS_STARTUP = "audio spacelons startup";
+  privatelon static final String BUILD_MULTI_SelonGMelonNT_TelonRM_DICTIONARY =
+          "build multi selongmelonnt telonrm dictionary";
 
   public KafkaStartup(
-      SegmentManager segmentManager,
-      EarlybirdKafkaConsumer earlybirdKafkaConsumer,
-      StartupUserEventIndexer startupUserEventIndexer,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      AudioSpaceEventsStreamIndexer audioSpaceEventsStreamIndexer,
-      QueryCacheManager queryCacheManager,
-      EarlybirdIndexLoader earlybirdIndexLoader,
-      FreshStartupHandler freshStartupHandler,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager,
-      CriticalExceptionHandler earlybirdExceptionHandler,
-      SearchDecider decider
+      SelongmelonntManagelonr selongmelonntManagelonr,
+      elonarlybirdKafkaConsumelonr elonarlybirdKafkaConsumelonr,
+      StartupUselonrelonvelonntIndelonxelonr startupUselonrelonvelonntIndelonxelonr,
+      UselonrUpdatelonsStrelonamIndelonxelonr uselonrUpdatelonsStrelonamIndelonxelonr,
+      UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
+      AudioSpacelonelonvelonntsStrelonamIndelonxelonr audioSpacelonelonvelonntsStrelonamIndelonxelonr,
+      QuelonryCachelonManagelonr quelonryCachelonManagelonr,
+      elonarlybirdIndelonxLoadelonr elonarlybirdIndelonxLoadelonr,
+      FrelonshStartupHandlelonr frelonshStartupHandlelonr,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr,
+      CriticalelonxcelonptionHandlelonr elonarlybirdelonxcelonptionHandlelonr,
+      SelonarchDeloncidelonr deloncidelonr
   ) {
-    this.segmentManager = segmentManager;
-    this.earlybirdKafkaConsumer = earlybirdKafkaConsumer;
-    this.startupUserEventIndexer = startupUserEventIndexer;
-    this.queryCacheManager = queryCacheManager;
-    this.earlybirdIndexLoader = earlybirdIndexLoader;
-    this.freshStartupHandler = freshStartupHandler;
-    this.userUpdatesStreamIndexer = userUpdatesStreamIndexer;
-    this.userScrubGeoEventStreamIndexer = userScrubGeoEventStreamIndexer;
-    this.audioSpaceEventsStreamIndexer = audioSpaceEventsStreamIndexer;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.loadedIndex = SearchLongGauge.export("kafka_startup_loaded_index");
-    this.freshStartup = SearchLongGauge.export("fresh_startup");
-    this.multiSegmentTermDictionaryManager = multiSegmentTermDictionaryManager;
-    this.earlybirdExceptionHandler = earlybirdExceptionHandler;
-    this.decider = decider;
-    freshStartup.set(0);
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.elonarlybirdKafkaConsumelonr = elonarlybirdKafkaConsumelonr;
+    this.startupUselonrelonvelonntIndelonxelonr = startupUselonrelonvelonntIndelonxelonr;
+    this.quelonryCachelonManagelonr = quelonryCachelonManagelonr;
+    this.elonarlybirdIndelonxLoadelonr = elonarlybirdIndelonxLoadelonr;
+    this.frelonshStartupHandlelonr = frelonshStartupHandlelonr;
+    this.uselonrUpdatelonsStrelonamIndelonxelonr = uselonrUpdatelonsStrelonamIndelonxelonr;
+    this.uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr = uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr;
+    this.audioSpacelonelonvelonntsStrelonamIndelonxelonr = audioSpacelonelonvelonntsStrelonamIndelonxelonr;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
+    this.loadelondIndelonx = SelonarchLongGaugelon.elonxport("kafka_startup_loadelond_indelonx");
+    this.frelonshStartup = SelonarchLongGaugelon.elonxport("frelonsh_startup");
+    this.multiSelongmelonntTelonrmDictionaryManagelonr = multiSelongmelonntTelonrmDictionaryManagelonr;
+    this.elonarlybirdelonxcelonptionHandlelonr = elonarlybirdelonxcelonptionHandlelonr;
+    this.deloncidelonr = deloncidelonr;
+    frelonshStartup.selont(0);
   }
 
-  private void userEventsStartup() {
-    LOG.info("Start indexing user events.");
+  privatelon void uselonrelonvelonntsStartup() {
+    LOG.info("Start indelonxing uselonr elonvelonnts.");
 
-    startupUserEventIndexer.indexAllEvents();
+    startupUselonrelonvelonntIndelonxelonr.indelonxAllelonvelonnts();
 
-    LOG.info("Finished loading/indexing user events.");
+    LOG.info("Finishelond loading/indelonxing uselonr elonvelonnts.");
 
-    // User updates are now current, keep them current by continuing to index from the stream.
-    LOG.info("Starting to run UserUpdatesStreamIndexer");
-    new Thread(userUpdatesStreamIndexer::run, "userupdates-stream-indexer").start();
+    // Uselonr updatelons arelon now currelonnt, kelonelonp thelonm currelonnt by continuing to indelonx from thelon strelonam.
+    LOG.info("Starting to run UselonrUpdatelonsStrelonamIndelonxelonr");
+    nelonw Threlonad(uselonrUpdatelonsStrelonamIndelonxelonr::run, "uselonrupdatelons-strelonam-indelonxelonr").start();
 
-    if (EarlybirdConfig.consumeUserScrubGeoEvents()) {
-      // User scrub geo events are now current,
-      // keep them current by continuing to index from the stream.
-      LOG.info("Starting to run UserScrubGeoEventsStreamIndexer");
-      new Thread(userScrubGeoEventStreamIndexer::run,
-          "userScrubGeoEvents-stream-indexer").start();
+    if (elonarlybirdConfig.consumelonUselonrScrubGelonoelonvelonnts()) {
+      // Uselonr scrub gelono elonvelonnts arelon now currelonnt,
+      // kelonelonp thelonm currelonnt by continuing to indelonx from thelon strelonam.
+      LOG.info("Starting to run UselonrScrubGelonoelonvelonntsStrelonamIndelonxelonr");
+      nelonw Threlonad(uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr::run,
+          "uselonrScrubGelonoelonvelonnts-strelonam-indelonxelonr").start();
     }
   }
 
-  private void loadAudioSpaceEvents() {
-    LOG.info("Index audio space events...");
-    EarlybirdStatus.beginEvent(AUDIO_SPACES_STARTUP,
-        searchIndexingMetricSet.startupInAudioSpaceEventIndexer);
+  privatelon void loadAudioSpacelonelonvelonnts() {
+    LOG.info("Indelonx audio spacelon elonvelonnts...");
+    elonarlybirdStatus.belonginelonvelonnt(AUDIO_SPACelonS_STARTUP,
+        selonarchIndelonxingMelontricSelont.startupInAudioSpacelonelonvelonntIndelonxelonr);
 
-    if (audioSpaceEventsStreamIndexer == null) {
-      LOG.error("Null audioSpaceEventsStreamIndexer");
-      return;
+    if (audioSpacelonelonvelonntsStrelonamIndelonxelonr == null) {
+      LOG.elonrror("Null audioSpacelonelonvelonntsStrelonamIndelonxelonr");
+      relonturn;
     }
 
-    if (decider.isAvailable("enable_reading_audio_space_events")) {
-      Stopwatch stopwatch = Stopwatch.createStarted();
-      audioSpaceEventsStreamIndexer.seekToBeginning();
-      audioSpaceEventsStreamIndexer.readRecordsUntilCurrent();
-      LOG.info("Finished reading audio spaces in {}", stopwatch);
-      audioSpaceEventsStreamIndexer.printSummary();
+    if (deloncidelonr.isAvailablelon("elonnablelon_relonading_audio_spacelon_elonvelonnts")) {
+      Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
+      audioSpacelonelonvelonntsStrelonamIndelonxelonr.selonelonkToBelonginning();
+      audioSpacelonelonvelonntsStrelonamIndelonxelonr.relonadReloncordsUntilCurrelonnt();
+      LOG.info("Finishelond relonading audio spacelons in {}", stopwatch);
+      audioSpacelonelonvelonntsStrelonamIndelonxelonr.printSummary();
 
-      new Thread(audioSpaceEventsStreamIndexer::run,
-          "audioSpaceEvents-stream-indexer").start();
-    } else {
-      LOG.info("Reading audio space events not enabled");
+      nelonw Threlonad(audioSpacelonelonvelonntsStrelonamIndelonxelonr::run,
+          "audioSpacelonelonvelonnts-strelonam-indelonxelonr").start();
+    } elonlselon {
+      LOG.info("Relonading audio spacelon elonvelonnts not elonnablelond");
     }
 
-    EarlybirdStatus.endEvent(AUDIO_SPACES_STARTUP,
-        searchIndexingMetricSet.startupInAudioSpaceEventIndexer);
+    elonarlybirdStatus.elonndelonvelonnt(AUDIO_SPACelonS_STARTUP,
+        selonarchIndelonxingMelontricSelont.startupInAudioSpacelonelonvelonntIndelonxelonr);
   }
 
-  private void tweetsAndUpdatesStartup() throws EarlybirdStartupException {
-    LOG.info("Index tweets and updates...");
-    EarlybirdStatus.beginEvent(LOAD_FLUSHED_INDEX,
-        searchIndexingMetricSet.startupInLoadFlushedIndex);
-    EarlybirdIndex index;
+  privatelon void twelonelontsAndUpdatelonsStartup() throws elonarlybirdStartupelonxcelonption {
+    LOG.info("Indelonx twelonelonts and updatelons...");
+    elonarlybirdStatus.belonginelonvelonnt(LOAD_FLUSHelonD_INDelonX,
+        selonarchIndelonxingMelontricSelont.startupInLoadFlushelondIndelonx);
+    elonarlybirdIndelonx indelonx;
 
-    // Set when you want to get a server from starting to ready quickly for development
-    // purposes.
-    boolean fastDevStartup = EarlybirdConfig.getBool("fast_dev_startup");
+    // Selont whelonn you want to gelont a selonrvelonr from starting to relonady quickly for delonvelonlopmelonnt
+    // purposelons.
+    boolelonan fastDelonvStartup = elonarlybirdConfig.gelontBool("fast_delonv_startup");
 
-    Optional<EarlybirdIndex> optIndex = Optional.empty();
-    if (!fastDevStartup) {
-      optIndex = earlybirdIndexLoader.loadIndex();
+    Optional<elonarlybirdIndelonx> optIndelonx = Optional.elonmpty();
+    if (!fastDelonvStartup) {
+      optIndelonx = elonarlybirdIndelonxLoadelonr.loadIndelonx();
     }
 
-    if (optIndex.isPresent()) {
-      loadedIndex.set(1);
-      LOG.info("Loaded an index.");
-      index = optIndex.get();
-      EarlybirdStatus.endEvent(LOAD_FLUSHED_INDEX,
-          searchIndexingMetricSet.startupInLoadFlushedIndex);
-    } else {
-      LOG.info("Didn't load an index, indexing from scratch.");
-      freshStartup.set(1);
-      boolean parallelIndexFromScratch = EarlybirdConfig.getBool(
-          "parallel_index_from_scratch");
-      LOG.info("parallel_index_from_scratch: {}", parallelIndexFromScratch);
-      EarlybirdStatus.beginEvent(FRESH_STARTUP,
-          searchIndexingMetricSet.startupInFreshStartup);
+    if (optIndelonx.isPrelonselonnt()) {
+      loadelondIndelonx.selont(1);
+      LOG.info("Loadelond an indelonx.");
+      indelonx = optIndelonx.gelont();
+      elonarlybirdStatus.elonndelonvelonnt(LOAD_FLUSHelonD_INDelonX,
+          selonarchIndelonxingMelontricSelont.startupInLoadFlushelondIndelonx);
+    } elonlselon {
+      LOG.info("Didn't load an indelonx, indelonxing from scratch.");
+      frelonshStartup.selont(1);
+      boolelonan parallelonlIndelonxFromScratch = elonarlybirdConfig.gelontBool(
+          "parallelonl_indelonx_from_scratch");
+      LOG.info("parallelonl_indelonx_from_scratch: {}", parallelonlIndelonxFromScratch);
+      elonarlybirdStatus.belonginelonvelonnt(FRelonSH_STARTUP,
+          selonarchIndelonxingMelontricSelont.startupInFrelonshStartup);
       try {
-        if (fastDevStartup) {
-          index = freshStartupHandler.fastIndexFromScratchForDevelopment();
-        } else if (parallelIndexFromScratch) {
-          index = freshStartupHandler.parallelIndexFromScratch();
-        } else {
-          index = freshStartupHandler.indexFromScratch();
+        if (fastDelonvStartup) {
+          indelonx = frelonshStartupHandlelonr.fastIndelonxFromScratchForDelonvelonlopmelonnt();
+        } elonlselon if (parallelonlIndelonxFromScratch) {
+          indelonx = frelonshStartupHandlelonr.parallelonlIndelonxFromScratch();
+        } elonlselon {
+          indelonx = frelonshStartupHandlelonr.indelonxFromScratch();
         }
-      } catch (Exception ex) {
-        throw new EarlybirdStartupException(ex);
+      } catch (elonxcelonption elonx) {
+        throw nelonw elonarlybirdStartupelonxcelonption(elonx);
       } finally {
-        EarlybirdStatus.endEvent(FRESH_STARTUP,
-            searchIndexingMetricSet.startupInFreshStartup);
+        elonarlybirdStatus.elonndelonvelonnt(FRelonSH_STARTUP,
+            selonarchIndelonxingMelontricSelont.startupInFrelonshStartup);
       }
     }
 
-    LOG.info("Index has {} segments.", index.getSegmentInfoList().size());
-    if (index.getSegmentInfoList().size() > 0) {
-      LOG.info("Inserting segments into SegmentManager");
-      for (SegmentInfo segmentInfo : index.getSegmentInfoList()) {
-        segmentManager.putSegmentInfo(segmentInfo);
+    LOG.info("Indelonx has {} selongmelonnts.", indelonx.gelontSelongmelonntInfoList().sizelon());
+    if (indelonx.gelontSelongmelonntInfoList().sizelon() > 0) {
+      LOG.info("Inselonrting selongmelonnts into SelongmelonntManagelonr");
+      for (SelongmelonntInfo selongmelonntInfo : indelonx.gelontSelongmelonntInfoList()) {
+        selongmelonntManagelonr.putSelongmelonntInfo(selongmelonntInfo);
       }
 
-      earlybirdKafkaConsumer.prepareAfterStartingWithIndex(
-          index.getMaxIndexedTweetId()
+      elonarlybirdKafkaConsumelonr.prelonparelonAftelonrStartingWithIndelonx(
+          indelonx.gelontMaxIndelonxelondTwelonelontId()
       );
     }
 
-    // Build the Multi segment term dictionary before catching up on indexing to ensure that the
-    // segments won't roll and delete the oldest segment while a multi segment term dictionary that
-    // includes that segment is being built.
-    buildMultiSegmentTermDictionary();
+    // Build thelon Multi selongmelonnt telonrm dictionary belonforelon catching up on indelonxing to elonnsurelon that thelon
+    // selongmelonnts won't roll and delonlelontelon thelon oldelonst selongmelonnt whilelon a multi selongmelonnt telonrm dictionary that
+    // includelons that selongmelonnt is beloning built.
+    buildMultiSelongmelonntTelonrmDictionary();
 
-    segmentManager.logState("Starting ingestUntilCurrent");
-    LOG.info("partial updates indexed: {}", segmentManager.getNumPartialUpdates());
-    EarlybirdStatus.beginEvent(INGEST_UNTIL_CURRENT,
-        searchIndexingMetricSet.startupInIngestUntilCurrent);
+    selongmelonntManagelonr.logStatelon("Starting ingelonstUntilCurrelonnt");
+    LOG.info("partial updatelons indelonxelond: {}", selongmelonntManagelonr.gelontNumPartialUpdatelons());
+    elonarlybirdStatus.belonginelonvelonnt(INGelonST_UNTIL_CURRelonNT,
+        selonarchIndelonxingMelontricSelont.startupInIngelonstUntilCurrelonnt);
 
-    earlybirdKafkaConsumer.ingestUntilCurrent(index.getTweetOffset(), index.getUpdateOffset());
+    elonarlybirdKafkaConsumelonr.ingelonstUntilCurrelonnt(indelonx.gelontTwelonelontOffselont(), indelonx.gelontUpdatelonOffselont());
 
-    validateSegments();
-    segmentManager.logState("ingestUntilCurrent is done");
-    LOG.info("partial updates indexed: {}", segmentManager.getNumPartialUpdates());
-    EarlybirdStatus.endEvent(INGEST_UNTIL_CURRENT,
-        searchIndexingMetricSet.startupInIngestUntilCurrent);
-    new Thread(earlybirdKafkaConsumer::run, "earlybird-kafka-consumer").start();
+    validatelonSelongmelonnts();
+    selongmelonntManagelonr.logStatelon("ingelonstUntilCurrelonnt is donelon");
+    LOG.info("partial updatelons indelonxelond: {}", selongmelonntManagelonr.gelontNumPartialUpdatelons());
+    elonarlybirdStatus.elonndelonvelonnt(INGelonST_UNTIL_CURRelonNT,
+        selonarchIndelonxingMelontricSelont.startupInIngelonstUntilCurrelonnt);
+    nelonw Threlonad(elonarlybirdKafkaConsumelonr::run, "elonarlybird-kafka-consumelonr").start();
   }
 
-  protected void validateSegments() throws EarlybirdStartupException {
-    if (!Config.environmentIsTest()) {
-      // Unfortunately, many tests start Earlybirds with 0 indexed documents, so we disable this
-      // check in tests.
-      validateSegmentsForNonTest();
+  protelonctelond void validatelonSelongmelonnts() throws elonarlybirdStartupelonxcelonption {
+    if (!Config.elonnvironmelonntIsTelonst()) {
+      // Unfortunatelonly, many telonsts start elonarlybirds with 0 indelonxelond documelonnts, so welon disablelon this
+      // chelonck in telonsts.
+      validatelonSelongmelonntsForNonTelonst();
     }
   }
 
-  protected void validateSegmentsForNonTest() throws EarlybirdStartupException {
-    // SEARCH-24123: Prevent Earlybird from starting if there are no indexed documents.
-    if (segmentManager.getNumIndexedDocuments() == 0) {
-      throw new EarlybirdStartupException("Earlybird has zero indexed documents.");
+  protelonctelond void validatelonSelongmelonntsForNonTelonst() throws elonarlybirdStartupelonxcelonption {
+    // SelonARCH-24123: Prelonvelonnt elonarlybird from starting if thelonrelon arelon no indelonxelond documelonnts.
+    if (selongmelonntManagelonr.gelontNumIndelonxelondDocumelonnts() == 0) {
+      throw nelonw elonarlybirdStartupelonxcelonption("elonarlybird has zelonro indelonxelond documelonnts.");
     }
   }
 
-  private void queryCacheStartup() throws EarlybirdStartupException {
-    EarlybirdStatus.beginEvent(SETUP_QUERY_CACHE,
-        searchIndexingMetricSet.startupInQueryCacheUpdates);
+  privatelon void quelonryCachelonStartup() throws elonarlybirdStartupelonxcelonption {
+    elonarlybirdStatus.belonginelonvelonnt(SelonTUP_QUelonRY_CACHelon,
+        selonarchIndelonxingMelontricSelont.startupInQuelonryCachelonUpdatelons);
     try {
-      queryCacheManager.setupTasksIfNeeded(segmentManager);
-    } catch (QueryParserException e) {
-      LOG.error("Exception when setting up query cache tasks");
-      throw new EarlybirdStartupException(e);
+      quelonryCachelonManagelonr.selontupTasksIfNelonelondelond(selongmelonntManagelonr);
+    } catch (QuelonryParselonrelonxcelonption elon) {
+      LOG.elonrror("elonxcelonption whelonn selontting up quelonry cachelon tasks");
+      throw nelonw elonarlybirdStartupelonxcelonption(elon);
     }
 
-    queryCacheManager.waitUntilAllQueryCachesAreBuilt();
+    quelonryCachelonManagelonr.waitUntilAllQuelonryCachelonsArelonBuilt();
 
-    // Print the sizes of the query caches so that we can see that they're built.
-    Iterable<SegmentInfo> segmentInfos =
-        segmentManager.getSegmentInfos(SegmentManager.Filter.All, SegmentManager.Order.OLD_TO_NEW);
-    segmentManager.logState("After building query caches");
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      LOG.info("Segment: {}, Total cardinality: {}", segmentInfo.getSegmentName(),
-          segmentInfo.getIndexSegment().getQueryCachesCardinality());
+    // Print thelon sizelons of thelon quelonry cachelons so that welon can selonelon that thelony'relon built.
+    Itelonrablelon<SelongmelonntInfo> selongmelonntInfos =
+        selongmelonntManagelonr.gelontSelongmelonntInfos(SelongmelonntManagelonr.Filtelonr.All, SelongmelonntManagelonr.Ordelonr.OLD_TO_NelonW);
+    selongmelonntManagelonr.logStatelon("Aftelonr building quelonry cachelons");
+    for (SelongmelonntInfo selongmelonntInfo : selongmelonntInfos) {
+      LOG.info("Selongmelonnt: {}, Total cardinality: {}", selongmelonntInfo.gelontSelongmelonntNamelon(),
+          selongmelonntInfo.gelontIndelonxSelongmelonnt().gelontQuelonryCachelonsCardinality());
     }
 
-    // We're done building the query caches for all segments, and the earlybird is ready to become
-    // current. Restrict all future query cache task runs to one single core, to make sure our
-    // searcher threads are not impacted.
-    queryCacheManager.setWorkerPoolSizeAfterStartup();
-    EarlybirdStatus.endEvent(SETUP_QUERY_CACHE,
-        searchIndexingMetricSet.startupInQueryCacheUpdates);
+    // Welon'relon donelon building thelon quelonry cachelons for all selongmelonnts, and thelon elonarlybird is relonady to beloncomelon
+    // currelonnt. Relonstrict all futurelon quelonry cachelon task runs to onelon singlelon corelon, to makelon surelon our
+    // selonarchelonr threlonads arelon not impactelond.
+    quelonryCachelonManagelonr.selontWorkelonrPoolSizelonAftelonrStartup();
+    elonarlybirdStatus.elonndelonvelonnt(SelonTUP_QUelonRY_CACHelon,
+        selonarchIndelonxingMelontricSelont.startupInQuelonryCachelonUpdatelons);
   }
 
   /**
-   * Closes all currently running Indexers.
+   * Closelons all currelonntly running Indelonxelonrs.
    */
-  @VisibleForTesting
-  public void shutdownIndexing() {
+  @VisiblelonForTelonsting
+  public void shutdownIndelonxing() {
     LOG.info("Shutting down KafkaStartup.");
 
-    earlybirdKafkaConsumer.close();
-    userUpdatesStreamIndexer.close();
-    userScrubGeoEventStreamIndexer.close();
-    // Note that the QueryCacheManager is shut down in EarlybirdServer::shutdown.
+    elonarlybirdKafkaConsumelonr.closelon();
+    uselonrUpdatelonsStrelonamIndelonxelonr.closelon();
+    uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr.closelon();
+    // Notelon that thelon QuelonryCachelonManagelonr is shut down in elonarlybirdSelonrvelonr::shutdown.
   }
 
-  private void buildMultiSegmentTermDictionary() {
-    EarlybirdStatus.beginEvent(BUILD_MULTI_SEGMENT_TERM_DICTIONARY,
-            searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
-    Stopwatch stopwatch = Stopwatch.createStarted();
-    LOG.info("Building multi segment term dictionary");
-    multiSegmentTermDictionaryManager.buildDictionary();
-    LOG.info("Done with building multi segment term dictionary in {}", stopwatch);
-    EarlybirdStatus.endEvent(BUILD_MULTI_SEGMENT_TERM_DICTIONARY,
-            searchIndexingMetricSet.startupInMultiSegmentTermDictionaryUpdates);
+  privatelon void buildMultiSelongmelonntTelonrmDictionary() {
+    elonarlybirdStatus.belonginelonvelonnt(BUILD_MULTI_SelonGMelonNT_TelonRM_DICTIONARY,
+            selonarchIndelonxingMelontricSelont.startupInMultiSelongmelonntTelonrmDictionaryUpdatelons);
+    Stopwatch stopwatch = Stopwatch.crelonatelonStartelond();
+    LOG.info("Building multi selongmelonnt telonrm dictionary");
+    multiSelongmelonntTelonrmDictionaryManagelonr.buildDictionary();
+    LOG.info("Donelon with building multi selongmelonnt telonrm dictionary in {}", stopwatch);
+    elonarlybirdStatus.elonndelonvelonnt(BUILD_MULTI_SelonGMelonNT_TelonRM_DICTIONARY,
+            selonarchIndelonxingMelontricSelont.startupInMultiSelongmelonntTelonrmDictionaryUpdatelons);
   }
 
-  private void parallelIndexingStartup() throws EarlybirdStartupException {
-    Thread userEventsThread = new Thread(this::userEventsStartup, "index-user-events-startup");
-    Thread tweetsAndUpdatesThread = new Thread(() -> {
+  privatelon void parallelonlIndelonxingStartup() throws elonarlybirdStartupelonxcelonption {
+    Threlonad uselonrelonvelonntsThrelonad = nelonw Threlonad(this::uselonrelonvelonntsStartup, "indelonx-uselonr-elonvelonnts-startup");
+    Threlonad twelonelontsAndUpdatelonsThrelonad = nelonw Threlonad(() -> {
       try {
-        tweetsAndUpdatesStartup();
-      } catch (EarlybirdStartupException e) {
-        earlybirdExceptionHandler.handle(this, e);
+        twelonelontsAndUpdatelonsStartup();
+      } catch (elonarlybirdStartupelonxcelonption elon) {
+        elonarlybirdelonxcelonptionHandlelonr.handlelon(this, elon);
       }
-    }, "index-tweets-and-updates-startup");
-    Thread audioSpaceEventsThread = new Thread(this::loadAudioSpaceEvents,
-        "index-audio-space-events-startup");
-    userEventsThread.start();
-    tweetsAndUpdatesThread.start();
-    audioSpaceEventsThread.start();
+    }, "indelonx-twelonelonts-and-updatelons-startup");
+    Threlonad audioSpacelonelonvelonntsThrelonad = nelonw Threlonad(this::loadAudioSpacelonelonvelonnts,
+        "indelonx-audio-spacelon-elonvelonnts-startup");
+    uselonrelonvelonntsThrelonad.start();
+    twelonelontsAndUpdatelonsThrelonad.start();
+    audioSpacelonelonvelonntsThrelonad.start();
 
     try {
-      userEventsThread.join();
-    } catch (InterruptedException e) {
-      throw new EarlybirdStartupException("Interrupted while indexing user events");
+      uselonrelonvelonntsThrelonad.join();
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      throw nelonw elonarlybirdStartupelonxcelonption("Intelonrruptelond whilelon indelonxing uselonr elonvelonnts");
     }
     try {
-      tweetsAndUpdatesThread.join();
-    } catch (InterruptedException e) {
-      throw new EarlybirdStartupException("Interrupted while indexing tweets and updates");
+      twelonelontsAndUpdatelonsThrelonad.join();
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      throw nelonw elonarlybirdStartupelonxcelonption("Intelonrruptelond whilelon indelonxing twelonelonts and updatelons");
     }
     try {
-      audioSpaceEventsThread.join();
-    } catch (InterruptedException e) {
-      throw new EarlybirdStartupException("Interrupted while indexing audio space events");
+      audioSpacelonelonvelonntsThrelonad.join();
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      throw nelonw elonarlybirdStartupelonxcelonption("Intelonrruptelond whilelon indelonxing audio spacelon elonvelonnts");
     }
   }
 
   /**
-   * Does startups and starts indexing. Returns when the earlybird
-   * is current.
+   * Doelons startups and starts indelonxing. Relonturns whelonn thelon elonarlybird
+   * is currelonnt.
    */
-  @Override
-  public Closeable start() throws EarlybirdStartupException {
-    parallelIndexingStartup();
-    queryCacheStartup();
+  @Ovelonrridelon
+  public Closelonablelon start() throws elonarlybirdStartupelonxcelonption {
+    parallelonlIndelonxingStartup();
+    quelonryCachelonStartup();
 
-    EarlybirdStatus.setStatus(EarlybirdStatusCode.CURRENT);
+    elonarlybirdStatus.selontStatus(elonarlybirdStatusCodelon.CURRelonNT);
 
-    return this::shutdownIndexing;
+    relonturn this::shutdownIndelonxing;
   }
 }

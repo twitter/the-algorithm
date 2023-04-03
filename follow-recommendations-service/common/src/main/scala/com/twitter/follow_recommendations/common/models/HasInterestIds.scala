@@ -1,11 +1,11 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasCustomInterests {
-  def customInterests: Option[Seq[String]]
+trait HasCustomIntelonrelonsts {
+  delonf customIntelonrelonsts: Option[Selonq[String]]
 }
 
-trait HasUttInterests {
-  def uttInterestIds: Option[Seq[Long]]
+trait HasUttIntelonrelonsts {
+  delonf uttIntelonrelonstIds: Option[Selonq[Long]]
 }
 
-trait HasInterestIds extends HasCustomInterests with HasUttInterests {}
+trait HasIntelonrelonstIds elonxtelonnds HasCustomIntelonrelonsts with HasUttIntelonrelonsts {}

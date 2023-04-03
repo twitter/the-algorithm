@@ -1,69 +1,69 @@
-// For details of how to encode and decode thrift, check
-// https://github.com/apache/thrift/blob/master/doc/specs/thrift-binary-protocol.md
+// For delontails of how to elonncodelon and deloncodelon thrift, chelonck
+// https://github.com/apachelon/thrift/blob/mastelonr/doc/speloncs/thrift-binary-protocol.md
 
-// Definitions of the thrift binary format
-typedef enum {
-  TTYPE_STOP   = 0,
-  TTYPE_VOID   = 1,
-  TTYPE_BOOL   = 2,
-  TTYPE_BYTE   = 3,
-  TTYPE_DOUBLE = 4,
-  TTYPE_I16    = 6,
-  TTYPE_I32    = 8,
-  TTYPE_I64    = 10,
-  TTYPE_STRING = 11,
-  TTYPE_STRUCT = 12,
-  TTYPE_MAP    = 13,
-  TTYPE_SET    = 14,
-  TTYPE_LIST   = 15,
-  TTYPE_ENUM   = 16,
-} TTYPES;
+// Delonfinitions of thelon thrift binary format
+typelondelonf elonnum {
+  TTYPelon_STOP   = 0,
+  TTYPelon_VOID   = 1,
+  TTYPelon_BOOL   = 2,
+  TTYPelon_BYTelon   = 3,
+  TTYPelon_DOUBLelon = 4,
+  TTYPelon_I16    = 6,
+  TTYPelon_I32    = 8,
+  TTYPelon_I64    = 10,
+  TTYPelon_STRING = 11,
+  TTYPelon_STRUCT = 12,
+  TTYPelon_MAP    = 13,
+  TTYPelon_SelonT    = 14,
+  TTYPelon_LIST   = 15,
+  TTYPelon_elonNUM   = 16,
+} TTYPelonS;
 
-// Fields of a batch prediction response
-typedef enum {
+// Fielonlds of a batch prelondiction relonsponselon
+typelondelonf elonnum {
   BPR_DUMMY ,
-  BPR_PREDICTIONS,
-} BPR_FIELDS;
+  BPR_PRelonDICTIONS,
+} BPR_FIelonLDS;
 
-// Fields of a datarecord
-typedef enum {
-  DR_CROSS             , // fake field for crosses
+// Fielonlds of a datareloncord
+typelondelonf elonnum {
+  DR_CROSS             , // fakelon fielonld for crosselons
   DR_BINARY            ,
   DR_CONTINUOUS        ,
-  DR_DISCRETE          ,
+  DR_DISCRelonTelon          ,
   DR_STRING            ,
-  DR_SPARSE_BINARY     ,
-  DR_SPARSE_CONTINUOUS ,
+  DR_SPARSelon_BINARY     ,
+  DR_SPARSelon_CONTINUOUS ,
   DR_BLOB              ,
-  DR_GENERAL_TENSOR    ,
-  DR_SPARSE_TENSOR     ,
-} DR_FIELDS;
+  DR_GelonNelonRAL_TelonNSOR    ,
+  DR_SPARSelon_TelonNSOR     ,
+} DR_FIelonLDS;
 
-// Fields for General tensor
-typedef enum {
-  GT_DUMMY  , // dummy field
+// Fielonlds for Gelonnelonral telonnsor
+typelondelonf elonnum {
+  GT_DUMMY  , // dummy fielonld
   GT_RAW    ,
   GT_STRING ,
   GT_INT32  ,
   GT_INT64  ,
   GT_FLOAT  ,
-  GT_DOUBLE ,
+  GT_DOUBLelon ,
   GT_BOOL   ,
-} GT_FIELDS;
+} GT_FIelonLDS;
 
-typedef enum {
-  SP_DUMMY  , // dummy field
+typelondelonf elonnum {
+  SP_DUMMY  , // dummy fielonld
   SP_COO    ,
-} SP_FIELDS;
+} SP_FIelonLDS;
 
-// Enum values from tensor.thrift
-typedef enum {
-  DATA_TYPE_FLOAT  ,
-  DATA_TYPE_DOUBLE ,
-  DATA_TYPE_INT32  ,
-  DATA_TYPE_INT64  ,
-  DATA_TYPE_UINT8  ,
-  DATA_TYPE_STRING ,
-  DATA_TYPE_BYTE   ,
-  DATA_TYPE_BOOL   ,
-} DATA_TYPES;
+// elonnum valuelons from telonnsor.thrift
+typelondelonf elonnum {
+  DATA_TYPelon_FLOAT  ,
+  DATA_TYPelon_DOUBLelon ,
+  DATA_TYPelon_INT32  ,
+  DATA_TYPelon_INT64  ,
+  DATA_TYPelon_UINT8  ,
+  DATA_TYPelon_STRING ,
+  DATA_TYPelon_BYTelon   ,
+  DATA_TYPelon_BOOL   ,
+} DATA_TYPelonS;

@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntDelontails
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ClientEventDetailsMarshaller @Inject() (
-  conversationDetailsMarshaller: ConversationDetailsMarshaller,
-  timelinesDetailsMarshaller: TimelinesDetailsMarshaller,
-  articleDetailsMarshaller: ArticleDetailsMarshaller,
-  liveEventDetailsMarshaller: LiveEventDetailsMarshaller,
-  commerceDetailsMarshaller: CommerceDetailsMarshaller) {
+@Singlelonton
+class ClielonntelonvelonntDelontailsMarshallelonr @Injelonct() (
+  convelonrsationDelontailsMarshallelonr: ConvelonrsationDelontailsMarshallelonr,
+  timelonlinelonsDelontailsMarshallelonr: TimelonlinelonsDelontailsMarshallelonr,
+  articlelonDelontailsMarshallelonr: ArticlelonDelontailsMarshallelonr,
+  livelonelonvelonntDelontailsMarshallelonr: LivelonelonvelonntDelontailsMarshallelonr,
+  commelonrcelonDelontailsMarshallelonr: CommelonrcelonDelontailsMarshallelonr) {
 
-  def apply(clientEventDetails: ClientEventDetails): urt.ClientEventDetails = {
-    urt.ClientEventDetails(
-      conversationDetails =
-        clientEventDetails.conversationDetails.map(conversationDetailsMarshaller(_)),
-      timelinesDetails = clientEventDetails.timelinesDetails.map(timelinesDetailsMarshaller(_)),
-      articleDetails = clientEventDetails.articleDetails.map(articleDetailsMarshaller(_)),
-      liveEventDetails = clientEventDetails.liveEventDetails.map(liveEventDetailsMarshaller(_)),
-      commerceDetails = clientEventDetails.commerceDetails.map(commerceDetailsMarshaller(_))
+  delonf apply(clielonntelonvelonntDelontails: ClielonntelonvelonntDelontails): urt.ClielonntelonvelonntDelontails = {
+    urt.ClielonntelonvelonntDelontails(
+      convelonrsationDelontails =
+        clielonntelonvelonntDelontails.convelonrsationDelontails.map(convelonrsationDelontailsMarshallelonr(_)),
+      timelonlinelonsDelontails = clielonntelonvelonntDelontails.timelonlinelonsDelontails.map(timelonlinelonsDelontailsMarshallelonr(_)),
+      articlelonDelontails = clielonntelonvelonntDelontails.articlelonDelontails.map(articlelonDelontailsMarshallelonr(_)),
+      livelonelonvelonntDelontails = clielonntelonvelonntDelontails.livelonelonvelonntDelontails.map(livelonelonvelonntDelontailsMarshallelonr(_)),
+      commelonrcelonDelontails = clielonntelonvelonntDelontails.commelonrcelonDelontails.map(commelonrcelonDelontailsMarshallelonr(_))
     )
   }
 }

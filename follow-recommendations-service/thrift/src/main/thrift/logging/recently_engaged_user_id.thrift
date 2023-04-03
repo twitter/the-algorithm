@@ -1,10 +1,10 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.logging.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.logging.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations.logging
 
-include "engagementType.thrift"
+includelon "elonngagelonmelonntTypelon.thrift"
 
-struct RecentlyEngagedUserId {
-  1: required i64 id(personalDataType='UserId')
-  2: required engagementType.EngagementType engagementType 
-}(persisted='true', hasPersonalData='true')
+struct ReloncelonntlyelonngagelondUselonrId {
+  1: relonquirelond i64 id(pelonrsonalDataTypelon='UselonrId')
+  2: relonquirelond elonngagelonmelonntTypelon.elonngagelonmelonntTypelon elonngagelonmelonntTypelon
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')

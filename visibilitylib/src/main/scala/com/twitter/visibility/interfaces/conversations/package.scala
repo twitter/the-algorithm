@@ -1,11 +1,11 @@
-package com.twitter.visibility.interfaces
+packagelon com.twittelonr.visibility.intelonrfacelons
 
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import scala.collection.Map
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonpository
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonl
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlTypelon
+import scala.collelonction.Map
 
-package object conversations {
-  type BatchSafetyLabelRepository =
-    KeyValueRepository[(Long, Seq[Long]), Long, Map[SafetyLabelType, SafetyLabel]]
+packagelon objelonct convelonrsations {
+  typelon BatchSafelontyLabelonlRelonpository =
+    KelonyValuelonRelonpository[(Long, Selonq[Long]), Long, Map[SafelontyLabelonlTypelon, SafelontyLabelonl]]
 }

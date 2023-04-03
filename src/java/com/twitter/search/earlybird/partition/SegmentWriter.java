@@ -1,239 +1,239 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.io.IOException;
-import java.util.EnumMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
+import java.io.IOelonxcelonption;
+import java.util.elonnumMap;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.concurrelonnt.atomic.AtomicLong;
 
-import com.google.common.collect.HashBasedTable;
-import com.google.common.collect.Table;
+import com.googlelon.common.collelonct.HashBaselondTablelon;
+import com.googlelon.common.collelonct.Tablelon;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.Percentile;
-import com.twitter.search.common.metrics.PercentileUtil;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchTimer;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.index.EarlybirdSegment;
-import com.twitter.util.Time;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.Pelonrcelonntilelon;
+import com.twittelonr.selonarch.common.melontrics.PelonrcelonntilelonUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonntTypelon;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.DocumelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonnt;
+import com.twittelonr.util.Timelon;
 
-public class SegmentWriter implements ISegmentWriter {
+public class SelongmelonntWritelonr implelonmelonnts ISelongmelonntWritelonr {
 
-  // helper, used for collecting stats
-  enum FailureReason {
-    FAILED_INSERT,
-    FAILED_FOR_TWEET_IN_INDEX,
-    FAILED_FOR_COMPLETE_SEGMENT
+  // helonlpelonr, uselond for colleloncting stats
+  elonnum FailurelonRelonason {
+    FAILelonD_INSelonRT,
+    FAILelonD_FOR_TWelonelonT_IN_INDelonX,
+    FAILelonD_FOR_COMPLelonTelon_SelonGMelonNT
   }
 
-  private static final String STAT_PREFIX = "segment_writer_";
-  private static final String EVENT_COUNTER = STAT_PREFIX + "%s_%s_segment_%s";
-  private static final String EVENT_COUNTER_ALL_SEGMENTS = STAT_PREFIX + "%s_%s_all_segments";
-  private static final String EVENT_TIMERS = STAT_PREFIX + "%s_timing";
-  private static final String DROPPED_UPDATES_FOR_DISABLED_SEGMENTS =
-      STAT_PREFIX + "%s_dropped_updates_for_disabled_segments";
-  private static final String INDEXING_LATENCY =
-      STAT_PREFIX + "%s_indexing_latency_ms";
+  privatelon static final String STAT_PRelonFIX = "selongmelonnt_writelonr_";
+  privatelon static final String elonVelonNT_COUNTelonR = STAT_PRelonFIX + "%s_%s_selongmelonnt_%s";
+  privatelon static final String elonVelonNT_COUNTelonR_ALL_SelonGMelonNTS = STAT_PRelonFIX + "%s_%s_all_selongmelonnts";
+  privatelon static final String elonVelonNT_TIMelonRS = STAT_PRelonFIX + "%s_timing";
+  privatelon static final String DROPPelonD_UPDATelonS_FOR_DISABLelonD_SelonGMelonNTS =
+      STAT_PRelonFIX + "%s_droppelond_updatelons_for_disablelond_selongmelonnts";
+  privatelon static final String INDelonXING_LATelonNCY =
+      STAT_PRelonFIX + "%s_indelonxing_latelonncy_ms";
 
-  private final byte penguinVersion;
-  private final DocumentFactory<ThriftIndexingEvent> updateFactory;
-  private final DocumentFactory<ThriftIndexingEvent> documentFactory;
-  private final SearchRateCounter missingPenguinVersion;
-  private final EarlybirdSegment earlybirdSegment;
-  private final SegmentInfo segmentInfo;
-  // Stores per segment counters for each (indexing event type, result) pair
-  // Example stat name
-  // "segment_writer_partial_update_success_segment_twttr_search_test_start_%d_p_0_of_1"
-  private final Table<ThriftIndexingEventType, Result, SearchRateCounter> statsForUpdateType =
-      HashBasedTable.create();
-  // Stores aggregated counters for each (indexing event type, result) pair across all segments
-  // Example stat name
-  // "segment_writer_partial_update_success_all_segments"
-  private final Table<ThriftIndexingEventType, Result, SearchRateCounter>
-      aggregateStatsForUpdateType = HashBasedTable.create();
-  // Stores per segment counters for each (indexing event type, non-retryable failure reason) pair
-  // Example stat name
-  // "segment_writer_partial_update_failed_for_tweet_in_index_segment_twttr_search_t_%d_p_0_of_1"
-  private final Table<ThriftIndexingEventType, FailureReason, SearchRateCounter>
-      failureStatsForUpdateType = HashBasedTable.create();
-  // Stores aggregated counters for each (indexing event type, non-retryable failure reason) pair
-  // Example stat name
-  // "segment_writer_partial_update_failed_for_tweet_in_index_all_segments"
-  private final Table<ThriftIndexingEventType, FailureReason, SearchRateCounter>
-      aggregateFailureStatsForUpdateType = HashBasedTable.create();
-  private final EnumMap<ThriftIndexingEventType, SearchTimerStats> eventTimers =
-      new EnumMap<>(ThriftIndexingEventType.class);
-  private final EnumMap<ThriftIndexingEventType, SearchRateCounter>
-    droppedUpdatesForDisabledSegments = new EnumMap<>(ThriftIndexingEventType.class);
-  // We pass this stat from the SearchIndexingMetricSet so that we can share the atomic longs
-  // between all SegmentWriters and export the largest freshness value across all segments.
-  private final EnumMap<ThriftIndexingEventType, AtomicLong> updateFreshness;
-  private final EnumMap<ThriftIndexingEventType, Percentile<Long>> indexingLatency =
-      new EnumMap<>(ThriftIndexingEventType.class);
+  privatelon final bytelon pelonnguinVelonrsion;
+  privatelon final DocumelonntFactory<ThriftIndelonxingelonvelonnt> updatelonFactory;
+  privatelon final DocumelonntFactory<ThriftIndelonxingelonvelonnt> documelonntFactory;
+  privatelon final SelonarchRatelonCountelonr missingPelonnguinVelonrsion;
+  privatelon final elonarlybirdSelongmelonnt elonarlybirdSelongmelonnt;
+  privatelon final SelongmelonntInfo selongmelonntInfo;
+  // Storelons pelonr selongmelonnt countelonrs for elonach (indelonxing elonvelonnt typelon, relonsult) pair
+  // elonxamplelon stat namelon
+  // "selongmelonnt_writelonr_partial_updatelon_succelonss_selongmelonnt_twttr_selonarch_telonst_start_%d_p_0_of_1"
+  privatelon final Tablelon<ThriftIndelonxingelonvelonntTypelon, Relonsult, SelonarchRatelonCountelonr> statsForUpdatelonTypelon =
+      HashBaselondTablelon.crelonatelon();
+  // Storelons aggrelongatelond countelonrs for elonach (indelonxing elonvelonnt typelon, relonsult) pair across all selongmelonnts
+  // elonxamplelon stat namelon
+  // "selongmelonnt_writelonr_partial_updatelon_succelonss_all_selongmelonnts"
+  privatelon final Tablelon<ThriftIndelonxingelonvelonntTypelon, Relonsult, SelonarchRatelonCountelonr>
+      aggrelongatelonStatsForUpdatelonTypelon = HashBaselondTablelon.crelonatelon();
+  // Storelons pelonr selongmelonnt countelonrs for elonach (indelonxing elonvelonnt typelon, non-relontryablelon failurelon relonason) pair
+  // elonxamplelon stat namelon
+  // "selongmelonnt_writelonr_partial_updatelon_failelond_for_twelonelont_in_indelonx_selongmelonnt_twttr_selonarch_t_%d_p_0_of_1"
+  privatelon final Tablelon<ThriftIndelonxingelonvelonntTypelon, FailurelonRelonason, SelonarchRatelonCountelonr>
+      failurelonStatsForUpdatelonTypelon = HashBaselondTablelon.crelonatelon();
+  // Storelons aggrelongatelond countelonrs for elonach (indelonxing elonvelonnt typelon, non-relontryablelon failurelon relonason) pair
+  // elonxamplelon stat namelon
+  // "selongmelonnt_writelonr_partial_updatelon_failelond_for_twelonelont_in_indelonx_all_selongmelonnts"
+  privatelon final Tablelon<ThriftIndelonxingelonvelonntTypelon, FailurelonRelonason, SelonarchRatelonCountelonr>
+      aggrelongatelonFailurelonStatsForUpdatelonTypelon = HashBaselondTablelon.crelonatelon();
+  privatelon final elonnumMap<ThriftIndelonxingelonvelonntTypelon, SelonarchTimelonrStats> elonvelonntTimelonrs =
+      nelonw elonnumMap<>(ThriftIndelonxingelonvelonntTypelon.class);
+  privatelon final elonnumMap<ThriftIndelonxingelonvelonntTypelon, SelonarchRatelonCountelonr>
+    droppelondUpdatelonsForDisablelondSelongmelonnts = nelonw elonnumMap<>(ThriftIndelonxingelonvelonntTypelon.class);
+  // Welon pass this stat from thelon SelonarchIndelonxingMelontricSelont so that welon can sharelon thelon atomic longs
+  // belontwelonelonn all SelongmelonntWritelonrs and elonxport thelon largelonst frelonshnelonss valuelon across all selongmelonnts.
+  privatelon final elonnumMap<ThriftIndelonxingelonvelonntTypelon, AtomicLong> updatelonFrelonshnelonss;
+  privatelon final elonnumMap<ThriftIndelonxingelonvelonntTypelon, Pelonrcelonntilelon<Long>> indelonxingLatelonncy =
+      nelonw elonnumMap<>(ThriftIndelonxingelonvelonntTypelon.class);
 
-  public SegmentWriter(
-      SegmentInfo segmentInfo,
-      EnumMap<ThriftIndexingEventType, AtomicLong> updateFreshness
+  public SelongmelonntWritelonr(
+      SelongmelonntInfo selongmelonntInfo,
+      elonnumMap<ThriftIndelonxingelonvelonntTypelon, AtomicLong> updatelonFrelonshnelonss
   ) {
-    this.segmentInfo = segmentInfo;
-    this.updateFreshness = updateFreshness;
-    this.earlybirdSegment = segmentInfo.getIndexSegment();
-    this.penguinVersion = EarlybirdConfig.getPenguinVersionByte();
-    this.updateFactory = segmentInfo.getEarlybirdIndexConfig().createUpdateFactory();
-    this.documentFactory = segmentInfo.getEarlybirdIndexConfig().createDocumentFactory();
+    this.selongmelonntInfo = selongmelonntInfo;
+    this.updatelonFrelonshnelonss = updatelonFrelonshnelonss;
+    this.elonarlybirdSelongmelonnt = selongmelonntInfo.gelontIndelonxSelongmelonnt();
+    this.pelonnguinVelonrsion = elonarlybirdConfig.gelontPelonnguinVelonrsionBytelon();
+    this.updatelonFactory = selongmelonntInfo.gelontelonarlybirdIndelonxConfig().crelonatelonUpdatelonFactory();
+    this.documelonntFactory = selongmelonntInfo.gelontelonarlybirdIndelonxConfig().crelonatelonDocumelonntFactory();
 
-    String segmentName = segmentInfo.getSegmentName();
-    for (ThriftIndexingEventType type : ThriftIndexingEventType.values()) {
-      for (Result result : Result.values()) {
-        String stat = String.format(EVENT_COUNTER, type, result, segmentName).toLowerCase();
-        statsForUpdateType.put(type, result, SearchRateCounter.export(stat));
+    String selongmelonntNamelon = selongmelonntInfo.gelontSelongmelonntNamelon();
+    for (ThriftIndelonxingelonvelonntTypelon typelon : ThriftIndelonxingelonvelonntTypelon.valuelons()) {
+      for (Relonsult relonsult : Relonsult.valuelons()) {
+        String stat = String.format(elonVelonNT_COUNTelonR, typelon, relonsult, selongmelonntNamelon).toLowelonrCaselon();
+        statsForUpdatelonTypelon.put(typelon, relonsult, SelonarchRatelonCountelonr.elonxport(stat));
 
-        String aggregateStat =
-            String.format(EVENT_COUNTER_ALL_SEGMENTS, type, result).toLowerCase();
-        aggregateStatsForUpdateType.put(type, result, SearchRateCounter.export(aggregateStat));
+        String aggrelongatelonStat =
+            String.format(elonVelonNT_COUNTelonR_ALL_SelonGMelonNTS, typelon, relonsult).toLowelonrCaselon();
+        aggrelongatelonStatsForUpdatelonTypelon.put(typelon, relonsult, SelonarchRatelonCountelonr.elonxport(aggrelongatelonStat));
       }
 
-      for (FailureReason reason : FailureReason.values()) {
-        String stat = String.format(EVENT_COUNTER, type, reason, segmentName).toLowerCase();
-        failureStatsForUpdateType.put(type, reason, SearchRateCounter.export(stat));
+      for (FailurelonRelonason relonason : FailurelonRelonason.valuelons()) {
+        String stat = String.format(elonVelonNT_COUNTelonR, typelon, relonason, selongmelonntNamelon).toLowelonrCaselon();
+        failurelonStatsForUpdatelonTypelon.put(typelon, relonason, SelonarchRatelonCountelonr.elonxport(stat));
 
-        String aggregateStat =
-            String.format(EVENT_COUNTER_ALL_SEGMENTS, type, reason).toLowerCase();
-        aggregateFailureStatsForUpdateType.put(
-            type, reason, SearchRateCounter.export(aggregateStat));
+        String aggrelongatelonStat =
+            String.format(elonVelonNT_COUNTelonR_ALL_SelonGMelonNTS, typelon, relonason).toLowelonrCaselon();
+        aggrelongatelonFailurelonStatsForUpdatelonTypelon.put(
+            typelon, relonason, SelonarchRatelonCountelonr.elonxport(aggrelongatelonStat));
       }
 
-      eventTimers.put(type, SearchTimerStats.export(
-          String.format(EVENT_TIMERS, type).toLowerCase(),
-          TimeUnit.MICROSECONDS,
-          false));
-      droppedUpdatesForDisabledSegments.put(
-          type,
-          SearchRateCounter.export(
-              String.format(DROPPED_UPDATES_FOR_DISABLED_SEGMENTS, type).toLowerCase()));
-      indexingLatency.put(
-          type,
-           PercentileUtil.createPercentile(
-              String.format(INDEXING_LATENCY, type).toLowerCase()));
+      elonvelonntTimelonrs.put(typelon, SelonarchTimelonrStats.elonxport(
+          String.format(elonVelonNT_TIMelonRS, typelon).toLowelonrCaselon(),
+          TimelonUnit.MICROSelonCONDS,
+          falselon));
+      droppelondUpdatelonsForDisablelondSelongmelonnts.put(
+          typelon,
+          SelonarchRatelonCountelonr.elonxport(
+              String.format(DROPPelonD_UPDATelonS_FOR_DISABLelonD_SelonGMelonNTS, typelon).toLowelonrCaselon()));
+      indelonxingLatelonncy.put(
+          typelon,
+           PelonrcelonntilelonUtil.crelonatelonPelonrcelonntilelon(
+              String.format(INDelonXING_LATelonNCY, typelon).toLowelonrCaselon()));
     }
 
-    this.missingPenguinVersion = SearchRateCounter.export(
-        "documents_without_current_penguin_version_" + penguinVersion + "_" + segmentName);
+    this.missingPelonnguinVelonrsion = SelonarchRatelonCountelonr.elonxport(
+        "documelonnts_without_currelonnt_pelonnguin_velonrsion_" + pelonnguinVelonrsion + "_" + selongmelonntNamelon);
   }
 
-  @Override
-  public synchronized Result indexThriftVersionedEvents(ThriftVersionedEvents tve)
-      throws IOException {
-    if (!tve.getVersionedEvents().containsKey(penguinVersion)) {
-      missingPenguinVersion.increment();
-      return Result.FAILURE_NOT_RETRYABLE;
+  @Ovelonrridelon
+  public synchronizelond Relonsult indelonxThriftVelonrsionelondelonvelonnts(ThriftVelonrsionelondelonvelonnts tvelon)
+      throws IOelonxcelonption {
+    if (!tvelon.gelontVelonrsionelondelonvelonnts().containsKelony(pelonnguinVelonrsion)) {
+      missingPelonnguinVelonrsion.increlonmelonnt();
+      relonturn Relonsult.FAILURelon_NOT_RelonTRYABLelon;
     }
 
-    ThriftIndexingEvent tie = tve.getVersionedEvents().get(penguinVersion);
-    ThriftIndexingEventType eventType = tie.getEventType();
+    ThriftIndelonxingelonvelonnt tielon = tvelon.gelontVelonrsionelondelonvelonnts().gelont(pelonnguinVelonrsion);
+    ThriftIndelonxingelonvelonntTypelon elonvelonntTypelon = tielon.gelontelonvelonntTypelon();
 
-    if (!segmentInfo.isEnabled()) {
-      droppedUpdatesForDisabledSegments.get(eventType).increment();
-      return Result.SUCCESS;
+    if (!selongmelonntInfo.iselonnablelond()) {
+      droppelondUpdatelonsForDisablelondSelongmelonnts.gelont(elonvelonntTypelon).increlonmelonnt();
+      relonturn Relonsult.SUCCelonSS;
     }
 
-    SearchTimerStats timerStats = eventTimers.get(eventType);
-    SearchTimer timer = timerStats.startNewTimer();
+    SelonarchTimelonrStats timelonrStats = elonvelonntTimelonrs.gelont(elonvelonntTypelon);
+    SelonarchTimelonr timelonr = timelonrStats.startNelonwTimelonr();
 
-    long tweetId = tve.getId();
-    Result result = tryApplyIndexingEvent(tweetId, tie);
+    long twelonelontId = tvelon.gelontId();
+    Relonsult relonsult = tryApplyIndelonxingelonvelonnt(twelonelontId, tielon);
 
-    if (result == Result.SUCCESS) {
-      long tweetAgeInMs = SnowflakeIdParser.getTimestampFromTweetId(tweetId);
+    if (relonsult == Relonsult.SUCCelonSS) {
+      long twelonelontAgelonInMs = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(twelonelontId);
 
-      AtomicLong freshness = updateFreshness.get(tie.getEventType());
-      // Note that this is racy at startup because we don't do an atomic swap, but it will be
-      // approximately accurate, and this stat doesn't matter until we are current.
-      if (freshness.get() < tweetAgeInMs) {
-        freshness.set(tweetAgeInMs);
+      AtomicLong frelonshnelonss = updatelonFrelonshnelonss.gelont(tielon.gelontelonvelonntTypelon());
+      // Notelon that this is racy at startup beloncauselon welon don't do an atomic swap, but it will belon
+      // approximatelonly accuratelon, and this stat doelonsn't mattelonr until welon arelon currelonnt.
+      if (frelonshnelonss.gelont() < twelonelontAgelonInMs) {
+        frelonshnelonss.selont(twelonelontAgelonInMs);
       }
 
-      if (tie.isSetCreateTimeMillis()) {
-        long age = Time.now().inMillis() - tie.getCreateTimeMillis();
-        indexingLatency.get(tie.getEventType()).record(age);
+      if (tielon.isSelontCrelonatelonTimelonMillis()) {
+        long agelon = Timelon.now().inMillis() - tielon.gelontCrelonatelonTimelonMillis();
+        indelonxingLatelonncy.gelont(tielon.gelontelonvelonntTypelon()).reloncord(agelon);
       }
     }
 
-    statsForUpdateType.get(eventType, result).increment();
-    aggregateStatsForUpdateType.get(eventType, result).increment();
-    timerStats.stopTimerAndIncrement(timer);
+    statsForUpdatelonTypelon.gelont(elonvelonntTypelon, relonsult).increlonmelonnt();
+    aggrelongatelonStatsForUpdatelonTypelon.gelont(elonvelonntTypelon, relonsult).increlonmelonnt();
+    timelonrStats.stopTimelonrAndIncrelonmelonnt(timelonr);
 
-    return result;
+    relonturn relonsult;
   }
 
-  public SegmentInfo getSegmentInfo() {
-    return segmentInfo;
+  public SelongmelonntInfo gelontSelongmelonntInfo() {
+    relonturn selongmelonntInfo;
   }
 
-  public boolean hasTweet(long tweetId) throws IOException {
-    return earlybirdSegment.hasDocument(tweetId);
+  public boolelonan hasTwelonelont(long twelonelontId) throws IOelonxcelonption {
+    relonturn elonarlybirdSelongmelonnt.hasDocumelonnt(twelonelontId);
   }
 
-  private Result tryApplyIndexingEvent(long tweetId, ThriftIndexingEvent tie) throws IOException {
-    if (applyIndexingEvent(tie, tweetId)) {
-      return Result.SUCCESS;
+  privatelon Relonsult tryApplyIndelonxingelonvelonnt(long twelonelontId, ThriftIndelonxingelonvelonnt tielon) throws IOelonxcelonption {
+    if (applyIndelonxingelonvelonnt(tielon, twelonelontId)) {
+      relonturn Relonsult.SUCCelonSS;
     }
 
-    if (tie.getEventType() == ThriftIndexingEventType.INSERT) {
-      // We don't retry inserts
-      incrementFailureStats(tie, FailureReason.FAILED_INSERT);
-      return Result.FAILURE_NOT_RETRYABLE;
+    if (tielon.gelontelonvelonntTypelon() == ThriftIndelonxingelonvelonntTypelon.INSelonRT) {
+      // Welon don't relontry inselonrts
+      increlonmelonntFailurelonStats(tielon, FailurelonRelonason.FAILelonD_INSelonRT);
+      relonturn Relonsult.FAILURelon_NOT_RelonTRYABLelon;
     }
 
-    if (earlybirdSegment.hasDocument(tweetId)) {
-      // An update fails to be applied for a tweet that is in the index.
-      incrementFailureStats(tie, FailureReason.FAILED_FOR_TWEET_IN_INDEX);
-      return Result.FAILURE_NOT_RETRYABLE;
+    if (elonarlybirdSelongmelonnt.hasDocumelonnt(twelonelontId)) {
+      // An updatelon fails to belon applielond for a twelonelont that is in thelon indelonx.
+      increlonmelonntFailurelonStats(tielon, FailurelonRelonason.FAILelonD_FOR_TWelonelonT_IN_INDelonX);
+      relonturn Relonsult.FAILURelon_NOT_RelonTRYABLelon;
     }
 
-    if (segmentInfo.isComplete()) {
-      // An update is directed at a tweet that is not in the segment (hasDocument(tweetId) failed),
-      // and the segment is complete (i.e. there will never be new tweets for this segment).
-      incrementFailureStats(tie, FailureReason.FAILED_FOR_COMPLETE_SEGMENT);
-      return Result.FAILURE_NOT_RETRYABLE;
+    if (selongmelonntInfo.isComplelontelon()) {
+      // An updatelon is direlonctelond at a twelonelont that is not in thelon selongmelonnt (hasDocumelonnt(twelonelontId) failelond),
+      // and thelon selongmelonnt is complelontelon (i.elon. thelonrelon will nelonvelonr belon nelonw twelonelonts for this selongmelonnt).
+      increlonmelonntFailurelonStats(tielon, FailurelonRelonason.FAILelonD_FOR_COMPLelonTelon_SelonGMelonNT);
+      relonturn Relonsult.FAILURelon_NOT_RelonTRYABLelon;
     }
 
-    // The tweet may arrive later for this event, so it's possible a later try will succeed
-    return Result.FAILURE_RETRYABLE;
+    // Thelon twelonelont may arrivelon latelonr for this elonvelonnt, so it's possiblelon a latelonr try will succelonelond
+    relonturn Relonsult.FAILURelon_RelonTRYABLelon;
   }
 
-  private void incrementFailureStats(ThriftIndexingEvent tie, FailureReason failureReason) {
-    failureStatsForUpdateType.get(tie.getEventType(), failureReason).increment();
-    aggregateFailureStatsForUpdateType.get(tie.getEventType(), failureReason).increment();
+  privatelon void increlonmelonntFailurelonStats(ThriftIndelonxingelonvelonnt tielon, FailurelonRelonason failurelonRelonason) {
+    failurelonStatsForUpdatelonTypelon.gelont(tielon.gelontelonvelonntTypelon(), failurelonRelonason).increlonmelonnt();
+    aggrelongatelonFailurelonStatsForUpdatelonTypelon.gelont(tielon.gelontelonvelonntTypelon(), failurelonRelonason).increlonmelonnt();
   }
 
-  private boolean applyIndexingEvent(ThriftIndexingEvent tie, long tweetId) throws IOException {
-    switch (tie.getEventType()) {
-      case OUT_OF_ORDER_APPEND:
-        return earlybirdSegment.appendOutOfOrder(updateFactory.newDocument(tie), tweetId);
-      case PARTIAL_UPDATE:
-        return earlybirdSegment.applyPartialUpdate(tie);
-      case DELETE:
-        return earlybirdSegment.delete(tweetId);
-      case INSERT:
-        earlybirdSegment.addDocument(buildInsertDocument(tie, tweetId));
-        return true;
-      default:
-        throw new IllegalArgumentException("Unexpected update type: " + tie.getEventType());
+  privatelon boolelonan applyIndelonxingelonvelonnt(ThriftIndelonxingelonvelonnt tielon, long twelonelontId) throws IOelonxcelonption {
+    switch (tielon.gelontelonvelonntTypelon()) {
+      caselon OUT_OF_ORDelonR_APPelonND:
+        relonturn elonarlybirdSelongmelonnt.appelonndOutOfOrdelonr(updatelonFactory.nelonwDocumelonnt(tielon), twelonelontId);
+      caselon PARTIAL_UPDATelon:
+        relonturn elonarlybirdSelongmelonnt.applyPartialUpdatelon(tielon);
+      caselon DelonLelonTelon:
+        relonturn elonarlybirdSelongmelonnt.delonlelontelon(twelonelontId);
+      caselon INSelonRT:
+        elonarlybirdSelongmelonnt.addDocumelonnt(buildInselonrtDocumelonnt(tielon, twelonelontId));
+        relonturn truelon;
+      delonfault:
+        throw nelonw IllelongalArgumelonntelonxcelonption("Unelonxpelonctelond updatelon typelon: " + tielon.gelontelonvelonntTypelon());
     }
   }
 
-  private TweetDocument buildInsertDocument(ThriftIndexingEvent tie, long tweetId) {
-    return new TweetDocument(
-        tweetId,
-        segmentInfo.getTimeSliceID(),
-        tie.getCreateTimeMillis(),
-        documentFactory.newDocument(tie));
+  privatelon TwelonelontDocumelonnt buildInselonrtDocumelonnt(ThriftIndelonxingelonvelonnt tielon, long twelonelontId) {
+    relonturn nelonw TwelonelontDocumelonnt(
+        twelonelontId,
+        selongmelonntInfo.gelontTimelonSlicelonID(),
+        tielon.gelontCrelonatelonTimelonMillis(),
+        documelonntFactory.nelonwDocumelonnt(tielon));
   }
 }

@@ -1,110 +1,110 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.multi_type_graph
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.multi_typelon_graph
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
-include "entity.thrift"
+includelon "elonntity.thrift"
 
-union LeftNode {
-  1: i64 userId(personalDataType = 'UserId')
-}(persisted = 'true', hasPersonalData = 'true')
+union LelonftNodelon {
+  1: i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct RightNode {
-  1: required RightNodeType rightNodeType(personalDataType = 'EngagementsPublic')
-  2: required Noun noun
-}(persisted = 'true', hasPersonalData = 'true')
+struct RightNodelon {
+  1: relonquirelond RightNodelonTypelon rightNodelonTypelon(pelonrsonalDataTypelon = 'elonngagelonmelonntsPublic')
+  2: relonquirelond Noun noun
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct RightNodeWithEdgeWeight {
-  1: required RightNode rightNode
-  2: required double weight(personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct RightNodelonWithelondgelonWelonight {
+  1: relonquirelond RightNodelon rightNodelon
+  2: relonquirelond doublelon welonight(pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-enum RightNodeType {
-  FollowUser = 1,
-  FavUser = 2,
-  BlockUser = 3,
-  AbuseReportUser = 4,
-  SpamReportUser = 5,
+elonnum RightNodelonTypelon {
+  FollowUselonr = 1,
+  FavUselonr = 2,
+  BlockUselonr = 3,
+  AbuselonRelonportUselonr = 4,
+  SpamRelonportUselonr = 5,
   FollowTopic = 6,
   SignUpCountry = 7,
-  ConsumedLanguage = 8,
-  FavTweet = 9,
-  ReplyTweet = 10,
-  RetweetTweet = 11,
-  NotifOpenOrClickTweet = 12,
-  SearchQuery = 13
-}(persisted = 'true')
+  ConsumelondLanguagelon = 8,
+  FavTwelonelont = 9,
+  RelonplyTwelonelont = 10,
+  RelontwelonelontTwelonelont = 11,
+  NotifOpelonnOrClickTwelonelont = 12,
+  SelonarchQuelonry = 13
+}(pelonrsistelond = 'truelon')
 
 union Noun {
-// Note: Each of the following needs to have an ordering defined in Ordering[Noun]
-// in file: multi_type_graph/assemble_multi_type_graph/AssembleMultiTypeGraph.scala
-// Please take note to make changes to Ordering[Noun] when modifying/adding new noun type here
-  1: i64 userId(personalDataType = 'UserId')
-  2: string country(personalDataType = 'InferredCountry')
-  3: string language(personalDataType = 'InferredLanguage')
-  4: i64 topicId(personalDataType = 'TopicFollow')
-  5: i64 tweetId(personalDataType = 'TweetId')
-  6: string query(personalDataType = 'SearchQuery')
-}(persisted = 'true', hasPersonalData = 'true')
+// Notelon: elonach of thelon following nelonelonds to havelon an ordelonring delonfinelond in Ordelonring[Noun]
+// in filelon: multi_typelon_graph/asselonmblelon_multi_typelon_graph/AsselonmblelonMultiTypelonGraph.scala
+// Plelonaselon takelon notelon to makelon changelons to Ordelonring[Noun] whelonn modifying/adding nelonw noun typelon helonrelon
+  1: i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: string country(pelonrsonalDataTypelon = 'InfelonrrelondCountry')
+  3: string languagelon(pelonrsonalDataTypelon = 'InfelonrrelondLanguagelon')
+  4: i64 topicId(pelonrsonalDataTypelon = 'TopicFollow')
+  5: i64 twelonelontId(pelonrsonalDataTypelon = 'TwelonelontId')
+  6: string quelonry(pelonrsonalDataTypelon = 'SelonarchQuelonry')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct RightNodeWithEdgeWeightList {
-  1: required list<RightNodeWithEdgeWeight> rightNodeWithEdgeWeightList
-}(persisted = 'true', hasPersonalData = 'true')
+struct RightNodelonWithelondgelonWelonightList {
+  1: relonquirelond list<RightNodelonWithelondgelonWelonight> rightNodelonWithelondgelonWelonightList
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct NounWithFrequency {
-  1: required Noun noun
-  2: required double frequency (personalDataType = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct NounWithFrelonquelonncy {
+  1: relonquirelond Noun noun
+  2: relonquirelond doublelon frelonquelonncy (pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct NounWithFrequencyList {
-  1: required list<NounWithFrequency> nounWithFrequencyList
-}(persisted = 'true', hasPersonalData = 'true')
+struct NounWithFrelonquelonncyList {
+  1: relonquirelond list<NounWithFrelonquelonncy> nounWithFrelonquelonncyList
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct RightNodeTypeStruct {
-   1: required RightNodeType rightNodeType
-}(persisted = 'true', hasPersonalData = 'false')
+struct RightNodelonTypelonStruct {
+   1: relonquirelond RightNodelonTypelon rightNodelonTypelon
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
-struct MultiTypeGraphEdge{
-   1: required LeftNode leftNode
-   2: required RightNodeWithEdgeWeight rightNodeWithEdgeWeight
-}(persisted = 'true', hasPersonalData = 'true')
+struct MultiTypelonGraphelondgelon{
+   1: relonquirelond LelonftNodelon lelonftNodelon
+   2: relonquirelond RightNodelonWithelondgelonWelonight rightNodelonWithelondgelonWelonight
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct LeftNodeToRightNodeWithEdgeWeightList{
-   1: required LeftNode leftNode
-   2: required RightNodeWithEdgeWeightList rightNodeWithEdgeWeightList
-}(persisted = 'true', hasPersonalData = 'true')
+struct LelonftNodelonToRightNodelonWithelondgelonWelonightList{
+   1: relonquirelond LelonftNodelon lelonftNodelon
+   2: relonquirelond RightNodelonWithelondgelonWelonightList rightNodelonWithelondgelonWelonightList
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')
 
-struct RightNodeSimHashSketch {
-  1: required RightNode rightNode
-  2: required list<byte> simHashOfEngagers
-  3: optional double normalizer
-}(persisted='true', hasPersonalData = 'false')
+struct RightNodelonSimHashSkelontch {
+  1: relonquirelond RightNodelon rightNodelon
+  2: relonquirelond list<bytelon> simHashOfelonngagelonrs
+  3: optional doublelon normalizelonr
+}(pelonrsistelond='truelon', hasPelonrsonalData = 'falselon')
 
-struct SimilarRightNode {
-  1: required RightNode rightNode
-  2: required double score (personalDataType = 'EngagementScore')
-}(persisted='true', hasPersonalData = 'true')
+struct SimilarRightNodelon {
+  1: relonquirelond RightNodelon rightNodelon
+  2: relonquirelond doublelon scorelon (pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct SimilarRightNodes {
-  1: required list<SimilarRightNode> rightNodesWithScores
-}(persisted='true', hasPersonalData = 'true')
+struct SimilarRightNodelons {
+  1: relonquirelond list<SimilarRightNodelon> rightNodelonsWithScorelons
+}(pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct RightNodeWithScore {
-  1: required RightNode rightNode
-  2: required double clusterScore (personalDataType = 'EngagementScore')
-}(persisted='true', hasPersonalData = 'true')
+struct RightNodelonWithScorelon {
+  1: relonquirelond RightNodelon rightNodelon
+  2: relonquirelond doublelon clustelonrScorelon (pelonrsonalDataTypelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct RightNodeWithScoreList {
-  1: required list<RightNodeWithScore> rightNodeWithScoreList
-}(persisted='true', hasPersonalData = 'true')
+struct RightNodelonWithScorelonList {
+  1: relonquirelond list<RightNodelonWithScorelon> rightNodelonWithScorelonList
+}(pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
 
-struct RightNodeWithClusters {
-  1: required RightNode rightNode
-  2: required string modelVersion (personalDataType = 'EngagementId')
-  3: required map<i32, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
-}(persisted="true", hasPersonalData = 'true')
+struct RightNodelonWithClustelonrs {
+  1: relonquirelond RightNodelon rightNodelon
+  2: relonquirelond string modelonlVelonrsion (pelonrsonalDataTypelon = 'elonngagelonmelonntId')
+  3: relonquirelond map<i32, doublelon> clustelonrIdToScorelons (pelonrsonalDataTypelonKelony = 'elonngagelonmelonntId', pelonrsonalDataTypelonValuelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct ModelVersionWithClusterScores {
-  1: required string modelVersion (personalDataType = 'EngagementId')
-  2: required map<i32, double> clusterIdToScores (personalDataTypeKey = 'EngagementId', personalDataTypeValue = 'EngagementScore')
-}(persisted = 'true', hasPersonalData = 'true')
+struct ModelonlVelonrsionWithClustelonrScorelons {
+  1: relonquirelond string modelonlVelonrsion (pelonrsonalDataTypelon = 'elonngagelonmelonntId')
+  2: relonquirelond map<i32, doublelon> clustelonrIdToScorelons (pelonrsonalDataTypelonKelony = 'elonngagelonmelonntId', pelonrsonalDataTypelonValuelon = 'elonngagelonmelonntScorelon')
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'truelon')

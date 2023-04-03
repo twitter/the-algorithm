@@ -1,218 +1,218 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
+import java.util.Collelonction;
+import java.util.Collelonctions;
+import java.util.Datelon;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.schema.earlybird.FlushVersion;
-import com.twitter.search.common.util.io.flushable.PersistentFile;
-import com.twitter.search.earlybird.archive.ArchiveSegment;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.util.ScrubGenUtil;
-import com.twitter.util.TwitterDateFormat;
+import com.twittelonr.selonarch.common.databaselon.DatabaselonConfig;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.FlushVelonrsion;
+import com.twittelonr.selonarch.common.util.io.flushablelon.PelonrsistelonntFilelon;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonSelongmelonnt;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.selonarch.elonarlybird.util.ScrubGelonnUtil;
+import com.twittelonr.util.TwittelonrDatelonFormat;
 
 /**
- * Encapsulates config information related to reading and writing segments to local filesystem or
+ * elonncapsulatelons config information relonlatelond to relonading and writing selongmelonnts to local filelonsystelonm or
  * HDFS.
  */
-public class SegmentSyncConfig {
-  public static final String LUCENE_DIR_PREFIX = "lucene_";
+public class SelongmelonntSyncConfig {
+  public static final String LUCelonNelon_DIR_PRelonFIX = "lucelonnelon_";
 
-  private final Optional<String> scrubGen;
+  privatelon final Optional<String> scrubGelonn;
 
-  public SegmentSyncConfig(Optional<String> scrubGen) {
-    this.scrubGen = scrubGen;
-    String scrubGenStat = scrubGen.orElse("unset");
-    SearchLongGauge.export("scrub_gen_" + scrubGenStat).set(1);
-    if (scrubGen.isPresent()) {
-      // Export a stat for the number of days between the scrub gen date and now
-      SearchCustomGauge.export("scrub_gen_age_in_days", () -> {
-        long scrubGenMillis = ScrubGenUtil.parseScrubGenToDate(scrubGen.get()).getTime();
-        return TimeUnit.MILLISECONDS.toDays(System.currentTimeMillis() - scrubGenMillis);
+  public SelongmelonntSyncConfig(Optional<String> scrubGelonn) {
+    this.scrubGelonn = scrubGelonn;
+    String scrubGelonnStat = scrubGelonn.orelonlselon("unselont");
+    SelonarchLongGaugelon.elonxport("scrub_gelonn_" + scrubGelonnStat).selont(1);
+    if (scrubGelonn.isPrelonselonnt()) {
+      // elonxport a stat for thelon numbelonr of days belontwelonelonn thelon scrub gelonn datelon and now
+      SelonarchCustomGaugelon.elonxport("scrub_gelonn_agelon_in_days", () -> {
+        long scrubGelonnMillis = ScrubGelonnUtil.parselonScrubGelonnToDatelon(scrubGelonn.gelont()).gelontTimelon();
+        relonturn TimelonUnit.MILLISelonCONDS.toDays(Systelonm.currelonntTimelonMillis() - scrubGelonnMillis);
       });
     }
   }
 
   /**
-   * Returns the file extension to be used for the current flush version.
+   * Relonturns thelon filelon elonxtelonnsion to belon uselond for thelon currelonnt flush velonrsion.
    */
-  public String getVersionFileExtension() {
-    return FlushVersion.CURRENT_FLUSH_VERSION.getVersionFileExtension();
+  public String gelontVelonrsionFilelonelonxtelonnsion() {
+    relonturn FlushVelonrsion.CURRelonNT_FLUSH_VelonRSION.gelontVelonrsionFilelonelonxtelonnsion();
   }
 
   /**
-   * Returns the threshold for how large a segment's status count must be at load time to be
-   * considered valid.
+   * Relonturns thelon threlonshold for how largelon a selongmelonnt's status count must belon at load timelon to belon
+   * considelonrelond valid.
    */
-  public int getMinSegmentStatusCountThreshold() {
-    double minSegmentTweetCountProportionThreshold =
-        EarlybirdConfig.getDouble("min_segment_tweet_count_percentage_threshold", 0) / 100;
-    return (int) (EarlybirdConfig.getMaxSegmentSize() * minSegmentTweetCountProportionThreshold);
+  public int gelontMinSelongmelonntStatusCountThrelonshold() {
+    doublelon minSelongmelonntTwelonelontCountProportionThrelonshold =
+        elonarlybirdConfig.gelontDoublelon("min_selongmelonnt_twelonelont_count_pelonrcelonntagelon_threlonshold", 0) / 100;
+    relonturn (int) (elonarlybirdConfig.gelontMaxSelongmelonntSizelon() * minSelongmelonntTwelonelontCountProportionThrelonshold);
   }
 
   /**
-   * Determines if this earlybird is allowed to flush segments to HDFS.
+   * Delontelonrminelons if this elonarlybird is allowelond to flush selongmelonnts to HDFS.
    */
-  public boolean isFlushToHdfsEnabled() {
-    return EarlybirdProperty.SEGMENT_FLUSH_TO_HDFS_ENABLED.get(false)
-        // Flush to HDFS is always disabled if FlushVersion is not official.
-        && FlushVersion.CURRENT_FLUSH_VERSION.isOfficial();
+  public boolelonan isFlushToHdfselonnablelond() {
+    relonturn elonarlybirdPropelonrty.SelonGMelonNT_FLUSH_TO_HDFS_elonNABLelonD.gelont(falselon)
+        // Flush to HDFS is always disablelond if FlushVelonrsion is not official.
+        && FlushVelonrsion.CURRelonNT_FLUSH_VelonRSION.isOfficial();
   }
 
   /**
-   * Determines if this earlybird is allowed to load segments from HDFS.
+   * Delontelonrminelons if this elonarlybird is allowelond to load selongmelonnts from HDFS.
    */
-  public boolean isSegmentLoadFromHdfsEnabled() {
-    return EarlybirdProperty.SEGMENT_LOAD_FROM_HDFS_ENABLED.get(false);
+  public boolelonan isSelongmelonntLoadFromHdfselonnablelond() {
+    relonturn elonarlybirdPropelonrty.SelonGMelonNT_LOAD_FROM_HDFS_elonNABLelonD.gelont(falselon);
   }
 
   /**
-   * Determines if this earlybird is allowed to delete flushed segments.
+   * Delontelonrminelons if this elonarlybird is allowelond to delonlelontelon flushelond selongmelonnts.
    */
-  public boolean isDeleteFlushedSegmentsEnabled() {
-    return EarlybirdConfig.getBool("segment_dropper_delete_flushed", true);
+  public boolelonan isDelonlelontelonFlushelondSelongmelonntselonnablelond() {
+    relonturn elonarlybirdConfig.gelontBool("selongmelonnt_droppelonr_delonlelontelon_flushelond", truelon);
   }
 
   /**
-   * Returns the root of the segment directory on the local disk.
+   * Relonturns thelon root of thelon selongmelonnt direlonctory on thelon local disk.
    */
-  public String getLocalSegmentSyncRootDir() {
-    return EarlybirdConfig.getString("segment_sync_dir", "partitions")
-        + getScrubGenFlushDirSuffix();
+  public String gelontLocalSelongmelonntSyncRootDir() {
+    relonturn elonarlybirdConfig.gelontString("selongmelonnt_sync_dir", "partitions")
+        + gelontScrubGelonnFlushDirSuffix();
   }
 
   /**
-   * Returns the root of the segment directory on HDFS.
+   * Relonturns thelon root of thelon selongmelonnt direlonctory on HDFS.
    */
-  public String getHdfsSegmentSyncRootDir() {
-    return EarlybirdProperty.HDFS_SEGMENT_SYNC_DIR.get("partitions")
-        + getScrubGenFlushDirSuffix();
+  public String gelontHdfsSelongmelonntSyncRootDir() {
+    relonturn elonarlybirdPropelonrty.HDFS_SelonGMelonNT_SYNC_DIR.gelont("partitions")
+        + gelontScrubGelonnFlushDirSuffix();
   }
 
   /**
-   * Returns the HDFS root directory where all segments should be uploaded.
+   * Relonturns thelon HDFS root direlonctory whelonrelon all selongmelonnts should belon uploadelond.
    */
-  public String getHdfsSegmentUploadRootDir() {
-    String hdfsSegmentUploadDir = EarlybirdProperty.HDFS_SEGMENT_UPLOAD_DIR.get(null);
-    return hdfsSegmentUploadDir != null
-        ? hdfsSegmentUploadDir + getScrubGenFlushDirSuffix()
-        : getHdfsSegmentSyncRootDir();
+  public String gelontHdfsSelongmelonntUploadRootDir() {
+    String hdfsSelongmelonntUploadDir = elonarlybirdPropelonrty.HDFS_SelonGMelonNT_UPLOAD_DIR.gelont(null);
+    relonturn hdfsSelongmelonntUploadDir != null
+        ? hdfsSelongmelonntUploadDir + gelontScrubGelonnFlushDirSuffix()
+        : gelontHdfsSelongmelonntSyncRootDir();
   }
 
   /**
-   * Returns the ZooKeeper path used for segment sync'ing.
+   * Relonturns thelon ZooKelonelonpelonr path uselond for selongmelonnt sync'ing.
    */
-  public String getZooKeeperSyncFullPath() {
-    return EarlybirdProperty.ZK_APP_ROOT.get() + "/"
-        + EarlybirdConfig.getString("segment_flush_sync_relative_path", "segment_flush_sync");
+  public String gelontZooKelonelonpelonrSyncFullPath() {
+    relonturn elonarlybirdPropelonrty.ZK_APP_ROOT.gelont() + "/"
+        + elonarlybirdConfig.gelontString("selongmelonnt_flush_sync_relonlativelon_path", "selongmelonnt_flush_sync");
   }
 
   /**
-   * Returns the list of directories that should be persisted for this segment.
+   * Relonturns thelon list of direlonctorielons that should belon pelonrsistelond for this selongmelonnt.
    */
-  public Collection<String> getPersistentFileNames(SegmentInfo segment) {
-    return Collections.singleton(segment.getSegmentName());
+  public Collelonction<String> gelontPelonrsistelonntFilelonNamelons(SelongmelonntInfo selongmelonnt) {
+    relonturn Collelonctions.singlelonton(selongmelonnt.gelontSelongmelonntNamelon());
   }
 
   /**
-   * Returns the list of all files that should be sync'ed for this segment.
+   * Relonturns thelon list of all filelons that should belon sync'elond for this selongmelonnt.
    */
-  public Collection<String> getAllSyncFileNames(SegmentInfo segment) {
-    Collection<String> allFileNames = PersistentFile.getAllFileNames(segment.getSegmentName());
-    if (segment.getEarlybirdIndexConfig().isIndexStoredOnDisk()) {
-      allFileNames = new ArrayList<>(allFileNames);
-      // Just the file name, not the full path
-      allFileNames.add(getLocalLuceneSyncDirFileName(segment.getSegment()));
+  public Collelonction<String> gelontAllSyncFilelonNamelons(SelongmelonntInfo selongmelonnt) {
+    Collelonction<String> allFilelonNamelons = PelonrsistelonntFilelon.gelontAllFilelonNamelons(selongmelonnt.gelontSelongmelonntNamelon());
+    if (selongmelonnt.gelontelonarlybirdIndelonxConfig().isIndelonxStorelondOnDisk()) {
+      allFilelonNamelons = nelonw ArrayList<>(allFilelonNamelons);
+      // Just thelon filelon namelon, not thelon full path
+      allFilelonNamelons.add(gelontLocalLucelonnelonSyncDirFilelonNamelon(selongmelonnt.gelontSelongmelonnt()));
     }
-    return allFileNames;
+    relonturn allFilelonNamelons;
   }
 
   /**
-   * Returns the local sync directory for the given segment.
+   * Relonturns thelon local sync direlonctory for thelon givelonn selongmelonnt.
    */
-  public String getLocalSyncDirName(Segment segment) {
-    return getLocalSegmentSyncRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension();
+  public String gelontLocalSyncDirNamelon(Selongmelonnt selongmelonnt) {
+    relonturn gelontLocalSelongmelonntSyncRootDir() + "/" + selongmelonnt.gelontSelongmelonntNamelon()
+        + gelontVelonrsionFilelonelonxtelonnsion();
   }
 
   /**
-   * Returns the local Lucene directory for the given segment.
+   * Relonturns thelon local Lucelonnelon direlonctory for thelon givelonn selongmelonnt.
    */
-  public String getLocalLuceneSyncDirName(Segment segment) {
-    return getLocalSyncDirName(segment) + "/" + getLocalLuceneSyncDirFileName(segment);
+  public String gelontLocalLucelonnelonSyncDirNamelon(Selongmelonnt selongmelonnt) {
+    relonturn gelontLocalSyncDirNamelon(selongmelonnt) + "/" + gelontLocalLucelonnelonSyncDirFilelonNamelon(selongmelonnt);
   }
 
   /**
-   * Returns the name (not the path) of the Lucene directory for the given segment.
+   * Relonturns thelon namelon (not thelon path) of thelon Lucelonnelon direlonctory for thelon givelonn selongmelonnt.
    */
-  private String getLocalLuceneSyncDirFileName(Segment segment) {
-    if (segment instanceof ArchiveSegment) {
-      Date endDate = ((ArchiveSegment) segment).getDataEndDate();
-      String endDateString = TwitterDateFormat.apply("yyyyMMdd").format(endDate);
-      return LUCENE_DIR_PREFIX + endDateString;
-    } else {
-      return LUCENE_DIR_PREFIX + "realtime";
+  privatelon String gelontLocalLucelonnelonSyncDirFilelonNamelon(Selongmelonnt selongmelonnt) {
+    if (selongmelonnt instancelonof ArchivelonSelongmelonnt) {
+      Datelon elonndDatelon = ((ArchivelonSelongmelonnt) selongmelonnt).gelontDataelonndDatelon();
+      String elonndDatelonString = TwittelonrDatelonFormat.apply("yyyyMMdd").format(elonndDatelon);
+      relonturn LUCelonNelon_DIR_PRelonFIX + elonndDatelonString;
+    } elonlselon {
+      relonturn LUCelonNelon_DIR_PRelonFIX + "relonaltimelon";
     }
   }
 
   /**
-   * Returns the HDFS sync directory for the given segment.
+   * Relonturns thelon HDFS sync direlonctory for thelon givelonn selongmelonnt.
    */
-  public String getHdfsSyncDirNamePrefix(Segment segment) {
-    return getHdfsSegmentSyncRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension() + "*";
+  public String gelontHdfsSyncDirNamelonPrelonfix(Selongmelonnt selongmelonnt) {
+    relonturn gelontHdfsSelongmelonntSyncRootDir() + "/" + selongmelonnt.gelontSelongmelonntNamelon()
+        + gelontVelonrsionFilelonelonxtelonnsion() + "*";
   }
 
   /**
-   * Returns the prefix of the HDFS directory where the files for this segment should be uploaded.
+   * Relonturns thelon prelonfix of thelon HDFS direlonctory whelonrelon thelon filelons for this selongmelonnt should belon uploadelond.
    */
-  public String getHdfsUploadDirNamePrefix(Segment segment) {
-    return getHdfsSegmentUploadRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension() + "*";
+  public String gelontHdfsUploadDirNamelonPrelonfix(Selongmelonnt selongmelonnt) {
+    relonturn gelontHdfsSelongmelonntUploadRootDir() + "/" + selongmelonnt.gelontSelongmelonntNamelon()
+        + gelontVelonrsionFilelonelonxtelonnsion() + "*";
   }
 
   /**
-   * Returns the HDFS directory where the files for this segment should be uploaded.
+   * Relonturns thelon HDFS direlonctory whelonrelon thelon filelons for this selongmelonnt should belon uploadelond.
    */
-  public String getHdfsFlushDirName(Segment segment) {
-    return getHdfsSegmentUploadRootDir() + "/" + segment.getSegmentName()
-        + getVersionFileExtension() + "_" + DatabaseConfig.getLocalHostname();
+  public String gelontHdfsFlushDirNamelon(Selongmelonnt selongmelonnt) {
+    relonturn gelontHdfsSelongmelonntUploadRootDir() + "/" + selongmelonnt.gelontSelongmelonntNamelon()
+        + gelontVelonrsionFilelonelonxtelonnsion() + "_" + DatabaselonConfig.gelontLocalHostnamelon();
   }
 
   /**
-   * Returns a temp HDFS directory to be used for this segment.
+   * Relonturns a telonmp HDFS direlonctory to belon uselond for this selongmelonnt.
    */
-  public String getHdfsTempFlushDirName(Segment segment) {
-    return getHdfsSegmentUploadRootDir() + "/temp_"
-        + DatabaseConfig.getLocalHostname() + "_" + segment.getSegmentName()
-        + getVersionFileExtension();
+  public String gelontHdfsTelonmpFlushDirNamelon(Selongmelonnt selongmelonnt) {
+    relonturn gelontHdfsSelongmelonntUploadRootDir() + "/telonmp_"
+        + DatabaselonConfig.gelontLocalHostnamelon() + "_" + selongmelonnt.gelontSelongmelonntNamelon()
+        + gelontVelonrsionFilelonelonxtelonnsion();
   }
 
   /**
-   * Concatenates the name of this segment with the flush version extension.
+   * Concatelonnatelons thelon namelon of this selongmelonnt with thelon flush velonrsion elonxtelonnsion.
    */
-  public String getVersionedName(Segment segment) {
-    return segment.getSegmentName() + getVersionFileExtension();
+  public String gelontVelonrsionelondNamelon(Selongmelonnt selongmelonnt) {
+    relonturn selongmelonnt.gelontSelongmelonntNamelon() + gelontVelonrsionFilelonelonxtelonnsion();
   }
 
-  private String getScrubGenFlushDirSuffix() {
-    return scrubGen
-        .map(s -> "/scrubbed/" + s)
-        .orElse("");
+  privatelon String gelontScrubGelonnFlushDirSuffix() {
+    relonturn scrubGelonn
+        .map(s -> "/scrubbelond/" + s)
+        .orelonlselon("");
   }
 
   /**
-   * Returns the scrub gen set for this earlybird.
+   * Relonturns thelon scrub gelonn selont for this elonarlybird.
    */
-  public Optional<String> getScrubGen() {
-    return scrubGen;
+  public Optional<String> gelontScrubGelonn() {
+    relonturn scrubGelonn;
   }
 }

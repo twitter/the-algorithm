@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.who_to_follow_module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.who_to_follow_modulelon
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
 
-object WhoToFollowArmCandidatePipelineConfig {
-  val MinCandidatesSize = 3
-  val MaxCandidatesSize = 20
+objelonct WhoToFollowArmCandidatelonPipelonlinelonConfig {
+  val MinCandidatelonsSizelon = 3
+  val MaxCandidatelonsSizelon = 20
 
-  val identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("WhoToFollowArm")
+  val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr = CandidatelonPipelonlinelonIdelonntifielonr("WhoToFollowArm")
 }

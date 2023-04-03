@@ -1,45 +1,45 @@
-package com.twitter.follow_recommendations.flows.content_recommender_flow
+packagelon com.twittelonr.follow_reloncommelonndations.flows.contelonnt_reloncommelonndelonr_flow
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.follow_recommendations.common.models.DebugOptions
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasExcludedUserIds
-import com.twitter.follow_recommendations.common.models.HasGeohashAndCountryCode
-import com.twitter.follow_recommendations.common.models.HasInvalidRelationshipUserIds
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedByUserIds
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.HasUserState
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DelonbugOptions
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.GelonohashAndCountryCodelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDelonbugOptions
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HaselonxcludelondUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasGelonohashAndCountryCodelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasInvalidRelonlationshipUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondByUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasUselonrStatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Params
 
-case class ContentRecommenderRequest(
-  override val params: Params,
-  override val clientContext: ClientContext,
-  inputExcludeUserIds: Seq[Long],
-  override val recentFollowedUserIds: Option[Seq[Long]],
-  override val recentFollowedByUserIds: Option[Seq[Long]],
-  override val invalidRelationshipUserIds: Option[Set[Long]],
-  override val displayLocation: DisplayLocation,
-  maxResults: Option[Int] = None,
-  override val debugOptions: Option[DebugOptions] = None,
-  override val geohashAndCountryCode: Option[GeohashAndCountryCode] = None,
-  override val userState: Option[UserState] = None)
-    extends HasParams
-    with HasClientContext
+caselon class ContelonntReloncommelonndelonrRelonquelonst(
+  ovelonrridelon val params: Params,
+  ovelonrridelon val clielonntContelonxt: ClielonntContelonxt,
+  inputelonxcludelonUselonrIds: Selonq[Long],
+  ovelonrridelon val reloncelonntFollowelondUselonrIds: Option[Selonq[Long]],
+  ovelonrridelon val reloncelonntFollowelondByUselonrIds: Option[Selonq[Long]],
+  ovelonrridelon val invalidRelonlationshipUselonrIds: Option[Selont[Long]],
+  ovelonrridelon val displayLocation: DisplayLocation,
+  maxRelonsults: Option[Int] = Nonelon,
+  ovelonrridelon val delonbugOptions: Option[DelonbugOptions] = Nonelon,
+  ovelonrridelon val gelonohashAndCountryCodelon: Option[GelonohashAndCountryCodelon] = Nonelon,
+  ovelonrridelon val uselonrStatelon: Option[UselonrStatelon] = Nonelon)
+    elonxtelonnds HasParams
+    with HasClielonntContelonxt
     with HasDisplayLocation
-    with HasDebugOptions
-    with HasRecentFollowedUserIds
-    with HasRecentFollowedByUserIds
-    with HasInvalidRelationshipUserIds
-    with HasExcludedUserIds
-    with HasUserState
-    with HasGeohashAndCountryCode {
-  override val excludedUserIds: Seq[Long] = {
-    inputExcludeUserIds ++ clientContext.userId.toSeq
+    with HasDelonbugOptions
+    with HasReloncelonntFollowelondUselonrIds
+    with HasReloncelonntFollowelondByUselonrIds
+    with HasInvalidRelonlationshipUselonrIds
+    with HaselonxcludelondUselonrIds
+    with HasUselonrStatelon
+    with HasGelonohashAndCountryCodelon {
+  ovelonrridelon val elonxcludelondUselonrIds: Selonq[Long] = {
+    inputelonxcludelonUselonrIds ++ clielonntContelonxt.uselonrId.toSelonq
   }
 }

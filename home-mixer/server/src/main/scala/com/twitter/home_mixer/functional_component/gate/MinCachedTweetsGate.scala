@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.functional_component.gate
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon
 
-import com.twitter.home_mixer.functional_component.gate.MinCachedTweetsGate.identifierSuffix
-import com.twitter.home_mixer.util.CachedScoredTweetsHelper
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon.MinCachelondTwelonelontsGatelon.idelonntifielonrSuffix
+import com.twittelonr.homelon_mixelonr.util.CachelondScorelondTwelonelontsHelonlpelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.Param
 
-case class MinCachedTweetsGate(
-  candidatePipelineIdentifier: CandidatePipelineIdentifier,
-  minCachedTweetsParam: Param[Int])
-    extends Gate[PipelineQuery] {
+caselon class MinCachelondTwelonelontsGatelon(
+  candidatelonPipelonlinelonIdelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr,
+  minCachelondTwelonelontsParam: Param[Int])
+    elonxtelonnds Gatelon[PipelonlinelonQuelonry] {
 
-  override val identifier: GateIdentifier =
-    GateIdentifier(candidatePipelineIdentifier + identifierSuffix)
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr =
+    GatelonIdelonntifielonr(candidatelonPipelonlinelonIdelonntifielonr + idelonntifielonrSuffix)
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] = {
-    val minCachedTweets = query.params(minCachedTweetsParam)
-    val cachedScoredTweets =
-      query.features.map(CachedScoredTweetsHelper.unseenCachedScoredTweets).getOrElse(Seq.empty)
-    val numCachedTweets = cachedScoredTweets.count { tweet =>
-      tweet.candidatePipelineIdentifier.exists(
-        CandidatePipelineIdentifier(_).equals(candidatePipelineIdentifier))
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry): Stitch[Boolelonan] = {
+    val minCachelondTwelonelonts = quelonry.params(minCachelondTwelonelontsParam)
+    val cachelondScorelondTwelonelonts =
+      quelonry.felonaturelons.map(CachelondScorelondTwelonelontsHelonlpelonr.unselonelonnCachelondScorelondTwelonelonts).gelontOrelonlselon(Selonq.elonmpty)
+    val numCachelondTwelonelonts = cachelondScorelondTwelonelonts.count { twelonelont =>
+      twelonelont.candidatelonPipelonlinelonIdelonntifielonr.elonxists(
+        CandidatelonPipelonlinelonIdelonntifielonr(_).elonquals(candidatelonPipelonlinelonIdelonntifielonr))
     }
-    Stitch.value(numCachedTweets < minCachedTweets)
+    Stitch.valuelon(numCachelondTwelonelonts < minCachelondTwelonelonts)
   }
 }
 
-object MinCachedTweetsGate {
-  val identifierSuffix = "MinCachedTweets"
+objelonct MinCachelondTwelonelontsGatelon {
+  val idelonntifielonrSuffix = "MinCachelondTwelonelonts"
 }

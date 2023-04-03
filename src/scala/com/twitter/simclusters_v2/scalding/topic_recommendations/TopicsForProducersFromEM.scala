@@ -1,261 +1,261 @@
-package com.twitter.simclusters_v2.scalding.topic_recommendations
-import com.twitter.bijection.Bufferable
-import com.twitter.bijection.Injection
-import com.twitter.recos.entities.thriftscala._
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.SemanticCoreEntityId
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.DataSources
-import com.twitter.simclusters_v2.hdfs_sources.TopLocaleTopicsForProducerFromEmScalaDataset
-import com.twitter.simclusters_v2.scalding.common.matrix.SparseMatrix
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.ProducerId
-import com.twitter.simclusters_v2.scalding.embedding.common.ExternalDataSources
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import com.twitter.wtf.scalding.jobs.common.EMRunner
-import java.util.TimeZone
+packagelon com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations
+import com.twittelonr.bijelonction.Buffelonrablelon
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.reloncos.elonntitielons.thriftscala._
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.Country
+import com.twittelonr.simclustelonrs_v2.common.Languagelon
+import com.twittelonr.simclustelonrs_v2.common.SelonmanticCorelonelonntityId
+import com.twittelonr.simclustelonrs_v2.common.TopicId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.DataSourcelons
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.TopLocalelonTopicsForProducelonrFromelonmScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.common.matrix.SparselonMatrix
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.ProducelonrId
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonxtelonrnalDataSourcelons
+import com.twittelonr.simclustelonrs_v2.thriftscala.UselonrAndNelonighbors
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.elonMRunnelonr
+import java.util.TimelonZonelon
 
 /**
- * In this file, we compute the top topics for a producer to be shown on the Topics To Follow Module on Profile Pages
+ * In this filelon, welon computelon thelon top topics for a producelonr to belon shown on thelon Topics To Follow Modulelon on Profilelon Pagelons
  *
- * The top topics for a producer are computed using the Expectation-Maximization (EM) approach
+ * Thelon top topics for a producelonr arelon computelond using thelon elonxpelonctation-Maximization (elonM) approach
  *
  * It works as follows:
  *
- *  1. Obtain the background model distribution of number of followers for a topic
+ *  1. Obtain thelon background modelonl distribution of numbelonr of followelonrs for a topic
  *
- *  2. Obtain the domain model distribution of the number of producer's followers who follow a topic
+ *  2. Obtain thelon domain modelonl distribution of thelon numbelonr of producelonr's followelonrs who follow a topic
  *
- *  4. Iteratively, use the Expectation-Maximization approach to get the best estimate of the domain model's topic distribution for a producer
+ *  4. Itelonrativelonly, uselon thelon elonxpelonctation-Maximization approach to gelont thelon belonst elonstimatelon of thelon domain modelonl's topic distribution for a producelonr
  *
- *  5. for each producer, we only keep its top K topics with highest weights in the domain model's topic distribution after the EM step
+ *  5. for elonach producelonr, welon only kelonelonp its top K topics with highelonst welonights in thelon domain modelonl's topic distribution aftelonr thelon elonM stelonp
  *
- *  6. Please note that we also store the locale info for each producer along with the topics
+ *  6. Plelonaselon notelon that welon also storelon thelon localelon info for elonach producelonr along with thelon topics
  */
 /**
-scalding remote run --user cassowary --reducers 2000 \
- --target src/scala/com/twitter/simclusters_v2/scalding/topic_recommendations:top_topics_for_producers_from_em-adhoc \
- --main-class com.twitter.simclusters_v2.scalding.topic_recommendations.TopicsForProducersFromEMAdhocApp \
- --submitter  hadoopnest1.atla.twitter.com  \
- --  --date 2020-07-05 --minActiveFollowers 10000 --minTopicFollowsThreshold 100 --maxTopicsPerProducerPerLocale 50 \
- --output_dir_topics_per_producer /user/cassowary/adhoc/your_ldap/ttf_profile_pages_producers_to_topics
+scalding relonmotelon run --uselonr cassowary --relonducelonrs 2000 \
+ --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/topic_reloncommelonndations:top_topics_for_producelonrs_from_elonm-adhoc \
+ --main-class com.twittelonr.simclustelonrs_v2.scalding.topic_reloncommelonndations.TopicsForProducelonrsFromelonMAdhocApp \
+ --submittelonr  hadoopnelonst1.atla.twittelonr.com  \
+ --  --datelon 2020-07-05 --minActivelonFollowelonrs 10000 --minTopicFollowsThrelonshold 100 --maxTopicsPelonrProducelonrPelonrLocalelon 50 \
+ --output_dir_topics_pelonr_producelonr /uselonr/cassowary/adhoc/your_ldap/ttf_profilelon_pagelons_producelonrs_to_topics
  */
-object TopicsForProducersFromEMAdhocApp extends AdhocExecutionApp {
+objelonct TopicsForProducelonrsFromelonMAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import TopicsForProducersFromEM._
-    val outputDirTopicsPerProducer = args("output_dir_topics_per_producer")
-    val minActiveFollowersForProducer = args.int("minActiveFollowers", 100)
-    val minTopicFollowsThreshold = args.int("minNumTopicFollows", 100)
-    val maxTopicsPerProducerPerLocale = args.int("maxTopicsPerProducer", 100)
-    val lambda = args.double("lambda", 0.95)
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    import TopicsForProducelonrsFromelonM._
+    val outputDirTopicsPelonrProducelonr = args("output_dir_topics_pelonr_producelonr")
+    val minActivelonFollowelonrsForProducelonr = args.int("minActivelonFollowelonrs", 100)
+    val minTopicFollowsThrelonshold = args.int("minNumTopicFollows", 100)
+    val maxTopicsPelonrProducelonrPelonrLocalelon = args.int("maxTopicsPelonrProducelonr", 100)
+    val lambda = args.doublelon("lambda", 0.95)
 
-    val numEMSteps = args.int("numEM", 100)
+    val numelonMStelonps = args.int("numelonM", 100)
 
-    val topicsFollowedByProducersFollowers: TypedPipe[
-      (ProducerId, (TopicId, Option[Language], Option[Country]), Double)
-    ] = getTopLocaleTopicsForProducersFromEM(
-      DataSources
-        .userUserNormalizedGraphSource(dateRange.prepend(Days(7))),
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource,
-      minActiveFollowersForProducer,
-      minTopicFollowsThreshold,
+    val topicsFollowelondByProducelonrsFollowelonrs: TypelondPipelon[
+      (ProducelonrId, (TopicId, Option[Languagelon], Option[Country]), Doublelon)
+    ] = gelontTopLocalelonTopicsForProducelonrsFromelonM(
+      DataSourcelons
+        .uselonrUselonrNormalizelondGraphSourcelon(datelonRangelon.prelonpelonnd(Days(7))),
+      elonxtelonrnalDataSourcelons.topicFollowGraphSourcelon,
+      elonxtelonrnalDataSourcelons.uselonrSourcelon,
+      elonxtelonrnalDataSourcelons.infelonrrelondUselonrConsumelondLanguagelonSourcelon,
+      minActivelonFollowelonrsForProducelonr,
+      minTopicFollowsThrelonshold,
       lambda,
-      numEMSteps
+      numelonMStelonps
     )
 
-    val topTopicsPerLocaleProducerTsvExec = sortAndGetTopLocaleTopicsPerProducer(
-      topicsFollowedByProducersFollowers,
-      maxTopicsPerProducerPerLocale
-    ).writeExecution(
-      TypedTsv(outputDirTopicsPerProducer)
+    val topTopicsPelonrLocalelonProducelonrTsvelonxelonc = sortAndGelontTopLocalelonTopicsPelonrProducelonr(
+      topicsFollowelondByProducelonrsFollowelonrs,
+      maxTopicsPelonrProducelonrPelonrLocalelon
+    ).writelonelonxeloncution(
+      TypelondTsv(outputDirTopicsPelonrProducelonr)
     )
 
-    topTopicsPerLocaleProducerTsvExec
+    topTopicsPelonrLocalelonProducelonrTsvelonxelonc
   }
 }
 
 /**
-capesospy-v2 update --build_locally \
- --start_cron top_topics_for_producers_from_em \
- src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally \
+ --start_cron top_topics_for_producelonrs_from_elonm \
+ src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object TopicsForProducersFromEMBatchApp extends ScheduledExecutionApp {
-  override val firstTime: RichDate = RichDate("2020-07-26")
+objelonct TopicsForProducelonrsFromelonMBatchApp elonxtelonnds SchelondulelondelonxeloncutionApp {
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2020-07-26")
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  private val topTopicsPerProducerFromEMPath: String =
-    "/user/cassowary/manhattan_sequence_files/top_topics_for_producers_from_em"
+  privatelon val topTopicsPelonrProducelonrFromelonMPath: String =
+    "/uselonr/cassowary/manhattan_selonquelonncelon_filelons/top_topics_for_producelonrs_from_elonm"
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    import TopicsForProducersFromEM._
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    import TopicsForProducelonrsFromelonM._
 
-    // threshold of the minimum number of active followers needed for a user to be considered as a producer
-    val minActiveFollowersForProducer = args.int("minActiveFollowers", 100)
+    // threlonshold of thelon minimum numbelonr of activelon followelonrs nelonelondelond for a uselonr to belon considelonrelond as a producelonr
+    val minActivelonFollowelonrsForProducelonr = args.int("minActivelonFollowelonrs", 100)
 
-    // threshold of the topic locale follows score needed for a topic to be considered as valid
-    val minTopicFollowsThreshold = args.int("minNumTopicFollows", 100)
+    // threlonshold of thelon topic localelon follows scorelon nelonelondelond for a topic to belon considelonrelond as valid
+    val minTopicFollowsThrelonshold = args.int("minNumTopicFollows", 100)
 
-    val maxTopicsPerProducer = args.int("maxTopicsPerProducer", 100)
+    val maxTopicsPelonrProducelonr = args.int("maxTopicsPelonrProducelonr", 100)
 
-    // lambda parameter for the EM algorithm
-    val lambda = args.double("lambda", 0.95)
+    // lambda paramelontelonr for thelon elonM algorithm
+    val lambda = args.doublelon("lambda", 0.95)
 
-    // number of EM iterations
-    val numEMSteps = args.int("numEM", 100)
+    // numbelonr of elonM itelonrations
+    val numelonMStelonps = args.int("numelonM", 100)
 
-    // (producer, locale) -> List<(topics, scores)> from Expectation Maximization approach
-    val topicsFollowedByProducersFollowers = getTopLocaleTopicsForProducersFromEM(
-      DataSources
-        .userUserNormalizedGraphSource(dateRange.prepend(Days(7))),
-      ExternalDataSources.topicFollowGraphSource,
-      ExternalDataSources.userSource,
-      ExternalDataSources.inferredUserConsumedLanguageSource,
-      minActiveFollowersForProducer,
-      minTopicFollowsThreshold,
+    // (producelonr, localelon) -> List<(topics, scorelons)> from elonxpelonctation Maximization approach
+    val topicsFollowelondByProducelonrsFollowelonrs = gelontTopLocalelonTopicsForProducelonrsFromelonM(
+      DataSourcelons
+        .uselonrUselonrNormalizelondGraphSourcelon(datelonRangelon.prelonpelonnd(Days(7))),
+      elonxtelonrnalDataSourcelons.topicFollowGraphSourcelon,
+      elonxtelonrnalDataSourcelons.uselonrSourcelon,
+      elonxtelonrnalDataSourcelons.infelonrrelondUselonrConsumelondLanguagelonSourcelon,
+      minActivelonFollowelonrsForProducelonr,
+      minTopicFollowsThrelonshold,
       lambda,
-      numEMSteps
+      numelonMStelonps
     )
 
-    val topLocaleTopicsForProducersFromEMKeyValExec =
-      sortAndGetTopLocaleTopicsPerProducer(
-        topicsFollowedByProducersFollowers,
-        maxTopicsPerProducer
+    val topLocalelonTopicsForProducelonrsFromelonMKelonyValelonxelonc =
+      sortAndGelontTopLocalelonTopicsPelonrProducelonr(
+        topicsFollowelondByProducelonrsFollowelonrs,
+        maxTopicsPelonrProducelonr
       ).map {
-          case ((producerId, languageOpt, countryOpt), topicsWithScores) =>
-            KeyVal(
-              UserIdWithLocale(
-                userId = producerId,
-                locale = Locale(language = languageOpt, country = countryOpt)),
-              SemanticCoreEntityScoreList(topicsWithScores.map {
-                case (topicid, topicScore) =>
-                  SemanticEntityScore(SemanticCoreEntity(entityId = topicid), score = topicScore)
+          caselon ((producelonrId, languagelonOpt, countryOpt), topicsWithScorelons) =>
+            KelonyVal(
+              UselonrIdWithLocalelon(
+                uselonrId = producelonrId,
+                localelon = Localelon(languagelon = languagelonOpt, country = countryOpt)),
+              SelonmanticCorelonelonntityScorelonList(topicsWithScorelons.map {
+                caselon (topicid, topicScorelon) =>
+                  SelonmanticelonntityScorelon(SelonmanticCorelonelonntity(elonntityId = topicid), scorelon = topicScorelon)
               })
             )
-        }.writeDALVersionedKeyValExecution(
-          TopLocaleTopicsForProducerFromEmScalaDataset,
-          D.Suffix(topTopicsPerProducerFromEMPath),
-          version = ExplicitEndTime(dateRange.end)
+        }.writelonDALVelonrsionelondKelonyValelonxeloncution(
+          TopLocalelonTopicsForProducelonrFromelonmScalaDataselont,
+          D.Suffix(topTopicsPelonrProducelonrFromelonMPath),
+          velonrsion = elonxplicitelonndTimelon(datelonRangelon.elonnd)
         )
-    topLocaleTopicsForProducersFromEMKeyValExec
+    topLocalelonTopicsForProducelonrsFromelonMKelonyValelonxelonc
   }
 }
 
-object TopicsForProducersFromEM {
+objelonct TopicsForProducelonrsFromelonM {
 
-  private val MinProducerTopicScoreThreshold = 0.0
+  privatelon val MinProducelonrTopicScorelonThrelonshold = 0.0
 
-  implicit val sparseMatrixInj: Injection[
-    (SemanticCoreEntityId, Option[Language], Option[Country]),
-    Array[Byte]
+  implicit val sparselonMatrixInj: Injelonction[
+    (SelonmanticCorelonelonntityId, Option[Languagelon], Option[Country]),
+    Array[Bytelon]
   ] =
-    Bufferable.injectionOf[(SemanticCoreEntityId, Option[Language], Option[Country])]
+    Buffelonrablelon.injelonctionOf[(SelonmanticCorelonelonntityId, Option[Languagelon], Option[Country])]
 
-  // This function takes the producer to topics map and generates the sorted and
-  // truncated top locale topics ranked list for each producer
-  def sortAndGetTopLocaleTopicsPerProducer(
-    producerToTopics: TypedPipe[(ProducerId, (TopicId, Option[Language], Option[Country]), Double)],
-    maxTopicsPerProducerPerLocale: Int
+  // This function takelons thelon producelonr to topics map and gelonnelonratelons thelon sortelond and
+  // truncatelond top localelon topics rankelond list for elonach producelonr
+  delonf sortAndGelontTopLocalelonTopicsPelonrProducelonr(
+    producelonrToTopics: TypelondPipelon[(ProducelonrId, (TopicId, Option[Languagelon], Option[Country]), Doublelon)],
+    maxTopicsPelonrProducelonrPelonrLocalelon: Int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[((ProducerId, Option[Language], Option[Country]), List[(TopicId, Double)])] = {
-    val numProducersWithLocales = Stat("num_producers_with_locales")
-    producerToTopics
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[((ProducelonrId, Option[Languagelon], Option[Country]), List[(TopicId, Doublelon)])] = {
+    val numProducelonrsWithLocalelons = Stat("num_producelonrs_with_localelons")
+    producelonrToTopics
       .map {
-        case (producerId, (topicId, languageOpt, countryOpt), score) =>
-          ((producerId, languageOpt, countryOpt), Seq((topicId, score)))
-      }.sumByKey.mapValues { topicsList: Seq[(TopicId, Double)] =>
-        numProducersWithLocales.inc()
+        caselon (producelonrId, (topicId, languagelonOpt, countryOpt), scorelon) =>
+          ((producelonrId, languagelonOpt, countryOpt), Selonq((topicId, scorelon)))
+      }.sumByKelony.mapValuelons { topicsList: Selonq[(TopicId, Doublelon)] =>
+        numProducelonrsWithLocalelons.inc()
         topicsList
-          .filter(_._2 >= MinProducerTopicScoreThreshold).sortBy(-_._2).take(
-            maxTopicsPerProducerPerLocale).toList
-      }.toTypedPipe
+          .filtelonr(_._2 >= MinProducelonrTopicScorelonThrelonshold).sortBy(-_._2).takelon(
+            maxTopicsPelonrProducelonrPelonrLocalelon).toList
+      }.toTypelondPipelon
   }
 
-  def getTopLocaleTopicsForProducersFromEM(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    followedTopicsToUsers: TypedPipe[(TopicId, UserId)],
-    userSource: TypedPipe[(UserId, (Country, Language))],
-    userLanguages: TypedPipe[(UserId, Seq[(Language, Double)])],
-    minActiveFollowersForProducer: Int,
-    minTopicFollowsThreshold: Int,
-    lambda: Double,
-    numEMSteps: Int
+  delonf gelontTopLocalelonTopicsForProducelonrsFromelonM(
+    uselonrUselonrGraph: TypelondPipelon[UselonrAndNelonighbors],
+    followelondTopicsToUselonrs: TypelondPipelon[(TopicId, UselonrId)],
+    uselonrSourcelon: TypelondPipelon[(UselonrId, (Country, Languagelon))],
+    uselonrLanguagelons: TypelondPipelon[(UselonrId, Selonq[(Languagelon, Doublelon)])],
+    minActivelonFollowelonrsForProducelonr: Int,
+    minTopicFollowsThrelonshold: Int,
+    lambda: Doublelon,
+    numelonMStelonps: Int
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(ProducerId, (TopicId, Option[Language], Option[Country]), Double)] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[(ProducelonrId, (TopicId, Option[Languagelon], Option[Country]), Doublelon)] = {
 
-    // Obtain Producer To Users Matrix
-    val producersToUsersMatrix: SparseMatrix[ProducerId, UserId, Double] =
-      TopicsForProducersUtils.getProducersToFollowedByUsersSparseMatrix(
-        userUserGraph,
-        minActiveFollowersForProducer)
+    // Obtain Producelonr To Uselonrs Matrix
+    val producelonrsToUselonrsMatrix: SparselonMatrix[ProducelonrId, UselonrId, Doublelon] =
+      TopicsForProducelonrsUtils.gelontProducelonrsToFollowelondByUselonrsSparselonMatrix(
+        uselonrUselonrGraph,
+        minActivelonFollowelonrsForProducelonr)
 
-    // Obtain Users to TopicsWithLocales Matrix
-    val topicToUsersMatrix: SparseMatrix[
-      (TopicId, Option[Language], Option[Country]),
-      UserId,
-      Double
-    ] = TopicsForProducersUtils.getFollowedTopicsToUserSparseMatrix(
-      followedTopicsToUsers,
-      userSource,
-      userLanguages,
-      minTopicFollowsThreshold)
+    // Obtain Uselonrs to TopicsWithLocalelons Matrix
+    val topicToUselonrsMatrix: SparselonMatrix[
+      (TopicId, Option[Languagelon], Option[Country]),
+      UselonrId,
+      Doublelon
+    ] = TopicsForProducelonrsUtils.gelontFollowelondTopicsToUselonrSparselonMatrix(
+      followelondTopicsToUselonrs,
+      uselonrSourcelon,
+      uselonrLanguagelons,
+      minTopicFollowsThrelonshold)
 
-    // Domain input probability distribution is the Map(topics->followers) per producer locale
-    val domainInputModel = producersToUsersMatrix
-      .multiplySparseMatrix(topicToUsersMatrix.transpose).toTypedPipe.map {
-        case (producerId, (topicId, languageOpt, countryOpt), dotProduct) =>
-          ((producerId, languageOpt, countryOpt), Map(topicId -> dotProduct))
-      }.sumByKey.toTypedPipe.map {
-        case ((producerId, languageOpt, countryOpt), topicsDomainInputMap) =>
-          ((languageOpt, countryOpt), (producerId, topicsDomainInputMap))
+    // Domain input probability distribution is thelon Map(topics->followelonrs) pelonr producelonr localelon
+    val domainInputModelonl = producelonrsToUselonrsMatrix
+      .multiplySparselonMatrix(topicToUselonrsMatrix.transposelon).toTypelondPipelon.map {
+        caselon (producelonrId, (topicId, languagelonOpt, countryOpt), dotProduct) =>
+          ((producelonrId, languagelonOpt, countryOpt), Map(topicId -> dotProduct))
+      }.sumByKelony.toTypelondPipelon.map {
+        caselon ((producelonrId, languagelonOpt, countryOpt), topicsDomainInputMap) =>
+          ((languagelonOpt, countryOpt), (producelonrId, topicsDomainInputMap))
       }
 
-    // BackgroundModel is the Map(topics -> Expected value of the number of users who follow the topic)
-    val backgroundModel = topicToUsersMatrix.rowL1Norms.map {
-      case ((topicId, languageOpt, countryOpt), numFollowersOfTopic) =>
-        ((languageOpt, countryOpt), Map(topicId -> numFollowersOfTopic))
-    }.sumByKey
+    // BackgroundModelonl is thelon Map(topics -> elonxpelonctelond valuelon of thelon numbelonr of uselonrs who follow thelon topic)
+    val backgroundModelonl = topicToUselonrsMatrix.rowL1Norms.map {
+      caselon ((topicId, languagelonOpt, countryOpt), numFollowelonrsOfTopic) =>
+        ((languagelonOpt, countryOpt), Map(topicId -> numFollowelonrsOfTopic))
+    }.sumByKelony
 
-    val resultsFromEMForEachLocale = domainInputModel.hashJoin(backgroundModel).flatMap {
-      case (
-            (languageOpt, countryOpt),
-            ((producerId, domainInputTopicFollowersMap), backgroundModelTopicFollowersMap)) =>
-        val emScoredTopicsForEachProducerPerLocale = EMRunner.estimateDomainModel(
-          domainInputTopicFollowersMap,
-          backgroundModelTopicFollowersMap,
+    val relonsultsFromelonMForelonachLocalelon = domainInputModelonl.hashJoin(backgroundModelonl).flatMap {
+      caselon (
+            (languagelonOpt, countryOpt),
+            ((producelonrId, domainInputTopicFollowelonrsMap), backgroundModelonlTopicFollowelonrsMap)) =>
+        val elonmScorelondTopicsForelonachProducelonrPelonrLocalelon = elonMRunnelonr.elonstimatelonDomainModelonl(
+          domainInputTopicFollowelonrsMap,
+          backgroundModelonlTopicFollowelonrsMap,
           lambda,
-          numEMSteps)
+          numelonMStelonps)
 
-        emScoredTopicsForEachProducerPerLocale.map {
-          case (topicId, topicScore) =>
-            (producerId, (topicId, languageOpt, countryOpt), topicScore)
+        elonmScorelondTopicsForelonachProducelonrPelonrLocalelon.map {
+          caselon (topicId, topicScorelon) =>
+            (producelonrId, (topicId, languagelonOpt, countryOpt), topicScorelon)
         }
     }
-    resultsFromEMForEachLocale
+    relonsultsFromelonMForelonachLocalelon
   }
 }

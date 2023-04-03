@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont
 
-sealed trait TweetDisplayType
+selonalelond trait TwelonelontDisplayTypelon
 
-case object Tweet extends TweetDisplayType
-case object TweetFollowOnly extends TweetDisplayType
-case object Media extends TweetDisplayType
-case object MomentTimelineTweet extends TweetDisplayType
-case object EmphasizedPromotedTweet extends TweetDisplayType
-case object QuotedTweet extends TweetDisplayType
-case object SelfThread extends TweetDisplayType
-case object CompactPromotedTweet extends TweetDisplayType
-case object TweetWithoutCard extends TweetDisplayType
-case object ReaderModeRoot extends TweetDisplayType
-case object ReaderMode extends TweetDisplayType
-case object CondensedTweet extends TweetDisplayType
+caselon objelonct Twelonelont elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct TwelonelontFollowOnly elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct Melondia elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct MomelonntTimelonlinelonTwelonelont elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct elonmphasizelondPromotelondTwelonelont elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct QuotelondTwelonelont elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct SelonlfThrelonad elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct CompactPromotelondTwelonelont elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct TwelonelontWithoutCard elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct RelonadelonrModelonRoot elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct RelonadelonrModelon elonxtelonnds TwelonelontDisplayTypelon
+caselon objelonct CondelonnselondTwelonelont elonxtelonnds TwelonelontDisplayTypelon

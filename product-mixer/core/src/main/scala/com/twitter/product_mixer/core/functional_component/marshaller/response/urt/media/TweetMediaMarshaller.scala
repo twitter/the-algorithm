@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melondia
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.TweetMedia
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia.TwelonelontMelondia
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TweetMediaMarshaller @Inject() () {
+@Singlelonton
+class TwelonelontMelondiaMarshallelonr @Injelonct() () {
 
-  def apply(tweetMedia: TweetMedia): urt.TweetMedia = urt.TweetMedia(
-    tweetId = tweetMedia.tweetId,
-    momentId = tweetMedia.momentId
+  delonf apply(twelonelontMelondia: TwelonelontMelondia): urt.TwelonelontMelondia = urt.TwelonelontMelondia(
+    twelonelontId = twelonelontMelondia.twelonelontId,
+    momelonntId = twelonelontMelondia.momelonntId
   )
 }

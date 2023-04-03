@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddelonntrielonsTimelonlinelonInstruction
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class AddEntriesInstructionMarshaller @Inject() (
-  timelineEntryMarshaller: TimelineEntryMarshaller) {
+@Singlelonton
+class AddelonntrielonsInstructionMarshallelonr @Injelonct() (
+  timelonlinelonelonntryMarshallelonr: TimelonlinelonelonntryMarshallelonr) {
 
-  def apply(instruction: AddEntriesTimelineInstruction): urt.AddEntries = urt.AddEntries(
-    entries = instruction.entries.map(timelineEntryMarshaller(_))
+  delonf apply(instruction: AddelonntrielonsTimelonlinelonInstruction): urt.Addelonntrielons = urt.Addelonntrielons(
+    elonntrielons = instruction.elonntrielons.map(timelonlinelonelonntryMarshallelonr(_))
   )
 }

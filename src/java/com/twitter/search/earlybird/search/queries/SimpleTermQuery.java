@@ -1,86 +1,86 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonScorelonr;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonWelonight;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
 /**
- * A version of a term query that we can use when we already know the term id (in case where we
- * previously looked it up), and have a TermsEnum to get the actual postings.
+ * A velonrsion of a telonrm quelonry that welon can uselon whelonn welon alrelonady know thelon telonrm id (in caselon whelonrelon welon
+ * prelonviously lookelond it up), and havelon a Telonrmselonnum to gelont thelon actual postings.
  *
- * This is can be used for constant score queries, where only iterating on the postings is required.
+ * This is can belon uselond for constant scorelon quelonrielons, whelonrelon only itelonrating on thelon postings is relonquirelond.
  */
-class SimpleTermQuery extends Query {
-  private final TermsEnum termsEnum;
-  private final long termId;
+class SimplelonTelonrmQuelonry elonxtelonnds Quelonry {
+  privatelon final Telonrmselonnum telonrmselonnum;
+  privatelon final long telonrmId;
 
-  public SimpleTermQuery(TermsEnum termsEnum, long termId) {
-    this.termsEnum = termsEnum;
-    this.termId = termId;
+  public SimplelonTelonrmQuelonry(Telonrmselonnum telonrmselonnum, long telonrmId) {
+    this.telonrmselonnum = telonrmselonnum;
+    this.telonrmId = telonrmId;
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new SimpleTermQueryWeight(scoreMode);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost)
+      throws IOelonxcelonption {
+    relonturn nelonw SimplelonTelonrmQuelonryWelonight(scorelonModelon);
   }
 
-  @Override
-  public int hashCode() {
-    return (termsEnum == null ? 0 : termsEnum.hashCode()) * 13 + (int) termId;
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn (telonrmselonnum == null ? 0 : telonrmselonnum.hashCodelon()) * 13 + (int) telonrmId;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof SimpleTermQuery)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof SimplelonTelonrmQuelonry)) {
+      relonturn falselon;
     }
 
-    SimpleTermQuery query = SimpleTermQuery.class.cast(obj);
-    return (termsEnum == null ? query.termsEnum == null : termsEnum.equals(query.termsEnum))
-        && (termId == query.termId);
+    SimplelonTelonrmQuelonry quelonry = SimplelonTelonrmQuelonry.class.cast(obj);
+    relonturn (telonrmselonnum == null ? quelonry.telonrmselonnum == null : telonrmselonnum.elonquals(quelonry.telonrmselonnum))
+        && (telonrmId == quelonry.telonrmId);
   }
 
-  @Override
-  public String toString(String field) {
-    return "SimpleTermQuery(" + field + ":" + termId + ")";
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn "SimplelonTelonrmQuelonry(" + fielonld + ":" + telonrmId + ")";
   }
 
-  private class SimpleTermQueryWeight extends ConstantScoreWeight {
-    private final ScoreMode scoreMode;
+  privatelon class SimplelonTelonrmQuelonryWelonight elonxtelonnds ConstantScorelonWelonight {
+    privatelon final ScorelonModelon scorelonModelon;
 
-    public SimpleTermQueryWeight(ScoreMode scoreMode) {
-      super(SimpleTermQuery.this, 1.0f);
-      this.scoreMode = scoreMode;
+    public SimplelonTelonrmQuelonryWelonight(ScorelonModelon scorelonModelon) {
+      supelonr(SimplelonTelonrmQuelonry.this, 1.0f);
+      this.scorelonModelon = scorelonModelon;
     }
 
-    @Override
+    @Ovelonrridelon
     public String toString() {
-      return "weight(" + SimpleTermQuery.this + ")";
+      relonturn "welonight(" + SimplelonTelonrmQuelonry.this + ")";
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      termsEnum.seekExact(termId);
+    @Ovelonrridelon
+    public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+      telonrmselonnum.selonelonkelonxact(telonrmId);
 
-      PostingsEnum docs = termsEnum.postings(
-          null, scoreMode.needsScores() ? PostingsEnum.FREQS : PostingsEnum.NONE);
-      assert docs != null;
-      return new ConstantScoreScorer(this, 0, scoreMode, docs);
+      Postingselonnum docs = telonrmselonnum.postings(
+          null, scorelonModelon.nelonelondsScorelons() ? Postingselonnum.FRelonQS : Postingselonnum.NONelon);
+      asselonrt docs != null;
+      relonturn nelonw ConstantScorelonScorelonr(this, 0, scorelonModelon, docs);
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return true;
+    @Ovelonrridelon
+    public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+      relonturn truelon;
     }
   }
 }

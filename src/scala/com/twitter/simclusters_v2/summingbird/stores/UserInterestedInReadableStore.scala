@@ -1,202 +1,202 @@
-package com.twitter.simclusters_v2.summingbird.stores
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.ManhattanCluster
-import com.twitter.storehaus_internal.manhattan.Athena
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.manhattan.Nash
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanClustelonr
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.Athelonna
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanRO
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanROConfig
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.Nash
+import com.twittelonr.storelonhaus_intelonrnal.util.ApplicationID
+import com.twittelonr.storelonhaus_intelonrnal.util.DataselontNamelon
+import com.twittelonr.storelonhaus_intelonrnal.util.HDFSPath
 
-object UserInterestedInReadableStore {
+objelonct UselonrIntelonrelonstelondInRelonadablelonStorelon {
 
-  // Clusters whose size is greater than this will not be considered. This is how the using UTEG
-  // experiment was run (because it could not process such clusters), and we don't have such a
-  // restriction for the Summingbird/Memcache implementation, but noticing that we aren't scoring
-  // tweets correctly in the big clusters. The fix for this seems a little involved, so for now
-  // let's just exclude such clusters.
-  val MaxClusterSizeForUserInterestedInDataset: Int = 5e6.toInt
+  // Clustelonrs whoselon sizelon is grelonatelonr than this will not belon considelonrelond. This is how thelon using UTelonG
+  // elonxpelonrimelonnt was run (beloncauselon it could not procelonss such clustelonrs), and welon don't havelon such a
+  // relonstriction for thelon Summingbird/Melonmcachelon implelonmelonntation, but noticing that welon arelonn't scoring
+  // twelonelonts correlonctly in thelon big clustelonrs. Thelon fix for this selonelonms a littlelon involvelond, so for now
+  // lelont's just elonxcludelon such clustelonrs.
+  val MaxClustelonrSizelonForUselonrIntelonrelonstelondInDataselont: Int = 5elon6.toInt
 
-  val modelVersionToDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145KDec11 -> "simclusters_v2_interested_in",
-    ModelVersions.Model20M145KUpdated -> "simclusters_v2_interested_in_20m_145k_updated",
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_interested_in_20m_145k_2020"
+  val modelonlVelonrsionToDataselontMap: Map[String, String] = Map(
+    ModelonlVelonrsions.Modelonl20M145KDelonc11 -> "simclustelonrs_v2_intelonrelonstelond_in",
+    ModelonlVelonrsions.Modelonl20M145KUpdatelond -> "simclustelonrs_v2_intelonrelonstelond_in_20m_145k_updatelond",
+    ModelonlVelonrsions.Modelonl20M145K2020 -> "simclustelonrs_v2_intelonrelonstelond_in_20m_145k_2020"
   )
 
-  // Producer embedding based User InterestedIn.
-  val modelVersionToDenserDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145KUpdated -> "simclusters_v2_interested_in_from_producer_embeddings_model20m145kupdated"
+  // Producelonr elonmbelondding baselond Uselonr IntelonrelonstelondIn.
+  val modelonlVelonrsionToDelonnselonrDataselontMap: Map[String, String] = Map(
+    ModelonlVelonrsions.Modelonl20M145KUpdatelond -> "simclustelonrs_v2_intelonrelonstelond_in_from_producelonr_elonmbelonddings_modelonl20m145kupdatelond"
   )
 
-  val modelVersionToIIAPEDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_interested_in_from_ape_20m145k2020"
+  val modelonlVelonrsionToIIAPelonDataselontMap: Map[String, String] = Map(
+    ModelonlVelonrsions.Modelonl20M145K2020 -> "simclustelonrs_v2_intelonrelonstelond_in_from_apelon_20m145k2020"
   )
 
-  val modelVersionToIIKFLiteDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145K2020 -> "simclusters_v2_interested_in_lite_20m_145k_2020"
+  val modelonlVelonrsionToIIKFLitelonDataselontMap: Map[String, String] = Map(
+    ModelonlVelonrsions.Modelonl20M145K2020 -> "simclustelonrs_v2_intelonrelonstelond_in_litelon_20m_145k_2020"
   )
 
-  val modelVersionToNextInterestedInDatasetMap: Map[String, String] = Map(
-    ModelVersions.Model20M145K2020 -> "bet_consumer_embedding_v2"
+  val modelonlVelonrsionToNelonxtIntelonrelonstelondInDataselontMap: Map[String, String] = Map(
+    ModelonlVelonrsions.Modelonl20M145K2020 -> "belont_consumelonr_elonmbelondding_v2"
   )
 
-  val defaultModelVersion: String = ModelVersions.Model20M145KUpdated
-  val knownModelVersions: String = modelVersionToDatasetMap.keys.mkString(",")
+  val delonfaultModelonlVelonrsion: String = ModelonlVelonrsions.Modelonl20M145KUpdatelond
+  val knownModelonlVelonrsions: String = modelonlVelonrsionToDataselontMap.kelonys.mkString(",")
 
-  def defaultStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    modelVersion: String = defaultModelVersion
-  ): ReadableStore[UserId, ClustersUserIsInterestedIn] = {
-    if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  delonf delonfaultStorelonWithMtls(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    modelonlVelonrsion: String = delonfaultModelonlVelonrsion
+  ): RelonadablelonStorelon[UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn] = {
+    if (!modelonlVelonrsionToDataselontMap.contains(modelonlVelonrsion)) {
+      throw nelonw IllelongalArgumelonntelonxcelonption(
+        "Unknown modelonl velonrsion: " + modelonlVelonrsion + ". Known modelonl velonrsions: " + knownModelonlVelonrsions)
     }
-    this.getStore("simclusters_v2", mhMtlsParams, modelVersionToDatasetMap(modelVersion))
+    this.gelontStorelon("simclustelonrs_v2", mhMtlsParams, modelonlVelonrsionToDataselontMap(modelonlVelonrsion))
   }
 
-  def defaultSimClustersEmbeddingStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    defaultStoreWithMtls(mhMtlsParams, ModelVersions.toKnownForModelVersion(modelVersion))
-      .composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(theEmbeddingType, theModelVersion, InternalId.UserId(userId))
-            if theEmbeddingType == embeddingType && theModelVersion == modelVersion =>
-          userId
-      }.mapValues(
-        toSimClustersEmbedding(_, embeddingType, Some(MaxClusterSizeForUserInterestedInDataset)))
+  delonf delonfaultSimClustelonrselonmbelonddingStorelonWithMtls(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion
+  ): RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding] = {
+    delonfaultStorelonWithMtls(mhMtlsParams, ModelonlVelonrsions.toKnownForModelonlVelonrsion(modelonlVelonrsion))
+      .composelonKelonyMapping[SimClustelonrselonmbelonddingId] {
+        caselon SimClustelonrselonmbelonddingId(thelonelonmbelonddingTypelon, thelonModelonlVelonrsion, IntelonrnalId.UselonrId(uselonrId))
+            if thelonelonmbelonddingTypelon == elonmbelonddingTypelon && thelonModelonlVelonrsion == modelonlVelonrsion =>
+          uselonrId
+      }.mapValuelons(
+        toSimClustelonrselonmbelondding(_, elonmbelonddingTypelon, Somelon(MaxClustelonrSizelonForUselonrIntelonrelonstelondInDataselont)))
   }
 
-  def defaultIIKFLiteStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    modelVersion: String = defaultModelVersion
-  ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
-    if (!modelVersionToIIKFLiteDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  delonf delonfaultIIKFLitelonStorelonWithMtls(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    modelonlVelonrsion: String = delonfaultModelonlVelonrsion
+  ): RelonadablelonStorelon[Long, ClustelonrsUselonrIsIntelonrelonstelondIn] = {
+    if (!modelonlVelonrsionToIIKFLitelonDataselontMap.contains(modelonlVelonrsion)) {
+      throw nelonw IllelongalArgumelonntelonxcelonption(
+        "Unknown modelonl velonrsion: " + modelonlVelonrsion + ". Known modelonl velonrsions: " + knownModelonlVelonrsions)
     }
-    getStore("simclusters_v2", mhMtlsParams, modelVersionToIIKFLiteDatasetMap(modelVersion))
+    gelontStorelon("simclustelonrs_v2", mhMtlsParams, modelonlVelonrsionToIIKFLitelonDataselontMap(modelonlVelonrsion))
   }
 
-  def defaultIIPEStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    modelVersion: String = defaultModelVersion
-  ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
-    if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  delonf delonfaultIIPelonStorelonWithMtls(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    modelonlVelonrsion: String = delonfaultModelonlVelonrsion
+  ): RelonadablelonStorelon[Long, ClustelonrsUselonrIsIntelonrelonstelondIn] = {
+    if (!modelonlVelonrsionToDataselontMap.contains(modelonlVelonrsion)) {
+      throw nelonw IllelongalArgumelonntelonxcelonption(
+        "Unknown modelonl velonrsion: " + modelonlVelonrsion + ". Known modelonl velonrsions: " + knownModelonlVelonrsions)
     }
-    getStore("simclusters_v2", mhMtlsParams, modelVersionToDenserDatasetMap(modelVersion))
+    gelontStorelon("simclustelonrs_v2", mhMtlsParams, modelonlVelonrsionToDelonnselonrDataselontMap(modelonlVelonrsion))
   }
 
-  def defaultIIAPEStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    modelVersion: String = defaultModelVersion
-  ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
-    if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  delonf delonfaultIIAPelonStorelonWithMtls(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    modelonlVelonrsion: String = delonfaultModelonlVelonrsion
+  ): RelonadablelonStorelon[Long, ClustelonrsUselonrIsIntelonrelonstelondIn] = {
+    if (!modelonlVelonrsionToDataselontMap.contains(modelonlVelonrsion)) {
+      throw nelonw IllelongalArgumelonntelonxcelonption(
+        "Unknown modelonl velonrsion: " + modelonlVelonrsion + ". Known modelonl velonrsions: " + knownModelonlVelonrsions)
     }
-    getStore("simclusters_v2", mhMtlsParams, modelVersionToIIAPEDatasetMap(modelVersion))
+    gelontStorelon("simclustelonrs_v2", mhMtlsParams, modelonlVelonrsionToIIAPelonDataselontMap(modelonlVelonrsion))
   }
 
-  def defaultIIPESimClustersEmbeddingStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    defaultIIPEStoreWithMtls(mhMtlsParams, ModelVersions.toKnownForModelVersion(modelVersion))
-      .composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(theEmbeddingType, theModelVersion, InternalId.UserId(userId))
-            if theEmbeddingType == embeddingType && theModelVersion == modelVersion =>
-          userId
+  delonf delonfaultIIPelonSimClustelonrselonmbelonddingStorelonWithMtls(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion
+  ): RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding] = {
+    delonfaultIIPelonStorelonWithMtls(mhMtlsParams, ModelonlVelonrsions.toKnownForModelonlVelonrsion(modelonlVelonrsion))
+      .composelonKelonyMapping[SimClustelonrselonmbelonddingId] {
+        caselon SimClustelonrselonmbelonddingId(thelonelonmbelonddingTypelon, thelonModelonlVelonrsion, IntelonrnalId.UselonrId(uselonrId))
+            if thelonelonmbelonddingTypelon == elonmbelonddingTypelon && thelonModelonlVelonrsion == modelonlVelonrsion =>
+          uselonrId
 
-      }.mapValues(toSimClustersEmbedding(_, embeddingType))
+      }.mapValuelons(toSimClustelonrselonmbelondding(_, elonmbelonddingTypelon))
   }
 
-  def defaultIIAPESimClustersEmbeddingStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    defaultIIAPEStoreWithMtls(mhMtlsParams, ModelVersions.toKnownForModelVersion(modelVersion))
-      .composeKeyMapping[SimClustersEmbeddingId] {
-        case SimClustersEmbeddingId(theEmbeddingType, theModelVersion, InternalId.UserId(userId))
-            if theEmbeddingType == embeddingType && theModelVersion == modelVersion =>
-          userId
-      }.mapValues(toSimClustersEmbedding(_, embeddingType))
+  delonf delonfaultIIAPelonSimClustelonrselonmbelonddingStorelonWithMtls(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion
+  ): RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding] = {
+    delonfaultIIAPelonStorelonWithMtls(mhMtlsParams, ModelonlVelonrsions.toKnownForModelonlVelonrsion(modelonlVelonrsion))
+      .composelonKelonyMapping[SimClustelonrselonmbelonddingId] {
+        caselon SimClustelonrselonmbelonddingId(thelonelonmbelonddingTypelon, thelonModelonlVelonrsion, IntelonrnalId.UselonrId(uselonrId))
+            if thelonelonmbelonddingTypelon == elonmbelonddingTypelon && thelonModelonlVelonrsion == modelonlVelonrsion =>
+          uselonrId
+      }.mapValuelons(toSimClustelonrselonmbelondding(_, elonmbelonddingTypelon))
   }
 
-  def defaultNextInterestedInStoreWithMtls(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    embeddingType: EmbeddingType,
-    modelVersion: ModelVersion
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    if (!modelVersionToNextInterestedInDatasetMap.contains(
-        ModelVersions.toKnownForModelVersion(modelVersion))) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+  delonf delonfaultNelonxtIntelonrelonstelondInStorelonWithMtls(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion
+  ): RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding] = {
+    if (!modelonlVelonrsionToNelonxtIntelonrelonstelondInDataselontMap.contains(
+        ModelonlVelonrsions.toKnownForModelonlVelonrsion(modelonlVelonrsion))) {
+      throw nelonw IllelongalArgumelonntelonxcelonption(
+        "Unknown modelonl velonrsion: " + modelonlVelonrsion + ". Known modelonl velonrsions: " + knownModelonlVelonrsions)
     }
-    val datasetName = modelVersionToNextInterestedInDatasetMap(
-      ModelVersions.toKnownForModelVersion(modelVersion))
-    new SimClustersManhattanReadableStoreForReadWriteDataset(
-      appId = "kafka_beam_sink_bet_consumer_embedding_prod",
-      datasetName = datasetName,
-      label = datasetName,
+    val dataselontNamelon = modelonlVelonrsionToNelonxtIntelonrelonstelondInDataselontMap(
+      ModelonlVelonrsions.toKnownForModelonlVelonrsion(modelonlVelonrsion))
+    nelonw SimClustelonrsManhattanRelonadablelonStorelonForRelonadWritelonDataselont(
+      appId = "kafka_belonam_sink_belont_consumelonr_elonmbelondding_prod",
+      dataselontNamelon = dataselontNamelon,
+      labelonl = dataselontNamelon,
       mtlsParams = mhMtlsParams,
-      manhattanCluster = Nash
-    ).mapValues(toSimClustersEmbedding(_, embeddingType))
+      manhattanClustelonr = Nash
+    ).mapValuelons(toSimClustelonrselonmbelondding(_, elonmbelonddingTypelon))
   }
 
-  def getWithMtls(
+  delonf gelontWithMtls(
     appId: String,
-    mtlsParams: ManhattanKVClientMtlsParams,
-    modelVersion: String = defaultModelVersion
-  ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
-    if (!modelVersionToDatasetMap.contains(modelVersion)) {
-      throw new IllegalArgumentException(
-        "Unknown model version: " + modelVersion + ". Known model versions: " + knownModelVersions)
+    mtlsParams: ManhattanKVClielonntMtlsParams,
+    modelonlVelonrsion: String = delonfaultModelonlVelonrsion
+  ): RelonadablelonStorelon[Long, ClustelonrsUselonrIsIntelonrelonstelondIn] = {
+    if (!modelonlVelonrsionToDataselontMap.contains(modelonlVelonrsion)) {
+      throw nelonw IllelongalArgumelonntelonxcelonption(
+        "Unknown modelonl velonrsion: " + modelonlVelonrsion + ". Known modelonl velonrsions: " + knownModelonlVelonrsions)
     }
-    this.getStore(appId, mtlsParams, modelVersionToDatasetMap(modelVersion))
+    this.gelontStorelon(appId, mtlsParams, modelonlVelonrsionToDataselontMap(modelonlVelonrsion))
   }
 
   /**
    * @param appId      Manhattan AppId
-   * @param mtlsParams MltsParams for s2s Authentication
+   * @param mtlsParams MltsParams for s2s Authelonntication
    *
-   * @return ReadableStore of user to cluster interestedIn data set
+   * @relonturn RelonadablelonStorelon of uselonr to clustelonr intelonrelonstelondIn data selont
    */
-  def getStore(
+  delonf gelontStorelon(
     appId: String,
-    mtlsParams: ManhattanKVClientMtlsParams,
-    datasetName: String,
-    manhattanCluster: ManhattanCluster = Athena
-  ): ReadableStore[Long, ClustersUserIsInterestedIn] = {
+    mtlsParams: ManhattanKVClielonntMtlsParams,
+    dataselontNamelon: String,
+    manhattanClustelonr: ManhattanClustelonr = Athelonna
+  ): RelonadablelonStorelon[Long, ClustelonrsUselonrIsIntelonrelonstelondIn] = {
 
-    implicit val keyInjection: Injection[Long, Array[Byte]] = Injection.long2BigEndian
-    implicit val userInterestsCodec: Injection[ClustersUserIsInterestedIn, Array[Byte]] =
-      CompactScalaCodec(ClustersUserIsInterestedIn)
+    implicit val kelonyInjelonction: Injelonction[Long, Array[Bytelon]] = Injelonction.long2Bigelonndian
+    implicit val uselonrIntelonrelonstsCodelonc: Injelonction[ClustelonrsUselonrIsIntelonrelonstelondIn, Array[Bytelon]] =
+      CompactScalaCodelonc(ClustelonrsUselonrIsIntelonrelonstelondIn)
 
-    ManhattanRO.getReadableStoreWithMtls[Long, ClustersUserIsInterestedIn](
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[Long, ClustelonrsUselonrIsIntelonrelonstelondIn](
       ManhattanROConfig(
-        HDFSPath(""), // not needed
+        HDFSPath(""), // not nelonelondelond
         ApplicationID(appId),
-        DatasetName(datasetName),
-        manhattanCluster
+        DataselontNamelon(dataselontNamelon),
+        manhattanClustelonr
       ),
       mtlsParams
     )
@@ -204,60 +204,60 @@ object UserInterestedInReadableStore {
 
   /**
    *
-   * @param record ClustersUserIsInterestedIn thrift struct from the MH data set
-   * @param embeddingType Embedding Type as defined in com.twitter.simclusters_v2.thriftscala.EmbeddingType
-   * @param maxClusterSizeOpt Option param to set max cluster size.
-   *                          We will not filter out clusters based on cluster size if it is None
-   * @return
+   * @param reloncord ClustelonrsUselonrIsIntelonrelonstelondIn thrift struct from thelon MH data selont
+   * @param elonmbelonddingTypelon elonmbelondding Typelon as delonfinelond in com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+   * @param maxClustelonrSizelonOpt Option param to selont max clustelonr sizelon.
+   *                          Welon will not filtelonr out clustelonrs baselond on clustelonr sizelon if it is Nonelon
+   * @relonturn
    */
-  def toSimClustersEmbedding(
-    record: ClustersUserIsInterestedIn,
-    embeddingType: EmbeddingType,
-    maxClusterSizeOpt: Option[Int] = None
-  ): SimClustersEmbedding = {
-    val embedding = record.clusterIdToScores
-      .collect {
-        case (clusterId, clusterScores) if maxClusterSizeOpt.forall { maxClusterSize =>
-              clusterScores.numUsersInterestedInThisClusterUpperBound.exists(_ < maxClusterSize)
+  delonf toSimClustelonrselonmbelondding(
+    reloncord: ClustelonrsUselonrIsIntelonrelonstelondIn,
+    elonmbelonddingTypelon: elonmbelonddingTypelon,
+    maxClustelonrSizelonOpt: Option[Int] = Nonelon
+  ): SimClustelonrselonmbelondding = {
+    val elonmbelondding = reloncord.clustelonrIdToScorelons
+      .collelonct {
+        caselon (clustelonrId, clustelonrScorelons) if maxClustelonrSizelonOpt.forall { maxClustelonrSizelon =>
+              clustelonrScorelons.numUselonrsIntelonrelonstelondInThisClustelonrUppelonrBound.elonxists(_ < maxClustelonrSizelon)
             } =>
-          val score = embeddingType match {
-            case EmbeddingType.FavBasedUserInterestedIn =>
-              clusterScores.favScore
-            case EmbeddingType.FollowBasedUserInterestedIn =>
-              clusterScores.followScore
-            case EmbeddingType.LogFavBasedUserInterestedIn =>
-              clusterScores.logFavScore
-            case EmbeddingType.FavBasedUserInterestedInFromPE =>
-              clusterScores.favScore
-            case EmbeddingType.FollowBasedUserInterestedInFromPE =>
-              clusterScores.followScore
-            case EmbeddingType.LogFavBasedUserInterestedInFromPE =>
-              clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedInFromAPE =>
-              clusterScores.logFavScore
-            case EmbeddingType.FollowBasedUserInterestedInFromAPE =>
-              clusterScores.followScore
-            case EmbeddingType.UserNextInterestedIn =>
-              clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedMaxpoolingAddressBookFromIIAPE =>
-              clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedAverageAddressBookFromIIAPE =>
-              clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedBooktypeMaxpoolingAddressBookFromIIAPE =>
-              clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedLargestDimMaxpoolingAddressBookFromIIAPE =>
-              clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedLouvainMaxpoolingAddressBookFromIIAPE =>
-              clusterScores.logFavScore
-            case EmbeddingType.LogFavBasedUserInterestedConnectedMaxpoolingAddressBookFromIIAPE =>
-              clusterScores.logFavScore
+          val scorelon = elonmbelonddingTypelon match {
+            caselon elonmbelonddingTypelon.FavBaselondUselonrIntelonrelonstelondIn =>
+              clustelonrScorelons.favScorelon
+            caselon elonmbelonddingTypelon.FollowBaselondUselonrIntelonrelonstelondIn =>
+              clustelonrScorelons.followScorelon
+            caselon elonmbelonddingTypelon.LogFavBaselondUselonrIntelonrelonstelondIn =>
+              clustelonrScorelons.logFavScorelon
+            caselon elonmbelonddingTypelon.FavBaselondUselonrIntelonrelonstelondInFromPelon =>
+              clustelonrScorelons.favScorelon
+            caselon elonmbelonddingTypelon.FollowBaselondUselonrIntelonrelonstelondInFromPelon =>
+              clustelonrScorelons.followScorelon
+            caselon elonmbelonddingTypelon.LogFavBaselondUselonrIntelonrelonstelondInFromPelon =>
+              clustelonrScorelons.logFavScorelon
+            caselon elonmbelonddingTypelon.LogFavBaselondUselonrIntelonrelonstelondInFromAPelon =>
+              clustelonrScorelons.logFavScorelon
+            caselon elonmbelonddingTypelon.FollowBaselondUselonrIntelonrelonstelondInFromAPelon =>
+              clustelonrScorelons.followScorelon
+            caselon elonmbelonddingTypelon.UselonrNelonxtIntelonrelonstelondIn =>
+              clustelonrScorelons.logFavScorelon
+            caselon elonmbelonddingTypelon.LogFavBaselondUselonrIntelonrelonstelondMaxpoolingAddrelonssBookFromIIAPelon =>
+              clustelonrScorelons.logFavScorelon
+            caselon elonmbelonddingTypelon.LogFavBaselondUselonrIntelonrelonstelondAvelonragelonAddrelonssBookFromIIAPelon =>
+              clustelonrScorelons.logFavScorelon
+            caselon elonmbelonddingTypelon.LogFavBaselondUselonrIntelonrelonstelondBooktypelonMaxpoolingAddrelonssBookFromIIAPelon =>
+              clustelonrScorelons.logFavScorelon
+            caselon elonmbelonddingTypelon.LogFavBaselondUselonrIntelonrelonstelondLargelonstDimMaxpoolingAddrelonssBookFromIIAPelon =>
+              clustelonrScorelons.logFavScorelon
+            caselon elonmbelonddingTypelon.LogFavBaselondUselonrIntelonrelonstelondLouvainMaxpoolingAddrelonssBookFromIIAPelon =>
+              clustelonrScorelons.logFavScorelon
+            caselon elonmbelonddingTypelon.LogFavBaselondUselonrIntelonrelonstelondConnelonctelondMaxpoolingAddrelonssBookFromIIAPelon =>
+              clustelonrScorelons.logFavScorelon
 
-            case _ =>
-              throw new IllegalArgumentException(s"unknown EmbeddingType: $embeddingType")
+            caselon _ =>
+              throw nelonw IllelongalArgumelonntelonxcelonption(s"unknown elonmbelonddingTypelon: $elonmbelonddingTypelon")
           }
-          score.map(clusterId -> _)
-      }.flatten.toMap
+          scorelon.map(clustelonrId -> _)
+      }.flattelonn.toMap
 
-    SimClustersEmbedding(embedding)
+    SimClustelonrselonmbelondding(elonmbelondding)
   }
 }

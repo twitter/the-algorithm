@@ -1,45 +1,45 @@
-package com.twitter.search.common.util.earlybird;
+packagelon com.twittelonr.selonarch.common.util.elonarlybird;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.elonarlyTelonrminationInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
 
-public final class ResponseMergerUtils {
+public final class RelonsponselonMelonrgelonrUtils {
 
   // Utility class, disallow instantiation.
-  private ResponseMergerUtils() {
+  privatelon RelonsponselonMelonrgelonrUtils() {
   }
 
   /**
-   * Merges early termination infos from several earlybird responses.
+   * Melonrgelons elonarly telonrmination infos from selonvelonral elonarlybird relonsponselons.
    *
-   * @param responses earlybird responses to merge the early termination infos from
-   * @return merged early termination info
+   * @param relonsponselons elonarlybird relonsponselons to melonrgelon thelon elonarly telonrmination infos from
+   * @relonturn melonrgelond elonarly telonrmination info
    */
-  public static EarlyTerminationInfo mergeEarlyTerminationInfo(List<EarlybirdResponse> responses) {
-    EarlyTerminationInfo etInfo = new EarlyTerminationInfo(false);
-    Set<String> etReasonSet = Sets.newHashSet();
-    // Fill in EarlyTerminationStatus
-    for (EarlybirdResponse ebResp : responses) {
-      if (ebResp.isSetEarlyTerminationInfo()
-          && ebResp.getEarlyTerminationInfo().isEarlyTerminated()) {
-        etInfo.setEarlyTerminated(true);
-        if (ebResp.getEarlyTerminationInfo().isSetEarlyTerminationReason()) {
-          etReasonSet.add(ebResp.getEarlyTerminationInfo().getEarlyTerminationReason());
+  public static elonarlyTelonrminationInfo melonrgelonelonarlyTelonrminationInfo(List<elonarlybirdRelonsponselon> relonsponselons) {
+    elonarlyTelonrminationInfo elontInfo = nelonw elonarlyTelonrminationInfo(falselon);
+    Selont<String> elontRelonasonSelont = Selonts.nelonwHashSelont();
+    // Fill in elonarlyTelonrminationStatus
+    for (elonarlybirdRelonsponselon elonbRelonsp : relonsponselons) {
+      if (elonbRelonsp.isSelontelonarlyTelonrminationInfo()
+          && elonbRelonsp.gelontelonarlyTelonrminationInfo().iselonarlyTelonrminatelond()) {
+        elontInfo.selontelonarlyTelonrminatelond(truelon);
+        if (elonbRelonsp.gelontelonarlyTelonrminationInfo().isSelontelonarlyTelonrminationRelonason()) {
+          elontRelonasonSelont.add(elonbRelonsp.gelontelonarlyTelonrminationInfo().gelontelonarlyTelonrminationRelonason());
         }
-        if (ebResp.getEarlyTerminationInfo().isSetMergedEarlyTerminationReasons()) {
-          etReasonSet.addAll(ebResp.getEarlyTerminationInfo().getMergedEarlyTerminationReasons());
+        if (elonbRelonsp.gelontelonarlyTelonrminationInfo().isSelontMelonrgelondelonarlyTelonrminationRelonasons()) {
+          elontRelonasonSelont.addAll(elonbRelonsp.gelontelonarlyTelonrminationInfo().gelontMelonrgelondelonarlyTelonrminationRelonasons());
         }
       }
     }
-    if (etInfo.isEarlyTerminated()) {
-      etInfo.setMergedEarlyTerminationReasons(Lists.newArrayList(etReasonSet));
+    if (elontInfo.iselonarlyTelonrminatelond()) {
+      elontInfo.selontMelonrgelondelonarlyTelonrminationRelonasons(Lists.nelonwArrayList(elontRelonasonSelont));
     }
-    return etInfo;
+    relonturn elontInfo;
   }
 }

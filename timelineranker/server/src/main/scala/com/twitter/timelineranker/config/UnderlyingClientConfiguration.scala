@@ -1,106 +1,106 @@
-package com.twitter.timelineranker.config
+packagelon com.twittelonr.timelonlinelonrankelonr.config
 
-import com.twitter.cortex_tweet_annotate.thriftscala.CortexTweetQueryService
-import com.twitter.finagle.Service
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.ThriftClientRequest
-import com.twitter.gizmoduck.thriftscala.{UserService => Gizmoduck}
-import com.twitter.manhattan.v1.thriftscala.{ManhattanCoordinator => ManhattanV1}
-import com.twitter.merlin.thriftscala.UserRolesService
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.UserTweetEntityGraph
-import com.twitter.search.earlybird.thriftscala.EarlybirdService
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.storehaus.Store
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelineranker.thriftscala.TimelineRanker
-import com.twitter.timelines.config.ConfigUtils
-import com.twitter.timelines.config.TimelinesUnderlyingClientConfiguration
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelineservice.thriftscala.TimelineService
-import com.twitter.tweetypie.thriftscala.{TweetService => TweetyPie}
-import com.twitter.util.Duration
-import com.twitter.util.Try
-import org.apache.thrift.protocol.TCompactProtocol
+import com.twittelonr.cortelonx_twelonelont_annotatelon.thriftscala.CortelonxTwelonelontQuelonrySelonrvicelon
+import com.twittelonr.finaglelon.Selonrvicelon
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.selonrvicelon.RelontryPolicy
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finaglelon.thrift.ThriftClielonntRelonquelonst
+import com.twittelonr.gizmoduck.thriftscala.{UselonrSelonrvicelon => Gizmoduck}
+import com.twittelonr.manhattan.v1.thriftscala.{ManhattanCoordinator => ManhattanV1}
+import com.twittelonr.melonrlin.thriftscala.UselonrRolelonsSelonrvicelon
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.UselonrTwelonelontelonntityGraph
+import com.twittelonr.selonarch.elonarlybird.thriftscala.elonarlybirdSelonrvicelon
+import com.twittelonr.socialgraph.thriftscala.SocialGraphSelonrvicelon
+import com.twittelonr.storelonhaus.Storelon
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.timelonlinelonrankelonr.thriftscala.TimelonlinelonRankelonr
+import com.twittelonr.timelonlinelons.config.ConfigUtils
+import com.twittelonr.timelonlinelons.config.TimelonlinelonsUndelonrlyingClielonntConfiguration
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.TimelonlinelonSelonrvicelon
+import com.twittelonr.twelonelontypielon.thriftscala.{TwelonelontSelonrvicelon => TwelonelontyPielon}
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Try
+import org.apachelon.thrift.protocol.TCompactProtocol
 
-abstract class UnderlyingClientConfiguration(
-  flags: TimelineRankerFlags,
-  val statsReceiver: StatsReceiver)
-    extends TimelinesUnderlyingClientConfiguration
+abstract class UndelonrlyingClielonntConfiguration(
+  flags: TimelonlinelonRankelonrFlags,
+  val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds TimelonlinelonsUndelonrlyingClielonntConfiguration
     with ConfigUtils {
 
-  lazy val thriftClientId: ClientId = timelineRankerClientId()
-  override lazy val serviceIdentifier: ServiceIdentifier = flags.getServiceIdentifier
+  lazy val thriftClielonntId: ClielonntId = timelonlinelonRankelonrClielonntId()
+  ovelonrridelon lazy val selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr = flags.gelontSelonrvicelonIdelonntifielonr
 
-  def timelineRankerClientId(scope: Option[String] = None): ClientId = {
-    clientIdWithScopeOpt("timelineranker", flags.getEnv, scope)
+  delonf timelonlinelonRankelonrClielonntId(scopelon: Option[String] = Nonelon): ClielonntId = {
+    clielonntIdWithScopelonOpt("timelonlinelonrankelonr", flags.gelontelonnv, scopelon)
   }
 
-  def createEarlybirdClient(
-    scope: String,
-    requestTimeout: Duration,
-    timeout: Duration,
-    retryPolicy: RetryPolicy[Try[Nothing]]
-  ): EarlybirdService.MethodPerEndpoint = {
-    val scopedName = s"earlybird/$scope"
+  delonf crelonatelonelonarlybirdClielonnt(
+    scopelon: String,
+    relonquelonstTimelonout: Duration,
+    timelonout: Duration,
+    relontryPolicy: RelontryPolicy[Try[Nothing]]
+  ): elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint = {
+    val scopelondNamelon = s"elonarlybird/$scopelon"
 
-    methodPerEndpointClient[
-      EarlybirdService.ServicePerEndpoint,
-      EarlybirdService.MethodPerEndpoint](
-      thriftMuxClientBuilder(
-        scopedName,
-        protocolFactoryOption = Some(new TCompactProtocol.Factory),
-        requireMutualTls = true)
-        .dest("/s/earlybird-root-superroot/root-superroot")
-        .timeout(timeout)
-        .requestTimeout(requestTimeout)
-        .retryPolicy(retryPolicy)
+    melonthodPelonrelonndpointClielonnt[
+      elonarlybirdSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint](
+      thriftMuxClielonntBuildelonr(
+        scopelondNamelon,
+        protocolFactoryOption = Somelon(nelonw TCompactProtocol.Factory),
+        relonquirelonMutualTls = truelon)
+        .delonst("/s/elonarlybird-root-supelonrroot/root-supelonrroot")
+        .timelonout(timelonout)
+        .relonquelonstTimelonout(relonquelonstTimelonout)
+        .relontryPolicy(relontryPolicy)
     )
   }
 
-  def createEarlybirdRealtimeCgClient(
-    scope: String,
-    requestTimeout: Duration,
-    timeout: Duration,
-    retryPolicy: RetryPolicy[Try[Nothing]]
-  ): EarlybirdService.MethodPerEndpoint = {
-    val scopedName = s"earlybird/$scope"
+  delonf crelonatelonelonarlybirdRelonaltimelonCgClielonnt(
+    scopelon: String,
+    relonquelonstTimelonout: Duration,
+    timelonout: Duration,
+    relontryPolicy: RelontryPolicy[Try[Nothing]]
+  ): elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint = {
+    val scopelondNamelon = s"elonarlybird/$scopelon"
 
-    methodPerEndpointClient[
-      EarlybirdService.ServicePerEndpoint,
-      EarlybirdService.MethodPerEndpoint](
-      thriftMuxClientBuilder(
-        scopedName,
-        protocolFactoryOption = Some(new TCompactProtocol.Factory),
-        requireMutualTls = true)
-        .dest("/s/earlybird-rootrealtimecg/root-realtime_cg")
-        .timeout(timeout)
-        .requestTimeout(requestTimeout)
-        .retryPolicy(retryPolicy)
+    melonthodPelonrelonndpointClielonnt[
+      elonarlybirdSelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      elonarlybirdSelonrvicelon.MelonthodPelonrelonndpoint](
+      thriftMuxClielonntBuildelonr(
+        scopelondNamelon,
+        protocolFactoryOption = Somelon(nelonw TCompactProtocol.Factory),
+        relonquirelonMutualTls = truelon)
+        .delonst("/s/elonarlybird-rootrelonaltimeloncg/root-relonaltimelon_cg")
+        .timelonout(timelonout)
+        .relonquelonstTimelonout(relonquelonstTimelonout)
+        .relontryPolicy(relontryPolicy)
     )
   }
 
-  def cortexTweetQueryServiceClient: CortexTweetQueryService.MethodPerEndpoint
-  def gizmoduckClient: Gizmoduck.MethodPerEndpoint
-  def manhattanStarbuckClient: ManhattanV1.MethodPerEndpoint
-  def sgsClient: SocialGraphService.MethodPerEndpoint
-  def timelineRankerForwardingClient: TimelineRanker.FinagledClient
-  def timelineServiceClient: TimelineService.MethodPerEndpoint
-  def tweetyPieHighQoSClient: TweetyPie.MethodPerEndpoint
-  def tweetyPieLowQoSClient: TweetyPie.MethodPerEndpoint
-  def userRolesServiceClient: UserRolesService.MethodPerEndpoint
-  def contentFeaturesCache: Store[TweetId, ContentFeatures]
-  def userTweetEntityGraphClient: UserTweetEntityGraph.FinagledClient
-  def stratoClient: StratoClient
+  delonf cortelonxTwelonelontQuelonrySelonrvicelonClielonnt: CortelonxTwelonelontQuelonrySelonrvicelon.MelonthodPelonrelonndpoint
+  delonf gizmoduckClielonnt: Gizmoduck.MelonthodPelonrelonndpoint
+  delonf manhattanStarbuckClielonnt: ManhattanV1.MelonthodPelonrelonndpoint
+  delonf sgsClielonnt: SocialGraphSelonrvicelon.MelonthodPelonrelonndpoint
+  delonf timelonlinelonRankelonrForwardingClielonnt: TimelonlinelonRankelonr.FinaglelondClielonnt
+  delonf timelonlinelonSelonrvicelonClielonnt: TimelonlinelonSelonrvicelon.MelonthodPelonrelonndpoint
+  delonf twelonelontyPielonHighQoSClielonnt: TwelonelontyPielon.MelonthodPelonrelonndpoint
+  delonf twelonelontyPielonLowQoSClielonnt: TwelonelontyPielon.MelonthodPelonrelonndpoint
+  delonf uselonrRolelonsSelonrvicelonClielonnt: UselonrRolelonsSelonrvicelon.MelonthodPelonrelonndpoint
+  delonf contelonntFelonaturelonsCachelon: Storelon[TwelonelontId, ContelonntFelonaturelons]
+  delonf uselonrTwelonelontelonntityGraphClielonnt: UselonrTwelonelontelonntityGraph.FinaglelondClielonnt
+  delonf stratoClielonnt: StratoClielonnt
 
-  def darkTrafficProxy: Option[Service[ThriftClientRequest, Array[Byte]]] = {
-    if (flags.darkTrafficDestination.trim.nonEmpty) {
-      Some(darkTrafficClient(flags.darkTrafficDestination))
-    } else {
-      None
+  delonf darkTrafficProxy: Option[Selonrvicelon[ThriftClielonntRelonquelonst, Array[Bytelon]]] = {
+    if (flags.darkTrafficDelonstination.trim.nonelonmpty) {
+      Somelon(darkTrafficClielonnt(flags.darkTrafficDelonstination))
+    } elonlselon {
+      Nonelon
     }
   }
 

@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.icon_label
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.icon_labelonl
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.icon_label.IconLabelCandidateUrtItemBuilder.IconLabelClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.LabelCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.richtext.BaseRichTextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon.HorizonIcon
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.icon_label.IconLabelItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.richtext.RichTextEntity
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.icon_labelonl.IconLabelonlCandidatelonUrtItelonmBuildelonr.IconLabelonlClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.LabelonlCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.richtelonxt.BaselonRichTelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.icon.HorizonIcon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.icon_labelonl.IconLabelonlItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt.RichTelonxtelonntity
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object IconLabelCandidateUrtItemBuilder {
-  val IconLabelClientEventInfoElement: String = "iconlabel"
+objelonct IconLabelonlCandidatelonUrtItelonmBuildelonr {
+  val IconLabelonlClielonntelonvelonntInfoelonlelonmelonnt: String = "iconlabelonl"
 }
 
-case class IconLabelCandidateUrtItemBuilder[-Query <: PipelineQuery, Candidate <: LabelCandidate](
-  richTextBuilder: BaseRichTextBuilder[Query, Candidate],
-  icon: Option[HorizonIcon] = None,
-  entities: Option[List[RichTextEntity]] = None,
-  clientEventInfoBuilder: Option[BaseClientEventInfoBuilder[Query, Candidate]] = None,
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, Candidate]] = None)
-    extends CandidateUrtEntryBuilder[Query, Candidate, IconLabelItem] {
+caselon class IconLabelonlCandidatelonUrtItelonmBuildelonr[-Quelonry <: PipelonlinelonQuelonry, Candidatelon <: LabelonlCandidatelon](
+  richTelonxtBuildelonr: BaselonRichTelonxtBuildelonr[Quelonry, Candidatelon],
+  icon: Option[HorizonIcon] = Nonelon,
+  elonntitielons: Option[List[RichTelonxtelonntity]] = Nonelon,
+  clielonntelonvelonntInfoBuildelonr: Option[BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, Candidatelon]] = Nonelon,
+  felonelondbackActionInfoBuildelonr: Option[BaselonFelonelondbackActionInfoBuildelonr[Quelonry, Candidatelon]] = Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, Candidatelon, IconLabelonlItelonm] {
 
-  override def apply(
-    query: Query,
-    labelCandidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): IconLabelItem =
-    IconLabelItem(
-      id = labelCandidate.id.toString,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder.flatMap(
-        _.apply(query, labelCandidate, candidateFeatures, Some(IconLabelClientEventInfoElement))),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, labelCandidate, candidateFeatures)),
-      text = richTextBuilder(query, labelCandidate, candidateFeatures),
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    labelonlCandidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): IconLabelonlItelonm =
+    IconLabelonlItelonm(
+      id = labelonlCandidatelon.id.toString,
+      sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+      clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr.flatMap(
+        _.apply(quelonry, labelonlCandidatelon, candidatelonFelonaturelons, Somelon(IconLabelonlClielonntelonvelonntInfoelonlelonmelonnt))),
+      felonelondbackActionInfo =
+        felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, labelonlCandidatelon, candidatelonFelonaturelons)),
+      telonxt = richTelonxtBuildelonr(quelonry, labelonlCandidatelon, candidatelonFelonaturelons),
       icon = icon,
     )
 }

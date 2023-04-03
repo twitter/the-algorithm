@@ -1,53 +1,53 @@
-package com.twitter.product_mixer.component_library.candidate_source.business_profiles
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.businelonss_profilelons
 
-import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
-import com.twitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.strato.StratoKeyViewFetcherWithSourceFeaturesSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.consumer_identity.business_profiles.BusinessProfileTeamMembersOnUserClientColumn
-import com.twitter.strato.generated.client.consumer_identity.business_profiles.BusinessProfileTeamMembersOnUserClientColumn.{
-  Value => TeamMembersSlice
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.NelonxtCursorFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.PrelonviousCursorFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato.StratoKelonyVielonwFelontchelonrWithSourcelonFelonaturelonsSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.consumelonr_idelonntity.businelonss_profilelons.BusinelonssProfilelonTelonamMelonmbelonrsOnUselonrClielonntColumn
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.consumelonr_idelonntity.businelonss_profilelons.BusinelonssProfilelonTelonamMelonmbelonrsOnUselonrClielonntColumn.{
+  Valuelon => TelonamMelonmbelonrsSlicelon
 }
-import com.twitter.strato.generated.client.consumer_identity.business_profiles.BusinessProfileTeamMembersOnUserClientColumn.{
-  View => TeamMembersView
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.consumelonr_idelonntity.businelonss_profilelons.BusinelonssProfilelonTelonamMelonmbelonrsOnUselonrClielonntColumn.{
+  Vielonw => TelonamMelonmbelonrsVielonw
 }
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TeamMembersCandidateSource @Inject() (
-  column: BusinessProfileTeamMembersOnUserClientColumn)
-    extends StratoKeyViewFetcherWithSourceFeaturesSource[
+@Singlelonton
+class TelonamMelonmbelonrsCandidatelonSourcelon @Injelonct() (
+  column: BusinelonssProfilelonTelonamMelonmbelonrsOnUselonrClielonntColumn)
+    elonxtelonnds StratoKelonyVielonwFelontchelonrWithSourcelonFelonaturelonsSourcelon[
       Long,
-      TeamMembersView,
-      TeamMembersSlice,
+      TelonamMelonmbelonrsVielonw,
+      TelonamMelonmbelonrsSlicelon,
       Long
     ] {
-  override val identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    "BusinessProfileTeamMembers")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    "BusinelonssProfilelonTelonamMelonmbelonrs")
 
-  override val fetcher: Fetcher[Long, TeamMembersView, TeamMembersSlice] = column.fetcher
+  ovelonrridelon val felontchelonr: Felontchelonr[Long, TelonamMelonmbelonrsVielonw, TelonamMelonmbelonrsSlicelon] = column.felontchelonr
 
-  override def stratoResultTransformer(
-    stratoKey: Long,
-    stratoResult: TeamMembersSlice
-  ): Seq[Long] =
-    stratoResult.members
+  ovelonrridelon delonf stratoRelonsultTransformelonr(
+    stratoKelony: Long,
+    stratoRelonsult: TelonamMelonmbelonrsSlicelon
+  ): Selonq[Long] =
+    stratoRelonsult.melonmbelonrs
 
-  override protected def extractFeaturesFromStratoResult(
-    stratoKey: Long,
-    stratoResult: TeamMembersSlice
-  ): FeatureMap = {
-    val featureMapBuilder = FeatureMapBuilder()
-    stratoResult.previousCursor.foreach { cursor =>
-      featureMapBuilder.add(PreviousCursorFeature, cursor.toString)
+  ovelonrridelon protelonctelond delonf elonxtractFelonaturelonsFromStratoRelonsult(
+    stratoKelony: Long,
+    stratoRelonsult: TelonamMelonmbelonrsSlicelon
+  ): FelonaturelonMap = {
+    val felonaturelonMapBuildelonr = FelonaturelonMapBuildelonr()
+    stratoRelonsult.prelonviousCursor.forelonach { cursor =>
+      felonaturelonMapBuildelonr.add(PrelonviousCursorFelonaturelon, cursor.toString)
     }
-    stratoResult.nextCursor.foreach { cursor =>
-      featureMapBuilder.add(NextCursorFeature, cursor.toString)
+    stratoRelonsult.nelonxtCursor.forelonach { cursor =>
+      felonaturelonMapBuildelonr.add(NelonxtCursorFelonaturelon, cursor.toString)
     }
-    featureMapBuilder.build()
+    felonaturelonMapBuildelonr.build()
   }
 }

@@ -1,54 +1,54 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object ConsumersBasedUserAdGraphParams {
+objelonct ConsumelonrsBaselondUselonrAdGraphParams {
 
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "consumers_based_user_ad_graph_enable_source",
-        default = false
+  objelonct elonnablelonSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "consumelonrs_baselond_uselonr_ad_graph_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  // UTG-Lookalike
-  object MinCoOccurrenceParam
-      extends FSBoundedParam[Int](
-        name = "consumers_based_user_ad_graph_min_co_occurrence",
-        default = 2,
+  // UTG-Lookalikelon
+  objelonct MinCoOccurrelonncelonParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "consumelonrs_baselond_uselonr_ad_graph_min_co_occurrelonncelon",
+        delonfault = 2,
         min = 0,
         max = 500
       )
 
-  object MinScoreParam
-      extends FSBoundedParam[Double](
-        name = "consumers_based_user_ad_graph_min_score",
-        default = 0.0,
+  objelonct MinScorelonParam
+      elonxtelonnds FSBoundelondParam[Doublelon](
+        namelon = "consumelonrs_baselond_uselonr_ad_graph_min_scorelon",
+        delonfault = 0.0,
         min = 0.0,
         max = 10.0
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam,
-    MinCoOccurrenceParam,
-    MinScoreParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonSourcelonParam,
+    MinCoOccurrelonncelonParam,
+    MinScorelonParam
   )
 
-  lazy val config: BaseConfig = {
+  lazy val config: BaselonConfig = {
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(MinCoOccurrenceParam)
-    val doubleOverrides = FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides(MinScoreParam)
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(EnableSourceParam)
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(MinCoOccurrelonncelonParam)
+    val doublelonOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons(MinScorelonParam)
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(elonnablelonSourcelonParam)
 
-    BaseConfigBuilder()
-      .set(intOverrides: _*)
-      .set(booleanOverrides: _*)
-      .set(doubleOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(intOvelonrridelons: _*)
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(doublelonOvelonrridelons: _*)
       .build()
   }
 }

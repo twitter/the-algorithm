@@ -1,190 +1,190 @@
-package com.twitter.product_mixer.core.pipeline.pipeline_failure
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon
 
 /**
- * Failures are grouped into categories based on which party is 'responsible' for the issue. This
- * is important for generating accurate SLOs and ensuring that the correct team is alerted.
+ * Failurelons arelon groupelond into catelongorielons baselond on which party is 'relonsponsiblelon' for thelon issuelon. This
+ * is important for gelonnelonrating accuratelon SLOs and elonnsuring that thelon correlonct telonam is alelonrtelond.
  */
-sealed trait PipelineFailureCategory {
-  val categoryName: String
-  val failureName: String
+selonalelond trait PipelonlinelonFailurelonCatelongory {
+  val catelongoryNamelon: String
+  val failurelonNamelon: String
 }
 
 /**
- * Client Failures are failures where the client is deemed responsible for the issue. Such as by
- * issuing an invalid request or not having the right permissions.
+ * Clielonnt Failurelons arelon failurelons whelonrelon thelon clielonnt is delonelonmelond relonsponsiblelon for thelon issuelon. Such as by
+ * issuing an invalid relonquelonst or not having thelon right pelonrmissions.
  *
- * A failure might belong in this category if it relates to behaviour on the client and is not
- * actionable by the team which owns the product.
+ * A failurelon might belonlong in this catelongory if it relonlatelons to belonhaviour on thelon clielonnt and is not
+ * actionablelon by thelon telonam which owns thelon product.
  */
-trait ClientFailure extends PipelineFailureCategory {
-  override val categoryName: String = "ClientFailure"
+trait ClielonntFailurelon elonxtelonnds PipelonlinelonFailurelonCatelongory {
+  ovelonrridelon val catelongoryNamelon: String = "ClielonntFailurelon"
 }
 
 /**
- * The requested product is disabled so the request cannot be served.
+ * Thelon relonquelonstelond product is disablelond so thelon relonquelonst cannot belon selonrvelond.
  */
-case object ProductDisabled extends ClientFailure {
-  override val failureName: String = "ProductDisabled"
+caselon objelonct ProductDisablelond elonxtelonnds ClielonntFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "ProductDisablelond"
 }
 
 /**
- * The request was deemed invalid by this or a backing service.
+ * Thelon relonquelonst was delonelonmelond invalid by this or a backing selonrvicelon.
  */
-case object BadRequest extends ClientFailure {
-  override val failureName: String = "BadRequest"
+caselon objelonct BadRelonquelonst elonxtelonnds ClielonntFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "BadRelonquelonst"
 }
 
 /**
- * Credentials proving the identity of the caller were missing, not trusted, or expired.
- * For example, an auth cookie might be expired and in need of refreshing.
+ * Crelondelonntials proving thelon idelonntity of thelon callelonr welonrelon missing, not trustelond, or elonxpirelond.
+ * For elonxamplelon, an auth cookielon might belon elonxpirelond and in nelonelond of relonfrelonshing.
  *
- * Do not confuse this with Authorization, where the credentials are believed but not allowed to perform the operation.
+ * Do not confuselon this with Authorization, whelonrelon thelon crelondelonntials arelon belonlielonvelond but not allowelond to pelonrform thelon opelonration.
  */
-case object Authentication extends ClientFailure {
-  override val failureName: String = "Authentication"
+caselon objelonct Authelonntication elonxtelonnds ClielonntFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "Authelonntication"
 }
 
 /**
- * The operation was forbidden (often, but not always, by a Strato access control policy).
+ * Thelon opelonration was forbiddelonn (oftelonn, but not always, by a Strato accelonss control policy).
  *
- * Do not confuse this with Authentication, where the given credentials were missing, not trusted, or expired.
+ * Do not confuselon this with Authelonntication, whelonrelon thelon givelonn crelondelonntials welonrelon missing, not trustelond, or elonxpirelond.
  */
-case object Unauthorized extends ClientFailure {
-  override val failureName: String = "Unauthorized"
+caselon objelonct Unauthorizelond elonxtelonnds ClielonntFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "Unauthorizelond"
 }
 
 /**
- * The operation returned a Not Found response.
+ * Thelon opelonration relonturnelond a Not Found relonsponselon.
  */
-case object NotFound extends ClientFailure {
-  override val failureName: String = "NotFound"
+caselon objelonct NotFound elonxtelonnds ClielonntFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "NotFound"
 }
 
 /**
- * An invalid input is included in a cursor field.
+ * An invalid input is includelond in a cursor fielonld.
  */
-case object MalformedCursor extends ClientFailure {
-  override val failureName: String = "MalformedCursor"
+caselon objelonct MalformelondCursor elonxtelonnds ClielonntFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "MalformelondCursor"
 }
 
 /**
- * The operation did not succeed due to a closed gate
+ * Thelon opelonration did not succelonelond duelon to a closelond gatelon
  */
-case object ClosedGate extends ClientFailure {
-  override val failureName: String = "ClosedGate"
+caselon objelonct CloselondGatelon elonxtelonnds ClielonntFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "CloselondGatelon"
 }
 
 /**
- * Server Failures are failures for which the owner of the product is responsible. Typically this
- * means the request was valid but an issue within Product Mixer or a dependent service prevented
- * it from succeeding.
+ * Selonrvelonr Failurelons arelon failurelons for which thelon ownelonr of thelon product is relonsponsiblelon. Typically this
+ * melonans thelon relonquelonst was valid but an issuelon within Product Mixelonr or a delonpelonndelonnt selonrvicelon prelonvelonntelond
+ * it from succelonelonding.
  *
- * Server Failures contribute to the success rate SLO for the product.
+ * Selonrvelonr Failurelons contributelon to thelon succelonss ratelon SLO for thelon product.
  */
-trait ServerFailure extends PipelineFailureCategory {
-  override val categoryName: String = "ServerFailure"
+trait SelonrvelonrFailurelon elonxtelonnds PipelonlinelonFailurelonCatelongory {
+  ovelonrridelon val catelongoryNamelon: String = "SelonrvelonrFailurelon"
 }
 
 /**
- * Unclassified failures occur when product code throws an exception that Product Mixer does not
+ * Unclassifielond failurelons occur whelonn product codelon throws an elonxcelonption that Product Mixelonr doelons not
  * know how to classify.
  *
- * They can be used in failOpen policies, etc - but it's always preferred to instead add additional
- * classification logic and to keep Unclassified failures at 0.
+ * Thelony can belon uselond in failOpelonn policielons, elontc - but it's always prelonfelonrrelond to instelonad add additional
+ * classification logic and to kelonelonp Unclassifielond failurelons at 0.
  */
-case object UncategorizedServerFailure extends ServerFailure {
-  override val failureName: String = "UncategorizedServerFailure"
+caselon objelonct UncatelongorizelondSelonrvelonrFailurelon elonxtelonnds SelonrvelonrFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "UncatelongorizelondSelonrvelonrFailurelon"
 }
 
 /**
- * A hydrator or transformer returned a misconfigured feature map, this indicates a customer
- * configuration error. The owner of the component should make sure the hydrator always returns a
- * [[FeatureMap]] with the all features defined in the hydrator also set in the map, it should not have
- * any unregistered features nor should registered features be absent.
+ * A hydrator or transformelonr relonturnelond a misconfigurelond felonaturelon map, this indicatelons a customelonr
+ * configuration elonrror. Thelon ownelonr of thelon componelonnt should makelon surelon thelon hydrator always relonturns a
+ * [[FelonaturelonMap]] with thelon all felonaturelons delonfinelond in thelon hydrator also selont in thelon map, it should not havelon
+ * any unrelongistelonrelond felonaturelons nor should relongistelonrelond felonaturelons belon abselonnt.
  */
-case object MisconfiguredFeatureMapFailure extends ServerFailure {
-  override val failureName: String = "MisconfiguredFeatureMapFailure"
+caselon objelonct MisconfigurelondFelonaturelonMapFailurelon elonxtelonnds SelonrvelonrFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "MisconfigurelondFelonaturelonMapFailurelon"
 }
 
 /**
- * A PipelineSelector returned an invalid ComponentIdentifier.
+ * A PipelonlinelonSelonlelonctor relonturnelond an invalid ComponelonntIdelonntifielonr.
  *
- * A pipeline selector should choose the identifier of a pipeline that is contained by the 'pipelines'
- * sequence of the ProductPipelineConfig.
+ * A pipelonlinelon selonlelonctor should chooselon thelon idelonntifielonr of a pipelonlinelon that is containelond by thelon 'pipelonlinelons'
+ * selonquelonncelon of thelon ProductPipelonlinelonConfig.
  */
-case object InvalidPipelineSelected extends ServerFailure {
-  override val failureName: String = "InvalidPipelineSelected"
+caselon objelonct InvalidPipelonlinelonSelonlelonctelond elonxtelonnds SelonrvelonrFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "InvalidPipelonlinelonSelonlelonctelond"
 }
 
 /**
- * Failures that occur when product code reaches an unexpected or otherwise illegal state.
+ * Failurelons that occur whelonn product codelon relonachelons an unelonxpelonctelond or othelonrwiselon illelongal statelon.
  */
-case object IllegalStateFailure extends ServerFailure {
-  override val failureName: String = "IllegalStateFailure"
+caselon objelonct IllelongalStatelonFailurelon elonxtelonnds SelonrvelonrFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "IllelongalStatelonFailurelon"
 }
 
 /**
- * An unexpected candidate was returned in a candidate source that was unable to be transformed.
+ * An unelonxpelonctelond candidatelon was relonturnelond in a candidatelon sourcelon that was unablelon to belon transformelond.
  */
-case object UnexpectedCandidateResult extends ServerFailure {
-  override val failureName: String = "UnexpectedCandidateResult"
+caselon objelonct UnelonxpelonctelondCandidatelonRelonsult elonxtelonnds SelonrvelonrFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "UnelonxpelonctelondCandidatelonRelonsult"
 }
 
 /**
- * An unexpected Candidate was returned in a marshaller
+ * An unelonxpelonctelond Candidatelon was relonturnelond in a marshallelonr
  */
-case object UnexpectedCandidateInMarshaller extends ServerFailure {
-  override val failureName: String = "UnexpectedCandidateInMarshaller"
+caselon objelonct UnelonxpelonctelondCandidatelonInMarshallelonr elonxtelonnds SelonrvelonrFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "UnelonxpelonctelondCandidatelonInMarshallelonr"
 }
 
 /**
- * Pipeline execution failed due to an incorrectly configured quality factor (e.g, accessing
- * quality factor state for a pipeline that does not have quality factor configured)
+ * Pipelonlinelon elonxeloncution failelond duelon to an incorrelonctly configurelond quality factor (elon.g, accelonssing
+ * quality factor statelon for a pipelonlinelon that doelons not havelon quality factor configurelond)
  */
-case object MisconfiguredQualityFactor extends ServerFailure {
-  override val failureName: String = "MisconfiguredQualityFactor"
+caselon objelonct MisconfigurelondQualityFactor elonxtelonnds SelonrvelonrFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "MisconfigurelondQualityFactor"
 }
 
 /**
- * Pipeline execution failed due to an incorrectly configured decorator (e.g, decorator
- * returned the wrong type or tried to decorate an already decorated candidate)
+ * Pipelonlinelon elonxeloncution failelond duelon to an incorrelonctly configurelond deloncorator (elon.g, deloncorator
+ * relonturnelond thelon wrong typelon or trielond to deloncoratelon an alrelonady deloncoratelond candidatelon)
  */
-case object MisconfiguredDecorator extends ServerFailure {
-  override val failureName: String = "MisconfiguredDecorator"
+caselon objelonct MisconfigurelondDeloncorator elonxtelonnds SelonrvelonrFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "MisconfigurelondDeloncorator"
 }
 
 /**
- * Candidate Source Pipeline execution failed due to a timeout.
+ * Candidatelon Sourcelon Pipelonlinelon elonxeloncution failelond duelon to a timelonout.
  */
-case object CandidateSourceTimeout extends ServerFailure {
-  override val failureName: String = "CandidateSourceTimeout"
+caselon objelonct CandidatelonSourcelonTimelonout elonxtelonnds SelonrvelonrFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "CandidatelonSourcelonTimelonout"
 }
 
 /**
- * Platform Failures are issues in the core Product Mixer logic itself which prevent a pipeline from
- * properly executing. These failures are the responsibility of the Product Mixer team.
+ * Platform Failurelons arelon issuelons in thelon corelon Product Mixelonr logic itselonlf which prelonvelonnt a pipelonlinelon from
+ * propelonrly elonxeloncuting. Thelonselon failurelons arelon thelon relonsponsibility of thelon Product Mixelonr telonam.
  */
-trait PlatformFailure extends PipelineFailureCategory {
-  override val categoryName: String = "PlatformFailure"
+trait PlatformFailurelon elonxtelonnds PipelonlinelonFailurelonCatelongory {
+  ovelonrridelon val catelongoryNamelon: String = "PlatformFailurelon"
 }
 
 /**
- * Pipeline execution failed due to an unexpected error in Product Mixer.
+ * Pipelonlinelon elonxeloncution failelond duelon to an unelonxpelonctelond elonrror in Product Mixelonr.
  *
- * ExecutionFailed indicates a bug with the core Product Mixer execution logic rather than with a
- * specific product. For example, a bug in PipelineBuilder leading to us returning a
- * ProductPipelineResult that neither succeeded nor failed.
+ * elonxeloncutionFailelond indicatelons a bug with thelon corelon Product Mixelonr elonxeloncution logic rathelonr than with a
+ * speloncific product. For elonxamplelon, a bug in PipelonlinelonBuildelonr lelonading to us relonturning a
+ * ProductPipelonlinelonRelonsult that nelonithelonr succelonelondelond nor failelond.
  */
-case object ExecutionFailed extends PlatformFailure {
-  override val failureName: String = "ExecutionFailed"
+caselon objelonct elonxeloncutionFailelond elonxtelonnds PlatformFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "elonxeloncutionFailelond"
 }
 
 /**
- * Pipeline execution failed due to a feature hydration failure.
+ * Pipelonlinelon elonxeloncution failelond duelon to a felonaturelon hydration failurelon.
  *
- * FeatureHydrationFailed indicates that the underlying hydration for a feature defined in a hydrator
- * failed (e.g, typically from a RPC call failing).
+ * FelonaturelonHydrationFailelond indicatelons that thelon undelonrlying hydration for a felonaturelon delonfinelond in a hydrator
+ * failelond (elon.g, typically from a RPC call failing).
  */
-case object FeatureHydrationFailed extends PlatformFailure {
-  override val failureName: String = "FeatureHydrationFailed"
+caselon objelonct FelonaturelonHydrationFailelond elonxtelonnds PlatformFailurelon {
+  ovelonrridelon val failurelonNamelon: String = "FelonaturelonHydrationFailelond"
 }

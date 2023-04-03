@@ -1,30 +1,30 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.earlybird.common.ClientIdUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.common.ClielonntIdUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
 
 /**
- * A filter that will set the clientId of the request to the strato HttpEndpoint Attribution.
+ * A filtelonr that will selont thelon clielonntId of thelon relonquelonst to thelon strato Httpelonndpoint Attribution.
  * <p>
- * If the clientId is already set to something non-null then that value is used.
- * If the clientId is null but Attribution.httpEndpoint() contains a value it will be set as
- * the clientId.
+ * If thelon clielonntId is alrelonady selont to somelonthing non-null thelonn that valuelon is uselond.
+ * If thelon clielonntId is null but Attribution.httpelonndpoint() contains a valuelon it will belon selont as
+ * thelon clielonntId.
  */
-public class StratoAttributionClientIdFilter extends
-    SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequest request, Service<EarlybirdRequest, EarlybirdResponse> service
+public class StratoAttributionClielonntIdFiltelonr elonxtelonnds
+    SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonst relonquelonst, Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon
   ) {
-    if (request.getClientId() == null) {
-      ClientIdUtil.getClientIdFromHttpEndpointAttribution().ifPresent(request::setClientId);
+    if (relonquelonst.gelontClielonntId() == null) {
+      ClielonntIdUtil.gelontClielonntIdFromHttpelonndpointAttribution().ifPrelonselonnt(relonquelonst::selontClielonntId);
     }
 
-    return service.apply(request);
+    relonturn selonrvicelon.apply(relonquelonst);
   }
 }
 

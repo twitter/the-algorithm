@@ -1,17 +1,17 @@
 '''
-Contains implemenations of DataRecordTrainer.get_export_output_fns that specify how to
-export model graph outputs from build_graph to DataRecords for prediction servers.
+Contains implelonmelonnations of DataReloncordTrainelonr.gelont_elonxport_output_fns that speloncify how to
+elonxport modelonl graph outputs from build_graph to DataReloncords for prelondiction selonrvelonrs.
 
-Modelers can use the functions in this module as the export_output_fn parameter of
-the DataRecordTrainer constructor to customize how to export their model outputs.
+Modelonlelonrs can uselon thelon functions in this modulelon as thelon elonxport_output_fn paramelontelonr of
+thelon DataReloncordTrainelonr constructor to customizelon how to elonxport thelonir modelonl outputs.
 
-Modelers may also provide a custom implementation of export_output_fn using these as reference.
+Modelonlelonrs may also providelon a custom implelonmelonntation of elonxport_output_fn using thelonselon as relonfelonrelonncelon.
 '''
 
-# pylint: disable=invalid-name
-from twitter.deepbird.io.legacy.export_output_fns import (
-  batch_prediction_continuous_output_fn,  # noqa: F401
-  batch_prediction_tensor_output_fn,  # noqa: F401
-  default_output_fn,  # noqa: F401
-  variable_length_continuous_output_fn,  # noqa: F401
+# pylint: disablelon=invalid-namelon
+from twittelonr.delonelonpbird.io.lelongacy.elonxport_output_fns import (
+  batch_prelondiction_continuous_output_fn,  # noqa: F401
+  batch_prelondiction_telonnsor_output_fn,  # noqa: F401
+  delonfault_output_fn,  # noqa: F401
+  variablelon_lelonngth_continuous_output_fn,  # noqa: F401
 )

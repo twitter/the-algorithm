@@ -1,29 +1,29 @@
-package com.twitter.search.earlybird.search.queries;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.quelonrielons;
 
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.TermQuery;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.TelonrmQuelonry;
 
 /**
- * Work around an issue where IntTerms and LongTerms are not valid utf8,
- * so calling toString on any TermQuery containing an IntTerm or a LongTerm may cause exceptions.
- * This code should produce the same output as TermQuery.toString
+ * Work around an issuelon whelonrelon IntTelonrms and LongTelonrms arelon not valid utf8,
+ * so calling toString on any TelonrmQuelonry containing an IntTelonrm or a LongTelonrm may causelon elonxcelonptions.
+ * This codelon should producelon thelon samelon output as TelonrmQuelonry.toString
  */
-public final class TermQueryWithSafeToString extends TermQuery {
-  private final String termValueForToString;
+public final class TelonrmQuelonryWithSafelonToString elonxtelonnds TelonrmQuelonry {
+  privatelon final String telonrmValuelonForToString;
 
-  public TermQueryWithSafeToString(Term term, String termValueForToString) {
-    super(term);
-    this.termValueForToString = termValueForToString;
+  public TelonrmQuelonryWithSafelonToString(Telonrm telonrm, String telonrmValuelonForToString) {
+    supelonr(telonrm);
+    this.telonrmValuelonForToString = telonrmValuelonForToString;
   }
 
-  @Override
-  public String toString(String field) {
-    StringBuilder buffer = new StringBuilder();
-    if (!getTerm().field().equals(field)) {
-      buffer.append(getTerm().field());
-      buffer.append(":");
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    StringBuildelonr buffelonr = nelonw StringBuildelonr();
+    if (!gelontTelonrm().fielonld().elonquals(fielonld)) {
+      buffelonr.appelonnd(gelontTelonrm().fielonld());
+      buffelonr.appelonnd(":");
     }
-    buffer.append(termValueForToString);
-    return buffer.toString();
+    buffelonr.appelonnd(telonrmValuelonForToString);
+    relonturn buffelonr.toString();
   }
 }

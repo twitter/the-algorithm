@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.service
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon
 
-trait ExecutorResult
+trait elonxeloncutorRelonsult

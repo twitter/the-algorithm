@@ -1,189 +1,189 @@
-package com.twitter.home_mixer.product.for_you
+packagelon com.twittelonr.homelon_mixelonr.product.for_you
 
-import com.twitter.tweetconvosvc.tweet_ancestor.{thriftscala => ta}
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.mediaservices.commons.tweetmedia.{thriftscala => mt}
-import com.twitter.product_mixer.component_library.candidate_source.timeline_scorer.ScoredTweetCandidateWithFocalTweet
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BasicTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecWithEducationTopicContextFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.RecommendationTopicContextFunctionalityType
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage
-import com.twitter.search.common.util.lang.ThriftLanguageUtil
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelinemixer.injection.model.candidate.AudioSpaceMetaData
-import com.twitter.timelines.conversation_features.{thriftscala => cvt}
-import com.twitter.timelinescorer.common.scoredtweetcandidate.{thriftscala => stc}
-import com.twitter.timelineservice.suggests.{thriftscala => tls}
+import com.twittelonr.twelonelontconvosvc.twelonelont_ancelonstor.{thriftscala => ta}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.melondiaselonrvicelons.commons.twelonelontmelondia.{thriftscala => mt}
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.timelonlinelon_scorelonr.ScorelondTwelonelontCandidatelonWithFocalTwelonelont
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.BasicTopicContelonxtFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ReloncWithelonducationTopicContelonxtFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ReloncommelonndationTopicContelonxtFunctionalityTypelon
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon
+import com.twittelonr.selonarch.common.util.lang.ThriftLanguagelonUtil
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.timelonlinelonmixelonr.injelonction.modelonl.candidatelon.AudioSpacelonMelontaData
+import com.twittelonr.timelonlinelons.convelonrsation_felonaturelons.{thriftscala => cvt}
+import com.twittelonr.timelonlinelonscorelonr.common.scorelondtwelonelontcandidatelon.{thriftscala => stc}
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.{thriftscala => tls}
 
-object ForYouTimelineScorerResponseFeatureTransformer
-    extends CandidateFeatureTransformer[ScoredTweetCandidateWithFocalTweet] {
+objelonct ForYouTimelonlinelonScorelonrRelonsponselonFelonaturelonTransformelonr
+    elonxtelonnds CandidatelonFelonaturelonTransformelonr[ScorelondTwelonelontCandidatelonWithFocalTwelonelont] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ForYouTimelineScorerResponse")
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr =
+    TransformelonrIdelonntifielonr("ForYouTimelonlinelonScorelonrRelonsponselon")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AncestorsFeature,
-    AudioSpaceMetaDataFeature,
-    AuthorIdFeature,
-    AuthorIsEligibleForConnectBoostFeature,
-    AuthoredByContextualUserFeature,
-    CandidateSourceIdFeature,
-    ConversationFeature,
-    ConversationModuleFocalTweetIdFeature,
-    ConversationModuleIdFeature,
-    DirectedAtUserIdFeature,
-    EarlybirdFeature,
-    EntityTokenFeature,
-    ExclusiveConversationAuthorIdFeature,
-    FavoritedByUserIdsFeature,
-    FollowedByUserIdsFeature,
-    TopicIdSocialContextFeature,
-    TopicContextFunctionalityTypeFeature,
-    FromInNetworkSourceFeature,
-    FullScoringSucceededFeature,
-    HasDisplayedTextFeature,
-    InReplyToTweetIdFeature,
-    IsAncestorCandidateFeature,
-    IsExtendedReplyFeature,
-    IsRandomTweetFeature,
-    IsReadFromCacheFeature,
-    IsRetweetFeature,
-    IsRetweetedReplyFeature,
-    NonSelfFavoritedByUserIdsFeature,
-    NumImagesFeature,
-    OriginalTweetCreationTimeFromSnowflakeFeature,
-    PredictionRequestIdFeature,
-    QuotedTweetIdFeature,
-    ScoreFeature,
-    SimclustersTweetTopKClustersWithScoresFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
-    StreamToKafkaFeature,
-    SuggestTypeFeature,
-    TweetLanguageFeature,
-    VideoDurationMsFeature,
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    AncelonstorsFelonaturelon,
+    AudioSpacelonMelontaDataFelonaturelon,
+    AuthorIdFelonaturelon,
+    AuthorIselonligiblelonForConnelonctBoostFelonaturelon,
+    AuthorelondByContelonxtualUselonrFelonaturelon,
+    CandidatelonSourcelonIdFelonaturelon,
+    ConvelonrsationFelonaturelon,
+    ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon,
+    ConvelonrsationModulelonIdFelonaturelon,
+    DirelonctelondAtUselonrIdFelonaturelon,
+    elonarlybirdFelonaturelon,
+    elonntityTokelonnFelonaturelon,
+    elonxclusivelonConvelonrsationAuthorIdFelonaturelon,
+    FavoritelondByUselonrIdsFelonaturelon,
+    FollowelondByUselonrIdsFelonaturelon,
+    TopicIdSocialContelonxtFelonaturelon,
+    TopicContelonxtFunctionalityTypelonFelonaturelon,
+    FromInNelontworkSourcelonFelonaturelon,
+    FullScoringSuccelonelondelondFelonaturelon,
+    HasDisplayelondTelonxtFelonaturelon,
+    InRelonplyToTwelonelontIdFelonaturelon,
+    IsAncelonstorCandidatelonFelonaturelon,
+    IselonxtelonndelondRelonplyFelonaturelon,
+    IsRandomTwelonelontFelonaturelon,
+    IsRelonadFromCachelonFelonaturelon,
+    IsRelontwelonelontFelonaturelon,
+    IsRelontwelonelontelondRelonplyFelonaturelon,
+    NonSelonlfFavoritelondByUselonrIdsFelonaturelon,
+    NumImagelonsFelonaturelon,
+    OriginalTwelonelontCrelonationTimelonFromSnowflakelonFelonaturelon,
+    PrelondictionRelonquelonstIdFelonaturelon,
+    QuotelondTwelonelontIdFelonaturelon,
+    ScorelonFelonaturelon,
+    SimclustelonrsTwelonelontTopKClustelonrsWithScorelonsFelonaturelon,
+    SourcelonTwelonelontIdFelonaturelon,
+    SourcelonUselonrIdFelonaturelon,
+    StrelonamToKafkaFelonaturelon,
+    SuggelonstTypelonFelonaturelon,
+    TwelonelontLanguagelonFelonaturelon,
+    VidelonoDurationMsFelonaturelon,
   )
 
-  // Convert language code to ISO 639-3 format
-  private def getLanguageISOFormatByValue(languageCodeValue: Int): String =
-    ThriftLanguageUtil.getLanguageCodeOf(ThriftLanguage.findByValue(languageCodeValue))
+  // Convelonrt languagelon codelon to ISO 639-3 format
+  privatelon delonf gelontLanguagelonISOFormatByValuelon(languagelonCodelonValuelon: Int): String =
+    ThriftLanguagelonUtil.gelontLanguagelonCodelonOf(ThriftLanguagelon.findByValuelon(languagelonCodelonValuelon))
 
-  override def transform(
-    candidateWithFocalTweet: ScoredTweetCandidateWithFocalTweet
-  ): FeatureMap = {
-    val candidate: stc.v1.ScoredTweetCandidate = candidateWithFocalTweet.candidate
-    val focalTweetId = candidateWithFocalTweet.focalTweetIdOpt
+  ovelonrridelon delonf transform(
+    candidatelonWithFocalTwelonelont: ScorelondTwelonelontCandidatelonWithFocalTwelonelont
+  ): FelonaturelonMap = {
+    val candidatelon: stc.v1.ScorelondTwelonelontCandidatelon = candidatelonWithFocalTwelonelont.candidatelon
+    val focalTwelonelontId = candidatelonWithFocalTwelonelont.focalTwelonelontIdOpt
 
-    val originalTweetId = candidate.sourceTweetId.getOrElse(candidate.tweetId)
-    val tweetFeatures = candidate.tweetFeaturesMap.flatMap(_.get(originalTweetId))
-    val earlybirdFeatures = tweetFeatures.flatMap(_.recapFeatures.flatMap(_.tweetFeatures))
-    val directedAtUserIsInFirstDegree =
-      earlybirdFeatures.flatMap(_.directedAtUserIdIsInFirstDegree)
-    val isReply = candidate.inReplyToTweetId.nonEmpty
-    val isRetweet = candidate.isRetweet.getOrElse(false)
-    val isInNetwork = candidate.isInNetwork.getOrElse(true)
-    val conversationFeatures = candidate.conversationFeatures.flatMap {
-      case cvt.ConversationFeatures.V1(candidate) => Some(candidate)
-      case _ => None
+    val originalTwelonelontId = candidatelon.sourcelonTwelonelontId.gelontOrelonlselon(candidatelon.twelonelontId)
+    val twelonelontFelonaturelons = candidatelon.twelonelontFelonaturelonsMap.flatMap(_.gelont(originalTwelonelontId))
+    val elonarlybirdFelonaturelons = twelonelontFelonaturelons.flatMap(_.reloncapFelonaturelons.flatMap(_.twelonelontFelonaturelons))
+    val direlonctelondAtUselonrIsInFirstDelongrelonelon =
+      elonarlybirdFelonaturelons.flatMap(_.direlonctelondAtUselonrIdIsInFirstDelongrelonelon)
+    val isRelonply = candidatelon.inRelonplyToTwelonelontId.nonelonmpty
+    val isRelontwelonelont = candidatelon.isRelontwelonelont.gelontOrelonlselon(falselon)
+    val isInNelontwork = candidatelon.isInNelontwork.gelontOrelonlselon(truelon)
+    val convelonrsationFelonaturelons = candidatelon.convelonrsationFelonaturelons.flatMap {
+      caselon cvt.ConvelonrsationFelonaturelons.V1(candidatelon) => Somelon(candidatelon)
+      caselon _ => Nonelon
     }
-    val numImages = candidate.mediaMetaData
+    val numImagelons = candidatelon.melondiaMelontaData
       .map(
-        _.count(mediaEntity =>
-          mediaEntity.mediaInfo.exists(_.isInstanceOf[mt.MediaInfo.ImageInfo]) ||
-            mediaEntity.mediaInfo.isEmpty))
-    val hasImage = earlybirdFeatures.exists(_.hasImage)
-    val hasVideo = earlybirdFeatures.exists(_.hasVideo)
-    val hasCard = earlybirdFeatures.exists(_.hasCard)
-    val hasQuote = earlybirdFeatures.exists(_.hasQuote.contains(true))
-    val hasDisplayedText = earlybirdFeatures.exists(_.tweetLength.exists(length => {
-      val numMedia = Seq(hasVideo, (hasImage || hasCard), hasQuote).count(b => b)
-      val tcoLengthsPlusSpaces = 23 * numMedia + (if (numMedia > 0) numMedia - 1 else 0)
-      length > tcoLengthsPlusSpaces
+        _.count(melondiaelonntity =>
+          melondiaelonntity.melondiaInfo.elonxists(_.isInstancelonOf[mt.MelondiaInfo.ImagelonInfo]) ||
+            melondiaelonntity.melondiaInfo.iselonmpty))
+    val hasImagelon = elonarlybirdFelonaturelons.elonxists(_.hasImagelon)
+    val hasVidelono = elonarlybirdFelonaturelons.elonxists(_.hasVidelono)
+    val hasCard = elonarlybirdFelonaturelons.elonxists(_.hasCard)
+    val hasQuotelon = elonarlybirdFelonaturelons.elonxists(_.hasQuotelon.contains(truelon))
+    val hasDisplayelondTelonxt = elonarlybirdFelonaturelons.elonxists(_.twelonelontLelonngth.elonxists(lelonngth => {
+      val numMelondia = Selonq(hasVidelono, (hasImagelon || hasCard), hasQuotelon).count(b => b)
+      val tcoLelonngthsPlusSpacelons = 23 * numMelondia + (if (numMelondia > 0) numMelondia - 1 elonlselon 0)
+      lelonngth > tcoLelonngthsPlusSpacelons
     }))
-    val suggestType = Some(
-      candidate.overrideSuggestType.getOrElse(tls.SuggestType.RankedTimelineTweet))
+    val suggelonstTypelon = Somelon(
+      candidatelon.ovelonrridelonSuggelonstTypelon.gelontOrelonlselon(tls.SuggelonstTypelon.RankelondTimelonlinelonTwelonelont))
 
-    val topicSocialProofMetadataOpt = candidate.entityData.flatMap(_.topicSocialProofMetadata)
-    val topicIdSocialContextOpt = topicSocialProofMetadataOpt.map(_.topicId)
-    val topicContextFunctionalityTypeOpt =
-      topicSocialProofMetadataOpt.map(_.topicContextFunctionalityType).collect {
-        case stc.v1.TopicContextFunctionalityType.Basic => BasicTopicContextFunctionalityType
-        case stc.v1.TopicContextFunctionalityType.Recommendation =>
-          RecommendationTopicContextFunctionalityType
-        case stc.v1.TopicContextFunctionalityType.RecWithEducation =>
-          RecWithEducationTopicContextFunctionalityType
+    val topicSocialProofMelontadataOpt = candidatelon.elonntityData.flatMap(_.topicSocialProofMelontadata)
+    val topicIdSocialContelonxtOpt = topicSocialProofMelontadataOpt.map(_.topicId)
+    val topicContelonxtFunctionalityTypelonOpt =
+      topicSocialProofMelontadataOpt.map(_.topicContelonxtFunctionalityTypelon).collelonct {
+        caselon stc.v1.TopicContelonxtFunctionalityTypelon.Basic => BasicTopicContelonxtFunctionalityTypelon
+        caselon stc.v1.TopicContelonxtFunctionalityTypelon.Reloncommelonndation =>
+          ReloncommelonndationTopicContelonxtFunctionalityTypelon
+        caselon stc.v1.TopicContelonxtFunctionalityTypelon.ReloncWithelonducation =>
+          ReloncWithelonducationTopicContelonxtFunctionalityTypelon
       }
 
-    FeatureMapBuilder()
+    FelonaturelonMapBuildelonr()
       .add(
-        AncestorsFeature,
-        candidate.ancestors
-          .getOrElse(Seq.empty)
-          .map(ancestor => ta.TweetAncestor(ancestor.tweetId, ancestor.userId.getOrElse(0L))))
+        AncelonstorsFelonaturelon,
+        candidatelon.ancelonstors
+          .gelontOrelonlselon(Selonq.elonmpty)
+          .map(ancelonstor => ta.TwelonelontAncelonstor(ancelonstor.twelonelontId, ancelonstor.uselonrId.gelontOrelonlselon(0L))))
       .add(
-        AudioSpaceMetaDataFeature,
-        candidate.audioSpaceMetaDatalist.map(_.head).map(AudioSpaceMetaData.fromThrift))
-      .add(AuthorIdFeature, Some(candidate.authorId))
+        AudioSpacelonMelontaDataFelonaturelon,
+        candidatelon.audioSpacelonMelontaDatalist.map(_.helonad).map(AudioSpacelonMelontaData.fromThrift))
+      .add(AuthorIdFelonaturelon, Somelon(candidatelon.authorId))
       .add(
-        AuthorIsEligibleForConnectBoostFeature,
-        candidate.authorIsEligibleForConnectBoost.getOrElse(false))
+        AuthorIselonligiblelonForConnelonctBoostFelonaturelon,
+        candidatelon.authorIselonligiblelonForConnelonctBoost.gelontOrelonlselon(falselon))
       .add(
-        AuthoredByContextualUserFeature,
-        candidate.viewerId.contains(candidate.authorId) ||
-          candidate.viewerId.exists(candidate.sourceUserId.contains))
-      .add(CandidateSourceIdFeature, candidate.candidateTweetSourceId)
-      .add(ConversationFeature, conversationFeatures)
-      .add(ConversationModuleIdFeature, candidate.conversationId)
-      .add(ConversationModuleFocalTweetIdFeature, focalTweetId)
-      .add(DirectedAtUserIdFeature, candidate.directedAtUserId)
-      .add(EarlybirdFeature, earlybirdFeatures)
-      // This is temporary, will need to be updated with the encoded string.
-      .add(EntityTokenFeature, Some("test_EntityTokenForYou"))
-      .add(ExclusiveConversationAuthorIdFeature, candidate.exclusiveConversationAuthorId)
-      .add(FavoritedByUserIdsFeature, candidate.favoritedByUserIds.getOrElse(Seq.empty))
-      .add(FollowedByUserIdsFeature, candidate.followedByUserIds.getOrElse(Seq.empty))
-      .add(TopicIdSocialContextFeature, topicIdSocialContextOpt)
-      .add(TopicContextFunctionalityTypeFeature, topicContextFunctionalityTypeOpt)
-      .add(FullScoringSucceededFeature, candidate.fullScoringSucceeded.getOrElse(false))
-      .add(HasDisplayedTextFeature, hasDisplayedText)
-      .add(InReplyToTweetIdFeature, candidate.inReplyToTweetId)
-      .add(IsAncestorCandidateFeature, candidate.isAncestorCandidate.getOrElse(false))
+        AuthorelondByContelonxtualUselonrFelonaturelon,
+        candidatelon.vielonwelonrId.contains(candidatelon.authorId) ||
+          candidatelon.vielonwelonrId.elonxists(candidatelon.sourcelonUselonrId.contains))
+      .add(CandidatelonSourcelonIdFelonaturelon, candidatelon.candidatelonTwelonelontSourcelonId)
+      .add(ConvelonrsationFelonaturelon, convelonrsationFelonaturelons)
+      .add(ConvelonrsationModulelonIdFelonaturelon, candidatelon.convelonrsationId)
+      .add(ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon, focalTwelonelontId)
+      .add(DirelonctelondAtUselonrIdFelonaturelon, candidatelon.direlonctelondAtUselonrId)
+      .add(elonarlybirdFelonaturelon, elonarlybirdFelonaturelons)
+      // This is telonmporary, will nelonelond to belon updatelond with thelon elonncodelond string.
+      .add(elonntityTokelonnFelonaturelon, Somelon("telonst_elonntityTokelonnForYou"))
+      .add(elonxclusivelonConvelonrsationAuthorIdFelonaturelon, candidatelon.elonxclusivelonConvelonrsationAuthorId)
+      .add(FavoritelondByUselonrIdsFelonaturelon, candidatelon.favoritelondByUselonrIds.gelontOrelonlselon(Selonq.elonmpty))
+      .add(FollowelondByUselonrIdsFelonaturelon, candidatelon.followelondByUselonrIds.gelontOrelonlselon(Selonq.elonmpty))
+      .add(TopicIdSocialContelonxtFelonaturelon, topicIdSocialContelonxtOpt)
+      .add(TopicContelonxtFunctionalityTypelonFelonaturelon, topicContelonxtFunctionalityTypelonOpt)
+      .add(FullScoringSuccelonelondelondFelonaturelon, candidatelon.fullScoringSuccelonelondelond.gelontOrelonlselon(falselon))
+      .add(HasDisplayelondTelonxtFelonaturelon, hasDisplayelondTelonxt)
+      .add(InRelonplyToTwelonelontIdFelonaturelon, candidatelon.inRelonplyToTwelonelontId)
+      .add(IsAncelonstorCandidatelonFelonaturelon, candidatelon.isAncelonstorCandidatelon.gelontOrelonlselon(falselon))
       .add(
-        IsExtendedReplyFeature,
-        isInNetwork && isReply && !isRetweet && directedAtUserIsInFirstDegree.contains(false))
-      .add(FromInNetworkSourceFeature, candidate.isInNetwork.getOrElse(true))
-      .add(IsRandomTweetFeature, candidate.isRandomTweet.getOrElse(false))
-      .add(IsReadFromCacheFeature, candidate.isReadFromCache.getOrElse(false))
-      .add(IsRetweetFeature, candidate.isRetweet.getOrElse(false))
-      .add(IsRetweetedReplyFeature, isReply && isRetweet)
+        IselonxtelonndelondRelonplyFelonaturelon,
+        isInNelontwork && isRelonply && !isRelontwelonelont && direlonctelondAtUselonrIsInFirstDelongrelonelon.contains(falselon))
+      .add(FromInNelontworkSourcelonFelonaturelon, candidatelon.isInNelontwork.gelontOrelonlselon(truelon))
+      .add(IsRandomTwelonelontFelonaturelon, candidatelon.isRandomTwelonelont.gelontOrelonlselon(falselon))
+      .add(IsRelonadFromCachelonFelonaturelon, candidatelon.isRelonadFromCachelon.gelontOrelonlselon(falselon))
+      .add(IsRelontwelonelontFelonaturelon, candidatelon.isRelontwelonelont.gelontOrelonlselon(falselon))
+      .add(IsRelontwelonelontelondRelonplyFelonaturelon, isRelonply && isRelontwelonelont)
       .add(
-        NonSelfFavoritedByUserIdsFeature,
-        candidate.favoritedByUserIds.getOrElse(Seq.empty).filterNot(_ == candidate.authorId))
-      .add(NumImagesFeature, numImages)
+        NonSelonlfFavoritelondByUselonrIdsFelonaturelon,
+        candidatelon.favoritelondByUselonrIds.gelontOrelonlselon(Selonq.elonmpty).filtelonrNot(_ == candidatelon.authorId))
+      .add(NumImagelonsFelonaturelon, numImagelons)
       .add(
-        OriginalTweetCreationTimeFromSnowflakeFeature,
-        SnowflakeId.timeFromIdOpt(originalTweetId))
-      .add(PredictionRequestIdFeature, candidate.predictionRequestId)
-      .add(ScoreFeature, Some(candidate.score))
+        OriginalTwelonelontCrelonationTimelonFromSnowflakelonFelonaturelon,
+        SnowflakelonId.timelonFromIdOpt(originalTwelonelontId))
+      .add(PrelondictionRelonquelonstIdFelonaturelon, candidatelon.prelondictionRelonquelonstId)
+      .add(ScorelonFelonaturelon, Somelon(candidatelon.scorelon))
       .add(
-        SimclustersTweetTopKClustersWithScoresFeature,
-        candidate.simclustersTweetTopKClustersWithScores.map(_.toMap).getOrElse(Map.empty))
+        SimclustelonrsTwelonelontTopKClustelonrsWithScorelonsFelonaturelon,
+        candidatelon.simclustelonrsTwelonelontTopKClustelonrsWithScorelons.map(_.toMap).gelontOrelonlselon(Map.elonmpty))
       .add(
-        StreamToKafkaFeature,
-        candidate.predictionRequestId.nonEmpty && candidate.fullScoringSucceeded.getOrElse(false))
-      .add(SourceTweetIdFeature, candidate.sourceTweetId)
-      .add(SourceUserIdFeature, candidate.sourceUserId)
-      .add(SuggestTypeFeature, suggestType)
-      .add(QuotedTweetIdFeature, candidate.quotedTweetId)
+        StrelonamToKafkaFelonaturelon,
+        candidatelon.prelondictionRelonquelonstId.nonelonmpty && candidatelon.fullScoringSuccelonelondelond.gelontOrelonlselon(falselon))
+      .add(SourcelonTwelonelontIdFelonaturelon, candidatelon.sourcelonTwelonelontId)
+      .add(SourcelonUselonrIdFelonaturelon, candidatelon.sourcelonUselonrId)
+      .add(SuggelonstTypelonFelonaturelon, suggelonstTypelon)
+      .add(QuotelondTwelonelontIdFelonaturelon, candidatelon.quotelondTwelonelontId)
       .add(
-        TweetLanguageFeature,
-        earlybirdFeatures.flatMap(_.language.map(_.value)).map(getLanguageISOFormatByValue))
-      .add(VideoDurationMsFeature, earlybirdFeatures.flatMap(_.videoDurationMs))
+        TwelonelontLanguagelonFelonaturelon,
+        elonarlybirdFelonaturelons.flatMap(_.languagelon.map(_.valuelon)).map(gelontLanguagelonISOFormatByValuelon))
+      .add(VidelonoDurationMsFelonaturelon, elonarlybirdFelonaturelons.flatMap(_.videlonoDurationMs))
       .build()
   }
 }

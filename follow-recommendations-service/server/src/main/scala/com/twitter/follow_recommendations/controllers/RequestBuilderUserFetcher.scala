@@ -1,48 +1,48 @@
-package com.twitter.follow_recommendations.controllers
+packagelon com.twittelonr.follow_reloncommelonndations.controllelonrs
 
-import com.twitter.decider.Decider
-import com.twitter.decider.SimpleRecipient
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.configapi.deciders.DeciderKey
-import com.twitter.gizmoduck.thriftscala.LookupContext
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.SimplelonReloncipielonnt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.StatsUtil
+import com.twittelonr.follow_reloncommelonndations.configapi.deloncidelonrs.DeloncidelonrKelony
+import com.twittelonr.gizmoduck.thriftscala.LookupContelonxt
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.gizmoduck.Gizmoduck
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RequestBuilderUserFetcher @Inject() (
+@Singlelonton
+class RelonquelonstBuildelonrUselonrFelontchelonr @Injelonct() (
   gizmoduck: Gizmoduck,
-  statsReceiver: StatsReceiver,
-  decider: Decider) {
-  private val scopedStats = statsReceiver.scope(this.getClass.getSimpleName)
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  deloncidelonr: Deloncidelonr) {
+  privatelon val scopelondStats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  def fetchUser(userIdOpt: Option[Long]): Stitch[Option[User]] = {
-    userIdOpt match {
-      case Some(userId) if enableDecider(userId) =>
+  delonf felontchUselonr(uselonrIdOpt: Option[Long]): Stitch[Option[Uselonr]] = {
+    uselonrIdOpt match {
+      caselon Somelon(uselonrId) if elonnablelonDeloncidelonr(uselonrId) =>
         val stitch = gizmoduck
-          .getUserById(
-            userId = userId,
-            context = LookupContext(
-              forUserId = Some(userId),
-              includeProtected = true,
-              includeSoftUsers = true
+          .gelontUselonrById(
+            uselonrId = uselonrId,
+            contelonxt = LookupContelonxt(
+              forUselonrId = Somelon(uselonrId),
+              includelonProtelonctelond = truelon,
+              includelonSoftUselonrs = truelon
             )
-          ).map(user => Some(user))
+          ).map(uselonr => Somelon(uselonr))
         StatsUtil
-          .profileStitch(stitch, scopedStats)
-          .handle {
-            case _: Throwable => None
+          .profilelonStitch(stitch, scopelondStats)
+          .handlelon {
+            caselon _: Throwablelon => Nonelon
           }
-      case _ => Stitch.None
+      caselon _ => Stitch.Nonelon
     }
   }
 
-  private def enableDecider(userId: Long): Boolean = {
-    decider.isAvailable(
-      DeciderKey.EnableFetchUserInRequestBuilder.toString,
-      Some(SimpleRecipient(userId)))
+  privatelon delonf elonnablelonDeloncidelonr(uselonrId: Long): Boolelonan = {
+    deloncidelonr.isAvailablelon(
+      DeloncidelonrKelony.elonnablelonFelontchUselonrInRelonquelonstBuildelonr.toString,
+      Somelon(SimplelonReloncipielonnt(uselonrId)))
   }
 }

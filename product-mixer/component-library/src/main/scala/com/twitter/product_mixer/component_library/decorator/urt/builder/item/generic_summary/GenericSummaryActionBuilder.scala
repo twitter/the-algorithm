@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.gelonnelonric_summary
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.generic_summary.GenericSummaryActionBuilder.GenericSummaryActionClientEventInfoElement
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseUrlBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.generic_summary.GenericSummaryAction
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.gelonnelonric_summary.GelonnelonricSummaryActionBuildelonr.GelonnelonricSummaryActionClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonUrlBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.gelonnelonric_summary.GelonnelonricSummaryAction
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object GenericSummaryActionBuilder {
-  val GenericSummaryActionClientEventInfoElement: String = "genericsummary-action"
+objelonct GelonnelonricSummaryActionBuildelonr {
+  val GelonnelonricSummaryActionClielonntelonvelonntInfoelonlelonmelonnt: String = "gelonnelonricsummary-action"
 }
 
-case class GenericSummaryActionBuilder[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  urlBuilder: BaseUrlBuilder[Query, Candidate],
-  clientEventInfoBuilder: Option[BaseClientEventInfoBuilder[Query, Candidate]] = None) {
+caselon class GelonnelonricSummaryActionBuildelonr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+  urlBuildelonr: BaselonUrlBuildelonr[Quelonry, Candidatelon],
+  clielonntelonvelonntInfoBuildelonr: Option[BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, Candidatelon]] = Nonelon) {
 
-  def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap
-  ): GenericSummaryAction = GenericSummaryAction(
-    url = urlBuilder.apply(query, candidate, candidateFeatures),
-    clientEventInfo = clientEventInfoBuilder.flatMap(
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): GelonnelonricSummaryAction = GelonnelonricSummaryAction(
+    url = urlBuildelonr.apply(quelonry, candidatelon, candidatelonFelonaturelons),
+    clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr.flatMap(
       _.apply(
-        query,
-        candidate,
-        candidateFeatures,
-        Some(GenericSummaryActionClientEventInfoElement)))
+        quelonry,
+        candidatelon,
+        candidatelonFelonaturelons,
+        Somelon(GelonnelonricSummaryActionClielonntelonvelonntInfoelonlelonmelonnt)))
   )
 }

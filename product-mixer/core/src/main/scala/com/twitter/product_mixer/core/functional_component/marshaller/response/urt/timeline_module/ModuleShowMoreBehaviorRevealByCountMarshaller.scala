@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleShowMoreBehaviorRevealByCount
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonShowMorelonBelonhaviorRelonvelonalByCount
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ModuleShowMoreBehaviorRevealByCountMarshaller @Inject() () {
+@Singlelonton
+class ModulelonShowMorelonBelonhaviorRelonvelonalByCountMarshallelonr @Injelonct() () {
 
-  def apply(
-    moduleShowMoreBehaviorRevealByCount: ModuleShowMoreBehaviorRevealByCount
-  ): urt.ModuleShowMoreBehavior =
-    urt.ModuleShowMoreBehavior.RevealByCount(
-      urt.ModuleShowMoreBehaviorRevealByCount(
-        initialItemsCount = moduleShowMoreBehaviorRevealByCount.initialItemsCount,
-        showMoreItemsCount = moduleShowMoreBehaviorRevealByCount.showMoreItemsCount
+  delonf apply(
+    modulelonShowMorelonBelonhaviorRelonvelonalByCount: ModulelonShowMorelonBelonhaviorRelonvelonalByCount
+  ): urt.ModulelonShowMorelonBelonhavior =
+    urt.ModulelonShowMorelonBelonhavior.RelonvelonalByCount(
+      urt.ModulelonShowMorelonBelonhaviorRelonvelonalByCount(
+        initialItelonmsCount = modulelonShowMorelonBelonhaviorRelonvelonalByCount.initialItelonmsCount,
+        showMorelonItelonmsCount = modulelonShowMorelonBelonhaviorRelonvelonalByCount.showMorelonItelonmsCount
       )
     )
 }

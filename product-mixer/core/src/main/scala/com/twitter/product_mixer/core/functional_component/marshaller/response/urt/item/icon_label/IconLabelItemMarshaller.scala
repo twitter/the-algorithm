@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.icon_label
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.icon_labelonl
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.icon_label.IconLabelItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.icon.HorizonIconMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.icon_labelonl.IconLabelonlItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class IconLabelItemMarshaller @Inject() (
-  richTextMarshaller: RichTextMarshaller,
-  horizonIconMarshaller: HorizonIconMarshaller) {
+@Singlelonton
+class IconLabelonlItelonmMarshallelonr @Injelonct() (
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr,
+  horizonIconMarshallelonr: HorizonIconMarshallelonr) {
 
-  def apply(iconLabelItem: IconLabelItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.IconLabel(
-      urt.IconLabel(
-        text = richTextMarshaller(iconLabelItem.text),
-        icon = iconLabelItem.icon.map(horizonIconMarshaller(_))
+  delonf apply(iconLabelonlItelonm: IconLabelonlItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.IconLabelonl(
+      urt.IconLabelonl(
+        telonxt = richTelonxtMarshallelonr(iconLabelonlItelonm.telonxt),
+        icon = iconLabelonlItelonm.icon.map(horizonIconMarshallelonr(_))
       )
     )
 }

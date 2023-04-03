@@ -1,19 +1,19 @@
-package com.twitter.follow_recommendations.configapi.candidates
+packagelon com.twittelonr.follow_reloncommelonndations.configapi.candidatelons
 
-import com.twitter.timelines.configapi.BaseRequestContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.NullFeatureContext
-import com.twitter.timelines.configapi.WithFeatureContext
-import com.twitter.timelines.configapi.WithUserId
+import com.twittelonr.timelonlinelons.configapi.BaselonRelonquelonstContelonxt
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.NullFelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.WithFelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.WithUselonrId
 
 /**
- * represent the context for a recommendation candidate (producer side)
- * @param userId id of the recommended user
- * @param featureContext feature context
+ * relonprelonselonnt thelon contelonxt for a reloncommelonndation candidatelon (producelonr sidelon)
+ * @param uselonrId id of thelon reloncommelonndelond uselonr
+ * @param felonaturelonContelonxt felonaturelon contelonxt
  */
-case class CandidateUserContext(
-  override val userId: Option[Long],
-  featureContext: FeatureContext = NullFeatureContext)
-    extends BaseRequestContext
-    with WithUserId
-    with WithFeatureContext
+caselon class CandidatelonUselonrContelonxt(
+  ovelonrridelon val uselonrId: Option[Long],
+  felonaturelonContelonxt: FelonaturelonContelonxt = NullFelonaturelonContelonxt)
+    elonxtelonnds BaselonRelonquelonstContelonxt
+    with WithUselonrId
+    with WithFelonaturelonContelonxt

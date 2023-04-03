@@ -1,30 +1,30 @@
-package com.twitter.home_mixer.product.scored_tweets.scorer
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scorelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
 
-trait DiversityDiscountProvider {
+trait DivelonrsityDiscountProvidelonr {
 
-  def entityId(candidate: CandidateWithFeatures[TweetCandidate]): Option[Long]
+  delonf elonntityId(candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon]): Option[Long]
 
   /**
-   * Compute the discounted score for the position
-   * @param score the previous score for the candidate
-   * @param position zero-based position for the candidate for the given entity
-   * @return the discounted score for the candidate
+   * Computelon thelon discountelond scorelon for thelon position
+   * @param scorelon thelon prelonvious scorelon for thelon candidatelon
+   * @param position zelonro-baselond position for thelon candidatelon for thelon givelonn elonntity
+   * @relonturn thelon discountelond scorelon for thelon candidatelon
    */
-  def discount(score: Double, position: Int): Double
+  delonf discount(scorelon: Doublelon, position: Int): Doublelon
 }
 
-object AuthorDiversityDiscountProvider extends DiversityDiscountProvider {
-  private val Decay = 0.5
-  private val Floor = 0.25
+objelonct AuthorDivelonrsityDiscountProvidelonr elonxtelonnds DivelonrsityDiscountProvidelonr {
+  privatelon val Deloncay = 0.5
+  privatelon val Floor = 0.25
 
-  override def entityId(candidate: CandidateWithFeatures[TweetCandidate]): Option[Long] =
-    candidate.features.getOrElse(AuthorIdFeature, None)
+  ovelonrridelon delonf elonntityId(candidatelon: CandidatelonWithFelonaturelons[TwelonelontCandidatelon]): Option[Long] =
+    candidatelon.felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon)
 
-  // Provides an exponential decay based discount by position (with a floor)
-  override def discount(score: Double, position: Int): Double =
-    score * ((1 - Floor) * Math.pow(Decay, position) + Floor)
+  // Providelons an elonxponelonntial deloncay baselond discount by position (with a floor)
+  ovelonrridelon delonf discount(scorelon: Doublelon, position: Int): Doublelon =
+    scorelon * ((1 - Floor) * Math.pow(Deloncay, position) + Floor)
 }

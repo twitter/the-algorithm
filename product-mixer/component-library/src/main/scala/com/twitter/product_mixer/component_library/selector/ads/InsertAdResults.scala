@@ -1,94 +1,94 @@
-package com.twitter.product_mixer.component_library.selector.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.ads
 
-import com.twitter.goldfinch.api.AdsInjectionSurfaceAreas.SurfaceAreaName
-import com.twitter.goldfinch.api.AdsInjectorAdditionalRequestParams
-import com.twitter.goldfinch.api.AdsInjectorOutput
-import com.twitter.goldfinch.api.{AdsInjector => GoldfinchAdsInjector}
-import com.twitter.product_mixer.component_library.model.query.ads._
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipeline
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.goldfinch.api.AdsInjelonctionSurfacelonArelonas.SurfacelonArelonaNamelon
+import com.twittelonr.goldfinch.api.AdsInjelonctorAdditionalRelonquelonstParams
+import com.twittelonr.goldfinch.api.AdsInjelonctorOutput
+import com.twittelonr.goldfinch.api.{AdsInjelonctor => GoldfinchAdsInjelonctor}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads._
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import CandidatelonScopelon.PartitionelondCandidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Injects the sequence of AdCandidates in the `result` in the
- * sequence of the Other Candidates(which are not ads).
+ * Injeloncts thelon selonquelonncelon of AdCandidatelons in thelon `relonsult` in thelon
+ * selonquelonncelon of thelon Othelonr Candidatelons(which arelon not ads).
  *
- * Every SurfaceArea or DisplayLocation runs their own desired set of adjusters(set in pipeline)
- * to inject ads and reposition the ads in the sequence of other candidates of `result` :
- * which are fetched by AdsInjectionSurfaceAreaAdjustersMap
- * Note: The original sequence of non_promoted entries(non-ads) is retained and the ads
- * are inserted in the sequence using `goldfinch` library based on the 'insertion-position'
- * hydrated in AdsCandidate by Adserver/Admixer.
+ * elonvelonry SurfacelonArelona or DisplayLocation runs thelonir own delonsirelond selont of adjustelonrs(selont in pipelonlinelon)
+ * to injelonct ads and relonposition thelon ads in thelon selonquelonncelon of othelonr candidatelons of `relonsult` :
+ * which arelon felontchelond by AdsInjelonctionSurfacelonArelonaAdjustelonrsMap
+ * Notelon: Thelon original selonquelonncelon of non_promotelond elonntrielons(non-ads) is relontainelond and thelon ads
+ * arelon inselonrtelond in thelon selonquelonncelon using `goldfinch` library baselond on thelon 'inselonrtion-position'
+ * hydratelond in AdsCandidatelon by Adselonrvelonr/Admixelonr.
  *
- * ***** Goldfinch recommends to run this selector as close to the marshalling of candidates to have
- * more realistic view of served-timeline in Goldfinch-BQ-Logs and avoid any further updates on the
- * timeline(sequence of entries) created. ****
+ * ***** Goldfinch reloncommelonnds to run this selonlelonctor as closelon to thelon marshalling of candidatelons to havelon
+ * morelon relonalistic vielonw of selonrvelond-timelonlinelon in Goldfinch-BQ-Logs and avoid any furthelonr updatelons on thelon
+ * timelonlinelon(selonquelonncelon of elonntrielons) crelonatelond. ****
  *
- * Any surface area like `search_tweets(surface_area)` can call
- * InsertAdResults(surfaceArea = "TweetSearch", candidatePipeline = adsCandidatePipeline.identifier,
- * ProductMixerAdsInjector = productMixerAdsInjector)
- * where the pipeline config can call
- * productMixerAdsInjector.forSurfaceArea("TweetSearch") to get AdsInjector Object
+ * Any surfacelon arelona likelon `selonarch_twelonelonts(surfacelon_arelona)` can call
+ * InselonrtAdRelonsults(surfacelonArelona = "TwelonelontSelonarch", candidatelonPipelonlinelon = adsCandidatelonPipelonlinelon.idelonntifielonr,
+ * ProductMixelonrAdsInjelonctor = productMixelonrAdsInjelonctor)
+ * whelonrelon thelon pipelonlinelon config can call
+ * productMixelonrAdsInjelonctor.forSurfacelonArelona("TwelonelontSelonarch") to gelont AdsInjelonctor Objelonct
  *
- * @example
- * `Seq(source1NonAd_Id1, source1NonAd_Id2, source2NonAd_Id1, source2NonAd_Id2,source1NonAd_Id3, source3NonAd_Id3,source3Ad_Id1_InsertionPos1, source3Ad_Id2_InsertionPos4)`
- * then the output result can be
- * `Seq(source1NonAd_Id1, source3Ad_Id1_InsertionPos1, source1NonAd_Id2, source2NonAd_Id1, source3Ad_Id2_InsertionPos4,source2NonAd_Id2, source1NonAd_Id3, source3NonAd_Id3)`
- * depending on the insertion position of Ads and other adjusters shifting the ads
+ * @elonxamplelon
+ * `Selonq(sourcelon1NonAd_Id1, sourcelon1NonAd_Id2, sourcelon2NonAd_Id1, sourcelon2NonAd_Id2,sourcelon1NonAd_Id3, sourcelon3NonAd_Id3,sourcelon3Ad_Id1_InselonrtionPos1, sourcelon3Ad_Id2_InselonrtionPos4)`
+ * thelonn thelon output relonsult can belon
+ * `Selonq(sourcelon1NonAd_Id1, sourcelon3Ad_Id1_InselonrtionPos1, sourcelon1NonAd_Id2, sourcelon2NonAd_Id1, sourcelon3Ad_Id2_InselonrtionPos4,sourcelon2NonAd_Id2, sourcelon1NonAd_Id3, sourcelon3NonAd_Id3)`
+ * delonpelonnding on thelon inselonrtion position of Ads and othelonr adjustelonrs shifting thelon ads
  */
-case class InsertAdResults(
-  surfaceAreaName: SurfaceAreaName,
-  adsInjector: GoldfinchAdsInjector[
-    PipelineQuery with AdsQuery,
-    CandidateWithDetails,
-    CandidateWithDetails
+caselon class InselonrtAdRelonsults(
+  surfacelonArelonaNamelon: SurfacelonArelonaNamelon,
+  adsInjelonctor: GoldfinchAdsInjelonctor[
+    PipelonlinelonQuelonry with AdsQuelonry,
+    CandidatelonWithDelontails,
+    CandidatelonWithDelontails
   ],
-  adsCandidatePipeline: CandidatePipelineIdentifier)
-    extends Selector[PipelineQuery with AdsQuery] {
+  adsCandidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr)
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry with AdsQuelonry] {
 
-  override val pipelineScope: CandidateScope = SpecificPipeline(adsCandidatePipeline)
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = SpeloncificPipelonlinelon(adsCandidatelonPipelonlinelon)
 
-  override def apply(
-    query: PipelineQuery with AdsQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    // Read into ads and non-ads candidates.
-    val PartitionedCandidates(adCandidates, otherRemainingCandidates) =
-      pipelineScope.partition(remainingCandidates)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry with AdsQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    // Relonad into ads and non-ads candidatelons.
+    val PartitionelondCandidatelons(adCandidatelons, othelonrRelonmainingCandidatelons) =
+      pipelonlinelonScopelon.partition(relonmainingCandidatelons)
 
-    // Create this param from Query/AdsCandidate based on surface_area, if required.
-    val adsInjectorAdditionalRequestParams =
-      AdsInjectorAdditionalRequestParams(budgetAwareExperimentId = None)
+    // Crelonatelon this param from Quelonry/AdsCandidatelon baselond on surfacelon_arelona, if relonquirelond.
+    val adsInjelonctorAdditionalRelonquelonstParams =
+      AdsInjelonctorAdditionalRelonquelonstParams(budgelontAwarelonelonxpelonrimelonntId = Nonelon)
 
-    val adsInjectorOutput: AdsInjectorOutput[CandidateWithDetails, CandidateWithDetails] =
-      adsInjector.applyForAllEntries(
-        query = query,
-        nonPromotedEntries = result,
-        promotedEntries = adCandidates,
-        adsInjectorAdditionalRequestParams = adsInjectorAdditionalRequestParams)
+    val adsInjelonctorOutput: AdsInjelonctorOutput[CandidatelonWithDelontails, CandidatelonWithDelontails] =
+      adsInjelonctor.applyForAllelonntrielons(
+        quelonry = quelonry,
+        nonPromotelondelonntrielons = relonsult,
+        promotelondelonntrielons = adCandidatelons,
+        adsInjelonctorAdditionalRelonquelonstParams = adsInjelonctorAdditionalRelonquelonstParams)
 
-    val updatedRemainingCandidates = otherRemainingCandidates ++
-      GoldfinchResults(adsInjectorOutput.unusedEntries).adapt
-    val mergedResults = GoldfinchResults(adsInjectorOutput.mergedEntries).adapt
-    SelectorResult(remainingCandidates = updatedRemainingCandidates, result = mergedResults)
+    val updatelondRelonmainingCandidatelons = othelonrRelonmainingCandidatelons ++
+      GoldfinchRelonsults(adsInjelonctorOutput.unuselondelonntrielons).adapt
+    val melonrgelondRelonsults = GoldfinchRelonsults(adsInjelonctorOutput.melonrgelondelonntrielons).adapt
+    SelonlelonctorRelonsult(relonmainingCandidatelons = updatelondRelonmainingCandidatelons, relonsult = melonrgelondRelonsults)
   }
 
   /**
-   * Goldfinch separates NonPromotedEntryType and PromotedEntryType models, while in ProMix both
-   * non-promoted and promoted entries are CandidateWithDetails. As such, we need to flatten the
-   * result back into a single Seq of CandidateWithDetails. See [[AdsInjectorOutput]]
+   * Goldfinch selonparatelons NonPromotelondelonntryTypelon and PromotelondelonntryTypelon modelonls, whilelon in ProMix both
+   * non-promotelond and promotelond elonntrielons arelon CandidatelonWithDelontails. As such, welon nelonelond to flattelonn thelon
+   * relonsult back into a singlelon Selonq of CandidatelonWithDelontails. Selonelon [[AdsInjelonctorOutput]]
    */
-  case class GoldfinchResults(results: Seq[Either[CandidateWithDetails, CandidateWithDetails]]) {
-    def adapt: Seq[CandidateWithDetails] = {
-      results.collect {
-        case Right(value) => value
-        case Left(value) => value
+  caselon class GoldfinchRelonsults(relonsults: Selonq[elonithelonr[CandidatelonWithDelontails, CandidatelonWithDelontails]]) {
+    delonf adapt: Selonq[CandidatelonWithDelontails] = {
+      relonsults.collelonct {
+        caselon Right(valuelon) => valuelon
+        caselon Lelonft(valuelon) => valuelon
       }
     }
   }

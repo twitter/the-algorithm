@@ -1,93 +1,93 @@
-package com.twitter.interaction_graph.scio.common
+packagelon com.twittelonr.intelonraction_graph.scio.common
 
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.socialgraph.presto.thriftscala.{Edge => SocialGraphEdge}
-import com.twitter.flockdb.tools.datasets.flock.thriftscala.FlockEdge
-import com.twitter.interaction_graph.scio.common.FeatureGroups.HEALTH_FEATURE_LIST
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.FeatureName
+import com.spotify.scio.ScioMelontrics
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.socialgraph.prelonsto.thriftscala.{elondgelon => SocialGraphelondgelon}
+import com.twittelonr.flockdb.tools.dataselonts.flock.thriftscala.Flockelondgelon
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonGroups.HelonALTH_FelonATURelon_LIST
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
 
-import java.time.Instant
-import java.time.temporal.ChronoUnit
+import java.timelon.Instant
+import java.timelon.telonmporal.ChronoUnit
 
-object GraphUtil {
+objelonct GraphUtil {
 
   /**
-   * Convert FlockEdge into common InteractionGraphRawInput class.
-   * updatedAt field in socialgraph.unfollows is in seconds.
+   * Convelonrt Flockelondgelon into common IntelonractionGraphRawInput class.
+   * updatelondAt fielonld in socialgraph.unfollows is in selonconds.
    */
-  def getFlockFeatures(
-    edges: SCollection[FlockEdge],
-    featureName: FeatureName,
-    currentTimeMillis: Long
-  ): SCollection[InteractionGraphRawInput] = {
-    edges
-      .withName(s"${featureName.toString} - Converting flock edge to interaction graph input")
-      .map { edge =>
-        val age = ChronoUnit.DAYS.between(
-          Instant.ofEpochMilli(edge.updatedAt * 1000L), // updatedAt is in seconds
-          Instant.ofEpochMilli(currentTimeMillis)
+  delonf gelontFlockFelonaturelons(
+    elondgelons: SCollelonction[Flockelondgelon],
+    felonaturelonNamelon: FelonaturelonNamelon,
+    currelonntTimelonMillis: Long
+  ): SCollelonction[IntelonractionGraphRawInput] = {
+    elondgelons
+      .withNamelon(s"${felonaturelonNamelon.toString} - Convelonrting flock elondgelon to intelonraction graph input")
+      .map { elondgelon =>
+        val agelon = ChronoUnit.DAYS.belontwelonelonn(
+          Instant.ofelonpochMilli(elondgelon.updatelondAt * 1000L), // updatelondAt is in selonconds
+          Instant.ofelonpochMilli(currelonntTimelonMillis)
         )
-        InteractionGraphRawInput(
-          edge.sourceId,
-          edge.destinationId,
-          featureName,
-          age.max(0).toInt,
+        IntelonractionGraphRawInput(
+          elondgelon.sourcelonId,
+          elondgelon.delonstinationId,
+          felonaturelonNamelon,
+          agelon.max(0).toInt,
           1.0)
       }
   }
 
   /**
-   * Convert com.twitter.socialgraph.presto.thriftscala.Edge (from unfollows) into common InteractionGraphRawInput class.
-   * updatedAt field in socialgraph.unfollows is in seconds.
+   * Convelonrt com.twittelonr.socialgraph.prelonsto.thriftscala.elondgelon (from unfollows) into common IntelonractionGraphRawInput class.
+   * updatelondAt fielonld in socialgraph.unfollows is in selonconds.
    */
-  def getSocialGraphFeatures(
-    edges: SCollection[SocialGraphEdge],
-    featureName: FeatureName,
-    currentTimeMillis: Long
-  ): SCollection[InteractionGraphRawInput] = {
-    edges
-      .withName(s"${featureName.toString} - Converting flock edge to interaction graph input")
-      .map { edge =>
-        val age = ChronoUnit.DAYS.between(
-          Instant.ofEpochMilli(edge.updatedAt * 1000L), // updatedAt is in seconds
-          Instant.ofEpochMilli(currentTimeMillis)
+  delonf gelontSocialGraphFelonaturelons(
+    elondgelons: SCollelonction[SocialGraphelondgelon],
+    felonaturelonNamelon: FelonaturelonNamelon,
+    currelonntTimelonMillis: Long
+  ): SCollelonction[IntelonractionGraphRawInput] = {
+    elondgelons
+      .withNamelon(s"${felonaturelonNamelon.toString} - Convelonrting flock elondgelon to intelonraction graph input")
+      .map { elondgelon =>
+        val agelon = ChronoUnit.DAYS.belontwelonelonn(
+          Instant.ofelonpochMilli(elondgelon.updatelondAt * 1000L), // updatelondAt is in selonconds
+          Instant.ofelonpochMilli(currelonntTimelonMillis)
         )
-        InteractionGraphRawInput(
-          edge.sourceId,
-          edge.destinationId,
-          featureName,
-          age.max(0).toInt,
+        IntelonractionGraphRawInput(
+          elondgelon.sourcelonId,
+          elondgelon.delonstinationId,
+          felonaturelonNamelon,
+          agelon.max(0).toInt,
           1.0)
       }
   }
-  def isFollow(edge: Edge): Boolean = {
-    val result = edge.features
-      .find(_.name == FeatureName.NumFollows)
-      .exists(_.tss.mean == 1.0)
-    result
+  delonf isFollow(elondgelon: elondgelon): Boolelonan = {
+    val relonsult = elondgelon.felonaturelons
+      .find(_.namelon == FelonaturelonNamelon.NumFollows)
+      .elonxists(_.tss.melonan == 1.0)
+    relonsult
   }
 
-  def filterExtremes(edge: Edge): Boolean = {
-    if (edge.weight.exists(_.isNaN)) {
-      ScioMetrics.counter("filter extremes", "nan").inc()
-      false
-    } else if (edge.weight.contains(Double.MaxValue)) {
-      ScioMetrics.counter("filter extremes", "max value").inc()
-      false
-    } else if (edge.weight.contains(Double.PositiveInfinity)) {
-      ScioMetrics.counter("filter extremes", "+ve inf").inc()
-      false
-    } else if (edge.weight.exists(_ < 0.0)) {
-      ScioMetrics.counter("filter extremes", "negative").inc()
-      false
-    } else {
-      true
+  delonf filtelonrelonxtrelonmelons(elondgelon: elondgelon): Boolelonan = {
+    if (elondgelon.welonight.elonxists(_.isNaN)) {
+      ScioMelontrics.countelonr("filtelonr elonxtrelonmelons", "nan").inc()
+      falselon
+    } elonlselon if (elondgelon.welonight.contains(Doublelon.MaxValuelon)) {
+      ScioMelontrics.countelonr("filtelonr elonxtrelonmelons", "max valuelon").inc()
+      falselon
+    } elonlselon if (elondgelon.welonight.contains(Doublelon.PositivelonInfinity)) {
+      ScioMelontrics.countelonr("filtelonr elonxtrelonmelons", "+velon inf").inc()
+      falselon
+    } elonlselon if (elondgelon.welonight.elonxists(_ < 0.0)) {
+      ScioMelontrics.countelonr("filtelonr elonxtrelonmelons", "nelongativelon").inc()
+      falselon
+    } elonlselon {
+      truelon
     }
   }
 
-  def filterNegative(edge: Edge): Boolean = {
-    !edge.features.find(ef => HEALTH_FEATURE_LIST.contains(ef.name)).exists(_.tss.mean > 0.0)
+  delonf filtelonrNelongativelon(elondgelon: elondgelon): Boolelonan = {
+    !elondgelon.felonaturelons.find(elonf => HelonALTH_FelonATURelon_LIST.contains(elonf.namelon)).elonxists(_.tss.melonan > 0.0)
   }
 }

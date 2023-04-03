@@ -1,51 +1,51 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.entity
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.elonntity
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
-include "com/twitter/algebird_internal/algebird.thrift"
-
-/**
- * Penguin text entity. All fields are required as this is used as a part of a memcache key.
- **/
-struct PenguinKey {
-  1: required string textEntity
-}(hasPersonalData = 'false')
+includelon "com/twittelonr/algelonbird_intelonrnal/algelonbird.thrift"
 
 /**
- * NER text entity. All fields are required as this is used as a part of a memcache key.
+ * Pelonnguin telonxt elonntity. All fielonlds arelon relonquirelond as this is uselond as a part of a melonmcachelon kelony.
  **/
-struct NerKey {
-  1: required string textEntity
-  2: required i32 wholeEntityType
-}(hasPersonalData = 'false')
+struct PelonnguinKelony {
+  1: relonquirelond string telonxtelonntity
+}(hasPelonrsonalData = 'falselon')
 
 /**
- * Semantic Core text entity. All fields are required as this is used as a part of a memcache key.
+ * NelonR telonxt elonntity. All fielonlds arelon relonquirelond as this is uselond as a part of a melonmcachelon kelony.
  **/
-struct SemanticCoreKey {
-  1: required i64 entityId(personalDataType = 'SemanticcoreClassification')
-}(hasPersonalData = 'true')
+struct NelonrKelony {
+  1: relonquirelond string telonxtelonntity
+  2: relonquirelond i32 wholelonelonntityTypelon
+}(hasPelonrsonalData = 'falselon')
 
 /**
- * Represents an entity extracted from a tweet.
+ * Selonmantic Corelon telonxt elonntity. All fielonlds arelon relonquirelond as this is uselond as a part of a melonmcachelon kelony.
  **/
-union TweetTextEntity {
+struct SelonmanticCorelonKelony {
+  1: relonquirelond i64 elonntityId(pelonrsonalDataTypelon = 'SelonmanticcorelonClassification')
+}(hasPelonrsonalData = 'truelon')
+
+/**
+ * Relonprelonselonnts an elonntity elonxtractelond from a twelonelont.
+ **/
+union TwelonelontTelonxtelonntity {
   1: string hashtag
-  2: PenguinKey penguin
-  3: NerKey ner
-  4: SemanticCoreKey semanticCore
-}(hasPersonalData = 'true')
+  2: PelonnguinKelony pelonnguin
+  3: NelonrKelony nelonr
+  4: SelonmanticCorelonKelony selonmanticCorelon
+}(hasPelonrsonalData = 'truelon')
 
-struct SpaceId {
+struct SpacelonId {
   1: string id
-}(hasPersonalData = 'true')
+}(hasPelonrsonalData = 'truelon')
 
 /**
- * All possible entities that simclusters are associated with.
+ * All possiblelon elonntitielons that simclustelonrs arelon associatelond with.
  **/
-union SimClusterEntity {
-  1: i64 tweetId(personalDataType = 'TweetId')
-  2: TweetTextEntity tweetEntity
-  3: SpaceId spaceId
-}(hasPersonalData = 'true')
+union SimClustelonrelonntity {
+  1: i64 twelonelontId(pelonrsonalDataTypelon = 'TwelonelontId')
+  2: TwelonelontTelonxtelonntity twelonelontelonntity
+  3: SpacelonId spacelonId
+}(hasPelonrsonalData = 'truelon')

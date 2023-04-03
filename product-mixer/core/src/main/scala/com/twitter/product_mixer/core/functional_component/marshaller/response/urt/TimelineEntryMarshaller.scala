@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelineEntryMarshaller @Inject() (
-  timelineEntryContentMarshaller: TimelineEntryContentMarshaller) {
+@Singlelonton
+class TimelonlinelonelonntryMarshallelonr @Injelonct() (
+  timelonlinelonelonntryContelonntMarshallelonr: TimelonlinelonelonntryContelonntMarshallelonr) {
 
-  def apply(entry: TimelineEntry): urt.TimelineEntry =
-    urt.TimelineEntry(
-      entryId = entry.entryIdentifier,
-      sortIndex = entry.sortIndex.getOrElse(throw new TimelineEntryMissingSortIndexException),
-      content = timelineEntryContentMarshaller(entry),
-      expiryTime = entry.expirationTimeInMillis
+  delonf apply(elonntry: Timelonlinelonelonntry): urt.Timelonlinelonelonntry =
+    urt.Timelonlinelonelonntry(
+      elonntryId = elonntry.elonntryIdelonntifielonr,
+      sortIndelonx = elonntry.sortIndelonx.gelontOrelonlselon(throw nelonw TimelonlinelonelonntryMissingSortIndelonxelonxcelonption),
+      contelonnt = timelonlinelonelonntryContelonntMarshallelonr(elonntry),
+      elonxpiryTimelon = elonntry.elonxpirationTimelonInMillis
     )
 }
 
-class TimelineEntryMissingSortIndexException
-    extends UnsupportedOperationException("Timeline entry missing sort index")
+class TimelonlinelonelonntryMissingSortIndelonxelonxcelonption
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption("Timelonlinelon elonntry missing sort indelonx")

@@ -1,42 +1,42 @@
-namespace java com.twitter.follow_recommendations.thriftjava
-#@namespace scala com.twitter.follow_recommendations.thriftscala
-#@namespace strato com.twitter.follow_recommendations
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations
 
-struct Header {
- 1: required Title title
+struct Helonadelonr {
+ 1: relonquirelond Titlelon titlelon
 }
 
-struct Title {
- 1: required string text
+struct Titlelon {
+ 1: relonquirelond string telonxt
 }
 
-struct Footer {
+struct Footelonr {
  1: optional Action action
 }
 
 struct Action {
- 1: required string text
- 2: required string actionURL
+ 1: relonquirelond string telonxt
+ 2: relonquirelond string actionURL
 }
 
-struct UserList {
-  1: required bool userBioEnabled
-  2: required bool userBioTruncated
-  3: optional i64 userBioMaxLines
-  4: optional FeedbackAction feedbackAction
+struct UselonrList {
+  1: relonquirelond bool uselonrBioelonnablelond
+  2: relonquirelond bool uselonrBioTruncatelond
+  3: optional i64 uselonrBioMaxLinelons
+  4: optional FelonelondbackAction felonelondbackAction
 }
 
-struct Carousel {
-  1: optional FeedbackAction feedbackAction
+struct Carouselonl {
+  1: optional FelonelondbackAction felonelondbackAction
 }
 
-union WTFPresentation {
-  1: UserList userBioList
-  2: Carousel carousel
+union WTFPrelonselonntation {
+  1: UselonrList uselonrBioList
+  2: Carouselonl carouselonl
 }
 
-struct DismissUserId {}
+struct DismissUselonrId {}
 
-union FeedbackAction {
- 1: DismissUserId dismissUserId
+union FelonelondbackAction {
+ 1: DismissUselonrId dismissUselonrId
 }

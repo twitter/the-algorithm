@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import CandidatelonScopelon.PartitionelondCandidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
 
-private[selector] object InsertSelector {
+privatelon[selonlelonctor] objelonct InselonrtSelonlelonctor {
 
   /**
-   * Insert all candidates from a candidate pipeline at a 0-indexed fixed position. If the current
-   * results are a shorter length than the requested position, then the candidates will be appended
-   * to the results.
+   * Inselonrt all candidatelons from a candidatelon pipelonlinelon at a 0-indelonxelond fixelond position. If thelon currelonnt
+   * relonsults arelon a shortelonr lelonngth than thelon relonquelonstelond position, thelonn thelon candidatelons will belon appelonndelond
+   * to thelon relonsults.
    */
-  def insertIntoResultsAtPosition(
+  delonf inselonrtIntoRelonsultsAtPosition(
     position: Int,
-    pipelineScope: CandidateScope,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    assert(position >= 0, "Position must be equal to or greater than zero")
+    pipelonlinelonScopelon: CandidatelonScopelon,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    asselonrt(position >= 0, "Position must belon elonqual to or grelonatelonr than zelonro")
 
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+    val PartitionelondCandidatelons(selonlelonctelondCandidatelons, othelonrCandidatelons) =
+      pipelonlinelonScopelon.partition(relonmainingCandidatelons)
 
-    val resultUpdated = if (selectedCandidates.nonEmpty) {
-      if (position < result.length) {
-        val (left, right) = result.splitAt(position)
-        left ++ selectedCandidates ++ right
-      } else {
-        result ++ selectedCandidates
+    val relonsultUpdatelond = if (selonlelonctelondCandidatelons.nonelonmpty) {
+      if (position < relonsult.lelonngth) {
+        val (lelonft, right) = relonsult.splitAt(position)
+        lelonft ++ selonlelonctelondCandidatelons ++ right
+      } elonlselon {
+        relonsult ++ selonlelonctelondCandidatelons
       }
-    } else {
-      result
+    } elonlselon {
+      relonsult
     }
 
-    SelectorResult(remainingCandidates = otherCandidates, result = resultUpdated)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = othelonrCandidatelons, relonsult = relonsultUpdatelond)
   }
 }

@@ -1,154 +1,154 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.relonal_timelon_aggrelongatelons
 
-import com.twitter.home_mixer.functional_component.feature_hydrator.real_time_aggregates.BaseRealtimeAggregateHydrator._
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.{Feature => MLApiFeature}
-import com.twitter.servo.cache.ReadCache
-import com.twitter.servo.keyvalue.KeyValueResult
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.util.Future
-import com.twitter.util.Time
-import com.twitter.util.Try
-import scala.collection.JavaConverters._
-import java.lang.{Double => JDouble}
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.relonal_timelon_aggrelongatelons.BaselonRelonaltimelonAggrelongatelonHydrator._
+import com.twittelonr.homelon_mixelonr.util.ObselonrvelondKelonyValuelonRelonsultHandlelonr
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.DataReloncordMelonrgelonr
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.util.SRichDataReloncord
+import com.twittelonr.ml.api.{Felonaturelon => MLApiFelonaturelon}
+import com.twittelonr.selonrvo.cachelon.RelonadCachelon
+import com.twittelonr.selonrvo.kelonyvaluelon.KelonyValuelonRelonsult
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongatelonGroup
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
+import com.twittelonr.util.Try
+import scala.collelonction.JavaConvelonrtelonrs._
+import java.lang.{Doublelon => JDoublelon}
 
-trait BaseRealtimeAggregateHydrator[K] extends ObservedKeyValueResultHandler {
+trait BaselonRelonaltimelonAggrelongatelonHydrator[K] elonxtelonnds ObselonrvelondKelonyValuelonRelonsultHandlelonr {
 
-  val client: ReadCache[K, DataRecord]
+  val clielonnt: RelonadCachelon[K, DataReloncord]
 
-  val aggregateGroups: Seq[AggregateGroup]
+  val aggrelongatelonGroups: Selonq[AggrelongatelonGroup]
 
-  val aggregateGroupToPrefix: Map[AggregateGroup, String] = Map.empty
+  val aggrelongatelonGroupToPrelonfix: Map[AggrelongatelonGroup, String] = Map.elonmpty
 
-  private lazy val typedAggregateGroupsList = aggregateGroups.map(_.buildTypedAggregateGroups())
+  privatelon lazy val typelondAggrelongatelonGroupsList = aggrelongatelonGroups.map(_.buildTypelondAggrelongatelonGroups())
 
-  private lazy val featureContexts: Seq[FeatureContext] = typedAggregateGroupsList.map {
-    typedAggregateGroups =>
-      new FeatureContext(typedAggregateGroups.flatMap(_.allOutputFeatures).asJava)
+  privatelon lazy val felonaturelonContelonxts: Selonq[FelonaturelonContelonxt] = typelondAggrelongatelonGroupsList.map {
+    typelondAggrelongatelonGroups =>
+      nelonw FelonaturelonContelonxt(typelondAggrelongatelonGroups.flatMap(_.allOutputFelonaturelons).asJava)
   }
 
-  private lazy val aggregateFeaturesRenameMap: Map[MLApiFeature[_], MLApiFeature[_]] = {
-    val prefixes: Seq[Option[String]] = aggregateGroups.map(aggregateGroupToPrefix.get)
+  privatelon lazy val aggrelongatelonFelonaturelonsRelonnamelonMap: Map[MLApiFelonaturelon[_], MLApiFelonaturelon[_]] = {
+    val prelonfixelons: Selonq[Option[String]] = aggrelongatelonGroups.map(aggrelongatelonGroupToPrelonfix.gelont)
 
-    typedAggregateGroupsList
-      .zip(prefixes).map {
-        case (typedAggregateGroups, prefix) =>
-          if (prefix.nonEmpty)
-            typedAggregateGroups
+    typelondAggrelongatelonGroupsList
+      .zip(prelonfixelons).map {
+        caselon (typelondAggrelongatelonGroups, prelonfix) =>
+          if (prelonfix.nonelonmpty)
+            typelondAggrelongatelonGroups
               .map {
-                _.outputFeaturesToRenamedOutputFeatures(prefix.get)
-              }.reduce(_ ++ _)
-          else
-            Map.empty[MLApiFeature[_], MLApiFeature[_]]
-      }.reduce(_ ++ _)
+                _.outputFelonaturelonsToRelonnamelondOutputFelonaturelons(prelonfix.gelont)
+              }.relonducelon(_ ++ _)
+          elonlselon
+            Map.elonmpty[MLApiFelonaturelon[_], MLApiFelonaturelon[_]]
+      }.relonducelon(_ ++ _)
   }
 
-  private lazy val renamedFeatureContexts: Seq[FeatureContext] =
-    typedAggregateGroupsList.map { typedAggregateGroups =>
-      val renamedAllOutputFeatures = typedAggregateGroups.flatMap(_.allOutputFeatures).map {
-        feature => aggregateFeaturesRenameMap.getOrElse(feature, feature)
+  privatelon lazy val relonnamelondFelonaturelonContelonxts: Selonq[FelonaturelonContelonxt] =
+    typelondAggrelongatelonGroupsList.map { typelondAggrelongatelonGroups =>
+      val relonnamelondAllOutputFelonaturelons = typelondAggrelongatelonGroups.flatMap(_.allOutputFelonaturelons).map {
+        felonaturelon => aggrelongatelonFelonaturelonsRelonnamelonMap.gelontOrelonlselon(felonaturelon, felonaturelon)
       }
 
-      new FeatureContext(renamedAllOutputFeatures.asJava)
+      nelonw FelonaturelonContelonxt(relonnamelondAllOutputFelonaturelons.asJava)
     }
 
-  private lazy val decays: Seq[TimeDecay] = typedAggregateGroupsList.map { typedAggregateGroups =>
-    RealTimeAggregateTimeDecay(
-      typedAggregateGroups.flatMap(_.continuousFeatureIdsToHalfLives).toMap)
+  privatelon lazy val deloncays: Selonq[TimelonDeloncay] = typelondAggrelongatelonGroupsList.map { typelondAggrelongatelonGroups =>
+    RelonalTimelonAggrelongatelonTimelonDeloncay(
+      typelondAggrelongatelonGroups.flatMap(_.continuousFelonaturelonIdsToHalfLivelons).toMap)
       .apply(_, _)
   }
 
-  private val drMerger = new DataRecordMerger
+  privatelon val drMelonrgelonr = nelonw DataReloncordMelonrgelonr
 
-  private def postTransformer(dataRecord: Try[Option[DataRecord]]): Try[DataRecord] = {
-    dataRecord.map {
-      case Some(dr) =>
-        val newDr = new DataRecord()
-        featureContexts.zip(renamedFeatureContexts).zip(decays).foreach {
-          case ((featureContext, renamedFeatureContext), decay) =>
-            val decayedDr = applyDecay(dr, featureContext, decay)
-            val renamedDr = applyRename(
-              dataRecord = decayedDr,
-              featureContext,
-              renamedFeatureContext,
-              aggregateFeaturesRenameMap)
-            drMerger.merge(newDr, renamedDr)
+  privatelon delonf postTransformelonr(dataReloncord: Try[Option[DataReloncord]]): Try[DataReloncord] = {
+    dataReloncord.map {
+      caselon Somelon(dr) =>
+        val nelonwDr = nelonw DataReloncord()
+        felonaturelonContelonxts.zip(relonnamelondFelonaturelonContelonxts).zip(deloncays).forelonach {
+          caselon ((felonaturelonContelonxt, relonnamelondFelonaturelonContelonxt), deloncay) =>
+            val deloncayelondDr = applyDeloncay(dr, felonaturelonContelonxt, deloncay)
+            val relonnamelondDr = applyRelonnamelon(
+              dataReloncord = deloncayelondDr,
+              felonaturelonContelonxt,
+              relonnamelondFelonaturelonContelonxt,
+              aggrelongatelonFelonaturelonsRelonnamelonMap)
+            drMelonrgelonr.melonrgelon(nelonwDr, relonnamelondDr)
         }
-        newDr
-      case _ =>
-        new DataRecord
+        nelonwDr
+      caselon _ =>
+        nelonw DataReloncord
     }
   }
 
-  def fetchAndConstructDataRecords(possiblyKeys: Seq[Option[K]]): Stitch[Seq[Try[DataRecord]]] = {
-    Stitch.callFuture {
-      val keys = possiblyKeys.flatten
+  delonf felontchAndConstructDataReloncords(possiblyKelonys: Selonq[Option[K]]): Stitch[Selonq[Try[DataReloncord]]] = {
+    Stitch.callFuturelon {
+      val kelonys = possiblyKelonys.flattelonn
 
-      val response: Future[KeyValueResult[K, DataRecord]] =
-        if (keys.isEmpty) {
-          Future.value(KeyValueResult.empty)
-        } else {
-          client.get(keys)
+      val relonsponselon: Futurelon[KelonyValuelonRelonsult[K, DataReloncord]] =
+        if (kelonys.iselonmpty) {
+          Futurelon.valuelon(KelonyValuelonRelonsult.elonmpty)
+        } elonlselon {
+          clielonnt.gelont(kelonys)
         }
 
-      response.map { result =>
-        possiblyKeys.map { possiblyKey =>
-          val value = observedGet(key = possiblyKey, keyValueResult = result)
-          postTransformer(value)
+      relonsponselon.map { relonsult =>
+        possiblyKelonys.map { possiblyKelony =>
+          val valuelon = obselonrvelondGelont(kelony = possiblyKelony, kelonyValuelonRelonsult = relonsult)
+          postTransformelonr(valuelon)
         }
       }
     }
   }
 }
 
-object BaseRealtimeAggregateHydrator {
-  type TimeDecay = scala.Function2[com.twitter.ml.api.DataRecord, scala.Long, scala.Unit]
+objelonct BaselonRelonaltimelonAggrelongatelonHydrator {
+  typelon TimelonDeloncay = scala.Function2[com.twittelonr.ml.api.DataReloncord, scala.Long, scala.Unit]
 
-  private def applyDecay(
-    dataRecord: DataRecord,
-    featureContext: FeatureContext,
-    decay: TimeDecay
-  ): DataRecord = {
-    def time: Long = Time.now.inMillis
+  privatelon delonf applyDeloncay(
+    dataReloncord: DataReloncord,
+    felonaturelonContelonxt: FelonaturelonContelonxt,
+    deloncay: TimelonDeloncay
+  ): DataReloncord = {
+    delonf timelon: Long = Timelon.now.inMillis
 
-    val richFullDr = new SRichDataRecord(dataRecord, featureContext)
-    val richNewDr = new SRichDataRecord(new DataRecord, featureContext)
-    val featureIterator = featureContext.iterator()
-    featureIterator.forEachRemaining { feature =>
-      if (richFullDr.hasFeature(feature)) {
-        val typedFeature = feature.asInstanceOf[MLApiFeature[JDouble]]
-        richNewDr.setFeatureValue(typedFeature, richFullDr.getFeatureValue(typedFeature))
+    val richFullDr = nelonw SRichDataReloncord(dataReloncord, felonaturelonContelonxt)
+    val richNelonwDr = nelonw SRichDataReloncord(nelonw DataReloncord, felonaturelonContelonxt)
+    val felonaturelonItelonrator = felonaturelonContelonxt.itelonrator()
+    felonaturelonItelonrator.forelonachRelonmaining { felonaturelon =>
+      if (richFullDr.hasFelonaturelon(felonaturelon)) {
+        val typelondFelonaturelon = felonaturelon.asInstancelonOf[MLApiFelonaturelon[JDoublelon]]
+        richNelonwDr.selontFelonaturelonValuelon(typelondFelonaturelon, richFullDr.gelontFelonaturelonValuelon(typelondFelonaturelon))
       }
     }
-    val resultDr = richNewDr.getRecord
-    decay(resultDr, time)
-    resultDr
+    val relonsultDr = richNelonwDr.gelontReloncord
+    deloncay(relonsultDr, timelon)
+    relonsultDr
   }
 
-  private def applyRename(
-    dataRecord: DataRecord,
-    featureContext: FeatureContext,
-    renamedFeatureContext: FeatureContext,
-    featureRenamingMap: Map[MLApiFeature[_], MLApiFeature[_]]
-  ): DataRecord = {
-    val richFullDr = new SRichDataRecord(dataRecord, featureContext)
-    val richNewDr = new SRichDataRecord(new DataRecord, renamedFeatureContext)
-    val featureIterator = featureContext.iterator()
-    featureIterator.forEachRemaining { feature =>
-      if (richFullDr.hasFeature(feature)) {
-        val renamedFeature = featureRenamingMap.getOrElse(feature, feature)
+  privatelon delonf applyRelonnamelon(
+    dataReloncord: DataReloncord,
+    felonaturelonContelonxt: FelonaturelonContelonxt,
+    relonnamelondFelonaturelonContelonxt: FelonaturelonContelonxt,
+    felonaturelonRelonnamingMap: Map[MLApiFelonaturelon[_], MLApiFelonaturelon[_]]
+  ): DataReloncord = {
+    val richFullDr = nelonw SRichDataReloncord(dataReloncord, felonaturelonContelonxt)
+    val richNelonwDr = nelonw SRichDataReloncord(nelonw DataReloncord, relonnamelondFelonaturelonContelonxt)
+    val felonaturelonItelonrator = felonaturelonContelonxt.itelonrator()
+    felonaturelonItelonrator.forelonachRelonmaining { felonaturelon =>
+      if (richFullDr.hasFelonaturelon(felonaturelon)) {
+        val relonnamelondFelonaturelon = felonaturelonRelonnamingMap.gelontOrelonlselon(felonaturelon, felonaturelon)
 
-        val typedFeature = feature.asInstanceOf[MLApiFeature[JDouble]]
-        val typedRenamedFeature = renamedFeature.asInstanceOf[MLApiFeature[JDouble]]
+        val typelondFelonaturelon = felonaturelon.asInstancelonOf[MLApiFelonaturelon[JDoublelon]]
+        val typelondRelonnamelondFelonaturelon = relonnamelondFelonaturelon.asInstancelonOf[MLApiFelonaturelon[JDoublelon]]
 
-        richNewDr.setFeatureValue(typedRenamedFeature, richFullDr.getFeatureValue(typedFeature))
+        richNelonwDr.selontFelonaturelonValuelon(typelondRelonnamelondFelonaturelon, richFullDr.gelontFelonaturelonValuelon(typelondFelonaturelon))
       }
     }
-    richNewDr.getRecord
+    richNelonwDr.gelontReloncord
   }
 }

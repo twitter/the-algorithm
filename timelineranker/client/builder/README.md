@@ -1,4 +1,4 @@
-# TimelineRanker client
+# TimelonlinelonRankelonr clielonnt
 
-Library for creating a client to talk to TLR. It contains a ClientBuilder implementation
-with some preferred settings for clients.
+Library for crelonating a clielonnt to talk to TLR. It contains a ClielonntBuildelonr implelonmelonntation
+with somelon prelonfelonrrelond selonttings for clielonnts.

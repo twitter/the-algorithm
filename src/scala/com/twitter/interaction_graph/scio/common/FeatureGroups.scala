@@ -1,30 +1,30 @@
-package com.twitter.interaction_graph.scio.common
+packagelon com.twittelonr.intelonraction_graph.scio.common
 
-import com.twitter.interaction_graph.thriftscala.FeatureName
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
 
-object FeatureGroups {
+objelonct FelonaturelonGroups {
 
-  val HEALTH_FEATURE_LIST: Set[FeatureName] = Set(
-    FeatureName.NumMutes,
-    FeatureName.NumBlocks,
-    FeatureName.NumReportAsSpams,
-    FeatureName.NumReportAsAbuses
+  val HelonALTH_FelonATURelon_LIST: Selont[FelonaturelonNamelon] = Selont(
+    FelonaturelonNamelon.NumMutelons,
+    FelonaturelonNamelon.NumBlocks,
+    FelonaturelonNamelon.NumRelonportAsSpams,
+    FelonaturelonNamelon.NumRelonportAsAbuselons
   )
 
-  val STATUS_FEATURE_LIST: Set[FeatureName] = Set(
-    FeatureName.AddressBookEmail,
-    FeatureName.AddressBookPhone,
-    FeatureName.AddressBookInBoth,
-    FeatureName.AddressBookMutualEdgeEmail,
-    FeatureName.AddressBookMutualEdgePhone,
-    FeatureName.AddressBookMutualEdgeInBoth,
-    FeatureName.NumFollows,
-    FeatureName.NumUnfollows,
-    FeatureName.NumMutualFollows
-  ) ++ HEALTH_FEATURE_LIST
+  val STATUS_FelonATURelon_LIST: Selont[FelonaturelonNamelon] = Selont(
+    FelonaturelonNamelon.AddrelonssBookelonmail,
+    FelonaturelonNamelon.AddrelonssBookPhonelon,
+    FelonaturelonNamelon.AddrelonssBookInBoth,
+    FelonaturelonNamelon.AddrelonssBookMutualelondgelonelonmail,
+    FelonaturelonNamelon.AddrelonssBookMutualelondgelonPhonelon,
+    FelonaturelonNamelon.AddrelonssBookMutualelondgelonInBoth,
+    FelonaturelonNamelon.NumFollows,
+    FelonaturelonNamelon.NumUnfollows,
+    FelonaturelonNamelon.NumMutualFollows
+  ) ++ HelonALTH_FelonATURelon_LIST
 
-  val DWELL_TIME_FEATURE_LIST: Set[FeatureName] = Set(
-    FeatureName.TotalDwellTime,
-    FeatureName.NumInspectedStatuses
+  val DWelonLL_TIMelon_FelonATURelon_LIST: Selont[FelonaturelonNamelon] = Selont(
+    FelonaturelonNamelon.TotalDwelonllTimelon,
+    FelonaturelonNamelon.NumInspelonctelondStatuselons
   )
 }

@@ -1,155 +1,155 @@
-package com.twitter.home_mixer.product.list_tweets
+packagelon com.twittelonr.homelon_mixelonr.product.list_twelonelonts
 
-import com.twitter.clientapp.{thriftscala => ca}
-import com.twitter.goldfinch.api.AdsInjectionSurfaceAreas
-import com.twitter.home_mixer.candidate_pipeline.ConversationServiceCandidatePipelineConfigBuilder
-import com.twitter.home_mixer.functional_component.decorator.ListConversationServiceCandidateDecorator
-import com.twitter.home_mixer.functional_component.feature_hydrator.RequestQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.side_effect.HomeScribeClientEventSideEffect
-import com.twitter.home_mixer.model.GapIncludeInstruction
-import com.twitter.home_mixer.product.list_tweets.model.ListTweetsQuery
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.logpipeline.client.common.EventPublisher
-import com.twitter.product_mixer.component_library.gate.NonEmptyCandidatesGate
-import com.twitter.product_mixer.component_library.premarshaller.urt.UrtDomainMarshaller
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AddEntriesWithReplaceAndShowAlertInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedBottomCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedGapCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.OrderedTopCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ReplaceAllEntries
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ReplaceEntryInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ShowAlertInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.StaticTimelineScribeConfigBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtMetadataBuilder
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.component_library.selector.UpdateSortCandidates
-import com.twitter.product_mixer.component_library.selector.ads.AdsInjector
-import com.twitter.product_mixer.component_library.selector.ads.InsertAdResults
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.UrtTransportMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.pipeline.FailOpenPolicy
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.candidate.DependentCandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.clielonntapp.{thriftscala => ca}
+import com.twittelonr.goldfinch.api.AdsInjelonctionSurfacelonArelonas
+import com.twittelonr.homelon_mixelonr.candidatelon_pipelonlinelon.ConvelonrsationSelonrvicelonCandidatelonPipelonlinelonConfigBuildelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.ListConvelonrsationSelonrvicelonCandidatelonDeloncorator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.RelonquelonstQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct.HomelonScribelonClielonntelonvelonntSidelonelonffelonct
+import com.twittelonr.homelon_mixelonr.modelonl.GapIncludelonInstruction
+import com.twittelonr.homelon_mixelonr.product.list_twelonelonts.modelonl.ListTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.logpipelonlinelon.clielonnt.common.elonvelonntPublishelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.gatelon.NonelonmptyCandidatelonsGatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.UrtDomainMarshallelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.AddelonntrielonsWithRelonplacelonAndShowAlelonrtInstructionBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.OrdelonrelondBottomCursorBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.OrdelonrelondGapCursorBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.OrdelonrelondTopCursorBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.RelonplacelonAllelonntrielons
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.RelonplacelonelonntryInstructionBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.ShowAlelonrtInstructionBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.StaticTimelonlinelonScribelonConfigBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UrtMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.InselonrtAppelonndRelonsults
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.UpdatelonSortCandidatelons
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.ads.AdsInjelonctor
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.ads.InselonrtAdRelonsults
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.UrtTransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.MixelonrPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonScribelonConfig
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.FailOpelonnPolicy
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.DelonpelonndelonntCandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr.MixelonrPipelonlinelonConfig
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ListTweetsMixerPipelineConfig @Inject() (
-  listTweetsTimelineServiceCandidatePipelineConfig: ListTweetsTimelineServiceCandidatePipelineConfig,
-  conversationServiceCandidatePipelineConfigBuilder: ConversationServiceCandidatePipelineConfigBuilder[
-    ListTweetsQuery
+@Singlelonton
+class ListTwelonelontsMixelonrPipelonlinelonConfig @Injelonct() (
+  listTwelonelontsTimelonlinelonSelonrvicelonCandidatelonPipelonlinelonConfig: ListTwelonelontsTimelonlinelonSelonrvicelonCandidatelonPipelonlinelonConfig,
+  convelonrsationSelonrvicelonCandidatelonPipelonlinelonConfigBuildelonr: ConvelonrsationSelonrvicelonCandidatelonPipelonlinelonConfigBuildelonr[
+    ListTwelonelontsQuelonry
   ],
-  listTweetsAdsCandidatePipelineBuilder: ListTweetsAdsCandidatePipelineBuilder,
-  requestQueryFeatureHydrator: RequestQueryFeatureHydrator[ListTweetsQuery],
-  adsInjector: AdsInjector,
-  clientEventsScribeEventPublisher: EventPublisher[ca.LogEvent],
-  urtTransportMarshaller: UrtTransportMarshaller)
-    extends MixerPipelineConfig[ListTweetsQuery, Timeline, urt.TimelineResponse] {
+  listTwelonelontsAdsCandidatelonPipelonlinelonBuildelonr: ListTwelonelontsAdsCandidatelonPipelonlinelonBuildelonr,
+  relonquelonstQuelonryFelonaturelonHydrator: RelonquelonstQuelonryFelonaturelonHydrator[ListTwelonelontsQuelonry],
+  adsInjelonctor: AdsInjelonctor,
+  clielonntelonvelonntsScribelonelonvelonntPublishelonr: elonvelonntPublishelonr[ca.Logelonvelonnt],
+  urtTransportMarshallelonr: UrtTransportMarshallelonr)
+    elonxtelonnds MixelonrPipelonlinelonConfig[ListTwelonelontsQuelonry, Timelonlinelon, urt.TimelonlinelonRelonsponselon] {
 
-  override val identifier: MixerPipelineIdentifier = MixerPipelineIdentifier("ListTweets")
+  ovelonrridelon val idelonntifielonr: MixelonrPipelonlinelonIdelonntifielonr = MixelonrPipelonlinelonIdelonntifielonr("ListTwelonelonts")
 
-  private val conversationServiceCandidatePipelineConfig =
-    conversationServiceCandidatePipelineConfigBuilder.build(
-      Seq(
-        NonEmptyCandidatesGate(
-          SpecificPipelines(listTweetsTimelineServiceCandidatePipelineConfig.identifier))
+  privatelon val convelonrsationSelonrvicelonCandidatelonPipelonlinelonConfig =
+    convelonrsationSelonrvicelonCandidatelonPipelonlinelonConfigBuildelonr.build(
+      Selonq(
+        NonelonmptyCandidatelonsGatelon(
+          SpeloncificPipelonlinelons(listTwelonelontsTimelonlinelonSelonrvicelonCandidatelonPipelonlinelonConfig.idelonntifielonr))
       ),
-      ListConversationServiceCandidateDecorator()
+      ListConvelonrsationSelonrvicelonCandidatelonDeloncorator()
     )
 
-  private val listTweetsAdsCandidatePipelineConfig = listTweetsAdsCandidatePipelineBuilder.build(
-    SpecificPipelines(listTweetsTimelineServiceCandidatePipelineConfig.identifier)
+  privatelon val listTwelonelontsAdsCandidatelonPipelonlinelonConfig = listTwelonelontsAdsCandidatelonPipelonlinelonBuildelonr.build(
+    SpeloncificPipelonlinelons(listTwelonelontsTimelonlinelonSelonrvicelonCandidatelonPipelonlinelonConfig.idelonntifielonr)
   )
 
-  override val candidatePipelines: Seq[CandidatePipelineConfig[ListTweetsQuery, _, _, _]] =
-    Seq(listTweetsTimelineServiceCandidatePipelineConfig)
+  ovelonrridelon val candidatelonPipelonlinelons: Selonq[CandidatelonPipelonlinelonConfig[ListTwelonelontsQuelonry, _, _, _]] =
+    Selonq(listTwelonelontsTimelonlinelonSelonrvicelonCandidatelonPipelonlinelonConfig)
 
-  override val dependentCandidatePipelines: Seq[
-    DependentCandidatePipelineConfig[ListTweetsQuery, _, _, _]
+  ovelonrridelon val delonpelonndelonntCandidatelonPipelonlinelons: Selonq[
+    DelonpelonndelonntCandidatelonPipelonlinelonConfig[ListTwelonelontsQuelonry, _, _, _]
   ] =
-    Seq(conversationServiceCandidatePipelineConfig, listTweetsAdsCandidatePipelineConfig)
+    Selonq(convelonrsationSelonrvicelonCandidatelonPipelonlinelonConfig, listTwelonelontsAdsCandidatelonPipelonlinelonConfig)
 
-  override val failOpenPolicies: Map[CandidatePipelineIdentifier, FailOpenPolicy] = Map(
-    conversationServiceCandidatePipelineConfig.identifier -> FailOpenPolicy.Always,
-    listTweetsAdsCandidatePipelineConfig.identifier -> FailOpenPolicy.Always)
+  ovelonrridelon val failOpelonnPolicielons: Map[CandidatelonPipelonlinelonIdelonntifielonr, FailOpelonnPolicy] = Map(
+    convelonrsationSelonrvicelonCandidatelonPipelonlinelonConfig.idelonntifielonr -> FailOpelonnPolicy.Always,
+    listTwelonelontsAdsCandidatelonPipelonlinelonConfig.idelonntifielonr -> FailOpelonnPolicy.Always)
 
-  override val resultSelectors: Seq[Selector[ListTweetsQuery]] = Seq(
-    UpdateSortCandidates(
-      ordering = CandidatesUtil.reverseChronTweetsOrdering,
-      candidatePipeline = conversationServiceCandidatePipelineConfig.identifier
+  ovelonrridelon val relonsultSelonlelonctors: Selonq[Selonlelonctor[ListTwelonelontsQuelonry]] = Selonq(
+    UpdatelonSortCandidatelons(
+      ordelonring = CandidatelonsUtil.relonvelonrselonChronTwelonelontsOrdelonring,
+      candidatelonPipelonlinelon = convelonrsationSelonrvicelonCandidatelonPipelonlinelonConfig.idelonntifielonr
     ),
-    InsertAppendResults(candidatePipeline = conversationServiceCandidatePipelineConfig.identifier),
-    InsertAdResults(
-      surfaceAreaName = AdsInjectionSurfaceAreas.HomeTimeline,
-      adsInjector = adsInjector.forSurfaceArea(AdsInjectionSurfaceAreas.HomeTimeline),
-      adsCandidatePipeline = listTweetsAdsCandidatePipelineConfig.identifier
+    InselonrtAppelonndRelonsults(candidatelonPipelonlinelon = convelonrsationSelonrvicelonCandidatelonPipelonlinelonConfig.idelonntifielonr),
+    InselonrtAdRelonsults(
+      surfacelonArelonaNamelon = AdsInjelonctionSurfacelonArelonas.HomelonTimelonlinelon,
+      adsInjelonctor = adsInjelonctor.forSurfacelonArelona(AdsInjelonctionSurfacelonArelonas.HomelonTimelonlinelon),
+      adsCandidatelonPipelonlinelon = listTwelonelontsAdsCandidatelonPipelonlinelonConfig.idelonntifielonr
     ),
   )
 
-  override val fetchQueryFeatures: Seq[QueryFeatureHydrator[ListTweetsQuery]] = Seq(
-    requestQueryFeatureHydrator
+  ovelonrridelon val felontchQuelonryFelonaturelons: Selonq[QuelonryFelonaturelonHydrator[ListTwelonelontsQuelonry]] = Selonq(
+    relonquelonstQuelonryFelonaturelonHydrator
   )
 
-  private val homeScribeClientEventSideEffect = HomeScribeClientEventSideEffect(
-    logPipelinePublisher = clientEventsScribeEventPublisher,
-    injectedTweetsCandidatePipelineIdentifiers =
-      Seq(conversationServiceCandidatePipelineConfig.identifier),
-    adsCandidatePipelineIdentifier = listTweetsAdsCandidatePipelineConfig.identifier,
+  privatelon val homelonScribelonClielonntelonvelonntSidelonelonffelonct = HomelonScribelonClielonntelonvelonntSidelonelonffelonct(
+    logPipelonlinelonPublishelonr = clielonntelonvelonntsScribelonelonvelonntPublishelonr,
+    injelonctelondTwelonelontsCandidatelonPipelonlinelonIdelonntifielonrs =
+      Selonq(convelonrsationSelonrvicelonCandidatelonPipelonlinelonConfig.idelonntifielonr),
+    adsCandidatelonPipelonlinelonIdelonntifielonr = listTwelonelontsAdsCandidatelonPipelonlinelonConfig.idelonntifielonr,
   )
 
-  override val resultSideEffects: Seq[PipelineResultSideEffect[ListTweetsQuery, Timeline]] =
-    Seq(homeScribeClientEventSideEffect)
+  ovelonrridelon val relonsultSidelonelonffeloncts: Selonq[PipelonlinelonRelonsultSidelonelonffelonct[ListTwelonelontsQuelonry, Timelonlinelon]] =
+    Selonq(homelonScribelonClielonntelonvelonntSidelonelonffelonct)
 
-  override val domainMarshaller: DomainMarshaller[ListTweetsQuery, Timeline] = {
-    val instructionBuilders = Seq(
-      ReplaceEntryInstructionBuilder(ReplaceAllEntries),
-      AddEntriesWithReplaceAndShowAlertInstructionBuilder(),
-      ShowAlertInstructionBuilder()
+  ovelonrridelon val domainMarshallelonr: DomainMarshallelonr[ListTwelonelontsQuelonry, Timelonlinelon] = {
+    val instructionBuildelonrs = Selonq(
+      RelonplacelonelonntryInstructionBuildelonr(RelonplacelonAllelonntrielons),
+      AddelonntrielonsWithRelonplacelonAndShowAlelonrtInstructionBuildelonr(),
+      ShowAlelonrtInstructionBuildelonr()
     )
 
-    val idSelector: PartialFunction[UniversalNoun[_], Long] = {
-      // exclude ads while determining tweet cursor values
-      case item: TweetItem if item.promotedMetadata.isEmpty => item.id
-      case module: TimelineModule
-          if module.items.headOption.exists(_.item.isInstanceOf[TweetItem]) =>
-        module.items.last.item match {
-          case item: TweetItem => item.id
+    val idSelonlelonctor: PartialFunction[UnivelonrsalNoun[_], Long] = {
+      // elonxcludelon ads whilelon delontelonrmining twelonelont cursor valuelons
+      caselon itelonm: TwelonelontItelonm if itelonm.promotelondMelontadata.iselonmpty => itelonm.id
+      caselon modulelon: TimelonlinelonModulelon
+          if modulelon.itelonms.helonadOption.elonxists(_.itelonm.isInstancelonOf[TwelonelontItelonm]) =>
+        modulelon.itelonms.last.itelonm match {
+          caselon itelonm: TwelonelontItelonm => itelonm.id
         }
     }
 
-    val topCursorBuilder = OrderedTopCursorBuilder(idSelector)
-    val bottomCursorBuilder =
-      OrderedBottomCursorBuilder(idSelector, GapIncludeInstruction.inverse())
-    val gapCursorBuilder = OrderedGapCursorBuilder(idSelector, GapIncludeInstruction)
+    val topCursorBuildelonr = OrdelonrelondTopCursorBuildelonr(idSelonlelonctor)
+    val bottomCursorBuildelonr =
+      OrdelonrelondBottomCursorBuildelonr(idSelonlelonctor, GapIncludelonInstruction.invelonrselon())
+    val gapCursorBuildelonr = OrdelonrelondGapCursorBuildelonr(idSelonlelonctor, GapIncludelonInstruction)
 
-    val metadataBuilder = UrtMetadataBuilder(
-      title = None,
-      scribeConfigBuilder = Some(
-        StaticTimelineScribeConfigBuilder(
-          TimelineScribeConfig(page = Some("list_tweets"), section = None, entityToken = None)))
+    val melontadataBuildelonr = UrtMelontadataBuildelonr(
+      titlelon = Nonelon,
+      scribelonConfigBuildelonr = Somelon(
+        StaticTimelonlinelonScribelonConfigBuildelonr(
+          TimelonlinelonScribelonConfig(pagelon = Somelon("list_twelonelonts"), selonction = Nonelon, elonntityTokelonn = Nonelon)))
     )
 
-    UrtDomainMarshaller(
-      instructionBuilders = instructionBuilders,
-      metadataBuilder = Some(metadataBuilder),
-      cursorBuilders = Seq(topCursorBuilder, bottomCursorBuilder, gapCursorBuilder)
+    UrtDomainMarshallelonr(
+      instructionBuildelonrs = instructionBuildelonrs,
+      melontadataBuildelonr = Somelon(melontadataBuildelonr),
+      cursorBuildelonrs = Selonq(topCursorBuildelonr, bottomCursorBuildelonr, gapCursorBuildelonr)
     )
   }
 
-  override val transportMarshaller: TransportMarshaller[Timeline, urt.TimelineResponse] =
-    urtTransportMarshaller
+  ovelonrridelon val transportMarshallelonr: TransportMarshallelonr[Timelonlinelon, urt.TimelonlinelonRelonsponselon] =
+    urtTransportMarshallelonr
 }

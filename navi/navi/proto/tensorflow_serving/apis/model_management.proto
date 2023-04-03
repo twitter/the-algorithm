@@ -1,16 +1,16 @@
 syntax = "proto3";
 
-package tensorflow.serving;
+packagelon telonnsorflow.selonrving;
 
-import "tensorflow_serving/apis/status.proto";
-import "tensorflow_serving/config/model_server_config.proto";
+import "telonnsorflow_selonrving/apis/status.proto";
+import "telonnsorflow_selonrving/config/modelonl_selonrvelonr_config.proto";
 
-option cc_enable_arenas = true;
+option cc_elonnablelon_arelonnas = truelon;
 
-message ReloadConfigRequest {
-  ModelServerConfig config = 1;
+melonssagelon RelonloadConfigRelonquelonst {
+  ModelonlSelonrvelonrConfig config = 1;
 }
 
-message ReloadConfigResponse {
+melonssagelon RelonloadConfigRelonsponselon {
   StatusProto status = 1;
 }

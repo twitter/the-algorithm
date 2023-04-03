@@ -1,22 +1,22 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfo
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
+import com.twittelonr.helonrmit.modelonl.Algorithm.Algorithm
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.FirstDelongrelonelonelondgelon
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.FirstDelongrelonelonelondgelonInfo
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.SeloncondDelongrelonelonelondgelon
 
-case class PotentialFirstDegreeEdge(
-  userId: Long,
-  connectingId: Long,
+caselon class PotelonntialFirstDelongrelonelonelondgelon(
+  uselonrId: Long,
+  connelonctingId: Long,
   algorithm: Algorithm,
-  score: Double,
-  edgeInfo: FirstDegreeEdgeInfo)
+  scorelon: Doublelon,
+  elondgelonInfo: FirstDelongrelonelonelondgelonInfo)
 
-case class IntermediateSecondDegreeEdge(
-  connectingId: Long,
-  candidateId: Long,
-  edgeInfo: FirstDegreeEdgeInfo)
+caselon class IntelonrmelondiatelonSeloncondDelongrelonelonelondgelon(
+  connelonctingId: Long,
+  candidatelonId: Long,
+  elondgelonInfo: FirstDelongrelonelonelondgelonInfo)
 
-case class STPGraph(
-  firstDegreeEdgeInfoList: List[FirstDegreeEdge],
-  secondDegreeEdgeInfoList: List[SecondDegreeEdge])
+caselon class STPGraph(
+  firstDelongrelonelonelondgelonInfoList: List[FirstDelongrelonelonelondgelon],
+  seloncondDelongrelonelonelondgelonInfoList: List[SeloncondDelongrelonelonelondgelon])

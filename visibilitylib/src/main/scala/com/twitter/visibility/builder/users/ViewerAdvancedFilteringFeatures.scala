@@ -1,92 +1,92 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.AdvancedFilters
-import com.twitter.gizmoduck.thriftscala.MentionFilter
-import com.twitter.stitch.NotFound
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.features.ViewerFiltersDefaultProfileImage
-import com.twitter.visibility.features.ViewerFiltersNewUsers
-import com.twitter.visibility.features.ViewerFiltersNoConfirmedEmail
-import com.twitter.visibility.features.ViewerFiltersNoConfirmedPhone
-import com.twitter.visibility.features.ViewerFiltersNotFollowedBy
-import com.twitter.visibility.features.ViewerMentionFilter
+import com.twittelonr.finaglelon.stats.Countelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.AdvancelondFiltelonrs
+import com.twittelonr.gizmoduck.thriftscala.MelonntionFiltelonr
+import com.twittelonr.stitch.NotFound
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.felonaturelons.VielonwelonrFiltelonrsDelonfaultProfilelonImagelon
+import com.twittelonr.visibility.felonaturelons.VielonwelonrFiltelonrsNelonwUselonrs
+import com.twittelonr.visibility.felonaturelons.VielonwelonrFiltelonrsNoConfirmelondelonmail
+import com.twittelonr.visibility.felonaturelons.VielonwelonrFiltelonrsNoConfirmelondPhonelon
+import com.twittelonr.visibility.felonaturelons.VielonwelonrFiltelonrsNotFollowelondBy
+import com.twittelonr.visibility.felonaturelons.VielonwelonrMelonntionFiltelonr
 
-class ViewerAdvancedFilteringFeatures(userSource: UserSource, statsReceiver: StatsReceiver) {
-  private[this] val scopedStatsReceiver = statsReceiver.scope("viewer_advanced_filtering_features")
+class VielonwelonrAdvancelondFiltelonringFelonaturelons(uselonrSourcelon: UselonrSourcelon, statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("vielonwelonr_advancelond_filtelonring_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val viewerFiltersNoConfirmedEmail =
-    scopedStatsReceiver.scope(ViewerFiltersNoConfirmedEmail.name).counter("requests")
-  private[this] val viewerFiltersNoConfirmedPhone =
-    scopedStatsReceiver.scope(ViewerFiltersNoConfirmedPhone.name).counter("requests")
-  private[this] val viewerFiltersDefaultProfileImage =
-    scopedStatsReceiver.scope(ViewerFiltersDefaultProfileImage.name).counter("requests")
-  private[this] val viewerFiltersNewUsers =
-    scopedStatsReceiver.scope(ViewerFiltersNewUsers.name).counter("requests")
-  private[this] val viewerFiltersNotFollowedBy =
-    scopedStatsReceiver.scope(ViewerFiltersNotFollowedBy.name).counter("requests")
-  private[this] val viewerMentionFilter =
-    scopedStatsReceiver.scope(ViewerMentionFilter.name).counter("requests")
+  privatelon[this] val vielonwelonrFiltelonrsNoConfirmelondelonmail =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrFiltelonrsNoConfirmelondelonmail.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrFiltelonrsNoConfirmelondPhonelon =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrFiltelonrsNoConfirmelondPhonelon.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrFiltelonrsDelonfaultProfilelonImagelon =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrFiltelonrsDelonfaultProfilelonImagelon.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrFiltelonrsNelonwUselonrs =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrFiltelonrsNelonwUselonrs.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrFiltelonrsNotFollowelondBy =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrFiltelonrsNotFollowelondBy.namelon).countelonr("relonquelonsts")
+  privatelon[this] val vielonwelonrMelonntionFiltelonr =
+    scopelondStatsReloncelonivelonr.scopelon(VielonwelonrMelonntionFiltelonr.namelon).countelonr("relonquelonsts")
 
-  def forViewerId(viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  delonf forVielonwelonrId(vielonwelonrId: Option[Long]): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
 
-    _.withFeature(ViewerFiltersNoConfirmedEmail, viewerFiltersNoConfirmedEmail(viewerId))
-      .withFeature(ViewerFiltersNoConfirmedPhone, viewerFiltersNoConfirmedPhone(viewerId))
-      .withFeature(ViewerFiltersDefaultProfileImage, viewerFiltersDefaultProfileImage(viewerId))
-      .withFeature(ViewerFiltersNewUsers, viewerFiltersNewUsers(viewerId))
-      .withFeature(ViewerFiltersNotFollowedBy, viewerFiltersNotFollowedBy(viewerId))
-      .withFeature(ViewerMentionFilter, viewerMentionFilter(viewerId))
+    _.withFelonaturelon(VielonwelonrFiltelonrsNoConfirmelondelonmail, vielonwelonrFiltelonrsNoConfirmelondelonmail(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrFiltelonrsNoConfirmelondPhonelon, vielonwelonrFiltelonrsNoConfirmelondPhonelon(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrFiltelonrsDelonfaultProfilelonImagelon, vielonwelonrFiltelonrsDelonfaultProfilelonImagelon(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrFiltelonrsNelonwUselonrs, vielonwelonrFiltelonrsNelonwUselonrs(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrFiltelonrsNotFollowelondBy, vielonwelonrFiltelonrsNotFollowelondBy(vielonwelonrId))
+      .withFelonaturelon(VielonwelonrMelonntionFiltelonr, vielonwelonrMelonntionFiltelonr(vielonwelonrId))
   }
 
-  def viewerFiltersNoConfirmedEmail(viewerId: Option[Long]): Stitch[Boolean] =
-    viewerAdvancedFilters(viewerId, af => af.filterNoConfirmedEmail, viewerFiltersNoConfirmedEmail)
+  delonf vielonwelonrFiltelonrsNoConfirmelondelonmail(vielonwelonrId: Option[Long]): Stitch[Boolelonan] =
+    vielonwelonrAdvancelondFiltelonrs(vielonwelonrId, af => af.filtelonrNoConfirmelondelonmail, vielonwelonrFiltelonrsNoConfirmelondelonmail)
 
-  def viewerFiltersNoConfirmedPhone(viewerId: Option[Long]): Stitch[Boolean] =
-    viewerAdvancedFilters(viewerId, af => af.filterNoConfirmedPhone, viewerFiltersNoConfirmedPhone)
+  delonf vielonwelonrFiltelonrsNoConfirmelondPhonelon(vielonwelonrId: Option[Long]): Stitch[Boolelonan] =
+    vielonwelonrAdvancelondFiltelonrs(vielonwelonrId, af => af.filtelonrNoConfirmelondPhonelon, vielonwelonrFiltelonrsNoConfirmelondPhonelon)
 
-  def viewerFiltersDefaultProfileImage(viewerId: Option[Long]): Stitch[Boolean] =
-    viewerAdvancedFilters(
-      viewerId,
-      af => af.filterDefaultProfileImage,
-      viewerFiltersDefaultProfileImage
+  delonf vielonwelonrFiltelonrsDelonfaultProfilelonImagelon(vielonwelonrId: Option[Long]): Stitch[Boolelonan] =
+    vielonwelonrAdvancelondFiltelonrs(
+      vielonwelonrId,
+      af => af.filtelonrDelonfaultProfilelonImagelon,
+      vielonwelonrFiltelonrsDelonfaultProfilelonImagelon
     )
 
-  def viewerFiltersNewUsers(viewerId: Option[Long]): Stitch[Boolean] =
-    viewerAdvancedFilters(viewerId, af => af.filterNewUsers, viewerFiltersNewUsers)
+  delonf vielonwelonrFiltelonrsNelonwUselonrs(vielonwelonrId: Option[Long]): Stitch[Boolelonan] =
+    vielonwelonrAdvancelondFiltelonrs(vielonwelonrId, af => af.filtelonrNelonwUselonrs, vielonwelonrFiltelonrsNelonwUselonrs)
 
-  def viewerFiltersNotFollowedBy(viewerId: Option[Long]): Stitch[Boolean] =
-    viewerAdvancedFilters(viewerId, af => af.filterNotFollowedBy, viewerFiltersNotFollowedBy)
+  delonf vielonwelonrFiltelonrsNotFollowelondBy(vielonwelonrId: Option[Long]): Stitch[Boolelonan] =
+    vielonwelonrAdvancelondFiltelonrs(vielonwelonrId, af => af.filtelonrNotFollowelondBy, vielonwelonrFiltelonrsNotFollowelondBy)
 
-  def viewerMentionFilter(viewerId: Option[Long]): Stitch[MentionFilter] = {
-    viewerMentionFilter.incr()
-    viewerId match {
-      case Some(id) =>
-        userSource.getMentionFilter(id).handle {
-          case NotFound =>
-            MentionFilter.Unfiltered
+  delonf vielonwelonrMelonntionFiltelonr(vielonwelonrId: Option[Long]): Stitch[MelonntionFiltelonr] = {
+    vielonwelonrMelonntionFiltelonr.incr()
+    vielonwelonrId match {
+      caselon Somelon(id) =>
+        uselonrSourcelon.gelontMelonntionFiltelonr(id).handlelon {
+          caselon NotFound =>
+            MelonntionFiltelonr.Unfiltelonrelond
         }
-      case _ => Stitch.value(MentionFilter.Unfiltered)
+      caselon _ => Stitch.valuelon(MelonntionFiltelonr.Unfiltelonrelond)
     }
   }
 
-  private[this] def viewerAdvancedFilters(
-    viewerId: Option[Long],
-    advancedFilterCheck: AdvancedFilters => Boolean,
-    featureCounter: Counter
-  ): Stitch[Boolean] = {
-    featureCounter.incr()
+  privatelon[this] delonf vielonwelonrAdvancelondFiltelonrs(
+    vielonwelonrId: Option[Long],
+    advancelondFiltelonrChelonck: AdvancelondFiltelonrs => Boolelonan,
+    felonaturelonCountelonr: Countelonr
+  ): Stitch[Boolelonan] = {
+    felonaturelonCountelonr.incr()
 
-    val advancedFilters = viewerId match {
-      case Some(id) => userSource.getAdvancedFilters(id)
-      case _ => Stitch.value(AdvancedFilters())
+    val advancelondFiltelonrs = vielonwelonrId match {
+      caselon Somelon(id) => uselonrSourcelon.gelontAdvancelondFiltelonrs(id)
+      caselon _ => Stitch.valuelon(AdvancelondFiltelonrs())
     }
 
-    advancedFilters.map(advancedFilterCheck)
+    advancelondFiltelonrs.map(advancelondFiltelonrChelonck)
   }
 }

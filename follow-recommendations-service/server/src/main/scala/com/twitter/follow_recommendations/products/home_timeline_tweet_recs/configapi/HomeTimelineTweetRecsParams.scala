@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.products.home_timeline_tweet_recs.configapi
+packagelon com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon_twelonelont_reloncs.configapi
 
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object HomeTimelineTweetRecsParams {
-  object EnableProduct extends Param[Boolean](false)
+objelonct HomelonTimelonlinelonTwelonelontReloncsParams {
+  objelonct elonnablelonProduct elonxtelonnds Param[Boolelonan](falselon)
 }

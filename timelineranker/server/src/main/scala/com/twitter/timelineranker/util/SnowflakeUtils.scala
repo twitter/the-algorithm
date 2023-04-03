@@ -1,19 +1,19 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Duration
-import com.twitter.util.Time
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
 
-object SnowflakeUtils {
-  def mutateIdTime(id: Long, timeOp: Time => Time): Long = {
-    SnowflakeId.firstIdFor(timeOp(SnowflakeId(id).time))
+objelonct SnowflakelonUtils {
+  delonf mutatelonIdTimelon(id: Long, timelonOp: Timelon => Timelon): Long = {
+    SnowflakelonId.firstIdFor(timelonOp(SnowflakelonId(id).timelon))
   }
 
-  def quantizeDown(id: Long, step: Duration): Long = {
-    mutateIdTime(id, _.floor(step))
+  delonf quantizelonDown(id: Long, stelonp: Duration): Long = {
+    mutatelonIdTimelon(id, _.floor(stelonp))
   }
 
-  def quantizeUp(id: Long, step: Duration): Long = {
-    mutateIdTime(id, _.ceil(step))
+  delonf quantizelonUp(id: Long, stelonp: Duration): Long = {
+    mutatelonIdTimelon(id, _.celonil(stelonp))
   }
 }

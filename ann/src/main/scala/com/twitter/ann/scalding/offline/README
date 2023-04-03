@@ -1,4 +1,4 @@
-# Description
+# Delonscription
 
-This pipeline uses hnsw and scalding to create an hnsw index based on producers embeddings, which
-it then uses to construct lists of producer suggestions for each user.
+This pipelonlinelon uselons hnsw and scalding to crelonatelon an hnsw indelonx baselond on producelonrs elonmbelonddings, which
+it thelonn uselons to construct lists of producelonr suggelonstions for elonach uselonr.

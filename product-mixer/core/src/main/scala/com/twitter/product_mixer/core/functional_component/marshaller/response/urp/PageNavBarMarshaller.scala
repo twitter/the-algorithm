@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urp
 
-import com.twitter.pages.render.{thriftscala => urp}
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TopicPageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urp.TitleNavBar
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.pagelons.relonndelonr.{thriftscala => urp}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PagelonNavBar
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TopicPagelonNavBar
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.TitlelonNavBar
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PageNavBarMarshaller @Inject() (
-  topicPageNavBarMarshaller: TopicPageNavBarMarshaller,
-  titleNavBarMarshaller: TitleNavBarMarshaller) {
+@Singlelonton
+class PagelonNavBarMarshallelonr @Injelonct() (
+  topicPagelonNavBarMarshallelonr: TopicPagelonNavBarMarshallelonr,
+  titlelonNavBarMarshallelonr: TitlelonNavBarMarshallelonr) {
 
-  def apply(pageNavBar: PageNavBar): urp.PageNavBar = pageNavBar match {
-    case pageNavBar: TopicPageNavBar =>
-      urp.PageNavBar.TopicPageNavBar(topicPageNavBarMarshaller(pageNavBar))
-    case pageNavBar: TitleNavBar =>
-      urp.PageNavBar.TitleNavBar(titleNavBarMarshaller(pageNavBar))
+  delonf apply(pagelonNavBar: PagelonNavBar): urp.PagelonNavBar = pagelonNavBar match {
+    caselon pagelonNavBar: TopicPagelonNavBar =>
+      urp.PagelonNavBar.TopicPagelonNavBar(topicPagelonNavBarMarshallelonr(pagelonNavBar))
+    caselon pagelonNavBar: TitlelonNavBar =>
+      urp.PagelonNavBar.TitlelonNavBar(titlelonNavBarMarshallelonr(pagelonNavBar))
   }
 }

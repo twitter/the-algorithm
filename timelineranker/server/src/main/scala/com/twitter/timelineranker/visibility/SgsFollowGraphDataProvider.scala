@@ -1,266 +1,266 @@
-package com.twitter.timelineranker.visibility
+packagelon com.twittelonr.timelonlinelonrankelonr.visibility
 
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.timelineranker.core.FollowGraphData
-import com.twitter.timelineranker.core.FollowGraphDataFuture
-import com.twitter.timelines.clients.socialgraph.ScopedSocialGraphClientFactory
-import com.twitter.timelines.model._
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.stats._
-import com.twitter.timelines.visibility._
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.timelonlinelonrankelonr.corelon.FollowGraphData
+import com.twittelonr.timelonlinelonrankelonr.corelon.FollowGraphDataFuturelon
+import com.twittelonr.timelonlinelons.clielonnts.socialgraph.ScopelondSocialGraphClielonntFactory
+import com.twittelonr.timelonlinelons.modelonl._
+import com.twittelonr.timelonlinelons.util.FailOpelonnHandlelonr
+import com.twittelonr.timelonlinelons.util.stats._
+import com.twittelonr.timelonlinelons.visibility._
+import com.twittelonr.util.Futurelon
 
-object SgsFollowGraphDataProvider {
-  val EmptyUserIdsSet: Set[UserId] = Set.empty[UserId]
-  val EmptyUserIdsSetFuture: Future[Set[UserId]] = Future.value(EmptyUserIdsSet)
-  val EmptyUserIdsSeq: Seq[UserId] = Seq.empty[UserId]
-  val EmptyUserIdsSeqFuture: Future[Seq[UserId]] = Future.value(EmptyUserIdsSeq)
-  val EmptyVisibilityProfiles: Map[UserId, VisibilityProfile] = Map.empty[UserId, VisibilityProfile]
-  val EmptyVisibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]] =
-    Future.value(EmptyVisibilityProfiles)
+objelonct SgsFollowGraphDataProvidelonr {
+  val elonmptyUselonrIdsSelont: Selont[UselonrId] = Selont.elonmpty[UselonrId]
+  val elonmptyUselonrIdsSelontFuturelon: Futurelon[Selont[UselonrId]] = Futurelon.valuelon(elonmptyUselonrIdsSelont)
+  val elonmptyUselonrIdsSelonq: Selonq[UselonrId] = Selonq.elonmpty[UselonrId]
+  val elonmptyUselonrIdsSelonqFuturelon: Futurelon[Selonq[UselonrId]] = Futurelon.valuelon(elonmptyUselonrIdsSelonq)
+  val elonmptyVisibilityProfilelons: Map[UselonrId, VisibilityProfilelon] = Map.elonmpty[UselonrId, VisibilityProfilelon]
+  val elonmptyVisibilityProfilelonsFuturelon: Futurelon[Map[UselonrId, VisibilityProfilelon]] =
+    Futurelon.valuelon(elonmptyVisibilityProfilelons)
 }
 
-object SgsFollowGraphDataFields extends Enumeration {
-  val FollowedUserIds: Value = Value
-  val MutuallyFollowingUserIds: Value = Value
-  val MutedUserIds: Value = Value
-  val RetweetsMutedUserIds: Value = Value
+objelonct SgsFollowGraphDataFielonlds elonxtelonnds elonnumelonration {
+  val FollowelondUselonrIds: Valuelon = Valuelon
+  val MutuallyFollowingUselonrIds: Valuelon = Valuelon
+  val MutelondUselonrIds: Valuelon = Valuelon
+  val RelontwelonelontsMutelondUselonrIds: Valuelon = Valuelon
 
-  val None: ValueSet = SgsFollowGraphDataFields.ValueSet()
+  val Nonelon: ValuelonSelont = SgsFollowGraphDataFielonlds.ValuelonSelont()
 
-  def throwIfInvalid(fields: SgsFollowGraphDataFields.ValueSet): Unit = {
-    if (fields.contains(MutuallyFollowingUserIds) && !fields.contains(FollowedUserIds)) {
-      throw new IllegalArgumentException(
-        "MutuallyFollowingUserIds field requires FollowedUserIds field to be defined."
+  delonf throwIfInvalid(fielonlds: SgsFollowGraphDataFielonlds.ValuelonSelont): Unit = {
+    if (fielonlds.contains(MutuallyFollowingUselonrIds) && !fielonlds.contains(FollowelondUselonrIds)) {
+      throw nelonw IllelongalArgumelonntelonxcelonption(
+        "MutuallyFollowingUselonrIds fielonld relonquirelons FollowelondUselonrIds fielonld to belon delonfinelond."
       )
     }
   }
 }
 
 /**
- * Provides information on the follow graph of a given user.
+ * Providelons information on thelon follow graph of a givelonn uselonr.
  */
-class SgsFollowGraphDataProvider(
-  socialGraphClientFactory: ScopedSocialGraphClientFactory,
-  visibilityProfileHydratorFactory: VisibilityProfileHydratorFactory,
-  fieldsToFetch: SgsFollowGraphDataFields.ValueSet,
-  scope: RequestScope,
-  statsReceiver: StatsReceiver)
-    extends FollowGraphDataProvider
-    with RequestStats {
+class SgsFollowGraphDataProvidelonr(
+  socialGraphClielonntFactory: ScopelondSocialGraphClielonntFactory,
+  visibilityProfilelonHydratorFactory: VisibilityProfilelonHydratorFactory,
+  fielonldsToFelontch: SgsFollowGraphDataFielonlds.ValuelonSelont,
+  scopelon: RelonquelonstScopelon,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds FollowGraphDataProvidelonr
+    with RelonquelonstStats {
 
-  SgsFollowGraphDataFields.throwIfInvalid(fieldsToFetch)
+  SgsFollowGraphDataFielonlds.throwIfInvalid(fielonldsToFelontch)
 
-  private[this] val stats = scope.stats("followGraphDataProvider", statsReceiver)
-  private[this] val scopedStatsReceiver = stats.scopedStatsReceiver
+  privatelon[this] val stats = scopelon.stats("followGraphDataProvidelonr", statsReloncelonivelonr)
+  privatelon[this] val scopelondStatsReloncelonivelonr = stats.scopelondStatsReloncelonivelonr
 
-  private[this] val followingScope = scopedStatsReceiver.scope("following")
-  private[this] val followingLatencyStat = followingScope.stat(LatencyMs)
-  private[this] val followingSizeStat = followingScope.stat(Size)
-  private[this] val followingTruncatedCounter = followingScope.counter("numTruncated")
+  privatelon[this] val followingScopelon = scopelondStatsReloncelonivelonr.scopelon("following")
+  privatelon[this] val followingLatelonncyStat = followingScopelon.stat(LatelonncyMs)
+  privatelon[this] val followingSizelonStat = followingScopelon.stat(Sizelon)
+  privatelon[this] val followingTruncatelondCountelonr = followingScopelon.countelonr("numTruncatelond")
 
-  private[this] val mutuallyFollowingScope = scopedStatsReceiver.scope("mutuallyFollowing")
-  private[this] val mutuallyFollowingLatencyStat = mutuallyFollowingScope.stat(LatencyMs)
-  private[this] val mutuallyFollowingSizeStat = mutuallyFollowingScope.stat(Size)
+  privatelon[this] val mutuallyFollowingScopelon = scopelondStatsReloncelonivelonr.scopelon("mutuallyFollowing")
+  privatelon[this] val mutuallyFollowingLatelonncyStat = mutuallyFollowingScopelon.stat(LatelonncyMs)
+  privatelon[this] val mutuallyFollowingSizelonStat = mutuallyFollowingScopelon.stat(Sizelon)
 
-  private[this] val visibilityScope = scopedStatsReceiver.scope("visibility")
-  private[this] val visibilityLatencyStat = visibilityScope.stat(LatencyMs)
-  private[this] val mutedStat = visibilityScope.stat("muted")
-  private[this] val retweetsMutedStat = visibilityScope.stat("retweetsMuted")
+  privatelon[this] val visibilityScopelon = scopelondStatsReloncelonivelonr.scopelon("visibility")
+  privatelon[this] val visibilityLatelonncyStat = visibilityScopelon.stat(LatelonncyMs)
+  privatelon[this] val mutelondStat = visibilityScopelon.stat("mutelond")
+  privatelon[this] val relontwelonelontsMutelondStat = visibilityScopelon.stat("relontwelonelontsMutelond")
 
-  private[this] val socialGraphClient = socialGraphClientFactory.scope(scope)
-  private[this] val visibilityProfileHydrator =
-    createVisibilityProfileHydrator(visibilityProfileHydratorFactory, scope, fieldsToFetch)
+  privatelon[this] val socialGraphClielonnt = socialGraphClielonntFactory.scopelon(scopelon)
+  privatelon[this] val visibilityProfilelonHydrator =
+    crelonatelonVisibilityProfilelonHydrator(visibilityProfilelonHydratorFactory, scopelon, fielonldsToFelontch)
 
-  private[this] val failOpenScope = scopedStatsReceiver.scope("failOpen")
-  private[this] val mutuallyFollowingHandler =
-    new FailOpenHandler(failOpenScope, "mutuallyFollowing")
+  privatelon[this] val failOpelonnScopelon = scopelondStatsReloncelonivelonr.scopelon("failOpelonn")
+  privatelon[this] val mutuallyFollowingHandlelonr =
+    nelonw FailOpelonnHandlelonr(failOpelonnScopelon, "mutuallyFollowing")
 
-  private[this] val obtainVisibilityProfiles = fieldsToFetch.contains(
-    SgsFollowGraphDataFields.MutedUserIds
-  ) || fieldsToFetch.contains(SgsFollowGraphDataFields.RetweetsMutedUserIds)
+  privatelon[this] val obtainVisibilityProfilelons = fielonldsToFelontch.contains(
+    SgsFollowGraphDataFielonlds.MutelondUselonrIds
+  ) || fielonldsToFelontch.contains(SgsFollowGraphDataFielonlds.RelontwelonelontsMutelondUselonrIds)
 
   /**
-   * Gets follow graph data for the given user.
+   * Gelonts follow graph data for thelon givelonn uselonr.
    *
-   * @param userId user whose follow graph details are to be obtained.
-   * @param maxFollowingCount Maximum number of followed user IDs to fetch.
-   *          If the given user follows more than these many users,
-   *          then the most recent maxFollowingCount users are returned.
+   * @param uselonrId uselonr whoselon follow graph delontails arelon to belon obtainelond.
+   * @param maxFollowingCount Maximum numbelonr of followelond uselonr IDs to felontch.
+   *          If thelon givelonn uselonr follows morelon than thelonselon many uselonrs,
+   *          thelonn thelon most reloncelonnt maxFollowingCount uselonrs arelon relonturnelond.
    */
-  def get(
-    userId: UserId,
+  delonf gelont(
+    uselonrId: UselonrId,
     maxFollowingCount: Int
-  ): Future[FollowGraphData] = {
-    getAsync(
-      userId,
+  ): Futurelon[FollowGraphData] = {
+    gelontAsync(
+      uselonrId,
       maxFollowingCount
-    ).get()
+    ).gelont()
   }
 
-  def getAsync(
-    userId: UserId,
+  delonf gelontAsync(
+    uselonrId: UselonrId,
     maxFollowingCount: Int
-  ): FollowGraphDataFuture = {
+  ): FollowGraphDataFuturelon = {
 
-    stats.statRequest()
-    val followedUserIdsFuture =
-      if (fieldsToFetch.contains(SgsFollowGraphDataFields.FollowedUserIds)) {
-        getFollowing(userId, maxFollowingCount)
-      } else {
-        SgsFollowGraphDataProvider.EmptyUserIdsSeqFuture
+    stats.statRelonquelonst()
+    val followelondUselonrIdsFuturelon =
+      if (fielonldsToFelontch.contains(SgsFollowGraphDataFielonlds.FollowelondUselonrIds)) {
+        gelontFollowing(uselonrId, maxFollowingCount)
+      } elonlselon {
+        SgsFollowGraphDataProvidelonr.elonmptyUselonrIdsSelonqFuturelon
       }
 
-    val mutuallyFollowingUserIdsFuture =
-      if (fieldsToFetch.contains(SgsFollowGraphDataFields.MutuallyFollowingUserIds)) {
-        followedUserIdsFuture.flatMap { followedUserIds =>
-          getMutuallyFollowingUserIds(userId, followedUserIds)
+    val mutuallyFollowingUselonrIdsFuturelon =
+      if (fielonldsToFelontch.contains(SgsFollowGraphDataFielonlds.MutuallyFollowingUselonrIds)) {
+        followelondUselonrIdsFuturelon.flatMap { followelondUselonrIds =>
+          gelontMutuallyFollowingUselonrIds(uselonrId, followelondUselonrIds)
         }
-      } else {
-        SgsFollowGraphDataProvider.EmptyUserIdsSetFuture
+      } elonlselon {
+        SgsFollowGraphDataProvidelonr.elonmptyUselonrIdsSelontFuturelon
       }
 
-    val visibilityProfilesFuture = if (obtainVisibilityProfiles) {
-      followedUserIdsFuture.flatMap { followedUserIds =>
-        getVisibilityProfiles(userId, followedUserIds)
+    val visibilityProfilelonsFuturelon = if (obtainVisibilityProfilelons) {
+      followelondUselonrIdsFuturelon.flatMap { followelondUselonrIds =>
+        gelontVisibilityProfilelons(uselonrId, followelondUselonrIds)
       }
-    } else {
-      SgsFollowGraphDataProvider.EmptyVisibilityProfilesFuture
+    } elonlselon {
+      SgsFollowGraphDataProvidelonr.elonmptyVisibilityProfilelonsFuturelon
     }
 
-    val mutedUserIdsFuture = if (fieldsToFetch.contains(SgsFollowGraphDataFields.MutedUserIds)) {
-      getMutedUsers(visibilityProfilesFuture).map { mutedUserIds =>
-        mutedStat.add(mutedUserIds.size)
-        mutedUserIds
+    val mutelondUselonrIdsFuturelon = if (fielonldsToFelontch.contains(SgsFollowGraphDataFielonlds.MutelondUselonrIds)) {
+      gelontMutelondUselonrs(visibilityProfilelonsFuturelon).map { mutelondUselonrIds =>
+        mutelondStat.add(mutelondUselonrIds.sizelon)
+        mutelondUselonrIds
       }
-    } else {
-      SgsFollowGraphDataProvider.EmptyUserIdsSetFuture
+    } elonlselon {
+      SgsFollowGraphDataProvidelonr.elonmptyUselonrIdsSelontFuturelon
     }
 
-    val retweetsMutedUserIdsFuture =
-      if (fieldsToFetch.contains(SgsFollowGraphDataFields.RetweetsMutedUserIds)) {
-        getRetweetsMutedUsers(visibilityProfilesFuture).map { retweetsMutedUserIds =>
-          retweetsMutedStat.add(retweetsMutedUserIds.size)
-          retweetsMutedUserIds
+    val relontwelonelontsMutelondUselonrIdsFuturelon =
+      if (fielonldsToFelontch.contains(SgsFollowGraphDataFielonlds.RelontwelonelontsMutelondUselonrIds)) {
+        gelontRelontwelonelontsMutelondUselonrs(visibilityProfilelonsFuturelon).map { relontwelonelontsMutelondUselonrIds =>
+          relontwelonelontsMutelondStat.add(relontwelonelontsMutelondUselonrIds.sizelon)
+          relontwelonelontsMutelondUselonrIds
         }
-      } else {
-        SgsFollowGraphDataProvider.EmptyUserIdsSetFuture
+      } elonlselon {
+        SgsFollowGraphDataProvidelonr.elonmptyUselonrIdsSelontFuturelon
       }
 
-    FollowGraphDataFuture(
-      userId,
-      followedUserIdsFuture,
-      mutuallyFollowingUserIdsFuture,
-      mutedUserIdsFuture,
-      retweetsMutedUserIdsFuture
+    FollowGraphDataFuturelon(
+      uselonrId,
+      followelondUselonrIdsFuturelon,
+      mutuallyFollowingUselonrIdsFuturelon,
+      mutelondUselonrIdsFuturelon,
+      relontwelonelontsMutelondUselonrIdsFuturelon
     )
   }
 
-  private[this] def getVisibilityProfiles(
-    userId: UserId,
-    followingIds: Seq[UserId]
-  ): Future[Map[UserId, VisibilityProfile]] = {
-    Stat.timeFuture(visibilityLatencyStat) {
-      visibilityProfileHydrator(Some(userId), Future.value(followingIds.toSeq))
+  privatelon[this] delonf gelontVisibilityProfilelons(
+    uselonrId: UselonrId,
+    followingIds: Selonq[UselonrId]
+  ): Futurelon[Map[UselonrId, VisibilityProfilelon]] = {
+    Stat.timelonFuturelon(visibilityLatelonncyStat) {
+      visibilityProfilelonHydrator(Somelon(uselonrId), Futurelon.valuelon(followingIds.toSelonq))
     }
   }
 
-  def getFollowing(userId: UserId, maxFollowingCount: Int): Future[Seq[UserId]] = {
-    Stat.timeFuture(followingLatencyStat) {
-      // We fetch 1 more than the limit so that we can decide if we ended up
-      // truncating the followings.
-      val followingIdsFuture = socialGraphClient.getFollowing(userId, Some(maxFollowingCount + 1))
-      followingIdsFuture.map { followingIds =>
-        followingSizeStat.add(followingIds.length)
-        if (followingIds.length > maxFollowingCount) {
-          followingTruncatedCounter.incr()
-          followingIds.take(maxFollowingCount)
-        } else {
+  delonf gelontFollowing(uselonrId: UselonrId, maxFollowingCount: Int): Futurelon[Selonq[UselonrId]] = {
+    Stat.timelonFuturelon(followingLatelonncyStat) {
+      // Welon felontch 1 morelon than thelon limit so that welon can deloncidelon if welon elonndelond up
+      // truncating thelon followings.
+      val followingIdsFuturelon = socialGraphClielonnt.gelontFollowing(uselonrId, Somelon(maxFollowingCount + 1))
+      followingIdsFuturelon.map { followingIds =>
+        followingSizelonStat.add(followingIds.lelonngth)
+        if (followingIds.lelonngth > maxFollowingCount) {
+          followingTruncatelondCountelonr.incr()
+          followingIds.takelon(maxFollowingCount)
+        } elonlselon {
           followingIds
         }
       }
     }
   }
 
-  def getMutuallyFollowingUserIds(
-    userId: UserId,
-    followingIds: Seq[UserId]
-  ): Future[Set[UserId]] = {
-    Stat.timeFuture(mutuallyFollowingLatencyStat) {
-      mutuallyFollowingHandler {
-        val mutuallyFollowingIdsFuture =
-          socialGraphClient.getFollowOverlap(followingIds.toSeq, userId)
-        mutuallyFollowingIdsFuture.map { mutuallyFollowingIds =>
-          mutuallyFollowingSizeStat.add(mutuallyFollowingIds.size)
+  delonf gelontMutuallyFollowingUselonrIds(
+    uselonrId: UselonrId,
+    followingIds: Selonq[UselonrId]
+  ): Futurelon[Selont[UselonrId]] = {
+    Stat.timelonFuturelon(mutuallyFollowingLatelonncyStat) {
+      mutuallyFollowingHandlelonr {
+        val mutuallyFollowingIdsFuturelon =
+          socialGraphClielonnt.gelontFollowOvelonrlap(followingIds.toSelonq, uselonrId)
+        mutuallyFollowingIdsFuturelon.map { mutuallyFollowingIds =>
+          mutuallyFollowingSizelonStat.add(mutuallyFollowingIds.sizelon)
         }
-        mutuallyFollowingIdsFuture
-      } { e: Throwable => SgsFollowGraphDataProvider.EmptyUserIdsSetFuture }
+        mutuallyFollowingIdsFuturelon
+      } { elon: Throwablelon => SgsFollowGraphDataProvidelonr.elonmptyUselonrIdsSelontFuturelon }
     }
   }
 
-  private[this] def getRetweetsMutedUsers(
-    visibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]]
-  ): Future[Set[UserId]] = {
-    // If the hydrator is not able to fetch retweets-muted status, we default to true.
-    getUsersMatchingVisibilityPredicate(
-      visibilityProfilesFuture,
-      (visibilityProfile: VisibilityProfile) => visibilityProfile.areRetweetsMuted.getOrElse(true)
+  privatelon[this] delonf gelontRelontwelonelontsMutelondUselonrs(
+    visibilityProfilelonsFuturelon: Futurelon[Map[UselonrId, VisibilityProfilelon]]
+  ): Futurelon[Selont[UselonrId]] = {
+    // If thelon hydrator is not ablelon to felontch relontwelonelonts-mutelond status, welon delonfault to truelon.
+    gelontUselonrsMatchingVisibilityPrelondicatelon(
+      visibilityProfilelonsFuturelon,
+      (visibilityProfilelon: VisibilityProfilelon) => visibilityProfilelon.arelonRelontwelonelontsMutelond.gelontOrelonlselon(truelon)
     )
   }
 
-  private[this] def getMutedUsers(
-    visibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]]
-  ): Future[Set[UserId]] = {
-    // If the hydrator is not able to fetch muted status, we default to true.
-    getUsersMatchingVisibilityPredicate(
-      visibilityProfilesFuture,
-      (visibilityProfile: VisibilityProfile) => visibilityProfile.isMuted.getOrElse(true)
+  privatelon[this] delonf gelontMutelondUselonrs(
+    visibilityProfilelonsFuturelon: Futurelon[Map[UselonrId, VisibilityProfilelon]]
+  ): Futurelon[Selont[UselonrId]] = {
+    // If thelon hydrator is not ablelon to felontch mutelond status, welon delonfault to truelon.
+    gelontUselonrsMatchingVisibilityPrelondicatelon(
+      visibilityProfilelonsFuturelon,
+      (visibilityProfilelon: VisibilityProfilelon) => visibilityProfilelon.isMutelond.gelontOrelonlselon(truelon)
     )
   }
 
-  private[this] def getUsersMatchingVisibilityPredicate(
-    visibilityProfilesFuture: Future[Map[UserId, VisibilityProfile]],
-    predicate: (VisibilityProfile => Boolean)
-  ): Future[Set[UserId]] = {
-    visibilityProfilesFuture.map { visibilityProfiles =>
-      visibilityProfiles
-        .filter {
-          case (_, visibilityProfile) =>
-            predicate(visibilityProfile)
+  privatelon[this] delonf gelontUselonrsMatchingVisibilityPrelondicatelon(
+    visibilityProfilelonsFuturelon: Futurelon[Map[UselonrId, VisibilityProfilelon]],
+    prelondicatelon: (VisibilityProfilelon => Boolelonan)
+  ): Futurelon[Selont[UselonrId]] = {
+    visibilityProfilelonsFuturelon.map { visibilityProfilelons =>
+      visibilityProfilelons
+        .filtelonr {
+          caselon (_, visibilityProfilelon) =>
+            prelondicatelon(visibilityProfilelon)
         }
-        .collect { case (userId, _) => userId }
-        .toSet
+        .collelonct { caselon (uselonrId, _) => uselonrId }
+        .toSelont
     }
   }
 
-  private[this] def createVisibilityProfileHydrator(
-    factory: VisibilityProfileHydratorFactory,
-    scope: RequestScope,
-    fieldsToFetch: SgsFollowGraphDataFields.ValueSet
-  ): VisibilityProfileHydrator = {
-    val hydrationProfileRequest = HydrationProfileRequest(
-      getMuted = fieldsToFetch.contains(SgsFollowGraphDataFields.MutedUserIds),
-      getRetweetsMuted = fieldsToFetch.contains(SgsFollowGraphDataFields.RetweetsMutedUserIds)
+  privatelon[this] delonf crelonatelonVisibilityProfilelonHydrator(
+    factory: VisibilityProfilelonHydratorFactory,
+    scopelon: RelonquelonstScopelon,
+    fielonldsToFelontch: SgsFollowGraphDataFielonlds.ValuelonSelont
+  ): VisibilityProfilelonHydrator = {
+    val hydrationProfilelonRelonquelonst = HydrationProfilelonRelonquelonst(
+      gelontMutelond = fielonldsToFelontch.contains(SgsFollowGraphDataFielonlds.MutelondUselonrIds),
+      gelontRelontwelonelontsMutelond = fielonldsToFelontch.contains(SgsFollowGraphDataFielonlds.RelontwelonelontsMutelondUselonrIds)
     )
-    factory(hydrationProfileRequest, scope)
+    factory(hydrationProfilelonRelonquelonst, scopelon)
   }
 }
 
-class ScopedSgsFollowGraphDataProviderFactory(
-  socialGraphClientFactory: ScopedSocialGraphClientFactory,
-  visibilityProfileHydratorFactory: VisibilityProfileHydratorFactory,
-  fieldsToFetch: SgsFollowGraphDataFields.ValueSet,
-  statsReceiver: StatsReceiver)
-    extends ScopedFactory[SgsFollowGraphDataProvider] {
+class ScopelondSgsFollowGraphDataProvidelonrFactory(
+  socialGraphClielonntFactory: ScopelondSocialGraphClielonntFactory,
+  visibilityProfilelonHydratorFactory: VisibilityProfilelonHydratorFactory,
+  fielonldsToFelontch: SgsFollowGraphDataFielonlds.ValuelonSelont,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds ScopelondFactory[SgsFollowGraphDataProvidelonr] {
 
-  override def scope(scope: RequestScope): SgsFollowGraphDataProvider = {
-    new SgsFollowGraphDataProvider(
-      socialGraphClientFactory,
-      visibilityProfileHydratorFactory,
-      fieldsToFetch,
-      scope,
-      statsReceiver
+  ovelonrridelon delonf scopelon(scopelon: RelonquelonstScopelon): SgsFollowGraphDataProvidelonr = {
+    nelonw SgsFollowGraphDataProvidelonr(
+      socialGraphClielonntFactory,
+      visibilityProfilelonHydratorFactory,
+      fielonldsToFelontch,
+      scopelon,
+      statsReloncelonivelonr
     )
   }
 }

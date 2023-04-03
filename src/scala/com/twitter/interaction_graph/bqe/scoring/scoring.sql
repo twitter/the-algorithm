@@ -1,52 +1,52 @@
-DECLARE date_end, date_latest_follows DATE;
-SET date_end = (
-  SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
-  FROM `twttr-bq-cassowary-prod.user.INFORMATION_SCHEMA.PARTITIONS`
-  WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="interaction_graph_labels_daily"
+DelonCLARelon datelon_elonnd, datelon_latelonst_follows DATelon;
+SelonT datelon_elonnd = (
+  SelonLelonCT PARSelon_DATelon('%Y%m%d', MAX(partition_id)) AS partition_id
+  FROM `twttr-bq-cassowary-prod.uselonr.INFORMATION_SCHelonMA.PARTITIONS`
+  WHelonRelon partition_id IS NOT NULL AND partition_id != '__NULL__' AND tablelon_namelon="intelonraction_graph_labelonls_daily"
 );
-SET date_latest_follows = (
-  SELECT PARSE_DATE('%Y%m%d', MAX(partition_id)) AS partition_id
-  FROM `twttr-recos-ml-prod.user_events.INFORMATION_SCHEMA.PARTITIONS`
-  WHERE partition_id IS NOT NULL AND partition_id != '__NULL__' AND table_name="valid_user_follows");
+SelonT datelon_latelonst_follows = (
+  SelonLelonCT PARSelon_DATelon('%Y%m%d', MAX(partition_id)) AS partition_id
+  FROM `twttr-reloncos-ml-prod.uselonr_elonvelonnts.INFORMATION_SCHelonMA.PARTITIONS`
+  WHelonRelon partition_id IS NOT NULL AND partition_id != '__NULL__' AND tablelon_namelon="valid_uselonr_follows");
 
-DELETE
-FROM `twttr-recos-ml-prod.realgraph.scores`
-WHERE ds = date_end;
+DelonLelonTelon
+FROM `twttr-reloncos-ml-prod.relonalgraph.scorelons`
+WHelonRelon ds = datelon_elonnd;
 
--- score candidates (59m)
-INSERT INTO `twttr-recos-ml-prod.realgraph.scores`
-WITH predicted_scores AS (
-  SELECT
-    source_id, 
-    destination_id, 
+-- scorelon candidatelons (59m)
+INSelonRT INTO `twttr-reloncos-ml-prod.relonalgraph.scorelons`
+WITH prelondictelond_scorelons AS (
+  SelonLelonCT
+    sourcelon_id,
+    delonstination_id,
     p1.prob AS prob, 
-    p2.prob AS prob_explicit
-  FROM ML.PREDICT(MODEL `twttr-recos-ml-prod.realgraph.prod`,
+    p2.prob AS prob_elonxplicit
+  FROM ML.PRelonDICT(MODelonL `twttr-reloncos-ml-prod.relonalgraph.prod`,
       (
-      SELECT
+      SelonLelonCT
         *
       FROM
-        `twttr-recos-ml-prod.realgraph.candidates` ) ) S1
-  CROSS JOIN UNNEST(S1.predicted_label_probs) AS p1
-  JOIN ML.PREDICT(MODEL `twttr-recos-ml-prod.realgraph.prod_explicit`,
+        `twttr-reloncos-ml-prod.relonalgraph.candidatelons` ) ) S1
+  CROSS JOIN UNNelonST(S1.prelondictelond_labelonl_probs) AS p1
+  JOIN ML.PRelonDICT(MODelonL `twttr-reloncos-ml-prod.relonalgraph.prod_elonxplicit`,
       (
-      SELECT
+      SelonLelonCT
         *
       FROM
-        `twttr-recos-ml-prod.realgraph.candidates` ) ) S2
-  USING (source_id, destination_id)
-  CROSS JOIN UNNEST(S2.predicted_label_probs) AS p2
-  WHERE p1.label=1 AND p2.label=1
+        `twttr-reloncos-ml-prod.relonalgraph.candidatelons` ) ) S2
+  USING (sourcelon_id, delonstination_id)
+  CROSS JOIN UNNelonST(S2.prelondictelond_labelonl_probs) AS p2
+  WHelonRelon p1.labelonl=1 AND p2.labelonl=1
 )
-SELECT 
-  COALESCE(predicted_scores.source_id, tweeting_follows.source_id) AS source_id,
-  COALESCE(predicted_scores.destination_id, tweeting_follows.destination_id) AS destination_id,
-  COALESCE(prob, 0.0) AS prob,
-  COALESCE(prob_explicit, 0.0) AS prob_explicit,
-  (tweeting_follows.source_id IS NOT NULL) AND (tweeting_follows.destination_id IS NOT NULL) AS followed,
-  date_end AS ds
+SelonLelonCT
+  COALelonSCelon(prelondictelond_scorelons.sourcelon_id, twelonelonting_follows.sourcelon_id) AS sourcelon_id,
+  COALelonSCelon(prelondictelond_scorelons.delonstination_id, twelonelonting_follows.delonstination_id) AS delonstination_id,
+  COALelonSCelon(prob, 0.0) AS prob,
+  COALelonSCelon(prob_elonxplicit, 0.0) AS prob_elonxplicit,
+  (twelonelonting_follows.sourcelon_id IS NOT NULL) AND (twelonelonting_follows.delonstination_id IS NOT NULL) AS followelond,
+  datelon_elonnd AS ds
 FROM
-  predicted_scores
+  prelondictelond_scorelons
   FULL JOIN
-  `twttr-recos-ml-prod.realgraph.tweeting_follows` tweeting_follows
-  USING (source_id, destination_id)
+  `twttr-reloncos-ml-prod.relonalgraph.twelonelonting_follows` twelonelonting_follows
+  USING (sourcelon_id, delonstination_id)

@@ -1,57 +1,57 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-import com.twitter.search.common.encoding.features.EncodedFeatures;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.elonncodelondFelonaturelons;
 
 /**
- * Holds engagement features for a particular tweet and encodes them as a single int.
- * The features are: retweet count, favorite count, itweet score, reply count.
+ * Holds elonngagelonmelonnt felonaturelons for a particular twelonelont and elonncodelons thelonm as a singlelon int.
+ * Thelon felonaturelons arelon: relontwelonelont count, favoritelon count, itwelonelont scorelon, relonply count.
  */
-public class TweetEngagementFeatures extends EncodedFeatures {
-  private static final int RETWEET_COUNT_BIT_SHIFT = 0;
-  private static final long RETWEET_COUNT_INVERSE_BIT_MASK =  0xffffff00L;
+public class TwelonelontelonngagelonmelonntFelonaturelons elonxtelonnds elonncodelondFelonaturelons {
+  privatelon static final int RelonTWelonelonT_COUNT_BIT_SHIFT = 0;
+  privatelon static final long RelonTWelonelonT_COUNT_INVelonRSelon_BIT_MASK =  0xffffff00L;
 
-  private static final int ITWEET_SCORE_BIT_SHIFT = 8;
-  private static final long ITWEET_SCORE_INVERSE_BIT_MASK = 0xffff00ffL;
+  privatelon static final int ITWelonelonT_SCORelon_BIT_SHIFT = 8;
+  privatelon static final long ITWelonelonT_SCORelon_INVelonRSelon_BIT_MASK = 0xffff00ffL;
 
-  private static final int FAV_COUNT_BIT_SHIFT = 16;
-  private static final long FAV_COUNT_INVERSE_BIT_MASK =    0xff00ffffL;
+  privatelon static final int FAV_COUNT_BIT_SHIFT = 16;
+  privatelon static final long FAV_COUNT_INVelonRSelon_BIT_MASK =    0xff00ffffL;
 
-  private static final int REPLY_COUNT_BIT_SHIFT = 24;
-  private static final long REPLY_COUNT_INVERSE_BIT_MASK =    0x00ffffffL;
+  privatelon static final int RelonPLY_COUNT_BIT_SHIFT = 24;
+  privatelon static final long RelonPLY_COUNT_INVelonRSelon_BIT_MASK =    0x00ffffffL;
 
-  public TweetEngagementFeatures setRetweetCount(byte count) {
-    setByteIfGreater(count, RETWEET_COUNT_BIT_SHIFT, RETWEET_COUNT_INVERSE_BIT_MASK);
-    return this;
+  public TwelonelontelonngagelonmelonntFelonaturelons selontRelontwelonelontCount(bytelon count) {
+    selontBytelonIfGrelonatelonr(count, RelonTWelonelonT_COUNT_BIT_SHIFT, RelonTWelonelonT_COUNT_INVelonRSelon_BIT_MASK);
+    relonturn this;
   }
 
-  public int getRetweetCount() {
-    return getByte(RETWEET_COUNT_BIT_SHIFT);
+  public int gelontRelontwelonelontCount() {
+    relonturn gelontBytelon(RelonTWelonelonT_COUNT_BIT_SHIFT);
   }
 
-  public TweetEngagementFeatures setITweetScore(byte score) {
-    setByteIfGreater(score, ITWEET_SCORE_BIT_SHIFT, ITWEET_SCORE_INVERSE_BIT_MASK);
-    return this;
+  public TwelonelontelonngagelonmelonntFelonaturelons selontITwelonelontScorelon(bytelon scorelon) {
+    selontBytelonIfGrelonatelonr(scorelon, ITWelonelonT_SCORelon_BIT_SHIFT, ITWelonelonT_SCORelon_INVelonRSelon_BIT_MASK);
+    relonturn this;
   }
 
-  public int getITweetScore() {
-    return getByte(ITWEET_SCORE_BIT_SHIFT);
+  public int gelontITwelonelontScorelon() {
+    relonturn gelontBytelon(ITWelonelonT_SCORelon_BIT_SHIFT);
   }
 
-  public TweetEngagementFeatures setFavCount(byte count) {
-    setByteIfGreater(count, FAV_COUNT_BIT_SHIFT, FAV_COUNT_INVERSE_BIT_MASK);
-    return this;
+  public TwelonelontelonngagelonmelonntFelonaturelons selontFavCount(bytelon count) {
+    selontBytelonIfGrelonatelonr(count, FAV_COUNT_BIT_SHIFT, FAV_COUNT_INVelonRSelon_BIT_MASK);
+    relonturn this;
   }
 
-  public int getFavCount() {
-    return getByte(FAV_COUNT_BIT_SHIFT);
+  public int gelontFavCount() {
+    relonturn gelontBytelon(FAV_COUNT_BIT_SHIFT);
   }
 
-  public TweetEngagementFeatures setReplyCount(byte count) {
-    setByteIfGreater(count, REPLY_COUNT_BIT_SHIFT, REPLY_COUNT_INVERSE_BIT_MASK);
-    return this;
+  public TwelonelontelonngagelonmelonntFelonaturelons selontRelonplyCount(bytelon count) {
+    selontBytelonIfGrelonatelonr(count, RelonPLY_COUNT_BIT_SHIFT, RelonPLY_COUNT_INVelonRSelon_BIT_MASK);
+    relonturn this;
   }
 
-  public int getReplyCount() {
-    return getByte(REPLY_COUNT_BIT_SHIFT);
+  public int gelontRelonplyCount() {
+    relonturn gelontBytelon(RelonPLY_COUNT_BIT_SHIFT);
   }
 }

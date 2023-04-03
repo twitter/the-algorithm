@@ -1,164 +1,164 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.Objeloncts;
+import java.util.Selont;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.results.thriftjava.FieldHitAttribution;
+import com.twittelonr.selonarch.common.relonsults.thriftjava.FielonldHitAttribution;
 
 /**
- * A wrapper for a Lucene query which first computes Lucene's query score
- * and then delegates to a {@link ScoringFunction} for final score computation.
+ * A wrappelonr for a Lucelonnelon quelonry which first computelons Lucelonnelon's quelonry scorelon
+ * and thelonn delonlelongatelons to a {@link ScoringFunction} for final scorelon computation.
  */
-public class RelevanceQuery extends Query {
-  private static final Logger LOG = LoggerFactory.getLogger(RelevanceQuery.class.getName());
+public class RelonlelonvancelonQuelonry elonxtelonnds Quelonry {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(RelonlelonvancelonQuelonry.class.gelontNamelon());
 
-  protected final Query luceneQuery;
-  protected final ScoringFunction scoringFunction;
+  protelonctelond final Quelonry lucelonnelonQuelonry;
+  protelonctelond final ScoringFunction scoringFunction;
 
-  // True when the lucene query's score should be ignored for debug explanations.
-  protected final boolean ignoreLuceneQueryScoreExplanation;
+  // Truelon whelonn thelon lucelonnelon quelonry's scorelon should belon ignorelond for delonbug elonxplanations.
+  protelonctelond final boolelonan ignorelonLucelonnelonQuelonryScorelonelonxplanation;
 
-  public RelevanceQuery(Query luceneQuery, ScoringFunction scoringFunction) {
-    this(luceneQuery, scoringFunction, false);
+  public RelonlelonvancelonQuelonry(Quelonry lucelonnelonQuelonry, ScoringFunction scoringFunction) {
+    this(lucelonnelonQuelonry, scoringFunction, falselon);
   }
 
-  public RelevanceQuery(Query luceneQuery,
+  public RelonlelonvancelonQuelonry(Quelonry lucelonnelonQuelonry,
                         ScoringFunction scoringFunction,
-                        boolean ignoreLuceneQueryScoreExplanation) {
-    this.luceneQuery = luceneQuery;
+                        boolelonan ignorelonLucelonnelonQuelonryScorelonelonxplanation) {
+    this.lucelonnelonQuelonry = lucelonnelonQuelonry;
     this.scoringFunction = scoringFunction;
-    this.ignoreLuceneQueryScoreExplanation = ignoreLuceneQueryScoreExplanation;
+    this.ignorelonLucelonnelonQuelonryScorelonelonxplanation = ignorelonLucelonnelonQuelonryScorelonelonxplanation;
   }
 
-  public ScoringFunction getScoringFunction() {
-    return scoringFunction;
+  public ScoringFunction gelontScoringFunction() {
+    relonturn scoringFunction;
   }
 
-  public Query getLuceneQuery() {
-    return luceneQuery;
+  public Quelonry gelontLucelonnelonQuelonry() {
+    relonturn lucelonnelonQuelonry;
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = luceneQuery.rewrite(reader);
-    if (rewritten == luceneQuery) {
-      return this;
+  @Ovelonrridelon
+  public Quelonry relonwritelon(IndelonxRelonadelonr relonadelonr) throws IOelonxcelonption {
+    Quelonry relonwrittelonn = lucelonnelonQuelonry.relonwritelon(relonadelonr);
+    if (relonwrittelonn == lucelonnelonQuelonry) {
+      relonturn this;
     }
-    return new RelevanceQuery(rewritten, scoringFunction, ignoreLuceneQueryScoreExplanation);
+    relonturn nelonw RelonlelonvancelonQuelonry(relonwrittelonn, scoringFunction, ignorelonLucelonnelonQuelonryScorelonelonxplanation);
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    Weight luceneWeight = luceneQuery.createWeight(searcher, scoreMode, boost);
-    if (luceneWeight == null) {
-      return null;
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost)
+      throws IOelonxcelonption {
+    Welonight lucelonnelonWelonight = lucelonnelonQuelonry.crelonatelonWelonight(selonarchelonr, scorelonModelon, boost);
+    if (lucelonnelonWelonight == null) {
+      relonturn null;
     }
-    return new RelevanceWeight(searcher, luceneWeight);
+    relonturn nelonw RelonlelonvancelonWelonight(selonarchelonr, lucelonnelonWelonight);
   }
 
-  public class RelevanceWeight extends Weight {
-    private final Weight luceneWeight;
+  public class RelonlelonvancelonWelonight elonxtelonnds Welonight {
+    privatelon final Welonight lucelonnelonWelonight;
 
-    public RelevanceWeight(IndexSearcher searcher, Weight luceneWeight) {
-      super(RelevanceQuery.this);
-      this.luceneWeight = luceneWeight;
-    }
-
-    @Override
-    public void extractTerms(Set<Term> terms) {
-      this.luceneWeight.extractTerms(terms);
+    public RelonlelonvancelonWelonight(IndelonxSelonarchelonr selonarchelonr, Welonight lucelonnelonWelonight) {
+      supelonr(RelonlelonvancelonQuelonry.this);
+      this.lucelonnelonWelonight = lucelonnelonWelonight;
     }
 
+    @Ovelonrridelon
+    public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
+      this.lucelonnelonWelonight.elonxtractTelonrms(telonrms);
+    }
 
-    @Override
-    public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-      return explain(context, doc, null);
+
+    @Ovelonrridelon
+    public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc) throws IOelonxcelonption {
+      relonturn elonxplain(contelonxt, doc, null);
     }
 
     /**
-     * Returns an explanation of the scoring for the given document.
+     * Relonturns an elonxplanation of thelon scoring for thelon givelonn documelonnt.
      *
-     * @param context The context of the reader that returned this document.
-     * @param doc The document.
-     * @param fieldHitAttribution Per-hit field attribution information.
-     * @return An explanation of the scoring for the given document.
+     * @param contelonxt Thelon contelonxt of thelon relonadelonr that relonturnelond this documelonnt.
+     * @param doc Thelon documelonnt.
+     * @param fielonldHitAttribution Pelonr-hit fielonld attribution information.
+     * @relonturn An elonxplanation of thelon scoring for thelon givelonn documelonnt.
      */
-    public Explanation explain(LeafReaderContext context, int doc,
-        @Nullable FieldHitAttribution fieldHitAttribution) throws IOException {
+    public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc,
+        @Nullablelon FielonldHitAttribution fielonldHitAttribution) throws IOelonxcelonption {
 
-      Explanation luceneExplanation = Explanation.noMatch("LuceneQuery explain skipped");
-      if (!ignoreLuceneQueryScoreExplanation) {
-        // get Lucene score
+      elonxplanation lucelonnelonelonxplanation = elonxplanation.noMatch("LucelonnelonQuelonry elonxplain skippelond");
+      if (!ignorelonLucelonnelonQuelonryScorelonelonxplanation) {
+        // gelont Lucelonnelon scorelon
         try {
-          luceneExplanation = luceneWeight.explain(context, doc);
-        } catch (Exception e) {
-          // We sometimes see exceptions resulting from term queries that do not store
-          // utf8-text, which TermQuery.toString() assumes.  Catch here and allow at least
-          // scoring function explanations to be returned.
-          LOG.error("Exception in explain", e);
-          luceneExplanation = Explanation.noMatch("LuceneQuery explain failed");
+          lucelonnelonelonxplanation = lucelonnelonWelonight.elonxplain(contelonxt, doc);
+        } catch (elonxcelonption elon) {
+          // Welon somelontimelons selonelon elonxcelonptions relonsulting from telonrm quelonrielons that do not storelon
+          // utf8-telonxt, which TelonrmQuelonry.toString() assumelons.  Catch helonrelon and allow at lelonast
+          // scoring function elonxplanations to belon relonturnelond.
+          LOG.elonrror("elonxcelonption in elonxplain", elon);
+          lucelonnelonelonxplanation = elonxplanation.noMatch("LucelonnelonQuelonry elonxplain failelond");
         }
       }
 
-      Explanation scoringFunctionExplanation;
-      scoringFunction.setFieldHitAttribution(fieldHitAttribution);
-      scoringFunctionExplanation = scoringFunction.explain(
-          context.reader(), doc, luceneExplanation.getValue().floatValue());
+      elonxplanation scoringFunctionelonxplanation;
+      scoringFunction.selontFielonldHitAttribution(fielonldHitAttribution);
+      scoringFunctionelonxplanation = scoringFunction.elonxplain(
+          contelonxt.relonadelonr(), doc, lucelonnelonelonxplanation.gelontValuelon().floatValuelon());
 
-      // just add a wrapper for a better structure of the final explanation
-      Explanation luceneExplanationWrapper = Explanation.match(
-          luceneExplanation.getValue(), "LuceneQuery", luceneExplanation);
+      // just add a wrappelonr for a belonttelonr structurelon of thelon final elonxplanation
+      elonxplanation lucelonnelonelonxplanationWrappelonr = elonxplanation.match(
+          lucelonnelonelonxplanation.gelontValuelon(), "LucelonnelonQuelonry", lucelonnelonelonxplanation);
 
-      return Explanation.match(scoringFunctionExplanation.getValue(), "RelevanceQuery",
-              scoringFunctionExplanation, luceneExplanationWrapper);
+      relonturn elonxplanation.match(scoringFunctionelonxplanation.gelontValuelon(), "RelonlelonvancelonQuelonry",
+              scoringFunctionelonxplanation, lucelonnelonelonxplanationWrappelonr);
     }
 
-    @Override
-    public Scorer scorer(LeafReaderContext context) throws IOException {
-      return luceneWeight.scorer(context);
+    @Ovelonrridelon
+    public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+      relonturn lucelonnelonWelonight.scorelonr(contelonxt);
     }
 
-    @Override
-    public boolean isCacheable(LeafReaderContext ctx) {
-      return luceneWeight.isCacheable(ctx);
+    @Ovelonrridelon
+    public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+      relonturn lucelonnelonWelonight.isCachelonablelon(ctx);
     }
   }
 
-  @Override
-  public int hashCode() {
-    return (luceneQuery == null ? 0 : luceneQuery.hashCode())
-        + (scoringFunction == null ? 0 : scoringFunction.hashCode()) * 13;
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn (lucelonnelonQuelonry == null ? 0 : lucelonnelonQuelonry.hashCodelon())
+        + (scoringFunction == null ? 0 : scoringFunction.hashCodelon()) * 13;
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof RelevanceQuery)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof RelonlelonvancelonQuelonry)) {
+      relonturn falselon;
     }
 
-    RelevanceQuery query = RelevanceQuery.class.cast(obj);
-    return Objects.equals(luceneQuery, query.luceneQuery)
-        && Objects.equals(scoringFunction, query.scoringFunction);
+    RelonlelonvancelonQuelonry quelonry = RelonlelonvancelonQuelonry.class.cast(obj);
+    relonturn Objeloncts.elonquals(lucelonnelonQuelonry, quelonry.lucelonnelonQuelonry)
+        && Objeloncts.elonquals(scoringFunction, quelonry.scoringFunction);
   }
 
-  @Override
-  public String toString(String field) {
-    return "RelevanceQuery[q=" + luceneQuery.toString(field) + "]";
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn "RelonlelonvancelonQuelonry[q=" + lucelonnelonQuelonry.toString(fielonld) + "]";
   }
 }

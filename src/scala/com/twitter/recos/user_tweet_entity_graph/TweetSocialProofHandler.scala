@@ -1,72 +1,72 @@
-package com.twitter.recos.user_tweet_entity_graph
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.graphjet.algorithms.RecommendationInfo
-import com.twitter.graphjet.algorithms.socialproof.{SocialProofResult => SocialProofJavaResult}
-import com.twitter.recos.decider.UserTweetEntityGraphDecider
-import com.twitter.recos.util.Stats
-import com.twitter.recos.util.Stats._
-import com.twitter.recos.recos_common.thriftscala.{SocialProofType => SocialProofThriftType}
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  SocialProofRequest => SocialProofThriftRequest
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.graphjelont.algorithms.ReloncommelonndationInfo
+import com.twittelonr.graphjelont.algorithms.socialproof.{SocialProofRelonsult => SocialProofJavaRelonsult}
+import com.twittelonr.reloncos.deloncidelonr.UselonrTwelonelontelonntityGraphDeloncidelonr
+import com.twittelonr.reloncos.util.Stats
+import com.twittelonr.reloncos.util.Stats._
+import com.twittelonr.reloncos.reloncos_common.thriftscala.{SocialProofTypelon => SocialProofThriftTypelon}
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.TwelonelontReloncommelonndation
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.{
+  SocialProofRelonquelonst => SocialProofThriftRelonquelonst
 }
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  SocialProofResponse => SocialProofThriftResponse
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.{
+  SocialProofRelonsponselon => SocialProofThriftRelonsponselon
 }
-import com.twitter.servo.request.RequestHandler
-import com.twitter.util.Future
-import scala.collection.JavaConverters._
+import com.twittelonr.selonrvo.relonquelonst.RelonquelonstHandlelonr
+import com.twittelonr.util.Futurelon
+import scala.collelonction.JavaConvelonrtelonrs._
 
-class TweetSocialProofHandler(
-  tweetSocialProofRunner: TweetSocialProofRunner,
-  decider: UserTweetEntityGraphDecider,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[SocialProofThriftRequest, SocialProofThriftResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
+class TwelonelontSocialProofHandlelonr(
+  twelonelontSocialProofRunnelonr: TwelonelontSocialProofRunnelonr,
+  deloncidelonr: UselonrTwelonelontelonntityGraphDeloncidelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstHandlelonr[SocialProofThriftRelonquelonst, SocialProofThriftRelonsponselon] {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
 
-  def getThriftSocialProof(
-    tweetSocialProof: SocialProofJavaResult
-  ): Map[SocialProofThriftType, Seq[Long]] = {
-    Option(tweetSocialProof.getSocialProof) match {
-      case Some(socialProof) if socialProof.isEmpty =>
-        stats.counter(Stats.EmptyResult).incr()
-        Map.empty[SocialProofThriftType, Seq[Long]]
-      case Some(socialProof) if !socialProof.isEmpty =>
+  delonf gelontThriftSocialProof(
+    twelonelontSocialProof: SocialProofJavaRelonsult
+  ): Map[SocialProofThriftTypelon, Selonq[Long]] = {
+    Option(twelonelontSocialProof.gelontSocialProof) match {
+      caselon Somelon(socialProof) if socialProof.iselonmpty =>
+        stats.countelonr(Stats.elonmptyRelonsult).incr()
+        Map.elonmpty[SocialProofThriftTypelon, Selonq[Long]]
+      caselon Somelon(socialProof) if !socialProof.iselonmpty =>
         socialProof.asScala.map {
-          case (socialProofType, connectingUsers) =>
+          caselon (socialProofTypelon, connelonctingUselonrs) =>
             (
-              SocialProofThriftType(socialProofType.toInt),
-              connectingUsers.asScala.map { Long2long }.toSeq)
+              SocialProofThriftTypelon(socialProofTypelon.toInt),
+              connelonctingUselonrs.asScala.map { Long2long }.toSelonq)
         }.toMap
-      case _ =>
-        throw new Exception("TweetSocialProofHandler gets wrong TweetSocialProof response")
+      caselon _ =>
+        throw nelonw elonxcelonption("TwelonelontSocialProofHandlelonr gelonts wrong TwelonelontSocialProof relonsponselon")
     }
   }
 
-  def apply(request: SocialProofThriftRequest): Future[SocialProofThriftResponse] = {
+  delonf apply(relonquelonst: SocialProofThriftRelonquelonst): Futurelon[SocialProofThriftRelonsponselon] = {
     StatsUtil.trackBlockStats(stats) {
-      if (decider.tweetSocialProof) {
-        val socialProofsFuture = tweetSocialProofRunner(request)
+      if (deloncidelonr.twelonelontSocialProof) {
+        val socialProofsFuturelon = twelonelontSocialProofRunnelonr(relonquelonst)
 
-        socialProofsFuture map { socialProofs: Seq[RecommendationInfo] =>
-          stats.counter(Stats.Served).incr(socialProofs.size)
-          SocialProofThriftResponse(
-            socialProofs.flatMap { tweetSocialProof: RecommendationInfo =>
-              val tweetSocialProofJavaResult = tweetSocialProof.asInstanceOf[SocialProofJavaResult]
-              Some(
-                TweetRecommendation(
-                  tweetSocialProofJavaResult.getNode,
-                  tweetSocialProofJavaResult.getWeight,
-                  getThriftSocialProof(tweetSocialProofJavaResult)
+        socialProofsFuturelon map { socialProofs: Selonq[ReloncommelonndationInfo] =>
+          stats.countelonr(Stats.Selonrvelond).incr(socialProofs.sizelon)
+          SocialProofThriftRelonsponselon(
+            socialProofs.flatMap { twelonelontSocialProof: ReloncommelonndationInfo =>
+              val twelonelontSocialProofJavaRelonsult = twelonelontSocialProof.asInstancelonOf[SocialProofJavaRelonsult]
+              Somelon(
+                TwelonelontReloncommelonndation(
+                  twelonelontSocialProofJavaRelonsult.gelontNodelon,
+                  twelonelontSocialProofJavaRelonsult.gelontWelonight,
+                  gelontThriftSocialProof(twelonelontSocialProofJavaRelonsult)
                 )
               )
             }
           )
         }
-      } else {
-        Future.value(SocialProofThriftResponse())
+      } elonlselon {
+        Futurelon.valuelon(SocialProofThriftRelonsponselon())
       }
     }
   }

@@ -1,99 +1,99 @@
-package com.twitter.search.common.converter.earlybird;
+packagelon com.twittelonr.selonarch.common.convelonrtelonr.elonarlybird;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import javax.annotation.concurrent.NotThreadSafe;
+import javax.annotation.concurrelonnt.NotThrelonadSafelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentBuilder;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdThriftDocumelonntBuildelonr;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonntTypelon;
 
 /**
- * CombinedIndexingConverter builds objects from TwitterMessage to ThriftVersionedEvent.
+ * CombinelondIndelonxingConvelonrtelonr builds objeloncts from TwittelonrMelonssagelon to ThriftVelonrsionelondelonvelonnt.
  *
- * It is used in tests and in offline jobs, so all data is available on the TwitterMessage. This
- * means that we don't need to split up the ThriftVersionedEvents into basic events and update
- * events, like we do in the realtime pipeline using the BasicIndexingConverter and the
- * DelayedIndexingConverter.
+ * It is uselond in telonsts and in offlinelon jobs, so all data is availablelon on thelon TwittelonrMelonssagelon. This
+ * melonans that welon don't nelonelond to split up thelon ThriftVelonrsionelondelonvelonnts into basic elonvelonnts and updatelon
+ * elonvelonnts, likelon welon do in thelon relonaltimelon pipelonlinelon using thelon BasicIndelonxingConvelonrtelonr and thelon
+ * DelonlayelondIndelonxingConvelonrtelonr.
  */
-@NotThreadSafe
-public class CombinedIndexingConverter {
-  private final EncodedFeatureBuilder featureBuilder;
-  private final Schema schema;
-  private final EarlybirdCluster cluster;
+@NotThrelonadSafelon
+public class CombinelondIndelonxingConvelonrtelonr {
+  privatelon final elonncodelondFelonaturelonBuildelonr felonaturelonBuildelonr;
+  privatelon final Schelonma schelonma;
+  privatelon final elonarlybirdClustelonr clustelonr;
 
-  public CombinedIndexingConverter(Schema schema, EarlybirdCluster cluster) {
-    this.featureBuilder = new EncodedFeatureBuilder();
-    this.schema = schema;
-    this.cluster = cluster;
+  public CombinelondIndelonxingConvelonrtelonr(Schelonma schelonma, elonarlybirdClustelonr clustelonr) {
+    this.felonaturelonBuildelonr = nelonw elonncodelondFelonaturelonBuildelonr();
+    this.schelonma = schelonma;
+    this.clustelonr = clustelonr;
   }
 
   /**
-   * Converts a TwitterMessage to a Thrift representation.
+   * Convelonrts a TwittelonrMelonssagelon to a Thrift relonprelonselonntation.
    */
-  public ThriftVersionedEvents convertMessageToThrift(
-      TwitterMessage message,
-      boolean strict,
-      List<PenguinVersion> penguinVersions) throws IOException {
-    Preconditions.checkNotNull(message);
-    Preconditions.checkNotNull(penguinVersions);
+  public ThriftVelonrsionelondelonvelonnts convelonrtMelonssagelonToThrift(
+      TwittelonrMelonssagelon melonssagelon,
+      boolelonan strict,
+      List<PelonnguinVelonrsion> pelonnguinVelonrsions) throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(melonssagelon);
+    Prelonconditions.chelonckNotNull(pelonnguinVelonrsions);
 
-    ThriftVersionedEvents versionedEvents = new ThriftVersionedEvents()
-        .setId(message.getId());
+    ThriftVelonrsionelondelonvelonnts velonrsionelondelonvelonnts = nelonw ThriftVelonrsionelondelonvelonnts()
+        .selontId(melonssagelon.gelontId());
 
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+    ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot = schelonma.gelontSchelonmaSnapshot();
 
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      ThriftDocument document =
-          buildDocumentForPenguinVersion(schemaSnapshot, message, strict, penguinVersion);
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : pelonnguinVelonrsions) {
+      ThriftDocumelonnt documelonnt =
+          buildDocumelonntForPelonnguinVelonrsion(schelonmaSnapshot, melonssagelon, strict, pelonnguinVelonrsion);
 
-      ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-          .setDocument(document)
-          .setEventType(ThriftIndexingEventType.INSERT)
-          .setSortId(message.getId());
-      message.getFromUserTwitterId().map(thriftIndexingEvent::setUid);
-      versionedEvents.putToVersionedEvents(penguinVersion.getByteValue(), thriftIndexingEvent);
+      ThriftIndelonxingelonvelonnt thriftIndelonxingelonvelonnt = nelonw ThriftIndelonxingelonvelonnt()
+          .selontDocumelonnt(documelonnt)
+          .selontelonvelonntTypelon(ThriftIndelonxingelonvelonntTypelon.INSelonRT)
+          .selontSortId(melonssagelon.gelontId());
+      melonssagelon.gelontFromUselonrTwittelonrId().map(thriftIndelonxingelonvelonnt::selontUid);
+      velonrsionelondelonvelonnts.putToVelonrsionelondelonvelonnts(pelonnguinVelonrsion.gelontBytelonValuelon(), thriftIndelonxingelonvelonnt);
     }
 
-    return versionedEvents;
+    relonturn velonrsionelondelonvelonnts;
   }
 
-  private ThriftDocument buildDocumentForPenguinVersion(
-      ImmutableSchemaInterface schemaSnapshot,
-      TwitterMessage message,
-      boolean strict,
-      PenguinVersion penguinVersion) throws IOException {
-    EncodedFeatureBuilder.TweetFeatureWithEncodeFeatures tweetFeature =
-        featureBuilder.createTweetFeaturesFromTwitterMessage(
-            message, penguinVersion, schemaSnapshot);
+  privatelon ThriftDocumelonnt buildDocumelonntForPelonnguinVelonrsion(
+      ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot,
+      TwittelonrMelonssagelon melonssagelon,
+      boolelonan strict,
+      PelonnguinVelonrsion pelonnguinVelonrsion) throws IOelonxcelonption {
+    elonncodelondFelonaturelonBuildelonr.TwelonelontFelonaturelonWithelonncodelonFelonaturelons twelonelontFelonaturelon =
+        felonaturelonBuildelonr.crelonatelonTwelonelontFelonaturelonsFromTwittelonrMelonssagelon(
+            melonssagelon, pelonnguinVelonrsion, schelonmaSnapshot);
 
-    EarlybirdThriftDocumentBuilder builder =
-        BasicIndexingConverter.buildBasicFields(message, schemaSnapshot, cluster, tweetFeature);
+    elonarlybirdThriftDocumelonntBuildelonr buildelonr =
+        BasicIndelonxingConvelonrtelonr.buildBasicFielonlds(melonssagelon, schelonmaSnapshot, clustelonr, twelonelontFelonaturelon);
 
-    BasicIndexingConverter
-        .buildUserFields(builder, message, tweetFeature.versionedFeatures, penguinVersion);
-    BasicIndexingConverter.buildGeoFields(builder, message, tweetFeature.versionedFeatures);
-    DelayedIndexingConverter.buildURLFields(builder, message, tweetFeature.encodedFeatures);
-    BasicIndexingConverter.buildRetweetAndReplyFields(builder, message, strict);
-    BasicIndexingConverter.buildQuotesFields(builder, message);
-    BasicIndexingConverter.buildVersionedFeatureFields(builder, tweetFeature.versionedFeatures);
-    DelayedIndexingConverter.buildCardFields(builder, message, penguinVersion);
-    BasicIndexingConverter.buildAnnotationFields(builder, message);
-    BasicIndexingConverter.buildNormalizedMinEngagementFields(
-        builder, tweetFeature.encodedFeatures, cluster);
-    DelayedIndexingConverter.buildNamedEntityFields(builder, message);
-    BasicIndexingConverter.buildDirectedAtFields(builder, message);
+    BasicIndelonxingConvelonrtelonr
+        .buildUselonrFielonlds(buildelonr, melonssagelon, twelonelontFelonaturelon.velonrsionelondFelonaturelons, pelonnguinVelonrsion);
+    BasicIndelonxingConvelonrtelonr.buildGelonoFielonlds(buildelonr, melonssagelon, twelonelontFelonaturelon.velonrsionelondFelonaturelons);
+    DelonlayelondIndelonxingConvelonrtelonr.buildURLFielonlds(buildelonr, melonssagelon, twelonelontFelonaturelon.elonncodelondFelonaturelons);
+    BasicIndelonxingConvelonrtelonr.buildRelontwelonelontAndRelonplyFielonlds(buildelonr, melonssagelon, strict);
+    BasicIndelonxingConvelonrtelonr.buildQuotelonsFielonlds(buildelonr, melonssagelon);
+    BasicIndelonxingConvelonrtelonr.buildVelonrsionelondFelonaturelonFielonlds(buildelonr, twelonelontFelonaturelon.velonrsionelondFelonaturelons);
+    DelonlayelondIndelonxingConvelonrtelonr.buildCardFielonlds(buildelonr, melonssagelon, pelonnguinVelonrsion);
+    BasicIndelonxingConvelonrtelonr.buildAnnotationFielonlds(buildelonr, melonssagelon);
+    BasicIndelonxingConvelonrtelonr.buildNormalizelondMinelonngagelonmelonntFielonlds(
+        buildelonr, twelonelontFelonaturelon.elonncodelondFelonaturelons, clustelonr);
+    DelonlayelondIndelonxingConvelonrtelonr.buildNamelondelonntityFielonlds(buildelonr, melonssagelon);
+    BasicIndelonxingConvelonrtelonr.buildDirelonctelondAtFielonlds(buildelonr, melonssagelon);
 
-    return builder.build();
+    relonturn buildelonr.build();
   }
 }

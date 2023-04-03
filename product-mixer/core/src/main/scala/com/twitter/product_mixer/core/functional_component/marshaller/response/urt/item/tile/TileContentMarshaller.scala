@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tile
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.tilelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.CallToActionTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tilelon.CallToActionTilelonContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tilelon.StandardTilelonContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tilelon.TilelonContelonnt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TileContentMarshaller @Inject() (
-  standardTileContentMarshaller: StandardTileContentMarshaller,
-  callToActionTileContentMarshaller: CallToActionTileContentMarshaller) {
+@Singlelonton
+class TilelonContelonntMarshallelonr @Injelonct() (
+  standardTilelonContelonntMarshallelonr: StandardTilelonContelonntMarshallelonr,
+  callToActionTilelonContelonntMarshallelonr: CallToActionTilelonContelonntMarshallelonr) {
 
-  def apply(tileContent: TileContent): urt.TileContent = tileContent match {
-    case tileCont: StandardTileContent =>
-      urt.TileContent.Standard(standardTileContentMarshaller(tileCont))
-    case tileCont: CallToActionTileContent =>
-      urt.TileContent.CallToAction(callToActionTileContentMarshaller(tileCont))
+  delonf apply(tilelonContelonnt: TilelonContelonnt): urt.TilelonContelonnt = tilelonContelonnt match {
+    caselon tilelonCont: StandardTilelonContelonnt =>
+      urt.TilelonContelonnt.Standard(standardTilelonContelonntMarshallelonr(tilelonCont))
+    caselon tilelonCont: CallToActionTilelonContelonnt =>
+      urt.TilelonContelonnt.CallToAction(callToActionTilelonContelonntMarshallelonr(tilelonCont))
   }
 }

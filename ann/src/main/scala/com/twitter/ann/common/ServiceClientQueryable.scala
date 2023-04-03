@@ -1,63 +1,63 @@
-package com.twitter.ann.common
+packagelon com.twittelonr.ann.common
 
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.thriftscala.{
-  NearestNeighborQuery,
-  NearestNeighborResult,
-  Distance => ServiceDistance,
-  RuntimeParams => ServiceRuntimeParams
+import com.twittelonr.ann.common.elonmbelonddingTypelon._
+import com.twittelonr.ann.common.thriftscala.{
+  NelonarelonstNelonighborQuelonry,
+  NelonarelonstNelonighborRelonsult,
+  Distancelon => SelonrvicelonDistancelon,
+  RuntimelonParams => SelonrvicelonRuntimelonParams
 }
-import com.twitter.bijection.Injection
-import com.twitter.finagle.Service
-import com.twitter.mediaservices.commons.codec.ArrayByteBufferCodec
-import com.twitter.util.Future
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.finaglelon.Selonrvicelon
+import com.twittelonr.melondiaselonrvicelons.commons.codelonc.ArrayBytelonBuffelonrCodelonc
+import com.twittelonr.util.Futurelon
 
-class ServiceClientQueryable[T, P <: RuntimeParams, D <: Distance[D]](
-  service: Service[NearestNeighborQuery, NearestNeighborResult],
-  runtimeParamInjection: Injection[P, ServiceRuntimeParams],
-  distanceInjection: Injection[D, ServiceDistance],
-  idInjection: Injection[T, Array[Byte]])
-    extends Queryable[T, P, D] {
-  override def query(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[T]] = {
-    service
+class SelonrvicelonClielonntQuelonryablelon[T, P <: RuntimelonParams, D <: Distancelon[D]](
+  selonrvicelon: Selonrvicelon[NelonarelonstNelonighborQuelonry, NelonarelonstNelonighborRelonsult],
+  runtimelonParamInjelonction: Injelonction[P, SelonrvicelonRuntimelonParams],
+  distancelonInjelonction: Injelonction[D, SelonrvicelonDistancelon],
+  idInjelonction: Injelonction[T, Array[Bytelon]])
+    elonxtelonnds Quelonryablelon[T, P, D] {
+  ovelonrridelon delonf quelonry(
+    elonmbelondding: elonmbelonddingVelonctor,
+    numOfNelonighbors: Int,
+    runtimelonParams: P
+  ): Futurelon[List[T]] = {
+    selonrvicelon
       .apply(
-        NearestNeighborQuery(
-          embeddingSerDe.toThrift(embedding),
-          withDistance = false,
-          runtimeParamInjection(runtimeParams),
-          numOfNeighbors
+        NelonarelonstNelonighborQuelonry(
+          elonmbelonddingSelonrDelon.toThrift(elonmbelondding),
+          withDistancelon = falselon,
+          runtimelonParamInjelonction(runtimelonParams),
+          numOfNelonighbors
         )
       )
-      .map { result =>
-        result.nearestNeighbors.map { nearestNeighbor =>
-          idInjection.invert(ArrayByteBufferCodec.decode(nearestNeighbor.id)).get
+      .map { relonsult =>
+        relonsult.nelonarelonstNelonighbors.map { nelonarelonstNelonighbor =>
+          idInjelonction.invelonrt(ArrayBytelonBuffelonrCodelonc.deloncodelon(nelonarelonstNelonighbor.id)).gelont
         }.toList
       }
   }
 
-  override def queryWithDistance(
-    embedding: EmbeddingVector,
-    numOfNeighbors: Int,
-    runtimeParams: P
-  ): Future[List[NeighborWithDistance[T, D]]] =
-    service
+  ovelonrridelon delonf quelonryWithDistancelon(
+    elonmbelondding: elonmbelonddingVelonctor,
+    numOfNelonighbors: Int,
+    runtimelonParams: P
+  ): Futurelon[List[NelonighborWithDistancelon[T, D]]] =
+    selonrvicelon
       .apply(
-        NearestNeighborQuery(
-          embeddingSerDe.toThrift(embedding),
-          withDistance = true,
-          runtimeParamInjection(runtimeParams),
-          numOfNeighbors
+        NelonarelonstNelonighborQuelonry(
+          elonmbelonddingSelonrDelon.toThrift(elonmbelondding),
+          withDistancelon = truelon,
+          runtimelonParamInjelonction(runtimelonParams),
+          numOfNelonighbors
         )
       )
-      .map { result =>
-        result.nearestNeighbors.map { nearestNeighbor =>
-          NeighborWithDistance(
-            idInjection.invert(ArrayByteBufferCodec.decode(nearestNeighbor.id)).get,
-            distanceInjection.invert(nearestNeighbor.distance.get).get
+      .map { relonsult =>
+        relonsult.nelonarelonstNelonighbors.map { nelonarelonstNelonighbor =>
+          NelonighborWithDistancelon(
+            idInjelonction.invelonrt(ArrayBytelonBuffelonrCodelonc.deloncodelon(nelonarelonstNelonighbor.id)).gelont,
+            distancelonInjelonction.invelonrt(nelonarelonstNelonighbor.distancelon.gelont).gelont
           )
         }.toList
       }

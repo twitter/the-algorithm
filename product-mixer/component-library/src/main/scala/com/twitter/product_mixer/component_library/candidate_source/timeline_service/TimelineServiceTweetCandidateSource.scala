@@ -1,47 +1,47 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_service
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.timelonlinelon_selonrvicelon
 
-import com.twitter.product_mixer.component_library.model.cursor.NextCursorFeature
-import com.twitter.product_mixer.component_library.model.cursor.PreviousCursorFeature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.timelineservice.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.NelonxtCursorFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.PrelonviousCursorFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelonWithelonxtractelondFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonsWithSourcelonFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.timelonlinelonselonrvicelon.TimelonlinelonSelonrvicelon
+import com.twittelonr.timelonlinelonselonrvicelon.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-case object TimelineServiceResponseWasTruncatedFeature
-    extends FeatureWithDefaultOnFailure[PipelineQuery, Boolean] {
-  override val defaultValue: Boolean = false
+caselon objelonct TimelonlinelonSelonrvicelonRelonsponselonWasTruncatelondFelonaturelon
+    elonxtelonnds FelonaturelonWithDelonfaultOnFailurelon[PipelonlinelonQuelonry, Boolelonan] {
+  ovelonrridelon val delonfaultValuelon: Boolelonan = falselon
 }
 
-@Singleton
-class TimelineServiceTweetCandidateSource @Inject() (
-  timelineService: TimelineService)
-    extends CandidateSourceWithExtractedFeatures[t.TimelineQuery, t.Tweet] {
+@Singlelonton
+class TimelonlinelonSelonrvicelonTwelonelontCandidatelonSourcelon @Injelonct() (
+  timelonlinelonSelonrvicelon: TimelonlinelonSelonrvicelon)
+    elonxtelonnds CandidatelonSourcelonWithelonxtractelondFelonaturelons[t.TimelonlinelonQuelonry, t.Twelonelont] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineServiceTweet")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr("TimelonlinelonSelonrvicelonTwelonelont")
 
-  override def apply(request: t.TimelineQuery): Stitch[CandidatesWithSourceFeatures[t.Tweet]] = {
-    timelineService
-      .getTimeline(request).map { timeline =>
-        val candidates = timeline.entries.collect {
-          case t.TimelineEntry.Tweet(tweet) => tweet
+  ovelonrridelon delonf apply(relonquelonst: t.TimelonlinelonQuelonry): Stitch[CandidatelonsWithSourcelonFelonaturelons[t.Twelonelont]] = {
+    timelonlinelonSelonrvicelon
+      .gelontTimelonlinelon(relonquelonst).map { timelonlinelon =>
+        val candidatelons = timelonlinelon.elonntrielons.collelonct {
+          caselon t.Timelonlinelonelonntry.Twelonelont(twelonelont) => twelonelont
         }
 
-        val candidateSourceFeatures =
-          FeatureMapBuilder()
-            .add(TimelineServiceResponseWasTruncatedFeature, timeline.wasTruncated.getOrElse(false))
-            .add(PreviousCursorFeature, timeline.responseCursor.flatMap(_.top).getOrElse(""))
-            .add(NextCursorFeature, timeline.responseCursor.flatMap(_.bottom).getOrElse(""))
+        val candidatelonSourcelonFelonaturelons =
+          FelonaturelonMapBuildelonr()
+            .add(TimelonlinelonSelonrvicelonRelonsponselonWasTruncatelondFelonaturelon, timelonlinelon.wasTruncatelond.gelontOrelonlselon(falselon))
+            .add(PrelonviousCursorFelonaturelon, timelonlinelon.relonsponselonCursor.flatMap(_.top).gelontOrelonlselon(""))
+            .add(NelonxtCursorFelonaturelon, timelonlinelon.relonsponselonCursor.flatMap(_.bottom).gelontOrelonlselon(""))
             .build()
 
-        CandidatesWithSourceFeatures(candidates = candidates, features = candidateSourceFeatures)
+        CandidatelonsWithSourcelonFelonaturelons(candidatelons = candidatelons, felonaturelons = candidatelonSourcelonFelonaturelons)
       }
   }
 

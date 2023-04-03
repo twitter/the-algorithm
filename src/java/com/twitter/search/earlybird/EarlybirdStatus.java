@@ -1,204 +1,204 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.telonxt.SimplelonDatelonFormat;
+import java.util.Datelon;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.concurrelonnt.atomic.AtomicBoolelonan;
 
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.BuildInfo;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.util.Duration;
+import com.twittelonr.common.util.BuildInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdStatusCodelon;
+import com.twittelonr.util.Duration;
 
 /**
- * High level status of an Earlybird server. SEARCH-28016
+ * High lelonvelonl status of an elonarlybird selonrvelonr. SelonARCH-28016
  */
-public final class EarlybirdStatus {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdStatus.class);
+public final class elonarlybirdStatus {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdStatus.class);
 
-  private static final String BUILD_SHA = getBuildShaFromVars();
+  privatelon static final String BUILD_SHA = gelontBuildShaFromVars();
 
-  protected static long startTime;
-  protected static EarlybirdStatusCode statusCode;
-  protected static String statusMessage;
-  protected static final AtomicBoolean THRIFT_PORT_OPEN = new AtomicBoolean(false);
-  protected static final AtomicBoolean WARMUP_THRIFT_PORT_OPEN = new AtomicBoolean(false);
-  protected static final AtomicBoolean THRIFT_SERVICE_STARTED = new AtomicBoolean(false);
+  protelonctelond static long startTimelon;
+  protelonctelond static elonarlybirdStatusCodelon statusCodelon;
+  protelonctelond static String statusMelonssagelon;
+  protelonctelond static final AtomicBoolelonan THRIFT_PORT_OPelonN = nelonw AtomicBoolelonan(falselon);
+  protelonctelond static final AtomicBoolelonan WARMUP_THRIFT_PORT_OPelonN = nelonw AtomicBoolelonan(falselon);
+  protelonctelond static final AtomicBoolelonan THRIFT_SelonRVICelon_STARTelonD = nelonw AtomicBoolelonan(falselon);
 
-  private static final List<EarlybirdEvent> EARLYBIRD_SERVER_EVENTS = Lists.newArrayList();
-  private static class EarlybirdEvent {
-    private final String eventName;
-    private final long timestampMillis;
-    private final long timeSinceServerStartMillis;
-    private final long durationMillis;
+  privatelon static final List<elonarlybirdelonvelonnt> elonARLYBIRD_SelonRVelonR_elonVelonNTS = Lists.nelonwArrayList();
+  privatelon static class elonarlybirdelonvelonnt {
+    privatelon final String elonvelonntNamelon;
+    privatelon final long timelonstampMillis;
+    privatelon final long timelonSincelonSelonrvelonrStartMillis;
+    privatelon final long durationMillis;
 
-    public EarlybirdEvent(String eventName, long timestampMillis) {
-      this(eventName, timestampMillis, -1);
+    public elonarlybirdelonvelonnt(String elonvelonntNamelon, long timelonstampMillis) {
+      this(elonvelonntNamelon, timelonstampMillis, -1);
     }
 
-    public EarlybirdEvent(
-        String eventName,
-        long timestampMillis,
-        long eventDurationMillis) {
-      this.eventName = eventName;
-      this.timestampMillis = timestampMillis;
-      this.timeSinceServerStartMillis = timestampMillis - startTime;
-      this.durationMillis = eventDurationMillis;
+    public elonarlybirdelonvelonnt(
+        String elonvelonntNamelon,
+        long timelonstampMillis,
+        long elonvelonntDurationMillis) {
+      this.elonvelonntNamelon = elonvelonntNamelon;
+      this.timelonstampMillis = timelonstampMillis;
+      this.timelonSincelonSelonrvelonrStartMillis = timelonstampMillis - startTimelon;
+      this.durationMillis = elonvelonntDurationMillis;
     }
 
-    public String getEventLogString() {
-      String result = String.format(
+    public String gelontelonvelonntLogString() {
+      String relonsult = String.format(
           "%s %s",
-          new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date(timestampMillis)),
-          eventName);
+          nelonw SimplelonDatelonFormat("yyyy-MM-dd HH:mm:ss.SSS").format(nelonw Datelon(timelonstampMillis)),
+          elonvelonntNamelon);
 
       if (durationMillis > 0) {
-        result += String.format(
-            ", took: %s", Duration.apply(durationMillis, TimeUnit.MILLISECONDS).toString());
+        relonsult += String.format(
+            ", took: %s", Duration.apply(durationMillis, TimelonUnit.MILLISelonCONDS).toString());
       }
 
-      result += String.format(
-          ", time since server start: %s",
-          Duration.apply(timeSinceServerStartMillis, TimeUnit.MILLISECONDS).toString()
+      relonsult += String.format(
+          ", timelon sincelon selonrvelonr start: %s",
+          Duration.apply(timelonSincelonSelonrvelonrStartMillis, TimelonUnit.MILLISelonCONDS).toString()
       );
 
-      return result;
+      relonturn relonsult;
     }
   }
 
-  private EarlybirdStatus() {
+  privatelon elonarlybirdStatus() {
   }
 
-  public static synchronized void setStartTime(long time) {
-    startTime = time;
-    LOG.info("startTime set to " + time);
+  public static synchronizelond void selontStartTimelon(long timelon) {
+    startTimelon = timelon;
+    LOG.info("startTimelon selont to " + timelon);
   }
 
-  public static synchronized void setStatus(EarlybirdStatusCode code) {
-    setStatus(code, null);
+  public static synchronizelond void selontStatus(elonarlybirdStatusCodelon codelon) {
+    selontStatus(codelon, null);
   }
 
-  public static synchronized void setStatus(EarlybirdStatusCode code, String message) {
-    statusCode = code;
-    statusMessage = message;
-    LOG.info("status set to " + code + (message != null ? " with message " + message : ""));
+  public static synchronizelond void selontStatus(elonarlybirdStatusCodelon codelon, String melonssagelon) {
+    statusCodelon = codelon;
+    statusMelonssagelon = melonssagelon;
+    LOG.info("status selont to " + codelon + (melonssagelon != null ? " with melonssagelon " + melonssagelon : ""));
   }
 
-  public static synchronized long getStartTime() {
-    return startTime;
+  public static synchronizelond long gelontStartTimelon() {
+    relonturn startTimelon;
   }
 
-  public static synchronized boolean isStarting() {
-    return statusCode == EarlybirdStatusCode.STARTING;
+  public static synchronizelond boolelonan isStarting() {
+    relonturn statusCodelon == elonarlybirdStatusCodelon.STARTING;
   }
 
-  public static synchronized boolean hasStarted() {
-    return statusCode == EarlybirdStatusCode.CURRENT;
+  public static synchronizelond boolelonan hasStartelond() {
+    relonturn statusCodelon == elonarlybirdStatusCodelon.CURRelonNT;
   }
 
-  public static boolean isThriftServiceStarted() {
-    return THRIFT_SERVICE_STARTED.get();
+  public static boolelonan isThriftSelonrvicelonStartelond() {
+    relonturn THRIFT_SelonRVICelon_STARTelonD.gelont();
   }
 
-  public static synchronized EarlybirdStatusCode getStatusCode() {
-    return statusCode;
+  public static synchronizelond elonarlybirdStatusCodelon gelontStatusCodelon() {
+    relonturn statusCodelon;
   }
 
-  public static synchronized String getStatusMessage() {
-    return (statusMessage == null ? "" : statusMessage + ", ")
-        + "warmup thrift port is " + (WARMUP_THRIFT_PORT_OPEN.get() ? "OPEN" : "CLOSED")
-        + ", production thrift port is " + (THRIFT_PORT_OPEN.get() ? "OPEN" : "CLOSED");
+  public static synchronizelond String gelontStatusMelonssagelon() {
+    relonturn (statusMelonssagelon == null ? "" : statusMelonssagelon + ", ")
+        + "warmup thrift port is " + (WARMUP_THRIFT_PORT_OPelonN.gelont() ? "OPelonN" : "CLOSelonD")
+        + ", production thrift port is " + (THRIFT_PORT_OPelonN.gelont() ? "OPelonN" : "CLOSelonD");
   }
 
-  public static synchronized void recordEarlybirdEvent(String eventName) {
-    long timeMillis = System.currentTimeMillis();
-    EARLYBIRD_SERVER_EVENTS.add(new EarlybirdEvent(eventName, timeMillis));
+  public static synchronizelond void reloncordelonarlybirdelonvelonnt(String elonvelonntNamelon) {
+    long timelonMillis = Systelonm.currelonntTimelonMillis();
+    elonARLYBIRD_SelonRVelonR_elonVelonNTS.add(nelonw elonarlybirdelonvelonnt(elonvelonntNamelon, timelonMillis));
   }
 
-  private static String getBeginEventMessage(String eventName) {
-    return "[Begin Event] " + eventName;
+  privatelon static String gelontBelonginelonvelonntMelonssagelon(String elonvelonntNamelon) {
+    relonturn "[Belongin elonvelonnt] " + elonvelonntNamelon;
   }
 
-  private static String getEndEventMessage(String eventName) {
-    return "[ End Event ] " + eventName;
-  }
-
-  /**
-   * Records the beginning of the given event.
-   *
-   * @param eventName The event name.
-   * @param startupMetric The metric that will be used to keep track of the time for this event.
-   */
-  public static synchronized void beginEvent(String eventName,
-                                             SearchIndexingMetricSet.StartupMetric startupMetric) {
-    long timeMillis = System.currentTimeMillis();
-    String eventMessage = getBeginEventMessage(eventName);
-    LOG.info(eventMessage);
-    EARLYBIRD_SERVER_EVENTS.add(new EarlybirdEvent(eventMessage, timeMillis));
-
-    startupMetric.begin();
+  privatelon static String gelontelonndelonvelonntMelonssagelon(String elonvelonntNamelon) {
+    relonturn "[ elonnd elonvelonnt ] " + elonvelonntNamelon;
   }
 
   /**
-   * Records the end of the given event.
+   * Reloncords thelon belonginning of thelon givelonn elonvelonnt.
    *
-   * @param eventName The event name.
-   * @param startupMetric The metric used to keep track of the time for this event.
+   * @param elonvelonntNamelon Thelon elonvelonnt namelon.
+   * @param startupMelontric Thelon melontric that will belon uselond to kelonelonp track of thelon timelon for this elonvelonnt.
    */
-  public static synchronized void endEvent(String eventName,
-                                           SearchIndexingMetricSet.StartupMetric startupMetric) {
-    long timeMillis = System.currentTimeMillis();
+  public static synchronizelond void belonginelonvelonnt(String elonvelonntNamelon,
+                                             SelonarchIndelonxingMelontricSelont.StartupMelontric startupMelontric) {
+    long timelonMillis = Systelonm.currelonntTimelonMillis();
+    String elonvelonntMelonssagelon = gelontBelonginelonvelonntMelonssagelon(elonvelonntNamelon);
+    LOG.info(elonvelonntMelonssagelon);
+    elonARLYBIRD_SelonRVelonR_elonVelonNTS.add(nelonw elonarlybirdelonvelonnt(elonvelonntMelonssagelon, timelonMillis));
 
-    String beginEventMessage = getBeginEventMessage(eventName);
-    Optional<EarlybirdEvent> beginEventOpt = EARLYBIRD_SERVER_EVENTS.stream()
-        .filter(event -> event.eventName.equals(beginEventMessage))
+    startupMelontric.belongin();
+  }
+
+  /**
+   * Reloncords thelon elonnd of thelon givelonn elonvelonnt.
+   *
+   * @param elonvelonntNamelon Thelon elonvelonnt namelon.
+   * @param startupMelontric Thelon melontric uselond to kelonelonp track of thelon timelon for this elonvelonnt.
+   */
+  public static synchronizelond void elonndelonvelonnt(String elonvelonntNamelon,
+                                           SelonarchIndelonxingMelontricSelont.StartupMelontric startupMelontric) {
+    long timelonMillis = Systelonm.currelonntTimelonMillis();
+
+    String belonginelonvelonntMelonssagelon = gelontBelonginelonvelonntMelonssagelon(elonvelonntNamelon);
+    Optional<elonarlybirdelonvelonnt> belonginelonvelonntOpt = elonARLYBIRD_SelonRVelonR_elonVelonNTS.strelonam()
+        .filtelonr(elonvelonnt -> elonvelonnt.elonvelonntNamelon.elonquals(belonginelonvelonntMelonssagelon))
         .findFirst();
 
-    String eventMessage = getEndEventMessage(eventName);
-    LOG.info(eventMessage);
-    EarlybirdEvent endEvent = new EarlybirdEvent(
-        eventMessage,
-        timeMillis,
-        beginEventOpt.map(e -> timeMillis - e.timestampMillis).orElse(-1L));
+    String elonvelonntMelonssagelon = gelontelonndelonvelonntMelonssagelon(elonvelonntNamelon);
+    LOG.info(elonvelonntMelonssagelon);
+    elonarlybirdelonvelonnt elonndelonvelonnt = nelonw elonarlybirdelonvelonnt(
+        elonvelonntMelonssagelon,
+        timelonMillis,
+        belonginelonvelonntOpt.map(elon -> timelonMillis - elon.timelonstampMillis).orelonlselon(-1L));
 
-    EARLYBIRD_SERVER_EVENTS.add(endEvent);
+    elonARLYBIRD_SelonRVelonR_elonVelonNTS.add(elonndelonvelonnt);
 
-    startupMetric.end(endEvent.durationMillis);
+    startupMelontric.elonnd(elonndelonvelonnt.durationMillis);
   }
 
-  public static synchronized void clearAllEvents() {
-    EARLYBIRD_SERVER_EVENTS.clear();
+  public static synchronizelond void clelonarAllelonvelonnts() {
+    elonARLYBIRD_SelonRVelonR_elonVelonNTS.clelonar();
   }
 
-  public static String getBuildSha() {
-    return BUILD_SHA;
+  public static String gelontBuildSha() {
+    relonturn BUILD_SHA;
   }
 
   /**
-   * Returns the list of all earlybird events that happened since the server started.
+   * Relonturns thelon list of all elonarlybird elonvelonnts that happelonnelond sincelon thelon selonrvelonr startelond.
    */
-  public static synchronized Iterable<String> getEarlybirdEvents() {
-    List<String> eventLog = Lists.newArrayListWithCapacity(EARLYBIRD_SERVER_EVENTS.size());
-    for (EarlybirdEvent event : EARLYBIRD_SERVER_EVENTS) {
-      eventLog.add(event.getEventLogString());
+  public static synchronizelond Itelonrablelon<String> gelontelonarlybirdelonvelonnts() {
+    List<String> elonvelonntLog = Lists.nelonwArrayListWithCapacity(elonARLYBIRD_SelonRVelonR_elonVelonNTS.sizelon());
+    for (elonarlybirdelonvelonnt elonvelonnt : elonARLYBIRD_SelonRVelonR_elonVelonNTS) {
+      elonvelonntLog.add(elonvelonnt.gelontelonvelonntLogString());
     }
-    return eventLog;
+    relonturn elonvelonntLog;
   }
 
-  private static String getBuildShaFromVars() {
-    BuildInfo buildInfo = new BuildInfo();
-    String buildSha = buildInfo.getProperties().getProperty(BuildInfo.Key.GIT_REVISION.value);
+  privatelon static String gelontBuildShaFromVars() {
+    BuildInfo buildInfo = nelonw BuildInfo();
+    String buildSha = buildInfo.gelontPropelonrtielons().gelontPropelonrty(BuildInfo.Kelony.GIT_RelonVISION.valuelon);
     if (buildSha != null) {
-      return buildSha;
-    } else {
-      return "UNKNOWN";
+      relonturn buildSha;
+    } elonlselon {
+      relonturn "UNKNOWN";
     }
   }
 }

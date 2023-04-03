@@ -1,46 +1,46 @@
-package com.twitter.product_mixer.component_library.feature.featurestorev1
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon.felonaturelonstorelonv1
 
-import com.twitter.ml.api.transform.FeatureRenameTransform
-import com.twitter.ml.featurestore.catalog.entities
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.TimelinesAggregationFrameworkFeatureGroup
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.core.feature.featurestorev1._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import scala.reflect.ClassTag
-object FeatureStoreV1QueryUserIdFeature {
-  def apply[Query <: PipelineQuery, Value](
-    feature: FSv1Feature[UserId, Value],
-    legacyName: Option[String] = None,
-    defaultValue: Option[Value] = None,
-    enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1Feature[Query, Query, _ <: EntityId, Value]
-    with FeatureStoreV1QueryFeature[Query, _ <: EntityId, Value] =
-    FeatureStoreV1QueryFeature(feature, QueryUserIdEntity, legacyName, defaultValue, enabledParam)
+import com.twittelonr.ml.api.transform.FelonaturelonRelonnamelonTransform
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.UselonrId
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntity
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntityWithId
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.TimelonlinelonsAggrelongationFramelonworkFelonaturelonGroup
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.{Felonaturelon => FSv1Felonaturelon}
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import scala.relonflelonct.ClassTag
+objelonct FelonaturelonStorelonV1QuelonryUselonrIdFelonaturelon {
+  delonf apply[Quelonry <: PipelonlinelonQuelonry, Valuelon](
+    felonaturelon: FSv1Felonaturelon[UselonrId, Valuelon],
+    lelongacyNamelon: Option[String] = Nonelon,
+    delonfaultValuelon: Option[Valuelon] = Nonelon,
+    elonnablelondParam: Option[FSParam[Boolelonan]] = Nonelon
+  ): FelonaturelonStorelonV1Felonaturelon[Quelonry, Quelonry, _ <: elonntityId, Valuelon]
+    with FelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, _ <: elonntityId, Valuelon] =
+    FelonaturelonStorelonV1QuelonryFelonaturelon(felonaturelon, QuelonryUselonrIdelonntity, lelongacyNamelon, delonfaultValuelon, elonnablelondParam)
 }
 
-object FeatureStoreV1QueryUserIdAggregateFeature {
-  def apply[Query <: PipelineQuery](
-    featureGroup: TimelinesAggregationFrameworkFeatureGroup[UserId],
-    enabledParam: Option[FSParam[Boolean]] = None,
-    keepLegacyNames: Boolean = false,
-    featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1QueryFeatureGroup[Query, _ <: EntityId] =
-    FeatureStoreV1QueryFeatureGroup(
-      featureGroup,
-      QueryUserIdEntity,
-      enabledParam,
-      keepLegacyNames,
-      featureNameTransform)((implicitly[ClassTag[UserId]]))
+objelonct FelonaturelonStorelonV1QuelonryUselonrIdAggrelongatelonFelonaturelon {
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    felonaturelonGroup: TimelonlinelonsAggrelongationFramelonworkFelonaturelonGroup[UselonrId],
+    elonnablelondParam: Option[FSParam[Boolelonan]] = Nonelon,
+    kelonelonpLelongacyNamelons: Boolelonan = falselon,
+    felonaturelonNamelonTransform: Option[FelonaturelonRelonnamelonTransform] = Nonelon
+  ): FelonaturelonStorelonV1QuelonryFelonaturelonGroup[Quelonry, _ <: elonntityId] =
+    FelonaturelonStorelonV1QuelonryFelonaturelonGroup(
+      felonaturelonGroup,
+      QuelonryUselonrIdelonntity,
+      elonnablelondParam,
+      kelonelonpLelongacyNamelons,
+      felonaturelonNamelonTransform)((implicitly[ClassTag[UselonrId]]))
 }
 
-object QueryUserIdEntity extends FeatureStoreV1QueryEntity[PipelineQuery, UserId] {
-  override val entity: Entity[UserId] = entities.core.User
+objelonct QuelonryUselonrIdelonntity elonxtelonnds FelonaturelonStorelonV1Quelonryelonntity[PipelonlinelonQuelonry, UselonrId] {
+  ovelonrridelon val elonntity: elonntity[UselonrId] = elonntitielons.corelon.Uselonr
 
-  override def entityWithId(query: PipelineQuery): EntityWithId[UserId] =
-    entity.withId(UserId(query.getUserIdLoggedOutSupport))
+  ovelonrridelon delonf elonntityWithId(quelonry: PipelonlinelonQuelonry): elonntityWithId[UselonrId] =
+    elonntity.withId(UselonrId(quelonry.gelontUselonrIdLoggelondOutSupport))
 }

@@ -1,9 +1,9 @@
-package com.twitter.product_mixer.core.model.common.presentation.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.urt
 
-import com.twitter.product_mixer.core.model.common.presentation.ItemPresentation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmPrelonselonntation
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
 
-trait BaseUrtItemPresentation extends ItemPresentation {
+trait BaselonUrtItelonmPrelonselonntation elonxtelonnds ItelonmPrelonselonntation {
 
-  def timelineItem: TimelineItem
+  delonf timelonlinelonItelonm: TimelonlinelonItelonm
 }

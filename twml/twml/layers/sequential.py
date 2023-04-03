@@ -1,160 +1,160 @@
 """
-Implementing Sequential Layer container
+Implelonmelonnting Selonquelonntial Layelonr containelonr
 """
 
 
-from .layer import Layer
+from .layelonr import Layelonr
 
-from tensorflow import keras
-from tensorflow.python.layers import base
+from telonnsorflow import kelonras
+from telonnsorflow.python.layelonrs import baselon
 
 
-class Sequential(Layer):
+class Selonquelonntial(Layelonr):
   """
-  A sequential stack of layers.
+  A selonquelonntial stack of layelonrs.
 
-  Arguments:
-      layers: list of layers to add to the model.
+  Argumelonnts:
+      layelonrs: list of layelonrs to add to thelon modelonl.
 
   Output:
-      the output of the sequential layers
+      thelon output of thelon selonquelonntial layelonrs
    """
 
-  def __init__(self, layers=None, **kwargs):
-    self._layers = []  # Stack of layers.
-    self._layer_names = []  # Stack of layers names
-    self._layer_outputs = []
-    # Add to the model any layers passed to the constructor.
-    if layers:
-      for layer in layers:
-        self.add(layer)
-    super(Sequential, self).__init__(**kwargs)
+  delonf __init__(selonlf, layelonrs=Nonelon, **kwargs):
+    selonlf._layelonrs = []  # Stack of layelonrs.
+    selonlf._layelonr_namelons = []  # Stack of layelonrs namelons
+    selonlf._layelonr_outputs = []
+    # Add to thelon modelonl any layelonrs passelond to thelon constructor.
+    if layelonrs:
+      for layelonr in layelonrs:
+        selonlf.add(layelonr)
+    supelonr(Selonquelonntial, selonlf).__init__(**kwargs)
 
-  def add(self, layer):
-    """Adds a layer instance on top of the layer stack.
+  delonf add(selonlf, layelonr):
+    """Adds a layelonr instancelon on top of thelon layelonr stack.
 
-    Arguments:
-      layer:
-        layer instance.
+    Argumelonnts:
+      layelonr:
+        layelonr instancelon.
 
-    Raises:
-      TypeError:
-        if the layer argument is not instance of base.Layer
+    Raiselons:
+      Typelonelonrror:
+        if thelon layelonr argumelonnt is not instancelon of baselon.Layelonr
     """
-    if not isinstance(layer, base.Layer) and not isinstance(layer, keras.layers.Layer):
-      raise TypeError('The added layer must be an instance of class Layer')
+    if not isinstancelon(layelonr, baselon.Layelonr) and not isinstancelon(layelonr, kelonras.layelonrs.Layelonr):
+      raiselon Typelonelonrror('Thelon addelond layelonr must belon an instancelon of class Layelonr')
 
-    if layer.name in self._layer_names:
-      raise ValueError('Layer with name %s already exists in sequential layer' % layer.name)
+    if layelonr.namelon in selonlf._layelonr_namelons:
+      raiselon Valuelonelonrror('Layelonr with namelon %s alrelonady elonxists in selonquelonntial layelonr' % layelonr.namelon)
 
-    self._layers.append(layer)
-    self._layer_names.append(layer.name)
+    selonlf._layelonrs.appelonnd(layelonr)
+    selonlf._layelonr_namelons.appelonnd(layelonr.namelon)
 
-  def pop(self):
-    """Removes the last layer in the model.
+  delonf pop(selonlf):
+    """Relonmovelons thelon last layelonr in thelon modelonl.
 
-    Raises:
-      TypeError:
-        if there are no layers in the model.
+    Raiselons:
+      Typelonelonrror:
+        if thelonrelon arelon no layelonrs in thelon modelonl.
     """
-    if not self._layers or not self._layer_names:
-      raise TypeError('There are no layers in the model.')
-    self._layers.pop()
-    self._layer_names.pop()
+    if not selonlf._layelonrs or not selonlf._layelonr_namelons:
+      raiselon Typelonelonrror('Thelonrelon arelon no layelonrs in thelon modelonl.')
+    selonlf._layelonrs.pop()
+    selonlf._layelonr_namelons.pop()
 
-  def call(self, inputs, **kwargs):  # pylint: disable=unused-argument
-    """The logic of the layer lives here.
+  delonf call(selonlf, inputs, **kwargs):  # pylint: disablelon=unuselond-argumelonnt
+    """Thelon logic of thelon layelonr livelons helonrelon.
 
-    Arguments:
+    Argumelonnts:
       inputs:
-        input tensor(s).
+        input telonnsor(s).
 
-    Returns:
-      The output of the sequential layers
+    Relonturns:
+      Thelon output of thelon selonquelonntial layelonrs
     """
-    self._layer_outputs = []
-    for layer in self._layers:
-      # don't use layer.call because you want to build individual layers
-      inputs = layer(inputs)  # overwrites the current input after it has been processed
-      self._layer_outputs.append(inputs)
-    return inputs
+    selonlf._layelonr_outputs = []
+    for layelonr in selonlf._layelonrs:
+      # don't uselon layelonr.call beloncauselon you want to build individual layelonrs
+      inputs = layelonr(inputs)  # ovelonrwritelons thelon currelonnt input aftelonr it has belonelonn procelonsselond
+      selonlf._layelonr_outputs.appelonnd(inputs)
+    relonturn inputs
 
-  @property
-  def layers(self):
-    """ Return the layers in the sequential layer """
-    return self._layers
+  @propelonrty
+  delonf layelonrs(selonlf):
+    """ Relonturn thelon layelonrs in thelon selonquelonntial layelonr """
+    relonturn selonlf._layelonrs
 
-  @property
-  def layer_names(self):
-    """ Return the layer names in the sequential layer """
-    return self._layer_names
+  @propelonrty
+  delonf layelonr_namelons(selonlf):
+    """ Relonturn thelon layelonr namelons in thelon selonquelonntial layelonr """
+    relonturn selonlf._layelonr_namelons
 
-  @property
-  def layer_outputs(self):
-    """ Return the layer outputs in the sequential layer """
-    return self._layer_outputs
+  @propelonrty
+  delonf layelonr_outputs(selonlf):
+    """ Relonturn thelon layelonr outputs in thelon selonquelonntial layelonr """
+    relonturn selonlf._layelonr_outputs
 
-  def get(self, key):
-    """Retrieves the n-th layer.
+  delonf gelont(selonlf, kelony):
+    """Relontrielonvelons thelon n-th layelonr.
 
-    Arguments:
-      key:
-        index of the layer
+    Argumelonnts:
+      kelony:
+        indelonx of thelon layelonr
 
     Output:
-      The n-th layer where n is equal to the key.
+      Thelon n-th layelonr whelonrelon n is elonqual to thelon kelony.
     """
-    return self._layers[key]
+    relonturn selonlf._layelonrs[kelony]
 
-  def get_output(self, key):
-    """Retrieves the n-th layer output.
+  delonf gelont_output(selonlf, kelony):
+    """Relontrielonvelons thelon n-th layelonr output.
 
-    Arguments:
-      key:
-        index of the layer
+    Argumelonnts:
+      kelony:
+        indelonx of thelon layelonr
 
     Output:
-      The intermediary output equivalent to the nth layer, where n is equal to the key.
+      Thelon intelonrmelondiary output elonquivalelonnt to thelon nth layelonr, whelonrelon n is elonqual to thelon kelony.
     """
-    return self._layer_outputs[key]
+    relonturn selonlf._layelonr_outputs[kelony]
 
-  def get_layer_by_name(self, name):
-    """Retrieves the layer corresponding to the name.
+  delonf gelont_layelonr_by_namelon(selonlf, namelon):
+    """Relontrielonvelons thelon layelonr correlonsponding to thelon namelon.
 
-    Arguments:
-      name:
-        name of the layer
+    Argumelonnts:
+      namelon:
+        namelon of thelon layelonr
 
     Output:
-      list of layers that have the name desired
+      list of layelonrs that havelon thelon namelon delonsirelond
     """
-    return self._layers[self._layer_names.index(name)]
+    relonturn selonlf._layelonrs[selonlf._layelonr_namelons.indelonx(namelon)]
 
-  def get_layer_output_by_name(self, name):
-    """Retrieves the layer output corresponding to the name.
+  delonf gelont_layelonr_output_by_namelon(selonlf, namelon):
+    """Relontrielonvelons thelon layelonr output correlonsponding to thelon namelon.
 
-    Arguments:
-      name:
-        name of the layer
+    Argumelonnts:
+      namelon:
+        namelon of thelon layelonr
 
     Output:
-      list of the output of the layers that have the desired name
+      list of thelon output of thelon layelonrs that havelon thelon delonsirelond namelon
     """
-    return self._layer_outputs[self._layer_names.index(name)]
+    relonturn selonlf._layelonr_outputs[selonlf._layelonr_namelons.indelonx(namelon)]
 
-  @property
-  def init(self):
-    """ returns a list of initialization ops (one per layer) """
-    return [layer.init for layer in self._layers]
+  @propelonrty
+  delonf init(selonlf):
+    """ relonturns a list of initialization ops (onelon pelonr layelonr) """
+    relonturn [layelonr.init for layelonr in selonlf._layelonrs]
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    """Computelons thelon output shapelon of thelon layelonr givelonn thelon input shapelon.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+      input_shapelon: A (possibly nelonstelond tuplelon of) `TelonnsorShapelon`.  It nelonelond not
+        belon fully delonfinelond (elon.g. thelon batch sizelon may belon unknown).
 
-    Raise NotImplementedError.
+    Raiselon NotImplelonmelonntelondelonrror.
 
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror

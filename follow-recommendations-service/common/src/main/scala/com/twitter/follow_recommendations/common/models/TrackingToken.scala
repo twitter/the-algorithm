@@ -1,62 +1,62 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.scrooge.BinaryThriftStructSerializer
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.util.Base64StringEncoder
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
+import com.twittelonr.scroogelon.BinaryThriftStructSelonrializelonr
+import com.twittelonr.suggelonsts.controllelonr_data.thriftscala.ControllelonrData
+import com.twittelonr.util.Baselon64Stringelonncodelonr
 
 /**
- * used for attribution per target-candidate pair
- * @param sessionId         trace-id of the finagle request
- * @param controllerData    64-bit encoded binary attributes of our recommendation
- * @param algorithmId       id for identifying a candidate source. maintained for backwards compatibility
+ * uselond for attribution pelonr targelont-candidatelon pair
+ * @param selonssionId         tracelon-id of thelon finaglelon relonquelonst
+ * @param controllelonrData    64-bit elonncodelond binary attributelons of our reloncommelonndation
+ * @param algorithmId       id for idelonntifying a candidatelon sourcelon. maintainelond for backwards compatibility
  */
-case class TrackingToken(
-  sessionId: Long,
+caselon class TrackingTokelonn(
+  selonssionId: Long,
   displayLocation: Option[DisplayLocation],
-  controllerData: Option[ControllerData],
+  controllelonrData: Option[ControllelonrData],
   algorithmId: Option[Int]) {
 
-  def toThrift: t.TrackingToken = {
-    Trace.id.traceId.toLong
-    t.TrackingToken(
-      sessionId = sessionId,
+  delonf toThrift: t.TrackingTokelonn = {
+    Tracelon.id.tracelonId.toLong
+    t.TrackingTokelonn(
+      selonssionId = selonssionId,
       displayLocation = displayLocation.map(_.toThrift),
-      controllerData = controllerData,
+      controllelonrData = controllelonrData,
       algoId = algorithmId
     )
   }
 
-  def toOfflineThrift: offline.TrackingToken = {
-    offline.TrackingToken(
-      sessionId = sessionId,
-      displayLocation = displayLocation.map(_.toOfflineThrift),
-      controllerData = controllerData,
+  delonf toOfflinelonThrift: offlinelon.TrackingTokelonn = {
+    offlinelon.TrackingTokelonn(
+      selonssionId = selonssionId,
+      displayLocation = displayLocation.map(_.toOfflinelonThrift),
+      controllelonrData = controllelonrData,
       algoId = algorithmId
     )
   }
 }
 
-object TrackingToken {
-  val binaryThriftSerializer = BinaryThriftStructSerializer[t.TrackingToken](t.TrackingToken)
-  def serialize(trackingToken: TrackingToken): String = {
-    Base64StringEncoder.encode(binaryThriftSerializer.toBytes(trackingToken.toThrift))
+objelonct TrackingTokelonn {
+  val binaryThriftSelonrializelonr = BinaryThriftStructSelonrializelonr[t.TrackingTokelonn](t.TrackingTokelonn)
+  delonf selonrializelon(trackingTokelonn: TrackingTokelonn): String = {
+    Baselon64Stringelonncodelonr.elonncodelon(binaryThriftSelonrializelonr.toBytelons(trackingTokelonn.toThrift))
   }
-  def deserialize(trackingTokenStr: String): TrackingToken = {
-    fromThrift(binaryThriftSerializer.fromBytes(Base64StringEncoder.decode(trackingTokenStr)))
+  delonf delonselonrializelon(trackingTokelonnStr: String): TrackingTokelonn = {
+    fromThrift(binaryThriftSelonrializelonr.fromBytelons(Baselon64Stringelonncodelonr.deloncodelon(trackingTokelonnStr)))
   }
-  def fromThrift(token: t.TrackingToken): TrackingToken = {
-    TrackingToken(
-      sessionId = token.sessionId,
-      displayLocation = token.displayLocation.map(DisplayLocation.fromThrift),
-      controllerData = token.controllerData,
-      algorithmId = token.algoId
+  delonf fromThrift(tokelonn: t.TrackingTokelonn): TrackingTokelonn = {
+    TrackingTokelonn(
+      selonssionId = tokelonn.selonssionId,
+      displayLocation = tokelonn.displayLocation.map(DisplayLocation.fromThrift),
+      controllelonrData = tokelonn.controllelonrData,
+      algorithmId = tokelonn.algoId
     )
   }
 }
 
-trait HasTrackingToken {
-  def trackingToken: Option[TrackingToken]
+trait HasTrackingTokelonn {
+  delonf trackingTokelonn: Option[TrackingTokelonn]
 }

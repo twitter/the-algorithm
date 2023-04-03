@@ -1,43 +1,43 @@
-package com.twitter.product_mixer.core.pipeline.step.pipeline_selector
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.pipelonlinelon_selonlelonctor
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.state.HasQuery
-import com.twitter.product_mixer.core.pipeline.step.Step
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.ExecutorResult
-import com.twitter.stitch.Arrow
-import javax.inject.Inject
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon.HasQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.stelonp.Stelonp
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutorRelonsult
+import com.twittelonr.stitch.Arrow
+import javax.injelonct.Injelonct
 
 /**
- * Pipeline Selection step to decide which pipeline to execute. This step doesn't update state, as
- * the selected pipeline identifier is added to the executor results list map for later retrieval
+ * Pipelonlinelon Selonlelonction stelonp to deloncidelon which pipelonlinelon to elonxeloncutelon. This stelonp doelonsn't updatelon statelon, as
+ * thelon selonlelonctelond pipelonlinelon idelonntifielonr is addelond to thelon elonxeloncutor relonsults list map for latelonr relontrielonval
  *
- * @tparam Query Pipeline query model
- * @tparam State The pipeline state domain model.
+ * @tparam Quelonry Pipelonlinelon quelonry modelonl
+ * @tparam Statelon Thelon pipelonlinelon statelon domain modelonl.
  */
-case class PipelineSelectorStep[Query <: PipelineQuery, State <: HasQuery[Query, State]] @Inject() (
-) extends Step[State, Query => ComponentIdentifier, Query, PipelineSelectorResult] {
-  override def isEmpty(config: Query => ComponentIdentifier): Boolean = false
+caselon class PipelonlinelonSelonlelonctorStelonp[Quelonry <: PipelonlinelonQuelonry, Statelon <: HasQuelonry[Quelonry, Statelon]] @Injelonct() (
+) elonxtelonnds Stelonp[Statelon, Quelonry => ComponelonntIdelonntifielonr, Quelonry, PipelonlinelonSelonlelonctorRelonsult] {
+  ovelonrridelon delonf iselonmpty(config: Quelonry => ComponelonntIdelonntifielonr): Boolelonan = falselon
 
-  override def adaptInput(
-    state: State,
-    config: Query => ComponentIdentifier
-  ): Query = state.query
+  ovelonrridelon delonf adaptInput(
+    statelon: Statelon,
+    config: Quelonry => ComponelonntIdelonntifielonr
+  ): Quelonry = statelon.quelonry
 
-  override def arrow(
-    config: Query => ComponentIdentifier,
-    context: Executor.Context
-  ): Arrow[Query, PipelineSelectorResult] = Arrow.map { query: Query =>
-    PipelineSelectorResult(config(query))
+  ovelonrridelon delonf arrow(
+    config: Quelonry => ComponelonntIdelonntifielonr,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Quelonry, PipelonlinelonSelonlelonctorRelonsult] = Arrow.map { quelonry: Quelonry =>
+    PipelonlinelonSelonlelonctorRelonsult(config(quelonry))
   }
 
-  // Noop since we keep the identifier in the executor results
-  override def updateState(
-    state: State,
-    executorResult: PipelineSelectorResult,
-    config: Query => ComponentIdentifier
-  ): State = state
+  // Noop sincelon welon kelonelonp thelon idelonntifielonr in thelon elonxeloncutor relonsults
+  ovelonrridelon delonf updatelonStatelon(
+    statelon: Statelon,
+    elonxeloncutorRelonsult: PipelonlinelonSelonlelonctorRelonsult,
+    config: Quelonry => ComponelonntIdelonntifielonr
+  ): Statelon = statelon
 }
 
-case class PipelineSelectorResult(pipelineIdentifier: ComponentIdentifier) extends ExecutorResult
+caselon class PipelonlinelonSelonlelonctorRelonsult(pipelonlinelonIdelonntifielonr: ComponelonntIdelonntifielonr) elonxtelonnds elonxeloncutorRelonsult

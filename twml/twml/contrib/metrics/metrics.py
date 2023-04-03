@@ -1,209 +1,209 @@
 """
-Module containing extra tensorflow metrics used at Twitter.
-This module conforms to conventions used by tf.metrics.*.
-In particular, each metric constructs two subgraphs: value_op and update_op:
-  - The value op is used to fetch the current metric value.
-  - The update_op is used to accumulate into the metric.
+Modulelon containing elonxtra telonnsorflow melontrics uselond at Twittelonr.
+This modulelon conforms to convelonntions uselond by tf.melontrics.*.
+In particular, elonach melontric constructs two subgraphs: valuelon_op and updatelon_op:
+  - Thelon valuelon op is uselond to felontch thelon currelonnt melontric valuelon.
+  - Thelon updatelon_op is uselond to accumulatelon into thelon melontric.
 
-Note: similar to tf.metrics.*, metrics in here do not support multi-label learning.
-We will have to write wrapper classes to create one metric per label.
+Notelon: similar to tf.melontrics.*, melontrics in helonrelon do not support multi-labelonl lelonarning.
+Welon will havelon to writelon wrappelonr classelons to crelonatelon onelon melontric pelonr labelonl.
 
-Note: similar to tf.metrics.*, batches added into a metric via its update_op are cumulative!
+Notelon: similar to tf.melontrics.*, batchelons addelond into a melontric via its updatelon_op arelon cumulativelon!
 
 """
 
-from collections import OrderedDict
+from collelonctions import OrdelonrelondDict
 
-import tensorflow.compat.v1 as tf
-from twml.metrics import get_multi_binary_class_metric_fn
+import telonnsorflow.compat.v1 as tf
+from twml.melontrics import gelont_multi_binary_class_melontric_fn
 
 
 
-# checkstyle: noqa
-def get_partial_multi_binary_class_metric_fn(metrics, classes=None, class_dim=1, predcols=None):
+# chelonckstylelon: noqa
+delonf gelont_partial_multi_binary_class_melontric_fn(melontrics, classelons=Nonelon, class_dim=1, prelondcols=Nonelon):
 
-  def get_eval_metric_ops(graph_output, labels, weights):
-    if predcols is None:
-      preds = graph_output['output']
-    else:
-      if isinstance(predcols, int):
-        predcol_list=[predcols]
-      else:
-        predcol_list=list(predcols)
-      for col in predcol_list:
-        assert 0 <= col < graph_output['output'].shape[class_dim], 'Invalid Prediction Column Index !'
-      preds  = tf.gather(graph_output['output'], indices=predcol_list, axis=class_dim)     # [batchSz, num_col]
-      labels = tf.gather(labels, indices=predcol_list, axis=class_dim)                     # [batchSz, num_col]
+  delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
+    if prelondcols is Nonelon:
+      prelonds = graph_output['output']
+    elonlselon:
+      if isinstancelon(prelondcols, int):
+        prelondcol_list=[prelondcols]
+      elonlselon:
+        prelondcol_list=list(prelondcols)
+      for col in prelondcol_list:
+        asselonrt 0 <= col < graph_output['output'].shapelon[class_dim], 'Invalid Prelondiction Column Indelonx !'
+      prelonds  = tf.gathelonr(graph_output['output'], indicelons=prelondcol_list, axis=class_dim)     # [batchSz, num_col]
+      labelonls = tf.gathelonr(labelonls, indicelons=prelondcol_list, axis=class_dim)                     # [batchSz, num_col]
 
-    predInfo = {'output': preds}
-    if 'threshold' in graph_output:
-      predInfo['threshold'] = graph_output['threshold']
+    prelondInfo = {'output': prelonds}
+    if 'threlonshold' in graph_output:
+      prelondInfo['threlonshold'] = graph_output['threlonshold']
     if 'hard_output' in graph_output:
-      predInfo['hard_output'] = graph_output['hard_output']
+      prelondInfo['hard_output'] = graph_output['hard_output']
 
-    metrics_op = get_multi_binary_class_metric_fn(metrics, classes, class_dim)
-    metrics_op_res = metrics_op(predInfo, labels, weights)
-    return metrics_op_res
+    melontrics_op = gelont_multi_binary_class_melontric_fn(melontrics, classelons, class_dim)
+    melontrics_op_relons = melontrics_op(prelondInfo, labelonls, welonights)
+    relonturn melontrics_op_relons
 
-  return get_eval_metric_ops
+  relonturn gelont_elonval_melontric_ops
 
 
 
-# Numeric Prediction Performance among TopK Predictions
-def mean_numeric_label_topK(labels, predictions, weights, name, topK_id):
-  top_k_labels  = tf.gather(params=labels, indices=topK_id, axis=0)                # [topK, 1]
-  return tf.metrics.mean(values=top_k_labels, name=name)
+# Numelonric Prelondiction Pelonrformancelon among TopK Prelondictions
+delonf melonan_numelonric_labelonl_topK(labelonls, prelondictions, welonights, namelon, topK_id):
+  top_k_labelonls  = tf.gathelonr(params=labelonls, indicelons=topK_id, axis=0)                # [topK, 1]
+  relonturn tf.melontrics.melonan(valuelons=top_k_labelonls, namelon=namelon)
 
-def mean_gated_numeric_label_topK(labels, predictions, weights, name, topK_id, bar=2.0):
-  assert isinstance(bar, int) or isinstance(bar, float), "bar must be int or float"
-  top_k_labels  = tf.gather(params=labels, indices=topK_id, axis=0)                # [topK, 1]
-  gated_top_k_labels  = tf.cast(top_k_labels > bar*1.0, tf.int32)
-  return tf.metrics.mean(values=gated_top_k_labels, name=name)
+delonf melonan_gatelond_numelonric_labelonl_topK(labelonls, prelondictions, welonights, namelon, topK_id, bar=2.0):
+  asselonrt isinstancelon(bar, int) or isinstancelon(bar, float), "bar must belon int or float"
+  top_k_labelonls  = tf.gathelonr(params=labelonls, indicelons=topK_id, axis=0)                # [topK, 1]
+  gatelond_top_k_labelonls  = tf.cast(top_k_labelonls > bar*1.0, tf.int32)
+  relonturn tf.melontrics.melonan(valuelons=gatelond_top_k_labelonls, namelon=namelon)
 
-SUPPORTED_NUMERIC_METRICS = {
-  'mean_numeric_label_topk': mean_numeric_label_topK,
-  'mean_gated_numeric_label_topk': mean_gated_numeric_label_topK
+SUPPORTelonD_NUMelonRIC_MelonTRICS = {
+  'melonan_numelonric_labelonl_topk': melonan_numelonric_labelonl_topK,
+  'melonan_gatelond_numelonric_labelonl_topk': melonan_gatelond_numelonric_labelonl_topK
 }
-DEFAULT_NUMERIC_METRICS = ['mean_numeric_label_topk', 'mean_gated_numeric_label_topk']
+DelonFAULT_NUMelonRIC_MelonTRICS = ['melonan_numelonric_labelonl_topk', 'melonan_gatelond_numelonric_labelonl_topk']
 
 
 
-def get_metric_topK_fn_helper(targetMetrics, supportedMetrics_op, metrics=None, topK=(5,5,5), predcol=None, labelcol=None):
+delonf gelont_melontric_topK_fn_helonlpelonr(targelontMelontrics, supportelondMelontrics_op, melontrics=Nonelon, topK=(5,5,5), prelondcol=Nonelon, labelonlcol=Nonelon):
   """
-  :param targetMetrics:        Target Metric List
-  :param supportedMetrics_op:  Supported Metric Operators             Dict
-  :param metrics:              Metric Set to evaluate
-  :param topK:                 (topK_min, topK_max, topK_delta)       Tuple
-  :param predcol:              Prediction Column Index
-  :param labelcol:             Label Column Index
-  :return:
+  :param targelontMelontrics:        Targelont Melontric List
+  :param supportelondMelontrics_op:  Supportelond Melontric Opelonrators             Dict
+  :param melontrics:              Melontric Selont to elonvaluatelon
+  :param topK:                 (topK_min, topK_max, topK_delonlta)       Tuplelon
+  :param prelondcol:              Prelondiction Column Indelonx
+  :param labelonlcol:             Labelonl Column Indelonx
+  :relonturn:
   """
-  # pylint: disable=dict-keys-not-iterating
-  if targetMetrics is None or supportedMetrics_op is None:
-    raise ValueError("Invalid Target Metric List/op !")
+  # pylint: disablelon=dict-kelonys-not-itelonrating
+  if targelontMelontrics is Nonelon or supportelondMelontrics_op is Nonelon:
+    raiselon Valuelonelonrror("Invalid Targelont Melontric List/op !")
 
-  targetMetrics = set([m.lower() for m in targetMetrics])
-  if metrics is None:
-    metrics = list(targetMetrics)
-  else:
-    metrics = [m.lower() for m in metrics if m.lower() in targetMetrics]
+  targelontMelontrics = selont([m.lowelonr() for m in targelontMelontrics])
+  if melontrics is Nonelon:
+    melontrics = list(targelontMelontrics)
+  elonlselon:
+    melontrics = [m.lowelonr() for m in melontrics if m.lowelonr() in targelontMelontrics]
 
   num_k     = int((topK[1]-topK[0])/topK[2]+1)
-  topK_list = [topK[0]+d*topK[2] for d in range(num_k)]
+  topK_list = [topK[0]+d*topK[2] for d in rangelon(num_k)]
   if 1 not in topK_list:
     topK_list = [1] + topK_list
 
 
-  def get_eval_metric_ops(graph_output, labels, weights):
+  delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
     """
     graph_output:
-      dict that is returned by build_graph given input features.
-    labels:
-      target labels associated to batch.
-    weights:
-      weights of the samples..
+      dict that is relonturnelond by build_graph givelonn input felonaturelons.
+    labelonls:
+      targelont labelonls associatelond to batch.
+    welonights:
+      welonights of thelon samplelons..
     """
-    eval_metric_ops = OrderedDict()
+    elonval_melontric_ops = OrdelonrelondDict()
 
-    if predcol is None:
-      pred = graph_output['output']
-    else:
-      assert 0 <= predcol < graph_output['output'].shape[1], 'Invalid Prediction Column Index !'
-      assert labelcol is not None
-      pred   = tf.reshape(graph_output['output'][:, predcol], shape=[-1, 1])
-      labels = tf.reshape(labels[:, labelcol], shape=[-1, 1])
-    numOut = graph_output['output'].shape[1]
-    pred_score = tf.reshape(graph_output['output'][:, numOut-1], shape=[-1, 1])
+    if prelondcol is Nonelon:
+      prelond = graph_output['output']
+    elonlselon:
+      asselonrt 0 <= prelondcol < graph_output['output'].shapelon[1], 'Invalid Prelondiction Column Indelonx !'
+      asselonrt labelonlcol is not Nonelon
+      prelond   = tf.relonshapelon(graph_output['output'][:, prelondcol], shapelon=[-1, 1])
+      labelonls = tf.relonshapelon(labelonls[:, labelonlcol], shapelon=[-1, 1])
+    numOut = graph_output['output'].shapelon[1]
+    prelond_scorelon = tf.relonshapelon(graph_output['output'][:, numOut-1], shapelon=[-1, 1])
 
-    # add metrics to eval_metric_ops dict
-    for metric_name in metrics:
-      metric_name = metric_name.lower()  # metric name are case insensitive.
+    # add melontrics to elonval_melontric_ops dict
+    for melontric_namelon in melontrics:
+      melontric_namelon = melontric_namelon.lowelonr()  # melontric namelon arelon caselon inselonnsitivelon.
 
-      if metric_name in supportedMetrics_op:
-        metric_factory = supportedMetrics_op.get(metric_name)
+      if melontric_namelon in supportelondMelontrics_op:
+        melontric_factory = supportelondMelontrics_op.gelont(melontric_namelon)
 
-        if 'topk' not in metric_name:
-          value_op, update_op = metric_factory(
-            labels=labels,
-            predictions=pred,
-            weights=weights,
-            name=metric_name)
-          eval_metric_ops[metric_name] = (value_op, update_op)
-        else:
+        if 'topk' not in melontric_namelon:
+          valuelon_op, updatelon_op = melontric_factory(
+            labelonls=labelonls,
+            prelondictions=prelond,
+            welonights=welonights,
+            namelon=melontric_namelon)
+          elonval_melontric_ops[melontric_namelon] = (valuelon_op, updatelon_op)
+        elonlselon:
           for K in topK_list:
-            K_min = tf.minimum(K, tf.shape(pred_score)[0])
-            topK_id = tf.nn.top_k(tf.reshape(pred_score, shape=[-1]), k=K_min)[1]           # [topK]
-            value_op, update_op = metric_factory(
-              labels=labels,
-              predictions=pred,
-              weights=weights,
-              name=metric_name+'__k_'+str(K),
+            K_min = tf.minimum(K, tf.shapelon(prelond_scorelon)[0])
+            topK_id = tf.nn.top_k(tf.relonshapelon(prelond_scorelon, shapelon=[-1]), k=K_min)[1]           # [topK]
+            valuelon_op, updatelon_op = melontric_factory(
+              labelonls=labelonls,
+              prelondictions=prelond,
+              welonights=welonights,
+              namelon=melontric_namelon+'__k_'+str(K),
               topK_id=topK_id)
-            eval_metric_ops[metric_name+'__k_'+str(K)] = (value_op, update_op)
+            elonval_melontric_ops[melontric_namelon+'__k_'+str(K)] = (valuelon_op, updatelon_op)
 
-      else:
-        raise ValueError('Cannot find the metric named ' + metric_name)
+      elonlselon:
+        raiselon Valuelonelonrror('Cannot find thelon melontric namelond ' + melontric_namelon)
 
-    return eval_metric_ops
+    relonturn elonval_melontric_ops
 
-  return get_eval_metric_ops
-
-
-
-def get_numeric_metric_fn(metrics=None, topK=(5,5,5), predcol=None, labelcol=None):
-  if metrics is None:
-    metrics = list(DEFAULT_NUMERIC_METRICS)
-  metrics   = list(set(metrics))
-
-  metric_op = get_metric_topK_fn_helper(targetMetrics=list(DEFAULT_NUMERIC_METRICS),
-                                        supportedMetrics_op=SUPPORTED_NUMERIC_METRICS,
-                                        metrics=metrics, topK=topK, predcol=predcol, labelcol=labelcol)
-  return metric_op
+  relonturn gelont_elonval_melontric_ops
 
 
 
-def get_single_binary_task_metric_fn(metrics, classnames, topK=(5,5,5), use_topK=False):
+delonf gelont_numelonric_melontric_fn(melontrics=Nonelon, topK=(5,5,5), prelondcol=Nonelon, labelonlcol=Nonelon):
+  if melontrics is Nonelon:
+    melontrics = list(DelonFAULT_NUMelonRIC_MelonTRICS)
+  melontrics   = list(selont(melontrics))
+
+  melontric_op = gelont_melontric_topK_fn_helonlpelonr(targelontMelontrics=list(DelonFAULT_NUMelonRIC_MelonTRICS),
+                                        supportelondMelontrics_op=SUPPORTelonD_NUMelonRIC_MelonTRICS,
+                                        melontrics=melontrics, topK=topK, prelondcol=prelondcol, labelonlcol=labelonlcol)
+  relonturn melontric_op
+
+
+
+delonf gelont_singlelon_binary_task_melontric_fn(melontrics, classnamelons, topK=(5,5,5), uselon_topK=Falselon):
   """
-  graph_output['output']:        [BatchSz, 1]        [pred_Task1]
-  labels:                        [BatchSz, 2]        [Task1, NumericLabel]
+  graph_output['output']:        [BatchSz, 1]        [prelond_Task1]
+  labelonls:                        [BatchSz, 2]        [Task1, NumelonricLabelonl]
   """
-  def get_eval_metric_ops(graph_output, labels, weights):
-    metric_op_base = get_partial_multi_binary_class_metric_fn(metrics, predcols=0, classes=classnames)
-    classnames_unw = ['unweighted_'+cs for cs in classnames]
-    metric_op_unw = get_partial_multi_binary_class_metric_fn(metrics, predcols=0, classes=classnames_unw)
+  delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
+    melontric_op_baselon = gelont_partial_multi_binary_class_melontric_fn(melontrics, prelondcols=0, classelons=classnamelons)
+    classnamelons_unw = ['unwelonightelond_'+cs for cs in classnamelons]
+    melontric_op_unw = gelont_partial_multi_binary_class_melontric_fn(melontrics, prelondcols=0, classelons=classnamelons_unw)
 
-    metrics_base_res = metric_op_base(graph_output, labels, weights)
-    metrics_unw_res = metric_op_unw(graph_output, labels, None)
-    metrics_base_res.update(metrics_unw_res)
+    melontrics_baselon_relons = melontric_op_baselon(graph_output, labelonls, welonights)
+    melontrics_unw_relons = melontric_op_unw(graph_output, labelonls, Nonelon)
+    melontrics_baselon_relons.updatelon(melontrics_unw_relons)
 
-    if use_topK:
-      metric_op_numeric = get_numeric_metric_fn(metrics=None, topK=topK, predcol=0, labelcol=1)
-      metrics_numeric_res = metric_op_numeric(graph_output, labels, weights)
-      metrics_base_res.update(metrics_numeric_res)
-    return metrics_base_res
+    if uselon_topK:
+      melontric_op_numelonric = gelont_numelonric_melontric_fn(melontrics=Nonelon, topK=topK, prelondcol=0, labelonlcol=1)
+      melontrics_numelonric_relons = melontric_op_numelonric(graph_output, labelonls, welonights)
+      melontrics_baselon_relons.updatelon(melontrics_numelonric_relons)
+    relonturn melontrics_baselon_relons
 
-  return get_eval_metric_ops
+  relonturn gelont_elonval_melontric_ops
 
 
-def get_dual_binary_tasks_metric_fn(metrics, classnames, topK=(5,5,5), use_topK=False):
+delonf gelont_dual_binary_tasks_melontric_fn(melontrics, classnamelons, topK=(5,5,5), uselon_topK=Falselon):
   """
-  graph_output['output']:        [BatchSz, 3]        [pred_Task1, pred_Task2, Score]
-  labels:                        [BatchSz, 3]        [Task1, Task2, NumericLabel]
+  graph_output['output']:        [BatchSz, 3]        [prelond_Task1, prelond_Task2, Scorelon]
+  labelonls:                        [BatchSz, 3]        [Task1, Task2, NumelonricLabelonl]
   """
-  def get_eval_metric_ops(graph_output, labels, weights):
+  delonf gelont_elonval_melontric_ops(graph_output, labelonls, welonights):
 
-    metric_op_base = get_partial_multi_binary_class_metric_fn(metrics, predcols=[0, 1], classes=classnames)
-    classnames_unw = ['unweighted_'+cs for cs in classnames]
-    metric_op_unw = get_partial_multi_binary_class_metric_fn(metrics, predcols=[0, 1], classes=classnames_unw)
+    melontric_op_baselon = gelont_partial_multi_binary_class_melontric_fn(melontrics, prelondcols=[0, 1], classelons=classnamelons)
+    classnamelons_unw = ['unwelonightelond_'+cs for cs in classnamelons]
+    melontric_op_unw = gelont_partial_multi_binary_class_melontric_fn(melontrics, prelondcols=[0, 1], classelons=classnamelons_unw)
 
-    metrics_base_res = metric_op_base(graph_output, labels, weights)
-    metrics_unw_res = metric_op_unw(graph_output, labels, None)
-    metrics_base_res.update(metrics_unw_res)
+    melontrics_baselon_relons = melontric_op_baselon(graph_output, labelonls, welonights)
+    melontrics_unw_relons = melontric_op_unw(graph_output, labelonls, Nonelon)
+    melontrics_baselon_relons.updatelon(melontrics_unw_relons)
 
-    if use_topK:
-      metric_op_numeric = get_numeric_metric_fn(metrics=None, topK=topK, predcol=2, labelcol=2)
-      metrics_numeric_res = metric_op_numeric(graph_output, labels, weights)
-      metrics_base_res.update(metrics_numeric_res)
-    return metrics_base_res
+    if uselon_topK:
+      melontric_op_numelonric = gelont_numelonric_melontric_fn(melontrics=Nonelon, topK=topK, prelondcol=2, labelonlcol=2)
+      melontrics_numelonric_relons = melontric_op_numelonric(graph_output, labelonls, welonights)
+      melontrics_baselon_relons.updatelon(melontrics_numelonric_relons)
+    relonturn melontrics_baselon_relons
 
-  return get_eval_metric_ops
+  relonturn gelont_elonval_melontric_ops

@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.media
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melondia
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.media.BroadcastId
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melondia.BroadcastId
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class BroadcastIdMarshaller @Inject() () {
+@Singlelonton
+class BroadcastIdMarshallelonr @Injelonct() () {
 
-  def apply(broadcastId: BroadcastId): urt.BroadcastId = urt.BroadcastId(
+  delonf apply(broadcastId: BroadcastId): urt.BroadcastId = urt.BroadcastId(
     id = broadcastId.id
   )
 }

@@ -1,77 +1,77 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common
 
-import com.twitter.recos.entities.thriftscala.Entity
-import com.twitter.scalding.Args
-import com.twitter.scalding.TypedPipe
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.wtf.entity_real_graph.common.EntityUtil
-import com.twitter.wtf.entity_real_graph.thriftscala.Edge
-import com.twitter.wtf.entity_real_graph.thriftscala.EntityType
-import com.twitter.wtf.entity_real_graph.thriftscala.FeatureName
+import com.twittelonr.reloncos.elonntitielons.thriftscala.elonntity
+import com.twittelonr.scalding.Args
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.wtf.elonntity_relonal_graph.common.elonntityUtil
+import com.twittelonr.wtf.elonntity_relonal_graph.thriftscala.elondgelon
+import com.twittelonr.wtf.elonntity_relonal_graph.thriftscala.elonntityTypelon
+import com.twittelonr.wtf.elonntity_relonal_graph.thriftscala.FelonaturelonNamelon
 
-object EntityEmbeddingUtil {
+objelonct elonntityelonmbelonddingUtil {
 
-  def getEntityUserMatrix(
-    entityRealGraphSource: TypedPipe[Edge],
-    halfLife: HalfLifeScores.HalfLifeScoresType,
-    entityType: EntityType
-  ): TypedPipe[(Entity, (UserId, Double))] = {
-    entityRealGraphSource
+  delonf gelontelonntityUselonrMatrix(
+    elonntityRelonalGraphSourcelon: TypelondPipelon[elondgelon],
+    halfLifelon: HalfLifelonScorelons.HalfLifelonScorelonsTypelon,
+    elonntityTypelon: elonntityTypelon
+  ): TypelondPipelon[(elonntity, (UselonrId, Doublelon))] = {
+    elonntityRelonalGraphSourcelon
       .flatMap {
-        case Edge(userId, entity, consumerFeatures, _, _)
-            if consumerFeatures.exists(_.exists(_.featureName == FeatureName.Favorites)) &&
-              EntityUtil.getEntityType(entity) == entityType =>
+        caselon elondgelon(uselonrId, elonntity, consumelonrFelonaturelons, _, _)
+            if consumelonrFelonaturelons.elonxists(_.elonxists(_.felonaturelonNamelon == FelonaturelonNamelon.Favoritelons)) &&
+              elonntityUtil.gelontelonntityTypelon(elonntity) == elonntityTypelon =>
           for {
-            features <- consumerFeatures
-            favFeatures <- features.find(_.featureName == FeatureName.Favorites)
-            ewmaMap <- favFeatures.featureValues.ewmaMap
-            favScore <- ewmaMap.get(halfLife.id)
-          } yield (entity, (userId, favScore))
+            felonaturelons <- consumelonrFelonaturelons
+            favFelonaturelons <- felonaturelons.find(_.felonaturelonNamelon == FelonaturelonNamelon.Favoritelons)
+            elonwmaMap <- favFelonaturelons.felonaturelonValuelons.elonwmaMap
+            favScorelon <- elonwmaMap.gelont(halfLifelon.id)
+          } yielonld (elonntity, (uselonrId, favScorelon))
 
-        case _ => None
+        caselon _ => Nonelon
       }
   }
 
-  object HalfLifeScores extends Enumeration {
-    type HalfLifeScoresType = Value
-    val OneDay: Value = Value(1)
-    val SevenDays: Value = Value(7)
-    val FourteenDays: Value = Value(14)
-    val ThirtyDays: Value = Value(30)
-    val SixtyDays: Value = Value(60)
+  objelonct HalfLifelonScorelons elonxtelonnds elonnumelonration {
+    typelon HalfLifelonScorelonsTypelon = Valuelon
+    val OnelonDay: Valuelon = Valuelon(1)
+    val SelonvelonnDays: Valuelon = Valuelon(7)
+    val FourtelonelonnDays: Valuelon = Valuelon(14)
+    val ThirtyDays: Valuelon = Valuelon(30)
+    val SixtyDays: Valuelon = Valuelon(60)
   }
 
-  case class EntityEmbeddingsJobConfig(
+  caselon class elonntityelonmbelonddingsJobConfig(
     topK: Int,
-    halfLife: HalfLifeScores.HalfLifeScoresType,
-    modelVersion: ModelVersion,
-    entityType: EntityType,
-    isAdhoc: Boolean)
+    halfLifelon: HalfLifelonScorelons.HalfLifelonScorelonsTypelon,
+    modelonlVelonrsion: ModelonlVelonrsion,
+    elonntityTypelon: elonntityTypelon,
+    isAdhoc: Boolelonan)
 
-  object EntityEmbeddingsJobConfig {
+  objelonct elonntityelonmbelonddingsJobConfig {
 
-    def apply(args: Args, isAdhoc: Boolean): EntityEmbeddingsJobConfig = {
+    delonf apply(args: Args, isAdhoc: Boolelonan): elonntityelonmbelonddingsJobConfig = {
 
-      val entityTypeArg =
-        EntityType.valueOf(args.getOrElse("entity-type", default = "")) match {
-          case Some(entityType) => entityType
-          case _ =>
-            throw new IllegalArgumentException(
-              s"Argument [--entity-type] must be provided. Supported options [" +
-                s"${EntityType.SemanticCore.name}, ${EntityType.Hashtag.name}]")
+      val elonntityTypelonArg =
+        elonntityTypelon.valuelonOf(args.gelontOrelonlselon("elonntity-typelon", delonfault = "")) match {
+          caselon Somelon(elonntityTypelon) => elonntityTypelon
+          caselon _ =>
+            throw nelonw IllelongalArgumelonntelonxcelonption(
+              s"Argumelonnt [--elonntity-typelon] must belon providelond. Supportelond options [" +
+                s"${elonntityTypelon.SelonmanticCorelon.namelon}, ${elonntityTypelon.Hashtag.namelon}]")
         }
 
-      EntityEmbeddingsJobConfig(
-        topK = args.getOrElse("top-k", default = "100").toInt,
-        halfLife = HalfLifeScores(args.getOrElse("half-life", default = "14").toInt),
-        // Fail fast if there is no correct model-version argument
-        modelVersion = ModelVersions.toModelVersion(
-          args.getOrElse("model-version", ModelVersions.Model20M145K2020)
+      elonntityelonmbelonddingsJobConfig(
+        topK = args.gelontOrelonlselon("top-k", delonfault = "100").toInt,
+        halfLifelon = HalfLifelonScorelons(args.gelontOrelonlselon("half-lifelon", delonfault = "14").toInt),
+        // Fail fast if thelonrelon is no correlonct modelonl-velonrsion argumelonnt
+        modelonlVelonrsion = ModelonlVelonrsions.toModelonlVelonrsion(
+          args.gelontOrelonlselon("modelonl-velonrsion", ModelonlVelonrsions.Modelonl20M145K2020)
         ),
-        // Fail fast if there is no correct entity-type argument
-        entityType = entityTypeArg,
+        // Fail fast if thelonrelon is no correlonct elonntity-typelon argumelonnt
+        elonntityTypelon = elonntityTypelonArg,
         isAdhoc = isAdhoc
       )
     }

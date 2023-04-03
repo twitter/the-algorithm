@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.graphql.contextual_ref
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.graphql.contelonxtual_relonf
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.OuterTweetContext
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.QuoteTweetId
-import com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref.RetweetId
-import com.twitter.strato.graphql.contextual_refs.{thriftscala => thrift}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf.OutelonrTwelonelontContelonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf.QuotelonTwelonelontId
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf.RelontwelonelontId
+import com.twittelonr.strato.graphql.contelonxtual_relonfs.{thriftscala => thrift}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class OuterTweetContextMarshaller @Inject() () {
+@Singlelonton
+class OutelonrTwelonelontContelonxtMarshallelonr @Injelonct() () {
 
-  def apply(outerTweetContext: OuterTweetContext): thrift.OuterTweetContext =
-    outerTweetContext match {
-      case QuoteTweetId(id) => thrift.OuterTweetContext.QuoteTweetId(id)
-      case RetweetId(id) => thrift.OuterTweetContext.RetweetId(id)
+  delonf apply(outelonrTwelonelontContelonxt: OutelonrTwelonelontContelonxt): thrift.OutelonrTwelonelontContelonxt =
+    outelonrTwelonelontContelonxt match {
+      caselon QuotelonTwelonelontId(id) => thrift.OutelonrTwelonelontContelonxt.QuotelonTwelonelontId(id)
+      caselon RelontwelonelontId(id) => thrift.OutelonrTwelonelontContelonxt.RelontwelonelontId(id)
     }
 }

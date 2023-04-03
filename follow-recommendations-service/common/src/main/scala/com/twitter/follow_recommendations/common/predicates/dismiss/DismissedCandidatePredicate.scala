@@ -1,32 +1,32 @@
-package com.twitter.follow_recommendations.common.predicates.dismiss
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.dismiss
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.FilterReason.DismissedId
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDismissedUserIds
-import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason.DismisselondId
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDismisselondUselonrIds
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Singlelonton
 
-@Singleton
-class DismissedCandidatePredicate extends Predicate[(HasDismissedUserIds, CandidateUser)] {
+@Singlelonton
+class DismisselondCandidatelonPrelondicatelon elonxtelonnds Prelondicatelon[(HasDismisselondUselonrIds, CandidatelonUselonr)] {
 
-  override def apply(pair: (HasDismissedUserIds, CandidateUser)): Stitch[PredicateResult] = {
+  ovelonrridelon delonf apply(pair: (HasDismisselondUselonrIds, CandidatelonUselonr)): Stitch[PrelondicatelonRelonsult] = {
 
-    val (targetUser, candidate) = pair
-    targetUser.dismissedUserIds
-      .map { dismissedUserIds =>
-        if (!dismissedUserIds.contains(candidate.id)) {
-          DismissedCandidatePredicate.ValidStitch
-        } else {
-          DismissedCandidatePredicate.DismissedStitch
+    val (targelontUselonr, candidatelon) = pair
+    targelontUselonr.dismisselondUselonrIds
+      .map { dismisselondUselonrIds =>
+        if (!dismisselondUselonrIds.contains(candidatelon.id)) {
+          DismisselondCandidatelonPrelondicatelon.ValidStitch
+        } elonlselon {
+          DismisselondCandidatelonPrelondicatelon.DismisselondStitch
         }
-      }.getOrElse(DismissedCandidatePredicate.ValidStitch)
+      }.gelontOrelonlselon(DismisselondCandidatelonPrelondicatelon.ValidStitch)
   }
 }
 
-object DismissedCandidatePredicate {
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val DismissedStitch: Stitch[PredicateResult.Invalid] =
-    Stitch.value(PredicateResult.Invalid(Set(DismissedId)))
+objelonct DismisselondCandidatelonPrelondicatelon {
+  val ValidStitch: Stitch[PrelondicatelonRelonsult.Valid.typelon] = Stitch.valuelon(PrelondicatelonRelonsult.Valid)
+  val DismisselondStitch: Stitch[PrelondicatelonRelonsult.Invalid] =
+    Stitch.valuelon(PrelondicatelonRelonsult.Invalid(Selont(DismisselondId)))
 }

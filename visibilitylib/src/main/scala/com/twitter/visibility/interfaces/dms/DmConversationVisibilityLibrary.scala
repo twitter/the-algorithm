@@ -1,93 +1,93 @@
-package com.twitter.visibility.interfaces.dms
+packagelon com.twittelonr.visibility.intelonrfacelons.dms
 
-import com.twitter.servo.util.Gate
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.visibility.VisibilityLibrary
-import com.twitter.visibility.builder.VisibilityResult
-import com.twitter.visibility.builder.dms.DmConversationFeatures
-import com.twitter.visibility.builder.users.AuthorFeatures
-import com.twitter.visibility.common.UserSource
-import com.twitter.visibility.common.dm_sources.DmConversationSource
-import com.twitter.visibility.common.stitch.StitchHelpers
-import com.twitter.visibility.features.FeatureMap
-import com.twitter.visibility.models.ContentId.DmConversationId
-import com.twitter.visibility.rules.Drop
-import com.twitter.visibility.rules.EvaluationContext
-import com.twitter.visibility.rules.Reason
-import com.twitter.visibility.rules.RuleBase
-import com.twitter.visibility.rules.providers.ProvidedEvaluationContext
-import com.twitter.visibility.rules.utils.ShimUtils
+import com.twittelonr.selonrvo.util.Gatelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.visibility.VisibilityLibrary
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
+import com.twittelonr.visibility.buildelonr.dms.DmConvelonrsationFelonaturelons
+import com.twittelonr.visibility.buildelonr.uselonrs.AuthorFelonaturelons
+import com.twittelonr.visibility.common.UselonrSourcelon
+import com.twittelonr.visibility.common.dm_sourcelons.DmConvelonrsationSourcelon
+import com.twittelonr.visibility.common.stitch.StitchHelonlpelonrs
+import com.twittelonr.visibility.felonaturelons.FelonaturelonMap
+import com.twittelonr.visibility.modelonls.ContelonntId.DmConvelonrsationId
+import com.twittelonr.visibility.rulelons.Drop
+import com.twittelonr.visibility.rulelons.elonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.Relonason
+import com.twittelonr.visibility.rulelons.RulelonBaselon
+import com.twittelonr.visibility.rulelons.providelonrs.ProvidelondelonvaluationContelonxt
+import com.twittelonr.visibility.rulelons.utils.ShimUtils
 
-object DmConversationVisibilityLibrary {
-  type Type = DmConversationVisibilityRequest => Stitch[VisibilityResult]
+objelonct DmConvelonrsationVisibilityLibrary {
+  typelon Typelon = DmConvelonrsationVisibilityRelonquelonst => Stitch[VisibilityRelonsult]
 
-  def apply(
+  delonf apply(
     visibilityLibrary: VisibilityLibrary,
-    stratoClient: StratoClient,
-    userSource: UserSource,
-    enableVfFeatureHydrationInShim: Gate[Unit] = Gate.False
-  ): Type = {
-    val libraryStatsReceiver = visibilityLibrary.statsReceiver
-    val stratoClientStatsReceiver = visibilityLibrary.statsReceiver.scope("strato")
-    val vfLatencyStatsReceiver = visibilityLibrary.statsReceiver.scope("vf_latency")
-    val vfEngineCounter = libraryStatsReceiver.counter("vf_engine_requests")
+    stratoClielonnt: StratoClielonnt,
+    uselonrSourcelon: UselonrSourcelon,
+    elonnablelonVfFelonaturelonHydrationInShim: Gatelon[Unit] = Gatelon.Falselon
+  ): Typelon = {
+    val libraryStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr
+    val stratoClielonntStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr.scopelon("strato")
+    val vfLatelonncyStatsReloncelonivelonr = visibilityLibrary.statsReloncelonivelonr.scopelon("vf_latelonncy")
+    val vfelonnginelonCountelonr = libraryStatsReloncelonivelonr.countelonr("vf_elonnginelon_relonquelonsts")
 
-    val dmConversationSource =
-      DmConversationSource.fromStrato(stratoClient, stratoClientStatsReceiver)
-    val authorFeatures = new AuthorFeatures(userSource, libraryStatsReceiver)
-    val dmConversationFeatures = new DmConversationFeatures(dmConversationSource, authorFeatures)
+    val dmConvelonrsationSourcelon =
+      DmConvelonrsationSourcelon.fromStrato(stratoClielonnt, stratoClielonntStatsReloncelonivelonr)
+    val authorFelonaturelons = nelonw AuthorFelonaturelons(uselonrSourcelon, libraryStatsReloncelonivelonr)
+    val dmConvelonrsationFelonaturelons = nelonw DmConvelonrsationFelonaturelons(dmConvelonrsationSourcelon, authorFelonaturelons)
 
-    { req: DmConversationVisibilityRequest =>
-      val dmConversationId = req.dmConversationId
-      val contentId = DmConversationId(dmConversationId)
-      val safetyLevel = req.safetyLevel
+    { relonq: DmConvelonrsationVisibilityRelonquelonst =>
+      val dmConvelonrsationId = relonq.dmConvelonrsationId
+      val contelonntId = DmConvelonrsationId(dmConvelonrsationId)
+      val safelontyLelonvelonl = relonq.safelontyLelonvelonl
 
-      if (!RuleBase.hasDmConversationRules(safetyLevel)) {
-        Stitch.value(VisibilityResult(contentId = contentId, verdict = Drop(Reason.Unspecified)))
-      } else {
-        vfEngineCounter.incr()
+      if (!RulelonBaselon.hasDmConvelonrsationRulelons(safelontyLelonvelonl)) {
+        Stitch.valuelon(VisibilityRelonsult(contelonntId = contelonntId, velonrdict = Drop(Relonason.Unspeloncifielond)))
+      } elonlselon {
+        vfelonnginelonCountelonr.incr()
 
-        val viewerContext = req.viewerContext
-        val viewerId = viewerContext.userId
-        val isVfFeatureHydrationEnabled: Boolean =
-          enableVfFeatureHydrationInShim()
+        val vielonwelonrContelonxt = relonq.vielonwelonrContelonxt
+        val vielonwelonrId = vielonwelonrContelonxt.uselonrId
+        val isVfFelonaturelonHydrationelonnablelond: Boolelonan =
+          elonnablelonVfFelonaturelonHydrationInShim()
 
-        val featureMap = visibilityLibrary.featureMapBuilder(
-          Seq(dmConversationFeatures.forDmConversationId(dmConversationId, viewerId)))
+        val felonaturelonMap = visibilityLibrary.felonaturelonMapBuildelonr(
+          Selonq(dmConvelonrsationFelonaturelons.forDmConvelonrsationId(dmConvelonrsationId, vielonwelonrId)))
 
-        val resp = if (isVfFeatureHydrationEnabled) {
-          val evaluationContext = ProvidedEvaluationContext.injectRuntimeRulesIntoEvaluationContext(
-            evaluationContext = EvaluationContext(
-              safetyLevel,
-              visibilityLibrary.getParams(viewerContext, safetyLevel),
-              visibilityLibrary.statsReceiver)
+        val relonsp = if (isVfFelonaturelonHydrationelonnablelond) {
+          val elonvaluationContelonxt = ProvidelondelonvaluationContelonxt.injelonctRuntimelonRulelonsIntoelonvaluationContelonxt(
+            elonvaluationContelonxt = elonvaluationContelonxt(
+              safelontyLelonvelonl,
+              visibilityLibrary.gelontParams(vielonwelonrContelonxt, safelontyLelonvelonl),
+              visibilityLibrary.statsReloncelonivelonr)
           )
 
-          val preFilteredFeatureMap =
-            ShimUtils.preFilterFeatureMap(featureMap, safetyLevel, contentId, evaluationContext)
+          val prelonFiltelonrelondFelonaturelonMap =
+            ShimUtils.prelonFiltelonrFelonaturelonMap(felonaturelonMap, safelontyLelonvelonl, contelonntId, elonvaluationContelonxt)
 
-          FeatureMap.resolve(preFilteredFeatureMap, libraryStatsReceiver).flatMap {
-            resolvedFeatureMap =>
+          FelonaturelonMap.relonsolvelon(prelonFiltelonrelondFelonaturelonMap, libraryStatsReloncelonivelonr).flatMap {
+            relonsolvelondFelonaturelonMap =>
               visibilityLibrary
-                .runRuleEngine(
-                  contentId,
-                  resolvedFeatureMap,
-                  viewerContext,
-                  safetyLevel
+                .runRulelonelonnginelon(
+                  contelonntId,
+                  relonsolvelondFelonaturelonMap,
+                  vielonwelonrContelonxt,
+                  safelontyLelonvelonl
                 )
           }
-        } else {
+        } elonlselon {
           visibilityLibrary
-            .runRuleEngine(
-              contentId,
-              featureMap,
-              viewerContext,
-              safetyLevel
+            .runRulelonelonnginelon(
+              contelonntId,
+              felonaturelonMap,
+              vielonwelonrContelonxt,
+              safelontyLelonvelonl
             )
         }
 
-        StitchHelpers.profileStitch(resp, Seq(vfLatencyStatsReceiver))
+        StitchHelonlpelonrs.profilelonStitch(relonsp, Selonq(vfLatelonncyStatsReloncelonivelonr))
       }
     }
   }

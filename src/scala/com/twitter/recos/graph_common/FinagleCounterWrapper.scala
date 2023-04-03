@@ -1,15 +1,15 @@
-package com.twitter.recos.graph_common
+packagelon com.twittelonr.reloncos.graph_common
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.graphjet.stats.{Counter => GraphCounter}
+import com.twittelonr.finaglelon.stats.Countelonr
+import com.twittelonr.graphjelont.stats.{Countelonr => GraphCountelonr}
 
 /**
- * FinagleCounterWrapper wraps Twitter's Finagle Counter.
+ * FinaglelonCountelonrWrappelonr wraps Twittelonr's Finaglelon Countelonr.
  *
- * This is because GraphJet is an openly available library which does not
- * depend on Finagle, but tracks stats using a similar interface.
+ * This is beloncauselon GraphJelont is an opelonnly availablelon library which doelons not
+ * delonpelonnd on Finaglelon, but tracks stats using a similar intelonrfacelon.
  */
-class FinagleCounterWrapper(counter: Counter) extends GraphCounter {
-  def incr() = counter.incr()
-  def incr(delta: Int) = counter.incr(delta)
+class FinaglelonCountelonrWrappelonr(countelonr: Countelonr) elonxtelonnds GraphCountelonr {
+  delonf incr() = countelonr.incr()
+  delonf incr(delonlta: Int) = countelonr.incr(delonlta)
 }

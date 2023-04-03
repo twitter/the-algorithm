@@ -1,58 +1,58 @@
-package com.twitter.follow_recommendations.common.candidate_sources.real_graph
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.relonal_graph
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.realGraph.UserRealgraphOonV2ClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.relonalGraph.UselonrRelonalgraphOonV2ClielonntColumn
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RealGraphOonV2Source @Inject() (
-  realGraphClientColumn: UserRealgraphOonV2ClientColumn)
-    extends CandidateSource[HasParams with HasClientContext, CandidateUser] {
+@Singlelonton
+class RelonalGraphOonV2Sourcelon @Injelonct() (
+  relonalGraphClielonntColumn: UselonrRelonalgraphOonV2ClielonntColumn)
+    elonxtelonnds CandidatelonSourcelon[HasParams with HasClielonntContelonxt, CandidatelonUselonr] {
 
-  override val identifier: CandidateSourceIdentifier =
-    RealGraphOonV2Source.Identifier
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    RelonalGraphOonV2Sourcelon.Idelonntifielonr
 
-  override def apply(request: HasParams with HasClientContext): Stitch[Seq[CandidateUser]] = {
-    request.getOptionalUserId
-      .map { userId =>
-        realGraphClientColumn.fetcher
-          .fetch(userId)
-          .map { result =>
-            result.v
-              .map { candidates => parseStratoResults(request, candidates) }
-              .getOrElse(Nil)
-              // returned candidates are sorted by score in descending order
-              .take(request.params(RealGraphOonParams.MaxResults))
-              .map(_.withCandidateSource(identifier))
+  ovelonrridelon delonf apply(relonquelonst: HasParams with HasClielonntContelonxt): Stitch[Selonq[CandidatelonUselonr]] = {
+    relonquelonst.gelontOptionalUselonrId
+      .map { uselonrId =>
+        relonalGraphClielonntColumn.felontchelonr
+          .felontch(uselonrId)
+          .map { relonsult =>
+            relonsult.v
+              .map { candidatelons => parselonStratoRelonsults(relonquelonst, candidatelons) }
+              .gelontOrelonlselon(Nil)
+              // relonturnelond candidatelons arelon sortelond by scorelon in delonscelonnding ordelonr
+              .takelon(relonquelonst.params(RelonalGraphOonParams.MaxRelonsults))
+              .map(_.withCandidatelonSourcelon(idelonntifielonr))
           }
-      }.getOrElse(Stitch(Seq.empty))
+      }.gelontOrelonlselon(Stitch(Selonq.elonmpty))
   }
 
-  private def parseStratoResults(
-    request: HasParams with HasClientContext,
-    candidateSeqThrift: CandidateSeq
-  ): Seq[CandidateUser] = {
-    candidateSeqThrift.candidates.collect {
-      case candidate if candidate.score >= request.params(RealGraphOonParams.ScoreThreshold) =>
-        CandidateUser(
-          candidate.userId,
-          Some(candidate.score)
+  privatelon delonf parselonStratoRelonsults(
+    relonquelonst: HasParams with HasClielonntContelonxt,
+    candidatelonSelonqThrift: CandidatelonSelonq
+  ): Selonq[CandidatelonUselonr] = {
+    candidatelonSelonqThrift.candidatelons.collelonct {
+      caselon candidatelon if candidatelon.scorelon >= relonquelonst.params(RelonalGraphOonParams.ScorelonThrelonshold) =>
+        CandidatelonUselonr(
+          candidatelon.uselonrId,
+          Somelon(candidatelon.scorelon)
         )
     }
   }
 
 }
 
-object RealGraphOonV2Source {
-  val Identifier: CandidateSourceIdentifier = CandidateSourceIdentifier(
-    Algorithm.RealGraphOonV2.toString
+objelonct RelonalGraphOonV2Sourcelon {
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.RelonalGraphOonV2.toString
   )
 }

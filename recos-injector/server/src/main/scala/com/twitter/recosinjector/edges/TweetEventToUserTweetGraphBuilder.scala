@@ -1,88 +1,88 @@
-package com.twitter.recosinjector.edges
+packagelon com.twittelonr.reloncosinjelonctor.elondgelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.TweetCreationTimeMHStore
-import com.twitter.frigate.common.util.SnowflakeUtils
-import com.twitter.recos.internal.thriftscala.RecosUserTweetInfo
-import com.twitter.recos.internal.thriftscala.TweetType
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.decider.RecosInjectorDecider
-import com.twitter.recosinjector.decider.RecosInjectorDeciderConstants
-import com.twitter.recosinjector.util.TweetCreateEventDetails
-import com.twitter.util.Future
-import com.twitter.util.Time
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.TwelonelontCrelonationTimelonMHStorelon
+import com.twittelonr.frigatelon.common.util.SnowflakelonUtils
+import com.twittelonr.reloncos.intelonrnal.thriftscala.ReloncosUselonrTwelonelontInfo
+import com.twittelonr.reloncos.intelonrnal.thriftscala.TwelonelontTypelon
+import com.twittelonr.reloncos.util.Action
+import com.twittelonr.reloncosinjelonctor.deloncidelonr.ReloncosInjelonctorDeloncidelonr
+import com.twittelonr.reloncosinjelonctor.deloncidelonr.ReloncosInjelonctorDeloncidelonrConstants
+import com.twittelonr.reloncosinjelonctor.util.TwelonelontCrelonatelonelonvelonntDelontails
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
 
-class TweetEventToUserTweetGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder,
-  tweetCreationStore: TweetCreationTimeMHStore,
-  decider: RecosInjectorDecider
+class TwelonelontelonvelonntToUselonrTwelonelontGraphBuildelonr(
+  uselonrTwelonelontelonntityelondgelonBuildelonr: UselonrTwelonelontelonntityelondgelonBuildelonr,
+  twelonelontCrelonationStorelon: TwelonelontCrelonationTimelonMHStorelon,
+  deloncidelonr: ReloncosInjelonctorDeloncidelonr
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetCreateEventDetails, UserTweetEntityEdge] {
+  ovelonrridelon implicit val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonvelonntToMelonssagelonBuildelonr[TwelonelontCrelonatelonelonvelonntDelontails, UselonrTwelonelontelonntityelondgelon] {
 
-  private val numRetweetEdgesCounter = statsReceiver.counter("num_retweet_edge")
-  private val numIsDecider = statsReceiver.counter("num_decider_enabled")
-  private val numIsNotDecider = statsReceiver.counter("num_decider_not_enabled")
+  privatelon val numRelontwelonelontelondgelonsCountelonr = statsReloncelonivelonr.countelonr("num_relontwelonelont_elondgelon")
+  privatelon val numIsDeloncidelonr = statsReloncelonivelonr.countelonr("num_deloncidelonr_elonnablelond")
+  privatelon val numIsNotDeloncidelonr = statsReloncelonivelonr.countelonr("num_deloncidelonr_not_elonnablelond")
 
-  override def shouldProcessEvent(event: TweetCreateEventDetails): Future[Boolean] = {
-    val isDecider = decider.isAvailable(
-      RecosInjectorDeciderConstants.TweetEventTransformerUserTweetEntityEdgesDecider
+  ovelonrridelon delonf shouldProcelonsselonvelonnt(elonvelonnt: TwelonelontCrelonatelonelonvelonntDelontails): Futurelon[Boolelonan] = {
+    val isDeloncidelonr = deloncidelonr.isAvailablelon(
+      ReloncosInjelonctorDeloncidelonrConstants.TwelonelontelonvelonntTransformelonrUselonrTwelonelontelonntityelondgelonsDeloncidelonr
     )
-    if (isDecider) {
-      numIsDecider.incr()
-      Future(true)
-    } else {
-      numIsNotDecider.incr()
-      Future(false)
+    if (isDeloncidelonr) {
+      numIsDeloncidelonr.incr()
+      Futurelon(truelon)
+    } elonlselon {
+      numIsNotDeloncidelonr.incr()
+      Futurelon(falselon)
     }
   }
 
   /**
-   * Build a Retweet edge: author -> RT -> SourceTweetId.
+   * Build a Relontwelonelont elondgelon: author -> RT -> SourcelonTwelonelontId.
    */
-  private def buildRetweetEdge(event: TweetCreateEventDetails) = {
-    val userTweetEngagement = event.userTweetEngagement
-    val tweetId = userTweetEngagement.tweetId
+  privatelon delonf buildRelontwelonelontelondgelon(elonvelonnt: TwelonelontCrelonatelonelonvelonntDelontails) = {
+    val uselonrTwelonelontelonngagelonmelonnt = elonvelonnt.uselonrTwelonelontelonngagelonmelonnt
+    val twelonelontId = uselonrTwelonelontelonngagelonmelonnt.twelonelontId
 
-    event.sourceTweetDetails
-      .map { sourceTweetDetails =>
-        val sourceTweetId = sourceTweetDetails.tweet.id // Id of the tweet being Retweeted
-        val sourceTweetEntitiesMapFut = userTweetEntityEdgeBuilder.getEntitiesMapAndUpdateCache(
-          tweetId = sourceTweetId,
-          tweetDetails = Some(sourceTweetDetails)
+    elonvelonnt.sourcelonTwelonelontDelontails
+      .map { sourcelonTwelonelontDelontails =>
+        val sourcelonTwelonelontId = sourcelonTwelonelontDelontails.twelonelont.id // Id of thelon twelonelont beloning Relontwelonelontelond
+        val sourcelonTwelonelontelonntitielonsMapFut = uselonrTwelonelontelonntityelondgelonBuildelonr.gelontelonntitielonsMapAndUpdatelonCachelon(
+          twelonelontId = sourcelonTwelonelontId,
+          twelonelontDelontails = Somelon(sourcelonTwelonelontDelontails)
         )
 
-        sourceTweetEntitiesMapFut.map { sourceTweetEntitiesMap =>
-          val edge = UserTweetEntityEdge(
-            sourceUser = userTweetEngagement.engageUserId,
-            targetTweet = sourceTweetId,
-            action = Action.Retweet,
-            metadata = Some(tweetId), // metadata is the tweetId
-            cardInfo = Some(sourceTweetDetails.cardInfo.toByte),
-            entitiesMap = sourceTweetEntitiesMap,
-            tweetDetails = Some(sourceTweetDetails)
+        sourcelonTwelonelontelonntitielonsMapFut.map { sourcelonTwelonelontelonntitielonsMap =>
+          val elondgelon = UselonrTwelonelontelonntityelondgelon(
+            sourcelonUselonr = uselonrTwelonelontelonngagelonmelonnt.elonngagelonUselonrId,
+            targelontTwelonelont = sourcelonTwelonelontId,
+            action = Action.Relontwelonelont,
+            melontadata = Somelon(twelonelontId), // melontadata is thelon twelonelontId
+            cardInfo = Somelon(sourcelonTwelonelontDelontails.cardInfo.toBytelon),
+            elonntitielonsMap = sourcelonTwelonelontelonntitielonsMap,
+            twelonelontDelontails = Somelon(sourcelonTwelonelontDelontails)
           )
-          numRetweetEdgesCounter.incr()
-          Seq(edge)
+          numRelontwelonelontelondgelonsCountelonr.incr()
+          Selonq(elondgelon)
         }
-      }.getOrElse(Future.Nil)
+      }.gelontOrelonlselon(Futurelon.Nil)
   }
 
-  override def buildEdges(event: TweetCreateEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val userTweetEngagement = event.userTweetEngagement
-    userTweetEngagement.action match {
-      case Action.Retweet =>
-        buildRetweetEdge(event)
-      case _ =>
-        Future.Nil
+  ovelonrridelon delonf buildelondgelons(elonvelonnt: TwelonelontCrelonatelonelonvelonntDelontails): Futurelon[Selonq[UselonrTwelonelontelonntityelondgelon]] = {
+    val uselonrTwelonelontelonngagelonmelonnt = elonvelonnt.uselonrTwelonelontelonngagelonmelonnt
+    uselonrTwelonelontelonngagelonmelonnt.action match {
+      caselon Action.Relontwelonelont =>
+        buildRelontwelonelontelondgelon(elonvelonnt)
+      caselon _ =>
+        Futurelon.Nil
     }
 
   }
 
-  override def filterEdges(
-    event: TweetCreateEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges) // No filtering for now. Add more if needed
+  ovelonrridelon delonf filtelonrelondgelons(
+    elonvelonnt: TwelonelontCrelonatelonelonvelonntDelontails,
+    elondgelons: Selonq[UselonrTwelonelontelonntityelondgelon]
+  ): Futurelon[Selonq[UselonrTwelonelontelonntityelondgelon]] = {
+    Futurelon(elondgelons) // No filtelonring for now. Add morelon if nelonelondelond
   }
 }

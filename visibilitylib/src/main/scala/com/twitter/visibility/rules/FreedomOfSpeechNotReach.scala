@@ -1,705 +1,705 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.spam.rtf.thriftscala.SafetyResultReason
-import com.twitter.util.Memoize
-import com.twitter.visibility.common.actions.AppealableReason
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.common.actions.SoftInterventionDisplayType
-import com.twitter.visibility.common.actions.SoftInterventionReason
-import com.twitter.visibility.common.actions.LimitedActionsPolicy
-import com.twitter.visibility.common.actions.LimitedAction
-import com.twitter.visibility.common.actions.converter.scala.LimitedActionTypeConverter
-import com.twitter.visibility.configapi.params.FSRuleParams.FosnrFallbackDropRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.FosnrRulesEnabledParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableFosnrRuleParam
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.ViolationLevel
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithInterstitialLimitedEngagements
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithSoftIntervention
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithAppealable
-import com.twitter.visibility.rules.ComposableActions.ComposableActionsWithInterstitial
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.ViewerDoesNotFollowAuthorOfFosnrViolatingTweet
-import com.twitter.visibility.rules.Condition.ViewerFollowsAuthorOfFosnrViolatingTweet
-import com.twitter.visibility.rules.FreedomOfSpeechNotReach.DefaultViolationLevel
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.State.Evaluated
+import com.twittelonr.spam.rtf.thriftscala.SafelontyRelonsultRelonason
+import com.twittelonr.util.Melonmoizelon
+import com.twittelonr.visibility.common.actions.AppelonalablelonRelonason
+import com.twittelonr.visibility.common.actions.LimitelondelonngagelonmelonntRelonason
+import com.twittelonr.visibility.common.actions.SoftIntelonrvelonntionDisplayTypelon
+import com.twittelonr.visibility.common.actions.SoftIntelonrvelonntionRelonason
+import com.twittelonr.visibility.common.actions.LimitelondActionsPolicy
+import com.twittelonr.visibility.common.actions.LimitelondAction
+import com.twittelonr.visibility.common.actions.convelonrtelonr.scala.LimitelondActionTypelonConvelonrtelonr
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.FosnrFallbackDropRulelonselonnablelondParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.FosnrRulelonselonnablelondParam
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonFosnrRulelonParam
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.felonaturelons.TwelonelontSafelontyLabelonls
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonl
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonlTypelon
+import com.twittelonr.visibility.modelonls.ViolationLelonvelonl
+import com.twittelonr.visibility.rulelons.ComposablelonActions.ComposablelonActionsWithIntelonrstitialLimitelondelonngagelonmelonnts
+import com.twittelonr.visibility.rulelons.ComposablelonActions.ComposablelonActionsWithSoftIntelonrvelonntion
+import com.twittelonr.visibility.rulelons.ComposablelonActions.ComposablelonActionsWithAppelonalablelon
+import com.twittelonr.visibility.rulelons.ComposablelonActions.ComposablelonActionsWithIntelonrstitial
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.NonAuthorVielonwelonr
+import com.twittelonr.visibility.rulelons.Condition.Not
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrDoelonsNotFollowAuthorOfFosnrViolatingTwelonelont
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrFollowsAuthorOfFosnrViolatingTwelonelont
+import com.twittelonr.visibility.rulelons.FrelonelondomOfSpelonelonchNotRelonach.DelonfaultViolationLelonvelonl
+import com.twittelonr.visibility.rulelons.Relonason._
+import com.twittelonr.visibility.rulelons.Statelon.elonvaluatelond
 
-object FreedomOfSpeechNotReach {
+objelonct FrelonelondomOfSpelonelonchNotRelonach {
 
-  val DefaultViolationLevel = ViolationLevel.Level1
+  val DelonfaultViolationLelonvelonl = ViolationLelonvelonl.Lelonvelonl1
 
-  def reasonToSafetyResultReason(reason: Reason): SafetyResultReason =
-    reason match {
-      case HatefulConduct => SafetyResultReason.FosnrHatefulConduct
-      case AbusiveBehavior => SafetyResultReason.FosnrAbusiveBehavior
-      case _ => SafetyResultReason.FosnrUnspecified
+  delonf relonasonToSafelontyRelonsultRelonason(relonason: Relonason): SafelontyRelonsultRelonason =
+    relonason match {
+      caselon HatelonfulConduct => SafelontyRelonsultRelonason.FosnrHatelonfulConduct
+      caselon AbusivelonBelonhavior => SafelontyRelonsultRelonason.FosnrAbusivelonBelonhavior
+      caselon _ => SafelontyRelonsultRelonason.FosnrUnspeloncifielond
     }
 
-  def reasonToSafetyResultReason(reason: AppealableReason): SafetyResultReason =
-    reason match {
-      case AppealableReason.HatefulConduct(_) => SafetyResultReason.FosnrHatefulConduct
-      case AppealableReason.AbusiveBehavior(_) => SafetyResultReason.FosnrAbusiveBehavior
-      case _ => SafetyResultReason.FosnrUnspecified
+  delonf relonasonToSafelontyRelonsultRelonason(relonason: AppelonalablelonRelonason): SafelontyRelonsultRelonason =
+    relonason match {
+      caselon AppelonalablelonRelonason.HatelonfulConduct(_) => SafelontyRelonsultRelonason.FosnrHatelonfulConduct
+      caselon AppelonalablelonRelonason.AbusivelonBelonhavior(_) => SafelontyRelonsultRelonason.FosnrAbusivelonBelonhavior
+      caselon _ => SafelontyRelonsultRelonason.FosnrUnspeloncifielond
     }
 
-  val EligibleTweetSafetyLabelTypes: Seq[TweetSafetyLabelType] =
-    Seq(ViolationLevel.Level4, ViolationLevel.Level3, ViolationLevel.Level2, ViolationLevel.Level1)
+  val elonligiblelonTwelonelontSafelontyLabelonlTypelons: Selonq[TwelonelontSafelontyLabelonlTypelon] =
+    Selonq(ViolationLelonvelonl.Lelonvelonl4, ViolationLelonvelonl.Lelonvelonl3, ViolationLelonvelonl.Lelonvelonl2, ViolationLelonvelonl.Lelonvelonl1)
       .map {
-        ViolationLevel.violationLevelToSafetyLabels.get(_).getOrElse(Set()).toSeq
-      }.reduceLeft {
+        ViolationLelonvelonl.violationLelonvelonlToSafelontyLabelonls.gelont(_).gelontOrelonlselon(Selont()).toSelonq
+      }.relonducelonLelonft {
         _ ++ _
       }
 
-  private val EligibleTweetSafetyLabelTypesSet = EligibleTweetSafetyLabelTypes.toSet
+  privatelon val elonligiblelonTwelonelontSafelontyLabelonlTypelonsSelont = elonligiblelonTwelonelontSafelontyLabelonlTypelons.toSelont
 
-  def extractTweetSafetyLabel(featureMap: Map[Feature[_], _]): Option[TweetSafetyLabel] = {
-    val tweetSafetyLabels = featureMap(TweetSafetyLabels)
-      .asInstanceOf[Seq[TweetSafetyLabel]]
+  delonf elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap: Map[Felonaturelon[_], _]): Option[TwelonelontSafelontyLabelonl] = {
+    val twelonelontSafelontyLabelonls = felonaturelonMap(TwelonelontSafelontyLabelonls)
+      .asInstancelonOf[Selonq[TwelonelontSafelontyLabelonl]]
       .flatMap { tsl =>
-        if (FreedomOfSpeechNotReach.EligibleTweetSafetyLabelTypesSet.contains(tsl.labelType)) {
-          Some(tsl.labelType -> tsl)
-        } else {
-          None
+        if (FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsSelont.contains(tsl.labelonlTypelon)) {
+          Somelon(tsl.labelonlTypelon -> tsl)
+        } elonlselon {
+          Nonelon
         }
       }
       .toMap
 
-    FreedomOfSpeechNotReach.EligibleTweetSafetyLabelTypes.flatMap(tweetSafetyLabels.get).headOption
+    FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelons.flatMap(twelonelontSafelontyLabelonls.gelont).helonadOption
   }
 
-  def eligibleTweetSafetyLabelTypesToAppealableReason(
-    labelType: TweetSafetyLabelType,
-    violationLevel: ViolationLevel
-  ): AppealableReason = {
-    labelType match {
-      case TweetSafetyLabelType.FosnrHatefulConduct =>
-        AppealableReason.HatefulConduct(violationLevel.level)
-      case TweetSafetyLabelType.FosnrHatefulConductLowSeveritySlur =>
-        AppealableReason.HatefulConduct(violationLevel.level)
-      case _ =>
-        AppealableReason.Unspecified(violationLevel.level)
+  delonf elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+    labelonlTypelon: TwelonelontSafelontyLabelonlTypelon,
+    violationLelonvelonl: ViolationLelonvelonl
+  ): AppelonalablelonRelonason = {
+    labelonlTypelon match {
+      caselon TwelonelontSafelontyLabelonlTypelon.FosnrHatelonfulConduct =>
+        AppelonalablelonRelonason.HatelonfulConduct(violationLelonvelonl.lelonvelonl)
+      caselon TwelonelontSafelontyLabelonlTypelon.FosnrHatelonfulConductLowSelonvelonritySlur =>
+        AppelonalablelonRelonason.HatelonfulConduct(violationLelonvelonl.lelonvelonl)
+      caselon _ =>
+        AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
     }
   }
 
-  def limitedActionConverter(
-    limitedActionStrings: Option[Seq[String]]
-  ): Option[LimitedActionsPolicy] = {
-    val limitedActions = limitedActionStrings.map { limitedActionString =>
-      limitedActionString
-        .map(action => LimitedActionTypeConverter.fromString(action)).map { action =>
+  delonf limitelondActionConvelonrtelonr(
+    limitelondActionStrings: Option[Selonq[String]]
+  ): Option[LimitelondActionsPolicy] = {
+    val limitelondActions = limitelondActionStrings.map { limitelondActionString =>
+      limitelondActionString
+        .map(action => LimitelondActionTypelonConvelonrtelonr.fromString(action)).map { action =>
           action match {
-            case Some(a) => Some(LimitedAction(a, None))
-            case _ => None
+            caselon Somelon(a) => Somelon(LimitelondAction(a, Nonelon))
+            caselon _ => Nonelon
           }
-        }.flatten
+        }.flattelonn
     }
-    limitedActions.map(actions => LimitedActionsPolicy(actions))
+    limitelondActions.map(actions => LimitelondActionsPolicy(actions))
   }
 }
 
-object FreedomOfSpeechNotReachReason {
-  def unapply(softIntervention: SoftIntervention): Option[AppealableReason] = {
-    softIntervention.reason match {
-      case SoftInterventionReason.FosnrReason(appealableReason) => Some(appealableReason)
-      case _ => None
+objelonct FrelonelondomOfSpelonelonchNotRelonachRelonason {
+  delonf unapply(softIntelonrvelonntion: SoftIntelonrvelonntion): Option[AppelonalablelonRelonason] = {
+    softIntelonrvelonntion.relonason match {
+      caselon SoftIntelonrvelonntionRelonason.FosnrRelonason(appelonalablelonRelonason) => Somelon(appelonalablelonRelonason)
+      caselon _ => Nonelon
     }
   }
 
-  def unapply(
-    interstitialLimitedEngagements: InterstitialLimitedEngagements
-  ): Option[AppealableReason] = {
-    interstitialLimitedEngagements.limitedEngagementReason match {
-      case Some(LimitedEngagementReason.FosnrReason(appealableReason)) => Some(appealableReason)
-      case _ => None
+  delonf unapply(
+    intelonrstitialLimitelondelonngagelonmelonnts: IntelonrstitialLimitelondelonngagelonmelonnts
+  ): Option[AppelonalablelonRelonason] = {
+    intelonrstitialLimitelondelonngagelonmelonnts.limitelondelonngagelonmelonntRelonason match {
+      caselon Somelon(LimitelondelonngagelonmelonntRelonason.FosnrRelonason(appelonalablelonRelonason)) => Somelon(appelonalablelonRelonason)
+      caselon _ => Nonelon
     }
   }
 
-  def unapply(
-    interstitial: Interstitial
-  ): Option[AppealableReason] = {
-    interstitial.reason match {
-      case Reason.FosnrReason(appealableReason) => Some(appealableReason)
-      case _ => None
+  delonf unapply(
+    intelonrstitial: Intelonrstitial
+  ): Option[AppelonalablelonRelonason] = {
+    intelonrstitial.relonason match {
+      caselon Relonason.FosnrRelonason(appelonalablelonRelonason) => Somelon(appelonalablelonRelonason)
+      caselon _ => Nonelon
     }
   }
 
-  def unapply(
-    appealable: Appealable
-  ): Option[AppealableReason] = {
-    Reason.toAppealableReason(appealable.reason, appealable.violationLevel)
+  delonf unapply(
+    appelonalablelon: Appelonalablelon
+  ): Option[AppelonalablelonRelonason] = {
+    Relonason.toAppelonalablelonRelonason(appelonalablelon.relonason, appelonalablelon.violationLelonvelonl)
   }
 
-  def unapply(
+  delonf unapply(
     action: Action
-  ): Option[AppealableReason] = {
+  ): Option[AppelonalablelonRelonason] = {
     action match {
-      case a: SoftIntervention =>
+      caselon a: SoftIntelonrvelonntion =>
         a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
-          case _ => None
+          caselon FrelonelondomOfSpelonelonchNotRelonachRelonason(r) => Somelon(r)
+          caselon _ => Nonelon
         }
-      case a: InterstitialLimitedEngagements =>
+      caselon a: IntelonrstitialLimitelondelonngagelonmelonnts =>
         a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
-          case _ => None
+          caselon FrelonelondomOfSpelonelonchNotRelonachRelonason(r) => Somelon(r)
+          caselon _ => Nonelon
         }
-      case a: Interstitial =>
+      caselon a: Intelonrstitial =>
         a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
-          case _ => None
+          caselon FrelonelondomOfSpelonelonchNotRelonachRelonason(r) => Somelon(r)
+          caselon _ => Nonelon
         }
-      case a: Appealable =>
+      caselon a: Appelonalablelon =>
         a match {
-          case FreedomOfSpeechNotReachReason(r) => Some(r)
-          case _ => None
+          caselon FrelonelondomOfSpelonelonchNotRelonachRelonason(r) => Somelon(r)
+          caselon _ => Nonelon
         }
-      case ComposableActionsWithSoftIntervention(FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case ComposableActionsWithInterstitialLimitedEngagements(
-            FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case ComposableActionsWithInterstitial(FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case ComposableActionsWithAppealable(FreedomOfSpeechNotReachReason(appealableReason)) =>
-        Some(appealableReason)
-      case _ => None
+      caselon ComposablelonActionsWithSoftIntelonrvelonntion(FrelonelondomOfSpelonelonchNotRelonachRelonason(appelonalablelonRelonason)) =>
+        Somelon(appelonalablelonRelonason)
+      caselon ComposablelonActionsWithIntelonrstitialLimitelondelonngagelonmelonnts(
+            FrelonelondomOfSpelonelonchNotRelonachRelonason(appelonalablelonRelonason)) =>
+        Somelon(appelonalablelonRelonason)
+      caselon ComposablelonActionsWithIntelonrstitial(FrelonelondomOfSpelonelonchNotRelonachRelonason(appelonalablelonRelonason)) =>
+        Somelon(appelonalablelonRelonason)
+      caselon ComposablelonActionsWithAppelonalablelon(FrelonelondomOfSpelonelonchNotRelonachRelonason(appelonalablelonRelonason)) =>
+        Somelon(appelonalablelonRelonason)
+      caselon _ => Nonelon
     }
   }
 }
 
-object FreedomOfSpeechNotReachActions {
+objelonct FrelonelondomOfSpelonelonchNotRelonachActions {
 
-  trait FreedomOfSpeechNotReachActionBuilder[T <: Action] extends ActionBuilder[T] {
-    def withViolationLevel(violationLevel: ViolationLevel): FreedomOfSpeechNotReachActionBuilder[T]
+  trait FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[T <: Action] elonxtelonnds ActionBuildelonr[T] {
+    delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl): FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[T]
   }
 
-  case class DropAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[Drop] {
+  caselon class DropAction(violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl)
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[Drop] {
 
-    override def actionType: Class[_] = classOf[Drop]
+    ovelonrridelon delonf actionTypelon: Class[_] = classOf[Drop]
 
-    override val actionSeverity = 16
-    private def toRuleResult: Reason => RuleResult = Memoize { r => RuleResult(Drop(r), Evaluated) }
+    ovelonrridelon val actionSelonvelonrity = 16
+    privatelon delonf toRulelonRelonsult: Relonason => RulelonRelonsult = Melonmoizelon { r => RulelonRelonsult(Drop(r), elonvaluatelond) }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonl,
+              violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      toRulelonRelonsult(Relonason.fromAppelonalablelonRelonason(appelonalablelonRelonason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 
-  case class AppealableAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  caselon class AppelonalablelonAction(violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl)
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[TwelonelontIntelonrstitial] {
 
-    override def actionType: Class[_] = classOf[Appealable]
+    ovelonrridelon delonf actionTypelon: Class[_] = classOf[Appelonalablelon]
 
-    override val actionSeverity = 17
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = None,
-          limitedEngagements = None,
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None,
-          appealable = Some(Appealable(r, violationLevel = violationLevel))
+    ovelonrridelon val actionSelonvelonrity = 17
+    privatelon delonf toRulelonRelonsult: Relonason => RulelonRelonsult = Melonmoizelon { r =>
+      RulelonRelonsult(
+        TwelonelontIntelonrstitial(
+          intelonrstitial = Nonelon,
+          softIntelonrvelonntion = Nonelon,
+          limitelondelonngagelonmelonnts = Nonelon,
+          downrank = Nonelon,
+          avoid = Somelon(Avoid(Nonelon)),
+          melondiaIntelonrstitial = Nonelon,
+          twelonelontVisibilityNudgelon = Nonelon,
+          abusivelonQuality = Nonelon,
+          appelonalablelon = Somelon(Appelonalablelon(r, violationLelonvelonl = violationLelonvelonl))
         ),
-        Evaluated
+        elonvaluatelond
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonl,
+              violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      toRulelonRelonsult(Relonason.fromAppelonalablelonRelonason(appelonalablelonRelonason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 
-  case class AppealableAvoidLimitedEngagementsAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel,
-    limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[Appealable] {
+  caselon class AppelonalablelonAvoidLimitelondelonngagelonmelonntsAction(
+    violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl,
+    limitelondActionStrings: Option[Selonq[String]])
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[Appelonalablelon] {
 
-    override def actionType: Class[_] = classOf[AppealableAvoidLimitedEngagementsAction]
+    ovelonrridelon delonf actionTypelon: Class[_] = classOf[AppelonalablelonAvoidLimitelondelonngagelonmelonntsAction]
 
-    override val actionSeverity = 17
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = None,
-          limitedEngagements = Some(
-            LimitedEngagements(
-              toLimitedEngagementReason(
-                Reason
-                  .toAppealableReason(r, violationLevel)
-                  .getOrElse(AppealableReason.Unspecified(violationLevel.level))),
-              FreedomOfSpeechNotReach.limitedActionConverter(limitedActionStrings)
+    ovelonrridelon val actionSelonvelonrity = 17
+    privatelon delonf toRulelonRelonsult: Relonason => RulelonRelonsult = Melonmoizelon { r =>
+      RulelonRelonsult(
+        TwelonelontIntelonrstitial(
+          intelonrstitial = Nonelon,
+          softIntelonrvelonntion = Nonelon,
+          limitelondelonngagelonmelonnts = Somelon(
+            Limitelondelonngagelonmelonnts(
+              toLimitelondelonngagelonmelonntRelonason(
+                Relonason
+                  .toAppelonalablelonRelonason(r, violationLelonvelonl)
+                  .gelontOrelonlselon(AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl))),
+              FrelonelondomOfSpelonelonchNotRelonach.limitelondActionConvelonrtelonr(limitelondActionStrings)
             )),
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None,
-          appealable = Some(Appealable(r, violationLevel = violationLevel))
+          downrank = Nonelon,
+          avoid = Somelon(Avoid(Nonelon)),
+          melondiaIntelonrstitial = Nonelon,
+          twelonelontVisibilityNudgelon = Nonelon,
+          abusivelonQuality = Nonelon,
+          appelonalablelon = Somelon(Appelonalablelon(r, violationLelonvelonl = violationLelonvelonl))
         ),
-        Evaluated
+        elonvaluatelond
       )
     }
 
-    def build(
-      evaluationContext: EvaluationContext,
-      featureMap: Map[Feature[_], _]
-    ): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(
+      elonvaluationContelonxt: elonvaluationContelonxt,
+      felonaturelonMap: Map[Felonaturelon[_], _]
+    ): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonl,
+              violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      toRulelonRelonsult(Relonason.fromAppelonalablelonRelonason(appelonalablelonRelonason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 
-  case class AvoidAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[Avoid] {
+  caselon class AvoidAction(violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl)
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[Avoid] {
 
-    override def actionType: Class[_] = classOf[Avoid]
+    ovelonrridelon delonf actionTypelon: Class[_] = classOf[Avoid]
 
-    override val actionSeverity = 1
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(Avoid(None), Evaluated)
+    ovelonrridelon val actionSelonvelonrity = 1
+    privatelon delonf toRulelonRelonsult: Relonason => RulelonRelonsult = Melonmoizelon { r =>
+      RulelonRelonsult(Avoid(Nonelon), elonvaluatelond)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonl,
+              violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      toRulelonRelonsult(Relonason.fromAppelonalablelonRelonason(appelonalablelonRelonason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 
-  case class LimitedEngagementsAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[LimitedEngagements] {
+  caselon class LimitelondelonngagelonmelonntsAction(violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl)
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[Limitelondelonngagelonmelonnts] {
 
-    override def actionType: Class[_] = classOf[LimitedEngagements]
+    ovelonrridelon delonf actionTypelon: Class[_] = classOf[Limitelondelonngagelonmelonnts]
 
-    override val actionSeverity = 6
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(LimitedEngagements(LimitedEngagementReason.NonCompliant, None), Evaluated)
+    ovelonrridelon val actionSelonvelonrity = 6
+    privatelon delonf toRulelonRelonsult: Relonason => RulelonRelonsult = Melonmoizelon { r =>
+      RulelonRelonsult(Limitelondelonngagelonmelonnts(LimitelondelonngagelonmelonntRelonason.NonCompliant, Nonelon), elonvaluatelond)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonl,
+              violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      toRulelonRelonsult(Relonason.fromAppelonalablelonRelonason(appelonalablelonRelonason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 
-  case class InterstitialLimitedEngagementsAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[InterstitialLimitedEngagements] {
+  caselon class IntelonrstitialLimitelondelonngagelonmelonntsAction(
+    violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl)
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[IntelonrstitialLimitelondelonngagelonmelonnts] {
 
-    override def actionType: Class[_] = classOf[InterstitialLimitedEngagements]
+    ovelonrridelon delonf actionTypelon: Class[_] = classOf[IntelonrstitialLimitelondelonngagelonmelonnts]
 
-    override val actionSeverity = 11
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(InterstitialLimitedEngagements(r, None), Evaluated)
+    ovelonrridelon val actionSelonvelonrity = 11
+    privatelon delonf toRulelonRelonsult: Relonason => RulelonRelonsult = Melonmoizelon { r =>
+      RulelonRelonsult(IntelonrstitialLimitelondelonngagelonmelonnts(r, Nonelon), elonvaluatelond)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonl,
+              violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      toRulelonRelonsult(Relonason.fromAppelonalablelonRelonason(appelonalablelonRelonason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 
-  case class InterstitialLimitedEngagementsAvoidAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel,
-    limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  caselon class IntelonrstitialLimitelondelonngagelonmelonntsAvoidAction(
+    violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl,
+    limitelondActionStrings: Option[Selonq[String]])
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[TwelonelontIntelonrstitial] {
 
-    override def actionType: Class[_] = classOf[InterstitialLimitedEngagementsAvoidAction]
+    ovelonrridelon delonf actionTypelon: Class[_] = classOf[IntelonrstitialLimitelondelonngagelonmelonntsAvoidAction]
 
-    override val actionSeverity = 14
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = Some(
-            Interstitial(
-              reason = FosnrReason(r),
-              localizedMessage = None,
+    ovelonrridelon val actionSelonvelonrity = 14
+    privatelon delonf toRulelonRelonsult: AppelonalablelonRelonason => RulelonRelonsult = Melonmoizelon { r =>
+      RulelonRelonsult(
+        TwelonelontIntelonrstitial(
+          intelonrstitial = Somelon(
+            Intelonrstitial(
+              relonason = FosnrRelonason(r),
+              localizelondMelonssagelon = Nonelon,
             )),
-          softIntervention = None,
-          limitedEngagements = Some(
-            LimitedEngagements(
-              reason = toLimitedEngagementReason(r),
-              policy = FreedomOfSpeechNotReach.limitedActionConverter(limitedActionStrings))),
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None
+          softIntelonrvelonntion = Nonelon,
+          limitelondelonngagelonmelonnts = Somelon(
+            Limitelondelonngagelonmelonnts(
+              relonason = toLimitelondelonngagelonmelonntRelonason(r),
+              policy = FrelonelondomOfSpelonelonchNotRelonach.limitelondActionConvelonrtelonr(limitelondActionStrings))),
+          downrank = Nonelon,
+          avoid = Somelon(Avoid(Nonelon)),
+          melondiaIntelonrstitial = Nonelon,
+          twelonelontVisibilityNudgelon = Nonelon
         ),
-        Evaluated
+        elonvaluatelond
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              labelType = label,
-              violationLevel = violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonlTypelon = labelonl,
+              violationLelonvelonl = violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(appealableReason)
+      toRulelonRelonsult(appelonalablelonRelonason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 
-  case class ConversationSectionAbusiveQualityAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[ConversationSectionAbusiveQuality.type] {
+  caselon class ConvelonrsationSelonctionAbusivelonQualityAction(
+    violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl)
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[ConvelonrsationSelonctionAbusivelonQuality.typelon] {
 
-    override def actionType: Class[_] = ConversationSectionAbusiveQuality.getClass
+    ovelonrridelon delonf actionTypelon: Class[_] = ConvelonrsationSelonctionAbusivelonQuality.gelontClass
 
-    override val actionSeverity = 5
-    private def toRuleResult: Reason => RuleResult = Memoize { r =>
-      RuleResult(ConversationSectionAbusiveQuality, Evaluated)
+    ovelonrridelon val actionSelonvelonrity = 5
+    privatelon delonf toRulelonRelonsult: Relonason => RulelonRelonsult = Melonmoizelon { r =>
+      RulelonRelonsult(ConvelonrsationSelonctionAbusivelonQuality, elonvaluatelond)
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonl,
+              violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(Reason.fromAppealableReason(appealableReason))
+      toRulelonRelonsult(Relonason.fromAppelonalablelonRelonason(appelonalablelonRelonason))
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 
-  case class SoftInterventionAvoidAction(violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  caselon class SoftIntelonrvelonntionAvoidAction(violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl)
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[TwelonelontIntelonrstitial] {
 
-    override def actionType: Class[_] = classOf[SoftInterventionAvoidAction]
+    ovelonrridelon delonf actionTypelon: Class[_] = classOf[SoftIntelonrvelonntionAvoidAction]
 
-    override val actionSeverity = 8
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = Some(
-            SoftIntervention(
-              reason = toSoftInterventionReason(r),
-              engagementNudge = false,
-              suppressAutoplay = true,
-              warning = None,
-              detailsUrl = None,
-              displayType = Some(SoftInterventionDisplayType.Fosnr)
+    ovelonrridelon val actionSelonvelonrity = 8
+    privatelon delonf toRulelonRelonsult: AppelonalablelonRelonason => RulelonRelonsult = Melonmoizelon { r =>
+      RulelonRelonsult(
+        TwelonelontIntelonrstitial(
+          intelonrstitial = Nonelon,
+          softIntelonrvelonntion = Somelon(
+            SoftIntelonrvelonntion(
+              relonason = toSoftIntelonrvelonntionRelonason(r),
+              elonngagelonmelonntNudgelon = falselon,
+              supprelonssAutoplay = truelon,
+              warning = Nonelon,
+              delontailsUrl = Nonelon,
+              displayTypelon = Somelon(SoftIntelonrvelonntionDisplayTypelon.Fosnr)
             )),
-          limitedEngagements = None,
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None
+          limitelondelonngagelonmelonnts = Nonelon,
+          downrank = Nonelon,
+          avoid = Somelon(Avoid(Nonelon)),
+          melondiaIntelonrstitial = Nonelon,
+          twelonelontVisibilityNudgelon = Nonelon,
+          abusivelonQuality = Nonelon
         ),
-        Evaluated
+        elonvaluatelond
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonl,
+              violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(appealableReason)
+      toRulelonRelonsult(appelonalablelonRelonason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 
-  case class SoftInterventionAvoidLimitedEngagementsAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel,
-    limitedActionStrings: Option[Seq[String]])
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  caselon class SoftIntelonrvelonntionAvoidLimitelondelonngagelonmelonntsAction(
+    violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl,
+    limitelondActionStrings: Option[Selonq[String]])
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[TwelonelontIntelonrstitial] {
 
-    override def actionType: Class[_] = classOf[SoftInterventionAvoidLimitedEngagementsAction]
+    ovelonrridelon delonf actionTypelon: Class[_] = classOf[SoftIntelonrvelonntionAvoidLimitelondelonngagelonmelonntsAction]
 
-    override val actionSeverity = 13
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = Some(
-            SoftIntervention(
-              reason = toSoftInterventionReason(r),
-              engagementNudge = false,
-              suppressAutoplay = true,
-              warning = None,
-              detailsUrl = None,
-              displayType = Some(SoftInterventionDisplayType.Fosnr)
+    ovelonrridelon val actionSelonvelonrity = 13
+    privatelon delonf toRulelonRelonsult: AppelonalablelonRelonason => RulelonRelonsult = Melonmoizelon { r =>
+      RulelonRelonsult(
+        TwelonelontIntelonrstitial(
+          intelonrstitial = Nonelon,
+          softIntelonrvelonntion = Somelon(
+            SoftIntelonrvelonntion(
+              relonason = toSoftIntelonrvelonntionRelonason(r),
+              elonngagelonmelonntNudgelon = falselon,
+              supprelonssAutoplay = truelon,
+              warning = Nonelon,
+              delontailsUrl = Nonelon,
+              displayTypelon = Somelon(SoftIntelonrvelonntionDisplayTypelon.Fosnr)
             )),
-          limitedEngagements = Some(
-            LimitedEngagements(
-              toLimitedEngagementReason(r),
-              FreedomOfSpeechNotReach.limitedActionConverter(limitedActionStrings))),
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = None
+          limitelondelonngagelonmelonnts = Somelon(
+            Limitelondelonngagelonmelonnts(
+              toLimitelondelonngagelonmelonntRelonason(r),
+              FrelonelondomOfSpelonelonchNotRelonach.limitelondActionConvelonrtelonr(limitelondActionStrings))),
+          downrank = Nonelon,
+          avoid = Somelon(Avoid(Nonelon)),
+          melondiaIntelonrstitial = Nonelon,
+          twelonelontVisibilityNudgelon = Nonelon,
+          abusivelonQuality = Nonelon
         ),
-        Evaluated
+        elonvaluatelond
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonl,
+              violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(appealableReason)
+      toRulelonRelonsult(appelonalablelonRelonason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 
-  case class SoftInterventionAvoidAbusiveQualityReplyAction(
-    violationLevel: ViolationLevel = DefaultViolationLevel)
-      extends FreedomOfSpeechNotReachActionBuilder[TweetInterstitial] {
+  caselon class SoftIntelonrvelonntionAvoidAbusivelonQualityRelonplyAction(
+    violationLelonvelonl: ViolationLelonvelonl = DelonfaultViolationLelonvelonl)
+      elonxtelonnds FrelonelondomOfSpelonelonchNotRelonachActionBuildelonr[TwelonelontIntelonrstitial] {
 
-    override def actionType: Class[_] = classOf[SoftInterventionAvoidAbusiveQualityReplyAction]
+    ovelonrridelon delonf actionTypelon: Class[_] = classOf[SoftIntelonrvelonntionAvoidAbusivelonQualityRelonplyAction]
 
-    override val actionSeverity = 13
-    private def toRuleResult: AppealableReason => RuleResult = Memoize { r =>
-      RuleResult(
-        TweetInterstitial(
-          interstitial = None,
-          softIntervention = Some(
-            SoftIntervention(
-              reason = toSoftInterventionReason(r),
-              engagementNudge = false,
-              suppressAutoplay = true,
-              warning = None,
-              detailsUrl = None,
-              displayType = Some(SoftInterventionDisplayType.Fosnr)
+    ovelonrridelon val actionSelonvelonrity = 13
+    privatelon delonf toRulelonRelonsult: AppelonalablelonRelonason => RulelonRelonsult = Melonmoizelon { r =>
+      RulelonRelonsult(
+        TwelonelontIntelonrstitial(
+          intelonrstitial = Nonelon,
+          softIntelonrvelonntion = Somelon(
+            SoftIntelonrvelonntion(
+              relonason = toSoftIntelonrvelonntionRelonason(r),
+              elonngagelonmelonntNudgelon = falselon,
+              supprelonssAutoplay = truelon,
+              warning = Nonelon,
+              delontailsUrl = Nonelon,
+              displayTypelon = Somelon(SoftIntelonrvelonntionDisplayTypelon.Fosnr)
             )),
-          limitedEngagements = None,
-          downrank = None,
-          avoid = Some(Avoid(None)),
-          mediaInterstitial = None,
-          tweetVisibilityNudge = None,
-          abusiveQuality = Some(ConversationSectionAbusiveQuality)
+          limitelondelonngagelonmelonnts = Nonelon,
+          downrank = Nonelon,
+          avoid = Somelon(Avoid(Nonelon)),
+          melondiaIntelonrstitial = Nonelon,
+          twelonelontVisibilityNudgelon = Nonelon,
+          abusivelonQuality = Somelon(ConvelonrsationSelonctionAbusivelonQuality)
         ),
-        Evaluated
+        elonvaluatelond
       )
     }
 
-    def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-      val appealableReason =
-        FreedomOfSpeechNotReach.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-          case Some(label) =>
-            FreedomOfSpeechNotReach.eligibleTweetSafetyLabelTypesToAppealableReason(
-              label,
-              violationLevel)
-          case _ =>
-            AppealableReason.Unspecified(violationLevel.level)
+    delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+      val appelonalablelonRelonason =
+        FrelonelondomOfSpelonelonchNotRelonach.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+          caselon Somelon(labelonl) =>
+            FrelonelondomOfSpelonelonchNotRelonach.elonligiblelonTwelonelontSafelontyLabelonlTypelonsToAppelonalablelonRelonason(
+              labelonl,
+              violationLelonvelonl)
+          caselon _ =>
+            AppelonalablelonRelonason.Unspeloncifielond(violationLelonvelonl.lelonvelonl)
         }
 
-      toRuleResult(appealableReason)
+      toRulelonRelonsult(appelonalablelonRelonason)
     }
 
-    override def withViolationLevel(violationLevel: ViolationLevel) = {
-      copy(violationLevel = violationLevel)
+    ovelonrridelon delonf withViolationLelonvelonl(violationLelonvelonl: ViolationLelonvelonl) = {
+      copy(violationLelonvelonl = violationLelonvelonl)
     }
   }
 }
 
-object FreedomOfSpeechNotReachRules {
+objelonct FrelonelondomOfSpelonelonchNotRelonachRulelons {
 
-  abstract class OnlyWhenAuthorViewerRule(
-    actionBuilder: ActionBuilder[_ <: Action],
+  abstract class OnlyWhelonnAuthorVielonwelonrRulelon(
+    actionBuildelonr: ActionBuildelonr[_ <: Action],
     condition: Condition)
-      extends Rule(actionBuilder, And(Not(NonAuthorViewer), condition))
+      elonxtelonnds Rulelon(actionBuildelonr, And(Not(NonAuthorVielonwelonr), condition))
 
-  abstract class OnlyWhenNonAuthorViewerRule(
-    actionBuilder: ActionBuilder[_ <: Action],
+  abstract class OnlyWhelonnNonAuthorVielonwelonrRulelon(
+    actionBuildelonr: ActionBuildelonr[_ <: Action],
     condition: Condition)
-      extends Rule(actionBuilder, And(NonAuthorViewer, condition))
+      elonxtelonnds Rulelon(actionBuildelonr, And(NonAuthorVielonwelonr, condition))
 
-  case class ViewerIsAuthorAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenAuthorViewerRule(
-        actionBuilder,
-        Condition.TweetHasViolationOfLevel(violationLevel)
+  caselon class VielonwelonrIsAuthorAndTwelonelontHasViolationOfLelonvelonl(
+    violationLelonvelonl: ViolationLelonvelonl,
+    ovelonrridelon val actionBuildelonr: ActionBuildelonr[_ <: Action])
+      elonxtelonnds OnlyWhelonnAuthorVielonwelonrRulelon(
+        actionBuildelonr,
+        Condition.TwelonelontHasViolationOfLelonvelonl(violationLelonvelonl)
       ) {
-    override lazy val name: String = s"ViewerIsAuthorAndTweetHasViolationOf$violationLevel"
+    ovelonrridelon lazy val namelon: String = s"VielonwelonrIsAuthorAndTwelonelontHasViolationOf$violationLelonvelonl"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonFosnrRulelonParam, FosnrRulelonselonnablelondParam)
   }
 
-  case class ViewerIsFollowerAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
-        actionBuilder,
+  caselon class VielonwelonrIsFollowelonrAndTwelonelontHasViolationOfLelonvelonl(
+    violationLelonvelonl: ViolationLelonvelonl,
+    ovelonrridelon val actionBuildelonr: ActionBuildelonr[_ <: Action])
+      elonxtelonnds OnlyWhelonnNonAuthorVielonwelonrRulelon(
+        actionBuildelonr,
         And(
-          Condition.TweetHasViolationOfLevel(violationLevel),
-          ViewerFollowsAuthorOfFosnrViolatingTweet)
+          Condition.TwelonelontHasViolationOfLelonvelonl(violationLelonvelonl),
+          VielonwelonrFollowsAuthorOfFosnrViolatingTwelonelont)
       ) {
-    override lazy val name: String = s"ViewerIsFollowerAndTweetHasViolationOf$violationLevel"
+    ovelonrridelon lazy val namelon: String = s"VielonwelonrIsFollowelonrAndTwelonelontHasViolationOf$violationLelonvelonl"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonFosnrRulelonParam, FosnrRulelonselonnablelondParam)
   }
 
-  case class ViewerIsNonFollowerNonAuthorAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
-        actionBuilder,
+  caselon class VielonwelonrIsNonFollowelonrNonAuthorAndTwelonelontHasViolationOfLelonvelonl(
+    violationLelonvelonl: ViolationLelonvelonl,
+    ovelonrridelon val actionBuildelonr: ActionBuildelonr[_ <: Action])
+      elonxtelonnds OnlyWhelonnNonAuthorVielonwelonrRulelon(
+        actionBuildelonr,
         And(
-          Condition.TweetHasViolationOfLevel(violationLevel),
-          ViewerDoesNotFollowAuthorOfFosnrViolatingTweet)
+          Condition.TwelonelontHasViolationOfLelonvelonl(violationLelonvelonl),
+          VielonwelonrDoelonsNotFollowAuthorOfFosnrViolatingTwelonelont)
       ) {
-    override lazy val name: String =
-      s"ViewerIsNonFollowerNonAuthorAndTweetHasViolationOf$violationLevel"
+    ovelonrridelon lazy val namelon: String =
+      s"VielonwelonrIsNonFollowelonrNonAuthorAndTwelonelontHasViolationOf$violationLelonvelonl"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonFosnrRulelonParam, FosnrRulelonselonnablelondParam)
   }
 
-  case class ViewerIsNonAuthorAndTweetHasViolationOfLevel(
-    violationLevel: ViolationLevel,
-    override val actionBuilder: ActionBuilder[_ <: Action])
-      extends OnlyWhenNonAuthorViewerRule(
-        actionBuilder,
-        Condition.TweetHasViolationOfLevel(violationLevel)
+  caselon class VielonwelonrIsNonAuthorAndTwelonelontHasViolationOfLelonvelonl(
+    violationLelonvelonl: ViolationLelonvelonl,
+    ovelonrridelon val actionBuildelonr: ActionBuildelonr[_ <: Action])
+      elonxtelonnds OnlyWhelonnNonAuthorVielonwelonrRulelon(
+        actionBuildelonr,
+        Condition.TwelonelontHasViolationOfLelonvelonl(violationLelonvelonl)
       ) {
-    override lazy val name: String =
-      s"ViewerIsNonAuthorAndTweetHasViolationOf$violationLevel"
+    ovelonrridelon lazy val namelon: String =
+      s"VielonwelonrIsNonAuthorAndTwelonelontHasViolationOf$violationLelonvelonl"
 
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableFosnrRuleParam, FosnrRulesEnabledParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonFosnrRulelonParam, FosnrRulelonselonnablelondParam)
   }
 
-  case object TweetHasViolationOfAnyLevelFallbackDropRule
-      extends RuleWithConstantAction(
-        Drop(reason = NotSupportedOnDevice),
-        Condition.TweetHasViolationOfAnyLevel
+  caselon objelonct TwelonelontHasViolationOfAnyLelonvelonlFallbackDropRulelon
+      elonxtelonnds RulelonWithConstantAction(
+        Drop(relonason = NotSupportelondOnDelonvicelon),
+        Condition.TwelonelontHasViolationOfAnyLelonvelonl
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableFosnrRuleParam, FosnrFallbackDropRulesEnabledParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonFosnrRulelonParam, FosnrFallbackDropRulelonselonnablelondParam)
   }
 }

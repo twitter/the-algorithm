@@ -1,203 +1,203 @@
-package com.twitter.product_mixer.shared_library.observer
+packagelon com.twittelonr.product_mixelonr.sharelond_library.obselonrvelonr
 
-import com.twitter.finagle.stats.Counter
-import com.twitter.finagle.stats.RollupStatsReceiver
-import com.twitter.finagle.stats.Stat
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.CancelledExceptionExtractor
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Throwables
-import com.twitter.util.Try
+import com.twittelonr.finaglelon.stats.Countelonr
+import com.twittelonr.finaglelon.stats.RollupStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.Stat
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.Cancelonllelondelonxcelonptionelonxtractor
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Throwablelons
+import com.twittelonr.util.Try
 
 /**
- * Helper functions to observe requests, success, failures, cancellations, exceptions, and latency.
- * Supports native functions and asynchronous operations.
+ * Helonlpelonr functions to obselonrvelon relonquelonsts, succelonss, failurelons, cancelonllations, elonxcelonptions, and latelonncy.
+ * Supports nativelon functions and asynchronous opelonrations.
  */
-object Observer {
-  val Requests = "requests"
-  val Success = "success"
-  val Failures = "failures"
-  val Cancelled = "cancelled"
-  val Latency = "latency_ms"
+objelonct Obselonrvelonr {
+  val Relonquelonsts = "relonquelonsts"
+  val Succelonss = "succelonss"
+  val Failurelons = "failurelons"
+  val Cancelonllelond = "cancelonllelond"
+  val Latelonncy = "latelonncy_ms"
 
   /**
-   * Helper function to observe a stitch
+   * Helonlpelonr function to obselonrvelon a stitch
    *
-   * @see [[StitchObserver]]
+   * @selonelon [[StitchObselonrvelonr]]
    */
-  def stitch[T](statsReceiver: StatsReceiver, scopes: String*): StitchObserver[T] =
-    new StitchObserver[T](statsReceiver, scopes)
+  delonf stitch[T](statsReloncelonivelonr: StatsReloncelonivelonr, scopelons: String*): StitchObselonrvelonr[T] =
+    nelonw StitchObselonrvelonr[T](statsReloncelonivelonr, scopelons)
 
   /**
-   * Helper function to observe an arrow
+   * Helonlpelonr function to obselonrvelon an arrow
    *
-   * @see [[ArrowObserver]]
+   * @selonelon [[ArrowObselonrvelonr]]
    */
-  def arrow[In, Out](statsReceiver: StatsReceiver, scopes: String*): ArrowObserver[In, Out] =
-    new ArrowObserver[In, Out](statsReceiver, scopes)
+  delonf arrow[In, Out](statsReloncelonivelonr: StatsReloncelonivelonr, scopelons: String*): ArrowObselonrvelonr[In, Out] =
+    nelonw ArrowObselonrvelonr[In, Out](statsReloncelonivelonr, scopelons)
 
   /**
-   * Helper function to observe a future
+   * Helonlpelonr function to obselonrvelon a futurelon
    *
-   * @see [[FutureObserver]]
+   * @selonelon [[FuturelonObselonrvelonr]]
    */
-  def future[T](statsReceiver: StatsReceiver, scopes: String*): FutureObserver[T] =
-    new FutureObserver[T](statsReceiver, scopes)
+  delonf futurelon[T](statsReloncelonivelonr: StatsReloncelonivelonr, scopelons: String*): FuturelonObselonrvelonr[T] =
+    nelonw FuturelonObselonrvelonr[T](statsReloncelonivelonr, scopelons)
 
   /**
-   * Helper function to observe a function
+   * Helonlpelonr function to obselonrvelon a function
    *
-   * @see [[FunctionObserver]]
+   * @selonelon [[FunctionObselonrvelonr]]
    */
-  def function[T](statsReceiver: StatsReceiver, scopes: String*): FunctionObserver[T] =
-    new FunctionObserver[T](statsReceiver, scopes)
+  delonf function[T](statsReloncelonivelonr: StatsReloncelonivelonr, scopelons: String*): FunctionObselonrvelonr[T] =
+    nelonw FunctionObselonrvelonr[T](statsReloncelonivelonr, scopelons)
 
   /**
-   * [[StitchObserver]] can record latency stats, success counters, and
-   * detailed failure stats for the results of a Stitch computation.
+   * [[StitchObselonrvelonr]] can reloncord latelonncy stats, succelonss countelonrs, and
+   * delontailelond failurelon stats for thelon relonsults of a Stitch computation.
    */
-  class StitchObserver[T](
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends Observer[T] {
+  class StitchObselonrvelonr[T](
+    ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+    ovelonrridelon val scopelons: Selonq[String])
+      elonxtelonnds Obselonrvelonr[T] {
 
     /**
-     * Record stats for the provided Stitch.
-     * The result of the computation is passed through.
+     * Reloncord stats for thelon providelond Stitch.
+     * Thelon relonsult of thelon computation is passelond through.
      *
-     * @note the provided Stitch must contain the parts that need to be timed.
-     *       Using this on just the result of the computation the latency stat
-     *       will be incorrect.
+     * @notelon thelon providelond Stitch must contain thelon parts that nelonelond to belon timelond.
+     *       Using this on just thelon relonsult of thelon computation thelon latelonncy stat
+     *       will belon incorrelonct.
      */
-    def apply(stitch: => Stitch[T]): Stitch[T] =
-      Stitch.time(stitch).map(observe.tupled).lowerFromTry
+    delonf apply(stitch: => Stitch[T]): Stitch[T] =
+      Stitch.timelon(stitch).map(obselonrvelon.tuplelond).lowelonrFromTry
   }
 
   /**
-   * [[ArrowObserver]] can record the latency stats, success counters, and
-   * detailed failure stats for the result of an Arrow computation.
-   * The result of the computation is passed through.
+   * [[ArrowObselonrvelonr]] can reloncord thelon latelonncy stats, succelonss countelonrs, and
+   * delontailelond failurelon stats for thelon relonsult of an Arrow computation.
+   * Thelon relonsult of thelon computation is passelond through.
    */
-  class ArrowObserver[In, Out](
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends Observer[Out] {
+  class ArrowObselonrvelonr[In, Out](
+    ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+    ovelonrridelon val scopelons: Selonq[String])
+      elonxtelonnds Obselonrvelonr[Out] {
 
     /**
-     * Returns a new Arrow that records stats when it's run.
-     * The result of the Arrow is passed through.
+     * Relonturns a nelonw Arrow that reloncords stats whelonn it's run.
+     * Thelon relonsult of thelon Arrow is passelond through.
      *
-     * @note the provided Arrow must contain the parts that need to be timed.
-     *       Using this on just the result of the computation the latency stat
-     *       will be incorrect.
+     * @notelon thelon providelond Arrow must contain thelon parts that nelonelond to belon timelond.
+     *       Using this on just thelon relonsult of thelon computation thelon latelonncy stat
+     *       will belon incorrelonct.
      */
-    def apply(arrow: Arrow[In, Out]): Arrow[In, Out] =
-      Arrow.time(arrow).map(observe.tupled).lowerFromTry
+    delonf apply(arrow: Arrow[In, Out]): Arrow[In, Out] =
+      Arrow.timelon(arrow).map(obselonrvelon.tuplelond).lowelonrFromTry
   }
 
   /**
-   * [[FutureObserver]] can record latency stats, success counters, and
-   * detailed failure stats for the results of a Future computation.
+   * [[FuturelonObselonrvelonr]] can reloncord latelonncy stats, succelonss countelonrs, and
+   * delontailelond failurelon stats for thelon relonsults of a Futurelon computation.
    */
-  class FutureObserver[T](
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends Observer[T] {
+  class FuturelonObselonrvelonr[T](
+    ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+    ovelonrridelon val scopelons: Selonq[String])
+      elonxtelonnds Obselonrvelonr[T] {
 
     /**
-     * Record stats for the provided Future.
-     * The result of the computation is passed through.
+     * Reloncord stats for thelon providelond Futurelon.
+     * Thelon relonsult of thelon computation is passelond through.
      *
-     * @note the provided Future must contain the parts that need to be timed.
-     *       Using this on just the result of the computation the latency stat
-     *       will be incorrect.
+     * @notelon thelon providelond Futurelon must contain thelon parts that nelonelond to belon timelond.
+     *       Using this on just thelon relonsult of thelon computation thelon latelonncy stat
+     *       will belon incorrelonct.
      */
-    def apply(future: => Future[T]): Future[T] =
+    delonf apply(futurelon: => Futurelon[T]): Futurelon[T] =
       Stat
-        .timeFuture(latencyStat)(future)
-        .onSuccess(observeSuccess)
-        .onFailure(observeFailure)
+        .timelonFuturelon(latelonncyStat)(futurelon)
+        .onSuccelonss(obselonrvelonSuccelonss)
+        .onFailurelon(obselonrvelonFailurelon)
   }
 
   /**
-   * [[FunctionObserver]] can record latency stats, success counters, and
-   * detailed failure stats for the results of a computation computation.
+   * [[FunctionObselonrvelonr]] can reloncord latelonncy stats, succelonss countelonrs, and
+   * delontailelond failurelon stats for thelon relonsults of a computation computation.
    */
-  class FunctionObserver[T](
-    override val statsReceiver: StatsReceiver,
-    override val scopes: Seq[String])
-      extends Observer[T] {
+  class FunctionObselonrvelonr[T](
+    ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+    ovelonrridelon val scopelons: Selonq[String])
+      elonxtelonnds Obselonrvelonr[T] {
 
     /**
-     * Record stats for the provided computation.
-     * The result of the computation is passed through.
+     * Reloncord stats for thelon providelond computation.
+     * Thelon relonsult of thelon computation is passelond through.
      *
-     * @note the provided computation must contain the parts that need to be timed.
-     *       Using this on just the result of the computation the latency stat
-     *       will be incorrect.
+     * @notelon thelon providelond computation must contain thelon parts that nelonelond to belon timelond.
+     *       Using this on just thelon relonsult of thelon computation thelon latelonncy stat
+     *       will belon incorrelonct.
      */
-    def apply(f: => T): T = {
-      Try(Stat.time(latencyStat)(f))
-        .onSuccess(observeSuccess)
-        .onFailure(observeFailure)
+    delonf apply(f: => T): T = {
+      Try(Stat.timelon(latelonncyStat)(f))
+        .onSuccelonss(obselonrvelonSuccelonss)
+        .onFailurelon(obselonrvelonFailurelon)
         .apply()
     }
   }
 
-  /** [[Observer]] provides methods for recording latency, success, and failure stats */
-  trait Observer[T] {
-    protected val statsReceiver: StatsReceiver
+  /** [[Obselonrvelonr]] providelons melonthods for reloncording latelonncy, succelonss, and failurelon stats */
+  trait Obselonrvelonr[T] {
+    protelonctelond val statsReloncelonivelonr: StatsReloncelonivelonr
 
-    /** Scopes that prefix all stats */
-    protected val scopes: Seq[String]
+    /** Scopelons that prelonfix all stats */
+    protelonctelond val scopelons: Selonq[String]
 
-    private val rollupStatsReceiver = new RollupStatsReceiver(statsReceiver.scope(scopes: _*))
-    private val requestsCounter: Counter = statsReceiver.counter(scopes :+ Requests: _*)
-    private val successCounter: Counter = statsReceiver.counter(scopes :+ Success: _*)
+    privatelon val rollupStatsReloncelonivelonr = nelonw RollupStatsReloncelonivelonr(statsReloncelonivelonr.scopelon(scopelons: _*))
+    privatelon val relonquelonstsCountelonr: Countelonr = statsReloncelonivelonr.countelonr(scopelons :+ Relonquelonsts: _*)
+    privatelon val succelonssCountelonr: Countelonr = statsReloncelonivelonr.countelonr(scopelons :+ Succelonss: _*)
 
-    // create the stats so their metrics paths are always present but
-    // defer to the [[RollupStatsReceiver]] to increment these stats
-    rollupStatsReceiver.counter(Failures)
-    rollupStatsReceiver.counter(Cancelled)
+    // crelonatelon thelon stats so thelonir melontrics paths arelon always prelonselonnt but
+    // delonfelonr to thelon [[RollupStatsReloncelonivelonr]] to increlonmelonnt thelonselon stats
+    rollupStatsReloncelonivelonr.countelonr(Failurelons)
+    rollupStatsReloncelonivelonr.countelonr(Cancelonllelond)
 
-    /** Serialize a throwable and it's causes into a seq of Strings for scoping metrics */
-    protected def serializeThrowable(throwable: Throwable): Seq[String] =
-      Throwables.mkString(throwable)
+    /** Selonrializelon a throwablelon and it's causelons into a selonq of Strings for scoping melontrics */
+    protelonctelond delonf selonrializelonThrowablelon(throwablelon: Throwablelon): Selonq[String] =
+      Throwablelons.mkString(throwablelon)
 
-    /** Used to record latency in milliseconds */
-    protected val latencyStat: Stat = statsReceiver.stat(scopes :+ Latency: _*)
+    /** Uselond to reloncord latelonncy in milliselonconds */
+    protelonctelond val latelonncyStat: Stat = statsReloncelonivelonr.stat(scopelons :+ Latelonncy: _*)
 
-    /** Records the latency from a [[Duration]] */
-    protected val observeLatency: Duration => Unit = { latency =>
-      latencyStat.add(latency.inMilliseconds)
+    /** Reloncords thelon latelonncy from a [[Duration]] */
+    protelonctelond val obselonrvelonLatelonncy: Duration => Unit = { latelonncy =>
+      latelonncyStat.add(latelonncy.inMilliselonconds)
     }
 
-    /** Records successes */
-    protected val observeSuccess: T => Unit = { _ =>
-      requestsCounter.incr()
-      successCounter.incr()
+    /** Reloncords succelonsselons */
+    protelonctelond val obselonrvelonSuccelonss: T => Unit = { _ =>
+      relonquelonstsCountelonr.incr()
+      succelonssCountelonr.incr()
     }
 
-    /** Records failures and failure details */
-    protected val observeFailure: Throwable => Unit = {
-      case CancelledExceptionExtractor(throwable) =>
-        requestsCounter.incr()
-        rollupStatsReceiver.counter(Cancelled +: serializeThrowable(throwable): _*).incr()
-      case throwable =>
-        requestsCounter.incr()
-        rollupStatsReceiver.counter(Failures +: serializeThrowable(throwable): _*).incr()
+    /** Reloncords failurelons and failurelon delontails */
+    protelonctelond val obselonrvelonFailurelon: Throwablelon => Unit = {
+      caselon Cancelonllelondelonxcelonptionelonxtractor(throwablelon) =>
+        relonquelonstsCountelonr.incr()
+        rollupStatsReloncelonivelonr.countelonr(Cancelonllelond +: selonrializelonThrowablelon(throwablelon): _*).incr()
+      caselon throwablelon =>
+        relonquelonstsCountelonr.incr()
+        rollupStatsReloncelonivelonr.countelonr(Failurelons +: selonrializelonThrowablelon(throwablelon): _*).incr()
     }
 
-    /** Records the latency, successes, and failures */
-    protected val observe: (Try[T], Duration) => Try[T] =
-      (response: Try[T], runDuration: Duration) => {
-        observeLatency(runDuration)
-        response
-          .onSuccess(observeSuccess)
-          .onFailure(observeFailure)
+    /** Reloncords thelon latelonncy, succelonsselons, and failurelons */
+    protelonctelond val obselonrvelon: (Try[T], Duration) => Try[T] =
+      (relonsponselon: Try[T], runDuration: Duration) => {
+        obselonrvelonLatelonncy(runDuration)
+        relonsponselon
+          .onSuccelonss(obselonrvelonSuccelonss)
+          .onFailurelon(obselonrvelonFailurelon)
       }
   }
 }

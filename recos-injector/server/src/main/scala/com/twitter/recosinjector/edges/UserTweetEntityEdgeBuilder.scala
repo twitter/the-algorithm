@@ -1,80 +1,80 @@
-package com.twitter.recosinjector.edges
+packagelon com.twittelonr.reloncosinjelonctor.elondgelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms.RecommendationType
-import com.twitter.recosinjector.clients.CacheEntityEntry
-import com.twitter.recosinjector.clients.RecosHoseEntitiesCache
-import com.twitter.recosinjector.clients.UrlResolver
-import com.twitter.recosinjector.util.TweetDetails
-import com.twitter.util.Future
-import scala.collection.Map
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graphjelont.algorithms.ReloncommelonndationTypelon
+import com.twittelonr.reloncosinjelonctor.clielonnts.Cachelonelonntityelonntry
+import com.twittelonr.reloncosinjelonctor.clielonnts.ReloncosHoselonelonntitielonsCachelon
+import com.twittelonr.reloncosinjelonctor.clielonnts.UrlRelonsolvelonr
+import com.twittelonr.reloncosinjelonctor.util.TwelonelontDelontails
+import com.twittelonr.util.Futurelon
+import scala.collelonction.Map
 import scala.util.hashing.MurmurHash3
 
-class UserTweetEntityEdgeBuilder(
-  cache: RecosHoseEntitiesCache,
-  urlResolver: UrlResolver
+class UselonrTwelonelontelonntityelondgelonBuildelonr(
+  cachelon: ReloncosHoselonelonntitielonsCachelon,
+  urlRelonsolvelonr: UrlRelonsolvelonr
 )(
-  implicit val stats: StatsReceiver) {
+  implicit val stats: StatsReloncelonivelonr) {
 
-  def getHashedEntities(entities: Seq[String]): Seq[Int] = {
-    entities.map(MurmurHash3.stringHash)
+  delonf gelontHashelondelonntitielons(elonntitielons: Selonq[String]): Selonq[Int] = {
+    elonntitielons.map(MurmurHash3.stringHash)
   }
 
   /**
-   * Given the entities and their corresponding hashedIds, store the hashId->entity mapping into a
-   * cache.
-   * This is because UTEG edges only store the hashIds, and relies on the cache values to
-   * recover the actual entities. This allows us to store integer values instead of string in the
-   * edges to save space.
+   * Givelonn thelon elonntitielons and thelonir correlonsponding hashelondIds, storelon thelon hashId->elonntity mapping into a
+   * cachelon.
+   * This is beloncauselon UTelonG elondgelons only storelon thelon hashIds, and relonlielons on thelon cachelon valuelons to
+   * reloncovelonr thelon actual elonntitielons. This allows us to storelon intelongelonr valuelons instelonad of string in thelon
+   * elondgelons to savelon spacelon.
    */
-  private def storeEntitiesInCache(
-    urlEntities: Seq[String],
-    urlHashIds: Seq[Int]
-  ): Future[Unit] = {
-    val urlCacheEntries = urlHashIds.zip(urlEntities).map {
-      case (hashId, url) =>
-        CacheEntityEntry(RecosHoseEntitiesCache.UrlPrefix, hashId, url)
+  privatelon delonf storelonelonntitielonsInCachelon(
+    urlelonntitielons: Selonq[String],
+    urlHashIds: Selonq[Int]
+  ): Futurelon[Unit] = {
+    val urlCachelonelonntrielons = urlHashIds.zip(urlelonntitielons).map {
+      caselon (hashId, url) =>
+        Cachelonelonntityelonntry(ReloncosHoselonelonntitielonsCachelon.UrlPrelonfix, hashId, url)
     }
-    cache.updateEntitiesCache(
-      newCacheEntries = urlCacheEntries,
-      stats = stats.scope("urlCache")
+    cachelon.updatelonelonntitielonsCachelon(
+      nelonwCachelonelonntrielons = urlCachelonelonntrielons,
+      stats = stats.scopelon("urlCachelon")
     )
   }
 
   /**
-   * Return an entity mapping from GraphJet recType -> hash(entity)
+   * Relonturn an elonntity mapping from GraphJelont reloncTypelon -> hash(elonntity)
    */
-  private def getEntitiesMap(
-    urlHashIds: Seq[Int]
+  privatelon delonf gelontelonntitielonsMap(
+    urlHashIds: Selonq[Int]
   ) = {
-    val entitiesMap = Seq(
-      RecommendationType.URL.getValue.toByte -> urlHashIds
-    ).collect {
-      case (keys, ids) if ids.nonEmpty => keys -> ids
+    val elonntitielonsMap = Selonq(
+      ReloncommelonndationTypelon.URL.gelontValuelon.toBytelon -> urlHashIds
+    ).collelonct {
+      caselon (kelonys, ids) if ids.nonelonmpty => kelonys -> ids
     }.toMap
-    if (entitiesMap.isEmpty) None else Some(entitiesMap)
+    if (elonntitielonsMap.iselonmpty) Nonelon elonlselon Somelon(elonntitielonsMap)
   }
 
-  def getEntitiesMapAndUpdateCache(
-    tweetId: Long,
-    tweetDetails: Option[TweetDetails]
-  ): Future[Option[Map[Byte, Seq[Int]]]] = {
-    val resolvedUrlFut = urlResolver
-      .getResolvedUrls(
-        urls = tweetDetails.flatMap(_.urls).getOrElse(Nil),
-        tweetId = tweetId
-      ).map(_.values.toSeq)
+  delonf gelontelonntitielonsMapAndUpdatelonCachelon(
+    twelonelontId: Long,
+    twelonelontDelontails: Option[TwelonelontDelontails]
+  ): Futurelon[Option[Map[Bytelon, Selonq[Int]]]] = {
+    val relonsolvelondUrlFut = urlRelonsolvelonr
+      .gelontRelonsolvelondUrls(
+        urls = twelonelontDelontails.flatMap(_.urls).gelontOrelonlselon(Nil),
+        twelonelontId = twelonelontId
+      ).map(_.valuelons.toSelonq)
 
-    resolvedUrlFut.map { resolvedUrls =>
-      val urlEntities = resolvedUrls
-      val urlHashIds = getHashedEntities(urlEntities)
+    relonsolvelondUrlFut.map { relonsolvelondUrls =>
+      val urlelonntitielons = relonsolvelondUrls
+      val urlHashIds = gelontHashelondelonntitielons(urlelonntitielons)
 
-      // Async call to cache
-      storeEntitiesInCache(
-        urlEntities = urlEntities,
+      // Async call to cachelon
+      storelonelonntitielonsInCachelon(
+        urlelonntitielons = urlelonntitielons,
         urlHashIds = urlHashIds
       )
-      getEntitiesMap(urlHashIds)
+      gelontelonntitielonsMap(urlHashIds)
     }
   }
 }

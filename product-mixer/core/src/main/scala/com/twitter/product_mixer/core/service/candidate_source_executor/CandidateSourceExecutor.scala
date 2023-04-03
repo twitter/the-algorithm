@@ -1,173 +1,173 @@
-package com.twitter.product_mixer.core.service.candidate_source_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_sourcelon_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.functional_component.transformer.BaseCandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSourcePosition
-import com.twitter.product_mixer.core.model.common.presentation.CandidateSources
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.ExecutionFailed
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.candidate_feature_transformer_executor.CandidateFeatureTransformerExecutor
-import com.twitter.product_mixer.core.service.transformer_executor.PerCandidateTransformerExecutor
-import com.twitter.product_mixer.core.service.transformer_executor.TransformerExecutor
-import com.twitter.stitch.Arrow
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.ListSet
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.BaselonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelonWithelonxtractelondFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonsWithSourcelonFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.BaselonCandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonSourcelonPosition
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonSourcelons
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.elonxeloncutionFailelond
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.UnelonxpelonctelondCandidatelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_felonaturelon_transformelonr_elonxeloncutor.CandidatelonFelonaturelonTransformelonrelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.transformelonr_elonxeloncutor.PelonrCandidatelonTransformelonrelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.transformelonr_elonxeloncutor.Transformelonrelonxeloncutor
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
+import com.twittelonr.util.logging.Logging
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.immutablelon.ListSelont
 
 /**
- * [[CandidateSourceExecutor]]:
- *   - Executes a [[BaseCandidateSource]], using a [[BaseCandidatePipelineQueryTransformer]] and a [[CandidatePipelineResultsTransformer]]
- *   - in parallel, uses a [[CandidateFeatureTransformer]] to optionally extract [[com.twitter.product_mixer.core.feature.Feature]]s from the result
- *   - Handles [[UnexpectedCandidateResult]] [[PipelineFailure]]s returned from [[CandidatePipelineResultsTransformer]] failures by removing those candidates from the result
+ * [[CandidatelonSourcelonelonxeloncutor]]:
+ *   - elonxeloncutelons a [[BaselonCandidatelonSourcelon]], using a [[BaselonCandidatelonPipelonlinelonQuelonryTransformelonr]] and a [[CandidatelonPipelonlinelonRelonsultsTransformelonr]]
+ *   - in parallelonl, uselons a [[CandidatelonFelonaturelonTransformelonr]] to optionally elonxtract [[com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon]]s from thelon relonsult
+ *   - Handlelons [[UnelonxpelonctelondCandidatelonRelonsult]] [[PipelonlinelonFailurelon]]s relonturnelond from [[CandidatelonPipelonlinelonRelonsultsTransformelonr]] failurelons by relonmoving thoselon candidatelons from thelon relonsult
  */
-@Singleton
-class CandidateSourceExecutor @Inject() (
-  override val statsReceiver: StatsReceiver,
-  candidateFeatureTransformerExecutor: CandidateFeatureTransformerExecutor,
-  transformerExecutor: TransformerExecutor,
-  perCandidateTransformerExecutor: PerCandidateTransformerExecutor)
-    extends Executor
+@Singlelonton
+class CandidatelonSourcelonelonxeloncutor @Injelonct() (
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr,
+  candidatelonFelonaturelonTransformelonrelonxeloncutor: CandidatelonFelonaturelonTransformelonrelonxeloncutor,
+  transformelonrelonxeloncutor: Transformelonrelonxeloncutor,
+  pelonrCandidatelonTransformelonrelonxeloncutor: PelonrCandidatelonTransformelonrelonxeloncutor)
+    elonxtelonnds elonxeloncutor
     with Logging {
 
-  def arrow[
-    Query <: PipelineQuery,
-    CandidateSourceQuery,
-    CandidateSourceResult,
-    Candidate <: UniversalNoun[Any]
+  delonf arrow[
+    Quelonry <: PipelonlinelonQuelonry,
+    CandidatelonSourcelonQuelonry,
+    CandidatelonSourcelonRelonsult,
+    Candidatelon <: UnivelonrsalNoun[Any]
   ](
-    candidateSource: BaseCandidateSource[CandidateSourceQuery, CandidateSourceResult],
-    queryTransformer: BaseCandidatePipelineQueryTransformer[
-      Query,
-      CandidateSourceQuery
+    candidatelonSourcelon: BaselonCandidatelonSourcelon[CandidatelonSourcelonQuelonry, CandidatelonSourcelonRelonsult],
+    quelonryTransformelonr: BaselonCandidatelonPipelonlinelonQuelonryTransformelonr[
+      Quelonry,
+      CandidatelonSourcelonQuelonry
     ],
-    resultTransformer: CandidatePipelineResultsTransformer[CandidateSourceResult, Candidate],
-    resultFeaturesTransformers: Seq[CandidateFeatureTransformer[CandidateSourceResult]],
-    context: Executor.Context
-  ): Arrow[Query, CandidateSourceExecutorResult[Candidate]] = {
+    relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[CandidatelonSourcelonRelonsult, Candidatelon],
+    relonsultFelonaturelonsTransformelonrs: Selonq[CandidatelonFelonaturelonTransformelonr[CandidatelonSourcelonRelonsult]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Quelonry, CandidatelonSourcelonelonxeloncutorRelonsult[Candidatelon]] = {
 
-    val candidateSourceArrow: Arrow[CandidateSourceQuery, CandidatesWithSourceFeatures[
-      CandidateSourceResult
+    val candidatelonSourcelonArrow: Arrow[CandidatelonSourcelonQuelonry, CandidatelonsWithSourcelonFelonaturelons[
+      CandidatelonSourcelonRelonsult
     ]] =
-      candidateSource match {
-        case regularCandidateSource: CandidateSource[CandidateSourceQuery, CandidateSourceResult] =>
-          Arrow.flatMap(regularCandidateSource.apply).map { candidates =>
-            CandidatesWithSourceFeatures(candidates, FeatureMap.empty)
+      candidatelonSourcelon match {
+        caselon relongularCandidatelonSourcelon: CandidatelonSourcelon[CandidatelonSourcelonQuelonry, CandidatelonSourcelonRelonsult] =>
+          Arrow.flatMap(relongularCandidatelonSourcelon.apply).map { candidatelons =>
+            CandidatelonsWithSourcelonFelonaturelons(candidatelons, FelonaturelonMap.elonmpty)
           }
-        case candidateSourceWithExtractedFeatures: CandidateSourceWithExtractedFeatures[
-              CandidateSourceQuery,
-              CandidateSourceResult
+        caselon candidatelonSourcelonWithelonxtractelondFelonaturelons: CandidatelonSourcelonWithelonxtractelondFelonaturelons[
+              CandidatelonSourcelonQuelonry,
+              CandidatelonSourcelonRelonsult
             ] =>
-          Arrow.flatMap(candidateSourceWithExtractedFeatures.apply)
+          Arrow.flatMap(candidatelonSourcelonWithelonxtractelondFelonaturelons.apply)
       }
 
-    val resultsTransformerArrow: Arrow[Seq[CandidateSourceResult], Seq[Try[Candidate]]] =
-      perCandidateTransformerExecutor.arrow(resultTransformer, context)
+    val relonsultsTransformelonrArrow: Arrow[Selonq[CandidatelonSourcelonRelonsult], Selonq[Try[Candidatelon]]] =
+      pelonrCandidatelonTransformelonrelonxeloncutor.arrow(relonsultTransformelonr, contelonxt)
 
-    val featureMapTransformersArrow: Arrow[
-      Seq[CandidateSourceResult],
-      Seq[FeatureMap]
+    val felonaturelonMapTransformelonrsArrow: Arrow[
+      Selonq[CandidatelonSourcelonRelonsult],
+      Selonq[FelonaturelonMap]
     ] =
-      candidateFeatureTransformerExecutor
-        .arrow(resultFeaturesTransformers, context).map(_.featureMaps)
+      candidatelonFelonaturelonTransformelonrelonxeloncutor
+        .arrow(relonsultFelonaturelonsTransformelonrs, contelonxt).map(_.felonaturelonMaps)
 
-    val candidatesResultArrow: Arrow[CandidatesWithSourceFeatures[CandidateSourceResult], Seq[
-      (Candidate, FeatureMap)
+    val candidatelonsRelonsultArrow: Arrow[CandidatelonsWithSourcelonFelonaturelons[CandidatelonSourcelonRelonsult], Selonq[
+      (Candidatelon, FelonaturelonMap)
     ]] = Arrow
-      .map[CandidatesWithSourceFeatures[CandidateSourceResult], Seq[CandidateSourceResult]](
-        _.candidates)
-      .andThen(Arrow
-        .joinMap(resultsTransformerArrow, featureMapTransformersArrow) {
-          case (transformed, features) =>
-            if (transformed.length != features.length)
-              throw PipelineFailure(
-                ExecutionFailed,
-                s"Found ${transformed.length} candidates and ${features.length} FeatureMaps, expected their lengths to be equal")
-            transformed.iterator
-              .zip(features.iterator)
-              .collect { case ErrorHandling(result) => result }
-              .toSeq
+      .map[CandidatelonsWithSourcelonFelonaturelons[CandidatelonSourcelonRelonsult], Selonq[CandidatelonSourcelonRelonsult]](
+        _.candidatelons)
+      .andThelonn(Arrow
+        .joinMap(relonsultsTransformelonrArrow, felonaturelonMapTransformelonrsArrow) {
+          caselon (transformelond, felonaturelons) =>
+            if (transformelond.lelonngth != felonaturelons.lelonngth)
+              throw PipelonlinelonFailurelon(
+                elonxeloncutionFailelond,
+                s"Found ${transformelond.lelonngth} candidatelons and ${felonaturelons.lelonngth} FelonaturelonMaps, elonxpelonctelond thelonir lelonngths to belon elonqual")
+            transformelond.itelonrator
+              .zip(felonaturelons.itelonrator)
+              .collelonct { caselon elonrrorHandling(relonsult) => relonsult }
+              .toSelonq
         })
 
-    // Build the final CandidateSourceExecutorResult
-    val executorResultArrow: Arrow[
-      (FeatureMap, Seq[(Candidate, FeatureMap)]),
-      CandidateSourceExecutorResult[
-        Candidate
+    // Build thelon final CandidatelonSourcelonelonxeloncutorRelonsult
+    val elonxeloncutorRelonsultArrow: Arrow[
+      (FelonaturelonMap, Selonq[(Candidatelon, FelonaturelonMap)]),
+      CandidatelonSourcelonelonxeloncutorRelonsult[
+        Candidatelon
       ]
     ] = Arrow.map {
-      case (queryFeatures: FeatureMap, results: Seq[(Candidate, FeatureMap)]) =>
-        val candidatesWithFeatures: Seq[FetchedCandidateWithFeatures[Candidate]] =
-          results.zipWithIndex.map {
-            case ((candidate, featureMap), index) =>
-              FetchedCandidateWithFeatures(
-                candidate,
-                featureMap + (CandidateSourcePosition, index) + (CandidateSources, ListSet(
-                  candidateSource.identifier))
+      caselon (quelonryFelonaturelons: FelonaturelonMap, relonsults: Selonq[(Candidatelon, FelonaturelonMap)]) =>
+        val candidatelonsWithFelonaturelons: Selonq[FelontchelondCandidatelonWithFelonaturelons[Candidatelon]] =
+          relonsults.zipWithIndelonx.map {
+            caselon ((candidatelon, felonaturelonMap), indelonx) =>
+              FelontchelondCandidatelonWithFelonaturelons(
+                candidatelon,
+                felonaturelonMap + (CandidatelonSourcelonPosition, indelonx) + (CandidatelonSourcelons, ListSelont(
+                  candidatelonSourcelon.idelonntifielonr))
               )
           }
-        CandidateSourceExecutorResult(
-          candidates = candidatesWithFeatures,
-          candidateSourceFeatureMap = queryFeatures
+        CandidatelonSourcelonelonxeloncutorRelonsult(
+          candidatelons = candidatelonsWithFelonaturelons,
+          candidatelonSourcelonFelonaturelonMap = quelonryFelonaturelons
         )
     }
 
-    val queryTransformerArrow =
-      transformerExecutor.arrow[Query, CandidateSourceQuery](queryTransformer, context)
+    val quelonryTransformelonrArrow =
+      transformelonrelonxeloncutor.arrow[Quelonry, CandidatelonSourcelonQuelonry](quelonryTransformelonr, contelonxt)
 
-    val combinedArrow =
-      queryTransformerArrow
-        .andThen(candidateSourceArrow)
-        .andThen(
+    val combinelondArrow =
+      quelonryTransformelonrArrow
+        .andThelonn(candidatelonSourcelonArrow)
+        .andThelonn(
           Arrow
             .join(
-              Arrow.map[CandidatesWithSourceFeatures[CandidateSourceResult], FeatureMap](
-                _.features),
-              candidatesResultArrow
+              Arrow.map[CandidatelonsWithSourcelonFelonaturelons[CandidatelonSourcelonRelonsult], FelonaturelonMap](
+                _.felonaturelons),
+              candidatelonsRelonsultArrow
             ))
-        .andThen(executorResultArrow)
+        .andThelonn(elonxeloncutorRelonsultArrow)
 
-    wrapComponentWithExecutorBookkeepingWithSize[Query, CandidateSourceExecutorResult[Candidate]](
-      context,
-      candidateSource.identifier,
-      result => result.candidates.size
-    )(combinedArrow)
+    wrapComponelonntWithelonxeloncutorBookkelonelonpingWithSizelon[Quelonry, CandidatelonSourcelonelonxeloncutorRelonsult[Candidatelon]](
+      contelonxt,
+      candidatelonSourcelon.idelonntifielonr,
+      relonsult => relonsult.candidatelons.sizelon
+    )(combinelondArrow)
   }
 
-  object ErrorHandling {
+  objelonct elonrrorHandling {
 
-    /** Silently drop [[UnexpectedCandidateResult]] */
-    def unapply[Candidate](
-      candidateTryAndFeatureMap: (Try[Candidate], FeatureMap)
-    ): Option[(Candidate, FeatureMap)] = {
-      val (candidateTry, featureMap) = candidateTryAndFeatureMap
-      val candidateOpt = candidateTry match {
-        case Throw(PipelineFailure(UnexpectedCandidateResult, _, _, _)) => None
-        case Throw(ex) => throw ex
-        case Return(r) => Some(r)
+    /** Silelonntly drop [[UnelonxpelonctelondCandidatelonRelonsult]] */
+    delonf unapply[Candidatelon](
+      candidatelonTryAndFelonaturelonMap: (Try[Candidatelon], FelonaturelonMap)
+    ): Option[(Candidatelon, FelonaturelonMap)] = {
+      val (candidatelonTry, felonaturelonMap) = candidatelonTryAndFelonaturelonMap
+      val candidatelonOpt = candidatelonTry match {
+        caselon Throw(PipelonlinelonFailurelon(UnelonxpelonctelondCandidatelonRelonsult, _, _, _)) => Nonelon
+        caselon Throw(elonx) => throw elonx
+        caselon Relonturn(r) => Somelon(r)
       }
 
-      candidateOpt.map { candidate => (candidate, featureMap) }
+      candidatelonOpt.map { candidatelon => (candidatelon, felonaturelonMap) }
     }
   }
 }
 
-case class FetchedCandidateWithFeatures[Candidate <: UniversalNoun[Any]](
-  candidate: Candidate,
-  features: FeatureMap)
-    extends CandidateWithFeatures[Candidate]
+caselon class FelontchelondCandidatelonWithFelonaturelons[Candidatelon <: UnivelonrsalNoun[Any]](
+  candidatelon: Candidatelon,
+  felonaturelons: FelonaturelonMap)
+    elonxtelonnds CandidatelonWithFelonaturelons[Candidatelon]

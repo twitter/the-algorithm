@@ -1,36 +1,36 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ClientEventInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.FeedbackInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleDisplayTypeMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleFooterMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleHeaderMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleMetadataMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module.ModuleShowMoreBehaviorMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ClielonntelonvelonntInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.FelonelondbackInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon.ModulelonDisplayTypelonMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon.ModulelonFootelonrMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon.ModulelonHelonadelonrMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon.ModulelonMelontadataMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon.ModulelonShowMorelonBelonhaviorMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelineModuleMarshaller @Inject() (
-  moduleItemMarshaller: ModuleItemMarshaller,
-  moduleDisplayTypeMarshaller: ModuleDisplayTypeMarshaller,
-  moduleHeaderMarshaller: ModuleHeaderMarshaller,
-  moduleFooterMarshaller: ModuleFooterMarshaller,
-  clientEventInfoMarshaller: ClientEventInfoMarshaller,
-  feedbackInfoMarshaller: FeedbackInfoMarshaller,
-  moduleMetadataMarshaller: ModuleMetadataMarshaller,
-  moduleShowMoreBehaviorMarshaller: ModuleShowMoreBehaviorMarshaller) {
+@Singlelonton
+class TimelonlinelonModulelonMarshallelonr @Injelonct() (
+  modulelonItelonmMarshallelonr: ModulelonItelonmMarshallelonr,
+  modulelonDisplayTypelonMarshallelonr: ModulelonDisplayTypelonMarshallelonr,
+  modulelonHelonadelonrMarshallelonr: ModulelonHelonadelonrMarshallelonr,
+  modulelonFootelonrMarshallelonr: ModulelonFootelonrMarshallelonr,
+  clielonntelonvelonntInfoMarshallelonr: ClielonntelonvelonntInfoMarshallelonr,
+  felonelondbackInfoMarshallelonr: FelonelondbackInfoMarshallelonr,
+  modulelonMelontadataMarshallelonr: ModulelonMelontadataMarshallelonr,
+  modulelonShowMorelonBelonhaviorMarshallelonr: ModulelonShowMorelonBelonhaviorMarshallelonr) {
 
-  def apply(timelineModule: TimelineModule): urt.TimelineModule = urt.TimelineModule(
-    items = timelineModule.items.map(moduleItemMarshaller(_, timelineModule.entryIdentifier)),
-    displayType = moduleDisplayTypeMarshaller(timelineModule.displayType),
-    header = timelineModule.header.map(moduleHeaderMarshaller(_)),
-    footer = timelineModule.footer.map(moduleFooterMarshaller(_)),
-    clientEventInfo = timelineModule.clientEventInfo.map(clientEventInfoMarshaller(_)),
-    feedbackInfo = timelineModule.feedbackActionInfo.map(feedbackInfoMarshaller(_)),
-    metadata = timelineModule.metadata.map(moduleMetadataMarshaller(_)),
-    showMoreBehavior = timelineModule.showMoreBehavior.map(moduleShowMoreBehaviorMarshaller(_))
+  delonf apply(timelonlinelonModulelon: TimelonlinelonModulelon): urt.TimelonlinelonModulelon = urt.TimelonlinelonModulelon(
+    itelonms = timelonlinelonModulelon.itelonms.map(modulelonItelonmMarshallelonr(_, timelonlinelonModulelon.elonntryIdelonntifielonr)),
+    displayTypelon = modulelonDisplayTypelonMarshallelonr(timelonlinelonModulelon.displayTypelon),
+    helonadelonr = timelonlinelonModulelon.helonadelonr.map(modulelonHelonadelonrMarshallelonr(_)),
+    footelonr = timelonlinelonModulelon.footelonr.map(modulelonFootelonrMarshallelonr(_)),
+    clielonntelonvelonntInfo = timelonlinelonModulelon.clielonntelonvelonntInfo.map(clielonntelonvelonntInfoMarshallelonr(_)),
+    felonelondbackInfo = timelonlinelonModulelon.felonelondbackActionInfo.map(felonelondbackInfoMarshallelonr(_)),
+    melontadata = timelonlinelonModulelon.melontadata.map(modulelonMelontadataMarshallelonr(_)),
+    showMorelonBelonhavior = timelonlinelonModulelon.showMorelonBelonhavior.map(modulelonShowMorelonBelonhaviorMarshallelonr(_))
   )
 }

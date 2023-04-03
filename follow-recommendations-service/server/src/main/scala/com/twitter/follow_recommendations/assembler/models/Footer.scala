@@ -1,9 +1,9 @@
-package com.twitter.follow_recommendations.assembler.models
+packagelon com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls
 
-import com.twitter.follow_recommendations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
 
-case class Footer(action: Option[Action]) {
-  lazy val toThrift: t.Footer = {
-    t.Footer(action.map(_.toThrift))
+caselon class Footelonr(action: Option[Action]) {
+  lazy val toThrift: t.Footelonr = {
+    t.Footelonr(action.map(_.toThrift))
   }
 }

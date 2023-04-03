@@ -1,67 +1,67 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.util.SearchResultUtil
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.util.SelonarchRelonsultUtil
+import com.twittelonr.util.Futurelon
 
 /**
- * Truncate the search results by score. Assumes that the search results are sorted in
- * score-descending order unless extraSortBeforeTruncation is set to true.
+ * Truncatelon thelon selonarch relonsults by scorelon. Assumelons that thelon selonarch relonsults arelon sortelond in
+ * scorelon-delonscelonnding ordelonr unlelonss elonxtraSortBelonforelonTruncation is selont to truelon.
  *
- * This transform has two main use cases:
+ * This transform has two main uselon caselons:
  *
- * - when returnAllResults is set to true, earlybird returns (numResultsPerShard * number of shards)
- *   results. this transform is then used to further truncate the result, so that the size will be the
- *   same as when returnAllResults is set to false.
+ * - whelonn relonturnAllRelonsults is selont to truelon, elonarlybird relonturns (numRelonsultsPelonrShard * numbelonr of shards)
+ *   relonsults. this transform is thelonn uselond to furthelonr truncatelon thelon relonsult, so that thelon sizelon will belon thelon
+ *   samelon as whelonn relonturnAllRelonsults is selont to falselon.
  *
- * - we retrieve extra number of results from earlybird, as specified in MaxCountMultiplierParam,
- *   so that we are left with sufficient number of candidates after hydration and filtering.
- *   this transform will be used to get rid of extra results we ended up not using.
+ * - welon relontrielonvelon elonxtra numbelonr of relonsults from elonarlybird, as speloncifielond in MaxCountMultiplielonrParam,
+ *   so that welon arelon lelonft with sufficielonnt numbelonr of candidatelons aftelonr hydration and filtelonring.
+ *   this transform will belon uselond to gelont rid of elonxtra relonsults welon elonndelond up not using.
  */
-class RecapSearchResultsTruncationTransform(
-  extraSortBeforeTruncationGate: DependencyProvider[Boolean],
-  maxCountProvider: DependencyProvider[Int],
-  statsReceiver: StatsReceiver)
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  private[this] val postTruncationSizeStat = statsReceiver.stat("postTruncationSize")
-  private[this] val earlybirdScoreX100Stat = statsReceiver.stat("earlybirdScoreX100")
+class ReloncapSelonarchRelonsultsTruncationTransform(
+  elonxtraSortBelonforelonTruncationGatelon: DelonpelonndelonncyProvidelonr[Boolelonan],
+  maxCountProvidelonr: DelonpelonndelonncyProvidelonr[Int],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
+  privatelon[this] val postTruncationSizelonStat = statsReloncelonivelonr.stat("postTruncationSizelon")
+  privatelon[this] val elonarlybirdScorelonX100Stat = statsReloncelonivelonr.stat("elonarlybirdScorelonX100")
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val sortBeforeTruncation = extraSortBeforeTruncationGate(envelope.query)
-    val maxCount = maxCountProvider(envelope.query)
-    val searchResults = envelope.searchResults
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val sortBelonforelonTruncation = elonxtraSortBelonforelonTruncationGatelon(elonnvelonlopelon.quelonry)
+    val maxCount = maxCountProvidelonr(elonnvelonlopelon.quelonry)
+    val selonarchRelonsults = elonnvelonlopelon.selonarchRelonsults
 
-    // set aside results that are marked by isRandomTweet field
-    val (randomTweetSeq, searchResultsExcludingRandom) = searchResults.partition { result =>
-      result.tweetFeatures.flatMap(_.isRandomTweet).getOrElse(false)
+    // selont asidelon relonsults that arelon markelond by isRandomTwelonelont fielonld
+    val (randomTwelonelontSelonq, selonarchRelonsultselonxcludingRandom) = selonarchRelonsults.partition { relonsult =>
+      relonsult.twelonelontFelonaturelons.flatMap(_.isRandomTwelonelont).gelontOrelonlselon(falselon)
     }
 
-    // sort and truncate searchResults other than the random tweet
-    val maxCountExcludingRandom = Math.max(0, maxCount - randomTweetSeq.size)
+    // sort and truncatelon selonarchRelonsults othelonr than thelon random twelonelont
+    val maxCountelonxcludingRandom = Math.max(0, maxCount - randomTwelonelontSelonq.sizelon)
 
-    val truncatedResultsExcludingRandom =
-      if (sortBeforeTruncation || searchResultsExcludingRandom.size > maxCountExcludingRandom) {
-        val sorted = if (sortBeforeTruncation) {
-          searchResultsExcludingRandom.sortWith(
-            SearchResultUtil.getScore(_) > SearchResultUtil.getScore(_))
-        } else searchResultsExcludingRandom
-        sorted.take(maxCountExcludingRandom)
-      } else searchResultsExcludingRandom
+    val truncatelondRelonsultselonxcludingRandom =
+      if (sortBelonforelonTruncation || selonarchRelonsultselonxcludingRandom.sizelon > maxCountelonxcludingRandom) {
+        val sortelond = if (sortBelonforelonTruncation) {
+          selonarchRelonsultselonxcludingRandom.sortWith(
+            SelonarchRelonsultUtil.gelontScorelon(_) > SelonarchRelonsultUtil.gelontScorelon(_))
+        } elonlselon selonarchRelonsultselonxcludingRandom
+        sortelond.takelon(maxCountelonxcludingRandom)
+      } elonlselon selonarchRelonsultselonxcludingRandom
 
-    // put back the random tweet set aside previously
-    val allTruncatedResults = truncatedResultsExcludingRandom ++ randomTweetSeq
+    // put back thelon random twelonelont selont asidelon prelonviously
+    val allTruncatelondRelonsults = truncatelondRelonsultselonxcludingRandom ++ randomTwelonelontSelonq
 
     // stats
-    postTruncationSizeStat.add(allTruncatedResults.size)
-    allTruncatedResults.foreach { result =>
-      val earlybirdScoreX100 =
-        result.metadata.flatMap(_.score).getOrElse(0.0).toFloat * 100
-      earlybirdScoreX100Stat.add(earlybirdScoreX100)
+    postTruncationSizelonStat.add(allTruncatelondRelonsults.sizelon)
+    allTruncatelondRelonsults.forelonach { relonsult =>
+      val elonarlybirdScorelonX100 =
+        relonsult.melontadata.flatMap(_.scorelon).gelontOrelonlselon(0.0).toFloat * 100
+      elonarlybirdScorelonX100Stat.add(elonarlybirdScorelonX100)
     }
 
-    Future.value(envelope.copy(searchResults = allTruncatedResults))
+    Futurelon.valuelon(elonnvelonlopelon.copy(selonarchRelonsults = allTruncatelondRelonsults))
   }
 }

@@ -1,564 +1,564 @@
-package com.twitter.simclusters_v2.scalding.embedding.common
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common
 
-import com.twitter.algebird.Aggregator
-import com.twitter.common.text.language.LocaleUtil
-import com.twitter.escherbird.common.thriftscala.Locale
-import com.twitter.escherbird.common.thriftscala.LocalizedUser
-import com.twitter.escherbird.metadata.thriftscala.FullMetadata
-import com.twitter.escherbird.scalding.source.FullMetadataSource
-import com.twitter.escherbird.scalding.source.utt.UttSourceScalaDataset
-import com.twitter.escherbird.utt.strato.thriftscala.SnapshotType
-import com.twitter.escherbird.utt.thriftscala.UttEntityRecord
-import com.twitter.interests_ds.jobs.interests_service.UserTopicRelationSnapshotScalaDataset
-import com.twitter.interests.thriftscala.InterestRelationType
-import com.twitter.interests.thriftscala.UserInterestsRelationSnapshot
-import com.twitter.penguin.scalding.datasets.PenguinUserLanguagesScalaDataset
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Stat
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.ValuePipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common._
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2InterestedIn20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.UserUserFavGraphScalaDataset
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.common_header.thriftscala.CommonHeader
-import com.twitter.common_header.thriftscala.IdType
-import com.twitter.common_header.thriftscala.VersionedCommonHeader
-import flockdb_tools.datasets.flock.FlockBlocksEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockFollowsEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsAbuseEdgesScalaDataset
-import flockdb_tools.datasets.flock.FlockReportAsSpamEdgesScalaDataset
-import twadoop_config.configuration.log_categories.group.search.AdaptiveSearchScalaDataset
-import com.twitter.search.adaptive.scribing.thriftscala.AdaptiveSearchScribeLog
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
-import tweetsource.common.UnhydratedFlatScalaDataset
-import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.timelineservice.thriftscala.FavoriteEventUnion
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.wtf.entity_real_graph.scalding.common.DatasetConstants
-import com.twitter.wtf.entity_real_graph.scalding.common.SemanticCoreFilters
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionDetails
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.InteractionType
-import com.twitter.wtf.scalding.client_event_processing.thriftscala.TweetImpressionDetails
-import com.twitter.frigate.data_pipeline.scalding.magicrecs.magicrecs_notification_lite.MagicrecsNotificationLite1DayLagScalaDataset
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionTargetType
-import com.twitter.wtf.scalding.jobs.client_event_processing.UserInteractionScalaDataset
-import java.util.TimeZone
-import com.twitter.interests_ds.jobs.interests_service.UserInterestRelationSnapshotScalaDataset
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil.UserId
-import com.twitter.scalding.typed.{ValuePipe => TypedValuePipe}
-import com.twitter.tweetsource.common.thriftscala.UnhydratedTweet
-import tweetsource.common.UnhydratedScalaDataset
+import com.twittelonr.algelonbird.Aggrelongator
+import com.twittelonr.common.telonxt.languagelon.LocalelonUtil
+import com.twittelonr.elonschelonrbird.common.thriftscala.Localelon
+import com.twittelonr.elonschelonrbird.common.thriftscala.LocalizelondUselonr
+import com.twittelonr.elonschelonrbird.melontadata.thriftscala.FullMelontadata
+import com.twittelonr.elonschelonrbird.scalding.sourcelon.FullMelontadataSourcelon
+import com.twittelonr.elonschelonrbird.scalding.sourcelon.utt.UttSourcelonScalaDataselont
+import com.twittelonr.elonschelonrbird.utt.strato.thriftscala.SnapshotTypelon
+import com.twittelonr.elonschelonrbird.utt.thriftscala.UttelonntityReloncord
+import com.twittelonr.intelonrelonsts_ds.jobs.intelonrelonsts_selonrvicelon.UselonrTopicRelonlationSnapshotScalaDataselont
+import com.twittelonr.intelonrelonsts.thriftscala.IntelonrelonstRelonlationTypelon
+import com.twittelonr.intelonrelonsts.thriftscala.UselonrIntelonrelonstsRelonlationSnapshot
+import com.twittelonr.pelonnguin.scalding.dataselonts.PelonnguinUselonrLanguagelonsScalaDataselont
+import com.twittelonr.scalding.DatelonOps
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.Stat
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding.ValuelonPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossClustelonrSamelonDC
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.ProcAtla
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.common._
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SimclustelonrsV2IntelonrelonstelondIn20M145KUpdatelondScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.UselonrUselonrFavGraphScalaDataselont
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossDC
+import com.twittelonr.common_helonadelonr.thriftscala.CommonHelonadelonr
+import com.twittelonr.common_helonadelonr.thriftscala.IdTypelon
+import com.twittelonr.common_helonadelonr.thriftscala.VelonrsionelondCommonHelonadelonr
+import flockdb_tools.dataselonts.flock.FlockBlockselondgelonsScalaDataselont
+import flockdb_tools.dataselonts.flock.FlockFollowselondgelonsScalaDataselont
+import flockdb_tools.dataselonts.flock.FlockRelonportAsAbuselonelondgelonsScalaDataselont
+import flockdb_tools.dataselonts.flock.FlockRelonportAsSpamelondgelonsScalaDataselont
+import twadoop_config.configuration.log_catelongorielons.group.selonarch.AdaptivelonSelonarchScalaDataselont
+import com.twittelonr.selonarch.adaptivelon.scribing.thriftscala.AdaptivelonSelonarchScribelonLog
+import twadoop_config.configuration.log_catelongorielons.group.timelonlinelon.TimelonlinelonSelonrvicelonFavoritelonsScalaDataselont
+import twelonelontsourcelon.common.UnhydratelondFlatScalaDataselont
+import com.twittelonr.frigatelon.data_pipelonlinelon.magicreloncs.magicreloncs_notifications_litelon.thriftscala.MagicReloncsNotificationLitelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
+import com.twittelonr.simclustelonrs_v2.thriftscala.elondgelonWithDeloncayelondWelonights
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.ContelonxtualizelondFavoritelonelonvelonnt
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.FavoritelonelonvelonntUnion
+import com.twittelonr.twelonelontsourcelon.common.thriftscala.UnhydratelondFlatTwelonelont
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import com.twittelonr.wtf.elonntity_relonal_graph.scalding.common.DataselontConstants
+import com.twittelonr.wtf.elonntity_relonal_graph.scalding.common.SelonmanticCorelonFiltelonrs
+import com.twittelonr.wtf.scalding.clielonnt_elonvelonnt_procelonssing.thriftscala.IntelonractionDelontails
+import com.twittelonr.wtf.scalding.clielonnt_elonvelonnt_procelonssing.thriftscala.IntelonractionTypelon
+import com.twittelonr.wtf.scalding.clielonnt_elonvelonnt_procelonssing.thriftscala.TwelonelontImprelonssionDelontails
+import com.twittelonr.frigatelon.data_pipelonlinelon.scalding.magicreloncs.magicreloncs_notification_litelon.MagicreloncsNotificationLitelon1DayLagScalaDataselont
+import com.twittelonr.ielonsourcelon.thriftscala.Intelonractionelonvelonnt
+import com.twittelonr.ielonsourcelon.thriftscala.IntelonractionTargelontTypelon
+import com.twittelonr.wtf.scalding.jobs.clielonnt_elonvelonnt_procelonssing.UselonrIntelonractionScalaDataselont
+import java.util.TimelonZonelon
+import com.twittelonr.intelonrelonsts_ds.jobs.intelonrelonsts_selonrvicelon.UselonrIntelonrelonstRelonlationSnapshotScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil.UselonrId
+import com.twittelonr.scalding.typelond.{ValuelonPipelon => TypelondValuelonPipelon}
+import com.twittelonr.twelonelontsourcelon.common.thriftscala.UnhydratelondTwelonelont
+import twelonelontsourcelon.common.UnhydratelondScalaDataselont
 
-object ExternalDataSources {
+objelonct elonxtelonrnalDataSourcelons {
   val UTTDomain = 131L
-  val usersourceColumns = Set("id", "account_country_code", "language")
-  val ValidFlockEdgeStateId = 0
+  val uselonrsourcelonColumns = Selont("id", "account_country_codelon", "languagelon")
+  val ValidFlockelondgelonStatelonId = 0
 
-  def getStandardLanguageCode(language: String): Option[String] = {
-    val locale = LocaleUtil.getLocaleOf(language)
-    if (locale == LocaleUtil.UNKNOWN) None else Some(locale.getLanguage)
+  delonf gelontStandardLanguagelonCodelon(languagelon: String): Option[String] = {
+    val localelon = LocalelonUtil.gelontLocalelonOf(languagelon)
+    if (localelon == LocalelonUtil.UNKNOWN) Nonelon elonlselon Somelon(localelon.gelontLanguagelon)
   }
 
-  // Reads UTT Entity Records (`utt_source` dataset)
-  def getUttEntityRecords(implicit timeZone: TimeZone): TypedPipe[UttEntityRecord] = {
+  // Relonads UTT elonntity Reloncords (`utt_sourcelon` dataselont)
+  delonf gelontUttelonntityReloncords(implicit timelonZonelon: TimelonZonelon): TypelondPipelon[UttelonntityReloncord] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(UttSourceScalaDataset, Days(14))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(UttSourcelonScalaDataselont, Days(14))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
   }
 
   /**
-   * Extracts the KGO seeds from the UTT Entity Records.
-   * Uses the most recent "Stable" version by default unless specified otherwise.
+   * elonxtracts thelon KGO selonelonds from thelon UTT elonntity Reloncords.
+   * Uselons thelon most reloncelonnt "Stablelon" velonrsion by delonfault unlelonss speloncifielond othelonrwiselon.
    *
-   * @param uttVersion UTT Version to use instead of the default value.
+   * @param uttVelonrsion UTT Velonrsion to uselon instelonad of thelon delonfault valuelon.
    */
-  def getLocaleProducerSeedIdsFromUttEntityRecords(
-    uttVersion: Option[Long] = None
+  delonf gelontLocalelonProducelonrSelonelondIdsFromUttelonntityReloncords(
+    uttVelonrsion: Option[Long] = Nonelon
   )(
-    implicit timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): TypedPipe[((TopicId, Language), Seq[UserId])] = {
+    implicit timelonZonelon: TimelonZonelon,
+    uniquelonId: UniquelonID
+  ): TypelondPipelon[((TopicId, Languagelon), Selonq[UselonrId])] = {
 
     val topicLangPairCount = Stat("topic_lang_pair_count_all")
-    val topicLangPairCountEmptySeed = Stat("topic_lang_pair_count_empty_seed")
-    val topicLangPairCountLteOneSeed = Stat("topic_lang_pair_count_lte_one_seed")
-    val topicLangPairCountLteFiveSeeds = Stat("topic_lang_pair_count_lte_five_seeds")
-    val topicLangPairCountLteTenSeeds = Stat("topic_lang_pair_count_lte_ten_seeds")
+    val topicLangPairCountelonmptySelonelond = Stat("topic_lang_pair_count_elonmpty_selonelond")
+    val topicLangPairCountLtelonOnelonSelonelond = Stat("topic_lang_pair_count_ltelon_onelon_selonelond")
+    val topicLangPairCountLtelonFivelonSelonelonds = Stat("topic_lang_pair_count_ltelon_fivelon_selonelonds")
+    val topicLangPairCountLtelonTelonnSelonelonds = Stat("topic_lang_pair_count_ltelon_telonn_selonelonds")
 
-    val uttEntityRecords: TypedPipe[UttEntityRecord] = getUttEntityRecords
+    val uttelonntityReloncords: TypelondPipelon[UttelonntityReloncord] = gelontUttelonntityReloncords
 
-    val uttVersionToUse: ValuePipe[Long] = uttVersion match {
-      case Some(uttVersionValue) =>
-        TypedValuePipe(uttVersionValue)
-      case _ => // find the most recent "stable" version as recommended by the SemanticCore team
-        uttEntityRecords
-          .filter(_.snapshotType.exists(_ == SnapshotType.Stable))
-          .map(_.version)
+    val uttVelonrsionToUselon: ValuelonPipelon[Long] = uttVelonrsion match {
+      caselon Somelon(uttVelonrsionValuelon) =>
+        TypelondValuelonPipelon(uttVelonrsionValuelon)
+      caselon _ => // find thelon most reloncelonnt "stablelon" velonrsion as reloncommelonndelond by thelon SelonmanticCorelon telonam
+        uttelonntityReloncords
+          .filtelonr(_.snapshotTypelon.elonxists(_ == SnapshotTypelon.Stablelon))
+          .map(_.velonrsion)
           .distinct
-          .aggregate(Aggregator.min) // the most recent version is the smallest negative value
+          .aggrelongatelon(Aggrelongator.min) // thelon most reloncelonnt velonrsion is thelon smallelonst nelongativelon valuelon
     }
 
-    val uttEntityRecordsSingleVersion: TypedPipe[UttEntityRecord] =
-      uttEntityRecords
-        .filterWithValue(uttVersionToUse) {
-          case (uttEntityRecord: UttEntityRecord, uttVersionOpt: Option[Long]) =>
-            uttVersionOpt.contains(uttEntityRecord.version)
+    val uttelonntityReloncordsSinglelonVelonrsion: TypelondPipelon[UttelonntityReloncord] =
+      uttelonntityReloncords
+        .filtelonrWithValuelon(uttVelonrsionToUselon) {
+          caselon (uttelonntityReloncord: UttelonntityReloncord, uttVelonrsionOpt: Option[Long]) =>
+            uttVelonrsionOpt.contains(uttelonntityReloncord.velonrsion)
         }
 
-    uttEntityRecordsSingleVersion.flatMap { uttEntityRecord: UttEntityRecord =>
-      val localizedUsers: Seq[LocalizedUser] =
-        uttEntityRecord.knownForUsers.flatMap(_.localizedUsers).getOrElse(Nil)
+    uttelonntityReloncordsSinglelonVelonrsion.flatMap { uttelonntityReloncord: UttelonntityReloncord =>
+      val localizelondUselonrs: Selonq[LocalizelondUselonr] =
+        uttelonntityReloncord.knownForUselonrs.flatMap(_.localizelondUselonrs).gelontOrelonlselon(Nil)
 
-      val validLocalizedUsers: Seq[(TopicId, Language, UserId)] =
-        localizedUsers
+      val validLocalizelondUselonrs: Selonq[(TopicId, Languagelon, UselonrId)] =
+        localizelondUselonrs
           .flatMap {
-            case LocalizedUser(userId: UserId, Some(Locale(Some(language: String), _)), _) =>
-              Some((uttEntityRecord.entityId, language, userId))
-            case _ =>
-              None
+            caselon LocalizelondUselonr(uselonrId: UselonrId, Somelon(Localelon(Somelon(languagelon: String), _)), _) =>
+              Somelon((uttelonntityReloncord.elonntityId, languagelon, uselonrId))
+            caselon _ =>
+              Nonelon
           }
 
-      val localeProducerSeedIds: Seq[((TopicId, Language), Seq[UserId])] = validLocalizedUsers
+      val localelonProducelonrSelonelondIds: Selonq[((TopicId, Languagelon), Selonq[UselonrId])] = validLocalizelondUselonrs
         .groupBy {
-          case (topicId: TopicId, language: Language, _) =>
-            (topicId, language)
+          caselon (topicId: TopicId, languagelon: Languagelon, _) =>
+            (topicId, languagelon)
         }
-        .mapValues(_.map(_._3).distinct) // values are distinct producerIds
-        .toSeq
+        .mapValuelons(_.map(_._3).distinct) // valuelons arelon distinct producelonrIds
+        .toSelonq
 
-      localeProducerSeedIds.foreach { // stats
-        case (_, seedIds: Seq[UserId]) =>
+      localelonProducelonrSelonelondIds.forelonach { // stats
+        caselon (_, selonelondIds: Selonq[UselonrId]) =>
           topicLangPairCount.inc()
-          if (seedIds.isEmpty) topicLangPairCountEmptySeed.inc()
-          if (seedIds.length <= 1) topicLangPairCountLteOneSeed.inc()
-          if (seedIds.length <= 5) topicLangPairCountLteFiveSeeds.inc()
-          if (seedIds.length <= 10) topicLangPairCountLteTenSeeds.inc()
+          if (selonelondIds.iselonmpty) topicLangPairCountelonmptySelonelond.inc()
+          if (selonelondIds.lelonngth <= 1) topicLangPairCountLtelonOnelonSelonelond.inc()
+          if (selonelondIds.lelonngth <= 5) topicLangPairCountLtelonFivelonSelonelonds.inc()
+          if (selonelondIds.lelonngth <= 10) topicLangPairCountLtelonTelonnSelonelonds.inc()
       }
 
-      localeProducerSeedIds
-    }.forceToDisk
+      localelonProducelonrSelonelondIds
+    }.forcelonToDisk
   }
 
-  def uttEntitiesSource(
-    customFullMetadataSource: Option[TypedPipe[FullMetadata]] = None
+  delonf uttelonntitielonsSourcelon(
+    customFullMelontadataSourcelon: Option[TypelondPipelon[FullMelontadata]] = Nonelon
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[Long] = {
-    customFullMetadataSource
-      .getOrElse(fullMetadataSource)
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[Long] = {
+    customFullMelontadataSourcelon
+      .gelontOrelonlselon(fullMelontadataSourcelon)
       .flatMap {
-        case fullMetadata if fullMetadata.domainId == UTTDomain =>
+        caselon fullMelontadata if fullMelontadata.domainId == UTTDomain =>
           for {
-            basicMetadata <- fullMetadata.basicMetadata
-            indexableFields <- basicMetadata.indexableFields
-            tags <- indexableFields.tags
-            if !SemanticCoreFilters.shouldFilterByTags(tags.toSet, DatasetConstants.stopTags)
-          } yield {
-            fullMetadata.entityId
+            basicMelontadata <- fullMelontadata.basicMelontadata
+            indelonxablelonFielonlds <- basicMelontadata.indelonxablelonFielonlds
+            tags <- indelonxablelonFielonlds.tags
+            if !SelonmanticCorelonFiltelonrs.shouldFiltelonrByTags(tags.toSelont, DataselontConstants.stopTags)
+          } yielonld {
+            fullMelontadata.elonntityId
           }
-        case _ => None
+        caselon _ => Nonelon
       }
   }
 
-  // Get followable topics from Escherbird
-  def uttFollowableEntitiesSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[Long] = {
-    val followableEntityCount = Stat("followable_entities_count")
-    val FollowableTag = "utt:followable_topic"
-    fullMetadataSource
+  // Gelont followablelon topics from elonschelonrbird
+  delonf uttFollowablelonelonntitielonsSourcelon(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[Long] = {
+    val followablelonelonntityCount = Stat("followablelon_elonntitielons_count")
+    val FollowablelonTag = "utt:followablelon_topic"
+    fullMelontadataSourcelon
       .flatMap {
-        case fullMetadata if fullMetadata.domainId == UTTDomain =>
+        caselon fullMelontadata if fullMelontadata.domainId == UTTDomain =>
           for {
-            basicMetadata <- fullMetadata.basicMetadata
-            indexableFields <- basicMetadata.indexableFields
-            tags <- indexableFields.tags
-            if tags.contains(FollowableTag)
-          } yield {
-            followableEntityCount.inc()
-            fullMetadata.entityId
+            basicMelontadata <- fullMelontadata.basicMelontadata
+            indelonxablelonFielonlds <- basicMelontadata.indelonxablelonFielonlds
+            tags <- indelonxablelonFielonlds.tags
+            if tags.contains(FollowablelonTag)
+          } yielonld {
+            followablelonelonntityCount.inc()
+            fullMelontadata.elonntityId
           }
-        case _ => None
+        caselon _ => Nonelon
       }
   }
 
-  def fullMetadataSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[FullMetadata] = {
-    TypedPipe
+  delonf fullMelontadataSourcelon(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[FullMelontadata] = {
+    TypelondPipelon
       .from(
-        new FullMetadataSource(s"/atla/proc/${FullMetadataSource.DefaultHdfsPath}")()(
-          dateRange.embiggen(Days(7))))
+        nelonw FullMelontadataSourcelon(s"/atla/proc/${FullMelontadataSourcelon.DelonfaultHdfsPath}")()(
+          datelonRangelon.elonmbiggelonn(Days(7))))
   }
 
-  def userSource(implicit timeZone: TimeZone): TypedPipe[(UserId, (Country, Language))] =
+  delonf uselonrSourcelon(implicit timelonZonelon: TimelonZonelon): TypelondPipelon[(UselonrId, (Country, Languagelon))] =
     DAL
-      .readMostRecentSnapshotNoOlderThan(UsersourceFlatScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .withColumns(usersourceColumns)
-      .toTypedPipe.flatMap { flatUser =>
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(UselonrsourcelonFlatScalaDataselont, Days(7))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .withColumns(uselonrsourcelonColumns)
+      .toTypelondPipelon.flatMap { flatUselonr =>
         for {
-          userId <- flatUser.id
-          country <- flatUser.accountCountryCode
-          language <- flatUser.language
-          standardLang <- getStandardLanguageCode(language)
-        } yield {
-          (userId, country.toUpperCase, standardLang)
+          uselonrId <- flatUselonr.id
+          country <- flatUselonr.accountCountryCodelon
+          languagelon <- flatUselonr.languagelon
+          standardLang <- gelontStandardLanguagelonCodelon(languagelon)
+        } yielonld {
+          (uselonrId, country.toUppelonrCaselon, standardLang)
         }
       }.distinct
-      .map { case (user, country, lang) => user -> (country, lang) }
+      .map { caselon (uselonr, country, lang) => uselonr -> (country, lang) }
 
-  // Build user language source from inferred languages (penguin_user_languages dataset)
-  def inferredUserConsumedLanguageSource(
-    implicit timeZone: TimeZone
-  ): TypedPipe[(UserId, Seq[(Language, Double)])] = {
+  // Build uselonr languagelon sourcelon from infelonrrelond languagelons (pelonnguin_uselonr_languagelons dataselont)
+  delonf infelonrrelondUselonrConsumelondLanguagelonSourcelon(
+    implicit timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, Selonq[(Languagelon, Doublelon)])] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(PenguinUserLanguagesScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(PelonnguinUselonrLanguagelonsScalaDataselont, Days(7))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
       .map { kv =>
-        val consumed = kv.value.consumed
-          .collect {
-            case scoredString if scoredString.weight > 0.001 => //throw away 5% outliers
-              (getStandardLanguageCode(scoredString.item), scoredString.weight)
-          }.collect {
-            case (Some(language), score) => (language, score)
+        val consumelond = kv.valuelon.consumelond
+          .collelonct {
+            caselon scorelondString if scorelondString.welonight > 0.001 => //throw away 5% outlielonrs
+              (gelontStandardLanguagelonCodelon(scorelondString.itelonm), scorelondString.welonight)
+          }.collelonct {
+            caselon (Somelon(languagelon), scorelon) => (languagelon, scorelon)
           }
-        (kv.key, consumed)
+        (kv.kelony, consumelond)
       }
   }
 
-  def inferredUserProducedLanguageSource(
-    implicit timeZone: TimeZone
-  ): TypedPipe[(UserId, Seq[(Language, Double)])] = {
+  delonf infelonrrelondUselonrProducelondLanguagelonSourcelon(
+    implicit timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, Selonq[(Languagelon, Doublelon)])] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(PenguinUserLanguagesScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(PelonnguinUselonrLanguagelonsScalaDataselont, Days(7))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
       .map { kv =>
-        val produced = kv.value.produced
-          .collect {
-            case scoredString if scoredString.weight > 0.15 => //throw away 5% outliers
-              (getStandardLanguageCode(scoredString.item), scoredString.weight)
-          }.collect {
-            case (Some(language), score) => (language, score)
+        val producelond = kv.valuelon.producelond
+          .collelonct {
+            caselon scorelondString if scorelondString.welonight > 0.15 => //throw away 5% outlielonrs
+              (gelontStandardLanguagelonCodelon(scorelondString.itelonm), scorelondString.welonight)
+          }.collelonct {
+            caselon (Somelon(languagelon), scorelon) => (languagelon, scorelon)
           }
-        (kv.key, produced)
+        (kv.kelony, producelond)
       }
   }
 
-  def simClustersInterestInSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[KeyVal[UserId, ClustersUserIsInterestedIn]] = {
+  delonf simClustelonrsIntelonrelonstInSourcelon(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[KelonyVal[UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn]] = {
     DAL
-      .readMostRecentSnapshotNoOlderThan(
-        SimclustersV2InterestedIn20M145KUpdatedScalaDataset,
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(
+        SimclustelonrsV2IntelonrelonstelondIn20M145KUpdatelondScalaDataselont,
         Days(30))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
   }
 
-  def simClustersInterestInLogFavSource(
-    minLogFavScore: Double
+  delonf simClustelonrsIntelonrelonstInLogFavSourcelon(
+    minLogFavScorelon: Doublelon
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[(UserId, Map[ClusterId, Double])] = {
-    simClustersInterestInSource.map {
-      case KeyVal(userId, clustersUserIsInterestedIn) =>
-        userId -> clustersUserIsInterestedIn.clusterIdToScores
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, Map[ClustelonrId, Doublelon])] = {
+    simClustelonrsIntelonrelonstInSourcelon.map {
+      caselon KelonyVal(uselonrId, clustelonrsUselonrIsIntelonrelonstelondIn) =>
+        uselonrId -> clustelonrsUselonrIsIntelonrelonstelondIn.clustelonrIdToScorelons
           .map {
-            case (clusterId, scores) =>
-              clusterId -> scores.logFavScore.getOrElse(0.0)
+            caselon (clustelonrId, scorelons) =>
+              clustelonrId -> scorelons.logFavScorelon.gelontOrelonlselon(0.0)
           }
-          .filter(_._2 > minLogFavScore)
+          .filtelonr(_._2 > minLogFavScorelon)
           .toMap
     }
   }
 
-  def topicFollowGraphSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(TopicId, UserId)] = {
-    val userTopicFollowCount = Stat("user_topic_follow_count")
+  delonf topicFollowGraphSourcelon(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[(TopicId, UselonrId)] = {
+    val uselonrTopicFollowCount = Stat("uselonr_topic_follow_count")
     DAL
-      .readMostRecentSnapshotNoOlderThan(UserTopicRelationSnapshotScalaDataset, Days(7))
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.Followed =>
-          (userInterestsRelationSnapshot.interestId, userInterestsRelationSnapshot.userId)
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(UselonrTopicRelonlationSnapshotScalaDataselont, Days(7))
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
+      .collelonct {
+        caselon uselonrIntelonrelonstsRelonlationSnapshot: UselonrIntelonrelonstsRelonlationSnapshot
+            if uselonrIntelonrelonstsRelonlationSnapshot.intelonrelonstTypelon == "UTT" &&
+              uselonrIntelonrelonstsRelonlationSnapshot.relonlation == IntelonrelonstRelonlationTypelon.Followelond =>
+          (uselonrIntelonrelonstsRelonlationSnapshot.intelonrelonstId, uselonrIntelonrelonstsRelonlationSnapshot.uselonrId)
       }
-      .hashJoin(uttFollowableEntitiesSource.asKeys)
+      .hashJoin(uttFollowablelonelonntitielonsSourcelon.asKelonys)
       .map {
-        case (topic, (user, _)) =>
-          userTopicFollowCount.inc()
-          (topic, user)
+        caselon (topic, (uselonr, _)) =>
+          uselonrTopicFollowCount.inc()
+          (topic, uselonr)
       }
   }
 
-  def notInterestedTopicsSource(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[(TopicId, UserId)] = {
-    val userNotInterestedInTopicsCount = Stat("user_not_interested_in_topics_count")
+  delonf notIntelonrelonstelondTopicsSourcelon(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[(TopicId, UselonrId)] = {
+    val uselonrNotIntelonrelonstelondInTopicsCount = Stat("uselonr_not_intelonrelonstelond_in_topics_count")
     DAL
-      .readMostRecentSnapshotNoOlderThan(
-        UserInterestRelationSnapshotScalaDataset,
-        Days(7)).withRemoteReadPolicy(ExplicitLocation(ProcAtla)).toTypedPipe.collect {
-        case userInterestsRelationSnapshot: UserInterestsRelationSnapshot
-            if userInterestsRelationSnapshot.interestType == "UTT" &&
-              userInterestsRelationSnapshot.relation == InterestRelationType.NotInterested =>
-          (userInterestsRelationSnapshot.interestId, userInterestsRelationSnapshot.userId)
+      .relonadMostReloncelonntSnapshotNoOldelonrThan(
+        UselonrIntelonrelonstRelonlationSnapshotScalaDataselont,
+        Days(7)).withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla)).toTypelondPipelon.collelonct {
+        caselon uselonrIntelonrelonstsRelonlationSnapshot: UselonrIntelonrelonstsRelonlationSnapshot
+            if uselonrIntelonrelonstsRelonlationSnapshot.intelonrelonstTypelon == "UTT" &&
+              uselonrIntelonrelonstsRelonlationSnapshot.relonlation == IntelonrelonstRelonlationTypelon.NotIntelonrelonstelond =>
+          (uselonrIntelonrelonstsRelonlationSnapshot.intelonrelonstId, uselonrIntelonrelonstsRelonlationSnapshot.uselonrId)
       }
-      .hashJoin(uttFollowableEntitiesSource.asKeys)
+      .hashJoin(uttFollowablelonelonntitielonsSourcelon.asKelonys)
       .map {
-        case (topic, (user, _)) =>
-          userNotInterestedInTopicsCount.inc()
-          (topic, user)
+        caselon (topic, (uselonr, _)) =>
+          uselonrNotIntelonrelonstelondInTopicsCount.inc()
+          (topic, uselonr)
       }
   }
 
-  def tweetSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[UnhydratedTweet] = {
+  delonf twelonelontSourcelon(
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[UnhydratelondTwelonelont] = {
     DAL
-      .read(UnhydratedScalaDataset, dateRange).withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .relonad(UnhydratelondScalaDataselont, datelonRangelon).withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
   }
 
-  def flatTweetsSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[UnhydratedFlatTweet] = {
+  delonf flatTwelonelontsSourcelon(
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[UnhydratelondFlatTwelonelont] = {
     DAL
-      .read(UnhydratedFlatScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
+      .relonad(UnhydratelondFlatScalaDataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
   }
 
-  def userTweetFavoritesSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
+  delonf uselonrTwelonelontFavoritelonsSourcelon(
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)] = {
     DAL
-      .read(TimelineServiceFavoritesScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .flatMap { cfe: ContextualizedFavoriteEvent =>
-        cfe.event match {
-          case FavoriteEventUnion.Favorite(fav) =>
-            Some(fav.userId, fav.tweetId, fav.eventTimeMs)
-          case _ =>
-            None
+      .relonad(TimelonlinelonSelonrvicelonFavoritelonsScalaDataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
+      .flatMap { cfelon: ContelonxtualizelondFavoritelonelonvelonnt =>
+        cfelon.elonvelonnt match {
+          caselon FavoritelonelonvelonntUnion.Favoritelon(fav) =>
+            Somelon(fav.uselonrId, fav.twelonelontId, fav.elonvelonntTimelonMs)
+          caselon _ =>
+            Nonelon
         }
       }
   }
 
-  def userTweetImpressionsSource(
-    dwellSec: Int = 1
+  delonf uselonrTwelonelontImprelonssionsSourcelon(
+    dwelonllSelonc: Int = 1
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, TweetId, Timestamp)] = {
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)] = {
     DAL
-      .read(UserInteractionScalaDataset, dateRange)
-      .withRemoteReadPolicy(AllowCrossClusterSameDC)
-      .toTypedPipe
+      .relonad(UselonrIntelonractionScalaDataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+      .toTypelondPipelon
       .flatMap {
-        case userInteraction
-            if userInteraction.interactionType == InteractionType.TweetImpressions =>
-          userInteraction.interactionDetails match {
-            case InteractionDetails.TweetImpressionDetails(
-                  TweetImpressionDetails(tweetId, _, dwellTimeInSecOpt))
-                if dwellTimeInSecOpt.exists(_ >= dwellSec) =>
-              Some(userInteraction.userId, tweetId, userInteraction.timeStamp)
-            case _ =>
-              None
+        caselon uselonrIntelonraction
+            if uselonrIntelonraction.intelonractionTypelon == IntelonractionTypelon.TwelonelontImprelonssions =>
+          uselonrIntelonraction.intelonractionDelontails match {
+            caselon IntelonractionDelontails.TwelonelontImprelonssionDelontails(
+                  TwelonelontImprelonssionDelontails(twelonelontId, _, dwelonllTimelonInSeloncOpt))
+                if dwelonllTimelonInSeloncOpt.elonxists(_ >= dwelonllSelonc) =>
+              Somelon(uselonrIntelonraction.uselonrId, twelonelontId, uselonrIntelonraction.timelonStamp)
+            caselon _ =>
+              Nonelon
           }
-        case _ => None
+        caselon _ => Nonelon
       }
   }
 
-  def transformFavEdges(
-    input: TypedPipe[EdgeWithDecayedWeights],
-    halfLifeInDaysForFavScore: Int
+  delonf transformFavelondgelons(
+    input: TypelondPipelon[elondgelonWithDeloncayelondWelonights],
+    halfLifelonInDaysForFavScorelon: Int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, Double)] = {
-    val numEdgesWithSpecifiedHalfLife = Stat(
-      s"num_edges_with_specified_half_life_${halfLifeInDaysForFavScore}_days")
-    val numEdgesWithoutSpecifiedHalfLife = Stat(
-      s"num_edges_without_specified_half_life_${halfLifeInDaysForFavScore}_days")
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[(Long, Long, Doublelon)] = {
+    val numelondgelonsWithSpeloncifielondHalfLifelon = Stat(
+      s"num_elondgelons_with_speloncifielond_half_lifelon_${halfLifelonInDaysForFavScorelon}_days")
+    val numelondgelonsWithoutSpeloncifielondHalfLifelon = Stat(
+      s"num_elondgelons_without_speloncifielond_half_lifelon_${halfLifelonInDaysForFavScorelon}_days")
     input
-      .flatMap { edge =>
-        if (edge.weights.halfLifeInDaysToDecayedSums.contains(halfLifeInDaysForFavScore)) {
-          numEdgesWithSpecifiedHalfLife.inc()
-          Some((edge.sourceId, edge.destinationId, edge.weights.halfLifeInDaysToDecayedSums(100)))
-        } else {
-          numEdgesWithoutSpecifiedHalfLife.inc()
-          None
+      .flatMap { elondgelon =>
+        if (elondgelon.welonights.halfLifelonInDaysToDeloncayelondSums.contains(halfLifelonInDaysForFavScorelon)) {
+          numelondgelonsWithSpeloncifielondHalfLifelon.inc()
+          Somelon((elondgelon.sourcelonId, elondgelon.delonstinationId, elondgelon.welonights.halfLifelonInDaysToDeloncayelondSums(100)))
+        } elonlselon {
+          numelondgelonsWithoutSpeloncifielondHalfLifelon.inc()
+          Nonelon
         }
       }
   }
 
-  def getFavEdges(
-    halfLifeInDaysForFavScore: Int
+  delonf gelontFavelondgelons(
+    halfLifelonInDaysForFavScorelon: Int
   )(
-    implicit dateRange: DateRange,
-    uniqueID: UniqueID
-  ): TypedPipe[(Long, Long, Double)] = {
-    implicit val tz: java.util.TimeZone = DateOps.UTC
-    transformFavEdges(
+    implicit datelonRangelon: DatelonRangelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[(Long, Long, Doublelon)] = {
+    implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+    transformFavelondgelons(
       DAL
-        .readMostRecentSnapshotNoOlderThan(UserUserFavGraphScalaDataset, Days(14))
-        .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-        .toTypedPipe,
-      halfLifeInDaysForFavScore
+        .relonadMostReloncelonntSnapshotNoOldelonrThan(UselonrUselonrFavGraphScalaDataselont, Days(14))
+        .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+        .toTypelondPipelon,
+      halfLifelonInDaysForFavScorelon
     )
   }
 
-  def flockReportAsSpamSource(
+  delonf flockRelonportAsSpamSourcelon(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(UselonrId, UselonrId)] = {
     DAL
-      .readMostRecentSnapshot(FlockReportAsSpamEdgesScalaDataset)
-      .toTypedPipe
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+      .relonadMostReloncelonntSnapshot(FlockRelonportAsSpamelondgelonsScalaDataselont)
+      .toTypelondPipelon
+      .collelonct {
+        caselon elondgelon if elondgelon.statelon == ValidFlockelondgelonStatelonId =>
+          (elondgelon.sourcelonId, elondgelon.delonstinationId)
       }
   }
 
-  def flockBlocksSource(
+  delonf flockBlocksSourcelon(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(UselonrId, UselonrId)] = {
     DAL
-      .readMostRecentSnapshot(FlockBlocksEdgesScalaDataset)
-      .toTypedPipe
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+      .relonadMostReloncelonntSnapshot(FlockBlockselondgelonsScalaDataselont)
+      .toTypelondPipelon
+      .collelonct {
+        caselon elondgelon if elondgelon.statelon == ValidFlockelondgelonStatelonId =>
+          (elondgelon.sourcelonId, elondgelon.delonstinationId)
       }
   }
 
-  def flockFollowsSource(
+  delonf flockFollowsSourcelon(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(UselonrId, UselonrId)] = {
     DAL
-      .readMostRecentSnapshot(FlockFollowsEdgesScalaDataset)
-      .toTypedPipe
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+      .relonadMostReloncelonntSnapshot(FlockFollowselondgelonsScalaDataselont)
+      .toTypelondPipelon
+      .collelonct {
+        caselon elondgelon if elondgelon.statelon == ValidFlockelondgelonStatelonId =>
+          (elondgelon.sourcelonId, elondgelon.delonstinationId)
       }
   }
 
-  def flockReportAsAbuseSource(
+  delonf flockRelonportAsAbuselonSourcelon(
   )(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, UserId)] = {
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(UselonrId, UselonrId)] = {
     DAL
-      .readMostRecentSnapshot(FlockReportAsAbuseEdgesScalaDataset)
-      .toTypedPipe
-      .collect {
-        case edge if edge.state == ValidFlockEdgeStateId =>
-          (edge.sourceId, edge.destinationId)
+      .relonadMostReloncelonntSnapshot(FlockRelonportAsAbuselonelondgelonsScalaDataselont)
+      .toTypelondPipelon
+      .collelonct {
+        caselon elondgelon if elondgelon.statelon == ValidFlockelondgelonStatelonId =>
+          (elondgelon.sourcelonId, elondgelon.delonstinationId)
       }
   }
 
-  def magicRecsNotficationOpenOrClickEventsSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[MagicRecsNotificationLite] = {
+  delonf magicReloncsNotficationOpelonnOrClickelonvelonntsSourcelon(
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[MagicReloncsNotificationLitelon] = {
     DAL
-      .read(MagicrecsNotificationLite1DayLagScalaDataset, dateRange)
-      .toTypedPipe
-      .filter { entry =>
-        // keep entries with a valid userId and tweetId, opened or clicked timestamp defined
-        val userIdExists = entry.targetUserId.isDefined
-        val tweetIdExists = entry.tweetId.isDefined
-        val openOrClickExists =
-          entry.openTimestampMs.isDefined || entry.ntabClickTimestampMs.isDefined
-        userIdExists && tweetIdExists && openOrClickExists
+      .relonad(MagicreloncsNotificationLitelon1DayLagScalaDataselont, datelonRangelon)
+      .toTypelondPipelon
+      .filtelonr { elonntry =>
+        // kelonelonp elonntrielons with a valid uselonrId and twelonelontId, opelonnelond or clickelond timelonstamp delonfinelond
+        val uselonrIdelonxists = elonntry.targelontUselonrId.isDelonfinelond
+        val twelonelontIdelonxists = elonntry.twelonelontId.isDelonfinelond
+        val opelonnOrClickelonxists =
+          elonntry.opelonnTimelonstampMs.isDelonfinelond || elonntry.ntabClickTimelonstampMs.isDelonfinelond
+        uselonrIdelonxists && twelonelontIdelonxists && opelonnOrClickelonxists
       }
   }
 
-  def ieSourceTweetEngagementsSource(implicit dateRange: DateRange): TypedPipe[InteractionEvent] = {
+  delonf ielonSourcelonTwelonelontelonngagelonmelonntsSourcelon(implicit datelonRangelon: DatelonRangelon): TypelondPipelon[Intelonractionelonvelonnt] = {
     DAL
-      .read(
-        com.twitter.iesource.processing.events.batch.ServerEngagementsScalaDataset,
-        dateRange).withColumns(
-        Set("targetId", "targetType", "engagingUserId", "details", "referenceTweet"))
-      .toTypedPipe
-      .filter { event =>
-        // filter out logged out users because their favorites are less reliable
-        event.engagingUserId > 0L && event.targetType == InteractionTargetType.Tweet
+      .relonad(
+        com.twittelonr.ielonsourcelon.procelonssing.elonvelonnts.batch.SelonrvelonrelonngagelonmelonntsScalaDataselont,
+        datelonRangelon).withColumns(
+        Selont("targelontId", "targelontTypelon", "elonngagingUselonrId", "delontails", "relonfelonrelonncelonTwelonelont"))
+      .toTypelondPipelon
+      .filtelonr { elonvelonnt =>
+        // filtelonr out loggelond out uselonrs beloncauselon thelonir favoritelons arelon lelonss relonliablelon
+        elonvelonnt.elonngagingUselonrId > 0L && elonvelonnt.targelontTypelon == IntelonractionTargelontTypelon.Twelonelont
       }
   }
 
-  private def userIdFromBlenderAdaptiveScribeLog(
-    blenderAdaptiveLog: AdaptiveSearchScribeLog
+  privatelon delonf uselonrIdFromBlelonndelonrAdaptivelonScribelonLog(
+    blelonndelonrAdaptivelonLog: AdaptivelonSelonarchScribelonLog
   ): Option[Long] = {
-    blenderAdaptiveLog.versionedCommonHeader match {
-      case VersionedCommonHeader.CommonHeader(CommonHeader.ServerHeader(serverHeader)) =>
-        serverHeader.requestInfo match {
-          case Some(requestInfo) => requestInfo.ids.get(IdType.UserId).map(_.toLong)
-          case _ => None
+    blelonndelonrAdaptivelonLog.velonrsionelondCommonHelonadelonr match {
+      caselon VelonrsionelondCommonHelonadelonr.CommonHelonadelonr(CommonHelonadelonr.SelonrvelonrHelonadelonr(selonrvelonrHelonadelonr)) =>
+        selonrvelonrHelonadelonr.relonquelonstInfo match {
+          caselon Somelon(relonquelonstInfo) => relonquelonstInfo.ids.gelont(IdTypelon.UselonrId).map(_.toLong)
+          caselon _ => Nonelon
         }
-      case _ => None
+      caselon _ => Nonelon
     }
   }
 
-  def adaptiveSearchScribeLogsSource(
-    implicit dateRange: DateRange
-  ): TypedPipe[(UserId, String)] = {
-    val searchData: TypedPipe[AdaptiveSearchScribeLog] =
+  delonf adaptivelonSelonarchScribelonLogsSourcelon(
+    implicit datelonRangelon: DatelonRangelon
+  ): TypelondPipelon[(UselonrId, String)] = {
+    val selonarchData: TypelondPipelon[AdaptivelonSelonarchScribelonLog] =
       DAL
-        .read(AdaptiveSearchScalaDataset, dateRange).toTypedPipe
+        .relonad(AdaptivelonSelonarchScalaDataselont, datelonRangelon).toTypelondPipelon
 
-    searchData
-      .flatMap({ scribeLog: AdaptiveSearchScribeLog =>
+    selonarchData
+      .flatMap({ scribelonLog: AdaptivelonSelonarchScribelonLog =>
         for {
-          userId <- userIdFromBlenderAdaptiveScribeLog(scribeLog)
-          // filter out logged out search queries
-          if userId != 0
-          queryString <- scribeLog.requestLog.flatMap(_.request).flatMap(_.rawQuery)
-        } yield {
-          (userId, Set(queryString))
+          uselonrId <- uselonrIdFromBlelonndelonrAdaptivelonScribelonLog(scribelonLog)
+          // filtelonr out loggelond out selonarch quelonrielons
+          if uselonrId != 0
+          quelonryString <- scribelonLog.relonquelonstLog.flatMap(_.relonquelonst).flatMap(_.rawQuelonry)
+        } yielonld {
+          (uselonrId, Selont(quelonryString))
         }
       })
-      // if a user searches for the same query multiple times, there could be duplicates.
-      // De-dup them to get the distinct queries searched by a user
-      .sumByKey
+      // if a uselonr selonarchelons for thelon samelon quelonry multiplelon timelons, thelonrelon could belon duplicatelons.
+      // Delon-dup thelonm to gelont thelon distinct quelonrielons selonarchelond by a uselonr
+      .sumByKelony
       .flatMap {
-        case (userId, distinctQuerySet) =>
-          distinctQuerySet.map { query =>
-            (userId, query)
+        caselon (uselonrId, distinctQuelonrySelont) =>
+          distinctQuelonrySelont.map { quelonry =>
+            (uselonrId, quelonry)
           }
       }
   }

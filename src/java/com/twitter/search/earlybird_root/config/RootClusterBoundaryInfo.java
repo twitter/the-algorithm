@@ -1,48 +1,48 @@
-package com.twitter.search.earlybird_root.config;
+packagelon com.twittelonr.selonarch.elonarlybird_root.config;
 
-import java.util.Date;
+import java.util.Datelon;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird.config.TierServingBoundaryEndPoint;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.elonarlybird.config.SelonrvingRangelon;
+import com.twittelonr.selonarch.elonarlybird.config.TielonrSelonrvingBoundaryelonndPoint;
 
 /**
- * Time boundary information for a root cluster.
- * Used by EarlybirdTimeRangeFilter.
+ * Timelon boundary information for a root clustelonr.
+ * Uselond by elonarlybirdTimelonRangelonFiltelonr.
  */
-public class RootClusterBoundaryInfo implements ServingRange {
+public class RootClustelonrBoundaryInfo implelonmelonnts SelonrvingRangelon {
 
-  private final TierServingBoundaryEndPoint servingRangeSince;
-  private final TierServingBoundaryEndPoint servingRangeMax;
+  privatelon final TielonrSelonrvingBoundaryelonndPoint selonrvingRangelonSincelon;
+  privatelon final TielonrSelonrvingBoundaryelonndPoint selonrvingRangelonMax;
 
   /**
-   * Build a time boundary information
+   * Build a timelon boundary information
    */
-  public RootClusterBoundaryInfo(
-      Date startDate,
-      Date clusterEndDate,
-      String sinceIdBoundaryString,
+  public RootClustelonrBoundaryInfo(
+      Datelon startDatelon,
+      Datelon clustelonrelonndDatelon,
+      String sincelonIdBoundaryString,
       String maxIdBoundaryString,
       Clock clock) {
-    this.servingRangeSince = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(sinceIdBoundaryString, startDate, clock);
-    this.servingRangeMax = TierServingBoundaryEndPoint
-        .newTierServingBoundaryEndPoint(maxIdBoundaryString, clusterEndDate, clock);
+    this.selonrvingRangelonSincelon = TielonrSelonrvingBoundaryelonndPoint
+        .nelonwTielonrSelonrvingBoundaryelonndPoint(sincelonIdBoundaryString, startDatelon, clock);
+    this.selonrvingRangelonMax = TielonrSelonrvingBoundaryelonndPoint
+        .nelonwTielonrSelonrvingBoundaryelonndPoint(maxIdBoundaryString, clustelonrelonndDatelon, clock);
   }
 
-  public long getServingRangeSinceId() {
-    return servingRangeSince.getBoundaryTweetId();
+  public long gelontSelonrvingRangelonSincelonId() {
+    relonturn selonrvingRangelonSincelon.gelontBoundaryTwelonelontId();
   }
 
-  public long getServingRangeMaxId() {
-    return servingRangeMax.getBoundaryTweetId();
+  public long gelontSelonrvingRangelonMaxId() {
+    relonturn selonrvingRangelonMax.gelontBoundaryTwelonelontId();
   }
 
-  public long getServingRangeSinceTimeSecondsFromEpoch() {
-    return servingRangeSince.getBoundaryTimeSecondsFromEpoch();
+  public long gelontSelonrvingRangelonSincelonTimelonSeloncondsFromelonpoch() {
+    relonturn selonrvingRangelonSincelon.gelontBoundaryTimelonSeloncondsFromelonpoch();
   }
 
-  public long getServingRangeUntilTimeSecondsFromEpoch() {
-    return servingRangeMax.getBoundaryTimeSecondsFromEpoch();
+  public long gelontSelonrvingRangelonUntilTimelonSeloncondsFromelonpoch() {
+    relonturn selonrvingRangelonMax.gelontBoundaryTimelonSeloncondsFromelonpoch();
   }
 }

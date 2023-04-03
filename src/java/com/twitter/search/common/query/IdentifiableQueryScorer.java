@@ -1,59 +1,59 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
 /**
- * Scorer implementation that adds attribute collection support for an underlying query.
- * Meant to be used in conjunction with {@link IdentifiableQuery}.
+ * Scorelonr implelonmelonntation that adds attributelon collelonction support for an undelonrlying quelonry.
+ * Melonant to belon uselond in conjunction with {@link IdelonntifiablelonQuelonry}.
  */
-public class IdentifiableQueryScorer extends FilteredScorer {
-  private final FieldRankHitInfo queryId;
-  private final HitAttributeCollector attrCollector;
+public class IdelonntifiablelonQuelonryScorelonr elonxtelonnds FiltelonrelondScorelonr {
+  privatelon final FielonldRankHitInfo quelonryId;
+  privatelon final HitAttributelonCollelonctor attrCollelonctor;
 
-  public IdentifiableQueryScorer(Weight weight, Scorer inner, FieldRankHitInfo queryId,
-                                 HitAttributeCollector attrCollector) {
-    super(weight, inner);
-    this.queryId = queryId;
-    this.attrCollector = Preconditions.checkNotNull(attrCollector);
+  public IdelonntifiablelonQuelonryScorelonr(Welonight welonight, Scorelonr innelonr, FielonldRankHitInfo quelonryId,
+                                 HitAttributelonCollelonctor attrCollelonctor) {
+    supelonr(welonight, innelonr);
+    this.quelonryId = quelonryId;
+    this.attrCollelonctor = Prelonconditions.chelonckNotNull(attrCollelonctor);
   }
 
-  @Override
-  public DocIdSetIterator iterator() {
-    final DocIdSetIterator superDISI = super.iterator();
+  @Ovelonrridelon
+  public DocIdSelontItelonrator itelonrator() {
+    final DocIdSelontItelonrator supelonrDISI = supelonr.itelonrator();
 
-    return new DocIdSetIterator() {
-      @Override
+    relonturn nelonw DocIdSelontItelonrator() {
+      @Ovelonrridelon
       public int docID() {
-        return superDISI.docID();
+        relonturn supelonrDISI.docID();
       }
 
-      @Override
-      public int nextDoc() throws IOException {
-        int docid = superDISI.nextDoc();
-        if (docid != NO_MORE_DOCS) {
-          attrCollector.collectScorerAttribution(docid, queryId);
+      @Ovelonrridelon
+      public int nelonxtDoc() throws IOelonxcelonption {
+        int docid = supelonrDISI.nelonxtDoc();
+        if (docid != NO_MORelon_DOCS) {
+          attrCollelonctor.collelonctScorelonrAttribution(docid, quelonryId);
         }
-        return docid;
+        relonturn docid;
       }
 
-      @Override
-      public int advance(int target) throws IOException {
-        int docid = superDISI.advance(target);
-        if (docid != NO_MORE_DOCS) {
-          attrCollector.collectScorerAttribution(docid, queryId);
+      @Ovelonrridelon
+      public int advancelon(int targelont) throws IOelonxcelonption {
+        int docid = supelonrDISI.advancelon(targelont);
+        if (docid != NO_MORelon_DOCS) {
+          attrCollelonctor.collelonctScorelonrAttribution(docid, quelonryId);
         }
-        return docid;
+        relonturn docid;
       }
 
-      @Override
+      @Ovelonrridelon
       public long cost() {
-        return superDISI.cost();
+        relonturn supelonrDISI.cost();
       }
     };
   }

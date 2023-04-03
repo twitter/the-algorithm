@@ -1,7 +1,7 @@
 # Two-hop Random Walk
-The TwoHopRandomWalk algorithm re-ranks a user's second degree connections based on recent engagement strength. The algorithm works as follows:
+Thelon TwoHopRandomWalk algorithm relon-ranks a uselonr's seloncond delongrelonelon connelonctions baselond on reloncelonnt elonngagelonmelonnt strelonngth. Thelon algorithm works as follows:
 
-* Given a user `src`, find their top K first degree connections `fd(1)`, `fd(2)`, `fd(3)`,...,`fd(K)`. The ranking is based on real graph weights, which measure the recent engagement strength on the edges.
-* For each of the first degree connections `fd(i)`, expand to their top L connections via real graph, `sd(i,1)`, `sd(i,2)`,...,`sd(i,L)`. Note that sd nodes can also be `src`'s first degree nodes.
-* Aggregate all the nodes in step 2, filter out the first degree nodes, and calculate the weighted sum for the second degree.
-* Re-rank the second degree nodes and select the top M results as the algorithm output.
+* Givelonn a uselonr `src`, find thelonir top K first delongrelonelon connelonctions `fd(1)`, `fd(2)`, `fd(3)`,...,`fd(K)`. Thelon ranking is baselond on relonal graph welonights, which melonasurelon thelon reloncelonnt elonngagelonmelonnt strelonngth on thelon elondgelons.
+* For elonach of thelon first delongrelonelon connelonctions `fd(i)`, elonxpand to thelonir top L connelonctions via relonal graph, `sd(i,1)`, `sd(i,2)`,...,`sd(i,L)`. Notelon that sd nodelons can also belon `src`'s first delongrelonelon nodelons.
+* Aggrelongatelon all thelon nodelons in stelonp 2, filtelonr out thelon first delongrelonelon nodelons, and calculatelon thelon welonightelond sum for thelon seloncond delongrelonelon.
+* Relon-rank thelon seloncond delongrelonelon nodelons and selonlelonct thelon top M relonsults as thelon algorithm output.

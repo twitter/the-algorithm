@@ -1,22 +1,22 @@
-package com.twitter.product_mixer.core.functional_component.side_effect
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct
 
 /**
- * A modifier for any [[SideEffect]] so that the request waits for it to complete before being returned
+ * A modifielonr for any [[Sidelonelonffelonct]] so that thelon relonquelonst waits for it to complelontelon belonforelon beloning relonturnelond
  *
- * @note this will make the [[SideEffect]]'s latency impact the overall request's latency
+ * @notelon this will makelon thelon [[Sidelonelonffelonct]]'s latelonncy impact thelon ovelonrall relonquelonst's latelonncy
  *
- * @example {{{
- * class MySideEffect extends PipelineResultSideEffect[T] with ExecuteSynchronously {...}
+ * @elonxamplelon {{{
+ * class MySidelonelonffelonct elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[T] with elonxeloncutelonSynchronously {...}
  * }}}
  *
- * @example {{{
- * class MySideEffect extends ScribeLogEventSideEffect[T] with ExecuteSynchronously {...}
+ * @elonxamplelon {{{
+ * class MySidelonelonffelonct elonxtelonnds ScribelonLogelonvelonntSidelonelonffelonct[T] with elonxeloncutelonSynchronously {...}
  * }}}
  */
-trait ExecuteSynchronously { _: SideEffect[_] => }
+trait elonxeloncutelonSynchronously { _: Sidelonelonffelonct[_] => }
 
 /**
- * A modifier for any [[ExecuteSynchronously]] [[SideEffect]] that makes it so failures will be
- * reported in the results but wont cause the request as a whole to fail.
+ * A modifielonr for any [[elonxeloncutelonSynchronously]] [[Sidelonelonffelonct]] that makelons it so failurelons will belon
+ * relonportelond in thelon relonsults but wont causelon thelon relonquelonst as a wholelon to fail.
  */
-trait FailOpen { _: ExecuteSynchronously => }
+trait FailOpelonn { _: elonxeloncutelonSynchronously => }

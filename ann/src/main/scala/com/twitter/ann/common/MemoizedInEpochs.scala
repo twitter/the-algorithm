@@ -1,37 +1,37 @@
-package com.twitter.ann.common
+packagelon com.twittelonr.ann.common
 
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
+import com.twittelonr.util.logging.Logging
 
-// Memoization with a twist
-// New epoch reuse K:V pairs from previous and recycle everything else
-class MemoizedInEpochs[K, V](f: K => Try[V]) extends Logging {
-  private var memoizedCalls: Map[K, V] = Map.empty
+// Melonmoization with a twist
+// Nelonw elonpoch relonuselon K:V pairs from prelonvious and reloncyclelon elonvelonrything elonlselon
+class MelonmoizelondInelonpochs[K, V](f: K => Try[V]) elonxtelonnds Logging {
+  privatelon var melonmoizelondCalls: Map[K, V] = Map.elonmpty
 
-  def epoch(keys: Seq[K]): Seq[V] = {
-    val newSet = keys.toSet
-    val keysToBeComputed = newSet.diff(memoizedCalls.keySet)
-    val computedKeysAndValues = keysToBeComputed.map { key =>
-      info(s"Memoize ${key}")
-      (key, f(key))
+  delonf elonpoch(kelonys: Selonq[K]): Selonq[V] = {
+    val nelonwSelont = kelonys.toSelont
+    val kelonysToBelonComputelond = nelonwSelont.diff(melonmoizelondCalls.kelonySelont)
+    val computelondKelonysAndValuelons = kelonysToBelonComputelond.map { kelony =>
+      info(s"Melonmoizelon ${kelony}")
+      (kelony, f(kelony))
     }
-    val keysAndValuesAfterFilteringFailures = computedKeysAndValues
+    val kelonysAndValuelonsAftelonrFiltelonringFailurelons = computelondKelonysAndValuelons
       .flatMap {
-        case (key, Return(value)) => Some((key, value))
-        case (key, Throw(e)) =>
-          warn(s"Calling f for ${key} has failed", e)
+        caselon (kelony, Relonturn(valuelon)) => Somelon((kelony, valuelon))
+        caselon (kelony, Throw(elon)) =>
+          warn(s"Calling f for ${kelony} has failelond", elon)
 
-          None
+          Nonelon
       }
-    val keysReusedFromLastEpoch = memoizedCalls.filterKeys(newSet.contains)
-    memoizedCalls = keysReusedFromLastEpoch ++ keysAndValuesAfterFilteringFailures
+    val kelonysRelonuselondFromLastelonpoch = melonmoizelondCalls.filtelonrKelonys(nelonwSelont.contains)
+    melonmoizelondCalls = kelonysRelonuselondFromLastelonpoch ++ kelonysAndValuelonsAftelonrFiltelonringFailurelons
 
-    debug(s"Final memoization is ${memoizedCalls.keys.mkString(", ")}")
+    delonbug(s"Final melonmoization is ${melonmoizelondCalls.kelonys.mkString(", ")}")
 
-    keys.flatMap(memoizedCalls.get)
+    kelonys.flatMap(melonmoizelondCalls.gelont)
   }
 
-  def currentEpochKeys: Set[K] = memoizedCalls.keySet
+  delonf currelonntelonpochKelonys: Selont[K] = melonmoizelondCalls.kelonySelont
 }

@@ -1,48 +1,48 @@
-create_thrift_libraries(
-    base_name = "thrift",
-    sources = ["*.thrift"],
+crelonatelon_thrift_librarielons(
+    baselon_namelon = "thrift",
+    sourcelons = ["*.thrift"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "finatra-internal/thrift/src/main/thrift",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift",
-        "src/thrift/com/twitter/ads/schema:common",
-        "src/thrift/com/twitter/ml/api:data",
-        "src/thrift/com/twitter/recos:recos-common",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
-        "src/thrift/com/twitter/timelines/render:thrift",
-        "strato/config/src/thrift/com/twitter/strato/graphql",
-        "strato/config/src/thrift/com/twitter/strato/graphql:api-media-graphql",
-        "strato/config/src/thrift/com/twitter/strato/graphql:topics-graphql",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncy_roots = [
+        "finatra-intelonrnal/thrift/src/main/thrift",
+        "product-mixelonr/corelon/src/main/thrift/com/twittelonr/product_mixelonr/corelon:thrift",
+        "src/thrift/com/twittelonr/ads/schelonma:common",
+        "src/thrift/com/twittelonr/ml/api:data",
+        "src/thrift/com/twittelonr/reloncos:reloncos-common",
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift",
+        "src/thrift/com/twittelonr/timelonlinelons/relonndelonr:thrift",
+        "strato/config/src/thrift/com/twittelonr/strato/graphql",
+        "strato/config/src/thrift/com/twittelonr/strato/graphql:api-melondia-graphql",
+        "strato/config/src/thrift/com/twittelonr/strato/graphql:topics-graphql",
     ],
-    generate_languages = [
+    gelonnelonratelon_languagelons = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "cr-mixer-thrift-java",
-    provides_scala_name = "cr-mixer-thrift-scala",
+    providelons_java_namelon = "cr-mixelonr-thrift-java",
+    providelons_scala_namelon = "cr-mixelonr-thrift-scala",
 )
 
-create_thrift_libraries(
-    base_name = "cr-mixer-scribe",
-    sources = ["*.thrift"],
-    tags = ["bazel-compatible"],
-    dependency_roots = [
-        "finatra-internal/thrift/src/main/thrift",
-        "product-mixer/core/src/main/thrift/com/twitter/product_mixer/core:thrift",
-        "src/thrift/com/twitter/ads/schema:common",
-        "src/thrift/com/twitter/ml/api:data",
-        "src/thrift/com/twitter/recos:recos-common",
-        "src/thrift/com/twitter/simclusters_v2:simclusters_v2-thrift",
-        "src/thrift/com/twitter/timelines/render:thrift",
-        "strato/config/src/thrift/com/twitter/strato/graphql",
+crelonatelon_thrift_librarielons(
+    baselon_namelon = "cr-mixelonr-scribelon",
+    sourcelons = ["*.thrift"],
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncy_roots = [
+        "finatra-intelonrnal/thrift/src/main/thrift",
+        "product-mixelonr/corelon/src/main/thrift/com/twittelonr/product_mixelonr/corelon:thrift",
+        "src/thrift/com/twittelonr/ads/schelonma:common",
+        "src/thrift/com/twittelonr/ml/api:data",
+        "src/thrift/com/twittelonr/reloncos:reloncos-common",
+        "src/thrift/com/twittelonr/simclustelonrs_v2:simclustelonrs_v2-thrift",
+        "src/thrift/com/twittelonr/timelonlinelons/relonndelonr:thrift",
+        "strato/config/src/thrift/com/twittelonr/strato/graphql",
     ],
-    generate_languages = [
+    gelonnelonratelon_languagelons = [
         "java",
         "scala",
         "strato",
     ],
-    provides_java_name = "cr-mixer-scribe-java",
-    provides_scala_name = "cr-mixer-scribe-scala",
+    providelons_java_namelon = "cr-mixelonr-scribelon-java",
+    providelons_scala_namelon = "cr-mixelonr-scribelon-scala",
 )

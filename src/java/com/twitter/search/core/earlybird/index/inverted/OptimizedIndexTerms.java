@@ -1,57 +1,57 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
 
-public class OptimizedIndexTerms extends Terms {
-  private final OptimizedMemoryIndex index;
+public class OptimizelondIndelonxTelonrms elonxtelonnds Telonrms {
+  privatelon final OptimizelondMelonmoryIndelonx indelonx;
 
-  public OptimizedIndexTerms(OptimizedMemoryIndex index) {
-    this.index = index;
+  public OptimizelondIndelonxTelonrms(OptimizelondMelonmoryIndelonx indelonx) {
+    this.indelonx = indelonx;
   }
 
-  @Override
-  public long size() {
-    return index.getNumTerms();
+  @Ovelonrridelon
+  public long sizelon() {
+    relonturn indelonx.gelontNumTelonrms();
   }
 
-  @Override
-  public TermsEnum iterator() {
-    return index.createTermsEnum(index.getMaxPublishedPointer());
+  @Ovelonrridelon
+  public Telonrmselonnum itelonrator() {
+    relonturn indelonx.crelonatelonTelonrmselonnum(indelonx.gelontMaxPublishelondPointelonr());
   }
 
-  @Override
-  public long getSumTotalTermFreq() {
-    return index.getSumTotalTermFreq();
+  @Ovelonrridelon
+  public long gelontSumTotalTelonrmFrelonq() {
+    relonturn indelonx.gelontSumTotalTelonrmFrelonq();
   }
 
-  @Override
-  public long getSumDocFreq() {
-    return index.getSumTermDocFreq();
+  @Ovelonrridelon
+  public long gelontSumDocFrelonq() {
+    relonturn indelonx.gelontSumTelonrmDocFrelonq();
   }
 
-  @Override
-  public int getDocCount() {
-    return index.getNumDocs();
+  @Ovelonrridelon
+  public int gelontDocCount() {
+    relonturn indelonx.gelontNumDocs();
   }
 
-  @Override
-  public boolean hasFreqs() {
-    return false;
+  @Ovelonrridelon
+  public boolelonan hasFrelonqs() {
+    relonturn falselon;
   }
 
-  @Override
-  public boolean hasOffsets() {
-    return false;
+  @Ovelonrridelon
+  public boolelonan hasOffselonts() {
+    relonturn falselon;
   }
 
-  @Override
-  public boolean hasPositions() {
-    return true;
+  @Ovelonrridelon
+  public boolelonan hasPositions() {
+    relonturn truelon;
   }
 
-  @Override
-  public boolean hasPayloads() {
-    return false;
+  @Ovelonrridelon
+  public boolelonan hasPayloads() {
+    relonturn falselon;
   }
 }

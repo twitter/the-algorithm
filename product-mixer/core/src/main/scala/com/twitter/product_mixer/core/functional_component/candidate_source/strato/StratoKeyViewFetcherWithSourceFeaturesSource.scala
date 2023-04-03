@@ -1,75 +1,75 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelonWithelonxtractelondFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonsWithSourcelonFelonaturelons
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
 
 /**
- * A [[CandidateSource]] for getting Candidates from Strato where the
- * Strato column's View is [[StratoView]] and the Value is a [[StratoValue]]
+ * A [[CandidatelonSourcelon]] for gelontting Candidatelons from Strato whelonrelon thelon
+ * Strato column's Vielonw is [[StratoVielonw]] and thelon Valuelon is a [[StratoValuelon]]
  *
- * A [[stratoResultTransformer]] must be defined to convert the
- * [[StratoValue]] into a Seq of [[Candidate]]
+ * A [[stratoRelonsultTransformelonr]] must belon delonfinelond to convelonrt thelon
+ * [[StratoValuelon]] into a Selonq of [[Candidatelon]]
  *
- * [[extractFeaturesFromStratoResult]] must be defined to extract a
- * [[FeatureMap]] from the [[StratoValue]]. If you don't need to do that,
- * use a [[StratoKeyViewFetcherSource]] instead.
+ * [[elonxtractFelonaturelonsFromStratoRelonsult]] must belon delonfinelond to elonxtract a
+ * [[FelonaturelonMap]] from thelon [[StratoValuelon]]. If you don't nelonelond to do that,
+ * uselon a [[StratoKelonyVielonwFelontchelonrSourcelon]] instelonad.
  *
- * @tparam StratoKey the column's Key type
- * @tparam StratoView the column's View type
- * @tparam StratoValue the column's Value type
+ * @tparam StratoKelony thelon column's Kelony typelon
+ * @tparam StratoVielonw thelon column's Vielonw typelon
+ * @tparam StratoValuelon thelon column's Valuelon typelon
  */
-trait StratoKeyViewFetcherWithSourceFeaturesSource[StratoKey, StratoView, StratoValue, Candidate]
-    extends CandidateSourceWithExtractedFeatures[StratoKeyView[StratoKey, StratoView], Candidate] {
+trait StratoKelonyVielonwFelontchelonrWithSourcelonFelonaturelonsSourcelon[StratoKelony, StratoVielonw, StratoValuelon, Candidatelon]
+    elonxtelonnds CandidatelonSourcelonWithelonxtractelondFelonaturelons[StratoKelonyVielonw[StratoKelony, StratoVielonw], Candidatelon] {
 
-  val fetcher: Fetcher[StratoKey, StratoView, StratoValue]
-
-  /**
-   * Transforms the value type returned by Strato into a Seq[Candidate].
-   *
-   * This might be as simple as `Seq(stratoResult)` if you're always returning a single candidate.
-   *
-   * Often, it just extracts a Seq from within a larger wrapper object.
-   *
-   * If there is global metadata that you need to include, see [[extractFeaturesFromStratoResult]]
-   * below to put that into a Feature.
-   */
-  protected def stratoResultTransformer(
-    stratoKey: StratoKey,
-    stratoResult: StratoValue
-  ): Seq[Candidate]
+  val felontchelonr: Felontchelonr[StratoKelony, StratoVielonw, StratoValuelon]
 
   /**
-   * Transforms the value type returned by Strato into a FeatureMap.
+   * Transforms thelon valuelon typelon relonturnelond by Strato into a Selonq[Candidatelon].
    *
-   * Override this to extract global metadata like cursors and place the results
-   * into a Feature.
+   * This might belon as simplelon as `Selonq(stratoRelonsult)` if you'relon always relonturning a singlelon candidatelon.
    *
-   * For example, a cursor.
+   * Oftelonn, it just elonxtracts a Selonq from within a largelonr wrappelonr objelonct.
+   *
+   * If thelonrelon is global melontadata that you nelonelond to includelon, selonelon [[elonxtractFelonaturelonsFromStratoRelonsult]]
+   * belonlow to put that into a Felonaturelon.
    */
-  protected def extractFeaturesFromStratoResult(
-    stratoKey: StratoKey,
-    stratoResult: StratoValue
-  ): FeatureMap
+  protelonctelond delonf stratoRelonsultTransformelonr(
+    stratoKelony: StratoKelony,
+    stratoRelonsult: StratoValuelon
+  ): Selonq[Candidatelon]
 
-  override def apply(
-    request: StratoKeyView[StratoKey, StratoView]
-  ): Stitch[CandidatesWithSourceFeatures[Candidate]] = {
-    fetcher
-      .fetch(request.key, request.view)
-      .map { result =>
-        val candidates = result.v
-          .map((stratoResult: StratoValue) => stratoResultTransformer(request.key, stratoResult))
-          .getOrElse(Seq.empty)
+  /**
+   * Transforms thelon valuelon typelon relonturnelond by Strato into a FelonaturelonMap.
+   *
+   * Ovelonrridelon this to elonxtract global melontadata likelon cursors and placelon thelon relonsults
+   * into a Felonaturelon.
+   *
+   * For elonxamplelon, a cursor.
+   */
+  protelonctelond delonf elonxtractFelonaturelonsFromStratoRelonsult(
+    stratoKelony: StratoKelony,
+    stratoRelonsult: StratoValuelon
+  ): FelonaturelonMap
 
-        val features = result.v
-          .map((stratoResult: StratoValue) =>
-            extractFeaturesFromStratoResult(request.key, stratoResult))
-          .getOrElse(FeatureMap.empty)
+  ovelonrridelon delonf apply(
+    relonquelonst: StratoKelonyVielonw[StratoKelony, StratoVielonw]
+  ): Stitch[CandidatelonsWithSourcelonFelonaturelons[Candidatelon]] = {
+    felontchelonr
+      .felontch(relonquelonst.kelony, relonquelonst.vielonw)
+      .map { relonsult =>
+        val candidatelons = relonsult.v
+          .map((stratoRelonsult: StratoValuelon) => stratoRelonsultTransformelonr(relonquelonst.kelony, stratoRelonsult))
+          .gelontOrelonlselon(Selonq.elonmpty)
 
-        CandidatesWithSourceFeatures(candidates, features)
-      }.rescue(StratoErrCategorizer.CategorizeStratoException)
+        val felonaturelons = relonsult.v
+          .map((stratoRelonsult: StratoValuelon) =>
+            elonxtractFelonaturelonsFromStratoRelonsult(relonquelonst.kelony, stratoRelonsult))
+          .gelontOrelonlselon(FelonaturelonMap.elonmpty)
+
+        CandidatelonsWithSourcelonFelonaturelons(candidatelons, felonaturelons)
+      }.relonscuelon(StratoelonrrCatelongorizelonr.CatelongorizelonStratoelonxcelonption)
   }
 }

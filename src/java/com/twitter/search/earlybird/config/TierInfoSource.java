@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird.config;
+packagelon com.twittelonr.selonarch.elonarlybird.config;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import javax.inject.Inject;
+import javax.injelonct.Injelonct;
 
-import com.twitter.search.common.util.zookeeper.ZooKeeperProxy;
+import com.twittelonr.selonarch.common.util.zookelonelonpelonr.ZooKelonelonpelonrProxy;
 
-public class TierInfoSource {
-  private final ZooKeeperProxy zkClient;
+public class TielonrInfoSourcelon {
+  privatelon final ZooKelonelonpelonrProxy zkClielonnt;
 
-  @Inject
-  public TierInfoSource(ZooKeeperProxy sZooKeeperClient) {
-    this.zkClient = sZooKeeperClient;
+  @Injelonct
+  public TielonrInfoSourcelon(ZooKelonelonpelonrProxy sZooKelonelonpelonrClielonnt) {
+    this.zkClielonnt = sZooKelonelonpelonrClielonnt;
   }
 
-  public List<TierInfo> getTierInformation() {
-    return getTierInfoWithPrefix("tier");
+  public List<TielonrInfo> gelontTielonrInformation() {
+    relonturn gelontTielonrInfoWithPrelonfix("tielonr");
   }
 
-  public String getConfigFileType() {
-    return TierConfig.getConfigFileName();
+  public String gelontConfigFilelonTypelon() {
+    relonturn TielonrConfig.gelontConfigFilelonNamelon();
   }
 
-  private List<TierInfo> getTierInfoWithPrefix(String tierPrefix) {
-    Set<String> tierNames = TierConfig.getTierNames();
-    List<TierInfo> tierInfos = new ArrayList<>();
-    for (String name : tierNames) {
-      if (name.startsWith(tierPrefix)) {
-        TierInfo tierInfo = TierConfig.getTierInfo(name);
-        tierInfos.add(tierInfo);
+  privatelon List<TielonrInfo> gelontTielonrInfoWithPrelonfix(String tielonrPrelonfix) {
+    Selont<String> tielonrNamelons = TielonrConfig.gelontTielonrNamelons();
+    List<TielonrInfo> tielonrInfos = nelonw ArrayList<>();
+    for (String namelon : tielonrNamelons) {
+      if (namelon.startsWith(tielonrPrelonfix)) {
+        TielonrInfo tielonrInfo = TielonrConfig.gelontTielonrInfo(namelon);
+        tielonrInfos.add(tielonrInfo);
       }
     }
-    return tierInfos;
+    relonturn tielonrInfos;
   }
 
 }

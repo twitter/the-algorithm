@@ -1,374 +1,374 @@
-package com.twitter.search.common.schema.base;
+packagelon com.twittelonr.selonarch.common.schelonma.baselon;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.document.FieldType;
-import org.apache.lucene.index.DocValuesType;
-import org.apache.lucene.index.IndexOptions;
+import org.apachelon.commons.lang.StringUtils;
+import org.apachelon.lucelonnelon.documelonnt.FielonldTypelon;
+import org.apachelon.lucelonnelon.indelonx.DocValuelonsTypelon;
+import org.apachelon.lucelonnelon.indelonx.IndelonxOptions;
 
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFType;
-import com.twitter.search.common.schema.thriftjava.ThriftCSFViewSettings;
-import com.twitter.search.common.schema.thriftjava.ThriftFeatureUpdateConstraint;
+import com.twittelonr.common.telonxt.util.TokelonnStrelonamSelonrializelonr;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFTypelon;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftCSFVielonwSelonttings;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFelonaturelonUpdatelonConstraint;
 
 /**
- * An extension of Lucene's {@link FieldType} that contains additional Earlybird-specific settings.
- * Lucene IndexingChains can downcast the FieldType object to access these additional settings.
+ * An elonxtelonnsion of Lucelonnelon's {@link FielonldTypelon} that contains additional elonarlybird-speloncific selonttings.
+ * Lucelonnelon IndelonxingChains can downcast thelon FielonldTypelon objelonct to accelonss thelonselon additional selonttings.
  */
-public class EarlybirdFieldType extends FieldType {
+public class elonarlybirdFielonldTypelon elonxtelonnds FielonldTypelon {
 
-  public static final EarlybirdFieldType LONG_CSF_FIELD_TYPE = new EarlybirdFieldType();
-  public static final EarlybirdFieldType INT_CSF_FIELD_TYPE = new EarlybirdFieldType();
-  public static final EarlybirdFieldType BYTE_CSF_FIELD_TYPE = new EarlybirdFieldType();
+  public static final elonarlybirdFielonldTypelon LONG_CSF_FIelonLD_TYPelon = nelonw elonarlybirdFielonldTypelon();
+  public static final elonarlybirdFielonldTypelon INT_CSF_FIelonLD_TYPelon = nelonw elonarlybirdFielonldTypelon();
+  public static final elonarlybirdFielonldTypelon BYTelon_CSF_FIelonLD_TYPelon = nelonw elonarlybirdFielonldTypelon();
 
   static {
-    LONG_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.LONG);
-    LONG_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    LONG_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
-    LONG_CSF_FIELD_TYPE.freeze();
+    LONG_CSF_FIelonLD_TYPelon.selontCsfTypelon(ThriftCSFTypelon.LONG);
+    LONG_CSF_FIelonLD_TYPelon.selontDocValuelonsTypelon(DocValuelonsTypelon.NUMelonRIC);
+    LONG_CSF_FIelonLD_TYPelon.selontCsfLoadIntoRam(truelon);
+    LONG_CSF_FIelonLD_TYPelon.frelonelonzelon();
 
-    INT_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.INT);
-    INT_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    INT_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
-    INT_CSF_FIELD_TYPE.freeze();
+    INT_CSF_FIelonLD_TYPelon.selontCsfTypelon(ThriftCSFTypelon.INT);
+    INT_CSF_FIelonLD_TYPelon.selontDocValuelonsTypelon(DocValuelonsTypelon.NUMelonRIC);
+    INT_CSF_FIelonLD_TYPelon.selontCsfLoadIntoRam(truelon);
+    INT_CSF_FIelonLD_TYPelon.frelonelonzelon();
 
-    BYTE_CSF_FIELD_TYPE.setCsfType(ThriftCSFType.BYTE);
-    BYTE_CSF_FIELD_TYPE.setDocValuesType(DocValuesType.NUMERIC);
-    BYTE_CSF_FIELD_TYPE.setCsfLoadIntoRam(true);
-    BYTE_CSF_FIELD_TYPE.freeze();
+    BYTelon_CSF_FIelonLD_TYPelon.selontCsfTypelon(ThriftCSFTypelon.BYTelon);
+    BYTelon_CSF_FIelonLD_TYPelon.selontDocValuelonsTypelon(DocValuelonsTypelon.NUMelonRIC);
+    BYTelon_CSF_FIelonLD_TYPelon.selontCsfLoadIntoRam(truelon);
+    BYTelon_CSF_FIelonLD_TYPelon.frelonelonzelon();
   }
 
 
-  private boolean storePerPositionPayloads;
-  private int defaultPayloadLength;
-  // This is true for fields that become immutable after optimization
-  private boolean becomesImmutable = true;
-  private boolean supportOrderedTerms;
-  private boolean supportTermTextLookup;
-  private boolean indexHFTermPairs;
+  privatelon boolelonan storelonPelonrPositionPayloads;
+  privatelon int delonfaultPayloadLelonngth;
+  // This is truelon for fielonlds that beloncomelon immutablelon aftelonr optimization
+  privatelon boolelonan beloncomelonsImmutablelon = truelon;
+  privatelon boolelonan supportOrdelonrelondTelonrms;
+  privatelon boolelonan supportTelonrmTelonxtLookup;
+  privatelon boolelonan indelonxHFTelonrmPairs;
 
   /**
-   * This flag turns on tweet specific normalizations.
-   * This turns on the following two token processors:
-   * {@link com.twitter.search.common.util.text.splitter.HashtagMentionPunctuationSplitter}
-   * {@link com.twitter.search.common.util.text.filter.NormalizedTokenFilter}
+   * This flag turns on twelonelont speloncific normalizations.
+   * This turns on thelon following two tokelonn procelonssors:
+   * {@link com.twittelonr.selonarch.common.util.telonxt.splittelonr.HashtagMelonntionPunctuationSplittelonr}
+   * {@link com.twittelonr.selonarch.common.util.telonxt.filtelonr.NormalizelondTokelonnFiltelonr}
    *
-   * HashtagMentionPunctuationSplitter would break a mention or hashtag like @ab_cd or #ab_cd into
-   * tokens {ab, cd}.
-   * NormalizedTokenFilter strips out the # @ $ from the tokens.
+   * HashtagMelonntionPunctuationSplittelonr would brelonak a melonntion or hashtag likelon @ab_cd or #ab_cd into
+   * tokelonns {ab, cd}.
+   * NormalizelondTokelonnFiltelonr strips out thelon # @ $ from thelon tokelonns.
    *
    *
-   * @deprecated we should remove this flag. It is confusing to have Earlybird apply additional
-   * tokenization on top of what ingester produced.
+   * @delonpreloncatelond welon should relonmovelon this flag. It is confusing to havelon elonarlybird apply additional
+   * tokelonnization on top of what ingelonstelonr producelond.
    */
-  @Deprecated
-  private boolean useTweetSpecificNormalization;
+  @Delonpreloncatelond
+  privatelon boolelonan uselonTwelonelontSpeloncificNormalization;
 
-  @Nullable
-  private TokenStreamSerializer.Builder tokenStreamSerializerProvider = null;
+  @Nullablelon
+  privatelon TokelonnStrelonamSelonrializelonr.Buildelonr tokelonnStrelonamSelonrializelonrProvidelonr = null;
 
-  // csf type settings
-  private ThriftCSFType csfType;
-  private boolean csfVariableLength;
-  private int csfFixedLengthNumValuesPerDoc;
-  private boolean csfFixedLengthUpdateable;
-  private boolean csfLoadIntoRam;
-  private boolean csfDefaultValueSet;
-  private long csfDefaultValue;
-  // True if this is a CSF field which is a view on top of a different CSF field
-  private boolean csfViewField;
-  // If this field is a csf view, this is the ID of the CSF field backing the view
-  private int csfViewBaseFieldId;
-  private FeatureConfiguration csfViewFeatureConfiguration;
+  // csf typelon selonttings
+  privatelon ThriftCSFTypelon csfTypelon;
+  privatelon boolelonan csfVariablelonLelonngth;
+  privatelon int csfFixelondLelonngthNumValuelonsPelonrDoc;
+  privatelon boolelonan csfFixelondLelonngthUpdatelonablelon;
+  privatelon boolelonan csfLoadIntoRam;
+  privatelon boolelonan csfDelonfaultValuelonSelont;
+  privatelon long csfDelonfaultValuelon;
+  // Truelon if this is a CSF fielonld which is a vielonw on top of a diffelonrelonnt CSF fielonld
+  privatelon boolelonan csfVielonwFielonld;
+  // If this fielonld is a csf vielonw, this is thelon ID of thelon CSF fielonld backing thelon vielonw
+  privatelon int csfVielonwBaselonFielonldId;
+  privatelon FelonaturelonConfiguration csfVielonwFelonaturelonConfiguration;
 
-  // facet field settings
-  private String facetName;
-  private boolean storeFacetSkiplist;
-  private boolean storeFacetOffensiveCounters;
-  private boolean useCSFForFacetCounting;
+  // facelont fielonld selonttings
+  privatelon String facelontNamelon;
+  privatelon boolelonan storelonFacelontSkiplist;
+  privatelon boolelonan storelonFacelontOffelonnsivelonCountelonrs;
+  privatelon boolelonan uselonCSFForFacelontCounting;
 
-  // Determines if this field is indexed
-  private boolean indexedField = false;
+  // Delontelonrminelons if this fielonld is indelonxelond
+  privatelon boolelonan indelonxelondFielonld = falselon;
 
-  // search field settings
-  // whether a field should be searched by default
-  private boolean textSearchableByDefault = false;
-  private float textSearchableFieldWeight = 1.0f;
+  // selonarch fielonld selonttings
+  // whelonthelonr a fielonld should belon selonarchelond by delonfault
+  privatelon boolelonan telonxtSelonarchablelonByDelonfault = falselon;
+  privatelon float telonxtSelonarchablelonFielonldWelonight = 1.0f;
 
-  // For indexed numerical fields
-  private IndexedNumericFieldSettings numericFieldSettings = null;
+  // For indelonxelond numelonrical fielonlds
+  privatelon IndelonxelondNumelonricFielonldSelonttings numelonricFielonldSelonttings = null;
 
-  public boolean isStorePerPositionPayloads() {
-    return storePerPositionPayloads;
+  public boolelonan isStorelonPelonrPositionPayloads() {
+    relonturn storelonPelonrPositionPayloads;
   }
 
-  public void setStorePerPositionPayloads(boolean storePerPositionPayloads) {
-    checkIfFrozen();
-    this.storePerPositionPayloads = storePerPositionPayloads;
+  public void selontStorelonPelonrPositionPayloads(boolelonan storelonPelonrPositionPayloads) {
+    chelonckIfFrozelonn();
+    this.storelonPelonrPositionPayloads = storelonPelonrPositionPayloads;
   }
 
-  public int getDefaultPayloadLength() {
-    return defaultPayloadLength;
+  public int gelontDelonfaultPayloadLelonngth() {
+    relonturn delonfaultPayloadLelonngth;
   }
 
-  public void setDefaultPayloadLength(int defaultPayloadLength) {
-    checkIfFrozen();
-    this.defaultPayloadLength = defaultPayloadLength;
+  public void selontDelonfaultPayloadLelonngth(int delonfaultPayloadLelonngth) {
+    chelonckIfFrozelonn();
+    this.delonfaultPayloadLelonngth = delonfaultPayloadLelonngth;
   }
 
-  public boolean becomesImmutable() {
-    return becomesImmutable;
+  public boolelonan beloncomelonsImmutablelon() {
+    relonturn beloncomelonsImmutablelon;
   }
 
-  public void setBecomesImmutable(boolean becomesImmutable) {
-    checkIfFrozen();
-    this.becomesImmutable = becomesImmutable;
+  public void selontBeloncomelonsImmutablelon(boolelonan beloncomelonsImmutablelon) {
+    chelonckIfFrozelonn();
+    this.beloncomelonsImmutablelon = beloncomelonsImmutablelon;
   }
 
-  public boolean isSupportOrderedTerms() {
-    return supportOrderedTerms;
+  public boolelonan isSupportOrdelonrelondTelonrms() {
+    relonturn supportOrdelonrelondTelonrms;
   }
 
-  public void setSupportOrderedTerms(boolean supportOrderedTerms) {
-    checkIfFrozen();
-    this.supportOrderedTerms = supportOrderedTerms;
+  public void selontSupportOrdelonrelondTelonrms(boolelonan supportOrdelonrelondTelonrms) {
+    chelonckIfFrozelonn();
+    this.supportOrdelonrelondTelonrms = supportOrdelonrelondTelonrms;
   }
 
-  public boolean isSupportTermTextLookup() {
-    return supportTermTextLookup;
+  public boolelonan isSupportTelonrmTelonxtLookup() {
+    relonturn supportTelonrmTelonxtLookup;
   }
 
-  public void setSupportTermTextLookup(boolean supportTermTextLookup) {
-    this.supportTermTextLookup = supportTermTextLookup;
+  public void selontSupportTelonrmTelonxtLookup(boolelonan supportTelonrmTelonxtLookup) {
+    this.supportTelonrmTelonxtLookup = supportTelonrmTelonxtLookup;
   }
 
-  @Nullable
-  public TokenStreamSerializer getTokenStreamSerializer() {
-    return tokenStreamSerializerProvider == null ? null : tokenStreamSerializerProvider.safeBuild();
+  @Nullablelon
+  public TokelonnStrelonamSelonrializelonr gelontTokelonnStrelonamSelonrializelonr() {
+    relonturn tokelonnStrelonamSelonrializelonrProvidelonr == null ? null : tokelonnStrelonamSelonrializelonrProvidelonr.safelonBuild();
   }
 
-  public void setTokenStreamSerializerBuilder(TokenStreamSerializer.Builder provider) {
-    checkIfFrozen();
-    this.tokenStreamSerializerProvider = provider;
+  public void selontTokelonnStrelonamSelonrializelonrBuildelonr(TokelonnStrelonamSelonrializelonr.Buildelonr providelonr) {
+    chelonckIfFrozelonn();
+    this.tokelonnStrelonamSelonrializelonrProvidelonr = providelonr;
   }
 
-  public ThriftCSFType getCsfType() {
-    return csfType;
+  public ThriftCSFTypelon gelontCsfTypelon() {
+    relonturn csfTypelon;
   }
 
-  public void setCsfType(ThriftCSFType csfType) {
-    checkIfFrozen();
-    this.csfType = csfType;
+  public void selontCsfTypelon(ThriftCSFTypelon csfTypelon) {
+    chelonckIfFrozelonn();
+    this.csfTypelon = csfTypelon;
   }
 
-  public boolean isCsfVariableLength() {
-    return csfVariableLength;
+  public boolelonan isCsfVariablelonLelonngth() {
+    relonturn csfVariablelonLelonngth;
   }
 
-  public int getCsfFixedLengthNumValuesPerDoc() {
-    return csfFixedLengthNumValuesPerDoc;
+  public int gelontCsfFixelondLelonngthNumValuelonsPelonrDoc() {
+    relonturn csfFixelondLelonngthNumValuelonsPelonrDoc;
   }
 
-  public void setCsfVariableLength() {
-    checkIfFrozen();
-    this.csfVariableLength = true;
+  public void selontCsfVariablelonLelonngth() {
+    chelonckIfFrozelonn();
+    this.csfVariablelonLelonngth = truelon;
   }
 
   /**
-   * Make the field a fixed length CSF, with the given length.
+   * Makelon thelon fielonld a fixelond lelonngth CSF, with thelon givelonn lelonngth.
    */
-  public void setCsfFixedLengthSettings(int csfFixedLengthNumValuesPerDocument,
-                                        boolean isCsfFixedLengthUpdateable) {
-    checkIfFrozen();
-    this.csfVariableLength = false;
-    this.csfFixedLengthNumValuesPerDoc = csfFixedLengthNumValuesPerDocument;
-    this.csfFixedLengthUpdateable = isCsfFixedLengthUpdateable;
+  public void selontCsfFixelondLelonngthSelonttings(int csfFixelondLelonngthNumValuelonsPelonrDocumelonnt,
+                                        boolelonan isCsfFixelondLelonngthUpdatelonablelon) {
+    chelonckIfFrozelonn();
+    this.csfVariablelonLelonngth = falselon;
+    this.csfFixelondLelonngthNumValuelonsPelonrDoc = csfFixelondLelonngthNumValuelonsPelonrDocumelonnt;
+    this.csfFixelondLelonngthUpdatelonablelon = isCsfFixelondLelonngthUpdatelonablelon;
   }
 
-  public boolean isCsfFixedLengthUpdateable() {
-    return csfFixedLengthUpdateable;
+  public boolelonan isCsfFixelondLelonngthUpdatelonablelon() {
+    relonturn csfFixelondLelonngthUpdatelonablelon;
   }
 
-  public boolean isCsfLoadIntoRam() {
-    return csfLoadIntoRam;
+  public boolelonan isCsfLoadIntoRam() {
+    relonturn csfLoadIntoRam;
   }
 
-  public void setCsfLoadIntoRam(boolean csfLoadIntoRam) {
-    checkIfFrozen();
+  public void selontCsfLoadIntoRam(boolelonan csfLoadIntoRam) {
+    chelonckIfFrozelonn();
     this.csfLoadIntoRam = csfLoadIntoRam;
   }
 
-  public void setCsfDefaultValue(long defaultValue) {
-    checkIfFrozen();
-    this.csfDefaultValue = defaultValue;
-    this.csfDefaultValueSet = true;
+  public void selontCsfDelonfaultValuelon(long delonfaultValuelon) {
+    chelonckIfFrozelonn();
+    this.csfDelonfaultValuelon = delonfaultValuelon;
+    this.csfDelonfaultValuelonSelont = truelon;
   }
 
-  public long getCsfDefaultValue() {
-    return csfDefaultValue;
+  public long gelontCsfDelonfaultValuelon() {
+    relonturn csfDelonfaultValuelon;
   }
 
-  public boolean isCsfDefaultValueSet() {
-    return csfDefaultValueSet;
+  public boolelonan isCsfDelonfaultValuelonSelont() {
+    relonturn csfDelonfaultValuelonSelont;
   }
 
-  public String getFacetName() {
-    return facetName;
+  public String gelontFacelontNamelon() {
+    relonturn facelontNamelon;
   }
 
-  public void setFacetName(String facetName) {
-    checkIfFrozen();
-    this.facetName = facetName;
+  public void selontFacelontNamelon(String facelontNamelon) {
+    chelonckIfFrozelonn();
+    this.facelontNamelon = facelontNamelon;
   }
 
-  public boolean isStoreFacetSkiplist() {
-    return storeFacetSkiplist;
+  public boolelonan isStorelonFacelontSkiplist() {
+    relonturn storelonFacelontSkiplist;
   }
 
-  public void setStoreFacetSkiplist(boolean storeFacetSkiplist) {
-    checkIfFrozen();
-    this.storeFacetSkiplist = storeFacetSkiplist;
+  public void selontStorelonFacelontSkiplist(boolelonan storelonFacelontSkiplist) {
+    chelonckIfFrozelonn();
+    this.storelonFacelontSkiplist = storelonFacelontSkiplist;
   }
 
-  public boolean isStoreFacetOffensiveCounters() {
-    return storeFacetOffensiveCounters;
+  public boolelonan isStorelonFacelontOffelonnsivelonCountelonrs() {
+    relonturn storelonFacelontOffelonnsivelonCountelonrs;
   }
 
-  public void setStoreFacetOffensiveCounters(boolean storeFacetOffensiveCounters) {
-    checkIfFrozen();
-    this.storeFacetOffensiveCounters = storeFacetOffensiveCounters;
+  public void selontStorelonFacelontOffelonnsivelonCountelonrs(boolelonan storelonFacelontOffelonnsivelonCountelonrs) {
+    chelonckIfFrozelonn();
+    this.storelonFacelontOffelonnsivelonCountelonrs = storelonFacelontOffelonnsivelonCountelonrs;
   }
 
-  public boolean isUseCSFForFacetCounting() {
-    return useCSFForFacetCounting;
+  public boolelonan isUselonCSFForFacelontCounting() {
+    relonturn uselonCSFForFacelontCounting;
   }
 
-  public void setUseCSFForFacetCounting(boolean useCSFForFacetCounting) {
-    checkIfFrozen();
-    this.useCSFForFacetCounting = useCSFForFacetCounting;
+  public void selontUselonCSFForFacelontCounting(boolelonan uselonCSFForFacelontCounting) {
+    chelonckIfFrozelonn();
+    this.uselonCSFForFacelontCounting = uselonCSFForFacelontCounting;
   }
 
-  public boolean isFacetField() {
-    return facetName != null && !StringUtils.isEmpty(facetName);
+  public boolelonan isFacelontFielonld() {
+    relonturn facelontNamelon != null && !StringUtils.iselonmpty(facelontNamelon);
   }
 
-  public boolean isIndexHFTermPairs() {
-    return indexHFTermPairs;
+  public boolelonan isIndelonxHFTelonrmPairs() {
+    relonturn indelonxHFTelonrmPairs;
   }
 
-  public void setIndexHFTermPairs(boolean indexHFTermPairs) {
-    checkIfFrozen();
-    this.indexHFTermPairs = indexHFTermPairs;
+  public void selontIndelonxHFTelonrmPairs(boolelonan indelonxHFTelonrmPairs) {
+    chelonckIfFrozelonn();
+    this.indelonxHFTelonrmPairs = indelonxHFTelonrmPairs;
   }
 
-  public boolean acceptPretokenizedField() {
-    return tokenStreamSerializerProvider != null;
-  }
-
-  /**
-   * set this field to use additional twitter specific tokenization.
-   * @deprecated should avoid doing additional tokenizations on top of what ingester produced.
-   */
-  @Deprecated
-  public boolean useTweetSpecificNormalization() {
-    return useTweetSpecificNormalization;
+  public boolelonan accelonptPrelontokelonnizelondFielonld() {
+    relonturn tokelonnStrelonamSelonrializelonrProvidelonr != null;
   }
 
   /**
-   * test whether this field uses additional twitter specific tokenization.
-   * @deprecated should avoid doing additional tokenizations on top of what ingester produced.
+   * selont this fielonld to uselon additional twittelonr speloncific tokelonnization.
+   * @delonpreloncatelond should avoid doing additional tokelonnizations on top of what ingelonstelonr producelond.
    */
-  @Deprecated
-  public void setUseTweetSpecificNormalization(boolean useTweetSpecificNormalization) {
-    checkIfFrozen();
-    this.useTweetSpecificNormalization = useTweetSpecificNormalization;
-  }
-
-  public boolean isIndexedField() {
-    return indexedField;
-  }
-
-  public void setIndexedField(boolean indexedField) {
-    this.indexedField = indexedField;
-  }
-
-  public boolean isTextSearchableByDefault() {
-    return textSearchableByDefault;
-  }
-
-  public void setTextSearchableByDefault(boolean textSearchableByDefault) {
-    checkIfFrozen();
-    this.textSearchableByDefault = textSearchableByDefault;
-  }
-
-  public float getTextSearchableFieldWeight() {
-    return textSearchableFieldWeight;
-  }
-
-  public void setTextSearchableFieldWeight(float textSearchableFieldWeight) {
-    checkIfFrozen();
-    this.textSearchableFieldWeight = textSearchableFieldWeight;
+  @Delonpreloncatelond
+  public boolelonan uselonTwelonelontSpeloncificNormalization() {
+    relonturn uselonTwelonelontSpeloncificNormalization;
   }
 
   /**
-   * Convenience method to find out if this field stores positions. {@link #indexOptions()} can also
-   * be used to determine the index options for this field.
+   * telonst whelonthelonr this fielonld uselons additional twittelonr speloncific tokelonnization.
+   * @delonpreloncatelond should avoid doing additional tokelonnizations on top of what ingelonstelonr producelond.
    */
-  public final boolean hasPositions() {
-    return indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS
-            || indexOptions() == IndexOptions.DOCS_AND_FREQS_AND_POSITIONS_AND_OFFSETS;
+  @Delonpreloncatelond
+  public void selontUselonTwelonelontSpeloncificNormalization(boolelonan uselonTwelonelontSpeloncificNormalization) {
+    chelonckIfFrozelonn();
+    this.uselonTwelonelontSpeloncificNormalization = uselonTwelonelontSpeloncificNormalization;
   }
 
-  public boolean isCsfViewField() {
-    return csfViewField;
+  public boolelonan isIndelonxelondFielonld() {
+    relonturn indelonxelondFielonld;
   }
 
-  public int getCsfViewBaseFieldId() {
-    return csfViewBaseFieldId;
+  public void selontIndelonxelondFielonld(boolelonan indelonxelondFielonld) {
+    this.indelonxelondFielonld = indelonxelondFielonld;
   }
 
-  public FeatureConfiguration getCsfViewFeatureConfiguration() {
-    return csfViewFeatureConfiguration;
+  public boolelonan isTelonxtSelonarchablelonByDelonfault() {
+    relonturn telonxtSelonarchablelonByDelonfault;
+  }
+
+  public void selontTelonxtSelonarchablelonByDelonfault(boolelonan telonxtSelonarchablelonByDelonfault) {
+    chelonckIfFrozelonn();
+    this.telonxtSelonarchablelonByDelonfault = telonxtSelonarchablelonByDelonfault;
+  }
+
+  public float gelontTelonxtSelonarchablelonFielonldWelonight() {
+    relonturn telonxtSelonarchablelonFielonldWelonight;
+  }
+
+  public void selontTelonxtSelonarchablelonFielonldWelonight(float telonxtSelonarchablelonFielonldWelonight) {
+    chelonckIfFrozelonn();
+    this.telonxtSelonarchablelonFielonldWelonight = telonxtSelonarchablelonFielonldWelonight;
   }
 
   /**
-   * Set the CSF view settings. A CSF view is a portion of an another CSF.
+   * Convelonnielonncelon melonthod to find out if this fielonld storelons positions. {@link #indelonxOptions()} can also
+   * belon uselond to delontelonrminelon thelon indelonx options for this fielonld.
    */
-  public void setCsfViewSettings(String fieldName,
-                                 ThriftCSFViewSettings csfViewSettings,
-                                 Schema.FieldInfo baseField) {
-    checkIfFrozen();
-    this.csfViewField = true;
-    this.csfViewBaseFieldId = csfViewSettings.getBaseFieldConfigId();
-    FeatureConfiguration.Builder builder = FeatureConfiguration.builder()
-            .withName(fieldName)
-            .withType(csfViewSettings.csfType)
-            .withBitRange(csfViewSettings.getValueIndex(),
-                csfViewSettings.getBitStartPosition(),
-                csfViewSettings.getBitLength())
-            .withBaseField(baseField.getName());
-    if (csfViewSettings.isSetOutputCSFType()) {
-      builder.withOutputType(csfViewSettings.getOutputCSFType());
+  public final boolelonan hasPositions() {
+    relonturn indelonxOptions() == IndelonxOptions.DOCS_AND_FRelonQS_AND_POSITIONS
+            || indelonxOptions() == IndelonxOptions.DOCS_AND_FRelonQS_AND_POSITIONS_AND_OFFSelonTS;
+  }
+
+  public boolelonan isCsfVielonwFielonld() {
+    relonturn csfVielonwFielonld;
+  }
+
+  public int gelontCsfVielonwBaselonFielonldId() {
+    relonturn csfVielonwBaselonFielonldId;
+  }
+
+  public FelonaturelonConfiguration gelontCsfVielonwFelonaturelonConfiguration() {
+    relonturn csfVielonwFelonaturelonConfiguration;
+  }
+
+  /**
+   * Selont thelon CSF vielonw selonttings. A CSF vielonw is a portion of an anothelonr CSF.
+   */
+  public void selontCsfVielonwSelonttings(String fielonldNamelon,
+                                 ThriftCSFVielonwSelonttings csfVielonwSelonttings,
+                                 Schelonma.FielonldInfo baselonFielonld) {
+    chelonckIfFrozelonn();
+    this.csfVielonwFielonld = truelon;
+    this.csfVielonwBaselonFielonldId = csfVielonwSelonttings.gelontBaselonFielonldConfigId();
+    FelonaturelonConfiguration.Buildelonr buildelonr = FelonaturelonConfiguration.buildelonr()
+            .withNamelon(fielonldNamelon)
+            .withTypelon(csfVielonwSelonttings.csfTypelon)
+            .withBitRangelon(csfVielonwSelonttings.gelontValuelonIndelonx(),
+                csfVielonwSelonttings.gelontBitStartPosition(),
+                csfVielonwSelonttings.gelontBitLelonngth())
+            .withBaselonFielonld(baselonFielonld.gelontNamelon());
+    if (csfVielonwSelonttings.isSelontOutputCSFTypelon()) {
+      buildelonr.withOutputTypelon(csfVielonwSelonttings.gelontOutputCSFTypelon());
     }
-    if (csfViewSettings.isSetNormalizationType()) {
-      builder.withFeatureNormalizationType(csfViewSettings.getNormalizationType());
+    if (csfVielonwSelonttings.isSelontNormalizationTypelon()) {
+      buildelonr.withFelonaturelonNormalizationTypelon(csfVielonwSelonttings.gelontNormalizationTypelon());
     }
-    if (csfViewSettings.isSetFeatureUpdateConstraints()) {
-      for (ThriftFeatureUpdateConstraint c : csfViewSettings.getFeatureUpdateConstraints()) {
-        builder.withFeatureUpdateConstraint(c);
+    if (csfVielonwSelonttings.isSelontFelonaturelonUpdatelonConstraints()) {
+      for (ThriftFelonaturelonUpdatelonConstraint c : csfVielonwSelonttings.gelontFelonaturelonUpdatelonConstraints()) {
+        buildelonr.withFelonaturelonUpdatelonConstraint(c);
       }
     }
 
-    this.csfViewFeatureConfiguration = builder.build();
+    this.csfVielonwFelonaturelonConfiguration = buildelonr.build();
   }
 
-  public IndexedNumericFieldSettings getNumericFieldSettings() {
-    return numericFieldSettings;
+  public IndelonxelondNumelonricFielonldSelonttings gelontNumelonricFielonldSelonttings() {
+    relonturn numelonricFielonldSelonttings;
   }
 
-  public void setNumericFieldSettings(IndexedNumericFieldSettings numericFieldSettings) {
-    checkIfFrozen();
-    this.numericFieldSettings = numericFieldSettings;
+  public void selontNumelonricFielonldSelonttings(IndelonxelondNumelonricFielonldSelonttings numelonricFielonldSelonttings) {
+    chelonckIfFrozelonn();
+    this.numelonricFielonldSelonttings = numelonricFielonldSelonttings;
   }
 }

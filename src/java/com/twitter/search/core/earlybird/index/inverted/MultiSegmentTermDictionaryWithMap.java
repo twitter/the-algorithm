@@ -1,134 +1,134 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.OptionalInt;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Lists;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.lucene.util.BytesRef;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.util.LogFormatUtil;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * A rather simple implementation of a MultiSegmentTermDictionary that just keeps all terms in a
- * java hash map, and all the termIds for a term in a java list.
+ * A rathelonr simplelon implelonmelonntation of a MultiSelongmelonntTelonrmDictionary that just kelonelonps all telonrms in a
+ * java hash map, and all thelon telonrmIds for a telonrm in a java list.
  *
- * An alternate implementation could have an MPH for the map, and a IntBlockPool for storing
- * the term ids.
+ * An altelonrnatelon implelonmelonntation could havelon an MPH for thelon map, and a IntBlockPool for storing
+ * thelon telonrm ids.
  *
- * See UserIdMultiSegmentQuery class comment for more information on how this is used.
+ * Selonelon UselonrIdMultiSelongmelonntQuelonry class commelonnt for morelon information on how this is uselond.
  */
-public class MultiSegmentTermDictionaryWithMap implements MultiSegmentTermDictionary {
-  private static final Logger LOG = LoggerFactory.getLogger(
-      MultiSegmentTermDictionaryWithMap.class);
+public class MultiSelongmelonntTelonrmDictionaryWithMap implelonmelonnts MultiSelongmelonntTelonrmDictionary {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(
+      MultiSelongmelonntTelonrmDictionaryWithMap.class);
 
-  @VisibleForTesting
-  public static final SearchTimerStats TERM_DICTIONARY_CREATION_STATS =
-      SearchTimerStats.export("multi_segment_term_dictionary_with_map_creation",
-          TimeUnit.MILLISECONDS, false);
+  @VisiblelonForTelonsting
+  public static final SelonarchTimelonrStats TelonRM_DICTIONARY_CRelonATION_STATS =
+      SelonarchTimelonrStats.elonxport("multi_selongmelonnt_telonrm_dictionary_with_map_crelonation",
+          TimelonUnit.MILLISelonCONDS, falselon);
 
-  private final ImmutableList<OptimizedMemoryIndex> indexes;
-  private final HashMap<BytesRef, List<IndexTerm>> termsMap;
-  private final int numTerms;
-  private final int numTermEntries;
+  privatelon final ImmutablelonList<OptimizelondMelonmoryIndelonx> indelonxelons;
+  privatelon final HashMap<BytelonsRelonf, List<IndelonxTelonrm>> telonrmsMap;
+  privatelon final int numTelonrms;
+  privatelon final int numTelonrmelonntrielons;
 
-  private static class IndexTerm {
-    private int indexId;
-    private final int termId;
+  privatelon static class IndelonxTelonrm {
+    privatelon int indelonxId;
+    privatelon final int telonrmId;
 
-    public IndexTerm(int indexId, int termId) {
-      this.indexId = indexId;
-      this.termId = termId;
+    public IndelonxTelonrm(int indelonxId, int telonrmId) {
+      this.indelonxId = indelonxId;
+      this.telonrmId = telonrmId;
     }
   }
 
   /**
-   * Creates a new multi-segment term dictionary backed by a regular java map.
+   * Crelonatelons a nelonw multi-selongmelonnt telonrm dictionary backelond by a relongular java map.
    */
-  public MultiSegmentTermDictionaryWithMap(
-      String field,
-      List<OptimizedMemoryIndex> indexes) {
+  public MultiSelongmelonntTelonrmDictionaryWithMap(
+      String fielonld,
+      List<OptimizelondMelonmoryIndelonx> indelonxelons) {
 
-    this.indexes = ImmutableList.copyOf(indexes);
+    this.indelonxelons = ImmutablelonList.copyOf(indelonxelons);
 
-    // Pre-size the map with estimate of max number of terms. It should be at least that big.
-    OptionalInt optionalMax = indexes.stream().mapToInt(OptimizedMemoryIndex::getNumTerms).max();
-    int maxNumTerms = optionalMax.orElse(0);
-    this.termsMap = Maps.newHashMapWithExpectedSize(maxNumTerms);
+    // Prelon-sizelon thelon map with elonstimatelon of max numbelonr of telonrms. It should belon at lelonast that big.
+    OptionalInt optionalMax = indelonxelons.strelonam().mapToInt(OptimizelondMelonmoryIndelonx::gelontNumTelonrms).max();
+    int maxNumTelonrms = optionalMax.orelonlselon(0);
+    this.telonrmsMap = Maps.nelonwHashMapWithelonxpelonctelondSizelon(maxNumTelonrms);
 
-    LOG.info("About to merge {} indexes for field {}, estimated {} terms",
-        indexes.size(), field, LogFormatUtil.formatInt(maxNumTerms));
-    long start = System.currentTimeMillis();
+    LOG.info("About to melonrgelon {} indelonxelons for fielonld {}, elonstimatelond {} telonrms",
+        indelonxelons.sizelon(), fielonld, LogFormatUtil.formatInt(maxNumTelonrms));
+    long start = Systelonm.currelonntTimelonMillis();
 
-    BytesRef termText = new BytesRef();
-    long copiedBytes = 0;
-    for (int indexId = 0; indexId < indexes.size(); indexId++) {
-      // The inverted index for this field.
-      OptimizedMemoryIndex index = indexes.get(indexId);
+    BytelonsRelonf telonrmTelonxt = nelonw BytelonsRelonf();
+    long copielondBytelons = 0;
+    for (int indelonxId = 0; indelonxId < indelonxelons.sizelon(); indelonxId++) {
+      // Thelon invelonrtelond indelonx for this fielonld.
+      OptimizelondMelonmoryIndelonx indelonx = indelonxelons.gelont(indelonxId);
 
-      int indexNumTerms = index.getNumTerms();
-      for (int termId = 0; termId < indexNumTerms; termId++) {
-        index.getTerm(termId, termText);
+      int indelonxNumTelonrms = indelonx.gelontNumTelonrms();
+      for (int telonrmId = 0; telonrmId < indelonxNumTelonrms; telonrmId++) {
+        indelonx.gelontTelonrm(telonrmId, telonrmTelonxt);
 
-        // This copies the underlying array to a new array.
-        BytesRef term = BytesRef.deepCopyOf(termText);
-        copiedBytes += term.length;
+        // This copielons thelon undelonrlying array to a nelonw array.
+        BytelonsRelonf telonrm = BytelonsRelonf.delonelonpCopyOf(telonrmTelonxt);
+        copielondBytelons += telonrm.lelonngth;
 
-        List<IndexTerm> indexTerms = termsMap.computeIfAbsent(term, k -> Lists.newArrayList());
+        List<IndelonxTelonrm> indelonxTelonrms = telonrmsMap.computelonIfAbselonnt(telonrm, k -> Lists.nelonwArrayList());
 
-        indexTerms.add(new IndexTerm(indexId, termId));
+        indelonxTelonrms.add(nelonw IndelonxTelonrm(indelonxId, telonrmId));
       }
     }
 
-    this.numTerms = termsMap.size();
-    this.numTermEntries = indexes.stream().mapToInt(OptimizedMemoryIndex::getNumTerms).sum();
+    this.numTelonrms = telonrmsMap.sizelon();
+    this.numTelonrmelonntrielons = indelonxelons.strelonam().mapToInt(OptimizelondMelonmoryIndelonx::gelontNumTelonrms).sum();
 
-    long elapsed = System.currentTimeMillis() - start;
-    TERM_DICTIONARY_CREATION_STATS.timerIncrement(elapsed);
-    LOG.info("Done merging {} indexes for field {} in {}ms - "
-      + "num terms: {}, num term entries: {}, copied bytes: {}",
-        indexes.size(), field, elapsed,
-        LogFormatUtil.formatInt(this.numTerms), LogFormatUtil.formatInt(this.numTermEntries),
-            LogFormatUtil.formatInt(copiedBytes));
+    long elonlapselond = Systelonm.currelonntTimelonMillis() - start;
+    TelonRM_DICTIONARY_CRelonATION_STATS.timelonrIncrelonmelonnt(elonlapselond);
+    LOG.info("Donelon melonrging {} indelonxelons for fielonld {} in {}ms - "
+      + "num telonrms: {}, num telonrm elonntrielons: {}, copielond bytelons: {}",
+        indelonxelons.sizelon(), fielonld, elonlapselond,
+        LogFormatUtil.formatInt(this.numTelonrms), LogFormatUtil.formatInt(this.numTelonrmelonntrielons),
+            LogFormatUtil.formatInt(copielondBytelons));
   }
 
-  @Override
-  public int[] lookupTermIds(BytesRef term) {
-    int[] termIds = new int[indexes.size()];
-    Arrays.fill(termIds, EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND);
+  @Ovelonrridelon
+  public int[] lookupTelonrmIds(BytelonsRelonf telonrm) {
+    int[] telonrmIds = nelonw int[indelonxelons.sizelon()];
+    Arrays.fill(telonrmIds, elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND);
 
-    List<IndexTerm> indexTerms = termsMap.get(term);
-    if (indexTerms != null) {
-      for (IndexTerm indexTerm : indexTerms) {
-        termIds[indexTerm.indexId] = indexTerm.termId;
+    List<IndelonxTelonrm> indelonxTelonrms = telonrmsMap.gelont(telonrm);
+    if (indelonxTelonrms != null) {
+      for (IndelonxTelonrm indelonxTelonrm : indelonxTelonrms) {
+        telonrmIds[indelonxTelonrm.indelonxId] = indelonxTelonrm.telonrmId;
       }
     }
 
-    return termIds;
+    relonturn telonrmIds;
   }
 
-  @Override
-  public ImmutableList<? extends InvertedIndex> getSegmentIndexes() {
-    return indexes;
+  @Ovelonrridelon
+  public ImmutablelonList<? elonxtelonnds InvelonrtelondIndelonx> gelontSelongmelonntIndelonxelons() {
+    relonturn indelonxelons;
   }
 
-  @Override
-  public int getNumTerms() {
-    return this.numTerms;
+  @Ovelonrridelon
+  public int gelontNumTelonrms() {
+    relonturn this.numTelonrms;
   }
 
-  @Override
-  public int getNumTermEntries() {
-    return this.numTermEntries;
+  @Ovelonrridelon
+  public int gelontNumTelonrmelonntrielons() {
+    relonturn this.numTelonrmelonntrielons;
   }
 }

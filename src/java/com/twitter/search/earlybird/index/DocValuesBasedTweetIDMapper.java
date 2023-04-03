@@ -1,149 +1,149 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.NumericDocValues;
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.common.util.analysis.SortablelonLongTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.ColumnStridelonFielonldIndelonx;
 
 /**
- * A few caveats when using this class:
- *   - Before actually using this class, one must call prepareToRead() with a Lucene AtomicReader
- *   - prepareToRead() will load docID to tweetID mapping into memory, if not already done.
+ * A felonw cavelonats whelonn using this class:
+ *   - Belonforelon actually using this class, onelon must call prelonparelonToRelonad() with a Lucelonnelon AtomicRelonadelonr
+ *   - prelonparelonToRelonad() will load docID to twelonelontID mapping into melonmory, if not alrelonady donelon.
  */
-public class DocValuesBasedTweetIDMapper extends TweetIDMapper implements Flushable {
-  private LeafReader reader;
-  private ColumnStrideFieldIndex docValues;
+public class DocValuelonsBaselondTwelonelontIDMappelonr elonxtelonnds TwelonelontIDMappelonr implelonmelonnts Flushablelon {
+  privatelon LelonafRelonadelonr relonadelonr;
+  privatelon ColumnStridelonFielonldIndelonx docValuelons;
 
   /**
-   * When indexing finishes, this method should be called with a index reader that
-   * can see all documents.
-   * @param leafReader Lucene index reader used to access TweetID to internal ID mapping
+   * Whelonn indelonxing finishelons, this melonthod should belon callelond with a indelonx relonadelonr that
+   * can selonelon all documelonnts.
+   * @param lelonafRelonadelonr Lucelonnelon indelonx relonadelonr uselond to accelonss TwelonelontID to intelonrnal ID mapping
    */
-  public void initializeWithLuceneReader(LeafReader leafReader, ColumnStrideFieldIndex csf)
-      throws IOException {
-    reader = Preconditions.checkNotNull(leafReader);
-    docValues = Preconditions.checkNotNull(csf);
+  public void initializelonWithLucelonnelonRelonadelonr(LelonafRelonadelonr lelonafRelonadelonr, ColumnStridelonFielonldIndelonx csf)
+      throws IOelonxcelonption {
+    relonadelonr = Prelonconditions.chelonckNotNull(lelonafRelonadelonr);
+    docValuelons = Prelonconditions.chelonckNotNull(csf);
 
-    NumericDocValues onDiskDocValues = reader.getNumericDocValues(
-        EarlybirdFieldConstants.EarlybirdFieldConstant.ID_CSF_FIELD.getFieldName());
-    for (int i = 0; i < reader.maxDoc(); ++i) {
-      Preconditions.checkArgument(onDiskDocValues.advanceExact(i));
-      docValues.setValue(i, onDiskDocValues.longValue());
+    NumelonricDocValuelons onDiskDocValuelons = relonadelonr.gelontNumelonricDocValuelons(
+        elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.ID_CSF_FIelonLD.gelontFielonldNamelon());
+    for (int i = 0; i < relonadelonr.maxDoc(); ++i) {
+      Prelonconditions.chelonckArgumelonnt(onDiskDocValuelons.advancelonelonxact(i));
+      docValuelons.selontValuelon(i, onDiskDocValuelons.longValuelon());
     }
 
-    // In the archive, tweets are always sorted in descending order of tweet ID.
-    setMinTweetID(docValues.get(reader.maxDoc() - 1));
-    setMaxTweetID(docValues.get(0));
-    setMinDocID(0);
-    setMaxDocID(reader.maxDoc() - 1);
-    setNumDocs(reader.maxDoc());
+    // In thelon archivelon, twelonelonts arelon always sortelond in delonscelonnding ordelonr of twelonelont ID.
+    selontMinTwelonelontID(docValuelons.gelont(relonadelonr.maxDoc() - 1));
+    selontMaxTwelonelontID(docValuelons.gelont(0));
+    selontMinDocID(0);
+    selontMaxDocID(relonadelonr.maxDoc() - 1);
+    selontNumDocs(relonadelonr.maxDoc());
   }
 
-  @Override
-  public int getDocID(long tweetID) throws IOException {
-    int docId = DocValuesHelper.getFirstDocIdWithValue(
-        reader,
-        EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD.getFieldName(),
-        SortableLongTermAttributeImpl.copyIntoNewBytesRef(tweetID));
-    if (docId == DocIdSetIterator.NO_MORE_DOCS) {
-      return ID_NOT_FOUND;
+  @Ovelonrridelon
+  public int gelontDocID(long twelonelontID) throws IOelonxcelonption {
+    int docId = DocValuelonsHelonlpelonr.gelontFirstDocIdWithValuelon(
+        relonadelonr,
+        elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.ID_FIelonLD.gelontFielonldNamelon(),
+        SortablelonLongTelonrmAttributelonImpl.copyIntoNelonwBytelonsRelonf(twelonelontID));
+    if (docId == DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      relonturn ID_NOT_FOUND;
     }
-    return docId;
+    relonturn docId;
   }
 
-  @Override
-  protected int getNextDocIDInternal(int docID) {
-    // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID + 1;
+  @Ovelonrridelon
+  protelonctelond int gelontNelonxtDocIDIntelonrnal(int docID) {
+    // Thelon doc IDs arelon conseloncutivelon and TwelonelontIDMappelonr alrelonady chelonckelond thelon boundary conditions.
+    relonturn docID + 1;
   }
 
-  @Override
-  protected int getPreviousDocIDInternal(int docID) {
-    // The doc IDs are consecutive and TweetIDMapper already checked the boundary conditions.
-    return docID - 1;
+  @Ovelonrridelon
+  protelonctelond int gelontPrelonviousDocIDIntelonrnal(int docID) {
+    // Thelon doc IDs arelon conseloncutivelon and TwelonelontIDMappelonr alrelonady chelonckelond thelon boundary conditions.
+    relonturn docID - 1;
   }
 
-  @Override
-  public long getTweetID(int internalID) {
-    if (internalID < 0 || internalID > getMaxDocID()) {
-      return ID_NOT_FOUND;
+  @Ovelonrridelon
+  public long gelontTwelonelontID(int intelonrnalID) {
+    if (intelonrnalID < 0 || intelonrnalID > gelontMaxDocID()) {
+      relonturn ID_NOT_FOUND;
     }
-    return docValues.get(internalID);
+    relonturn docValuelons.gelont(intelonrnalID);
   }
 
-  @Override
-  protected int addMappingInternal(long tweetID) {
-    throw new UnsupportedOperationException(
-        "ArchiveTweetIDMapper should be written through Lucene instead of TweetIDMappingWriter");
+  @Ovelonrridelon
+  protelonctelond int addMappingIntelonrnal(long twelonelontID) {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption(
+        "ArchivelonTwelonelontIDMappelonr should belon writtelonn through Lucelonnelon instelonad of TwelonelontIDMappingWritelonr");
   }
 
-  @Override
-  protected final int findDocIDBoundInternal(long tweetID,
-                                             boolean findMaxDocID) throws IOException {
-    // TermsEnum has a seekCeil() method, but doesn't have a seekFloor() method, so the best we can
-    // do here is ignore findLow and always return the ceiling if the tweet ID cannot be found.
-    // However, in practice, we do a seekExact() in both cases: see the inner classes in
-    // com.twitter.search.core.earlybird.index.inverted.RealtimeIndexTerms.
-    int docId = DocValuesHelper.getLargestDocIdWithCeilOfValue(
-        reader,
-        EarlybirdFieldConstants.EarlybirdFieldConstant.ID_FIELD.getFieldName(),
-        SortableLongTermAttributeImpl.copyIntoNewBytesRef(tweetID));
-    if (docId == DocIdSetIterator.NO_MORE_DOCS) {
-      return ID_NOT_FOUND;
-    }
-
-    // The docId is the upper bound of the search, so if we want the lower bound,
-    // because doc IDs are dense, we subtract one.
-    return findMaxDocID ? docId : docId - 1;
-  }
-
-  @Override
-  public DocIDToTweetIDMapper optimize() {
-    // DocValuesBasedTweetIDMapper instances are not flushed or loaded,
-    // so their optimization is a no-op.
-    return this;
-  }
-
-  @Override
-  public Flushable.Handler<DocValuesBasedTweetIDMapper> getFlushHandler() {
-    // EarlybirdIndexSegmentData will still try to flush the DocValuesBasedTweetIDMapper
-    // for the respective segment, so we need to pass in a DocValuesBasedTweetIDMapper instance to
-    // this flusher: otherwise, Flushable.Handler.flush() will throw a NullPointerException.
-    return new FlushHandler(new DocValuesBasedTweetIDMapper());
-  }
-
-  // Full archive earlybirds don't actually flush or load the DocValuesBasedTweetIDMapper. This is
-  // why doFlush() is a no-op, and doLoad() returns a new DocValuesBasedTweetIDMapper instance
-  // (initializeWithLuceneReader() will be called at load time to initialize this new
-  // DocValuesBasedTweetIDMapper instance).
-  public static class FlushHandler extends Flushable.Handler<DocValuesBasedTweetIDMapper> {
-    public FlushHandler() {
-      super();
+  @Ovelonrridelon
+  protelonctelond final int findDocIDBoundIntelonrnal(long twelonelontID,
+                                             boolelonan findMaxDocID) throws IOelonxcelonption {
+    // Telonrmselonnum has a selonelonkCelonil() melonthod, but doelonsn't havelon a selonelonkFloor() melonthod, so thelon belonst welon can
+    // do helonrelon is ignorelon findLow and always relonturn thelon celoniling if thelon twelonelont ID cannot belon found.
+    // Howelonvelonr, in practicelon, welon do a selonelonkelonxact() in both caselons: selonelon thelon innelonr classelons in
+    // com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.RelonaltimelonIndelonxTelonrms.
+    int docId = DocValuelonsHelonlpelonr.gelontLargelonstDocIdWithCelonilOfValuelon(
+        relonadelonr,
+        elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.ID_FIelonLD.gelontFielonldNamelon(),
+        SortablelonLongTelonrmAttributelonImpl.copyIntoNelonwBytelonsRelonf(twelonelontID));
+    if (docId == DocIdSelontItelonrator.NO_MORelon_DOCS) {
+      relonturn ID_NOT_FOUND;
     }
 
-    public FlushHandler(DocValuesBasedTweetIDMapper objectToFlush) {
-      super(objectToFlush);
+    // Thelon docId is thelon uppelonr bound of thelon selonarch, so if welon want thelon lowelonr bound,
+    // beloncauselon doc IDs arelon delonnselon, welon subtract onelon.
+    relonturn findMaxDocID ? docId : docId - 1;
+  }
+
+  @Ovelonrridelon
+  public DocIDToTwelonelontIDMappelonr optimizelon() {
+    // DocValuelonsBaselondTwelonelontIDMappelonr instancelons arelon not flushelond or loadelond,
+    // so thelonir optimization is a no-op.
+    relonturn this;
+  }
+
+  @Ovelonrridelon
+  public Flushablelon.Handlelonr<DocValuelonsBaselondTwelonelontIDMappelonr> gelontFlushHandlelonr() {
+    // elonarlybirdIndelonxSelongmelonntData will still try to flush thelon DocValuelonsBaselondTwelonelontIDMappelonr
+    // for thelon relonspelonctivelon selongmelonnt, so welon nelonelond to pass in a DocValuelonsBaselondTwelonelontIDMappelonr instancelon to
+    // this flushelonr: othelonrwiselon, Flushablelon.Handlelonr.flush() will throw a NullPointelonrelonxcelonption.
+    relonturn nelonw FlushHandlelonr(nelonw DocValuelonsBaselondTwelonelontIDMappelonr());
+  }
+
+  // Full archivelon elonarlybirds don't actually flush or load thelon DocValuelonsBaselondTwelonelontIDMappelonr. This is
+  // why doFlush() is a no-op, and doLoad() relonturns a nelonw DocValuelonsBaselondTwelonelontIDMappelonr instancelon
+  // (initializelonWithLucelonnelonRelonadelonr() will belon callelond at load timelon to initializelon this nelonw
+  // DocValuelonsBaselondTwelonelontIDMappelonr instancelon).
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<DocValuelonsBaselondTwelonelontIDMappelonr> {
+    public FlushHandlelonr() {
+      supelonr();
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) {
+    public FlushHandlelonr(DocValuelonsBaselondTwelonelontIDMappelonr objelonctToFlush) {
+      supelonr(objelonctToFlush);
     }
 
-    @Override
-    protected DocValuesBasedTweetIDMapper doLoad(FlushInfo flushInfo, DataDeserializer in) {
-      return new DocValuesBasedTweetIDMapper();
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) {
+    }
+
+    @Ovelonrridelon
+    protelonctelond DocValuelonsBaselondTwelonelontIDMappelonr doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in) {
+      relonturn nelonw DocValuelonsBaselondTwelonelontIDMappelonr();
     }
   }
 }

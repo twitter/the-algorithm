@@ -1,24 +1,24 @@
-package com.twitter.home_mixer.product.scored_tweets.scoring_pipeline
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.scoring_pipelonlinelon
 
-import com.twitter.home_mixer.functional_component.scorer.VerifiedAuthorScalingScorer
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.identifier.ScoringPipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.scoring.ScoringPipelineConfig
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.scorelonr.VelonrifielondAuthorScalingScorelonr
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.InselonrtAppelonndRelonsults
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScoringPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.scoring.ScoringPipelonlinelonConfig
 
-object ScoredTweetsRescoreVerifiedAuthorScoringPipelineConfig
-    extends ScoringPipelineConfig[ScoredTweetsQuery, TweetCandidate] {
+objelonct ScorelondTwelonelontsRelonscorelonVelonrifielondAuthorScoringPipelonlinelonConfig
+    elonxtelonnds ScoringPipelonlinelonConfig[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: ScoringPipelineIdentifier =
-    ScoringPipelineIdentifier("ScoredTweetsRescoreVerifiedAuthor")
+  ovelonrridelon val idelonntifielonr: ScoringPipelonlinelonIdelonntifielonr =
+    ScoringPipelonlinelonIdelonntifielonr("ScorelondTwelonelontsRelonscorelonVelonrifielondAuthor")
 
-  override val selectors: Seq[Selector[ScoredTweetsQuery]] =
-    Seq(InsertAppendResults(AllPipelines))
+  ovelonrridelon val selonlelonctors: Selonq[Selonlelonctor[ScorelondTwelonelontsQuelonry]] =
+    Selonq(InselonrtAppelonndRelonsults(AllPipelonlinelons))
 
-  override val scorers: Seq[Scorer[ScoredTweetsQuery, TweetCandidate]] =
-    Seq(VerifiedAuthorScalingScorer)
+  ovelonrridelon val scorelonrs: Selonq[Scorelonr[ScorelondTwelonelontsQuelonry, TwelonelontCandidatelon]] =
+    Selonq(VelonrifielondAuthorScalingScorelonr)
 }

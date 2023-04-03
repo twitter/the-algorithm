@@ -1,151 +1,151 @@
-package com.twitter.cr_mixer.featureswitch
+packagelon com.twittelonr.cr_mixelonr.felonaturelonswitch
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.abdecider.UserRecipient
-import com.twitter.cr_mixer.{thriftscala => t}
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.discovery.common.configapi.FeatureContextBuilder
-import com.twitter.featureswitches.FSRecipient
-import com.twitter.featureswitches.UserAgent
-import com.twitter.featureswitches.{Recipient => FeatureSwitchRecipient}
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.timelines.configapi.Config
-import com.twitter.timelines.configapi.FeatureValue
-import com.twitter.timelines.configapi.ForcedFeatureContext
-import com.twitter.timelines.configapi.OrElseFeatureContext
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.configapi.RequestContext
-import com.twitter.timelines.configapi.abdecider.LoggingABDeciderExperimentContext
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.abdeloncidelonr.UselonrReloncipielonnt
+import com.twittelonr.cr_mixelonr.{thriftscala => t}
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.discovelonry.common.configapi.FelonaturelonContelonxtBuildelonr
+import com.twittelonr.felonaturelonswitchelons.FSReloncipielonnt
+import com.twittelonr.felonaturelonswitchelons.UselonrAgelonnt
+import com.twittelonr.felonaturelonswitchelons.{Reloncipielonnt => FelonaturelonSwitchReloncipielonnt}
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.thriftscala.ClielonntContelonxt
+import com.twittelonr.timelonlinelons.configapi.Config
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonValuelon
+import com.twittelonr.timelonlinelons.configapi.ForcelondFelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.OrelonlselonFelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.timelonlinelons.configapi.RelonquelonstContelonxt
+import com.twittelonr.timelonlinelons.configapi.abdeloncidelonr.LoggingABDeloncidelonrelonxpelonrimelonntContelonxt
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-/** Singleton object for building [[Params]] to override */
-@Singleton
-class ParamsBuilder @Inject() (
-  globalStats: StatsReceiver,
-  abDecider: LoggingABDecider,
-  featureContextBuilder: FeatureContextBuilder,
+/** Singlelonton objelonct for building [[Params]] to ovelonrridelon */
+@Singlelonton
+class ParamsBuildelonr @Injelonct() (
+  globalStats: StatsReloncelonivelonr,
+  abDeloncidelonr: LoggingABDeloncidelonr,
+  felonaturelonContelonxtBuildelonr: FelonaturelonContelonxtBuildelonr,
   config: Config) {
 
-  private val stats = globalStats.scope("params")
+  privatelon val stats = globalStats.scopelon("params")
 
-  def buildFromClientContext(
-    clientContext: ClientContext,
+  delonf buildFromClielonntContelonxt(
+    clielonntContelonxt: ClielonntContelonxt,
     product: t.Product,
-    userState: UserState,
-    userRoleOverride: Option[Set[String]] = None,
-    featureOverrides: Map[String, FeatureValue] = Map.empty,
+    uselonrStatelon: UselonrStatelon,
+    uselonrRolelonOvelonrridelon: Option[Selont[String]] = Nonelon,
+    felonaturelonOvelonrridelons: Map[String, FelonaturelonValuelon] = Map.elonmpty,
   ): Params = {
-    clientContext.userId match {
-      case Some(userId) =>
-        val userRecipient = buildFeatureSwitchRecipient(
-          userId,
-          userRoleOverride,
-          clientContext,
+    clielonntContelonxt.uselonrId match {
+      caselon Somelon(uselonrId) =>
+        val uselonrReloncipielonnt = buildFelonaturelonSwitchReloncipielonnt(
+          uselonrId,
+          uselonrRolelonOvelonrridelon,
+          clielonntContelonxt,
           product,
-          userState
+          uselonrStatelon
         )
 
-        val featureContext = OrElseFeatureContext(
-          ForcedFeatureContext(featureOverrides),
-          featureContextBuilder(
-            Some(userId),
-            Some(userRecipient)
+        val felonaturelonContelonxt = OrelonlselonFelonaturelonContelonxt(
+          ForcelondFelonaturelonContelonxt(felonaturelonOvelonrridelons),
+          felonaturelonContelonxtBuildelonr(
+            Somelon(uselonrId),
+            Somelon(uselonrReloncipielonnt)
           ))
 
         config(
-          requestContext = RequestContext(
-            userId = Some(userId),
-            experimentContext = LoggingABDeciderExperimentContext(
-              abDecider,
-              Some(UserRecipient(userId, Some(userId)))),
-            featureContext = featureContext
+          relonquelonstContelonxt = RelonquelonstContelonxt(
+            uselonrId = Somelon(uselonrId),
+            elonxpelonrimelonntContelonxt = LoggingABDeloncidelonrelonxpelonrimelonntContelonxt(
+              abDeloncidelonr,
+              Somelon(UselonrReloncipielonnt(uselonrId, Somelon(uselonrId)))),
+            felonaturelonContelonxt = felonaturelonContelonxt
           ),
           stats
         )
-      case None =>
-        val guestRecipient =
-          buildFeatureSwitchRecipientWithGuestId(clientContext: ClientContext, product, userState)
+      caselon Nonelon =>
+        val guelonstReloncipielonnt =
+          buildFelonaturelonSwitchReloncipielonntWithGuelonstId(clielonntContelonxt: ClielonntContelonxt, product, uselonrStatelon)
 
-        val featureContext = OrElseFeatureContext(
-          ForcedFeatureContext(featureOverrides),
-          featureContextBuilder(
-            clientContext.userId,
-            Some(guestRecipient)
+        val felonaturelonContelonxt = OrelonlselonFelonaturelonContelonxt(
+          ForcelondFelonaturelonContelonxt(felonaturelonOvelonrridelons),
+          felonaturelonContelonxtBuildelonr(
+            clielonntContelonxt.uselonrId,
+            Somelon(guelonstReloncipielonnt)
           )
-        ) //ExperimentContext with GuestRecipient is not supported  as there is no active use-cases yet in CrMixer
+        ) //elonxpelonrimelonntContelonxt with GuelonstReloncipielonnt is not supportelond  as thelonrelon is no activelon uselon-caselons yelont in CrMixelonr
 
         config(
-          requestContext = RequestContext(
-            userId = clientContext.userId,
-            featureContext = featureContext
+          relonquelonstContelonxt = RelonquelonstContelonxt(
+            uselonrId = clielonntContelonxt.uselonrId,
+            felonaturelonContelonxt = felonaturelonContelonxt
           ),
           stats
         )
     }
   }
 
-  private def buildFeatureSwitchRecipientWithGuestId(
-    clientContext: ClientContext,
+  privatelon delonf buildFelonaturelonSwitchReloncipielonntWithGuelonstId(
+    clielonntContelonxt: ClielonntContelonxt,
     product: t.Product,
-    userState: UserState
-  ): FeatureSwitchRecipient = {
+    uselonrStatelon: UselonrStatelon
+  ): FelonaturelonSwitchReloncipielonnt = {
 
-    val recipient = FSRecipient(
-      userId = None,
-      userRoles = None,
-      deviceId = clientContext.deviceId,
-      guestId = clientContext.guestId,
-      languageCode = clientContext.languageCode,
-      countryCode = clientContext.countryCode,
-      userAgent = clientContext.userAgent.flatMap(UserAgent(_)),
-      isVerified = None,
-      isTwoffice = None,
-      tooClient = None,
-      highWaterMark = None
+    val reloncipielonnt = FSReloncipielonnt(
+      uselonrId = Nonelon,
+      uselonrRolelons = Nonelon,
+      delonvicelonId = clielonntContelonxt.delonvicelonId,
+      guelonstId = clielonntContelonxt.guelonstId,
+      languagelonCodelon = clielonntContelonxt.languagelonCodelon,
+      countryCodelon = clielonntContelonxt.countryCodelon,
+      uselonrAgelonnt = clielonntContelonxt.uselonrAgelonnt.flatMap(UselonrAgelonnt(_)),
+      isVelonrifielond = Nonelon,
+      isTwofficelon = Nonelon,
+      tooClielonnt = Nonelon,
+      highWatelonrMark = Nonelon
     )
 
-    recipient.withCustomFields(
-      (ParamsBuilder.ProductCustomField, product.toString),
-      (ParamsBuilder.UserStateCustomField, userState.toString)
+    reloncipielonnt.withCustomFielonlds(
+      (ParamsBuildelonr.ProductCustomFielonld, product.toString),
+      (ParamsBuildelonr.UselonrStatelonCustomFielonld, uselonrStatelon.toString)
     )
   }
 
-  private def buildFeatureSwitchRecipient(
-    userId: Long,
-    userRolesOverride: Option[Set[String]],
-    clientContext: ClientContext,
+  privatelon delonf buildFelonaturelonSwitchReloncipielonnt(
+    uselonrId: Long,
+    uselonrRolelonsOvelonrridelon: Option[Selont[String]],
+    clielonntContelonxt: ClielonntContelonxt,
     product: t.Product,
-    userState: UserState
-  ): FeatureSwitchRecipient = {
-    val userRoles = userRolesOverride match {
-      case Some(overrides) => Some(overrides)
-      case _ => clientContext.userRoles.map(_.toSet)
+    uselonrStatelon: UselonrStatelon
+  ): FelonaturelonSwitchReloncipielonnt = {
+    val uselonrRolelons = uselonrRolelonsOvelonrridelon match {
+      caselon Somelon(ovelonrridelons) => Somelon(ovelonrridelons)
+      caselon _ => clielonntContelonxt.uselonrRolelons.map(_.toSelont)
     }
 
-    val recipient = FSRecipient(
-      userId = Some(userId),
-      userRoles = userRoles,
-      deviceId = clientContext.deviceId,
-      guestId = clientContext.guestId,
-      languageCode = clientContext.languageCode,
-      countryCode = clientContext.countryCode,
-      userAgent = clientContext.userAgent.flatMap(UserAgent(_)),
-      isVerified = None,
-      isTwoffice = None,
-      tooClient = None,
-      highWaterMark = None
+    val reloncipielonnt = FSReloncipielonnt(
+      uselonrId = Somelon(uselonrId),
+      uselonrRolelons = uselonrRolelons,
+      delonvicelonId = clielonntContelonxt.delonvicelonId,
+      guelonstId = clielonntContelonxt.guelonstId,
+      languagelonCodelon = clielonntContelonxt.languagelonCodelon,
+      countryCodelon = clielonntContelonxt.countryCodelon,
+      uselonrAgelonnt = clielonntContelonxt.uselonrAgelonnt.flatMap(UselonrAgelonnt(_)),
+      isVelonrifielond = Nonelon,
+      isTwofficelon = Nonelon,
+      tooClielonnt = Nonelon,
+      highWatelonrMark = Nonelon
     )
 
-    recipient.withCustomFields(
-      (ParamsBuilder.ProductCustomField, product.toString),
-      (ParamsBuilder.UserStateCustomField, userState.toString)
+    reloncipielonnt.withCustomFielonlds(
+      (ParamsBuildelonr.ProductCustomFielonld, product.toString),
+      (ParamsBuildelonr.UselonrStatelonCustomFielonld, uselonrStatelon.toString)
     )
   }
 }
 
-object ParamsBuilder {
-  private val ProductCustomField = "product_id"
-  private val UserStateCustomField = "user_state"
+objelonct ParamsBuildelonr {
+  privatelon val ProductCustomFielonld = "product_id"
+  privatelon val UselonrStatelonCustomFielonld = "uselonr_statelon"
 }

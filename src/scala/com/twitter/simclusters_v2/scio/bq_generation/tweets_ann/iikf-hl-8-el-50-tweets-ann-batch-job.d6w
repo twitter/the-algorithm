@@ -1,38 +1,38 @@
-class Profile(Struct):
-  project = Required(String)
-  date = Required(String)
-  environment = Default(String, 'dev')
-  job_name = Default(String, 'iikf-hl-8-el-50-tweets-ann-batch-job')
-  machine = Default(String, 'n2-highmem-4')
+class Profilelon(Struct):
+  projelonct = Relonquirelond(String)
+  datelon = Relonquirelond(String)
+  elonnvironmelonnt = Delonfault(String, 'delonv')
+  job_namelon = Delonfault(String, 'iikf-hl-8-elonl-50-twelonelonts-ann-batch-job')
+  machinelon = Delonfault(String, 'n2-highmelonm-4')
 
 job = Job(
-   name='{{profile.job_name}}',
-   project='{{profile.project}}',
-   staging_bucket='{{profile.project}}',
-   service_account='{{profile.user_name}}-shdw@twttr-dp-svc-accounts.iam.gserviceaccount.com',
-   region='us-central1',
-   worker_config=WorkerConfig(
-       num_workers=2,
-       worker_machine_type='{{profile.machine}}',
-       worker_disk_type=WorkerDiskType('HDD'),
+   namelon='{{profilelon.job_namelon}}',
+   projelonct='{{profilelon.projelonct}}',
+   staging_buckelont='{{profilelon.projelonct}}',
+   selonrvicelon_account='{{profilelon.uselonr_namelon}}-shdw@twttr-dp-svc-accounts.iam.gselonrvicelonaccount.com',
+   relongion='us-celonntral1',
+   workelonr_config=WorkelonrConfig(
+       num_workelonrs=2,
+       workelonr_machinelon_typelon='{{profilelon.machinelon}}',
+       workelonr_disk_typelon=WorkelonrDiskTypelon('HDD'),
    ),
-   extra_args={
-     "date": '{{profile.date}}'
+   elonxtra_args={
+     "datelon": '{{profilelon.datelon}}'
    },
-   service_identifier='twtr:svc:{{profile.user_name}}:{{profile.job_name}}:{{profile.environment}}:{{profile.cluster}}',
-   deployment_config=BatchDeploymentConfig(
-     role='{{profile.user_name}}',
-     environment='prod',
-     build_target='src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann:iikf-hl-8-el-50-tweets-ann-batch-job',
-     gcp_deployment_credentials='/var/lib/tss/keys/{{profile.user_name}}/cloud/gcp/dp/shadow.json',
-     statebird_config=StatebirdConfig(
+   selonrvicelon_idelonntifielonr='twtr:svc:{{profilelon.uselonr_namelon}}:{{profilelon.job_namelon}}:{{profilelon.elonnvironmelonnt}}:{{profilelon.clustelonr}}',
+   delonploymelonnt_config=BatchDelonploymelonntConfig(
+     rolelon='{{profilelon.uselonr_namelon}}',
+     elonnvironmelonnt='prod',
+     build_targelont='src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/twelonelonts_ann:iikf-hl-8-elonl-50-twelonelonts-ann-batch-job',
+     gcp_delonploymelonnt_crelondelonntials='/var/lib/tss/kelonys/{{profilelon.uselonr_namelon}}/cloud/gcp/dp/shadow.json',
+     statelonbird_config=StatelonbirdConfig(
        batch_width='PT4H',
-       first_time='{{profile.date}}',
+       first_timelon='{{profilelon.datelon}}',
      ),
      workflow_config=WorkflowConfig(
-      play=True,
+      play=Truelon,
      ),
-     timeout='PT24H'
+     timelonout='PT24H'
    )
 )
 

@@ -1,279 +1,279 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.IOException;
-import java.util.Date;
+import java.io.IOelonxcelonption;
+import java.util.Datelon;
 
-import com.google.common.base.Preconditions;
-import com.google.common.base.Predicate;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Prelondicatelon;
 
-import org.apache.commons.lang.time.FastDateFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.timelon.FastDatelonFormat;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchStatsReceiverImpl;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.document.DocumentFactory;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
-import com.twitter.search.earlybird.partition.SegmentHdfsFlusher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentLoader;
-import com.twitter.search.earlybird.partition.SegmentOptimizer;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.partition.SimpleSegmentIndexer;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonrImpl;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonr;
+import com.twittelonr.selonarch.common.util.zktrylock.ZooKelonelonpelonrTryLockFactory;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.DocumelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntHdfsFlushelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntLoadelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntOptimizelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.SimplelonSelongmelonntIndelonxelonr;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
 
 /**
- * Given a segment, this class checks if the segment has an index built on HDFS:
- *   if not, use SimpleSegmentIndexer to build an index
- *   if yes, load the HDFS index, build a new index for the new status data which has dates newer
- *   than the HDFS index, then append the loaded HDFS index.
+ * Givelonn a selongmelonnt, this class cheloncks if thelon selongmelonnt has an indelonx built on HDFS:
+ *   if not, uselon SimplelonSelongmelonntIndelonxelonr to build an indelonx
+ *   if yelons, load thelon HDFS indelonx, build a nelonw indelonx for thelon nelonw status data which has datelons nelonwelonr
+ *   than thelon HDFS indelonx, thelonn appelonnd thelon loadelond HDFS indelonx.
  */
-public class ArchiveSegmentUpdater {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveSegmentUpdater.class);
+public class ArchivelonSelongmelonntUpdatelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ArchivelonSelongmelonntUpdatelonr.class);
 
-  private final SegmentSyncConfig sync;
-  private final EarlybirdIndexConfig earlybirdIndexConfig;
-  private final ZooKeeperTryLockFactory zkTryLockFactory;
-  private final SearchStatsReceiver statsReceiver = new SearchStatsReceiverImpl();
-  private final SearchIndexingMetricSet searchIndexingMetricSet =
-      new SearchIndexingMetricSet(statsReceiver);
-  private final EarlybirdSearcherStats searcherStats =
-      new EarlybirdSearcherStats(statsReceiver);
-  private final SearchRateCounter indexNewSegment =
-      new SearchRateCounter("index_new_segment");
-  private final SearchRateCounter updateExistingSegment =
-      new SearchRateCounter("update_existing_segment");
-  private final SearchRateCounter skipExistingSegment =
-      new SearchRateCounter("skip_existing_segment");
-  private Clock clock;
+  privatelon final SelongmelonntSyncConfig sync;
+  privatelon final elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig;
+  privatelon final ZooKelonelonpelonrTryLockFactory zkTryLockFactory;
+  privatelon final SelonarchStatsReloncelonivelonr statsReloncelonivelonr = nelonw SelonarchStatsReloncelonivelonrImpl();
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont =
+      nelonw SelonarchIndelonxingMelontricSelont(statsReloncelonivelonr);
+  privatelon final elonarlybirdSelonarchelonrStats selonarchelonrStats =
+      nelonw elonarlybirdSelonarchelonrStats(statsReloncelonivelonr);
+  privatelon final SelonarchRatelonCountelonr indelonxNelonwSelongmelonnt =
+      nelonw SelonarchRatelonCountelonr("indelonx_nelonw_selongmelonnt");
+  privatelon final SelonarchRatelonCountelonr updatelonelonxistingSelongmelonnt =
+      nelonw SelonarchRatelonCountelonr("updatelon_elonxisting_selongmelonnt");
+  privatelon final SelonarchRatelonCountelonr skipelonxistingSelongmelonnt =
+      nelonw SelonarchRatelonCountelonr("skip_elonxisting_selongmelonnt");
+  privatelon Clock clock;
 
-  public ArchiveSegmentUpdater(ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-                               SegmentSyncConfig sync,
-                               EarlybirdIndexConfig earlybirdIndexConfig,
+  public ArchivelonSelongmelonntUpdatelonr(ZooKelonelonpelonrTryLockFactory zooKelonelonpelonrTryLockFactory,
+                               SelongmelonntSyncConfig sync,
+                               elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig,
                                Clock clock) {
     this.sync = sync;
-    this.earlybirdIndexConfig = earlybirdIndexConfig;
-    this.zkTryLockFactory = zooKeeperTryLockFactory;
+    this.elonarlybirdIndelonxConfig = elonarlybirdIndelonxConfig;
+    this.zkTryLockFactory = zooKelonelonpelonrTryLockFactory;
     this.clock = clock;
   }
 
-  private boolean canUpdateSegment(SegmentInfo segmentInfo) {
-    if (!(segmentInfo.getSegment() instanceof ArchiveSegment)) {
-      LOG.info("only ArchiveSegment is available for updating now: "
-          + segmentInfo);
-      return false;
+  privatelon boolelonan canUpdatelonSelongmelonnt(SelongmelonntInfo selongmelonntInfo) {
+    if (!(selongmelonntInfo.gelontSelongmelonnt() instancelonof ArchivelonSelongmelonnt)) {
+      LOG.info("only ArchivelonSelongmelonnt is availablelon for updating now: "
+          + selongmelonntInfo);
+      relonturn falselon;
     }
 
-    if (!segmentInfo.isEnabled()) {
-      LOG.debug("Segment is disabled: " + segmentInfo);
-      return false;
+    if (!selongmelonntInfo.iselonnablelond()) {
+      LOG.delonbug("Selongmelonnt is disablelond: " + selongmelonntInfo);
+      relonturn falselon;
     }
 
-    if (segmentInfo.isComplete() || segmentInfo.isIndexing()
-        || segmentInfo.getSyncInfo().isLoaded()) {
-      LOG.debug("Cannot update already indexed segment: " + segmentInfo);
-      return false;
+    if (selongmelonntInfo.isComplelontelon() || selongmelonntInfo.isIndelonxing()
+        || selongmelonntInfo.gelontSyncInfo().isLoadelond()) {
+      LOG.delonbug("Cannot updatelon alrelonady indelonxelond selongmelonnt: " + selongmelonntInfo);
+      relonturn falselon;
     }
 
-    return true;
+    relonturn truelon;
   }
 
   /**
-   * Given a segment, checks if the segment has an index built on HDFS:
-   *   if not, use SimpleSegmentIndexer to build an index
-   *   if yes, load the HDFS index, build a new index for the new status data which has dates newer
-   *   than the HDFS index, then append the loaded HDFS index.
+   * Givelonn a selongmelonnt, cheloncks if thelon selongmelonnt has an indelonx built on HDFS:
+   *   if not, uselon SimplelonSelongmelonntIndelonxelonr to build an indelonx
+   *   if yelons, load thelon HDFS indelonx, build a nelonw indelonx for thelon nelonw status data which has datelons nelonwelonr
+   *   than thelon HDFS indelonx, thelonn appelonnd thelon loadelond HDFS indelonx.
    *
-   * Returns whether the segment was successfully updated.
+   * Relonturns whelonthelonr thelon selongmelonnt was succelonssfully updatelond.
    */
-  public boolean updateSegment(SegmentInfo segmentInfo) {
-    Preconditions.checkArgument(segmentInfo.getSegment() instanceof ArchiveSegment);
-    if (!canUpdateSegment(segmentInfo)) {
-      return false;
+  public boolelonan updatelonSelongmelonnt(SelongmelonntInfo selongmelonntInfo) {
+    Prelonconditions.chelonckArgumelonnt(selongmelonntInfo.gelontSelongmelonnt() instancelonof ArchivelonSelongmelonnt);
+    if (!canUpdatelonSelongmelonnt(selongmelonntInfo)) {
+      relonturn falselon;
     }
 
-    if (segmentInfo.isIndexing()) {
-      LOG.error("Segment is already being indexed: " + segmentInfo);
-      return false;
+    if (selongmelonntInfo.isIndelonxing()) {
+      LOG.elonrror("Selongmelonnt is alrelonady beloning indelonxelond: " + selongmelonntInfo);
+      relonturn falselon;
     }
 
-    final Date hdfsEndDate = ArchiveHDFSUtils.getSegmentEndDateOnHdfs(sync, segmentInfo);
-    if (hdfsEndDate == null) {
-      indexNewSegment.increment();
-      if (!indexSegment(segmentInfo, ArchiveSegment.MATCH_ALL_DATE_PREDICATE)) {
-        return false;
+    final Datelon hdfselonndDatelon = ArchivelonHDFSUtils.gelontSelongmelonntelonndDatelonOnHdfs(sync, selongmelonntInfo);
+    if (hdfselonndDatelon == null) {
+      indelonxNelonwSelongmelonnt.increlonmelonnt();
+      if (!indelonxSelongmelonnt(selongmelonntInfo, ArchivelonSelongmelonnt.MATCH_ALL_DATelon_PRelonDICATelon)) {
+        relonturn falselon;
       }
-    } else {
-      final Date curEndDate = ((ArchiveSegment) segmentInfo.getSegment()).getDataEndDate();
-      if (!hdfsEndDate.before(curEndDate)) {
-        skipExistingSegment.increment();
-        LOG.info("Segment is up-to-date: " + segmentInfo.getSegment().getTimeSliceID()
-            + " Found flushed segment on HDFS with end date: "
-            + FastDateFormat.getInstance("yyyyMMdd").format(hdfsEndDate));
-        segmentInfo.setComplete(true);
-        segmentInfo.getSyncInfo().setFlushed(true);
-        return true;
+    } elonlselon {
+      final Datelon curelonndDatelon = ((ArchivelonSelongmelonnt) selongmelonntInfo.gelontSelongmelonnt()).gelontDataelonndDatelon();
+      if (!hdfselonndDatelon.belonforelon(curelonndDatelon)) {
+        skipelonxistingSelongmelonnt.increlonmelonnt();
+        LOG.info("Selongmelonnt is up-to-datelon: " + selongmelonntInfo.gelontSelongmelonnt().gelontTimelonSlicelonID()
+            + " Found flushelond selongmelonnt on HDFS with elonnd datelon: "
+            + FastDatelonFormat.gelontInstancelon("yyyyMMdd").format(hdfselonndDatelon));
+        selongmelonntInfo.selontComplelontelon(truelon);
+        selongmelonntInfo.gelontSyncInfo().selontFlushelond(truelon);
+        relonturn truelon;
       }
 
-      updateExistingSegment.increment();
-      LOG.info("Updating segment: " + segmentInfo.getSegment().getTimeSliceID()
-          + "; new endDate will be " + FastDateFormat.getInstance("yyyyMMdd").format(curEndDate));
+      updatelonelonxistingSelongmelonnt.increlonmelonnt();
+      LOG.info("Updating selongmelonnt: " + selongmelonntInfo.gelontSelongmelonnt().gelontTimelonSlicelonID()
+          + "; nelonw elonndDatelon will belon " + FastDatelonFormat.gelontInstancelon("yyyyMMdd").format(curelonndDatelon));
 
-      if (!updateSegment(segmentInfo, hdfsEndDate)) {
-        return false;
+      if (!updatelonSelongmelonnt(selongmelonntInfo, hdfselonndDatelon)) {
+        relonturn falselon;
       }
     }
 
-    boolean success = SegmentOptimizer.optimize(segmentInfo);
-    if (!success) {
-      // Clean up the segment dir on local disk
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      LOG.info("Error optimizing segment: " + segmentInfo);
-      return false;
+    boolelonan succelonss = SelongmelonntOptimizelonr.optimizelon(selongmelonntInfo);
+    if (!succelonss) {
+      // Clelonan up thelon selongmelonnt dir on local disk
+      selongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
+      LOG.info("elonrror optimizing selongmelonnt: " + selongmelonntInfo);
+      relonturn falselon;
     }
 
-    // Verify segment before uploading.
-    success = ArchiveSegmentVerifier.verifySegment(segmentInfo);
-    if (!success) {
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      LOG.info("Segment not uploaded to HDFS because it did not pass verification: " + segmentInfo);
-      return false;
+    // Velonrify selongmelonnt belonforelon uploading.
+    succelonss = ArchivelonSelongmelonntVelonrifielonr.velonrifySelongmelonnt(selongmelonntInfo);
+    if (!succelonss) {
+      selongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
+      LOG.info("Selongmelonnt not uploadelond to HDFS beloncauselon it did not pass velonrification: " + selongmelonntInfo);
+      relonturn falselon;
     }
 
-    // upload the index to HDFS
-    success = new SegmentHdfsFlusher(zkTryLockFactory, sync, false)
-        .flushSegmentToDiskAndHDFS(segmentInfo);
-    if (success) {
-      ArchiveHDFSUtils.deleteHdfsSegmentDir(sync, segmentInfo, false, true);
-    } else {
-      // Clean up the segment dir on hdfs
-      ArchiveHDFSUtils.deleteHdfsSegmentDir(sync, segmentInfo, true, false);
-      LOG.info("Error uploading segment to HDFS: " + segmentInfo);
+    // upload thelon indelonx to HDFS
+    succelonss = nelonw SelongmelonntHdfsFlushelonr(zkTryLockFactory, sync, falselon)
+        .flushSelongmelonntToDiskAndHDFS(selongmelonntInfo);
+    if (succelonss) {
+      ArchivelonHDFSUtils.delonlelontelonHdfsSelongmelonntDir(sync, selongmelonntInfo, falselon, truelon);
+    } elonlselon {
+      // Clelonan up thelon selongmelonnt dir on hdfs
+      ArchivelonHDFSUtils.delonlelontelonHdfsSelongmelonntDir(sync, selongmelonntInfo, truelon, falselon);
+      LOG.info("elonrror uploading selongmelonnt to HDFS: " + selongmelonntInfo);
     }
-    segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
+    selongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
 
-    return success;
+    relonturn succelonss;
   }
 
   /**
-   * Build index for the given segmentInfo. Only those statuses passing the dateFilter are indexed.
+   * Build indelonx for thelon givelonn selongmelonntInfo. Only thoselon statuselons passing thelon datelonFiltelonr arelon indelonxelond.
    */
-  private boolean indexSegment(final SegmentInfo segmentInfo, Predicate<Date> dateFilter) {
-    Preconditions.checkArgument(segmentInfo.getSegment() instanceof ArchiveSegment);
+  privatelon boolelonan indelonxSelongmelonnt(final SelongmelonntInfo selongmelonntInfo, Prelondicatelon<Datelon> datelonFiltelonr) {
+    Prelonconditions.chelonckArgumelonnt(selongmelonntInfo.gelontSelongmelonnt() instancelonof ArchivelonSelongmelonnt);
 
-    RecordReader<TweetDocument> documentReader = null;
+    ReloncordRelonadelonr<TwelonelontDocumelonnt> documelonntRelonadelonr = null;
     try {
-      ArchiveSegment archiveSegment = (ArchiveSegment) segmentInfo.getSegment();
-      DocumentFactory<ThriftIndexingEvent> documentFactory =
-          earlybirdIndexConfig.createDocumentFactory();
-      documentReader = archiveSegment.getStatusRecordReader(documentFactory, dateFilter);
+      ArchivelonSelongmelonnt archivelonSelongmelonnt = (ArchivelonSelongmelonnt) selongmelonntInfo.gelontSelongmelonnt();
+      DocumelonntFactory<ThriftIndelonxingelonvelonnt> documelonntFactory =
+          elonarlybirdIndelonxConfig.crelonatelonDocumelonntFactory();
+      documelonntRelonadelonr = archivelonSelongmelonnt.gelontStatusReloncordRelonadelonr(documelonntFactory, datelonFiltelonr);
 
-      // Read and index the statuses
-      boolean success = new SimpleSegmentIndexer(documentReader, searchIndexingMetricSet)
-          .indexSegment(segmentInfo);
-      if (!success) {
-        // Clean up segment dir on local disk
-        segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-        LOG.info("Error indexing segment: " + segmentInfo);
+      // Relonad and indelonx thelon statuselons
+      boolelonan succelonss = nelonw SimplelonSelongmelonntIndelonxelonr(documelonntRelonadelonr, selonarchIndelonxingMelontricSelont)
+          .indelonxSelongmelonnt(selongmelonntInfo);
+      if (!succelonss) {
+        // Clelonan up selongmelonnt dir on local disk
+        selongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
+        LOG.info("elonrror indelonxing selongmelonnt: " + selongmelonntInfo);
       }
 
-      return success;
-    } catch (IOException e) {
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      LOG.info("Exception while indexing segment: " + segmentInfo, e);
-      return false;
+      relonturn succelonss;
+    } catch (IOelonxcelonption elon) {
+      selongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
+      LOG.info("elonxcelonption whilelon indelonxing selongmelonnt: " + selongmelonntInfo, elon);
+      relonturn falselon;
     } finally {
-      if (documentReader != null) {
-        documentReader.stop();
+      if (documelonntRelonadelonr != null) {
+        documelonntRelonadelonr.stop();
       }
     }
   }
 
   /**
-   * Load the index built on HDFS for the given segmentInfo, index the new data and append the
-   * HDFS index to the new indexed segment
+   * Load thelon indelonx built on HDFS for thelon givelonn selongmelonntInfo, indelonx thelon nelonw data and appelonnd thelon
+   * HDFS indelonx to thelon nelonw indelonxelond selongmelonnt
    */
-  private boolean updateSegment(final SegmentInfo segmentInfo, final Date hdfsEndDate) {
-    SegmentInfo hdfsSegmentInfo = loadSegmentFromHdfs(segmentInfo, hdfsEndDate);
-    if (hdfsSegmentInfo == null) {
-      return indexSegment(segmentInfo, ArchiveSegment.MATCH_ALL_DATE_PREDICATE);
+  privatelon boolelonan updatelonSelongmelonnt(final SelongmelonntInfo selongmelonntInfo, final Datelon hdfselonndDatelon) {
+    SelongmelonntInfo hdfsSelongmelonntInfo = loadSelongmelonntFromHdfs(selongmelonntInfo, hdfselonndDatelon);
+    if (hdfsSelongmelonntInfo == null) {
+      relonturn indelonxSelongmelonnt(selongmelonntInfo, ArchivelonSelongmelonnt.MATCH_ALL_DATelon_PRelonDICATelon);
     }
 
-    boolean success = indexSegment(segmentInfo, input -> {
-      // we're updating the segment - only index days after the old end date,
-      // and we're sure that the previous days have already been indexed.
-      return input.after(hdfsEndDate);
+    boolelonan succelonss = indelonxSelongmelonnt(selongmelonntInfo, input -> {
+      // welon'relon updating thelon selongmelonnt - only indelonx days aftelonr thelon old elonnd datelon,
+      // and welon'relon surelon that thelon prelonvious days havelon alrelonady belonelonn indelonxelond.
+      relonturn input.aftelonr(hdfselonndDatelon);
     });
-    if (!success) {
-      LOG.error("Error indexing new data: " + segmentInfo);
-      return indexSegment(segmentInfo, ArchiveSegment.MATCH_ALL_DATE_PREDICATE);
+    if (!succelonss) {
+      LOG.elonrror("elonrror indelonxing nelonw data: " + selongmelonntInfo);
+      relonturn indelonxSelongmelonnt(selongmelonntInfo, ArchivelonSelongmelonnt.MATCH_ALL_DATelon_PRelonDICATelon);
     }
 
-    // Now, append the index loaded from hdfs
+    // Now, appelonnd thelon indelonx loadelond from hdfs
     try {
-      segmentInfo.getIndexSegment().append(hdfsSegmentInfo.getIndexSegment());
-      hdfsSegmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      LOG.info("Deleted local segment directories with end date " + hdfsEndDate + " : "
-          + segmentInfo);
-    } catch (IOException e) {
-      LOG.warn("Caught IOException while appending segment " + hdfsSegmentInfo.getSegmentName(), e);
-      hdfsSegmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      segmentInfo.deleteLocalIndexedSegmentDirectoryImmediately();
-      return false;
+      selongmelonntInfo.gelontIndelonxSelongmelonnt().appelonnd(hdfsSelongmelonntInfo.gelontIndelonxSelongmelonnt());
+      hdfsSelongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
+      LOG.info("Delonlelontelond local selongmelonnt direlonctorielons with elonnd datelon " + hdfselonndDatelon + " : "
+          + selongmelonntInfo);
+    } catch (IOelonxcelonption elon) {
+      LOG.warn("Caught IOelonxcelonption whilelon appelonnding selongmelonnt " + hdfsSelongmelonntInfo.gelontSelongmelonntNamelon(), elon);
+      hdfsSelongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
+      selongmelonntInfo.delonlelontelonLocalIndelonxelondSelongmelonntDirelonctoryImmelondiatelonly();
+      relonturn falselon;
     }
 
-    segmentInfo.setComplete(true);
-    return true;
+    selongmelonntInfo.selontComplelontelon(truelon);
+    relonturn truelon;
   }
 
   /**
-   * Load the index built on HDFS for the given segmentInfo and end date
+   * Load thelon indelonx built on HDFS for thelon givelonn selongmelonntInfo and elonnd datelon
    */
-  private SegmentInfo loadSegmentFromHdfs(final SegmentInfo segmentInfo, final Date hdfsEndDate) {
-    Preconditions.checkArgument(segmentInfo.getSegment() instanceof ArchiveSegment);
+  privatelon SelongmelonntInfo loadSelongmelonntFromHdfs(final SelongmelonntInfo selongmelonntInfo, final Datelon hdfselonndDatelon) {
+    Prelonconditions.chelonckArgumelonnt(selongmelonntInfo.gelontSelongmelonnt() instancelonof ArchivelonSelongmelonnt);
 
-    ArchiveSegment segment = new ArchiveSegment(
-        segmentInfo.getTimeSliceID(),
-        EarlybirdConfig.getMaxSegmentSize(),
-        segmentInfo.getNumPartitions(),
-        segmentInfo.getSegment().getHashPartitionID(),
-        hdfsEndDate);
-    EarlybirdSegmentFactory factory = new EarlybirdSegmentFactory(
-        earlybirdIndexConfig,
-        searchIndexingMetricSet,
-        searcherStats,
+    ArchivelonSelongmelonnt selongmelonnt = nelonw ArchivelonSelongmelonnt(
+        selongmelonntInfo.gelontTimelonSlicelonID(),
+        elonarlybirdConfig.gelontMaxSelongmelonntSizelon(),
+        selongmelonntInfo.gelontNumPartitions(),
+        selongmelonntInfo.gelontSelongmelonnt().gelontHashPartitionID(),
+        hdfselonndDatelon);
+    elonarlybirdSelongmelonntFactory factory = nelonw elonarlybirdSelongmelonntFactory(
+        elonarlybirdIndelonxConfig,
+        selonarchIndelonxingMelontricSelont,
+        selonarchelonrStats,
         clock);
 
-    SegmentInfo hdfsSegmentInfo;
+    SelongmelonntInfo hdfsSelongmelonntInfo;
 
     try {
-      hdfsSegmentInfo = new SegmentInfo(segment,  factory, sync);
-      CriticalExceptionHandler criticalExceptionHandler =
-          new CriticalExceptionHandler();
+      hdfsSelongmelonntInfo = nelonw SelongmelonntInfo(selongmelonnt,  factory, sync);
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr =
+          nelonw CriticalelonxcelonptionHandlelonr();
 
-      boolean success = new SegmentLoader(sync, criticalExceptionHandler)
-          .load(hdfsSegmentInfo);
-      if (!success) {
-        // If not successful, segmentLoader has already cleaned up the local dir.
-        LOG.info("Error loading hdfs segment " + hdfsSegmentInfo
-            + ", building segment from scratch.");
-        hdfsSegmentInfo = null;
+      boolelonan succelonss = nelonw SelongmelonntLoadelonr(sync, criticalelonxcelonptionHandlelonr)
+          .load(hdfsSelongmelonntInfo);
+      if (!succelonss) {
+        // If not succelonssful, selongmelonntLoadelonr has alrelonady clelonanelond up thelon local dir.
+        LOG.info("elonrror loading hdfs selongmelonnt " + hdfsSelongmelonntInfo
+            + ", building selongmelonnt from scratch.");
+        hdfsSelongmelonntInfo = null;
       }
-    } catch (IOException e) {
-      LOG.error("Exception while loading segment from hdfs: " + segmentInfo, e);
-      hdfsSegmentInfo = null;
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("elonxcelonption whilelon loading selongmelonnt from hdfs: " + selongmelonntInfo, elon);
+      hdfsSelongmelonntInfo = null;
     }
 
-    return hdfsSegmentInfo;
+    relonturn hdfsSelongmelonntInfo;
   }
 }

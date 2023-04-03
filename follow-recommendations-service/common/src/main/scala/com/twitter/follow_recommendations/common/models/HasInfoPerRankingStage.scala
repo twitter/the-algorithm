@@ -1,5 +1,5 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasInfoPerRankingStage {
-  def infoPerRankingStage: Option[scala.collection.Map[String, RankingInfo]]
+trait HasInfoPelonrRankingStagelon {
+  delonf infoPelonrRankingStagelon: Option[scala.collelonction.Map[String, RankingInfo]]
 }

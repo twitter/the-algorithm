@@ -1,57 +1,57 @@
-package com.twitter.follow_recommendations.common.clients.geoduck
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.gelonoduck
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.GeohashAndCountryCode
-import com.twitter.stitch.Stitch
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.GelonohashAndCountryCodelon
+import com.twittelonr.stitch.Stitch
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UserLocationFetcher @Inject() (
-  locationServiceClient: LocationServiceClient,
-  reverseGeocodeClient: ReverseGeocodeClient,
-  statsReceiver: StatsReceiver) {
+@Singlelonton
+class UselonrLocationFelontchelonr @Injelonct() (
+  locationSelonrvicelonClielonnt: LocationSelonrvicelonClielonnt,
+  relonvelonrselonGelonocodelonClielonnt: RelonvelonrselonGelonocodelonClielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private val stats: StatsReceiver = statsReceiver.scope("user_location_fetcher")
-  private val totalRequestsCounter = stats.counter("requests")
-  private val emptyResponsesCounter = stats.counter("empty")
-  private val locationServiceExceptionCounter = stats.counter("location_service_exception")
-  private val reverseGeocodeExceptionCounter = stats.counter("reverse_geocode_exception")
+  privatelon val stats: StatsReloncelonivelonr = statsReloncelonivelonr.scopelon("uselonr_location_felontchelonr")
+  privatelon val totalRelonquelonstsCountelonr = stats.countelonr("relonquelonsts")
+  privatelon val elonmptyRelonsponselonsCountelonr = stats.countelonr("elonmpty")
+  privatelon val locationSelonrvicelonelonxcelonptionCountelonr = stats.countelonr("location_selonrvicelon_elonxcelonption")
+  privatelon val relonvelonrselonGelonocodelonelonxcelonptionCountelonr = stats.countelonr("relonvelonrselon_gelonocodelon_elonxcelonption")
 
-  def getGeohashAndCountryCode(
-    userId: Option[Long],
-    ipAddress: Option[String]
-  ): Stitch[Option[GeohashAndCountryCode]] = {
-    totalRequestsCounter.incr()
+  delonf gelontGelonohashAndCountryCodelon(
+    uselonrId: Option[Long],
+    ipAddrelonss: Option[String]
+  ): Stitch[Option[GelonohashAndCountryCodelon]] = {
+    totalRelonquelonstsCountelonr.incr()
     val lscLocationStitch = Stitch
-      .collect {
-        userId.map(locationServiceClient.getGeohashAndCountryCode)
-      }.rescue {
-        case _: Exception =>
-          locationServiceExceptionCounter.incr()
-          Stitch.None
+      .collelonct {
+        uselonrId.map(locationSelonrvicelonClielonnt.gelontGelonohashAndCountryCodelon)
+      }.relonscuelon {
+        caselon _: elonxcelonption =>
+          locationSelonrvicelonelonxcelonptionCountelonr.incr()
+          Stitch.Nonelon
       }
 
     val ipLocationStitch = Stitch
-      .collect {
-        ipAddress.map(reverseGeocodeClient.getGeohashAndCountryCode)
-      }.rescue {
-        case _: Exception =>
-          reverseGeocodeExceptionCounter.incr()
-          Stitch.None
+      .collelonct {
+        ipAddrelonss.map(relonvelonrselonGelonocodelonClielonnt.gelontGelonohashAndCountryCodelon)
+      }.relonscuelon {
+        caselon _: elonxcelonption =>
+          relonvelonrselonGelonocodelonelonxcelonptionCountelonr.incr()
+          Stitch.Nonelon
       }
 
     Stitch.join(lscLocationStitch, ipLocationStitch).map {
-      case (lscLocation, ipLocation) => {
-        val geohash = lscLocation.flatMap(_.geohash).orElse(ipLocation.flatMap(_.geohash))
-        val countryCode =
-          lscLocation.flatMap(_.countryCode).orElse(ipLocation.flatMap(_.countryCode))
-        (geohash, countryCode) match {
-          case (None, None) =>
-            emptyResponsesCounter.incr()
-            None
-          case _ => Some(GeohashAndCountryCode(geohash, countryCode))
+      caselon (lscLocation, ipLocation) => {
+        val gelonohash = lscLocation.flatMap(_.gelonohash).orelonlselon(ipLocation.flatMap(_.gelonohash))
+        val countryCodelon =
+          lscLocation.flatMap(_.countryCodelon).orelonlselon(ipLocation.flatMap(_.countryCodelon))
+        (gelonohash, countryCodelon) match {
+          caselon (Nonelon, Nonelon) =>
+            elonmptyRelonsponselonsCountelonr.incr()
+            Nonelon
+          caselon _ => Somelon(GelonohashAndCountryCodelon(gelonohash, countryCodelon))
         }
       }
     }

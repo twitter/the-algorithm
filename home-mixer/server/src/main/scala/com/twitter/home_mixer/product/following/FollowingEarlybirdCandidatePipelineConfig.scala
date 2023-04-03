@@ -1,54 +1,54 @@
-package com.twitter.home_mixer.product.following
+packagelon com.twittelonr.homelon_mixelonr.product.following
 
-import com.twitter.home_mixer.candidate_pipeline.FollowingEarlybirdResponseFeatureTransformer
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdCandidateSource
-import com.twitter.home_mixer.functional_component.feature_hydrator.SGSFollowedUsersFeature
-import com.twitter.home_mixer.functional_component.gate.NonEmptySeqFeatureGate
-import com.twitter.home_mixer.product.following.model.FollowingQuery
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.search.earlybird.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.candidatelon_pipelonlinelon.FollowingelonarlybirdRelonsponselonFelonaturelonTransformelonr
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.candidatelon_sourcelon.elonarlybirdCandidatelonSourcelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.SGSFollowelondUselonrsFelonaturelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon.NonelonmptySelonqFelonaturelonGatelon
+import com.twittelonr.homelon_mixelonr.product.following.modelonl.FollowingQuelonry
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.BaselonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.selonarch.elonarlybird.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FollowingEarlybirdCandidatePipelineConfig @Inject() (
-  earlybirdCandidateSource: EarlybirdCandidateSource,
-  followingEarlybirdQueryTransformer: FollowingEarlybirdQueryTransformer)
-    extends CandidatePipelineConfig[
-      FollowingQuery,
-      t.EarlybirdRequest,
-      t.ThriftSearchResult,
-      TweetCandidate
+@Singlelonton
+class FollowingelonarlybirdCandidatelonPipelonlinelonConfig @Injelonct() (
+  elonarlybirdCandidatelonSourcelon: elonarlybirdCandidatelonSourcelon,
+  followingelonarlybirdQuelonryTransformelonr: FollowingelonarlybirdQuelonryTransformelonr)
+    elonxtelonnds CandidatelonPipelonlinelonConfig[
+      FollowingQuelonry,
+      t.elonarlybirdRelonquelonst,
+      t.ThriftSelonarchRelonsult,
+      TwelonelontCandidatelon
     ] {
 
-  override val identifier: CandidatePipelineIdentifier =
-    CandidatePipelineIdentifier("FollowingEarlybird")
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr =
+    CandidatelonPipelonlinelonIdelonntifielonr("Followingelonarlybird")
 
-  override val candidateSource: BaseCandidateSource[t.EarlybirdRequest, t.ThriftSearchResult] =
-    earlybirdCandidateSource
+  ovelonrridelon val candidatelonSourcelon: BaselonCandidatelonSourcelon[t.elonarlybirdRelonquelonst, t.ThriftSelonarchRelonsult] =
+    elonarlybirdCandidatelonSourcelon
 
-  override val gates: Seq[Gate[FollowingQuery]] = Seq(
-    NonEmptySeqFeatureGate(SGSFollowedUsersFeature)
+  ovelonrridelon val gatelons: Selonq[Gatelon[FollowingQuelonry]] = Selonq(
+    NonelonmptySelonqFelonaturelonGatelon(SGSFollowelondUselonrsFelonaturelon)
   )
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    FollowingQuery,
-    t.EarlybirdRequest
-  ] = followingEarlybirdQueryTransformer
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[
+    FollowingQuelonry,
+    t.elonarlybirdRelonquelonst
+  ] = followingelonarlybirdQuelonryTransformelonr
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[t.ThriftSearchResult]
-  ] = Seq(FollowingEarlybirdResponseFeatureTransformer)
+  ovelonrridelon val felonaturelonsFromCandidatelonSourcelonTransformelonrs: Selonq[
+    CandidatelonFelonaturelonTransformelonr[t.ThriftSelonarchRelonsult]
+  ] = Selonq(FollowingelonarlybirdRelonsponselonFelonaturelonTransformelonr)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    t.ThriftSearchResult,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.id) }
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[
+    t.ThriftSelonarchRelonsult,
+    TwelonelontCandidatelon
+  ] = { sourcelonRelonsult => TwelonelontCandidatelon(id = sourcelonRelonsult.id) }
 }

@@ -1,15 +1,15 @@
-package com.twitter.follow_recommendations.common.candidate_sources.user_user_graph
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.uselonr_uselonr_graph
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.Param
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UserUserGraphFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    UserUserGraphParams.UserUserGraphCandidateSourceEnabledInWeightMap,
-    UserUserGraphParams.UserUserGraphCandidateSourceEnabledInTransform
+@Singlelonton
+class UselonrUselonrGraphFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[Param[Boolelonan] with FSNamelon] = Selonq(
+    UselonrUselonrGraphParams.UselonrUselonrGraphCandidatelonSourcelonelonnablelondInWelonightMap,
+    UselonrUselonrGraphParams.UselonrUselonrGraphCandidatelonSourcelonelonnablelondInTransform
   )
 }

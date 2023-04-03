@@ -1,25 +1,25 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-import com.twitter.guano.commons.thriftscala.PolicyInViolation
-import com.twitter.spam.rtf.{thriftscala => s}
+import com.twittelonr.guano.commons.thriftscala.PolicyInViolation
+import com.twittelonr.spam.rtf.{thriftscala => s}
 
-case class SafetyLabelMetadata(
-  policyInViolation: Option[PolicyInViolation] = None,
-  policyUrl: Option[String] = None) {
+caselon class SafelontyLabelonlMelontadata(
+  policyInViolation: Option[PolicyInViolation] = Nonelon,
+  policyUrl: Option[String] = Nonelon) {
 
-  def toThrift: s.SafetyLabelMetadata = {
-    s.SafetyLabelMetadata(
+  delonf toThrift: s.SafelontyLabelonlMelontadata = {
+    s.SafelontyLabelonlMelontadata(
       policyInViolation,
       policyUrl
     )
   }
 }
 
-object SafetyLabelMetadata {
-  def fromThrift(metadata: s.SafetyLabelMetadata): SafetyLabelMetadata = {
-    SafetyLabelMetadata(
-      metadata.policyInViolation,
-      metadata.policyUrl
+objelonct SafelontyLabelonlMelontadata {
+  delonf fromThrift(melontadata: s.SafelontyLabelonlMelontadata): SafelontyLabelonlMelontadata = {
+    SafelontyLabelonlMelontadata(
+      melontadata.policyInViolation,
+      melontadata.policyUrl
     )
   }
 }

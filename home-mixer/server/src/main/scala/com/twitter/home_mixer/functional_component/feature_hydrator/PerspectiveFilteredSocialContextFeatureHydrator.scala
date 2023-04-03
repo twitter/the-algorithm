@@ -1,69 +1,69 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.PerspectiveFilteredLikedByUserIdsFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.timelineservice.TimelineService
-import com.twitter.stitch.timelineservice.TimelineService.GetPerspectives
-import com.twitter.timelineservice.thriftscala.PerspectiveType
-import com.twitter.timelineservice.thriftscala.PerspectiveType.Favorited
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FavoritelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PelonrspelonctivelonFiltelonrelondLikelondByUselonrIdsFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.timelonlinelonselonrvicelon.TimelonlinelonSelonrvicelon
+import com.twittelonr.stitch.timelonlinelonselonrvicelon.TimelonlinelonSelonrvicelon.GelontPelonrspelonctivelons
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.PelonrspelonctivelonTypelon
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.PelonrspelonctivelonTypelon.Favoritelond
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Filter out unlike edges from liked-by tweets
- * Useful if the likes come from a cache and because UTEG does not fully remove unlike edges.
+ * Filtelonr out unlikelon elondgelons from likelond-by twelonelonts
+ * Uselonful if thelon likelons comelon from a cachelon and beloncauselon UTelonG doelons not fully relonmovelon unlikelon elondgelons.
  */
-@Singleton
-class PerspectiveFilteredSocialContextFeatureHydrator @Inject() (timelineService: TimelineService)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class PelonrspelonctivelonFiltelonrelondSocialContelonxtFelonaturelonHydrator @Injelonct() (timelonlinelonSelonrvicelon: TimelonlinelonSelonrvicelon)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("PerspectiveFilteredSocialContext")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("PelonrspelonctivelonFiltelonrelondSocialContelonxt")
 
-  override val features: Set[Feature[_, _]] = Set(PerspectiveFilteredLikedByUserIdsFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(PelonrspelonctivelonFiltelonrelondLikelondByUselonrIdsFelonaturelon)
 
-  private val MaxCountUsers = 10
-  private val favoritePerspectiveSet: Set[PerspectiveType] = Set(Favorited)
+  privatelon val MaxCountUselonrs = 10
+  privatelon val favoritelonPelonrspelonctivelonSelont: Selont[PelonrspelonctivelonTypelon] = Selont(Favoritelond)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val engagingUserIdtoTweetId = candidates.flatMap { candidate =>
-      candidate.features
-        .get(FavoritedByUserIdsFeature).take(MaxCountUsers)
-        .map(favoritedBy => favoritedBy -> candidate.candidate.id)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val elonngagingUselonrIdtoTwelonelontId = candidatelons.flatMap { candidatelon =>
+      candidatelon.felonaturelons
+        .gelont(FavoritelondByUselonrIdsFelonaturelon).takelon(MaxCountUselonrs)
+        .map(favoritelondBy => favoritelondBy -> candidatelon.candidatelon.id)
     }
 
-    val queries = engagingUserIdtoTweetId.map {
-      case (userId, tweetId) =>
-        GetPerspectives.Query(userId = userId, tweetId = tweetId, types = favoritePerspectiveSet)
+    val quelonrielons = elonngagingUselonrIdtoTwelonelontId.map {
+      caselon (uselonrId, twelonelontId) =>
+        GelontPelonrspelonctivelons.Quelonry(uselonrId = uselonrId, twelonelontId = twelonelontId, typelons = favoritelonPelonrspelonctivelonSelont)
     }
 
-    Stitch.collect(queries.map(timelineService.getPerspective)).map { perspectiveResults =>
-      val validUserIdTweetIds: Set[(Long, Long)] =
-        queries
-          .zip(perspectiveResults)
-          .collect { case (query, perspective) if perspective.favorited => query }
-          .map(query => (query.userId, query.tweetId))
-          .toSet
+    Stitch.collelonct(quelonrielons.map(timelonlinelonSelonrvicelon.gelontPelonrspelonctivelon)).map { pelonrspelonctivelonRelonsults =>
+      val validUselonrIdTwelonelontIds: Selont[(Long, Long)] =
+        quelonrielons
+          .zip(pelonrspelonctivelonRelonsults)
+          .collelonct { caselon (quelonry, pelonrspelonctivelon) if pelonrspelonctivelon.favoritelond => quelonry }
+          .map(quelonry => (quelonry.uselonrId, quelonry.twelonelontId))
+          .toSelont
 
-      candidates.map { candidate =>
-        val perspectiveFilteredFavoritedByUserIds: Seq[Long] = candidate.features
-          .get(FavoritedByUserIdsFeature).take(MaxCountUsers)
-          .filter { userId => validUserIdTweetIds.contains((userId, candidate.candidate.id)) }
+      candidatelons.map { candidatelon =>
+        val pelonrspelonctivelonFiltelonrelondFavoritelondByUselonrIds: Selonq[Long] = candidatelon.felonaturelons
+          .gelont(FavoritelondByUselonrIdsFelonaturelon).takelon(MaxCountUselonrs)
+          .filtelonr { uselonrId => validUselonrIdTwelonelontIds.contains((uselonrId, candidatelon.candidatelon.id)) }
 
-        FeatureMapBuilder()
-          .add(PerspectiveFilteredLikedByUserIdsFeature, perspectiveFilteredFavoritedByUserIds)
+        FelonaturelonMapBuildelonr()
+          .add(PelonrspelonctivelonFiltelonrelondLikelondByUselonrIdsFelonaturelon, pelonrspelonctivelonFiltelonrelondFavoritelondByUselonrIds)
           .build()
       }
     }

@@ -1,39 +1,39 @@
-package com.twitter.timelineranker.clients.content_features_cache
+packagelon com.twittelonr.timelonlinelonrankelonr.clielonnts.contelonnt_felonaturelons_cachelon
 
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.clients.memcache_common._
-import com.twitter.timelines.content_features.{thriftscala => thrift}
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Duration
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.storelonhaus.Storelon
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.timelonlinelons.clielonnts.melonmcachelon_common._
+import com.twittelonr.timelonlinelons.contelonnt_felonaturelons.{thriftscala => thrift}
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.util.Duration
 
 /**
- * Content features will be stored by tweetId
+ * Contelonnt felonaturelons will belon storelond by twelonelontId
  */
-class ContentFeaturesMemcacheBuilder(
-  config: StorehausMemcacheConfig,
+class ContelonntFelonaturelonsMelonmcachelonBuildelonr(
+  config: StorelonhausMelonmcachelonConfig,
   ttl: Duration,
-  statsReceiver: StatsReceiver) {
-  private[this] val scalaToThriftInjection: Injection[ContentFeatures, thrift.ContentFeatures] =
-    Injection.build[ContentFeatures, thrift.ContentFeatures](_.toThrift)(
-      ContentFeatures.tryFromThrift)
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon[this] val scalaToThriftInjelonction: Injelonction[ContelonntFelonaturelons, thrift.ContelonntFelonaturelons] =
+    Injelonction.build[ContelonntFelonaturelons, thrift.ContelonntFelonaturelons](_.toThrift)(
+      ContelonntFelonaturelons.tryFromThrift)
 
-  private[this] val thriftToBytesInjection: Injection[thrift.ContentFeatures, Array[Byte]] =
-    CompactScalaCodec(thrift.ContentFeatures)
+  privatelon[this] val thriftToBytelonsInjelonction: Injelonction[thrift.ContelonntFelonaturelons, Array[Bytelon]] =
+    CompactScalaCodelonc(thrift.ContelonntFelonaturelons)
 
-  private[this] implicit val valueInjection: Injection[ContentFeatures, Array[Byte]] =
-    scalaToThriftInjection.andThen(thriftToBytesInjection)
+  privatelon[this] implicit val valuelonInjelonction: Injelonction[ContelonntFelonaturelons, Array[Bytelon]] =
+    scalaToThriftInjelonction.andThelonn(thriftToBytelonsInjelonction)
 
-  private[this] val underlyingBuilder =
-    new MemcacheStoreBuilder[TweetId, ContentFeatures](
+  privatelon[this] val undelonrlyingBuildelonr =
+    nelonw MelonmcachelonStorelonBuildelonr[TwelonelontId, ContelonntFelonaturelons](
       config = config,
-      scopeName = "contentFeaturesCache",
-      statsReceiver = statsReceiver,
+      scopelonNamelon = "contelonntFelonaturelonsCachelon",
+      statsReloncelonivelonr = statsReloncelonivelonr,
       ttl = ttl
     )
 
-  def build(): Store[TweetId, ContentFeatures] = underlyingBuilder.build()
+  delonf build(): Storelon[TwelonelontId, ContelonntFelonaturelons] = undelonrlyingBuildelonr.build()
 }

@@ -1,55 +1,55 @@
-package com.twitter.timelineranker.common
+packagelon com.twittelonr.timelonlinelonrankelonr.common
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.CandidateTweet
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.util.Future
-import com.twitter.util.Time
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.CandidatelonTwelonelont
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelon
 import scala.util.Random
 
 /**
- * picks up one or more random tweets and sets its tweetFeatures.isRandomTweet field to true.
+ * picks up onelon or morelon random twelonelonts and selonts its twelonelontFelonaturelons.isRandomTwelonelont fielonld to truelon.
  */
-class MarkRandomTweetTransform(
-  includeRandomTweetProvider: DependencyProvider[Boolean],
-  randomGenerator: Random = new Random(Time.now.inMilliseconds),
-  includeSingleRandomTweetProvider: DependencyProvider[Boolean],
-  probabilityRandomTweetProvider: DependencyProvider[Double])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+class MarkRandomTwelonelontTransform(
+  includelonRandomTwelonelontProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan],
+  randomGelonnelonrator: Random = nelonw Random(Timelon.now.inMilliselonconds),
+  includelonSinglelonRandomTwelonelontProvidelonr: DelonpelonndelonncyProvidelonr[Boolelonan],
+  probabilityRandomTwelonelontProvidelonr: DelonpelonndelonncyProvidelonr[Doublelon])
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val includeRandomTweet = includeRandomTweetProvider(envelope.query)
-    val includeSingleRandomTweet = includeSingleRandomTweetProvider(envelope.query)
-    val probabilityRandomTweet = probabilityRandomTweetProvider(envelope.query)
-    val searchResults = envelope.searchResults
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val includelonRandomTwelonelont = includelonRandomTwelonelontProvidelonr(elonnvelonlopelon.quelonry)
+    val includelonSinglelonRandomTwelonelont = includelonSinglelonRandomTwelonelontProvidelonr(elonnvelonlopelon.quelonry)
+    val probabilityRandomTwelonelont = probabilityRandomTwelonelontProvidelonr(elonnvelonlopelon.quelonry)
+    val selonarchRelonsults = elonnvelonlopelon.selonarchRelonsults
 
-    if (!includeRandomTweet || searchResults.isEmpty) { // random tweet off
-      Future.value(envelope)
-    } else if (includeSingleRandomTweet) { // pick only one
-      val randomIdx = randomGenerator.nextInt(searchResults.size)
-      val randomTweet = searchResults(randomIdx)
-      val randomTweetWithFlag = randomTweet.copy(
-        tweetFeatures = randomTweet.tweetFeatures
-          .orElse(Some(CandidateTweet.DefaultFeatures))
-          .map(_.copy(isRandomTweet = Some(true)))
+    if (!includelonRandomTwelonelont || selonarchRelonsults.iselonmpty) { // random twelonelont off
+      Futurelon.valuelon(elonnvelonlopelon)
+    } elonlselon if (includelonSinglelonRandomTwelonelont) { // pick only onelon
+      val randomIdx = randomGelonnelonrator.nelonxtInt(selonarchRelonsults.sizelon)
+      val randomTwelonelont = selonarchRelonsults(randomIdx)
+      val randomTwelonelontWithFlag = randomTwelonelont.copy(
+        twelonelontFelonaturelons = randomTwelonelont.twelonelontFelonaturelons
+          .orelonlselon(Somelon(CandidatelonTwelonelont.DelonfaultFelonaturelons))
+          .map(_.copy(isRandomTwelonelont = Somelon(truelon)))
       )
-      val updatedSearchResults = searchResults.updated(randomIdx, randomTweetWithFlag)
+      val updatelondSelonarchRelonsults = selonarchRelonsults.updatelond(randomIdx, randomTwelonelontWithFlag)
 
-      Future.value(envelope.copy(searchResults = updatedSearchResults))
-    } else { // pick tweets with perTweetProbability
-      val updatedSearchResults = searchResults.map { result =>
-        if (randomGenerator.nextDouble() < probabilityRandomTweet) {
-          result.copy(
-            tweetFeatures = result.tweetFeatures
-              .orElse(Some(CandidateTweet.DefaultFeatures))
-              .map(_.copy(isRandomTweet = Some(true))))
+      Futurelon.valuelon(elonnvelonlopelon.copy(selonarchRelonsults = updatelondSelonarchRelonsults))
+    } elonlselon { // pick twelonelonts with pelonrTwelonelontProbability
+      val updatelondSelonarchRelonsults = selonarchRelonsults.map { relonsult =>
+        if (randomGelonnelonrator.nelonxtDoublelon() < probabilityRandomTwelonelont) {
+          relonsult.copy(
+            twelonelontFelonaturelons = relonsult.twelonelontFelonaturelons
+              .orelonlselon(Somelon(CandidatelonTwelonelont.DelonfaultFelonaturelons))
+              .map(_.copy(isRandomTwelonelont = Somelon(truelon))))
 
-        } else
-          result
+        } elonlselon
+          relonsult
       }
 
-      Future.value(envelope.copy(searchResults = updatedSearchResults))
+      Futurelon.valuelon(elonnvelonlopelon.copy(selonarchRelonsults = updatelondSelonarchRelonsults))
     }
   }
 }

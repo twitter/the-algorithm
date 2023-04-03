@@ -1,10 +1,10 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urp
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonScribelonConfig
 
-case class SegmentedTimeline(
+caselon class SelongmelonntelondTimelonlinelon(
   id: String,
-  labelText: String,
-  timeline: TimelineKey,
-  scribeConfig: Option[TimelineScribeConfig] = None,
-  refreshIntervalSec: Option[Long] = None)
+  labelonlTelonxt: String,
+  timelonlinelon: TimelonlinelonKelony,
+  scribelonConfig: Option[TimelonlinelonScribelonConfig] = Nonelon,
+  relonfrelonshIntelonrvalSelonc: Option[Long] = Nonelon)

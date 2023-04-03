@@ -1,12 +1,12 @@
-package com.twitter.home_mixer.product.list_recommended_users.model
+packagelon com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.modelonl
 
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
+import com.twittelonr.gizmoduck.{thriftscala => gt}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
 
-object ListFeatures {
-  // Candidate features
-  object GizmoduckUserFeature extends Feature[UserCandidate, Option[gt.User]]
-  object IsListMemberFeature extends Feature[UserCandidate, Boolean]
-  object ScoreFeature extends Feature[UserCandidate, Double]
+objelonct ListFelonaturelons {
+  // Candidatelon felonaturelons
+  objelonct GizmoduckUselonrFelonaturelon elonxtelonnds Felonaturelon[UselonrCandidatelon, Option[gt.Uselonr]]
+  objelonct IsListMelonmbelonrFelonaturelon elonxtelonnds Felonaturelon[UselonrCandidatelon, Boolelonan]
+  objelonct ScorelonFelonaturelon elonxtelonnds Felonaturelon[UselonrCandidatelon, Doublelon]
 }

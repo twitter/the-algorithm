@@ -1,16 +1,16 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions
 
-import com.twitter.bijection.Bufferable
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
+import com.twittelonr.bijelonction.Buffelonrablelon
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.{
   ScalaCompactThrift,
-  genericInjection
+  gelonnelonricInjelonction
 }
-import com.twitter.simclusters_v2.thriftscala.ClusterDetails
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrDelontails
 
-object ClusterDetailsInjection {
-  val injection = KeyValInjection[(String, Int), ClusterDetails](
-    genericInjection(Bufferable.injectionOf[(String, Int)]),
-    ScalaCompactThrift(ClusterDetails)
+objelonct ClustelonrDelontailsInjelonction {
+  val injelonction = KelonyValInjelonction[(String, Int), ClustelonrDelontails](
+    gelonnelonricInjelonction(Buffelonrablelon.injelonctionOf[(String, Int)]),
+    ScalaCompactThrift(ClustelonrDelontails)
   )
 }

@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.scorer
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
 
-/** A [[Candidate]] and it's [[FeatureMap]] after being processed by a [[Scorer]] */
-case class ScoredCandidateResult[Candidate <: UniversalNoun[Any]](
-  candidate: Candidate,
-  scorerResult: FeatureMap)
-    extends CandidateWithFeatures[Candidate] {
-  override val features: FeatureMap = scorerResult
+/** A [[Candidatelon]] and it's [[FelonaturelonMap]] aftelonr beloning procelonsselond by a [[Scorelonr]] */
+caselon class ScorelondCandidatelonRelonsult[Candidatelon <: UnivelonrsalNoun[Any]](
+  candidatelon: Candidatelon,
+  scorelonrRelonsult: FelonaturelonMap)
+    elonxtelonnds CandidatelonWithFelonaturelons[Candidatelon] {
+  ovelonrridelon val felonaturelons: FelonaturelonMap = scorelonrRelonsult
 }

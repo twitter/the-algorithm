@@ -1,9 +1,9 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "decider/src/main/scala",
-        "src/scala/com/twitter/recos/util:recos-util",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "deloncidelonr/src/main/scala",
+        "src/scala/com/twittelonr/reloncos/util:reloncos-util",
     ],
 )

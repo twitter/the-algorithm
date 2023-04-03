@@ -1,14 +1,14 @@
-package com.twitter.follow_recommendations.common.rankers.fatigue_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.fatiguelon_rankelonr
 
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object ImpressionBasedFatigueRankerParams {
-  // Whether to enable hard dropping of impressed candidates
-  object DropImpressedCandidateEnabled extends Param[Boolean](false)
-  // At what # of impressions to hard drop candidates.
-  object DropCandidateImpressionThreshold extends Param[Int](default = 10)
-  // Whether to scribe candidate ranking/scoring info per ranking stage
-  object ScribeRankingInfoInFatigueRanker
-      extends FSParam[Boolean]("fatigue_ranker_scribe_ranking_info", true)
+objelonct ImprelonssionBaselondFatiguelonRankelonrParams {
+  // Whelonthelonr to elonnablelon hard dropping of imprelonsselond candidatelons
+  objelonct DropImprelonsselondCandidatelonelonnablelond elonxtelonnds Param[Boolelonan](falselon)
+  // At what # of imprelonssions to hard drop candidatelons.
+  objelonct DropCandidatelonImprelonssionThrelonshold elonxtelonnds Param[Int](delonfault = 10)
+  // Whelonthelonr to scribelon candidatelon ranking/scoring info pelonr ranking stagelon
+  objelonct ScribelonRankingInfoInFatiguelonRankelonr
+      elonxtelonnds FSParam[Boolelonan]("fatiguelon_rankelonr_scribelon_ranking_info", truelon)
 }

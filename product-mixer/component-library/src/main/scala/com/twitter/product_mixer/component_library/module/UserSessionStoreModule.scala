@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.user_session_store.ReadOnlyUserSessionStore
-import com.twitter.user_session_store.ReadWriteUserSessionStore
-import com.twitter.user_session_store.UserSessionDataset
-import com.twitter.user_session_store.UserSessionDataset.UserSessionDataset
-import com.twitter.user_session_store.config.manhattan.UserSessionStoreManhattanConfig
-import com.twitter.user_session_store.impl.manhattan.readonly.ReadOnlyManhattanUserSessionStoreBuilder
-import com.twitter.user_session_store.impl.manhattan.readwrite.ReadWriteManhattanUserSessionStoreBuilder
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.uselonr_selonssion_storelon.RelonadOnlyUselonrSelonssionStorelon
+import com.twittelonr.uselonr_selonssion_storelon.RelonadWritelonUselonrSelonssionStorelon
+import com.twittelonr.uselonr_selonssion_storelon.UselonrSelonssionDataselont
+import com.twittelonr.uselonr_selonssion_storelon.UselonrSelonssionDataselont.UselonrSelonssionDataselont
+import com.twittelonr.uselonr_selonssion_storelon.config.manhattan.UselonrSelonssionStorelonManhattanConfig
+import com.twittelonr.uselonr_selonssion_storelon.impl.manhattan.relonadonly.RelonadOnlyManhattanUselonrSelonssionStorelonBuildelonr
+import com.twittelonr.uselonr_selonssion_storelon.impl.manhattan.relonadwritelon.RelonadWritelonManhattanUselonrSelonssionStorelonBuildelonr
 
-import javax.inject.Singleton
+import javax.injelonct.Singlelonton
 
-object UserSessionStoreModule extends TwitterModule {
-  private val ReadWriteAppId = "timelineservice_user_session_store"
-  private val ReadWriteStagingDataset = "tls_user_session_store_nonprod"
-  private val ReadWriteProdDataset = "tls_user_session_store"
-  private val ReadOnlyAppId = "user_session_store"
-  private val ReadOnlyDataset = "user_session_fields"
+objelonct UselonrSelonssionStorelonModulelon elonxtelonnds TwittelonrModulelon {
+  privatelon val RelonadWritelonAppId = "timelonlinelonselonrvicelon_uselonr_selonssion_storelon"
+  privatelon val RelonadWritelonStagingDataselont = "tls_uselonr_selonssion_storelon_nonprod"
+  privatelon val RelonadWritelonProdDataselont = "tls_uselonr_selonssion_storelon"
+  privatelon val RelonadOnlyAppId = "uselonr_selonssion_storelon"
+  privatelon val RelonadOnlyDataselont = "uselonr_selonssion_fielonlds"
 
-  @Provides
-  @Singleton
-  def providesReadWriteUserSessionStore(
-    injectedServiceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): ReadWriteUserSessionStore = {
-    val scopedStatsReceiver = statsReceiver.scope(injectedServiceIdentifier.service)
+  @Providelons
+  @Singlelonton
+  delonf providelonsRelonadWritelonUselonrSelonssionStorelon(
+    injelonctelondSelonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadWritelonUselonrSelonssionStorelon = {
+    val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(injelonctelondSelonrvicelonIdelonntifielonr.selonrvicelon)
 
-    val dataset = injectedServiceIdentifier.environment.toLowerCase match {
-      case "prod" => ReadWriteProdDataset
-      case _ => ReadWriteStagingDataset
+    val dataselont = injelonctelondSelonrvicelonIdelonntifielonr.elonnvironmelonnt.toLowelonrCaselon match {
+      caselon "prod" => RelonadWritelonProdDataselont
+      caselon _ => RelonadWritelonStagingDataselont
     }
 
-    val clientReadWriteConfig = new UserSessionStoreManhattanConfig.Prod.ReadWrite.Omega {
-      override val appId = ReadWriteAppId
-      override val defaultMaxTimeout = 400.milliseconds
-      override val maxRetryCount = 1
-      override val serviceIdentifier = injectedServiceIdentifier
-      override val datasetNamesById = Map[UserSessionDataset, String](
-        UserSessionDataset.ActiveDaysInfo -> dataset,
-        UserSessionDataset.NonPollingTimes -> dataset
+    val clielonntRelonadWritelonConfig = nelonw UselonrSelonssionStorelonManhattanConfig.Prod.RelonadWritelon.Omelonga {
+      ovelonrridelon val appId = RelonadWritelonAppId
+      ovelonrridelon val delonfaultMaxTimelonout = 400.milliselonconds
+      ovelonrridelon val maxRelontryCount = 1
+      ovelonrridelon val selonrvicelonIdelonntifielonr = injelonctelondSelonrvicelonIdelonntifielonr
+      ovelonrridelon val dataselontNamelonsById = Map[UselonrSelonssionDataselont, String](
+        UselonrSelonssionDataselont.ActivelonDaysInfo -> dataselont,
+        UselonrSelonssionDataselont.NonPollingTimelons -> dataselont
       )
     }
 
-    ReadWriteManhattanUserSessionStoreBuilder
-      .buildReadWriteUserSessionStore(clientReadWriteConfig, statsReceiver, scopedStatsReceiver)
+    RelonadWritelonManhattanUselonrSelonssionStorelonBuildelonr
+      .buildRelonadWritelonUselonrSelonssionStorelon(clielonntRelonadWritelonConfig, statsReloncelonivelonr, scopelondStatsReloncelonivelonr)
   }
 
-  @Provides
-  @Singleton
-  def providesReadOnlyUserSessionStore(
-    injectedServiceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): ReadOnlyUserSessionStore = {
-    val scopedStatsReceiver = statsReceiver.scope(injectedServiceIdentifier.service)
+  @Providelons
+  @Singlelonton
+  delonf providelonsRelonadOnlyUselonrSelonssionStorelon(
+    injelonctelondSelonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): RelonadOnlyUselonrSelonssionStorelon = {
+    val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon(injelonctelondSelonrvicelonIdelonntifielonr.selonrvicelon)
 
-    val clientReadOnlyConfig = new UserSessionStoreManhattanConfig.Prod.ReadOnly.Athena {
-      override val appId = ReadOnlyAppId
-      override val defaultMaxTimeout = 400.milliseconds
-      override val maxRetryCount = 1
-      override val serviceIdentifier = injectedServiceIdentifier
-      override val datasetNamesById = Map[UserSessionDataset, String](
-        UserSessionDataset.UserHealth -> ReadOnlyDataset
+    val clielonntRelonadOnlyConfig = nelonw UselonrSelonssionStorelonManhattanConfig.Prod.RelonadOnly.Athelonna {
+      ovelonrridelon val appId = RelonadOnlyAppId
+      ovelonrridelon val delonfaultMaxTimelonout = 400.milliselonconds
+      ovelonrridelon val maxRelontryCount = 1
+      ovelonrridelon val selonrvicelonIdelonntifielonr = injelonctelondSelonrvicelonIdelonntifielonr
+      ovelonrridelon val dataselontNamelonsById = Map[UselonrSelonssionDataselont, String](
+        UselonrSelonssionDataselont.UselonrHelonalth -> RelonadOnlyDataselont
       )
     }
 
-    ReadOnlyManhattanUserSessionStoreBuilder
-      .buildReadOnlyUserSessionStore(clientReadOnlyConfig, statsReceiver, scopedStatsReceiver)
+    RelonadOnlyManhattanUselonrSelonssionStorelonBuildelonr
+      .buildRelonadOnlyUselonrSelonssionStorelon(clielonntRelonadOnlyConfig, statsReloncelonivelonr, scopelondStatsReloncelonivelonr)
   }
 }

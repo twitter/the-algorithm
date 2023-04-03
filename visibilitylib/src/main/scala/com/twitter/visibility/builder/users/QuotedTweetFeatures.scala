@@ -1,52 +1,52 @@
-package com.twitter.visibility.builder.users
+packagelon com.twittelonr.visibility.buildelonr.uselonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.AuthorBlocksOuterAuthor
-import com.twitter.visibility.features.OuterAuthorFollowsAuthor
-import com.twitter.visibility.features.OuterAuthorId
-import com.twitter.visibility.features.OuterAuthorIsInnerAuthor
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.felonaturelons.AuthorBlocksOutelonrAuthor
+import com.twittelonr.visibility.felonaturelons.OutelonrAuthorFollowsAuthor
+import com.twittelonr.visibility.felonaturelons.OutelonrAuthorId
+import com.twittelonr.visibility.felonaturelons.OutelonrAuthorIsInnelonrAuthor
 
-class QuotedTweetFeatures(
-  relationshipFeatures: RelationshipFeatures,
-  statsReceiver: StatsReceiver) {
+class QuotelondTwelonelontFelonaturelons(
+  relonlationshipFelonaturelons: RelonlationshipFelonaturelons,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val scopedStatsReceiver = statsReceiver.scope("quoted_tweet_features")
+  privatelon[this] val scopelondStatsReloncelonivelonr = statsReloncelonivelonr.scopelon("quotelond_twelonelont_felonaturelons")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val outerAuthorIdStat =
-    scopedStatsReceiver.scope(OuterAuthorId.name).counter("requests")
-  private[this] val authorBlocksOuterAuthor =
-    scopedStatsReceiver.scope(AuthorBlocksOuterAuthor.name).counter("requests")
-  private[this] val outerAuthorFollowsAuthor =
-    scopedStatsReceiver.scope(OuterAuthorFollowsAuthor.name).counter("requests")
-  private[this] val outerAuthorIsInnerAuthor =
-    scopedStatsReceiver.scope(OuterAuthorIsInnerAuthor.name).counter("requests")
+  privatelon[this] val outelonrAuthorIdStat =
+    scopelondStatsReloncelonivelonr.scopelon(OutelonrAuthorId.namelon).countelonr("relonquelonsts")
+  privatelon[this] val authorBlocksOutelonrAuthor =
+    scopelondStatsReloncelonivelonr.scopelon(AuthorBlocksOutelonrAuthor.namelon).countelonr("relonquelonsts")
+  privatelon[this] val outelonrAuthorFollowsAuthor =
+    scopelondStatsReloncelonivelonr.scopelon(OutelonrAuthorFollowsAuthor.namelon).countelonr("relonquelonsts")
+  privatelon[this] val outelonrAuthorIsInnelonrAuthor =
+    scopelondStatsReloncelonivelonr.scopelon(OutelonrAuthorIsInnelonrAuthor.namelon).countelonr("relonquelonsts")
 
-  def forOuterAuthor(
-    outerAuthorId: Long,
-    innerAuthorId: Long
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    requests.incr()
+  delonf forOutelonrAuthor(
+    outelonrAuthorId: Long,
+    innelonrAuthorId: Long
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    relonquelonsts.incr()
 
-    outerAuthorIdStat.incr()
-    authorBlocksOuterAuthor.incr()
-    outerAuthorFollowsAuthor.incr()
-    outerAuthorIsInnerAuthor.incr()
+    outelonrAuthorIdStat.incr()
+    authorBlocksOutelonrAuthor.incr()
+    outelonrAuthorFollowsAuthor.incr()
+    outelonrAuthorIsInnelonrAuthor.incr()
 
-    val viewer = Some(outerAuthorId)
+    val vielonwelonr = Somelon(outelonrAuthorId)
 
-    _.withConstantFeature(OuterAuthorId, outerAuthorId)
-      .withFeature(
-        AuthorBlocksOuterAuthor,
-        relationshipFeatures.authorBlocksViewer(innerAuthorId, viewer))
-      .withFeature(
-        OuterAuthorFollowsAuthor,
-        relationshipFeatures.viewerFollowsAuthor(innerAuthorId, viewer))
-      .withConstantFeature(
-        OuterAuthorIsInnerAuthor,
-        innerAuthorId == outerAuthorId
+    _.withConstantFelonaturelon(OutelonrAuthorId, outelonrAuthorId)
+      .withFelonaturelon(
+        AuthorBlocksOutelonrAuthor,
+        relonlationshipFelonaturelons.authorBlocksVielonwelonr(innelonrAuthorId, vielonwelonr))
+      .withFelonaturelon(
+        OutelonrAuthorFollowsAuthor,
+        relonlationshipFelonaturelons.vielonwelonrFollowsAuthor(innelonrAuthorId, vielonwelonr))
+      .withConstantFelonaturelon(
+        OutelonrAuthorIsInnelonrAuthor,
+        innelonrAuthorId == outelonrAuthorId
       )
   }
 }

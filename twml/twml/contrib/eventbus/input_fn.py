@@ -1,59 +1,59 @@
-from reader import EventBusPipedBinaryRecordReader
-import tensorflow.compat.v1 as tf
+from relonadelonr import elonvelonntBusPipelondBinaryReloncordRelonadelonr
+import telonnsorflow.compat.v1 as tf
 import twml
 
 
 """
-This module provides input function for DeepBird v2 training.
-The training data records are loaded from an EventBus reader.
+This modulelon providelons input function for DelonelonpBird v2 training.
+Thelon training data reloncords arelon loadelond from an elonvelonntBus relonadelonr.
 """
 
 
-def get_eventbus_data_record_generator(eventbus_reader):
+delonf gelont_elonvelonntbus_data_reloncord_gelonnelonrator(elonvelonntbus_relonadelonr):
   """
-  This module provides a data record generater from EventBus reader.
+  This modulelon providelons a data reloncord gelonnelonratelonr from elonvelonntBus relonadelonr.
 
   Args:
-    eventbus_reader: EventBus reader
+    elonvelonntbus_relonadelonr: elonvelonntBus relonadelonr
 
-  Returns:
-    gen: Data record generater
+  Relonturns:
+    gelonn: Data reloncord gelonnelonratelonr
   """
-  eventbus_reader.initialize()
-  counter = [0]
+  elonvelonntbus_relonadelonr.initializelon()
+  countelonr = [0]
 
-  def gen():
-    while True:
-      record = eventbus_reader.read()
-      if eventbus_reader.debug:
-        tf.logging.warn("counter: {}".format(counter[0]))
-        with open('tmp_record_{}.bin'.format(counter[0]), 'wb') as f:
-          f.write(record)
-        counter[0] = counter[0] + 1
-      yield record
-  return gen
+  delonf gelonn():
+    whilelon Truelon:
+      reloncord = elonvelonntbus_relonadelonr.relonad()
+      if elonvelonntbus_relonadelonr.delonbug:
+        tf.logging.warn("countelonr: {}".format(countelonr[0]))
+        with opelonn('tmp_reloncord_{}.bin'.format(countelonr[0]), 'wb') as f:
+          f.writelon(reloncord)
+        countelonr[0] = countelonr[0] + 1
+      yielonld reloncord
+  relonturn gelonn
 
 
-def get_eventbus_data_record_dataset(eventbus_reader, parse_fn, batch_size):
+delonf gelont_elonvelonntbus_data_reloncord_dataselont(elonvelonntbus_relonadelonr, parselon_fn, batch_sizelon):
   """
-  This module generates batch data for training from a data record generator.
+  This modulelon gelonnelonratelons batch data for training from a data reloncord gelonnelonrator.
   """
-  dataset = tf.data.Dataset.from_generator(
-    get_eventbus_data_record_generator(eventbus_reader), tf.string, tf.TensorShape([]))
-  return dataset.batch(batch_size).map(parse_fn, num_parallel_calls=4).prefetch(buffer_size=10)
+  dataselont = tf.data.Dataselont.from_gelonnelonrator(
+    gelont_elonvelonntbus_data_reloncord_gelonnelonrator(elonvelonntbus_relonadelonr), tf.string, tf.TelonnsorShapelon([]))
+  relonturn dataselont.batch(batch_sizelon).map(parselon_fn, num_parallelonl_calls=4).prelonfelontch(buffelonr_sizelon=10)
 
 
-def get_train_input_fn(feature_config, params, parse_fn=None):
+delonf gelont_train_input_fn(felonaturelon_config, params, parselon_fn=Nonelon):
   """
-  This module provides input function for DeepBird v2 training.
-  It gets batched training data from data record generator.
+  This modulelon providelons input function for DelonelonpBird v2 training.
+  It gelonts batchelond training data from data reloncord gelonnelonrator.
   """
-  eventbus_reader = EventBusPipedBinaryRecordReader(
-    params.jar_file, params.num_eb_threads, params.subscriber_id,
-    filter_str=params.filter_str, debug=params.debug)
+  elonvelonntbus_relonadelonr = elonvelonntBusPipelondBinaryReloncordRelonadelonr(
+    params.jar_filelon, params.num_elonb_threlonads, params.subscribelonr_id,
+    filtelonr_str=params.filtelonr_str, delonbug=params.delonbug)
 
-  train_parse_fn = parse_fn or twml.parsers.get_sparse_parse_fn(
-    feature_config, ["ids", "keys", "values", "batch_size", "weights"])
+  train_parselon_fn = parselon_fn or twml.parselonrs.gelont_sparselon_parselon_fn(
+    felonaturelon_config, ["ids", "kelonys", "valuelons", "batch_sizelon", "welonights"])
 
-  return lambda: get_eventbus_data_record_dataset(
-    eventbus_reader, train_parse_fn, params.train_batch_size)
+  relonturn lambda: gelont_elonvelonntbus_data_reloncord_dataselont(
+    elonvelonntbus_relonadelonr, train_parselon_fn, params.train_batch_sizelon)

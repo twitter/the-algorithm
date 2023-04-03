@@ -1,72 +1,72 @@
-package com.twitter.search.earlybird.querycache;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonrycachelon;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.search.DocIdSetIterator;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
 
-public class CachedResultDocIdSetIterator extends DocIdSetIterator {
-  // With the realtime index, we grow the doc id negatively.
-  // Hence the smallest doc id is the ID the latest/newest document in the cache.
-  private final int cachedSmallestDocID;
+public class CachelondRelonsultDocIdSelontItelonrator elonxtelonnds DocIdSelontItelonrator {
+  // With thelon relonaltimelon indelonx, welon grow thelon doc id nelongativelonly.
+  // Helonncelon thelon smallelonst doc id is thelon ID thelon latelonst/nelonwelonst documelonnt in thelon cachelon.
+  privatelon final int cachelondSmallelonstDocID;
 
-  // Documents that were indexed after the last cache update
-  private final DocIdSetIterator freshDocIdIterator;
-  // Documents that were cached
-  private final DocIdSetIterator cachedDocIdIterator;
+  // Documelonnts that welonrelon indelonxelond aftelonr thelon last cachelon updatelon
+  privatelon final DocIdSelontItelonrator frelonshDocIdItelonrator;
+  // Documelonnts that welonrelon cachelond
+  privatelon final DocIdSelontItelonrator cachelondDocIdItelonrator;
 
-  private int currentDocId;
-  private boolean initialized = false;
+  privatelon int currelonntDocId;
+  privatelon boolelonan initializelond = falselon;
 
-  public CachedResultDocIdSetIterator(int cachedSmallestDocID,
-                                      DocIdSetIterator freshDocIdIterator,
-                                      DocIdSetIterator cachedDocIdIterator) {
-    this.cachedSmallestDocID = cachedSmallestDocID;
+  public CachelondRelonsultDocIdSelontItelonrator(int cachelondSmallelonstDocID,
+                                      DocIdSelontItelonrator frelonshDocIdItelonrator,
+                                      DocIdSelontItelonrator cachelondDocIdItelonrator) {
+    this.cachelondSmallelonstDocID = cachelondSmallelonstDocID;
 
-    this.freshDocIdIterator = freshDocIdIterator;
-    this.cachedDocIdIterator = cachedDocIdIterator;
-    this.currentDocId = -1;
+    this.frelonshDocIdItelonrator = frelonshDocIdItelonrator;
+    this.cachelondDocIdItelonrator = cachelondDocIdItelonrator;
+    this.currelonntDocId = -1;
   }
 
-  @Override
+  @Ovelonrridelon
   public int docID() {
-    return currentDocId;
+    relonturn currelonntDocId;
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    if (currentDocId < cachedSmallestDocID) {
-      currentDocId = freshDocIdIterator.nextDoc();
-    } else if (currentDocId != NO_MORE_DOCS) {
-      if (!initialized) {
-        // the first time we come in here, currentDocId should be pointing to
-        // something >= cachedMinDocID. We need to go to the doc after cachedMinDocID.
-        currentDocId = cachedDocIdIterator.advance(currentDocId + 1);
-        initialized = true;
-      } else {
-        currentDocId = cachedDocIdIterator.nextDoc();
+  @Ovelonrridelon
+  public int nelonxtDoc() throws IOelonxcelonption {
+    if (currelonntDocId < cachelondSmallelonstDocID) {
+      currelonntDocId = frelonshDocIdItelonrator.nelonxtDoc();
+    } elonlselon if (currelonntDocId != NO_MORelon_DOCS) {
+      if (!initializelond) {
+        // thelon first timelon welon comelon in helonrelon, currelonntDocId should belon pointing to
+        // somelonthing >= cachelondMinDocID. Welon nelonelond to go to thelon doc aftelonr cachelondMinDocID.
+        currelonntDocId = cachelondDocIdItelonrator.advancelon(currelonntDocId + 1);
+        initializelond = truelon;
+      } elonlselon {
+        currelonntDocId = cachelondDocIdItelonrator.nelonxtDoc();
       }
     }
-    return currentDocId;
+    relonturn currelonntDocId;
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    if (target < cachedSmallestDocID) {
-      currentDocId = freshDocIdIterator.advance(target);
-    } else if (currentDocId != NO_MORE_DOCS) {
-      initialized = true;
-      currentDocId = cachedDocIdIterator.advance(target);
+  @Ovelonrridelon
+  public int advancelon(int targelont) throws IOelonxcelonption {
+    if (targelont < cachelondSmallelonstDocID) {
+      currelonntDocId = frelonshDocIdItelonrator.advancelon(targelont);
+    } elonlselon if (currelonntDocId != NO_MORelon_DOCS) {
+      initializelond = truelon;
+      currelonntDocId = cachelondDocIdItelonrator.advancelon(targelont);
     }
 
-    return currentDocId;
+    relonturn currelonntDocId;
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    if (currentDocId < cachedSmallestDocID) {
-      return freshDocIdIterator.cost();
-    } else {
-      return cachedDocIdIterator.cost();
+    if (currelonntDocId < cachelondSmallelonstDocID) {
+      relonturn frelonshDocIdItelonrator.cost();
+    } elonlselon {
+      relonturn cachelondDocIdItelonrator.cost();
     }
   }
 }

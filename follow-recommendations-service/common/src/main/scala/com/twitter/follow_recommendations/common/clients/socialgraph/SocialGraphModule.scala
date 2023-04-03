@@ -1,25 +1,25 @@
-package com.twitter.follow_recommendations.common.clients.socialgraph
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph
 
-import com.google.inject.Provides
-import com.twitter.finagle.ThriftMux
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.stitch.socialgraph.SocialGraph
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.common.BaselonClielonntModulelon
+import com.twittelonr.socialgraph.thriftscala.SocialGraphSelonrvicelon
+import com.twittelonr.stitch.socialgraph.SocialGraph
+import javax.injelonct.Singlelonton
 
-object SocialGraphModule
-    extends BaseClientModule[SocialGraphService.MethodPerEndpoint]
-    with MtlsClient {
-  override val label = "social-graph-service"
-  override val dest = "/s/socialgraph/socialgraph"
+objelonct SocialGraphModulelon
+    elonxtelonnds BaselonClielonntModulelon[SocialGraphSelonrvicelon.MelonthodPelonrelonndpoint]
+    with MtlsClielonnt {
+  ovelonrridelon val labelonl = "social-graph-selonrvicelon"
+  ovelonrridelon val delonst = "/s/socialgraph/socialgraph"
 
-  override def configureThriftMuxClient(client: ThriftMux.Client): ThriftMux.Client =
-    client.withSessionQualifier.noFailFast
+  ovelonrridelon delonf configurelonThriftMuxClielonnt(clielonnt: ThriftMux.Clielonnt): ThriftMux.Clielonnt =
+    clielonnt.withSelonssionQualifielonr.noFailFast
 
-  @Provides
-  @Singleton
-  def providesStitchClient(futureIface: SocialGraphService.MethodPerEndpoint): SocialGraph = {
-    SocialGraph(futureIface)
+  @Providelons
+  @Singlelonton
+  delonf providelonsStitchClielonnt(futurelonIfacelon: SocialGraphSelonrvicelon.MelonthodPelonrelonndpoint): SocialGraph = {
+    SocialGraph(futurelonIfacelon)
   }
 }

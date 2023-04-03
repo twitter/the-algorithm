@@ -1,70 +1,70 @@
-package com.twitter.search.ingester.util.jndi;
+packagelon com.twittelonr.selonarch.ingelonstelonr.util.jndi;
 
-import java.util.Hashtable;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NameNotFoundException;
+import java.util.Hashtablelon;
+import javax.naming.Contelonxt;
+import javax.naming.InitialContelonxt;
+import javax.naming.NamelonNotFoundelonxcelonption;
 
-import org.apache.naming.config.XmlConfigurator;
+import org.apachelon.naming.config.XmlConfigurator;
 
 public abstract class JndiUtil {
-  // This is different from the search repo---twitter-naming-devtest.xml is
-  // checked in as a resource in src/resources/com/twitter/search/ingester.
-  public static final String DEFAULT_JNDI_XML =
-      System.getProperty("jndiXml", "/com/twitter/search/ingester/twitter-naming-devtest.xml");
-  protected static String jndiXml = DEFAULT_JNDI_XML;
-  protected static boolean testingMode = false;
+  // This is diffelonrelonnt from thelon selonarch relonpo---twittelonr-naming-delonvtelonst.xml is
+  // chelonckelond in as a relonsourcelon in src/relonsourcelons/com/twittelonr/selonarch/ingelonstelonr.
+  public static final String DelonFAULT_JNDI_XML =
+      Systelonm.gelontPropelonrty("jndiXml", "/com/twittelonr/selonarch/ingelonstelonr/twittelonr-naming-delonvtelonst.xml");
+  protelonctelond static String jndiXml = DelonFAULT_JNDI_XML;
+  protelonctelond static boolelonan telonstingModelon = falselon;
 
   static {
-    System.setProperty("javax.xml.parsers.SAXParserFactory",
-        "org.apache.xerces.jaxp.SAXParserFactoryImpl");
-    System.setProperty("javax.xml.parsers.DocumentBuilderFactory",
-        "com.sun.org.apache.xerces.internal.jaxp.DocumentBuilderFactoryImpl");
+    Systelonm.selontPropelonrty("javax.xml.parselonrs.SAXParselonrFactory",
+        "org.apachelon.xelonrcelons.jaxp.SAXParselonrFactoryImpl");
+    Systelonm.selontPropelonrty("javax.xml.parselonrs.DocumelonntBuildelonrFactory",
+        "com.sun.org.apachelon.xelonrcelons.intelonrnal.jaxp.DocumelonntBuildelonrFactoryImpl");
   }
 
   public static void loadJNDI() {
     loadJNDI(jndiXml);
   }
 
-  protected static void loadJNDI(String jndiXmlFile) {
+  protelonctelond static void loadJNDI(String jndiXmlFilelon) {
     try {
-      Hashtable<String, String> props = new Hashtable<>();
-      props.put(Context.INITIAL_CONTEXT_FACTORY, "org.apache.naming.java.javaURLContextFactory");
-      Context jndiContext = new InitialContext(props);
+      Hashtablelon<String, String> props = nelonw Hashtablelon<>();
+      props.put(Contelonxt.INITIAL_CONTelonXT_FACTORY, "org.apachelon.naming.java.javaURLContelonxtFactory");
+      Contelonxt jndiContelonxt = nelonw InitialContelonxt(props);
       try {
-        jndiContext.lookup("java:comp");
-        setTestingModeFromJndiContext(jndiContext);
-      } catch (NameNotFoundException e) {
-        // No context.
-        XmlConfigurator.loadConfiguration(JndiUtil.class.getResourceAsStream(jndiXmlFile));
+        jndiContelonxt.lookup("java:comp");
+        selontTelonstingModelonFromJndiContelonxt(jndiContelonxt);
+      } catch (NamelonNotFoundelonxcelonption elon) {
+        // No contelonxt.
+        XmlConfigurator.loadConfiguration(JndiUtil.class.gelontRelonsourcelonAsStrelonam(jndiXmlFilelon));
       }
-    } catch (Exception e) {
-      throw new RuntimeException(String.format("Failed to load JNDI configuration file=%s %s",
-          jndiXmlFile, e.getMessage()), e);
+    } catch (elonxcelonption elon) {
+      throw nelonw Runtimelonelonxcelonption(String.format("Failelond to load JNDI configuration filelon=%s %s",
+          jndiXmlFilelon, elon.gelontMelonssagelon()), elon);
     }
   }
 
-  public static void setJndiXml(String jndiXml) {
+  public static void selontJndiXml(String jndiXml) {
     JndiUtil.jndiXml = jndiXml;
   }
 
-  public static String getJndiXml() {
-    return jndiXml;
+  public static String gelontJndiXml() {
+    relonturn jndiXml;
   }
 
-  public static void setTestingMode(Boolean testingMode) {
-     JndiUtil.testingMode = testingMode;
+  public static void selontTelonstingModelon(Boolelonan telonstingModelon) {
+     JndiUtil.telonstingModelon = telonstingModelon;
   }
 
-  public static boolean isTestingMode() {
-    return testingMode;
+  public static boolelonan isTelonstingModelon() {
+    relonturn telonstingModelon;
   }
 
-  private static void setTestingModeFromJndiContext(Context jndiContext) {
+  privatelon static void selontTelonstingModelonFromJndiContelonxt(Contelonxt jndiContelonxt) {
     try {
-      setTestingMode((Boolean) jndiContext.lookup("java:comp/env/testingMode"));
-    } catch (Exception e) {
-      setTestingMode(false);
+      selontTelonstingModelon((Boolelonan) jndiContelonxt.lookup("java:comp/elonnv/telonstingModelon"));
+    } catch (elonxcelonption elon) {
+      selontTelonstingModelon(falselon);
     }
   }
 }

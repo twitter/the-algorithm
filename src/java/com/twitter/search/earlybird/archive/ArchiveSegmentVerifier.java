@@ -1,75 +1,75 @@
-package com.twitter.search.earlybird.archive;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.store.Directory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.indelonx.DirelonctoryRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.earlybird.partition.SegmentInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
 
-public final class ArchiveSegmentVerifier {
-  private static final Logger LOG = LoggerFactory.getLogger(ArchiveSegmentVerifier.class);
+public final class ArchivelonSelongmelonntVelonrifielonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ArchivelonSelongmelonntVelonrifielonr.class);
 
-  private ArchiveSegmentVerifier() {
+  privatelon ArchivelonSelongmelonntVelonrifielonr() {
   }
 
-  @VisibleForTesting
-  static boolean shouldVerifySegment(SegmentInfo segmentInfo) {
-    if (segmentInfo.isIndexing()) {
-      LOG.warn("ArchiveSegmentVerifier got segment still indexing.");
-      return false;
+  @VisiblelonForTelonsting
+  static boolelonan shouldVelonrifySelongmelonnt(SelongmelonntInfo selongmelonntInfo) {
+    if (selongmelonntInfo.isIndelonxing()) {
+      LOG.warn("ArchivelonSelongmelonntVelonrifielonr got selongmelonnt still indelonxing.");
+      relonturn falselon;
     }
 
-    if (!segmentInfo.isComplete()) {
-      LOG.warn("ArchiveSegmentVerifyer got incomplete segment.");
-      return false;
+    if (!selongmelonntInfo.isComplelontelon()) {
+      LOG.warn("ArchivelonSelongmelonntVelonrifyelonr got incomplelontelon selongmelonnt.");
+      relonturn falselon;
     }
 
-    if (!segmentInfo.isOptimized()) {
-      LOG.warn("ArchiveSegmentVerifyer got unoptimized segment.");
-      return false;
+    if (!selongmelonntInfo.isOptimizelond()) {
+      LOG.warn("ArchivelonSelongmelonntVelonrifyelonr got unoptimizelond selongmelonnt.");
+      relonturn falselon;
     }
 
-    return true;
+    relonturn truelon;
   }
 
   /**
-   * Verifies an archive segment has a sane number of leaves.
+   * Velonrifielons an archivelon selongmelonnt has a sanelon numbelonr of lelonavelons.
    */
-  public static boolean verifySegment(SegmentInfo segmentInfo) {
-    if (!shouldVerifySegment(segmentInfo)) {
-      return false;
+  public static boolelonan velonrifySelongmelonnt(SelongmelonntInfo selongmelonntInfo) {
+    if (!shouldVelonrifySelongmelonnt(selongmelonntInfo)) {
+      relonturn falselon;
     }
-    Directory directory = segmentInfo.getIndexSegment().getLuceneDirectory();
-    return verifyLuceneIndex(directory);
+    Direlonctory direlonctory = selongmelonntInfo.gelontIndelonxSelongmelonnt().gelontLucelonnelonDirelonctory();
+    relonturn velonrifyLucelonnelonIndelonx(direlonctory);
   }
 
-  private static boolean verifyLuceneIndex(Directory directory) {
+  privatelon static boolelonan velonrifyLucelonnelonIndelonx(Direlonctory direlonctory) {
     try {
-      DirectoryReader indexerReader = DirectoryReader.open(directory);
-      List<LeafReaderContext> leaves = indexerReader.getContext().leaves();
-      if (leaves.size() != 1) {
-        LOG.warn("Lucene index does not have exactly one segment: " + leaves.size() + " != 1. "
-            + "Lucene segments should have been merged during optimization.");
-        return false;
+      DirelonctoryRelonadelonr indelonxelonrRelonadelonr = DirelonctoryRelonadelonr.opelonn(direlonctory);
+      List<LelonafRelonadelonrContelonxt> lelonavelons = indelonxelonrRelonadelonr.gelontContelonxt().lelonavelons();
+      if (lelonavelons.sizelon() != 1) {
+        LOG.warn("Lucelonnelon indelonx doelons not havelon elonxactly onelon selongmelonnt: " + lelonavelons.sizelon() + " != 1. "
+            + "Lucelonnelon selongmelonnts should havelon belonelonn melonrgelond during optimization.");
+        relonturn falselon;
       }
 
-      LeafReader reader = leaves.get(0).reader();
-      if (reader.numDocs() <= 0) {
-        LOG.warn("Lucene index has no document: " + reader);
-        return false;
+      LelonafRelonadelonr relonadelonr = lelonavelons.gelont(0).relonadelonr();
+      if (relonadelonr.numDocs() <= 0) {
+        LOG.warn("Lucelonnelon indelonx has no documelonnt: " + relonadelonr);
+        relonturn falselon;
       }
-      return true;
-    } catch (IOException e) {
-      LOG.warn("Found bad lucene index at: " + directory);
-      return false;
+      relonturn truelon;
+    } catch (IOelonxcelonption elon) {
+      LOG.warn("Found bad lucelonnelon indelonx at: " + direlonctory);
+      relonturn falselon;
     }
   }
 }

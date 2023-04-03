@@ -1,123 +1,123 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
 
-object SearchResultUtil {
-  val DefaultScore = 0.0
-  def getScore(result: ThriftSearchResult): Double = {
-    result.metadata.flatMap(_.score).filterNot(_.isNaN).getOrElse(DefaultScore)
+objelonct SelonarchRelonsultUtil {
+  val DelonfaultScorelon = 0.0
+  delonf gelontScorelon(relonsult: ThriftSelonarchRelonsult): Doublelon = {
+    relonsult.melontadata.flatMap(_.scorelon).filtelonrNot(_.isNaN).gelontOrelonlselon(DelonfaultScorelon)
   }
 
-  def isRetweet(result: ThriftSearchResult): Boolean = {
-    result.metadata.flatMap(_.isRetweet).getOrElse(false)
+  delonf isRelontwelonelont(relonsult: ThriftSelonarchRelonsult): Boolelonan = {
+    relonsult.melontadata.flatMap(_.isRelontwelonelont).gelontOrelonlselon(falselon)
   }
 
-  def isReply(result: ThriftSearchResult): Boolean = {
-    result.metadata.flatMap(_.isReply).getOrElse(false)
+  delonf isRelonply(relonsult: ThriftSelonarchRelonsult): Boolelonan = {
+    relonsult.melontadata.flatMap(_.isRelonply).gelontOrelonlselon(falselon)
   }
 
-  def isEligibleReply(result: ThriftSearchResult): Boolean = {
-    isReply(result) && !isRetweet(result)
+  delonf iselonligiblelonRelonply(relonsult: ThriftSelonarchRelonsult): Boolelonan = {
+    isRelonply(relonsult) && !isRelontwelonelont(relonsult)
   }
 
-  def authorId(result: ThriftSearchResult): Option[UserId] = {
-    // fromUserId defaults to 0L if unset. None is cleaner
-    result.metadata.map(_.fromUserId).filter(_ != 0L)
+  delonf authorId(relonsult: ThriftSelonarchRelonsult): Option[UselonrId] = {
+    // fromUselonrId delonfaults to 0L if unselont. Nonelon is clelonanelonr
+    relonsult.melontadata.map(_.fromUselonrId).filtelonr(_ != 0L)
   }
 
-  def referencedTweetAuthorId(result: ThriftSearchResult): Option[UserId] = {
-    // referencedTweetAuthorId defaults to 0L by default. None is cleaner
-    result.metadata.map(_.referencedTweetAuthorId).filter(_ != 0L)
+  delonf relonfelonrelonncelondTwelonelontAuthorId(relonsult: ThriftSelonarchRelonsult): Option[UselonrId] = {
+    // relonfelonrelonncelondTwelonelontAuthorId delonfaults to 0L by delonfault. Nonelon is clelonanelonr
+    relonsult.melontadata.map(_.relonfelonrelonncelondTwelonelontAuthorId).filtelonr(_ != 0L)
   }
 
   /**
-   * Extended replies are replies, that are not retweets (see below), from a followed userId
-   * towards a non-followed userId.
+   * elonxtelonndelond relonplielons arelon relonplielons, that arelon not relontwelonelonts (selonelon belonlow), from a followelond uselonrId
+   * towards a non-followelond uselonrId.
    *
-   * In Thrift SearchResult it is possible to have both isRetweet and isReply set to true,
-   * in the case of the retweeted reply. This is confusing edge case as the retweet object
-   * is not itself a reply, but the original tweet is reply.
+   * In Thrift SelonarchRelonsult it is possiblelon to havelon both isRelontwelonelont and isRelonply selont to truelon,
+   * in thelon caselon of thelon relontwelonelontelond relonply. This is confusing elondgelon caselon as thelon relontwelonelont objelonct
+   * is not itselonlf a relonply, but thelon original twelonelont is relonply.
    */
-  def isExtendedReply(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
-    isEligibleReply(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(!followedUserIds.contains(_)) // referenced author is not
+  delonf iselonxtelonndelondRelonply(followelondUselonrIds: Selonq[UselonrId])(relonsult: ThriftSelonarchRelonsult): Boolelonan = {
+    iselonligiblelonRelonply(relonsult) &&
+    authorId(relonsult).elonxists(followelondUselonrIds.contains(_)) && // author is followelond
+    relonfelonrelonncelondTwelonelontAuthorId(relonsult).elonxists(!followelondUselonrIds.contains(_)) // relonfelonrelonncelond author is not
   }
 
   /**
-   * If a tweet is a reply that is not a retweet, and both the user follows both the reply author
-   * and the reply parent's author
+   * If a twelonelont is a relonply that is not a relontwelonelont, and both thelon uselonr follows both thelon relonply author
+   * and thelon relonply parelonnt's author
    */
-  def isInNetworkReply(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
-    isEligibleReply(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(followedUserIds.contains(_)) // referenced author is
+  delonf isInNelontworkRelonply(followelondUselonrIds: Selonq[UselonrId])(relonsult: ThriftSelonarchRelonsult): Boolelonan = {
+    iselonligiblelonRelonply(relonsult) &&
+    authorId(relonsult).elonxists(followelondUselonrIds.contains(_)) && // author is followelond
+    relonfelonrelonncelondTwelonelontAuthorId(relonsult).elonxists(followelondUselonrIds.contains(_)) // relonfelonrelonncelond author is
   }
 
   /**
-   * If a tweet is a retweet, and user follows author of outside tweet but not following author of
-   * source/inner tweet. This tweet is also called oon-retweet
+   * If a twelonelont is a relontwelonelont, and uselonr follows author of outsidelon twelonelont but not following author of
+   * sourcelon/innelonr twelonelont. This twelonelont is also callelond oon-relontwelonelont
    */
-  def isOutOfNetworkRetweet(followedUserIds: Seq[UserId])(result: ThriftSearchResult): Boolean = {
-    isRetweet(result) &&
-    authorId(result).exists(followedUserIds.contains(_)) && // author is followed
-    referencedTweetAuthorId(result).exists(!followedUserIds.contains(_)) // referenced author is not
+  delonf isOutOfNelontworkRelontwelonelont(followelondUselonrIds: Selonq[UselonrId])(relonsult: ThriftSelonarchRelonsult): Boolelonan = {
+    isRelontwelonelont(relonsult) &&
+    authorId(relonsult).elonxists(followelondUselonrIds.contains(_)) && // author is followelond
+    relonfelonrelonncelondTwelonelontAuthorId(relonsult).elonxists(!followelondUselonrIds.contains(_)) // relonfelonrelonncelond author is not
   }
 
   /**
-   * From official documentation in thrift on sharedStatusId:
-   * When isRetweet (or packed features equivalent) is true, this is the status id of the
-   * original tweet. When isReply and getReplySource are true, this is the status id of the
-   * original tweet. In all other circumstances this is 0.
+   * From official documelonntation in thrift on sharelondStatusId:
+   * Whelonn isRelontwelonelont (or packelond felonaturelons elonquivalelonnt) is truelon, this is thelon status id of thelon
+   * original twelonelont. Whelonn isRelonply and gelontRelonplySourcelon arelon truelon, this is thelon status id of thelon
+   * original twelonelont. In all othelonr circumstancelons this is 0.
    *
-   * If a tweet is a retweet of a reply, this is the status id of the reply (the original tweet
-   * of the retweet), not the reply's in-reply-to tweet status id.
+   * If a twelonelont is a relontwelonelont of a relonply, this is thelon status id of thelon relonply (thelon original twelonelont
+   * of thelon relontwelonelont), not thelon relonply's in-relonply-to twelonelont status id.
    */
-  def getSourceTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    result.metadata.map(_.sharedStatusId).filter(_ != 0L)
+  delonf gelontSourcelonTwelonelontId(relonsult: ThriftSelonarchRelonsult): Option[TwelonelontId] = {
+    relonsult.melontadata.map(_.sharelondStatusId).filtelonr(_ != 0L)
   }
 
-  def getRetweetSourceTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    if (isRetweet(result)) {
-      getSourceTweetId(result)
-    } else {
-      None
+  delonf gelontRelontwelonelontSourcelonTwelonelontId(relonsult: ThriftSelonarchRelonsult): Option[TwelonelontId] = {
+    if (isRelontwelonelont(relonsult)) {
+      gelontSourcelonTwelonelontId(relonsult)
+    } elonlselon {
+      Nonelon
     }
   }
 
-  def getInReplyToTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    if (isReply(result)) {
-      getSourceTweetId(result)
-    } else {
-      None
+  delonf gelontInRelonplyToTwelonelontId(relonsult: ThriftSelonarchRelonsult): Option[TwelonelontId] = {
+    if (isRelonply(relonsult)) {
+      gelontSourcelonTwelonelontId(relonsult)
+    } elonlselon {
+      Nonelon
     }
   }
 
-  def getReplyRootTweetId(result: ThriftSearchResult): Option[TweetId] = {
-    if (isEligibleReply(result)) {
+  delonf gelontRelonplyRootTwelonelontId(relonsult: ThriftSelonarchRelonsult): Option[TwelonelontId] = {
+    if (iselonligiblelonRelonply(relonsult)) {
       for {
-        meta <- result.metadata
-        extraMeta <- meta.extraMetadata
-        conversationId <- extraMeta.conversationId
-      } yield {
-        conversationId
+        melonta <- relonsult.melontadata
+        elonxtraMelonta <- melonta.elonxtraMelontadata
+        convelonrsationId <- elonxtraMelonta.convelonrsationId
+      } yielonld {
+        convelonrsationId
       }
-    } else {
-      None
+    } elonlselon {
+      Nonelon
     }
   }
 
   /**
-   * For retweet: selfTweetId + sourceTweetId, (however selfTweetId is redundant here, since Health
-   * score retweet by tweetId == sourceTweetId)
-   * For replies: selfTweetId + immediate ancestor tweetId + root ancestor tweetId.
-   * Use set to de-duplicate the case when source tweet == root tweet. (like A->B, B is root and source).
+   * For relontwelonelont: selonlfTwelonelontId + sourcelonTwelonelontId, (howelonvelonr selonlfTwelonelontId is relondundant helonrelon, sincelon Helonalth
+   * scorelon relontwelonelont by twelonelontId == sourcelonTwelonelontId)
+   * For relonplielons: selonlfTwelonelontId + immelondiatelon ancelonstor twelonelontId + root ancelonstor twelonelontId.
+   * Uselon selont to delon-duplicatelon thelon caselon whelonn sourcelon twelonelont == root twelonelont. (likelon A->B, B is root and sourcelon).
    */
-  def getOriginalTweetIdAndAncestorTweetIds(searchResult: ThriftSearchResult): Set[TweetId] = {
-    Set(searchResult.id) ++
-      SearchResultUtil.getSourceTweetId(searchResult).toSet ++
-      SearchResultUtil.getReplyRootTweetId(searchResult).toSet
+  delonf gelontOriginalTwelonelontIdAndAncelonstorTwelonelontIds(selonarchRelonsult: ThriftSelonarchRelonsult): Selont[TwelonelontId] = {
+    Selont(selonarchRelonsult.id) ++
+      SelonarchRelonsultUtil.gelontSourcelonTwelonelontId(selonarchRelonsult).toSelont ++
+      SelonarchRelonsultUtil.gelontRelonplyRootTwelonelontId(selonarchRelonsult).toSelont
   }
 }

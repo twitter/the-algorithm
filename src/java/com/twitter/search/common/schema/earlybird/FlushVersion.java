@@ -1,336 +1,336 @@
-package com.twitter.search.common.schema.earlybird;
+packagelon com.twittelonr.selonarch.common.schelonma.elonarlybird;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.twitter.search.common.config.Config;
+import com.twittelonr.selonarch.common.config.Config;
 
-public enum FlushVersion {
+public elonnum FlushVelonrsion {
   /* =======================================================
-   * Versions
+   * Velonrsions
    * ======================================================= */
-  VERSION_0("Initial version of partition flushing."),
-  VERSION_1("Added timestamps and corresponding mapper to SegmentData."),
-  VERSION_2("Add column stride fields."),
-  VERSION_3("Change facet field configuration."),
-  VERSION_4("Add per term offensive counters to parallel posting arrays."),
-  VERSION_5("Add native photo facet."),
-  VERSION_6("Add UserFeature column stride field"),
-  VERSION_7("Index segment optimizations; new facet data structures."),
-  VERSION_8("Store statuses in memory in Earlybird."),
-  VERSION_9("Index from_user_ids into a searchable field."),
-  VERSION_10("Change from_user_id dictionary from fst to mphf"),
-  VERSION_11("Write image and video facet in separate lucene field."),
-  VERSION_12("Add retweeted status ID to the sparse CSF."),
-  VERSION_13("Add isOffensive field for profanity filter."),
-  VERSION_14("Fix features column stride field corruption."),
-  VERSION_15("Upgrade Lucene version, which has a different FST serialization format."),
-  VERSION_16("Remove maxDoc in favor of lastDocID"),
-  VERSION_17("Added partition and timeslice identifiers to SegmentData."),
-  VERSION_18("Per-term payloads"),
-  VERSION_19("Multiple per-doc payload fields"),
-  VERSION_20("Unify and fix hash codes"),
-  VERSION_21("Super awesome new flexible realtime posting list format."),
-  VERSION_22("Added new geo implementation."),
-  VERSION_23("Upgrade to Lucene 4.0.0 Final"),
-  VERSION_24("Added tweet topic ids."),
-  VERSION_25("Turn on skip list for mention facet."),
-  VERSION_26("Added new EncodedTweetFeaturesColumnStrideField."),
-  VERSION_27("Topic ids facet field."),
-  VERSION_28("From-user discover stories skiplist field."),
-  VERSION_29("Move tokenized screen name to the new username field"),
-  VERSION_30("Enable HF term pairs index."),
-  VERSION_31("Remove reverse doc ids."),
-  VERSION_32("Switch shared status id CSF to non-sparse long CSF index."),
-  VERSION_33("New skip lists for optimized high df posting lists."),
-  VERSION_34("Store tweet signature in EarlybirdEncodedFeatures."),
-  VERSION_35("Don't store shared status id csf in archive indexes."),
-  VERSION_36("Don't store norms."),
-  VERSION_37("64 bit user ids."),
-  VERSION_38("Index links in archive."),
-  VERSION_39("Fix pic.twitter.com image link handling not setting the internal field correctly."),
-  VERSION_40("Fix all archive tweets being marked as replies."),
-  VERSION_41("Avoid flushing event_ids field; event clusters are applied as updates."),
-  VERSION_42("No position fields refactoring; made a few fields to not use position."),
-  VERSION_43("Index private geo coordinates"),
-  VERSION_44("Materialize last doc id in HighDFCompressedPostinglists", true),
-  VERSION_45("Removing from_user_id facets support", true),
-  VERSION_46("Guard against badly out of order tweets in the search archive.", true),
-  VERSION_47("Added card title and description fields.", true),
-  VERSION_48("Added card type CSF.", true),
-  VERSION_49("Lucene 4.4 upgrade", true),
-  VERSION_50("Put mem-archive back on non-lucene optimized indexes", true),
-  VERSION_51("Force index rebuild to fix blank text field. See SEARCH-2505.", true),
-  VERSION_52("Refactoring of docValues/CSF.", true),
-  VERSION_53("Remove SegmentData.Configuration", true),
-  VERSION_54("Fix bad indices caused by SEARCH-2723.", true),
-  VERSION_55("Fixed non-deterministic facetIds across restarts. SEARCH-2815.", true),
-  VERSION_56("Flush FacetIDMap.", true),
-  VERSION_57("Remove LatLonMapper and use standard DocValues instead.", true),
-  VERSION_58("Longterm Attribute Optimization.", true),
-  VERSION_59("Renamed archive segment names. Current segment is no longer mutable.", true),
-  // Flush version 60 and 59 have the same format.
-  // Flush version is increased to trigger a rebuild, because we noticed incomplete segments.
-  // More details can be found on SEARCH-3664
-  VERSION_60("Flush version change to trigger segment rebuild.", true),
-  VERSION_61("Adding back from_user_id", true),
-  VERSION_62("Add retweet facet.", true),
-  VERSION_63("Switch to new index API in com.twitter.search.core.earlybird.", true),
-  VERSION_64("Sort merge archive day and part-* data. SEARCH-4692.", true),
-  VERSION_65("Fix ID_FIELD and CREATED_AT_FIELD sort order. SEARCH-4004 SEARCH-912 ", true),
-  VERSION_66("Rebuild data for 1/5/2015. Data on HDFS fixed as part of SEARCH-5347.", true),
-  VERSION_67("Upgrade to Lucene 4.10.3.", true),
-  VERSION_68("Switching to Penguin v4", true),
-  VERSION_69("Fix 16% archive segments: SEARCH-6073", true),
-  VERSION_70("Switching to Penguin v4 for full archive cluster. SEARCH-5302", true),
-  VERSION_71("Switching to Penguin v4 for ssd archive cluster.", true),
-  VERSION_72("Added Escherbird annotations for full archive.", true),
-  VERSION_73("Lucene 5.2.1 upgrade.", true, 0),
-  VERSION_74("Hanndle geo scurbbed data and archive geo index accuracy", true, 0),
-  VERSION_75("Delete from_user_id_stories from indices", true, 0),
-  VERSION_76("Allow multiple index extensions.", true, 0),
-  VERSION_77("Removed EarlybirdCodec", true, 0),
-  // minor version 2: added embedded tweet features
-  // minor version 3: change embedded tweet features to INC_ONLY
-  VERSION_78("Added 80 bytes of extended features", true, 3),
-  // minor version 1: SEARCH-8564 - Reference Tweet Author ID, using
-  //                  EXTENDED_TEST_FEATURE_UNUSED_BITS_2 and EXTENDED_TEST_FEATURE_UNUSED_BITS_3
-  VERSION_79("Renamed UNUSED_BIT to HAS_VISIBLE_LINK", true, 1),
-  // minor version 2: SEARCH-8564 / http://go/rb/770373
-  //                  Made REFERENCE_AUTHOR_ID_LEAST_SIGNIFICANT_INT and
-  //                  REFERENCE_AUTHOR_ID_MOST_SIGNIFICANT_INT immutable field
-  VERSION_80("Facet for links: SEARCH-8331", true, 2),
-  // minor version 1: added video view count
-  VERSION_81("Adding LowDF posting list with packed ints", true, 1),
-  VERSION_82("Enabling HighDF posting list with packed ints", true, 0),
-  // minor version 1: SEARCH-9379 - Added bitset for nullcast tweets
-  // minor version 2: SEARCH-8765 - Added visible token ratio
-  VERSION_83("Add bits in encoded features for media type flags. SEARCH-9131", true, 2),
-  VERSION_84("Enable archive rebuild for __has_links field. SEARCH-9635", true, 0),
-  // minor version 1: SEARCHQUAL-8130, add engagement v2
-  VERSION_85("New archive build gen for missing geo data. SEARCH-9894", true, 1),
-  VERSION_86("Added new fields to the index", true, 0),
-  // During this rebuild both the statuses and the engagement counts were regenerated.
-  // minor version 1: added quote_count
-  VERSION_87("Periodic archive full rebuild. SEARCH-9423", true, 1),
-  // minor version 1: make new tokenized user name/handle fields textSearchable
-  //                  (see go/rb/847134/)
-  // minor version 2: added has_quote
-  VERSION_88("Fixing missing day in the full archive index. SEARCH-11233", true, 2),
-  VERSION_89("Index and store conversation ids.", true, 0),
-  VERSION_90("Fixing inconsistent days in the full archive index. SEARCH-11744", true, 0),
-  VERSION_91("Making in_reply_to_user_id field use MPH. SEARCH-10836", true, 0),
-  VERSION_92("Allow searches by any field. SEARCH-11251", true, 0),
-  // During this rebuild we regenerated engagement counts and merged the annotations in the
-  // aggregate job.
-  VERSION_93("Periodic archive full rebuild. SEARCH-11076", true, 0),
-  // minor version 1: add ThriftCSFViewSettings.outputCSFType
-  VERSION_94("Indexing a bunch of geo fields. SEARCH-10283", true, 1),
-  VERSION_95("Removing topic ID fields. SEARCH-8616", true, 0),
-    // minor version 1: add ThriftCSFViewSettings.normalizationType
-  VERSION_96("Enabling conversation ID for all clusters. SEARCH-11989", true, 1),
-  // minor version 1: set several feature configuration to be correct double type
-  // minor version 2: set some more feature configuration to be correct double type
-  // minor version 3: add safety labels SEARCHQUAL-9561
-  // minor version 4: add weighted engagement counts SEARCHQUAL-9574
-  // minor version 5: add Dopamine non personalized score SEARCHQUAL-9743
-  VERSION_97("Changing CSF type to BOOLEAN for some has_* flags.", true, 5),
-  VERSION_98("Periodic archive full rebuild. PCM-56871.", true, 1),
-  VERSION_99("Removing named_entities field. SEARCH-13708", true, 0),
-  // minor version 1: add periscope features (SEARCHQUAL-10008)
-  // minor version 2: add raw_earlybird_score to TweetExternalFeatures (SEARCHQUAL-10347)
-  VERSION_100("Upgrade Penguin Version from V4 to V6. SEARCH-12991", true, 2),
-  // minor version 1: adjust for normalizer type for some engagement counters (SEARCHQUAL-9537)
-  // minor version 2: add decaying engagement counts and last engaged timestamps (SEARCHQUAL-10532)
-  VERSION_101("Add emoji to the index. SEARCH-12991", true, 2),
-  VERSION_102("Periodic full archive rebuild. PCM-67851", true, 0),
-  VERSION_103("Add liked_by_user_id field. SEARCH-15341", true, 0),
-  // minor version 1: remove last engaged timestamp with 3-hour increment (SEARCHQUAL-10903)
-  // minor version 2: add fake engagement counts (SEARCHQUAL-10795)
-  // minor version 3: add last engaged timestamp with 1-hour increment (SEARCHQUAL-10942)
-  VERSION_104("Reverting to the 20170109_pc100_par30 build gen. SEARCH-15731", true, 3),
-  VERSION_105("Add 3 new fields to archive index for engagement features. SEARCH-16102", true, 0),
-  // This is the last rebuild based on /tables/statuses. Starting 9/14 this build-gen is powered
-  // by TweetSource. During this rebuild both statuses and engagement counts were rebuilt.
-  VERSION_106("Periodic archive full rebuild. PCM-74652", true, 0),
-  VERSION_107("Removing card fields from full archive index.", true, 0),
-  VERSION_108("Removing the tms_id field from all schemas.", true, 0),
-  VERSION_109("Removing LAT_LON_FIELD from all schemas.", true, 0),
-  VERSION_110("Adding the card fields back to the full archive index.", true, 1),
-  // minor version 1: Add composer source csf field (SEARCH-22494)
-  VERSION_111("Adding composer_source to index. SEARCH-20377.", true, 1),
-  VERSION_112("Partial rebuild to fix SEARCH-22529.", true, 0),
-  VERSION_113("Full archive build gen 20180312_pc100_par30.", true, 0),
-  VERSION_114("Fix for SEARCH-23761.", true, 0),
-  VERSION_115("Add fields for quoted tweets. SEARCH-23919", true, 0),
-  // minor version 1: Add 4 bit hashtag count, mention count and stock count (SEARCH-24336)
-  VERSION_116("Bump flush version for scrubbing pipeline. SEARCH-24225", true, 1),
-  VERSION_117("Add retweeted_by_user_id and replied_to_by_user_id fields. SEARCH-24463", true, 0),
-  // minor version 1: Removed dopamine_non_personalized_score (SEARCHQUAL-10321)
-  VERSION_118("Adding the reply and retweet source tweet IDs: SEARCH-23702, SEARCH-24502", true, 1),
-  // minor version 1: add blink engagement counts (SEARCHQUAL-15176)
-  VERSION_119("Remove public inferred location: SEARCH-24235", true, 1),
-  VERSION_120("Flush extensions before fields when flushing segments.", true, 0),
-  VERSION_121("Flush the startingDocIdForSearch field. SEARCH-25464.", true, 0),
-  VERSION_122("Do not flush the startingDocIdForSearch field.", true, 0),
-  VERSION_123("Renaming the largestDocID flushed property to firstAddedDocID.", true, 0),
-  VERSION_124("Use the skip list posting list for all fields.", true, 0),
-  VERSION_125("Use hashmap for tweet ID lookup.", true, 0),
-  VERSION_126("Use the skip list posting list for all fields.", true, 0),
-  VERSION_127("Flushing the min and max doc IDs in each segment.", true, 0),
-  VERSION_128("Add card_lang to index. SEARCH-26539", true, 0),
-  VERSION_129("Move the tweet ID mapper to the segment data.", true, 0),
-  VERSION_130("Move the time mapper to the segment data.", true, 0),
-  VERSION_131("Change the facets classes to work with any doc IDs.", true, 0),
-  VERSION_132("Make the CSF classes work with any doc IDs.", true, 0),
-  VERSION_133("Removing smallestDocID property.", true, 0),
-  VERSION_134("Optimize DeletedDocs before flushing.", true, 0),
-  VERSION_135("Add payloads to skiplists.", true, 0),
-  VERSION_136("Add name to int pools.", true, 0),
-  VERSION_137("Add unsorted stream offset.", true, 0),
-  VERSION_138("Switch to the OutOfOrderRealtimeTweetIDMapper.", true, 0),
-  VERSION_139("Remove realtime posting lists.", true, 0),
-  VERSION_140("Add named_entity field. SEARCH-27547", true, 0),
-  VERSION_141("Flush the out of order updates count.", true, 0),
-  VERSION_142("Add named_entity facet support. SEARCH-28054", true, 0),
-  VERSION_143("Index updates before optimizing segment.", true, 0),
-  VERSION_144("Refactor TermsArray.", true, 0),
-  VERSION_145("Remove SmallestDocID.", true, 0),
-  VERSION_146("Add entity_id facet support. SEARCH-28071", true, 0),
-  VERSION_147("Enable updating facets", true, 0),
-  VERSION_148("Rename the counter for feature updates to partial updates", true, 0),
-  VERSION_149("Stop flushing offsets for sorted updates DL streams.", true, 0),
-  VERSION_150("Update the name of the property for the updates DL stream offset.", true, 0),
-  VERSION_151("Upgrade Lucene version to 5.5.5.", true, 0),
-  VERSION_152("Upgrade Lucene version to 6.0.0.", true, 0),
-  VERSION_153("Upgrade Lucene version to 6.6.6.", true, 0),
-  VERSION_154("Store the timeslice ID on EarlybirdIndexSegmentData.", true, 0),
-  VERSION_155("Do not flush index extensions.", true, 0),
-  VERSION_156("Deprecate ThriftIndexedFieldSettings.defaultFieldBoost.", true, 0),
-  VERSION_157("Load CREATED_AT_CSF_FIELD into RAM in archive.", true, 0),
-  VERSION_158("Added directed at user ID field and CSF.", true, 0),
-  VERSION_159("Changing deleted docs serialization format.", true, 0),
-  VERSION_160("Add fields for health model scores. SEARCH-31907, HML-2099", true, 0),
-  VERSION_161("Switch to the 'search' Kafka cluster.", true, 0),
-  VERSION_162("Update Lucene version to 7.0.0.", true, 0),
-  VERSION_163("Update Lucene version to 7.7.2.", true, 0),
-  // minor version 1: add IS_TRENDING_NOW_FLAG
-  VERSION_164("Collect per-term stats in the realtime segments.", true, 1),
-  VERSION_165("Update Lucene version to 8.5.2.", true, 0),
-  VERSION_166("Serialize maxPosition field for InvertedRealtimeIndex", true, 0),
-  VERSION_167("Add field for pSpammyTweetScore. HML-2557", true, 0),
-  VERSION_168("Add field for pReportedTweetScore. HML-2644", true, 0),
-  VERSION_169("Add field for spammyTweetContentScore. PFM-70", true, 0),
-  VERSION_170("Add reference author id CSF. SEARCH-34715", true, 0),
-  VERSION_171("Add space_id field. SEARCH-36156", true, 0),
-  VERSION_172("Add facet support for space_id. SEARCH-36388", true, 0),
-  VERSION_173("Add space admin and title fields. SEARCH-36986", true, 0),
-  VERSION_174("Switching to Penguin v7 for realtime-exp0 cluster. SEARCH-36068", true, 0),
-  VERSION_175("Adding exclusive conversation author id CSF", true, 0),
-  VERSION_176("Adding card URI CSF", true, 0),
-  // minor version 1: add FROM_BLUE_VERIFIED_ACCOUNT_FLAG
-  // minor version 2: Adding new cluster REALTIME_CG. SEARCH-45692
-  VERSION_177("Adding URL Description and Title fields. SEARCH-41641", true, 2),
+  VelonRSION_0("Initial velonrsion of partition flushing."),
+  VelonRSION_1("Addelond timelonstamps and correlonsponding mappelonr to SelongmelonntData."),
+  VelonRSION_2("Add column stridelon fielonlds."),
+  VelonRSION_3("Changelon facelont fielonld configuration."),
+  VelonRSION_4("Add pelonr telonrm offelonnsivelon countelonrs to parallelonl posting arrays."),
+  VelonRSION_5("Add nativelon photo facelont."),
+  VelonRSION_6("Add UselonrFelonaturelon column stridelon fielonld"),
+  VelonRSION_7("Indelonx selongmelonnt optimizations; nelonw facelont data structurelons."),
+  VelonRSION_8("Storelon statuselons in melonmory in elonarlybird."),
+  VelonRSION_9("Indelonx from_uselonr_ids into a selonarchablelon fielonld."),
+  VelonRSION_10("Changelon from_uselonr_id dictionary from fst to mphf"),
+  VelonRSION_11("Writelon imagelon and videlono facelont in selonparatelon lucelonnelon fielonld."),
+  VelonRSION_12("Add relontwelonelontelond status ID to thelon sparselon CSF."),
+  VelonRSION_13("Add isOffelonnsivelon fielonld for profanity filtelonr."),
+  VelonRSION_14("Fix felonaturelons column stridelon fielonld corruption."),
+  VelonRSION_15("Upgradelon Lucelonnelon velonrsion, which has a diffelonrelonnt FST selonrialization format."),
+  VelonRSION_16("Relonmovelon maxDoc in favor of lastDocID"),
+  VelonRSION_17("Addelond partition and timelonslicelon idelonntifielonrs to SelongmelonntData."),
+  VelonRSION_18("Pelonr-telonrm payloads"),
+  VelonRSION_19("Multiplelon pelonr-doc payload fielonlds"),
+  VelonRSION_20("Unify and fix hash codelons"),
+  VelonRSION_21("Supelonr awelonsomelon nelonw flelonxiblelon relonaltimelon posting list format."),
+  VelonRSION_22("Addelond nelonw gelono implelonmelonntation."),
+  VelonRSION_23("Upgradelon to Lucelonnelon 4.0.0 Final"),
+  VelonRSION_24("Addelond twelonelont topic ids."),
+  VelonRSION_25("Turn on skip list for melonntion facelont."),
+  VelonRSION_26("Addelond nelonw elonncodelondTwelonelontFelonaturelonsColumnStridelonFielonld."),
+  VelonRSION_27("Topic ids facelont fielonld."),
+  VelonRSION_28("From-uselonr discovelonr storielons skiplist fielonld."),
+  VelonRSION_29("Movelon tokelonnizelond screlonelonn namelon to thelon nelonw uselonrnamelon fielonld"),
+  VelonRSION_30("elonnablelon HF telonrm pairs indelonx."),
+  VelonRSION_31("Relonmovelon relonvelonrselon doc ids."),
+  VelonRSION_32("Switch sharelond status id CSF to non-sparselon long CSF indelonx."),
+  VelonRSION_33("Nelonw skip lists for optimizelond high df posting lists."),
+  VelonRSION_34("Storelon twelonelont signaturelon in elonarlybirdelonncodelondFelonaturelons."),
+  VelonRSION_35("Don't storelon sharelond status id csf in archivelon indelonxelons."),
+  VelonRSION_36("Don't storelon norms."),
+  VelonRSION_37("64 bit uselonr ids."),
+  VelonRSION_38("Indelonx links in archivelon."),
+  VelonRSION_39("Fix pic.twittelonr.com imagelon link handling not selontting thelon intelonrnal fielonld correlonctly."),
+  VelonRSION_40("Fix all archivelon twelonelonts beloning markelond as relonplielons."),
+  VelonRSION_41("Avoid flushing elonvelonnt_ids fielonld; elonvelonnt clustelonrs arelon applielond as updatelons."),
+  VelonRSION_42("No position fielonlds relonfactoring; madelon a felonw fielonlds to not uselon position."),
+  VelonRSION_43("Indelonx privatelon gelono coordinatelons"),
+  VelonRSION_44("Matelonrializelon last doc id in HighDFComprelonsselondPostinglists", truelon),
+  VelonRSION_45("Relonmoving from_uselonr_id facelonts support", truelon),
+  VelonRSION_46("Guard against badly out of ordelonr twelonelonts in thelon selonarch archivelon.", truelon),
+  VelonRSION_47("Addelond card titlelon and delonscription fielonlds.", truelon),
+  VelonRSION_48("Addelond card typelon CSF.", truelon),
+  VelonRSION_49("Lucelonnelon 4.4 upgradelon", truelon),
+  VelonRSION_50("Put melonm-archivelon back on non-lucelonnelon optimizelond indelonxelons", truelon),
+  VelonRSION_51("Forcelon indelonx relonbuild to fix blank telonxt fielonld. Selonelon SelonARCH-2505.", truelon),
+  VelonRSION_52("Relonfactoring of docValuelons/CSF.", truelon),
+  VelonRSION_53("Relonmovelon SelongmelonntData.Configuration", truelon),
+  VelonRSION_54("Fix bad indicelons causelond by SelonARCH-2723.", truelon),
+  VelonRSION_55("Fixelond non-delontelonrministic facelontIds across relonstarts. SelonARCH-2815.", truelon),
+  VelonRSION_56("Flush FacelontIDMap.", truelon),
+  VelonRSION_57("Relonmovelon LatLonMappelonr and uselon standard DocValuelons instelonad.", truelon),
+  VelonRSION_58("Longtelonrm Attributelon Optimization.", truelon),
+  VelonRSION_59("Relonnamelond archivelon selongmelonnt namelons. Currelonnt selongmelonnt is no longelonr mutablelon.", truelon),
+  // Flush velonrsion 60 and 59 havelon thelon samelon format.
+  // Flush velonrsion is increlonaselond to triggelonr a relonbuild, beloncauselon welon noticelond incomplelontelon selongmelonnts.
+  // Morelon delontails can belon found on SelonARCH-3664
+  VelonRSION_60("Flush velonrsion changelon to triggelonr selongmelonnt relonbuild.", truelon),
+  VelonRSION_61("Adding back from_uselonr_id", truelon),
+  VelonRSION_62("Add relontwelonelont facelont.", truelon),
+  VelonRSION_63("Switch to nelonw indelonx API in com.twittelonr.selonarch.corelon.elonarlybird.", truelon),
+  VelonRSION_64("Sort melonrgelon archivelon day and part-* data. SelonARCH-4692.", truelon),
+  VelonRSION_65("Fix ID_FIelonLD and CRelonATelonD_AT_FIelonLD sort ordelonr. SelonARCH-4004 SelonARCH-912 ", truelon),
+  VelonRSION_66("Relonbuild data for 1/5/2015. Data on HDFS fixelond as part of SelonARCH-5347.", truelon),
+  VelonRSION_67("Upgradelon to Lucelonnelon 4.10.3.", truelon),
+  VelonRSION_68("Switching to Pelonnguin v4", truelon),
+  VelonRSION_69("Fix 16% archivelon selongmelonnts: SelonARCH-6073", truelon),
+  VelonRSION_70("Switching to Pelonnguin v4 for full archivelon clustelonr. SelonARCH-5302", truelon),
+  VelonRSION_71("Switching to Pelonnguin v4 for ssd archivelon clustelonr.", truelon),
+  VelonRSION_72("Addelond elonschelonrbird annotations for full archivelon.", truelon),
+  VelonRSION_73("Lucelonnelon 5.2.1 upgradelon.", truelon, 0),
+  VelonRSION_74("Hanndlelon gelono scurbbelond data and archivelon gelono indelonx accuracy", truelon, 0),
+  VelonRSION_75("Delonlelontelon from_uselonr_id_storielons from indicelons", truelon, 0),
+  VelonRSION_76("Allow multiplelon indelonx elonxtelonnsions.", truelon, 0),
+  VelonRSION_77("Relonmovelond elonarlybirdCodelonc", truelon, 0),
+  // minor velonrsion 2: addelond elonmbelonddelond twelonelont felonaturelons
+  // minor velonrsion 3: changelon elonmbelonddelond twelonelont felonaturelons to INC_ONLY
+  VelonRSION_78("Addelond 80 bytelons of elonxtelonndelond felonaturelons", truelon, 3),
+  // minor velonrsion 1: SelonARCH-8564 - Relonfelonrelonncelon Twelonelont Author ID, using
+  //                  elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_2 and elonXTelonNDelonD_TelonST_FelonATURelon_UNUSelonD_BITS_3
+  VelonRSION_79("Relonnamelond UNUSelonD_BIT to HAS_VISIBLelon_LINK", truelon, 1),
+  // minor velonrsion 2: SelonARCH-8564 / http://go/rb/770373
+  //                  Madelon RelonFelonRelonNCelon_AUTHOR_ID_LelonAST_SIGNIFICANT_INT and
+  //                  RelonFelonRelonNCelon_AUTHOR_ID_MOST_SIGNIFICANT_INT immutablelon fielonld
+  VelonRSION_80("Facelont for links: SelonARCH-8331", truelon, 2),
+  // minor velonrsion 1: addelond videlono vielonw count
+  VelonRSION_81("Adding LowDF posting list with packelond ints", truelon, 1),
+  VelonRSION_82("elonnabling HighDF posting list with packelond ints", truelon, 0),
+  // minor velonrsion 1: SelonARCH-9379 - Addelond bitselont for nullcast twelonelonts
+  // minor velonrsion 2: SelonARCH-8765 - Addelond visiblelon tokelonn ratio
+  VelonRSION_83("Add bits in elonncodelond felonaturelons for melondia typelon flags. SelonARCH-9131", truelon, 2),
+  VelonRSION_84("elonnablelon archivelon relonbuild for __has_links fielonld. SelonARCH-9635", truelon, 0),
+  // minor velonrsion 1: SelonARCHQUAL-8130, add elonngagelonmelonnt v2
+  VelonRSION_85("Nelonw archivelon build gelonn for missing gelono data. SelonARCH-9894", truelon, 1),
+  VelonRSION_86("Addelond nelonw fielonlds to thelon indelonx", truelon, 0),
+  // During this relonbuild both thelon statuselons and thelon elonngagelonmelonnt counts welonrelon relongelonnelonratelond.
+  // minor velonrsion 1: addelond quotelon_count
+  VelonRSION_87("Pelonriodic archivelon full relonbuild. SelonARCH-9423", truelon, 1),
+  // minor velonrsion 1: makelon nelonw tokelonnizelond uselonr namelon/handlelon fielonlds telonxtSelonarchablelon
+  //                  (selonelon go/rb/847134/)
+  // minor velonrsion 2: addelond has_quotelon
+  VelonRSION_88("Fixing missing day in thelon full archivelon indelonx. SelonARCH-11233", truelon, 2),
+  VelonRSION_89("Indelonx and storelon convelonrsation ids.", truelon, 0),
+  VelonRSION_90("Fixing inconsistelonnt days in thelon full archivelon indelonx. SelonARCH-11744", truelon, 0),
+  VelonRSION_91("Making in_relonply_to_uselonr_id fielonld uselon MPH. SelonARCH-10836", truelon, 0),
+  VelonRSION_92("Allow selonarchelons by any fielonld. SelonARCH-11251", truelon, 0),
+  // During this relonbuild welon relongelonnelonratelond elonngagelonmelonnt counts and melonrgelond thelon annotations in thelon
+  // aggrelongatelon job.
+  VelonRSION_93("Pelonriodic archivelon full relonbuild. SelonARCH-11076", truelon, 0),
+  // minor velonrsion 1: add ThriftCSFVielonwSelonttings.outputCSFTypelon
+  VelonRSION_94("Indelonxing a bunch of gelono fielonlds. SelonARCH-10283", truelon, 1),
+  VelonRSION_95("Relonmoving topic ID fielonlds. SelonARCH-8616", truelon, 0),
+    // minor velonrsion 1: add ThriftCSFVielonwSelonttings.normalizationTypelon
+  VelonRSION_96("elonnabling convelonrsation ID for all clustelonrs. SelonARCH-11989", truelon, 1),
+  // minor velonrsion 1: selont selonvelonral felonaturelon configuration to belon correlonct doublelon typelon
+  // minor velonrsion 2: selont somelon morelon felonaturelon configuration to belon correlonct doublelon typelon
+  // minor velonrsion 3: add safelonty labelonls SelonARCHQUAL-9561
+  // minor velonrsion 4: add welonightelond elonngagelonmelonnt counts SelonARCHQUAL-9574
+  // minor velonrsion 5: add Dopaminelon non pelonrsonalizelond scorelon SelonARCHQUAL-9743
+  VelonRSION_97("Changing CSF typelon to BOOLelonAN for somelon has_* flags.", truelon, 5),
+  VelonRSION_98("Pelonriodic archivelon full relonbuild. PCM-56871.", truelon, 1),
+  VelonRSION_99("Relonmoving namelond_elonntitielons fielonld. SelonARCH-13708", truelon, 0),
+  // minor velonrsion 1: add pelonriscopelon felonaturelons (SelonARCHQUAL-10008)
+  // minor velonrsion 2: add raw_elonarlybird_scorelon to TwelonelontelonxtelonrnalFelonaturelons (SelonARCHQUAL-10347)
+  VelonRSION_100("Upgradelon Pelonnguin Velonrsion from V4 to V6. SelonARCH-12991", truelon, 2),
+  // minor velonrsion 1: adjust for normalizelonr typelon for somelon elonngagelonmelonnt countelonrs (SelonARCHQUAL-9537)
+  // minor velonrsion 2: add deloncaying elonngagelonmelonnt counts and last elonngagelond timelonstamps (SelonARCHQUAL-10532)
+  VelonRSION_101("Add elonmoji to thelon indelonx. SelonARCH-12991", truelon, 2),
+  VelonRSION_102("Pelonriodic full archivelon relonbuild. PCM-67851", truelon, 0),
+  VelonRSION_103("Add likelond_by_uselonr_id fielonld. SelonARCH-15341", truelon, 0),
+  // minor velonrsion 1: relonmovelon last elonngagelond timelonstamp with 3-hour increlonmelonnt (SelonARCHQUAL-10903)
+  // minor velonrsion 2: add fakelon elonngagelonmelonnt counts (SelonARCHQUAL-10795)
+  // minor velonrsion 3: add last elonngagelond timelonstamp with 1-hour increlonmelonnt (SelonARCHQUAL-10942)
+  VelonRSION_104("Relonvelonrting to thelon 20170109_pc100_par30 build gelonn. SelonARCH-15731", truelon, 3),
+  VelonRSION_105("Add 3 nelonw fielonlds to archivelon indelonx for elonngagelonmelonnt felonaturelons. SelonARCH-16102", truelon, 0),
+  // This is thelon last relonbuild baselond on /tablelons/statuselons. Starting 9/14 this build-gelonn is powelonrelond
+  // by TwelonelontSourcelon. During this relonbuild both statuselons and elonngagelonmelonnt counts welonrelon relonbuilt.
+  VelonRSION_106("Pelonriodic archivelon full relonbuild. PCM-74652", truelon, 0),
+  VelonRSION_107("Relonmoving card fielonlds from full archivelon indelonx.", truelon, 0),
+  VelonRSION_108("Relonmoving thelon tms_id fielonld from all schelonmas.", truelon, 0),
+  VelonRSION_109("Relonmoving LAT_LON_FIelonLD from all schelonmas.", truelon, 0),
+  VelonRSION_110("Adding thelon card fielonlds back to thelon full archivelon indelonx.", truelon, 1),
+  // minor velonrsion 1: Add composelonr sourcelon csf fielonld (SelonARCH-22494)
+  VelonRSION_111("Adding composelonr_sourcelon to indelonx. SelonARCH-20377.", truelon, 1),
+  VelonRSION_112("Partial relonbuild to fix SelonARCH-22529.", truelon, 0),
+  VelonRSION_113("Full archivelon build gelonn 20180312_pc100_par30.", truelon, 0),
+  VelonRSION_114("Fix for SelonARCH-23761.", truelon, 0),
+  VelonRSION_115("Add fielonlds for quotelond twelonelonts. SelonARCH-23919", truelon, 0),
+  // minor velonrsion 1: Add 4 bit hashtag count, melonntion count and stock count (SelonARCH-24336)
+  VelonRSION_116("Bump flush velonrsion for scrubbing pipelonlinelon. SelonARCH-24225", truelon, 1),
+  VelonRSION_117("Add relontwelonelontelond_by_uselonr_id and relonplielond_to_by_uselonr_id fielonlds. SelonARCH-24463", truelon, 0),
+  // minor velonrsion 1: Relonmovelond dopaminelon_non_pelonrsonalizelond_scorelon (SelonARCHQUAL-10321)
+  VelonRSION_118("Adding thelon relonply and relontwelonelont sourcelon twelonelont IDs: SelonARCH-23702, SelonARCH-24502", truelon, 1),
+  // minor velonrsion 1: add blink elonngagelonmelonnt counts (SelonARCHQUAL-15176)
+  VelonRSION_119("Relonmovelon public infelonrrelond location: SelonARCH-24235", truelon, 1),
+  VelonRSION_120("Flush elonxtelonnsions belonforelon fielonlds whelonn flushing selongmelonnts.", truelon, 0),
+  VelonRSION_121("Flush thelon startingDocIdForSelonarch fielonld. SelonARCH-25464.", truelon, 0),
+  VelonRSION_122("Do not flush thelon startingDocIdForSelonarch fielonld.", truelon, 0),
+  VelonRSION_123("Relonnaming thelon largelonstDocID flushelond propelonrty to firstAddelondDocID.", truelon, 0),
+  VelonRSION_124("Uselon thelon skip list posting list for all fielonlds.", truelon, 0),
+  VelonRSION_125("Uselon hashmap for twelonelont ID lookup.", truelon, 0),
+  VelonRSION_126("Uselon thelon skip list posting list for all fielonlds.", truelon, 0),
+  VelonRSION_127("Flushing thelon min and max doc IDs in elonach selongmelonnt.", truelon, 0),
+  VelonRSION_128("Add card_lang to indelonx. SelonARCH-26539", truelon, 0),
+  VelonRSION_129("Movelon thelon twelonelont ID mappelonr to thelon selongmelonnt data.", truelon, 0),
+  VelonRSION_130("Movelon thelon timelon mappelonr to thelon selongmelonnt data.", truelon, 0),
+  VelonRSION_131("Changelon thelon facelonts classelons to work with any doc IDs.", truelon, 0),
+  VelonRSION_132("Makelon thelon CSF classelons work with any doc IDs.", truelon, 0),
+  VelonRSION_133("Relonmoving smallelonstDocID propelonrty.", truelon, 0),
+  VelonRSION_134("Optimizelon DelonlelontelondDocs belonforelon flushing.", truelon, 0),
+  VelonRSION_135("Add payloads to skiplists.", truelon, 0),
+  VelonRSION_136("Add namelon to int pools.", truelon, 0),
+  VelonRSION_137("Add unsortelond strelonam offselont.", truelon, 0),
+  VelonRSION_138("Switch to thelon OutOfOrdelonrRelonaltimelonTwelonelontIDMappelonr.", truelon, 0),
+  VelonRSION_139("Relonmovelon relonaltimelon posting lists.", truelon, 0),
+  VelonRSION_140("Add namelond_elonntity fielonld. SelonARCH-27547", truelon, 0),
+  VelonRSION_141("Flush thelon out of ordelonr updatelons count.", truelon, 0),
+  VelonRSION_142("Add namelond_elonntity facelont support. SelonARCH-28054", truelon, 0),
+  VelonRSION_143("Indelonx updatelons belonforelon optimizing selongmelonnt.", truelon, 0),
+  VelonRSION_144("Relonfactor TelonrmsArray.", truelon, 0),
+  VelonRSION_145("Relonmovelon SmallelonstDocID.", truelon, 0),
+  VelonRSION_146("Add elonntity_id facelont support. SelonARCH-28071", truelon, 0),
+  VelonRSION_147("elonnablelon updating facelonts", truelon, 0),
+  VelonRSION_148("Relonnamelon thelon countelonr for felonaturelon updatelons to partial updatelons", truelon, 0),
+  VelonRSION_149("Stop flushing offselonts for sortelond updatelons DL strelonams.", truelon, 0),
+  VelonRSION_150("Updatelon thelon namelon of thelon propelonrty for thelon updatelons DL strelonam offselont.", truelon, 0),
+  VelonRSION_151("Upgradelon Lucelonnelon velonrsion to 5.5.5.", truelon, 0),
+  VelonRSION_152("Upgradelon Lucelonnelon velonrsion to 6.0.0.", truelon, 0),
+  VelonRSION_153("Upgradelon Lucelonnelon velonrsion to 6.6.6.", truelon, 0),
+  VelonRSION_154("Storelon thelon timelonslicelon ID on elonarlybirdIndelonxSelongmelonntData.", truelon, 0),
+  VelonRSION_155("Do not flush indelonx elonxtelonnsions.", truelon, 0),
+  VelonRSION_156("Delonpreloncatelon ThriftIndelonxelondFielonldSelonttings.delonfaultFielonldBoost.", truelon, 0),
+  VelonRSION_157("Load CRelonATelonD_AT_CSF_FIelonLD into RAM in archivelon.", truelon, 0),
+  VelonRSION_158("Addelond direlonctelond at uselonr ID fielonld and CSF.", truelon, 0),
+  VelonRSION_159("Changing delonlelontelond docs selonrialization format.", truelon, 0),
+  VelonRSION_160("Add fielonlds for helonalth modelonl scorelons. SelonARCH-31907, HML-2099", truelon, 0),
+  VelonRSION_161("Switch to thelon 'selonarch' Kafka clustelonr.", truelon, 0),
+  VelonRSION_162("Updatelon Lucelonnelon velonrsion to 7.0.0.", truelon, 0),
+  VelonRSION_163("Updatelon Lucelonnelon velonrsion to 7.7.2.", truelon, 0),
+  // minor velonrsion 1: add IS_TRelonNDING_NOW_FLAG
+  VelonRSION_164("Collelonct pelonr-telonrm stats in thelon relonaltimelon selongmelonnts.", truelon, 1),
+  VelonRSION_165("Updatelon Lucelonnelon velonrsion to 8.5.2.", truelon, 0),
+  VelonRSION_166("Selonrializelon maxPosition fielonld for InvelonrtelondRelonaltimelonIndelonx", truelon, 0),
+  VelonRSION_167("Add fielonld for pSpammyTwelonelontScorelon. HML-2557", truelon, 0),
+  VelonRSION_168("Add fielonld for pRelonportelondTwelonelontScorelon. HML-2644", truelon, 0),
+  VelonRSION_169("Add fielonld for spammyTwelonelontContelonntScorelon. PFM-70", truelon, 0),
+  VelonRSION_170("Add relonfelonrelonncelon author id CSF. SelonARCH-34715", truelon, 0),
+  VelonRSION_171("Add spacelon_id fielonld. SelonARCH-36156", truelon, 0),
+  VelonRSION_172("Add facelont support for spacelon_id. SelonARCH-36388", truelon, 0),
+  VelonRSION_173("Add spacelon admin and titlelon fielonlds. SelonARCH-36986", truelon, 0),
+  VelonRSION_174("Switching to Pelonnguin v7 for relonaltimelon-elonxp0 clustelonr. SelonARCH-36068", truelon, 0),
+  VelonRSION_175("Adding elonxclusivelon convelonrsation author id CSF", truelon, 0),
+  VelonRSION_176("Adding card URI CSF", truelon, 0),
+  // minor velonrsion 1: add FROM_BLUelon_VelonRIFIelonD_ACCOUNT_FLAG
+  // minor velonrsion 2: Adding nelonw clustelonr RelonALTIMelon_CG. SelonARCH-45692
+  VelonRSION_177("Adding URL Delonscription and Titlelon fielonlds. SelonARCH-41641", truelon, 2),
 
   /**
-   * This semi colon is on a separate line to avoid polluting git blame history.
-   * Put a comma after the new enum field you're adding.
+   * This selonmi colon is on a selonparatelon linelon to avoid polluting git blamelon history.
+   * Put a comma aftelonr thelon nelonw elonnum fielonld you'relon adding.
    */;
 
-  // The current version.
-  public static final FlushVersion CURRENT_FLUSH_VERSION =
-      FlushVersion.values()[FlushVersion.values().length - 1];
+  // Thelon currelonnt velonrsion.
+  public static final FlushVelonrsion CURRelonNT_FLUSH_VelonRSION =
+      FlushVelonrsion.valuelons()[FlushVelonrsion.valuelons().lelonngth - 1];
 
-  public static final String DELIMITER = "_v_";
+  public static final String DelonLIMITelonR = "_v_";
 
   /* =======================================================
-   * Helper methods
+   * Helonlpelonr melonthods
    * ======================================================= */
-  private final String description;
-  private final boolean isOfficial;
-  private final int minorVersion;
+  privatelon final String delonscription;
+  privatelon final boolelonan isOfficial;
+  privatelon final int minorVelonrsion;
 
   /**
-   * A flush version is not official unless explicitly stated to be official.
-   * An unofficial flush version is never uploaded to HDFS.
+   * A flush velonrsion is not official unlelonss elonxplicitly statelond to belon official.
+   * An unofficial flush velonrsion is nelonvelonr uploadelond to HDFS.
    */
-  private FlushVersion(String description) {
-    this(description, false, 0);
+  privatelon FlushVelonrsion(String delonscription) {
+    this(delonscription, falselon, 0);
   }
 
-  private FlushVersion(String description, boolean isOfficial) {
-    this(description, isOfficial, 0);
+  privatelon FlushVelonrsion(String delonscription, boolelonan isOfficial) {
+    this(delonscription, isOfficial, 0);
   }
 
-  private FlushVersion(String description, boolean isOfficial, int minorVersion) {
-    this.description = description;
+  privatelon FlushVelonrsion(String delonscription, boolelonan isOfficial, int minorVelonrsion) {
+    this.delonscription = delonscription;
     this.isOfficial = isOfficial;
-    this.minorVersion = minorVersion;
+    this.minorVelonrsion = minorVelonrsion;
   }
 
   /**
-   * Returns file extension with version number.
+   * Relonturns filelon elonxtelonnsion with velonrsion numbelonr.
    */
-  public String getVersionFileExtension() {
-    if (this == VERSION_0) {
-      return "";
-    } else {
-      return DELIMITER + ordinal();
+  public String gelontVelonrsionFilelonelonxtelonnsion() {
+    if (this == VelonRSION_0) {
+      relonturn "";
+    } elonlselon {
+      relonturn DelonLIMITelonR + ordinal();
     }
   }
 
   /**
-   * Returns file extension given flush version number.
-   * If the flush version is unknown (e.g. higher than current flush version or lower than 0), null
-   * is returned.
+   * Relonturns filelon elonxtelonnsion givelonn flush velonrsion numbelonr.
+   * If thelon flush velonrsion is unknown (elon.g. highelonr than currelonnt flush velonrsion or lowelonr than 0), null
+   * is relonturnelond.
    */
-  @Nullable
-  public static String getVersionFileExtension(int flushVersion) {
-    if (flushVersion > CURRENT_FLUSH_VERSION.ordinal() || flushVersion < 0) {
-      return null;
-    } else {
-      return FlushVersion.values()[flushVersion].getVersionFileExtension();
+  @Nullablelon
+  public static String gelontVelonrsionFilelonelonxtelonnsion(int flushVelonrsion) {
+    if (flushVelonrsion > CURRelonNT_FLUSH_VelonRSION.ordinal() || flushVelonrsion < 0) {
+      relonturn null;
+    } elonlselon {
+      relonturn FlushVelonrsion.valuelons()[flushVelonrsion].gelontVelonrsionFilelonelonxtelonnsion();
     }
   }
 
   /**
-   * Returns a string describing the current schema version.
-   * @deprecated Please use {@link com.twitter.search.common.schema.base.Schema#getVersionDescription()}
+   * Relonturns a string delonscribing thelon currelonnt schelonma velonrsion.
+   * @delonpreloncatelond Plelonaselon uselon {@link com.twittelonr.selonarch.common.schelonma.baselon.Schelonma#gelontVelonrsionDelonscription()}
    */
-  @Deprecated
-  public String getDescription() {
-    return description;
+  @Delonpreloncatelond
+  public String gelontDelonscription() {
+    relonturn delonscription;
   }
 
   /**
-   * Returns the schema's major version.
-   * @deprecated Please use {@link com.twitter.search.common.schema.base.Schema#getMajorVersionNumber()}.
+   * Relonturns thelon schelonma's major velonrsion.
+   * @delonpreloncatelond Plelonaselon uselon {@link com.twittelonr.selonarch.common.schelonma.baselon.Schelonma#gelontMajorVelonrsionNumbelonr()}.
    */
-  @Deprecated
-  public int getVersionNumber() {
-    return this.ordinal();
+  @Delonpreloncatelond
+  public int gelontVelonrsionNumbelonr() {
+    relonturn this.ordinal();
   }
 
-  public boolean onOrAfter(FlushVersion other) {
-    return compareTo(other) >= 0;
-  }
-
-  /**
-   * Returns whether the schema version is official. Only official segments are uploaded to HDFS.
-   * @deprecated Please use {@link com.twitter.search.common.schema.base.Schema#isVersionOfficial()}.
-   */
-  @Deprecated
-  public boolean isOfficial() {
-    // We want the loading/flushing tests to pass locally even if the version is not meant
-    // to be an official version.
-    return isOfficial || Config.environmentIsTest();
+  public boolelonan onOrAftelonr(FlushVelonrsion othelonr) {
+    relonturn comparelonTo(othelonr) >= 0;
   }
 
   /**
-   * As of now, this is hardcoded to 0. We will start using this soon.
-   * @deprecated Please consult schema for minor version. This should only be used to build schema.
+   * Relonturns whelonthelonr thelon schelonma velonrsion is official. Only official selongmelonnts arelon uploadelond to HDFS.
+   * @delonpreloncatelond Plelonaselon uselon {@link com.twittelonr.selonarch.common.schelonma.baselon.Schelonma#isVelonrsionOfficial()}.
    */
-  @Deprecated
-  public int getMinorVersion() {
-    return minorVersion;
+  @Delonpreloncatelond
+  public boolelonan isOfficial() {
+    // Welon want thelon loading/flushing telonsts to pass locally elonvelonn if thelon velonrsion is not melonant
+    // to belon an official velonrsion.
+    relonturn isOfficial || Config.elonnvironmelonntIsTelonst();
+  }
+
+  /**
+   * As of now, this is hardcodelond to 0. Welon will start using this soon.
+   * @delonpreloncatelond Plelonaselon consult schelonma for minor velonrsion. This should only belon uselond to build schelonma.
+   */
+  @Delonpreloncatelond
+  public int gelontMinorVelonrsion() {
+    relonturn minorVelonrsion;
   }
 }

@@ -1,59 +1,59 @@
-package com.twitter.recos.user_user_graph
+packagelon com.twittelonr.reloncos.uselonr_uselonr_graph
 
-import com.twitter.graphjet.bipartite.api.EdgeTypeMask
-import com.twitter.recos.recos_common.thriftscala.UserSocialProofType
+import com.twittelonr.graphjelont.bipartitelon.api.elondgelonTypelonMask
+import com.twittelonr.reloncos.reloncos_common.thriftscala.UselonrSocialProofTypelon
 
 /**
- * The bit mask is used to encode edge types in the top bits of an integer,
- * e.g. Follow, Mention, and Mediatag. Under current segment configuration, each segment
- * stores up to 128M edges. Assuming that each node on one side is unique, each segment
- * stores up to 128M unique nodes on one side, which occupies the lower 27 bits of an integer.
- * This leaves five bits to encode the edge types, which at max can store 32 edge types.
- * The following implementation utilizes the top four bits and leaves one free bit out.
+ * Thelon bit mask is uselond to elonncodelon elondgelon typelons in thelon top bits of an intelongelonr,
+ * elon.g. Follow, Melonntion, and Melondiatag. Undelonr currelonnt selongmelonnt configuration, elonach selongmelonnt
+ * storelons up to 128M elondgelons. Assuming that elonach nodelon on onelon sidelon is uniquelon, elonach selongmelonnt
+ * storelons up to 128M uniquelon nodelons on onelon sidelon, which occupielons thelon lowelonr 27 bits of an intelongelonr.
+ * This lelonavelons fivelon bits to elonncodelon thelon elondgelon typelons, which at max can storelon 32 elondgelon typelons.
+ * Thelon following implelonmelonntation utilizelons thelon top four bits and lelonavelons onelon frelonelon bit out.
  */
-class UserEdgeTypeMask extends EdgeTypeMask {
-  import UserEdgeTypeMask._
-  override def encode(node: Int, edgeType: Byte): Int = {
-    require(
-      edgeType == FOLLOW || edgeType == MENTION || edgeType == MEDIATAG,
-      s"encode: Illegal edge type argument $edgeType")
-    node | EDGEARRAY(edgeType)
+class UselonrelondgelonTypelonMask elonxtelonnds elondgelonTypelonMask {
+  import UselonrelondgelonTypelonMask._
+  ovelonrridelon delonf elonncodelon(nodelon: Int, elondgelonTypelon: Bytelon): Int = {
+    relonquirelon(
+      elondgelonTypelon == FOLLOW || elondgelonTypelon == MelonNTION || elondgelonTypelon == MelonDIATAG,
+      s"elonncodelon: Illelongal elondgelon typelon argumelonnt $elondgelonTypelon")
+    nodelon | elonDGelonARRAY(elondgelonTypelon)
   }
 
-  override def edgeType(node: Int): Byte = {
-    (node >> 28).toByte
+  ovelonrridelon delonf elondgelonTypelon(nodelon: Int): Bytelon = {
+    (nodelon >> 28).toBytelon
   }
 
-  override def restore(node: Int): Int = {
-    node & MASK
+  ovelonrridelon delonf relonstorelon(nodelon: Int): Int = {
+    nodelon & MASK
   }
 }
 
-object UserEdgeTypeMask {
+objelonct UselonrelondgelonTypelonMask {
 
   /**
-   * Reserve the top four bits of each integer to encode the edge type information.
+   * Relonselonrvelon thelon top four bits of elonach intelongelonr to elonncodelon thelon elondgelon typelon information.
    */
   val MASK: Int =
-    Integer.parseInt("00001111111111111111111111111111", 2)
-  val FOLLOW: Byte = 0
-  val MENTION: Byte = 1
-  val MEDIATAG: Byte = 2
-  val SIZE: Byte = 3
-  val UNUSED3: Byte = 3
-  val UNUSED4: Byte = 4
-  val UNUSED5: Byte = 5
-  val UNUSED6: Byte = 6
-  val UNUSED7: Byte = 7
-  val UNUSED8: Byte = 8
-  val UNUSED9: Byte = 9
-  val UNUSED10: Byte = 10
-  val UNUSED11: Byte = 11
-  val UNUSED12: Byte = 12
-  val UNUSED13: Byte = 13
-  val UNUSED14: Byte = 14
-  val UNUSED15: Byte = 15
-  val EDGEARRAY: Array[Int] = Array(
+    Intelongelonr.parselonInt("00001111111111111111111111111111", 2)
+  val FOLLOW: Bytelon = 0
+  val MelonNTION: Bytelon = 1
+  val MelonDIATAG: Bytelon = 2
+  val SIZelon: Bytelon = 3
+  val UNUSelonD3: Bytelon = 3
+  val UNUSelonD4: Bytelon = 4
+  val UNUSelonD5: Bytelon = 5
+  val UNUSelonD6: Bytelon = 6
+  val UNUSelonD7: Bytelon = 7
+  val UNUSelonD8: Bytelon = 8
+  val UNUSelonD9: Bytelon = 9
+  val UNUSelonD10: Bytelon = 10
+  val UNUSelonD11: Bytelon = 11
+  val UNUSelonD12: Bytelon = 12
+  val UNUSelonD13: Bytelon = 13
+  val UNUSelonD14: Bytelon = 14
+  val UNUSelonD15: Bytelon = 15
+  val elonDGelonARRAY: Array[Int] = Array(
     0,
     1 << 28,
     2 << 28,
@@ -73,19 +73,19 @@ object UserEdgeTypeMask {
   )
 
   /**
-   * Map valid social proof types specified by clients to an array of bytes. If clients do not
-   * specify any social proof types in thrift, it will return all available social types by
-   * default.
+   * Map valid social proof typelons speloncifielond by clielonnts to an array of bytelons. If clielonnts do not
+   * speloncify any social proof typelons in thrift, it will relonturn all availablelon social typelons by
+   * delonfault.
    *
-   * @param socialProofTypes are the valid socialProofTypes specified by clients
-   * @return an array of bytes representing valid social proof types
+   * @param socialProofTypelons arelon thelon valid socialProofTypelons speloncifielond by clielonnts
+   * @relonturn an array of bytelons relonprelonselonnting valid social proof typelons
    */
-  def getUserUserGraphSocialProofTypes(
-    socialProofTypes: Option[Seq[UserSocialProofType]]
-  ): Array[Byte] = {
-    socialProofTypes
-      .map { _.map { _.getValue }.toArray }
-      .getOrElse((0 until SIZE).toArray)
-      .map { _.toByte }
+  delonf gelontUselonrUselonrGraphSocialProofTypelons(
+    socialProofTypelons: Option[Selonq[UselonrSocialProofTypelon]]
+  ): Array[Bytelon] = {
+    socialProofTypelons
+      .map { _.map { _.gelontValuelon }.toArray }
+      .gelontOrelonlselon((0 until SIZelon).toArray)
+      .map { _.toBytelon }
   }
 }

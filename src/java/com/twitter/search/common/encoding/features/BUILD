@@ -1,17 +1,17 @@
-# Java library for feature encoding and decoding utilities.
+# Java library for felonaturelon elonncoding and deloncoding utilitielons.
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    provides = artifact(
-        org = "com.twitter.search.common",
-        name = "encoding-features",
-        repo = artifactory,
+    providelons = artifact(
+        org = "com.twittelonr.selonarch.common",
+        namelon = "elonncoding-felonaturelons",
+        relonpo = artifactory,
     ),
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/thrift/com/twitter/search/common:indexing-java",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/guava",
+        "3rdparty/jvm/org/apachelon/thrift:libthrift",
+        "src/java/com/twittelonr/selonarch/common/schelonma/baselon",
+        "src/thrift/com/twittelonr/selonarch/common:indelonxing-java",
     ],
 )

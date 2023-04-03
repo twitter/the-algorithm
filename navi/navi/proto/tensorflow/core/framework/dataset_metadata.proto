@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package tensorflow.data;
+packagelon telonnsorflow.data;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/dataset_metadata_go_proto";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/dataselont_melontadata_go_proto";
 
-// next: 2
-message Metadata {
-  bytes name = 1;
+// nelonxt: 2
+melonssagelon Melontadata {
+  bytelons namelon = 1;
 }

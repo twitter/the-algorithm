@@ -1,105 +1,105 @@
-package com.twitter.product_mixer.core.service.selector_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.selonlelonctor_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.SelectorIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.IllegalStateFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SelonlelonctorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.IllelongalStatelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.stitch.Arrow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Applies a `Seq[Selector]` in sequential order.
- * Returns the results, and also a detailed list each selector's results (for debugging / understandability).
+ * Applielons a `Selonq[Selonlelonctor]` in selonquelonntial ordelonr.
+ * Relonturns thelon relonsults, and also a delontailelond list elonach selonlelonctor's relonsults (for delonbugging / undelonrstandability).
  */
-@Singleton
-class SelectorExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
-  def arrow[Query <: PipelineQuery](
-    selectors: Seq[Selector[Query]],
-    context: Executor.Context
-  ): Arrow[SelectorExecutor.Inputs[Query], SelectorExecutorResult] = {
+@Singlelonton
+class Selonlelonctorelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr) elonxtelonnds elonxeloncutor {
+  delonf arrow[Quelonry <: PipelonlinelonQuelonry](
+    selonlelonctors: Selonq[Selonlelonctor[Quelonry]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[Selonlelonctorelonxeloncutor.Inputs[Quelonry], SelonlelonctorelonxeloncutorRelonsult] = {
 
-    if (selectors.isEmpty) {
-      throw PipelineFailure(
-        IllegalStateFailure,
-        "Must provide a non-empty Seq of Selectors. Check the config indicated by the componentStack and ensure that a non-empty Selector Seq is provided.",
-        componentStack = Some(context.componentStack)
+    if (selonlelonctors.iselonmpty) {
+      throw PipelonlinelonFailurelon(
+        IllelongalStatelonFailurelon,
+        "Must providelon a non-elonmpty Selonq of Selonlelonctors. Chelonck thelon config indicatelond by thelon componelonntStack and elonnsurelon that a non-elonmpty Selonlelonctor Selonq is providelond.",
+        componelonntStack = Somelon(contelonxt.componelonntStack)
       )
     }
 
-    val selectorArrows =
-      selectors.zipWithIndex.foldLeft(Arrow.identity[(Query, IndexedSeq[SelectorResult])]) {
-        case (previousSelectorArrows, (selector, index)) =>
-          val selectorResult = getIndividualSelectorIsoArrow(selector, index, context)
-          previousSelectorArrows.andThen(selectorResult)
+    val selonlelonctorArrows =
+      selonlelonctors.zipWithIndelonx.foldLelonft(Arrow.idelonntity[(Quelonry, IndelonxelondSelonq[SelonlelonctorRelonsult])]) {
+        caselon (prelonviousSelonlelonctorArrows, (selonlelonctor, indelonx)) =>
+          val selonlelonctorRelonsult = gelontIndividualSelonlelonctorIsoArrow(selonlelonctor, indelonx, contelonxt)
+          prelonviousSelonlelonctorArrows.andThelonn(selonlelonctorRelonsult)
       }
 
     Arrow
       .zipWithArg(
         Arrow
-          .map[SelectorExecutor.Inputs[Query], (Query, IndexedSeq[SelectorResult])] {
-            case SelectorExecutor.Inputs(query, candidates) =>
-              (query, IndexedSeq(SelectorResult(candidates, Seq.empty)))
-          }.andThen(selectorArrows)).map {
-        case (inputs, (_, selectorResults)) =>
-          // the last results, safe because it's always non-empty since it starts with 1 element in it
-          val SelectorResult(remainingCandidates, result) = selectorResults.last
+          .map[Selonlelonctorelonxeloncutor.Inputs[Quelonry], (Quelonry, IndelonxelondSelonq[SelonlelonctorRelonsult])] {
+            caselon Selonlelonctorelonxeloncutor.Inputs(quelonry, candidatelons) =>
+              (quelonry, IndelonxelondSelonq(SelonlelonctorRelonsult(candidatelons, Selonq.elonmpty)))
+          }.andThelonn(selonlelonctorArrows)).map {
+        caselon (inputs, (_, selonlelonctorRelonsults)) =>
+          // thelon last relonsults, safelon beloncauselon it's always non-elonmpty sincelon it starts with 1 elonlelonmelonnt in it
+          val SelonlelonctorRelonsult(relonmainingCandidatelons, relonsult) = selonlelonctorRelonsults.last
 
-          val resultsAndRemainingCandidates =
-            (result.iterator ++ remainingCandidates.iterator).toSet
+          val relonsultsAndRelonmainingCandidatelons =
+            (relonsult.itelonrator ++ relonmainingCandidatelons.itelonrator).toSelont
 
-          // the droppedCandidates are all the candidates which are in neither the result or remainingCandidates
-          val droppedCandidates = inputs.candidatesWithDetails.iterator
-            .filterNot(resultsAndRemainingCandidates.contains)
-            .toIndexedSeq
+          // thelon droppelondCandidatelons arelon all thelon candidatelons which arelon in nelonithelonr thelon relonsult or relonmainingCandidatelons
+          val droppelondCandidatelons = inputs.candidatelonsWithDelontails.itelonrator
+            .filtelonrNot(relonsultsAndRelonmainingCandidatelons.contains)
+            .toIndelonxelondSelonq
 
-          SelectorExecutorResult(
-            selectedCandidates = result,
-            remainingCandidates = remainingCandidates,
-            droppedCandidates = droppedCandidates,
-            individualSelectorResults =
-              selectorResults.tail // `.tail` to remove the initial state we had
+          SelonlelonctorelonxeloncutorRelonsult(
+            selonlelonctelondCandidatelons = relonsult,
+            relonmainingCandidatelons = relonmainingCandidatelons,
+            droppelondCandidatelons = droppelondCandidatelons,
+            individualSelonlelonctorRelonsults =
+              selonlelonctorRelonsults.tail // `.tail` to relonmovelon thelon initial statelon welon had
           )
       }
   }
 
-  private def getIndividualSelectorIsoArrow[Query <: PipelineQuery](
-    selector: Selector[Query],
-    index: Int,
-    context: Executor.Context
-  ): Arrow.Iso[(Query, IndexedSeq[SelectorResult])] = {
-    val identifier = SelectorIdentifier(selector.getClass.getSimpleName, index)
+  privatelon delonf gelontIndividualSelonlelonctorIsoArrow[Quelonry <: PipelonlinelonQuelonry](
+    selonlelonctor: Selonlelonctor[Quelonry],
+    indelonx: Int,
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow.Iso[(Quelonry, IndelonxelondSelonq[SelonlelonctorRelonsult])] = {
+    val idelonntifielonr = SelonlelonctorIdelonntifielonr(selonlelonctor.gelontClass.gelontSimplelonNamelon, indelonx)
 
     val arrow = Arrow
-      .identity[(Query, IndexedSeq[SelectorResult])]
+      .idelonntity[(Quelonry, IndelonxelondSelonq[SelonlelonctorRelonsult])]
       .map {
-        case (query, previousResults) =>
-          // last is safe here because we pass in a non-empty IndexedSeq
-          val previousResult = previousResults.last
-          val currentResult = selector.apply(
-            query,
-            previousResult.remainingCandidates,
-            previousResult.result
+        caselon (quelonry, prelonviousRelonsults) =>
+          // last is safelon helonrelon beloncauselon welon pass in a non-elonmpty IndelonxelondSelonq
+          val prelonviousRelonsult = prelonviousRelonsults.last
+          val currelonntRelonsult = selonlelonctor.apply(
+            quelonry,
+            prelonviousRelonsult.relonmainingCandidatelons,
+            prelonviousRelonsult.relonsult
           )
-          (query, previousResults :+ currentResult)
+          (quelonry, prelonviousRelonsults :+ currelonntRelonsult)
       }
 
-    wrapComponentsWithTracingOnly(context, identifier)(
-      wrapWithErrorHandling(context, identifier)(
+    wrapComponelonntsWithTracingOnly(contelonxt, idelonntifielonr)(
+      wrapWithelonrrorHandling(contelonxt, idelonntifielonr)(
         arrow
       )
     )
   }
 }
 
-object SelectorExecutor {
-  case class Inputs[Query <: PipelineQuery](
-    query: Query,
-    candidatesWithDetails: Seq[CandidateWithDetails])
+objelonct Selonlelonctorelonxeloncutor {
+  caselon class Inputs[Quelonry <: PipelonlinelonQuelonry](
+    quelonry: Quelonry,
+    candidatelonsWithDelontails: Selonq[CandidatelonWithDelontails])
 }

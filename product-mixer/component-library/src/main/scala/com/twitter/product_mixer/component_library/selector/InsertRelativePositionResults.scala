@@ -1,58 +1,58 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.common.SpecificPipelines
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import CandidatelonScopelon.PartitionelondCandidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.SpeloncificPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.Param
 
 /**
- * Insert all candidates from a candidate pipeline at a position below, relative to the last
- * selection of the relative to candidate pipeline. If the relative to candidate pipeline does not
- * contain candidates, then the candidates will be inserted with padding relative to position zero.
- * If the current results are a shorter length than the requested padding, then the candidates will
- * be appended to the results.
+ * Inselonrt all candidatelons from a candidatelon pipelonlinelon at a position belonlow, relonlativelon to thelon last
+ * selonlelonction of thelon relonlativelon to candidatelon pipelonlinelon. If thelon relonlativelon to candidatelon pipelonlinelon doelons not
+ * contain candidatelons, thelonn thelon candidatelons will belon inselonrtelond with padding relonlativelon to position zelonro.
+ * If thelon currelonnt relonsults arelon a shortelonr lelonngth than thelon relonquelonstelond padding, thelonn thelon candidatelons will
+ * belon appelonndelond to thelon relonsults.
  */
-case class InsertRelativePositionResults(
-  candidatePipeline: CandidatePipelineIdentifier,
-  relativeToCandidatePipeline: CandidatePipelineIdentifier,
-  paddingAboveParam: Param[Int])
-    extends Selector[PipelineQuery] {
+caselon class InselonrtRelonlativelonPositionRelonsults(
+  candidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+  relonlativelonToCandidatelonPipelonlinelon: CandidatelonPipelonlinelonIdelonntifielonr,
+  paddingAbovelonParam: Param[Int])
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override val pipelineScope: CandidateScope = SpecificPipelines(candidatePipeline)
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = SpeloncificPipelonlinelons(candidatelonPipelonlinelon)
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
 
-    val paddingAbove = query.params(paddingAboveParam)
-    assert(paddingAbove >= 0, "Padding above must be equal to or greater than zero")
+    val paddingAbovelon = quelonry.params(paddingAbovelonParam)
+    asselonrt(paddingAbovelon >= 0, "Padding abovelon must belon elonqual to or grelonatelonr than zelonro")
 
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
+    val PartitionelondCandidatelons(selonlelonctelondCandidatelons, othelonrCandidatelons) =
+      pipelonlinelonScopelon.partition(relonmainingCandidatelons)
 
-    val resultUpdated = if (selectedCandidates.nonEmpty) {
-      // If the relativeToCandidatePipeline has zero candidates, lastIndexWhere will return -1 which
-      // will start padding from the zero position
-      val relativePosition = result.lastIndexWhere(_.source == relativeToCandidatePipeline) + 1
-      val position = relativePosition + paddingAbove
+    val relonsultUpdatelond = if (selonlelonctelondCandidatelons.nonelonmpty) {
+      // If thelon relonlativelonToCandidatelonPipelonlinelon has zelonro candidatelons, lastIndelonxWhelonrelon will relonturn -1 which
+      // will start padding from thelon zelonro position
+      val relonlativelonPosition = relonsult.lastIndelonxWhelonrelon(_.sourcelon == relonlativelonToCandidatelonPipelonlinelon) + 1
+      val position = relonlativelonPosition + paddingAbovelon
 
-      if (position < result.length) {
-        val (left, right) = result.splitAt(position)
-        left ++ selectedCandidates ++ right
-      } else {
-        result ++ selectedCandidates
+      if (position < relonsult.lelonngth) {
+        val (lelonft, right) = relonsult.splitAt(position)
+        lelonft ++ selonlelonctelondCandidatelons ++ right
+      } elonlselon {
+        relonsult ++ selonlelonctelondCandidatelons
       }
-    } else {
-      result
+    } elonlselon {
+      relonsult
     }
 
-    SelectorResult(remainingCandidates = otherCandidates, result = resultUpdated)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = othelonrCandidatelons, relonsult = relonsultUpdatelond)
   }
 }

@@ -1,572 +1,572 @@
-package com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph
+packagelon com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.asselonmblelon_multi_typelon_graph
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.coders.Coder
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.fs.multiformat.DiskFormat
-import com.twitter.beam.io.fs.multiformat.PathLayout
-import com.twitter.beam.job.DateRangeOptions
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.dal.client.dataset.SnapshotDALDataset
-import com.twitter.frigate.data_pipeline.magicrecs.magicrecs_notifications_lite.thriftscala.MagicRecsNotificationLite
-import com.twitter.iesource.thriftscala.InteractionEvent
-import com.twitter.iesource.thriftscala.InteractionType
-import com.twitter.iesource.thriftscala.ReferenceTweet
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.scio_internal.coders.ThriftStructLazyBinaryScroogeCoder
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.scrooge.ThriftStruct
-import com.twitter.simclusters_v2.common.Country
-import com.twitter.simclusters_v2.common.Language
-import com.twitter.simclusters_v2.common.TopicId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.MultiTypeGraphForTopKRightNodesThriftScioScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.TopKRightNounsScioScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.TruncatedMultiTypeGraphScioScalaDataset
-import com.twitter.simclusters_v2.scio.common.ExternalDataSources
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.GlobalDefaultMinFrequencyOfRightNodeType
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.HalfLifeInDaysForFavScore
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.NumTopNounsForUnknownRightNodeType
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.SampledEmployeeIds
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.TopKConfig
-import com.twitter.simclusters_v2.scio.multi_type_graph.assemble_multi_type_graph.Config.TopKRightNounsForMHDump
-import com.twitter.simclusters_v2.scio.multi_type_graph.common.MultiTypeGraphUtil
-import com.twitter.simclusters_v2.thriftscala.EdgeWithDecayedWeights
-import com.twitter.simclusters_v2.thriftscala.LeftNode
-import com.twitter.simclusters_v2.thriftscala.MultiTypeGraphEdge
-import com.twitter.simclusters_v2.thriftscala.Noun
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequency
-import com.twitter.simclusters_v2.thriftscala.NounWithFrequencyList
-import com.twitter.simclusters_v2.thriftscala.RightNode
-import com.twitter.simclusters_v2.thriftscala.RightNodeType
-import com.twitter.simclusters_v2.thriftscala.RightNodeTypeStruct
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeight
-import com.twitter.simclusters_v2.thriftscala.RightNodeWithEdgeWeightList
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import com.twitter.util.Duration
-import java.time.Instant
-import org.joda.time.Interval
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.codelonrs.Codelonr
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.fs.multiformat.DiskFormat
+import com.twittelonr.belonam.io.fs.multiformat.PathLayout
+import com.twittelonr.belonam.job.DatelonRangelonOptions
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.dal.clielonnt.dataselont.SnapshotDALDataselont
+import com.twittelonr.frigatelon.data_pipelonlinelon.magicreloncs.magicreloncs_notifications_litelon.thriftscala.MagicReloncsNotificationLitelon
+import com.twittelonr.ielonsourcelon.thriftscala.Intelonractionelonvelonnt
+import com.twittelonr.ielonsourcelon.thriftscala.IntelonractionTypelon
+import com.twittelonr.ielonsourcelon.thriftscala.RelonfelonrelonncelonTwelonelont
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.scio_intelonrnal.codelonrs.ThriftStructLazyBinaryScroogelonCodelonr
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.scroogelon.ThriftStruct
+import com.twittelonr.simclustelonrs_v2.common.Country
+import com.twittelonr.simclustelonrs_v2.common.Languagelon
+import com.twittelonr.simclustelonrs_v2.common.TopicId
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.MultiTypelonGraphForTopKRightNodelonsThriftScioScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.TopKRightNounsScioScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.TruncatelondMultiTypelonGraphScioScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scio.common.elonxtelonrnalDataSourcelons
+import com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.asselonmblelon_multi_typelon_graph.Config.GlobalDelonfaultMinFrelonquelonncyOfRightNodelonTypelon
+import com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.asselonmblelon_multi_typelon_graph.Config.HalfLifelonInDaysForFavScorelon
+import com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.asselonmblelon_multi_typelon_graph.Config.NumTopNounsForUnknownRightNodelonTypelon
+import com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.asselonmblelon_multi_typelon_graph.Config.SamplelondelonmployelonelonIds
+import com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.asselonmblelon_multi_typelon_graph.Config.TopKConfig
+import com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.asselonmblelon_multi_typelon_graph.Config.TopKRightNounsForMHDump
+import com.twittelonr.simclustelonrs_v2.scio.multi_typelon_graph.common.MultiTypelonGraphUtil
+import com.twittelonr.simclustelonrs_v2.thriftscala.elondgelonWithDeloncayelondWelonights
+import com.twittelonr.simclustelonrs_v2.thriftscala.LelonftNodelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.MultiTypelonGraphelondgelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.Noun
+import com.twittelonr.simclustelonrs_v2.thriftscala.NounWithFrelonquelonncy
+import com.twittelonr.simclustelonrs_v2.thriftscala.NounWithFrelonquelonncyList
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonTypelonStruct
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonWithelondgelonWelonight
+import com.twittelonr.simclustelonrs_v2.thriftscala.RightNodelonWithelondgelonWelonightList
+import com.twittelonr.twadoop.uselonr.gelonn.thriftscala.CombinelondUselonr
+import com.twittelonr.util.Duration
+import java.timelon.Instant
+import org.joda.timelon.Intelonrval
 
 /**
- * Scio version of
- * src/scala/com/twitter/simclusters_v2/scalding/multi_type_graph/assemble_multi_type_graph/AssembleMultiTypeGraph.scala
+ * Scio velonrsion of
+ * src/scala/com/twittelonr/simclustelonrs_v2/scalding/multi_typelon_graph/asselonmblelon_multi_typelon_graph/AsselonmblelonMultiTypelonGraph.scala
  */
-trait AssembleMultiTypeGraphScioBaseApp extends ScioBeamJob[DateRangeOptions] {
-  // Provides an implicit binary thrift scrooge coder by default.
-  override implicit def scroogeCoder[T <: ThriftStruct: Manifest]: Coder[T] =
-    ThriftStructLazyBinaryScroogeCoder.scroogeCoder
+trait AsselonmblelonMultiTypelonGraphScioBaselonApp elonxtelonnds ScioBelonamJob[DatelonRangelonOptions] {
+  // Providelons an implicit binary thrift scroogelon codelonr by delonfault.
+  ovelonrridelon implicit delonf scroogelonCodelonr[T <: ThriftStruct: Manifelonst]: Codelonr[T] =
+    ThriftStructLazyBinaryScroogelonCodelonr.scroogelonCodelonr
 
-  val isAdhoc: Boolean
+  val isAdhoc: Boolelonan
   val rootMHPath: String
   val rootThriftPath: String
 
-  val truncatedMultiTypeGraphMHOutputDir: String =
-    Config.truncatedMultiTypeGraphMHOutputDir
-  val truncatedMultiTypeGraphThriftOutputDir: String =
-    Config.truncatedMultiTypeGraphThriftOutputDir
+  val truncatelondMultiTypelonGraphMHOutputDir: String =
+    Config.truncatelondMultiTypelonGraphMHOutputDir
+  val truncatelondMultiTypelonGraphThriftOutputDir: String =
+    Config.truncatelondMultiTypelonGraphThriftOutputDir
   val topKRightNounsMHOutputDir: String = Config.topKRightNounsMHOutputDir
   val topKRightNounsOutputDir: String = Config.topKRightNounsOutputDir
 
-  val fullMultiTypeGraphThriftOutputDir: String =
-    Config.fullMultiTypeGraphThriftOutputDir
-  val truncatedMultiTypeGraphKeyValDataset: KeyValDALDataset[
-    KeyVal[LeftNode, RightNodeWithEdgeWeightList]
-  ] = TruncatedMultiTypeGraphScioScalaDataset
-  val topKRightNounsKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
-  ] = TopKRightNounsScioScalaDataset
-  val topKRightNounsMHKeyValDataset: KeyValDALDataset[
-    KeyVal[RightNodeTypeStruct, NounWithFrequencyList]
-  ] = TopKRightNounsMhScioScalaDataset
-  val fullMultiTypeGraphSnapshotDataset: SnapshotDALDataset[MultiTypeGraphEdge] =
-    FullMultiTypeGraphScioScalaDataset
-  val multiTypeGraphTopKForRightNodesSnapshotDataset: SnapshotDALDataset[
-    MultiTypeGraphEdge
+  val fullMultiTypelonGraphThriftOutputDir: String =
+    Config.fullMultiTypelonGraphThriftOutputDir
+  val truncatelondMultiTypelonGraphKelonyValDataselont: KelonyValDALDataselont[
+    KelonyVal[LelonftNodelon, RightNodelonWithelondgelonWelonightList]
+  ] = TruncatelondMultiTypelonGraphScioScalaDataselont
+  val topKRightNounsKelonyValDataselont: KelonyValDALDataselont[
+    KelonyVal[RightNodelonTypelonStruct, NounWithFrelonquelonncyList]
+  ] = TopKRightNounsScioScalaDataselont
+  val topKRightNounsMHKelonyValDataselont: KelonyValDALDataselont[
+    KelonyVal[RightNodelonTypelonStruct, NounWithFrelonquelonncyList]
+  ] = TopKRightNounsMhScioScalaDataselont
+  val fullMultiTypelonGraphSnapshotDataselont: SnapshotDALDataselont[MultiTypelonGraphelondgelon] =
+    FullMultiTypelonGraphScioScalaDataselont
+  val multiTypelonGraphTopKForRightNodelonsSnapshotDataselont: SnapshotDALDataselont[
+    MultiTypelonGraphelondgelon
   ] =
-    MultiTypeGraphForTopKRightNodesThriftScioScalaDataset
+    MultiTypelonGraphForTopKRightNodelonsThriftScioScalaDataselont
 
-  def getValidUsers(
-    input: SCollection[CombinedUser]
-  ): SCollection[UserId] = {
+  delonf gelontValidUselonrs(
+    input: SCollelonction[CombinelondUselonr]
+  ): SCollelonction[UselonrId] = {
     input
       .flatMap { u =>
         for {
-          user <- u.user
-          if user.id != 0
-          safety <- user.safety
-          if !(safety.suspended || safety.deactivated)
-        } yield {
-          user.id
+          uselonr <- u.uselonr
+          if uselonr.id != 0
+          safelonty <- uselonr.safelonty
+          if !(safelonty.suspelonndelond || safelonty.delonactivatelond)
+        } yielonld {
+          uselonr.id
         }
       }
   }
 
-  def filterInvalidUsers(
-    flockEdges: SCollection[(UserId, UserId)],
-    validUsers: SCollection[UserId]
-  ): SCollection[(UserId, UserId)] = {
-    val validUsersWithValues = validUsers.map(userId => (userId, ()))
-    flockEdges
-      .join(validUsersWithValues)
+  delonf filtelonrInvalidUselonrs(
+    flockelondgelons: SCollelonction[(UselonrId, UselonrId)],
+    validUselonrs: SCollelonction[UselonrId]
+  ): SCollelonction[(UselonrId, UselonrId)] = {
+    val validUselonrsWithValuelons = validUselonrs.map(uselonrId => (uselonrId, ()))
+    flockelondgelons
+      .join(validUselonrsWithValuelons)
       .map {
-        case (srcId, (destId, _)) =>
-          (destId, srcId)
+        caselon (srcId, (delonstId, _)) =>
+          (delonstId, srcId)
       }
-      .join(validUsersWithValues)
+      .join(validUselonrsWithValuelons)
       .map {
-        case (destId, (srcId, _)) =>
-          (srcId, destId)
+        caselon (delonstId, (srcId, _)) =>
+          (srcId, delonstId)
       }
   }
 
-  def getFavEdges(
-    input: SCollection[EdgeWithDecayedWeights],
-    halfLifeInDaysForFavScore: Int,
-  ): SCollection[(Long, Long, Double)] = {
+  delonf gelontFavelondgelons(
+    input: SCollelonction[elondgelonWithDeloncayelondWelonights],
+    halfLifelonInDaysForFavScorelon: Int,
+  ): SCollelonction[(Long, Long, Doublelon)] = {
     input
-      .flatMap { edge =>
-        if (edge.weights.halfLifeInDaysToDecayedSums.contains(halfLifeInDaysForFavScore)) {
-          Some(
+      .flatMap { elondgelon =>
+        if (elondgelon.welonights.halfLifelonInDaysToDeloncayelondSums.contains(halfLifelonInDaysForFavScorelon)) {
+          Somelon(
             (
-              edge.sourceId,
-              edge.destinationId,
-              edge.weights.halfLifeInDaysToDecayedSums(halfLifeInDaysForFavScore)))
-        } else {
-          None
+              elondgelon.sourcelonId,
+              elondgelon.delonstinationId,
+              elondgelon.welonights.halfLifelonInDaysToDeloncayelondSums(halfLifelonInDaysForFavScorelon)))
+        } elonlselon {
+          Nonelon
         }
       }
   }
 
-  def leftRightTuple(
-    leftNodeUserId: UserId,
-    rightNodeType: RightNodeType,
+  delonf lelonftRightTuplelon(
+    lelonftNodelonUselonrId: UselonrId,
+    rightNodelonTypelon: RightNodelonTypelon,
     rightNoun: Noun,
-    weight: Double = 1.0
-  ): (LeftNode, RightNodeWithEdgeWeight) = {
+    welonight: Doublelon = 1.0
+  ): (LelonftNodelon, RightNodelonWithelondgelonWelonight) = {
     (
-      LeftNode.UserId(leftNodeUserId),
-      RightNodeWithEdgeWeight(
-        rightNode = RightNode(rightNodeType = rightNodeType, noun = rightNoun),
-        weight = weight))
+      LelonftNodelon.UselonrId(lelonftNodelonUselonrId),
+      RightNodelonWithelondgelonWelonight(
+        rightNodelon = RightNodelon(rightNodelonTypelon = rightNodelonTypelon, noun = rightNoun),
+        welonight = welonight))
   }
 
-  def getUserFavGraph(
-    userUserFavEdges: SCollection[(UserId, UserId, Double)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userUserFavEdges.map {
-      case (srcId, destId, edgeWt) =>
-        leftRightTuple(srcId, RightNodeType.FavUser, Noun.UserId(destId), edgeWt)
+  delonf gelontUselonrFavGraph(
+    uselonrUselonrFavelondgelons: SCollelonction[(UselonrId, UselonrId, Doublelon)]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    uselonrUselonrFavelondgelons.map {
+      caselon (srcId, delonstId, elondgelonWt) =>
+        lelonftRightTuplelon(srcId, RightNodelonTypelon.FavUselonr, Noun.UselonrId(delonstId), elondgelonWt)
     }
   }
 
-  def getUserFollowGraph(
-    userUserFollowEdges: SCollection[(UserId, UserId)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userUserFollowEdges.map {
-      case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.FollowUser, Noun.UserId(destId), 1.0)
+  delonf gelontUselonrFollowGraph(
+    uselonrUselonrFollowelondgelons: SCollelonction[(UselonrId, UselonrId)]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    uselonrUselonrFollowelondgelons.map {
+      caselon (srcId, delonstId) =>
+        lelonftRightTuplelon(srcId, RightNodelonTypelon.FollowUselonr, Noun.UselonrId(delonstId), 1.0)
     }
   }
 
-  def getUserBlockGraph(
-    userUserBlockEdges: SCollection[(UserId, UserId)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userUserBlockEdges.map {
-      case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.BlockUser, Noun.UserId(destId), 1.0)
+  delonf gelontUselonrBlockGraph(
+    uselonrUselonrBlockelondgelons: SCollelonction[(UselonrId, UselonrId)]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    uselonrUselonrBlockelondgelons.map {
+      caselon (srcId, delonstId) =>
+        lelonftRightTuplelon(srcId, RightNodelonTypelon.BlockUselonr, Noun.UselonrId(delonstId), 1.0)
     }
   }
 
-  def getUserAbuseReportGraph(
-    userUserAbuseReportEdges: SCollection[(UserId, UserId)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userUserAbuseReportEdges.map {
-      case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.AbuseReportUser, Noun.UserId(destId), 1.0)
+  delonf gelontUselonrAbuselonRelonportGraph(
+    uselonrUselonrAbuselonRelonportelondgelons: SCollelonction[(UselonrId, UselonrId)]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    uselonrUselonrAbuselonRelonportelondgelons.map {
+      caselon (srcId, delonstId) =>
+        lelonftRightTuplelon(srcId, RightNodelonTypelon.AbuselonRelonportUselonr, Noun.UselonrId(delonstId), 1.0)
     }
   }
 
-  def getUserSpamReportGraph(
-    userUserSpamReportEdges: SCollection[(UserId, UserId)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userUserSpamReportEdges.map {
-      case (srcId, destId) =>
-        leftRightTuple(srcId, RightNodeType.SpamReportUser, Noun.UserId(destId), 1.0)
+  delonf gelontUselonrSpamRelonportGraph(
+    uselonrUselonrSpamRelonportelondgelons: SCollelonction[(UselonrId, UselonrId)]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    uselonrUselonrSpamRelonportelondgelons.map {
+      caselon (srcId, delonstId) =>
+        lelonftRightTuplelon(srcId, RightNodelonTypelon.SpamRelonportUselonr, Noun.UselonrId(delonstId), 1.0)
     }
   }
 
-  def getUserTopicFollowGraph(
-    topicUserFollowedByEdges: SCollection[(TopicId, UserId)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    topicUserFollowedByEdges.map {
-      case (topicId, userId) =>
-        leftRightTuple(userId, RightNodeType.FollowTopic, Noun.TopicId(topicId), 1.0)
+  delonf gelontUselonrTopicFollowGraph(
+    topicUselonrFollowelondByelondgelons: SCollelonction[(TopicId, UselonrId)]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    topicUselonrFollowelondByelondgelons.map {
+      caselon (topicId, uselonrId) =>
+        lelonftRightTuplelon(uselonrId, RightNodelonTypelon.FollowTopic, Noun.TopicId(topicId), 1.0)
     }
   }
 
-  def getUserSignUpCountryGraph(
-    userSignUpCountryEdges: SCollection[(UserId, Country)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userSignUpCountryEdges.map {
-      case (userId, country) =>
-        leftRightTuple(userId, RightNodeType.SignUpCountry, Noun.Country(country), 1.0)
+  delonf gelontUselonrSignUpCountryGraph(
+    uselonrSignUpCountryelondgelons: SCollelonction[(UselonrId, Country)]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    uselonrSignUpCountryelondgelons.map {
+      caselon (uselonrId, country) =>
+        lelonftRightTuplelon(uselonrId, RightNodelonTypelon.SignUpCountry, Noun.Country(country), 1.0)
     }
   }
 
-  def getMagicRecsNotifOpenOrClickTweetsGraph(
-    userMRNotifOpenOrClickEvents: SCollection[MagicRecsNotificationLite]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userMRNotifOpenOrClickEvents.flatMap { entry =>
+  delonf gelontMagicReloncsNotifOpelonnOrClickTwelonelontsGraph(
+    uselonrMRNotifOpelonnOrClickelonvelonnts: SCollelonction[MagicReloncsNotificationLitelon]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    uselonrMRNotifOpelonnOrClickelonvelonnts.flatMap { elonntry =>
       for {
-        userId <- entry.targetUserId
-        tweetId <- entry.tweetId
-      } yield {
-        leftRightTuple(userId, RightNodeType.NotifOpenOrClickTweet, Noun.TweetId(tweetId), 1.0)
+        uselonrId <- elonntry.targelontUselonrId
+        twelonelontId <- elonntry.twelonelontId
+      } yielonld {
+        lelonftRightTuplelon(uselonrId, RightNodelonTypelon.NotifOpelonnOrClickTwelonelont, Noun.TwelonelontId(twelonelontId), 1.0)
       }
     }
   }
 
-  def getUserConsumedLanguagesGraph(
-    userConsumedLanguageEdges: SCollection[(UserId, Seq[(Language, Double)])]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userConsumedLanguageEdges.flatMap {
-      case (userId, langWithWeights) =>
-        langWithWeights.map {
-          case (lang, weight) =>
-            leftRightTuple(userId, RightNodeType.ConsumedLanguage, Noun.Language(lang), 1.0)
+  delonf gelontUselonrConsumelondLanguagelonsGraph(
+    uselonrConsumelondLanguagelonelondgelons: SCollelonction[(UselonrId, Selonq[(Languagelon, Doublelon)])]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    uselonrConsumelondLanguagelonelondgelons.flatMap {
+      caselon (uselonrId, langWithWelonights) =>
+        langWithWelonights.map {
+          caselon (lang, welonight) =>
+            lelonftRightTuplelon(uselonrId, RightNodelonTypelon.ConsumelondLanguagelon, Noun.Languagelon(lang), 1.0)
         }
     }
   }
 
-  def getSearchGraph(
-    userSearchQueryEdges: SCollection[(UserId, String)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    userSearchQueryEdges.map {
-      case (userId, query) =>
-        leftRightTuple(userId, RightNodeType.SearchQuery, Noun.Query(query), 1.0)
+  delonf gelontSelonarchGraph(
+    uselonrSelonarchQuelonryelondgelons: SCollelonction[(UselonrId, String)]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    uselonrSelonarchQuelonryelondgelons.map {
+      caselon (uselonrId, quelonry) =>
+        lelonftRightTuplelon(uselonrId, RightNodelonTypelon.SelonarchQuelonry, Noun.Quelonry(quelonry), 1.0)
     }
   }
 
-  def getUserTweetInteractionGraph(
-    tweetInteractionEvents: SCollection[InteractionEvent],
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val userTweetInteractionsByType: SCollection[((UserId, TweetId), RightNodeType)] =
-      tweetInteractionEvents
-        .flatMap { event =>
-          val referenceTweet: Option[ReferenceTweet] = event.referenceTweet
-          val targetId: Long = event.targetId
-          val userId: Long = event.engagingUserId
+  delonf gelontUselonrTwelonelontIntelonractionGraph(
+    twelonelontIntelonractionelonvelonnts: SCollelonction[Intelonractionelonvelonnt],
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    val uselonrTwelonelontIntelonractionsByTypelon: SCollelonction[((UselonrId, TwelonelontId), RightNodelonTypelon)] =
+      twelonelontIntelonractionelonvelonnts
+        .flatMap { elonvelonnt =>
+          val relonfelonrelonncelonTwelonelont: Option[RelonfelonrelonncelonTwelonelont] = elonvelonnt.relonfelonrelonncelonTwelonelont
+          val targelontId: Long = elonvelonnt.targelontId
+          val uselonrId: Long = elonvelonnt.elonngagingUselonrId
 
-          //  To find the id of the tweet that was interacted with
-          //  For likes, this is the targetId; for retweet or reply, it is the referenceTweet's id
-          //  One thing to note is that for likes, referenceTweet is empty
-          val (tweetIdOpt, rightNodeTypeOpt) = {
-            event.interactionType match {
-              case Some(InteractionType.Favorite) =>
-                // Only allow favorites on original tweets, not retweets, to avoid double-counting
-                // because we have retweet-type tweets in the data source as well
+          //  To find thelon id of thelon twelonelont that was intelonractelond with
+          //  For likelons, this is thelon targelontId; for relontwelonelont or relonply, it is thelon relonfelonrelonncelonTwelonelont's id
+          //  Onelon thing to notelon is that for likelons, relonfelonrelonncelonTwelonelont is elonmpty
+          val (twelonelontIdOpt, rightNodelonTypelonOpt) = {
+            elonvelonnt.intelonractionTypelon match {
+              caselon Somelon(IntelonractionTypelon.Favoritelon) =>
+                // Only allow favoritelons on original twelonelonts, not relontwelonelonts, to avoid doublelon-counting
+                // beloncauselon welon havelon relontwelonelont-typelon twelonelonts in thelon data sourcelon as welonll
                 (
-                  if (referenceTweet.isEmpty) {
-                    Some(targetId)
-                  } else None,
-                  Some(RightNodeType.FavTweet))
-              case Some(InteractionType.Reply) =>
-                (referenceTweet.map(_.tweetId), Some(RightNodeType.ReplyTweet))
-              case Some(InteractionType.Retweet) =>
-                (referenceTweet.map(_.tweetId), Some(RightNodeType.RetweetTweet))
-              case _ => (None, None)
+                  if (relonfelonrelonncelonTwelonelont.iselonmpty) {
+                    Somelon(targelontId)
+                  } elonlselon Nonelon,
+                  Somelon(RightNodelonTypelon.FavTwelonelont))
+              caselon Somelon(IntelonractionTypelon.Relonply) =>
+                (relonfelonrelonncelonTwelonelont.map(_.twelonelontId), Somelon(RightNodelonTypelon.RelonplyTwelonelont))
+              caselon Somelon(IntelonractionTypelon.Relontwelonelont) =>
+                (relonfelonrelonncelonTwelonelont.map(_.twelonelontId), Somelon(RightNodelonTypelon.RelontwelonelontTwelonelont))
+              caselon _ => (Nonelon, Nonelon)
             }
           }
           for {
-            tweetId <- tweetIdOpt
-            rightNodeType <- rightNodeTypeOpt
-          } yield {
-            ((userId, tweetId), rightNodeType)
+            twelonelontId <- twelonelontIdOpt
+            rightNodelonTypelon <- rightNodelonTypelonOpt
+          } yielonld {
+            ((uselonrId, twelonelontId), rightNodelonTypelon)
           }
         }
 
-    userTweetInteractionsByType
-      .mapValues(Set(_))
-      .sumByKey
+    uselonrTwelonelontIntelonractionsByTypelon
+      .mapValuelons(Selont(_))
+      .sumByKelony
       .flatMap {
-        case ((userId, tweetId), rightNodeTypeSet) =>
-          rightNodeTypeSet.map { rightNodeType =>
-            leftRightTuple(userId, rightNodeType, Noun.TweetId(tweetId), 1.0)
+        caselon ((uselonrId, twelonelontId), rightNodelonTypelonSelont) =>
+          rightNodelonTypelonSelont.map { rightNodelonTypelon =>
+            lelonftRightTuplelon(uselonrId, rightNodelonTypelon, Noun.TwelonelontId(twelonelontId), 1.0)
           }
       }
   }
 
-  def getTopKRightNounsWithFrequencies(
-    fullGraph: SCollection[(LeftNode, RightNodeWithEdgeWeight)],
-    topKConfig: Map[RightNodeType, Int],
-    minFrequency: Int,
-  ): SCollection[(RightNodeType, Seq[(Noun, Double)])] = {
-    val maxAcrossRightNounType: Int = topKConfig.valuesIterator.max
+  delonf gelontTopKRightNounsWithFrelonquelonncielons(
+    fullGraph: SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)],
+    topKConfig: Map[RightNodelonTypelon, Int],
+    minFrelonquelonncy: Int,
+  ): SCollelonction[(RightNodelonTypelon, Selonq[(Noun, Doublelon)])] = {
+    val maxAcrossRightNounTypelon: Int = topKConfig.valuelonsItelonrator.max
 
     fullGraph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          (rightNodeWithWeight.rightNode, 1.0)
+        caselon (lelonftNodelon, rightNodelonWithWelonight) =>
+          (rightNodelonWithWelonight.rightNodelon, 1.0)
       }
-      .sumByKey
-      .filter(_._2 >= minFrequency)
+      .sumByKelony
+      .filtelonr(_._2 >= minFrelonquelonncy)
       .map {
-        case (rightNode, freq) =>
-          (rightNode.rightNodeType, (rightNode.noun, freq))
+        caselon (rightNodelon, frelonq) =>
+          (rightNodelon.rightNodelonTypelon, (rightNodelon.noun, frelonq))
       }
-      .topByKey(maxAcrossRightNounType)(Ordering.by(_._2))
+      .topByKelony(maxAcrossRightNounTypelon)(Ordelonring.by(_._2))
       .map {
-        case (rightNodeType, nounsListWithFreq) =>
-          val truncatedList = nounsListWithFreq.toSeq
+        caselon (rightNodelonTypelon, nounsListWithFrelonq) =>
+          val truncatelondList = nounsListWithFrelonq.toSelonq
             .sortBy(-_._2)
-            .take(topKConfig.getOrElse(rightNodeType, NumTopNounsForUnknownRightNodeType))
-          (rightNodeType, truncatedList)
+            .takelon(topKConfig.gelontOrelonlselon(rightNodelonTypelon, NumTopNounsForUnknownRightNodelonTypelon))
+          (rightNodelonTypelon, truncatelondList)
       }
   }
 
-  def getTruncatedGraph(
-    fullGraph: SCollection[(LeftNode, RightNodeWithEdgeWeight)],
-    topKWithFrequency: SCollection[(RightNodeType, Seq[(Noun, Double)])]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val topNouns = topKWithFrequency
+  delonf gelontTruncatelondGraph(
+    fullGraph: SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)],
+    topKWithFrelonquelonncy: SCollelonction[(RightNodelonTypelon, Selonq[(Noun, Doublelon)])]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    val topNouns = topKWithFrelonquelonncy
       .flatMap {
-        case (rightNodeType, nounsList) =>
+        caselon (rightNodelonTypelon, nounsList) =>
           nounsList
             .map {
-              case (nounVal, aggregatedFrequency) =>
-                RightNode(rightNodeType, nounVal)
+              caselon (nounVal, aggrelongatelondFrelonquelonncy) =>
+                RightNodelon(rightNodelonTypelon, nounVal)
             }
       }.map(nouns => (nouns, ()))
 
     fullGraph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          (rightNodeWithWeight.rightNode, (leftNode, rightNodeWithWeight))
+        caselon (lelonftNodelon, rightNodelonWithWelonight) =>
+          (rightNodelonWithWelonight.rightNodelon, (lelonftNodelon, rightNodelonWithWelonight))
       }
       .hashJoin(topNouns)
       .map {
-        case (rightNode, ((left, rightNodeWithWeight), _)) =>
-          (left, rightNodeWithWeight)
+        caselon (rightNodelon, ((lelonft, rightNodelonWithWelonight), _)) =>
+          (lelonft, rightNodelonWithWelonight)
       }
   }
 
-  def buildEmployeeGraph(
-    graph: SCollection[(LeftNode, RightNodeWithEdgeWeight)]
-  ): SCollection[(LeftNode, RightNodeWithEdgeWeight)] = {
-    val employeeIds = SampledEmployeeIds
+  delonf buildelonmployelonelonGraph(
+    graph: SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)]
+  ): SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] = {
+    val elonmployelonelonIds = SamplelondelonmployelonelonIds
     graph
-      .collect {
-        case (LeftNode.UserId(userId), rightNodeWithWeight) if employeeIds.contains(userId) =>
-          (LeftNode.UserId(userId), rightNodeWithWeight)
+      .collelonct {
+        caselon (LelonftNodelon.UselonrId(uselonrId), rightNodelonWithWelonight) if elonmployelonelonIds.contains(uselonrId) =>
+          (LelonftNodelon.UselonrId(uselonrId), rightNodelonWithWelonight)
       }
   }
 
-  override def configurePipeline(sc: ScioContext, opts: DateRangeOptions): Unit = {
-    // Define the implicit ScioContext to read datasets from ExternalDataSources
-    implicit def scioContext: ScioContext = sc
+  ovelonrridelon delonf configurelonPipelonlinelon(sc: ScioContelonxt, opts: DatelonRangelonOptions): Unit = {
+    // Delonfinelon thelon implicit ScioContelonxt to relonad dataselonts from elonxtelonrnalDataSourcelons
+    implicit delonf scioContelonxt: ScioContelonxt = sc
 
-    // DAL.Environment variable for WriteExecs
-    val dalEnv = if (isAdhoc) DAL.Environment.Dev else DAL.Environment.Prod
+    // DAL.elonnvironmelonnt variablelon for Writelonelonxeloncs
+    val dalelonnv = if (isAdhoc) DAL.elonnvironmelonnt.Delonv elonlselon DAL.elonnvironmelonnt.Prod
 
-    // Define date intervals
-    val interval_7days =
-      new Interval(opts.interval.getEnd.minusWeeks(1), opts.interval.getEnd.minusMillis(1))
-    val interval_14days =
-      new Interval(opts.interval.getEnd.minusWeeks(2), opts.interval.getEnd.minusMillis(1))
+    // Delonfinelon datelon intelonrvals
+    val intelonrval_7days =
+      nelonw Intelonrval(opts.intelonrval.gelontelonnd.minusWelonelonks(1), opts.intelonrval.gelontelonnd.minusMillis(1))
+    val intelonrval_14days =
+      nelonw Intelonrval(opts.intelonrval.gelontelonnd.minusWelonelonks(2), opts.intelonrval.gelontelonnd.minusMillis(1))
 
     /*
-     * Dataset read operations
+     * Dataselont relonad opelonrations
      */
-    // Get list of valid UserIds - to filter out deactivated or suspended user accounts
-    val validUsers = getValidUsers(ExternalDataSources.userSource(Duration.fromDays(7)))
+    // Gelont list of valid UselonrIds - to filtelonr out delonactivatelond or suspelonndelond uselonr accounts
+    val validUselonrs = gelontValidUselonrs(elonxtelonrnalDataSourcelons.uselonrSourcelon(Duration.fromDays(7)))
 
-    // ieSource tweet engagements data for tweet favs, replies, retweets - from last 14 days
-    val tweetSource = ExternalDataSources.ieSourceTweetEngagementsSource(interval_14days)
+    // ielonSourcelon twelonelont elonngagelonmelonnts data for twelonelont favs, relonplielons, relontwelonelonts - from last 14 days
+    val twelonelontSourcelon = elonxtelonrnalDataSourcelons.ielonSourcelonTwelonelontelonngagelonmelonntsSourcelon(intelonrval_14days)
 
-    // Read TFlock datasets
-    val flockFollowSource = ExternalDataSources.flockFollowSource(Duration.fromDays(7))
-    val flockBlockSource = ExternalDataSources.flockBlockSource(Duration.fromDays(7))
-    val flockReportAsAbuseSource =
-      ExternalDataSources.flockReportAsAbuseSource(Duration.fromDays(7))
-    val flockReportAsSpamSource =
-      ExternalDataSources.flockReportAsSpamSource(Duration.fromDays(7))
+    // Relonad TFlock dataselonts
+    val flockFollowSourcelon = elonxtelonrnalDataSourcelons.flockFollowSourcelon(Duration.fromDays(7))
+    val flockBlockSourcelon = elonxtelonrnalDataSourcelons.flockBlockSourcelon(Duration.fromDays(7))
+    val flockRelonportAsAbuselonSourcelon =
+      elonxtelonrnalDataSourcelons.flockRelonportAsAbuselonSourcelon(Duration.fromDays(7))
+    val flockRelonportAsSpamSourcelon =
+      elonxtelonrnalDataSourcelons.flockRelonportAsSpamSourcelon(Duration.fromDays(7))
 
-    // user-user fav edges
-    val userUserFavSource = ExternalDataSources.userUserFavSource(Duration.fromDays(14))
-    val userUserFavEdges = getFavEdges(userUserFavSource, HalfLifeInDaysForFavScore)
+    // uselonr-uselonr fav elondgelons
+    val uselonrUselonrFavSourcelon = elonxtelonrnalDataSourcelons.uselonrUselonrFavSourcelon(Duration.fromDays(14))
+    val uselonrUselonrFavelondgelons = gelontFavelondgelons(uselonrUselonrFavSourcelon, HalfLifelonInDaysForFavScorelon)
 
-    // user-user follow edges
-    val userUserFollowEdges = filterInvalidUsers(flockFollowSource, validUsers)
+    // uselonr-uselonr follow elondgelons
+    val uselonrUselonrFollowelondgelons = filtelonrInvalidUselonrs(flockFollowSourcelon, validUselonrs)
 
-    // user-user block edges
-    val userUserBlockEdges = filterInvalidUsers(flockBlockSource, validUsers)
+    // uselonr-uselonr block elondgelons
+    val uselonrUselonrBlockelondgelons = filtelonrInvalidUselonrs(flockBlockSourcelon, validUselonrs)
 
-    // user-user abuse report edges
-    val userUserAbuseReportEdges = filterInvalidUsers(flockReportAsAbuseSource, validUsers)
+    // uselonr-uselonr abuselon relonport elondgelons
+    val uselonrUselonrAbuselonRelonportelondgelons = filtelonrInvalidUselonrs(flockRelonportAsAbuselonSourcelon, validUselonrs)
 
-    // user-user spam report edges
-    val userUserSpamReportEdges = filterInvalidUsers(flockReportAsSpamSource, validUsers)
+    // uselonr-uselonr spam relonport elondgelons
+    val uselonrUselonrSpamRelonportelondgelons = filtelonrInvalidUselonrs(flockRelonportAsSpamSourcelon, validUselonrs)
 
-    // user-signup country edges
-    val userSignUpCountryEdges = ExternalDataSources
-      .userCountrySource(Duration.fromDays(7))
+    // uselonr-signup country elondgelons
+    val uselonrSignUpCountryelondgelons = elonxtelonrnalDataSourcelons
+      .uselonrCountrySourcelon(Duration.fromDays(7))
 
-    // user-consumed language edges
-    val userConsumedLanguageEdges =
-      ExternalDataSources.inferredUserConsumedLanguageSource(Duration.fromDays(7))
+    // uselonr-consumelond languagelon elondgelons
+    val uselonrConsumelondLanguagelonelondgelons =
+      elonxtelonrnalDataSourcelons.infelonrrelondUselonrConsumelondLanguagelonSourcelon(Duration.fromDays(7))
 
-    // user-topic follow edges
-    val topicUserFollowedByEdges =
-      ExternalDataSources.topicFollowGraphSource(Duration.fromDays(7))
+    // uselonr-topic follow elondgelons
+    val topicUselonrFollowelondByelondgelons =
+      elonxtelonrnalDataSourcelons.topicFollowGraphSourcelon(Duration.fromDays(7))
 
-    // user-MRNotifOpenOrClick events from last 7 days
-    val userMRNotifOpenOrClickEvents =
-      ExternalDataSources.magicRecsNotficationOpenOrClickEventsSource(interval_7days)
+    // uselonr-MRNotifOpelonnOrClick elonvelonnts from last 7 days
+    val uselonrMRNotifOpelonnOrClickelonvelonnts =
+      elonxtelonrnalDataSourcelons.magicReloncsNotficationOpelonnOrClickelonvelonntsSourcelon(intelonrval_7days)
 
-    // user-searchQuery strings from last 7 days
-    val userSearchQueryEdges =
-      ExternalDataSources.adaptiveSearchScribeLogsSource(interval_7days)
+    // uselonr-selonarchQuelonry strings from last 7 days
+    val uselonrSelonarchQuelonryelondgelons =
+      elonxtelonrnalDataSourcelons.adaptivelonSelonarchScribelonLogsSourcelon(intelonrval_7days)
 
     /*
-     * Generate the full graph
+     * Gelonnelonratelon thelon full graph
      */
     val fullGraph =
-      getUserTweetInteractionGraph(tweetSource) ++
-        getUserFavGraph(userUserFavEdges) ++
-        getUserFollowGraph(userUserFollowEdges) ++
-        getUserBlockGraph(userUserBlockEdges) ++
-        getUserAbuseReportGraph(userUserAbuseReportEdges) ++
-        getUserSpamReportGraph(userUserSpamReportEdges) ++
-        getUserSignUpCountryGraph(userSignUpCountryEdges) ++
-        getUserConsumedLanguagesGraph(userConsumedLanguageEdges) ++
-        getUserTopicFollowGraph(topicUserFollowedByEdges) ++
-        getMagicRecsNotifOpenOrClickTweetsGraph(userMRNotifOpenOrClickEvents) ++
-        getSearchGraph(userSearchQueryEdges)
+      gelontUselonrTwelonelontIntelonractionGraph(twelonelontSourcelon) ++
+        gelontUselonrFavGraph(uselonrUselonrFavelondgelons) ++
+        gelontUselonrFollowGraph(uselonrUselonrFollowelondgelons) ++
+        gelontUselonrBlockGraph(uselonrUselonrBlockelondgelons) ++
+        gelontUselonrAbuselonRelonportGraph(uselonrUselonrAbuselonRelonportelondgelons) ++
+        gelontUselonrSpamRelonportGraph(uselonrUselonrSpamRelonportelondgelons) ++
+        gelontUselonrSignUpCountryGraph(uselonrSignUpCountryelondgelons) ++
+        gelontUselonrConsumelondLanguagelonsGraph(uselonrConsumelondLanguagelonelondgelons) ++
+        gelontUselonrTopicFollowGraph(topicUselonrFollowelondByelondgelons) ++
+        gelontMagicReloncsNotifOpelonnOrClickTwelonelontsGraph(uselonrMRNotifOpelonnOrClickelonvelonnts) ++
+        gelontSelonarchGraph(uselonrSelonarchQuelonryelondgelons)
 
-    // Get Top K RightNodes
-    val topKRightNodes: SCollection[(RightNodeType, Seq[(Noun, Double)])] =
-      getTopKRightNounsWithFrequencies(
+    // Gelont Top K RightNodelons
+    val topKRightNodelons: SCollelonction[(RightNodelonTypelon, Selonq[(Noun, Doublelon)])] =
+      gelontTopKRightNounsWithFrelonquelonncielons(
         fullGraph,
         TopKConfig,
-        GlobalDefaultMinFrequencyOfRightNodeType)
+        GlobalDelonfaultMinFrelonquelonncyOfRightNodelonTypelon)
 
-    // key transformation - topK nouns, keyed by the RightNodeNounType
-    val topKNounsKeyedByType: SCollection[(RightNodeTypeStruct, NounWithFrequencyList)] =
-      topKRightNodes
+    // kelony transformation - topK nouns, kelonyelond by thelon RightNodelonNounTypelon
+    val topKNounsKelonyelondByTypelon: SCollelonction[(RightNodelonTypelonStruct, NounWithFrelonquelonncyList)] =
+      topKRightNodelons
         .map {
-          case (rightNodeType, rightNounsWithScoresList) =>
-            val nounsListWithFrequency: Seq[NounWithFrequency] = rightNounsWithScoresList
+          caselon (rightNodelonTypelon, rightNounsWithScorelonsList) =>
+            val nounsListWithFrelonquelonncy: Selonq[NounWithFrelonquelonncy] = rightNounsWithScorelonsList
               .map {
-                case (noun, aggregatedFrequency) =>
-                  NounWithFrequency(noun, aggregatedFrequency)
+                caselon (noun, aggrelongatelondFrelonquelonncy) =>
+                  NounWithFrelonquelonncy(noun, aggrelongatelondFrelonquelonncy)
               }
-            (RightNodeTypeStruct(rightNodeType), NounWithFrequencyList(nounsListWithFrequency))
+            (RightNodelonTypelonStruct(rightNodelonTypelon), NounWithFrelonquelonncyList(nounsListWithFrelonquelonncy))
         }
 
-    // Get Truncated graph based on the top K RightNodes
-    val truncatedGraph: SCollection[(LeftNode, RightNodeWithEdgeWeight)] =
-      getTruncatedGraph(fullGraph, topKRightNodes)
+    // Gelont Truncatelond graph baselond on thelon top K RightNodelons
+    val truncatelondGraph: SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonight)] =
+      gelontTruncatelondGraph(fullGraph, topKRightNodelons)
 
-    // key transformations - truncated graph, keyed by LeftNode
-    // Note: By wrapping and unwrapping with the LeftNode.UserId, we don't have to deal
-    // with defining our own customer ordering for LeftNode type
-    val truncatedGraphKeyedBySrc: SCollection[(LeftNode, RightNodeWithEdgeWeightList)] =
-      truncatedGraph
-        .collect {
-          case (LeftNode.UserId(userId), rightNodeWithWeight) =>
-            userId -> List(rightNodeWithWeight)
+    // kelony transformations - truncatelond graph, kelonyelond by LelonftNodelon
+    // Notelon: By wrapping and unwrapping with thelon LelonftNodelon.UselonrId, welon don't havelon to delonal
+    // with delonfining our own customelonr ordelonring for LelonftNodelon typelon
+    val truncatelondGraphKelonyelondBySrc: SCollelonction[(LelonftNodelon, RightNodelonWithelondgelonWelonightList)] =
+      truncatelondGraph
+        .collelonct {
+          caselon (LelonftNodelon.UselonrId(uselonrId), rightNodelonWithWelonight) =>
+            uselonrId -> List(rightNodelonWithWelonight)
         }
-        .sumByKey
+        .sumByKelony
         .map {
-          case (userId, rightNodeWithWeightList) =>
-            (LeftNode.UserId(userId), RightNodeWithEdgeWeightList(rightNodeWithWeightList))
+          caselon (uselonrId, rightNodelonWithWelonightList) =>
+            (LelonftNodelon.UselonrId(uselonrId), RightNodelonWithelondgelonWelonightList(rightNodelonWithWelonightList))
         }
 
-    // WriteExecs
-    // Write TopK RightNodes to DAL - save all the top K nodes for the clustering step
-    topKNounsKeyedByType
+    // Writelonelonxeloncs
+    // Writelon TopK RightNodelons to DAL - savelon all thelon top K nodelons for thelon clustelonring stelonp
+    topKNounsKelonyelondByTypelon
       .map {
-        case (engagementType, rightList) =>
-          KeyVal(engagementType, rightList)
+        caselon (elonngagelonmelonntTypelon, rightList) =>
+          KelonyVal(elonngagelonmelonntTypelon, rightList)
       }
-      .saveAsCustomOutput(
-        name = "WriteTopKNouns",
-        DAL.writeVersionedKeyVal(
-          topKRightNounsKeyValDataset,
-          PathLayout.VersionedPath(prefix =
+      .savelonAsCustomOutput(
+        namelon = "WritelonTopKNouns",
+        DAL.writelonVelonrsionelondKelonyVal(
+          topKRightNounsKelonyValDataselont,
+          PathLayout.VelonrsionelondPath(prelonfix =
             rootMHPath + topKRightNounsOutputDir),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = dalEnv,
+          instant = Instant.ofelonpochMilli(opts.intelonrval.gelontelonndMillis - 1L),
+          elonnvironmelonntOvelonrridelon = dalelonnv,
         )
       )
 
-    // Write TopK RightNodes to DAL - only take TopKRightNounsForMHDump RightNodes for MH dump
-    topKNounsKeyedByType
+    // Writelon TopK RightNodelons to DAL - only takelon TopKRightNounsForMHDump RightNodelons for MH dump
+    topKNounsKelonyelondByTypelon
       .map {
-        case (engagementType, rightList) =>
+        caselon (elonngagelonmelonntTypelon, rightList) =>
           val rightListMH =
-            NounWithFrequencyList(rightList.nounWithFrequencyList.take(TopKRightNounsForMHDump))
-          KeyVal(engagementType, rightListMH)
+            NounWithFrelonquelonncyList(rightList.nounWithFrelonquelonncyList.takelon(TopKRightNounsForMHDump))
+          KelonyVal(elonngagelonmelonntTypelon, rightListMH)
       }
-      .saveAsCustomOutput(
-        name = "WriteTopKNounsToMHForDebugger",
-        DAL.writeVersionedKeyVal(
-          topKRightNounsMHKeyValDataset,
-          PathLayout.VersionedPath(prefix =
+      .savelonAsCustomOutput(
+        namelon = "WritelonTopKNounsToMHForDelonbuggelonr",
+        DAL.writelonVelonrsionelondKelonyVal(
+          topKRightNounsMHKelonyValDataselont,
+          PathLayout.VelonrsionelondPath(prelonfix =
             rootMHPath + topKRightNounsMHOutputDir),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = dalEnv,
+          instant = Instant.ofelonpochMilli(opts.intelonrval.gelontelonndMillis - 1L),
+          elonnvironmelonntOvelonrridelon = dalelonnv,
         )
       )
 
-    // Write truncated graph (MultiTypeGraphTopKForRightNodes) to DAL in KeyVal format
-    truncatedGraphKeyedBySrc
+    // Writelon truncatelond graph (MultiTypelonGraphTopKForRightNodelons) to DAL in KelonyVal format
+    truncatelondGraphKelonyelondBySrc
       .map {
-        case (leftNode, rightNodeWithWeightList) =>
-          KeyVal(leftNode, rightNodeWithWeightList)
-      }.saveAsCustomOutput(
-        name = "WriteTruncatedMultiTypeGraph",
-        DAL.writeVersionedKeyVal(
-          truncatedMultiTypeGraphKeyValDataset,
-          PathLayout.VersionedPath(prefix =
-            rootMHPath + truncatedMultiTypeGraphMHOutputDir),
-          instant = Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
-          environmentOverride = dalEnv,
+        caselon (lelonftNodelon, rightNodelonWithWelonightList) =>
+          KelonyVal(lelonftNodelon, rightNodelonWithWelonightList)
+      }.savelonAsCustomOutput(
+        namelon = "WritelonTruncatelondMultiTypelonGraph",
+        DAL.writelonVelonrsionelondKelonyVal(
+          truncatelondMultiTypelonGraphKelonyValDataselont,
+          PathLayout.VelonrsionelondPath(prelonfix =
+            rootMHPath + truncatelondMultiTypelonGraphMHOutputDir),
+          instant = Instant.ofelonpochMilli(opts.intelonrval.gelontelonndMillis - 1L),
+          elonnvironmelonntOvelonrridelon = dalelonnv,
         )
       )
 
-    // Write truncated graph (MultiTypeGraphTopKForRightNodes) to DAL in thrift format
-    truncatedGraph
+    // Writelon truncatelond graph (MultiTypelonGraphTopKForRightNodelons) to DAL in thrift format
+    truncatelondGraph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          MultiTypeGraphEdge(leftNode, rightNodeWithWeight)
-      }.saveAsCustomOutput(
-        name = "WriteTruncatedMultiTypeGraphThrift",
-        DAL.writeSnapshot(
-          multiTypeGraphTopKForRightNodesSnapshotDataset,
-          PathLayout.FixedPath(rootThriftPath + truncatedMultiTypeGraphThriftOutputDir),
-          Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+        caselon (lelonftNodelon, rightNodelonWithWelonight) =>
+          MultiTypelonGraphelondgelon(lelonftNodelon, rightNodelonWithWelonight)
+      }.savelonAsCustomOutput(
+        namelon = "WritelonTruncatelondMultiTypelonGraphThrift",
+        DAL.writelonSnapshot(
+          multiTypelonGraphTopKForRightNodelonsSnapshotDataselont,
+          PathLayout.FixelondPath(rootThriftPath + truncatelondMultiTypelonGraphThriftOutputDir),
+          Instant.ofelonpochMilli(opts.intelonrval.gelontelonndMillis - 1L),
           DiskFormat.Thrift(),
-          environmentOverride = dalEnv
+          elonnvironmelonntOvelonrridelon = dalelonnv
         )
       )
 
-    // Write full graph to DAL
+    // Writelon full graph to DAL
     fullGraph
       .map {
-        case (leftNode, rightNodeWithWeight) =>
-          MultiTypeGraphEdge(leftNode, rightNodeWithWeight)
+        caselon (lelonftNodelon, rightNodelonWithWelonight) =>
+          MultiTypelonGraphelondgelon(lelonftNodelon, rightNodelonWithWelonight)
       }
-      .saveAsCustomOutput(
-        name = "WriteFullMultiTypeGraph",
-        DAL.writeSnapshot(
-          fullMultiTypeGraphSnapshotDataset,
-          PathLayout.FixedPath(rootThriftPath + fullMultiTypeGraphThriftOutputDir),
-          Instant.ofEpochMilli(opts.interval.getEndMillis - 1L),
+      .savelonAsCustomOutput(
+        namelon = "WritelonFullMultiTypelonGraph",
+        DAL.writelonSnapshot(
+          fullMultiTypelonGraphSnapshotDataselont,
+          PathLayout.FixelondPath(rootThriftPath + fullMultiTypelonGraphThriftOutputDir),
+          Instant.ofelonpochMilli(opts.intelonrval.gelontelonndMillis - 1L),
           DiskFormat.Thrift(),
-          environmentOverride = dalEnv
+          elonnvironmelonntOvelonrridelon = dalelonnv
         )
       )
 

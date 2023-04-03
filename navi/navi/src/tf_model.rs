@@ -1,370 +1,370 @@
-#[cfg(feature = "tf")]
+#[cfg(felonaturelon = "tf")]
 pub mod tf {
-    use arrayvec::ArrayVec;
-    use itertools::Itertools;
-    use log::{debug, error, info, warn};
-    use prost::Message;
-    use std::fmt;
-    use std::fmt::Display;
-    use std::string::String;
-    use tensorflow::io::{RecordReader, RecordReadError};
-    use tensorflow::Operation;
-    use tensorflow::SavedModelBundle;
-    use tensorflow::SessionOptions;
-    use tensorflow::SessionRunArgs;
-    use tensorflow::Tensor;
-    use tensorflow::{DataType, FetchToken, Graph, TensorInfo, TensorType};
+    uselon arrayvelonc::ArrayVelonc;
+    uselon itelonrtools::Itelonrtools;
+    uselon log::{delonbug, elonrror, info, warn};
+    uselon prost::Melonssagelon;
+    uselon std::fmt;
+    uselon std::fmt::Display;
+    uselon std::string::String;
+    uselon telonnsorflow::io::{ReloncordRelonadelonr, ReloncordRelonadelonrror};
+    uselon telonnsorflow::Opelonration;
+    uselon telonnsorflow::SavelondModelonlBundlelon;
+    uselon telonnsorflow::SelonssionOptions;
+    uselon telonnsorflow::SelonssionRunArgs;
+    uselon telonnsorflow::Telonnsor;
+    uselon telonnsorflow::{DataTypelon, FelontchTokelonn, Graph, TelonnsorInfo, TelonnsorTypelon};
 
-    use std::thread::sleep;
-    use std::time::Duration;
+    uselon std::threlonad::slelonelonp;
+    uselon std::timelon::Duration;
 
-    use crate::cli_args::{Args, ARGS, INPUTS, MODEL_SPECS, OUTPUTS};
-    use crate::tf_proto::tensorflow_serving::prediction_log::LogType;
-    use crate::tf_proto::tensorflow_serving::{PredictionLog, PredictLog};
-    use crate::tf_proto::ConfigProto;
-    use anyhow::{Context, Result};
-    use serde_json::Value;
+    uselon cratelon::cli_args::{Args, ARGS, INPUTS, MODelonL_SPelonCS, OUTPUTS};
+    uselon cratelon::tf_proto::telonnsorflow_selonrving::prelondiction_log::LogTypelon;
+    uselon cratelon::tf_proto::telonnsorflow_selonrving::{PrelondictionLog, PrelondictLog};
+    uselon cratelon::tf_proto::ConfigProto;
+    uselon anyhow::{Contelonxt, Relonsult};
+    uselon selonrdelon_json::Valuelon;
 
-    use crate::TensorReturnEnum;
-    use crate::bootstrap::{TensorInput, TensorInputEnum};
-    use crate::metrics::{
-        INFERENCE_FAILED_REQUESTS_BY_MODEL, NUM_REQUESTS_FAILED, NUM_REQUESTS_FAILED_BY_MODEL,
+    uselon cratelon::TelonnsorRelonturnelonnum;
+    uselon cratelon::bootstrap::{TelonnsorInput, TelonnsorInputelonnum};
+    uselon cratelon::melontrics::{
+        INFelonRelonNCelon_FAILelonD_RelonQUelonSTS_BY_MODelonL, NUM_RelonQUelonSTS_FAILelonD, NUM_RelonQUelonSTS_FAILelonD_BY_MODelonL,
     };
-    use crate::predict_service::Model;
-    use crate::{MAX_NUM_INPUTS, utils};
+    uselon cratelon::prelondict_selonrvicelon::Modelonl;
+    uselon cratelon::{MAX_NUM_INPUTS, utils};
 
-    #[derive(Debug)]
-    pub enum TFTensorEnum {
-        String(Tensor<String>),
-        Int(Tensor<i32>),
-        Int64(Tensor<i64>),
-        Float(Tensor<f32>),
-        Double(Tensor<f64>),
-        Boolean(Tensor<bool>),
+    #[delonrivelon(Delonbug)]
+    pub elonnum TFTelonnsorelonnum {
+        String(Telonnsor<String>),
+        Int(Telonnsor<i32>),
+        Int64(Telonnsor<i64>),
+        Float(Telonnsor<f32>),
+        Doublelon(Telonnsor<f64>),
+        Boolelonan(Telonnsor<bool>),
     }
 
-    #[derive(Debug)]
-    pub struct TFModel {
-        pub model_idx: usize,
-        pub bundle: SavedModelBundle,
-        pub input_names: ArrayVec<String, MAX_NUM_INPUTS>,
-        pub input_info: Vec<TensorInfo>,
-        pub input_ops: Vec<Operation>,
-        pub output_names: Vec<String>,
-        pub output_info: Vec<TensorInfo>,
-        pub output_ops: Vec<Operation>,
-        pub export_dir: String,
-        pub version: i64,
-        pub inter_op: i32,
+    #[delonrivelon(Delonbug)]
+    pub struct TFModelonl {
+        pub modelonl_idx: usizelon,
+        pub bundlelon: SavelondModelonlBundlelon,
+        pub input_namelons: ArrayVelonc<String, MAX_NUM_INPUTS>,
+        pub input_info: Velonc<TelonnsorInfo>,
+        pub input_ops: Velonc<Opelonration>,
+        pub output_namelons: Velonc<String>,
+        pub output_info: Velonc<TelonnsorInfo>,
+        pub output_ops: Velonc<Opelonration>,
+        pub elonxport_dir: String,
+        pub velonrsion: i64,
+        pub intelonr_op: i32,
         pub intra_op: i32,
     }
 
-    impl Display for TFModel {
-        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-            write!(
+    impl Display for TFModelonl {
+        fn fmt(&selonlf, f: &mut fmt::Formattelonr) -> fmt::Relonsult {
+            writelon!(
                 f,
-                "idx: {}, tensorflow model_name:{}, export_dir:{}, version:{}, inter:{}, intra:{}",
-                self.model_idx,
-                MODEL_SPECS[self.model_idx],
-                self.export_dir,
-                self.version,
-                self.inter_op,
-                self.intra_op
+                "idx: {}, telonnsorflow modelonl_namelon:{}, elonxport_dir:{}, velonrsion:{}, intelonr:{}, intra:{}",
+                selonlf.modelonl_idx,
+                MODelonL_SPelonCS[selonlf.modelonl_idx],
+                selonlf.elonxport_dir,
+                selonlf.velonrsion,
+                selonlf.intelonr_op,
+                selonlf.intra_op
             )
         }
     }
 
-    impl TFModel {
-        pub fn new(idx: usize, version: String, model_config: &Value) -> Result<TFModel> {
-            // Create input variables for our addition
-            let config = ConfigProto {
-                intra_op_parallelism_threads: utils::get_config_or(
-                    model_config,
-                    "intra_op_parallelism",
-                    &ARGS.intra_op_parallelism[idx],
+    impl TFModelonl {
+        pub fn nelonw(idx: usizelon, velonrsion: String, modelonl_config: &Valuelon) -> Relonsult<TFModelonl> {
+            // Crelonatelon input variablelons for our addition
+            lelont config = ConfigProto {
+                intra_op_parallelonlism_threlonads: utils::gelont_config_or(
+                    modelonl_config,
+                    "intra_op_parallelonlism",
+                    &ARGS.intra_op_parallelonlism[idx],
                 )
-                .parse()?,
-                inter_op_parallelism_threads: utils::get_config_or(
-                    model_config,
-                    "inter_op_parallelism",
-                    &ARGS.inter_op_parallelism[idx],
+                .parselon()?,
+                intelonr_op_parallelonlism_threlonads: utils::gelont_config_or(
+                    modelonl_config,
+                    "intelonr_op_parallelonlism",
+                    &ARGS.intelonr_op_parallelonlism[idx],
                 )
-                .parse()?,
-                ..Default::default()
+                .parselon()?,
+                ..Delonfault::delonfault()
             };
-            let mut buf = Vec::new();
-            buf.reserve(config.encoded_len());
-            config.encode(&mut buf).unwrap();
-            let mut opts = SessionOptions::new();
-            opts.set_config(&buf)?;
-            let export_dir = format!("{}/{}", ARGS.model_dir[idx], version);
-            let mut graph = Graph::new();
-            let bundle = SavedModelBundle::load(&opts, ["serve"], &mut graph, &export_dir)
-                .context("error load model")?;
-            let signature = bundle
-                .meta_graph_def()
-                .get_signature(&ARGS.serving_sig[idx])
-                .context("error finding signature")?;
-            let input_names = INPUTS[idx]
-                .get_or_init(|| {
-                    let input_spec = signature
+            lelont mut buf = Velonc::nelonw();
+            buf.relonselonrvelon(config.elonncodelond_lelonn());
+            config.elonncodelon(&mut buf).unwrap();
+            lelont mut opts = SelonssionOptions::nelonw();
+            opts.selont_config(&buf)?;
+            lelont elonxport_dir = format!("{}/{}", ARGS.modelonl_dir[idx], velonrsion);
+            lelont mut graph = Graph::nelonw();
+            lelont bundlelon = SavelondModelonlBundlelon::load(&opts, ["selonrvelon"], &mut graph, &elonxport_dir)
+                .contelonxt("elonrror load modelonl")?;
+            lelont signaturelon = bundlelon
+                .melonta_graph_delonf()
+                .gelont_signaturelon(&ARGS.selonrving_sig[idx])
+                .contelonxt("elonrror finding signaturelon")?;
+            lelont input_namelons = INPUTS[idx]
+                .gelont_or_init(|| {
+                    lelont input_spelonc = signaturelon
                         .inputs()
-                        .iter()
-                        .map(|p| p.0.clone())
-                        .collect::<ArrayVec<String, MAX_NUM_INPUTS>>();
+                        .itelonr()
+                        .map(|p| p.0.clonelon())
+                        .collelonct::<ArrayVelonc<String, MAX_NUM_INPUTS>>();
                     info!(
-                        "input not set from cli, now we set from model metadata:{:?}",
-                        input_spec
+                        "input not selont from cli, now welon selont from modelonl melontadata:{:?}",
+                        input_spelonc
                     );
-                    input_spec
+                    input_spelonc
                 })
-                .clone();
-            let input_info = input_names
-                .iter()
+                .clonelon();
+            lelont input_info = input_namelons
+                .itelonr()
                 .map(|i| {
-                    signature
-                        .get_input(i)
-                        .context("error finding input op info")
+                    signaturelon
+                        .gelont_input(i)
+                        .contelonxt("elonrror finding input op info")
                         .unwrap()
-                        .clone()
+                        .clonelon()
                 })
-                .collect_vec();
+                .collelonct_velonc();
 
-            let input_ops = input_info
-                .iter()
+            lelont input_ops = input_info
+                .itelonr()
                 .map(|i| {
                     graph
-                        .operation_by_name_required(&i.name().name)
-                        .context("error finding input op")
+                        .opelonration_by_namelon_relonquirelond(&i.namelon().namelon)
+                        .contelonxt("elonrror finding input op")
                         .unwrap()
                 })
-                .collect_vec();
+                .collelonct_velonc();
 
-            info!("Model Input size: {}", input_info.len());
+            info!("Modelonl Input sizelon: {}", input_info.lelonn());
 
-            let output_names = OUTPUTS[idx].to_vec().clone();
+            lelont output_namelons = OUTPUTS[idx].to_velonc().clonelon();
 
-            let output_info = output_names
-                .iter()
+            lelont output_info = output_namelons
+                .itelonr()
                 .map(|o| {
-                    signature
-                        .get_output(o)
-                        .context("error finding output op info")
+                    signaturelon
+                        .gelont_output(o)
+                        .contelonxt("elonrror finding output op info")
                         .unwrap()
-                        .clone()
+                        .clonelon()
                 })
-                .collect_vec();
+                .collelonct_velonc();
 
-            let output_ops = output_info
-                .iter()
+            lelont output_ops = output_info
+                .itelonr()
                 .map(|o| {
                     graph
-                        .operation_by_name_required(&o.name().name)
-                        .context("error finding output op")
+                        .opelonration_by_namelon_relonquirelond(&o.namelon().namelon)
+                        .contelonxt("elonrror finding output op")
                         .unwrap()
                 })
-                .collect_vec();
+                .collelonct_velonc();
 
-            let tf_model = TFModel {
-                model_idx: idx,
-                bundle,
-                input_names,
+            lelont tf_modelonl = TFModelonl {
+                modelonl_idx: idx,
+                bundlelon,
+                input_namelons,
                 input_info,
                 input_ops,
-                output_names,
+                output_namelons,
                 output_info,
                 output_ops,
-                export_dir,
-                version: Args::version_str_to_epoch(&version)?,
-                inter_op: config.inter_op_parallelism_threads,
-                intra_op: config.intra_op_parallelism_threads,
+                elonxport_dir,
+                velonrsion: Args::velonrsion_str_to_elonpoch(&velonrsion)?,
+                intelonr_op: config.intelonr_op_parallelonlism_threlonads,
+                intra_op: config.intra_op_parallelonlism_threlonads,
             };
-            tf_model.warmup()?;
-            Ok(tf_model)
+            tf_modelonl.warmup()?;
+            Ok(tf_modelonl)
         }
 
-        #[inline(always)]
-        fn get_tftensor_dimensions<T>(
+        #[inlinelon(always)]
+        fn gelont_tftelonnsor_dimelonnsions<T>(
             t: &[T],
-            input_size: u64,
-            batch_size: u64,
-            input_dims: Option<Vec<i64>>,
-        ) -> Vec<u64> {
-            // if input size is 1, we just specify a single dimension to outgoing tensor matching the
-            // size of the input tensor. This is for backwards compatiblity with existing Navi clients
-            // which specify input as a single string tensor (like tfexample) and use batching support.
-            let mut dims = vec![];
-            if input_size > 1 {
-                if batch_size == 1 && input_dims.is_some() {
-                    // client side batching is enabled?
+            input_sizelon: u64,
+            batch_sizelon: u64,
+            input_dims: Option<Velonc<i64>>,
+        ) -> Velonc<u64> {
+            // if input sizelon is 1, welon just speloncify a singlelon dimelonnsion to outgoing telonnsor matching thelon
+            // sizelon of thelon input telonnsor. This is for backwards compatiblity with elonxisting Navi clielonnts
+            // which speloncify input as a singlelon string telonnsor (likelon tfelonxamplelon) and uselon batching support.
+            lelont mut dims = velonc![];
+            if input_sizelon > 1 {
+                if batch_sizelon == 1 && input_dims.is_somelon() {
+                    // clielonnt sidelon batching is elonnablelond?
                     input_dims
                         .unwrap()
-                        .iter()
-                        .for_each(|axis| dims.push(*axis as u64));
-                } else {
-                    dims.push(batch_size);
-                    dims.push(t.len() as u64 / batch_size);
+                        .itelonr()
+                        .for_elonach(|axis| dims.push(*axis as u64));
+                } elonlselon {
+                    dims.push(batch_sizelon);
+                    dims.push(t.lelonn() as u64 / batch_sizelon);
                 }
-            } else {
-                dims.push(t.len() as u64);
+            } elonlselon {
+                dims.push(t.lelonn() as u64);
             }
             dims
         }
 
-        fn convert_to_tftensor_enum(
-            input: TensorInput,
-            input_size: u64,
-            batch_size: u64,
-        ) -> TFTensorEnum {
-            match input.tensor_data {
-                TensorInputEnum::String(t) => {
-                    let strings = t
-                        .into_iter()
-                        .map(|x| unsafe { String::from_utf8_unchecked(x) })
-                        .collect_vec();
-                    TFTensorEnum::String(
-                        Tensor::new(&TFModel::get_tftensor_dimensions(
-                            strings.as_slice(),
-                            input_size,
-                            batch_size,
+        fn convelonrt_to_tftelonnsor_elonnum(
+            input: TelonnsorInput,
+            input_sizelon: u64,
+            batch_sizelon: u64,
+        ) -> TFTelonnsorelonnum {
+            match input.telonnsor_data {
+                TelonnsorInputelonnum::String(t) => {
+                    lelont strings = t
+                        .into_itelonr()
+                        .map(|x| unsafelon { String::from_utf8_unchelonckelond(x) })
+                        .collelonct_velonc();
+                    TFTelonnsorelonnum::String(
+                        Telonnsor::nelonw(&TFModelonl::gelont_tftelonnsor_dimelonnsions(
+                            strings.as_slicelon(),
+                            input_sizelon,
+                            batch_sizelon,
                             input.dims,
                         ))
-                        .with_values(strings.as_slice())
+                        .with_valuelons(strings.as_slicelon())
                         .unwrap(),
                     )
                 }
-                TensorInputEnum::Int(t) => TFTensorEnum::Int(
-                    Tensor::new(&TFModel::get_tftensor_dimensions(
-                        t.as_slice(),
-                        input_size,
-                        batch_size,
+                TelonnsorInputelonnum::Int(t) => TFTelonnsorelonnum::Int(
+                    Telonnsor::nelonw(&TFModelonl::gelont_tftelonnsor_dimelonnsions(
+                        t.as_slicelon(),
+                        input_sizelon,
+                        batch_sizelon,
                         input.dims,
                     ))
-                    .with_values(t.as_slice())
+                    .with_valuelons(t.as_slicelon())
                     .unwrap(),
                 ),
-                TensorInputEnum::Int64(t) => TFTensorEnum::Int64(
-                    Tensor::new(&TFModel::get_tftensor_dimensions(
-                        t.as_slice(),
-                        input_size,
-                        batch_size,
+                TelonnsorInputelonnum::Int64(t) => TFTelonnsorelonnum::Int64(
+                    Telonnsor::nelonw(&TFModelonl::gelont_tftelonnsor_dimelonnsions(
+                        t.as_slicelon(),
+                        input_sizelon,
+                        batch_sizelon,
                         input.dims,
                     ))
-                    .with_values(t.as_slice())
+                    .with_valuelons(t.as_slicelon())
                     .unwrap(),
                 ),
-                TensorInputEnum::Float(t) => TFTensorEnum::Float(
-                    Tensor::new(&TFModel::get_tftensor_dimensions(
-                        t.as_slice(),
-                        input_size,
-                        batch_size,
+                TelonnsorInputelonnum::Float(t) => TFTelonnsorelonnum::Float(
+                    Telonnsor::nelonw(&TFModelonl::gelont_tftelonnsor_dimelonnsions(
+                        t.as_slicelon(),
+                        input_sizelon,
+                        batch_sizelon,
                         input.dims,
                     ))
-                    .with_values(t.as_slice())
+                    .with_valuelons(t.as_slicelon())
                     .unwrap(),
                 ),
-                TensorInputEnum::Double(t) => TFTensorEnum::Double(
-                    Tensor::new(&TFModel::get_tftensor_dimensions(
-                        t.as_slice(),
-                        input_size,
-                        batch_size,
+                TelonnsorInputelonnum::Doublelon(t) => TFTelonnsorelonnum::Doublelon(
+                    Telonnsor::nelonw(&TFModelonl::gelont_tftelonnsor_dimelonnsions(
+                        t.as_slicelon(),
+                        input_sizelon,
+                        batch_sizelon,
                         input.dims,
                     ))
-                    .with_values(t.as_slice())
+                    .with_valuelons(t.as_slicelon())
                     .unwrap(),
                 ),
-                TensorInputEnum::Boolean(t) => TFTensorEnum::Boolean(
-                    Tensor::new(&TFModel::get_tftensor_dimensions(
-                        t.as_slice(),
-                        input_size,
-                        batch_size,
+                TelonnsorInputelonnum::Boolelonan(t) => TFTelonnsorelonnum::Boolelonan(
+                    Telonnsor::nelonw(&TFModelonl::gelont_tftelonnsor_dimelonnsions(
+                        t.as_slicelon(),
+                        input_sizelon,
+                        batch_sizelon,
                         input.dims,
                     ))
-                    .with_values(t.as_slice())
+                    .with_valuelons(t.as_slicelon())
                     .unwrap(),
                 ),
             }
         }
-        fn fetch_output<T: TensorType>(
-            args: &mut SessionRunArgs,
-            token_output: &FetchToken,
-            batch_size: u64,
-            output_size: u64,
-        ) -> (Tensor<T>, u64) {
-            let tensor_output = args.fetch::<T>(*token_output).expect("fetch output failed");
-            let mut tensor_width = tensor_output.dims()[1];
-            if batch_size == 1 && output_size > 1 {
-                tensor_width = tensor_output.dims().iter().fold(1, |mut total, &val| {
+        fn felontch_output<T: TelonnsorTypelon>(
+            args: &mut SelonssionRunArgs,
+            tokelonn_output: &FelontchTokelonn,
+            batch_sizelon: u64,
+            output_sizelon: u64,
+        ) -> (Telonnsor<T>, u64) {
+            lelont telonnsor_output = args.felontch::<T>(*tokelonn_output).elonxpelonct("felontch output failelond");
+            lelont mut telonnsor_width = telonnsor_output.dims()[1];
+            if batch_sizelon == 1 && output_sizelon > 1 {
+                telonnsor_width = telonnsor_output.dims().itelonr().fold(1, |mut total, &val| {
                     total *= val;
                     total
                 });
             }
-            (tensor_output, tensor_width)
+            (telonnsor_output, telonnsor_width)
         }
     }
 
-    impl Model for TFModel {
-        fn warmup(&self) -> Result<()> {
+    impl Modelonl for TFModelonl {
+        fn warmup(&selonlf) -> Relonsult<()> {
             // warm up
-            let warmup_file = format!(
-                "{}/assets.extra/tf_serving_warmup_requests",
-                self.export_dir
+            lelont warmup_filelon = format!(
+                "{}/asselonts.elonxtra/tf_selonrving_warmup_relonquelonsts",
+                selonlf.elonxport_dir
             );
-            if std::path::Path::new(&warmup_file).exists() {
-                use std::io::Cursor;
+            if std::path::Path::nelonw(&warmup_filelon).elonxists() {
+                uselon std::io::Cursor;
                 info!(
-                    "found warmup assets in {}, now perform warming up",
-                    warmup_file
+                    "found warmup asselonts in {}, now pelonrform warming up",
+                    warmup_filelon
                 );
-                let f = std::fs::File::open(warmup_file).context("cannot open warmup file")?;
-                // let mut buf = Vec::new();
-                let read = std::io::BufReader::new(f);
-                let mut reader = RecordReader::new(read);
-                let mut warmup_cnt = 0;
+                lelont f = std::fs::Filelon::opelonn(warmup_filelon).contelonxt("cannot opelonn warmup filelon")?;
+                // lelont mut buf = Velonc::nelonw();
+                lelont relonad = std::io::BufRelonadelonr::nelonw(f);
+                lelont mut relonadelonr = ReloncordRelonadelonr::nelonw(relonad);
+                lelont mut warmup_cnt = 0;
                 loop {
-                    let next = reader.read_next_owned();
-                    match next {
-                        Ok(res) => match res {
-                            Some(vec) => {
-                                // info!("read one tfRecord");
-                                match PredictionLog::decode(&mut Cursor::new(vec))
-                                    .context("can't parse PredictonLog")?
+                    lelont nelonxt = relonadelonr.relonad_nelonxt_ownelond();
+                    match nelonxt {
+                        Ok(relons) => match relons {
+                            Somelon(velonc) => {
+                                // info!("relonad onelon tfReloncord");
+                                match PrelondictionLog::deloncodelon(&mut Cursor::nelonw(velonc))
+                                    .contelonxt("can't parselon PrelondictonLog")?
                                 {
-                                    PredictionLog {
-                                        log_metadata: _,
-                                        log_type:
-                                            Some(LogType::PredictLog(PredictLog {
-                                                request: Some(mut req),
-                                                response: _,
+                                    PrelondictionLog {
+                                        log_melontadata: _,
+                                        log_typelon:
+                                            Somelon(LogTypelon::PrelondictLog(PrelondictLog {
+                                                relonquelonst: Somelon(mut relonq),
+                                                relonsponselon: _,
                                             })),
                                     } => {
-                                        if warmup_cnt == ARGS.max_warmup_records {
-                                            //warm up to max_warmup_records  records
+                                        if warmup_cnt == ARGS.max_warmup_reloncords {
+                                            //warm up to max_warmup_reloncords  reloncords
                                             warn!(
-                                                "reached max warmup {} records, exit warmup for {}",
-                                                ARGS.max_warmup_records,
-                                                MODEL_SPECS[self.model_idx]
+                                                "relonachelond max warmup {} reloncords, elonxit warmup for {}",
+                                                ARGS.max_warmup_reloncords,
+                                                MODelonL_SPelonCS[selonlf.modelonl_idx]
                                             );
-                                            break;
+                                            brelonak;
                                         }
-                                        self.do_predict(
-                                            vec![req.take_input_vals(&self.input_names)],
+                                        selonlf.do_prelondict(
+                                            velonc![relonq.takelon_input_vals(&selonlf.input_namelons)],
                                             1,
                                         );
-                                        sleep(Duration::from_millis(100));
+                                        slelonelonp(Duration::from_millis(100));
                                         warmup_cnt += 1;
                                     }
-                                    _ => error!("some wrong record in warming up file"),
+                                    _ => elonrror!("somelon wrong reloncord in warming up filelon"),
                                 }
                             }
-                            None => {
-                                info!("end of warmup file, warmed up with records: {}", warmup_cnt);
-                                break;
+                            Nonelon => {
+                                info!("elonnd of warmup filelon, warmelond up with reloncords: {}", warmup_cnt);
+                                brelonak;
                             }
                         },
-                        Err(RecordReadError::CorruptFile)
-                        | Err(RecordReadError::IoError { .. }) => {
-                            error!("read tfrecord error for warmup files, skip");
+                        elonrr(ReloncordRelonadelonrror::CorruptFilelon)
+                        | elonrr(ReloncordRelonadelonrror::Ioelonrror { .. }) => {
+                            elonrror!("relonad tfreloncord elonrror for warmup filelons, skip");
                         }
                         _ => {}
                     }
@@ -373,120 +373,120 @@ pub mod tf {
             Ok(())
         }
 
-        #[inline(always)]
-        fn do_predict(
-            &self,
-            input_tensors: Vec<Vec<TensorInput>>,
-            batch_size: u64,
-        ) -> (Vec<TensorReturnEnum>, Vec<Vec<usize>>) {
-            // let mut batch_ends = input_tensors.iter().map(|t| t.len()).collect::<Vec<usize>>();
-            let output_size = self.output_names.len() as u64;
-            let input_size = self.input_names.len() as u64;
-            debug!(
-                "Request for Tensorflow with batch size: {} and input_size: {}",
-                batch_size, input_size
+        #[inlinelon(always)]
+        fn do_prelondict(
+            &selonlf,
+            input_telonnsors: Velonc<Velonc<TelonnsorInput>>,
+            batch_sizelon: u64,
+        ) -> (Velonc<TelonnsorRelonturnelonnum>, Velonc<Velonc<usizelon>>) {
+            // lelont mut batch_elonnds = input_telonnsors.itelonr().map(|t| t.lelonn()).collelonct::<Velonc<usizelon>>();
+            lelont output_sizelon = selonlf.output_namelons.lelonn() as u64;
+            lelont input_sizelon = selonlf.input_namelons.lelonn() as u64;
+            delonbug!(
+                "Relonquelonst for Telonnsorflow with batch sizelon: {} and input_sizelon: {}",
+                batch_sizelon, input_sizelon
             );
-            // build a set of input TF tensors
+            // build a selont of input TF telonnsors
 
-            let batch_end = (1usize..=input_tensors.len() as usize)
-                .into_iter()
-                .collect_vec();
-            let mut batch_ends = vec![batch_end; output_size as usize];
+            lelont batch_elonnd = (1usizelon..=input_telonnsors.lelonn() as usizelon)
+                .into_itelonr()
+                .collelonct_velonc();
+            lelont mut batch_elonnds = velonc![batch_elonnd; output_sizelon as usizelon];
 
-            let batched_tensors = TensorInputEnum::merge_batch(input_tensors)
-                .into_iter()
-                .enumerate()
-                .map(|(_, i)| TFModel::convert_to_tftensor_enum(i, input_size, batch_size))
-                .collect_vec();
+            lelont batchelond_telonnsors = TelonnsorInputelonnum::melonrgelon_batch(input_telonnsors)
+                .into_itelonr()
+                .elonnumelonratelon()
+                .map(|(_, i)| TFModelonl::convelonrt_to_tftelonnsor_elonnum(i, input_sizelon, batch_sizelon))
+                .collelonct_velonc();
 
-            let mut args = SessionRunArgs::new();
-            for (index, tf_tensor) in batched_tensors.iter().enumerate() {
-                match tf_tensor {
-                    TFTensorEnum::String(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Int(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Int64(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Float(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Double(inner) => args.add_feed(&self.input_ops[index], 0, inner),
-                    TFTensorEnum::Boolean(inner) => args.add_feed(&self.input_ops[index], 0, inner),
+            lelont mut args = SelonssionRunArgs::nelonw();
+            for (indelonx, tf_telonnsor) in batchelond_telonnsors.itelonr().elonnumelonratelon() {
+                match tf_telonnsor {
+                    TFTelonnsorelonnum::String(innelonr) => args.add_felonelond(&selonlf.input_ops[indelonx], 0, innelonr),
+                    TFTelonnsorelonnum::Int(innelonr) => args.add_felonelond(&selonlf.input_ops[indelonx], 0, innelonr),
+                    TFTelonnsorelonnum::Int64(innelonr) => args.add_felonelond(&selonlf.input_ops[indelonx], 0, innelonr),
+                    TFTelonnsorelonnum::Float(innelonr) => args.add_felonelond(&selonlf.input_ops[indelonx], 0, innelonr),
+                    TFTelonnsorelonnum::Doublelon(innelonr) => args.add_felonelond(&selonlf.input_ops[indelonx], 0, innelonr),
+                    TFTelonnsorelonnum::Boolelonan(innelonr) => args.add_felonelond(&selonlf.input_ops[indelonx], 0, innelonr),
                 }
             }
-            // For output ops, we receive the same op object by name. Actual tensor tokens are available at different offsets.
-            // Since indices are ordered, its important to specify output flag to Navi in the same order.
-            let token_outputs = self
+            // For output ops, welon reloncelonivelon thelon samelon op objelonct by namelon. Actual telonnsor tokelonns arelon availablelon at diffelonrelonnt offselonts.
+            // Sincelon indicelons arelon ordelonrelond, its important to speloncify output flag to Navi in thelon samelon ordelonr.
+            lelont tokelonn_outputs = selonlf
                 .output_ops
-                .iter()
-                .enumerate()
-                .map(|(idx, op)| args.request_fetch(op, idx as i32))
-                .collect_vec();
-            match self.bundle.session.run(&mut args) {
+                .itelonr()
+                .elonnumelonratelon()
+                .map(|(idx, op)| args.relonquelonst_felontch(op, idx as i32))
+                .collelonct_velonc();
+            match selonlf.bundlelon.selonssion.run(&mut args) {
                 Ok(_) => (),
-                Err(e) => {
-                    NUM_REQUESTS_FAILED.inc_by(batch_size);
-                    NUM_REQUESTS_FAILED_BY_MODEL
-                        .with_label_values(&[&MODEL_SPECS[self.model_idx]])
-                        .inc_by(batch_size);
-                    INFERENCE_FAILED_REQUESTS_BY_MODEL
-                        .with_label_values(&[&MODEL_SPECS[self.model_idx]])
-                        .inc_by(batch_size);
-                    panic!("{model}: {e:?}", model = MODEL_SPECS[self.model_idx], e = e);
+                elonrr(elon) => {
+                    NUM_RelonQUelonSTS_FAILelonD.inc_by(batch_sizelon);
+                    NUM_RelonQUelonSTS_FAILelonD_BY_MODelonL
+                        .with_labelonl_valuelons(&[&MODelonL_SPelonCS[selonlf.modelonl_idx]])
+                        .inc_by(batch_sizelon);
+                    INFelonRelonNCelon_FAILelonD_RelonQUelonSTS_BY_MODelonL
+                        .with_labelonl_valuelons(&[&MODelonL_SPelonCS[selonlf.modelonl_idx]])
+                        .inc_by(batch_sizelon);
+                    panic!("{modelonl}: {elon:?}", modelonl = MODelonL_SPelonCS[selonlf.modelonl_idx], elon = elon);
                 }
             }
-            let mut predict_return = vec![];
-            // Check the output.
-            for (index, token_output) in token_outputs.iter().enumerate() {
-                // same ops, with type info at different offsets.
-                let (res, width) = match self.output_ops[index].output_type(index) {
-                    DataType::Float => {
-                        let (tensor_output, tensor_width) =
-                            TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
+            lelont mut prelondict_relonturn = velonc![];
+            // Chelonck thelon output.
+            for (indelonx, tokelonn_output) in tokelonn_outputs.itelonr().elonnumelonratelon() {
+                // samelon ops, with typelon info at diffelonrelonnt offselonts.
+                lelont (relons, width) = match selonlf.output_ops[indelonx].output_typelon(indelonx) {
+                    DataTypelon::Float => {
+                        lelont (telonnsor_output, telonnsor_width) =
+                            TFModelonl::felontch_output(&mut args, tokelonn_output, batch_sizelon, output_sizelon);
                         (
-                            TensorReturnEnum::FloatTensorReturn(Box::new(tensor_output)),
-                            tensor_width,
+                            TelonnsorRelonturnelonnum::FloatTelonnsorRelonturn(Box::nelonw(telonnsor_output)),
+                            telonnsor_width,
                         )
                     }
-                    DataType::Int64 => {
-                        let (tensor_output, tensor_width) =
-                            TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
+                    DataTypelon::Int64 => {
+                        lelont (telonnsor_output, telonnsor_width) =
+                            TFModelonl::felontch_output(&mut args, tokelonn_output, batch_sizelon, output_sizelon);
                         (
-                            TensorReturnEnum::Int64TensorReturn(Box::new(tensor_output)),
-                            tensor_width,
+                            TelonnsorRelonturnelonnum::Int64TelonnsorRelonturn(Box::nelonw(telonnsor_output)),
+                            telonnsor_width,
                         )
                     }
-                    DataType::Int32 => {
-                        let (tensor_output, tensor_width) =
-                            TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
+                    DataTypelon::Int32 => {
+                        lelont (telonnsor_output, telonnsor_width) =
+                            TFModelonl::felontch_output(&mut args, tokelonn_output, batch_sizelon, output_sizelon);
                         (
-                            TensorReturnEnum::Int32TensorReturn(Box::new(tensor_output)),
-                            tensor_width,
+                            TelonnsorRelonturnelonnum::Int32TelonnsorRelonturn(Box::nelonw(telonnsor_output)),
+                            telonnsor_width,
                         )
                     }
-                    DataType::String => {
-                        let (tensor_output, tensor_width) =
-                            TFModel::fetch_output(&mut args, token_output, batch_size, output_size);
+                    DataTypelon::String => {
+                        lelont (telonnsor_output, telonnsor_width) =
+                            TFModelonl::felontch_output(&mut args, tokelonn_output, batch_sizelon, output_sizelon);
                         (
-                            TensorReturnEnum::StringTensorReturn(Box::new(tensor_output)),
-                            tensor_width,
+                            TelonnsorRelonturnelonnum::StringTelonnsorRelonturn(Box::nelonw(telonnsor_output)),
+                            telonnsor_width,
                         )
                     }
-                    _ => panic!("Unsupported return type!"),
+                    _ => panic!("Unsupportelond relonturn typelon!"),
                 };
-                let width = width as usize;
-                for b in batch_ends[index].iter_mut() {
+                lelont width = width as usizelon;
+                for b in batch_elonnds[indelonx].itelonr_mut() {
                     *b *= width;
                 }
-                predict_return.push(res)
+                prelondict_relonturn.push(relons)
             }
-            //TODO: remove in the future
-            //TODO: support actual mtl model outputs
-            (predict_return, batch_ends)
+            //TODO: relonmovelon in thelon futurelon
+            //TODO: support actual mtl modelonl outputs
+            (prelondict_relonturn, batch_elonnds)
         }
-        #[inline(always)]
-        fn model_idx(&self) -> usize {
-            self.model_idx
+        #[inlinelon(always)]
+        fn modelonl_idx(&selonlf) -> usizelon {
+            selonlf.modelonl_idx
         }
-        #[inline(always)]
-        fn version(&self) -> i64 {
-            self.version
+        #[inlinelon(always)]
+        fn velonrsion(&selonlf) -> i64 {
+            selonlf.velonrsion
         }
     }
 }

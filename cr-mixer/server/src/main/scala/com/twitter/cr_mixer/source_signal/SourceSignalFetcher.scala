@@ -1,45 +1,45 @@
-package com.twitter.cr_mixer.source_signal
+packagelon com.twittelonr.cr_mixelonr.sourcelon_signal
 
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.util.Future
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.sourcelon_signal.SourcelonFelontchelonr.FelontchelonrQuelonry
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.util.Futurelon
 
 /***
- * A SourceSignalFetcher is a trait that extends from `SourceFetcher`
- * and is specialized in tackling Signals (eg., USS, FRS) fetch.
- * Currently, we define Signals as (but not limited to) a set of past engagements that
- * the user makes, such as RecentFav, RecentFollow, etc.
+ * A SourcelonSignalFelontchelonr is a trait that elonxtelonnds from `SourcelonFelontchelonr`
+ * and is speloncializelond in tackling Signals (elong., USS, FRS) felontch.
+ * Currelonntly, welon delonfinelon Signals as (but not limitelond to) a selont of past elonngagelonmelonnts that
+ * thelon uselonr makelons, such as ReloncelonntFav, ReloncelonntFollow, elontc.
  *
- * The [[ResultType]] of a SourceSignalFetcher is `Seq[SourceInfo]`. When we pass in userId,
- * the underlying store returns a list of signals.
+ * Thelon [[RelonsultTypelon]] of a SourcelonSignalFelontchelonr is `Selonq[SourcelonInfo]`. Whelonn welon pass in uselonrId,
+ * thelon undelonrlying storelon relonturns a list of signals.
  */
-trait SourceSignalFetcher extends SourceFetcher[Seq[SourceInfo]] {
+trait SourcelonSignalFelontchelonr elonxtelonnds SourcelonFelontchelonr[Selonq[SourcelonInfo]] {
 
-  protected type SignalConvertType
+  protelonctelond typelon SignalConvelonrtTypelon
 
-  def trackStats(
-    query: FetcherQuery
+  delonf trackStats(
+    quelonry: FelontchelonrQuelonry
   )(
-    func: => Future[Option[Seq[SourceInfo]]]
-  ): Future[Option[Seq[SourceInfo]]] = {
-    val productScopedStats = stats.scope(query.product.originalName)
-    val productUserStateScopedStats = productScopedStats.scope(query.userState.toString)
+    func: => Futurelon[Option[Selonq[SourcelonInfo]]]
+  ): Futurelon[Option[Selonq[SourcelonInfo]]] = {
+    val productScopelondStats = stats.scopelon(quelonry.product.originalNamelon)
+    val productUselonrStatelonScopelondStats = productScopelondStats.scopelon(quelonry.uselonrStatelon.toString)
     StatsUtil
-      .trackOptionItemsStats(productScopedStats) {
+      .trackOptionItelonmsStats(productScopelondStats) {
         StatsUtil
-          .trackOptionItemsStats(productUserStateScopedStats) {
+          .trackOptionItelonmsStats(productUselonrStatelonScopelondStats) {
             func
           }
       }
   }
 
   /***
-   * Convert a list of Signals of type [[SignalConvertType]] into SourceInfo
+   * Convelonrt a list of Signals of typelon [[SignalConvelonrtTypelon]] into SourcelonInfo
    */
-  def convertSourceInfo(
-    sourceType: SourceType,
-    signals: Seq[SignalConvertType]
-  ): Seq[SourceInfo]
+  delonf convelonrtSourcelonInfo(
+    sourcelonTypelon: SourcelonTypelon,
+    signals: Selonq[SignalConvelonrtTypelon]
+  ): Selonq[SourcelonInfo]
 }

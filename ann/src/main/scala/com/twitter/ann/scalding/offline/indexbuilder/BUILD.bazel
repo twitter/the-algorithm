@@ -1,37 +1,37 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-only",
     ],
-    dependencies = [
-        "3rdparty/src/jvm/com/twitter/scalding:args",
-        "3rdparty/src/jvm/com/twitter/scalding:core",
-        "ann/src/main/scala/com/twitter/ann/annoy",
-        "ann/src/main/scala/com/twitter/ann/brute_force",
-        "ann/src/main/scala/com/twitter/ann/common",
-        "ann/src/main/scala/com/twitter/ann/hnsw",
-        "ann/src/main/scala/com/twitter/ann/serialization",
-        "ann/src/main/scala/com/twitter/ann/util",
-        "src/scala/com/twitter/cortex/ml/embeddings/common:Helpers",
-        "src/scala/com/twitter/scalding_internal/job",
+    delonpelonndelonncielons = [
+        "3rdparty/src/jvm/com/twittelonr/scalding:args",
+        "3rdparty/src/jvm/com/twittelonr/scalding:corelon",
+        "ann/src/main/scala/com/twittelonr/ann/annoy",
+        "ann/src/main/scala/com/twittelonr/ann/brutelon_forcelon",
+        "ann/src/main/scala/com/twittelonr/ann/common",
+        "ann/src/main/scala/com/twittelonr/ann/hnsw",
+        "ann/src/main/scala/com/twittelonr/ann/selonrialization",
+        "ann/src/main/scala/com/twittelonr/ann/util",
+        "src/scala/com/twittelonr/cortelonx/ml/elonmbelonddings/common:Helonlpelonrs",
+        "src/scala/com/twittelonr/scalding_intelonrnal/job",
     ],
 )
 
 hadoop_binary(
-    name = "indexbuilder-deploy",
-    main = "com.twitter.ann.scalding.offline.indexbuilder.IndexBuilderApp",
+    namelon = "indelonxbuildelonr-delonploy",
+    main = "com.twittelonr.ann.scalding.offlinelon.indelonxbuildelonr.IndelonxBuildelonrApp",
     platform = "java8",
-    runtime_platform = "java8",
+    runtimelon_platform = "java8",
     tags = [
-        "bazel-compatible",
-        "bazel-compatible:migrated",
-        "bazel-only",
+        "bazelonl-compatiblelon",
+        "bazelonl-compatiblelon:migratelond",
+        "bazelonl-only",
     ],
-    dependencies = [
-        ":indexbuilder",
+    delonpelonndelonncielons = [
+        ":indelonxbuildelonr",
         "3rdparty/jvm/org/slf4j:slf4j-jdk14",
     ],
 )

@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.commelonrcelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductGroupItem.CommerceProductGroupEntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.commelonrcelon.CommelonrcelonProductGroupItelonm.CommelonrcelonProductGroupelonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
 
-object CommerceProductGroupItem {
-  val CommerceProductGroupEntryNamespace: EntryNamespace = EntryNamespace("commerce-product-group")
+objelonct CommelonrcelonProductGroupItelonm {
+  val CommelonrcelonProductGroupelonntryNamelonspacelon: elonntryNamelonspacelon = elonntryNamelonspacelon("commelonrcelon-product-group")
 }
 
-case class CommerceProductGroupItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo])
-    extends TimelineItem {
+caselon class CommelonrcelonProductGroupItelonm(
+  ovelonrridelon val id: Long,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo])
+    elonxtelonnds TimelonlinelonItelonm {
 
-  val entryNamespace: EntryNamespace = CommerceProductGroupEntryNamespace
-  def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  val elonntryNamelonspacelon: elonntryNamelonspacelon = CommelonrcelonProductGroupelonntryNamelonspacelon
+  delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

@@ -1,322 +1,322 @@
-package com.twitter.recos.user_tweet_entity_graph
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph
 
 import java.util.Random
-import com.twitter.concurrent.AsyncQueue
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graphjet.algorithms._
-import com.twitter.graphjet.algorithms.filters._
-import com.twitter.graphjet.algorithms.counting.TopSecondDegreeByCountResponse
-import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountForTweet
-import com.twitter.graphjet.algorithms.counting.tweet.TopSecondDegreeByCountRequestForTweet
-import com.twitter.graphjet.bipartite.NodeMetadataLeftIndexedMultiSegmentBipartiteGraph
-import com.twitter.logging.Logger
-import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.model.SalsaQueryRunner.SalsaRunnerConfig
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.RecommendTweetEntityRequest
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetEntityDisplayLocation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetType
-import com.twitter.recos.util.Stats.trackBlockStats
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Try
-import it.unimi.dsi.fastutil.longs.Long2DoubleOpenHashMap
-import it.unimi.dsi.fastutil.longs.LongOpenHashSet
-import scala.collection.JavaConverters._
+import com.twittelonr.concurrelonnt.AsyncQuelonuelon
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graphjelont.algorithms._
+import com.twittelonr.graphjelont.algorithms.filtelonrs._
+import com.twittelonr.graphjelont.algorithms.counting.TopSeloncondDelongrelonelonByCountRelonsponselon
+import com.twittelonr.graphjelont.algorithms.counting.twelonelont.TopSeloncondDelongrelonelonByCountForTwelonelont
+import com.twittelonr.graphjelont.algorithms.counting.twelonelont.TopSeloncondDelongrelonelonByCountRelonquelonstForTwelonelont
+import com.twittelonr.graphjelont.bipartitelon.NodelonMelontadataLelonftIndelonxelondMultiSelongmelonntBipartitelonGraph
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.reloncos.graph_common.FinaglelonStatsReloncelonivelonrWrappelonr
+import com.twittelonr.reloncos.modelonl.SalsaQuelonryRunnelonr.SalsaRunnelonrConfig
+import com.twittelonr.reloncos.reloncos_common.thriftscala.SocialProofTypelon
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.ReloncommelonndTwelonelontelonntityRelonquelonst
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.TwelonelontelonntityDisplayLocation
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.TwelonelontTypelon
+import com.twittelonr.reloncos.util.Stats.trackBlockStats
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.JavaTimelonr
+import com.twittelonr.util.Try
+import it.unimi.dsi.fastutil.longs.Long2DoublelonOpelonnHashMap
+import it.unimi.dsi.fastutil.longs.LongOpelonnHashSelont
+import scala.collelonction.JavaConvelonrtelonrs._
 
-import com.twitter.graphjet.algorithms.RecommendationType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.{
-  RecommendationType => ThriftRecommendationType
+import com.twittelonr.graphjelont.algorithms.ReloncommelonndationTypelon
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.{
+  ReloncommelonndationTypelon => ThriftReloncommelonndationTypelon
 }
-import scala.collection.Map
-import scala.collection.Set
+import scala.collelonction.Map
+import scala.collelonction.Selont
 
-object TweetRecommendationsRunner {
-  private val DefaultTweetTypes: Seq[TweetType] =
-    Seq(TweetType.Regular, TweetType.Summary, TweetType.Photo, TweetType.Player)
-  private val DefaultF1ExactSocialProofSize = 1
-  private val DefaultRareTweetRecencyMillis: Long = 7.days.inMillis
+objelonct TwelonelontReloncommelonndationsRunnelonr {
+  privatelon val DelonfaultTwelonelontTypelons: Selonq[TwelonelontTypelon] =
+    Selonq(TwelonelontTypelon.Relongular, TwelonelontTypelon.Summary, TwelonelontTypelon.Photo, TwelonelontTypelon.Playelonr)
+  privatelon val DelonfaultF1elonxactSocialProofSizelon = 1
+  privatelon val DelonfaultRarelonTwelonelontReloncelonncyMillis: Long = 7.days.inMillis
 
   /**
-   * Map valid social proof types specified by clients to an array of bytes. If clients do not
-   * specify any social proof type unions in thrift, it will return an empty set by default.
+   * Map valid social proof typelons speloncifielond by clielonnts to an array of bytelons. If clielonnts do not
+   * speloncify any social proof typelon unions in thrift, it will relonturn an elonmpty selont by delonfault.
    */
-  private def getSocialProofTypeUnions(
-    socialProofTypeUnions: Option[Set[Seq[SocialProofType]]]
-  ): Set[Array[Byte]] = {
-    socialProofTypeUnions
+  privatelon delonf gelontSocialProofTypelonUnions(
+    socialProofTypelonUnions: Option[Selont[Selonq[SocialProofTypelon]]]
+  ): Selont[Array[Bytelon]] = {
+    socialProofTypelonUnions
       .map {
         _.map {
           _.map {
-            _.getValue.toByte
+            _.gelontValuelon.toBytelon
           }.toArray
         }
       }
-      .getOrElse(Set.empty)
+      .gelontOrelonlselon(Selont.elonmpty)
   }
 
-  private def getRecommendationTypes(
-    recommendationTypes: Seq[ThriftRecommendationType]
-  ): Set[RecommendationType] = {
-    recommendationTypes.flatMap {
+  privatelon delonf gelontReloncommelonndationTypelons(
+    reloncommelonndationTypelons: Selonq[ThriftReloncommelonndationTypelon]
+  ): Selont[ReloncommelonndationTypelon] = {
+    reloncommelonndationTypelons.flatMap {
       _ match {
-        case ThriftRecommendationType.Tweet => Some(RecommendationType.TWEET)
-        case ThriftRecommendationType.Hashtag => Some(RecommendationType.HASHTAG)
-        case ThriftRecommendationType.Url => Some(RecommendationType.URL)
-        case _ =>
-          throw new Exception("Unmatched Recommendation Type in getRecommendationTypes")
+        caselon ThriftReloncommelonndationTypelon.Twelonelont => Somelon(ReloncommelonndationTypelon.TWelonelonT)
+        caselon ThriftReloncommelonndationTypelon.Hashtag => Somelon(ReloncommelonndationTypelon.HASHTAG)
+        caselon ThriftReloncommelonndationTypelon.Url => Somelon(ReloncommelonndationTypelon.URL)
+        caselon _ =>
+          throw nelonw elonxcelonption("Unmatchelond Reloncommelonndation Typelon in gelontReloncommelonndationTypelons")
       }
-    }.toSet
+    }.toSelont
   }
 
-  private def convertThriftEnumsToJavaEnums(
-    maxResults: Option[Map[ThriftRecommendationType, Int]]
-  ): Map[RecommendationType, Integer] = {
-    maxResults
+  privatelon delonf convelonrtThriftelonnumsToJavaelonnums(
+    maxRelonsults: Option[Map[ThriftReloncommelonndationTypelon, Int]]
+  ): Map[ReloncommelonndationTypelon, Intelongelonr] = {
+    maxRelonsults
       .map {
         _.flatMap {
           _ match {
-            case (ThriftRecommendationType.Tweet, v) => Some((RecommendationType.TWEET, v: Integer))
-            case (ThriftRecommendationType.Hashtag, v) =>
-              Some((RecommendationType.HASHTAG, v: Integer))
-            case (ThriftRecommendationType.Url, v) => Some((RecommendationType.URL, v: Integer))
-            case _ =>
-              throw new Exception("Unmatched Recommendation Type in convertThriftEnumsToJavaEnums")
+            caselon (ThriftReloncommelonndationTypelon.Twelonelont, v) => Somelon((ReloncommelonndationTypelon.TWelonelonT, v: Intelongelonr))
+            caselon (ThriftReloncommelonndationTypelon.Hashtag, v) =>
+              Somelon((ReloncommelonndationTypelon.HASHTAG, v: Intelongelonr))
+            caselon (ThriftReloncommelonndationTypelon.Url, v) => Somelon((ReloncommelonndationTypelon.URL, v: Intelongelonr))
+            caselon _ =>
+              throw nelonw elonxcelonption("Unmatchelond Reloncommelonndation Typelon in convelonrtThriftelonnumsToJavaelonnums")
           }
         }
       }
-      .getOrElse(Map.empty)
+      .gelontOrelonlselon(Map.elonmpty)
   }
 
 }
 
 /**
- * The MagicRecsRunner creates a queue of reader threads, MagicRecs, and each one reads from the
- * graph and computes recommendations.
+ * Thelon MagicReloncsRunnelonr crelonatelons a quelonuelon of relonadelonr threlonads, MagicReloncs, and elonach onelon relonads from thelon
+ * graph and computelons reloncommelonndations.
  */
-class TweetRecommendationsRunner(
-  bipartiteGraph: NodeMetadataLeftIndexedMultiSegmentBipartiteGraph,
-  salsaRunnerConfig: SalsaRunnerConfig,
-  statsReceiverWrapper: FinagleStatsReceiverWrapper) {
+class TwelonelontReloncommelonndationsRunnelonr(
+  bipartitelonGraph: NodelonMelontadataLelonftIndelonxelondMultiSelongmelonntBipartitelonGraph,
+  salsaRunnelonrConfig: SalsaRunnelonrConfig,
+  statsReloncelonivelonrWrappelonr: FinaglelonStatsReloncelonivelonrWrappelonr) {
 
-  import TweetRecommendationsRunner._
+  import TwelonelontReloncommelonndationsRunnelonr._
 
-  private val log: Logger = Logger()
+  privatelon val log: Loggelonr = Loggelonr()
 
-  private val stats = statsReceiverWrapper.statsReceiver.scope(this.getClass.getSimpleName)
-  private val magicRecsFailureCounter = stats.counter("failure")
-  private val pollCounter = stats.counter("poll")
-  private val pollTimeoutCounter = stats.counter("pollTimeout")
-  private val offerCounter = stats.counter("offer")
-  private val pollLatencyStat = stats.stat("pollLatency")
+  privatelon val stats = statsReloncelonivelonrWrappelonr.statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val magicReloncsFailurelonCountelonr = stats.countelonr("failurelon")
+  privatelon val pollCountelonr = stats.countelonr("poll")
+  privatelon val pollTimelonoutCountelonr = stats.countelonr("pollTimelonout")
+  privatelon val offelonrCountelonr = stats.countelonr("offelonr")
+  privatelon val pollLatelonncyStat = stats.stat("pollLatelonncy")
 
-  private val magicRecsQueue = new AsyncQueue[TopSecondDegreeByCountForTweet]
-  (0 until salsaRunnerConfig.numSalsaRunners).foreach { _ =>
-    magicRecsQueue.offer(
-      new TopSecondDegreeByCountForTweet(
-        bipartiteGraph,
-        salsaRunnerConfig.expectedNodesToHitInSalsa,
-        statsReceiverWrapper.scope(this.getClass.getSimpleName)
+  privatelon val magicReloncsQuelonuelon = nelonw AsyncQuelonuelon[TopSeloncondDelongrelonelonByCountForTwelonelont]
+  (0 until salsaRunnelonrConfig.numSalsaRunnelonrs).forelonach { _ =>
+    magicReloncsQuelonuelon.offelonr(
+      nelonw TopSeloncondDelongrelonelonByCountForTwelonelont(
+        bipartitelonGraph,
+        salsaRunnelonrConfig.elonxpelonctelondNodelonsToHitInSalsa,
+        statsReloncelonivelonrWrappelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
       )
     )
   }
 
-  private implicit val timer: JavaTimer = new JavaTimer(true)
+  privatelon implicit val timelonr: JavaTimelonr = nelonw JavaTimelonr(truelon)
 
-  private def getBaseFilters(
-    staleTweetDuration: Long,
-    tweetTypes: Seq[TweetType]
+  privatelon delonf gelontBaselonFiltelonrs(
+    stalelonTwelonelontDuration: Long,
+    twelonelontTypelons: Selonq[TwelonelontTypelon]
   ) = {
     List(
-      // Keep RecentTweetFilter first since it's the cheapest
-      new RecentTweetFilter(staleTweetDuration, statsReceiverWrapper),
-      new TweetCardFilter(
-        tweetTypes.contains(TweetType.Regular),
-        tweetTypes.contains(TweetType.Summary),
-        tweetTypes.contains(TweetType.Photo),
-        tweetTypes.contains(TweetType.Player),
-        false, // no promoted tweets
-        statsReceiverWrapper
+      // Kelonelonp ReloncelonntTwelonelontFiltelonr first sincelon it's thelon chelonapelonst
+      nelonw ReloncelonntTwelonelontFiltelonr(stalelonTwelonelontDuration, statsReloncelonivelonrWrappelonr),
+      nelonw TwelonelontCardFiltelonr(
+        twelonelontTypelons.contains(TwelonelontTypelon.Relongular),
+        twelonelontTypelons.contains(TwelonelontTypelon.Summary),
+        twelonelontTypelons.contains(TwelonelontTypelon.Photo),
+        twelonelontTypelons.contains(TwelonelontTypelon.Playelonr),
+        falselon, // no promotelond twelonelonts
+        statsReloncelonivelonrWrappelonr
       ),
-      new DirectInteractionsFilter(bipartiteGraph, statsReceiverWrapper),
-      new RequestedSetFilter(statsReceiverWrapper),
-      new SocialProofTypesFilter(statsReceiverWrapper)
+      nelonw DirelonctIntelonractionsFiltelonr(bipartitelonGraph, statsReloncelonivelonrWrappelonr),
+      nelonw RelonquelonstelondSelontFiltelonr(statsReloncelonivelonrWrappelonr),
+      nelonw SocialProofTypelonsFiltelonr(statsReloncelonivelonrWrappelonr)
     )
   }
 
   /**
-   * Helper method to interpret the output of MagicRecs graph
+   * Helonlpelonr melonthod to intelonrprelont thelon output of MagicReloncs graph
    *
-   * @param magicRecsResponse is the response from running MagicRecs
-   * @return a sequence of candidate ids, with score and list of social proofs
+   * @param magicReloncsRelonsponselon is thelon relonsponselon from running MagicReloncs
+   * @relonturn a selonquelonncelon of candidatelon ids, with scorelon and list of social proofs
    */
-  private def transformMagicRecsResponse(
-    magicRecsResponse: Option[TopSecondDegreeByCountResponse]
-  ): Seq[RecommendationInfo] = {
-    val responses = magicRecsResponse match {
-      case Some(response) => response.getRankedRecommendations.asScala.toSeq
-      case _ => Nil
+  privatelon delonf transformMagicReloncsRelonsponselon(
+    magicReloncsRelonsponselon: Option[TopSeloncondDelongrelonelonByCountRelonsponselon]
+  ): Selonq[ReloncommelonndationInfo] = {
+    val relonsponselons = magicReloncsRelonsponselon match {
+      caselon Somelon(relonsponselon) => relonsponselon.gelontRankelondReloncommelonndations.asScala.toSelonq
+      caselon _ => Nil
     }
-    responses
+    relonsponselons
   }
 
   /**
-   * Helper function to determine different post-process filtering logic in GraphJet,
-   * based on display locations
+   * Helonlpelonr function to delontelonrminelon diffelonrelonnt post-procelonss filtelonring logic in GraphJelont,
+   * baselond on display locations
    */
-  private def getFiltersByDisplayLocations(
-    displayLocation: TweetEntityDisplayLocation,
-    whitelistAuthors: LongOpenHashSet,
-    blacklistAuthors: LongOpenHashSet,
-    validSocialProofs: Array[Byte]
+  privatelon delonf gelontFiltelonrsByDisplayLocations(
+    displayLocation: TwelonelontelonntityDisplayLocation,
+    whitelonlistAuthors: LongOpelonnHashSelont,
+    blacklistAuthors: LongOpelonnHashSelont,
+    validSocialProofs: Array[Bytelon]
   ) = {
     displayLocation match {
-      case TweetEntityDisplayLocation.MagicRecsF1 =>
-        Seq(
-          new ANDFilters(
-            List[ResultFilter](
-              new TweetAuthorFilter(
-                bipartiteGraph,
-                whitelistAuthors,
-                new LongOpenHashSet(),
-                statsReceiverWrapper),
-              new ExactUserSocialProofSizeFilter(
-                DefaultF1ExactSocialProofSize,
+      caselon TwelonelontelonntityDisplayLocation.MagicReloncsF1 =>
+        Selonq(
+          nelonw ANDFiltelonrs(
+            List[RelonsultFiltelonr](
+              nelonw TwelonelontAuthorFiltelonr(
+                bipartitelonGraph,
+                whitelonlistAuthors,
+                nelonw LongOpelonnHashSelont(),
+                statsReloncelonivelonrWrappelonr),
+              nelonw elonxactUselonrSocialProofSizelonFiltelonr(
+                DelonfaultF1elonxactSocialProofSizelon,
                 validSocialProofs,
-                statsReceiverWrapper
+                statsReloncelonivelonrWrappelonr
               )
             ).asJava,
-            statsReceiverWrapper
+            statsReloncelonivelonrWrappelonr
           ),
-          // Blacklist filter must be applied separately from F1's AND filter chain
-          new TweetAuthorFilter(
-            bipartiteGraph,
-            new LongOpenHashSet(),
+          // Blacklist filtelonr must belon applielond selonparatelonly from F1's AND filtelonr chain
+          nelonw TwelonelontAuthorFiltelonr(
+            bipartitelonGraph,
+            nelonw LongOpelonnHashSelont(),
             blacklistAuthors,
-            statsReceiverWrapper)
+            statsReloncelonivelonrWrappelonr)
         )
-      case TweetEntityDisplayLocation.MagicRecsRareTweet =>
-        Seq(
-          new TweetAuthorFilter(
-            bipartiteGraph,
-            whitelistAuthors,
+      caselon TwelonelontelonntityDisplayLocation.MagicReloncsRarelonTwelonelont =>
+        Selonq(
+          nelonw TwelonelontAuthorFiltelonr(
+            bipartitelonGraph,
+            whitelonlistAuthors,
             blacklistAuthors,
-            statsReceiverWrapper),
-          new RecentEdgeMetadataFilter(
-            DefaultRareTweetRecencyMillis,
-            UserTweetEdgeTypeMask.Tweet.id.toByte,
-            statsReceiverWrapper
+            statsReloncelonivelonrWrappelonr),
+          nelonw ReloncelonntelondgelonMelontadataFiltelonr(
+            DelonfaultRarelonTwelonelontReloncelonncyMillis,
+            UselonrTwelonelontelondgelonTypelonMask.Twelonelont.id.toBytelon,
+            statsReloncelonivelonrWrappelonr
           )
         )
-      case _ =>
-        Seq(
-          new TweetAuthorFilter(
-            bipartiteGraph,
-            whitelistAuthors,
+      caselon _ =>
+        Selonq(
+          nelonw TwelonelontAuthorFiltelonr(
+            bipartitelonGraph,
+            whitelonlistAuthors,
             blacklistAuthors,
-            statsReceiverWrapper))
+            statsReloncelonivelonrWrappelonr))
     }
   }
 
   /**
-   * Helper method to run salsa computation and convert the results to Option
+   * Helonlpelonr melonthod to run salsa computation and convelonrt thelon relonsults to Option
    *
-   * @param magicRecs is magicRecs reader on bipartite graph
-   * @param magicRecsRequest is the magicRecs request
-   * @return is an option of MagicRecsResponse
+   * @param magicReloncs is magicReloncs relonadelonr on bipartitelon graph
+   * @param magicReloncsRelonquelonst is thelon magicReloncs relonquelonst
+   * @relonturn is an option of MagicReloncsRelonsponselon
    */
-  private def getMagicRecsResponse(
-    magicRecs: TopSecondDegreeByCountForTweet,
-    magicRecsRequest: TopSecondDegreeByCountRequestForTweet
+  privatelon delonf gelontMagicReloncsRelonsponselon(
+    magicReloncs: TopSeloncondDelongrelonelonByCountForTwelonelont,
+    magicReloncsRelonquelonst: TopSeloncondDelongrelonelonByCountRelonquelonstForTwelonelont
   )(
-    implicit statsReceiver: StatsReceiver
-  ): Option[TopSecondDegreeByCountResponse] = {
+    implicit statsReloncelonivelonr: StatsReloncelonivelonr
+  ): Option[TopSeloncondDelongrelonelonByCountRelonsponselon] = {
     trackBlockStats(stats) {
-      val random = new Random()
-      // compute recs -- need to catch and print exceptions here otherwise they are swallowed
-      val magicRecsAttempt =
-        Try(magicRecs.computeRecommendations(magicRecsRequest, random)).onFailure { e =>
-          magicRecsFailureCounter.incr()
-          log.error(e, "MagicRecs computation failed")
+      val random = nelonw Random()
+      // computelon reloncs -- nelonelond to catch and print elonxcelonptions helonrelon othelonrwiselon thelony arelon swallowelond
+      val magicReloncsAttelonmpt =
+        Try(magicReloncs.computelonReloncommelonndations(magicReloncsRelonquelonst, random)).onFailurelon { elon =>
+          magicReloncsFailurelonCountelonr.incr()
+          log.elonrror(elon, "MagicReloncs computation failelond")
         }
-      magicRecsAttempt.toOption
+      magicReloncsAttelonmpt.toOption
     }
   }
 
-  private def getMagicRecsRequest(
-    request: RecommendTweetEntityRequest
-  ): TopSecondDegreeByCountRequestForTweet = {
-    val requesterId = request.requesterId
-    val leftSeedNodes = new Long2DoubleOpenHashMap(
-      request.seedsWithWeights.keys.toArray,
-      request.seedsWithWeights.values.toArray
+  privatelon delonf gelontMagicReloncsRelonquelonst(
+    relonquelonst: ReloncommelonndTwelonelontelonntityRelonquelonst
+  ): TopSeloncondDelongrelonelonByCountRelonquelonstForTwelonelont = {
+    val relonquelonstelonrId = relonquelonst.relonquelonstelonrId
+    val lelonftSelonelondNodelons = nelonw Long2DoublelonOpelonnHashMap(
+      relonquelonst.selonelondsWithWelonights.kelonys.toArray,
+      relonquelonst.selonelondsWithWelonights.valuelons.toArray
     )
-    val tweetsToExcludeArray = new LongOpenHashSet(request.excludedTweetIds.getOrElse(Nil).toArray)
-    val staleTweetDuration = request.maxTweetAgeInMillis.getOrElse(RecosConfig.maxTweetAgeInMillis)
-    val staleEngagementDuration =
-      request.maxEngagementAgeInMillis.getOrElse(RecosConfig.maxEngagementAgeInMillis)
-    val tweetTypes = request.tweetTypes.getOrElse(DefaultTweetTypes)
-    val tweetAuthors = new LongOpenHashSet(request.tweetAuthors.getOrElse(Nil).toArray)
-    val excludedTweetAuthors = new LongOpenHashSet(
-      request.excludedTweetAuthors.getOrElse(Nil).toArray)
+    val twelonelontsToelonxcludelonArray = nelonw LongOpelonnHashSelont(relonquelonst.elonxcludelondTwelonelontIds.gelontOrelonlselon(Nil).toArray)
+    val stalelonTwelonelontDuration = relonquelonst.maxTwelonelontAgelonInMillis.gelontOrelonlselon(ReloncosConfig.maxTwelonelontAgelonInMillis)
+    val stalelonelonngagelonmelonntDuration =
+      relonquelonst.maxelonngagelonmelonntAgelonInMillis.gelontOrelonlselon(ReloncosConfig.maxelonngagelonmelonntAgelonInMillis)
+    val twelonelontTypelons = relonquelonst.twelonelontTypelons.gelontOrelonlselon(DelonfaultTwelonelontTypelons)
+    val twelonelontAuthors = nelonw LongOpelonnHashSelont(relonquelonst.twelonelontAuthors.gelontOrelonlselon(Nil).toArray)
+    val elonxcludelondTwelonelontAuthors = nelonw LongOpelonnHashSelont(
+      relonquelonst.elonxcludelondTwelonelontAuthors.gelontOrelonlselon(Nil).toArray)
     val validSocialProofs =
-      UserTweetEdgeTypeMask.getUserTweetGraphSocialProofTypes(request.socialProofTypes)
+      UselonrTwelonelontelondgelonTypelonMask.gelontUselonrTwelonelontGraphSocialProofTypelons(relonquelonst.socialProofTypelons)
 
-    val resultFilterChain = new ResultFilterChain(
+    val relonsultFiltelonrChain = nelonw RelonsultFiltelonrChain(
       (
-        getBaseFilters(staleTweetDuration, tweetTypes) ++
-          getFiltersByDisplayLocations(
-            displayLocation = request.displayLocation,
-            whitelistAuthors = tweetAuthors,
-            blacklistAuthors = excludedTweetAuthors,
+        gelontBaselonFiltelonrs(stalelonTwelonelontDuration, twelonelontTypelons) ++
+          gelontFiltelonrsByDisplayLocations(
+            displayLocation = relonquelonst.displayLocation,
+            whitelonlistAuthors = twelonelontAuthors,
+            blacklistAuthors = elonxcludelondTwelonelontAuthors,
             validSocialProofs = validSocialProofs
           )
       ).asJava
     )
 
-    new TopSecondDegreeByCountRequestForTweet(
-      requesterId,
-      leftSeedNodes,
-      tweetsToExcludeArray,
-      getRecommendationTypes(request.recommendationTypes).asJava,
-      convertThriftEnumsToJavaEnums(request.maxResultsByType).asJava,
-      UserTweetEdgeTypeMask.SIZE,
-      request.maxUserSocialProofSize.getOrElse(RecosConfig.maxUserSocialProofSize),
-      request.maxTweetSocialProofSize.getOrElse(RecosConfig.maxTweetSocialProofSize),
-      convertThriftEnumsToJavaEnums(request.minUserSocialProofSizes).asJava,
+    nelonw TopSeloncondDelongrelonelonByCountRelonquelonstForTwelonelont(
+      relonquelonstelonrId,
+      lelonftSelonelondNodelons,
+      twelonelontsToelonxcludelonArray,
+      gelontReloncommelonndationTypelons(relonquelonst.reloncommelonndationTypelons).asJava,
+      convelonrtThriftelonnumsToJavaelonnums(relonquelonst.maxRelonsultsByTypelon).asJava,
+      UselonrTwelonelontelondgelonTypelonMask.SIZelon,
+      relonquelonst.maxUselonrSocialProofSizelon.gelontOrelonlselon(ReloncosConfig.maxUselonrSocialProofSizelon),
+      relonquelonst.maxTwelonelontSocialProofSizelon.gelontOrelonlselon(ReloncosConfig.maxTwelonelontSocialProofSizelon),
+      convelonrtThriftelonnumsToJavaelonnums(relonquelonst.minUselonrSocialProofSizelons).asJava,
       validSocialProofs,
-      staleTweetDuration,
-      staleEngagementDuration,
-      resultFilterChain,
-      getSocialProofTypeUnions(request.socialProofTypeUnions).asJava
+      stalelonTwelonelontDuration,
+      stalelonelonngagelonmelonntDuration,
+      relonsultFiltelonrChain,
+      gelontSocialProofTypelonUnions(relonquelonst.socialProofTypelonUnions).asJava
     )
   }
 
-  def apply(request: RecommendTweetEntityRequest): Future[Seq[RecommendationInfo]] = {
-    pollCounter.incr()
-    val t0 = System.currentTimeMillis
-    magicRecsQueue.poll().map { magicRecs =>
-      val pollTime = System.currentTimeMillis - t0
-      pollLatencyStat.add(pollTime)
-      val magicRecsResponse = Try {
-        if (pollTime < salsaRunnerConfig.timeoutSalsaRunner) {
-          val magicRecsRequest = getMagicRecsRequest(request)
-          transformMagicRecsResponse(
-            getMagicRecsResponse(magicRecs, magicRecsRequest)(statsReceiverWrapper.statsReceiver)
+  delonf apply(relonquelonst: ReloncommelonndTwelonelontelonntityRelonquelonst): Futurelon[Selonq[ReloncommelonndationInfo]] = {
+    pollCountelonr.incr()
+    val t0 = Systelonm.currelonntTimelonMillis
+    magicReloncsQuelonuelon.poll().map { magicReloncs =>
+      val pollTimelon = Systelonm.currelonntTimelonMillis - t0
+      pollLatelonncyStat.add(pollTimelon)
+      val magicReloncsRelonsponselon = Try {
+        if (pollTimelon < salsaRunnelonrConfig.timelonoutSalsaRunnelonr) {
+          val magicReloncsRelonquelonst = gelontMagicReloncsRelonquelonst(relonquelonst)
+          transformMagicReloncsRelonsponselon(
+            gelontMagicReloncsRelonsponselon(magicReloncs, magicReloncsRelonquelonst)(statsReloncelonivelonrWrappelonr.statsReloncelonivelonr)
           )
-        } else {
-          // if we did not get a magicRecs in time, then fail fast here and immediately put it back
-          log.warning("magicRecsQueue polling timeout")
-          pollTimeoutCounter.incr()
-          throw new RuntimeException("magicRecs poll timeout")
+        } elonlselon {
+          // if welon did not gelont a magicReloncs in timelon, thelonn fail fast helonrelon and immelondiatelonly put it back
+          log.warning("magicReloncsQuelonuelon polling timelonout")
+          pollTimelonoutCountelonr.incr()
+          throw nelonw Runtimelonelonxcelonption("magicReloncs poll timelonout")
           Nil
         }
-      } ensure {
-        magicRecsQueue.offer(magicRecs)
-        offerCounter.incr()
+      } elonnsurelon {
+        magicReloncsQuelonuelon.offelonr(magicReloncs)
+        offelonrCountelonr.incr()
       }
-      magicRecsResponse.toOption getOrElse Nil
+      magicReloncsRelonsponselon.toOption gelontOrelonlselon Nil
     }
   }
 }

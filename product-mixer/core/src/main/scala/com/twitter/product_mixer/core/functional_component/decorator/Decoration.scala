@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.functional_component.decorator
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.UniversalPresentation
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.UnivelonrsalPrelonselonntation
 
 /**
- * Decoration associates specific [[UniversalPresentation]] with a candidate
+ * Deloncoration associatelons speloncific [[UnivelonrsalPrelonselonntation]] with a candidatelon
  */
-case class Decoration(
-  candidate: UniversalNoun[Any],
-  presentation: UniversalPresentation)
+caselon class Deloncoration(
+  candidatelon: UnivelonrsalNoun[Any],
+  prelonselonntation: UnivelonrsalPrelonselonntation)

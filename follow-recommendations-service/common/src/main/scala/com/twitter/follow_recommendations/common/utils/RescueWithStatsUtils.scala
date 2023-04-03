@@ -1,49 +1,49 @@
-package com.twitter.follow_recommendations.common.utils
+packagelon com.twittelonr.follow_reloncommelonndations.common.utils
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.stitch.Stitch
-import com.twitter.util.Duration
-import com.twitter.util.TimeoutException
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.StatsUtil
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelonoutelonxcelonption
 
-object RescueWithStatsUtils {
-  def rescueWithStats[T](
-    s: Stitch[Seq[T]],
-    stats: StatsReceiver,
-    source: String
-  ): Stitch[Seq[T]] = {
-    StatsUtil.profileStitchSeqResults(s, stats.scope(source)).rescue {
-      case _: Exception => Stitch.Nil
+objelonct RelonscuelonWithStatsUtils {
+  delonf relonscuelonWithStats[T](
+    s: Stitch[Selonq[T]],
+    stats: StatsReloncelonivelonr,
+    sourcelon: String
+  ): Stitch[Selonq[T]] = {
+    StatsUtil.profilelonStitchSelonqRelonsults(s, stats.scopelon(sourcelon)).relonscuelon {
+      caselon _: elonxcelonption => Stitch.Nil
     }
   }
 
-  def rescueOptionalWithStats[T](
+  delonf relonscuelonOptionalWithStats[T](
     s: Stitch[Option[T]],
-    stats: StatsReceiver,
-    source: String
+    stats: StatsReloncelonivelonr,
+    sourcelon: String
   ): Stitch[Option[T]] = {
-    StatsUtil.profileStitchOptionalResults(s, stats.scope(source)).rescue {
-      case _: Exception => Stitch.None
+    StatsUtil.profilelonStitchOptionalRelonsults(s, stats.scopelon(sourcelon)).relonscuelon {
+      caselon _: elonxcelonption => Stitch.Nonelon
     }
   }
 
-  def rescueWithStatsWithin[T](
-    s: Stitch[Seq[T]],
-    stats: StatsReceiver,
-    source: String,
-    timeout: Duration
-  ): Stitch[Seq[T]] = {
-    val hydratedScopeSource = stats.scope(source)
+  delonf relonscuelonWithStatsWithin[T](
+    s: Stitch[Selonq[T]],
+    stats: StatsReloncelonivelonr,
+    sourcelon: String,
+    timelonout: Duration
+  ): Stitch[Selonq[T]] = {
+    val hydratelondScopelonSourcelon = stats.scopelon(sourcelon)
     StatsUtil
-      .profileStitchSeqResults(
-        s.within(timeout)(com.twitter.finagle.util.DefaultTimer),
-        hydratedScopeSource)
-      .rescue {
-        case _: TimeoutException =>
-          hydratedScopeSource.counter("timeout").incr()
+      .profilelonStitchSelonqRelonsults(
+        s.within(timelonout)(com.twittelonr.finaglelon.util.DelonfaultTimelonr),
+        hydratelondScopelonSourcelon)
+      .relonscuelon {
+        caselon _: Timelonoutelonxcelonption =>
+          hydratelondScopelonSourcelon.countelonr("timelonout").incr()
           Stitch.Nil
-        case _: Exception =>
-          hydratedScopeSource.counter("exception").incr()
+        caselon _: elonxcelonption =>
+          hydratelondScopelonSourcelon.countelonr("elonxcelonption").incr()
           Stitch.Nil
       }
   }

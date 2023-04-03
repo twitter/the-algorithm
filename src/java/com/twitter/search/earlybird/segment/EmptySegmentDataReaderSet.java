@@ -1,72 +1,72 @@
-package com.twitter.search.earlybird.segment;
+packagelon com.twittelonr.selonarch.elonarlybird.selongmelonnt;
 
 import java.util.Optional;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.io.EmptyRecordReader;
-import com.twitter.search.common.util.io.recordreader.RecordReader;
-import com.twitter.search.earlybird.document.TweetDocument;
-import com.twitter.search.earlybird.partition.SegmentInfo;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.util.io.elonmptyReloncordRelonadelonr;
+import com.twittelonr.selonarch.common.util.io.reloncordrelonadelonr.ReloncordRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.documelonnt.TwelonelontDocumelonnt;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
 
 /**
- * A SegmentDataReaderSet that returns no data. Uses a DocumentReader that is
- * always caught up, but never gets exhausted.
- * Can be used for bringing up an earlybird against a static set of segments,
- * and will not incorporate any new updates.
+ * A SelongmelonntDataRelonadelonrSelont that relonturns no data. Uselons a DocumelonntRelonadelonr that is
+ * always caught up, but nelonvelonr gelonts elonxhaustelond.
+ * Can belon uselond for bringing up an elonarlybird against a static selont of selongmelonnts,
+ * and will not incorporatelon any nelonw updatelons.
  */
-public class EmptySegmentDataReaderSet implements SegmentDataReaderSet {
-  public static final EmptySegmentDataReaderSet INSTANCE = new EmptySegmentDataReaderSet();
+public class elonmptySelongmelonntDataRelonadelonrSelont implelonmelonnts SelongmelonntDataRelonadelonrSelont {
+  public static final elonmptySelongmelonntDataRelonadelonrSelont INSTANCelon = nelonw elonmptySelongmelonntDataRelonadelonrSelont();
 
-  @Override
-  public void attachDocumentReaders(SegmentInfo segmentInfo) {
+  @Ovelonrridelon
+  public void attachDocumelonntRelonadelonrs(SelongmelonntInfo selongmelonntInfo) {
   }
 
-  @Override
-  public void attachUpdateReaders(SegmentInfo segmentInfo) {
+  @Ovelonrridelon
+  public void attachUpdatelonRelonadelonrs(SelongmelonntInfo selongmelonntInfo) {
   }
 
-  @Override
-  public void completeSegmentDocs(SegmentInfo segmentInfo) {
+  @Ovelonrridelon
+  public void complelontelonSelongmelonntDocs(SelongmelonntInfo selongmelonntInfo) {
   }
 
-  @Override
-  public void stopSegmentUpdates(SegmentInfo segmentInfo) {
+  @Ovelonrridelon
+  public void stopSelongmelonntUpdatelons(SelongmelonntInfo selongmelonntInfo) {
   }
 
-  @Override
+  @Ovelonrridelon
   public void stopAll() {
   }
 
-  @Override
-  public boolean allCaughtUp() {
+  @Ovelonrridelon
+  public boolelonan allCaughtUp() {
     // ALWAYS CAUGHT UP
-    return true;
+    relonturn truelon;
   }
 
-  @Override
-  public RecordReader<TweetDocument> newDocumentReader(SegmentInfo segmentInfo)
-      throws Exception {
-    return null;
+  @Ovelonrridelon
+  public ReloncordRelonadelonr<TwelonelontDocumelonnt> nelonwDocumelonntRelonadelonr(SelongmelonntInfo selongmelonntInfo)
+      throws elonxcelonption {
+    relonturn null;
   }
 
-  @Override
-  public RecordReader<TweetDocument> getDocumentReader() {
-    return new EmptyRecordReader<>();
+  @Ovelonrridelon
+  public ReloncordRelonadelonr<TwelonelontDocumelonnt> gelontDocumelonntRelonadelonr() {
+    relonturn nelonw elonmptyReloncordRelonadelonr<>();
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReader() {
-    return null;
+  @Ovelonrridelon
+  public ReloncordRelonadelonr<ThriftVelonrsionelondelonvelonnts> gelontUpdatelonelonvelonntsRelonadelonr() {
+    relonturn null;
   }
 
-  @Override
-  public RecordReader<ThriftVersionedEvents> getUpdateEventsReaderForSegment(
-      SegmentInfo segmentInfo) {
-    return null;
+  @Ovelonrridelon
+  public ReloncordRelonadelonr<ThriftVelonrsionelondelonvelonnts> gelontUpdatelonelonvelonntsRelonadelonrForSelongmelonnt(
+      SelongmelonntInfo selongmelonntInfo) {
+    relonturn null;
   }
 
-  @Override
-  public Optional<Long> getUpdateEventsStreamOffsetForSegment(SegmentInfo segmentInfo) {
-    return Optional.of(0L);
+  @Ovelonrridelon
+  public Optional<Long> gelontUpdatelonelonvelonntsStrelonamOffselontForSelongmelonnt(SelongmelonntInfo selongmelonntInfo) {
+    relonturn Optional.of(0L);
   }
 }

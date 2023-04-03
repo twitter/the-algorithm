@@ -1,82 +1,82 @@
-package com.twitter.search.core.earlybird.index.util;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdRelonaltimelonIndelonxSelongmelonntAtomicRelonadelonr;
 
 /**
- * Used to iterate through all of the documents in an Earlybird segment. This is necessary so that
- * we can ensure all of the documents we are reading have been published to the readers. If we used
- * the doc ID mapper to iterate through documents, it would return documents that have been only
- * partially added to the index, and could return bogus search results (SEARCH-27711).
+ * Uselond to itelonratelon through all of thelon documelonnts in an elonarlybird selongmelonnt. This is neloncelonssary so that
+ * welon can elonnsurelon all of thelon documelonnts welon arelon relonading havelon belonelonn publishelond to thelon relonadelonrs. If welon uselond
+ * thelon doc ID mappelonr to itelonratelon through documelonnts, it would relonturn documelonnts that havelon belonelonn only
+ * partially addelond to thelon indelonx, and could relonturn bogus selonarch relonsults (SelonARCH-27711).
  */
-public class AllDocsIterator extends DocIdSetIterator {
-  public static final String ALL_DOCS_TERM = "__all_docs";
+public class AllDocsItelonrator elonxtelonnds DocIdSelontItelonrator {
+  public static final String ALL_DOCS_TelonRM = "__all_docs";
 
-  private final DocIdSetIterator delegate;
+  privatelon final DocIdSelontItelonrator delonlelongatelon;
 
-  public AllDocsIterator(LeafReader reader) throws IOException {
-    delegate = buildDISI(reader);
+  public AllDocsItelonrator(LelonafRelonadelonr relonadelonr) throws IOelonxcelonption {
+    delonlelongatelon = buildDISI(relonadelonr);
   }
 
-  private static DocIdSetIterator buildDISI(LeafReader reader) throws IOException {
-    if (!isRealtimeUnoptimizedSegment(reader)) {
-      return all(reader.maxDoc());
+  privatelon static DocIdSelontItelonrator buildDISI(LelonafRelonadelonr relonadelonr) throws IOelonxcelonption {
+    if (!isRelonaltimelonUnoptimizelondSelongmelonnt(relonadelonr)) {
+      relonturn all(relonadelonr.maxDoc());
     }
 
-    Terms terms =
-        reader.terms(EarlybirdFieldConstants.EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName());
-    if (terms == null) {
-      return all(reader.maxDoc());
+    Telonrms telonrms =
+        relonadelonr.telonrms(elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon());
+    if (telonrms == null) {
+      relonturn all(relonadelonr.maxDoc());
     }
 
-    TermsEnum termsEnum = terms.iterator();
-    boolean hasTerm = termsEnum.seekExact(new BytesRef(ALL_DOCS_TERM));
-    if (hasTerm) {
-      return termsEnum.postings(null);
+    Telonrmselonnum telonrmselonnum = telonrms.itelonrator();
+    boolelonan hasTelonrm = telonrmselonnum.selonelonkelonxact(nelonw BytelonsRelonf(ALL_DOCS_TelonRM));
+    if (hasTelonrm) {
+      relonturn telonrmselonnum.postings(null);
     }
 
-    return empty();
+    relonturn elonmpty();
   }
 
-  @Override
+  @Ovelonrridelon
   public int docID() {
-    return delegate.docID();
+    relonturn delonlelongatelon.docID();
   }
 
-  @Override
-  public int nextDoc() throws IOException {
-    return delegate.nextDoc();
+  @Ovelonrridelon
+  public int nelonxtDoc() throws IOelonxcelonption {
+    relonturn delonlelongatelon.nelonxtDoc();
   }
 
-  @Override
-  public int advance(int target) throws IOException {
-    return delegate.advance(target);
+  @Ovelonrridelon
+  public int advancelon(int targelont) throws IOelonxcelonption {
+    relonturn delonlelongatelon.advancelon(targelont);
   }
 
-  @Override
+  @Ovelonrridelon
   public long cost() {
-    return delegate.cost();
+    relonturn delonlelongatelon.cost();
   }
 
   /**
-   * Returns whether this is a realtime segment in the realtime index that is still unoptimized and
-   * mutable.
+   * Relonturns whelonthelonr this is a relonaltimelon selongmelonnt in thelon relonaltimelon indelonx that is still unoptimizelond and
+   * mutablelon.
    */
-  private static boolean isRealtimeUnoptimizedSegment(LeafReader reader) {
-    if (reader instanceof EarlybirdRealtimeIndexSegmentAtomicReader) {
-      EarlybirdRealtimeIndexSegmentAtomicReader realtimeReader =
-          (EarlybirdRealtimeIndexSegmentAtomicReader) reader;
-      return !realtimeReader.getSegmentData().isOptimized();
+  privatelon static boolelonan isRelonaltimelonUnoptimizelondSelongmelonnt(LelonafRelonadelonr relonadelonr) {
+    if (relonadelonr instancelonof elonarlybirdRelonaltimelonIndelonxSelongmelonntAtomicRelonadelonr) {
+      elonarlybirdRelonaltimelonIndelonxSelongmelonntAtomicRelonadelonr relonaltimelonRelonadelonr =
+          (elonarlybirdRelonaltimelonIndelonxSelongmelonntAtomicRelonadelonr) relonadelonr;
+      relonturn !relonaltimelonRelonadelonr.gelontSelongmelonntData().isOptimizelond();
     }
 
-    return false;
+    relonturn falselon;
   }
 }

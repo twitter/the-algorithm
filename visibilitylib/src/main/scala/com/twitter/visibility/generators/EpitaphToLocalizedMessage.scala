@@ -1,66 +1,66 @@
-package com.twitter.visibility.generators
+packagelon com.twittelonr.visibility.gelonnelonrators
 
-import com.twitter.visibility.common.actions.LocalizedMessage
-import com.twitter.visibility.common.actions.MessageLink
-import com.twitter.visibility.results.translation.Translator
-import com.twitter.visibility.results.richtext.EpitaphToRichText
-import com.twitter.visibility.results.translation.Resource
-import com.twitter.visibility.results.translation.LearnMoreLink
-import com.twitter.visibility.rules.Epitaph
-import com.twitter.visibility.results.richtext.EpitaphToRichText.Copy
+import com.twittelonr.visibility.common.actions.LocalizelondMelonssagelon
+import com.twittelonr.visibility.common.actions.MelonssagelonLink
+import com.twittelonr.visibility.relonsults.translation.Translator
+import com.twittelonr.visibility.relonsults.richtelonxt.elonpitaphToRichTelonxt
+import com.twittelonr.visibility.relonsults.translation.Relonsourcelon
+import com.twittelonr.visibility.relonsults.translation.LelonarnMorelonLink
+import com.twittelonr.visibility.rulelons.elonpitaph
+import com.twittelonr.visibility.relonsults.richtelonxt.elonpitaphToRichTelonxt.Copy
 
-object EpitaphToLocalizedMessage {
-  def apply(
-    epitaph: Epitaph,
-    languageTag: String,
-  ): LocalizedMessage = {
+objelonct elonpitaphToLocalizelondMelonssagelon {
+  delonf apply(
+    elonpitaph: elonpitaph,
+    languagelonTag: String,
+  ): LocalizelondMelonssagelon = {
     val copy =
-      EpitaphToRichText.EpitaphToPolicyMap.getOrElse(epitaph, EpitaphToRichText.FallbackPolicy)
-    val text = Translator.translate(
-      copy.resource,
-      languageTag
+      elonpitaphToRichTelonxt.elonpitaphToPolicyMap.gelontOrelonlselon(elonpitaph, elonpitaphToRichTelonxt.FallbackPolicy)
+    val telonxt = Translator.translatelon(
+      copy.relonsourcelon,
+      languagelonTag
     )
-    localizeWithCopyAndText(copy, languageTag, text)
+    localizelonWithCopyAndTelonxt(copy, languagelonTag, telonxt)
   }
 
-  def apply(
-    epitaph: Epitaph,
-    languageTag: String,
-    applicableCountries: Seq[String],
-  ): LocalizedMessage = {
+  delonf apply(
+    elonpitaph: elonpitaph,
+    languagelonTag: String,
+    applicablelonCountrielons: Selonq[String],
+  ): LocalizelondMelonssagelon = {
     val copy =
-      EpitaphToRichText.EpitaphToPolicyMap.getOrElse(epitaph, EpitaphToRichText.FallbackPolicy)
-    val text = Translator.translateWithSimplePlaceholderReplacement(
-      copy.resource,
-      languageTag,
-      Map((Resource.ApplicableCountriesPlaceholder -> applicableCountries.mkString(", ")))
+      elonpitaphToRichTelonxt.elonpitaphToPolicyMap.gelontOrelonlselon(elonpitaph, elonpitaphToRichTelonxt.FallbackPolicy)
+    val telonxt = Translator.translatelonWithSimplelonPlacelonholdelonrRelonplacelonmelonnt(
+      copy.relonsourcelon,
+      languagelonTag,
+      Map((Relonsourcelon.ApplicablelonCountrielonsPlacelonholdelonr -> applicablelonCountrielons.mkString(", ")))
     )
-    localizeWithCopyAndText(copy, languageTag, text)
+    localizelonWithCopyAndTelonxt(copy, languagelonTag, telonxt)
   }
 
-  private def localizeWithCopyAndText(
+  privatelon delonf localizelonWithCopyAndTelonxt(
     copy: Copy,
-    languageTag: String,
-    text: String
-  ): LocalizedMessage = {
-    val learnMore = Translator.translate(LearnMoreLink, languageTag)
+    languagelonTag: String,
+    telonxt: String
+  ): LocalizelondMelonssagelon = {
+    val lelonarnMorelon = Translator.translatelon(LelonarnMorelonLink, languagelonTag)
 
     val links = copy.additionalLinks match {
-      case links if links.nonEmpty =>
-        MessageLink(Resource.LearnMorePlaceholder, learnMore, copy.link) +:
+      caselon links if links.nonelonmpty =>
+        MelonssagelonLink(Relonsourcelon.LelonarnMorelonPlacelonholdelonr, lelonarnMorelon, copy.link) +:
           links.map {
-            case EpitaphToRichText.Link(placeholder, copyResource, link) =>
-              val copyText = Translator.translate(copyResource, languageTag)
-              MessageLink(placeholder, copyText, link)
+            caselon elonpitaphToRichTelonxt.Link(placelonholdelonr, copyRelonsourcelon, link) =>
+              val copyTelonxt = Translator.translatelon(copyRelonsourcelon, languagelonTag)
+              MelonssagelonLink(placelonholdelonr, copyTelonxt, link)
           }
-      case _ =>
-        Seq(
-          MessageLink(
-            key = Resource.LearnMorePlaceholder,
-            displayText = learnMore,
+      caselon _ =>
+        Selonq(
+          MelonssagelonLink(
+            kelony = Relonsourcelon.LelonarnMorelonPlacelonholdelonr,
+            displayTelonxt = lelonarnMorelon,
             uri = copy.link))
     }
 
-    LocalizedMessage(message = text, language = languageTag, links = links)
+    LocalizelondMelonssagelon(melonssagelon = telonxt, languagelon = languagelonTag, links = links)
   }
 }

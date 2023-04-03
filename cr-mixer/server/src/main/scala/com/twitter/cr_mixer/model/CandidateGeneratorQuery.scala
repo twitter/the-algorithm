@@ -1,96 +1,96 @@
-package com.twitter.cr_mixer.model
+packagelon com.twittelonr.cr_mixelonr.modelonl
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.thriftscala.Product
-import com.twitter.product_mixer.core.thriftscala.ClientContext
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.TopicId
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.cr_mixelonr.thriftscala.Product
+import com.twittelonr.product_mixelonr.corelon.thriftscala.ClielonntContelonxt
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.TopicId
+import com.twittelonr.timelonlinelons.configapi.Params
 
-sealed trait CandidateGeneratorQuery {
+selonalelond trait CandidatelonGelonnelonratorQuelonry {
   val product: Product
-  val maxNumResults: Int
-  val impressedTweetList: Set[TweetId]
+  val maxNumRelonsults: Int
+  val imprelonsselondTwelonelontList: Selont[TwelonelontId]
   val params: Params
-  val requestUUID: Long
+  val relonquelonstUUID: Long
 }
 
-sealed trait HasUserId {
-  val userId: UserId
+selonalelond trait HasUselonrId {
+  val uselonrId: UselonrId
 }
 
-case class CrCandidateGeneratorQuery(
-  userId: UserId,
+caselon class CrCandidatelonGelonnelonratorQuelonry(
+  uselonrId: UselonrId,
   product: Product,
-  userState: UserState,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
+  uselonrStatelon: UselonrStatelon,
+  maxNumRelonsults: Int,
+  imprelonsselondTwelonelontList: Selont[TwelonelontId],
   params: Params,
-  requestUUID: Long,
-  languageCode: Option[String] = None)
-    extends CandidateGeneratorQuery
-    with HasUserId
+  relonquelonstUUID: Long,
+  languagelonCodelon: Option[String] = Nonelon)
+    elonxtelonnds CandidatelonGelonnelonratorQuelonry
+    with HasUselonrId
 
-case class UtegTweetCandidateGeneratorQuery(
-  userId: UserId,
+caselon class UtelongTwelonelontCandidatelonGelonnelonratorQuelonry(
+  uselonrId: UselonrId,
   product: Product,
-  userState: UserState,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
+  uselonrStatelon: UselonrStatelon,
+  maxNumRelonsults: Int,
+  imprelonsselondTwelonelontList: Selont[TwelonelontId],
   params: Params,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
-    with HasUserId
+  relonquelonstUUID: Long)
+    elonxtelonnds CandidatelonGelonnelonratorQuelonry
+    with HasUselonrId
 
-case class RelatedTweetCandidateGeneratorQuery(
-  internalId: InternalId,
-  clientContext: ClientContext, // To scribe LogIn/LogOut requests
+caselon class RelonlatelondTwelonelontCandidatelonGelonnelonratorQuelonry(
+  intelonrnalId: IntelonrnalId,
+  clielonntContelonxt: ClielonntContelonxt, // To scribelon LogIn/LogOut relonquelonsts
   product: Product,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
+  maxNumRelonsults: Int,
+  imprelonsselondTwelonelontList: Selont[TwelonelontId],
   params: Params,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
+  relonquelonstUUID: Long)
+    elonxtelonnds CandidatelonGelonnelonratorQuelonry
 
-case class RelatedVideoTweetCandidateGeneratorQuery(
-  internalId: InternalId,
-  clientContext: ClientContext, // To scribe LogIn/LogOut requests
+caselon class RelonlatelondVidelonoTwelonelontCandidatelonGelonnelonratorQuelonry(
+  intelonrnalId: IntelonrnalId,
+  clielonntContelonxt: ClielonntContelonxt, // To scribelon LogIn/LogOut relonquelonsts
   product: Product,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
+  maxNumRelonsults: Int,
+  imprelonsselondTwelonelontList: Selont[TwelonelontId],
   params: Params,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
+  relonquelonstUUID: Long)
+    elonxtelonnds CandidatelonGelonnelonratorQuelonry
 
-case class FrsTweetCandidateGeneratorQuery(
-  userId: UserId,
+caselon class FrsTwelonelontCandidatelonGelonnelonratorQuelonry(
+  uselonrId: UselonrId,
   product: Product,
-  maxNumResults: Int,
-  impressedUserList: Set[UserId],
-  impressedTweetList: Set[TweetId],
+  maxNumRelonsults: Int,
+  imprelonsselondUselonrList: Selont[UselonrId],
+  imprelonsselondTwelonelontList: Selont[TwelonelontId],
   params: Params,
-  languageCodeOpt: Option[String] = None,
-  countryCodeOpt: Option[String] = None,
-  requestUUID: Long)
-    extends CandidateGeneratorQuery
+  languagelonCodelonOpt: Option[String] = Nonelon,
+  countryCodelonOpt: Option[String] = Nonelon,
+  relonquelonstUUID: Long)
+    elonxtelonnds CandidatelonGelonnelonratorQuelonry
 
-case class AdsCandidateGeneratorQuery(
-  userId: UserId,
+caselon class AdsCandidatelonGelonnelonratorQuelonry(
+  uselonrId: UselonrId,
   product: Product,
-  userState: UserState,
-  maxNumResults: Int,
+  uselonrStatelon: UselonrStatelon,
+  maxNumRelonsults: Int,
   params: Params,
-  requestUUID: Long)
+  relonquelonstUUID: Long)
 
-case class TopicTweetCandidateGeneratorQuery(
-  userId: UserId,
-  topicIds: Set[TopicId],
+caselon class TopicTwelonelontCandidatelonGelonnelonratorQuelonry(
+  uselonrId: UselonrId,
+  topicIds: Selont[TopicId],
   product: Product,
-  maxNumResults: Int,
-  impressedTweetList: Set[TweetId],
+  maxNumRelonsults: Int,
+  imprelonsselondTwelonelontList: Selont[TwelonelontId],
   params: Params,
-  requestUUID: Long,
-  isVideoOnly: Boolean)
-    extends CandidateGeneratorQuery
+  relonquelonstUUID: Long,
+  isVidelonoOnly: Boolelonan)
+    elonxtelonnds CandidatelonGelonnelonratorQuelonry

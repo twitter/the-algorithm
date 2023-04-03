@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.request
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
 
-trait ProductContext
+trait ProductContelonxt
 
-trait HasProductContext {
-  def productContext: Option[ProductContext]
+trait HasProductContelonxt {
+  delonf productContelonxt: Option[ProductContelonxt]
 }

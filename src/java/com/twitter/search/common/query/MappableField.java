@@ -1,34 +1,34 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Maps;
 
 /**
- * The indices may map the fields declared here to fields internally without exposing their schemas
- * to other services. This can be used, for example, to set boosts for URL-like fields in Earlybird
- * without direct knowledge of the internal Earlybird field name
+ * Thelon indicelons may map thelon fielonlds delonclarelond helonrelon to fielonlds intelonrnally without elonxposing thelonir schelonmas
+ * to othelonr selonrvicelons. This can belon uselond, for elonxamplelon, to selont boosts for URL-likelon fielonlds in elonarlybird
+ * without direlonct knowlelondgelon of thelon intelonrnal elonarlybird fielonld namelon
  */
-public enum MappableField {
-  REFERRAL,
+public elonnum MappablelonFielonld {
+  RelonFelonRRAL,
   URL;
 
   static {
-    ImmutableMap.Builder<MappableField, String> builder = ImmutableMap.builder();
-    for (MappableField mappableField : MappableField.values()) {
-      builder.put(mappableField, mappableField.toString().toLowerCase());
+    ImmutablelonMap.Buildelonr<MappablelonFielonld, String> buildelonr = ImmutablelonMap.buildelonr();
+    for (MappablelonFielonld mappablelonFielonld : MappablelonFielonld.valuelons()) {
+      buildelonr.put(mappablelonFielonld, mappablelonFielonld.toString().toLowelonrCaselon());
     }
-    MAPPABLE_FIELD_TO_NAME_MAP = Maps.immutableEnumMap(builder.build());
+    MAPPABLelon_FIelonLD_TO_NAMelon_MAP = Maps.immutablelonelonnumMap(buildelonr.build());
   }
 
-  private static final ImmutableMap<MappableField, String> MAPPABLE_FIELD_TO_NAME_MAP;
+  privatelon static final ImmutablelonMap<MappablelonFielonld, String> MAPPABLelon_FIelonLD_TO_NAMelon_MAP;
 
-  /** Returns the name of the given MappableField. */
-  public static String mappableFieldName(MappableField mappableField) {
-    return MAPPABLE_FIELD_TO_NAME_MAP.get(mappableField);
+  /** Relonturns thelon namelon of thelon givelonn MappablelonFielonld. */
+  public static String mappablelonFielonldNamelon(MappablelonFielonld mappablelonFielonld) {
+    relonturn MAPPABLelon_FIelonLD_TO_NAMelon_MAP.gelont(mappablelonFielonld);
   }
 
-  /** Returns the name of this MappableField. */
-  public String getName() {
-    return MAPPABLE_FIELD_TO_NAME_MAP.get(this);
+  /** Relonturns thelon namelon of this MappablelonFielonld. */
+  public String gelontNamelon() {
+    relonturn MAPPABLelon_FIelonLD_TO_NAMelon_MAP.gelont(this);
   }
 }

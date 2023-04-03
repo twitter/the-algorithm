@@ -1,28 +1,28 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+packagelon com.twittelonr.intelonraction_graph.scio.agg_addrelonss_book
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.addressbook.jobs.simplematches.SimpleUserMatchesScalaDataset
-import com.twitter.addressbook.matches.thriftscala.UserMatchesRecord
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.cde.scio.dal_read.SourceUtil
-import org.joda.time.Interval
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.addrelonssbook.jobs.simplelonmatchelons.SimplelonUselonrMatchelonsScalaDataselont
+import com.twittelonr.addrelonssbook.matchelons.thriftscala.UselonrMatchelonsReloncord
+import com.twittelonr.belonam.job.SelonrvicelonIdelonntifielonrOptions
+import com.twittelonr.cdelon.scio.dal_relonad.SourcelonUtil
+import org.joda.timelon.Intelonrval
 
-case class InteractionGraphAddressBookSource(
-  pipelineOptions: InteractionGraphAddressBookOption
+caselon class IntelonractionGraphAddrelonssBookSourcelon(
+  pipelonlinelonOptions: IntelonractionGraphAddrelonssBookOption
 )(
-  implicit sc: ScioContext,
+  implicit sc: ScioContelonxt,
 ) {
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  val dalelonnvironmelonnt: String = pipelonlinelonOptions
+    .as(classOf[SelonrvicelonIdelonntifielonrOptions])
+    .gelontelonnvironmelonnt()
 
-  def readSimpleUserMatches(
-    dateInterval: Interval
-  ): SCollection[UserMatchesRecord] = {
-    SourceUtil.readMostRecentSnapshotDALDataset[UserMatchesRecord](
-      SimpleUserMatchesScalaDataset,
-      dateInterval,
-      dalEnvironment)
+  delonf relonadSimplelonUselonrMatchelons(
+    datelonIntelonrval: Intelonrval
+  ): SCollelonction[UselonrMatchelonsReloncord] = {
+    SourcelonUtil.relonadMostReloncelonntSnapshotDALDataselont[UselonrMatchelonsReloncord](
+      SimplelonUselonrMatchelonsScalaDataselont,
+      datelonIntelonrval,
+      dalelonnvironmelonnt)
   }
 }

@@ -1,114 +1,114 @@
-package com.twitter.follow_recommendations.products.home_timeline
+packagelon com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon
 
-import com.twitter.follow_recommendations.assembler.models.ActionConfig
-import com.twitter.follow_recommendations.assembler.models.FollowedByUsersProof
-import com.twitter.follow_recommendations.assembler.models.FooterConfig
-import com.twitter.follow_recommendations.assembler.models.GeoContextProof
-import com.twitter.follow_recommendations.assembler.models.HeaderConfig
-import com.twitter.follow_recommendations.assembler.models.Layout
-import com.twitter.follow_recommendations.assembler.models.TitleConfig
-import com.twitter.follow_recommendations.assembler.models.UserListLayout
-import com.twitter.follow_recommendations.assembler.models.UserListOptions
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlow
-import com.twitter.follow_recommendations.flows.ads.PromotedAccountsFlowRequest
-import com.twitter.follow_recommendations.blenders.PromotedAccountsBlender
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.home_timeline.configapi.HomeTimelineParams._
-import com.twitter.inject.Injector
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.product.guice.ProductScope
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls.ActionConfig
+import com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls.FollowelondByUselonrsProof
+import com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls.FootelonrConfig
+import com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls.GelonoContelonxtProof
+import com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls.HelonadelonrConfig
+import com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls.Layout
+import com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls.TitlelonConfig
+import com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls.UselonrListLayout
+import com.twittelonr.follow_reloncommelonndations.asselonmblelonr.modelonls.UselonrListOptions
+import com.twittelonr.follow_reloncommelonndations.common.baselon.BaselonReloncommelonndationFlow
+import com.twittelonr.follow_reloncommelonndations.common.baselon.IdelonntityTransform
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Transform
+import com.twittelonr.follow_reloncommelonndations.flows.ads.PromotelondAccountsFlow
+import com.twittelonr.follow_reloncommelonndations.flows.ads.PromotelondAccountsFlowRelonquelonst
+import com.twittelonr.follow_reloncommelonndations.blelonndelonrs.PromotelondAccountsBlelonndelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Reloncommelonndation
+import com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml.PostNuxMlFlow
+import com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml.PostNuxMlRelonquelonstBuildelonr
+import com.twittelonr.follow_reloncommelonndations.products.common.Product
+import com.twittelonr.follow_reloncommelonndations.products.common.ProductRelonquelonst
+import com.twittelonr.follow_reloncommelonndations.products.homelon_timelonlinelon.configapi.HomelonTimelonlinelonParams._
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.ProductScopelon
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HomeTimelineProduct @Inject() (
+@Singlelonton
+class HomelonTimelonlinelonProduct @Injelonct() (
   postNuxMlFlow: PostNuxMlFlow,
-  postNuxMlRequestBuilder: PostNuxMlRequestBuilder,
-  promotedAccountsFlow: PromotedAccountsFlow,
-  promotedAccountsBlender: PromotedAccountsBlender,
-  productScope: ProductScope,
-  injector: Injector,
-) extends Product {
+  postNuxMlRelonquelonstBuildelonr: PostNuxMlRelonquelonstBuildelonr,
+  promotelondAccountsFlow: PromotelondAccountsFlow,
+  promotelondAccountsBlelonndelonr: PromotelondAccountsBlelonndelonr,
+  productScopelon: ProductScopelon,
+  injelonctor: Injelonctor,
+) elonxtelonnds Product {
 
-  override val name: String = "Home Timeline"
+  ovelonrridelon val namelon: String = "Homelon Timelonlinelon"
 
-  override val identifier: String = "home-timeline"
+  ovelonrridelon val idelonntifielonr: String = "homelon-timelonlinelon"
 
-  override val displayLocation: DisplayLocation = DisplayLocation.HomeTimeline
+  ovelonrridelon val displayLocation: DisplayLocation = DisplayLocation.HomelonTimelonlinelon
 
-  override def selectWorkflows(
-    request: ProductRequest
-  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>
-      Seq(
-        postNuxMlFlow.mapKey({ request: ProductRequest => postNuxMlRequest }),
-        promotedAccountsFlow.mapKey(mkPromotedAccountsRequest))
+  ovelonrridelon delonf selonlelonctWorkflows(
+    relonquelonst: ProductRelonquelonst
+  ): Stitch[Selonq[BaselonReloncommelonndationFlow[ProductRelonquelonst, _ <: Reloncommelonndation]]] = {
+    postNuxMlRelonquelonstBuildelonr.build(relonquelonst).map { postNuxMlRelonquelonst =>
+      Selonq(
+        postNuxMlFlow.mapKelony({ relonquelonst: ProductRelonquelonst => postNuxMlRelonquelonst }),
+        promotelondAccountsFlow.mapKelony(mkPromotelondAccountsRelonquelonst))
     }
   }
 
-  override val blender: Transform[ProductRequest, Recommendation] = {
-    promotedAccountsBlender.mapTarget[ProductRequest](getMaxResults)
+  ovelonrridelon val blelonndelonr: Transform[ProductRelonquelonst, Reloncommelonndation] = {
+    promotelondAccountsBlelonndelonr.mapTargelont[ProductRelonquelonst](gelontMaxRelonsults)
   }
 
-  private val identityTransform = new IdentityTransform[ProductRequest, Recommendation]
+  privatelon val idelonntityTransform = nelonw IdelonntityTransform[ProductRelonquelonst, Reloncommelonndation]
 
-  override def resultsTransformer(
-    request: ProductRequest
-  ): Stitch[Transform[ProductRequest, Recommendation]] = Stitch.value(identityTransform)
+  ovelonrridelon delonf relonsultsTransformelonr(
+    relonquelonst: ProductRelonquelonst
+  ): Stitch[Transform[ProductRelonquelonst, Reloncommelonndation]] = Stitch.valuelon(idelonntityTransform)
 
-  override def enabled(request: ProductRequest): Stitch[Boolean] =
-    Stitch.value(request.params(EnableProduct))
+  ovelonrridelon delonf elonnablelond(relonquelonst: ProductRelonquelonst): Stitch[Boolelonan] =
+    Stitch.valuelon(relonquelonst.params(elonnablelonProduct))
 
-  override def layout: Option[Layout] = {
-    productMixerProduct.map { product =>
-      val homeTimelineStrings = productScope.let(product) {
-        injector.instance[HomeTimelineStrings]
+  ovelonrridelon delonf layout: Option[Layout] = {
+    productMixelonrProduct.map { product =>
+      val homelonTimelonlinelonStrings = productScopelon.lelont(product) {
+        injelonctor.instancelon[HomelonTimelonlinelonStrings]
       }
-      UserListLayout(
-        header = Some(HeaderConfig(TitleConfig(homeTimelineStrings.whoToFollowModuleTitle))),
-        userListOptions = UserListOptions(userBioEnabled = true, userBioTruncated = true, None),
-        socialProofs = Some(
-          Seq(
-            FollowedByUsersProof(
-              homeTimelineStrings.whoToFollowFollowedByManyUserSingleString,
-              homeTimelineStrings.whoToFollowFollowedByManyUserDoubleString,
-              homeTimelineStrings.whoToFollowFollowedByManyUserMultipleString
+      UselonrListLayout(
+        helonadelonr = Somelon(HelonadelonrConfig(TitlelonConfig(homelonTimelonlinelonStrings.whoToFollowModulelonTitlelon))),
+        uselonrListOptions = UselonrListOptions(uselonrBioelonnablelond = truelon, uselonrBioTruncatelond = truelon, Nonelon),
+        socialProofs = Somelon(
+          Selonq(
+            FollowelondByUselonrsProof(
+              homelonTimelonlinelonStrings.whoToFollowFollowelondByManyUselonrSinglelonString,
+              homelonTimelonlinelonStrings.whoToFollowFollowelondByManyUselonrDoublelonString,
+              homelonTimelonlinelonStrings.whoToFollowFollowelondByManyUselonrMultiplelonString
             ),
-            GeoContextProof(homeTimelineStrings.whoToFollowPopularInCountryKey)
+            GelonoContelonxtProof(homelonTimelonlinelonStrings.whoToFollowPopularInCountryKelony)
           )),
-        footer = Some(
-          FooterConfig(
-            Some(ActionConfig(homeTimelineStrings.whoToFollowModuleFooter, "http://twitter.com"))))
+        footelonr = Somelon(
+          FootelonrConfig(
+            Somelon(ActionConfig(homelonTimelonlinelonStrings.whoToFollowModulelonFootelonr, "http://twittelonr.com"))))
       )
     }
   }
 
-  override def productMixerProduct: Option[request.Product] = Some(HTLProductMixer)
+  ovelonrridelon delonf productMixelonrProduct: Option[relonquelonst.Product] = Somelon(HTLProductMixelonr)
 
-  private[home_timeline] def mkPromotedAccountsRequest(
-    req: ProductRequest
-  ): PromotedAccountsFlowRequest = {
-    PromotedAccountsFlowRequest(
-      req.recommendationRequest.clientContext,
-      req.params,
-      req.recommendationRequest.displayLocation,
-      None,
-      req.recommendationRequest.excludedIds.getOrElse(Nil)
+  privatelon[homelon_timelonlinelon] delonf mkPromotelondAccountsRelonquelonst(
+    relonq: ProductRelonquelonst
+  ): PromotelondAccountsFlowRelonquelonst = {
+    PromotelondAccountsFlowRelonquelonst(
+      relonq.reloncommelonndationRelonquelonst.clielonntContelonxt,
+      relonq.params,
+      relonq.reloncommelonndationRelonquelonst.displayLocation,
+      Nonelon,
+      relonq.reloncommelonndationRelonquelonst.elonxcludelondIds.gelontOrelonlselon(Nil)
     )
   }
 
-  private[home_timeline] def getMaxResults(req: ProductRequest): Int = {
-    req.recommendationRequest.maxResults.getOrElse(
-      req.params(DefaultMaxResults)
+  privatelon[homelon_timelonlinelon] delonf gelontMaxRelonsults(relonq: ProductRelonquelonst): Int = {
+    relonq.reloncommelonndationRelonquelonst.maxRelonsults.gelontOrelonlselon(
+      relonq.params(DelonfaultMaxRelonsults)
     )
   }
 }

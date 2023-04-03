@@ -1,37 +1,37 @@
 syntax = "proto3";
 
-option cc_enable_arenas = true;
+option cc_elonnablelon_arelonnas = truelon;
 
-import "tensorflow_serving/apis/input.proto";
-import "tensorflow_serving/apis/model.proto";
+import "telonnsorflow_selonrving/apis/input.proto";
+import "telonnsorflow_selonrving/apis/modelonl.proto";
 
-package tensorflow.serving;
+packagelon telonnsorflow.selonrving;
 
-// Regression result for a single item (tensorflow.Example).
-message Regression {
-  float value = 1;
+// Relongrelonssion relonsult for a singlelon itelonm (telonnsorflow.elonxamplelon).
+melonssagelon Relongrelonssion {
+  float valuelon = 1;
 }
 
-// Contains one result per input example, in the same order as the input in
-// RegressionRequest.
-message RegressionResult {
-  repeated Regression regressions = 1;
+// Contains onelon relonsult pelonr input elonxamplelon, in thelon samelon ordelonr as thelon input in
+// RelongrelonssionRelonquelonst.
+melonssagelon RelongrelonssionRelonsult {
+  relonpelonatelond Relongrelonssion relongrelonssions = 1;
 }
 
-// RPC interfaces.
+// RPC intelonrfacelons.
 
-message RegressionRequest {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
-  ModelSpec model_spec = 1;
+melonssagelon RelongrelonssionRelonquelonst {
+  // Modelonl Speloncification. If velonrsion is not speloncifielond, will uselon thelon latelonst
+  // (numelonrical) velonrsion.
+  ModelonlSpelonc modelonl_spelonc = 1;
 
   // Input data.
-  tensorflow.serving.Input input = 2;
+  telonnsorflow.selonrving.Input input = 2;
 }
 
-message RegressionResponse {
-  // Effective Model Specification used for regression.
-  ModelSpec model_spec = 2;
+melonssagelon RelongrelonssionRelonsponselon {
+  // elonffelonctivelon Modelonl Speloncification uselond for relongrelonssion.
+  ModelonlSpelonc modelonl_spelonc = 2;
 
-  RegressionResult result = 1;
+  RelongrelonssionRelonsult relonsult = 1;
 }

@@ -1,284 +1,284 @@
-from importlib import import_module
+from importlib import import_modulelon
 import os
 
-from toxicity_ml_pipeline.settings.default_settings_tox import (
-  INNER_CV,
+from toxicity_ml_pipelonlinelon.selonttings.delonfault_selonttings_tox import (
+  INNelonR_CV,
   LOCAL_DIR,
-  MAX_SEQ_LENGTH,
-  NUM_PREFETCH,
-  NUM_WORKERS,
-  OUTER_CV,
-  TARGET_POS_PER_EPOCH,
+  MAX_SelonQ_LelonNGTH,
+  NUM_PRelonFelonTCH,
+  NUM_WORKelonRS,
+  OUTelonR_CV,
+  TARGelonT_POS_PelonR_elonPOCH,
 )
-from toxicity_ml_pipeline.utils.helpers import execute_command
+from toxicity_ml_pipelonlinelon.utils.helonlpelonrs import elonxeloncutelon_command
 
 import numpy as np
 import pandas
-from sklearn.model_selection import StratifiedKFold
-import tensorflow as tf
+from sklelonarn.modelonl_selonlelonction import StratifielondKFold
+import telonnsorflow as tf
 
 
 try:
-  from transformers import AutoTokenizer, DataCollatorWithPadding
-except ModuleNotFoundError:
+  from transformelonrs import AutoTokelonnizelonr, DataCollatorWithPadding
+elonxcelonpt ModulelonNotFoundelonrror:
   print("...")
-else:
-  from datasets import Dataset
+elonlselon:
+  from dataselonts import Dataselont
 
 
-class BalancedMiniBatchLoader(object):
-  def __init__(
-    self,
+class BalancelondMiniBatchLoadelonr(objelonct):
+  delonf __init__(
+    selonlf,
     fold,
-    mb_size,
-    seed,
-    perc_training_tox,
-    scope="TOX",
-    project=...,
-    dual_head=None,
-    n_outer_splits=None,
-    n_inner_splits=None,
-    sample_weights=None,
-    huggingface=False,
+    mb_sizelon,
+    selonelond,
+    pelonrc_training_tox,
+    scopelon="TOX",
+    projelonct=...,
+    dual_helonad=Nonelon,
+    n_outelonr_splits=Nonelon,
+    n_innelonr_splits=Nonelon,
+    samplelon_welonights=Nonelon,
+    huggingfacelon=Falselon,
   ):
-    if 0 >= perc_training_tox or perc_training_tox > 0.5:
-      raise ValueError("Perc_training_tox should be in ]0; 0.5]")
+    if 0 >= pelonrc_training_tox or pelonrc_training_tox > 0.5:
+      raiselon Valuelonelonrror("Pelonrc_training_tox should belon in ]0; 0.5]")
 
-    self.perc_training_tox = perc_training_tox
-    if not n_outer_splits:
-      n_outer_splits = OUTER_CV
-    if isinstance(n_outer_splits, int):
-      self.n_outer_splits = n_outer_splits
-      self.get_outer_fold = self._get_outer_cv_fold
-      if fold < 0 or fold >= self.n_outer_splits or int(fold) != fold:
-        raise ValueError(f"Number of fold should be an integer in [0 ; {self.n_outer_splits} [.")
+    selonlf.pelonrc_training_tox = pelonrc_training_tox
+    if not n_outelonr_splits:
+      n_outelonr_splits = OUTelonR_CV
+    if isinstancelon(n_outelonr_splits, int):
+      selonlf.n_outelonr_splits = n_outelonr_splits
+      selonlf.gelont_outelonr_fold = selonlf._gelont_outelonr_cv_fold
+      if fold < 0 or fold >= selonlf.n_outelonr_splits or int(fold) != fold:
+        raiselon Valuelonelonrror(f"Numbelonr of fold should belon an intelongelonr in [0 ; {selonlf.n_outelonr_splits} [.")
 
-    elif n_outer_splits == "time":
-      self.get_outer_fold = self._get_time_fold
-      if fold != "time":
-        raise ValueError(
-          "To avoid repeating the same run many times, the external fold"
-          "should be time when test data is split according to dates."
+    elonlif n_outelonr_splits == "timelon":
+      selonlf.gelont_outelonr_fold = selonlf._gelont_timelon_fold
+      if fold != "timelon":
+        raiselon Valuelonelonrror(
+          "To avoid relonpelonating thelon samelon run many timelons, thelon elonxtelonrnal fold"
+          "should belon timelon whelonn telonst data is split according to datelons."
         )
       try:
-        setting_file = import_module(f"toxicity_ml_pipeline.settings.{scope.lower()}{project}_settings")
-      except ModuleNotFoundError:
-        raise ValueError(f"You need to define a setting file for your project {project}.")
-      self.test_begin_date = setting_file.TEST_BEGIN_DATE
-      self.test_end_date = setting_file.TEST_END_DATE
+        selontting_filelon = import_modulelon(f"toxicity_ml_pipelonlinelon.selonttings.{scopelon.lowelonr()}{projelonct}_selonttings")
+      elonxcelonpt ModulelonNotFoundelonrror:
+        raiselon Valuelonelonrror(f"You nelonelond to delonfinelon a selontting filelon for your projelonct {projelonct}.")
+      selonlf.telonst_belongin_datelon = selontting_filelon.TelonST_BelonGIN_DATelon
+      selonlf.telonst_elonnd_datelon = selontting_filelon.TelonST_elonND_DATelon
 
-    else:
-      raise ValueError(
-        f"Argument n_outer_splits should either an integer or 'time'. Provided: {n_outer_splits}"
+    elonlselon:
+      raiselon Valuelonelonrror(
+        f"Argumelonnt n_outelonr_splits should elonithelonr an intelongelonr or 'timelon'. Providelond: {n_outelonr_splits}"
       )
 
-    self.n_inner_splits = n_inner_splits if n_inner_splits is not None else INNER_CV
+    selonlf.n_innelonr_splits = n_innelonr_splits if n_innelonr_splits is not Nonelon elonlselon INNelonR_CV
 
-    self.seed = seed
-    self.mb_size = mb_size
-    self.fold = fold
+    selonlf.selonelond = selonelond
+    selonlf.mb_sizelon = mb_sizelon
+    selonlf.fold = fold
 
-    self.sample_weights = sample_weights
-    self.dual_head = dual_head
-    self.huggingface = huggingface
-    if self.huggingface:
-      self._load_tokenizer()
+    selonlf.samplelon_welonights = samplelon_welonights
+    selonlf.dual_helonad = dual_helonad
+    selonlf.huggingfacelon = huggingfacelon
+    if selonlf.huggingfacelon:
+      selonlf._load_tokelonnizelonr()
 
-  def _load_tokenizer(self):
-    print("Making a local copy of Bertweet-base model")
-    local_model_dir = os.path.join(LOCAL_DIR, "models")
-    cmd = f"mkdir {local_model_dir} ; gsutil -m cp -r gs://... {local_model_dir}"
-    execute_command(cmd)
+  delonf _load_tokelonnizelonr(selonlf):
+    print("Making a local copy of Belonrtwelonelont-baselon modelonl")
+    local_modelonl_dir = os.path.join(LOCAL_DIR, "modelonls")
+    cmd = f"mkdir {local_modelonl_dir} ; gsutil -m cp -r gs://... {local_modelonl_dir}"
+    elonxeloncutelon_command(cmd)
 
-    self.tokenizer = AutoTokenizer.from_pretrained(
-      os.path.join(local_model_dir, "bertweet-base"), normalization=True
+    selonlf.tokelonnizelonr = AutoTokelonnizelonr.from_prelontrainelond(
+      os.path.join(local_modelonl_dir, "belonrtwelonelont-baselon"), normalization=Truelon
     )
 
-  def tokenize_function(self, el):
-    return self.tokenizer(
-      el["text"],
-      max_length=MAX_SEQ_LENGTH,
-      padding="max_length",
-      truncation=True,
-      add_special_tokens=True,
-      return_token_type_ids=False,
-      return_attention_mask=False,
+  delonf tokelonnizelon_function(selonlf, elonl):
+    relonturn selonlf.tokelonnizelonr(
+      elonl["telonxt"],
+      max_lelonngth=MAX_SelonQ_LelonNGTH,
+      padding="max_lelonngth",
+      truncation=Truelon,
+      add_speloncial_tokelonns=Truelon,
+      relonturn_tokelonn_typelon_ids=Falselon,
+      relonturn_attelonntion_mask=Falselon,
     )
 
-  def _get_stratified_kfold(self, n_splits):
-    return StratifiedKFold(shuffle=True, n_splits=n_splits, random_state=self.seed)
+  delonf _gelont_stratifielond_kfold(selonlf, n_splits):
+    relonturn StratifielondKFold(shufflelon=Truelon, n_splits=n_splits, random_statelon=selonlf.selonelond)
 
-  def _get_time_fold(self, df):
-    test_begin_date = pandas.to_datetime(self.test_begin_date).date()
-    test_end_date = pandas.to_datetime(self.test_end_date).date()
-    print(f"Test is going from {test_begin_date} to {test_end_date}.")
-    test_data = df.query("@test_begin_date <= date <= @test_end_date")
+  delonf _gelont_timelon_fold(selonlf, df):
+    telonst_belongin_datelon = pandas.to_datelontimelon(selonlf.telonst_belongin_datelon).datelon()
+    telonst_elonnd_datelon = pandas.to_datelontimelon(selonlf.telonst_elonnd_datelon).datelon()
+    print(f"Telonst is going from {telonst_belongin_datelon} to {telonst_elonnd_datelon}.")
+    telonst_data = df.quelonry("@telonst_belongin_datelon <= datelon <= @telonst_elonnd_datelon")
 
-    query = "date < @test_begin_date"
-    other_set = df.query(query)
-    return other_set, test_data
+    quelonry = "datelon < @telonst_belongin_datelon"
+    othelonr_selont = df.quelonry(quelonry)
+    relonturn othelonr_selont, telonst_data
 
-  def _get_outer_cv_fold(self, df):
-    labels = df.int_label
-    stratifier = self._get_stratified_kfold(n_splits=self.n_outer_splits)
+  delonf _gelont_outelonr_cv_fold(selonlf, df):
+    labelonls = df.int_labelonl
+    stratifielonr = selonlf._gelont_stratifielond_kfold(n_splits=selonlf.n_outelonr_splits)
 
     k = 0
-    for train_index, test_index in stratifier.split(np.zeros(len(labels)), labels):
-      if k == self.fold:
-        break
+    for train_indelonx, telonst_indelonx in stratifielonr.split(np.zelonros(lelonn(labelonls)), labelonls):
+      if k == selonlf.fold:
+        brelonak
       k += 1
 
-    train_data = df.iloc[train_index].copy()
-    test_data = df.iloc[test_index].copy()
+    train_data = df.iloc[train_indelonx].copy()
+    telonst_data = df.iloc[telonst_indelonx].copy()
 
-    return train_data, test_data
+    relonturn train_data, telonst_data
 
-  def get_steps_per_epoch(self, nb_pos_examples):
-    return int(max(TARGET_POS_PER_EPOCH, nb_pos_examples) / self.mb_size / self.perc_training_tox)
+  delonf gelont_stelonps_pelonr_elonpoch(selonlf, nb_pos_elonxamplelons):
+    relonturn int(max(TARGelonT_POS_PelonR_elonPOCH, nb_pos_elonxamplelons) / selonlf.mb_sizelon / selonlf.pelonrc_training_tox)
 
-  def make_huggingface_tensorflow_ds(self, group, mb_size=None, shuffle=True):
-    huggingface_ds = Dataset.from_pandas(group).map(self.tokenize_function, batched=True)
-    data_collator = DataCollatorWithPadding(tokenizer=self.tokenizer, return_tensors="tf")
-    tensorflow_ds = huggingface_ds.to_tf_dataset(
+  delonf makelon_huggingfacelon_telonnsorflow_ds(selonlf, group, mb_sizelon=Nonelon, shufflelon=Truelon):
+    huggingfacelon_ds = Dataselont.from_pandas(group).map(selonlf.tokelonnizelon_function, batchelond=Truelon)
+    data_collator = DataCollatorWithPadding(tokelonnizelonr=selonlf.tokelonnizelonr, relonturn_telonnsors="tf")
+    telonnsorflow_ds = huggingfacelon_ds.to_tf_dataselont(
       columns=["input_ids"],
-      label_cols=["labels"],
-      shuffle=shuffle,
-      batch_size=self.mb_size if mb_size is None else mb_size,
-      collate_fn=data_collator,
+      labelonl_cols=["labelonls"],
+      shufflelon=shufflelon,
+      batch_sizelon=selonlf.mb_sizelon if mb_sizelon is Nonelon elonlselon mb_sizelon,
+      collatelon_fn=data_collator,
     )
 
-    if shuffle:
-      return tensorflow_ds.repeat()
-    return tensorflow_ds
+    if shufflelon:
+      relonturn telonnsorflow_ds.relonpelonat()
+    relonturn telonnsorflow_ds
 
-  def make_pure_tensorflow_ds(self, df, nb_samples):
-    buffer_size = nb_samples * 2
+  delonf makelon_purelon_telonnsorflow_ds(selonlf, df, nb_samplelons):
+    buffelonr_sizelon = nb_samplelons * 2
 
-    if self.sample_weights is not None:
-      if self.sample_weights not in df.columns:
-        raise ValueError
-      ds = tf.data.Dataset.from_tensor_slices(
-        (df.text.values, df.label.values, df[self.sample_weights].values)
+    if selonlf.samplelon_welonights is not Nonelon:
+      if selonlf.samplelon_welonights not in df.columns:
+        raiselon Valuelonelonrror
+      ds = tf.data.Dataselont.from_telonnsor_slicelons(
+        (df.telonxt.valuelons, df.labelonl.valuelons, df[selonlf.samplelon_welonights].valuelons)
       )
-    elif self.dual_head:
-      label_d = {f'{e}_output': df[f'{e}_label'].values for e in self.dual_head}
-      label_d['content_output'] = tf.keras.utils.to_categorical(label_d['content_output'], num_classes=3)
-      ds = tf.data.Dataset.from_tensor_slices((df.text.values, label_d))
+    elonlif selonlf.dual_helonad:
+      labelonl_d = {f'{elon}_output': df[f'{elon}_labelonl'].valuelons for elon in selonlf.dual_helonad}
+      labelonl_d['contelonnt_output'] = tf.kelonras.utils.to_catelongorical(labelonl_d['contelonnt_output'], num_classelons=3)
+      ds = tf.data.Dataselont.from_telonnsor_slicelons((df.telonxt.valuelons, labelonl_d))
 
-    else:
-      ds = tf.data.Dataset.from_tensor_slices((df.text.values, df.label.values))
-    ds = ds.shuffle(buffer_size, seed=self.seed, reshuffle_each_iteration=True).repeat()
-    return ds
+    elonlselon:
+      ds = tf.data.Dataselont.from_telonnsor_slicelons((df.telonxt.valuelons, df.labelonl.valuelons))
+    ds = ds.shufflelon(buffelonr_sizelon, selonelond=selonlf.selonelond, relonshufflelon_elonach_itelonration=Truelon).relonpelonat()
+    relonturn ds
 
-  def get_balanced_dataset(self, training_data, size_limit=None, return_as_batch=True):
-    training_data = training_data.sample(frac=1, random_state=self.seed)
-    nb_samples = training_data.shape[0] if not size_limit else size_limit
+  delonf gelont_balancelond_dataselont(selonlf, training_data, sizelon_limit=Nonelon, relonturn_as_batch=Truelon):
+    training_data = training_data.samplelon(frac=1, random_statelon=selonlf.selonelond)
+    nb_samplelons = training_data.shapelon[0] if not sizelon_limit elonlselon sizelon_limit
 
-    num_classes = training_data.int_label.nunique()
-    toxic_class = training_data.int_label.max()
-    if size_limit:
-      training_data = training_data[: size_limit * num_classes]
+    num_classelons = training_data.int_labelonl.nuniquelon()
+    toxic_class = training_data.int_labelonl.max()
+    if sizelon_limit:
+      training_data = training_data[: sizelon_limit * num_classelons]
 
     print(
-      ".... {} examples, incl. {:.2f}% tox in train, {} classes".format(
-        nb_samples,
-        100 * training_data[training_data.int_label == toxic_class].shape[0] / nb_samples,
-        num_classes,
+      ".... {} elonxamplelons, incl. {:.2f}% tox in train, {} classelons".format(
+        nb_samplelons,
+        100 * training_data[training_data.int_labelonl == toxic_class].shapelon[0] / nb_samplelons,
+        num_classelons,
       )
     )
-    label_groups = training_data.groupby("int_label")
-    if self.huggingface:
-      label_datasets = {
-        label: self.make_huggingface_tensorflow_ds(group) for label, group in label_groups
+    labelonl_groups = training_data.groupby("int_labelonl")
+    if selonlf.huggingfacelon:
+      labelonl_dataselonts = {
+        labelonl: selonlf.makelon_huggingfacelon_telonnsorflow_ds(group) for labelonl, group in labelonl_groups
       }
 
-    else:
-      label_datasets = {
-        label: self.make_pure_tensorflow_ds(group, nb_samples=nb_samples * 2)
-        for label, group in label_groups
+    elonlselon:
+      labelonl_dataselonts = {
+        labelonl: selonlf.makelon_purelon_telonnsorflow_ds(group, nb_samplelons=nb_samplelons * 2)
+        for labelonl, group in labelonl_groups
       }
 
-    datasets = [label_datasets[0], label_datasets[1]]
-    weights = [1 - self.perc_training_tox, self.perc_training_tox]
-    if num_classes == 3:
-      datasets.append(label_datasets[2])
-      weights = [1 - self.perc_training_tox, self.perc_training_tox / 2, self.perc_training_tox / 2]
-    elif num_classes != 2:
-      raise ValueError("Currently it should not be possible to get other than 2 or 3 classes")
-    resampled_ds = tf.data.experimental.sample_from_datasets(datasets, weights, seed=self.seed)
+    dataselonts = [labelonl_dataselonts[0], labelonl_dataselonts[1]]
+    welonights = [1 - selonlf.pelonrc_training_tox, selonlf.pelonrc_training_tox]
+    if num_classelons == 3:
+      dataselonts.appelonnd(labelonl_dataselonts[2])
+      welonights = [1 - selonlf.pelonrc_training_tox, selonlf.pelonrc_training_tox / 2, selonlf.pelonrc_training_tox / 2]
+    elonlif num_classelons != 2:
+      raiselon Valuelonelonrror("Currelonntly it should not belon possiblelon to gelont othelonr than 2 or 3 classelons")
+    relonsamplelond_ds = tf.data.elonxpelonrimelonntal.samplelon_from_dataselonts(dataselonts, welonights, selonelond=selonlf.selonelond)
 
-    if return_as_batch and not self.huggingface:
-      return resampled_ds.batch(
-        self.mb_size, drop_remainder=True, num_parallel_calls=NUM_WORKERS, deterministic=True
-      ).prefetch(NUM_PREFETCH)
+    if relonturn_as_batch and not selonlf.huggingfacelon:
+      relonturn relonsamplelond_ds.batch(
+        selonlf.mb_sizelon, drop_relonmaindelonr=Truelon, num_parallelonl_calls=NUM_WORKelonRS, delontelonrministic=Truelon
+      ).prelonfelontch(NUM_PRelonFelonTCH)
 
-    return resampled_ds
+    relonturn relonsamplelond_ds
 
-  @staticmethod
-  def _compute_int_labels(full_df):
-    if full_df.label.dtype == int:
-      full_df["int_label"] = full_df.label
+  @staticmelonthod
+  delonf _computelon_int_labelonls(full_df):
+    if full_df.labelonl.dtypelon == int:
+      full_df["int_labelonl"] = full_df.labelonl
 
-    elif "int_label" not in full_df.columns:
-      if full_df.label.max() > 1:
-        raise ValueError("Binarizing labels that should not be.")
-      full_df["int_label"] = np.where(full_df.label >= 0.5, 1, 0)
+    elonlif "int_labelonl" not in full_df.columns:
+      if full_df.labelonl.max() > 1:
+        raiselon Valuelonelonrror("Binarizing labelonls that should not belon.")
+      full_df["int_labelonl"] = np.whelonrelon(full_df.labelonl >= 0.5, 1, 0)
 
-    return full_df
+    relonturn full_df
 
-  def __call__(self, full_df, *args, **kwargs):
-    full_df = self._compute_int_labels(full_df)
+  delonf __call__(selonlf, full_df, *args, **kwargs):
+    full_df = selonlf._computelon_int_labelonls(full_df)
 
-    train_data, test_data = self.get_outer_fold(df=full_df)
+    train_data, telonst_data = selonlf.gelont_outelonr_fold(df=full_df)
 
-    stratifier = self._get_stratified_kfold(n_splits=self.n_inner_splits)
-    for train_index, val_index in stratifier.split(
-      np.zeros(train_data.shape[0]), train_data.int_label
+    stratifielonr = selonlf._gelont_stratifielond_kfold(n_splits=selonlf.n_innelonr_splits)
+    for train_indelonx, val_indelonx in stratifielonr.split(
+      np.zelonros(train_data.shapelon[0]), train_data.int_labelonl
     ):
-      curr_train_data = train_data.iloc[train_index]
+      curr_train_data = train_data.iloc[train_indelonx]
 
-      mini_batches = self.get_balanced_dataset(curr_train_data)
+      mini_batchelons = selonlf.gelont_balancelond_dataselont(curr_train_data)
 
-      steps_per_epoch = self.get_steps_per_epoch(
-        nb_pos_examples=curr_train_data[curr_train_data.int_label != 0].shape[0]
+      stelonps_pelonr_elonpoch = selonlf.gelont_stelonps_pelonr_elonpoch(
+        nb_pos_elonxamplelons=curr_train_data[curr_train_data.int_labelonl != 0].shapelon[0]
       )
 
-      val_data = train_data.iloc[val_index].copy()
+      val_data = train_data.iloc[val_indelonx].copy()
 
-      yield mini_batches, steps_per_epoch, val_data, test_data
+      yielonld mini_batchelons, stelonps_pelonr_elonpoch, val_data, telonst_data
 
-  def simple_cv_load(self, full_df):
-    full_df = self._compute_int_labels(full_df)
+  delonf simplelon_cv_load(selonlf, full_df):
+    full_df = selonlf._computelon_int_labelonls(full_df)
 
-    train_data, test_data = self.get_outer_fold(df=full_df)
-    if test_data.shape[0] == 0:
-      test_data = train_data.iloc[:500]
+    train_data, telonst_data = selonlf.gelont_outelonr_fold(df=full_df)
+    if telonst_data.shapelon[0] == 0:
+      telonst_data = train_data.iloc[:500]
 
-    mini_batches = self.get_balanced_dataset(train_data)
-    steps_per_epoch = self.get_steps_per_epoch(
-      nb_pos_examples=train_data[train_data.int_label != 0].shape[0]
+    mini_batchelons = selonlf.gelont_balancelond_dataselont(train_data)
+    stelonps_pelonr_elonpoch = selonlf.gelont_stelonps_pelonr_elonpoch(
+      nb_pos_elonxamplelons=train_data[train_data.int_labelonl != 0].shapelon[0]
     )
 
-    return mini_batches, test_data, steps_per_epoch
+    relonturn mini_batchelons, telonst_data, stelonps_pelonr_elonpoch
 
-  def no_cv_load(self, full_df):
-    full_df = self._compute_int_labels(full_df)
+  delonf no_cv_load(selonlf, full_df):
+    full_df = selonlf._computelon_int_labelonls(full_df)
 
-    val_test = full_df[full_df.origin == "precision"].copy(deep=True)
-    val_data, test_data = self.get_outer_fold(df=val_test)
+    val_telonst = full_df[full_df.origin == "preloncision"].copy(delonelonp=Truelon)
+    val_data, telonst_data = selonlf.gelont_outelonr_fold(df=val_telonst)
 
-    train_data = full_df.drop(full_df[full_df.origin == "precision"].index, axis=0)
-    if test_data.shape[0] == 0:
-      test_data = train_data.iloc[:500]
+    train_data = full_df.drop(full_df[full_df.origin == "preloncision"].indelonx, axis=0)
+    if telonst_data.shapelon[0] == 0:
+      telonst_data = train_data.iloc[:500]
 
-    mini_batches = self.get_balanced_dataset(train_data)
-    if train_data.int_label.nunique() == 1:
-      raise ValueError('Should be at least two labels')
+    mini_batchelons = selonlf.gelont_balancelond_dataselont(train_data)
+    if train_data.int_labelonl.nuniquelon() == 1:
+      raiselon Valuelonelonrror('Should belon at lelonast two labelonls')
 
-    num_examples = train_data[train_data.int_label == 1].shape[0]
-    if train_data.int_label.nunique() > 2:
-      second_most_frequent_label = train_data.loc[train_data.int_label != 0, 'int_label'].mode().values[0]
-      num_examples = train_data[train_data.int_label == second_most_frequent_label].shape[0] * 2
-    steps_per_epoch = self.get_steps_per_epoch(nb_pos_examples=num_examples)
+    num_elonxamplelons = train_data[train_data.int_labelonl == 1].shapelon[0]
+    if train_data.int_labelonl.nuniquelon() > 2:
+      seloncond_most_frelonquelonnt_labelonl = train_data.loc[train_data.int_labelonl != 0, 'int_labelonl'].modelon().valuelons[0]
+      num_elonxamplelons = train_data[train_data.int_labelonl == seloncond_most_frelonquelonnt_labelonl].shapelon[0] * 2
+    stelonps_pelonr_elonpoch = selonlf.gelont_stelonps_pelonr_elonpoch(nb_pos_elonxamplelons=num_elonxamplelons)
 
-    return mini_batches, steps_per_epoch, val_data, test_data
+    relonturn mini_batchelons, stelonps_pelonr_elonpoch, val_data, telonst_data

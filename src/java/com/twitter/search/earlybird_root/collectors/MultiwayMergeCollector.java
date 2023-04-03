@@ -1,82 +1,82 @@
-package com.twitter.search.earlybird_root.collectors;
+packagelon com.twittelonr.selonarch.elonarlybird_root.collelonctors;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.Comparator;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
 
 /**
- * Generic MultiwayMergeCollector class for doing k-way merge of earlybird responses
- * that takes a comparator and returns a list of results sorted by the comparator.
+ * Gelonnelonric MultiwayMelonrgelonCollelonctor class for doing k-way melonrgelon of elonarlybird relonsponselons
+ * that takelons a comparator and relonturns a list of relonsults sortelond by thelon comparator.
  */
-public abstract class MultiwayMergeCollector<T> {
-  protected static final Logger LOG = LoggerFactory.getLogger(MultiwayMergeCollector.class);
+public abstract class MultiwayMelonrgelonCollelonctor<T> {
+  protelonctelond static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(MultiwayMelonrgelonCollelonctor.class);
 
-  private final Comparator<T> resultComparator;
-  private final int numResponsesToMerge;
-  private final List<T> results = Lists.newArrayList();
-  private int numResponsesAdded = 0;
+  privatelon final Comparator<T> relonsultComparator;
+  privatelon final int numRelonsponselonsToMelonrgelon;
+  privatelon final List<T> relonsults = Lists.nelonwArrayList();
+  privatelon int numRelonsponselonsAddelond = 0;
 
   /**
-   * Constructor that does multi way merge and takes in a custom predicate search result filter.
+   * Constructor that doelons multi way melonrgelon and takelons in a custom prelondicatelon selonarch relonsult filtelonr.
    */
-  public MultiwayMergeCollector(int numResponses,
+  public MultiwayMelonrgelonCollelonctor(int numRelonsponselons,
                                 Comparator<T> comparator) {
-    Preconditions.checkNotNull(comparator);
-    this.resultComparator = comparator;
-    this.numResponsesToMerge = numResponses;
+    Prelonconditions.chelonckNotNull(comparator);
+    this.relonsultComparator = comparator;
+    this.numRelonsponselonsToMelonrgelon = numRelonsponselons;
   }
 
   /**
-   * Add a single response from one partition, updates stats.
+   * Add a singlelon relonsponselon from onelon partition, updatelons stats.
    *
-   * @param response response from one partition
+   * @param relonsponselon relonsponselon from onelon partition
    */
-  public final void addResponse(EarlybirdResponse response) {
-    // On prod, does it ever happen we receive more responses than numPartitions ?
-    Preconditions.checkArgument(numResponsesAdded++ < numResponsesToMerge,
-        String.format("Attempting to merge more than %d responses", numResponsesToMerge));
-    if (!isResponseValid(response)) {
-      return;
+  public final void addRelonsponselon(elonarlybirdRelonsponselon relonsponselon) {
+    // On prod, doelons it elonvelonr happelonn welon reloncelonivelon morelon relonsponselons than numPartitions ?
+    Prelonconditions.chelonckArgumelonnt(numRelonsponselonsAddelond++ < numRelonsponselonsToMelonrgelon,
+        String.format("Attelonmpting to melonrgelon morelon than %d relonsponselons", numRelonsponselonsToMelonrgelon));
+    if (!isRelonsponselonValid(relonsponselon)) {
+      relonturn;
     }
-    collectStats(response);
-    List<T> resultsFromResponse = collectResults(response);
-    if (resultsFromResponse != null && resultsFromResponse.size() > 0) {
-      results.addAll(resultsFromResponse);
+    collelonctStats(relonsponselon);
+    List<T> relonsultsFromRelonsponselon = collelonctRelonsults(relonsponselon);
+    if (relonsultsFromRelonsponselon != null && relonsultsFromRelonsponselon.sizelon() > 0) {
+      relonsults.addAll(relonsultsFromRelonsponselon);
     }
   }
 
   /**
-   * Parse the EarlybirdResponse and retrieve list of results to be appended.
+   * Parselon thelon elonarlybirdRelonsponselon and relontrielonvelon list of relonsults to belon appelonndelond.
    *
-   * @param response earlybird response from where results are extracted
-   * @return  resultsList to be appended
+   * @param relonsponselon elonarlybird relonsponselon from whelonrelon relonsults arelon elonxtractelond
+   * @relonturn  relonsultsList to belon appelonndelond
    */
-  protected abstract List<T> collectResults(EarlybirdResponse response);
+  protelonctelond abstract List<T> collelonctRelonsults(elonarlybirdRelonsponselon relonsponselon);
 
   /**
-   * It is recommended that sub-class overrides this function to add custom logic to
-   * collect more stat and call this base function.
+   * It is reloncommelonndelond that sub-class ovelonrridelons this function to add custom logic to
+   * collelonct morelon stat and call this baselon function.
    */
-  protected void collectStats(EarlybirdResponse response) {
+  protelonctelond void collelonctStats(elonarlybirdRelonsponselon relonsponselon) {
   }
 
   /**
-   * Get full list of results, after addResponse calls have been invoked.
+   * Gelont full list of relonsults, aftelonr addRelonsponselon calls havelon belonelonn invokelond.
    *
-   * @return list of results extracted from all EarlybirdResponses that have been collected so far
+   * @relonturn list of relonsults elonxtractelond from all elonarlybirdRelonsponselons that havelon belonelonn collelonctelond so far
    */
-  protected final List<T> getResultsList() {
-    Collections.sort(results, resultComparator);
-    return results;
+  protelonctelond final List<T> gelontRelonsultsList() {
+    Collelonctions.sort(relonsults, relonsultComparator);
+    relonturn relonsults;
   }
 
-  protected abstract boolean isResponseValid(EarlybirdResponse response);
+  protelonctelond abstract boolelonan isRelonsponselonValid(elonarlybirdRelonsponselon relonsponselon);
 }

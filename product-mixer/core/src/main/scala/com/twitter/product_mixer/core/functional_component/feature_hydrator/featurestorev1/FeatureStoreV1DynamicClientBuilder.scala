@@ -1,12 +1,12 @@
-package com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1
 
-import com.twitter.ml.featurestore.lib.dynamic.BaseDynamicHydrationConfig
-import com.twitter.ml.featurestore.lib.dynamic.BaseGatedFeatures
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic.BaselonDynamicHydrationConfig
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic.BaselonGatelondFelonaturelons
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic.DynamicFelonaturelonStorelonClielonnt
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait FeatureStoreV1DynamicClientBuilder {
-  def build[Query <: PipelineQuery](
-    dynamicHydrationConfig: BaseDynamicHydrationConfig[Query, _ <: BaseGatedFeatures[Query]]
-  ): DynamicFeatureStoreClient[Query]
+trait FelonaturelonStorelonV1DynamicClielonntBuildelonr {
+  delonf build[Quelonry <: PipelonlinelonQuelonry](
+    dynamicHydrationConfig: BaselonDynamicHydrationConfig[Quelonry, _ <: BaselonGatelondFelonaturelons[Quelonry]]
+  ): DynamicFelonaturelonStorelonClielonnt[Quelonry]
 }

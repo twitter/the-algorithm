@@ -1,97 +1,97 @@
-package com.twitter.product_mixer.shared_library.http_client
+packagelon com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.Service
-import com.twitter.finagle.client.Transporter
-import com.twitter.finagle.http.ProxyCredentials
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Response
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.shared_library.http_client.FinagleHttpClientBuilder.buildFinagleHttpClient
-import com.twitter.util.Duration
+import com.twittelonr.finaglelon.Http
+import com.twittelonr.finaglelon.Selonrvicelon
+import com.twittelonr.finaglelon.clielonnt.Transportelonr
+import com.twittelonr.finaglelon.http.ProxyCrelondelonntials
+import com.twittelonr.finaglelon.http.Relonquelonst
+import com.twittelonr.finaglelon.http.Relonsponselon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.sharelond_library.http_clielonnt.FinaglelonHttpClielonntBuildelonr.buildFinaglelonHttpClielonnt
+import com.twittelonr.util.Duration
 
-object FinagleHttpClientWithProxyBuilder {
+objelonct FinaglelonHttpClielonntWithProxyBuildelonr {
 
   /**
-   * Build a Finagle HTTP client with Egress Proxy support using Credentials
+   * Build a Finaglelon HTTP clielonnt with elongrelonss Proxy support using Crelondelonntials
    *
-   * @param twitterProxyHostPort    Twitter egress proxy host port
-   * @param remoteProxyHostPort     Remote proxy host port
-   * @param requestTimeout          HTTP client request timeout
-   * @param connectTimeout          HTTP client transport connect timeout
-   * @param acquisitionTimeout      HTTP client session acquisition timeout
-   * @param proxyCredentials        Proxy credentials
-   * @param statsReceiver           Stats
+   * @param twittelonrProxyHostPort    Twittelonr elongrelonss proxy host port
+   * @param relonmotelonProxyHostPort     Relonmotelon proxy host port
+   * @param relonquelonstTimelonout          HTTP clielonnt relonquelonst timelonout
+   * @param connelonctTimelonout          HTTP clielonnt transport connelonct timelonout
+   * @param acquisitionTimelonout      HTTP clielonnt selonssion acquisition timelonout
+   * @param proxyCrelondelonntials        Proxy crelondelonntials
+   * @param statsReloncelonivelonr           Stats
    *
-   * @return Finagle HTTP client with Egress Proxy support using Credentials
+   * @relonturn Finaglelon HTTP clielonnt with elongrelonss Proxy support using Crelondelonntials
    */
-  def buildFinagleHttpClientWithCredentialProxy(
-    twitterProxyHostPort: HttpHostPort,
-    remoteProxyHostPort: HttpHostPort,
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    proxyCredentials: ProxyCredentials,
-    statsReceiver: StatsReceiver,
-  ): Http.Client = {
-    val httpClient = buildFinagleHttpClient(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      statsReceiver = statsReceiver
+  delonf buildFinaglelonHttpClielonntWithCrelondelonntialProxy(
+    twittelonrProxyHostPort: HttpHostPort,
+    relonmotelonProxyHostPort: HttpHostPort,
+    relonquelonstTimelonout: Duration,
+    connelonctTimelonout: Duration,
+    acquisitionTimelonout: Duration,
+    proxyCrelondelonntials: ProxyCrelondelonntials,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): Http.Clielonnt = {
+    val httpClielonnt = buildFinaglelonHttpClielonnt(
+      relonquelonstTimelonout = relonquelonstTimelonout,
+      connelonctTimelonout = connelonctTimelonout,
+      acquisitionTimelonout = acquisitionTimelonout,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-    httpClient.withTransport
+    httpClielonnt.withTransport
       .httpProxyTo(
-        host = remoteProxyHostPort.toString,
-        credentials = Transporter.Credentials(proxyCredentials.username, proxyCredentials.password))
-      .withTls(remoteProxyHostPort.host)
+        host = relonmotelonProxyHostPort.toString,
+        crelondelonntials = Transportelonr.Crelondelonntials(proxyCrelondelonntials.uselonrnamelon, proxyCrelondelonntials.password))
+      .withTls(relonmotelonProxyHostPort.host)
   }
 
   /**
-   * Build a Finagle HTTP client with Egress Proxy support
+   * Build a Finaglelon HTTP clielonnt with elongrelonss Proxy support
    *
-   * @param twitterProxyHostPort   Twitter egress proxy host port
-   * @param remoteProxyHostPort    Remote proxy host port
-   * @param requestTimeout         HTTP client request timeout
-   * @param connectTimeout         HTTP client transport connect timeout
-   * @param acquisitionTimeout     HTTP client session acquisition timeout
-   * @param statsReceiver          Stats
+   * @param twittelonrProxyHostPort   Twittelonr elongrelonss proxy host port
+   * @param relonmotelonProxyHostPort    Relonmotelon proxy host port
+   * @param relonquelonstTimelonout         HTTP clielonnt relonquelonst timelonout
+   * @param connelonctTimelonout         HTTP clielonnt transport connelonct timelonout
+   * @param acquisitionTimelonout     HTTP clielonnt selonssion acquisition timelonout
+   * @param statsReloncelonivelonr          Stats
    *
-   * @return Finagle HTTP client with Egress Proxy support
+   * @relonturn Finaglelon HTTP clielonnt with elongrelonss Proxy support
    */
-  def buildFinagleHttpClientWithProxy(
-    twitterProxyHostPort: HttpHostPort,
-    remoteProxyHostPort: HttpHostPort,
-    requestTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    statsReceiver: StatsReceiver,
-  ): Http.Client = {
-    val httpClient = buildFinagleHttpClient(
-      requestTimeout = requestTimeout,
-      connectTimeout = connectTimeout,
-      acquisitionTimeout = acquisitionTimeout,
-      statsReceiver = statsReceiver
+  delonf buildFinaglelonHttpClielonntWithProxy(
+    twittelonrProxyHostPort: HttpHostPort,
+    relonmotelonProxyHostPort: HttpHostPort,
+    relonquelonstTimelonout: Duration,
+    connelonctTimelonout: Duration,
+    acquisitionTimelonout: Duration,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+  ): Http.Clielonnt = {
+    val httpClielonnt = buildFinaglelonHttpClielonnt(
+      relonquelonstTimelonout = relonquelonstTimelonout,
+      connelonctTimelonout = connelonctTimelonout,
+      acquisitionTimelonout = acquisitionTimelonout,
+      statsReloncelonivelonr = statsReloncelonivelonr
     )
 
-    httpClient.withTransport
-      .httpProxyTo(remoteProxyHostPort.toString)
-      .withTls(remoteProxyHostPort.host)
+    httpClielonnt.withTransport
+      .httpProxyTo(relonmotelonProxyHostPort.toString)
+      .withTls(relonmotelonProxyHostPort.host)
   }
 
   /**
-   * Build a Finagle HTTP service with Egress Proxy support
+   * Build a Finaglelon HTTP selonrvicelon with elongrelonss Proxy support
    *
-   * @param finagleHttpClientWithProxy Finagle HTTP client from which to build the service
-   * @param twitterProxyHostPort       Twitter egress proxy host port
+   * @param finaglelonHttpClielonntWithProxy Finaglelon HTTP clielonnt from which to build thelon selonrvicelon
+   * @param twittelonrProxyHostPort       Twittelonr elongrelonss proxy host port
    *
-   * @return Finagle HTTP service with Egress Proxy support
+   * @relonturn Finaglelon HTTP selonrvicelon with elongrelonss Proxy support
    */
-  def buildFinagleHttpServiceWithProxy(
-    finagleHttpClientWithProxy: Http.Client,
-    twitterProxyHostPort: HttpHostPort
-  ): Service[Request, Response] = {
-    finagleHttpClientWithProxy.newService(twitterProxyHostPort.toString)
+  delonf buildFinaglelonHttpSelonrvicelonWithProxy(
+    finaglelonHttpClielonntWithProxy: Http.Clielonnt,
+    twittelonrProxyHostPort: HttpHostPort
+  ): Selonrvicelon[Relonquelonst, Relonsponselon] = {
+    finaglelonHttpClielonntWithProxy.nelonwSelonrvicelon(twittelonrProxyHostPort.toString)
   }
 }

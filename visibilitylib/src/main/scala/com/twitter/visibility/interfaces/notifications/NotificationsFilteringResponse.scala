@@ -1,13 +1,13 @@
-package com.twitter.visibility.interfaces.notifications
+packagelon com.twittelonr.visibility.intelonrfacelons.notifications
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.rules.Action
-import scala.collection.immutable.Set
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.rulelons.Action
+import scala.collelonction.immutablelon.Selont
 
-sealed trait NotificationsFilteringResponse
+selonalelond trait NotificationsFiltelonringRelonsponselon
 
-case object Allow extends NotificationsFilteringResponse
+caselon objelonct Allow elonxtelonnds NotificationsFiltelonringRelonsponselon
 
-case class Filtered(action: Action) extends NotificationsFilteringResponse
+caselon class Filtelonrelond(action: Action) elonxtelonnds NotificationsFiltelonringRelonsponselon
 
-case class Failed(features: Set[Feature[_]]) extends NotificationsFilteringResponse
+caselon class Failelond(felonaturelons: Selont[Felonaturelon[_]]) elonxtelonnds NotificationsFiltelonringRelonsponselon

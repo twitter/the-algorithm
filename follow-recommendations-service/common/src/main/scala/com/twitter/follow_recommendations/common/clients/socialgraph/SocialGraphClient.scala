@@ -1,421 +1,421 @@
-package com.twitter.follow_recommendations.common.clients.socialgraph
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.socialgraph
 
-import com.twitter.escherbird.util.stitchcache.StitchCache
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.base.StatsUtil
-import com.twitter.follow_recommendations.common.models.FollowProof
-import com.twitter.follow_recommendations.common.models.UserIdWithTimestamp
-import com.twitter.inject.Logging
-import com.twitter.socialgraph.thriftscala.EdgesRequest
-import com.twitter.socialgraph.thriftscala.IdsRequest
-import com.twitter.socialgraph.thriftscala.IdsResult
-import com.twitter.socialgraph.thriftscala.LookupContext
-import com.twitter.socialgraph.thriftscala.OverCapacity
-import com.twitter.socialgraph.thriftscala.PageRequest
-import com.twitter.socialgraph.thriftscala.RelationshipType
-import com.twitter.socialgraph.thriftscala.SrcRelationship
-import com.twitter.socialgraph.util.ByteBufferUtil
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
-import com.twitter.strato.client.Fetcher
-import com.twitter.strato.generated.client.onboarding.socialGraphService.IdsClientColumn
-import com.twitter.util.Duration
-import com.twitter.util.Time
-import java.nio.ByteBuffer
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.elonschelonrbird.util.stitchcachelon.StitchCachelon
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.baselon.StatsUtil
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FollowProof
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.UselonrIdWithTimelonstamp
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.socialgraph.thriftscala.elondgelonsRelonquelonst
+import com.twittelonr.socialgraph.thriftscala.IdsRelonquelonst
+import com.twittelonr.socialgraph.thriftscala.IdsRelonsult
+import com.twittelonr.socialgraph.thriftscala.LookupContelonxt
+import com.twittelonr.socialgraph.thriftscala.OvelonrCapacity
+import com.twittelonr.socialgraph.thriftscala.PagelonRelonquelonst
+import com.twittelonr.socialgraph.thriftscala.RelonlationshipTypelon
+import com.twittelonr.socialgraph.thriftscala.SrcRelonlationship
+import com.twittelonr.socialgraph.util.BytelonBuffelonrUtil
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.socialgraph.SocialGraph
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.socialGraphSelonrvicelon.IdsClielonntColumn
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelon
+import java.nio.BytelonBuffelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-case class RecentEdgesQuery(
-  userId: Long,
-  relations: Seq[RelationshipType],
-  // prefer to default value to better utilize the caching function of stitch
-  count: Option[Int] = Some(SocialGraphClient.MaxQuerySize),
-  performUnion: Boolean = true,
-  recentEdgesWindowOpt: Option[Duration] = None,
-  targets: Option[Seq[Long]] = None)
+caselon class ReloncelonntelondgelonsQuelonry(
+  uselonrId: Long,
+  relonlations: Selonq[RelonlationshipTypelon],
+  // prelonfelonr to delonfault valuelon to belonttelonr utilizelon thelon caching function of stitch
+  count: Option[Int] = Somelon(SocialGraphClielonnt.MaxQuelonrySizelon),
+  pelonrformUnion: Boolelonan = truelon,
+  reloncelonntelondgelonsWindowOpt: Option[Duration] = Nonelon,
+  targelonts: Option[Selonq[Long]] = Nonelon)
 
-case class EdgeRequestQuery(
-  userId: Long,
-  relation: RelationshipType,
-  count: Option[Int] = Some(SocialGraphClient.MaxQuerySize),
-  performUnion: Boolean = true,
-  recentEdgesWindowOpt: Option[Duration] = None,
-  targets: Option[Seq[Long]] = None)
+caselon class elondgelonRelonquelonstQuelonry(
+  uselonrId: Long,
+  relonlation: RelonlationshipTypelon,
+  count: Option[Int] = Somelon(SocialGraphClielonnt.MaxQuelonrySizelon),
+  pelonrformUnion: Boolelonan = truelon,
+  reloncelonntelondgelonsWindowOpt: Option[Duration] = Nonelon,
+  targelonts: Option[Selonq[Long]] = Nonelon)
 
-@Singleton
-class SocialGraphClient @Inject() (
+@Singlelonton
+class SocialGraphClielonnt @Injelonct() (
   socialGraph: SocialGraph,
-  idsClientColumn: IdsClientColumn,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Logging {
+  idsClielonntColumn: IdsClielonntColumn,
+  statsReloncelonivelonr: StatsReloncelonivelonr = NullStatsReloncelonivelonr)
+    elonxtelonnds Logging {
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val cacheStats = stats.scope("cache")
-  private val getIntersectionsStats = stats.scope("getIntersections")
-  private val getIntersectionsFromCachedColumnStats =
-    stats.scope("getIntersectionsFromCachedColumn")
-  private val getRecentEdgesStats = stats.scope("getRecentEdges")
-  private val getRecentEdgesCachedStats = stats.scope("getRecentEdgesCached")
-  private val getRecentEdgesFromCachedColumnStats = stats.scope("getRecentEdgesFromCachedColumn")
-  private val getRecentEdgesCachedInternalStats = stats.scope("getRecentEdgesCachedInternal")
-  private val getRecentEdgesWithTimeStats = stats.scope("getRecentEdgesWithTime")
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val cachelonStats = stats.scopelon("cachelon")
+  privatelon val gelontIntelonrselonctionsStats = stats.scopelon("gelontIntelonrselonctions")
+  privatelon val gelontIntelonrselonctionsFromCachelondColumnStats =
+    stats.scopelon("gelontIntelonrselonctionsFromCachelondColumn")
+  privatelon val gelontReloncelonntelondgelonsStats = stats.scopelon("gelontReloncelonntelondgelons")
+  privatelon val gelontReloncelonntelondgelonsCachelondStats = stats.scopelon("gelontReloncelonntelondgelonsCachelond")
+  privatelon val gelontReloncelonntelondgelonsFromCachelondColumnStats = stats.scopelon("gelontReloncelonntelondgelonsFromCachelondColumn")
+  privatelon val gelontReloncelonntelondgelonsCachelondIntelonrnalStats = stats.scopelon("gelontReloncelonntelondgelonsCachelondIntelonrnal")
+  privatelon val gelontReloncelonntelondgelonsWithTimelonStats = stats.scopelon("gelontReloncelonntelondgelonsWithTimelon")
 
-  val sgsIdsFetcher: Fetcher[IdsRequest, Unit, IdsResult] = idsClientColumn.fetcher
+  val sgsIdsFelontchelonr: Felontchelonr[IdsRelonquelonst, Unit, IdsRelonsult] = idsClielonntColumn.felontchelonr
 
-  private val recentEdgesCache = StitchCache[RecentEdgesQuery, Seq[Long]](
-    maxCacheSize = SocialGraphClient.MaxCacheSize,
-    ttl = SocialGraphClient.CacheTTL,
-    statsReceiver = cacheStats,
-    underlyingCall = getRecentEdges
+  privatelon val reloncelonntelondgelonsCachelon = StitchCachelon[ReloncelonntelondgelonsQuelonry, Selonq[Long]](
+    maxCachelonSizelon = SocialGraphClielonnt.MaxCachelonSizelon,
+    ttl = SocialGraphClielonnt.CachelonTTL,
+    statsReloncelonivelonr = cachelonStats,
+    undelonrlyingCall = gelontReloncelonntelondgelons
   )
 
-  def getRecentEdgesCached(
-    rq: RecentEdgesQuery,
-    useCachedStratoColumn: Boolean = true
-  ): Stitch[Seq[Long]] = {
-    getRecentEdgesCachedStats.counter("requests").incr()
-    if (useCachedStratoColumn) {
-      getRecentEdgesFromCachedColumn(rq)
-    } else {
-      StatsUtil.profileStitch(
-        getRecentEdgesCachedInternal(rq),
-        getRecentEdgesCachedInternalStats
+  delonf gelontReloncelonntelondgelonsCachelond(
+    rq: ReloncelonntelondgelonsQuelonry,
+    uselonCachelondStratoColumn: Boolelonan = truelon
+  ): Stitch[Selonq[Long]] = {
+    gelontReloncelonntelondgelonsCachelondStats.countelonr("relonquelonsts").incr()
+    if (uselonCachelondStratoColumn) {
+      gelontReloncelonntelondgelonsFromCachelondColumn(rq)
+    } elonlselon {
+      StatsUtil.profilelonStitch(
+        gelontReloncelonntelondgelonsCachelondIntelonrnal(rq),
+        gelontReloncelonntelondgelonsCachelondIntelonrnalStats
       )
     }
   }
 
-  def getRecentEdgesCachedInternal(rq: RecentEdgesQuery): Stitch[Seq[Long]] = {
-    recentEdgesCache.readThrough(rq)
+  delonf gelontReloncelonntelondgelonsCachelondIntelonrnal(rq: ReloncelonntelondgelonsQuelonry): Stitch[Selonq[Long]] = {
+    reloncelonntelondgelonsCachelon.relonadThrough(rq)
   }
 
-  def getRecentEdgesFromCachedColumn(rq: RecentEdgesQuery): Stitch[Seq[Long]] = {
-    val pageRequest = rq.recentEdgesWindowOpt match {
-      case Some(recentEdgesWindow) =>
-        PageRequest(
+  delonf gelontReloncelonntelondgelonsFromCachelondColumn(rq: ReloncelonntelondgelonsQuelonry): Stitch[Selonq[Long]] = {
+    val pagelonRelonquelonst = rq.reloncelonntelondgelonsWindowOpt match {
+      caselon Somelon(reloncelonntelondgelonsWindow) =>
+        PagelonRelonquelonst(
           count = rq.count,
-          cursor = Some(getEdgeCursor(recentEdgesWindow)),
-          selectAll = Some(true)
+          cursor = Somelon(gelontelondgelonCursor(reloncelonntelondgelonsWindow)),
+          selonlelonctAll = Somelon(truelon)
         )
-      case _ => PageRequest(count = rq.count)
+      caselon _ => PagelonRelonquelonst(count = rq.count)
     }
-    val idsRequest = IdsRequest(
-      rq.relations.map { relationshipType =>
-        SrcRelationship(
-          source = rq.userId,
-          relationshipType = relationshipType,
-          targets = rq.targets
+    val idsRelonquelonst = IdsRelonquelonst(
+      rq.relonlations.map { relonlationshipTypelon =>
+        SrcRelonlationship(
+          sourcelon = rq.uselonrId,
+          relonlationshipTypelon = relonlationshipTypelon,
+          targelonts = rq.targelonts
         )
       },
-      pageRequest = Some(pageRequest),
-      context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+      pagelonRelonquelonst = Somelon(pagelonRelonquelonst),
+      contelonxt = Somelon(LookupContelonxt(pelonrformUnion = Somelon(rq.pelonrformUnion)))
     )
 
-    val socialGraphStitch = sgsIdsFetcher
-      .fetch(idsRequest, Unit)
+    val socialGraphStitch = sgsIdsFelontchelonr
+      .felontch(idsRelonquelonst, Unit)
       .map(_.v)
-      .map { result =>
-        result
-          .map { idResult =>
-            val userIds: Seq[Long] = idResult.ids
-            getRecentEdgesFromCachedColumnStats.stat("num_edges").add(userIds.size)
-            userIds
-          }.getOrElse(Seq.empty)
+      .map { relonsult =>
+        relonsult
+          .map { idRelonsult =>
+            val uselonrIds: Selonq[Long] = idRelonsult.ids
+            gelontReloncelonntelondgelonsFromCachelondColumnStats.stat("num_elondgelons").add(uselonrIds.sizelon)
+            uselonrIds
+          }.gelontOrelonlselon(Selonq.elonmpty)
       }
-      .rescue {
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
+      .relonscuelon {
+        caselon elon: elonxcelonption =>
+          stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
           Stitch.Nil
       }
 
-    StatsUtil.profileStitch(
+    StatsUtil.profilelonStitch(
       socialGraphStitch,
-      getRecentEdgesFromCachedColumnStats
+      gelontReloncelonntelondgelonsFromCachelondColumnStats
     )
   }
 
-  def getRecentEdges(rq: RecentEdgesQuery): Stitch[Seq[Long]] = {
-    val pageRequest = rq.recentEdgesWindowOpt match {
-      case Some(recentEdgesWindow) =>
-        PageRequest(
+  delonf gelontReloncelonntelondgelons(rq: ReloncelonntelondgelonsQuelonry): Stitch[Selonq[Long]] = {
+    val pagelonRelonquelonst = rq.reloncelonntelondgelonsWindowOpt match {
+      caselon Somelon(reloncelonntelondgelonsWindow) =>
+        PagelonRelonquelonst(
           count = rq.count,
-          cursor = Some(getEdgeCursor(recentEdgesWindow)),
-          selectAll = Some(true)
+          cursor = Somelon(gelontelondgelonCursor(reloncelonntelondgelonsWindow)),
+          selonlelonctAll = Somelon(truelon)
         )
-      case _ => PageRequest(count = rq.count)
+      caselon _ => PagelonRelonquelonst(count = rq.count)
     }
     val socialGraphStitch = socialGraph
       .ids(
-        IdsRequest(
-          rq.relations.map { relationshipType =>
-            SrcRelationship(
-              source = rq.userId,
-              relationshipType = relationshipType,
-              targets = rq.targets
+        IdsRelonquelonst(
+          rq.relonlations.map { relonlationshipTypelon =>
+            SrcRelonlationship(
+              sourcelon = rq.uselonrId,
+              relonlationshipTypelon = relonlationshipTypelon,
+              targelonts = rq.targelonts
             )
           },
-          pageRequest = Some(pageRequest),
-          context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+          pagelonRelonquelonst = Somelon(pagelonRelonquelonst),
+          contelonxt = Somelon(LookupContelonxt(pelonrformUnion = Somelon(rq.pelonrformUnion)))
         )
       )
-      .map { idsResult =>
-        val userIds: Seq[Long] = idsResult.ids
-        getRecentEdgesStats.stat("num_edges").add(userIds.size)
-        userIds
+      .map { idsRelonsult =>
+        val uselonrIds: Selonq[Long] = idsRelonsult.ids
+        gelontReloncelonntelondgelonsStats.stat("num_elondgelons").add(uselonrIds.sizelon)
+        uselonrIds
       }
-      .rescue {
-        case e: OverCapacity =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          logger.warn("SGS Over Capacity", e)
+      .relonscuelon {
+        caselon elon: OvelonrCapacity =>
+          stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          loggelonr.warn("SGS Ovelonr Capacity", elon)
           Stitch.Nil
       }
-    StatsUtil.profileStitch(
+    StatsUtil.profilelonStitch(
       socialGraphStitch,
-      getRecentEdgesStats
+      gelontReloncelonntelondgelonsStats
     )
   }
 
-  // This method return recent edges of (userId, timeInMs)
-  def getRecentEdgesWithTime(rq: EdgeRequestQuery): Stitch[Seq[UserIdWithTimestamp]] = {
-    val pageRequest = rq.recentEdgesWindowOpt match {
-      case Some(recentEdgesWindow) =>
-        PageRequest(
+  // This melonthod relonturn reloncelonnt elondgelons of (uselonrId, timelonInMs)
+  delonf gelontReloncelonntelondgelonsWithTimelon(rq: elondgelonRelonquelonstQuelonry): Stitch[Selonq[UselonrIdWithTimelonstamp]] = {
+    val pagelonRelonquelonst = rq.reloncelonntelondgelonsWindowOpt match {
+      caselon Somelon(reloncelonntelondgelonsWindow) =>
+        PagelonRelonquelonst(
           count = rq.count,
-          cursor = Some(getEdgeCursor(recentEdgesWindow)),
-          selectAll = Some(true)
+          cursor = Somelon(gelontelondgelonCursor(reloncelonntelondgelonsWindow)),
+          selonlelonctAll = Somelon(truelon)
         )
-      case _ => PageRequest(count = rq.count)
+      caselon _ => PagelonRelonquelonst(count = rq.count)
     }
 
     val socialGraphStitch = socialGraph
-      .edges(
-        EdgesRequest(
-          SrcRelationship(
-            source = rq.userId,
-            relationshipType = rq.relation,
-            targets = rq.targets
+      .elondgelons(
+        elondgelonsRelonquelonst(
+          SrcRelonlationship(
+            sourcelon = rq.uselonrId,
+            relonlationshipTypelon = rq.relonlation,
+            targelonts = rq.targelonts
           ),
-          pageRequest = Some(pageRequest),
-          context = Some(LookupContext(performUnion = Some(rq.performUnion)))
+          pagelonRelonquelonst = Somelon(pagelonRelonquelonst),
+          contelonxt = Somelon(LookupContelonxt(pelonrformUnion = Somelon(rq.pelonrformUnion)))
         )
       )
-      .map { edgesResult =>
-        val userIds = edgesResult.edges.map { socialEdge =>
-          UserIdWithTimestamp(socialEdge.target, socialEdge.updatedAt)
+      .map { elondgelonsRelonsult =>
+        val uselonrIds = elondgelonsRelonsult.elondgelons.map { socialelondgelon =>
+          UselonrIdWithTimelonstamp(socialelondgelon.targelont, socialelondgelon.updatelondAt)
         }
-        getRecentEdgesWithTimeStats.stat("num_edges").add(userIds.size)
-        userIds
+        gelontReloncelonntelondgelonsWithTimelonStats.stat("num_elondgelons").add(uselonrIds.sizelon)
+        uselonrIds
       }
-      .rescue {
-        case e: OverCapacity =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          logger.warn("SGS Over Capacity", e)
+      .relonscuelon {
+        caselon elon: OvelonrCapacity =>
+          stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          loggelonr.warn("SGS Ovelonr Capacity", elon)
           Stitch.Nil
       }
-    StatsUtil.profileStitch(
+    StatsUtil.profilelonStitch(
       socialGraphStitch,
-      getRecentEdgesWithTimeStats
+      gelontReloncelonntelondgelonsWithTimelonStats
     )
   }
 
-  // This method returns the cursor for a time duration, such that all the edges returned by SGS will be created
-  // in the range (now-window, now)
-  def getEdgeCursor(window: Duration): ByteBuffer = {
-    val cursorInLong = (-(Time.now - window).inMilliseconds) << 20
-    ByteBufferUtil.fromLong(cursorInLong)
+  // This melonthod relonturns thelon cursor for a timelon duration, such that all thelon elondgelons relonturnelond by SGS will belon crelonatelond
+  // in thelon rangelon (now-window, now)
+  delonf gelontelondgelonCursor(window: Duration): BytelonBuffelonr = {
+    val cursorInLong = (-(Timelon.now - window).inMilliselonconds) << 20
+    BytelonBuffelonrUtil.fromLong(cursorInLong)
   }
 
-  // notice that this is more expensive but more realtime than the GFS one
-  def getIntersections(
-    userId: Long,
-    candidateIds: Seq[Long],
-    numIntersectionIds: Int
+  // noticelon that this is morelon elonxpelonnsivelon but morelon relonaltimelon than thelon GFS onelon
+  delonf gelontIntelonrselonctions(
+    uselonrId: Long,
+    candidatelonIds: Selonq[Long],
+    numIntelonrselonctionIds: Int
   ): Stitch[Map[Long, FollowProof]] = {
     val socialGraphStitch: Stitch[Map[Long, FollowProof]] = Stitch
-      .collect(candidateIds.map { candidateId =>
+      .collelonct(candidatelonIds.map { candidatelonId =>
         socialGraph
           .ids(
-            IdsRequest(
-              Seq(
-                SrcRelationship(userId, RelationshipType.Following),
-                SrcRelationship(candidateId, RelationshipType.FollowedBy)
+            IdsRelonquelonst(
+              Selonq(
+                SrcRelonlationship(uselonrId, RelonlationshipTypelon.Following),
+                SrcRelonlationship(candidatelonId, RelonlationshipTypelon.FollowelondBy)
               ),
-              pageRequest = Some(PageRequest(count = Some(numIntersectionIds)))
+              pagelonRelonquelonst = Somelon(PagelonRelonquelonst(count = Somelon(numIntelonrselonctionIds)))
             )
-          ).map { idsResult =>
-            getIntersectionsStats.stat("num_edges").add(idsResult.ids.size)
-            (candidateId -> FollowProof(idsResult.ids, idsResult.ids.size))
+          ).map { idsRelonsult =>
+            gelontIntelonrselonctionsStats.stat("num_elondgelons").add(idsRelonsult.ids.sizelon)
+            (candidatelonId -> FollowProof(idsRelonsult.ids, idsRelonsult.ids.sizelon))
           }
       }).map(_.toMap)
-      .rescue {
-        case e: OverCapacity =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          logger.warn("social graph over capacity in hydrating social proof", e)
-          Stitch.value(Map.empty)
+      .relonscuelon {
+        caselon elon: OvelonrCapacity =>
+          stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          loggelonr.warn("social graph ovelonr capacity in hydrating social proof", elon)
+          Stitch.valuelon(Map.elonmpty)
       }
-    StatsUtil.profileStitch(
+    StatsUtil.profilelonStitch(
       socialGraphStitch,
-      getIntersectionsStats
+      gelontIntelonrselonctionsStats
     )
   }
 
-  def getIntersectionsFromCachedColumn(
-    userId: Long,
-    candidateIds: Seq[Long],
-    numIntersectionIds: Int
+  delonf gelontIntelonrselonctionsFromCachelondColumn(
+    uselonrId: Long,
+    candidatelonIds: Selonq[Long],
+    numIntelonrselonctionIds: Int
   ): Stitch[Map[Long, FollowProof]] = {
     val socialGraphStitch: Stitch[Map[Long, FollowProof]] = Stitch
-      .collect(candidateIds.map { candidateId =>
-        val idsRequest = IdsRequest(
-          Seq(
-            SrcRelationship(userId, RelationshipType.Following),
-            SrcRelationship(candidateId, RelationshipType.FollowedBy)
+      .collelonct(candidatelonIds.map { candidatelonId =>
+        val idsRelonquelonst = IdsRelonquelonst(
+          Selonq(
+            SrcRelonlationship(uselonrId, RelonlationshipTypelon.Following),
+            SrcRelonlationship(candidatelonId, RelonlationshipTypelon.FollowelondBy)
           ),
-          pageRequest = Some(PageRequest(count = Some(numIntersectionIds)))
+          pagelonRelonquelonst = Somelon(PagelonRelonquelonst(count = Somelon(numIntelonrselonctionIds)))
         )
 
-        sgsIdsFetcher
-          .fetch(idsRequest, Unit)
+        sgsIdsFelontchelonr
+          .felontch(idsRelonquelonst, Unit)
           .map(_.v)
-          .map { resultOpt =>
-            resultOpt.map { idsResult =>
-              getIntersectionsFromCachedColumnStats.stat("num_edges").add(idsResult.ids.size)
-              candidateId -> FollowProof(idsResult.ids, idsResult.ids.size)
+          .map { relonsultOpt =>
+            relonsultOpt.map { idsRelonsult =>
+              gelontIntelonrselonctionsFromCachelondColumnStats.stat("num_elondgelons").add(idsRelonsult.ids.sizelon)
+              candidatelonId -> FollowProof(idsRelonsult.ids, idsRelonsult.ids.sizelon)
             }
           }
-      }).map(_.flatten.toMap)
-      .rescue {
-        case e: Exception =>
-          stats.counter(e.getClass.getSimpleName).incr()
-          Stitch.value(Map.empty)
+      }).map(_.flattelonn.toMap)
+      .relonscuelon {
+        caselon elon: elonxcelonption =>
+          stats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          Stitch.valuelon(Map.elonmpty)
       }
-    StatsUtil.profileStitch(
+    StatsUtil.profilelonStitch(
       socialGraphStitch,
-      getIntersectionsFromCachedColumnStats
+      gelontIntelonrselonctionsFromCachelondColumnStats
     )
   }
 
-  def getInvalidRelationshipUserIds(
-    userId: Long,
-    maxNumRelationship: Int = SocialGraphClient.MaxNumInvalidRelationship
-  ): Stitch[Seq[Long]] = {
-    getRecentEdges(
-      RecentEdgesQuery(
-        userId,
-        SocialGraphClient.InvalidRelationshipTypes,
-        Some(maxNumRelationship)
+  delonf gelontInvalidRelonlationshipUselonrIds(
+    uselonrId: Long,
+    maxNumRelonlationship: Int = SocialGraphClielonnt.MaxNumInvalidRelonlationship
+  ): Stitch[Selonq[Long]] = {
+    gelontReloncelonntelondgelons(
+      ReloncelonntelondgelonsQuelonry(
+        uselonrId,
+        SocialGraphClielonnt.InvalidRelonlationshipTypelons,
+        Somelon(maxNumRelonlationship)
       )
     )
   }
 
-  def getInvalidRelationshipUserIdsFromCachedColumn(
-    userId: Long,
-    maxNumRelationship: Int = SocialGraphClient.MaxNumInvalidRelationship
-  ): Stitch[Seq[Long]] = {
-    getRecentEdgesFromCachedColumn(
-      RecentEdgesQuery(
-        userId,
-        SocialGraphClient.InvalidRelationshipTypes,
-        Some(maxNumRelationship)
+  delonf gelontInvalidRelonlationshipUselonrIdsFromCachelondColumn(
+    uselonrId: Long,
+    maxNumRelonlationship: Int = SocialGraphClielonnt.MaxNumInvalidRelonlationship
+  ): Stitch[Selonq[Long]] = {
+    gelontReloncelonntelondgelonsFromCachelondColumn(
+      ReloncelonntelondgelonsQuelonry(
+        uselonrId,
+        SocialGraphClielonnt.InvalidRelonlationshipTypelons,
+        Somelon(maxNumRelonlationship)
       )
     )
   }
 
-  def getRecentFollowedUserIds(userId: Long): Stitch[Seq[Long]] = {
-    getRecentEdges(
-      RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.Following)
+  delonf gelontReloncelonntFollowelondUselonrIds(uselonrId: Long): Stitch[Selonq[Long]] = {
+    gelontReloncelonntelondgelons(
+      ReloncelonntelondgelonsQuelonry(
+        uselonrId,
+        Selonq(RelonlationshipTypelon.Following)
       )
     )
   }
 
-  def getRecentFollowedUserIdsFromCachedColumn(userId: Long): Stitch[Seq[Long]] = {
-    getRecentEdgesFromCachedColumn(
-      RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.Following)
+  delonf gelontReloncelonntFollowelondUselonrIdsFromCachelondColumn(uselonrId: Long): Stitch[Selonq[Long]] = {
+    gelontReloncelonntelondgelonsFromCachelondColumn(
+      ReloncelonntelondgelonsQuelonry(
+        uselonrId,
+        Selonq(RelonlationshipTypelon.Following)
       )
     )
   }
 
-  def getRecentFollowedUserIdsWithTime(userId: Long): Stitch[Seq[UserIdWithTimestamp]] = {
-    getRecentEdgesWithTime(
-      EdgeRequestQuery(
-        userId,
-        RelationshipType.Following
+  delonf gelontReloncelonntFollowelondUselonrIdsWithTimelon(uselonrId: Long): Stitch[Selonq[UselonrIdWithTimelonstamp]] = {
+    gelontReloncelonntelondgelonsWithTimelon(
+      elondgelonRelonquelonstQuelonry(
+        uselonrId,
+        RelonlationshipTypelon.Following
       )
     )
   }
 
-  def getRecentFollowedByUserIds(userId: Long): Stitch[Seq[Long]] = {
-    getRecentEdges(
-      RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.FollowedBy)
+  delonf gelontReloncelonntFollowelondByUselonrIds(uselonrId: Long): Stitch[Selonq[Long]] = {
+    gelontReloncelonntelondgelons(
+      ReloncelonntelondgelonsQuelonry(
+        uselonrId,
+        Selonq(RelonlationshipTypelon.FollowelondBy)
       )
     )
   }
 
-  def getRecentFollowedByUserIdsFromCachedColumn(userId: Long): Stitch[Seq[Long]] = {
-    getRecentEdgesFromCachedColumn(
-      RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.FollowedBy)
+  delonf gelontReloncelonntFollowelondByUselonrIdsFromCachelondColumn(uselonrId: Long): Stitch[Selonq[Long]] = {
+    gelontReloncelonntelondgelonsFromCachelondColumn(
+      ReloncelonntelondgelonsQuelonry(
+        uselonrId,
+        Selonq(RelonlationshipTypelon.FollowelondBy)
       )
     )
   }
 
-  def getRecentFollowedUserIdsWithTimeWindow(
-    userId: Long,
-    timeWindow: Duration
-  ): Stitch[Seq[Long]] = {
-    getRecentEdges(
-      RecentEdgesQuery(
-        userId,
-        Seq(RelationshipType.Following),
-        recentEdgesWindowOpt = Some(timeWindow)
+  delonf gelontReloncelonntFollowelondUselonrIdsWithTimelonWindow(
+    uselonrId: Long,
+    timelonWindow: Duration
+  ): Stitch[Selonq[Long]] = {
+    gelontReloncelonntelondgelons(
+      ReloncelonntelondgelonsQuelonry(
+        uselonrId,
+        Selonq(RelonlationshipTypelon.Following),
+        reloncelonntelondgelonsWindowOpt = Somelon(timelonWindow)
       )
     )
   }
 }
 
-object SocialGraphClient {
+objelonct SocialGraphClielonnt {
 
-  val MaxQuerySize: Int = 500
-  val MaxCacheSize: Int = 5000000
-  // Ref: src/thrift/com/twitter/socialgraph/social_graph_service.thrift
-  val MaxNumInvalidRelationship: Int = 5000
-  val CacheTTL: Duration = Duration.fromHours(24)
+  val MaxQuelonrySizelon: Int = 500
+  val MaxCachelonSizelon: Int = 5000000
+  // Relonf: src/thrift/com/twittelonr/socialgraph/social_graph_selonrvicelon.thrift
+  val MaxNumInvalidRelonlationship: Int = 5000
+  val CachelonTTL: Duration = Duration.fromHours(24)
 
-  val InvalidRelationshipTypes: Seq[RelationshipType] = Seq(
-    RelationshipType.HideRecommendations,
-    RelationshipType.Blocking,
-    RelationshipType.BlockedBy,
-    RelationshipType.Muting,
-    RelationshipType.MutedBy,
-    RelationshipType.ReportedAsSpam,
-    RelationshipType.ReportedAsSpamBy,
-    RelationshipType.ReportedAsAbuse,
-    RelationshipType.ReportedAsAbuseBy,
-    RelationshipType.FollowRequestOutgoing,
-    RelationshipType.Following,
-    RelationshipType.UsedToFollow,
+  val InvalidRelonlationshipTypelons: Selonq[RelonlationshipTypelon] = Selonq(
+    RelonlationshipTypelon.HidelonReloncommelonndations,
+    RelonlationshipTypelon.Blocking,
+    RelonlationshipTypelon.BlockelondBy,
+    RelonlationshipTypelon.Muting,
+    RelonlationshipTypelon.MutelondBy,
+    RelonlationshipTypelon.RelonportelondAsSpam,
+    RelonlationshipTypelon.RelonportelondAsSpamBy,
+    RelonlationshipTypelon.RelonportelondAsAbuselon,
+    RelonlationshipTypelon.RelonportelondAsAbuselonBy,
+    RelonlationshipTypelon.FollowRelonquelonstOutgoing,
+    RelonlationshipTypelon.Following,
+    RelonlationshipTypelon.UselondToFollow,
   )
 
   /**
    *
-   * Whether to call SGS to validate each candidate based on the number of invalid relationship users
-   * prefetched during request building step. This aims to not omit any invalid candidates that are
-   * not filtered out in previous steps.
-   *   If the number is 0, this might be a fail-opened SGS call.
-   *   If the number is larger or equal to 5000, this could hit SGS page size limit.
-   * Both cases account for a small percentage of the total traffic (<5%).
+   * Whelonthelonr to call SGS to validatelon elonach candidatelon baselond on thelon numbelonr of invalid relonlationship uselonrs
+   * prelonfelontchelond during relonquelonst building stelonp. This aims to not omit any invalid candidatelons that arelon
+   * not filtelonrelond out in prelonvious stelonps.
+   *   If thelon numbelonr is 0, this might belon a fail-opelonnelond SGS call.
+   *   If thelon numbelonr is largelonr or elonqual to 5000, this could hit SGS pagelon sizelon limit.
+   * Both caselons account for a small pelonrcelonntagelon of thelon total traffic (<5%).
    *
-   * @param numInvalidRelationshipUsers number of invalid relationship users fetched from getInvalidRelationshipUserIds
-   * @return whether to enable post-ranker SGS predicate
+   * @param numInvalidRelonlationshipUselonrs numbelonr of invalid relonlationship uselonrs felontchelond from gelontInvalidRelonlationshipUselonrIds
+   * @relonturn whelonthelonr to elonnablelon post-rankelonr SGS prelondicatelon
    */
-  def enablePostRankerSgsPredicate(numInvalidRelationshipUsers: Int): Boolean = {
-    numInvalidRelationshipUsers == 0 || numInvalidRelationshipUsers >= MaxNumInvalidRelationship
+  delonf elonnablelonPostRankelonrSgsPrelondicatelon(numInvalidRelonlationshipUselonrs: Int): Boolelonan = {
+    numInvalidRelonlationshipUselonrs == 0 || numInvalidRelonlationshipUselonrs >= MaxNumInvalidRelonlationship
   }
 }

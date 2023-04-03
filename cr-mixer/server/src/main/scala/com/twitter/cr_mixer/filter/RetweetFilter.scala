@@ -1,41 +1,41 @@
-package com.twitter.cr_mixer.filter
+packagelon com.twittelonr.cr_mixelonr.filtelonr
 
-import com.twitter.cr_mixer.model.CandidateGeneratorQuery
-import com.twitter.cr_mixer.model.InitialCandidate
-import com.twitter.cr_mixer.param.UtegTweetGlobalParams
-import com.twitter.util.Future
+import com.twittelonr.cr_mixelonr.modelonl.CandidatelonGelonnelonratorQuelonry
+import com.twittelonr.cr_mixelonr.modelonl.InitialCandidatelon
+import com.twittelonr.cr_mixelonr.param.UtelongTwelonelontGlobalParams
+import com.twittelonr.util.Futurelon
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /***
- * Filters candidates that are retweets
+ * Filtelonrs candidatelons that arelon relontwelonelonts
  */
-@Singleton
-case class RetweetFilter @Inject() () extends FilterBase {
-  override def name: String = this.getClass.getCanonicalName
-  override type ConfigType = Boolean
+@Singlelonton
+caselon class RelontwelonelontFiltelonr @Injelonct() () elonxtelonnds FiltelonrBaselon {
+  ovelonrridelon delonf namelon: String = this.gelontClass.gelontCanonicalNamelon
+  ovelonrridelon typelon ConfigTypelon = Boolelonan
 
-  override def filter(
-    candidates: Seq[Seq[InitialCandidate]],
-    config: ConfigType
-  ): Future[Seq[Seq[InitialCandidate]]] = {
+  ovelonrridelon delonf filtelonr(
+    candidatelons: Selonq[Selonq[InitialCandidatelon]],
+    config: ConfigTypelon
+  ): Futurelon[Selonq[Selonq[InitialCandidatelon]]] = {
     if (config) {
-      Future.value(
-        candidates.map { candidateSeq =>
-          candidateSeq.filterNot { candidate =>
-            candidate.tweetInfo.isRetweet.getOrElse(false)
+      Futurelon.valuelon(
+        candidatelons.map { candidatelonSelonq =>
+          candidatelonSelonq.filtelonrNot { candidatelon =>
+            candidatelon.twelonelontInfo.isRelontwelonelont.gelontOrelonlselon(falselon)
           }
         }
       )
-    } else {
-      Future.value(candidates)
+    } elonlselon {
+      Futurelon.valuelon(candidatelons)
     }
   }
 
-  override def requestToConfig[CGQueryType <: CandidateGeneratorQuery](
-    query: CGQueryType
-  ): ConfigType = {
-    query.params(UtegTweetGlobalParams.EnableRetweetFilterParam)
+  ovelonrridelon delonf relonquelonstToConfig[CGQuelonryTypelon <: CandidatelonGelonnelonratorQuelonry](
+    quelonry: CGQuelonryTypelon
+  ): ConfigTypelon = {
+    quelonry.params(UtelongTwelonelontGlobalParams.elonnablelonRelontwelonelontFiltelonrParam)
   }
 }

@@ -1,64 +1,64 @@
-package com.twitter.recos.graph_common
+packagelon com.twittelonr.reloncos.graph_common
 
-import com.twitter.graphjet.stats.StatsReceiver
-import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph
+import com.twittelonr.graphjelont.stats.StatsReloncelonivelonr
+import com.twittelonr.graphjelont.bipartitelon.MultiSelongmelonntPowelonrLawBipartitelonGraph
 
 /**
- * The GraphBuilder builds a MultiSegmentPowerLawBipartiteGraph given a set of parameters.
+ * Thelon GraphBuildelonr builds a MultiSelongmelonntPowelonrLawBipartitelonGraph givelonn a selont of paramelontelonrs.
  */
-object MultiSegmentPowerLawBipartiteGraphBuilder {
+objelonct MultiSelongmelonntPowelonrLawBipartitelonGraphBuildelonr {
 
   /**
-   * This encapsulates all the state needed to initialize the in-memory graph.
+   * This elonncapsulatelons all thelon statelon nelonelondelond to initializelon thelon in-melonmory graph.
    *
-   * @param maxNumSegments           is the maximum number of segments we'll add to the graph.
-   *                                 At that point, the oldest segments will start getting dropped
-   * @param maxNumEdgesPerSegment    determines when the implementation decides to fork off a
-   *                                 new segment
-   * @param expectedNumLeftNodes     is the expected number of left nodes that would be inserted in
-   *                                 the segment
-   * @param expectedMaxLeftDegree    is the maximum degree expected for any left node
-   * @param leftPowerLawExponent     is the exponent of the LHS power-law graph. see
-   *                                 [[com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool]]
-   *                                 for details
-   * @param expectedNumRightNodes    is the expected number of right nodes that would be inserted in
-   *                                 the segment
-   * @param expectedMaxRightDegree   is the maximum degree expected for any right node
-   * @param rightPowerLawExponent    is the exponent of the RHS power-law graph. see
-   *                                 [[com.twitter.graphjet.bipartite.edgepool.PowerLawDegreeEdgePool]]
-   *                                 for details
+   * @param maxNumSelongmelonnts           is thelon maximum numbelonr of selongmelonnts welon'll add to thelon graph.
+   *                                 At that point, thelon oldelonst selongmelonnts will start gelontting droppelond
+   * @param maxNumelondgelonsPelonrSelongmelonnt    delontelonrminelons whelonn thelon implelonmelonntation deloncidelons to fork off a
+   *                                 nelonw selongmelonnt
+   * @param elonxpelonctelondNumLelonftNodelons     is thelon elonxpelonctelond numbelonr of lelonft nodelons that would belon inselonrtelond in
+   *                                 thelon selongmelonnt
+   * @param elonxpelonctelondMaxLelonftDelongrelonelon    is thelon maximum delongrelonelon elonxpelonctelond for any lelonft nodelon
+   * @param lelonftPowelonrLawelonxponelonnt     is thelon elonxponelonnt of thelon LHS powelonr-law graph. selonelon
+   *                                 [[com.twittelonr.graphjelont.bipartitelon.elondgelonpool.PowelonrLawDelongrelonelonelondgelonPool]]
+   *                                 for delontails
+   * @param elonxpelonctelondNumRightNodelons    is thelon elonxpelonctelond numbelonr of right nodelons that would belon inselonrtelond in
+   *                                 thelon selongmelonnt
+   * @param elonxpelonctelondMaxRightDelongrelonelon   is thelon maximum delongrelonelon elonxpelonctelond for any right nodelon
+   * @param rightPowelonrLawelonxponelonnt    is thelon elonxponelonnt of thelon RHS powelonr-law graph. selonelon
+   *                                 [[com.twittelonr.graphjelont.bipartitelon.elondgelonpool.PowelonrLawDelongrelonelonelondgelonPool]]
+   *                                 for delontails
    */
-  case class GraphBuilderConfig(
-    maxNumSegments: Int,
-    maxNumEdgesPerSegment: Int,
-    expectedNumLeftNodes: Int,
-    expectedMaxLeftDegree: Int,
-    leftPowerLawExponent: Double,
-    expectedNumRightNodes: Int,
-    expectedMaxRightDegree: Int,
-    rightPowerLawExponent: Double)
+  caselon class GraphBuildelonrConfig(
+    maxNumSelongmelonnts: Int,
+    maxNumelondgelonsPelonrSelongmelonnt: Int,
+    elonxpelonctelondNumLelonftNodelons: Int,
+    elonxpelonctelondMaxLelonftDelongrelonelon: Int,
+    lelonftPowelonrLawelonxponelonnt: Doublelon,
+    elonxpelonctelondNumRightNodelons: Int,
+    elonxpelonctelondMaxRightDelongrelonelon: Int,
+    rightPowelonrLawelonxponelonnt: Doublelon)
 
   /**
-   * This apply function returns a mutuable bipartiteGraph
+   * This apply function relonturns a mutuablelon bipartitelonGraph
    *
-   * @param graphBuilderConfig         is the graph builder config
+   * @param graphBuildelonrConfig         is thelon graph buildelonr config
    *
    */
-  def apply(
-    graphBuilderConfig: GraphBuilderConfig,
-    statsReceiver: StatsReceiver
-  ): MultiSegmentPowerLawBipartiteGraph = {
-    new MultiSegmentPowerLawBipartiteGraph(
-      graphBuilderConfig.maxNumSegments,
-      graphBuilderConfig.maxNumEdgesPerSegment,
-      graphBuilderConfig.expectedNumLeftNodes,
-      graphBuilderConfig.expectedMaxLeftDegree,
-      graphBuilderConfig.leftPowerLawExponent,
-      graphBuilderConfig.expectedNumRightNodes,
-      graphBuilderConfig.expectedMaxRightDegree,
-      graphBuilderConfig.rightPowerLawExponent,
-      new ActionEdgeTypeMask(),
-      statsReceiver
+  delonf apply(
+    graphBuildelonrConfig: GraphBuildelonrConfig,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): MultiSelongmelonntPowelonrLawBipartitelonGraph = {
+    nelonw MultiSelongmelonntPowelonrLawBipartitelonGraph(
+      graphBuildelonrConfig.maxNumSelongmelonnts,
+      graphBuildelonrConfig.maxNumelondgelonsPelonrSelongmelonnt,
+      graphBuildelonrConfig.elonxpelonctelondNumLelonftNodelons,
+      graphBuildelonrConfig.elonxpelonctelondMaxLelonftDelongrelonelon,
+      graphBuildelonrConfig.lelonftPowelonrLawelonxponelonnt,
+      graphBuildelonrConfig.elonxpelonctelondNumRightNodelons,
+      graphBuildelonrConfig.elonxpelonctelondMaxRightDelongrelonelon,
+      graphBuildelonrConfig.rightPowelonrLawelonxponelonnt,
+      nelonw ActionelondgelonTypelonMask(),
+      statsReloncelonivelonr
     )
   }
 }

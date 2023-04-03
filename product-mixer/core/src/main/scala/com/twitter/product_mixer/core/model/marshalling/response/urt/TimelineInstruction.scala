@@ -1,65 +1,65 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ContainsFeedbackActionInfos
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.HasFeedbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ContainsFelonelondbackActionInfos
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.HasFelonelondbackActionInfo
 
-sealed trait TimelineInstruction
+selonalelond trait TimelonlinelonInstruction
 
-case class AddEntriesTimelineInstruction(entries: Seq[TimelineEntry])
-    extends TimelineInstruction
-    with ContainsFeedbackActionInfos {
-  override def feedbackActionInfos: Seq[Option[FeedbackActionInfo]] =
-    entries.flatMap {
-      // Order is important, as entries that implement both ContainsFeedbackActionInfos and
-      // HasFeedbackActionInfo are expected to include both when implementing ContainsFeedbackActionInfos
-      case containsFeedbackActionInfos: ContainsFeedbackActionInfos =>
-        containsFeedbackActionInfos.feedbackActionInfos
-      case hasFeedbackActionInfo: HasFeedbackActionInfo =>
-        Seq(hasFeedbackActionInfo.feedbackActionInfo)
-      case _ => Seq.empty
+caselon class AddelonntrielonsTimelonlinelonInstruction(elonntrielons: Selonq[Timelonlinelonelonntry])
+    elonxtelonnds TimelonlinelonInstruction
+    with ContainsFelonelondbackActionInfos {
+  ovelonrridelon delonf felonelondbackActionInfos: Selonq[Option[FelonelondbackActionInfo]] =
+    elonntrielons.flatMap {
+      // Ordelonr is important, as elonntrielons that implelonmelonnt both ContainsFelonelondbackActionInfos and
+      // HasFelonelondbackActionInfo arelon elonxpelonctelond to includelon both whelonn implelonmelonnting ContainsFelonelondbackActionInfos
+      caselon containsFelonelondbackActionInfos: ContainsFelonelondbackActionInfos =>
+        containsFelonelondbackActionInfos.felonelondbackActionInfos
+      caselon hasFelonelondbackActionInfo: HasFelonelondbackActionInfo =>
+        Selonq(hasFelonelondbackActionInfo.felonelondbackActionInfo)
+      caselon _ => Selonq.elonmpty
     }
 }
 
-case class ReplaceEntryTimelineInstruction(entry: TimelineEntry)
-    extends TimelineInstruction
-    with ContainsFeedbackActionInfos {
-  override def feedbackActionInfos: Seq[Option[FeedbackActionInfo]] =
-    entry match {
-      // Order is important, as entries that implement both ContainsFeedbackActionInfos and
-      // HasFeedbackActionInfo are expected to include both when implementing ContainsFeedbackActionInfos
-      case containsFeedbackActionInfos: ContainsFeedbackActionInfos =>
-        containsFeedbackActionInfos.feedbackActionInfos
-      case hasFeedbackActionInfo: HasFeedbackActionInfo =>
-        Seq(hasFeedbackActionInfo.feedbackActionInfo)
-      case _ => Seq.empty
+caselon class RelonplacelonelonntryTimelonlinelonInstruction(elonntry: Timelonlinelonelonntry)
+    elonxtelonnds TimelonlinelonInstruction
+    with ContainsFelonelondbackActionInfos {
+  ovelonrridelon delonf felonelondbackActionInfos: Selonq[Option[FelonelondbackActionInfo]] =
+    elonntry match {
+      // Ordelonr is important, as elonntrielons that implelonmelonnt both ContainsFelonelondbackActionInfos and
+      // HasFelonelondbackActionInfo arelon elonxpelonctelond to includelon both whelonn implelonmelonnting ContainsFelonelondbackActionInfos
+      caselon containsFelonelondbackActionInfos: ContainsFelonelondbackActionInfos =>
+        containsFelonelondbackActionInfos.felonelondbackActionInfos
+      caselon hasFelonelondbackActionInfo: HasFelonelondbackActionInfo =>
+        Selonq(hasFelonelondbackActionInfo.felonelondbackActionInfo)
+      caselon _ => Selonq.elonmpty
     }
 }
 
-case class AddToModuleTimelineInstruction(
-  moduleItems: Seq[ModuleItem],
-  moduleEntryId: String,
-  moduleItemEntryId: Option[String],
-  prepend: Option[Boolean])
-    extends TimelineInstruction
-    with ContainsFeedbackActionInfos {
-  override def feedbackActionInfos: Seq[Option[FeedbackActionInfo]] =
-    moduleItems.map(_.item.feedbackActionInfo)
+caselon class AddToModulelonTimelonlinelonInstruction(
+  modulelonItelonms: Selonq[ModulelonItelonm],
+  modulelonelonntryId: String,
+  modulelonItelonmelonntryId: Option[String],
+  prelonpelonnd: Option[Boolelonan])
+    elonxtelonnds TimelonlinelonInstruction
+    with ContainsFelonelondbackActionInfos {
+  ovelonrridelon delonf felonelondbackActionInfos: Selonq[Option[FelonelondbackActionInfo]] =
+    modulelonItelonms.map(_.itelonm.felonelondbackActionInfo)
 }
 
-case class PinEntryTimelineInstruction(entry: TimelineEntry) extends TimelineInstruction
+caselon class PinelonntryTimelonlinelonInstruction(elonntry: Timelonlinelonelonntry) elonxtelonnds TimelonlinelonInstruction
 
-case class MarkEntriesUnreadInstruction(entryIds: Seq[String]) extends TimelineInstruction
+caselon class MarkelonntrielonsUnrelonadInstruction(elonntryIds: Selonq[String]) elonxtelonnds TimelonlinelonInstruction
 
-case class ClearCacheTimelineInstruction() extends TimelineInstruction
+caselon class ClelonarCachelonTimelonlinelonInstruction() elonxtelonnds TimelonlinelonInstruction
 
-sealed trait TimelineTerminationDirection
-case object TopTermination extends TimelineTerminationDirection
-case object BottomTermination extends TimelineTerminationDirection
-case object TopAndBottomTermination extends TimelineTerminationDirection
-case class TerminateTimelineInstruction(terminateTimelineDirection: TimelineTerminationDirection)
-    extends TimelineInstruction
+selonalelond trait TimelonlinelonTelonrminationDirelonction
+caselon objelonct TopTelonrmination elonxtelonnds TimelonlinelonTelonrminationDirelonction
+caselon objelonct BottomTelonrmination elonxtelonnds TimelonlinelonTelonrminationDirelonction
+caselon objelonct TopAndBottomTelonrmination elonxtelonnds TimelonlinelonTelonrminationDirelonction
+caselon class TelonrminatelonTimelonlinelonInstruction(telonrminatelonTimelonlinelonDirelonction: TimelonlinelonTelonrminationDirelonction)
+    elonxtelonnds TimelonlinelonInstruction
 
-case class ShowCoverInstruction(cover: Cover) extends TimelineInstruction
+caselon class ShowCovelonrInstruction(covelonr: Covelonr) elonxtelonnds TimelonlinelonInstruction
 
-case class ShowAlertInstruction(showAlert: ShowAlert) extends TimelineInstruction
+caselon class ShowAlelonrtInstruction(showAlelonrt: ShowAlelonrt) elonxtelonnds TimelonlinelonInstruction

@@ -1,26 +1,26 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
 /**
- *  Example implementation of {@link SkipListComparator} with Order-Theoretic Properties.
+ *  elonxamplelon implelonmelonntation of {@link SkipListComparator} with Ordelonr-Thelonorelontic Propelonrtielons.
  *
- *  Notice:
- *    Re-using key object is highly suggested!
- *    Normally the generic type should be a mutable object so it can be reused by the reader/writer.
+ *  Noticelon:
+ *    Relon-using kelony objelonct is highly suggelonstelond!
+ *    Normally thelon gelonnelonric typelon should belon a mutablelon objelonct so it can belon relonuselond by thelon relonadelonr/writelonr.
  */
-public class SkipListIntegerComparator implements SkipListComparator<Integer> {
+public class SkipListIntelongelonrComparator implelonmelonnts SkipListComparator<Intelongelonr> {
 
-  @Override
-  public int compareKeyWithValue(Integer key, int targetValue, int targetPosition) {
-    return key - targetValue;
+  @Ovelonrridelon
+  public int comparelonKelonyWithValuelon(Intelongelonr kelony, int targelontValuelon, int targelontPosition) {
+    relonturn kelony - targelontValuelon;
   }
 
-  @Override
-  public int compareValues(int v1, int v2) {
-    return v1 - v2;
+  @Ovelonrridelon
+  public int comparelonValuelons(int v1, int v2) {
+    relonturn v1 - v2;
   }
 
-  @Override
-  public int getSentinelValue() {
-    return Integer.MAX_VALUE;
+  @Ovelonrridelon
+  public int gelontSelonntinelonlValuelon() {
+    relonturn Intelongelonr.MAX_VALUelon;
   }
 }

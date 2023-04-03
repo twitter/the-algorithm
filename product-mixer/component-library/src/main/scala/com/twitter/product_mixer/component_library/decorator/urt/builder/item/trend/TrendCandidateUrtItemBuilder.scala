@@ -1,63 +1,63 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.trelonnd
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.trend.TrendCandidateUrtItemBuilder.TrendsClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendDescription
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendDomainContext
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendGroupedTrends
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendNormalizedTrendName
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTrendName
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendTweetCount
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.TrendUrl
-import com.twitter.product_mixer.component_library.model.candidate.trends_events.UnifiedTrendCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.promoted.BasePromotedMetadataBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.TrendItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.trelonnd.TrelonndCandidatelonUrtItelonmBuildelonr.TrelonndsClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.TrelonndDelonscription
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.TrelonndDomainContelonxt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.TrelonndGroupelondTrelonnds
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.TrelonndNormalizelondTrelonndNamelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.TrelonndTrelonndNamelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.TrelonndTwelonelontCount
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.TrelonndUrl
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.trelonnds_elonvelonnts.UnifielondTrelonndCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.promotelond.BaselonPromotelondMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.trelonnd.TrelonndItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object TrendCandidateUrtItemBuilder {
-  final val TrendsClientEventInfoElement = "trend"
+objelonct TrelonndCandidatelonUrtItelonmBuildelonr {
+  final val TrelonndsClielonntelonvelonntInfoelonlelonmelonnt = "trelonnd"
 }
 
-case class TrendCandidateUrtItemBuilder[Query <: PipelineQuery](
-  trendMetaDescriptionBuilder: TrendMetaDescriptionBuilder[Query, UnifiedTrendCandidate],
-  promotedMetadataBuilder: BasePromotedMetadataBuilder[Query, UnifiedTrendCandidate],
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, UnifiedTrendCandidate],
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, UnifiedTrendCandidate]] =
-    None)
-    extends CandidateUrtEntryBuilder[Query, UnifiedTrendCandidate, TimelineItem] {
+caselon class TrelonndCandidatelonUrtItelonmBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  trelonndMelontaDelonscriptionBuildelonr: TrelonndMelontaDelonscriptionBuildelonr[Quelonry, UnifielondTrelonndCandidatelon],
+  promotelondMelontadataBuildelonr: BaselonPromotelondMelontadataBuildelonr[Quelonry, UnifielondTrelonndCandidatelon],
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, UnifielondTrelonndCandidatelon],
+  felonelondbackActionInfoBuildelonr: Option[BaselonFelonelondbackActionInfoBuildelonr[Quelonry, UnifielondTrelonndCandidatelon]] =
+    Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, UnifielondTrelonndCandidatelon, TimelonlinelonItelonm] {
 
-  override def apply(
-    query: Query,
-    candidate: UnifiedTrendCandidate,
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    TrendItem(
-      id = candidate.id,
-      sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-      clientEventInfo = clientEventInfoBuilder(
-        query = query,
-        candidate = candidate,
-        candidateFeatures = candidateFeatures,
-        element = Some(TrendsClientEventInfoElement)
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: UnifielondTrelonndCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): TimelonlinelonItelonm = {
+    TrelonndItelonm(
+      id = candidatelon.id,
+      sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+      clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+        quelonry = quelonry,
+        candidatelon = candidatelon,
+        candidatelonFelonaturelons = candidatelonFelonaturelons,
+        elonlelonmelonnt = Somelon(TrelonndsClielonntelonvelonntInfoelonlelonmelonnt)
       ),
-      feedbackActionInfo = None,
-      normalizedTrendName = candidateFeatures.get(TrendNormalizedTrendName),
-      trendName = candidateFeatures.get(TrendTrendName),
-      url = candidateFeatures.get(TrendUrl),
-      description = candidateFeatures.getOrElse(TrendDescription, None),
-      metaDescription = trendMetaDescriptionBuilder(query, candidate, candidateFeatures),
-      tweetCount = candidateFeatures.getOrElse(TrendTweetCount, None),
-      domainContext = candidateFeatures.getOrElse(TrendDomainContext, None),
-      promotedMetadata = promotedMetadataBuilder(
-        query = query,
-        candidate = candidate,
-        candidateFeatures = candidateFeatures
+      felonelondbackActionInfo = Nonelon,
+      normalizelondTrelonndNamelon = candidatelonFelonaturelons.gelont(TrelonndNormalizelondTrelonndNamelon),
+      trelonndNamelon = candidatelonFelonaturelons.gelont(TrelonndTrelonndNamelon),
+      url = candidatelonFelonaturelons.gelont(TrelonndUrl),
+      delonscription = candidatelonFelonaturelons.gelontOrelonlselon(TrelonndDelonscription, Nonelon),
+      melontaDelonscription = trelonndMelontaDelonscriptionBuildelonr(quelonry, candidatelon, candidatelonFelonaturelons),
+      twelonelontCount = candidatelonFelonaturelons.gelontOrelonlselon(TrelonndTwelonelontCount, Nonelon),
+      domainContelonxt = candidatelonFelonaturelons.gelontOrelonlselon(TrelonndDomainContelonxt, Nonelon),
+      promotelondMelontadata = promotelondMelontadataBuildelonr(
+        quelonry = quelonry,
+        candidatelon = candidatelon,
+        candidatelonFelonaturelons = candidatelonFelonaturelons
       ),
-      groupedTrends = candidateFeatures.getOrElse(TrendGroupedTrends, None)
+      groupelondTrelonnds = candidatelonFelonaturelons.gelontOrelonlselon(TrelonndGroupelondTrelonnds, Nonelon)
     )
   }
 }

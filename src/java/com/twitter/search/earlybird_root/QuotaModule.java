@@ -1,110 +1,110 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import javax.annotation.Nullable;
-import javax.inject.Named;
-import javax.inject.Singleton;
+import java.util.concurrelonnt.elonxeloncutors;
+import java.util.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelon;
+import javax.annotation.Nullablelon;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.common.util.concurrent.TwitterRateLimiterProxyFactory;
-import com.google.inject.Provides;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.util.concurrelonnt.ThrelonadFactoryBuildelonr;
+import com.googlelon.common.util.concurrelonnt.TwittelonrRatelonLimitelonrProxyFactory;
+import com.googlelon.injelonct.Providelons;
 
-import com.twitter.app.Flag;
-import com.twitter.app.Flaggable;
-import com.twitter.common.util.Clock;
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.ClientIdArchiveAccessFilter;
-import com.twitter.search.earlybird_root.filters.ClientIdQuotaFilter;
-import com.twitter.search.earlybird_root.filters.DisableClientByTierFilter;
-import com.twitter.search.earlybird_root.quota.ConfigBasedQuotaConfig;
-import com.twitter.search.earlybird_root.quota.ConfigRepoBasedQuotaManager;
+import com.twittelonr.app.Flag;
+import com.twittelonr.app.Flaggablelon;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.ClielonntIdArchivelonAccelonssFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.ClielonntIdQuotaFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.DisablelonClielonntByTielonrFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.quota.ConfigBaselondQuotaConfig;
+import com.twittelonr.selonarch.elonarlybird_root.quota.ConfigRelonpoBaselondQuotaManagelonr;
 
-public class QuotaModule extends TwitterModule {
-  @VisibleForTesting
-  public static final String NAMED_QUOTA_CONFIG_PATH = "quotaConfigPath";
-  public static final String NAMED_CLIENT_QUOTA_KEY = "clientQuotaKey";
-  private static final String NAMED_REQUIRE_QUOTA_CONFIG_FOR_CLIENTS
-      = "requireQuotaConfigForClients";
+public class QuotaModulelon elonxtelonnds TwittelonrModulelon {
+  @VisiblelonForTelonsting
+  public static final String NAMelonD_QUOTA_CONFIG_PATH = "quotaConfigPath";
+  public static final String NAMelonD_CLIelonNT_QUOTA_KelonY = "clielonntQuotaKelony";
+  privatelon static final String NAMelonD_RelonQUIRelon_QUOTA_CONFIG_FOR_CLIelonNTS
+      = "relonquirelonQuotaConfigForClielonnts";
 
-  private final Flag<String> quotaConfigPathFlag = createMandatoryFlag(
+  privatelon final Flag<String> quotaConfigPathFlag = crelonatelonMandatoryFlag(
       "quota_config_path",
       "",
-      "Path to the quota config file",
-      Flaggable.ofString());
+      "Path to thelon quota config filelon",
+      Flaggablelon.ofString());
 
-  private final Flag<String> clientQuotaKeyFlag = createFlag(
-      "client_quota_key",
+  privatelon final Flag<String> clielonntQuotaKelonyFlag = crelonatelonFlag(
+      "clielonnt_quota_kelony",
       "quota",
-      "The key that will be used to extract client quotas",
-      Flaggable.ofString());
+      "Thelon kelony that will belon uselond to elonxtract clielonnt quotas",
+      Flaggablelon.ofString());
 
-  private final Flag<Boolean> requireQuotaConfigForClientsFlag = createFlag(
-      "require_quota_config_for_clients",
-      true,
-      "If true, require a quota value under <client_quota_key> for each client in the config",
-      Flaggable.ofJavaBoolean());
+  privatelon final Flag<Boolelonan> relonquirelonQuotaConfigForClielonntsFlag = crelonatelonFlag(
+      "relonquirelon_quota_config_for_clielonnts",
+      truelon,
+      "If truelon, relonquirelon a quota valuelon undelonr <clielonnt_quota_kelony> for elonach clielonnt in thelon config",
+      Flaggablelon.ofJavaBoolelonan());
 
-  @Provides
-  @Singleton
-  @Named(NAMED_QUOTA_CONFIG_PATH)
-  String provideQuotaConfigPath() {
-    return quotaConfigPathFlag.apply();
+  @Providelons
+  @Singlelonton
+  @Namelond(NAMelonD_QUOTA_CONFIG_PATH)
+  String providelonQuotaConfigPath() {
+    relonturn quotaConfigPathFlag.apply();
   }
 
-  @Provides
-  @Singleton
-  @Named(NAMED_CLIENT_QUOTA_KEY)
-  String provideClientQuotaKey() {
-    return clientQuotaKeyFlag.apply();
+  @Providelons
+  @Singlelonton
+  @Namelond(NAMelonD_CLIelonNT_QUOTA_KelonY)
+  String providelonClielonntQuotaKelony() {
+    relonturn clielonntQuotaKelonyFlag.apply();
   }
 
-  @Provides
-  @Singleton
-  @Named(NAMED_REQUIRE_QUOTA_CONFIG_FOR_CLIENTS)
-  boolean provideRequireQuotaConfigForClients() {
-    return requireQuotaConfigForClientsFlag.apply();
+  @Providelons
+  @Singlelonton
+  @Namelond(NAMelonD_RelonQUIRelon_QUOTA_CONFIG_FOR_CLIelonNTS)
+  boolelonan providelonRelonquirelonQuotaConfigForClielonnts() {
+    relonturn relonquirelonQuotaConfigForClielonntsFlag.apply();
   }
 
-  @Provides
-  @Singleton
-  ClientIdQuotaFilter provideConfigRepoBasedClientIdQuotaFilter(
-      ConfigRepoBasedQuotaManager configRepoBasedQuotaManager,
-      TwitterRateLimiterProxyFactory rateLimiterProxyFactory) throws Exception {
-    return new ClientIdQuotaFilter(configRepoBasedQuotaManager, rateLimiterProxyFactory);
+  @Providelons
+  @Singlelonton
+  ClielonntIdQuotaFiltelonr providelonConfigRelonpoBaselondClielonntIdQuotaFiltelonr(
+      ConfigRelonpoBaselondQuotaManagelonr configRelonpoBaselondQuotaManagelonr,
+      TwittelonrRatelonLimitelonrProxyFactory ratelonLimitelonrProxyFactory) throws elonxcelonption {
+    relonturn nelonw ClielonntIdQuotaFiltelonr(configRelonpoBaselondQuotaManagelonr, ratelonLimitelonrProxyFactory);
   }
 
-  @Provides
-  @Singleton
-  ConfigBasedQuotaConfig providesConfigBasedQuotaConfig(
-      @Nullable @Named(NAMED_QUOTA_CONFIG_PATH) String quotaConfigPath,
-      @Nullable @Named(NAMED_CLIENT_QUOTA_KEY) String clientQuotaKey,
-      @Nullable @Named(NAMED_REQUIRE_QUOTA_CONFIG_FOR_CLIENTS) boolean requireQuotaConfigForClients,
+  @Providelons
+  @Singlelonton
+  ConfigBaselondQuotaConfig providelonsConfigBaselondQuotaConfig(
+      @Nullablelon @Namelond(NAMelonD_QUOTA_CONFIG_PATH) String quotaConfigPath,
+      @Nullablelon @Namelond(NAMelonD_CLIelonNT_QUOTA_KelonY) String clielonntQuotaKelony,
+      @Nullablelon @Namelond(NAMelonD_RelonQUIRelon_QUOTA_CONFIG_FOR_CLIelonNTS) boolelonan relonquirelonQuotaConfigForClielonnts,
       Clock clock
-  ) throws Exception {
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(
-        new ThreadFactoryBuilder()
-            .setNameFormat("quota-config-reloader")
-            .setDaemon(true)
+  ) throws elonxcelonption {
+    SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutorSelonrvicelon = elonxeloncutors.nelonwSinglelonThrelonadSchelondulelondelonxeloncutor(
+        nelonw ThrelonadFactoryBuildelonr()
+            .selontNamelonFormat("quota-config-relonloadelonr")
+            .selontDaelonmon(truelon)
             .build());
-    return ConfigBasedQuotaConfig.newConfigBasedQuotaConfig(
-        quotaConfigPath, clientQuotaKey, requireQuotaConfigForClients, executorService, clock);
+    relonturn ConfigBaselondQuotaConfig.nelonwConfigBaselondQuotaConfig(
+        quotaConfigPath, clielonntQuotaKelony, relonquirelonQuotaConfigForClielonnts, elonxeloncutorSelonrvicelon, clock);
   }
 
-  @Provides
-  @Singleton
-  DisableClientByTierFilter provideDisableClientByTierFilter(
-      ConfigRepoBasedQuotaManager configRepoBasedQuotaManager,
-      SearchDecider searchDecider) {
-    return new DisableClientByTierFilter(configRepoBasedQuotaManager, searchDecider);
+  @Providelons
+  @Singlelonton
+  DisablelonClielonntByTielonrFiltelonr providelonDisablelonClielonntByTielonrFiltelonr(
+      ConfigRelonpoBaselondQuotaManagelonr configRelonpoBaselondQuotaManagelonr,
+      SelonarchDeloncidelonr selonarchDeloncidelonr) {
+    relonturn nelonw DisablelonClielonntByTielonrFiltelonr(configRelonpoBaselondQuotaManagelonr, selonarchDeloncidelonr);
   }
 
-  @Provides
-  @Singleton
-  ClientIdArchiveAccessFilter clientIdArchiveAccessFilter(
-      ConfigRepoBasedQuotaManager configRepoBasedQuotaManager) {
-    return new ClientIdArchiveAccessFilter(configRepoBasedQuotaManager);
+  @Providelons
+  @Singlelonton
+  ClielonntIdArchivelonAccelonssFiltelonr clielonntIdArchivelonAccelonssFiltelonr(
+      ConfigRelonpoBaselondQuotaManagelonr configRelonpoBaselondQuotaManagelonr) {
+    relonturn nelonw ClielonntIdArchivelonAccelonssFiltelonr(configRelonpoBaselondQuotaManagelonr);
   }
 }

@@ -1,26 +1,26 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.follow_recommendations.logging.{thriftscala => offline}
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
+import com.twittelonr.follow_reloncommelonndations.logging.{thriftscala => offlinelon}
 
-case class RankingInfo(
-  scores: Option[Scores],
+caselon class RankingInfo(
+  scorelons: Option[Scorelons],
   rank: Option[Int]) {
 
-  def toThrift: t.RankingInfo = {
-    t.RankingInfo(scores.map(_.toThrift), rank)
+  delonf toThrift: t.RankingInfo = {
+    t.RankingInfo(scorelons.map(_.toThrift), rank)
   }
 
-  def toOfflineThrift: offline.RankingInfo = {
-    offline.RankingInfo(scores.map(_.toOfflineThrift), rank)
+  delonf toOfflinelonThrift: offlinelon.RankingInfo = {
+    offlinelon.RankingInfo(scorelons.map(_.toOfflinelonThrift), rank)
   }
 }
 
-object RankingInfo {
+objelonct RankingInfo {
 
-  def fromThrift(rankingInfo: t.RankingInfo): RankingInfo = {
+  delonf fromThrift(rankingInfo: t.RankingInfo): RankingInfo = {
     RankingInfo(
-      scores = rankingInfo.scores.map(Scores.fromThrift),
+      scorelons = rankingInfo.scorelons.map(Scorelons.fromThrift),
       rank = rankingInfo.rank
     )
   }

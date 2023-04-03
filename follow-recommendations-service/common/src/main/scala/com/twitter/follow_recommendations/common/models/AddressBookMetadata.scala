@@ -1,29 +1,29 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
 
 /**
- * contains information if a candidate is from a candidate source generated using the following signals.
+ * contains information if a candidatelon is from a candidatelon sourcelon gelonnelonratelond using thelon following signals.
  */
-case class AddressBookMetadata(
-  inForwardPhoneBook: Boolean,
-  inReversePhoneBook: Boolean,
-  inForwardEmailBook: Boolean,
-  inReverseEmailBook: Boolean)
+caselon class AddrelonssBookMelontadata(
+  inForwardPhonelonBook: Boolelonan,
+  inRelonvelonrselonPhonelonBook: Boolelonan,
+  inForwardelonmailBook: Boolelonan,
+  inRelonvelonrselonelonmailBook: Boolelonan)
 
-object AddressBookMetadata {
+objelonct AddrelonssBookMelontadata {
 
-  val ForwardPhoneBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ForwardPhoneBook.toString)
+  val ForwardPhonelonBookCandidatelonSourcelon = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.ForwardPhonelonBook.toString)
 
-  val ReversePhoneBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ReversePhoneBook.toString)
+  val RelonvelonrselonPhonelonBookCandidatelonSourcelon = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.RelonvelonrselonPhonelonBook.toString)
 
-  val ForwardEmailBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ForwardEmailBook.toString)
+  val ForwardelonmailBookCandidatelonSourcelon = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.ForwardelonmailBook.toString)
 
-  val ReverseEmailBookCandidateSource = CandidateSourceIdentifier(
-    Algorithm.ReverseEmailBookIbis.toString)
+  val RelonvelonrselonelonmailBookCandidatelonSourcelon = CandidatelonSourcelonIdelonntifielonr(
+    Algorithm.RelonvelonrselonelonmailBookIbis.toString)
 
 }

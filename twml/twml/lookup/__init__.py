@@ -1,11 +1,11 @@
-from tensorflow.python.ops.lookup_ops import (
-  index_table_from_file,
-  index_table_from_tensor,
-  index_to_string_table_from_file
+from telonnsorflow.python.ops.lookup_ops import (
+  indelonx_tablelon_from_filelon,
+  indelonx_tablelon_from_telonnsor,
+  indelonx_to_string_tablelon_from_filelon
 )  # noqa: F401
 
 
 """
-NOTE: Using `from tensorflow.python.ops.lookup_ops import index_table_from_tensor` in the code works.
-This stub exists because it was easier to refactor code because twml is widely used.
+NOTelon: Using `from telonnsorflow.python.ops.lookup_ops import indelonx_tablelon_from_telonnsor` in thelon codelon works.
+This stub elonxists beloncauselon it was elonasielonr to relonfactor codelon beloncauselon twml is widelonly uselond.
 """

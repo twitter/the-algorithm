@@ -1,111 +1,111 @@
-package com.twitter.product_mixer.core.model.common.identifier
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize
-import com.twitter.conversions.StringOps
-import scala.util.matching.Regex
+import com.fastelonrxml.jackson.databind.annotation.JsonSelonrializelon
+import com.twittelonr.convelonrsions.StringOps
+import scala.util.matching.Relongelonx
 
 /**
- * Component Identifiers are a type of identifier used in product mixer to identify
- * unique components - products, pipelines, candidate sources.
+ * Componelonnt Idelonntifielonrs arelon a typelon of idelonntifielonr uselond in product mixelonr to idelonntify
+ * uniquelon componelonnts - products, pipelonlinelons, candidatelon sourcelons.
  *
- * Each identifier has two parts - a type and a name. Subclasses of [[ComponentIdentifier]]
- * should hardcode the `componentType`, and be declared in this file.
+ * elonach idelonntifielonr has two parts - a typelon and a namelon. Subclasselons of [[ComponelonntIdelonntifielonr]]
+ * should hardcodelon thelon `componelonntTypelon`, and belon delonclarelond in this filelon.
  *
- * For example, a [[ProductPipelineIdentifier]] has the type "ProductPipeline".
+ * For elonxamplelon, a [[ProductPipelonlinelonIdelonntifielonr]] has thelon typelon "ProductPipelonlinelon".
  *
- * Component identifiers are used in:
+ * Componelonnt idelonntifielonrs arelon uselond in:
  *   - Logs
  *   - Tooling
- *   - Metrics
- *   - Feature Switches
+ *   - Melontrics
+ *   - Felonaturelon Switchelons
  *
-  * A component identifier name is restricted to:
- *   - 3 to 80 characters to ensure reasonable length
+  * A componelonnt idelonntifielonr namelon is relonstrictelond to:
+ *   - 3 to 80 charactelonrs to elonnsurelon relonasonablelon lelonngth
  *   - A-Z, a-z, and Digits
  *   - Must start with A-Z
- *   - Digits only on the ends of "words"
- *   - Examples include "AlphaSample" and "UsersLikeMe"
- *   - and "SimsV2" or "Test6"
+ *   - Digits only on thelon elonnds of "words"
+ *   - elonxamplelons includelon "AlphaSamplelon" and "UselonrsLikelonMelon"
+ *   - and "SimsV2" or "Telonst6"
  *
- * Avoid including types like "Pipeline", "MixerPipeline" etc in your identifier. these
- * can be implied by the type itself, and will automatically be used where appropriate (logs etc).
+ * Avoid including typelons likelon "Pipelonlinelon", "MixelonrPipelonlinelon" elontc in your idelonntifielonr. thelonselon
+ * can belon implielond by thelon typelon itselonlf, and will automatically belon uselond whelonrelon appropriatelon (logs elontc).
  */
-@JsonSerialize(using = classOf[ComponentIdentifierSerializer])
-abstract class ComponentIdentifier(
-  val componentType: String,
-  val name: String)
-    extends Equals {
+@JsonSelonrializelon(using = classOf[ComponelonntIdelonntifielonrSelonrializelonr])
+abstract class ComponelonntIdelonntifielonr(
+  val componelonntTypelon: String,
+  val namelon: String)
+    elonxtelonnds elonquals {
 
-  val file: sourcecode.File = ""
+  val filelon: sourceloncodelon.Filelon = ""
 
-  override val toString: String = s"$name$componentType"
+  ovelonrridelon val toString: String = s"$namelon$componelonntTypelon"
 
-  val snakeCase: String = StringOps.toSnakeCase(toString)
+  val snakelonCaselon: String = StringOps.toSnakelonCaselon(toString)
 
-  val toScopes: Seq[String] = Seq(componentType, name)
+  val toScopelons: Selonq[String] = Selonq(componelonntTypelon, namelon)
 }
 
-object ComponentIdentifier {
-  // Allows for CamelCase and CamelCaseVer3 styles
-  val AllowedCharacters: Regex = "([A-Z][A-Za-z]*[0-9]*)+".r
-  val MinLength = 3
-  val MaxLength = 80
+objelonct ComponelonntIdelonntifielonr {
+  // Allows for CamelonlCaselon and CamelonlCaselonVelonr3 stylelons
+  val AllowelondCharactelonrs: Relongelonx = "([A-Z][A-Za-z]*[0-9]*)+".r
+  val MinLelonngth = 3
+  val MaxLelonngth = 80
 
   /**
-   * When a [[ComponentIdentifier.name]] is [[BasedOnParentComponent]]
-   * then when operations that depend on the [[ComponentIdentifier]]
-   * are performed, like registering and stats, we will perform that
-   * operation by substituting the [[ComponentIdentifier.name]] with
-   * the parent component's [[ComponentIdentifier.name]].
+   * Whelonn a [[ComponelonntIdelonntifielonr.namelon]] is [[BaselondOnParelonntComponelonnt]]
+   * thelonn whelonn opelonrations that delonpelonnd on thelon [[ComponelonntIdelonntifielonr]]
+   * arelon pelonrformelond, likelon relongistelonring and stats, welon will pelonrform that
+   * opelonration by substituting thelon [[ComponelonntIdelonntifielonr.namelon]] with
+   * thelon parelonnt componelonnt's [[ComponelonntIdelonntifielonr.namelon]].
    */
-  private[core] val BasedOnParentComponent = "BasedOnParentComponent"
+  privatelon[corelon] val BaselondOnParelonntComponelonnt = "BaselondOnParelonntComponelonnt"
 
-  def isValidName(name: String): Boolean = {
-    name match {
-      case n if n.length < MinLength =>
-        false
-      case n if n.length > MaxLength =>
-        false
-      case AllowedCharacters(_*) =>
-        true
-      case _ =>
-        false
+  delonf isValidNamelon(namelon: String): Boolelonan = {
+    namelon match {
+      caselon n if n.lelonngth < MinLelonngth =>
+        falselon
+      caselon n if n.lelonngth > MaxLelonngth =>
+        falselon
+      caselon AllowelondCharactelonrs(_*) =>
+        truelon
+      caselon _ =>
+        falselon
     }
   }
 
-  implicit val ordering: Ordering[ComponentIdentifier] =
-    Ordering.by { component =>
-      val componentTypeRank = component match {
-        case _: ProductIdentifier => 0
-        case _: ProductPipelineIdentifier => 1
-        case _: MixerPipelineIdentifier => 2
-        case _: RecommendationPipelineIdentifier => 3
-        case _: ScoringPipelineIdentifier => 4
-        case _: CandidatePipelineIdentifier => 5
-        case _: PipelineStepIdentifier => 6
-        case _: CandidateSourceIdentifier => 7
-        case _: FeatureHydratorIdentifier => 8
-        case _: GateIdentifier => 9
-        case _: FilterIdentifier => 10
-        case _: TransformerIdentifier => 11
-        case _: ScorerIdentifier => 12
-        case _: DecoratorIdentifier => 13
-        case _: DomainMarshallerIdentifier => 14
-        case _: TransportMarshallerIdentifier => 15
-        case _: SideEffectIdentifier => 16
-        case _: PlatformIdentifier => 17
-        case _: SelectorIdentifier => 18
-        case _ => Int.MaxValue
+  implicit val ordelonring: Ordelonring[ComponelonntIdelonntifielonr] =
+    Ordelonring.by { componelonnt =>
+      val componelonntTypelonRank = componelonnt match {
+        caselon _: ProductIdelonntifielonr => 0
+        caselon _: ProductPipelonlinelonIdelonntifielonr => 1
+        caselon _: MixelonrPipelonlinelonIdelonntifielonr => 2
+        caselon _: ReloncommelonndationPipelonlinelonIdelonntifielonr => 3
+        caselon _: ScoringPipelonlinelonIdelonntifielonr => 4
+        caselon _: CandidatelonPipelonlinelonIdelonntifielonr => 5
+        caselon _: PipelonlinelonStelonpIdelonntifielonr => 6
+        caselon _: CandidatelonSourcelonIdelonntifielonr => 7
+        caselon _: FelonaturelonHydratorIdelonntifielonr => 8
+        caselon _: GatelonIdelonntifielonr => 9
+        caselon _: FiltelonrIdelonntifielonr => 10
+        caselon _: TransformelonrIdelonntifielonr => 11
+        caselon _: ScorelonrIdelonntifielonr => 12
+        caselon _: DeloncoratorIdelonntifielonr => 13
+        caselon _: DomainMarshallelonrIdelonntifielonr => 14
+        caselon _: TransportMarshallelonrIdelonntifielonr => 15
+        caselon _: SidelonelonffelonctIdelonntifielonr => 16
+        caselon _: PlatformIdelonntifielonr => 17
+        caselon _: SelonlelonctorIdelonntifielonr => 18
+        caselon _ => Int.MaxValuelon
       }
 
-      // First rank by type, then by name for equivalent types for overall order stability
-      (componentTypeRank, component.name)
+      // First rank by typelon, thelonn by namelon for elonquivalelonnt typelons for ovelonrall ordelonr stability
+      (componelonntTypelonRank, componelonnt.namelon)
     }
 }
 
 /**
- * HasComponentIdentifier indicates that component has a [[ComponentIdentifier]]
+ * HasComponelonntIdelonntifielonr indicatelons that componelonnt has a [[ComponelonntIdelonntifielonr]]
  */
-trait HasComponentIdentifier {
-  val identifier: ComponentIdentifier
+trait HasComponelonntIdelonntifielonr {
+  val idelonntifielonr: ComponelonntIdelonntifielonr
 }

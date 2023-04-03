@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird_root.common;
+packagelon com.twittelonr.selonarch.elonarlybird_root.common;
 
-public final class InjectionNames {
+public final class InjelonctionNamelons {
 
-  public static final String FULL_ARCHIVE = "full_archive";
-  public static final String REALTIME = "realtime";
-  public static final String PROTECTED = "protected";
+  public static final String FULL_ARCHIVelon = "full_archivelon";
+  public static final String RelonALTIMelon = "relonaltimelon";
+  public static final String PROTelonCTelonD = "protelonctelond";
 
-  private InjectionNames() { }
+  privatelon InjelonctionNamelons() { }
 }

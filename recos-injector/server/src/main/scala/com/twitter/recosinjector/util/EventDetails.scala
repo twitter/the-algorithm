@@ -1,126 +1,126 @@
-package com.twitter.recosinjector.util
+packagelon com.twittelonr.reloncosinjelonctor.util
 
-import com.twitter.frigate.common.base.TweetUtil
-import com.twitter.gizmoduck.thriftscala.User
-import com.twitter.recos.util.Action.Action
-import com.twitter.tweetypie.thriftscala.Tweet
+import com.twittelonr.frigatelon.common.baselon.TwelonelontUtil
+import com.twittelonr.gizmoduck.thriftscala.Uselonr
+import com.twittelonr.reloncos.util.Action.Action
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
 
 /**
- * This is used to store information about a newly created tweet
- * @param validEntityUserIds For users mentioned or mediatagged in the tweet, these follow the
- *                           engage user and only they are are considered valid
- * @param sourceTweetDetails For Reply, Quote, or RT, source tweet is the tweet being actioned on
+ * This is uselond to storelon information about a nelonwly crelonatelond twelonelont
+ * @param validelonntityUselonrIds For uselonrs melonntionelond or melondiataggelond in thelon twelonelont, thelonselon follow thelon
+ *                           elonngagelon uselonr and only thelony arelon arelon considelonrelond valid
+ * @param sourcelonTwelonelontDelontails For Relonply, Quotelon, or RT, sourcelon twelonelont is thelon twelonelont beloning actionelond on
  */
-case class TweetCreateEventDetails(
-  userTweetEngagement: UserTweetEngagement,
-  validEntityUserIds: Seq[Long],
-  sourceTweetDetails: Option[TweetDetails]) {
-  // A mention is only valid if the mentioned user follows the source user
-  val validMentionUserIds: Option[Seq[Long]] = {
-    userTweetEngagement.tweetDetails.flatMap(_.mentionUserIds.map(_.intersect(validEntityUserIds)))
+caselon class TwelonelontCrelonatelonelonvelonntDelontails(
+  uselonrTwelonelontelonngagelonmelonnt: UselonrTwelonelontelonngagelonmelonnt,
+  validelonntityUselonrIds: Selonq[Long],
+  sourcelonTwelonelontDelontails: Option[TwelonelontDelontails]) {
+  // A melonntion is only valid if thelon melonntionelond uselonr follows thelon sourcelon uselonr
+  val validMelonntionUselonrIds: Option[Selonq[Long]] = {
+    uselonrTwelonelontelonngagelonmelonnt.twelonelontDelontails.flatMap(_.melonntionUselonrIds.map(_.intelonrselonct(validelonntityUselonrIds)))
   }
 
-  // A mediatag is only valid if the mediatagged user follows the source user
-  val validMediatagUserIds: Option[Seq[Long]] = {
-    userTweetEngagement.tweetDetails.flatMap(_.mediatagUserIds.map(_.intersect(validEntityUserIds)))
+  // A melondiatag is only valid if thelon melondiataggelond uselonr follows thelon sourcelon uselonr
+  val validMelondiatagUselonrIds: Option[Selonq[Long]] = {
+    uselonrTwelonelontelonngagelonmelonnt.twelonelontDelontails.flatMap(_.melondiatagUselonrIds.map(_.intelonrselonct(validelonntityUselonrIds)))
   }
 }
 
 /**
- * Stores information about a favorite/unfav engagement.
- * NOTE: This could either be Likes, or UNLIKEs (i.e. when user cancels the Like)
- * @param userTweetEngagement the engagement details
+ * Storelons information about a favoritelon/unfav elonngagelonmelonnt.
+ * NOTelon: This could elonithelonr belon Likelons, or UNLIKelons (i.elon. whelonn uselonr cancelonls thelon Likelon)
+ * @param uselonrTwelonelontelonngagelonmelonnt thelon elonngagelonmelonnt delontails
  */
-case class TweetFavoriteEventDetails(
-  userTweetEngagement: UserTweetEngagement)
+caselon class TwelonelontFavoritelonelonvelonntDelontails(
+  uselonrTwelonelontelonngagelonmelonnt: UselonrTwelonelontelonngagelonmelonnt)
 
 /**
- * Stores information about a unified user action engagement.
- * @param userTweetEngagement the engagement details
+ * Storelons information about a unifielond uselonr action elonngagelonmelonnt.
+ * @param uselonrTwelonelontelonngagelonmelonnt thelon elonngagelonmelonnt delontails
  */
-case class UuaEngagementEventDetails(
-  userTweetEngagement: UserTweetEngagement)
+caselon class UuaelonngagelonmelonntelonvelonntDelontails(
+  uselonrTwelonelontelonngagelonmelonnt: UselonrTwelonelontelonngagelonmelonnt)
 
 /**
- * Details about a user-tweet engagement, like when a user tweeted/liked a tweet
- * @param engageUserId User that engaged with the tweet
- * @param action The action the user took on the tweet
- * @param tweetId The type of engagement the user took on the tweet
+ * Delontails about a uselonr-twelonelont elonngagelonmelonnt, likelon whelonn a uselonr twelonelontelond/likelond a twelonelont
+ * @param elonngagelonUselonrId Uselonr that elonngagelond with thelon twelonelont
+ * @param action Thelon action thelon uselonr took on thelon twelonelont
+ * @param twelonelontId Thelon typelon of elonngagelonmelonnt thelon uselonr took on thelon twelonelont
  */
-case class UserTweetEngagement(
-  engageUserId: Long,
-  engageUser: Option[User],
+caselon class UselonrTwelonelontelonngagelonmelonnt(
+  elonngagelonUselonrId: Long,
+  elonngagelonUselonr: Option[Uselonr],
   action: Action,
-  engagementTimeMillis: Option[Long],
-  tweetId: Long,
-  tweetDetails: Option[TweetDetails])
+  elonngagelonmelonntTimelonMillis: Option[Long],
+  twelonelontId: Long,
+  twelonelontDelontails: Option[TwelonelontDelontails])
 
 /**
- * Helper class that decomposes a tweet object and provides related details about this tweet
+ * Helonlpelonr class that deloncomposelons a twelonelont objelonct and providelons relonlatelond delontails about this twelonelont
  */
-case class TweetDetails(tweet: Tweet) {
-  val authorId: Option[Long] = tweet.coreData.map(_.userId)
+caselon class TwelonelontDelontails(twelonelont: Twelonelont) {
+  val authorId: Option[Long] = twelonelont.corelonData.map(_.uselonrId)
 
-  val urls: Option[Seq[String]] = tweet.urls.map(_.map(_.url))
+  val urls: Option[Selonq[String]] = twelonelont.urls.map(_.map(_.url))
 
-  val mediaUrls: Option[Seq[String]] = tweet.media.map(_.map(_.expandedUrl))
+  val melondiaUrls: Option[Selonq[String]] = twelonelont.melondia.map(_.map(_.elonxpandelondUrl))
 
-  val hashtags: Option[Seq[String]] = tweet.hashtags.map(_.map(_.text))
+  val hashtags: Option[Selonq[String]] = twelonelont.hashtags.map(_.map(_.telonxt))
 
-  // mentionUserIds include reply user ids at the beginning of a tweet
-  val mentionUserIds: Option[Seq[Long]] = tweet.mentions.map(_.flatMap(_.userId))
+  // melonntionUselonrIds includelon relonply uselonr ids at thelon belonginning of a twelonelont
+  val melonntionUselonrIds: Option[Selonq[Long]] = twelonelont.melonntions.map(_.flatMap(_.uselonrId))
 
-  val mediatagUserIds: Option[Seq[Long]] = tweet.mediaTags.map {
+  val melondiatagUselonrIds: Option[Selonq[Long]] = twelonelont.melondiaTags.map {
     _.tagMap.flatMap {
-      case (_, mediaTag) => mediaTag.flatMap(_.userId)
-    }.toSeq
+      caselon (_, melondiaTag) => melondiaTag.flatMap(_.uselonrId)
+    }.toSelonq
   }
 
-  val replySourceId: Option[Long] = tweet.coreData.flatMap(_.reply.flatMap(_.inReplyToStatusId))
-  val replyUserId: Option[Long] = tweet.coreData.flatMap(_.reply.map(_.inReplyToUserId))
+  val relonplySourcelonId: Option[Long] = twelonelont.corelonData.flatMap(_.relonply.flatMap(_.inRelonplyToStatusId))
+  val relonplyUselonrId: Option[Long] = twelonelont.corelonData.flatMap(_.relonply.map(_.inRelonplyToUselonrId))
 
-  val retweetSourceId: Option[Long] = tweet.coreData.flatMap(_.share.map(_.sourceStatusId))
-  val retweetUserId: Option[Long] = tweet.coreData.flatMap(_.share.map(_.sourceUserId))
+  val relontwelonelontSourcelonId: Option[Long] = twelonelont.corelonData.flatMap(_.sharelon.map(_.sourcelonStatusId))
+  val relontwelonelontUselonrId: Option[Long] = twelonelont.corelonData.flatMap(_.sharelon.map(_.sourcelonUselonrId))
 
-  val quoteSourceId: Option[Long] = tweet.quotedTweet.map(_.tweetId)
-  val quoteUserId: Option[Long] = tweet.quotedTweet.map(_.userId)
-  val quoteTweetUrl: Option[String] = tweet.quotedTweet.flatMap(_.permalink.map(_.shortUrl))
+  val quotelonSourcelonId: Option[Long] = twelonelont.quotelondTwelonelont.map(_.twelonelontId)
+  val quotelonUselonrId: Option[Long] = twelonelont.quotelondTwelonelont.map(_.uselonrId)
+  val quotelonTwelonelontUrl: Option[String] = twelonelont.quotelondTwelonelont.flatMap(_.pelonrmalink.map(_.shortUrl))
 
-  //If the tweet is retweet/reply/quote, this is the tweet that the new tweet responds to
-  val (sourceTweetId, sourceTweetUserId) = {
-    (replySourceId, retweetSourceId, quoteSourceId) match {
-      case (Some(replyId), _, _) =>
-        (Some(replyId), replyUserId)
-      case (_, Some(retweetId), _) =>
-        (Some(retweetId), retweetUserId)
-      case (_, _, Some(quoteId)) =>
-        (Some(quoteId), quoteUserId)
-      case _ =>
-        (None, None)
+  //If thelon twelonelont is relontwelonelont/relonply/quotelon, this is thelon twelonelont that thelon nelonw twelonelont relonsponds to
+  val (sourcelonTwelonelontId, sourcelonTwelonelontUselonrId) = {
+    (relonplySourcelonId, relontwelonelontSourcelonId, quotelonSourcelonId) match {
+      caselon (Somelon(relonplyId), _, _) =>
+        (Somelon(relonplyId), relonplyUselonrId)
+      caselon (_, Somelon(relontwelonelontId), _) =>
+        (Somelon(relontwelonelontId), relontwelonelontUselonrId)
+      caselon (_, _, Somelon(quotelonId)) =>
+        (Somelon(quotelonId), quotelonUselonrId)
+      caselon _ =>
+        (Nonelon, Nonelon)
     }
   }
 
-  // Boolean information
-  val hasPhoto: Boolean = TweetUtil.containsPhotoTweet(tweet)
+  // Boolelonan information
+  val hasPhoto: Boolelonan = TwelonelontUtil.containsPhotoTwelonelont(twelonelont)
 
-  val hasVideo: Boolean = TweetUtil.containsVideoTweet(tweet)
+  val hasVidelono: Boolelonan = TwelonelontUtil.containsVidelonoTwelonelont(twelonelont)
 
-  // TweetyPie does not populate url fields in a quote tweet create event, even though we
-  // consider quote tweets as url tweets. This boolean helps make up for it.
-  // Details: https://groups.google.com/a/twitter.com/d/msg/eng/BhK1XAcSSWE/F8Gc4_5uDwAJ
-  val hasQuoteTweetUrl: Boolean = tweet.quotedTweet.exists(_.permalink.isDefined)
+  // TwelonelontyPielon doelons not populatelon url fielonlds in a quotelon twelonelont crelonatelon elonvelonnt, elonvelonn though welon
+  // considelonr quotelon twelonelonts as url twelonelonts. This boolelonan helonlps makelon up for it.
+  // Delontails: https://groups.googlelon.com/a/twittelonr.com/d/msg/elonng/BhK1XAcSSWelon/F8Gc4_5uDwAJ
+  val hasQuotelonTwelonelontUrl: Boolelonan = twelonelont.quotelondTwelonelont.elonxists(_.pelonrmalink.isDelonfinelond)
 
-  val hasUrl: Boolean = this.urls.exists(_.nonEmpty) || hasQuoteTweetUrl
+  val hasUrl: Boolelonan = this.urls.elonxists(_.nonelonmpty) || hasQuotelonTwelonelontUrl
 
-  val hasHashtag: Boolean = this.hashtags.exists(_.nonEmpty)
+  val hasHashtag: Boolelonan = this.hashtags.elonxists(_.nonelonmpty)
 
-  val isCard: Boolean = hasUrl | hasPhoto | hasVideo
+  val isCard: Boolelonan = hasUrl | hasPhoto | hasVidelono
 
-  implicit def bool2Long(b: Boolean): Long = if (b) 1L else 0L
+  implicit delonf bool2Long(b: Boolelonan): Long = if (b) 1L elonlselon 0L
 
-  // Return a hashed long that contains card type information of the tweet
-  val cardInfo: Long = isCard | (hasUrl << 1) | (hasPhoto << 2) | (hasVideo << 3)
+  // Relonturn a hashelond long that contains card typelon information of thelon twelonelont
+  val cardInfo: Long = isCard | (hasUrl << 1) | (hasPhoto << 2) | (hasVidelono << 3)
 
-  // nullcast tweet is one that is purposefully not broadcast to followers, ex. an ad tweet.
-  val isNullCastTweet: Boolean = tweet.coreData.exists(_.nullcast)
+  // nullcast twelonelont is onelon that is purposelonfully not broadcast to followelonrs, elonx. an ad twelonelont.
+  val isNullCastTwelonelont: Boolelonan = twelonelont.corelonData.elonxists(_.nullcast)
 }

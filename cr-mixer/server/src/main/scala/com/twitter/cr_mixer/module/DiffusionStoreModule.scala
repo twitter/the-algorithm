@@ -1,54 +1,54 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.thriftscala.TweetsWithScore
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.TwelonelontsWithScorelon
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.Apollo
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanRO
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanROConfig
+import com.twittelonr.storelonhaus_intelonrnal.util.ApplicationID
+import com.twittelonr.storelonhaus_intelonrnal.util.DataselontNamelon
+import com.twittelonr.storelonhaus_intelonrnal.util.HDFSPath
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object DiffusionStoreModule extends TwitterModule {
-  type UserId = Long
-  implicit val longCodec = implicitly[Injection[Long, Array[Byte]]]
-  implicit val tweetRecsInjection: Injection[TweetsWithScore, Array[Byte]] =
-    BinaryScalaCodec(TweetsWithScore)
+objelonct DiffusionStorelonModulelon elonxtelonnds TwittelonrModulelon {
+  typelon UselonrId = Long
+  implicit val longCodelonc = implicitly[Injelonction[Long, Array[Bytelon]]]
+  implicit val twelonelontReloncsInjelonction: Injelonction[TwelonelontsWithScorelon, Array[Bytelon]] =
+    BinaryScalaCodelonc(TwelonelontsWithScorelon)
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.RetweetBasedDiffusionRecsMhStore)
-  def retweetBasedDiffusionRecsMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[Long, TweetsWithScore] = {
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.RelontwelonelontBaselondDiffusionReloncsMhStorelon)
+  delonf relontwelonelontBaselondDiffusionReloncsMhStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[Long, TwelonelontsWithScorelon] = {
     val manhattanROConfig = ManhattanROConfig(
-      HDFSPath(""), // not needed
-      ApplicationID("cr_mixer_apollo"),
-      DatasetName("diffusion_retweet_tweet_recs"),
+      HDFSPath(""), // not nelonelondelond
+      ApplicationID("cr_mixelonr_apollo"),
+      DataselontNamelon("diffusion_relontwelonelont_twelonelont_reloncs"),
       Apollo
     )
 
-    buildTweetRecsStore(serviceIdentifier, manhattanROConfig)
+    buildTwelonelontReloncsStorelon(selonrvicelonIdelonntifielonr, manhattanROConfig)
   }
 
-  private def buildTweetRecsStore(
-    serviceIdentifier: ServiceIdentifier,
+  privatelon delonf buildTwelonelontReloncsStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
     manhattanROConfig: ManhattanROConfig
-  ): ReadableStore[Long, TweetsWithScore] = {
+  ): RelonadablelonStorelon[Long, TwelonelontsWithScorelon] = {
 
     ManhattanRO
-      .getReadableStoreWithMtls[Long, TweetsWithScore](
+      .gelontRelonadablelonStorelonWithMtls[Long, TwelonelontsWithScorelon](
         manhattanROConfig,
-        ManhattanKVClientMtlsParams(serviceIdentifier)
-      )(longCodec, tweetRecsInjection)
+        ManhattanKVClielonntMtlsParams(selonrvicelonIdelonntifielonr)
+      )(longCodelonc, twelonelontReloncsInjelonction)
   }
 }

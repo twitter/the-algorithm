@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.trend
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.trelonnd
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted.PromotedMetadataMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.trend.TrendItem
-import com.twitter.timelines.render.thriftscala.GroupedTrend
-import com.twitter.timelines.render.thriftscala.TrendMetadata
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond.PromotelondMelontadataMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.trelonnd.TrelonndItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.thriftscala.GroupelondTrelonnd
+import com.twittelonr.timelonlinelons.relonndelonr.thriftscala.TrelonndMelontadata
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-@Singleton
-class TrendItemMarshaller @Inject() (
-  promotedMetadataMarshaller: PromotedMetadataMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class TrelonndItelonmMarshallelonr @Injelonct() (
+  promotelondMelontadataMarshallelonr: PromotelondMelontadataMarshallelonr,
+  urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(trendItem: TrendItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.Trend(
-      urt.Trend(
-        name = trendItem.trendName,
-        url = urlMarshaller(trendItem.url),
-        promotedMetadata = trendItem.promotedMetadata.map(promotedMetadataMarshaller(_)),
-        description = trendItem.description,
-        trendMetadata = Some(
-          TrendMetadata(
-            metaDescription = trendItem.metaDescription,
-            url = Some(urlMarshaller(trendItem.url)),
-            domainContext = trendItem.domainContext
+  delonf apply(trelonndItelonm: TrelonndItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.Trelonnd(
+      urt.Trelonnd(
+        namelon = trelonndItelonm.trelonndNamelon,
+        url = urlMarshallelonr(trelonndItelonm.url),
+        promotelondMelontadata = trelonndItelonm.promotelondMelontadata.map(promotelondMelontadataMarshallelonr(_)),
+        delonscription = trelonndItelonm.delonscription,
+        trelonndMelontadata = Somelon(
+          TrelonndMelontadata(
+            melontaDelonscription = trelonndItelonm.melontaDelonscription,
+            url = Somelon(urlMarshallelonr(trelonndItelonm.url)),
+            domainContelonxt = trelonndItelonm.domainContelonxt
           )),
-        groupedTrends = trendItem.groupedTrends.map { trends =>
-          trends.map { trend =>
-            GroupedTrend(name = trend.trendName, url = urlMarshaller(trend.url))
+        groupelondTrelonnds = trelonndItelonm.groupelondTrelonnds.map { trelonnds =>
+          trelonnds.map { trelonnd =>
+            GroupelondTrelonnd(namelon = trelonnd.trelonndNamelon, url = urlMarshallelonr(trelonnd.url))
           }
         }
       )

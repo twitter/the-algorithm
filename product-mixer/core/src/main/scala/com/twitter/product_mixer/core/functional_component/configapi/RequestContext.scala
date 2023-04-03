@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.configapi
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi
 
-import com.twitter.timelines.configapi.BaseRequestContext
-import com.twitter.timelines.configapi.FeatureContext
-import com.twitter.timelines.configapi.GuestId
-import com.twitter.timelines.configapi.UserId
-import com.twitter.timelines.configapi.WithFeatureContext
-import com.twitter.timelines.configapi.WithGuestId
-import com.twitter.timelines.configapi.WithUserId
+import com.twittelonr.timelonlinelons.configapi.BaselonRelonquelonstContelonxt
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.GuelonstId
+import com.twittelonr.timelonlinelons.configapi.UselonrId
+import com.twittelonr.timelonlinelons.configapi.WithFelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.configapi.WithGuelonstId
+import com.twittelonr.timelonlinelons.configapi.WithUselonrId
 
-/** Represents [[com.twitter.timelines.configapi]]'s context information */
-case class RequestContext(
-  userId: Option[UserId],
-  guestId: Option[GuestId],
-  featureContext: FeatureContext)
-    extends BaseRequestContext
-    with WithUserId
-    with WithGuestId
-    with WithFeatureContext
+/** Relonprelonselonnts [[com.twittelonr.timelonlinelons.configapi]]'s contelonxt information */
+caselon class RelonquelonstContelonxt(
+  uselonrId: Option[UselonrId],
+  guelonstId: Option[GuelonstId],
+  felonaturelonContelonxt: FelonaturelonContelonxt)
+    elonxtelonnds BaselonRelonquelonstContelonxt
+    with WithUselonrId
+    with WithGuelonstId
+    with WithFelonaturelonContelonxt

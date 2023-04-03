@@ -1,41 +1,41 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.rules.State.FeatureFailed
-import com.twitter.visibility.rules.State.MissingFeature
-import com.twitter.visibility.rules.State.RuleFailed
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.rulelons.Statelon.FelonaturelonFailelond
+import com.twittelonr.visibility.rulelons.Statelon.MissingFelonaturelon
+import com.twittelonr.visibility.rulelons.Statelon.RulelonFailelond
 
-abstract class FailClosedException(message: String, state: State, ruleName: String)
-    extends Exception(message) {
-  def getState: State = {
-    state
+abstract class FailCloselondelonxcelonption(melonssagelon: String, statelon: Statelon, rulelonNamelon: String)
+    elonxtelonnds elonxcelonption(melonssagelon) {
+  delonf gelontStatelon: Statelon = {
+    statelon
   }
 
-  def getRuleName: String = {
-    ruleName
+  delonf gelontRulelonNamelon: String = {
+    rulelonNamelon
   }
 }
 
-case class MissingFeaturesException(
-  ruleName: String,
-  missingFeatures: Set[Feature[_]])
-    extends FailClosedException(
-      s"A $ruleName rule evaluation has ${missingFeatures.size} missing features: ${missingFeatures
-        .map(_.name)}",
-      MissingFeature(missingFeatures),
-      ruleName) {}
+caselon class MissingFelonaturelonselonxcelonption(
+  rulelonNamelon: String,
+  missingFelonaturelons: Selont[Felonaturelon[_]])
+    elonxtelonnds FailCloselondelonxcelonption(
+      s"A $rulelonNamelon rulelon elonvaluation has ${missingFelonaturelons.sizelon} missing felonaturelons: ${missingFelonaturelons
+        .map(_.namelon)}",
+      MissingFelonaturelon(missingFelonaturelons),
+      rulelonNamelon) {}
 
-case class FeaturesFailedException(
-  ruleName: String,
-  featureFailures: Map[Feature[_], Throwable])
-    extends FailClosedException(
-      s"A $ruleName rule evaluation has ${featureFailures.size} failed features: ${featureFailures.keys
-        .map(_.name)}, ${featureFailures.values}",
-      FeatureFailed(featureFailures),
-      ruleName) {}
+caselon class FelonaturelonsFailelondelonxcelonption(
+  rulelonNamelon: String,
+  felonaturelonFailurelons: Map[Felonaturelon[_], Throwablelon])
+    elonxtelonnds FailCloselondelonxcelonption(
+      s"A $rulelonNamelon rulelon elonvaluation has ${felonaturelonFailurelons.sizelon} failelond felonaturelons: ${felonaturelonFailurelons.kelonys
+        .map(_.namelon)}, ${felonaturelonFailurelons.valuelons}",
+      FelonaturelonFailelond(felonaturelonFailurelons),
+      rulelonNamelon) {}
 
-case class RuleFailedException(ruleName: String, exception: Throwable)
-    extends FailClosedException(
-      s"A $ruleName rule evaluation failed to execute",
-      RuleFailed(exception),
-      ruleName) {}
+caselon class RulelonFailelondelonxcelonption(rulelonNamelon: String, elonxcelonption: Throwablelon)
+    elonxtelonnds FailCloselondelonxcelonption(
+      s"A $rulelonNamelon rulelon elonvaluation failelond to elonxeloncutelon",
+      RulelonFailelond(elonxcelonption),
+      rulelonNamelon) {}

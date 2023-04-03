@@ -1,158 +1,158 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftFacetCount;
-import com.twitter.search.earlybird.thrift.ThriftFacetCountMetadata;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
-import com.twitter.search.earlybird.thrift.ThriftFacetResults;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AntiGamingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontCount;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontCountMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontFielonldRelonsults;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontRelonsults;
 
-public class ExplainFacetResultsCollector extends FacetResultsCollector {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ExplainFacetResultsCollector.class.getName());
+public class elonxplainFacelontRelonsultsCollelonctor elonxtelonnds FacelontRelonsultsCollelonctor {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(elonxplainFacelontRelonsultsCollelonctor.class.gelontNamelon());
 
-  protected final List<Pair<Integer, Long>> proofs;
-  protected final Map<String, Map<String, List<Long>>> proofAccumulators;
+  protelonctelond final List<Pair<Intelongelonr, Long>> proofs;
+  protelonctelond final Map<String, Map<String, List<Long>>> proofAccumulators;
 
-  protected Map<String, FacetLabelProvider> facetLabelProviders;
-  private FacetIDMap facetIDMap;
+  protelonctelond Map<String, FacelontLabelonlProvidelonr> facelontLabelonlProvidelonrs;
+  privatelon FacelontIDMap facelontIDMap;
 
   /**
-   * Creates a new facet collector with the ability to provide explanations for the search results.
+   * Crelonatelons a nelonw facelont collelonctor with thelon ability to providelon elonxplanations for thelon selonarch relonsults.
    */
-  public ExplainFacetResultsCollector(
-      ImmutableSchemaInterface schema,
-      FacetSearchRequestInfo searchRequestInfo,
-      AntiGamingFilter antiGamingFilter,
-      EarlybirdSearcherStats searcherStats,
+  public elonxplainFacelontRelonsultsCollelonctor(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      FacelontSelonarchRelonquelonstInfo selonarchRelonquelonstInfo,
+      AntiGamingFiltelonr antiGamingFiltelonr,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
       Clock clock,
-      int requestDebugMode) throws IOException {
-    super(schema, searchRequestInfo, antiGamingFilter, searcherStats, clock, requestDebugMode);
+      int relonquelonstDelonbugModelon) throws IOelonxcelonption {
+    supelonr(schelonma, selonarchRelonquelonstInfo, antiGamingFiltelonr, selonarchelonrStats, clock, relonquelonstDelonbugModelon);
 
-    proofs = new ArrayList<>(128);
+    proofs = nelonw ArrayList<>(128);
 
-    proofAccumulators = Maps.newHashMap();
-    for (Schema.FieldInfo facetField : schema.getFacetFields()) {
-      HashMap<String, List<Long>> fieldLabelToTweetIdsMap = new HashMap<>();
-      proofAccumulators.put(facetField.getFieldType().getFacetName(), fieldLabelToTweetIdsMap);
+    proofAccumulators = Maps.nelonwHashMap();
+    for (Schelonma.FielonldInfo facelontFielonld : schelonma.gelontFacelontFielonlds()) {
+      HashMap<String, List<Long>> fielonldLabelonlToTwelonelontIdsMap = nelonw HashMap<>();
+      proofAccumulators.put(facelontFielonld.gelontFielonldTypelon().gelontFacelontNamelon(), fielonldLabelonlToTwelonelontIdsMap);
     }
   }
 
-  @Override
-  protected Accumulator newPerSegmentAccumulator(EarlybirdIndexSegmentAtomicReader indexReader) {
-    Accumulator accumulator = super.newPerSegmentAccumulator(indexReader);
-    accumulator.accessor.setProofs(proofs);
-    facetLabelProviders = indexReader.getFacetLabelProviders();
-    facetIDMap = indexReader.getFacetIDMap();
+  @Ovelonrridelon
+  protelonctelond Accumulator nelonwPelonrSelongmelonntAccumulator(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr indelonxRelonadelonr) {
+    Accumulator accumulator = supelonr.nelonwPelonrSelongmelonntAccumulator(indelonxRelonadelonr);
+    accumulator.accelonssor.selontProofs(proofs);
+    facelontLabelonlProvidelonrs = indelonxRelonadelonr.gelontFacelontLabelonlProvidelonrs();
+    facelontIDMap = indelonxRelonadelonr.gelontFacelontIDMap();
 
-    return accumulator;
+    relonturn accumulator;
   }
 
-  @Override
-  public void doCollect(long tweetID) throws IOException {
-    proofs.clear();
+  @Ovelonrridelon
+  public void doCollelonct(long twelonelontID) throws IOelonxcelonption {
+    proofs.clelonar();
 
-    // FacetResultsCollector.doCollect() calls FacetScorer.incrementCounts(),
-    // FacetResultsCollector.doCollect() creates a FacetResultsCollector.Accumulator, if
-    // necessary, which contains the accessor (a CompositeFacetIterator) and accumulators
-    // (FacetAccumulator of each field)
-    super.doCollect(tweetID);
+    // FacelontRelonsultsCollelonctor.doCollelonct() calls FacelontScorelonr.increlonmelonntCounts(),
+    // FacelontRelonsultsCollelonctor.doCollelonct() crelonatelons a FacelontRelonsultsCollelonctor.Accumulator, if
+    // neloncelonssary, which contains thelon accelonssor (a CompositelonFacelontItelonrator) and accumulators
+    // (FacelontAccumulator of elonach fielonld)
+    supelonr.doCollelonct(twelonelontID);
 
-    for (Pair<Integer, Long> fieldIdTermIdPair : proofs) {
-      int fieldID = fieldIdTermIdPair.getFirst();
-      long termID = fieldIdTermIdPair.getSecond();
+    for (Pair<Intelongelonr, Long> fielonldIdTelonrmIdPair : proofs) {
+      int fielonldID = fielonldIdTelonrmIdPair.gelontFirst();
+      long telonrmID = fielonldIdTelonrmIdPair.gelontSeloncond();
 
-      // Convert term ID to the term text, a.k.a. facet label
-      String facetName = facetIDMap.getFacetFieldByFacetID(fieldID).getFacetName();
-      if (facetName != null) {
-        String facetLabel = facetLabelProviders.get(facetName)
-                .getLabelAccessor().getTermText(termID);
+      // Convelonrt telonrm ID to thelon telonrm telonxt, a.k.a. facelont labelonl
+      String facelontNamelon = facelontIDMap.gelontFacelontFielonldByFacelontID(fielonldID).gelontFacelontNamelon();
+      if (facelontNamelon != null) {
+        String facelontLabelonl = facelontLabelonlProvidelonrs.gelont(facelontNamelon)
+                .gelontLabelonlAccelonssor().gelontTelonrmTelonxt(telonrmID);
 
-        List<Long> tweetIDs = proofAccumulators.get(facetName).get(facetLabel);
-        if (tweetIDs == null) {
-          tweetIDs = new ArrayList<>();
-          proofAccumulators.get(facetName).put(facetLabel, tweetIDs);
+        List<Long> twelonelontIDs = proofAccumulators.gelont(facelontNamelon).gelont(facelontLabelonl);
+        if (twelonelontIDs == null) {
+          twelonelontIDs = nelonw ArrayList<>();
+          proofAccumulators.gelont(facelontNamelon).put(facelontLabelonl, twelonelontIDs);
         }
 
-        tweetIDs.add(tweetID);
+        twelonelontIDs.add(twelonelontID);
       }
     }
 
-    // clear it again just to be sure
-    proofs.clear();
+    // clelonar it again just to belon surelon
+    proofs.clelonar();
   }
 
   /**
-   * Sets explanations for the facet results.
+   * Selonts elonxplanations for thelon facelont relonsults.
    */
-  public void setExplanations(ThriftFacetResults facetResults) {
-    StringBuilder explanation = new StringBuilder();
+  public void selontelonxplanations(ThriftFacelontRelonsults facelontRelonsults) {
+    StringBuildelonr elonxplanation = nelonw StringBuildelonr();
 
-    for (Map.Entry<String, ThriftFacetFieldResults> facetFieldResultsEntry
-            : facetResults.getFacetFields().entrySet()) {
-      String facetName = facetFieldResultsEntry.getKey();
-      ThriftFacetFieldResults facetFieldResults = facetFieldResultsEntry.getValue();
+    for (Map.elonntry<String, ThriftFacelontFielonldRelonsults> facelontFielonldRelonsultselonntry
+            : facelontRelonsults.gelontFacelontFielonlds().elonntrySelont()) {
+      String facelontNamelon = facelontFielonldRelonsultselonntry.gelontKelony();
+      ThriftFacelontFielonldRelonsults facelontFielonldRelonsults = facelontFielonldRelonsultselonntry.gelontValuelon();
 
-      Map<String, List<Long>> proofAccumulator = proofAccumulators.get(facetName);
+      Map<String, List<Long>> proofAccumulator = proofAccumulators.gelont(facelontNamelon);
 
       if (proofAccumulator == null) {
-        // did not accumulate explanation for this facet type? a bug?
-        LOG.warn("No explanation accumulated for facet type " + facetName);
-        continue;
+        // did not accumulatelon elonxplanation for this facelont typelon? a bug?
+        LOG.warn("No elonxplanation accumulatelond for facelont typelon " + facelontNamelon);
+        continuelon;
       }
 
-      for (ThriftFacetCount facetCount : facetFieldResults.getTopFacets()) {
-        String facetLabel = facetCount.getFacetLabel(); // a.k.a. term text
-        ThriftFacetCountMetadata metadata = facetCount.getMetadata();
+      for (ThriftFacelontCount facelontCount : facelontFielonldRelonsults.gelontTopFacelonts()) {
+        String facelontLabelonl = facelontCount.gelontFacelontLabelonl(); // a.k.a. telonrm telonxt
+        ThriftFacelontCountMelontadata melontadata = facelontCount.gelontMelontadata();
 
-        List<Long> tweetIDs = proofAccumulator.get(facetLabel);
-        if (tweetIDs == null) {
-          // did not accumulate explanation for this facet label? a bug?
-          LOG.warn("No explanation accumulated for " + facetLabel + " of facet type " + facetName);
-          continue;
-        }
-
-        explanation.setLength(0);
-        String oldExplanation = null;
-        if (metadata.isSetExplanation()) {
-          // save the old explanation from TwitterInMemoryIndexSearcher.fillTermMetadata()
-          oldExplanation = metadata.getExplanation();
-          // as of 2012/05/29, we have 18 digits tweet IDs
-          explanation.ensureCapacity(oldExplanation.length() + (18 + 2) + 10);
-        } else {
-          // as of 2012/05/29, we have 18 digits tweet IDs
-          explanation.ensureCapacity(tweetIDs.size() * (18 + 2) + 10);
+        List<Long> twelonelontIDs = proofAccumulator.gelont(facelontLabelonl);
+        if (twelonelontIDs == null) {
+          // did not accumulatelon elonxplanation for this facelont labelonl? a bug?
+          LOG.warn("No elonxplanation accumulatelond for " + facelontLabelonl + " of facelont typelon " + facelontNamelon);
+          continuelon;
         }
 
-        explanation.append("[");
-        for (Long tweetID : tweetIDs) {
-          explanation.append(tweetID)
-                  .append(", ");
+        elonxplanation.selontLelonngth(0);
+        String oldelonxplanation = null;
+        if (melontadata.isSelontelonxplanation()) {
+          // savelon thelon old elonxplanation from TwittelonrInMelonmoryIndelonxSelonarchelonr.fillTelonrmMelontadata()
+          oldelonxplanation = melontadata.gelontelonxplanation();
+          // as of 2012/05/29, welon havelon 18 digits twelonelont IDs
+          elonxplanation.elonnsurelonCapacity(oldelonxplanation.lelonngth() + (18 + 2) + 10);
+        } elonlselon {
+          // as of 2012/05/29, welon havelon 18 digits twelonelont IDs
+          elonxplanation.elonnsurelonCapacity(twelonelontIDs.sizelon() * (18 + 2) + 10);
         }
-        explanation.setLength(explanation.length() - 2); // remove the last ", "
-        explanation.append("]\n");
-        if (oldExplanation != null) {
-          explanation.append(oldExplanation);
+
+        elonxplanation.appelonnd("[");
+        for (Long twelonelontID : twelonelontIDs) {
+          elonxplanation.appelonnd(twelonelontID)
+                  .appelonnd(", ");
         }
-        metadata.setExplanation(explanation.toString());
+        elonxplanation.selontLelonngth(elonxplanation.lelonngth() - 2); // relonmovelon thelon last ", "
+        elonxplanation.appelonnd("]\n");
+        if (oldelonxplanation != null) {
+          elonxplanation.appelonnd(oldelonxplanation);
+        }
+        melontadata.selontelonxplanation(elonxplanation.toString());
       }
     }
   }

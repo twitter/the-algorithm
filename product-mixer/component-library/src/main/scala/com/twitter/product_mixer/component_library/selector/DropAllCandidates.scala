@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon.PartitionelondCandidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Drops all Candidates on the `remainingCandidates` side which are in the [[pipelineScope]]
+ * Drops all Candidatelons on thelon `relonmainingCandidatelons` sidelon which arelon in thelon [[pipelonlinelonScopelon]]
  *
- * This is typically used as a placeholder when templating out a new pipeline or
- * as a simple filter to drop candidates based only on the [[CandidateScope]]
+ * This is typically uselond as a placelonholdelonr whelonn telonmplating out a nelonw pipelonlinelon or
+ * as a simplelon filtelonr to drop candidatelons baselond only on thelon [[CandidatelonScopelon]]
  */
-case class DropAllCandidates(override val pipelineScope: CandidateScope = AllPipelines)
-    extends Selector[PipelineQuery] {
+caselon class DropAllCandidatelons(ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon = AllPipelonlinelons)
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val PartitionedCandidates(inScope, outOfScope) = pipelineScope.partition(remainingCandidates)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val PartitionelondCandidatelons(inScopelon, outOfScopelon) = pipelonlinelonScopelon.partition(relonmainingCandidatelons)
 
-    SelectorResult(remainingCandidates = outOfScope, result = result)
+    SelonlelonctorRelonsult(relonmainingCandidatelons = outOfScopelon, relonsult = relonsult)
   }
 }

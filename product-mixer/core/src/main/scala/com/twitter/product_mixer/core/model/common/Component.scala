@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.common
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common
 
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.HasComponentIdentifier
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.HasComponelonntIdelonntifielonr
 
 /**
- * Components are very generically reusable composable pieces
- * Components are uniquely identifiable and centrally registered
+ * Componelonnts arelon velonry gelonnelonrically relonusablelon composablelon pieloncelons
+ * Componelonnts arelon uniquelonly idelonntifiablelon and celonntrally relongistelonrelond
  */
-trait Component extends HasComponentIdentifier {
+trait Componelonnt elonxtelonnds HasComponelonntIdelonntifielonr {
 
-  /** @see [[ComponentIdentifier]] */
-  override val identifier: ComponentIdentifier
+  /** @selonelon [[ComponelonntIdelonntifielonr]] */
+  ovelonrridelon val idelonntifielonr: ComponelonntIdelonntifielonr
 
-  /** the [[Alert]]s that will be used for this component. */
-  val alerts: Seq[Alert] = Seq.empty
+  /** thelon [[Alelonrt]]s that will belon uselond for this componelonnt. */
+  val alelonrts: Selonq[Alelonrt] = Selonq.elonmpty
 }

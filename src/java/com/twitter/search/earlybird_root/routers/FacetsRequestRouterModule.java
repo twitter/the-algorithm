@@ -1,33 +1,33 @@
-package com.twitter.search.earlybird_root.routers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.routelonrs;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
-import com.google.inject.Provides;
+import com.googlelon.injelonct.Providelons;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.RealtimeServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.elonarlybirdTimelonRangelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.RelonaltimelonSelonrvingRangelonProvidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.SelonrvingRangelonProvidelonr;
 
-public class FacetsRequestRouterModule extends TwitterModule {
-  public static final String TIME_RANGE_FILTER = "facets_time_range_filter";
+public class FacelontsRelonquelonstRoutelonrModulelon elonxtelonnds TwittelonrModulelon {
+  public static final String TIMelon_RANGelon_FILTelonR = "facelonts_timelon_rangelon_filtelonr";
 
-  public static final String SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_facets_serving_range_boundary_hours_ago";
+  public static final String SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY =
+      "supelonrroot_facelonts_selonrving_rangelon_boundary_hours_ago";
 
-  private ServingRangeProvider getServingRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(
-        decider, SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  privatelon SelonrvingRangelonProvidelonr gelontSelonrvingRangelonProvidelonr(final SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn nelonw RelonaltimelonSelonrvingRangelonProvidelonr(
+        deloncidelonr, SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY);
   }
 
-  @Provides
-  @Singleton
-  @Named(TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesTimeRangeFilter(SearchDecider decider) throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithoutQueryRewriter(
-        getServingRangeProvider(decider));
+  @Providelons
+  @Singlelonton
+  @Namelond(TIMelon_RANGelon_FILTelonR)
+  privatelon elonarlybirdTimelonRangelonFiltelonr providelonsTimelonRangelonFiltelonr(SelonarchDeloncidelonr deloncidelonr) throws elonxcelonption {
+    relonturn elonarlybirdTimelonRangelonFiltelonr.nelonwTimelonRangelonFiltelonrWithoutQuelonryRelonwritelonr(
+        gelontSelonrvingRangelonProvidelonr(deloncidelonr));
   }
 }

@@ -1,100 +1,100 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ChildFeedbackActionMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.FeedbackActionMarshaller
-import com.twitter.product_mixer.core.model.common.identifier.TransportMarshallerIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ContainsFeedbackActionInfos
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackAction
-import com.twitter.timelines.render.thriftscala.TimelineResponse
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ChildFelonelondbackActionMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.FelonelondbackActionMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransportMarshallelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ContainsFelonelondbackActionInfos
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackAction
+import com.twittelonr.timelonlinelons.relonndelonr.thriftscala.TimelonlinelonRelonsponselon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * [[TransportMarshaller]] for URT types
+ * [[TransportMarshallelonr]] for URT typelons
  *
- * @note to make an instance of a [[UrtTransportMarshaller]] you can use [[UrtTransportMarshallerBuilder.marshaller]]
+ * @notelon to makelon an instancelon of a [[UrtTransportMarshallelonr]] you can uselon [[UrtTransportMarshallelonrBuildelonr.marshallelonr]]
  */
-@Singleton
-class UrtTransportMarshaller @Inject() (
-  timelineInstructionMarshaller: TimelineInstructionMarshaller,
-  feedbackActionMarshaller: FeedbackActionMarshaller,
-  childFeedbackActionMarshaller: ChildFeedbackActionMarshaller,
-  timelineMetadataMarshaller: TimelineMetadataMarshaller)
-    extends TransportMarshaller[Timeline, urt.TimelineResponse] {
+@Singlelonton
+class UrtTransportMarshallelonr @Injelonct() (
+  timelonlinelonInstructionMarshallelonr: TimelonlinelonInstructionMarshallelonr,
+  felonelondbackActionMarshallelonr: FelonelondbackActionMarshallelonr,
+  childFelonelondbackActionMarshallelonr: ChildFelonelondbackActionMarshallelonr,
+  timelonlinelonMelontadataMarshallelonr: TimelonlinelonMelontadataMarshallelonr)
+    elonxtelonnds TransportMarshallelonr[Timelonlinelon, urt.TimelonlinelonRelonsponselon] {
 
-  override val identifier: TransportMarshallerIdentifier =
-    TransportMarshallerIdentifier("UnifiedRichTimeline")
+  ovelonrridelon val idelonntifielonr: TransportMarshallelonrIdelonntifielonr =
+    TransportMarshallelonrIdelonntifielonr("UnifielondRichTimelonlinelon")
 
-  override def apply(timeline: Timeline): urt.TimelineResponse = {
-    val feedbackActions: Option[Map[String, urt.FeedbackAction]] = {
-      collectAndMarshallFeedbackActions(timeline.instructions)
+  ovelonrridelon delonf apply(timelonlinelon: Timelonlinelon): urt.TimelonlinelonRelonsponselon = {
+    val felonelondbackActions: Option[Map[String, urt.FelonelondbackAction]] = {
+      collelonctAndMarshallFelonelondbackActions(timelonlinelon.instructions)
     }
-    urt.TimelineResponse(
-      state = urt.TimelineState.Ok,
-      timeline = urt.Timeline(
-        id = timeline.id,
-        instructions = timeline.instructions.map(timelineInstructionMarshaller(_)),
-        responseObjects =
-          feedbackActions.map(actions => urt.ResponseObjects(feedbackActions = Some(actions))),
-        metadata = timeline.metadata.map(timelineMetadataMarshaller(_))
+    urt.TimelonlinelonRelonsponselon(
+      statelon = urt.TimelonlinelonStatelon.Ok,
+      timelonlinelon = urt.Timelonlinelon(
+        id = timelonlinelon.id,
+        instructions = timelonlinelon.instructions.map(timelonlinelonInstructionMarshallelonr(_)),
+        relonsponselonObjeloncts =
+          felonelondbackActions.map(actions => urt.RelonsponselonObjeloncts(felonelondbackActions = Somelon(actions))),
+        melontadata = timelonlinelon.melontadata.map(timelonlinelonMelontadataMarshallelonr(_))
       )
     )
   }
 
-  // Currently, feedbackActionInfo at the URT TimelineItem level is supported, which covers almost all
-  // existing use cases. However, if additional feedbackActionInfos are defined on the URT
-  // TimelineItemContent level for "compound" URT types (see deprecated TopicCollection /
-  // TopicCollectionData), this is not supported. If "compound" URT types are added in the future,
-  // support must be added within that type (see ModuleItem) to handle the collection and marshalling
-  // of these feedbackActionInfos.
+  // Currelonntly, felonelondbackActionInfo at thelon URT TimelonlinelonItelonm lelonvelonl is supportelond, which covelonrs almost all
+  // elonxisting uselon caselons. Howelonvelonr, if additional felonelondbackActionInfos arelon delonfinelond on thelon URT
+  // TimelonlinelonItelonmContelonnt lelonvelonl for "compound" URT typelons (selonelon delonpreloncatelond TopicCollelonction /
+  // TopicCollelonctionData), this is not supportelond. If "compound" URT typelons arelon addelond in thelon futurelon,
+  // support must belon addelond within that typelon (selonelon ModulelonItelonm) to handlelon thelon collelonction and marshalling
+  // of thelonselon felonelondbackActionInfos.
 
-  private[this] def collectAndMarshallFeedbackActions(
-    instructions: Seq[TimelineInstruction]
-  ): Option[Map[String, urt.FeedbackAction]] = {
-    val feedbackActions: Seq[FeedbackAction] = for {
-      feedbackActionInfos <- instructions.collect {
-        case c: ContainsFeedbackActionInfos => c.feedbackActionInfos
+  privatelon[this] delonf collelonctAndMarshallFelonelondbackActions(
+    instructions: Selonq[TimelonlinelonInstruction]
+  ): Option[Map[String, urt.FelonelondbackAction]] = {
+    val felonelondbackActions: Selonq[FelonelondbackAction] = for {
+      felonelondbackActionInfos <- instructions.collelonct {
+        caselon c: ContainsFelonelondbackActionInfos => c.felonelondbackActionInfos
       }
-      feedbackInfoOpt <- feedbackActionInfos
-      feedbackInfo <- feedbackInfoOpt.toSeq
-      feedbackAction <- feedbackInfo.feedbackActions
-    } yield feedbackAction
+      felonelondbackInfoOpt <- felonelondbackActionInfos
+      felonelondbackInfo <- felonelondbackInfoOpt.toSelonq
+      felonelondbackAction <- felonelondbackInfo.felonelondbackActions
+    } yielonld felonelondbackAction
 
-    if (feedbackActions.nonEmpty) {
-      val urtFeedbackActions = feedbackActions.map(feedbackActionMarshaller(_))
+    if (felonelondbackActions.nonelonmpty) {
+      val urtFelonelondbackActions = felonelondbackActions.map(felonelondbackActionMarshallelonr(_))
 
-      val urtChildFeedbackActions: Seq[urt.FeedbackAction] = for {
-        feedbackAction <- feedbackActions
-        childFeedbackActions <- feedbackAction.childFeedbackActions.toSeq
-        childFeedbackAction <- childFeedbackActions
-      } yield childFeedbackActionMarshaller(childFeedbackAction)
+      val urtChildFelonelondbackActions: Selonq[urt.FelonelondbackAction] = for {
+        felonelondbackAction <- felonelondbackActions
+        childFelonelondbackActions <- felonelondbackAction.childFelonelondbackActions.toSelonq
+        childFelonelondbackAction <- childFelonelondbackActions
+      } yielonld childFelonelondbackActionMarshallelonr(childFelonelondbackAction)
 
-      val allUrtFeedbackActions = urtFeedbackActions ++ urtChildFeedbackActions
+      val allUrtFelonelondbackActions = urtFelonelondbackActions ++ urtChildFelonelondbackActions
 
-      Some(
-        allUrtFeedbackActions.map { urtAction =>
-          FeedbackActionMarshaller.generateKey(urtAction) -> urtAction
+      Somelon(
+        allUrtFelonelondbackActions.map { urtAction =>
+          FelonelondbackActionMarshallelonr.gelonnelonratelonKelony(urtAction) -> urtAction
         }.toMap
       )
-    } else {
-      None
+    } elonlselon {
+      Nonelon
     }
   }
 }
 
-object UrtTransportMarshaller {
-  def unavailable(timelineId: String): TimelineResponse = {
-    urt.TimelineResponse(
-      state = urt.TimelineState.Unavailable,
-      timeline = urt.Timeline(
-        id = timelineId,
-        instructions = Seq.empty,
-        responseObjects = None,
-        metadata = None
+objelonct UrtTransportMarshallelonr {
+  delonf unavailablelon(timelonlinelonId: String): TimelonlinelonRelonsponselon = {
+    urt.TimelonlinelonRelonsponselon(
+      statelon = urt.TimelonlinelonStatelon.Unavailablelon,
+      timelonlinelon = urt.Timelonlinelon(
+        id = timelonlinelonId,
+        instructions = Selonq.elonmpty,
+        relonsponselonObjeloncts = Nonelon,
+        melontadata = Nonelon
       )
     )
   }

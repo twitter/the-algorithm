@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
 
 /**
- * [[DropSelector]] detects duplicates by looking for candidates with the same key. A key can be
- * anything but is typically derived from a candidate's id and class. This approach is not always
- * appropriate. For example, two candidate sources might both return different sub-classes of
- * [[com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate]] resulting in
- * them not being treated as duplicates.
+ * [[DropSelonlelonctor]] delonteloncts duplicatelons by looking for candidatelons with thelon samelon kelony. A kelony can belon
+ * anything but is typically delonrivelond from a candidatelon's id and class. This approach is not always
+ * appropriatelon. For elonxamplelon, two candidatelon sourcelons might both relonturn diffelonrelonnt sub-classelons of
+ * [[com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon]] relonsulting in
+ * thelonm not beloning trelonatelond as duplicatelons.
  */
-trait DeduplicationKey[Key] {
-  def apply(candidate: ItemCandidateWithDetails): Key
+trait DelonduplicationKelony[Kelony] {
+  delonf apply(candidatelon: ItelonmCandidatelonWithDelontails): Kelony
 }
 
 /**
- * Use candidate id and class to determine duplicates.
+ * Uselon candidatelon id and class to delontelonrminelon duplicatelons.
  */
-object IdAndClassDuplicationKey extends DeduplicationKey[(String, Class[_ <: UniversalNoun[Any]])] {
-  def apply(item: ItemCandidateWithDetails): (String, Class[_ <: UniversalNoun[Any]]) =
-    (item.candidate.id.toString, item.candidate.getClass)
+objelonct IdAndClassDuplicationKelony elonxtelonnds DelonduplicationKelony[(String, Class[_ <: UnivelonrsalNoun[Any]])] {
+  delonf apply(itelonm: ItelonmCandidatelonWithDelontails): (String, Class[_ <: UnivelonrsalNoun[Any]]) =
+    (itelonm.candidatelon.id.toString, itelonm.candidatelon.gelontClass)
 }
 
 /**
- * Use candidate id to determine duplicates.
- * This should be used instead of [[IdAndClassDuplicationKey]] in order to deduplicate across
- * different candidate types, such as different implementations of
- * [[com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate]].
+ * Uselon candidatelon id to delontelonrminelon duplicatelons.
+ * This should belon uselond instelonad of [[IdAndClassDuplicationKelony]] in ordelonr to delonduplicatelon across
+ * diffelonrelonnt candidatelon typelons, such as diffelonrelonnt implelonmelonntations of
+ * [[com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon]].
  */
-object IdDuplicationKey extends DeduplicationKey[String] {
-  def apply(item: ItemCandidateWithDetails): String = item.candidate.id.toString
+objelonct IdDuplicationKelony elonxtelonnds DelonduplicationKelony[String] {
+  delonf apply(itelonm: ItelonmCandidatelonWithDelontails): String = itelonm.candidatelon.id.toString
 }

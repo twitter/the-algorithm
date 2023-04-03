@@ -1,18 +1,18 @@
 syntax = "proto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+packagelon telonnsorflow.selonrving;
+option cc_elonnablelon_arelonnas = truelon;
 
-import "tensorflow_serving/config/log_collector_config.proto";
+import "telonnsorflow_selonrving/config/log_collelonctor_config.proto";
 
-message SamplingConfig {
-  // Requests will be logged uniformly at random with this probability. Valid
-  // range: [0, 1.0].
-  double sampling_rate = 1;
+melonssagelon SamplingConfig {
+  // Relonquelonsts will belon loggelond uniformly at random with this probability. Valid
+  // rangelon: [0, 1.0].
+  doublelon sampling_ratelon = 1;
 }
 
-// Configuration for logging query/responses.
-message LoggingConfig {
-  LogCollectorConfig log_collector_config = 1;
+// Configuration for logging quelonry/relonsponselons.
+melonssagelon LoggingConfig {
+  LogCollelonctorConfig log_collelonctor_config = 1;
   SamplingConfig sampling_config = 2;
 }

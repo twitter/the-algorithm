@@ -1,21 +1,21 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.alelonrt
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.color.RosettaColorMarshaller
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.product_mixer.core.model.marshalling.response.urt.alert.ShowAlertIconDisplayInfo
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.color.RoselonttaColorMarshallelonr
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.alelonrt.ShowAlelonrtIconDisplayInfo
 
-@Singleton
-class ShowAlertIconDisplayInfoMarshaller @Inject() (
-  showAlertIconMarshaller: ShowAlertIconMarshaller,
-  rosettaColorMarshaller: RosettaColorMarshaller,
+@Singlelonton
+class ShowAlelonrtIconDisplayInfoMarshallelonr @Injelonct() (
+  showAlelonrtIconMarshallelonr: ShowAlelonrtIconMarshallelonr,
+  roselonttaColorMarshallelonr: RoselonttaColorMarshallelonr,
 ) {
 
-  def apply(alertIconDisplayInfo: ShowAlertIconDisplayInfo): urt.ShowAlertIconDisplayInfo =
-    urt.ShowAlertIconDisplayInfo(
-      icon = showAlertIconMarshaller(alertIconDisplayInfo.icon),
-      tint = rosettaColorMarshaller(alertIconDisplayInfo.tint),
+  delonf apply(alelonrtIconDisplayInfo: ShowAlelonrtIconDisplayInfo): urt.ShowAlelonrtIconDisplayInfo =
+    urt.ShowAlelonrtIconDisplayInfo(
+      icon = showAlelonrtIconMarshallelonr(alelonrtIconDisplayInfo.icon),
+      tint = roselonttaColorMarshallelonr(alelonrtIconDisplayInfo.tint),
     )
 
 }

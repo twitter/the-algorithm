@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.functional_component.configapi.registry
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.relongistry
 
 /**
- * Register Params that do not relate to a specific product.
- * See [[ParamConfig]] for hooks to register Params based on type.
+ * Relongistelonr Params that do not relonlatelon to a speloncific product.
+ * Selonelon [[ParamConfig]] for hooks to relongistelonr Params baselond on typelon.
  */
-trait GlobalParamConfig extends ParamConfig with ParamConfigBuilder
+trait GlobalParamConfig elonxtelonnds ParamConfig with ParamConfigBuildelonr

@@ -1,6 +1,6 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasExcludedUserIds {
-  // user ids that are going to be excluded from recommendations
-  def excludedUserIds: Seq[Long]
+trait HaselonxcludelondUselonrIds {
+  // uselonr ids that arelon going to belon elonxcludelond from reloncommelonndations
+  delonf elonxcludelondUselonrIds: Selonq[Long]
 }

@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.button
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.button
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.ButtonStyle
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Default
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Primary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Secondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Text
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Destructive
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.Neutral
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveSecondary
-import com.twitter.product_mixer.core.model.marshalling.response.urt.button.DestructiveText
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.ButtonStylelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Delonfault
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Primary
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Seloncondary
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Telonxt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Delonstructivelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.Nelonutral
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.DelonstructivelonSeloncondary
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.button.DelonstructivelonTelonxt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ButtonStyleMarshaller @Inject() () {
-  def apply(buttonStyle: ButtonStyle): urt.ButtonStyle =
-    buttonStyle match {
-      case Default => urt.ButtonStyle.Default
-      case Primary => urt.ButtonStyle.Primary
-      case Secondary => urt.ButtonStyle.Secondary
-      case Text => urt.ButtonStyle.Text
-      case Destructive => urt.ButtonStyle.Destructive
-      case Neutral => urt.ButtonStyle.Neutral
-      case DestructiveSecondary => urt.ButtonStyle.DestructiveSecondary
-      case DestructiveText => urt.ButtonStyle.DestructiveText
+@Singlelonton
+class ButtonStylelonMarshallelonr @Injelonct() () {
+  delonf apply(buttonStylelon: ButtonStylelon): urt.ButtonStylelon =
+    buttonStylelon match {
+      caselon Delonfault => urt.ButtonStylelon.Delonfault
+      caselon Primary => urt.ButtonStylelon.Primary
+      caselon Seloncondary => urt.ButtonStylelon.Seloncondary
+      caselon Telonxt => urt.ButtonStylelon.Telonxt
+      caselon Delonstructivelon => urt.ButtonStylelon.Delonstructivelon
+      caselon Nelonutral => urt.ButtonStylelon.Nelonutral
+      caselon DelonstructivelonSeloncondary => urt.ButtonStylelon.DelonstructivelonSeloncondary
+      caselon DelonstructivelonTelonxt => urt.ButtonStylelon.DelonstructivelonTelonxt
     }
 }

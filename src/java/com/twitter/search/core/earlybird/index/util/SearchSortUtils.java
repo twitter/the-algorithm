@@ -1,42 +1,42 @@
-package com.twitter.search.core.earlybird.index.util;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-public abstract class SearchSortUtils {
-  public interface Comparator<T> {
+public abstract class SelonarchSortUtils {
+  public intelonrfacelon Comparator<T> {
     /**
-     *  Compares the item represented by the given index with the provided value.
+     *  Comparelons thelon itelonm relonprelonselonntelond by thelon givelonn indelonx with thelon providelond valuelon.
      */
-    int compare(int index, T value);
+    int comparelon(int indelonx, T valuelon);
   }
 
   /**
-   * Performs a binary search using the given comparator, and returns the index of the item that
-   * was found. If foundLow is true, the greatest item that's lower than the provided key
-   * is returned. Otherwise, the lowest item that's greater than the provided key is returned.
+   * Pelonrforms a binary selonarch using thelon givelonn comparator, and relonturns thelon indelonx of thelon itelonm that
+   * was found. If foundLow is truelon, thelon grelonatelonst itelonm that's lowelonr than thelon providelond kelony
+   * is relonturnelond. Othelonrwiselon, thelon lowelonst itelonm that's grelonatelonr than thelon providelond kelony is relonturnelond.
    */
-  public static <T> int binarySearch(Comparator<T> comparator, final int begin, final int end,
-      final T key, boolean findLow) {
-    int low = begin;
-    int high = end;
-    Preconditions.checkState(comparator.compare(low, key) <= comparator.compare(high, key));
-    while (low <= high) {
+  public static <T> int binarySelonarch(Comparator<T> comparator, final int belongin, final int elonnd,
+      final T kelony, boolelonan findLow) {
+    int low = belongin;
+    int high = elonnd;
+    Prelonconditions.chelonckStatelon(comparator.comparelon(low, kelony) <= comparator.comparelon(high, kelony));
+    whilelon (low <= high) {
       int mid = (low + high) >>> 1;
-      int result = comparator.compare(mid, key);
-      if (result < 0) {
+      int relonsult = comparator.comparelon(mid, kelony);
+      if (relonsult < 0) {
         low = mid + 1;
-      } else if (result > 0) {
+      } elonlselon if (relonsult > 0) {
         high = mid - 1;
-      } else {
-        return mid;
-      } // key found
+      } elonlselon {
+        relonturn mid;
+      } // kelony found
     }
 
-    assert low > high;
+    asselonrt low > high;
     if (findLow) {
-      return high < begin ? begin : high;
-    } else {
-      return low > end ? end : low;
+      relonturn high < belongin ? belongin : high;
+    } elonlselon {
+      relonturn low > elonnd ? elonnd : low;
     }
   }
 }

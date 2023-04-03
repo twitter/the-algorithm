@@ -1,34 +1,34 @@
-package com.twitter.home_mixer.product.following.param
+packagelon com.twittelonr.homelon_mixelonr.product.following.param
 
-import com.twitter.home_mixer.param.decider.DeciderKey
-import com.twitter.home_mixer.product.following.param.FollowingParam._
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.servo.decider.DeciderKeyName
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.param.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.homelon_mixelonr.product.following.param.FollowingParam._
+import com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyNamelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class FollowingParamConfig @Inject() () extends ProductParamConfig {
-  override val enabledDeciderKey: DeciderKeyName = DeciderKey.EnableFollowingProduct
-  override val supportedClientFSName: String = SupportedClientFSName
+@Singlelonton
+class FollowingParamConfig @Injelonct() () elonxtelonnds ProductParamConfig {
+  ovelonrridelon val elonnablelondDeloncidelonrKelony: DeloncidelonrKelonyNamelon = DeloncidelonrKelony.elonnablelonFollowingProduct
+  ovelonrridelon val supportelondClielonntFSNamelon: String = SupportelondClielonntFSNamelon
 
-  override val booleanFSOverrides =
-    Seq(
-      EnableFlipInjectionModuleCandidatePipelineParam,
-      EnableWhoToFollowCandidatePipelineParam,
-      EnableAdsCandidatePipelineParam,
-      EnableFastAds,
+  ovelonrridelon val boolelonanFSOvelonrridelons =
+    Selonq(
+      elonnablelonFlipInjelonctionModulelonCandidatelonPipelonlinelonParam,
+      elonnablelonWhoToFollowCandidatelonPipelonlinelonParam,
+      elonnablelonAdsCandidatelonPipelonlinelonParam,
+      elonnablelonFastAds,
     )
 
-  override val boundedIntFSOverrides = Seq(
-    FlipInlineInjectionModulePosition,
+  ovelonrridelon val boundelondIntFSOvelonrridelons = Selonq(
+    FlipInlinelonInjelonctionModulelonPosition,
     WhoToFollowPositionParam,
-    ServerMaxResultsParam
+    SelonrvelonrMaxRelonsultsParam
   )
 
-  override val stringFSOverrides = Seq(WhoToFollowDisplayLocationParam)
+  ovelonrridelon val stringFSOvelonrridelons = Selonq(WhoToFollowDisplayLocationParam)
 
-  override val boundedDurationFSOverrides = Seq(WhoToFollowMinInjectionIntervalParam)
+  ovelonrridelon val boundelondDurationFSOvelonrridelons = Selonq(WhoToFollowMinInjelonctionIntelonrvalParam)
 
-  override val enumFSOverrides = Seq(WhoToFollowDisplayTypeIdParam)
+  ovelonrridelon val elonnumFSOvelonrridelons = Selonq(WhoToFollowDisplayTypelonIdParam)
 }

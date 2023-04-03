@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.twitter.conversions.DurationOps.RichDuration
-import com.twitter.home_mixer.param.HomeMixerFlagName
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps.RichDuration
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrFlagNamelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.util.Duration
 
-object HomeMixerFlagsModule extends TwitterModule {
+objelonct HomelonMixelonrFlagsModulelon elonxtelonnds TwittelonrModulelon {
 
-  import HomeMixerFlagName._
+  import HomelonMixelonrFlagNamelon._
 
-  flag[Boolean](
-    name = ScribeClientEventsFlag,
-    default = false,
-    help = "Toggles logging client events to Scribe"
+  flag[Boolelonan](
+    namelon = ScribelonClielonntelonvelonntsFlag,
+    delonfault = falselon,
+    helonlp = "Togglelons logging clielonnt elonvelonnts to Scribelon"
   )
 
-  flag[Boolean](
-    name = ScribeServedEntriesFlag,
-    default = false,
-    help = "Toggles logging served entries to Scribe"
+  flag[Boolelonan](
+    namelon = ScribelonSelonrvelondelonntrielonsFlag,
+    delonfault = falselon,
+    helonlp = "Togglelons logging selonrvelond elonntrielons to Scribelon"
   )
 
-  flag[Boolean](
-    name = ScribeServedCommonFeaturesAndCandidateFeaturesFlag,
-    default = false,
-    help = "Toggles logging served common features and candidates features to Scribe"
-  )
-
-  flag[String](
-    name = DataRecordMetadataStoreConfigsYmlFlag,
-    default = "",
-    help = "The YML file that contains the necessary info for creating metadata store MySQL client."
+  flag[Boolelonan](
+    namelon = ScribelonSelonrvelondCommonFelonaturelonsAndCandidatelonFelonaturelonsFlag,
+    delonfault = falselon,
+    helonlp = "Togglelons logging selonrvelond common felonaturelons and candidatelons felonaturelons to Scribelon"
   )
 
   flag[String](
-    name = DarkTrafficFilterDeciderKey,
-    default = "dark_traffic_filter",
-    help = "Dark traffic filter decider key"
+    namelon = DataReloncordMelontadataStorelonConfigsYmlFlag,
+    delonfault = "",
+    helonlp = "Thelon YML filelon that contains thelon neloncelonssary info for crelonating melontadata storelon MySQL clielonnt."
+  )
+
+  flag[String](
+    namelon = DarkTrafficFiltelonrDeloncidelonrKelony,
+    delonfault = "dark_traffic_filtelonr",
+    helonlp = "Dark traffic filtelonr deloncidelonr kelony"
   )
 
   flag[Duration](
-    TargetFetchLatency,
+    TargelontFelontchLatelonncy,
     300.millis,
-    "Target fetch latency from candidate sources for Quality Factor"
+    "Targelont felontch latelonncy from candidatelon sourcelons for Quality Factor"
   )
 
   flag[Duration](
-    TargetScoringLatency,
+    TargelontScoringLatelonncy,
     700.millis,
-    "Target scoring latency for Quality Factor"
+    "Targelont scoring latelonncy for Quality Factor"
   )
 }

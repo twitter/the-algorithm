@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird_root.collectors;
+packagelon com.twittelonr.selonarch.elonarlybird_root.collelonctors;
 
-import com.twitter.search.common.relevance.utils.ResultComparators;
-import com.twitter.search.common.util.earlybird.ThriftSearchResultsRelevanceStatsUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+import com.twittelonr.selonarch.common.relonlelonvancelon.utils.RelonsultComparators;
+import com.twittelonr.selonarch.common.util.elonarlybird.ThriftSelonarchRelonsultsRelonlelonvancelonStatsUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
 
 /**
- * RelevanceMergeCollector class extends (@link RecencyMergeCollector} to do k-way merge of
- * earlybird responses, but sorted by relevance score.
+ * RelonlelonvancelonMelonrgelonCollelonctor class elonxtelonnds (@link ReloncelonncyMelonrgelonCollelonctor} to do k-way melonrgelon of
+ * elonarlybird relonsponselons, but sortelond by relonlelonvancelon scorelon.
  *
- * Note that this is a superset of functionality found in
- * {@link com.twitter.search.blender.services.earlybird.relevance.RelevanceCollector}
- * If you make changes here, evaluate if they should be made in RelevanceCollector as well.
+ * Notelon that this is a supelonrselont of functionality found in
+ * {@link com.twittelonr.selonarch.blelonndelonr.selonrvicelons.elonarlybird.relonlelonvancelon.RelonlelonvancelonCollelonctor}
+ * If you makelon changelons helonrelon, elonvaluatelon if thelony should belon madelon in RelonlelonvancelonCollelonctor as welonll.
  */
-public class RelevanceMergeCollector extends RecencyMergeCollector {
+public class RelonlelonvancelonMelonrgelonCollelonctor elonxtelonnds ReloncelonncyMelonrgelonCollelonctor {
 
-  public RelevanceMergeCollector(int numResponses) {
-    super(numResponses, ResultComparators.SCORE_COMPARATOR);
+  public RelonlelonvancelonMelonrgelonCollelonctor(int numRelonsponselons) {
+    supelonr(numRelonsponselons, RelonsultComparators.SCORelon_COMPARATOR);
   }
 
-  @Override
-  protected void collectStats(EarlybirdResponse response) {
-    super.collectStats(response);
+  @Ovelonrridelon
+  protelonctelond void collelonctStats(elonarlybirdRelonsponselon relonsponselon) {
+    supelonr.collelonctStats(relonsponselon);
 
-    if (!response.getSearchResults().isSetRelevanceStats()) {
-      return;
+    if (!relonsponselon.gelontSelonarchRelonsults().isSelontRelonlelonvancelonStats()) {
+      relonturn;
     }
 
-    if (!finalResults.isSetRelevanceStats()) {
-      finalResults.setRelevanceStats(new ThriftSearchResultsRelevanceStats());
+    if (!finalRelonsults.isSelontRelonlelonvancelonStats()) {
+      finalRelonsults.selontRelonlelonvancelonStats(nelonw ThriftSelonarchRelonsultsRelonlelonvancelonStats());
     }
 
-    ThriftSearchResultsRelevanceStats base = finalResults.getRelevanceStats();
-    ThriftSearchResultsRelevanceStats delta = response.getSearchResults().getRelevanceStats();
+    ThriftSelonarchRelonsultsRelonlelonvancelonStats baselon = finalRelonsults.gelontRelonlelonvancelonStats();
+    ThriftSelonarchRelonsultsRelonlelonvancelonStats delonlta = relonsponselon.gelontSelonarchRelonsults().gelontRelonlelonvancelonStats();
 
-    ThriftSearchResultsRelevanceStatsUtil.addRelevanceStats(base, delta);
+    ThriftSelonarchRelonsultsRelonlelonvancelonStatsUtil.addRelonlelonvancelonStats(baselon, delonlta);
   }
 }

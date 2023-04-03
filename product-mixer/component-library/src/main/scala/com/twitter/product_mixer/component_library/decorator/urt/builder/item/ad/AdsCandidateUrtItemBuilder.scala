@@ -1,274 +1,274 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.ad
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.ad
 
-import com.twitter.ads.adserver.{thriftscala => ads}
-import com.twitter.adserver.{thriftscala => adserver}
-import com.twitter.product_mixer.component_library.decorator.urt.builder.contextual_ref.ContextualTweetRefBuilder
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tweet.TweetCandidateUrtItemBuilder.TweetClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsTweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.AdMetadataContainer
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Amplify
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.CallToAction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.ClickTrackingInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DcmUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DirectSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerIssue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerPolitical
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclaimerType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DisclosureType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.DynamicPrerollType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Earned
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.IndirectSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Issue
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.LiveTvEvent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Marketplace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.MediaInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoDisclosure
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.NoSponsorshipSponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Political
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Preroll
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PrerollMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SkAdNetworkData
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.SponsorshipType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.UnknownUrlOverrideType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.VideoVariant
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.util.AdMetadataContainerSerializer
-import com.twitter.timelines.util.PrerollMetadataSerializer
+import com.twittelonr.ads.adselonrvelonr.{thriftscala => ads}
+import com.twittelonr.adselonrvelonr.{thriftscala => adselonrvelonr}
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.contelonxtual_relonf.ContelonxtualTwelonelontRelonfBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.twelonelont.TwelonelontCandidatelonUrtItelonmBuildelonr.TwelonelontClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.Twelonelont
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.AdMelontadataContainelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.Amplify
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.CallToAction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.ClickTrackingInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DcmUrlOvelonrridelonTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DirelonctSponsorshipTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DisclaimelonrIssuelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DisclaimelonrPolitical
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DisclaimelonrTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DisclosurelonTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.DynamicPrelonrollTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.elonarnelond
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.IndirelonctSponsorshipTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.Issuelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.LivelonTvelonvelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.Markelontplacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.MelondiaInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.NoDisclosurelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.NoSponsorshipSponsorshipTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.Political
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.Prelonroll
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PrelonrollMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PromotelondMelontadata
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.SkAdNelontworkData
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.SponsorshipTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.UnknownUrlOvelonrridelonTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.VidelonoVariant
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.util.AdMelontadataContainelonrSelonrializelonr
+import com.twittelonr.timelonlinelons.util.PrelonrollMelontadataSelonrializelonr
 
 /**
- * [[AdsCandidateUrtItemBuilder]] takes a [[AdsCandidate]] (with a [[Query]] as additional context)
- * and converts it into the Product Mixer URT representation, or throws an error.
+ * [[AdsCandidatelonUrtItelonmBuildelonr]] takelons a [[AdsCandidatelon]] (with a [[Quelonry]] as additional contelonxt)
+ * and convelonrts it into thelon Product Mixelonr URT relonprelonselonntation, or throws an elonrror.
  *
- * Currently, the only supported form for URT representation of the [[AdsCandidate]] is a [[Tweet]],
- * but in the future it could be expanded to handle other forms of ads.
+ * Currelonntly, thelon only supportelond form for URT relonprelonselonntation of thelon [[AdsCandidatelon]] is a [[Twelonelont]],
+ * but in thelon futurelon it could belon elonxpandelond to handlelon othelonr forms of ads.
  *
- * @param tweetClientEventInfoBuilder Optionally, provide a ClientEventInfoBuilder for Tweets
- *                                    that given an AdsTweetCandidate and element of "tweet".
- * @param tweetDisplayType Should be [[EmphasizedPromotedTweet]] on Profile timelines,
- *                         otherwise [[Tweet]]
+ * @param twelonelontClielonntelonvelonntInfoBuildelonr Optionally, providelon a ClielonntelonvelonntInfoBuildelonr for Twelonelonts
+ *                                    that givelonn an AdsTwelonelontCandidatelon and elonlelonmelonnt of "twelonelont".
+ * @param twelonelontDisplayTypelon Should belon [[elonmphasizelondPromotelondTwelonelont]] on Profilelon timelonlinelons,
+ *                         othelonrwiselon [[Twelonelont]]
  */
-case class AdsCandidateUrtItemBuilder[Query <: PipelineQuery](
-  tweetClientEventInfoBuilder: Option[BaseClientEventInfoBuilder[Query, AdsTweetCandidate]] = None,
-  contextualTweetRefBuilder: Option[ContextualTweetRefBuilder[AdsTweetCandidate]] = None,
-  tweetDisplayType: TweetDisplayType = Tweet)
-    extends CandidateUrtEntryBuilder[Query, AdsCandidate, TimelineItem] {
+caselon class AdsCandidatelonUrtItelonmBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  twelonelontClielonntelonvelonntInfoBuildelonr: Option[BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, AdsTwelonelontCandidatelon]] = Nonelon,
+  contelonxtualTwelonelontRelonfBuildelonr: Option[ContelonxtualTwelonelontRelonfBuildelonr[AdsTwelonelontCandidatelon]] = Nonelon,
+  twelonelontDisplayTypelon: TwelonelontDisplayTypelon = Twelonelont)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, AdsCandidatelon, TimelonlinelonItelonm] {
 
-  override def apply(
-    pipelineQuery: Query,
-    candidate: AdsCandidate,
-    candidateFeatures: FeatureMap
-  ): TimelineItem = {
-    candidate match {
-      case tweetCandidate: AdsTweetCandidate =>
-        TweetItem(
-          id = tweetCandidate.id,
-          entryNamespace = TweetItem.PromotedTweetEntryNamespace,
-          sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-          clientEventInfo = tweetClientEventInfoBuilder.flatMap(
+  ovelonrridelon delonf apply(
+    pipelonlinelonQuelonry: Quelonry,
+    candidatelon: AdsCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): TimelonlinelonItelonm = {
+    candidatelon match {
+      caselon twelonelontCandidatelon: AdsTwelonelontCandidatelon =>
+        TwelonelontItelonm(
+          id = twelonelontCandidatelon.id,
+          elonntryNamelonspacelon = TwelonelontItelonm.PromotelondTwelonelontelonntryNamelonspacelon,
+          sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+          clielonntelonvelonntInfo = twelonelontClielonntelonvelonntInfoBuildelonr.flatMap(
             _.apply(
-              pipelineQuery,
-              tweetCandidate,
-              candidateFeatures,
-              Some(TweetClientEventInfoElement))),
-          feedbackActionInfo = None,
-          isPinned = None,
-          entryIdToReplace = None,
-          socialContext = None,
-          highlights = None,
-          innerTombstoneInfo = None,
-          timelinesScoreInfo = None,
-          hasModeratedReplies = None,
-          forwardPivot = None,
-          innerForwardPivot = None,
-          conversationAnnotation = None,
-          promotedMetadata = Some(promotedMetadata(tweetCandidate.adImpression)),
-          displayType = tweetDisplayType,
-          contextualTweetRef = contextualTweetRefBuilder.flatMap(_.apply(tweetCandidate)),
-          prerollMetadata = prerollMetadata(tweetCandidate.adImpression),
-          replyBadge = None,
-          destination = None
+              pipelonlinelonQuelonry,
+              twelonelontCandidatelon,
+              candidatelonFelonaturelons,
+              Somelon(TwelonelontClielonntelonvelonntInfoelonlelonmelonnt))),
+          felonelondbackActionInfo = Nonelon,
+          isPinnelond = Nonelon,
+          elonntryIdToRelonplacelon = Nonelon,
+          socialContelonxt = Nonelon,
+          highlights = Nonelon,
+          innelonrTombstonelonInfo = Nonelon,
+          timelonlinelonsScorelonInfo = Nonelon,
+          hasModelonratelondRelonplielons = Nonelon,
+          forwardPivot = Nonelon,
+          innelonrForwardPivot = Nonelon,
+          convelonrsationAnnotation = Nonelon,
+          promotelondMelontadata = Somelon(promotelondMelontadata(twelonelontCandidatelon.adImprelonssion)),
+          displayTypelon = twelonelontDisplayTypelon,
+          contelonxtualTwelonelontRelonf = contelonxtualTwelonelontRelonfBuildelonr.flatMap(_.apply(twelonelontCandidatelon)),
+          prelonrollMelontadata = prelonrollMelontadata(twelonelontCandidatelon.adImprelonssion),
+          relonplyBadgelon = Nonelon,
+          delonstination = Nonelon
         )
     }
   }
 
-  private def promotedMetadata(impression: adserver.AdImpression) = {
-    PromotedMetadata(
-      advertiserId = impression.advertiserId,
-      impressionString = impression.impressionString,
-      disclosureType = impression.disclosureType.map(convertDisclosureType),
-      experimentValues = impression.experimentValues.map(_.toMap),
-      promotedTrendId = impression.promotedTrendId.map(_.toLong),
-      promotedTrendName = impression.promotedTrendName,
-      promotedTrendQueryTerm = impression.promotedTrendQueryTerm,
-      promotedTrendDescription = impression.promotedTrendDescription,
-      clickTrackingInfo = impression.clickTrackingInfo.map(convertClickTrackingInfo),
-      adMetadataContainer = adMetadataContainer(impression)
+  privatelon delonf promotelondMelontadata(imprelonssion: adselonrvelonr.AdImprelonssion) = {
+    PromotelondMelontadata(
+      advelonrtiselonrId = imprelonssion.advelonrtiselonrId,
+      imprelonssionString = imprelonssion.imprelonssionString,
+      disclosurelonTypelon = imprelonssion.disclosurelonTypelon.map(convelonrtDisclosurelonTypelon),
+      elonxpelonrimelonntValuelons = imprelonssion.elonxpelonrimelonntValuelons.map(_.toMap),
+      promotelondTrelonndId = imprelonssion.promotelondTrelonndId.map(_.toLong),
+      promotelondTrelonndNamelon = imprelonssion.promotelondTrelonndNamelon,
+      promotelondTrelonndQuelonryTelonrm = imprelonssion.promotelondTrelonndQuelonryTelonrm,
+      promotelondTrelonndDelonscription = imprelonssion.promotelondTrelonndDelonscription,
+      clickTrackingInfo = imprelonssion.clickTrackingInfo.map(convelonrtClickTrackingInfo),
+      adMelontadataContainelonr = adMelontadataContainelonr(imprelonssion)
     )
   }
 
-  private def convertDisclosureType(
-    disclosureType: adserver.DisclosureType
-  ): DisclosureType = disclosureType match {
-    case adserver.DisclosureType.None => NoDisclosure
-    case adserver.DisclosureType.Political => Political
-    case adserver.DisclosureType.Earned => Earned
-    case adserver.DisclosureType.Issue => Issue
-    case _ => throw new UnsupportedDisclosureTypeException(disclosureType)
+  privatelon delonf convelonrtDisclosurelonTypelon(
+    disclosurelonTypelon: adselonrvelonr.DisclosurelonTypelon
+  ): DisclosurelonTypelon = disclosurelonTypelon match {
+    caselon adselonrvelonr.DisclosurelonTypelon.Nonelon => NoDisclosurelon
+    caselon adselonrvelonr.DisclosurelonTypelon.Political => Political
+    caselon adselonrvelonr.DisclosurelonTypelon.elonarnelond => elonarnelond
+    caselon adselonrvelonr.DisclosurelonTypelon.Issuelon => Issuelon
+    caselon _ => throw nelonw UnsupportelondDisclosurelonTypelonelonxcelonption(disclosurelonTypelon)
   }
 
-  private def convertClickTrackingInfo(
-    clickTracking: adserver.ClickTrackingInfo
+  privatelon delonf convelonrtClickTrackingInfo(
+    clickTracking: adselonrvelonr.ClickTrackingInfo
   ): ClickTrackingInfo = ClickTrackingInfo(
-    urlParams = clickTracking.urlParams.getOrElse(Map.empty),
-    urlOverride = clickTracking.urlOverride,
-    urlOverrideType = clickTracking.urlOverrideType.map {
-      case adserver.UrlOverrideType.Unknown => UnknownUrlOverrideType
-      case adserver.UrlOverrideType.Dcm => DcmUrlOverrideType
-      case _ => throw new UnsupportedClickTrackingInfoException(clickTracking)
+    urlParams = clickTracking.urlParams.gelontOrelonlselon(Map.elonmpty),
+    urlOvelonrridelon = clickTracking.urlOvelonrridelon,
+    urlOvelonrridelonTypelon = clickTracking.urlOvelonrridelonTypelon.map {
+      caselon adselonrvelonr.UrlOvelonrridelonTypelon.Unknown => UnknownUrlOvelonrridelonTypelon
+      caselon adselonrvelonr.UrlOvelonrridelonTypelon.Dcm => DcmUrlOvelonrridelonTypelon
+      caselon _ => throw nelonw UnsupportelondClickTrackingInfoelonxcelonption(clickTracking)
     }
   )
 
-  private def prerollMetadata(adImpression: adserver.AdImpression): Option[PrerollMetadata] = {
-    adImpression.serializedPrerollMetadata
-      .flatMap(PrerollMetadataSerializer.deserialize).map { metadata =>
-        PrerollMetadata(
-          metadata.preroll.map(convertPreroll),
-          metadata.videoAnalyticsScribePassthrough
+  privatelon delonf prelonrollMelontadata(adImprelonssion: adselonrvelonr.AdImprelonssion): Option[PrelonrollMelontadata] = {
+    adImprelonssion.selonrializelondPrelonrollMelontadata
+      .flatMap(PrelonrollMelontadataSelonrializelonr.delonselonrializelon).map { melontadata =>
+        PrelonrollMelontadata(
+          melontadata.prelonroll.map(convelonrtPrelonroll),
+          melontadata.videlonoAnalyticsScribelonPassthrough
         )
       }
   }
 
-  private def adMetadataContainer(
-    adImpression: adserver.AdImpression
-  ): Option[AdMetadataContainer] = {
-    adImpression.serializedAdMetadataContainer
-      .flatMap(AdMetadataContainerSerializer.deserialize).map { container =>
-        AdMetadataContainer(
-          removePromotedAttributionForPreroll = container.removePromotedAttributionForPreroll,
-          sponsorshipCandidate = container.sponsorshipCandidate,
-          sponsorshipOrganization = container.sponsorshipOrganization,
-          sponsorshipOrganizationWebsite = container.sponsorshipOrganizationWebsite,
-          sponsorshipType = container.sponsorshipType.map(convertSponsorshipType),
-          disclaimerType = container.disclaimerType.map(convertDisclaimerType),
-          skAdNetworkDataList = container.skAdNetworkDataList.map(convertSkAdNetworkDataList),
-          unifiedCardOverride = container.unifiedCardOverride
+  privatelon delonf adMelontadataContainelonr(
+    adImprelonssion: adselonrvelonr.AdImprelonssion
+  ): Option[AdMelontadataContainelonr] = {
+    adImprelonssion.selonrializelondAdMelontadataContainelonr
+      .flatMap(AdMelontadataContainelonrSelonrializelonr.delonselonrializelon).map { containelonr =>
+        AdMelontadataContainelonr(
+          relonmovelonPromotelondAttributionForPrelonroll = containelonr.relonmovelonPromotelondAttributionForPrelonroll,
+          sponsorshipCandidatelon = containelonr.sponsorshipCandidatelon,
+          sponsorshipOrganization = containelonr.sponsorshipOrganization,
+          sponsorshipOrganizationWelonbsitelon = containelonr.sponsorshipOrganizationWelonbsitelon,
+          sponsorshipTypelon = containelonr.sponsorshipTypelon.map(convelonrtSponsorshipTypelon),
+          disclaimelonrTypelon = containelonr.disclaimelonrTypelon.map(convelonrtDisclaimelonrTypelon),
+          skAdNelontworkDataList = containelonr.skAdNelontworkDataList.map(convelonrtSkAdNelontworkDataList),
+          unifielondCardOvelonrridelon = containelonr.unifielondCardOvelonrridelon
         )
       }
   }
 
-  private def convertSponsorshipType(
-    sponsorshipType: ads.SponsorshipType
-  ): SponsorshipType = sponsorshipType match {
-    case ads.SponsorshipType.Direct => DirectSponsorshipType
-    case ads.SponsorshipType.Indirect => IndirectSponsorshipType
-    case ads.SponsorshipType.NoSponsorship => NoSponsorshipSponsorshipType
-    // Thrift has extras (e.g. Sponsorship4) that are not used in practice
-    case _ => throw new UnsupportedSponsorshipTypeException(sponsorshipType)
+  privatelon delonf convelonrtSponsorshipTypelon(
+    sponsorshipTypelon: ads.SponsorshipTypelon
+  ): SponsorshipTypelon = sponsorshipTypelon match {
+    caselon ads.SponsorshipTypelon.Direlonct => DirelonctSponsorshipTypelon
+    caselon ads.SponsorshipTypelon.Indirelonct => IndirelonctSponsorshipTypelon
+    caselon ads.SponsorshipTypelon.NoSponsorship => NoSponsorshipSponsorshipTypelon
+    // Thrift has elonxtras (elon.g. Sponsorship4) that arelon not uselond in practicelon
+    caselon _ => throw nelonw UnsupportelondSponsorshipTypelonelonxcelonption(sponsorshipTypelon)
   }
 
-  private def convertDisclaimerType(
-    disclaimerType: ads.DisclaimerType
-  ): DisclaimerType = disclaimerType match {
-    case ads.DisclaimerType.Political => DisclaimerPolitical
-    case ads.DisclaimerType.Issue => DisclaimerIssue
-    case _ => throw new UnsupportedDisclaimerTypeException(disclaimerType)
+  privatelon delonf convelonrtDisclaimelonrTypelon(
+    disclaimelonrTypelon: ads.DisclaimelonrTypelon
+  ): DisclaimelonrTypelon = disclaimelonrTypelon match {
+    caselon ads.DisclaimelonrTypelon.Political => DisclaimelonrPolitical
+    caselon ads.DisclaimelonrTypelon.Issuelon => DisclaimelonrIssuelon
+    caselon _ => throw nelonw UnsupportelondDisclaimelonrTypelonelonxcelonption(disclaimelonrTypelon)
   }
 
-  private def convertDynamicPrerollType(
-    dynamicPrerollType: ads.DynamicPrerollType
-  ): DynamicPrerollType =
-    dynamicPrerollType match {
-      case ads.DynamicPrerollType.Amplify => Amplify
-      case ads.DynamicPrerollType.Marketplace => Marketplace
-      case ads.DynamicPrerollType.LiveTvEvent => LiveTvEvent
-      case _ => throw new UnsupportedDynamicPrerollTypeException(dynamicPrerollType)
+  privatelon delonf convelonrtDynamicPrelonrollTypelon(
+    dynamicPrelonrollTypelon: ads.DynamicPrelonrollTypelon
+  ): DynamicPrelonrollTypelon =
+    dynamicPrelonrollTypelon match {
+      caselon ads.DynamicPrelonrollTypelon.Amplify => Amplify
+      caselon ads.DynamicPrelonrollTypelon.Markelontplacelon => Markelontplacelon
+      caselon ads.DynamicPrelonrollTypelon.LivelonTvelonvelonnt => LivelonTvelonvelonnt
+      caselon _ => throw nelonw UnsupportelondDynamicPrelonrollTypelonelonxcelonption(dynamicPrelonrollTypelon)
     }
 
-  private def convertMediaInfo(mediaInfo: ads.MediaInfo): MediaInfo = {
-    MediaInfo(
-      uuid = mediaInfo.uuid,
-      publisherId = mediaInfo.publisherId,
-      callToAction = mediaInfo.callToAction.map(convertCallToAction),
-      durationMillis = mediaInfo.durationMillis,
-      videoVariants = mediaInfo.videoVariants.map(convertVideoVariants),
-      advertiserName = mediaInfo.advertiserName,
-      renderAdByAdvertiserName = mediaInfo.renderAdByAdvertiserName,
-      advertiserProfileImageUrl = mediaInfo.advertiserProfileImageUrl
+  privatelon delonf convelonrtMelondiaInfo(melondiaInfo: ads.MelondiaInfo): MelondiaInfo = {
+    MelondiaInfo(
+      uuid = melondiaInfo.uuid,
+      publishelonrId = melondiaInfo.publishelonrId,
+      callToAction = melondiaInfo.callToAction.map(convelonrtCallToAction),
+      durationMillis = melondiaInfo.durationMillis,
+      videlonoVariants = melondiaInfo.videlonoVariants.map(convelonrtVidelonoVariants),
+      advelonrtiselonrNamelon = melondiaInfo.advelonrtiselonrNamelon,
+      relonndelonrAdByAdvelonrtiselonrNamelon = melondiaInfo.relonndelonrAdByAdvelonrtiselonrNamelon,
+      advelonrtiselonrProfilelonImagelonUrl = melondiaInfo.advelonrtiselonrProfilelonImagelonUrl
     )
   }
 
-  private def convertVideoVariants(videoVariants: Seq[ads.VideoVariant]): Seq[VideoVariant] = {
-    videoVariants.map(videoVariant =>
-      VideoVariant(
-        url = videoVariant.url,
-        contentType = videoVariant.contentType,
-        bitrate = videoVariant.bitrate
+  privatelon delonf convelonrtVidelonoVariants(videlonoVariants: Selonq[ads.VidelonoVariant]): Selonq[VidelonoVariant] = {
+    videlonoVariants.map(videlonoVariant =>
+      VidelonoVariant(
+        url = videlonoVariant.url,
+        contelonntTypelon = videlonoVariant.contelonntTypelon,
+        bitratelon = videlonoVariant.bitratelon
       ))
   }
 
-  private def convertCallToAction(callToAction: ads.CallToAction): CallToAction = {
+  privatelon delonf convelonrtCallToAction(callToAction: ads.CallToAction): CallToAction = {
     CallToAction(
-      callToActionType = callToAction.callToActionType,
+      callToActionTypelon = callToAction.callToActionTypelon,
       url = callToAction.url
     )
   }
 
-  private def convertPreroll(
-    preroll: ads.Preroll
-  ): Preroll = {
-    Preroll(
-      preroll.prerollId,
-      preroll.dynamicPrerollType.map(convertDynamicPrerollType),
-      preroll.mediaInfo.map(convertMediaInfo)
+  privatelon delonf convelonrtPrelonroll(
+    prelonroll: ads.Prelonroll
+  ): Prelonroll = {
+    Prelonroll(
+      prelonroll.prelonrollId,
+      prelonroll.dynamicPrelonrollTypelon.map(convelonrtDynamicPrelonrollTypelon),
+      prelonroll.melondiaInfo.map(convelonrtMelondiaInfo)
     )
   }
 
-  private def convertSkAdNetworkDataList(
-    skAdNetworkDataList: Seq[ads.SkAdNetworkData]
-  ): Seq[SkAdNetworkData] = skAdNetworkDataList.map(sdAdNetwork =>
-    SkAdNetworkData(
-      version = sdAdNetwork.version,
-      srcAppId = sdAdNetwork.srcAppId,
-      dstAppId = sdAdNetwork.dstAppId,
-      adNetworkId = sdAdNetwork.adNetworkId,
-      campaignId = sdAdNetwork.campaignId,
-      impressionTimeInMillis = sdAdNetwork.impressionTimeInMillis,
-      nonce = sdAdNetwork.nonce,
-      signature = sdAdNetwork.signature,
-      fidelityType = sdAdNetwork.fidelityType
+  privatelon delonf convelonrtSkAdNelontworkDataList(
+    skAdNelontworkDataList: Selonq[ads.SkAdNelontworkData]
+  ): Selonq[SkAdNelontworkData] = skAdNelontworkDataList.map(sdAdNelontwork =>
+    SkAdNelontworkData(
+      velonrsion = sdAdNelontwork.velonrsion,
+      srcAppId = sdAdNelontwork.srcAppId,
+      dstAppId = sdAdNelontwork.dstAppId,
+      adNelontworkId = sdAdNelontwork.adNelontworkId,
+      campaignId = sdAdNelontwork.campaignId,
+      imprelonssionTimelonInMillis = sdAdNelontwork.imprelonssionTimelonInMillis,
+      noncelon = sdAdNelontwork.noncelon,
+      signaturelon = sdAdNelontwork.signaturelon,
+      fidelonlityTypelon = sdAdNelontwork.fidelonlityTypelon
     ))
 }
 
-class UnsupportedClickTrackingInfoException(clickTrackingInfo: adserver.ClickTrackingInfo)
-    extends UnsupportedOperationException(
-      s"Unsupported ClickTrackingInfo: $clickTrackingInfo"
+class UnsupportelondClickTrackingInfoelonxcelonption(clickTrackingInfo: adselonrvelonr.ClickTrackingInfo)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Unsupportelond ClickTrackingInfo: $clickTrackingInfo"
     )
 
-class UnsupportedDisclaimerTypeException(disclaimerType: ads.DisclaimerType)
-    extends UnsupportedOperationException(
-      s"Unsupported DisclaimerType: $disclaimerType"
+class UnsupportelondDisclaimelonrTypelonelonxcelonption(disclaimelonrTypelon: ads.DisclaimelonrTypelon)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Unsupportelond DisclaimelonrTypelon: $disclaimelonrTypelon"
     )
 
-class UnsupportedDisclosureTypeException(disclosureType: adserver.DisclosureType)
-    extends UnsupportedOperationException(
-      s"Unsupported DisclosureType: $disclosureType"
+class UnsupportelondDisclosurelonTypelonelonxcelonption(disclosurelonTypelon: adselonrvelonr.DisclosurelonTypelon)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Unsupportelond DisclosurelonTypelon: $disclosurelonTypelon"
     )
 
-class UnsupportedDynamicPrerollTypeException(dynamicPrerollType: ads.DynamicPrerollType)
-    extends UnsupportedOperationException(
-      s"Unsupported DynamicPrerollType: $dynamicPrerollType"
+class UnsupportelondDynamicPrelonrollTypelonelonxcelonption(dynamicPrelonrollTypelon: ads.DynamicPrelonrollTypelon)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Unsupportelond DynamicPrelonrollTypelon: $dynamicPrelonrollTypelon"
     )
 
-class UnsupportedSponsorshipTypeException(sponsorshipType: ads.SponsorshipType)
-    extends UnsupportedOperationException(
-      s"Unsupported SponsorshipType: $sponsorshipType"
+class UnsupportelondSponsorshipTypelonelonxcelonption(sponsorshipTypelon: ads.SponsorshipTypelon)
+    elonxtelonnds UnsupportelondOpelonrationelonxcelonption(
+      s"Unsupportelond SponsorshipTypelon: $sponsorshipTypelon"
     )

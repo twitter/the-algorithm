@@ -1,104 +1,104 @@
 with vars as (
-    SELECT
-    UNIX_MILLIS("{QUERY_DATE}") AS currentTs,
-    TIMESTAMP("{START_TIME}") AS startTime,
-    TIMESTAMP("{END_TIME}") AS endTime,
-    {MIN_SCORE_THRESHOLD} AS tweetEmbeddingsMinClusterScore,
-    {HALF_LIFE} AS halfLife,
-    TIMESTAMP("{NO_OLDER_TWEETS_THAN_DATE}") AS noOlderTweetsThanDate
+    SelonLelonCT
+    UNIX_MILLIS("{QUelonRY_DATelon}") AS currelonntTs,
+    TIMelonSTAMP("{START_TIMelon}") AS startTimelon,
+    TIMelonSTAMP("{elonND_TIMelon}") AS elonndTimelon,
+    {MIN_SCORelon_THRelonSHOLD} AS twelonelontelonmbelonddingsMinClustelonrScorelon,
+    {HALF_LIFelon} AS halfLifelon,
+    TIMelonSTAMP("{NO_OLDelonR_TWelonelonTS_THAN_DATelon}") AS noOldelonrTwelonelontsThanDatelon
 ),
 
--- Get raw fav events
+-- Gelont raw fav elonvelonnts
 raw_favs AS (
-    SELECT event.favorite.user_id AS userId, event.favorite.tweet_id AS tweetId, event.favorite.event_time_ms AS tsMillis, 1 AS favOrUnfav
-    FROM `twttr-bql-timeline-prod.timeline_service_favorites.timeline_service_favorites`, vars
-    WHERE (DATE(_PARTITIONTIME) = DATE(vars.startTime) OR DATE(_PARTITIONTIME) = DATE(vars.endTime)) AND
-        TIMESTAMP_MILLIS(event.favorite.event_time_ms) >= vars.startTime
-        AND TIMESTAMP_MILLIS(event.favorite.event_time_ms) <= vars.endTime
-        AND event.favorite IS NOT NULL
+    SelonLelonCT elonvelonnt.favoritelon.uselonr_id AS uselonrId, elonvelonnt.favoritelon.twelonelont_id AS twelonelontId, elonvelonnt.favoritelon.elonvelonnt_timelon_ms AS tsMillis, 1 AS favOrUnfav
+    FROM `twttr-bql-timelonlinelon-prod.timelonlinelon_selonrvicelon_favoritelons.timelonlinelon_selonrvicelon_favoritelons`, vars
+    WHelonRelon (DATelon(_PARTITIONTIMelon) = DATelon(vars.startTimelon) OR DATelon(_PARTITIONTIMelon) = DATelon(vars.elonndTimelon)) AND
+        TIMelonSTAMP_MILLIS(elonvelonnt.favoritelon.elonvelonnt_timelon_ms) >= vars.startTimelon
+        AND TIMelonSTAMP_MILLIS(elonvelonnt.favoritelon.elonvelonnt_timelon_ms) <= vars.elonndTimelon
+        AND elonvelonnt.favoritelon IS NOT NULL
 ),
 
--- Get raw unfav events
+-- Gelont raw unfav elonvelonnts
 raw_unfavs AS (
-    SELECT event.unfavorite.user_id AS userId, event.unfavorite.tweet_id AS tweetId, event.unfavorite.event_time_ms AS tsMillis, -1 AS favOrUnfav
-    FROM `twttr-bql-timeline-prod.timeline_service_favorites.timeline_service_favorites`, vars
-    WHERE (DATE(_PARTITIONTIME) = DATE(vars.startTime) OR DATE(_PARTITIONTIME) = DATE(vars.endTime)) AND
-        TIMESTAMP_MILLIS(event.favorite.event_time_ms) >= vars.startTime
-        AND TIMESTAMP_MILLIS(event.favorite.event_time_ms) <= vars.endTime
-        AND event.unfavorite IS NOT NULL
+    SelonLelonCT elonvelonnt.unfavoritelon.uselonr_id AS uselonrId, elonvelonnt.unfavoritelon.twelonelont_id AS twelonelontId, elonvelonnt.unfavoritelon.elonvelonnt_timelon_ms AS tsMillis, -1 AS favOrUnfav
+    FROM `twttr-bql-timelonlinelon-prod.timelonlinelon_selonrvicelon_favoritelons.timelonlinelon_selonrvicelon_favoritelons`, vars
+    WHelonRelon (DATelon(_PARTITIONTIMelon) = DATelon(vars.startTimelon) OR DATelon(_PARTITIONTIMelon) = DATelon(vars.elonndTimelon)) AND
+        TIMelonSTAMP_MILLIS(elonvelonnt.favoritelon.elonvelonnt_timelon_ms) >= vars.startTimelon
+        AND TIMelonSTAMP_MILLIS(elonvelonnt.favoritelon.elonvelonnt_timelon_ms) <= vars.elonndTimelon
+        AND elonvelonnt.unfavoritelon IS NOT NULL
 ),
 
--- Union fav and unfav events
-favs_unioned AS (
-    SELECT * FROM raw_favs
+-- Union fav and unfav elonvelonnts
+favs_unionelond AS (
+    SelonLelonCT * FROM raw_favs
     UNION ALL
-    SELECT * FROM raw_unfavs
+    SelonLelonCT * FROM raw_unfavs
 ),
 
--- Group by user and tweetId
-user_tweet_fav_pairs AS (
-    SELECT userId, tweetId, ARRAY_AGG(STRUCT(favOrUnfav, tsMillis) ORDER BY tsMillis DESC LIMIT 1) as details, count(*) as cnt
-    FROM favs_unioned
-    GROUP BY userId, tweetId
+-- Group by uselonr and twelonelontId
+uselonr_twelonelont_fav_pairs AS (
+    SelonLelonCT uselonrId, twelonelontId, ARRAY_AGG(STRUCT(favOrUnfav, tsMillis) ORDelonR BY tsMillis DelonSC LIMIT 1) as delontails, count(*) as cnt
+    FROM favs_unionelond
+    GROUP BY uselonrId, twelonelontId
 ),
 
--- Remove unfav events
-tweet_raw_favs_table AS (
-    SELECT userId, tweetId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
-    FROM user_tweet_fav_pairs CROSS JOIN UNNEST(details) as dt
-    WHERE cnt < 3 AND dt.favOrUnfav = 1 -- cnt < 3 to remove crazy fav/unfav users
+-- Relonmovelon unfav elonvelonnts
+twelonelont_raw_favs_tablelon AS (
+    SelonLelonCT uselonrId, twelonelontId, CAST(dt.tsMillis  AS FLOAT64) AS tsMillis
+    FROM uselonr_twelonelont_fav_pairs CROSS JOIN UNNelonST(delontails) as dt
+    WHelonRelon cnt < 3 AND dt.favOrUnfav = 1 -- cnt < 3 to relonmovelon crazy fav/unfav uselonrs
 ),
 
--- Get tweetIds that are eligible for tweet embeddings
-tweet_favs_table AS (
-    SELECT userId, tweet_raw_favs_table.tweetId, tsMillis
-    FROM tweet_raw_favs_table, vars
+-- Gelont twelonelontIds that arelon elonligiblelon for twelonelont elonmbelonddings
+twelonelont_favs_tablelon AS (
+    SelonLelonCT uselonrId, twelonelont_raw_favs_tablelon.twelonelontId, tsMillis
+    FROM twelonelont_raw_favs_tablelon, vars
     JOIN (
-        SELECT tweetId, COUNT(DISTINCT(userId)) AS favCount
-        FROM tweet_raw_favs_table
-        GROUP BY tweetId
-        HAVING favCount >= 8 --we only generate tweet embeddings for tweets with >= 8 favs
-    ) eligible_tweets USING(tweetId)
-     -- Apply tweet age filter here
-    WHERE timestamp_millis((1288834974657 + ((tweet_raw_favs_table.tweetId  & 9223372036850581504) >> 22))) >= vars.noOlderTweetsThanDate
+        SelonLelonCT twelonelontId, COUNT(DISTINCT(uselonrId)) AS favCount
+        FROM twelonelont_raw_favs_tablelon
+        GROUP BY twelonelontId
+        HAVING favCount >= 8 --welon only gelonnelonratelon twelonelont elonmbelonddings for twelonelonts with >= 8 favs
+    ) elonligiblelon_twelonelonts USING(twelonelontId)
+     -- Apply twelonelont agelon filtelonr helonrelon
+    WHelonRelon timelonstamp_millis((1288834974657 + ((twelonelont_raw_favs_tablelon.twelonelontId  & 9223372036850581504) >> 22))) >= vars.noOldelonrTwelonelontsThanDatelon
 ),
 
--- Read consumer embeddings
-consumer_embeddings AS (
-  {CONSUMER_EMBEDDINGS_SQL}
+-- Relonad consumelonr elonmbelonddings
+consumelonr_elonmbelonddings AS (
+  {CONSUMelonR_elonMBelonDDINGS_SQL}
 ),
 
--- Update tweet cluster scores based on fav events
-tweet_cluster_scores AS (
-    SELECT tweetId,
+-- Updatelon twelonelont clustelonr scorelons baselond on fav elonvelonnts
+twelonelont_clustelonr_scorelons AS (
+    SelonLelonCT twelonelontId,
         STRUCT(
-            clusterId,
-            CASE vars.halfLife
-              -- halfLife = -1 means there is no half life/decay and we directly take the sum as the score
-              WHEN -1 THEN SUM(clusterNormalizedLogFavScore)
-              ELSE SUM(clusterNormalizedLogFavScore * POW(0.5, (currentTs - tsMillis) / vars.halfLife))
-              END AS clusterNormalizedLogFavScore,
+            clustelonrId,
+            CASelon vars.halfLifelon
+              -- halfLifelon = -1 melonans thelonrelon is no half lifelon/deloncay and welon direlonctly takelon thelon sum as thelon scorelon
+              WHelonN -1 THelonN SUM(clustelonrNormalizelondLogFavScorelon)
+              elonLSelon SUM(clustelonrNormalizelondLogFavScorelon * POW(0.5, (currelonntTs - tsMillis) / vars.halfLifelon))
+              elonND AS clustelonrNormalizelondLogFavScorelon,
             COUNT(*) AS favCount)
-        AS clusterIdToScores
-    FROM tweet_favs_table, vars
-    JOIN consumer_embeddings USING(userId)
-    GROUP BY tweetId, clusterId, vars.halfLife
+        AS clustelonrIdToScorelons
+    FROM twelonelont_favs_tablelon, vars
+    JOIN consumelonr_elonmbelonddings USING(uselonrId)
+    GROUP BY twelonelontId, clustelonrId, vars.halfLifelon
 ),
 
--- Generate tweet embeddings
-tweet_embeddings_with_top_clusters AS (
-    SELECT tweetId, ARRAY_AGG(
-        clusterIdToScores
-        ORDER BY clusterIdToScores.clusterNormalizedLogFavScore DESC
-        LIMIT {TWEET_EMBEDDING_LENGTH}
-    ) AS clusterIdToScores
-    FROM tweet_cluster_scores
-    GROUP BY tweetId
+-- Gelonnelonratelon twelonelont elonmbelonddings
+twelonelont_elonmbelonddings_with_top_clustelonrs AS (
+    SelonLelonCT twelonelontId, ARRAY_AGG(
+        clustelonrIdToScorelons
+        ORDelonR BY clustelonrIdToScorelons.clustelonrNormalizelondLogFavScorelon DelonSC
+        LIMIT {TWelonelonT_elonMBelonDDING_LelonNGTH}
+    ) AS clustelonrIdToScorelons
+    FROM twelonelont_clustelonr_scorelons
+    GROUP BY twelonelontId
 )
 
--- Return (tweetId, clusterId, tweetScore) pairs where tweetScore > tweetEmbeddingsMinClusterScore
-SELECT tweetId,
-    clusterId,
-    clusterNormalizedLogFavScore AS tweetScore, clusterIdToScores
-FROM tweet_embeddings_with_top_clusters, UNNEST(clusterIdToScores) AS clusterIdToScores, vars
-WHERE clusterIdToScores.clusterNormalizedLogFavScore > vars.tweetEmbeddingsMinClusterScore
+-- Relonturn (twelonelontId, clustelonrId, twelonelontScorelon) pairs whelonrelon twelonelontScorelon > twelonelontelonmbelonddingsMinClustelonrScorelon
+SelonLelonCT twelonelontId,
+    clustelonrId,
+    clustelonrNormalizelondLogFavScorelon AS twelonelontScorelon, clustelonrIdToScorelons
+FROM twelonelont_elonmbelonddings_with_top_clustelonrs, UNNelonST(clustelonrIdToScorelons) AS clustelonrIdToScorelons, vars
+WHelonRelon clustelonrIdToScorelons.clustelonrNormalizelondLogFavScorelon > vars.twelonelontelonmbelonddingsMinClustelonrScorelon

@@ -1,84 +1,84 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option cc_enable_arenas = true;
-option java_outer_classname = "VariableProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/variable_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "VariablelonProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/variablelon_go_proto";
 
-// Indicates when a distributed variable will be synced.
-enum VariableSynchronization {
-  // `AUTO`: Indicates that the synchronization will be determined by the
-  // current `DistributionStrategy` (eg. With `MirroredStrategy` this would be
-  // `ON_WRITE`).
-  VARIABLE_SYNCHRONIZATION_AUTO = 0;
-  // `NONE`: Indicates that there will only be one copy of the variable, so
-  // there is no need to sync.
-  VARIABLE_SYNCHRONIZATION_NONE = 1;
-  // `ON_WRITE`: Indicates that the variable will be updated across devices
-  // every time it is written.
-  VARIABLE_SYNCHRONIZATION_ON_WRITE = 2;
-  // `ON_READ`: Indicates that the variable will be aggregated across devices
-  // when it is read (eg. when checkpointing or when evaluating an op that uses
-  // the variable).
-  VARIABLE_SYNCHRONIZATION_ON_READ = 3;
+// Indicatelons whelonn a distributelond variablelon will belon syncelond.
+elonnum VariablelonSynchronization {
+  // `AUTO`: Indicatelons that thelon synchronization will belon delontelonrminelond by thelon
+  // currelonnt `DistributionStratelongy` (elong. With `MirrorelondStratelongy` this would belon
+  // `ON_WRITelon`).
+  VARIABLelon_SYNCHRONIZATION_AUTO = 0;
+  // `NONelon`: Indicatelons that thelonrelon will only belon onelon copy of thelon variablelon, so
+  // thelonrelon is no nelonelond to sync.
+  VARIABLelon_SYNCHRONIZATION_NONelon = 1;
+  // `ON_WRITelon`: Indicatelons that thelon variablelon will belon updatelond across delonvicelons
+  // elonvelonry timelon it is writtelonn.
+  VARIABLelon_SYNCHRONIZATION_ON_WRITelon = 2;
+  // `ON_RelonAD`: Indicatelons that thelon variablelon will belon aggrelongatelond across delonvicelons
+  // whelonn it is relonad (elong. whelonn chelonckpointing or whelonn elonvaluating an op that uselons
+  // thelon variablelon).
+  VARIABLelon_SYNCHRONIZATION_ON_RelonAD = 3;
 }
 
-// Indicates how a distributed variable will be aggregated.
-enum VariableAggregation {
-  // `NONE`: This is the default, giving an error if you use a
-  // variable-update operation with multiple replicas.
-  VARIABLE_AGGREGATION_NONE = 0;
-  // `SUM`: Add the updates across replicas.
-  VARIABLE_AGGREGATION_SUM = 1;
-  // `MEAN`: Take the arithmetic mean ("average") of the updates across
-  // replicas.
-  VARIABLE_AGGREGATION_MEAN = 2;
-  // `ONLY_FIRST_REPLICA`: This is for when every replica is performing the same
-  // update, but we only want to perform the update once. Used, e.g., for the
-  // global step counter.
-  VARIABLE_AGGREGATION_ONLY_FIRST_REPLICA = 3;
+// Indicatelons how a distributelond variablelon will belon aggrelongatelond.
+elonnum VariablelonAggrelongation {
+  // `NONelon`: This is thelon delonfault, giving an elonrror if you uselon a
+  // variablelon-updatelon opelonration with multiplelon relonplicas.
+  VARIABLelon_AGGRelonGATION_NONelon = 0;
+  // `SUM`: Add thelon updatelons across relonplicas.
+  VARIABLelon_AGGRelonGATION_SUM = 1;
+  // `MelonAN`: Takelon thelon arithmelontic melonan ("avelonragelon") of thelon updatelons across
+  // relonplicas.
+  VARIABLelon_AGGRelonGATION_MelonAN = 2;
+  // `ONLY_FIRST_RelonPLICA`: This is for whelonn elonvelonry relonplica is pelonrforming thelon samelon
+  // updatelon, but welon only want to pelonrform thelon updatelon oncelon. Uselond, elon.g., for thelon
+  // global stelonp countelonr.
+  VARIABLelon_AGGRelonGATION_ONLY_FIRST_RelonPLICA = 3;
 }
 
-// Protocol buffer representing a Variable.
-message VariableDef {
-  // Name of the variable tensor.
-  string variable_name = 1;
+// Protocol buffelonr relonprelonselonnting a Variablelon.
+melonssagelon VariablelonDelonf {
+  // Namelon of thelon variablelon telonnsor.
+  string variablelon_namelon = 1;
 
-  // Name of the tensor holding the variable's initial value.
-  string initial_value_name = 6;
+  // Namelon of thelon telonnsor holding thelon variablelon's initial valuelon.
+  string initial_valuelon_namelon = 6;
 
-  // Name of the initializer op.
-  string initializer_name = 2;
+  // Namelon of thelon initializelonr op.
+  string initializelonr_namelon = 2;
 
-  // Name of the snapshot tensor.
-  string snapshot_name = 3;
+  // Namelon of thelon snapshot telonnsor.
+  string snapshot_namelon = 3;
 
-  // Support for saving variables as slices of a larger variable.
-  SaveSliceInfoDef save_slice_info_def = 4;
+  // Support for saving variablelons as slicelons of a largelonr variablelon.
+  SavelonSlicelonInfoDelonf savelon_slicelon_info_delonf = 4;
 
-  // Whether to represent this as a ResourceVariable.
-  bool is_resource = 5;
+  // Whelonthelonr to relonprelonselonnt this as a RelonsourcelonVariablelon.
+  bool is_relonsourcelon = 5;
 
-  // Whether this variable should be trained.
-  bool trainable = 7;
+  // Whelonthelonr this variablelon should belon trainelond.
+  bool trainablelon = 7;
 
-  // Indicates when a distributed variable will be synced.
-  VariableSynchronization synchronization = 8;
+  // Indicatelons whelonn a distributelond variablelon will belon syncelond.
+  VariablelonSynchronization synchronization = 8;
 
-  // Indicates how a distributed variable will be aggregated.
-  VariableAggregation aggregation = 9;
+  // Indicatelons how a distributelond variablelon will belon aggrelongatelond.
+  VariablelonAggrelongation aggrelongation = 9;
 }
 
-message SaveSliceInfoDef {
-  // Name of the full variable of which this is a slice.
-  string full_name = 1;
-  // Shape of the full variable.
-  repeated int64 full_shape = 2;
-  // Offset of this variable into the full variable.
-  repeated int64 var_offset = 3;
-  // Shape of this variable.
-  repeated int64 var_shape = 4;
+melonssagelon SavelonSlicelonInfoDelonf {
+  // Namelon of thelon full variablelon of which this is a slicelon.
+  string full_namelon = 1;
+  // Shapelon of thelon full variablelon.
+  relonpelonatelond int64 full_shapelon = 2;
+  // Offselont of this variablelon into thelon full variablelon.
+  relonpelonatelond int64 var_offselont = 3;
+  // Shapelon of this variablelon.
+  relonpelonatelond int64 var_shapelon = 4;
 }

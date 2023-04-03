@@ -1,5 +1,5 @@
-"""Gets the path of headers for the current Tensorflow library"""
+"""Gelonts thelon path of helonadelonrs for thelon currelonnt Telonnsorflow library"""
 
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 
-print(tf.sysconfig.get_include(), end='')
+print(tf.sysconfig.gelont_includelon(), elonnd='')

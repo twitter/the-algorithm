@@ -1,100 +1,100 @@
-package com.twitter.search.earlybird.search.relevance.collectors;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.collelonctors;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.collections.RandomAccessPriorityQueue;
-import com.twitter.search.common.relevance.features.TweetIntegerShingleSignature;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.search.EarlyTerminationState;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.relevance.RelevanceHit;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchRequestInfo;
-import com.twitter.search.earlybird.search.relevance.RelevanceSearchResults;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultsRelevanceStats;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.common_intelonrnal.collelonctions.RandomAccelonssPriorityQuelonuelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontIntelongelonrShinglelonSignaturelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.selonarch.elonarlyTelonrminationStatelon;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonHit;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonSelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.RelonlelonvancelonSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunction;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultsRelonlelonvancelonStats;
 
 /**
- * RelevanceTopCollector is a results collector that collects the top numResults by
- * score, filtering out duplicates.
+ * RelonlelonvancelonTopCollelonctor is a relonsults collelonctor that colleloncts thelon top numRelonsults by
+ * scorelon, filtelonring out duplicatelons.
  */
-public class RelevanceTopCollector extends AbstractRelevanceCollector {
-  // Search results are collected in a min-heap.
-  protected final RandomAccessPriorityQueue<RelevanceHit, TweetIntegerShingleSignature> minQueue;
+public class RelonlelonvancelonTopCollelonctor elonxtelonnds AbstractRelonlelonvancelonCollelonctor {
+  // Selonarch relonsults arelon collelonctelond in a min-helonap.
+  protelonctelond final RandomAccelonssPriorityQuelonuelon<RelonlelonvancelonHit, TwelonelontIntelongelonrShinglelonSignaturelon> minQuelonuelon;
 
-  // Number of hits actually added to the min queue after dupe filtering and skipping.
-  // Less than or equal to numHitsProcessed.
-  protected int numHitsCollected;
+  // Numbelonr of hits actually addelond to thelon min quelonuelon aftelonr dupelon filtelonring and skipping.
+  // Lelonss than or elonqual to numHitsProcelonsselond.
+  protelonctelond int numHitsCollelonctelond;
 
-  // The 'top' of the min heap, or, the lowest scored document in the heap.
-  private RelevanceHit pqTop;
-  private float lowestScore = ScoringFunction.SKIP_HIT;
+  // Thelon 'top' of thelon min helonap, or, thelon lowelonst scorelond documelonnt in thelon helonap.
+  privatelon RelonlelonvancelonHit pqTop;
+  privatelon float lowelonstScorelon = ScoringFunction.SKIP_HIT;
 
-  private final boolean isFilterDupes;
+  privatelon final boolelonan isFiltelonrDupelons;
 
-  public RelevanceTopCollector(
-      ImmutableSchemaInterface schema,
-      RelevanceSearchRequestInfo searchRequestInfo,
+  public RelonlelonvancelonTopCollelonctor(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      RelonlelonvancelonSelonarchRelonquelonstInfo selonarchRelonquelonstInfo,
       ScoringFunction scoringFunction,
-      EarlybirdSearcherStats searcherStats,
-      EarlybirdCluster cluster,
-      UserTable userTable,
+      elonarlybirdSelonarchelonrStats selonarchelonrStats,
+      elonarlybirdClustelonr clustelonr,
+      UselonrTablelon uselonrTablelon,
       Clock clock,
-      int requestDebugMode) {
-    super(schema, searchRequestInfo, scoringFunction, searcherStats, cluster, userTable, clock,
-        requestDebugMode);
-    this.minQueue = new RandomAccessPriorityQueue<RelevanceHit, TweetIntegerShingleSignature>(
-        searchRequestInfo.getNumResultsRequested(), RelevanceHit.PQ_COMPARATOR_BY_SCORE) {
-      @Override
-      protected RelevanceHit getSentinelObject() {
-        return new RelevanceHit(); // default relevance constructor would create a hit with the
-                                   // lowest score possible.
+      int relonquelonstDelonbugModelon) {
+    supelonr(schelonma, selonarchRelonquelonstInfo, scoringFunction, selonarchelonrStats, clustelonr, uselonrTablelon, clock,
+        relonquelonstDelonbugModelon);
+    this.minQuelonuelon = nelonw RandomAccelonssPriorityQuelonuelon<RelonlelonvancelonHit, TwelonelontIntelongelonrShinglelonSignaturelon>(
+        selonarchRelonquelonstInfo.gelontNumRelonsultsRelonquelonstelond(), RelonlelonvancelonHit.PQ_COMPARATOR_BY_SCORelon) {
+      @Ovelonrridelon
+      protelonctelond RelonlelonvancelonHit gelontSelonntinelonlObjelonct() {
+        relonturn nelonw RelonlelonvancelonHit(); // delonfault relonlelonvancelon constructor would crelonatelon a hit with thelon
+                                   // lowelonst scorelon possiblelon.
       }
     };
-    this.pqTop = minQueue.top();
-    this.isFilterDupes = getSearchRequestInfo().getRelevanceOptions().isFilterDups();
+    this.pqTop = minQuelonuelon.top();
+    this.isFiltelonrDupelons = gelontSelonarchRelonquelonstInfo().gelontRelonlelonvancelonOptions().isFiltelonrDups();
   }
 
-  protected void collectWithScoreInternal(
-      long tweetID,
-      long timeSliceID,
-      float score,
-      ThriftSearchResultMetadata metadata) {
-    // This collector cannot handle these scores:
-    assert !Float.isNaN(score);
+  protelonctelond void collelonctWithScorelonIntelonrnal(
+      long twelonelontID,
+      long timelonSlicelonID,
+      float scorelon,
+      ThriftSelonarchRelonsultMelontadata melontadata) {
+    // This collelonctor cannot handlelon thelonselon scorelons:
+    asselonrt !Float.isNaN(scorelon);
 
-    if (score <= lowestScore) {
-      // Since docs are returned in-order (i.e., increasing doc Id), a document
-      // with equal score to pqTop.score cannot compete since HitQueue favors
-      // documents with lower doc Ids. Therefore reject those docs too.
-      // IMPORTANT: docs skipped by the scoring function will have scores set
-      // to ScoringFunction.SKIP_HIT, meaning they will not be collected.
-      return;
+    if (scorelon <= lowelonstScorelon) {
+      // Sincelon docs arelon relonturnelond in-ordelonr (i.elon., increlonasing doc Id), a documelonnt
+      // with elonqual scorelon to pqTop.scorelon cannot compelontelon sincelon HitQuelonuelon favors
+      // documelonnts with lowelonr doc Ids. Thelonrelonforelon relonjelonct thoselon docs too.
+      // IMPORTANT: docs skippelond by thelon scoring function will havelon scorelons selont
+      // to ScoringFunction.SKIP_HIT, melonaning thelony will not belon collelonctelond.
+      relonturn;
     }
 
-    boolean dupFound = false;
-    Preconditions.checkState(metadata.isSetSignature(),
-        "The signature should be set at metadata collection time, but it is null. "
-            + "Tweet id = %s, metadata = %s",
-        tweetID,
-        metadata);
-    int signatureInt = metadata.getSignature();
-    final TweetIntegerShingleSignature signature =
-        TweetIntegerShingleSignature.deserialize(signatureInt);
+    boolelonan dupFound = falselon;
+    Prelonconditions.chelonckStatelon(melontadata.isSelontSignaturelon(),
+        "Thelon signaturelon should belon selont at melontadata collelonction timelon, but it is null. "
+            + "Twelonelont id = %s, melontadata = %s",
+        twelonelontID,
+        melontadata);
+    int signaturelonInt = melontadata.gelontSignaturelon();
+    final TwelonelontIntelongelonrShinglelonSignaturelon signaturelon =
+        TwelonelontIntelongelonrShinglelonSignaturelon.delonselonrializelon(signaturelonInt);
 
-    if (isFilterDupes) {
-      // update duplicate if any
-      if (signatureInt != TweetIntegerShingleSignature.DEFAULT_NO_SIGNATURE) {
-        dupFound = minQueue.incrementElement(
-            signature,
-            element -> {
-              if (score > element.getScore()) {
-                element.update(timeSliceID, tweetID, signature, metadata);
+    if (isFiltelonrDupelons) {
+      // updatelon duplicatelon if any
+      if (signaturelonInt != TwelonelontIntelongelonrShinglelonSignaturelon.DelonFAULT_NO_SIGNATURelon) {
+        dupFound = minQuelonuelon.increlonmelonntelonlelonmelonnt(
+            signaturelon,
+            elonlelonmelonnt -> {
+              if (scorelon > elonlelonmelonnt.gelontScorelon()) {
+                elonlelonmelonnt.updatelon(timelonSlicelonID, twelonelontID, signaturelon, melontadata);
               }
             }
         );
@@ -102,66 +102,66 @@ public class RelevanceTopCollector extends AbstractRelevanceCollector {
     }
 
     if (!dupFound) {
-      numHitsCollected++;
+      numHitsCollelonctelond++;
 
-      // if we didn't find a duplicate element to update then we add it now as a new element to the
+      // if welon didn't find a duplicatelon elonlelonmelonnt to updatelon thelonn welon add it now as a nelonw elonlelonmelonnt to thelon
       // pq
-      pqTop = minQueue.updateTop(top -> top.update(timeSliceID, tweetID, signature, metadata));
+      pqTop = minQuelonuelon.updatelonTop(top -> top.updatelon(timelonSlicelonID, twelonelontID, signaturelon, melontadata));
 
-      lowestScore = pqTop.getScore();
+      lowelonstScorelon = pqTop.gelontScorelon();
     }
   }
 
-  @Override
-  protected void doCollectWithScore(final long tweetID, final float score) throws IOException {
-    ThriftSearchResultMetadata metadata = collectMetadata();
-    scoringFunction.populateResultMetadataBasedOnScoringData(
-        searchRequestInfo.getSearchQuery().getResultMetadataOptions(),
-        metadata,
-        scoringFunction.getScoringDataForCurrentDocument());
-    collectWithScoreInternal(tweetID, currTimeSliceID, score, metadata);
+  @Ovelonrridelon
+  protelonctelond void doCollelonctWithScorelon(final long twelonelontID, final float scorelon) throws IOelonxcelonption {
+    ThriftSelonarchRelonsultMelontadata melontadata = collelonctMelontadata();
+    scoringFunction.populatelonRelonsultMelontadataBaselondOnScoringData(
+        selonarchRelonquelonstInfo.gelontSelonarchQuelonry().gelontRelonsultMelontadataOptions(),
+        melontadata,
+        scoringFunction.gelontScoringDataForCurrelonntDocumelonnt());
+    collelonctWithScorelonIntelonrnal(twelonelontID, currTimelonSlicelonID, scorelon, melontadata);
   }
 
-  @Override
-  public EarlyTerminationState innerShouldCollectMore() {
-    // Note that numHitsCollected here might be less than num results collected in the
-    // TwitterEarlyTerminationCollector, if we hit dups or there are very low scores.
-    if (numHitsCollected >= getMaxHitsToProcess()) {
-      return setEarlyTerminationState(EarlyTerminationState.TERMINATED_MAX_HITS_EXCEEDED);
+  @Ovelonrridelon
+  public elonarlyTelonrminationStatelon innelonrShouldCollelonctMorelon() {
+    // Notelon that numHitsCollelonctelond helonrelon might belon lelonss than num relonsults collelonctelond in thelon
+    // TwittelonrelonarlyTelonrminationCollelonctor, if welon hit dups or thelonrelon arelon velonry low scorelons.
+    if (numHitsCollelonctelond >= gelontMaxHitsToProcelonss()) {
+      relonturn selontelonarlyTelonrminationStatelon(elonarlyTelonrminationStatelon.TelonRMINATelonD_MAX_HITS_elonXCelonelonDelonD);
     }
-    return EarlyTerminationState.COLLECTING;
+    relonturn elonarlyTelonrminationStatelon.COLLelonCTING;
   }
 
-  @Override
-  protected RelevanceSearchResults doGetRelevanceResults() throws IOException {
-    return getRelevanceResultsInternal();
+  @Ovelonrridelon
+  protelonctelond RelonlelonvancelonSelonarchRelonsults doGelontRelonlelonvancelonRelonsults() throws IOelonxcelonption {
+    relonturn gelontRelonlelonvancelonRelonsultsIntelonrnal();
   }
 
-  protected RelevanceSearchResults getRelevanceResultsInternal() {
-    return resultsFromQueue(minQueue, getSearchRequestInfo().getNumResultsRequested(),
-                            getRelevanceStats());
+  protelonctelond RelonlelonvancelonSelonarchRelonsults gelontRelonlelonvancelonRelonsultsIntelonrnal() {
+    relonturn relonsultsFromQuelonuelon(minQuelonuelon, gelontSelonarchRelonquelonstInfo().gelontNumRelonsultsRelonquelonstelond(),
+                            gelontRelonlelonvancelonStats());
   }
 
-  private static RelevanceSearchResults resultsFromQueue(
-      RandomAccessPriorityQueue<RelevanceHit, TweetIntegerShingleSignature> pq,
-      int desiredNumResults,
-      ThriftSearchResultsRelevanceStats relevanceStats) {
-    // trim first in case we didn't fill up the queue to not get any sentinel values here
-    int numResults = pq.trim();
-    if (numResults > desiredNumResults) {
-      for (int i = 0; i < numResults - desiredNumResults; i++) {
+  privatelon static RelonlelonvancelonSelonarchRelonsults relonsultsFromQuelonuelon(
+      RandomAccelonssPriorityQuelonuelon<RelonlelonvancelonHit, TwelonelontIntelongelonrShinglelonSignaturelon> pq,
+      int delonsirelondNumRelonsults,
+      ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats) {
+    // trim first in caselon welon didn't fill up thelon quelonuelon to not gelont any selonntinelonl valuelons helonrelon
+    int numRelonsults = pq.trim();
+    if (numRelonsults > delonsirelondNumRelonsults) {
+      for (int i = 0; i < numRelonsults - delonsirelondNumRelonsults; i++) {
         pq.pop();
       }
-      numResults = desiredNumResults;
+      numRelonsults = delonsirelondNumRelonsults;
     }
-    RelevanceSearchResults results = new RelevanceSearchResults(numResults);
-    // insert hits in decreasing order by score
-    for (int i = numResults - 1; i >= 0; i--) {
-      RelevanceHit hit = pq.pop();
-      results.setHit(hit, i);
+    RelonlelonvancelonSelonarchRelonsults relonsults = nelonw RelonlelonvancelonSelonarchRelonsults(numRelonsults);
+    // inselonrt hits in deloncrelonasing ordelonr by scorelon
+    for (int i = numRelonsults - 1; i >= 0; i--) {
+      RelonlelonvancelonHit hit = pq.pop();
+      relonsults.selontHit(hit, i);
     }
-    results.setRelevanceStats(relevanceStats);
-    results.setNumHits(numResults);
-    return results;
+    relonsults.selontRelonlelonvancelonStats(relonlelonvancelonStats);
+    relonsults.selontNumHits(numRelonsults);
+    relonturn relonsults;
   }
 }

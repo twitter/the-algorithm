@@ -1,263 +1,263 @@
-package com.twitter.interaction_graph.scio.common
+packagelon com.twittelonr.intelonraction_graph.scio.common
 
-import com.spotify.scio.ScioMetrics
-import com.spotify.scio.values.SCollection
-import com.twitter.interaction_graph.scio.common.FeatureGroups.DWELL_TIME_FEATURE_LIST
-import com.twitter.interaction_graph.scio.common.FeatureGroups.STATUS_FEATURE_LIST
-import com.twitter.interaction_graph.scio.common.UserUtil.DUMMY_USER_ID
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.EdgeFeature
-import com.twitter.interaction_graph.thriftscala.FeatureName
-import com.twitter.interaction_graph.thriftscala.TimeSeriesStatistics
-import com.twitter.interaction_graph.thriftscala.Vertex
-import com.twitter.interaction_graph.thriftscala.VertexFeature
+import com.spotify.scio.ScioMelontrics
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonGroups.DWelonLL_TIMelon_FelonATURelon_LIST
+import com.twittelonr.intelonraction_graph.scio.common.FelonaturelonGroups.STATUS_FelonATURelon_LIST
+import com.twittelonr.intelonraction_graph.scio.common.UselonrUtil.DUMMY_USelonR_ID
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelonFelonaturelon
+import com.twittelonr.intelonraction_graph.thriftscala.FelonaturelonNamelon
+import com.twittelonr.intelonraction_graph.thriftscala.TimelonSelonrielonsStatistics
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
+import com.twittelonr.intelonraction_graph.thriftscala.VelonrtelonxFelonaturelon
 
-object FeatureGeneratorUtil {
+objelonct FelonaturelonGelonnelonratorUtil {
 
-  // Initialize a TimeSeriesStatistics object by (value, age) pair
-  def initializeTSS(featureValue: Double, age: Int = 1): TimeSeriesStatistics =
-    TimeSeriesStatistics(
-      mean = featureValue,
-      m2ForVariance = 0.0,
-      ewma = featureValue,
-      numElapsedDays = age,
-      numNonZeroDays = age,
-      numDaysSinceLast = Some(age)
+  // Initializelon a TimelonSelonrielonsStatistics objelonct by (valuelon, agelon) pair
+  delonf initializelonTSS(felonaturelonValuelon: Doublelon, agelon: Int = 1): TimelonSelonrielonsStatistics =
+    TimelonSelonrielonsStatistics(
+      melonan = felonaturelonValuelon,
+      m2ForVariancelon = 0.0,
+      elonwma = felonaturelonValuelon,
+      numelonlapselondDays = agelon,
+      numNonZelonroDays = agelon,
+      numDaysSincelonLast = Somelon(agelon)
     )
 
   /**
-   * Create vertex feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
-   * We will represent non-directional features (eg num_create_tweets) as "outgoing" values.
-   * @return
+   * Crelonatelon velonrtelonx felonaturelon from IntelonractionGraphRawInput graph (src, dst, felonaturelon namelon, agelon, felonaturelonValuelon)
+   * Welon will relonprelonselonnt non-direlonctional felonaturelons (elong num_crelonatelon_twelonelonts) as "outgoing" valuelons.
+   * @relonturn
    */
-  def getVertexFeature(
-    input: SCollection[InteractionGraphRawInput]
-  ): SCollection[Vertex] = {
-    // For vertex features we need to calculate both in and out featureValue
-    val vertexAggregatedFeatureValues = input
+  delonf gelontVelonrtelonxFelonaturelon(
+    input: SCollelonction[IntelonractionGraphRawInput]
+  ): SCollelonction[Velonrtelonx] = {
+    // For velonrtelonx felonaturelons welon nelonelond to calculatelon both in and out felonaturelonValuelon
+    val velonrtelonxAggrelongatelondFelonaturelonValuelons = input
       .flatMap { input =>
-        if (input.dst != DUMMY_USER_ID) {
-          Seq(
-            ((input.src, input.name.value), (input.featureValue, 0.0)),
-            ((input.dst, input.name.value), (0.0, input.featureValue))
+        if (input.dst != DUMMY_USelonR_ID) {
+          Selonq(
+            ((input.src, input.namelon.valuelon), (input.felonaturelonValuelon, 0.0)),
+            ((input.dst, input.namelon.valuelon), (0.0, input.felonaturelonValuelon))
           )
-        } else {
-          // we put the non-directional features as "outgoing" values
-          Seq(((input.src, input.name.value), (input.featureValue, 0.0)))
+        } elonlselon {
+          // welon put thelon non-direlonctional felonaturelons as "outgoing" valuelons
+          Selonq(((input.src, input.namelon.valuelon), (input.felonaturelonValuelon, 0.0)))
         }
       }
-      .sumByKey
+      .sumByKelony
       .map {
-        case ((userId, nameId), (outEdges, inEdges)) =>
-          (userId, (FeatureName(nameId), outEdges, inEdges))
-      }.groupByKey
+        caselon ((uselonrId, namelonId), (outelondgelons, inelondgelons)) =>
+          (uselonrId, (FelonaturelonNamelon(namelonId), outelondgelons, inelondgelons))
+      }.groupByKelony
 
-    vertexAggregatedFeatureValues.map {
-      case (userId, records) =>
-        // sort features by FeatureName for deterministic order (esp during testing)
-        val features = records.toSeq.sortBy(_._1.value).flatMap {
-          case (name, outEdges, inEdges) =>
-            // create out vertex features
-            val outFeatures = if (outEdges > 0) {
-              val outTss = initializeTSS(outEdges)
+    velonrtelonxAggrelongatelondFelonaturelonValuelons.map {
+      caselon (uselonrId, reloncords) =>
+        // sort felonaturelons by FelonaturelonNamelon for delontelonrministic ordelonr (elonsp during telonsting)
+        val felonaturelons = reloncords.toSelonq.sortBy(_._1.valuelon).flatMap {
+          caselon (namelon, outelondgelons, inelondgelons) =>
+            // crelonatelon out velonrtelonx felonaturelons
+            val outFelonaturelons = if (outelondgelons > 0) {
+              val outTss = initializelonTSS(outelondgelons)
               List(
-                VertexFeature(
-                  name = name,
-                  outgoing = true,
+                VelonrtelonxFelonaturelon(
+                  namelon = namelon,
+                  outgoing = truelon,
                   tss = outTss
                 ))
-            } else Nil
+            } elonlselon Nil
 
-            // create in vertex features
-            val inFeatures = if (inEdges > 0) {
-              val inTss = initializeTSS(inEdges)
+            // crelonatelon in velonrtelonx felonaturelons
+            val inFelonaturelons = if (inelondgelons > 0) {
+              val inTss = initializelonTSS(inelondgelons)
               List(
-                VertexFeature(
-                  name = name,
-                  outgoing = false,
+                VelonrtelonxFelonaturelon(
+                  namelon = namelon,
+                  outgoing = falselon,
                   tss = inTss
                 ))
-            } else Nil
+            } elonlselon Nil
 
-            outFeatures ++ inFeatures
+            outFelonaturelons ++ inFelonaturelons
         }
-        Vertex(userId = userId, features = features)
+        Velonrtelonx(uselonrId = uselonrId, felonaturelons = felonaturelons)
     }
   }
 
   /**
-   * Create edge feature from InteractionGraphRawInput graph (src, dst, feature name, age, featureValue)
-   * We will exclude all non-directional features (eg num_create_tweets) from all edge aggregates
+   * Crelonatelon elondgelon felonaturelon from IntelonractionGraphRawInput graph (src, dst, felonaturelon namelon, agelon, felonaturelonValuelon)
+   * Welon will elonxcludelon all non-direlonctional felonaturelons (elong num_crelonatelon_twelonelonts) from all elondgelon aggrelongatelons
    */
-  def getEdgeFeature(
-    input: SCollection[InteractionGraphRawInput]
-  ): SCollection[Edge] = {
+  delonf gelontelondgelonFelonaturelon(
+    input: SCollelonction[IntelonractionGraphRawInput]
+  ): SCollelonction[elondgelon] = {
     input
-      .withName("filter non-directional features")
+      .withNamelon("filtelonr non-direlonctional felonaturelons")
       .flatMap { input =>
-        if (input.dst != DUMMY_USER_ID) {
-          ScioMetrics.counter("getEdgeFeature", s"directional feature ${input.name.name}").inc()
-          Some(((input.src, input.dst), (input.name, input.age, input.featureValue)))
-        } else {
-          ScioMetrics.counter("getEdgeFeature", s"non-directional feature ${input.name.name}").inc()
-          None
+        if (input.dst != DUMMY_USelonR_ID) {
+          ScioMelontrics.countelonr("gelontelondgelonFelonaturelon", s"direlonctional felonaturelon ${input.namelon.namelon}").inc()
+          Somelon(((input.src, input.dst), (input.namelon, input.agelon, input.felonaturelonValuelon)))
+        } elonlselon {
+          ScioMelontrics.countelonr("gelontelondgelonFelonaturelon", s"non-direlonctional felonaturelon ${input.namelon.namelon}").inc()
+          Nonelon
         }
       }
-      .withName("group features by pairs")
-      .groupByKey
+      .withNamelon("group felonaturelons by pairs")
+      .groupByKelony
       .map {
-        case ((src, dst), records) =>
-          // sort features by FeatureName for deterministic order (esp during testing)
-          val features = records.toSeq.sortBy(_._1.value).map {
-            case (name, age, featureValue) =>
-              val tss = initializeTSS(featureValue, age)
-              EdgeFeature(
-                name = name,
+        caselon ((src, dst), reloncords) =>
+          // sort felonaturelons by FelonaturelonNamelon for delontelonrministic ordelonr (elonsp during telonsting)
+          val felonaturelons = reloncords.toSelonq.sortBy(_._1.valuelon).map {
+            caselon (namelon, agelon, felonaturelonValuelon) =>
+              val tss = initializelonTSS(felonaturelonValuelon, agelon)
+              elondgelonFelonaturelon(
+                namelon = namelon,
                 tss = tss
               )
           }
-          Edge(
-            sourceId = src,
-            destinationId = dst,
-            weight = Some(0.0),
-            features = features.toSeq
+          elondgelon(
+            sourcelonId = src,
+            delonstinationId = dst,
+            welonight = Somelon(0.0),
+            felonaturelons = felonaturelons.toSelonq
           )
       }
   }
 
-  // For same user id, combine different vertex feature records into one record
-  // The input will assume for each (userId, featureName, direction), there will be only one record
-  def combineVertexFeatures(
-    vertex: SCollection[Vertex],
-  ): SCollection[Vertex] = {
-    vertex
-      .groupBy { v: Vertex =>
-        v.userId
+  // For samelon uselonr id, combinelon diffelonrelonnt velonrtelonx felonaturelon reloncords into onelon reloncord
+  // Thelon input will assumelon for elonach (uselonrId, felonaturelonNamelon, direlonction), thelonrelon will belon only onelon reloncord
+  delonf combinelonVelonrtelonxFelonaturelons(
+    velonrtelonx: SCollelonction[Velonrtelonx],
+  ): SCollelonction[Velonrtelonx] = {
+    velonrtelonx
+      .groupBy { v: Velonrtelonx =>
+        v.uselonrId
       }
       .map {
-        case (userId, vertexes) =>
-          val combiner = vertexes.foldLeft(VertexFeatureCombiner(userId)) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex)
+        caselon (uselonrId, velonrtelonxelons) =>
+          val combinelonr = velonrtelonxelons.foldLelonft(VelonrtelonxFelonaturelonCombinelonr(uselonrId)) {
+            caselon (combinelonr, velonrtelonx) =>
+              combinelonr.addFelonaturelon(velonrtelonx)
           }
-          combiner.getCombinedVertex(0)
+          combinelonr.gelontCombinelondVelonrtelonx(0)
       }
 
   }
 
-  def combineEdgeFeatures(
-    edge: SCollection[Edge]
-  ): SCollection[Edge] = {
-    edge
-      .groupBy { e =>
-        (e.sourceId, e.destinationId)
+  delonf combinelonelondgelonFelonaturelons(
+    elondgelon: SCollelonction[elondgelon]
+  ): SCollelonction[elondgelon] = {
+    elondgelon
+      .groupBy { elon =>
+        (elon.sourcelonId, elon.delonstinationId)
       }
-      .withName("combining edge features for each (src, dst)")
+      .withNamelon("combining elondgelon felonaturelons for elonach (src, dst)")
       .map {
-        case ((src, dst), edges) =>
-          val combiner = edges.foldLeft(EdgeFeatureCombiner(src, dst)) {
-            case (combiner, edge) =>
-              combiner.addFeature(edge)
+        caselon ((src, dst), elondgelons) =>
+          val combinelonr = elondgelons.foldLelonft(elondgelonFelonaturelonCombinelonr(src, dst)) {
+            caselon (combinelonr, elondgelon) =>
+              combinelonr.addFelonaturelon(elondgelon)
           }
-          combiner.getCombinedEdge(0)
+          combinelonr.gelontCombinelondelondgelon(0)
       }
   }
 
-  def combineVertexFeaturesWithDecay(
-    history: SCollection[Vertex],
-    daily: SCollection[Vertex],
-    historyWeight: Double,
-    dailyWeight: Double
-  ): SCollection[Vertex] = {
+  delonf combinelonVelonrtelonxFelonaturelonsWithDeloncay(
+    history: SCollelonction[Velonrtelonx],
+    daily: SCollelonction[Velonrtelonx],
+    historyWelonight: Doublelon,
+    dailyWelonight: Doublelon
+  ): SCollelonction[Velonrtelonx] = {
 
     history
-      .keyBy(_.userId)
-      .cogroup(daily.keyBy(_.userId)).map {
-        case (userId, (h, d)) =>
-          // Adding history iterators
-          val historyCombiner = h.toList.foldLeft(VertexFeatureCombiner(userId)) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex, historyWeight, 0)
+      .kelonyBy(_.uselonrId)
+      .cogroup(daily.kelonyBy(_.uselonrId)).map {
+        caselon (uselonrId, (h, d)) =>
+          // Adding history itelonrators
+          val historyCombinelonr = h.toList.foldLelonft(VelonrtelonxFelonaturelonCombinelonr(uselonrId)) {
+            caselon (combinelonr, velonrtelonx) =>
+              combinelonr.addFelonaturelon(velonrtelonx, historyWelonight, 0)
           }
-          // Adding daily iterators
-          val finalCombiner = d.toList.foldLeft(historyCombiner) {
-            case (combiner, vertex) =>
-              combiner.addFeature(vertex, dailyWeight, 1)
+          // Adding daily itelonrators
+          val finalCombinelonr = d.toList.foldLelonft(historyCombinelonr) {
+            caselon (combinelonr, velonrtelonx) =>
+              combinelonr.addFelonaturelon(velonrtelonx, dailyWelonight, 1)
           }
 
-          finalCombiner.getCombinedVertex(
+          finalCombinelonr.gelontCombinelondVelonrtelonx(
             2
-          ) // 2 means totally we have 2 days(yesterday and today) data to combine together
+          ) // 2 melonans totally welon havelon 2 days(yelonstelonrday and today) data to combinelon togelonthelonr
       }
   }
 
-  def combineEdgeFeaturesWithDecay(
-    history: SCollection[Edge],
-    daily: SCollection[Edge],
-    historyWeight: Double,
-    dailyWeight: Double
-  ): SCollection[Edge] = {
+  delonf combinelonelondgelonFelonaturelonsWithDeloncay(
+    history: SCollelonction[elondgelon],
+    daily: SCollelonction[elondgelon],
+    historyWelonight: Doublelon,
+    dailyWelonight: Doublelon
+  ): SCollelonction[elondgelon] = {
 
     history
-      .keyBy { e =>
-        (e.sourceId, e.destinationId)
+      .kelonyBy { elon =>
+        (elon.sourcelonId, elon.delonstinationId)
       }
-      .withName("combine history and daily edges with decay")
-      .cogroup(daily.keyBy { e =>
-        (e.sourceId, e.destinationId)
+      .withNamelon("combinelon history and daily elondgelons with deloncay")
+      .cogroup(daily.kelonyBy { elon =>
+        (elon.sourcelonId, elon.delonstinationId)
       }).map {
-        case ((src, dst), (h, d)) =>
-          //val combiner = EdgeFeatureCombiner(src, dst)
-          // Adding history iterators
+        caselon ((src, dst), (h, d)) =>
+          //val combinelonr = elondgelonFelonaturelonCombinelonr(src, dst)
+          // Adding history itelonrators
 
-          val historyCombiner = h.toList.foldLeft(EdgeFeatureCombiner(src, dst)) {
-            case (combiner, edge) =>
-              combiner.addFeature(edge, historyWeight, 0)
+          val historyCombinelonr = h.toList.foldLelonft(elondgelonFelonaturelonCombinelonr(src, dst)) {
+            caselon (combinelonr, elondgelon) =>
+              combinelonr.addFelonaturelon(elondgelon, historyWelonight, 0)
           }
 
-          val finalCombiner = d.toList.foldLeft(historyCombiner) {
-            case (combiner, edge) =>
-              combiner.addFeature(edge, dailyWeight, 1)
+          val finalCombinelonr = d.toList.foldLelonft(historyCombinelonr) {
+            caselon (combinelonr, elondgelon) =>
+              combinelonr.addFelonaturelon(elondgelon, dailyWelonight, 1)
           }
 
-          finalCombiner.getCombinedEdge(
+          finalCombinelonr.gelontCombinelondelondgelon(
             2
-          ) // 2 means totally we have 2 days(yesterday and today) data to combine together
+          ) // 2 melonans totally welon havelon 2 days(yelonstelonrday and today) data to combinelon togelonthelonr
 
       }
   }
 
   /**
-   * Create features from following graph (src, dst, age, featureValue)
-   * Note that we will filter out vertex features represented as edges from the edge output.
+   * Crelonatelon felonaturelons from following graph (src, dst, agelon, felonaturelonValuelon)
+   * Notelon that welon will filtelonr out velonrtelonx felonaturelons relonprelonselonntelond as elondgelons from thelon elondgelon output.
    */
-  def getFeatures(
-    input: SCollection[InteractionGraphRawInput]
-  ): (SCollection[Vertex], SCollection[Edge]) = {
-    (getVertexFeature(input), getEdgeFeature(input))
+  delonf gelontFelonaturelons(
+    input: SCollelonction[IntelonractionGraphRawInput]
+  ): (SCollelonction[Velonrtelonx], SCollelonction[elondgelon]) = {
+    (gelontVelonrtelonxFelonaturelon(input), gelontelondgelonFelonaturelon(input))
   }
 
-  // remove the edge features that from flock, address book or sms as we will refresh them on a daily basis
-  def removeStatusFeatures(e: Edge): Seq[Edge] = {
-    val updatedFeatureList = e.features.filter { e =>
-      !STATUS_FEATURE_LIST.contains(e.name)
+  // relonmovelon thelon elondgelon felonaturelons that from flock, addrelonss book or sms as welon will relonfrelonsh thelonm on a daily basis
+  delonf relonmovelonStatusFelonaturelons(elon: elondgelon): Selonq[elondgelon] = {
+    val updatelondFelonaturelonList = elon.felonaturelons.filtelonr { elon =>
+      !STATUS_FelonATURelon_LIST.contains(elon.namelon)
     }
-    if (updatedFeatureList.size > 0) {
-      val edge = Edge(
-        sourceId = e.sourceId,
-        destinationId = e.destinationId,
-        weight = e.weight,
-        features = updatedFeatureList
+    if (updatelondFelonaturelonList.sizelon > 0) {
+      val elondgelon = elondgelon(
+        sourcelonId = elon.sourcelonId,
+        delonstinationId = elon.delonstinationId,
+        welonight = elon.welonight,
+        felonaturelons = updatelondFelonaturelonList
       )
-      Seq(edge)
-    } else
+      Selonq(elondgelon)
+    } elonlselon
       Nil
   }
 
-  // check if the edge feature has features other than dwell time feature
-  def edgeWithFeatureOtherThanDwellTime(e: Edge): Boolean = {
-    e.features.exists { f =>
-      !DWELL_TIME_FEATURE_LIST.contains(f.name)
+  // chelonck if thelon elondgelon felonaturelon has felonaturelons othelonr than dwelonll timelon felonaturelon
+  delonf elondgelonWithFelonaturelonOthelonrThanDwelonllTimelon(elon: elondgelon): Boolelonan = {
+    elon.felonaturelons.elonxists { f =>
+      !DWelonLL_TIMelon_FelonATURelon_LIST.contains(f.namelon)
     }
   }
 }

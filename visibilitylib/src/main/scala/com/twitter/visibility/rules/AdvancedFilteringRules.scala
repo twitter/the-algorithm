@@ -1,71 +1,71 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.gizmoduck.thriftscala.MentionFilter.Following
-import com.twitter.visibility.features.ViewerMentionFilter
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.Unspecified
+import com.twittelonr.gizmoduck.thriftscala.MelonntionFiltelonr.Following
+import com.twittelonr.visibility.felonaturelons.VielonwelonrMelonntionFiltelonr
+import com.twittelonr.visibility.rulelons.Condition._
+import com.twittelonr.visibility.rulelons.Relonason.Unspeloncifielond
 
-object NoConfirmedEmailRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+objelonct NoConfirmelondelonmailRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersNoConfirmedEmail,
-        Not(AuthorHasConfirmedEmail)
+        NonAuthorVielonwelonr,
+        Not(VielonwelonrDoelonsFollowAuthor),
+        VielonwelonrFiltelonrsNoConfirmelondelonmail,
+        Not(AuthorHasConfirmelondelonmail)
       )
     )
 
-object NoConfirmedPhoneRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+objelonct NoConfirmelondPhonelonRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersNoConfirmedPhone,
-        Not(AuthorHasVerifiedPhone)
+        NonAuthorVielonwelonr,
+        Not(VielonwelonrDoelonsFollowAuthor),
+        VielonwelonrFiltelonrsNoConfirmelondPhonelon,
+        Not(AuthorHasVelonrifielondPhonelon)
       )
     )
 
-object NoDefaultProfileImageRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+objelonct NoDelonfaultProfilelonImagelonRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersDefaultProfileImage,
-        AuthorHasDefaultProfileImage
+        NonAuthorVielonwelonr,
+        Not(VielonwelonrDoelonsFollowAuthor),
+        VielonwelonrFiltelonrsDelonfaultProfilelonImagelon,
+        AuthorHasDelonfaultProfilelonImagelon
       )
     )
 
-object NoNewUsersRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+objelonct NoNelonwUselonrsRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        AuthorIsNewAccount
+        NonAuthorVielonwelonr,
+        Not(VielonwelonrDoelonsFollowAuthor),
+        AuthorIsNelonwAccount
       )
     )
 
-object NoNotFollowedByRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+objelonct NoNotFollowelondByRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        ViewerFiltersNotFollowedBy,
-        Not(AuthorDoesFollowViewer)
+        NonAuthorVielonwelonr,
+        Not(VielonwelonrDoelonsFollowAuthor),
+        VielonwelonrFiltelonrsNotFollowelondBy,
+        Not(AuthorDoelonsFollowVielonwelonr)
       )
     )
 
-object OnlyPeopleIFollowRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
+objelonct OnlyPelonoplelonIFollowRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
       And(
-        NonAuthorViewer,
-        Not(ViewerDoesFollowAuthor),
-        Equals(ViewerMentionFilter, Following),
-        Not(NotificationIsOnCommunityTweet)
+        NonAuthorVielonwelonr,
+        Not(VielonwelonrDoelonsFollowAuthor),
+        elonquals(VielonwelonrMelonntionFiltelonr, Following),
+        Not(NotificationIsOnCommunityTwelonelont)
       )
     )

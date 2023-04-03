@@ -1,114 +1,114 @@
-package com.twitter.ann.service.loadtest
+packagelon com.twittelonr.ann.selonrvicelon.loadtelonst
 
-import com.google.common.annotations.VisibleForTesting
-import com.twitter.ann.common.Distance
-import com.twitter.ann.common.Queryable
-import com.twitter.ann.common.RuntimeParams
-import com.twitter.concurrent.AsyncMeter
-import com.twitter.concurrent.AsyncStream
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.logging.Logger
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Stopwatch
-import com.twitter.util.Timer
-import com.twitter.util.Try
-import java.util.concurrent.atomic.AtomicInteger
+import com.googlelon.common.annotations.VisiblelonForTelonsting
+import com.twittelonr.ann.common.Distancelon
+import com.twittelonr.ann.common.Quelonryablelon
+import com.twittelonr.ann.common.RuntimelonParams
+import com.twittelonr.concurrelonnt.AsyncMelontelonr
+import com.twittelonr.concurrelonnt.AsyncStrelonam
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Stopwatch
+import com.twittelonr.util.Timelonr
+import com.twittelonr.util.Try
+import java.util.concurrelonnt.atomic.AtomicIntelongelonr
 
-object QueryTimeConfiguration {
-  val ResultHeader =
-    "params\tnumNeighbors\trecall@1\trecall@10\trecall\tavgLatencyMicros\tp50LatencyMicros\tp90LatencyMicros\tp99LatencyMicros\tavgRPS"
+objelonct QuelonryTimelonConfiguration {
+  val RelonsultHelonadelonr =
+    "params\tnumNelonighbors\treloncall@1\treloncall@10\treloncall\tavgLatelonncyMicros\tp50LatelonncyMicros\tp90LatelonncyMicros\tp99LatelonncyMicros\tavgRPS"
 }
 
-case class QueryTimeConfiguration[T, P <: RuntimeParams](
-  recorder: LoadTestQueryRecorder[T],
+caselon class QuelonryTimelonConfiguration[T, P <: RuntimelonParams](
+  reloncordelonr: LoadTelonstQuelonryReloncordelonr[T],
   param: P,
-  numberOfNeighbors: Int,
-  private val results: InMemoryLoadTestQueryRecorder[T]) {
-  override def toString: String =
-    s"QueryTimeConfiguration(param = $param, numberOfNeighbors = $numberOfNeighbors)"
+  numbelonrOfNelonighbors: Int,
+  privatelon val relonsults: InMelonmoryLoadTelonstQuelonryReloncordelonr[T]) {
+  ovelonrridelon delonf toString: String =
+    s"QuelonryTimelonConfiguration(param = $param, numbelonrOfNelonighbors = $numbelonrOfNelonighbors)"
 
-  def printResults: String = {
-    val snapshot = results.computeSnapshot()
-    s"$param\t$numberOfNeighbors\t${results.top1Recall}\t${results.top10Recall}\t${results.recall}\t${snapshot.avgQueryLatencyMicros}\t${snapshot.p50QueryLatencyMicros}\t${snapshot.p90QueryLatencyMicros}\t${snapshot.p99QueryLatencyMicros}\t${results.avgRPS}"
+  delonf printRelonsults: String = {
+    val snapshot = relonsults.computelonSnapshot()
+    s"$param\t$numbelonrOfNelonighbors\t${relonsults.top1Reloncall}\t${relonsults.top10Reloncall}\t${relonsults.reloncall}\t${snapshot.avgQuelonryLatelonncyMicros}\t${snapshot.p50QuelonryLatelonncyMicros}\t${snapshot.p90QuelonryLatelonncyMicros}\t${snapshot.p99QuelonryLatelonncyMicros}\t${relonsults.avgRPS}"
   }
 }
 
 /**
- * Basic worker for ANN benchmark, send query with configured QPS and record results
+ * Basic workelonr for ANN belonnchmark, selonnd quelonry with configurelond QPS and reloncord relonsults
  */
-class AnnLoadTestWorker(
-  timer: Timer = DefaultTimer) {
-  private val logger = Logger()
+class AnnLoadTelonstWorkelonr(
+  timelonr: Timelonr = DelonfaultTimelonr) {
+  privatelon val loggelonr = Loggelonr()
 
   /**
-   * @param queries List of tuple of query embedding and corresponding list of truth set of ids associated with the embedding
-   * @param qps the maximum number of request per second to send to the queryable. Note that if you
-   *            do not set the concurrency level high enough you may not be able to achieve this.
-   * @param duration         how long to perform the load test.
-   * @param configuration    Query configuration encapsulating runtime params and recorder.
-   * @param concurrencyLevel The maximum number of concurrent requests to the queryable at a time.
-   *                         Note that you may not be able to achieve this number of concurrent
-   *                         requests if you do not have the QPS set high enough.
+   * @param quelonrielons List of tuplelon of quelonry elonmbelondding and correlonsponding list of truth selont of ids associatelond with thelon elonmbelondding
+   * @param qps thelon maximum numbelonr of relonquelonst pelonr seloncond to selonnd to thelon quelonryablelon. Notelon that if you
+   *            do not selont thelon concurrelonncy lelonvelonl high elonnough you may not belon ablelon to achielonvelon this.
+   * @param duration         how long to pelonrform thelon load telonst.
+   * @param configuration    Quelonry configuration elonncapsulating runtimelon params and reloncordelonr.
+   * @param concurrelonncyLelonvelonl Thelon maximum numbelonr of concurrelonnt relonquelonsts to thelon quelonryablelon at a timelon.
+   *                         Notelon that you may not belon ablelon to achielonvelon this numbelonr of concurrelonnt
+   *                         relonquelonsts if you do not havelon thelon QPS selont high elonnough.
    *
-   * @return a Future that completes when the load test is over. It contains the number of requests
-   *         sent.
+   * @relonturn a Futurelon that complelontelons whelonn thelon load telonst is ovelonr. It contains thelon numbelonr of relonquelonsts
+   *         selonnt.
    */
-  def runWithQps[T, P <: RuntimeParams, D <: Distance[D]](
-    queryable: Queryable[T, P, D],
-    queries: Seq[Query[T]],
+  delonf runWithQps[T, P <: RuntimelonParams, D <: Distancelon[D]](
+    quelonryablelon: Quelonryablelon[T, P, D],
+    quelonrielons: Selonq[Quelonry[T]],
     qps: Int,
     duration: Duration,
-    configuration: QueryTimeConfiguration[T, P],
-    concurrencyLevel: Int
-  ): Future[Int] = {
-    val elapsed = Stopwatch.start()
-    val atomicInteger = new AtomicInteger(0)
-    val fullStream = Stream.continually {
-      if (elapsed() <= duration) {
-        logger.ifDebug(s"running with config: $configuration")
-        Some(atomicInteger.getAndIncrement() % queries.size)
-      } else {
-        logger.ifDebug(s"stopping with config: $configuration")
-        None
+    configuration: QuelonryTimelonConfiguration[T, P],
+    concurrelonncyLelonvelonl: Int
+  ): Futurelon[Int] = {
+    val elonlapselond = Stopwatch.start()
+    val atomicIntelongelonr = nelonw AtomicIntelongelonr(0)
+    val fullStrelonam = Strelonam.continually {
+      if (elonlapselond() <= duration) {
+        loggelonr.ifDelonbug(s"running with config: $configuration")
+        Somelon(atomicIntelongelonr.gelontAndIncrelonmelonnt() % quelonrielons.sizelon)
+      } elonlselon {
+        loggelonr.ifDelonbug(s"stopping with config: $configuration")
+        Nonelon
       }
     }
-    val limitedStream = fullStream.takeWhile(_.isDefined).flatten
-    // at most we will have concurrencyLevel concurrent requests. So we should never have more than
-    // concurrency level waiters.
-    val asyncMeter = AsyncMeter.perSecond(qps, concurrencyLevel)(timer)
+    val limitelondStrelonam = fullStrelonam.takelonWhilelon(_.isDelonfinelond).flattelonn
+    // at most welon will havelon concurrelonncyLelonvelonl concurrelonnt relonquelonsts. So welon should nelonvelonr havelon morelon than
+    // concurrelonncy lelonvelonl waitelonrs.
+    val asyncMelontelonr = AsyncMelontelonr.pelonrSeloncond(qps, concurrelonncyLelonvelonl)(timelonr)
 
-    Future.Unit.before {
-      AsyncStream
-        .fromSeq(limitedStream).mapConcurrent(concurrencyLevel) { index =>
-          asyncMeter.await(1).flatMap { _ =>
-            performQuery(configuration, queryable, queries(index))
+    Futurelon.Unit.belonforelon {
+      AsyncStrelonam
+        .fromSelonq(limitelondStrelonam).mapConcurrelonnt(concurrelonncyLelonvelonl) { indelonx =>
+          asyncMelontelonr.await(1).flatMap { _ =>
+            pelonrformQuelonry(configuration, quelonryablelon, quelonrielons(indelonx))
           }
-        }.size
+        }.sizelon
     }
   }
 
-  @VisibleForTesting
-  private[loadtest] def performQuery[T, P <: RuntimeParams, D <: Distance[D]](
-    configuration: QueryTimeConfiguration[T, P],
-    queryable: Queryable[T, P, D],
-    query: Query[T]
-  ): Future[Try[Unit]] = {
-    val elapsed = Stopwatch.start()
-    queryable
-      .query(query.embedding, configuration.numberOfNeighbors, configuration.param)
-      .onSuccess { res: List[T] =>
-        // underneath LoadTestRecorder will record results for load test
-        // knnMap should be truncated to be same size as query result
-        configuration.recorder.recordQueryResult(
-          query.trueNeighbours,
-          res,
-          elapsed.apply()
+  @VisiblelonForTelonsting
+  privatelon[loadtelonst] delonf pelonrformQuelonry[T, P <: RuntimelonParams, D <: Distancelon[D]](
+    configuration: QuelonryTimelonConfiguration[T, P],
+    quelonryablelon: Quelonryablelon[T, P, D],
+    quelonry: Quelonry[T]
+  ): Futurelon[Try[Unit]] = {
+    val elonlapselond = Stopwatch.start()
+    quelonryablelon
+      .quelonry(quelonry.elonmbelondding, configuration.numbelonrOfNelonighbors, configuration.param)
+      .onSuccelonss { relons: List[T] =>
+        // undelonrnelonath LoadTelonstReloncordelonr will reloncord relonsults for load telonst
+        // knnMap should belon truncatelond to belon samelon sizelon as quelonry relonsult
+        configuration.reloncordelonr.reloncordQuelonryRelonsult(
+          quelonry.truelonNelonighbours,
+          relons,
+          elonlapselond.apply()
         )
-        logger.ifDebug(s"Successful query for $query")
+        loggelonr.ifDelonbug(s"Succelonssful quelonry for $quelonry")
       }
-      .onFailure { e =>
-        logger.error(s"Failed query for $query: " + e)
+      .onFailurelon { elon =>
+        loggelonr.elonrror(s"Failelond quelonry for $quelonry: " + elon)
       }
       .unit
       .liftToTry

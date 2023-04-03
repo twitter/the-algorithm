@@ -1,928 +1,928 @@
-package com.twitter.simclusters_v2.scalding
+packagelon com.twittelonr.simclustelonrs_v2.scalding
 
-import com.twitter.algebird.Max
-import com.twitter.algebird.Monoid
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.hermit.candidate.thriftscala.Candidate
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.logging.Logger
-import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
-import com.twitter.sbf.core.AlgorithmConfig
-import com.twitter.sbf.core.MHAlgorithm
-import com.twitter.sbf.core.PredictionStat
-import com.twitter.sbf.core.SparseBinaryMatrix
-import com.twitter.sbf.core.SparseRealMatrix
-import com.twitter.sbf.graph.Graph
-import com.twitter.scalding._
-import com.twitter.scalding.commons.source.VersionedKeyValSource
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.scalding_internal.source.lzo_scrooge.FixedPathLzoScrooge
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.usersource.snapshot.flat.UsersourceFlatScalaDataset
-import com.twitter.usersource.snapshot.flat.thriftscala.FlatUser
-import com.twitter.wtf.scalding.sims.thriftscala.SimilarUserPair
-import java.io.PrintWriter
-import java.text.DecimalFormat
+import com.twittelonr.algelonbird.Max
+import com.twittelonr.algelonbird.Monoid
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelon
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.pluck.sourcelon.cassowary.FollowingsCosinelonSimilaritielonsManhattanSourcelon
+import com.twittelonr.sbf.corelon.AlgorithmConfig
+import com.twittelonr.sbf.corelon.MHAlgorithm
+import com.twittelonr.sbf.corelon.PrelondictionStat
+import com.twittelonr.sbf.corelon.SparselonBinaryMatrix
+import com.twittelonr.sbf.corelon.SparselonRelonalMatrix
+import com.twittelonr.sbf.graph.Graph
+import com.twittelonr.scalding._
+import com.twittelonr.scalding.commons.sourcelon.VelonrsionelondKelonyValSourcelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.scalding_intelonrnal.sourcelon.lzo_scroogelon.FixelondPathLzoScroogelon
+import com.twittelonr.simclustelonrs_v2.scalding.common.TypelondRichPipelon._
+import com.twittelonr.uselonrsourcelon.snapshot.flat.UselonrsourcelonFlatScalaDataselont
+import com.twittelonr.uselonrsourcelon.snapshot.flat.thriftscala.FlatUselonr
+import com.twittelonr.wtf.scalding.sims.thriftscala.SimilarUselonrPair
+import java.io.PrintWritelonr
+import java.telonxt.DeloncimalFormat
 import java.util
-import org.apache.hadoop.conf.Configuration
-import org.apache.hadoop.fs.FileSystem
-import org.apache.hadoop.fs.Path
-import scala.collection.JavaConverters._
+import org.apachelon.hadoop.conf.Configuration
+import org.apachelon.hadoop.fs.FilelonSystelonm
+import org.apachelon.hadoop.fs.Path
+import scala.collelonction.JavaConvelonrtelonrs._
 
-case class TopUser(id: Long, activeFollowerCount: Int, screenName: String)
+caselon class TopUselonr(id: Long, activelonFollowelonrCount: Int, screlonelonnNamelon: String)
 
-case class TopUserWithMappedId(topUser: TopUser, mappedId: Int)
+caselon class TopUselonrWithMappelondId(topUselonr: TopUselonr, mappelondId: Int)
 
-case class AdjList(sourceId: Long, neighbors: List[(Long, Float)])
+caselon class AdjList(sourcelonId: Long, nelonighbors: List[(Long, Float)])
 
-object TopUsersSimilarityGraph {
-  val log = Logger()
+objelonct TopUselonrsSimilarityGraph {
+  val log = Loggelonr()
 
-  def topUsers(
-    userSourcePipe: TypedPipe[FlatUser],
-    minActiveFollowers: Int,
+  delonf topUselonrs(
+    uselonrSourcelonPipelon: TypelondPipelon[FlatUselonr],
+    minActivelonFollowelonrs: Int,
     topK: Int
-  ): TypedPipe[TopUser] = {
-    userSourcePipe
-      .collect {
-        case f: FlatUser
-            if f.activeFollowers.exists(_ >= minActiveFollowers)
-              && f.followers.isDefined && f.id.isDefined && f.screenName.isDefined
-              && !f.deactivated.contains(true) && !f.suspended.contains(true) =>
-          TopUser(f.id.get, f.activeFollowers.get.toInt, f.screenName.get)
+  ): TypelondPipelon[TopUselonr] = {
+    uselonrSourcelonPipelon
+      .collelonct {
+        caselon f: FlatUselonr
+            if f.activelonFollowelonrs.elonxists(_ >= minActivelonFollowelonrs)
+              && f.followelonrs.isDelonfinelond && f.id.isDelonfinelond && f.screlonelonnNamelon.isDelonfinelond
+              && !f.delonactivatelond.contains(truelon) && !f.suspelonndelond.contains(truelon) =>
+          TopUselonr(f.id.gelont, f.activelonFollowelonrs.gelont.toInt, f.screlonelonnNamelon.gelont)
       }
       .groupAll
-      .sortedReverseTake(topK)(Ordering.by(_.activeFollowerCount))
-      .values
-      .flatten
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_.activelonFollowelonrCount))
+      .valuelons
+      .flattelonn
   }
 
   /**
-   * This function returns the top most followed userIds truncated to topK
-   * Offers the same functionality as TopUsersSimilarityGraph.topUsers but more efficient
-   * as we donot store screennames while grouping and sorting the users
+   * This function relonturns thelon top most followelond uselonrIds truncatelond to topK
+   * Offelonrs thelon samelon functionality as TopUselonrsSimilarityGraph.topUselonrs but morelon elonfficielonnt
+   * as welon donot storelon screlonelonnnamelons whilelon grouping and sorting thelon uselonrs
    */
-  def topUserIds(
-    userSourcePipe: TypedPipe[FlatUser],
-    minActiveFollowers: Int,
+  delonf topUselonrIds(
+    uselonrSourcelonPipelon: TypelondPipelon[FlatUselonr],
+    minActivelonFollowelonrs: Int,
     topK: Int
-  ): TypedPipe[Long] = {
-    userSourcePipe
-      .collect {
-        case f: FlatUser
-            if f.activeFollowers.exists(_ >= minActiveFollowers)
-              && f.followers.isDefined && f.id.isDefined && f.screenName.isDefined
-              && !f.deactivated.contains(true) && !f.suspended.contains(true) =>
-          (f.id.get, f.activeFollowers.get)
+  ): TypelondPipelon[Long] = {
+    uselonrSourcelonPipelon
+      .collelonct {
+        caselon f: FlatUselonr
+            if f.activelonFollowelonrs.elonxists(_ >= minActivelonFollowelonrs)
+              && f.followelonrs.isDelonfinelond && f.id.isDelonfinelond && f.screlonelonnNamelon.isDelonfinelond
+              && !f.delonactivatelond.contains(truelon) && !f.suspelonndelond.contains(truelon) =>
+          (f.id.gelont, f.activelonFollowelonrs.gelont)
       }
       .groupAll
-      .sortedReverseTake(topK)(Ordering.by(_._2))
-      .values
-      .flatten
-      .keys
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_._2))
+      .valuelons
+      .flattelonn
+      .kelonys
   }
 
-  def topUsersWithMappedIds(
-    userSourcePipe: TypedPipe[FlatUser],
-    minActiveFollowers: Int
-  ): TypedPipe[TopUserWithMappedId] = {
-    userSourcePipe
-      .collect {
-        case f: FlatUser
-            if f.activeFollowers.exists(_ >= minActiveFollowers)
-              && f.followers.isDefined && f.id.isDefined && f.screenName.isDefined
-              && !f.deactivated.contains(true) && !f.suspended.contains(true) =>
-          TopUser(f.id.get, f.activeFollowers.get.toInt, f.screenName.get)
+  delonf topUselonrsWithMappelondIds(
+    uselonrSourcelonPipelon: TypelondPipelon[FlatUselonr],
+    minActivelonFollowelonrs: Int
+  ): TypelondPipelon[TopUselonrWithMappelondId] = {
+    uselonrSourcelonPipelon
+      .collelonct {
+        caselon f: FlatUselonr
+            if f.activelonFollowelonrs.elonxists(_ >= minActivelonFollowelonrs)
+              && f.followelonrs.isDelonfinelond && f.id.isDelonfinelond && f.screlonelonnNamelon.isDelonfinelond
+              && !f.delonactivatelond.contains(truelon) && !f.suspelonndelond.contains(truelon) =>
+          TopUselonr(f.id.gelont, f.activelonFollowelonrs.gelont.toInt, f.screlonelonnNamelon.gelont)
       }
       .groupAll
       .mapGroup {
-        case (_, topUserIter) =>
-          topUserIter.zipWithIndex.map {
-            case (topUser, id) =>
-              TopUserWithMappedId(topUser, id)
+        caselon (_, topUselonrItelonr) =>
+          topUselonrItelonr.zipWithIndelonx.map {
+            caselon (topUselonr, id) =>
+              TopUselonrWithMappelondId(topUselonr, id)
           }
       }
-      .values
+      .valuelons
   }
 
-  def topUsersWithMappedIdsTopK(
-    userSourcePipe: TypedPipe[FlatUser],
-    minActiveFollowers: Int,
+  delonf topUselonrsWithMappelondIdsTopK(
+    uselonrSourcelonPipelon: TypelondPipelon[FlatUselonr],
+    minActivelonFollowelonrs: Int,
     topK: Int
-  ): TypedPipe[TopUserWithMappedId] = {
-    userSourcePipe
-      .collect {
-        case f: FlatUser
-            if f.activeFollowers.exists(_ >= minActiveFollowers)
-              && f.followers.isDefined && f.id.isDefined && f.screenName.isDefined
-              && !f.deactivated.contains(true) && !f.suspended.contains(true) =>
-          TopUser(f.id.get, f.activeFollowers.get.toInt, f.screenName.get)
+  ): TypelondPipelon[TopUselonrWithMappelondId] = {
+    uselonrSourcelonPipelon
+      .collelonct {
+        caselon f: FlatUselonr
+            if f.activelonFollowelonrs.elonxists(_ >= minActivelonFollowelonrs)
+              && f.followelonrs.isDelonfinelond && f.id.isDelonfinelond && f.screlonelonnNamelon.isDelonfinelond
+              && !f.delonactivatelond.contains(truelon) && !f.suspelonndelond.contains(truelon) =>
+          TopUselonr(f.id.gelont, f.activelonFollowelonrs.gelont.toInt, f.screlonelonnNamelon.gelont)
       }
       .groupAll
-      .sortedReverseTake(topK)(Ordering.by(_.activeFollowerCount))
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_.activelonFollowelonrCount))
       .map {
-        case (_, topUserIter) =>
-          topUserIter.zipWithIndex.map {
-            case (topUser, id) =>
-              TopUserWithMappedId(topUser, id)
+        caselon (_, topUselonrItelonr) =>
+          topUselonrItelonr.zipWithIndelonx.map {
+            caselon (topUselonr, id) =>
+              TopUselonrWithMappelondId(topUselonr, id)
           }
       }
-      .flatten
+      .flattelonn
   }
 
   /**
-   * This function returns the top most followed and verified userIds truncated to topK
+   * This function relonturns thelon top most followelond and velonrifielond uselonrIds truncatelond to topK
    */
-  def vits(
-    userSourcePipe: TypedPipe[FlatUser],
-    minActiveFollowers: Int,
+  delonf vits(
+    uselonrSourcelonPipelon: TypelondPipelon[FlatUselonr],
+    minActivelonFollowelonrs: Int,
     topK: Int
-  ): TypedPipe[Long] = {
-    userSourcePipe
-      .collect {
-        case f: FlatUser
-            if f.verified.contains(true) && f.id.isDefined &&
-              f.screenName.isDefined && !f.deactivated.contains(true) && !f.suspended.contains(
-              true) &&
-              f.activeFollowers.exists(_ >= minActiveFollowers) =>
-          (f.id.get, f.activeFollowers.get)
+  ): TypelondPipelon[Long] = {
+    uselonrSourcelonPipelon
+      .collelonct {
+        caselon f: FlatUselonr
+            if f.velonrifielond.contains(truelon) && f.id.isDelonfinelond &&
+              f.screlonelonnNamelon.isDelonfinelond && !f.delonactivatelond.contains(truelon) && !f.suspelonndelond.contains(
+              truelon) &&
+              f.activelonFollowelonrs.elonxists(_ >= minActivelonFollowelonrs) =>
+          (f.id.gelont, f.activelonFollowelonrs.gelont)
       }
       .groupAll
-      .sortedReverseTake(topK)(Ordering.by(_._2))
-      .values
-      .flatten
-      .keys
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_._2))
+      .valuelons
+      .flattelonn
+      .kelonys
   }
 
-  def topUsersInMemory(
-    userSourcePipe: TypedPipe[FlatUser],
-    minActiveFollowers: Int,
+  delonf topUselonrsInMelonmory(
+    uselonrSourcelonPipelon: TypelondPipelon[FlatUselonr],
+    minActivelonFollowelonrs: Int,
     topK: Int
-  ): Execution[List[TopUserWithMappedId]] = {
-    log.info(s"Will fetch top $topK users with at least $minActiveFollowers many active followers")
-    topUsers(userSourcePipe, minActiveFollowers, topK).toIterableExecution
-      .map { idFollowersList =>
-        idFollowersList.toList.sortBy(_.id).zipWithIndex.map {
-          case (topuser, index) =>
-            TopUserWithMappedId(topuser, index)
+  ): elonxeloncution[List[TopUselonrWithMappelondId]] = {
+    log.info(s"Will felontch top $topK uselonrs with at lelonast $minActivelonFollowelonrs many activelon followelonrs")
+    topUselonrs(uselonrSourcelonPipelon, minActivelonFollowelonrs, topK).toItelonrablelonelonxeloncution
+      .map { idFollowelonrsList =>
+        idFollowelonrsList.toList.sortBy(_.id).zipWithIndelonx.map {
+          caselon (topuselonr, indelonx) =>
+            TopUselonrWithMappelondId(topuselonr, indelonx)
         }
       }
   }
 
-  def addSelfLoop(
-    input: TypedPipe[(Long, Map[Long, Float])],
-    maxToSelfLoopWeight: Float => Float
-  ): TypedPipe[(Long, Map[Long, Float])] = {
+  delonf addSelonlfLoop(
+    input: TypelondPipelon[(Long, Map[Long, Float])],
+    maxToSelonlfLoopWelonight: Float => Float
+  ): TypelondPipelon[(Long, Map[Long, Float])] = {
     input
       .map {
-        case (nodeId, neighborMap) if neighborMap.nonEmpty =>
-          val maxEntry = neighborMap.values.max
-          val selfLoopWeight = maxToSelfLoopWeight(maxEntry)
-          (nodeId, neighborMap ++ Map(nodeId -> selfLoopWeight))
-        case (nodeId, emptyMap) =>
-          (nodeId, emptyMap)
+        caselon (nodelonId, nelonighborMap) if nelonighborMap.nonelonmpty =>
+          val maxelonntry = nelonighborMap.valuelons.max
+          val selonlfLoopWelonight = maxToSelonlfLoopWelonight(maxelonntry)
+          (nodelonId, nelonighborMap ++ Map(nodelonId -> selonlfLoopWelonight))
+        caselon (nodelonId, elonmptyMap) =>
+          (nodelonId, elonmptyMap)
       }
   }
 
-  def makeGraph(
-    backfillPipe: TypedPipe[(Long, Map[Long, Float])],
-    dirToReadFromOrSaveTo: String
-  ): Execution[TypedPipe[(Long, Map[Long, Float])]] = {
-    backfillPipe
+  delonf makelonGraph(
+    backfillPipelon: TypelondPipelon[(Long, Map[Long, Float])],
+    dirToRelonadFromOrSavelonTo: String
+  ): elonxeloncution[TypelondPipelon[(Long, Map[Long, Float])]] = {
+    backfillPipelon
       .map {
-        case (nodeId, nbrMap) =>
-          val cands = nbrMap.toList.map { case (nId, wt) => Candidate(nId, wt) }
-          Candidates(nodeId, candidates = cands)
+        caselon (nodelonId, nbrMap) =>
+          val cands = nbrMap.toList.map { caselon (nId, wt) => Candidatelon(nId, wt) }
+          Candidatelons(nodelonId, candidatelons = cands)
       }
-      .make(new FixedPathLzoScrooge(dirToReadFromOrSaveTo, Candidates))
+      .makelon(nelonw FixelondPathLzoScroogelon(dirToRelonadFromOrSavelonTo, Candidatelons))
       .map { tp =>
         tp.map {
-          case Candidates(nodeId, cands) =>
-            (nodeId, cands.map { case Candidate(nId, wt, _) => (nId, wt.toFloat) }.toMap)
+          caselon Candidatelons(nodelonId, cands) =>
+            (nodelonId, cands.map { caselon Candidatelon(nId, wt, _) => (nId, wt.toFloat) }.toMap)
         }
       }
   }
 
-  def getSubgraphFromUserGroupedInput(
-    fullGraph: TypedPipe[Candidates],
-    usersToInclude: TypedPipe[Long],
-    maxNeighborsPerNode: Int,
-    degreeThresholdForStat: Int
+  delonf gelontSubgraphFromUselonrGroupelondInput(
+    fullGraph: TypelondPipelon[Candidatelons],
+    uselonrsToIncludelon: TypelondPipelon[Long],
+    maxNelonighborsPelonrNodelon: Int,
+    delongrelonelonThrelonsholdForStat: Int
   )(
-    implicit uniqId: UniqueID
-  ): TypedPipe[(Long, Map[Long, Float])] = {
-    val numUsersWithZeroEdges = Stat("num_users_with_zero_edges")
-    val numUsersWithSmallDegree = Stat("num_users_with_degree_lt_" + degreeThresholdForStat)
-    val numUsersWithEnoughDegree = Stat("num_users_with_degree_gte_" + degreeThresholdForStat)
+    implicit uniqId: UniquelonID
+  ): TypelondPipelon[(Long, Map[Long, Float])] = {
+    val numUselonrsWithZelonroelondgelons = Stat("num_uselonrs_with_zelonro_elondgelons")
+    val numUselonrsWithSmallDelongrelonelon = Stat("num_uselonrs_with_delongrelonelon_lt_" + delongrelonelonThrelonsholdForStat)
+    val numUselonrsWithelonnoughDelongrelonelon = Stat("num_uselonrs_with_delongrelonelon_gtelon_" + delongrelonelonThrelonsholdForStat)
 
     fullGraph
       .map { cands =>
         (
-          cands.userId,
-          // These candidates are already sorted, but leaving it in just in case the behavior changes upstream
-          cands.candidates
-            .map { c => (c.userId, c.score) }.sortBy(-_._2).take(maxNeighborsPerNode).toMap
+          cands.uselonrId,
+          // Thelonselon candidatelons arelon alrelonady sortelond, but lelonaving it in just in caselon thelon belonhavior changelons upstrelonam
+          cands.candidatelons
+            .map { c => (c.uselonrId, c.scorelon) }.sortBy(-_._2).takelon(maxNelonighborsPelonrNodelon).toMap
         )
       }
-      .rightJoin(usersToInclude.asKeys)
-      // uncomment for adhoc job
-      //.withReducers(110)
-      .mapValues(_._1) // discard the Unit
-      .toTypedPipe
-      .count("num_sims_records_from_top_users")
+      .rightJoin(uselonrsToIncludelon.asKelonys)
+      // uncommelonnt for adhoc job
+      //.withRelonducelonrs(110)
+      .mapValuelons(_._1) // discard thelon Unit
+      .toTypelondPipelon
+      .count("num_sims_reloncords_from_top_uselonrs")
       .flatMap {
-        case (nodeId, Some(neighborMap)) =>
-          neighborMap.flatMap {
-            case (neighborId, edgeWt) =>
+        caselon (nodelonId, Somelon(nelonighborMap)) =>
+          nelonighborMap.flatMap {
+            caselon (nelonighborId, elondgelonWt) =>
               List(
-                (nodeId, Map(neighborId -> Max(edgeWt.toFloat))),
-                (neighborId, Map(nodeId -> Max(edgeWt.toFloat)))
+                (nodelonId, Map(nelonighborId -> Max(elondgelonWt.toFloat))),
+                (nelonighborId, Map(nodelonId -> Max(elondgelonWt.toFloat)))
               )
           }
-        case (nodeId, None) => List((nodeId, Map.empty[Long, Max[Float]]))
+        caselon (nodelonId, Nonelon) => List((nodelonId, Map.elonmpty[Long, Max[Float]]))
       }
-      .sumByKey
-      // uncomment for adhoc job
-      //.withReducers(150)
-      .toTypedPipe
-      .mapValues(_.mapValues(_.get)) // get the max for each value in each map
-      .count("num_sims_records_after_symmetrization_before_keeping_only_top_users")
-      .join(usersToInclude.asKeys) // only keep records for top users
-      // uncomment for adhoc job
-      //.withReducers(100)
-      .mapValues(_._1)
-      .toTypedPipe
+      .sumByKelony
+      // uncommelonnt for adhoc job
+      //.withRelonducelonrs(150)
+      .toTypelondPipelon
+      .mapValuelons(_.mapValuelons(_.gelont)) // gelont thelon max for elonach valuelon in elonach map
+      .count("num_sims_reloncords_aftelonr_symmelontrization_belonforelon_kelonelonping_only_top_uselonrs")
+      .join(uselonrsToIncludelon.asKelonys) // only kelonelonp reloncords for top uselonrs
+      // uncommelonnt for adhoc job
+      //.withRelonducelonrs(100)
+      .mapValuelons(_._1)
+      .toTypelondPipelon
       .map {
-        case (nodeId, neighborsMap) =>
-          if (neighborsMap.nonEmpty) {
-            if (neighborsMap.size < degreeThresholdForStat) {
-              numUsersWithSmallDegree.inc()
-            } else {
-              numUsersWithEnoughDegree.inc()
+        caselon (nodelonId, nelonighborsMap) =>
+          if (nelonighborsMap.nonelonmpty) {
+            if (nelonighborsMap.sizelon < delongrelonelonThrelonsholdForStat) {
+              numUselonrsWithSmallDelongrelonelon.inc()
+            } elonlselon {
+              numUselonrsWithelonnoughDelongrelonelon.inc()
             }
-          } else {
-            numUsersWithZeroEdges.inc()
+          } elonlselon {
+            numUselonrsWithZelonroelondgelons.inc()
           }
-          (nodeId, neighborsMap)
+          (nodelonId, nelonighborsMap)
       }
-      .count("num_sims_records_after_symmetrization_only_top_users")
+      .count("num_sims_reloncords_aftelonr_symmelontrization_only_top_uselonrs")
   }
 
-  def getSubgraphFromUserGroupedInput(
-    fullGraph: TypedPipe[Candidates],
-    usersToInclude: Set[Long],
-    maxNeighborsPerNode: Int
+  delonf gelontSubgraphFromUselonrGroupelondInput(
+    fullGraph: TypelondPipelon[Candidatelons],
+    uselonrsToIncludelon: Selont[Long],
+    maxNelonighborsPelonrNodelon: Int
   )(
-    implicit uniqId: UniqueID
-  ): TypedPipe[(Long, Map[Long, Float])] = {
-    val numUsersWithZeroEdges = Stat("num_users_with_zero_edges")
-    val numUsersWithDegreeLessThan10 = Stat("num_users_with_degree_less_than_10")
+    implicit uniqId: UniquelonID
+  ): TypelondPipelon[(Long, Map[Long, Float])] = {
+    val numUselonrsWithZelonroelondgelons = Stat("num_uselonrs_with_zelonro_elondgelons")
+    val numUselonrsWithDelongrelonelonLelonssThan10 = Stat("num_uselonrs_with_delongrelonelon_lelonss_than_10")
 
-    val (intIdsToIncludeSorted: Array[Int], longIdsToIncludeSorted: Array[Long]) =
-      setToSortedArrays(usersToInclude)
-    log.info("Size of intArray " + intIdsToIncludeSorted.length)
-    log.info("Size of longArray " + longIdsToIncludeSorted.length)
+    val (intIdsToIncludelonSortelond: Array[Int], longIdsToIncludelonSortelond: Array[Long]) =
+      selontToSortelondArrays(uselonrsToIncludelon)
+    log.info("Sizelon of intArray " + intIdsToIncludelonSortelond.lelonngth)
+    log.info("Sizelon of longArray " + longIdsToIncludelonSortelond.lelonngth)
 
     fullGraph
-      .collect {
-        case candidates
+      .collelonct {
+        caselon candidatelons
             if isIdInIntOrLongArray(
-              candidates.userId,
-              intIdsToIncludeSorted,
-              longIdsToIncludeSorted) =>
-          val sourceId = candidates.userId
-          val toKeep = candidates.candidates.collect {
-            case neighbor
+              candidatelons.uselonrId,
+              intIdsToIncludelonSortelond,
+              longIdsToIncludelonSortelond) =>
+          val sourcelonId = candidatelons.uselonrId
+          val toKelonelonp = candidatelons.candidatelons.collelonct {
+            caselon nelonighbor
                 if isIdInIntOrLongArray(
-                  neighbor.userId,
-                  intIdsToIncludeSorted,
-                  longIdsToIncludeSorted) =>
-              (neighbor.userId, neighbor.score.toFloat)
+                  nelonighbor.uselonrId,
+                  intIdsToIncludelonSortelond,
+                  longIdsToIncludelonSortelond) =>
+              (nelonighbor.uselonrId, nelonighbor.scorelon.toFloat)
           }.toList
 
-          val toKeepLength = toKeep.size
-          if (toKeep.isEmpty) {
-            numUsersWithZeroEdges.inc()
-          } else if (toKeepLength < 10) {
-            numUsersWithDegreeLessThan10.inc()
+          val toKelonelonpLelonngth = toKelonelonp.sizelon
+          if (toKelonelonp.iselonmpty) {
+            numUselonrsWithZelonroelondgelons.inc()
+          } elonlselon if (toKelonelonpLelonngth < 10) {
+            numUselonrsWithDelongrelonelonLelonssThan10.inc()
           }
 
-          val knn = if (toKeepLength > maxNeighborsPerNode) {
-            toKeep.sortBy(_._2).takeRight(maxNeighborsPerNode)
-          } else toKeep
+          val knn = if (toKelonelonpLelonngth > maxNelonighborsPelonrNodelon) {
+            toKelonelonp.sortBy(_._2).takelonRight(maxNelonighborsPelonrNodelon)
+          } elonlselon toKelonelonp
 
           knn.flatMap {
-            case (nbrId, wt) =>
+            caselon (nbrId, wt) =>
               List(
-                (sourceId, Map(nbrId -> Max(wt))),
-                (nbrId, Map(sourceId -> Max(wt)))
+                (sourcelonId, Map(nbrId -> Max(wt))),
+                (nbrId, Map(sourcelonId -> Max(wt)))
               )
           }
       }
-      .flatten
-      .sumByKey
-      .toTypedPipe
-      .mapValues(_.mapValues(_.get)) // get the max for each value in each map
+      .flattelonn
+      .sumByKelony
+      .toTypelondPipelon
+      .mapValuelons(_.mapValuelons(_.gelont)) // gelont thelon max for elonach valuelon in elonach map
   }
 
-  def getInMemorySubgraphFromUserGroupedInput(
-    fullGraph: TypedPipe[Candidates],
-    usersToInclude: Set[Long],
-    maxNeighborsPerNode: Int
+  delonf gelontInMelonmorySubgraphFromUselonrGroupelondInput(
+    fullGraph: TypelondPipelon[Candidatelons],
+    uselonrsToIncludelon: Selont[Long],
+    maxNelonighborsPelonrNodelon: Int
   )(
-    implicit uniqId: UniqueID
-  ): Execution[Iterable[AdjList]] = {
-    getSubgraphFromUserGroupedInput(fullGraph, usersToInclude, maxNeighborsPerNode).map {
-      case (sourceId, weightedNeighbors) =>
+    implicit uniqId: UniquelonID
+  ): elonxeloncution[Itelonrablelon[AdjList]] = {
+    gelontSubgraphFromUselonrGroupelondInput(fullGraph, uselonrsToIncludelon, maxNelonighborsPelonrNodelon).map {
+      caselon (sourcelonId, welonightelondNelonighbors) =>
         AdjList(
-          sourceId,
-          weightedNeighbors.toList.sortBy(_._1)
+          sourcelonId,
+          welonightelondNelonighbors.toList.sortBy(_._1)
         )
-    }.toIterableExecution
+    }.toItelonrablelonelonxeloncution
   }
 
-  def isIdInIntOrLongArray(
+  delonf isIdInIntOrLongArray(
     id: Long,
-    intArraySorted: Array[Int],
-    longArraySorted: Array[Long]
-  ): Boolean = {
-    if (id < Integer.MAX_VALUE) {
-      util.Arrays.binarySearch(intArraySorted, id.toInt) >= 0
-    } else {
-      util.Arrays.binarySearch(longArraySorted, id.toLong) >= 0
+    intArraySortelond: Array[Int],
+    longArraySortelond: Array[Long]
+  ): Boolelonan = {
+    if (id < Intelongelonr.MAX_VALUelon) {
+      util.Arrays.binarySelonarch(intArraySortelond, id.toInt) >= 0
+    } elonlselon {
+      util.Arrays.binarySelonarch(longArraySortelond, id.toLong) >= 0
     }
   }
 
   /**
-   * Creates two sorted arrays out of a set, one with ints and one with longs.
-   * Sorted arrays are only slightly more expensive to search in, but empirically I've found
-   * that the MapReduce job runs more reliably using them than using Set directly.
+   * Crelonatelons two sortelond arrays out of a selont, onelon with ints and onelon with longs.
+   * Sortelond arrays arelon only slightly morelon elonxpelonnsivelon to selonarch in, but elonmpirically I'velon found
+   * that thelon MapRelonducelon job runs morelon relonliably using thelonm than using Selont direlonctly.
    *
-   * @param inSet
+   * @param inSelont
    *
-   * @return
+   * @relonturn
    */
-  def setToSortedArrays(inSet: Set[Long]): (Array[Int], Array[Long]) = {
-    val (intArrayUnconvertedSorted, longArraySorted) =
-      inSet.toArray.sorted.partition { l => l < Integer.MAX_VALUE }
-    (intArrayUnconvertedSorted.map(_.toInt), longArraySorted)
+  delonf selontToSortelondArrays(inSelont: Selont[Long]): (Array[Int], Array[Long]) = {
+    val (intArrayUnconvelonrtelondSortelond, longArraySortelond) =
+      inSelont.toArray.sortelond.partition { l => l < Intelongelonr.MAX_VALUelon }
+    (intArrayUnconvelonrtelondSortelond.map(_.toInt), longArraySortelond)
   }
 
-  def getInMemorySubgraph(
-    fullGraph: TypedPipe[SimilarUserPair],
-    usersToInclude: Set[Long],
-    maxNeighborsPerNode: Int
+  delonf gelontInMelonmorySubgraph(
+    fullGraph: TypelondPipelon[SimilarUselonrPair],
+    uselonrsToIncludelon: Selont[Long],
+    maxNelonighborsPelonrNodelon: Int
   )(
-    implicit uniqId: UniqueID
-  ): Execution[Iterable[AdjList]] = {
-    val numValidEdges = Stat("num_valid_edges")
-    val numInvalidEdges = Stat("num_invalid_edges")
+    implicit uniqId: UniquelonID
+  ): elonxeloncution[Itelonrablelon[AdjList]] = {
+    val numValidelondgelons = Stat("num_valid_elondgelons")
+    val numInvalidelondgelons = Stat("num_invalid_elondgelons")
 
-    val (intIdsToIncludeSorted: Array[Int], longIdsToIncludeSorted: Array[Long]) =
-      setToSortedArrays(usersToInclude)
-    log.info("Size of intArray " + intIdsToIncludeSorted.length)
-    log.info("Size of longArray " + longIdsToIncludeSorted.length)
+    val (intIdsToIncludelonSortelond: Array[Int], longIdsToIncludelonSortelond: Array[Long]) =
+      selontToSortelondArrays(uselonrsToIncludelon)
+    log.info("Sizelon of intArray " + intIdsToIncludelonSortelond.lelonngth)
+    log.info("Sizelon of longArray " + longIdsToIncludelonSortelond.lelonngth)
 
     fullGraph
-      .filter { edge =>
-        val res =
-          isIdInIntOrLongArray(edge.sourceId, intIdsToIncludeSorted, longIdsToIncludeSorted) &&
-            isIdInIntOrLongArray(edge.destinationId, intIdsToIncludeSorted, longIdsToIncludeSorted)
-        if (res) {
-          numValidEdges.inc()
-        } else {
-          numInvalidEdges.inc()
+      .filtelonr { elondgelon =>
+        val relons =
+          isIdInIntOrLongArray(elondgelon.sourcelonId, intIdsToIncludelonSortelond, longIdsToIncludelonSortelond) &&
+            isIdInIntOrLongArray(elondgelon.delonstinationId, intIdsToIncludelonSortelond, longIdsToIncludelonSortelond)
+        if (relons) {
+          numValidelondgelons.inc()
+        } elonlselon {
+          numInvalidelondgelons.inc()
         }
-        res
+        relons
       }
-      .map { edge => (edge.sourceId, (edge.destinationId, edge.cosineScore.toFloat)) }
+      .map { elondgelon => (elondgelon.sourcelonId, (elondgelon.delonstinationId, elondgelon.cosinelonScorelon.toFloat)) }
       .group
-      .sortedReverseTake(maxNeighborsPerNode)(Ordering.by(_._2))
-      .toTypedPipe
+      .sortelondRelonvelonrselonTakelon(maxNelonighborsPelonrNodelon)(Ordelonring.by(_._2))
+      .toTypelondPipelon
       .flatMap {
-        case (sourceId, weightedNeighbors) =>
-          weightedNeighbors.flatMap {
-            case (destId, wt) =>
+        caselon (sourcelonId, welonightelondNelonighbors) =>
+          welonightelondNelonighbors.flatMap {
+            caselon (delonstId, wt) =>
               /*
-          By default, a k-nearest neighbor graph need not be symmetric, since if u is in v's
-          k nearest neighbors, that doesn't guarantee that v is in u's.
-          This step adds edges in both directions, but having a Map ensures that each neighbor
-          only appears once and not twice. Using Max() operator from Algebird, we take the max
-          weight of (u, v) and (v, u) - it is expected that the two will be pretty much the same.
+          By delonfault, a k-nelonarelonst nelonighbor graph nelonelond not belon symmelontric, sincelon if u is in v's
+          k nelonarelonst nelonighbors, that doelonsn't guarantelonelon that v is in u's.
+          This stelonp adds elondgelons in both direlonctions, but having a Map elonnsurelons that elonach nelonighbor
+          only appelonars oncelon and not twicelon. Using Max() opelonrator from Algelonbird, welon takelon thelon max
+          welonight of (u, v) and (v, u) - it is elonxpelonctelond that thelon two will belon prelontty much thelon samelon.
 
-          Example illustrating how Map and Max work together:
+          elonxamplelon illustrating how Map and Max work togelonthelonr:
           Map(1 -> Max(2)) + Map(1 -> Max(3)) = Map(1 -> Max(3))
                */
               List(
-                (sourceId, Map(destId -> Max(wt))),
-                (destId, Map(sourceId -> Max(wt)))
+                (sourcelonId, Map(delonstId -> Max(wt))),
+                (delonstId, Map(sourcelonId -> Max(wt)))
               )
           }
       }
-      .sumByKey
+      .sumByKelony
       .map {
-        case (sourceId, weightedNeighbors) =>
+        caselon (sourcelonId, welonightelondNelonighbors) =>
           AdjList(
-            sourceId,
-            weightedNeighbors.toList.map { case (id, maxWt) => (id, maxWt.get) }.sortBy(_._1)
+            sourcelonId,
+            welonightelondNelonighbors.toList.map { caselon (id, maxWt) => (id, maxWt.gelont) }.sortBy(_._1)
           )
       }
-      .toIterableExecution
+      .toItelonrablelonelonxeloncution
   }
 
-  def convertIterableToGraph(
-    adjList: Iterable[AdjList],
-    verticesMapping: Map[Long, Int],
-    wtExponent: Float
+  delonf convelonrtItelonrablelonToGraph(
+    adjList: Itelonrablelon[AdjList],
+    velonrticelonsMapping: Map[Long, Int],
+    wtelonxponelonnt: Float
   ): Graph = {
-    val n = verticesMapping.size
-    val neighbors: Array[Array[Int]] = new Array[Array[Int]](n)
-    val wts: Array[Array[Float]] = new Array[Array[Float]](n)
+    val n = velonrticelonsMapping.sizelon
+    val nelonighbors: Array[Array[Int]] = nelonw Array[Array[Int]](n)
+    val wts: Array[Array[Float]] = nelonw Array[Array[Float]](n)
 
-    var numEdges = 0L
-    var numVertices = 0
+    var numelondgelons = 0L
+    var numVelonrticelons = 0
 
-    val iter = adjList.iterator
-    val verticesWithAtleastOneEdgeBuilder = Set.newBuilder[Long]
+    val itelonr = adjList.itelonrator
+    val velonrticelonsWithAtlelonastOnelonelondgelonBuildelonr = Selont.nelonwBuildelonr[Long]
 
-    while (iter.hasNext) {
-      val AdjList(originalId, wtedNeighbors) = iter.next()
-      val wtedNeighborsSize = wtedNeighbors.size
-      val newId = verticesMapping(originalId) // throw exception if originalId not in map
-      if (newId < 0 || newId >= n) {
-        throw new IllegalStateException(
-          s"$originalId has been mapped to $newId, which is outside" +
-            s"the expected range [0, " + (n - 1) + "]")
+    whilelon (itelonr.hasNelonxt) {
+      val AdjList(originalId, wtelondNelonighbors) = itelonr.nelonxt()
+      val wtelondNelonighborsSizelon = wtelondNelonighbors.sizelon
+      val nelonwId = velonrticelonsMapping(originalId) // throw elonxcelonption if originalId not in map
+      if (nelonwId < 0 || nelonwId >= n) {
+        throw nelonw IllelongalStatelonelonxcelonption(
+          s"$originalId has belonelonn mappelond to $nelonwId, which is outsidelon" +
+            s"thelon elonxpelonctelond rangelon [0, " + (n - 1) + "]")
       }
-      verticesWithAtleastOneEdgeBuilder += originalId
-      neighbors(newId) = new Array[Int](wtedNeighborsSize)
-      wts(newId) = new Array[Float](wtedNeighborsSize)
-      wtedNeighbors.zipWithIndex.foreach {
-        case ((nbrId, wt), index) =>
-          neighbors(newId)(index) = verticesMapping(nbrId)
-          wts(newId)(index) = wt
-          numEdges += 1
+      velonrticelonsWithAtlelonastOnelonelondgelonBuildelonr += originalId
+      nelonighbors(nelonwId) = nelonw Array[Int](wtelondNelonighborsSizelon)
+      wts(nelonwId) = nelonw Array[Float](wtelondNelonighborsSizelon)
+      wtelondNelonighbors.zipWithIndelonx.forelonach {
+        caselon ((nbrId, wt), indelonx) =>
+          nelonighbors(nelonwId)(indelonx) = velonrticelonsMapping(nbrId)
+          wts(nelonwId)(indelonx) = wt
+          numelondgelons += 1
       }
 
-      if (math.abs(wtExponent - 1.0) > 1e-5) {
-        var maxWt = Float.MinValue
-        for (index <- wts(newId).indices) {
-          wts(newId)(index) = math.pow(wts(newId)(index), wtExponent).toFloat
-          if (wts(newId)(index) > maxWt) {
-            maxWt = wts(newId)(index)
+      if (math.abs(wtelonxponelonnt - 1.0) > 1elon-5) {
+        var maxWt = Float.MinValuelon
+        for (indelonx <- wts(nelonwId).indicelons) {
+          wts(nelonwId)(indelonx) = math.pow(wts(nelonwId)(indelonx), wtelonxponelonnt).toFloat
+          if (wts(nelonwId)(indelonx) > maxWt) {
+            maxWt = wts(nelonwId)(indelonx)
           }
         }
       }
-      numVertices += 1
-      if (numVertices % 100000 == 0) {
-        log.info(s"Done with $numVertices many vertices.")
+      numVelonrticelons += 1
+      if (numVelonrticelons % 100000 == 0) {
+        log.info(s"Donelon with $numVelonrticelons many velonrticelons.")
       }
     }
 
-    val verticesWithAtleastOneEdge = verticesWithAtleastOneEdgeBuilder.result()
-    val verticesWithZeroEdges = verticesMapping.keySet.diff(verticesWithAtleastOneEdge)
+    val velonrticelonsWithAtlelonastOnelonelondgelon = velonrticelonsWithAtlelonastOnelonelondgelonBuildelonr.relonsult()
+    val velonrticelonsWithZelonroelondgelons = velonrticelonsMapping.kelonySelont.diff(velonrticelonsWithAtlelonastOnelonelondgelon)
 
-    verticesWithZeroEdges.foreach { originalId =>
-      neighbors(verticesMapping(originalId)) = new Array[Int](0)
-      wts(verticesMapping(originalId)) = new Array[Float](0)
+    velonrticelonsWithZelonroelondgelons.forelonach { originalId =>
+      nelonighbors(velonrticelonsMapping(originalId)) = nelonw Array[Int](0)
+      wts(velonrticelonsMapping(originalId)) = nelonw Array[Float](0)
     }
 
-    log.info("Number of vertices with zero edges " + verticesWithZeroEdges.size)
-    log.info("Number of edges " + numEdges)
-    if (verticesWithZeroEdges.nonEmpty) {
-      log.info("The vertices with zero edges: " + verticesWithZeroEdges.mkString(","))
+    log.info("Numbelonr of velonrticelons with zelonro elondgelons " + velonrticelonsWithZelonroelondgelons.sizelon)
+    log.info("Numbelonr of elondgelons " + numelondgelons)
+    if (velonrticelonsWithZelonroelondgelons.nonelonmpty) {
+      log.info("Thelon velonrticelons with zelonro elondgelons: " + velonrticelonsWithZelonroelondgelons.mkString(","))
     }
 
-    new Graph(n, numEdges / 2, neighbors, wts)
+    nelonw Graph(n, numelondgelons / 2, nelonighbors, wts)
   }
 
-  def run(
-    userSourcePipe: TypedPipe[FlatUser],
-    minActiveFollowers: Int,
+  delonf run(
+    uselonrSourcelonPipelon: TypelondPipelon[FlatUselonr],
+    minActivelonFollowelonrs: Int,
     topK: Int,
-    getSubgraphFn: Set[Long] => Execution[Iterable[AdjList]],
-    wtExponent: Float
+    gelontSubgraphFn: Selont[Long] => elonxeloncution[Itelonrablelon[AdjList]],
+    wtelonxponelonnt: Float
   )(
-    implicit id: UniqueID
-  ): Execution[(List[TopUserWithMappedId], Graph)] = {
-    topUsersInMemory(
-      userSourcePipe,
-      minActiveFollowers,
+    implicit id: UniquelonID
+  ): elonxeloncution[(List[TopUselonrWithMappelondId], Graph)] = {
+    topUselonrsInMelonmory(
+      uselonrSourcelonPipelon,
+      minActivelonFollowelonrs,
       topK
-    ).flatMap { topUsers =>
-      val idMap = topUsers.map { topUser => (topUser.topUser.id, topUser.mappedId) }.toMap
+    ).flatMap { topUselonrs =>
+      val idMap = topUselonrs.map { topUselonr => (topUselonr.topUselonr.id, topUselonr.mappelondId) }.toMap
 
-      log.info("Got idMap with " + idMap.size + " entries.")
-      getSubgraphFn(idMap.keySet)
-        .map { iterableAdjLists =>
-          log.info("Going to convert iterable to graph")
-          val tic = System.currentTimeMillis()
-          val graph = convertIterableToGraph(
-            iterableAdjLists,
+      log.info("Got idMap with " + idMap.sizelon + " elonntrielons.")
+      gelontSubgraphFn(idMap.kelonySelont)
+        .map { itelonrablelonAdjLists =>
+          log.info("Going to convelonrt itelonrablelon to graph")
+          val tic = Systelonm.currelonntTimelonMillis()
+          val graph = convelonrtItelonrablelonToGraph(
+            itelonrablelonAdjLists,
             idMap,
-            wtExponent
+            wtelonxponelonnt
           )
-          val toc = System.currentTimeMillis()
-          val seconds = (toc - tic) * 1.0 / 1e6
-          log.info("Took %.2f seconds to convert iterable to graph".format(seconds))
-          (topUsers, graph)
+          val toc = Systelonm.currelonntTimelonMillis()
+          val selonconds = (toc - tic) * 1.0 / 1elon6
+          log.info("Took %.2f selonconds to convelonrt itelonrablelon to graph".format(selonconds))
+          (topUselonrs, graph)
         }
     }
   }
 
-  def runUsingJoin(
-    mappedUsers: TypedPipe[(Long, Int)],
-    allEdges: TypedPipe[Candidates],
-    maxNeighborsPerNode: Int
+  delonf runUsingJoin(
+    mappelondUselonrs: TypelondPipelon[(Long, Int)],
+    allelondgelons: TypelondPipelon[Candidatelons],
+    maxNelonighborsPelonrNodelon: Int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(Int, String)] = {
-    val numEdgesAfterFirstJoin = Stat("num_edges_after_first_join")
-    val numEdgesAfterSecondJoin = Stat("num_edges_after_second_join")
-    val numEdgesLostTopKTruncated = Stat("num_edges_lost_topk_truncated")
-    val finalNumEdges = Stat("final_num_edges")
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[(Int, String)] = {
+    val numelondgelonsAftelonrFirstJoin = Stat("num_elondgelons_aftelonr_first_join")
+    val numelondgelonsAftelonrSeloncondJoin = Stat("num_elondgelons_aftelonr_seloncond_join")
+    val numelondgelonsLostTopKTruncatelond = Stat("num_elondgelons_lost_topk_truncatelond")
+    val finalNumelondgelons = Stat("final_num_elondgelons")
 
-    allEdges
-      .map { cs => (cs.userId, cs.candidates) }
-      .join(mappedUsers)
-      .withReducers(6000)
+    allelondgelons
+      .map { cs => (cs.uselonrId, cs.candidatelons) }
+      .join(mappelondUselonrs)
+      .withRelonducelonrs(6000)
       .flatMap {
-        case (id, (neighbors, mappedId)) =>
-          val before = neighbors.size
-          val topKNeighbors = neighbors.sortBy(-_.score).take(maxNeighborsPerNode)
-          val after = topKNeighbors.size
-          numEdgesLostTopKTruncated.incBy(before - after)
-          topKNeighbors.map { candidate =>
-            numEdgesAfterFirstJoin.inc()
-            (candidate.userId, (mappedId, candidate.score.toFloat))
+        caselon (id, (nelonighbors, mappelondId)) =>
+          val belonforelon = nelonighbors.sizelon
+          val topKNelonighbors = nelonighbors.sortBy(-_.scorelon).takelon(maxNelonighborsPelonrNodelon)
+          val aftelonr = topKNelonighbors.sizelon
+          numelondgelonsLostTopKTruncatelond.incBy(belonforelon - aftelonr)
+          topKNelonighbors.map { candidatelon =>
+            numelondgelonsAftelonrFirstJoin.inc()
+            (candidatelon.uselonrId, (mappelondId, candidatelon.scorelon.toFloat))
           }
       }
-      .join(mappedUsers)
-      .withReducers(9000)
+      .join(mappelondUselonrs)
+      .withRelonducelonrs(9000)
       .flatMap {
-        case (id, ((mappedNeighborId, score), mappedId)) =>
-          numEdgesAfterSecondJoin.inc()
+        caselon (id, ((mappelondNelonighborId, scorelon), mappelondId)) =>
+          numelondgelonsAftelonrSeloncondJoin.inc()
           List(
-            (mappedId, Map(mappedNeighborId -> Max(score))),
-            (mappedNeighborId, Map(mappedId -> Max(score)))
+            (mappelondId, Map(mappelondNelonighborId -> Max(scorelon))),
+            (mappelondNelonighborId, Map(mappelondId -> Max(scorelon)))
           )
       }
-      .sumByKey
-      .withReducers(9100)
+      .sumByKelony
+      .withRelonducelonrs(9100)
       .map {
-        case (id, nbrMap) =>
-          val sorted = nbrMap.mapValues(_.get).toList.sortBy(-_._2)
-          finalNumEdges.incBy(sorted.size)
-          val str = sorted.map { case (nbrId, wt) => "%d %.2f".format(nbrId, wt) }.mkString(" ")
+        caselon (id, nbrMap) =>
+          val sortelond = nbrMap.mapValuelons(_.gelont).toList.sortBy(-_._2)
+          finalNumelondgelons.incBy(sortelond.sizelon)
+          val str = sortelond.map { caselon (nbrId, wt) => "%d %.2f".format(nbrId, wt) }.mkString(" ")
           (id, str)
       }
 
   }
 
-  def writeToHDFSFile(lines: Iterator[String], conf: Configuration, outputFile: String): Unit = {
-    val fs = FileSystem.newInstance(conf)
-    val outputStream = fs.create(new Path(outputFile))
-    log.info("Will write to " + outputFile)
-    var numLines = 0
-    val tic = System.currentTimeMillis()
+  delonf writelonToHDFSFilelon(linelons: Itelonrator[String], conf: Configuration, outputFilelon: String): Unit = {
+    val fs = FilelonSystelonm.nelonwInstancelon(conf)
+    val outputStrelonam = fs.crelonatelon(nelonw Path(outputFilelon))
+    log.info("Will writelon to " + outputFilelon)
+    var numLinelons = 0
+    val tic = Systelonm.currelonntTimelonMillis()
     try {
-      val writer = new PrintWriter(outputStream)
-      while (lines.hasNext) {
-        writer.println(lines.next())
-        numLines += 1
-        if (numLines % 1000000 == 0) {
-          log.info(s"Done writing $numLines lines")
+      val writelonr = nelonw PrintWritelonr(outputStrelonam)
+      whilelon (linelons.hasNelonxt) {
+        writelonr.println(linelons.nelonxt())
+        numLinelons += 1
+        if (numLinelons % 1000000 == 0) {
+          log.info(s"Donelon writing $numLinelons linelons")
         }
       }
-      writer.flush()
-      writer.close()
+      writelonr.flush()
+      writelonr.closelon()
     } finally {
-      outputStream.close()
+      outputStrelonam.closelon()
     }
-    val toc = System.currentTimeMillis()
-    val seconds = (toc - tic) * 1.0 / 1e6
+    val toc = Systelonm.currelonntTimelonMillis()
+    val selonconds = (toc - tic) * 1.0 / 1elon6
     log.info(
-      "Finished writing %d lines to %s. Took %.2f seconds".format(numLines, outputFile, seconds))
+      "Finishelond writing %d linelons to %s. Took %.2f selonconds".format(numLinelons, outputFilelon, selonconds))
   }
 
-  def writeToHDFSIfHDFS(lines: Iterator[String], mode: Mode, outputFile: String): Unit = {
-    mode match {
-      case Hdfs(_, conf) =>
-        writeToHDFSFile(lines, conf, outputFile)
-      case _ => ()
+  delonf writelonToHDFSIfHDFS(linelons: Itelonrator[String], modelon: Modelon, outputFilelon: String): Unit = {
+    modelon match {
+      caselon Hdfs(_, conf) =>
+        writelonToHDFSFilelon(linelons, conf, outputFilelon)
+      caselon _ => ()
     }
   }
 
-  def writeTopUsers(topUsers: List[TopUserWithMappedId], mode: Mode, outputFile: String): Unit = {
-    val topUsersLines =
-      topUsers.map { topUser =>
-        // Add 1 to mappedId so as to get 1-indexed ids, which are friendlier to humans.
+  delonf writelonTopUselonrs(topUselonrs: List[TopUselonrWithMappelondId], modelon: Modelon, outputFilelon: String): Unit = {
+    val topUselonrsLinelons =
+      topUselonrs.map { topUselonr =>
+        // Add 1 to mappelondId so as to gelont 1-indelonxelond ids, which arelon frielonndlielonr to humans.
         List(
-          topUser.topUser.id,
-          topUser.mappedId + 1,
-          topUser.topUser.screenName,
-          topUser.topUser.activeFollowerCount
+          topUselonr.topUselonr.id,
+          topUselonr.mappelondId + 1,
+          topUselonr.topUselonr.screlonelonnNamelon,
+          topUselonr.topUselonr.activelonFollowelonrCount
         ).mkString("\t")
-      }.iterator
-    writeToHDFSIfHDFS(topUsersLines, mode, outputFile)
+      }.itelonrator
+    writelonToHDFSIfHDFS(topUselonrsLinelons, modelon, outputFilelon)
   }
 
-  def readSimsInput(isKeyValSource: Boolean, inputDir: String): TypedPipe[Candidates] = {
-    if (isKeyValSource) {
-      log.info("Will treat " + inputDir + " as SequenceFiles input")
-      val rawInput = FollowingsCosineSimilaritiesManhattanSource(path = inputDir)
-      TypedPipe.from(rawInput).map(_._2)
-    } else {
-      log.info("Will treat " + inputDir + " as LzoScrooge input")
-      TypedPipe.from(new FixedPathLzoScrooge(inputDir, Candidates))
+  delonf relonadSimsInput(isKelonyValSourcelon: Boolelonan, inputDir: String): TypelondPipelon[Candidatelons] = {
+    if (isKelonyValSourcelon) {
+      log.info("Will trelonat " + inputDir + " as SelonquelonncelonFilelons input")
+      val rawInput = FollowingsCosinelonSimilaritielonsManhattanSourcelon(path = inputDir)
+      TypelondPipelon.from(rawInput).map(_._2)
+    } elonlselon {
+      log.info("Will trelonat " + inputDir + " as LzoScroogelon input")
+      TypelondPipelon.from(nelonw FixelondPathLzoScroogelon(inputDir, Candidatelons))
     }
   }
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:top_users_only && \
- * oscar hdfs --hadoop-client-memory 120000 --user cassowary --host atla-aor-08-sr1 \
- * --bundle top_users_only --tool com.twitter.simclusters_v2.scalding.ClusterHdfsGraphApp \
- * --screen --screen-detached --tee ldap_logs/SBFOnSubGraphOf100MTopusersWithMappedIds_120GB_RAM \
- * -- --inputDir adhoc/ldap_subgraphOf100MTopUsersWithMappedIds --numNodesPerCommunity 200 \
- * --outputDir adhoc/ldap_SBFOnSubGraphOf100MTopusersWithMappedIds_k500K_120GB_RAM --assumedNumberOfNodes 100200000
+ * ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding:top_uselonrs_only && \
+ * oscar hdfs --hadoop-clielonnt-melonmory 120000 --uselonr cassowary --host atla-aor-08-sr1 \
+ * --bundlelon top_uselonrs_only --tool com.twittelonr.simclustelonrs_v2.scalding.ClustelonrHdfsGraphApp \
+ * --screlonelonn --screlonelonn-delontachelond --telonelon ldap_logs/SBFOnSubGraphOf100MTopuselonrsWithMappelondIds_120GB_RAM \
+ * -- --inputDir adhoc/ldap_subgraphOf100MTopUselonrsWithMappelondIds --numNodelonsPelonrCommunity 200 \
+ * --outputDir adhoc/ldap_SBFOnSubGraphOf100MTopuselonrsWithMappelondIds_k500K_120GB_RAM --assumelondNumbelonrOfNodelons 100200000
  */
-object ClusterHdfsGraphApp extends TwitterExecutionApp {
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
+objelonct ClustelonrHdfsGraphApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
           val inputDir = args("inputDir")
-          val numNodesPerCommunity = args.int("numNodesPerCommunity", 200)
+          val numNodelonsPelonrCommunity = args.int("numNodelonsPelonrCommunity", 200)
           val outputDir = args("outputDir")
-          val assumedNumberOfNodes = args.int("assumedNumberOfNodes")
-          //val useEdgeWeights = args.boolean("useEdgeWeights")
+          val assumelondNumbelonrOfNodelons = args.int("assumelondNumbelonrOfNodelons")
+          //val uselonelondgelonWelonights = args.boolelonan("uselonelondgelonWelonights")
 
-          val input = TypedPipe.from(TypedTsv[(Int, String)](inputDir)).map {
-            case (id, nbrStr) =>
-              val nbrsWithWeights = nbrStr.split(" ")
-              val nbrsArray = nbrsWithWeights.zipWithIndex
-                .collect {
-                  case (str, index) if index % 2 == 0 =>
+          val input = TypelondPipelon.from(TypelondTsv[(Int, String)](inputDir)).map {
+            caselon (id, nbrStr) =>
+              val nbrsWithWelonights = nbrStr.split(" ")
+              val nbrsArray = nbrsWithWelonights.zipWithIndelonx
+                .collelonct {
+                  caselon (str, indelonx) if indelonx % 2 == 0 =>
                     str.toInt
                 }
-              (id, nbrsArray.sorted)
+              (id, nbrsArray.sortelond)
           }
 
-          println("Gonna assume total number of nodes is " + assumedNumberOfNodes)
+          println("Gonna assumelon total numbelonr of nodelons is " + assumelondNumbelonrOfNodelons)
 
-          input.toIterableExecution.flatMap { adjListsIter =>
-            val nbrs: Array[Array[Int]] = new Array[Array[Int]](assumedNumberOfNodes)
-            var numEdges = 0L
-            var numVertices = 0
-            var maxVertexId = 0
+          input.toItelonrablelonelonxeloncution.flatMap { adjListsItelonr =>
+            val nbrs: Array[Array[Int]] = nelonw Array[Array[Int]](assumelondNumbelonrOfNodelons)
+            var numelondgelons = 0L
+            var numVelonrticelons = 0
+            var maxVelonrtelonxId = 0
 
-            val tic = System.currentTimeMillis
-            adjListsIter.foreach {
-              case (id, nbrArray) =>
-                if (id >= assumedNumberOfNodes) {
-                  throw new IllegalStateException(
-                    s"Yikes! Entry with id $id, >= assumedNumberOfNodes")
+            val tic = Systelonm.currelonntTimelonMillis
+            adjListsItelonr.forelonach {
+              caselon (id, nbrArray) =>
+                if (id >= assumelondNumbelonrOfNodelons) {
+                  throw nelonw IllelongalStatelonelonxcelonption(
+                    s"Yikelons! elonntry with id $id, >= assumelondNumbelonrOfNodelons")
                 }
                 nbrs(id) = nbrArray
-                if (id > maxVertexId) {
-                  maxVertexId = id
+                if (id > maxVelonrtelonxId) {
+                  maxVelonrtelonxId = id
                 }
-                numEdges += nbrArray.length
-                numVertices += 1
-                if (numVertices % 100000 == 0) {
-                  println(s"Done loading $numVertices many vertices. Edges so far: $numEdges")
+                numelondgelons += nbrArray.lelonngth
+                numVelonrticelons += 1
+                if (numVelonrticelons % 100000 == 0) {
+                  println(s"Donelon loading $numVelonrticelons many velonrticelons. elondgelons so far: $numelondgelons")
                 }
             }
-            (0 until assumedNumberOfNodes).foreach { i =>
+            (0 until assumelondNumbelonrOfNodelons).forelonach { i =>
               if (nbrs(i) == null) {
                 nbrs(i) = Array[Int]()
               }
             }
-            val toc = System.currentTimeMillis()
+            val toc = Systelonm.currelonntTimelonMillis()
             println(
-              "maxVertexId is " + maxVertexId + ", assumedNumberOfNodes is " + assumedNumberOfNodes)
+              "maxVelonrtelonxId is " + maxVelonrtelonxId + ", assumelondNumbelonrOfNodelons is " + assumelondNumbelonrOfNodelons)
             println(
-              s"Done loading graph with $assumedNumberOfNodes nodes and $numEdges edges (counting each edge twice)")
-            println("Number of nodes with at least neighbor is " + numVertices)
-            println("Time to load the graph " + (toc - tic) / 1000.0 / 60.0 + " minutes")
+              s"Donelon loading graph with $assumelondNumbelonrOfNodelons nodelons and $numelondgelons elondgelons (counting elonach elondgelon twicelon)")
+            println("Numbelonr of nodelons with at lelonast nelonighbor is " + numVelonrticelons)
+            println("Timelon to load thelon graph " + (toc - tic) / 1000.0 / 60.0 + " minutelons")
 
-            val graph = new Graph(assumedNumberOfNodes, numEdges / 2, nbrs, null)
-            val k = assumedNumberOfNodes / numNodesPerCommunity
-            println("Will set number of communities to " + k)
-            val algoConfig = new AlgorithmConfig()
+            val graph = nelonw Graph(assumelondNumbelonrOfNodelons, numelondgelons / 2, nbrs, null)
+            val k = assumelondNumbelonrOfNodelons / numNodelonsPelonrCommunity
+            println("Will selont numbelonr of communitielons to " + k)
+            val algoConfig = nelonw AlgorithmConfig()
               .withCpu(16).withK(k)
-              .withWtCoeff(10.0).withMaxEpoch(5)
-            var z = new SparseBinaryMatrix(assumedNumberOfNodes, k)
-            val err = new PrintWriter(System.err)
+              .withWtCoelonff(10.0).withMaxelonpoch(5)
+            var z = nelonw SparselonBinaryMatrix(assumelondNumbelonrOfNodelons, k)
+            val elonrr = nelonw PrintWritelonr(Systelonm.elonrr)
 
-            println("Going to initalize from random neighborhoods")
-            z.initFromBestNeighborhoods(
+            println("Going to initalizelon from random nelonighborhoods")
+            z.initFromBelonstNelonighborhoods(
               graph,
-              (gr: Graph, i: Integer) => algoConfig.rng.nextDouble,
-              false,
-              err)
-            println("Done initializing from random neighborhoods")
+              (gr: Graph, i: Intelongelonr) => algoConfig.rng.nelonxtDoublelon,
+              falselon,
+              elonrr)
+            println("Donelon initializing from random nelonighborhoods")
 
-            val prec0 = MHAlgorithm.clusterPrecision(graph, z, 0, 1000, algoConfig.rng)
-            println("Precision of cluster 0:" + prec0.precision)
-            val prec1 = MHAlgorithm.clusterPrecision(graph, z, 1, 1000, algoConfig.rng)
-            println("Precision of cluster 1:" + prec1.precision)
+            val prelonc0 = MHAlgorithm.clustelonrPreloncision(graph, z, 0, 1000, algoConfig.rng)
+            println("Preloncision of clustelonr 0:" + prelonc0.preloncision)
+            val prelonc1 = MHAlgorithm.clustelonrPreloncision(graph, z, 1, 1000, algoConfig.rng)
+            println("Preloncision of clustelonr 1:" + prelonc1.preloncision)
             println(
-              "Fraction of empty rows after initializing from random neighborhoods: " + z.emptyRowProportion)
+              "Fraction of elonmpty rows aftelonr initializing from random nelonighborhoods: " + z.elonmptyRowProportion)
 
-            val tic2 = System.currentTimeMillis
-            val algo = new MHAlgorithm(algoConfig, graph, z, err)
-            val optimizedZ = algo.optimize
-            val toc2 = System.currentTimeMillis
-            println("Time to optimize: %.2f seconds\n".format((toc2 - tic2) / 1000.0))
-            println("Time to initialize & optimize: %.2f seconds\n".format((toc2 - toc) / 1000.0))
+            val tic2 = Systelonm.currelonntTimelonMillis
+            val algo = nelonw MHAlgorithm(algoConfig, graph, z, elonrr)
+            val optimizelondZ = algo.optimizelon
+            val toc2 = Systelonm.currelonntTimelonMillis
+            println("Timelon to optimizelon: %.2f selonconds\n".format((toc2 - tic2) / 1000.0))
+            println("Timelon to initializelon & optimizelon: %.2f selonconds\n".format((toc2 - toc) / 1000.0))
 
-            val srm = MHAlgorithm.heuristicallyScoreClusterAssignments(graph, optimizedZ)
-            val outputIter = (0 to srm.getNumRows).map { rowId =>
-              val rowWithIndices = srm.getColIdsForRow(rowId)
-              val rowWithScores = srm.getValuesForRow(rowId)
-              val str = rowWithIndices
-                .zip(rowWithScores).map {
-                  case (colId, score) =>
-                    "%d:%.2g".format(colId + 1, score)
+            val srm = MHAlgorithm.helonuristicallyScorelonClustelonrAssignmelonnts(graph, optimizelondZ)
+            val outputItelonr = (0 to srm.gelontNumRows).map { rowId =>
+              val rowWithIndicelons = srm.gelontColIdsForRow(rowId)
+              val rowWithScorelons = srm.gelontValuelonsForRow(rowId)
+              val str = rowWithIndicelons
+                .zip(rowWithScorelons).map {
+                  caselon (colId, scorelon) =>
+                    "%d:%.2g".format(colId + 1, scorelon)
                 }.mkString(" ")
               "%d %s".format(rowId, str)
             }
 
-            TypedPipe.from(outputIter).writeExecution(TypedTsv(outputDir))
+            TypelondPipelon.from(outputItelonr).writelonelonxeloncution(TypelondTsv(outputDir))
           }
         }
     }
 }
 
 /**
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:top_users_only && \
- * oscar hdfs --hadoop-client-memory 60000 --user cassowary --host atla-aor-08-sr1 \
- * --bundle top_users_only --tool com.twitter.simclusters_v2.scalding.ScalableTopUsersSimilarityGraphApp \
- * --screen --screen-detached --tee ldap_logs/SubGraphOf100MTopusersWithMappedIds \
- * -- --mappedUsersDir adhoc/ldap_top100M_mappedUsers \
- * --inputDir adhoc/ldap_approximate_cosine_similarity_follow \
- * --outputDir adhoc/ldap_subgraphOf100MTopUsersWithMappedIds_correct_topK
+ * ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding:top_uselonrs_only && \
+ * oscar hdfs --hadoop-clielonnt-melonmory 60000 --uselonr cassowary --host atla-aor-08-sr1 \
+ * --bundlelon top_uselonrs_only --tool com.twittelonr.simclustelonrs_v2.scalding.ScalablelonTopUselonrsSimilarityGraphApp \
+ * --screlonelonn --screlonelonn-delontachelond --telonelon ldap_logs/SubGraphOf100MTopuselonrsWithMappelondIds \
+ * -- --mappelondUselonrsDir adhoc/ldap_top100M_mappelondUselonrs \
+ * --inputDir adhoc/ldap_approximatelon_cosinelon_similarity_follow \
+ * --outputDir adhoc/ldap_subgraphOf100MTopUselonrsWithMappelondIds_correlonct_topK
  */
-object ScalableTopUsersSimilarityGraphApp extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
-  val log = Logger()
+objelonct ScalablelonTopUselonrsSimilarityGraphApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  implicit val dp = DatelonParselonr.delonfault
+  val log = Loggelonr()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
           val inputDir = args("inputDir")
-          val mappedUsersDir = args("mappedUsersDir")
-          val maxNeighbors = args.int("maxNeighbors", 100)
+          val mappelondUselonrsDir = args("mappelondUselonrsDir")
+          val maxNelonighbors = args.int("maxNelonighbors", 100)
           val outputDir = args("outputDir")
 
-          val mappedUsers = TypedPipe
-            .from(TypedTsv[(Long, Int, String, Int)](mappedUsersDir))
+          val mappelondUselonrs = TypelondPipelon
+            .from(TypelondTsv[(Long, Int, String, Int)](mappelondUselonrsDir))
             .map {
-              case (id, _, _, mappedId) =>
-                (id, mappedId)
+              caselon (id, _, _, mappelondId) =>
+                (id, mappelondId)
             }
             .shard(200)
 
-          val sims = TypedPipe
-            .from(FollowingsCosineSimilaritiesManhattanSource(path = inputDir))
+          val sims = TypelondPipelon
+            .from(FollowingsCosinelonSimilaritielonsManhattanSourcelon(path = inputDir))
             .map(_._2)
 
-          TopUsersSimilarityGraph
+          TopUselonrsSimilarityGraph
             .runUsingJoin(
-              mappedUsers,
+              mappelondUselonrs,
               sims,
-              maxNeighbors
-            ).writeExecution(TypedTsv(args("outputDir")))
+              maxNelonighbors
+            ).writelonelonxeloncution(TypelondTsv(args("outputDir")))
         }
     }
 }
 
 /**
- * Scalding app using Executions that does the following:
+ * Scalding app using elonxeloncutions that doelons thelon following:
  *
- * 1. Get the top N most followed users on Twitter
- * (also maps them to ids 1 -> N in int space for easier processing)
- * 2. For each user from the step above, get the top K most similar users for this user from the
- * list of N users from the step above.
- * 3. Construct an undirected graph by setting an edge between (u, v) if
- * either v is in u's top-K similar users list, or u is in v's top-K similar user's list.
- * 4. The weight for the (u, v) edge is set to be the cosine similarity between u and v's
- * follower lists, raised to some exponent > 1.
- * This last step is a heuristic reweighting procedure to give more importance to edges involving
- * more similar users.
- * 5. Write the above graph to HDFS in Metis format,
- * i.e. one line per node, with the line for each node specifying the list of neighbors along
- * with their weights. The first line specifies the number of nodes and the number of edges.
+ * 1. Gelont thelon top N most followelond uselonrs on Twittelonr
+ * (also maps thelonm to ids 1 -> N in int spacelon for elonasielonr procelonssing)
+ * 2. For elonach uselonr from thelon stelonp abovelon, gelont thelon top K most similar uselonrs for this uselonr from thelon
+ * list of N uselonrs from thelon stelonp abovelon.
+ * 3. Construct an undirelonctelond graph by selontting an elondgelon belontwelonelonn (u, v) if
+ * elonithelonr v is in u's top-K similar uselonrs list, or u is in v's top-K similar uselonr's list.
+ * 4. Thelon welonight for thelon (u, v) elondgelon is selont to belon thelon cosinelon similarity belontwelonelonn u and v's
+ * followelonr lists, raiselond to somelon elonxponelonnt > 1.
+ * This last stelonp is a helonuristic relonwelonighting procelondurelon to givelon morelon importancelon to elondgelons involving
+ * morelon similar uselonrs.
+ * 5. Writelon thelon abovelon graph to HDFS in Melontis format,
+ * i.elon. onelon linelon pelonr nodelon, with thelon linelon for elonach nodelon speloncifying thelon list of nelonighbors along
+ * with thelonir welonights. Thelon first linelon speloncifielons thelon numbelonr of nodelons and thelon numbelonr of elondgelons.
  *
- * I've tested this Scalding job for values of topK upto 20M.
+ * I'velon telonstelond this Scalding job for valuelons of topK upto 20M.
  *
- * Example invocation:
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:top_users_similarity_graph && \
- * oscar hdfs --hadoop-client-memory 60000 --host atla-amw-03-sr1 --bundle top_users_similarity_graph \
- * --tool com.twitter.simclusters_v2.scalding.TopUsersSimilarityGraphApp \
- * --hadoop-properties "elephantbird.use.combine.input.format=true;elephantbird.combine.split.size=468435456;mapred.min.split.size=468435456;mapreduce.reduce.memory.mb=5096;mapreduce.reduce.java.opts=-Xmx4400m" \
- * --screen --screen-detached --tee logs/20MSubGraphExecution -- --date 2017-10-24 \
- * --minActiveFollowers 300 --topK 20000000 \
- * --inputUserGroupedDir /user/cassowary/manhattan_sequence_files/approximate_cosine_similarity_follow/ \
- * --groupedInputInSequenceFiles \
- * --maxNeighborsPerNode 100 --wtExponent 2 \
- * --outputTopUsersDir /user/your_ldap/simclusters_graph_prep_q42017/top20MUsers \
- * --outputGraphDir /user/your_ldap/simclusters_graph_prep_q42017/top20Musers_exp2_100neighbors_metis_graph
+ * elonxamplelon invocation:
+ * $ ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding:top_uselonrs_similarity_graph && \
+ * oscar hdfs --hadoop-clielonnt-melonmory 60000 --host atla-amw-03-sr1 --bundlelon top_uselonrs_similarity_graph \
+ * --tool com.twittelonr.simclustelonrs_v2.scalding.TopUselonrsSimilarityGraphApp \
+ * --hadoop-propelonrtielons "elonlelonphantbird.uselon.combinelon.input.format=truelon;elonlelonphantbird.combinelon.split.sizelon=468435456;maprelond.min.split.sizelon=468435456;maprelonducelon.relonducelon.melonmory.mb=5096;maprelonducelon.relonducelon.java.opts=-Xmx4400m" \
+ * --screlonelonn --screlonelonn-delontachelond --telonelon logs/20MSubGraphelonxeloncution -- --datelon 2017-10-24 \
+ * --minActivelonFollowelonrs 300 --topK 20000000 \
+ * --inputUselonrGroupelondDir /uselonr/cassowary/manhattan_selonquelonncelon_filelons/approximatelon_cosinelon_similarity_follow/ \
+ * --groupelondInputInSelonquelonncelonFilelons \
+ * --maxNelonighborsPelonrNodelon 100 --wtelonxponelonnt 2 \
+ * --outputTopUselonrsDir /uselonr/your_ldap/simclustelonrs_graph_prelonp_q42017/top20MUselonrs \
+ * --outputGraphDir /uselonr/your_ldap/simclustelonrs_graph_prelonp_q42017/top20Muselonrs_elonxp2_100nelonighbors_melontis_graph
  *
  */
-object TopUsersSimilarityGraphApp extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
-  val log = Logger()
+objelonct TopUselonrsSimilarityGraphApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  implicit val dp = DatelonParselonr.delonfault
+  val log = Loggelonr()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val minActiveFollowers = args.int("minActiveFollowers", 100000)
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
+          val minActivelonFollowelonrs = args.int("minActivelonFollowelonrs", 100000)
           val topK = args.int("topK")
-          val date = DateRange.parse(args("date"))
+          val datelon = DatelonRangelon.parselon(args("datelon"))
           val inputSimilarPairsDir = args.optional("inputSimilarPairsDir")
-          val inputUserGroupedDir = args.optional("inputUserGroupedDir")
-          val isGroupedInputSequenceFiles = args.boolean("groupedInputInSequenceFiles")
-          val outputTopUsersDir = args("outputTopUsersDir")
-          val maxNeighborsPerNode = args.int("maxNeighborsPerNode", 300)
-          val wtExponent = args.float("wtExponent", 3.5f)
+          val inputUselonrGroupelondDir = args.optional("inputUselonrGroupelondDir")
+          val isGroupelondInputSelonquelonncelonFilelons = args.boolelonan("groupelondInputInSelonquelonncelonFilelons")
+          val outputTopUselonrsDir = args("outputTopUselonrsDir")
+          val maxNelonighborsPelonrNodelon = args.int("maxNelonighborsPelonrNodelon", 300)
+          val wtelonxponelonnt = args.float("wtelonxponelonnt", 3.5f)
           val outputGraphDir = args("outputGraphDir")
 
-          val userSource = DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, date).toTypedPipe
-          val exception = new IllegalStateException(
-            "Please specify only one of inputSimilarPairsDir or inputUserGroupedDir"
+          val uselonrSourcelon = DAL.relonadMostReloncelonntSnapshot(UselonrsourcelonFlatScalaDataselont, datelon).toTypelondPipelon
+          val elonxcelonption = nelonw IllelongalStatelonelonxcelonption(
+            "Plelonaselon speloncify only onelon of inputSimilarPairsDir or inputUselonrGroupelondDir"
           )
 
-          (inputSimilarPairsDir, inputUserGroupedDir) match {
-            case (Some(_), Some(_)) => throw exception
-            case (None, None) => throw exception
-            case _ => // no-op
+          (inputSimilarPairsDir, inputUselonrGroupelondDir) match {
+            caselon (Somelon(_), Somelon(_)) => throw elonxcelonption
+            caselon (Nonelon, Nonelon) => throw elonxcelonption
+            caselon _ => // no-op
           }
 
-          def getSubgraphFn(usersToInclude: Set[Long]) = {
-            (inputSimilarPairsDir, inputUserGroupedDir) match {
-              case (Some(similarPairs), None) =>
-                val similarUserPairs: TypedPipe[SimilarUserPair] =
-                  TypedPipe.from(
-                    new FixedPathLzoScrooge(
-                      inputSimilarPairsDir.get,
-                      SimilarUserPair
+          delonf gelontSubgraphFn(uselonrsToIncludelon: Selont[Long]) = {
+            (inputSimilarPairsDir, inputUselonrGroupelondDir) match {
+              caselon (Somelon(similarPairs), Nonelon) =>
+                val similarUselonrPairs: TypelondPipelon[SimilarUselonrPair] =
+                  TypelondPipelon.from(
+                    nelonw FixelondPathLzoScroogelon(
+                      inputSimilarPairsDir.gelont,
+                      SimilarUselonrPair
                     ))
-                TopUsersSimilarityGraph.getInMemorySubgraph(
-                  similarUserPairs,
-                  usersToInclude,
-                  maxNeighborsPerNode)
-              case (None, Some(groupedInput)) =>
-                val candidatesPipe =
-                  TopUsersSimilarityGraph.readSimsInput(isGroupedInputSequenceFiles, groupedInput)
-                TopUsersSimilarityGraph.getInMemorySubgraphFromUserGroupedInput(
-                  candidatesPipe,
-                  usersToInclude,
-                  maxNeighborsPerNode
+                TopUselonrsSimilarityGraph.gelontInMelonmorySubgraph(
+                  similarUselonrPairs,
+                  uselonrsToIncludelon,
+                  maxNelonighborsPelonrNodelon)
+              caselon (Nonelon, Somelon(groupelondInput)) =>
+                val candidatelonsPipelon =
+                  TopUselonrsSimilarityGraph.relonadSimsInput(isGroupelondInputSelonquelonncelonFilelons, groupelondInput)
+                TopUselonrsSimilarityGraph.gelontInMelonmorySubgraphFromUselonrGroupelondInput(
+                  candidatelonsPipelon,
+                  uselonrsToIncludelon,
+                  maxNelonighborsPelonrNodelon
                 )
-              case _ => Execution.from(Nil) // we should never get here
+              caselon _ => elonxeloncution.from(Nil) // welon should nelonvelonr gelont helonrelon
             }
           }
 
-          TopUsersSimilarityGraph
+          TopUselonrsSimilarityGraph
             .run(
-              userSource,
-              minActiveFollowers,
+              uselonrSourcelon,
+              minActivelonFollowelonrs,
               topK,
-              getSubgraphFn,
-              wtExponent
+              gelontSubgraphFn,
+              wtelonxponelonnt
             ).flatMap {
-              case (topUsersList, graph) =>
-                // We're writing to HDFS ourselves, from the submitter node.
-                // When we use TypedPipe.write, it's failing for large topK, e.g.10M.
-                // We can make the submitter node have a lot of memory, but it's
-                // difficult and suboptimal to give this much memory to all mappers.
-                val topUsersExec = Execution.from(
-                  TopUsersSimilarityGraph
-                    .writeTopUsers(topUsersList, mode, outputTopUsersDir + "/all")
+              caselon (topUselonrsList, graph) =>
+                // Welon'relon writing to HDFS ourselonlvelons, from thelon submittelonr nodelon.
+                // Whelonn welon uselon TypelondPipelon.writelon, it's failing for largelon topK, elon.g.10M.
+                // Welon can makelon thelon submittelonr nodelon havelon a lot of melonmory, but it's
+                // difficult and suboptimal to givelon this much melonmory to all mappelonrs.
+                val topUselonrselonxelonc = elonxeloncution.from(
+                  TopUselonrsSimilarityGraph
+                    .writelonTopUselonrs(topUselonrsList, modelon, outputTopUselonrsDir + "/all")
                 )
 
-                // We want to make sure the write of the topUsers succeeds, and
-                // only then write out the graph. A graph without the topUsers is useless.
-                topUsersExec.map { _ =>
-                  // We're writing to HDFS ourselves, from the submitter node.
-                  // When we use TypedPipe.write, it fails due to OOM on the mappers.
-                  // We can make the submitter node have a lot of memory, but it's difficult
-                  // and suboptimal to give this much memory to all mappers.
-                  TopUsersSimilarityGraph.writeToHDFSIfHDFS(
+                // Welon want to makelon surelon thelon writelon of thelon topUselonrs succelonelonds, and
+                // only thelonn writelon out thelon graph. A graph without thelon topUselonrs is uselonlelonss.
+                topUselonrselonxelonc.map { _ =>
+                  // Welon'relon writing to HDFS ourselonlvelons, from thelon submittelonr nodelon.
+                  // Whelonn welon uselon TypelondPipelon.writelon, it fails duelon to OOM on thelon mappelonrs.
+                  // Welon can makelon thelon submittelonr nodelon havelon a lot of melonmory, but it's difficult
+                  // and suboptimal to givelon this much melonmory to all mappelonrs.
+                  TopUselonrsSimilarityGraph.writelonToHDFSIfHDFS(
                     graph
-                      .iterableStringRepresentation(new DecimalFormat("#.###")).iterator().asScala,
-                    mode,
+                      .itelonrablelonStringRelonprelonselonntation(nelonw DeloncimalFormat("#.###")).itelonrator().asScala,
+                    modelon,
                     outputGraphDir + "/all"
                   )
                 }
@@ -933,62 +933,62 @@ object TopUsersSimilarityGraphApp extends TwitterExecutionApp {
 }
 
 /**
- * App that only outputs the topK users on Twitter by active follower count. Example invocation:
- * $ ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:top_users_only && \
- * oscar hdfs --hadoop-client-memory 60000 --host atla-aor-08-sr1 --bundle top_users_only \
- * --tool com.twitter.simclusters_v2.scalding.TopUsersOnlyApp \
- * #are these hadoop-properties needed for this job?
- * #--hadoop-properties "scalding.with.reducers.set.explicitly=true;elephantbird.use.combine.input.format=true;elephantbird.combine.split.size=468435456;mapred.min.split.size=468435456" \
- * --screen --screen-detached --tee logs/10MTopusersOnlyExecution -- --date 2017-10-20 \
- * --minActiveFollowers 500 --topK 10000000 \
- * --outputTopUsersDir /user/your_ldap/simclusters_graph_prep_q42017/top10MUsers
+ * App that only outputs thelon topK uselonrs on Twittelonr by activelon followelonr count. elonxamplelon invocation:
+ * $ ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding:top_uselonrs_only && \
+ * oscar hdfs --hadoop-clielonnt-melonmory 60000 --host atla-aor-08-sr1 --bundlelon top_uselonrs_only \
+ * --tool com.twittelonr.simclustelonrs_v2.scalding.TopUselonrsOnlyApp \
+ * #arelon thelonselon hadoop-propelonrtielons nelonelondelond for this job?
+ * #--hadoop-propelonrtielons "scalding.with.relonducelonrs.selont.elonxplicitly=truelon;elonlelonphantbird.uselon.combinelon.input.format=truelon;elonlelonphantbird.combinelon.split.sizelon=468435456;maprelond.min.split.sizelon=468435456" \
+ * --screlonelonn --screlonelonn-delontachelond --telonelon logs/10MTopuselonrsOnlyelonxeloncution -- --datelon 2017-10-20 \
+ * --minActivelonFollowelonrs 500 --topK 10000000 \
+ * --outputTopUselonrsDir /uselonr/your_ldap/simclustelonrs_graph_prelonp_q42017/top10MUselonrs
  *
- * ./bazel bundle src/scala/com/twitter/simclusters_v2/scalding:top_users_only && \
- * oscar hdfs --hadoop-client-memory 60000 --user cassowary --host atla-aor-08-sr1 \
- * --bundle top_users_only --tool com.twitter.simclusters_v2.scalding.TopUsersOnlyApp \
- * --screen --screen-detached --tee ldap_logs/100MTopusersWithMappedIds \
- * -- --date 2019-10-11 --minActiveFollowers 67 --outputTopUsersDir adhoc/ldap_top100M_mappedUsers \
- * --includeMappedIds
+ * ./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding:top_uselonrs_only && \
+ * oscar hdfs --hadoop-clielonnt-melonmory 60000 --uselonr cassowary --host atla-aor-08-sr1 \
+ * --bundlelon top_uselonrs_only --tool com.twittelonr.simclustelonrs_v2.scalding.TopUselonrsOnlyApp \
+ * --screlonelonn --screlonelonn-delontachelond --telonelon ldap_logs/100MTopuselonrsWithMappelondIds \
+ * -- --datelon 2019-10-11 --minActivelonFollowelonrs 67 --outputTopUselonrsDir adhoc/ldap_top100M_mappelondUselonrs \
+ * --includelonMappelondIds
  */
-object TopUsersOnlyApp extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
-  val log = Logger()
+objelonct TopUselonrsOnlyApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  implicit val dp = DatelonParselonr.delonfault
+  val log = Loggelonr()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
-          val minActiveFollowers = args.int("minActiveFollowers", 100000)
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
+          val minActivelonFollowelonrs = args.int("minActivelonFollowelonrs", 100000)
           val topK = args.int("topK", 20000000)
-          val date = DateRange.parse(args("date"))
-          val outputTopUsersDir = args("outputTopUsersDir")
-          val includeMappedIds = args.boolean("includeMappedIds")
+          val datelon = DatelonRangelon.parselon(args("datelon"))
+          val outputTopUselonrsDir = args("outputTopUselonrsDir")
+          val includelonMappelondIds = args.boolelonan("includelonMappelondIds")
 
-          if (includeMappedIds) {
-            println("Going to include mappedIds in output")
-            TopUsersSimilarityGraph
-              .topUsersWithMappedIds(
-                DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, date).toTypedPipe,
-                minActiveFollowers
+          if (includelonMappelondIds) {
+            println("Going to includelon mappelondIds in output")
+            TopUselonrsSimilarityGraph
+              .topUselonrsWithMappelondIds(
+                DAL.relonadMostReloncelonntSnapshot(UselonrsourcelonFlatScalaDataselont, datelon).toTypelondPipelon,
+                minActivelonFollowelonrs
               )
               .map {
-                case TopUserWithMappedId(TopUser(id, activeFollowerCount, screenName), mappedId) =>
-                  (id, activeFollowerCount, screenName, mappedId)
+                caselon TopUselonrWithMappelondId(TopUselonr(id, activelonFollowelonrCount, screlonelonnNamelon), mappelondId) =>
+                  (id, activelonFollowelonrCount, screlonelonnNamelon, mappelondId)
               }
-              .writeExecution(TypedTsv(outputTopUsersDir))
-          } else {
-            TopUsersSimilarityGraph
-              .topUsersInMemory(
-                DAL.readMostRecentSnapshot(UsersourceFlatScalaDataset, date).toTypedPipe,
-                minActiveFollowers,
+              .writelonelonxeloncution(TypelondTsv(outputTopUselonrsDir))
+          } elonlselon {
+            TopUselonrsSimilarityGraph
+              .topUselonrsInMelonmory(
+                DAL.relonadMostReloncelonntSnapshot(UselonrsourcelonFlatScalaDataselont, datelon).toTypelondPipelon,
+                minActivelonFollowelonrs,
                 topK
-              ).map { topUsersList =>
-                TopUsersSimilarityGraph.writeTopUsers(
-                  topUsersList,
-                  mode,
-                  outputTopUsersDir + "/all")
+              ).map { topUselonrsList =>
+                TopUselonrsSimilarityGraph.writelonTopUselonrs(
+                  topUselonrsList,
+                  modelon,
+                  outputTopUselonrsDir + "/all")
               }
           }
         }

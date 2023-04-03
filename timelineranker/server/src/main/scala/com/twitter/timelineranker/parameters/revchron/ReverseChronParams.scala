@@ -1,45 +1,45 @@
-package com.twitter.timelineranker.parameters.revchron
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.relonvchron
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object ReverseChronParams {
-  import ReverseChronTimelineQueryContext._
-
-  /**
-   * Controls limit on the number of followed users fetched from SGS when materializing home timelines.
-   */
-  object MaxFollowedUsersParam
-      extends FSBoundedParam(
-        "reverse_chron_max_followed_users",
-        default = MaxFollowedUsers.default,
-        min = MaxFollowedUsers.bounds.minInclusive,
-        max = MaxFollowedUsers.bounds.maxInclusive
-      )
-
-  object ReturnEmptyWhenOverMaxFollowsParam
-      extends FSParam(
-        name = "reverse_chron_return_empty_when_over_max_follows",
-        default = true
-      )
+objelonct RelonvelonrselonChronParams {
+  import RelonvelonrselonChronTimelonlinelonQuelonryContelonxt._
 
   /**
-   * When true, search requests for the reverse chron timeline will include an additional operator
-   * so that search will not return tweets that are directed at non-followed users.
+   * Controls limit on thelon numbelonr of followelond uselonrs felontchelond from SGS whelonn matelonrializing homelon timelonlinelons.
    */
-  object DirectedAtNarrowcastingViaSearchParam
-      extends FSParam(
-        name = "reverse_chron_directed_at_narrowcasting_via_search",
-        default = false
+  objelonct MaxFollowelondUselonrsParam
+      elonxtelonnds FSBoundelondParam(
+        "relonvelonrselon_chron_max_followelond_uselonrs",
+        delonfault = MaxFollowelondUselonrs.delonfault,
+        min = MaxFollowelondUselonrs.bounds.minInclusivelon,
+        max = MaxFollowelondUselonrs.bounds.maxInclusivelon
+      )
+
+  objelonct RelonturnelonmptyWhelonnOvelonrMaxFollowsParam
+      elonxtelonnds FSParam(
+        namelon = "relonvelonrselon_chron_relonturn_elonmpty_whelonn_ovelonr_max_follows",
+        delonfault = truelon
       )
 
   /**
-   * When true, search requests for the reverse chron timeline will request additional metadata
-   * from search and use this metadata for post filtering.
+   * Whelonn truelon, selonarch relonquelonsts for thelon relonvelonrselon chron timelonlinelon will includelon an additional opelonrator
+   * so that selonarch will not relonturn twelonelonts that arelon direlonctelond at non-followelond uselonrs.
    */
-  object PostFilteringBasedOnSearchMetadataEnabledParam
-      extends FSParam(
-        name = "reverse_chron_post_filtering_based_on_search_metadata_enabled",
-        default = true
+  objelonct DirelonctelondAtNarrowcastingViaSelonarchParam
+      elonxtelonnds FSParam(
+        namelon = "relonvelonrselon_chron_direlonctelond_at_narrowcasting_via_selonarch",
+        delonfault = falselon
+      )
+
+  /**
+   * Whelonn truelon, selonarch relonquelonsts for thelon relonvelonrselon chron timelonlinelon will relonquelonst additional melontadata
+   * from selonarch and uselon this melontadata for post filtelonring.
+   */
+  objelonct PostFiltelonringBaselondOnSelonarchMelontadataelonnablelondParam
+      elonxtelonnds FSParam(
+        namelon = "relonvelonrselon_chron_post_filtelonring_baselond_on_selonarch_melontadata_elonnablelond",
+        delonfault = truelon
       )
 }

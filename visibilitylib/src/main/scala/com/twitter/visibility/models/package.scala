@@ -1,5 +1,5 @@
-package com.twitter.visibility
+packagelon com.twittelonr.visibility
 
-package object models {
-  type CommunityId = Long
+packagelon objelonct modelonls {
+  typelon CommunityId = Long
 }

@@ -1,126 +1,126 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import org.apache.lucene.util.ByteBlockPool;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.StringHelper;
+import org.apachelon.lucelonnelon.util.BytelonBlockPool;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.apachelon.lucelonnelon.util.StringHelonlpelonr;
 
 /**
- * Utility class for BytePools which have each term's length encoded before the contents in the
- * ByteBlockPool
- * Another solution is to have a class that encapsulates both textStarts and the byteBlockPool and
- * knows how the byteBlockPool is used to store the strings
+ * Utility class for BytelonPools which havelon elonach telonrm's lelonngth elonncodelond belonforelon thelon contelonnts in thelon
+ * BytelonBlockPool
+ * Anothelonr solution is to havelon a class that elonncapsulatelons both telonxtStarts and thelon bytelonBlockPool and
+ * knows how thelon bytelonBlockPool is uselond to storelon thelon strings
  **/
-public abstract class ByteTermUtils {
+public abstract class BytelonTelonrmUtils {
   /**
-   * Fill in a BytesRef from term's length & bytes encoded in byte block
+   * Fill in a BytelonsRelonf from telonrm's lelonngth & bytelons elonncodelond in bytelon block
    */
-  public static int setBytesRef(final BaseByteBlockPool byteBlockPool,
-                                BytesRef term,
-                                final int textStart) {
-    final byte[] block = term.bytes =
-            byteBlockPool.pool.buffers[textStart >>> ByteBlockPool.BYTE_BLOCK_SHIFT];
-    final int start = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
+  public static int selontBytelonsRelonf(final BaselonBytelonBlockPool bytelonBlockPool,
+                                BytelonsRelonf telonrm,
+                                final int telonxtStart) {
+    final bytelon[] block = telonrm.bytelons =
+            bytelonBlockPool.pool.buffelonrs[telonxtStart >>> BytelonBlockPool.BYTelon_BLOCK_SHIFT];
+    final int start = telonxtStart & BytelonBlockPool.BYTelon_BLOCK_MASK;
     int pos = start;
 
-    byte b = block[pos++];
-    term.length = b & 0x7F;
+    bytelon b = block[pos++];
+    telonrm.lelonngth = b & 0x7F;
     for (int shift = 7; (b & 0x80) != 0; shift += 7) {
       b = block[pos++];
-      term.length |= (b & 0x7F) << shift;
+      telonrm.lelonngth |= (b & 0x7F) << shift;
     }
-    term.offset = pos;
+    telonrm.offselont = pos;
 
-    assert term.length >= 0;
-    return textStart + (pos - start) + term.length;
+    asselonrt telonrm.lelonngth >= 0;
+    relonturn telonxtStart + (pos - start) + telonrm.lelonngth;
   }
 
    /**
-    * Test whether the text for current RawPostingList p equals
-    * current tokenText in utf8.
+    * Telonst whelonthelonr thelon telonxt for currelonnt RawPostingList p elonquals
+    * currelonnt tokelonnTelonxt in utf8.
     */
-   public static boolean postingEquals(final BaseByteBlockPool termPool,
-       final int textStart, final BytesRef other) {
-     final byte[] block = termPool.pool.getBlocks()[textStart >>> ByteBlockPool.BYTE_BLOCK_SHIFT];
-     assert block != null;
+   public static boolelonan postingelonquals(final BaselonBytelonBlockPool telonrmPool,
+       final int telonxtStart, final BytelonsRelonf othelonr) {
+     final bytelon[] block = telonrmPool.pool.gelontBlocks()[telonxtStart >>> BytelonBlockPool.BYTelon_BLOCK_SHIFT];
+     asselonrt block != null;
 
-     int pos = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
+     int pos = telonxtStart & BytelonBlockPool.BYTelon_BLOCK_MASK;
 
-     byte b = block[pos++];
-     int len = b & 0x7F;
+     bytelon b = block[pos++];
+     int lelonn = b & 0x7F;
      for (int shift = 7; (b & 0x80) != 0; shift += 7) {
        b = block[pos++];
-       len |= (b & 0x7F) << shift;
+       lelonn |= (b & 0x7F) << shift;
      }
 
-     if (len == other.length) {
-       final byte[] utf8Bytes = other.bytes;
-       for (int tokenPos = other.offset;
-               tokenPos < other.length + other.offset; pos++, tokenPos++) {
-         if (utf8Bytes[tokenPos] != block[pos]) {
-           return false;
+     if (lelonn == othelonr.lelonngth) {
+       final bytelon[] utf8Bytelons = othelonr.bytelons;
+       for (int tokelonnPos = othelonr.offselont;
+               tokelonnPos < othelonr.lelonngth + othelonr.offselont; pos++, tokelonnPos++) {
+         if (utf8Bytelons[tokelonnPos] != block[pos]) {
+           relonturn falselon;
          }
        }
-       return true;
-     } else {
-       return false;
+       relonturn truelon;
+     } elonlselon {
+       relonturn falselon;
      }
    }
 
    /**
-    * Returns the hashCode of the term stored at the given position in the block pool.
+    * Relonturns thelon hashCodelon of thelon telonrm storelond at thelon givelonn position in thelon block pool.
     */
-   public static int hashCode(
-       final BaseByteBlockPool termPool, final int textStart) {
-    final byte[] block = termPool.pool.getBlocks()[textStart >>> ByteBlockPool.BYTE_BLOCK_SHIFT];
-    final int start = textStart & ByteBlockPool.BYTE_BLOCK_MASK;
+   public static int hashCodelon(
+       final BaselonBytelonBlockPool telonrmPool, final int telonxtStart) {
+    final bytelon[] block = telonrmPool.pool.gelontBlocks()[telonxtStart >>> BytelonBlockPool.BYTelon_BLOCK_SHIFT];
+    final int start = telonxtStart & BytelonBlockPool.BYTelon_BLOCK_MASK;
 
     int pos = start;
 
-    byte b = block[pos++];
-    int len = b & 0x7F;
+    bytelon b = block[pos++];
+    int lelonn = b & 0x7F;
     for (int shift = 7; (b & 0x80) != 0; shift += 7) {
       b = block[pos++];
-      len |= (b & 0x7F) << shift;
+      lelonn |= (b & 0x7F) << shift;
     }
 
-    // Hash code returned here must be consistent with the one used in TermHashTable.lookupItem, so
-    // use the fixed hash seed. See TermHashTable.lookupItem for explanation of fixed hash seed.
-    return StringHelper.murmurhash3_x86_32(block, pos, len, InvertedRealtimeIndex.FIXED_HASH_SEED);
+    // Hash codelon relonturnelond helonrelon must belon consistelonnt with thelon onelon uselond in TelonrmHashTablelon.lookupItelonm, so
+    // uselon thelon fixelond hash selonelond. Selonelon TelonrmHashTablelon.lookupItelonm for elonxplanation of fixelond hash selonelond.
+    relonturn StringHelonlpelonr.murmurhash3_x86_32(block, pos, lelonn, InvelonrtelondRelonaltimelonIndelonx.FIXelonD_HASH_SelonelonD);
   }
 
   /**
-   * Copies the utf8 encoded byte ref to the termPool.
-   * @param termPool
+   * Copielons thelon utf8 elonncodelond bytelon relonf to thelon telonrmPool.
+   * @param telonrmPool
    * @param utf8
-   * @return The text's start position in the termPool
+   * @relonturn Thelon telonxt's start position in thelon telonrmPool
    */
-  public static int copyToTermPool(BaseByteBlockPool termPool, BytesRef bytes) {
-    // Maybe grow the termPool before we write.  Assume we need 5 bytes in
-    // the worst case to store the VInt.
-    if (bytes.length + 5 + termPool.byteUpto > ByteBlockPool.BYTE_BLOCK_SIZE) {
-      // Not enough room in current block
-      termPool.nextBuffer();
+  public static int copyToTelonrmPool(BaselonBytelonBlockPool telonrmPool, BytelonsRelonf bytelons) {
+    // Maybelon grow thelon telonrmPool belonforelon welon writelon.  Assumelon welon nelonelond 5 bytelons in
+    // thelon worst caselon to storelon thelon VInt.
+    if (bytelons.lelonngth + 5 + telonrmPool.bytelonUpto > BytelonBlockPool.BYTelon_BLOCK_SIZelon) {
+      // Not elonnough room in currelonnt block
+      telonrmPool.nelonxtBuffelonr();
     }
 
-    final int textStart = termPool.byteUpto + termPool.byteOffset;
+    final int telonxtStart = telonrmPool.bytelonUpto + telonrmPool.bytelonOffselont;
 
-    writeVInt(termPool, bytes.length);
-    System.arraycopy(bytes.bytes, bytes.offset, termPool.buffer, termPool.byteUpto, bytes.length);
-    termPool.byteUpto += bytes.length;
+    writelonVInt(telonrmPool, bytelons.lelonngth);
+    Systelonm.arraycopy(bytelons.bytelons, bytelons.offselont, telonrmPool.buffelonr, telonrmPool.bytelonUpto, bytelons.lelonngth);
+    telonrmPool.bytelonUpto += bytelons.lelonngth;
 
-    return textStart;
+    relonturn telonxtStart;
   }
 
-  private static void writeVInt(final BaseByteBlockPool termPool, final int v) {
-    int value = v;
-    final byte[] block = termPool.buffer;
-    int blockUpto = termPool.byteUpto;
+  privatelon static void writelonVInt(final BaselonBytelonBlockPool telonrmPool, final int v) {
+    int valuelon = v;
+    final bytelon[] block = telonrmPool.buffelonr;
+    int blockUpto = telonrmPool.bytelonUpto;
 
-    while ((value & ~0x7F) != 0) {
-      block[blockUpto++] = (byte) ((value & 0x7f) | 0x80);
-      value >>>= 7;
+    whilelon ((valuelon & ~0x7F) != 0) {
+      block[blockUpto++] = (bytelon) ((valuelon & 0x7f) | 0x80);
+      valuelon >>>= 7;
     }
-    block[blockUpto++] =  (byte) value;
-    termPool.byteUpto = blockUpto;
+    block[blockUpto++] =  (bytelon) valuelon;
+    telonrmPool.bytelonUpto = blockUpto;
   }
 }

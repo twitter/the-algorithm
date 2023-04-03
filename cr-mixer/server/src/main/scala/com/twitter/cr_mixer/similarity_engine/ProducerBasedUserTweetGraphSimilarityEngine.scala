@@ -1,94 +1,94 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.param.ProducerBasedUserTweetGraphParams
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.user_tweet_graph.thriftscala.ProducerBasedRelatedTweetRequest
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
-import javax.inject.Singleton
-import com.twitter.cr_mixer.param.GlobalParams
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.timelines.configapi
-import com.twitter.recos.user_tweet_graph.thriftscala.UserTweetGraph
+import com.twittelonr.cr_mixelonr.modelonl.SimilarityelonnginelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.param.ProducelonrBaselondUselonrTwelonelontGraphParams
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.thriftscala.ProducelonrBaselondRelonlatelondTwelonelontRelonquelonst
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
+import com.twittelonr.cr_mixelonr.param.GlobalParams
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.thriftscala.UselonrTwelonelontGraph
 
 /**
- * This store looks for similar tweets from UserTweetGraph for a Source ProducerId
- * For a query producerId,User Tweet Graph (UTG),
- * lets us find out which tweets the query producer's followers co-engaged
+ * This storelon looks for similar twelonelonts from UselonrTwelonelontGraph for a Sourcelon ProducelonrId
+ * For a quelonry producelonrId,Uselonr Twelonelont Graph (UTG),
+ * lelonts us find out which twelonelonts thelon quelonry producelonr's followelonrs co-elonngagelond
  */
-@Singleton
-case class ProducerBasedUserTweetGraphSimilarityEngine(
-  userTweetGraphService: UserTweetGraph.MethodPerEndpoint,
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[ProducerBasedUserTweetGraphSimilarityEngine.Query, Seq[
-      TweetWithScore
+@Singlelonton
+caselon class ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon(
+  uselonrTwelonelontGraphSelonrvicelon: UselonrTwelonelontGraph.MelonthodPelonrelonndpoint,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonadablelonStorelon[ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon.Quelonry, Selonq[
+      TwelonelontWithScorelon
     ]] {
 
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val fetchCandidatesStat = stats.scope("fetchCandidates")
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val felontchCandidatelonsStat = stats.scopelon("felontchCandidatelons")
 
-  override def get(
-    query: ProducerBasedUserTweetGraphSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
-    query.sourceId match {
-      case InternalId.UserId(producerId) =>
-        StatsUtil.trackOptionItemsStats(fetchCandidatesStat) {
-          val relatedTweetRequest =
-            ProducerBasedRelatedTweetRequest(
-              producerId,
-              maxResults = Some(query.maxResults),
-              minCooccurrence = Some(query.minCooccurrence),
-              minScore = Some(query.minScore),
-              maxNumFollowers = Some(query.maxNumFollowers),
-              maxTweetAgeInHours = Some(query.maxTweetAgeInHours),
+  ovelonrridelon delonf gelont(
+    quelonry: ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon.Quelonry
+  ): Futurelon[Option[Selonq[TwelonelontWithScorelon]]] = {
+    quelonry.sourcelonId match {
+      caselon IntelonrnalId.UselonrId(producelonrId) =>
+        StatsUtil.trackOptionItelonmsStats(felontchCandidatelonsStat) {
+          val relonlatelondTwelonelontRelonquelonst =
+            ProducelonrBaselondRelonlatelondTwelonelontRelonquelonst(
+              producelonrId,
+              maxRelonsults = Somelon(quelonry.maxRelonsults),
+              minCooccurrelonncelon = Somelon(quelonry.minCooccurrelonncelon),
+              minScorelon = Somelon(quelonry.minScorelon),
+              maxNumFollowelonrs = Somelon(quelonry.maxNumFollowelonrs),
+              maxTwelonelontAgelonInHours = Somelon(quelonry.maxTwelonelontAgelonInHours),
             )
 
-          userTweetGraphService.producerBasedRelatedTweets(relatedTweetRequest).map {
-            relatedTweetResponse =>
-              val candidates =
-                relatedTweetResponse.tweets.map(tweet => TweetWithScore(tweet.tweetId, tweet.score))
-              Some(candidates)
+          uselonrTwelonelontGraphSelonrvicelon.producelonrBaselondRelonlatelondTwelonelonts(relonlatelondTwelonelontRelonquelonst).map {
+            relonlatelondTwelonelontRelonsponselon =>
+              val candidatelons =
+                relonlatelondTwelonelontRelonsponselon.twelonelonts.map(twelonelont => TwelonelontWithScorelon(twelonelont.twelonelontId, twelonelont.scorelon))
+              Somelon(candidatelons)
           }
         }
-      case _ =>
-        Future.value(None)
+      caselon _ =>
+        Futurelon.valuelon(Nonelon)
     }
   }
 }
 
-object ProducerBasedUserTweetGraphSimilarityEngine {
+objelonct ProducelonrBaselondUselonrTwelonelontGraphSimilarityelonnginelon {
 
-  def toSimilarityEngineInfo(score: Double): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.ProducerBasedUserTweetGraph,
-      modelId = None,
-      score = Some(score))
+  delonf toSimilarityelonnginelonInfo(scorelon: Doublelon): SimilarityelonnginelonInfo = {
+    SimilarityelonnginelonInfo(
+      similarityelonnginelonTypelon = SimilarityelonnginelonTypelon.ProducelonrBaselondUselonrTwelonelontGraph,
+      modelonlId = Nonelon,
+      scorelon = Somelon(scorelon))
   }
 
-  case class Query(
-    sourceId: InternalId,
-    maxResults: Int,
-    minCooccurrence: Int, // require at least {minCooccurrence} lhs user engaged with returned tweet
-    minScore: Double,
-    maxNumFollowers: Int, // max number of lhs users
-    maxTweetAgeInHours: Int)
+  caselon class Quelonry(
+    sourcelonId: IntelonrnalId,
+    maxRelonsults: Int,
+    minCooccurrelonncelon: Int, // relonquirelon at lelonast {minCooccurrelonncelon} lhs uselonr elonngagelond with relonturnelond twelonelont
+    minScorelon: Doublelon,
+    maxNumFollowelonrs: Int, // max numbelonr of lhs uselonrs
+    maxTwelonelontAgelonInHours: Int)
 
-  def fromParams(
-    sourceId: InternalId,
+  delonf fromParams(
+    sourcelonId: IntelonrnalId,
     params: configapi.Params,
-  ): EngineQuery[Query] = {
-    EngineQuery(
-      Query(
-        sourceId = sourceId,
-        maxResults = params(GlobalParams.MaxCandidateNumPerSourceKeyParam),
-        minCooccurrence = params(ProducerBasedUserTweetGraphParams.MinCoOccurrenceParam),
-        maxNumFollowers = params(ProducerBasedUserTweetGraphParams.MaxNumFollowersParam),
-        maxTweetAgeInHours = params(GlobalParams.MaxTweetAgeHoursParam).inHours,
-        minScore = params(ProducerBasedUserTweetGraphParams.MinScoreParam)
+  ): elonnginelonQuelonry[Quelonry] = {
+    elonnginelonQuelonry(
+      Quelonry(
+        sourcelonId = sourcelonId,
+        maxRelonsults = params(GlobalParams.MaxCandidatelonNumPelonrSourcelonKelonyParam),
+        minCooccurrelonncelon = params(ProducelonrBaselondUselonrTwelonelontGraphParams.MinCoOccurrelonncelonParam),
+        maxNumFollowelonrs = params(ProducelonrBaselondUselonrTwelonelontGraphParams.MaxNumFollowelonrsParam),
+        maxTwelonelontAgelonInHours = params(GlobalParams.MaxTwelonelontAgelonHoursParam).inHours,
+        minScorelon = params(ProducelonrBaselondUselonrTwelonelontGraphParams.MinScorelonParam)
       ),
       params
     )

@@ -1,98 +1,98 @@
-package com.twitter.simclustersann.modules
+packagelon com.twittelonr.simclustelonrsann.modulelons
 
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsThriftWebFormsModule
-import com.twitter.finatra.thrift.ThriftServer
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.thriftwebforms.MethodOptions
-import com.twitter.thriftwebforms.view.ServiceResponseView
-import com.twitter.util.Future
-import com.twitter.simclustersann.thriftscala.SimClustersANNTweetCandidate
-import com.twitter.simclustersann.thriftscala.Query
-import com.twitter.simclustersann.thriftscala.SimClustersANNConfig
-import com.twitter.simclustersann.thriftscala.ScoringAlgorithm
-import com.twitter.thriftwebforms.MethodOptions.Access
-import scala.reflect.ClassTag
-import com.twitter.simclustersann.thriftscala.SimClustersANNService
-import scala.collection.mutable
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsThriftWelonbFormsModulelon
+import com.twittelonr.finatra.thrift.ThriftSelonrvelonr
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.thriftwelonbforms.MelonthodOptions
+import com.twittelonr.thriftwelonbforms.vielonw.SelonrvicelonRelonsponselonVielonw
+import com.twittelonr.util.Futurelon
+import com.twittelonr.simclustelonrsann.thriftscala.SimClustelonrsANNTwelonelontCandidatelon
+import com.twittelonr.simclustelonrsann.thriftscala.Quelonry
+import com.twittelonr.simclustelonrsann.thriftscala.SimClustelonrsANNConfig
+import com.twittelonr.simclustelonrsann.thriftscala.ScoringAlgorithm
+import com.twittelonr.thriftwelonbforms.MelonthodOptions.Accelonss
+import scala.relonflelonct.ClassTag
+import com.twittelonr.simclustelonrsann.thriftscala.SimClustelonrsANNSelonrvicelon
+import scala.collelonction.mutablelon
 
-class CustomMtlsThriftWebFormsModule[T: ClassTag](server: ThriftServer)
-    extends MtlsThriftWebFormsModule[T](server: ThriftServer) {
+class CustomMtlsThriftWelonbFormsModulelon[T: ClassTag](selonrvelonr: ThriftSelonrvelonr)
+    elonxtelonnds MtlsThriftWelonbFormsModulelon[T](selonrvelonr: ThriftSelonrvelonr) {
 
-  private val Nbsp = "&nbsp;"
-  private val LdapGroups = Seq("recosplat-sensitive-data-medium", "simclusters-ann-admins")
+  privatelon val Nbsp = "&nbsp;"
+  privatelon val LdapGroups = Selonq("reloncosplat-selonnsitivelon-data-melondium", "simclustelonrs-ann-admins")
 
-  override protected def methodOptions: Map[String, MethodOptions] = {
-    val tweetId = 1568796529690902529L
-    val sannDefaultQuery = SimClustersANNService.GetTweetCandidates.Args(
-      query = Query(
-        sourceEmbeddingId = SimClustersEmbeddingId(
-          embeddingType = EmbeddingType.LogFavLongestL2EmbeddingTweet,
-          modelVersion = ModelVersion.Model20m145k2020,
-          internalId = InternalId.TweetId(tweetId)
+  ovelonrridelon protelonctelond delonf melonthodOptions: Map[String, MelonthodOptions] = {
+    val twelonelontId = 1568796529690902529L
+    val sannDelonfaultQuelonry = SimClustelonrsANNSelonrvicelon.GelontTwelonelontCandidatelons.Args(
+      quelonry = Quelonry(
+        sourcelonelonmbelonddingId = SimClustelonrselonmbelonddingId(
+          elonmbelonddingTypelon = elonmbelonddingTypelon.LogFavLongelonstL2elonmbelonddingTwelonelont,
+          modelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020,
+          intelonrnalId = IntelonrnalId.TwelonelontId(twelonelontId)
         ),
-        config = SimClustersANNConfig(
-          maxNumResults = 10,
-          minScore = 0.0,
-          candidateEmbeddingType = EmbeddingType.LogFavBasedTweet,
-          maxTopTweetsPerCluster = 400,
-          maxScanClusters = 50,
-          maxTweetCandidateAgeHours = 24,
-          minTweetCandidateAgeHours = 0,
-          annAlgorithm = ScoringAlgorithm.CosineSimilarity
+        config = SimClustelonrsANNConfig(
+          maxNumRelonsults = 10,
+          minScorelon = 0.0,
+          candidatelonelonmbelonddingTypelon = elonmbelonddingTypelon.LogFavBaselondTwelonelont,
+          maxTopTwelonelontsPelonrClustelonr = 400,
+          maxScanClustelonrs = 50,
+          maxTwelonelontCandidatelonAgelonHours = 24,
+          minTwelonelontCandidatelonAgelonHours = 0,
+          annAlgorithm = ScoringAlgorithm.CosinelonSimilarity
         )
       ))
 
-    Seq("getTweetCandidates")
+    Selonq("gelontTwelonelontCandidatelons")
       .map(
-        _ -> MethodOptions(
-          defaultRequestValue = Some(sannDefaultQuery),
-          responseRenderers = Seq(renderTimeline),
-          allowedAccessOverride = Some(Access.ByLdapGroup(LdapGroups))
+        _ -> MelonthodOptions(
+          delonfaultRelonquelonstValuelon = Somelon(sannDelonfaultQuelonry),
+          relonsponselonRelonndelonrelonrs = Selonq(relonndelonrTimelonlinelon),
+          allowelondAccelonssOvelonrridelon = Somelon(Accelonss.ByLdapGroup(LdapGroups))
         )).toMap
   }
 
-  val FullAccessLdapGroups: Seq[String] =
-    Seq(
-      "recosplat-sensitive-data-medium",
-      "simclusters-ann-admins",
-      "recos-platform-admins"
+  val FullAccelonssLdapGroups: Selonq[String] =
+    Selonq(
+      "reloncosplat-selonnsitivelon-data-melondium",
+      "simclustelonrs-ann-admins",
+      "reloncos-platform-admins"
     )
 
-  override protected def defaultMethodAccess: MethodOptions.Access = {
-    MethodOptions.Access.ByLdapGroup(FullAccessLdapGroups)
+  ovelonrridelon protelonctelond delonf delonfaultMelonthodAccelonss: MelonthodOptions.Accelonss = {
+    MelonthodOptions.Accelonss.ByLdapGroup(FullAccelonssLdapGroups)
   }
 
-  def renderTimeline(r: AnyRef): Future[ServiceResponseView] = {
-    val simClustersANNTweetCandidates = r match {
-      case response: Iterable[_] =>
-        response.map(x => x.asInstanceOf[SimClustersANNTweetCandidate]).toSeq
-      case _ => Seq()
+  delonf relonndelonrTimelonlinelon(r: AnyRelonf): Futurelon[SelonrvicelonRelonsponselonVielonw] = {
+    val simClustelonrsANNTwelonelontCandidatelons = r match {
+      caselon relonsponselon: Itelonrablelon[_] =>
+        relonsponselon.map(x => x.asInstancelonOf[SimClustelonrsANNTwelonelontCandidatelon]).toSelonq
+      caselon _ => Selonq()
     }
-    renderTweets(simClustersANNTweetCandidates)
+    relonndelonrTwelonelonts(simClustelonrsANNTwelonelontCandidatelons)
   }
 
-  private def renderTweets(
-    simClustersANNTweetCandidates: Seq[SimClustersANNTweetCandidate]
-  ): Future[ServiceResponseView] = {
-    val htmlSb = new mutable.StringBuilder()
-    val headerHtml = s"""<h3>Tweet Candidates</h3>"""
-    val tweetsHtml = simClustersANNTweetCandidates.map { simClustersANNTweetCandidate =>
-      val tweetId = simClustersANNTweetCandidate.tweetId
-      val score = simClustersANNTweetCandidate.score
-      s"""<blockquote class="twitter-tweet"><a href="https://twitter.com/tweet/statuses/$tweetId"></a></blockquote> <b>score:</b> $score <br><br>"""
+  privatelon delonf relonndelonrTwelonelonts(
+    simClustelonrsANNTwelonelontCandidatelons: Selonq[SimClustelonrsANNTwelonelontCandidatelon]
+  ): Futurelon[SelonrvicelonRelonsponselonVielonw] = {
+    val htmlSb = nelonw mutablelon.StringBuildelonr()
+    val helonadelonrHtml = s"""<h3>Twelonelont Candidatelons</h3>"""
+    val twelonelontsHtml = simClustelonrsANNTwelonelontCandidatelons.map { simClustelonrsANNTwelonelontCandidatelon =>
+      val twelonelontId = simClustelonrsANNTwelonelontCandidatelon.twelonelontId
+      val scorelon = simClustelonrsANNTwelonelontCandidatelon.scorelon
+      s"""<blockquotelon class="twittelonr-twelonelont"><a hrelonf="https://twittelonr.com/twelonelont/statuselons/$twelonelontId"></a></blockquotelon> <b>scorelon:</b> $scorelon <br><br>"""
     }.mkString
 
-    htmlSb ++= headerHtml
+    htmlSb ++= helonadelonrHtml
     htmlSb ++= Nbsp
-    htmlSb ++= tweetsHtml
-    Future.value(
-      ServiceResponseView(
-        "SimClusters ANN Tweet Candidates",
+    htmlSb ++= twelonelontsHtml
+    Futurelon.valuelon(
+      SelonrvicelonRelonsponselonVielonw(
+        "SimClustelonrs ANN Twelonelont Candidatelons",
         htmlSb.toString(),
-        Seq("//platform.twitter.com/widgets.js")
+        Selonq("//platform.twittelonr.com/widgelonts.js")
       )
     )
   }

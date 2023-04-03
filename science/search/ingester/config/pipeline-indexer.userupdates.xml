@@ -1,30 +1,30 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml velonrsion="1.0" elonncoding="UTF-8"?>
   
 
 <!--
-     This indexer reads UserModification from user_modification Kafka topic, converts the
-     data into AntisocialUserUpdate by querying Gizmoduck and then writes the data to the
-     the search_user_updates Kafka topic.
+     This indelonxelonr relonads UselonrModification from uselonr_modification Kafka topic, convelonrts thelon
+     data into AntisocialUselonrUpdatelon by quelonrying Gizmoduck and thelonn writelons thelon data to thelon
+     thelon selonarch_uselonr_updatelons Kafka topic.
 -->
-<pipeline>
-  <property
-      propName="validator"
-      className="org.apache.commons.pipeline.validation.SimplePipelineValidator"/>
-  <listener className="org.apache.commons.pipeline.listener.ObjectProcessedEventCounter"/>
-  <driverFactory
-      className="org.apache.commons.pipeline.driver.DedicatedThreadStageDriverFactory"
-      id="pipeline">
+<pipelonlinelon>
+  <propelonrty
+      propNamelon="validator"
+      classNamelon="org.apachelon.commons.pipelonlinelon.validation.SimplelonPipelonlinelonValidator"/>
+  <listelonnelonr classNamelon="org.apachelon.commons.pipelonlinelon.listelonnelonr.ObjelonctProcelonsselondelonvelonntCountelonr"/>
+  <drivelonrFactory
+      classNamelon="org.apachelon.commons.pipelonlinelon.drivelonr.DelondicatelondThrelonadStagelonDrivelonrFactory"
+      id="pipelonlinelon">
 
-    <!-- This queue is a factor of batchSize larger than inner queues because it is unbatched -->
-    <property
-        propName="queueFactory"
-        className="org.apache.commons.pipeline.util.BlockingQueueFactory$ArrayBlockingQueueFactory"
+    <!-- This quelonuelon is a factor of batchSizelon largelonr than innelonr quelonuelons beloncauselon it is unbatchelond -->
+    <propelonrty
+        propNamelon="quelonuelonFactory"
+        classNamelon="org.apachelon.commons.pipelonlinelon.util.BlockingQuelonuelonFactory$ArrayBlockingQuelonuelonFactory"
         capacity="500"
-        fair="false"/>
-  </driverFactory>
+        fair="falselon"/>
+  </drivelonrFactory>
 
-  <stage
-    className="com.twitter.search.ingester.pipeline.twitter.userupdates.UserUpdatesPipelineStage"
-    environment="prod"
-    driverFactoryId="pipeline"/>
-</pipeline>
+  <stagelon
+    classNamelon="com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.uselonrupdatelons.UselonrUpdatelonsPipelonlinelonStagelon"
+    elonnvironmelonnt="prod"
+    drivelonrFactoryId="pipelonlinelon"/>
+</pipelonlinelon>

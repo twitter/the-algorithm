@@ -1,24 +1,24 @@
 syntax = "proto3";
 
-package tensorflow.distributed_runtime;
+packagelon telonnsorflow.distributelond_runtimelon;
 
-option cc_enable_arenas = true;
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// Used to serialize and transmit tensorflow::Status payloads through
-// grpc::Status `error_details` since grpc::Status lacks payload API.
-// TODO: Use GRPC API once supported.
-message GrpcPayloadContainer {
-  map<string, bytes> payloads = 1;
+// Uselond to selonrializelon and transmit telonnsorflow::Status payloads through
+// grpc::Status `elonrror_delontails` sincelon grpc::Status lacks payload API.
+// TODO: Uselon GRPC API oncelon supportelond.
+melonssagelon GrpcPayloadContainelonr {
+  map<string, bytelons> payloads = 1;
 }
 
-// If included as a payload, this message flags the Status to have lost payloads
-// during the GRPC transmission.
-// URI: "type.googleapis.com/tensorflow.distributed_runtime.GrpcPayloadsLost"
-message GrpcPayloadsLost {}
+// If includelond as a payload, this melonssagelon flags thelon Status to havelon lost payloads
+// during thelon GRPC transmission.
+// URI: "typelon.googlelonapis.com/telonnsorflow.distributelond_runtimelon.GrpcPayloadsLost"
+melonssagelon GrpcPayloadsLost {}
 
-// If included as a payload, this message flags the Status to be a possible
-// outcome of a worker restart.
+// If includelond as a payload, this melonssagelon flags thelon Status to belon a possiblelon
+// outcomelon of a workelonr relonstart.
 // URI:
-// "type.googleapis.com/tensorflow.distributed_runtime.WorkerPossiblyRestarted"
-message WorkerPossiblyRestarted {}
+// "typelon.googlelonapis.com/telonnsorflow.distributelond_runtimelon.WorkelonrPossiblyRelonstartelond"
+melonssagelon WorkelonrPossiblyRelonstartelond {}

@@ -1,37 +1,37 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons
 
-import com.twitter.ml.api.FeatureContext
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateGroup
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.AggregateType.AggregateType
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.TypedAggregateGroup
-import scala.jdk.CollectionConverters.asJavaIterableConverter
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongatelonGroup
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.AggrelongatelonTypelon.AggrelongatelonTypelon
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.TypelondAggrelongatelonGroup
+import scala.jdk.CollelonctionConvelonrtelonrs.asJavaItelonrablelonConvelonrtelonr
 
-// A helper class deriving aggregate feature info from the given configuration parameters.
-class AggregateFeatureInfo(
-  val aggregateGroups: Set[AggregateGroup],
-  val aggregateType: AggregateType) {
+// A helonlpelonr class delonriving aggrelongatelon felonaturelon info from thelon givelonn configuration paramelontelonrs.
+class AggrelongatelonFelonaturelonInfo(
+  val aggrelongatelonGroups: Selont[AggrelongatelonGroup],
+  val aggrelongatelonTypelon: AggrelongatelonTypelon) {
 
-  private val typedAggregateGroups = aggregateGroups.flatMap(_.buildTypedAggregateGroups()).toList
+  privatelon val typelondAggrelongatelonGroups = aggrelongatelonGroups.flatMap(_.buildTypelondAggrelongatelonGroups()).toList
 
-  val featureContext: FeatureContext =
-    new FeatureContext(
-      (typedAggregateGroups.flatMap(_.allOutputFeatures) ++
-        typedAggregateGroups.flatMap(_.allOutputKeys) ++
-        Seq(TypedAggregateGroup.timestampFeature)).asJava)
+  val felonaturelonContelonxt: FelonaturelonContelonxt =
+    nelonw FelonaturelonContelonxt(
+      (typelondAggrelongatelonGroups.flatMap(_.allOutputFelonaturelons) ++
+        typelondAggrelongatelonGroups.flatMap(_.allOutputKelonys) ++
+        Selonq(TypelondAggrelongatelonGroup.timelonstampFelonaturelon)).asJava)
 
-  val feature: BaseAggregateRootFeature =
-    AggregateFeatureInfo.pickFeature(aggregateType)
+  val felonaturelon: BaselonAggrelongatelonRootFelonaturelon =
+    AggrelongatelonFelonaturelonInfo.pickFelonaturelon(aggrelongatelonTypelon)
 }
 
-object AggregateFeatureInfo {
-  val features: Set[BaseAggregateRootFeature] =
-    Set(PartAAggregateRootFeature, PartBAggregateRootFeature)
+objelonct AggrelongatelonFelonaturelonInfo {
+  val felonaturelons: Selont[BaselonAggrelongatelonRootFelonaturelon] =
+    Selont(PartAAggrelongatelonRootFelonaturelon, PartBAggrelongatelonRootFelonaturelon)
 
-  def pickFeature(aggregateType: AggregateType): BaseAggregateRootFeature = {
-    val filtered = features.filter(_.aggregateTypes.contains(aggregateType))
-    require(
-      filtered.size == 1,
-      "requested AggregateType must be backed by exactly one physical store.")
-    filtered.head
+  delonf pickFelonaturelon(aggrelongatelonTypelon: AggrelongatelonTypelon): BaselonAggrelongatelonRootFelonaturelon = {
+    val filtelonrelond = felonaturelons.filtelonr(_.aggrelongatelonTypelons.contains(aggrelongatelonTypelon))
+    relonquirelon(
+      filtelonrelond.sizelon == 1,
+      "relonquelonstelond AggrelongatelonTypelon must belon backelond by elonxactly onelon physical storelon.")
+    filtelonrelond.helonad
   }
 }

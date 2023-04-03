@@ -1,22 +1,22 @@
-package com.twitter.search.earlybird_root.validators;
+packagelon com.twittelonr.selonarch.elonarlybird_root.validators;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
 
-public class TopTweetsResultsValidator implements ServiceResponseValidator<EarlybirdResponse> {
-  private final EarlybirdCluster cluster;
+public class TopTwelonelontsRelonsultsValidator implelonmelonnts SelonrvicelonRelonsponselonValidator<elonarlybirdRelonsponselon> {
+  privatelon final elonarlybirdClustelonr clustelonr;
 
-  public TopTweetsResultsValidator(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  public TopTwelonelontsRelonsultsValidator(elonarlybirdClustelonr clustelonr) {
+    this.clustelonr = clustelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    if (!response.isSetSearchResults() || !response.getSearchResults().isSetResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set search results."));
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> validatelon(elonarlybirdRelonsponselon relonsponselon) {
+    if (!relonsponselon.isSelontSelonarchRelonsults() || !relonsponselon.gelontSelonarchRelonsults().isSelontRelonsults()) {
+      relonturn Futurelon.elonxcelonption(
+          nelonw IllelongalStatelonelonxcelonption(clustelonr + " didn't selont selonarch relonsults."));
     }
-    return Future.value(response);
+    relonturn Futurelon.valuelon(relonsponselon);
   }
 }

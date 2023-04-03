@@ -1,29 +1,29 @@
-target(
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility",
+targelont(
+    delonpelonndelonncielons = [
+        "visibility/lib/src/main/scala/com/twittelonr/visibility",
     ],
 )
 
-target(
-    name = "conversations",
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/tweets",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/conversations",
+targelont(
+    namelon = "convelonrsations",
+    delonpelonndelonncielons = [
+        "visibility/lib/src/main/scala/com/twittelonr/visibility/intelonrfacelons/common/twelonelonts",
+        "visibility/lib/src/main/scala/com/twittelonr/visibility/intelonrfacelons/convelonrsations",
     ],
 )
 
-target(
-    name = "tweets",
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility/generators",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/common/tweets",
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/tweets",
+targelont(
+    namelon = "twelonelonts",
+    delonpelonndelonncielons = [
+        "visibility/lib/src/main/scala/com/twittelonr/visibility/gelonnelonrators",
+        "visibility/lib/src/main/scala/com/twittelonr/visibility/intelonrfacelons/common/twelonelonts",
+        "visibility/lib/src/main/scala/com/twittelonr/visibility/intelonrfacelons/twelonelonts",
     ],
 )
 
-target(
-    name = "users",
-    dependencies = [
-        "visibility/lib/src/main/scala/com/twitter/visibility/interfaces/users",
+targelont(
+    namelon = "uselonrs",
+    delonpelonndelonncielons = [
+        "visibility/lib/src/main/scala/com/twittelonr/visibility/intelonrfacelons/uselonrs",
     ],
 )

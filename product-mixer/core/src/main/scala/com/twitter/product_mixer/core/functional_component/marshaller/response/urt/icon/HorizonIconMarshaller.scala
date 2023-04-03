@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.icon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.icon._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.icon._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HorizonIconMarshaller @Inject() () {
+@Singlelonton
+class HorizonIconMarshallelonr @Injelonct() () {
 
-  def apply(icon: HorizonIcon): urt.HorizonIcon = icon match {
-    case Bookmark => urt.HorizonIcon.Bookmark
-    case Moment => urt.HorizonIcon.Moment
-    case Debug => urt.HorizonIcon.Debug
-    case Error => urt.HorizonIcon.Error
-    case Follow => urt.HorizonIcon.Follow
-    case Unfollow => urt.HorizonIcon.Unfollow
-    case Smile => urt.HorizonIcon.Smile
-    case Frown => urt.HorizonIcon.Frown
-    case Help => urt.HorizonIcon.Help
-    case Link => urt.HorizonIcon.Link
-    case Message => urt.HorizonIcon.Message
-    case No => urt.HorizonIcon.No
-    case Outgoing => urt.HorizonIcon.Outgoing
-    case Pin => urt.HorizonIcon.Pin
-    case Retweet => urt.HorizonIcon.Retweet
-    case Speaker => urt.HorizonIcon.Speaker
-    case Trashcan => urt.HorizonIcon.Trashcan
-    case Feedback => urt.HorizonIcon.Feedback
-    case FeedbackClose => urt.HorizonIcon.FeedbackClose
-    case EyeOff => urt.HorizonIcon.EyeOff
-    case Moderation => urt.HorizonIcon.Moderation
-    case Topic => urt.HorizonIcon.Topic
-    case TopicClose => urt.HorizonIcon.TopicClose
-    case Flag => urt.HorizonIcon.Flag
-    case TopicFilled => urt.HorizonIcon.TopicFilled
-    case NotificationsFollow => urt.HorizonIcon.NotificationsFollow
-    case Person => urt.HorizonIcon.Person
-    case BalloonStroke => urt.HorizonIcon.BalloonStroke
-    case Calendar => urt.HorizonIcon.Calendar
-    case LocationStroke => urt.HorizonIcon.LocationStroke
-    case PersonStroke => urt.HorizonIcon.PersonStroke
-    case Safety => urt.HorizonIcon.Safety
-    case Logo => urt.HorizonIcon.Logo
-    case SparkleOn => urt.HorizonIcon.SparkleOn
-    case StarRising => urt.HorizonIcon.StarRising
-    case CameraVideo => urt.HorizonIcon.CameraVideo
-    case ShoppingClock => urt.HorizonIcon.ShoppingClock
-    case ArrowRight => urt.HorizonIcon.ArrowRight
-    case SpeakerOff => urt.HorizonIcon.SpeakerOff
+  delonf apply(icon: HorizonIcon): urt.HorizonIcon = icon match {
+    caselon Bookmark => urt.HorizonIcon.Bookmark
+    caselon Momelonnt => urt.HorizonIcon.Momelonnt
+    caselon Delonbug => urt.HorizonIcon.Delonbug
+    caselon elonrror => urt.HorizonIcon.elonrror
+    caselon Follow => urt.HorizonIcon.Follow
+    caselon Unfollow => urt.HorizonIcon.Unfollow
+    caselon Smilelon => urt.HorizonIcon.Smilelon
+    caselon Frown => urt.HorizonIcon.Frown
+    caselon Helonlp => urt.HorizonIcon.Helonlp
+    caselon Link => urt.HorizonIcon.Link
+    caselon Melonssagelon => urt.HorizonIcon.Melonssagelon
+    caselon No => urt.HorizonIcon.No
+    caselon Outgoing => urt.HorizonIcon.Outgoing
+    caselon Pin => urt.HorizonIcon.Pin
+    caselon Relontwelonelont => urt.HorizonIcon.Relontwelonelont
+    caselon Spelonakelonr => urt.HorizonIcon.Spelonakelonr
+    caselon Trashcan => urt.HorizonIcon.Trashcan
+    caselon Felonelondback => urt.HorizonIcon.Felonelondback
+    caselon FelonelondbackCloselon => urt.HorizonIcon.FelonelondbackCloselon
+    caselon elonyelonOff => urt.HorizonIcon.elonyelonOff
+    caselon Modelonration => urt.HorizonIcon.Modelonration
+    caselon Topic => urt.HorizonIcon.Topic
+    caselon TopicCloselon => urt.HorizonIcon.TopicCloselon
+    caselon Flag => urt.HorizonIcon.Flag
+    caselon TopicFillelond => urt.HorizonIcon.TopicFillelond
+    caselon NotificationsFollow => urt.HorizonIcon.NotificationsFollow
+    caselon Pelonrson => urt.HorizonIcon.Pelonrson
+    caselon BalloonStrokelon => urt.HorizonIcon.BalloonStrokelon
+    caselon Calelonndar => urt.HorizonIcon.Calelonndar
+    caselon LocationStrokelon => urt.HorizonIcon.LocationStrokelon
+    caselon PelonrsonStrokelon => urt.HorizonIcon.PelonrsonStrokelon
+    caselon Safelonty => urt.HorizonIcon.Safelonty
+    caselon Logo => urt.HorizonIcon.Logo
+    caselon SparklelonOn => urt.HorizonIcon.SparklelonOn
+    caselon StarRising => urt.HorizonIcon.StarRising
+    caselon CamelonraVidelono => urt.HorizonIcon.CamelonraVidelono
+    caselon ShoppingClock => urt.HorizonIcon.ShoppingClock
+    caselon ArrowRight => urt.HorizonIcon.ArrowRight
+    caselon SpelonakelonrOff => urt.HorizonIcon.SpelonakelonrOff
   }
 }

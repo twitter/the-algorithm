@@ -1,73 +1,73 @@
-package com.twitter.simclustersann
+packagelon com.twittelonr.simclustelonrsann
 
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import javax.inject.Inject
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.injelonct.utils.Handlelonr
+import javax.injelonct.Injelonct
 import scala.util.control.NonFatal
-import com.google.common.util.concurrent.RateLimiter
-import com.twitter.conversions.DurationOps.richDurationFromInt
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Await
-import com.twitter.util.ExecutorServiceFuturePool
-import com.twitter.util.Future
+import com.googlelon.common.util.concurrelonnt.RatelonLimitelonr
+import com.twittelonr.convelonrsions.DurationOps.richDurationFromInt
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Await
+import com.twittelonr.util.elonxeloncutorSelonrvicelonFuturelonPool
+import com.twittelonr.util.Futurelon
 
-class SimclustersAnnWarmupHandler @Inject() (
-  clusterTweetCandidatesStore: ReadableStore[ClusterId, Seq[(TweetId, Double)]],
-  futurePool: ExecutorServiceFuturePool,
-  rateLimiter: RateLimiter,
-  statsReceiver: StatsReceiver)
-    extends Handler
+class SimclustelonrsAnnWarmupHandlelonr @Injelonct() (
+  clustelonrTwelonelontCandidatelonsStorelon: RelonadablelonStorelon[ClustelonrId, Selonq[(TwelonelontId, Doublelon)]],
+  futurelonPool: elonxeloncutorSelonrvicelonFuturelonPool,
+  ratelonLimitelonr: RatelonLimitelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Handlelonr
     with Logging {
 
-  private val stats = statsReceiver.scope(this.getClass.getName)
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontNamelon)
 
-  private val scopedStats = stats.scope("fetchFromCache")
-  private val clusters = scopedStats.counter("clusters")
-  private val fetchedKeys = scopedStats.counter("keys")
-  private val failures = scopedStats.counter("failures")
-  private val success = scopedStats.counter("success")
+  privatelon val scopelondStats = stats.scopelon("felontchFromCachelon")
+  privatelon val clustelonrs = scopelondStats.countelonr("clustelonrs")
+  privatelon val felontchelondKelonys = scopelondStats.countelonr("kelonys")
+  privatelon val failurelons = scopelondStats.countelonr("failurelons")
+  privatelon val succelonss = scopelondStats.countelonr("succelonss")
 
-  private val SimclustersNumber = 144428
+  privatelon val SimclustelonrsNumbelonr = 144428
 
-  override def handle(): Unit = {
+  ovelonrridelon delonf handlelon(): Unit = {
     try {
-      val clusterIds = List.range(1, SimclustersNumber)
-      val futures: Seq[Future[Unit]] = clusterIds
-        .map { clusterId =>
-          clusters.incr()
-          futurePool {
-            rateLimiter.acquire()
+      val clustelonrIds = List.rangelon(1, SimclustelonrsNumbelonr)
+      val futurelons: Selonq[Futurelon[Unit]] = clustelonrIds
+        .map { clustelonrId =>
+          clustelonrs.incr()
+          futurelonPool {
+            ratelonLimitelonr.acquirelon()
 
-            Await.result(
-              clusterTweetCandidatesStore
-                .get(clusterId)
-                .onSuccess { _ =>
-                  success.incr()
+            Await.relonsult(
+              clustelonrTwelonelontCandidatelonsStorelon
+                .gelont(clustelonrId)
+                .onSuccelonss { _ =>
+                  succelonss.incr()
                 }
-                .handle {
-                  case NonFatal(e) =>
-                    failures.incr()
+                .handlelon {
+                  caselon NonFatal(elon) =>
+                    failurelons.incr()
                 },
-              timeout = 10.seconds
+              timelonout = 10.selonconds
             )
-            fetchedKeys.incr()
+            felontchelondKelonys.incr()
           }
         }
 
-      Await.result(Future.collect(futures), timeout = 10.minutes)
+      Await.relonsult(Futurelon.collelonct(futurelons), timelonout = 10.minutelons)
 
     } catch {
-      case NonFatal(e) => error(e.getMessage, e)
+      caselon NonFatal(elon) => elonrror(elon.gelontMelonssagelon, elon)
     } finally {
       try {
-        futurePool.executor.shutdown()
+        futurelonPool.elonxeloncutor.shutdown()
       } catch {
-        case NonFatal(_) =>
+        caselon NonFatal(_) =>
       }
-      info("Warmup done.")
+      info("Warmup donelon.")
     }
   }
 }

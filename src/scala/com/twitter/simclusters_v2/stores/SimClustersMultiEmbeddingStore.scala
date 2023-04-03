@@ -1,74 +1,74 @@
-package com.twitter.simclusters_v2.stores
+packagelon com.twittelonr.simclustelonrs_v2.storelons
 
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.SimClustersMultiEmbeddingId._
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersMultiEmbedding,
-  SimClustersEmbeddingId,
-  SimClustersMultiEmbeddingId
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrsMultielonmbelonddingId._
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  SimClustelonrsMultielonmbelondding,
+  SimClustelonrselonmbelonddingId,
+  SimClustelonrsMultielonmbelonddingId
 }
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Future
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Futurelon
 
 /**
- * The helper methods for SimClusters Multi-Embedding based ReadableStore
+ * Thelon helonlpelonr melonthods for SimClustelonrs Multi-elonmbelondding baselond RelonadablelonStorelon
  */
-object SimClustersMultiEmbeddingStore {
+objelonct SimClustelonrsMultielonmbelonddingStorelon {
 
   /**
-   * Only support the Values based Multi-embedding transformation.
+   * Only support thelon Valuelons baselond Multi-elonmbelondding transformation.
    */
-  case class SimClustersMultiEmbeddingWrapperStore(
-    sourceStore: ReadableStore[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding])
-      extends ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] {
+  caselon class SimClustelonrsMultielonmbelonddingWrappelonrStorelon(
+    sourcelonStorelon: RelonadablelonStorelon[SimClustelonrsMultielonmbelonddingId, SimClustelonrsMultielonmbelondding])
+      elonxtelonnds RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding] {
 
-    override def get(k: SimClustersEmbeddingId): Future[Option[SimClustersEmbedding]] = {
-      sourceStore.get(toMultiEmbeddingId(k)).map(_.map(toSimClustersEmbedding(k, _)))
+    ovelonrridelon delonf gelont(k: SimClustelonrselonmbelonddingId): Futurelon[Option[SimClustelonrselonmbelondding]] = {
+      sourcelonStorelon.gelont(toMultielonmbelonddingId(k)).map(_.map(toSimClustelonrselonmbelondding(k, _)))
     }
 
-    // Override the multiGet for better batch performance.
-    override def multiGet[K1 <: SimClustersEmbeddingId](
-      ks: Set[K1]
-    ): Map[K1, Future[Option[SimClustersEmbedding]]] = {
-      if (ks.isEmpty) {
-        Map.empty
-      } else {
-        // Aggregate multiple get requests by MultiEmbeddingId
-        val multiEmbeddingIds = ks.map { k =>
-          k -> toMultiEmbeddingId(k)
+    // Ovelonrridelon thelon multiGelont for belonttelonr batch pelonrformancelon.
+    ovelonrridelon delonf multiGelont[K1 <: SimClustelonrselonmbelonddingId](
+      ks: Selont[K1]
+    ): Map[K1, Futurelon[Option[SimClustelonrselonmbelondding]]] = {
+      if (ks.iselonmpty) {
+        Map.elonmpty
+      } elonlselon {
+        // Aggrelongatelon multiplelon gelont relonquelonsts by MultielonmbelonddingId
+        val multielonmbelonddingIds = ks.map { k =>
+          k -> toMultielonmbelonddingId(k)
         }.toMap
 
-        val multiEmbeddings = sourceStore.multiGet(multiEmbeddingIds.values.toSet)
+        val multielonmbelonddings = sourcelonStorelon.multiGelont(multielonmbelonddingIds.valuelons.toSelont)
         ks.map { k =>
-          k -> multiEmbeddings(multiEmbeddingIds(k)).map(_.map(toSimClustersEmbedding(k, _)))
+          k -> multielonmbelonddings(multielonmbelonddingIds(k)).map(_.map(toSimClustelonrselonmbelondding(k, _)))
         }.toMap
       }
     }
 
-    private def toSimClustersEmbedding(
-      id: SimClustersEmbeddingId,
-      multiEmbedding: SimClustersMultiEmbedding
-    ): SimClustersEmbedding = {
-      multiEmbedding match {
-        case SimClustersMultiEmbedding.Values(values) =>
+    privatelon delonf toSimClustelonrselonmbelondding(
+      id: SimClustelonrselonmbelonddingId,
+      multielonmbelondding: SimClustelonrsMultielonmbelondding
+    ): SimClustelonrselonmbelondding = {
+      multielonmbelondding match {
+        caselon SimClustelonrsMultielonmbelondding.Valuelons(valuelons) =>
           val subId = toSubId(id)
-          if (subId >= values.embeddings.size) {
-            throw new IllegalArgumentException(
-              s"SimClustersMultiEmbeddingId $id is over the size of ${values.embeddings.size}")
-          } else {
-            values.embeddings(subId).embedding
+          if (subId >= valuelons.elonmbelonddings.sizelon) {
+            throw nelonw IllelongalArgumelonntelonxcelonption(
+              s"SimClustelonrsMultielonmbelonddingId $id is ovelonr thelon sizelon of ${valuelons.elonmbelonddings.sizelon}")
+          } elonlselon {
+            valuelons.elonmbelonddings(subId).elonmbelondding
           }
-        case _ =>
-          throw new IllegalArgumentException(
-            s"Invalid SimClustersMultiEmbedding $id, $multiEmbedding")
+        caselon _ =>
+          throw nelonw IllelongalArgumelonntelonxcelonption(
+            s"Invalid SimClustelonrsMultielonmbelondding $id, $multielonmbelondding")
       }
     }
   }
 
-  def toSimClustersEmbeddingStore(
-    sourceStore: ReadableStore[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding]
-  ): ReadableStore[SimClustersEmbeddingId, SimClustersEmbedding] = {
-    SimClustersMultiEmbeddingWrapperStore(sourceStore)
+  delonf toSimClustelonrselonmbelonddingStorelon(
+    sourcelonStorelon: RelonadablelonStorelon[SimClustelonrsMultielonmbelonddingId, SimClustelonrsMultielonmbelondding]
+  ): RelonadablelonStorelon[SimClustelonrselonmbelonddingId, SimClustelonrselonmbelondding] = {
+    SimClustelonrsMultielonmbelonddingWrappelonrStorelon(sourcelonStorelon)
   }
 
 }

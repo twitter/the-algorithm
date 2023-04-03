@@ -1,132 +1,132 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.Lists;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
-import com.twitter.search.common.schema.thriftjava.ThriftFieldData;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.delonbug.thriftjava.Delonbugelonvelonnts;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonld;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonldData;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonntTypelon;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrThriftVelonrsionelondelonvelonnts;
 
 /**
- * Converter for {@code ThriftVersionedEvents}.
+ * Convelonrtelonr for {@codelon ThriftVelonrsionelondelonvelonnts}.
  *
  */
-public class ThriftVersionedEventsConverter {
-  private static final long UNUSED_USER_ID = -1L;
+public class ThriftVelonrsionelondelonvelonntsConvelonrtelonr {
+  privatelon static final long UNUSelonD_USelonR_ID = -1L;
 
-  private Iterable<PenguinVersion> penguinVersions;
+  privatelon Itelonrablelon<PelonnguinVelonrsion> pelonnguinVelonrsions;
 
-  public ThriftVersionedEventsConverter(Iterable<PenguinVersion> penguinVersions) {
-    this.penguinVersions = penguinVersions;
+  public ThriftVelonrsionelondelonvelonntsConvelonrtelonr(Itelonrablelon<PelonnguinVelonrsion> pelonnguinVelonrsions) {
+    this.pelonnguinVelonrsions = pelonnguinVelonrsions;
   }
 
   /**
-   * Creates a DELETE IngesterThriftVersionedEvents instance for the given tweet ID and user ID.
+   * Crelonatelons a DelonLelonTelon IngelonstelonrThriftVelonrsionelondelonvelonnts instancelon for thelon givelonn twelonelont ID and uselonr ID.
    *
-   * @param tweetId The tweet ID.
-   * @param userId The user ID.
-   * @param debugEvents The DebugEvents to propagate to the returned IngesterThriftVersionedEvents
-   *                    instance.
-   * @return A DELETE IngesterThriftVersionedEvents instance with the given tweet and user IDs.
+   * @param twelonelontId Thelon twelonelont ID.
+   * @param uselonrId Thelon uselonr ID.
+   * @param delonbugelonvelonnts Thelon Delonbugelonvelonnts to propagatelon to thelon relonturnelond IngelonstelonrThriftVelonrsionelondelonvelonnts
+   *                    instancelon.
+   * @relonturn A DelonLelonTelon IngelonstelonrThriftVelonrsionelondelonvelonnts instancelon with thelon givelonn twelonelont and uselonr IDs.
    */
-  public IngesterThriftVersionedEvents toDelete(
-      long tweetId, long userId, DebugEvents debugEvents) {
-    ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-        .setEventType(ThriftIndexingEventType.DELETE)
-        .setUid(tweetId);
-    return toThriftVersionedEvents(tweetId, userId, thriftIndexingEvent, debugEvents);
+  public IngelonstelonrThriftVelonrsionelondelonvelonnts toDelonlelontelon(
+      long twelonelontId, long uselonrId, Delonbugelonvelonnts delonbugelonvelonnts) {
+    ThriftIndelonxingelonvelonnt thriftIndelonxingelonvelonnt = nelonw ThriftIndelonxingelonvelonnt()
+        .selontelonvelonntTypelon(ThriftIndelonxingelonvelonntTypelon.DelonLelonTelon)
+        .selontUid(twelonelontId);
+    relonturn toThriftVelonrsionelondelonvelonnts(twelonelontId, uselonrId, thriftIndelonxingelonvelonnt, delonbugelonvelonnts);
   }
 
   /**
-   * Creates an OUT_OF_ORDER_APPEND IngesterThriftVersionedEvents instance for the given tweet ID
-   * and the given value for the given field.
+   * Crelonatelons an OUT_OF_ORDelonR_APPelonND IngelonstelonrThriftVelonrsionelondelonvelonnts instancelon for thelon givelonn twelonelont ID
+   * and thelon givelonn valuelon for thelon givelonn fielonld.
    *
-   * @param tweetId The tweet ID.
-   * @param field The updated field.
-   * @param value The new field value.
-   * @param debugEvents The DebugEvents to propagate to the returned IngesterThriftVersionedEvents
-   *                    instance.
-   * @return An OUT_OF_ORDER_APPEND IngesterThriftVersionedEvents instance with the given tweet ID
-   *         and value for the field.
+   * @param twelonelontId Thelon twelonelont ID.
+   * @param fielonld Thelon updatelond fielonld.
+   * @param valuelon Thelon nelonw fielonld valuelon.
+   * @param delonbugelonvelonnts Thelon Delonbugelonvelonnts to propagatelon to thelon relonturnelond IngelonstelonrThriftVelonrsionelondelonvelonnts
+   *                    instancelon.
+   * @relonturn An OUT_OF_ORDelonR_APPelonND IngelonstelonrThriftVelonrsionelondelonvelonnts instancelon with thelon givelonn twelonelont ID
+   *         and valuelon for thelon fielonld.
    */
-  public IngesterThriftVersionedEvents toOutOfOrderAppend(
-      long tweetId,
-      EarlybirdFieldConstants.EarlybirdFieldConstant field,
-      long value,
-      DebugEvents debugEvents) {
-    ThriftField updateField = new ThriftField()
-        .setFieldConfigId(field.getFieldId())
-        .setFieldData(new ThriftFieldData().setLongValue(value));
-    ThriftDocument document = new ThriftDocument()
-        .setFields(Lists.newArrayList(updateField));
-    ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-        .setEventType(ThriftIndexingEventType.OUT_OF_ORDER_APPEND)
-        .setUid(tweetId)
-        .setDocument(document);
-    return toThriftVersionedEvents(tweetId, UNUSED_USER_ID, thriftIndexingEvent, debugEvents);
+  public IngelonstelonrThriftVelonrsionelondelonvelonnts toOutOfOrdelonrAppelonnd(
+      long twelonelontId,
+      elonarlybirdFielonldConstants.elonarlybirdFielonldConstant fielonld,
+      long valuelon,
+      Delonbugelonvelonnts delonbugelonvelonnts) {
+    ThriftFielonld updatelonFielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(fielonld.gelontFielonldId())
+        .selontFielonldData(nelonw ThriftFielonldData().selontLongValuelon(valuelon));
+    ThriftDocumelonnt documelonnt = nelonw ThriftDocumelonnt()
+        .selontFielonlds(Lists.nelonwArrayList(updatelonFielonld));
+    ThriftIndelonxingelonvelonnt thriftIndelonxingelonvelonnt = nelonw ThriftIndelonxingelonvelonnt()
+        .selontelonvelonntTypelon(ThriftIndelonxingelonvelonntTypelon.OUT_OF_ORDelonR_APPelonND)
+        .selontUid(twelonelontId)
+        .selontDocumelonnt(documelonnt);
+    relonturn toThriftVelonrsionelondelonvelonnts(twelonelontId, UNUSelonD_USelonR_ID, thriftIndelonxingelonvelonnt, delonbugelonvelonnts);
   }
 
 
   /**
-   * Creates a PARTIAL_UPDATE IngesterThriftVersionedEvents instance for the given tweet ID and the
-   * given value for the given feature.
+   * Crelonatelons a PARTIAL_UPDATelon IngelonstelonrThriftVelonrsionelondelonvelonnts instancelon for thelon givelonn twelonelont ID and thelon
+   * givelonn valuelon for thelon givelonn felonaturelon.
    *
-   * @param tweetId The tweet ID.
-   * @param feature The updated feature.
-   * @param value The new feature value.
-   * @param debugEvents The DebugEvents to propagate to the returned IngesterThriftVersionedEvents
-   *                    instance.
-   * @return A PARTIAL_UPDATE IngesterThriftVersionedEvents instance with the given tweet ID and
-   *         value for the feature.
+   * @param twelonelontId Thelon twelonelont ID.
+   * @param felonaturelon Thelon updatelond felonaturelon.
+   * @param valuelon Thelon nelonw felonaturelon valuelon.
+   * @param delonbugelonvelonnts Thelon Delonbugelonvelonnts to propagatelon to thelon relonturnelond IngelonstelonrThriftVelonrsionelondelonvelonnts
+   *                    instancelon.
+   * @relonturn A PARTIAL_UPDATelon IngelonstelonrThriftVelonrsionelondelonvelonnts instancelon with thelon givelonn twelonelont ID and
+   *         valuelon for thelon felonaturelon.
    */
-  public IngesterThriftVersionedEvents toPartialUpdate(
-      long tweetId,
-      EarlybirdFieldConstants.EarlybirdFieldConstant feature,
-      int value,
-      DebugEvents debugEvents) {
-    ThriftField updateField = new ThriftField()
-        .setFieldConfigId(feature.getFieldId())
-        .setFieldData(new ThriftFieldData().setIntValue(value));
-    ThriftDocument document = new ThriftDocument()
-        .setFields(Lists.newArrayList(updateField));
-    ThriftIndexingEvent thriftIndexingEvent = new ThriftIndexingEvent()
-        .setEventType(ThriftIndexingEventType.PARTIAL_UPDATE)
-        .setUid(tweetId)
-        .setDocument(document);
-    return toThriftVersionedEvents(tweetId, UNUSED_USER_ID, thriftIndexingEvent, debugEvents);
+  public IngelonstelonrThriftVelonrsionelondelonvelonnts toPartialUpdatelon(
+      long twelonelontId,
+      elonarlybirdFielonldConstants.elonarlybirdFielonldConstant felonaturelon,
+      int valuelon,
+      Delonbugelonvelonnts delonbugelonvelonnts) {
+    ThriftFielonld updatelonFielonld = nelonw ThriftFielonld()
+        .selontFielonldConfigId(felonaturelon.gelontFielonldId())
+        .selontFielonldData(nelonw ThriftFielonldData().selontIntValuelon(valuelon));
+    ThriftDocumelonnt documelonnt = nelonw ThriftDocumelonnt()
+        .selontFielonlds(Lists.nelonwArrayList(updatelonFielonld));
+    ThriftIndelonxingelonvelonnt thriftIndelonxingelonvelonnt = nelonw ThriftIndelonxingelonvelonnt()
+        .selontelonvelonntTypelon(ThriftIndelonxingelonvelonntTypelon.PARTIAL_UPDATelon)
+        .selontUid(twelonelontId)
+        .selontDocumelonnt(documelonnt);
+    relonturn toThriftVelonrsionelondelonvelonnts(twelonelontId, UNUSelonD_USelonR_ID, thriftIndelonxingelonvelonnt, delonbugelonvelonnts);
   }
 
-  // Wraps the given ThriftIndexingEvent into a ThriftVersionedEvents instance.
-  private IngesterThriftVersionedEvents toThriftVersionedEvents(
-      long tweetId, long userId, ThriftIndexingEvent thriftIndexingEvent, DebugEvents debugEvents) {
-    if (!thriftIndexingEvent.isSetCreateTimeMillis()
-        && (debugEvents != null)
-        && debugEvents.isSetCreatedAt()) {
-      thriftIndexingEvent.setCreateTimeMillis(debugEvents.getCreatedAt().getEventTimestampMillis());
+  // Wraps thelon givelonn ThriftIndelonxingelonvelonnt into a ThriftVelonrsionelondelonvelonnts instancelon.
+  privatelon IngelonstelonrThriftVelonrsionelondelonvelonnts toThriftVelonrsionelondelonvelonnts(
+      long twelonelontId, long uselonrId, ThriftIndelonxingelonvelonnt thriftIndelonxingelonvelonnt, Delonbugelonvelonnts delonbugelonvelonnts) {
+    if (!thriftIndelonxingelonvelonnt.isSelontCrelonatelonTimelonMillis()
+        && (delonbugelonvelonnts != null)
+        && delonbugelonvelonnts.isSelontCrelonatelondAt()) {
+      thriftIndelonxingelonvelonnt.selontCrelonatelonTimelonMillis(delonbugelonvelonnts.gelontCrelonatelondAt().gelontelonvelonntTimelonstampMillis());
     }
 
-    Map<Byte, ThriftIndexingEvent> versionedEvents = new HashMap<>();
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      versionedEvents.put(penguinVersion.getByteValue(), thriftIndexingEvent);
+    Map<Bytelon, ThriftIndelonxingelonvelonnt> velonrsionelondelonvelonnts = nelonw HashMap<>();
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : pelonnguinVelonrsions) {
+      velonrsionelondelonvelonnts.put(pelonnguinVelonrsion.gelontBytelonValuelon(), thriftIndelonxingelonvelonnt);
     }
 
-    IngesterThriftVersionedEvents events =
-        new IngesterThriftVersionedEvents(userId,  versionedEvents);
-    events.setId(tweetId);
-    events.setDebugEvents(debugEvents);
-    return events;
+    IngelonstelonrThriftVelonrsionelondelonvelonnts elonvelonnts =
+        nelonw IngelonstelonrThriftVelonrsionelondelonvelonnts(uselonrId,  velonrsionelondelonvelonnts);
+    elonvelonnts.selontId(twelonelontId);
+    elonvelonnts.selontDelonbugelonvelonnts(delonbugelonvelonnts);
+    relonturn elonvelonnts;
   }
 
-  public void updatePenguinVersions(List<PenguinVersion> updatePenguinVersions) {
-    penguinVersions = updatePenguinVersions;
+  public void updatelonPelonnguinVelonrsions(List<PelonnguinVelonrsion> updatelonPelonnguinVelonrsions) {
+    pelonnguinVelonrsions = updatelonPelonnguinVelonrsions;
   }
 }

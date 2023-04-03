@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.FollowAllMessageActionType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.MessageActionType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.FollowAllMelonssagelonActionTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.MelonssagelonActionTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class MessageActionTypeMarshaller @Inject() () {
+@Singlelonton
+class MelonssagelonActionTypelonMarshallelonr @Injelonct() () {
 
-  def apply(messageActionType: MessageActionType): urt.MessageActionType = messageActionType match {
-    case FollowAllMessageActionType => urt.MessageActionType.FollowAll
+  delonf apply(melonssagelonActionTypelon: MelonssagelonActionTypelon): urt.MelonssagelonActionTypelon = melonssagelonActionTypelon match {
+    caselon FollowAllMelonssagelonActionTypelon => urt.MelonssagelonActionTypelon.FollowAll
   }
 }

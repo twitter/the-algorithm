@@ -1,53 +1,53 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.search.common.dark.DarkProxy;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
-import com.twitter.util.Duration;
+import com.twittelonr.finaglelon.thrift.ThriftClielonntRelonquelonst;
+import com.twittelonr.selonarch.common.dark.DarkProxy;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
+import com.twittelonr.util.Duration;
 
 /**
- * Manages a finagle server underneath, which can be recreated.
+ * Managelons a finaglelon selonrvelonr undelonrnelonath, which can belon reloncrelonatelond.
  *
- * This class is not thread-safe. It is up to the concrete implementations and their callers to
- * correctly synchronize calls to these methods (for example, to make sure that there is no race
- * condition if startProductionFinagleServer() and stopProductionFinagleServer() are called
- * concurrently from two different threads).
+ * This class is not threlonad-safelon. It is up to thelon concrelontelon implelonmelonntations and thelonir callelonrs to
+ * correlonctly synchronizelon calls to thelonselon melonthods (for elonxamplelon, to makelon surelon that thelonrelon is no racelon
+ * condition if startProductionFinaglelonSelonrvelonr() and stopProductionFinaglelonSelonrvelonr() arelon callelond
+ * concurrelonntly from two diffelonrelonnt threlonads).
  */
-public interface EarlybirdFinagleServerManager {
+public intelonrfacelon elonarlybirdFinaglelonSelonrvelonrManagelonr {
   /**
-   * Determines if the warm up finagle server is currently running
+   * Delontelonrminelons if thelon warm up finaglelon selonrvelonr is currelonntly running
    */
-  boolean isWarmUpServerRunning();
+  boolelonan isWarmUpSelonrvelonrRunning();
 
   /**
-   * Starts up the warm up finagle server on the given port.
+   * Starts up thelon warm up finaglelon selonrvelonr on thelon givelonn port.
    */
-  void startWarmUpFinagleServer(
-      EarlybirdService.ServiceIface serviceIface,
-      String serviceName,
+  void startWarmUpFinaglelonSelonrvelonr(
+      elonarlybirdSelonrvicelon.SelonrvicelonIfacelon selonrvicelonIfacelon,
+      String selonrvicelonNamelon,
       int port);
 
   /**
-   * Stops the warm up finagle server, after waiting for at most the given amount of time.
+   * Stops thelon warm up finaglelon selonrvelonr, aftelonr waiting for at most thelon givelonn amount of timelon.
    */
-  void stopWarmUpFinagleServer(Duration serverCloseWaitTime) throws InterruptedException;
+  void stopWarmUpFinaglelonSelonrvelonr(Duration selonrvelonrCloselonWaitTimelon) throws Intelonrruptelondelonxcelonption;
 
   /**
-   * Determines if the production finagle server is currently running.
+   * Delontelonrminelons if thelon production finaglelon selonrvelonr is currelonntly running.
    */
-  boolean isProductionServerRunning();
+  boolelonan isProductionSelonrvelonrRunning();
 
   /**
-   * Starts up the production finagle server on the given port.
+   * Starts up thelon production finaglelon selonrvelonr on thelon givelonn port.
    */
-  void startProductionFinagleServer(
-      DarkProxy<ThriftClientRequest, byte[]> darkProxy,
-      EarlybirdService.ServiceIface serviceIface,
-      String serviceName,
+  void startProductionFinaglelonSelonrvelonr(
+      DarkProxy<ThriftClielonntRelonquelonst, bytelon[]> darkProxy,
+      elonarlybirdSelonrvicelon.SelonrvicelonIfacelon selonrvicelonIfacelon,
+      String selonrvicelonNamelon,
       int port);
 
   /**
-   * Stops the production finagle server after waiting for at most the given amount of time.
+   * Stops thelon production finaglelon selonrvelonr aftelonr waiting for at most thelon givelonn amount of timelon.
    */
-  void stopProductionFinagleServer(Duration serverCloseWaitTime) throws InterruptedException;
+  void stopProductionFinaglelonSelonrvelonr(Duration selonrvelonrCloselonWaitTimelon) throws Intelonrruptelondelonxcelonption;
 }

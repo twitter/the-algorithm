@@ -1,51 +1,51 @@
-package com.twitter.home_mixer.product.list_recommended_users.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.home_mixer.product.list_recommended_users.model.ListFeatures.IsListMemberFeature
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasListId
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.modelonl.ListFelonaturelons.IsListMelonmbelonrFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.socialgraph.{thriftscala => sg}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.socialgraph.SocialGraph
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class IsListMemberFeatureHydrator @Inject() (socialGraph: SocialGraph)
-    extends BulkCandidateFeatureHydrator[PipelineQuery with HasListId, UserCandidate] {
+@Singlelonton
+class IsListMelonmbelonrFelonaturelonHydrator @Injelonct() (socialGraph: SocialGraph)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry with HasListId, UselonrCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("IsListMember")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("IsListMelonmbelonr")
 
-  override val features: Set[Feature[_, _]] = Set(IsListMemberFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(IsListMelonmbelonrFelonaturelon)
 
-  override def apply(
-    query: PipelineQuery with HasListId,
-    candidates: Seq[CandidateWithFeatures[UserCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val userIds = candidates.map(_.candidate.id)
-    val request = sg.IdsRequest(
-      relationships = Seq(
-        sg.SrcRelationship(
-          source = query.listId,
-          relationshipType = sg.RelationshipType.ListHasMember,
-          hasRelationship = true,
-          targets = Some(userIds))),
-      pageRequest = Some(sg.PageRequest(selectAll = Some(true)))
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry with HasListId,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[UselonrCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val uselonrIds = candidatelons.map(_.candidatelon.id)
+    val relonquelonst = sg.IdsRelonquelonst(
+      relonlationships = Selonq(
+        sg.SrcRelonlationship(
+          sourcelon = quelonry.listId,
+          relonlationshipTypelon = sg.RelonlationshipTypelon.ListHasMelonmbelonr,
+          hasRelonlationship = truelon,
+          targelonts = Somelon(uselonrIds))),
+      pagelonRelonquelonst = Somelon(sg.PagelonRelonquelonst(selonlelonctAll = Somelon(truelon)))
     )
 
-    socialGraph.ids(request).map(_.ids).map { listMembers =>
-      val listMembersSet = listMembers.toSet
-      candidates.map { candidate =>
-        FeatureMapBuilder()
-          .add(IsListMemberFeature, listMembersSet.contains(candidate.candidate.id))
+    socialGraph.ids(relonquelonst).map(_.ids).map { listMelonmbelonrs =>
+      val listMelonmbelonrsSelont = listMelonmbelonrs.toSelont
+      candidatelons.map { candidatelon =>
+        FelonaturelonMapBuildelonr()
+          .add(IsListMelonmbelonrFelonaturelon, listMelonmbelonrsSelont.contains(candidatelon.candidatelon.id))
           .build()
       }
     }

@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.service.gate_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor
 
-import com.twitter.product_mixer.core.functional_component.gate.GateResult
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.GatelonRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
 
-case class ExecutedGateResult(identifier: GateIdentifier, result: GateResult)
+caselon class elonxeloncutelondGatelonRelonsult(idelonntifielonr: GatelonIdelonntifielonr, relonsult: GatelonRelonsult)

@@ -1,146 +1,146 @@
-package com.twitter.search.common.schema.base;
+packagelon com.twittelonr.selonarch.common.schelonma.baselon;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashSelont;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonld;
 
 /**
- * Utility APIs for ThriftDocument.
+ * Utility APIs for ThriftDocumelonnt.
  */
-public final class ThriftDocumentUtil {
-  private ThriftDocumentUtil() {
+public final class ThriftDocumelonntUtil {
+  privatelon ThriftDocumelonntUtil() {
   }
 
   /**
-   * Get ThriftField out of a ThriftDocument.
+   * Gelont ThriftFielonld out of a ThriftDocumelonnt.
    */
-  public static ThriftField getField(ThriftDocument thriftDoc,
-                                     String fieldName,
-                                     FieldNameToIdMapping idMap) {
-    int id = idMap.getFieldID(fieldName);
-    for (ThriftField field : thriftDoc.getFields()) {
-      int fieldId = field.getFieldConfigId();
-      if (fieldId == id) {
-        return field;
+  public static ThriftFielonld gelontFielonld(ThriftDocumelonnt thriftDoc,
+                                     String fielonldNamelon,
+                                     FielonldNamelonToIdMapping idMap) {
+    int id = idMap.gelontFielonldID(fielonldNamelon);
+    for (ThriftFielonld fielonld : thriftDoc.gelontFielonlds()) {
+      int fielonldId = fielonld.gelontFielonldConfigId();
+      if (fielonldId == id) {
+        relonturn fielonld;
       }
     }
 
-    return null;
+    relonturn null;
   }
 
   /**
-   * Get all fields out of a ThriftDocument that match the given field name.
+   * Gelont all fielonlds out of a ThriftDocumelonnt that match thelon givelonn fielonld namelon.
    */
-  public static List<ThriftField> getFields(
-      ThriftDocument thriftDoc, String fieldName, FieldNameToIdMapping idMap) {
+  public static List<ThriftFielonld> gelontFielonlds(
+      ThriftDocumelonnt thriftDoc, String fielonldNamelon, FielonldNamelonToIdMapping idMap) {
 
-    int id = idMap.getFieldID(fieldName);
-    List<ThriftField> result = new ArrayList<>();
+    int id = idMap.gelontFielonldID(fielonldNamelon);
+    List<ThriftFielonld> relonsult = nelonw ArrayList<>();
 
-    for (ThriftField field : thriftDoc.getFields()) {
-      int fieldId = field.getFieldConfigId();
-      if (fieldId == id) {
-        result.add(field);
+    for (ThriftFielonld fielonld : thriftDoc.gelontFielonlds()) {
+      int fielonldId = fielonld.gelontFielonldConfigId();
+      if (fielonldId == id) {
+        relonsult.add(fielonld);
       }
     }
 
-    return result;
+    relonturn relonsult;
   }
 
 
   /**
-   * Retrieve the long value from a thrift field
+   * Relontrielonvelon thelon long valuelon from a thrift fielonld
    */
-  public static long getLongValue(ThriftDocument thriftDoc,
-                                  String fieldName,
-                                  FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? 0L : f.getFieldData().getLongValue();
+  public static long gelontLongValuelon(ThriftDocumelonnt thriftDoc,
+                                  String fielonldNamelon,
+                                  FielonldNamelonToIdMapping idMap) {
+    ThriftFielonld f = gelontFielonld(thriftDoc, fielonldNamelon, idMap);
+    relonturn f == null ? 0L : f.gelontFielonldData().gelontLongValuelon();
   }
 
   /**
-   * Retrieve the byte value from a thrift field
+   * Relontrielonvelon thelon bytelon valuelon from a thrift fielonld
    */
-  public static byte getByteValue(ThriftDocument thriftDoc,
-                                  String fieldName,
-                                  FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? (byte) 0 : f.getFieldData().getByteValue();
+  public static bytelon gelontBytelonValuelon(ThriftDocumelonnt thriftDoc,
+                                  String fielonldNamelon,
+                                  FielonldNamelonToIdMapping idMap) {
+    ThriftFielonld f = gelontFielonld(thriftDoc, fielonldNamelon, idMap);
+    relonturn f == null ? (bytelon) 0 : f.gelontFielonldData().gelontBytelonValuelon();
   }
 
   /**
-   * Retrieve the bytes value from a thrift field
+   * Relontrielonvelon thelon bytelons valuelon from a thrift fielonld
    */
-  public static byte[] getBytesValue(ThriftDocument thriftDoc,
-                                     String fieldName,
-                                     FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? null : f.getFieldData().getBytesValue();
+  public static bytelon[] gelontBytelonsValuelon(ThriftDocumelonnt thriftDoc,
+                                     String fielonldNamelon,
+                                     FielonldNamelonToIdMapping idMap) {
+    ThriftFielonld f = gelontFielonld(thriftDoc, fielonldNamelon, idMap);
+    relonturn f == null ? null : f.gelontFielonldData().gelontBytelonsValuelon();
   }
 
   /**
-   * Retrieve the int value from a thrift field
+   * Relontrielonvelon thelon int valuelon from a thrift fielonld
    */
-  public static int getIntValue(ThriftDocument thriftDoc,
-                                String fieldName,
-                                FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? 0 : f.getFieldData().getIntValue();
+  public static int gelontIntValuelon(ThriftDocumelonnt thriftDoc,
+                                String fielonldNamelon,
+                                FielonldNamelonToIdMapping idMap) {
+    ThriftFielonld f = gelontFielonld(thriftDoc, fielonldNamelon, idMap);
+    relonturn f == null ? 0 : f.gelontFielonldData().gelontIntValuelon();
   }
 
   /**
-   * Retrieve the string value from a thrift field
+   * Relontrielonvelon thelon string valuelon from a thrift fielonld
    */
-  public static String getStringValue(ThriftDocument thriftDoc,
-                                      String fieldName,
-                                      FieldNameToIdMapping idMap) {
-    ThriftField f = getField(thriftDoc, fieldName, idMap);
-    return f == null ? null : f.getFieldData().getStringValue();
+  public static String gelontStringValuelon(ThriftDocumelonnt thriftDoc,
+                                      String fielonldNamelon,
+                                      FielonldNamelonToIdMapping idMap) {
+    ThriftFielonld f = gelontFielonld(thriftDoc, fielonldNamelon, idMap);
+    relonturn f == null ? null : f.gelontFielonldData().gelontStringValuelon();
   }
 
   /**
-   * Retrieve the string values from all thrift fields with the given fieldName.
+   * Relontrielonvelon thelon string valuelons from all thrift fielonlds with thelon givelonn fielonldNamelon.
    */
-  public static List<String> getStringValues(
-      ThriftDocument thriftDoc,
-      String fieldName,
-      FieldNameToIdMapping idMap) {
-    List<ThriftField> fields = getFields(thriftDoc, fieldName, idMap);
-    List<String> fieldStrings = new ArrayList<>();
+  public static List<String> gelontStringValuelons(
+      ThriftDocumelonnt thriftDoc,
+      String fielonldNamelon,
+      FielonldNamelonToIdMapping idMap) {
+    List<ThriftFielonld> fielonlds = gelontFielonlds(thriftDoc, fielonldNamelon, idMap);
+    List<String> fielonldStrings = nelonw ArrayList<>();
 
-    for (ThriftField field : fields) {
-      fieldStrings.add(field.getFieldData().getStringValue());
+    for (ThriftFielonld fielonld : fielonlds) {
+      fielonldStrings.add(fielonld.gelontFielonldData().gelontStringValuelon());
     }
-    return fieldStrings;
+    relonturn fielonldStrings;
   }
 
   /**
-   * Returns whether the specified document has duplicate fields.
+   * Relonturns whelonthelonr thelon speloncifielond documelonnt has duplicatelon fielonlds.
    */
-  public static boolean hasDuplicateFields(ThriftDocument thriftDoc) {
-    Set<Integer> seen = new HashSet<>();
-    for (ThriftField field : thriftDoc.getFields()) {
-      if (!seen.add(field.getFieldConfigId())) {
-        return true;
+  public static boolelonan hasDuplicatelonFielonlds(ThriftDocumelonnt thriftDoc) {
+    Selont<Intelongelonr> selonelonn = nelonw HashSelont<>();
+    for (ThriftFielonld fielonld : thriftDoc.gelontFielonlds()) {
+      if (!selonelonn.add(fielonld.gelontFielonldConfigId())) {
+        relonturn truelon;
       }
     }
-    return false;
+    relonturn falselon;
   }
 
   /**
-   * Get ThriftField out of a ThriftDocument.
+   * Gelont ThriftFielonld out of a ThriftDocumelonnt.
    */
-  public static ThriftField getField(ThriftDocument thriftDoc, int fieldId) {
-    for (ThriftField field : thriftDoc.getFields()) {
-      if (field.getFieldConfigId() == fieldId) {
-        return field;
+  public static ThriftFielonld gelontFielonld(ThriftDocumelonnt thriftDoc, int fielonldId) {
+    for (ThriftFielonld fielonld : thriftDoc.gelontFielonlds()) {
+      if (fielonld.gelontFielonldConfigId() == fielonldId) {
+        relonturn fielonld;
       }
     }
 
-    return null;
+    relonturn null;
   }
 }

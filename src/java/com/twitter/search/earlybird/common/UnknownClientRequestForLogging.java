@@ -1,77 +1,77 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.thrift.TException;
-import org.apache.thrift.TSerializer;
-import org.apache.thrift.protocol.TBinaryProtocol;
-import org.slf4j.Logger;
+import org.apachelon.commons.codelonc.binary.Baselon64;
+import org.apachelon.thrift.Telonxcelonption;
+import org.apachelon.thrift.TSelonrializelonr;
+import org.apachelon.thrift.protocol.TBinaryProtocol;
+import org.slf4j.Loggelonr;
 
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+import com.twittelonr.selonarch.common.util.FinaglelonUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
 
 /**
- * This class logs all requests that misses either the finagle Id or the client Id.
+ * This class logs all relonquelonsts that misselons elonithelonr thelon finaglelon Id or thelon clielonnt Id.
  */
-public final class UnknownClientRequestForLogging {
-  private static final Logger GENERAL_LOG = org.slf4j.LoggerFactory.getLogger(
-      UnknownClientRequestForLogging.class);
-  private static final Logger LOG = org.slf4j.LoggerFactory.getLogger(
-      UnknownClientRequestForLogging.class.getName() + ".unknownClientRequests");
+public final class UnknownClielonntRelonquelonstForLogging {
+  privatelon static final Loggelonr GelonNelonRAL_LOG = org.slf4j.LoggelonrFactory.gelontLoggelonr(
+      UnknownClielonntRelonquelonstForLogging.class);
+  privatelon static final Loggelonr LOG = org.slf4j.LoggelonrFactory.gelontLoggelonr(
+      UnknownClielonntRelonquelonstForLogging.class.gelontNamelon() + ".unknownClielonntRelonquelonsts");
 
-  private final String logLine;
-  private final EarlybirdRequest request;
-  private final String clientId;
-  private final String finagleId;
+  privatelon final String logLinelon;
+  privatelon final elonarlybirdRelonquelonst relonquelonst;
+  privatelon final String clielonntId;
+  privatelon final String finaglelonId;
 
-  private final Base64 base64 = new Base64();
-  private final TSerializer serializer = new TSerializer(new TBinaryProtocol.Factory());
+  privatelon final Baselon64 baselon64 = nelonw Baselon64();
+  privatelon final TSelonrializelonr selonrializelonr = nelonw TSelonrializelonr(nelonw TBinaryProtocol.Factory());
 
-  private UnknownClientRequestForLogging(
-      String logLine,
-      EarlybirdRequest request,
-      String clientId,
-      String finagleId) {
+  privatelon UnknownClielonntRelonquelonstForLogging(
+      String logLinelon,
+      elonarlybirdRelonquelonst relonquelonst,
+      String clielonntId,
+      String finaglelonId) {
 
-    this.logLine = logLine;
-    this.request = request;
-    this.clientId = clientId;
-    this.finagleId = finagleId;
+    this.logLinelon = logLinelon;
+    this.relonquelonst = relonquelonst;
+    this.clielonntId = clielonntId;
+    this.finaglelonId = finaglelonId;
   }
 
   /**
-   * Returns an UnknownClientRequestForLogging instance if a client ID is not set on the given
-   * earlybird request. If the request has a client ID set, {@code null} is returned.
+   * Relonturns an UnknownClielonntRelonquelonstForLogging instancelon if a clielonnt ID is not selont on thelon givelonn
+   * elonarlybird relonquelonst. If thelon relonquelonst has a clielonnt ID selont, {@codelon null} is relonturnelond.
    *
-   * @param logLine Additional information to propagate to the log file, when logging this request.
-   * @param request The earlybird request.
+   * @param logLinelon Additional information to propagatelon to thelon log filelon, whelonn logging this relonquelonst.
+   * @param relonquelonst Thelon elonarlybird relonquelonst.
    */
-  public static UnknownClientRequestForLogging unknownClientRequest(
-      String logLine, EarlybirdRequest request) {
-    String clientId = ClientIdUtil.getClientIdFromRequest(request);
-    String finagleId = FinagleUtil.getFinagleClientName();
+  public static UnknownClielonntRelonquelonstForLogging unknownClielonntRelonquelonst(
+      String logLinelon, elonarlybirdRelonquelonst relonquelonst) {
+    String clielonntId = ClielonntIdUtil.gelontClielonntIdFromRelonquelonst(relonquelonst);
+    String finaglelonId = FinaglelonUtil.gelontFinaglelonClielonntNamelon();
 
-    if (clientId.equals(ClientIdUtil.UNSET_CLIENT_ID)) {
-      return new UnknownClientRequestForLogging(logLine, request, clientId, finagleId);
-    } else {
-      return null;
+    if (clielonntId.elonquals(ClielonntIdUtil.UNSelonT_CLIelonNT_ID)) {
+      relonturn nelonw UnknownClielonntRelonquelonstForLogging(logLinelon, relonquelonst, clielonntId, finaglelonId);
+    } elonlselon {
+      relonturn null;
     }
   }
 
-  private String asBase64() {
+  privatelon String asBaselon64() {
     try {
-      // Need to make a deepCopy() here, because the request may still be in use (e.g. if we are
-      // doing this in the pre-logger), and we should not be modifying crucial fields on the
-      // EarlybirdRequest in place.
-      EarlybirdRequest clearedRequest = request.deepCopy();
-      clearedRequest.unsetClientRequestTimeMs();
-      return base64.encodeToString(serializer.serialize(clearedRequest));
-    } catch (TException e) {
-      GENERAL_LOG.error("Failed to serialize request for logging.", e);
-      return "failed_to_serialize";
+      // Nelonelond to makelon a delonelonpCopy() helonrelon, beloncauselon thelon relonquelonst may still belon in uselon (elon.g. if welon arelon
+      // doing this in thelon prelon-loggelonr), and welon should not belon modifying crucial fielonlds on thelon
+      // elonarlybirdRelonquelonst in placelon.
+      elonarlybirdRelonquelonst clelonarelondRelonquelonst = relonquelonst.delonelonpCopy();
+      clelonarelondRelonquelonst.unselontClielonntRelonquelonstTimelonMs();
+      relonturn baselon64.elonncodelonToString(selonrializelonr.selonrializelon(clelonarelondRelonquelonst));
+    } catch (Telonxcelonption elon) {
+      GelonNelonRAL_LOG.elonrror("Failelond to selonrializelon relonquelonst for logging.", elon);
+      relonturn "failelond_to_selonrializelon";
     }
   }
 
   public void log() {
-    LOG.info("{},{},{},{}", clientId, finagleId, logLine, asBase64());
+    LOG.info("{},{},{},{}", clielonntId, finaglelonId, logLinelon, asBaselon64());
   }
 }

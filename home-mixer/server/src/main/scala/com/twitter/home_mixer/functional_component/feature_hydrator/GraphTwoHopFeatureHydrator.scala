@@ -1,105 +1,105 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.graph_feature_service.{thriftscala => gfs}
-import com.twitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsExtendedReplyFeature
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.GraphTwoHopRepository
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.home_mixer.util.ObservedKeyValueResultHandler
-import com.twitter.home_mixer.util.ReplyRetweetUtil
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.datarecord.DataRecordInAFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.servo.repository.KeyValueRepository
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.prediction.adapters.two_hop_features.TwoHopFeaturesAdapter
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
-import scala.collection.JavaConverters._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.graph_felonaturelon_selonrvicelon.{thriftscala => gfs}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FollowelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IselonxtelonndelondRelonplyFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.GraphTwoHopRelonpository
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.homelon_mixelonr.util.ObselonrvelondKelonyValuelonRelonsultHandlelonr
+import com.twittelonr.homelon_mixelonr.util.RelonplyRelontwelonelontUtil
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.datareloncord.DataReloncordInAFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonpository
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.prelondiction.adaptelonrs.two_hop_felonaturelons.TwoHopFelonaturelonsAdaptelonr
+import com.twittelonr.util.Try
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
+import scala.collelonction.JavaConvelonrtelonrs._
 
-object GraphTwoHopFeature
-    extends DataRecordInAFeature[TweetCandidate]
-    with FeatureWithDefaultOnFailure[TweetCandidate, DataRecord] {
-  override def defaultValue: DataRecord = new DataRecord()
+objelonct GraphTwoHopFelonaturelon
+    elonxtelonnds DataReloncordInAFelonaturelon[TwelonelontCandidatelon]
+    with FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, DataReloncord] {
+  ovelonrridelon delonf delonfaultValuelon: DataReloncord = nelonw DataReloncord()
 }
 
-@Singleton
-class GraphTwoHopFeatureHydrator @Inject() (
-  @Named(GraphTwoHopRepository) client: KeyValueRepository[(Seq[Long], Long), Long, Seq[
-    gfs.IntersectionValue
+@Singlelonton
+class GraphTwoHopFelonaturelonHydrator @Injelonct() (
+  @Namelond(GraphTwoHopRelonpository) clielonnt: KelonyValuelonRelonpository[(Selonq[Long], Long), Long, Selonq[
+    gfs.IntelonrselonctionValuelon
   ]],
-  override val statsReceiver: StatsReceiver)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with ObservedKeyValueResultHandler {
+  ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon]
+    with ObselonrvelondKelonyValuelonRelonsultHandlelonr {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("GraphTwoHop")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("GraphTwoHop")
 
-  override val features: Set[Feature[_, _]] = Set(GraphTwoHopFeature, FollowedByUserIdsFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(GraphTwoHopFelonaturelon, FollowelondByUselonrIdsFelonaturelon)
 
-  override val statScope: String = identifier.toString
+  ovelonrridelon val statScopelon: String = idelonntifielonr.toString
 
-  private val twoHopFeaturesAdapter = new TwoHopFeaturesAdapter
+  privatelon val twoHopFelonaturelonsAdaptelonr = nelonw TwoHopFelonaturelonsAdaptelonr
 
-  private val FollowFeatureType = gfs.FeatureType(gfs.EdgeType.Following, gfs.EdgeType.FollowedBy)
+  privatelon val FollowFelonaturelonTypelon = gfs.FelonaturelonTypelon(gfs.elondgelonTypelon.Following, gfs.elondgelonTypelon.FollowelondBy)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    // Apply filters to in network candidates for ExtendedReplyAncestors and retweets.
-    // ExtendedReplyAncestors should also be in candidates. No filter for oon.
-    val (inNetworkCandidates, oonCandidates) = candidates.partition { candidate =>
-      candidate.features.getOrElse(InNetworkFeature, false)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    // Apply filtelonrs to in nelontwork candidatelons for elonxtelonndelondRelonplyAncelonstors and relontwelonelonts.
+    // elonxtelonndelondRelonplyAncelonstors should also belon in candidatelons. No filtelonr for oon.
+    val (inNelontworkCandidatelons, oonCandidatelons) = candidatelons.partition { candidatelon =>
+      candidatelon.felonaturelons.gelontOrelonlselon(InNelontworkFelonaturelon, falselon)
     }
 
-    val inNetworkReplyToAncestorTweet =
-      ReplyRetweetUtil.replyToAncestorTweetCandidatesMap(inNetworkCandidates)
+    val inNelontworkRelonplyToAncelonstorTwelonelont =
+      RelonplyRelontwelonelontUtil.relonplyToAncelonstorTwelonelontCandidatelonsMap(inNelontworkCandidatelons)
 
-    val inNetworkExtendedReplyAncestors = inNetworkCandidates
-      .filter(_.features.getOrElse(IsExtendedReplyFeature, false)).flatMap { inNetworkCandidate =>
-        inNetworkReplyToAncestorTweet.get(inNetworkCandidate.candidate.id)
-      }.flatten
+    val inNelontworkelonxtelonndelondRelonplyAncelonstors = inNelontworkCandidatelons
+      .filtelonr(_.felonaturelons.gelontOrelonlselon(IselonxtelonndelondRelonplyFelonaturelon, falselon)).flatMap { inNelontworkCandidatelon =>
+        inNelontworkRelonplyToAncelonstorTwelonelont.gelont(inNelontworkCandidatelon.candidatelon.id)
+      }.flattelonn
 
-    val inNetworkCandidatesToHydrate = inNetworkExtendedReplyAncestors ++
-      inNetworkCandidates.filter(_.features.getOrElse(IsRetweetFeature, false))
+    val inNelontworkCandidatelonsToHydratelon = inNelontworkelonxtelonndelondRelonplyAncelonstors ++
+      inNelontworkCandidatelons.filtelonr(_.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon))
 
-    val candidatesToHydrate = (inNetworkCandidatesToHydrate ++ oonCandidates)
-      .flatMap(candidate => CandidatesUtil.getOriginalAuthorId(candidate.features)).distinct
+    val candidatelonsToHydratelon = (inNelontworkCandidatelonsToHydratelon ++ oonCandidatelons)
+      .flatMap(candidatelon => CandidatelonsUtil.gelontOriginalAuthorId(candidatelon.felonaturelons)).distinct
 
-    val response = Stitch.callFuture(client((candidatesToHydrate, query.getRequiredUserId)))
+    val relonsponselon = Stitch.callFuturelon(clielonnt((candidatelonsToHydratelon, quelonry.gelontRelonquirelondUselonrId)))
 
-    response.map { result =>
-      candidates.map { candidate =>
-        val originalAuthorId = CandidatesUtil.getOriginalAuthorId(candidate.features)
+    relonsponselon.map { relonsult =>
+      candidatelons.map { candidatelon =>
+        val originalAuthorId = CandidatelonsUtil.gelontOriginalAuthorId(candidatelon.felonaturelons)
 
-        val value = observedGet(key = originalAuthorId, keyValueResult = result)
-        val transformedValue = postTransformer(value)
-        val followedByUserIds = value.toOption.flatMap(getFollowedByUserIds(_)).getOrElse(Seq.empty)
+        val valuelon = obselonrvelondGelont(kelony = originalAuthorId, kelonyValuelonRelonsult = relonsult)
+        val transformelondValuelon = postTransformelonr(valuelon)
+        val followelondByUselonrIds = valuelon.toOption.flatMap(gelontFollowelondByUselonrIds(_)).gelontOrelonlselon(Selonq.elonmpty)
 
-        FeatureMapBuilder()
-          .add(GraphTwoHopFeature, transformedValue)
-          .add(FollowedByUserIdsFeature, followedByUserIds)
+        FelonaturelonMapBuildelonr()
+          .add(GraphTwoHopFelonaturelon, transformelondValuelon)
+          .add(FollowelondByUselonrIdsFelonaturelon, followelondByUselonrIds)
           .build()
       }
     }
   }
 
-  private def getFollowedByUserIds(input: Option[Seq[gfs.IntersectionValue]]): Option[Seq[Long]] =
-    input.map(_.filter(_.featureType == FollowFeatureType).flatMap(_.intersectionIds).flatten)
+  privatelon delonf gelontFollowelondByUselonrIds(input: Option[Selonq[gfs.IntelonrselonctionValuelon]]): Option[Selonq[Long]] =
+    input.map(_.filtelonr(_.felonaturelonTypelon == FollowFelonaturelonTypelon).flatMap(_.intelonrselonctionIds).flattelonn)
 
-  private def postTransformer(input: Try[Option[Seq[gfs.IntersectionValue]]]): Try[DataRecord] =
-    input.map(twoHopFeaturesAdapter.adaptToDataRecords(_).asScala.head)
+  privatelon delonf postTransformelonr(input: Try[Option[Selonq[gfs.IntelonrselonctionValuelon]]]): Try[DataReloncord] =
+    input.map(twoHopFelonaturelonsAdaptelonr.adaptToDataReloncords(_).asScala.helonad)
 }

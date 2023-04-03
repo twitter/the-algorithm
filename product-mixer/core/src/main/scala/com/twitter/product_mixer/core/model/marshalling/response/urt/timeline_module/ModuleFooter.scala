@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
 
-case class ModuleFooter(
-  text: String,
+caselon class ModulelonFootelonr(
+  telonxt: String,
   landingUrl: Option[Url])

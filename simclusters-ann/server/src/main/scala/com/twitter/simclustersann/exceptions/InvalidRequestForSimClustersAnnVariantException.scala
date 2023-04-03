@@ -1,16 +1,16 @@
-package com.twitter.simclustersann.exceptions
+packagelon com.twittelonr.simclustelonrsann.elonxcelonptions
 
-import com.twitter.finagle.RequestException
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
+import com.twittelonr.finaglelon.Relonquelonstelonxcelonption
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
 
-case class InvalidRequestForSimClustersAnnVariantException(
-  modelVersion: ModelVersion,
-  embeddingType: EmbeddingType,
-  actualServiceName: String,
-  expectedServiceName: Option[String])
-    extends RequestException(
-      s"Request with model version ($modelVersion) and embedding type ($embeddingType) cannot be " +
-        s"processed by service variant ($actualServiceName)." +
-        s" Expected service variant: $expectedServiceName.",
+caselon class InvalidRelonquelonstForSimClustelonrsAnnVariantelonxcelonption(
+  modelonlVelonrsion: ModelonlVelonrsion,
+  elonmbelonddingTypelon: elonmbelonddingTypelon,
+  actualSelonrvicelonNamelon: String,
+  elonxpelonctelondSelonrvicelonNamelon: Option[String])
+    elonxtelonnds Relonquelonstelonxcelonption(
+      s"Relonquelonst with modelonl velonrsion ($modelonlVelonrsion) and elonmbelondding typelon ($elonmbelonddingTypelon) cannot belon " +
+        s"procelonsselond by selonrvicelon variant ($actualSelonrvicelonNamelon)." +
+        s" elonxpelonctelond selonrvicelon variant: $elonxpelonctelondSelonrvicelonNamelon.",
       null)

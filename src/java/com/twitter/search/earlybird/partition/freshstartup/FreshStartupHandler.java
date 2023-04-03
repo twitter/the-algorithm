@@ -1,439 +1,439 @@
-package com.twitter.search.earlybird.partition.freshstartup;
+packagelon com.twittelonr.selonarch.elonarlybird.partition.frelonshstartup;
 
-import java.io.IOException;
-import java.time.Duration;
+import java.io.IOelonxcelonption;
+import java.timelon.Duration;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.HashSelont;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.base.Stopwatch;
-import com.google.common.base.Verify;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import com.googlelon.common.baselon.Stopwatch;
+import com.googlelon.common.baselon.Velonrify;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.ApiException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncord;
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncords;
+import org.apachelon.kafka.clielonnts.consumelonr.KafkaConsumelonr;
+import org.apachelon.kafka.clielonnts.consumelonr.OffselontAndTimelonstamp;
+import org.apachelon.kafka.common.TopicPartition;
+import org.apachelon.kafka.common.elonrrors.Apielonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import static com.twitter.search.common.util.LogFormatUtil.formatInt;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import static com.twittelonr.selonarch.common.util.LogFormatUtil.formatInt;
 
-import com.twitter.search.common.util.GCUtil;
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.util.LogFormatUtil;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.exception.WrappedKafkaApiException;
-import com.twitter.search.earlybird.factory.EarlybirdKafkaConsumersFactory;
-import com.twitter.search.earlybird.partition.EarlybirdIndex;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.util.ParallelUtil;
+import com.twittelonr.selonarch.common.util.GCUtil;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.util.LogFormatUtil;
+import com.twittelonr.selonarch.elonarlybird.common.NonPagingAsselonrt;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.elonarlybirdStartupelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.WrappelondKafkaApielonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.factory.elonarlybirdKafkaConsumelonrsFactory;
+import com.twittelonr.selonarch.elonarlybird.partition.elonarlybirdIndelonx;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr;
+import com.twittelonr.selonarch.elonarlybird.util.ParallelonlUtil;
 
 /**
- * Bootstraps an index by indexing tweets and updates in parallel.
+ * Bootstraps an indelonx by indelonxing twelonelonts and updatelons in parallelonl.
  *
- * DEVELOPMENT
+ * DelonVelonLOPMelonNT
  * ===========
  *
- * 1. In earlybird-search.yml, set the following values in the "production" section:
- *   - max_segment_size to 200000
- *   - late_tweet_buffer to 10000
+ * 1. In elonarlybird-selonarch.yml, selont thelon following valuelons in thelon "production" selonction:
+ *   - max_selongmelonnt_sizelon to 200000
+ *   - latelon_twelonelont_buffelonr to 10000
  *
- * 2. In KafkaStartup, don't load the index, replace the .loadIndex call as instructed
- *  in the file.
+ * 2. In KafkaStartup, don't load thelon indelonx, relonplacelon thelon .loadIndelonx call as instructelond
+ *  in thelon filelon.
  *
- * 3. In the aurora configs, set serving_timeslices to a low number (like 5) for staging.
+ * 3. In thelon aurora configs, selont selonrving_timelonslicelons to a low numbelonr (likelon 5) for staging.
  */
-public class FreshStartupHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(FreshStartupHandler.class);
-  private static final NonPagingAssert BUILDING_FEWER_THAN_SPECIFIED_SEGMENTS =
-          new NonPagingAssert("building_fewer_than_specified_segments");
+public class FrelonshStartupHandlelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(FrelonshStartupHandlelonr.class);
+  privatelon static final NonPagingAsselonrt BUILDING_FelonWelonR_THAN_SPelonCIFIelonD_SelonGMelonNTS =
+          nelonw NonPagingAsselonrt("building_felonwelonr_than_speloncifielond_selongmelonnts");
 
-  private final Clock clock;
-  private final TopicPartition tweetTopic;
-  private final TopicPartition updateTopic;
-  private final SegmentManager segmentManager;
-  private final int maxSegmentSize;
-  private final int lateTweetBuffer;
-  private final EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory;
-  private final CriticalExceptionHandler criticalExceptionHandler;
+  privatelon final Clock clock;
+  privatelon final TopicPartition twelonelontTopic;
+  privatelon final TopicPartition updatelonTopic;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
+  privatelon final int maxSelongmelonntSizelon;
+  privatelon final int latelonTwelonelontBuffelonr;
+  privatelon final elonarlybirdKafkaConsumelonrsFactory elonarlybirdKafkaConsumelonrsFactory;
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
 
-  public FreshStartupHandler(
+  public FrelonshStartupHandlelonr(
     Clock clock,
-    EarlybirdKafkaConsumersFactory earlybirdKafkaConsumersFactory,
-    TopicPartition tweetTopic,
-    TopicPartition updateTopic,
-    SegmentManager segmentManager,
-    int maxSegmentSize,
-    int lateTweetBuffer,
-    CriticalExceptionHandler criticalExceptionHandler
+    elonarlybirdKafkaConsumelonrsFactory elonarlybirdKafkaConsumelonrsFactory,
+    TopicPartition twelonelontTopic,
+    TopicPartition updatelonTopic,
+    SelongmelonntManagelonr selongmelonntManagelonr,
+    int maxSelongmelonntSizelon,
+    int latelonTwelonelontBuffelonr,
+    CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr
   ) {
     this.clock = clock;
-    this.earlybirdKafkaConsumersFactory = earlybirdKafkaConsumersFactory;
-    this.tweetTopic = tweetTopic;
-    this.updateTopic = updateTopic;
-    this.segmentManager = segmentManager;
-    this.maxSegmentSize = maxSegmentSize;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.lateTweetBuffer = lateTweetBuffer;
+    this.elonarlybirdKafkaConsumelonrsFactory = elonarlybirdKafkaConsumelonrsFactory;
+    this.twelonelontTopic = twelonelontTopic;
+    this.updatelonTopic = updatelonTopic;
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.maxSelongmelonntSizelon = maxSelongmelonntSizelon;
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
+    this.latelonTwelonelontBuffelonr = latelonTwelonelontBuffelonr;
   }
 
   /**
-   * Don't index in parallel, just pass some time back that the EarlybirdKafkaConsumer
-   * can start indexing from.
+   * Don't indelonx in parallelonl, just pass somelon timelon back that thelon elonarlybirdKafkaConsumelonr
+   * can start indelonxing from.
    */
-  public EarlybirdIndex indexFromScratch() {
-    long indexTimePeriod = Duration.ofHours(
-        EarlybirdConfig.getInt("index_from_scratch_hours", 12)
+  public elonarlybirdIndelonx indelonxFromScratch() {
+    long indelonxTimelonPelonriod = Duration.ofHours(
+        elonarlybirdConfig.gelontInt("indelonx_from_scratch_hours", 12)
     ).toMillis();
 
-    return runIndexFromScratch(indexTimePeriod);
+    relonturn runIndelonxFromScratch(indelonxTimelonPelonriod);
   }
 
-  public EarlybirdIndex fastIndexFromScratchForDevelopment() {
-    LOG.info("Running fast index from scratch...");
-    return runIndexFromScratch(Duration.ofMinutes(10).toMillis());
+  public elonarlybirdIndelonx fastIndelonxFromScratchForDelonvelonlopmelonnt() {
+    LOG.info("Running fast indelonx from scratch...");
+    relonturn runIndelonxFromScratch(Duration.ofMinutelons(10).toMillis());
   }
 
-  private EarlybirdIndex runIndexFromScratch(long indexTimePeriodMs) {
-    KafkaConsumer<Long, ThriftVersionedEvents> consumerForFindingOffsets =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_offsets");
+  privatelon elonarlybirdIndelonx runIndelonxFromScratch(long indelonxTimelonPelonriodMs) {
+    KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> consumelonrForFindingOffselonts =
+        elonarlybirdKafkaConsumelonrsFactory.crelonatelonKafkaConsumelonr("consumelonr_for_offselonts");
 
-    long timestamp = clock.nowMillis() - indexTimePeriodMs;
+    long timelonstamp = clock.nowMillis() - indelonxTimelonPelonriodMs;
 
-    Map<TopicPartition, OffsetAndTimestamp> offsets;
+    Map<TopicPartition, OffselontAndTimelonstamp> offselonts;
     try {
-      offsets = consumerForFindingOffsets
-          .offsetsForTimes(ImmutableMap.of(tweetTopic, timestamp, updateTopic, timestamp));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException(kafkaApiException);
+      offselonts = consumelonrForFindingOffselonts
+          .offselontsForTimelons(ImmutablelonMap.of(twelonelontTopic, timelonstamp, updatelonTopic, timelonstamp));
+    } catch (Apielonxcelonption kafkaApielonxcelonption) {
+      throw nelonw WrappelondKafkaApielonxcelonption(kafkaApielonxcelonption);
     }
 
-    return new EarlybirdIndex(
-        Lists.newArrayList(),
-        offsets.get(tweetTopic).offset(),
-        offsets.get(updateTopic).offset());
+    relonturn nelonw elonarlybirdIndelonx(
+        Lists.nelonwArrayList(),
+        offselonts.gelont(twelonelontTopic).offselont(),
+        offselonts.gelont(updatelonTopic).offselont());
   }
 
 
   /**
-   * Index Tweets and updates from scratch, without relying on a serialized index in HDFS.
+   * Indelonx Twelonelonts and updatelons from scratch, without relonlying on a selonrializelond indelonx in HDFS.
    *
-   * This function indexes the segments in parallel, limiting the number of segments that
-   * are currently indexed, due to memory limitations. That's followed by another pass to index
-   * some updates - see the implementation for more details.
+   * This function indelonxelons thelon selongmelonnts in parallelonl, limiting thelon numbelonr of selongmelonnts that
+   * arelon currelonntly indelonxelond, duelon to melonmory limitations. That's followelond by anothelonr pass to indelonx
+   * somelon updatelons - selonelon thelon implelonmelonntation for morelon delontails.
    *
-   * The index this function outputs contains N segments, where the first N-1 are optimized and
-   * the last one is not.
+   * Thelon indelonx this function outputs contains N selongmelonnts, whelonrelon thelon first N-1 arelon optimizelond and
+   * thelon last onelon is not.
    */
-  public EarlybirdIndex parallelIndexFromScratch() throws Exception {
-    Stopwatch parallelIndexStopwatch = Stopwatch.createStarted();
+  public elonarlybirdIndelonx parallelonlIndelonxFromScratch() throws elonxcelonption {
+    Stopwatch parallelonlIndelonxStopwatch = Stopwatch.crelonatelonStartelond();
 
-    LOG.info("Starting parallel fresh startup.");
-    LOG.info("Max segment size: {}", maxSegmentSize);
-    LOG.info("Late tweet buffer size: {}", lateTweetBuffer);
+    LOG.info("Starting parallelonl frelonsh startup.");
+    LOG.info("Max selongmelonnt sizelon: {}", maxSelongmelonntSizelon);
+    LOG.info("Latelon twelonelont buffelonr sizelon: {}", latelonTwelonelontBuffelonr);
 
-    // Once we finish fresh startup and proceed to indexing from the streams, we'll immediately
-    // start a new segment, since the output of the fresh startup is full segments.
+    // Oncelon welon finish frelonsh startup and procelonelond to indelonxing from thelon strelonams, welon'll immelondiatelonly
+    // start a nelonw selongmelonnt, sincelon thelon output of thelon frelonsh startup is full selongmelonnts.
     //
-    // That's why we index max_segments-1 segments here instead of indexing max_segments segments
-    // and discarding the first one later.
-    int numSegments = segmentManager.getMaxEnabledSegments() - 1;
-    LOG.info("Number of segments to build: {}", numSegments);
+    // That's why welon indelonx max_selongmelonnts-1 selongmelonnts helonrelon instelonad of indelonxing max_selongmelonnts selongmelonnts
+    // and discarding thelon first onelon latelonr.
+    int numSelongmelonnts = selongmelonntManagelonr.gelontMaxelonnablelondSelongmelonnts() - 1;
+    LOG.info("Numbelonr of selongmelonnts to build: {}", numSelongmelonnts);
 
-    // Find end offsets.
-    KafkaOffsetPair tweetsOffsetRange = findOffsetRangeForTweetsKafkaTopic();
+    // Find elonnd offselonts.
+    KafkaOffselontPair twelonelontsOffselontRangelon = findOffselontRangelonForTwelonelontsKafkaTopic();
 
-    ArrayList<SegmentBuildInfo> segmentBuildInfos = makeSegmentBuildInfos(
-        numSegments, tweetsOffsetRange);
+    ArrayList<SelongmelonntBuildInfo> selongmelonntBuildInfos = makelonSelongmelonntBuildInfos(
+        numSelongmelonnts, twelonelontsOffselontRangelon);
 
-    segmentManager.logState("Before starting fresh startup");
+    selongmelonntManagelonr.logStatelon("Belonforelon starting frelonsh startup");
 
-    // Index tweets and events.
-    Stopwatch initialIndexStopwatch = Stopwatch.createStarted();
+    // Indelonx twelonelonts and elonvelonnts.
+    Stopwatch initialIndelonxStopwatch = Stopwatch.crelonatelonStartelond();
 
-    // We index at most `MAX_PARALLEL_INDEXED` (MPI) segments at the same time. If we need to
-    // produce 20 segments here, we'd need memory for MPI unoptimized and 20-MPI optimized segments.
+    // Welon indelonx at most `MAX_PARALLelonL_INDelonXelonD` (MPI) selongmelonnts at thelon samelon timelon. If welon nelonelond to
+    // producelon 20 selongmelonnts helonrelon, welon'd nelonelond melonmory for MPI unoptimizelond and 20-MPI optimizelond selongmelonnts.
     //
-    // For back of envelope calculations you can assume optimized segments take ~6GB and unoptimized
-    // ones ~12GB.
-    final int MAX_PARALLEL_INDEXED = 8;
+    // For back of elonnvelonlopelon calculations you can assumelon optimizelond selongmelonnts takelon ~6GB and unoptimizelond
+    // onelons ~12GB.
+    final int MAX_PARALLelonL_INDelonXelonD = 8;
 
-    List<SegmentInfo> segmentInfos = ParallelUtil.parmap(
-        "fresh-startup",
-        MAX_PARALLEL_INDEXED,
-        segmentBuildInfo -> indexTweetsAndUpdatesForSegment(segmentBuildInfo, segmentBuildInfos),
-        segmentBuildInfos
+    List<SelongmelonntInfo> selongmelonntInfos = ParallelonlUtil.parmap(
+        "frelonsh-startup",
+        MAX_PARALLelonL_INDelonXelonD,
+        selongmelonntBuildInfo -> indelonxTwelonelontsAndUpdatelonsForSelongmelonnt(selongmelonntBuildInfo, selongmelonntBuildInfos),
+        selongmelonntBuildInfos
     );
 
-    LOG.info("Finished indexing tweets and updates in {}", initialIndexStopwatch);
+    LOG.info("Finishelond indelonxing twelonelonts and updatelons in {}", initialIndelonxStopwatch);
 
-    PostOptimizationUpdatesIndexer postOptimizationUpdatesIndexer =
-        new PostOptimizationUpdatesIndexer(
-            segmentBuildInfos,
-            earlybirdKafkaConsumersFactory,
-            updateTopic);
+    PostOptimizationUpdatelonsIndelonxelonr postOptimizationUpdatelonsIndelonxelonr =
+        nelonw PostOptimizationUpdatelonsIndelonxelonr(
+            selongmelonntBuildInfos,
+            elonarlybirdKafkaConsumelonrsFactory,
+            updatelonTopic);
 
-    postOptimizationUpdatesIndexer.indexRestOfUpdates();
+    postOptimizationUpdatelonsIndelonxelonr.indelonxRelonstOfUpdatelons();
 
-    // Finished indexing tweets and updates.
-    LOG.info("Segment build infos after we're done:");
-    for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
-      segmentBuildInfo.logState();
+    // Finishelond indelonxing twelonelonts and updatelons.
+    LOG.info("Selongmelonnt build infos aftelonr welon'relon donelon:");
+    for (SelongmelonntBuildInfo selongmelonntBuildInfo : selongmelonntBuildInfos) {
+      selongmelonntBuildInfo.logStatelon();
     }
 
-    segmentManager.logState("After finishing fresh startup");
+    selongmelonntManagelonr.logStatelon("Aftelonr finishing frelonsh startup");
 
-    LOG.info("Collected {} segment infos", segmentInfos.size());
-    LOG.info("Segment names:");
-    for (SegmentInfo segmentInfo : segmentInfos) {
-      LOG.info(segmentInfo.getSegmentName());
+    LOG.info("Collelonctelond {} selongmelonnt infos", selongmelonntInfos.sizelon());
+    LOG.info("Selongmelonnt namelons:");
+    for (SelongmelonntInfo selongmelonntInfo : selongmelonntInfos) {
+      LOG.info(selongmelonntInfo.gelontSelongmelonntNamelon());
     }
 
-    SegmentBuildInfo lastSegmentBuildInfo = segmentBuildInfos.get(segmentBuildInfos.size() - 1);
-    long finishedUpdatesAtOffset = lastSegmentBuildInfo.getUpdateKafkaOffsetPair().getEndOffset();
-    long maxIndexedTweetId = lastSegmentBuildInfo.getMaxIndexedTweetId();
+    SelongmelonntBuildInfo lastSelongmelonntBuildInfo = selongmelonntBuildInfos.gelont(selongmelonntBuildInfos.sizelon() - 1);
+    long finishelondUpdatelonsAtOffselont = lastSelongmelonntBuildInfo.gelontUpdatelonKafkaOffselontPair().gelontelonndOffselont();
+    long maxIndelonxelondTwelonelontId = lastSelongmelonntBuildInfo.gelontMaxIndelonxelondTwelonelontId();
 
-    LOG.info("Max indexed tweet id: {}", maxIndexedTweetId);
-    LOG.info("Parallel startup finished in {}", parallelIndexStopwatch);
+    LOG.info("Max indelonxelond twelonelont id: {}", maxIndelonxelondTwelonelontId);
+    LOG.info("Parallelonl startup finishelond in {}", parallelonlIndelonxStopwatch);
 
-    // verifyConstructedIndex(segmentBuildInfos);
-    // Run a GC to free up some memory after the fresh startup.
+    // velonrifyConstructelondIndelonx(selongmelonntBuildInfos);
+    // Run a GC to frelonelon up somelon melonmory aftelonr thelon frelonsh startup.
     GCUtil.runGC();
-    logMemoryStats();
+    logMelonmoryStats();
 
-    return new EarlybirdIndex(
-        segmentInfos,
-        tweetsOffsetRange.getEndOffset() + 1,
-        finishedUpdatesAtOffset + 1,
-        maxIndexedTweetId
+    relonturn nelonw elonarlybirdIndelonx(
+        selongmelonntInfos,
+        twelonelontsOffselontRangelon.gelontelonndOffselont() + 1,
+        finishelondUpdatelonsAtOffselont + 1,
+        maxIndelonxelondTwelonelontId
     );
   }
 
-  private void logMemoryStats() {
-    double toGB = 1024 * 1024 * 1024;
-    double totalMemoryGB = Runtime.getRuntime().totalMemory() / toGB;
-    double freeMemoryGB = Runtime.getRuntime().freeMemory() / toGB;
-    LOG.info("Memory stats: Total memory GB: {}, Free memory GB: {}",
-        totalMemoryGB, freeMemoryGB);
+  privatelon void logMelonmoryStats() {
+    doublelon toGB = 1024 * 1024 * 1024;
+    doublelon totalMelonmoryGB = Runtimelon.gelontRuntimelon().totalMelonmory() / toGB;
+    doublelon frelonelonMelonmoryGB = Runtimelon.gelontRuntimelon().frelonelonMelonmory() / toGB;
+    LOG.info("Melonmory stats: Total melonmory GB: {}, Frelonelon melonmory GB: {}",
+        totalMelonmoryGB, frelonelonMelonmoryGB);
   }
 
   /**
-   * Prints statistics about the constructed index compared to all tweets in the
-   * tweets stream.
+   * Prints statistics about thelon constructelond indelonx comparelond to all twelonelonts in thelon
+   * twelonelonts strelonam.
    *
-   * Only run this for testing and debugging purposes, never in prod environment.
+   * Only run this for telonsting and delonbugging purposelons, nelonvelonr in prod elonnvironmelonnt.
    */
-  private void verifyConstructedIndex(List<SegmentBuildInfo> segmentBuildInfos)
-      throws IOException {
-    LOG.info("Verifying constructed index...");
-    // Read every tweet from the offset range that we're constructing an index for.
-    KafkaConsumer<Long, ThriftVersionedEvents> tweetsKafkaConsumer =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("tweets_verify");
+  privatelon void velonrifyConstructelondIndelonx(List<SelongmelonntBuildInfo> selongmelonntBuildInfos)
+      throws IOelonxcelonption {
+    LOG.info("Velonrifying constructelond indelonx...");
+    // Relonad elonvelonry twelonelont from thelon offselont rangelon that welon'relon constructing an indelonx for.
+    KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> twelonelontsKafkaConsumelonr =
+        elonarlybirdKafkaConsumelonrsFactory.crelonatelonKafkaConsumelonr("twelonelonts_velonrify");
     try {
-      tweetsKafkaConsumer.assign(ImmutableList.of(tweetTopic));
-      tweetsKafkaConsumer.seek(tweetTopic, segmentBuildInfos.get(0).getTweetStartOffset());
-    } catch (ApiException apiException) {
-      throw new WrappedKafkaApiException(apiException);
+      twelonelontsKafkaConsumelonr.assign(ImmutablelonList.of(twelonelontTopic));
+      twelonelontsKafkaConsumelonr.selonelonk(twelonelontTopic, selongmelonntBuildInfos.gelont(0).gelontTwelonelontStartOffselont());
+    } catch (Apielonxcelonption apielonxcelonption) {
+      throw nelonw WrappelondKafkaApielonxcelonption(apielonxcelonption);
     }
-    long finalTweetOffset = segmentBuildInfos.get(segmentBuildInfos.size() - 1).getTweetEndOffset();
-    boolean done = false;
-    Set<Long> uniqueTweetIds = new HashSet<>();
-    long readTweetsCount = 0;
+    long finalTwelonelontOffselont = selongmelonntBuildInfos.gelont(selongmelonntBuildInfos.sizelon() - 1).gelontTwelonelontelonndOffselont();
+    boolelonan donelon = falselon;
+    Selont<Long> uniquelonTwelonelontIds = nelonw HashSelont<>();
+    long relonadTwelonelontsCount = 0;
     do {
-      for (ConsumerRecord<Long, ThriftVersionedEvents> record
-          : tweetsKafkaConsumer.poll(Duration.ofSeconds(1))) {
-        if (record.offset() > finalTweetOffset) {
-          done = true;
-          break;
+      for (ConsumelonrReloncord<Long, ThriftVelonrsionelondelonvelonnts> reloncord
+          : twelonelontsKafkaConsumelonr.poll(Duration.ofSelonconds(1))) {
+        if (reloncord.offselont() > finalTwelonelontOffselont) {
+          donelon = truelon;
+          brelonak;
         }
-        readTweetsCount++;
-        uniqueTweetIds.add(record.value().getId());
+        relonadTwelonelontsCount++;
+        uniquelonTwelonelontIds.add(reloncord.valuelon().gelontId());
       }
-    } while (!done);
+    } whilelon (!donelon);
 
-    LOG.info("Total amount of read tweets: {}", formatInt(readTweetsCount));
-    // Might be less, due to duplicates.
-    LOG.info("Unique tweet ids : {}", LogFormatUtil.formatInt(uniqueTweetIds.size()));
+    LOG.info("Total amount of relonad twelonelonts: {}", formatInt(relonadTwelonelontsCount));
+    // Might belon lelonss, duelon to duplicatelons.
+    LOG.info("Uniquelon twelonelont ids : {}", LogFormatUtil.formatInt(uniquelonTwelonelontIds.sizelon()));
 
-    int notFoundInIndex = 0;
-    for (Long tweetId : uniqueTweetIds) {
-      boolean found = false;
-      for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
-        if (segmentBuildInfo.getSegmentWriter().hasTweet(tweetId)) {
-          found = true;
-          break;
+    int notFoundInIndelonx = 0;
+    for (Long twelonelontId : uniquelonTwelonelontIds) {
+      boolelonan found = falselon;
+      for (SelongmelonntBuildInfo selongmelonntBuildInfo : selongmelonntBuildInfos) {
+        if (selongmelonntBuildInfo.gelontSelongmelonntWritelonr().hasTwelonelont(twelonelontId)) {
+          found = truelon;
+          brelonak;
         }
       }
       if (!found) {
-        notFoundInIndex++;
+        notFoundInIndelonx++;
       }
     }
 
-    LOG.info("Tweets not found in the index: {}", LogFormatUtil.formatInt(notFoundInIndex));
+    LOG.info("Twelonelonts not found in thelon indelonx: {}", LogFormatUtil.formatInt(notFoundInIndelonx));
 
-    long totalIndexedTweets = 0;
-    for (SegmentBuildInfo segmentBuildInfo : segmentBuildInfos) {
-      SegmentInfo si = segmentBuildInfo.getSegmentWriter().getSegmentInfo();
-      totalIndexedTweets += si.getIndexStats().getStatusCount();
+    long totalIndelonxelondTwelonelonts = 0;
+    for (SelongmelonntBuildInfo selongmelonntBuildInfo : selongmelonntBuildInfos) {
+      SelongmelonntInfo si = selongmelonntBuildInfo.gelontSelongmelonntWritelonr().gelontSelongmelonntInfo();
+      totalIndelonxelondTwelonelonts += si.gelontIndelonxStats().gelontStatusCount();
     }
 
-    LOG.info("Total indexed tweets: {}", formatInt(totalIndexedTweets));
+    LOG.info("Total indelonxelond twelonelonts: {}", formatInt(totalIndelonxelondTwelonelonts));
   }
 
   /**
-   * Find the end offsets for the tweets Kafka topic this partition is reading
+   * Find thelon elonnd offselonts for thelon twelonelonts Kafka topic this partition is relonading
    * from.
    */
-  private KafkaOffsetPair findOffsetRangeForTweetsKafkaTopic() {
-    KafkaConsumer<Long, ThriftVersionedEvents> consumerForFindingOffsets =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_end_offsets");
+  privatelon KafkaOffselontPair findOffselontRangelonForTwelonelontsKafkaTopic() {
+    KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> consumelonrForFindingOffselonts =
+        elonarlybirdKafkaConsumelonrsFactory.crelonatelonKafkaConsumelonr("consumelonr_for_elonnd_offselonts");
 
-    Map<TopicPartition, Long> endOffsets;
-    Map<TopicPartition, Long> beginningOffsets;
+    Map<TopicPartition, Long> elonndOffselonts;
+    Map<TopicPartition, Long> belonginningOffselonts;
 
     try {
-      endOffsets = consumerForFindingOffsets.endOffsets(ImmutableList.of(tweetTopic));
-      beginningOffsets = consumerForFindingOffsets.beginningOffsets(ImmutableList.of(tweetTopic));
-    } catch (ApiException kafkaApiException) {
-      throw new WrappedKafkaApiException(kafkaApiException);
+      elonndOffselonts = consumelonrForFindingOffselonts.elonndOffselonts(ImmutablelonList.of(twelonelontTopic));
+      belonginningOffselonts = consumelonrForFindingOffselonts.belonginningOffselonts(ImmutablelonList.of(twelonelontTopic));
+    } catch (Apielonxcelonption kafkaApielonxcelonption) {
+      throw nelonw WrappelondKafkaApielonxcelonption(kafkaApielonxcelonption);
     } finally {
-      consumerForFindingOffsets.close();
+      consumelonrForFindingOffselonts.closelon();
     }
 
-    long tweetsBeginningOffset = beginningOffsets.get(tweetTopic);
-    long tweetsEndOffset = endOffsets.get(tweetTopic);
-    LOG.info(String.format("Tweets beginning offset: %,d", tweetsBeginningOffset));
-    LOG.info(String.format("Tweets end offset: %,d", tweetsEndOffset));
-    LOG.info(String.format("Total amount of records in the stream: %,d",
-        tweetsEndOffset - tweetsBeginningOffset + 1));
+    long twelonelontsBelonginningOffselont = belonginningOffselonts.gelont(twelonelontTopic);
+    long twelonelontselonndOffselont = elonndOffselonts.gelont(twelonelontTopic);
+    LOG.info(String.format("Twelonelonts belonginning offselont: %,d", twelonelontsBelonginningOffselont));
+    LOG.info(String.format("Twelonelonts elonnd offselont: %,d", twelonelontselonndOffselont));
+    LOG.info(String.format("Total amount of reloncords in thelon strelonam: %,d",
+        twelonelontselonndOffselont - twelonelontsBelonginningOffselont + 1));
 
-    return new KafkaOffsetPair(tweetsBeginningOffset, tweetsEndOffset);
+    relonturn nelonw KafkaOffselontPair(twelonelontsBelonginningOffselont, twelonelontselonndOffselont);
   }
 
   /**
-   * For each segment, we know what offset it begins at. This function finds the tweet ids
-   * for these offsets.
+   * For elonach selongmelonnt, welon know what offselont it belongins at. This function finds thelon twelonelont ids
+   * for thelonselon offselonts.
    */
-  private void fillTweetIdsForSegmentStarts(List<SegmentBuildInfo> segmentBuildInfos)
-      throws EarlybirdStartupException {
-    KafkaConsumer<Long, ThriftVersionedEvents> consumerForTweetIds =
-        earlybirdKafkaConsumersFactory.createKafkaConsumer("consumer_for_tweet_ids", 1);
-    consumerForTweetIds.assign(ImmutableList.of(tweetTopic));
+  privatelon void fillTwelonelontIdsForSelongmelonntStarts(List<SelongmelonntBuildInfo> selongmelonntBuildInfos)
+      throws elonarlybirdStartupelonxcelonption {
+    KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> consumelonrForTwelonelontIds =
+        elonarlybirdKafkaConsumelonrsFactory.crelonatelonKafkaConsumelonr("consumelonr_for_twelonelont_ids", 1);
+    consumelonrForTwelonelontIds.assign(ImmutablelonList.of(twelonelontTopic));
 
-    // Find first tweet ids for each segment.
-    for (SegmentBuildInfo buildInfo : segmentBuildInfos) {
-      long tweetOffset = buildInfo.getTweetStartOffset();
-      ConsumerRecords<Long, ThriftVersionedEvents> records;
+    // Find first twelonelont ids for elonach selongmelonnt.
+    for (SelongmelonntBuildInfo buildInfo : selongmelonntBuildInfos) {
+      long twelonelontOffselont = buildInfo.gelontTwelonelontStartOffselont();
+      ConsumelonrReloncords<Long, ThriftVelonrsionelondelonvelonnts> reloncords;
       try {
-        consumerForTweetIds.seek(tweetTopic, tweetOffset);
-        records = consumerForTweetIds.poll(Duration.ofSeconds(1));
-      } catch (ApiException kafkaApiException) {
-        throw new WrappedKafkaApiException(kafkaApiException);
+        consumelonrForTwelonelontIds.selonelonk(twelonelontTopic, twelonelontOffselont);
+        reloncords = consumelonrForTwelonelontIds.poll(Duration.ofSelonconds(1));
+      } catch (Apielonxcelonption kafkaApielonxcelonption) {
+        throw nelonw WrappelondKafkaApielonxcelonption(kafkaApielonxcelonption);
       }
 
-      if (records.count() > 0) {
-        ConsumerRecord<Long, ThriftVersionedEvents> recordAtOffset = records.iterator().next();
-        if (recordAtOffset.offset() != tweetOffset) {
-          LOG.error(String.format("We were looking for offset %,d. Found a record at offset %,d",
-              tweetOffset, recordAtOffset.offset()));
+      if (reloncords.count() > 0) {
+        ConsumelonrReloncord<Long, ThriftVelonrsionelondelonvelonnts> reloncordAtOffselont = reloncords.itelonrator().nelonxt();
+        if (reloncordAtOffselont.offselont() != twelonelontOffselont) {
+          LOG.elonrror(String.format("Welon welonrelon looking for offselont %,d. Found a reloncord at offselont %,d",
+              twelonelontOffselont, reloncordAtOffselont.offselont()));
         }
 
-        buildInfo.setStartTweetId(recordAtOffset.value().getId());
-      } else {
-        throw new EarlybirdStartupException("Didn't get any tweets back for an offset");
+        buildInfo.selontStartTwelonelontId(reloncordAtOffselont.valuelon().gelontId());
+      } elonlselon {
+        throw nelonw elonarlybirdStartupelonxcelonption("Didn't gelont any twelonelonts back for an offselont");
       }
     }
 
-    // Check that something weird didn't happen where we end up with segment ids
-    // which are in non-incresing order.
-    // Goes from oldest to newest.
-    for (int i = 1; i < segmentBuildInfos.size(); i++) {
-      long startTweetId = segmentBuildInfos.get(i).getStartTweetId();
-      long prevStartTweetId = segmentBuildInfos.get(i - 1).getStartTweetId();
-      Verify.verify(prevStartTweetId < startTweetId);
+    // Chelonck that somelonthing welonird didn't happelonn whelonrelon welon elonnd up with selongmelonnt ids
+    // which arelon in non-increlonsing ordelonr.
+    // Goelons from oldelonst to nelonwelonst.
+    for (int i = 1; i < selongmelonntBuildInfos.sizelon(); i++) {
+      long startTwelonelontId = selongmelonntBuildInfos.gelont(i).gelontStartTwelonelontId();
+      long prelonvStartTwelonelontId = selongmelonntBuildInfos.gelont(i - 1).gelontStartTwelonelontId();
+      Velonrify.velonrify(prelonvStartTwelonelontId < startTwelonelontId);
     }
   }
 
   /**
-   * Generate the offsets at which tweets begin and end for each segment that we want
-   * to create.
+   * Gelonnelonratelon thelon offselonts at which twelonelonts belongin and elonnd for elonach selongmelonnt that welon want
+   * to crelonatelon.
    */
-  private ArrayList<SegmentBuildInfo> makeSegmentBuildInfos(
-      int numSegments, KafkaOffsetPair tweetsOffsets) throws EarlybirdStartupException {
-    ArrayList<SegmentBuildInfo> segmentBuildInfos = new ArrayList<>();
+  privatelon ArrayList<SelongmelonntBuildInfo> makelonSelongmelonntBuildInfos(
+      int numSelongmelonnts, KafkaOffselontPair twelonelontsOffselonts) throws elonarlybirdStartupelonxcelonption {
+    ArrayList<SelongmelonntBuildInfo> selongmelonntBuildInfos = nelonw ArrayList<>();
 
-    // If we have 3 segments, the starting tweet offsets are:
-    // end-3N, end-2N, end-N
-    int segmentSize = maxSegmentSize - lateTweetBuffer;
-    LOG.info("Segment size: {}", segmentSize);
+    // If welon havelon 3 selongmelonnts, thelon starting twelonelont offselonts arelon:
+    // elonnd-3N, elonnd-2N, elonnd-N
+    int selongmelonntSizelon = maxSelongmelonntSizelon - latelonTwelonelontBuffelonr;
+    LOG.info("Selongmelonnt sizelon: {}", selongmelonntSizelon);
 
-    long tweetsInStream = tweetsOffsets.getEndOffset() - tweetsOffsets.getBeginOffset() + 1;
-    double numBuildableSegments = ((double) tweetsInStream) / segmentSize;
+    long twelonelontsInStrelonam = twelonelontsOffselonts.gelontelonndOffselont() - twelonelontsOffselonts.gelontBelonginOffselont() + 1;
+    doublelon numBuildablelonSelongmelonnts = ((doublelon) twelonelontsInStrelonam) / selongmelonntSizelon;
 
-    LOG.info("Number of segments we can build: {}", numBuildableSegments);
+    LOG.info("Numbelonr of selongmelonnts welon can build: {}", numBuildablelonSelongmelonnts);
 
-    int numSegmentsToBuild = numSegments;
-    int numBuildableSegmentsInt = (int) numBuildableSegments;
+    int numSelongmelonntsToBuild = numSelongmelonnts;
+    int numBuildablelonSelongmelonntsInt = (int) numBuildablelonSelongmelonnts;
 
-    if (numBuildableSegmentsInt < numSegmentsToBuild) {
-      // This can happen if we get a low amount of tweets such that the ~10 days of tweets stored in
-      // Kafka are not enough to build the specified number of segments.
-      LOG.warn("Building {} segments instead of the specified {} segments because there are not "
-              + "enough tweets", numSegmentsToBuild, numSegments);
-      BUILDING_FEWER_THAN_SPECIFIED_SEGMENTS.assertFailed();
-      numSegmentsToBuild = numBuildableSegmentsInt;
+    if (numBuildablelonSelongmelonntsInt < numSelongmelonntsToBuild) {
+      // This can happelonn if welon gelont a low amount of twelonelonts such that thelon ~10 days of twelonelonts storelond in
+      // Kafka arelon not elonnough to build thelon speloncifielond numbelonr of selongmelonnts.
+      LOG.warn("Building {} selongmelonnts instelonad of thelon speloncifielond {} selongmelonnts beloncauselon thelonrelon arelon not "
+              + "elonnough twelonelonts", numSelongmelonntsToBuild, numSelongmelonnts);
+      BUILDING_FelonWelonR_THAN_SPelonCIFIelonD_SelonGMelonNTS.asselonrtFailelond();
+      numSelongmelonntsToBuild = numBuildablelonSelongmelonntsInt;
     }
 
-    for (int rewind = numSegmentsToBuild; rewind >= 1; rewind--) {
-      long tweetStartOffset = (tweetsOffsets.getEndOffset() + 1) - (rewind * segmentSize);
-      long tweetEndOffset = tweetStartOffset + segmentSize - 1;
+    for (int relonwind = numSelongmelonntsToBuild; relonwind >= 1; relonwind--) {
+      long twelonelontStartOffselont = (twelonelontsOffselonts.gelontelonndOffselont() + 1) - (relonwind * selongmelonntSizelon);
+      long twelonelontelonndOffselont = twelonelontStartOffselont + selongmelonntSizelon - 1;
 
-      int index = segmentBuildInfos.size();
+      int indelonx = selongmelonntBuildInfos.sizelon();
 
-      segmentBuildInfos.add(new SegmentBuildInfo(
-          tweetStartOffset,
-          tweetEndOffset,
-          index,
-          rewind == 1
+      selongmelonntBuildInfos.add(nelonw SelongmelonntBuildInfo(
+          twelonelontStartOffselont,
+          twelonelontelonndOffselont,
+          indelonx,
+          relonwind == 1
       ));
     }
 
-    Verify.verify(segmentBuildInfos.get(segmentBuildInfos.size() - 1)
-        .getTweetEndOffset() == tweetsOffsets.getEndOffset());
+    Velonrify.velonrify(selongmelonntBuildInfos.gelont(selongmelonntBuildInfos.sizelon() - 1)
+        .gelontTwelonelontelonndOffselont() == twelonelontsOffselonts.gelontelonndOffselont());
 
-    LOG.info("Filling start tweet ids ...");
-    fillTweetIdsForSegmentStarts(segmentBuildInfos);
+    LOG.info("Filling start twelonelont ids ...");
+    fillTwelonelontIdsForSelongmelonntStarts(selongmelonntBuildInfos);
 
-    return segmentBuildInfos;
+    relonturn selongmelonntBuildInfos;
   }
 
-  private SegmentInfo indexTweetsAndUpdatesForSegment(
-      SegmentBuildInfo segmentBuildInfo,
-      ArrayList<SegmentBuildInfo> segmentBuildInfos) throws Exception {
+  privatelon SelongmelonntInfo indelonxTwelonelontsAndUpdatelonsForSelongmelonnt(
+      SelongmelonntBuildInfo selongmelonntBuildInfo,
+      ArrayList<SelongmelonntBuildInfo> selongmelonntBuildInfos) throws elonxcelonption {
 
-    PreOptimizationSegmentIndexer preOptimizationSegmentIndexer =
-        new PreOptimizationSegmentIndexer(
-            segmentBuildInfo,
-            segmentBuildInfos,
-            this.segmentManager,
-            this.tweetTopic,
-            this.updateTopic,
-            this.earlybirdKafkaConsumersFactory,
-            this.lateTweetBuffer
+    PrelonOptimizationSelongmelonntIndelonxelonr prelonOptimizationSelongmelonntIndelonxelonr =
+        nelonw PrelonOptimizationSelongmelonntIndelonxelonr(
+            selongmelonntBuildInfo,
+            selongmelonntBuildInfos,
+            this.selongmelonntManagelonr,
+            this.twelonelontTopic,
+            this.updatelonTopic,
+            this.elonarlybirdKafkaConsumelonrsFactory,
+            this.latelonTwelonelontBuffelonr
         );
 
-    return preOptimizationSegmentIndexer.runIndexing();
+    relonturn prelonOptimizationSelongmelonntIndelonxelonr.runIndelonxing();
   }
 }

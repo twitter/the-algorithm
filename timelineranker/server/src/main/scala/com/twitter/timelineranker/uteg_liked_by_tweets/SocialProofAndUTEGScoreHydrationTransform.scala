@@ -1,28 +1,28 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.utelong_likelond_by_twelonelonts
 
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.util.Future
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+import com.twittelonr.util.Futurelon
 
-object SocialProofAndUTEGScoreHydrationTransform
-    extends FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
+objelonct SocialProofAndUTelonGScorelonHydrationTransform
+    elonxtelonnds FuturelonArrow[
+      HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon,
+      HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
     ] {
-  override def apply(
-    request: HydratedCandidatesAndFeaturesEnvelope
-  ): Future[HydratedCandidatesAndFeaturesEnvelope] = {
+  ovelonrridelon delonf apply(
+    relonquelonst: HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+  ): Futurelon[HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon] = {
 
-    val updatedFeatures = request.features.map {
-      case (tweetId, features) =>
-        tweetId ->
-          features.copy(
-            utegSocialProofByType =
-              request.candidateEnvelope.utegResults.get(tweetId).map(_.socialProofByType),
-            utegScore = request.candidateEnvelope.utegResults.get(tweetId).map(_.score)
+    val updatelondFelonaturelons = relonquelonst.felonaturelons.map {
+      caselon (twelonelontId, felonaturelons) =>
+        twelonelontId ->
+          felonaturelons.copy(
+            utelongSocialProofByTypelon =
+              relonquelonst.candidatelonelonnvelonlopelon.utelongRelonsults.gelont(twelonelontId).map(_.socialProofByTypelon),
+            utelongScorelon = relonquelonst.candidatelonelonnvelonlopelon.utelongRelonsults.gelont(twelonelontId).map(_.scorelon)
           )
     }
 
-    Future.value(request.copy(features = updatedFeatures))
+    Futurelon.valuelon(relonquelonst.copy(felonaturelons = updatelondFelonaturelons))
   }
 }

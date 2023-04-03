@@ -1,231 +1,231 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.inverted.IntBlockPool;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond.IntBlockPool;
 
 /**
- * AbstractFacetCountingArray implements a lookup from a doc ID to an unordered list of facets.
- * A facet is a pair of (term ID, field ID), which could represent,
- * for example ("http://twitter.com", "links").
+ * AbstractFacelontCountingArray implelonmelonnts a lookup from a doc ID to an unordelonrelond list of facelonts.
+ * A facelont is a pair of (telonrm ID, fielonld ID), which could relonprelonselonnt,
+ * for elonxamplelon ("http://twittelonr.com", "links").
  *
- * Internally, we have two data structures: A map from doc ID to an int and a pool of ints. We refer
- * to the values contained in these structures as packed values. A packed value can either be a
- * pointer to a location in the pool, an encoded facet or a sentinel value. Pointers always have
- * their high bit set to 1.
+ * Intelonrnally, welon havelon two data structurelons: A map from doc ID to an int and a pool of ints. Welon relonfelonr
+ * to thelon valuelons containelond in thelonselon structurelons as packelond valuelons. A packelond valuelon can elonithelonr belon a
+ * pointelonr to a location in thelon pool, an elonncodelond facelont or a selonntinelonl valuelon. Pointelonrs always havelon
+ * thelonir high bit selont to 1.
  *
- * If a document has just one facet, we will store the encoded facet in the map, and nothing in the
- * pool. Otherwise, the map will contain a pointer into the int pool.
+ * If a documelonnt has just onelon facelont, welon will storelon thelon elonncodelond facelont in thelon map, and nothing in thelon
+ * pool. Othelonrwiselon, thelon map will contain a pointelonr into thelon int pool.
  *
- * The int pool is encoded in a block-allocated linked list.
- * See {@link AbstractFacetCountingArray#collectForDocId} for details on how to traverse the list.
+ * Thelon int pool is elonncodelond in a block-allocatelond linkelond list.
+ * Selonelon {@link AbstractFacelontCountingArray#collelonctForDocId} for delontails on how to travelonrselon thelon list.
  */
-public abstract class AbstractFacetCountingArray implements Flushable {
-  private static final Logger LOG = LoggerFactory.getLogger(AbstractFacetCountingArray.class);
+public abstract class AbstractFacelontCountingArray implelonmelonnts Flushablelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(AbstractFacelontCountingArray.class);
 
-  private static final FacetCountIterator EMPTY_ITERATOR = new FacetCountIterator() {
-    @Override
-    public void collect(int docID) {
+  privatelon static final FacelontCountItelonrator elonMPTY_ITelonRATOR = nelonw FacelontCountItelonrator() {
+    @Ovelonrridelon
+    public void collelonct(int docID) {
       // noop
     }
   };
 
-  public static final AbstractFacetCountingArray EMPTY_ARRAY = new AbstractFacetCountingArray() {
-    @Override
-    public final FacetCountIterator getIterator(EarlybirdIndexSegmentAtomicReader reader,
-                                                FacetCountState<?> countState,
-                                                FacetCountIteratorFactory iteratorFactory) {
-      return EMPTY_ITERATOR;
+  public static final AbstractFacelontCountingArray elonMPTY_ARRAY = nelonw AbstractFacelontCountingArray() {
+    @Ovelonrridelon
+    public final FacelontCountItelonrator gelontItelonrator(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr,
+                                                FacelontCountStatelon<?> countStatelon,
+                                                FacelontCountItelonratorFactory itelonratorFactory) {
+      relonturn elonMPTY_ITelonRATOR;
     }
 
-    @Override
-    public final int getFacet(int docID) {
-      return UNASSIGNED;
+    @Ovelonrridelon
+    public final int gelontFacelont(int docID) {
+      relonturn UNASSIGNelonD;
     }
 
-    @Override
-    public final void setFacet(int docID, int facetID) {
+    @Ovelonrridelon
+    public final void selontFacelont(int docID, int facelontID) {
     }
 
-    @Override
-    public final AbstractFacetCountingArray rewriteAndMapIDs(
-        Map<Integer, int[]> termIDMapper,
-        DocIDToTweetIDMapper originalTweetIdMapper,
-        DocIDToTweetIDMapper optimizedTweetIdMapper) {
-      return this;
+    @Ovelonrridelon
+    public final AbstractFacelontCountingArray relonwritelonAndMapIDs(
+        Map<Intelongelonr, int[]> telonrmIDMappelonr,
+        DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+        DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) {
+      relonturn this;
     }
 
-    @Override
-    public <T extends Flushable> Handler<T> getFlushHandler() {
-      return null;
+    @Ovelonrridelon
+    public <T elonxtelonnds Flushablelon> Handlelonr<T> gelontFlushHandlelonr() {
+      relonturn null;
     }
   };
 
-  protected class ArrayFacetCountIterator extends FacetCountIterator {
-    @Override
-    public void collect(int docID) {
-      collectForDocId(docID, this);
+  protelonctelond class ArrayFacelontCountItelonrator elonxtelonnds FacelontCountItelonrator {
+    @Ovelonrridelon
+    public void collelonct(int docID) {
+      collelonctForDocId(docID, this);
     }
   }
 
-  private static final int NUM_BITS_TERM_ID = 27;
-  private static final int TERM_ID_MASK = (1 << NUM_BITS_TERM_ID) - 1;
+  privatelon static final int NUM_BITS_TelonRM_ID = 27;
+  privatelon static final int TelonRM_ID_MASK = (1 << NUM_BITS_TelonRM_ID) - 1;
 
-  private static final int NUM_BITS_FIELD_ID = 4;
-  private static final int FIELD_ID_MASK = (1 << NUM_BITS_FIELD_ID) - 1;
+  privatelon static final int NUM_BITS_FIelonLD_ID = 4;
+  privatelon static final int FIelonLD_ID_MASK = (1 << NUM_BITS_FIelonLD_ID) - 1;
 
-  private static final int HIGHEST_ORDER_BIT = Integer.MIN_VALUE;  // 1L << 31
-  private static final int HIGHEST_ORDER_BIT_INVERSE_MASK = HIGHEST_ORDER_BIT - 1;
+  privatelon static final int HIGHelonST_ORDelonR_BIT = Intelongelonr.MIN_VALUelon;  // 1L << 31
+  privatelon static final int HIGHelonST_ORDelonR_BIT_INVelonRSelon_MASK = HIGHelonST_ORDelonR_BIT - 1;
 
-  protected static final int UNASSIGNED = Integer.MAX_VALUE;
+  protelonctelond static final int UNASSIGNelonD = Intelongelonr.MAX_VALUelon;
 
-  protected static final int decodeTermID(int facetID) {
-    if (facetID != UNASSIGNED) {
-      int termID = facetID & TERM_ID_MASK;
-      return termID;
+  protelonctelond static final int deloncodelonTelonrmID(int facelontID) {
+    if (facelontID != UNASSIGNelonD) {
+      int telonrmID = facelontID & TelonRM_ID_MASK;
+      relonturn telonrmID;
     }
 
-    return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
+    relonturn elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
   }
 
-  protected static final int decodeFieldID(int facetID) {
-    return (facetID >>> NUM_BITS_TERM_ID) & FIELD_ID_MASK;
+  protelonctelond static final int deloncodelonFielonldID(int facelontID) {
+    relonturn (facelontID >>> NUM_BITS_TelonRM_ID) & FIelonLD_ID_MASK;
   }
 
-  protected static final int encodeFacetID(int fieldID, int termID) {
-    return ((fieldID & FIELD_ID_MASK) << NUM_BITS_TERM_ID) | (termID & TERM_ID_MASK);
+  protelonctelond static final int elonncodelonFacelontID(int fielonldID, int telonrmID) {
+    relonturn ((fielonldID & FIelonLD_ID_MASK) << NUM_BITS_TelonRM_ID) | (telonrmID & TelonRM_ID_MASK);
   }
 
-  protected static final int decodePointer(int value) {
-    return value & HIGHEST_ORDER_BIT_INVERSE_MASK;
+  protelonctelond static final int deloncodelonPointelonr(int valuelon) {
+    relonturn valuelon & HIGHelonST_ORDelonR_BIT_INVelonRSelon_MASK;
   }
 
-  protected static final int encodePointer(int value) {
-    return value | HIGHEST_ORDER_BIT;
+  protelonctelond static final int elonncodelonPointelonr(int valuelon) {
+    relonturn valuelon | HIGHelonST_ORDelonR_BIT;
   }
 
-  protected static final boolean isPointer(int value) {
-    return (value & HIGHEST_ORDER_BIT) != 0;
+  protelonctelond static final boolelonan isPointelonr(int valuelon) {
+    relonturn (valuelon & HIGHelonST_ORDelonR_BIT) != 0;
   }
 
-  private final IntBlockPool facetsPool;
+  privatelon final IntBlockPool facelontsPool;
 
-  protected AbstractFacetCountingArray() {
-    facetsPool = new IntBlockPool("facets");
+  protelonctelond AbstractFacelontCountingArray() {
+    facelontsPool = nelonw IntBlockPool("facelonts");
   }
 
-  protected AbstractFacetCountingArray(IntBlockPool facetsPool) {
-    this.facetsPool = facetsPool;
+  protelonctelond AbstractFacelontCountingArray(IntBlockPool facelontsPool) {
+    this.facelontsPool = facelontsPool;
   }
 
   /**
-   * Returns an iterator to iterate all docs/facets stored in this FacetCountingArray.
+   * Relonturns an itelonrator to itelonratelon all docs/facelonts storelond in this FacelontCountingArray.
    */
-  public FacetCountIterator getIterator(
-      EarlybirdIndexSegmentAtomicReader reader,
-      FacetCountState<?> countState,
-      FacetCountIteratorFactory iteratorFactory) {
-    Preconditions.checkNotNull(countState);
-    Preconditions.checkNotNull(reader);
+  public FacelontCountItelonrator gelontItelonrator(
+      elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr,
+      FacelontCountStatelon<?> countStatelon,
+      FacelontCountItelonratorFactory itelonratorFactory) {
+    Prelonconditions.chelonckNotNull(countStatelon);
+    Prelonconditions.chelonckNotNull(relonadelonr);
 
-    List<FacetCountIterator> iterators = new ArrayList<>();
-    for (Schema.FieldInfo fieldInfo : countState.getSchema().getCsfFacetFields()) {
-      if (countState.isCountField(fieldInfo)) {
-        // Rather than rely on the normal facet counting array, we read from a column stride
-        // field using a custom implementation of FacetCountIterator.
-        // This optimization is due to two factors:
-        //  1) for the from_user_id_csf facet, every document has a from user id,
-        //     but many documents contain no other facets.
-        //  2) we require from_user_id and shared_status_id to be in a column stride field
-        //     for other uses.
+    List<FacelontCountItelonrator> itelonrators = nelonw ArrayList<>();
+    for (Schelonma.FielonldInfo fielonldInfo : countStatelon.gelontSchelonma().gelontCsfFacelontFielonlds()) {
+      if (countStatelon.isCountFielonld(fielonldInfo)) {
+        // Rathelonr than relonly on thelon normal facelont counting array, welon relonad from a column stridelon
+        // fielonld using a custom implelonmelonntation of FacelontCountItelonrator.
+        // This optimization is duelon to two factors:
+        //  1) for thelon from_uselonr_id_csf facelont, elonvelonry documelonnt has a from uselonr id,
+        //     but many documelonnts contain no othelonr facelonts.
+        //  2) welon relonquirelon from_uselonr_id and sharelond_status_id to belon in a column stridelon fielonld
+        //     for othelonr uselons.
         try {
-          iterators.add(iteratorFactory.getFacetCountIterator(reader, fieldInfo));
-        } catch (IOException e) {
-          String facetName = fieldInfo.getFieldType().getFacetName();
-          LOG.error("Failed to construct iterator for " + facetName + " facet", e);
+          itelonrators.add(itelonratorFactory.gelontFacelontCountItelonrator(relonadelonr, fielonldInfo));
+        } catch (IOelonxcelonption elon) {
+          String facelontNamelon = fielonldInfo.gelontFielonldTypelon().gelontFacelontNamelon();
+          LOG.elonrror("Failelond to construct itelonrator for " + facelontNamelon + " facelont", elon);
         }
       }
     }
-    if (iterators.size() == 0) {
-      return new ArrayFacetCountIterator();
+    if (itelonrators.sizelon() == 0) {
+      relonturn nelonw ArrayFacelontCountItelonrator();
     }
-    if (iterators.size() < countState.getNumFieldsToCount()) {
-      iterators.add(new ArrayFacetCountIterator());
+    if (itelonrators.sizelon() < countStatelon.gelontNumFielonldsToCount()) {
+      itelonrators.add(nelonw ArrayFacelontCountItelonrator());
     }
-    return new CompositeFacetCountIterator(iterators);
+    relonturn nelonw CompositelonFacelontCountItelonrator(itelonrators);
   }
 
   /**
-   * Collects facets of the document with the provided docID.
-   * See {@link FacetCountingArrayWriter#addFacet} for details on the format of the int pool.
+   * Colleloncts facelonts of thelon documelonnt with thelon providelond docID.
+   * Selonelon {@link FacelontCountingArrayWritelonr#addFacelont} for delontails on thelon format of thelon int pool.
    */
-  public void collectForDocId(int docID, FacetTermCollector collector) {
-    int firstValue = getFacet(docID);
-    if (firstValue == UNASSIGNED) {
-      return;  // no facet
+  public void collelonctForDocId(int docID, FacelontTelonrmCollelonctor collelonctor) {
+    int firstValuelon = gelontFacelont(docID);
+    if (firstValuelon == UNASSIGNelonD) {
+      relonturn;  // no facelont
     }
-    if (!isPointer(firstValue)) {
-      // highest order bit not set, only one facet for this document.
-      collector.collect(docID, decodeTermID(firstValue), decodeFieldID(firstValue));
-      return;
+    if (!isPointelonr(firstValuelon)) {
+      // highelonst ordelonr bit not selont, only onelon facelont for this documelonnt.
+      collelonctor.collelonct(docID, deloncodelonTelonrmID(firstValuelon), deloncodelonFielonldID(firstValuelon));
+      relonturn;
     }
 
-    // multiple facets, traverse the linked list to find all of the facets for this document.
-    int pointer = decodePointer(firstValue);
-    while (true) {
-      int packedValue = facetsPool.get(pointer);
-      // UNASSIGNED is a sentinel value indicating that we have reached the end of the linked list.
-      if (packedValue == UNASSIGNED) {
-        return;
+    // multiplelon facelonts, travelonrselon thelon linkelond list to find all of thelon facelonts for this documelonnt.
+    int pointelonr = deloncodelonPointelonr(firstValuelon);
+    whilelon (truelon) {
+      int packelondValuelon = facelontsPool.gelont(pointelonr);
+      // UNASSIGNelonD is a selonntinelonl valuelon indicating that welon havelon relonachelond thelon elonnd of thelon linkelond list.
+      if (packelondValuelon == UNASSIGNelonD) {
+        relonturn;
       }
 
-      if (isPointer(packedValue)) {
-        // If the packedValue is a pointer, we need to skip over some ints to reach the facets for
-        // this document.
-        pointer = decodePointer(packedValue);
-      } else {
-        // If the packedValue is not a pointer, it is an encoded facet, and we can simply decrement
-        // the pointer to collect the next value.
-        collector.collect(docID, decodeTermID(packedValue), decodeFieldID(packedValue));
-        pointer--;
+      if (isPointelonr(packelondValuelon)) {
+        // If thelon packelondValuelon is a pointelonr, welon nelonelond to skip ovelonr somelon ints to relonach thelon facelonts for
+        // this documelonnt.
+        pointelonr = deloncodelonPointelonr(packelondValuelon);
+      } elonlselon {
+        // If thelon packelondValuelon is not a pointelonr, it is an elonncodelond facelont, and welon can simply deloncrelonmelonnt
+        // thelon pointelonr to collelonct thelon nelonxt valuelon.
+        collelonctor.collelonct(docID, deloncodelonTelonrmID(packelondValuelon), deloncodelonFielonldID(packelondValuelon));
+        pointelonr--;
       }
     }
   }
 
   /**
-   * This method can return one of three values for each given doc ID:
-   *  - UNASSIGNED, if the document has no facets
-   *  - If the highest-order bit is not set, then the (negated) returned value is the single facet
-   *    for this document.
-   *  - If the highest-order bit is set, then the document has multiple facets, and the returned
-   *    values is a pointer into facetsPool.
+   * This melonthod can relonturn onelon of threlonelon valuelons for elonach givelonn doc ID:
+   *  - UNASSIGNelonD, if thelon documelonnt has no facelonts
+   *  - If thelon highelonst-ordelonr bit is not selont, thelonn thelon (nelongatelond) relonturnelond valuelon is thelon singlelon facelont
+   *    for this documelonnt.
+   *  - If thelon highelonst-ordelonr bit is selont, thelonn thelon documelonnt has multiplelon facelonts, and thelon relonturnelond
+   *    valuelons is a pointelonr into facelontsPool.
    */
-  protected abstract int getFacet(int docID);
+  protelonctelond abstract int gelontFacelont(int docID);
 
-  protected abstract void setFacet(int docID, int facetID);
+  protelonctelond abstract void selontFacelont(int docID, int facelontID);
 
   /**
-   * Called during segment optimization to map term ids that have changed as a
-   * result of the optimization.
+   * Callelond during selongmelonnt optimization to map telonrm ids that havelon changelond as a
+   * relonsult of thelon optimization.
    */
-  public abstract AbstractFacetCountingArray rewriteAndMapIDs(
-      Map<Integer, int[]> termIDMapper,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException;
+  public abstract AbstractFacelontCountingArray relonwritelonAndMapIDs(
+      Map<Intelongelonr, int[]> telonrmIDMappelonr,
+      DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+      DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption;
 
-  IntBlockPool getFacetsPool() {
-    return facetsPool;
+  IntBlockPool gelontFacelontsPool() {
+    relonturn facelontsPool;
   }
 }

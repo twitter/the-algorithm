@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.component_library.feature.featurestorev1
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon.felonaturelonstorelonv1
 
-import com.twitter.ml.api.transform.FeatureRenameTransform
-import com.twitter.ml.featurestore.catalog.entities
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.UserId
-import com.twitter.ml.featurestore.lib.entity.Entity
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.TimelinesAggregationFrameworkFeatureGroup
-import com.twitter.ml.featurestore.lib.feature.{Feature => FSv1Feature}
-import com.twitter.product_mixer.component_library.model.candidate.TweetAuthorIdFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1._
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.configapi.FSParam
-import scala.reflect.ClassTag
+import com.twittelonr.ml.api.transform.FelonaturelonRelonnamelonTransform
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.UselonrId
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntity
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntityWithId
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.TimelonlinelonsAggrelongationFramelonworkFelonaturelonGroup
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.{Felonaturelon => FSv1Felonaturelon}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontAuthorIdFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1._
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import scala.relonflelonct.ClassTag
 
-object FeatureStoreV1TweetCandidateAuthorIdFeature {
-  def apply[Query <: PipelineQuery, Value](
-    feature: FSv1Feature[UserId, Value],
-    legacyName: Option[String] = None,
-    defaultValue: Option[Value] = None,
-    enabledParam: Option[FSParam[Boolean]] = None
-  ): FeatureStoreV1CandidateFeature[Query, TweetCandidate, _ <: EntityId, Value] =
-    FeatureStoreV1CandidateFeature(
-      feature,
-      TweetCandidateAuthorIdEntity,
-      legacyName,
-      defaultValue,
-      enabledParam)
+objelonct FelonaturelonStorelonV1TwelonelontCandidatelonAuthorIdFelonaturelon {
+  delonf apply[Quelonry <: PipelonlinelonQuelonry, Valuelon](
+    felonaturelon: FSv1Felonaturelon[UselonrId, Valuelon],
+    lelongacyNamelon: Option[String] = Nonelon,
+    delonfaultValuelon: Option[Valuelon] = Nonelon,
+    elonnablelondParam: Option[FSParam[Boolelonan]] = Nonelon
+  ): FelonaturelonStorelonV1CandidatelonFelonaturelon[Quelonry, TwelonelontCandidatelon, _ <: elonntityId, Valuelon] =
+    FelonaturelonStorelonV1CandidatelonFelonaturelon(
+      felonaturelon,
+      TwelonelontCandidatelonAuthorIdelonntity,
+      lelongacyNamelon,
+      delonfaultValuelon,
+      elonnablelondParam)
 }
 
-object FeatureStoreV1TweetCandidateAuthorIdAggregateFeature {
-  def apply[Query <: PipelineQuery](
-    featureGroup: TimelinesAggregationFrameworkFeatureGroup[UserId],
-    enabledParam: Option[FSParam[Boolean]] = None,
-    keepLegacyNames: Boolean = false,
-    featureNameTransform: Option[FeatureRenameTransform] = None
-  ): FeatureStoreV1CandidateFeatureGroup[Query, TweetCandidate, _ <: EntityId] =
-    FeatureStoreV1CandidateFeatureGroup(
-      featureGroup,
-      TweetCandidateAuthorIdEntity,
-      enabledParam,
-      keepLegacyNames,
-      featureNameTransform
-    )(implicitly[ClassTag[UserId]])
+objelonct FelonaturelonStorelonV1TwelonelontCandidatelonAuthorIdAggrelongatelonFelonaturelon {
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    felonaturelonGroup: TimelonlinelonsAggrelongationFramelonworkFelonaturelonGroup[UselonrId],
+    elonnablelondParam: Option[FSParam[Boolelonan]] = Nonelon,
+    kelonelonpLelongacyNamelons: Boolelonan = falselon,
+    felonaturelonNamelonTransform: Option[FelonaturelonRelonnamelonTransform] = Nonelon
+  ): FelonaturelonStorelonV1CandidatelonFelonaturelonGroup[Quelonry, TwelonelontCandidatelon, _ <: elonntityId] =
+    FelonaturelonStorelonV1CandidatelonFelonaturelonGroup(
+      felonaturelonGroup,
+      TwelonelontCandidatelonAuthorIdelonntity,
+      elonnablelondParam,
+      kelonelonpLelongacyNamelons,
+      felonaturelonNamelonTransform
+    )(implicitly[ClassTag[UselonrId]])
 }
 
-object TweetCandidateAuthorIdEntity
-    extends FeatureStoreV1CandidateEntity[PipelineQuery, TweetCandidate, UserId] {
-  override val entity: Entity[UserId] = entities.core.Author
+objelonct TwelonelontCandidatelonAuthorIdelonntity
+    elonxtelonnds FelonaturelonStorelonV1Candidatelonelonntity[PipelonlinelonQuelonry, TwelonelontCandidatelon, UselonrId] {
+  ovelonrridelon val elonntity: elonntity[UselonrId] = elonntitielons.corelon.Author
 
-  override def entityWithId(
-    query: PipelineQuery,
-    tweet: TweetCandidate,
-    existingFeatures: FeatureMap
-  ): EntityWithId[UserId] =
-    entity.withId(UserId(existingFeatures.get(TweetAuthorIdFeature)))
+  ovelonrridelon delonf elonntityWithId(
+    quelonry: PipelonlinelonQuelonry,
+    twelonelont: TwelonelontCandidatelon,
+    elonxistingFelonaturelons: FelonaturelonMap
+  ): elonntityWithId[UselonrId] =
+    elonntity.withId(UselonrId(elonxistingFelonaturelons.gelont(TwelonelontAuthorIdFelonaturelon)))
 }

@@ -1,113 +1,113 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.ArrayBlockingQuelonuelon;
+import java.util.concurrelonnt.elonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.elonxeloncutors;
+import java.util.concurrelonnt.Relonjelonctelondelonxeloncutionelonxcelonption;
+import java.util.concurrelonnt.ThrelonadFactory;
+import java.util.concurrelonnt.ThrelonadPoolelonxeloncutor;
+import java.util.concurrelonnt.TimelonUnit;
 
 import scala.Function0;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.util.concurrelonnt.ThrelonadFactoryBuildelonr;
 
-import com.twitter.search.common.concurrent.ThreadPoolExecutorStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.util.ExecutorServiceFuturePool;
-import com.twitter.util.Future;
-import com.twitter.util.FuturePool;
+import com.twittelonr.selonarch.common.concurrelonnt.ThrelonadPoolelonxeloncutorStats;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.util.elonxeloncutorSelonrvicelonFuturelonPool;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.FuturelonPool;
 
 /**
- * A future pool that delegates all calls to an underlying futurePool, which can be recreated.
+ * A futurelon pool that delonlelongatelons all calls to an undelonrlying futurelonPool, which can belon reloncrelonatelond.
  */
-public class EarlybirdFuturePoolManager implements FuturePool {
-  private volatile ExecutorServiceFuturePool pool = null;
+public class elonarlybirdFuturelonPoolManagelonr implelonmelonnts FuturelonPool {
+  privatelon volatilelon elonxeloncutorSelonrvicelonFuturelonPool pool = null;
 
-  private final String threadName;
-  private final ThreadPoolExecutorStats threadPoolExecutorStats;
+  privatelon final String threlonadNamelon;
+  privatelon final ThrelonadPoolelonxeloncutorStats threlonadPoolelonxeloncutorStats;
 
-  public EarlybirdFuturePoolManager(String threadName) {
-    this.threadName = threadName;
-    this.threadPoolExecutorStats = new ThreadPoolExecutorStats(threadName);
+  public elonarlybirdFuturelonPoolManagelonr(String threlonadNamelon) {
+    this.threlonadNamelon = threlonadNamelon;
+    this.threlonadPoolelonxeloncutorStats = nelonw ThrelonadPoolelonxeloncutorStats(threlonadNamelon);
   }
 
-  final synchronized void createUnderlyingFuturePool(int threadCount) {
-    Preconditions.checkState(pool == null, "Cannot create a new pool before stopping the old one");
+  final synchronizelond void crelonatelonUndelonrlyingFuturelonPool(int threlonadCount) {
+    Prelonconditions.chelonckStatelon(pool == null, "Cannot crelonatelon a nelonw pool belonforelon stopping thelon old onelon");
 
-    ExecutorService executorService =
-        createExecutorService(threadCount, getMaxQueueSize());
-    if (executorService instanceof ThreadPoolExecutor) {
-      threadPoolExecutorStats.setUnderlyingExecutorForStats((ThreadPoolExecutor) executorService);
+    elonxeloncutorSelonrvicelon elonxeloncutorSelonrvicelon =
+        crelonatelonelonxeloncutorSelonrvicelon(threlonadCount, gelontMaxQuelonuelonSizelon());
+    if (elonxeloncutorSelonrvicelon instancelonof ThrelonadPoolelonxeloncutor) {
+      threlonadPoolelonxeloncutorStats.selontUndelonrlyingelonxeloncutorForStats((ThrelonadPoolelonxeloncutor) elonxeloncutorSelonrvicelon);
     }
 
-    pool = new ExecutorServiceFuturePool(executorService);
+    pool = nelonw elonxeloncutorSelonrvicelonFuturelonPool(elonxeloncutorSelonrvicelon);
   }
 
-  final synchronized void stopUnderlyingFuturePool(long timeout, TimeUnit timeunit)
-      throws InterruptedException {
-    Preconditions.checkNotNull(pool);
-    pool.executor().shutdown();
-    pool.executor().awaitTermination(timeout, timeunit);
+  final synchronizelond void stopUndelonrlyingFuturelonPool(long timelonout, TimelonUnit timelonunit)
+      throws Intelonrruptelondelonxcelonption {
+    Prelonconditions.chelonckNotNull(pool);
+    pool.elonxeloncutor().shutdown();
+    pool.elonxeloncutor().awaitTelonrmination(timelonout, timelonunit);
     pool = null;
   }
 
-  boolean isPoolReady() {
-    return pool != null;
+  boolelonan isPoolRelonady() {
+    relonturn pool != null;
   }
 
-  @Override
-  public final <T> Future<T> apply(Function0<T> f) {
-    return Preconditions.checkNotNull(pool).apply(f);
+  @Ovelonrridelon
+  public final <T> Futurelon<T> apply(Function0<T> f) {
+    relonturn Prelonconditions.chelonckNotNull(pool).apply(f);
   }
 
-  @VisibleForTesting
-  protected ExecutorService createExecutorService(int threadCount, int maxQueueSize) {
-    if (maxQueueSize <= 0) {
-      return Executors.newFixedThreadPool(threadCount, createThreadFactory(threadName));
+  @VisiblelonForTelonsting
+  protelonctelond elonxeloncutorSelonrvicelon crelonatelonelonxeloncutorSelonrvicelon(int threlonadCount, int maxQuelonuelonSizelon) {
+    if (maxQuelonuelonSizelon <= 0) {
+      relonturn elonxeloncutors.nelonwFixelondThrelonadPool(threlonadCount, crelonatelonThrelonadFactory(threlonadNamelon));
     }
 
-    SearchRateCounter rejectedTaskCounter =
-        SearchRateCounter.export(threadName + "_rejected_task_count");
-    return new ThreadPoolExecutor(
-        threadCount, threadCount, 0, TimeUnit.MILLISECONDS,
-        new ArrayBlockingQueue<>(maxQueueSize),
-        createThreadFactory(threadName),
-        (runnable, executor) -> {
-          rejectedTaskCounter.increment();
-          throw new RejectedExecutionException(threadName + " queue is full");
+    SelonarchRatelonCountelonr relonjelonctelondTaskCountelonr =
+        SelonarchRatelonCountelonr.elonxport(threlonadNamelon + "_relonjelonctelond_task_count");
+    relonturn nelonw ThrelonadPoolelonxeloncutor(
+        threlonadCount, threlonadCount, 0, TimelonUnit.MILLISelonCONDS,
+        nelonw ArrayBlockingQuelonuelon<>(maxQuelonuelonSizelon),
+        crelonatelonThrelonadFactory(threlonadNamelon),
+        (runnablelon, elonxeloncutor) -> {
+          relonjelonctelondTaskCountelonr.increlonmelonnt();
+          throw nelonw Relonjelonctelondelonxeloncutionelonxcelonption(threlonadNamelon + " quelonuelon is full");
         });
   }
 
-  @VisibleForTesting
-  protected int getMaxQueueSize() {
-    return EarlybirdProperty.MAX_QUEUE_SIZE.get(0);
+  @VisiblelonForTelonsting
+  protelonctelond int gelontMaxQuelonuelonSizelon() {
+    relonturn elonarlybirdPropelonrty.MAX_QUelonUelon_SIZelon.gelont(0);
   }
 
-  @VisibleForTesting
-  static ThreadFactory createThreadFactory(String threadName) {
-    return new ThreadFactoryBuilder()
-        .setNameFormat(threadName + "-%d")
-        .setDaemon(true)
+  @VisiblelonForTelonsting
+  static ThrelonadFactory crelonatelonThrelonadFactory(String threlonadNamelon) {
+    relonturn nelonw ThrelonadFactoryBuildelonr()
+        .selontNamelonFormat(threlonadNamelon + "-%d")
+        .selontDaelonmon(truelon)
         .build();
   }
 
-  @Override
-  public int poolSize() {
-    return Preconditions.checkNotNull(pool).poolSize();
+  @Ovelonrridelon
+  public int poolSizelon() {
+    relonturn Prelonconditions.chelonckNotNull(pool).poolSizelon();
   }
 
-  @Override
-  public int numActiveTasks() {
-    return Preconditions.checkNotNull(pool).numActiveTasks();
+  @Ovelonrridelon
+  public int numActivelonTasks() {
+    relonturn Prelonconditions.chelonckNotNull(pool).numActivelonTasks();
   }
 
-  @Override
-  public long numCompletedTasks() {
-    return Preconditions.checkNotNull(pool).numCompletedTasks();
+  @Ovelonrridelon
+  public long numComplelontelondTasks() {
+    relonturn Prelonconditions.chelonckNotNull(pool).numComplelontelondTasks();
   }
 
 

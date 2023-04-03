@@ -1,9 +1,9 @@
-package com.twitter.search.common.search;
+packagelon com.twittelonr.selonarch.common.selonarch;
 
 /**
- * Any class that can track and return query cost.
+ * Any class that can track and relonturn quelonry cost.
  */
-public interface QueryCostProvider {
-  /** Returns the total cost. */
-  double getTotalCost();
+public intelonrfacelon QuelonryCostProvidelonr {
+  /** Relonturns thelon total cost. */
+  doublelon gelontTotalCost();
 }

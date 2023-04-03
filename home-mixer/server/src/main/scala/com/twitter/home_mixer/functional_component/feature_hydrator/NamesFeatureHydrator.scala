@@ -1,95 +1,95 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.gizmoduck.{thriftscala => gt}
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FavoritedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.FollowedByUserIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.RealNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.SourceUserIdFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableNahFeedbackInfoParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import com.twitter.util.Return
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.gizmoduck.{thriftscala => gt}
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FavoritelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FollowelondByUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.RelonalNamelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScrelonelonnNamelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SourcelonUselonrIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.elonnablelonNahFelonelondbackInfoParam
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.gizmoduck.Gizmoduck
+import com.twittelonr.util.Relonturn
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-protected case class ProfileNames(screenName: String, realName: String)
+protelonctelond caselon class ProfilelonNamelons(screlonelonnNamelon: String, relonalNamelon: String)
 
-@Singleton
-class NamesFeatureHydrator @Inject() (gizmoduck: Gizmoduck)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate]
-    with Conditionally[PipelineQuery] {
+@Singlelonton
+class NamelonsFelonaturelonHydrator @Injelonct() (gizmoduck: Gizmoduck)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon]
+    with Conditionally[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("Names")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("Namelons")
 
-  override val features: Set[Feature[_, _]] = Set(ScreenNamesFeature, RealNamesFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(ScrelonelonnNamelonsFelonaturelon, RelonalNamelonsFelonaturelon)
 
-  override def onlyIf(query: PipelineQuery): Boolean = query.product match {
-    case FollowingProduct => query.params(EnableNahFeedbackInfoParam)
-    case _ => true
+  ovelonrridelon delonf onlyIf(quelonry: PipelonlinelonQuelonry): Boolelonan = quelonry.product match {
+    caselon FollowingProduct => quelonry.params(elonnablelonNahFelonelondbackInfoParam)
+    caselon _ => truelon
   }
 
-  private val queryFields: Set[gt.QueryFields] = Set(gt.QueryFields.Profile)
+  privatelon val quelonryFielonlds: Selont[gt.QuelonryFielonlds] = Selont(gt.QuelonryFielonlds.Profilelon)
 
   /**
-   * The UI currently only ever displays the first 2 names in social context lines
-   * E.g. "User and 3 others like" or "UserA and UserB liked"
+   * Thelon UI currelonntly only elonvelonr displays thelon first 2 namelons in social contelonxt linelons
+   * elon.g. "Uselonr and 3 othelonrs likelon" or "UselonrA and UselonrB likelond"
    */
-  private val MaxCountUsers = 2
+  privatelon val MaxCountUselonrs = 2
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
 
-    val candidateUserIdsMap = candidates.map { candidate =>
-      candidate.candidate.id ->
-        (candidate.features.getOrElse(FavoritedByUserIdsFeature, Nil).take(MaxCountUsers) ++
-          candidate.features.getOrElse(FollowedByUserIdsFeature, Nil).take(MaxCountUsers) ++
-          candidate.features.getOrElse(AuthorIdFeature, None) ++
-          candidate.features.getOrElse(SourceUserIdFeature, None)).distinct
+    val candidatelonUselonrIdsMap = candidatelons.map { candidatelon =>
+      candidatelon.candidatelon.id ->
+        (candidatelon.felonaturelons.gelontOrelonlselon(FavoritelondByUselonrIdsFelonaturelon, Nil).takelon(MaxCountUselonrs) ++
+          candidatelon.felonaturelons.gelontOrelonlselon(FollowelondByUselonrIdsFelonaturelon, Nil).takelon(MaxCountUselonrs) ++
+          candidatelon.felonaturelons.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon) ++
+          candidatelon.felonaturelons.gelontOrelonlselon(SourcelonUselonrIdFelonaturelon, Nonelon)).distinct
     }.toMap
 
-    val distinctUserIds = candidateUserIdsMap.values.flatten.toSeq.distinct
+    val distinctUselonrIds = candidatelonUselonrIdsMap.valuelons.flattelonn.toSelonq.distinct
 
     Stitch
-      .collectToTry(distinctUserIds.map(userId => gizmoduck.getUserById(userId, queryFields)))
-      .map { allUsers =>
-        val idToProfileNamesMap = allUsers.flatMap {
-          case Return(allUser) =>
-            allUser.profile
-              .map(profile => allUser.id -> ProfileNames(profile.screenName, profile.name))
-          case _ => None
+      .collelonctToTry(distinctUselonrIds.map(uselonrId => gizmoduck.gelontUselonrById(uselonrId, quelonryFielonlds)))
+      .map { allUselonrs =>
+        val idToProfilelonNamelonsMap = allUselonrs.flatMap {
+          caselon Relonturn(allUselonr) =>
+            allUselonr.profilelon
+              .map(profilelon => allUselonr.id -> ProfilelonNamelons(profilelon.screlonelonnNamelon, profilelon.namelon))
+          caselon _ => Nonelon
         }.toMap
 
-        val validUserIds = idToProfileNamesMap.keySet
+        val validUselonrIds = idToProfilelonNamelonsMap.kelonySelont
 
-        candidates.map { candidate =>
-          val combinedMap = candidateUserIdsMap
-            .getOrElse(candidate.candidate.id, Nil)
+        candidatelons.map { candidatelon =>
+          val combinelondMap = candidatelonUselonrIdsMap
+            .gelontOrelonlselon(candidatelon.candidatelon.id, Nil)
             .flatMap {
-              case userId if validUserIds.contains(userId) =>
-                idToProfileNamesMap.get(userId).map(profileNames => userId -> profileNames)
-              case _ => None
+              caselon uselonrId if validUselonrIds.contains(uselonrId) =>
+                idToProfilelonNamelonsMap.gelont(uselonrId).map(profilelonNamelons => uselonrId -> profilelonNamelons)
+              caselon _ => Nonelon
             }
 
-          val perCandidateRealNameMap = combinedMap.map { case (k, v) => k -> v.realName }.toMap
-          val perCandidateScreenNameMap = combinedMap.map { case (k, v) => k -> v.screenName }.toMap
+          val pelonrCandidatelonRelonalNamelonMap = combinelondMap.map { caselon (k, v) => k -> v.relonalNamelon }.toMap
+          val pelonrCandidatelonScrelonelonnNamelonMap = combinelondMap.map { caselon (k, v) => k -> v.screlonelonnNamelon }.toMap
 
-          FeatureMapBuilder()
-            .add(ScreenNamesFeature, perCandidateScreenNameMap)
-            .add(RealNamesFeature, perCandidateRealNameMap)
+          FelonaturelonMapBuildelonr()
+            .add(ScrelonelonnNamelonsFelonaturelon, pelonrCandidatelonScrelonelonnNamelonMap)
+            .add(RelonalNamelonsFelonaturelon, pelonrCandidatelonRelonalNamelonMap)
             .build()
         }
       }

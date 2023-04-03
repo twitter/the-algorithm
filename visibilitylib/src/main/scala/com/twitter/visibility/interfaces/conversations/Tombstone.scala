@@ -1,35 +1,35 @@
-package com.twitter.visibility.interfaces.conversations
+packagelon com.twittelonr.visibility.intelonrfacelons.convelonrsations
 
-import com.twitter.timelines.render.thriftscala.TombstoneDisplayType
-import com.twitter.timelines.render.thriftscala.TombstoneInfo
-import com.twitter.visibility.rules._
+import com.twittelonr.timelonlinelons.relonndelonr.thriftscala.TombstonelonDisplayTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.thriftscala.TombstonelonInfo
+import com.twittelonr.visibility.rulelons._
 
-case class VfTombstone(
-  tombstoneId: Long,
-  includeTweet: Boolean,
+caselon class VfTombstonelon(
+  tombstonelonId: Long,
+  includelonTwelonelont: Boolelonan,
   action: Action,
-  tombstoneInfo: Option[TombstoneInfo] = None,
-  tombstoneDisplayType: TombstoneDisplayType = TombstoneDisplayType.Inline,
-  truncateDescendantsWhenFocal: Boolean = false) {
+  tombstonelonInfo: Option[TombstonelonInfo] = Nonelon,
+  tombstonelonDisplayTypelon: TombstonelonDisplayTypelon = TombstonelonDisplayTypelon.Inlinelon,
+  truncatelonDelonscelonndantsWhelonnFocal: Boolelonan = falselon) {
 
-  val isTruncatable: Boolean = action match {
-    case Interstitial(Reason.ViewerBlocksAuthor, _, _) => true
-    case Interstitial(Reason.ViewerHardMutedAuthor, _, _) => true
-    case Interstitial(Reason.MutedKeyword, _, _) => true
-    case Tombstone(Epitaph.NotFound, _) => true
-    case Tombstone(Epitaph.Unavailable, _) => true
-    case Tombstone(Epitaph.Suspended, _) => true
-    case Tombstone(Epitaph.Protected, _) => true
-    case Tombstone(Epitaph.Deactivated, _) => true
-    case Tombstone(Epitaph.BlockedBy, _) => true
-    case Tombstone(Epitaph.Moderated, _) => true
-    case Tombstone(Epitaph.Deleted, _) => true
-    case Tombstone(Epitaph.Underage, _) => true
-    case Tombstone(Epitaph.NoStatedAge, _) => true
-    case Tombstone(Epitaph.LoggedOutAge, _) => true
-    case Tombstone(Epitaph.SuperFollowsContent, _) => true
-    case Tombstone(Epitaph.CommunityTweetHidden, _) => true
-    case _: LocalizedTombstone => true
-    case _ => false
+  val isTruncatablelon: Boolelonan = action match {
+    caselon Intelonrstitial(Relonason.VielonwelonrBlocksAuthor, _, _) => truelon
+    caselon Intelonrstitial(Relonason.VielonwelonrHardMutelondAuthor, _, _) => truelon
+    caselon Intelonrstitial(Relonason.MutelondKelonyword, _, _) => truelon
+    caselon Tombstonelon(elonpitaph.NotFound, _) => truelon
+    caselon Tombstonelon(elonpitaph.Unavailablelon, _) => truelon
+    caselon Tombstonelon(elonpitaph.Suspelonndelond, _) => truelon
+    caselon Tombstonelon(elonpitaph.Protelonctelond, _) => truelon
+    caselon Tombstonelon(elonpitaph.Delonactivatelond, _) => truelon
+    caselon Tombstonelon(elonpitaph.BlockelondBy, _) => truelon
+    caselon Tombstonelon(elonpitaph.Modelonratelond, _) => truelon
+    caselon Tombstonelon(elonpitaph.Delonlelontelond, _) => truelon
+    caselon Tombstonelon(elonpitaph.Undelonragelon, _) => truelon
+    caselon Tombstonelon(elonpitaph.NoStatelondAgelon, _) => truelon
+    caselon Tombstonelon(elonpitaph.LoggelondOutAgelon, _) => truelon
+    caselon Tombstonelon(elonpitaph.SupelonrFollowsContelonnt, _) => truelon
+    caselon Tombstonelon(elonpitaph.CommunityTwelonelontHiddelonn, _) => truelon
+    caselon _: LocalizelondTombstonelon => truelon
+    caselon _ => falselon
   }
 }

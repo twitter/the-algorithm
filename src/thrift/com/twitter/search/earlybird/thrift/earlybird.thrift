@@ -1,1416 +1,1416 @@
-namespace java com.twitter.search.earlybird.thrift
-#@namespace scala com.twitter.search.earlybird.thriftscala
-#@namespace strato com.twitter.search.earlybird
-namespace py gen.twitter.search.earlybird
+namelonspacelon java com.twittelonr.selonarch.elonarlybird.thrift
+#@namelonspacelon scala com.twittelonr.selonarch.elonarlybird.thriftscala
+#@namelonspacelon strato com.twittelonr.selonarch.elonarlybird
+namelonspacelon py gelonn.twittelonr.selonarch.elonarlybird
 
-include "com/twitter/ads/adserver/adserver_common.thrift"
-include "com/twitter/search/common/caching/caching.thrift"
-include "com/twitter/search/common/constants/query.thrift"
-include "com/twitter/search/common/constants/search_language.thrift"
-include "com/twitter/search/common/conversation/conversation.thrift"
-include "com/twitter/search/common/features/features.thrift"
-include "com/twitter/search/common/indexing/status.thrift"
-include "com/twitter/search/common/query/search.thrift"
-include "com/twitter/search/common/ranking/ranking.thrift"
-include "com/twitter/search/common/results/expansions.thrift"
-include "com/twitter/search/common/results/highlight.thrift"
-include "com/twitter/search/common/results/hit_attribution.thrift"
-include "com/twitter/search/common/results/hits.thrift"
-include "com/twitter/search/common/results/social.thrift"
-include "com/twitter/service/spiderduck/gen/metadata_store.thrift"
-include "com/twitter/tweetypie/deprecated.thrift"
-include "com/twitter/tweetypie/tweet.thrift"
-include "com/twitter/escherbird/tweet_annotation.thrift"
+includelon "com/twittelonr/ads/adselonrvelonr/adselonrvelonr_common.thrift"
+includelon "com/twittelonr/selonarch/common/caching/caching.thrift"
+includelon "com/twittelonr/selonarch/common/constants/quelonry.thrift"
+includelon "com/twittelonr/selonarch/common/constants/selonarch_languagelon.thrift"
+includelon "com/twittelonr/selonarch/common/convelonrsation/convelonrsation.thrift"
+includelon "com/twittelonr/selonarch/common/felonaturelons/felonaturelons.thrift"
+includelon "com/twittelonr/selonarch/common/indelonxing/status.thrift"
+includelon "com/twittelonr/selonarch/common/quelonry/selonarch.thrift"
+includelon "com/twittelonr/selonarch/common/ranking/ranking.thrift"
+includelon "com/twittelonr/selonarch/common/relonsults/elonxpansions.thrift"
+includelon "com/twittelonr/selonarch/common/relonsults/highlight.thrift"
+includelon "com/twittelonr/selonarch/common/relonsults/hit_attribution.thrift"
+includelon "com/twittelonr/selonarch/common/relonsults/hits.thrift"
+includelon "com/twittelonr/selonarch/common/relonsults/social.thrift"
+includelon "com/twittelonr/selonrvicelon/spidelonrduck/gelonn/melontadata_storelon.thrift"
+includelon "com/twittelonr/twelonelontypielon/delonpreloncatelond.thrift"
+includelon "com/twittelonr/twelonelontypielon/twelonelont.thrift"
+includelon "com/twittelonr/elonschelonrbird/twelonelont_annotation.thrift"
 
-enum ThriftSearchRankingMode {
-  // good old realtime search mode
-  RECENCY = 0,
-  // new super fancy relevance ranking
-  RELEVANCE = 1,
-  DEPRECATED_DISCOVERY = 2,
-  // top tweets ranking mode
-  TOPTWEETS = 3,
-  // results from accounts followed by the searcher
+elonnum ThriftSelonarchRankingModelon {
+  // good old relonaltimelon selonarch modelon
+  RelonCelonNCY = 0,
+  // nelonw supelonr fancy relonlelonvancelon ranking
+  RelonLelonVANCelon = 1,
+  DelonPRelonCATelonD_DISCOVelonRY = 2,
+  // top twelonelonts ranking modelon
+  TOPTWelonelonTS = 3,
+  // relonsults from accounts followelond by thelon selonarchelonr
   FOLLOWS = 4,
 
-  PLACE_HOLDER5 = 5,
-  PLACE_HOLDER6 = 6,
+  PLACelon_HOLDelonR5 = 5,
+  PLACelon_HOLDelonR6 = 6,
 }
 
-enum ThriftSearchResultType {
-  // it's a time-ordered result.
-  RECENCY = 0,
-  // it's a highly relevant tweet (aka top tweet).
-  RELEVANCE = 1,
-  // top tweet result type
+elonnum ThriftSelonarchRelonsultTypelon {
+  // it's a timelon-ordelonrelond relonsult.
+  RelonCelonNCY = 0,
+  // it's a highly relonlelonvant twelonelont (aka top twelonelont).
+  RelonLelonVANCelon = 1,
+  // top twelonelont relonsult typelon
   POPULAR = 2,
-  // promoted tweets (ads)
-  PROMOTED = 3,
-  // relevance-ordered (as opposed to time-ordered) tweets generated from a variety of candidates
-  RELEVANCE_ORDERED = 4,
+  // promotelond twelonelonts (ads)
+  PROMOTelonD = 3,
+  // relonlelonvancelon-ordelonrelond (as opposelond to timelon-ordelonrelond) twelonelonts gelonnelonratelond from a varielonty of candidatelons
+  RelonLelonVANCelon_ORDelonRelonD = 4,
 
-  PLACE_HOLDER5 = 5,
-  PLACE_HOLDER6 = 6,
+  PLACelon_HOLDelonR5 = 5,
+  PLACelon_HOLDelonR6 = 6,
 }
 
-enum ThriftSocialFilterType {
-  // filter only users that the searcher is directly following.
+elonnum ThriftSocialFiltelonrTypelon {
+  // filtelonr only uselonrs that thelon selonarchelonr is direlonctly following.
   FOLLOWS = 0,
-  // filter only users that are in searcher's social circle of trust.
-  TRUSTED = 1,
-  // filter both follows and trusted.
+  // filtelonr only uselonrs that arelon in selonarchelonr's social circlelon of trust.
+  TRUSTelonD = 1,
+  // filtelonr both follows and trustelond.
   ALL = 2,
 
-  PLACE_HOLDER3 = 3,
-  PLACE_HOLDER4 = 4,
+  PLACelon_HOLDelonR3 = 3,
+  PLACelon_HOLDelonR4 = 4,
 
 }
 
-enum ThriftTweetSource {
-  ///// enums set by Earlybird
-  REALTIME_CLUSTER = 1,
-  FULL_ARCHIVE_CLUSTER = 2,
-  REALTIME_PROTECTED_CLUSTER = 4,
+elonnum ThriftTwelonelontSourcelon {
+  ///// elonnums selont by elonarlybird
+  RelonALTIMelon_CLUSTelonR = 1,
+  FULL_ARCHIVelon_CLUSTelonR = 2,
+  RelonALTIMelon_PROTelonCTelonD_CLUSTelonR = 4,
 
-  ///// enums set inside Blender
-  ADSERVER = 0,
-  // from top news search, only used in universal search
-  TOP_NEWS = 3,
-  // special tweets included just for EventParrot.
-  FORCE_INCLUDED = 5,
-  // from Content Recommender
-  // from topic to Tweet path
-  CONTENT_RECS_TOPIC_TO_TWEET = 6,
-  // used for hydrating QIG Tweets (go/qig)
+  ///// elonnums selont insidelon Blelonndelonr
+  ADSelonRVelonR = 0,
+  // from top nelonws selonarch, only uselond in univelonrsal selonarch
+  TOP_NelonWS = 3,
+  // speloncial twelonelonts includelond just for elonvelonntParrot.
+  FORCelon_INCLUDelonD = 5,
+  // from Contelonnt Reloncommelonndelonr
+  // from topic to Twelonelont path
+  CONTelonNT_RelonCS_TOPIC_TO_TWelonelonT = 6,
+  // uselond for hydrating QIG Twelonelonts (go/qig)
   QIG = 8,
-  // used for TOPTWEETS ranking mode
-  TOP_TWEET = 9,
-  // used for experimental candidate sources
-  EXPERIMENTAL = 7,
-  // from Scanr service
+  // uselond for TOPTWelonelonTS ranking modelon
+  TOP_TWelonelonT = 9,
+  // uselond for elonxpelonrimelonntal candidatelon sourcelons
+  elonXPelonRIMelonNTAL = 7,
+  // from Scanr selonrvicelon
   SCANR = 10,
 
-  PLACE_HOLDER11 = 11,
-  PLACE_HOLDER12 = 12
+  PLACelon_HOLDelonR11 = 11,
+  PLACelon_HOLDelonR12 = 12
 }
 
-enum NamedEntitySource {
-  TEXT = 0,
+elonnum NamelondelonntitySourcelon {
+  TelonXT = 0,
   URL = 1,
 
-  PLACE_HOLDER2 = 2,
-  PLACE_HOLDER3 = 3,
-  PLACE_HOLDER4 = 4,
+  PLACelon_HOLDelonR2 = 2,
+  PLACelon_HOLDelonR3 = 3,
+  PLACelon_HOLDelonR4 = 4,
 }
 
-enum ExperimentCluster {
-  EXP0 = 0, // Send requests to the earlybird-realtime-exp0 cluster
-  PLACE_HOLDER1 = 1,
-  PLACE_HOLDER2 = 2,
+elonnum elonxpelonrimelonntClustelonr {
+  elonXP0 = 0, // Selonnd relonquelonsts to thelon elonarlybird-relonaltimelon-elonxp0 clustelonr
+  PLACelon_HOLDelonR1 = 1,
+  PLACelon_HOLDelonR2 = 2,
 }
 
-enum AudioSpaceState {
+elonnum AudioSpacelonStatelon {
    RUNNING = 0,
-   ENDED = 1,
+   elonNDelonD = 1,
 
-   PLACE_HOLDER2 = 2,
-   PLACE_HOLDER3 = 3,
-   PLACE_HOLDER4 = 4,
-   PLACE_HOLDER5 = 5,
+   PLACelon_HOLDelonR2 = 2,
+   PLACelon_HOLDelonR3 = 3,
+   PLACelon_HOLDelonR4 = 4,
+   PLACelon_HOLDelonR5 = 5,
 }
 
-// Contains all scoring and relevance-filtering related controls and options for Earlybird.
-struct ThriftSearchRelevanceOptions {
-  // Next available field ID: 31 and note that 45 and 50 have been used already
+// Contains all scoring and relonlelonvancelon-filtelonring relonlatelond controls and options for elonarlybird.
+struct ThriftSelonarchRelonlelonvancelonOptions {
+  // Nelonxt availablelon fielonld ID: 31 and notelon that 45 and 50 havelon belonelonn uselond alrelonady
 
-  2: optional bool filterDups = 0         // filter out duplicate search results
-  26: optional bool keepDupWithHigherScore = 1 // keep the duplicate tweet with the higher score
+  2: optional bool filtelonrDups = 0         // filtelonr out duplicatelon selonarch relonsults
+  26: optional bool kelonelonpDupWithHighelonrScorelon = 1 // kelonelonp thelon duplicatelon twelonelont with thelon highelonr scorelon
 
-  3: optional bool proximityScoring = 0   // whether to do proximity scoring or not
-  4: optional i32 maxConsecutiveSameUser  // filter consecutive results from the same user
-  5: optional ranking.ThriftRankingParams rankingParams  // composed by blender
-  // deprecated in favor of the maxHitsToProcess in CollectorParams
-  6: optional i32 maxHitsToProcess // when to early-terminate for relevance
-  7: optional string experimentName      // what relevance experiment is running
-  8: optional string experimentBucket    // what bucket the user is in; DDG defaults to hard-coded 'control'
-  9: optional bool interpretSinceId = 1   // whether to interpret since_id operator
+  3: optional bool proximityScoring = 0   // whelonthelonr to do proximity scoring or not
+  4: optional i32 maxConseloncutivelonSamelonUselonr  // filtelonr conseloncutivelon relonsults from thelon samelon uselonr
+  5: optional ranking.ThriftRankingParams rankingParams  // composelond by blelonndelonr
+  // delonpreloncatelond in favor of thelon maxHitsToProcelonss in CollelonctorParams
+  6: optional i32 maxHitsToProcelonss // whelonn to elonarly-telonrminatelon for relonlelonvancelon
+  7: optional string elonxpelonrimelonntNamelon      // what relonlelonvancelon elonxpelonrimelonnt is running
+  8: optional string elonxpelonrimelonntBuckelont    // what buckelont thelon uselonr is in; DDG delonfaults to hard-codelond 'control'
+  9: optional bool intelonrprelontSincelonId = 1   // whelonthelonr to intelonrprelont sincelon_id opelonrator
 
-  24: optional i32 maxHitsPerUser // Overrides ThriftSearchQuery.maxHitsPerUser
+  24: optional i32 maxHitsPelonrUselonr // Ovelonrridelons ThriftSelonarchQuelonry.maxHitsPelonrUselonr
 
-  // only used by discovery for capping direct follow tweets
-  10: optional i32 maxConsecutiveDirectFollows
+  // only uselond by discovelonry for capping direlonct follow twelonelonts
+  10: optional i32 maxConseloncutivelonDirelonctFollows
 
-  // Note - the orderByRelevance flag is critical to understanding how merging
-  // and trimming works in relevance mode in the search root.
+  // Notelon - thelon ordelonrByRelonlelonvancelon flag is critical to undelonrstanding how melonrging
+  // and trimming works in relonlelonvancelon modelon in thelon selonarch root.
   //
-  // When orderByRelevance is true, results are trimmed in score-order.  This means the
-  // client will get the top results from (maxHitsToProcess * numHashPartitions) hits,
-  // ordered by score.
+  // Whelonn ordelonrByRelonlelonvancelon is truelon, relonsults arelon trimmelond in scorelon-ordelonr.  This melonans thelon
+  // clielonnt will gelont thelon top relonsults from (maxHitsToProcelonss * numHashPartitions) hits,
+  // ordelonrelond by scorelon.
   //
-  // When orderByRelevance is false, results are trimmed in id-order.  This means the
-  // client will get the top results from an approximation of maxHitsToProcess hits
-  // (across the entire corpus).  These results ordered by ID.
-  14: optional bool orderByRelevance = 0
+  // Whelonn ordelonrByRelonlelonvancelon is falselon, relonsults arelon trimmelond in id-ordelonr.  This melonans thelon
+  // clielonnt will gelont thelon top relonsults from an approximation of maxHitsToProcelonss hits
+  // (across thelon elonntirelon corpus).  Thelonselon relonsults ordelonrelond by ID.
+  14: optional bool ordelonrByRelonlelonvancelon = 0
 
-  // Max blending count for results returned due to from:user rewrites
-  16: optional i32 maxUserBlendCount
+  // Max blelonnding count for relonsults relonturnelond duelon to from:uselonr relonwritelons
+  16: optional i32 maxUselonrBlelonndCount
 
-  // The weight for proximity phrases generated while translating the serialized query to the
-  // lucene query.
-  19: optional double proximityPhraseWeight = 1.0
-  20: optional i32 proximityPhraseSlop = 255
+  // Thelon welonight for proximity phraselons gelonnelonratelond whilelon translating thelon selonrializelond quelonry to thelon
+  // lucelonnelon quelonry.
+  19: optional doublelon proximityPhraselonWelonight = 1.0
+  20: optional i32 proximityPhraselonSlop = 255
 
-  // Override the weights of searchable fields.
-  // Negative weight means the the field is not enabled for search by default,
-  // but if it is (e.g., by annotation), the absolute value of the weight shall be
-  // used (if the annotation does not specify a weight).
-  21: optional map<string, double> fieldWeightMapOverride
+  // Ovelonrridelon thelon welonights of selonarchablelon fielonlds.
+  // Nelongativelon welonight melonans thelon thelon fielonld is not elonnablelond for selonarch by delonfault,
+  // but if it is (elon.g., by annotation), thelon absolutelon valuelon of thelon welonight shall belon
+  // uselond (if thelon annotation doelons not speloncify a welonight).
+  21: optional map<string, doublelon> fielonldWelonightMapOvelonrridelon
 
-  // whether disable the coordination in the rewritten disjunction query, term query and phrase query
-  // the details can be found in LuceneVisitor
-  22: optional bool deprecated_disableCoord = 0
+  // whelonthelonr disablelon thelon coordination in thelon relonwrittelonn disjunction quelonry, telonrm quelonry and phraselon quelonry
+  // thelon delontails can belon found in LucelonnelonVisitor
+  22: optional bool delonpreloncatelond_disablelonCoord = 0
 
-  // Root only. Returns all results seen by root to the client without trimming
-  // if set to true.
-  23: optional bool returnAllResults
+  // Root only. Relonturns all relonsults selonelonn by root to thelon clielonnt without trimming
+  // if selont to truelon.
+  23: optional bool relonturnAllRelonsults
 
-  // DEPRECATED: All v2 counters will be used explicitly in the scoring function and
-  // returned in their own field (in either metadata or feature map in response).
-  25: optional bool useEngagementCountersV2 = 0
+  // DelonPRelonCATelonD: All v2 countelonrs will belon uselond elonxplicitly in thelon scoring function and
+  // relonturnelond in thelonir own fielonld (in elonithelonr melontadata or felonaturelon map in relonsponselon).
+  25: optional bool uselonelonngagelonmelonntCountelonrsV2 = 0
 
-  // -------- PERSONALIZATION-RELATED RELEVANCE OPTIONS --------
-  // Take special care with these options when reasoning about caching.
+  // -------- PelonRSONALIZATION-RelonLATelonD RelonLelonVANCelon OPTIONS --------
+  // Takelon speloncial carelon with thelonselon options whelonn relonasoning about caching.
 
-  // Deprecated in SEARCH-8616.
-  45: optional map<i32, double> deprecated_topicIDWeights
+  // Delonpreloncatelond in SelonARCH-8616.
+  45: optional map<i32, doublelon> delonpreloncatelond_topicIDWelonights
 
-  // Collect hit attribution on queries and likedByUserIDFilter64-enhanced queries to
-  // get likedByUserIds list in metadata field.
-  // NOTE: this flag has no affect on fromUserIDFilter64.
-  50: optional bool collectFieldHitAttributions = 0
+  // Collelonct hit attribution on quelonrielons and likelondByUselonrIDFiltelonr64-elonnhancelond quelonrielons to
+  // gelont likelondByUselonrIds list in melontadata fielonld.
+  // NOTelon: this flag has no affelonct on fromUselonrIDFiltelonr64.
+  50: optional bool collelonctFielonldHitAttributions = 0
 
-  // Whether to collect all hits regardless of their score with RelevanceAllCollector.
-  27: optional bool useRelevanceAllCollector = 0
+  // Whelonthelonr to collelonct all hits relongardlelonss of thelonir scorelon with RelonlelonvancelonAllCollelonctor.
+  27: optional bool uselonRelonlelonvancelonAllCollelonctor = 0
 
-  // Override features of specific tweets before the tweets are scored.  
-  28: optional map<i64, features.ThriftSearchResultFeatures> perTweetFeaturesOverride
+  // Ovelonrridelon felonaturelons of speloncific twelonelonts belonforelon thelon twelonelonts arelon scorelond.
+  28: optional map<i64, felonaturelons.ThriftSelonarchRelonsultFelonaturelons> pelonrTwelonelontFelonaturelonsOvelonrridelon
 
-  // Override features of all tweets from specific users before the tweets are scored. 
-  29: optional map<i64, features.ThriftSearchResultFeatures> perUserFeaturesOverride
+  // Ovelonrridelon felonaturelons of all twelonelonts from speloncific uselonrs belonforelon thelon twelonelonts arelon scorelond.
+  29: optional map<i64, felonaturelons.ThriftSelonarchRelonsultFelonaturelons> pelonrUselonrFelonaturelonsOvelonrridelon
 
-  // Override features of all tweets before the tweets are scored.
-  30: optional features.ThriftSearchResultFeatures globalFeaturesOverride
-}(persisted='true')
+  // Ovelonrridelon felonaturelons of all twelonelonts belonforelon thelon twelonelonts arelon scorelond.
+  30: optional felonaturelons.ThriftSelonarchRelonsultFelonaturelons globalFelonaturelonsOvelonrridelon
+}(pelonrsistelond='truelon')
 
-// Facets types that may have different ranking parameters.
-enum ThriftFacetType {
-  DEFAULT = 0,
-  MENTIONS_FACET = 1,
-  HASHTAGS_FACET = 2,
-  // Deprecated in SEARCH-13708
-  DEPRECATED_NAMED_ENTITIES_FACET = 3,
-  STOCKS_FACET = 4,
-  VIDEOS_FACET = 5,
-  IMAGES_FACET = 6,
-  NEWS_FACET = 7,
-  LANGUAGES_FACET = 8,
-  SOURCES_FACET = 9,
-  TWIMG_FACET = 10,
-  FROM_USER_ID_FACET = 11,
-  DEPRECATED_TOPIC_IDS_FACET = 12,
-  RETWEETS_FACET = 13,
-  LINKS_FACET = 14,
+// Facelonts typelons that may havelon diffelonrelonnt ranking paramelontelonrs.
+elonnum ThriftFacelontTypelon {
+  DelonFAULT = 0,
+  MelonNTIONS_FACelonT = 1,
+  HASHTAGS_FACelonT = 2,
+  // Delonpreloncatelond in SelonARCH-13708
+  DelonPRelonCATelonD_NAMelonD_elonNTITIelonS_FACelonT = 3,
+  STOCKS_FACelonT = 4,
+  VIDelonOS_FACelonT = 5,
+  IMAGelonS_FACelonT = 6,
+  NelonWS_FACelonT = 7,
+  LANGUAGelonS_FACelonT = 8,
+  SOURCelonS_FACelonT = 9,
+  TWIMG_FACelonT = 10,
+  FROM_USelonR_ID_FACelonT = 11,
+  DelonPRelonCATelonD_TOPIC_IDS_FACelonT = 12,
+  RelonTWelonelonTS_FACelonT = 13,
+  LINKS_FACelonT = 14,
 
-  PLACE_HOLDER15 = 15,
-  PLACE_HOLDER16 = 16,
+  PLACelon_HOLDelonR15 = 15,
+  PLACelon_HOLDelonR16 = 16,
 }
 
-struct ThriftSearchDebugOptions {
-  // Make earlybird only score and return tweets (specified by tweet id) here, regardless
-  // if they have a hit for the current query or not.
-  1: optional set<i64> statusIds;
+struct ThriftSelonarchDelonbugOptions {
+  // Makelon elonarlybird only scorelon and relonturn twelonelonts (speloncifielond by twelonelont id) helonrelon, relongardlelonss
+  // if thelony havelon a hit for thelon currelonnt quelonry or not.
+  1: optional selont<i64> statusIds;
 
-  // Assorted structures to pass in debug options.
+  // Assortelond structurelons to pass in delonbug options.
   2: optional map<string, string> stringMap;
-  3: optional map<string, double> valueMap;
-  4: optional list<double> valueList;
-}(persisted='true')
+  3: optional map<string, doublelon> valuelonMap;
+  4: optional list<doublelon> valuelonList;
+}(pelonrsistelond='truelon')
 
-// These options control what metadata will be returned by earlybird for each search result
-// in the ThriftSearchResultMetadata struct.  These options are currently mostly supported by
-// AbstractRelevanceCollector and partially in SearchResultsCollector.  Most are true by default to
-// preserve backwards compatibility, but can be disabled as necessary to optimize searches returning
-// many results (such as discover).
-struct ThriftSearchResultMetadataOptions {
-  // If true, fills in the tweetUrls field in ThriftSearchResultMetadata.
-  // Populated by AbstractRelevanceCollector.
-  1: optional bool getTweetUrls = 1
+// Thelonselon options control what melontadata will belon relonturnelond by elonarlybird for elonach selonarch relonsult
+// in thelon ThriftSelonarchRelonsultMelontadata struct.  Thelonselon options arelon currelonntly mostly supportelond by
+// AbstractRelonlelonvancelonCollelonctor and partially in SelonarchRelonsultsCollelonctor.  Most arelon truelon by delonfault to
+// prelonselonrvelon backwards compatibility, but can belon disablelond as neloncelonssary to optimizelon selonarchelons relonturning
+// many relonsults (such as discovelonr).
+struct ThriftSelonarchRelonsultMelontadataOptions {
+  // If truelon, fills in thelon twelonelontUrls fielonld in ThriftSelonarchRelonsultMelontadata.
+  // Populatelond by AbstractRelonlelonvancelonCollelonctor.
+  1: optional bool gelontTwelonelontUrls = 1
 
-  // If true, fills in the resultLocation field in ThriftSearchResultMetadata.
-  // Populated by AbstractRelevanceCollector.
-  2: optional bool getResultLocation = 1
+  // If truelon, fills in thelon relonsultLocation fielonld in ThriftSelonarchRelonsultMelontadata.
+  // Populatelond by AbstractRelonlelonvancelonCollelonctor.
+  2: optional bool gelontRelonsultLocation = 1
   
-  // Deprecated in SEARCH-8616.
-  3: optional bool deprecated_getTopicIDs = 1
+  // Delonpreloncatelond in SelonARCH-8616.
+  3: optional bool delonpreloncatelond_gelontTopicIDs = 1
 
-  // If true, fills in the luceneScore field in ThriftSearchResultMetadata.
-  // Populated by LinearScoringFunction.
-  4: optional bool getLuceneScore = 0
+  // If truelon, fills in thelon lucelonnelonScorelon fielonld in ThriftSelonarchRelonsultMelontadata.
+  // Populatelond by LinelonarScoringFunction.
+  4: optional bool gelontLucelonnelonScorelon = 0
 
-  // Deprecated but used to be for Offline feature values for static index
-  5: optional bool deprecated_getExpFeatureValues = 0
+  // Delonpreloncatelond but uselond to belon for Offlinelon felonaturelon valuelons for static indelonx
+  5: optional bool delonpreloncatelond_gelontelonxpFelonaturelonValuelons = 0
 
-  // If true, will omit all features derivable from packedFeatures, and set packedFeatures
-  // instead.
-  6: optional bool deprecated_usePackedFeatures = 0
+  // If truelon, will omit all felonaturelons delonrivablelon from packelondFelonaturelons, and selont packelondFelonaturelons
+  // instelonad.
+  6: optional bool delonpreloncatelond_uselonPackelondFelonaturelons = 0
 
-  // If true, fills sharedStatusId. For replies this is the in-reply-to status id and for
-  // retweets this is the retweet source status id.
-  // Also fills in the the isRetweet and isReply flags.
-  7: optional bool getInReplyToStatusId = 0
+  // If truelon, fills sharelondStatusId. For relonplielons this is thelon in-relonply-to status id and for
+  // relontwelonelonts this is thelon relontwelonelont sourcelon status id.
+  // Also fills in thelon thelon isRelontwelonelont and isRelonply flags.
+  7: optional bool gelontInRelonplyToStatusId = 0
 
-  // If true, fills referencedTweetAuthorId. Also fills in the the isRetweet and isReply flags.
-  8: optional bool getReferencedTweetAuthorId = 0
+  // If truelon, fills relonfelonrelonncelondTwelonelontAuthorId. Also fills in thelon thelon isRelontwelonelont and isRelonply flags.
+  8: optional bool gelontRelonfelonrelonncelondTwelonelontAuthorId = 0
 
-  // If true, fills media bits (video/vine/periscope/etc.)
-  9: optional bool getMediaBits = 0
+  // If truelon, fills melondia bits (videlono/vinelon/pelonriscopelon/elontc.)
+  9: optional bool gelontMelondiaBits = 0
 
-  // If true, will return all defined features in the packed features.  This flag does not cover
-  // the above defined features.
-  10: optional bool getAllFeatures = 0
+  // If truelon, will relonturn all delonfinelond felonaturelons in thelon packelond felonaturelons.  This flag doelons not covelonr
+  // thelon abovelon delonfinelond felonaturelons.
+  10: optional bool gelontAllFelonaturelons = 0
 
-  // If true, will return all features as ThriftSearchResultFeatures format.
-  11: optional bool returnSearchResultFeatures = 0
+  // If truelon, will relonturn all felonaturelons as ThriftSelonarchRelonsultFelonaturelons format.
+  11: optional bool relonturnSelonarchRelonsultFelonaturelons = 0
 
-  // If the client caches some features schemas, client can indicate its cache schemas through
-  // this field based on (version, checksum).
-  12: optional list<features.ThriftSearchFeatureSchemaSpecifier> featureSchemasAvailableInClient
+  // If thelon clielonnt cachelons somelon felonaturelons schelonmas, clielonnt can indicatelon its cachelon schelonmas through
+  // this fielonld baselond on (velonrsion, cheloncksum).
+  12: optional list<felonaturelons.ThriftSelonarchFelonaturelonSchelonmaSpeloncifielonr> felonaturelonSchelonmasAvailablelonInClielonnt
 
-  // Specific feature IDs to return for recency requests. Populated in SearchResultFeatures.
-  // Values must be IDs of CSF fields from EarlybirdFieldConstants.
-  13: optional list<i32> requestedFeatureIDs
+  // Speloncific felonaturelon IDs to relonturn for reloncelonncy relonquelonsts. Populatelond in SelonarchRelonsultFelonaturelons.
+  // Valuelons must belon IDs of CSF fielonlds from elonarlybirdFielonldConstants.
+  13: optional list<i32> relonquelonstelondFelonaturelonIDs
 
-  // If true, fills in the namedEntities field in ThriftSearchResultExtraMetadata
-  14: optional bool getNamedEntities = 0
+  // If truelon, fills in thelon namelondelonntitielons fielonld in ThriftSelonarchRelonsultelonxtraMelontadata
+  14: optional bool gelontNamelondelonntitielons = 0
 
-  // If true, fills in the entityAnnotations field in ThriftSearchResultExtraMetadata
-  15: optional bool getEntityAnnotations = 0
+  // If truelon, fills in thelon elonntityAnnotations fielonld in ThriftSelonarchRelonsultelonxtraMelontadata
+  15: optional bool gelontelonntityAnnotations = 0
 
-  // If true, fills in the fromUserId field in the ThriftSearchResultExtraMetadata
-  16: optional bool getFromUserId = 0
+  // If truelon, fills in thelon fromUselonrId fielonld in thelon ThriftSelonarchRelonsultelonxtraMelontadata
+  16: optional bool gelontFromUselonrId = 0
 
-  // If true, fills in the spaces field in the ThriftSearchResultExtraMetadata
-  17: optional bool getSpaces = 0
+  // If truelon, fills in thelon spacelons fielonld in thelon ThriftSelonarchRelonsultelonxtraMelontadata
+  17: optional bool gelontSpacelons = 0
 
-  18: optional bool getExclusiveConversationAuthorId = 0
-}(persisted='true')
+  18: optional bool gelontelonxclusivelonConvelonrsationAuthorId = 0
+}(pelonrsistelond='truelon')
 
 
-// ThriftSearchQuery describes an earlybird search request, which typically consists
-// of these parts:
-//  - a query to retrieve hits
-//  - relevance options to score hits
-//  - a collector to collect hits and process into search results
-// Note that this struct is used in both ThriftBlenderRequest and EarlybirdRequest.
-// Most fields are not set when this struct is embedded in ThriftBlenderRequest, and
-// are filled in by the blender before sending to earlybird.
-struct ThriftSearchQuery {
-  // Next available field ID: 42
+// ThriftSelonarchQuelonry delonscribelons an elonarlybird selonarch relonquelonst, which typically consists
+// of thelonselon parts:
+//  - a quelonry to relontrielonvelon hits
+//  - relonlelonvancelon options to scorelon hits
+//  - a collelonctor to collelonct hits and procelonss into selonarch relonsults
+// Notelon that this struct is uselond in both ThriftBlelonndelonrRelonquelonst and elonarlybirdRelonquelonst.
+// Most fielonlds arelon not selont whelonn this struct is elonmbelonddelond in ThriftBlelonndelonrRelonquelonst, and
+// arelon fillelond in by thelon blelonndelonr belonforelon selonnding to elonarlybird.
+struct ThriftSelonarchQuelonry {
+  // Nelonxt availablelon fielonld ID: 42
 
-  // -------- SECTION ZERO: THINGS USED ONLY BY THE BLENDER --------
-  // See SEARCHQUAL-2398
-  // These fields are used by the blender and clients of the blender, but not by earlybird.
+  // -------- SelonCTION ZelonRO: THINGS USelonD ONLY BY THelon BLelonNDelonR --------
+  // Selonelon SelonARCHQUAL-2398
+  // Thelonselon fielonlds arelon uselond by thelon blelonndelonr and clielonnts of thelon blelonndelonr, but not by elonarlybird.
 
-  // blender use only
-  // The raw un-parsed user search query.
-  6: optional string rawQuery(personalDataType = 'SearchQuery')
+  // blelonndelonr uselon only
+  // Thelon raw un-parselond uselonr selonarch quelonry.
+  6: optional string rawQuelonry(pelonrsonalDataTypelon = 'SelonarchQuelonry')
 
-  // blender use only
-  // Language of the rawQuery.
-  18: optional string queryLang(personalDataType = 'InferredLanguage')
+  // blelonndelonr uselon only
+  // Languagelon of thelon rawQuelonry.
+  18: optional string quelonryLang(pelonrsonalDataTypelon = 'InfelonrrelondLanguagelon')
 
-  // blender use only
-  // What page of results to return, indexed from 1.
-  7: optional i32 page = 1
+  // blelonndelonr uselon only
+  // What pagelon of relonsults to relonturn, indelonxelond from 1.
+  7: optional i32 pagelon = 1
 
-  // blender use only
-  // Number of results to skip (for pagination).  Indexed from 0.
-  2: optional i32 deprecated_resultOffset = 0
+  // blelonndelonr uselon only
+  // Numbelonr of relonsults to skip (for pagination).  Indelonxelond from 0.
+  2: optional i32 delonpreloncatelond_relonsultOffselont = 0
 
 
-  // -------- SECTION ONE: RETRIEVAL OPTIONS --------
-  // These options control the query that will be used to retrieve documents / hits.
+  // -------- SelonCTION ONelon: RelonTRIelonVAL OPTIONS --------
+  // Thelonselon options control thelon quelonry that will belon uselond to relontrielonvelon documelonnts / hits.
 
-  // The parsed query tree, serialized to a string.  Restricts the search results to
-  // tweets matching this query.
-  1: optional string serializedQuery(personalDataType = 'SearchQuery')
+  // Thelon parselond quelonry trelonelon, selonrializelond to a string.  Relonstricts thelon selonarch relonsults to
+  // twelonelonts matching this quelonry.
+  1: optional string selonrializelondQuelonry(pelonrsonalDataTypelon = 'SelonarchQuelonry')
 
-  // Restricts the search results to tweets having this minimum tweep cred, out of 100.
-  5: optional i32 minTweepCredFilter = -1
+  // Relonstricts thelon selonarch relonsults to twelonelonts having this minimum twelonelonp crelond, out of 100.
+  5: optional i32 minTwelonelonpCrelondFiltelonr = -1
 
-  // Restricts the search results to tweets from these users.
-  34: optional list<i64> fromUserIDFilter64(personalDataType = 'PrivateAccountsFollowing, PublicAccountsFollowing')
-  // Restricts the search results to tweets liked by these users.
-  40: optional list<i64> likedByUserIDFilter64(personalDataType = 'PrivateAccountsFollowing, PublicAccountsFollowing')
+  // Relonstricts thelon selonarch relonsults to twelonelonts from thelonselon uselonrs.
+  34: optional list<i64> fromUselonrIDFiltelonr64(pelonrsonalDataTypelon = 'PrivatelonAccountsFollowing, PublicAccountsFollowing')
+  // Relonstricts thelon selonarch relonsults to twelonelonts likelond by thelonselon uselonrs.
+  40: optional list<i64> likelondByUselonrIDFiltelonr64(pelonrsonalDataTypelon = 'PrivatelonAccountsFollowing, PublicAccountsFollowing')
 
-  // If searchStatusIds are present, earlybird will ignore the serializedQuery completely
-  // and simply score each of searchStatusIds, also bypassing features like duplicate
-  // filtering and early termination.
-  // IMPORTANT: this means that it is possible to get scores equal to ScoringFunction.SKIP_HIT,
-  // for results skipped by the scoring function.
-  31: optional set<i64> searchStatusIds
+  // If selonarchStatusIds arelon prelonselonnt, elonarlybird will ignorelon thelon selonrializelondQuelonry complelontelonly
+  // and simply scorelon elonach of selonarchStatusIds, also bypassing felonaturelons likelon duplicatelon
+  // filtelonring and elonarly telonrmination.
+  // IMPORTANT: this melonans that it is possiblelon to gelont scorelons elonqual to ScoringFunction.SKIP_HIT,
+  // for relonsults skippelond by thelon scoring function.
+  31: optional selont<i64> selonarchStatusIds
 
-  35: optional set<i64> deprecated_eventClusterIdsFilter
+  35: optional selont<i64> delonpreloncatelond_elonvelonntClustelonrIdsFiltelonr
 
-  41: optional map<string, list<i64>> namedDisjunctionMap
+  41: optional map<string, list<i64>> namelondDisjunctionMap
 
-  // -------- SECTION TWO: HIT COLLECTOR OPTIONS --------
-  // These options control what hits will be collected by the hit collector.
-  // Whether we want to collect and return per-field hit attributions is set in RelevanceOptions.
-  // See SEARCH-2784
-  // Number of results to return (after offset/page correction).
-  // This is ignored when searchStatusIds is set.
-  3: required i32 numResults
+  // -------- SelonCTION TWO: HIT COLLelonCTOR OPTIONS --------
+  // Thelonselon options control what hits will belon collelonctelond by thelon hit collelonctor.
+  // Whelonthelonr welon want to collelonct and relonturn pelonr-fielonld hit attributions is selont in RelonlelonvancelonOptions.
+  // Selonelon SelonARCH-2784
+  // Numbelonr of relonsults to relonturn (aftelonr offselont/pagelon correlonction).
+  // This is ignorelond whelonn selonarchStatusIds is selont.
+  3: relonquirelond i32 numRelonsults
 
-  // Maximum number of hits to process by the collector.
-  // deprecated in favor of the maxHitsToProcess in CollectorParams
-  4: optional i32 maxHitsToProcess = 1000
+  // Maximum numbelonr of hits to procelonss by thelon collelonctor.
+  // delonpreloncatelond in favor of thelon maxHitsToProcelonss in CollelonctorParams
+  4: optional i32 maxHitsToProcelonss = 1000
 
-  // Collect hit counts for these time periods (in milliseconds).
-  30: optional list<i64> hitCountBuckets
+  // Collelonct hit counts for thelonselon timelon pelonriods (in milliselonconds).
+  30: optional list<i64> hitCountBuckelonts
 
-  // If set, earlybird will also return the facet labels of the specified facet fields
-  // in result tweets.
-  33: optional list<string> facetFieldNames
+  // If selont, elonarlybird will also relonturn thelon facelont labelonls of thelon speloncifielond facelont fielonlds
+  // in relonsult twelonelonts.
+  33: optional list<string> facelontFielonldNamelons
 
-  // Options controlling which search result metadata is returned.
-  36: optional ThriftSearchResultMetadataOptions resultMetadataOptions
+  // Options controlling which selonarch relonsult melontadata is relonturnelond.
+  36: optional ThriftSelonarchRelonsultMelontadataOptions relonsultMelontadataOptions
 
-  // Collection related Params
-  38: optional search.CollectorParams collectorParams
+  // Collelonction relonlatelond Params
+  38: optional selonarch.CollelonctorParams collelonctorParams
 
-  // Whether to collect conversation IDs
-  39: optional bool collectConversationId = 0
+  // Whelonthelonr to collelonct convelonrsation IDs
+  39: optional bool collelonctConvelonrsationId = 0
 
-  // -------- SECTION THREE: RELEVANCE OPTIONS --------
-  // These options control relevance scoring and anti-gaming.
+  // -------- SelonCTION THRelonelon: RelonLelonVANCelon OPTIONS --------
+  // Thelonselon options control relonlelonvancelon scoring and anti-gaming.
 
-  // Ranking mode (RECENCY means time-ordered ranking with no relevance).
-  8: optional ThriftSearchRankingMode rankingMode = ThriftSearchRankingMode.RECENCY
+  // Ranking modelon (RelonCelonNCY melonans timelon-ordelonrelond ranking with no relonlelonvancelon).
+  8: optional ThriftSelonarchRankingModelon rankingModelon = ThriftSelonarchRankingModelon.RelonCelonNCY
 
-  // Relevance scoring options.
-  9: optional ThriftSearchRelevanceOptions relevanceOptions
+  // Relonlelonvancelon scoring options.
+  9: optional ThriftSelonarchRelonlelonvancelonOptions relonlelonvancelonOptions
 
-  // Limits the number of hits that can be contributed by the same user, for anti-gaming.
-  // Set to -1 to disable the anti-gaming filter.  This is ignored when searchStatusIds
-  // is set.
-  11: optional i32 maxHitsPerUser = 3
+  // Limits thelon numbelonr of hits that can belon contributelond by thelon samelon uselonr, for anti-gaming.
+  // Selont to -1 to disablelon thelon anti-gaming filtelonr.  This is ignorelond whelonn selonarchStatusIds
+  // is selont.
+  11: optional i32 maxHitsPelonrUselonr = 3
 
-  // Disables anti-gaming filter checks for any tweets that exceed this tweepcred.
-  12: optional i32 maxTweepcredForAntiGaming = 65
-
-  // -------- PERSONALIZATION-RELATED RELEVANCE OPTIONS --------
-  // Take special care with these options when reasoning about caching.  All of these
-  // options, if set, will bypass the cache with the exception of uiLang which is the
-  // only form of personalization allowed for caching.
-
-  // User ID of searcher.  This is used for relevance, and will be used for retrieval
-  // by the protected tweets index.  If set, query will not be cached.
-  20: optional i64 searcherId(personalDataType = 'UserId')
-
-  // Bloom filter containing trusted user IDs.  If set, query will not be cached.
-  10: optional binary trustedFilter(personalDataType = 'UserId')
-
-  // Bloom filter containing direct follow user IDs.  If set, query will not be cached.
-  16: optional binary directFollowFilter(personalDataType = 'UserId, PrivateAccountsFollowing, PublicAccountsFollowing')
-
-  // UI language from the searcher's profile settings.
-  14: optional string uiLang(personalDataType = 'GeneralSettings')
-
-  // Confidence of the understandability of different languages for this user.
-  // uiLang field above is treated as a userlang with a confidence of 1.0.
-  28: optional map<search_language.ThriftLanguage, double> userLangs(personalDataTypeKey = 'InferredLanguage')
-
-  // An alternative to fromUserIDFilter64 that relies on the relevance bloom filters
-  // for user filtering.  Not currently used in production.  Only supported for realtime
-  // searches.
-  // If set, earlybird expects both trustedFilter and directFollowFilter to also be set.
-  17: optional ThriftSocialFilterType socialFilterType
-
-  // -------- SECTION FOUR: DEBUG OPTIONS, FORGOTTEN FEATURES --------
-
-  // Earlybird search debug options.
-  19: optional ThriftSearchDebugOptions debugOptions
-
-  // Overrides the query time for debugging.
-  29: optional i64 timestampMsecs = 0
-
-  // Support for this feature has been removed and this field is left for backwards compatibility
-  // (and to detect improper usage by clients when it is set).
-  25: optional list<string> deprecated_iterativeQueries
-
-  // Specifies a lucene query that will only be used if serializedQuery is not set,
-  // for debugging.  Not currently used in production.
-  27: optional string luceneQuery(personalDataType = 'SearchQuery')
-
-  // This field is deprecated and is not used by earlybirds when processing the query.
-  21: optional i32 deprecated_minDocsToProcess = 0
-}(persisted='true', hasPersonalData = 'true')
-
-
-struct ThriftFacetLabel {
-  1: required string fieldName
-  2: required string label
-  // the number of times this facet has shown up in tweets with offensive words.
-  3: optional i32 offensiveCount = 0
-
-  // only filled for TWIMG facets
-  4: optional string nativePhotoUrl
-}(persisted='true')
-
-struct ThriftSearchResultGeoLocation {
-  1: optional double latitude(personalDataType = 'GpsCoordinates')
-  2: optional double longitude(personalDataType = 'GpsCoordinates')
-  3: optional double distanceKm
-}(persisted='true', hasPersonalData = 'true')
-
-// Contains an expanded url and media type from the URL facet fields in earlybird.
-// Note: thrift copied from status.thrift with unused fields renamed.
-struct ThriftSearchResultUrl {
-  // Next available field ID: 6.  Fields 2-4 removed.
-
-  // Note: this is actually the expanded url.  Rename after deprecated fields are removed.
-  1: required string originalUrl
-
-  // Media type of the url.
-  5: optional metadata_store.MediaTypes mediaType
-}(persisted='true')
-
-struct ThriftSearchResultNamedEntity {
-  1: required string canonicalName
-  2: required string entityType
-  3: required NamedEntitySource source
-}(persisted='true')
-
-struct ThriftSearchResultAudioSpace {
-  1: required string id
-  2: required AudioSpaceState state
-}(persisted='true')
-
-// Even more metadata
-struct ThriftSearchResultExtraMetadata {
-  // Next available field ID: 49
-
-  1: optional double userLangScore
-  2: optional bool hasDifferentLang
-  3: optional bool hasEnglishTweetAndDifferentUILang
-  4: optional bool hasEnglishUIAndDifferentTweetLang
-  5: optional i32 quotedCount
-  6: optional double querySpecificScore
-  7: optional bool hasQuote
-  29: optional i64 quotedTweetId
-  30: optional i64 quotedUserId
-  31: optional search_language.ThriftLanguage cardLang
-  8: optional i64 conversationId
-  9: optional bool isSensitiveContent
-  10: optional bool hasMultipleMediaFlag
-  11: optional bool profileIsEggFlag
-  12: optional bool isUserNewFlag
-  26: optional double authorSpecificScore
-  28: optional bool isComposerSourceCamera
-
-  // temporary V2 engagement counters, original ones in ThriftSearchResultMetadata has log()
-  // applied on them and then converted to int in Thrift, which is effectively a premature
-  // discretization. It doesn't affect the scoring inside Earlybird but for scoring and ML training
-  // outside earlybird, they were bad. These newly added ones stores a proper value of these
-  // counts. This also provides an easier transition to v2 counter when Earlybird is eventually
-  // ready to consume them from DL
-  // See SEARCHQUAL-9536, SEARCH-11181
-  18: optional i32 retweetCountV2
+  // Disablelons anti-gaming filtelonr cheloncks for any twelonelonts that elonxcelonelond this twelonelonpcrelond.
+  12: optional i32 maxTwelonelonpcrelondForAntiGaming = 65
+
+  // -------- PelonRSONALIZATION-RelonLATelonD RelonLelonVANCelon OPTIONS --------
+  // Takelon speloncial carelon with thelonselon options whelonn relonasoning about caching.  All of thelonselon
+  // options, if selont, will bypass thelon cachelon with thelon elonxcelonption of uiLang which is thelon
+  // only form of pelonrsonalization allowelond for caching.
+
+  // Uselonr ID of selonarchelonr.  This is uselond for relonlelonvancelon, and will belon uselond for relontrielonval
+  // by thelon protelonctelond twelonelonts indelonx.  If selont, quelonry will not belon cachelond.
+  20: optional i64 selonarchelonrId(pelonrsonalDataTypelon = 'UselonrId')
+
+  // Bloom filtelonr containing trustelond uselonr IDs.  If selont, quelonry will not belon cachelond.
+  10: optional binary trustelondFiltelonr(pelonrsonalDataTypelon = 'UselonrId')
+
+  // Bloom filtelonr containing direlonct follow uselonr IDs.  If selont, quelonry will not belon cachelond.
+  16: optional binary direlonctFollowFiltelonr(pelonrsonalDataTypelon = 'UselonrId, PrivatelonAccountsFollowing, PublicAccountsFollowing')
+
+  // UI languagelon from thelon selonarchelonr's profilelon selonttings.
+  14: optional string uiLang(pelonrsonalDataTypelon = 'GelonnelonralSelonttings')
+
+  // Confidelonncelon of thelon undelonrstandability of diffelonrelonnt languagelons for this uselonr.
+  // uiLang fielonld abovelon is trelonatelond as a uselonrlang with a confidelonncelon of 1.0.
+  28: optional map<selonarch_languagelon.ThriftLanguagelon, doublelon> uselonrLangs(pelonrsonalDataTypelonKelony = 'InfelonrrelondLanguagelon')
+
+  // An altelonrnativelon to fromUselonrIDFiltelonr64 that relonlielons on thelon relonlelonvancelon bloom filtelonrs
+  // for uselonr filtelonring.  Not currelonntly uselond in production.  Only supportelond for relonaltimelon
+  // selonarchelons.
+  // If selont, elonarlybird elonxpeloncts both trustelondFiltelonr and direlonctFollowFiltelonr to also belon selont.
+  17: optional ThriftSocialFiltelonrTypelon socialFiltelonrTypelon
+
+  // -------- SelonCTION FOUR: DelonBUG OPTIONS, FORGOTTelonN FelonATURelonS --------
+
+  // elonarlybird selonarch delonbug options.
+  19: optional ThriftSelonarchDelonbugOptions delonbugOptions
+
+  // Ovelonrridelons thelon quelonry timelon for delonbugging.
+  29: optional i64 timelonstampMseloncs = 0
+
+  // Support for this felonaturelon has belonelonn relonmovelond and this fielonld is lelonft for backwards compatibility
+  // (and to delontelonct impropelonr usagelon by clielonnts whelonn it is selont).
+  25: optional list<string> delonpreloncatelond_itelonrativelonQuelonrielons
+
+  // Speloncifielons a lucelonnelon quelonry that will only belon uselond if selonrializelondQuelonry is not selont,
+  // for delonbugging.  Not currelonntly uselond in production.
+  27: optional string lucelonnelonQuelonry(pelonrsonalDataTypelon = 'SelonarchQuelonry')
+
+  // This fielonld is delonpreloncatelond and is not uselond by elonarlybirds whelonn procelonssing thelon quelonry.
+  21: optional i32 delonpreloncatelond_minDocsToProcelonss = 0
+}(pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
+
+
+struct ThriftFacelontLabelonl {
+  1: relonquirelond string fielonldNamelon
+  2: relonquirelond string labelonl
+  // thelon numbelonr of timelons this facelont has shown up in twelonelonts with offelonnsivelon words.
+  3: optional i32 offelonnsivelonCount = 0
+
+  // only fillelond for TWIMG facelonts
+  4: optional string nativelonPhotoUrl
+}(pelonrsistelond='truelon')
+
+struct ThriftSelonarchRelonsultGelonoLocation {
+  1: optional doublelon latitudelon(pelonrsonalDataTypelon = 'GpsCoordinatelons')
+  2: optional doublelon longitudelon(pelonrsonalDataTypelon = 'GpsCoordinatelons')
+  3: optional doublelon distancelonKm
+}(pelonrsistelond='truelon', hasPelonrsonalData = 'truelon')
+
+// Contains an elonxpandelond url and melondia typelon from thelon URL facelont fielonlds in elonarlybird.
+// Notelon: thrift copielond from status.thrift with unuselond fielonlds relonnamelond.
+struct ThriftSelonarchRelonsultUrl {
+  // Nelonxt availablelon fielonld ID: 6.  Fielonlds 2-4 relonmovelond.
+
+  // Notelon: this is actually thelon elonxpandelond url.  Relonnamelon aftelonr delonpreloncatelond fielonlds arelon relonmovelond.
+  1: relonquirelond string originalUrl
+
+  // Melondia typelon of thelon url.
+  5: optional melontadata_storelon.MelondiaTypelons melondiaTypelon
+}(pelonrsistelond='truelon')
+
+struct ThriftSelonarchRelonsultNamelondelonntity {
+  1: relonquirelond string canonicalNamelon
+  2: relonquirelond string elonntityTypelon
+  3: relonquirelond NamelondelonntitySourcelon sourcelon
+}(pelonrsistelond='truelon')
+
+struct ThriftSelonarchRelonsultAudioSpacelon {
+  1: relonquirelond string id
+  2: relonquirelond AudioSpacelonStatelon statelon
+}(pelonrsistelond='truelon')
+
+// elonvelonn morelon melontadata
+struct ThriftSelonarchRelonsultelonxtraMelontadata {
+  // Nelonxt availablelon fielonld ID: 49
+
+  1: optional doublelon uselonrLangScorelon
+  2: optional bool hasDiffelonrelonntLang
+  3: optional bool haselonnglishTwelonelontAndDiffelonrelonntUILang
+  4: optional bool haselonnglishUIAndDiffelonrelonntTwelonelontLang
+  5: optional i32 quotelondCount
+  6: optional doublelon quelonrySpeloncificScorelon
+  7: optional bool hasQuotelon
+  29: optional i64 quotelondTwelonelontId
+  30: optional i64 quotelondUselonrId
+  31: optional selonarch_languagelon.ThriftLanguagelon cardLang
+  8: optional i64 convelonrsationId
+  9: optional bool isSelonnsitivelonContelonnt
+  10: optional bool hasMultiplelonMelondiaFlag
+  11: optional bool profilelonIselonggFlag
+  12: optional bool isUselonrNelonwFlag
+  26: optional doublelon authorSpeloncificScorelon
+  28: optional bool isComposelonrSourcelonCamelonra
+
+  // telonmporary V2 elonngagelonmelonnt countelonrs, original onelons in ThriftSelonarchRelonsultMelontadata has log()
+  // applielond on thelonm and thelonn convelonrtelond to int in Thrift, which is elonffelonctivelonly a prelonmaturelon
+  // discrelontization. It doelonsn't affelonct thelon scoring insidelon elonarlybird but for scoring and ML training
+  // outsidelon elonarlybird, thelony welonrelon bad. Thelonselon nelonwly addelond onelons storelons a propelonr valuelon of thelonselon
+  // counts. This also providelons an elonasielonr transition to v2 countelonr whelonn elonarlybird is elonvelonntually
+  // relonady to consumelon thelonm from DL
+  // Selonelon SelonARCHQUAL-9536, SelonARCH-11181
+  18: optional i32 relontwelonelontCountV2
   19: optional i32 favCountV2
-  20: optional i32 replyCountV2
-  // Tweepcred weighted version of various engagement counts
-  22: optional i32 weightedRetweetCount
-  23: optional i32 weightedReplyCount
-  24: optional i32 weightedFavCount
-  25: optional i32 weightedQuoteCount
+  20: optional i32 relonplyCountV2
+  // Twelonelonpcrelond welonightelond velonrsion of various elonngagelonmelonnt counts
+  22: optional i32 welonightelondRelontwelonelontCount
+  23: optional i32 welonightelondRelonplyCount
+  24: optional i32 welonightelondFavCount
+  25: optional i32 welonightelondQuotelonCount
 
   // 2 bits - 0, 1, 2, 3+
-  13: optional i32 numMentions
+  13: optional i32 numMelonntions
   14: optional i32 numHashtags
 
-  // 1 byte - 256 possible languages
-  15: optional i32 linkLanguage
-  // 6 bits - 64 possible values
-  16: optional i32 prevUserTweetEngagement
+  // 1 bytelon - 256 possiblelon languagelons
+  15: optional i32 linkLanguagelon
+  // 6 bits - 64 possiblelon valuelons
+  16: optional i32 prelonvUselonrTwelonelontelonngagelonmelonnt
 
-  17: optional features.ThriftSearchResultFeatures features
+  17: optional felonaturelons.ThriftSelonarchRelonsultFelonaturelons felonaturelons
 
-  // If the ThriftSearchQuery.likedByUserIdFilter64 and ThriftSearchRelevanceOptions.collectFieldHitAttributions 
-  // fields are set, then this field will contain the list of all users in the query that liked this tweet.
-  // Otherwise, this field is not set.
-  27: optional list<i64> likedByUserIds
+  // If thelon ThriftSelonarchQuelonry.likelondByUselonrIdFiltelonr64 and ThriftSelonarchRelonlelonvancelonOptions.collelonctFielonldHitAttributions
+  // fielonlds arelon selont, thelonn this fielonld will contain thelon list of all uselonrs in thelon quelonry that likelond this twelonelont.
+  // Othelonrwiselon, this fielonld is not selont.
+  27: optional list<i64> likelondByUselonrIds
 
 
-  // Deprecated. See SEARCHQUAL-10321
-  21: optional double dopamineNonPersonalizedScore
+  // Delonpreloncatelond. Selonelon SelonARCHQUAL-10321
+  21: optional doublelon dopaminelonNonPelonrsonalizelondScorelon
 
-  32: optional list<ThriftSearchResultNamedEntity> namedEntities
-  33: optional list<tweet_annotation.TweetEntityAnnotation> entityAnnotations
+  32: optional list<ThriftSelonarchRelonsultNamelondelonntity> namelondelonntitielons
+  33: optional list<twelonelont_annotation.TwelonelontelonntityAnnotation> elonntityAnnotations
 
-  // Health model scores from HML
-  34: optional double toxicityScore // (go/toxicity)
-  35: optional double pBlockScore // (go/pblock)
-  36: optional double experimentalHealthModelScore1
-  37: optional double experimentalHealthModelScore2
-  38: optional double experimentalHealthModelScore3
-  39: optional double experimentalHealthModelScore4
+  // Helonalth modelonl scorelons from HML
+  34: optional doublelon toxicityScorelon // (go/toxicity)
+  35: optional doublelon pBlockScorelon // (go/pblock)
+  36: optional doublelon elonxpelonrimelonntalHelonalthModelonlScorelon1
+  37: optional doublelon elonxpelonrimelonntalHelonalthModelonlScorelon2
+  38: optional doublelon elonxpelonrimelonntalHelonalthModelonlScorelon3
+  39: optional doublelon elonxpelonrimelonntalHelonalthModelonlScorelon4
 
-  40: optional i64 directedAtUserId
+  40: optional i64 direlonctelondAtUselonrId
 
-  // Health model scores from HML (cont.)
-  41: optional double pSpammyTweetScore // (go/pspammytweet)
-  42: optional double pReportedTweetScore // (go/preportedtweet)
-  43: optional double spammyTweetContentScore // (go/spammy-tweet-content)
-  // it is populated by looking up user table and it is only available in archive earlybirds response
-  44: optional bool isUserProtected
-  45: optional list<ThriftSearchResultAudioSpace> spaces
+  // Helonalth modelonl scorelons from HML (cont.)
+  41: optional doublelon pSpammyTwelonelontScorelon // (go/pspammytwelonelont)
+  42: optional doublelon pRelonportelondTwelonelontScorelon // (go/prelonportelondtwelonelont)
+  43: optional doublelon spammyTwelonelontContelonntScorelon // (go/spammy-twelonelont-contelonnt)
+  // it is populatelond by looking up uselonr tablelon and it is only availablelon in archivelon elonarlybirds relonsponselon
+  44: optional bool isUselonrProtelonctelond
+  45: optional list<ThriftSelonarchRelonsultAudioSpacelon> spacelons
 
-  46: optional i64 exclusiveConversationAuthorId
+  46: optional i64 elonxclusivelonConvelonrsationAuthorId
   47: optional string cardUri
-  48: optional bool fromBlueVerifiedAccount(personalDataType = 'UserVerifiedFlag')
-}(persisted='true')
+  48: optional bool fromBluelonVelonrifielondAccount(pelonrsonalDataTypelon = 'UselonrVelonrifielondFlag')
+}(pelonrsistelond='truelon')
 
-// Some basic metadata about a search result.  Useful for re-sorting, filtering, etc.
+// Somelon basic melontadata about a selonarch relonsult.  Uselonful for relon-sorting, filtelonring, elontc.
 //
-// NOTE: DO NOT ADD NEW FIELD!!
-// Stop adding new fields to this struct, all new fields should go to
-// ThriftSearchResultExtraMetadata (VM-1897), or there will be performance issues in production.
-struct ThriftSearchResultMetadata {
-  // Next available field ID: 86
+// NOTelon: DO NOT ADD NelonW FIelonLD!!
+// Stop adding nelonw fielonlds to this struct, all nelonw fielonlds should go to
+// ThriftSelonarchRelonsultelonxtraMelontadata (VM-1897), or thelonrelon will belon pelonrformancelon issuelons in production.
+struct ThriftSelonarchRelonsultMelontadata {
+  // Nelonxt availablelon fielonld ID: 86
 
-  // -------- BASIC SCORING METADATA --------
+  // -------- BASIC SCORING MelonTADATA --------
 
-  // When resultType is RECENCY most scoring metadata will not be available.
-  1: required ThriftSearchResultType resultType
+  // Whelonn relonsultTypelon is RelonCelonNCY most scoring melontadata will not belon availablelon.
+  1: relonquirelond ThriftSelonarchRelonsultTypelon relonsultTypelon
 
-  // Relevance score computed for this result.
-  3: optional double score
+  // Relonlelonvancelon scorelon computelond for this relonsult.
+  3: optional doublelon scorelon
 
-  // True if the result was skipped by the scoring function.  Only set when the collect-all
-  // results collector was used - in other cases skipped results are not returned.
-  // The score will be ScoringFunction.SKIP_HIT when skipped is true.
-  43: optional bool skipped
+  // Truelon if thelon relonsult was skippelond by thelon scoring function.  Only selont whelonn thelon collelonct-all
+  // relonsults collelonctor was uselond - in othelonr caselons skippelond relonsults arelon not relonturnelond.
+  // Thelon scorelon will belon ScoringFunction.SKIP_HIT whelonn skippelond is truelon.
+  43: optional bool skippelond
 
-  // optionally a Lucene-style explanation for this result
-  5: optional string explanation
+  // optionally a Lucelonnelon-stylelon elonxplanation for this relonsult
+  5: optional string elonxplanation
 
 
-  // -------- NETWORK-BASED SCORING METADATA --------
+  // -------- NelonTWORK-BASelonD SCORING MelonTADATA --------
 
-  // Found the tweet in the trusted circle.
-  6: optional bool isTrusted
+  // Found thelon twelonelont in thelon trustelond circlelon.
+  6: optional bool isTrustelond
 
-  // Found the tweet in the direct follows.
+  // Found thelon twelonelont in thelon direlonct follows.
   8: optional bool isFollow
 
-  // True if the fromUserId of this tweet was whitelisted by the dup / antigaming filter.
-  // This typically indicates the result was from a tweet that matched a fromUserId query.
-  9: optional bool dontFilterUser
+  // Truelon if thelon fromUselonrId of this twelonelont was whitelonlistelond by thelon dup / antigaming filtelonr.
+  // This typically indicatelons thelon relonsult was from a twelonelont that matchelond a fromUselonrId quelonry.
+  9: optional bool dontFiltelonrUselonr
 
 
-  // -------- COMMON DOCUMENT METADATA --------
+  // -------- COMMON DOCUMelonNT MelonTADATA --------
 
-  // User ID of the author.  When isRetweet is true, this is the user ID of the retweeter
-  // and NOT that of the original tweet.
-  7: optional i64 fromUserId = 0
+  // Uselonr ID of thelon author.  Whelonn isRelontwelonelont is truelon, this is thelon uselonr ID of thelon relontwelonelontelonr
+  // and NOT that of thelon original twelonelont.
+  7: optional i64 fromUselonrId = 0
 
-  // When isRetweet (or packed features equivalent) is true, this is the status id of the
-  // original tweet. When isReply and getReplySource are true, this is the status id of the
-  // original tweet. In all other circumstances this is 0.
-  40: optional i64 sharedStatusId = 0
+  // Whelonn isRelontwelonelont (or packelond felonaturelons elonquivalelonnt) is truelon, this is thelon status id of thelon
+  // original twelonelont. Whelonn isRelonply and gelontRelonplySourcelon arelon truelon, this is thelon status id of thelon
+  // original twelonelont. In all othelonr circumstancelons this is 0.
+  40: optional i64 sharelondStatusId = 0
 
-  // When hasCard (or packed features equivalent) is true, this is one of SearchCardType.
-  49: optional i8 cardType = 0
+  // Whelonn hasCard (or packelond felonaturelons elonquivalelonnt) is truelon, this is onelon of SelonarchCardTypelon.
+  49: optional i8 cardTypelon = 0
 
-  // -------- EXTENDED DOCUMENT METADATA --------
-  // This is additional metadata from facet fields and column stride fields.
-  // Return of these fields is controlled by ThriftSearchResultMetadataOptions to
-  // allow for fine-grained control over when these fields are returned, as an
-  // optimization for searches returning a large quantity of results.
+  // -------- elonXTelonNDelonD DOCUMelonNT MelonTADATA --------
+  // This is additional melontadata from facelont fielonlds and column stridelon fielonlds.
+  // Relonturn of thelonselon fielonlds is controllelond by ThriftSelonarchRelonsultMelontadataOptions to
+  // allow for finelon-grainelond control ovelonr whelonn thelonselon fielonlds arelon relonturnelond, as an
+  // optimization for selonarchelons relonturning a largelon quantity of relonsults.
 
-  // Lucene component of the relevance score.  Only returned when
-  // ThriftSearchResultMetadataOptions.getLuceneScore is true.
-  31: optional double luceneScore = 0.0
+  // Lucelonnelon componelonnt of thelon relonlelonvancelon scorelon.  Only relonturnelond whelonn
+  // ThriftSelonarchRelonsultMelontadataOptions.gelontLucelonnelonScorelon is truelon.
+  31: optional doublelon lucelonnelonScorelon = 0.0
 
-  // Urls found in the tweet.  Only returned when
-  // ThriftSearchResultMetadataOptions.getTweetUrls is true.
-  18: optional list<ThriftSearchResultUrl> tweetUrls
+  // Urls found in thelon twelonelont.  Only relonturnelond whelonn
+  // ThriftSelonarchRelonsultMelontadataOptions.gelontTwelonelontUrls is truelon.
+  18: optional list<ThriftSelonarchRelonsultUrl> twelonelontUrls
 
-  // Deprecated in SEARCH-8616.
-  36: optional list<i32> deprecated_topicIDs
+  // Delonpreloncatelond in SelonARCH-8616.
+  36: optional list<i32> delonpreloncatelond_topicIDs
 
-  // Facets available in this tweet, this will only be filled if
-  // ThriftSearchQuery.facetFieldNames is set in the request.
-  22: optional list<ThriftFacetLabel> facetLabels
+  // Facelonts availablelon in this twelonelont, this will only belon fillelond if
+  // ThriftSelonarchQuelonry.facelontFielonldNamelons is selont in thelon relonquelonst.
+  22: optional list<ThriftFacelontLabelonl> facelontLabelonls
 
-  // The location of the result, and the distance to it from the center of the query
-  // location.  Only returned when ThriftSearchResultMetadataOptions.getResultLocation is true.
-  35: optional ThriftSearchResultGeoLocation resultLocation
+  // Thelon location of thelon relonsult, and thelon distancelon to it from thelon celonntelonr of thelon quelonry
+  // location.  Only relonturnelond whelonn ThriftSelonarchRelonsultMelontadataOptions.gelontRelonsultLocation is truelon.
+  35: optional ThriftSelonarchRelonsultGelonoLocation relonsultLocation
 
-  // Per field hit attribution.
-  55: optional hit_attribution.FieldHitAttribution fieldHitAttribution
+  // Pelonr fielonld hit attribution.
+  55: optional hit_attribution.FielonldHitAttribution fielonldHitAttribution
 
-  // whether this has geolocation_type:geotag hit
-  57: optional bool geotagHit = 0
+  // whelonthelonr this has gelonolocation_typelon:gelonotag hit
+  57: optional bool gelonotagHit = 0
 
-  // the user id of the author of the source/referenced tweet (the tweet one replied
-  // to, retweeted and possibly quoted, etc.) (SEARCH-8561)
-  // Only returned when ThriftSearchResultMetadataOptions.getReferencedTweetAuthorId is true.
-  60: optional i64 referencedTweetAuthorId = 0
+  // thelon uselonr id of thelon author of thelon sourcelon/relonfelonrelonncelond twelonelont (thelon twelonelont onelon relonplielond
+  // to, relontwelonelontelond and possibly quotelond, elontc.) (SelonARCH-8561)
+  // Only relonturnelond whelonn ThriftSelonarchRelonsultMelontadataOptions.gelontRelonfelonrelonncelondTwelonelontAuthorId is truelon.
+  60: optional i64 relonfelonrelonncelondTwelonelontAuthorId = 0
 
-  // Whether this tweet has certain types of media.
-  // Only returned when ThriftSearchResultMetadataOptions.getMediaBits is true.
-  // "Native video" is either consumer, pro, vine, or periscope.
-  // "Native image" is an image hosted on pic.twitter.com.
-  62: optional bool hasConsumerVideo
-  63: optional bool hasProVideo
-  64: optional bool hasVine
-  65: optional bool hasPeriscope
-  66: optional bool hasNativeVideo
-  67: optional bool hasNativeImage
+  // Whelonthelonr this twelonelont has celonrtain typelons of melondia.
+  // Only relonturnelond whelonn ThriftSelonarchRelonsultMelontadataOptions.gelontMelondiaBits is truelon.
+  // "Nativelon videlono" is elonithelonr consumelonr, pro, vinelon, or pelonriscopelon.
+  // "Nativelon imagelon" is an imagelon hostelond on pic.twittelonr.com.
+  62: optional bool hasConsumelonrVidelono
+  63: optional bool hasProVidelono
+  64: optional bool hasVinelon
+  65: optional bool hasPelonriscopelon
+  66: optional bool hasNativelonVidelono
+  67: optional bool hasNativelonImagelon
 
-  // Packed features for this result. This field is never populated.
-  50: optional status.PackedFeatures deprecated_packedFeatures
+  // Packelond felonaturelons for this relonsult. This fielonld is nelonvelonr populatelond.
+  50: optional status.PackelondFelonaturelons delonpreloncatelond_packelondFelonaturelons
 
-  // The features stored in earlybird
+  // Thelon felonaturelons storelond in elonarlybird
 
-  // From integer 0 from EarlybirdFeatureConfiguration:
-  16: optional bool isRetweet
-  71: optional bool isSelfTweet
-  10: optional bool isOffensive
+  // From intelongelonr 0 from elonarlybirdFelonaturelonConfiguration:
+  16: optional bool isRelontwelonelont
+  71: optional bool isSelonlfTwelonelont
+  10: optional bool isOffelonnsivelon
   11: optional bool hasLink
-  12: optional bool hasTrend
-  13: optional bool isReply
-  14: optional bool hasMultipleHashtagsOrTrends
-  23: optional bool fromVerifiedAccount
-  // Static text quality score.  This is actually an int between 0 and 100.
-  30: optional double textScore
-  51: optional search_language.ThriftLanguage language
+  12: optional bool hasTrelonnd
+  13: optional bool isRelonply
+  14: optional bool hasMultiplelonHashtagsOrTrelonnds
+  23: optional bool fromVelonrifielondAccount
+  // Static telonxt quality scorelon.  This is actually an int belontwelonelonn 0 and 100.
+  30: optional doublelon telonxtScorelon
+  51: optional selonarch_languagelon.ThriftLanguagelon languagelon
 
-  // From integer 1 from EarlybirdFeatureConfiguration:
-  52: optional bool hasImage
-  53: optional bool hasVideo
-  28: optional bool hasNews
+  // From intelongelonr 1 from elonarlybirdFelonaturelonConfiguration:
+  52: optional bool hasImagelon
+  53: optional bool hasVidelono
+  28: optional bool hasNelonws
   48: optional bool hasCard
-  61: optional bool hasVisibleLink
-  // Tweep cred aka user rep.  This is actually an int between 0 and 100.
-  32: optional double userRep
-  24: optional bool isUserSpam
-  25: optional bool isUserNSFW
-  26: optional bool isUserBot
-  54: optional bool isUserAntiSocial
+  61: optional bool hasVisiblelonLink
+  // Twelonelonp crelond aka uselonr relonp.  This is actually an int belontwelonelonn 0 and 100.
+  32: optional doublelon uselonrRelonp
+  24: optional bool isUselonrSpam
+  25: optional bool isUselonrNSFW
+  26: optional bool isUselonrBot
+  54: optional bool isUselonrAntiSocial
 
-  // From integer 2 from EarlybirdFeatureConfiguration:
+  // From intelongelonr 2 from elonarlybirdFelonaturelonConfiguration:
 
-  // Retweet, fav, reply, embeds counts, and video view counts are APPROXIMATE ONLY.
-  // Note that retweetCount, favCount and replyCount are not original unnormalized values,
-  // but after a log2() function for historical reason, this loses us some granularity.
-  // For more accurate counts, use {retweet, fav, reply}CountV2 in extraMetadata.
-  2: optional i32 retweetCount
+  // Relontwelonelont, fav, relonply, elonmbelonds counts, and videlono vielonw counts arelon APPROXIMATelon ONLY.
+  // Notelon that relontwelonelontCount, favCount and relonplyCount arelon not original unnormalizelond valuelons,
+  // but aftelonr a log2() function for historical relonason, this loselons us somelon granularity.
+  // For morelon accuratelon counts, uselon {relontwelonelont, fav, relonply}CountV2 in elonxtraMelontadata.
+  2: optional i32 relontwelonelontCount
   33: optional i32 favCount
-  34: optional i32 replyCount
-  58: optional i32 embedsImpressionCount
-  59: optional i32 embedsUrlCount
-  68: optional i32 videoViewCount
+  34: optional i32 relonplyCount
+  58: optional i32 elonmbelondsImprelonssionCount
+  59: optional i32 elonmbelondsUrlCount
+  68: optional i32 videlonoVielonwCount
 
-  // Parus score.  This is actually an int between 0 and 100.
-  29: optional double parusScore
+  // Parus scorelon.  This is actually an int belontwelonelonn 0 and 100.
+  29: optional doublelon parusScorelon
 
-  // Extra feature data, all new feature fields you want to return from Earlybird should go into
-  // this one, the outer one is always reaching its limit of the nubmer of fields JVM can
+  // elonxtra felonaturelon data, all nelonw felonaturelon fielonlds you want to relonturn from elonarlybird should go into
+  // this onelon, thelon outelonr onelon is always relonaching its limit of thelon nubmelonr of fielonlds JVM can
   // comfortably support!!
-  86: optional ThriftSearchResultExtraMetadata extraMetadata
+  86: optional ThriftSelonarchRelonsultelonxtraMelontadata elonxtraMelontadata
 
-  // Integer 3 is omitted, see expFeatureValues above for more details.
+  // Intelongelonr 3 is omittelond, selonelon elonxpFelonaturelonValuelons abovelon for morelon delontails.
 
-  // From integer 4 from EarlybirdFeatureConfiguration:
-  // Signature, for duplicate detection and removal.
-  4: optional i32 signature
+  // From intelongelonr 4 from elonarlybirdFelonaturelonConfiguration:
+  // Signaturelon, for duplicatelon delontelonction and relonmoval.
+  4: optional i32 signaturelon
 
-  // -------- THINGS USED ONLY BY THE BLENDER --------
+  // -------- THINGS USelonD ONLY BY THelon BLelonNDelonR --------
 
-  // Social proof of the tweet, for network discovery.
-  // Do not use these fields outside of network discovery.
-  41: optional list<i64> retweetedUserIDs64
-  42: optional list<i64> replyUserIDs64
+  // Social proof of thelon twelonelont, for nelontwork discovelonry.
+  // Do not uselon thelonselon fielonlds outsidelon of nelontwork discovelonry.
+  41: optional list<i64> relontwelonelontelondUselonrIDs64
+  42: optional list<i64> relonplyUselonrIDs64
 
-  // Social connection between the search user and this result.
-  19: optional social.ThriftSocialContext socialContext
+  // Social connelonction belontwelonelonn thelon selonarch uselonr and this relonsult.
+  19: optional social.ThriftSocialContelonxt socialContelonxt
 
-  // used by RelevanceTimelineSearchWorkflow, whether a tweet should be highlighted or not
-  46: optional bool highlightResult
+  // uselond by RelonlelonvancelonTimelonlinelonSelonarchWorkflow, whelonthelonr a twelonelont should belon highlightelond or not
+  46: optional bool highlightRelonsult
 
-  // used by RelevanceTimelineSearchWorkflow, the highlight context of the highlighted tweet
-  47: optional highlight.ThriftHighlightContext highlightContext
+  // uselond by RelonlelonvancelonTimelonlinelonSelonarchWorkflow, thelon highlight contelonxt of thelon highlightelond twelonelont
+  47: optional highlight.ThriftHighlightContelonxt highlightContelonxt
 
-  // the penguin version used to tokenize the tweets by the serving earlybird index as defined
-  // in com.twitter.common.text.version.PenguinVersion
-  56: optional i8 penguinVersion
+  // thelon pelonnguin velonrsion uselond to tokelonnizelon thelon twelonelonts by thelon selonrving elonarlybird indelonx as delonfinelond
+  // in com.twittelonr.common.telonxt.velonrsion.PelonnguinVelonrsion
+  56: optional i8 pelonnguinVelonrsion
 
   69: optional bool isNullcast
 
-  // This is the normalized ratio(0.00 to 1.00) of nth token(starting before 140) divided by
-  // numTokens and then normalized into 16 positions(4 bits) but on a scale of 0 to 100% as
-  // we unnormalize it for you
-  70: optional double tokenAt140DividedByNumTokensBucket
+  // This is thelon normalizelond ratio(0.00 to 1.00) of nth tokelonn(starting belonforelon 140) dividelond by
+  // numTokelonns and thelonn normalizelond into 16 positions(4 bits) but on a scalelon of 0 to 100% as
+  // welon unnormalizelon it for you
+  70: optional doublelon tokelonnAt140DividelondByNumTokelonnsBuckelont
 
-}(persisted='true')
+}(pelonrsistelond='truelon')
 
-// Query level result stats.
-// Next id: 20
-struct ThriftSearchResultsRelevanceStats {
-  1: optional i32 numScored = 0
-  // Skipped documents count, they were also scored but their scores got ignored (skipped), note that this is different
-  // from numResultsSkipped in the ThriftSearchResults.
-  2: optional i32 numSkipped = 0
-  3: optional i32 numSkippedForAntiGaming = 0
-  4: optional i32 numSkippedForLowReputation = 0
-  5: optional i32 numSkippedForLowTextScore = 0
-  6: optional i32 numSkippedForSocialFilter = 0
-  7: optional i32 numSkippedForLowFinalScore = 0
-  8: optional i32 oldestScoredTweetAgeInSeconds = 0
+// Quelonry lelonvelonl relonsult stats.
+// Nelonxt id: 20
+struct ThriftSelonarchRelonsultsRelonlelonvancelonStats {
+  1: optional i32 numScorelond = 0
+  // Skippelond documelonnts count, thelony welonrelon also scorelond but thelonir scorelons got ignorelond (skippelond), notelon that this is diffelonrelonnt
+  // from numRelonsultsSkippelond in thelon ThriftSelonarchRelonsults.
+  2: optional i32 numSkippelond = 0
+  3: optional i32 numSkippelondForAntiGaming = 0
+  4: optional i32 numSkippelondForLowRelonputation = 0
+  5: optional i32 numSkippelondForLowTelonxtScorelon = 0
+  6: optional i32 numSkippelondForSocialFiltelonr = 0
+  7: optional i32 numSkippelondForLowFinalScorelon = 0
+  8: optional i32 oldelonstScorelondTwelonelontAgelonInSelonconds = 0
 
-  // More counters for various features.
-  9:  optional i32 numFromDirectFollows = 0
-  10: optional i32 numFromTrustedCircle = 0
-  11: optional i32 numReplies = 0
-  12: optional i32 numRepliesTrusted = 0
-  13: optional i32 numRepliesOutOfNetwork = 0
-  14: optional i32 numSelfTweets = 0
-  15: optional i32 numWithMedia = 0
-  16: optional i32 numWithNews = 0
-  17: optional i32 numSpamUser = 0
-  18: optional i32 numOffensive = 0
+  // Morelon countelonrs for various felonaturelons.
+  9:  optional i32 numFromDirelonctFollows = 0
+  10: optional i32 numFromTrustelondCirclelon = 0
+  11: optional i32 numRelonplielons = 0
+  12: optional i32 numRelonplielonsTrustelond = 0
+  13: optional i32 numRelonplielonsOutOfNelontwork = 0
+  14: optional i32 numSelonlfTwelonelonts = 0
+  15: optional i32 numWithMelondia = 0
+  16: optional i32 numWithNelonws = 0
+  17: optional i32 numSpamUselonr = 0
+  18: optional i32 numOffelonnsivelon = 0
   19: optional i32 numBot = 0
-}(persisted='true')
+}(pelonrsistelond='truelon')
 
-// Per result debug info.
-struct ThriftSearchResultDebugInfo {
-  1: optional string hostname
-  2: optional string clusterName
+// Pelonr relonsult delonbug info.
+struct ThriftSelonarchRelonsultDelonbugInfo {
+  1: optional string hostnamelon
+  2: optional string clustelonrNamelon
   3: optional i32 partitionId
-  4: optional string tiername
-}(persisted='true')
+  4: optional string tielonrnamelon
+}(pelonrsistelond='truelon')
 
-struct ThriftSearchResult {
-  // Next available field ID: 22
+struct ThriftSelonarchRelonsult {
+  // Nelonxt availablelon fielonld ID: 22
 
-  // Result status id.
-  1: required i64 id
+  // Relonsult status id.
+  1: relonquirelond i64 id
 
-  // TweetyPie status of the search result
-  7: optional deprecated.Status tweetypieStatus
-  19: optional tweet.Tweet tweetypieTweet  // v2 struct
+  // TwelonelontyPielon status of thelon selonarch relonsult
+  7: optional delonpreloncatelond.Status twelonelontypielonStatus
+  19: optional twelonelont.Twelonelont twelonelontypielonTwelonelont  // v2 struct
 
-  // If the search result is a retweet, this field contains the source TweetyPie status.
-  10: optional deprecated.Status sourceTweetypieStatus
-  20: optional tweet.Tweet sourceTweetypieTweet  // v2 struct
+  // If thelon selonarch relonsult is a relontwelonelont, this fielonld contains thelon sourcelon TwelonelontyPielon status.
+  10: optional delonpreloncatelond.Status sourcelonTwelonelontypielonStatus
+  20: optional twelonelont.Twelonelont sourcelonTwelonelontypielonTwelonelont  // v2 struct
 
-  // If the search result is a quote tweet, this field contains the quoted TweetyPie status.
-  17: optional deprecated.Status quotedTweetypieStatus
-  21: optional tweet.Tweet quotedTweetypieTweet  // v2 struct
+  // If thelon selonarch relonsult is a quotelon twelonelont, this fielonld contains thelon quotelond TwelonelontyPielon status.
+  17: optional delonpreloncatelond.Status quotelondTwelonelontypielonStatus
+  21: optional twelonelont.Twelonelont quotelondTwelonelontypielonTwelonelont  // v2 struct
 
-  // Additional metadata about a search result.
-  5: optional ThriftSearchResultMetadata metadata
+  // Additional melontadata about a selonarch relonsult.
+  5: optional ThriftSelonarchRelonsultMelontadata melontadata
 
-  // Hit highlights for various parts of this tweet
-  // for tweet text
+  // Hit highlights for various parts of this twelonelont
+  // for twelonelont telonxt
   6: optional list<hits.ThriftHits> hitHighlights
-  // for the title and description in the card expando.
-  12: optional list<hits.ThriftHits> cardTitleHitHighlights
-  13: optional list<hits.ThriftHits> cardDescriptionHitHighlights
+  // for thelon titlelon and delonscription in thelon card elonxpando.
+  12: optional list<hits.ThriftHits> cardTitlelonHitHighlights
+  13: optional list<hits.ThriftHits> cardDelonscriptionHitHighlights
 
-  // Expansion types, if expandResult == False, the expasions set should be ignored.
-  8: optional bool expandResult = 0
-  9: optional set<expansions.ThriftTweetExpansionType> expansions
+  // elonxpansion typelons, if elonxpandRelonsult == Falselon, thelon elonxpasions selont should belon ignorelond.
+  8: optional bool elonxpandRelonsult = 0
+  9: optional selont<elonxpansions.ThriftTwelonelontelonxpansionTypelon> elonxpansions
 
-  // Only set if this is a promoted tweet
-  11: optional adserver_common.AdImpression adImpression
+  // Only selont if this is a promotelond twelonelont
+  11: optional adselonrvelonr_common.AdImprelonssion adImprelonssion
 
-  // where this tweet is from
-  // Since ThriftSearchResult used not only as an Earlybird response, but also an internal
-  // data transfer object of Blender, the value of this field is mutable in Blender, not
-  // necessarily reflecting Earlybird response.
-  14: optional ThriftTweetSource tweetSource
+  // whelonrelon this twelonelont is from
+  // Sincelon ThriftSelonarchRelonsult uselond not only as an elonarlybird relonsponselon, but also an intelonrnal
+  // data transfelonr objelonct of Blelonndelonr, thelon valuelon of this fielonld is mutablelon in Blelonndelonr, not
+  // neloncelonssarily relonfleloncting elonarlybird relonsponselon.
+  14: optional ThriftTwelonelontSourcelon twelonelontSourcelon
 
-  // the features of a tweet used for relevance timeline
-  // this field is populated by blender in RelevanceTimelineSearchWorkflow
-  15: optional features.ThriftTweetFeatures tweetFeatures
+  // thelon felonaturelons of a twelonelont uselond for relonlelonvancelon timelonlinelon
+  // this fielonld is populatelond by blelonndelonr in RelonlelonvancelonTimelonlinelonSelonarchWorkflow
+  15: optional felonaturelons.ThriftTwelonelontFelonaturelons twelonelontFelonaturelons
 
-  // the conversation context of a tweet
-  16: optional conversation.ThriftConversationContext conversationContext
+  // thelon convelonrsation contelonxt of a twelonelont
+  16: optional convelonrsation.ThriftConvelonrsationContelonxt convelonrsationContelonxt
 
-  // per-result debugging info that's persisted across merges.
-  18: optional ThriftSearchResultDebugInfo debugInfo
-}(persisted='true')
+  // pelonr-relonsult delonbugging info that's pelonrsistelond across melonrgelons.
+  18: optional ThriftSelonarchRelonsultDelonbugInfo delonbugInfo
+}(pelonrsistelond='truelon')
 
-enum ThriftFacetRankingMode {
+elonnum ThriftFacelontRankingModelon {
   COUNT = 0,
-  FILTER_WITH_TERM_STATISTICS = 1,
+  FILTelonR_WITH_TelonRM_STATISTICS = 1,
 }
 
-struct ThriftFacetFieldRequest {
-  // next available field ID: 4
-  1: required string fieldName
-  2: optional i32 numResults = 5
+struct ThriftFacelontFielonldRelonquelonst {
+  // nelonxt availablelon fielonld ID: 4
+  1: relonquirelond string fielonldNamelon
+  2: optional i32 numRelonsults = 5
 
-  // use facetRankingOptions in ThriftFacetRequest instead
-  3: optional ThriftFacetRankingMode rankingMode = ThriftFacetRankingMode.COUNT
-}(persisted='true')
+  // uselon facelontRankingOptions in ThriftFacelontRelonquelonst instelonad
+  3: optional ThriftFacelontRankingModelon rankingModelon = ThriftFacelontRankingModelon.COUNT
+}(pelonrsistelond='truelon')
 
-struct ThriftFacetRequest {
-  // Next available field ID: 7
-  1: optional list<ThriftFacetFieldRequest> facetFields
-  5: optional ranking.ThriftFacetRankingOptions facetRankingOptions
-  6: optional bool usingQueryCache = 0
-}(persisted='true')
+struct ThriftFacelontRelonquelonst {
+  // Nelonxt availablelon fielonld ID: 7
+  1: optional list<ThriftFacelontFielonldRelonquelonst> facelontFielonlds
+  5: optional ranking.ThriftFacelontRankingOptions facelontRankingOptions
+  6: optional bool usingQuelonryCachelon = 0
+}(pelonrsistelond='truelon')
 
-struct ThriftTermRequest {
-  1: optional string fieldName = "text"
-  2: required string term
-}(persisted='true')
+struct ThriftTelonrmRelonquelonst {
+  1: optional string fielonldNamelon = "telonxt"
+  2: relonquirelond string telonrm
+}(pelonrsistelond='truelon')
 
-enum ThriftHistogramGranularityType {
-  MINUTES = 0
+elonnum ThriftHistogramGranularityTypelon {
+  MINUTelonS = 0
   HOURS = 1,
   DAYS = 2,
   CUSTOM = 3,
 
-  PLACE_HOLDER4 = 4,
-  PLACE_HOLDER5 = 5,
+  PLACelon_HOLDelonR4 = 4,
+  PLACelon_HOLDelonR5 = 5,
 }
 
-struct ThriftHistogramSettings {
-  1: required ThriftHistogramGranularityType granularity
+struct ThriftHistogramSelonttings {
+  1: relonquirelond ThriftHistogramGranularityTypelon granularity
   2: optional i32 numBins = 60
-  3: optional i32 samplingRate = 1
-  4: optional i32 binSizeInSeconds   // the bin size, only used if granularity is set to CUSTOM.
-}(persisted='true')
+  3: optional i32 samplingRatelon = 1
+  4: optional i32 binSizelonInSelonconds   // thelon bin sizelon, only uselond if granularity is selont to CUSTOM.
+}(pelonrsistelond='truelon')
 
-// next id is 4
-struct ThriftTermStatisticsRequest {
-  1: optional list<ThriftTermRequest> termRequests
-  2: optional ThriftHistogramSettings histogramSettings
-  // If this is set to true, even if there is no termRequests above, so long as the histogramSettings
-  // is set, Earlybird will return a null->ThriftTermResults entry in the termResults map, containing
-  // the global tweet count histogram for current query, which is the number of tweets matching this
-  // query in different minutes/hours/days.
-  3: optional bool includeGlobalCounts = 0
-  // When this is set, the background facets call does another search in order to find the best
-  // representative tweet for a given term request, the representative tweet is stored in the
-  // metadata of the termstats result
-  4: optional bool scoreTweetsForRepresentatives = 0
-}(persisted='true')
+// nelonxt id is 4
+struct ThriftTelonrmStatisticsRelonquelonst {
+  1: optional list<ThriftTelonrmRelonquelonst> telonrmRelonquelonsts
+  2: optional ThriftHistogramSelonttings histogramSelonttings
+  // If this is selont to truelon, elonvelonn if thelonrelon is no telonrmRelonquelonsts abovelon, so long as thelon histogramSelonttings
+  // is selont, elonarlybird will relonturn a null->ThriftTelonrmRelonsults elonntry in thelon telonrmRelonsults map, containing
+  // thelon global twelonelont count histogram for currelonnt quelonry, which is thelon numbelonr of twelonelonts matching this
+  // quelonry in diffelonrelonnt minutelons/hours/days.
+  3: optional bool includelonGlobalCounts = 0
+  // Whelonn this is selont, thelon background facelonts call doelons anothelonr selonarch in ordelonr to find thelon belonst
+  // relonprelonselonntativelon twelonelont for a givelonn telonrm relonquelonst, thelon relonprelonselonntativelon twelonelont is storelond in thelon
+  // melontadata of thelon telonrmstats relonsult
+  4: optional bool scorelonTwelonelontsForRelonprelonselonntativelons = 0
+}(pelonrsistelond='truelon')
 
-// Next id is 12
-struct ThriftFacetCountMetadata {
-  // this is the id of the first tweet in the index that contained this facet
+// Nelonxt id is 12
+struct ThriftFacelontCountMelontadata {
+  // this is thelon id of thelon first twelonelont in thelon indelonx that containelond this facelont
   1: optional i64 statusId = -1
 
-  // whether the tweet with the above statusId is NSFW, from an antisocial user,
-  // marked as sensitive content, etc.
-  10: optional bool statusPossiblySensitive
+  // whelonthelonr thelon twelonelont with thelon abovelon statusId is NSFW, from an antisocial uselonr,
+  // markelond as selonnsitivelon contelonnt, elontc.
+  10: optional bool statusPossiblySelonnsitivelon
 
-  // the id of the user who sent the tweet above - only returned if
-  // statusId is returned too
-  // NOTE: for native photos we may not be able to determine the user,
-  // even though the statusId can be returned. This is because the statusId
-  // can be determined from the url, but the user can't and the tweet may
-  // not be in the index anymore. In this case statusId would be set but
-  // twitterUserId would not.
-  2: optional i64 twitterUserId = -1
+  // thelon id of thelon uselonr who selonnt thelon twelonelont abovelon - only relonturnelond if
+  // statusId is relonturnelond too
+  // NOTelon: for nativelon photos welon may not belon ablelon to delontelonrminelon thelon uselonr,
+  // elonvelonn though thelon statusId can belon relonturnelond. This is beloncauselon thelon statusId
+  // can belon delontelonrminelond from thelon url, but thelon uselonr can't and thelon twelonelont may
+  // not belon in thelon indelonx anymorelon. In this caselon statusId would belon selont but
+  // twittelonrUselonrId would not.
+  2: optional i64 twittelonrUselonrId = -1
 
-  // the language of the tweet above.
-  8: optional search_language.ThriftLanguage statusLanguage
+  // thelon languagelon of thelon twelonelont abovelon.
+  8: optional selonarch_languagelon.ThriftLanguagelon statusLanguagelon
 
-  // optionally whitelist the fromUserId from dup/twitterUserId filtering
-  3: optional bool dontFilterUser = 0;
+  // optionally whitelonlist thelon fromUselonrId from dup/twittelonrUselonrId filtelonring
+  3: optional bool dontFiltelonrUselonr = 0;
 
-  // if this facet is a native photo we return for convenience the
+  // if this facelont is a nativelon photo welon relonturn for convelonnielonncelon thelon
   // twimg url
-  4: optional string nativePhotoUrl
+  4: optional string nativelonPhotoUrl
 
-  // optionally returns some debug information about this facet
-  5: optional string explanation
+  // optionally relonturns somelon delonbug information about this facelont
+  5: optional string elonxplanation
 
-  // the created_at value for the tweet from statusId - only returned
-  // if statusId is returned too
-  6: optional i64 created_at
+  // thelon crelonatelond_at valuelon for thelon twelonelont from statusId - only relonturnelond
+  // if statusId is relonturnelond too
+  6: optional i64 crelonatelond_at
 
-  // the maximum tweepcred of the hits that contained this facet
-  7: optional i32 maxTweepCred
+  // thelon maximum twelonelonpcrelond of thelon hits that containelond this facelont
+  7: optional i32 maxTwelonelonpCrelond
 
-  // Whether this facet result is force inserted, instead of organically returned from search.
-  // This field is only used in Blender to mark the force-inserted facet results
-  // (from recent tweets, etc).
-  11: optional bool forceInserted = 0
-}(persisted='true')
+  // Whelonthelonr this facelont relonsult is forcelon inselonrtelond, instelonad of organically relonturnelond from selonarch.
+  // This fielonld is only uselond in Blelonndelonr to mark thelon forcelon-inselonrtelond facelont relonsults
+  // (from reloncelonnt twelonelonts, elontc).
+  11: optional bool forcelonInselonrtelond = 0
+}(pelonrsistelond='truelon')
 
-struct ThriftTermResults {
-  1: required i32 totalCount
+struct ThriftTelonrmRelonsults {
+  1: relonquirelond i32 totalCount
   2: optional list<i32> histogramBins
-  3: optional ThriftFacetCountMetadata metadata
-}(persisted='true')
+  3: optional ThriftFacelontCountMelontadata melontadata
+}(pelonrsistelond='truelon')
 
-struct ThriftTermStatisticsResults {
-  1: required map<ThriftTermRequest,ThriftTermResults> termResults
-  2: optional ThriftHistogramSettings histogramSettings
-  // If histogramSettings are set, this will have a list of ThriftHistogramSettings.numBins binIds,
-  // that the corresponding histogramBins in ThriftTermResults will have counts for.
-  // The binIds will correspond to the times of the hits matching the driving search query for this
-  // term statistics request.
-  // If there were no hits matching the search query, numBins binIds will be returned, but the
-  // values of the binIds will not meaninfully correspond to anything related to the query, and
-  // should not be used. Such cases can be identified by ThriftSearchResults.numHitsProcessed being
-  // set to 0 in the response, and the response not being early terminated.
+struct ThriftTelonrmStatisticsRelonsults {
+  1: relonquirelond map<ThriftTelonrmRelonquelonst,ThriftTelonrmRelonsults> telonrmRelonsults
+  2: optional ThriftHistogramSelonttings histogramSelonttings
+  // If histogramSelonttings arelon selont, this will havelon a list of ThriftHistogramSelonttings.numBins binIds,
+  // that thelon correlonsponding histogramBins in ThriftTelonrmRelonsults will havelon counts for.
+  // Thelon binIds will correlonspond to thelon timelons of thelon hits matching thelon driving selonarch quelonry for this
+  // telonrm statistics relonquelonst.
+  // If thelonrelon welonrelon no hits matching thelon selonarch quelonry, numBins binIds will belon relonturnelond, but thelon
+  // valuelons of thelon binIds will not melonaninfully correlonspond to anything relonlatelond to thelon quelonry, and
+  // should not belon uselond. Such caselons can belon idelonntifielond by ThriftSelonarchRelonsults.numHitsProcelonsselond beloning
+  // selont to 0 in thelon relonsponselon, and thelon relonsponselon not beloning elonarly telonrminatelond.
   3: optional list<i32> binIds
-  // If set, this id indicates the id of the minimum (oldest) bin that has been completely searched,
-  // even if the query was early terminated. If not set no bin was searched fully, or no histogram
-  // was requested.
-  // Note that if e.g. a query only matches a bin partially (due to e.g. a since operator) the bin
-  // is still considered fully searched if the query did not early terminate.
-  4: optional i32 minCompleteBinId
-}(persisted='true')
+  // If selont, this id indicatelons thelon id of thelon minimum (oldelonst) bin that has belonelonn complelontelonly selonarchelond,
+  // elonvelonn if thelon quelonry was elonarly telonrminatelond. If not selont no bin was selonarchelond fully, or no histogram
+  // was relonquelonstelond.
+  // Notelon that if elon.g. a quelonry only matchelons a bin partially (duelon to elon.g. a sincelon opelonrator) thelon bin
+  // is still considelonrelond fully selonarchelond if thelon quelonry did not elonarly telonrminatelon.
+  4: optional i32 minComplelontelonBinId
+}(pelonrsistelond='truelon')
 
-struct ThriftFacetCount {
-  // the text of the facet
-  1: required string facetLabel
+struct ThriftFacelontCount {
+  // thelon telonxt of thelon facelont
+  1: relonquirelond string facelontLabelonl
 
-  // deprecated; currently matches weightedCount for backwards-compatibility reasons
-  2: optional i32 facetCount
+  // delonpreloncatelond; currelonntly matchelons welonightelondCount for backwards-compatibility relonasons
+  2: optional i32 facelontCount
 
-  // the simple count of tweets that contained this facet, without any
-  // weighting applied
-  7: optional i32 simpleCount
+  // thelon simplelon count of twelonelonts that containelond this facelont, without any
+  // welonighting applielond
+  7: optional i32 simplelonCount
 
-  // a weighted version of the count, using signals like tweepcred, parus, etc.
-  8: optional i32 weightedCount
+  // a welonightelond velonrsion of thelon count, using signals likelon twelonelonpcrelond, parus, elontc.
+  8: optional i32 welonightelondCount
 
-  // the number of times this facet occurred in tweets matching the background query
-  // using the term statistics API - only set if FILTER_WITH_TERM_STATISTICS was used
+  // thelon numbelonr of timelons this facelont occurrelond in twelonelonts matching thelon background quelonry
+  // using thelon telonrm statistics API - only selont if FILTelonR_WITH_TelonRM_STATISTICS was uselond
   3: optional i32 backgroundCount
 
-  // the relevance score that was computed for this facet if FILTER_WITH_TERM_STATISTICS
-  // was used
-  4: optional double score
+  // thelon relonlelonvancelon scorelon that was computelond for this facelont if FILTelonR_WITH_TelonRM_STATISTICS
+  // was uselond
+  4: optional doublelon scorelon
 
-  // a counter for how often this facet was penalized
-  5: optional i32 penaltyCount
+  // a countelonr for how oftelonn this facelont was pelonnalizelond
+  5: optional i32 pelonnaltyCount
 
-  6: optional ThriftFacetCountMetadata metadata
-}(persisted='true')
+  6: optional ThriftFacelontCountMelontadata melontadata
+}(pelonrsistelond='truelon')
 
-// List of facet labels and counts for a given facet field, the
-// total count for this field, and a quality score for this field
-struct ThriftFacetFieldResults {
-  1: required list<ThriftFacetCount> topFacets
-  2: required i32 totalCount
-  3: optional double scoreQuality
-  4: optional i32 totalScore
-  5: optional i32 totalPenalty
+// List of facelont labelonls and counts for a givelonn facelont fielonld, thelon
+// total count for this fielonld, and a quality scorelon for this fielonld
+struct ThriftFacelontFielonldRelonsults {
+  1: relonquirelond list<ThriftFacelontCount> topFacelonts
+  2: relonquirelond i32 totalCount
+  3: optional doublelon scorelonQuality
+  4: optional i32 totalScorelon
+  5: optional i32 totalPelonnalty
 
-  // The ratio of the tweet language in the tweets with this facet field, a map from the language
-  // name to a number between (0.0, 1.0]. Only languages with ratio higher than 0.1 will be included.
-  6: optional map<search_language.ThriftLanguage, double> languageHistogram
+  // Thelon ratio of thelon twelonelont languagelon in thelon twelonelonts with this facelont fielonld, a map from thelon languagelon
+  // namelon to a numbelonr belontwelonelonn (0.0, 1.0]. Only languagelons with ratio highelonr than 0.1 will belon includelond.
+  6: optional map<selonarch_languagelon.ThriftLanguagelon, doublelon> languagelonHistogram
 }
 
-struct ThriftFacetResults {
-  1: required map<string, ThriftFacetFieldResults> facetFields
+struct ThriftFacelontRelonsults {
+  1: relonquirelond map<string, ThriftFacelontFielonldRelonsults> facelontFielonlds
   2: optional i32 backgroundNumHits
-  // returns optionally a list of user ids that should not get filtered
-  // out by things like antigaming filters, because these users were explicitly
-  // queried for
-  // Note that ThriftFacetCountMetadata returns already dontFilterUser
-  // for facet requests in which case this list is not needed. However, it
-  // is needed for subsequent term statistics queries, were user id lookups
-  // are performed, but a different background query is used.
-  3: optional set<i64> userIDWhitelist
+  // relonturns optionally a list of uselonr ids that should not gelont filtelonrelond
+  // out by things likelon antigaming filtelonrs, beloncauselon thelonselon uselonrs welonrelon elonxplicitly
+  // quelonrielond for
+  // Notelon that ThriftFacelontCountMelontadata relonturns alrelonady dontFiltelonrUselonr
+  // for facelont relonquelonsts in which caselon this list is not nelonelondelond. Howelonvelonr, it
+  // is nelonelondelond for subselonquelonnt telonrm statistics quelonrielons, welonrelon uselonr id lookups
+  // arelon pelonrformelond, but a diffelonrelonnt background quelonry is uselond.
+  3: optional selont<i64> uselonrIDWhitelonlist
 }
 
-struct ThriftSearchResults {
-  // Next available field ID: 23
-  1: required list<ThriftSearchResult> results = []
+struct ThriftSelonarchRelonsults {
+  // Nelonxt availablelon fielonld ID: 23
+  1: relonquirelond list<ThriftSelonarchRelonsult> relonsults = []
 
-  // (SEARCH-11950): Now resultOffset is deprecated, so there is no use in numResultsSkipped too.
-  9: optional i32 deprecated_numResultsSkipped
+  // (SelonARCH-11950): Now relonsultOffselont is delonpreloncatelond, so thelonrelon is no uselon in numRelonsultsSkippelond too.
+  9: optional i32 delonpreloncatelond_numRelonsultsSkippelond
 
-  // Number of docs that matched the query and were processed.
-  7: optional i32 numHitsProcessed
+  // Numbelonr of docs that matchelond thelon quelonry and welonrelon procelonsselond.
+  7: optional i32 numHitsProcelonsselond
 
-  // Range of status IDs searched, from max ID to min ID (both inclusive).
-  // These may be unset in case that the search query contained ID or time
-  // operators that were completely out of range for the given index.
-  10: optional i64 maxSearchedStatusID
-  11: optional i64 minSearchedStatusID
+  // Rangelon of status IDs selonarchelond, from max ID to min ID (both inclusivelon).
+  // Thelonselon may belon unselont in caselon that thelon selonarch quelonry containelond ID or timelon
+  // opelonrators that welonrelon complelontelonly out of rangelon for thelon givelonn indelonx.
+  10: optional i64 maxSelonarchelondStatusID
+  11: optional i64 minSelonarchelondStatusID
 
-  // Time range that was searched (both inclusive).
-  19: optional i32 maxSearchedTimeSinceEpoch
-  20: optional i32 minSearchedTimeSinceEpoch
+  // Timelon rangelon that was selonarchelond (both inclusivelon).
+  19: optional i32 maxSelonarchelondTimelonSincelonelonpoch
+  20: optional i32 minSelonarchelondTimelonSincelonelonpoch
 
-  12: optional ThriftSearchResultsRelevanceStats relevanceStats
+  12: optional ThriftSelonarchRelonsultsRelonlelonvancelonStats relonlelonvancelonStats
 
-  // Overall quality of this search result set
-  13: optional double score = -1.0
-  18: optional double nsfwRatio = 0.0
+  // Ovelonrall quality of this selonarch relonsult selont
+  13: optional doublelon scorelon = -1.0
+  18: optional doublelon nsfwRatio = 0.0
 
-  // The count of hit documents in each language.
-  14: optional map<search_language.ThriftLanguage, i32> languageHistogram
+  // Thelon count of hit documelonnts in elonach languagelon.
+  14: optional map<selonarch_languagelon.ThriftLanguagelon, i32> languagelonHistogram
 
-  // Hit counts per time period:
-  // The key is a time cutoff in milliseconds (e.g. 60000 msecs ago).
-  // The value is the number of hits that are more recent than the cutoff.
+  // Hit counts pelonr timelon pelonriod:
+  // Thelon kelony is a timelon cutoff in milliselonconds (elon.g. 60000 mseloncs ago).
+  // Thelon valuelon is thelon numbelonr of hits that arelon morelon reloncelonnt than thelon cutoff.
   15: optional map<i64, i32> hitCounts
 
-  // the total cost for this query
-  16: optional double queryCost
+  // thelon total cost for this quelonry
+  16: optional doublelon quelonryCost
 
-  // Set to non-0 if this query was terminated early (either due to a timeout, or exceeded query cost)
-  // When getting this response from a single earlybird, this will be set to 1, if the query
-  // terminated early.
-  // When getting this response from a search root, this should be set to the number of individual
-  // earlybird requests that were terminated early.
-  17: optional i32 numPartitionsEarlyTerminated
+  // Selont to non-0 if this quelonry was telonrminatelond elonarly (elonithelonr duelon to a timelonout, or elonxcelonelondelond quelonry cost)
+  // Whelonn gelontting this relonsponselon from a singlelon elonarlybird, this will belon selont to 1, if thelon quelonry
+  // telonrminatelond elonarly.
+  // Whelonn gelontting this relonsponselon from a selonarch root, this should belon selont to thelon numbelonr of individual
+  // elonarlybird relonquelonsts that welonrelon telonrminatelond elonarly.
+  17: optional i32 numPartitionselonarlyTelonrminatelond
 
-  // If ThriftSearchResults returns features in features.ThriftSearchResultFeature format, this
-  // field would define the schema of the features.
-  // If the earlybird schema is already in the client cached schemas indicated in the request, then
-  // searchFeatureSchema would only have (version, checksum) information.
+  // If ThriftSelonarchRelonsults relonturns felonaturelons in felonaturelons.ThriftSelonarchRelonsultFelonaturelon format, this
+  // fielonld would delonfinelon thelon schelonma of thelon felonaturelons.
+  // If thelon elonarlybird schelonma is alrelonady in thelon clielonnt cachelond schelonmas indicatelond in thelon relonquelonst, thelonn
+  // selonarchFelonaturelonSchelonma would only havelon (velonrsion, cheloncksum) information.
   //
-  // Notice that earlybird root only sends one schema back to the superroot even though earlybird
-  // root might receive multiple version of schemas.
+  // Noticelon that elonarlybird root only selonnds onelon schelonma back to thelon supelonrroot elonvelonn though elonarlybird
+  // root might reloncelonivelon multiplelon velonrsion of schelonmas.
   //
-  // Earlybird roots' schema merge/choose logic when returning results to superroot:
-  // . pick the most occurred versioned schema and return the schema to the superroot
-  // . if the superroot already caches the schema, only send the version information back
+  // elonarlybird roots' schelonma melonrgelon/chooselon logic whelonn relonturning relonsults to supelonrroot:
+  // . pick thelon most occurrelond velonrsionelond schelonma and relonturn thelon schelonma to thelon supelonrroot
+  // . if thelon supelonrroot alrelonady cachelons thelon schelonma, only selonnd thelon velonrsion information back
   //
-  // Superroots' schema merge/choose logic when returning results to clients:
-  // . pick the schema based on the order of: realtime > protected > archive
-  // . because of the above ordering, it is possible that archive earlybird schema with a new flush
-  //   verion (with new bit features) might be lost to older realtime earlybird schema; this is
-  //   considered to to be rare and accetable because one realtime earlybird deploy would fix it
-  21: optional features.ThriftSearchFeatureSchema featureSchema
+  // Supelonrroots' schelonma melonrgelon/chooselon logic whelonn relonturning relonsults to clielonnts:
+  // . pick thelon schelonma baselond on thelon ordelonr of: relonaltimelon > protelonctelond > archivelon
+  // . beloncauselon of thelon abovelon ordelonring, it is possiblelon that archivelon elonarlybird schelonma with a nelonw flush
+  //   velonrion (with nelonw bit felonaturelons) might belon lost to oldelonr relonaltimelon elonarlybird schelonma; this is
+  //   considelonrelond to to belon rarelon and accelontablelon beloncauselon onelon relonaltimelon elonarlybird delonploy would fix it
+  21: optional felonaturelons.ThriftSelonarchFelonaturelonSchelonma felonaturelonSchelonma
 
-  // How long it took to score the results in earlybird (in nanoseconds). The number of results
-  // that were scored should be set in numHitsProcessed.
-  // Expected to only be set for requests that actually do scoring (i.e. Relevance and TopTweets).
-  22: optional i64 scoringTimeNanos
+  // How long it took to scorelon thelon relonsults in elonarlybird (in nanoselonconds). Thelon numbelonr of relonsults
+  // that welonrelon scorelond should belon selont in numHitsProcelonsselond.
+  // elonxpelonctelond to only belon selont for relonquelonsts that actually do scoring (i.elon. Relonlelonvancelon and TopTwelonelonts).
+  22: optional i64 scoringTimelonNanos
 
-  8: optional i32 deprecated_numDocsProcessed
+  8: optional i32 delonpreloncatelond_numDocsProcelonsselond
 }
 
-// Note: Earlybird no longer respects this field, as it does not contain statuses.
-// Blender should respect it.
-enum EarlybirdReturnStatusType {
+// Notelon: elonarlybird no longelonr relonspeloncts this fielonld, as it doelons not contain statuselons.
+// Blelonndelonr should relonspelonct it.
+elonnum elonarlybirdRelonturnStatusTypelon {
   NO_STATUS = 0
-  // deprecated
-  DEPRECATED_BASIC_STATUS = 1,
-  // deprecated
-  DEPRECATED_SEARCH_STATUS = 2,
-  TWEETYPIE_STATUS = 3,
+  // delonpreloncatelond
+  DelonPRelonCATelonD_BASIC_STATUS = 1,
+  // delonpreloncatelond
+  DelonPRelonCATelonD_SelonARCH_STATUS = 2,
+  TWelonelonTYPIelon_STATUS = 3,
 
-  PLACE_HOLDER4 = 4,
-  PLACE_HOLDER5 = 5,
+  PLACelon_HOLDelonR4 = 4,
+  PLACelon_HOLDelonR5 = 5,
 }
 
-struct AdjustedRequestParams {
-  // Next available field ID: 4
+struct AdjustelondRelonquelonstParams {
+  // Nelonxt availablelon fielonld ID: 4
 
-  // Adjusted value for EarlybirdRequest.searchQuery.numResults.
-  1: optional i32 numResults
+  // Adjustelond valuelon for elonarlybirdRelonquelonst.selonarchQuelonry.numRelonsults.
+  1: optional i32 numRelonsults
 
-  // Adjusted value for EarlybirdRequest.searchQuery.maxHitsToProcess and
-  // EarlybirdRequest.searchQuery.relevanceOptions.maxHitsToProcess.
-  2: optional i32 maxHitsToProcess
+  // Adjustelond valuelon for elonarlybirdRelonquelonst.selonarchQuelonry.maxHitsToProcelonss and
+  // elonarlybirdRelonquelonst.selonarchQuelonry.relonlelonvancelonOptions.maxHitsToProcelonss.
+  2: optional i32 maxHitsToProcelonss
 
-  // Adjusted value for EarlybirdRequest.searchQuery.relevanceOptions.returnAllResults
-  3: optional bool returnAllResults
+  // Adjustelond valuelon for elonarlybirdRelonquelonst.selonarchQuelonry.relonlelonvancelonOptions.relonturnAllRelonsults
+  3: optional bool relonturnAllRelonsults
 }
 
-struct EarlybirdRequest {
-  // Next available field ID: 36
+struct elonarlybirdRelonquelonst {
+  // Nelonxt availablelon fielonld ID: 36
 
-  // -------- COMMON REQUEST OPTIONS --------
-  // These fields contain options respected by all kinds of earlybird requests.
+  // -------- COMMON RelonQUelonST OPTIONS --------
+  // Thelonselon fielonlds contain options relonspelonctelond by all kinds of elonarlybird relonquelonsts.
 
-  // Search query containing general earlybird retrieval and hit collection options.
-  // Also contains the options specific to search requests.
-  1: required ThriftSearchQuery searchQuery
+  // Selonarch quelonry containing gelonnelonral elonarlybird relontrielonval and hit collelonction options.
+  // Also contains thelon options speloncific to selonarch relonquelonsts.
+  1: relonquirelond ThriftSelonarchQuelonry selonarchQuelonry
 
-  // Common RPC information - client hostname and request ID.
-  12: optional string clientHost
-  13: optional string clientRequestID
+  // Common RPC information - clielonnt hostnamelon and relonquelonst ID.
+  12: optional string clielonntHost
+  13: optional string clielonntRelonquelonstID
 
-  // A string identifying the client that initiated the request.
-  // Ex: macaw-search.prod, webforall.prod, webforall.staging.
-  // The intention is to track the load we get from each client, and eventually enforce
-  // per-client QPS quotas, but this field could also be used to allow access to certain features
-  // only to certain clients, etc.
-  21: optional string clientId
+  // A string idelonntifying thelon clielonnt that initiatelond thelon relonquelonst.
+  // elonx: macaw-selonarch.prod, welonbforall.prod, welonbforall.staging.
+  // Thelon intelonntion is to track thelon load welon gelont from elonach clielonnt, and elonvelonntually elonnforcelon
+  // pelonr-clielonnt QPS quotas, but this fielonld could also belon uselond to allow accelonss to celonrtain felonaturelons
+  // only to celonrtain clielonnts, elontc.
+  21: optional string clielonntId
 
-  // The time (in millis since epoch) when the earlybird client issued this request.
-  // Can be used to estimate request timeout time, capturing in-transit time for the request.
-  23: optional i64 clientRequestTimeMs
+  // Thelon timelon (in millis sincelon elonpoch) whelonn thelon elonarlybird clielonnt issuelond this relonquelonst.
+  // Can belon uselond to elonstimatelon relonquelonst timelonout timelon, capturing in-transit timelon for thelon relonquelonst.
+  23: optional i64 clielonntRelonquelonstTimelonMs
 
-  // Caching parameters used by earlybird roots.
+  // Caching paramelontelonrs uselond by elonarlybird roots.
   24: optional caching.CachingParams cachingParams
 
-  // Deprecated. See SEARCH-2784
-  // Earlybird requests will be early terminated in a best-effort way to prevent them from
-  // exceeding the given timeout.  If timeout is <= 0 this early termination criteria is
-  // disabled.
-  17: optional i32 timeoutMs = -1
+  // Delonpreloncatelond. Selonelon SelonARCH-2784
+  // elonarlybird relonquelonsts will belon elonarly telonrminatelond in a belonst-elonffort way to prelonvelonnt thelonm from
+  // elonxcelonelonding thelon givelonn timelonout.  If timelonout is <= 0 this elonarly telonrmination critelonria is
+  // disablelond.
+  17: optional i32 timelonoutMs = -1
 
-  // Deprecated. See SEARCH-2784
-  // Earlybird requests will be early terminated in a best-effort way to prevent them from
-  // exceeding the given query cost.  If maxQueryCost <= 0 this early termination criteria
-  // is disabled.
-  20: optional double maxQueryCost = -1
-
-
-  // -------- REQUEST-TYPE SPECIFIC OPTIONS --------
-  // These fields contain options for one specific kind of request.  If one of these options
-  // is set the request will be considered to be the appropriate type of request.
-
-  // Options for facet counting requests.
-  11: optional ThriftFacetRequest facetRequest
-
-  // Options for term statistics requests.
-  14: optional ThriftTermStatisticsRequest termStatisticsRequest
+  // Delonpreloncatelond. Selonelon SelonARCH-2784
+  // elonarlybird relonquelonsts will belon elonarly telonrminatelond in a belonst-elonffort way to prelonvelonnt thelonm from
+  // elonxcelonelonding thelon givelonn quelonry cost.  If maxQuelonryCost <= 0 this elonarly telonrmination critelonria
+  // is disablelond.
+  20: optional doublelon maxQuelonryCost = -1
 
 
-  // -------- DEBUG OPTIONS --------
-  // Used for debugging only.
+  // -------- RelonQUelonST-TYPelon SPelonCIFIC OPTIONS --------
+  // Thelonselon fielonlds contain options for onelon speloncific kind of relonquelonst.  If onelon of thelonselon options
+  // is selont thelon relonquelonst will belon considelonrelond to belon thelon appropriatelon typelon of relonquelonst.
 
-  // Debug mode, 0 for no debug information.
-  15: optional i8 debugMode = 0
+  // Options for facelont counting relonquelonsts.
+  11: optional ThriftFacelontRelonquelonst facelontRelonquelonst
 
-  // Can be used to pass extra debug arguments to earlybird.
-  34: optional EarlybirdDebugOptions debugOptions
-
-  // Searches a specific segment by time slice id if set and segment id is > 0.
-  22: optional i64 searchSegmentId
-
-  // -------- THINGS USED ONLY BY THE BLENDER --------
-  // These fields are used by the blender and clients of the blender, but not by earlybird.
-
-  // Specifies what kind of status object to return, if any.
-  7: optional EarlybirdReturnStatusType returnStatusType
+  // Options for telonrm statistics relonquelonsts.
+  14: optional ThriftTelonrmStatisticsRelonquelonst telonrmStatisticsRelonquelonst
 
 
-  // -------- THINGS USED BY THE ROOTS --------
-  // These fields are not in use by earlybirds themselves, but are in use by earlybird roots
-  // (and their clients).
-  // These fields live here since we currently reuse the same thrift request and response structs
-  // for both earlybirds and earlybird roots, and could potentially be moved out if we were to
-  // introduce separate request / response structs specifically for the roots.
+  // -------- DelonBUG OPTIONS --------
+  // Uselond for delonbugging only.
 
-  // We have a threshold for how many hash partition requests need to succeed at the root level
-  // in order for the earlybird root request to be considered successful.
-  // Each type or earlybird queries (e.g. relevance, or term statistics) has a predefined default
-  // threshold value (e.g. 90% or hash partitions need to succeed for a recency query).
-  // The client can optionally set the threshold value to be something other than the default,
-  // by setting this field to a value in the range of 0 (exclusive) to 1 (inclusive).
-  // If this value is set outside of the (0, 1] range, a CLIENT_ERROR EarlybirdResponseCode will
-  // be returned.
-  25: optional double successfulResponseThreshold
+  // Delonbug modelon, 0 for no delonbug information.
+  15: optional i8 delonbugModelon = 0
 
-  // Where does the query come from?
-  26: optional query.ThriftQuerySource querySource
+  // Can belon uselond to pass elonxtra delonbug argumelonnts to elonarlybird.
+  34: optional elonarlybirdDelonbugOptions delonbugOptions
 
-  // Whether to get archive results This flag is advisory. A request may still be restricted from
-  // getting reqults from the archive based on the requesting client, query source, requested
-  // time/id range, etc.
-  27: optional bool getOlderResults
+  // Selonarchelons a speloncific selongmelonnt by timelon slicelon id if selont and selongmelonnt id is > 0.
+  22: optional i64 selonarchSelongmelonntId
 
-  // The list of users followed by the current user.
-  // Used to restrict the values in the fromUserIDFilter64 field when sending a request
-  // to the protectected cluster.
-  28: optional list<i64> followedUserIds
+  // -------- THINGS USelonD ONLY BY THelon BLelonNDelonR --------
+  // Thelonselon fielonlds arelon uselond by thelon blelonndelonr and clielonnts of thelon blelonndelonr, but not by elonarlybird.
 
-  // The adjusted parameters for the protected request.
-  29: optional AdjustedRequestParams adjustedProtectedRequestParams
+  // Speloncifielons what kind of status objelonct to relonturn, if any.
+  7: optional elonarlybirdRelonturnStatusTypelon relonturnStatusTypelon
 
-  // The adjusted parameters for the full archive request.
-  30: optional AdjustedRequestParams adjustedFullArchiveRequestParams
 
-  // Return only the protected tweets. This flag is used by the SuperRoot to return relevance
-  // results that contain only protected tweets.
-  31: optional bool getProtectedTweetsOnly
+  // -------- THINGS USelonD BY THelon ROOTS --------
+  // Thelonselon fielonlds arelon not in uselon by elonarlybirds thelonmselonlvelons, but arelon in uselon by elonarlybird roots
+  // (and thelonir clielonnts).
+  // Thelonselon fielonlds livelon helonrelon sincelon welon currelonntly relonuselon thelon samelon thrift relonquelonst and relonsponselon structs
+  // for both elonarlybirds and elonarlybird roots, and could potelonntially belon movelond out if welon welonrelon to
+  // introducelon selonparatelon relonquelonst / relonsponselon structs speloncifically for thelon roots.
 
-  // Tokenize serialized queries with the appropriate Pengin version(s).
-  // Only has an effect on superroot.
-  32: optional bool retokenizeSerializedQuery
+  // Welon havelon a threlonshold for how many hash partition relonquelonsts nelonelond to succelonelond at thelon root lelonvelonl
+  // in ordelonr for thelon elonarlybird root relonquelonst to belon considelonrelond succelonssful.
+  // elonach typelon or elonarlybird quelonrielons (elon.g. relonlelonvancelon, or telonrm statistics) has a prelondelonfinelond delonfault
+  // threlonshold valuelon (elon.g. 90% or hash partitions nelonelond to succelonelond for a reloncelonncy quelonry).
+  // Thelon clielonnt can optionally selont thelon threlonshold valuelon to belon somelonthing othelonr than thelon delonfault,
+  // by selontting this fielonld to a valuelon in thelon rangelon of 0 (elonxclusivelon) to 1 (inclusivelon).
+  // If this valuelon is selont outsidelon of thelon (0, 1] rangelon, a CLIelonNT_elonRROR elonarlybirdRelonsponselonCodelon will
+  // belon relonturnelond.
+  25: optional doublelon succelonssfulRelonsponselonThrelonshold
 
-  // Flag to ignore tweets that are very recent and could be incompletely indexed.
-  // If false, will allow queries to see results that may violate implicit streaming
-  // guarantees and will search Tweets that have been partially indexed.
-  // See go/indexing-latency for more details. When enabled, prevents seeing tweets
-  // that are less than 15 seconds old (or a similarly configured threshold).
-  // May be set to false unless explicitly set to true.
-  33: optional bool skipVeryRecentTweets = 1
+  // Whelonrelon doelons thelon quelonry comelon from?
+  26: optional quelonry.ThriftQuelonrySourcelon quelonrySourcelon
 
-  // Setting an experimental cluster will reroute traffic at the realtime root layer to an experimental
-  // Earlybird cluster. This will have no impact if set on requests to anywhere other than realtime root.
-  35: optional ExperimentCluster experimentClusterToUse
+  // Whelonthelonr to gelont archivelon relonsults This flag is advisory. A relonquelonst may still belon relonstrictelond from
+  // gelontting relonqults from thelon archivelon baselond on thelon relonquelonsting clielonnt, quelonry sourcelon, relonquelonstelond
+  // timelon/id rangelon, elontc.
+  27: optional bool gelontOldelonrRelonsults
 
-  // Caps number of results returned by roots after merging results from different earlybird partitions/clusters. 
-  // If not set, ThriftSearchQuery.numResults or CollectorParams.numResultsToReturn will be used to cap results. 
-  // This parameter will be ignored if ThriftRelevanceOptions.returnAllResults is set to true.
-  36: optional i32 numResultsToReturnAtRoot
+  // Thelon list of uselonrs followelond by thelon currelonnt uselonr.
+  // Uselond to relonstrict thelon valuelons in thelon fromUselonrIDFiltelonr64 fielonld whelonn selonnding a relonquelonst
+  // to thelon protelonctelonctelond clustelonr.
+  28: optional list<i64> followelondUselonrIds
+
+  // Thelon adjustelond paramelontelonrs for thelon protelonctelond relonquelonst.
+  29: optional AdjustelondRelonquelonstParams adjustelondProtelonctelondRelonquelonstParams
+
+  // Thelon adjustelond paramelontelonrs for thelon full archivelon relonquelonst.
+  30: optional AdjustelondRelonquelonstParams adjustelondFullArchivelonRelonquelonstParams
+
+  // Relonturn only thelon protelonctelond twelonelonts. This flag is uselond by thelon SupelonrRoot to relonturn relonlelonvancelon
+  // relonsults that contain only protelonctelond twelonelonts.
+  31: optional bool gelontProtelonctelondTwelonelontsOnly
+
+  // Tokelonnizelon selonrializelond quelonrielons with thelon appropriatelon Pelonngin velonrsion(s).
+  // Only has an elonffelonct on supelonrroot.
+  32: optional bool relontokelonnizelonSelonrializelondQuelonry
+
+  // Flag to ignorelon twelonelonts that arelon velonry reloncelonnt and could belon incomplelontelonly indelonxelond.
+  // If falselon, will allow quelonrielons to selonelon relonsults that may violatelon implicit strelonaming
+  // guarantelonelons and will selonarch Twelonelonts that havelon belonelonn partially indelonxelond.
+  // Selonelon go/indelonxing-latelonncy for morelon delontails. Whelonn elonnablelond, prelonvelonnts seloneloning twelonelonts
+  // that arelon lelonss than 15 selonconds old (or a similarly configurelond threlonshold).
+  // May belon selont to falselon unlelonss elonxplicitly selont to truelon.
+  33: optional bool skipVelonryReloncelonntTwelonelonts = 1
+
+  // Selontting an elonxpelonrimelonntal clustelonr will relonroutelon traffic at thelon relonaltimelon root layelonr to an elonxpelonrimelonntal
+  // elonarlybird clustelonr. This will havelon no impact if selont on relonquelonsts to anywhelonrelon othelonr than relonaltimelon root.
+  35: optional elonxpelonrimelonntClustelonr elonxpelonrimelonntClustelonrToUselon
+
+  // Caps numbelonr of relonsults relonturnelond by roots aftelonr melonrging relonsults from diffelonrelonnt elonarlybird partitions/clustelonrs.
+  // If not selont, ThriftSelonarchQuelonry.numRelonsults or CollelonctorParams.numRelonsultsToRelonturn will belon uselond to cap relonsults.
+  // This paramelontelonr will belon ignorelond if ThriftRelonlelonvancelonOptions.relonturnAllRelonsults is selont to truelon.
+  36: optional i32 numRelonsultsToRelonturnAtRoot
 }
 
-enum EarlybirdResponseCode {
-  SUCCESS = 0,
+elonnum elonarlybirdRelonsponselonCodelon {
+  SUCCelonSS = 0,
   PARTITION_NOT_FOUND = 1,
-  PARTITION_DISABLED = 2,
-  TRANSIENT_ERROR = 3,
-  PERSISTENT_ERROR = 4,
-  CLIENT_ERROR = 5,
-  PARTITION_SKIPPED = 6,
-  // Request was queued up on the server for so long that it timed out, and was not
-  // executed at all.
-  SERVER_TIMEOUT_ERROR = 7,
-  TIER_SKIPPED = 8,
-  // Not enough partitions returned a successful response. The merged response will have partition
-  // counts and early termination info set, but will not have search results.
-  TOO_MANY_PARTITIONS_FAILED_ERROR = 9,
-  // Client went over its quota, and the request was throttled.
-  QUOTA_EXCEEDED_ERROR = 10,
-  // Client's request is blocked based on Search Infra's policy. Search Infra can can block client's
-  // requests based on the query source of the request.
-  REQUEST_BLOCKED_ERROR = 11,
+  PARTITION_DISABLelonD = 2,
+  TRANSIelonNT_elonRROR = 3,
+  PelonRSISTelonNT_elonRROR = 4,
+  CLIelonNT_elonRROR = 5,
+  PARTITION_SKIPPelonD = 6,
+  // Relonquelonst was quelonuelond up on thelon selonrvelonr for so long that it timelond out, and was not
+  // elonxeloncutelond at all.
+  SelonRVelonR_TIMelonOUT_elonRROR = 7,
+  TIelonR_SKIPPelonD = 8,
+  // Not elonnough partitions relonturnelond a succelonssful relonsponselon. Thelon melonrgelond relonsponselon will havelon partition
+  // counts and elonarly telonrmination info selont, but will not havelon selonarch relonsults.
+  TOO_MANY_PARTITIONS_FAILelonD_elonRROR = 9,
+  // Clielonnt welonnt ovelonr its quota, and thelon relonquelonst was throttlelond.
+  QUOTA_elonXCelonelonDelonD_elonRROR = 10,
+  // Clielonnt's relonquelonst is blockelond baselond on Selonarch Infra's policy. Selonarch Infra can can block clielonnt's
+  // relonquelonsts baselond on thelon quelonry sourcelon of thelon relonquelonst.
+  RelonQUelonST_BLOCKelonD_elonRROR = 11,
 
-  CLIENT_CANCEL_ERROR = 12,
+  CLIelonNT_CANCelonL_elonRROR = 12,
 
-  CLIENT_BLOCKED_BY_TIER_ERROR = 13,
+  CLIelonNT_BLOCKelonD_BY_TIelonR_elonRROR = 13,
 
-  PLACE_HOLDER_2015_09_21 = 14,
+  PLACelon_HOLDelonR_2015_09_21 = 14,
 }
 
-// A recorded request and response.
-struct EarlybirdRequestResponse {
-  // Where did we send this request to.
-  1: optional string sentTo;
-  2: optional EarlybirdRequest request;
-  // This can't be an EarlybirdResponse, because the thrift compiler for Python
-  // doesn't allow cyclic references and we have some Python utilities that will fail.
-  3: optional string response;
+// A reloncordelond relonquelonst and relonsponselon.
+struct elonarlybirdRelonquelonstRelonsponselon {
+  // Whelonrelon did welon selonnd this relonquelonst to.
+  1: optional string selonntTo;
+  2: optional elonarlybirdRelonquelonst relonquelonst;
+  // This can't belon an elonarlybirdRelonsponselon, beloncauselon thelon thrift compilelonr for Python
+  // doelonsn't allow cyclic relonfelonrelonncelons and welon havelon somelon Python utilitielons that will fail.
+  3: optional string relonsponselon;
 }
 
-struct EarlybirdDebugInfo {
+struct elonarlybirdDelonbugInfo {
   1: optional string host
-  2: optional string parsedQuery
-  3: optional string luceneQuery
-  // Requests sent to dependent services. For example, superroot sends to realtime root,
-  // archive root, etc.
-  4: optional list<EarlybirdRequestResponse> sentRequests;
-  // segment level debug info (eg. hitsPerSegment, max/minSearchedTime etc.)
-  5: optional list<string> collectorDebugInfo
-  6: optional list<string> termStatisticsDebugInfo
+  2: optional string parselondQuelonry
+  3: optional string lucelonnelonQuelonry
+  // Relonquelonsts selonnt to delonpelonndelonnt selonrvicelons. For elonxamplelon, supelonrroot selonnds to relonaltimelon root,
+  // archivelon root, elontc.
+  4: optional list<elonarlybirdRelonquelonstRelonsponselon> selonntRelonquelonsts;
+  // selongmelonnt lelonvelonl delonbug info (elong. hitsPelonrSelongmelonnt, max/minSelonarchelondTimelon elontc.)
+  5: optional list<string> collelonctorDelonbugInfo
+  6: optional list<string> telonrmStatisticsDelonbugInfo
 }
 
-struct EarlybirdDebugOptions {
-  1: optional bool includeCollectorDebugInfo
+struct elonarlybirdDelonbugOptions {
+  1: optional bool includelonCollelonctorDelonbugInfo
 }
 
-struct TierResponse {
-  1: optional EarlybirdResponseCode tierResponseCode
+struct TielonrRelonsponselon {
+  1: optional elonarlybirdRelonsponselonCodelon tielonrRelonsponselonCodelon
   2: optional i32 numPartitions
-  3: optional i32 numSuccessfulPartitions
+  3: optional i32 numSuccelonssfulPartitions
 }
 
-struct EarlybirdServerStats {
-  // The hostname of the Earlybird that processed this request.
-  1: optional string hostname
+struct elonarlybirdSelonrvelonrStats {
+  // Thelon hostnamelon of thelon elonarlybird that procelonsselond this relonquelonst.
+  1: optional string hostnamelon
 
-  // The partition to which this earlybird belongs.
+  // Thelon partition to which this elonarlybird belonlongs.
   2: optional i32 partition
 
-  // Current Earlybird QPS.
-  // Earlybirds should set this field at the end of a request (not at the start). This would give
-  // roots a more up-to-date view of the load on the earlybirds.
-  3: optional i64 currentQps
+  // Currelonnt elonarlybird QPS.
+  // elonarlybirds should selont this fielonld at thelon elonnd of a relonquelonst (not at thelon start). This would givelon
+  // roots a morelon up-to-datelon vielonw of thelon load on thelon elonarlybirds.
+  3: optional i64 currelonntQps
 
-  // The time the request waited in the queue before Earlybird started processing it.
-  // This does not include the time spent in the finagle queue: it's the time between the moment
-  // earlybird received the request, and the moment it started processing the request.
-  4: optional i64 queueTimeMillis
+  // Thelon timelon thelon relonquelonst waitelond in thelon quelonuelon belonforelon elonarlybird startelond procelonssing it.
+  // This doelons not includelon thelon timelon spelonnt in thelon finaglelon quelonuelon: it's thelon timelon belontwelonelonn thelon momelonnt
+  // elonarlybird reloncelonivelond thelon relonquelonst, and thelon momelonnt it startelond procelonssing thelon relonquelonst.
+  4: optional i64 quelonuelonTimelonMillis
 
-  // The average request time in the queue before Earlybird started processing it.
-  // This does not include the time that requests spent in the finagle queue: it's the average time
-  // between the moment earlybird received its requests, and the moment it started processing them.
-  5: optional i64 averageQueueTimeMillis
+  // Thelon avelonragelon relonquelonst timelon in thelon quelonuelon belonforelon elonarlybird startelond procelonssing it.
+  // This doelons not includelon thelon timelon that relonquelonsts spelonnt in thelon finaglelon quelonuelon: it's thelon avelonragelon timelon
+  // belontwelonelonn thelon momelonnt elonarlybird reloncelonivelond its relonquelonsts, and thelon momelonnt it startelond procelonssing thelonm.
+  5: optional i64 avelonragelonQuelonuelonTimelonMillis
 
-  // Current average per-request latency as perceived by Earlybird.
-  6: optional i64 averageLatencyMicros
+  // Currelonnt avelonragelon pelonr-relonquelonst latelonncy as pelonrcelonivelond by elonarlybird.
+  6: optional i64 avelonragelonLatelonncyMicros
 
-  // The tier to which this earlybird belongs.
-  7: optional string tierName
+  // Thelon tielonr to which this elonarlybird belonlongs.
+  7: optional string tielonrNamelon
 }
 
-struct EarlybirdResponse {
-  // Next available field ID: 17
-  1: optional ThriftSearchResults searchResults
-  5: optional ThriftFacetResults facetResults
-  6: optional ThriftTermStatisticsResults termStatisticsResults
-  2: required EarlybirdResponseCode responseCode
-  3: required i64 responseTime
-  7: optional i64 responseTimeMicros
-  // fields below will only be returned if debug > 1 in the request.
-  4: optional string debugString
-  8: optional EarlybirdDebugInfo debugInfo
+struct elonarlybirdRelonsponselon {
+  // Nelonxt availablelon fielonld ID: 17
+  1: optional ThriftSelonarchRelonsults selonarchRelonsults
+  5: optional ThriftFacelontRelonsults facelontRelonsults
+  6: optional ThriftTelonrmStatisticsRelonsults telonrmStatisticsRelonsults
+  2: relonquirelond elonarlybirdRelonsponselonCodelon relonsponselonCodelon
+  3: relonquirelond i64 relonsponselonTimelon
+  7: optional i64 relonsponselonTimelonMicros
+  // fielonlds belonlow will only belon relonturnelond if delonbug > 1 in thelon relonquelonst.
+  4: optional string delonbugString
+  8: optional elonarlybirdDelonbugInfo delonbugInfo
 
-  // Only exists for merged earlybird response.
+  // Only elonxists for melonrgelond elonarlybird relonsponselon.
   10: optional i32 numPartitions
-  11: optional i32 numSuccessfulPartitions
-  // Only exists for merged earlybird response from multiple tiers.
-  13: optional list<TierResponse> perTierResponse
+  11: optional i32 numSuccelonssfulPartitions
+  // Only elonxists for melonrgelond elonarlybird relonsponselon from multiplelon tielonrs.
+  13: optional list<TielonrRelonsponselon> pelonrTielonrRelonsponselon
 
-  // Total number of segments that were searched. Partially searched segments are fully counted.
-  // e.g. if we searched 1 segment fully, and early terminated half way through the second
-  // segment, this field should be set to 2.
-  15: optional i32 numSearchedSegments
+  // Total numbelonr of selongmelonnts that welonrelon selonarchelond. Partially selonarchelond selongmelonnts arelon fully countelond.
+  // elon.g. if welon selonarchelond 1 selongmelonnt fully, and elonarly telonrminatelond half way through thelon seloncond
+  // selongmelonnt, this fielonld should belon selont to 2.
+  15: optional i32 numSelonarchelondSelongmelonnts
 
-  // Whether the request early terminated, if so, the termination reason.
-  12: optional search.EarlyTerminationInfo earlyTerminationInfo
+  // Whelonthelonr thelon relonquelonst elonarly telonrminatelond, if so, thelon telonrmination relonason.
+  12: optional selonarch.elonarlyTelonrminationInfo elonarlyTelonrminationInfo
 
-  // Whether this response is from cache.
-  14: optional bool cacheHit
+  // Whelonthelonr this relonsponselon is from cachelon.
+  14: optional bool cachelonHit
 
-  // Stats used by roots to determine if we should go into degraded mode.
-  16: optional EarlybirdServerStats earlybirdServerStats
+  // Stats uselond by roots to delontelonrminelon if welon should go into delongradelond modelon.
+  16: optional elonarlybirdSelonrvelonrStats elonarlybirdSelonrvelonrStats
 }
 
-enum EarlybirdStatusCode {
+elonnum elonarlybirdStatusCodelon {
   STARTING = 0,
-  CURRENT = 1,
+  CURRelonNT = 1,
   STOPPING = 2,
-  UNHEALTHY = 3,
-  BLACKLISTED = 4,
+  UNHelonALTHY = 3,
+  BLACKLISTelonD = 4,
 
-  PLACE_HOLDER5 = 5,
-  PLACE_HOLDER6 = 6,
+  PLACelon_HOLDelonR5 = 5,
+  PLACelon_HOLDelonR6 = 6,
 }
 
-struct EarlybirdStatusResponse {
-  1: required EarlybirdStatusCode code
-  2: required i64 aliveSince
-  3: optional string message
+struct elonarlybirdStatusRelonsponselon {
+  1: relonquirelond elonarlybirdStatusCodelon codelon
+  2: relonquirelond i64 alivelonSincelon
+  3: optional string melonssagelon
 }
 
-service EarlybirdService {
-  string getName(),
-  EarlybirdStatusResponse getStatus(),
-  EarlybirdResponse search( 1: EarlybirdRequest request )
+selonrvicelon elonarlybirdSelonrvicelon {
+  string gelontNamelon(),
+  elonarlybirdStatusRelonsponselon gelontStatus(),
+  elonarlybirdRelonsponselon selonarch( 1: elonarlybirdRelonquelonst relonquelonst )
 }

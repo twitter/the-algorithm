@@ -1,24 +1,24 @@
-package com.twitter.follow_recommendations.common.clients.gizmoduck
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.gizmoduck
 
-import com.google.inject.Provides
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.follow_recommendations.common.clients.common.BaseClientModule
-import com.twitter.gizmoduck.thriftscala.QueryFields
-import com.twitter.gizmoduck.thriftscala.UserService
-import com.twitter.stitch.gizmoduck.Gizmoduck
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.common.BaselonClielonntModulelon
+import com.twittelonr.gizmoduck.thriftscala.QuelonryFielonlds
+import com.twittelonr.gizmoduck.thriftscala.UselonrSelonrvicelon
+import com.twittelonr.stitch.gizmoduck.Gizmoduck
+import javax.injelonct.Singlelonton
 
-object GizmoduckModule extends BaseClientModule[UserService.MethodPerEndpoint] with MtlsClient {
-  override val label = "gizmoduck"
-  override val dest = "/s/gizmoduck/gizmoduck"
+objelonct GizmoduckModulelon elonxtelonnds BaselonClielonntModulelon[UselonrSelonrvicelon.MelonthodPelonrelonndpoint] with MtlsClielonnt {
+  ovelonrridelon val labelonl = "gizmoduck"
+  ovelonrridelon val delonst = "/s/gizmoduck/gizmoduck"
 
-  @Provides
-  @Singleton
-  def provideExtraGizmoduckQueryFields: Set[QueryFields] = Set.empty
+  @Providelons
+  @Singlelonton
+  delonf providelonelonxtraGizmoduckQuelonryFielonlds: Selont[QuelonryFielonlds] = Selont.elonmpty
 
-  @Provides
-  @Singleton
-  def providesStitchClient(futureIface: UserService.MethodPerEndpoint): Gizmoduck = {
-    Gizmoduck(futureIface)
+  @Providelons
+  @Singlelonton
+  delonf providelonsStitchClielonnt(futurelonIfacelon: UselonrSelonrvicelon.MelonthodPelonrelonndpoint): Gizmoduck = {
+    Gizmoduck(futurelonIfacelon)
   }
 }

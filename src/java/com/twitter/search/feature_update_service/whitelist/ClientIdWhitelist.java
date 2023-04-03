@@ -1,77 +1,77 @@
-package com.twitter.search.feature_update_service.whitelist;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.whitelonlist;
 
-import java.io.InputStream;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicReference;
+import java.io.InputStrelonam;
+import java.util.Selont;
+import java.util.concurrelonnt.elonxeloncutors;
+import java.util.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.atomic.AtomicRelonfelonrelonncelon;
 
-import com.google.common.collect.ImmutableSet;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
+import com.googlelon.common.util.concurrelonnt.ThrelonadFactoryBuildelonr;
 
-import org.yaml.snakeyaml.Yaml;
+import org.yaml.snakelonyaml.Yaml;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.search.common.util.io.periodic.PeriodicFileLoader;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.thrift.ClielonntId;
+import com.twittelonr.selonarch.common.util.io.pelonriodic.PelonriodicFilelonLoadelonr;
 
 /**
- * ClientIdWhitelist extends PeriodicFileLoader to load client whitelist
- * from configbus and checks to see if current clientId is allowed
+ * ClielonntIdWhitelonlist elonxtelonnds PelonriodicFilelonLoadelonr to load clielonnt whitelonlist
+ * from configbus and cheloncks to selonelon if currelonnt clielonntId is allowelond
  */
-public class ClientIdWhitelist extends PeriodicFileLoader {
+public class ClielonntIdWhitelonlist elonxtelonnds PelonriodicFilelonLoadelonr {
 
-  private final AtomicReference<ImmutableSet<ClientId>> clientIdSet = new AtomicReference<>();
+  privatelon final AtomicRelonfelonrelonncelon<ImmutablelonSelont<ClielonntId>> clielonntIdSelont = nelonw AtomicRelonfelonrelonncelon<>();
 
 
-  public ClientIdWhitelist(String clientIdWhitelistPath, ScheduledExecutorService executorService,
+  public ClielonntIdWhitelonlist(String clielonntIdWhitelonlistPath, SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutorSelonrvicelon,
                            Clock clock) {
-    super("ClientIdWhitelist", clientIdWhitelistPath, executorService, clock);
+    supelonr("ClielonntIdWhitelonlist", clielonntIdWhitelonlistPath, elonxeloncutorSelonrvicelon, clock);
   }
 
   /**
-   * Creates the object that manages loads from the clientIdWhitelistpath in config.
-   * It periodically reloads the client whitelist file using the given executor service.
+   * Crelonatelons thelon objelonct that managelons loads from thelon clielonntIdWhitelonlistpath in config.
+   * It pelonriodically relonloads thelon clielonnt whitelonlist filelon using thelon givelonn elonxeloncutor selonrvicelon.
    */
-  public static ClientIdWhitelist initWhitelist(
-      String clientIdWhitelistPath, ScheduledExecutorService executorService,
-      Clock clock) throws Exception {
-    ClientIdWhitelist clientIdWhitelist = new ClientIdWhitelist(
-        clientIdWhitelistPath, executorService, clock);
-    clientIdWhitelist.init();
-    return clientIdWhitelist;
+  public static ClielonntIdWhitelonlist initWhitelonlist(
+      String clielonntIdWhitelonlistPath, SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutorSelonrvicelon,
+      Clock clock) throws elonxcelonption {
+    ClielonntIdWhitelonlist clielonntIdWhitelonlist = nelonw ClielonntIdWhitelonlist(
+        clielonntIdWhitelonlistPath, elonxeloncutorSelonrvicelon, clock);
+    clielonntIdWhitelonlist.init();
+    relonturn clielonntIdWhitelonlist;
   }
 
   /**
-   * Creates clock and executor service needed to create a periodic file loading object
-   * then returns object that accpets file.
-   * @param clientWhitelistPath
-   * @return ClientIdWhitelist
-   * @throws Exception
+   * Crelonatelons clock and elonxeloncutor selonrvicelon nelonelondelond to crelonatelon a pelonriodic filelon loading objelonct
+   * thelonn relonturns objelonct that accpelonts filelon.
+   * @param clielonntWhitelonlistPath
+   * @relonturn ClielonntIdWhitelonlist
+   * @throws elonxcelonption
    */
-  public static ClientIdWhitelist initWhitelist(String clientWhitelistPath) throws Exception {
-    Clock clock = Clock.SYSTEM_CLOCK;
-    ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor(
-        new ThreadFactoryBuilder()
-            .setNameFormat("client-whitelist-reloader")
-            .setDaemon(true)
+  public static ClielonntIdWhitelonlist initWhitelonlist(String clielonntWhitelonlistPath) throws elonxcelonption {
+    Clock clock = Clock.SYSTelonM_CLOCK;
+    SchelondulelondelonxeloncutorSelonrvicelon elonxeloncutorSelonrvicelon = elonxeloncutors.nelonwSinglelonThrelonadSchelondulelondelonxeloncutor(
+        nelonw ThrelonadFactoryBuildelonr()
+            .selontNamelonFormat("clielonnt-whitelonlist-relonloadelonr")
+            .selontDaelonmon(truelon)
             .build());
 
-    return initWhitelist(clientWhitelistPath, executorService, clock);
+    relonturn initWhitelonlist(clielonntWhitelonlistPath, elonxeloncutorSelonrvicelon, clock);
   }
-  @Override
-  protected void accept(InputStream fileStream) {
-    ImmutableSet.Builder<ClientId> clientIdBuilder = new ImmutableSet.Builder<>();
-    Yaml yaml = new Yaml();
-    Set<String> set = yaml.loadAs(fileStream, Set.class);
-    for (String id : set) {
-      clientIdBuilder.add(ClientId.apply(id));
+  @Ovelonrridelon
+  protelonctelond void accelonpt(InputStrelonam filelonStrelonam) {
+    ImmutablelonSelont.Buildelonr<ClielonntId> clielonntIdBuildelonr = nelonw ImmutablelonSelont.Buildelonr<>();
+    Yaml yaml = nelonw Yaml();
+    Selont<String> selont = yaml.loadAs(filelonStrelonam, Selont.class);
+    for (String id : selont) {
+      clielonntIdBuildelonr.add(ClielonntId.apply(id));
     }
-    clientIdSet.set(clientIdBuilder.build());
+    clielonntIdSelont.selont(clielonntIdBuildelonr.build());
   }
 
-  // checks to see if clientId is in set of whitelisted clients
-  public boolean isClientAllowed(ClientId clientId) {
-    return clientIdSet.get().contains(clientId);
+  // cheloncks to selonelon if clielonntId is in selont of whitelonlistelond clielonnts
+  public boolelonan isClielonntAllowelond(ClielonntId clielonntId) {
+    relonturn clielonntIdSelont.gelont().contains(clielonntId);
   }
 }

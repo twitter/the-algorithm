@@ -1,124 +1,124 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-private[selector] object DynamicPositionSelector {
+privatelon[selonlelonctor] objelonct DynamicPositionSelonlelonctor {
 
-  sealed trait IndexType
-  case object RelativeIndices extends IndexType
-  case object AbsoluteIndices extends IndexType
+  selonalelond trait IndelonxTypelon
+  caselon objelonct RelonlativelonIndicelons elonxtelonnds IndelonxTypelon
+  caselon objelonct AbsolutelonIndicelons elonxtelonnds IndelonxTypelon
 
   /**
-   * Given an existing `result` seq, inserts candidates from `candidatesToInsertByIndex` into the `result` 1-by-1 with
-   * the provided index being the index relative to the `result` if given [[RelativeIndices]] or
-   * absolute index if given [[AbsoluteIndices]] (excluding duplicate insertions at an index, see below).
+   * Givelonn an elonxisting `relonsult` selonq, inselonrts candidatelons from `candidatelonsToInselonrtByIndelonx` into thelon `relonsult` 1-by-1 with
+   * thelon providelond indelonx beloning thelon indelonx relonlativelon to thelon `relonsult` if givelonn [[RelonlativelonIndicelons]] or
+   * absolutelon indelonx if givelonn [[AbsolutelonIndicelons]] (elonxcluding duplicatelon inselonrtions at an indelonx, selonelon belonlow).
    *
-   * Indices below 0 are added to the front and indices > the length are added to the end
+   * Indicelons belonlow 0 arelon addelond to thelon front and indicelons > thelon lelonngth arelon addelond to thelon elonnd
    *
-   * @note if multiple candidates exist with the same index, they are inserted in the order which they appear and only count
-   *       as a single element with regards to the absolute index values, see the example below
+   * @notelon if multiplelon candidatelons elonxist with thelon samelon indelonx, thelony arelon inselonrtelond in thelon ordelonr which thelony appelonar and only count
+   *       as a singlelon elonlelonmelonnt with relongards to thelon absolutelon indelonx valuelons, selonelon thelon elonxamplelon belonlow
    *
-   * @example when using [[RelativeIndices]] {{{
-   *          mergeByIndexIntoResult(
-   *          Seq(
+   * @elonxamplelon whelonn using [[RelonlativelonIndicelons]] {{{
+   *          melonrgelonByIndelonxIntoRelonsult(
+   *          Selonq(
    *            0 -> "a",
    *            0 -> "b",
    *            0 -> "c",
-   *            1 -> "e",
+   *            1 -> "elon",
    *            2 -> "g",
    *            2 -> "h"),
-   *          Seq(
+   *          Selonq(
    *            "D",
    *            "F"
    *          ),
-   *          RelativeIndices) == Seq(
+   *          RelonlativelonIndicelons) == Selonq(
    *            "a",
    *            "b",
    *            "c",
    *            "D",
-   *            "e",
+   *            "elon",
    *            "F",
    *            "g",
    *            "h"
    *          )
    * }}}
    *
-   * @example when using [[AbsoluteIndices]] {{{
-   *          mergeByIndexIntoResult(
-   *          Seq(
+   * @elonxamplelon whelonn using [[AbsolutelonIndicelons]] {{{
+   *          melonrgelonByIndelonxIntoRelonsult(
+   *          Selonq(
    *            0 -> "a",
    *            0 -> "b",
    *            1 -> "c",
-   *            3 -> "e",
+   *            3 -> "elon",
    *            5 -> "g",
    *            6 -> "h"),
-   *          Seq(
+   *          Selonq(
    *            "D",
    *            "F"
    *          ),
-   *          AbsoluteIndices) == Seq(
-   *            "a", // index 0, "a" and "b" together only count as 1 element with regards to indexes because they have duplicate insertion points
-   *            "b", // index 0
-   *            "c", // index 1
-   *            "D", // index 2
-   *            "e", // index 3
-   *            "F", // index 4
-   *            "g", // index 5
-   *            "h" // index 6
+   *          AbsolutelonIndicelons) == Selonq(
+   *            "a", // indelonx 0, "a" and "b" togelonthelonr only count as 1 elonlelonmelonnt with relongards to indelonxelons beloncauselon thelony havelon duplicatelon inselonrtion points
+   *            "b", // indelonx 0
+   *            "c", // indelonx 1
+   *            "D", // indelonx 2
+   *            "elon", // indelonx 3
+   *            "F", // indelonx 4
+   *            "g", // indelonx 5
+   *            "h" // indelonx 6
    *          )
    * }}}
    */
-  def mergeByIndexIntoResult[T]( // generic on `T` to simplify unit testing
-    candidatesToInsertByIndex: Seq[(Int, T)],
-    result: Seq[T],
-    indexType: IndexType
-  ): Seq[T] = {
-    val positionAndCandidateList = candidatesToInsertByIndex.sortWith {
-      case ((indexLeft: Int, _), (indexRight: Int, _)) =>
-        indexLeft < indexRight // order by desired absolute index ascending
+  delonf melonrgelonByIndelonxIntoRelonsult[T]( // gelonnelonric on `T` to simplify unit telonsting
+    candidatelonsToInselonrtByIndelonx: Selonq[(Int, T)],
+    relonsult: Selonq[T],
+    indelonxTypelon: IndelonxTypelon
+  ): Selonq[T] = {
+    val positionAndCandidatelonList = candidatelonsToInselonrtByIndelonx.sortWith {
+      caselon ((indelonxLelonft: Int, _), (indelonxRight: Int, _)) =>
+        indelonxLelonft < indelonxRight // ordelonr by delonsirelond absolutelon indelonx ascelonnding
     }
 
-    // Merge result and positionAndCandidateList into resultUpdated while making sure that the entries
-    // from the positionAndCandidateList are inserted at the right index.
-    val resultUpdated = Seq.newBuilder[T]
-    resultUpdated.sizeHint(result.size + positionAndCandidateList.size)
+    // Melonrgelon relonsult and positionAndCandidatelonList into relonsultUpdatelond whilelon making surelon that thelon elonntrielons
+    // from thelon positionAndCandidatelonList arelon inselonrtelond at thelon right indelonx.
+    val relonsultUpdatelond = Selonq.nelonwBuildelonr[T]
+    relonsultUpdatelond.sizelonHint(relonsult.sizelon + positionAndCandidatelonList.sizelon)
 
-    var currentResultIndex = 0
-    val inputResultIterator = result.iterator
-    val positionAndCandidateIterator = positionAndCandidateList.iterator.buffered
-    var previousInsertPosition: Option[Int] = None
+    var currelonntRelonsultIndelonx = 0
+    val inputRelonsultItelonrator = relonsult.itelonrator
+    val positionAndCandidatelonItelonrator = positionAndCandidatelonList.itelonrator.buffelonrelond
+    var prelonviousInselonrtPosition: Option[Int] = Nonelon
 
-    while (inputResultIterator.nonEmpty && positionAndCandidateIterator.nonEmpty) {
-      positionAndCandidateIterator.head match {
-        case (nextInsertionPosition, nextCandidateToInsert)
-            if previousInsertPosition.contains(nextInsertionPosition) =>
-          // inserting multiple candidates at the same index
-          resultUpdated += nextCandidateToInsert
-          // do not increment any indices, but insert the candidate and advance to the next candidate
-          positionAndCandidateIterator.next()
+    whilelon (inputRelonsultItelonrator.nonelonmpty && positionAndCandidatelonItelonrator.nonelonmpty) {
+      positionAndCandidatelonItelonrator.helonad match {
+        caselon (nelonxtInselonrtionPosition, nelonxtCandidatelonToInselonrt)
+            if prelonviousInselonrtPosition.contains(nelonxtInselonrtionPosition) =>
+          // inselonrting multiplelon candidatelons at thelon samelon indelonx
+          relonsultUpdatelond += nelonxtCandidatelonToInselonrt
+          // do not increlonmelonnt any indicelons, but inselonrt thelon candidatelon and advancelon to thelon nelonxt candidatelon
+          positionAndCandidatelonItelonrator.nelonxt()
 
-        case (nextInsertionPosition, nextCandidateToInsert)
-            if currentResultIndex >= nextInsertionPosition =>
-          // inserting a candidate at a new index
-          // add candidate to the results
-          resultUpdated += nextCandidateToInsert
-          // save the position of the inserted element to handle duplicate index insertions
-          previousInsertPosition = Some(nextInsertionPosition)
-          // advance to next candidate
-          positionAndCandidateIterator.next()
-          if (indexType == AbsoluteIndices) {
-            // if the indices are absolute, instead of relative to the original `result` we need to
-            // count the insertions of candidates into the results towards the `currentResultIndex`
-            currentResultIndex += 1
+        caselon (nelonxtInselonrtionPosition, nelonxtCandidatelonToInselonrt)
+            if currelonntRelonsultIndelonx >= nelonxtInselonrtionPosition =>
+          // inselonrting a candidatelon at a nelonw indelonx
+          // add candidatelon to thelon relonsults
+          relonsultUpdatelond += nelonxtCandidatelonToInselonrt
+          // savelon thelon position of thelon inselonrtelond elonlelonmelonnt to handlelon duplicatelon indelonx inselonrtions
+          prelonviousInselonrtPosition = Somelon(nelonxtInselonrtionPosition)
+          // advancelon to nelonxt candidatelon
+          positionAndCandidatelonItelonrator.nelonxt()
+          if (indelonxTypelon == AbsolutelonIndicelons) {
+            // if thelon indicelons arelon absolutelon, instelonad of relonlativelon to thelon original `relonsult` welon nelonelond to
+            // count thelon inselonrtions of candidatelons into thelon relonsults towards thelon `currelonntRelonsultIndelonx`
+            currelonntRelonsultIndelonx += 1
           }
-        case _ =>
-          // no candidate to insert by index so use the candidates from the result and increment the index
-          resultUpdated += inputResultIterator.next()
-          currentResultIndex += 1
+        caselon _ =>
+          // no candidatelon to inselonrt by indelonx so uselon thelon candidatelons from thelon relonsult and increlonmelonnt thelon indelonx
+          relonsultUpdatelond += inputRelonsultItelonrator.nelonxt()
+          currelonntRelonsultIndelonx += 1
       }
     }
-    // one of the iterators is empty, so append the remaining candidates in order to the end
-    resultUpdated ++= positionAndCandidateIterator.map { case (_, candidate) => candidate }
-    resultUpdated ++= inputResultIterator
+    // onelon of thelon itelonrators is elonmpty, so appelonnd thelon relonmaining candidatelons in ordelonr to thelon elonnd
+    relonsultUpdatelond ++= positionAndCandidatelonItelonrator.map { caselon (_, candidatelon) => candidatelon }
+    relonsultUpdatelond ++= inputRelonsultItelonrator
 
-    resultUpdated.result()
+    relonsultUpdatelond.relonsult()
   }
 }

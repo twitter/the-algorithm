@@ -1,18 +1,18 @@
-package com.twitter.cr_mixer
+packagelon com.twittelonr.cr_mixelonr
 
-import com.twitter.finatra.http.routing.HttpWarmup
-import com.twitter.finatra.httpclient.RequestBuilder._
-import com.twitter.inject.Logging
-import com.twitter.inject.utils.Handler
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finatra.http.routing.HttpWarmup
+import com.twittelonr.finatra.httpclielonnt.RelonquelonstBuildelonr._
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.injelonct.utils.Handlelonr
+import com.twittelonr.util.Try
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CrMixerHttpServerWarmupHandler @Inject() (warmup: HttpWarmup) extends Handler with Logging {
+@Singlelonton
+class CrMixelonrHttpSelonrvelonrWarmupHandlelonr @Injelonct() (warmup: HttpWarmup) elonxtelonnds Handlelonr with Logging {
 
-  override def handle(): Unit = {
-    Try(warmup.send(get("/admin/cr-mixer/product-pipelines"), admin = true)())
-      .onFailure(e => error(e.getMessage, e))
+  ovelonrridelon delonf handlelon(): Unit = {
+    Try(warmup.selonnd(gelont("/admin/cr-mixelonr/product-pipelonlinelons"), admin = truelon)())
+      .onFailurelon(elon => elonrror(elon.gelontMelonssagelon, elon))
   }
 }

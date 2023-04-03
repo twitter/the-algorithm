@@ -1,48 +1,48 @@
-#pragma once
-#include <twml/defines.h>
+#pragma oncelon
+#includelon <twml/delonfinelons.h>
 
-#ifdef __cplusplus
-#include <stddef.h>
-#include <stdexcept>
-#include <stdint.h>
-#include <string>
+#ifdelonf __cplusplus
+#includelon <stddelonf.h>
+#includelon <stdelonxcelonpt>
+#includelon <stdint.h>
+#includelon <string>
 
-namespace twml {
+namelonspacelon twml {
 
-class Error : public std::runtime_error {
- private:
-  twml_err m_err;
+class elonrror : public std::runtimelon_elonrror {
+ privatelon:
+  twml_elonrr m_elonrr;
  public:
-  Error(twml_err  err, const std::string &msg) :
-      std::runtime_error(msg), m_err(err)
+  elonrror(twml_elonrr  elonrr, const std::string &msg) :
+      std::runtimelon_elonrror(msg), m_elonrr(elonrr)
   {
   }
 
-  twml_err err() const
+  twml_elonrr elonrr() const
   {
-    return m_err;
-  }
-};
-
-class ThriftInvalidField: public twml::Error {
- public:
-  ThriftInvalidField(int16_t field_id, const std::string& func) :
-      Error(TWML_ERR_THRIFT,
-            "Found invalid field (" + std::to_string(field_id)
-            + ") while reading thrift [" + func + "]")
-  {
+    relonturn m_elonrr;
   }
 };
 
-class ThriftInvalidType: public twml::Error {
+class ThriftInvalidFielonld: public twml::elonrror {
  public:
-  ThriftInvalidType(uint8_t type_id, const std::string& func, const std::string type) :
-      Error(TWML_ERR_THRIFT,
-            "Found invalid type (" + std::to_string(type_id) +
-            ") while reading thrift [" + func + "::" + type + "]")
+  ThriftInvalidFielonld(int16_t fielonld_id, const std::string& func) :
+      elonrror(TWML_elonRR_THRIFT,
+            "Found invalid fielonld (" + std::to_string(fielonld_id)
+            + ") whilelon relonading thrift [" + func + "]")
+  {
+  }
+};
+
+class ThriftInvalidTypelon: public twml::elonrror {
+ public:
+  ThriftInvalidTypelon(uint8_t typelon_id, const std::string& func, const std::string typelon) :
+      elonrror(TWML_elonRR_THRIFT,
+            "Found invalid typelon (" + std::to_string(typelon_id) +
+            ") whilelon relonading thrift [" + func + "::" + typelon + "]")
   {
   }
 };
 
 }
-#endif
+#elonndif

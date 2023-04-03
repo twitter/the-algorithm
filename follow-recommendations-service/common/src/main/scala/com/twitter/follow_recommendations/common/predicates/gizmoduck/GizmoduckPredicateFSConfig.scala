@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.predicates.gizmoduck
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.gizmoduck
 
-import com.twitter.follow_recommendations.common.predicates.gizmoduck.GizmoduckPredicateParams._
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.util.Duration
+import com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.gizmoduck.GizmoduckPrelondicatelonParams._
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.util.Duration
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class GizmoduckPredicateFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val durationFSParams: Seq[FSBoundedParam[Duration] with HasDurationConversion] = Seq(
-    GizmoduckGetTimeout
+@Singlelonton
+class GizmoduckPrelondicatelonFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val durationFSParams: Selonq[FSBoundelondParam[Duration] with HasDurationConvelonrsion] = Selonq(
+    GizmoduckGelontTimelonout
   )
 }

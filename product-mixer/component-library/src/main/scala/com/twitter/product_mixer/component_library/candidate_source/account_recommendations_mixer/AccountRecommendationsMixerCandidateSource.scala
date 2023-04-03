@@ -1,57 +1,57 @@
-package com.twitter.product_mixer.component_library.candidate_source.account_recommendations_mixer
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.account_reloncommelonndations_mixelonr
 
-import com.twitter.account_recommendations_mixer.{thriftscala => t}
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.account_reloncommelonndations_mixelonr.{thriftscala => t}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelonWithelonxtractelondFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonsWithSourcelonFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object WhoToFollowModuleHeaderFeature extends Feature[UserCandidate, t.Header]
-object WhoToFollowModuleFooterFeature extends Feature[UserCandidate, Option[t.Footer]]
-object WhoToFollowModuleDisplayOptionsFeature
-    extends Feature[UserCandidate, Option[t.DisplayOptions]]
+objelonct WhoToFollowModulelonHelonadelonrFelonaturelon elonxtelonnds Felonaturelon[UselonrCandidatelon, t.Helonadelonr]
+objelonct WhoToFollowModulelonFootelonrFelonaturelon elonxtelonnds Felonaturelon[UselonrCandidatelon, Option[t.Footelonr]]
+objelonct WhoToFollowModulelonDisplayOptionsFelonaturelon
+    elonxtelonnds Felonaturelon[UselonrCandidatelon, Option[t.DisplayOptions]]
 
-@Singleton
-class AccountRecommendationsMixerCandidateSource @Inject() (
-  accountRecommendationsMixer: t.AccountRecommendationsMixer.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[
-      t.AccountRecommendationsMixerRequest,
-      t.RecommendedUser
+@Singlelonton
+class AccountReloncommelonndationsMixelonrCandidatelonSourcelon @Injelonct() (
+  accountReloncommelonndationsMixelonr: t.AccountReloncommelonndationsMixelonr.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelonWithelonxtractelondFelonaturelons[
+      t.AccountReloncommelonndationsMixelonrRelonquelonst,
+      t.ReloncommelonndelondUselonr
     ] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(name = "AccountRecommendationsMixer")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr(namelon = "AccountReloncommelonndationsMixelonr")
 
-  override def apply(
-    request: t.AccountRecommendationsMixerRequest
-  ): Stitch[CandidatesWithSourceFeatures[t.RecommendedUser]] = {
+  ovelonrridelon delonf apply(
+    relonquelonst: t.AccountReloncommelonndationsMixelonrRelonquelonst
+  ): Stitch[CandidatelonsWithSourcelonFelonaturelons[t.ReloncommelonndelondUselonr]] = {
     Stitch
-      .callFuture(accountRecommendationsMixer.getWtfRecommendations(request))
-      .map { response: t.WhoToFollowResponse =>
-        responseToCandidatesWithSourceFeatures(
-          response.userRecommendations,
-          response.header,
-          response.footer,
-          response.displayOptions)
+      .callFuturelon(accountReloncommelonndationsMixelonr.gelontWtfReloncommelonndations(relonquelonst))
+      .map { relonsponselon: t.WhoToFollowRelonsponselon =>
+        relonsponselonToCandidatelonsWithSourcelonFelonaturelons(
+          relonsponselon.uselonrReloncommelonndations,
+          relonsponselon.helonadelonr,
+          relonsponselon.footelonr,
+          relonsponselon.displayOptions)
       }
   }
 
-  private def responseToCandidatesWithSourceFeatures(
-    userRecommendations: Seq[t.RecommendedUser],
-    header: t.Header,
-    footer: Option[t.Footer],
+  privatelon delonf relonsponselonToCandidatelonsWithSourcelonFelonaturelons(
+    uselonrReloncommelonndations: Selonq[t.ReloncommelonndelondUselonr],
+    helonadelonr: t.Helonadelonr,
+    footelonr: Option[t.Footelonr],
     displayOptions: Option[t.DisplayOptions],
-  ): CandidatesWithSourceFeatures[t.RecommendedUser] = {
-    val features = FeatureMapBuilder()
-      .add(WhoToFollowModuleHeaderFeature, header)
-      .add(WhoToFollowModuleFooterFeature, footer)
-      .add(WhoToFollowModuleDisplayOptionsFeature, displayOptions)
+  ): CandidatelonsWithSourcelonFelonaturelons[t.ReloncommelonndelondUselonr] = {
+    val felonaturelons = FelonaturelonMapBuildelonr()
+      .add(WhoToFollowModulelonHelonadelonrFelonaturelon, helonadelonr)
+      .add(WhoToFollowModulelonFootelonrFelonaturelon, footelonr)
+      .add(WhoToFollowModulelonDisplayOptionsFelonaturelon, displayOptions)
       .build()
-    CandidatesWithSourceFeatures(userRecommendations, features)
+    CandidatelonsWithSourcelonFelonaturelons(uselonrReloncommelonndations, felonaturelons)
   }
 }

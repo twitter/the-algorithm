@@ -1,53 +1,53 @@
-package com.twitter.product_mixer.core.module
+packagelon com.twittelonr.product_mixelonr.corelon.modulelon
 
-import com.google.inject.Provides
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.featureswitches.v2.FeatureSwitches
-import com.twitter.featureswitches.v2.builder.FeatureSwitchesBuilder
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ConfigRepoLocalPath
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.FeatureSwitchesPath
-import com.twitter.product_mixer.core.module.product_mixer_flags.ProductMixerFlagModule.ServiceLocal
-import com.twitter.timelines.features.app.ForcibleFeatureValuesModule
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.felonaturelonswitchelons.v2.FelonaturelonSwitchelons
+import com.twittelonr.felonaturelonswitchelons.v2.buildelonr.FelonaturelonSwitchelonsBuildelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.ConfigRelonpoLocalPath
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.FelonaturelonSwitchelonsPath
+import com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags.ProductMixelonrFlagModulelon.SelonrvicelonLocal
+import com.twittelonr.timelonlinelons.felonaturelons.app.ForciblelonFelonaturelonValuelonsModulelon
+import javax.injelonct.Singlelonton
 
-object FeatureSwitchesModule extends TwitterModule with ForcibleFeatureValuesModule {
-  private val DefaultConfigRepoPath = "/usr/local/config"
+objelonct FelonaturelonSwitchelonsModulelon elonxtelonnds TwittelonrModulelon with ForciblelonFelonaturelonValuelonsModulelon {
+  privatelon val DelonfaultConfigRelonpoPath = "/usr/local/config"
 
-  @Provides
-  @Singleton
-  def providesFeatureSwitches(
-    abDecider: LoggingABDecider,
-    statsReceiver: StatsReceiver,
-    @Flag(ServiceLocal) isServiceLocal: Boolean,
-    @Flag(ConfigRepoLocalPath) localConfigRepoPath: String,
-    @Flag(FeatureSwitchesPath) featuresPath: String
-  ): FeatureSwitches = {
-    val configRepoPath = if (isServiceLocal) {
-      localConfigRepoPath
-    } else {
-      DefaultConfigRepoPath
+  @Providelons
+  @Singlelonton
+  delonf providelonsFelonaturelonSwitchelons(
+    abDeloncidelonr: LoggingABDeloncidelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    @Flag(SelonrvicelonLocal) isSelonrvicelonLocal: Boolelonan,
+    @Flag(ConfigRelonpoLocalPath) localConfigRelonpoPath: String,
+    @Flag(FelonaturelonSwitchelonsPath) felonaturelonsPath: String
+  ): FelonaturelonSwitchelons = {
+    val configRelonpoPath = if (isSelonrvicelonLocal) {
+      localConfigRelonpoPath
+    } elonlselon {
+      DelonfaultConfigRelonpoPath
     }
 
-    val baseBuilder = FeatureSwitchesBuilder
-      .createDefault(featuresPath, abDecider, Some(statsReceiver))
-      .configRepoAbsPath(configRepoPath)
-      .forcedValues(getFeatureSwitchOverrides)
-      // Track stats when an experiment impression is made. For example:
-      // "experiment_impressions/test_experiment_1234/"
-      // "experiment_impressions/test_experiment_1234/control"
-      // "experiment_impressions/test_experiment_1234/treatment"
-      .experimentImpressionStatsEnabled(true)
-      .unitsOfDiversionEnable(true)
+    val baselonBuildelonr = FelonaturelonSwitchelonsBuildelonr
+      .crelonatelonDelonfault(felonaturelonsPath, abDeloncidelonr, Somelon(statsReloncelonivelonr))
+      .configRelonpoAbsPath(configRelonpoPath)
+      .forcelondValuelons(gelontFelonaturelonSwitchOvelonrridelons)
+      // Track stats whelonn an elonxpelonrimelonnt imprelonssion is madelon. For elonxamplelon:
+      // "elonxpelonrimelonnt_imprelonssions/telonst_elonxpelonrimelonnt_1234/"
+      // "elonxpelonrimelonnt_imprelonssions/telonst_elonxpelonrimelonnt_1234/control"
+      // "elonxpelonrimelonnt_imprelonssions/telonst_elonxpelonrimelonnt_1234/trelonatmelonnt"
+      .elonxpelonrimelonntImprelonssionStatselonnablelond(truelon)
+      .unitsOfDivelonrsionelonnablelon(truelon)
 
-    val finalBuilder = if (isServiceLocal) {
-      baseBuilder
-    } else {
-      baseBuilder.serviceDetailsFromAurora()
+    val finalBuildelonr = if (isSelonrvicelonLocal) {
+      baselonBuildelonr
+    } elonlselon {
+      baselonBuildelonr.selonrvicelonDelontailsFromAurora()
     }
 
-    finalBuilder.build()
+    finalBuildelonr.build()
   }
 }

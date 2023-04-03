@@ -1,172 +1,172 @@
-package com.twitter.product_mixer.core.service.filter_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.filtelonr_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.Conditionally
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.product_mixer.core.service.filter_executor.FilterExecutor.FilterState
-import com.twitter.stitch.Arrow
-import com.twitter.stitch.Arrow.Iso
-import javax.inject.Inject
-import javax.inject.Singleton
-import scala.collection.immutable.Queue
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.Conditionally
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.filtelonr_elonxeloncutor.Filtelonrelonxeloncutor.FiltelonrStatelon
+import com.twittelonr.stitch.Arrow
+import com.twittelonr.stitch.Arrow.Iso
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import scala.collelonction.immutablelon.Quelonuelon
 
 /**
- * Applies a `Seq[Filter]` in sequential order.
- * Returns the results and a detailed Seq of each filter's results (for debugging / coherence).
+ * Applielons a `Selonq[Filtelonr]` in selonquelonntial ordelonr.
+ * Relonturns thelon relonsults and a delontailelond Selonq of elonach filtelonr's relonsults (for delonbugging / cohelonrelonncelon).
  *
- * Note that each successive filter is only passed the 'kept' Seq from the previous filter, not the full
- * set of candidates.
+ * Notelon that elonach succelonssivelon filtelonr is only passelond thelon 'kelonpt' Selonq from thelon prelonvious filtelonr, not thelon full
+ * selont of candidatelons.
  */
-@Singleton
-class FilterExecutor @Inject() (override val statsReceiver: StatsReceiver) extends Executor {
+@Singlelonton
+class Filtelonrelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr) elonxtelonnds elonxeloncutor {
 
-  private val Kept = "kept"
-  private val Removed = "removed"
+  privatelon val Kelonpt = "kelonpt"
+  privatelon val Relonmovelond = "relonmovelond"
 
-  def arrow[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    filters: Seq[Filter[Query, Candidate]],
-    context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterExecutorResult[Candidate]] = {
+  delonf arrow[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+    filtelonrs: Selonq[Filtelonr[Quelonry, Candidatelon]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[(Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]), FiltelonrelonxeloncutorRelonsult[Candidatelon]] = {
 
-    val filterArrows = filters.map(getIsoArrowForFilter(_, context))
-    val combinedArrow = isoArrowsSequentially(filterArrows)
+    val filtelonrArrows = filtelonrs.map(gelontIsoArrowForFiltelonr(_, contelonxt))
+    val combinelondArrow = isoArrowsSelonquelonntially(filtelonrArrows)
 
     Arrow
-      .map[(Query, Seq[CandidateWithFeatures[Candidate]]), FilterState[Query, Candidate]] {
-        case (query, filterCandidates) =>
-          // transform the input to the initial state of a `FilterExecutorResult`
-          val initialFilterExecutorResult =
-            FilterExecutorResult(filterCandidates.map(_.candidate), Queue.empty)
-          val allCandidates: Map[Candidate, CandidateWithFeatures[Candidate]] =
-            filterCandidates.map { fc =>
-              (fc.candidate, fc)
+      .map[(Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]), FiltelonrStatelon[Quelonry, Candidatelon]] {
+        caselon (quelonry, filtelonrCandidatelons) =>
+          // transform thelon input to thelon initial statelon of a `FiltelonrelonxeloncutorRelonsult`
+          val initialFiltelonrelonxeloncutorRelonsult =
+            FiltelonrelonxeloncutorRelonsult(filtelonrCandidatelons.map(_.candidatelon), Quelonuelon.elonmpty)
+          val allCandidatelons: Map[Candidatelon, CandidatelonWithFelonaturelons[Candidatelon]] =
+            filtelonrCandidatelons.map { fc =>
+              (fc.candidatelon, fc)
             }.toMap
 
-          FilterState(query, allCandidates, initialFilterExecutorResult)
+          FiltelonrStatelon(quelonry, allCandidatelons, initialFiltelonrelonxeloncutorRelonsult)
       }
-      .flatMapArrow(combinedArrow)
+      .flatMapArrow(combinelondArrow)
       .map {
-        case FilterState(_, _, filterExecutorResult) =>
-          filterExecutorResult.copy(individualFilterResults =
-            // materialize the Queue into a List for faster future iterations
-            filterExecutorResult.individualFilterResults.toList)
+        caselon FiltelonrStatelon(_, _, filtelonrelonxeloncutorRelonsult) =>
+          filtelonrelonxeloncutorRelonsult.copy(individualFiltelonrRelonsults =
+            // matelonrializelon thelon Quelonuelon into a List for fastelonr futurelon itelonrations
+            filtelonrelonxeloncutorRelonsult.individualFiltelonrRelonsults.toList)
       }
 
   }
 
   /**
-   * Adds filter specific stats, generic [[wrapComponentWithExecutorBookkeeping]] stats, and wraps with failure handling
+   * Adds filtelonr speloncific stats, gelonnelonric [[wrapComponelonntWithelonxeloncutorBookkelonelonping]] stats, and wraps with failurelon handling
    *
-   * If the filter is a [[Conditionally]] ensures that we dont record stats if its turned off
+   * If thelon filtelonr is a [[Conditionally]] elonnsurelons that welon dont reloncord stats if its turnelond off
    *
-   * @note For performance, the [[FilterExecutorResult.individualFilterResults]] is build backwards - the head being the most recent result.
-   * @param filter the filter to make an [[Arrow]] out of
-   * @param context the [[Executor.Context]] for the pipeline this is a part of
+   * @notelon For pelonrformancelon, thelon [[FiltelonrelonxeloncutorRelonsult.individualFiltelonrRelonsults]] is build backwards - thelon helonad beloning thelon most reloncelonnt relonsult.
+   * @param filtelonr thelon filtelonr to makelon an [[Arrow]] out of
+   * @param contelonxt thelon [[elonxeloncutor.Contelonxt]] for thelon pipelonlinelon this is a part of
    */
-  private def getIsoArrowForFilter[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    filter: Filter[Query, Candidate],
-    context: Executor.Context
-  ): Iso[FilterState[Query, Candidate]] = {
-    val broadcastStatsReceiver =
-      Executor.broadcastStatsReceiver(context, filter.identifier, statsReceiver)
+  privatelon delonf gelontIsoArrowForFiltelonr[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+    filtelonr: Filtelonr[Quelonry, Candidatelon],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Iso[FiltelonrStatelon[Quelonry, Candidatelon]] = {
+    val broadcastStatsReloncelonivelonr =
+      elonxeloncutor.broadcastStatsReloncelonivelonr(contelonxt, filtelonr.idelonntifielonr, statsReloncelonivelonr)
 
-    val keptCounter = broadcastStatsReceiver.counter(Kept)
-    val removedCounter = broadcastStatsReceiver.counter(Removed)
+    val kelonptCountelonr = broadcastStatsReloncelonivelonr.countelonr(Kelonpt)
+    val relonmovelondCountelonr = broadcastStatsReloncelonivelonr.countelonr(Relonmovelond)
 
-    val filterArrow = Arrow.flatMap[
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      FilterExecutorIndividualResult[Candidate]
+    val filtelonrArrow = Arrow.flatMap[
+      (Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]),
+      FiltelonrelonxeloncutorIndividualRelonsult[Candidatelon]
     ] {
-      case (query, candidates) =>
-        filter.apply(query, candidates).map { result =>
-          FilterExecutorIndividualResult(
-            identifier = filter.identifier,
-            kept = result.kept,
-            removed = result.removed)
+      caselon (quelonry, candidatelons) =>
+        filtelonr.apply(quelonry, candidatelons).map { relonsult =>
+          FiltelonrelonxeloncutorIndividualRelonsult(
+            idelonntifielonr = filtelonr.idelonntifielonr,
+            kelonpt = relonsult.kelonpt,
+            relonmovelond = relonsult.relonmovelond)
         }
     }
 
-    val observedArrow: Arrow[
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      FilterExecutorIndividualResult[
-        Candidate
+    val obselonrvelondArrow: Arrow[
+      (Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]),
+      FiltelonrelonxeloncutorIndividualRelonsult[
+        Candidatelon
       ]
-    ] = wrapComponentWithExecutorBookkeeping(
-      context = context,
-      currentComponentIdentifier = filter.identifier,
-      onSuccess = { result: FilterExecutorIndividualResult[Candidate] =>
-        keptCounter.incr(result.kept.size)
-        removedCounter.incr(result.removed.size)
+    ] = wrapComponelonntWithelonxeloncutorBookkelonelonping(
+      contelonxt = contelonxt,
+      currelonntComponelonntIdelonntifielonr = filtelonr.idelonntifielonr,
+      onSuccelonss = { relonsult: FiltelonrelonxeloncutorIndividualRelonsult[Candidatelon] =>
+        kelonptCountelonr.incr(relonsult.kelonpt.sizelon)
+        relonmovelondCountelonr.incr(relonsult.relonmovelond.sizelon)
       }
     )(
-      filterArrow
+      filtelonrArrow
     )
 
     val conditionallyRunArrow: Arrow[
-      (Query, Seq[CandidateWithFeatures[Candidate]]),
-      IndividualFilterResults[
-        Candidate
+      (Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]),
+      IndividualFiltelonrRelonsults[
+        Candidatelon
       ]
     ] =
-      filter match {
-        case filter: Filter[Query, Candidate] with Conditionally[
-              Filter.Input[Query, Candidate] @unchecked
+      filtelonr match {
+        caselon filtelonr: Filtelonr[Quelonry, Candidatelon] with Conditionally[
+              Filtelonr.Input[Quelonry, Candidatelon] @unchelonckelond
             ] =>
-          Arrow.ifelse(
+          Arrow.ifelonlselon(
             {
-              case (query, candidates) =>
-                filter.onlyIf(Filter.Input(query, candidates))
+              caselon (quelonry, candidatelons) =>
+                filtelonr.onlyIf(Filtelonr.Input(quelonry, candidatelons))
             },
-            observedArrow,
-            Arrow.value(ConditionalFilterDisabled(filter.identifier))
+            obselonrvelondArrow,
+            Arrow.valuelon(ConditionalFiltelonrDisablelond(filtelonr.idelonntifielonr))
           )
-        case _ => observedArrow
+        caselon _ => obselonrvelondArrow
       }
 
-    // return an `Iso` arrow for easier composition later
+    // relonturn an `Iso` arrow for elonasielonr composition latelonr
     Arrow
       .zipWithArg(
         Arrow
-          .map[FilterState[Query, Candidate], (Query, Seq[CandidateWithFeatures[Candidate]])] {
-            case FilterState(query, candidateToFeaturesMap, FilterExecutorResult(result, _)) =>
-              (query, result.flatMap(candidateToFeaturesMap.get))
-          }.andThen(conditionallyRunArrow))
+          .map[FiltelonrStatelon[Quelonry, Candidatelon], (Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]])] {
+            caselon FiltelonrStatelon(quelonry, candidatelonToFelonaturelonsMap, FiltelonrelonxeloncutorRelonsult(relonsult, _)) =>
+              (quelonry, relonsult.flatMap(candidatelonToFelonaturelonsMap.gelont))
+          }.andThelonn(conditionallyRunArrow))
       .map {
-        case (
-              FilterState(query, allCandidates, filterExecutorResult),
-              filterResult: FilterExecutorIndividualResult[Candidate]) =>
-          val resultWithCurrentPrepended =
-            filterExecutorResult.individualFilterResults :+ filterResult
-          val newFilterExecutorResult = FilterExecutorResult(
-            result = filterResult.kept,
-            individualFilterResults = resultWithCurrentPrepended)
-          FilterState(query, allCandidates, newFilterExecutorResult)
+        caselon (
+              FiltelonrStatelon(quelonry, allCandidatelons, filtelonrelonxeloncutorRelonsult),
+              filtelonrRelonsult: FiltelonrelonxeloncutorIndividualRelonsult[Candidatelon]) =>
+          val relonsultWithCurrelonntPrelonpelonndelond =
+            filtelonrelonxeloncutorRelonsult.individualFiltelonrRelonsults :+ filtelonrRelonsult
+          val nelonwFiltelonrelonxeloncutorRelonsult = FiltelonrelonxeloncutorRelonsult(
+            relonsult = filtelonrRelonsult.kelonpt,
+            individualFiltelonrRelonsults = relonsultWithCurrelonntPrelonpelonndelond)
+          FiltelonrStatelon(quelonry, allCandidatelons, nelonwFiltelonrelonxeloncutorRelonsult)
 
-        case (filterState, filterDisabledResult: ConditionalFilterDisabled) =>
-          filterState.copy(
-            executorResult = filterState.executorResult.copy(
-              individualFilterResults =
-                filterState.executorResult.individualFilterResults :+ filterDisabledResult
+        caselon (filtelonrStatelon, filtelonrDisablelondRelonsult: ConditionalFiltelonrDisablelond) =>
+          filtelonrStatelon.copy(
+            elonxeloncutorRelonsult = filtelonrStatelon.elonxeloncutorRelonsult.copy(
+              individualFiltelonrRelonsults =
+                filtelonrStatelon.elonxeloncutorRelonsult.individualFiltelonrRelonsults :+ filtelonrDisablelondRelonsult
             ))
       }
   }
 }
 
-object FilterExecutor {
+objelonct Filtelonrelonxeloncutor {
 
   /**
-   * FilterState is an internal representation of the state that is passed between each individual filter arrow.
+   * FiltelonrStatelon is an intelonrnal relonprelonselonntation of thelon statelon that is passelond belontwelonelonn elonach individual filtelonr arrow.
    *
-   * @param query: The query
-   * @param candidateToFeaturesMap: A lookup mapping from Candidate -> FilterCandidate, to rebuild the inputs quickly for the next filter
-   * @param executorResult: The in-progress executor result
+   * @param quelonry: Thelon quelonry
+   * @param candidatelonToFelonaturelonsMap: A lookup mapping from Candidatelon -> FiltelonrCandidatelon, to relonbuild thelon inputs quickly for thelon nelonxt filtelonr
+   * @param elonxeloncutorRelonsult: Thelon in-progrelonss elonxeloncutor relonsult
    */
-  private case class FilterState[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    query: Query,
-    candidateToFeaturesMap: Map[Candidate, CandidateWithFeatures[Candidate]],
-    executorResult: FilterExecutorResult[Candidate])
+  privatelon caselon class FiltelonrStatelon[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+    quelonry: Quelonry,
+    candidatelonToFelonaturelonsMap: Map[Candidatelon, CandidatelonWithFelonaturelons[Candidatelon]],
+    elonxeloncutorRelonsult: FiltelonrelonxeloncutorRelonsult[Candidatelon])
 }

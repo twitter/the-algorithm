@@ -1,45 +1,45 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
 
-public class EarlybirdProtectedValidationBehavior extends EarlybirdServiceValidationBehavior {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdProtectedValidationBehavior.class);
+public class elonarlybirdProtelonctelondValidationBelonhavior elonxtelonnds elonarlybirdSelonrvicelonValidationBelonhavior {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(elonarlybirdProtelonctelondValidationBelonhavior.class);
 
-  @Override
-  public EarlybirdResponse getResponseIfInvalidRequest(EarlybirdRequest request) {
-    if (!request.isSetSearchQuery() || request.getSearchQuery() == null) {
-      String errorMsg = "Invalid EarlybirdRequest, no ThriftSearchQuery specified. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+  @Ovelonrridelon
+  public elonarlybirdRelonsponselon gelontRelonsponselonIfInvalidRelonquelonst(elonarlybirdRelonquelonst relonquelonst) {
+    if (!relonquelonst.isSelontSelonarchQuelonry() || relonquelonst.gelontSelonarchQuelonry() == null) {
+      String elonrrorMsg = "Invalid elonarlybirdRelonquelonst, no ThriftSelonarchQuelonry speloncifielond. " + relonquelonst;
+      LOG.warn(elonrrorMsg);
+      relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
     }
-    ThriftSearchQuery searchQuery = request.getSearchQuery();
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonst.gelontSelonarchQuelonry();
 
-    // Make sure this request is valid for the protected tweets cluster.
-    if (!searchQuery.isSetFromUserIDFilter64() || searchQuery.getFromUserIDFilter64().isEmpty()) {
-      String errorMsg = "ThriftSearchQuery.fromUserIDFilter64 not set. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
-    }
-
-    if (!searchQuery.isSetSearcherId()) {
-      String errorMsg = "ThriftSearchQuery.searcherId not set. " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    // Makelon surelon this relonquelonst is valid for thelon protelonctelond twelonelonts clustelonr.
+    if (!selonarchQuelonry.isSelontFromUselonrIDFiltelonr64() || selonarchQuelonry.gelontFromUselonrIDFiltelonr64().iselonmpty()) {
+      String elonrrorMsg = "ThriftSelonarchQuelonry.fromUselonrIDFiltelonr64 not selont. " + relonquelonst;
+      LOG.warn(elonrrorMsg);
+      relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
     }
 
-    if (searchQuery.getSearcherId() < 0) {
-      String errorMsg = "Invalid ThriftSearchQuery.searcherId: " + searchQuery.getSearcherId()
-          + ". " + request;
-      LOG.warn(errorMsg);
-      return createErrorResponse(errorMsg);
+    if (!selonarchQuelonry.isSelontSelonarchelonrId()) {
+      String elonrrorMsg = "ThriftSelonarchQuelonry.selonarchelonrId not selont. " + relonquelonst;
+      LOG.warn(elonrrorMsg);
+      relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
     }
 
-    return super.getResponseIfInvalidRequest(request);
+    if (selonarchQuelonry.gelontSelonarchelonrId() < 0) {
+      String elonrrorMsg = "Invalid ThriftSelonarchQuelonry.selonarchelonrId: " + selonarchQuelonry.gelontSelonarchelonrId()
+          + ". " + relonquelonst;
+      LOG.warn(elonrrorMsg);
+      relonturn crelonatelonelonrrorRelonsponselon(elonrrorMsg);
+    }
+
+    relonturn supelonr.gelontRelonsponselonIfInvalidRelonquelonst(relonquelonst);
   }
 }

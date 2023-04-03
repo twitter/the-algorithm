@@ -1,68 +1,68 @@
-package com.twitter.product_mixer.core.product.guice
+packagelon com.twittelonr.product_mixelonr.corelon.product.guicelon
 
-import com.google.inject.Key
-import com.google.inject.OutOfScopeException
-import com.google.inject.Provider
-import com.google.inject.Scope
-import com.google.inject.Scopes
-import com.twitter.util.Local
-import scala.collection.concurrent
-import scala.collection.mutable
+import com.googlelon.injelonct.Kelony
+import com.googlelon.injelonct.OutOfScopelonelonxcelonption
+import com.googlelon.injelonct.Providelonr
+import com.googlelon.injelonct.Scopelon
+import com.googlelon.injelonct.Scopelons
+import com.twittelonr.util.Local
+import scala.collelonction.concurrelonnt
+import scala.collelonction.mutablelon
 
 /**
- * A scala-esque implementation of SimpleScope: https://github.com/google/guice/wiki/CustomScopes#implementing-scope
+ * A scala-elonsquelon implelonmelonntation of SimplelonScopelon: https://github.com/googlelon/guicelon/wiki/CustomScopelons#implelonmelonnting-scopelon
  *
- * Scopes the execution of a single block of code via `let`
+ * Scopelons thelon elonxeloncution of a singlelon block of codelon via `lelont`
  */
-class SimpleScope extends Scope {
+class SimplelonScopelon elonxtelonnds Scopelon {
 
-  private val values = new Local[concurrent.Map[Key[_], Any]]()
+  privatelon val valuelons = nelonw Local[concurrelonnt.Map[Kelony[_], Any]]()
 
   /**
-   * Execute a block with a fresh scope.
+   * elonxeloncutelon a block with a frelonsh scopelon.
    *
-   * You can optionally supply a map of initialObjects to 'seed' the new scope.
+   * You can optionally supply a map of initialObjeloncts to 'selonelond' thelon nelonw scopelon.
    */
-  def let[T](initialObjects: Map[Key[_], Any] = Map.empty)(f: => T): T = {
-    val newMap: concurrent.Map[Key[_], Any] = concurrent.TrieMap.empty
+  delonf lelont[T](initialObjeloncts: Map[Kelony[_], Any] = Map.elonmpty)(f: => T): T = {
+    val nelonwMap: concurrelonnt.Map[Kelony[_], Any] = concurrelonnt.TrielonMap.elonmpty
 
-    initialObjects.foreach { case (key, value) => newMap.put(key, value) }
+    initialObjeloncts.forelonach { caselon (kelony, valuelon) => nelonwMap.put(kelony, valuelon) }
 
-    values.let(newMap)(f)
+    valuelons.lelont(nelonwMap)(f)
   }
 
-  override def scope[T](
-    key: Key[T],
-    unscoped: Provider[T]
-  ): Provider[T] = () => {
-    val scopedObjects: mutable.Map[Key[T], Any] = getScopedObjectMap(key)
+  ovelonrridelon delonf scopelon[T](
+    kelony: Kelony[T],
+    unscopelond: Providelonr[T]
+  ): Providelonr[T] = () => {
+    val scopelondObjeloncts: mutablelon.Map[Kelony[T], Any] = gelontScopelondObjelonctMap(kelony)
 
-    scopedObjects
-      .get(key).map(_.asInstanceOf[T]).getOrElse {
-        val objectFromUnscoped: T = unscoped.get()
+    scopelondObjeloncts
+      .gelont(kelony).map(_.asInstancelonOf[T]).gelontOrelonlselon {
+        val objelonctFromUnscopelond: T = unscopelond.gelont()
 
-        if (Scopes.isCircularProxy(objectFromUnscoped)) {
-          objectFromUnscoped // Don't remember proxies
-        } else {
-          scopedObjects.put(key, objectFromUnscoped)
-          objectFromUnscoped
+        if (Scopelons.isCircularProxy(objelonctFromUnscopelond)) {
+          objelonctFromUnscopelond // Don't relonmelonmbelonr proxielons
+        } elonlselon {
+          scopelondObjeloncts.put(kelony, objelonctFromUnscopelond)
+          objelonctFromUnscopelond
         }
       }
   }
 
-  def getScopedObjectMap[T](key: Key[T]): concurrent.Map[Key[T], Any] = {
-    values()
-      .getOrElse(
-        throw new OutOfScopeException(s"Cannot access $key outside of a scoping block")
-      ).asInstanceOf[concurrent.Map[Key[T], Any]]
+  delonf gelontScopelondObjelonctMap[T](kelony: Kelony[T]): concurrelonnt.Map[Kelony[T], Any] = {
+    valuelons()
+      .gelontOrelonlselon(
+        throw nelonw OutOfScopelonelonxcelonption(s"Cannot accelonss $kelony outsidelon of a scoping block")
+      ).asInstancelonOf[concurrelonnt.Map[Kelony[T], Any]]
   }
 }
 
-object SimpleScope {
+objelonct SimplelonScopelon {
 
-  val SEEDED_KEY_PROVIDER: Provider[Nothing] = () =>
-    throw new IllegalStateException(
-      """If you got here then it means that your code asked for scoped object which should have
-      | been explicitly seeded in this scope by calling SimpleScope.seed(),
+  val SelonelonDelonD_KelonY_PROVIDelonR: Providelonr[Nothing] = () =>
+    throw nelonw IllelongalStatelonelonxcelonption(
+      """If you got helonrelon thelonn it melonans that your codelon askelond for scopelond objelonct which should havelon
+      | belonelonn elonxplicitly selonelondelond in this scopelon by calling SimplelonScopelon.selonelond(),
       | but was not.""".stripMargin)
 }

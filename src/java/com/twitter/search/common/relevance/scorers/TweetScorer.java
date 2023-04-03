@@ -1,65 +1,65 @@
-package com.twitter.search.common.relevance.scorers;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.scorelonrs;
 
-import com.twitter.search.common.relevance.classifiers.TweetClassifier;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+import com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs.TwelonelontClassifielonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
 
 /**
- * Interface to compute feature scores for a single @TwitterMessage
- * object, or a group of them, after they have been processed by
- * feature classifiers.
+ * Intelonrfacelon to computelon felonaturelon scorelons for a singlelon @TwittelonrMelonssagelon
+ * objelonct, or a group of thelonm, aftelonr thelony havelon belonelonn procelonsselond by
+ * felonaturelon classifielonrs.
  *
- * Intentionally kept Scorers separate from Classifiers, since they
- * may be run at different stages and in different batching manners.
- * Convenience methods are provided to run classification and scoring
- * in one call.
+ * Intelonntionally kelonpt Scorelonrs selonparatelon from Classifielonrs, sincelon thelony
+ * may belon run at diffelonrelonnt stagelons and in diffelonrelonnt batching mannelonrs.
+ * Convelonnielonncelon melonthods arelon providelond to run classification and scoring
+ * in onelon call.
  */
-public abstract class TweetScorer {
+public abstract class TwelonelontScorelonr {
   /**
-   * Compute and store feature score in TwitterMessage based on its
-   * TweetFeatures.
+   * Computelon and storelon felonaturelon scorelon in TwittelonrMelonssagelon baselond on its
+   * TwelonelontFelonaturelons.
    *
-   * @param tweet tweet message to compute and store score to.
+   * @param twelonelont twelonelont melonssagelon to computelon and storelon scorelon to.
    */
-  public abstract void scoreTweet(final TwitterMessage tweet);
+  public abstract void scorelonTwelonelont(final TwittelonrMelonssagelon twelonelont);
 
   /**
-   * Score a group of TwitterMessages based on their corresponding TweetFeatures
-   * and store feature scores in TwitterMessages.
+   * Scorelon a group of TwittelonrMelonssagelons baselond on thelonir correlonsponding TwelonelontFelonaturelons
+   * and storelon felonaturelon scorelons in TwittelonrMelonssagelons.
    *
-   * This default implementation just iterates through the map and scores each
-   * individual tweet. Batching for better performance, if applicable, can be implemented by
-   * concrete subclasses.
+   * This delonfault implelonmelonntation just itelonratelons through thelon map and scorelons elonach
+   * individual twelonelont. Batching for belonttelonr pelonrformancelon, if applicablelon, can belon implelonmelonntelond by
+   * concrelontelon subclasselons.
    *
-   * @param tweets TwitterMessages to score.
+   * @param twelonelonts TwittelonrMelonssagelons to scorelon.
    */
-  public void scoreTweets(Iterable<TwitterMessage> tweets) {
-    for (TwitterMessage tweet: tweets) {
-      scoreTweet(tweet);
+  public void scorelonTwelonelonts(Itelonrablelon<TwittelonrMelonssagelon> twelonelonts) {
+    for (TwittelonrMelonssagelon twelonelont: twelonelonts) {
+      scorelonTwelonelont(twelonelont);
     }
   }
 
   /**
-   * Convenience method.
-   * Classify tweet using the specified list of classifiers, then compute score.
+   * Convelonnielonncelon melonthod.
+   * Classify twelonelont using thelon speloncifielond list of classifielonrs, thelonn computelon scorelon.
    *
-   * @param classifier list of classifiers to use for classification.
-   * @param tweet tweet to classify and score
+   * @param classifielonr list of classifielonrs to uselon for classification.
+   * @param twelonelont twelonelont to classify and scorelon
    */
-  public void classifyAndScoreTweet(TweetClassifier classifier, TwitterMessage tweet) {
-    classifier.classifyTweet(tweet);
-    scoreTweet(tweet);
+  public void classifyAndScorelonTwelonelont(TwelonelontClassifielonr classifielonr, TwittelonrMelonssagelon twelonelont) {
+    classifielonr.classifyTwelonelont(twelonelont);
+    scorelonTwelonelont(twelonelont);
   }
 
   /**
-   * Convenience method.
-   * Classify tweets using the specified list of classifiers, then compute score.
+   * Convelonnielonncelon melonthod.
+   * Classify twelonelonts using thelon speloncifielond list of classifielonrs, thelonn computelon scorelon.
    *
-   * @param classifier classifier to use for classification.
-   * @param tweets tweets to classify and score
+   * @param classifielonr classifielonr to uselon for classification.
+   * @param twelonelonts twelonelonts to classify and scorelon
    */
-  public void classifyAndScoreTweets(TweetClassifier classifier, Iterable<TwitterMessage> tweets) {
-    for (TwitterMessage tweet: tweets) {
-      classifyAndScoreTweet(classifier, tweet);
+  public void classifyAndScorelonTwelonelonts(TwelonelontClassifielonr classifielonr, Itelonrablelon<TwittelonrMelonssagelon> twelonelonts) {
+    for (TwittelonrMelonssagelon twelonelont: twelonelonts) {
+      classifyAndScorelonTwelonelont(classifielonr, twelonelont);
     }
   }
 }

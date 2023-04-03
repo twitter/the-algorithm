@@ -1,81 +1,81 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.util.Collections;
-import java.util.IdentityHashMap;
+import java.util.Collelonctions;
+import java.util.IdelonntityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.visitors.MultiTermDisjunctionRankVisitor;
-import com.twitter.search.queryparser.visitors.NodeRankAnnotator;
-import com.twitter.search.queryparser.visitors.QueryTreeIndex;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.MultiTelonrmDisjunctionRankVisitor;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.NodelonRankAnnotator;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.QuelonryTrelonelonIndelonx;
 
 /**
- * A helper class to collect field and query node hit attributions.
+ * A helonlpelonr class to collelonct fielonld and quelonry nodelon hit attributions.
  */
-public class QueryHitAttributeHelper extends HitAttributeHelper {
-  private final Query annotatedQuery;
+public class QuelonryHitAttributelonHelonlpelonr elonxtelonnds HitAttributelonHelonlpelonr {
+  privatelon final Quelonry annotatelondQuelonry;
 
-  protected QueryHitAttributeHelper(HitAttributeCollector collector,
-                                    Function<Integer, String> fieldIdsToFieldNames,
-                                    IdentityHashMap<Query, Integer> nodeToRankMap,
-                                    Query annotatedQuery,
-                                    Map<Query, List<Integer>> expandedRanksMap) {
-    super(collector, fieldIdsToFieldNames, nodeToRankMap, expandedRanksMap);
-    this.annotatedQuery = annotatedQuery;
+  protelonctelond QuelonryHitAttributelonHelonlpelonr(HitAttributelonCollelonctor collelonctor,
+                                    Function<Intelongelonr, String> fielonldIdsToFielonldNamelons,
+                                    IdelonntityHashMap<Quelonry, Intelongelonr> nodelonToRankMap,
+                                    Quelonry annotatelondQuelonry,
+                                    Map<Quelonry, List<Intelongelonr>> elonxpandelondRanksMap) {
+    supelonr(collelonctor, fielonldIdsToFielonldNamelons, nodelonToRankMap, elonxpandelondRanksMap);
+    this.annotatelondQuelonry = annotatelondQuelonry;
   }
 
   /**
-   * Constructor specific for com.twitter.search.queryParser.query.Query
+   * Constructor speloncific for com.twittelonr.selonarch.quelonryParselonr.quelonry.Quelonry
    *
-   * This helper visits a parsed query to construct a node-to-rank mapping,
-   * and uses a schema to determine all of the possible fields to be tracked.
-   * A collector is then created.
+   * This helonlpelonr visits a parselond quelonry to construct a nodelon-to-rank mapping,
+   * and uselons a schelonma to delontelonrminelon all of thelon possiblelon fielonlds to belon trackelond.
+   * A collelonctor is thelonn crelonatelond.
    *
-   * @param query the query for which we will collect hit attribution.
-   * @param schema the indexing schema.
+   * @param quelonry thelon quelonry for which welon will collelonct hit attribution.
+   * @param schelonma thelon indelonxing schelonma.
    */
-  public static QueryHitAttributeHelper from(Query query, final Schema schema)
-      throws QueryParserException {
-    IdentityHashMap<Query, Integer> nodeToRankMap;
-    Query annotatedQuery;
+  public static QuelonryHitAttributelonHelonlpelonr from(Quelonry quelonry, final Schelonma schelonma)
+      throws QuelonryParselonrelonxcelonption {
+    IdelonntityHashMap<Quelonry, Intelongelonr> nodelonToRankMap;
+    Quelonry annotatelondQuelonry;
 
-    // First see if the query already has node rank annotations on it. If so, we'll just use those
-    // to identify query nodes.
-    // We enforce that all provided ranks are in the range of [0, N-1] so not to blow up the size
-    // of the collection array.
-    QueryRankVisitor rankVisitor = new QueryRankVisitor();
-    if (query.accept(rankVisitor)) {
-      nodeToRankMap = rankVisitor.getNodeToRankMap();
-      annotatedQuery = query;
-    } else {
-      // Otherwise, we will assign all nodes in-order ranks, and use those to track per-node hit
+    // First selonelon if thelon quelonry alrelonady has nodelon rank annotations on it. If so, welon'll just uselon thoselon
+    // to idelonntify quelonry nodelons.
+    // Welon elonnforcelon that all providelond ranks arelon in thelon rangelon of [0, N-1] so not to blow up thelon sizelon
+    // of thelon collelonction array.
+    QuelonryRankVisitor rankVisitor = nelonw QuelonryRankVisitor();
+    if (quelonry.accelonpt(rankVisitor)) {
+      nodelonToRankMap = rankVisitor.gelontNodelonToRankMap();
+      annotatelondQuelonry = quelonry;
+    } elonlselon {
+      // Othelonrwiselon, welon will assign all nodelons in-ordelonr ranks, and uselon thoselon to track pelonr-nodelon hit
       // attribution
-      QueryTreeIndex queryTreeIndex = QueryTreeIndex.buildFor(query);
-      NodeRankAnnotator annotator = new NodeRankAnnotator(queryTreeIndex.getNodeToIndexMap());
-      annotatedQuery = query.accept(annotator);
-      nodeToRankMap = annotator.getUpdatedNodeToRankMap();
+      QuelonryTrelonelonIndelonx quelonryTrelonelonIndelonx = QuelonryTrelonelonIndelonx.buildFor(quelonry);
+      NodelonRankAnnotator annotator = nelonw NodelonRankAnnotator(quelonryTrelonelonIndelonx.gelontNodelonToIndelonxMap());
+      annotatelondQuelonry = quelonry.accelonpt(annotator);
+      nodelonToRankMap = annotator.gelontUpdatelondNodelonToRankMap();
     }
 
-    // Extract ranks for multi_term_disjunction operators
-    MultiTermDisjunctionRankVisitor multiTermDisjunctionRankVisitor =
-        new MultiTermDisjunctionRankVisitor(Collections.max(nodeToRankMap.values()));
-    annotatedQuery.accept(multiTermDisjunctionRankVisitor);
-    Map<Query, List<Integer>> expandedRanksMap =
-        multiTermDisjunctionRankVisitor.getMultiTermDisjunctionRankExpansionsMap();
+    // elonxtract ranks for multi_telonrm_disjunction opelonrators
+    MultiTelonrmDisjunctionRankVisitor multiTelonrmDisjunctionRankVisitor =
+        nelonw MultiTelonrmDisjunctionRankVisitor(Collelonctions.max(nodelonToRankMap.valuelons()));
+    annotatelondQuelonry.accelonpt(multiTelonrmDisjunctionRankVisitor);
+    Map<Quelonry, List<Intelongelonr>> elonxpandelondRanksMap =
+        multiTelonrmDisjunctionRankVisitor.gelontMultiTelonrmDisjunctionRankelonxpansionsMap();
 
-    return new QueryHitAttributeHelper(
-        new HitAttributeCollector(),
-        (fieldId) -> schema.getFieldName(fieldId),
-        nodeToRankMap,
-        annotatedQuery,
-        expandedRanksMap);
+    relonturn nelonw QuelonryHitAttributelonHelonlpelonr(
+        nelonw HitAttributelonCollelonctor(),
+        (fielonldId) -> schelonma.gelontFielonldNamelon(fielonldId),
+        nodelonToRankMap,
+        annotatelondQuelonry,
+        elonxpandelondRanksMap);
   }
 
-  public Query getAnnotatedQuery() {
-    return annotatedQuery;
+  public Quelonry gelontAnnotatelondQuelonry() {
+    relonturn annotatelondQuelonry;
   }
 }

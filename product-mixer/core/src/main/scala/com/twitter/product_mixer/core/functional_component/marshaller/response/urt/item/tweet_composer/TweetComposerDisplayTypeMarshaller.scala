@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet_composer
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.twelonelont_composelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.Reply
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet_composer.TweetComposerSelfThread
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont_composelonr.Relonply
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont_composelonr.TwelonelontComposelonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont_composelonr.TwelonelontComposelonrSelonlfThrelonad
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TweetComposerDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class TwelonelontComposelonrDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(displayType: TweetComposerDisplayType): urt.TweetComposerDisplayType =
-    displayType match {
-      case TweetComposerSelfThread => urt.TweetComposerDisplayType.SelfThread
-      case Reply => urt.TweetComposerDisplayType.Reply
+  delonf apply(displayTypelon: TwelonelontComposelonrDisplayTypelon): urt.TwelonelontComposelonrDisplayTypelon =
+    displayTypelon match {
+      caselon TwelonelontComposelonrSelonlfThrelonad => urt.TwelonelontComposelonrDisplayTypelon.SelonlfThrelonad
+      caselon Relonply => urt.TwelonelontComposelonrDisplayTypelon.Relonply
     }
 }

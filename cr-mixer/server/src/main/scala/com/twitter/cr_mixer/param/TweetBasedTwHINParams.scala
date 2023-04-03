@@ -1,30 +1,30 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.cr_mixelonr.modelonl.ModelonlConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object TweetBasedTwHINParams {
-  object ModelIdParam
-      extends FSParam[String](
-        name = "tweet_based_twhin_model_id",
-        default = ModelConfig.TweetBasedTwHINRegularUpdateAll20221024,
+objelonct TwelonelontBaselondTwHINParams {
+  objelonct ModelonlIdParam
+      elonxtelonnds FSParam[String](
+        namelon = "twelonelont_baselond_twhin_modelonl_id",
+        delonfault = ModelonlConfig.TwelonelontBaselondTwHINRelongularUpdatelonAll20221024,
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(ModelIdParam)
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(ModelonlIdParam)
 
-  lazy val config: BaseConfig = {
-    val stringFSOverrides =
-      FeatureSwitchOverrideUtil.getStringFSOverrides(
-        ModelIdParam
+  lazy val config: BaselonConfig = {
+    val stringFSOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontStringFSOvelonrridelons(
+        ModelonlIdParam
       )
 
-    BaseConfigBuilder()
-      .set(stringFSOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(stringFSOvelonrridelons: _*)
       .build()
   }
 }

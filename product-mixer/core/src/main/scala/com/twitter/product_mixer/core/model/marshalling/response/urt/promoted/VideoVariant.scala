@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-case class VideoVariant(
+caselon class VidelonoVariant(
   url: Option[String],
-  contentType: Option[String],
-  bitrate: Option[Int])
+  contelonntTypelon: Option[String],
+  bitratelon: Option[Int])

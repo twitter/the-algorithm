@@ -1,92 +1,92 @@
-namespace java com.twitter.simclusters_v2.thriftjava
-namespace py gen.twitter.simclusters_v2.online_store
-#@namespace scala com.twitter.simclusters_v2.thriftscala
-#@namespace strato com.twitter.simclusters_v2
+namelonspacelon java com.twittelonr.simclustelonrs_v2.thriftjava
+namelonspacelon py gelonn.twittelonr.simclustelonrs_v2.onlinelon_storelon
+#@namelonspacelon scala com.twittelonr.simclustelonrs_v2.thriftscala
+#@namelonspacelon strato com.twittelonr.simclustelonrs_v2
 
-include "entity.thrift"
-include "com/twitter/algebird_internal/algebird.thrift"
-
-/**
- * A SimClusters model version.
- **/
-enum ModelVersion {
-	MODEL_20M_145K_dec11 = 1, // DEPRECATED
-	MODEL_20M_145K_updated = 2, // DEPRECATED
-  MODEL_20M_145K_2020 = 3,
-  RESERVED_4 = 4,
-  RESERVED_5 = 5,
-  RESERVED_6 = 6
-}(persisted = 'true', hasPersonalData = 'false')
+includelon "elonntity.thrift"
+includelon "com/twittelonr/algelonbird_intelonrnal/algelonbird.thrift"
 
 /**
- * Uniquely identifies a SimCluster. All fields are required as this is used as a memcache key.
+ * A SimClustelonrs modelonl velonrsion.
  **/
-struct FullClusterId {
-  1: required ModelVersion modelVersion
-  2: required i32 clusterId
-}(persisted='true', hasPersonalData = 'false')
+elonnum ModelonlVelonrsion {
+	MODelonL_20M_145K_delonc11 = 1, // DelonPRelonCATelonD
+	MODelonL_20M_145K_updatelond = 2, // DelonPRelonCATelonD
+  MODelonL_20M_145K_2020 = 3,
+  RelonSelonRVelonD_4 = 4,
+  RelonSelonRVelonD_5 = 5,
+  RelonSelonRVelonD_6 = 6
+}(pelonrsistelond = 'truelon', hasPelonrsonalData = 'falselon')
 
 /**
- * Contains a set of scores per cluster.
+ * Uniquelonly idelonntifielons a SimClustelonr. All fielonlds arelon relonquirelond as this is uselond as a melonmcachelon kelony.
  **/
-struct Scores {
-  1: optional algebird.DecayedValue favClusterNormalized8HrHalfLifeScore
-  2: optional algebird.DecayedValue followClusterNormalized8HrHalfLifeScore
-}(hasPersonalData = 'false')
+struct FullClustelonrId {
+  1: relonquirelond ModelonlVelonrsion modelonlVelonrsion
+  2: relonquirelond i32 clustelonrId
+}(pelonrsistelond='truelon', hasPelonrsonalData = 'falselon')
 
 /**
- * A combination of entity and model. All fields are required as this is used as a memcache key.
+ * Contains a selont of scorelons pelonr clustelonr.
  **/
-struct EntityWithVersion {
-  1: required entity.SimClusterEntity entity
-  2: required ModelVersion version
-}(hasPersonalData = 'true')
+struct Scorelons {
+  1: optional algelonbird.DeloncayelondValuelon favClustelonrNormalizelond8HrHalfLifelonScorelon
+  2: optional algelonbird.DeloncayelondValuelon followClustelonrNormalizelond8HrHalfLifelonScorelon
+}(hasPelonrsonalData = 'falselon')
 
 /**
- * Contains top K clusters with corresponding scores. We're representing clusters purely using ints, and
- * omitting the modelVersion, since that is included in the memcache key.
+ * A combination of elonntity and modelonl. All fielonlds arelon relonquirelond as this is uselond as a melonmcachelon kelony.
  **/
-struct TopKClustersWithScores {
-  1: optional map<i32, Scores> topClustersByFavClusterNormalizedScore(personalDataTypeKey = 'InferredInterests')
-  2: optional map<i32, Scores> topClustersByFollowClusterNormalizedScore(personalDataTypeKey = 'InferredInterests')
-}(hasPersonalData = 'true')
+struct elonntityWithVelonrsion {
+  1: relonquirelond elonntity.SimClustelonrelonntity elonntity
+  2: relonquirelond ModelonlVelonrsion velonrsion
+}(hasPelonrsonalData = 'truelon')
 
 /**
- * Contains top K text entities with corresponding scores.  We're omitting the modelVersion,
- * since that is included in the memcache key.
+ * Contains top K clustelonrs with correlonsponding scorelons. Welon'relon relonprelonselonnting clustelonrs purelonly using ints, and
+ * omitting thelon modelonlVelonrsion, sincelon that is includelond in thelon melonmcachelon kelony.
  **/
-struct TopKEntitiesWithScores {
-  1: optional map<entity.TweetTextEntity, Scores> topEntitiesByFavClusterNormalizedScore
-  2: optional map<entity.TweetTextEntity, Scores> topEntitiesByFollowClusterNormalizedScore
-}(hasPersonalData = 'true')
+struct TopKClustelonrsWithScorelons {
+  1: optional map<i32, Scorelons> topClustelonrsByFavClustelonrNormalizelondScorelon(pelonrsonalDataTypelonKelony = 'InfelonrrelondIntelonrelonsts')
+  2: optional map<i32, Scorelons> topClustelonrsByFollowClustelonrNormalizelondScorelon(pelonrsonalDataTypelonKelony = 'InfelonrrelondIntelonrelonsts')
+}(hasPelonrsonalData = 'truelon')
 
 /**
- * Contains top K tweets with corresponding scores. We're omitting the modelVersion,
- * since that is included in the memcache key.
+ * Contains top K telonxt elonntitielons with correlonsponding scorelons.  Welon'relon omitting thelon modelonlVelonrsion,
+ * sincelon that is includelond in thelon melonmcachelon kelony.
  **/
-struct TopKTweetsWithScores {
-  1: optional map<i64, Scores> topTweetsByFavClusterNormalizedScore(personalDataTypeKey='TweetId')
-  2: optional map<i64, Scores> topTweetsByFollowClusterNormalizedScore(personalDataTypeKey='TweetId')
-}(hasPersonalData = 'true')
+struct TopKelonntitielonsWithScorelons {
+  1: optional map<elonntity.TwelonelontTelonxtelonntity, Scorelons> topelonntitielonsByFavClustelonrNormalizelondScorelon
+  2: optional map<elonntity.TwelonelontTelonxtelonntity, Scorelons> topelonntitielonsByFollowClustelonrNormalizelondScorelon
+}(hasPelonrsonalData = 'truelon')
 
 /**
- * Contains FullClusterId and the corresponding top K tweets and scores.
+ * Contains top K twelonelonts with correlonsponding scorelons. Welon'relon omitting thelon modelonlVelonrsion,
+ * sincelon that is includelond in thelon melonmcachelon kelony.
  **/
-struct ClusterIdToTopKTweetsWithScores {
-  1: required FullClusterId clusterId
-  2: required TopKTweetsWithScores topKTweetsWithScores
-}(hasPersonalData = 'true')
+struct TopKTwelonelontsWithScorelons {
+  1: optional map<i64, Scorelons> topTwelonelontsByFavClustelonrNormalizelondScorelon(pelonrsonalDataTypelonKelony='TwelonelontId')
+  2: optional map<i64, Scorelons> topTwelonelontsByFollowClustelonrNormalizelondScorelon(pelonrsonalDataTypelonKelony='TwelonelontId')
+}(hasPelonrsonalData = 'truelon')
 
 /**
- * Contains a map of Model Version to top K clusters with corresponding scores.
+ * Contains FullClustelonrId and thelon correlonsponding top K twelonelonts and scorelons.
  **/
-struct MultiModelTopKClustersWithScores {
-  1: optional map<ModelVersion, TopKClustersWithScores> multiModelTopKClustersWithScores
-}(hasPersonalData = 'true')
+struct ClustelonrIdToTopKTwelonelontsWithScorelons {
+  1: relonquirelond FullClustelonrId clustelonrId
+  2: relonquirelond TopKTwelonelontsWithScorelons topKTwelonelontsWithScorelons
+}(hasPelonrsonalData = 'truelon')
 
 /**
- * Contains a map of Model Version top K tweets with corresponding scores.
+ * Contains a map of Modelonl Velonrsion to top K clustelonrs with correlonsponding scorelons.
  **/
-struct MultiModelTopKTweetsWithScores {
-  1: optional map<ModelVersion, TopKTweetsWithScores> multiModelTopKTweetsWithScores
-}(hasPersonalData = 'true')
+struct MultiModelonlTopKClustelonrsWithScorelons {
+  1: optional map<ModelonlVelonrsion, TopKClustelonrsWithScorelons> multiModelonlTopKClustelonrsWithScorelons
+}(hasPelonrsonalData = 'truelon')
+
+/**
+ * Contains a map of Modelonl Velonrsion top K twelonelonts with correlonsponding scorelons.
+ **/
+struct MultiModelonlTopKTwelonelontsWithScorelons {
+  1: optional map<ModelonlVelonrsion, TopKTwelonelontsWithScorelons> multiModelonlTopKTwelonelontsWithScorelons
+}(hasPelonrsonalData = 'truelon')

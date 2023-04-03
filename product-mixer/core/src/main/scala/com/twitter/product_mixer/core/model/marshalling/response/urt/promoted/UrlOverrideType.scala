@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-sealed trait UrlOverrideType
+selonalelond trait UrlOvelonrridelonTypelon
 
-object UnknownUrlOverrideType extends UrlOverrideType
-object DcmUrlOverrideType extends UrlOverrideType
+objelonct UnknownUrlOvelonrridelonTypelon elonxtelonnds UrlOvelonrridelonTypelon
+objelonct DcmUrlOvelonrridelonTypelon elonxtelonnds UrlOvelonrridelonTypelon

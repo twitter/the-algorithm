@@ -1,155 +1,155 @@
-package com.twitter.search.earlybird.ml;
+packagelon com.twittelonr.selonarch.elonarlybird.ml;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Optional;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Optional;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.file.AbstractFile;
-import com.twitter.search.common.file.FileUtils;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.schema.DynamicSchema;
-import com.twitter.search.common.util.ml.prediction_engine.CompositeFeatureContext;
-import com.twitter.search.common.util.ml.prediction_engine.LightweightLinearModel;
-import com.twitter.search.common.util.ml.prediction_engine.ModelLoader;
+import com.twittelonr.selonarch.common.filelon.AbstractFilelon;
+import com.twittelonr.selonarch.common.filelon.FilelonUtils;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.schelonma.DynamicSchelonma;
+import com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon.CompositelonFelonaturelonContelonxt;
+import com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon.LightwelonightLinelonarModelonl;
+import com.twittelonr.selonarch.common.util.ml.prelondiction_elonnginelon.ModelonlLoadelonr;
 
-import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.CONTEXT;
-import static com.twitter.search.modeling.tweet_ranking.TweetScoringFeatures.FeatureContextVersion.CURRENT_VERSION;
+import static com.twittelonr.selonarch.modelonling.twelonelont_ranking.TwelonelontScoringFelonaturelons.CONTelonXT;
+import static com.twittelonr.selonarch.modelonling.twelonelont_ranking.TwelonelontScoringFelonaturelons.FelonaturelonContelonxtVelonrsion.CURRelonNT_VelonRSION;
 
 /**
- * Loads the scoring models for tweets and provides access to them.
+ * Loads thelon scoring modelonls for twelonelonts and providelons accelonss to thelonm.
  *
- * This class relies on a list ModelLoader objects to retrieve the objects from them. It will
- * return the first model found according to the order in the list.
+ * This class relonlielons on a list ModelonlLoadelonr objeloncts to relontrielonvelon thelon objeloncts from thelonm. It will
+ * relonturn thelon first modelonl found according to thelon ordelonr in thelon list.
  *
- * For production, we load models from 2 sources: classpath and HDFS. If a model is available
- * from HDFS, we return it, otherwise we use the model from the classpath.
+ * For production, welon load modelonls from 2 sourcelons: classpath and HDFS. If a modelonl is availablelon
+ * from HDFS, welon relonturn it, othelonrwiselon welon uselon thelon modelonl from thelon classpath.
  *
- * The models used in for default requests (i.e. not experiments) MUST be present in the
- * classpath, this allows us to avoid errors if they can't be loaded from HDFS.
- * Models for experiments can live only in HDFS, so we don't need to redeploy Earlybird if we
- * want to test them.
+ * Thelon modelonls uselond in for delonfault relonquelonsts (i.elon. not elonxpelonrimelonnts) MUST belon prelonselonnt in thelon
+ * classpath, this allows us to avoid elonrrors if thelony can't belon loadelond from HDFS.
+ * Modelonls for elonxpelonrimelonnts can livelon only in HDFS, so welon don't nelonelond to relondelonploy elonarlybird if welon
+ * want to telonst thelonm.
  */
-public class ScoringModelsManager {
+public class ScoringModelonlsManagelonr {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ScoringModelsManager.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ScoringModelonlsManagelonr.class);
 
   /**
-   * Used when
-   * 1. Testing
-   * 2. The scoring models are disabled in the config
-   * 3. Exceptions thrown during loading the scoring models
+   * Uselond whelonn
+   * 1. Telonsting
+   * 2. Thelon scoring modelonls arelon disablelond in thelon config
+   * 3. elonxcelonptions thrown during loading thelon scoring modelonls
    */
-  public static final ScoringModelsManager NO_OP_MANAGER = new ScoringModelsManager() {
-    @Override
-    public boolean isEnabled() {
-      return false;
+  public static final ScoringModelonlsManagelonr NO_OP_MANAGelonR = nelonw ScoringModelonlsManagelonr() {
+    @Ovelonrridelon
+    public boolelonan iselonnablelond() {
+      relonturn falselon;
     }
   };
 
-  private final ModelLoader[] loaders;
-  private final DynamicSchema dynamicSchema;
+  privatelon final ModelonlLoadelonr[] loadelonrs;
+  privatelon final DynamicSchelonma dynamicSchelonma;
 
-  public ScoringModelsManager(ModelLoader... loaders) {
-    this.loaders = loaders;
-    this.dynamicSchema = null;
+  public ScoringModelonlsManagelonr(ModelonlLoadelonr... loadelonrs) {
+    this.loadelonrs = loadelonrs;
+    this.dynamicSchelonma = null;
   }
 
-  public ScoringModelsManager(DynamicSchema dynamicSchema, ModelLoader... loaders) {
-    this.loaders = loaders;
-    this.dynamicSchema = dynamicSchema;
+  public ScoringModelonlsManagelonr(DynamicSchelonma dynamicSchelonma, ModelonlLoadelonr... loadelonrs) {
+    this.loadelonrs = loadelonrs;
+    this.dynamicSchelonma = dynamicSchelonma;
   }
 
   /**
-   * Indicates that the scoring models were enabled in the config and were loaded successfully
+   * Indicatelons that thelon scoring modelonls welonrelon elonnablelond in thelon config and welonrelon loadelond succelonssfully
    */
-  public boolean isEnabled() {
-    return true;
+  public boolelonan iselonnablelond() {
+    relonturn truelon;
   }
 
-  public void reload() {
-    for (ModelLoader loader : loaders) {
-      loader.run();
+  public void relonload() {
+    for (ModelonlLoadelonr loadelonr : loadelonrs) {
+      loadelonr.run();
     }
   }
 
   /**
-   * Loads and returns the model with the given name, if one exists.
+   * Loads and relonturns thelon modelonl with thelon givelonn namelon, if onelon elonxists.
    */
-  public Optional<LightweightLinearModel> getModel(String modelName) {
-    for (ModelLoader loader : loaders) {
-      Optional<LightweightLinearModel> model = loader.getModel(modelName);
-      if (model.isPresent()) {
-        return model;
+  public Optional<LightwelonightLinelonarModelonl> gelontModelonl(String modelonlNamelon) {
+    for (ModelonlLoadelonr loadelonr : loadelonrs) {
+      Optional<LightwelonightLinelonarModelonl> modelonl = loadelonr.gelontModelonl(modelonlNamelon);
+      if (modelonl.isPrelonselonnt()) {
+        relonturn modelonl;
       }
     }
-    return Optional.absent();
+    relonturn Optional.abselonnt();
   }
 
   /**
-   * Creates an instance that loads models first from HDFS and the classpath resources.
+   * Crelonatelons an instancelon that loads modelonls first from HDFS and thelon classpath relonsourcelons.
    *
-   * If the models are not found in HDFS, it uses the models from the classpath as fallback.
+   * If thelon modelonls arelon not found in HDFS, it uselons thelon modelonls from thelon classpath as fallback.
    */
-  public static ScoringModelsManager create(
-      SearchStatsReceiver serverStats,
-      String hdfsNameNode,
-      String hdfsBasedPath,
-      DynamicSchema dynamicSchema) throws IOException {
-    // Create a composite feature context so we can load both legacy and schema-based models
-    CompositeFeatureContext featureContext = new CompositeFeatureContext(
-        CONTEXT, dynamicSchema::getSearchFeatureSchema);
-    ModelLoader hdfsLoader = createHdfsLoader(
-        serverStats, hdfsNameNode, hdfsBasedPath, featureContext);
-    ModelLoader classpathLoader = createClasspathLoader(
-        serverStats, featureContext);
+  public static ScoringModelonlsManagelonr crelonatelon(
+      SelonarchStatsReloncelonivelonr selonrvelonrStats,
+      String hdfsNamelonNodelon,
+      String hdfsBaselondPath,
+      DynamicSchelonma dynamicSchelonma) throws IOelonxcelonption {
+    // Crelonatelon a compositelon felonaturelon contelonxt so welon can load both lelongacy and schelonma-baselond modelonls
+    CompositelonFelonaturelonContelonxt felonaturelonContelonxt = nelonw CompositelonFelonaturelonContelonxt(
+        CONTelonXT, dynamicSchelonma::gelontSelonarchFelonaturelonSchelonma);
+    ModelonlLoadelonr hdfsLoadelonr = crelonatelonHdfsLoadelonr(
+        selonrvelonrStats, hdfsNamelonNodelon, hdfsBaselondPath, felonaturelonContelonxt);
+    ModelonlLoadelonr classpathLoadelonr = crelonatelonClasspathLoadelonr(
+        selonrvelonrStats, felonaturelonContelonxt);
 
-    // Explicitly load the models from the classpath
-    classpathLoader.run();
+    // elonxplicitly load thelon modelonls from thelon classpath
+    classpathLoadelonr.run();
 
-    ScoringModelsManager manager = new ScoringModelsManager(hdfsLoader, classpathLoader);
-    LOG.info("Initialized ScoringModelsManager for loading models from HDFS and the classpath");
-    return manager;
+    ScoringModelonlsManagelonr managelonr = nelonw ScoringModelonlsManagelonr(hdfsLoadelonr, classpathLoadelonr);
+    LOG.info("Initializelond ScoringModelonlsManagelonr for loading modelonls from HDFS and thelon classpath");
+    relonturn managelonr;
   }
 
-  protected static ModelLoader createHdfsLoader(
-      SearchStatsReceiver serverStats,
-      String hdfsNameNode,
-      String hdfsBasedPath,
-      CompositeFeatureContext featureContext) {
-    String hdfsVersionedPath = hdfsBasedPath + "/" + CURRENT_VERSION.getVersionDirectory();
-    LOG.info("Starting to load scoring models from HDFS: {}:{}",
-        hdfsNameNode, hdfsVersionedPath);
-    return ModelLoader.forHdfsDirectory(
-        hdfsNameNode,
-        hdfsVersionedPath,
-        featureContext,
-        "scoring_models_hdfs_",
-        serverStats);
+  protelonctelond static ModelonlLoadelonr crelonatelonHdfsLoadelonr(
+      SelonarchStatsReloncelonivelonr selonrvelonrStats,
+      String hdfsNamelonNodelon,
+      String hdfsBaselondPath,
+      CompositelonFelonaturelonContelonxt felonaturelonContelonxt) {
+    String hdfsVelonrsionelondPath = hdfsBaselondPath + "/" + CURRelonNT_VelonRSION.gelontVelonrsionDirelonctory();
+    LOG.info("Starting to load scoring modelonls from HDFS: {}:{}",
+        hdfsNamelonNodelon, hdfsVelonrsionelondPath);
+    relonturn ModelonlLoadelonr.forHdfsDirelonctory(
+        hdfsNamelonNodelon,
+        hdfsVelonrsionelondPath,
+        felonaturelonContelonxt,
+        "scoring_modelonls_hdfs_",
+        selonrvelonrStats);
   }
 
   /**
-   * Creates a loader that loads models from a default location in the classpath.
+   * Crelonatelons a loadelonr that loads modelonls from a delonfault location in thelon classpath.
    */
-  @VisibleForTesting
-  public static ModelLoader createClasspathLoader(
-      SearchStatsReceiver serverStats, CompositeFeatureContext featureContext)
-      throws IOException {
-    AbstractFile defaultModelsBaseDir = FileUtils.getTmpDirHandle(
-        ScoringModelsManager.class,
-        "/com/twitter/search/earlybird/ml/default_models");
-    AbstractFile defaultModelsDir = defaultModelsBaseDir.getChild(
-        CURRENT_VERSION.getVersionDirectory());
+  @VisiblelonForTelonsting
+  public static ModelonlLoadelonr crelonatelonClasspathLoadelonr(
+      SelonarchStatsReloncelonivelonr selonrvelonrStats, CompositelonFelonaturelonContelonxt felonaturelonContelonxt)
+      throws IOelonxcelonption {
+    AbstractFilelon delonfaultModelonlsBaselonDir = FilelonUtils.gelontTmpDirHandlelon(
+        ScoringModelonlsManagelonr.class,
+        "/com/twittelonr/selonarch/elonarlybird/ml/delonfault_modelonls");
+    AbstractFilelon delonfaultModelonlsDir = delonfaultModelonlsBaselonDir.gelontChild(
+        CURRelonNT_VelonRSION.gelontVelonrsionDirelonctory());
 
-    LOG.info("Starting to load scoring models from the classpath: {}",
-        defaultModelsDir.getPath());
-    return ModelLoader.forDirectory(
-        defaultModelsDir,
-        featureContext,
-        "scoring_models_classpath_",
-        serverStats);
+    LOG.info("Starting to load scoring modelonls from thelon classpath: {}",
+        delonfaultModelonlsDir.gelontPath());
+    relonturn ModelonlLoadelonr.forDirelonctory(
+        delonfaultModelonlsDir,
+        felonaturelonContelonxt,
+        "scoring_modelonls_classpath_",
+        selonrvelonrStats);
   }
 }

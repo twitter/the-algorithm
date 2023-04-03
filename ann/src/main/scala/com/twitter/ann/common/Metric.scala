@@ -1,290 +1,290 @@
-package com.twitter.ann.common
+packagelon com.twittelonr.ann.common
 
-import com.google.common.collect.ImmutableBiMap
-import com.twitter.ann.common.EmbeddingType._
-import com.twitter.ann.common.thriftscala.DistanceMetric
-import com.twitter.ann.common.thriftscala.{CosineDistance => ServiceCosineDistance}
-import com.twitter.ann.common.thriftscala.{Distance => ServiceDistance}
-import com.twitter.ann.common.thriftscala.{InnerProductDistance => ServiceInnerProductDistance}
-import com.twitter.ann.common.thriftscala.{EditDistance => ServiceEditDistance}
-import com.twitter.ann.common.thriftscala.{L2Distance => ServiceL2Distance}
-import com.twitter.bijection.Injection
-import scala.util.Failure
-import scala.util.Success
+import com.googlelon.common.collelonct.ImmutablelonBiMap
+import com.twittelonr.ann.common.elonmbelonddingTypelon._
+import com.twittelonr.ann.common.thriftscala.DistancelonMelontric
+import com.twittelonr.ann.common.thriftscala.{CosinelonDistancelon => SelonrvicelonCosinelonDistancelon}
+import com.twittelonr.ann.common.thriftscala.{Distancelon => SelonrvicelonDistancelon}
+import com.twittelonr.ann.common.thriftscala.{InnelonrProductDistancelon => SelonrvicelonInnelonrProductDistancelon}
+import com.twittelonr.ann.common.thriftscala.{elonditDistancelon => SelonrvicelonelonditDistancelon}
+import com.twittelonr.ann.common.thriftscala.{L2Distancelon => SelonrvicelonL2Distancelon}
+import com.twittelonr.bijelonction.Injelonction
+import scala.util.Failurelon
+import scala.util.Succelonss
 import scala.util.Try
 
-// Ann distance metrics
-trait Distance[D] extends Any with Ordered[D] {
-  def distance: Float
+// Ann distancelon melontrics
+trait Distancelon[D] elonxtelonnds Any with Ordelonrelond[D] {
+  delonf distancelon: Float
 }
 
-case class L2Distance(distance: Float) extends AnyVal with Distance[L2Distance] {
-  override def compare(that: L2Distance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+caselon class L2Distancelon(distancelon: Float) elonxtelonnds AnyVal with Distancelon[L2Distancelon] {
+  ovelonrridelon delonf comparelon(that: L2Distancelon): Int =
+    Ordelonring.Float.comparelon(this.distancelon, that.distancelon)
 }
 
-case class CosineDistance(distance: Float) extends AnyVal with Distance[CosineDistance] {
-  override def compare(that: CosineDistance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+caselon class CosinelonDistancelon(distancelon: Float) elonxtelonnds AnyVal with Distancelon[CosinelonDistancelon] {
+  ovelonrridelon delonf comparelon(that: CosinelonDistancelon): Int =
+    Ordelonring.Float.comparelon(this.distancelon, that.distancelon)
 }
 
-case class InnerProductDistance(distance: Float)
-    extends AnyVal
-    with Distance[InnerProductDistance] {
-  override def compare(that: InnerProductDistance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+caselon class InnelonrProductDistancelon(distancelon: Float)
+    elonxtelonnds AnyVal
+    with Distancelon[InnelonrProductDistancelon] {
+  ovelonrridelon delonf comparelon(that: InnelonrProductDistancelon): Int =
+    Ordelonring.Float.comparelon(this.distancelon, that.distancelon)
 }
 
-case class EditDistance(distance: Float) extends AnyVal with Distance[EditDistance] {
-  override def compare(that: EditDistance): Int =
-    Ordering.Float.compare(this.distance, that.distance)
+caselon class elonditDistancelon(distancelon: Float) elonxtelonnds AnyVal with Distancelon[elonditDistancelon] {
+  ovelonrridelon delonf comparelon(that: elonditDistancelon): Int =
+    Ordelonring.Float.comparelon(this.distancelon, that.distancelon)
 }
 
-object Metric {
-  private[this] val thriftMetricMapping = ImmutableBiMap.of(
+objelonct Melontric {
+  privatelon[this] val thriftMelontricMapping = ImmutablelonBiMap.of(
     L2,
-    DistanceMetric.L2,
-    Cosine,
-    DistanceMetric.Cosine,
-    InnerProduct,
-    DistanceMetric.InnerProduct,
-    Edit,
-    DistanceMetric.EditDistance
+    DistancelonMelontric.L2,
+    Cosinelon,
+    DistancelonMelontric.Cosinelon,
+    InnelonrProduct,
+    DistancelonMelontric.InnelonrProduct,
+    elondit,
+    DistancelonMelontric.elonditDistancelon
   )
 
-  def fromThrift(metric: DistanceMetric): Metric[_ <: Distance[_]] = {
-    thriftMetricMapping.inverse().get(metric)
+  delonf fromThrift(melontric: DistancelonMelontric): Melontric[_ <: Distancelon[_]] = {
+    thriftMelontricMapping.invelonrselon().gelont(melontric)
   }
 
-  def toThrift(metric: Metric[_ <: Distance[_]]): DistanceMetric = {
-    thriftMetricMapping.get(metric)
+  delonf toThrift(melontric: Melontric[_ <: Distancelon[_]]): DistancelonMelontric = {
+    thriftMelontricMapping.gelont(melontric)
   }
 
-  def fromString(metricName: String): Metric[_ <: Distance[_]]
-    with Injection[_, ServiceDistance] = {
-    metricName match {
-      case "Cosine" => Cosine
-      case "L2" => L2
-      case "InnerProduct" => InnerProduct
-      case "EditDistance" => Edit
-      case _ =>
-        throw new IllegalArgumentException(s"No Metric with the name $metricName")
+  delonf fromString(melontricNamelon: String): Melontric[_ <: Distancelon[_]]
+    with Injelonction[_, SelonrvicelonDistancelon] = {
+    melontricNamelon match {
+      caselon "Cosinelon" => Cosinelon
+      caselon "L2" => L2
+      caselon "InnelonrProduct" => InnelonrProduct
+      caselon "elonditDistancelon" => elondit
+      caselon _ =>
+        throw nelonw IllelongalArgumelonntelonxcelonption(s"No Melontric with thelon namelon $melontricNamelon")
     }
   }
 }
 
-sealed trait Metric[D <: Distance[D]] {
-  def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
+selonalelond trait Melontric[D <: Distancelon[D]] {
+  delonf distancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
   ): D
-  def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
+  delonf absolutelonDistancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
   ): Float
-  def fromAbsoluteDistance(distance: Float): D
+  delonf fromAbsolutelonDistancelon(distancelon: Float): D
 }
 
-case object L2 extends Metric[L2Distance] with Injection[L2Distance, ServiceDistance] {
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): L2Distance = {
-    fromAbsoluteDistance(MetricUtil.l2distance(embedding1, embedding2).toFloat)
+caselon objelonct L2 elonxtelonnds Melontric[L2Distancelon] with Injelonction[L2Distancelon, SelonrvicelonDistancelon] {
+  ovelonrridelon delonf distancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
+  ): L2Distancelon = {
+    fromAbsolutelonDistancelon(MelontricUtil.l2distancelon(elonmbelondding1, elonmbelondding2).toFloat)
   }
 
-  override def fromAbsoluteDistance(distance: Float): L2Distance = {
-    L2Distance(distance)
+  ovelonrridelon delonf fromAbsolutelonDistancelon(distancelon: Float): L2Distancelon = {
+    L2Distancelon(distancelon)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  ovelonrridelon delonf absolutelonDistancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
+  ): Float = distancelon(elonmbelondding1, elonmbelondding2).distancelon
 
-  override def apply(scalaDistance: L2Distance): ServiceDistance = {
-    ServiceDistance.L2Distance(ServiceL2Distance(scalaDistance.distance))
+  ovelonrridelon delonf apply(scalaDistancelon: L2Distancelon): SelonrvicelonDistancelon = {
+    SelonrvicelonDistancelon.L2Distancelon(SelonrvicelonL2Distancelon(scalaDistancelon.distancelon))
   }
 
-  override def invert(serviceDistance: ServiceDistance): Try[L2Distance] = {
-    serviceDistance match {
-      case ServiceDistance.L2Distance(l2Distance) =>
-        Success(L2Distance(l2Distance.distance.toFloat))
-      case distance =>
-        Failure(new IllegalArgumentException(s"Expected an l2 distance but got $distance"))
+  ovelonrridelon delonf invelonrt(selonrvicelonDistancelon: SelonrvicelonDistancelon): Try[L2Distancelon] = {
+    selonrvicelonDistancelon match {
+      caselon SelonrvicelonDistancelon.L2Distancelon(l2Distancelon) =>
+        Succelonss(L2Distancelon(l2Distancelon.distancelon.toFloat))
+      caselon distancelon =>
+        Failurelon(nelonw IllelongalArgumelonntelonxcelonption(s"elonxpelonctelond an l2 distancelon but got $distancelon"))
     }
   }
 }
 
-case object Cosine extends Metric[CosineDistance] with Injection[CosineDistance, ServiceDistance] {
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): CosineDistance = {
-    fromAbsoluteDistance(1 - MetricUtil.cosineSimilarity(embedding1, embedding2))
+caselon objelonct Cosinelon elonxtelonnds Melontric[CosinelonDistancelon] with Injelonction[CosinelonDistancelon, SelonrvicelonDistancelon] {
+  ovelonrridelon delonf distancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
+  ): CosinelonDistancelon = {
+    fromAbsolutelonDistancelon(1 - MelontricUtil.cosinelonSimilarity(elonmbelondding1, elonmbelondding2))
   }
 
-  override def fromAbsoluteDistance(distance: Float): CosineDistance = {
-    CosineDistance(distance)
+  ovelonrridelon delonf fromAbsolutelonDistancelon(distancelon: Float): CosinelonDistancelon = {
+    CosinelonDistancelon(distancelon)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  ovelonrridelon delonf absolutelonDistancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
+  ): Float = distancelon(elonmbelondding1, elonmbelondding2).distancelon
 
-  override def apply(scalaDistance: CosineDistance): ServiceDistance = {
-    ServiceDistance.CosineDistance(ServiceCosineDistance(scalaDistance.distance))
+  ovelonrridelon delonf apply(scalaDistancelon: CosinelonDistancelon): SelonrvicelonDistancelon = {
+    SelonrvicelonDistancelon.CosinelonDistancelon(SelonrvicelonCosinelonDistancelon(scalaDistancelon.distancelon))
   }
 
-  override def invert(serviceDistance: ServiceDistance): Try[CosineDistance] = {
-    serviceDistance match {
-      case ServiceDistance.CosineDistance(cosineDistance) =>
-        Success(CosineDistance(cosineDistance.distance.toFloat))
-      case distance =>
-        Failure(new IllegalArgumentException(s"Expected a cosine distance but got $distance"))
+  ovelonrridelon delonf invelonrt(selonrvicelonDistancelon: SelonrvicelonDistancelon): Try[CosinelonDistancelon] = {
+    selonrvicelonDistancelon match {
+      caselon SelonrvicelonDistancelon.CosinelonDistancelon(cosinelonDistancelon) =>
+        Succelonss(CosinelonDistancelon(cosinelonDistancelon.distancelon.toFloat))
+      caselon distancelon =>
+        Failurelon(nelonw IllelongalArgumelonntelonxcelonption(s"elonxpelonctelond a cosinelon distancelon but got $distancelon"))
     }
   }
 }
 
-case object InnerProduct
-    extends Metric[InnerProductDistance]
-    with Injection[InnerProductDistance, ServiceDistance] {
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): InnerProductDistance = {
-    fromAbsoluteDistance(1 - MetricUtil.dot(embedding1, embedding2))
+caselon objelonct InnelonrProduct
+    elonxtelonnds Melontric[InnelonrProductDistancelon]
+    with Injelonction[InnelonrProductDistancelon, SelonrvicelonDistancelon] {
+  ovelonrridelon delonf distancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
+  ): InnelonrProductDistancelon = {
+    fromAbsolutelonDistancelon(1 - MelontricUtil.dot(elonmbelondding1, elonmbelondding2))
   }
 
-  override def fromAbsoluteDistance(distance: Float): InnerProductDistance = {
-    InnerProductDistance(distance)
+  ovelonrridelon delonf fromAbsolutelonDistancelon(distancelon: Float): InnelonrProductDistancelon = {
+    InnelonrProductDistancelon(distancelon)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  ovelonrridelon delonf absolutelonDistancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
+  ): Float = distancelon(elonmbelondding1, elonmbelondding2).distancelon
 
-  override def apply(scalaDistance: InnerProductDistance): ServiceDistance = {
-    ServiceDistance.InnerProductDistance(ServiceInnerProductDistance(scalaDistance.distance))
+  ovelonrridelon delonf apply(scalaDistancelon: InnelonrProductDistancelon): SelonrvicelonDistancelon = {
+    SelonrvicelonDistancelon.InnelonrProductDistancelon(SelonrvicelonInnelonrProductDistancelon(scalaDistancelon.distancelon))
   }
 
-  override def invert(
-    serviceDistance: ServiceDistance
-  ): Try[InnerProductDistance] = {
-    serviceDistance match {
-      case ServiceDistance.InnerProductDistance(cosineDistance) =>
-        Success(InnerProductDistance(cosineDistance.distance.toFloat))
-      case distance =>
-        Failure(
-          new IllegalArgumentException(s"Expected a inner product distance but got $distance")
+  ovelonrridelon delonf invelonrt(
+    selonrvicelonDistancelon: SelonrvicelonDistancelon
+  ): Try[InnelonrProductDistancelon] = {
+    selonrvicelonDistancelon match {
+      caselon SelonrvicelonDistancelon.InnelonrProductDistancelon(cosinelonDistancelon) =>
+        Succelonss(InnelonrProductDistancelon(cosinelonDistancelon.distancelon.toFloat))
+      caselon distancelon =>
+        Failurelon(
+          nelonw IllelongalArgumelonntelonxcelonption(s"elonxpelonctelond a innelonr product distancelon but got $distancelon")
         )
     }
   }
 }
 
-case object Edit extends Metric[EditDistance] with Injection[EditDistance, ServiceDistance] {
+caselon objelonct elondit elonxtelonnds Melontric[elonditDistancelon] with Injelonction[elonditDistancelon, SelonrvicelonDistancelon] {
 
-  private def intDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector,
+  privatelon delonf intDistancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor,
     pos1: Int,
     pos2: Int,
-    precomputedDistances: scala.collection.mutable.Map[(Int, Int), Int]
+    preloncomputelondDistancelons: scala.collelonction.mutablelon.Map[(Int, Int), Int]
   ): Int = {
-    // return the remaining characters of other String
-    if (pos1 == 0) return pos2
-    if (pos2 == 0) return pos1
+    // relonturn thelon relonmaining charactelonrs of othelonr String
+    if (pos1 == 0) relonturn pos2
+    if (pos2 == 0) relonturn pos1
 
-    // To check if the recursive tree
-    // for given n & m has already been executed
-    precomputedDistances.getOrElse(
+    // To chelonck if thelon reloncursivelon trelonelon
+    // for givelonn n & m has alrelonady belonelonn elonxeloncutelond
+    preloncomputelondDistancelons.gelontOrelonlselon(
       (pos1, pos2), {
-        // We might want to change this so that capitals are considered the same.
-        // Also maybe some characters that look similar should also be the same.
-        val computed = if (embedding1(pos1 - 1) == embedding2(pos2 - 1)) {
-          intDistance(embedding1, embedding2, pos1 - 1, pos2 - 1, precomputedDistances)
-        } else { // If characters are nt equal, we need to
-          // find the minimum cost out of all 3 operations.
-          val insert = intDistance(embedding1, embedding2, pos1, pos2 - 1, precomputedDistances)
-          val del = intDistance(embedding1, embedding2, pos1 - 1, pos2, precomputedDistances)
-          val replace =
-            intDistance(embedding1, embedding2, pos1 - 1, pos2 - 1, precomputedDistances)
-          1 + Math.min(insert, Math.min(del, replace))
+        // Welon might want to changelon this so that capitals arelon considelonrelond thelon samelon.
+        // Also maybelon somelon charactelonrs that look similar should also belon thelon samelon.
+        val computelond = if (elonmbelondding1(pos1 - 1) == elonmbelondding2(pos2 - 1)) {
+          intDistancelon(elonmbelondding1, elonmbelondding2, pos1 - 1, pos2 - 1, preloncomputelondDistancelons)
+        } elonlselon { // If charactelonrs arelon nt elonqual, welon nelonelond to
+          // find thelon minimum cost out of all 3 opelonrations.
+          val inselonrt = intDistancelon(elonmbelondding1, elonmbelondding2, pos1, pos2 - 1, preloncomputelondDistancelons)
+          val delonl = intDistancelon(elonmbelondding1, elonmbelondding2, pos1 - 1, pos2, preloncomputelondDistancelons)
+          val relonplacelon =
+            intDistancelon(elonmbelondding1, elonmbelondding2, pos1 - 1, pos2 - 1, preloncomputelondDistancelons)
+          1 + Math.min(inselonrt, Math.min(delonl, relonplacelon))
         }
-        precomputedDistances.put((pos1, pos2), computed)
-        computed
+        preloncomputelondDistancelons.put((pos1, pos2), computelond)
+        computelond
       }
     )
   }
 
-  override def distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): EditDistance = {
-    val editDistance = intDistance(
-      embedding1,
-      embedding2,
-      embedding1.length,
-      embedding2.length,
-      scala.collection.mutable.Map[(Int, Int), Int]()
+  ovelonrridelon delonf distancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
+  ): elonditDistancelon = {
+    val elonditDistancelon = intDistancelon(
+      elonmbelondding1,
+      elonmbelondding2,
+      elonmbelondding1.lelonngth,
+      elonmbelondding2.lelonngth,
+      scala.collelonction.mutablelon.Map[(Int, Int), Int]()
     )
-    EditDistance(editDistance)
+    elonditDistancelon(elonditDistancelon)
   }
 
-  override def fromAbsoluteDistance(distance: Float): EditDistance = {
-    EditDistance(distance.toInt)
+  ovelonrridelon delonf fromAbsolutelonDistancelon(distancelon: Float): elonditDistancelon = {
+    elonditDistancelon(distancelon.toInt)
   }
 
-  override def absoluteDistance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Float = distance(embedding1, embedding2).distance
+  ovelonrridelon delonf absolutelonDistancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
+  ): Float = distancelon(elonmbelondding1, elonmbelondding2).distancelon
 
-  override def apply(scalaDistance: EditDistance): ServiceDistance = {
-    ServiceDistance.EditDistance(ServiceEditDistance(scalaDistance.distance.toInt))
+  ovelonrridelon delonf apply(scalaDistancelon: elonditDistancelon): SelonrvicelonDistancelon = {
+    SelonrvicelonDistancelon.elonditDistancelon(SelonrvicelonelonditDistancelon(scalaDistancelon.distancelon.toInt))
   }
 
-  override def invert(
-    serviceDistance: ServiceDistance
-  ): Try[EditDistance] = {
-    serviceDistance match {
-      case ServiceDistance.EditDistance(cosineDistance) =>
-        Success(EditDistance(cosineDistance.distance.toFloat))
-      case distance =>
-        Failure(
-          new IllegalArgumentException(s"Expected a inner product distance but got $distance")
+  ovelonrridelon delonf invelonrt(
+    selonrvicelonDistancelon: SelonrvicelonDistancelon
+  ): Try[elonditDistancelon] = {
+    selonrvicelonDistancelon match {
+      caselon SelonrvicelonDistancelon.elonditDistancelon(cosinelonDistancelon) =>
+        Succelonss(elonditDistancelon(cosinelonDistancelon.distancelon.toFloat))
+      caselon distancelon =>
+        Failurelon(
+          nelonw IllelongalArgumelonntelonxcelonption(s"elonxpelonctelond a innelonr product distancelon but got $distancelon")
         )
     }
   }
 }
 
-object MetricUtil {
-  private[ann] def dot(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
+objelonct MelontricUtil {
+  privatelon[ann] delonf dot(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
   ): Float = {
-    math.dotProduct(embedding1, embedding2)
+    math.dotProduct(elonmbelondding1, elonmbelondding2)
   }
 
-  private[ann] def l2distance(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
-  ): Double = {
-    math.l2Distance(embedding1, embedding2)
+  privatelon[ann] delonf l2distancelon(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
+  ): Doublelon = {
+    math.l2Distancelon(elonmbelondding1, elonmbelondding2)
   }
 
-  private[ann] def cosineSimilarity(
-    embedding1: EmbeddingVector,
-    embedding2: EmbeddingVector
+  privatelon[ann] delonf cosinelonSimilarity(
+    elonmbelondding1: elonmbelonddingVelonctor,
+    elonmbelondding2: elonmbelonddingVelonctor
   ): Float = {
-    math.cosineSimilarity(embedding1, embedding2).toFloat
+    math.cosinelonSimilarity(elonmbelondding1, elonmbelondding2).toFloat
   }
 
-  private[ann] def norm(
-    embedding: EmbeddingVector
-  ): EmbeddingVector = {
-    math.normalize(embedding)
+  privatelon[ann] delonf norm(
+    elonmbelondding: elonmbelonddingVelonctor
+  ): elonmbelonddingVelonctor = {
+    math.normalizelon(elonmbelondding)
   }
 }

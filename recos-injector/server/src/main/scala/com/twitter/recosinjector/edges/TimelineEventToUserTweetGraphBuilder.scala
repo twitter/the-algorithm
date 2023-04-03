@@ -1,54 +1,54 @@
-package com.twitter.recosinjector.edges
+packagelon com.twittelonr.reloncosinjelonctor.elondgelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.TweetFavoriteEventDetails
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.util.Action
+import com.twittelonr.reloncosinjelonctor.util.TwelonelontFavoritelonelonvelonntDelontails
+import com.twittelonr.util.Futurelon
 
-class TimelineEventToUserTweetGraphBuilder(
-  userTweetEntityEdgeBuilder: UserTweetEntityEdgeBuilder
+class TimelonlinelonelonvelonntToUselonrTwelonelontGraphBuildelonr(
+  uselonrTwelonelontelonntityelondgelonBuildelonr: UselonrTwelonelontelonntityelondgelonBuildelonr
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetFavoriteEventDetails, UserTweetEntityEdge] {
+  ovelonrridelon implicit val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonvelonntToMelonssagelonBuildelonr[TwelonelontFavoritelonelonvelonntDelontails, UselonrTwelonelontelonntityelondgelon] {
 
-  override def shouldProcessEvent(event: TweetFavoriteEventDetails): Future[Boolean] = {
-    Future(true)
+  ovelonrridelon delonf shouldProcelonsselonvelonnt(elonvelonnt: TwelonelontFavoritelonelonvelonntDelontails): Futurelon[Boolelonan] = {
+    Futurelon(truelon)
   }
 
-  override def buildEdges(details: TweetFavoriteEventDetails): Future[Seq[UserTweetEntityEdge]] = {
-    val engagement = details.userTweetEngagement
+  ovelonrridelon delonf buildelondgelons(delontails: TwelonelontFavoritelonelonvelonntDelontails): Futurelon[Selonq[UselonrTwelonelontelonntityelondgelon]] = {
+    val elonngagelonmelonnt = delontails.uselonrTwelonelontelonngagelonmelonnt
 
-    engagement.action match {
-      case Action.Favorite =>
-        val tweetDetails = engagement.tweetDetails
+    elonngagelonmelonnt.action match {
+      caselon Action.Favoritelon =>
+        val twelonelontDelontails = elonngagelonmelonnt.twelonelontDelontails
 
-        val entitiesMapFut = userTweetEntityEdgeBuilder.getEntitiesMapAndUpdateCache(
-          tweetId = engagement.tweetId,
-          tweetDetails = tweetDetails
+        val elonntitielonsMapFut = uselonrTwelonelontelonntityelondgelonBuildelonr.gelontelonntitielonsMapAndUpdatelonCachelon(
+          twelonelontId = elonngagelonmelonnt.twelonelontId,
+          twelonelontDelontails = twelonelontDelontails
         )
 
-        entitiesMapFut
-          .map { entitiesMap =>
-            UserTweetEntityEdge(
-              sourceUser = engagement.engageUserId,
-              targetTweet = engagement.tweetId,
-              action = engagement.action,
-              metadata = engagement.engagementTimeMillis,
-              cardInfo = engagement.tweetDetails.map(_.cardInfo.toByte),
-              entitiesMap = entitiesMap,
-              tweetDetails = tweetDetails
+        elonntitielonsMapFut
+          .map { elonntitielonsMap =>
+            UselonrTwelonelontelonntityelondgelon(
+              sourcelonUselonr = elonngagelonmelonnt.elonngagelonUselonrId,
+              targelontTwelonelont = elonngagelonmelonnt.twelonelontId,
+              action = elonngagelonmelonnt.action,
+              melontadata = elonngagelonmelonnt.elonngagelonmelonntTimelonMillis,
+              cardInfo = elonngagelonmelonnt.twelonelontDelontails.map(_.cardInfo.toBytelon),
+              elonntitielonsMap = elonntitielonsMap,
+              twelonelontDelontails = twelonelontDelontails
             )
           }
-          .map(Seq(_))
+          .map(Selonq(_))
 
-      case _ => Future.Nil
+      caselon _ => Futurelon.Nil
     }
   }
 
-  override def filterEdges(
-    event: TweetFavoriteEventDetails,
-    edges: Seq[UserTweetEntityEdge]
-  ): Future[Seq[UserTweetEntityEdge]] = {
-    Future(edges)
+  ovelonrridelon delonf filtelonrelondgelons(
+    elonvelonnt: TwelonelontFavoritelonelonvelonntDelontails,
+    elondgelons: Selonq[UselonrTwelonelontelonntityelondgelon]
+  ): Futurelon[Selonq[UselonrTwelonelontelonntityelondgelon]] = {
+    Futurelon(elondgelons)
   }
 }

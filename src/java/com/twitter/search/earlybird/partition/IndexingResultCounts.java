@@ -1,51 +1,51 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
 /**
- * Helper class used to store counts to be logged.
+ * Helonlpelonr class uselond to storelon counts to belon loggelond.
  */
-public class IndexingResultCounts {
-  private int indexingCalls;
-  private int failureRetriable;
-  private int failureNotRetriable;
-  private int indexingSuccess;
+public class IndelonxingRelonsultCounts {
+  privatelon int indelonxingCalls;
+  privatelon int failurelonRelontriablelon;
+  privatelon int failurelonNotRelontriablelon;
+  privatelon int indelonxingSuccelonss;
 
-  public IndexingResultCounts() {
+  public IndelonxingRelonsultCounts() {
   }
 
   /**
-   * Updates the internal counts with a single result.
+   * Updatelons thelon intelonrnal counts with a singlelon relonsult.
    */
-  public void countResult(ISegmentWriter.Result result) {
-    indexingCalls++;
-    if (result == ISegmentWriter.Result.FAILURE_NOT_RETRYABLE) {
-      failureNotRetriable++;
-    } else if (result == ISegmentWriter.Result.FAILURE_RETRYABLE) {
-      failureRetriable++;
-    } else if (result == ISegmentWriter.Result.SUCCESS) {
-      indexingSuccess++;
+  public void countRelonsult(ISelongmelonntWritelonr.Relonsult relonsult) {
+    indelonxingCalls++;
+    if (relonsult == ISelongmelonntWritelonr.Relonsult.FAILURelon_NOT_RelonTRYABLelon) {
+      failurelonNotRelontriablelon++;
+    } elonlselon if (relonsult == ISelongmelonntWritelonr.Relonsult.FAILURelon_RelonTRYABLelon) {
+      failurelonRelontriablelon++;
+    } elonlselon if (relonsult == ISelongmelonntWritelonr.Relonsult.SUCCelonSS) {
+      indelonxingSuccelonss++;
     }
   }
 
-  int getIndexingCalls() {
-    return indexingCalls;
+  int gelontIndelonxingCalls() {
+    relonturn indelonxingCalls;
   }
 
-  int getFailureRetriable() {
-    return failureRetriable;
+  int gelontFailurelonRelontriablelon() {
+    relonturn failurelonRelontriablelon;
   }
 
-  int getFailureNotRetriable() {
-    return failureNotRetriable;
+  int gelontFailurelonNotRelontriablelon() {
+    relonturn failurelonNotRelontriablelon;
   }
 
-  int getIndexingSuccess() {
-    return indexingSuccess;
+  int gelontIndelonxingSuccelonss() {
+    relonturn indelonxingSuccelonss;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return String.format("[calls: %,d, success: %,d, fail not-retryable: %,d, fail retryable: %,d]",
-        indexingCalls, indexingSuccess, failureNotRetriable, failureRetriable);
+    relonturn String.format("[calls: %,d, succelonss: %,d, fail not-relontryablelon: %,d, fail relontryablelon: %,d]",
+        indelonxingCalls, indelonxingSuccelonss, failurelonNotRelontriablelon, failurelonRelontriablelon);
   }
 }
 

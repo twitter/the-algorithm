@@ -1,167 +1,167 @@
 <configuration>
-    <shutdownHook class="ch.qos.logback.core.hook.DelayingShutdownHook"/>
+    <shutdownHook class="ch.qos.logback.corelon.hook.DelonlayingShutdownHook"/>
 
     <!-- ===================================================== -->
-    <!-- Service Config -->
+    <!-- Selonrvicelon Config -->
     <!-- ===================================================== -->
-    <property name="DEFAULT_SERVICE_PATTERN"
-              value="%-16X{traceId} %-12X{clientId:--} %-16X{method} %-25logger{0} %msg"/>
+    <propelonrty namelon="DelonFAULT_SelonRVICelon_PATTelonRN"
+              valuelon="%-16X{tracelonId} %-12X{clielonntId:--} %-16X{melonthod} %-25loggelonr{0} %msg"/>
 
-    <property name="DEFAULT_ACCESS_PATTERN"
-              value="%msg"/>
+    <propelonrty namelon="DelonFAULT_ACCelonSS_PATTelonRN"
+              valuelon="%msg"/>
 
     <!-- ===================================================== -->
     <!-- Common Config -->
     <!-- ===================================================== -->
 
-    <!-- JUL/JDK14 to Logback bridge -->
-    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
-        <resetJUL>true</resetJUL>
-    </contextListener>
+    <!-- JUL/JDK14 to Logback bridgelon -->
+    <contelonxtListelonnelonr class="ch.qos.logback.classic.jul.LelonvelonlChangelonPropagator">
+        <relonselontJUL>truelon</relonselontJUL>
+    </contelonxtListelonnelonr>
 
     <!-- ====================================================================================== -->
-    <!-- NOTE: The following appenders use a simple TimeBasedRollingPolicy configuration.       -->
-    <!--       You may want to consider using a more advanced SizeAndTimeBasedRollingPolicy.    -->
-    <!--       See: https://logback.qos.ch/manual/appenders.html#SizeAndTimeBasedRollingPolicy  -->
+    <!-- NOTelon: Thelon following appelonndelonrs uselon a simplelon TimelonBaselondRollingPolicy configuration.       -->
+    <!--       You may want to considelonr using a morelon advancelond SizelonAndTimelonBaselondRollingPolicy.    -->
+    <!--       Selonelon: https://logback.qos.ch/manual/appelonndelonrs.html#SizelonAndTimelonBaselondRollingPolicy  -->
     <!-- ====================================================================================== -->
 
-    <!-- Service Log (rollover daily, keep maximum of 21 days of gzip compressed logs) -->
-    <appender name="SERVICE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.service.output}</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
-            <fileNamePattern>${log.service.output}.%d.gz</fileNamePattern>
-            <!-- the maximum total size of all the log files -->
-            <totalSizeCap>3GB</totalSizeCap>
-            <!-- keep maximum 21 days' worth of history -->
+    <!-- Selonrvicelon Log (rollovelonr daily, kelonelonp maximum of 21 days of gzip comprelonsselond logs) -->
+    <appelonndelonr namelon="SelonRVICelon" class="ch.qos.logback.corelon.rolling.RollingFilelonAppelonndelonr">
+        <filelon>${log.selonrvicelon.output}</filelon>
+        <rollingPolicy class="ch.qos.logback.corelon.rolling.TimelonBaselondRollingPolicy">
+            <!-- daily rollovelonr -->
+            <filelonNamelonPattelonrn>${log.selonrvicelon.output}.%d.gz</filelonNamelonPattelonrn>
+            <!-- thelon maximum total sizelon of all thelon log filelons -->
+            <totalSizelonCap>3GB</totalSizelonCap>
+            <!-- kelonelonp maximum 21 days' worth of history -->
             <maxHistory>21</maxHistory>
-            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <clelonanHistoryOnStart>truelon</clelonanHistoryOnStart>
         </rollingPolicy>
-        <encoder>
-            <pattern>%date %.-3level ${DEFAULT_SERVICE_PATTERN}%n</pattern>
-        </encoder>
-    </appender>
+        <elonncodelonr>
+            <pattelonrn>%datelon %.-3lelonvelonl ${DelonFAULT_SelonRVICelon_PATTelonRN}%n</pattelonrn>
+        </elonncodelonr>
+    </appelonndelonr>
 
-    <!-- Access Log (rollover daily, keep maximum of 21 days of gzip compressed logs) -->
-    <appender name="ACCESS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${log.access.output}</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
-            <fileNamePattern>${log.access.output}.%d.gz</fileNamePattern>
-            <!-- the maximum total size of all the log files -->
-            <totalSizeCap>100MB</totalSizeCap>
-            <!-- keep maximum 7 days' worth of history -->
+    <!-- Accelonss Log (rollovelonr daily, kelonelonp maximum of 21 days of gzip comprelonsselond logs) -->
+    <appelonndelonr namelon="ACCelonSS" class="ch.qos.logback.corelon.rolling.RollingFilelonAppelonndelonr">
+        <filelon>${log.accelonss.output}</filelon>
+        <rollingPolicy class="ch.qos.logback.corelon.rolling.TimelonBaselondRollingPolicy">
+            <!-- daily rollovelonr -->
+            <filelonNamelonPattelonrn>${log.accelonss.output}.%d.gz</filelonNamelonPattelonrn>
+            <!-- thelon maximum total sizelon of all thelon log filelons -->
+            <totalSizelonCap>100MB</totalSizelonCap>
+            <!-- kelonelonp maximum 7 days' worth of history -->
             <maxHistory>7</maxHistory>
-            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <clelonanHistoryOnStart>truelon</clelonanHistoryOnStart>
         </rollingPolicy>
-        <encoder>
-            <pattern>${DEFAULT_ACCESS_PATTERN}%n</pattern>
-        </encoder>
-    </appender>
+        <elonncodelonr>
+            <pattelonrn>${DelonFAULT_ACCelonSS_PATTelonRN}%n</pattelonrn>
+        </elonncodelonr>
+    </appelonndelonr>
 
-    <!--LogLens -->
-    <appender name="LOGLENS" class="com.twitter.loglens.logback.LoglensAppender">
-        <mdcAdditionalContext>true</mdcAdditionalContext>
-        <category>${log.lens.category}</category>
-        <index>${log.lens.index}</index>
-        <tag>${log.lens.tag}/service</tag>
-        <encoder>
-            <pattern>%msg</pattern>
-        </encoder>
-    </appender>
+    <!--LogLelonns -->
+    <appelonndelonr namelon="LOGLelonNS" class="com.twittelonr.loglelonns.logback.LoglelonnsAppelonndelonr">
+        <mdcAdditionalContelonxt>truelon</mdcAdditionalContelonxt>
+        <catelongory>${log.lelonns.catelongory}</catelongory>
+        <indelonx>${log.lelonns.indelonx}</indelonx>
+        <tag>${log.lelonns.tag}/selonrvicelon</tag>
+        <elonncodelonr>
+            <pattelonrn>%msg</pattelonrn>
+        </elonncodelonr>
+    </appelonndelonr>
 
-    <!-- LogLens Access -->
-    <appender name="LOGLENS-ACCESS" class="com.twitter.loglens.logback.LoglensAppender">
-        <mdcAdditionalContext>true</mdcAdditionalContext>
-        <category>${log.lens.category}</category>
-        <index>${log.lens.index}</index>
-        <tag>${log.lens.tag}/access</tag>
-        <encoder>
-            <pattern>%msg</pattern>
-        </encoder>
-    </appender>
+    <!-- LogLelonns Accelonss -->
+    <appelonndelonr namelon="LOGLelonNS-ACCelonSS" class="com.twittelonr.loglelonns.logback.LoglelonnsAppelonndelonr">
+        <mdcAdditionalContelonxt>truelon</mdcAdditionalContelonxt>
+        <catelongory>${log.lelonns.catelongory}</catelongory>
+        <indelonx>${log.lelonns.indelonx}</indelonx>
+        <tag>${log.lelonns.tag}/accelonss</tag>
+        <elonncodelonr>
+            <pattelonrn>%msg</pattelonrn>
+        </elonncodelonr>
+    </appelonndelonr>
 
-    <!-- Pipeline Execution Logs -->
-    <appender name="ALLOW-LISTED-PIPELINE-EXECUTIONS" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>allow_listed_pipeline_executions.log</file>
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- daily rollover -->
-            <fileNamePattern>allow_listed_pipeline_executions.log.%d.gz</fileNamePattern>
-             <!-- the maximum total size of all the log files -->
-            <totalSizeCap>100MB</totalSizeCap>
-            <!-- keep maximum 7 days' worth of history -->
+    <!-- Pipelonlinelon elonxeloncution Logs -->
+    <appelonndelonr namelon="ALLOW-LISTelonD-PIPelonLINelon-elonXelonCUTIONS" class="ch.qos.logback.corelon.rolling.RollingFilelonAppelonndelonr">
+        <filelon>allow_listelond_pipelonlinelon_elonxeloncutions.log</filelon>
+        <rollingPolicy class="ch.qos.logback.corelon.rolling.TimelonBaselondRollingPolicy">
+            <!-- daily rollovelonr -->
+            <filelonNamelonPattelonrn>allow_listelond_pipelonlinelon_elonxeloncutions.log.%d.gz</filelonNamelonPattelonrn>
+             <!-- thelon maximum total sizelon of all thelon log filelons -->
+            <totalSizelonCap>100MB</totalSizelonCap>
+            <!-- kelonelonp maximum 7 days' worth of history -->
             <maxHistory>7</maxHistory>
-            <cleanHistoryOnStart>true</cleanHistoryOnStart>
+            <clelonanHistoryOnStart>truelon</clelonanHistoryOnStart>
         </rollingPolicy>
-        <encoder>
-            <pattern>%date %.-3level ${DEFAULT_SERVICE_PATTERN}%n</pattern>
-        </encoder>
-    </appender>
+        <elonncodelonr>
+            <pattelonrn>%datelon %.-3lelonvelonl ${DelonFAULT_SelonRVICelon_PATTelonRN}%n</pattelonrn>
+        </elonncodelonr>
+    </appelonndelonr>
 
     <!-- ===================================================== -->
-    <!-- Primary Async Appenders -->
+    <!-- Primary Async Appelonndelonrs -->
     <!-- ===================================================== -->
 
-    <property name="async_queue_size" value="${queue.size:-50000}"/>
-    <property name="async_max_flush_time" value="${max.flush.time:-0}"/>
+    <propelonrty namelon="async_quelonuelon_sizelon" valuelon="${quelonuelon.sizelon:-50000}"/>
+    <propelonrty namelon="async_max_flush_timelon" valuelon="${max.flush.timelon:-0}"/>
 
-    <appender name="ASYNC-SERVICE" class="com.twitter.inject.logback.AsyncAppender">
-        <queueSize>${async_queue_size}</queueSize>
-        <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-        <appender-ref ref="SERVICE"/>
-    </appender>
+    <appelonndelonr namelon="ASYNC-SelonRVICelon" class="com.twittelonr.injelonct.logback.AsyncAppelonndelonr">
+        <quelonuelonSizelon>${async_quelonuelon_sizelon}</quelonuelonSizelon>
+        <maxFlushTimelon>${async_max_flush_timelon}</maxFlushTimelon>
+        <appelonndelonr-relonf relonf="SelonRVICelon"/>
+    </appelonndelonr>
 
-    <appender name="ASYNC-ACCESS" class="com.twitter.inject.logback.AsyncAppender">
-        <queueSize>${async_queue_size}</queueSize>
-        <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-        <appender-ref ref="ACCESS"/>
-    </appender>
+    <appelonndelonr namelon="ASYNC-ACCelonSS" class="com.twittelonr.injelonct.logback.AsyncAppelonndelonr">
+        <quelonuelonSizelon>${async_quelonuelon_sizelon}</quelonuelonSizelon>
+        <maxFlushTimelon>${async_max_flush_timelon}</maxFlushTimelon>
+        <appelonndelonr-relonf relonf="ACCelonSS"/>
+    </appelonndelonr>
 
-    <appender name="ASYNC-ALLOW-LISTED-PIPELINE-EXECUTIONS" class="com.twitter.inject.logback.AsyncAppender">
-        <queueSize>${async_queue_size}</queueSize>
-        <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-        <appender-ref ref="ALLOW-LISTED-PIPELINE-EXECUTIONS"/>
-    </appender>
+    <appelonndelonr namelon="ASYNC-ALLOW-LISTelonD-PIPelonLINelon-elonXelonCUTIONS" class="com.twittelonr.injelonct.logback.AsyncAppelonndelonr">
+        <quelonuelonSizelon>${async_quelonuelon_sizelon}</quelonuelonSizelon>
+        <maxFlushTimelon>${async_max_flush_timelon}</maxFlushTimelon>
+        <appelonndelonr-relonf relonf="ALLOW-LISTelonD-PIPelonLINelon-elonXelonCUTIONS"/>
+    </appelonndelonr>
 
-    <appender name="ASYNC-LOGLENS" class="com.twitter.inject.logback.AsyncAppender">
-        <queueSize>${async_queue_size}</queueSize>
-        <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-        <appender-ref ref="LOGLENS"/>
-    </appender>
+    <appelonndelonr namelon="ASYNC-LOGLelonNS" class="com.twittelonr.injelonct.logback.AsyncAppelonndelonr">
+        <quelonuelonSizelon>${async_quelonuelon_sizelon}</quelonuelonSizelon>
+        <maxFlushTimelon>${async_max_flush_timelon}</maxFlushTimelon>
+        <appelonndelonr-relonf relonf="LOGLelonNS"/>
+    </appelonndelonr>
 
-    <appender name="ASYNC-LOGLENS-ACCESS" class="com.twitter.inject.logback.AsyncAppender">
-        <queueSize>${async_queue_size}</queueSize>
-        <maxFlushTime>${async_max_flush_time}</maxFlushTime>
-        <appender-ref ref="LOGLENS-ACCESS"/>
-    </appender>
+    <appelonndelonr namelon="ASYNC-LOGLelonNS-ACCelonSS" class="com.twittelonr.injelonct.logback.AsyncAppelonndelonr">
+        <quelonuelonSizelon>${async_quelonuelon_sizelon}</quelonuelonSizelon>
+        <maxFlushTimelon>${async_max_flush_timelon}</maxFlushTimelon>
+        <appelonndelonr-relonf relonf="LOGLelonNS-ACCelonSS"/>
+    </appelonndelonr>
 
     <!-- ===================================================== -->
-    <!-- Package Config -->
+    <!-- Packagelon Config -->
     <!-- ===================================================== -->
 
-    <!-- Per-Package Config -->
-    <logger name="com.twitter" level="INHERITED"/>
-    <logger name="com.twitter.wilyns" level="INHERITED"/>
-    <logger name="com.twitter.configbus.client.file" level="INHERITED"/>
-    <logger name="com.twitter.finagle.mux" level="INHERITED"/>
-    <logger name="com.twitter.finagle.serverset2" level="INHERITED"/>
-    <logger name="com.twitter.logging.ScribeHandler" level="INHERITED"/>
-    <logger name="com.twitter.zookeeper.client.internal" level="INHERITED"/>
-    <!-- Disable deadline exceeded logs by default. This can be overriden dynamically in the admin panel of individual instances. -->
-    <logger name="com.twitter.relevance_platform.common.exceptions.DeadlineExceededExceptionMapper" level="OFF"/>
+    <!-- Pelonr-Packagelon Config -->
+    <loggelonr namelon="com.twittelonr" lelonvelonl="INHelonRITelonD"/>
+    <loggelonr namelon="com.twittelonr.wilyns" lelonvelonl="INHelonRITelonD"/>
+    <loggelonr namelon="com.twittelonr.configbus.clielonnt.filelon" lelonvelonl="INHelonRITelonD"/>
+    <loggelonr namelon="com.twittelonr.finaglelon.mux" lelonvelonl="INHelonRITelonD"/>
+    <loggelonr namelon="com.twittelonr.finaglelon.selonrvelonrselont2" lelonvelonl="INHelonRITelonD"/>
+    <loggelonr namelon="com.twittelonr.logging.ScribelonHandlelonr" lelonvelonl="INHelonRITelonD"/>
+    <loggelonr namelon="com.twittelonr.zookelonelonpelonr.clielonnt.intelonrnal" lelonvelonl="INHelonRITelonD"/>
+    <!-- Disablelon delonadlinelon elonxcelonelondelond logs by delonfault. This can belon ovelonrridelonn dynamically in thelon admin panelonl of individual instancelons. -->
+    <loggelonr namelon="com.twittelonr.relonlelonvancelon_platform.common.elonxcelonptions.DelonadlinelonelonxcelonelondelondelonxcelonptionMappelonr" lelonvelonl="OFF"/>
 
     <!-- Root Config -->
-    <!-- For all logs except access logs, disable logging below log_level level by default. This can be overriden in the per-package loggers, and dynamically in the admin panel of individual instances. -->
-    <root level="${log_level:-INFO}">
-        <appender-ref ref="ASYNC-SERVICE"/>
-        <appender-ref ref="ASYNC-LOGLENS"/>
+    <!-- For all logs elonxcelonpt accelonss logs, disablelon logging belonlow log_lelonvelonl lelonvelonl by delonfault. This can belon ovelonrridelonn in thelon pelonr-packagelon loggelonrs, and dynamically in thelon admin panelonl of individual instancelons. -->
+    <root lelonvelonl="${log_lelonvelonl:-INFO}">
+        <appelonndelonr-relonf relonf="ASYNC-SelonRVICelon"/>
+        <appelonndelonr-relonf relonf="ASYNC-LOGLelonNS"/>
     </root>
 
-    <!-- Access Logging -->
-   <!-- Access logs are turned off by default -->
-    <logger name="com.twitter.finatra.thrift.filters.AccessLoggingFilter" level="OFF" additivity="false">
-        <appender-ref ref="ASYNC-ACCESS"/>
-        <appender-ref ref="ASYNC-LOGLENS-ACCESS"/>
-    </logger>
+    <!-- Accelonss Logging -->
+   <!-- Accelonss logs arelon turnelond off by delonfault -->
+    <loggelonr namelon="com.twittelonr.finatra.thrift.filtelonrs.AccelonssLoggingFiltelonr" lelonvelonl="OFF" additivity="falselon">
+        <appelonndelonr-relonf relonf="ASYNC-ACCelonSS"/>
+        <appelonndelonr-relonf relonf="ASYNC-LOGLelonNS-ACCelonSS"/>
+    </loggelonr>
 
 </configuration>

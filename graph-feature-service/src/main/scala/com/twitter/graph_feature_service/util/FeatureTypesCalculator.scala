@@ -1,57 +1,57 @@
-package com.twitter.graph_feature_service.util
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.util
 
-import com.twitter.graph_feature_service.thriftscala.EdgeType._
-import com.twitter.graph_feature_service.thriftscala.{FeatureType, PresetFeatureTypes}
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.elondgelonTypelon._
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.{FelonaturelonTypelon, PrelonselontFelonaturelonTypelons}
 
-object FeatureTypesCalculator {
+objelonct FelonaturelonTypelonsCalculator {
 
-  final val DefaultTwoHop = Seq(
-    FeatureType(Following, FollowedBy),
-    FeatureType(Following, FavoritedBy),
-    FeatureType(Following, RetweetedBy),
-    FeatureType(Following, MentionedBy),
-    FeatureType(Following, MutualFollow),
-    FeatureType(Favorite, FollowedBy),
-    FeatureType(Favorite, FavoritedBy),
-    FeatureType(Favorite, RetweetedBy),
-    FeatureType(Favorite, MentionedBy),
-    FeatureType(Favorite, MutualFollow),
-    FeatureType(MutualFollow, FollowedBy),
-    FeatureType(MutualFollow, FavoritedBy),
-    FeatureType(MutualFollow, RetweetedBy),
-    FeatureType(MutualFollow, MentionedBy),
-    FeatureType(MutualFollow, MutualFollow)
+  final val DelonfaultTwoHop = Selonq(
+    FelonaturelonTypelon(Following, FollowelondBy),
+    FelonaturelonTypelon(Following, FavoritelondBy),
+    FelonaturelonTypelon(Following, RelontwelonelontelondBy),
+    FelonaturelonTypelon(Following, MelonntionelondBy),
+    FelonaturelonTypelon(Following, MutualFollow),
+    FelonaturelonTypelon(Favoritelon, FollowelondBy),
+    FelonaturelonTypelon(Favoritelon, FavoritelondBy),
+    FelonaturelonTypelon(Favoritelon, RelontwelonelontelondBy),
+    FelonaturelonTypelon(Favoritelon, MelonntionelondBy),
+    FelonaturelonTypelon(Favoritelon, MutualFollow),
+    FelonaturelonTypelon(MutualFollow, FollowelondBy),
+    FelonaturelonTypelon(MutualFollow, FavoritelondBy),
+    FelonaturelonTypelon(MutualFollow, RelontwelonelontelondBy),
+    FelonaturelonTypelon(MutualFollow, MelonntionelondBy),
+    FelonaturelonTypelon(MutualFollow, MutualFollow)
   )
 
-  final val SocialProofTwoHop = Seq(FeatureType(Following, FollowedBy))
+  final val SocialProofTwoHop = Selonq(FelonaturelonTypelon(Following, FollowelondBy))
 
-  final val HtlTwoHop = DefaultTwoHop
+  final val HtlTwoHop = DelonfaultTwoHop
 
   final val WtfTwoHop = SocialProofTwoHop
 
-  final val SqTwoHop = DefaultTwoHop
+  final val SqTwoHop = DelonfaultTwoHop
 
-  final val RuxTwoHop = DefaultTwoHop
+  final val RuxTwoHop = DelonfaultTwoHop
 
-  final val MRTwoHop = DefaultTwoHop
+  final val MRTwoHop = DelonfaultTwoHop
 
-  final val UserTypeaheadTwoHop = SocialProofTwoHop
+  final val UselonrTypelonahelonadTwoHop = SocialProofTwoHop
 
-  final val presetFeatureTypes =
-    (HtlTwoHop ++ WtfTwoHop ++ SqTwoHop ++ RuxTwoHop ++ MRTwoHop ++ UserTypeaheadTwoHop).toSet
+  final val prelonselontFelonaturelonTypelons =
+    (HtlTwoHop ++ WtfTwoHop ++ SqTwoHop ++ RuxTwoHop ++ MRTwoHop ++ UselonrTypelonahelonadTwoHop).toSelont
 
-  def getFeatureTypes(
-    presetFeatureTypes: PresetFeatureTypes,
-    featureTypes: Seq[FeatureType]
-  ): Seq[FeatureType] = {
-    presetFeatureTypes match {
-      case PresetFeatureTypes.HtlTwoHop => HtlTwoHop
-      case PresetFeatureTypes.WtfTwoHop => WtfTwoHop
-      case PresetFeatureTypes.SqTwoHop => SqTwoHop
-      case PresetFeatureTypes.RuxTwoHop => RuxTwoHop
-      case PresetFeatureTypes.MrTwoHop => MRTwoHop
-      case PresetFeatureTypes.UserTypeaheadTwoHop => UserTypeaheadTwoHop
-      case _ => featureTypes
+  delonf gelontFelonaturelonTypelons(
+    prelonselontFelonaturelonTypelons: PrelonselontFelonaturelonTypelons,
+    felonaturelonTypelons: Selonq[FelonaturelonTypelon]
+  ): Selonq[FelonaturelonTypelon] = {
+    prelonselontFelonaturelonTypelons match {
+      caselon PrelonselontFelonaturelonTypelons.HtlTwoHop => HtlTwoHop
+      caselon PrelonselontFelonaturelonTypelons.WtfTwoHop => WtfTwoHop
+      caselon PrelonselontFelonaturelonTypelons.SqTwoHop => SqTwoHop
+      caselon PrelonselontFelonaturelonTypelons.RuxTwoHop => RuxTwoHop
+      caselon PrelonselontFelonaturelonTypelons.MrTwoHop => MRTwoHop
+      caselon PrelonselontFelonaturelonTypelons.UselonrTypelonahelonadTwoHop => UselonrTypelonahelonadTwoHop
+      caselon _ => felonaturelonTypelons
     }
   }
 

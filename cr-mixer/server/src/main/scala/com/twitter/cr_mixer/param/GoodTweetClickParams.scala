@@ -1,75 +1,75 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSEnumParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
-import com.twitter.usersignalservice.thriftscala.SignalType
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSelonnumParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.uselonrsignalselonrvicelon.thriftscala.SignalTypelon
 
-object GoodTweetClickParams {
+objelonct GoodTwelonelontClickParams {
 
-  object ClickMinDwellTimeParam extends Enumeration {
-    protected case class SignalTypeValue(signalType: SignalType) extends super.Val
-    import scala.language.implicitConversions
-    implicit def valueToSignalTypeValue(x: Value): SignalTypeValue =
-      x.asInstanceOf[SignalTypeValue]
+  objelonct ClickMinDwelonllTimelonParam elonxtelonnds elonnumelonration {
+    protelonctelond caselon class SignalTypelonValuelon(signalTypelon: SignalTypelon) elonxtelonnds supelonr.Val
+    import scala.languagelon.implicitConvelonrsions
+    implicit delonf valuelonToSignalTypelonValuelon(x: Valuelon): SignalTypelonValuelon =
+      x.asInstancelonOf[SignalTypelonValuelon]
 
-    val TotalDwellTime2s = SignalTypeValue(SignalType.GoodTweetClick)
-    val TotalDwellTime5s = SignalTypeValue(SignalType.GoodTweetClick5s)
-    val TotalDwellTime10s = SignalTypeValue(SignalType.GoodTweetClick10s)
-    val TotalDwellTime30s = SignalTypeValue(SignalType.GoodTweetClick30s)
+    val TotalDwelonllTimelon2s = SignalTypelonValuelon(SignalTypelon.GoodTwelonelontClick)
+    val TotalDwelonllTimelon5s = SignalTypelonValuelon(SignalTypelon.GoodTwelonelontClick5s)
+    val TotalDwelonllTimelon10s = SignalTypelonValuelon(SignalTypelon.GoodTwelonelontClick10s)
+    val TotalDwelonllTimelon30s = SignalTypelonValuelon(SignalTypelon.GoodTwelonelontClick30s)
 
   }
 
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "signal_good_tweet_clicks_enable_source",
-        default = false
+  objelonct elonnablelonSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "signal_good_twelonelont_clicks_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  object ClickMinDwellTimeType
-      extends FSEnumParam[ClickMinDwellTimeParam.type](
-        name = "signal_good_tweet_clicks_min_dwelltime_type_id",
-        default = ClickMinDwellTimeParam.TotalDwellTime2s,
-        enum = ClickMinDwellTimeParam
+  objelonct ClickMinDwelonllTimelonTypelon
+      elonxtelonnds FSelonnumParam[ClickMinDwelonllTimelonParam.typelon](
+        namelon = "signal_good_twelonelont_clicks_min_dwelonlltimelon_typelon_id",
+        delonfault = ClickMinDwelonllTimelonParam.TotalDwelonllTimelon2s,
+        elonnum = ClickMinDwelonllTimelonParam
       )
 
-  object MaxSignalNumParam
-      extends FSBoundedParam[Int](
-        name = "signal_good_tweet_clicks_max_signal_num",
-        default = 15,
+  objelonct MaxSignalNumParam
+      elonxtelonnds FSBoundelondParam[Int](
+        namelon = "signal_good_twelonelont_clicks_max_signal_num",
+        delonfault = 15,
         min = 0,
         max = 15
       )
 
-  val AllParams: Seq[Param[_] with FSName] =
-    Seq(EnableSourceParam, ClickMinDwellTimeType, MaxSignalNumParam)
+  val AllParams: Selonq[Param[_] with FSNamelon] =
+    Selonq(elonnablelonSourcelonParam, ClickMinDwelonllTimelonTypelon, MaxSignalNumParam)
 
-  lazy val config: BaseConfig = {
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+  lazy val config: BaselonConfig = {
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonSourcelonParam
     )
 
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
-      Logger(getClass),
-      ClickMinDwellTimeType
+    val elonnumOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(
+      NullStatsReloncelonivelonr,
+      Loggelonr(gelontClass),
+      ClickMinDwelonllTimelonTypelon
     )
 
-    val intOverrides = FeatureSwitchOverrideUtil.getBoundedIntFSOverrides(
+    val intOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondIntFSOvelonrridelons(
       MaxSignalNumParam
     )
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*)
-      .set(enumOverrides: _*)
-      .set(intOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*)
+      .selont(elonnumOvelonrridelons: _*)
+      .selont(intOvelonrridelons: _*)
       .build()
   }
 }

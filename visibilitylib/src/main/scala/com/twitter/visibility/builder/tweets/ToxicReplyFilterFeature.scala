@@ -1,57 +1,57 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.contenthealth.toxicreplyfilter.thriftscala.FilterState
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.features.ToxicReplyFilterConversationAuthorIsViewer
-import com.twitter.visibility.features.ToxicReplyFilterState
+import com.twittelonr.contelonnthelonalth.toxicrelonplyfiltelonr.thriftscala.FiltelonrStatelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.felonaturelons.ToxicRelonplyFiltelonrConvelonrsationAuthorIsVielonwelonr
+import com.twittelonr.visibility.felonaturelons.ToxicRelonplyFiltelonrStatelon
 
-class ToxicReplyFilterFeature(
-  statsReceiver: StatsReceiver) {
+class ToxicRelonplyFiltelonrFelonaturelon(
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  def forTweet(tweet: Tweet, viewerId: Option[Long]): FeatureMapBuilder => FeatureMapBuilder = {
-    builder =>
-      requests.incr()
+  delonf forTwelonelont(twelonelont: Twelonelont, vielonwelonrId: Option[Long]): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    buildelonr =>
+      relonquelonsts.incr()
 
-      builder
-        .withConstantFeature(ToxicReplyFilterState, isTweetFilteredFromAuthor(tweet))
-        .withConstantFeature(
-          ToxicReplyFilterConversationAuthorIsViewer,
-          isRootAuthorViewer(tweet, viewerId))
+      buildelonr
+        .withConstantFelonaturelon(ToxicRelonplyFiltelonrStatelon, isTwelonelontFiltelonrelondFromAuthor(twelonelont))
+        .withConstantFelonaturelon(
+          ToxicRelonplyFiltelonrConvelonrsationAuthorIsVielonwelonr,
+          isRootAuthorVielonwelonr(twelonelont, vielonwelonrId))
   }
 
-  private[this] def isRootAuthorViewer(tweet: Tweet, maybeViewerId: Option[Long]): Boolean = {
-    val maybeAuthorId = tweet.filteredReplyDetails.map(_.conversationAuthorId)
+  privatelon[this] delonf isRootAuthorVielonwelonr(twelonelont: Twelonelont, maybelonVielonwelonrId: Option[Long]): Boolelonan = {
+    val maybelonAuthorId = twelonelont.filtelonrelondRelonplyDelontails.map(_.convelonrsationAuthorId)
 
-    (maybeViewerId, maybeAuthorId) match {
-      case (Some(viewerId), Some(authorId)) if viewerId == authorId => {
-        rootAuthorViewerStats.incr()
-        true
+    (maybelonVielonwelonrId, maybelonAuthorId) match {
+      caselon (Somelon(vielonwelonrId), Somelon(authorId)) if vielonwelonrId == authorId => {
+        rootAuthorVielonwelonrStats.incr()
+        truelon
       }
-      case _ => false
+      caselon _ => falselon
     }
   }
 
-  private[this] def isTweetFilteredFromAuthor(
-    tweet: Tweet,
-  ): FilterState = {
-    val result = tweet.filteredReplyDetails.map(_.filterState).getOrElse(FilterState.Unfiltered)
+  privatelon[this] delonf isTwelonelontFiltelonrelondFromAuthor(
+    twelonelont: Twelonelont,
+  ): FiltelonrStatelon = {
+    val relonsult = twelonelont.filtelonrelondRelonplyDelontails.map(_.filtelonrStatelon).gelontOrelonlselon(FiltelonrStatelon.Unfiltelonrelond)
 
-    if (result == FilterState.FilteredFromAuthor) {
-      filteredFromAuthorStats.incr()
+    if (relonsult == FiltelonrStatelon.FiltelonrelondFromAuthor) {
+      filtelonrelondFromAuthorStats.incr()
     }
-    result
+    relonsult
   }
 
-  private[this] val scopedStatsReceiver =
-    statsReceiver.scope("toxicreplyfilter")
+  privatelon[this] val scopelondStatsReloncelonivelonr =
+    statsReloncelonivelonr.scopelon("toxicrelonplyfiltelonr")
 
-  private[this] val requests = scopedStatsReceiver.counter("requests")
+  privatelon[this] val relonquelonsts = scopelondStatsReloncelonivelonr.countelonr("relonquelonsts")
 
-  private[this] val rootAuthorViewerStats =
-    scopedStatsReceiver.scope(ToxicReplyFilterConversationAuthorIsViewer.name).counter("requests")
+  privatelon[this] val rootAuthorVielonwelonrStats =
+    scopelondStatsReloncelonivelonr.scopelon(ToxicRelonplyFiltelonrConvelonrsationAuthorIsVielonwelonr.namelon).countelonr("relonquelonsts")
 
-  private[this] val filteredFromAuthorStats =
-    scopedStatsReceiver.scope(ToxicReplyFilterState.name).counter("requests")
+  privatelon[this] val filtelonrelondFromAuthorStats =
+    scopelondStatsReloncelonivelonr.scopelon(ToxicRelonplyFiltelonrStatelon.namelon).countelonr("relonquelonsts")
 }

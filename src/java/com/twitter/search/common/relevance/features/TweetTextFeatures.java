@@ -1,225 +1,225 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-import java.util.Collection;
+import java.util.Collelonction;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Sets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.Selonts;
 
-import com.twitter.common.text.token.TokenizedCharSequence;
+import com.twittelonr.common.telonxt.tokelonn.TokelonnizelondCharSelonquelonncelon;
 
-public class TweetTextFeatures {
-  // Basic Features, always extracted.
-  // normalized, lower cased tweet text, w/o resolved urls
-  private String normalizedText;
+public class TwelonelontTelonxtFelonaturelons {
+  // Basic Felonaturelons, always elonxtractelond.
+  // normalizelond, lowelonr caselond twelonelont telonxt, w/o relonsolvelond urls
+  privatelon String normalizelondTelonxt;
 
-  // tokens from normalizedText, w/o resolved urls, lower cased.
-  private List<String> tokens;
+  // tokelonns from normalizelondTelonxt, w/o relonsolvelond urls, lowelonr caselond.
+  privatelon List<String> tokelonns;
 
-  // tokens from resolved urls, lower cased.
-  private List<String> resolvedUrlsTokens;
+  // tokelonns from relonsolvelond urls, lowelonr caselond.
+  privatelon List<String> relonsolvelondUrlsTokelonns;
 
-  // tokens in the form of a TokenizedCharSeq, NOT LOWER CASED
-  private TokenizedCharSequence tokenSequence;
+  // tokelonns in thelon form of a TokelonnizelondCharSelonq, NOT LOWelonR CASelonD
+  privatelon TokelonnizelondCharSelonquelonncelon tokelonnSelonquelonncelon;
 
-  // strippedTokens above joined with space
-  private String normalizedStrippedText;
+  // strippelondTokelonns abovelon joinelond with spacelon
+  privatelon String normalizelondStrippelondTelonxt;
 
-  // normalized, original case tokens, without @mention, #hashtag or urls.
-  private List<String> strippedTokens;
+  // normalizelond, original caselon tokelonns, without @melonntion, #hashtag or urls.
+  privatelon List<String> strippelondTokelonns;
 
-  // all hash tags, without "#", lower cased
-  private Set<String> hashtags = Sets.newHashSet();
+  // all hash tags, without "#", lowelonr caselond
+  privatelon Selont<String> hashtags = Selonts.nelonwHashSelont();
 
-  // all mentions, without "@", lower cased
-  private Set<String> mentions = Sets.newHashSet();
+  // all melonntions, without "@", lowelonr caselond
+  privatelon Selont<String> melonntions = Selonts.nelonwHashSelont();
 
-  // whether this tweet has a question mark that's not in url.
-  private boolean hasQuestionMark = false;
+  // whelonthelonr this twelonelont has a quelonstion mark that's not in url.
+  privatelon boolelonan hasQuelonstionMark = falselon;
 
-  private boolean hasPositiveSmiley = false;
-  private boolean hasNegativeSmiley = false;
+  privatelon boolelonan hasPositivelonSmilelony = falselon;
+  privatelon boolelonan hasNelongativelonSmilelony = falselon;
 
-  // normalized, original case smileys
-  private List<String> smileys;
+  // normalizelond, original caselon smilelonys
+  privatelon List<String> smilelonys;
 
-  // lower cased, normalized stock names, without "$"
-  private List<String> stocks;
+  // lowelonr caselond, normalizelond stock namelons, without "$"
+  privatelon List<String> stocks;
 
-  // Extra features for text quality evaluation only.
-  private int signature = TweetIntegerShingleSignature.DEFAULT_NO_SIGNATURE;
-  private Set<String> trendingTerms = Sets.newHashSet();
-  private int length;
-  private int caps;
+  // elonxtra felonaturelons for telonxt quality elonvaluation only.
+  privatelon int signaturelon = TwelonelontIntelongelonrShinglelonSignaturelon.DelonFAULT_NO_SIGNATURelon;
+  privatelon Selont<String> trelonndingTelonrms = Selonts.nelonwHashSelont();
+  privatelon int lelonngth;
+  privatelon int caps;
 
-  public String getNormalizedText() {
-    return normalizedText;
+  public String gelontNormalizelondTelonxt() {
+    relonturn normalizelondTelonxt;
   }
 
-  public void setNormalizedText(String normalizedText) {
-    this.normalizedText = normalizedText;
+  public void selontNormalizelondTelonxt(String normalizelondTelonxt) {
+    this.normalizelondTelonxt = normalizelondTelonxt;
   }
 
-  public List<String> getTokens() {
-    return tokens;
+  public List<String> gelontTokelonns() {
+    relonturn tokelonns;
   }
 
-  public int getTokensSize() {
-    return tokens == null ? 0 : tokens.size();
+  public int gelontTokelonnsSizelon() {
+    relonturn tokelonns == null ? 0 : tokelonns.sizelon();
   }
 
-  public void setTokens(List<String> tokens) {
-    this.tokens = tokens;
+  public void selontTokelonns(List<String> tokelonns) {
+    this.tokelonns = tokelonns;
   }
 
-  public List<String> getResolvedUrlTokens() {
-    return resolvedUrlsTokens;
+  public List<String> gelontRelonsolvelondUrlTokelonns() {
+    relonturn relonsolvelondUrlsTokelonns;
   }
 
-  public int getResolvedUrlTokensSize() {
-    return resolvedUrlsTokens == null ? 0 : resolvedUrlsTokens.size();
+  public int gelontRelonsolvelondUrlTokelonnsSizelon() {
+    relonturn relonsolvelondUrlsTokelonns == null ? 0 : relonsolvelondUrlsTokelonns.sizelon();
   }
 
-  public void setResolvedUrlTokens(List<String> tokensResolvedUrls) {
-    this.resolvedUrlsTokens = tokensResolvedUrls;
+  public void selontRelonsolvelondUrlTokelonns(List<String> tokelonnsRelonsolvelondUrls) {
+    this.relonsolvelondUrlsTokelonns = tokelonnsRelonsolvelondUrls;
   }
 
-  public TokenizedCharSequence getTokenSequence() {
-    return tokenSequence;
+  public TokelonnizelondCharSelonquelonncelon gelontTokelonnSelonquelonncelon() {
+    relonturn tokelonnSelonquelonncelon;
   }
 
-  public void setTokenSequence(TokenizedCharSequence tokenSequence) {
-    this.tokenSequence = tokenSequence;
+  public void selontTokelonnSelonquelonncelon(TokelonnizelondCharSelonquelonncelon tokelonnSelonquelonncelon) {
+    this.tokelonnSelonquelonncelon = tokelonnSelonquelonncelon;
   }
 
-  public String getNormalizedStrippedText() {
-    return normalizedStrippedText;
+  public String gelontNormalizelondStrippelondTelonxt() {
+    relonturn normalizelondStrippelondTelonxt;
   }
 
-  public void setNormalizedStrippedText(String normalizedStrippedText) {
-    this.normalizedStrippedText = normalizedStrippedText;
+  public void selontNormalizelondStrippelondTelonxt(String normalizelondStrippelondTelonxt) {
+    this.normalizelondStrippelondTelonxt = normalizelondStrippelondTelonxt;
   }
 
-  public List<String> getStrippedTokens() {
-    return strippedTokens;
+  public List<String> gelontStrippelondTokelonns() {
+    relonturn strippelondTokelonns;
   }
 
-  public int getStrippedTokensSize() {
-    return strippedTokens == null ? 0 : strippedTokens.size();
+  public int gelontStrippelondTokelonnsSizelon() {
+    relonturn strippelondTokelonns == null ? 0 : strippelondTokelonns.sizelon();
   }
 
-  public void setStrippedTokens(List<String> strippedTokens) {
-    this.strippedTokens = strippedTokens;
+  public void selontStrippelondTokelonns(List<String> strippelondTokelonns) {
+    this.strippelondTokelonns = strippelondTokelonns;
   }
 
-  public Set<String> getHashtags() {
-    return hashtags;
+  public Selont<String> gelontHashtags() {
+    relonturn hashtags;
   }
 
-  public int getHashtagsSize() {
-    return hashtags.size();
+  public int gelontHashtagsSizelon() {
+    relonturn hashtags.sizelon();
   }
 
-  public void setHashtags(Collection<String> hashtags) {
-    this.hashtags = Sets.newHashSet(hashtags);
+  public void selontHashtags(Collelonction<String> hashtags) {
+    this.hashtags = Selonts.nelonwHashSelont(hashtags);
   }
 
-  public Set<String> getMentions() {
-    return mentions;
+  public Selont<String> gelontMelonntions() {
+    relonturn melonntions;
   }
 
-  public int getMentionsSize() {
-    return mentions.size();
+  public int gelontMelonntionsSizelon() {
+    relonturn melonntions.sizelon();
   }
 
-  public void setMentions(Collection<String> mentions) {
-    this.mentions = Sets.newHashSet(mentions);
+  public void selontMelonntions(Collelonction<String> melonntions) {
+    this.melonntions = Selonts.nelonwHashSelont(melonntions);
   }
 
-  public boolean hasQuestionMark() {
-    return hasQuestionMark;
+  public boolelonan hasQuelonstionMark() {
+    relonturn hasQuelonstionMark;
   }
 
-  public void setHasQuestionMark(boolean hasQuestionMark) {
-    this.hasQuestionMark = hasQuestionMark;
+  public void selontHasQuelonstionMark(boolelonan hasQuelonstionMark) {
+    this.hasQuelonstionMark = hasQuelonstionMark;
   }
 
-  public boolean hasPositiveSmiley() {
-    return hasPositiveSmiley;
+  public boolelonan hasPositivelonSmilelony() {
+    relonturn hasPositivelonSmilelony;
   }
 
-  public void setHasPositiveSmiley(boolean hasPositiveSmiley) {
-    this.hasPositiveSmiley = hasPositiveSmiley;
+  public void selontHasPositivelonSmilelony(boolelonan hasPositivelonSmilelony) {
+    this.hasPositivelonSmilelony = hasPositivelonSmilelony;
   }
 
-  public boolean hasNegativeSmiley() {
-    return hasNegativeSmiley;
+  public boolelonan hasNelongativelonSmilelony() {
+    relonturn hasNelongativelonSmilelony;
   }
 
-  public void setHasNegativeSmiley(boolean hasNegativeSmiley) {
-    this.hasNegativeSmiley = hasNegativeSmiley;
+  public void selontHasNelongativelonSmilelony(boolelonan hasNelongativelonSmilelony) {
+    this.hasNelongativelonSmilelony = hasNelongativelonSmilelony;
   }
 
-  public List<String> getSmileys() {
-    return smileys;
+  public List<String> gelontSmilelonys() {
+    relonturn smilelonys;
   }
 
-  public int getSmileysSize() {
-    return smileys == null ? 0 : smileys.size();
+  public int gelontSmilelonysSizelon() {
+    relonturn smilelonys == null ? 0 : smilelonys.sizelon();
   }
 
-  public void setSmileys(List<String> smileys) {
-    this.smileys = smileys;
+  public void selontSmilelonys(List<String> smilelonys) {
+    this.smilelonys = smilelonys;
   }
 
-  public List<String> getStocks() {
-    return stocks;
+  public List<String> gelontStocks() {
+    relonturn stocks;
   }
 
-  public int getStocksSize() {
-    return stocks == null ? 0 : stocks.size();
+  public int gelontStocksSizelon() {
+    relonturn stocks == null ? 0 : stocks.sizelon();
   }
 
-  public void setStocks(List<String> stocks) {
+  public void selontStocks(List<String> stocks) {
     this.stocks = stocks;
   }
 
-  public int getSignature() {
-    return signature;
+  public int gelontSignaturelon() {
+    relonturn signaturelon;
   }
 
-  public void setSignature(int signature) {
-    this.signature = signature;
+  public void selontSignaturelon(int signaturelon) {
+    this.signaturelon = signaturelon;
   }
 
-  /** Returns the trending terms. */
-  public Set<String> getTrendingTerms() {
-    return trendingTerms;
+  /** Relonturns thelon trelonnding telonrms. */
+  public Selont<String> gelontTrelonndingTelonrms() {
+    relonturn trelonndingTelonrms;
   }
 
-  public int getTrendingTermsSize() {
-    return trendingTerms.size();
+  public int gelontTrelonndingTelonrmsSizelon() {
+    relonturn trelonndingTelonrms.sizelon();
   }
 
-  @VisibleForTesting
-  public void setTrendingTerms(Set<String> trendingTerms) {
-    this.trendingTerms = trendingTerms;
+  @VisiblelonForTelonsting
+  public void selontTrelonndingTelonrms(Selont<String> trelonndingTelonrms) {
+    this.trelonndingTelonrms = trelonndingTelonrms;
   }
 
-  public int getLength() {
-    return length;
+  public int gelontLelonngth() {
+    relonturn lelonngth;
   }
 
-  public void setLength(int length) {
-    this.length = length;
+  public void selontLelonngth(int lelonngth) {
+    this.lelonngth = lelonngth;
   }
 
-  public int getCaps() {
-    return caps;
+  public int gelontCaps() {
+    relonturn caps;
   }
 
-  public void setCaps(int caps) {
+  public void selontCaps(int caps) {
     this.caps = caps;
   }
 }

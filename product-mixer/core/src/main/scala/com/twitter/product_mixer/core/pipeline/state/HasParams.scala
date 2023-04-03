@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.pipeline.state
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon
 
-import com.twitter.timelines.configapi.Params
+import com.twittelonr.timelonlinelons.configapi.Params
 
 trait HasParams {
-  def params: Params
+  delonf params: Params
 }

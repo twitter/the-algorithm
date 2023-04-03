@@ -1,42 +1,42 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.conversions.PercentOps._
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.peoplediscovery.api.thriftscala.ThriftPeopleDiscoveryService
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.convelonrsions.PelonrcelonntOps._
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.pelonoplelondiscovelonry.api.thriftscala.ThriftPelonoplelonDiscovelonrySelonrvicelon
+import com.twittelonr.util.Duration
 
 /**
- * Implementation with reasonable defaults for an idempotent People Discovery Thrift client.
+ * Implelonmelonntation with relonasonablelon delonfaults for an idelonmpotelonnt Pelonoplelon Discovelonry Thrift clielonnt.
  *
- * Note that the per request and total timeouts configured in this module are meant to represent a
- * reasonable starting point only. These were selected based on common practice, and should not be
- * assumed to be optimal for any particular use case. If you are interested in further tuning the
- * settings in this module, it is recommended to create local copy for your service.
+ * Notelon that thelon pelonr relonquelonst and total timelonouts configurelond in this modulelon arelon melonant to relonprelonselonnt a
+ * relonasonablelon starting point only. Thelonselon welonrelon selonlelonctelond baselond on common practicelon, and should not belon
+ * assumelond to belon optimal for any particular uselon caselon. If you arelon intelonrelonstelond in furthelonr tuning thelon
+ * selonttings in this modulelon, it is reloncommelonndelond to crelonatelon local copy for your selonrvicelon.
  */
-object PeopleDiscoveryServiceModule
-    extends ThriftMethodBuilderClientModule[
-      ThriftPeopleDiscoveryService.ServicePerEndpoint,
-      ThriftPeopleDiscoveryService.MethodPerEndpoint
+objelonct PelonoplelonDiscovelonrySelonrvicelonModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      ThriftPelonoplelonDiscovelonrySelonrvicelon.SelonrvicelonPelonrelonndpoint,
+      ThriftPelonoplelonDiscovelonrySelonrvicelon.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override val label: String = "people-discovery-api"
+  ovelonrridelon val labelonl: String = "pelonoplelon-discovelonry-api"
 
-  override val dest: String = "/s/people-discovery-api/people-discovery-api:thrift"
+  ovelonrridelon val delonst: String = "/s/pelonoplelon-discovelonry-api/pelonoplelon-discovelonry-api:thrift"
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    methodBuilder
-      .withTimeoutPerRequest(800.millis)
-      .withTimeoutTotal(1200.millis)
-      .idempotent(5.percent)
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = {
+    melonthodBuildelonr
+      .withTimelonoutPelonrRelonquelonst(800.millis)
+      .withTimelonoutTotal(1200.millis)
+      .idelonmpotelonnt(5.pelonrcelonnt)
   }
 
-  override protected def sessionAcquisitionTimeout: Duration = 500.milliseconds
+  ovelonrridelon protelonctelond delonf selonssionAcquisitionTimelonout: Duration = 500.milliselonconds
 }

@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
 
-trait HasUserState {
-  def userState: Option[UserState]
+trait HasUselonrStatelon {
+  delonf uselonrStatelon: Option[UselonrStatelon]
 }

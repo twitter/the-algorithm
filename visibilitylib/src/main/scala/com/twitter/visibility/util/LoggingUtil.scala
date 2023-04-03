@@ -1,35 +1,35 @@
-package com.twitter.visibility.util
+packagelon com.twittelonr.visibility.util
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.logging._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.logging._
 
-object LoggingUtil {
+objelonct LoggingUtil {
 
-  val ExperimentationLog: String = "vf_abdecider"
+  val elonxpelonrimelonntationLog: String = "vf_abdeloncidelonr"
 
-  def mkDefaultHandlerFactory(statsReceiver: StatsReceiver): () => Handler = {
-    QueueingHandler(
-      maxQueueSize = 10000,
-      handler = ScribeHandler(
-        category = "client_event",
-        formatter = BareFormatter,
-        statsReceiver = statsReceiver.scope("client_event_scribe"),
-        level = Some(Level.INFO)
+  delonf mkDelonfaultHandlelonrFactory(statsReloncelonivelonr: StatsReloncelonivelonr): () => Handlelonr = {
+    QuelonueloningHandlelonr(
+      maxQuelonuelonSizelon = 10000,
+      handlelonr = ScribelonHandlelonr(
+        catelongory = "clielonnt_elonvelonnt",
+        formattelonr = BarelonFormattelonr,
+        statsReloncelonivelonr = statsReloncelonivelonr.scopelon("clielonnt_elonvelonnt_scribelon"),
+        lelonvelonl = Somelon(Lelonvelonl.INFO)
       )
     )
   }
 
-  def mkDefaultLoggerFactory(statsReceiver: StatsReceiver): LoggerFactory = {
-    LoggerFactory(
-      node = ExperimentationLog,
-      level = Some(Level.INFO),
-      useParents = false,
-      handlers = List(mkDefaultHandlerFactory(statsReceiver))
+  delonf mkDelonfaultLoggelonrFactory(statsReloncelonivelonr: StatsReloncelonivelonr): LoggelonrFactory = {
+    LoggelonrFactory(
+      nodelon = elonxpelonrimelonntationLog,
+      lelonvelonl = Somelon(Lelonvelonl.INFO),
+      uselonParelonnts = falselon,
+      handlelonrs = List(mkDelonfaultHandlelonrFactory(statsReloncelonivelonr))
     )
   }
 
-  def mkDefaultLogger(statsReceiver: StatsReceiver): Logger = {
-    mkDefaultLoggerFactory(statsReceiver)()
+  delonf mkDelonfaultLoggelonr(statsReloncelonivelonr: StatsReloncelonivelonr): Loggelonr = {
+    mkDelonfaultLoggelonrFactory(statsReloncelonivelonr)()
   }
 
 }

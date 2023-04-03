@@ -1,115 +1,115 @@
-package com.twitter.follow_recommendations.common.clients.interests_service
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.intelonrelonsts_selonrvicelon
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.InterestedInInterestsFetchKey
-import com.twitter.inject.Logging
-import com.twitter.interests.thriftscala.InterestId
-import com.twitter.interests.thriftscala.InterestRelationship
-import com.twitter.interests.thriftscala.InterestedInInterestModel
-import com.twitter.interests.thriftscala.UserInterest
-import com.twitter.interests.thriftscala.UserInterestData
-import com.twitter.interests.thriftscala.UserInterestsResponse
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.IntelonrelonstelondInIntelonrelonstsFelontchKelony
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.intelonrelonsts.thriftscala.IntelonrelonstId
+import com.twittelonr.intelonrelonsts.thriftscala.IntelonrelonstRelonlationship
+import com.twittelonr.intelonrelonsts.thriftscala.IntelonrelonstelondInIntelonrelonstModelonl
+import com.twittelonr.intelonrelonsts.thriftscala.UselonrIntelonrelonst
+import com.twittelonr.intelonrelonsts.thriftscala.UselonrIntelonrelonstData
+import com.twittelonr.intelonrelonsts.thriftscala.UselonrIntelonrelonstsRelonsponselon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
 
-@Singleton
-class InterestServiceClient @Inject() (
-  stratoClient: Client,
-  statsReceiver: StatsReceiver = NullStatsReceiver)
-    extends Logging {
+@Singlelonton
+class IntelonrelonstSelonrvicelonClielonnt @Injelonct() (
+  stratoClielonnt: Clielonnt,
+  statsReloncelonivelonr: StatsReloncelonivelonr = NullStatsReloncelonivelonr)
+    elonxtelonnds Logging {
 
-  val interestsServiceStratoColumnPath = "interests/interestedInInterests"
-  val stats = statsReceiver.scope("interest_service_client")
-  val errorCounter = stats.counter("error")
+  val intelonrelonstsSelonrvicelonStratoColumnPath = "intelonrelonsts/intelonrelonstelondInIntelonrelonsts"
+  val stats = statsReloncelonivelonr.scopelon("intelonrelonst_selonrvicelon_clielonnt")
+  val elonrrorCountelonr = stats.countelonr("elonrror")
 
-  private val interestsFetcher =
-    stratoClient.fetcher[InterestedInInterestsFetchKey, UserInterestsResponse](
-      interestsServiceStratoColumnPath,
-      checkTypes = true
+  privatelon val intelonrelonstsFelontchelonr =
+    stratoClielonnt.felontchelonr[IntelonrelonstelondInIntelonrelonstsFelontchKelony, UselonrIntelonrelonstsRelonsponselon](
+      intelonrelonstsSelonrvicelonStratoColumnPath,
+      chelonckTypelons = truelon
     )
 
-  def fetchUttInterestIds(
-    userId: Long
-  ): Stitch[Seq[Long]] = {
-    fetchInterestRelationships(userId)
-      .map(_.toSeq.flatten.flatMap(extractUttInterest))
+  delonf felontchUttIntelonrelonstIds(
+    uselonrId: Long
+  ): Stitch[Selonq[Long]] = {
+    felontchIntelonrelonstRelonlationships(uselonrId)
+      .map(_.toSelonq.flattelonn.flatMap(elonxtractUttIntelonrelonst))
   }
 
-  def extractUttInterest(
-    interestRelationShip: InterestRelationship
+  delonf elonxtractUttIntelonrelonst(
+    intelonrelonstRelonlationShip: IntelonrelonstRelonlationship
   ): Option[Long] = {
-    interestRelationShip match {
-      case InterestRelationship.V1(relationshipV1) =>
-        relationshipV1.interestId match {
-          case InterestId.SemanticCore(semanticCoreInterest) => Some(semanticCoreInterest.id)
-          case _ => None
+    intelonrelonstRelonlationShip match {
+      caselon IntelonrelonstRelonlationship.V1(relonlationshipV1) =>
+        relonlationshipV1.intelonrelonstId match {
+          caselon IntelonrelonstId.SelonmanticCorelon(selonmanticCorelonIntelonrelonst) => Somelon(selonmanticCorelonIntelonrelonst.id)
+          caselon _ => Nonelon
         }
-      case _ => None
+      caselon _ => Nonelon
     }
   }
 
-  def fetchCustomInterests(
-    userId: Long
-  ): Stitch[Seq[String]] = {
-    fetchInterestRelationships(userId)
-      .map(_.toSeq.flatten.flatMap(extractCustomInterest))
+  delonf felontchCustomIntelonrelonsts(
+    uselonrId: Long
+  ): Stitch[Selonq[String]] = {
+    felontchIntelonrelonstRelonlationships(uselonrId)
+      .map(_.toSelonq.flattelonn.flatMap(elonxtractCustomIntelonrelonst))
   }
 
-  def extractCustomInterest(
-    interestRelationShip: InterestRelationship
+  delonf elonxtractCustomIntelonrelonst(
+    intelonrelonstRelonlationShip: IntelonrelonstRelonlationship
   ): Option[String] = {
-    interestRelationShip match {
-      case InterestRelationship.V1(relationshipV1) =>
-        relationshipV1.interestId match {
-          case InterestId.FreeForm(freeFormInterest) => Some(freeFormInterest.interest)
-          case _ => None
+    intelonrelonstRelonlationShip match {
+      caselon IntelonrelonstRelonlationship.V1(relonlationshipV1) =>
+        relonlationshipV1.intelonrelonstId match {
+          caselon IntelonrelonstId.FrelonelonForm(frelonelonFormIntelonrelonst) => Somelon(frelonelonFormIntelonrelonst.intelonrelonst)
+          caselon _ => Nonelon
         }
-      case _ => None
+      caselon _ => Nonelon
     }
   }
 
-  def fetchInterestRelationships(
-    userId: Long
-  ): Stitch[Option[Seq[InterestRelationship]]] = {
-    interestsFetcher
-      .fetch(
-        InterestedInInterestsFetchKey(
-          userId = userId,
-          labels = None,
-          None
+  delonf felontchIntelonrelonstRelonlationships(
+    uselonrId: Long
+  ): Stitch[Option[Selonq[IntelonrelonstRelonlationship]]] = {
+    intelonrelonstsFelontchelonr
+      .felontch(
+        IntelonrelonstelondInIntelonrelonstsFelontchKelony(
+          uselonrId = uselonrId,
+          labelonls = Nonelon,
+          Nonelon
         ))
       .map(_.v)
       .map {
-        case Some(response) =>
-          response.interests.interests.map { interests =>
-            interests.collect {
-              case UserInterest(_, Some(interestData)) =>
-                getInterestRelationship(interestData)
-            }.flatten
+        caselon Somelon(relonsponselon) =>
+          relonsponselon.intelonrelonsts.intelonrelonsts.map { intelonrelonsts =>
+            intelonrelonsts.collelonct {
+              caselon UselonrIntelonrelonst(_, Somelon(intelonrelonstData)) =>
+                gelontIntelonrelonstRelonlationship(intelonrelonstData)
+            }.flattelonn
           }
-        case _ => None
+        caselon _ => Nonelon
       }
-      .rescue {
-        case e: Throwable => // we are swallowing all errors
-          logger.warn(s"interests could not be retrieved for user $userId due to ${e.getCause}")
-          errorCounter.incr
-          Stitch.None
+      .relonscuelon {
+        caselon elon: Throwablelon => // welon arelon swallowing all elonrrors
+          loggelonr.warn(s"intelonrelonsts could not belon relontrielonvelond for uselonr $uselonrId duelon to ${elon.gelontCauselon}")
+          elonrrorCountelonr.incr
+          Stitch.Nonelon
       }
   }
 
-  private def getInterestRelationship(
-    interestData: UserInterestData
-  ): Seq[InterestRelationship] = {
-    interestData match {
-      case UserInterestData.InterestedIn(interestModels) =>
-        interestModels.collect {
-          case InterestedInInterestModel.ExplicitModel(model) => model
+  privatelon delonf gelontIntelonrelonstRelonlationship(
+    intelonrelonstData: UselonrIntelonrelonstData
+  ): Selonq[IntelonrelonstRelonlationship] = {
+    intelonrelonstData match {
+      caselon UselonrIntelonrelonstData.IntelonrelonstelondIn(intelonrelonstModelonls) =>
+        intelonrelonstModelonls.collelonct {
+          caselon IntelonrelonstelondInIntelonrelonstModelonl.elonxplicitModelonl(modelonl) => modelonl
         }
-      case _ => Nil
+      caselon _ => Nil
     }
   }
 }

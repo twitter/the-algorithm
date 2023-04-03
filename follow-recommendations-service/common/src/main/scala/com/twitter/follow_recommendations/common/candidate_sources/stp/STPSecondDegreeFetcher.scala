@@ -1,94 +1,94 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.follow_recommendations.common.models.IntermediateSecondDegreeEdge
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.StrongTiePredictionFeaturesOnUserClientColumn
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.SecondDegreeEdgeInfo
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.IntelonrmelondiatelonSeloncondDelongrelonelonelondgelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.StrongTielonPrelondictionFelonaturelonsOnUselonrClielonntColumn
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.FirstDelongrelonelonelondgelon
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.SeloncondDelongrelonelonelondgelon
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.SeloncondDelongrelonelonelondgelonInfo
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-// Link to code functionality we're migrating
-@Singleton
-class STPSecondDegreeFetcher @Inject() (
-  strongTiePredictionFeaturesOnUserClientColumn: StrongTiePredictionFeaturesOnUserClientColumn) {
+// Link to codelon functionality welon'relon migrating
+@Singlelonton
+class STPSeloncondDelongrelonelonFelontchelonr @Injelonct() (
+  strongTielonPrelondictionFelonaturelonsOnUselonrClielonntColumn: StrongTielonPrelondictionFelonaturelonsOnUselonrClielonntColumn) {
 
-  private def scoreSecondDegreeEdge(edge: SecondDegreeEdge): (Int, Int, Int) = {
-    def bool2int(b: Boolean): Int = if (b) 1 else 0
+  privatelon delonf scorelonSeloncondDelongrelonelonelondgelon(elondgelon: SeloncondDelongrelonelonelondgelon): (Int, Int, Int) = {
+    delonf bool2int(b: Boolelonan): Int = if (b) 1 elonlselon 0
     (
-      -edge.edgeInfo.numMutualFollowPath,
-      -edge.edgeInfo.numLowTweepcredFollowPath,
-      -(bool2int(edge.edgeInfo.forwardEmailPath) + bool2int(edge.edgeInfo.reverseEmailPath) +
-        bool2int(edge.edgeInfo.forwardPhonePath) + bool2int(edge.edgeInfo.reversePhonePath))
+      -elondgelon.elondgelonInfo.numMutualFollowPath,
+      -elondgelon.elondgelonInfo.numLowTwelonelonpcrelondFollowPath,
+      -(bool2int(elondgelon.elondgelonInfo.forwardelonmailPath) + bool2int(elondgelon.elondgelonInfo.relonvelonrselonelonmailPath) +
+        bool2int(elondgelon.elondgelonInfo.forwardPhonelonPath) + bool2int(elondgelon.elondgelonInfo.relonvelonrselonPhonelonPath))
     )
   }
 
-  // Use each first-degree edge(w/ candidateId) to expand and find mutual follows.
-  // Then, with the mutual follows, group-by candidateId and join edge information
-  // to create secondDegree edges.
-  def getSecondDegreeEdges(
-    target: HasClientContext with HasParams,
-    firstDegreeEdges: Seq[FirstDegreeEdge]
-  ): Stitch[Seq[SecondDegreeEdge]] = {
-    target.getOptionalUserId
-      .map { userId =>
-        val firstDegreeConnectingIds = firstDegreeEdges.map(_.dstId)
-        val firstDegreeEdgeInfoMap = firstDegreeEdges.map(e => (e.dstId, e.edgeInfo)).toMap
+  // Uselon elonach first-delongrelonelon elondgelon(w/ candidatelonId) to elonxpand and find mutual follows.
+  // Thelonn, with thelon mutual follows, group-by candidatelonId and join elondgelon information
+  // to crelonatelon seloncondDelongrelonelon elondgelons.
+  delonf gelontSeloncondDelongrelonelonelondgelons(
+    targelont: HasClielonntContelonxt with HasParams,
+    firstDelongrelonelonelondgelons: Selonq[FirstDelongrelonelonelondgelon]
+  ): Stitch[Selonq[SeloncondDelongrelonelonelondgelon]] = {
+    targelont.gelontOptionalUselonrId
+      .map { uselonrId =>
+        val firstDelongrelonelonConnelonctingIds = firstDelongrelonelonelondgelons.map(_.dstId)
+        val firstDelongrelonelonelondgelonInfoMap = firstDelongrelonelonelondgelons.map(elon => (elon.dstId, elon.elondgelonInfo)).toMap
 
-        val intermediateSecondDegreeEdgesStitch = Stitch
-          .traverse(firstDegreeConnectingIds) { connectingId =>
-            val stpFeaturesOptStitch = strongTiePredictionFeaturesOnUserClientColumn.fetcher
-              .fetch(connectingId)
+        val intelonrmelondiatelonSeloncondDelongrelonelonelondgelonsStitch = Stitch
+          .travelonrselon(firstDelongrelonelonConnelonctingIds) { connelonctingId =>
+            val stpFelonaturelonsOptStitch = strongTielonPrelondictionFelonaturelonsOnUselonrClielonntColumn.felontchelonr
+              .felontch(connelonctingId)
               .map(_.v)
-            stpFeaturesOptStitch.map { stpFeatureOpt =>
-              val intermediateSecondDegreeEdges = for {
-                edgeInfo <- firstDegreeEdgeInfoMap.get(connectingId)
-                stpFeatures <- stpFeatureOpt
-                topSecondDegreeUserIds =
-                  stpFeatures.topMutualFollows
-                    .getOrElse(Nil)
-                    .map(_.userId)
-                    .take(STPSecondDegreeFetcher.MaxNumOfMutualFollows)
-              } yield topSecondDegreeUserIds.map(
-                IntermediateSecondDegreeEdge(connectingId, _, edgeInfo))
-              intermediateSecondDegreeEdges.getOrElse(Nil)
+            stpFelonaturelonsOptStitch.map { stpFelonaturelonOpt =>
+              val intelonrmelondiatelonSeloncondDelongrelonelonelondgelons = for {
+                elondgelonInfo <- firstDelongrelonelonelondgelonInfoMap.gelont(connelonctingId)
+                stpFelonaturelons <- stpFelonaturelonOpt
+                topSeloncondDelongrelonelonUselonrIds =
+                  stpFelonaturelons.topMutualFollows
+                    .gelontOrelonlselon(Nil)
+                    .map(_.uselonrId)
+                    .takelon(STPSeloncondDelongrelonelonFelontchelonr.MaxNumOfMutualFollows)
+              } yielonld topSeloncondDelongrelonelonUselonrIds.map(
+                IntelonrmelondiatelonSeloncondDelongrelonelonelondgelon(connelonctingId, _, elondgelonInfo))
+              intelonrmelondiatelonSeloncondDelongrelonelonelondgelons.gelontOrelonlselon(Nil)
             }
-          }.map(_.flatten)
+          }.map(_.flattelonn)
 
-        intermediateSecondDegreeEdgesStitch.map { intermediateSecondDegreeEdges =>
-          val secondaryDegreeEdges = intermediateSecondDegreeEdges.groupBy(_.candidateId).map {
-            case (candidateId, intermediateEdges) =>
-              SecondDegreeEdge(
-                srcId = userId,
-                dstId = candidateId,
-                edgeInfo = SecondDegreeEdgeInfo(
-                  numMutualFollowPath = intermediateEdges.count(_.edgeInfo.mutualFollow),
-                  numLowTweepcredFollowPath =
-                    intermediateEdges.count(_.edgeInfo.lowTweepcredFollow),
-                  forwardEmailPath = intermediateEdges.exists(_.edgeInfo.forwardEmail),
-                  reverseEmailPath = intermediateEdges.exists(_.edgeInfo.reverseEmail),
-                  forwardPhonePath = intermediateEdges.exists(_.edgeInfo.forwardPhone),
-                  reversePhonePath = intermediateEdges.exists(_.edgeInfo.reversePhone),
-                  socialProof = intermediateEdges
-                    .filter { e => e.edgeInfo.mutualFollow || e.edgeInfo.lowTweepcredFollow }
-                    .sortBy(-_.edgeInfo.realGraphWeight)
-                    .take(3)
-                    .map { c => (c.connectingId, c.edgeInfo.realGraphWeight) }
+        intelonrmelondiatelonSeloncondDelongrelonelonelondgelonsStitch.map { intelonrmelondiatelonSeloncondDelongrelonelonelondgelons =>
+          val seloncondaryDelongrelonelonelondgelons = intelonrmelondiatelonSeloncondDelongrelonelonelondgelons.groupBy(_.candidatelonId).map {
+            caselon (candidatelonId, intelonrmelondiatelonelondgelons) =>
+              SeloncondDelongrelonelonelondgelon(
+                srcId = uselonrId,
+                dstId = candidatelonId,
+                elondgelonInfo = SeloncondDelongrelonelonelondgelonInfo(
+                  numMutualFollowPath = intelonrmelondiatelonelondgelons.count(_.elondgelonInfo.mutualFollow),
+                  numLowTwelonelonpcrelondFollowPath =
+                    intelonrmelondiatelonelondgelons.count(_.elondgelonInfo.lowTwelonelonpcrelondFollow),
+                  forwardelonmailPath = intelonrmelondiatelonelondgelons.elonxists(_.elondgelonInfo.forwardelonmail),
+                  relonvelonrselonelonmailPath = intelonrmelondiatelonelondgelons.elonxists(_.elondgelonInfo.relonvelonrselonelonmail),
+                  forwardPhonelonPath = intelonrmelondiatelonelondgelons.elonxists(_.elondgelonInfo.forwardPhonelon),
+                  relonvelonrselonPhonelonPath = intelonrmelondiatelonelondgelons.elonxists(_.elondgelonInfo.relonvelonrselonPhonelon),
+                  socialProof = intelonrmelondiatelonelondgelons
+                    .filtelonr { elon => elon.elondgelonInfo.mutualFollow || elon.elondgelonInfo.lowTwelonelonpcrelondFollow }
+                    .sortBy(-_.elondgelonInfo.relonalGraphWelonight)
+                    .takelon(3)
+                    .map { c => (c.connelonctingId, c.elondgelonInfo.relonalGraphWelonight) }
                 )
               )
           }
-          secondaryDegreeEdges.toSeq
-            .sortBy(scoreSecondDegreeEdge)
-            .take(STPSecondDegreeFetcher.MaxNumSecondDegreeEdges)
+          seloncondaryDelongrelonelonelondgelons.toSelonq
+            .sortBy(scorelonSeloncondDelongrelonelonelondgelon)
+            .takelon(STPSeloncondDelongrelonelonFelontchelonr.MaxNumSeloncondDelongrelonelonelondgelons)
         }
-      }.getOrElse(Stitch.Nil)
+      }.gelontOrelonlselon(Stitch.Nil)
   }
 }
 
-object STPSecondDegreeFetcher {
-  val MaxNumSecondDegreeEdges = 200
+objelonct STPSeloncondDelongrelonelonFelontchelonr {
+  val MaxNumSeloncondDelongrelonelonelondgelons = 200
   val MaxNumOfMutualFollows = 50
 }

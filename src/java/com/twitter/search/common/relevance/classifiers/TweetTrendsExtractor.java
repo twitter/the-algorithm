@@ -1,165 +1,165 @@
-package com.twitter.search.common.relevance.classifiers;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.classifielonrs;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.ImmutablelonMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.relevance.NGramCache;
-import com.twitter.search.common.relevance.TrendsThriftDataServiceManager;
-import com.twitter.search.common.relevance.config.TweetProcessingConfig;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.util.Duration;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr;
+import com.twittelonr.selonarch.common.melontrics.RelonlelonvancelonStats;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.NGramCachelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.TrelonndsThriftDataSelonrvicelonManagelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.config.TwelonelontProcelonssingConfig;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontTelonxtFelonaturelons;
+import com.twittelonr.util.Duration;
 
 /**
- * Determines if tweets contains trending terms.
- * Sets corresponding bits and fields to TweetTextFeatures.
+ * Delontelonrminelons if twelonelonts contains trelonnding telonrms.
+ * Selonts correlonsponding bits and fielonlds to TwelonelontTelonxtFelonaturelons.
  */
-public class TweetTrendsExtractor {
+public class TwelonelontTrelonndselonxtractor {
 
-  // The amount of time before filling the trends cache for the first time.
-  private static final long INIT_TRENDS_CACHE_DELAY = 0;
+  // Thelon amount of timelon belonforelon filling thelon trelonnds cachelon for thelon first timelon.
+  privatelon static final long INIT_TRelonNDS_CACHelon_DelonLAY = 0;
 
-  private static final Logger LOG = LoggerFactory.getLogger(TweetTrendsExtractor.class.getName());
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwelonelontTrelonndselonxtractor.class.gelontNamelon());
 
-  private static final int LOGGING_INTERVAL = 100000;
+  privatelon static final int LOGGING_INTelonRVAL = 100000;
 
-  // Singleton trends data service. This is the default service used unless a different
-  // instance is injected in the constructor.
-  private static volatile TrendsThriftDataServiceManager trendsDataServiceSingleton;
+  // Singlelonton trelonnds data selonrvicelon. This is thelon delonfault selonrvicelon uselond unlelonss a diffelonrelonnt
+  // instancelon is injelonctelond in thelon constructor.
+  privatelon static volatilelon TrelonndsThriftDataSelonrvicelonManagelonr trelonndsDataSelonrvicelonSinglelonton;
 
-  // trends cache used for extracting trends from tweets
-  private static volatile ImmutableMap<PenguinVersion, NGramCache> trendsCaches;
+  // trelonnds cachelon uselond for elonxtracting trelonnds from twelonelonts
+  privatelon static volatilelon ImmutablelonMap<PelonnguinVelonrsion, NGramCachelon> trelonndsCachelons;
 
-  private static synchronized void initTrendsDataServiceInstance(
-      ServiceIdentifier serviceIdentifier,
-      List<PenguinVersion> supportedPenguinVersions) {
-    if (trendsDataServiceSingleton == null) {
-      TweetProcessingConfig.init();
-      if (trendsCaches == null) {
-        ImmutableMap.Builder<PenguinVersion, NGramCache> trendsCachesBuilder =
-            ImmutableMap.builder();
-        for (PenguinVersion penguinVersion : supportedPenguinVersions) {
-          NGramCache cache = NGramCache.builder()
-              .maxCacheSize(
-                  TweetProcessingConfig.getInt("trends_extractor_num_trends_to_cache", 5000))
-              .penguinVersion(penguinVersion)
+  privatelon static synchronizelond void initTrelonndsDataSelonrvicelonInstancelon(
+      SelonrvicelonIdelonntifielonr selonrvicelonIdelonntifielonr,
+      List<PelonnguinVelonrsion> supportelondPelonnguinVelonrsions) {
+    if (trelonndsDataSelonrvicelonSinglelonton == null) {
+      TwelonelontProcelonssingConfig.init();
+      if (trelonndsCachelons == null) {
+        ImmutablelonMap.Buildelonr<PelonnguinVelonrsion, NGramCachelon> trelonndsCachelonsBuildelonr =
+            ImmutablelonMap.buildelonr();
+        for (PelonnguinVelonrsion pelonnguinVelonrsion : supportelondPelonnguinVelonrsions) {
+          NGramCachelon cachelon = NGramCachelon.buildelonr()
+              .maxCachelonSizelon(
+                  TwelonelontProcelonssingConfig.gelontInt("trelonnds_elonxtractor_num_trelonnds_to_cachelon", 5000))
+              .pelonnguinVelonrsion(pelonnguinVelonrsion)
               .build();
-          trendsCachesBuilder.put(penguinVersion, cache);
+          trelonndsCachelonsBuildelonr.put(pelonnguinVelonrsion, cachelon);
         }
-        trendsCaches = trendsCachesBuilder.build();
+        trelonndsCachelons = trelonndsCachelonsBuildelonr.build();
       }
-      long rawTimeout = TweetProcessingConfig.getLong("trends_extractor_timeout_msec", 200);
-      long rawInterval =
-          TweetProcessingConfig.getLong("trends_extractor_reload_interval_sec", 600L);
-      trendsDataServiceSingleton =
-          TrendsThriftDataServiceManager.newInstance(
-              serviceIdentifier,
-              TweetProcessingConfig.getInt("trends_extractor_retry", 2),
-              Duration.apply(rawTimeout, TimeUnit.MILLISECONDS),
-              Duration.apply(INIT_TRENDS_CACHE_DELAY, TimeUnit.SECONDS),
-              Duration.apply(rawInterval, TimeUnit.SECONDS),
-              trendsCaches.values().asList()
+      long rawTimelonout = TwelonelontProcelonssingConfig.gelontLong("trelonnds_elonxtractor_timelonout_mselonc", 200);
+      long rawIntelonrval =
+          TwelonelontProcelonssingConfig.gelontLong("trelonnds_elonxtractor_relonload_intelonrval_selonc", 600L);
+      trelonndsDataSelonrvicelonSinglelonton =
+          TrelonndsThriftDataSelonrvicelonManagelonr.nelonwInstancelon(
+              selonrvicelonIdelonntifielonr,
+              TwelonelontProcelonssingConfig.gelontInt("trelonnds_elonxtractor_relontry", 2),
+              Duration.apply(rawTimelonout, TimelonUnit.MILLISelonCONDS),
+              Duration.apply(INIT_TRelonNDS_CACHelon_DelonLAY, TimelonUnit.SelonCONDS),
+              Duration.apply(rawIntelonrval, TimelonUnit.SelonCONDS),
+              trelonndsCachelons.valuelons().asList()
           );
-      trendsDataServiceSingleton.startAutoRefresh();
-      LOG.info("Started trend extractor.");
+      trelonndsDataSelonrvicelonSinglelonton.startAutoRelonfrelonsh();
+      LOG.info("Startelond trelonnd elonxtractor.");
     }
   }
 
-  public TweetTrendsExtractor(
-      ServiceIdentifier serviceIdentifier,
-      List<PenguinVersion> supportedPenguinVersions) {
-    initTrendsDataServiceInstance(serviceIdentifier, supportedPenguinVersions);
+  public TwelonelontTrelonndselonxtractor(
+      SelonrvicelonIdelonntifielonr selonrvicelonIdelonntifielonr,
+      List<PelonnguinVelonrsion> supportelondPelonnguinVelonrsions) {
+    initTrelonndsDataSelonrvicelonInstancelon(selonrvicelonIdelonntifielonr, supportelondPelonnguinVelonrsions);
   }
 
   /**
-   * Extract trending terms from the specified tweet.
-   * @param tweet the specified tweet
+   * elonxtract trelonnding telonrms from thelon speloncifielond twelonelont.
+   * @param twelonelont thelon speloncifielond twelonelont
    */
-  public void extractTrends(TwitterMessage tweet) {
-    extractTrends(ImmutableList.of(tweet));
+  public void elonxtractTrelonnds(TwittelonrMelonssagelon twelonelont) {
+    elonxtractTrelonnds(ImmutablelonList.of(twelonelont));
   }
 
   /**
-   * Extract trending terms from the specified list of tweets.
-   * @param tweets a list of tweets
+   * elonxtract trelonnding telonrms from thelon speloncifielond list of twelonelonts.
+   * @param twelonelonts a list of twelonelonts
    */
-  public void extractTrends(Iterable<TwitterMessage> tweets) {
-    Preconditions.checkNotNull(tweets);
+  public void elonxtractTrelonnds(Itelonrablelon<TwittelonrMelonssagelon> twelonelonts) {
+    Prelonconditions.chelonckNotNull(twelonelonts);
 
-    for (TwitterMessage tweet : tweets) {
-      for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-        NGramCache trendsCache = trendsCaches.get(penguinVersion);
-        if (trendsCache == null) {
-          LOG.info("Trends cache for Penguin version " + penguinVersion + " is null.");
-          continue;
-        } else if (trendsCache.numTrendingTerms() == 0) {
-          LOG.info("Trends cache for Penguin version " + penguinVersion + " is empty.");
-          continue;
+    for (TwittelonrMelonssagelon twelonelont : twelonelonts) {
+      for (PelonnguinVelonrsion pelonnguinVelonrsion : twelonelont.gelontSupportelondPelonnguinVelonrsions()) {
+        NGramCachelon trelonndsCachelon = trelonndsCachelons.gelont(pelonnguinVelonrsion);
+        if (trelonndsCachelon == null) {
+          LOG.info("Trelonnds cachelon for Pelonnguin velonrsion " + pelonnguinVelonrsion + " is null.");
+          continuelon;
+        } elonlselon if (trelonndsCachelon.numTrelonndingTelonrms() == 0) {
+          LOG.info("Trelonnds cachelon for Pelonnguin velonrsion " + pelonnguinVelonrsion + " is elonmpty.");
+          continuelon;
         }
 
-        List<String> trendsInTweet = trendsCache.extractTrendsFrom(
-            tweet.getTokenizedCharSequence(penguinVersion), tweet.getLocale());
+        List<String> trelonndsInTwelonelont = trelonndsCachelon.elonxtractTrelonndsFrom(
+            twelonelont.gelontTokelonnizelondCharSelonquelonncelon(pelonnguinVelonrsion), twelonelont.gelontLocalelon());
 
-        TweetTextFeatures textFeatures = tweet.getTweetTextFeatures(penguinVersion);
-        if (textFeatures == null || textFeatures.getTokens() == null) {
-          continue;
+        TwelonelontTelonxtFelonaturelons telonxtFelonaturelons = twelonelont.gelontTwelonelontTelonxtFelonaturelons(pelonnguinVelonrsion);
+        if (telonxtFelonaturelons == null || telonxtFelonaturelons.gelontTokelonns() == null) {
+          continuelon;
         }
 
-        textFeatures.getTrendingTerms().addAll(trendsInTweet);
+        telonxtFelonaturelons.gelontTrelonndingTelonrms().addAll(trelonndsInTwelonelont);
 
-        updateTrendsStats(
-            tweet,
-            textFeatures,
-            penguinVersion,
-            RelevanceStats.exportLong(
-                "trends_extractor_has_trends_" + penguinVersion.name().toLowerCase()),
-            RelevanceStats.exportLong(
-                "trends_extractor_no_trends_" + penguinVersion.name().toLowerCase()),
-            RelevanceStats.exportLong(
-                "trends_extractor_too_many_trends_" + penguinVersion.name().toLowerCase()));
+        updatelonTrelonndsStats(
+            twelonelont,
+            telonxtFelonaturelons,
+            pelonnguinVelonrsion,
+            RelonlelonvancelonStats.elonxportLong(
+                "trelonnds_elonxtractor_has_trelonnds_" + pelonnguinVelonrsion.namelon().toLowelonrCaselon()),
+            RelonlelonvancelonStats.elonxportLong(
+                "trelonnds_elonxtractor_no_trelonnds_" + pelonnguinVelonrsion.namelon().toLowelonrCaselon()),
+            RelonlelonvancelonStats.elonxportLong(
+                "trelonnds_elonxtractor_too_many_trelonnds_" + pelonnguinVelonrsion.namelon().toLowelonrCaselon()));
       }
     }
   }
 
-  private void updateTrendsStats(TwitterMessage tweet,
-                                 TweetTextFeatures textFeatures,
-                                 PenguinVersion penguinVersion,
-                                 SearchCounter hasTrendsCounterToUpdate,
-                                 SearchCounter noTrendsCounterToUpdate,
-                                 SearchCounter tooManyTrendsCounterToUpdate) {
-    int numTrendingTerms = textFeatures.getTrendingTerms().size();
-    if (numTrendingTerms == 0) {
-      noTrendsCounterToUpdate.increment();
-    } else {
-      if (numTrendingTerms > 1) {
-        tooManyTrendsCounterToUpdate.increment();
+  privatelon void updatelonTrelonndsStats(TwittelonrMelonssagelon twelonelont,
+                                 TwelonelontTelonxtFelonaturelons telonxtFelonaturelons,
+                                 PelonnguinVelonrsion pelonnguinVelonrsion,
+                                 SelonarchCountelonr hasTrelonndsCountelonrToUpdatelon,
+                                 SelonarchCountelonr noTrelonndsCountelonrToUpdatelon,
+                                 SelonarchCountelonr tooManyTrelonndsCountelonrToUpdatelon) {
+    int numTrelonndingTelonrms = telonxtFelonaturelons.gelontTrelonndingTelonrms().sizelon();
+    if (numTrelonndingTelonrms == 0) {
+      noTrelonndsCountelonrToUpdatelon.increlonmelonnt();
+    } elonlselon {
+      if (numTrelonndingTelonrms > 1) {
+        tooManyTrelonndsCountelonrToUpdatelon.increlonmelonnt();
       }
-      hasTrendsCounterToUpdate.increment();
+      hasTrelonndsCountelonrToUpdatelon.increlonmelonnt();
     }
 
-    long counter = noTrendsCounterToUpdate.get();
-    if (counter % LOGGING_INTERVAL == 0) {
-      long hasTrends = hasTrendsCounterToUpdate.get();
-      long noTrends = noTrendsCounterToUpdate.get();
-      long tooManyTrends = tooManyTrendsCounterToUpdate.get();
-      double ratio = 100.0d * hasTrends / (hasTrends + noTrends + 1);
-      double tooManyTrendsRatio = 100.0d * tooManyTrends / (hasTrends + 1);
+    long countelonr = noTrelonndsCountelonrToUpdatelon.gelont();
+    if (countelonr % LOGGING_INTelonRVAL == 0) {
+      long hasTrelonnds = hasTrelonndsCountelonrToUpdatelon.gelont();
+      long noTrelonnds = noTrelonndsCountelonrToUpdatelon.gelont();
+      long tooManyTrelonnds = tooManyTrelonndsCountelonrToUpdatelon.gelont();
+      doublelon ratio = 100.0d * hasTrelonnds / (hasTrelonnds + noTrelonnds + 1);
+      doublelon tooManyTrelonndsRatio = 100.0d * tooManyTrelonnds / (hasTrelonnds + 1);
       LOG.info(String.format(
-          "Has trends %d, no trends %d, ratio %.2f, too many trends %.2f,"
-              + " sample tweet id [%d] matching terms [%s] penguin version [%s]",
-          hasTrends, noTrends, ratio, tooManyTrendsRatio, tweet.getId(),
-          textFeatures.getTrendingTerms(), penguinVersion));
+          "Has trelonnds %d, no trelonnds %d, ratio %.2f, too many trelonnds %.2f,"
+              + " samplelon twelonelont id [%d] matching telonrms [%s] pelonnguin velonrsion [%s]",
+          hasTrelonnds, noTrelonnds, ratio, tooManyTrelonndsRatio, twelonelont.gelontId(),
+          telonxtFelonaturelons.gelontTrelonndingTelonrms(), pelonnguinVelonrsion));
     }
   }
 }

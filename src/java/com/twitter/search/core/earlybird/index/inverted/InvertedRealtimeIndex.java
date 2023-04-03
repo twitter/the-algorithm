@@ -1,464 +1,464 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Comparator;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.StringHelper;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.apachelon.lucelonnelon.util.StringHelonlpelonr;
 
-import com.twitter.search.common.hashtable.HashTable;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.util.hash.KeysSource;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.hashtablelon.HashTablelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.util.hash.KelonysSourcelon;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
-public class InvertedRealtimeIndex extends InvertedIndex {
-  public static final int FIXED_HASH_SEED = 0;
+public class InvelonrtelondRelonaltimelonIndelonx elonxtelonnds InvelonrtelondIndelonx {
+  public static final int FIXelonD_HASH_SelonelonD = 0;
 
-  public final class TermHashTable extends HashTable<BytesRef> {
+  public final class TelonrmHashTablelon elonxtelonnds HashTablelon<BytelonsRelonf> {
 
-    private final TermPointerEncoding termPointerEncoding;
+    privatelon final TelonrmPointelonrelonncoding telonrmPointelonrelonncoding;
 
-    public TermHashTable(int size, TermPointerEncoding termPointerEncoding) {
-      super(size);
-      this.termPointerEncoding = termPointerEncoding;
+    public TelonrmHashTablelon(int sizelon, TelonrmPointelonrelonncoding telonrmPointelonrelonncoding) {
+      supelonr(sizelon);
+      this.telonrmPointelonrelonncoding = telonrmPointelonrelonncoding;
     }
 
-    public TermHashTable(int[] termsHash, TermPointerEncoding termPointerEncoding) {
-      super(termsHash);
-      this.termPointerEncoding = termPointerEncoding;
+    public TelonrmHashTablelon(int[] telonrmsHash, TelonrmPointelonrelonncoding telonrmPointelonrelonncoding) {
+      supelonr(telonrmsHash);
+      this.telonrmPointelonrelonncoding = telonrmPointelonrelonncoding;
     }
 
-    @Override
-    public boolean matchItem(BytesRef term, int candidateTermID) {
-      return ByteTermUtils.postingEquals(
-          getTermPool(),
-          termPointerEncoding.getTextStart(termsArray.termPointers[candidateTermID]), term);
+    @Ovelonrridelon
+    public boolelonan matchItelonm(BytelonsRelonf telonrm, int candidatelonTelonrmID) {
+      relonturn BytelonTelonrmUtils.postingelonquals(
+          gelontTelonrmPool(),
+          telonrmPointelonrelonncoding.gelontTelonxtStart(telonrmsArray.telonrmPointelonrs[candidatelonTelonrmID]), telonrm);
     }
 
-    @Override
-    public int hashCodeForItem(int itemID) {
-      return ByteTermUtils.hashCode(
-          getTermPool(), termPointerEncoding.getTextStart(termsArray.termPointers[itemID]));
+    @Ovelonrridelon
+    public int hashCodelonForItelonm(int itelonmID) {
+      relonturn BytelonTelonrmUtils.hashCodelon(
+          gelontTelonrmPool(), telonrmPointelonrelonncoding.gelontTelonxtStart(telonrmsArray.telonrmPointelonrs[itelonmID]));
     }
 
     /*
-     * Use a fixed hash seed to compute the hash code for the given item. This is necessary because
-     * we want the TermHashTable to be consistent for lookups in indexes that have been flushed and
-     * loaded across restarts and redeploys.
+     * Uselon a fixelond hash selonelond to computelon thelon hash codelon for thelon givelonn itelonm. This is neloncelonssary beloncauselon
+     * welon want thelon TelonrmHashTablelon to belon consistelonnt for lookups in indelonxelons that havelon belonelonn flushelond and
+     * loadelond across relonstarts and relondelonploys.
      *
-     * Note: previously we used item.hashcode(), however that hash function relies on the seed value
-     * StringHelper.GOOD_FAST_HASH_SEED, which is initialized to System.currentTimeMillis() when the
-     * JVM process starts up.
+     * Notelon: prelonviously welon uselond itelonm.hashcodelon(), howelonvelonr that hash function relonlielons on thelon selonelond valuelon
+     * StringHelonlpelonr.GOOD_FAST_HASH_SelonelonD, which is initializelond to Systelonm.currelonntTimelonMillis() whelonn thelon
+     * JVM procelonss starts up.
      */
-    public long lookupItem(BytesRef item) {
-      int itemHashCode = StringHelper.murmurhash3_x86_32(item, FIXED_HASH_SEED);
+    public long lookupItelonm(BytelonsRelonf itelonm) {
+      int itelonmHashCodelon = StringHelonlpelonr.murmurhash3_x86_32(itelonm, FIXelonD_HASH_SelonelonD);
 
-      return super.lookupItem(item, itemHashCode);
+      relonturn supelonr.lookupItelonm(itelonm, itelonmHashCodelon);
     }
   }
 
 
   /**
-   * Skip list comparator used by {@link #termsSkipList}. The key would be the bytesRef of the term,
-   *   and the value would be the termID of a term.
+   * Skip list comparator uselond by {@link #telonrmsSkipList}. Thelon kelony would belon thelon bytelonsRelonf of thelon telonrm,
+   *   and thelon valuelon would belon thelon telonrmID of a telonrm.
    *
-   *   Notice this comparator is keeping states,
-   *   so different threads CANNOT share the same comparator.
+   *   Noticelon this comparator is kelonelonping statelons,
+   *   so diffelonrelonnt threlonads CANNOT sharelon thelon samelon comparator.
    */
-  public static final class TermsSkipListComparator implements SkipListComparator<BytesRef> {
-    private static final Comparator<BytesRef> BYTES_REF_COMPARATOR = Comparator.naturalOrder();
+  public static final class TelonrmsSkipListComparator implelonmelonnts SkipListComparator<BytelonsRelonf> {
+    privatelon static final Comparator<BytelonsRelonf> BYTelonS_RelonF_COMPARATOR = Comparator.naturalOrdelonr();
 
-    private static final int SENTINEL_VALUE = HashTable.EMPTY_SLOT;
+    privatelon static final int SelonNTINelonL_VALUelon = HashTablelon.elonMPTY_SLOT;
 
-    // Initializing two BytesRef to use for later comparisons.
-    //   Notice different threads cannot share the same comparator.
-    private final BytesRef bytesRef1 = new BytesRef();
-    private final BytesRef bytesRef2 = new BytesRef();
+    // Initializing two BytelonsRelonf to uselon for latelonr comparisons.
+    //   Noticelon diffelonrelonnt threlonads cannot sharelon thelon samelon comparator.
+    privatelon final BytelonsRelonf bytelonsRelonf1 = nelonw BytelonsRelonf();
+    privatelon final BytelonsRelonf bytelonsRelonf2 = nelonw BytelonsRelonf();
 
     /**
-     * We have to pass each part of the index in since during load process, the comparator
-     *   needs to be build before the index.
+     * Welon havelon to pass elonach part of thelon indelonx in sincelon during load procelonss, thelon comparator
+     *   nelonelonds to belon build belonforelon thelon indelonx.
      */
-    private final InvertedRealtimeIndex invertedIndex;
+    privatelon final InvelonrtelondRelonaltimelonIndelonx invelonrtelondIndelonx;
 
-    public TermsSkipListComparator(InvertedRealtimeIndex invertedIndex) {
-      this.invertedIndex = invertedIndex;
+    public TelonrmsSkipListComparator(InvelonrtelondRelonaltimelonIndelonx invelonrtelondIndelonx) {
+      this.invelonrtelondIndelonx = invelonrtelondIndelonx;
     }
 
-    @Override
-    public int compareKeyWithValue(BytesRef key, int targetValue, int targetPosition) {
-      // No key could represent SENTINEL_VALUE and SENTINEL_VALUE is greatest.
-      if (targetValue == SENTINEL_VALUE) {
-        return -1;
-      } else {
-        getTerm(targetValue, bytesRef1);
-        return BYTES_REF_COMPARATOR.compare(key, bytesRef1);
+    @Ovelonrridelon
+    public int comparelonKelonyWithValuelon(BytelonsRelonf kelony, int targelontValuelon, int targelontPosition) {
+      // No kelony could relonprelonselonnt SelonNTINelonL_VALUelon and SelonNTINelonL_VALUelon is grelonatelonst.
+      if (targelontValuelon == SelonNTINelonL_VALUelon) {
+        relonturn -1;
+      } elonlselon {
+        gelontTelonrm(targelontValuelon, bytelonsRelonf1);
+        relonturn BYTelonS_RelonF_COMPARATOR.comparelon(kelony, bytelonsRelonf1);
       }
     }
 
-    @Override
-    public int compareValues(int v1, int v2) {
-      // SENTINEL_VALUE is greatest.
-      if (v1 != SENTINEL_VALUE && v2 != SENTINEL_VALUE) {
-        getTerm(v1, bytesRef1);
-        getTerm(v2, bytesRef2);
-        return BYTES_REF_COMPARATOR.compare(bytesRef1, bytesRef2);
-      } else if (v1 == SENTINEL_VALUE && v2 == SENTINEL_VALUE) {
-        return 0;
-      } else if (v1 == SENTINEL_VALUE) {
-        return 1;
-      } else {
-        return -1;
+    @Ovelonrridelon
+    public int comparelonValuelons(int v1, int v2) {
+      // SelonNTINelonL_VALUelon is grelonatelonst.
+      if (v1 != SelonNTINelonL_VALUelon && v2 != SelonNTINelonL_VALUelon) {
+        gelontTelonrm(v1, bytelonsRelonf1);
+        gelontTelonrm(v2, bytelonsRelonf2);
+        relonturn BYTelonS_RelonF_COMPARATOR.comparelon(bytelonsRelonf1, bytelonsRelonf2);
+      } elonlselon if (v1 == SelonNTINelonL_VALUelon && v2 == SelonNTINelonL_VALUelon) {
+        relonturn 0;
+      } elonlselon if (v1 == SelonNTINelonL_VALUelon) {
+        relonturn 1;
+      } elonlselon {
+        relonturn -1;
       }
     }
 
-    @Override
-    public int getSentinelValue() {
-      return SENTINEL_VALUE;
+    @Ovelonrridelon
+    public int gelontSelonntinelonlValuelon() {
+      relonturn SelonNTINelonL_VALUelon;
     }
 
     /**
-     * Get the term specified by the termID.
-     *   This method should be the same as {@link InvertedRealtimeIndex#getTerm}
+     * Gelont thelon telonrm speloncifielond by thelon telonrmID.
+     *   This melonthod should belon thelon samelon as {@link InvelonrtelondRelonaltimelonIndelonx#gelontTelonrm}
      */
-    private void getTerm(int termID, BytesRef text) {
-      invertedIndex.getTerm(termID, text);
+    privatelon void gelontTelonrm(int telonrmID, BytelonsRelonf telonxt) {
+      invelonrtelondIndelonx.gelontTelonrm(telonrmID, telonxt);
     }
   }
 
-  private static final int HASHMAP_SIZE = 64 * 1024;
+  privatelon static final int HASHMAP_SIZelon = 64 * 1024;
 
-  private SkipListContainer<BytesRef> termsSkipList;
+  privatelon SkipListContainelonr<BytelonsRelonf> telonrmsSkipList;
 
-  private final TermPointerEncoding termPointerEncoding;
-  private final ByteBlockPool termPool;
-  private final SkipListPostingList postingList;
+  privatelon final TelonrmPointelonrelonncoding telonrmPointelonrelonncoding;
+  privatelon final BytelonBlockPool telonrmPool;
+  privatelon final SkipListPostingList postingList;
 
-  private int numTerms;
-  private int numDocs;
-  private int sumTotalTermFreq;
-  private int sumTermDocFreq;
-  private int maxPosition;
+  privatelon int numTelonrms;
+  privatelon int numDocs;
+  privatelon int sumTotalTelonrmFrelonq;
+  privatelon int sumTelonrmDocFrelonq;
+  privatelon int maxPosition;
 
-  private volatile TermHashTable hashTable;
-  private TermsArray termsArray;
+  privatelon volatilelon TelonrmHashTablelon hashTablelon;
+  privatelon TelonrmsArray telonrmsArray;
 
   /**
-   * Creates a new in-memory real-time inverted index for the given field.
+   * Crelonatelons a nelonw in-melonmory relonal-timelon invelonrtelond indelonx for thelon givelonn fielonld.
    */
-  public InvertedRealtimeIndex(EarlybirdFieldType fieldType,
-                               TermPointerEncoding termPointerEncoding,
-                               String fieldName) {
-    super(fieldType);
-    this.termPool = new ByteBlockPool();
+  public InvelonrtelondRelonaltimelonIndelonx(elonarlybirdFielonldTypelon fielonldTypelon,
+                               TelonrmPointelonrelonncoding telonrmPointelonrelonncoding,
+                               String fielonldNamelon) {
+    supelonr(fielonldTypelon);
+    this.telonrmPool = nelonw BytelonBlockPool();
 
-    this.termPointerEncoding = termPointerEncoding;
-    this.hashTable = new TermHashTable(HASHMAP_SIZE, termPointerEncoding);
+    this.telonrmPointelonrelonncoding = telonrmPointelonrelonncoding;
+    this.hashTablelon = nelonw TelonrmHashTablelon(HASHMAP_SIZelon, telonrmPointelonrelonncoding);
 
-    this.postingList = new SkipListPostingList(
-        fieldType.hasPositions()
-            ? SkipListContainer.HasPositions.YES
-            : SkipListContainer.HasPositions.NO,
-        fieldType.isStorePerPositionPayloads()
-            ? SkipListContainer.HasPayloads.YES
-            : SkipListContainer.HasPayloads.NO,
-        fieldName);
+    this.postingList = nelonw SkipListPostingList(
+        fielonldTypelon.hasPositions()
+            ? SkipListContainelonr.HasPositions.YelonS
+            : SkipListContainelonr.HasPositions.NO,
+        fielonldTypelon.isStorelonPelonrPositionPayloads()
+            ? SkipListContainelonr.HasPayloads.YelonS
+            : SkipListContainelonr.HasPayloads.NO,
+        fielonldNamelon);
 
-    this.termsArray = new TermsArray(
-        HASHMAP_SIZE, fieldType.isStoreFacetOffensiveCounters());
+    this.telonrmsArray = nelonw TelonrmsArray(
+        HASHMAP_SIZelon, fielonldTypelon.isStorelonFacelontOffelonnsivelonCountelonrs());
 
-    // Create termsSkipList to maintain order if field is support ordered terms.
-    if (fieldType.isSupportOrderedTerms()) {
-      // Terms skip list does not support position.
-      this.termsSkipList = new SkipListContainer<>(
-          new TermsSkipListComparator(this),
-          SkipListContainer.HasPositions.NO,
-          SkipListContainer.HasPayloads.NO,
-          "terms");
-      this.termsSkipList.newSkipList();
-    } else {
-      this.termsSkipList = null;
+    // Crelonatelon telonrmsSkipList to maintain ordelonr if fielonld is support ordelonrelond telonrms.
+    if (fielonldTypelon.isSupportOrdelonrelondTelonrms()) {
+      // Telonrms skip list doelons not support position.
+      this.telonrmsSkipList = nelonw SkipListContainelonr<>(
+          nelonw TelonrmsSkipListComparator(this),
+          SkipListContainelonr.HasPositions.NO,
+          SkipListContainelonr.HasPayloads.NO,
+          "telonrms");
+      this.telonrmsSkipList.nelonwSkipList();
+    } elonlselon {
+      this.telonrmsSkipList = null;
     }
   }
 
-  void setTermsSkipList(SkipListContainer<BytesRef> termsSkipList) {
-    this.termsSkipList = termsSkipList;
+  void selontTelonrmsSkipList(SkipListContainelonr<BytelonsRelonf> telonrmsSkipList) {
+    this.telonrmsSkipList = telonrmsSkipList;
   }
 
-  SkipListContainer<BytesRef> getTermsSkipList() {
-    return termsSkipList;
+  SkipListContainelonr<BytelonsRelonf> gelontTelonrmsSkipList() {
+    relonturn telonrmsSkipList;
   }
 
-  private InvertedRealtimeIndex(
-      EarlybirdFieldType fieldType,
-      int numTerms,
+  privatelon InvelonrtelondRelonaltimelonIndelonx(
+      elonarlybirdFielonldTypelon fielonldTypelon,
+      int numTelonrms,
       int numDocs,
-      int sumTermDocFreq,
-      int sumTotalTermFreq,
+      int sumTelonrmDocFrelonq,
+      int sumTotalTelonrmFrelonq,
       int maxPosition,
-      int[] termsHash,
-      TermsArray termsArray,
-      ByteBlockPool termPool,
-      TermPointerEncoding termPointerEncoding,
+      int[] telonrmsHash,
+      TelonrmsArray telonrmsArray,
+      BytelonBlockPool telonrmPool,
+      TelonrmPointelonrelonncoding telonrmPointelonrelonncoding,
       SkipListPostingList postingList) {
-    super(fieldType);
-    this.numTerms = numTerms;
+    supelonr(fielonldTypelon);
+    this.numTelonrms = numTelonrms;
     this.numDocs = numDocs;
-    this.sumTermDocFreq = sumTermDocFreq;
-    this.sumTotalTermFreq = sumTotalTermFreq;
+    this.sumTelonrmDocFrelonq = sumTelonrmDocFrelonq;
+    this.sumTotalTelonrmFrelonq = sumTotalTelonrmFrelonq;
     this.maxPosition = maxPosition;
-    this.termsArray = termsArray;
-    this.termPool = termPool;
-    this.termPointerEncoding = termPointerEncoding;
-    this.hashTable = new TermHashTable(termsHash, termPointerEncoding);
+    this.telonrmsArray = telonrmsArray;
+    this.telonrmPool = telonrmPool;
+    this.telonrmPointelonrelonncoding = telonrmPointelonrelonncoding;
+    this.hashTablelon = nelonw TelonrmHashTablelon(telonrmsHash, telonrmPointelonrelonncoding);
     this.postingList = postingList;
   }
 
-  void insertToTermsSkipList(BytesRef termBytesRef, int termID) {
-    if (termsSkipList != null) {
-      // Use the comparator passed in while building the skip list since we only have one writer.
-      termsSkipList.insert(termBytesRef, termID, SkipListContainer.FIRST_LIST_HEAD);
+  void inselonrtToTelonrmsSkipList(BytelonsRelonf telonrmBytelonsRelonf, int telonrmID) {
+    if (telonrmsSkipList != null) {
+      // Uselon thelon comparator passelond in whilelon building thelon skip list sincelon welon only havelon onelon writelonr.
+      telonrmsSkipList.inselonrt(telonrmBytelonsRelonf, telonrmID, SkipListContainelonr.FIRST_LIST_HelonAD);
     }
   }
 
-  @Override
-  public int getNumTerms() {
-    return numTerms;
+  @Ovelonrridelon
+  public int gelontNumTelonrms() {
+    relonturn numTelonrms;
   }
 
-  @Override
-  public int getNumDocs() {
-    return numDocs;
+  @Ovelonrridelon
+  public int gelontNumDocs() {
+    relonturn numDocs;
   }
 
-  @Override
-  public int getSumTotalTermFreq() {
-    return sumTotalTermFreq;
+  @Ovelonrridelon
+  public int gelontSumTotalTelonrmFrelonq() {
+    relonturn sumTotalTelonrmFrelonq;
   }
 
-  @Override
-  public int getSumTermDocFreq() {
-    return sumTermDocFreq;
+  @Ovelonrridelon
+  public int gelontSumTelonrmDocFrelonq() {
+    relonturn sumTelonrmDocFrelonq;
   }
 
-  @Override
-  public Terms createTerms(int maxPublishedPointer) {
-    return new RealtimeIndexTerms(this, maxPublishedPointer);
+  @Ovelonrridelon
+  public Telonrms crelonatelonTelonrms(int maxPublishelondPointelonr) {
+    relonturn nelonw RelonaltimelonIndelonxTelonrms(this, maxPublishelondPointelonr);
   }
 
-  @Override
-  public TermsEnum createTermsEnum(int maxPublishedPointer) {
-    // Use SkipListInMemoryTermsEnum if termsSkipList is not null, which indicates field required
-    // ordered term.
-    if (termsSkipList == null) {
-      return new RealtimeIndexTerms.InMemoryTermsEnum(this, maxPublishedPointer);
-    } else {
-      return new RealtimeIndexTerms.SkipListInMemoryTermsEnum(this, maxPublishedPointer);
+  @Ovelonrridelon
+  public Telonrmselonnum crelonatelonTelonrmselonnum(int maxPublishelondPointelonr) {
+    // Uselon SkipListInMelonmoryTelonrmselonnum if telonrmsSkipList is not null, which indicatelons fielonld relonquirelond
+    // ordelonrelond telonrm.
+    if (telonrmsSkipList == null) {
+      relonturn nelonw RelonaltimelonIndelonxTelonrms.InMelonmoryTelonrmselonnum(this, maxPublishelondPointelonr);
+    } elonlselon {
+      relonturn nelonw RelonaltimelonIndelonxTelonrms.SkipListInMelonmoryTelonrmselonnum(this, maxPublishelondPointelonr);
     }
   }
 
-  int getPostingListPointer(int termID) {
-    return termsArray.getPostingsPointer(termID);
+  int gelontPostingListPointelonr(int telonrmID) {
+    relonturn telonrmsArray.gelontPostingsPointelonr(telonrmID);
   }
 
-  @Override
-  public int getLargestDocIDForTerm(int termID) {
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-      return TermsArray.INVALID;
-    } else {
-      return postingList.getDocIDFromPosting(termsArray.largestPostings[termID]);
+  @Ovelonrridelon
+  public int gelontLargelonstDocIDForTelonrm(int telonrmID) {
+    if (telonrmID == elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND) {
+      relonturn TelonrmsArray.INVALID;
+    } elonlselon {
+      relonturn postingList.gelontDocIDFromPosting(telonrmsArray.largelonstPostings[telonrmID]);
     }
   }
 
-  @Override
-  public int getDF(int termID) {
-    if (termID == HashTable.EMPTY_SLOT) {
-      return 0;
-    } else {
-      return this.postingList.getDF(termID, termsArray);
+  @Ovelonrridelon
+  public int gelontDF(int telonrmID) {
+    if (telonrmID == HashTablelon.elonMPTY_SLOT) {
+      relonturn 0;
+    } elonlselon {
+      relonturn this.postingList.gelontDF(telonrmID, telonrmsArray);
     }
   }
 
-  @Override
-  public int getMaxPublishedPointer() {
-    return this.postingList.getMaxPublishedPointer();
+  @Ovelonrridelon
+  public int gelontMaxPublishelondPointelonr() {
+    relonturn this.postingList.gelontMaxPublishelondPointelonr();
   }
 
-  @Override
-  public int lookupTerm(BytesRef term) {
-    return HashTable.decodeItemId(hashTable.lookupItem(term));
+  @Ovelonrridelon
+  public int lookupTelonrm(BytelonsRelonf telonrm) {
+    relonturn HashTablelon.deloncodelonItelonmId(hashTablelon.lookupItelonm(telonrm));
   }
 
-  @Override
-  public FacetLabelAccessor getLabelAccessor() {
-    final TermsArray termsArrayCopy = this.termsArray;
+  @Ovelonrridelon
+  public FacelontLabelonlAccelonssor gelontLabelonlAccelonssor() {
+    final TelonrmsArray telonrmsArrayCopy = this.telonrmsArray;
 
-    return new FacetLabelAccessor() {
-      @Override protected boolean seek(long termID) {
-        if (termID == HashTable.EMPTY_SLOT) {
-          return false;
+    relonturn nelonw FacelontLabelonlAccelonssor() {
+      @Ovelonrridelon protelonctelond boolelonan selonelonk(long telonrmID) {
+        if (telonrmID == HashTablelon.elonMPTY_SLOT) {
+          relonturn falselon;
         }
-        int termPointer = termsArrayCopy.termPointers[(int) termID];
-        hasTermPayload = termPointerEncoding.hasPayload(termPointer);
-        int textStart = termPointerEncoding.getTextStart(termPointer);
-        int termPayloadStart = ByteTermUtils.setBytesRef(termPool, termRef, textStart);
-        if (hasTermPayload) {
-          ByteTermUtils.setBytesRef(termPool, termPayload, termPayloadStart);
+        int telonrmPointelonr = telonrmsArrayCopy.telonrmPointelonrs[(int) telonrmID];
+        hasTelonrmPayload = telonrmPointelonrelonncoding.hasPayload(telonrmPointelonr);
+        int telonxtStart = telonrmPointelonrelonncoding.gelontTelonxtStart(telonrmPointelonr);
+        int telonrmPayloadStart = BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, telonrmRelonf, telonxtStart);
+        if (hasTelonrmPayload) {
+          BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, telonrmPayload, telonrmPayloadStart);
         }
-        offensiveCount = termsArrayCopy.offensiveCounters != null
-            ? termsArrayCopy.offensiveCounters[(int) termID] : 0;
+        offelonnsivelonCount = telonrmsArrayCopy.offelonnsivelonCountelonrs != null
+            ? telonrmsArrayCopy.offelonnsivelonCountelonrs[(int) telonrmID] : 0;
 
-        return true;
+        relonturn truelon;
       }
     };
   }
 
-  @Override
-  public boolean hasMaxPublishedPointer() {
-    return true;
+  @Ovelonrridelon
+  public boolelonan hasMaxPublishelondPointelonr() {
+    relonturn truelon;
   }
 
-  @Override
-  public void getTerm(int termID, BytesRef text) {
-    getTerm(termID, text, termsArray, termPointerEncoding, termPool);
-  }
-
-  /**
-   * Extract to helper method so the logic can be shared with
-   *   {@link TermsSkipListComparator#getTerm}
-   */
-  private static void getTerm(int termID, BytesRef text,
-                              TermsArray termsArray,
-                              TermPointerEncoding termPointerEncoding,
-                              ByteBlockPool termPool) {
-    int textStart = termPointerEncoding.getTextStart(termsArray.termPointers[termID]);
-    ByteTermUtils.setBytesRef(termPool, text, textStart);
+  @Ovelonrridelon
+  public void gelontTelonrm(int telonrmID, BytelonsRelonf telonxt) {
+    gelontTelonrm(telonrmID, telonxt, telonrmsArray, telonrmPointelonrelonncoding, telonrmPool);
   }
 
   /**
-   * Called when postings hash is too small (> 50% occupied).
+   * elonxtract to helonlpelonr melonthod so thelon logic can belon sharelond with
+   *   {@link TelonrmsSkipListComparator#gelontTelonrm}
    */
-  void rehashPostings(int newSize) {
-    TermHashTable newTable = new TermHashTable(newSize, termPointerEncoding);
-    hashTable.rehash(newTable);
-    hashTable = newTable;
+  privatelon static void gelontTelonrm(int telonrmID, BytelonsRelonf telonxt,
+                              TelonrmsArray telonrmsArray,
+                              TelonrmPointelonrelonncoding telonrmPointelonrelonncoding,
+                              BytelonBlockPool telonrmPool) {
+    int telonxtStart = telonrmPointelonrelonncoding.gelontTelonxtStart(telonrmsArray.telonrmPointelonrs[telonrmID]);
+    BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, telonxt, telonxtStart);
   }
 
   /**
-   * Returns per-term array containing the number of documents indexed with that term that were
-   * considered to be offensive.
+   * Callelond whelonn postings hash is too small (> 50% occupielond).
    */
-  @Nullable
-  int[] getOffensiveCounters() {
-    return this.termsArray.offensiveCounters;
+  void relonhashPostings(int nelonwSizelon) {
+    TelonrmHashTablelon nelonwTablelon = nelonw TelonrmHashTablelon(nelonwSizelon, telonrmPointelonrelonncoding);
+    hashTablelon.relonhash(nelonwTablelon);
+    hashTablelon = nelonwTablelon;
   }
 
   /**
-   * Returns access to all the terms in this index as a {@link KeysSource}.
+   * Relonturns pelonr-telonrm array containing thelon numbelonr of documelonnts indelonxelond with that telonrm that welonrelon
+   * considelonrelond to belon offelonnsivelon.
    */
-  public KeysSource getKeysSource() {
-    final int localNumTerms = this.numTerms;
-    final TermsArray termsArrayCopy = this.termsArray;
+  @Nullablelon
+  int[] gelontOffelonnsivelonCountelonrs() {
+    relonturn this.telonrmsArray.offelonnsivelonCountelonrs;
+  }
 
-    return new KeysSource() {
-      private int termID = 0;
-      private BytesRef text = new BytesRef();
+  /**
+   * Relonturns accelonss to all thelon telonrms in this indelonx as a {@link KelonysSourcelon}.
+   */
+  public KelonysSourcelon gelontKelonysSourcelon() {
+    final int localNumTelonrms = this.numTelonrms;
+    final TelonrmsArray telonrmsArrayCopy = this.telonrmsArray;
 
-      @Override
-      public int getNumberOfKeys() {
-        return localNumTerms;
+    relonturn nelonw KelonysSourcelon() {
+      privatelon int telonrmID = 0;
+      privatelon BytelonsRelonf telonxt = nelonw BytelonsRelonf();
+
+      @Ovelonrridelon
+      public int gelontNumbelonrOfKelonys() {
+        relonturn localNumTelonrms;
       }
 
-      /** Must not be called more often than getNumberOfKeys() before rewind() is called */
-      @Override
-      public BytesRef nextKey() {
-        Preconditions.checkState(termID < localNumTerms);
-        int textStart = termPointerEncoding.getTextStart(termsArrayCopy.termPointers[termID]);
-        ByteTermUtils.setBytesRef(termPool, text, textStart);
-        termID++;
-        return text;
+      /** Must not belon callelond morelon oftelonn than gelontNumbelonrOfKelonys() belonforelon relonwind() is callelond */
+      @Ovelonrridelon
+      public BytelonsRelonf nelonxtKelony() {
+        Prelonconditions.chelonckStatelon(telonrmID < localNumTelonrms);
+        int telonxtStart = telonrmPointelonrelonncoding.gelontTelonxtStart(telonrmsArrayCopy.telonrmPointelonrs[telonrmID]);
+        BytelonTelonrmUtils.selontBytelonsRelonf(telonrmPool, telonxt, telonxtStart);
+        telonrmID++;
+        relonturn telonxt;
       }
 
-      @Override
-      public void rewind() {
-        termID = 0;
+      @Ovelonrridelon
+      public void relonwind() {
+        telonrmID = 0;
       }
     };
   }
 
   /**
-   * Returns byte pool containing term text for all terms in this index.
+   * Relonturns bytelon pool containing telonrm telonxt for all telonrms in this indelonx.
    */
-  public ByteBlockPool getTermPool() {
-    return this.termPool;
+  public BytelonBlockPool gelontTelonrmPool() {
+    relonturn this.telonrmPool;
   }
 
   /**
-   * Returns per-term array containing pointers to where the text of each term is stored in the
-   * byte pool returned by {@link #getTermPool()}.
+   * Relonturns pelonr-telonrm array containing pointelonrs to whelonrelon thelon telonxt of elonach telonrm is storelond in thelon
+   * bytelon pool relonturnelond by {@link #gelontTelonrmPool()}.
    */
-  public int[] getTermPointers() {
-    return this.termsArray.termPointers;
+  public int[] gelontTelonrmPointelonrs() {
+    relonturn this.telonrmsArray.telonrmPointelonrs;
   }
 
   /**
-   * Returns the hash table used to look up terms in this index.
+   * Relonturns thelon hash tablelon uselond to look up telonrms in this indelonx.
    */
-  InvertedRealtimeIndex.TermHashTable getHashTable() {
-    return hashTable;
+  InvelonrtelondRelonaltimelonIndelonx.TelonrmHashTablelon gelontHashTablelon() {
+    relonturn hashTablelon;
   }
 
 
-  TermsArray getTermsArray() {
-    return termsArray;
+  TelonrmsArray gelontTelonrmsArray() {
+    relonturn telonrmsArray;
   }
 
-  TermsArray growTermsArray() {
-    termsArray = termsArray.grow();
-    return termsArray;
+  TelonrmsArray growTelonrmsArray() {
+    telonrmsArray = telonrmsArray.grow();
+    relonturn telonrmsArray;
   }
 
-  @SuppressWarnings("unchecked")
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @SupprelonssWarnings("unchelonckelond")
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  TermPointerEncoding getTermPointerEncoding() {
-    return termPointerEncoding;
+  TelonrmPointelonrelonncoding gelontTelonrmPointelonrelonncoding() {
+    relonturn telonrmPointelonrelonncoding;
   }
 
-  SkipListPostingList getPostingList() {
-    return postingList;
+  SkipListPostingList gelontPostingList() {
+    relonturn postingList;
   }
 
-  void incrementNumTerms() {
-    numTerms++;
+  void increlonmelonntNumTelonrms() {
+    numTelonrms++;
   }
 
-  void incrementSumTotalTermFreq() {
-    sumTotalTermFreq++;
+  void increlonmelonntSumTotalTelonrmFrelonq() {
+    sumTotalTelonrmFrelonq++;
   }
 
-  public void incrementSumTermDocFreq() {
-    sumTermDocFreq++;
+  public void increlonmelonntSumTelonrmDocFrelonq() {
+    sumTelonrmDocFrelonq++;
   }
 
-  public void incrementNumDocs() {
+  public void increlonmelonntNumDocs() {
     numDocs++;
   }
 
-  void setNumDocs(int numDocs) {
+  void selontNumDocs(int numDocs) {
     this.numDocs = numDocs;
   }
 
@@ -468,91 +468,91 @@ public class InvertedRealtimeIndex extends InvertedIndex {
     }
   }
 
-  int getMaxPosition() {
-    return maxPosition;
+  int gelontMaxPosition() {
+    relonturn maxPosition;
   }
 
-  public static class FlushHandler extends Flushable.Handler<InvertedRealtimeIndex> {
-    private static final String NUM_DOCS_PROP_NAME = "numDocs";
-    private static final String SUM_TOTAL_TERM_FREQ_PROP_NAME = "sumTotalTermFreq";
-    private static final String SUM_TERM_DOC_FREQ_PROP_NAME = "sumTermDocFreq";
-    private static final String NUM_TERMS_PROP_NAME = "numTerms";
-    private static final String POSTING_LIST_PROP_NAME = "postingList";
-    private static final String TERMS_SKIP_LIST_PROP_NAME = "termsSkipList";
-    private static final String MAX_POSITION = "maxPosition";
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<InvelonrtelondRelonaltimelonIndelonx> {
+    privatelon static final String NUM_DOCS_PROP_NAMelon = "numDocs";
+    privatelon static final String SUM_TOTAL_TelonRM_FRelonQ_PROP_NAMelon = "sumTotalTelonrmFrelonq";
+    privatelon static final String SUM_TelonRM_DOC_FRelonQ_PROP_NAMelon = "sumTelonrmDocFrelonq";
+    privatelon static final String NUM_TelonRMS_PROP_NAMelon = "numTelonrms";
+    privatelon static final String POSTING_LIST_PROP_NAMelon = "postingList";
+    privatelon static final String TelonRMS_SKIP_LIST_PROP_NAMelon = "telonrmsSkipList";
+    privatelon static final String MAX_POSITION = "maxPosition";
 
-    protected final EarlybirdFieldType fieldType;
-    protected final TermPointerEncoding termPointerEncoding;
+    protelonctelond final elonarlybirdFielonldTypelon fielonldTypelon;
+    protelonctelond final TelonrmPointelonrelonncoding telonrmPointelonrelonncoding;
 
-    public FlushHandler(EarlybirdFieldType fieldType,
-                        TermPointerEncoding termPointerEncoding) {
-      this.fieldType = fieldType;
-      this.termPointerEncoding = termPointerEncoding;
+    public FlushHandlelonr(elonarlybirdFielonldTypelon fielonldTypelon,
+                        TelonrmPointelonrelonncoding telonrmPointelonrelonncoding) {
+      this.fielonldTypelon = fielonldTypelon;
+      this.telonrmPointelonrelonncoding = telonrmPointelonrelonncoding;
     }
 
-    public FlushHandler(InvertedRealtimeIndex objectToFlush) {
-      super(objectToFlush);
-      this.fieldType = objectToFlush.fieldType;
-      this.termPointerEncoding = objectToFlush.getTermPointerEncoding();
+    public FlushHandlelonr(InvelonrtelondRelonaltimelonIndelonx objelonctToFlush) {
+      supelonr(objelonctToFlush);
+      this.fielonldTypelon = objelonctToFlush.fielonldTypelon;
+      this.telonrmPointelonrelonncoding = objelonctToFlush.gelontTelonrmPointelonrelonncoding();
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out)
-        throws IOException {
-      InvertedRealtimeIndex objectToFlush = getObjectToFlush();
-      flushInfo.addIntProperty(NUM_TERMS_PROP_NAME, objectToFlush.getNumTerms());
-      flushInfo.addIntProperty(NUM_DOCS_PROP_NAME, objectToFlush.numDocs);
-      flushInfo.addIntProperty(SUM_TERM_DOC_FREQ_PROP_NAME, objectToFlush.sumTermDocFreq);
-      flushInfo.addIntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME, objectToFlush.sumTotalTermFreq);
-      flushInfo.addIntProperty(MAX_POSITION, objectToFlush.maxPosition);
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out)
+        throws IOelonxcelonption {
+      InvelonrtelondRelonaltimelonIndelonx objelonctToFlush = gelontObjelonctToFlush();
+      flushInfo.addIntPropelonrty(NUM_TelonRMS_PROP_NAMelon, objelonctToFlush.gelontNumTelonrms());
+      flushInfo.addIntPropelonrty(NUM_DOCS_PROP_NAMelon, objelonctToFlush.numDocs);
+      flushInfo.addIntPropelonrty(SUM_TelonRM_DOC_FRelonQ_PROP_NAMelon, objelonctToFlush.sumTelonrmDocFrelonq);
+      flushInfo.addIntPropelonrty(SUM_TOTAL_TelonRM_FRelonQ_PROP_NAMelon, objelonctToFlush.sumTotalTelonrmFrelonq);
+      flushInfo.addIntPropelonrty(MAX_POSITION, objelonctToFlush.maxPosition);
 
-      out.writeIntArray(objectToFlush.hashTable.slots());
-      objectToFlush.termsArray.getFlushHandler()
-          .flush(flushInfo.newSubProperties("termsArray"), out);
-      objectToFlush.getTermPool().getFlushHandler()
-          .flush(flushInfo.newSubProperties("termPool"), out);
-      objectToFlush.getPostingList().getFlushHandler()
-          .flush(flushInfo.newSubProperties(POSTING_LIST_PROP_NAME), out);
+      out.writelonIntArray(objelonctToFlush.hashTablelon.slots());
+      objelonctToFlush.telonrmsArray.gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons("telonrmsArray"), out);
+      objelonctToFlush.gelontTelonrmPool().gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons("telonrmPool"), out);
+      objelonctToFlush.gelontPostingList().gelontFlushHandlelonr()
+          .flush(flushInfo.nelonwSubPropelonrtielons(POSTING_LIST_PROP_NAMelon), out);
 
-      if (fieldType.isSupportOrderedTerms()) {
-        Preconditions.checkNotNull(objectToFlush.termsSkipList);
+      if (fielonldTypelon.isSupportOrdelonrelondTelonrms()) {
+        Prelonconditions.chelonckNotNull(objelonctToFlush.telonrmsSkipList);
 
-        objectToFlush.termsSkipList.getFlushHandler()
-            .flush(flushInfo.newSubProperties(TERMS_SKIP_LIST_PROP_NAME), out);
+        objelonctToFlush.telonrmsSkipList.gelontFlushHandlelonr()
+            .flush(flushInfo.nelonwSubPropelonrtielons(TelonRMS_SKIP_LIST_PROP_NAMelon), out);
       }
     }
 
-    @Override
-    protected InvertedRealtimeIndex doLoad(FlushInfo flushInfo, DataDeserializer in)
-        throws IOException {
-      int[] termsHash = in.readIntArray();
-      TermsArray termsArray = (new TermsArray.FlushHandler())
-          .load(flushInfo.getSubProperties("termsArray"), in);
-      ByteBlockPool termPool = (new ByteBlockPool.FlushHandler())
-          .load(flushInfo.getSubProperties("termPool"), in);
-      SkipListPostingList postingList = (new SkipListPostingList.FlushHandler())
-          .load(flushInfo.getSubProperties(POSTING_LIST_PROP_NAME), in);
+    @Ovelonrridelon
+    protelonctelond InvelonrtelondRelonaltimelonIndelonx doLoad(FlushInfo flushInfo, DataDelonselonrializelonr in)
+        throws IOelonxcelonption {
+      int[] telonrmsHash = in.relonadIntArray();
+      TelonrmsArray telonrmsArray = (nelonw TelonrmsArray.FlushHandlelonr())
+          .load(flushInfo.gelontSubPropelonrtielons("telonrmsArray"), in);
+      BytelonBlockPool telonrmPool = (nelonw BytelonBlockPool.FlushHandlelonr())
+          .load(flushInfo.gelontSubPropelonrtielons("telonrmPool"), in);
+      SkipListPostingList postingList = (nelonw SkipListPostingList.FlushHandlelonr())
+          .load(flushInfo.gelontSubPropelonrtielons(POSTING_LIST_PROP_NAMelon), in);
 
-      InvertedRealtimeIndex index = new InvertedRealtimeIndex(
-          fieldType,
-          flushInfo.getIntProperty(NUM_TERMS_PROP_NAME),
-          flushInfo.getIntProperty(NUM_DOCS_PROP_NAME),
-          flushInfo.getIntProperty(SUM_TERM_DOC_FREQ_PROP_NAME),
-          flushInfo.getIntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME),
-          flushInfo.getIntProperty(MAX_POSITION),
-          termsHash,
-          termsArray,
-          termPool,
-          termPointerEncoding,
+      InvelonrtelondRelonaltimelonIndelonx indelonx = nelonw InvelonrtelondRelonaltimelonIndelonx(
+          fielonldTypelon,
+          flushInfo.gelontIntPropelonrty(NUM_TelonRMS_PROP_NAMelon),
+          flushInfo.gelontIntPropelonrty(NUM_DOCS_PROP_NAMelon),
+          flushInfo.gelontIntPropelonrty(SUM_TelonRM_DOC_FRelonQ_PROP_NAMelon),
+          flushInfo.gelontIntPropelonrty(SUM_TOTAL_TelonRM_FRelonQ_PROP_NAMelon),
+          flushInfo.gelontIntPropelonrty(MAX_POSITION),
+          telonrmsHash,
+          telonrmsArray,
+          telonrmPool,
+          telonrmPointelonrelonncoding,
           postingList);
 
-      if (fieldType.isSupportOrderedTerms()) {
-        SkipListComparator<BytesRef> comparator = new TermsSkipListComparator(index);
-        index.setTermsSkipList((new SkipListContainer.FlushHandler<>(comparator))
-            .load(flushInfo.getSubProperties(TERMS_SKIP_LIST_PROP_NAME), in));
+      if (fielonldTypelon.isSupportOrdelonrelondTelonrms()) {
+        SkipListComparator<BytelonsRelonf> comparator = nelonw TelonrmsSkipListComparator(indelonx);
+        indelonx.selontTelonrmsSkipList((nelonw SkipListContainelonr.FlushHandlelonr<>(comparator))
+            .load(flushInfo.gelontSubPropelonrtielons(TelonRMS_SKIP_LIST_PROP_NAMelon), in));
       }
 
-      return index;
+      relonturn indelonx;
     }
   }
 }

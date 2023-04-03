@@ -1,15 +1,15 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "configapi/configapi-core/src/main/scala/com/twitter/timelines/configapi",
-        "home-mixer/server/src/main/scala/com/twitter/home_mixer/param/decider",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/decorator/urt",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product",
-        "timelinemixer/common/src/main/scala/com/twitter/timelinemixer/clients/timelineranker",
-        "util/util-core/src/main/scala/com/twitter/conversions",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/javax/injelonct:javax.injelonct",
+        "configapi/configapi-corelon/src/main/scala/com/twittelonr/timelonlinelons/configapi",
+        "homelon-mixelonr/selonrvelonr/src/main/scala/com/twittelonr/homelon_mixelonr/param/deloncidelonr",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/deloncorator/urt",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/product",
+        "timelonlinelonmixelonr/common/src/main/scala/com/twittelonr/timelonlinelonmixelonr/clielonnts/timelonlinelonrankelonr",
+        "util/util-corelon/src/main/scala/com/twittelonr/convelonrsions",
     ],
 )

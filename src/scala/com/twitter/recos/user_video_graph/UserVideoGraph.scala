@@ -1,73 +1,73 @@
-package com.twitter.recos.user_video_graph
+packagelon com.twittelonr.reloncos.uselonr_videlono_graph
 
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.tracing.Trace
-import com.twitter.finagle.tracing.TraceId
-import com.twitter.recos.decider.EndpointLoadShedder
-import com.twitter.recos.user_video_graph.thriftscala._
-import com.twitter.util.Duration
-import com.twitter.util.Future
-import com.twitter.util.Timer
-import scala.concurrent.duration.MILLISECONDS
-import com.twitter.logging.Logger
-import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.ConsumersBasedRelatedTweetsHandler
-import com.twitter.recos.user_video_graph.relatedTweetHandlers.ProducerBasedRelatedTweetsHandler
-import com.twitter.recos.user_video_graph.relatedTweetHandlers.TweetBasedRelatedTweetsHandler
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.finaglelon.tracing.TracelonId
+import com.twittelonr.reloncos.deloncidelonr.elonndpointLoadShelonddelonr
+import com.twittelonr.reloncos.uselonr_videlono_graph.thriftscala._
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.Timelonr
+import scala.concurrelonnt.duration.MILLISelonCONDS
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.relonlatelondTwelonelontHandlelonrs.ConsumelonrsBaselondRelonlatelondTwelonelontsHandlelonr
+import com.twittelonr.reloncos.uselonr_videlono_graph.relonlatelondTwelonelontHandlelonrs.ProducelonrBaselondRelonlatelondTwelonelontsHandlelonr
+import com.twittelonr.reloncos.uselonr_videlono_graph.relonlatelondTwelonelontHandlelonrs.TwelonelontBaselondRelonlatelondTwelonelontsHandlelonr
 
-object UserVideoGraph {
-  def traceId: TraceId = Trace.id
-  def clientId: Option[ClientId] = ClientId.current
+objelonct UselonrVidelonoGraph {
+  delonf tracelonId: TracelonId = Tracelon.id
+  delonf clielonntId: Option[ClielonntId] = ClielonntId.currelonnt
 }
 
-class UserVideoGraph(
-  tweetBasedRelatedTweetsHandler: TweetBasedRelatedTweetsHandler,
-  producerBasedRelatedTweetsHandler: ProducerBasedRelatedTweetsHandler,
-  consumersBasedRelatedTweetsHandler: ConsumersBasedRelatedTweetsHandler,
-  endpointLoadShedder: EndpointLoadShedder
+class UselonrVidelonoGraph(
+  twelonelontBaselondRelonlatelondTwelonelontsHandlelonr: TwelonelontBaselondRelonlatelondTwelonelontsHandlelonr,
+  producelonrBaselondRelonlatelondTwelonelontsHandlelonr: ProducelonrBaselondRelonlatelondTwelonelontsHandlelonr,
+  consumelonrsBaselondRelonlatelondTwelonelontsHandlelonr: ConsumelonrsBaselondRelonlatelondTwelonelontsHandlelonr,
+  elonndpointLoadShelonddelonr: elonndpointLoadShelonddelonr
 )(
-  implicit timer: Timer)
-    extends thriftscala.UserVideoGraph.MethodPerEndpoint {
+  implicit timelonr: Timelonr)
+    elonxtelonnds thriftscala.UselonrVidelonoGraph.MelonthodPelonrelonndpoint {
 
-  private val defaultTimeout: Duration = Duration(50, MILLISECONDS)
-  private val EmptyResponse = Future.value(RelatedTweetResponse())
-  private val log = Logger()
+  privatelon val delonfaultTimelonout: Duration = Duration(50, MILLISelonCONDS)
+  privatelon val elonmptyRelonsponselon = Futurelon.valuelon(RelonlatelondTwelonelontRelonsponselon())
+  privatelon val log = Loggelonr()
 
-  override def tweetBasedRelatedTweets(
-    request: TweetBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("videoGraphTweetBasedRelatedTweets") {
-      tweetBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
-    }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
-        EmptyResponse
-      case e =>
-        log.info("user-video-graph_tweetBasedRelatedTweets" + e)
-        EmptyResponse
+  ovelonrridelon delonf twelonelontBaselondRelonlatelondTwelonelonts(
+    relonquelonst: TwelonelontBaselondRelonlatelondTwelonelontRelonquelonst
+  ): Futurelon[RelonlatelondTwelonelontRelonsponselon] =
+    elonndpointLoadShelonddelonr("videlonoGraphTwelonelontBaselondRelonlatelondTwelonelonts") {
+      twelonelontBaselondRelonlatelondTwelonelontsHandlelonr(relonquelonst).raiselonWithin(delonfaultTimelonout)
+    }.relonscuelon {
+      caselon elonndpointLoadShelonddelonr.LoadShelonddingelonxcelonption =>
+        elonmptyRelonsponselon
+      caselon elon =>
+        log.info("uselonr-videlono-graph_twelonelontBaselondRelonlatelondTwelonelonts" + elon)
+        elonmptyRelonsponselon
     }
 
-  override def producerBasedRelatedTweets(
-    request: ProducerBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("producerBasedRelatedTweets") {
-      producerBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
-    }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
-        EmptyResponse
-      case e =>
-        log.info("user-video-graph_producerBasedRelatedTweets" + e)
-        EmptyResponse
+  ovelonrridelon delonf producelonrBaselondRelonlatelondTwelonelonts(
+    relonquelonst: ProducelonrBaselondRelonlatelondTwelonelontRelonquelonst
+  ): Futurelon[RelonlatelondTwelonelontRelonsponselon] =
+    elonndpointLoadShelonddelonr("producelonrBaselondRelonlatelondTwelonelonts") {
+      producelonrBaselondRelonlatelondTwelonelontsHandlelonr(relonquelonst).raiselonWithin(delonfaultTimelonout)
+    }.relonscuelon {
+      caselon elonndpointLoadShelonddelonr.LoadShelonddingelonxcelonption =>
+        elonmptyRelonsponselon
+      caselon elon =>
+        log.info("uselonr-videlono-graph_producelonrBaselondRelonlatelondTwelonelonts" + elon)
+        elonmptyRelonsponselon
     }
 
-  override def consumersBasedRelatedTweets(
-    request: ConsumersBasedRelatedTweetRequest
-  ): Future[RelatedTweetResponse] =
-    endpointLoadShedder("consumersBasedRelatedTweets") {
-      consumersBasedRelatedTweetsHandler(request).raiseWithin(defaultTimeout)
-    }.rescue {
-      case EndpointLoadShedder.LoadSheddingException =>
-        EmptyResponse
-      case e =>
-        log.info("user-video-graph_consumersBasedRelatedTweets" + e)
-        EmptyResponse
+  ovelonrridelon delonf consumelonrsBaselondRelonlatelondTwelonelonts(
+    relonquelonst: ConsumelonrsBaselondRelonlatelondTwelonelontRelonquelonst
+  ): Futurelon[RelonlatelondTwelonelontRelonsponselon] =
+    elonndpointLoadShelonddelonr("consumelonrsBaselondRelonlatelondTwelonelonts") {
+      consumelonrsBaselondRelonlatelondTwelonelontsHandlelonr(relonquelonst).raiselonWithin(delonfaultTimelonout)
+    }.relonscuelon {
+      caselon elonndpointLoadShelonddelonr.LoadShelonddingelonxcelonption =>
+        elonmptyRelonsponselon
+      caselon elon =>
+        log.info("uselonr-videlono-graph_consumelonrsBaselondRelonlatelondTwelonelonts" + elon)
+        elonmptyRelonsponselon
     }
 }

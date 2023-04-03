@@ -1,40 +1,40 @@
-package com.twitter.search.earlybird.document;
+packagelon com.twittelonr.selonarch.elonarlybird.documelonnt;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
 
 /**
- * Object to encapsulate {@link ThriftIndexingEvent} with a time slice ID.
+ * Objelonct to elonncapsulatelon {@link ThriftIndelonxingelonvelonnt} with a timelon slicelon ID.
  */
-public class TimeSlicedThriftIndexingEvent {
-  private final long timeSliceID;
-  private final ThriftIndexingEvent thriftIndexingEvent;
+public class TimelonSlicelondThriftIndelonxingelonvelonnt {
+  privatelon final long timelonSlicelonID;
+  privatelon final ThriftIndelonxingelonvelonnt thriftIndelonxingelonvelonnt;
 
-  public TimeSlicedThriftIndexingEvent(long timeSliceID, ThriftIndexingEvent thriftIndexingEvent) {
-    Preconditions.checkNotNull(thriftIndexingEvent);
+  public TimelonSlicelondThriftIndelonxingelonvelonnt(long timelonSlicelonID, ThriftIndelonxingelonvelonnt thriftIndelonxingelonvelonnt) {
+    Prelonconditions.chelonckNotNull(thriftIndelonxingelonvelonnt);
 
-    this.timeSliceID = timeSliceID;
-    this.thriftIndexingEvent = thriftIndexingEvent;
+    this.timelonSlicelonID = timelonSlicelonID;
+    this.thriftIndelonxingelonvelonnt = thriftIndelonxingelonvelonnt;
   }
 
-  public long getStatusID() {
-    return thriftIndexingEvent.getUid();
+  public long gelontStatusID() {
+    relonturn thriftIndelonxingelonvelonnt.gelontUid();
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  public long gelontTimelonSlicelonID() {
+    relonturn timelonSlicelonID;
   }
 
-  public ThriftIndexingEvent getThriftIndexingEvent() {
-    return thriftIndexingEvent;
+  public ThriftIndelonxingelonvelonnt gelontThriftIndelonxingelonvelonnt() {
+    relonturn thriftIndelonxingelonvelonnt;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return "TimeSlicedThriftIndexingEvent{"
-        + "timeSliceID=" + timeSliceID
-        + ", thriftIndexingEvent=" + thriftIndexingEvent
+    relonturn "TimelonSlicelondThriftIndelonxingelonvelonnt{"
+        + "timelonSlicelonID=" + timelonSlicelonID
+        + ", thriftIndelonxingelonvelonnt=" + thriftIndelonxingelonvelonnt
         + '}';
   }
 }

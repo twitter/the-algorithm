@@ -1,18 +1,18 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
 
-object TimelineEntry {
-  def fromThrift(entry: thrift.TimelineEntry): TimelineEntry = {
-    entry match {
-      case thrift.TimelineEntry.Tweet(e) => Tweet.fromThrift(e)
-      case thrift.TimelineEntry.TweetypieTweet(e) => new HydratedTweetEntry(e)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $entry")
+objelonct Timelonlinelonelonntry {
+  delonf fromThrift(elonntry: thrift.Timelonlinelonelonntry): Timelonlinelonelonntry = {
+    elonntry match {
+      caselon thrift.Timelonlinelonelonntry.Twelonelont(elon) => Twelonelont.fromThrift(elon)
+      caselon thrift.Timelonlinelonelonntry.TwelonelontypielonTwelonelont(elon) => nelonw HydratelondTwelonelontelonntry(elon)
+      caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption(s"Unsupportelond typelon: $elonntry")
     }
   }
 }
 
-trait TimelineEntry {
-  def toTimelineEntryThrift: thrift.TimelineEntry
-  def throwIfInvalid(): Unit
+trait Timelonlinelonelonntry {
+  delonf toTimelonlinelonelonntryThrift: thrift.Timelonlinelonelonntry
+  delonf throwIfInvalid(): Unit
 }

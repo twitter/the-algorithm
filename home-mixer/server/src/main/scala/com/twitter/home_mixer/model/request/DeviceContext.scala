@@ -1,74 +1,74 @@
-package com.twitter.home_mixer.model.request
+packagelon com.twittelonr.homelon_mixelonr.modelonl.relonquelonst
 
-import com.twitter.product_mixer.core.model.marshalling.request.ClientContext
-import com.twitter.{timelineservice => tls}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.ClielonntContelonxt
+import com.twittelonr.{timelonlinelonselonrvicelon => tls}
 
-case class DeviceContext(
-  isPolling: Option[Boolean],
-  requestContext: Option[String],
-  latestControlAvailable: Option[Boolean],
-  autoplayEnabled: Option[Boolean]) {
+caselon class DelonvicelonContelonxt(
+  isPolling: Option[Boolelonan],
+  relonquelonstContelonxt: Option[String],
+  latelonstControlAvailablelon: Option[Boolelonan],
+  autoplayelonnablelond: Option[Boolelonan]) {
 
-  lazy val requestContextValue: Option[DeviceContext.RequestContext.Value] =
-    requestContext.flatMap { value =>
-      val normalizedValue = value.trim.toLowerCase()
-      DeviceContext.RequestContext.values.find(_.toString == normalizedValue)
+  lazy val relonquelonstContelonxtValuelon: Option[DelonvicelonContelonxt.RelonquelonstContelonxt.Valuelon] =
+    relonquelonstContelonxt.flatMap { valuelon =>
+      val normalizelondValuelon = valuelon.trim.toLowelonrCaselon()
+      DelonvicelonContelonxt.RelonquelonstContelonxt.valuelons.find(_.toString == normalizelondValuelon)
     }
 
-  def toTimelineServiceDeviceContext(clientContext: ClientContext): tls.DeviceContext =
-    tls.DeviceContext(
-      countryCode = clientContext.countryCode,
-      languageCode = clientContext.languageCode,
-      clientAppId = clientContext.appId,
-      ipAddress = clientContext.ipAddress,
-      guestId = clientContext.guestId,
-      sessionId = None,
-      timezone = None,
-      userAgent = clientContext.userAgent,
-      deviceId = clientContext.deviceId,
+  delonf toTimelonlinelonSelonrvicelonDelonvicelonContelonxt(clielonntContelonxt: ClielonntContelonxt): tls.DelonvicelonContelonxt =
+    tls.DelonvicelonContelonxt(
+      countryCodelon = clielonntContelonxt.countryCodelon,
+      languagelonCodelon = clielonntContelonxt.languagelonCodelon,
+      clielonntAppId = clielonntContelonxt.appId,
+      ipAddrelonss = clielonntContelonxt.ipAddrelonss,
+      guelonstId = clielonntContelonxt.guelonstId,
+      selonssionId = Nonelon,
+      timelonzonelon = Nonelon,
+      uselonrAgelonnt = clielonntContelonxt.uselonrAgelonnt,
+      delonvicelonId = clielonntContelonxt.delonvicelonId,
       isPolling = isPolling,
-      requestProvenance = requestContext,
-      referrer = None,
-      tfeAuthHeader = None,
-      mobileDeviceId = clientContext.mobileDeviceId,
-      isSessionStart = None,
-      displaySize = None,
-      isURTRequest = Some(true),
-      latestControlAvailable = latestControlAvailable,
-      guestIdMarketing = clientContext.guestIdMarketing,
-      isInternalOrTwoffice = clientContext.isTwoffice,
-      browserNotificationPermission = None,
-      guestIdAds = clientContext.guestIdAds,
+      relonquelonstProvelonnancelon = relonquelonstContelonxt,
+      relonfelonrrelonr = Nonelon,
+      tfelonAuthHelonadelonr = Nonelon,
+      mobilelonDelonvicelonId = clielonntContelonxt.mobilelonDelonvicelonId,
+      isSelonssionStart = Nonelon,
+      displaySizelon = Nonelon,
+      isURTRelonquelonst = Somelon(truelon),
+      latelonstControlAvailablelon = latelonstControlAvailablelon,
+      guelonstIdMarkelonting = clielonntContelonxt.guelonstIdMarkelonting,
+      isIntelonrnalOrTwofficelon = clielonntContelonxt.isTwofficelon,
+      browselonrNotificationPelonrmission = Nonelon,
+      guelonstIdAds = clielonntContelonxt.guelonstIdAds,
     )
 }
 
-object DeviceContext {
-  val Empty: DeviceContext = DeviceContext(
-    isPolling = None,
-    requestContext = None,
-    latestControlAvailable = None,
-    autoplayEnabled = None
+objelonct DelonvicelonContelonxt {
+  val elonmpty: DelonvicelonContelonxt = DelonvicelonContelonxt(
+    isPolling = Nonelon,
+    relonquelonstContelonxt = Nonelon,
+    latelonstControlAvailablelon = Nonelon,
+    autoplayelonnablelond = Nonelon
   )
 
   /**
-   * Constants which reflect valid client request provenances (why a request was initiated, encoded
-   * by the "request_context" HTTP parameter).
+   * Constants which relonflelonct valid clielonnt relonquelonst provelonnancelons (why a relonquelonst was initiatelond, elonncodelond
+   * by thelon "relonquelonst_contelonxt" HTTP paramelontelonr).
    */
-  object RequestContext extends Enumeration {
-    val Auto = Value("auto")
-    val Foreground = Value("foreground")
-    val Gap = Value("gap")
-    val Launch = Value("launch")
-    val ManualRefresh = Value("manual_refresh")
-    val Navigate = Value("navigate")
-    val Polling = Value("polling")
-    val PullToRefresh = Value("ptr")
-    val Signup = Value("signup")
-    val TweetSelfThread = Value("tweet_self_thread")
-    val BackgroundFetch = Value("background_fetch")
+  objelonct RelonquelonstContelonxt elonxtelonnds elonnumelonration {
+    val Auto = Valuelon("auto")
+    val Forelonground = Valuelon("forelonground")
+    val Gap = Valuelon("gap")
+    val Launch = Valuelon("launch")
+    val ManualRelonfrelonsh = Valuelon("manual_relonfrelonsh")
+    val Navigatelon = Valuelon("navigatelon")
+    val Polling = Valuelon("polling")
+    val PullToRelonfrelonsh = Valuelon("ptr")
+    val Signup = Valuelon("signup")
+    val TwelonelontSelonlfThrelonad = Valuelon("twelonelont_selonlf_threlonad")
+    val BackgroundFelontch = Valuelon("background_felontch")
   }
 }
 
-trait HasDeviceContext {
-  def deviceContext: Option[DeviceContext]
+trait HasDelonvicelonContelonxt {
+  delonf delonvicelonContelonxt: Option[DelonvicelonContelonxt]
 }

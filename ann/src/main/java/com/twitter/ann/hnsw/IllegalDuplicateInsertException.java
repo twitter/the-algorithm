@@ -1,7 +1,7 @@
-package com.twitter.ann.hnsw;
+packagelon com.twittelonr.ann.hnsw;
 
-public class IllegalDuplicateInsertException extends Exception {
-  public IllegalDuplicateInsertException(String message) {
-    super(message);
+public class IllelongalDuplicatelonInselonrtelonxcelonption elonxtelonnds elonxcelonption {
+  public IllelongalDuplicatelonInselonrtelonxcelonption(String melonssagelon) {
+    supelonr(melonssagelon);
   }
 }

@@ -1,294 +1,294 @@
-package com.twitter.recos.user_video_graph
+packagelon com.twittelonr.reloncos.uselonr_videlono_graph
 
-import com.twitter.abdecider.ABDeciderFactory
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.app.Flag
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.ThriftMux
-import com.twitter.finagle.http.HttpMuxer
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.mtls.client.MtlsStackClient.MtlsThriftMuxClientSyntax
-import com.twitter.finagle.mtls.server.MtlsStackServer._
-import com.twitter.finagle.mux.ClientDiscardedRequestException
-import com.twitter.finagle.mux.transport.OpportunisticTls
-import com.twitter.finagle.service.ReqRep
-import com.twitter.finagle.service.ResponseClass
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finatra.kafka.consumers.FinagleKafkaConsumerBuilder
-import com.twitter.finatra.kafka.domain.KafkaGroupId
-import com.twitter.finatra.kafka.domain.SeekStrategy
-import com.twitter.finatra.kafka.serde.ScalaSerdes
-import com.twitter.frigate.common.util.ElfOwlFilter
-import com.twitter.frigate.common.util.ElfOwlFilter.ByLdapGroup
-import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph
-import com.twitter.logging._
-import com.twitter.recos.decider.EndpointLoadShedder
-import com.twitter.recos.decider.UserTweetGraphDecider
-import com.twitter.recos.graph_common.FinagleStatsReceiverWrapper
-import com.twitter.recos.graph_common.MultiSegmentPowerLawBipartiteGraphBuilder
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.recos.user_video_graph.RecosConfig._
-import com.twitter.recos.user_tweet_graph.relatedTweetHandlers.ConsumersBasedRelatedTweetsHandler
-import com.twitter.recos.user_video_graph.relatedTweetHandlers.TweetBasedRelatedTweetsHandler
-import com.twitter.recos.user_video_graph.relatedTweetHandlers.ProducerBasedRelatedTweetsHandler
-import com.twitter.recos.user_video_graph.store.UserRecentFollowersStore
-import com.twitter.server.Deciderable
-import com.twitter.server.TwitterServer
-import com.twitter.server.logging.{Logging => JDK14Logging}
-import com.twitter.servo.request._
-import com.twitter.servo.util.ExceptionCounter
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.socialgraph.thriftscala.SocialGraphService
-import com.twitter.storehaus.ReadableStore
-import com.twitter.util.Await
-import com.twitter.util.Duration
-import com.twitter.util.JavaTimer
-import com.twitter.util.Throw
-import com.twitter.util.Timer
-import java.net.InetSocketAddress
-import java.util.concurrent.TimeUnit
-import org.apache.kafka.clients.CommonClientConfigs
-import org.apache.kafka.common.config.SaslConfigs
-import org.apache.kafka.common.config.SslConfigs
-import org.apache.kafka.common.security.auth.SecurityProtocol
-import org.apache.kafka.common.serialization.StringDeserializer
-import scala.reflect.ClassTag
+import com.twittelonr.abdeloncidelonr.ABDeloncidelonrFactory
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.app.Flag
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.ThriftMux
+import com.twittelonr.finaglelon.http.HttpMuxelonr
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt.MtlsThriftMuxClielonntSyntax
+import com.twittelonr.finaglelon.mtls.selonrvelonr.MtlsStackSelonrvelonr._
+import com.twittelonr.finaglelon.mux.ClielonntDiscardelondRelonquelonstelonxcelonption
+import com.twittelonr.finaglelon.mux.transport.OpportunisticTls
+import com.twittelonr.finaglelon.selonrvicelon.RelonqRelonp
+import com.twittelonr.finaglelon.selonrvicelon.RelonsponselonClass
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finatra.kafka.consumelonrs.FinaglelonKafkaConsumelonrBuildelonr
+import com.twittelonr.finatra.kafka.domain.KafkaGroupId
+import com.twittelonr.finatra.kafka.domain.SelonelonkStratelongy
+import com.twittelonr.finatra.kafka.selonrdelon.ScalaSelonrdelons
+import com.twittelonr.frigatelon.common.util.elonlfOwlFiltelonr
+import com.twittelonr.frigatelon.common.util.elonlfOwlFiltelonr.ByLdapGroup
+import com.twittelonr.graphjelont.bipartitelon.MultiSelongmelonntPowelonrLawBipartitelonGraph
+import com.twittelonr.logging._
+import com.twittelonr.reloncos.deloncidelonr.elonndpointLoadShelonddelonr
+import com.twittelonr.reloncos.deloncidelonr.UselonrTwelonelontGraphDeloncidelonr
+import com.twittelonr.reloncos.graph_common.FinaglelonStatsReloncelonivelonrWrappelonr
+import com.twittelonr.reloncos.graph_common.MultiSelongmelonntPowelonrLawBipartitelonGraphBuildelonr
+import com.twittelonr.reloncos.intelonrnal.thriftscala.ReloncosHoselonMelonssagelon
+import com.twittelonr.reloncos.uselonr_videlono_graph.ReloncosConfig._
+import com.twittelonr.reloncos.uselonr_twelonelont_graph.relonlatelondTwelonelontHandlelonrs.ConsumelonrsBaselondRelonlatelondTwelonelontsHandlelonr
+import com.twittelonr.reloncos.uselonr_videlono_graph.relonlatelondTwelonelontHandlelonrs.TwelonelontBaselondRelonlatelondTwelonelontsHandlelonr
+import com.twittelonr.reloncos.uselonr_videlono_graph.relonlatelondTwelonelontHandlelonrs.ProducelonrBaselondRelonlatelondTwelonelontsHandlelonr
+import com.twittelonr.reloncos.uselonr_videlono_graph.storelon.UselonrReloncelonntFollowelonrsStorelon
+import com.twittelonr.selonrvelonr.Deloncidelonrablelon
+import com.twittelonr.selonrvelonr.TwittelonrSelonrvelonr
+import com.twittelonr.selonrvelonr.logging.{Logging => JDK14Logging}
+import com.twittelonr.selonrvo.relonquelonst._
+import com.twittelonr.selonrvo.util.elonxcelonptionCountelonr
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.socialgraph.thriftscala.SocialGraphSelonrvicelon
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.util.Await
+import com.twittelonr.util.Duration
+import com.twittelonr.util.JavaTimelonr
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Timelonr
+import java.nelont.InelontSockelontAddrelonss
+import java.util.concurrelonnt.TimelonUnit
+import org.apachelon.kafka.clielonnts.CommonClielonntConfigs
+import org.apachelon.kafka.common.config.SaslConfigs
+import org.apachelon.kafka.common.config.SslConfigs
+import org.apachelon.kafka.common.seloncurity.auth.SeloncurityProtocol
+import org.apachelon.kafka.common.selonrialization.StringDelonselonrializelonr
+import scala.relonflelonct.ClassTag
 
-object Main extends TwitterServer with JDK14Logging with Deciderable {
-  profile =>
+objelonct Main elonxtelonnds TwittelonrSelonrvelonr with JDK14Logging with Deloncidelonrablelon {
+  profilelon =>
 
   val shardId: Flag[Int] = flag("shardId", 0, "Shard ID")
-  val servicePort: Flag[InetSocketAddress] =
-    flag("service.port", new InetSocketAddress(10143), "Thrift service port")
-  val logDir: Flag[String] = flag("logdir", "recos", "Logging directory")
-  val numShards: Flag[Int] = flag("numShards", 1, "Number of shards for this service")
-  val truststoreLocation: Flag[String] =
-    flag[String]("truststore_location", "", "Truststore file location")
-  val hoseName: Flag[String] =
-    flag("hosename", "recos_injector_user_user", "the kafka stream used for incoming edges")
+  val selonrvicelonPort: Flag[InelontSockelontAddrelonss] =
+    flag("selonrvicelon.port", nelonw InelontSockelontAddrelonss(10143), "Thrift selonrvicelon port")
+  val logDir: Flag[String] = flag("logdir", "reloncos", "Logging direlonctory")
+  val numShards: Flag[Int] = flag("numShards", 1, "Numbelonr of shards for this selonrvicelon")
+  val truststorelonLocation: Flag[String] =
+    flag[String]("truststorelon_location", "", "Truststorelon filelon location")
+  val hoselonNamelon: Flag[String] =
+    flag("hoselonnamelon", "reloncos_injelonctor_uselonr_uselonr", "thelon kafka strelonam uselond for incoming elondgelons")
 
-  val dataCenter: Flag[String] = flag("service.cluster", "atla", "Data Center")
-  val serviceRole: Flag[String] = flag("service.role", "Service Role")
-  val serviceEnv: Flag[String] = flag("service.env", "Service Env")
-  val serviceName: Flag[String] = flag("service.name", "Service Name")
+  val dataCelonntelonr: Flag[String] = flag("selonrvicelon.clustelonr", "atla", "Data Celonntelonr")
+  val selonrvicelonRolelon: Flag[String] = flag("selonrvicelon.rolelon", "Selonrvicelon Rolelon")
+  val selonrvicelonelonnv: Flag[String] = flag("selonrvicelon.elonnv", "Selonrvicelon elonnv")
+  val selonrvicelonNamelon: Flag[String] = flag("selonrvicelon.namelon", "Selonrvicelon Namelon")
 
-  private val maxNumSegments =
-    flag("maxNumSegments", graphBuilderConfig.maxNumSegments, "the number of segments in the graph")
+  privatelon val maxNumSelongmelonnts =
+    flag("maxNumSelongmelonnts", graphBuildelonrConfig.maxNumSelongmelonnts, "thelon numbelonr of selongmelonnts in thelon graph")
 
-  private val statsReceiverWrapper = FinagleStatsReceiverWrapper(statsReceiver)
+  privatelon val statsReloncelonivelonrWrappelonr = FinaglelonStatsReloncelonivelonrWrappelonr(statsReloncelonivelonr)
 
   /**
-   * A ClientRequestAuthorizer to be used in a request-authorization RequestFilter.
+   * A ClielonntRelonquelonstAuthorizelonr to belon uselond in a relonquelonst-authorization RelonquelonstFiltelonr.
    */
-  lazy val clientAuthorizer: ClientRequestAuthorizer =
-    ClientRequestAuthorizer.observed(
-      ClientRequestAuthorizer.permissive,
-      new ClientRequestObserver(statsReceiver)
+  lazy val clielonntAuthorizelonr: ClielonntRelonquelonstAuthorizelonr =
+    ClielonntRelonquelonstAuthorizelonr.obselonrvelond(
+      ClielonntRelonquelonstAuthorizelonr.pelonrmissivelon,
+      nelonw ClielonntRelonquelonstObselonrvelonr(statsReloncelonivelonr)
     )
 
-  lazy val clientId = ClientId(s"usertweetgraph.${serviceEnv()}")
+  lazy val clielonntId = ClielonntId(s"uselonrtwelonelontgraph.${selonrvicelonelonnv()}")
 
-  private def makeThriftClient[ThriftServiceType: ClassTag](
-    dest: String,
-    label: String,
-    serviceIdentifier: ServiceIdentifier,
-    requestTimeout: Duration = 100.milliseconds
-  ): ThriftServiceType = {
-    ThriftMux.client
-      .withClientId(ClientId("usertweetgraph.prod"))
-      .withOpportunisticTls(OpportunisticTls.Required)
-      .withMutualTls(serviceIdentifier)
-      .withRequestTimeout(requestTimeout)
-      .withStatsReceiver(statsReceiver.scope("clnt"))
-      .withResponseClassifier {
-        case ReqRep(_, Throw(_: ClientDiscardedRequestException)) => ResponseClass.Ignorable
-      }.build[ThriftServiceType](dest, label)
+  privatelon delonf makelonThriftClielonnt[ThriftSelonrvicelonTypelon: ClassTag](
+    delonst: String,
+    labelonl: String,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    relonquelonstTimelonout: Duration = 100.milliselonconds
+  ): ThriftSelonrvicelonTypelon = {
+    ThriftMux.clielonnt
+      .withClielonntId(ClielonntId("uselonrtwelonelontgraph.prod"))
+      .withOpportunisticTls(OpportunisticTls.Relonquirelond)
+      .withMutualTls(selonrvicelonIdelonntifielonr)
+      .withRelonquelonstTimelonout(relonquelonstTimelonout)
+      .withStatsReloncelonivelonr(statsReloncelonivelonr.scopelon("clnt"))
+      .withRelonsponselonClassifielonr {
+        caselon RelonqRelonp(_, Throw(_: ClielonntDiscardelondRelonquelonstelonxcelonption)) => RelonsponselonClass.Ignorablelon
+      }.build[ThriftSelonrvicelonTypelon](delonst, labelonl)
   }
 
-  private val shutdownTimeout = flag(
-    "service.shutdownTimeout",
-    5.seconds,
-    "Maximum amount of time to wait for pending requests to complete on shutdown"
+  privatelon val shutdownTimelonout = flag(
+    "selonrvicelon.shutdownTimelonout",
+    5.selonconds,
+    "Maximum amount of timelon to wait for pelonnding relonquelonsts to complelontelon on shutdown"
   )
 
   /**
-   * ExceptionCounter for tracking failures from RequestHandler(s).
+   * elonxcelonptionCountelonr for tracking failurelons from RelonquelonstHandlelonr(s).
    */
-  lazy val exceptionCounter = new ExceptionCounter(statsReceiver)
+  lazy val elonxcelonptionCountelonr = nelonw elonxcelonptionCountelonr(statsReloncelonivelonr)
 
   /**
-   * Function for translating exceptions returned by a RequestHandler. Useful
-   * for cases where underlying exception types should be wrapped in those
-   * defined in the project's Thrift IDL.
+   * Function for translating elonxcelonptions relonturnelond by a RelonquelonstHandlelonr. Uselonful
+   * for caselons whelonrelon undelonrlying elonxcelonption typelons should belon wrappelond in thoselon
+   * delonfinelond in thelon projelonct's Thrift IDL.
    */
-  lazy val translateExceptions: PartialFunction[Throwable, Throwable] = {
-    case t => t
+  lazy val translatelonelonxcelonptions: PartialFunction[Throwablelon, Throwablelon] = {
+    caselon t => t
   }
 
-  val DefaultLdapAccessGroup: Seq[String] = Seq("eng", "cassowary-group", "timeline-team")
+  val DelonfaultLdapAccelonssGroup: Selonq[String] = Selonq("elonng", "cassowary-group", "timelonlinelon-telonam")
 
   // ********* logging **********
 
-  lazy val loggingLevel: Level = Level.INFO
-  lazy val recosLogPath: String = logDir() + "/recos.log"
+  lazy val loggingLelonvelonl: Lelonvelonl = Lelonvelonl.INFO
+  lazy val reloncosLogPath: String = logDir() + "/reloncos.log"
   lazy val graphLogPath: String = logDir() + "/graph.log"
-  lazy val accessLogPath: String = logDir() + "/access.log"
+  lazy val accelonssLogPath: String = logDir() + "/accelonss.log"
 
-  override def loggerFactories: List[LoggerFactory] =
+  ovelonrridelon delonf loggelonrFactorielons: List[LoggelonrFactory] =
     List(
-      LoggerFactory(
-        level = Some(loggingLevel),
-        handlers = QueueingHandler(
-          handler = FileHandler(
-            filename = recosLogPath,
-            level = Some(loggingLevel),
+      LoggelonrFactory(
+        lelonvelonl = Somelon(loggingLelonvelonl),
+        handlelonrs = QuelonueloningHandlelonr(
+          handlelonr = FilelonHandlelonr(
+            filelonnamelon = reloncosLogPath,
+            lelonvelonl = Somelon(loggingLelonvelonl),
             rollPolicy = Policy.Hourly,
-            rotateCount = 6,
-            formatter = new Formatter
+            rotatelonCount = 6,
+            formattelonr = nelonw Formattelonr
           )
         ) :: Nil
       ),
-      LoggerFactory(
-        node = "graph",
-        useParents = false,
-        level = Some(loggingLevel),
-        handlers = QueueingHandler(
-          handler = FileHandler(
-            filename = graphLogPath,
-            level = Some(loggingLevel),
+      LoggelonrFactory(
+        nodelon = "graph",
+        uselonParelonnts = falselon,
+        lelonvelonl = Somelon(loggingLelonvelonl),
+        handlelonrs = QuelonueloningHandlelonr(
+          handlelonr = FilelonHandlelonr(
+            filelonnamelon = graphLogPath,
+            lelonvelonl = Somelon(loggingLelonvelonl),
             rollPolicy = Policy.Hourly,
-            rotateCount = 6,
-            formatter = new Formatter
+            rotatelonCount = 6,
+            formattelonr = nelonw Formattelonr
           )
         ) :: Nil
       ),
-      LoggerFactory(
-        node = "access",
-        useParents = false,
-        level = Some(loggingLevel),
-        handlers = QueueingHandler(
-          handler = FileHandler(
-            filename = accessLogPath,
-            level = Some(loggingLevel),
+      LoggelonrFactory(
+        nodelon = "accelonss",
+        uselonParelonnts = falselon,
+        lelonvelonl = Somelon(loggingLelonvelonl),
+        handlelonrs = QuelonueloningHandlelonr(
+          handlelonr = FilelonHandlelonr(
+            filelonnamelon = accelonssLogPath,
+            lelonvelonl = Somelon(loggingLelonvelonl),
             rollPolicy = Policy.Hourly,
-            rotateCount = 6,
-            formatter = new Formatter
+            rotatelonCount = 6,
+            formattelonr = nelonw Formattelonr
           )
         ) :: Nil
       ),
-      LoggerFactory(
-        node = "client_event",
-        level = Some(loggingLevel),
-        useParents = false,
-        handlers = QueueingHandler(
-          maxQueueSize = 10000,
-          handler = ScribeHandler(
-            category = "client_event",
-            formatter = BareFormatter
+      LoggelonrFactory(
+        nodelon = "clielonnt_elonvelonnt",
+        lelonvelonl = Somelon(loggingLelonvelonl),
+        uselonParelonnts = falselon,
+        handlelonrs = QuelonueloningHandlelonr(
+          maxQuelonuelonSizelon = 10000,
+          handlelonr = ScribelonHandlelonr(
+            catelongory = "clielonnt_elonvelonnt",
+            formattelonr = BarelonFormattelonr
           )
         ) :: Nil
       )
     )
-  // ******** Decider *************
+  // ******** Deloncidelonr *************
 
-  // ********* ABdecider **********
+  // ********* ABdeloncidelonr **********
 
-  val abDeciderYmlPath: String = "/usr/local/config/abdecider/abdecider.yml"
+  val abDeloncidelonrYmlPath: String = "/usr/local/config/abdeloncidelonr/abdeloncidelonr.yml"
 
-  val scribeLogger: Option[Logger] = Some(Logger.get("client_event"))
+  val scribelonLoggelonr: Option[Loggelonr] = Somelon(Loggelonr.gelont("clielonnt_elonvelonnt"))
 
-  val abDecider: LoggingABDecider =
-    ABDeciderFactory(
-      abDeciderYmlPath = abDeciderYmlPath,
-      scribeLogger = scribeLogger,
-      environment = Some("production")
+  val abDeloncidelonr: LoggingABDeloncidelonr =
+    ABDeloncidelonrFactory(
+      abDeloncidelonrYmlPath = abDeloncidelonrYmlPath,
+      scribelonLoggelonr = scribelonLoggelonr,
+      elonnvironmelonnt = Somelon("production")
     ).buildWithLogging()
 
-  // ********* Recos service **********
+  // ********* Reloncos selonrvicelon **********
 
-  def main(): Unit = {
-    log.info("building graph with maxNumSegments = " + profile.maxNumSegments())
+  delonf main(): Unit = {
+    log.info("building graph with maxNumSelongmelonnts = " + profilelon.maxNumSelongmelonnts())
 
-    implicit val timer: Timer = new JavaTimer(true)
+    implicit val timelonr: Timelonr = nelonw JavaTimelonr(truelon)
 
-    val graph = MultiSegmentPowerLawBipartiteGraphBuilder(
-      graphBuilderConfig.copy(maxNumSegments = profile.maxNumSegments()),
-      statsReceiverWrapper
+    val graph = MultiSelongmelonntPowelonrLawBipartitelonGraphBuildelonr(
+      graphBuildelonrConfig.copy(maxNumSelongmelonnts = profilelon.maxNumSelongmelonnts()),
+      statsReloncelonivelonrWrappelonr
     )
 
-    val kafkaConfigBuilder = FinagleKafkaConsumerBuilder[String, RecosHoseMessage]()
-      .dest("/s/kafka/recommendations:kafka-tls")
-      .groupId(KafkaGroupId(f"user_video_graph-${shardId()}%06d"))
-      .keyDeserializer(new StringDeserializer)
-      .valueDeserializer(ScalaSerdes.Thrift[RecosHoseMessage].deserializer)
-      .seekStrategy(SeekStrategy.REWIND)
-      .rewindDuration(48.hours)
-      .withConfig(CommonClientConfigs.SECURITY_PROTOCOL_CONFIG, SecurityProtocol.SASL_SSL.toString)
-      .withConfig(SslConfigs.SSL_TRUSTSTORE_LOCATION_CONFIG, truststoreLocation())
-      .withConfig(SaslConfigs.SASL_MECHANISM, SaslConfigs.GSSAPI_MECHANISM)
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVICE_NAME, "kafka")
-      .withConfig(SaslConfigs.SASL_KERBEROS_SERVER_NAME, "kafka")
+    val kafkaConfigBuildelonr = FinaglelonKafkaConsumelonrBuildelonr[String, ReloncosHoselonMelonssagelon]()
+      .delonst("/s/kafka/reloncommelonndations:kafka-tls")
+      .groupId(KafkaGroupId(f"uselonr_videlono_graph-${shardId()}%06d"))
+      .kelonyDelonselonrializelonr(nelonw StringDelonselonrializelonr)
+      .valuelonDelonselonrializelonr(ScalaSelonrdelons.Thrift[ReloncosHoselonMelonssagelon].delonselonrializelonr)
+      .selonelonkStratelongy(SelonelonkStratelongy.RelonWIND)
+      .relonwindDuration(48.hours)
+      .withConfig(CommonClielonntConfigs.SelonCURITY_PROTOCOL_CONFIG, SeloncurityProtocol.SASL_SSL.toString)
+      .withConfig(SslConfigs.SSL_TRUSTSTORelon_LOCATION_CONFIG, truststorelonLocation())
+      .withConfig(SaslConfigs.SASL_MelonCHANISM, SaslConfigs.GSSAPI_MelonCHANISM)
+      .withConfig(SaslConfigs.SASL_KelonRBelonROS_SelonRVICelon_NAMelon, "kafka")
+      .withConfig(SaslConfigs.SASL_KelonRBelonROS_SelonRVelonR_NAMelon, "kafka")
 
-    val graphWriter =
-      UserVideoGraphWriter(
+    val graphWritelonr =
+      UselonrVidelonoGraphWritelonr(
         shardId().toString,
-        serviceEnv(),
-        hoseName(),
-        128, // keep the original setting.
-        kafkaConfigBuilder,
-        clientId.name,
-        statsReceiver,
+        selonrvicelonelonnv(),
+        hoselonNamelon(),
+        128, // kelonelonp thelon original selontting.
+        kafkaConfigBuildelonr,
+        clielonntId.namelon,
+        statsReloncelonivelonr,
       )
-    graphWriter.initHose(graph)
+    graphWritelonr.initHoselon(graph)
 
     // For MutualTLS
-    val serviceIdentifier = ServiceIdentifier(
-      role = serviceRole(),
-      service = serviceName(),
-      environment = serviceEnv(),
-      zone = dataCenter()
+    val selonrvicelonIdelonntifielonr = SelonrvicelonIdelonntifielonr(
+      rolelon = selonrvicelonRolelon(),
+      selonrvicelon = selonrvicelonNamelon(),
+      elonnvironmelonnt = selonrvicelonelonnv(),
+      zonelon = dataCelonntelonr()
     )
-    log.info(s"ServiceIdentifier = ${serviceIdentifier.toString}")
+    log.info(s"SelonrvicelonIdelonntifielonr = ${selonrvicelonIdelonntifielonr.toString}")
 
-    val socialGraphClient: SocialGraphService.MethodPerEndpoint =
-      makeThriftClient[SocialGraphService.MethodPerEndpoint](
+    val socialGraphClielonnt: SocialGraphSelonrvicelon.MelonthodPelonrelonndpoint =
+      makelonThriftClielonnt[SocialGraphSelonrvicelon.MelonthodPelonrelonndpoint](
         "/s/socialgraph/socialgraph",
         "socialgraph",
-        serviceIdentifier)
-    val userRecentFollowersStore: ReadableStore[UserRecentFollowersStore.Query, Seq[UserId]] =
-      new UserRecentFollowersStore(socialGraphClient)
+        selonrvicelonIdelonntifielonr)
+    val uselonrReloncelonntFollowelonrsStorelon: RelonadablelonStorelon[UselonrReloncelonntFollowelonrsStorelon.Quelonry, Selonq[UselonrId]] =
+      nelonw UselonrReloncelonntFollowelonrsStorelon(socialGraphClielonnt)
 
-    val tweetBasedRelatedTweetsHandler = new TweetBasedRelatedTweetsHandler(graph, statsReceiver)
-    val consumersBasedRelatedTweetsHandler =
-      new ConsumersBasedRelatedTweetsHandler(graph, statsReceiver)
-    val producerBasedRelatedTweetsHandler =
-      new ProducerBasedRelatedTweetsHandler(graph, userRecentFollowersStore, statsReceiver)
+    val twelonelontBaselondRelonlatelondTwelonelontsHandlelonr = nelonw TwelonelontBaselondRelonlatelondTwelonelontsHandlelonr(graph, statsReloncelonivelonr)
+    val consumelonrsBaselondRelonlatelondTwelonelontsHandlelonr =
+      nelonw ConsumelonrsBaselondRelonlatelondTwelonelontsHandlelonr(graph, statsReloncelonivelonr)
+    val producelonrBaselondRelonlatelondTwelonelontsHandlelonr =
+      nelonw ProducelonrBaselondRelonlatelondTwelonelontsHandlelonr(graph, uselonrReloncelonntFollowelonrsStorelon, statsReloncelonivelonr)
 
-    val decider = UserTweetGraphDecider(serviceEnv(), dataCenter())
-    val endpointLoadShedder = new EndpointLoadShedder(decider)
-    val userVideoGraph =
-      new UserVideoGraph(
-        tweetBasedRelatedTweetsHandler,
-        producerBasedRelatedTweetsHandler,
-        consumersBasedRelatedTweetsHandler,
-        endpointLoadShedder)(timer) with LoggingUserVideoGraph
+    val deloncidelonr = UselonrTwelonelontGraphDeloncidelonr(selonrvicelonelonnv(), dataCelonntelonr())
+    val elonndpointLoadShelonddelonr = nelonw elonndpointLoadShelonddelonr(deloncidelonr)
+    val uselonrVidelonoGraph =
+      nelonw UselonrVidelonoGraph(
+        twelonelontBaselondRelonlatelondTwelonelontsHandlelonr,
+        producelonrBaselondRelonlatelondTwelonelontsHandlelonr,
+        consumelonrsBaselondRelonlatelondTwelonelontsHandlelonr,
+        elonndpointLoadShelonddelonr)(timelonr) with LoggingUselonrVidelonoGraph
 
-    val thriftServer = ThriftMux.server
-      .withOpportunisticTls(OpportunisticTls.Required)
-      .withMutualTls(serviceIdentifier)
-      .serveIface(servicePort(), userVideoGraph)
+    val thriftSelonrvelonr = ThriftMux.selonrvelonr
+      .withOpportunisticTls(OpportunisticTls.Relonquirelond)
+      .withMutualTls(selonrvicelonIdelonntifielonr)
+      .selonrvelonIfacelon(selonrvicelonPort(), uselonrVidelonoGraph)
 
-    log.info("clientid: " + clientId.toString)
-    log.info("servicePort: " + servicePort().toString)
+    log.info("clielonntid: " + clielonntId.toString)
+    log.info("selonrvicelonPort: " + selonrvicelonPort().toString)
 
     log.info("adding shutdown hook")
-    onExit {
-      graphWriter.shutdown()
-      thriftServer.close(shutdownTimeout().fromNow)
+    onelonxit {
+      graphWritelonr.shutdown()
+      thriftSelonrvelonr.closelon(shutdownTimelonout().fromNow)
     }
-    log.info("added shutdown hook")
+    log.info("addelond shutdown hook")
 
-    // Wait on the thriftServer so that shutdownTimeout is respected.
-    Await.result(thriftServer)
+    // Wait on thelon thriftSelonrvelonr so that shutdownTimelonout is relonspelonctelond.
+    Await.relonsult(thriftSelonrvelonr)
   }
 }

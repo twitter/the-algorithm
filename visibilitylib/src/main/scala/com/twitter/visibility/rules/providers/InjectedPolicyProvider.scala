@@ -1,27 +1,27 @@
-package com.twitter.visibility.rules.providers
+packagelon com.twittelonr.visibility.rulelons.providelonrs
 
-import com.twitter.visibility.configapi.configs.VisibilityDeciderGates
-import com.twitter.visibility.models.SafetyLevel
-import com.twitter.visibility.rules.MixedVisibilityPolicy
-import com.twitter.visibility.rules.RuleBase
-import com.twitter.visibility.rules.generators.TweetRuleGenerator
+import com.twittelonr.visibility.configapi.configs.VisibilityDeloncidelonrGatelons
+import com.twittelonr.visibility.modelonls.SafelontyLelonvelonl
+import com.twittelonr.visibility.rulelons.MixelondVisibilityPolicy
+import com.twittelonr.visibility.rulelons.RulelonBaselon
+import com.twittelonr.visibility.rulelons.gelonnelonrators.TwelonelontRulelonGelonnelonrator
 
-class InjectedPolicyProvider(
-  visibilityDeciderGates: VisibilityDeciderGates,
-  tweetRuleGenerator: TweetRuleGenerator)
-    extends PolicyProvider {
+class InjelonctelondPolicyProvidelonr(
+  visibilityDeloncidelonrGatelons: VisibilityDeloncidelonrGatelons,
+  twelonelontRulelonGelonnelonrator: TwelonelontRulelonGelonnelonrator)
+    elonxtelonnds PolicyProvidelonr {
 
-  private[rules] val policiesForSurface: Map[SafetyLevel, MixedVisibilityPolicy] =
-    RuleBase.RuleMap.map {
-      case (safetyLevel, policy) =>
+  privatelon[rulelons] val policielonsForSurfacelon: Map[SafelontyLelonvelonl, MixelondVisibilityPolicy] =
+    RulelonBaselon.RulelonMap.map {
+      caselon (safelontyLelonvelonl, policy) =>
         (
-          safetyLevel,
-          MixedVisibilityPolicy(
+          safelontyLelonvelonl,
+          MixelondVisibilityPolicy(
             originalPolicy = policy,
-            additionalTweetRules = tweetRuleGenerator.rulesForSurface(safetyLevel)))
+            additionalTwelonelontRulelons = twelonelontRulelonGelonnelonrator.rulelonsForSurfacelon(safelontyLelonvelonl)))
     }
 
-  override def policyForSurface(safetyLevel: SafetyLevel): MixedVisibilityPolicy = {
-    policiesForSurface(safetyLevel)
+  ovelonrridelon delonf policyForSurfacelon(safelontyLelonvelonl: SafelontyLelonvelonl): MixelondVisibilityPolicy = {
+    policielonsForSurfacelon(safelontyLelonvelonl)
   }
 }

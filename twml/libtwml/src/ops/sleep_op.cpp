@@ -1,51 +1,51 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/common_shape_fns.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/common_shapelon_fns.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <chrono>
-#include <thread>
+#includelon <chrono>
+#includelon <threlonad>
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("Sleep")
-.Input("num_milliseconds: int32")
-.Output("sleep_time_in_ms: int32")
-.SetShapeFn(tensorflow::shape_inference::ScalarShape)
+RelonGISTelonR_OP("Slelonelonp")
+.Input("num_milliselonconds: int32")
+.Output("slelonelonp_timelon_in_ms: int32")
+.SelontShapelonFn(telonnsorflow::shapelon_infelonrelonncelon::ScalarShapelon)
 .Doc(R"doc(
-A tensorflow OP that sleeps for specified number of milliseconds. 
-This is a proxy to determine the number of inter_op_parallelism pool. 
-This is not part of the Tensorflow API as of the date of writing this 
-doc. Hence, a tensorflow operation is the best resort.
+A telonnsorflow OP that slelonelonps for speloncifielond numbelonr of milliselonconds.
+This is a proxy to delontelonrminelon thelon numbelonr of intelonr_op_parallelonlism pool.
+This is not part of thelon Telonnsorflow API as of thelon datelon of writing this
+doc. Helonncelon, a telonnsorflow opelonration is thelon belonst relonsort.
 Input
-  num_milliseconds: A scalar tensor corresponding to the number
-  of milliseconds the operation should sleep for
+  num_milliselonconds: A scalar telonnsor correlonsponding to thelon numbelonr
+  of milliselonconds thelon opelonration should slelonelonp for
 Output
-  sleep_time_in_ms: A scalar tensor corresponding to the 
-  actual number of milliseconds for which the operation slept
+  slelonelonp_timelon_in_ms: A scalar telonnsor correlonsponding to thelon
+  actual numbelonr of milliselonconds for which thelon opelonration slelonpt
 )doc");
 
-class SleepOp : public OpKernel {
+class SlelonelonpOp : public OpKelonrnelonl {
  public:
-    explicit SleepOp(OpKernelConstruction* context) : OpKernel(context) {}
+    elonxplicit SlelonelonpOp(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {}
 
-    void Compute(OpKernelContext* context) override {
-      // Grab the input tensor
-      const Tensor& input_tensor = context->input(0);
-      auto input = input_tensor.flat<int32>();
+    void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+      // Grab thelon input telonnsor
+      const Telonnsor& input_telonnsor = contelonxt->input(0);
+      auto input = input_telonnsor.flat<int32>();
 
-      // Sleep for specified milliseconds
-      auto start = std::chrono::high_resolution_clock::now();
-      std::this_thread::sleep_for(std::chrono::milliseconds(input(0)));
-      auto end = std::chrono::high_resolution_clock::now();
-      std::chrono::duration<double, std::milli> elapsed = end-start;
+      // Slelonelonp for speloncifielond milliselonconds
+      auto start = std::chrono::high_relonsolution_clock::now();
+      std::this_threlonad::slelonelonp_for(std::chrono::milliselonconds(input(0)));
+      auto elonnd = std::chrono::high_relonsolution_clock::now();
+      std::chrono::duration<doublelon, std::milli> elonlapselond = elonnd-start;
 
-      // Set the output tensor
-      Tensor* output_tensor = NULL;
-      OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output_tensor));
-      auto output_flat = output_tensor->flat<int32>();
-      output_flat(0) = elapsed.count();
+      // Selont thelon output telonnsor
+      Telonnsor* output_telonnsor = NULL;
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, TelonnsorShapelon({}), &output_telonnsor));
+      auto output_flat = output_telonnsor->flat<int32>();
+      output_flat(0) = elonlapselond.count();
     }
 };
 
-REGISTER_KERNEL_BUILDER(Name("Sleep").Device(DEVICE_CPU), SleepOp);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(Namelon("Slelonelonp").Delonvicelon(DelonVICelon_CPU), SlelonelonpOp);

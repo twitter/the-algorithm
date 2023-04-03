@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urp.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageBody
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageHeader
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageNavBar
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PagelonBody
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PagelonHelonadelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PagelonNavBar
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonScribelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-case class StaticTimelineScribeConfigBuilder(
-  timelineScribeConfig: TimelineScribeConfig)
-    extends TimelineScribeConfigBuilder[PipelineQuery] {
+caselon class StaticTimelonlinelonScribelonConfigBuildelonr(
+  timelonlinelonScribelonConfig: TimelonlinelonScribelonConfig)
+    elonxtelonnds TimelonlinelonScribelonConfigBuildelonr[PipelonlinelonQuelonry] {
 
-  override def build(
-    query: PipelineQuery,
-    pageBody: PageBody,
-    pageHeader: Option[PageHeader],
-    pageNavBar: Option[PageNavBar]
-  ): Option[TimelineScribeConfig] = Some(timelineScribeConfig)
+  ovelonrridelon delonf build(
+    quelonry: PipelonlinelonQuelonry,
+    pagelonBody: PagelonBody,
+    pagelonHelonadelonr: Option[PagelonHelonadelonr],
+    pagelonNavBar: Option[PagelonNavBar]
+  ): Option[TimelonlinelonScribelonConfig] = Somelon(timelonlinelonScribelonConfig)
 }

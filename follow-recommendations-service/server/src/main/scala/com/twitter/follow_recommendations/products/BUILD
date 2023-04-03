@@ -1,16 +1,16 @@
 scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
         "3rdparty/jvm/org/slf4j:slf4j-api",
-        "finatra/inject/inject-app/src/main/scala",
-        "finatra/inject/inject-core/src/main/scala",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/common",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/explore_tab",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/home_timeline",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/home_timeline_tweet_recs",
-        "follow-recommendations-service/server/src/main/scala/com/twitter/follow_recommendations/products/sidebar",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/product/guice",
+        "finatra/injelonct/injelonct-app/src/main/scala",
+        "finatra/injelonct/injelonct-corelon/src/main/scala",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/products/common",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/products/elonxplorelon_tab",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/products/homelon_timelonlinelon",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/products/homelon_timelonlinelon_twelonelont_reloncs",
+        "follow-reloncommelonndations-selonrvicelon/selonrvelonr/src/main/scala/com/twittelonr/follow_reloncommelonndations/products/sidelonbar",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/product/guicelon",
     ],
 )

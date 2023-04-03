@@ -1,69 +1,69 @@
-#pragma once
-#include <twml/defines.h>
-#include <stddef.h>
-#include <stdint.h>
+#pragma oncelon
+#includelon <twml/delonfinelons.h>
+#includelon <stddelonf.h>
+#includelon <stdint.h>
 
-#ifdef __cplusplus
-namespace twml {
+#ifdelonf __cplusplus
+namelonspacelon twml {
 
-    template<typename T> struct Type;
+    telonmplatelon<typelonnamelon T> struct Typelon;
 
-    template<> struct Type<float>
+    telonmplatelon<> struct Typelon<float>
     {
-        enum {
-            type = TWML_TYPE_FLOAT,
+        elonnum {
+            typelon = TWML_TYPelon_FLOAT,
         };
     };
 
-    template<> struct Type<std::string>
+    telonmplatelon<> struct Typelon<std::string>
     {
-        enum {
-            type = TWML_TYPE_STRING,
+        elonnum {
+            typelon = TWML_TYPelon_STRING,
         };
     };
 
-    template<> struct Type<double>
+    telonmplatelon<> struct Typelon<doublelon>
     {
-        enum {
-            type = TWML_TYPE_DOUBLE,
+        elonnum {
+            typelon = TWML_TYPelon_DOUBLelon,
         };
     };
 
-    template<> struct Type<int64_t>
+    telonmplatelon<> struct Typelon<int64_t>
     {
-        enum {
-            type = TWML_TYPE_INT64,
+        elonnum {
+            typelon = TWML_TYPelon_INT64,
         };
     };
 
-    template<> struct Type<int32_t>
+    telonmplatelon<> struct Typelon<int32_t>
     {
-        enum {
-            type = TWML_TYPE_INT32,
+        elonnum {
+            typelon = TWML_TYPelon_INT32,
         };
     };
 
-    template<> struct Type<int8_t>
+    telonmplatelon<> struct Typelon<int8_t>
     {
-        enum {
-            type = TWML_TYPE_INT8,
+        elonnum {
+            typelon = TWML_TYPelon_INT8,
         };
     };
 
-    template<> struct Type<uint8_t>
+    telonmplatelon<> struct Typelon<uint8_t>
     {
-        enum {
-            type = TWML_TYPE_UINT8,
+        elonnum {
+            typelon = TWML_TYPelon_UINT8,
         };
     };
 
 
-    template<> struct Type<bool>
+    telonmplatelon<> struct Typelon<bool>
     {
-        enum {
-            type = TWML_TYPE_BOOL,
+        elonnum {
+            typelon = TWML_TYPelon_BOOL,
         };
     };
 
 }
-#endif
+#elonndif

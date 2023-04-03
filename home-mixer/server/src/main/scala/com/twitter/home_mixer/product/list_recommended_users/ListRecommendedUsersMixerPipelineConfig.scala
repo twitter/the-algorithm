@@ -1,100 +1,100 @@
-package com.twitter.home_mixer.product.list_recommended_users
+packagelon com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs
 
-import com.twitter.home_mixer.functional_component.feature_hydrator.ListMembersQueryFeatureHydrator
-import com.twitter.home_mixer.functional_component.gate.ViewerIsListOwnerGate
-import com.twitter.home_mixer.product.list_recommended_users.model.ListFeatures.GizmoduckUserFeature
-import com.twitter.home_mixer.product.list_recommended_users.model.ListRecommendedUsersQuery
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ExcludedIdsMaxLengthParam
-import com.twitter.home_mixer.product.list_recommended_users.param.ListRecommendedUsersParam.ServerMaxResultsParam
-import com.twitter.product_mixer.component_library.premarshaller.urt.UrtDomainMarshaller
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AddEntriesWithReplaceInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ReplaceAllEntries
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.ReplaceEntryInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.StaticTimelineScribeConfigBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UnorderedExcludeIdsBottomCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtMetadataBuilder
-import com.twitter.product_mixer.component_library.selector.DropFilteredCandidates
-import com.twitter.product_mixer.component_library.selector.DropMaxCandidates
-import com.twitter.product_mixer.component_library.selector.InsertAppendResults
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.marshaller.TransportMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.UrtTransportMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.MixerPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineScribeConfig
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineConfig
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.ListMelonmbelonrsQuelonryFelonaturelonHydrator
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.gatelon.VielonwelonrIsListOwnelonrGatelon
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.modelonl.ListFelonaturelons.GizmoduckUselonrFelonaturelon
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.modelonl.ListReloncommelonndelondUselonrsQuelonry
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.param.ListReloncommelonndelondUselonrsParam.elonxcludelondIdsMaxLelonngthParam
+import com.twittelonr.homelon_mixelonr.product.list_reloncommelonndelond_uselonrs.param.ListReloncommelonndelondUselonrsParam.SelonrvelonrMaxRelonsultsParam
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.UrtDomainMarshallelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.AddelonntrielonsWithRelonplacelonInstructionBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.RelonplacelonAllelonntrielons
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.RelonplacelonelonntryInstructionBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.StaticTimelonlinelonScribelonConfigBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UnordelonrelondelonxcludelonIdsBottomCursorBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UrtMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.DropFiltelonrelondCandidatelons
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.DropMaxCandidatelons
+import com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.InselonrtAppelonndRelonsults
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.TransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.UrtTransportMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.MixelonrPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonScribelonConfig
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.UselonrItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr.MixelonrPipelonlinelonConfig
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ListRecommendedUsersMixerPipelineConfig @Inject() (
-  listMemberBasedUsersCandidatePipelineConfig: ListMemberBasedUsersCandidatePipelineConfig,
-  viewerIsListOwnerGate: ViewerIsListOwnerGate,
-  listMembersQueryFeatureHydrator: ListMembersQueryFeatureHydrator,
-  urtTransportMarshaller: UrtTransportMarshaller)
-    extends MixerPipelineConfig[ListRecommendedUsersQuery, Timeline, urt.TimelineResponse] {
+@Singlelonton
+class ListReloncommelonndelondUselonrsMixelonrPipelonlinelonConfig @Injelonct() (
+  listMelonmbelonrBaselondUselonrsCandidatelonPipelonlinelonConfig: ListMelonmbelonrBaselondUselonrsCandidatelonPipelonlinelonConfig,
+  vielonwelonrIsListOwnelonrGatelon: VielonwelonrIsListOwnelonrGatelon,
+  listMelonmbelonrsQuelonryFelonaturelonHydrator: ListMelonmbelonrsQuelonryFelonaturelonHydrator,
+  urtTransportMarshallelonr: UrtTransportMarshallelonr)
+    elonxtelonnds MixelonrPipelonlinelonConfig[ListReloncommelonndelondUselonrsQuelonry, Timelonlinelon, urt.TimelonlinelonRelonsponselon] {
 
-  override val identifier: MixerPipelineIdentifier = MixerPipelineIdentifier("ListRecommendedUsers")
+  ovelonrridelon val idelonntifielonr: MixelonrPipelonlinelonIdelonntifielonr = MixelonrPipelonlinelonIdelonntifielonr("ListReloncommelonndelondUselonrs")
 
-  override val gates = Seq(viewerIsListOwnerGate)
+  ovelonrridelon val gatelons = Selonq(vielonwelonrIsListOwnelonrGatelon)
 
-  override val fetchQueryFeatures: Seq[QueryFeatureHydrator[ListRecommendedUsersQuery]] =
-    Seq(listMembersQueryFeatureHydrator)
+  ovelonrridelon val felontchQuelonryFelonaturelons: Selonq[QuelonryFelonaturelonHydrator[ListReloncommelonndelondUselonrsQuelonry]] =
+    Selonq(listMelonmbelonrsQuelonryFelonaturelonHydrator)
 
-  override val candidatePipelines: Seq[
-    CandidatePipelineConfig[ListRecommendedUsersQuery, _, _, _]
+  ovelonrridelon val candidatelonPipelonlinelons: Selonq[
+    CandidatelonPipelonlinelonConfig[ListReloncommelonndelondUselonrsQuelonry, _, _, _]
   ] =
-    Seq(listMemberBasedUsersCandidatePipelineConfig)
+    Selonq(listMelonmbelonrBaselondUselonrsCandidatelonPipelonlinelonConfig)
 
-  override val resultSelectors: Seq[Selector[ListRecommendedUsersQuery]] = Seq(
-    DropFilteredCandidates(
-      candidatePipeline = listMemberBasedUsersCandidatePipelineConfig.identifier,
-      filter = candidate => candidate.features.getOrElse(GizmoduckUserFeature, None).isDefined
+  ovelonrridelon val relonsultSelonlelonctors: Selonq[Selonlelonctor[ListReloncommelonndelondUselonrsQuelonry]] = Selonq(
+    DropFiltelonrelondCandidatelons(
+      candidatelonPipelonlinelon = listMelonmbelonrBaselondUselonrsCandidatelonPipelonlinelonConfig.idelonntifielonr,
+      filtelonr = candidatelon => candidatelon.felonaturelons.gelontOrelonlselon(GizmoduckUselonrFelonaturelon, Nonelon).isDelonfinelond
     ),
-    DropMaxCandidates(
-      candidatePipeline = listMemberBasedUsersCandidatePipelineConfig.identifier,
-      maxSelectionsParam = ServerMaxResultsParam),
-    InsertAppendResults(listMemberBasedUsersCandidatePipelineConfig.identifier)
+    DropMaxCandidatelons(
+      candidatelonPipelonlinelon = listMelonmbelonrBaselondUselonrsCandidatelonPipelonlinelonConfig.idelonntifielonr,
+      maxSelonlelonctionsParam = SelonrvelonrMaxRelonsultsParam),
+    InselonrtAppelonndRelonsults(listMelonmbelonrBaselondUselonrsCandidatelonPipelonlinelonConfig.idelonntifielonr)
   )
 
-  override val domainMarshaller: DomainMarshaller[ListRecommendedUsersQuery, Timeline] = {
-    val instructionBuilders = Seq(
-      ReplaceEntryInstructionBuilder(ReplaceAllEntries),
-      AddEntriesWithReplaceInstructionBuilder()
+  ovelonrridelon val domainMarshallelonr: DomainMarshallelonr[ListReloncommelonndelondUselonrsQuelonry, Timelonlinelon] = {
+    val instructionBuildelonrs = Selonq(
+      RelonplacelonelonntryInstructionBuildelonr(RelonplacelonAllelonntrielons),
+      AddelonntrielonsWithRelonplacelonInstructionBuildelonr()
     )
 
-    val metadataBuilder = UrtMetadataBuilder(
-      title = None,
-      scribeConfigBuilder = Some(
-        StaticTimelineScribeConfigBuilder(
-          TimelineScribeConfig(
-            page = Some("list_recommended_users"),
-            section = None,
-            entityToken = None)))
+    val melontadataBuildelonr = UrtMelontadataBuildelonr(
+      titlelon = Nonelon,
+      scribelonConfigBuildelonr = Somelon(
+        StaticTimelonlinelonScribelonConfigBuildelonr(
+          TimelonlinelonScribelonConfig(
+            pagelon = Somelon("list_reloncommelonndelond_uselonrs"),
+            selonction = Nonelon,
+            elonntityTokelonn = Nonelon)))
     )
 
-    val excludeIdsSelector: PartialFunction[UniversalNoun[_], Long] = {
-      case item: UserItem => item.id
+    val elonxcludelonIdsSelonlelonctor: PartialFunction[UnivelonrsalNoun[_], Long] = {
+      caselon itelonm: UselonrItelonm => itelonm.id
     }
 
-    val cursorBuilder = UnorderedExcludeIdsBottomCursorBuilder(
-      excludedIdsMaxLengthParam = ExcludedIdsMaxLengthParam,
-      excludeIdsSelector = excludeIdsSelector)
+    val cursorBuildelonr = UnordelonrelondelonxcludelonIdsBottomCursorBuildelonr(
+      elonxcludelondIdsMaxLelonngthParam = elonxcludelondIdsMaxLelonngthParam,
+      elonxcludelonIdsSelonlelonctor = elonxcludelonIdsSelonlelonctor)
 
-    UrtDomainMarshaller(
-      instructionBuilders = instructionBuilders,
-      metadataBuilder = Some(metadataBuilder),
-      cursorBuilders = Seq(cursorBuilder)
+    UrtDomainMarshallelonr(
+      instructionBuildelonrs = instructionBuildelonrs,
+      melontadataBuildelonr = Somelon(melontadataBuildelonr),
+      cursorBuildelonrs = Selonq(cursorBuildelonr)
     )
   }
 
-  override val transportMarshaller: TransportMarshaller[Timeline, urt.TimelineResponse] =
-    urtTransportMarshaller
+  ovelonrridelon val transportMarshallelonr: TransportMarshallelonr[Timelonlinelon, urt.TimelonlinelonRelonsponselon] =
+    urtTransportMarshallelonr
 }

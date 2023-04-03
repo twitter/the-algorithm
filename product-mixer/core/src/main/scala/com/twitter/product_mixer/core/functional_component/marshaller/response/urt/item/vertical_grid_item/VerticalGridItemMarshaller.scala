@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.vertical_grid_item
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.velonrtical_grid_itelonm
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.vertical_grid_item.VerticalGridItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.velonrtical_grid_itelonm.VelonrticalGridItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class VerticalGridItemMarshaller @Inject() (
-  verticalGridItemContentMarshaller: VerticalGridItemContentMarshaller) {
+@Singlelonton
+class VelonrticalGridItelonmMarshallelonr @Injelonct() (
+  velonrticalGridItelonmContelonntMarshallelonr: VelonrticalGridItelonmContelonntMarshallelonr) {
 
-  def apply(verticalGridItem: VerticalGridItem): urt.TimelineItemContent =
-    urt.TimelineItemContent.VerticalGridItem(
-      urt.VerticalGridItem(
-        content = verticalGridItemContentMarshaller(verticalGridItem)
+  delonf apply(velonrticalGridItelonm: VelonrticalGridItelonm): urt.TimelonlinelonItelonmContelonnt =
+    urt.TimelonlinelonItelonmContelonnt.VelonrticalGridItelonm(
+      urt.VelonrticalGridItelonm(
+        contelonnt = velonrticalGridItelonmContelonntMarshallelonr(velonrticalGridItelonm)
       )
     )
 }

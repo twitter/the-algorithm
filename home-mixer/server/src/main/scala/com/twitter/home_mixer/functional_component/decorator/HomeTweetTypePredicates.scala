@@ -1,227 +1,227 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.timelinemixer.injection.model.candidate.SemanticCoreFeatures
-import com.twitter.tweetypie.{thriftscala => tpt}
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.timelonlinelonmixelonr.injelonction.modelonl.candidatelon.SelonmanticCorelonFelonaturelons
+import com.twittelonr.twelonelontypielon.{thriftscala => tpt}
 
-object HomeTweetTypePredicates {
+objelonct HomelonTwelonelontTypelonPrelondicatelons {
 
   /**
-   * IMPORTANT: Please avoid logging tweet types that are tied to sensitive
-   * internal author information / labels (e.g. blink labels, abuse labels, or geo-location).
+   * IMPORTANT: Plelonaselon avoid logging twelonelont typelons that arelon tielond to selonnsitivelon
+   * intelonrnal author information / labelonls (elon.g. blink labelonls, abuselon labelonls, or gelono-location).
    */
-  private[this] val CandidatePredicates: Seq[(String, FeatureMap => Boolean)] = Seq(
-    ("with_candidate", _ => true),
-    ("retweet", _.getOrElse(IsRetweetFeature, false)),
-    ("reply", _.getOrElse(InReplyToTweetIdFeature, None).nonEmpty),
-    ("image", _.getOrElse(EarlybirdFeature, None).exists(_.hasImage)),
-    ("video", _.getOrElse(EarlybirdFeature, None).exists(_.hasVideo)),
-    ("link", _.getOrElse(EarlybirdFeature, None).exists(_.hasVisibleLink)),
-    ("quote", _.getOrElse(EarlybirdFeature, None).exists(_.hasQuote.contains(true))),
-    ("like_social_context", _.getOrElse(NonSelfFavoritedByUserIdsFeature, Seq.empty).nonEmpty),
-    ("protected", _.getOrElse(EarlybirdFeature, None).exists(_.isProtected)),
+  privatelon[this] val CandidatelonPrelondicatelons: Selonq[(String, FelonaturelonMap => Boolelonan)] = Selonq(
+    ("with_candidatelon", _ => truelon),
+    ("relontwelonelont", _.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)),
+    ("relonply", _.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon).nonelonmpty),
+    ("imagelon", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.hasImagelon)),
+    ("videlono", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.hasVidelono)),
+    ("link", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.hasVisiblelonLink)),
+    ("quotelon", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.hasQuotelon.contains(truelon))),
+    ("likelon_social_contelonxt", _.gelontOrelonlselon(NonSelonlfFavoritelondByUselonrIdsFelonaturelon, Selonq.elonmpty).nonelonmpty),
+    ("protelonctelond", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.isProtelonctelond)),
     (
-      "has_exclusive_conversation_author_id",
-      _.getOrElse(ExclusiveConversationAuthorIdFeature, None).nonEmpty),
-    ("is_eligible_for_connect_boost", _.getOrElse(AuthorIsEligibleForConnectBoostFeature, false)),
-    ("hashtag", _.getOrElse(EarlybirdFeature, None).exists(_.numHashtags > 0)),
-    ("has_scheduled_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.isScheduled)),
-    ("has_recorded_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.isRecorded)),
-    ("is_read_from_cache", _.getOrElse(IsReadFromCacheFeature, false)),
+      "has_elonxclusivelon_convelonrsation_author_id",
+      _.gelontOrelonlselon(elonxclusivelonConvelonrsationAuthorIdFelonaturelon, Nonelon).nonelonmpty),
+    ("is_elonligiblelon_for_connelonct_boost", _.gelontOrelonlselon(AuthorIselonligiblelonForConnelonctBoostFelonaturelon, falselon)),
+    ("hashtag", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.numHashtags > 0)),
+    ("has_schelondulelond_spacelon", _.gelontOrelonlselon(AudioSpacelonMelontaDataFelonaturelon, Nonelon).elonxists(_.isSchelondulelond)),
+    ("has_reloncordelond_spacelon", _.gelontOrelonlselon(AudioSpacelonMelontaDataFelonaturelon, Nonelon).elonxists(_.isReloncordelond)),
+    ("is_relonad_from_cachelon", _.gelontOrelonlselon(IsRelonadFromCachelonFelonaturelon, falselon)),
     (
-      "is_self_thread_tweet",
-      _.getOrElse(ConversationFeature, None).exists(_.isSelfThreadTweet.contains(true))),
-    ("get_initial", _.getOrElse(GetInitialFeature, false)),
-    ("get_newer", _.getOrElse(GetNewerFeature, false)),
-    ("get_middle", _.getOrElse(GetMiddleFeature, false)),
-    ("get_older", _.getOrElse(GetOlderFeature, false)),
-    ("pull_to_refresh", _.getOrElse(PullToRefreshFeature, false)),
-    ("polling", _.getOrElse(PollingFeature, false)),
-    ("tls_size_20_plus", _ => false),
-    ("near_empty", _ => false),
-    ("ranked_request", _ => false),
-    ("mutual_follow", _.getOrElse(EarlybirdFeature, None).exists(_.fromMutualFollow)),
-    ("has_ticketed_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.hasTickets)),
-    ("in_utis_top5", _.getOrElse(PositionFeature, None).exists(_ < 5)),
-    ("is_utis_pos0", _.getOrElse(PositionFeature, None).exists(_ == 0)),
-    ("is_utis_pos1", _.getOrElse(PositionFeature, None).exists(_ == 1)),
-    ("is_utis_pos2", _.getOrElse(PositionFeature, None).exists(_ == 2)),
-    ("is_utis_pos3", _.getOrElse(PositionFeature, None).exists(_ == 3)),
-    ("is_utis_pos4", _.getOrElse(PositionFeature, None).exists(_ == 4)),
+      "is_selonlf_threlonad_twelonelont",
+      _.gelontOrelonlselon(ConvelonrsationFelonaturelon, Nonelon).elonxists(_.isSelonlfThrelonadTwelonelont.contains(truelon))),
+    ("gelont_initial", _.gelontOrelonlselon(GelontInitialFelonaturelon, falselon)),
+    ("gelont_nelonwelonr", _.gelontOrelonlselon(GelontNelonwelonrFelonaturelon, falselon)),
+    ("gelont_middlelon", _.gelontOrelonlselon(GelontMiddlelonFelonaturelon, falselon)),
+    ("gelont_oldelonr", _.gelontOrelonlselon(GelontOldelonrFelonaturelon, falselon)),
+    ("pull_to_relonfrelonsh", _.gelontOrelonlselon(PullToRelonfrelonshFelonaturelon, falselon)),
+    ("polling", _.gelontOrelonlselon(PollingFelonaturelon, falselon)),
+    ("tls_sizelon_20_plus", _ => falselon),
+    ("nelonar_elonmpty", _ => falselon),
+    ("rankelond_relonquelonst", _ => falselon),
+    ("mutual_follow", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.fromMutualFollow)),
+    ("has_tickelontelond_spacelon", _.gelontOrelonlselon(AudioSpacelonMelontaDataFelonaturelon, Nonelon).elonxists(_.hasTickelonts)),
+    ("in_utis_top5", _.gelontOrelonlselon(PositionFelonaturelon, Nonelon).elonxists(_ < 5)),
+    ("is_utis_pos0", _.gelontOrelonlselon(PositionFelonaturelon, Nonelon).elonxists(_ == 0)),
+    ("is_utis_pos1", _.gelontOrelonlselon(PositionFelonaturelon, Nonelon).elonxists(_ == 1)),
+    ("is_utis_pos2", _.gelontOrelonlselon(PositionFelonaturelon, Nonelon).elonxists(_ == 2)),
+    ("is_utis_pos3", _.gelontOrelonlselon(PositionFelonaturelon, Nonelon).elonxists(_ == 3)),
+    ("is_utis_pos4", _.gelontOrelonlselon(PositionFelonaturelon, Nonelon).elonxists(_ == 4)),
     (
-      "is_signup_request",
-      candidate => candidate.getOrElse(AccountAgeFeature, None).exists(_.untilNow < 30.minutes)),
-    ("empty_request", _ => false),
-    ("served_size_less_than_5", _.getOrElse(ServedSizeFeature, None).exists(_ < 5)),
-    ("served_size_less_than_10", _.getOrElse(ServedSizeFeature, None).exists(_ < 10)),
-    ("served_size_less_than_20", _.getOrElse(ServedSizeFeature, None).exists(_ < 20)),
-    ("served_size_less_than_50", _.getOrElse(ServedSizeFeature, None).exists(_ < 50)),
+      "is_signup_relonquelonst",
+      candidatelon => candidatelon.gelontOrelonlselon(AccountAgelonFelonaturelon, Nonelon).elonxists(_.untilNow < 30.minutelons)),
+    ("elonmpty_relonquelonst", _ => falselon),
+    ("selonrvelond_sizelon_lelonss_than_5", _.gelontOrelonlselon(SelonrvelondSizelonFelonaturelon, Nonelon).elonxists(_ < 5)),
+    ("selonrvelond_sizelon_lelonss_than_10", _.gelontOrelonlselon(SelonrvelondSizelonFelonaturelon, Nonelon).elonxists(_ < 10)),
+    ("selonrvelond_sizelon_lelonss_than_20", _.gelontOrelonlselon(SelonrvelondSizelonFelonaturelon, Nonelon).elonxists(_ < 20)),
+    ("selonrvelond_sizelon_lelonss_than_50", _.gelontOrelonlselon(SelonrvelondSizelonFelonaturelon, Nonelon).elonxists(_ < 50)),
     (
-      "served_size_between_50_and_100",
-      _.getOrElse(ServedSizeFeature, None).exists(size => size >= 50 && size < 100)),
-    ("authored_by_contextual_user", _.getOrElse(AuthoredByContextualUserFeature, false)),
-    ("has_ancestors", _.getOrElse(AncestorsFeature, Seq.empty).nonEmpty),
-    ("full_scoring_succeeded", _.getOrElse(FullScoringSucceededFeature, false)),
+      "selonrvelond_sizelon_belontwelonelonn_50_and_100",
+      _.gelontOrelonlselon(SelonrvelondSizelonFelonaturelon, Nonelon).elonxists(sizelon => sizelon >= 50 && sizelon < 100)),
+    ("authorelond_by_contelonxtual_uselonr", _.gelontOrelonlselon(AuthorelondByContelonxtualUselonrFelonaturelon, falselon)),
+    ("has_ancelonstors", _.gelontOrelonlselon(AncelonstorsFelonaturelon, Selonq.elonmpty).nonelonmpty),
+    ("full_scoring_succelonelondelond", _.gelontOrelonlselon(FullScoringSuccelonelondelondFelonaturelon, falselon)),
     (
-      "account_age_less_than_30_minutes",
-      _.getOrElse(AccountAgeFeature, None).exists(_.untilNow < 30.minutes)),
+      "account_agelon_lelonss_than_30_minutelons",
+      _.gelontOrelonlselon(AccountAgelonFelonaturelon, Nonelon).elonxists(_.untilNow < 30.minutelons)),
     (
-      "account_age_less_than_1_day",
-      _.getOrElse(AccountAgeFeature, None).exists(_.untilNow < 1.day)),
+      "account_agelon_lelonss_than_1_day",
+      _.gelontOrelonlselon(AccountAgelonFelonaturelon, Nonelon).elonxists(_.untilNow < 1.day)),
     (
-      "account_age_less_than_7_days",
-      _.getOrElse(AccountAgeFeature, None).exists(_.untilNow < 7.days)),
+      "account_agelon_lelonss_than_7_days",
+      _.gelontOrelonlselon(AccountAgelonFelonaturelon, Nonelon).elonxists(_.untilNow < 7.days)),
     (
-      "directed_at_user_is_in_first_degree",
-      _.getOrElse(EarlybirdFeature, None).exists(_.directedAtUserIdIsInFirstDegree.contains(true))),
-    ("root_user_is_in_first_degree", _ => false),
+      "direlonctelond_at_uselonr_is_in_first_delongrelonelon",
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.direlonctelondAtUselonrIdIsInFirstDelongrelonelon.contains(truelon))),
+    ("root_uselonr_is_in_first_delongrelonelon", _ => falselon),
     (
-      "has_semantic_core_annotation",
-      _.getOrElse(EarlybirdFeature, None).exists(_.semanticCoreAnnotations.nonEmpty)),
-    ("is_request_context_foreground", _.getOrElse(IsForegroundRequestFeature, false)),
+      "has_selonmantic_corelon_annotation",
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.selonmanticCorelonAnnotations.nonelonmpty)),
+    ("is_relonquelonst_contelonxt_forelonground", _.gelontOrelonlselon(IsForelongroundRelonquelonstFelonaturelon, falselon)),
     (
       "part_of_utt",
-      _.getOrElse(EarlybirdFeature, None)
-        .exists(_.semanticCoreAnnotations.exists(_.exists(annotation =>
-          annotation.domainId == SemanticCoreFeatures.UnifiedTwitterTaxonomy)))),
-    ("is_random_tweet", _.getOrElse(IsRandomTweetFeature, false)),
-    ("has_random_tweet_in_response", _.getOrElse(HasRandomTweetFeature, false)),
-    ("is_random_tweet_above_in_utis", _.getOrElse(IsRandomTweetAboveFeature, false)),
-    ("is_request_context_launch", _.getOrElse(IsLaunchRequestFeature, false)),
-    ("viewer_is_employee", _ => false),
-    ("viewer_is_timelines_employee", _ => false),
-    ("viewer_follows_any_topics", _.getOrElse(UserFollowedTopicsCountFeature, None).exists(_ > 0)),
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon)
+        .elonxists(_.selonmanticCorelonAnnotations.elonxists(_.elonxists(annotation =>
+          annotation.domainId == SelonmanticCorelonFelonaturelons.UnifielondTwittelonrTaxonomy)))),
+    ("is_random_twelonelont", _.gelontOrelonlselon(IsRandomTwelonelontFelonaturelon, falselon)),
+    ("has_random_twelonelont_in_relonsponselon", _.gelontOrelonlselon(HasRandomTwelonelontFelonaturelon, falselon)),
+    ("is_random_twelonelont_abovelon_in_utis", _.gelontOrelonlselon(IsRandomTwelonelontAbovelonFelonaturelon, falselon)),
+    ("is_relonquelonst_contelonxt_launch", _.gelontOrelonlselon(IsLaunchRelonquelonstFelonaturelon, falselon)),
+    ("vielonwelonr_is_elonmployelonelon", _ => falselon),
+    ("vielonwelonr_is_timelonlinelons_elonmployelonelon", _ => falselon),
+    ("vielonwelonr_follows_any_topics", _.gelontOrelonlselon(UselonrFollowelondTopicsCountFelonaturelon, Nonelon).elonxists(_ > 0)),
     (
-      "has_ancestor_authored_by_viewer",
-      candidate =>
-        candidate
-          .getOrElse(AncestorsFeature, Seq.empty).exists(ancestor =>
-            candidate.getOrElse(ViewerIdFeature, 0L) == ancestor.userId)),
-    ("ancestor", _.getOrElse(IsAncestorCandidateFeature, false)),
+      "has_ancelonstor_authorelond_by_vielonwelonr",
+      candidatelon =>
+        candidatelon
+          .gelontOrelonlselon(AncelonstorsFelonaturelon, Selonq.elonmpty).elonxists(ancelonstor =>
+            candidatelon.gelontOrelonlselon(VielonwelonrIdFelonaturelon, 0L) == ancelonstor.uselonrId)),
+    ("ancelonstor", _.gelontOrelonlselon(IsAncelonstorCandidatelonFelonaturelon, falselon)),
     (
-      "root_ancestor",
-      candidate =>
-        candidate.getOrElse(IsAncestorCandidateFeature, false) && candidate
-          .getOrElse(InReplyToTweetIdFeature, None).isEmpty),
+      "root_ancelonstor",
+      candidatelon =>
+        candidatelon.gelontOrelonlselon(IsAncelonstorCandidatelonFelonaturelon, falselon) && candidatelon
+          .gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon).iselonmpty),
     (
-      "deep_reply",
-      candidate =>
-        candidate.getOrElse(InReplyToTweetIdFeature, None).nonEmpty && candidate
-          .getOrElse(AncestorsFeature, Seq.empty).size > 2),
+      "delonelonp_relonply",
+      candidatelon =>
+        candidatelon.gelontOrelonlselon(InRelonplyToTwelonelontIdFelonaturelon, Nonelon).nonelonmpty && candidatelon
+          .gelontOrelonlselon(AncelonstorsFelonaturelon, Selonq.elonmpty).sizelon > 2),
     (
-      "has_simcluster_embeddings",
-      _.getOrElse(
-        SimclustersTweetTopKClustersWithScoresFeature,
-        Map.empty[String, Double]).nonEmpty),
+      "has_simclustelonr_elonmbelonddings",
+      _.gelontOrelonlselon(
+        SimclustelonrsTwelonelontTopKClustelonrsWithScorelonsFelonaturelon,
+        Map.elonmpty[String, Doublelon]).nonelonmpty),
     (
-      "tweet_age_less_than_15_seconds",
-      _.getOrElse(OriginalTweetCreationTimeFromSnowflakeFeature, None)
-        .exists(_.untilNow <= 15.seconds)),
-    ("is_followed_topic_tweet", _ => false),
-    ("is_recommended_topic_tweet", _ => false),
-    ("is_topic_tweet", _ => false),
-    ("preferred_language_matches_tweet_language", _ => false),
+      "twelonelont_agelon_lelonss_than_15_selonconds",
+      _.gelontOrelonlselon(OriginalTwelonelontCrelonationTimelonFromSnowflakelonFelonaturelon, Nonelon)
+        .elonxists(_.untilNow <= 15.selonconds)),
+    ("is_followelond_topic_twelonelont", _ => falselon),
+    ("is_reloncommelonndelond_topic_twelonelont", _ => falselon),
+    ("is_topic_twelonelont", _ => falselon),
+    ("prelonfelonrrelond_languagelon_matchelons_twelonelont_languagelon", _ => falselon),
     (
-      "device_language_matches_tweet_language",
-      candidate =>
-        candidate.getOrElse(TweetLanguageFeature, None) ==
-          candidate.getOrElse(DeviceLanguageFeature, None)),
-    ("question", _.getOrElse(EarlybirdFeature, None).exists(_.hasQuestion.contains(true))),
-    ("in_network", _.getOrElse(FromInNetworkSourceFeature, true)),
-    ("viewer_follows_original_author", _ => false),
-    ("has_account_follow_prompt", _ => false),
-    ("has_relevance_prompt", _ => false),
-    ("has_topic_annotation_haug_prompt", _ => false),
-    ("has_topic_annotation_random_precision_prompt", _ => false),
-    ("has_topic_annotation_prompt", _ => false),
+      "delonvicelon_languagelon_matchelons_twelonelont_languagelon",
+      candidatelon =>
+        candidatelon.gelontOrelonlselon(TwelonelontLanguagelonFelonaturelon, Nonelon) ==
+          candidatelon.gelontOrelonlselon(DelonvicelonLanguagelonFelonaturelon, Nonelon)),
+    ("quelonstion", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.hasQuelonstion.contains(truelon))),
+    ("in_nelontwork", _.gelontOrelonlselon(FromInNelontworkSourcelonFelonaturelon, truelon)),
+    ("vielonwelonr_follows_original_author", _ => falselon),
+    ("has_account_follow_prompt", _ => falselon),
+    ("has_relonlelonvancelon_prompt", _ => falselon),
+    ("has_topic_annotation_haug_prompt", _ => falselon),
+    ("has_topic_annotation_random_preloncision_prompt", _ => falselon),
+    ("has_topic_annotation_prompt", _ => falselon),
     (
       "has_political_annotation",
-      _.getOrElse(EarlybirdFeature, None).exists(
-        _.semanticCoreAnnotations.exists(
-          _.exists(annotation =>
-            SemanticCoreFeatures.PoliticalDomains.contains(annotation.domainId) ||
-              (annotation.domainId == SemanticCoreFeatures.UnifiedTwitterTaxonomy &&
-                annotation.entityId == SemanticCoreFeatures.UttPoliticsEntityId))))),
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(
+        _.selonmanticCorelonAnnotations.elonxists(
+          _.elonxists(annotation =>
+            SelonmanticCorelonFelonaturelons.PoliticalDomains.contains(annotation.domainId) ||
+              (annotation.domainId == SelonmanticCorelonFelonaturelons.UnifielondTwittelonrTaxonomy &&
+                annotation.elonntityId == SelonmanticCorelonFelonaturelons.UttPoliticselonntityId))))),
     (
-      "is_dont_at_me_by_invitation",
-      _.getOrElse(EarlybirdFeature, None).exists(
-        _.conversationControl.exists(_.isInstanceOf[tpt.ConversationControl.ByInvitation]))),
+      "is_dont_at_melon_by_invitation",
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(
+        _.convelonrsationControl.elonxists(_.isInstancelonOf[tpt.ConvelonrsationControl.ByInvitation]))),
     (
-      "is_dont_at_me_community",
-      _.getOrElse(EarlybirdFeature, None)
-        .exists(_.conversationControl.exists(_.isInstanceOf[tpt.ConversationControl.Community]))),
-    ("has_zero_score", _.getOrElse(ScoreFeature, None).exists(_ == 0.0)),
-    ("is_viewer_not_invited_to_reply", _ => false),
-    ("is_viewer_invited_to_reply", _ => false),
-    ("has_gte_10_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 10))),
-    ("has_gte_100_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 100))),
-    ("has_gte_1k_favs", _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 1000))),
+      "is_dont_at_melon_community",
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon)
+        .elonxists(_.convelonrsationControl.elonxists(_.isInstancelonOf[tpt.ConvelonrsationControl.Community]))),
+    ("has_zelonro_scorelon", _.gelontOrelonlselon(ScorelonFelonaturelon, Nonelon).elonxists(_ == 0.0)),
+    ("is_vielonwelonr_not_invitelond_to_relonply", _ => falselon),
+    ("is_vielonwelonr_invitelond_to_relonply", _ => falselon),
+    ("has_gtelon_10_favs", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.favCountV2.elonxists(_ >= 10))),
+    ("has_gtelon_100_favs", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.favCountV2.elonxists(_ >= 100))),
+    ("has_gtelon_1k_favs", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.favCountV2.elonxists(_ >= 1000))),
     (
-      "has_gte_10k_favs",
-      _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 1000))),
+      "has_gtelon_10k_favs",
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.favCountV2.elonxists(_ >= 1000))),
     (
-      "has_gte_100k_favs",
-      _.getOrElse(EarlybirdFeature, None).exists(_.favCountV2.exists(_ >= 100000))),
-    ("above_neighbor_is_topic_tweet", _ => false),
-    ("is_topic_tweet_with_neighbor_below", _ => false),
-    ("has_audio_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.hasSpace)),
-    ("has_live_audio_space", _.getOrElse(AudioSpaceMetaDataFeature, None).exists(_.isLive)),
+      "has_gtelon_100k_favs",
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.favCountV2.elonxists(_ >= 100000))),
+    ("abovelon_nelonighbor_is_topic_twelonelont", _ => falselon),
+    ("is_topic_twelonelont_with_nelonighbor_belonlow", _ => falselon),
+    ("has_audio_spacelon", _.gelontOrelonlselon(AudioSpacelonMelontaDataFelonaturelon, Nonelon).elonxists(_.hasSpacelon)),
+    ("has_livelon_audio_spacelon", _.gelontOrelonlselon(AudioSpacelonMelontaDataFelonaturelon, Nonelon).elonxists(_.isLivelon)),
     (
-      "has_gte_10_retweets",
-      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 10))),
+      "has_gtelon_10_relontwelonelonts",
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.relontwelonelontCountV2.elonxists(_ >= 10))),
     (
-      "has_gte_100_retweets",
-      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 100))),
+      "has_gtelon_100_relontwelonelonts",
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.relontwelonelontCountV2.elonxists(_ >= 100))),
     (
-      "has_gte_1k_retweets",
-      _.getOrElse(EarlybirdFeature, None).exists(_.retweetCountV2.exists(_ >= 1000))),
+      "has_gtelon_1k_relontwelonelonts",
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.relontwelonelontCountV2.elonxists(_ >= 1000))),
     (
       "has_us_political_annotation",
-      _.getOrElse(EarlybirdFeature, None)
-        .exists(_.semanticCoreAnnotations.exists(_.exists(annotation =>
-          annotation.domainId == SemanticCoreFeatures.UnifiedTwitterTaxonomy &&
-            annotation.entityId == SemanticCoreFeatures.usPoliticalTweetEntityId &&
-            annotation.groupId == SemanticCoreFeatures.UsPoliticalTweetAnnotationGroupIds.BalancedV0)))),
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon)
+        .elonxists(_.selonmanticCorelonAnnotations.elonxists(_.elonxists(annotation =>
+          annotation.domainId == SelonmanticCorelonFelonaturelons.UnifielondTwittelonrTaxonomy &&
+            annotation.elonntityId == SelonmanticCorelonFelonaturelons.usPoliticalTwelonelontelonntityId &&
+            annotation.groupId == SelonmanticCorelonFelonaturelons.UsPoliticalTwelonelontAnnotationGroupIds.BalancelondV0)))),
     (
-      "has_toxicity_score_above_threshold",
-      _.getOrElse(EarlybirdFeature, None).exists(_.toxicityScore.exists(_ > 0.91))),
+      "has_toxicity_scorelon_abovelon_threlonshold",
+      _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.toxicityScorelon.elonxists(_ > 0.91))),
     (
-      "text_only",
-      candidate =>
-        candidate.getOrElse(HasDisplayedTextFeature, false) &&
-          !(candidate.getOrElse(EarlybirdFeature, None).exists(_.hasImage) ||
-            candidate.getOrElse(EarlybirdFeature, None).exists(_.hasVideo) ||
-            candidate.getOrElse(EarlybirdFeature, None).exists(_.hasCard))),
+      "telonxt_only",
+      candidatelon =>
+        candidatelon.gelontOrelonlselon(HasDisplayelondTelonxtFelonaturelon, falselon) &&
+          !(candidatelon.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.hasImagelon) ||
+            candidatelon.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.hasVidelono) ||
+            candidatelon.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.hasCard))),
     (
-      "image_only",
-      candidate =>
-        candidate.getOrElse(EarlybirdFeature, None).exists(_.hasImage) &&
-          !candidate.getOrElse(HasDisplayedTextFeature, false)),
-    ("has_1_image", _.getOrElse(NumImagesFeature, None).exists(_ == 1)),
-    ("has_2_images", _.getOrElse(NumImagesFeature, None).exists(_ == 2)),
-    ("has_3_images", _.getOrElse(NumImagesFeature, None).exists(_ == 3)),
-    ("has_4_images", _.getOrElse(NumImagesFeature, None).exists(_ == 4)),
-    ("has_card", _.getOrElse(EarlybirdFeature, None).exists(_.hasCard)),
-    ("3_or_more_consecutive_not_in_network", _ => false),
-    ("2_or_more_consecutive_not_in_network", _ => false),
-    ("5_out_of_7_not_in_network", _ => false),
-    ("7_out_of_7_not_in_network", _ => false),
-    ("5_out_of_5_not_in_network", _ => false),
-    ("user_follow_count_gte_50", _.getOrElse(UserFollowingCountFeature, None).exists(_ > 50)),
-    ("has_liked_by_social_context", _ => false),
-    ("has_followed_by_social_context", _ => false),
-    ("has_topic_social_context", _ => false),
-    ("timeline_entry_has_banner", _ => false),
-    ("served_in_conversation_module", _.getOrElse(ServedInConversationModuleFeature, false)),
+      "imagelon_only",
+      candidatelon =>
+        candidatelon.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.hasImagelon) &&
+          !candidatelon.gelontOrelonlselon(HasDisplayelondTelonxtFelonaturelon, falselon)),
+    ("has_1_imagelon", _.gelontOrelonlselon(NumImagelonsFelonaturelon, Nonelon).elonxists(_ == 1)),
+    ("has_2_imagelons", _.gelontOrelonlselon(NumImagelonsFelonaturelon, Nonelon).elonxists(_ == 2)),
+    ("has_3_imagelons", _.gelontOrelonlselon(NumImagelonsFelonaturelon, Nonelon).elonxists(_ == 3)),
+    ("has_4_imagelons", _.gelontOrelonlselon(NumImagelonsFelonaturelon, Nonelon).elonxists(_ == 4)),
+    ("has_card", _.gelontOrelonlselon(elonarlybirdFelonaturelon, Nonelon).elonxists(_.hasCard)),
+    ("3_or_morelon_conseloncutivelon_not_in_nelontwork", _ => falselon),
+    ("2_or_morelon_conseloncutivelon_not_in_nelontwork", _ => falselon),
+    ("5_out_of_7_not_in_nelontwork", _ => falselon),
+    ("7_out_of_7_not_in_nelontwork", _ => falselon),
+    ("5_out_of_5_not_in_nelontwork", _ => falselon),
+    ("uselonr_follow_count_gtelon_50", _.gelontOrelonlselon(UselonrFollowingCountFelonaturelon, Nonelon).elonxists(_ > 50)),
+    ("has_likelond_by_social_contelonxt", _ => falselon),
+    ("has_followelond_by_social_contelonxt", _ => falselon),
+    ("has_topic_social_contelonxt", _ => falselon),
+    ("timelonlinelon_elonntry_has_bannelonr", _ => falselon),
+    ("selonrvelond_in_convelonrsation_modulelon", _.gelontOrelonlselon(SelonrvelondInConvelonrsationModulelonFelonaturelon, falselon)),
     (
-      "conversation_module_has_2_displayed_tweets",
-      _.getOrElse(ConversationModule2DisplayedTweetsFeature, false)),
-    ("conversation_module_has_gap", _.getOrElse(ConversationModuleHasGapFeature, false)),
-    ("served_in_recap_tweet_candidate_module_injection", _ => false),
-    ("served_in_threaded_conversation_module", _ => false)
+      "convelonrsation_modulelon_has_2_displayelond_twelonelonts",
+      _.gelontOrelonlselon(ConvelonrsationModulelon2DisplayelondTwelonelontsFelonaturelon, falselon)),
+    ("convelonrsation_modulelon_has_gap", _.gelontOrelonlselon(ConvelonrsationModulelonHasGapFelonaturelon, falselon)),
+    ("selonrvelond_in_reloncap_twelonelont_candidatelon_modulelon_injelonction", _ => falselon),
+    ("selonrvelond_in_threlonadelond_convelonrsation_modulelon", _ => falselon)
   )
 
-  val PredicateMap = CandidatePredicates.toMap
+  val PrelondicatelonMap = CandidatelonPrelondicatelons.toMap
 }

@@ -1,22 +1,22 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
     scalac_plugins = ["no-roomba"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/model",
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/model/promoted",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "src/thrift/com/twitter/ads/adserver:adserver_common-scala",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "ads-injelonction/lib/src/main/scala/com/twittelonr/goldfinch/modelonl",
+        "ads-injelonction/lib/src/main/scala/com/twittelonr/goldfinch/modelonl/promotelond",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/common",
+        "src/thrift/com/twittelonr/ads/adselonrvelonr:adselonrvelonr_common-scala",
     ],
-    exports = [
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/model",
-        "ads-injection/lib/src/main/scala/com/twitter/goldfinch/model/promoted",
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/model/common",
-        "src/thrift/com/twitter/ads/adserver:adserver_common-scala",
+    elonxports = [
+        "ads-injelonction/lib/src/main/scala/com/twittelonr/goldfinch/modelonl",
+        "ads-injelonction/lib/src/main/scala/com/twittelonr/goldfinch/modelonl/promotelond",
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/modelonl/common",
+        "src/thrift/com/twittelonr/ads/adselonrvelonr:adselonrvelonr_common-scala",
     ],
 )

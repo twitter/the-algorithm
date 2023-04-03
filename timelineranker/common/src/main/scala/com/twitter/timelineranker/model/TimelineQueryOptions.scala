@@ -1,20 +1,20 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
 
-object TimelineQueryOptions {
-  def fromThrift(options: thrift.TimelineQueryOptions): TimelineQueryOptions = {
+objelonct TimelonlinelonQuelonryOptions {
+  delonf fromThrift(options: thrift.TimelonlinelonQuelonryOptions): TimelonlinelonQuelonryOptions = {
     options match {
-      case thrift.TimelineQueryOptions.RankedTimelineQueryOptions(r) =>
-        RankedTimelineQueryOptions.fromThrift(r)
-      case thrift.TimelineQueryOptions.ReverseChronTimelineQueryOptions(r) =>
-        ReverseChronTimelineQueryOptions.fromThrift(r)
-      case _ => throw new IllegalArgumentException(s"Unsupported type: $options")
+      caselon thrift.TimelonlinelonQuelonryOptions.RankelondTimelonlinelonQuelonryOptions(r) =>
+        RankelondTimelonlinelonQuelonryOptions.fromThrift(r)
+      caselon thrift.TimelonlinelonQuelonryOptions.RelonvelonrselonChronTimelonlinelonQuelonryOptions(r) =>
+        RelonvelonrselonChronTimelonlinelonQuelonryOptions.fromThrift(r)
+      caselon _ => throw nelonw IllelongalArgumelonntelonxcelonption(s"Unsupportelond typelon: $options")
     }
   }
 }
 
-trait TimelineQueryOptions {
-  def toTimelineQueryOptionsThrift: thrift.TimelineQueryOptions
-  def throwIfInvalid(): Unit
+trait TimelonlinelonQuelonryOptions {
+  delonf toTimelonlinelonQuelonryOptionsThrift: thrift.TimelonlinelonQuelonryOptions
+  delonf throwIfInvalid(): Unit
 }

@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.common.UniversalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
 
-trait HasEntryIdentifier extends UniversalNoun[Any] with HasEntryNamespace {
-  // Distinctly identifies this entry and must be unique relative to other entries within a response
-  lazy val entryIdentifier: String = s"$entryNamespace-$id"
+trait HaselonntryIdelonntifielonr elonxtelonnds UnivelonrsalNoun[Any] with HaselonntryNamelonspacelon {
+  // Distinctly idelonntifielons this elonntry and must belon uniquelon relonlativelon to othelonr elonntrielons within a relonsponselon
+  lazy val elonntryIdelonntifielonr: String = s"$elonntryNamelonspacelon-$id"
 }

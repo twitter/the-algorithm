@@ -1,65 +1,65 @@
-package com.twitter.recosinjector.edges
+packagelon com.twittelonr.reloncosinjelonctor.elondgelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.util.Action
-import com.twitter.recosinjector.util.TweetCreateEventDetails
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.util.Action
+import com.twittelonr.reloncosinjelonctor.util.TwelonelontCrelonatelonelonvelonntDelontails
+import com.twittelonr.util.Futurelon
 
 /**
- * Given a tweet creation event, parse for UserUserGraph edges. Specifically, when a new tweet is
- * created, extract the valid mentioned and mediatagged users in the tweet and create edges for them
+ * Givelonn a twelonelont crelonation elonvelonnt, parselon for UselonrUselonrGraph elondgelons. Speloncifically, whelonn a nelonw twelonelont is
+ * crelonatelond, elonxtract thelon valid melonntionelond and melondiataggelond uselonrs in thelon twelonelont and crelonatelon elondgelons for thelonm
  */
-class TweetEventToUserUserGraphBuilder(
+class TwelonelontelonvelonntToUselonrUselonrGraphBuildelonr(
 )(
-  override implicit val statsReceiver: StatsReceiver)
-    extends EventToMessageBuilder[TweetCreateEventDetails, UserUserEdge] {
-  private val tweetOrQuoteEventCounter = statsReceiver.counter("num_tweet_or_quote_event")
-  private val nonTweetOrQuoteEventCounter = statsReceiver.counter("num_non_tweet_or_quote_event")
-  private val mentionEdgeCounter = statsReceiver.counter("num_mention_edge")
-  private val mediatagEdgeCounter = statsReceiver.counter("num_mediatag_edge")
+  ovelonrridelon implicit val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonvelonntToMelonssagelonBuildelonr[TwelonelontCrelonatelonelonvelonntDelontails, UselonrUselonrelondgelon] {
+  privatelon val twelonelontOrQuotelonelonvelonntCountelonr = statsReloncelonivelonr.countelonr("num_twelonelont_or_quotelon_elonvelonnt")
+  privatelon val nonTwelonelontOrQuotelonelonvelonntCountelonr = statsReloncelonivelonr.countelonr("num_non_twelonelont_or_quotelon_elonvelonnt")
+  privatelon val melonntionelondgelonCountelonr = statsReloncelonivelonr.countelonr("num_melonntion_elondgelon")
+  privatelon val melondiatagelondgelonCountelonr = statsReloncelonivelonr.countelonr("num_melondiatag_elondgelon")
 
-  override def shouldProcessEvent(event: TweetCreateEventDetails): Future[Boolean] = {
-    // For user interactions, only new tweets and quotes are considered (no replies or retweets)
-    event.userTweetEngagement.action match {
-      case Action.Tweet | Action.Quote =>
-        tweetOrQuoteEventCounter.incr()
-        Future(true)
-      case _ =>
-        nonTweetOrQuoteEventCounter.incr()
-        Future(false)
+  ovelonrridelon delonf shouldProcelonsselonvelonnt(elonvelonnt: TwelonelontCrelonatelonelonvelonntDelontails): Futurelon[Boolelonan] = {
+    // For uselonr intelonractions, only nelonw twelonelonts and quotelons arelon considelonrelond (no relonplielons or relontwelonelonts)
+    elonvelonnt.uselonrTwelonelontelonngagelonmelonnt.action match {
+      caselon Action.Twelonelont | Action.Quotelon =>
+        twelonelontOrQuotelonelonvelonntCountelonr.incr()
+        Futurelon(truelon)
+      caselon _ =>
+        nonTwelonelontOrQuotelonelonvelonntCountelonr.incr()
+        Futurelon(falselon)
     }
   }
 
-  override def buildEdges(event: TweetCreateEventDetails): Future[Seq[UserUserEdge]] = {
-    val mentionEdges = event.validMentionUserIds
-      .map(_.map { mentionUserId =>
-        UserUserEdge(
-          sourceUser = event.userTweetEngagement.engageUserId,
-          targetUser = mentionUserId,
-          action = Action.Mention,
-          metadata = Some(System.currentTimeMillis())
+  ovelonrridelon delonf buildelondgelons(elonvelonnt: TwelonelontCrelonatelonelonvelonntDelontails): Futurelon[Selonq[UselonrUselonrelondgelon]] = {
+    val melonntionelondgelons = elonvelonnt.validMelonntionUselonrIds
+      .map(_.map { melonntionUselonrId =>
+        UselonrUselonrelondgelon(
+          sourcelonUselonr = elonvelonnt.uselonrTwelonelontelonngagelonmelonnt.elonngagelonUselonrId,
+          targelontUselonr = melonntionUselonrId,
+          action = Action.Melonntion,
+          melontadata = Somelon(Systelonm.currelonntTimelonMillis())
         )
-      }).getOrElse(Nil)
+      }).gelontOrelonlselon(Nil)
 
-    val mediatagEdges = event.validMediatagUserIds
-      .map(_.map { mediatagUserId =>
-        UserUserEdge(
-          sourceUser = event.userTweetEngagement.engageUserId,
-          targetUser = mediatagUserId,
-          action = Action.MediaTag,
-          metadata = Some(System.currentTimeMillis())
+    val melondiatagelondgelons = elonvelonnt.validMelondiatagUselonrIds
+      .map(_.map { melondiatagUselonrId =>
+        UselonrUselonrelondgelon(
+          sourcelonUselonr = elonvelonnt.uselonrTwelonelontelonngagelonmelonnt.elonngagelonUselonrId,
+          targelontUselonr = melondiatagUselonrId,
+          action = Action.MelondiaTag,
+          melontadata = Somelon(Systelonm.currelonntTimelonMillis())
         )
-      }).getOrElse(Nil)
+      }).gelontOrelonlselon(Nil)
 
-    mentionEdgeCounter.incr(mentionEdges.size)
-    mediatagEdgeCounter.incr(mediatagEdges.size)
-    Future(mentionEdges ++ mediatagEdges)
+    melonntionelondgelonCountelonr.incr(melonntionelondgelons.sizelon)
+    melondiatagelondgelonCountelonr.incr(melondiatagelondgelons.sizelon)
+    Futurelon(melonntionelondgelons ++ melondiatagelondgelons)
   }
 
-  override def filterEdges(
-    event: TweetCreateEventDetails,
-    edges: Seq[UserUserEdge]
-  ): Future[Seq[UserUserEdge]] = {
-    Future(edges)
+  ovelonrridelon delonf filtelonrelondgelons(
+    elonvelonnt: TwelonelontCrelonatelonelonvelonntDelontails,
+    elondgelons: Selonq[UselonrUselonrelondgelon]
+  ): Futurelon[Selonq[UselonrUselonrelondgelon]] = {
+    Futurelon(elondgelons)
   }
 }

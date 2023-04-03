@@ -1,423 +1,423 @@
-package com.twitter.simclusters_v2.scalding.common.matrix
+packagelon com.twittelonr.simclustelonrs_v2.scalding.common.matrix
 
-import com.twitter.algebird.Semigroup
-import com.twitter.bijection.Injection
-import com.twitter.scalding.{TypedPipe, ValuePipe}
+import com.twittelonr.algelonbird.Selonmigroup
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.scalding.{TypelondPipelon, ValuelonPipelon}
 
 /**
- * A case class that represents a sparse matrix backed by a TypedPipe[(R, C, V)].
+ * A caselon class that relonprelonselonnts a sparselon matrix backelond by a TypelondPipelon[(R, C, V)].
  *
- * We assume the input does not have more than one value per (row, col), and all the input values
- * are non-zero.
+ * Welon assumelon thelon input doelons not havelon morelon than onelon valuelon pelonr (row, col), and all thelon input valuelons
+ * arelon non-zelonro.
  *
- * We do not except the input pipe are indexed from 0 to numRows or numCols.
- * The input can be any type (for example, userId/TweetId/Hashtag).
- * We do not convert them to indices, but just use the input as a key to represent the rowId/colId.
+ * Welon do not elonxcelonpt thelon input pipelon arelon indelonxelond from 0 to numRows or numCols.
+ * Thelon input can belon any typelon (for elonxamplelon, uselonrId/TwelonelontId/Hashtag).
+ * Welon do not convelonrt thelonm to indicelons, but just uselon thelon input as a kelony to relonprelonselonnt thelon rowId/colId.
  *
- * Example:
+ * elonxamplelon:
  *
- *  val a = SparseMatrix(TypedPipe.from(Seq((1,1,1.0), (2,2,2.0), (3,3,3.0))))
+ *  val a = SparselonMatrix(TypelondPipelon.from(Selonq((1,1,1.0), (2,2,2.0), (3,3,3.0))))
  *
- *  val b = a.rowL2Normalize // get a new matrix that has unit-norm each row.
+ *  val b = a.rowL2Normalizelon // gelont a nelonw matrix that has unit-norm elonach row.
  *
- *  val c = a.multiplySparseMatrix(b) // multiply another matrix
+ *  val c = a.multiplySparselonMatrix(b) // multiply anothelonr matrix
  *
- *  val d = a.transpose // transpose the matrix
+ *  val d = a.transposelon // transposelon thelon matrix
  *
- * @param pipe underlying pipe. We assume the input does not have more than one value per (row, col),
- *             and all the values are non-zero.
- * @param rowOrd ordering function for row type
- * @param colOrd ordering function for col type
- * @param numericV numeric operations for value type
- * @param semigroupV semigroup for the value type
- * @param rowInj injection function for the row type
- * @param colInj injection function for the col type
- * @tparam R Type for rows
- * @tparam C Type for columns
- * @tparam V Type for elements of the matrix
+ * @param pipelon undelonrlying pipelon. Welon assumelon thelon input doelons not havelon morelon than onelon valuelon pelonr (row, col),
+ *             and all thelon valuelons arelon non-zelonro.
+ * @param rowOrd ordelonring function for row typelon
+ * @param colOrd ordelonring function for col typelon
+ * @param numelonricV numelonric opelonrations for valuelon typelon
+ * @param selonmigroupV selonmigroup for thelon valuelon typelon
+ * @param rowInj injelonction function for thelon row typelon
+ * @param colInj injelonction function for thelon col typelon
+ * @tparam R Typelon for rows
+ * @tparam C Typelon for columns
+ * @tparam V Typelon for elonlelonmelonnts of thelon matrix
  */
-case class SparseMatrix[R, C, V](
-  pipe: TypedPipe[(R, C, V)]
+caselon class SparselonMatrix[R, C, V](
+  pipelon: TypelondPipelon[(R, C, V)]
 )(
-  implicit override val rowOrd: Ordering[R],
-  override val colOrd: Ordering[C],
-  override val numericV: Numeric[V],
-  override val semigroupV: Semigroup[V],
-  override val rowInj: Injection[R, Array[Byte]],
-  override val colInj: Injection[C, Array[Byte]])
-    extends TypedPipeMatrix[R, C, V] {
+  implicit ovelonrridelon val rowOrd: Ordelonring[R],
+  ovelonrridelon val colOrd: Ordelonring[C],
+  ovelonrridelon val numelonricV: Numelonric[V],
+  ovelonrridelon val selonmigroupV: Selonmigroup[V],
+  ovelonrridelon val rowInj: Injelonction[R, Array[Bytelon]],
+  ovelonrridelon val colInj: Injelonction[C, Array[Bytelon]])
+    elonxtelonnds TypelondPipelonMatrix[R, C, V] {
 
-  // number of non-zero values in the matrix
-  override lazy val nnz: ValuePipe[Long] = {
-    this.filter((_, _, v) => v != numericV.zero).pipe.map(_ => 1L).sum
+  // numbelonr of non-zelonro valuelons in thelon matrix
+  ovelonrridelon lazy val nnz: ValuelonPipelon[Long] = {
+    this.filtelonr((_, _, v) => v != numelonricV.zelonro).pipelon.map(_ => 1L).sum
   }
 
-  // number of non-zero values in each row
-  lazy val rowNnz: TypedPipe[(R, Long)] = {
-    this.pipe.collect {
-      case (row, _, v) if v != numericV.zero =>
+  // numbelonr of non-zelonro valuelons in elonach row
+  lazy val rowNnz: TypelondPipelon[(R, Long)] = {
+    this.pipelon.collelonct {
+      caselon (row, _, v) if v != numelonricV.zelonro =>
         row -> 1L
-    }.sumByKey
+    }.sumByKelony
   }
 
-  // get the num of non-zero values for each col.
-  lazy val colNnz: TypedPipe[(C, Long)] = {
-    this.transpose.rowNnz
+  // gelont thelon num of non-zelonro valuelons for elonach col.
+  lazy val colNnz: TypelondPipelon[(C, Long)] = {
+    this.transposelon.rowNnz
   }
 
-  override lazy val uniqueRowIds: TypedPipe[R] = {
-    this.pipe.map(t => t._1).distinct
+  ovelonrridelon lazy val uniquelonRowIds: TypelondPipelon[R] = {
+    this.pipelon.map(t => t._1).distinct
   }
 
-  override lazy val uniqueColIds: TypedPipe[C] = {
-    this.pipe.map(t => t._2).distinct
+  ovelonrridelon lazy val uniquelonColIds: TypelondPipelon[C] = {
+    this.pipelon.map(t => t._2).distinct
   }
 
-  override def getRow(rowId: R): TypedPipe[(C, V)] = {
-    this.pipe.collect {
-      case (i, j, value) if i == rowId =>
-        j -> value
+  ovelonrridelon delonf gelontRow(rowId: R): TypelondPipelon[(C, V)] = {
+    this.pipelon.collelonct {
+      caselon (i, j, valuelon) if i == rowId =>
+        j -> valuelon
     }
   }
 
-  override def getCol(colId: C): TypedPipe[(R, V)] = {
-    this.pipe.collect {
-      case (i, j, value) if j == colId =>
-        i -> value
+  ovelonrridelon delonf gelontCol(colId: C): TypelondPipelon[(R, V)] = {
+    this.pipelon.collelonct {
+      caselon (i, j, valuelon) if j == colId =>
+        i -> valuelon
     }
   }
 
-  override def get(rowId: R, colId: C): ValuePipe[V] = {
-    this.pipe.collect {
-      case (i, j, value) if i == rowId && j == colId =>
-        value
-    }.sum // this assumes the matrix does not have any duplicates
+  ovelonrridelon delonf gelont(rowId: R, colId: C): ValuelonPipelon[V] = {
+    this.pipelon.collelonct {
+      caselon (i, j, valuelon) if i == rowId && j == colId =>
+        valuelon
+    }.sum // this assumelons thelon matrix doelons not havelon any duplicatelons
   }
 
-  // filter the matrix based on (row, col, value)
-  def filter(fn: (R, C, V) => Boolean): SparseMatrix[R, C, V] = {
-    SparseMatrix(this.pipe.filter {
-      case (row, col, value) => fn(row, col, value)
+  // filtelonr thelon matrix baselond on (row, col, valuelon)
+  delonf filtelonr(fn: (R, C, V) => Boolelonan): SparselonMatrix[R, C, V] = {
+    SparselonMatrix(this.pipelon.filtelonr {
+      caselon (row, col, valuelon) => fn(row, col, valuelon)
     })
   }
 
-  // filter the matrix based on a subset of rows
-  def filterRows(rows: TypedPipe[R]): SparseMatrix[R, C, V] = {
-    SparseMatrix(this.rowAsKeys.join(rows.asKeys).map {
-      case (row, ((col, value), _)) => (row, col, value)
+  // filtelonr thelon matrix baselond on a subselont of rows
+  delonf filtelonrRows(rows: TypelondPipelon[R]): SparselonMatrix[R, C, V] = {
+    SparselonMatrix(this.rowAsKelonys.join(rows.asKelonys).map {
+      caselon (row, ((col, valuelon), _)) => (row, col, valuelon)
     })
   }
 
-  // filter the matrix based on a subset of cols
-  def filterCols(cols: TypedPipe[C]): SparseMatrix[R, C, V] = {
-    this.transpose.filterRows(cols).transpose
+  // filtelonr thelon matrix baselond on a subselont of cols
+  delonf filtelonrCols(cols: TypelondPipelon[C]): SparselonMatrix[R, C, V] = {
+    this.transposelon.filtelonrRows(cols).transposelon
   }
 
-  // convert the triplet (row, col, value) to a new (row1, col1, value1)
-  def tripleApply[R1, C1, V1](
+  // convelonrt thelon triplelont (row, col, valuelon) to a nelonw (row1, col1, valuelon1)
+  delonf triplelonApply[R1, C1, V1](
     fn: (R, C, V) => (R1, C1, V1)
   )(
-    implicit rowOrd1: Ordering[R1],
-    colOrd1: Ordering[C1],
-    numericV1: Numeric[V1],
-    semigroupV1: Semigroup[V1],
-    rowInj: Injection[R1, Array[Byte]],
-    colInj: Injection[C1, Array[Byte]]
-  ): SparseMatrix[R1, C1, V1] = {
-    SparseMatrix(this.pipe.map {
-      case (row, col, value) => fn(row, col, value)
+    implicit rowOrd1: Ordelonring[R1],
+    colOrd1: Ordelonring[C1],
+    numelonricV1: Numelonric[V1],
+    selonmigroupV1: Selonmigroup[V1],
+    rowInj: Injelonction[R1, Array[Bytelon]],
+    colInj: Injelonction[C1, Array[Bytelon]]
+  ): SparselonMatrix[R1, C1, V1] = {
+    SparselonMatrix(this.pipelon.map {
+      caselon (row, col, valuelon) => fn(row, col, valuelon)
     })
   }
 
-  // get the l1 norms for all rows
-  lazy val rowL1Norms: TypedPipe[(R, Double)] = {
-    this.pipe.map {
-      case (row, _, value) =>
-        row -> numericV.toDouble(value).abs
-    }.sumByKey
+  // gelont thelon l1 norms for all rows
+  lazy val rowL1Norms: TypelondPipelon[(R, Doublelon)] = {
+    this.pipelon.map {
+      caselon (row, _, valuelon) =>
+        row -> numelonricV.toDoublelon(valuelon).abs
+    }.sumByKelony
   }
 
-  // get the l2 norms for all rows
-  lazy val rowL2Norms: TypedPipe[(R, Double)] = {
-    this.pipe
+  // gelont thelon l2 norms for all rows
+  lazy val rowL2Norms: TypelondPipelon[(R, Doublelon)] = {
+    this.pipelon
       .map {
-        case (row, _, value) =>
-          row -> numericV.toDouble(value) * numericV.toDouble(value)
+        caselon (row, _, valuelon) =>
+          row -> numelonricV.toDoublelon(valuelon) * numelonricV.toDoublelon(valuelon)
       }
-      .sumByKey
-      .mapValues(math.sqrt)
+      .sumByKelony
+      .mapValuelons(math.sqrt)
   }
 
-  // normalize the matrix to make sure each row has unit norm
-  lazy val rowL2Normalize: SparseMatrix[R, C, Double] = {
-    val result = this.rowAsKeys
+  // normalizelon thelon matrix to makelon surelon elonach row has unit norm
+  lazy val rowL2Normalizelon: SparselonMatrix[R, C, Doublelon] = {
+    val relonsult = this.rowAsKelonys
       .join(this.rowL2Norms)
-      .collect {
-        case (row, ((col, value), l2norm)) if l2norm > 0.0 =>
-          (row, col, numericV.toDouble(value) / l2norm)
+      .collelonct {
+        caselon (row, ((col, valuelon), l2norm)) if l2norm > 0.0 =>
+          (row, col, numelonricV.toDoublelon(valuelon) / l2norm)
       }
 
-    SparseMatrix(result)
+    SparselonMatrix(relonsult)
   }
 
-  // get the l2 norms for all cols
-  lazy val colL2Norms: TypedPipe[(C, Double)] = {
-    this.transpose.rowL2Norms
+  // gelont thelon l2 norms for all cols
+  lazy val colL2Norms: TypelondPipelon[(C, Doublelon)] = {
+    this.transposelon.rowL2Norms
   }
 
-  // normalize the matrix to make sure each column has unit norm
-  lazy val colL2Normalize: SparseMatrix[R, C, Double] = {
-    this.transpose.rowL2Normalize.transpose
-  }
-
-  /**
-   * Take topK non-zero elements from each row. Cols are ordered by the `ordering` function
-   */
-  def sortWithTakePerRow(k: Int)(ordering: Ordering[(C, V)]): TypedPipe[(R, Seq[(C, V)])] = {
-    this.rowAsKeys.group.sortedTake(k)(ordering)
+  // normalizelon thelon matrix to makelon surelon elonach column has unit norm
+  lazy val colL2Normalizelon: SparselonMatrix[R, C, Doublelon] = {
+    this.transposelon.rowL2Normalizelon.transposelon
   }
 
   /**
-   * Take topK non-zero elements from each column. Rows are ordered by the `ordering` function.
-   *
+   * Takelon topK non-zelonro elonlelonmelonnts from elonach row. Cols arelon ordelonrelond by thelon `ordelonring` function
    */
-  def sortWithTakePerCol(k: Int)(ordering: Ordering[(R, V)]): TypedPipe[(C, Seq[(R, V)])] = {
-    this.transpose.sortWithTakePerRow(k)(ordering)
+  delonf sortWithTakelonPelonrRow(k: Int)(ordelonring: Ordelonring[(C, V)]): TypelondPipelon[(R, Selonq[(C, V)])] = {
+    this.rowAsKelonys.group.sortelondTakelon(k)(ordelonring)
   }
 
   /**
-   * Multiply another SparseMatrix. The only requirement is that the col type of current matrix should
-   * be same with the row type of the other matrix.
+   * Takelon topK non-zelonro elonlelonmelonnts from elonach column. Rows arelon ordelonrelond by thelon `ordelonring` function.
    *
-   * @param sparseMatrix   another matrix to multiply
-   * @param numReducersOpt optional parameter to set number of reducers. It uses 1000 by default.
-   *                       you can change it based on your applications.
-   * @param ordering2      ordering function for the column type of another matrix
-   * @param injection2     injection function for the column type of another matrix
-   * @tparam C2 col type of another matrix
-   *
-   * @return
    */
-  def multiplySparseMatrix[C2](
-    sparseMatrix: SparseMatrix[C, C2, V],
-    numReducersOpt: Option[Int] = None
+  delonf sortWithTakelonPelonrCol(k: Int)(ordelonring: Ordelonring[(R, V)]): TypelondPipelon[(C, Selonq[(R, V)])] = {
+    this.transposelon.sortWithTakelonPelonrRow(k)(ordelonring)
+  }
+
+  /**
+   * Multiply anothelonr SparselonMatrix. Thelon only relonquirelonmelonnt is that thelon col typelon of currelonnt matrix should
+   * belon samelon with thelon row typelon of thelon othelonr matrix.
+   *
+   * @param sparselonMatrix   anothelonr matrix to multiply
+   * @param numRelonducelonrsOpt optional paramelontelonr to selont numbelonr of relonducelonrs. It uselons 1000 by delonfault.
+   *                       you can changelon it baselond on your applications.
+   * @param ordelonring2      ordelonring function for thelon column typelon of anothelonr matrix
+   * @param injelonction2     injelonction function for thelon column typelon of anothelonr matrix
+   * @tparam C2 col typelon of anothelonr matrix
+   *
+   * @relonturn
+   */
+  delonf multiplySparselonMatrix[C2](
+    sparselonMatrix: SparselonMatrix[C, C2, V],
+    numRelonducelonrsOpt: Option[Int] = Nonelon
   )(
-    implicit ordering2: Ordering[C2],
-    injection2: Injection[C2, Array[Byte]]
-  ): SparseMatrix[R, C2, V] = {
-    implicit val colInjectionFunction: C => Array[Byte] = colInj.toFunction
+    implicit ordelonring2: Ordelonring[C2],
+    injelonction2: Injelonction[C2, Array[Bytelon]]
+  ): SparselonMatrix[R, C2, V] = {
+    implicit val colInjelonctionFunction: C => Array[Bytelon] = colInj.toFunction
 
-    val result =
-      // 1000 is the reducer number used for sketchJoin; 1000 is a number that works well empirically.
-      // feel free to change this or make this as a param if you find this does not work for your case.
-      this.transpose.rowAsKeys
-        .sketch(numReducersOpt.getOrElse(1000))
-        .join(sparseMatrix.rowAsKeys)
+    val relonsult =
+      // 1000 is thelon relonducelonr numbelonr uselond for skelontchJoin; 1000 is a numbelonr that works welonll elonmpirically.
+      // felonelonl frelonelon to changelon this or makelon this as a param if you find this doelons not work for your caselon.
+      this.transposelon.rowAsKelonys
+        .skelontch(numRelonducelonrsOpt.gelontOrelonlselon(1000))
+        .join(sparselonMatrix.rowAsKelonys)
         .map {
-          case (_, ((row1, value1), (col2, value2))) =>
-            (row1, col2) -> numericV.times(value1, value2)
+          caselon (_, ((row1, valuelon1), (col2, valuelon2))) =>
+            (row1, col2) -> numelonricV.timelons(valuelon1, valuelon2)
         }
-        .sumByKey
+        .sumByKelony
         .map {
-          case ((row, col), value) =>
-            (row, col, value)
+          caselon ((row, col), valuelon) =>
+            (row, col, valuelon)
         }
 
-    SparseMatrix(result)
+    SparselonMatrix(relonsult)
   }
 
   /**
-   * Multiply a SparseRowMatrix. The implementation of this function assume the input SparseRowMatrix
-   * is a skinny matrix, i.e., with a small number of unique columns. Based on our experience, you can
-   * think 100K is a small number here.
+   * Multiply a SparselonRowMatrix. Thelon implelonmelonntation of this function assumelon thelon input SparselonRowMatrix
+   * is a skinny matrix, i.elon., with a small numbelonr of uniquelon columns. Baselond on our elonxpelonrielonncelon, you can
+   * think 100K is a small numbelonr helonrelon.
    *
-   * @param skinnyMatrix    another matrix to multiply
-   * @param numReducersOpt  optional parameter to set number of reducers. It uses 1000 by default.
-   *                        you can change it based on your applications.
-   * @param ordering2 ordering function for the column type of another matrix
-   * @param injection2 injection function for the column type of another matrix
-   * @tparam C2 col type of another matrix
+   * @param skinnyMatrix    anothelonr matrix to multiply
+   * @param numRelonducelonrsOpt  optional paramelontelonr to selont numbelonr of relonducelonrs. It uselons 1000 by delonfault.
+   *                        you can changelon it baselond on your applications.
+   * @param ordelonring2 ordelonring function for thelon column typelon of anothelonr matrix
+   * @param injelonction2 injelonction function for thelon column typelon of anothelonr matrix
+   * @tparam C2 col typelon of anothelonr matrix
    *
-   * @return
+   * @relonturn
    */
-  def multiplySkinnySparseRowMatrix[C2](
-    skinnyMatrix: SparseRowMatrix[C, C2, V],
-    numReducersOpt: Option[Int] = None
+  delonf multiplySkinnySparselonRowMatrix[C2](
+    skinnyMatrix: SparselonRowMatrix[C, C2, V],
+    numRelonducelonrsOpt: Option[Int] = Nonelon
   )(
-    implicit ordering2: Ordering[C2],
-    injection2: Injection[C2, Array[Byte]]
-  ): SparseRowMatrix[R, C2, V] = {
+    implicit ordelonring2: Ordelonring[C2],
+    injelonction2: Injelonction[C2, Array[Bytelon]]
+  ): SparselonRowMatrix[R, C2, V] = {
 
-    assert(
+    asselonrt(
       skinnyMatrix.isSkinnyMatrix,
-      "this function only works for skinny sparse row matrix, otherwise you will get out-of-memory problem")
+      "this function only works for skinny sparselon row matrix, othelonrwiselon you will gelont out-of-melonmory problelonm")
 
-    implicit val colInjectionFunction: C => Array[Byte] = colInj.toFunction
+    implicit val colInjelonctionFunction: C => Array[Bytelon] = colInj.toFunction
 
-    val result =
-      // 1000 is the reducer number used for sketchJoin; 1000 is a number that works well empirically.
-      // feel free to change this or make this as a param if you find this does not work for your case.
-      this.transpose.rowAsKeys
-        .sketch(numReducersOpt.getOrElse(1000))
-        .join(skinnyMatrix.pipe)
+    val relonsult =
+      // 1000 is thelon relonducelonr numbelonr uselond for skelontchJoin; 1000 is a numbelonr that works welonll elonmpirically.
+      // felonelonl frelonelon to changelon this or makelon this as a param if you find this doelons not work for your caselon.
+      this.transposelon.rowAsKelonys
+        .skelontch(numRelonducelonrsOpt.gelontOrelonlselon(1000))
+        .join(skinnyMatrix.pipelon)
         .map {
-          case (_, ((row1, value1), colMap)) =>
-            row1 -> colMap.mapValues(v => numericV.times(value1, v))
+          caselon (_, ((row1, valuelon1), colMap)) =>
+            row1 -> colMap.mapValuelons(v => numelonricV.timelons(valuelon1, v))
         }
-        .sumByKey
+        .sumByKelony
 
-    SparseRowMatrix(result, skinnyMatrix.isSkinnyMatrix)
+    SparselonRowMatrix(relonsult, skinnyMatrix.isSkinnyMatrix)
   }
 
   /***
-   * Multiply a DenseRowMatrix. The result will be also a DenseRowMatrix.
+   * Multiply a DelonnselonRowMatrix. Thelon relonsult will belon also a DelonnselonRowMatrix.
    *
-   * @param denseRowMatrix matrix to multiply
-   * @param numReducersOpt optional parameter to set number of reducers. It uses 1000 by default.
-   *                       you can change it based on your applications
-   * @return
+   * @param delonnselonRowMatrix matrix to multiply
+   * @param numRelonducelonrsOpt optional paramelontelonr to selont numbelonr of relonducelonrs. It uselons 1000 by delonfault.
+   *                       you can changelon it baselond on your applications
+   * @relonturn
    */
-  def multiplyDenseRowMatrix(
-    denseRowMatrix: DenseRowMatrix[C],
-    numReducersOpt: Option[Int] = None
-  ): DenseRowMatrix[R] = {
+  delonf multiplyDelonnselonRowMatrix(
+    delonnselonRowMatrix: DelonnselonRowMatrix[C],
+    numRelonducelonrsOpt: Option[Int] = Nonelon
+  ): DelonnselonRowMatrix[R] = {
 
-    implicit val colInjectionFunction: C => Array[Byte] = colInj.toFunction
-    implicit val arrayVSemiGroup: Semigroup[Array[Double]] = denseRowMatrix.semigroupArrayV
+    implicit val colInjelonctionFunction: C => Array[Bytelon] = colInj.toFunction
+    implicit val arrayVSelonmiGroup: Selonmigroup[Array[Doublelon]] = delonnselonRowMatrix.selonmigroupArrayV
 
-    val result =
-      // 1000 is the reducer number used for sketchJoin; 1000 is a number that works well empirically.
-      // feel free to change this or make this as a param if you find this does not work for your case.
-      this.transpose.rowAsKeys
-        .sketch(numReducersOpt.getOrElse(1000))
-        .join(denseRowMatrix.pipe)
+    val relonsult =
+      // 1000 is thelon relonducelonr numbelonr uselond for skelontchJoin; 1000 is a numbelonr that works welonll elonmpirically.
+      // felonelonl frelonelon to changelon this or makelon this as a param if you find this doelons not work for your caselon.
+      this.transposelon.rowAsKelonys
+        .skelontch(numRelonducelonrsOpt.gelontOrelonlselon(1000))
+        .join(delonnselonRowMatrix.pipelon)
         .map {
-          case (_, ((row1, value1), array)) =>
-            row1 -> array.map(v => numericV.toDouble(value1) * v)
+          caselon (_, ((row1, valuelon1), array)) =>
+            row1 -> array.map(v => numelonricV.toDoublelon(valuelon1) * v)
         }
-        .sumByKey
+        .sumByKelony
 
-    DenseRowMatrix(result)
+    DelonnselonRowMatrix(relonsult)
   }
 
-  // Transpose the matrix.
-  lazy val transpose: SparseMatrix[C, R, V] = {
-    SparseMatrix(
-      this.pipe
+  // Transposelon thelon matrix.
+  lazy val transposelon: SparselonMatrix[C, R, V] = {
+    SparselonMatrix(
+      this.pipelon
         .map {
-          case (row, col, value) =>
-            (col, row, value)
+          caselon (row, col, valuelon) =>
+            (col, row, valuelon)
         })
   }
 
-  // Create a Key-Val TypedPipe for .join() and other use cases.
-  lazy val rowAsKeys: TypedPipe[(R, (C, V))] = {
-    this.pipe
+  // Crelonatelon a Kelony-Val TypelondPipelon for .join() and othelonr uselon caselons.
+  lazy val rowAsKelonys: TypelondPipelon[(R, (C, V))] = {
+    this.pipelon
       .map {
-        case (row, col, value) =>
-          (row, (col, value))
+        caselon (row, col, valuelon) =>
+          (row, (col, valuelon))
       }
   }
 
-  // convert to a TypedPipe
-  lazy val toTypedPipe: TypedPipe[(R, C, V)] = {
-    this.pipe
+  // convelonrt to a TypelondPipelon
+  lazy val toTypelondPipelon: TypelondPipelon[(R, C, V)] = {
+    this.pipelon
   }
 
-  lazy val forceToDisk: SparseMatrix[R, C, V] = {
-    SparseMatrix(this.pipe.forceToDisk)
+  lazy val forcelonToDisk: SparselonMatrix[R, C, V] = {
+    SparselonMatrix(this.pipelon.forcelonToDisk)
   }
 
   /**
-   * Convert the matrix to a SparseRowMatrix. Do this only when the max number of non-zero values per row is
-   * small (say, not more than 200K).
+   * Convelonrt thelon matrix to a SparselonRowMatrix. Do this only whelonn thelon max numbelonr of non-zelonro valuelons pelonr row is
+   * small (say, not morelon than 200K).
    *
-   * @isSkinnyMatrix is the resulted matrix skinny, i.e., number of unique colIds is small (<200K).
-   *                Note the difference between `number of unique colIds` and `max number of non-zero values per row`.
-   * @return
+   * @isSkinnyMatrix is thelon relonsultelond matrix skinny, i.elon., numbelonr of uniquelon colIds is small (<200K).
+   *                Notelon thelon diffelonrelonncelon belontwelonelonn `numbelonr of uniquelon colIds` and `max numbelonr of non-zelonro valuelons pelonr row`.
+   * @relonturn
    */
-  def toSparseRowMatrix(isSkinnyMatrix: Boolean = false): SparseRowMatrix[R, C, V] = {
-    SparseRowMatrix(
-      this.pipe.map {
-        case (i, j, v) =>
+  delonf toSparselonRowMatrix(isSkinnyMatrix: Boolelonan = falselon): SparselonRowMatrix[R, C, V] = {
+    SparselonRowMatrix(
+      this.pipelon.map {
+        caselon (i, j, v) =>
           i -> Map(j -> v)
-      }.sumByKey,
+      }.sumByKelony,
       isSkinnyMatrix)
   }
 
   /**
-   * Convert the matrix to a DenseRowMatrix
+   * Convelonrt thelon matrix to a DelonnselonRowMatrix
    *
-   * @param numCols the number of columns in the DenseRowMatrix.
-   * @param colToIndexFunction the function to convert colId to the column index in the dense matrix
-   * @return
+   * @param numCols thelon numbelonr of columns in thelon DelonnselonRowMatrix.
+   * @param colToIndelonxFunction thelon function to convelonrt colId to thelon column indelonx in thelon delonnselon matrix
+   * @relonturn
    */
-  def toDenseRowMatrix(numCols: Int, colToIndexFunction: C => Int): DenseRowMatrix[R] = {
-    this.toSparseRowMatrix(isSkinnyMatrix = true).toDenseRowMatrix(numCols, colToIndexFunction)
+  delonf toDelonnselonRowMatrix(numCols: Int, colToIndelonxFunction: C => Int): DelonnselonRowMatrix[R] = {
+    this.toSparselonRowMatrix(isSkinnyMatrix = truelon).toDelonnselonRowMatrix(numCols, colToIndelonxFunction)
   }
 
   /**
-   * Determines whether we should return a given Iterator given a threshold for the sum of values
-   * across a row and whether we are looking to stay under or above that value.
-   * Note that Iterators are mutable/destructive, and even calling .size on it will 'use it up'
-   * i.e. it no longer hasNext and we no longer have any reference to the head of the collection.
+   * Delontelonrminelons whelonthelonr welon should relonturn a givelonn Itelonrator givelonn a threlonshold for thelon sum of valuelons
+   * across a row and whelonthelonr welon arelon looking to stay undelonr or abovelon that valuelon.
+   * Notelon that Itelonrators arelon mutablelon/delonstructivelon, and elonvelonn calling .sizelon on it will 'uselon it up'
+   * i.elon. it no longelonr hasNelonxt and welon no longelonr havelon any relonfelonrelonncelon to thelon helonad of thelon collelonction.
    *
-   * @param columnValueIterator    Iterator over column-value pairs.
-   * @param threshold The threshold for the sum of values
-   * @param ifMin     True if we want to stay at least above that given value
-   * @return          A new SparseMatrix after we have filtered the ineligible rows
+   * @param columnValuelonItelonrator    Itelonrator ovelonr column-valuelon pairs.
+   * @param threlonshold Thelon threlonshold for thelon sum of valuelons
+   * @param ifMin     Truelon if welon want to stay at lelonast abovelon that givelonn valuelon
+   * @relonturn          A nelonw SparselonMatrix aftelonr welon havelon filtelonrelond thelon inelonligiblelon rows
    */
-  private[this] def filterIter(
-    columnValueIterator: Iterator[(C, V)],
-    threshold: V,
-    ifMin: Boolean
-  ): Iterator[(C, V)] = {
-    var sum: V = numericV.zero
-    var it: Iterator[(C, V)] = Iterator.empty
-    var exceeded = false
-    while (columnValueIterator.hasNext && !exceeded) {
-      val (c, v) = columnValueIterator.next
-      val nextSum = semigroupV.plus(sum, v)
-      val cmp = numericV.compare(nextSum, threshold)
+  privatelon[this] delonf filtelonrItelonr(
+    columnValuelonItelonrator: Itelonrator[(C, V)],
+    threlonshold: V,
+    ifMin: Boolelonan
+  ): Itelonrator[(C, V)] = {
+    var sum: V = numelonricV.zelonro
+    var it: Itelonrator[(C, V)] = Itelonrator.elonmpty
+    var elonxcelonelondelond = falselon
+    whilelon (columnValuelonItelonrator.hasNelonxt && !elonxcelonelondelond) {
+      val (c, v) = columnValuelonItelonrator.nelonxt
+      val nelonxtSum = selonmigroupV.plus(sum, v)
+      val cmp = numelonricV.comparelon(nelonxtSum, threlonshold)
       if ((ifMin && cmp < 0) || (!ifMin && cmp <= 0)) {
-        it = it ++ Iterator((c, v))
-        sum = nextSum
-      } else {
-        it = it ++ Iterator((c, v))
-        exceeded = true
+        it = it ++ Itelonrator((c, v))
+        sum = nelonxtSum
+      } elonlselon {
+        it = it ++ Itelonrator((c, v))
+        elonxcelonelondelond = truelon
       }
     }
-    (ifMin, exceeded) match {
-      case (true, true) => it ++ columnValueIterator
-      case (true, false) => Iterator.empty
-      case (false, true) => Iterator.empty
-      case (false, false) => it ++ columnValueIterator
+    (ifMin, elonxcelonelondelond) match {
+      caselon (truelon, truelon) => it ++ columnValuelonItelonrator
+      caselon (truelon, falselon) => Itelonrator.elonmpty
+      caselon (falselon, truelon) => Itelonrator.elonmpty
+      caselon (falselon, falselon) => it ++ columnValuelonItelonrator
     }
   }
 
   /**
-   * removes entries whose sum over rows do not meet the minimum sum (minSum)
-   * @param minSum  minimum sum for which we want to enforce across all rows
+   * relonmovelons elonntrielons whoselon sum ovelonr rows do not melonelont thelon minimum sum (minSum)
+   * @param minSum  minimum sum for which welon want to elonnforcelon across all rows
    */
-  def filterRowsByMinSum(minSum: V): SparseMatrix[R, C, V] = {
-    val filteredPipe = this.rowAsKeys.group
-      .mapValueStream(filterIter(_, threshold = minSum, ifMin = true)).map {
-        case (r, (c, v)) =>
+  delonf filtelonrRowsByMinSum(minSum: V): SparselonMatrix[R, C, V] = {
+    val filtelonrelondPipelon = this.rowAsKelonys.group
+      .mapValuelonStrelonam(filtelonrItelonr(_, threlonshold = minSum, ifMin = truelon)).map {
+        caselon (r, (c, v)) =>
           (r, c, v)
       }
-    SparseMatrix(filteredPipe)
+    SparselonMatrix(filtelonrelondPipelon)
   }
 
   /**
-   * removes entries whose sum over rows exceed the maximum sum (maxSum)
-   * @param maxSum  maximum sum for which we want to enforce across all rows
+   * relonmovelons elonntrielons whoselon sum ovelonr rows elonxcelonelond thelon maximum sum (maxSum)
+   * @param maxSum  maximum sum for which welon want to elonnforcelon across all rows
    */
-  def filterRowsByMaxSum(maxSum: V): SparseMatrix[R, C, V] = {
-    val filteredPipe = this.rowAsKeys.group
-      .mapValueStream(filterIter(_, threshold = maxSum, ifMin = false)).map {
-        case (r, (c, v)) =>
+  delonf filtelonrRowsByMaxSum(maxSum: V): SparselonMatrix[R, C, V] = {
+    val filtelonrelondPipelon = this.rowAsKelonys.group
+      .mapValuelonStrelonam(filtelonrItelonr(_, threlonshold = maxSum, ifMin = falselon)).map {
+        caselon (r, (c, v)) =>
           (r, c, v)
       }
-    SparseMatrix(filteredPipe)
+    SparselonMatrix(filtelonrelondPipelon)
   }
 }

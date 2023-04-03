@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.UserFacepile
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.UselonrFacelonpilelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class UserFacepileMarshaller @Inject() (
-  messageActionTypeMarshaller: MessageActionTypeMarshaller,
-  messageTextActionMarshaller: MessageTextActionMarshaller,
-  userFacepileDisplayTypeMarshaller: UserFacepileDisplayTypeMarshaller) {
+@Singlelonton
+class UselonrFacelonpilelonMarshallelonr @Injelonct() (
+  melonssagelonActionTypelonMarshallelonr: MelonssagelonActionTypelonMarshallelonr,
+  melonssagelonTelonxtActionMarshallelonr: MelonssagelonTelonxtActionMarshallelonr,
+  uselonrFacelonpilelonDisplayTypelonMarshallelonr: UselonrFacelonpilelonDisplayTypelonMarshallelonr) {
 
-  def apply(userFacepile: UserFacepile): urt.UserFacepile =
-    urt.UserFacepile(
-      userIds = userFacepile.userIds,
-      featuredUserIds = userFacepile.featuredUserIds,
-      action = userFacepile.action.map(messageTextActionMarshaller(_)),
-      actionType = userFacepile.actionType.map(messageActionTypeMarshaller(_)),
-      displaysFeaturingText = userFacepile.displaysFeaturingText,
-      displayType = userFacepile.displayType.map(userFacepileDisplayTypeMarshaller(_))
+  delonf apply(uselonrFacelonpilelon: UselonrFacelonpilelon): urt.UselonrFacelonpilelon =
+    urt.UselonrFacelonpilelon(
+      uselonrIds = uselonrFacelonpilelon.uselonrIds,
+      felonaturelondUselonrIds = uselonrFacelonpilelon.felonaturelondUselonrIds,
+      action = uselonrFacelonpilelon.action.map(melonssagelonTelonxtActionMarshallelonr(_)),
+      actionTypelon = uselonrFacelonpilelon.actionTypelon.map(melonssagelonActionTypelonMarshallelonr(_)),
+      displaysFelonaturingTelonxt = uselonrFacelonpilelon.displaysFelonaturingTelonxt,
+      displayTypelon = uselonrFacelonpilelon.displayTypelon.map(uselonrFacelonpilelonDisplayTypelonMarshallelonr(_))
     )
 }

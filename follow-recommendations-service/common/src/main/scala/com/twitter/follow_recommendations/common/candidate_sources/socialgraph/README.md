@@ -1,6 +1,6 @@
-# Social Graph Candidate Source
-Provides candidate expansion based on the Twitter social graph.
+# Social Graph Candidatelon Sourcelon
+Providelons candidatelon elonxpansion baselond on thelon Twittelonr social graph.
 
-Currently, the expansion is mainly based on the "follow" social graph edge, which allows the service to identify recent following accounts for a given set of accounts. The input accounts could be a user's recent following, engaged, or other related accounts.
+Currelonntly, thelon elonxpansion is mainly baselond on thelon "follow" social graph elondgelon, which allows thelon selonrvicelon to idelonntify reloncelonnt following accounts for a givelonn selont of accounts. Thelon input accounts could belon a uselonr's reloncelonnt following, elonngagelond, or othelonr relonlatelond accounts.
 
-In summary, the Social Graph Candidate Source utilizes the Twitter social graph to provide candidate expansion, primarily focusing on recent following accounts.
+In summary, thelon Social Graph Candidatelon Sourcelon utilizelons thelon Twittelonr social graph to providelon candidatelon elonxpansion, primarily focusing on reloncelonnt following accounts.

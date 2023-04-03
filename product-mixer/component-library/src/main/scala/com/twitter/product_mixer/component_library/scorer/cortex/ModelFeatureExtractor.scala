@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.scorer.cortex
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.cortelonx
 
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import inference.GrpcService.ModelInferResponse.InferOutputTensor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonsponselon.InfelonrOutputTelonnsor
 
 /**
- * Extractor defining how a Scorer should go from outputted tensors to the individual results
- * for each candidate being scored.
+ * elonxtractor delonfining how a Scorelonr should go from outputtelond telonnsors to thelon individual relonsults
+ * for elonach candidatelon beloning scorelond.
  *
- * @tparam Result the type of the Value being returned.
- * Users can pass in an anonymous function
+ * @tparam Relonsult thelon typelon of thelon Valuelon beloning relonturnelond.
+ * Uselonrs can pass in an anonymous function
  */
-trait ModelFeatureExtractor[-Query <: PipelineQuery, Result] {
-  def apply(query: Query, tensorOutput: Seq[InferOutputTensor]): Seq[Result]
+trait ModelonlFelonaturelonelonxtractor[-Quelonry <: PipelonlinelonQuelonry, Relonsult] {
+  delonf apply(quelonry: Quelonry, telonnsorOutput: Selonq[InfelonrOutputTelonnsor]): Selonq[Relonsult]
 }

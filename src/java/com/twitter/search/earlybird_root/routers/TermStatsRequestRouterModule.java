@@ -1,60 +1,60 @@
-package com.twitter.search.earlybird_root.routers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.routelonrs;
 
-import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.injelonct.Namelond;
+import javax.injelonct.Singlelonton;
 
-import com.google.inject.Provides;
+import com.googlelon.injelonct.Providelons;
 
-import com.twitter.inject.TwitterModule;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.earlybird_root.filters.EarlybirdTimeRangeFilter;
-import com.twitter.search.earlybird_root.filters.FullArchiveServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.RealtimeServingRangeProvider;
-import com.twitter.search.earlybird_root.filters.ServingRangeProvider;
+import com.twittelonr.injelonct.TwittelonrModulelon;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.elonarlybirdTimelonRangelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.FullArchivelonSelonrvingRangelonProvidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.RelonaltimelonSelonrvingRangelonProvidelonr;
+import com.twittelonr.selonarch.elonarlybird_root.filtelonrs.SelonrvingRangelonProvidelonr;
 
-public class TermStatsRequestRouterModule extends TwitterModule {
-  public static final String FULL_ARCHIVE_TIME_RANGE_FILTER =
-      "term_stats_full_archive_time_range_filter";
-  public static final String REALTIME_TIME_RANGE_FILTER =
-      "term_stats_realtime_time_range_filter";
+public class TelonrmStatsRelonquelonstRoutelonrModulelon elonxtelonnds TwittelonrModulelon {
+  public static final String FULL_ARCHIVelon_TIMelon_RANGelon_FILTelonR =
+      "telonrm_stats_full_archivelon_timelon_rangelon_filtelonr";
+  public static final String RelonALTIMelon_TIMelon_RANGelon_FILTelonR =
+      "telonrm_stats_relonaltimelon_timelon_rangelon_filtelonr";
 
-  private static final String SUPERROOT_TERM_STATS_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY =
-      "superroot_term_stats_serving_range_boundary_hours_ago";
+  privatelon static final String SUPelonRROOT_TelonRM_STATS_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY =
+      "supelonrroot_telonrm_stats_selonrving_rangelon_boundary_hours_ago";
 
-  private ServingRangeProvider getFullArchiveTimeRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new FullArchiveServingRangeProvider(
-        decider, SUPERROOT_TERM_STATS_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
+  privatelon SelonrvingRangelonProvidelonr gelontFullArchivelonTimelonRangelonProvidelonr(final SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn nelonw FullArchivelonSelonrvingRangelonProvidelonr(
+        deloncidelonr, SUPelonRROOT_TelonRM_STATS_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY);
   }
 
-  private ServingRangeProvider getRealtimeTimeRangeProvider(final SearchDecider decider)
-      throws Exception {
-    return new RealtimeServingRangeProvider(
-        decider, SUPERROOT_TERM_STATS_SERVING_RANGE_BOUNDARY_HOURS_AGO_DECIDER_KEY);
-  }
-
-  /**
-   * For term stats full archive cluster spans from 21 March to 2006 to 6 days ago from current time
-   */
-  @Provides
-  @Singleton
-  @Named(FULL_ARCHIVE_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesFullArchiveTimeRangeFilter(final SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithQueryRewriter(
-        getFullArchiveTimeRangeProvider(decider), decider);
+  privatelon SelonrvingRangelonProvidelonr gelontRelonaltimelonTimelonRangelonProvidelonr(final SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn nelonw RelonaltimelonSelonrvingRangelonProvidelonr(
+        deloncidelonr, SUPelonRROOT_TelonRM_STATS_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO_DelonCIDelonR_KelonY);
   }
 
   /**
-   * For term stats realtime cluster spans from 6 days ago from current time to a far away date
-   * into the future
+   * For telonrm stats full archivelon clustelonr spans from 21 March to 2006 to 6 days ago from currelonnt timelon
    */
-  @Provides
-  @Singleton
-  @Named(REALTIME_TIME_RANGE_FILTER)
-  private EarlybirdTimeRangeFilter providesRealtimeTimeRangeFilter(final SearchDecider decider)
-      throws Exception {
-    return EarlybirdTimeRangeFilter.newTimeRangeFilterWithQueryRewriter(
-        getRealtimeTimeRangeProvider(decider), decider);
+  @Providelons
+  @Singlelonton
+  @Namelond(FULL_ARCHIVelon_TIMelon_RANGelon_FILTelonR)
+  privatelon elonarlybirdTimelonRangelonFiltelonr providelonsFullArchivelonTimelonRangelonFiltelonr(final SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn elonarlybirdTimelonRangelonFiltelonr.nelonwTimelonRangelonFiltelonrWithQuelonryRelonwritelonr(
+        gelontFullArchivelonTimelonRangelonProvidelonr(deloncidelonr), deloncidelonr);
+  }
+
+  /**
+   * For telonrm stats relonaltimelon clustelonr spans from 6 days ago from currelonnt timelon to a far away datelon
+   * into thelon futurelon
+   */
+  @Providelons
+  @Singlelonton
+  @Namelond(RelonALTIMelon_TIMelon_RANGelon_FILTelonR)
+  privatelon elonarlybirdTimelonRangelonFiltelonr providelonsRelonaltimelonTimelonRangelonFiltelonr(final SelonarchDeloncidelonr deloncidelonr)
+      throws elonxcelonption {
+    relonturn elonarlybirdTimelonRangelonFiltelonr.nelonwTimelonRangelonFiltelonrWithQuelonryRelonwritelonr(
+        gelontRelonaltimelonTimelonRangelonProvidelonr(deloncidelonr), deloncidelonr);
   }
 }

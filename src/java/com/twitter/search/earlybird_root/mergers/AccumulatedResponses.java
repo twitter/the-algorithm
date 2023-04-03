@@ -1,176 +1,176 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.search.common.query.thriftjava.EarlyTerminationInfo;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.earlybird.thrift.TierResponse;
+import com.twittelonr.selonarch.common.quelonry.thriftjava.elonarlyTelonrminationInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.TielonrRelonsponselon;
 
 /**
- * Collection of EarlybirdResponses and associated stats to be merged.
+ * Collelonction of elonarlybirdRelonsponselons and associatelond stats to belon melonrgelond.
  */
-public class AccumulatedResponses {
-  // The list of the successful responses from all earlybird futures. This does not include empty
-  // responses resulted from null requests.
-  private final List<EarlybirdResponse> successResponses;
-  // The list of the unsuccessful responses from all earlybird futures.
-  private final List<EarlybirdResponse> errorResponses;
-  // the list of max statusIds seen in each earlybird.
-  private final List<Long> maxIds;
-  // the list of min statusIds seen in each earlybird.
-  private final List<Long> minIds;
+public class AccumulatelondRelonsponselons {
+  // Thelon list of thelon succelonssful relonsponselons from all elonarlybird futurelons. This doelons not includelon elonmpty
+  // relonsponselons relonsultelond from null relonquelonsts.
+  privatelon final List<elonarlybirdRelonsponselon> succelonssRelonsponselons;
+  // Thelon list of thelon unsuccelonssful relonsponselons from all elonarlybird futurelons.
+  privatelon final List<elonarlybirdRelonsponselon> elonrrorRelonsponselons;
+  // thelon list of max statusIds selonelonn in elonach elonarlybird.
+  privatelon final List<Long> maxIds;
+  // thelon list of min statusIds selonelonn in elonach elonarlybird.
+  privatelon final List<Long> minIds;
 
-  private final EarlyTerminationInfo mergedEarlyTerminationInfo;
-  private final boolean isMergingAcrossTiers;
-  private final PartitionCounts partitionCounts;
-  private final int numSearchedSegments;
+  privatelon final elonarlyTelonrminationInfo melonrgelondelonarlyTelonrminationInfo;
+  privatelon final boolelonan isMelonrgingAcrossTielonrs;
+  privatelon final PartitionCounts partitionCounts;
+  privatelon final int numSelonarchelondSelongmelonnts;
 
   public static final class PartitionCounts {
-    private final int numPartitions;
-    private final int numSuccessfulPartitions;
-    private final List<TierResponse> perTierResponse;
+    privatelon final int numPartitions;
+    privatelon final int numSuccelonssfulPartitions;
+    privatelon final List<TielonrRelonsponselon> pelonrTielonrRelonsponselon;
 
-    public PartitionCounts(int numPartitions, int numSuccessfulPartitions, List<TierResponse>
-        perTierResponse) {
+    public PartitionCounts(int numPartitions, int numSuccelonssfulPartitions, List<TielonrRelonsponselon>
+        pelonrTielonrRelonsponselon) {
       this.numPartitions = numPartitions;
-      this.numSuccessfulPartitions = numSuccessfulPartitions;
-      this.perTierResponse = perTierResponse;
+      this.numSuccelonssfulPartitions = numSuccelonssfulPartitions;
+      this.pelonrTielonrRelonsponselon = pelonrTielonrRelonsponselon;
     }
 
-    public int getNumPartitions() {
-      return numPartitions;
+    public int gelontNumPartitions() {
+      relonturn numPartitions;
     }
 
-    public int getNumSuccessfulPartitions() {
-      return numSuccessfulPartitions;
+    public int gelontNumSuccelonssfulPartitions() {
+      relonturn numSuccelonssfulPartitions;
     }
 
-    public List<TierResponse> getPerTierResponse() {
-      return perTierResponse;
+    public List<TielonrRelonsponselon> gelontPelonrTielonrRelonsponselon() {
+      relonturn pelonrTielonrRelonsponselon;
     }
   }
 
   /**
-   * Create AccumulatedResponses
+   * Crelonatelon AccumulatelondRelonsponselons
    */
-  public AccumulatedResponses(List<EarlybirdResponse> successResponses,
-                              List<EarlybirdResponse> errorResponses,
+  public AccumulatelondRelonsponselons(List<elonarlybirdRelonsponselon> succelonssRelonsponselons,
+                              List<elonarlybirdRelonsponselon> elonrrorRelonsponselons,
                               List<Long> maxIds,
                               List<Long> minIds,
-                              EarlyTerminationInfo mergedEarlyTerminationInfo,
-                              boolean isMergingAcrossTiers,
+                              elonarlyTelonrminationInfo melonrgelondelonarlyTelonrminationInfo,
+                              boolelonan isMelonrgingAcrossTielonrs,
                               PartitionCounts partitionCounts,
-                              int numSearchedSegments) {
-    this.successResponses = successResponses;
-    this.errorResponses = errorResponses;
+                              int numSelonarchelondSelongmelonnts) {
+    this.succelonssRelonsponselons = succelonssRelonsponselons;
+    this.elonrrorRelonsponselons = elonrrorRelonsponselons;
     this.maxIds = maxIds;
     this.minIds = minIds;
-    this.mergedEarlyTerminationInfo = mergedEarlyTerminationInfo;
-    this.isMergingAcrossTiers = isMergingAcrossTiers;
+    this.melonrgelondelonarlyTelonrminationInfo = melonrgelondelonarlyTelonrminationInfo;
+    this.isMelonrgingAcrossTielonrs = isMelonrgingAcrossTielonrs;
     this.partitionCounts = partitionCounts;
-    this.numSearchedSegments = numSearchedSegments;
+    this.numSelonarchelondSelongmelonnts = numSelonarchelondSelongmelonnts;
   }
 
-  public List<EarlybirdResponse> getSuccessResponses() {
-    return successResponses;
+  public List<elonarlybirdRelonsponselon> gelontSuccelonssRelonsponselons() {
+    relonturn succelonssRelonsponselons;
   }
 
-  public List<EarlybirdResponse> getErrorResponses() {
-    return errorResponses;
+  public List<elonarlybirdRelonsponselon> gelontelonrrorRelonsponselons() {
+    relonturn elonrrorRelonsponselons;
   }
 
-  public List<Long> getMaxIds() {
-    return maxIds;
+  public List<Long> gelontMaxIds() {
+    relonturn maxIds;
   }
 
-  public List<Long> getMinIds() {
-    return minIds;
+  public List<Long> gelontMinIds() {
+    relonturn minIds;
   }
 
-  public EarlyTerminationInfo getMergedEarlyTerminationInfo() {
-    return mergedEarlyTerminationInfo;
+  public elonarlyTelonrminationInfo gelontMelonrgelondelonarlyTelonrminationInfo() {
+    relonturn melonrgelondelonarlyTelonrminationInfo;
   }
 
-  public boolean foundError() {
-    return !errorResponses.isEmpty();
+  public boolelonan foundelonrror() {
+    relonturn !elonrrorRelonsponselons.iselonmpty();
   }
 
   /**
-   * Tries to return a merged EarlybirdResponse that propagates as much information from the error
-   * responses as possible.
+   * Trielons to relonturn a melonrgelond elonarlybirdRelonsponselon that propagatelons as much information from thelon elonrror
+   * relonsponselons as possiblelon.
    *
-   * If all error responses have the same error response code, the merged response will have the
-   * same error response code, and the debugString/debugInfo on the merged response will be set to
-   * the debugString/debugInfo of one of the merged responses.
+   * If all elonrror relonsponselons havelon thelon samelon elonrror relonsponselon codelon, thelon melonrgelond relonsponselon will havelon thelon
+   * samelon elonrror relonsponselon codelon, and thelon delonbugString/delonbugInfo on thelon melonrgelond relonsponselon will belon selont to
+   * thelon delonbugString/delonbugInfo of onelon of thelon melonrgelond relonsponselons.
    *
-   * If the error responses have at least 2 different response codes, TRANSIENT_ERROR will be set
-   * on the merged response. Also, we will look for the most common error response code, and will
-   * propagate the debugString/debugInfo from an error response with that response code.
+   * If thelon elonrror relonsponselons havelon at lelonast 2 diffelonrelonnt relonsponselon codelons, TRANSIelonNT_elonRROR will belon selont
+   * on thelon melonrgelond relonsponselon. Also, welon will look for thelon most common elonrror relonsponselon codelon, and will
+   * propagatelon thelon delonbugString/delonbugInfo from an elonrror relonsponselon with that relonsponselon codelon.
    */
-  public EarlybirdResponse getMergedErrorResponse() {
-    Preconditions.checkState(!errorResponses.isEmpty());
+  public elonarlybirdRelonsponselon gelontMelonrgelondelonrrorRelonsponselon() {
+    Prelonconditions.chelonckStatelon(!elonrrorRelonsponselons.iselonmpty());
 
-    // Find a response that has the most common error response code.
+    // Find a relonsponselon that has thelon most common elonrror relonsponselon codelon.
     int maxCount = 0;
-    EarlybirdResponse errorResponseWithMostCommonErrorResponseCode = null;
-    Map<EarlybirdResponseCode, Integer> responseCodeCounts = Maps.newHashMap();
-    for (EarlybirdResponse errorResponse : errorResponses) {
-      EarlybirdResponseCode responseCode = errorResponse.getResponseCode();
-      Integer responseCodeCount = responseCodeCounts.get(responseCode);
-      if (responseCodeCount == null) {
-        responseCodeCount = 0;
+    elonarlybirdRelonsponselon elonrrorRelonsponselonWithMostCommonelonrrorRelonsponselonCodelon = null;
+    Map<elonarlybirdRelonsponselonCodelon, Intelongelonr> relonsponselonCodelonCounts = Maps.nelonwHashMap();
+    for (elonarlybirdRelonsponselon elonrrorRelonsponselon : elonrrorRelonsponselons) {
+      elonarlybirdRelonsponselonCodelon relonsponselonCodelon = elonrrorRelonsponselon.gelontRelonsponselonCodelon();
+      Intelongelonr relonsponselonCodelonCount = relonsponselonCodelonCounts.gelont(relonsponselonCodelon);
+      if (relonsponselonCodelonCount == null) {
+        relonsponselonCodelonCount = 0;
       }
-      ++responseCodeCount;
-      responseCodeCounts.put(responseCode, responseCodeCount);
-      if (responseCodeCount > maxCount) {
-        errorResponseWithMostCommonErrorResponseCode = errorResponse;
+      ++relonsponselonCodelonCount;
+      relonsponselonCodelonCounts.put(relonsponselonCodelon, relonsponselonCodelonCount);
+      if (relonsponselonCodelonCount > maxCount) {
+        elonrrorRelonsponselonWithMostCommonelonrrorRelonsponselonCodelon = elonrrorRelonsponselon;
       }
     }
 
-    // If all error responses have the same response code, set it on the merged response.
-    // Otherwise, set TRANSIENT_ERROR on the merged response.
-    EarlybirdResponseCode mergedResponseCode = EarlybirdResponseCode.TRANSIENT_ERROR;
-    if (responseCodeCounts.size() == 1) {
-      mergedResponseCode = responseCodeCounts.keySet().iterator().next();
+    // If all elonrror relonsponselons havelon thelon samelon relonsponselon codelon, selont it on thelon melonrgelond relonsponselon.
+    // Othelonrwiselon, selont TRANSIelonNT_elonRROR on thelon melonrgelond relonsponselon.
+    elonarlybirdRelonsponselonCodelon melonrgelondRelonsponselonCodelon = elonarlybirdRelonsponselonCodelon.TRANSIelonNT_elonRROR;
+    if (relonsponselonCodelonCounts.sizelon() == 1) {
+      melonrgelondRelonsponselonCodelon = relonsponselonCodelonCounts.kelonySelont().itelonrator().nelonxt();
     }
 
-    EarlybirdResponse mergedResponse = new EarlybirdResponse()
-        .setResponseCode(mergedResponseCode);
+    elonarlybirdRelonsponselon melonrgelondRelonsponselon = nelonw elonarlybirdRelonsponselon()
+        .selontRelonsponselonCodelon(melonrgelondRelonsponselonCodelon);
 
-    // Propagate the debugString/debugInfo of the selected error response to the merged response.
-    Preconditions.checkNotNull(errorResponseWithMostCommonErrorResponseCode);
-    if (errorResponseWithMostCommonErrorResponseCode.isSetDebugString()) {
-      mergedResponse.setDebugString(errorResponseWithMostCommonErrorResponseCode.getDebugString());
+    // Propagatelon thelon delonbugString/delonbugInfo of thelon selonlelonctelond elonrror relonsponselon to thelon melonrgelond relonsponselon.
+    Prelonconditions.chelonckNotNull(elonrrorRelonsponselonWithMostCommonelonrrorRelonsponselonCodelon);
+    if (elonrrorRelonsponselonWithMostCommonelonrrorRelonsponselonCodelon.isSelontDelonbugString()) {
+      melonrgelondRelonsponselon.selontDelonbugString(elonrrorRelonsponselonWithMostCommonelonrrorRelonsponselonCodelon.gelontDelonbugString());
     }
-    if (errorResponseWithMostCommonErrorResponseCode.isSetDebugInfo()) {
-      mergedResponse.setDebugInfo(errorResponseWithMostCommonErrorResponseCode.getDebugInfo());
+    if (elonrrorRelonsponselonWithMostCommonelonrrorRelonsponselonCodelon.isSelontDelonbugInfo()) {
+      melonrgelondRelonsponselon.selontDelonbugInfo(elonrrorRelonsponselonWithMostCommonelonrrorRelonsponselonCodelon.gelontDelonbugInfo());
     }
 
-    // Set the numPartitions and numPartitionsSucceeded on the mergedResponse
-    mergedResponse.setNumPartitions(partitionCounts.getNumPartitions());
-    mergedResponse.setNumSuccessfulPartitions(partitionCounts.getNumSuccessfulPartitions());
+    // Selont thelon numPartitions and numPartitionsSuccelonelondelond on thelon melonrgelondRelonsponselon
+    melonrgelondRelonsponselon.selontNumPartitions(partitionCounts.gelontNumPartitions());
+    melonrgelondRelonsponselon.selontNumSuccelonssfulPartitions(partitionCounts.gelontNumSuccelonssfulPartitions());
 
-    return mergedResponse;
+    relonturn melonrgelondRelonsponselon;
   }
 
-  public boolean isMergingAcrossTiers() {
-    return isMergingAcrossTiers;
+  public boolelonan isMelonrgingAcrossTielonrs() {
+    relonturn isMelonrgingAcrossTielonrs;
   }
 
-  public boolean isMergingPartitionsWithinATier() {
-    return !isMergingAcrossTiers;
+  public boolelonan isMelonrgingPartitionsWithinATielonr() {
+    relonturn !isMelonrgingAcrossTielonrs;
   }
 
-  public PartitionCounts getPartitionCounts() {
-    return partitionCounts;
+  public PartitionCounts gelontPartitionCounts() {
+    relonturn partitionCounts;
   }
 
-  public int getNumSearchedSegments() {
-    return numSearchedSegments;
+  public int gelontNumSelonarchelondSelongmelonnts() {
+    relonturn numSelonarchelondSelongmelonnts;
   }
 }

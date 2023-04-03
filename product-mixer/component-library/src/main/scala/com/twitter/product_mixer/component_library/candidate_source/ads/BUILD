@@ -1,18 +1,18 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/javax/inject:javax.inject",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "src/thrift/com/twitter/ads/adserver:adserver_common-scala",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
-        "strato/config/columns/ads/admixer:admixer-strato-client",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/javax/injelonct:javax.injelonct",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/candidatelon_sourcelon/strato",
+        "src/thrift/com/twittelonr/ads/adselonrvelonr:adselonrvelonr_common-scala",
+        "src/thrift/com/twittelonr/ads/adselonrvelonr:adselonrvelonr_rpc-scala",
+        "strato/config/columns/ads/admixelonr:admixelonr-strato-clielonnt",
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/candidate_source/strato",
-        "src/thrift/com/twitter/ads/adserver:adserver_common-scala",
-        "src/thrift/com/twitter/ads/adserver:adserver_rpc-scala",
+    elonxports = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/candidatelon_sourcelon/strato",
+        "src/thrift/com/twittelonr/ads/adselonrvelonr:adselonrvelonr_common-scala",
+        "src/thrift/com/twittelonr/ads/adselonrvelonr:adselonrvelonr_rpc-scala",
     ],
 )

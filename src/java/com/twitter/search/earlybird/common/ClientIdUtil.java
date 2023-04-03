@@ -1,85 +1,85 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
 import java.util.Optional;
 
-import com.twitter.common.optional.Optionals;
-import com.twitter.search.common.util.FinagleUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.strato.opcontext.Attribution;
-import com.twitter.strato.opcontext.HttpEndpoint;
+import com.twittelonr.common.optional.Optionals;
+import com.twittelonr.selonarch.common.util.FinaglelonUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.strato.opcontelonxt.Attribution;
+import com.twittelonr.strato.opcontelonxt.Httpelonndpoint;
 
-public final class ClientIdUtil {
-  // Blenders should always set the EarlybirdRequest.clientId field. It should be set to the Finagle
-  // client ID of the client that caused the blender to send this request to the roots. If the
-  // Finagle ID of the blender's client cannot be determined, it will be set to "unknown" (see
-  // com.twitter.search.common.util.FinagleUtil.UNKNOWN_CLIENT_NAME). However, other services that
-  // send requests to roots might not set EarlybirdRequest.clientId.
+public final class ClielonntIdUtil {
+  // Blelonndelonrs should always selont thelon elonarlybirdRelonquelonst.clielonntId fielonld. It should belon selont to thelon Finaglelon
+  // clielonnt ID of thelon clielonnt that causelond thelon blelonndelonr to selonnd this relonquelonst to thelon roots. If thelon
+  // Finaglelon ID of thelon blelonndelonr's clielonnt cannot belon delontelonrminelond, it will belon selont to "unknown" (selonelon
+  // com.twittelonr.selonarch.common.util.FinaglelonUtil.UNKNOWN_CLIelonNT_NAMelon). Howelonvelonr, othelonr selonrvicelons that
+  // selonnd relonquelonsts to roots might not selont elonarlybirdRelonquelonst.clielonntId.
   //
-  // So an "unset" clientId means: EarlybirdRequest.clientId was null.
-  // An "unknown" clientId means: the client that sent us the request
-  // tried setting EarlybirdRequest.clientId, but couldn't figure out a good value for it.
-  public static final String UNSET_CLIENT_ID = "unset";
+  // So an "unselont" clielonntId melonans: elonarlybirdRelonquelonst.clielonntId was null.
+  // An "unknown" clielonntId melonans: thelon clielonnt that selonnt us thelon relonquelonst
+  // trielond selontting elonarlybirdRelonquelonst.clielonntId, but couldn't figurelon out a good valuelon for it.
+  public static final String UNSelonT_CLIelonNT_ID = "unselont";
 
-  private static final String CLIENT_ID_FOR_UNKNOWN_CLIENTS = "unknown_client_id";
+  privatelon static final String CLIelonNT_ID_FOR_UNKNOWN_CLIelonNTS = "unknown_clielonnt_id";
 
-  private static final String CLIENT_ID_PREFIX = "client_id_";
+  privatelon static final String CLIelonNT_ID_PRelonFIX = "clielonnt_id_";
 
-  private static final String FINAGLE_CLIENT_ID_AND_CLIENT_ID_PATTERN =
-      "finagle_id_%s_and_client_id_%s";
+  privatelon static final String FINAGLelon_CLIelonNT_ID_AND_CLIelonNT_ID_PATTelonRN =
+      "finaglelon_id_%s_and_clielonnt_id_%s";
 
-  private static final String CLIENT_ID_AND_REQUEST_TYPE = "client_id_%s_and_type_%s";
+  privatelon static final String CLIelonNT_ID_AND_RelonQUelonST_TYPelon = "clielonnt_id_%s_and_typelon_%s";
 
-  private ClientIdUtil() {
+  privatelon ClielonntIdUtil() {
   }
 
-  /** Returns the ID of the client that initiated this request or UNSET_CLIENT_ID if not set. */
-  public static String getClientIdFromRequest(EarlybirdRequest request) {
-    return Optional
-        .ofNullable(request.getClientId())
-        .map(String::toLowerCase)
-        .orElse(UNSET_CLIENT_ID);
-  }
-
-  /**
-   * Returns the Strato http endpoint attribution as an Optional.
-   */
-  public static Optional<String> getClientIdFromHttpEndpointAttribution() {
-    return Optionals
-        .optional(Attribution.httpEndpoint())
-        .map(HttpEndpoint::name)
-        .map(String::toLowerCase);
-  }
-
-  /** Formats the given clientId into a string that can be used for stats. */
-  public static String formatClientId(String clientId) {
-    return CLIENT_ID_PREFIX + clientId;
+  /** Relonturns thelon ID of thelon clielonnt that initiatelond this relonquelonst or UNSelonT_CLIelonNT_ID if not selont. */
+  public static String gelontClielonntIdFromRelonquelonst(elonarlybirdRelonquelonst relonquelonst) {
+    relonturn Optional
+        .ofNullablelon(relonquelonst.gelontClielonntId())
+        .map(String::toLowelonrCaselon)
+        .orelonlselon(UNSelonT_CLIelonNT_ID);
   }
 
   /**
-   * Formats the given Finagle clientId and the given clientId into a single string that can be used
-   * for stats, or other purposes where the two IDs need to be combined.
+   * Relonturns thelon Strato http elonndpoint attribution as an Optional.
    */
-  public static String formatFinagleClientIdAndClientId(String finagleClientId, String clientId) {
-    return String.format(FINAGLE_CLIENT_ID_AND_CLIENT_ID_PATTERN, finagleClientId, clientId);
+  public static Optional<String> gelontClielonntIdFromHttpelonndpointAttribution() {
+    relonturn Optionals
+        .optional(Attribution.httpelonndpoint())
+        .map(Httpelonndpoint::namelon)
+        .map(String::toLowelonrCaselon);
+  }
+
+  /** Formats thelon givelonn clielonntId into a string that can belon uselond for stats. */
+  public static String formatClielonntId(String clielonntId) {
+    relonturn CLIelonNT_ID_PRelonFIX + clielonntId;
   }
 
   /**
-   * Formats the given clientId and requestType into a single string that can be used
-   * for stats or other purposes.
+   * Formats thelon givelonn Finaglelon clielonntId and thelon givelonn clielonntId into a singlelon string that can belon uselond
+   * for stats, or othelonr purposelons whelonrelon thelon two IDs nelonelond to belon combinelond.
    */
-  public static String formatClientIdAndRequestType(
-      String clientId, String requestType) {
-    return String.format(CLIENT_ID_AND_REQUEST_TYPE, clientId, requestType);
+  public static String formatFinaglelonClielonntIdAndClielonntId(String finaglelonClielonntId, String clielonntId) {
+    relonturn String.format(FINAGLelon_CLIelonNT_ID_AND_CLIelonNT_ID_PATTelonRN, finaglelonClielonntId, clielonntId);
   }
 
   /**
-   * Format the quota client id
+   * Formats thelon givelonn clielonntId and relonquelonstTypelon into a singlelon string that can belon uselond
+   * for stats or othelonr purposelons.
    */
-  public static String getQuotaClientId(String clientId) {
-    if (FinagleUtil.UNKNOWN_CLIENT_NAME.equals(clientId) || UNSET_CLIENT_ID.equals(clientId)) {
-      return CLIENT_ID_FOR_UNKNOWN_CLIENTS;
+  public static String formatClielonntIdAndRelonquelonstTypelon(
+      String clielonntId, String relonquelonstTypelon) {
+    relonturn String.format(CLIelonNT_ID_AND_RelonQUelonST_TYPelon, clielonntId, relonquelonstTypelon);
+  }
+
+  /**
+   * Format thelon quota clielonnt id
+   */
+  public static String gelontQuotaClielonntId(String clielonntId) {
+    if (FinaglelonUtil.UNKNOWN_CLIelonNT_NAMelon.elonquals(clielonntId) || UNSelonT_CLIelonNT_ID.elonquals(clielonntId)) {
+      relonturn CLIelonNT_ID_FOR_UNKNOWN_CLIelonNTS;
     }
 
-    return clientId;
+    relonturn clielonntId;
   }
 }

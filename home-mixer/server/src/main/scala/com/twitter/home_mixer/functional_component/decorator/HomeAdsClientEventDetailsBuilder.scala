@@ -1,46 +1,46 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.finagle.tracing.Trace
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.TimelinesDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.suggests.controller_data.home_tweets.v1.{thriftscala => v1ht}
-import com.twitter.suggests.controller_data.home_tweets.{thriftscala => ht}
-import com.twitter.suggests.controller_data.thriftscala.ControllerData
-import com.twitter.suggests.controller_data.v2.thriftscala.{ControllerData => ControllerDataV2}
+import com.twittelonr.finaglelon.tracing.Tracelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntDelontailsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.TimelonlinelonsDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.suggelonsts.controllelonr_data.homelon_twelonelonts.v1.{thriftscala => v1ht}
+import com.twittelonr.suggelonsts.controllelonr_data.homelon_twelonelonts.{thriftscala => ht}
+import com.twittelonr.suggelonsts.controllelonr_data.thriftscala.ControllelonrData
+import com.twittelonr.suggelonsts.controllelonr_data.v2.thriftscala.{ControllelonrData => ControllelonrDataV2}
 
-case class HomeAdsClientEventDetailsBuilder(injectionType: Option[String])
-    extends BaseClientEventDetailsBuilder[PipelineQuery, UniversalNoun[Any]] {
+caselon class HomelonAdsClielonntelonvelonntDelontailsBuildelonr(injelonctionTypelon: Option[String])
+    elonxtelonnds BaselonClielonntelonvelonntDelontailsBuildelonr[PipelonlinelonQuelonry, UnivelonrsalNoun[Any]] {
 
-  override def apply(
-    query: PipelineQuery,
-    candidate: UniversalNoun[Any],
-    candidateFeatures: FeatureMap
-  ): Option[ClientEventDetails] = {
-    val homeTweetsControllerDataV1 = v1ht.HomeTweetsControllerData(
-      tweetTypesBitmap = 0L,
-      traceId = Some(Trace.id.traceId.toLong),
-      requestJoinId = None)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: UnivelonrsalNoun[Any],
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): Option[ClielonntelonvelonntDelontails] = {
+    val homelonTwelonelontsControllelonrDataV1 = v1ht.HomelonTwelonelontsControllelonrData(
+      twelonelontTypelonsBitmap = 0L,
+      tracelonId = Somelon(Tracelon.id.tracelonId.toLong),
+      relonquelonstJoinId = Nonelon)
 
-    val serializedControllerData = HomeClientEventDetailsBuilder.ControllerDataSerializer(
-      ControllerData.V2(
-        ControllerDataV2.HomeTweets(ht.HomeTweetsControllerData.V1(homeTweetsControllerDataV1))))
+    val selonrializelondControllelonrData = HomelonClielonntelonvelonntDelontailsBuildelonr.ControllelonrDataSelonrializelonr(
+      ControllelonrData.V2(
+        ControllelonrDataV2.HomelonTwelonelonts(ht.HomelonTwelonelontsControllelonrData.V1(homelonTwelonelontsControllelonrDataV1))))
 
-    val clientEventDetails = ClientEventDetails(
-      conversationDetails = None,
-      timelinesDetails = Some(
-        TimelinesDetails(
-          injectionType = injectionType,
-          controllerData = Some(serializedControllerData),
-          sourceData = None)),
-      articleDetails = None,
-      liveEventDetails = None,
-      commerceDetails = None
+    val clielonntelonvelonntDelontails = ClielonntelonvelonntDelontails(
+      convelonrsationDelontails = Nonelon,
+      timelonlinelonsDelontails = Somelon(
+        TimelonlinelonsDelontails(
+          injelonctionTypelon = injelonctionTypelon,
+          controllelonrData = Somelon(selonrializelondControllelonrData),
+          sourcelonData = Nonelon)),
+      articlelonDelontails = Nonelon,
+      livelonelonvelonntDelontails = Nonelon,
+      commelonrcelonDelontails = Nonelon
     )
 
-    Some(clientEventDetails)
+    Somelon(clielonntelonvelonntDelontails)
   }
 }

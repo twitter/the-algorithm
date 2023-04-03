@@ -1,13 +1,13 @@
-package com.twitter.ann.hnsw
+packagelon com.twittelonr.ann.hnsw
 
-import com.twitter.ann.common.EmbeddingType._
-import java.io.OutputStream
+import com.twittelonr.ann.common.elonmbelonddingTypelon._
+import java.io.OutputStrelonam
 
-trait IdEmbeddingMap[T] {
-  def putIfAbsent(id: T, embedding: EmbeddingVector): EmbeddingVector
-  def put(id: T, embedding: EmbeddingVector): EmbeddingVector
-  def get(id: T): EmbeddingVector
-  def iter(): Iterator[(T, EmbeddingVector)]
-  def size(): Int
-  def toDirectory(embeddingFileOutputStream: OutputStream): Unit
+trait IdelonmbelonddingMap[T] {
+  delonf putIfAbselonnt(id: T, elonmbelondding: elonmbelonddingVelonctor): elonmbelonddingVelonctor
+  delonf put(id: T, elonmbelondding: elonmbelonddingVelonctor): elonmbelonddingVelonctor
+  delonf gelont(id: T): elonmbelonddingVelonctor
+  delonf itelonr(): Itelonrator[(T, elonmbelonddingVelonctor)]
+  delonf sizelon(): Int
+  delonf toDirelonctory(elonmbelonddingFilelonOutputStrelonam: OutputStrelonam): Unit
 }

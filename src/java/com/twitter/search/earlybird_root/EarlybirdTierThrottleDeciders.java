@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Singlelonton;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.decider.SearchDecider;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
 
 /**
- * Controls fractions of requests that are sent out to each tier.
+ * Controls fractions of relonquelonsts that arelon selonnt out to elonach tielonr.
  */
-@Singleton
-public class EarlybirdTierThrottleDeciders {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(EarlybirdTierThrottleDeciders.class);
-  private static final String TIER_THROTTLE_DECIDER_KEY_FORMAT =
-      "percentage_to_hit_cluster_%s_tier_%s";
-  private final SearchDecider decider;
+@Singlelonton
+public class elonarlybirdTielonrThrottlelonDeloncidelonrs {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(elonarlybirdTielonrThrottlelonDeloncidelonrs.class);
+  privatelon static final String TIelonR_THROTTLelon_DelonCIDelonR_KelonY_FORMAT =
+      "pelonrcelonntagelon_to_hit_clustelonr_%s_tielonr_%s";
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
 
   /**
-   * Construct a decider using the singleton decider object injected by Guice for the
-   * specified tier.
-   * See {@link com.twitter.search.common.root.SearchRootModule#provideDecider()}
+   * Construct a deloncidelonr using thelon singlelonton deloncidelonr objelonct injelonctelond by Guicelon for thelon
+   * speloncifielond tielonr.
+   * Selonelon {@link com.twittelonr.selonarch.common.root.SelonarchRootModulelon#providelonDeloncidelonr()}
    */
-  @Inject
-  public EarlybirdTierThrottleDeciders(SearchDecider decider) {
-    this.decider = decider;
+  @Injelonct
+  public elonarlybirdTielonrThrottlelonDeloncidelonrs(SelonarchDeloncidelonr deloncidelonr) {
+    this.deloncidelonr = deloncidelonr;
   }
 
   /**
-   * Return the throttle decider key for the specified tier.
+   * Relonturn thelon throttlelon deloncidelonr kelony for thelon speloncifielond tielonr.
    */
-  public String getTierThrottleDeciderKey(String clusterName, String tierName) {
-    String deciderKey = String.format(TIER_THROTTLE_DECIDER_KEY_FORMAT, clusterName, tierName);
-    if (!decider.getDecider().feature(deciderKey).exists()) {
-      LOG.warn("Decider key {} not found. Will always return unavailable.", deciderKey);
+  public String gelontTielonrThrottlelonDeloncidelonrKelony(String clustelonrNamelon, String tielonrNamelon) {
+    String deloncidelonrKelony = String.format(TIelonR_THROTTLelon_DelonCIDelonR_KelonY_FORMAT, clustelonrNamelon, tielonrNamelon);
+    if (!deloncidelonr.gelontDeloncidelonr().felonaturelon(deloncidelonrKelony).elonxists()) {
+      LOG.warn("Deloncidelonr kelony {} not found. Will always relonturn unavailablelon.", deloncidelonrKelony);
     }
-    return deciderKey;
+    relonturn deloncidelonrKelony;
   }
 
   /**
-   * Check whether a request should be sent to the specified tier.
+   * Chelonck whelonthelonr a relonquelonst should belon selonnt to thelon speloncifielond tielonr.
    */
-  public Boolean shouldSendRequestToTier(final String tierDarkReadDeciderKey) {
-    return decider.isAvailable(tierDarkReadDeciderKey);
+  public Boolelonan shouldSelonndRelonquelonstToTielonr(final String tielonrDarkRelonadDeloncidelonrKelony) {
+    relonturn deloncidelonr.isAvailablelon(tielonrDarkRelonadDeloncidelonrKelony);
   }
 }

@@ -1,205 +1,205 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Module
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.contentrecommender.thriftscala.TweetInfo
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.memcached.{Client => MemcachedClient}
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.frigate.common.store.health.TweetHealthModelStore
-import com.twitter.frigate.common.store.health.TweetHealthModelStore.TweetHealthModelStoreConfig
-import com.twitter.frigate.common.store.health.UserHealthModelStore
-import com.twitter.frigate.thriftscala.TweetHealthScores
-import com.twitter.frigate.thriftscala.UserAgathaScores
-import com.twitter.hermit.store.common.DeciderableReadableStore
-import com.twitter.hermit.store.common.ObservedCachedReadableStore
-import com.twitter.hermit.store.common.ObservedMemcachedReadableStore
-import com.twitter.hermit.store.common.ObservedReadableStore
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.strato.client.{Client => StratoClient}
-import com.twitter.contentrecommender.store.TweetInfoStore
-import com.twitter.contentrecommender.store.TweetyPieFieldsStore
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.cr_mixer.param.decider.CrMixerDecider
-import com.twitter.cr_mixer.param.decider.DeciderKey
-import com.twitter.frigate.data_pipeline.scalding.thriftscala.BlueVerifiedAnnotationsV2
-import com.twitter.recos.user_tweet_graph_plus.thriftscala.UserTweetGraphPlus
-import com.twitter.recos.user_tweet_graph_plus.thriftscala.TweetEngagementScores
-import com.twitter.relevance_platform.common.health_store.UserMediaRepresentationHealthStore
-import com.twitter.relevance_platform.common.health_store.MagicRecsRealTimeAggregatesStore
-import com.twitter.relevance_platform.thriftscala.MagicRecsRealTimeAggregatesScores
-import com.twitter.relevance_platform.thriftscala.UserMediaRepresentationScores
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.tweetypie.thriftscala.TweetService
-import com.twitter.util.Future
-import com.twitter.util.JavaTimer
-import com.twitter.util.Timer
+import com.googlelon.injelonct.Modulelon
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.contelonntreloncommelonndelonr.thriftscala.TwelonelontInfo
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.melonmcachelond.{Clielonnt => MelonmcachelondClielonnt}
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.frigatelon.common.storelon.helonalth.TwelonelontHelonalthModelonlStorelon
+import com.twittelonr.frigatelon.common.storelon.helonalth.TwelonelontHelonalthModelonlStorelon.TwelonelontHelonalthModelonlStorelonConfig
+import com.twittelonr.frigatelon.common.storelon.helonalth.UselonrHelonalthModelonlStorelon
+import com.twittelonr.frigatelon.thriftscala.TwelonelontHelonalthScorelons
+import com.twittelonr.frigatelon.thriftscala.UselonrAgathaScorelons
+import com.twittelonr.helonrmit.storelon.common.DeloncidelonrablelonRelonadablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondCachelondRelonadablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondMelonmcachelondRelonadablelonStorelon
+import com.twittelonr.helonrmit.storelon.common.ObselonrvelondRelonadablelonStorelon
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.strato.clielonnt.{Clielonnt => StratoClielonnt}
+import com.twittelonr.contelonntreloncommelonndelonr.storelon.TwelonelontInfoStorelon
+import com.twittelonr.contelonntreloncommelonndelonr.storelon.TwelonelontyPielonFielonldsStorelon
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.CrMixelonrDeloncidelonr
+import com.twittelonr.cr_mixelonr.param.deloncidelonr.DeloncidelonrKelony
+import com.twittelonr.frigatelon.data_pipelonlinelon.scalding.thriftscala.BluelonVelonrifielondAnnotationsV2
+import com.twittelonr.reloncos.uselonr_twelonelont_graph_plus.thriftscala.UselonrTwelonelontGraphPlus
+import com.twittelonr.reloncos.uselonr_twelonelont_graph_plus.thriftscala.TwelonelontelonngagelonmelonntScorelons
+import com.twittelonr.relonlelonvancelon_platform.common.helonalth_storelon.UselonrMelondiaRelonprelonselonntationHelonalthStorelon
+import com.twittelonr.relonlelonvancelon_platform.common.helonalth_storelon.MagicReloncsRelonalTimelonAggrelongatelonsStorelon
+import com.twittelonr.relonlelonvancelon_platform.thriftscala.MagicReloncsRelonalTimelonAggrelongatelonsScorelons
+import com.twittelonr.relonlelonvancelon_platform.thriftscala.UselonrMelondiaRelonprelonselonntationScorelons
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontSelonrvicelon
+import com.twittelonr.util.Futurelon
+import com.twittelonr.util.JavaTimelonr
+import com.twittelonr.util.Timelonr
 
-import javax.inject.Named
+import javax.injelonct.Namelond
 
-object TweetInfoStoreModule extends TwitterModule {
-  implicit val timer: Timer = new JavaTimer(true)
-  override def modules: Seq[Module] = Seq(UnifiedCacheClient)
+objelonct TwelonelontInfoStorelonModulelon elonxtelonnds TwittelonrModulelon {
+  implicit val timelonr: Timelonr = nelonw JavaTimelonr(truelon)
+  ovelonrridelon delonf modulelons: Selonq[Modulelon] = Selonq(UnifielondCachelonClielonnt)
 
-  @Provides
-  @Singleton
-  def providesTweetInfoStore(
-    statsReceiver: StatsReceiver,
-    serviceIdentifier: ServiceIdentifier,
-    stratoClient: StratoClient,
-    @Named(ModuleNames.UnifiedCache) crMixerUnifiedCacheClient: MemcachedClient,
-    manhattanKVClientMtlsParams: ManhattanKVClientMtlsParams,
-    tweetyPieService: TweetService.MethodPerEndpoint,
-    userTweetGraphPlusService: UserTweetGraphPlus.MethodPerEndpoint,
-    @Named(ModuleNames.BlueVerifiedAnnotationStore) blueVerifiedAnnotationStore: ReadableStore[
+  @Providelons
+  @Singlelonton
+  delonf providelonsTwelonelontInfoStorelon(
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    stratoClielonnt: StratoClielonnt,
+    @Namelond(ModulelonNamelons.UnifielondCachelon) crMixelonrUnifielondCachelonClielonnt: MelonmcachelondClielonnt,
+    manhattanKVClielonntMtlsParams: ManhattanKVClielonntMtlsParams,
+    twelonelontyPielonSelonrvicelon: TwelonelontSelonrvicelon.MelonthodPelonrelonndpoint,
+    uselonrTwelonelontGraphPlusSelonrvicelon: UselonrTwelonelontGraphPlus.MelonthodPelonrelonndpoint,
+    @Namelond(ModulelonNamelons.BluelonVelonrifielondAnnotationStorelon) bluelonVelonrifielondAnnotationStorelon: RelonadablelonStorelon[
       String,
-      BlueVerifiedAnnotationsV2
+      BluelonVelonrifielondAnnotationsV2
     ],
-    decider: CrMixerDecider
-  ): ReadableStore[TweetId, TweetInfo] = {
+    deloncidelonr: CrMixelonrDeloncidelonr
+  ): RelonadablelonStorelon[TwelonelontId, TwelonelontInfo] = {
 
-    val tweetEngagementScoreStore: ReadableStore[TweetId, TweetEngagementScores] = {
-      val underlyingStore =
-        ObservedReadableStore(new ReadableStore[TweetId, TweetEngagementScores] {
-          override def get(
-            k: TweetId
-          ): Future[Option[TweetEngagementScores]] = {
-            userTweetGraphPlusService.tweetEngagementScore(k).map {
-              Some(_)
+    val twelonelontelonngagelonmelonntScorelonStorelon: RelonadablelonStorelon[TwelonelontId, TwelonelontelonngagelonmelonntScorelons] = {
+      val undelonrlyingStorelon =
+        ObselonrvelondRelonadablelonStorelon(nelonw RelonadablelonStorelon[TwelonelontId, TwelonelontelonngagelonmelonntScorelons] {
+          ovelonrridelon delonf gelont(
+            k: TwelonelontId
+          ): Futurelon[Option[TwelonelontelonngagelonmelonntScorelons]] = {
+            uselonrTwelonelontGraphPlusSelonrvicelon.twelonelontelonngagelonmelonntScorelon(k).map {
+              Somelon(_)
             }
           }
-        })(statsReceiver.scope("UserTweetGraphTweetEngagementScoreStore"))
+        })(statsReloncelonivelonr.scopelon("UselonrTwelonelontGraphTwelonelontelonngagelonmelonntScorelonStorelon"))
 
-      DeciderableReadableStore(
-        underlyingStore,
-        decider.deciderGateBuilder.idGate(
-          DeciderKey.enableUtgRealTimeTweetEngagementScoreDeciderKey),
-        statsReceiver.scope("UserTweetGraphTweetEngagementScoreStore")
+      DeloncidelonrablelonRelonadablelonStorelon(
+        undelonrlyingStorelon,
+        deloncidelonr.deloncidelonrGatelonBuildelonr.idGatelon(
+          DeloncidelonrKelony.elonnablelonUtgRelonalTimelonTwelonelontelonngagelonmelonntScorelonDeloncidelonrKelony),
+        statsReloncelonivelonr.scopelon("UselonrTwelonelontGraphTwelonelontelonngagelonmelonntScorelonStorelon")
       )
 
     }
 
-    val tweetHealthModelStore: ReadableStore[TweetId, TweetHealthScores] = {
-      val underlyingStore = TweetHealthModelStore.buildReadableStore(
-        stratoClient,
-        Some(
-          TweetHealthModelStoreConfig(
-            enablePBlock = true,
-            enableToxicity = true,
-            enablePSpammy = true,
-            enablePReported = true,
-            enableSpammyTweetContent = true,
-            enablePNegMultimodal = true,
+    val twelonelontHelonalthModelonlStorelon: RelonadablelonStorelon[TwelonelontId, TwelonelontHelonalthScorelons] = {
+      val undelonrlyingStorelon = TwelonelontHelonalthModelonlStorelon.buildRelonadablelonStorelon(
+        stratoClielonnt,
+        Somelon(
+          TwelonelontHelonalthModelonlStorelonConfig(
+            elonnablelonPBlock = truelon,
+            elonnablelonToxicity = truelon,
+            elonnablelonPSpammy = truelon,
+            elonnablelonPRelonportelond = truelon,
+            elonnablelonSpammyTwelonelontContelonnt = truelon,
+            elonnablelonPNelongMultimodal = truelon,
           ))
-      )(statsReceiver.scope("UnderlyingTweetHealthModelStore"))
+      )(statsReloncelonivelonr.scopelon("UndelonrlyingTwelonelontHelonalthModelonlStorelon"))
 
-      DeciderableReadableStore(
-        ObservedMemcachedReadableStore.fromCacheClient(
-          backingStore = underlyingStore,
-          cacheClient = crMixerUnifiedCacheClient,
+      DeloncidelonrablelonRelonadablelonStorelon(
+        ObselonrvelondMelonmcachelondRelonadablelonStorelon.fromCachelonClielonnt(
+          backingStorelon = undelonrlyingStorelon,
+          cachelonClielonnt = crMixelonrUnifielondCachelonClielonnt,
           ttl = 2.hours
         )(
-          valueInjection = BinaryScalaCodec(TweetHealthScores),
-          statsReceiver = statsReceiver.scope("memCachedTweetHealthModelStore"),
-          keyToString = { k: TweetId => s"tHMS/$k" }
+          valuelonInjelonction = BinaryScalaCodelonc(TwelonelontHelonalthScorelons),
+          statsReloncelonivelonr = statsReloncelonivelonr.scopelon("melonmCachelondTwelonelontHelonalthModelonlStorelon"),
+          kelonyToString = { k: TwelonelontId => s"tHMS/$k" }
         ),
-        decider.deciderGateBuilder.idGate(DeciderKey.enableHealthSignalsScoreDeciderKey),
-        statsReceiver.scope("TweetHealthModelStore")
-      ) // use s"tHMS/$k" instead of s"tweetHealthModelStore/$k" to differentiate from CR cache
+        deloncidelonr.deloncidelonrGatelonBuildelonr.idGatelon(DeloncidelonrKelony.elonnablelonHelonalthSignalsScorelonDeloncidelonrKelony),
+        statsReloncelonivelonr.scopelon("TwelonelontHelonalthModelonlStorelon")
+      ) // uselon s"tHMS/$k" instelonad of s"twelonelontHelonalthModelonlStorelon/$k" to diffelonrelonntiatelon from CR cachelon
     }
 
-    val userHealthModelStore: ReadableStore[UserId, UserAgathaScores] = {
-      val underlyingStore = UserHealthModelStore.buildReadableStore(stratoClient)(
-        statsReceiver.scope("UnderlyingUserHealthModelStore"))
-      DeciderableReadableStore(
-        ObservedMemcachedReadableStore.fromCacheClient(
-          backingStore = underlyingStore,
-          cacheClient = crMixerUnifiedCacheClient,
+    val uselonrHelonalthModelonlStorelon: RelonadablelonStorelon[UselonrId, UselonrAgathaScorelons] = {
+      val undelonrlyingStorelon = UselonrHelonalthModelonlStorelon.buildRelonadablelonStorelon(stratoClielonnt)(
+        statsReloncelonivelonr.scopelon("UndelonrlyingUselonrHelonalthModelonlStorelon"))
+      DeloncidelonrablelonRelonadablelonStorelon(
+        ObselonrvelondMelonmcachelondRelonadablelonStorelon.fromCachelonClielonnt(
+          backingStorelon = undelonrlyingStorelon,
+          cachelonClielonnt = crMixelonrUnifielondCachelonClielonnt,
           ttl = 18.hours
         )(
-          valueInjection = BinaryScalaCodec(UserAgathaScores),
-          statsReceiver = statsReceiver.scope("memCachedUserHealthModelStore"),
-          keyToString = { k: UserId => s"uHMS/$k" }
+          valuelonInjelonction = BinaryScalaCodelonc(UselonrAgathaScorelons),
+          statsReloncelonivelonr = statsReloncelonivelonr.scopelon("melonmCachelondUselonrHelonalthModelonlStorelon"),
+          kelonyToString = { k: UselonrId => s"uHMS/$k" }
         ),
-        decider.deciderGateBuilder.idGate(DeciderKey.enableUserAgathaScoreDeciderKey),
-        statsReceiver.scope("UserHealthModelStore")
+        deloncidelonr.deloncidelonrGatelonBuildelonr.idGatelon(DeloncidelonrKelony.elonnablelonUselonrAgathaScorelonDeloncidelonrKelony),
+        statsReloncelonivelonr.scopelon("UselonrHelonalthModelonlStorelon")
       )
     }
 
-    val userMediaRepresentationHealthStore: ReadableStore[UserId, UserMediaRepresentationScores] = {
-      val underlyingStore =
-        UserMediaRepresentationHealthStore.buildReadableStore(
-          manhattanKVClientMtlsParams,
-          statsReceiver.scope("UnderlyingUserMediaRepresentationHealthStore")
+    val uselonrMelondiaRelonprelonselonntationHelonalthStorelon: RelonadablelonStorelon[UselonrId, UselonrMelondiaRelonprelonselonntationScorelons] = {
+      val undelonrlyingStorelon =
+        UselonrMelondiaRelonprelonselonntationHelonalthStorelon.buildRelonadablelonStorelon(
+          manhattanKVClielonntMtlsParams,
+          statsReloncelonivelonr.scopelon("UndelonrlyingUselonrMelondiaRelonprelonselonntationHelonalthStorelon")
         )
-      DeciderableReadableStore(
-        ObservedMemcachedReadableStore.fromCacheClient(
-          backingStore = underlyingStore,
-          cacheClient = crMixerUnifiedCacheClient,
+      DeloncidelonrablelonRelonadablelonStorelon(
+        ObselonrvelondMelonmcachelondRelonadablelonStorelon.fromCachelonClielonnt(
+          backingStorelon = undelonrlyingStorelon,
+          cachelonClielonnt = crMixelonrUnifielondCachelonClielonnt,
           ttl = 12.hours
         )(
-          valueInjection = BinaryScalaCodec(UserMediaRepresentationScores),
-          statsReceiver = statsReceiver.scope("memCacheUserMediaRepresentationHealthStore"),
-          keyToString = { k: UserId => s"uMRHS/$k" }
+          valuelonInjelonction = BinaryScalaCodelonc(UselonrMelondiaRelonprelonselonntationScorelons),
+          statsReloncelonivelonr = statsReloncelonivelonr.scopelon("melonmCachelonUselonrMelondiaRelonprelonselonntationHelonalthStorelon"),
+          kelonyToString = { k: UselonrId => s"uMRHS/$k" }
         ),
-        decider.deciderGateBuilder.idGate(DeciderKey.enableUserMediaRepresentationStoreDeciderKey),
-        statsReceiver.scope("UserMediaRepresentationHealthStore")
+        deloncidelonr.deloncidelonrGatelonBuildelonr.idGatelon(DeloncidelonrKelony.elonnablelonUselonrMelondiaRelonprelonselonntationStorelonDeloncidelonrKelony),
+        statsReloncelonivelonr.scopelon("UselonrMelondiaRelonprelonselonntationHelonalthStorelon")
       )
     }
 
-    val magicRecsRealTimeAggregatesStore: ReadableStore[
-      TweetId,
-      MagicRecsRealTimeAggregatesScores
+    val magicReloncsRelonalTimelonAggrelongatelonsStorelon: RelonadablelonStorelon[
+      TwelonelontId,
+      MagicReloncsRelonalTimelonAggrelongatelonsScorelons
     ] = {
-      val underlyingStore =
-        MagicRecsRealTimeAggregatesStore.buildReadableStore(
-          serviceIdentifier,
-          statsReceiver.scope("UnderlyingMagicRecsRealTimeAggregatesScores")
+      val undelonrlyingStorelon =
+        MagicReloncsRelonalTimelonAggrelongatelonsStorelon.buildRelonadablelonStorelon(
+          selonrvicelonIdelonntifielonr,
+          statsReloncelonivelonr.scopelon("UndelonrlyingMagicReloncsRelonalTimelonAggrelongatelonsScorelons")
         )
-      DeciderableReadableStore(
-        underlyingStore,
-        decider.deciderGateBuilder.idGate(DeciderKey.enableMagicRecsRealTimeAggregatesStore),
-        statsReceiver.scope("MagicRecsRealTimeAggregatesStore")
+      DeloncidelonrablelonRelonadablelonStorelon(
+        undelonrlyingStorelon,
+        deloncidelonr.deloncidelonrGatelonBuildelonr.idGatelon(DeloncidelonrKelony.elonnablelonMagicReloncsRelonalTimelonAggrelongatelonsStorelon),
+        statsReloncelonivelonr.scopelon("MagicReloncsRelonalTimelonAggrelongatelonsStorelon")
       )
     }
 
-    val tweetInfoStore: ReadableStore[TweetId, TweetInfo] = {
-      val underlyingStore = TweetInfoStore(
-        TweetyPieFieldsStore.getStoreFromTweetyPie(tweetyPieService),
-        userMediaRepresentationHealthStore,
-        magicRecsRealTimeAggregatesStore,
-        tweetEngagementScoreStore,
-        blueVerifiedAnnotationStore
-      )(statsReceiver.scope("tweetInfoStore"))
+    val twelonelontInfoStorelon: RelonadablelonStorelon[TwelonelontId, TwelonelontInfo] = {
+      val undelonrlyingStorelon = TwelonelontInfoStorelon(
+        TwelonelontyPielonFielonldsStorelon.gelontStorelonFromTwelonelontyPielon(twelonelontyPielonSelonrvicelon),
+        uselonrMelondiaRelonprelonselonntationHelonalthStorelon,
+        magicReloncsRelonalTimelonAggrelongatelonsStorelon,
+        twelonelontelonngagelonmelonntScorelonStorelon,
+        bluelonVelonrifielondAnnotationStorelon
+      )(statsReloncelonivelonr.scopelon("twelonelontInfoStorelon"))
 
-      val memcachedStore = ObservedMemcachedReadableStore.fromCacheClient(
-        backingStore = underlyingStore,
-        cacheClient = crMixerUnifiedCacheClient,
-        ttl = 15.minutes,
-        // Hydrating tweetInfo is now a required step for all candidates,
-        // hence we needed to tune these thresholds.
-        asyncUpdate = serviceIdentifier.environment == "prod"
+      val melonmcachelondStorelon = ObselonrvelondMelonmcachelondRelonadablelonStorelon.fromCachelonClielonnt(
+        backingStorelon = undelonrlyingStorelon,
+        cachelonClielonnt = crMixelonrUnifielondCachelonClielonnt,
+        ttl = 15.minutelons,
+        // Hydrating twelonelontInfo is now a relonquirelond stelonp for all candidatelons,
+        // helonncelon welon nelonelondelond to tunelon thelonselon threlonsholds.
+        asyncUpdatelon = selonrvicelonIdelonntifielonr.elonnvironmelonnt == "prod"
       )(
-        valueInjection = BinaryScalaCodec(TweetInfo),
-        statsReceiver = statsReceiver.scope("memCachedTweetInfoStore"),
-        keyToString = { k: TweetId => s"tIS/$k" }
+        valuelonInjelonction = BinaryScalaCodelonc(TwelonelontInfo),
+        statsReloncelonivelonr = statsReloncelonivelonr.scopelon("melonmCachelondTwelonelontInfoStorelon"),
+        kelonyToString = { k: TwelonelontId => s"tIS/$k" }
       )
 
-      ObservedCachedReadableStore.from(
-        memcachedStore,
-        ttl = 15.minutes,
-        maxKeys = 8388607, // Check TweetInfo definition. size~92b. Around 736 MB
-        windowSize = 10000L,
-        cacheName = "tweet_info_cache",
-        maxMultiGetSize = 20
-      )(statsReceiver.scope("inMemoryCachedTweetInfoStore"))
+      ObselonrvelondCachelondRelonadablelonStorelon.from(
+        melonmcachelondStorelon,
+        ttl = 15.minutelons,
+        maxKelonys = 8388607, // Chelonck TwelonelontInfo delonfinition. sizelon~92b. Around 736 MB
+        windowSizelon = 10000L,
+        cachelonNamelon = "twelonelont_info_cachelon",
+        maxMultiGelontSizelon = 20
+      )(statsReloncelonivelonr.scopelon("inMelonmoryCachelondTwelonelontInfoStorelon"))
     }
-    tweetInfoStore
+    twelonelontInfoStorelon
   }
 }

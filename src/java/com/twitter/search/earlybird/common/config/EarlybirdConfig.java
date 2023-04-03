@@ -1,363 +1,363 @@
-package com.twitter.search.earlybird.common.config;
+packagelon com.twittelonr.selonarch.elonarlybird.common.config;
 
-import java.util.Date;
+import java.util.Datelon;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.collect.ImmutableMap;
+import com.googlelon.common.collelonct.ImmutablelonMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.aurora.AuroraInstanceKey;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.config.ConfigFile;
-import com.twitter.search.common.config.ConfigurationException;
-import com.twitter.search.common.config.SearchPenguinVersionsConfig;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.aurora.AuroraInstancelonKelony;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.config.ConfigFilelon;
+import com.twittelonr.selonarch.common.config.Configurationelonxcelonption;
+import com.twittelonr.selonarch.common.config.SelonarchPelonnguinVelonrsionsConfig;
 
-public final class EarlybirdConfig {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdConfig.class);
+public final class elonarlybirdConfig {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdConfig.class);
 
-  private static final String DEFAULT_CONFIG_FILE = "earlybird-search.yml";
-  private static final String LATE_TWEET_BUFFER_KEY = "late_tweet_buffer";
+  privatelon static final String DelonFAULT_CONFIG_FILelon = "elonarlybird-selonarch.yml";
+  privatelon static final String LATelon_TWelonelonT_BUFFelonR_KelonY = "latelon_twelonelont_buffelonr";
 
-  public static final String EARLYBIRD_ZK_CONFIG_DIR = "/twitter/search/production/earlybird/";
-  public static final String EARLYBIRD_CONFIG_DIR = "earlybird/config";
+  public static final String elonARLYBIRD_ZK_CONFIG_DIR = "/twittelonr/selonarch/production/elonarlybird/";
+  public static final String elonARLYBIRD_CONFIG_DIR = "elonarlybird/config";
 
-  public static final String USER_SNAPSHOT_BASE_DIR = "user_snapshot_base_dir";
+  public static final String USelonR_SNAPSHOT_BASelon_DIR = "uselonr_snapshot_baselon_dir";
 
-  private static volatile ConfigFile earlybirdConfig = null;
-  private static volatile Map<String, Object> overrideValueMap = ImmutableMap.of();
+  privatelon static volatilelon ConfigFilelon elonarlybirdConfig = null;
+  privatelon static volatilelon Map<String, Objelonct> ovelonrridelonValuelonMap = ImmutablelonMap.of();
 
-  private static String logDirOverride = null;
-  private static AuroraInstanceKey auroraInstanceKey = null;
+  privatelon static String logDirOvelonrridelon = null;
+  privatelon static AuroraInstancelonKelony auroraInstancelonKelony = null;
 
-  private static int adminPort;
+  privatelon static int adminPort;
 
-  private EarlybirdConfig() { }
+  privatelon elonarlybirdConfig() { }
 
-  private static final class PenguinVersionHolder {
-    private static final PenguinVersion PENGUIN_VERSION_SINGLETON =
-        SearchPenguinVersionsConfig.getSingleSupportedVersion(
-            EarlybirdProperty.PENGUIN_VERSION.get());
-    private static final byte PENGUIN_VERSION_BYTE_VALUE =
-        PENGUIN_VERSION_SINGLETON.getByteValue();
+  privatelon static final class PelonnguinVelonrsionHoldelonr {
+    privatelon static final PelonnguinVelonrsion PelonNGUIN_VelonRSION_SINGLelonTON =
+        SelonarchPelonnguinVelonrsionsConfig.gelontSinglelonSupportelondVelonrsion(
+            elonarlybirdPropelonrty.PelonNGUIN_VelonRSION.gelont());
+    privatelon static final bytelon PelonNGUIN_VelonRSION_BYTelon_VALUelon =
+        PelonNGUIN_VelonRSION_SINGLelonTON.gelontBytelonValuelon();
   }
 
-  public static byte getPenguinVersionByte() {
-    return PenguinVersionHolder.PENGUIN_VERSION_BYTE_VALUE;
+  public static bytelon gelontPelonnguinVelonrsionBytelon() {
+    relonturn PelonnguinVelonrsionHoldelonr.PelonNGUIN_VelonRSION_BYTelon_VALUelon;
   }
 
-  public static PenguinVersion getPenguinVersion() {
-    return PenguinVersionHolder.PENGUIN_VERSION_SINGLETON;
+  public static PelonnguinVelonrsion gelontPelonnguinVelonrsion() {
+    relonturn PelonnguinVelonrsionHoldelonr.PelonNGUIN_VelonRSION_SINGLelonTON;
   }
 
   /**
-   * Reads the earlybird configuration from the given file.
+   * Relonads thelon elonarlybird configuration from thelon givelonn filelon.
    */
-  public static synchronized void init(@Nullable String configFile) {
-    if (earlybirdConfig == null) {
-      String file = configFile == null ? DEFAULT_CONFIG_FILE : configFile;
-      earlybirdConfig = new ConfigFile(EARLYBIRD_CONFIG_DIR, file);
+  public static synchronizelond void init(@Nullablelon String configFilelon) {
+    if (elonarlybirdConfig == null) {
+      String filelon = configFilelon == null ? DelonFAULT_CONFIG_FILelon : configFilelon;
+      elonarlybirdConfig = nelonw ConfigFilelon(elonARLYBIRD_CONFIG_DIR, filelon);
     }
   }
 
-  public static synchronized void setOverrideValues(Map<String, Object> overrideValues) {
-    overrideValueMap = ImmutableMap.copyOf(overrideValues);
+  public static synchronizelond void selontOvelonrridelonValuelons(Map<String, Objelonct> ovelonrridelonValuelons) {
+    ovelonrridelonValuelonMap = ImmutablelonMap.copyOf(ovelonrridelonValuelons);
   }
 
   /**
-   * Pack all values in a string that can be printed for informational purposes.
-   * @return the string.
+   * Pack all valuelons in a string that can belon printelond for informational purposelons.
+   * @relonturn thelon string.
    */
-  public static String allValuesAsString() {
-    Map<String, String> stringMap = earlybirdConfig.getStringMap();
+  public static String allValuelonsAsString() {
+    Map<String, String> stringMap = elonarlybirdConfig.gelontStringMap();
 
-    StringBuilder stringBuilder = new StringBuilder();
+    StringBuildelonr stringBuildelonr = nelonw StringBuildelonr();
 
-    stringBuilder.append("Config environment: " + Config.getEnvironment() + "\n\n");
-    stringBuilder.append(
-        String.format("Values from earlybird-search.yml (total %d):\n", stringMap.size()));
+    stringBuildelonr.appelonnd("Config elonnvironmelonnt: " + Config.gelontelonnvironmelonnt() + "\n\n");
+    stringBuildelonr.appelonnd(
+        String.format("Valuelons from elonarlybird-selonarch.yml (total %d):\n", stringMap.sizelon()));
 
-    stringMap.forEach((key, value) -> {
-      stringBuilder.append(String.format("  %s: %s\n", key, value.toString()));
-      if (overrideValueMap.containsKey(key)) {
-        stringBuilder.append(String.format(
-          "    override value: %s\n", overrideValueMap.get(key).toString()));
+    stringMap.forelonach((kelony, valuelon) -> {
+      stringBuildelonr.appelonnd(String.format("  %s: %s\n", kelony, valuelon.toString()));
+      if (ovelonrridelonValuelonMap.containsKelony(kelony)) {
+        stringBuildelonr.appelonnd(String.format(
+          "    ovelonrridelon valuelon: %s\n", ovelonrridelonValuelonMap.gelont(kelony).toString()));
       }
     });
 
-    stringBuilder.append(String.format(
-        "\n\nAll command-line overrides (total: %d):\n", overrideValueMap.size()));
-    overrideValueMap.forEach((key, value) -> {
-      stringBuilder.append(String.format("  %s: %s\n", key, value.toString()));
+    stringBuildelonr.appelonnd(String.format(
+        "\n\nAll command-linelon ovelonrridelons (total: %d):\n", ovelonrridelonValuelonMap.sizelon()));
+    ovelonrridelonValuelonMap.forelonach((kelony, valuelon) -> {
+      stringBuildelonr.appelonnd(String.format("  %s: %s\n", kelony, valuelon.toString()));
     });
 
-    return stringBuilder.toString();
+    relonturn stringBuildelonr.toString();
   }
 
   /**
-   * Returns the value of the given property as a string. If the property is not set, a runtime
-   * exception is thrown.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a string. If thelon propelonrty is not selont, a runtimelon
+   * elonxcelonption is thrown.
    */
-  public static String getString(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (String) overrideValue;
+  public static String gelontString(String propelonrty) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (String) ovelonrridelonValuelon;
     }
 
     try {
-      return earlybirdConfig.getString(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config string " + property, e);
-      throw new RuntimeException(e);
+      relonturn elonarlybirdConfig.gelontString(propelonrty);
+    } catch (Configurationelonxcelonption elon) {
+      LOG.elonrror("Fatal elonrror: could not gelont config string " + propelonrty, elon);
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 
   /**
-   * Returns the value of the given property as a string.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a string.
    */
-  public static String getString(String property, String defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (String) overrideValue;
+  public static String gelontString(String propelonrty, String delonfaultValuelon) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (String) ovelonrridelonValuelon;
     }
 
-    return earlybirdConfig.getString(property, defaultValue);
+    relonturn elonarlybirdConfig.gelontString(propelonrty, delonfaultValuelon);
   }
 
   /**
-   * Returns the value of the given property as an integer. If the property is not set, a runtime
-   * exception is thrown.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as an intelongelonr. If thelon propelonrty is not selont, a runtimelon
+   * elonxcelonption is thrown.
    */
-  public static int getInt(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (int) overrideValue;
+  public static int gelontInt(String propelonrty) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (int) ovelonrridelonValuelon;
     }
 
     try {
-      return earlybirdConfig.getInt(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config int " + property, e);
-      throw new RuntimeException(e);
+      relonturn elonarlybirdConfig.gelontInt(propelonrty);
+    } catch (Configurationelonxcelonption elon) {
+      LOG.elonrror("Fatal elonrror: could not gelont config int " + propelonrty, elon);
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 
   /**
-   * Returns the value of the given property as an integer.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as an intelongelonr.
    */
-  public static int getInt(String property, int defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (int) overrideValue;
+  public static int gelontInt(String propelonrty, int delonfaultValuelon) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (int) ovelonrridelonValuelon;
     }
 
-    return earlybirdConfig.getInt(property, defaultValue);
+    relonturn elonarlybirdConfig.gelontInt(propelonrty, delonfaultValuelon);
   }
 
   /**
-   * Returns the value of the given property as a double.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a doublelon.
    */
-  public static double getDouble(String property, double defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (double) overrideValue;
+  public static doublelon gelontDoublelon(String propelonrty, doublelon delonfaultValuelon) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (doublelon) ovelonrridelonValuelon;
     }
 
-    return earlybirdConfig.getDouble(property, defaultValue);
+    relonturn elonarlybirdConfig.gelontDoublelon(propelonrty, delonfaultValuelon);
   }
 
   /**
-   * Returns the value of the given property as a long. If the property is not set, a runtime
-   * exception is thrown.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a long. If thelon propelonrty is not selont, a runtimelon
+   * elonxcelonption is thrown.
    */
-  public static long getLong(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (long) overrideValue;
+  public static long gelontLong(String propelonrty) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (long) ovelonrridelonValuelon;
     }
 
     try {
-      return earlybirdConfig.getLong(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config long " + property, e);
-      throw new RuntimeException(e);
+      relonturn elonarlybirdConfig.gelontLong(propelonrty);
+    } catch (Configurationelonxcelonption elon) {
+      LOG.elonrror("Fatal elonrror: could not gelont config long " + propelonrty, elon);
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 
   /**
-   * Returns the value of the given property as a long.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a long.
    */
-  public static long getLong(String property, long defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (long) overrideValue;
+  public static long gelontLong(String propelonrty, long delonfaultValuelon) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (long) ovelonrridelonValuelon;
     }
 
-    return earlybirdConfig.getLong(property, defaultValue);
+    relonturn elonarlybirdConfig.gelontLong(propelonrty, delonfaultValuelon);
   }
 
   /**
-   * Returns the value of the given property as a boolean. If the property is not set, a runtime
-   * exception is thrown.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a boolelonan. If thelon propelonrty is not selont, a runtimelon
+   * elonxcelonption is thrown.
    */
-  public static boolean getBool(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (boolean) overrideValue;
+  public static boolelonan gelontBool(String propelonrty) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (boolelonan) ovelonrridelonValuelon;
     }
 
     try {
-      return earlybirdConfig.getBool(property);
-    } catch (ConfigurationException e) {
-      LOG.error("Fatal error: could not get config boolean " + property, e);
-      throw new RuntimeException(e);
+      relonturn elonarlybirdConfig.gelontBool(propelonrty);
+    } catch (Configurationelonxcelonption elon) {
+      LOG.elonrror("Fatal elonrror: could not gelont config boolelonan " + propelonrty, elon);
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 
   /**
-   * Returns the value of the given property as a boolean.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a boolelonan.
    */
-  public static boolean getBool(String property, boolean defaultValue) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (boolean) overrideValue;
+  public static boolelonan gelontBool(String propelonrty, boolelonan delonfaultValuelon) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (boolelonan) ovelonrridelonValuelon;
     }
 
-    return earlybirdConfig.getBool(property, defaultValue);
+    relonturn elonarlybirdConfig.gelontBool(propelonrty, delonfaultValuelon);
   }
 
   /**
-   * Returns the value of the given property as a date.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a datelon.
    */
-  public static Date getDate(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (Date) overrideValue;
+  public static Datelon gelontDatelon(String propelonrty) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (Datelon) ovelonrridelonValuelon;
     }
 
-    Date date = (Date) earlybirdConfig.getObject(property, null);
-    if (date == null) {
-      throw new RuntimeException("Could not get config date: " + property);
+    Datelon datelon = (Datelon) elonarlybirdConfig.gelontObjelonct(propelonrty, null);
+    if (datelon == null) {
+      throw nelonw Runtimelonelonxcelonption("Could not gelont config datelon: " + propelonrty);
     }
-    return date;
+    relonturn datelon;
   }
 
   /**
-   * Returns the value of the given property as a list of strings.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a list of strings.
    */
-  public static List<String> getListOfStrings(String property) {
-    Object overrideValue = overrideValueMap.get(property);
-    if (overrideValue != null) {
-      return (List<String>) overrideValue;
+  public static List<String> gelontListOfStrings(String propelonrty) {
+    Objelonct ovelonrridelonValuelon = ovelonrridelonValuelonMap.gelont(propelonrty);
+    if (ovelonrridelonValuelon != null) {
+      relonturn (List<String>) ovelonrridelonValuelon;
     }
 
-    List<String> list = (List<String>) earlybirdConfig.getObject(property, null);
+    List<String> list = (List<String>) elonarlybirdConfig.gelontObjelonct(propelonrty, null);
     if (list == null) {
-      throw new RuntimeException("Could not get list of strings: " + property);
+      throw nelonw Runtimelonelonxcelonption("Could not gelont list of strings: " + propelonrty);
     }
-    return list;
+    relonturn list;
   }
 
   /**
-   * Returns the value of the given property as a map.
+   * Relonturns thelon valuelon of thelon givelonn propelonrty as a map.
    */
-  @SuppressWarnings("unchecked")
-  public static Map<String, Object> getMap(String property) {
-    Map<String, Object> map = (Map<String, Object>) earlybirdConfig.getObject(property, null);
+  @SupprelonssWarnings("unchelonckelond")
+  public static Map<String, Objelonct> gelontMap(String propelonrty) {
+    Map<String, Objelonct> map = (Map<String, Objelonct>) elonarlybirdConfig.gelontObjelonct(propelonrty, null);
     if (map == null) {
-      throw new RuntimeException("Could not find config property: " + property);
+      throw nelonw Runtimelonelonxcelonption("Could not find config propelonrty: " + propelonrty);
     }
-    return map;
+    relonturn map;
   }
 
-  public static int getMaxSegmentSize() {
-    return EarlybirdConfig.getInt("max_segment_size", 1 << 16);
+  public static int gelontMaxSelongmelonntSizelon() {
+    relonturn elonarlybirdConfig.gelontInt("max_selongmelonnt_sizelon", 1 << 16);
   }
 
   /**
-   * Returns the log properties file.
+   * Relonturns thelon log propelonrtielons filelon.
    */
-  public static String getLogPropertiesFile() {
+  public static String gelontLogPropelonrtielonsFilelon() {
     try {
-      String filename = earlybirdConfig.getString("log_properties_filename");
-      return earlybirdConfig.getConfigFilePath(filename);
-    } catch (ConfigurationException e) {
-      // Print here rather than use LOG - log was probably not initialized yet.
-      LOG.error("Fatal error: could not get log properties file", e);
-      throw new RuntimeException(e);
+      String filelonnamelon = elonarlybirdConfig.gelontString("log_propelonrtielons_filelonnamelon");
+      relonturn elonarlybirdConfig.gelontConfigFilelonPath(filelonnamelon);
+    } catch (Configurationelonxcelonption elon) {
+      // Print helonrelon rathelonr than uselon LOG - log was probably not initializelond yelont.
+      LOG.elonrror("Fatal elonrror: could not gelont log propelonrtielons filelon", elon);
+      throw nelonw Runtimelonelonxcelonption(elon);
     }
   }
 
   /**
-   * Returns the log directory.
+   * Relonturns thelon log direlonctory.
    */
-  public static String getLogDir() {
-    if (logDirOverride != null) {
-      return logDirOverride;
-    } else {
-      return EarlybirdConfig.getString("log_dir");
+  public static String gelontLogDir() {
+    if (logDirOvelonrridelon != null) {
+      relonturn logDirOvelonrridelon;
+    } elonlselon {
+      relonturn elonarlybirdConfig.gelontString("log_dir");
     }
   }
 
-  public static void overrideLogDir(String logDir) {
-    EarlybirdConfig.logDirOverride = logDir;
+  public static void ovelonrridelonLogDir(String logDir) {
+    elonarlybirdConfig.logDirOvelonrridelon = logDir;
   }
 
-  public static int getThriftPort() {
-    return EarlybirdProperty.THRIFT_PORT.get();
+  public static int gelontThriftPort() {
+    relonturn elonarlybirdPropelonrty.THRIFT_PORT.gelont();
   }
 
-  public static int getWarmUpThriftPort() {
-    return EarlybirdProperty.WARMUP_THRIFT_PORT.get();
+  public static int gelontWarmUpThriftPort() {
+    relonturn elonarlybirdPropelonrty.WARMUP_THRIFT_PORT.gelont();
   }
 
-  public static int getSearcherThreads() {
-    return EarlybirdProperty.SEARCHER_THREADS.get();
+  public static int gelontSelonarchelonrThrelonads() {
+    relonturn elonarlybirdPropelonrty.SelonARCHelonR_THRelonADS.gelont();
   }
 
-  public static int getLateTweetBuffer() {
-    return getInt(LATE_TWEET_BUFFER_KEY);
+  public static int gelontLatelonTwelonelontBuffelonr() {
+    relonturn gelontInt(LATelon_TWelonelonT_BUFFelonR_KelonY);
   }
 
-  public static int getAdminPort() {
-    return adminPort;
+  public static int gelontAdminPort() {
+    relonturn adminPort;
   }
 
-  public static void setAdminPort(int adminPort) {
-    EarlybirdConfig.adminPort = adminPort;
+  public static void selontAdminPort(int adminPort) {
+    elonarlybirdConfig.adminPort = adminPort;
   }
 
-  public static boolean isRealtimeOrProtected() {
-    String earlybirdName = EarlybirdProperty.EARLYBIRD_NAME.get();
-    return earlybirdName.contains("realtime") || earlybirdName.contains("protected");
+  public static boolelonan isRelonaltimelonOrProtelonctelond() {
+    String elonarlybirdNamelon = elonarlybirdPropelonrty.elonARLYBIRD_NAMelon.gelont();
+    relonturn elonarlybirdNamelon.contains("relonaltimelon") || elonarlybirdNamelon.contains("protelonctelond");
   }
 
-  public static boolean consumeUserScrubGeoEvents() {
-    return EarlybirdProperty.CONSUME_GEO_SCRUB_EVENTS.get();
+  public static boolelonan consumelonUselonrScrubGelonoelonvelonnts() {
+    relonturn elonarlybirdPropelonrty.CONSUMelon_GelonO_SCRUB_elonVelonNTS.gelont();
   }
 
-  @Nullable
-  public static AuroraInstanceKey getAuroraInstanceKey() {
-    return auroraInstanceKey;
+  @Nullablelon
+  public static AuroraInstancelonKelony gelontAuroraInstancelonKelony() {
+    relonturn auroraInstancelonKelony;
   }
 
-  public static void setAuroraInstanceKey(AuroraInstanceKey auroraInstanceKey) {
-    EarlybirdConfig.auroraInstanceKey = auroraInstanceKey;
+  public static void selontAuroraInstancelonKelony(AuroraInstancelonKelony auroraInstancelonKelony) {
+    elonarlybirdConfig.auroraInstancelonKelony = auroraInstancelonKelony;
   }
 
-  public static boolean isAurora() {
-    return auroraInstanceKey != null;
+  public static boolelonan isAurora() {
+    relonturn auroraInstancelonKelony != null;
   }
 
-  public static void setForTests(String property, Object value) {
-    earlybirdConfig.setForTests(DEFAULT_CONFIG_FILE, property, value);
+  public static void selontForTelonsts(String propelonrty, Objelonct valuelon) {
+    elonarlybirdConfig.selontForTelonsts(DelonFAULT_CONFIG_FILelon, propelonrty, valuelon);
   }
 
-  public static synchronized void clearForTests() {
-    earlybirdConfig = new ConfigFile(EARLYBIRD_CONFIG_DIR, DEFAULT_CONFIG_FILE);
+  public static synchronizelond void clelonarForTelonsts() {
+    elonarlybirdConfig = nelonw ConfigFilelon(elonARLYBIRD_CONFIG_DIR, DelonFAULT_CONFIG_FILelon);
   }
 }

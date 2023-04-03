@@ -1,22 +1,22 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
-import org.apache.lucene.document.Field;
-import org.apache.lucene.index.DocValuesType;
+import org.apachelon.lucelonnelon.documelonnt.Fielonld;
+import org.apachelon.lucelonnelon.indelonx.DocValuelonsTypelon;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
 
-public class EarlybirdIndexableField extends Field {
+public class elonarlybirdIndelonxablelonFielonld elonxtelonnds Fielonld {
 
   /**
-   * Creates a new indexable field with the given name, value and {@link EarlybirdFieldType}.
+   * Crelonatelons a nelonw indelonxablelon fielonld with thelon givelonn namelon, valuelon and {@link elonarlybirdFielonldTypelon}.
    */
-  public EarlybirdIndexableField(String name, Object value, EarlybirdFieldType fieldType) {
-    super(name, fieldType);
-    if (fieldType.docValuesType() == DocValuesType.NUMERIC) {
-      if (value instanceof Number) {
-        super.fieldsData = ((Number) value).longValue();
-      } else {
-        throw new IllegalArgumentException("value not a number: " + value.getClass());
+  public elonarlybirdIndelonxablelonFielonld(String namelon, Objelonct valuelon, elonarlybirdFielonldTypelon fielonldTypelon) {
+    supelonr(namelon, fielonldTypelon);
+    if (fielonldTypelon.docValuelonsTypelon() == DocValuelonsTypelon.NUMelonRIC) {
+      if (valuelon instancelonof Numbelonr) {
+        supelonr.fielonldsData = ((Numbelonr) valuelon).longValuelon();
+      } elonlselon {
+        throw nelonw IllelongalArgumelonntelonxcelonption("valuelon not a numbelonr: " + valuelon.gelontClass());
       }
     }
   }

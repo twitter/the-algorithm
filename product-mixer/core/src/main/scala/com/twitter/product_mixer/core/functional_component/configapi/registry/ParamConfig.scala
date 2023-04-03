@@ -1,74 +1,74 @@
-package com.twitter.product_mixer.core.functional_component.configapi.registry
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.relongistry
 
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.DefinedFeatureName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.EnumParamWithFeatureName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.EnumSeqParamWithFeatureName
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil.ValueFeatureName
-import com.twitter.timelines.configapi.decider.HasDecider
-import com.twitter.timelines.configapi.Bounded
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.HasDurationConversion
-import com.twitter.timelines.configapi.OptionalOverride
-import com.twitter.timelines.configapi.Param
-import com.twitter.util.Duration
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil.DelonfinelondFelonaturelonNamelon
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil.elonnumParamWithFelonaturelonNamelon
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil.elonnumSelonqParamWithFelonaturelonNamelon
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil.ValuelonFelonaturelonNamelon
+import com.twittelonr.timelonlinelons.configapi.deloncidelonr.HasDeloncidelonr
+import com.twittelonr.timelonlinelons.configapi.Boundelond
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.HasDurationConvelonrsion
+import com.twittelonr.timelonlinelons.configapi.OptionalOvelonrridelon
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.util.Duration
 
-/** ParamConfig is used to configure overrides for [[Param]]s of various types */
+/** ParamConfig is uselond to configurelon ovelonrridelons for [[Param]]s of various typelons */
 trait ParamConfig {
 
-  def booleanDeciderOverrides: Seq[Param[Boolean] with HasDecider] = Seq.empty
+  delonf boolelonanDeloncidelonrOvelonrridelons: Selonq[Param[Boolelonan] with HasDeloncidelonr] = Selonq.elonmpty
 
-  def booleanFSOverrides: Seq[Param[Boolean] with FSName] = Seq.empty
+  delonf boolelonanFSOvelonrridelons: Selonq[Param[Boolelonan] with FSNamelon] = Selonq.elonmpty
 
-  def optionalBooleanOverrides: Seq[
-    (Param[Option[Boolean]], DefinedFeatureName, ValueFeatureName)
-  ] = Seq.empty
+  delonf optionalBoolelonanOvelonrridelons: Selonq[
+    (Param[Option[Boolelonan]], DelonfinelondFelonaturelonNamelon, ValuelonFelonaturelonNamelon)
+  ] = Selonq.elonmpty
 
-  def enumFSOverrides: Seq[EnumParamWithFeatureName[_ <: Enumeration]] = Seq.empty
+  delonf elonnumFSOvelonrridelons: Selonq[elonnumParamWithFelonaturelonNamelon[_ <: elonnumelonration]] = Selonq.elonmpty
 
-  def enumSeqFSOverrides: Seq[EnumSeqParamWithFeatureName[_ <: Enumeration]] = Seq.empty
+  delonf elonnumSelonqFSOvelonrridelons: Selonq[elonnumSelonqParamWithFelonaturelonNamelon[_ <: elonnumelonration]] = Selonq.elonmpty
 
   /**
-   * Support for non-Duration supplied FS overrides (e.g. `timeFromStringFSOverrides`,
-   * `timeFromNumberFSOverrides`, `getBoundedOptionalDurationFromMillisOverrides`) is not provided
-   * as Duration is preferred
+   * Support for non-Duration supplielond FS ovelonrridelons (elon.g. `timelonFromStringFSOvelonrridelons`,
+   * `timelonFromNumbelonrFSOvelonrridelons`, `gelontBoundelondOptionalDurationFromMillisOvelonrridelons`) is not providelond
+   * as Duration is prelonfelonrrelond
    */
-  def boundedDurationFSOverrides: Seq[
-    Param[Duration] with Bounded[Duration] with FSName with HasDurationConversion
-  ] = Seq.empty
+  delonf boundelondDurationFSOvelonrridelons: Selonq[
+    Param[Duration] with Boundelond[Duration] with FSNamelon with HasDurationConvelonrsion
+  ] = Selonq.elonmpty
 
-  /** Support for unbounded numeric FS overrides is not provided as bounded is preferred */
-  def boundedIntFSOverrides: Seq[Param[Int] with Bounded[Int] with FSName] = Seq.empty
+  /** Support for unboundelond numelonric FS ovelonrridelons is not providelond as boundelond is prelonfelonrrelond */
+  delonf boundelondIntFSOvelonrridelons: Selonq[Param[Int] with Boundelond[Int] with FSNamelon] = Selonq.elonmpty
 
-  def boundedOptionalIntOverrides: Seq[
-    (Param[Option[Int]] with Bounded[Option[Int]], DefinedFeatureName, ValueFeatureName)
-  ] = Seq.empty
+  delonf boundelondOptionalIntOvelonrridelons: Selonq[
+    (Param[Option[Int]] with Boundelond[Option[Int]], DelonfinelondFelonaturelonNamelon, ValuelonFelonaturelonNamelon)
+  ] = Selonq.elonmpty
 
-  def intSeqFSOverrides: Seq[Param[Seq[Int]] with FSName] = Seq.empty
+  delonf intSelonqFSOvelonrridelons: Selonq[Param[Selonq[Int]] with FSNamelon] = Selonq.elonmpty
 
-  def boundedLongFSOverrides: Seq[Param[Long] with Bounded[Long] with FSName] = Seq.empty
+  delonf boundelondLongFSOvelonrridelons: Selonq[Param[Long] with Boundelond[Long] with FSNamelon] = Selonq.elonmpty
 
-  def boundedOptionalLongOverrides: Seq[
-    (Param[Option[Long]] with Bounded[Option[Long]], DefinedFeatureName, ValueFeatureName)
-  ] = Seq.empty
+  delonf boundelondOptionalLongOvelonrridelons: Selonq[
+    (Param[Option[Long]] with Boundelond[Option[Long]], DelonfinelondFelonaturelonNamelon, ValuelonFelonaturelonNamelon)
+  ] = Selonq.elonmpty
 
-  def longSeqFSOverrides: Seq[Param[Seq[Long]] with FSName] = Seq.empty
+  delonf longSelonqFSOvelonrridelons: Selonq[Param[Selonq[Long]] with FSNamelon] = Selonq.elonmpty
 
-  def longSetFSOverrides: Seq[Param[Set[Long]] with FSName] = Seq.empty
+  delonf longSelontFSOvelonrridelons: Selonq[Param[Selont[Long]] with FSNamelon] = Selonq.elonmpty
 
-  def boundedDoubleFSOverrides: Seq[Param[Double] with Bounded[Double] with FSName] = Seq.empty
+  delonf boundelondDoublelonFSOvelonrridelons: Selonq[Param[Doublelon] with Boundelond[Doublelon] with FSNamelon] = Selonq.elonmpty
 
-  def boundedOptionalDoubleOverrides: Seq[
-    (Param[Option[Double]] with Bounded[Option[Double]], DefinedFeatureName, ValueFeatureName)
-  ] = Seq.empty
+  delonf boundelondOptionalDoublelonOvelonrridelons: Selonq[
+    (Param[Option[Doublelon]] with Boundelond[Option[Doublelon]], DelonfinelondFelonaturelonNamelon, ValuelonFelonaturelonNamelon)
+  ] = Selonq.elonmpty
 
-  def doubleSeqFSOverrides: Seq[Param[Seq[Double]] with FSName] = Seq.empty
+  delonf doublelonSelonqFSOvelonrridelons: Selonq[Param[Selonq[Doublelon]] with FSNamelon] = Selonq.elonmpty
 
-  def stringFSOverrides: Seq[Param[String] with FSName] = Seq.empty
+  delonf stringFSOvelonrridelons: Selonq[Param[String] with FSNamelon] = Selonq.elonmpty
 
-  def stringSeqFSOverrides: Seq[Param[Seq[String]] with FSName] = Seq.empty
+  delonf stringSelonqFSOvelonrridelons: Selonq[Param[Selonq[String]] with FSNamelon] = Selonq.elonmpty
 
-  def optionalStringOverrides: Seq[(Param[Option[String]], DefinedFeatureName, ValueFeatureName)] =
-    Seq.empty
+  delonf optionalStringOvelonrridelons: Selonq[(Param[Option[String]], DelonfinelondFelonaturelonNamelon, ValuelonFelonaturelonNamelon)] =
+    Selonq.elonmpty
 
-  def gatedOverrides: Map[String, Seq[OptionalOverride[_]]] = Map.empty
+  delonf gatelondOvelonrridelons: Map[String, Selonq[OptionalOvelonrridelon[_]]] = Map.elonmpty
 }

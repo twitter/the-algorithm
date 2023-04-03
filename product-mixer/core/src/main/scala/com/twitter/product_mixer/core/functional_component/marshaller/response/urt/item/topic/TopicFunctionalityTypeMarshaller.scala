@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.topic
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.topic
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.BasicTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.PivotTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.RecommendationTopicFunctionalityType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicFunctionalityType
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.BasicTopicFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.PivotTopicFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.ReloncommelonndationTopicFunctionalityTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.TopicFunctionalityTypelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TopicFunctionalityTypeMarshaller @Inject() () {
+@Singlelonton
+class TopicFunctionalityTypelonMarshallelonr @Injelonct() () {
 
-  def apply(topicFunctionalityType: TopicFunctionalityType): urt.TopicFunctionalityType =
-    topicFunctionalityType match {
-      case BasicTopicFunctionalityType => urt.TopicFunctionalityType.Basic
-      case RecommendationTopicFunctionalityType => urt.TopicFunctionalityType.Recommendation
-      case PivotTopicFunctionalityType => urt.TopicFunctionalityType.Pivot
+  delonf apply(topicFunctionalityTypelon: TopicFunctionalityTypelon): urt.TopicFunctionalityTypelon =
+    topicFunctionalityTypelon match {
+      caselon BasicTopicFunctionalityTypelon => urt.TopicFunctionalityTypelon.Basic
+      caselon ReloncommelonndationTopicFunctionalityTypelon => urt.TopicFunctionalityTypelon.Reloncommelonndation
+      caselon PivotTopicFunctionalityTypelon => urt.TopicFunctionalityTypelon.Pivot
     }
 }

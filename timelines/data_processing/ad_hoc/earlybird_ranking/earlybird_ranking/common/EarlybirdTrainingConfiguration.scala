@@ -1,268 +1,268 @@
-package com.twitter.timelines.data_processing.ad_hoc.earlybird_ranking.common
+packagelon com.twittelonr.timelonlinelons.data_procelonssing.ad_hoc.elonarlybird_ranking.common
 
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.Feature
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.ITransform
-import com.twitter.ml.api.transform.CascadeTransform
-import com.twitter.ml.api.transform.TransformFactory
-import com.twitter.ml.api.util.SRichDataRecord
-import com.twitter.ml.api.constant.SharedFeatures
-import com.twitter.search.common.features.SearchResultFeature
-import com.twitter.search.common.features.ExternalTweetFeature
-import com.twitter.search.common.features.TweetFeature
-import com.twitter.timelines.prediction.features.recap.RecapFeatures
-import com.twitter.timelines.prediction.features.request_context.RequestContextFeatures
-import com.twitter.timelines.prediction.features.time_features.TimeDataRecordFeatures
-import com.twitter.timelines.prediction.features.common.TimelinesSharedFeatures
-import com.twitter.timelines.prediction.features.real_graph.RealGraphDataRecordFeatures
-import scala.collection.JavaConverters._
-import java.lang.{Boolean => JBoolean}
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.Felonaturelon
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.ITransform
+import com.twittelonr.ml.api.transform.CascadelonTransform
+import com.twittelonr.ml.api.transform.TransformFactory
+import com.twittelonr.ml.api.util.SRichDataReloncord
+import com.twittelonr.ml.api.constant.SharelondFelonaturelons
+import com.twittelonr.selonarch.common.felonaturelons.SelonarchRelonsultFelonaturelon
+import com.twittelonr.selonarch.common.felonaturelons.elonxtelonrnalTwelonelontFelonaturelon
+import com.twittelonr.selonarch.common.felonaturelons.TwelonelontFelonaturelon
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.reloncap.ReloncapFelonaturelons
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.relonquelonst_contelonxt.RelonquelonstContelonxtFelonaturelons
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.timelon_felonaturelons.TimelonDataReloncordFelonaturelons
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.common.TimelonlinelonsSharelondFelonaturelons
+import com.twittelonr.timelonlinelons.prelondiction.felonaturelons.relonal_graph.RelonalGraphDataReloncordFelonaturelons
+import scala.collelonction.JavaConvelonrtelonrs._
+import java.lang.{Boolelonan => JBoolelonan}
 
-case class LabelInfo(name: String, downsampleFraction: Double, importance: Double)
+caselon class LabelonlInfo(namelon: String, downsamplelonFraction: Doublelon, importancelon: Doublelon)
 
-case class LabelInfoWithFeature(info: LabelInfo, feature: Feature[JBoolean])
+caselon class LabelonlInfoWithFelonaturelon(info: LabelonlInfo, felonaturelon: Felonaturelon[JBoolelonan])
 
-trait EarlybirdTrainingConfiguration {
+trait elonarlybirdTrainingConfiguration {
 
-  protected def labels: Map[String, Feature.Binary]
+  protelonctelond delonf labelonls: Map[String, Felonaturelon.Binary]
 
-  protected def weights: Map[String, Double] = Map(
-    "detail_expanded" -> 0.3,
-    "favorited" -> 1.0,
-    "open_linked" -> 0.1,
-    "photo_expanded" -> 0.03,
-    "profile_clicked" -> 1.0,
-    "replied" -> 9.0,
-    "retweeted" -> 1.0,
-    "video_playback50" -> 0.01
+  protelonctelond delonf welonights: Map[String, Doublelon] = Map(
+    "delontail_elonxpandelond" -> 0.3,
+    "favoritelond" -> 1.0,
+    "opelonn_linkelond" -> 0.1,
+    "photo_elonxpandelond" -> 0.03,
+    "profilelon_clickelond" -> 1.0,
+    "relonplielond" -> 9.0,
+    "relontwelonelontelond" -> 1.0,
+    "videlono_playback50" -> 0.01
   )
 
-  // we basically should not downsample any of the precious positive data.
-  // importance are currently set to match the full model's weights.
-  protected def PositiveSamplingRate: Double = 1.0
-  private def NegativeSamplingRate: Double = PositiveSamplingRate * 0.08
+  // welon basically should not downsamplelon any of thelon preloncious positivelon data.
+  // importancelon arelon currelonntly selont to match thelon full modelonl's welonights.
+  protelonctelond delonf PositivelonSamplingRatelon: Doublelon = 1.0
+  privatelon delonf NelongativelonSamplingRatelon: Doublelon = PositivelonSamplingRatelon * 0.08
 
-  // we basically should not downsample any of the precious positive data.
-  // importance are currently set to match the full model's weights.
-  final lazy val LabelInfos: List[LabelInfoWithFeature] = {
-    assert(labels.keySet == weights.keySet)
-    labels.keySet.map(makeLabelInfoWithFeature).toList
+  // welon basically should not downsamplelon any of thelon preloncious positivelon data.
+  // importancelon arelon currelonntly selont to match thelon full modelonl's welonights.
+  final lazy val LabelonlInfos: List[LabelonlInfoWithFelonaturelon] = {
+    asselonrt(labelonls.kelonySelont == welonights.kelonySelont)
+    labelonls.kelonySelont.map(makelonLabelonlInfoWithFelonaturelon).toList
   }
 
-  def makeLabelInfoWithFeature(labelName: String): LabelInfoWithFeature = {
-    LabelInfoWithFeature(
-      LabelInfo(labelName, PositiveSamplingRate, weights(labelName)),
-      labels(labelName))
+  delonf makelonLabelonlInfoWithFelonaturelon(labelonlNamelon: String): LabelonlInfoWithFelonaturelon = {
+    LabelonlInfoWithFelonaturelon(
+      LabelonlInfo(labelonlNamelon, PositivelonSamplingRatelon, welonights(labelonlNamelon)),
+      labelonls(labelonlNamelon))
   }
 
-  final lazy val NegativeInfo: LabelInfo = LabelInfo("negative", NegativeSamplingRate, 1.0)
+  final lazy val NelongativelonInfo: LabelonlInfo = LabelonlInfo("nelongativelon", NelongativelonSamplingRatelon, 1.0)
 
-  // example of features available in schema based namespace:
-  protected def featureToSearchResultFeatureMap: Map[Feature[_], SearchResultFeature] = Map(
-    RecapFeatures.TEXT_SCORE -> TweetFeature.TEXT_SCORE,
-    RecapFeatures.REPLY_COUNT -> TweetFeature.REPLY_COUNT,
-    RecapFeatures.RETWEET_COUNT -> TweetFeature.RETWEET_COUNT,
-    RecapFeatures.FAV_COUNT -> TweetFeature.FAVORITE_COUNT,
-    RecapFeatures.HAS_CARD -> TweetFeature.HAS_CARD_FLAG,
-    RecapFeatures.HAS_CONSUMER_VIDEO -> TweetFeature.HAS_CONSUMER_VIDEO_FLAG,
-    RecapFeatures.HAS_PRO_VIDEO -> TweetFeature.HAS_PRO_VIDEO_FLAG,
-    // no corresponding HAS_NATIVE_VIDEO feature in TweetFeature
-    RecapFeatures.HAS_VINE -> TweetFeature.HAS_VINE_FLAG,
-    RecapFeatures.HAS_PERISCOPE -> TweetFeature.HAS_PERISCOPE_FLAG,
-    RecapFeatures.HAS_NATIVE_IMAGE -> TweetFeature.HAS_NATIVE_IMAGE_FLAG,
-    RecapFeatures.HAS_IMAGE -> TweetFeature.HAS_IMAGE_URL_FLAG,
-    RecapFeatures.HAS_NEWS -> TweetFeature.HAS_NEWS_URL_FLAG,
-    RecapFeatures.HAS_VIDEO -> TweetFeature.HAS_VIDEO_URL_FLAG,
-    RecapFeatures.HAS_TREND -> TweetFeature.HAS_TREND_FLAG,
-    RecapFeatures.HAS_MULTIPLE_HASHTAGS_OR_TRENDS -> TweetFeature.HAS_MULTIPLE_HASHTAGS_OR_TRENDS_FLAG,
-    RecapFeatures.IS_OFFENSIVE -> TweetFeature.IS_OFFENSIVE_FLAG,
-    RecapFeatures.IS_REPLY -> TweetFeature.IS_REPLY_FLAG,
-    RecapFeatures.IS_RETWEET -> TweetFeature.IS_RETWEET_FLAG,
-    RecapFeatures.IS_AUTHOR_BOT -> TweetFeature.IS_USER_BOT_FLAG,
-    RecapFeatures.FROM_VERIFIED_ACCOUNT -> TweetFeature.FROM_VERIFIED_ACCOUNT_FLAG,
-    RecapFeatures.USER_REP -> TweetFeature.USER_REPUTATION,
-    RecapFeatures.EMBEDS_IMPRESSION_COUNT -> TweetFeature.EMBEDS_IMPRESSION_COUNT,
-    RecapFeatures.EMBEDS_URL_COUNT -> TweetFeature.EMBEDS_URL_COUNT,
-    // RecapFeatures.VIDEO_VIEW_COUNT deprecated
-    RecapFeatures.FAV_COUNT_V2 -> TweetFeature.FAVORITE_COUNT_V2,
-    RecapFeatures.RETWEET_COUNT_V2 -> TweetFeature.RETWEET_COUNT_V2,
-    RecapFeatures.REPLY_COUNT_V2 -> TweetFeature.REPLY_COUNT_V2,
-    RecapFeatures.IS_SENSITIVE -> TweetFeature.IS_SENSITIVE_CONTENT,
-    RecapFeatures.HAS_MULTIPLE_MEDIA -> TweetFeature.HAS_MULTIPLE_MEDIA_FLAG,
-    RecapFeatures.IS_AUTHOR_PROFILE_EGG -> TweetFeature.PROFILE_IS_EGG_FLAG,
-    RecapFeatures.IS_AUTHOR_NEW -> TweetFeature.IS_USER_NEW_FLAG,
-    RecapFeatures.NUM_MENTIONS -> TweetFeature.NUM_MENTIONS,
-    RecapFeatures.NUM_HASHTAGS -> TweetFeature.NUM_HASHTAGS,
-    RecapFeatures.HAS_VISIBLE_LINK -> TweetFeature.HAS_VISIBLE_LINK_FLAG,
-    RecapFeatures.HAS_LINK -> TweetFeature.HAS_LINK_FLAG,
-    //note: DISCRETE features are not supported by the modelInterpreter tool.
-    // for the following features, we will create separate CONTINUOUS features instead of renaming
-    //RecapFeatures.LINK_LANGUAGE
-    //RecapFeatures.LANGUAGE
-    TimelinesSharedFeatures.HAS_QUOTE -> TweetFeature.HAS_QUOTE_FLAG,
-    TimelinesSharedFeatures.QUOTE_COUNT -> TweetFeature.QUOTE_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_FAV_COUNT -> TweetFeature.WEIGHTED_FAVORITE_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_QUOTE_COUNT -> TweetFeature.WEIGHTED_QUOTE_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_REPLY_COUNT -> TweetFeature.WEIGHTED_REPLY_COUNT,
-    TimelinesSharedFeatures.WEIGHTED_RETWEET_COUNT -> TweetFeature.WEIGHTED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_FAVORITE_COUNT -> TweetFeature.DECAYED_FAVORITE_COUNT,
-    TimelinesSharedFeatures.DECAYED_RETWEET_COUNT -> TweetFeature.DECAYED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_REPLY_COUNT -> TweetFeature.DECAYED_RETWEET_COUNT,
-    TimelinesSharedFeatures.DECAYED_QUOTE_COUNT -> TweetFeature.DECAYED_QUOTE_COUNT,
-    TimelinesSharedFeatures.FAKE_FAVORITE_COUNT -> TweetFeature.FAKE_FAVORITE_COUNT,
-    TimelinesSharedFeatures.FAKE_RETWEET_COUNT -> TweetFeature.FAKE_RETWEET_COUNT,
-    TimelinesSharedFeatures.FAKE_REPLY_COUNT -> TweetFeature.FAKE_REPLY_COUNT,
-    TimelinesSharedFeatures.FAKE_QUOTE_COUNT -> TweetFeature.FAKE_QUOTE_COUNT,
-    TimelinesSharedFeatures.EMBEDS_IMPRESSION_COUNT_V2 -> TweetFeature.EMBEDS_IMPRESSION_COUNT_V2,
-    TimelinesSharedFeatures.EMBEDS_URL_COUNT_V2 -> TweetFeature.EMBEDS_URL_COUNT_V2,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_FLAG -> TweetFeature.LABEL_ABUSIVE_FLAG,
-    TimelinesSharedFeatures.LABEL_ABUSIVE_HI_RCL_FLAG -> TweetFeature.LABEL_ABUSIVE_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_DUP_CONTENT_FLAG -> TweetFeature.LABEL_DUP_CONTENT_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_PRC_FLAG -> TweetFeature.LABEL_NSFW_HI_PRC_FLAG,
-    TimelinesSharedFeatures.LABEL_NSFW_HI_RCL_FLAG -> TweetFeature.LABEL_NSFW_HI_RCL_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_FLAG -> TweetFeature.LABEL_SPAM_FLAG,
-    TimelinesSharedFeatures.LABEL_SPAM_HI_RCL_FLAG -> TweetFeature.LABEL_SPAM_HI_RCL_FLAG
+  // elonxamplelon of felonaturelons availablelon in schelonma baselond namelonspacelon:
+  protelonctelond delonf felonaturelonToSelonarchRelonsultFelonaturelonMap: Map[Felonaturelon[_], SelonarchRelonsultFelonaturelon] = Map(
+    ReloncapFelonaturelons.TelonXT_SCORelon -> TwelonelontFelonaturelon.TelonXT_SCORelon,
+    ReloncapFelonaturelons.RelonPLY_COUNT -> TwelonelontFelonaturelon.RelonPLY_COUNT,
+    ReloncapFelonaturelons.RelonTWelonelonT_COUNT -> TwelonelontFelonaturelon.RelonTWelonelonT_COUNT,
+    ReloncapFelonaturelons.FAV_COUNT -> TwelonelontFelonaturelon.FAVORITelon_COUNT,
+    ReloncapFelonaturelons.HAS_CARD -> TwelonelontFelonaturelon.HAS_CARD_FLAG,
+    ReloncapFelonaturelons.HAS_CONSUMelonR_VIDelonO -> TwelonelontFelonaturelon.HAS_CONSUMelonR_VIDelonO_FLAG,
+    ReloncapFelonaturelons.HAS_PRO_VIDelonO -> TwelonelontFelonaturelon.HAS_PRO_VIDelonO_FLAG,
+    // no correlonsponding HAS_NATIVelon_VIDelonO felonaturelon in TwelonelontFelonaturelon
+    ReloncapFelonaturelons.HAS_VINelon -> TwelonelontFelonaturelon.HAS_VINelon_FLAG,
+    ReloncapFelonaturelons.HAS_PelonRISCOPelon -> TwelonelontFelonaturelon.HAS_PelonRISCOPelon_FLAG,
+    ReloncapFelonaturelons.HAS_NATIVelon_IMAGelon -> TwelonelontFelonaturelon.HAS_NATIVelon_IMAGelon_FLAG,
+    ReloncapFelonaturelons.HAS_IMAGelon -> TwelonelontFelonaturelon.HAS_IMAGelon_URL_FLAG,
+    ReloncapFelonaturelons.HAS_NelonWS -> TwelonelontFelonaturelon.HAS_NelonWS_URL_FLAG,
+    ReloncapFelonaturelons.HAS_VIDelonO -> TwelonelontFelonaturelon.HAS_VIDelonO_URL_FLAG,
+    ReloncapFelonaturelons.HAS_TRelonND -> TwelonelontFelonaturelon.HAS_TRelonND_FLAG,
+    ReloncapFelonaturelons.HAS_MULTIPLelon_HASHTAGS_OR_TRelonNDS -> TwelonelontFelonaturelon.HAS_MULTIPLelon_HASHTAGS_OR_TRelonNDS_FLAG,
+    ReloncapFelonaturelons.IS_OFFelonNSIVelon -> TwelonelontFelonaturelon.IS_OFFelonNSIVelon_FLAG,
+    ReloncapFelonaturelons.IS_RelonPLY -> TwelonelontFelonaturelon.IS_RelonPLY_FLAG,
+    ReloncapFelonaturelons.IS_RelonTWelonelonT -> TwelonelontFelonaturelon.IS_RelonTWelonelonT_FLAG,
+    ReloncapFelonaturelons.IS_AUTHOR_BOT -> TwelonelontFelonaturelon.IS_USelonR_BOT_FLAG,
+    ReloncapFelonaturelons.FROM_VelonRIFIelonD_ACCOUNT -> TwelonelontFelonaturelon.FROM_VelonRIFIelonD_ACCOUNT_FLAG,
+    ReloncapFelonaturelons.USelonR_RelonP -> TwelonelontFelonaturelon.USelonR_RelonPUTATION,
+    ReloncapFelonaturelons.elonMBelonDS_IMPRelonSSION_COUNT -> TwelonelontFelonaturelon.elonMBelonDS_IMPRelonSSION_COUNT,
+    ReloncapFelonaturelons.elonMBelonDS_URL_COUNT -> TwelonelontFelonaturelon.elonMBelonDS_URL_COUNT,
+    // ReloncapFelonaturelons.VIDelonO_VIelonW_COUNT delonpreloncatelond
+    ReloncapFelonaturelons.FAV_COUNT_V2 -> TwelonelontFelonaturelon.FAVORITelon_COUNT_V2,
+    ReloncapFelonaturelons.RelonTWelonelonT_COUNT_V2 -> TwelonelontFelonaturelon.RelonTWelonelonT_COUNT_V2,
+    ReloncapFelonaturelons.RelonPLY_COUNT_V2 -> TwelonelontFelonaturelon.RelonPLY_COUNT_V2,
+    ReloncapFelonaturelons.IS_SelonNSITIVelon -> TwelonelontFelonaturelon.IS_SelonNSITIVelon_CONTelonNT,
+    ReloncapFelonaturelons.HAS_MULTIPLelon_MelonDIA -> TwelonelontFelonaturelon.HAS_MULTIPLelon_MelonDIA_FLAG,
+    ReloncapFelonaturelons.IS_AUTHOR_PROFILelon_elonGG -> TwelonelontFelonaturelon.PROFILelon_IS_elonGG_FLAG,
+    ReloncapFelonaturelons.IS_AUTHOR_NelonW -> TwelonelontFelonaturelon.IS_USelonR_NelonW_FLAG,
+    ReloncapFelonaturelons.NUM_MelonNTIONS -> TwelonelontFelonaturelon.NUM_MelonNTIONS,
+    ReloncapFelonaturelons.NUM_HASHTAGS -> TwelonelontFelonaturelon.NUM_HASHTAGS,
+    ReloncapFelonaturelons.HAS_VISIBLelon_LINK -> TwelonelontFelonaturelon.HAS_VISIBLelon_LINK_FLAG,
+    ReloncapFelonaturelons.HAS_LINK -> TwelonelontFelonaturelon.HAS_LINK_FLAG,
+    //notelon: DISCRelonTelon felonaturelons arelon not supportelond by thelon modelonlIntelonrprelontelonr tool.
+    // for thelon following felonaturelons, welon will crelonatelon selonparatelon CONTINUOUS felonaturelons instelonad of relonnaming
+    //ReloncapFelonaturelons.LINK_LANGUAGelon
+    //ReloncapFelonaturelons.LANGUAGelon
+    TimelonlinelonsSharelondFelonaturelons.HAS_QUOTelon -> TwelonelontFelonaturelon.HAS_QUOTelon_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.QUOTelon_COUNT -> TwelonelontFelonaturelon.QUOTelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_FAV_COUNT -> TwelonelontFelonaturelon.WelonIGHTelonD_FAVORITelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_QUOTelon_COUNT -> TwelonelontFelonaturelon.WelonIGHTelonD_QUOTelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_RelonPLY_COUNT -> TwelonelontFelonaturelon.WelonIGHTelonD_RelonPLY_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.WelonIGHTelonD_RelonTWelonelonT_COUNT -> TwelonelontFelonaturelon.WelonIGHTelonD_RelonTWelonelonT_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_FAVORITelon_COUNT -> TwelonelontFelonaturelon.DelonCAYelonD_FAVORITelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_RelonTWelonelonT_COUNT -> TwelonelontFelonaturelon.DelonCAYelonD_RelonTWelonelonT_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_RelonPLY_COUNT -> TwelonelontFelonaturelon.DelonCAYelonD_RelonTWelonelonT_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.DelonCAYelonD_QUOTelon_COUNT -> TwelonelontFelonaturelon.DelonCAYelonD_QUOTelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.FAKelon_FAVORITelon_COUNT -> TwelonelontFelonaturelon.FAKelon_FAVORITelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.FAKelon_RelonTWelonelonT_COUNT -> TwelonelontFelonaturelon.FAKelon_RelonTWelonelonT_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.FAKelon_RelonPLY_COUNT -> TwelonelontFelonaturelon.FAKelon_RelonPLY_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.FAKelon_QUOTelon_COUNT -> TwelonelontFelonaturelon.FAKelon_QUOTelon_COUNT,
+    TimelonlinelonsSharelondFelonaturelons.elonMBelonDS_IMPRelonSSION_COUNT_V2 -> TwelonelontFelonaturelon.elonMBelonDS_IMPRelonSSION_COUNT_V2,
+    TimelonlinelonsSharelondFelonaturelons.elonMBelonDS_URL_COUNT_V2 -> TwelonelontFelonaturelon.elonMBelonDS_URL_COUNT_V2,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_ABUSIVelon_FLAG -> TwelonelontFelonaturelon.LABelonL_ABUSIVelon_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_ABUSIVelon_HI_RCL_FLAG -> TwelonelontFelonaturelon.LABelonL_ABUSIVelon_HI_RCL_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_DUP_CONTelonNT_FLAG -> TwelonelontFelonaturelon.LABelonL_DUP_CONTelonNT_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_NSFW_HI_PRC_FLAG -> TwelonelontFelonaturelon.LABelonL_NSFW_HI_PRC_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_NSFW_HI_RCL_FLAG -> TwelonelontFelonaturelon.LABelonL_NSFW_HI_RCL_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_SPAM_FLAG -> TwelonelontFelonaturelon.LABelonL_SPAM_FLAG,
+    TimelonlinelonsSharelondFelonaturelons.LABelonL_SPAM_HI_RCL_FLAG -> TwelonelontFelonaturelon.LABelonL_SPAM_HI_RCL_FLAG
   )
 
-  protected def derivedFeaturesAdder: ITransform =
-    new ITransform {
-      private val hasEnglishTweetDiffUiLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_ENGLISH_TWEET_DIFF_UI_LANG)
-          .asInstanceOf[Feature.Binary]
-      private val hasEnglishUiDiffTweetLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_ENGLISH_UI_DIFF_TWEET_LANG)
-          .asInstanceOf[Feature.Binary]
-      private val hasDiffLangFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.HAS_DIFF_LANG)
-          .asInstanceOf[Feature.Binary]
-      private val isSelfTweetFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.IS_SELF_TWEET)
-          .asInstanceOf[Feature.Binary]
-      private val tweetAgeInSecsFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.TWEET_AGE_IN_SECS)
-          .asInstanceOf[Feature.Continuous]
-      private val authorSpecificScoreFeature =
-        featureInstanceFromSearchResultFeature(ExternalTweetFeature.AUTHOR_SPECIFIC_SCORE)
-          .asInstanceOf[Feature.Continuous]
+  protelonctelond delonf delonrivelondFelonaturelonsAddelonr: ITransform =
+    nelonw ITransform {
+      privatelon val haselonnglishTwelonelontDiffUiLangFelonaturelon =
+        felonaturelonInstancelonFromSelonarchRelonsultFelonaturelon(elonxtelonrnalTwelonelontFelonaturelon.HAS_elonNGLISH_TWelonelonT_DIFF_UI_LANG)
+          .asInstancelonOf[Felonaturelon.Binary]
+      privatelon val haselonnglishUiDiffTwelonelontLangFelonaturelon =
+        felonaturelonInstancelonFromSelonarchRelonsultFelonaturelon(elonxtelonrnalTwelonelontFelonaturelon.HAS_elonNGLISH_UI_DIFF_TWelonelonT_LANG)
+          .asInstancelonOf[Felonaturelon.Binary]
+      privatelon val hasDiffLangFelonaturelon =
+        felonaturelonInstancelonFromSelonarchRelonsultFelonaturelon(elonxtelonrnalTwelonelontFelonaturelon.HAS_DIFF_LANG)
+          .asInstancelonOf[Felonaturelon.Binary]
+      privatelon val isSelonlfTwelonelontFelonaturelon =
+        felonaturelonInstancelonFromSelonarchRelonsultFelonaturelon(elonxtelonrnalTwelonelontFelonaturelon.IS_SelonLF_TWelonelonT)
+          .asInstancelonOf[Felonaturelon.Binary]
+      privatelon val twelonelontAgelonInSeloncsFelonaturelon =
+        felonaturelonInstancelonFromSelonarchRelonsultFelonaturelon(elonxtelonrnalTwelonelontFelonaturelon.TWelonelonT_AGelon_IN_SelonCS)
+          .asInstancelonOf[Felonaturelon.Continuous]
+      privatelon val authorSpeloncificScorelonFelonaturelon =
+        felonaturelonInstancelonFromSelonarchRelonsultFelonaturelon(elonxtelonrnalTwelonelontFelonaturelon.AUTHOR_SPelonCIFIC_SCORelon)
+          .asInstancelonOf[Felonaturelon.Continuous]
 
-      // see comments above
-      private val linkLanguageFeature = new Feature.Continuous(TweetFeature.LINK_LANGUAGE.getName)
-      private val languageFeature = new Feature.Continuous(TweetFeature.LANGUAGE.getName)
+      // selonelon commelonnts abovelon
+      privatelon val linkLanguagelonFelonaturelon = nelonw Felonaturelon.Continuous(TwelonelontFelonaturelon.LINK_LANGUAGelon.gelontNamelon)
+      privatelon val languagelonFelonaturelon = nelonw Felonaturelon.Continuous(TwelonelontFelonaturelon.LANGUAGelon.gelontNamelon)
 
-      override def transformContext(featureContext: FeatureContext): FeatureContext =
-        featureContext.addFeatures(
-          authorSpecificScoreFeature,
-          // used when training against the full scoreEarlybirdModelEvaluationJob.scala
-          // TimelinesSharedFeatures.PREDICTED_SCORE_LOG,
-          hasEnglishTweetDiffUiLangFeature,
-          hasEnglishUiDiffTweetLangFeature,
-          hasDiffLangFeature,
-          isSelfTweetFeature,
-          tweetAgeInSecsFeature,
-          linkLanguageFeature,
-          languageFeature
+      ovelonrridelon delonf transformContelonxt(felonaturelonContelonxt: FelonaturelonContelonxt): FelonaturelonContelonxt =
+        felonaturelonContelonxt.addFelonaturelons(
+          authorSpeloncificScorelonFelonaturelon,
+          // uselond whelonn training against thelon full scorelonelonarlybirdModelonlelonvaluationJob.scala
+          // TimelonlinelonsSharelondFelonaturelons.PRelonDICTelonD_SCORelon_LOG,
+          haselonnglishTwelonelontDiffUiLangFelonaturelon,
+          haselonnglishUiDiffTwelonelontLangFelonaturelon,
+          hasDiffLangFelonaturelon,
+          isSelonlfTwelonelontFelonaturelon,
+          twelonelontAgelonInSeloncsFelonaturelon,
+          linkLanguagelonFelonaturelon,
+          languagelonFelonaturelon
         )
 
-      override def transform(record: DataRecord): Unit = {
-        val srecord = SRichDataRecord(record)
+      ovelonrridelon delonf transform(reloncord: DataReloncord): Unit = {
+        val sreloncord = SRichDataReloncord(reloncord)
 
-        srecord.getFeatureValueOpt(RealGraphDataRecordFeatures.WEIGHT).map { realgraphWeight =>
-          srecord.setFeatureValue(authorSpecificScoreFeature, realgraphWeight)
+        sreloncord.gelontFelonaturelonValuelonOpt(RelonalGraphDataReloncordFelonaturelons.WelonIGHT).map { relonalgraphWelonight =>
+          sreloncord.selontFelonaturelonValuelon(authorSpeloncificScorelonFelonaturelon, relonalgraphWelonight)
         }
 
-        // use this when training against the log of the full score
-        // srecord.getFeatureValueOpt(TimelinesSharedFeatures.PREDICTED_SCORE).map { score =>
-        //   if (score > 0.0) {
-        //     srecord.setFeatureValue(TimelinesSharedFeatures.PREDICTED_SCORE_LOG, Math.log(score))
+        // uselon this whelonn training against thelon log of thelon full scorelon
+        // sreloncord.gelontFelonaturelonValuelonOpt(TimelonlinelonsSharelondFelonaturelons.PRelonDICTelonD_SCORelon).map { scorelon =>
+        //   if (scorelon > 0.0) {
+        //     sreloncord.selontFelonaturelonValuelon(TimelonlinelonsSharelondFelonaturelons.PRelonDICTelonD_SCORelon_LOG, Math.log(scorelon))
         //   }
         // }
 
-        if (srecord.hasFeature(RequestContextFeatures.LANGUAGE_CODE) && srecord.hasFeature(
-            RecapFeatures.LANGUAGE)) {
-          val uilangIsEnglish = srecord
-            .getFeatureValue(RequestContextFeatures.LANGUAGE_CODE).toString == "en"
-          val tweetIsEnglish = srecord.getFeatureValue(RecapFeatures.LANGUAGE) == 5
-          srecord.setFeatureValue(
-            hasEnglishTweetDiffUiLangFeature,
-            tweetIsEnglish && !uilangIsEnglish
+        if (sreloncord.hasFelonaturelon(RelonquelonstContelonxtFelonaturelons.LANGUAGelon_CODelon) && sreloncord.hasFelonaturelon(
+            ReloncapFelonaturelons.LANGUAGelon)) {
+          val uilangIselonnglish = sreloncord
+            .gelontFelonaturelonValuelon(RelonquelonstContelonxtFelonaturelons.LANGUAGelon_CODelon).toString == "elonn"
+          val twelonelontIselonnglish = sreloncord.gelontFelonaturelonValuelon(ReloncapFelonaturelons.LANGUAGelon) == 5
+          sreloncord.selontFelonaturelonValuelon(
+            haselonnglishTwelonelontDiffUiLangFelonaturelon,
+            twelonelontIselonnglish && !uilangIselonnglish
           )
-          srecord.setFeatureValue(
-            hasEnglishUiDiffTweetLangFeature,
-            uilangIsEnglish && !tweetIsEnglish
+          sreloncord.selontFelonaturelonValuelon(
+            haselonnglishUiDiffTwelonelontLangFelonaturelon,
+            uilangIselonnglish && !twelonelontIselonnglish
           )
         }
-        srecord.getFeatureValueOpt(RecapFeatures.MATCH_UI_LANG).map { match_ui_lang =>
-          srecord.setFeatureValue(
-            hasDiffLangFeature,
+        sreloncord.gelontFelonaturelonValuelonOpt(ReloncapFelonaturelons.MATCH_UI_LANG).map { match_ui_lang =>
+          sreloncord.selontFelonaturelonValuelon(
+            hasDiffLangFelonaturelon,
             !match_ui_lang
           )
         }
 
         for {
-          author_id <- srecord.getFeatureValueOpt(SharedFeatures.AUTHOR_ID)
-          user_id <- srecord.getFeatureValueOpt(SharedFeatures.USER_ID)
-        } srecord.setFeatureValue(
-          isSelfTweetFeature,
-          author_id == user_id
+          author_id <- sreloncord.gelontFelonaturelonValuelonOpt(SharelondFelonaturelons.AUTHOR_ID)
+          uselonr_id <- sreloncord.gelontFelonaturelonValuelonOpt(SharelondFelonaturelons.USelonR_ID)
+        } sreloncord.selontFelonaturelonValuelon(
+          isSelonlfTwelonelontFelonaturelon,
+          author_id == uselonr_id
         )
 
-        srecord.getFeatureValueOpt(TimeDataRecordFeatures.TIME_SINCE_TWEET_CREATION).map {
-          time_since_tweet_creation =>
-            srecord.setFeatureValue(
-              tweetAgeInSecsFeature,
-              time_since_tweet_creation / 1000.0
+        sreloncord.gelontFelonaturelonValuelonOpt(TimelonDataReloncordFelonaturelons.TIMelon_SINCelon_TWelonelonT_CRelonATION).map {
+          timelon_sincelon_twelonelont_crelonation =>
+            sreloncord.selontFelonaturelonValuelon(
+              twelonelontAgelonInSeloncsFelonaturelon,
+              timelon_sincelon_twelonelont_crelonation / 1000.0
             )
         }
 
-        srecord.getFeatureValueOpt(RecapFeatures.LINK_LANGUAGE).map { link_language =>
-          srecord.setFeatureValue(
-            linkLanguageFeature,
-            link_language.toDouble
+        sreloncord.gelontFelonaturelonValuelonOpt(ReloncapFelonaturelons.LINK_LANGUAGelon).map { link_languagelon =>
+          sreloncord.selontFelonaturelonValuelon(
+            linkLanguagelonFelonaturelon,
+            link_languagelon.toDoublelon
           )
         }
-        srecord.getFeatureValueOpt(RecapFeatures.LANGUAGE).map { language =>
-          srecord.setFeatureValue(
-            languageFeature,
-            language.toDouble
+        sreloncord.gelontFelonaturelonValuelonOpt(ReloncapFelonaturelons.LANGUAGelon).map { languagelon =>
+          sreloncord.selontFelonaturelonValuelon(
+            languagelonFelonaturelon,
+            languagelon.toDoublelon
           )
         }
       }
     }
 
-  protected def featureInstanceFromSearchResultFeature(
-    tweetFeature: SearchResultFeature
-  ): Feature[_] = {
-    val featureType = tweetFeature.getType
-    val featureName = tweetFeature.getName
+  protelonctelond delonf felonaturelonInstancelonFromSelonarchRelonsultFelonaturelon(
+    twelonelontFelonaturelon: SelonarchRelonsultFelonaturelon
+  ): Felonaturelon[_] = {
+    val felonaturelonTypelon = twelonelontFelonaturelon.gelontTypelon
+    val felonaturelonNamelon = twelonelontFelonaturelon.gelontNamelon
 
-    require(
-      !tweetFeature.isDiscrete && (
-        featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.BOOLEAN_VALUE ||
-          featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.DOUBLE_VALUE ||
-          featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.INT32_VALUE
+    relonquirelon(
+      !twelonelontFelonaturelon.isDiscrelontelon && (
+        felonaturelonTypelon == com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonTypelon.BOOLelonAN_VALUelon ||
+          felonaturelonTypelon == com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonTypelon.DOUBLelon_VALUelon ||
+          felonaturelonTypelon == com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonTypelon.INT32_VALUelon
       )
     )
 
-    if (featureType == com.twitter.search.common.features.thrift.ThriftSearchFeatureType.BOOLEAN_VALUE)
-      new Feature.Binary(featureName)
-    else
-      new Feature.Continuous(featureName)
+    if (felonaturelonTypelon == com.twittelonr.selonarch.common.felonaturelons.thrift.ThriftSelonarchFelonaturelonTypelon.BOOLelonAN_VALUelon)
+      nelonw Felonaturelon.Binary(felonaturelonNamelon)
+    elonlselon
+      nelonw Felonaturelon.Continuous(felonaturelonNamelon)
   }
 
-  lazy val EarlybirdFeatureRenamer: ITransform = {
-    val earlybirdFeatureRenameMap: Map[Feature[_], Feature[_]] =
-      featureToSearchResultFeatureMap.map {
-        case (originalFeature, tweetFeature) =>
-          originalFeature -> featureInstanceFromSearchResultFeature(tweetFeature)
+  lazy val elonarlybirdFelonaturelonRelonnamelonr: ITransform = {
+    val elonarlybirdFelonaturelonRelonnamelonMap: Map[Felonaturelon[_], Felonaturelon[_]] =
+      felonaturelonToSelonarchRelonsultFelonaturelonMap.map {
+        caselon (originalFelonaturelon, twelonelontFelonaturelon) =>
+          originalFelonaturelon -> felonaturelonInstancelonFromSelonarchRelonsultFelonaturelon(twelonelontFelonaturelon)
       }.toMap
 
-    new CascadeTransform(
+    nelonw CascadelonTransform(
       List(
-        derivedFeaturesAdder,
-        TransformFactory.produceTransform(
-          TransformFactory.produceFeatureRenameTransformSpec(
-            earlybirdFeatureRenameMap.asJava
+        delonrivelondFelonaturelonsAddelonr,
+        TransformFactory.producelonTransform(
+          TransformFactory.producelonFelonaturelonRelonnamelonTransformSpelonc(
+            elonarlybirdFelonaturelonRelonnamelonMap.asJava
           )
         )
       ).asJava

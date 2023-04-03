@@ -1,8 +1,8 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight.HighlightedSection
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.highlight.HighlightelondSelonction
 
-case class TweetHighlights(
-  textHighlights: Option[List[HighlightedSection]],
-  cardTitleHighlights: Option[List[HighlightedSection]],
-  cardDescriptionHighlights: Option[List[HighlightedSection]])
+caselon class TwelonelontHighlights(
+  telonxtHighlights: Option[List[HighlightelondSelonction]],
+  cardTitlelonHighlights: Option[List[HighlightelondSelonction]],
+  cardDelonscriptionHighlights: Option[List[HighlightelondSelonction]])

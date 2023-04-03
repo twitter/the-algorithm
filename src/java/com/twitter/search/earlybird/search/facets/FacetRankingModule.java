@@ -1,26 +1,26 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import com.twitter.search.core.earlybird.facets.FacetCountState;
-import com.twitter.search.earlybird.search.EarlybirdLuceneSearcher;
-import com.twitter.search.earlybird.thrift.ThriftFacetFieldResults;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontCountStatelon;
+import com.twittelonr.selonarch.elonarlybird.selonarch.elonarlybirdLucelonnelonSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontFielonldRelonsults;
 
-public abstract class FacetRankingModule {
-  public static final List<FacetRankingModule> REGISTERED_RANKING_MODULES =
-      new ArrayList<>();
+public abstract class FacelontRankingModulelon {
+  public static final List<FacelontRankingModulelon> RelonGISTelonRelonD_RANKING_MODULelonS =
+      nelonw ArrayList<>();
 
   static {
-    REGISTERED_RANKING_MODULES.add(new SimpleCountRankingModule());
+    RelonGISTelonRelonD_RANKING_MODULelonS.add(nelonw SimplelonCountRankingModulelon());
   }
 
   /**
-   * Prepares the {@link com.twitter.search.earlybird.thrift.ThriftFacetFieldResults}
-   * in {@link FacetCountState} before they're returned. This extension point therefore allows
-   * post-processing the facet results, e.g. for re-ranking or sorting purposes.
+   * Prelonparelons thelon {@link com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontFielonldRelonsults}
+   * in {@link FacelontCountStatelon} belonforelon thelony'relon relonturnelond. This elonxtelonnsion point thelonrelonforelon allows
+   * post-procelonssing thelon facelont relonsults, elon.g. for relon-ranking or sorting purposelons.
    */
-  public abstract void prepareResults(
-      EarlybirdLuceneSearcher.FacetSearchResults hits,
-      FacetCountState<ThriftFacetFieldResults> facetCountState);
+  public abstract void prelonparelonRelonsults(
+      elonarlybirdLucelonnelonSelonarchelonr.FacelontSelonarchRelonsults hits,
+      FacelontCountStatelon<ThriftFacelontFielonldRelonsults> facelontCountStatelon);
 }

@@ -1,84 +1,84 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.AuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetAuthorIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetInNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetRealNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.FocalTweetScreenNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.InNetworkFeature
-import com.twitter.home_mixer.model.HomeFeatures.RealNamesFeature
-import com.twitter.home_mixer.model.HomeFeatures.ScreenNamesFeature
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.AuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ConvelonrsationModulelonIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FocalTwelonelontAuthorIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FocalTwelonelontInNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FocalTwelonelontRelonalNamelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.FocalTwelonelontScrelonelonnNamelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.InNelontworkFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.RelonalNamelonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ScrelonelonnNamelonsFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Social context for convo modules is hydrated on the root Tweet but needs info about the focal
- * Tweet (e.g. author) to render the banner. This hydrator copies focal Tweet data into the root.
+ * Social contelonxt for convo modulelons is hydratelond on thelon root Twelonelont but nelonelonds info about thelon focal
+ * Twelonelont (elon.g. author) to relonndelonr thelon bannelonr. This hydrator copielons focal Twelonelont data into thelon root.
  */
-@Singleton
-class FocalTweetFeatureHydrator @Inject() ()
-    extends BulkCandidateFeatureHydrator[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class FocalTwelonelontFelonaturelonHydrator @Injelonct() ()
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("FocalTweet")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("FocalTwelonelont")
 
-  override val features: Set[Feature[_, _]] = Set(
-    FocalTweetAuthorIdFeature,
-    FocalTweetInNetworkFeature,
-    FocalTweetRealNamesFeature,
-    FocalTweetScreenNamesFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    FocalTwelonelontAuthorIdFelonaturelon,
+    FocalTwelonelontInNelontworkFelonaturelon,
+    FocalTwelonelontRelonalNamelonsFelonaturelon,
+    FocalTwelonelontScrelonelonnNamelonsFelonaturelon
   )
 
-  private val DefaultFeatureMap = FeatureMapBuilder()
-    .add(FocalTweetAuthorIdFeature, None)
-    .add(FocalTweetInNetworkFeature, None)
-    .add(FocalTweetRealNamesFeature, None)
-    .add(FocalTweetScreenNamesFeature, None)
+  privatelon val DelonfaultFelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(FocalTwelonelontAuthorIdFelonaturelon, Nonelon)
+    .add(FocalTwelonelontInNelontworkFelonaturelon, Nonelon)
+    .add(FocalTwelonelontRelonalNamelonsFelonaturelon, Nonelon)
+    .add(FocalTwelonelontScrelonelonnNamelonsFelonaturelon, Nonelon)
     .build()
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    // Build a map of all the focal tweets to their corresponding features
-    val focalTweetIdToFeatureMap = candidates.flatMap { candidate =>
-      val focalTweetId = candidate.features.getOrElse(ConversationModuleFocalTweetIdFeature, None)
-      if (focalTweetId.contains(candidate.candidate.id)) {
-        Some(candidate.candidate.id -> candidate.features)
-      } else None
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    // Build a map of all thelon focal twelonelonts to thelonir correlonsponding felonaturelons
+    val focalTwelonelontIdToFelonaturelonMap = candidatelons.flatMap { candidatelon =>
+      val focalTwelonelontId = candidatelon.felonaturelons.gelontOrelonlselon(ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon, Nonelon)
+      if (focalTwelonelontId.contains(candidatelon.candidatelon.id)) {
+        Somelon(candidatelon.candidatelon.id -> candidatelon.felonaturelons)
+      } elonlselon Nonelon
     }.toMap
 
-    val updatedFeatureMap = candidates.map { candidate =>
-      val focalTweetId = candidate.features.getOrElse(ConversationModuleFocalTweetIdFeature, None)
-      val conversationId = candidate.features.getOrElse(ConversationModuleIdFeature, None)
+    val updatelondFelonaturelonMap = candidatelons.map { candidatelon =>
+      val focalTwelonelontId = candidatelon.felonaturelons.gelontOrelonlselon(ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon, Nonelon)
+      val convelonrsationId = candidatelon.felonaturelons.gelontOrelonlselon(ConvelonrsationModulelonIdFelonaturelon, Nonelon)
 
-      // Check if the candidate is a root tweet and ensure its focal tweet's features are available
-      if (conversationId.contains(candidate.candidate.id)
-        && focalTweetId.exists(focalTweetIdToFeatureMap.contains)) {
-        val featureMap = focalTweetIdToFeatureMap.get(focalTweetId.get).get
-        FeatureMapBuilder()
-          .add(FocalTweetAuthorIdFeature, featureMap.getOrElse(AuthorIdFeature, None))
-          .add(FocalTweetInNetworkFeature, Some(featureMap.getOrElse(InNetworkFeature, true)))
+      // Chelonck if thelon candidatelon is a root twelonelont and elonnsurelon its focal twelonelont's felonaturelons arelon availablelon
+      if (convelonrsationId.contains(candidatelon.candidatelon.id)
+        && focalTwelonelontId.elonxists(focalTwelonelontIdToFelonaturelonMap.contains)) {
+        val felonaturelonMap = focalTwelonelontIdToFelonaturelonMap.gelont(focalTwelonelontId.gelont).gelont
+        FelonaturelonMapBuildelonr()
+          .add(FocalTwelonelontAuthorIdFelonaturelon, felonaturelonMap.gelontOrelonlselon(AuthorIdFelonaturelon, Nonelon))
+          .add(FocalTwelonelontInNelontworkFelonaturelon, Somelon(felonaturelonMap.gelontOrelonlselon(InNelontworkFelonaturelon, truelon)))
           .add(
-            FocalTweetRealNamesFeature,
-            Some(featureMap.getOrElse(RealNamesFeature, Map.empty[Long, String])))
+            FocalTwelonelontRelonalNamelonsFelonaturelon,
+            Somelon(felonaturelonMap.gelontOrelonlselon(RelonalNamelonsFelonaturelon, Map.elonmpty[Long, String])))
           .add(
-            FocalTweetScreenNamesFeature,
-            Some(featureMap.getOrElse(ScreenNamesFeature, Map.empty[Long, String])))
+            FocalTwelonelontScrelonelonnNamelonsFelonaturelon,
+            Somelon(felonaturelonMap.gelontOrelonlselon(ScrelonelonnNamelonsFelonaturelon, Map.elonmpty[Long, String])))
           .build()
-      } else DefaultFeatureMap
+      } elonlselon DelonfaultFelonaturelonMap
     }
 
-    Stitch.value(updatedFeatureMap)
+    Stitch.valuelon(updatelondFelonaturelonMap)
   }
 }

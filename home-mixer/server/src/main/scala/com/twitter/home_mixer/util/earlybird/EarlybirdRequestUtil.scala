@@ -1,58 +1,58 @@
-package com.twitter.home_mixer.util.earlybird
+packagelon com.twittelonr.homelon_mixelonr.util.elonarlybird
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.search.common.query.thriftjava.{thriftscala => scq}
-import com.twitter.search.earlybird.{thriftscala => eb}
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.selonarch.common.quelonry.thriftjava.{thriftscala => scq}
+import com.twittelonr.selonarch.elonarlybird.{thriftscala => elonb}
+import com.twittelonr.util.Duration
 
-object EarlybirdRequestUtil {
+objelonct elonarlybirdRelonquelonstUtil {
 
-  // If no EarlybirdOptions.maxNumHitsPerShard is set then default to this value.
-  val DefaultMaxHitsToProcess = 1000
-  val DefaultSearchProcessingTimeout: Duration = 200.milliseconds
-  val DefaultMaxNumResultsPerShard = 100
-  val DeafultCollectorParams = scq.CollectorParams(
-    // numResultsToReturn defines how many results each EB shard will return to search root
-    numResultsToReturn = DefaultMaxNumResultsPerShard,
-    // terminationParams.maxHitsToProcess is used for early terminating per shard results fetching.
-    terminationParams = Some(
-      scq.CollectorTerminationParams(
-        maxHitsToProcess = Some(DefaultMaxHitsToProcess),
-        timeoutMs = DefaultSearchProcessingTimeout.inMilliseconds.toInt
+  // If no elonarlybirdOptions.maxNumHitsPelonrShard is selont thelonn delonfault to this valuelon.
+  val DelonfaultMaxHitsToProcelonss = 1000
+  val DelonfaultSelonarchProcelonssingTimelonout: Duration = 200.milliselonconds
+  val DelonfaultMaxNumRelonsultsPelonrShard = 100
+  val DelonafultCollelonctorParams = scq.CollelonctorParams(
+    // numRelonsultsToRelonturn delonfinelons how many relonsults elonach elonB shard will relonturn to selonarch root
+    numRelonsultsToRelonturn = DelonfaultMaxNumRelonsultsPelonrShard,
+    // telonrminationParams.maxHitsToProcelonss is uselond for elonarly telonrminating pelonr shard relonsults felontching.
+    telonrminationParams = Somelon(
+      scq.CollelonctorTelonrminationParams(
+        maxHitsToProcelonss = Somelon(DelonfaultMaxHitsToProcelonss),
+        timelonoutMs = DelonfaultSelonarchProcelonssingTimelonout.inMilliselonconds.toInt
       ))
   )
 
-  def getTweetsEBFeaturesRequest(
-    userId: Option[Long],
-    tweetIds: Option[Seq[Long]],
-    clientId: Option[String],
-    getTweetsFromArchiveIndex: Boolean = false,
-    getOnlyProtectedTweets: Boolean = false,
-  ): eb.EarlybirdRequest = {
+  delonf gelontTwelonelontselonBFelonaturelonsRelonquelonst(
+    uselonrId: Option[Long],
+    twelonelontIds: Option[Selonq[Long]],
+    clielonntId: Option[String],
+    gelontTwelonelontsFromArchivelonIndelonx: Boolelonan = falselon,
+    gelontOnlyProtelonctelondTwelonelonts: Boolelonan = falselon,
+  ): elonb.elonarlybirdRelonquelonst = {
 
-    val candidateSize = tweetIds.getOrElse(Seq.empty).size
-    val thriftQuery = eb.ThriftSearchQuery(
-      numResults = candidateSize,
-      collectConversationId = true,
-      rankingMode = eb.ThriftSearchRankingMode.Relevance,
-      relevanceOptions = Some(RelevanceSearchUtil.RelevanceOptions),
-      collectorParams = Some(DeafultCollectorParams),
-      facetFieldNames = Some(RelevanceSearchUtil.FacetsToFetch),
-      resultMetadataOptions = Some(RelevanceSearchUtil.MetadataOptions),
-      searcherId = userId,
-      searchStatusIds = tweetIds.map(_.toSet),
+    val candidatelonSizelon = twelonelontIds.gelontOrelonlselon(Selonq.elonmpty).sizelon
+    val thriftQuelonry = elonb.ThriftSelonarchQuelonry(
+      numRelonsults = candidatelonSizelon,
+      collelonctConvelonrsationId = truelon,
+      rankingModelon = elonb.ThriftSelonarchRankingModelon.Relonlelonvancelon,
+      relonlelonvancelonOptions = Somelon(RelonlelonvancelonSelonarchUtil.RelonlelonvancelonOptions),
+      collelonctorParams = Somelon(DelonafultCollelonctorParams),
+      facelontFielonldNamelons = Somelon(RelonlelonvancelonSelonarchUtil.FacelontsToFelontch),
+      relonsultMelontadataOptions = Somelon(RelonlelonvancelonSelonarchUtil.MelontadataOptions),
+      selonarchelonrId = uselonrId,
+      selonarchStatusIds = twelonelontIds.map(_.toSelont),
     )
 
-    eb.EarlybirdRequest(
-      searchQuery = thriftQuery,
-      clientId = clientId,
-      getOlderResults = Some(getTweetsFromArchiveIndex),
-      getProtectedTweetsOnly = Some(getOnlyProtectedTweets),
-      timeoutMs = DefaultSearchProcessingTimeout.inMilliseconds.toInt,
-      skipVeryRecentTweets = true,
-      // This param decides # of tweets to return from search superRoot and realtime/protected/Archive roots.
-      // It takes higher precedence than ThriftSearchQuery.numResults
-      numResultsToReturnAtRoot = Some(candidateSize)
+    elonb.elonarlybirdRelonquelonst(
+      selonarchQuelonry = thriftQuelonry,
+      clielonntId = clielonntId,
+      gelontOldelonrRelonsults = Somelon(gelontTwelonelontsFromArchivelonIndelonx),
+      gelontProtelonctelondTwelonelontsOnly = Somelon(gelontOnlyProtelonctelondTwelonelonts),
+      timelonoutMs = DelonfaultSelonarchProcelonssingTimelonout.inMilliselonconds.toInt,
+      skipVelonryReloncelonntTwelonelonts = truelon,
+      // This param deloncidelons # of twelonelonts to relonturn from selonarch supelonrRoot and relonaltimelon/protelonctelond/Archivelon roots.
+      // It takelons highelonr preloncelondelonncelon than ThriftSelonarchQuelonry.numRelonsults
+      numRelonsultsToRelonturnAtRoot = Somelon(candidatelonSizelon)
     )
   }
 }

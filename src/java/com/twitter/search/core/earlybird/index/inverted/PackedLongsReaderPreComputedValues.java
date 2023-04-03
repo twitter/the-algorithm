@@ -1,202 +1,202 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
 /**
- * Pre-computed shifts, mask, and start int indices used by
- * {@link IntBlockPoolPackedLongsReader} to decode packed values from
+ * Prelon-computelond shifts, mask, and start int indicelons uselond by
+ * {@link IntBlockPoolPackelondLongsRelonadelonr} to deloncodelon packelond valuelons from
  * {@link IntBlockPool}.
  *
- * The purpose of this class is for decoding efficiency and speed. This class is thread-safe since
- * all its usages are read-only.
+ * Thelon purposelon of this class is for deloncoding elonfficielonncy and spelonelond. This class is threlonad-safelon sincelon
+ * all its usagelons arelon relonad-only.
  *
- * Packed ints are stored from LOWEST bits for HIGHEST bits in an int.
+ * Packelond ints arelon storelond from LOWelonST bits for HIGHelonST bits in an int.
  *
- * Here are 3 different situations when a packed value spans 1, 2, and 3 ints:
+ * Helonrelon arelon 3 diffelonrelonnt situations whelonn a packelond valuelon spans 1, 2, and 3 ints:
  *
- * - A packed value spans 1 int:
+ * - A packelond valuelon spans 1 int:
  *            [High Bits ................................. Low Bits]
- *   int[n] = [possible_other_data|packed_value|possible_other_data]
+ *   int[n] = [possiblelon_othelonr_data|packelond_valuelon|possiblelon_othelonr_data]
  *
- *   To decode, 1 shift right and 1 mask are needed:
+ *   To deloncodelon, 1 shift right and 1 mask arelon nelonelondelond:
  *     * shift - {@link #allLowBitsRightShift}
- *     * mask - dynamically computed based on bitsPerValue (in decoded slice).
+ *     * mask - dynamically computelond baselond on bitsPelonrValuelon (in deloncodelond slicelon).
  *
- * - A packed value spans 2 ints:
- *   The data is stored as:
+ * - A packelond valuelon spans 2 ints:
+ *   Thelon data is storelond as:
  *              [High Bits .................. Low Bits]
- *   int[n]   = [low_bits_of_packed_value | other_data]
- *   int[n+1] = [other_data| high_bits_of_packed_value]
+ *   int[n]   = [low_bits_of_packelond_valuelon | othelonr_data]
+ *   int[n+1] = [othelonr_data| high_bits_of_packelond_valuelon]
  *
- *   To decode, 1 shift right, 1 shift left, and 2 masks are needed:
- *     * 1 shift right {@link #allLowBitsRightShift} and 1 mask (computed on the fly) to compute
- *       low_bits_of_packed_value
- *     * 1 mask {@link #allMiddleBitsMask} and 1 shift left {@link #allMiddleBitsLeftShift} to
- *       compute high_bits_of_packed_value
- *     * 1 OR to combine `high_bits_of_packed_value | low_bits_of_packed_value`
+ *   To deloncodelon, 1 shift right, 1 shift lelonft, and 2 masks arelon nelonelondelond:
+ *     * 1 shift right {@link #allLowBitsRightShift} and 1 mask (computelond on thelon fly) to computelon
+ *       low_bits_of_packelond_valuelon
+ *     * 1 mask {@link #allMiddlelonBitsMask} and 1 shift lelonft {@link #allMiddlelonBitsLelonftShift} to
+ *       computelon high_bits_of_packelond_valuelon
+ *     * 1 OR to combinelon `high_bits_of_packelond_valuelon | low_bits_of_packelond_valuelon`
  *
- * - A packed value spans 3 ints:
- *   The data is stored as:
+ * - A packelond valuelon spans 3 ints:
+ *   Thelon data is storelond as:
  *              [High Bits .................. Low Bits]
- *   int[n]   = [low_bits_of_packed_value | other_data]
- *   int[n+1] = [ ... middle_bits_of_packed_value ... ]
- *   int[n+2] = [other_data| high_bits_of_packed_value]
+ *   int[n]   = [low_bits_of_packelond_valuelon | othelonr_data]
+ *   int[n+1] = [ ... middlelon_bits_of_packelond_valuelon ... ]
+ *   int[n+2] = [othelonr_data| high_bits_of_packelond_valuelon]
  *
- *   To decode, 1 shift right, 2 shift left, and 3 masks are needed:
- *     * 1 shift right {@link #allLowBitsRightShift} and 1 mask (computed on the fly) to compute
- *       low_bits_of_packed_value
- *     * 1 shift left {@link #allMiddleBitsLeftShift} and 1 mask {@link #allMiddleBitsMask} to
- *       compute middle_bits_of_data
- *     * 1 shift left {@link #allHighBitsLeftShift} and 1 mask {@link #allHighBitsMask} to compute
+ *   To deloncodelon, 1 shift right, 2 shift lelonft, and 3 masks arelon nelonelondelond:
+ *     * 1 shift right {@link #allLowBitsRightShift} and 1 mask (computelond on thelon fly) to computelon
+ *       low_bits_of_packelond_valuelon
+ *     * 1 shift lelonft {@link #allMiddlelonBitsLelonftShift} and 1 mask {@link #allMiddlelonBitsMask} to
+ *       computelon middlelon_bits_of_data
+ *     * 1 shift lelonft {@link #allHighBitsLelonftShift} and 1 mask {@link #allHighBitsMask} to computelon
  *       high_bits_of_data
- *     * 1 OR to combine `low_bits_of_data | middle_bits_of_data | high_bits_of_data`
+ *     * 1 OR to combinelon `low_bits_of_data | middlelon_bits_of_data | high_bits_of_data`
  *
- * Example usage:
- * @see HighDFPackedIntsDocsEnum
- * @see HighDFPackedIntsDocsAndPositionsEnum
+ * elonxamplelon usagelon:
+ * @selonelon HighDFPackelondIntsDocselonnum
+ * @selonelon HighDFPackelondIntsDocsAndPositionselonnum
  */
-public final class PackedLongsReaderPreComputedValues {
-  private final int[][] allLowBitsRightShift;
-  private final int[][] allMiddleBitsLeftShift;
-  private final int[][] allMiddleBitsMask;
-  private final int[][] allHighBitsLeftShift;
-  private final int[][] allHighBitsMask;
+public final class PackelondLongsRelonadelonrPrelonComputelondValuelons {
+  privatelon final int[][] allLowBitsRightShift;
+  privatelon final int[][] allMiddlelonBitsLelonftShift;
+  privatelon final int[][] allMiddlelonBitsMask;
+  privatelon final int[][] allHighBitsLelonftShift;
+  privatelon final int[][] allHighBitsMask;
 
   /**
-   * 2D int arrays containing pre-computed start int indices; the 2 dimensions are
-   * int[numBitsPerPackedValue][packedValueIndex].
+   * 2D int arrays containing prelon-computelond start int indicelons; thelon 2 dimelonnsions arelon
+   * int[numBitsPelonrPackelondValuelon][packelondValuelonIndelonx].
    *
-   * For a given number bits per packed value and a given packed value index, this is the first
-   * int in the subsequent of ints that contains the packed value with the given packed value index.
+   * For a givelonn numbelonr bits pelonr packelond valuelon and a givelonn packelond valuelon indelonx, this is thelon first
+   * int in thelon subselonquelonnt of ints that contains thelon packelond valuelon with thelon givelonn packelond valuelon indelonx.
    */
-  private final int[][] allStartIntIndices;
+  privatelon final int[][] allStartIntIndicelons;
 
   /**
-   * Sole constructor.
+   * Solelon constructor.
    *
-   * @param maxBitsPerValue max possible number of bits of packed values that will be decoded
-   * @param maxNumValues max number of values are encoded back to back
-   * @param maxNumInts max number of ints are used to store packed values
-   * @param needStartIntIndex for optimization: whether start int indices are needed
+   * @param maxBitsPelonrValuelon max possiblelon numbelonr of bits of packelond valuelons that will belon deloncodelond
+   * @param maxNumValuelons max numbelonr of valuelons arelon elonncodelond back to back
+   * @param maxNumInts max numbelonr of ints arelon uselond to storelon packelond valuelons
+   * @param nelonelondStartIntIndelonx for optimization: whelonthelonr start int indicelons arelon nelonelondelond
    */
-  PackedLongsReaderPreComputedValues(
-      int maxBitsPerValue,
-      int maxNumValues,
+  PackelondLongsRelonadelonrPrelonComputelondValuelons(
+      int maxBitsPelonrValuelon,
+      int maxNumValuelons,
       int maxNumInts,
-      boolean needStartIntIndex) {
-    assert maxBitsPerValue <= Long.SIZE;
+      boolelonan nelonelondStartIntIndelonx) {
+    asselonrt maxBitsPelonrValuelon <= Long.SIZelon;
 
-    if (needStartIntIndex) {
-      this.allStartIntIndices = new int[maxBitsPerValue + 1][maxNumValues];
-    } else {
-      this.allStartIntIndices = null;
+    if (nelonelondStartIntIndelonx) {
+      this.allStartIntIndicelons = nelonw int[maxBitsPelonrValuelon + 1][maxNumValuelons];
+    } elonlselon {
+      this.allStartIntIndicelons = null;
     }
 
-    this.allLowBitsRightShift = new int[maxBitsPerValue + 1][maxNumValues];
-    this.allMiddleBitsLeftShift = new int[maxBitsPerValue + 1][maxNumValues];
-    this.allMiddleBitsMask = new int[maxBitsPerValue + 1][maxNumValues];
+    this.allLowBitsRightShift = nelonw int[maxBitsPelonrValuelon + 1][maxNumValuelons];
+    this.allMiddlelonBitsLelonftShift = nelonw int[maxBitsPelonrValuelon + 1][maxNumValuelons];
+    this.allMiddlelonBitsMask = nelonw int[maxBitsPelonrValuelon + 1][maxNumValuelons];
 
-    // Packed value could use up 2 ints.
-    if (maxBitsPerValue > Integer.SIZE) {
-      this.allHighBitsLeftShift = new int[maxBitsPerValue + 1][maxNumValues];
-      this.allHighBitsMask = new int[maxBitsPerValue + 1][maxNumValues];
-    } else {
-      this.allHighBitsLeftShift = null;
+    // Packelond valuelon could uselon up 2 ints.
+    if (maxBitsPelonrValuelon > Intelongelonr.SIZelon) {
+      this.allHighBitsLelonftShift = nelonw int[maxBitsPelonrValuelon + 1][maxNumValuelons];
+      this.allHighBitsMask = nelonw int[maxBitsPelonrValuelon + 1][maxNumValuelons];
+    } elonlselon {
+      this.allHighBitsLelonftShift = null;
       this.allHighBitsMask = null;
     }
 
-    compute(maxBitsPerValue, maxNumValues, maxNumInts);
+    computelon(maxBitsPelonrValuelon, maxNumValuelons, maxNumInts);
   }
 
   /**
-   * Compute masks, shifts and start indices.
+   * Computelon masks, shifts and start indicelons.
    */
-  private void compute(int maxBitsPerValue, int maxNumValues, int maxNumInts) {
-    // For each possible bits per packed value.
-    for (int bitsPerPackedValue = 0; bitsPerPackedValue <= maxBitsPerValue; bitsPerPackedValue++) {
-      int[] startIntIndices =
-          allStartIntIndices != null ? allStartIntIndices[bitsPerPackedValue] : null;
+  privatelon void computelon(int maxBitsPelonrValuelon, int maxNumValuelons, int maxNumInts) {
+    // For elonach possiblelon bits pelonr packelond valuelon.
+    for (int bitsPelonrPackelondValuelon = 0; bitsPelonrPackelondValuelon <= maxBitsPelonrValuelon; bitsPelonrPackelondValuelon++) {
+      int[] startIntIndicelons =
+          allStartIntIndicelons != null ? allStartIntIndicelons[bitsPelonrPackelondValuelon] : null;
       int[] lowBitsRightShift =
-          allLowBitsRightShift[bitsPerPackedValue];
-      int[] middleBitsLeftShift =
-          allMiddleBitsLeftShift[bitsPerPackedValue];
-      int[] middleBitsMask =
-          allMiddleBitsMask[bitsPerPackedValue];
-      int[] highBitsLeftShift =
-          allHighBitsLeftShift != null ? allHighBitsLeftShift[bitsPerPackedValue] : null;
+          allLowBitsRightShift[bitsPelonrPackelondValuelon];
+      int[] middlelonBitsLelonftShift =
+          allMiddlelonBitsLelonftShift[bitsPelonrPackelondValuelon];
+      int[] middlelonBitsMask =
+          allMiddlelonBitsMask[bitsPelonrPackelondValuelon];
+      int[] highBitsLelonftShift =
+          allHighBitsLelonftShift != null ? allHighBitsLelonftShift[bitsPelonrPackelondValuelon] : null;
       int[] highBitsMask =
-          allHighBitsMask != null ? allHighBitsMask[bitsPerPackedValue] : null;
+          allHighBitsMask != null ? allHighBitsMask[bitsPelonrPackelondValuelon] : null;
 
       int shift = 0;
-      int currentIntIndex = 0;
-      int bitsRead;
-      int bitsRemaining;
+      int currelonntIntIndelonx = 0;
+      int bitsRelonad;
+      int bitsRelonmaining;
 
-      // For each packed value.
-      for (int packedValueIndex = 0; packedValueIndex < maxNumValues; packedValueIndex++) {
-        if (startIntIndices != null) {
-          startIntIndices[packedValueIndex] = currentIntIndex;
+      // For elonach packelond valuelon.
+      for (int packelondValuelonIndelonx = 0; packelondValuelonIndelonx < maxNumValuelons; packelondValuelonIndelonx++) {
+        if (startIntIndicelons != null) {
+          startIntIndicelons[packelondValuelonIndelonx] = currelonntIntIndelonx;
         }
-        // Packed value spans to the 1st int.
-        lowBitsRightShift[packedValueIndex] = shift;
-        bitsRead = Integer.SIZE - shift;
-        bitsRemaining = bitsPerPackedValue - bitsRead;
+        // Packelond valuelon spans to thelon 1st int.
+        lowBitsRightShift[packelondValuelonIndelonx] = shift;
+        bitsRelonad = Intelongelonr.SIZelon - shift;
+        bitsRelonmaining = bitsPelonrPackelondValuelon - bitsRelonad;
 
-        if (bitsRemaining >= 0) {
-          // Packed value spans to the 2nd int.
-          currentIntIndex++;
-          if (currentIntIndex == maxNumInts) {
-            break;
+        if (bitsRelonmaining >= 0) {
+          // Packelond valuelon spans to thelon 2nd int.
+          currelonntIntIndelonx++;
+          if (currelonntIntIndelonx == maxNumInts) {
+            brelonak;
           }
-          middleBitsLeftShift[packedValueIndex] = bitsRead;
-          middleBitsMask[packedValueIndex] =
-              bitsRemaining >= Integer.SIZE ? 0xFFFFFFFF : (1 << bitsRemaining) - 1;
+          middlelonBitsLelonftShift[packelondValuelonIndelonx] = bitsRelonad;
+          middlelonBitsMask[packelondValuelonIndelonx] =
+              bitsRelonmaining >= Intelongelonr.SIZelon ? 0xFFFFFFFF : (1 << bitsRelonmaining) - 1;
 
-          // Packed value spans to the 3rd int.
-          bitsRead += Integer.SIZE;
-          bitsRemaining -= Integer.SIZE;
-          if (bitsRemaining >= 0) {
-            currentIntIndex++;
-            if (currentIntIndex == maxNumInts) {
-              break;
+          // Packelond valuelon spans to thelon 3rd int.
+          bitsRelonad += Intelongelonr.SIZelon;
+          bitsRelonmaining -= Intelongelonr.SIZelon;
+          if (bitsRelonmaining >= 0) {
+            currelonntIntIndelonx++;
+            if (currelonntIntIndelonx == maxNumInts) {
+              brelonak;
             }
-            assert highBitsLeftShift != null;
-            assert highBitsMask != null;
-            highBitsLeftShift[packedValueIndex] = bitsRead;
-            highBitsMask[packedValueIndex] =
-                bitsRemaining >= Integer.SIZE ? 0xFFFFFFFF : (1 << bitsRemaining) - 1;
+            asselonrt highBitsLelonftShift != null;
+            asselonrt highBitsMask != null;
+            highBitsLelonftShift[packelondValuelonIndelonx] = bitsRelonad;
+            highBitsMask[packelondValuelonIndelonx] =
+                bitsRelonmaining >= Intelongelonr.SIZelon ? 0xFFFFFFFF : (1 << bitsRelonmaining) - 1;
           }
         }
 
-        shift += bitsPerPackedValue;
-        shift = shift % Integer.SIZE;
+        shift += bitsPelonrPackelondValuelon;
+        shift = shift % Intelongelonr.SIZelon;
       }
     }
   }
 
   /********************************************************************
-   * Getters of Pre-computed Values: returns should NEVER be modified *
+   * Gelonttelonrs of Prelon-computelond Valuelons: relonturns should NelonVelonR belon modifielond *
    ********************************************************************/
 
-  int[] getStartIntIndices(int numBitsPerValue) {
-    return allStartIntIndices == null ? null : allStartIntIndices[numBitsPerValue];
+  int[] gelontStartIntIndicelons(int numBitsPelonrValuelon) {
+    relonturn allStartIntIndicelons == null ? null : allStartIntIndicelons[numBitsPelonrValuelon];
   }
 
-  int[] getLowBitsRightShift(int numBitsPerValue) {
-    return allLowBitsRightShift[numBitsPerValue];
+  int[] gelontLowBitsRightShift(int numBitsPelonrValuelon) {
+    relonturn allLowBitsRightShift[numBitsPelonrValuelon];
   }
 
-  int[] getMiddleBitsLeftShift(int numBitsPerValue) {
-    return allMiddleBitsLeftShift[numBitsPerValue];
+  int[] gelontMiddlelonBitsLelonftShift(int numBitsPelonrValuelon) {
+    relonturn allMiddlelonBitsLelonftShift[numBitsPelonrValuelon];
   }
 
-  int[] getMiddleBitsMask(int numBitsPerValue) {
-    return allMiddleBitsMask[numBitsPerValue];
+  int[] gelontMiddlelonBitsMask(int numBitsPelonrValuelon) {
+    relonturn allMiddlelonBitsMask[numBitsPelonrValuelon];
   }
 
-  int[] getHighBitsLeftShift(int numBitsPerValue) {
-    return allHighBitsLeftShift == null ? null : allHighBitsLeftShift[numBitsPerValue];
+  int[] gelontHighBitsLelonftShift(int numBitsPelonrValuelon) {
+    relonturn allHighBitsLelonftShift == null ? null : allHighBitsLelonftShift[numBitsPelonrValuelon];
   }
 
-  int[] getHighBitsMask(int numBitsPerValue) {
-    return allHighBitsMask == null ? null : allHighBitsMask[numBitsPerValue];
+  int[] gelontHighBitsMask(int numBitsPelonrValuelon) {
+    relonturn allHighBitsMask == null ? null : allHighBitsMask[numBitsPelonrValuelon];
   }
 }

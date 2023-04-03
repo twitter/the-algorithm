@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.products.common
+packagelon com.twittelonr.follow_reloncommelonndations.products.common
 
-abstract class ProductException(message: String) extends Exception(message)
+abstract class Productelonxcelonption(melonssagelon: String) elonxtelonnds elonxcelonption(melonssagelon)
 
-class MissingFieldException(productRequest: ProductRequest, fieldName: String)
-    extends ProductException(
-      s"Missing ${fieldName} field for ${productRequest.recommendationRequest.displayLocation} request")
+class MissingFielonldelonxcelonption(productRelonquelonst: ProductRelonquelonst, fielonldNamelon: String)
+    elonxtelonnds Productelonxcelonption(
+      s"Missing ${fielonldNamelon} fielonld for ${productRelonquelonst.reloncommelonndationRelonquelonst.displayLocation} relonquelonst")

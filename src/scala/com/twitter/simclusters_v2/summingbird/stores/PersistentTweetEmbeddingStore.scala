@@ -1,104 +1,104 @@
-package com.twitter.simclusters_v2.summingbird.stores
+packagelon com.twittelonr.simclustelonrs_v2.summingbird.storelons
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.store.strato.StratoFetchableStore
-import com.twitter.frigate.common.store.strato.StratoStore
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.SimClustersEmbedding._
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.simclusters_v2.thriftscala.PersistentSimClustersEmbedding
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus.Store
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.storelon.strato.StratoFelontchablelonStorelon
+import com.twittelonr.frigatelon.common.storelon.strato.StratoStorelon
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding._
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.simclustelonrs_v2.thriftscala.PelonrsistelonntSimClustelonrselonmbelondding
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus.Storelon
+import com.twittelonr.strato.catalog.Scan.Slicelon
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
 
-object PersistentTweetEmbeddingStore {
+objelonct PelonrsistelonntTwelonelontelonmbelonddingStorelon {
 
-  val LogFavBasedColumn =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145KUpdatedPersistent"
-  val LogFavBasedColumn20m145k2020 =
-    "recommendations/simclusters_v2/embeddings/logFavBasedTweet20M145K2020Persistent"
+  val LogFavBaselondColumn =
+    "reloncommelonndations/simclustelonrs_v2/elonmbelonddings/logFavBaselondTwelonelont20M145KUpdatelondPelonrsistelonnt"
+  val LogFavBaselondColumn20m145k2020 =
+    "reloncommelonndations/simclustelonrs_v2/elonmbelonddings/logFavBaselondTwelonelont20M145K2020Pelonrsistelonnt"
 
-  val LogFavBased20m145k2020Dataset = "log_fav_based_tweet_20m_145k_2020_embeddings"
-  val LogFavBased20m145kUpdatedDataset = "log_fav_based_tweet_20m_145k_updated_embeddings"
+  val LogFavBaselond20m145k2020Dataselont = "log_fav_baselond_twelonelont_20m_145k_2020_elonmbelonddings"
+  val LogFavBaselond20m145kUpdatelondDataselont = "log_fav_baselond_twelonelont_20m_145k_updatelond_elonmbelonddings"
 
-  val DefaultMaxLength = 15
+  val DelonfaultMaxLelonngth = 15
 
-  def mostRecentTweetEmbeddingStore(
-    stratoClient: Client,
+  delonf mostReloncelonntTwelonelontelonmbelonddingStorelon(
+    stratoClielonnt: Clielonnt,
     column: String,
-    maxLength: Int = DefaultMaxLength
-  ): ReadableStore[TweetId, SimClustersEmbedding] = {
-    StratoFetchableStore
-      .withUnitView[(TweetId, Timestamp), PersistentSimClustersEmbedding](stratoClient, column)
-      .composeKeyMapping[TweetId]((_, LatestEmbeddingVersion))
-      .mapValues(_.embedding.truncate(maxLength))
+    maxLelonngth: Int = DelonfaultMaxLelonngth
+  ): RelonadablelonStorelon[TwelonelontId, SimClustelonrselonmbelondding] = {
+    StratoFelontchablelonStorelon
+      .withUnitVielonw[(TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding](stratoClielonnt, column)
+      .composelonKelonyMapping[TwelonelontId]((_, LatelonstelonmbelonddingVelonrsion))
+      .mapValuelons(_.elonmbelondding.truncatelon(maxLelonngth))
   }
 
-  def longestL2NormTweetEmbeddingStore(
-    stratoClient: Client,
+  delonf longelonstL2NormTwelonelontelonmbelonddingStorelon(
+    stratoClielonnt: Clielonnt,
     column: String
-  ): ReadableStore[TweetId, SimClustersEmbedding] =
-    StratoFetchableStore
-      .withUnitView[(TweetId, Timestamp), PersistentSimClustersEmbedding](stratoClient, column)
-      .composeKeyMapping[TweetId]((_, LongestL2EmbeddingVersion))
-      .mapValues(_.embedding)
+  ): RelonadablelonStorelon[TwelonelontId, SimClustelonrselonmbelondding] =
+    StratoFelontchablelonStorelon
+      .withUnitVielonw[(TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding](stratoClielonnt, column)
+      .composelonKelonyMapping[TwelonelontId]((_, LongelonstL2elonmbelonddingVelonrsion))
+      .mapValuelons(_.elonmbelondding)
 
-  def mostRecentTweetEmbeddingStoreManhattan(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    dataset: String,
-    statsReceiver: StatsReceiver,
-    maxLength: Int = DefaultMaxLength
-  ): ReadableStore[TweetId, SimClustersEmbedding] =
-    ManhattanFromStratoStore
-      .createPersistentTweetStore(
-        dataset = dataset,
+  delonf mostReloncelonntTwelonelontelonmbelonddingStorelonManhattan(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    dataselont: String,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    maxLelonngth: Int = DelonfaultMaxLelonngth
+  ): RelonadablelonStorelon[TwelonelontId, SimClustelonrselonmbelondding] =
+    ManhattanFromStratoStorelon
+      .crelonatelonPelonrsistelonntTwelonelontStorelon(
+        dataselont = dataselont,
         mhMtlsParams = mhMtlsParams,
-        statsReceiver = statsReceiver
-      ).composeKeyMapping[TweetId]((_, LatestEmbeddingVersion))
-      .mapValues[SimClustersEmbedding](_.embedding.truncate(maxLength))
+        statsReloncelonivelonr = statsReloncelonivelonr
+      ).composelonKelonyMapping[TwelonelontId]((_, LatelonstelonmbelonddingVelonrsion))
+      .mapValuelons[SimClustelonrselonmbelondding](_.elonmbelondding.truncatelon(maxLelonngth))
 
-  def longestL2NormTweetEmbeddingStoreManhattan(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    dataset: String,
-    statsReceiver: StatsReceiver,
-    maxLength: Int = 50
-  ): ReadableStore[TweetId, SimClustersEmbedding] =
-    ManhattanFromStratoStore
-      .createPersistentTweetStore(
-        dataset = dataset,
+  delonf longelonstL2NormTwelonelontelonmbelonddingStorelonManhattan(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    dataselont: String,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    maxLelonngth: Int = 50
+  ): RelonadablelonStorelon[TwelonelontId, SimClustelonrselonmbelondding] =
+    ManhattanFromStratoStorelon
+      .crelonatelonPelonrsistelonntTwelonelontStorelon(
+        dataselont = dataselont,
         mhMtlsParams = mhMtlsParams,
-        statsReceiver = statsReceiver
-      ).composeKeyMapping[TweetId]((_, LongestL2EmbeddingVersion))
-      .mapValues[SimClustersEmbedding](_.embedding.truncate(maxLength))
+        statsReloncelonivelonr = statsReloncelonivelonr
+      ).composelonKelonyMapping[TwelonelontId]((_, LongelonstL2elonmbelonddingVelonrsion))
+      .mapValuelons[SimClustelonrselonmbelondding](_.elonmbelondding.truncatelon(maxLelonngth))
 
   /**
-   * The writeable store for Persistent Tweet embedding. Only available in SimClusters package.
+   * Thelon writelonablelon storelon for Pelonrsistelonnt Twelonelont elonmbelondding. Only availablelon in SimClustelonrs packagelon.
    */
-  private[simclusters_v2] def persistentTweetEmbeddingStore(
-    stratoClient: Client,
+  privatelon[simclustelonrs_v2] delonf pelonrsistelonntTwelonelontelonmbelonddingStorelon(
+    stratoClielonnt: Clielonnt,
     column: String
-  ): Store[PersistentTweetEmbeddingId, PersistentSimClustersEmbedding] = {
-    StratoStore
-      .withUnitView[(TweetId, Timestamp), PersistentSimClustersEmbedding](stratoClient, column)
-      .composeKeyMapping(_.toTuple)
+  ): Storelon[PelonrsistelonntTwelonelontelonmbelonddingId, PelonrsistelonntSimClustelonrselonmbelondding] = {
+    StratoStorelon
+      .withUnitVielonw[(TwelonelontId, Timelonstamp), PelonrsistelonntSimClustelonrselonmbelondding](stratoClielonnt, column)
+      .composelonKelonyMapping(_.toTuplelon)
   }
 
-  type Timestamp = Long
+  typelon Timelonstamp = Long
 
-  case class PersistentTweetEmbeddingId(
-    tweetId: TweetId,
-    timestampInMs: Timestamp = LatestEmbeddingVersion) {
-    lazy val toTuple: (TweetId, Timestamp) = (tweetId, timestampInMs)
+  caselon class PelonrsistelonntTwelonelontelonmbelonddingId(
+    twelonelontId: TwelonelontId,
+    timelonstampInMs: Timelonstamp = LatelonstelonmbelonddingVelonrsion) {
+    lazy val toTuplelon: (TwelonelontId, Timelonstamp) = (twelonelontId, timelonstampInMs)
   }
 
-  // Special version - reserved for the latest version of the embedding
-  private[summingbird] val LatestEmbeddingVersion = 0L
-  // Special version - reserved for the embedding with the longest L2 norm
-  private[summingbird] val LongestL2EmbeddingVersion = 1L
+  // Speloncial velonrsion - relonselonrvelond for thelon latelonst velonrsion of thelon elonmbelondding
+  privatelon[summingbird] val LatelonstelonmbelonddingVelonrsion = 0L
+  // Speloncial velonrsion - relonselonrvelond for thelon elonmbelondding with thelon longelonst L2 norm
+  privatelon[summingbird] val LongelonstL2elonmbelonddingVelonrsion = 1L
 
-  // The tweet embedding store keeps at most 20 LKeys
-  private[stores] val DefaultSlice = Slice[Long](from = None, to = None, limit = None)
+  // Thelon twelonelont elonmbelondding storelon kelonelonps at most 20 LKelonys
+  privatelon[storelons] val DelonfaultSlicelon = Slicelon[Long](from = Nonelon, to = Nonelon, limit = Nonelon)
 }

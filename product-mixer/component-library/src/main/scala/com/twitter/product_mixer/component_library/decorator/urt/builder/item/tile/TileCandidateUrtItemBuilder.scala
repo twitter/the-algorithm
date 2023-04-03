@@ -1,48 +1,48 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.tile
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.tilelon
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.tile.TileCandidateUrtItemBuilder.TopicTileClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.StandardTileContent
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tile.TileItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.tilelon.TilelonCandidatelonUrtItelonmBuildelonr.TopicTilelonClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.PromptCarouselonlTilelonCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tilelon.StandardTilelonContelonnt
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.tilelon.TilelonItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object TileCandidateUrtItemBuilder {
-  val TopicTileClientEventInfoElement: String = "tile"
+objelonct TilelonCandidatelonUrtItelonmBuildelonr {
+  val TopicTilelonClielonntelonvelonntInfoelonlelonmelonnt: String = "tilelon"
 }
 
-case class TileCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, PromptCarouselTileCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, PromptCarouselTileCandidate]
-  ] = None)
-    extends CandidateUrtEntryBuilder[Query, PromptCarouselTileCandidate, TileItem] {
+caselon class TilelonCandidatelonUrtItelonmBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, PromptCarouselonlTilelonCandidatelon],
+  felonelondbackActionInfoBuildelonr: Option[
+    BaselonFelonelondbackActionInfoBuildelonr[Quelonry, PromptCarouselonlTilelonCandidatelon]
+  ] = Nonelon)
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, PromptCarouselonlTilelonCandidatelon, TilelonItelonm] {
 
-  override def apply(
-    query: Query,
-    tileCandidate: PromptCarouselTileCandidate,
-    candidateFeatures: FeatureMap
-  ): TileItem = TileItem(
-    id = tileCandidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      tileCandidate,
-      candidateFeatures,
-      Some(TopicTileClientEventInfoElement)),
-    title = "", //This data is ignored do
-    supportingText = "",
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, tileCandidate, candidateFeatures)),
-    image = None,
-    url = None,
-    content = StandardTileContent(
-      title = "",
-      supportingText = "",
-      badge = None
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    tilelonCandidatelon: PromptCarouselonlTilelonCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): TilelonItelonm = TilelonItelonm(
+    id = tilelonCandidatelon.id,
+    sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+    clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+      quelonry,
+      tilelonCandidatelon,
+      candidatelonFelonaturelons,
+      Somelon(TopicTilelonClielonntelonvelonntInfoelonlelonmelonnt)),
+    titlelon = "", //This data is ignorelond do
+    supportingTelonxt = "",
+    felonelondbackActionInfo =
+      felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, tilelonCandidatelon, candidatelonFelonaturelons)),
+    imagelon = Nonelon,
+    url = Nonelon,
+    contelonnt = StandardTilelonContelonnt(
+      titlelon = "",
+      supportingTelonxt = "",
+      badgelon = Nonelon
     )
   )
 }

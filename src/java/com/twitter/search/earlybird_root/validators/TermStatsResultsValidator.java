@@ -1,23 +1,23 @@
-package com.twitter.search.earlybird_root.validators;
+packagelon com.twittelonr.selonarch.elonarlybird_root.validators;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
 
-public class TermStatsResultsValidator implements ServiceResponseValidator<EarlybirdResponse> {
-  private final EarlybirdCluster cluster;
+public class TelonrmStatsRelonsultsValidator implelonmelonnts SelonrvicelonRelonsponselonValidator<elonarlybirdRelonsponselon> {
+  privatelon final elonarlybirdClustelonr clustelonr;
 
-  public TermStatsResultsValidator(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  public TelonrmStatsRelonsultsValidator(elonarlybirdClustelonr clustelonr) {
+    this.clustelonr = clustelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    if (!response.isSetTermStatisticsResults()
-        || !response.getTermStatisticsResults().isSetTermResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " returned null term statistics results."));
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> validatelon(elonarlybirdRelonsponselon relonsponselon) {
+    if (!relonsponselon.isSelontTelonrmStatisticsRelonsults()
+        || !relonsponselon.gelontTelonrmStatisticsRelonsults().isSelontTelonrmRelonsults()) {
+      relonturn Futurelon.elonxcelonption(
+          nelonw IllelongalStatelonelonxcelonption(clustelonr + " relonturnelond null telonrm statistics relonsults."));
     }
-    return Future.value(response);
+    relonturn Futurelon.valuelon(relonsponselon);
   }
 }

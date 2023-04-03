@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads
 
-import com.twitter.adserver.{thriftscala => ads}
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.adselonrvelonr.{thriftscala => ads}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads.AdsQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait AdsDisplayLocationBuilder[-Query <: PipelineQuery with AdsQuery] {
+trait AdsDisplayLocationBuildelonr[-Quelonry <: PipelonlinelonQuelonry with AdsQuelonry] {
 
-  def apply(query: Query): ads.DisplayLocation
+  delonf apply(quelonry: Quelonry): ads.DisplayLocation
 }
 
-case class StaticAdsDisplayLocationBuilder(displayLocation: ads.DisplayLocation)
-    extends AdsDisplayLocationBuilder[PipelineQuery with AdsQuery] {
+caselon class StaticAdsDisplayLocationBuildelonr(displayLocation: ads.DisplayLocation)
+    elonxtelonnds AdsDisplayLocationBuildelonr[PipelonlinelonQuelonry with AdsQuelonry] {
 
-  def apply(query: PipelineQuery with AdsQuery): ads.DisplayLocation = displayLocation
+  delonf apply(quelonry: PipelonlinelonQuelonry with AdsQuelonry): ads.DisplayLocation = displayLocation
 }

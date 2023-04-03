@@ -1,45 +1,45 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.HomeFeatures.DismissInfoFeature
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.timelinemixer.clients.manhattan.InjectionHistoryClient
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.manhattan.DismissInfo
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.DismissInfoFelonaturelon
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.manhattan.InjelonctionHistoryClielonnt
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.manhattan.DismissInfo
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.thriftscala.SuggelonstTypelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object DismissInfoQueryFeatureHydrator {
-  val DismissInfoSuggestTypes = Seq(SuggestType.WhoToFollow)
+objelonct DismissInfoQuelonryFelonaturelonHydrator {
+  val DismissInfoSuggelonstTypelons = Selonq(SuggelonstTypelon.WhoToFollow)
 }
 
-@Singleton
-case class DismissInfoQueryFeatureHydrator @Inject() (
-  dismissInfoClient: InjectionHistoryClient)
-    extends QueryFeatureHydrator[PipelineQuery] {
+@Singlelonton
+caselon class DismissInfoQuelonryFelonaturelonHydrator @Injelonct() (
+  dismissInfoClielonnt: InjelonctionHistoryClielonnt)
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("DismissInfo")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("DismissInfo")
 
-  override val features: Set[Feature[_, _]] = Set(DismissInfoFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(DismissInfoFelonaturelon)
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] =
-    Stitch.callFuture {
-      dismissInfoClient
-        .readDismissInfoEntries(
-          query.getRequiredUserId,
-          DismissInfoQueryFeatureHydrator.DismissInfoSuggestTypes).map { response =>
-          val dismissInfoMap = response.mapValues(DismissInfo.fromThrift)
-          FeatureMapBuilder().add(DismissInfoFeature, dismissInfoMap).build()
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] =
+    Stitch.callFuturelon {
+      dismissInfoClielonnt
+        .relonadDismissInfoelonntrielons(
+          quelonry.gelontRelonquirelondUselonrId,
+          DismissInfoQuelonryFelonaturelonHydrator.DismissInfoSuggelonstTypelons).map { relonsponselon =>
+          val dismissInfoMap = relonsponselon.mapValuelons(DismissInfo.fromThrift)
+          FelonaturelonMapBuildelonr().add(DismissInfoFelonaturelon, dismissInfoMap).build()
         }
     }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.8, 50, 60, 60)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.8, 50, 60, 60)
   )
 }

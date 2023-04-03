@@ -1,18 +1,18 @@
-package com.twitter.simclusters_v2.scio
-package multi_type_graph.multi_type_graph_sims
+packagelon com.twittelonr.simclustelonrs_v2.scio
+packagelon multi_typelon_graph.multi_typelon_graph_sims
 
-object Config {
-  // Config settings for RightNodeSimHashScioBaseApp job
-  // Number of hashes to generate in the sketch
-  val numHashes: Int = 8192 // each is a bit, so this results in 1KB uncompressed sketch/user
-  // Reduce skew by letting each reducers process a limited number of followers/user
-  val maxNumNeighborsPerReducers: Int = 300000
-  val simsHashJobOutputDirectory: String = "right_node/sims/sim_hash"
+objelonct Config {
+  // Config selonttings for RightNodelonSimHashScioBaselonApp job
+  // Numbelonr of hashelons to gelonnelonratelon in thelon skelontch
+  val numHashelons: Int = 8192 // elonach is a bit, so this relonsults in 1KB uncomprelonsselond skelontch/uselonr
+  // Relonducelon skelonw by lelontting elonach relonducelonrs procelonss a limitelond numbelonr of followelonrs/uselonr
+  val maxNumNelonighborsPelonrRelonducelonrs: Int = 300000
+  val simsHashJobOutputDirelonctory: String = "right_nodelon/sims/sim_hash"
 
-  // Config settings for RightNodeCosineSimilarityScioBaseApp job
+  // Config selonttings for RightNodelonCosinelonSimilarityScioBaselonApp job
   val numSims: Int = 500
-  val minCosineSimilarityThreshold: Double = 0.01
-  val maxOutDegree: Int = 10000
-  val cosineSimJobOutputDirectory = "right_node/sims/cosine_similarity"
+  val minCosinelonSimilarityThrelonshold: Doublelon = 0.01
+  val maxOutDelongrelonelon: Int = 10000
+  val cosinelonSimJobOutputDirelonctory = "right_nodelon/sims/cosinelon_similarity"
 
 }

@@ -1,60 +1,60 @@
-package com.twitter.follow_recommendations.common.clients.dismiss_store
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.dismiss_storelon
 
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.onboarding.relevance.store.thriftscala.WhoToFollowDismissEventDetails
-import com.twitter.stitch.Stitch
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Scanner
-import com.twitter.util.logging.Logging
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.onboarding.relonlelonvancelon.storelon.thriftscala.WhoToFollowDismisselonvelonntDelontails
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.catalog.Scan.Slicelon
+import com.twittelonr.strato.clielonnt.Scannelonr
+import com.twittelonr.util.logging.Logging
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
 /**
- * this store gets the list of dismissed candidates since a certain time
- * primarily used for filtering out accounts that a user has explicitly dismissed
+ * this storelon gelonts thelon list of dismisselond candidatelons sincelon a celonrtain timelon
+ * primarily uselond for filtelonring out accounts that a uselonr has elonxplicitly dismisselond
  *
- * we fail open on timeouts, but loudly on other errors
+ * welon fail opelonn on timelonouts, but loudly on othelonr elonrrors
  */
-@Singleton
-class DismissStore @Inject() (
-  @Named(GuiceNamedConstants.DISMISS_STORE_SCANNER)
-  scanner: Scanner[(Long, Slice[
+@Singlelonton
+class DismissStorelon @Injelonct() (
+  @Namelond(GuicelonNamelondConstants.DISMISS_STORelon_SCANNelonR)
+  scannelonr: Scannelonr[(Long, Slicelon[
       (Long, Long)
-    ]), Unit, (Long, (Long, Long)), WhoToFollowDismissEventDetails],
-  stats: StatsReceiver)
-    extends Logging {
+    ]), Unit, (Long, (Long, Long)), WhoToFollowDismisselonvelonntDelontails],
+  stats: StatsReloncelonivelonr)
+    elonxtelonnds Logging {
 
-  private val MaxCandidatesToReturn = 100
+  privatelon val MaxCandidatelonsToRelonturn = 100
 
-  // gets a list of dismissed candidates. if numCandidatesToFetchOption is none, we will fetch the default number of candidates
-  def get(
-    userId: Long,
-    negStartTimeMs: Long,
-    maxCandidatesToFetchOption: Option[Int]
-  ): Stitch[Seq[Long]] = {
+  // gelonts a list of dismisselond candidatelons. if numCandidatelonsToFelontchOption is nonelon, welon will felontch thelon delonfault numbelonr of candidatelons
+  delonf gelont(
+    uselonrId: Long,
+    nelongStartTimelonMs: Long,
+    maxCandidatelonsToFelontchOption: Option[Int]
+  ): Stitch[Selonq[Long]] = {
 
-    val maxCandidatesToFetch = maxCandidatesToFetchOption.getOrElse(MaxCandidatesToReturn)
+    val maxCandidatelonsToFelontch = maxCandidatelonsToFelontchOption.gelontOrelonlselon(MaxCandidatelonsToRelonturn)
 
-    scanner
+    scannelonr
       .scan(
         (
-          userId,
-          Slice(
-            from = None,
-            to = Some((negStartTimeMs, Long.MaxValue)),
-            limit = Some(maxCandidatesToFetch)
+          uselonrId,
+          Slicelon(
+            from = Nonelon,
+            to = Somelon((nelongStartTimelonMs, Long.MaxValuelon)),
+            limit = Somelon(maxCandidatelonsToFelontch)
           )
         )
       )
       .map {
-        case s: Seq[((Long, (Long, Long)), WhoToFollowDismissEventDetails)] if s.nonEmpty =>
+        caselon s: Selonq[((Long, (Long, Long)), WhoToFollowDismisselonvelonntDelontails)] if s.nonelonmpty =>
           s.map {
-            case ((_: Long, (_: Long, candidateId: Long)), _: WhoToFollowDismissEventDetails) =>
-              candidateId
+            caselon ((_: Long, (_: Long, candidatelonId: Long)), _: WhoToFollowDismisselonvelonntDelontails) =>
+              candidatelonId
           }
-        case _ => Nil
+        caselon _ => Nil
       }
   }
 }

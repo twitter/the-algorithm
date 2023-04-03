@@ -1,7 +1,7 @@
-package com.twitter.visibility.interfaces.search
+packagelon com.twittelonr.visibility.intelonrfacelons.selonarch
 
-import com.twitter.visibility.builder.VisibilityResult
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
 
-case class CombinedVisibilityResult(
-  tweetVisibilityResult: VisibilityResult,
-  quotedTweetVisibilityResult: Option[VisibilityResult])
+caselon class CombinelondVisibilityRelonsult(
+  twelonelontVisibilityRelonsult: VisibilityRelonsult,
+  quotelondTwelonelontVisibilityRelonsult: Option[VisibilityRelonsult])

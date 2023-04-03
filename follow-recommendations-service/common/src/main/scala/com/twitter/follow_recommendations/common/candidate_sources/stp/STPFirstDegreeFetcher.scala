@@ -1,155 +1,155 @@
-package com.twitter.follow_recommendations.common.candidate_sources.stp
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.stp
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ForwardPhoneBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReverseEmailBookSource
-import com.twitter.follow_recommendations.common.candidate_sources.addressbook.ReversePhoneBookSource
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.follow_recommendations.common.models.PotentialFirstDegreeEdge
-import com.twitter.follow_recommendations.common.stores.LowTweepCredFollowStore
-import com.twitter.hermit.model.Algorithm
-import com.twitter.hermit.model.Algorithm.Algorithm
-import com.twitter.inject.Logging
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.util.Duration
-import com.twitter.util.Timer
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdge
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfo
-import com.twitter.wtf.scalding.jobs.strong_tie_prediction.FirstDegreeEdgeInfoMonoid
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.ForwardelonmailBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.ForwardPhonelonBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.RelonvelonrselonelonmailBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.addrelonssbook.RelonvelonrselonPhonelonBookSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.relonal_timelon_relonal_graph.RelonalTimelonRelonalGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.PotelonntialFirstDelongrelonelonelondgelon
+import com.twittelonr.follow_reloncommelonndations.common.storelons.LowTwelonelonpCrelondFollowStorelon
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.helonrmit.modelonl.Algorithm.Algorithm
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.util.Duration
+import com.twittelonr.util.Timelonr
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.FirstDelongrelonelonelondgelon
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.FirstDelongrelonelonelondgelonInfo
+import com.twittelonr.wtf.scalding.jobs.strong_tielon_prelondiction.FirstDelongrelonelonelondgelonInfoMonoid
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-// Grabs FirstDegreeNodes from Candidate Sources
-@Singleton
-class STPFirstDegreeFetcher @Inject() (
-  realTimeGraphClient: RealTimeRealGraphClient,
-  reversePhoneBookSource: ReversePhoneBookSource,
-  reverseEmailBookSource: ReverseEmailBookSource,
-  forwardEmailBookSource: ForwardEmailBookSource,
-  forwardPhoneBookSource: ForwardPhoneBookSource,
-  mutualFollowStrongTiePredictionSource: MutualFollowStrongTiePredictionSource,
-  lowTweepCredFollowStore: LowTweepCredFollowStore,
-  timer: Timer,
-  statsReceiver: StatsReceiver)
-    extends Logging {
+// Grabs FirstDelongrelonelonNodelons from Candidatelon Sourcelons
+@Singlelonton
+class STPFirstDelongrelonelonFelontchelonr @Injelonct() (
+  relonalTimelonGraphClielonnt: RelonalTimelonRelonalGraphClielonnt,
+  relonvelonrselonPhonelonBookSourcelon: RelonvelonrselonPhonelonBookSourcelon,
+  relonvelonrselonelonmailBookSourcelon: RelonvelonrselonelonmailBookSourcelon,
+  forwardelonmailBookSourcelon: ForwardelonmailBookSourcelon,
+  forwardPhonelonBookSourcelon: ForwardPhonelonBookSourcelon,
+  mutualFollowStrongTielonPrelondictionSourcelon: MutualFollowStrongTielonPrelondictionSourcelon,
+  lowTwelonelonpCrelondFollowStorelon: LowTwelonelonpCrelondFollowStorelon,
+  timelonr: Timelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds Logging {
 
-  private val stats = statsReceiver.scope("STPFirstDegreeFetcher")
-  private val stitchRequests = stats.scope("stitchRequests")
-  private val allStitchRequests = stitchRequests.counter("all")
-  private val timeoutStitchRequests = stitchRequests.counter("timeout")
-  private val successStitchRequests = stitchRequests.counter("success")
+  privatelon val stats = statsReloncelonivelonr.scopelon("STPFirstDelongrelonelonFelontchelonr")
+  privatelon val stitchRelonquelonsts = stats.scopelon("stitchRelonquelonsts")
+  privatelon val allStitchRelonquelonsts = stitchRelonquelonsts.countelonr("all")
+  privatelon val timelonoutStitchRelonquelonsts = stitchRelonquelonsts.countelonr("timelonout")
+  privatelon val succelonssStitchRelonquelonsts = stitchRelonquelonsts.countelonr("succelonss")
 
-  private implicit val firstDegreeEdgeInfoMonoid: FirstDegreeEdgeInfoMonoid =
-    new FirstDegreeEdgeInfoMonoid
+  privatelon implicit val firstDelongrelonelonelondgelonInfoMonoid: FirstDelongrelonelonelondgelonInfoMonoid =
+    nelonw FirstDelongrelonelonelondgelonInfoMonoid
 
   /**
-   * Used to map from algorithm to the correct fetcher and firstDegreeEdgeInfo.
-   * Afterward, uses fetcher to get candidates and construct the correct FirstDegreeEdgeInfo.
+   * Uselond to map from algorithm to thelon correlonct felontchelonr and firstDelongrelonelonelondgelonInfo.
+   * Aftelonrward, uselons felontchelonr to gelont candidatelons and construct thelon correlonct FirstDelongrelonelonelondgelonInfo.
    * */
-  private def getPotentialFirstEdgesFromFetcher(
-    userId: Long,
-    target: HasClientContext with HasParams with HasRecentFollowedUserIds,
+  privatelon delonf gelontPotelonntialFirstelondgelonsFromFelontchelonr(
+    uselonrId: Long,
+    targelont: HasClielonntContelonxt with HasParams with HasReloncelonntFollowelondUselonrIds,
     algorithm: Algorithm,
-    weight: Double
-  ): Stitch[Seq[PotentialFirstDegreeEdge]] = {
-    val (candidates, edgeInfo) = algorithm match {
-      case Algorithm.MutualFollowSTP =>
+    welonight: Doublelon
+  ): Stitch[Selonq[PotelonntialFirstDelongrelonelonelondgelon]] = {
+    val (candidatelons, elondgelonInfo) = algorithm match {
+      caselon Algorithm.MutualFollowSTP =>
         (
-          mutualFollowStrongTiePredictionSource(target),
-          Some(FirstDegreeEdgeInfo(mutualFollow = true)))
-      case Algorithm.ReverseEmailBookIbis =>
-        (reverseEmailBookSource(target), Some(FirstDegreeEdgeInfo(reverseEmail = true)))
-      case Algorithm.ReversePhoneBook =>
-        (reversePhoneBookSource(target), Some(FirstDegreeEdgeInfo(reversePhone = true)))
-      case Algorithm.ForwardEmailBook =>
-        (forwardEmailBookSource(target), Some(FirstDegreeEdgeInfo(forwardEmail = true)))
-      case Algorithm.ForwardPhoneBook =>
-        (forwardPhoneBookSource(target), Some(FirstDegreeEdgeInfo(forwardPhone = true)))
-      case Algorithm.LowTweepcredFollow =>
+          mutualFollowStrongTielonPrelondictionSourcelon(targelont),
+          Somelon(FirstDelongrelonelonelondgelonInfo(mutualFollow = truelon)))
+      caselon Algorithm.RelonvelonrselonelonmailBookIbis =>
+        (relonvelonrselonelonmailBookSourcelon(targelont), Somelon(FirstDelongrelonelonelondgelonInfo(relonvelonrselonelonmail = truelon)))
+      caselon Algorithm.RelonvelonrselonPhonelonBook =>
+        (relonvelonrselonPhonelonBookSourcelon(targelont), Somelon(FirstDelongrelonelonelondgelonInfo(relonvelonrselonPhonelon = truelon)))
+      caselon Algorithm.ForwardelonmailBook =>
+        (forwardelonmailBookSourcelon(targelont), Somelon(FirstDelongrelonelonelondgelonInfo(forwardelonmail = truelon)))
+      caselon Algorithm.ForwardPhonelonBook =>
+        (forwardPhonelonBookSourcelon(targelont), Somelon(FirstDelongrelonelonelondgelonInfo(forwardPhonelon = truelon)))
+      caselon Algorithm.LowTwelonelonpcrelondFollow =>
         (
-          lowTweepCredFollowStore.getLowTweepCredUsers(target),
-          Some(FirstDegreeEdgeInfo(lowTweepcredFollow = true)))
-      case _ =>
-        (Stitch.Nil, None)
+          lowTwelonelonpCrelondFollowStorelon.gelontLowTwelonelonpCrelondUselonrs(targelont),
+          Somelon(FirstDelongrelonelonelondgelonInfo(lowTwelonelonpcrelondFollow = truelon)))
+      caselon _ =>
+        (Stitch.Nil, Nonelon)
     }
-    candidates.map(_.flatMap { candidate =>
-      edgeInfo.map(PotentialFirstDegreeEdge(userId, candidate.id, algorithm, weight, _))
+    candidatelons.map(_.flatMap { candidatelon =>
+      elondgelonInfo.map(PotelonntialFirstDelongrelonelonelondgelon(uselonrId, candidatelon.id, algorithm, welonight, _))
     })
   }
 
   /**
-   * Using the DefaultMap (AlgorithmToScore) we iterate through algorithm/weights to get
-   * candidates with a set weight. Then, given repeating candidates (by candidate id).
-   * Given those candidates we group by the candidateId and sum all below weights and combine
-   * the edgeInfos of into one. Then we choose the candidates with most weight. Finally,
-   * we attach the realGraphWeight score to those candidates.
+   * Using thelon DelonfaultMap (AlgorithmToScorelon) welon itelonratelon through algorithm/welonights to gelont
+   * candidatelons with a selont welonight. Thelonn, givelonn relonpelonating candidatelons (by candidatelon id).
+   * Givelonn thoselon candidatelons welon group by thelon candidatelonId and sum all belonlow welonights and combinelon
+   * thelon elondgelonInfos of into onelon. Thelonn welon chooselon thelon candidatelons with most welonight. Finally,
+   * welon attach thelon relonalGraphWelonight scorelon to thoselon candidatelons.
    * */
-  def getFirstDegreeEdges(
-    target: HasClientContext with HasParams with HasRecentFollowedUserIds
-  ): Stitch[Seq[FirstDegreeEdge]] = {
-    target.getOptionalUserId
-      .map { userId =>
-        allStitchRequests.incr()
-        val firstEdgesQueryStitch = Stitch
-          .collect(STPFirstDegreeFetcher.DefaultGraphBuilderAlgorithmToScore.map {
-            case (algorithm, candidateWeight) =>
-              getPotentialFirstEdgesFromFetcher(userId, target, algorithm, candidateWeight)
-          }.toSeq)
-          .map(_.flatten)
+  delonf gelontFirstDelongrelonelonelondgelons(
+    targelont: HasClielonntContelonxt with HasParams with HasReloncelonntFollowelondUselonrIds
+  ): Stitch[Selonq[FirstDelongrelonelonelondgelon]] = {
+    targelont.gelontOptionalUselonrId
+      .map { uselonrId =>
+        allStitchRelonquelonsts.incr()
+        val firstelondgelonsQuelonryStitch = Stitch
+          .collelonct(STPFirstDelongrelonelonFelontchelonr.DelonfaultGraphBuildelonrAlgorithmToScorelon.map {
+            caselon (algorithm, candidatelonWelonight) =>
+              gelontPotelonntialFirstelondgelonsFromFelontchelonr(uselonrId, targelont, algorithm, candidatelonWelonight)
+          }.toSelonq)
+          .map(_.flattelonn)
 
-        val destinationIdsToEdges = firstEdgesQueryStitch
-          .map(_.groupBy(_.connectingId).map {
-            case (destinationId: Long, edges: Seq[PotentialFirstDegreeEdge]) =>
-              val combinedDestScore = edges.map(_.score).sum
-              val combinedEdgeInfo: FirstDegreeEdgeInfo =
-                edges.map(_.edgeInfo).fold(firstDegreeEdgeInfoMonoid.zero) {
-                  (aggregatedInfo, currentInfo) =>
-                    firstDegreeEdgeInfoMonoid.plus(aggregatedInfo, currentInfo)
+        val delonstinationIdsToelondgelons = firstelondgelonsQuelonryStitch
+          .map(_.groupBy(_.connelonctingId).map {
+            caselon (delonstinationId: Long, elondgelons: Selonq[PotelonntialFirstDelongrelonelonelondgelon]) =>
+              val combinelondDelonstScorelon = elondgelons.map(_.scorelon).sum
+              val combinelondelondgelonInfo: FirstDelongrelonelonelondgelonInfo =
+                elondgelons.map(_.elondgelonInfo).fold(firstDelongrelonelonelondgelonInfoMonoid.zelonro) {
+                  (aggrelongatelondInfo, currelonntInfo) =>
+                    firstDelongrelonelonelondgelonInfoMonoid.plus(aggrelongatelondInfo, currelonntInfo)
                 }
-              (destinationId, combinedEdgeInfo, combinedDestScore)
-          }).map(_.toSeq)
+              (delonstinationId, combinelondelondgelonInfo, combinelondDelonstScorelon)
+          }).map(_.toSelonq)
 
-        val topDestinationEdges = destinationIdsToEdges.map(_.sortBy {
-          case (_, _, combinedDestScore) => -combinedDestScore
-        }.take(STPFirstDegreeFetcher.MaxNumFirstDegreeEdges))
+        val topDelonstinationelondgelons = delonstinationIdsToelondgelons.map(_.sortBy {
+          caselon (_, _, combinelondDelonstScorelon) => -combinelondDelonstScorelon
+        }.takelon(STPFirstDelongrelonelonFelontchelonr.MaxNumFirstDelongrelonelonelondgelons))
 
         Stitch
-          .join(realTimeGraphClient.getRealGraphWeights(userId), topDestinationEdges).map {
-            case (realGraphWeights, topDestinationEdges) =>
-              successStitchRequests.incr()
-              topDestinationEdges.map {
-                case (destinationId, combinedEdgeInfo, _) =>
-                  val updatedEdgeInfo = combinedEdgeInfo.copy(
-                    realGraphWeight = realGraphWeights.getOrElse(destinationId, 0.0),
-                    lowTweepcredFollow =
-                      !combinedEdgeInfo.mutualFollow && combinedEdgeInfo.lowTweepcredFollow
+          .join(relonalTimelonGraphClielonnt.gelontRelonalGraphWelonights(uselonrId), topDelonstinationelondgelons).map {
+            caselon (relonalGraphWelonights, topDelonstinationelondgelons) =>
+              succelonssStitchRelonquelonsts.incr()
+              topDelonstinationelondgelons.map {
+                caselon (delonstinationId, combinelondelondgelonInfo, _) =>
+                  val updatelondelondgelonInfo = combinelondelondgelonInfo.copy(
+                    relonalGraphWelonight = relonalGraphWelonights.gelontOrelonlselon(delonstinationId, 0.0),
+                    lowTwelonelonpcrelondFollow =
+                      !combinelondelondgelonInfo.mutualFollow && combinelondelondgelonInfo.lowTwelonelonpcrelondFollow
                   )
-                  FirstDegreeEdge(userId, destinationId, updatedEdgeInfo)
+                  FirstDelongrelonelonelondgelon(uselonrId, delonstinationId, updatelondelondgelonInfo)
               }
-          }.within(STPFirstDegreeFetcher.LongTimeoutFetcher)(timer).rescue {
-            case ex =>
-              timeoutStitchRequests.incr()
-              logger.error("Exception while loading direct edges in OnlineSTP: ", ex)
+          }.within(STPFirstDelongrelonelonFelontchelonr.LongTimelonoutFelontchelonr)(timelonr).relonscuelon {
+            caselon elonx =>
+              timelonoutStitchRelonquelonsts.incr()
+              loggelonr.elonrror("elonxcelonption whilelon loading direlonct elondgelons in OnlinelonSTP: ", elonx)
               Stitch.Nil
           }
-      }.getOrElse(Stitch.Nil)
+      }.gelontOrelonlselon(Stitch.Nil)
   }
 }
 
-object STPFirstDegreeFetcher {
-  val MaxNumFirstDegreeEdges = 200
-  val DefaultGraphBuilderAlgorithmToScore = Map(
+objelonct STPFirstDelongrelonelonFelontchelonr {
+  val MaxNumFirstDelongrelonelonelondgelons = 200
+  val DelonfaultGraphBuildelonrAlgorithmToScorelon = Map(
     Algorithm.MutualFollowSTP -> 10.0,
-    Algorithm.LowTweepcredFollow -> 6.0,
-    Algorithm.ForwardEmailBook -> 7.0,
-    Algorithm.ForwardPhoneBook -> 9.0,
-    Algorithm.ReverseEmailBookIbis -> 5.0,
-    Algorithm.ReversePhoneBook -> 8.0
+    Algorithm.LowTwelonelonpcrelondFollow -> 6.0,
+    Algorithm.ForwardelonmailBook -> 7.0,
+    Algorithm.ForwardPhonelonBook -> 9.0,
+    Algorithm.RelonvelonrselonelonmailBookIbis -> 5.0,
+    Algorithm.RelonvelonrselonPhonelonBook -> 8.0
   )
-  val LongTimeoutFetcher: Duration = 300.millis
+  val LongTimelonoutFelontchelonr: Duration = 300.millis
 }

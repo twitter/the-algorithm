@@ -1,15 +1,15 @@
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/guava",
         "3rdparty/jvm/commons-io",
         "3rdparty/jvm/org/json",
-        "src/java/com/twitter/common/util:system-mocks",
-        "src/java/com/twitter/search/common/dark",
-        "src/java/com/twitter/search/common/metrics",
-        "src/java/com/twitter/search/common/util/io/periodic",
-        "src/java/com/twitter/search/common/util/json",
+        "src/java/com/twittelonr/common/util:systelonm-mocks",
+        "src/java/com/twittelonr/selonarch/common/dark",
+        "src/java/com/twittelonr/selonarch/common/melontrics",
+        "src/java/com/twittelonr/selonarch/common/util/io/pelonriodic",
+        "src/java/com/twittelonr/selonarch/common/util/json",
     ],
 )

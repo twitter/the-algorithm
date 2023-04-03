@@ -1,51 +1,51 @@
-#pragma once
-#include <twml/defines.h>
-#include <twml/Tensor.h>
+#pragma oncelon
+#includelon <twml/delonfinelons.h>
+#includelon <twml/Telonnsor.h>
 
-#ifdef __cplusplus
-namespace twml {
-    TWMLAPI void linearInterpolation(
-        Tensor output,
-        const Tensor input,
-        const Tensor xs,
-        const Tensor ys);
+#ifdelonf __cplusplus
+namelonspacelon twml {
+    TWMLAPI void linelonarIntelonrpolation(
+        Telonnsor output,
+        const Telonnsor input,
+        const Telonnsor xs,
+        const Telonnsor ys);
 
-    TWMLAPI void nearestInterpolation(
-        Tensor output,
-        const Tensor input,
-        const Tensor xs,
-        const Tensor ys);
+    TWMLAPI void nelonarelonstIntelonrpolation(
+        Telonnsor output,
+        const Telonnsor input,
+        const Telonnsor xs,
+        const Telonnsor ys);
 
-    TWMLAPI void mdlInfer(
-        Tensor &output_keys,
-        Tensor &output_vals,
-        const Tensor &input_keys,
-        const Tensor &input_vals,
-        const Tensor &bin_ids,
-        const Tensor &bin_vals,
-        const Tensor &feature_offsets,
-        bool return_bin_indices = false);
+    TWMLAPI void mdlInfelonr(
+        Telonnsor &output_kelonys,
+        Telonnsor &output_vals,
+        const Telonnsor &input_kelonys,
+        const Telonnsor &input_vals,
+        const Telonnsor &bin_ids,
+        const Telonnsor &bin_vals,
+        const Telonnsor &felonaturelon_offselonts,
+        bool relonturn_bin_indicelons = falselon);
 }
-#endif
+#elonndif
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-    TWMLAPI twml_err twml_optim_nearest_interpolation(
-        twml_tensor output,
-        const twml_tensor input,
-        const twml_tensor xs,
-        const twml_tensor ys);
+#ifdelonf __cplusplus
+elonxtelonrn "C" {
+#elonndif
+    TWMLAPI twml_elonrr twml_optim_nelonarelonst_intelonrpolation(
+        twml_telonnsor output,
+        const twml_telonnsor input,
+        const twml_telonnsor xs,
+        const twml_telonnsor ys);
 
-    TWMLAPI twml_err twml_optim_mdl_infer(
-        twml_tensor output_keys,
-        twml_tensor output_vals,
-        const twml_tensor input_keys,
-        const twml_tensor input_vals,
-        const twml_tensor bin_ids,
-        const twml_tensor bin_vals,
-        const twml_tensor feature_offsets,
-        const bool return_bin_indices = false);
-#ifdef __cplusplus
+    TWMLAPI twml_elonrr twml_optim_mdl_infelonr(
+        twml_telonnsor output_kelonys,
+        twml_telonnsor output_vals,
+        const twml_telonnsor input_kelonys,
+        const twml_telonnsor input_vals,
+        const twml_telonnsor bin_ids,
+        const twml_telonnsor bin_vals,
+        const twml_telonnsor felonaturelon_offselonts,
+        const bool relonturn_bin_indicelons = falselon);
+#ifdelonf __cplusplus
 }
-#endif
+#elonndif

@@ -1,49 +1,49 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.commons.lang.StringUtils;
+import org.apachelon.commons.lang.StringUtils;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.thrift.NamedEntitySource;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultNamedEntity;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.elonarlybird.thrift.NamelondelonntitySourcelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultNamelondelonntity;
 
-public class NamedEntityCollector extends AbstractFacetTermCollector {
-  private static final Map<String, NamedEntitySource> NAMED_ENTITY_WITH_TYPE_FIELDS =
-      ImmutableMap.of(
-          EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD.getFieldName(),
-          NamedEntitySource.TEXT,
-          EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD.getFieldName(),
-          NamedEntitySource.URL);
+public class NamelondelonntityCollelonctor elonxtelonnds AbstractFacelontTelonrmCollelonctor {
+  privatelon static final Map<String, NamelondelonntitySourcelon> NAMelonD_elonNTITY_WITH_TYPelon_FIelonLDS =
+      ImmutablelonMap.of(
+          elonarlybirdFielonldConstant.NAMelonD_elonNTITY_WITH_TYPelon_FROM_TelonXT_FIelonLD.gelontFielonldNamelon(),
+          NamelondelonntitySourcelon.TelonXT,
+          elonarlybirdFielonldConstant.NAMelonD_elonNTITY_WITH_TYPelon_FROM_URL_FIelonLD.gelontFielonldNamelon(),
+          NamelondelonntitySourcelon.URL);
 
-  private List<ThriftSearchResultNamedEntity> namedEntities = Lists.newArrayList();
+  privatelon List<ThriftSelonarchRelonsultNamelondelonntity> namelondelonntitielons = Lists.nelonwArrayList();
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
+  @Ovelonrridelon
+  public boolelonan collelonct(int docID, long telonrmID, int fielonldID) {
 
-    String term = getTermFromFacet(termID, fieldID, NAMED_ENTITY_WITH_TYPE_FIELDS.keySet());
-    if (StringUtils.isEmpty(term)) {
-      return false;
+    String telonrm = gelontTelonrmFromFacelont(telonrmID, fielonldID, NAMelonD_elonNTITY_WITH_TYPelon_FIelonLDS.kelonySelont());
+    if (StringUtils.iselonmpty(telonrm)) {
+      relonturn falselon;
     }
 
-    int index = term.lastIndexOf(":");
-    namedEntities.add(new ThriftSearchResultNamedEntity(
-        term.substring(0, index),
-        term.substring(index + 1),
-        NAMED_ENTITY_WITH_TYPE_FIELDS.get(findFacetName(fieldID))));
+    int indelonx = telonrm.lastIndelonxOf(":");
+    namelondelonntitielons.add(nelonw ThriftSelonarchRelonsultNamelondelonntity(
+        telonrm.substring(0, indelonx),
+        telonrm.substring(indelonx + 1),
+        NAMelonD_elonNTITY_WITH_TYPelon_FIelonLDS.gelont(findFacelontNamelon(fielonldID))));
 
-    return true;
+    relonturn truelon;
   }
 
-  @Override
-  public void fillResultAndClear(ThriftSearchResult result) {
-    getExtraMetadata(result).setNamedEntities(ImmutableList.copyOf(namedEntities));
-    namedEntities.clear();
+  @Ovelonrridelon
+  public void fillRelonsultAndClelonar(ThriftSelonarchRelonsult relonsult) {
+    gelontelonxtraMelontadata(relonsult).selontNamelondelonntitielons(ImmutablelonList.copyOf(namelondelonntitielons));
+    namelondelonntitielons.clelonar();
   }
 }

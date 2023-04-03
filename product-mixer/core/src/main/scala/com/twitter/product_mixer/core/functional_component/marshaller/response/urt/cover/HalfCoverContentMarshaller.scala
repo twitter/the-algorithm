@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.cover
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.covelonr
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.CallbackMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.DismissInfoMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.cover.HalfCoverContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.CallbackMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.DismissInfoMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.covelonr.HalfCovelonrContelonnt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class HalfCoverContentMarshaller @Inject() (
-  halfCoverDisplayTypeMarshaller: HalfCoverDisplayTypeMarshaller,
-  coverCtaMarshaller: CoverCtaMarshaller,
-  richTextMarshaller: RichTextMarshaller,
-  coverImageMarshaller: CoverImageMarshaller,
-  dismissInfoMarshaller: DismissInfoMarshaller,
-  callbackMarshaller: CallbackMarshaller) {
+@Singlelonton
+class HalfCovelonrContelonntMarshallelonr @Injelonct() (
+  halfCovelonrDisplayTypelonMarshallelonr: HalfCovelonrDisplayTypelonMarshallelonr,
+  covelonrCtaMarshallelonr: CovelonrCtaMarshallelonr,
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr,
+  covelonrImagelonMarshallelonr: CovelonrImagelonMarshallelonr,
+  dismissInfoMarshallelonr: DismissInfoMarshallelonr,
+  callbackMarshallelonr: CallbackMarshallelonr) {
 
-  def apply(halfCover: HalfCoverContent): urt.Cover =
-    urt.Cover.HalfCover(
-      urt.HalfCover(
-        displayType = halfCoverDisplayTypeMarshaller(halfCover.displayType),
-        primaryText = richTextMarshaller(halfCover.primaryText),
-        primaryCoverCta = coverCtaMarshaller(halfCover.primaryCoverCta),
-        secondaryCoverCta = halfCover.secondaryCoverCta.map(coverCtaMarshaller(_)),
-        secondaryText = halfCover.secondaryText.map(richTextMarshaller(_)),
-        impressionCallbacks = halfCover.impressionCallbacks.map(_.map(callbackMarshaller(_))),
-        dismissible = halfCover.dismissible,
-        coverImage = halfCover.coverImage.map(coverImageMarshaller(_)),
-        dismissInfo = halfCover.dismissInfo.map(dismissInfoMarshaller(_))
+  delonf apply(halfCovelonr: HalfCovelonrContelonnt): urt.Covelonr =
+    urt.Covelonr.HalfCovelonr(
+      urt.HalfCovelonr(
+        displayTypelon = halfCovelonrDisplayTypelonMarshallelonr(halfCovelonr.displayTypelon),
+        primaryTelonxt = richTelonxtMarshallelonr(halfCovelonr.primaryTelonxt),
+        primaryCovelonrCta = covelonrCtaMarshallelonr(halfCovelonr.primaryCovelonrCta),
+        seloncondaryCovelonrCta = halfCovelonr.seloncondaryCovelonrCta.map(covelonrCtaMarshallelonr(_)),
+        seloncondaryTelonxt = halfCovelonr.seloncondaryTelonxt.map(richTelonxtMarshallelonr(_)),
+        imprelonssionCallbacks = halfCovelonr.imprelonssionCallbacks.map(_.map(callbackMarshallelonr(_))),
+        dismissiblelon = halfCovelonr.dismissiblelon,
+        covelonrImagelon = halfCovelonr.covelonrImagelon.map(covelonrImagelonMarshallelonr(_)),
+        dismissInfo = halfCovelonr.dismissInfo.map(dismissInfoMarshallelonr(_))
       ))
 }

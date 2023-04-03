@@ -1,44 +1,44 @@
-package com.twitter.home_mixer.functional_component.decorator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator
 
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleFocalTweetIdFeature
-import com.twitter.home_mixer.model.HomeFeatures.ConversationModuleIdFeature
-import com.twitter.home_mixer.param.HomeGlobalParams.EnableSocialContextParam
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.social_context.BaseSocialContextBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.SocialContext
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.ConvelonrsationModulelonIdFelonaturelon
+import com.twittelonr.homelon_mixelonr.param.HomelonGlobalParams.elonnablelonSocialContelonxtParam
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.social_contelonxt.BaselonSocialContelonxtBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.SocialContelonxt
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class HomeTweetSocialContextBuilder @Inject() (
-  likedBySocialContextBuilder: LikedBySocialContextBuilder,
-  followedBySocialContextBuilder: FollowedBySocialContextBuilder,
-  topicSocialContextBuilder: TopicSocialContextBuilder,
-  extendedReplySocialContextBuilder: ExtendedReplySocialContextBuilder,
-  receivedReplySocialContextBuilder: ReceivedReplySocialContextBuilder)
-    extends BaseSocialContextBuilder[PipelineQuery, TweetCandidate] {
+@Singlelonton
+caselon class HomelonTwelonelontSocialContelonxtBuildelonr @Injelonct() (
+  likelondBySocialContelonxtBuildelonr: LikelondBySocialContelonxtBuildelonr,
+  followelondBySocialContelonxtBuildelonr: FollowelondBySocialContelonxtBuildelonr,
+  topicSocialContelonxtBuildelonr: TopicSocialContelonxtBuildelonr,
+  elonxtelonndelondRelonplySocialContelonxtBuildelonr: elonxtelonndelondRelonplySocialContelonxtBuildelonr,
+  reloncelonivelondRelonplySocialContelonxtBuildelonr: ReloncelonivelondRelonplySocialContelonxtBuildelonr)
+    elonxtelonnds BaselonSocialContelonxtBuildelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  def apply(
-    query: PipelineQuery,
-    candidate: TweetCandidate,
-    features: FeatureMap
-  ): Option[SocialContext] = {
-    if (query.params(EnableSocialContextParam)) {
-      features.getOrElse(ConversationModuleFocalTweetIdFeature, None) match {
-        case None =>
-          likedBySocialContextBuilder(query, candidate, features)
-            .orElse(followedBySocialContextBuilder(query, candidate, features))
-            .orElse(topicSocialContextBuilder(query, candidate, features))
-        case Some(_) =>
-          val conversationId = features.getOrElse(ConversationModuleIdFeature, None)
-          // Only hydrate the social context into the root tweet in a conversation module
-          if (conversationId.contains(candidate.id)) {
-            extendedReplySocialContextBuilder(query, candidate, features)
-              .orElse(receivedReplySocialContextBuilder(query, candidate, features))
-          } else None
+  delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelon: TwelonelontCandidatelon,
+    felonaturelons: FelonaturelonMap
+  ): Option[SocialContelonxt] = {
+    if (quelonry.params(elonnablelonSocialContelonxtParam)) {
+      felonaturelons.gelontOrelonlselon(ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon, Nonelon) match {
+        caselon Nonelon =>
+          likelondBySocialContelonxtBuildelonr(quelonry, candidatelon, felonaturelons)
+            .orelonlselon(followelondBySocialContelonxtBuildelonr(quelonry, candidatelon, felonaturelons))
+            .orelonlselon(topicSocialContelonxtBuildelonr(quelonry, candidatelon, felonaturelons))
+        caselon Somelon(_) =>
+          val convelonrsationId = felonaturelons.gelontOrelonlselon(ConvelonrsationModulelonIdFelonaturelon, Nonelon)
+          // Only hydratelon thelon social contelonxt into thelon root twelonelont in a convelonrsation modulelon
+          if (convelonrsationId.contains(candidatelon.id)) {
+            elonxtelonndelondRelonplySocialContelonxtBuildelonr(quelonry, candidatelon, felonaturelons)
+              .orelonlselon(reloncelonivelondRelonplySocialContelonxtBuildelonr(quelonry, candidatelon, felonaturelons))
+          } elonlselon Nonelon
       }
-    } else None
+    } elonlselon Nonelon
   }
 }

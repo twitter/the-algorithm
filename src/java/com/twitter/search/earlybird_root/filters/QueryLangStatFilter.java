@@ -1,114 +1,114 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Singlelonton;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.text.language.LocaleUtil;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.common.telonxt.languagelon.LocalelonUtil;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.util.lang.ThriftLanguagelonUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Export stats for query languages.
+ * elonxport stats for quelonry languagelons.
  */
-@Singleton
-public class QueryLangStatFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+@Singlelonton
+public class QuelonryLangStatFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
   public static class Config {
-    // We put a limit here in case an error in the client are sending us random lang codes.
-    private int maxNumberOfLangs;
+    // Welon put a limit helonrelon in caselon an elonrror in thelon clielonnt arelon selonnding us random lang codelons.
+    privatelon int maxNumbelonrOfLangs;
 
-    public Config(int maxNumberOfLangs) {
-      this.maxNumberOfLangs = maxNumberOfLangs;
+    public Config(int maxNumbelonrOfLangs) {
+      this.maxNumbelonrOfLangs = maxNumbelonrOfLangs;
     }
 
-    public int getMaxNumberOfLangs() {
-      return maxNumberOfLangs;
+    public int gelontMaxNumbelonrOfLangs() {
+      relonturn maxNumbelonrOfLangs;
     }
   }
 
-  @VisibleForTesting
-  protected static final String LANG_STATS_PREFIX = "num_queries_in_lang_";
+  @VisiblelonForTelonsting
+  protelonctelond static final String LANG_STATS_PRelonFIX = "num_quelonrielons_in_lang_";
 
-  private final Config config;
-  private final SearchCounter allCountsForLangsOverMaxNumLang =
-      SearchCounter.export(LANG_STATS_PREFIX + "overflow");
+  privatelon final Config config;
+  privatelon final SelonarchCountelonr allCountsForLangsOvelonrMaxNumLang =
+      SelonarchCountelonr.elonxport(LANG_STATS_PRelonFIX + "ovelonrflow");
 
-  private final ConcurrentHashMap<String, SearchCounter> langCounters =
-      new ConcurrentHashMap<>();
+  privatelon final ConcurrelonntHashMap<String, SelonarchCountelonr> langCountelonrs =
+      nelonw ConcurrelonntHashMap<>();
 
-  @Inject
-  public QueryLangStatFilter(Config config) {
+  @Injelonct
+  public QuelonryLangStatFiltelonr(Config config) {
     this.config = config;
   }
 
-  private SearchCounter getCounter(String lang) {
-    Preconditions.checkNotNull(lang);
+  privatelon SelonarchCountelonr gelontCountelonr(String lang) {
+    Prelonconditions.chelonckNotNull(lang);
 
-    SearchCounter counter = langCounters.get(lang);
-    if (counter == null) {
-      if (langCounters.size() >= config.getMaxNumberOfLangs()) {
-        return allCountsForLangsOverMaxNumLang;
+    SelonarchCountelonr countelonr = langCountelonrs.gelont(lang);
+    if (countelonr == null) {
+      if (langCountelonrs.sizelon() >= config.gelontMaxNumbelonrOfLangs()) {
+        relonturn allCountsForLangsOvelonrMaxNumLang;
       }
-      synchronized (langCounters) { // This double-checked locking is safe,
-                                    // since we're using a ConcurrentHashMap
-        counter = langCounters.get(lang);
-        if (counter == null) {
-          counter = SearchCounter.export(LANG_STATS_PREFIX + lang);
-          langCounters.put(lang, counter);
+      synchronizelond (langCountelonrs) { // This doublelon-chelonckelond locking is safelon,
+                                    // sincelon welon'relon using a ConcurrelonntHashMap
+        countelonr = langCountelonrs.gelont(lang);
+        if (countelonr == null) {
+          countelonr = SelonarchCountelonr.elonxport(LANG_STATS_PRelonFIX + lang);
+          langCountelonrs.put(lang, countelonr);
         }
       }
     }
 
-    return counter;
+    relonturn countelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
 
     String lang = null;
 
-    ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
+    ThriftSelonarchQuelonry selonarchQuelonry = relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry();
 
-    lang = searchQuery.getQueryLang();
+    lang = selonarchQuelonry.gelontQuelonryLang();
 
     if (lang == null) {
       // fallback to ui lang
-      lang = searchQuery.getUiLang();
+      lang = selonarchQuelonry.gelontUiLang();
     }
 
-    if (lang == null && searchQuery.isSetUserLangs()) {
-      // fallback to the user lang with the highest confidence
-      double maxConfidence = Double.MIN_VALUE;
+    if (lang == null && selonarchQuelonry.isSelontUselonrLangs()) {
+      // fallback to thelon uselonr lang with thelon highelonst confidelonncelon
+      doublelon maxConfidelonncelon = Doublelon.MIN_VALUelon;
 
-      for (Map.Entry<ThriftLanguage, Double> entry : searchQuery.getUserLangs().entrySet()) {
-        if (entry.getValue() > maxConfidence) {
-          lang = ThriftLanguageUtil.getLanguageCodeOf(entry.getKey());
-          maxConfidence = entry.getValue();
+      for (Map.elonntry<ThriftLanguagelon, Doublelon> elonntry : selonarchQuelonry.gelontUselonrLangs().elonntrySelont()) {
+        if (elonntry.gelontValuelon() > maxConfidelonncelon) {
+          lang = ThriftLanguagelonUtil.gelontLanguagelonCodelonOf(elonntry.gelontKelony());
+          maxConfidelonncelon = elonntry.gelontValuelon();
         }
       }
     }
 
     if (lang == null) {
-      lang = LocaleUtil.UNDETERMINED_LANGUAGE;
+      lang = LocalelonUtil.UNDelonTelonRMINelonD_LANGUAGelon;
     }
 
-    getCounter(lang).increment();
+    gelontCountelonr(lang).increlonmelonnt();
 
-    return service.apply(requestContext);
+    relonturn selonrvicelon.apply(relonquelonstContelonxt);
   }
 }

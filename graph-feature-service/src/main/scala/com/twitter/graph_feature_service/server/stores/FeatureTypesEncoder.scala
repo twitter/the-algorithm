@@ -1,16 +1,16 @@
-package com.twitter.graph_feature_service.server.stores
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.selonrvelonr.storelons
 
-import com.twitter.graph_feature_service.common.Configs.RandomSeed
-import com.twitter.graph_feature_service.thriftscala.FeatureType
+import com.twittelonr.graph_felonaturelon_selonrvicelon.common.Configs.RandomSelonelond
+import com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala.FelonaturelonTypelon
 import scala.util.hashing.MurmurHash3
 
-object FeatureTypesEncoder {
+objelonct FelonaturelonTypelonselonncodelonr {
 
-  def apply(featureTypes: Seq[FeatureType]): String = {
-    val byteArray = featureTypes.flatMap { featureType =>
-      Array(featureType.leftEdgeType.getValue.toByte, featureType.rightEdgeType.getValue.toByte)
+  delonf apply(felonaturelonTypelons: Selonq[FelonaturelonTypelon]): String = {
+    val bytelonArray = felonaturelonTypelons.flatMap { felonaturelonTypelon =>
+      Array(felonaturelonTypelon.lelonftelondgelonTypelon.gelontValuelon.toBytelon, felonaturelonTypelon.rightelondgelonTypelon.gelontValuelon.toBytelon)
     }.toArray
-    (MurmurHash3.bytesHash(byteArray, RandomSeed) & 0x7fffffff).toString // keep positive
+    (MurmurHash3.bytelonsHash(bytelonArray, RandomSelonelond) & 0x7fffffff).toString // kelonelonp positivelon
   }
 
 }

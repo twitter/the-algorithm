@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonMelontadata
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TimelineMetadataMarshaller @Inject() (
-  timelineScribeConfigMarshaller: TimelineScribeConfigMarshaller,
-  readerModeConfigMarshaller: ReaderModeConfigMarshaller) {
+@Singlelonton
+class TimelonlinelonMelontadataMarshallelonr @Injelonct() (
+  timelonlinelonScribelonConfigMarshallelonr: TimelonlinelonScribelonConfigMarshallelonr,
+  relonadelonrModelonConfigMarshallelonr: RelonadelonrModelonConfigMarshallelonr) {
 
-  def apply(timelineMetadata: TimelineMetadata): urt.TimelineMetadata = urt.TimelineMetadata(
-    title = timelineMetadata.title,
-    scribeConfig = timelineMetadata.scribeConfig.map(timelineScribeConfigMarshaller(_)),
-    readerModeConfig = timelineMetadata.readerModeConfig.map(readerModeConfigMarshaller(_))
+  delonf apply(timelonlinelonMelontadata: TimelonlinelonMelontadata): urt.TimelonlinelonMelontadata = urt.TimelonlinelonMelontadata(
+    titlelon = timelonlinelonMelontadata.titlelon,
+    scribelonConfig = timelonlinelonMelontadata.scribelonConfig.map(timelonlinelonScribelonConfigMarshallelonr(_)),
+    relonadelonrModelonConfig = timelonlinelonMelontadata.relonadelonrModelonConfig.map(relonadelonrModelonConfigMarshallelonr(_))
   )
 }

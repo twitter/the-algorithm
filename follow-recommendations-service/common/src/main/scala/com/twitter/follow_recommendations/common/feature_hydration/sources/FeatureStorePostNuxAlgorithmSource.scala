@@ -1,232 +1,232 @@
-package com.twitter.follow_recommendations.common.feature_hydration.sources
+packagelon com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons
 
-import com.github.benmanes.caffeine.cache.Caffeine
-import com.google.inject.Inject
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.TimeoutException
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.constants.CandidateAlgorithmTypeConstants
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.CandidateAlgorithmAdapter.remapCandidateSource
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.PostNuxAlgorithmIdAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.adapters.PostNuxAlgorithmTypeAdapter
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSource
-import com.twitter.follow_recommendations.common.feature_hydration.common.FeatureSourceId
-import com.twitter.follow_recommendations.common.feature_hydration.common.HasPreFetchedFeature
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.adaptAdditionalFeaturesToDataRecord
-import com.twitter.follow_recommendations.common.feature_hydration.sources.Utils.randomizedTTL
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasSimilarToContext
-import com.twitter.hermit.constants.AlgorithmFeedbackTokens.AlgorithmToFeedbackTokenMap
-import com.twitter.ml.api.DataRecord
-import com.twitter.ml.api.DataRecordMerger
-import com.twitter.ml.api.FeatureContext
-import com.twitter.ml.api.IRecordOneToOneAdapter
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmIdAggregateDataset
-import com.twitter.ml.featurestore.catalog.datasets.customer_journey.PostNuxAlgorithmTypeAggregateDataset
-import com.twitter.ml.featurestore.catalog.entities.onboarding.{WtfAlgorithm => OnboardingWtfAlgoId}
-import com.twitter.ml.featurestore.catalog.entities.onboarding.{
-  WtfAlgorithmType => OnboardingWtfAlgoType
+import com.github.belonnmanelons.caffeloninelon.cachelon.Caffeloninelon
+import com.googlelon.injelonct.Injelonct
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.Timelonoutelonxcelonption
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.constants.CandidatelonAlgorithmTypelonConstants
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.adaptelonrs.CandidatelonAlgorithmAdaptelonr.relonmapCandidatelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.adaptelonrs.PostNuxAlgorithmIdAdaptelonr
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.adaptelonrs.PostNuxAlgorithmTypelonAdaptelonr
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.FelonaturelonSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.FelonaturelonSourcelonId
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.common.HasPrelonFelontchelondFelonaturelon
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons.Utils.adaptAdditionalFelonaturelonsToDataReloncord
+import com.twittelonr.follow_reloncommelonndations.common.felonaturelon_hydration.sourcelons.Utils.randomizelondTTL
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasSimilarToContelonxt
+import com.twittelonr.helonrmit.constants.AlgorithmFelonelondbackTokelonns.AlgorithmToFelonelondbackTokelonnMap
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.ml.api.DataReloncordMelonrgelonr
+import com.twittelonr.ml.api.FelonaturelonContelonxt
+import com.twittelonr.ml.api.IReloncordOnelonToOnelonAdaptelonr
+import com.twittelonr.ml.felonaturelonstorelon.catalog.dataselonts.customelonr_journelony.PostNuxAlgorithmIdAggrelongatelonDataselont
+import com.twittelonr.ml.felonaturelonstorelon.catalog.dataselonts.customelonr_journelony.PostNuxAlgorithmTypelonAggrelongatelonDataselont
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons.onboarding.{WtfAlgorithm => OnboardingWtfAlgoId}
+import com.twittelonr.ml.felonaturelonstorelon.catalog.elonntitielons.onboarding.{
+  WtfAlgorithmTypelon => OnboardingWtfAlgoTypelon
 }
-import com.twitter.ml.featurestore.catalog.features.customer_journey.CombineAllFeaturesPolicy
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.ml.featurestore.lib.WtfAlgorithmId
-import com.twitter.ml.featurestore.lib.WtfAlgorithmType
-import com.twitter.ml.featurestore.lib.data.PredictionRecord
-import com.twitter.ml.featurestore.lib.data.PredictionRecordAdapter
-import com.twitter.ml.featurestore.lib.dataset.DatasetId
-import com.twitter.ml.featurestore.lib.dataset.online.Hydrator.HydrationResponse
-import com.twitter.ml.featurestore.lib.dataset.online.OnlineAccessDataset
-import com.twitter.ml.featurestore.lib.dynamic.ClientConfig
-import com.twitter.ml.featurestore.lib.dynamic.DynamicFeatureStoreClient
-import com.twitter.ml.featurestore.lib.dynamic.DynamicHydrationConfig
-import com.twitter.ml.featurestore.lib.dynamic.FeatureStoreParamsConfig
-import com.twitter.ml.featurestore.lib.dynamic.GatedFeatures
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.BoundFeature
-import com.twitter.ml.featurestore.lib.feature.BoundFeatureSet
-import com.twitter.ml.featurestore.lib.online.DatasetValuesCache
-import com.twitter.ml.featurestore.lib.online.FeatureStoreRequest
-import com.twitter.ml.featurestore.lib.online.OnlineFeatureGenerationStats
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import java.util.concurrent.TimeUnit
-import scala.collection.JavaConverters._
+import com.twittelonr.ml.felonaturelonstorelon.catalog.felonaturelons.customelonr_journelony.CombinelonAllFelonaturelonsPolicy
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.ml.felonaturelonstorelon.lib.WtfAlgorithmId
+import com.twittelonr.ml.felonaturelonstorelon.lib.WtfAlgorithmTypelon
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.PrelondictionReloncord
+import com.twittelonr.ml.felonaturelonstorelon.lib.data.PrelondictionReloncordAdaptelonr
+import com.twittelonr.ml.felonaturelonstorelon.lib.dataselont.DataselontId
+import com.twittelonr.ml.felonaturelonstorelon.lib.dataselont.onlinelon.Hydrator.HydrationRelonsponselon
+import com.twittelonr.ml.felonaturelonstorelon.lib.dataselont.onlinelon.OnlinelonAccelonssDataselont
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic.ClielonntConfig
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic.DynamicFelonaturelonStorelonClielonnt
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic.DynamicHydrationConfig
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic.FelonaturelonStorelonParamsConfig
+import com.twittelonr.ml.felonaturelonstorelon.lib.dynamic.GatelondFelonaturelons
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntityWithId
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.BoundFelonaturelon
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.BoundFelonaturelonSelont
+import com.twittelonr.ml.felonaturelonstorelon.lib.onlinelon.DataselontValuelonsCachelon
+import com.twittelonr.ml.felonaturelonstorelon.lib.onlinelon.FelonaturelonStorelonRelonquelonst
+import com.twittelonr.ml.felonaturelonstorelon.lib.onlinelon.OnlinelonFelonaturelonGelonnelonrationStats
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import java.util.concurrelonnt.TimelonUnit
+import scala.collelonction.JavaConvelonrtelonrs._
 
-class FeatureStorePostNuxAlgorithmSource @Inject() (
-  serviceIdentifier: ServiceIdentifier,
-  stats: StatsReceiver)
-    extends FeatureSource {
-  import FeatureStorePostNuxAlgorithmSource._
+class FelonaturelonStorelonPostNuxAlgorithmSourcelon @Injelonct() (
+  selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+  stats: StatsReloncelonivelonr)
+    elonxtelonnds FelonaturelonSourcelon {
+  import FelonaturelonStorelonPostNuxAlgorithmSourcelon._
 
-  val backupSourceStats = stats.scope("feature_store_hydration_post_nux_algorithm")
-  val adapterStats = backupSourceStats.scope("adapters")
-  override def id: FeatureSourceId = FeatureSourceId.FeatureStorePostNuxAlgorithmSourceId
-  override def featureContext: FeatureContext = getFeatureContext
+  val backupSourcelonStats = stats.scopelon("felonaturelon_storelon_hydration_post_nux_algorithm")
+  val adaptelonrStats = backupSourcelonStats.scopelon("adaptelonrs")
+  ovelonrridelon delonf id: FelonaturelonSourcelonId = FelonaturelonSourcelonId.FelonaturelonStorelonPostNuxAlgorithmSourcelonId
+  ovelonrridelon delonf felonaturelonContelonxt: FelonaturelonContelonxt = gelontFelonaturelonContelonxt
 
-  private val dataRecordMerger = new DataRecordMerger
+  privatelon val dataReloncordMelonrgelonr = nelonw DataReloncordMelonrgelonr
 
-  val clientConfig: ClientConfig[HasParams] = ClientConfig(
+  val clielonntConfig: ClielonntConfig[HasParams] = ClielonntConfig(
     dynamicHydrationConfig = dynamicHydrationConfig,
-    featureStoreParamsConfig =
-      FeatureStoreParamsConfig(FeatureStoreParameters.featureStoreParams, Map.empty),
+    felonaturelonStorelonParamsConfig =
+      FelonaturelonStorelonParamsConfig(FelonaturelonStorelonParamelontelonrs.felonaturelonStorelonParams, Map.elonmpty),
     /**
-     * The smaller one between `timeoutProvider` and `FeatureStoreSourceParams.GlobalFetchTimeout`
-     * used below takes effect.
+     * Thelon smallelonr onelon belontwelonelonn `timelonoutProvidelonr` and `FelonaturelonStorelonSourcelonParams.GlobalFelontchTimelonout`
+     * uselond belonlow takelons elonffelonct.
      */
-    timeoutProvider = Function.const(800.millis),
-    serviceIdentifier = serviceIdentifier
+    timelonoutProvidelonr = Function.const(800.millis),
+    selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr
   )
 
-  private val datasetsToCache = Set(
-    PostNuxAlgorithmIdAggregateDataset,
-    PostNuxAlgorithmTypeAggregateDataset,
-  ).asInstanceOf[Set[OnlineAccessDataset[_ <: EntityId, _]]]
+  privatelon val dataselontsToCachelon = Selont(
+    PostNuxAlgorithmIdAggrelongatelonDataselont,
+    PostNuxAlgorithmTypelonAggrelongatelonDataselont,
+  ).asInstancelonOf[Selont[OnlinelonAccelonssDataselont[_ <: elonntityId, _]]]
 
-  private val datasetValuesCache: DatasetValuesCache =
-    DatasetValuesCache(
-      Caffeine
-        .newBuilder()
-        .expireAfterWrite(randomizedTTL(12.hours.inSeconds), TimeUnit.SECONDS)
-        .maximumSize(DefaultCacheMaxKeys)
-        .build[(_ <: EntityId, DatasetId), Stitch[HydrationResponse[_]]]
+  privatelon val dataselontValuelonsCachelon: DataselontValuelonsCachelon =
+    DataselontValuelonsCachelon(
+      Caffeloninelon
+        .nelonwBuildelonr()
+        .elonxpirelonAftelonrWritelon(randomizelondTTL(12.hours.inSelonconds), TimelonUnit.SelonCONDS)
+        .maximumSizelon(DelonfaultCachelonMaxKelonys)
+        .build[(_ <: elonntityId, DataselontId), Stitch[HydrationRelonsponselon[_]]]
         .asMap,
-      datasetsToCache,
-      DatasetCacheScope
+      dataselontsToCachelon,
+      DataselontCachelonScopelon
     )
 
-  private val dynamicFeatureStoreClient = DynamicFeatureStoreClient(
-    clientConfig,
-    backupSourceStats,
-    Set(datasetValuesCache)
+  privatelon val dynamicFelonaturelonStorelonClielonnt = DynamicFelonaturelonStorelonClielonnt(
+    clielonntConfig,
+    backupSourcelonStats,
+    Selont(dataselontValuelonsCachelon)
   )
 
-  private val adapterToDataRecord: IRecordOneToOneAdapter[PredictionRecord] =
-    PredictionRecordAdapter.oneToOne(
-      BoundFeatureSet(allFeatures),
-      OnlineFeatureGenerationStats(backupSourceStats)
+  privatelon val adaptelonrToDataReloncord: IReloncordOnelonToOnelonAdaptelonr[PrelondictionReloncord] =
+    PrelondictionReloncordAdaptelonr.onelonToOnelon(
+      BoundFelonaturelonSelont(allFelonaturelons),
+      OnlinelonFelonaturelonGelonnelonrationStats(backupSourcelonStats)
     )
 
-  // These two calculate the rate for each feature by dividing it by the number of impressions, then
+  // Thelonselon two calculatelon thelon ratelon for elonach felonaturelon by dividing it by thelon numbelonr of imprelonssions, thelonn
   // apply a log transformation.
-  private val transformAdapters = Seq(PostNuxAlgorithmIdAdapter, PostNuxAlgorithmTypeAdapter)
-  override def hydrateFeatures(
-    target: HasClientContext
-      with HasPreFetchedFeature
+  privatelon val transformAdaptelonrs = Selonq(PostNuxAlgorithmIdAdaptelonr, PostNuxAlgorithmTypelonAdaptelonr)
+  ovelonrridelon delonf hydratelonFelonaturelons(
+    targelont: HasClielonntContelonxt
+      with HasPrelonFelontchelondFelonaturelon
       with HasParams
-      with HasSimilarToContext
+      with HasSimilarToContelonxt
       with HasDisplayLocation,
-    candidates: Seq[CandidateUser]
-  ): Stitch[Map[CandidateUser, DataRecord]] = {
-    target.getOptionalUserId
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Stitch[Map[CandidatelonUselonr, DataReloncord]] = {
+    targelont.gelontOptionalUselonrId
       .map { _: Long =>
-        val candidateAlgoIdEntities = candidates.map { candidate =>
-          candidate.id -> candidate.getAllAlgorithms
+        val candidatelonAlgoIdelonntitielons = candidatelons.map { candidatelon =>
+          candidatelon.id -> candidatelon.gelontAllAlgorithms
             .flatMap { algo =>
-              AlgorithmToFeedbackTokenMap.get(remapCandidateSource(algo))
+              AlgorithmToFelonelondbackTokelonnMap.gelont(relonmapCandidatelonSourcelon(algo))
             }.map(algoId => OnboardingWtfAlgoId.withId(WtfAlgorithmId(algoId)))
         }.toMap
 
-        val candidateAlgoTypeEntities = candidateAlgoIdEntities.map {
-          case (candidateId, algoIdEntities) =>
-            candidateId -> algoIdEntities
+        val candidatelonAlgoTypelonelonntitielons = candidatelonAlgoIdelonntitielons.map {
+          caselon (candidatelonId, algoIdelonntitielons) =>
+            candidatelonId -> algoIdelonntitielons
               .map(_.id.algoId)
-              .flatMap(algoId => CandidateAlgorithmTypeConstants.getAlgorithmTypes(algoId.toString))
+              .flatMap(algoId => CandidatelonAlgorithmTypelonConstants.gelontAlgorithmTypelons(algoId.toString))
               .distinct
-              .map(algoType => OnboardingWtfAlgoType.withId(WtfAlgorithmType(algoType)))
+              .map(algoTypelon => OnboardingWtfAlgoTypelon.withId(WtfAlgorithmTypelon(algoTypelon)))
         }
 
-        val entities = {
-          candidateAlgoIdEntities.values.flatten ++ candidateAlgoTypeEntities.values.flatten
-        }.toSeq.distinct
-        val requests = entities.map(entity => FeatureStoreRequest(Seq(entity)))
+        val elonntitielons = {
+          candidatelonAlgoIdelonntitielons.valuelons.flattelonn ++ candidatelonAlgoTypelonelonntitielons.valuelons.flattelonn
+        }.toSelonq.distinct
+        val relonquelonsts = elonntitielons.map(elonntity => FelonaturelonStorelonRelonquelonst(Selonq(elonntity)))
 
-        val predictionRecordsFut = dynamicFeatureStoreClient(requests, target)
-        val candidateFeatureMap = predictionRecordsFut.map {
-          predictionRecords: Seq[PredictionRecord] =>
-            val entityFeatureMap: Map[EntityWithId[_], DataRecord] = entities
-              .zip(predictionRecords).map {
-                case (entity, predictionRecord) =>
-                  entity -> adaptAdditionalFeaturesToDataRecord(
-                    adapterToDataRecord.adaptToDataRecord(predictionRecord),
-                    adapterStats,
-                    transformAdapters)
+        val prelondictionReloncordsFut = dynamicFelonaturelonStorelonClielonnt(relonquelonsts, targelont)
+        val candidatelonFelonaturelonMap = prelondictionReloncordsFut.map {
+          prelondictionReloncords: Selonq[PrelondictionReloncord] =>
+            val elonntityFelonaturelonMap: Map[elonntityWithId[_], DataReloncord] = elonntitielons
+              .zip(prelondictionReloncords).map {
+                caselon (elonntity, prelondictionReloncord) =>
+                  elonntity -> adaptAdditionalFelonaturelonsToDataReloncord(
+                    adaptelonrToDataReloncord.adaptToDataReloncord(prelondictionReloncord),
+                    adaptelonrStats,
+                    transformAdaptelonrs)
               }.toMap
 
-            // In case we have more than one algorithm ID, or type, for a candidate, we merge the
-            // resulting DataRecords using the two merging policies below.
-            val algoIdMergeFn =
-              CombineAllFeaturesPolicy(PostNuxAlgorithmIdAdapter.getFeatures).getMergeFn
-            val algoTypeMergeFn =
-              CombineAllFeaturesPolicy(PostNuxAlgorithmTypeAdapter.getFeatures).getMergeFn
+            // In caselon welon havelon morelon than onelon algorithm ID, or typelon, for a candidatelon, welon melonrgelon thelon
+            // relonsulting DataReloncords using thelon two melonrging policielons belonlow.
+            val algoIdMelonrgelonFn =
+              CombinelonAllFelonaturelonsPolicy(PostNuxAlgorithmIdAdaptelonr.gelontFelonaturelons).gelontMelonrgelonFn
+            val algoTypelonMelonrgelonFn =
+              CombinelonAllFelonaturelonsPolicy(PostNuxAlgorithmTypelonAdaptelonr.gelontFelonaturelons).gelontMelonrgelonFn
 
-            val candidateAlgoIdFeaturesMap = candidateAlgoIdEntities.mapValues { entities =>
-              val features = entities.flatMap(e => Option(entityFeatureMap.getOrElse(e, null)))
-              algoIdMergeFn(features)
+            val candidatelonAlgoIdFelonaturelonsMap = candidatelonAlgoIdelonntitielons.mapValuelons { elonntitielons =>
+              val felonaturelons = elonntitielons.flatMap(elon => Option(elonntityFelonaturelonMap.gelontOrelonlselon(elon, null)))
+              algoIdMelonrgelonFn(felonaturelons)
             }
 
-            val candidateAlgoTypeFeaturesMap = candidateAlgoTypeEntities.mapValues { entities =>
-              val features = entities.flatMap(e => Option(entityFeatureMap.getOrElse(e, null)))
-              algoTypeMergeFn(features)
+            val candidatelonAlgoTypelonFelonaturelonsMap = candidatelonAlgoTypelonelonntitielons.mapValuelons { elonntitielons =>
+              val felonaturelons = elonntitielons.flatMap(elon => Option(elonntityFelonaturelonMap.gelontOrelonlselon(elon, null)))
+              algoTypelonMelonrgelonFn(felonaturelons)
             }
 
-            candidates.map { candidate =>
-              val idDrOpt = candidateAlgoIdFeaturesMap.getOrElse(candidate.id, None)
-              val typeDrOpt = candidateAlgoTypeFeaturesMap.getOrElse(candidate.id, None)
+            candidatelons.map { candidatelon =>
+              val idDrOpt = candidatelonAlgoIdFelonaturelonsMap.gelontOrelonlselon(candidatelon.id, Nonelon)
+              val typelonDrOpt = candidatelonAlgoTypelonFelonaturelonsMap.gelontOrelonlselon(candidatelon.id, Nonelon)
 
-              val featureDr = (idDrOpt, typeDrOpt) match {
-                case (None, Some(typeDataRecord)) => typeDataRecord
-                case (Some(idDataRecord), None) => idDataRecord
-                case (None, None) => new DataRecord()
-                case (Some(idDataRecord), Some(typeDataRecord)) =>
-                  dataRecordMerger.merge(idDataRecord, typeDataRecord)
-                  idDataRecord
+              val felonaturelonDr = (idDrOpt, typelonDrOpt) match {
+                caselon (Nonelon, Somelon(typelonDataReloncord)) => typelonDataReloncord
+                caselon (Somelon(idDataReloncord), Nonelon) => idDataReloncord
+                caselon (Nonelon, Nonelon) => nelonw DataReloncord()
+                caselon (Somelon(idDataReloncord), Somelon(typelonDataReloncord)) =>
+                  dataReloncordMelonrgelonr.melonrgelon(idDataReloncord, typelonDataReloncord)
+                  idDataReloncord
               }
-              candidate -> featureDr
+              candidatelon -> felonaturelonDr
             }.toMap
         }
         Stitch
-          .callFuture(candidateFeatureMap)
-          .within(target.params(FeatureStoreSourceParams.GlobalFetchTimeout))(
-            com.twitter.finagle.util.DefaultTimer)
-          .rescue {
-            case _: TimeoutException =>
-              Stitch.value(Map.empty[CandidateUser, DataRecord])
+          .callFuturelon(candidatelonFelonaturelonMap)
+          .within(targelont.params(FelonaturelonStorelonSourcelonParams.GlobalFelontchTimelonout))(
+            com.twittelonr.finaglelon.util.DelonfaultTimelonr)
+          .relonscuelon {
+            caselon _: Timelonoutelonxcelonption =>
+              Stitch.valuelon(Map.elonmpty[CandidatelonUselonr, DataReloncord])
           }
-      }.getOrElse(Stitch.value(Map.empty[CandidateUser, DataRecord]))
+      }.gelontOrelonlselon(Stitch.valuelon(Map.elonmpty[CandidatelonUselonr, DataReloncord]))
   }
 }
 
-object FeatureStorePostNuxAlgorithmSource {
-  private val DatasetCacheScope = "feature_store_local_cache_post_nux_algorithm"
-  private val DefaultCacheMaxKeys = 1000 // Both of these datasets have <50 keys total.
+objelonct FelonaturelonStorelonPostNuxAlgorithmSourcelon {
+  privatelon val DataselontCachelonScopelon = "felonaturelon_storelon_local_cachelon_post_nux_algorithm"
+  privatelon val DelonfaultCachelonMaxKelonys = 1000 // Both of thelonselon dataselonts havelon <50 kelonys total.
 
-  val allFeatures: Set[BoundFeature[_ <: EntityId, _]] =
-    FeatureStoreFeatures.postNuxAlgorithmIdAggregateFeatures ++
-      FeatureStoreFeatures.postNuxAlgorithmTypeAggregateFeatures
+  val allFelonaturelons: Selont[BoundFelonaturelon[_ <: elonntityId, _]] =
+    FelonaturelonStorelonFelonaturelons.postNuxAlgorithmIdAggrelongatelonFelonaturelons ++
+      FelonaturelonStorelonFelonaturelons.postNuxAlgorithmTypelonAggrelongatelonFelonaturelons
 
-  val algoIdFinalFeatures = CombineAllFeaturesPolicy(
-    PostNuxAlgorithmIdAdapter.getFeatures).outputFeaturesPostMerge.toSeq
-  val algoTypeFinalFeatures = CombineAllFeaturesPolicy(
-    PostNuxAlgorithmTypeAdapter.getFeatures).outputFeaturesPostMerge.toSeq
+  val algoIdFinalFelonaturelons = CombinelonAllFelonaturelonsPolicy(
+    PostNuxAlgorithmIdAdaptelonr.gelontFelonaturelons).outputFelonaturelonsPostMelonrgelon.toSelonq
+  val algoTypelonFinalFelonaturelons = CombinelonAllFelonaturelonsPolicy(
+    PostNuxAlgorithmTypelonAdaptelonr.gelontFelonaturelons).outputFelonaturelonsPostMelonrgelon.toSelonq
 
-  val getFeatureContext: FeatureContext =
-    new FeatureContext().addFeatures((algoIdFinalFeatures ++ algoTypeFinalFeatures).asJava)
+  val gelontFelonaturelonContelonxt: FelonaturelonContelonxt =
+    nelonw FelonaturelonContelonxt().addFelonaturelons((algoIdFinalFelonaturelons ++ algoTypelonFinalFelonaturelons).asJava)
 
   val dynamicHydrationConfig: DynamicHydrationConfig[HasParams] =
     DynamicHydrationConfig(
-      Set(
-        GatedFeatures(
-          boundFeatureSet =
-            BoundFeatureSet(FeatureStoreFeatures.postNuxAlgorithmIdAggregateFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableAlgorithmAggregateFeatures)
+      Selont(
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont =
+            BoundFelonaturelonSelont(FelonaturelonStorelonFelonaturelons.postNuxAlgorithmIdAggrelongatelonFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonAlgorithmAggrelongatelonFelonaturelons)
         ),
-        GatedFeatures(
-          boundFeatureSet =
-            BoundFeatureSet(FeatureStoreFeatures.postNuxAlgorithmTypeAggregateFeatures),
-          gate = HasParams.paramGate(FeatureStoreSourceParams.EnableAlgorithmAggregateFeatures)
+        GatelondFelonaturelons(
+          boundFelonaturelonSelont =
+            BoundFelonaturelonSelont(FelonaturelonStorelonFelonaturelons.postNuxAlgorithmTypelonAggrelongatelonFelonaturelons),
+          gatelon = HasParams.paramGatelon(FelonaturelonStorelonSourcelonParams.elonnablelonAlgorithmAggrelongatelonFelonaturelons)
         ),
       ))
 }

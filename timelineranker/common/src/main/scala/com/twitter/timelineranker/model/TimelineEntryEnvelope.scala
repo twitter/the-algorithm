@@ -1,24 +1,24 @@
-package com.twitter.timelineranker.model
+packagelon com.twittelonr.timelonlinelonrankelonr.modelonl
 
-import com.twitter.timelineranker.{thriftscala => thrift}
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => thrift}
 
-object TimelineEntryEnvelope {
-  def fromThrift(entryEnvelope: thrift.TimelineEntryEnvelope): TimelineEntryEnvelope = {
-    TimelineEntryEnvelope(
-      entry = TimelineEntry.fromThrift(entryEnvelope.entry)
+objelonct Timelonlinelonelonntryelonnvelonlopelon {
+  delonf fromThrift(elonntryelonnvelonlopelon: thrift.Timelonlinelonelonntryelonnvelonlopelon): Timelonlinelonelonntryelonnvelonlopelon = {
+    Timelonlinelonelonntryelonnvelonlopelon(
+      elonntry = Timelonlinelonelonntry.fromThrift(elonntryelonnvelonlopelon.elonntry)
     )
   }
 }
 
-case class TimelineEntryEnvelope(entry: TimelineEntry) {
+caselon class Timelonlinelonelonntryelonnvelonlopelon(elonntry: Timelonlinelonelonntry) {
 
   throwIfInvalid()
 
-  def toThrift: thrift.TimelineEntryEnvelope = {
-    thrift.TimelineEntryEnvelope(entry.toTimelineEntryThrift)
+  delonf toThrift: thrift.Timelonlinelonelonntryelonnvelonlopelon = {
+    thrift.Timelonlinelonelonntryelonnvelonlopelon(elonntry.toTimelonlinelonelonntryThrift)
   }
 
-  def throwIfInvalid(): Unit = {
-    entry.throwIfInvalid()
+  delonf throwIfInvalid(): Unit = {
+    elonntry.throwIfInvalid()
   }
 }

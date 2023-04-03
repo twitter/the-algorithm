@@ -1,60 +1,60 @@
-package com.twitter.product_mixer.core.functional_component.side_effect
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect.Inputs
-import com.twitter.product_mixer.core.model.common
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct.Inputs
+import com.twittelonr.product_mixelonr.corelon.modelonl.common
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * A side-effect that can be run with a pipeline result before transport marshalling
+ * A sidelon-elonffelonct that can belon run with a pipelonlinelon relonsult belonforelon transport marshalling
  *
- * @see SideEffect
+ * @selonelon Sidelonelonffelonct
  *
- * @tparam Query pipeline query
- * @tparam ResultType response after domain marshalling
+ * @tparam Quelonry pipelonlinelon quelonry
+ * @tparam RelonsultTypelon relonsponselon aftelonr domain marshalling
  */
-trait PipelineResultSideEffect[-Query <: PipelineQuery, -ResultType <: HasMarshalling]
-    extends SideEffect[Inputs[Query, ResultType]]
-    with PipelineResultSideEffect.SupportsConditionally[Query, ResultType]
+trait PipelonlinelonRelonsultSidelonelonffelonct[-Quelonry <: PipelonlinelonQuelonry, -RelonsultTypelon <: HasMarshalling]
+    elonxtelonnds Sidelonelonffelonct[Inputs[Quelonry, RelonsultTypelon]]
+    with PipelonlinelonRelonsultSidelonelonffelonct.SupportsConditionally[Quelonry, RelonsultTypelon]
 
-object PipelineResultSideEffect {
+objelonct PipelonlinelonRelonsultSidelonelonffelonct {
 
   /**
-   * Mixin for when you want to conditionally run a [[PipelineResultSideEffect]]
+   * Mixin for whelonn you want to conditionally run a [[PipelonlinelonRelonsultSidelonelonffelonct]]
    *
-   * This is a thin wrapper around [[common.Conditionally]] exposing a nicer API for the [[PipelineResultSideEffect]] specific use-case.
+   * This is a thin wrappelonr around [[common.Conditionally]] elonxposing a nicelonr API for thelon [[PipelonlinelonRelonsultSidelonelonffelonct]] speloncific uselon-caselon.
    */
-  trait Conditionally[-Query <: PipelineQuery, -ResultType <: HasMarshalling]
-      extends common.Conditionally[Inputs[Query, ResultType]] {
-    _: PipelineResultSideEffect[Query, ResultType] =>
+  trait Conditionally[-Quelonry <: PipelonlinelonQuelonry, -RelonsultTypelon <: HasMarshalling]
+      elonxtelonnds common.Conditionally[Inputs[Quelonry, RelonsultTypelon]] {
+    _: PipelonlinelonRelonsultSidelonelonffelonct[Quelonry, RelonsultTypelon] =>
 
-    /** @see [[common.Conditionally.onlyIf]] */
-    def onlyIf(
-      query: Query,
-      selectedCandidates: Seq[CandidateWithDetails],
-      remainingCandidates: Seq[CandidateWithDetails],
-      droppedCandidates: Seq[CandidateWithDetails],
-      response: ResultType
-    ): Boolean
+    /** @selonelon [[common.Conditionally.onlyIf]] */
+    delonf onlyIf(
+      quelonry: Quelonry,
+      selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+      relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+      droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+      relonsponselon: RelonsultTypelon
+    ): Boolelonan
 
-    override final def onlyIf(input: Inputs[Query, ResultType]): Boolean =
+    ovelonrridelon final delonf onlyIf(input: Inputs[Quelonry, RelonsultTypelon]): Boolelonan =
       onlyIf(
-        input.query,
-        input.selectedCandidates,
-        input.remainingCandidates,
-        input.droppedCandidates,
-        input.response)
+        input.quelonry,
+        input.selonlelonctelondCandidatelons,
+        input.relonmainingCandidatelons,
+        input.droppelondCandidatelons,
+        input.relonsponselon)
 
   }
 
-  type SupportsConditionally[-Query <: PipelineQuery, -ResultType <: HasMarshalling] =
-    common.SupportsConditionally[Inputs[Query, ResultType]]
+  typelon SupportsConditionally[-Quelonry <: PipelonlinelonQuelonry, -RelonsultTypelon <: HasMarshalling] =
+    common.SupportsConditionally[Inputs[Quelonry, RelonsultTypelon]]
 
-  case class Inputs[+Query <: PipelineQuery, +ResultType <: HasMarshalling](
-    query: Query,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: ResultType)
+  caselon class Inputs[+Quelonry <: PipelonlinelonQuelonry, +RelonsultTypelon <: HasMarshalling](
+    quelonry: Quelonry,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: RelonsultTypelon)
 }

@@ -1,10 +1,10 @@
-package com.twitter.search.earlybird;
+packagelon com.twittelonr.selonarch.elonarlybird;
 
-public final class EarlybirdMain {
-  private EarlybirdMain() {
+public final class elonarlybirdMain {
+  privatelon elonarlybirdMain() {
   }
 
   public static void main(String[] args) {
-    new Earlybird().main(args);
+    nelonw elonarlybird().main(args);
   }
 }

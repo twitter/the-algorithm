@@ -1,332 +1,332 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableDownrankSpamReplySectioningRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableNotGraduatedSearchDropRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableNsfwTextSectioningRuleParam
-import com.twitter.visibility.configapi.params.RuleParams.NotGraduatedUserLabelRuleHoldbackExperimentParam
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.LoggedOutOrViewerNotFollowingAuthor
-import com.twitter.visibility.rules.Condition.LoggedOutOrViewerOptInFiltering
-import com.twitter.visibility.rules.Condition.NonAuthorViewer
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.TweetComposedBefore
-import com.twitter.visibility.rules.Condition.ViewerDoesFollowAuthor
-import com.twitter.visibility.rules.Condition.ViewerOptInFilteringOnSearch
-import com.twitter.visibility.rules.Reason.Nsfw
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonDownrankSpamRelonplySelonctioningRulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonNotGraduatelondSelonarchDropRulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonNsfwTelonxtSelonctioningRulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.NotGraduatelondUselonrLabelonlRulelonHoldbackelonxpelonrimelonntParam
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonlTypelon
+import com.twittelonr.visibility.modelonls.UselonrLabelonlValuelon
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.LoggelondOutOrVielonwelonrNotFollowingAuthor
+import com.twittelonr.visibility.rulelons.Condition.LoggelondOutOrVielonwelonrOptInFiltelonring
+import com.twittelonr.visibility.rulelons.Condition.NonAuthorVielonwelonr
+import com.twittelonr.visibility.rulelons.Condition.Not
+import com.twittelonr.visibility.rulelons.Condition.TwelonelontComposelondBelonforelon
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrDoelonsFollowAuthor
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrOptInFiltelonringOnSelonarch
+import com.twittelonr.visibility.rulelons.Relonason.Nsfw
+import com.twittelonr.visibility.rulelons.Relonason.Unspeloncifielond
+import com.twittelonr.visibility.rulelons.RulelonActionSourcelonBuildelonr.TwelonelontSafelontyLabelonlSourcelonBuildelonr
 
-case object SafeSearchTweetRules {
+caselon objelonct SafelonSelonarchTwelonelontRulelons {
 
-  object SafeSearchAbusiveTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.Abusive
+  objelonct SafelonSelonarchAbusivelonTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        TwelonelontSafelontyLabelonlTypelon.Abusivelon
       )
-      with DoesLogVerdict {
-    override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-      TweetSafetyLabelSourceBuilder(TweetSafetyLabelType.Abusive))
+      with DoelonsLogVelonrdict {
+    ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+      TwelonelontSafelontyLabelonlSourcelonBuildelonr(TwelonelontSafelontyLabelonlTypelon.Abusivelon))
   }
 
-  object SafeSearchNsfwHighPrecisionTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+  objelonct SafelonSelonarchNsfwHighPreloncisionTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        TweetSafetyLabelType.NsfwHighPrecision
+        TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
       )
 
-  object SafeSearchGoreAndViolenceHighPrecisionTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+  objelonct SafelonSelonarchGorelonAndViolelonncelonHighPreloncisionTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision
       )
 
-  object SafeSearchNsfwReportedHeuristicsTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+  objelonct SafelonSelonarchNsfwRelonportelondHelonuristicsTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        TweetSafetyLabelType.NsfwReportedHeuristics
+        TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
       )
 
-  object SafeSearchGoreAndViolenceReportedHeuristicsTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+  objelonct SafelonSelonarchGorelonAndViolelonncelonRelonportelondHelonuristicsTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
       )
 
-  object SafeSearchNsfwCardImageTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+  objelonct SafelonSelonarchNsfwCardImagelonTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        TweetSafetyLabelType.NsfwCardImage
+        TwelonelontSafelontyLabelonlTypelon.NsfwCardImagelon
       )
 
-  object SafeSearchNsfwHighRecallTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+  objelonct SafelonSelonarchNsfwHighReloncallTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        TweetSafetyLabelType.NsfwHighRecall
+        TwelonelontSafelontyLabelonlTypelon.NsfwHighReloncall
       )
 
-  object SafeSearchNsfwVideoTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+  objelonct SafelonSelonarchNsfwVidelonoTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        TweetSafetyLabelType.NsfwVideo
+        TwelonelontSafelontyLabelonlTypelon.NsfwVidelono
       )
 
-  object SafeSearchNsfwTextTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
+  objelonct SafelonSelonarchNsfwTelonxtTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        TweetSafetyLabelType.NsfwText
+        TwelonelontSafelontyLabelonlTypelon.NsfwTelonxt
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonNsfwTelonxtSelonctioningRulelonParam)
   }
 
-  object SafeSearchNsfwTextAuthorLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+  objelonct SafelonSelonarchNsfwTelonxtAuthorLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
         Drop(Nsfw),
-        UserLabelValue.DownrankSpamReply
+        UselonrLabelonlValuelon.DownrankSpamRelonply
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableNsfwTextSectioningRuleParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonNsfwTelonxtSelonctioningRulelonParam)
   }
 
-  object SafeSearchGoreAndViolenceTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Drop(Unspecified),
+  objelonct SafelonSelonarchGorelonAndViolelonncelonTwelonelontLabelonlRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+        Drop(Unspeloncifielond),
         And(
-          NonAuthorViewer,
-          TweetComposedBefore(TweetSafetyLabelType.GoreAndViolence.DeprecatedAt),
-          LoggedOutOrViewerOptInFiltering
+          NonAuthorVielonwelonr,
+          TwelonelontComposelondBelonforelon(TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelon.DelonpreloncatelondAt),
+          LoggelondOutOrVielonwelonrOptInFiltelonring
         ),
-        TweetSafetyLabelType.GoreAndViolence
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelon
       )
 
-  object SafeSearchUntrustedUrlTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.UntrustedUrl
+  objelonct SafelonSelonarchUntrustelondUrlTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        TwelonelontSafelontyLabelonlTypelon.UntrustelondUrl
       )
 
-  object SafeSearchDownrankSpamReplyTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.DownrankSpamReply
+  objelonct SafelonSelonarchDownrankSpamRelonplyTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        TwelonelontSafelontyLabelonlTypelon.DownrankSpamRelonply
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableDownrankSpamReplySectioningRuleParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonDownrankSpamRelonplySelonctioningRulelonParam)
   }
 
-  object SafeSearchDownrankSpamReplyAuthorLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.DownrankSpamReply
+  objelonct SafelonSelonarchDownrankSpamRelonplyAuthorLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.DownrankSpamRelonply
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableDownrankSpamReplySectioningRuleParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonDownrankSpamRelonplySelonctioningRulelonParam)
   }
 
-  object SafeSearchAutomationNonFollowerTweetLabelRule
-      extends NonFollowerViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.Automation
+  objelonct SafelonSelonarchAutomationNonFollowelonrTwelonelontLabelonlRulelon
+      elonxtelonnds NonFollowelonrVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        TwelonelontSafelontyLabelonlTypelon.Automation
       )
 
-  object SafeSearchDuplicateMentionNonFollowerTweetLabelRule
-      extends NonFollowerViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.DuplicateMention
+  objelonct SafelonSelonarchDuplicatelonMelonntionNonFollowelonrTwelonelontLabelonlRulelon
+      elonxtelonnds NonFollowelonrVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        TwelonelontSafelontyLabelonlTypelon.DuplicatelonMelonntion
       )
 
-  object SafeSearchBystanderAbusiveTweetLabelRule
-      extends NonAuthorViewerOptInFilteringWithTweetLabelRule(
-        Drop(Unspecified),
-        TweetSafetyLabelType.BystanderAbusive
+  objelonct SafelonSelonarchBystandelonrAbusivelonTwelonelontLabelonlRulelon
+      elonxtelonnds NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        TwelonelontSafelontyLabelonlTypelon.BystandelonrAbusivelon
       )
 }
 
-case object UnsafeSearchTweetRules {
+caselon objelonct UnsafelonSelonarchTwelonelontRulelons {
 
-  object UnsafeSearchNsfwHighPrecisionInterstitialAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Interstitial(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwHighPrecision
+  objelonct UnsafelonSelonarchNsfwHighPreloncisionIntelonrstitialAllUselonrsTwelonelontLabelonlRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+        Intelonrstitial(Nsfw),
+        Not(VielonwelonrOptInFiltelonringOnSelonarch),
+        TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
       )
 
-  object UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Interstitial(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+  objelonct UnsafelonSelonarchGorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+        Intelonrstitial(Nsfw),
+        Not(VielonwelonrOptInFiltelonringOnSelonarch),
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision
       )
 
-  object UnsafeSearchGoreAndViolenceHighPrecisionAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
+  objelonct UnsafelonSelonarchGorelonAndViolelonncelonHighPreloncisionAllUselonrsTwelonelontLabelonlDropRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.GoreAndViolenceHighPrecision
+        Not(VielonwelonrOptInFiltelonringOnSelonarch),
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonHighPreloncision
       )
 
-  object UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Interstitial(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwReportedHeuristics
+  objelonct UnsafelonSelonarchNsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+        Intelonrstitial(Nsfw),
+        Not(VielonwelonrOptInFiltelonringOnSelonarch),
+        TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
       )
 
-  object UnsafeSearchNsfwReportedHeuristicsAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
+  objelonct UnsafelonSelonarchNsfwRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlDropRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwReportedHeuristics
+        Not(VielonwelonrOptInFiltelonringOnSelonarch),
+        TwelonelontSafelontyLabelonlTypelon.NsfwRelonportelondHelonuristics
       )
 
-  object UnsafeSearchNsfwHighPrecisionAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
+  objelonct UnsafelonSelonarchNsfwHighPreloncisionAllUselonrsTwelonelontLabelonlDropRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwHighPrecision
+        Not(VielonwelonrOptInFiltelonringOnSelonarch),
+        TwelonelontSafelontyLabelonlTypelon.NsfwHighPreloncision
       )
 
-  object UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Interstitial(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+  objelonct UnsafelonSelonarchGorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+        Intelonrstitial(Nsfw),
+        Not(VielonwelonrOptInFiltelonringOnSelonarch),
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
       )
 
-  object UnsafeSearchGoreAndViolenceReportedHeuristicsAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
+  objelonct UnsafelonSelonarchGorelonAndViolelonncelonRelonportelondHelonuristicsAllUselonrsTwelonelontLabelonlDropRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.GoreAndViolenceReportedHeuristics
+        Not(VielonwelonrOptInFiltelonringOnSelonarch),
+        TwelonelontSafelontyLabelonlTypelon.GorelonAndViolelonncelonRelonportelondHelonuristics
       )
 
-  object UnsafeSearchNsfwCardImageAllUsersTweetLabelRule
-      extends ConditionWithTweetLabelRule(
-        Interstitial(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwCardImage
+  objelonct UnsafelonSelonarchNsfwCardImagelonAllUselonrsTwelonelontLabelonlRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
+        Intelonrstitial(Nsfw),
+        Not(VielonwelonrOptInFiltelonringOnSelonarch),
+        TwelonelontSafelontyLabelonlTypelon.NsfwCardImagelon
       )
 
-  object UnsafeSearchNsfwCardImageAllUsersTweetLabelDropRule
-      extends ConditionWithTweetLabelRule(
+  objelonct UnsafelonSelonarchNsfwCardImagelonAllUselonrsTwelonelontLabelonlDropRulelon
+      elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
         Drop(Nsfw),
-        Not(ViewerOptInFilteringOnSearch),
-        TweetSafetyLabelType.NsfwCardImage
+        Not(VielonwelonrOptInFiltelonringOnSelonarch),
+        TwelonelontSafelontyLabelonlTypelon.NsfwCardImagelon
       )
 
 }
 
-case object SafeSearchUserRules {
+caselon objelonct SafelonSelonarchUselonrRulelons {
 
-  object SafeSearchAbusiveUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.Abusive
+  objelonct SafelonSelonarchAbusivelonUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.Abusivelon
       )
 
-  object SafeSearchAbusiveHighRecallUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.AbusiveHighRecall,
-        LoggedOutOrViewerNotFollowingAuthor
+  objelonct SafelonSelonarchAbusivelonHighReloncallUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.AbusivelonHighReloncall,
+        LoggelondOutOrVielonwelonrNotFollowingAuthor
       )
 
-  object SafeSearchHighRecallUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+  objelonct SafelonSelonarchHighReloncallUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
         Drop(Nsfw),
-        UserLabelValue.NsfwHighRecall,
-        LoggedOutOrViewerNotFollowingAuthor
+        UselonrLabelonlValuelon.NsfwHighReloncall,
+        LoggelondOutOrVielonwelonrNotFollowingAuthor
       )
 
-  object SafeSearchCompromisedUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.Compromised
+  objelonct SafelonSelonarchCompromiselondUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.Compromiselond
       )
 
-  object SafeSearchDuplicateContentUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.DuplicateContent
+  objelonct SafelonSelonarchDuplicatelonContelonntUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.DuplicatelonContelonnt
       )
 
-  object SafeSearchLowQualityUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.LowQuality
+  objelonct SafelonSelonarchLowQualityUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.LowQuality
       )
 
-  object SafeSearchNsfwHighPrecisionUserLabelRule
-      extends ConditionWithUserLabelRule(
+  objelonct SafelonSelonarchNsfwHighPreloncisionUselonrLabelonlRulelon
+      elonxtelonnds ConditionWithUselonrLabelonlRulelon(
         Drop(Nsfw),
-        LoggedOutOrViewerOptInFiltering,
-        UserLabelValue.NsfwHighPrecision
+        LoggelondOutOrVielonwelonrOptInFiltelonring,
+        UselonrLabelonlValuelon.NsfwHighPreloncision
       )
 
-  object SafeSearchNsfwAvatarImageUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+  objelonct SafelonSelonarchNsfwAvatarImagelonUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
         Drop(Nsfw),
-        UserLabelValue.NsfwAvatarImage
+        UselonrLabelonlValuelon.NsfwAvatarImagelon
       )
 
-  object SafeSearchNsfwBannerImageUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+  objelonct SafelonSelonarchNsfwBannelonrImagelonUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
         Drop(Nsfw),
-        UserLabelValue.NsfwBannerImage
+        UselonrLabelonlValuelon.NsfwBannelonrImagelon
       )
 
-  object SafeSearchNsfwNearPerfectAuthorRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
+  objelonct SafelonSelonarchNsfwNelonarPelonrfelonctAuthorRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
         Drop(Nsfw),
-        UserLabelValue.NsfwNearPerfect
+        UselonrLabelonlValuelon.NsfwNelonarPelonrfelonct
       )
 
-  object SafeSearchReadOnlyUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.ReadOnly
+  objelonct SafelonSelonarchRelonadOnlyUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.RelonadOnly
       )
 
-  object SafeSearchSpamHighRecallUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.SpamHighRecall
+  objelonct SafelonSelonarchSpamHighReloncallUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.SpamHighReloncall
       )
 
-  object SafeSearchSearchBlacklistUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.SearchBlacklist
+  objelonct SafelonSelonarchSelonarchBlacklistUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.SelonarchBlacklist
       )
 
-  object SafeSearchNsfwTextUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.NsfwText
+  objelonct SafelonSelonarchNsfwTelonxtUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.NsfwTelonxt
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableNsfwTextSectioningRuleParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonNsfwTelonxtSelonctioningRulelonParam)
   }
 
-  object SafeSearchDoNotAmplifyNonFollowersUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.DoNotAmplify,
-        prerequisiteCondition = Not(ViewerDoesFollowAuthor)
+  objelonct SafelonSelonarchDoNotAmplifyNonFollowelonrsUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.DoNotAmplify,
+        prelonrelonquisitelonCondition = Not(VielonwelonrDoelonsFollowAuthor)
       )
 
-  object SafeSearchNotGraduatedNonFollowersUserLabelRule
-      extends ViewerOptInFilteringOnSearchUserLabelRule(
-        Drop(Unspecified),
-        UserLabelValue.NotGraduated,
-        prerequisiteCondition = Not(ViewerDoesFollowAuthor)
+  objelonct SafelonSelonarchNotGraduatelondNonFollowelonrsUselonrLabelonlRulelon
+      elonxtelonnds VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
+        Drop(Unspeloncifielond),
+        UselonrLabelonlValuelon.NotGraduatelond,
+        prelonrelonquisitelonCondition = Not(VielonwelonrDoelonsFollowAuthor)
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] =
-      Seq(EnableNotGraduatedSearchDropRuleParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(elonnablelonNotGraduatelondSelonarchDropRulelonParam)
 
-    override def holdbacks: Seq[RuleParam[Boolean]] =
-      Seq(NotGraduatedUserLabelRuleHoldbackExperimentParam)
+    ovelonrridelon delonf holdbacks: Selonq[RulelonParam[Boolelonan]] =
+      Selonq(NotGraduatelondUselonrLabelonlRulelonHoldbackelonxpelonrimelonntParam)
 
   }
 }

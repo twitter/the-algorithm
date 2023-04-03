@@ -1,57 +1,57 @@
-package com.twitter.visibility.builder.tweets
+packagelon com.twittelonr.visibility.buildelonr.twelonelonts
 
-import com.twitter.stitch.Stitch
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.visibility.builder.FeatureMapBuilder
-import com.twitter.visibility.common.TrustedFriendsListId
-import com.twitter.visibility.common.TrustedFriendsSource
-import com.twitter.visibility.features.TweetIsTrustedFriendTweet
-import com.twitter.visibility.features.ViewerIsTrustedFriendOfTweetAuthor
-import com.twitter.visibility.features.ViewerIsTrustedFriendTweetAuthor
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.visibility.buildelonr.FelonaturelonMapBuildelonr
+import com.twittelonr.visibility.common.TrustelondFrielonndsListId
+import com.twittelonr.visibility.common.TrustelondFrielonndsSourcelon
+import com.twittelonr.visibility.felonaturelons.TwelonelontIsTrustelondFrielonndTwelonelont
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIsTrustelondFrielonndOfTwelonelontAuthor
+import com.twittelonr.visibility.felonaturelons.VielonwelonrIsTrustelondFrielonndTwelonelontAuthor
 
-class TrustedFriendsFeatures(trustedFriendsSource: TrustedFriendsSource) {
+class TrustelondFrielonndsFelonaturelons(trustelondFrielonndsSourcelon: TrustelondFrielonndsSourcelon) {
 
-  private[builder] def viewerIsTrustedFriend(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): Stitch[Boolean] =
-    (trustedFriendsListId(tweet), viewerId) match {
-      case (Some(tfListId), Some(userId)) =>
-        trustedFriendsSource.isTrustedFriend(tfListId, userId)
-      case _ => Stitch.False
+  privatelon[buildelonr] delonf vielonwelonrIsTrustelondFrielonnd(
+    twelonelont: Twelonelont,
+    vielonwelonrId: Option[Long]
+  ): Stitch[Boolelonan] =
+    (trustelondFrielonndsListId(twelonelont), vielonwelonrId) match {
+      caselon (Somelon(tfListId), Somelon(uselonrId)) =>
+        trustelondFrielonndsSourcelon.isTrustelondFrielonnd(tfListId, uselonrId)
+      caselon _ => Stitch.Falselon
     }
 
-  private[builder] def viewerIsTrustedFriendListOwner(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): Stitch[Boolean] =
-    (trustedFriendsListId(tweet), viewerId) match {
-      case (Some(tfListId), Some(userId)) =>
-        trustedFriendsSource.isTrustedFriendListOwner(tfListId, userId)
-      case _ => Stitch.False
+  privatelon[buildelonr] delonf vielonwelonrIsTrustelondFrielonndListOwnelonr(
+    twelonelont: Twelonelont,
+    vielonwelonrId: Option[Long]
+  ): Stitch[Boolelonan] =
+    (trustelondFrielonndsListId(twelonelont), vielonwelonrId) match {
+      caselon (Somelon(tfListId), Somelon(uselonrId)) =>
+        trustelondFrielonndsSourcelon.isTrustelondFrielonndListOwnelonr(tfListId, uselonrId)
+      caselon _ => Stitch.Falselon
     }
 
-  private[builder] def trustedFriendsListId(tweet: Tweet): Option[TrustedFriendsListId] =
-    tweet.trustedFriendsControl.map(_.trustedFriendsListId)
+  privatelon[buildelonr] delonf trustelondFrielonndsListId(twelonelont: Twelonelont): Option[TrustelondFrielonndsListId] =
+    twelonelont.trustelondFrielonndsControl.map(_.trustelondFrielonndsListId)
 
-  def forTweet(
-    tweet: Tweet,
-    viewerId: Option[Long]
-  ): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(
-      TweetIsTrustedFriendTweet,
-      tweet.trustedFriendsControl.isDefined
-    ).withFeature(
-        ViewerIsTrustedFriendTweetAuthor,
-        viewerIsTrustedFriendListOwner(tweet, viewerId)
-      ).withFeature(
-        ViewerIsTrustedFriendOfTweetAuthor,
-        viewerIsTrustedFriend(tweet, viewerId)
+  delonf forTwelonelont(
+    twelonelont: Twelonelont,
+    vielonwelonrId: Option[Long]
+  ): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    _.withConstantFelonaturelon(
+      TwelonelontIsTrustelondFrielonndTwelonelont,
+      twelonelont.trustelondFrielonndsControl.isDelonfinelond
+    ).withFelonaturelon(
+        VielonwelonrIsTrustelondFrielonndTwelonelontAuthor,
+        vielonwelonrIsTrustelondFrielonndListOwnelonr(twelonelont, vielonwelonrId)
+      ).withFelonaturelon(
+        VielonwelonrIsTrustelondFrielonndOfTwelonelontAuthor,
+        vielonwelonrIsTrustelondFrielonnd(twelonelont, vielonwelonrId)
       )
   }
 
-  def forTweetOnly(tweet: Tweet): FeatureMapBuilder => FeatureMapBuilder = {
-    _.withConstantFeature(TweetIsTrustedFriendTweet, tweet.trustedFriendsControl.isDefined)
+  delonf forTwelonelontOnly(twelonelont: Twelonelont): FelonaturelonMapBuildelonr => FelonaturelonMapBuildelonr = {
+    _.withConstantFelonaturelon(TwelonelontIsTrustelondFrielonndTwelonelont, twelonelont.trustelondFrielonndsControl.isDelonfinelond)
   }
 
 }

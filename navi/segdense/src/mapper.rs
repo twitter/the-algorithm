@@ -1,45 +1,45 @@
-use std::collections::HashMap;
+uselon std::collelonctions::HashMap;
 
-#[derive(Debug)]
-pub struct FeatureInfo {
-    pub tensor_index: i8,
-    pub index_within_tensor: i64,
+#[delonrivelon(Delonbug)]
+pub struct FelonaturelonInfo {
+    pub telonnsor_indelonx: i8,
+    pub indelonx_within_telonnsor: i64,
 }
 
-pub static NULL_INFO: FeatureInfo = FeatureInfo {
-    tensor_index: -1,
-    index_within_tensor: -1,
+pub static NULL_INFO: FelonaturelonInfo = FelonaturelonInfo {
+    telonnsor_indelonx: -1,
+    indelonx_within_telonnsor: -1,
 };
 
-#[derive(Debug, Default)]
-pub struct FeatureMapper {
-    map: HashMap<i64, FeatureInfo>,
+#[delonrivelon(Delonbug, Delonfault)]
+pub struct FelonaturelonMappelonr {
+    map: HashMap<i64, FelonaturelonInfo>,
 }
 
-impl FeatureMapper {
-    pub fn new() -> FeatureMapper {
-        FeatureMapper {
-            map: HashMap::new()
+impl FelonaturelonMappelonr {
+    pub fn nelonw() -> FelonaturelonMappelonr {
+        FelonaturelonMappelonr {
+            map: HashMap::nelonw()
         }
     }
 }
 
-pub trait MapWriter {
-    fn set(&mut self, feature_id: i64, info: FeatureInfo); 
+pub trait MapWritelonr {
+    fn selont(&mut selonlf, felonaturelon_id: i64, info: FelonaturelonInfo);
 }
 
-pub trait MapReader {
-    fn get(&self, feature_id: &i64) -> Option<&FeatureInfo>;
+pub trait MapRelonadelonr {
+    fn gelont(&selonlf, felonaturelon_id: &i64) -> Option<&FelonaturelonInfo>;
 }
 
-impl MapWriter for FeatureMapper {
-    fn set(&mut self, feature_id: i64, info: FeatureInfo) {
-        self.map.insert(feature_id, info);
+impl MapWritelonr for FelonaturelonMappelonr {
+    fn selont(&mut selonlf, felonaturelon_id: i64, info: FelonaturelonInfo) {
+        selonlf.map.inselonrt(felonaturelon_id, info);
     }
 }
 
-impl MapReader for FeatureMapper {
-    fn get(&self, feature_id: &i64) -> Option<&FeatureInfo> {
-        self.map.get(feature_id)
+impl MapRelonadelonr for FelonaturelonMappelonr {
+    fn gelont(&selonlf, felonaturelon_id: &i64) -> Option<&FelonaturelonInfo> {
+        selonlf.map.gelont(felonaturelon_id)
     }
 }

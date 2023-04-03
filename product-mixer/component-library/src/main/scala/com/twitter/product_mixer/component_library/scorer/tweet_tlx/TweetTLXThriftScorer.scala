@@ -1,79 +1,79 @@
-package com.twitter.product_mixer.component_library.scorer.tweet_tlx
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.twelonelont_tlx
 
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.scorer.Scorer
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.ScorerIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinescorer.thriftscala.v1
-import com.twitter.timelinescorer.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.scorelonr.Scorelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ScorelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelonscorelonr.thriftscala.v1
+import com.twittelonr.timelonlinelonscorelonr.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * @note This Feature is shared with
- * [[com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tlx.TweetTLXScoreCandidateFeatureHydrator]]
+ * @notelon This Felonaturelon is sharelond with
+ * [[com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.twelonelont_tlx.TwelonelontTLXScorelonCandidatelonFelonaturelonHydrator]]
  * and
- * [[com.twitter.product_mixer.component_library.scorer.tweet_tlx.TweetTLXStratoScorer]]
- * as the these components should not be used at the same time by the same Product
+ * [[com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.twelonelont_tlx.TwelonelontTLXStratoScorelonr]]
+ * as thelon thelonselon componelonnts should not belon uselond at thelon samelon timelon by thelon samelon Product
  */
-object TLXScore extends FeatureWithDefaultOnFailure[TweetCandidate, Option[Double]] {
-  override val defaultValue = None
+objelonct TLXScorelon elonxtelonnds FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, Option[Doublelon]] {
+  ovelonrridelon val delonfaultValuelon = Nonelon
 }
 
 /**
- * Score Tweets via Timeline Scorer (TLX) Thrift API
+ * Scorelon Twelonelonts via Timelonlinelon Scorelonr (TLX) Thrift API
  *
- * @note This is the [[Scorer]] version of
- * [[com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_tlx.TweetTLXScoreCandidateFeatureHydrator]]
+ * @notelon This is thelon [[Scorelonr]] velonrsion of
+ * [[com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.twelonelont_tlx.TwelonelontTLXScorelonCandidatelonFelonaturelonHydrator]]
  */
-@Singleton
-class TweetTLXThriftScorer @Inject() (timelineScorerClient: t.TimelineScorer.MethodPerEndpoint)
-    extends Scorer[PipelineQuery, TweetCandidate] {
+@Singlelonton
+class TwelonelontTLXThriftScorelonr @Injelonct() (timelonlinelonScorelonrClielonnt: t.TimelonlinelonScorelonr.MelonthodPelonrelonndpoint)
+    elonxtelonnds Scorelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: ScorerIdentifier = ScorerIdentifier("TLX")
+  ovelonrridelon val idelonntifielonr: ScorelonrIdelonntifielonr = ScorelonrIdelonntifielonr("TLX")
 
-  override val features: Set[Feature[_, _]] = Set(TLXScore)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(TLXScorelon)
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
-    val userId = query.getOptionalUserId
-    val tweetScoringQuery = v1.TweetScoringQuery(
-      predictionPipeline = v1.PredictionPipeline.Recap,
-      tweetIds = candidates.map(_.candidate.id))
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
+    val uselonrId = quelonry.gelontOptionalUselonrId
+    val twelonelontScoringQuelonry = v1.TwelonelontScoringQuelonry(
+      prelondictionPipelonlinelon = v1.PrelondictionPipelonlinelon.Reloncap,
+      twelonelontIds = candidatelons.map(_.candidatelon.id))
 
-    val tweetScoringRequest = t.TweetScoringRequest.V1(
-      v1.TweetScoringRequest(
-        tweetScoringRequestContext = Some(v1.TweetScoringRequestContext(userId = userId)),
-        tweetScoringQueries = Some(Seq(tweetScoringQuery)),
-        retrieveFeatures = Some(false)
+    val twelonelontScoringRelonquelonst = t.TwelonelontScoringRelonquelonst.V1(
+      v1.TwelonelontScoringRelonquelonst(
+        twelonelontScoringRelonquelonstContelonxt = Somelon(v1.TwelonelontScoringRelonquelonstContelonxt(uselonrId = uselonrId)),
+        twelonelontScoringQuelonrielons = Somelon(Selonq(twelonelontScoringQuelonry)),
+        relontrielonvelonFelonaturelons = Somelon(falselon)
       ))
 
-    Stitch.callFuture(timelineScorerClient.getTweetScores(tweetScoringRequest)).map {
-      case t.TweetScoringResponse.V1(response) =>
-        val tweetIdScoreMap = response.tweetScoringResults
+    Stitch.callFuturelon(timelonlinelonScorelonrClielonnt.gelontTwelonelontScorelons(twelonelontScoringRelonquelonst)).map {
+      caselon t.TwelonelontScoringRelonsponselon.V1(relonsponselon) =>
+        val twelonelontIdScorelonMap = relonsponselon.twelonelontScoringRelonsults
           .flatMap {
-            _.headOption.map {
-              _.scoredTweets.flatMap(tweet => tweet.tweetId.map(_ -> tweet.score))
+            _.helonadOption.map {
+              _.scorelondTwelonelonts.flatMap(twelonelont => twelonelont.twelonelontId.map(_ -> twelonelont.scorelon))
             }
-          }.getOrElse(Seq.empty).toMap
+          }.gelontOrelonlselon(Selonq.elonmpty).toMap
 
-        candidates.map { candidateWithFeatures =>
-          val score = tweetIdScoreMap.getOrElse(candidateWithFeatures.candidate.id, None)
-          FeatureMapBuilder()
-            .add(TLXScore, score)
+        candidatelons.map { candidatelonWithFelonaturelons =>
+          val scorelon = twelonelontIdScorelonMap.gelontOrelonlselon(candidatelonWithFelonaturelons.candidatelon.id, Nonelon)
+          FelonaturelonMapBuildelonr()
+            .add(TLXScorelon, scorelon)
             .build()
 
         }
-      case t.TweetScoringResponse.UnknownUnionField(field) =>
-        throw new UnsupportedOperationException(s"Unknown response type: ${field.field.name}")
+      caselon t.TwelonelontScoringRelonsponselon.UnknownUnionFielonld(fielonld) =>
+        throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown relonsponselon typelon: ${fielonld.fielonld.namelon}")
     }
   }
 }

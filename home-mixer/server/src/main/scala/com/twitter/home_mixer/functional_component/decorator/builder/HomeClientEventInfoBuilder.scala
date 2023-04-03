@@ -1,43 +1,43 @@
-package com.twitter.home_mixer.functional_component.decorator.builder
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.deloncorator.buildelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.EntityTokenFeature
-import com.twitter.home_mixer.model.HomeFeatures.SuggestTypeFeature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventDetailsBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.timelines.injection.scribe.InjectionScribeUtil
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.elonntityTokelonnFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SuggelonstTypelonFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntDelontailsBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.injelonction.scribelon.InjelonctionScribelonUtil
 
 /**
- * Sets the [[ClientEventInfo]] with the `component` field set to the Suggest Type assigned to each candidate
+ * Selonts thelon [[ClielonntelonvelonntInfo]] with thelon `componelonnt` fielonld selont to thelon Suggelonst Typelon assignelond to elonach candidatelon
  */
-case class HomeClientEventInfoBuilder[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-  detailsBuilder: Option[BaseClientEventDetailsBuilder[Query, Candidate]] = None)
-    extends BaseClientEventInfoBuilder[Query, Candidate] {
+caselon class HomelonClielonntelonvelonntInfoBuildelonr[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+  delontailsBuildelonr: Option[BaselonClielonntelonvelonntDelontailsBuildelonr[Quelonry, Candidatelon]] = Nonelon)
+    elonxtelonnds BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, Candidatelon] {
 
-  override def apply(
-    query: Query,
-    candidate: Candidate,
-    candidateFeatures: FeatureMap,
-    element: Option[String]
-  ): Option[ClientEventInfo] = {
-    val suggestType = candidateFeatures
-      .getOrElse(SuggestTypeFeature, None)
-      .getOrElse(throw new UnsupportedOperationException(s"No SuggestType was set"))
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: Candidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap,
+    elonlelonmelonnt: Option[String]
+  ): Option[ClielonntelonvelonntInfo] = {
+    val suggelonstTypelon = candidatelonFelonaturelons
+      .gelontOrelonlselon(SuggelonstTypelonFelonaturelon, Nonelon)
+      .gelontOrelonlselon(throw nelonw UnsupportelondOpelonrationelonxcelonption(s"No SuggelonstTypelon was selont"))
 
-    Some(
-      ClientEventInfo(
-        component = InjectionScribeUtil.scribeComponent(suggestType),
-        element = element,
-        details = detailsBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-        action = None,
+    Somelon(
+      ClielonntelonvelonntInfo(
+        componelonnt = InjelonctionScribelonUtil.scribelonComponelonnt(suggelonstTypelon),
+        elonlelonmelonnt = elonlelonmelonnt,
+        delontails = delontailsBuildelonr.flatMap(_.apply(quelonry, candidatelon, candidatelonFelonaturelons)),
+        action = Nonelon,
         /**
-         * A backend entity encoded by the Client Entities Encoding Library.
-         * Placeholder string for now
+         * A backelonnd elonntity elonncodelond by thelon Clielonnt elonntitielons elonncoding Library.
+         * Placelonholdelonr string for now
          */
-        entityToken = candidateFeatures.getOrElse(EntityTokenFeature, None)
+        elonntityTokelonn = candidatelonFelonaturelons.gelontOrelonlselon(elonntityTokelonnFelonaturelon, Nonelon)
       )
     )
   }

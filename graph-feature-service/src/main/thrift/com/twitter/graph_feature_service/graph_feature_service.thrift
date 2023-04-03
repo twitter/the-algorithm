@@ -1,123 +1,123 @@
-namespace java com.twitter.graph_feature_service.thriftjava
-#@namespace scala com.twitter.graph_feature_service.thriftscala
-#@namespace strato com.twitter.graph_feature_service.thriftscala
+namelonspacelon java com.twittelonr.graph_felonaturelon_selonrvicelon.thriftjava
+#@namelonspacelon scala com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala
+#@namelonspacelon strato com.twittelonr.graph_felonaturelon_selonrvicelon.thriftscala
 
-// edge type to differentiate different types of graphs (we can also add a lot of other types of edges)
-enum EdgeType {
+// elondgelon typelon to diffelonrelonntiatelon diffelonrelonnt typelons of graphs (welon can also add a lot of othelonr typelons of elondgelons)
+elonnum elondgelonTypelon {
   FOLLOWING,
-  FOLLOWED_BY,
-  FAVORITE,
-  FAVORITED_BY,
-  RETWEET,
-  RETWEETED_BY,
-  REPLY,
-  REPLYED_BY,
-  MENTION,
-  MENTIONED_BY,
+  FOLLOWelonD_BY,
+  FAVORITelon,
+  FAVORITelonD_BY,
+  RelonTWelonelonT,
+  RelonTWelonelonTelonD_BY,
+  RelonPLY,
+  RelonPLYelonD_BY,
+  MelonNTION,
+  MelonNTIONelonD_BY,
   MUTUAL_FOLLOW,
-  SIMILAR_TO, // more edge types (like block, report, etc.) can be supported later.
-  RESERVED_12,
-  RESERVED_13,
-  RESERVED_14,
-  RESERVED_15,
-  RESERVED_16,
-  RESERVED_17,
-  RESERVED_18,
-  RESERVED_19,
-  RESERVED_20
+  SIMILAR_TO, // morelon elondgelon typelons (likelon block, relonport, elontc.) can belon supportelond latelonr.
+  RelonSelonRVelonD_12,
+  RelonSelonRVelonD_13,
+  RelonSelonRVelonD_14,
+  RelonSelonRVelonD_15,
+  RelonSelonRVelonD_16,
+  RelonSelonRVelonD_17,
+  RelonSelonRVelonD_18,
+  RelonSelonRVelonD_19,
+  RelonSelonRVelonD_20
 }
 
-enum PresetFeatureTypes {
-  EMPTY,
+elonnum PrelonselontFelonaturelonTypelons {
+  elonMPTY,
   HTL_TWO_HOP,
   WTF_TWO_HOP,
   SQ_TWO_HOP,
   RUX_TWO_HOP,
   MR_TWO_HOP,
-  USER_TYPEAHEAD_TWO_HOP
+  USelonR_TYPelonAHelonAD_TWO_HOP
 }
 
-struct UserWithCount {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required i32 count
-}(hasPersonalData = 'true')
+struct UselonrWithCount {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond i32 count
+}(hasPelonrsonalData = 'truelon')
 
-struct UserWithScore {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required double score
-}(hasPersonalData = 'true')
+struct UselonrWithScorelon {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond doublelon scorelon
+}(hasPelonrsonalData = 'truelon')
 
-// Feature Type
-// For example, to compute how many of source user's following's have favorited candidate user,
-// we need to compute the intersection between source user's FOLLOWING edges, and candidate user's
-// FAVORITED_BY edge. In this case, we should user FeatureType(FOLLOWING, FAVORITED_BY)
-struct FeatureType {
-  1: required EdgeType leftEdgeType // edge type from source user
-  2: required EdgeType rightEdgeType // edge type from candidate user
-}(persisted="true")
+// Felonaturelon Typelon
+// For elonxamplelon, to computelon how many of sourcelon uselonr's following's havelon favoritelond candidatelon uselonr,
+// welon nelonelond to computelon thelon intelonrselonction belontwelonelonn sourcelon uselonr's FOLLOWING elondgelons, and candidatelon uselonr's
+// FAVORITelonD_BY elondgelon. In this caselon, welon should uselonr FelonaturelonTypelon(FOLLOWING, FAVORITelonD_BY)
+struct FelonaturelonTypelon {
+  1: relonquirelond elondgelonTypelon lelonftelondgelonTypelon // elondgelon typelon from sourcelon uselonr
+  2: relonquirelond elondgelonTypelon rightelondgelonTypelon // elondgelon typelon from candidatelon uselonr
+}(pelonrsistelond="truelon")
 
-struct IntersectionValue {
-  1: required FeatureType featureType
+struct IntelonrselonctionValuelon {
+  1: relonquirelond FelonaturelonTypelon felonaturelonTypelon
   2: optional i32 count
-  3: optional list<i64> intersectionIds(personalDataType = 'UserId')
-  4: optional i32 leftNodeDegree
-  5: optional i32 rightNodeDegree
-}(persisted="true", hasPersonalData = 'true')
+  3: optional list<i64> intelonrselonctionIds(pelonrsonalDataTypelon = 'UselonrId')
+  4: optional i32 lelonftNodelonDelongrelonelon
+  5: optional i32 rightNodelonDelongrelonelon
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-struct GfsIntersectionResult {
-  1: required i64 candidateUserId(personalDataType = 'UserId')
-  2: required list<IntersectionValue> intersectionValues
-}(hasPersonalData = 'true')
+struct GfsIntelonrselonctionRelonsult {
+  1: relonquirelond i64 candidatelonUselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond list<IntelonrselonctionValuelon> intelonrselonctionValuelons
+}(hasPelonrsonalData = 'truelon')
 
-struct GfsIntersectionRequest {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required list<i64> candidateUserIds(personalDataType = 'UserId')
-  3: required list<FeatureType> featureTypes
-  4: optional i32 intersectionIdLimit
+struct GfsIntelonrselonctionRelonquelonst {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond list<i64> candidatelonUselonrIds(pelonrsonalDataTypelon = 'UselonrId')
+  3: relonquirelond list<FelonaturelonTypelon> felonaturelonTypelons
+  4: optional i32 intelonrselonctionIdLimit
 }
 
-struct GfsPresetIntersectionRequest {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required list<i64> candidateUserIds(personalDataType = 'UserId')
-  3: required PresetFeatureTypes presetFeatureTypes
-  4: optional i32 intersectionIdLimit
-}(hasPersonalData = 'true')
+struct GfsPrelonselontIntelonrselonctionRelonquelonst {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond list<i64> candidatelonUselonrIds(pelonrsonalDataTypelon = 'UselonrId')
+  3: relonquirelond PrelonselontFelonaturelonTypelons prelonselontFelonaturelonTypelons
+  4: optional i32 intelonrselonctionIdLimit
+}(hasPelonrsonalData = 'truelon')
 
-struct GfsIntersectionResponse {
-  1: required list<GfsIntersectionResult> results
+struct GfsIntelonrselonctionRelonsponselon {
+  1: relonquirelond list<GfsIntelonrselonctionRelonsult> relonsults
 }
 
-service Server {
-  GfsIntersectionResponse getIntersection(1: GfsIntersectionRequest request)
-  GfsIntersectionResponse getPresetIntersection(1: GfsPresetIntersectionRequest request)
+selonrvicelon Selonrvelonr {
+  GfsIntelonrselonctionRelonsponselon gelontIntelonrselonction(1: GfsIntelonrselonctionRelonquelonst relonquelonst)
+  GfsIntelonrselonctionRelonsponselon gelontPrelonselontIntelonrselonction(1: GfsPrelonselontIntelonrselonctionRelonquelonst relonquelonst)
 }
 
 ###################################################################################################
-##  For internal usage only
+##  For intelonrnal usagelon only
 ###################################################################################################
-struct WorkerIntersectionRequest {
-  1: required i64 userId(personalDataType = 'UserId')
-  2: required list<i64> candidateUserIds(personalDataType = 'UserId')
-  3: required list<FeatureType> featureTypes
-  4: required PresetFeatureTypes presetFeatureTypes
-  5: required i32 intersectionIdLimit
-}(hasPersonalData = 'true')
+struct WorkelonrIntelonrselonctionRelonquelonst {
+  1: relonquirelond i64 uselonrId(pelonrsonalDataTypelon = 'UselonrId')
+  2: relonquirelond list<i64> candidatelonUselonrIds(pelonrsonalDataTypelon = 'UselonrId')
+  3: relonquirelond list<FelonaturelonTypelon> felonaturelonTypelons
+  4: relonquirelond PrelonselontFelonaturelonTypelons prelonselontFelonaturelonTypelons
+  5: relonquirelond i32 intelonrselonctionIdLimit
+}(hasPelonrsonalData = 'truelon')
 
-struct WorkerIntersectionResponse {
-  1: required list<list<WorkerIntersectionValue>> results
+struct WorkelonrIntelonrselonctionRelonsponselon {
+  1: relonquirelond list<list<WorkelonrIntelonrselonctionValuelon>> relonsults
 }
 
-struct WorkerIntersectionValue {
+struct WorkelonrIntelonrselonctionValuelon {
   1: i32 count
-  2: i32 leftNodeDegree
-  3: i32 rightNodeDegree
-  4: list<i64> intersectionIds(personalDataType = 'UserId')
-}(hasPersonalData = 'true')
+  2: i32 lelonftNodelonDelongrelonelon
+  3: i32 rightNodelonDelongrelonelon
+  4: list<i64> intelonrselonctionIds(pelonrsonalDataTypelon = 'UselonrId')
+}(hasPelonrsonalData = 'truelon')
 
-struct CachedIntersectionResult {
-  1: required list<WorkerIntersectionValue> values
+struct CachelondIntelonrselonctionRelonsult {
+  1: relonquirelond list<WorkelonrIntelonrselonctionValuelon> valuelons
 }
 
-service Worker {
-  WorkerIntersectionResponse getIntersection(1: WorkerIntersectionRequest request)
+selonrvicelon Workelonr {
+  WorkelonrIntelonrselonctionRelonsponselon gelontIntelonrselonction(1: WorkelonrIntelonrselonctionRelonquelonst relonquelonst)
 }

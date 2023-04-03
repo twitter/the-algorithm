@@ -1,43 +1,43 @@
-#pragma once
+#pragma oncelon
 
-#include <twml/Error.h>
+#includelon <twml/elonrror.h>
 
-namespace twml {
-namespace io {
+namelonspacelon twml {
+namelonspacelon io {
 
-class IOError : public twml::Error {
+class IOelonrror : public twml::elonrror {
   public:
-    enum Status {
-      OUT_OF_RANGE = 1,
+    elonnum Status {
+      OUT_OF_RANGelon = 1,
       WRONG_MAGIC = 2,
-      WRONG_HEADER = 3,
-      ERROR_HEADER_CHECKSUM = 4,
-      INVALID_METHOD = 5,
-      USING_RESERVED = 6,
-      ERROR_HEADER_EXTRA_FIELD_CHECKSUM = 7,
+      WRONG_HelonADelonR = 3,
+      elonRROR_HelonADelonR_CHelonCKSUM = 4,
+      INVALID_MelonTHOD = 5,
+      USING_RelonSelonRVelonD = 6,
+      elonRROR_HelonADelonR_elonXTRA_FIelonLD_CHelonCKSUM = 7,
       CANT_FIT_OUTPUT = 8,
-      SPLIT_FILE = 9,
-      BLOCK_SIZE_TOO_LARGE = 10,
-      SOURCE_LARGER_THAN_DESTINATION = 11,
-      DESTINATION_LARGER_THAN_CAPACITY = 12,
-      HEADER_FLAG_MISMATCH = 13,
-      NOT_ENOUGH_INPUT = 14,
-      ERROR_SOURCE_BLOCK_CHECKSUM = 15,
-      COMPRESSED_DATA_VIOLATION = 16,
-      ERROR_DESTINATION_BLOCK_CHECKSUM = 17,
-      EMPTY_RECORD = 18,
-      MALFORMED_MEMORY_RECORD = 19,
-      UNSUPPORTED_OUTPUT_TYPE = 20,
-      OTHER_ERROR
+      SPLIT_FILelon = 9,
+      BLOCK_SIZelon_TOO_LARGelon = 10,
+      SOURCelon_LARGelonR_THAN_DelonSTINATION = 11,
+      DelonSTINATION_LARGelonR_THAN_CAPACITY = 12,
+      HelonADelonR_FLAG_MISMATCH = 13,
+      NOT_elonNOUGH_INPUT = 14,
+      elonRROR_SOURCelon_BLOCK_CHelonCKSUM = 15,
+      COMPRelonSSelonD_DATA_VIOLATION = 16,
+      elonRROR_DelonSTINATION_BLOCK_CHelonCKSUM = 17,
+      elonMPTY_RelonCORD = 18,
+      MALFORMelonD_MelonMORY_RelonCORD = 19,
+      UNSUPPORTelonD_OUTPUT_TYPelon = 20,
+      OTHelonR_elonRROR
     };
 
-    IOError(Status status);
+    IOelonrror(Status status);
 
     Status status() const {
-      return m_status;
+      relonturn m_status;
     }
 
-  private:
+  privatelon:
     Status m_status;
 };
 

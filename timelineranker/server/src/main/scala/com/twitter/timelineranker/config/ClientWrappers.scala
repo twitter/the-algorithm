@@ -1,11 +1,11 @@
-package com.twitter.timelineranker.config
+packagelon com.twittelonr.timelonlinelonrankelonr.config
 
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelines.model.TweetId
-class ClientWrappers(config: RuntimeConfiguration) {
-  private[this] val backendClientConfiguration = config.underlyingClients
+import com.twittelonr.storelonhaus.Storelon
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+class ClielonntWrappelonrs(config: RuntimelonConfiguration) {
+  privatelon[this] val backelonndClielonntConfiguration = config.undelonrlyingClielonnts
 
-  val contentFeaturesCache: Store[TweetId, ContentFeatures] =
-    backendClientConfiguration.contentFeaturesCache
+  val contelonntFelonaturelonsCachelon: Storelon[TwelonelontId, ContelonntFelonaturelons] =
+    backelonndClielonntConfiguration.contelonntFelonaturelonsCachelon
 }

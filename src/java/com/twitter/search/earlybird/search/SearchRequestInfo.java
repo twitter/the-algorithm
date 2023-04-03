@@ -1,180 +1,180 @@
-package com.twitter.search.earlybird.search;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch;
 
 import java.util.List;
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.search.Query;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.HitAttributeHelper;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.QualityFactor;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.queryparser.util.IdTimeRanges;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.quelonry.HitAttributelonHelonlpelonr;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.elonarlybird.QualityFactor;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.quelonryparselonr.util.IdTimelonRangelons;
 
-public class SearchRequestInfo {
-  private final ThriftSearchQuery searchQuery;
-  private final Query luceneQuery;
-  private final boolean collectConversationId;
-  private final boolean collectResultLocation;
-  private final boolean getInReplyToStatusId;
-  private final boolean getReferenceAuthorId;
-  private final boolean getFromUserId;
-  private final boolean collectExclusiveConversationAuthorId;
+public class SelonarchRelonquelonstInfo {
+  privatelon final ThriftSelonarchQuelonry selonarchQuelonry;
+  privatelon final Quelonry lucelonnelonQuelonry;
+  privatelon final boolelonan collelonctConvelonrsationId;
+  privatelon final boolelonan collelonctRelonsultLocation;
+  privatelon final boolelonan gelontInRelonplyToStatusId;
+  privatelon final boolelonan gelontRelonfelonrelonncelonAuthorId;
+  privatelon final boolelonan gelontFromUselonrId;
+  privatelon final boolelonan collelonctelonxclusivelonConvelonrsationAuthorId;
 
-  private final int numResultsRequested;
-  private final int maxHitsToProcess;
-  private final List<String> facetFieldNames;
-  private long timestamp;
+  privatelon final int numRelonsultsRelonquelonstelond;
+  privatelon final int maxHitsToProcelonss;
+  privatelon final List<String> facelontFielonldNamelons;
+  privatelon long timelonstamp;
 
-  private final TerminationTracker terminationTracker;
+  privatelon final TelonrminationTrackelonr telonrminationTrackelonr;
 
-  protected final QualityFactor qualityFactor;
+  protelonctelond final QualityFactor qualityFactor;
 
-  // Set if we want to collect per-field hit attributes for this request.
-  @Nullable
-  private HitAttributeHelper hitAttributeHelper;
+  // Selont if welon want to collelonct pelonr-fielonld hit attributelons for this relonquelonst.
+  @Nullablelon
+  privatelon HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr;
 
-  private IdTimeRanges idTimeRanges;
+  privatelon IdTimelonRangelons idTimelonRangelons;
 
-  private static final int DEFAULT_MAX_HITS = 1000;
+  privatelon static final int DelonFAULT_MAX_HITS = 1000;
 
-  private static final SearchCounter RESET_MAX_HITS_TO_PROCESS_COUNTER =
-      SearchCounter.export("search_request_info_reset_max_hits_to_process");
+  privatelon static final SelonarchCountelonr RelonSelonT_MAX_HITS_TO_PROCelonSS_COUNTelonR =
+      SelonarchCountelonr.elonxport("selonarch_relonquelonst_info_relonselont_max_hits_to_procelonss");
 
-  public SearchRequestInfo(
-      ThriftSearchQuery searchQuery,
-      Query luceneQuery,
-      TerminationTracker terminationTracker) {
-    this(searchQuery, luceneQuery, terminationTracker, null);
+  public SelonarchRelonquelonstInfo(
+      ThriftSelonarchQuelonry selonarchQuelonry,
+      Quelonry lucelonnelonQuelonry,
+      TelonrminationTrackelonr telonrminationTrackelonr) {
+    this(selonarchQuelonry, lucelonnelonQuelonry, telonrminationTrackelonr, null);
   }
 
-  public SearchRequestInfo(
-      ThriftSearchQuery searchQuery,
-      Query luceneQuery,
-      TerminationTracker terminationTracker,
+  public SelonarchRelonquelonstInfo(
+      ThriftSelonarchQuelonry selonarchQuelonry,
+      Quelonry lucelonnelonQuelonry,
+      TelonrminationTrackelonr telonrminationTrackelonr,
       QualityFactor qualityFactor) {
-    Preconditions.checkNotNull(searchQuery.getCollectorParams());
-    Preconditions.checkNotNull(terminationTracker);
+    Prelonconditions.chelonckNotNull(selonarchQuelonry.gelontCollelonctorParams());
+    Prelonconditions.chelonckNotNull(telonrminationTrackelonr);
 
-    this.searchQuery = searchQuery;
-    this.luceneQuery = luceneQuery;
-    this.collectConversationId = searchQuery.isCollectConversationId();
-    if (searchQuery.isSetResultMetadataOptions()) {
-      this.collectResultLocation = searchQuery.getResultMetadataOptions().isGetResultLocation();
-      this.getInReplyToStatusId = searchQuery.getResultMetadataOptions().isGetInReplyToStatusId();
-      this.getReferenceAuthorId =
-          searchQuery.getResultMetadataOptions().isGetReferencedTweetAuthorId();
-      this.getFromUserId = searchQuery.getResultMetadataOptions().isGetFromUserId();
-      this.collectExclusiveConversationAuthorId =
-          searchQuery.getResultMetadataOptions().isGetExclusiveConversationAuthorId();
-    } else {
-      this.collectResultLocation = false;
-      this.getInReplyToStatusId = false;
-      this.getReferenceAuthorId = false;
-      this.getFromUserId = false;
-      this.collectExclusiveConversationAuthorId = false;
+    this.selonarchQuelonry = selonarchQuelonry;
+    this.lucelonnelonQuelonry = lucelonnelonQuelonry;
+    this.collelonctConvelonrsationId = selonarchQuelonry.isCollelonctConvelonrsationId();
+    if (selonarchQuelonry.isSelontRelonsultMelontadataOptions()) {
+      this.collelonctRelonsultLocation = selonarchQuelonry.gelontRelonsultMelontadataOptions().isGelontRelonsultLocation();
+      this.gelontInRelonplyToStatusId = selonarchQuelonry.gelontRelonsultMelontadataOptions().isGelontInRelonplyToStatusId();
+      this.gelontRelonfelonrelonncelonAuthorId =
+          selonarchQuelonry.gelontRelonsultMelontadataOptions().isGelontRelonfelonrelonncelondTwelonelontAuthorId();
+      this.gelontFromUselonrId = selonarchQuelonry.gelontRelonsultMelontadataOptions().isGelontFromUselonrId();
+      this.collelonctelonxclusivelonConvelonrsationAuthorId =
+          selonarchQuelonry.gelontRelonsultMelontadataOptions().isGelontelonxclusivelonConvelonrsationAuthorId();
+    } elonlselon {
+      this.collelonctRelonsultLocation = falselon;
+      this.gelontInRelonplyToStatusId = falselon;
+      this.gelontRelonfelonrelonncelonAuthorId = falselon;
+      this.gelontFromUselonrId = falselon;
+      this.collelonctelonxclusivelonConvelonrsationAuthorId = falselon;
     }
 
     this.qualityFactor = qualityFactor;
 
-    this.numResultsRequested = searchQuery.getCollectorParams().getNumResultsToReturn();
-    this.maxHitsToProcess = calculateMaxHitsToProcess(searchQuery);
-    this.terminationTracker = terminationTracker;
-    this.facetFieldNames = searchQuery.getFacetFieldNames();
+    this.numRelonsultsRelonquelonstelond = selonarchQuelonry.gelontCollelonctorParams().gelontNumRelonsultsToRelonturn();
+    this.maxHitsToProcelonss = calculatelonMaxHitsToProcelonss(selonarchQuelonry);
+    this.telonrminationTrackelonr = telonrminationTrackelonr;
+    this.facelontFielonldNamelons = selonarchQuelonry.gelontFacelontFielonldNamelons();
   }
 
   /**
-   * Gets the value to be used as max hits to process for this query. The base class gets it from
-   * the searchQuery directly, and uses a default if that's not set.
+   * Gelonts thelon valuelon to belon uselond as max hits to procelonss for this quelonry. Thelon baselon class gelonts it from
+   * thelon selonarchQuelonry direlonctly, and uselons a delonfault if that's not selont.
    *
-   * Subclasses can override this to compute a different value for max hits to process.
+   * Subclasselons can ovelonrridelon this to computelon a diffelonrelonnt valuelon for max hits to procelonss.
    */
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
-    int maxHits = thriftSearchQuery.getCollectorParams().isSetTerminationParams()
-        ? thriftSearchQuery.getCollectorParams().getTerminationParams().getMaxHitsToProcess() : 0;
+  protelonctelond int calculatelonMaxHitsToProcelonss(ThriftSelonarchQuelonry thriftSelonarchQuelonry) {
+    int maxHits = thriftSelonarchQuelonry.gelontCollelonctorParams().isSelontTelonrminationParams()
+        ? thriftSelonarchQuelonry.gelontCollelonctorParams().gelontTelonrminationParams().gelontMaxHitsToProcelonss() : 0;
 
     if (maxHits <= 0) {
-      maxHits = DEFAULT_MAX_HITS;
-      RESET_MAX_HITS_TO_PROCESS_COUNTER.increment();
+      maxHits = DelonFAULT_MAX_HITS;
+      RelonSelonT_MAX_HITS_TO_PROCelonSS_COUNTelonR.increlonmelonnt();
     }
-    return maxHits;
+    relonturn maxHits;
   }
 
-  public final ThriftSearchQuery getSearchQuery() {
-    return this.searchQuery;
+  public final ThriftSelonarchQuelonry gelontSelonarchQuelonry() {
+    relonturn this.selonarchQuelonry;
   }
 
-  public Query getLuceneQuery() {
-    return luceneQuery;
+  public Quelonry gelontLucelonnelonQuelonry() {
+    relonturn lucelonnelonQuelonry;
   }
 
-  public final int getNumResultsRequested() {
-    return numResultsRequested;
+  public final int gelontNumRelonsultsRelonquelonstelond() {
+    relonturn numRelonsultsRelonquelonstelond;
   }
 
-  public final int getMaxHitsToProcess() {
-    return maxHitsToProcess;
+  public final int gelontMaxHitsToProcelonss() {
+    relonturn maxHitsToProcelonss;
   }
 
-  public boolean isCollectConversationId() {
-    return collectConversationId;
+  public boolelonan isCollelonctConvelonrsationId() {
+    relonturn collelonctConvelonrsationId;
   }
 
-  public boolean isCollectResultLocation() {
-    return collectResultLocation;
+  public boolelonan isCollelonctRelonsultLocation() {
+    relonturn collelonctRelonsultLocation;
   }
 
-  public boolean isGetInReplyToStatusId() {
-    return getInReplyToStatusId;
+  public boolelonan isGelontInRelonplyToStatusId() {
+    relonturn gelontInRelonplyToStatusId;
   }
 
-  public boolean isGetReferenceAuthorId() {
-    return getReferenceAuthorId;
+  public boolelonan isGelontRelonfelonrelonncelonAuthorId() {
+    relonturn gelontRelonfelonrelonncelonAuthorId;
   }
 
-  public boolean isCollectExclusiveConversationAuthorId() {
-    return collectExclusiveConversationAuthorId;
+  public boolelonan isCollelonctelonxclusivelonConvelonrsationAuthorId() {
+    relonturn collelonctelonxclusivelonConvelonrsationAuthorId;
   }
 
-  public final IdTimeRanges getIdTimeRanges() {
-    return idTimeRanges;
+  public final IdTimelonRangelons gelontIdTimelonRangelons() {
+    relonturn idTimelonRangelons;
   }
 
-  public SearchRequestInfo setIdTimeRanges(IdTimeRanges newIdTimeRanges) {
-    this.idTimeRanges = newIdTimeRanges;
-    return this;
+  public SelonarchRelonquelonstInfo selontIdTimelonRangelons(IdTimelonRangelons nelonwIdTimelonRangelons) {
+    this.idTimelonRangelons = nelonwIdTimelonRangelons;
+    relonturn this;
   }
 
-  public SearchRequestInfo setTimestamp(long newTimestamp) {
-    this.timestamp = newTimestamp;
-    return this;
+  public SelonarchRelonquelonstInfo selontTimelonstamp(long nelonwTimelonstamp) {
+    this.timelonstamp = nelonwTimelonstamp;
+    relonturn this;
   }
 
-  public long getTimestamp() {
-    return timestamp;
+  public long gelontTimelonstamp() {
+    relonturn timelonstamp;
   }
 
-  public TerminationTracker getTerminationTracker() {
-    return this.terminationTracker;
+  public TelonrminationTrackelonr gelontTelonrminationTrackelonr() {
+    relonturn this.telonrminationTrackelonr;
   }
 
-  @Nullable
-  public HitAttributeHelper getHitAttributeHelper() {
-    return hitAttributeHelper;
+  @Nullablelon
+  public HitAttributelonHelonlpelonr gelontHitAttributelonHelonlpelonr() {
+    relonturn hitAttributelonHelonlpelonr;
   }
 
-  public void setHitAttributeHelper(@Nullable HitAttributeHelper hitAttributeHelper) {
-    this.hitAttributeHelper = hitAttributeHelper;
+  public void selontHitAttributelonHelonlpelonr(@Nullablelon HitAttributelonHelonlpelonr hitAttributelonHelonlpelonr) {
+    this.hitAttributelonHelonlpelonr = hitAttributelonHelonlpelonr;
   }
 
-  public List<String> getFacetFieldNames() {
-    return facetFieldNames;
+  public List<String> gelontFacelontFielonldNamelons() {
+    relonturn facelontFielonldNamelons;
   }
 
-  public boolean isGetFromUserId() {
-    return getFromUserId;
+  public boolelonan isGelontFromUselonrId() {
+    relonturn gelontFromUselonrId;
   }
 }

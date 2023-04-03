@@ -1,45 +1,45 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.BottomCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineCursorSerializer
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor.UrtCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.BottomCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Builds [[UrtOrderedCursor]] in the Bottom position
+ * Builds [[UrtOrdelonrelondCursor]] in thelon Bottom position
  *
- * @param idSelector Specifies the entry from which to derive the `id` field
- * @param includeOperation Logic to determine whether or not to build the bottom cursor, which only
- *                         applies if gap cursors are required (e.g. Home Latest). When applicable,
- *                         this logic should always be the inverse of the logic used to decide
- *                         whether or not to build the gap cursor via [[OrderedGapCursorBuilder]],
- *                         since either the gap or the bottom cursor must always be returned.
- * @param serializer Converts the cursor to an encoded string
+ * @param idSelonlelonctor Speloncifielons thelon elonntry from which to delonrivelon thelon `id` fielonld
+ * @param includelonOpelonration Logic to delontelonrminelon whelonthelonr or not to build thelon bottom cursor, which only
+ *                         applielons if gap cursors arelon relonquirelond (elon.g. Homelon Latelonst). Whelonn applicablelon,
+ *                         this logic should always belon thelon invelonrselon of thelon logic uselond to deloncidelon
+ *                         whelonthelonr or not to build thelon gap cursor via [[OrdelonrelondGapCursorBuildelonr]],
+ *                         sincelon elonithelonr thelon gap or thelon bottom cursor must always belon relonturnelond.
+ * @param selonrializelonr Convelonrts thelon cursor to an elonncodelond string
  */
-case class OrderedBottomCursorBuilder[
-  -Query <: PipelineQuery with HasPipelineCursor[UrtOrderedCursor]
+caselon class OrdelonrelondBottomCursorBuildelonr[
+  -Quelonry <: PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtOrdelonrelondCursor]
 ](
-  idSelector: PartialFunction[TimelineEntry, Long],
-  override val includeOperation: IncludeInstruction[Query] = AlwaysInclude,
-  serializer: PipelineCursorSerializer[UrtOrderedCursor] = UrtCursorSerializer)
-    extends UrtCursorBuilder[Query] {
-  override val cursorType: CursorType = BottomCursor
+  idSelonlelonctor: PartialFunction[Timelonlinelonelonntry, Long],
+  ovelonrridelon val includelonOpelonration: IncludelonInstruction[Quelonry] = AlwaysIncludelon,
+  selonrializelonr: PipelonlinelonCursorSelonrializelonr[UrtOrdelonrelondCursor] = UrtCursorSelonrializelonr)
+    elonxtelonnds UrtCursorBuildelonr[Quelonry] {
+  ovelonrridelon val cursorTypelon: CursorTypelon = BottomCursor
 
-  override def cursorValue(query: Query, timelineEntries: Seq[TimelineEntry]): String = {
-    val bottomId = timelineEntries.reverseIterator.collectFirst(idSelector)
+  ovelonrridelon delonf cursorValuelon(quelonry: Quelonry, timelonlinelonelonntrielons: Selonq[Timelonlinelonelonntry]): String = {
+    val bottomId = timelonlinelonelonntrielons.relonvelonrselonItelonrator.collelonctFirst(idSelonlelonctor)
 
-    val id = bottomId.orElse(query.pipelineCursor.flatMap(_.id))
+    val id = bottomId.orelonlselon(quelonry.pipelonlinelonCursor.flatMap(_.id))
 
-    val cursor = UrtOrderedCursor(
-      initialSortIndex = nextBottomInitialSortIndex(query, timelineEntries),
+    val cursor = UrtOrdelonrelondCursor(
+      initialSortIndelonx = nelonxtBottomInitialSortIndelonx(quelonry, timelonlinelonelonntrielons),
       id = id,
-      cursorType = Some(cursorType)
+      cursorTypelon = Somelon(cursorTypelon)
     )
 
-    serializer.serializeCursor(cursor)
+    selonrializelonr.selonrializelonCursor(cursor)
   }
 }

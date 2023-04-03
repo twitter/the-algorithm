@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.component_library.selector.sorter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor.sortelonr
 
-sealed trait SortOrder
-case object Ascending extends SortOrder
-case object Descending extends SortOrder
+selonalelond trait SortOrdelonr
+caselon objelonct Ascelonnding elonxtelonnds SortOrdelonr
+caselon objelonct Delonscelonnding elonxtelonnds SortOrdelonr

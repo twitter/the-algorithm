@@ -1,53 +1,53 @@
-package com.twitter.home_mixer.product.scored_tweets.candidate_pipeline
+packagelon com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon
 
-import com.twitter.home_mixer.product.scored_tweets.candidate_pipeline.CachedScoredTweetsCandidatePipelineConfig._
-import com.twitter.home_mixer.product.scored_tweets.candidate_source.CachedScoredTweetsCandidateSource
-import com.twitter.home_mixer.product.scored_tweets.model.ScoredTweetsQuery
-import com.twitter.home_mixer.product.scored_tweets.response_transformer.CachedScoredTweetsResponseFeatureTransformer
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.candidate_source.BaseCandidateSource
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineQueryTransformer
-import com.twitter.product_mixer.core.functional_component.transformer.CandidatePipelineResultsTransformer
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.pipeline.candidate.CandidatePipelineConfig
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_pipelonlinelon.CachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig._
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.candidatelon_sourcelon.CachelondScorelondTwelonelontsCandidatelonSourcelon
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.modelonl.ScorelondTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.product.scorelond_twelonelonts.relonsponselon_transformelonr.CachelondScorelondTwelonelontsRelonsponselonFelonaturelonTransformelonr
+import com.twittelonr.homelon_mixelonr.{thriftscala => hmt}
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.BaselonCandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonQuelonryTransformelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonPipelonlinelonRelonsultsTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.candidatelon.CandidatelonPipelonlinelonConfig
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Candidate Pipeline Config that fetches tweets from Scored Tweets Cache.
+ * Candidatelon Pipelonlinelon Config that felontchelons twelonelonts from Scorelond Twelonelonts Cachelon.
  */
-@Singleton
-class CachedScoredTweetsCandidatePipelineConfig @Inject() (
-  cachedScoredTweetsCandidateSource: CachedScoredTweetsCandidateSource)
-    extends CandidatePipelineConfig[
-      ScoredTweetsQuery,
-      ScoredTweetsQuery,
-      hmt.CachedScoredTweet,
-      TweetCandidate
+@Singlelonton
+class CachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig @Injelonct() (
+  cachelondScorelondTwelonelontsCandidatelonSourcelon: CachelondScorelondTwelonelontsCandidatelonSourcelon)
+    elonxtelonnds CandidatelonPipelonlinelonConfig[
+      ScorelondTwelonelontsQuelonry,
+      ScorelondTwelonelontsQuelonry,
+      hmt.CachelondScorelondTwelonelont,
+      TwelonelontCandidatelon
     ] {
 
-  override val identifier: CandidatePipelineIdentifier = Identifier
+  ovelonrridelon val idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr = Idelonntifielonr
 
-  override val queryTransformer: CandidatePipelineQueryTransformer[
-    ScoredTweetsQuery,
-    ScoredTweetsQuery
-  ] = identity
+  ovelonrridelon val quelonryTransformelonr: CandidatelonPipelonlinelonQuelonryTransformelonr[
+    ScorelondTwelonelontsQuelonry,
+    ScorelondTwelonelontsQuelonry
+  ] = idelonntity
 
-  override val candidateSource: BaseCandidateSource[ScoredTweetsQuery, hmt.CachedScoredTweet] =
-    cachedScoredTweetsCandidateSource
+  ovelonrridelon val candidatelonSourcelon: BaselonCandidatelonSourcelon[ScorelondTwelonelontsQuelonry, hmt.CachelondScorelondTwelonelont] =
+    cachelondScorelondTwelonelontsCandidatelonSourcelon
 
-  override val featuresFromCandidateSourceTransformers: Seq[
-    CandidateFeatureTransformer[hmt.CachedScoredTweet]
-  ] = Seq(CachedScoredTweetsResponseFeatureTransformer)
+  ovelonrridelon val felonaturelonsFromCandidatelonSourcelonTransformelonrs: Selonq[
+    CandidatelonFelonaturelonTransformelonr[hmt.CachelondScorelondTwelonelont]
+  ] = Selonq(CachelondScorelondTwelonelontsRelonsponselonFelonaturelonTransformelonr)
 
-  override val resultTransformer: CandidatePipelineResultsTransformer[
-    hmt.CachedScoredTweet,
-    TweetCandidate
-  ] = { sourceResult => TweetCandidate(id = sourceResult.tweetId) }
+  ovelonrridelon val relonsultTransformelonr: CandidatelonPipelonlinelonRelonsultsTransformelonr[
+    hmt.CachelondScorelondTwelonelont,
+    TwelonelontCandidatelon
+  ] = { sourcelonRelonsult => TwelonelontCandidatelon(id = sourcelonRelonsult.twelonelontId) }
 }
 
-object CachedScoredTweetsCandidatePipelineConfig {
-  val Identifier: CandidatePipelineIdentifier = CandidatePipelineIdentifier("CachedScoredTweets")
+objelonct CachelondScorelondTwelonelontsCandidatelonPipelonlinelonConfig {
+  val Idelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr = CandidatelonPipelonlinelonIdelonntifielonr("CachelondScorelondTwelonelonts")
 }

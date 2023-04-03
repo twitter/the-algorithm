@@ -1,67 +1,67 @@
-package com.twitter.cr_mixer.source_signal
+packagelon com.twittelonr.cr_mixelonr.sourcelon_signal
 
-import com.twitter.core_workflows.user_model.thriftscala.UserState
-import com.twitter.cr_mixer.model.GraphSourceInfo
-import com.twitter.cr_mixer.model.SourceInfo
-import com.twitter.cr_mixer.source_signal.SourceFetcher.FetcherQuery
-import com.twitter.cr_mixer.thriftscala.SourceType
-import com.twitter.cr_mixer.thriftscala.{Product => TProduct}
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.corelon_workflows.uselonr_modelonl.thriftscala.UselonrStatelon
+import com.twittelonr.cr_mixelonr.modelonl.GraphSourcelonInfo
+import com.twittelonr.cr_mixelonr.modelonl.SourcelonInfo
+import com.twittelonr.cr_mixelonr.sourcelon_signal.SourcelonFelontchelonr.FelontchelonrQuelonry
+import com.twittelonr.cr_mixelonr.thriftscala.SourcelonTypelon
+import com.twittelonr.cr_mixelonr.thriftscala.{Product => TProduct}
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class SourceInfoRouter @Inject() (
-  ussSourceSignalFetcher: UssSourceSignalFetcher,
-  frsSourceSignalFetcher: FrsSourceSignalFetcher,
-  frsSourceGraphFetcher: FrsSourceGraphFetcher,
-  realGraphOonSourceGraphFetcher: RealGraphOonSourceGraphFetcher,
-  realGraphInSourceGraphFetcher: RealGraphInSourceGraphFetcher,
+@Singlelonton
+caselon class SourcelonInfoRoutelonr @Injelonct() (
+  ussSourcelonSignalFelontchelonr: UssSourcelonSignalFelontchelonr,
+  frsSourcelonSignalFelontchelonr: FrsSourcelonSignalFelontchelonr,
+  frsSourcelonGraphFelontchelonr: FrsSourcelonGraphFelontchelonr,
+  relonalGraphOonSourcelonGraphFelontchelonr: RelonalGraphOonSourcelonGraphFelontchelonr,
+  relonalGraphInSourcelonGraphFelontchelonr: RelonalGraphInSourcelonGraphFelontchelonr,
 ) {
 
-  def get(
-    userId: UserId,
+  delonf gelont(
+    uselonrId: UselonrId,
     product: TProduct,
-    userState: UserState,
+    uselonrStatelon: UselonrStatelon,
     params: configapi.Params
-  ): Future[(Set[SourceInfo], Map[String, Option[GraphSourceInfo]])] = {
+  ): Futurelon[(Selont[SourcelonInfo], Map[String, Option[GraphSourcelonInfo]])] = {
 
-    val fetcherQuery = FetcherQuery(userId, product, userState, params)
-    Future.join(
-      getSourceSignals(fetcherQuery),
-      getSourceGraphs(fetcherQuery)
+    val felontchelonrQuelonry = FelontchelonrQuelonry(uselonrId, product, uselonrStatelon, params)
+    Futurelon.join(
+      gelontSourcelonSignals(felontchelonrQuelonry),
+      gelontSourcelonGraphs(felontchelonrQuelonry)
     )
   }
 
-  private def getSourceSignals(
-    fetcherQuery: FetcherQuery
-  ): Future[Set[SourceInfo]] = {
-    Future
+  privatelon delonf gelontSourcelonSignals(
+    felontchelonrQuelonry: FelontchelonrQuelonry
+  ): Futurelon[Selont[SourcelonInfo]] = {
+    Futurelon
       .join(
-        ussSourceSignalFetcher.get(fetcherQuery),
-        frsSourceSignalFetcher.get(fetcherQuery)).map {
-        case (ussSignalsOpt, frsSignalsOpt) =>
-          (ussSignalsOpt.getOrElse(Seq.empty) ++ frsSignalsOpt.getOrElse(Seq.empty)).toSet
+        ussSourcelonSignalFelontchelonr.gelont(felontchelonrQuelonry),
+        frsSourcelonSignalFelontchelonr.gelont(felontchelonrQuelonry)).map {
+        caselon (ussSignalsOpt, frsSignalsOpt) =>
+          (ussSignalsOpt.gelontOrelonlselon(Selonq.elonmpty) ++ frsSignalsOpt.gelontOrelonlselon(Selonq.elonmpty)).toSelont
       }
   }
 
-  private def getSourceGraphs(
-    fetcherQuery: FetcherQuery
-  ): Future[Map[String, Option[GraphSourceInfo]]] = {
+  privatelon delonf gelontSourcelonGraphs(
+    felontchelonrQuelonry: FelontchelonrQuelonry
+  ): Futurelon[Map[String, Option[GraphSourcelonInfo]]] = {
 
-    Future
+    Futurelon
       .join(
-        frsSourceGraphFetcher.get(fetcherQuery),
-        realGraphOonSourceGraphFetcher.get(fetcherQuery),
-        realGraphInSourceGraphFetcher.get(fetcherQuery)
+        frsSourcelonGraphFelontchelonr.gelont(felontchelonrQuelonry),
+        relonalGraphOonSourcelonGraphFelontchelonr.gelont(felontchelonrQuelonry),
+        relonalGraphInSourcelonGraphFelontchelonr.gelont(felontchelonrQuelonry)
       ).map {
-        case (frsGraphOpt, realGraphOonGraphOpt, realGraphInGraphOpt) =>
+        caselon (frsGraphOpt, relonalGraphOonGraphOpt, relonalGraphInGraphOpt) =>
           Map(
-            SourceType.FollowRecommendation.name -> frsGraphOpt,
-            SourceType.RealGraphOon.name -> realGraphOonGraphOpt,
-            SourceType.RealGraphIn.name -> realGraphInGraphOpt,
+            SourcelonTypelon.FollowReloncommelonndation.namelon -> frsGraphOpt,
+            SourcelonTypelon.RelonalGraphOon.namelon -> relonalGraphOonGraphOpt,
+            SourcelonTypelon.RelonalGraphIn.namelon -> relonalGraphInGraphOpt,
           )
       }
   }

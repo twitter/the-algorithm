@@ -1,52 +1,52 @@
-package com.twitter.search.earlybird.document;
+packagelon com.twittelonr.selonarch.elonarlybird.documelonnt;
 
-import org.apache.lucene.document.Document;
+import org.apachelon.lucelonnelon.documelonnt.Documelonnt;
 
 /**
- * TweetDocument is a record produced by DocumentReader and TweetIndexUpdateReader
- * for consumption by the partition indexer.
+ * TwelonelontDocumelonnt is a reloncord producelond by DocumelonntRelonadelonr and TwelonelontIndelonxUpdatelonRelonadelonr
+ * for consumption by thelon partition indelonxelonr.
  */
-public final class TweetDocument {
-  private final long tweetID;
-  private final long timeSliceID;
-  private final long eventTimeMs;
-  private final Document document;
+public final class TwelonelontDocumelonnt {
+  privatelon final long twelonelontID;
+  privatelon final long timelonSlicelonID;
+  privatelon final long elonvelonntTimelonMs;
+  privatelon final Documelonnt documelonnt;
 
-  public TweetDocument(
-      long tweetID,
-      long timeSliceID,
-      long eventTimeMs,
-      Document document
+  public TwelonelontDocumelonnt(
+      long twelonelontID,
+      long timelonSlicelonID,
+      long elonvelonntTimelonMs,
+      Documelonnt documelonnt
   ) {
-    this.tweetID = tweetID;
-    this.timeSliceID = timeSliceID;
-    this.eventTimeMs = eventTimeMs;
-    this.document = document;
+    this.twelonelontID = twelonelontID;
+    this.timelonSlicelonID = timelonSlicelonID;
+    this.elonvelonntTimelonMs = elonvelonntTimelonMs;
+    this.documelonnt = documelonnt;
   }
 
-  public long getTweetID() {
-    return tweetID;
+  public long gelontTwelonelontID() {
+    relonturn twelonelontID;
   }
 
-  public long getTimeSliceID() {
-    return timeSliceID;
+  public long gelontTimelonSlicelonID() {
+    relonturn timelonSlicelonID;
   }
 
-  public long getEventTimeMs() {
-    return eventTimeMs;
+  public long gelontelonvelonntTimelonMs() {
+    relonturn elonvelonntTimelonMs;
   }
 
-  public Document getDocument() {
-    return document;
+  public Documelonnt gelontDocumelonnt() {
+    relonturn documelonnt;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return "TweetDocument{"
-        + "tweetID=" + tweetID
-        + ", timeSliceID=" + timeSliceID
-        + ", eventTimeMs=" + eventTimeMs
-        + ", document=" + document
+    relonturn "TwelonelontDocumelonnt{"
+        + "twelonelontID=" + twelonelontID
+        + ", timelonSlicelonID=" + timelonSlicelonID
+        + ", elonvelonntTimelonMs=" + elonvelonntTimelonMs
+        + ", documelonnt=" + documelonnt
         + '}';
   }
 }

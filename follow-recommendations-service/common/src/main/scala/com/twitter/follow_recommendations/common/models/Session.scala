@@ -1,16 +1,16 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.finagle.tracing.Trace
+import com.twittelonr.finaglelon.tracing.Tracelon
 
-object Session {
+objelonct Selonssion {
 
   /**
-   * The sessionId in FRS is the finagle trace id which is static within the lifetime of a single
-   * request.
+   * Thelon selonssionId in FRS is thelon finaglelon tracelon id which is static within thelon lifelontimelon of a singlelon
+   * relonquelonst.
    *
-   * It is used when generating per-candidate tokens (in TrackingTokenTransform) and is also passed
-   * in to downstream Optimus ranker requests.
+   * It is uselond whelonn gelonnelonrating pelonr-candidatelon tokelonns (in TrackingTokelonnTransform) and is also passelond
+   * in to downstrelonam Optimus rankelonr relonquelonsts.
    *
    */
-  def getSessionId: Long = Trace.id.traceId.toLong
+  delonf gelontSelonssionId: Long = Tracelon.id.tracelonId.toLong
 }

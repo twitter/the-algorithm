@@ -1,49 +1,49 @@
-package com.twitter.home_mixer.util
+packagelon com.twittelonr.homelon_mixelonr.util
 
-import com.twitter.home_mixer.model.HomeFeatures.CachedScoredTweetsFeature
-import com.twitter.home_mixer.{thriftscala => hmt}
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Time
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.CachelondScorelondTwelonelontsFelonaturelon
+import com.twittelonr.homelon_mixelonr.{thriftscala => hmt}
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.util.Timelon
 
-object CachedScoredTweetsHelper {
+objelonct CachelondScorelondTwelonelontsHelonlpelonr {
 
-  def tweetImpressionsAndCachedScoredTweets(
-    features: FeatureMap,
-    candidatePipelineIdentifier: CandidatePipelineIdentifier
-  ): Seq[Long] = {
-    val tweetImpressions = TweetImpressionsHelper.tweetImpressions(features)
-    val cachedScoredTweets = features
-      .getOrElse(CachedScoredTweetsFeature, Seq.empty)
-      .filter { tweet =>
-        tweet.candidatePipelineIdentifier.exists(
-          CandidatePipelineIdentifier(_).equals(candidatePipelineIdentifier))
-      }.map(_.tweetId)
+  delonf twelonelontImprelonssionsAndCachelondScorelondTwelonelonts(
+    felonaturelons: FelonaturelonMap,
+    candidatelonPipelonlinelonIdelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr
+  ): Selonq[Long] = {
+    val twelonelontImprelonssions = TwelonelontImprelonssionsHelonlpelonr.twelonelontImprelonssions(felonaturelons)
+    val cachelondScorelondTwelonelonts = felonaturelons
+      .gelontOrelonlselon(CachelondScorelondTwelonelontsFelonaturelon, Selonq.elonmpty)
+      .filtelonr { twelonelont =>
+        twelonelont.candidatelonPipelonlinelonIdelonntifielonr.elonxists(
+          CandidatelonPipelonlinelonIdelonntifielonr(_).elonquals(candidatelonPipelonlinelonIdelonntifielonr))
+      }.map(_.twelonelontId)
 
-    (tweetImpressions ++ cachedScoredTweets).toSeq
+    (twelonelontImprelonssions ++ cachelondScorelondTwelonelonts).toSelonq
   }
 
-  def tweetImpressionsAndCachedScoredTweetsInRange(
-    features: FeatureMap,
-    candidatePipelineIdentifier: CandidatePipelineIdentifier,
-    maxNumImpressions: Int,
-    sinceTime: Time,
-    untilTime: Time
-  ): Seq[Long] =
-    tweetImpressionsAndCachedScoredTweets(features, candidatePipelineIdentifier)
-      .filter { tweetId =>
-        val creationTime = SnowflakeId.timeFromId(tweetId)
-        sinceTime <= creationTime && untilTime >= creationTime
-      }.take(maxNumImpressions)
+  delonf twelonelontImprelonssionsAndCachelondScorelondTwelonelontsInRangelon(
+    felonaturelons: FelonaturelonMap,
+    candidatelonPipelonlinelonIdelonntifielonr: CandidatelonPipelonlinelonIdelonntifielonr,
+    maxNumImprelonssions: Int,
+    sincelonTimelon: Timelon,
+    untilTimelon: Timelon
+  ): Selonq[Long] =
+    twelonelontImprelonssionsAndCachelondScorelondTwelonelonts(felonaturelons, candidatelonPipelonlinelonIdelonntifielonr)
+      .filtelonr { twelonelontId =>
+        val crelonationTimelon = SnowflakelonId.timelonFromId(twelonelontId)
+        sincelonTimelon <= crelonationTimelon && untilTimelon >= crelonationTimelon
+      }.takelon(maxNumImprelonssions)
 
-  def unseenCachedScoredTweets(
-    features: FeatureMap
-  ): Seq[hmt.CachedScoredTweet] = {
-    val seenTweetIds = TweetImpressionsHelper.tweetImpressions(features)
+  delonf unselonelonnCachelondScorelondTwelonelonts(
+    felonaturelons: FelonaturelonMap
+  ): Selonq[hmt.CachelondScorelondTwelonelont] = {
+    val selonelonnTwelonelontIds = TwelonelontImprelonssionsHelonlpelonr.twelonelontImprelonssions(felonaturelons)
 
-    features
-      .getOrElse(CachedScoredTweetsFeature, Seq.empty)
-      .filter(tweet => !seenTweetIds.contains(tweet.tweetId))
+    felonaturelons
+      .gelontOrelonlselon(CachelondScorelondTwelonelontsFelonaturelon, Selonq.elonmpty)
+      .filtelonr(twelonelont => !selonelonnTwelonelontIds.contains(twelonelont.twelonelontId))
   }
 }

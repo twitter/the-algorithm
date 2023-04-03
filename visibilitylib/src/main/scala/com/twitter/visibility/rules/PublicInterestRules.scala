@@ -1,327 +1,327 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.guano.commons.thriftscala.PolicyInViolation
-import com.twitter.spam.rtf.thriftscala.SafetyResultReason
-import com.twitter.util.Memoize
-import com.twitter.util.Time
-import com.twitter.visibility.common.actions.ComplianceTweetNoticeEventType
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams.EnableSearchIpiSafeSearchWithoutUserInQueryDropRule
-import com.twitter.visibility.features.Feature
-import com.twitter.visibility.features.TweetSafetyLabels
-import com.twitter.visibility.models.TweetSafetyLabel
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition.And
-import com.twitter.visibility.rules.Condition.LoggedOutOrViewerOptInFiltering
-import com.twitter.visibility.rules.Condition.Not
-import com.twitter.visibility.rules.Condition.Or
-import com.twitter.visibility.rules.Condition.SearchQueryHasUser
-import com.twitter.visibility.rules.Condition.TweetComposedAfter
-import com.twitter.visibility.rules.Condition.TweetHasLabel
-import com.twitter.visibility.rules.Reason._
-import com.twitter.visibility.rules.State.Evaluated
+import com.twittelonr.guano.commons.thriftscala.PolicyInViolation
+import com.twittelonr.spam.rtf.thriftscala.SafelontyRelonsultRelonason
+import com.twittelonr.util.Melonmoizelon
+import com.twittelonr.util.Timelon
+import com.twittelonr.visibility.common.actions.CompliancelonTwelonelontNoticelonelonvelonntTypelon
+import com.twittelonr.visibility.common.actions.LimitelondelonngagelonmelonntRelonason
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonSelonarchIpiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon
+import com.twittelonr.visibility.felonaturelons.Felonaturelon
+import com.twittelonr.visibility.felonaturelons.TwelonelontSafelontyLabelonls
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonl
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonlTypelon
+import com.twittelonr.visibility.rulelons.Condition.And
+import com.twittelonr.visibility.rulelons.Condition.LoggelondOutOrVielonwelonrOptInFiltelonring
+import com.twittelonr.visibility.rulelons.Condition.Not
+import com.twittelonr.visibility.rulelons.Condition.Or
+import com.twittelonr.visibility.rulelons.Condition.SelonarchQuelonryHasUselonr
+import com.twittelonr.visibility.rulelons.Condition.TwelonelontComposelondAftelonr
+import com.twittelonr.visibility.rulelons.Condition.TwelonelontHasLabelonl
+import com.twittelonr.visibility.rulelons.Relonason._
+import com.twittelonr.visibility.rulelons.Statelon.elonvaluatelond
 
-object PublicInterest {
-  object PolicyConfig {
-    val LowQualityProxyLabelStart: Time = Time.fromMilliseconds(1554076800000L)
-    val DefaultReason: (Reason, Option[LimitedEngagementReason]) =
-      (OneOff, Some(LimitedEngagementReason.NonCompliant))
-    val DefaultPolicyInViolation: PolicyInViolation = PolicyInViolation.OneOff
+objelonct PublicIntelonrelonst {
+  objelonct PolicyConfig {
+    val LowQualityProxyLabelonlStart: Timelon = Timelon.fromMilliselonconds(1554076800000L)
+    val DelonfaultRelonason: (Relonason, Option[LimitelondelonngagelonmelonntRelonason]) =
+      (OnelonOff, Somelon(LimitelondelonngagelonmelonntRelonason.NonCompliant))
+    val DelonfaultPolicyInViolation: PolicyInViolation = PolicyInViolation.OnelonOff
   }
 
-  val policyInViolationToReason: Map[PolicyInViolation, Reason] = Map(
-    PolicyInViolation.AbusePolicyEpisodic -> AbuseEpisodic,
-    PolicyInViolation.AbusePolicyEpisodicEncourageSelfharm -> AbuseEpisodicEncourageSelfHarm,
-    PolicyInViolation.AbusePolicyEpisodicHatefulConduct -> AbuseEpisodicHatefulConduct,
-    PolicyInViolation.AbusePolicyGratuitousGore -> AbuseGratuitousGore,
-    PolicyInViolation.AbusePolicyGlorificationofViolence -> AbuseGlorificationOfViolence,
-    PolicyInViolation.AbusePolicyEncourageMobHarassment -> AbuseMobHarassment,
-    PolicyInViolation.AbusePolicyMomentofDeathDeceasedUser -> AbuseMomentOfDeathOrDeceasedUser,
-    PolicyInViolation.AbusePolicyPrivateInformation -> AbusePrivateInformation,
-    PolicyInViolation.AbusePolicyRighttoPrivacy -> AbuseRightToPrivacy,
-    PolicyInViolation.AbusePolicyThreattoExpose -> AbuseThreatToExpose,
-    PolicyInViolation.AbusePolicyViolentSexualConduct -> AbuseViolentSexualConduct,
-    PolicyInViolation.AbusePolicyViolentThreatsHatefulConduct -> AbuseViolentThreatHatefulConduct,
-    PolicyInViolation.AbusePolicyViolentThreatorBounty -> AbuseViolentThreatOrBounty,
-    PolicyInViolation.OneOff -> OneOff,
-    PolicyInViolation.AbusePolicyElectionInterference -> VotingMisinformation,
+  val policyInViolationToRelonason: Map[PolicyInViolation, Relonason] = Map(
+    PolicyInViolation.AbuselonPolicyelonpisodic -> Abuselonelonpisodic,
+    PolicyInViolation.AbuselonPolicyelonpisodicelonncouragelonSelonlfharm -> AbuselonelonpisodicelonncouragelonSelonlfHarm,
+    PolicyInViolation.AbuselonPolicyelonpisodicHatelonfulConduct -> AbuselonelonpisodicHatelonfulConduct,
+    PolicyInViolation.AbuselonPolicyGratuitousGorelon -> AbuselonGratuitousGorelon,
+    PolicyInViolation.AbuselonPolicyGlorificationofViolelonncelon -> AbuselonGlorificationOfViolelonncelon,
+    PolicyInViolation.AbuselonPolicyelonncouragelonMobHarassmelonnt -> AbuselonMobHarassmelonnt,
+    PolicyInViolation.AbuselonPolicyMomelonntofDelonathDeloncelonaselondUselonr -> AbuselonMomelonntOfDelonathOrDeloncelonaselondUselonr,
+    PolicyInViolation.AbuselonPolicyPrivatelonInformation -> AbuselonPrivatelonInformation,
+    PolicyInViolation.AbuselonPolicyRighttoPrivacy -> AbuselonRightToPrivacy,
+    PolicyInViolation.AbuselonPolicyThrelonattoelonxposelon -> AbuselonThrelonatToelonxposelon,
+    PolicyInViolation.AbuselonPolicyViolelonntSelonxualConduct -> AbuselonViolelonntSelonxualConduct,
+    PolicyInViolation.AbuselonPolicyViolelonntThrelonatsHatelonfulConduct -> AbuselonViolelonntThrelonatHatelonfulConduct,
+    PolicyInViolation.AbuselonPolicyViolelonntThrelonatorBounty -> AbuselonViolelonntThrelonatOrBounty,
+    PolicyInViolation.OnelonOff -> OnelonOff,
+    PolicyInViolation.AbuselonPolicyelonlelonctionIntelonrfelonrelonncelon -> VotingMisinformation,
     PolicyInViolation.MisinformationVoting -> VotingMisinformation,
-    PolicyInViolation.HackedMaterials -> HackedMaterials,
+    PolicyInViolation.HackelondMatelonrials -> HackelondMatelonrials,
     PolicyInViolation.Scam -> Scams,
     PolicyInViolation.PlatformManipulation -> PlatformManipulation,
     PolicyInViolation.MisinformationCivic -> MisinfoCivic,
-    PolicyInViolation.AbusePolicyUkraineCrisisMisinformation -> MisinfoCrisis,
-    PolicyInViolation.MisinformationGeneric -> MisinfoGeneric,
-    PolicyInViolation.MisinformationMedical -> MisinfoMedical,
+    PolicyInViolation.AbuselonPolicyUkrainelonCrisisMisinformation -> MisinfoCrisis,
+    PolicyInViolation.MisinformationGelonnelonric -> MisinfoGelonnelonric,
+    PolicyInViolation.MisinformationMelondical -> MisinfoMelondical,
   )
 
-  val reasonToPolicyInViolation: Map[Reason, PolicyInViolation] = Map(
-    AbuseEpisodic -> PolicyInViolation.AbusePolicyEpisodic,
-    AbuseEpisodicEncourageSelfHarm -> PolicyInViolation.AbusePolicyEpisodicEncourageSelfharm,
-    AbuseEpisodicHatefulConduct -> PolicyInViolation.AbusePolicyEpisodicHatefulConduct,
-    AbuseGratuitousGore -> PolicyInViolation.AbusePolicyGratuitousGore,
-    AbuseGlorificationOfViolence -> PolicyInViolation.AbusePolicyGlorificationofViolence,
-    AbuseMobHarassment -> PolicyInViolation.AbusePolicyEncourageMobHarassment,
-    AbuseMomentOfDeathOrDeceasedUser -> PolicyInViolation.AbusePolicyMomentofDeathDeceasedUser,
-    AbusePrivateInformation -> PolicyInViolation.AbusePolicyPrivateInformation,
-    AbuseRightToPrivacy -> PolicyInViolation.AbusePolicyRighttoPrivacy,
-    AbuseThreatToExpose -> PolicyInViolation.AbusePolicyThreattoExpose,
-    AbuseViolentSexualConduct -> PolicyInViolation.AbusePolicyViolentSexualConduct,
-    AbuseViolentThreatHatefulConduct -> PolicyInViolation.AbusePolicyViolentThreatsHatefulConduct,
-    AbuseViolentThreatOrBounty -> PolicyInViolation.AbusePolicyViolentThreatorBounty,
-    OneOff -> PolicyInViolation.OneOff,
+  val relonasonToPolicyInViolation: Map[Relonason, PolicyInViolation] = Map(
+    Abuselonelonpisodic -> PolicyInViolation.AbuselonPolicyelonpisodic,
+    AbuselonelonpisodicelonncouragelonSelonlfHarm -> PolicyInViolation.AbuselonPolicyelonpisodicelonncouragelonSelonlfharm,
+    AbuselonelonpisodicHatelonfulConduct -> PolicyInViolation.AbuselonPolicyelonpisodicHatelonfulConduct,
+    AbuselonGratuitousGorelon -> PolicyInViolation.AbuselonPolicyGratuitousGorelon,
+    AbuselonGlorificationOfViolelonncelon -> PolicyInViolation.AbuselonPolicyGlorificationofViolelonncelon,
+    AbuselonMobHarassmelonnt -> PolicyInViolation.AbuselonPolicyelonncouragelonMobHarassmelonnt,
+    AbuselonMomelonntOfDelonathOrDeloncelonaselondUselonr -> PolicyInViolation.AbuselonPolicyMomelonntofDelonathDeloncelonaselondUselonr,
+    AbuselonPrivatelonInformation -> PolicyInViolation.AbuselonPolicyPrivatelonInformation,
+    AbuselonRightToPrivacy -> PolicyInViolation.AbuselonPolicyRighttoPrivacy,
+    AbuselonThrelonatToelonxposelon -> PolicyInViolation.AbuselonPolicyThrelonattoelonxposelon,
+    AbuselonViolelonntSelonxualConduct -> PolicyInViolation.AbuselonPolicyViolelonntSelonxualConduct,
+    AbuselonViolelonntThrelonatHatelonfulConduct -> PolicyInViolation.AbuselonPolicyViolelonntThrelonatsHatelonfulConduct,
+    AbuselonViolelonntThrelonatOrBounty -> PolicyInViolation.AbuselonPolicyViolelonntThrelonatorBounty,
+    OnelonOff -> PolicyInViolation.OnelonOff,
     VotingMisinformation -> PolicyInViolation.MisinformationVoting,
-    HackedMaterials -> PolicyInViolation.HackedMaterials,
+    HackelondMatelonrials -> PolicyInViolation.HackelondMatelonrials,
     Scams -> PolicyInViolation.Scam,
     PlatformManipulation -> PolicyInViolation.PlatformManipulation,
     MisinfoCivic -> PolicyInViolation.MisinformationCivic,
-    MisinfoCrisis -> PolicyInViolation.AbusePolicyUkraineCrisisMisinformation,
-    MisinfoGeneric -> PolicyInViolation.MisinformationGeneric,
-    MisinfoMedical -> PolicyInViolation.MisinformationMedical,
+    MisinfoCrisis -> PolicyInViolation.AbuselonPolicyUkrainelonCrisisMisinformation,
+    MisinfoGelonnelonric -> PolicyInViolation.MisinformationGelonnelonric,
+    MisinfoMelondical -> PolicyInViolation.MisinformationMelondical,
   )
 
-  val ReasonToSafetyResultReason: Map[Reason, SafetyResultReason] = Map(
-    AbuseEpisodic -> SafetyResultReason.Episodic,
-    AbuseEpisodicEncourageSelfHarm -> SafetyResultReason.AbuseEpisodicEncourageSelfHarm,
-    AbuseEpisodicHatefulConduct -> SafetyResultReason.AbuseEpisodicHatefulConduct,
-    AbuseGratuitousGore -> SafetyResultReason.AbuseGratuitousGore,
-    AbuseGlorificationOfViolence -> SafetyResultReason.AbuseGlorificationOfViolence,
-    AbuseMobHarassment -> SafetyResultReason.AbuseMobHarassment,
-    AbuseMomentOfDeathOrDeceasedUser -> SafetyResultReason.AbuseMomentOfDeathOrDeceasedUser,
-    AbusePrivateInformation -> SafetyResultReason.AbusePrivateInformation,
-    AbuseRightToPrivacy -> SafetyResultReason.AbuseRightToPrivacy,
-    AbuseThreatToExpose -> SafetyResultReason.AbuseThreatToExpose,
-    AbuseViolentSexualConduct -> SafetyResultReason.AbuseViolentSexualConduct,
-    AbuseViolentThreatHatefulConduct -> SafetyResultReason.AbuseViolentThreatHatefulConduct,
-    AbuseViolentThreatOrBounty -> SafetyResultReason.AbuseViolentThreatOrBounty,
-    OneOff -> SafetyResultReason.OneOff,
-    VotingMisinformation -> SafetyResultReason.VotingMisinformation,
-    HackedMaterials -> SafetyResultReason.HackedMaterials,
-    Scams -> SafetyResultReason.Scams,
-    PlatformManipulation -> SafetyResultReason.PlatformManipulation,
-    MisinfoCivic -> SafetyResultReason.MisinfoCivic,
-    MisinfoCrisis -> SafetyResultReason.MisinfoCrisis,
-    MisinfoGeneric -> SafetyResultReason.MisinfoGeneric,
-    MisinfoMedical -> SafetyResultReason.MisinfoMedical,
-    IpiDevelopmentOnly -> SafetyResultReason.DevelopmentOnlyPublicInterest
+  val RelonasonToSafelontyRelonsultRelonason: Map[Relonason, SafelontyRelonsultRelonason] = Map(
+    Abuselonelonpisodic -> SafelontyRelonsultRelonason.elonpisodic,
+    AbuselonelonpisodicelonncouragelonSelonlfHarm -> SafelontyRelonsultRelonason.AbuselonelonpisodicelonncouragelonSelonlfHarm,
+    AbuselonelonpisodicHatelonfulConduct -> SafelontyRelonsultRelonason.AbuselonelonpisodicHatelonfulConduct,
+    AbuselonGratuitousGorelon -> SafelontyRelonsultRelonason.AbuselonGratuitousGorelon,
+    AbuselonGlorificationOfViolelonncelon -> SafelontyRelonsultRelonason.AbuselonGlorificationOfViolelonncelon,
+    AbuselonMobHarassmelonnt -> SafelontyRelonsultRelonason.AbuselonMobHarassmelonnt,
+    AbuselonMomelonntOfDelonathOrDeloncelonaselondUselonr -> SafelontyRelonsultRelonason.AbuselonMomelonntOfDelonathOrDeloncelonaselondUselonr,
+    AbuselonPrivatelonInformation -> SafelontyRelonsultRelonason.AbuselonPrivatelonInformation,
+    AbuselonRightToPrivacy -> SafelontyRelonsultRelonason.AbuselonRightToPrivacy,
+    AbuselonThrelonatToelonxposelon -> SafelontyRelonsultRelonason.AbuselonThrelonatToelonxposelon,
+    AbuselonViolelonntSelonxualConduct -> SafelontyRelonsultRelonason.AbuselonViolelonntSelonxualConduct,
+    AbuselonViolelonntThrelonatHatelonfulConduct -> SafelontyRelonsultRelonason.AbuselonViolelonntThrelonatHatelonfulConduct,
+    AbuselonViolelonntThrelonatOrBounty -> SafelontyRelonsultRelonason.AbuselonViolelonntThrelonatOrBounty,
+    OnelonOff -> SafelontyRelonsultRelonason.OnelonOff,
+    VotingMisinformation -> SafelontyRelonsultRelonason.VotingMisinformation,
+    HackelondMatelonrials -> SafelontyRelonsultRelonason.HackelondMatelonrials,
+    Scams -> SafelontyRelonsultRelonason.Scams,
+    PlatformManipulation -> SafelontyRelonsultRelonason.PlatformManipulation,
+    MisinfoCivic -> SafelontyRelonsultRelonason.MisinfoCivic,
+    MisinfoCrisis -> SafelontyRelonsultRelonason.MisinfoCrisis,
+    MisinfoGelonnelonric -> SafelontyRelonsultRelonason.MisinfoGelonnelonric,
+    MisinfoMelondical -> SafelontyRelonsultRelonason.MisinfoMelondical,
+    IpiDelonvelonlopmelonntOnly -> SafelontyRelonsultRelonason.DelonvelonlopmelonntOnlyPublicIntelonrelonst
   )
 
-  val Reasons: Set[Reason] = ReasonToSafetyResultReason.keySet
-  val SafetyResultReasons: Set[SafetyResultReason] = ReasonToSafetyResultReason.values.toSet
+  val Relonasons: Selont[Relonason] = RelonasonToSafelontyRelonsultRelonason.kelonySelont
+  val SafelontyRelonsultRelonasons: Selont[SafelontyRelonsultRelonason] = RelonasonToSafelontyRelonsultRelonason.valuelons.toSelont
 
-  val SafetyResultReasonToReason: Map[SafetyResultReason, Reason] =
-    ReasonToSafetyResultReason.map(t => t._2 -> t._1)
+  val SafelontyRelonsultRelonasonToRelonason: Map[SafelontyRelonsultRelonason, Relonason] =
+    RelonasonToSafelontyRelonsultRelonason.map(t => t._2 -> t._1)
 
-  val EligibleTweetSafetyLabelTypes: Seq[TweetSafetyLabelType] = Seq(
-    TweetSafetyLabelType.LowQuality,
-    TweetSafetyLabelType.MisinfoCivic,
-    TweetSafetyLabelType.MisinfoGeneric,
-    TweetSafetyLabelType.MisinfoMedical,
-    TweetSafetyLabelType.MisinfoCrisis,
-    TweetSafetyLabelType.IpiDevelopmentOnly
+  val elonligiblelonTwelonelontSafelontyLabelonlTypelons: Selonq[TwelonelontSafelontyLabelonlTypelon] = Selonq(
+    TwelonelontSafelontyLabelonlTypelon.LowQuality,
+    TwelonelontSafelontyLabelonlTypelon.MisinfoCivic,
+    TwelonelontSafelontyLabelonlTypelon.MisinfoGelonnelonric,
+    TwelonelontSafelontyLabelonlTypelon.MisinfoMelondical,
+    TwelonelontSafelontyLabelonlTypelon.MisinfoCrisis,
+    TwelonelontSafelontyLabelonlTypelon.IpiDelonvelonlopmelonntOnly
   )
 
-  private val EligibleTweetSafetyLabelTypesSet = EligibleTweetSafetyLabelTypes.toSet
+  privatelon val elonligiblelonTwelonelontSafelontyLabelonlTypelonsSelont = elonligiblelonTwelonelontSafelontyLabelonlTypelons.toSelont
 
-  def extractTweetSafetyLabel(featureMap: Map[Feature[_], _]): Option[TweetSafetyLabel] = {
-    val tweetSafetyLabels = featureMap(TweetSafetyLabels)
-      .asInstanceOf[Seq[TweetSafetyLabel]]
+  delonf elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap: Map[Felonaturelon[_], _]): Option[TwelonelontSafelontyLabelonl] = {
+    val twelonelontSafelontyLabelonls = felonaturelonMap(TwelonelontSafelontyLabelonls)
+      .asInstancelonOf[Selonq[TwelonelontSafelontyLabelonl]]
       .flatMap { tsl =>
-        if (PublicInterest.EligibleTweetSafetyLabelTypesSet.contains(tsl.labelType)) {
-          Some(tsl.labelType -> tsl)
-        } else {
-          None
+        if (PublicIntelonrelonst.elonligiblelonTwelonelontSafelontyLabelonlTypelonsSelont.contains(tsl.labelonlTypelon)) {
+          Somelon(tsl.labelonlTypelon -> tsl)
+        } elonlselon {
+          Nonelon
         }
       }
       .toMap
 
-    PublicInterest.EligibleTweetSafetyLabelTypes.flatMap(tweetSafetyLabels.get).headOption
+    PublicIntelonrelonst.elonligiblelonTwelonelontSafelontyLabelonlTypelons.flatMap(twelonelontSafelontyLabelonls.gelont).helonadOption
   }
 
-  def policyToReason(policy: PolicyInViolation): Reason =
-    policyInViolationToReason.get(policy).getOrElse(PolicyConfig.DefaultReason._1)
+  delonf policyToRelonason(policy: PolicyInViolation): Relonason =
+    policyInViolationToRelonason.gelont(policy).gelontOrelonlselon(PolicyConfig.DelonfaultRelonason._1)
 
-  def reasonToPolicy(reason: Reason): PolicyInViolation =
-    reasonToPolicyInViolation.get(reason).getOrElse(PolicyConfig.DefaultPolicyInViolation)
+  delonf relonasonToPolicy(relonason: Relonason): PolicyInViolation =
+    relonasonToPolicyInViolation.gelont(relonason).gelontOrelonlselon(PolicyConfig.DelonfaultPolicyInViolation)
 }
 
-class PublicInterestActionBuilder[T <: Action]() extends ActionBuilder[T] {
-  def actionType: Class[_] = classOf[InterstitialLimitedEngagements]
+class PublicIntelonrelonstActionBuildelonr[T <: Action]() elonxtelonnds ActionBuildelonr[T] {
+  delonf actionTypelon: Class[_] = classOf[IntelonrstitialLimitelondelonngagelonmelonnts]
 
-  override val actionSeverity = 11
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-    val (reason, limitedEngagementReason) =
-      PublicInterest.extractTweetSafetyLabel(featureMap).map { tweetSafetyLabel =>
-        (tweetSafetyLabel.labelType, tweetSafetyLabel.source)
+  ovelonrridelon val actionSelonvelonrity = 11
+  delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+    val (relonason, limitelondelonngagelonmelonntRelonason) =
+      PublicIntelonrelonst.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map { twelonelontSafelontyLabelonl =>
+        (twelonelontSafelontyLabelonl.labelonlTypelon, twelonelontSafelontyLabelonl.sourcelon)
       } match {
-        case Some((TweetSafetyLabelType.LowQuality, source)) =>
-          source match {
-            case Some(source) =>
-              SafetyResultReason.valueOf(source.name) match {
-                case Some(matchedReason)
-                    if PublicInterest.SafetyResultReasonToReason.contains(matchedReason) =>
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.LowQuality, sourcelon)) =>
+          sourcelon match {
+            caselon Somelon(sourcelon) =>
+              SafelontyRelonsultRelonason.valuelonOf(sourcelon.namelon) match {
+                caselon Somelon(matchelondRelonason)
+                    if PublicIntelonrelonst.SafelontyRelonsultRelonasonToRelonason.contains(matchelondRelonason) =>
                   (
-                    PublicInterest.SafetyResultReasonToReason(matchedReason),
-                    Some(LimitedEngagementReason.NonCompliant))
-                case _ => PublicInterest.PolicyConfig.DefaultReason
+                    PublicIntelonrelonst.SafelontyRelonsultRelonasonToRelonason(matchelondRelonason),
+                    Somelon(LimitelondelonngagelonmelonntRelonason.NonCompliant))
+                caselon _ => PublicIntelonrelonst.PolicyConfig.DelonfaultRelonason
               }
-            case _ => PublicInterest.PolicyConfig.DefaultReason
+            caselon _ => PublicIntelonrelonst.PolicyConfig.DelonfaultRelonason
           }
 
 
-        case Some((TweetSafetyLabelType.MisinfoCivic, source)) =>
-          (Reason.MisinfoCivic, LimitedEngagementReason.fromString(source.map(_.name)))
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.MisinfoCivic, sourcelon)) =>
+          (Relonason.MisinfoCivic, LimitelondelonngagelonmelonntRelonason.fromString(sourcelon.map(_.namelon)))
 
-        case Some((TweetSafetyLabelType.MisinfoCrisis, source)) =>
-          (Reason.MisinfoCrisis, LimitedEngagementReason.fromString(source.map(_.name)))
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.MisinfoCrisis, sourcelon)) =>
+          (Relonason.MisinfoCrisis, LimitelondelonngagelonmelonntRelonason.fromString(sourcelon.map(_.namelon)))
 
-        case Some((TweetSafetyLabelType.MisinfoGeneric, source)) =>
-          (Reason.MisinfoGeneric, LimitedEngagementReason.fromString(source.map(_.name)))
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.MisinfoGelonnelonric, sourcelon)) =>
+          (Relonason.MisinfoGelonnelonric, LimitelondelonngagelonmelonntRelonason.fromString(sourcelon.map(_.namelon)))
 
-        case Some((TweetSafetyLabelType.MisinfoMedical, source)) =>
-          (Reason.MisinfoMedical, LimitedEngagementReason.fromString(source.map(_.name)))
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.MisinfoMelondical, sourcelon)) =>
+          (Relonason.MisinfoMelondical, LimitelondelonngagelonmelonntRelonason.fromString(sourcelon.map(_.namelon)))
 
-        case Some((TweetSafetyLabelType.IpiDevelopmentOnly, _)) =>
-          (Reason.IpiDevelopmentOnly, Some(LimitedEngagementReason.NonCompliant))
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.IpiDelonvelonlopmelonntOnly, _)) =>
+          (Relonason.IpiDelonvelonlopmelonntOnly, Somelon(LimitelondelonngagelonmelonntRelonason.NonCompliant))
 
-        case _ =>
-          PublicInterest.PolicyConfig.DefaultReason
+        caselon _ =>
+          PublicIntelonrelonst.PolicyConfig.DelonfaultRelonason
       }
 
-    RuleResult(InterstitialLimitedEngagements(reason, limitedEngagementReason), Evaluated)
+    RulelonRelonsult(IntelonrstitialLimitelondelonngagelonmelonnts(relonason, limitelondelonngagelonmelonntRelonason), elonvaluatelond)
   }
 }
 
-class PublicInterestComplianceTweetNoticeActionBuilder
-    extends ActionBuilder[ComplianceTweetNoticePreEnrichment] {
+class PublicIntelonrelonstCompliancelonTwelonelontNoticelonActionBuildelonr
+    elonxtelonnds ActionBuildelonr[CompliancelonTwelonelontNoticelonPrelonelonnrichmelonnt] {
 
-  override def actionType: Class[_] = classOf[ComplianceTweetNoticePreEnrichment]
+  ovelonrridelon delonf actionTypelon: Class[_] = classOf[CompliancelonTwelonelontNoticelonPrelonelonnrichmelonnt]
 
-  override val actionSeverity = 2
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-    val reason =
-      PublicInterest.extractTweetSafetyLabel(featureMap).map { tweetSafetyLabel =>
-        (tweetSafetyLabel.labelType, tweetSafetyLabel.source)
+  ovelonrridelon val actionSelonvelonrity = 2
+  delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+    val relonason =
+      PublicIntelonrelonst.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map { twelonelontSafelontyLabelonl =>
+        (twelonelontSafelontyLabelonl.labelonlTypelon, twelonelontSafelontyLabelonl.sourcelon)
       } match {
-        case Some((TweetSafetyLabelType.LowQuality, source)) =>
-          source match {
-            case Some(source) =>
-              SafetyResultReason.valueOf(source.name) match {
-                case Some(matchedReason)
-                    if PublicInterest.SafetyResultReasonToReason.contains(matchedReason) =>
-                  PublicInterest.SafetyResultReasonToReason(matchedReason)
-                case _ => PublicInterest.PolicyConfig.DefaultReason._1
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.LowQuality, sourcelon)) =>
+          sourcelon match {
+            caselon Somelon(sourcelon) =>
+              SafelontyRelonsultRelonason.valuelonOf(sourcelon.namelon) match {
+                caselon Somelon(matchelondRelonason)
+                    if PublicIntelonrelonst.SafelontyRelonsultRelonasonToRelonason.contains(matchelondRelonason) =>
+                  PublicIntelonrelonst.SafelontyRelonsultRelonasonToRelonason(matchelondRelonason)
+                caselon _ => PublicIntelonrelonst.PolicyConfig.DelonfaultRelonason._1
               }
-            case _ => PublicInterest.PolicyConfig.DefaultReason._1
+            caselon _ => PublicIntelonrelonst.PolicyConfig.DelonfaultRelonason._1
           }
 
 
-        case Some((TweetSafetyLabelType.MisinfoCivic, _)) =>
-          Reason.MisinfoCivic
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.MisinfoCivic, _)) =>
+          Relonason.MisinfoCivic
 
-        case Some((TweetSafetyLabelType.MisinfoCrisis, _)) =>
-          Reason.MisinfoCrisis
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.MisinfoCrisis, _)) =>
+          Relonason.MisinfoCrisis
 
-        case Some((TweetSafetyLabelType.MisinfoGeneric, _)) =>
-          Reason.MisinfoGeneric
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.MisinfoGelonnelonric, _)) =>
+          Relonason.MisinfoGelonnelonric
 
-        case Some((TweetSafetyLabelType.MisinfoMedical, _)) =>
-          Reason.MisinfoMedical
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.MisinfoMelondical, _)) =>
+          Relonason.MisinfoMelondical
 
-        case Some((TweetSafetyLabelType.IpiDevelopmentOnly, _)) =>
-          Reason.IpiDevelopmentOnly
+        caselon Somelon((TwelonelontSafelontyLabelonlTypelon.IpiDelonvelonlopmelonntOnly, _)) =>
+          Relonason.IpiDelonvelonlopmelonntOnly
 
-        case _ =>
-          PublicInterest.PolicyConfig.DefaultReason._1
+        caselon _ =>
+          PublicIntelonrelonst.PolicyConfig.DelonfaultRelonason._1
       }
 
-    RuleResult(
-      ComplianceTweetNoticePreEnrichment(reason, ComplianceTweetNoticeEventType.PublicInterest),
-      Evaluated)
+    RulelonRelonsult(
+      CompliancelonTwelonelontNoticelonPrelonelonnrichmelonnt(relonason, CompliancelonTwelonelontNoticelonelonvelonntTypelon.PublicIntelonrelonst),
+      elonvaluatelond)
   }
 }
 
-class PublicInterestDropActionBuilder extends ActionBuilder[Drop] {
+class PublicIntelonrelonstDropActionBuildelonr elonxtelonnds ActionBuildelonr[Drop] {
 
-  override def actionType: Class[_] = classOf[Drop]
+  ovelonrridelon delonf actionTypelon: Class[_] = classOf[Drop]
 
-  override val actionSeverity = 16
-  private def toRuleResult: Reason => RuleResult = Memoize { r => RuleResult(Drop(r), Evaluated) }
+  ovelonrridelon val actionSelonvelonrity = 16
+  privatelon delonf toRulelonRelonsult: Relonason => RulelonRelonsult = Melonmoizelon { r => RulelonRelonsult(Drop(r), elonvaluatelond) }
 
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult = {
-    val reason = PublicInterest.extractTweetSafetyLabel(featureMap).map(_.labelType) match {
-      case Some(TweetSafetyLabelType.LowQuality) =>
-        Reason.OneOff
+  delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult = {
+    val relonason = PublicIntelonrelonst.elonxtractTwelonelontSafelontyLabelonl(felonaturelonMap).map(_.labelonlTypelon) match {
+      caselon Somelon(TwelonelontSafelontyLabelonlTypelon.LowQuality) =>
+        Relonason.OnelonOff
 
-      case Some(TweetSafetyLabelType.MisinfoCivic) =>
-        Reason.MisinfoCivic
+      caselon Somelon(TwelonelontSafelontyLabelonlTypelon.MisinfoCivic) =>
+        Relonason.MisinfoCivic
 
-      case Some(TweetSafetyLabelType.MisinfoCrisis) =>
-        Reason.MisinfoCrisis
+      caselon Somelon(TwelonelontSafelontyLabelonlTypelon.MisinfoCrisis) =>
+        Relonason.MisinfoCrisis
 
-      case Some(TweetSafetyLabelType.MisinfoGeneric) =>
-        Reason.MisinfoGeneric
+      caselon Somelon(TwelonelontSafelontyLabelonlTypelon.MisinfoGelonnelonric) =>
+        Relonason.MisinfoGelonnelonric
 
-      case Some(TweetSafetyLabelType.MisinfoMedical) =>
-        Reason.MisinfoMedical
+      caselon Somelon(TwelonelontSafelontyLabelonlTypelon.MisinfoMelondical) =>
+        Relonason.MisinfoMelondical
 
-      case _ =>
-        Reason.OneOff
+      caselon _ =>
+        Relonason.OnelonOff
     }
 
-    toRuleResult(reason)
+    toRulelonRelonsult(relonason)
   }
 }
 
-object PublicInterestRules {
+objelonct PublicIntelonrelonstRulelons {
 
-  object AbusePolicyEpisodicTweetLabelInterstitialRule
-      extends Rule(
-        new PublicInterestActionBuilder(),
+  objelonct AbuselonPolicyelonpisodicTwelonelontLabelonlIntelonrstitialRulelon
+      elonxtelonnds Rulelon(
+        nelonw PublicIntelonrelonstActionBuildelonr(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          TwelonelontComposelondAftelonr(PublicIntelonrelonst.PolicyConfig.LowQualityProxyLabelonlStart),
           Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+            PublicIntelonrelonst.elonligiblelonTwelonelontSafelontyLabelonlTypelons.map(TwelonelontHasLabelonl(_)): _*
           )
         )
       )
 
-  object AbusePolicyEpisodicTweetLabelComplianceTweetNoticeRule
-      extends Rule(
-        new PublicInterestComplianceTweetNoticeActionBuilder(),
+  objelonct AbuselonPolicyelonpisodicTwelonelontLabelonlCompliancelonTwelonelontNoticelonRulelon
+      elonxtelonnds Rulelon(
+        nelonw PublicIntelonrelonstCompliancelonTwelonelontNoticelonActionBuildelonr(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          TwelonelontComposelondAftelonr(PublicIntelonrelonst.PolicyConfig.LowQualityProxyLabelonlStart),
           Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+            PublicIntelonrelonst.elonligiblelonTwelonelontSafelontyLabelonlTypelons.map(TwelonelontHasLabelonl(_)): _*
           )
         )
       )
 
-  object AbusePolicyEpisodicTweetLabelDropRule
-      extends Rule(
-        new PublicInterestDropActionBuilder(),
+  objelonct AbuselonPolicyelonpisodicTwelonelontLabelonlDropRulelon
+      elonxtelonnds Rulelon(
+        nelonw PublicIntelonrelonstDropActionBuildelonr(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          TwelonelontComposelondAftelonr(PublicIntelonrelonst.PolicyConfig.LowQualityProxyLabelonlStart),
           Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+            PublicIntelonrelonst.elonligiblelonTwelonelontSafelontyLabelonlTypelons.map(TwelonelontHasLabelonl(_)): _*
           )
         )
       )
 
-  object SearchIpiSafeSearchWithoutUserInQueryDropRule
-      extends Rule(
-        new PublicInterestDropActionBuilder(),
+  objelonct SelonarchIpiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon
+      elonxtelonnds Rulelon(
+        nelonw PublicIntelonrelonstDropActionBuildelonr(),
         And(
-          TweetComposedAfter(PublicInterest.PolicyConfig.LowQualityProxyLabelStart),
+          TwelonelontComposelondAftelonr(PublicIntelonrelonst.PolicyConfig.LowQualityProxyLabelonlStart),
           Or(
-            PublicInterest.EligibleTweetSafetyLabelTypes.map(TweetHasLabel(_)): _*
+            PublicIntelonrelonst.elonligiblelonTwelonelontSafelontyLabelonlTypelons.map(TwelonelontHasLabelonl(_)): _*
           ),
-          LoggedOutOrViewerOptInFiltering,
-          Not(SearchQueryHasUser)
+          LoggelondOutOrVielonwelonrOptInFiltelonring,
+          Not(SelonarchQuelonryHasUselonr)
         )
       ) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(
-      EnableSearchIpiSafeSearchWithoutUserInQueryDropRule)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+      elonnablelonSelonarchIpiSafelonSelonarchWithoutUselonrInQuelonryDropRulelon)
   }
 }

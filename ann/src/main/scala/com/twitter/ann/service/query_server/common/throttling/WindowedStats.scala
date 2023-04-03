@@ -1,22 +1,22 @@
-package com.twitter.ann.service.query_server.common.throttling
+packagelon com.twittelonr.ann.selonrvicelon.quelonry_selonrvelonr.common.throttling
 
 /**
- * A simple ring buffer that keeps track of long values over `window`.
+ * A simplelon ring buffelonr that kelonelonps track of long valuelons ovelonr `window`.
  */
-private[throttling] class WindowedStats(window: Int) {
-  private[this] val buffer = new Array[Long](window)
-  private[this] var index = 0
-  private[this] var sumValue = 0L
-  private[this] var count = 0
+privatelon[throttling] class WindowelondStats(window: Int) {
+  privatelon[this] val buffelonr = nelonw Array[Long](window)
+  privatelon[this] var indelonx = 0
+  privatelon[this] var sumValuelon = 0L
+  privatelon[this] var count = 0
 
-  def add(v: Long): Unit = {
+  delonf add(v: Long): Unit = {
     count = math.min(count + 1, window)
-    val old = buffer(index)
-    buffer(index) = v
-    index = (index + 1) % window
-    sumValue += v - old
+    val old = buffelonr(indelonx)
+    buffelonr(indelonx) = v
+    indelonx = (indelonx + 1) % window
+    sumValuelon += v - old
   }
 
-  def avg: Double = { sumValue.toDouble / count }
-  def sum: Long = { sumValue }
+  delonf avg: Doublelon = { sumValuelon.toDoublelon / count }
+  delonf sum: Long = { sumValuelon }
 }

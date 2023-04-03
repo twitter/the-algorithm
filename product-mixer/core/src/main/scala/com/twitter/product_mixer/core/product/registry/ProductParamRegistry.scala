@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.product.registry
+packagelon com.twittelonr.product_mixelonr.corelon.product.relongistry
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.decider.DeciderGateBuilder
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.Config
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrGatelonBuildelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.Config
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ProductParamRegistry @Inject() (
-  productPipelineRegistryConfig: ProductPipelineRegistryConfig,
-  deciderGateBuilder: DeciderGateBuilder,
-  statsReceiver: StatsReceiver) {
+@Singlelonton
+class ProductParamRelongistry @Injelonct() (
+  productPipelonlinelonRelongistryConfig: ProductPipelonlinelonRelongistryConfig,
+  deloncidelonrGatelonBuildelonr: DeloncidelonrGatelonBuildelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  def build(): Seq[Config] = {
-    val productConfigs = productPipelineRegistryConfig.productPipelineConfigs.map {
-      productPipelineConfig =>
-        BaseConfigBuilder(
-          productPipelineConfig.paramConfig.build(deciderGateBuilder, statsReceiver))
-          .build(productPipelineConfig.paramConfig.getClass.getSimpleName)
+  delonf build(): Selonq[Config] = {
+    val productConfigs = productPipelonlinelonRelongistryConfig.productPipelonlinelonConfigs.map {
+      productPipelonlinelonConfig =>
+        BaselonConfigBuildelonr(
+          productPipelonlinelonConfig.paramConfig.build(deloncidelonrGatelonBuildelonr, statsReloncelonivelonr))
+          .build(productPipelonlinelonConfig.paramConfig.gelontClass.gelontSimplelonNamelon)
     }
 
     productConfigs

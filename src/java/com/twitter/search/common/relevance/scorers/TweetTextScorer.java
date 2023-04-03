@@ -1,242 +1,242 @@
-package com.twitter.search.common.relevance.scorers;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.scorelonrs;
 
 import java.util.Map;
-import java.util.concurrent.ConcurrentMap;
+import java.util.concurrelonnt.ConcurrelonntMap;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.relevance.config.TweetProcessingConfig;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
-import com.twitter.search.common.relevance.features.TweetFeatures;
-import com.twitter.search.common.relevance.features.TweetTextFeatures;
-import com.twitter.search.common.relevance.features.TweetTextQuality;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.melontrics.RelonlelonvancelonStats;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.config.TwelonelontProcelonssingConfig;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontFelonaturelons;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontTelonxtFelonaturelons;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontTelonxtQuality;
 
 /**
- * Compute a text score for TwitterMessage based on its offensiveness,
- * shoutness, length, readability and hashtag properties extracted from
- * tweet text.
+ * Computelon a telonxt scorelon for TwittelonrMelonssagelon baselond on its offelonnsivelonnelonss,
+ * shoutnelonss, lelonngth, relonadability and hashtag propelonrtielons elonxtractelond from
+ * twelonelont telonxt.
  * <p/>
  * Formula:
- * text_score = offensive_text_damping * offensive_username_damping *
- * Sigma(feature_score_weight * feature_score)
+ * telonxt_scorelon = offelonnsivelon_telonxt_damping * offelonnsivelon_uselonrnamelon_damping *
+ * Sigma(felonaturelon_scorelon_welonight * felonaturelon_scorelon)
  * <p/>
- * scored features are: length, readability, shout, entropy, links
+ * scorelond felonaturelons arelon: lelonngth, relonadability, shout, elonntropy, links
  */
-public class TweetTextScorer extends TweetScorer {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetTextScorer.class);
+public class TwelonelontTelonxtScorelonr elonxtelonnds TwelonelontScorelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwelonelontTelonxtScorelonr.class);
 
-  private static final double DEFAULT_OFFENSIVE_TERM_DAMPING = 0.2d;
-  private static final double DEFAULT_OFFENSIVE_NAME_DAMPING = 0.2d;
+  privatelon static final doublelon DelonFAULT_OFFelonNSIVelon_TelonRM_DAMPING = 0.2d;
+  privatelon static final doublelon DelonFAULT_OFFelonNSIVelon_NAMelon_DAMPING = 0.2d;
 
-  // Sigma of all weights = 1.0d
-  private static final double DEFAULT_LENGTH_WEIGHT = 0.5d;
-  private static final double DEFAULT_READABILITY_WEIGHT = 0.1d;
-  private static final double DEFAULT_SHOUT_WEIGHT = 0.1d;
-  private static final double DEFAULT_ENTROPY_WEIGHT = 0.25d;
-  private static final double DEFAULT_LINK_WEIGHT = 0.05d;
+  // Sigma of all welonights = 1.0d
+  privatelon static final doublelon DelonFAULT_LelonNGTH_WelonIGHT = 0.5d;
+  privatelon static final doublelon DelonFAULT_RelonADABILITY_WelonIGHT = 0.1d;
+  privatelon static final doublelon DelonFAULT_SHOUT_WelonIGHT = 0.1d;
+  privatelon static final doublelon DelonFAULT_elonNTROPY_WelonIGHT = 0.25d;
+  privatelon static final doublelon DelonFAULT_LINK_WelonIGHT = 0.05d;
 
-  private static final double DEFAULT_NO_DAMPING = 1.0d;
+  privatelon static final doublelon DelonFAULT_NO_DAMPING = 1.0d;
 
-  // Sigmoid alpha values for normalization
-  private static final double DEFAULT_READABILITY_ALPHA = 0.05d;
-  private static final double DEFAULT_ENTROPY_ALPHA = 0.5d;
-  private static final double DEFAULT_LENGTH_ALPHA = 0.03d;
+  // Sigmoid alpha valuelons for normalization
+  privatelon static final doublelon DelonFAULT_RelonADABILITY_ALPHA = 0.05d;
+  privatelon static final doublelon DelonFAULT_elonNTROPY_ALPHA = 0.5d;
+  privatelon static final doublelon DelonFAULT_LelonNGTH_ALPHA = 0.03d;
 
-  private static final ConcurrentMap<String, SearchRateCounter> RATE_COUNTERS =
-      Maps.newConcurrentMap();
-  private static final ConcurrentMap<PenguinVersion, Map<Integer, SearchRateCounter>>
-      SCORE_HISTOGRAMS = Maps.newConcurrentMap();
+  privatelon static final ConcurrelonntMap<String, SelonarchRatelonCountelonr> RATelon_COUNTelonRS =
+      Maps.nelonwConcurrelonntMap();
+  privatelon static final ConcurrelonntMap<PelonnguinVelonrsion, Map<Intelongelonr, SelonarchRatelonCountelonr>>
+      SCORelon_HISTOGRAMS = Maps.nelonwConcurrelonntMap();
 
-  private double offensiveTermDamping = DEFAULT_OFFENSIVE_TERM_DAMPING;
-  private double offensiveNameDamping = DEFAULT_OFFENSIVE_NAME_DAMPING;
+  privatelon doublelon offelonnsivelonTelonrmDamping = DelonFAULT_OFFelonNSIVelon_TelonRM_DAMPING;
+  privatelon doublelon offelonnsivelonNamelonDamping = DelonFAULT_OFFelonNSIVelon_NAMelon_DAMPING;
 
-  private double lengthWeight = DEFAULT_LENGTH_WEIGHT;
-  private double readabilityWeight = DEFAULT_READABILITY_WEIGHT;
-  private double shoutWeight = DEFAULT_SHOUT_WEIGHT;
-  private double entropyWeight = DEFAULT_ENTROPY_WEIGHT;
-  private double linkWeight = DEFAULT_LINK_WEIGHT;
+  privatelon doublelon lelonngthWelonight = DelonFAULT_LelonNGTH_WelonIGHT;
+  privatelon doublelon relonadabilityWelonight = DelonFAULT_RelonADABILITY_WelonIGHT;
+  privatelon doublelon shoutWelonight = DelonFAULT_SHOUT_WelonIGHT;
+  privatelon doublelon elonntropyWelonight = DelonFAULT_elonNTROPY_WelonIGHT;
+  privatelon doublelon linkWelonight = DelonFAULT_LINK_WelonIGHT;
 
-  private double readabilityAlpha = DEFAULT_READABILITY_ALPHA;
-  private double entropyAlpha = DEFAULT_ENTROPY_ALPHA;
-  private double lengthAlpha = DEFAULT_LENGTH_ALPHA;
+  privatelon doublelon relonadabilityAlpha = DelonFAULT_RelonADABILITY_ALPHA;
+  privatelon doublelon elonntropyAlpha = DelonFAULT_elonNTROPY_ALPHA;
+  privatelon doublelon lelonngthAlpha = DelonFAULT_LelonNGTH_ALPHA;
 
-  /** Configure from a config file, validate the configuration. */
-  public TweetTextScorer(String configFile) {
-    TweetProcessingConfig.init(configFile);
+  /** Configurelon from a config filelon, validatelon thelon configuration. */
+  public TwelonelontTelonxtScorelonr(String configFilelon) {
+    TwelonelontProcelonssingConfig.init(configFilelon);
 
-    // get dampings
-    checkWeightRange(offensiveTermDamping = TweetProcessingConfig
-        .getDouble("offensive_term_damping", DEFAULT_OFFENSIVE_TERM_DAMPING));
-    checkWeightRange(offensiveNameDamping = TweetProcessingConfig
-        .getDouble("offensive_name_damping", DEFAULT_OFFENSIVE_NAME_DAMPING));
+    // gelont dampings
+    chelonckWelonightRangelon(offelonnsivelonTelonrmDamping = TwelonelontProcelonssingConfig
+        .gelontDoublelon("offelonnsivelon_telonrm_damping", DelonFAULT_OFFelonNSIVelon_TelonRM_DAMPING));
+    chelonckWelonightRangelon(offelonnsivelonNamelonDamping = TwelonelontProcelonssingConfig
+        .gelontDoublelon("offelonnsivelon_namelon_damping", DelonFAULT_OFFelonNSIVelon_NAMelon_DAMPING));
 
-    // get weights
-    checkWeightRange(lengthWeight = TweetProcessingConfig
-        .getDouble("length_weight", DEFAULT_LENGTH_WEIGHT));
-    checkWeightRange(readabilityWeight = TweetProcessingConfig
-        .getDouble("readability_weight", DEFAULT_READABILITY_WEIGHT));
-    checkWeightRange(shoutWeight = TweetProcessingConfig
-        .getDouble("shout_weight", DEFAULT_SHOUT_WEIGHT));
-    checkWeightRange(entropyWeight = TweetProcessingConfig
-        .getDouble("entropy_weight", DEFAULT_ENTROPY_WEIGHT));
-    checkWeightRange(linkWeight = TweetProcessingConfig
-        .getDouble("link_weight", DEFAULT_LINK_WEIGHT));
+    // gelont welonights
+    chelonckWelonightRangelon(lelonngthWelonight = TwelonelontProcelonssingConfig
+        .gelontDoublelon("lelonngth_welonight", DelonFAULT_LelonNGTH_WelonIGHT));
+    chelonckWelonightRangelon(relonadabilityWelonight = TwelonelontProcelonssingConfig
+        .gelontDoublelon("relonadability_welonight", DelonFAULT_RelonADABILITY_WelonIGHT));
+    chelonckWelonightRangelon(shoutWelonight = TwelonelontProcelonssingConfig
+        .gelontDoublelon("shout_welonight", DelonFAULT_SHOUT_WelonIGHT));
+    chelonckWelonightRangelon(elonntropyWelonight = TwelonelontProcelonssingConfig
+        .gelontDoublelon("elonntropy_welonight", DelonFAULT_elonNTROPY_WelonIGHT));
+    chelonckWelonightRangelon(linkWelonight = TwelonelontProcelonssingConfig
+        .gelontDoublelon("link_welonight", DelonFAULT_LINK_WelonIGHT));
 
-    // check sigma of weights
-    Preconditions.checkArgument(
-        lengthWeight + readabilityWeight + shoutWeight + entropyWeight + linkWeight == 1.0d);
+    // chelonck sigma of welonights
+    Prelonconditions.chelonckArgumelonnt(
+        lelonngthWelonight + relonadabilityWelonight + shoutWelonight + elonntropyWelonight + linkWelonight == 1.0d);
 
-    readabilityAlpha = TweetProcessingConfig
-        .getDouble("readability_alpha", DEFAULT_READABILITY_ALPHA);
-    entropyAlpha = TweetProcessingConfig.getDouble("entropy_alpha", DEFAULT_ENTROPY_ALPHA);
-    lengthAlpha = TweetProcessingConfig.getDouble("length_alpha", DEFAULT_LENGTH_ALPHA);
+    relonadabilityAlpha = TwelonelontProcelonssingConfig
+        .gelontDoublelon("relonadability_alpha", DelonFAULT_RelonADABILITY_ALPHA);
+    elonntropyAlpha = TwelonelontProcelonssingConfig.gelontDoublelon("elonntropy_alpha", DelonFAULT_elonNTROPY_ALPHA);
+    lelonngthAlpha = TwelonelontProcelonssingConfig.gelontDoublelon("lelonngth_alpha", DelonFAULT_LelonNGTH_ALPHA);
   }
 
-  /** Creates a new TweetTextScorer instance. */
-  public TweetTextScorer() {
+  /** Crelonatelons a nelonw TwelonelontTelonxtScorelonr instancelon. */
+  public TwelonelontTelonxtScorelonr() {
   }
 
-  /** Scores the given tweet. */
-  public void scoreTweet(final TwitterMessage tweet) {
-    Preconditions.checkNotNull(tweet);
+  /** Scorelons thelon givelonn twelonelont. */
+  public void scorelonTwelonelont(final TwittelonrMelonssagelon twelonelont) {
+    Prelonconditions.chelonckNotNull(twelonelont);
 
-    for (PenguinVersion penguinVersion : tweet.getSupportedPenguinVersions()) {
-      TweetFeatures features = Preconditions.checkNotNull(tweet.getTweetFeatures(penguinVersion));
-      TweetTextFeatures textFeatures = Preconditions.checkNotNull(features.getTweetTextFeatures());
-      TweetTextQuality textQuality = Preconditions.checkNotNull(features.getTweetTextQuality());
-      boolean isOffensiveText = textQuality.hasBoolQuality(
-          TweetTextQuality.BooleanQualityType.OFFENSIVE);
-      boolean isOffensiveScreenName = textQuality.hasBoolQuality(
-          TweetTextQuality.BooleanQualityType.OFFENSIVE_USER);
-      double shoutScore = DEFAULT_NO_DAMPING - textQuality.getShout();
-      double lengthScore = normalize(textFeatures.getLength(), lengthAlpha);
-      double readabilityScore = normalize(textQuality.getReadability(), readabilityAlpha);
-      double entropyScore = normalize(textQuality.getEntropy(), entropyAlpha);
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : twelonelont.gelontSupportelondPelonnguinVelonrsions()) {
+      TwelonelontFelonaturelons felonaturelons = Prelonconditions.chelonckNotNull(twelonelont.gelontTwelonelontFelonaturelons(pelonnguinVelonrsion));
+      TwelonelontTelonxtFelonaturelons telonxtFelonaturelons = Prelonconditions.chelonckNotNull(felonaturelons.gelontTwelonelontTelonxtFelonaturelons());
+      TwelonelontTelonxtQuality telonxtQuality = Prelonconditions.chelonckNotNull(felonaturelons.gelontTwelonelontTelonxtQuality());
+      boolelonan isOffelonnsivelonTelonxt = telonxtQuality.hasBoolQuality(
+          TwelonelontTelonxtQuality.BoolelonanQualityTypelon.OFFelonNSIVelon);
+      boolelonan isOffelonnsivelonScrelonelonnNamelon = telonxtQuality.hasBoolQuality(
+          TwelonelontTelonxtQuality.BoolelonanQualityTypelon.OFFelonNSIVelon_USelonR);
+      doublelon shoutScorelon = DelonFAULT_NO_DAMPING - telonxtQuality.gelontShout();
+      doublelon lelonngthScorelon = normalizelon(telonxtFelonaturelons.gelontLelonngth(), lelonngthAlpha);
+      doublelon relonadabilityScorelon = normalizelon(telonxtQuality.gelontRelonadability(), relonadabilityAlpha);
+      doublelon elonntropyScorelon = normalizelon(telonxtQuality.gelontelonntropy(), elonntropyAlpha);
 
-      double score = (isOffensiveText ? offensiveTermDamping : DEFAULT_NO_DAMPING)
-        * (isOffensiveScreenName ? offensiveNameDamping : DEFAULT_NO_DAMPING)
-        * (lengthWeight * lengthScore
-           + readabilityWeight * readabilityScore
-           + shoutWeight * shoutScore
-           + entropyWeight * entropyScore
-           + linkWeight * (tweet.getExpandedUrlMapSize() > 0 ? 1 : 0));
+      doublelon scorelon = (isOffelonnsivelonTelonxt ? offelonnsivelonTelonrmDamping : DelonFAULT_NO_DAMPING)
+        * (isOffelonnsivelonScrelonelonnNamelon ? offelonnsivelonNamelonDamping : DelonFAULT_NO_DAMPING)
+        * (lelonngthWelonight * lelonngthScorelon
+           + relonadabilityWelonight * relonadabilityScorelon
+           + shoutWelonight * shoutScorelon
+           + elonntropyWelonight * elonntropyScorelon
+           + linkWelonight * (twelonelont.gelontelonxpandelondUrlMapSizelon() > 0 ? 1 : 0));
 
-      // scale to [0, 100] byte
-      textQuality.setTextScore((byte) (score * 100));
+      // scalelon to [0, 100] bytelon
+      telonxtQuality.selontTelonxtScorelon((bytelon) (scorelon * 100));
 
-      updateStats(
-          isOffensiveText,
-          isOffensiveScreenName,
-          textFeatures,
-          score,
-          getRateCounterStat("num_offensive_text_", penguinVersion),
-          getRateCounterStat("num_offensive_user_", penguinVersion),
-          getRateCounterStat("num_no_trends_", penguinVersion),
-          getRateCounterStat("num_has_trends_", penguinVersion),
-          getRateCounterStat("num_too_many_trends_", penguinVersion),
-          getRateCounterStat("num_scored_tweets_", penguinVersion),
-          getScoreHistogram(penguinVersion));
+      updatelonStats(
+          isOffelonnsivelonTelonxt,
+          isOffelonnsivelonScrelonelonnNamelon,
+          telonxtFelonaturelons,
+          scorelon,
+          gelontRatelonCountelonrStat("num_offelonnsivelon_telonxt_", pelonnguinVelonrsion),
+          gelontRatelonCountelonrStat("num_offelonnsivelon_uselonr_", pelonnguinVelonrsion),
+          gelontRatelonCountelonrStat("num_no_trelonnds_", pelonnguinVelonrsion),
+          gelontRatelonCountelonrStat("num_has_trelonnds_", pelonnguinVelonrsion),
+          gelontRatelonCountelonrStat("num_too_many_trelonnds_", pelonnguinVelonrsion),
+          gelontRatelonCountelonrStat("num_scorelond_twelonelonts_", pelonnguinVelonrsion),
+          gelontScorelonHistogram(pelonnguinVelonrsion));
 
-      if (LOG.isDebugEnabled()) {
-        LOG.debug(String.format(
-            "Tweet length [%.2f] weighted length [%.2f], readability [%.2f] "
-            + "weighted readability [%.2f], shout [%.2f] weighted shout [%.2f], "
-            + "entropy [%.2f], weighted entropy [%.2f], "
-            + "score [%.2f], text [%s], penguin version [%s]",
-            lengthScore,
-            lengthWeight * lengthScore,
-            readabilityScore,
-            readabilityWeight * readabilityScore,
-            shoutScore,
-            shoutWeight * shoutScore,
-            entropyScore,
-            entropyWeight * entropyScore,
-            score,
-            tweet.getText(),
-            penguinVersion));
+      if (LOG.isDelonbugelonnablelond()) {
+        LOG.delonbug(String.format(
+            "Twelonelont lelonngth [%.2f] welonightelond lelonngth [%.2f], relonadability [%.2f] "
+            + "welonightelond relonadability [%.2f], shout [%.2f] welonightelond shout [%.2f], "
+            + "elonntropy [%.2f], welonightelond elonntropy [%.2f], "
+            + "scorelon [%.2f], telonxt [%s], pelonnguin velonrsion [%s]",
+            lelonngthScorelon,
+            lelonngthWelonight * lelonngthScorelon,
+            relonadabilityScorelon,
+            relonadabilityWelonight * relonadabilityScorelon,
+            shoutScorelon,
+            shoutWelonight * shoutScorelon,
+            elonntropyScorelon,
+            elonntropyWelonight * elonntropyScorelon,
+            scorelon,
+            twelonelont.gelontTelonxt(),
+            pelonnguinVelonrsion));
       }
     }
   }
 
-  private void updateStats(boolean isOffensiveText,
-                           boolean isOffensiveScreenName,
-                           TweetTextFeatures textFeatures,
-                           double score,
-                           SearchRateCounter offensiveTextCounter,
-                           SearchRateCounter offensiveUserNameCounter,
-                           SearchRateCounter noTrendsCounter,
-                           SearchRateCounter hasTrendsCounter,
-                           SearchRateCounter tooManyTrendsHashtagsCounter,
-                           SearchRateCounter scoredTweets,
-                           Map<Integer, SearchRateCounter> scoreHistogram) {
-    // set stats
-    if (isOffensiveText) {
-      offensiveTextCounter.increment();
+  privatelon void updatelonStats(boolelonan isOffelonnsivelonTelonxt,
+                           boolelonan isOffelonnsivelonScrelonelonnNamelon,
+                           TwelonelontTelonxtFelonaturelons telonxtFelonaturelons,
+                           doublelon scorelon,
+                           SelonarchRatelonCountelonr offelonnsivelonTelonxtCountelonr,
+                           SelonarchRatelonCountelonr offelonnsivelonUselonrNamelonCountelonr,
+                           SelonarchRatelonCountelonr noTrelonndsCountelonr,
+                           SelonarchRatelonCountelonr hasTrelonndsCountelonr,
+                           SelonarchRatelonCountelonr tooManyTrelonndsHashtagsCountelonr,
+                           SelonarchRatelonCountelonr scorelondTwelonelonts,
+                           Map<Intelongelonr, SelonarchRatelonCountelonr> scorelonHistogram) {
+    // selont stats
+    if (isOffelonnsivelonTelonxt) {
+      offelonnsivelonTelonxtCountelonr.increlonmelonnt();
     }
-    if (isOffensiveScreenName) {
-      offensiveUserNameCounter.increment();
+    if (isOffelonnsivelonScrelonelonnNamelon) {
+      offelonnsivelonUselonrNamelonCountelonr.increlonmelonnt();
     }
-    if (textFeatures.getTrendingTermsSize() == 0) {
-      noTrendsCounter.increment();
-    } else {
-      hasTrendsCounter.increment();
+    if (telonxtFelonaturelons.gelontTrelonndingTelonrmsSizelon() == 0) {
+      noTrelonndsCountelonr.increlonmelonnt();
+    } elonlselon {
+      hasTrelonndsCountelonr.increlonmelonnt();
     }
-    if (TwitterMessage.hasMultipleHashtagsOrTrends(textFeatures)) {
-      tooManyTrendsHashtagsCounter.increment();
+    if (TwittelonrMelonssagelon.hasMultiplelonHashtagsOrTrelonnds(telonxtFelonaturelons)) {
+      tooManyTrelonndsHashtagsCountelonr.increlonmelonnt();
     }
-    scoredTweets.increment();
+    scorelondTwelonelonts.increlonmelonnt();
 
-    int bucket = (int) Math.floor(score * 10) * 10;
-    scoreHistogram.get(bucket).increment();
+    int buckelont = (int) Math.floor(scorelon * 10) * 10;
+    scorelonHistogram.gelont(buckelont).increlonmelonnt();
   }
 
-  // normalize the passed in value to smoothed [0, 1.0d] range
-  private static double normalize(double value, double alpha) {
-    return 2 * (1.0d / (1.0d + Math.exp(-(alpha * value))) - 0.5);
+  // normalizelon thelon passelond in valuelon to smoothelond [0, 1.0d] rangelon
+  privatelon static doublelon normalizelon(doublelon valuelon, doublelon alpha) {
+    relonturn 2 * (1.0d / (1.0d + Math.elonxp(-(alpha * valuelon))) - 0.5);
   }
 
-  // Make sure weight values are within the range of [0.0, 1.0]
-  private void checkWeightRange(double value) {
-    Preconditions.checkArgument(value >= 0.0d && value <= 1.0d);
+  // Makelon surelon welonight valuelons arelon within thelon rangelon of [0.0, 1.0]
+  privatelon void chelonckWelonightRangelon(doublelon valuelon) {
+    Prelonconditions.chelonckArgumelonnt(valuelon >= 0.0d && valuelon <= 1.0d);
   }
 
-  private Map<Integer, SearchRateCounter> getScoreHistogram(PenguinVersion penguinVersion) {
-    Map<Integer, SearchRateCounter> scoreHistogram = SCORE_HISTOGRAMS.get(penguinVersion);
-    if (scoreHistogram == null) {
-      scoreHistogram = Maps.newHashMap();
-      String statsName = "num_text_score_%d_%s";
+  privatelon Map<Intelongelonr, SelonarchRatelonCountelonr> gelontScorelonHistogram(PelonnguinVelonrsion pelonnguinVelonrsion) {
+    Map<Intelongelonr, SelonarchRatelonCountelonr> scorelonHistogram = SCORelon_HISTOGRAMS.gelont(pelonnguinVelonrsion);
+    if (scorelonHistogram == null) {
+      scorelonHistogram = Maps.nelonwHashMap();
+      String statsNamelon = "num_telonxt_scorelon_%d_%s";
 
       for (int i = 0; i <= 100; i += 10) {
-        scoreHistogram.put(i, RelevanceStats.exportRate(
-                               String.format(statsName, i, penguinVersion.name().toLowerCase())));
+        scorelonHistogram.put(i, RelonlelonvancelonStats.elonxportRatelon(
+                               String.format(statsNamelon, i, pelonnguinVelonrsion.namelon().toLowelonrCaselon())));
       }
 
-      scoreHistogram = SCORE_HISTOGRAMS.putIfAbsent(penguinVersion, scoreHistogram);
-      if (scoreHistogram == null) {
-        scoreHistogram = SCORE_HISTOGRAMS.get(penguinVersion);
+      scorelonHistogram = SCORelon_HISTOGRAMS.putIfAbselonnt(pelonnguinVelonrsion, scorelonHistogram);
+      if (scorelonHistogram == null) {
+        scorelonHistogram = SCORelon_HISTOGRAMS.gelont(pelonnguinVelonrsion);
       }
     }
 
-    return scoreHistogram;
+    relonturn scorelonHistogram;
   }
 
-  private SearchRateCounter getRateCounterStat(String statPrefix, PenguinVersion penguinVersion) {
-    String statName = statPrefix + penguinVersion.name().toLowerCase();
-    SearchRateCounter rateCounter = RATE_COUNTERS.get(statName);
-    if (rateCounter == null) {
-      // Only one RateCounter instance is created for each stat name. So we don't need to worry
-      // that another thread might've created this instance in the meantime: we can just create/get
-      // it, and store it in the map.
-      rateCounter = RelevanceStats.exportRate(statName);
-      RATE_COUNTERS.put(statName, rateCounter);
+  privatelon SelonarchRatelonCountelonr gelontRatelonCountelonrStat(String statPrelonfix, PelonnguinVelonrsion pelonnguinVelonrsion) {
+    String statNamelon = statPrelonfix + pelonnguinVelonrsion.namelon().toLowelonrCaselon();
+    SelonarchRatelonCountelonr ratelonCountelonr = RATelon_COUNTelonRS.gelont(statNamelon);
+    if (ratelonCountelonr == null) {
+      // Only onelon RatelonCountelonr instancelon is crelonatelond for elonach stat namelon. So welon don't nelonelond to worry
+      // that anothelonr threlonad might'velon crelonatelond this instancelon in thelon melonantimelon: welon can just crelonatelon/gelont
+      // it, and storelon it in thelon map.
+      ratelonCountelonr = RelonlelonvancelonStats.elonxportRatelon(statNamelon);
+      RATelon_COUNTelonRS.put(statNamelon, ratelonCountelonr);
     }
-    return rateCounter;
+    relonturn ratelonCountelonr;
   }
 }

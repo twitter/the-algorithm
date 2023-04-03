@@ -1,13 +1,13 @@
 import sys
 
-from .parsers import DBv2DataExampleParser
-from .reader import LollyModelReader
-from .scorer import LollyModelScorer
+from .parselonrs import DBv2DataelonxamplelonParselonr
+from .relonadelonr import LollyModelonlRelonadelonr
+from .scorelonr import LollyModelonlScorelonr
 
 
-if __name__ == "__main__":
-  lolly_model_reader = LollyModelReader(lolly_model_file_path=sys.argv[1])
-  lolly_model_scorer = LollyModelScorer(data_example_parser=DBv2DataExampleParser(lolly_model_reader))
+if __namelon__ == "__main__":
+  lolly_modelonl_relonadelonr = LollyModelonlRelonadelonr(lolly_modelonl_filelon_path=sys.argv[1])
+  lolly_modelonl_scorelonr = LollyModelonlScorelonr(data_elonxamplelon_parselonr=DBv2DataelonxamplelonParselonr(lolly_modelonl_relonadelonr))
 
-  score = lolly_model_scorer.score(data_example=sys.argv[2])
-  print(score)
+  scorelon = lolly_modelonl_scorelonr.scorelon(data_elonxamplelon=sys.argv[2])
+  print(scorelon)

@@ -1,7 +1,7 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-trait HasSimilarToContext {
+trait HasSimilarToContelonxt {
 
-  // user ids that are used to generate similar to recommendations
-  def similarToUserIds: Seq[Long]
+  // uselonr ids that arelon uselond to gelonnelonratelon similar to reloncommelonndations
+  delonf similarToUselonrIds: Selonq[Long]
 }

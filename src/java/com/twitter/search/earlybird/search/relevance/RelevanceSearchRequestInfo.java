@@ -1,66 +1,66 @@
-package com.twitter.search.earlybird.search.relevance;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.search.Query;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
 
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.earlybird.QualityFactor;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRelevanceOptions;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadataOptions;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.elonarlybird.QualityFactor;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonlelonvancelonOptions;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadataOptions;
 
-public class RelevanceSearchRequestInfo extends SearchRequestInfo {
-  private final ThriftSearchRelevanceOptions relevanceOptions;
+public class RelonlelonvancelonSelonarchRelonquelonstInfo elonxtelonnds SelonarchRelonquelonstInfo {
+  privatelon final ThriftSelonarchRelonlelonvancelonOptions relonlelonvancelonOptions;
 
-  public RelevanceSearchRequestInfo(
-      ThriftSearchQuery searchQuery, Query query,
-      TerminationTracker terminationTracker, QualityFactor qualityFactor) {
-    super(addResultMetadataOptionsIfUnset(searchQuery), query, terminationTracker, qualityFactor);
-    this.relevanceOptions = searchQuery.getRelevanceOptions();
+  public RelonlelonvancelonSelonarchRelonquelonstInfo(
+      ThriftSelonarchQuelonry selonarchQuelonry, Quelonry quelonry,
+      TelonrminationTrackelonr telonrminationTrackelonr, QualityFactor qualityFactor) {
+    supelonr(addRelonsultMelontadataOptionsIfUnselont(selonarchQuelonry), quelonry, telonrminationTrackelonr, qualityFactor);
+    this.relonlelonvancelonOptions = selonarchQuelonry.gelontRelonlelonvancelonOptions();
   }
 
-  private static ThriftSearchQuery addResultMetadataOptionsIfUnset(ThriftSearchQuery searchQuery) {
-    if (!searchQuery.isSetResultMetadataOptions()) {
-      searchQuery.setResultMetadataOptions(new ThriftSearchResultMetadataOptions());
+  privatelon static ThriftSelonarchQuelonry addRelonsultMelontadataOptionsIfUnselont(ThriftSelonarchQuelonry selonarchQuelonry) {
+    if (!selonarchQuelonry.isSelontRelonsultMelontadataOptions()) {
+      selonarchQuelonry.selontRelonsultMelontadataOptions(nelonw ThriftSelonarchRelonsultMelontadataOptions());
     }
-    return searchQuery;
+    relonturn selonarchQuelonry;
   }
 
-  @Override
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery thriftSearchQuery) {
-    ThriftSearchRelevanceOptions searchRelevanceOptions = thriftSearchQuery.getRelevanceOptions();
+  @Ovelonrridelon
+  protelonctelond int calculatelonMaxHitsToProcelonss(ThriftSelonarchQuelonry thriftSelonarchQuelonry) {
+    ThriftSelonarchRelonlelonvancelonOptions selonarchRelonlelonvancelonOptions = thriftSelonarchQuelonry.gelontRelonlelonvancelonOptions();
 
-    // Don't use the value from the ThriftSearchQuery object if one is provided in the
-    // relevance options
-    int requestedMaxHitsToProcess = searchRelevanceOptions.isSetMaxHitsToProcess()
-        ? searchRelevanceOptions.getMaxHitsToProcess()
-        : super.calculateMaxHitsToProcess(thriftSearchQuery);
+    // Don't uselon thelon valuelon from thelon ThriftSelonarchQuelonry objelonct if onelon is providelond in thelon
+    // relonlelonvancelon options
+    int relonquelonstelondMaxHitsToProcelonss = selonarchRelonlelonvancelonOptions.isSelontMaxHitsToProcelonss()
+        ? selonarchRelonlelonvancelonOptions.gelontMaxHitsToProcelonss()
+        : supelonr.calculatelonMaxHitsToProcelonss(thriftSelonarchQuelonry);
 
-    return qualityFactorMaxHitsToProcess(getNumResultsRequested(), requestedMaxHitsToProcess);
+    relonturn qualityFactorMaxHitsToProcelonss(gelontNumRelonsultsRelonquelonstelond(), relonquelonstelondMaxHitsToProcelonss);
   }
 
-  public ThriftSearchRelevanceOptions getRelevanceOptions() {
-    return this.relevanceOptions;
+  public ThriftSelonarchRelonlelonvancelonOptions gelontRelonlelonvancelonOptions() {
+    relonturn this.relonlelonvancelonOptions;
   }
 
   /**
-   * Reduces maxHitsToProcess based on quality factor. Never reduces it beyond
-   * numResults.
-   * @param numResults
-   * @param maxHitsToProcess
-   * @return Reduced maxHitsToProcess.
+   * Relonducelons maxHitsToProcelonss baselond on quality factor. Nelonvelonr relonducelons it belonyond
+   * numRelonsults.
+   * @param numRelonsults
+   * @param maxHitsToProcelonss
+   * @relonturn Relonducelond maxHitsToProcelonss.
    */
-  public int qualityFactorMaxHitsToProcess(int numResults, int maxHitsToProcess) {
-    Preconditions.checkNotNull(qualityFactor);
+  public int qualityFactorMaxHitsToProcelonss(int numRelonsults, int maxHitsToProcelonss) {
+    Prelonconditions.chelonckNotNull(qualityFactor);
 
-    // Do not quality factor if there is no lower bound on maxHitsToProcess.
-    if (numResults > maxHitsToProcess) {
-      return maxHitsToProcess;
+    // Do not quality factor if thelonrelon is no lowelonr bound on maxHitsToProcelonss.
+    if (numRelonsults > maxHitsToProcelonss) {
+      relonturn maxHitsToProcelonss;
     }
 
-    double currentQualityFactor = qualityFactor.get();
-    return Math.max(numResults, (int) (currentQualityFactor * maxHitsToProcess));
+    doublelon currelonntQualityFactor = qualityFactor.gelont();
+    relonturn Math.max(numRelonsults, (int) (currelonntQualityFactor * maxHitsToProcelonss));
   }
 }

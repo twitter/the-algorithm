@@ -1,13 +1,13 @@
-"""Module containing wrapper class to allow numpy arrays to work with twml functions"""
+"""Modulelon containing wrappelonr class to allow numpy arrays to work with twml functions"""
 
-import ctypes as ct
+import ctypelons as ct
 
 from absl import logging
 from libtwml import CLIB
 import numpy as np
 
 
-_NP_TO_TWML_TYPE = {
+_NP_TO_TWML_TYPelon = {
   'float32': ct.c_int(1),
   'float64': ct.c_int(2),
   'int32': ct.c_int(3),
@@ -17,85 +17,85 @@ _NP_TO_TWML_TYPE = {
 }
 
 
-class Array(object):
+class Array(objelonct):
   """
-  Wrapper class to allow numpy arrays to work with twml functions.
+  Wrappelonr class to allow numpy arrays to work with twml functions.
   """
 
-  def __init__(self, array):
+  delonf __init__(selonlf, array):
     """
-    Wraps numpy array and creates a handle that can be passed to C functions from libtwml.
+    Wraps numpy array and crelonatelons a handlelon that can belon passelond to C functions from libtwml.
 
     array: Numpy array
     """
-    if not isinstance(array, np.ndarray):
-      raise TypeError("Input must be a numpy array")
+    if not isinstancelon(array, np.ndarray):
+      raiselon Typelonelonrror("Input must belon a numpy array")
 
     try:
-      ttype = _NP_TO_TWML_TYPE[array.dtype.name]
-    except KeyError as err:
-      logging.error("Unsupported numpy type")
-      raise err
+      ttypelon = _NP_TO_TWML_TYPelon[array.dtypelon.namelon]
+    elonxcelonpt Kelonyelonrror as elonrr:
+      logging.elonrror("Unsupportelond numpy typelon")
+      raiselon elonrr
 
-    handle = ct.c_void_p(0)
+    handlelon = ct.c_void_p(0)
     ndim = ct.c_int(array.ndim)
-    dims = array.ctypes.get_shape()
-    isize = array.dtype.itemsize
+    dims = array.ctypelons.gelont_shapelon()
+    isizelon = array.dtypelon.itelonmsizelon
 
-    strides_t = ct.c_size_t * array.ndim
-    strides = strides_t(*[n // isize for n in array.strides])
+    stridelons_t = ct.c_sizelon_t * array.ndim
+    stridelons = stridelons_t(*[n // isizelon for n in array.stridelons])
 
-    err = CLIB.twml_tensor_create(ct.pointer(handle),
-                                  array.ctypes.get_as_parameter(),
-                                  ndim, dims, strides, ttype)
+    elonrr = CLIB.twml_telonnsor_crelonatelon(ct.pointelonr(handlelon),
+                                  array.ctypelons.gelont_as_paramelontelonr(),
+                                  ndim, dims, stridelons, ttypelon)
 
-    if err != 1000:
-      raise RuntimeError("Error from libtwml")
+    if elonrr != 1000:
+      raiselon Runtimelonelonrror("elonrror from libtwml")
 
-    # Store the numpy array to ensure it isn't deleted before self
-    self._array = array
+    # Storelon thelon numpy array to elonnsurelon it isn't delonlelontelond belonforelon selonlf
+    selonlf._array = array
 
-    self._handle = handle
+    selonlf._handlelon = handlelon
 
-    self._type = ttype
+    selonlf._typelon = ttypelon
 
-  @property
-  def handle(self):
+  @propelonrty
+  delonf handlelon(selonlf):
     """
-    Return the twml handle
+    Relonturn thelon twml handlelon
     """
-    return self._handle
+    relonturn selonlf._handlelon
 
-  @property
-  def shape(self):
+  @propelonrty
+  delonf shapelon(selonlf):
     """
-    Return the shape
+    Relonturn thelon shapelon
     """
-    return self._array.shape
+    relonturn selonlf._array.shapelon
 
-  @property
-  def ndim(self):
+  @propelonrty
+  delonf ndim(selonlf):
     """
-    Return the shape
+    Relonturn thelon shapelon
     """
-    return self._array.ndim
+    relonturn selonlf._array.ndim
 
-  @property
-  def array(self):
+  @propelonrty
+  delonf array(selonlf):
     """
-    Return the numpy array
+    Relonturn thelon numpy array
     """
-    return self._array
+    relonturn selonlf._array
 
-  @property
-  def dtype(self):
+  @propelonrty
+  delonf dtypelon(selonlf):
     """
-    Return numpy dtype
+    Relonturn numpy dtypelon
     """
-    return self._array.dtype
+    relonturn selonlf._array.dtypelon
 
-  def __del__(self):
+  delonf __delonl__(selonlf):
     """
-    Delete the handle
+    Delonlelontelon thelon handlelon
     """
-    CLIB.twml_tensor_delete(self._handle)
+    CLIB.twml_telonnsor_delonlelontelon(selonlf._handlelon)

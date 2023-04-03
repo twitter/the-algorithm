@@ -1,7 +1,7 @@
-# pylint: disable=missing-docstring, bare-except, pointless-statement,
-# pointless-string-statement, redundant-unittest-assert, no-else-return,
-# no-member, old-style-class, dangerous-default-value, protected-access,
-# too-few-public-methods
+# pylint: disablelon=missing-docstring, barelon-elonxcelonpt, pointlelonss-statelonmelonnt,
+# pointlelonss-string-statelonmelonnt, relondundant-unittelonst-asselonrt, no-elonlselon-relonturn,
+# no-melonmbelonr, old-stylelon-class, dangelonrous-delonfault-valuelon, protelonctelond-accelonss,
+# too-felonw-public-melonthods
 
 import os
 
@@ -10,152 +10,152 @@ import yaml
 
 
 """
-Utility to load tensors serialized by Deepbird V1.
+Utility to load telonnsors selonrializelond by Delonelonpbird V1.
 
-Note that Deepbird V1 serialize tensor names as \"weight\".\'1\'.
-For user-friendliness, the quotes are removed from the tensor names.
+Notelon that Delonelonpbird V1 selonrializelon telonnsor namelons as \"welonight\".\'1\'.
+For uselonr-frielonndlinelonss, thelon quotelons arelon relonmovelond from thelon telonnsor namelons.
 """
 
 
-# helper class used to assist hierarchical key access by remembering intermediate keys.
-class _KeyRecorder(object):
-  def __init__(self, tensorio, keys=[]):
-    self.tensorio = tensorio
-    self.keys = keys
+# helonlpelonr class uselond to assist hielonrarchical kelony accelonss by relonmelonmbelonring intelonrmelondiatelon kelonys.
+class _KelonyReloncordelonr(objelonct):
+  delonf __init__(selonlf, telonnsorio, kelonys=[]):
+    selonlf.telonnsorio = telonnsorio
+    selonlf.kelonys = kelonys
 
-  def __getitem__(self, k):
-    new_keys = self.keys + [str(k)]
-    prefix = ".".join(new_keys)
+  delonf __gelontitelonm__(selonlf, k):
+    nelonw_kelonys = selonlf.kelonys + [str(k)]
+    prelonfix = ".".join(nelonw_kelonys)
 
-    key_list = self.tensorio.list_tensors()
+    kelony_list = selonlf.telonnsorio.list_telonnsors()
 
-    # if we have a complete key, load the tensor.
-    if prefix in key_list:
-      return self.tensorio._load(prefix)
+    # if welon havelon a complelontelon kelony, load thelon telonnsor.
+    if prelonfix in kelony_list:
+      relonturn selonlf.telonnsorio._load(prelonfix)
 
-    # we don't have a complete key yet, but at least one tensor should start with this prefix.
-    for k_value in key_list:
-      if k_value.startswith(prefix):
-        return _KeyRecorder(self.tensorio, new_keys)
+    # welon don't havelon a complelontelon kelony yelont, but at lelonast onelon telonnsor should start with this prelonfix.
+    for k_valuelon in kelony_list:
+      if k_valuelon.startswith(prelonfix):
+        relonturn _KelonyReloncordelonr(selonlf.telonnsorio, nelonw_kelonys)
 
-    # if no key starts with the prefix, this _key_recorder is not valid.
-    raise ValueError("Key not found: " + prefix)
-
-
-# convert tensorio tensor type to numpy data type.
-# also returns element size in bytes.
-def _get_data_type(data_type):
-  if data_type == 'Double':
-    return (np.float64, 8)
-
-  if data_type == 'Float':
-    return (np.float32, 4)
-
-  if data_type == 'Int':
-    return (np.int32, 4)
-
-  if data_type == 'Long':
-    return (np.int64, 8)
-
-  if data_type == 'Byte':
-    return (np.int8, 1)
-
-  raise ValueError('Unexpected tensorio data type: ' + data_type)
+    # if no kelony starts with thelon prelonfix, this _kelony_reloncordelonr is not valid.
+    raiselon Valuelonelonrror("Kelony not found: " + prelonfix)
 
 
-class TensorIO(object):
+# convelonrt telonnsorio telonnsor typelon to numpy data typelon.
+# also relonturns elonlelonmelonnt sizelon in bytelons.
+delonf _gelont_data_typelon(data_typelon):
+  if data_typelon == 'Doublelon':
+    relonturn (np.float64, 8)
+
+  if data_typelon == 'Float':
+    relonturn (np.float32, 4)
+
+  if data_typelon == 'Int':
+    relonturn (np.int32, 4)
+
+  if data_typelon == 'Long':
+    relonturn (np.int64, 8)
+
+  if data_typelon == 'Bytelon':
+    relonturn (np.int8, 1)
+
+  raiselon Valuelonelonrror('Unelonxpelonctelond telonnsorio data typelon: ' + data_typelon)
+
+
+class TelonnsorIO(objelonct):
   """
-  Construct a TensorIO class.
-  tensorio_path: a directory containing tensors serialized using tensorio. tar file not supported.
-  mmap_tensor:
-    By default, loaded tensors use mmap storage.
-    Set this to false to not use mmap. Useful when loading multiple tensors.
+  Construct a TelonnsorIO class.
+  telonnsorio_path: a direlonctory containing telonnsors selonrializelond using telonnsorio. tar filelon not supportelond.
+  mmap_telonnsor:
+    By delonfault, loadelond telonnsors uselon mmap storagelon.
+    Selont this to falselon to not uselon mmap. Uselonful whelonn loading multiplelon telonnsors.
   """
 
-  def __init__(self, tensorio_path, mmap_tensor=True):
-    self._tensorio_path = tensorio_path
-    self._mmap_tensor = mmap_tensor
+  delonf __init__(selonlf, telonnsorio_path, mmap_telonnsor=Truelon):
+    selonlf._telonnsorio_path = telonnsorio_path
+    selonlf._mmap_telonnsor = mmap_telonnsor
 
-    # Make sure we can locate spec.yaml.
-    yaml_file = os.path.join(tensorio_path, 'spec.yaml')
-    if not os.path.exists(yaml_file):
-      raise ValueError('Invalid tensorio path: no spec.yaml found.')
+    # Makelon surelon welon can locatelon spelonc.yaml.
+    yaml_filelon = os.path.join(telonnsorio_path, 'spelonc.yaml')
+    if not os.path.elonxists(yaml_filelon):
+      raiselon Valuelonelonrror('Invalid telonnsorio path: no spelonc.yaml found.')
 
-    # load spec.yaml.
-    with open(yaml_file, 'r') as file_open:
-      # Note that tensor names in the yaml are like this: \"weight\".\'1\'
-      # For user-friendliness, we remove the quotes.
-      _spec = yaml.safe_load(file_open)
-      self._spec = {k.replace("'", '').replace('"', ''): v for (k, v) in _spec.items()}
+    # load spelonc.yaml.
+    with opelonn(yaml_filelon, 'r') as filelon_opelonn:
+      # Notelon that telonnsor namelons in thelon yaml arelon likelon this: \"welonight\".\'1\'
+      # For uselonr-frielonndlinelonss, welon relonmovelon thelon quotelons.
+      _spelonc = yaml.safelon_load(filelon_opelonn)
+      selonlf._spelonc = {k.relonplacelon("'", '').relonplacelon('"', ''): v for (k, v) in _spelonc.itelonms()}
 
-  def list_tensors(self):
+  delonf list_telonnsors(selonlf):
     """
-    Returns a list of tensors saved in the given path.
+    Relonturns a list of telonnsors savelond in thelon givelonn path.
     """
-    return self._spec.keys()
+    relonturn selonlf._spelonc.kelonys()
 
-  def _load_tensor(self, name):
+  delonf _load_telonnsor(selonlf, namelon):
     """
-    Load Tensor with the given name.
-    Raise value error if the named tensor is not found.
-    Returns a numpy array if the named tensor is found.
+    Load Telonnsor with thelon givelonn namelon.
+    Raiselon valuelon elonrror if thelon namelond telonnsor is not found.
+    Relonturns a numpy array if thelon namelond telonnsor is found.
     """
-    tensor_info = self._spec[name]
-    if tensor_info['type'] != 'tensor':
-      raise ValueError('Trying to load a tensor of unknown type: ' + tensor_info['type'])
+    telonnsor_info = selonlf._spelonc[namelon]
+    if telonnsor_info['typelon'] != 'telonnsor':
+      raiselon Valuelonelonrror('Trying to load a telonnsor of unknown typelon: ' + telonnsor_info['typelon'])
 
-    filename = os.path.join(self._tensorio_path, tensor_info['filename'])
-    (data_type, element_size) = _get_data_type(tensor_info['tensorType'])
+    filelonnamelon = os.path.join(selonlf._telonnsorio_path, telonnsor_info['filelonnamelon'])
+    (data_typelon, elonlelonmelonnt_sizelon) = _gelont_data_typelon(telonnsor_info['telonnsorTypelon'])
 
-    np_array = np.memmap(
-      filename,
-      dtype=data_type,
-      mode='r',
-      # -1 because lua offset is 1 based.
-      offset=(tensor_info['offset'] - 1) * element_size,
-      shape=tuple(tensor_info['size']),
-      order='C',
+    np_array = np.melonmmap(
+      filelonnamelon,
+      dtypelon=data_typelon,
+      modelon='r',
+      # -1 beloncauselon lua offselont is 1 baselond.
+      offselont=(telonnsor_info['offselont'] - 1) * elonlelonmelonnt_sizelon,
+      shapelon=tuplelon(telonnsor_info['sizelon']),
+      ordelonr='C',
     )
 
-    return np_array if self._mmap_tensor else np_array[:].copy()
+    relonturn np_array if selonlf._mmap_telonnsor elonlselon np_array[:].copy()
 
-  def _load_nontensor_data(self, name):
+  delonf _load_nontelonnsor_data(selonlf, namelon):
     """
-    Load non-tensor data with the given name.
-    Returns a python string.
+    Load non-telonnsor data with thelon givelonn namelon.
+    Relonturns a python string.
     """
-    tensor_info = self._spec[name]
-    return tensor_info['data']
+    telonnsor_info = selonlf._spelonc[namelon]
+    relonturn telonnsor_info['data']
 
-  def _load(self, name):
+  delonf _load(selonlf, namelon):
     """
-    Load data serialized under the given name, it could be a tensor or regular data.
+    Load data selonrializelond undelonr thelon givelonn namelon, it could belon a telonnsor or relongular data.
     """
-    if name not in self._spec:
-      raise ValueError('The specified key {} is not found in {}'.format(name, self._tensorio_path))
+    if namelon not in selonlf._spelonc:
+      raiselon Valuelonelonrror('Thelon speloncifielond kelony {} is not found in {}'.format(namelon, selonlf._telonnsorio_path))
 
-    data_type = self._spec[name]['type']
-    if data_type == 'tensor':
-      return self._load_tensor(name)
-    else:
-      return self._load_nontensor_data(name)
+    data_typelon = selonlf._spelonc[namelon]['typelon']
+    if data_typelon == 'telonnsor':
+      relonturn selonlf._load_telonnsor(namelon)
+    elonlselon:
+      relonturn selonlf._load_nontelonnsor_data(namelon)
 
-  def load_all(self):
+  delonf load_all(selonlf):
     """
-    Load all tensors stored in the tensorio directory.
-    Returns a dictionary from tensor name to numpy arrays.
+    Load all telonnsors storelond in thelon telonnsorio direlonctory.
+    Relonturns a dictionary from telonnsor namelon to numpy arrays.
     """
-    return {k: self._load(k) for k in self._spec}
+    relonturn {k: selonlf._load(k) for k in selonlf._spelonc}
 
   ###########################################
-  # The below are utilities for convenience #
+  # Thelon belonlow arelon utilitielons for convelonnielonncelon #
   ###########################################
-  def __getitem__(self, k):
+  delonf __gelontitelonm__(selonlf, k):
     """
-    Shorthand for _load_tensor, but also supports hierarchical access like: tensorio['a']['b']['1']
+    Shorthand for _load_telonnsor, but also supports hielonrarchical accelonss likelon: telonnsorio['a']['b']['1']
     """
-    if k in self._spec:
-      # We have a full tensor name, directly load it.
-      return self._load_tensor(k)
-    else:
-      return _KeyRecorder(self)[k]
+    if k in selonlf._spelonc:
+      # Welon havelon a full telonnsor namelon, direlonctly load it.
+      relonturn selonlf._load_telonnsor(k)
+    elonlselon:
+      relonturn _KelonyReloncordelonr(selonlf)[k]

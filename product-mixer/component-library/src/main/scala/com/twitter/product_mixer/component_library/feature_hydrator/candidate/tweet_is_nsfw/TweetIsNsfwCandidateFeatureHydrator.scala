@@ -1,109 +1,109 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.candidate.tweet_is_nsfw
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.candidatelon.twelonelont_is_nsfw
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.BulkCandidateFeatureHydrator
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.tweetypie.{TweetyPie => TweetypieStitchClient}
-import com.twitter.tweetypie.{thriftscala => t}
-import com.twitter.util.Return
-import com.twitter.util.Throw
-import com.twitter.util.Try
-import com.twitter.util.logging.Logging
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.BulkCandidatelonFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.twelonelontypielon.{TwelonelontyPielon => TwelonelontypielonStitchClielonnt}
+import com.twittelonr.twelonelontypielon.{thriftscala => t}
+import com.twittelonr.util.Relonturn
+import com.twittelonr.util.Throw
+import com.twittelonr.util.Try
+import com.twittelonr.util.logging.Logging
 
-// The VF NsfwHighPrecisionLabel that powers the NSFW determination here has been deprecated and is no longer written to.
-@deprecated("Prefer VisibilityReason")
-object IsNsfw extends FeatureWithDefaultOnFailure[TweetCandidate, Option[Boolean]] {
+// Thelon VF NsfwHighPreloncisionLabelonl that powelonrs thelon NSFW delontelonrmination helonrelon has belonelonn delonpreloncatelond and is no longelonr writtelonn to.
+@delonpreloncatelond("Prelonfelonr VisibilityRelonason")
+objelonct IsNsfw elonxtelonnds FelonaturelonWithDelonfaultOnFailurelon[TwelonelontCandidatelon, Option[Boolelonan]] {
 
   /**
-   * Generic Logic to evaluate whether a tweet is nsfw
-   * @param hasNsfwHighPrecisionLabel flag for tweetypieTweet nsfwHighPrecision label
-   * @param isNsfwUser flag for tweetypieTweet coreData nsfwUser flag
-   * @param isNsfwAdmin flag for tweetypieTweet coreData nsfwAdmin flag
-   * @return isNsfw to true if any of the three flags is true
+   * Gelonnelonric Logic to elonvaluatelon whelonthelonr a twelonelont is nsfw
+   * @param hasNsfwHighPreloncisionLabelonl flag for twelonelontypielonTwelonelont nsfwHighPreloncision labelonl
+   * @param isNsfwUselonr flag for twelonelontypielonTwelonelont corelonData nsfwUselonr flag
+   * @param isNsfwAdmin flag for twelonelontypielonTwelonelont corelonData nsfwAdmin flag
+   * @relonturn isNsfw to truelon if any of thelon threlonelon flags is truelon
    */
-  def apply(
-    hasNsfwHighPrecisionLabel: Option[Boolean],
-    isNsfwUser: Option[Boolean],
-    isNsfwAdmin: Option[Boolean]
-  ): Boolean = {
-    hasNsfwHighPrecisionLabel
-      .getOrElse(false) || (isNsfwUser.getOrElse(false) || isNsfwAdmin.getOrElse(false))
+  delonf apply(
+    hasNsfwHighPreloncisionLabelonl: Option[Boolelonan],
+    isNsfwUselonr: Option[Boolelonan],
+    isNsfwAdmin: Option[Boolelonan]
+  ): Boolelonan = {
+    hasNsfwHighPreloncisionLabelonl
+      .gelontOrelonlselon(falselon) || (isNsfwUselonr.gelontOrelonlselon(falselon) || isNsfwAdmin.gelontOrelonlselon(falselon))
   }
 
-  override val defaultValue = None
+  ovelonrridelon val delonfaultValuelon = Nonelon
 }
 
-// The VF NsfwHighPrecisionLabel that powers the NSFW determination here has been deprecated and is no longer written to.
-// TODO: Remove after all dependencies have migrated to using TweetCandidateVisibilityReasonFeatureHydrator.
-@deprecated("Prefer TweetCandidateVisibilityReasonFeatureHydrator")
-case class TweetIsNsfwCandidateFeatureHydrator(
-  tweetypieStitchClient: TweetypieStitchClient,
-  tweetVisibilityPolicy: t.TweetVisibilityPolicy)
-    extends BulkCandidateFeatureHydrator[PipelineQuery, BaseTweetCandidate]
+// Thelon VF NsfwHighPreloncisionLabelonl that powelonrs thelon NSFW delontelonrmination helonrelon has belonelonn delonpreloncatelond and is no longelonr writtelonn to.
+// TODO: Relonmovelon aftelonr all delonpelonndelonncielons havelon migratelond to using TwelonelontCandidatelonVisibilityRelonasonFelonaturelonHydrator.
+@delonpreloncatelond("Prelonfelonr TwelonelontCandidatelonVisibilityRelonasonFelonaturelonHydrator")
+caselon class TwelonelontIsNsfwCandidatelonFelonaturelonHydrator(
+  twelonelontypielonStitchClielonnt: TwelonelontypielonStitchClielonnt,
+  twelonelontVisibilityPolicy: t.TwelonelontVisibilityPolicy)
+    elonxtelonnds BulkCandidatelonFelonaturelonHydrator[PipelonlinelonQuelonry, BaselonTwelonelontCandidatelon]
     with Logging {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("TweetIsNsfw")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("TwelonelontIsNsfw")
 
-  override def features: Set[Feature[_, _]] = Set(IsNsfw)
+  ovelonrridelon delonf felonaturelons: Selont[Felonaturelon[_, _]] = Selont(IsNsfw)
 
-  private val NsfwLabelFields: Set[t.TweetInclude] = Set[t.TweetInclude](
-    // Tweet fields containing NSFW related attributes, in addition to what exists in coreData.
-    t.TweetInclude.TweetFieldId(t.Tweet.NsfwHighPrecisionLabelField.id),
-    t.TweetInclude.TweetFieldId(t.Tweet.CoreDataField.id)
+  privatelon val NsfwLabelonlFielonlds: Selont[t.TwelonelontIncludelon] = Selont[t.TwelonelontIncludelon](
+    // Twelonelont fielonlds containing NSFW relonlatelond attributelons, in addition to what elonxists in corelonData.
+    t.TwelonelontIncludelon.TwelonelontFielonldId(t.Twelonelont.NsfwHighPreloncisionLabelonlFielonld.id),
+    t.TwelonelontIncludelon.TwelonelontFielonldId(t.Twelonelont.CorelonDataFielonld.id)
   )
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[BaseTweetCandidate]]
-  ): Stitch[Seq[FeatureMap]] = {
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[BaselonTwelonelontCandidatelon]]
+  ): Stitch[Selonq[FelonaturelonMap]] = {
     Stitch
-      .traverse(candidates.map(_.candidate.id)) { tweetId =>
-        tweetypieStitchClient
-          .getTweetFields(
-            tweetId = tweetId,
-            options = t.GetTweetFieldsOptions(
-              forUserId = query.getOptionalUserId,
-              tweetIncludes = NsfwLabelFields,
-              doNotCache = true,
-              visibilityPolicy = tweetVisibilityPolicy,
-              safetyLevel = None,
+      .travelonrselon(candidatelons.map(_.candidatelon.id)) { twelonelontId =>
+        twelonelontypielonStitchClielonnt
+          .gelontTwelonelontFielonlds(
+            twelonelontId = twelonelontId,
+            options = t.GelontTwelonelontFielonldsOptions(
+              forUselonrId = quelonry.gelontOptionalUselonrId,
+              twelonelontIncludelons = NsfwLabelonlFielonlds,
+              doNotCachelon = truelon,
+              visibilityPolicy = twelonelontVisibilityPolicy,
+              safelontyLelonvelonl = Nonelon,
             )
           ).liftToTry
-      }.map { getTweetFieldsResults: Seq[Try[t.GetTweetFieldsResult]] =>
-        val tweets: Seq[Try[t.Tweet]] = getTweetFieldsResults.map {
-          case Return(t.GetTweetFieldsResult(_, t.TweetFieldsResultState.Found(found), _, _)) =>
-            Return(found.tweet)
-          case Return(t.GetTweetFieldsResult(_, resultState, _, _)) =>
-            Throw(IsNsfwFeatureHydrationFailure(s"Unexpected tweet result state: ${resultState}"))
-          case Throw(e) =>
-            Throw(e)
+      }.map { gelontTwelonelontFielonldsRelonsults: Selonq[Try[t.GelontTwelonelontFielonldsRelonsult]] =>
+        val twelonelonts: Selonq[Try[t.Twelonelont]] = gelontTwelonelontFielonldsRelonsults.map {
+          caselon Relonturn(t.GelontTwelonelontFielonldsRelonsult(_, t.TwelonelontFielonldsRelonsultStatelon.Found(found), _, _)) =>
+            Relonturn(found.twelonelont)
+          caselon Relonturn(t.GelontTwelonelontFielonldsRelonsult(_, relonsultStatelon, _, _)) =>
+            Throw(IsNsfwFelonaturelonHydrationFailurelon(s"Unelonxpelonctelond twelonelont relonsult statelon: ${relonsultStatelon}"))
+          caselon Throw(elon) =>
+            Throw(elon)
         }
 
-        candidates.zip(tweets).map {
-          case (candidateWithFeatures, tweetTry) =>
-            val isNsfwFeature = tweetTry.map { tweet =>
+        candidatelons.zip(twelonelonts).map {
+          caselon (candidatelonWithFelonaturelons, twelonelontTry) =>
+            val isNsfwFelonaturelon = twelonelontTry.map { twelonelont =>
               IsNsfw(
-                hasNsfwHighPrecisionLabel = Some(tweet.nsfwHighPrecisionLabel.isDefined),
-                isNsfwUser = tweet.coreData.map(_.nsfwUser),
-                isNsfwAdmin = tweet.coreData.map(_.nsfwAdmin)
+                hasNsfwHighPreloncisionLabelonl = Somelon(twelonelont.nsfwHighPreloncisionLabelonl.isDelonfinelond),
+                isNsfwUselonr = twelonelont.corelonData.map(_.nsfwUselonr),
+                isNsfwAdmin = twelonelont.corelonData.map(_.nsfwAdmin)
               )
             }
 
-            FeatureMapBuilder()
-              .add(IsNsfw, isNsfwFeature.map(Some(_)))
+            FelonaturelonMapBuildelonr()
+              .add(IsNsfw, isNsfwFelonaturelon.map(Somelon(_)))
               .build()
         }
       }
   }
 }
 
-case class IsNsfwFeatureHydrationFailure(message: String)
-    extends Exception(s"IsNsfwFeatureHydrationFailure(${message})")
+caselon class IsNsfwFelonaturelonHydrationFailurelon(melonssagelon: String)
+    elonxtelonnds elonxcelonption(s"IsNsfwFelonaturelonHydrationFailurelon(${melonssagelon})")

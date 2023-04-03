@@ -1,8 +1,8 @@
-package com.twitter.home_mixer.model.request
+packagelon com.twittelonr.homelon_mixelonr.modelonl.relonquelonst
 
 /**
- * [[HasListId]] enables shared components to access the list id shared by all list timeline products.
+ * [[HasListId]] elonnablelons sharelond componelonnts to accelonss thelon list id sharelond by all list timelonlinelon products.
  */
 trait HasListId {
-  def listId: Long
+  delonf listId: Long
 }

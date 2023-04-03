@@ -1,43 +1,43 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrelonnt.atomic.AtomicRelonfelonrelonncelon;
 
 import scala.Option;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.finagle.context.Contexts;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.root.SearchPayloadSizeFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.finaglelon.contelonxt.Contelonxts;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.root.SelonarchPayloadSizelonFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
 
 /**
- * A filter that sets the clientId in the local context, to be usd later by SearchPayloadSizeFilter.
+ * A filtelonr that selonts thelon clielonntId in thelon local contelonxt, to belon usd latelonr by SelonarchPayloadSizelonFiltelonr.
  */
-public class SearchPayloadSizeLocalContextFilter
-    extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  private static final SearchCounter CLIENT_ID_CONTEXT_KEY_NOT_SET_COUNTER = SearchCounter.export(
-      "search_payload_size_local_context_filter_client_id_context_key_not_set");
+public class SelonarchPayloadSizelonLocalContelonxtFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  privatelon static final SelonarchCountelonr CLIelonNT_ID_CONTelonXT_KelonY_NOT_SelonT_COUNTelonR = SelonarchCountelonr.elonxport(
+      "selonarch_payload_sizelon_local_contelonxt_filtelonr_clielonnt_id_contelonxt_kelony_not_selont");
 
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    // In production, the SearchPayloadSizeFilter.CLIENT_ID_CONTEXT_KEY should always be set
-    // (by ThriftServer). However, it's not set in tests, because tests do not start a ThriftServer.
-    Option<AtomicReference<String>> clientIdOption =
-        Contexts.local().get(SearchPayloadSizeFilter.CLIENT_ID_CONTEXT_KEY);
-    if (clientIdOption.isDefined()) {
-      AtomicReference<String> clientIdReference = clientIdOption.get();
-      Preconditions.checkArgument(clientIdReference.get() == null);
-      clientIdReference.set(request.getClientId());
-    } else {
-      CLIENT_ID_CONTEXT_KEY_NOT_SET_COUNTER.increment();
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
+    // In production, thelon SelonarchPayloadSizelonFiltelonr.CLIelonNT_ID_CONTelonXT_KelonY should always belon selont
+    // (by ThriftSelonrvelonr). Howelonvelonr, it's not selont in telonsts, beloncauselon telonsts do not start a ThriftSelonrvelonr.
+    Option<AtomicRelonfelonrelonncelon<String>> clielonntIdOption =
+        Contelonxts.local().gelont(SelonarchPayloadSizelonFiltelonr.CLIelonNT_ID_CONTelonXT_KelonY);
+    if (clielonntIdOption.isDelonfinelond()) {
+      AtomicRelonfelonrelonncelon<String> clielonntIdRelonfelonrelonncelon = clielonntIdOption.gelont();
+      Prelonconditions.chelonckArgumelonnt(clielonntIdRelonfelonrelonncelon.gelont() == null);
+      clielonntIdRelonfelonrelonncelon.selont(relonquelonst.gelontClielonntId());
+    } elonlselon {
+      CLIelonNT_ID_CONTelonXT_KelonY_NOT_SelonT_COUNTelonR.increlonmelonnt();
     }
 
-    return service.apply(request);
+    relonturn selonrvicelon.apply(relonquelonst);
   }
 }

@@ -1,35 +1,35 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PromotelondMelontadata
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PromotedMetadataMarshaller @Inject() (
-  disclosureTypeMarshaller: DisclosureTypeMarshaller,
-  adMetadataContainerMarshaller: AdMetadataContainerMarshaller,
-  clickTrackingInfoMarshaller: ClickTrackingInfoMarshaller) {
+@Singlelonton
+class PromotelondMelontadataMarshallelonr @Injelonct() (
+  disclosurelonTypelonMarshallelonr: DisclosurelonTypelonMarshallelonr,
+  adMelontadataContainelonrMarshallelonr: AdMelontadataContainelonrMarshallelonr,
+  clickTrackingInfoMarshallelonr: ClickTrackingInfoMarshallelonr) {
 
-  /** See comments on [[com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.PromotedMetadata]]
-   * regarding impressionId and impressionString
+  /** Selonelon commelonnts on [[com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.PromotelondMelontadata]]
+   * relongarding imprelonssionId and imprelonssionString
    *
-   * TL;DR the domain model only has impressionString (the newer version) an this marshaller sets both
-   * impressionId (the older) and impressionString based on it for compatibility.
+   * TL;DR thelon domain modelonl only has imprelonssionString (thelon nelonwelonr velonrsion) an this marshallelonr selonts both
+   * imprelonssionId (thelon oldelonr) and imprelonssionString baselond on it for compatibility.
    * */
-  def apply(promotedMetadata: PromotedMetadata): urt.PromotedMetadata =
-    urt.PromotedMetadata(
-      advertiserId = promotedMetadata.advertiserId,
-      impressionId = promotedMetadata.impressionString,
-      disclosureType = promotedMetadata.disclosureType.map(disclosureTypeMarshaller(_)),
-      experimentValues = promotedMetadata.experimentValues,
-      promotedTrendId = promotedMetadata.promotedTrendId,
-      promotedTrendName = promotedMetadata.promotedTrendName,
-      promotedTrendQueryTerm = promotedMetadata.promotedTrendQueryTerm,
-      adMetadataContainer =
-        promotedMetadata.adMetadataContainer.map(adMetadataContainerMarshaller(_)),
-      promotedTrendDescription = promotedMetadata.promotedTrendDescription,
-      impressionString = promotedMetadata.impressionString,
-      clickTrackingInfo = promotedMetadata.clickTrackingInfo.map(clickTrackingInfoMarshaller(_))
+  delonf apply(promotelondMelontadata: PromotelondMelontadata): urt.PromotelondMelontadata =
+    urt.PromotelondMelontadata(
+      advelonrtiselonrId = promotelondMelontadata.advelonrtiselonrId,
+      imprelonssionId = promotelondMelontadata.imprelonssionString,
+      disclosurelonTypelon = promotelondMelontadata.disclosurelonTypelon.map(disclosurelonTypelonMarshallelonr(_)),
+      elonxpelonrimelonntValuelons = promotelondMelontadata.elonxpelonrimelonntValuelons,
+      promotelondTrelonndId = promotelondMelontadata.promotelondTrelonndId,
+      promotelondTrelonndNamelon = promotelondMelontadata.promotelondTrelonndNamelon,
+      promotelondTrelonndQuelonryTelonrm = promotelondMelontadata.promotelondTrelonndQuelonryTelonrm,
+      adMelontadataContainelonr =
+        promotelondMelontadata.adMelontadataContainelonr.map(adMelontadataContainelonrMarshallelonr(_)),
+      promotelondTrelonndDelonscription = promotelondMelontadata.promotelondTrelonndDelonscription,
+      imprelonssionString = promotelondMelontadata.imprelonssionString,
+      clickTrackingInfo = promotelondMelontadata.clickTrackingInfo.map(clickTrackingInfoMarshallelonr(_))
     )
 }

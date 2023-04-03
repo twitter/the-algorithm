@@ -1,71 +1,71 @@
-package com.twitter.cr_mixer.similarity_engine
+packagelon com.twittelonr.cr_mixelonr.similarity_elonnginelon
 
-import com.twitter.cr_mixer.model.SimilarityEngineInfo
-import com.twitter.simclusters_v2.common.TweetId
-import com.twitter.cr_mixer.model.TweetWithScore
-import com.twitter.cr_mixer.thriftscala.SimilarityEngineType
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.storehaus.ReadableStore
-import com.twitter.timelines.configapi
-import com.twitter.util.Future
-import javax.inject.Singleton
+import com.twittelonr.cr_mixelonr.modelonl.SimilarityelonnginelonInfo
+import com.twittelonr.simclustelonrs_v2.common.TwelonelontId
+import com.twittelonr.cr_mixelonr.modelonl.TwelonelontWithScorelon
+import com.twittelonr.cr_mixelonr.thriftscala.SimilarityelonnginelonTypelon
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.timelonlinelons.configapi
+import com.twittelonr.util.Futurelon
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class TwhinCollabFilterSimilarityEngine(
-  twhinCandidatesStratoStore: ReadableStore[Long, Seq[TweetId]],
-  statsReceiver: StatsReceiver)
-    extends ReadableStore[
-      TwhinCollabFilterSimilarityEngine.Query,
-      Seq[TweetWithScore]
+@Singlelonton
+caselon class TwhinCollabFiltelonrSimilarityelonnginelon(
+  twhinCandidatelonsStratoStorelon: RelonadablelonStorelon[Long, Selonq[TwelonelontId]],
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonadablelonStorelon[
+      TwhinCollabFiltelonrSimilarityelonnginelon.Quelonry,
+      Selonq[TwelonelontWithScorelon]
     ] {
 
-  import TwhinCollabFilterSimilarityEngine._
-  override def get(
-    query: TwhinCollabFilterSimilarityEngine.Query
-  ): Future[Option[Seq[TweetWithScore]]] = {
+  import TwhinCollabFiltelonrSimilarityelonnginelon._
+  ovelonrridelon delonf gelont(
+    quelonry: TwhinCollabFiltelonrSimilarityelonnginelon.Quelonry
+  ): Futurelon[Option[Selonq[TwelonelontWithScorelon]]] = {
 
-    query.sourceId match {
-      case InternalId.UserId(userId) =>
-        twhinCandidatesStratoStore.get(userId).map {
+    quelonry.sourcelonId match {
+      caselon IntelonrnalId.UselonrId(uselonrId) =>
+        twhinCandidatelonsStratoStorelon.gelont(uselonrId).map {
           _.map {
-            _.map { tweetId => TweetWithScore(tweetId, defaultScore) }
+            _.map { twelonelontId => TwelonelontWithScorelon(twelonelontId, delonfaultScorelon) }
           }
         }
-      case _ =>
-        Future.None
+      caselon _ =>
+        Futurelon.Nonelon
     }
   }
 }
 
-object TwhinCollabFilterSimilarityEngine {
+objelonct TwhinCollabFiltelonrSimilarityelonnginelon {
 
-  val defaultScore: Double = 1.0
+  val delonfaultScorelon: Doublelon = 1.0
 
-  case class TwhinCollabFilterView(clusterVersion: String)
+  caselon class TwhinCollabFiltelonrVielonw(clustelonrVelonrsion: String)
 
-  case class Query(
-    sourceId: InternalId,
+  caselon class Quelonry(
+    sourcelonId: IntelonrnalId,
   )
 
-  def toSimilarityEngineInfo(
-    query: LookupEngineQuery[Query],
-    score: Double
-  ): SimilarityEngineInfo = {
-    SimilarityEngineInfo(
-      similarityEngineType = SimilarityEngineType.TwhinCollabFilter,
-      modelId = Some(query.lookupKey),
-      score = Some(score))
+  delonf toSimilarityelonnginelonInfo(
+    quelonry: LookupelonnginelonQuelonry[Quelonry],
+    scorelon: Doublelon
+  ): SimilarityelonnginelonInfo = {
+    SimilarityelonnginelonInfo(
+      similarityelonnginelonTypelon = SimilarityelonnginelonTypelon.TwhinCollabFiltelonr,
+      modelonlId = Somelon(quelonry.lookupKelony),
+      scorelon = Somelon(scorelon))
   }
 
-  def fromParams(
-    sourceId: InternalId,
-    modelId: String,
+  delonf fromParams(
+    sourcelonId: IntelonrnalId,
+    modelonlId: String,
     params: configapi.Params,
-  ): LookupEngineQuery[Query] = {
-    LookupEngineQuery(
-      Query(sourceId = sourceId),
-      modelId,
+  ): LookupelonnginelonQuelonry[Quelonry] = {
+    LookupelonnginelonQuelonry(
+      Quelonry(sourcelonId = sourcelonId),
+      modelonlId,
       params
     )
   }

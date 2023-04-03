@@ -1,63 +1,63 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import java.util.Datelon;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.util.date.DateUtil;
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.util.datelon.DatelonUtil;
+import com.twittelonr.selonarch.elonarlybird.config.SelonrvingRangelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public class FullArchiveServingRangeProvider implements ServingRangeProvider {
+public class FullArchivelonSelonrvingRangelonProvidelonr implelonmelonnts SelonrvingRangelonProvidelonr {
 
-  public static final Date FULL_ARCHIVE_START_DATE = DateUtil.toDate(2006, 3, 21);
-  private static final int DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO = 48;
+  public static final Datelon FULL_ARCHIVelon_START_DATelon = DatelonUtil.toDatelon(2006, 3, 21);
+  privatelon static final int DelonFAULT_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO = 48;
 
-  private final SearchDecider decider;
-  private final String deciderKey;
+  privatelon final SelonarchDeloncidelonr deloncidelonr;
+  privatelon final String deloncidelonrKelony;
 
-  public FullArchiveServingRangeProvider(
-      SearchDecider decider, String deciderKey) {
-    this.decider = decider;
-    this.deciderKey = deciderKey;
+  public FullArchivelonSelonrvingRangelonProvidelonr(
+      SelonarchDeloncidelonr deloncidelonr, String deloncidelonrKelony) {
+    this.deloncidelonr = deloncidelonr;
+    this.deloncidelonrKelony = deloncidelonrKelony;
   }
 
-  @Override
-  public ServingRange getServingRange(
-      final EarlybirdRequestContext requestContext, boolean useBoundaryOverride) {
-    return new ServingRange() {
-      @Override
-      public long getServingRangeSinceId() {
-        // we use 1 instead of 0, because the since_id operator is inclusive in earlybirds.
-        return 1L;
+  @Ovelonrridelon
+  public SelonrvingRangelon gelontSelonrvingRangelon(
+      final elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt, boolelonan uselonBoundaryOvelonrridelon) {
+    relonturn nelonw SelonrvingRangelon() {
+      @Ovelonrridelon
+      public long gelontSelonrvingRangelonSincelonId() {
+        // welon uselon 1 instelonad of 0, beloncauselon thelon sincelon_id opelonrator is inclusivelon in elonarlybirds.
+        relonturn 1L;
       }
 
-      @Override
-      public long getServingRangeMaxId() {
-        long servingRangeEndMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
-                ? decider.getAvailability(deciderKey)
-                : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
+      @Ovelonrridelon
+      public long gelontSelonrvingRangelonMaxId() {
+        long selonrvingRangelonelonndMillis = TimelonUnit.HOURS.toMillis(
+            (deloncidelonr.felonaturelonelonxists(deloncidelonrKelony))
+                ? deloncidelonr.gelontAvailability(deloncidelonrKelony)
+                : DelonFAULT_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
-        return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
+        long boundaryTimelon = relonquelonstContelonxt.gelontCrelonatelondTimelonMillis() - selonrvingRangelonelonndMillis;
+        relonturn SnowflakelonIdParselonr.gelonnelonratelonValidStatusId(boundaryTimelon, 0);
       }
 
-      @Override
-      public long getServingRangeSinceTimeSecondsFromEpoch() {
-        return FULL_ARCHIVE_START_DATE.getTime() / 1000;
+      @Ovelonrridelon
+      public long gelontSelonrvingRangelonSincelonTimelonSeloncondsFromelonpoch() {
+        relonturn FULL_ARCHIVelon_START_DATelon.gelontTimelon() / 1000;
       }
 
-      @Override
-      public long getServingRangeUntilTimeSecondsFromEpoch() {
-        long servingRangeEndMillis = TimeUnit.HOURS.toMillis(
-            (decider.featureExists(deciderKey))
-                ? decider.getAvailability(deciderKey)
-                : DEFAULT_SERVING_RANGE_BOUNDARY_HOURS_AGO);
+      @Ovelonrridelon
+      public long gelontSelonrvingRangelonUntilTimelonSeloncondsFromelonpoch() {
+        long selonrvingRangelonelonndMillis = TimelonUnit.HOURS.toMillis(
+            (deloncidelonr.felonaturelonelonxists(deloncidelonrKelony))
+                ? deloncidelonr.gelontAvailability(deloncidelonrKelony)
+                : DelonFAULT_SelonRVING_RANGelon_BOUNDARY_HOURS_AGO);
 
-        long boundaryTime = requestContext.getCreatedTimeMillis() - servingRangeEndMillis;
-        return boundaryTime / 1000;
+        long boundaryTimelon = relonquelonstContelonxt.gelontCrelonatelondTimelonMillis() - selonrvingRangelonelonndMillis;
+        relonturn boundaryTimelon / 1000;
       }
     };
   }

@@ -1,33 +1,33 @@
-package com.twitter.product_mixer.component_library.scorer.tensorbuilder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.telonnsorbuildelonr
 
-import com.twitter.ml.api.thriftscala.FloatTensor
-import inference.GrpcService.ModelInferRequest.InferInputTensor
+import com.twittelonr.ml.api.thriftscala.FloatTelonnsor
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst.InfelonrInputTelonnsor
 
-case object FloatTensorInferInputTensorBuilder extends InferInputTensorBuilder[FloatTensor] {
+caselon objelonct FloatTelonnsorInfelonrInputTelonnsorBuildelonr elonxtelonnds InfelonrInputTelonnsorBuildelonr[FloatTelonnsor] {
 
-  private[tensorbuilder] def extractTensorShape(featureValues: Seq[FloatTensor]): Seq[Int] = {
-    val headFloatTensor = featureValues.head
-    if (headFloatTensor.shape.isEmpty) {
-      Seq(
-        featureValues.size,
-        featureValues.head.floats.size
+  privatelon[telonnsorbuildelonr] delonf elonxtractTelonnsorShapelon(felonaturelonValuelons: Selonq[FloatTelonnsor]): Selonq[Int] = {
+    val helonadFloatTelonnsor = felonaturelonValuelons.helonad
+    if (helonadFloatTelonnsor.shapelon.iselonmpty) {
+      Selonq(
+        felonaturelonValuelons.sizelon,
+        felonaturelonValuelons.helonad.floats.sizelon
       )
-    } else {
-      Seq(featureValues.size) ++ headFloatTensor.shape.get.map(_.toInt)
+    } elonlselon {
+      Selonq(felonaturelonValuelons.sizelon) ++ helonadFloatTelonnsor.shapelon.gelont.map(_.toInt)
     }
   }
 
-  def apply(
-    featureName: String,
-    featureValues: Seq[FloatTensor]
-  ): Seq[InferInputTensor] = {
-    if (featureValues.isEmpty) throw new EmptyFloatTensorException(featureName)
-    val tensorShape = extractTensorShape(featureValues)
-    val floatValues = featureValues.flatMap { featureValue =>
-      featureValue.floats.map(_.toFloat)
+  delonf apply(
+    felonaturelonNamelon: String,
+    felonaturelonValuelons: Selonq[FloatTelonnsor]
+  ): Selonq[InfelonrInputTelonnsor] = {
+    if (felonaturelonValuelons.iselonmpty) throw nelonw elonmptyFloatTelonnsorelonxcelonption(felonaturelonNamelon)
+    val telonnsorShapelon = elonxtractTelonnsorShapelon(felonaturelonValuelons)
+    val floatValuelons = felonaturelonValuelons.flatMap { felonaturelonValuelon =>
+      felonaturelonValuelon.floats.map(_.toFloat)
     }
-    InferInputTensorBuilder.buildFloat32InferInputTensor(featureName, floatValues, tensorShape)
+    InfelonrInputTelonnsorBuildelonr.buildFloat32InfelonrInputTelonnsor(felonaturelonNamelon, floatValuelons, telonnsorShapelon)
   }
 }
-class EmptyFloatTensorException(featureName: String)
-    extends RuntimeException(s"FloatTensor in feature $featureName is empty!")
+class elonmptyFloatTelonnsorelonxcelonption(felonaturelonNamelon: String)
+    elonxtelonnds Runtimelonelonxcelonption(s"FloatTelonnsor in felonaturelon $felonaturelonNamelon is elonmpty!")

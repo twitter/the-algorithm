@@ -1,30 +1,30 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.event
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.elonvelonnt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ClientEventInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.FeedbackActionInfo
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ImageVariant
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Url
-import com.twitter.product_mixer.core.model.marshalling.response.urt.EntryNamespace
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineItem
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ClielonntelonvelonntInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.FelonelondbackActionInfo
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ImagelonVariant
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Url
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.elonntryNamelonspacelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonItelonm
 
-object EventSummaryItem {
-  val EventSummaryItemEntryNamespace = EntryNamespace("eventsummary")
+objelonct elonvelonntSummaryItelonm {
+  val elonvelonntSummaryItelonmelonntryNamelonspacelon = elonntryNamelonspacelon("elonvelonntsummary")
 }
 
-case class EventSummaryItem(
-  override val id: Long,
-  override val sortIndex: Option[Long],
-  override val clientEventInfo: Option[ClientEventInfo],
-  override val feedbackActionInfo: Option[FeedbackActionInfo],
-  title: String,
-  displayType: EventSummaryDisplayType,
+caselon class elonvelonntSummaryItelonm(
+  ovelonrridelon val id: Long,
+  ovelonrridelon val sortIndelonx: Option[Long],
+  ovelonrridelon val clielonntelonvelonntInfo: Option[ClielonntelonvelonntInfo],
+  ovelonrridelon val felonelondbackActionInfo: Option[FelonelondbackActionInfo],
+  titlelon: String,
+  displayTypelon: elonvelonntSummaryDisplayTypelon,
   url: Url,
-  image: Option[ImageVariant],
-  timeString: Option[String])
-    extends TimelineItem {
-  override val entryNamespace: EntryNamespace =
-    EventSummaryItem.EventSummaryItemEntryNamespace
+  imagelon: Option[ImagelonVariant],
+  timelonString: Option[String])
+    elonxtelonnds TimelonlinelonItelonm {
+  ovelonrridelon val elonntryNamelonspacelon: elonntryNamelonspacelon =
+    elonvelonntSummaryItelonm.elonvelonntSummaryItelonmelonntryNamelonspacelon
 
-  override def withSortIndex(sortIndex: Long): TimelineEntry = copy(sortIndex = Some(sortIndex))
+  ovelonrridelon delonf withSortIndelonx(sortIndelonx: Long): Timelonlinelonelonntry = copy(sortIndelonx = Somelon(sortIndelonx))
 }

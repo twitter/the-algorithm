@@ -1,149 +1,149 @@
-package com.twitter.cr_mixer.module
+packagelon com.twittelonr.cr_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.bijection.Injection
-import com.twitter.bijection.scrooge.CompactScalaCodec
-import com.twitter.cr_mixer.model.ModuleNames
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.inject.TwitterModule
-import com.twitter.simclusters_v2.thriftscala.CandidateTweetsList
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.Apollo
-import com.twitter.storehaus_internal.manhattan.ManhattanRO
-import com.twitter.storehaus_internal.manhattan.ManhattanROConfig
-import com.twitter.storehaus_internal.util.ApplicationID
-import com.twitter.storehaus_internal.util.DatasetName
-import com.twitter.storehaus_internal.util.HDFSPath
-import javax.inject.Named
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.bijelonction.scroogelon.CompactScalaCodelonc
+import com.twittelonr.cr_mixelonr.modelonl.ModulelonNamelons
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.CandidatelonTwelonelontsList
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.Apollo
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanRO
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanROConfig
+import com.twittelonr.storelonhaus_intelonrnal.util.ApplicationID
+import com.twittelonr.storelonhaus_intelonrnal.util.DataselontNamelon
+import com.twittelonr.storelonhaus_intelonrnal.util.HDFSPath
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object OfflineCandidateStoreModule extends TwitterModule {
-  type UserId = Long
-  implicit val tweetCandidatesInjection: Injection[CandidateTweetsList, Array[Byte]] =
-    CompactScalaCodec(CandidateTweetsList)
+objelonct OfflinelonCandidatelonStorelonModulelon elonxtelonnds TwittelonrModulelon {
+  typelon UselonrId = Long
+  implicit val twelonelontCandidatelonsInjelonction: Injelonction[CandidatelonTwelonelontsList, Array[Bytelon]] =
+    CompactScalaCodelonc(CandidatelonTwelonelontsList)
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.OfflineTweet2020CandidateStore)
-  def offlineTweet2020CandidateMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[UserId, CandidateTweetsList] = {
-    buildOfflineCandidateStore(
-      serviceIdentifier,
-      datasetName = "offline_tweet_recommendations_from_interestedin_2020"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.OfflinelonTwelonelont2020CandidatelonStorelon)
+  delonf offlinelonTwelonelont2020CandidatelonMhStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[UselonrId, CandidatelonTwelonelontsList] = {
+    buildOfflinelonCandidatelonStorelon(
+      selonrvicelonIdelonntifielonr,
+      dataselontNamelon = "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelondin_2020"
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.OfflineTweet2020Hl0El15CandidateStore)
-  def offlineTweet2020Hl0El15CandidateMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[UserId, CandidateTweetsList] = {
-    buildOfflineCandidateStore(
-      serviceIdentifier,
-      datasetName = "offline_tweet_recommendations_from_interestedin_2020_hl_0_el_15"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.OfflinelonTwelonelont2020Hl0elonl15CandidatelonStorelon)
+  delonf offlinelonTwelonelont2020Hl0elonl15CandidatelonMhStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[UselonrId, CandidatelonTwelonelontsList] = {
+    buildOfflinelonCandidatelonStorelon(
+      selonrvicelonIdelonntifielonr,
+      dataselontNamelon = "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelondin_2020_hl_0_elonl_15"
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.OfflineTweet2020Hl2El15CandidateStore)
-  def offlineTweet2020Hl2El15CandidateMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[UserId, CandidateTweetsList] = {
-    buildOfflineCandidateStore(
-      serviceIdentifier,
-      datasetName = "offline_tweet_recommendations_from_interestedin_2020_hl_2_el_15"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.OfflinelonTwelonelont2020Hl2elonl15CandidatelonStorelon)
+  delonf offlinelonTwelonelont2020Hl2elonl15CandidatelonMhStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[UselonrId, CandidatelonTwelonelontsList] = {
+    buildOfflinelonCandidatelonStorelon(
+      selonrvicelonIdelonntifielonr,
+      dataselontNamelon = "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelondin_2020_hl_2_elonl_15"
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.OfflineTweet2020Hl2El50CandidateStore)
-  def offlineTweet2020Hl2El50CandidateMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[UserId, CandidateTweetsList] = {
-    buildOfflineCandidateStore(
-      serviceIdentifier,
-      datasetName = "offline_tweet_recommendations_from_interestedin_2020_hl_2_el_50"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.OfflinelonTwelonelont2020Hl2elonl50CandidatelonStorelon)
+  delonf offlinelonTwelonelont2020Hl2elonl50CandidatelonMhStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[UselonrId, CandidatelonTwelonelontsList] = {
+    buildOfflinelonCandidatelonStorelon(
+      selonrvicelonIdelonntifielonr,
+      dataselontNamelon = "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelondin_2020_hl_2_elonl_50"
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.OfflineTweet2020Hl8El50CandidateStore)
-  def offlineTweet2020Hl8El50CandidateMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[UserId, CandidateTweetsList] = {
-    buildOfflineCandidateStore(
-      serviceIdentifier,
-      datasetName = "offline_tweet_recommendations_from_interestedin_2020_hl_8_el_50"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.OfflinelonTwelonelont2020Hl8elonl50CandidatelonStorelon)
+  delonf offlinelonTwelonelont2020Hl8elonl50CandidatelonMhStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[UselonrId, CandidatelonTwelonelontsList] = {
+    buildOfflinelonCandidatelonStorelon(
+      selonrvicelonIdelonntifielonr,
+      dataselontNamelon = "offlinelon_twelonelont_reloncommelonndations_from_intelonrelonstelondin_2020_hl_8_elonl_50"
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.OfflineTweetMTSCandidateStore)
-  def offlineTweetMTSCandidateMhStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[UserId, CandidateTweetsList] = {
-    buildOfflineCandidateStore(
-      serviceIdentifier,
-      datasetName = "offline_tweet_recommendations_from_mts_consumer_embeddings"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.OfflinelonTwelonelontMTSCandidatelonStorelon)
+  delonf offlinelonTwelonelontMTSCandidatelonMhStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[UselonrId, CandidatelonTwelonelontsList] = {
+    buildOfflinelonCandidatelonStorelon(
+      selonrvicelonIdelonntifielonr,
+      dataselontNamelon = "offlinelon_twelonelont_reloncommelonndations_from_mts_consumelonr_elonmbelonddings"
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.OfflineFavDecayedSumCandidateStore)
-  def offlineFavDecayedSumCandidateStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[UserId, CandidateTweetsList] = {
-    buildOfflineCandidateStore(
-      serviceIdentifier,
-      datasetName = "offline_tweet_recommendations_from_decayed_sum"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.OfflinelonFavDeloncayelondSumCandidatelonStorelon)
+  delonf offlinelonFavDeloncayelondSumCandidatelonStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[UselonrId, CandidatelonTwelonelontsList] = {
+    buildOfflinelonCandidatelonStorelon(
+      selonrvicelonIdelonntifielonr,
+      dataselontNamelon = "offlinelon_twelonelont_reloncommelonndations_from_deloncayelond_sum"
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.OfflineFtrAt5Pop1000RankDecay11CandidateStore)
-  def offlineFtrAt5Pop1000RankDecay11CandidateStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[UserId, CandidateTweetsList] = {
-    buildOfflineCandidateStore(
-      serviceIdentifier,
-      datasetName = "offline_tweet_recommendations_from_ftrat5_pop1000_rank_decay_1_1"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.OfflinelonFtrAt5Pop1000RankDeloncay11CandidatelonStorelon)
+  delonf offlinelonFtrAt5Pop1000RankDeloncay11CandidatelonStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[UselonrId, CandidatelonTwelonelontsList] = {
+    buildOfflinelonCandidatelonStorelon(
+      selonrvicelonIdelonntifielonr,
+      dataselontNamelon = "offlinelon_twelonelont_reloncommelonndations_from_ftrat5_pop1000_rank_deloncay_1_1"
     )
   }
 
-  @Provides
-  @Singleton
-  @Named(ModuleNames.OfflineFtrAt5Pop10000RankDecay11CandidateStore)
-  def offlineFtrAt5Pop10000RankDecay11CandidateStore(
-    serviceIdentifier: ServiceIdentifier
-  ): ReadableStore[UserId, CandidateTweetsList] = {
-    buildOfflineCandidateStore(
-      serviceIdentifier,
-      datasetName = "offline_tweet_recommendations_from_ftrat5_pop10000_rank_decay_1_1"
+  @Providelons
+  @Singlelonton
+  @Namelond(ModulelonNamelons.OfflinelonFtrAt5Pop10000RankDeloncay11CandidatelonStorelon)
+  delonf offlinelonFtrAt5Pop10000RankDeloncay11CandidatelonStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr
+  ): RelonadablelonStorelon[UselonrId, CandidatelonTwelonelontsList] = {
+    buildOfflinelonCandidatelonStorelon(
+      selonrvicelonIdelonntifielonr,
+      dataselontNamelon = "offlinelon_twelonelont_reloncommelonndations_from_ftrat5_pop10000_rank_deloncay_1_1"
     )
   }
 
-  private def buildOfflineCandidateStore(
-    serviceIdentifier: ServiceIdentifier,
-    datasetName: String
-  ): ReadableStore[UserId, CandidateTweetsList] = {
+  privatelon delonf buildOfflinelonCandidatelonStorelon(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    dataselontNamelon: String
+  ): RelonadablelonStorelon[UselonrId, CandidatelonTwelonelontsList] = {
     ManhattanRO
-      .getReadableStoreWithMtls[Long, CandidateTweetsList](
+      .gelontRelonadablelonStorelonWithMtls[Long, CandidatelonTwelonelontsList](
         ManhattanROConfig(
-          HDFSPath(""), // not needed
-          ApplicationID("multi_type_simclusters"),
-          DatasetName(datasetName),
+          HDFSPath(""), // not nelonelondelond
+          ApplicationID("multi_typelon_simclustelonrs"),
+          DataselontNamelon(dataselontNamelon),
           Apollo
         ),
-        ManhattanKVClientMtlsParams(serviceIdentifier)
+        ManhattanKVClielonntMtlsParams(selonrvicelonIdelonntifielonr)
       )
   }
 

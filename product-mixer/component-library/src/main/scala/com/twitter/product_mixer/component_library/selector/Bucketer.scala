@@ -1,20 +1,20 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.core.model.common.identifier.CandidatePipelineIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
 
 /**
- * Given a [[CandidateWithDetails]] return the corresponding [[Bucket]]
- * it should be associated with when used in a `pattern` or `ratio`
- * in [[InsertAppendPatternResults]] or [[InsertAppendRatioResults]]
+ * Givelonn a [[CandidatelonWithDelontails]] relonturn thelon correlonsponding [[Buckelont]]
+ * it should belon associatelond with whelonn uselond in a `pattelonrn` or `ratio`
+ * in [[InselonrtAppelonndPattelonrnRelonsults]] or [[InselonrtAppelonndRatioRelonsults]]
  */
-trait Bucketer[Bucket] {
-  def apply(candidateWithDetails: CandidateWithDetails): Bucket
+trait Buckelontelonr[Buckelont] {
+  delonf apply(candidatelonWithDelontails: CandidatelonWithDelontails): Buckelont
 }
 
-object Bucketer {
+objelonct Buckelontelonr {
 
-  /** A [[Bucketer]] that buckets by [[CandidateWithDetails.source]] */
-  val ByCandidateSource: Bucketer[CandidatePipelineIdentifier] =
-    (candidateWithDetails: CandidateWithDetails) => candidateWithDetails.source
+  /** A [[Buckelontelonr]] that buckelonts by [[CandidatelonWithDelontails.sourcelon]] */
+  val ByCandidatelonSourcelon: Buckelontelonr[CandidatelonPipelonlinelonIdelonntifielonr] =
+    (candidatelonWithDelontails: CandidatelonWithDelontails) => candidatelonWithDelontails.sourcelon
 }

@@ -1,129 +1,129 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
 import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.elonnumSelont;
+import java.util.HashSelont;
+import java.util.Selont;
+import java.util.concurrelonnt.ConcurrelonntHashMap;
+import java.util.concurrelonnt.ConcurrelonntMap;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.clientstats.RequestCounters;
-import com.twitter.search.common.clientstats.RequestCountersEventListener;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.search.queryparser.query.search.SearchOperator;
-import com.twitter.search.queryparser.visitors.DetectVisitor;
-import com.twitter.util.Future;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.clielonntstats.RelonquelonstCountelonrs;
+import com.twittelonr.selonarch.common.clielonntstats.RelonquelonstCountelonrselonvelonntListelonnelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.selonarch.SelonarchOpelonrator;
+import com.twittelonr.selonarch.quelonryparselonr.visitors.DelontelonctVisitor;
+import com.twittelonr.util.Futurelon;
 
 /**
-* This filter exports RequestCounters stats for each unique combination of client_id and
-* query_operator. RequestCounters produce 19 stats for each prefix, and we have numerous
-* clients and operators, so this filter can produce a large number of stats. To keep the
-* number of exported stats reasonable we use an allow list of operators. The list currently
-* includes the geo operators while we monitor the impacts of realtime geo filtering. See
-* SEARCH-33699 for project details.
+* This filtelonr elonxports RelonquelonstCountelonrs stats for elonach uniquelon combination of clielonnt_id and
+* quelonry_opelonrator. RelonquelonstCountelonrs producelon 19 stats for elonach prelonfix, and welon havelon numelonrous
+* clielonnts and opelonrators, so this filtelonr can producelon a largelon numbelonr of stats. To kelonelonp thelon
+* numbelonr of elonxportelond stats relonasonablelon welon uselon an allow list of opelonrators. Thelon list currelonntly
+* includelons thelon gelono opelonrators whilelon welon monitor thelon impacts of relonaltimelon gelono filtelonring. Selonelon
+* SelonARCH-33699 for projelonct delontails.
 *
-* To find the stats look for query_client_operator_* exported by archive roots.
+* To find thelon stats look for quelonry_clielonnt_opelonrator_* elonxportelond by archivelon roots.
 *
  **/
 
-public class ClientIdQueryOperatorStatsFilter
-    extends SimpleFilter<EarlybirdRequestContext, EarlybirdResponse> {
+public class ClielonntIdQuelonryOpelonratorStatsFiltelonr
+    elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> {
 
-  private static final Logger LOG = LoggerFactory.getLogger(ClientIdQueryOperatorStatsFilter.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(ClielonntIdQuelonryOpelonratorStatsFiltelonr.class);
 
-  public static final String COUNTER_PREFIX_PATTERN = "query_client_operator_%s_%s";
-  private final Clock clock;
-  private final ConcurrentMap<String, RequestCounters> requestCountersByClientIdAndOperator =
-      new ConcurrentHashMap<>();
-  private final Set<SearchOperator.Type> operatorsToRecordStatsFor = new HashSet<>(Arrays.asList(
-      SearchOperator.Type.GEO_BOUNDING_BOX,
-      SearchOperator.Type.GEOCODE,
-      SearchOperator.Type.GEOLOCATION_TYPE,
-      SearchOperator.Type.NEAR,
-      SearchOperator.Type.PLACE,
-      SearchOperator.Type.WITHIN));
+  public static final String COUNTelonR_PRelonFIX_PATTelonRN = "quelonry_clielonnt_opelonrator_%s_%s";
+  privatelon final Clock clock;
+  privatelon final ConcurrelonntMap<String, RelonquelonstCountelonrs> relonquelonstCountelonrsByClielonntIdAndOpelonrator =
+      nelonw ConcurrelonntHashMap<>();
+  privatelon final Selont<SelonarchOpelonrator.Typelon> opelonratorsToReloncordStatsFor = nelonw HashSelont<>(Arrays.asList(
+      SelonarchOpelonrator.Typelon.GelonO_BOUNDING_BOX,
+      SelonarchOpelonrator.Typelon.GelonOCODelon,
+      SelonarchOpelonrator.Typelon.GelonOLOCATION_TYPelon,
+      SelonarchOpelonrator.Typelon.NelonAR,
+      SelonarchOpelonrator.Typelon.PLACelon,
+      SelonarchOpelonrator.Typelon.WITHIN));
 
-  public ClientIdQueryOperatorStatsFilter() {
-    this.clock = Clock.SYSTEM_CLOCK;
+  public ClielonntIdQuelonryOpelonratorStatsFiltelonr() {
+    this.clock = Clock.SYSTelonM_CLOCK;
   }
 
-  @Override
-  public Future<EarlybirdResponse> apply(
-      EarlybirdRequestContext requestContext,
-      Service<EarlybirdRequestContext, EarlybirdResponse> service) {
-    EarlybirdRequest req = requestContext.getRequest();
-    Query parsedQuery = requestContext.getParsedQuery();
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(
+      elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+      Selonrvicelon<elonarlybirdRelonquelonstContelonxt, elonarlybirdRelonsponselon> selonrvicelon) {
+    elonarlybirdRelonquelonst relonq = relonquelonstContelonxt.gelontRelonquelonst();
+    Quelonry parselondQuelonry = relonquelonstContelonxt.gelontParselondQuelonry();
 
-    if (parsedQuery == null) {
-      return service.apply(requestContext);
+    if (parselondQuelonry == null) {
+      relonturn selonrvicelon.apply(relonquelonstContelonxt);
     }
 
-    Set<SearchOperator.Type> operators = getOperators(parsedQuery);
-    Future<EarlybirdResponse> response = service.apply(requestContext);
-    for (SearchOperator.Type operator : operators) {
+    Selont<SelonarchOpelonrator.Typelon> opelonrators = gelontOpelonrators(parselondQuelonry);
+    Futurelon<elonarlybirdRelonsponselon> relonsponselon = selonrvicelon.apply(relonquelonstContelonxt);
+    for (SelonarchOpelonrator.Typelon opelonrator : opelonrators) {
 
-      RequestCounters clientOperatorCounters = getClientOperatorCounters(req.clientId, operator);
-      RequestCountersEventListener<EarlybirdResponse> clientOperatorCountersEventListener =
-          new RequestCountersEventListener<>(
-              clientOperatorCounters, clock, EarlybirdSuccessfulResponseHandler.INSTANCE);
+      RelonquelonstCountelonrs clielonntOpelonratorCountelonrs = gelontClielonntOpelonratorCountelonrs(relonq.clielonntId, opelonrator);
+      RelonquelonstCountelonrselonvelonntListelonnelonr<elonarlybirdRelonsponselon> clielonntOpelonratorCountelonrselonvelonntListelonnelonr =
+          nelonw RelonquelonstCountelonrselonvelonntListelonnelonr<>(
+              clielonntOpelonratorCountelonrs, clock, elonarlybirdSuccelonssfulRelonsponselonHandlelonr.INSTANCelon);
 
-      response = response.addEventListener(clientOperatorCountersEventListener);
+      relonsponselon = relonsponselon.addelonvelonntListelonnelonr(clielonntOpelonratorCountelonrselonvelonntListelonnelonr);
     }
-    return response;
+    relonturn relonsponselon;
   }
 
   /**
-   * Gets or creates RequestCounters for the given clientId and operatorType
+   * Gelonts or crelonatelons RelonquelonstCountelonrs for thelon givelonn clielonntId and opelonratorTypelon
    */
-  private RequestCounters getClientOperatorCounters(String clientId,
-                                                    SearchOperator.Type operatorType) {
-    String counterPrefix = String.format(COUNTER_PREFIX_PATTERN, clientId, operatorType.toString());
-    RequestCounters clientCounters = requestCountersByClientIdAndOperator.get(counterPrefix);
-    if (clientCounters == null) {
-      clientCounters = new RequestCounters(counterPrefix);
-      RequestCounters existingCounters =
-          requestCountersByClientIdAndOperator.putIfAbsent(counterPrefix, clientCounters);
-      if (existingCounters != null) {
-        clientCounters = existingCounters;
+  privatelon RelonquelonstCountelonrs gelontClielonntOpelonratorCountelonrs(String clielonntId,
+                                                    SelonarchOpelonrator.Typelon opelonratorTypelon) {
+    String countelonrPrelonfix = String.format(COUNTelonR_PRelonFIX_PATTelonRN, clielonntId, opelonratorTypelon.toString());
+    RelonquelonstCountelonrs clielonntCountelonrs = relonquelonstCountelonrsByClielonntIdAndOpelonrator.gelont(countelonrPrelonfix);
+    if (clielonntCountelonrs == null) {
+      clielonntCountelonrs = nelonw RelonquelonstCountelonrs(countelonrPrelonfix);
+      RelonquelonstCountelonrs elonxistingCountelonrs =
+          relonquelonstCountelonrsByClielonntIdAndOpelonrator.putIfAbselonnt(countelonrPrelonfix, clielonntCountelonrs);
+      if (elonxistingCountelonrs != null) {
+        clielonntCountelonrs = elonxistingCountelonrs;
       }
     }
-    return clientCounters;
+    relonturn clielonntCountelonrs;
   }
 
   /**
-   * Returns a set of the SearchOperator types that are:
-   * 1) used by the query
-   * 2) included in the allow list: operatorsToRecordStatsFor
+   * Relonturns a selont of thelon SelonarchOpelonrator typelons that arelon:
+   * 1) uselond by thelon quelonry
+   * 2) includelond in thelon allow list: opelonratorsToReloncordStatsFor
    */
-  private Set<SearchOperator.Type> getOperators(Query parsedQuery) {
-    final DetectVisitor detectVisitor = new DetectVisitor(false, SearchOperator.Type.values());
-    Set<SearchOperator.Type> detectedOperatorTypes = EnumSet.noneOf(SearchOperator.Type.class);
+  privatelon Selont<SelonarchOpelonrator.Typelon> gelontOpelonrators(Quelonry parselondQuelonry) {
+    final DelontelonctVisitor delontelonctVisitor = nelonw DelontelonctVisitor(falselon, SelonarchOpelonrator.Typelon.valuelons());
+    Selont<SelonarchOpelonrator.Typelon> delontelonctelondOpelonratorTypelons = elonnumSelont.nonelonOf(SelonarchOpelonrator.Typelon.class);
 
     try {
-      parsedQuery.accept(detectVisitor);
-    } catch (QueryParserException e) {
-      LOG.error("Failed to detect SearchOperators in query: " + parsedQuery.toString());
-      return detectedOperatorTypes;
+      parselondQuelonry.accelonpt(delontelonctVisitor);
+    } catch (QuelonryParselonrelonxcelonption elon) {
+      LOG.elonrror("Failelond to delontelonct SelonarchOpelonrators in quelonry: " + parselondQuelonry.toString());
+      relonturn delontelonctelondOpelonratorTypelons;
     }
 
-    for (Query query : detectVisitor.getDetectedQueries()) {
-      // This detectVisitor only matches on SearchOperators.
-      SearchOperator operator = (SearchOperator) query;
-      SearchOperator.Type operatorType = operator.getOperatorType();
-      if (operatorsToRecordStatsFor.contains(operatorType)) {
-        detectedOperatorTypes.add(operatorType);
+    for (Quelonry quelonry : delontelonctVisitor.gelontDelontelonctelondQuelonrielons()) {
+      // This delontelonctVisitor only matchelons on SelonarchOpelonrators.
+      SelonarchOpelonrator opelonrator = (SelonarchOpelonrator) quelonry;
+      SelonarchOpelonrator.Typelon opelonratorTypelon = opelonrator.gelontOpelonratorTypelon();
+      if (opelonratorsToReloncordStatsFor.contains(opelonratorTypelon)) {
+        delontelonctelondOpelonratorTypelons.add(opelonratorTypelon);
       }
     }
-    return detectedOperatorTypes;
+    relonturn delontelonctelondOpelonratorTypelons;
   }
 }

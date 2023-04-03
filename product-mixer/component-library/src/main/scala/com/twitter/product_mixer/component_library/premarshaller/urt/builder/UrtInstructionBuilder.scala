@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait UrtInstructionBuilder[-Query <: PipelineQuery, +Instruction <: TimelineInstruction] {
+trait UrtInstructionBuildelonr[-Quelonry <: PipelonlinelonQuelonry, +Instruction <: TimelonlinelonInstruction] {
 
-  def includeInstruction: IncludeInstruction[Query] = AlwaysInclude
+  delonf includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon
 
-  def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[Instruction]
+  delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Selonq[Instruction]
 }

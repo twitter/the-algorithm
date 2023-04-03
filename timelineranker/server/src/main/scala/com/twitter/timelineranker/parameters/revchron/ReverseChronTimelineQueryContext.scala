@@ -1,114 +1,114 @@
-package com.twitter.timelineranker.parameters.revchron
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.relonvchron
 
-import com.twitter.timelineranker.model.ReverseChronTimelineQuery
-import com.twitter.timelines.util.bounds.BoundsWithDefault
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineservice.model.core.TimelineLimits
+import com.twittelonr.timelonlinelonrankelonr.modelonl.RelonvelonrselonChronTimelonlinelonQuelonry
+import com.twittelonr.timelonlinelons.util.bounds.BoundsWithDelonfault
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.corelon.TimelonlinelonKind
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.corelon.TimelonlinelonLimits
 
-object ReverseChronTimelineQueryContext {
-  val MaxCountLimit: Int = TimelineLimits.default.lengthLimit(TimelineKind.home)
-  val MaxCount: BoundsWithDefault[Int] = BoundsWithDefault[Int](0, MaxCountLimit, MaxCountLimit)
-  val MaxCountMultiplier: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.5, 2.0, 1.0)
-  val MaxFollowedUsers: BoundsWithDefault[Int] = BoundsWithDefault[Int](1, 15000, 5000)
-  val TweetsFilteringLossageThresholdPercent: BoundsWithDefault[Int] =
-    BoundsWithDefault[Int](10, 100, 20)
-  val TweetsFilteringLossageLimitPercent: BoundsWithDefault[Int] =
-    BoundsWithDefault[Int](40, 65, 60)
+objelonct RelonvelonrselonChronTimelonlinelonQuelonryContelonxt {
+  val MaxCountLimit: Int = TimelonlinelonLimits.delonfault.lelonngthLimit(TimelonlinelonKind.homelon)
+  val MaxCount: BoundsWithDelonfault[Int] = BoundsWithDelonfault[Int](0, MaxCountLimit, MaxCountLimit)
+  val MaxCountMultiplielonr: BoundsWithDelonfault[Doublelon] = BoundsWithDelonfault[Doublelon](0.5, 2.0, 1.0)
+  val MaxFollowelondUselonrs: BoundsWithDelonfault[Int] = BoundsWithDelonfault[Int](1, 15000, 5000)
+  val TwelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt: BoundsWithDelonfault[Int] =
+    BoundsWithDelonfault[Int](10, 100, 20)
+  val TwelonelontsFiltelonringLossagelonLimitPelonrcelonnt: BoundsWithDelonfault[Int] =
+    BoundsWithDelonfault[Int](40, 65, 60)
 
-  def getDefaultContext(query: ReverseChronTimelineQuery): ReverseChronTimelineQueryContext = {
-    new ReverseChronTimelineQueryContextImpl(
-      query,
-      getMaxCount = () => MaxCount.default,
-      getMaxCountMultiplier = () => MaxCountMultiplier.default,
-      getMaxFollowedUsers = () => MaxFollowedUsers.default,
-      getReturnEmptyWhenOverMaxFollows = () => true,
-      getDirectedAtNarrowastingViaSearch = () => false,
-      getPostFilteringBasedOnSearchMetadataEnabled = () => true,
-      getBackfillFilteredEntries = () => false,
-      getTweetsFilteringLossageThresholdPercent = () =>
-        TweetsFilteringLossageThresholdPercent.default,
-      getTweetsFilteringLossageLimitPercent = () => TweetsFilteringLossageLimitPercent.default
+  delonf gelontDelonfaultContelonxt(quelonry: RelonvelonrselonChronTimelonlinelonQuelonry): RelonvelonrselonChronTimelonlinelonQuelonryContelonxt = {
+    nelonw RelonvelonrselonChronTimelonlinelonQuelonryContelonxtImpl(
+      quelonry,
+      gelontMaxCount = () => MaxCount.delonfault,
+      gelontMaxCountMultiplielonr = () => MaxCountMultiplielonr.delonfault,
+      gelontMaxFollowelondUselonrs = () => MaxFollowelondUselonrs.delonfault,
+      gelontRelonturnelonmptyWhelonnOvelonrMaxFollows = () => truelon,
+      gelontDirelonctelondAtNarrowastingViaSelonarch = () => falselon,
+      gelontPostFiltelonringBaselondOnSelonarchMelontadataelonnablelond = () => truelon,
+      gelontBackfillFiltelonrelondelonntrielons = () => falselon,
+      gelontTwelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt = () =>
+        TwelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt.delonfault,
+      gelontTwelonelontsFiltelonringLossagelonLimitPelonrcelonnt = () => TwelonelontsFiltelonringLossagelonLimitPelonrcelonnt.delonfault
     )
   }
 }
 
-// Note that methods that return parameter value always use () to indicate that
-// side effects may be involved in their invocation.
-// for example, A likely side effect is to cause experiment impression.
-trait ReverseChronTimelineQueryContext {
-  def query: ReverseChronTimelineQuery
+// Notelon that melonthods that relonturn paramelontelonr valuelon always uselon () to indicatelon that
+// sidelon elonffeloncts may belon involvelond in thelonir invocation.
+// for elonxamplelon, A likelonly sidelon elonffelonct is to causelon elonxpelonrimelonnt imprelonssion.
+trait RelonvelonrselonChronTimelonlinelonQuelonryContelonxt {
+  delonf quelonry: RelonvelonrselonChronTimelonlinelonQuelonry
 
-  // Maximum number of tweets to be returned to caller.
-  def maxCount(): Int
+  // Maximum numbelonr of twelonelonts to belon relonturnelond to callelonr.
+  delonf maxCount(): Int
 
-  // Multiplier applied to the number of tweets fetched from search expressed as percentage.
-  // It can be used to fetch more than the number tweets requested by a caller (to improve similarity)
-  // or to fetch less than requested to reduce load.
-  def maxCountMultiplier(): Double
+  // Multiplielonr applielond to thelon numbelonr of twelonelonts felontchelond from selonarch elonxprelonsselond as pelonrcelonntagelon.
+  // It can belon uselond to felontch morelon than thelon numbelonr twelonelonts relonquelonstelond by a callelonr (to improvelon similarity)
+  // or to felontch lelonss than relonquelonstelond to relonducelon load.
+  delonf maxCountMultiplielonr(): Doublelon
 
-  // Maximum number of followed user accounts to use when materializing home timelines.
-  def maxFollowedUsers(): Int
+  // Maximum numbelonr of followelond uselonr accounts to uselon whelonn matelonrializing homelon timelonlinelons.
+  delonf maxFollowelondUselonrs(): Int
 
-  // When true, if the user follows more than maxFollowedUsers, return an empty timeline.
-  def returnEmptyWhenOverMaxFollows(): Boolean
+  // Whelonn truelon, if thelon uselonr follows morelon than maxFollowelondUselonrs, relonturn an elonmpty timelonlinelon.
+  delonf relonturnelonmptyWhelonnOvelonrMaxFollows(): Boolelonan
 
-  // When true, appends an operator for directed-at narrowcasting to the home materialization
-  // search request
-  def directedAtNarrowcastingViaSearch(): Boolean
+  // Whelonn truelon, appelonnds an opelonrator for direlonctelond-at narrowcasting to thelon homelon matelonrialization
+  // selonarch relonquelonst
+  delonf direlonctelondAtNarrowcastingViaSelonarch(): Boolelonan
 
-  // When true, requests additional metadata from search and use this metadata for post filtering.
-  def postFilteringBasedOnSearchMetadataEnabled(): Boolean
+  // Whelonn truelon, relonquelonsts additional melontadata from selonarch and uselon this melontadata for post filtelonring.
+  delonf postFiltelonringBaselondOnSelonarchMelontadataelonnablelond(): Boolelonan
 
-  // Controls whether to back-fill timeline entries that get filtered out by TweetsPostFilter
-  // during home timeline materialization.
-  def backfillFilteredEntries(): Boolean
+  // Controls whelonthelonr to back-fill timelonlinelon elonntrielons that gelont filtelonrelond out by TwelonelontsPostFiltelonr
+  // during homelon timelonlinelon matelonrialization.
+  delonf backfillFiltelonrelondelonntrielons(): Boolelonan
 
-  // If back-filling filtered entries is enabled and if number of tweets that get filtered out
-  // exceed this percentage then we will issue a second call to get more tweets.
-  def tweetsFilteringLossageThresholdPercent(): Int
+  // If back-filling filtelonrelond elonntrielons is elonnablelond and if numbelonr of twelonelonts that gelont filtelonrelond out
+  // elonxcelonelond this pelonrcelonntagelon thelonn welon will issuelon a seloncond call to gelont morelon twelonelonts.
+  delonf twelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt(): Int
 
-  // We need to ensure that the number of tweets requested by the second call
-  // are not unbounded (for example, if everything is filtered out in the first call)
-  // therefore we adjust the actual filtered out percentage to be no greater than
-  // the value below.
-  def tweetsFilteringLossageLimitPercent(): Int
+  // Welon nelonelond to elonnsurelon that thelon numbelonr of twelonelonts relonquelonstelond by thelon seloncond call
+  // arelon not unboundelond (for elonxamplelon, if elonvelonrything is filtelonrelond out in thelon first call)
+  // thelonrelonforelon welon adjust thelon actual filtelonrelond out pelonrcelonntagelon to belon no grelonatelonr than
+  // thelon valuelon belonlow.
+  delonf twelonelontsFiltelonringLossagelonLimitPelonrcelonnt(): Int
 
-  // We need to indicate to search if we should use the archive cluster
-  // this option will come from ReverseChronTimelineQueryOptions and
-  // will be `true` by default if the options are not present.
-  def getTweetsFromArchiveIndex(): Boolean =
-    query.options.map(_.getTweetsFromArchiveIndex).getOrElse(true)
+  // Welon nelonelond to indicatelon to selonarch if welon should uselon thelon archivelon clustelonr
+  // this option will comelon from RelonvelonrselonChronTimelonlinelonQuelonryOptions and
+  // will belon `truelon` by delonfault if thelon options arelon not prelonselonnt.
+  delonf gelontTwelonelontsFromArchivelonIndelonx(): Boolelonan =
+    quelonry.options.map(_.gelontTwelonelontsFromArchivelonIndelonx).gelontOrelonlselon(truelon)
 }
 
-class ReverseChronTimelineQueryContextImpl(
-  override val query: ReverseChronTimelineQuery,
-  getMaxCount: () => Int,
-  getMaxCountMultiplier: () => Double,
-  getMaxFollowedUsers: () => Int,
-  getReturnEmptyWhenOverMaxFollows: () => Boolean,
-  getDirectedAtNarrowastingViaSearch: () => Boolean,
-  getPostFilteringBasedOnSearchMetadataEnabled: () => Boolean,
-  getBackfillFilteredEntries: () => Boolean,
-  getTweetsFilteringLossageThresholdPercent: () => Int,
-  getTweetsFilteringLossageLimitPercent: () => Int)
-    extends ReverseChronTimelineQueryContext {
-  override def maxCount(): Int = { getMaxCount() }
-  override def maxCountMultiplier(): Double = { getMaxCountMultiplier() }
-  override def maxFollowedUsers(): Int = { getMaxFollowedUsers() }
-  override def backfillFilteredEntries(): Boolean = { getBackfillFilteredEntries() }
-  override def tweetsFilteringLossageThresholdPercent(): Int = {
-    getTweetsFilteringLossageThresholdPercent()
+class RelonvelonrselonChronTimelonlinelonQuelonryContelonxtImpl(
+  ovelonrridelon val quelonry: RelonvelonrselonChronTimelonlinelonQuelonry,
+  gelontMaxCount: () => Int,
+  gelontMaxCountMultiplielonr: () => Doublelon,
+  gelontMaxFollowelondUselonrs: () => Int,
+  gelontRelonturnelonmptyWhelonnOvelonrMaxFollows: () => Boolelonan,
+  gelontDirelonctelondAtNarrowastingViaSelonarch: () => Boolelonan,
+  gelontPostFiltelonringBaselondOnSelonarchMelontadataelonnablelond: () => Boolelonan,
+  gelontBackfillFiltelonrelondelonntrielons: () => Boolelonan,
+  gelontTwelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt: () => Int,
+  gelontTwelonelontsFiltelonringLossagelonLimitPelonrcelonnt: () => Int)
+    elonxtelonnds RelonvelonrselonChronTimelonlinelonQuelonryContelonxt {
+  ovelonrridelon delonf maxCount(): Int = { gelontMaxCount() }
+  ovelonrridelon delonf maxCountMultiplielonr(): Doublelon = { gelontMaxCountMultiplielonr() }
+  ovelonrridelon delonf maxFollowelondUselonrs(): Int = { gelontMaxFollowelondUselonrs() }
+  ovelonrridelon delonf backfillFiltelonrelondelonntrielons(): Boolelonan = { gelontBackfillFiltelonrelondelonntrielons() }
+  ovelonrridelon delonf twelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt(): Int = {
+    gelontTwelonelontsFiltelonringLossagelonThrelonsholdPelonrcelonnt()
   }
-  override def tweetsFilteringLossageLimitPercent(): Int = {
-    getTweetsFilteringLossageLimitPercent()
+  ovelonrridelon delonf twelonelontsFiltelonringLossagelonLimitPelonrcelonnt(): Int = {
+    gelontTwelonelontsFiltelonringLossagelonLimitPelonrcelonnt()
   }
-  override def returnEmptyWhenOverMaxFollows(): Boolean = {
-    getReturnEmptyWhenOverMaxFollows()
+  ovelonrridelon delonf relonturnelonmptyWhelonnOvelonrMaxFollows(): Boolelonan = {
+    gelontRelonturnelonmptyWhelonnOvelonrMaxFollows()
   }
-  override def directedAtNarrowcastingViaSearch(): Boolean = {
-    getDirectedAtNarrowastingViaSearch()
+  ovelonrridelon delonf direlonctelondAtNarrowcastingViaSelonarch(): Boolelonan = {
+    gelontDirelonctelondAtNarrowastingViaSelonarch()
   }
-  override def postFilteringBasedOnSearchMetadataEnabled(): Boolean = {
-    getPostFilteringBasedOnSearchMetadataEnabled()
+  ovelonrridelon delonf postFiltelonringBaselondOnSelonarchMelontadataelonnablelond(): Boolelonan = {
+    gelontPostFiltelonringBaselondOnSelonarchMelontadataelonnablelond()
   }
 }

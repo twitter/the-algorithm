@@ -1,9 +1,9 @@
 scala_library(
-    compiler_option_sets = ["fatal_warnings"],
+    compilelonr_option_selonts = ["fatal_warnings"],
     platform = "java8",
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "follow-recommendations-service/common/src/main/scala/com/twitter/follow_recommendations/common/models",
-        "util/util-core/src/main/scala/com/twitter/conversions",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "follow-reloncommelonndations-selonrvicelon/common/src/main/scala/com/twittelonr/follow_reloncommelonndations/common/modelonls",
+        "util/util-corelon/src/main/scala/com/twittelonr/convelonrsions",
     ],
 )

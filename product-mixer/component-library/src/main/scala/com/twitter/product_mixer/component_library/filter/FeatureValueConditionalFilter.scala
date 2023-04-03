@@ -1,64 +1,64 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.component_library.filter.FeatureConditionalFilter.IdentifierInfix
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.filtelonr.FelonaturelonConditionalFiltelonr.IdelonntifielonrInfix
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * Predicate to apply to candidate feature, to determine whether to apply filter.
- * True indicates we will apply the filter. False indicates to keep candidate and not apply filter.
- * @tparam FeatureValue
+ * Prelondicatelon to apply to candidatelon felonaturelon, to delontelonrminelon whelonthelonr to apply filtelonr.
+ * Truelon indicatelons welon will apply thelon filtelonr. Falselon indicatelons to kelonelonp candidatelon and not apply filtelonr.
+ * @tparam FelonaturelonValuelon
  */
-trait ShouldApplyFilter[FeatureValue] {
-  def apply(feature: FeatureValue): Boolean
+trait ShouldApplyFiltelonr[FelonaturelonValuelon] {
+  delonf apply(felonaturelon: FelonaturelonValuelon): Boolelonan
 }
 
 /**
- * A filter that applies the [[filter]] for candidates for which [[shouldApplyFilter]] is true, and keeps the others
- * @param feature feature to determine whether to apply underyling filter
- * @param shouldApplyFilter function to determine whether to apply filter
- * @param filter the actual filter to apply if shouldApplyFilter is True
- * @tparam Query The domain model for the query or request
- * @tparam Candidate The type of the candidates
- * @tparam FeatureValueType
+ * A filtelonr that applielons thelon [[filtelonr]] for candidatelons for which [[shouldApplyFiltelonr]] is truelon, and kelonelonps thelon othelonrs
+ * @param felonaturelon felonaturelon to delontelonrminelon whelonthelonr to apply undelonryling filtelonr
+ * @param shouldApplyFiltelonr function to delontelonrminelon whelonthelonr to apply filtelonr
+ * @param filtelonr thelon actual filtelonr to apply if shouldApplyFiltelonr is Truelon
+ * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
+ * @tparam Candidatelon Thelon typelon of thelon candidatelons
+ * @tparam FelonaturelonValuelonTypelon
  */
-case class FeatureValueConditionalFilter[
-  -Query <: PipelineQuery,
-  Candidate <: UniversalNoun[Any],
-  FeatureValueType
+caselon class FelonaturelonValuelonConditionalFiltelonr[
+  -Quelonry <: PipelonlinelonQuelonry,
+  Candidatelon <: UnivelonrsalNoun[Any],
+  FelonaturelonValuelonTypelon
 ](
-  feature: Feature[Candidate, FeatureValueType],
-  shouldApplyFilter: ShouldApplyFilter[FeatureValueType],
-  filter: Filter[Query, Candidate])
-    extends Filter[Query, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier(
-    feature.toString + IdentifierInfix + filter.identifier.name
+  felonaturelon: Felonaturelon[Candidatelon, FelonaturelonValuelonTypelon],
+  shouldApplyFiltelonr: ShouldApplyFiltelonr[FelonaturelonValuelonTypelon],
+  filtelonr: Filtelonr[Quelonry, Candidatelon])
+    elonxtelonnds Filtelonr[Quelonry, Candidatelon] {
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr(
+    felonaturelon.toString + IdelonntifielonrInfix + filtelonr.idelonntifielonr.namelon
   )
 
-  override val alerts: Seq[Alert] = filter.alerts
+  ovelonrridelon val alelonrts: Selonq[Alelonrt] = filtelonr.alelonrts
 
-  override def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val (candidatesToFilter, candidatesToKeep) = candidates.partition { candidate =>
-      shouldApplyFilter(candidate.features.get(feature))
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
+    val (candidatelonsToFiltelonr, candidatelonsToKelonelonp) = candidatelons.partition { candidatelon =>
+      shouldApplyFiltelonr(candidatelon.felonaturelons.gelont(felonaturelon))
     }
-    filter.apply(query, candidatesToFilter).map { filterResult =>
-      FilterResult(
-        kept = filterResult.kept ++ candidatesToKeep.map(_.candidate),
-        removed = filterResult.removed)
+    filtelonr.apply(quelonry, candidatelonsToFiltelonr).map { filtelonrRelonsult =>
+      FiltelonrRelonsult(
+        kelonpt = filtelonrRelonsult.kelonpt ++ candidatelonsToKelonelonp.map(_.candidatelon),
+        relonmovelond = filtelonrRelonsult.relonmovelond)
     }
   }
 }
 
-object FeatureConditionalFilter {
-  val IdentifierInfix = "FeatureConditional"
+objelonct FelonaturelonConditionalFiltelonr {
+  val IdelonntifielonrInfix = "FelonaturelonConditional"
 }

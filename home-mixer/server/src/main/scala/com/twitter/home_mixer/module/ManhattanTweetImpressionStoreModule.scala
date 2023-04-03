@@ -1,52 +1,52 @@
-package com.twitter.home_mixer.module
+packagelon com.twittelonr.homelon_mixelonr.modulelon
 
-import com.google.inject.Provides
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.inject.TwitterModule
-import com.twitter.storage.client.manhattan.kv.Guarantee
-import com.twitter.storehaus_internal.manhattan.ManhattanClusters
-import com.twitter.timelines.clients.manhattan.mhv3.ManhattanClientBuilder
-import com.twitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClientConfig
-import com.twitter.timelines.impressionstore.store.ManhattanTweetImpressionStoreClient
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.Guarantelonelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.ManhattanClustelonrs
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.mhv3.ManhattanClielonntBuildelonr
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.storelon.ManhattanTwelonelontImprelonssionStorelonClielonntConfig
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.storelon.ManhattanTwelonelontImprelonssionStorelonClielonnt
+import javax.injelonct.Singlelonton
 
-object ManhattanTweetImpressionStoreModule extends TwitterModule {
+objelonct ManhattanTwelonelontImprelonssionStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val ProdAppId = "timelines_tweet_impression_store_v2"
-  private val ProdDataset = "timelines_tweet_impressions_v2"
-  private val StagingAppId = "timelines_tweet_impression_store_staging"
-  private val StagingDataset = "timelines_tweet_impressions_staging"
-  private val StatsScope = "manhattanTweetImpressionStoreClient"
-  private val DefaultTTL = 2.days
+  privatelon val ProdAppId = "timelonlinelons_twelonelont_imprelonssion_storelon_v2"
+  privatelon val ProdDataselont = "timelonlinelons_twelonelont_imprelonssions_v2"
+  privatelon val StagingAppId = "timelonlinelons_twelonelont_imprelonssion_storelon_staging"
+  privatelon val StagingDataselont = "timelonlinelons_twelonelont_imprelonssions_staging"
+  privatelon val StatsScopelon = "manhattanTwelonelontImprelonssionStorelonClielonnt"
+  privatelon val DelonfaultTTL = 2.days
 
-  @Provides
-  @Singleton
-  def providesManhattanTweetImpressionStoreClient(
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver
-  ): ManhattanTweetImpressionStoreClient = {
+  @Providelons
+  @Singlelonton
+  delonf providelonsManhattanTwelonelontImprelonssionStorelonClielonnt(
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr
+  ): ManhattanTwelonelontImprelonssionStorelonClielonnt = {
 
-    val (appId, dataset) = serviceIdentifier.environment.toLowerCase match {
-      case "prod" => (ProdAppId, ProdDataset)
-      case _ => (StagingAppId, StagingDataset)
+    val (appId, dataselont) = selonrvicelonIdelonntifielonr.elonnvironmelonnt.toLowelonrCaselon match {
+      caselon "prod" => (ProdAppId, ProdDataselont)
+      caselon _ => (StagingAppId, StagingDataselont)
     }
 
-    val config = ManhattanTweetImpressionStoreClientConfig(
-      cluster = ManhattanClusters.nash,
+    val config = ManhattanTwelonelontImprelonssionStorelonClielonntConfig(
+      clustelonr = ManhattanClustelonrs.nash,
       appId = appId,
-      dataset = dataset,
-      statsScope = StatsScope,
-      defaultGuarantee = Guarantee.SoftDcReadMyWrites,
-      defaultMaxTimeout = 100.milliseconds,
-      maxRetryCount = 2,
-      isReadOnly = false,
-      serviceIdentifier = serviceIdentifier,
-      ttl = DefaultTTL
+      dataselont = dataselont,
+      statsScopelon = StatsScopelon,
+      delonfaultGuarantelonelon = Guarantelonelon.SoftDcRelonadMyWritelons,
+      delonfaultMaxTimelonout = 100.milliselonconds,
+      maxRelontryCount = 2,
+      isRelonadOnly = falselon,
+      selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr,
+      ttl = DelonfaultTTL
     )
 
-    val manhattanEndpoint = ManhattanClientBuilder.buildManhattanEndpoint(config, statsReceiver)
-    ManhattanTweetImpressionStoreClient(config, manhattanEndpoint, statsReceiver)
+    val manhattanelonndpoint = ManhattanClielonntBuildelonr.buildManhattanelonndpoint(config, statsReloncelonivelonr)
+    ManhattanTwelonelontImprelonssionStorelonClielonnt(config, manhattanelonndpoint, statsReloncelonivelonr)
   }
 }

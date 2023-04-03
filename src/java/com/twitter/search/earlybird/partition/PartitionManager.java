@@ -1,254 +1,254 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.earlybird.EarlybirdStatus;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.EarlybirdStartupException;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.segment.SegmentDataProvider;
-import com.twitter.search.earlybird.thrift.EarlybirdStatusCode;
-import com.twitter.search.earlybird.util.OneTaskScheduledExecutorManager;
-import com.twitter.search.earlybird.util.PeriodicActionParams;
-import com.twitter.search.earlybird.util.ShutdownWaitTimeParams;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twittelonr.selonarch.common.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelonFactory;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdStatus;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.elonarlybirdStartupelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.quelonrycachelon.QuelonryCachelonManagelonr;
+import com.twittelonr.selonarch.elonarlybird.selongmelonnt.SelongmelonntDataProvidelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdStatusCodelon;
+import com.twittelonr.selonarch.elonarlybird.util.OnelonTaskSchelondulelondelonxeloncutorManagelonr;
+import com.twittelonr.selonarch.elonarlybird.util.PelonriodicActionParams;
+import com.twittelonr.selonarch.elonarlybird.util.ShutdownWaitTimelonParams;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
 
 /**
- * PartitionManager is responsible for indexing data for a partition, including Tweets and Users.
+ * PartitionManagelonr is relonsponsiblelon for indelonxing data for a partition, including Twelonelonts and Uselonrs.
  */
-public abstract class PartitionManager extends OneTaskScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(PartitionManager.class);
+public abstract class PartitionManagelonr elonxtelonnds OnelonTaskSchelondulelondelonxeloncutorManagelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(PartitionManagelonr.class);
 
-  private static final SearchCounter IGNORED_EXCEPTIONS =
-      SearchCounter.export("partition_manager_ignored_exceptions");
+  privatelon static final SelonarchCountelonr IGNORelonD_elonXCelonPTIONS =
+      SelonarchCountelonr.elonxport("partition_managelonr_ignorelond_elonxcelonptions");
 
-  private static final String PARTITION_MANAGER_THREAD_NAME = "PartitionManager";
-  private static final boolean THREAD_IS_DAEMON = true;
-  protected static final String INDEX_CURRENT_SEGMENT = "indexing the current segment";
-  protected static final String SETUP_QUERY_CACHE = "setting up query cache";
+  privatelon static final String PARTITION_MANAGelonR_THRelonAD_NAMelon = "PartitionManagelonr";
+  privatelon static final boolelonan THRelonAD_IS_DAelonMON = truelon;
+  protelonctelond static final String INDelonX_CURRelonNT_SelonGMelonNT = "indelonxing thelon currelonnt selongmelonnt";
+  protelonctelond static final String SelonTUP_QUelonRY_CACHelon = "selontting up quelonry cachelon";
 
-  protected final SegmentManager segmentManager;
-  protected final QueryCacheManager queryCacheManager;
-  // Should be updated by info read from ZK
-  protected final DynamicPartitionConfig dynamicPartitionConfig;
+  protelonctelond final SelongmelonntManagelonr selongmelonntManagelonr;
+  protelonctelond final QuelonryCachelonManagelonr quelonryCachelonManagelonr;
+  // Should belon updatelond by info relonad from ZK
+  protelonctelond final DynamicPartitionConfig dynamicPartitionConfig;
 
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
 
-  private boolean partitionManagerFirstLoop = true;
+  privatelon boolelonan partitionManagelonrFirstLoop = truelon;
 
-  public PartitionManager(QueryCacheManager queryCacheManager,
-                          SegmentManager segmentManager,
+  public PartitionManagelonr(QuelonryCachelonManagelonr quelonryCachelonManagelonr,
+                          SelongmelonntManagelonr selongmelonntManagelonr,
                           DynamicPartitionConfig dynamicPartitionConfig,
-                          ScheduledExecutorServiceFactory executorServiceFactory,
-                          SearchIndexingMetricSet searchIndexingMetricSet,
-                          SearchStatsReceiver searchStatsReceiver,
-                          CriticalExceptionHandler criticalExceptionHandler) {
-    super(
-        executorServiceFactory,
-        PARTITION_MANAGER_THREAD_NAME,
-        THREAD_IS_DAEMON,
-        PeriodicActionParams.withFixedDelay(
-          EarlybirdConfig.getInt("time_slice_roll_check_interval_ms", 500),
-          TimeUnit.MILLISECONDS),
-        ShutdownWaitTimeParams.indefinitely(),
-        searchStatsReceiver,
-        criticalExceptionHandler);
+                          SchelondulelondelonxeloncutorSelonrvicelonFactory elonxeloncutorSelonrvicelonFactory,
+                          SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+                          SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+                          CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    supelonr(
+        elonxeloncutorSelonrvicelonFactory,
+        PARTITION_MANAGelonR_THRelonAD_NAMelon,
+        THRelonAD_IS_DAelonMON,
+        PelonriodicActionParams.withFixelondDelonlay(
+          elonarlybirdConfig.gelontInt("timelon_slicelon_roll_chelonck_intelonrval_ms", 500),
+          TimelonUnit.MILLISelonCONDS),
+        ShutdownWaitTimelonParams.indelonfinitelonly(),
+        selonarchStatsReloncelonivelonr,
+        criticalelonxcelonptionHandlelonr);
 
-    this.segmentManager = segmentManager;
-    this.queryCacheManager = queryCacheManager;
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.quelonryCachelonManagelonr = quelonryCachelonManagelonr;
     this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
   }
 
   /**
-   * Runs the partition manager.
+   * Runs thelon partition managelonr.
    */
   public final void runImpl() {
-    if (partitionManagerFirstLoop) {
+    if (partitionManagelonrFirstLoop) {
       try {
-        testHookBeforeStartUp();
+        telonstHookBelonforelonStartUp();
         startUp();
-        validateSegments();
-        segmentManager.logState("After startUp");
-      } catch (Throwable t) {
-        criticalExceptionHandler.handle(this, t);
-        shutDownIndexing();
-        throw new RuntimeException("PartitionManager unhandled exception, stopping scheduler", t);
+        validatelonSelongmelonnts();
+        selongmelonntManagelonr.logStatelon("Aftelonr startUp");
+      } catch (Throwablelon t) {
+        criticalelonxcelonptionHandlelonr.handlelon(this, t);
+        shutDownIndelonxing();
+        throw nelonw Runtimelonelonxcelonption("PartitionManagelonr unhandlelond elonxcelonption, stopping schelondulelonr", t);
       }
     }
 
     try {
-      testHookAfterSleep();
-      indexingLoop(partitionManagerFirstLoop);
-    } catch (InterruptedException e) {
-      LOG.warn("PartitionManager thread interrupted, stoping scheduler", e);
-      shutDownIndexing();
-      throw new RuntimeException("PartitionManager thread interrupted", e);
-    } catch (Exception e) {
-      LOG.error("Exception in indexing PartitionManager loop", e);
-      IGNORED_EXCEPTIONS.increment();
-    } catch (Throwable t) {
-      LOG.error("Unhandled exception in indexing PartitionManager loop", t);
-      criticalExceptionHandler.handle(this, t);
-      shutDownIndexing();
-      throw new RuntimeException("PartitionManager unhandled exception, stopping scheduler", t);
+      telonstHookAftelonrSlelonelonp();
+      indelonxingLoop(partitionManagelonrFirstLoop);
+    } catch (Intelonrruptelondelonxcelonption elon) {
+      LOG.warn("PartitionManagelonr threlonad intelonrruptelond, stoping schelondulelonr", elon);
+      shutDownIndelonxing();
+      throw nelonw Runtimelonelonxcelonption("PartitionManagelonr threlonad intelonrruptelond", elon);
+    } catch (elonxcelonption elon) {
+      LOG.elonrror("elonxcelonption in indelonxing PartitionManagelonr loop", elon);
+      IGNORelonD_elonXCelonPTIONS.increlonmelonnt();
+    } catch (Throwablelon t) {
+      LOG.elonrror("Unhandlelond elonxcelonption in indelonxing PartitionManagelonr loop", t);
+      criticalelonxcelonptionHandlelonr.handlelon(this, t);
+      shutDownIndelonxing();
+      throw nelonw Runtimelonelonxcelonption("PartitionManagelonr unhandlelond elonxcelonption, stopping schelondulelonr", t);
     } finally {
-      partitionManagerFirstLoop = false;
+      partitionManagelonrFirstLoop = falselon;
     }
   }
 
   /**
-   * Returns the SegmentDataProvider instance that will be used to fetch the information for all
-   * segments.
+   * Relonturns thelon SelongmelonntDataProvidelonr instancelon that will belon uselond to felontch thelon information for all
+   * selongmelonnts.
    */
-  public abstract SegmentDataProvider getSegmentDataProvider();
+  public abstract SelongmelonntDataProvidelonr gelontSelongmelonntDataProvidelonr();
 
   /**
-   * Starts up this partition manager.
+   * Starts up this partition managelonr.
    */
-  protected abstract void startUp() throws Exception;
+  protelonctelond abstract void startUp() throws elonxcelonption;
 
   /**
-   * Runs one indexing iteration.
+   * Runs onelon indelonxing itelonration.
    *
-   * @param firstLoop Determines if this is the first time the indexing loop is running.
+   * @param firstLoop Delontelonrminelons if this is thelon first timelon thelon indelonxing loop is running.
    */
-  protected abstract void indexingLoop(boolean firstLoop) throws Exception;
+  protelonctelond abstract void indelonxingLoop(boolelonan firstLoop) throws elonxcelonption;
 
   /**
-   * Shuts down all indexing.
+   * Shuts down all indelonxing.
    */
-  protected abstract void shutDownIndexing();
+  protelonctelond abstract void shutDownIndelonxing();
 
-  @Override
-  public void shutdownComponent() {
-    shutDownIndexing();
+  @Ovelonrridelon
+  public void shutdownComponelonnt() {
+    shutDownIndelonxing();
   }
 
   /**
-   * Notifies all other threads that the partition manager has become current (ie. has indexed all
-   * available events).
+   * Notifielons all othelonr threlonads that thelon partition managelonr has beloncomelon currelonnt (ielon. has indelonxelond all
+   * availablelon elonvelonnts).
    */
-  public void becomeCurrent() {
-    LOG.info("PartitionManager became current");
-    if (EarlybirdStatus.isStarting()) {
-      EarlybirdStatus.setStatus(EarlybirdStatusCode.CURRENT);
-    } else {
-      LOG.warn("Could not set statusCode to CURRENT from " + EarlybirdStatus.getStatusCode());
+  public void beloncomelonCurrelonnt() {
+    LOG.info("PartitionManagelonr beloncamelon currelonnt");
+    if (elonarlybirdStatus.isStarting()) {
+      elonarlybirdStatus.selontStatus(elonarlybirdStatusCodelon.CURRelonNT);
+    } elonlselon {
+      LOG.warn("Could not selont statusCodelon to CURRelonNT from " + elonarlybirdStatus.gelontStatusCodelon());
     }
 
-    // Now that we're done starting up, set the query cache thread pool size to one.
-    queryCacheManager.setWorkerPoolSizeAfterStartup();
+    // Now that welon'relon donelon starting up, selont thelon quelonry cachelon threlonad pool sizelon to onelon.
+    quelonryCachelonManagelonr.selontWorkelonrPoolSizelonAftelonrStartup();
   }
 
-  protected void setupQueryCacheIfNeeded() throws QueryParserException {
-    queryCacheManager.setupTasksIfNeeded(segmentManager);
+  protelonctelond void selontupQuelonryCachelonIfNelonelondelond() throws QuelonryParselonrelonxcelonption {
+    quelonryCachelonManagelonr.selontupTasksIfNelonelondelond(selongmelonntManagelonr);
   }
 
-  // Only for tests, used for testing exception handling
-  private static TestHook testHookBeforeStartUp;
-  private static TestHook testHookAfterSleep;
+  // Only for telonsts, uselond for telonsting elonxcelonption handling
+  privatelon static TelonstHook telonstHookBelonforelonStartUp;
+  privatelon static TelonstHook telonstHookAftelonrSlelonelonp;
 
-  private static void testHookBeforeStartUp() throws Exception {
-    if (Config.environmentIsTest() && testHookBeforeStartUp != null) {
-      testHookBeforeStartUp.run();
-    }
-  }
-
-  private static void testHookAfterSleep() throws Exception {
-    if (Config.environmentIsTest() && testHookAfterSleep != null) {
-      testHookAfterSleep.run();
+  privatelon static void telonstHookBelonforelonStartUp() throws elonxcelonption {
+    if (Config.elonnvironmelonntIsTelonst() && telonstHookBelonforelonStartUp != null) {
+      telonstHookBelonforelonStartUp.run();
     }
   }
 
-  @Override
-  protected void runOneIteration() {
+  privatelon static void telonstHookAftelonrSlelonelonp() throws elonxcelonption {
+    if (Config.elonnvironmelonntIsTelonst() && telonstHookAftelonrSlelonelonp != null) {
+      telonstHookAftelonrSlelonelonp.run();
+    }
+  }
+
+  @Ovelonrridelon
+  protelonctelond void runOnelonItelonration() {
     try {
       runImpl();
-    } catch (Throwable t) {
-      LOG.error("Unhandled exception in PartitionManager loop", t);
-      throw new RuntimeException(t.getMessage());
+    } catch (Throwablelon t) {
+      LOG.elonrror("Unhandlelond elonxcelonption in PartitionManagelonr loop", t);
+      throw nelonw Runtimelonelonxcelonption(t.gelontMelonssagelon());
     }
   }
 
-  public SearchIndexingMetricSet getSearchIndexingMetricSet() {
-    return searchIndexingMetricSet;
+  public SelonarchIndelonxingMelontricSelont gelontSelonarchIndelonxingMelontricSelont() {
+    relonturn selonarchIndelonxingMelontricSelont;
   }
 
   /**
-   * Allows tests to run code before the partition manager starts up.
+   * Allows telonsts to run codelon belonforelon thelon partition managelonr starts up.
    *
-   * @param testHook The code to run before the start up.
+   * @param telonstHook Thelon codelon to run belonforelon thelon start up.
    */
-  @VisibleForTesting
-  public static void setTestHookBeforeStartUp(TestHook testHook) {
-    if (Config.environmentIsTest()) {
-      testHookBeforeStartUp = testHook;
-    } else {
-      throw new RuntimeException("Trying to set startup test hook in non-test code!!");
+  @VisiblelonForTelonsting
+  public static void selontTelonstHookBelonforelonStartUp(TelonstHook telonstHook) {
+    if (Config.elonnvironmelonntIsTelonst()) {
+      telonstHookBelonforelonStartUp = telonstHook;
+    } elonlselon {
+      throw nelonw Runtimelonelonxcelonption("Trying to selont startup telonst hook in non-telonst codelon!!");
     }
   }
 
   /**
-   * Allows tests to run code before the indexing loop.
+   * Allows telonsts to run codelon belonforelon thelon indelonxing loop.
    *
-   * @param testHook The code to run before the indexing loop.
+   * @param telonstHook Thelon codelon to run belonforelon thelon indelonxing loop.
    */
-  @VisibleForTesting
-  public static void setTestHookAfterSleep(TestHook testHook) {
-    if (Config.environmentIsTest()) {
-      testHookAfterSleep = testHook;
-    } else {
-      throw new RuntimeException("Trying to set test hook in non-test code!!");
+  @VisiblelonForTelonsting
+  public static void selontTelonstHookAftelonrSlelonelonp(TelonstHook telonstHook) {
+    if (Config.elonnvironmelonntIsTelonst()) {
+      telonstHookAftelonrSlelonelonp = telonstHook;
+    } elonlselon {
+      throw nelonw Runtimelonelonxcelonption("Trying to selont telonst hook in non-telonst codelon!!");
     }
   }
 
   /**
-   * An interface that allows tests to run code at various points in the PartitionManager's
-   * lyfecycle.
+   * An intelonrfacelon that allows telonsts to run codelon at various points in thelon PartitionManagelonr's
+   * lyfeloncyclelon.
    */
-  @VisibleForTesting
-  public interface TestHook {
+  @VisiblelonForTelonsting
+  public intelonrfacelon TelonstHook {
     /**
-     * Defines the code that should be run.
+     * Delonfinelons thelon codelon that should belon run.
      */
-    void run() throws Exception;
+    void run() throws elonxcelonption;
   }
 
   /**
-   * Allows tests to determine if this partition manager is all caught up.
+   * Allows telonsts to delontelonrminelon if this partition managelonr is all caught up.
    *
-   * @return {@code true} if this partition manager is caught up, {@code false} otherwise.
+   * @relonturn {@codelon truelon} if this partition managelonr is caught up, {@codelon falselon} othelonrwiselon.
    */
-  @VisibleForTesting
-  public abstract boolean isCaughtUpForTests();
+  @VisiblelonForTelonsting
+  public abstract boolelonan isCaughtUpForTelonsts();
 
-  @VisibleForTesting
-  protected void validateSegments() throws EarlybirdStartupException {
-    // This is necessary because many tests rely on starting partition manager but not indexing any
-    // tweets. However, we do not want Earlybirds to start in production if they are not serving any
-    // tweets. (SEARCH-24238)
-    if (Config.environmentIsTest()) {
-      return;
+  @VisiblelonForTelonsting
+  protelonctelond void validatelonSelongmelonnts() throws elonarlybirdStartupelonxcelonption {
+    // This is neloncelonssary beloncauselon many telonsts relonly on starting partition managelonr but not indelonxing any
+    // twelonelonts. Howelonvelonr, welon do not want elonarlybirds to start in production if thelony arelon not selonrving any
+    // twelonelonts. (SelonARCH-24238)
+    if (Config.elonnvironmelonntIsTelonst()) {
+      relonturn;
     }
-    validateSegmentsForNonTest();
+    validatelonSelongmelonntsForNonTelonst();
   }
 
-  @VisibleForTesting
-  protected void validateSegmentsForNonTest() throws EarlybirdStartupException {
-    // Subclasses can override this and provide additional checks.
-    if (segmentManager.getNumIndexedDocuments() == 0) {
-      throw new EarlybirdStartupException("Earlybird has zero indexed documents.");
+  @VisiblelonForTelonsting
+  protelonctelond void validatelonSelongmelonntsForNonTelonst() throws elonarlybirdStartupelonxcelonption {
+    // Subclasselons can ovelonrridelon this and providelon additional cheloncks.
+    if (selongmelonntManagelonr.gelontNumIndelonxelondDocumelonnts() == 0) {
+      throw nelonw elonarlybirdStartupelonxcelonption("elonarlybird has zelonro indelonxelond documelonnts.");
     }
   }
 }

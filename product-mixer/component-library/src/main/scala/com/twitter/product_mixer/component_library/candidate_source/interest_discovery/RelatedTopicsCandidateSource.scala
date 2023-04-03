@@ -1,34 +1,34 @@
-package com.twitter.product_mixer.component_library.candidate_source.interest_discovery
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.intelonrelonst_discovelonry
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import com.twitter.inject.Logging
-import com.twitter.interests_discovery.{thriftscala => t}
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
+import com.googlelon.injelonct.Injelonct
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.injelonct.Logging
+import com.twittelonr.intelonrelonsts_discovelonry.{thriftscala => t}
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
 
 /**
- * Generate a list of related topics results from IDS getRelatedTopics (thrift) endpoint.
- * Returns related topics, given a topic, whereas [[RecommendedTopicsCandidateSource]] returns
- * recommended topics, given a user.
+ * Gelonnelonratelon a list of relonlatelond topics relonsults from IDS gelontRelonlatelondTopics (thrift) elonndpoint.
+ * Relonturns relonlatelond topics, givelonn a topic, whelonrelonas [[ReloncommelonndelondTopicsCandidatelonSourcelon]] relonturns
+ * reloncommelonndelond topics, givelonn a uselonr.
  */
-@Singleton
-class RelatedTopicsCandidateSource @Inject() (
-  interestDiscoveryService: t.InterestsDiscoveryService.MethodPerEndpoint)
-    extends CandidateSource[t.RelatedTopicsRequest, t.RelatedTopic]
+@Singlelonton
+class RelonlatelondTopicsCandidatelonSourcelon @Injelonct() (
+  intelonrelonstDiscovelonrySelonrvicelon: t.IntelonrelonstsDiscovelonrySelonrvicelon.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelon[t.RelonlatelondTopicsRelonquelonst, t.RelonlatelondTopic]
     with Logging {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(name = "RelatedTopics")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr(namelon = "RelonlatelondTopics")
 
-  override def apply(
-    request: t.RelatedTopicsRequest
-  ): Stitch[Seq[t.RelatedTopic]] = {
+  ovelonrridelon delonf apply(
+    relonquelonst: t.RelonlatelondTopicsRelonquelonst
+  ): Stitch[Selonq[t.RelonlatelondTopic]] = {
     Stitch
-      .callFuture(interestDiscoveryService.getRelatedTopics(request))
-      .map { response: t.RelatedTopicsResponse =>
-        response.topics
+      .callFuturelon(intelonrelonstDiscovelonrySelonrvicelon.gelontRelonlatelondTopics(relonquelonst))
+      .map { relonsponselon: t.RelonlatelondTopicsRelonsponselon =>
+        relonsponselon.topics
       }
   }
 }

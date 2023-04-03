@@ -1,136 +1,136 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-import "tensorflow/core/framework/attr_value.proto";
-import "tensorflow/core/framework/node_def.proto";
-import "tensorflow/core/framework/op_def.proto";
+import "telonnsorflow/corelon/framelonwork/attr_valuelon.proto";
+import "telonnsorflow/corelon/framelonwork/nodelon_delonf.proto";
+import "telonnsorflow/corelon/framelonwork/op_delonf.proto";
 
-option cc_enable_arenas = true;
-option java_outer_classname = "FunctionProtos";
-option java_multiple_files = true;
-option java_package = "org.tensorflow.framework";
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/framework/function_go_proto";
+option cc_elonnablelon_arelonnas = truelon;
+option java_outelonr_classnamelon = "FunctionProtos";
+option java_multiplelon_filelons = truelon;
+option java_packagelon = "org.telonnsorflow.framelonwork";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/framelonwork/function_go_proto";
 
-// A library is a set of named functions.
-message FunctionDefLibrary {
-  repeated FunctionDef function = 1;
-  repeated GradientDef gradient = 2;
-  repeated RegisteredGradient registered_gradients = 3;
+// A library is a selont of namelond functions.
+melonssagelon FunctionDelonfLibrary {
+  relonpelonatelond FunctionDelonf function = 1;
+  relonpelonatelond GradielonntDelonf gradielonnt = 2;
+  relonpelonatelond RelongistelonrelondGradielonnt relongistelonrelond_gradielonnts = 3;
 }
 
-// A function can be instantiated when the runtime can bind every attr
-// with a value. When a GraphDef has a call to a function, it must
-// have binding for every attr defined in the signature.
+// A function can belon instantiatelond whelonn thelon runtimelon can bind elonvelonry attr
+// with a valuelon. Whelonn a GraphDelonf has a call to a function, it must
+// havelon binding for elonvelonry attr delonfinelond in thelon signaturelon.
 //
 // TODO:
-//   * device spec, etc.
-message FunctionDef {
-  // The definition of the function's name, arguments, return values,
-  // attrs etc.
-  OpDef signature = 1;
+//   * delonvicelon spelonc, elontc.
+melonssagelon FunctionDelonf {
+  // Thelon delonfinition of thelon function's namelon, argumelonnts, relonturn valuelons,
+  // attrs elontc.
+  OpDelonf signaturelon = 1;
 
-  // Attributes specific to this function definition.
-  map<string, AttrValue> attr = 5;
+  // Attributelons speloncific to this function delonfinition.
+  map<string, AttrValuelon> attr = 5;
 
-  // Attributes for function arguments. These attributes are the same set of
-  // valid attributes as to _Arg nodes.
-  message ArgAttrs {
-    map<string, AttrValue> attr = 1;
+  // Attributelons for function argumelonnts. Thelonselon attributelons arelon thelon samelon selont of
+  // valid attributelons as to _Arg nodelons.
+  melonssagelon ArgAttrs {
+    map<string, AttrValuelon> attr = 1;
   }
   map<uint32, ArgAttrs> arg_attr = 7;
 
-  // Unique IDs for each resource argument, used to track aliasing resources. If
-  // Argument A and Argument B alias each other, then
-  // resource_arg_unique_ids[A.index] == resource_arg_unique_ids[B.index].
+  // Uniquelon IDs for elonach relonsourcelon argumelonnt, uselond to track aliasing relonsourcelons. If
+  // Argumelonnt A and Argumelonnt B alias elonach othelonr, thelonn
+  // relonsourcelon_arg_uniquelon_ids[A.indelonx] == relonsourcelon_arg_uniquelon_ids[B.indelonx].
   //
-  // If this field is empty, none of the arguments could alias; otherwise, every
-  // resource argument should have an entry in this field.
+  // If this fielonld is elonmpty, nonelon of thelon argumelonnts could alias; othelonrwiselon, elonvelonry
+  // relonsourcelon argumelonnt should havelon an elonntry in this fielonld.
   //
-  // When instantiated, the unique IDs will be attached to the _Arg nodes'
-  // "_resource_arg_unique_id" attribute.
-  map<uint32, uint32> resource_arg_unique_id = 8;
+  // Whelonn instantiatelond, thelon uniquelon IDs will belon attachelond to thelon _Arg nodelons'
+  // "_relonsourcelon_arg_uniquelon_id" attributelon.
+  map<uint32, uint32> relonsourcelon_arg_uniquelon_id = 8;
 
-  // NOTE: field id 2 deleted on Jan 11, 2017, GraphDef version 21.
-  reserved 2;
+  // NOTelon: fielonld id 2 delonlelontelond on Jan 11, 2017, GraphDelonf velonrsion 21.
+  relonselonrvelond 2;
 
-  // In both of the following fields, there is the need to specify an
-  // output that is used as either the input to another node (in
-  // `node_def`) or as a return value of the function (in `ret`).
-  // Unlike the NodeDefs in GraphDef, we need to be able to specify a
-  // list in some cases (instead of just single outputs).  Also, we
-  // need to be able to deal with lists of unknown length (so the
-  // output index may not be known at function definition time).  So
-  // we use the following format instead:
-  // * "fun_in" where "fun_in" is the name of a function input arg in
-  //   the `signature` field above.  This represents that input, whether
-  //   it is a single tensor or a list.
-  // * "fun_in:0" gives the first element of a function input arg (a
-  //   non-list input is considered a list of length 1 for these
-  //   purposes).
-  // * "node:out" where "node" is the name of a node in `node_def` and
-  //   "out" is the name one of its op's output arguments (the name
-  //   comes from the OpDef of the node's op). This represents that
-  //   node's output, whether it is a single tensor or a list.
-  //   Note: We enforce that an op's output arguments are never
-  //   renamed in the backwards-compatibility test.
-  // * "node:out:0" gives the first element of a node output arg (a
-  //   non-list output is considered a list of length 1 for these
-  //   purposes).
+  // In both of thelon following fielonlds, thelonrelon is thelon nelonelond to speloncify an
+  // output that is uselond as elonithelonr thelon input to anothelonr nodelon (in
+  // `nodelon_delonf`) or as a relonturn valuelon of thelon function (in `relont`).
+  // Unlikelon thelon NodelonDelonfs in GraphDelonf, welon nelonelond to belon ablelon to speloncify a
+  // list in somelon caselons (instelonad of just singlelon outputs).  Also, welon
+  // nelonelond to belon ablelon to delonal with lists of unknown lelonngth (so thelon
+  // output indelonx may not belon known at function delonfinition timelon).  So
+  // welon uselon thelon following format instelonad:
+  // * "fun_in" whelonrelon "fun_in" is thelon namelon of a function input arg in
+  //   thelon `signaturelon` fielonld abovelon.  This relonprelonselonnts that input, whelonthelonr
+  //   it is a singlelon telonnsor or a list.
+  // * "fun_in:0" givelons thelon first elonlelonmelonnt of a function input arg (a
+  //   non-list input is considelonrelond a list of lelonngth 1 for thelonselon
+  //   purposelons).
+  // * "nodelon:out" whelonrelon "nodelon" is thelon namelon of a nodelon in `nodelon_delonf` and
+  //   "out" is thelon namelon onelon of its op's output argumelonnts (thelon namelon
+  //   comelons from thelon OpDelonf of thelon nodelon's op). This relonprelonselonnts that
+  //   nodelon's output, whelonthelonr it is a singlelon telonnsor or a list.
+  //   Notelon: Welon elonnforcelon that an op's output argumelonnts arelon nelonvelonr
+  //   relonnamelond in thelon backwards-compatibility telonst.
+  // * "nodelon:out:0" givelons thelon first elonlelonmelonnt of a nodelon output arg (a
+  //   non-list output is considelonrelond a list of lelonngth 1 for thelonselon
+  //   purposelons).
   //
-  // NOT CURRENTLY SUPPORTED (but may be in the future):
-  // * "node:out:-1" gives last element in a node output list
-  // * "node:out:1:" gives a list with all but the first element in a
-  //   node output list
-  // * "node:out::-1" gives a list with all but the last element in a
-  //   node output list
+  // NOT CURRelonNTLY SUPPORTelonD (but may belon in thelon futurelon):
+  // * "nodelon:out:-1" givelons last elonlelonmelonnt in a nodelon output list
+  // * "nodelon:out:1:" givelons a list with all but thelon first elonlelonmelonnt in a
+  //   nodelon output list
+  // * "nodelon:out::-1" givelons a list with all but thelon last elonlelonmelonnt in a
+  //   nodelon output list
 
-  // The body of the function.  Unlike the NodeDefs in a GraphDef, attrs
-  // may have values of type `placeholder` and the `input` field uses
-  // the "output" format above.
+  // Thelon body of thelon function.  Unlikelon thelon NodelonDelonfs in a GraphDelonf, attrs
+  // may havelon valuelons of typelon `placelonholdelonr` and thelon `input` fielonld uselons
+  // thelon "output" format abovelon.
 
-  // By convention, "op" in node_def is resolved by consulting with a
-  // user-defined library first. If not resolved, "func" is assumed to
-  // be a builtin op.
-  repeated NodeDef node_def = 3;
+  // By convelonntion, "op" in nodelon_delonf is relonsolvelond by consulting with a
+  // uselonr-delonfinelond library first. If not relonsolvelond, "func" is assumelond to
+  // belon a builtin op.
+  relonpelonatelond NodelonDelonf nodelon_delonf = 3;
 
-  // A mapping from the output arg names from `signature` to the
-  // outputs from `node_def` that should be returned by the function.
-  map<string, string> ret = 4;
+  // A mapping from thelon output arg namelons from `signaturelon` to thelon
+  // outputs from `nodelon_delonf` that should belon relonturnelond by thelon function.
+  map<string, string> relont = 4;
 
-  // A mapping from control output names from `signature` to node names in
-  // `node_def` which should be control outputs of this function.
-  map<string, string> control_ret = 6;
+  // A mapping from control output namelons from `signaturelon` to nodelon namelons in
+  // `nodelon_delonf` which should belon control outputs of this function.
+  map<string, string> control_relont = 6;
 }
 
-// GradientDef defines the gradient function of a function defined in
+// GradielonntDelonf delonfinelons thelon gradielonnt function of a function delonfinelond in
 // a function library.
 //
-// A gradient function g (specified by gradient_func) for a function f
-// (specified by function_name) must follow the following:
+// A gradielonnt function g (speloncifielond by gradielonnt_func) for a function f
+// (speloncifielond by function_namelon) must follow thelon following:
 //
-// The function 'f' must be a numerical function which takes N inputs
-// and produces M outputs. Its gradient function 'g', which is a
-// function taking N + M inputs and produces N outputs.
+// Thelon function 'f' must belon a numelonrical function which takelons N inputs
+// and producelons M outputs. Its gradielonnt function 'g', which is a
+// function taking N + M inputs and producelons N outputs.
 //
-// I.e. if we have
+// I.elon. if welon havelon
 //    (y1, y2, ..., y_M) = f(x1, x2, ..., x_N),
-// then, g is
+// thelonn, g is
 //    (dL/dx1, dL/dx2, ..., dL/dx_N) = g(x1, x2, ..., x_N,
 //                                      dL/dy1, dL/dy2, ..., dL/dy_M),
-// where L is a scalar-value function of (x1, x2, ..., xN) (e.g., the
-// loss function). dL/dx_i is the partial derivative of L with respect
+// whelonrelon L is a scalar-valuelon function of (x1, x2, ..., xN) (elon.g., thelon
+// loss function). dL/dx_i is thelon partial delonrivativelon of L with relonspelonct
 // to x_i.
-message GradientDef {
-  string function_name = 1;  // The function name.
-  string gradient_func = 2;  // The gradient function's name.
+melonssagelon GradielonntDelonf {
+  string function_namelon = 1;  // Thelon function namelon.
+  string gradielonnt_func = 2;  // Thelon gradielonnt function's namelon.
 }
 
-// RegisteredGradient stores a gradient function that is registered in the
-// gradients library and used in the ops of a function in the function library.
-// Unlike GradientDef, these gradients are identified by op type, and not
-// directly linked to any function.
-message RegisteredGradient {
-  string gradient_func = 1;       // The gradient function's name.
-  string registered_op_type = 2;  // The gradient function's registered op type.
+// RelongistelonrelondGradielonnt storelons a gradielonnt function that is relongistelonrelond in thelon
+// gradielonnts library and uselond in thelon ops of a function in thelon function library.
+// Unlikelon GradielonntDelonf, thelonselon gradielonnts arelon idelonntifielond by op typelon, and not
+// direlonctly linkelond to any function.
+melonssagelon RelongistelonrelondGradielonnt {
+  string gradielonnt_func = 1;       // Thelon gradielonnt function's namelon.
+  string relongistelonrelond_op_typelon = 2;  // Thelon gradielonnt function's relongistelonrelond op typelon.
 }

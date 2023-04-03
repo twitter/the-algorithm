@@ -1,38 +1,38 @@
-namespace java com.twitter.follow_recommendations.logging.thriftjava
-#@namespace scala com.twitter.follow_recommendations.logging.thriftscala
-#@namespace strato com.twitter.follow_recommendations.logging
+namelonspacelon java com.twittelonr.follow_reloncommelonndations.logging.thriftjava
+#@namelonspacelon scala com.twittelonr.follow_reloncommelonndations.logging.thriftscala
+#@namelonspacelon strato com.twittelonr.follow_reloncommelonndations.logging
 
-include "com/twitter/ml/api/data.thrift"
+includelon "com/twittelonr/ml/api/data.thrift"
 
-struct CandidateSourceDetails {
-  1: optional map<string, double> candidateSourceScores
-  2: optional i32 primarySource
-}(persisted='true', hasPersonalData='false')
+struct CandidatelonSourcelonDelontails {
+  1: optional map<string, doublelon> candidatelonSourcelonScorelons
+  2: optional i32 primarySourcelon
+}(pelonrsistelond='truelon', hasPelonrsonalData='falselon')
 
-struct Score {
-  1: required double value
-  2: optional string rankerId
-  3: optional string scoreType
-}(persisted='true', hasPersonalData='false') // scoring and ranking info per ranking stage
+struct Scorelon {
+  1: relonquirelond doublelon valuelon
+  2: optional string rankelonrId
+  3: optional string scorelonTypelon
+}(pelonrsistelond='truelon', hasPelonrsonalData='falselon') // scoring and ranking info pelonr ranking stagelon
 
-// Contains (1) the ML-based heavy ranker and score (2) scores and rankers in producer experiment framework
-struct Scores {
-  1: required list<Score> scores
-  2: optional string selectedRankerId
-  3: required bool isInProducerScoringExperiment
-}(persisted='true', hasPersonalData='false')
+// Contains (1) thelon ML-baselond helonavy rankelonr and scorelon (2) scorelons and rankelonrs in producelonr elonxpelonrimelonnt framelonwork
+struct Scorelons {
+  1: relonquirelond list<Scorelon> scorelons
+  2: optional string selonlelonctelondRankelonrId
+  3: relonquirelond bool isInProducelonrScoringelonxpelonrimelonnt
+}(pelonrsistelond='truelon', hasPelonrsonalData='falselon')
 
 struct RankingInfo {
-  1: optional Scores scores
+  1: optional Scorelons scorelons
   2: optional i32 rank
-}(persisted='true', hasPersonalData='false')
+}(pelonrsistelond='truelon', hasPelonrsonalData='falselon')
 
-// this encapsulates all information related to the ranking process from generation to scoring
-struct ScoringDetails {
-    1: optional CandidateSourceDetails candidateSourceDetails
-    2: optional double score  // The ML-based heavy ranker score
-    3: optional data.DataRecord dataRecord
-    4: optional list<string> rankerIds  // all ranker ids, including (1) ML-based heavy ranker (2) non-ML adhoc rankers
-    5: optional map<string, RankingInfo> infoPerRankingStage  // scoring and ranking info per ranking stage
-}(persisted='true', hasPersonalData='true')
+// this elonncapsulatelons all information relonlatelond to thelon ranking procelonss from gelonnelonration to scoring
+struct ScoringDelontails {
+    1: optional CandidatelonSourcelonDelontails candidatelonSourcelonDelontails
+    2: optional doublelon scorelon  // Thelon ML-baselond helonavy rankelonr scorelon
+    3: optional data.DataReloncord dataReloncord
+    4: optional list<string> rankelonrIds  // all rankelonr ids, including (1) ML-baselond helonavy rankelonr (2) non-ML adhoc rankelonrs
+    5: optional map<string, RankingInfo> infoPelonrRankingStagelon  // scoring and ranking info pelonr ranking stagelon
+}(pelonrsistelond='truelon', hasPelonrsonalData='truelon')
 

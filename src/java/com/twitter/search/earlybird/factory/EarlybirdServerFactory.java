@@ -1,353 +1,353 @@
-package com.twitter.search.earlybird.factory;
+packagelon com.twittelonr.selonarch.elonarlybird.factory;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.aurora.AuroraInstanceKey;
-import com.twitter.search.common.aurora.AuroraSchedulerClient;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.decider.SearchDecider;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.util.ml.tensorflow_engine.TensorflowModelsManager;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.EarlybirdDarkProxy;
-import com.twitter.search.earlybird.EarlybirdFinagleServerManager;
-import com.twitter.search.earlybird.EarlybirdFuturePoolManager;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.EarlybirdServer;
-import com.twitter.search.earlybird.EarlybirdServerSetManager;
-import com.twitter.search.earlybird.EarlybirdWarmUpManager;
-import com.twitter.search.earlybird.QualityFactor;
-import com.twitter.search.earlybird.UpdateableEarlybirdStateManager;
-import com.twitter.search.earlybird.archive.ArchiveEarlybirdIndexConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.userupdates.UserScrubGeoMap;
-import com.twitter.search.earlybird.common.userupdates.UserUpdatesChecker;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSegmentFactory;
-import com.twitter.search.earlybird.ml.ScoringModelsManager;
-import com.twitter.search.earlybird.partition.AudioSpaceEventsStreamIndexer;
-import com.twitter.search.earlybird.partition.AudioSpaceTable;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.EarlybirdStartup;
-import com.twitter.search.earlybird.partition.MultiSegmentTermDictionaryManager;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionManager;
-import com.twitter.search.earlybird.partition.SegmentManager;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
-import com.twitter.search.earlybird.partition.UserScrubGeoEventStreamIndexer;
-import com.twitter.search.earlybird.partition.UserUpdatesStreamIndexer;
-import com.twitter.search.earlybird.querycache.QueryCacheConfig;
-import com.twitter.search.earlybird.querycache.QueryCacheManager;
-import com.twitter.search.earlybird.stats.EarlybirdSearcherStats;
-import com.twitter.search.earlybird.util.TermCountMonitor;
-import com.twitter.search.earlybird.util.TweetCountMonitor;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.aurora.AuroraInstancelonKelony;
+import com.twittelonr.selonarch.common.aurora.AuroraSchelondulelonrClielonnt;
+import com.twittelonr.selonarch.common.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelonFactory;
+import com.twittelonr.selonarch.common.deloncidelonr.SelonarchDeloncidelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.util.ml.telonnsorflow_elonnginelon.TelonnsorflowModelonlsManagelonr;
+import com.twittelonr.selonarch.common.util.zktrylock.ZooKelonelonpelonrTryLockFactory;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdDarkProxy;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdFinaglelonSelonrvelonrManagelonr;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdFuturelonPoolManagelonr;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdSelonrvelonr;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdSelonrvelonrSelontManagelonr;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdWarmUpManagelonr;
+import com.twittelonr.selonarch.elonarlybird.QualityFactor;
+import com.twittelonr.selonarch.elonarlybird.UpdatelonablelonelonarlybirdStatelonManagelonr;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonelonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrScrubGelonoMap;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrUpdatelonsChelonckelonr;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSelongmelonntFactory;
+import com.twittelonr.selonarch.elonarlybird.ml.ScoringModelonlsManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.AudioSpacelonelonvelonntsStrelonamIndelonxelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.AudioSpacelonTablelon;
+import com.twittelonr.selonarch.elonarlybird.partition.DynamicPartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.elonarlybirdStartup;
+import com.twittelonr.selonarch.elonarlybird.partition.MultiSelongmelonntTelonrmDictionaryManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.UselonrUpdatelonsStrelonamIndelonxelonr;
+import com.twittelonr.selonarch.elonarlybird.quelonrycachelon.QuelonryCachelonConfig;
+import com.twittelonr.selonarch.elonarlybird.quelonrycachelon.QuelonryCachelonManagelonr;
+import com.twittelonr.selonarch.elonarlybird.stats.elonarlybirdSelonarchelonrStats;
+import com.twittelonr.selonarch.elonarlybird.util.TelonrmCountMonitor;
+import com.twittelonr.selonarch.elonarlybird.util.TwelonelontCountMonitor;
 
 /**
- * This is the wiring file that builds EarlybirdServers.
- * Production and test code share this same wiring file.
+ * This is thelon wiring filelon that builds elonarlybirdSelonrvelonrs.
+ * Production and telonst codelon sharelon this samelon wiring filelon.
  * <p/>
- * To supply mocks for testing, one can do so by supplying a different
- * EarlybirdWiringModule to this wiring file.
+ * To supply mocks for telonsting, onelon can do so by supplying a diffelonrelonnt
+ * elonarlybirdWiringModulelon to this wiring filelon.
  */
-public final class EarlybirdServerFactory {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdServerFactory.class);
+public final class elonarlybirdSelonrvelonrFactory {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdSelonrvelonrFactory.class);
 
   /**
-   * Creates the EarlybirdServer based on the bindings in the given wire module.
+   * Crelonatelons thelon elonarlybirdSelonrvelonr baselond on thelon bindings in thelon givelonn wirelon modulelon.
    *
-   * @param earlybirdWireModule The wire module that specifies all required bindings.
+   * @param elonarlybirdWirelonModulelon Thelon wirelon modulelon that speloncifielons all relonquirelond bindings.
    */
-  public EarlybirdServer makeEarlybirdServer(EarlybirdWireModule earlybirdWireModule)
-      throws IOException {
-    LOG.info("Started making an Earlybird server");
-    CriticalExceptionHandler criticalExceptionHandler = new CriticalExceptionHandler();
-    Decider decider = earlybirdWireModule.provideDecider();
-    SearchDecider searchDecider = new SearchDecider(decider);
+  public elonarlybirdSelonrvelonr makelonelonarlybirdSelonrvelonr(elonarlybirdWirelonModulelon elonarlybirdWirelonModulelon)
+      throws IOelonxcelonption {
+    LOG.info("Startelond making an elonarlybird selonrvelonr");
+    CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr = nelonw CriticalelonxcelonptionHandlelonr();
+    Deloncidelonr deloncidelonr = elonarlybirdWirelonModulelon.providelonDeloncidelonr();
+    SelonarchDeloncidelonr selonarchDeloncidelonr = nelonw SelonarchDeloncidelonr(deloncidelonr);
 
-    EarlybirdWireModule.ZooKeeperClients zkClients = earlybirdWireModule.provideZooKeeperClients();
-    ZooKeeperTryLockFactory zkTryLockFactory =
-        zkClients.stateClient.createZooKeeperTryLockFactory();
+    elonarlybirdWirelonModulelon.ZooKelonelonpelonrClielonnts zkClielonnts = elonarlybirdWirelonModulelon.providelonZooKelonelonpelonrClielonnts();
+    ZooKelonelonpelonrTryLockFactory zkTryLockFactory =
+        zkClielonnts.statelonClielonnt.crelonatelonZooKelonelonpelonrTryLockFactory();
 
-    EarlybirdIndexConfig earlybirdIndexConfig =
-        earlybirdWireModule.provideEarlybirdIndexConfig(
-            decider, earlybirdWireModule.provideSearchIndexingMetricSet(),
-            criticalExceptionHandler);
+    elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig =
+        elonarlybirdWirelonModulelon.providelonelonarlybirdIndelonxConfig(
+            deloncidelonr, elonarlybirdWirelonModulelon.providelonSelonarchIndelonxingMelontricSelont(),
+            criticalelonxcelonptionHandlelonr);
 
-    SearchStatsReceiver earlybirdServerStats =
-        earlybirdWireModule.provideEarlybirdServerStatsReceiver();
+    SelonarchStatsReloncelonivelonr elonarlybirdSelonrvelonrStats =
+        elonarlybirdWirelonModulelon.providelonelonarlybirdSelonrvelonrStatsReloncelonivelonr();
 
-    EarlybirdSearcherStats tweetsSearcherStats =
-        earlybirdWireModule.provideTweetsSearcherStats();
+    elonarlybirdSelonarchelonrStats twelonelontsSelonarchelonrStats =
+        elonarlybirdWirelonModulelon.providelonTwelonelontsSelonarchelonrStats();
 
     DynamicPartitionConfig dynamicPartitionConfig =
-        earlybirdWireModule.provideDynamicPartitionConfig();
+        elonarlybirdWirelonModulelon.providelonDynamicPartitionConfig();
 
-    PartitionConfig partitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    LOG.info("Partition config info [Cluster: {}, Tier: {}, Partition: {}, Replica: {}]",
-            partitionConfig.getClusterName(),
-            partitionConfig.getTierName(),
-            partitionConfig.getIndexingHashPartitionID(),
-            partitionConfig.getHostPositionWithinHashPartition());
+    PartitionConfig partitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
+    LOG.info("Partition config info [Clustelonr: {}, Tielonr: {}, Partition: {}, Relonplica: {}]",
+            partitionConfig.gelontClustelonrNamelon(),
+            partitionConfig.gelontTielonrNamelon(),
+            partitionConfig.gelontIndelonxingHashPartitionID(),
+            partitionConfig.gelontHostPositionWithinHashPartition());
 
-    Clock clock = earlybirdWireModule.provideClock();
-    UserUpdatesChecker userUpdatesChecker =
-        new UserUpdatesChecker(clock, decider, earlybirdIndexConfig.getCluster());
+    Clock clock = elonarlybirdWirelonModulelon.providelonClock();
+    UselonrUpdatelonsChelonckelonr uselonrUpdatelonsChelonckelonr =
+        nelonw UselonrUpdatelonsChelonckelonr(clock, deloncidelonr, elonarlybirdIndelonxConfig.gelontClustelonr());
 
-    UserTable userTable = UserTable.newTableWithDefaultCapacityAndPredicate(
-        earlybirdIndexConfig.getUserTableFilter(partitionConfig)::apply);
+    UselonrTablelon uselonrTablelon = UselonrTablelon.nelonwTablelonWithDelonfaultCapacityAndPrelondicatelon(
+        elonarlybirdIndelonxConfig.gelontUselonrTablelonFiltelonr(partitionConfig)::apply);
 
-    UserScrubGeoMap userScrubGeoMap = new UserScrubGeoMap();
+    UselonrScrubGelonoMap uselonrScrubGelonoMap = nelonw UselonrScrubGelonoMap();
 
-    AudioSpaceTable audioSpaceTable = new AudioSpaceTable(clock);
+    AudioSpacelonTablelon audioSpacelonTablelon = nelonw AudioSpacelonTablelon(clock);
 
-    SegmentSyncConfig segmentSyncConfig =
-        earlybirdWireModule.provideSegmentSyncConfig(earlybirdIndexConfig.getCluster());
+    SelongmelonntSyncConfig selongmelonntSyncConfig =
+        elonarlybirdWirelonModulelon.providelonSelongmelonntSyncConfig(elonarlybirdIndelonxConfig.gelontClustelonr());
 
-    SegmentManager segmentManager = earlybirdWireModule.provideSegmentManager(
+    SelongmelonntManagelonr selongmelonntManagelonr = elonarlybirdWirelonModulelon.providelonSelongmelonntManagelonr(
         dynamicPartitionConfig,
-        earlybirdIndexConfig,
-        earlybirdWireModule.provideSearchIndexingMetricSet(),
-        tweetsSearcherStats,
-        earlybirdServerStats,
-        userUpdatesChecker,
-        segmentSyncConfig,
-        userTable,
-        userScrubGeoMap,
+        elonarlybirdIndelonxConfig,
+        elonarlybirdWirelonModulelon.providelonSelonarchIndelonxingMelontricSelont(),
+        twelonelontsSelonarchelonrStats,
+        elonarlybirdSelonrvelonrStats,
+        uselonrUpdatelonsChelonckelonr,
+        selongmelonntSyncConfig,
+        uselonrTablelon,
+        uselonrScrubGelonoMap,
         clock,
-        criticalExceptionHandler);
+        criticalelonxcelonptionHandlelonr);
 
-    QueryCacheConfig config = earlybirdWireModule.provideQueryCacheConfig(earlybirdServerStats);
+    QuelonryCachelonConfig config = elonarlybirdWirelonModulelon.providelonQuelonryCachelonConfig(elonarlybirdSelonrvelonrStats);
 
-    QueryCacheManager queryCacheManager = earlybirdWireModule.provideQueryCacheManager(
+    QuelonryCachelonManagelonr quelonryCachelonManagelonr = elonarlybirdWirelonModulelon.providelonQuelonryCachelonManagelonr(
         config,
-        earlybirdIndexConfig,
-        partitionConfig.getMaxEnabledLocalSegments(),
-        userTable,
-        userScrubGeoMap,
-        earlybirdWireModule.provideQueryCacheUpdateTaskScheduledExecutorFactory(),
-        earlybirdServerStats,
-        tweetsSearcherStats,
-        decider,
-        criticalExceptionHandler,
+        elonarlybirdIndelonxConfig,
+        partitionConfig.gelontMaxelonnablelondLocalSelongmelonnts(),
+        uselonrTablelon,
+        uselonrScrubGelonoMap,
+        elonarlybirdWirelonModulelon.providelonQuelonryCachelonUpdatelonTaskSchelondulelondelonxeloncutorFactory(),
+        elonarlybirdSelonrvelonrStats,
+        twelonelontsSelonarchelonrStats,
+        deloncidelonr,
+        criticalelonxcelonptionHandlelonr,
         clock);
 
-    EarlybirdServerSetManager serverSetManager = earlybirdWireModule.provideServerSetManager(
-        zkClients.discoveryClient,
+    elonarlybirdSelonrvelonrSelontManagelonr selonrvelonrSelontManagelonr = elonarlybirdWirelonModulelon.providelonSelonrvelonrSelontManagelonr(
+        zkClielonnts.discovelonryClielonnt,
         dynamicPartitionConfig,
-        earlybirdServerStats,
-        EarlybirdConfig.getThriftPort(),
+        elonarlybirdSelonrvelonrStats,
+        elonarlybirdConfig.gelontThriftPort(),
         "");
 
-    EarlybirdWarmUpManager warmUpManager =
-        earlybirdWireModule.provideWarmUpManager(zkClients.discoveryClient,
+    elonarlybirdWarmUpManagelonr warmUpManagelonr =
+        elonarlybirdWirelonModulelon.providelonWarmUpManagelonr(zkClielonnts.discovelonryClielonnt,
                                                  dynamicPartitionConfig,
-                                                 earlybirdServerStats,
-                                                 decider,
+                                                 elonarlybirdSelonrvelonrStats,
+                                                 deloncidelonr,
                                                  clock,
-                                                 EarlybirdConfig.getWarmUpThriftPort(),
+                                                 elonarlybirdConfig.gelontWarmUpThriftPort(),
                                                  "warmup_");
 
-    EarlybirdDarkProxy earlybirdDarkProxy = earlybirdWireModule.provideEarlybirdDarkProxy(
-        new SearchDecider(decider),
-        earlybirdWireModule.provideFinagleStatsReceiver(),
-        serverSetManager,
-        warmUpManager,
-        partitionConfig.getClusterName());
+    elonarlybirdDarkProxy elonarlybirdDarkProxy = elonarlybirdWirelonModulelon.providelonelonarlybirdDarkProxy(
+        nelonw SelonarchDeloncidelonr(deloncidelonr),
+        elonarlybirdWirelonModulelon.providelonFinaglelonStatsReloncelonivelonr(),
+        selonrvelonrSelontManagelonr,
+        warmUpManagelonr,
+        partitionConfig.gelontClustelonrNamelon());
 
-    UserUpdatesStreamIndexer userUpdatesStreamIndexer =
-        earlybirdWireModule.provideUserUpdatesKafkaConsumer(segmentManager);
+    UselonrUpdatelonsStrelonamIndelonxelonr uselonrUpdatelonsStrelonamIndelonxelonr =
+        elonarlybirdWirelonModulelon.providelonUselonrUpdatelonsKafkaConsumelonr(selongmelonntManagelonr);
 
-    UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer =
-        earlybirdWireModule.provideUserScrubGeoEventKafkaConsumer(segmentManager);
+    UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr =
+        elonarlybirdWirelonModulelon.providelonUselonrScrubGelonoelonvelonntKafkaConsumelonr(selongmelonntManagelonr);
 
-    AudioSpaceEventsStreamIndexer audioSpaceEventsStreamIndexer =
-        earlybirdWireModule.provideAudioSpaceEventsStreamIndexer(audioSpaceTable, clock);
+    AudioSpacelonelonvelonntsStrelonamIndelonxelonr audioSpacelonelonvelonntsStrelonamIndelonxelonr =
+        elonarlybirdWirelonModulelon.providelonAudioSpacelonelonvelonntsStrelonamIndelonxelonr(audioSpacelonTablelon, clock);
 
-    MultiSegmentTermDictionaryManager.Config termDictionaryConfig =
-        earlybirdWireModule.provideMultiSegmentTermDictionaryManagerConfig();
-    MultiSegmentTermDictionaryManager multiSegmentTermDictionaryManager =
-        earlybirdWireModule.provideMultiSegmentTermDictionaryManager(
-            termDictionaryConfig,
-            segmentManager,
-            earlybirdServerStats,
-            decider,
-            earlybirdIndexConfig.getCluster());
+    MultiSelongmelonntTelonrmDictionaryManagelonr.Config telonrmDictionaryConfig =
+        elonarlybirdWirelonModulelon.providelonMultiSelongmelonntTelonrmDictionaryManagelonrConfig();
+    MultiSelongmelonntTelonrmDictionaryManagelonr multiSelongmelonntTelonrmDictionaryManagelonr =
+        elonarlybirdWirelonModulelon.providelonMultiSelongmelonntTelonrmDictionaryManagelonr(
+            telonrmDictionaryConfig,
+            selongmelonntManagelonr,
+            elonarlybirdSelonrvelonrStats,
+            deloncidelonr,
+            elonarlybirdIndelonxConfig.gelontClustelonr());
 
-    TermCountMonitor termCountMonitor =
-        earlybirdWireModule.provideTermCountMonitor(
-            segmentManager, earlybirdWireModule.provideTermCountMonitorScheduledExecutorFactory(),
-            earlybirdServerStats,
-            criticalExceptionHandler);
-    TweetCountMonitor tweetCountMonitor =
-        earlybirdWireModule.provideTweetCountMonitor(
-            segmentManager, earlybirdWireModule.provideTweetCountMonitorScheduledExecutorFactory(),
-            earlybirdServerStats,
-            criticalExceptionHandler);
+    TelonrmCountMonitor telonrmCountMonitor =
+        elonarlybirdWirelonModulelon.providelonTelonrmCountMonitor(
+            selongmelonntManagelonr, elonarlybirdWirelonModulelon.providelonTelonrmCountMonitorSchelondulelondelonxeloncutorFactory(),
+            elonarlybirdSelonrvelonrStats,
+            criticalelonxcelonptionHandlelonr);
+    TwelonelontCountMonitor twelonelontCountMonitor =
+        elonarlybirdWirelonModulelon.providelonTwelonelontCountMonitor(
+            selongmelonntManagelonr, elonarlybirdWirelonModulelon.providelonTwelonelontCountMonitorSchelondulelondelonxeloncutorFactory(),
+            elonarlybirdSelonrvelonrStats,
+            criticalelonxcelonptionHandlelonr);
 
-    ScoringModelsManager scoringModelsManager = earlybirdWireModule.provideScoringModelsManager(
-        earlybirdServerStats,
-        earlybirdIndexConfig
+    ScoringModelonlsManagelonr scoringModelonlsManagelonr = elonarlybirdWirelonModulelon.providelonScoringModelonlsManagelonr(
+        elonarlybirdSelonrvelonrStats,
+        elonarlybirdIndelonxConfig
     );
 
-    TensorflowModelsManager tensorflowModelsManager =
-        earlybirdWireModule.provideTensorflowModelsManager(
-            earlybirdServerStats,
-            "tf_loader",
-            decider,
-            earlybirdIndexConfig
+    TelonnsorflowModelonlsManagelonr telonnsorflowModelonlsManagelonr =
+        elonarlybirdWirelonModulelon.providelonTelonnsorflowModelonlsManagelonr(
+            elonarlybirdSelonrvelonrStats,
+            "tf_loadelonr",
+            deloncidelonr,
+            elonarlybirdIndelonxConfig
         );
 
-    AuroraSchedulerClient schedulerClient = null;
-    AuroraInstanceKey auroraInstanceKey = EarlybirdConfig.getAuroraInstanceKey();
-    if (auroraInstanceKey != null) {
-      schedulerClient = new AuroraSchedulerClient(auroraInstanceKey.getCluster());
+    AuroraSchelondulelonrClielonnt schelondulelonrClielonnt = null;
+    AuroraInstancelonKelony auroraInstancelonKelony = elonarlybirdConfig.gelontAuroraInstancelonKelony();
+    if (auroraInstancelonKelony != null) {
+      schelondulelonrClielonnt = nelonw AuroraSchelondulelonrClielonnt(auroraInstancelonKelony.gelontClustelonr());
     }
 
-    UpdateableEarlybirdStateManager earlybirdStateManager =
-        earlybirdWireModule.provideUpdateableEarlybirdStateManager(
-            earlybirdIndexConfig,
+    UpdatelonablelonelonarlybirdStatelonManagelonr elonarlybirdStatelonManagelonr =
+        elonarlybirdWirelonModulelon.providelonUpdatelonablelonelonarlybirdStatelonManagelonr(
+            elonarlybirdIndelonxConfig,
             dynamicPartitionConfig,
-            zkClients.stateClient,
-            schedulerClient,
-            earlybirdWireModule.provideStateUpdateManagerExecutorFactory(),
-            scoringModelsManager,
-            tensorflowModelsManager,
-            earlybirdServerStats,
-            new SearchDecider(decider),
-            criticalExceptionHandler);
+            zkClielonnts.statelonClielonnt,
+            schelondulelonrClielonnt,
+            elonarlybirdWirelonModulelon.providelonStatelonUpdatelonManagelonrelonxeloncutorFactory(),
+            scoringModelonlsManagelonr,
+            telonnsorflowModelonlsManagelonr,
+            elonarlybirdSelonrvelonrStats,
+            nelonw SelonarchDeloncidelonr(deloncidelonr),
+            criticalelonxcelonptionHandlelonr);
 
-    EarlybirdFuturePoolManager futurePoolManager = earlybirdWireModule.provideFuturePoolManager();
-    EarlybirdFinagleServerManager finagleServerManager =
-        earlybirdWireModule.provideFinagleServerManager(criticalExceptionHandler);
+    elonarlybirdFuturelonPoolManagelonr futurelonPoolManagelonr = elonarlybirdWirelonModulelon.providelonFuturelonPoolManagelonr();
+    elonarlybirdFinaglelonSelonrvelonrManagelonr finaglelonSelonrvelonrManagelonr =
+        elonarlybirdWirelonModulelon.providelonFinaglelonSelonrvelonrManagelonr(criticalelonxcelonptionHandlelonr);
 
-    PartitionManager partitionManager = null;
-    if (EarlybirdIndexConfigUtil.isArchiveSearch()) {
-      partitionManager = buildArchivePartitionManager(
-          earlybirdWireModule,
-          userUpdatesStreamIndexer,
-          userScrubGeoEventStreamIndexer,
+    PartitionManagelonr partitionManagelonr = null;
+    if (elonarlybirdIndelonxConfigUtil.isArchivelonSelonarch()) {
+      partitionManagelonr = buildArchivelonPartitionManagelonr(
+          elonarlybirdWirelonModulelon,
+          uselonrUpdatelonsStrelonamIndelonxelonr,
+          uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
           zkTryLockFactory,
-          earlybirdIndexConfig,
+          elonarlybirdIndelonxConfig,
           dynamicPartitionConfig,
-          segmentManager,
-          queryCacheManager,
-          earlybirdServerStats,
-          serverSetManager,
-          earlybirdWireModule.providePartitionManagerExecutorFactory(),
-          earlybirdWireModule.provideSimpleUserUpdateIndexerScheduledExecutorFactory(),
+          selongmelonntManagelonr,
+          quelonryCachelonManagelonr,
+          elonarlybirdSelonrvelonrStats,
+          selonrvelonrSelontManagelonr,
+          elonarlybirdWirelonModulelon.providelonPartitionManagelonrelonxeloncutorFactory(),
+          elonarlybirdWirelonModulelon.providelonSimplelonUselonrUpdatelonIndelonxelonrSchelondulelondelonxeloncutorFactory(),
           clock,
-          segmentSyncConfig,
-          criticalExceptionHandler);
-    } else {
-      LOG.info("Not creating PartitionManager");
+          selongmelonntSyncConfig,
+          criticalelonxcelonptionHandlelonr);
+    } elonlselon {
+      LOG.info("Not crelonating PartitionManagelonr");
     }
 
-    EarlybirdSegmentFactory earlybirdSegmentFactory = new EarlybirdSegmentFactory(
-        earlybirdIndexConfig,
-        earlybirdWireModule.provideSearchIndexingMetricSet(),
-        tweetsSearcherStats,
+    elonarlybirdSelongmelonntFactory elonarlybirdSelongmelonntFactory = nelonw elonarlybirdSelongmelonntFactory(
+        elonarlybirdIndelonxConfig,
+        elonarlybirdWirelonModulelon.providelonSelonarchIndelonxingMelontricSelont(),
+        twelonelontsSelonarchelonrStats,
         clock);
 
-    EarlybirdStartup earlybirdStartup = earlybirdWireModule.provideEarlybirdStartup(
-        partitionManager,
-        userUpdatesStreamIndexer,
-        userScrubGeoEventStreamIndexer,
-        audioSpaceEventsStreamIndexer,
+    elonarlybirdStartup elonarlybirdStartup = elonarlybirdWirelonModulelon.providelonelonarlybirdStartup(
+        partitionManagelonr,
+        uselonrUpdatelonsStrelonamIndelonxelonr,
+        uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
+        audioSpacelonelonvelonntsStrelonamIndelonxelonr,
         dynamicPartitionConfig,
-        criticalExceptionHandler,
-        segmentManager,
-        multiSegmentTermDictionaryManager,
-        queryCacheManager,
+        criticalelonxcelonptionHandlelonr,
+        selongmelonntManagelonr,
+        multiSelongmelonntTelonrmDictionaryManagelonr,
+        quelonryCachelonManagelonr,
         zkTryLockFactory,
-        serverSetManager,
+        selonrvelonrSelontManagelonr,
         clock,
-        segmentSyncConfig,
-        earlybirdSegmentFactory,
-        earlybirdIndexConfig.getCluster(),
-        searchDecider);
+        selongmelonntSyncConfig,
+        elonarlybirdSelongmelonntFactory,
+        elonarlybirdIndelonxConfig.gelontClustelonr(),
+        selonarchDeloncidelonr);
 
-    QualityFactor qualityFactor = earlybirdWireModule.provideQualityFactor(
-        decider,
-        earlybirdServerStats);
+    QualityFactor qualityFactor = elonarlybirdWirelonModulelon.providelonQualityFactor(
+        deloncidelonr,
+        elonarlybirdSelonrvelonrStats);
 
-    EarlybirdServer earlybirdServer = new EarlybirdServer(
-        queryCacheManager,
-        zkClients.stateClient,
-        decider,
-        earlybirdIndexConfig,
+    elonarlybirdSelonrvelonr elonarlybirdSelonrvelonr = nelonw elonarlybirdSelonrvelonr(
+        quelonryCachelonManagelonr,
+        zkClielonnts.statelonClielonnt,
+        deloncidelonr,
+        elonarlybirdIndelonxConfig,
         dynamicPartitionConfig,
-        partitionManager,
-        segmentManager,
-        audioSpaceTable,
-        termCountMonitor,
-        tweetCountMonitor,
-        earlybirdStateManager,
-        futurePoolManager,
-        finagleServerManager,
-        serverSetManager,
-        warmUpManager,
-        earlybirdServerStats,
-        tweetsSearcherStats,
-        scoringModelsManager,
-        tensorflowModelsManager,
+        partitionManagelonr,
+        selongmelonntManagelonr,
+        audioSpacelonTablelon,
+        telonrmCountMonitor,
+        twelonelontCountMonitor,
+        elonarlybirdStatelonManagelonr,
+        futurelonPoolManagelonr,
+        finaglelonSelonrvelonrManagelonr,
+        selonrvelonrSelontManagelonr,
+        warmUpManagelonr,
+        elonarlybirdSelonrvelonrStats,
+        twelonelontsSelonarchelonrStats,
+        scoringModelonlsManagelonr,
+        telonnsorflowModelonlsManagelonr,
         clock,
-        multiSegmentTermDictionaryManager,
-        earlybirdDarkProxy,
-        segmentSyncConfig,
-        earlybirdWireModule.provideQueryTimeoutFactory(),
-        earlybirdStartup,
+        multiSelongmelonntTelonrmDictionaryManagelonr,
+        elonarlybirdDarkProxy,
+        selongmelonntSyncConfig,
+        elonarlybirdWirelonModulelon.providelonQuelonryTimelonoutFactory(),
+        elonarlybirdStartup,
         qualityFactor,
-        earlybirdWireModule.provideSearchIndexingMetricSet());
+        elonarlybirdWirelonModulelon.providelonSelonarchIndelonxingMelontricSelont());
 
-    earlybirdStateManager.setEarlybirdServer(earlybirdServer);
-    criticalExceptionHandler.setShutdownHook(earlybirdServer::shutdown);
+    elonarlybirdStatelonManagelonr.selontelonarlybirdSelonrvelonr(elonarlybirdSelonrvelonr);
+    criticalelonxcelonptionHandlelonr.selontShutdownHook(elonarlybirdSelonrvelonr::shutdown);
 
-    return earlybirdServer;
+    relonturn elonarlybirdSelonrvelonr;
   }
 
-  private PartitionManager buildArchivePartitionManager(
-      EarlybirdWireModule earlybirdWireModule,
-      UserUpdatesStreamIndexer userUpdatesStreamIndexer,
-      UserScrubGeoEventStreamIndexer userScrubGeoEventStreamIndexer,
-      ZooKeeperTryLockFactory zkTryLockFactory,
-      EarlybirdIndexConfig earlybirdIndexConfig,
+  privatelon PartitionManagelonr buildArchivelonPartitionManagelonr(
+      elonarlybirdWirelonModulelon elonarlybirdWirelonModulelon,
+      UselonrUpdatelonsStrelonamIndelonxelonr uselonrUpdatelonsStrelonamIndelonxelonr,
+      UselonrScrubGelonoelonvelonntStrelonamIndelonxelonr uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
+      ZooKelonelonpelonrTryLockFactory zkTryLockFactory,
+      elonarlybirdIndelonxConfig elonarlybirdIndelonxConfig,
       DynamicPartitionConfig dynamicPartitionConfig,
-      SegmentManager segmentManager,
-      QueryCacheManager queryCacheManager,
-      SearchStatsReceiver searchStatsReceiver,
-      EarlybirdServerSetManager serverSetManager,
-      ScheduledExecutorServiceFactory partitionManagerExecutorServiceFactory,
-      ScheduledExecutorServiceFactory simpleUserUpdateIndexerExecutorFactory,
+      SelongmelonntManagelonr selongmelonntManagelonr,
+      QuelonryCachelonManagelonr quelonryCachelonManagelonr,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      elonarlybirdSelonrvelonrSelontManagelonr selonrvelonrSelontManagelonr,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory partitionManagelonrelonxeloncutorSelonrvicelonFactory,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory simplelonUselonrUpdatelonIndelonxelonrelonxeloncutorFactory,
       Clock clock,
-      SegmentSyncConfig segmentSyncConfig,
-      CriticalExceptionHandler criticalExceptionHandler)
-      throws IOException {
+      SelongmelonntSyncConfig selongmelonntSyncConfig,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr)
+      throws IOelonxcelonption {
 
-      Preconditions.checkState(earlybirdIndexConfig instanceof ArchiveEarlybirdIndexConfig);
-      LOG.info("Creating ArchiveSearchPartitionManager");
-      return earlybirdWireModule.provideFullArchivePartitionManager(
+      Prelonconditions.chelonckStatelon(elonarlybirdIndelonxConfig instancelonof ArchivelonelonarlybirdIndelonxConfig);
+      LOG.info("Crelonating ArchivelonSelonarchPartitionManagelonr");
+      relonturn elonarlybirdWirelonModulelon.providelonFullArchivelonPartitionManagelonr(
           zkTryLockFactory,
-          queryCacheManager,
-          segmentManager,
+          quelonryCachelonManagelonr,
+          selongmelonntManagelonr,
           dynamicPartitionConfig,
-          userUpdatesStreamIndexer,
-          userScrubGeoEventStreamIndexer,
-          searchStatsReceiver,
-          (ArchiveEarlybirdIndexConfig) earlybirdIndexConfig,
-          serverSetManager,
-          partitionManagerExecutorServiceFactory,
-          simpleUserUpdateIndexerExecutorFactory,
-          earlybirdWireModule.provideSearchIndexingMetricSet(),
+          uselonrUpdatelonsStrelonamIndelonxelonr,
+          uselonrScrubGelonoelonvelonntStrelonamIndelonxelonr,
+          selonarchStatsReloncelonivelonr,
+          (ArchivelonelonarlybirdIndelonxConfig) elonarlybirdIndelonxConfig,
+          selonrvelonrSelontManagelonr,
+          partitionManagelonrelonxeloncutorSelonrvicelonFactory,
+          simplelonUselonrUpdatelonIndelonxelonrelonxeloncutorFactory,
+          elonarlybirdWirelonModulelon.providelonSelonarchIndelonxingMelontricSelont(),
           clock,
-          segmentSyncConfig,
-          criticalExceptionHandler);
+          selongmelonntSyncConfig,
+          criticalelonxcelonptionHandlelonr);
   }
 }

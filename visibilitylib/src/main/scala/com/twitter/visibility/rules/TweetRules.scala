@@ -1,594 +1,594 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.visibility.common.actions.LimitedEngagementReason
-import com.twitter.visibility.configapi.params.FSRuleParams.AdAvoidanceHighToxicityModelScoreThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.AdAvoidanceReportedTweetModelScoreThresholdParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetDropProtectedRuleEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetDropRuleEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.CommunityTweetNonMemberLimitedActionsRuleEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.StaleTweetLimitedActionsRulesEnabledParam
-import com.twitter.visibility.configapi.params.FSRuleParams.TrustedFriendsTweetLimitedEngagementsRuleEnabledParam
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams._
-import com.twitter.visibility.features.{TweetDeleteReason => FeatureTweetDeleteReason}
-import com.twitter.visibility.models.TweetDeleteReason
-import com.twitter.visibility.models.TweetSafetyLabelType
-import com.twitter.visibility.rules.Condition.ViewerIsExclusiveTweetAuthor
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.CommunityTweetAuthorRemoved
-import com.twitter.visibility.rules.Reason.CommunityTweetHidden
-import com.twitter.visibility.rules.Reason.Nsfw
-import com.twitter.visibility.rules.Reason.StaleTweet
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.RuleActionSourceBuilder.TweetSafetyLabelSourceBuilder
+import com.twittelonr.visibility.common.actions.LimitelondelonngagelonmelonntRelonason
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.AdAvoidancelonHighToxicityModelonlScorelonThrelonsholdParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.AdAvoidancelonRelonportelondTwelonelontModelonlScorelonThrelonsholdParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.CommunityTwelonelontCommunityUnavailablelonLimitelondActionsRulelonselonnablelondParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.CommunityTwelonelontDropProtelonctelondRulelonelonnablelondParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.CommunityTwelonelontDropRulelonelonnablelondParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.CommunityTwelonelontLimitelondActionsRulelonselonnablelondParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.CommunityTwelonelontMelonmbelonrRelonmovelondLimitelondActionsRulelonselonnablelondParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.CommunityTwelonelontNonMelonmbelonrLimitelondActionsRulelonelonnablelondParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.StalelonTwelonelontLimitelondActionsRulelonselonnablelondParam
+import com.twittelonr.visibility.configapi.params.FSRulelonParams.TrustelondFrielonndsTwelonelontLimitelondelonngagelonmelonntsRulelonelonnablelondParam
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams
+import com.twittelonr.visibility.configapi.params.RulelonParams._
+import com.twittelonr.visibility.felonaturelons.{TwelonelontDelonlelontelonRelonason => FelonaturelonTwelonelontDelonlelontelonRelonason}
+import com.twittelonr.visibility.modelonls.TwelonelontDelonlelontelonRelonason
+import com.twittelonr.visibility.modelonls.TwelonelontSafelontyLabelonlTypelon
+import com.twittelonr.visibility.rulelons.Condition.VielonwelonrIselonxclusivelonTwelonelontAuthor
+import com.twittelonr.visibility.rulelons.Condition._
+import com.twittelonr.visibility.rulelons.Relonason.CommunityTwelonelontAuthorRelonmovelond
+import com.twittelonr.visibility.rulelons.Relonason.CommunityTwelonelontHiddelonn
+import com.twittelonr.visibility.rulelons.Relonason.Nsfw
+import com.twittelonr.visibility.rulelons.Relonason.StalelonTwelonelont
+import com.twittelonr.visibility.rulelons.Relonason.Unspeloncifielond
+import com.twittelonr.visibility.rulelons.RulelonActionSourcelonBuildelonr.TwelonelontSafelontyLabelonlSourcelonBuildelonr
 
-abstract class TweetHasLabelRule(action: Action, tweetSafetyLabelType: TweetSafetyLabelType)
-    extends RuleWithConstantAction(action, TweetHasLabel(tweetSafetyLabelType)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
+abstract class TwelonelontHasLabelonlRulelon(action: Action, twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds RulelonWithConstantAction(action, TwelonelontHasLabelonl(twelonelontSafelontyLabelonlTypelon)) {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(twelonelontSafelontyLabelonlTypelon))
 }
 
-abstract class ConditionWithTweetLabelRule(
+abstract class ConditionWithTwelonelontLabelonlRulelon(
   action: Action,
   condition: Condition,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends RuleWithConstantAction(action, And(TweetHasLabel(tweetSafetyLabelType), condition)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds RulelonWithConstantAction(action, And(TwelonelontHasLabelonl(twelonelontSafelontyLabelonlTypelon), condition)) {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(twelonelontSafelontyLabelonlTypelon))
 }
 
-abstract class NonAuthorWithTweetLabelRule(
+abstract class NonAuthorWithTwelonelontLabelonlRulelon(
   action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(action, NonAuthorViewer, tweetSafetyLabelType) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    TweetSafetyLabelSourceBuilder(tweetSafetyLabelType))
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(action, NonAuthorVielonwelonr, twelonelontSafelontyLabelonlTypelon) {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    TwelonelontSafelontyLabelonlSourcelonBuildelonr(twelonelontSafelontyLabelonlTypelon))
 }
 
-abstract class NonFollowerWithTweetLabelRule(
+abstract class NonFollowelonrWithTwelonelontLabelonlRulelon(
   action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       action,
-      LoggedOutOrViewerNotFollowingAuthor,
-      tweetSafetyLabelType
+      LoggelondOutOrVielonwelonrNotFollowingAuthor,
+      twelonelontSafelontyLabelonlTypelon
     )
 
-abstract class NonAuthorAndNonFollowerWithTweetLabelRule(
+abstract class NonAuthorAndNonFollowelonrWithTwelonelontLabelonlRulelon(
   action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       action,
-      And(NonAuthorViewer, LoggedOutOrViewerNotFollowingAuthor),
-      tweetSafetyLabelType
+      And(NonAuthorVielonwelonr, LoggelondOutOrVielonwelonrNotFollowingAuthor),
+      twelonelontSafelontyLabelonlTypelon
     )
 
-abstract class NonFollowerWithUqfTweetLabelRule(
+abstract class NonFollowelonrWithUqfTwelonelontLabelonlRulelon(
   action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       action,
       Or(
-        LoggedOutViewer,
+        LoggelondOutVielonwelonr,
         And(
-          NonAuthorViewer,
-          Not(ViewerDoesFollowAuthor),
-          ViewerHasUqfEnabled
+          NonAuthorVielonwelonr,
+          Not(VielonwelonrDoelonsFollowAuthor),
+          VielonwelonrHasUqfelonnablelond
         )
       ),
-      tweetSafetyLabelType
+      twelonelontSafelontyLabelonlTypelon
     )
 
-abstract class ViewerWithUqfTweetLabelRule(action: Action, labelValue: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(action, ViewerHasUqfEnabled, labelValue)
+abstract class VielonwelonrWithUqfTwelonelontLabelonlRulelon(action: Action, labelonlValuelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(action, VielonwelonrHasUqfelonnablelond, labelonlValuelon)
 
-case object ConversationControlRules {
+caselon objelonct ConvelonrsationControlRulelons {
 
-  abstract class ConversationControlBaseRule(condition: Condition)
-      extends RuleWithConstantAction(
-        LimitedEngagements(LimitedEngagementReason.ConversationControl),
+  abstract class ConvelonrsationControlBaselonRulelon(condition: Condition)
+      elonxtelonnds RulelonWithConstantAction(
+        Limitelondelonngagelonmelonnts(LimitelondelonngagelonmelonntRelonason.ConvelonrsationControl),
         condition) {
-    override def enabled: Seq[RuleParam[Boolean]] = Seq(TweetConversationControlEnabledParam)
+    ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(TwelonelontConvelonrsationControlelonnablelondParam)
   }
 
-  object LimitRepliesCommunityConversationRule
-      extends ConversationControlBaseRule(
+  objelonct LimitRelonplielonsCommunityConvelonrsationRulelon
+      elonxtelonnds ConvelonrsationControlBaselonRulelon(
         And(
-          TweetIsCommunityConversation,
+          TwelonelontIsCommunityConvelonrsation,
           Not(
             Or(
-              LoggedOutViewer,
-              Retweet,
-              ViewerIsTweetConversationRootAuthor,
-              ViewerIsInvitedToTweetConversation,
-              ConversationRootAuthorDoesFollowViewer
+              LoggelondOutVielonwelonr,
+              Relontwelonelont,
+              VielonwelonrIsTwelonelontConvelonrsationRootAuthor,
+              VielonwelonrIsInvitelondToTwelonelontConvelonrsation,
+              ConvelonrsationRootAuthorDoelonsFollowVielonwelonr
             ))
         )
       )
 
-  object LimitRepliesFollowersConversationRule
-      extends ConversationControlBaseRule(
+  objelonct LimitRelonplielonsFollowelonrsConvelonrsationRulelon
+      elonxtelonnds ConvelonrsationControlBaselonRulelon(
         And(
-          TweetIsFollowersConversation,
+          TwelonelontIsFollowelonrsConvelonrsation,
           Not(
             Or(
-              LoggedOutViewer,
-              Retweet,
-              ViewerIsTweetConversationRootAuthor,
-              ViewerIsInvitedToTweetConversation,
-              ViewerDoesFollowConversationRootAuthor
+              LoggelondOutVielonwelonr,
+              Relontwelonelont,
+              VielonwelonrIsTwelonelontConvelonrsationRootAuthor,
+              VielonwelonrIsInvitelondToTwelonelontConvelonrsation,
+              VielonwelonrDoelonsFollowConvelonrsationRootAuthor
             ))
         )
       )
 
-  object LimitRepliesByInvitationConversationRule
-      extends ConversationControlBaseRule(
+  objelonct LimitRelonplielonsByInvitationConvelonrsationRulelon
+      elonxtelonnds ConvelonrsationControlBaselonRulelon(
         And(
-          TweetIsByInvitationConversation,
+          TwelonelontIsByInvitationConvelonrsation,
           Not(
             Or(
-              LoggedOutViewer,
-              Retweet,
-              ViewerIsTweetConversationRootAuthor,
-              ViewerIsInvitedToTweetConversation
+              LoggelondOutVielonwelonr,
+              Relontwelonelont,
+              VielonwelonrIsTwelonelontConvelonrsationRootAuthor,
+              VielonwelonrIsInvitelondToTwelonelontConvelonrsation
             ))
         )
       )
 
 }
 
-abstract class NonAuthorViewerOptInFilteringWithTweetLabelRule(
+abstract class NonAuthorVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
   action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       action,
-      And(NonAuthorViewer, LoggedOutOrViewerOptInFiltering),
-      tweetSafetyLabelType)
+      And(NonAuthorVielonwelonr, LoggelondOutOrVielonwelonrOptInFiltelonring),
+      twelonelontSafelontyLabelonlTypelon)
 
-abstract class NonFollowerViewerOptInFilteringWithTweetLabelRule(
+abstract class NonFollowelonrVielonwelonrOptInFiltelonringWithTwelonelontLabelonlRulelon(
   action: Action,
-  tweetSafetyLabelType: TweetSafetyLabelType)
-    extends ConditionWithTweetLabelRule(
+  twelonelontSafelontyLabelonlTypelon: TwelonelontSafelontyLabelonlTypelon)
+    elonxtelonnds ConditionWithTwelonelontLabelonlRulelon(
       action,
-      And(LoggedOutOrViewerNotFollowingAuthor, LoggedOutOrViewerOptInFiltering),
-      tweetSafetyLabelType
+      And(LoggelondOutOrVielonwelonrNotFollowingAuthor, LoggelondOutOrVielonwelonrOptInFiltelonring),
+      twelonelontSafelontyLabelonlTypelon
     )
 
-object TweetNsfwUserDropRule extends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwUserAuthor)
-object TweetNsfwAdminDropRule extends RuleWithConstantAction(Drop(Nsfw), TweetHasNsfwAdminAuthor)
+objelonct TwelonelontNsfwUselonrDropRulelon elonxtelonnds RulelonWithConstantAction(Drop(Nsfw), TwelonelontHasNsfwUselonrAuthor)
+objelonct TwelonelontNsfwAdminDropRulelon elonxtelonnds RulelonWithConstantAction(Drop(Nsfw), TwelonelontHasNsfwAdminAuthor)
 
-object NullcastedTweetRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(Nullcast, Not(Retweet), Not(IsQuotedInnerTweet), Not(TweetIsCommunityTweet)))
+objelonct NullcastelondTwelonelontRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
+      And(Nullcast, Not(Relontwelonelont), Not(IsQuotelondInnelonrTwelonelont), Not(TwelonelontIsCommunityTwelonelont)))
 
-object MutedRetweetsRule
-    extends RuleWithConstantAction(Drop(Unspecified), And(Retweet, ViewerMutesRetweetsFromAuthor))
+objelonct MutelondRelontwelonelontsRulelon
+    elonxtelonnds RulelonWithConstantAction(Drop(Unspeloncifielond), And(Relontwelonelont, VielonwelonrMutelonsRelontwelonelontsFromAuthor))
 
-abstract class FilterCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(action, TweetIsCommunityTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetDropRuleEnabledParam)
+abstract class FiltelonrCommunityTwelonelontsRulelon(ovelonrridelon val action: Action)
+    elonxtelonnds RulelonWithConstantAction(action, TwelonelontIsCommunityTwelonelont) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(CommunityTwelonelontDropRulelonelonnablelondParam)
 }
 
-object DropCommunityTweetsRule extends FilterCommunityTweetsRule(Drop(CommunityTweetHidden))
+objelonct DropCommunityTwelonelontsRulelon elonxtelonnds FiltelonrCommunityTwelonelontsRulelon(Drop(CommunityTwelonelontHiddelonn))
 
-object TombstoneCommunityTweetsRule
-    extends FilterCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+objelonct TombstonelonCommunityTwelonelontsRulelon
+    elonxtelonnds FiltelonrCommunityTwelonelontsRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-abstract class FilterCommunityTweetCommunityNotVisibleRule(override val action: Action)
-    extends RuleWithConstantAction(
+abstract class FiltelonrCommunityTwelonelontCommunityNotVisiblelonRulelon(ovelonrridelon val action: Action)
+    elonxtelonnds RulelonWithConstantAction(
       action,
       And(
-        NonAuthorViewer,
-        TweetIsCommunityTweet,
-        Not(CommunityTweetCommunityVisible),
+        NonAuthorVielonwelonr,
+        TwelonelontIsCommunityTwelonelont,
+        Not(CommunityTwelonelontCommunityVisiblelon),
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(DropCommunityTweetWithUndefinedCommunityRuleEnabledParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(DropCommunityTwelonelontWithUndelonfinelondCommunityRulelonelonnablelondParam)
 }
 
-object DropCommunityTweetCommunityNotVisibleRule
-    extends FilterCommunityTweetCommunityNotVisibleRule(Drop(CommunityTweetHidden))
+objelonct DropCommunityTwelonelontCommunityNotVisiblelonRulelon
+    elonxtelonnds FiltelonrCommunityTwelonelontCommunityNotVisiblelonRulelon(Drop(CommunityTwelonelontHiddelonn))
 
-object TombstoneCommunityTweetCommunityNotVisibleRule
-    extends FilterCommunityTweetCommunityNotVisibleRule(Tombstone(Epitaph.Unavailable))
+objelonct TombstonelonCommunityTwelonelontCommunityNotVisiblelonRulelon
+    elonxtelonnds FiltelonrCommunityTwelonelontCommunityNotVisiblelonRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-abstract class FilterAllCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(action, TweetIsCommunityTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetsEnabledParam)
+abstract class FiltelonrAllCommunityTwelonelontsRulelon(ovelonrridelon val action: Action)
+    elonxtelonnds RulelonWithConstantAction(action, TwelonelontIsCommunityTwelonelont) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(CommunityTwelonelontselonnablelondParam)
 }
 
-object DropAllCommunityTweetsRule extends FilterAllCommunityTweetsRule(Drop(Unspecified))
+objelonct DropAllCommunityTwelonelontsRulelon elonxtelonnds FiltelonrAllCommunityTwelonelontsRulelon(Drop(Unspeloncifielond))
 
-object TombstoneAllCommunityTweetsRule
-    extends FilterAllCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+objelonct TombstonelonAllCommunityTwelonelontsRulelon
+    elonxtelonnds FiltelonrAllCommunityTwelonelontsRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-object DropOuterCommunityTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(TweetIsCommunityTweet, Not(IsQuotedInnerTweet)))
+objelonct DropOutelonrCommunityTwelonelontsRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
+      And(TwelonelontIsCommunityTwelonelont, Not(IsQuotelondInnelonrTwelonelont)))
 
-object DropAllHiddenCommunityTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(TweetIsCommunityTweet, CommunityTweetIsHidden))
+objelonct DropAllHiddelonnCommunityTwelonelontsRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
+      And(TwelonelontIsCommunityTwelonelont, CommunityTwelonelontIsHiddelonn))
 
-abstract class FilterHiddenCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
+abstract class FiltelonrHiddelonnCommunityTwelonelontsRulelon(ovelonrridelon val action: Action)
+    elonxtelonnds RulelonWithConstantAction(
       action,
       And(
-        NonAuthorViewer,
-        TweetIsCommunityTweet,
-        CommunityTweetIsHidden,
-        Not(ViewerIsCommunityModerator)
+        NonAuthorVielonwelonr,
+        TwelonelontIsCommunityTwelonelont,
+        CommunityTwelonelontIsHiddelonn,
+        Not(VielonwelonrIsCommunityModelonrator)
       ))
 
-object DropHiddenCommunityTweetsRule
-    extends FilterHiddenCommunityTweetsRule(Drop(CommunityTweetHidden))
+objelonct DropHiddelonnCommunityTwelonelontsRulelon
+    elonxtelonnds FiltelonrHiddelonnCommunityTwelonelontsRulelon(Drop(CommunityTwelonelontHiddelonn))
 
-object TombstoneHiddenCommunityTweetsRule
-    extends FilterHiddenCommunityTweetsRule(Tombstone(Epitaph.CommunityTweetHidden))
+objelonct TombstonelonHiddelonnCommunityTwelonelontsRulelon
+    elonxtelonnds FiltelonrHiddelonnCommunityTwelonelontsRulelon(Tombstonelon(elonpitaph.CommunityTwelonelontHiddelonn))
 
-object DropAllAuthorRemovedCommunityTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      And(TweetIsCommunityTweet, CommunityTweetAuthorIsRemoved))
+objelonct DropAllAuthorRelonmovelondCommunityTwelonelontsRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
+      And(TwelonelontIsCommunityTwelonelont, CommunityTwelonelontAuthorIsRelonmovelond))
 
-abstract class FilterAuthorRemovedCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
+abstract class FiltelonrAuthorRelonmovelondCommunityTwelonelontsRulelon(ovelonrridelon val action: Action)
+    elonxtelonnds RulelonWithConstantAction(
       action,
       And(
-        NonAuthorViewer,
-        TweetIsCommunityTweet,
-        CommunityTweetAuthorIsRemoved,
-        Not(ViewerIsCommunityModerator)
+        NonAuthorVielonwelonr,
+        TwelonelontIsCommunityTwelonelont,
+        CommunityTwelonelontAuthorIsRelonmovelond,
+        Not(VielonwelonrIsCommunityModelonrator)
       ))
 
-object DropAuthorRemovedCommunityTweetsRule
-    extends FilterAuthorRemovedCommunityTweetsRule(Drop(CommunityTweetAuthorRemoved))
+objelonct DropAuthorRelonmovelondCommunityTwelonelontsRulelon
+    elonxtelonnds FiltelonrAuthorRelonmovelondCommunityTwelonelontsRulelon(Drop(CommunityTwelonelontAuthorRelonmovelond))
 
-object TombstoneAuthorRemovedCommunityTweetsRule
-    extends FilterAuthorRemovedCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+objelonct TombstonelonAuthorRelonmovelondCommunityTwelonelontsRulelon
+    elonxtelonnds FiltelonrAuthorRelonmovelondCommunityTwelonelontsRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-abstract class FilterProtectedCommunityTweetsRule(override val action: Action)
-    extends RuleWithConstantAction(
+abstract class FiltelonrProtelonctelondCommunityTwelonelontsRulelon(ovelonrridelon val action: Action)
+    elonxtelonnds RulelonWithConstantAction(
       action,
-      And(TweetIsCommunityTweet, ProtectedAuthor, NonAuthorViewer)) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetDropProtectedRuleEnabledParam)
+      And(TwelonelontIsCommunityTwelonelont, ProtelonctelondAuthor, NonAuthorVielonwelonr)) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(CommunityTwelonelontDropProtelonctelondRulelonelonnablelondParam)
 }
 
-object DropProtectedCommunityTweetsRule
-    extends FilterProtectedCommunityTweetsRule(Drop(CommunityTweetHidden))
+objelonct DropProtelonctelondCommunityTwelonelontsRulelon
+    elonxtelonnds FiltelonrProtelonctelondCommunityTwelonelontsRulelon(Drop(CommunityTwelonelontHiddelonn))
 
-object TombstoneProtectedCommunityTweetsRule
-    extends FilterProtectedCommunityTweetsRule(Tombstone(Epitaph.Unavailable))
+objelonct TombstonelonProtelonctelondCommunityTwelonelontsRulelon
+    elonxtelonnds FiltelonrProtelonctelondCommunityTwelonelontsRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-abstract class CommunityTweetCommunityUnavailableLimitedActionsRule(
-  reason: LimitedEngagementReason,
-  condition: CommunityTweetCommunityUnavailable,
-) extends RuleWithConstantAction(
-      LimitedEngagements(reason),
+abstract class CommunityTwelonelontCommunityUnavailablelonLimitelondActionsRulelon(
+  relonason: LimitelondelonngagelonmelonntRelonason,
+  condition: CommunityTwelonelontCommunityUnavailablelon,
+) elonxtelonnds RulelonWithConstantAction(
+      Limitelondelonngagelonmelonnts(relonason),
       And(
-        Not(NonAuthorViewer),
-        TweetIsCommunityTweet,
+        Not(NonAuthorVielonwelonr),
+        TwelonelontIsCommunityTwelonelont,
         condition,
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    CommunityTweetCommunityUnavailableLimitedActionsRulesEnabledParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    CommunityTwelonelontCommunityUnavailablelonLimitelondActionsRulelonselonnablelondParam)
 }
 
-object CommunityTweetCommunityNotFoundLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetCommunityNotFound,
-      CommunityTweetCommunityNotFound,
+objelonct CommunityTwelonelontCommunityNotFoundLimitelondActionsRulelon
+    elonxtelonnds CommunityTwelonelontCommunityUnavailablelonLimitelondActionsRulelon(
+      LimitelondelonngagelonmelonntRelonason.CommunityTwelonelontCommunityNotFound,
+      CommunityTwelonelontCommunityNotFound,
     )
 
-object CommunityTweetCommunityDeletedLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetCommunityDeleted,
-      CommunityTweetCommunityDeleted,
+objelonct CommunityTwelonelontCommunityDelonlelontelondLimitelondActionsRulelon
+    elonxtelonnds CommunityTwelonelontCommunityUnavailablelonLimitelondActionsRulelon(
+      LimitelondelonngagelonmelonntRelonason.CommunityTwelonelontCommunityDelonlelontelond,
+      CommunityTwelonelontCommunityDelonlelontelond,
     )
 
-object CommunityTweetCommunitySuspendedLimitedActionsRule
-    extends CommunityTweetCommunityUnavailableLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetCommunitySuspended,
-      CommunityTweetCommunitySuspended,
+objelonct CommunityTwelonelontCommunitySuspelonndelondLimitelondActionsRulelon
+    elonxtelonnds CommunityTwelonelontCommunityUnavailablelonLimitelondActionsRulelon(
+      LimitelondelonngagelonmelonntRelonason.CommunityTwelonelontCommunitySuspelonndelond,
+      CommunityTwelonelontCommunitySuspelonndelond,
     )
 
-abstract class CommunityTweetModeratedLimitedActionsRule(
-  reason: LimitedEngagementReason,
-  condition: CommunityTweetIsModerated,
-  enabledParam: RuleParam[Boolean],
-) extends RuleWithConstantAction(
-      LimitedEngagements(reason),
+abstract class CommunityTwelonelontModelonratelondLimitelondActionsRulelon(
+  relonason: LimitelondelonngagelonmelonntRelonason,
+  condition: CommunityTwelonelontIsModelonratelond,
+  elonnablelondParam: RulelonParam[Boolelonan],
+) elonxtelonnds RulelonWithConstantAction(
+      Limitelondelonngagelonmelonnts(relonason),
       And(
-        TweetIsCommunityTweet,
+        TwelonelontIsCommunityTwelonelont,
         condition,
         Or(
-          Not(NonAuthorViewer),
-          ViewerIsCommunityModerator,
+          Not(NonAuthorVielonwelonr),
+          VielonwelonrIsCommunityModelonrator,
         )
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(enabledParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelondParam)
 }
 
-object CommunityTweetMemberRemovedLimitedActionsRule
-    extends CommunityTweetModeratedLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetMemberRemoved,
-      CommunityTweetAuthorIsRemoved,
-      CommunityTweetMemberRemovedLimitedActionsRulesEnabledParam,
+objelonct CommunityTwelonelontMelonmbelonrRelonmovelondLimitelondActionsRulelon
+    elonxtelonnds CommunityTwelonelontModelonratelondLimitelondActionsRulelon(
+      LimitelondelonngagelonmelonntRelonason.CommunityTwelonelontMelonmbelonrRelonmovelond,
+      CommunityTwelonelontAuthorIsRelonmovelond,
+      CommunityTwelonelontMelonmbelonrRelonmovelondLimitelondActionsRulelonselonnablelondParam,
     )
 
-object CommunityTweetHiddenLimitedActionsRule
-    extends CommunityTweetModeratedLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetHidden,
-      CommunityTweetIsHidden,
-      CommunityTweetLimitedActionsRulesEnabledParam,
+objelonct CommunityTwelonelontHiddelonnLimitelondActionsRulelon
+    elonxtelonnds CommunityTwelonelontModelonratelondLimitelondActionsRulelon(
+      LimitelondelonngagelonmelonntRelonason.CommunityTwelonelontHiddelonn,
+      CommunityTwelonelontIsHiddelonn,
+      CommunityTwelonelontLimitelondActionsRulelonselonnablelondParam,
     )
 
-abstract class CommunityTweetLimitedActionsRule(
-  reason: LimitedEngagementReason,
+abstract class CommunityTwelonelontLimitelondActionsRulelon(
+  relonason: LimitelondelonngagelonmelonntRelonason,
   condition: Condition,
-) extends RuleWithConstantAction(
-      LimitedEngagements(reason),
+) elonxtelonnds RulelonWithConstantAction(
+      Limitelondelonngagelonmelonnts(relonason),
       And(
-        TweetIsCommunityTweet,
+        TwelonelontIsCommunityTwelonelont,
         condition
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(CommunityTweetLimitedActionsRulesEnabledParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(CommunityTwelonelontLimitelondActionsRulelonselonnablelondParam)
 }
 
-object CommunityTweetMemberLimitedActionsRule
-    extends CommunityTweetLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetMember,
-      ViewerIsCommunityMember,
+objelonct CommunityTwelonelontMelonmbelonrLimitelondActionsRulelon
+    elonxtelonnds CommunityTwelonelontLimitelondActionsRulelon(
+      LimitelondelonngagelonmelonntRelonason.CommunityTwelonelontMelonmbelonr,
+      VielonwelonrIsCommunityMelonmbelonr,
     )
 
-object CommunityTweetNonMemberLimitedActionsRule
-    extends CommunityTweetLimitedActionsRule(
-      LimitedEngagementReason.CommunityTweetNonMember,
-      Not(ViewerIsCommunityMember),
+objelonct CommunityTwelonelontNonMelonmbelonrLimitelondActionsRulelon
+    elonxtelonnds CommunityTwelonelontLimitelondActionsRulelon(
+      LimitelondelonngagelonmelonntRelonason.CommunityTwelonelontNonMelonmbelonr,
+      Not(VielonwelonrIsCommunityMelonmbelonr),
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    CommunityTweetNonMemberLimitedActionsRuleEnabledParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    CommunityTwelonelontNonMelonmbelonrLimitelondActionsRulelonelonnablelondParam)
 }
 
-object ReportedTweetInterstitialRule
-    extends RuleWithConstantAction(
-      Interstitial(Reason.ViewerReportedTweet),
+objelonct RelonportelondTwelonelontIntelonrstitialRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Intelonrstitial(Relonason.VielonwelonrRelonportelondTwelonelont),
       And(
-        NonAuthorViewer,
-        Not(Retweet),
-        ViewerReportsTweet
+        NonAuthorVielonwelonr,
+        Not(Relontwelonelont),
+        VielonwelonrRelonportsTwelonelont
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableReportedTweetInterstitialRule)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonRelonportelondTwelonelontIntelonrstitialRulelon)
 }
 
-object ReportedTweetInterstitialSearchRule
-    extends RuleWithConstantAction(
-      Interstitial(Reason.ViewerReportedTweet),
+objelonct RelonportelondTwelonelontIntelonrstitialSelonarchRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Intelonrstitial(Relonason.VielonwelonrRelonportelondTwelonelont),
       And(
-        NonAuthorViewer,
-        Not(Retweet),
-        ViewerReportsTweet
+        NonAuthorVielonwelonr,
+        Not(Relontwelonelont),
+        VielonwelonrRelonportsTwelonelont
       )) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableReportedTweetInterstitialSearchRule)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonRelonportelondTwelonelontIntelonrstitialSelonarchRulelon)
 }
 
-abstract class FilterExclusiveTweetContentRule(
+abstract class FiltelonrelonxclusivelonTwelonelontContelonntRulelon(
   action: Action,
-  additionalCondition: Condition = Condition.True)
-    extends RuleWithConstantAction(
+  additionalCondition: Condition = Condition.Truelon)
+    elonxtelonnds RulelonWithConstantAction(
       action,
       And(
         additionalCondition,
-        TweetIsExclusiveContent,
+        TwelonelontIselonxclusivelonContelonnt,
         Or(
-          LoggedOutViewer,
+          LoggelondOutVielonwelonr,
           Not(
             Or(
-              ViewerIsExclusiveTweetAuthor,
-              ViewerSuperFollowsExclusiveTweetAuthor,
+              VielonwelonrIselonxclusivelonTwelonelontAuthor,
+              VielonwelonrSupelonrFollowselonxclusivelonTwelonelontAuthor,
               And(
-                Not(NonAuthorViewer),
-                Not(Retweet)
+                Not(NonAuthorVielonwelonr),
+                Not(Relontwelonelont)
               )
             )
           ),
         ),
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropExclusiveTweetContentRule)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropExclusiveTweetContentRuleFailClosed)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDropelonxclusivelonTwelonelontContelonntRulelon)
+  ovelonrridelon delonf elonnablelonFailCloselond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonDropelonxclusivelonTwelonelontContelonntRulelonFailCloselond)
 }
 
-object DropExclusiveTweetContentRule
-    extends FilterExclusiveTweetContentRule(Drop(Reason.ExclusiveTweet))
+objelonct DropelonxclusivelonTwelonelontContelonntRulelon
+    elonxtelonnds FiltelonrelonxclusivelonTwelonelontContelonntRulelon(Drop(Relonason.elonxclusivelonTwelonelont))
 
-object TombstoneExclusiveTweetContentRule
-    extends FilterExclusiveTweetContentRule(Tombstone(Epitaph.SuperFollowsContent))
+objelonct TombstonelonelonxclusivelonTwelonelontContelonntRulelon
+    elonxtelonnds FiltelonrelonxclusivelonTwelonelontContelonntRulelon(Tombstonelon(elonpitaph.SupelonrFollowsContelonnt))
 
-object TombstoneExclusiveQuotedTweetContentRule
-    extends FilterExclusiveTweetContentRule(
-      Tombstone(Epitaph.SuperFollowsContent),
-      IsQuotedInnerTweet
+objelonct TombstonelonelonxclusivelonQuotelondTwelonelontContelonntRulelon
+    elonxtelonnds FiltelonrelonxclusivelonTwelonelontContelonntRulelon(
+      Tombstonelon(elonpitaph.SupelonrFollowsContelonnt),
+      IsQuotelondInnelonrTwelonelont
     )
 
-object DropAllExclusiveTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Reason.ExclusiveTweet),
-      TweetIsExclusiveContent
+objelonct DropAllelonxclusivelonTwelonelontsRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.elonxclusivelonTwelonelont),
+      TwelonelontIselonxclusivelonContelonnt
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllExclusiveTweetsRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropAllExclusiveTweetsRuleFailClosedParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDropAllelonxclusivelonTwelonelontsRulelonParam)
+  ovelonrridelon delonf elonnablelonFailCloselond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonDropAllelonxclusivelonTwelonelontsRulelonFailCloselondParam)
 }
 
-object DropTweetsWithGeoRestrictedMediaRule
-    extends RuleWithConstantAction(Drop(Unspecified), MediaRestrictedInViewerCountry) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    EnableDropTweetsWithGeoRestrictedMediaRuleParam)
+objelonct DropTwelonelontsWithGelonoRelonstrictelondMelondiaRulelon
+    elonxtelonnds RulelonWithConstantAction(Drop(Unspeloncifielond), MelondiaRelonstrictelondInVielonwelonrCountry) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonDropTwelonelontsWithGelonoRelonstrictelondMelondiaRulelonParam)
 }
 
-object TrustedFriendsTweetLimitedEngagementsRule
-    extends RuleWithConstantAction(
-      LimitedEngagements(LimitedEngagementReason.TrustedFriendsTweet),
-      TweetIsTrustedFriendsContent
+objelonct TrustelondFrielonndsTwelonelontLimitelondelonngagelonmelonntsRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Limitelondelonngagelonmelonnts(LimitelondelonngagelonmelonntRelonason.TrustelondFrielonndsTwelonelont),
+      TwelonelontIsTrustelondFrielonndsContelonnt
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(
-    TrustedFriendsTweetLimitedEngagementsRuleEnabledParam
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    TrustelondFrielonndsTwelonelontLimitelondelonngagelonmelonntsRulelonelonnablelondParam
   )
 }
 
-object DropAllTrustedFriendsTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Reason.TrustedFriendsTweet),
-      TweetIsTrustedFriendsContent
+objelonct DropAllTrustelondFrielonndsTwelonelontsRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Relonason.TrustelondFrielonndsTwelonelont),
+      TwelonelontIsTrustelondFrielonndsContelonnt
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllTrustedFriendsTweetsRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDropAllTrustelondFrielonndsTwelonelontsRulelonParam)
+  ovelonrridelon delonf elonnablelonFailCloselond: Selonq[RulelonParam[Boolelonan]] = Selonq(RulelonParams.Truelon)
 }
 
-object DropAllCollabInvitationTweetsRule
-    extends RuleWithConstantAction(
-      Drop(Unspecified),
-      TweetIsCollabInvitationContent
+objelonct DropAllCollabInvitationTwelonelontsRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(Unspeloncifielond),
+      TwelonelontIsCollabInvitationContelonnt
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropAllCollabInvitationTweetsRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDropAllCollabInvitationTwelonelontsRulelonParam)
+  ovelonrridelon delonf elonnablelonFailCloselond: Selonq[RulelonParam[Boolelonan]] = Selonq(RulelonParams.Truelon)
 }
 
-abstract class FilterTrustedFriendsTweetContentRule(action: Action)
-    extends OnlyWhenNotAuthorViewerRule(
+abstract class FiltelonrTrustelondFrielonndsTwelonelontContelonntRulelon(action: Action)
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
       action,
       And(
-        TweetIsTrustedFriendsContent,
+        TwelonelontIsTrustelondFrielonndsContelonnt,
         Not(
           Or(
-            ViewerIsTrustedFriendsTweetAuthor,
-            ViewerIsTrustedFriend
+            VielonwelonrIsTrustelondFrielonndsTwelonelontAuthor,
+            VielonwelonrIsTrustelondFrielonnd
           )
         )
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDropTrustedFriendsTweetContentRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDropTrustelondFrielonndsTwelonelontContelonntRulelonParam)
+  ovelonrridelon delonf elonnablelonFailCloselond: Selonq[RulelonParam[Boolelonan]] = Selonq(RulelonParams.Truelon)
 }
 
-object DropTrustedFriendsTweetContentRule
-    extends FilterTrustedFriendsTweetContentRule(Drop(Reason.TrustedFriendsTweet))
+objelonct DropTrustelondFrielonndsTwelonelontContelonntRulelon
+    elonxtelonnds FiltelonrTrustelondFrielonndsTwelonelontContelonntRulelon(Drop(Relonason.TrustelondFrielonndsTwelonelont))
 
-object TombstoneTrustedFriendsTweetContentRule
-    extends FilterTrustedFriendsTweetContentRule(Tombstone(Epitaph.Unavailable))
+objelonct TombstonelonTrustelondFrielonndsTwelonelontContelonntRulelon
+    elonxtelonnds FiltelonrTrustelondFrielonndsTwelonelontContelonntRulelon(Tombstonelon(elonpitaph.Unavailablelon))
 
-object TweetNsfwUserAdminAvoidRule
-    extends RuleWithConstantAction(
+objelonct TwelonelontNsfwUselonrAdminAvoidRulelon
+    elonxtelonnds RulelonWithConstantAction(
       Avoid(),
       Or(
-        TweetHasNsfwUserAuthor,
-        TweetHasNsfwAdminAuthor,
-        NsfwUserAuthor,
+        TwelonelontHasNsfwUselonrAuthor,
+        TwelonelontHasNsfwAdminAuthor,
+        NsfwUselonrAuthor,
         NsfwAdminAuthor
       )
     )
 
-object AvoidHighToxicityModelScoreRule
-    extends RuleWithConstantAction(
+objelonct AvoidHighToxicityModelonlScorelonRulelon
+    elonxtelonnds RulelonWithConstantAction(
       Avoid(),
-      TweetHasLabelWithScoreAboveThresholdWithParam(
-        TweetSafetyLabelType.HighToxicityScore,
-        AdAvoidanceHighToxicityModelScoreThresholdParam)
+      TwelonelontHasLabelonlWithScorelonAbovelonThrelonsholdWithParam(
+        TwelonelontSafelontyLabelonlTypelon.HighToxicityScorelon,
+        AdAvoidancelonHighToxicityModelonlScorelonThrelonsholdParam)
     )
 
-object AvoidReportedTweetModelScoreRule
-    extends RuleWithConstantAction(
+objelonct AvoidRelonportelondTwelonelontModelonlScorelonRulelon
+    elonxtelonnds RulelonWithConstantAction(
       Avoid(),
-      TweetHasLabelWithScoreAboveThresholdWithParam(
-        TweetSafetyLabelType.HighPReportedTweetScore,
-        AdAvoidanceReportedTweetModelScoreThresholdParam)
+      TwelonelontHasLabelonlWithScorelonAbovelonThrelonsholdWithParam(
+        TwelonelontSafelontyLabelonlTypelon.HighPRelonportelondTwelonelontScorelon,
+        AdAvoidancelonRelonportelondTwelonelontModelonlScorelonThrelonsholdParam)
     )
 
-object TombstoneDeletedOuterTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Deleted),
+objelonct TombstonelonDelonlelontelondOutelonrTwelonelontRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Tombstonelon(elonpitaph.Delonlelontelond),
       And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
-        Not(IsQuotedInnerTweet)
+        elonquals(FelonaturelonTwelonelontDelonlelontelonRelonason, TwelonelontDelonlelontelonRelonason.Delonlelontelond),
+        Not(IsQuotelondInnelonrTwelonelont)
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDelonlelontelonStatelonTwelonelontRulelonsParam)
 }
 
-object TombstoneDeletedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Deleted),
+objelonct TombstonelonDelonlelontelondTwelonelontRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Tombstonelon(elonpitaph.Delonlelontelond),
       And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
+        elonquals(FelonaturelonTwelonelontDelonlelontelonRelonason, TwelonelontDelonlelontelonRelonason.Delonlelontelond),
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDelonlelontelonStatelonTwelonelontRulelonsParam)
 }
 
-object TombstoneDeletedQuotedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.Deleted),
+objelonct TombstonelonDelonlelontelondQuotelondTwelonelontRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Tombstonelon(elonpitaph.Delonlelontelond),
       And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.Deleted),
-        IsQuotedInnerTweet
+        elonquals(FelonaturelonTwelonelontDelonlelontelonRelonason, TwelonelontDelonlelontelonRelonason.Delonlelontelond),
+        IsQuotelondInnelonrTwelonelont
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDelonlelontelonStatelonTwelonelontRulelonsParam)
 }
 
-object TombstoneBounceDeletedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.BounceDeleted),
-      Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
+objelonct TombstonelonBouncelonDelonlelontelondTwelonelontRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Tombstonelon(elonpitaph.BouncelonDelonlelontelond),
+      elonquals(FelonaturelonTwelonelontDelonlelontelonRelonason, TwelonelontDelonlelontelonRelonason.BouncelonDelonlelontelond),
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDelonlelontelonStatelonTwelonelontRulelonsParam)
 }
 
-object TombstoneBounceDeletedOuterTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.BounceDeleted),
+objelonct TombstonelonBouncelonDelonlelontelondOutelonrTwelonelontRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Tombstonelon(elonpitaph.BouncelonDelonlelontelond),
       And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
-        Not(IsQuotedInnerTweet)
+        elonquals(FelonaturelonTwelonelontDelonlelontelonRelonason, TwelonelontDelonlelontelonRelonason.BouncelonDelonlelontelond),
+        Not(IsQuotelondInnelonrTwelonelont)
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDelonlelontelonStatelonTwelonelontRulelonsParam)
 }
 
-object TombstoneBounceDeletedQuotedTweetRule
-    extends RuleWithConstantAction(
-      Tombstone(Epitaph.BounceDeleted),
+objelonct TombstonelonBouncelonDelonlelontelondQuotelondTwelonelontRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Tombstonelon(elonpitaph.BouncelonDelonlelontelond),
       And(
-        Equals(FeatureTweetDeleteReason, TweetDeleteReason.BounceDeleted),
-        IsQuotedInnerTweet
+        elonquals(FelonaturelonTwelonelontDelonlelontelonRelonason, TwelonelontDelonlelontelonRelonason.BouncelonDelonlelontelond),
+        IsQuotelondInnelonrTwelonelont
       )
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableDeleteStateTweetRulesParam)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonDelonlelontelonStatelonTwelonelontRulelonsParam)
 }
 
 
-object DropStaleTweetsRule
-    extends RuleWithConstantAction(
-      Drop(StaleTweet),
-      And(TweetIsStaleTweet, Not(IsQuotedInnerTweet), Not(Retweet), Not(IsSourceTweet))) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(EnableStaleTweetDropRuleParam)
-  override def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(
-    EnableStaleTweetDropRuleFailClosedParam)
+objelonct DropStalelonTwelonelontsRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Drop(StalelonTwelonelont),
+      And(TwelonelontIsStalelonTwelonelont, Not(IsQuotelondInnelonrTwelonelont), Not(Relontwelonelont), Not(IsSourcelonTwelonelont))) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(elonnablelonStalelonTwelonelontDropRulelonParam)
+  ovelonrridelon delonf elonnablelonFailCloselond: Selonq[RulelonParam[Boolelonan]] = Selonq(
+    elonnablelonStalelonTwelonelontDropRulelonFailCloselondParam)
 }
 
-object StaleTweetLimitedActionsRule
-    extends RuleWithConstantAction(
-      LimitedEngagements(LimitedEngagementReason.StaleTweet),
-      TweetIsStaleTweet) {
-  override def enabled: Seq[RuleParam[Boolean]] = Seq(StaleTweetLimitedActionsRulesEnabledParam)
+objelonct StalelonTwelonelontLimitelondActionsRulelon
+    elonxtelonnds RulelonWithConstantAction(
+      Limitelondelonngagelonmelonnts(LimitelondelonngagelonmelonntRelonason.StalelonTwelonelont),
+      TwelonelontIsStalelonTwelonelont) {
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(StalelonTwelonelontLimitelondActionsRulelonselonnablelondParam)
 }

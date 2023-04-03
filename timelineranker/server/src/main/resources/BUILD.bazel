@@ -1,5 +1,5 @@
-resources(
-    sources = [
+relonsourcelons(
+    sourcelons = [
         "*.xml",
     ],
 )

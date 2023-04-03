@@ -1,138 +1,138 @@
-package com.twitter.search.earlybird.search.relevance;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.index.LeafReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.util.RangeFilterDISI;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunctionProvider.NamedScoringFunctionProvider;
+import com.twittelonr.selonarch.common.quelonry.DelonfaultFiltelonrWelonight;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.util.RangelonFiltelonrDISI;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunction;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunctionProvidelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunctionProvidelonr.NamelondScoringFunctionProvidelonr;
 
 /**
- * This filter only accepts documents for which the provided
- * {@link com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction}
- * returns a score that's greater or equal to the passed-in minScore and smaller or equal
- * to maxScore.
+ * This filtelonr only accelonpts documelonnts for which thelon providelond
+ * {@link com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunction}
+ * relonturns a scorelon that's grelonatelonr or elonqual to thelon passelond-in minScorelon and smallelonr or elonqual
+ * to maxScorelon.
  */
-public final class ScoreFilterQuery extends Query {
-  private static final float DEFAULT_LUCENE_SCORE = 1.0F;
+public final class ScorelonFiltelonrQuelonry elonxtelonnds Quelonry {
+  privatelon static final float DelonFAULT_LUCelonNelon_SCORelon = 1.0F;
 
-  private final float minScore;
-  private final float maxScore;
-  private final NamedScoringFunctionProvider scoringFunctionProvider;
-  private final ImmutableSchemaInterface schema;
+  privatelon final float minScorelon;
+  privatelon final float maxScorelon;
+  privatelon final NamelondScoringFunctionProvidelonr scoringFunctionProvidelonr;
+  privatelon final ImmutablelonSchelonmaIntelonrfacelon schelonma;
 
   /**
-   * Returns a score filter.
+   * Relonturns a scorelon filtelonr.
    *
-   * @param schema The schema to use to extract the feature scores.
-   * @param scoringFunctionProvider The scoring function provider.
-   * @param minScore The minimum score threshold.
-   * @param maxScore The maximum score threshold.
-   * @return A score filter with the given configuration.
+   * @param schelonma Thelon schelonma to uselon to elonxtract thelon felonaturelon scorelons.
+   * @param scoringFunctionProvidelonr Thelon scoring function providelonr.
+   * @param minScorelon Thelon minimum scorelon threlonshold.
+   * @param maxScorelon Thelon maximum scorelon threlonshold.
+   * @relonturn A scorelon filtelonr with thelon givelonn configuration.
    */
-  public static Query getScoreFilterQuery(
-      ImmutableSchemaInterface schema,
-      NamedScoringFunctionProvider scoringFunctionProvider,
-      float minScore,
-      float maxScore) {
-    return new BooleanQuery.Builder()
-        .add(new ScoreFilterQuery(schema, scoringFunctionProvider, minScore, maxScore),
-             BooleanClause.Occur.FILTER)
+  public static Quelonry gelontScorelonFiltelonrQuelonry(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      NamelondScoringFunctionProvidelonr scoringFunctionProvidelonr,
+      float minScorelon,
+      float maxScorelon) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(nelonw ScorelonFiltelonrQuelonry(schelonma, scoringFunctionProvidelonr, minScorelon, maxScorelon),
+             BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  private ScoreFilterQuery(ImmutableSchemaInterface schema,
-                           NamedScoringFunctionProvider scoringFunctionProvider,
-                           float minScore,
-                           float maxScore) {
-    this.schema = schema;
-    this.scoringFunctionProvider = scoringFunctionProvider;
-    this.minScore = minScore;
-    this.maxScore = maxScore;
+  privatelon ScorelonFiltelonrQuelonry(ImmutablelonSchelonmaIntelonrfacelon schelonma,
+                           NamelondScoringFunctionProvidelonr scoringFunctionProvidelonr,
+                           float minScorelon,
+                           float maxScorelon) {
+    this.schelonma = schelonma;
+    this.scoringFunctionProvidelonr = scoringFunctionProvidelonr;
+    this.minScorelon = minScorelon;
+    this.maxScorelon = maxScorelon;
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    return new DefaultFilterWeight(this) {
-      @Override
-      protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) throws IOException {
-        ScoringFunction scoringFunction = scoringFunctionProvider.getScoringFunction();
-        scoringFunction.setNextReader((EarlybirdIndexSegmentAtomicReader) context.reader());
-        return new ScoreFilterDocIdSetIterator(
-            context.reader(), scoringFunction, minScore, maxScore);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost)
+      throws IOelonxcelonption {
+    relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+      @Ovelonrridelon
+      protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        ScoringFunction scoringFunction = scoringFunctionProvidelonr.gelontScoringFunction();
+        scoringFunction.selontNelonxtRelonadelonr((elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) contelonxt.relonadelonr());
+        relonturn nelonw ScorelonFiltelonrDocIdSelontItelonrator(
+            contelonxt.relonadelonr(), scoringFunction, minScorelon, maxScorelon);
       }
     };
   }
 
-  private static final class ScoreFilterDocIdSetIterator extends RangeFilterDISI {
-    private final ScoringFunction scoringFunction;
-    private final float minScore;
-    private final float maxScore;
+  privatelon static final class ScorelonFiltelonrDocIdSelontItelonrator elonxtelonnds RangelonFiltelonrDISI {
+    privatelon final ScoringFunction scoringFunction;
+    privatelon final float minScorelon;
+    privatelon final float maxScorelon;
 
-    public ScoreFilterDocIdSetIterator(LeafReader indexReader, ScoringFunction scoringFunction,
-                                       float minScore, float maxScore) throws IOException {
-      super(indexReader);
+    public ScorelonFiltelonrDocIdSelontItelonrator(LelonafRelonadelonr indelonxRelonadelonr, ScoringFunction scoringFunction,
+                                       float minScorelon, float maxScorelon) throws IOelonxcelonption {
+      supelonr(indelonxRelonadelonr);
       this.scoringFunction = scoringFunction;
-      this.minScore = minScore;
-      this.maxScore = maxScore;
+      this.minScorelon = minScorelon;
+      this.maxScorelon = maxScorelon;
     }
 
-    @Override
-    protected boolean shouldReturnDoc() throws IOException {
-      float score = scoringFunction.score(docID(), DEFAULT_LUCENE_SCORE);
-      return score >= minScore && score <= maxScore;
+    @Ovelonrridelon
+    protelonctelond boolelonan shouldRelonturnDoc() throws IOelonxcelonption {
+      float scorelon = scoringFunction.scorelon(docID(), DelonFAULT_LUCelonNelon_SCORelon);
+      relonturn scorelon >= minScorelon && scorelon <= maxScorelon;
     }
   }
 
-  public float getMinScoreForTest() {
-    return minScore;
+  public float gelontMinScorelonForTelonst() {
+    relonturn minScorelon;
   }
 
-  public float getMaxScoreForTest() {
-    return maxScore;
+  public float gelontMaxScorelonForTelonst() {
+    relonturn maxScorelon;
   }
 
-  public ScoringFunctionProvider getScoringFunctionProviderForTest() {
-    return scoringFunctionProvider;
+  public ScoringFunctionProvidelonr gelontScoringFunctionProvidelonrForTelonst() {
+    relonturn scoringFunctionProvidelonr;
   }
 
-  @Override
-  public int hashCode() {
-    return (int) (minScore * 29
-                  + maxScore * 17
-                  + (scoringFunctionProvider == null ? 0 : scoringFunctionProvider.hashCode()));
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn (int) (minScorelon * 29
+                  + maxScorelon * 17
+                  + (scoringFunctionProvidelonr == null ? 0 : scoringFunctionProvidelonr.hashCodelon()));
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof ScoreFilterQuery)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof ScorelonFiltelonrQuelonry)) {
+      relonturn falselon;
     }
 
-    ScoreFilterQuery filter = ScoreFilterQuery.class.cast(obj);
-    return (minScore == filter.minScore)
-        && (maxScore == filter.maxScore)
-        && (scoringFunctionProvider == null
-            ? filter.scoringFunctionProvider == null
-            : scoringFunctionProvider.equals(filter.scoringFunctionProvider));
+    ScorelonFiltelonrQuelonry filtelonr = ScorelonFiltelonrQuelonry.class.cast(obj);
+    relonturn (minScorelon == filtelonr.minScorelon)
+        && (maxScorelon == filtelonr.maxScorelon)
+        && (scoringFunctionProvidelonr == null
+            ? filtelonr.scoringFunctionProvidelonr == null
+            : scoringFunctionProvidelonr.elonquals(filtelonr.scoringFunctionProvidelonr));
   }
 
-  @Override
-  public String toString(String field) {
-    return "SCORE_FILTER_QUERY[minScore=" + minScore + ",maxScore=" + maxScore + "]";
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn "SCORelon_FILTelonR_QUelonRY[minScorelon=" + minScorelon + ",maxScorelon=" + maxScorelon + "]";
   }
 }

@@ -1,83 +1,83 @@
-package com.twitter.home_mixer.functional_component.selector
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.selonlelonctor
 
-import com.twitter.home_mixer.functional_component.selector.DebunchCandidates.TrailingTweetsMinSize
-import com.twitter.home_mixer.functional_component.selector.DebunchCandidates.TrailingTweetsPortionToKeep
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope.PartitionedCandidates
-import com.twitter.product_mixer.core.functional_component.selector.Selector
-import com.twitter.product_mixer.core.functional_component.selector.SelectorResult
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.selonlelonctor.DelonbunchCandidatelons.TrailingTwelonelontsMinSizelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.selonlelonctor.DelonbunchCandidatelons.TrailingTwelonelontsPortionToKelonelonp
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.GelontNelonwelonrFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon.PartitionelondCandidatelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.Selonlelonctor
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.selonlelonctor.SelonlelonctorRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait MustDebunch {
-  def apply(candidate: CandidateWithDetails): Boolean
+trait MustDelonbunch {
+  delonf apply(candidatelon: CandidatelonWithDelontails): Boolelonan
 }
 
-object DebunchCandidates {
-  val TrailingTweetsMinSize = 5
-  val TrailingTweetsPortionToKeep = 0.1
+objelonct DelonbunchCandidatelons {
+  val TrailingTwelonelontsMinSizelon = 5
+  val TrailingTwelonelontsPortionToKelonelonp = 0.1
 }
 
 /**
- * This selector rearranges the candidates to only allow bunches of size [[maxBunchSize]], where a
- * bunch is a consecutive sequence of candidates that meet [[mustDebunch]].
+ * This selonlelonctor relonarrangelons thelon candidatelons to only allow bunchelons of sizelon [[maxBunchSizelon]], whelonrelon a
+ * bunch is a conseloncutivelon selonquelonncelon of candidatelons that melonelont [[mustDelonbunch]].
  */
-case class DebunchCandidates(
-  override val pipelineScope: CandidateScope,
-  mustDebunch: MustDebunch,
-  maxBunchSize: Int)
-    extends Selector[PipelineQuery] {
+caselon class DelonbunchCandidatelons(
+  ovelonrridelon val pipelonlinelonScopelon: CandidatelonScopelon,
+  mustDelonbunch: MustDelonbunch,
+  maxBunchSizelon: Int)
+    elonxtelonnds Selonlelonctor[PipelonlinelonQuelonry] {
 
-  override def apply(
-    query: PipelineQuery,
-    remainingCandidates: Seq[CandidateWithDetails],
-    result: Seq[CandidateWithDetails]
-  ): SelectorResult = {
-    val PartitionedCandidates(selectedCandidates, otherCandidates) =
-      pipelineScope.partition(remainingCandidates)
-    val mutableCandidates = collection.mutable.ListBuffer(selectedCandidates: _*)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsult: Selonq[CandidatelonWithDelontails]
+  ): SelonlelonctorRelonsult = {
+    val PartitionelondCandidatelons(selonlelonctelondCandidatelons, othelonrCandidatelons) =
+      pipelonlinelonScopelon.partition(relonmainingCandidatelons)
+    val mutablelonCandidatelons = collelonction.mutablelon.ListBuffelonr(selonlelonctelondCandidatelons: _*)
 
-    var candidatePointer = 0
-    var nonDebunchPointer = 0
-    var bunchSize = 0
-    var finalNonDebunch = -1
+    var candidatelonPointelonr = 0
+    var nonDelonbunchPointelonr = 0
+    var bunchSizelon = 0
+    var finalNonDelonbunch = -1
 
-    while (candidatePointer < mutableCandidates.size) {
-      if (mustDebunch(mutableCandidates(candidatePointer))) bunchSize += 1
-      else {
-        bunchSize = 0
-        finalNonDebunch = candidatePointer
+    whilelon (candidatelonPointelonr < mutablelonCandidatelons.sizelon) {
+      if (mustDelonbunch(mutablelonCandidatelons(candidatelonPointelonr))) bunchSizelon += 1
+      elonlselon {
+        bunchSizelon = 0
+        finalNonDelonbunch = candidatelonPointelonr
       }
 
-      if (bunchSize > maxBunchSize) {
-        nonDebunchPointer = Math.max(candidatePointer, nonDebunchPointer)
-        while (nonDebunchPointer < mutableCandidates.size &&
-          mustDebunch(mutableCandidates(nonDebunchPointer))) {
-          nonDebunchPointer += 1
+      if (bunchSizelon > maxBunchSizelon) {
+        nonDelonbunchPointelonr = Math.max(candidatelonPointelonr, nonDelonbunchPointelonr)
+        whilelon (nonDelonbunchPointelonr < mutablelonCandidatelons.sizelon &&
+          mustDelonbunch(mutablelonCandidatelons(nonDelonbunchPointelonr))) {
+          nonDelonbunchPointelonr += 1
         }
-        if (nonDebunchPointer == mutableCandidates.size)
-          candidatePointer = mutableCandidates.size
-        else {
-          val nextNonDebunch = mutableCandidates(nonDebunchPointer)
-          mutableCandidates.remove(nonDebunchPointer)
-          mutableCandidates.insert(candidatePointer, nextNonDebunch)
-          bunchSize = 0
-          finalNonDebunch = candidatePointer
+        if (nonDelonbunchPointelonr == mutablelonCandidatelons.sizelon)
+          candidatelonPointelonr = mutablelonCandidatelons.sizelon
+        elonlselon {
+          val nelonxtNonDelonbunch = mutablelonCandidatelons(nonDelonbunchPointelonr)
+          mutablelonCandidatelons.relonmovelon(nonDelonbunchPointelonr)
+          mutablelonCandidatelons.inselonrt(candidatelonPointelonr, nelonxtNonDelonbunch)
+          bunchSizelon = 0
+          finalNonDelonbunch = candidatelonPointelonr
         }
       }
 
-      candidatePointer += 1
+      candidatelonPointelonr += 1
     }
 
-    val debunchedCandidates = if (query.features.exists(_.getOrElse(GetNewerFeature, false))) {
-      val trailingTweetsSize = mutableCandidates.size - finalNonDebunch - 1
-      val keepCandidates = finalNonDebunch + 1 +
-        Math.max(TrailingTweetsMinSize, TrailingTweetsPortionToKeep * trailingTweetsSize).toInt
-      mutableCandidates.toList.take(keepCandidates)
-    } else mutableCandidates.toList
+    val delonbunchelondCandidatelons = if (quelonry.felonaturelons.elonxists(_.gelontOrelonlselon(GelontNelonwelonrFelonaturelon, falselon))) {
+      val trailingTwelonelontsSizelon = mutablelonCandidatelons.sizelon - finalNonDelonbunch - 1
+      val kelonelonpCandidatelons = finalNonDelonbunch + 1 +
+        Math.max(TrailingTwelonelontsMinSizelon, TrailingTwelonelontsPortionToKelonelonp * trailingTwelonelontsSizelon).toInt
+      mutablelonCandidatelons.toList.takelon(kelonelonpCandidatelons)
+    } elonlselon mutablelonCandidatelons.toList
 
-    val updatedCandidates = otherCandidates ++ debunchedCandidates
-    SelectorResult(remainingCandidates = updatedCandidates, result = result)
+    val updatelondCandidatelons = othelonrCandidatelons ++ delonbunchelondCandidatelons
+    SelonlelonctorRelonsult(relonmainingCandidatelons = updatelondCandidatelons, relonsult = relonsult)
   }
 }

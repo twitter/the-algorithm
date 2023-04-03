@@ -1,422 +1,422 @@
-package com.twitter.search.earlybird.search.relevance;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon;
 
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.Lists;
 
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
+import com.twittelonr.selonarch.common.constants.SelonarchCardTypelon;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
 
-public class LinearScoringData {
-  public static final float NO_BOOST_VALUE = 1.0f;
+public class LinelonarScoringData {
+  public static final float NO_BOOST_VALUelon = 1.0f;
 
-  // A signal value so we can tell if something is unset, also used in explanation.
-  public static final int UNSET_SIGNAL_VALUE = -999;
+  // A signal valuelon so welon can telonll if somelonthing is unselont, also uselond in elonxplanation.
+  public static final int UNSelonT_SIGNAL_VALUelon = -999;
 
-  //This is somewhat arbitrary, and is here so that we have some limit on
-  //how many offline experimental features we support per query
-  public static final int MAX_OFFLINE_EXPERIMENTAL_FIELDS = 5;
+  //This is somelonwhat arbitrary, and is helonrelon so that welon havelon somelon limit on
+  //how many offlinelon elonxpelonrimelonntal felonaturelons welon support pelonr quelonry
+  public static final int MAX_OFFLINelon_elonXPelonRIMelonNTAL_FIelonLDS = 5;
 
-  public enum SkipReason {
-    NOT_SKIPPED,
+  public elonnum SkipRelonason {
+    NOT_SKIPPelonD,
     ANTIGAMING,
-    LOW_REPUTATION,
-    LOW_TEXT_SCORE,
-    LOW_RETWEET_COUNT,
+    LOW_RelonPUTATION,
+    LOW_TelonXT_SCORelon,
+    LOW_RelonTWelonelonT_COUNT,
     LOW_FAV_COUNT,
-    SOCIAL_FILTER,
-    LOW_FINAL_SCORE
+    SOCIAL_FILTelonR,
+    LOW_FINAL_SCORelon
   }
 
-  // When you add fields here, make sure you also update the clear() function.
-  public double luceneScore;
-  public double textScore;
-  //I am not sure why this has to be double...
-  public double tokenAt140DividedByNumTokensBucket;
-  public double userRep;
-  public double parusScore;
-  public final double[] offlineExpFeatureValues = new double[MAX_OFFLINE_EXPERIMENTAL_FIELDS];
+  // Whelonn you add fielonlds helonrelon, makelon surelon you also updatelon thelon clelonar() function.
+  public doublelon lucelonnelonScorelon;
+  public doublelon telonxtScorelon;
+  //I am not surelon why this has to belon doublelon...
+  public doublelon tokelonnAt140DividelondByNumTokelonnsBuckelont;
+  public doublelon uselonrRelonp;
+  public doublelon parusScorelon;
+  public final doublelon[] offlinelonelonxpFelonaturelonValuelons = nelonw doublelon[MAX_OFFLINelon_elonXPelonRIMelonNTAL_FIelonLDS];
 
-  // v1 engagement counters
-  public double retweetCountPostLog2;
-  public double favCountPostLog2;
-  public double replyCountPostLog2;
-  public double embedsImpressionCount;
-  public double embedsUrlCount;
-  public double videoViewCount;
+  // v1 elonngagelonmelonnt countelonrs
+  public doublelon relontwelonelontCountPostLog2;
+  public doublelon favCountPostLog2;
+  public doublelon relonplyCountPostLog2;
+  public doublelon elonmbelondsImprelonssionCount;
+  public doublelon elonmbelondsUrlCount;
+  public doublelon videlonoVielonwCount;
 
-  // v2 engagement counters (that have a v1 counter part)
-  public double retweetCountV2;
-  public double favCountV2;
-  public double replyCountV2;
-  public double embedsImpressionCountV2;
-  public double embedsUrlCountV2;
-  public double videoViewCountV2;
-  // pure v2 engagement counters, they started v2 only
-  public double quotedCount;
-  public double weightedRetweetCount;
-  public double weightedReplyCount;
-  public double weightedFavCount;
-  public double weightedQuoteCount;
+  // v2 elonngagelonmelonnt countelonrs (that havelon a v1 countelonr part)
+  public doublelon relontwelonelontCountV2;
+  public doublelon favCountV2;
+  public doublelon relonplyCountV2;
+  public doublelon elonmbelondsImprelonssionCountV2;
+  public doublelon elonmbelondsUrlCountV2;
+  public doublelon videlonoVielonwCountV2;
+  // purelon v2 elonngagelonmelonnt countelonrs, thelony startelond v2 only
+  public doublelon quotelondCount;
+  public doublelon welonightelondRelontwelonelontCount;
+  public doublelon welonightelondRelonplyCount;
+  public doublelon welonightelondFavCount;
+  public doublelon welonightelondQuotelonCount;
 
-  // card related properties
-  public boolean hasCard;
-  public byte cardType;
+  // card relonlatelond propelonrtielons
+  public boolelonan hasCard;
+  public bytelon cardTypelon;
 
-  public boolean hasUrl;
-  public boolean isReply;
-  public boolean isRetweet;
-  public boolean isOffensive;
-  public boolean hasTrend;
-  public boolean isFromVerifiedAccount;
-  public boolean isFromBlueVerifiedAccount;
-  public boolean isUserSpam;
-  public boolean isUserNSFW;
-  public boolean isUserBot;
-  public boolean isUserAntiSocial;
-  public boolean hasVisibleLink;
+  public boolelonan hasUrl;
+  public boolelonan isRelonply;
+  public boolelonan isRelontwelonelont;
+  public boolelonan isOffelonnsivelon;
+  public boolelonan hasTrelonnd;
+  public boolelonan isFromVelonrifielondAccount;
+  public boolelonan isFromBluelonVelonrifielondAccount;
+  public boolelonan isUselonrSpam;
+  public boolelonan isUselonrNSFW;
+  public boolelonan isUselonrBot;
+  public boolelonan isUselonrAntiSocial;
+  public boolelonan hasVisiblelonLink;
 
-  public double luceneContrib;
-  public double reputationContrib;
-  public double textScoreContrib;
-  public double favContrib;
-  public double replyContrib;
-  public double multipleReplyContrib;
-  public double retweetContrib;
-  public double parusContrib;
-  public final double[] offlineExpFeatureContributions =
-      new double[MAX_OFFLINE_EXPERIMENTAL_FIELDS];
-  public double embedsImpressionContrib;
-  public double embedsUrlContrib;
-  public double videoViewContrib;
-  public double quotedContrib;
+  public doublelon lucelonnelonContrib;
+  public doublelon relonputationContrib;
+  public doublelon telonxtScorelonContrib;
+  public doublelon favContrib;
+  public doublelon relonplyContrib;
+  public doublelon multiplelonRelonplyContrib;
+  public doublelon relontwelonelontContrib;
+  public doublelon parusContrib;
+  public final doublelon[] offlinelonelonxpFelonaturelonContributions =
+      nelonw doublelon[MAX_OFFLINelon_elonXPelonRIMelonNTAL_FIelonLDS];
+  public doublelon elonmbelondsImprelonssionContrib;
+  public doublelon elonmbelondsUrlContrib;
+  public doublelon videlonoVielonwContrib;
+  public doublelon quotelondContrib;
 
-  public double hasUrlContrib;
-  public double isReplyContrib;
-  public double isFollowRetweetContrib;
-  public double isTrustedRetweetContrib;
+  public doublelon hasUrlContrib;
+  public doublelon isRelonplyContrib;
+  public doublelon isFollowRelontwelonelontContrib;
+  public doublelon isTrustelondRelontwelonelontContrib;
 
-  // Value passed in the request (ThriftRankingParams.querySpecificScoreAdjustments)
-  public double querySpecificScore;
+  // Valuelon passelond in thelon relonquelonst (ThriftRankingParams.quelonrySpeloncificScorelonAdjustmelonnts)
+  public doublelon quelonrySpeloncificScorelon;
 
-  // Value passed in the request (ThriftRankingParams.authorSpecificScoreAdjustments)
-  public double authorSpecificScore;
+  // Valuelon passelond in thelon relonquelonst (ThriftRankingParams.authorSpeloncificScorelonAdjustmelonnts)
+  public doublelon authorSpeloncificScorelon;
 
-  public double normalizedLuceneScore;
+  public doublelon normalizelondLucelonnelonScorelon;
 
-  public int tweetLangId;
-  public double uiLangMult;
-  public double userLangMult;
-  public boolean hasDifferentLang;
-  public boolean hasEnglishTweetAndDifferentUILang;
-  public boolean hasEnglishUIAndDifferentTweetLang;
+  public int twelonelontLangId;
+  public doublelon uiLangMult;
+  public doublelon uselonrLangMult;
+  public boolelonan hasDiffelonrelonntLang;
+  public boolelonan haselonnglishTwelonelontAndDiffelonrelonntUILang;
+  public boolelonan haselonnglishUIAndDiffelonrelonntTwelonelontLang;
 
-  public int tweetAgeInSeconds;
-  public double ageDecayMult;
+  public int twelonelontAgelonInSelonconds;
+  public doublelon agelonDeloncayMult;
 
-  // Intermediate scores
-  public double scoreBeforeBoost;
-  public double scoreAfterBoost;
-  public double scoreFinal;
-  public double scoreReturned;
+  // Intelonrmelondiatelon scorelons
+  public doublelon scorelonBelonforelonBoost;
+  public doublelon scorelonAftelonrBoost;
+  public doublelon scorelonFinal;
+  public doublelon scorelonRelonturnelond;
 
-  public SkipReason skipReason;
+  public SkipRelonason skipRelonason;
 
-  public boolean isTrusted;
-  public boolean isFollow;
-  public boolean spamUserDampApplied;
-  public boolean nsfwUserDampApplied;
-  public boolean botUserDampApplied;
-  public boolean trustedCircleBoostApplied;
-  public boolean directFollowBoostApplied;
-  public boolean outOfNetworkReplyPenaltyApplied;
-  public boolean hasMultipleHashtagsOrTrends;
+  public boolelonan isTrustelond;
+  public boolelonan isFollow;
+  public boolelonan spamUselonrDampApplielond;
+  public boolelonan nsfwUselonrDampApplielond;
+  public boolelonan botUselonrDampApplielond;
+  public boolelonan trustelondCirclelonBoostApplielond;
+  public boolelonan direlonctFollowBoostApplielond;
+  public boolelonan outOfNelontworkRelonplyPelonnaltyApplielond;
+  public boolelonan hasMultiplelonHashtagsOrTrelonnds;
 
-  public boolean tweetHasTrendsBoostApplied;
-  public boolean tweetFromVerifiedAccountBoostApplied;
-  public boolean tweetFromBlueVerifiedAccountBoostApplied;
-  public boolean hasCardBoostApplied;
-  public boolean cardDomainMatchBoostApplied;
-  public boolean cardAuthorMatchBoostApplied;
-  public boolean cardTitleMatchBoostApplied;
-  public boolean cardDescriptionMatchBoostApplied;
+  public boolelonan twelonelontHasTrelonndsBoostApplielond;
+  public boolelonan twelonelontFromVelonrifielondAccountBoostApplielond;
+  public boolelonan twelonelontFromBluelonVelonrifielondAccountBoostApplielond;
+  public boolelonan hasCardBoostApplielond;
+  public boolelonan cardDomainMatchBoostApplielond;
+  public boolelonan cardAuthorMatchBoostApplielond;
+  public boolelonan cardTitlelonMatchBoostApplielond;
+  public boolelonan cardDelonscriptionMatchBoostApplielond;
 
-  public List<String> hitFields;
-  public boolean hasNoTextHitDemotionApplied;
-  public boolean hasUrlOnlyHitDemotionApplied;
-  public boolean hasNameOnlyHitDemotionApplied;
-  public boolean hasSeparateTextAndNameHitDemotionApplied;
-  public boolean hasSeparateTextAndUrlHitDemotionApplied;
+  public List<String> hitFielonlds;
+  public boolelonan hasNoTelonxtHitDelonmotionApplielond;
+  public boolelonan hasUrlOnlyHitDelonmotionApplielond;
+  public boolelonan hasNamelonOnlyHitDelonmotionApplielond;
+  public boolelonan hasSelonparatelonTelonxtAndNamelonHitDelonmotionApplielond;
+  public boolelonan hasSelonparatelonTelonxtAndUrlHitDelonmotionApplielond;
 
-  public long fromUserId;
-  // This is actually retweet status ID, or the ID of the original tweet being (natively) retweeted
-  public long sharedStatusId;
-  public long referenceAuthorId; // SEARCH-8564
+  public long fromUselonrId;
+  // This is actually relontwelonelont status ID, or thelon ID of thelon original twelonelont beloning (nativelonly) relontwelonelontelond
+  public long sharelondStatusId;
+  public long relonfelonrelonncelonAuthorId; // SelonARCH-8564
 
-  public boolean isSelfTweet;
-  public boolean selfTweetBoostApplied;
-  public double selfTweetMult;
+  public boolelonan isSelonlfTwelonelont;
+  public boolelonan selonlfTwelonelontBoostApplielond;
+  public doublelon selonlfTwelonelontMult;
 
-  public boolean hasImageUrl;
-  public boolean hasVideoUrl;
-  public boolean hasMedialUrlBoostApplied;
-  public boolean hasNewsUrl;
-  public boolean hasNewsUrlBoostApplied;
+  public boolelonan hasImagelonUrl;
+  public boolelonan hasVidelonoUrl;
+  public boolelonan hasMelondialUrlBoostApplielond;
+  public boolelonan hasNelonwsUrl;
+  public boolelonan hasNelonwsUrlBoostApplielond;
 
-  public boolean hasConsumerVideo;
-  public boolean hasProVideo;
-  public boolean hasVine;
-  public boolean hasPeriscope;
-  public boolean hasNativeImage;
-  public boolean isNullcast;
-  public boolean hasQuote;
+  public boolelonan hasConsumelonrVidelono;
+  public boolelonan hasProVidelono;
+  public boolelonan hasVinelon;
+  public boolelonan hasPelonriscopelon;
+  public boolelonan hasNativelonImagelon;
+  public boolelonan isNullcast;
+  public boolelonan hasQuotelon;
 
-  public boolean isSensitiveContent;
-  public boolean hasMultipleMediaFlag;
-  public boolean profileIsEggFlag;
-  public boolean isUserNewFlag;
+  public boolelonan isSelonnsitivelonContelonnt;
+  public boolelonan hasMultiplelonMelondiaFlag;
+  public boolelonan profilelonIselonggFlag;
+  public boolelonan isUselonrNelonwFlag;
 
-  public int numMentions;
+  public int numMelonntions;
   public int numHashtags;
-  public int linkLanguage;
-  public int prevUserTweetEngagement;
+  public int linkLanguagelon;
+  public int prelonvUselonrTwelonelontelonngagelonmelonnt;
 
-  public boolean isComposerSourceCamera;
+  public boolelonan isComposelonrSourcelonCamelonra;
 
-  // health model scores by HML
-  public double toxicityScore; // go/toxicity
-  public double pBlockScore; // go/pblock
-  public double pSpammyTweetScore; // go/pspammytweet
-  public double pReportedTweetScore; // go/preportedtweet
-  public double spammyTweetContentScore; // go/spammy-tweet-content
-  public double experimentalHealthModelScore1;
-  public double experimentalHealthModelScore2;
-  public double experimentalHealthModelScore3;
-  public double experimentalHealthModelScore4;
+  // helonalth modelonl scorelons by HML
+  public doublelon toxicityScorelon; // go/toxicity
+  public doublelon pBlockScorelon; // go/pblock
+  public doublelon pSpammyTwelonelontScorelon; // go/pspammytwelonelont
+  public doublelon pRelonportelondTwelonelontScorelon; // go/prelonportelondtwelonelont
+  public doublelon spammyTwelonelontContelonntScorelon; // go/spammy-twelonelont-contelonnt
+  public doublelon elonxpelonrimelonntalHelonalthModelonlScorelon1;
+  public doublelon elonxpelonrimelonntalHelonalthModelonlScorelon2;
+  public doublelon elonxpelonrimelonntalHelonalthModelonlScorelon3;
+  public doublelon elonxpelonrimelonntalHelonalthModelonlScorelon4;
 
-  public LinearScoringData() {
-    hitFields = Lists.newArrayList();
-    clear();
+  public LinelonarScoringData() {
+    hitFielonlds = Lists.nelonwArrayList();
+    clelonar();
   }
 
-  // the following three counters were added later and they got denormalized in standard way,
-  // you can choose to apply scalding (for legacy LinearScoringFunction) or
-  // not apply (for returning in metadata and display in debug).
-  public double getEmbedsImpressionCount(boolean scaleForScoring) {
-    return scaleForScoring ? logWith0(embedsImpressionCount) : embedsImpressionCount;
+  // thelon following threlonelon countelonrs welonrelon addelond latelonr and thelony got delonnormalizelond in standard way,
+  // you can chooselon to apply scalding (for lelongacy LinelonarScoringFunction) or
+  // not apply (for relonturning in melontadata and display in delonbug).
+  public doublelon gelontelonmbelondsImprelonssionCount(boolelonan scalelonForScoring) {
+    relonturn scalelonForScoring ? logWith0(elonmbelondsImprelonssionCount) : elonmbelondsImprelonssionCount;
   }
-  public double getEmbedsUrlCount(boolean scaleForScoring) {
-    return scaleForScoring ? logWith0(embedsUrlCount) : embedsUrlCount;
+  public doublelon gelontelonmbelondsUrlCount(boolelonan scalelonForScoring) {
+    relonturn scalelonForScoring ? logWith0(elonmbelondsUrlCount) : elonmbelondsUrlCount;
   }
-  public double getVideoViewCount(boolean scaleForScoring) {
-    return scaleForScoring ? logWith0(videoViewCount) : videoViewCount;
+  public doublelon gelontVidelonoVielonwCount(boolelonan scalelonForScoring) {
+    relonturn scalelonForScoring ? logWith0(videlonoVielonwCount) : videlonoVielonwCount;
   }
-  private static double logWith0(double value) {
-    return value > 0 ? Math.log(value) : 0.0;
-  }
-
-  /**
-   * Returns a string description of all data stored in this instance.
-   */
-  public String getPropertyExplanation() {
-    StringBuilder sb = new StringBuilder();
-    sb.append(hasCard ? "CARD " + SearchCardType.cardTypeFromByteValue(cardType) : "");
-    sb.append(hasUrl ? "URL " : "");
-    sb.append(isReply ? "REPLY " : "");
-    sb.append(isRetweet ? "RETWEET " : "");
-    sb.append(isOffensive ? "OFFENSIVE " : "");
-    sb.append(hasTrend ? "TREND " : "");
-    sb.append(hasMultipleHashtagsOrTrends ? "HASHTAG/TREND+ " : "");
-    sb.append(isFromVerifiedAccount ? "VERIFIED " : "");
-    sb.append(isFromBlueVerifiedAccount ? "BLUE_VERIFIED " : "");
-    sb.append(isUserSpam ? "SPAM " : "");
-    sb.append(isUserNSFW ? "NSFW " : "");
-    sb.append(isUserBot ? "BOT " : "");
-    sb.append(isUserAntiSocial ? "ANTISOCIAL " : "");
-    sb.append(isTrusted ? "TRUSTED " : "");
-    sb.append(isFollow ? "FOLLOW " : "");
-    sb.append(isSelfTweet ? "SELF " : "");
-    sb.append(hasImageUrl ? "IMAGE " : "");
-    sb.append(hasVideoUrl ? "VIDEO " : "");
-    sb.append(hasNewsUrl ? "NEWS " : "");
-    sb.append(isNullcast ? "NULLCAST" : "");
-    sb.append(hasQuote ? "QUOTE" : "");
-    sb.append(isComposerSourceCamera ? "Composer Source: CAMERA" : "");
-    sb.append(favCountPostLog2 > 0 ? "Faves:" + favCountPostLog2 + " " : "");
-    sb.append(retweetCountPostLog2 > 0 ? "Retweets:" + retweetCountPostLog2 + " " : "");
-    sb.append(replyCountPostLog2 > 0 ? "Replies:" + replyCountPostLog2 + " " : "");
-    sb.append(getEmbedsImpressionCount(false) > 0
-        ? "Embedded Imps:" + getEmbedsImpressionCount(false) + " " : "");
-    sb.append(getEmbedsUrlCount(false) > 0
-        ? "Embedded Urls:" + getEmbedsUrlCount(false) + " " : "");
-    sb.append(getVideoViewCount(false) > 0
-        ? "Video views:" + getVideoViewCount(false) + " " : "");
-    sb.append(weightedRetweetCount > 0 ? "Weighted Retweets:"
-        + ((int) weightedRetweetCount) + " " : "");
-    sb.append(weightedReplyCount > 0
-        ? "Weighted Replies:" + ((int) weightedReplyCount) + " " : "");
-    sb.append(weightedFavCount > 0
-        ? "Weighted Faves:" + ((int) weightedFavCount) + " " : "");
-    sb.append(weightedQuoteCount > 0
-        ? "Weighted Quotes:" + ((int) weightedQuoteCount) + " " : "");
-    return sb.toString();
+  privatelon static doublelon logWith0(doublelon valuelon) {
+    relonturn valuelon > 0 ? Math.log(valuelon) : 0.0;
   }
 
   /**
-   * Resets all data stored in this instance.
+   * Relonturns a string delonscription of all data storelond in this instancelon.
    */
-  public void clear() {
-    luceneScore = UNSET_SIGNAL_VALUE;
-    textScore = UNSET_SIGNAL_VALUE;
-    tokenAt140DividedByNumTokensBucket = UNSET_SIGNAL_VALUE;
-    userRep = UNSET_SIGNAL_VALUE;
-    retweetCountPostLog2 = UNSET_SIGNAL_VALUE;
-    favCountPostLog2 = UNSET_SIGNAL_VALUE;
-    replyCountPostLog2 = UNSET_SIGNAL_VALUE;
-    parusScore = UNSET_SIGNAL_VALUE;
-    Arrays.fill(offlineExpFeatureValues, 0);
-    embedsImpressionCount = UNSET_SIGNAL_VALUE;
-    embedsUrlCount = UNSET_SIGNAL_VALUE;
-    videoViewCount = UNSET_SIGNAL_VALUE;
-    // v2 engagement, these each have a v1 counterpart
-    retweetCountV2 = UNSET_SIGNAL_VALUE;
-    favCountV2 = UNSET_SIGNAL_VALUE;
-    replyCountV2 = UNSET_SIGNAL_VALUE;
-    embedsImpressionCountV2 = UNSET_SIGNAL_VALUE;
-    embedsUrlCountV2 = UNSET_SIGNAL_VALUE;
-    videoViewCountV2 = UNSET_SIGNAL_VALUE;
-    // new engagement counters, they only have one version with the v2 normalizer
-    quotedCount = UNSET_SIGNAL_VALUE;
-    weightedRetweetCount = UNSET_SIGNAL_VALUE;
-    weightedReplyCount = UNSET_SIGNAL_VALUE;
-    weightedFavCount = UNSET_SIGNAL_VALUE;
-    weightedQuoteCount = UNSET_SIGNAL_VALUE;
+  public String gelontPropelonrtyelonxplanation() {
+    StringBuildelonr sb = nelonw StringBuildelonr();
+    sb.appelonnd(hasCard ? "CARD " + SelonarchCardTypelon.cardTypelonFromBytelonValuelon(cardTypelon) : "");
+    sb.appelonnd(hasUrl ? "URL " : "");
+    sb.appelonnd(isRelonply ? "RelonPLY " : "");
+    sb.appelonnd(isRelontwelonelont ? "RelonTWelonelonT " : "");
+    sb.appelonnd(isOffelonnsivelon ? "OFFelonNSIVelon " : "");
+    sb.appelonnd(hasTrelonnd ? "TRelonND " : "");
+    sb.appelonnd(hasMultiplelonHashtagsOrTrelonnds ? "HASHTAG/TRelonND+ " : "");
+    sb.appelonnd(isFromVelonrifielondAccount ? "VelonRIFIelonD " : "");
+    sb.appelonnd(isFromBluelonVelonrifielondAccount ? "BLUelon_VelonRIFIelonD " : "");
+    sb.appelonnd(isUselonrSpam ? "SPAM " : "");
+    sb.appelonnd(isUselonrNSFW ? "NSFW " : "");
+    sb.appelonnd(isUselonrBot ? "BOT " : "");
+    sb.appelonnd(isUselonrAntiSocial ? "ANTISOCIAL " : "");
+    sb.appelonnd(isTrustelond ? "TRUSTelonD " : "");
+    sb.appelonnd(isFollow ? "FOLLOW " : "");
+    sb.appelonnd(isSelonlfTwelonelont ? "SelonLF " : "");
+    sb.appelonnd(hasImagelonUrl ? "IMAGelon " : "");
+    sb.appelonnd(hasVidelonoUrl ? "VIDelonO " : "");
+    sb.appelonnd(hasNelonwsUrl ? "NelonWS " : "");
+    sb.appelonnd(isNullcast ? "NULLCAST" : "");
+    sb.appelonnd(hasQuotelon ? "QUOTelon" : "");
+    sb.appelonnd(isComposelonrSourcelonCamelonra ? "Composelonr Sourcelon: CAMelonRA" : "");
+    sb.appelonnd(favCountPostLog2 > 0 ? "Favelons:" + favCountPostLog2 + " " : "");
+    sb.appelonnd(relontwelonelontCountPostLog2 > 0 ? "Relontwelonelonts:" + relontwelonelontCountPostLog2 + " " : "");
+    sb.appelonnd(relonplyCountPostLog2 > 0 ? "Relonplielons:" + relonplyCountPostLog2 + " " : "");
+    sb.appelonnd(gelontelonmbelondsImprelonssionCount(falselon) > 0
+        ? "elonmbelonddelond Imps:" + gelontelonmbelondsImprelonssionCount(falselon) + " " : "");
+    sb.appelonnd(gelontelonmbelondsUrlCount(falselon) > 0
+        ? "elonmbelonddelond Urls:" + gelontelonmbelondsUrlCount(falselon) + " " : "");
+    sb.appelonnd(gelontVidelonoVielonwCount(falselon) > 0
+        ? "Videlono vielonws:" + gelontVidelonoVielonwCount(falselon) + " " : "");
+    sb.appelonnd(welonightelondRelontwelonelontCount > 0 ? "Welonightelond Relontwelonelonts:"
+        + ((int) welonightelondRelontwelonelontCount) + " " : "");
+    sb.appelonnd(welonightelondRelonplyCount > 0
+        ? "Welonightelond Relonplielons:" + ((int) welonightelondRelonplyCount) + " " : "");
+    sb.appelonnd(welonightelondFavCount > 0
+        ? "Welonightelond Favelons:" + ((int) welonightelondFavCount) + " " : "");
+    sb.appelonnd(welonightelondQuotelonCount > 0
+        ? "Welonightelond Quotelons:" + ((int) welonightelondQuotelonCount) + " " : "");
+    relonturn sb.toString();
+  }
 
-    hasUrl = false;
-    isReply = false;
-    isRetweet = false;
-    isOffensive = false;
-    hasTrend = false;
-    isFromVerifiedAccount = false;
-    isFromBlueVerifiedAccount = false;
-    isUserSpam = false;
-    isUserNSFW = false;
-    isUserBot = false;
-    isUserAntiSocial = false;
-    hasVisibleLink = false;
-    isNullcast = false;
+  /**
+   * Relonselonts all data storelond in this instancelon.
+   */
+  public void clelonar() {
+    lucelonnelonScorelon = UNSelonT_SIGNAL_VALUelon;
+    telonxtScorelon = UNSelonT_SIGNAL_VALUelon;
+    tokelonnAt140DividelondByNumTokelonnsBuckelont = UNSelonT_SIGNAL_VALUelon;
+    uselonrRelonp = UNSelonT_SIGNAL_VALUelon;
+    relontwelonelontCountPostLog2 = UNSelonT_SIGNAL_VALUelon;
+    favCountPostLog2 = UNSelonT_SIGNAL_VALUelon;
+    relonplyCountPostLog2 = UNSelonT_SIGNAL_VALUelon;
+    parusScorelon = UNSelonT_SIGNAL_VALUelon;
+    Arrays.fill(offlinelonelonxpFelonaturelonValuelons, 0);
+    elonmbelondsImprelonssionCount = UNSelonT_SIGNAL_VALUelon;
+    elonmbelondsUrlCount = UNSelonT_SIGNAL_VALUelon;
+    videlonoVielonwCount = UNSelonT_SIGNAL_VALUelon;
+    // v2 elonngagelonmelonnt, thelonselon elonach havelon a v1 countelonrpart
+    relontwelonelontCountV2 = UNSelonT_SIGNAL_VALUelon;
+    favCountV2 = UNSelonT_SIGNAL_VALUelon;
+    relonplyCountV2 = UNSelonT_SIGNAL_VALUelon;
+    elonmbelondsImprelonssionCountV2 = UNSelonT_SIGNAL_VALUelon;
+    elonmbelondsUrlCountV2 = UNSelonT_SIGNAL_VALUelon;
+    videlonoVielonwCountV2 = UNSelonT_SIGNAL_VALUelon;
+    // nelonw elonngagelonmelonnt countelonrs, thelony only havelon onelon velonrsion with thelon v2 normalizelonr
+    quotelondCount = UNSelonT_SIGNAL_VALUelon;
+    welonightelondRelontwelonelontCount = UNSelonT_SIGNAL_VALUelon;
+    welonightelondRelonplyCount = UNSelonT_SIGNAL_VALUelon;
+    welonightelondFavCount = UNSelonT_SIGNAL_VALUelon;
+    welonightelondQuotelonCount = UNSelonT_SIGNAL_VALUelon;
 
-    luceneContrib = UNSET_SIGNAL_VALUE;
-    reputationContrib = UNSET_SIGNAL_VALUE;
-    textScoreContrib = UNSET_SIGNAL_VALUE;
-    replyContrib = UNSET_SIGNAL_VALUE;
-    multipleReplyContrib = UNSET_SIGNAL_VALUE;
-    retweetContrib = UNSET_SIGNAL_VALUE;
-    favContrib = UNSET_SIGNAL_VALUE;
-    parusContrib = UNSET_SIGNAL_VALUE;
-    Arrays.fill(offlineExpFeatureContributions, 0);
-    embedsImpressionContrib = UNSET_SIGNAL_VALUE;
-    embedsUrlContrib = UNSET_SIGNAL_VALUE;
-    videoViewContrib = UNSET_SIGNAL_VALUE;
-    hasUrlContrib = UNSET_SIGNAL_VALUE;
-    isReplyContrib = UNSET_SIGNAL_VALUE;
+    hasUrl = falselon;
+    isRelonply = falselon;
+    isRelontwelonelont = falselon;
+    isOffelonnsivelon = falselon;
+    hasTrelonnd = falselon;
+    isFromVelonrifielondAccount = falselon;
+    isFromBluelonVelonrifielondAccount = falselon;
+    isUselonrSpam = falselon;
+    isUselonrNSFW = falselon;
+    isUselonrBot = falselon;
+    isUselonrAntiSocial = falselon;
+    hasVisiblelonLink = falselon;
+    isNullcast = falselon;
 
-    querySpecificScore = UNSET_SIGNAL_VALUE;
-    authorSpecificScore = UNSET_SIGNAL_VALUE;
+    lucelonnelonContrib = UNSelonT_SIGNAL_VALUelon;
+    relonputationContrib = UNSelonT_SIGNAL_VALUelon;
+    telonxtScorelonContrib = UNSelonT_SIGNAL_VALUelon;
+    relonplyContrib = UNSelonT_SIGNAL_VALUelon;
+    multiplelonRelonplyContrib = UNSelonT_SIGNAL_VALUelon;
+    relontwelonelontContrib = UNSelonT_SIGNAL_VALUelon;
+    favContrib = UNSelonT_SIGNAL_VALUelon;
+    parusContrib = UNSelonT_SIGNAL_VALUelon;
+    Arrays.fill(offlinelonelonxpFelonaturelonContributions, 0);
+    elonmbelondsImprelonssionContrib = UNSelonT_SIGNAL_VALUelon;
+    elonmbelondsUrlContrib = UNSelonT_SIGNAL_VALUelon;
+    videlonoVielonwContrib = UNSelonT_SIGNAL_VALUelon;
+    hasUrlContrib = UNSelonT_SIGNAL_VALUelon;
+    isRelonplyContrib = UNSelonT_SIGNAL_VALUelon;
 
-    normalizedLuceneScore = NO_BOOST_VALUE;
+    quelonrySpeloncificScorelon = UNSelonT_SIGNAL_VALUelon;
+    authorSpeloncificScorelon = UNSelonT_SIGNAL_VALUelon;
 
-    tweetLangId = ThriftLanguage.UNKNOWN.getValue();
-    uiLangMult = NO_BOOST_VALUE;
-    userLangMult = NO_BOOST_VALUE;
-    hasDifferentLang = false;
-    hasEnglishTweetAndDifferentUILang = false;
-    hasEnglishUIAndDifferentTweetLang = false;
+    normalizelondLucelonnelonScorelon = NO_BOOST_VALUelon;
 
-    tweetAgeInSeconds = 0;
-    ageDecayMult = NO_BOOST_VALUE;
+    twelonelontLangId = ThriftLanguagelon.UNKNOWN.gelontValuelon();
+    uiLangMult = NO_BOOST_VALUelon;
+    uselonrLangMult = NO_BOOST_VALUelon;
+    hasDiffelonrelonntLang = falselon;
+    haselonnglishTwelonelontAndDiffelonrelonntUILang = falselon;
+    haselonnglishUIAndDiffelonrelonntTwelonelontLang = falselon;
 
-    // Intermediate scores
-    scoreBeforeBoost = UNSET_SIGNAL_VALUE;
-    scoreAfterBoost = UNSET_SIGNAL_VALUE;
-    scoreFinal = UNSET_SIGNAL_VALUE;
-    scoreReturned = UNSET_SIGNAL_VALUE;
+    twelonelontAgelonInSelonconds = 0;
+    agelonDeloncayMult = NO_BOOST_VALUelon;
 
-    skipReason = SkipReason.NOT_SKIPPED;
+    // Intelonrmelondiatelon scorelons
+    scorelonBelonforelonBoost = UNSelonT_SIGNAL_VALUelon;
+    scorelonAftelonrBoost = UNSelonT_SIGNAL_VALUelon;
+    scorelonFinal = UNSelonT_SIGNAL_VALUelon;
+    scorelonRelonturnelond = UNSelonT_SIGNAL_VALUelon;
 
-    isTrusted = false;  // Set later
-    isFollow = false; // Set later
-    trustedCircleBoostApplied = false;
-    directFollowBoostApplied = false;
-    outOfNetworkReplyPenaltyApplied = false;
-    hasMultipleHashtagsOrTrends = false;
-    spamUserDampApplied = false;
-    nsfwUserDampApplied = false;
-    botUserDampApplied = false;
+    skipRelonason = SkipRelonason.NOT_SKIPPelonD;
 
-    tweetHasTrendsBoostApplied = false;
-    tweetFromVerifiedAccountBoostApplied = false;
-    tweetFromBlueVerifiedAccountBoostApplied = false;
+    isTrustelond = falselon;  // Selont latelonr
+    isFollow = falselon; // Selont latelonr
+    trustelondCirclelonBoostApplielond = falselon;
+    direlonctFollowBoostApplielond = falselon;
+    outOfNelontworkRelonplyPelonnaltyApplielond = falselon;
+    hasMultiplelonHashtagsOrTrelonnds = falselon;
+    spamUselonrDampApplielond = falselon;
+    nsfwUselonrDampApplielond = falselon;
+    botUselonrDampApplielond = falselon;
 
-    fromUserId = UNSET_SIGNAL_VALUE;
-    sharedStatusId = UNSET_SIGNAL_VALUE;
-    referenceAuthorId = UNSET_SIGNAL_VALUE;
+    twelonelontHasTrelonndsBoostApplielond = falselon;
+    twelonelontFromVelonrifielondAccountBoostApplielond = falselon;
+    twelonelontFromBluelonVelonrifielondAccountBoostApplielond = falselon;
 
-    isSelfTweet = false;
-    selfTweetBoostApplied = false;
-    selfTweetMult = NO_BOOST_VALUE;
+    fromUselonrId = UNSelonT_SIGNAL_VALUelon;
+    sharelondStatusId = UNSelonT_SIGNAL_VALUelon;
+    relonfelonrelonncelonAuthorId = UNSelonT_SIGNAL_VALUelon;
 
-    trustedCircleBoostApplied = false;
-    directFollowBoostApplied = false;
+    isSelonlfTwelonelont = falselon;
+    selonlfTwelonelontBoostApplielond = falselon;
+    selonlfTwelonelontMult = NO_BOOST_VALUelon;
 
-    hasImageUrl = false;
-    hasVideoUrl = false;
-    hasMedialUrlBoostApplied = false;
-    hasNewsUrl = false;
-    hasNewsUrlBoostApplied = false;
+    trustelondCirclelonBoostApplielond = falselon;
+    direlonctFollowBoostApplielond = falselon;
 
-    hasCard = false;
-    cardType = SearchCardType.UNKNOWN.getByteValue();
-    hasCardBoostApplied = false;
-    cardDomainMatchBoostApplied = false;
-    cardAuthorMatchBoostApplied = false;
-    cardTitleMatchBoostApplied = false;
-    cardDescriptionMatchBoostApplied = false;
+    hasImagelonUrl = falselon;
+    hasVidelonoUrl = falselon;
+    hasMelondialUrlBoostApplielond = falselon;
+    hasNelonwsUrl = falselon;
+    hasNelonwsUrlBoostApplielond = falselon;
 
-    hitFields.clear();
-    hasNoTextHitDemotionApplied = false;
-    hasUrlOnlyHitDemotionApplied = false;
-    hasNameOnlyHitDemotionApplied = false;
-    hasSeparateTextAndNameHitDemotionApplied = false;
-    hasSeparateTextAndUrlHitDemotionApplied = false;
+    hasCard = falselon;
+    cardTypelon = SelonarchCardTypelon.UNKNOWN.gelontBytelonValuelon();
+    hasCardBoostApplielond = falselon;
+    cardDomainMatchBoostApplielond = falselon;
+    cardAuthorMatchBoostApplielond = falselon;
+    cardTitlelonMatchBoostApplielond = falselon;
+    cardDelonscriptionMatchBoostApplielond = falselon;
 
-    hasConsumerVideo = false;
-    hasProVideo = false;
-    hasVine = false;
-    hasPeriscope = false;
-    hasNativeImage = false;
+    hitFielonlds.clelonar();
+    hasNoTelonxtHitDelonmotionApplielond = falselon;
+    hasUrlOnlyHitDelonmotionApplielond = falselon;
+    hasNamelonOnlyHitDelonmotionApplielond = falselon;
+    hasSelonparatelonTelonxtAndNamelonHitDelonmotionApplielond = falselon;
+    hasSelonparatelonTelonxtAndUrlHitDelonmotionApplielond = falselon;
 
-    isSensitiveContent = false;
-    hasMultipleMediaFlag = false;
-    profileIsEggFlag = false;
-    numMentions = 0;
+    hasConsumelonrVidelono = falselon;
+    hasProVidelono = falselon;
+    hasVinelon = falselon;
+    hasPelonriscopelon = falselon;
+    hasNativelonImagelon = falselon;
+
+    isSelonnsitivelonContelonnt = falselon;
+    hasMultiplelonMelondiaFlag = falselon;
+    profilelonIselonggFlag = falselon;
+    numMelonntions = 0;
     numHashtags = 0;
-    isUserNewFlag = false;
-    linkLanguage = 0;
-    prevUserTweetEngagement = 0;
+    isUselonrNelonwFlag = falselon;
+    linkLanguagelon = 0;
+    prelonvUselonrTwelonelontelonngagelonmelonnt = 0;
 
-    isComposerSourceCamera = false;
+    isComposelonrSourcelonCamelonra = falselon;
 
-    // health model scores by HML
-    toxicityScore = UNSET_SIGNAL_VALUE;
-    pBlockScore = UNSET_SIGNAL_VALUE;
-    pSpammyTweetScore = UNSET_SIGNAL_VALUE;
-    pReportedTweetScore = UNSET_SIGNAL_VALUE;
-    spammyTweetContentScore = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore1 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore2 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore3 = UNSET_SIGNAL_VALUE;
-    experimentalHealthModelScore4 = UNSET_SIGNAL_VALUE;
+    // helonalth modelonl scorelons by HML
+    toxicityScorelon = UNSelonT_SIGNAL_VALUelon;
+    pBlockScorelon = UNSelonT_SIGNAL_VALUelon;
+    pSpammyTwelonelontScorelon = UNSelonT_SIGNAL_VALUelon;
+    pRelonportelondTwelonelontScorelon = UNSelonT_SIGNAL_VALUelon;
+    spammyTwelonelontContelonntScorelon = UNSelonT_SIGNAL_VALUelon;
+    elonxpelonrimelonntalHelonalthModelonlScorelon1 = UNSelonT_SIGNAL_VALUelon;
+    elonxpelonrimelonntalHelonalthModelonlScorelon2 = UNSelonT_SIGNAL_VALUelon;
+    elonxpelonrimelonntalHelonalthModelonlScorelon3 = UNSelonT_SIGNAL_VALUelon;
+    elonxpelonrimelonntalHelonalthModelonlScorelon4 = UNSelonT_SIGNAL_VALUelon;
   }
 }

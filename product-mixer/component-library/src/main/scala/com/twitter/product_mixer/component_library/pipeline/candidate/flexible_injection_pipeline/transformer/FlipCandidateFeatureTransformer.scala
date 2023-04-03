@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.flexible_injection_pipeline.transformer
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.flelonxiblelon_injelonction_pipelonlinelon.transformelonr
 
-import com.twitter.onboarding.injections.{thriftscala => onboardingthrift}
-import com.twitter.product_mixer.component_library.candidate_source.flexible_injection_pipeline.IntermediatePrompt
-import com.twitter.product_mixer.component_library.model.candidate.BasePromptCandidate
-import com.twitter.product_mixer.component_library.model.candidate.PromptCarouselTileCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
+import com.twittelonr.onboarding.injelonctions.{thriftscala => onboardingthrift}
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.flelonxiblelon_injelonction_pipelonlinelon.IntelonrmelondiatelonPrompt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonPromptCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.PromptCarouselonlTilelonCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
 
-case object FlipPromptCarouselTileFeature
-    extends Feature[PromptCarouselTileCandidate, Option[onboardingthrift.Tile]]
+caselon objelonct FlipPromptCarouselonlTilelonFelonaturelon
+    elonxtelonnds Felonaturelon[PromptCarouselonlTilelonCandidatelon, Option[onboardingthrift.Tilelon]]
 
-case object FlipPromptInjectionsFeature
-    extends Feature[BasePromptCandidate[String], onboardingthrift.Injection]
+caselon objelonct FlipPromptInjelonctionsFelonaturelon
+    elonxtelonnds Felonaturelon[BaselonPromptCandidatelon[String], onboardingthrift.Injelonction]
 
-case object FlipPromptOffsetInModuleFeature
-    extends Feature[PromptCarouselTileCandidate, Option[Int]]
+caselon objelonct FlipPromptOffselontInModulelonFelonaturelon
+    elonxtelonnds Felonaturelon[PromptCarouselonlTilelonCandidatelon, Option[Int]]
 
-object FlipCandidateFeatureTransformer extends CandidateFeatureTransformer[IntermediatePrompt] {
+objelonct FlipCandidatelonFelonaturelonTransformelonr elonxtelonnds CandidatelonFelonaturelonTransformelonr[IntelonrmelondiatelonPrompt] {
 
-  override val identifier: TransformerIdentifier = TransformerIdentifier("FlipCandidateFeature")
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr = TransformelonrIdelonntifielonr("FlipCandidatelonFelonaturelon")
 
-  override val features: Set[Feature[_, _]] =
-    Set(FlipPromptInjectionsFeature, FlipPromptOffsetInModuleFeature, FlipPromptCarouselTileFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] =
+    Selont(FlipPromptInjelonctionsFelonaturelon, FlipPromptOffselontInModulelonFelonaturelon, FlipPromptCarouselonlTilelonFelonaturelon)
 
-  /** Hydrates a [[FeatureMap]] for a given [[Inputs]] */
-  override def transform(input: IntermediatePrompt): FeatureMap = {
-    FeatureMapBuilder()
-      .add(FlipPromptInjectionsFeature, input.injection)
-      .add(FlipPromptOffsetInModuleFeature, input.offsetInModule)
-      .add(FlipPromptCarouselTileFeature, input.carouselTile)
+  /** Hydratelons a [[FelonaturelonMap]] for a givelonn [[Inputs]] */
+  ovelonrridelon delonf transform(input: IntelonrmelondiatelonPrompt): FelonaturelonMap = {
+    FelonaturelonMapBuildelonr()
+      .add(FlipPromptInjelonctionsFelonaturelon, input.injelonction)
+      .add(FlipPromptOffselontInModulelonFelonaturelon, input.offselontInModulelon)
+      .add(FlipPromptCarouselonlTilelonFelonaturelon, input.carouselonlTilelon)
       .build()
   }
 }

@@ -1,297 +1,297 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
 /**
- * A RecencyResponseMerger that prioritizes not losing results during pagination.
- * As of now, this merger is used by Gnip to make sure that scrolling returns all results.
+ * A ReloncelonncyRelonsponselonMelonrgelonr that prioritizelons not losing relonsults during pagination.
+ * As of now, this melonrgelonr is uselond by Gnip to makelon surelon that scrolling relonturns all relonsults.
  *
- * The logic used for merging partitions is a bit tricky, because on one hand, we want to make sure
- * that we do miss results on the next pagination request; on the other hand, we want to return as
- * many results as we can, and we want to set the minSearchedStatusID of the merged response as low
- * as we can, in order to minimize the number of pagination requests.
+ * Thelon logic uselond for melonrging partitions is a bit tricky, beloncauselon on onelon hand, welon want to makelon surelon
+ * that welon do miss relonsults on thelon nelonxt pagination relonquelonst; on thelon othelonr hand, welon want to relonturn as
+ * many relonsults as welon can, and welon want to selont thelon minSelonarchelondStatusID of thelon melonrgelond relonsponselon as low
+ * as welon can, in ordelonr to minimizelon thelon numbelonr of pagination relonquelonsts.
  *
- * The merging logic is:
+ * Thelon melonrging logic is:
  *
- * Realtime cluster:
- *  1. merge results from all partitions
- *  2. if at least one partition response is early-terminated, set earlyTerminated = true
- *     on the merged response
- *  3. set trimmingMinId = max(minSearchedStatusIDs of all partition responses)
- *  4. trim all results to trimmingMinId
- *  5. set minSearchedStatusID on the merged response to trimmingMinId
- *  6. if we have more than numRequested results:
- *     - keep only the newest numRequested results
- *     - set minSearchedStatusID of the merged response to the lowest tweet ID in the response
- *  7. if at least one partition response is not early-terminated, set
- *     tierBottomId = max(minSearchedStatusIDs of all non-early-terminated responses)
- *     (otherwise, set tierBottomId to some undefined value: -1, Long.MAX_VALUE, etc.)
- *  8. if minSearchedStatusID of the merged response is the same as tierBottomId,
- *     clear the early-termination flag on the merged response
+ * Relonaltimelon clustelonr:
+ *  1. melonrgelon relonsults from all partitions
+ *  2. if at lelonast onelon partition relonsponselon is elonarly-telonrminatelond, selont elonarlyTelonrminatelond = truelon
+ *     on thelon melonrgelond relonsponselon
+ *  3. selont trimmingMinId = max(minSelonarchelondStatusIDs of all partition relonsponselons)
+ *  4. trim all relonsults to trimmingMinId
+ *  5. selont minSelonarchelondStatusID on thelon melonrgelond relonsponselon to trimmingMinId
+ *  6. if welon havelon morelon than numRelonquelonstelond relonsults:
+ *     - kelonelonp only thelon nelonwelonst numRelonquelonstelond relonsults
+ *     - selont minSelonarchelondStatusID of thelon melonrgelond relonsponselon to thelon lowelonst twelonelont ID in thelon relonsponselon
+ *  7. if at lelonast onelon partition relonsponselon is not elonarly-telonrminatelond, selont
+ *     tielonrBottomId = max(minSelonarchelondStatusIDs of all non-elonarly-telonrminatelond relonsponselons)
+ *     (othelonrwiselon, selont tielonrBottomId to somelon undelonfinelond valuelon: -1, Long.MAX_VALUelon, elontc.)
+ *  8. if minSelonarchelondStatusID of thelon melonrgelond relonsponselon is thelon samelon as tielonrBottomId,
+ *     clelonar thelon elonarly-telonrmination flag on thelon melonrgelond relonsponselon
  *
- * The logic in steps 7 and 8 can be a little tricky to understand. They basically say: when we've
- * exhausted the "least deep" partition in the realtime cluster, it's time to move to the full
- * archive cluster (if we keep going past the "least deep" partition, we might miss results).
+ * Thelon logic in stelonps 7 and 8 can belon a littlelon tricky to undelonrstand. Thelony basically say: whelonn welon'velon
+ * elonxhaustelond thelon "lelonast delonelonp" partition in thelon relonaltimelon clustelonr, it's timelon to movelon to thelon full
+ * archivelon clustelonr (if welon kelonelonp going past thelon "lelonast delonelonp" partition, welon might miss relonsults).
  *
- * Full archive cluster:
- *  1. merge results from all partitions
- *  2. if at least one partition response is early-terminated, set earlyTerminated = true
- *     on the merged response
- *  3. set trimmingMinId to:
- *     - max(minSearchedStatusIDs of early-terminated responses), if at least one partition response
- *       is early-terminated
- *     - min(minSearchedStatusIDs of all responses), if all partition responses are not
- *       early-terminated
- *  4. trim all results to trimmingMinId
- *  5. set minSearchedStatusID of the merged response to trimmingMinId
- *  6. if we have more than numRequested results:
- *     - keep only the newest numRequested results
- *     - set minSearchedStatusID of the merged response to the lowest tweet ID in the response
+ * Full archivelon clustelonr:
+ *  1. melonrgelon relonsults from all partitions
+ *  2. if at lelonast onelon partition relonsponselon is elonarly-telonrminatelond, selont elonarlyTelonrminatelond = truelon
+ *     on thelon melonrgelond relonsponselon
+ *  3. selont trimmingMinId to:
+ *     - max(minSelonarchelondStatusIDs of elonarly-telonrminatelond relonsponselons), if at lelonast onelon partition relonsponselon
+ *       is elonarly-telonrminatelond
+ *     - min(minSelonarchelondStatusIDs of all relonsponselons), if all partition relonsponselons arelon not
+ *       elonarly-telonrminatelond
+ *  4. trim all relonsults to trimmingMinId
+ *  5. selont minSelonarchelondStatusID of thelon melonrgelond relonsponselon to trimmingMinId
+ *  6. if welon havelon morelon than numRelonquelonstelond relonsults:
+ *     - kelonelonp only thelon nelonwelonst numRelonquelonstelond relonsults
+ *     - selont minSelonarchelondStatusID of thelon melonrgelond relonsponselon to thelon lowelonst twelonelont ID in thelon relonsponselon
  *
- * The logic in step 3 can be a little tricky to understand. On one hand, if we always set
- * trimmingMinId to the highest minSearchedStatusID, then some tweets at the very bottom of some
- * partitions will never be returned. Consider the case:
+ * Thelon logic in stelonp 3 can belon a littlelon tricky to undelonrstand. On onelon hand, if welon always selont
+ * trimmingMinId to thelon highelonst minSelonarchelondStatusID, thelonn somelon twelonelonts at thelon velonry bottom of somelon
+ * partitions will nelonvelonr belon relonturnelond. Considelonr thelon caselon:
  *
- *  partition 1 has tweets 10, 8, 6
- *  partition 2 has tweets 9, 7, 5
+ *  partition 1 has twelonelonts 10, 8, 6
+ *  partition 2 has twelonelonts 9, 7, 5
  *
- * In this case, we would always trim all results to minId = 6, and tweet 5 would never be returned.
+ * In this caselon, welon would always trim all relonsults to minId = 6, and twelonelont 5 would nelonvelonr belon relonturnelond.
  *
- * On the other hand, if we always set trimmingMinId to the lowest minSearchedStatusID, then we
- * might miss tweets from partitions that early-terminated. Consider the case:
+ * On thelon othelonr hand, if welon always selont trimmingMinId to thelon lowelonst minSelonarchelondStatusID, thelonn welon
+ * might miss twelonelonts from partitions that elonarly-telonrminatelond. Considelonr thelon caselon:
  *
- * partition 1 has tweets 10, 5, 3, 1 that match our query
- * partition 2 has tweets 9, 8, 7, 6, 2 that match our query
+ * partition 1 has twelonelonts 10, 5, 3, 1 that match our quelonry
+ * partition 2 has twelonelonts 9, 8, 7, 6, 2 that match our quelonry
  *
- * If we ask for 3 results, than partition 1 will return tweets 10, 5, 3, and partition 2 will
- * return tweets 9, 8, 7. If we set trimmingMinId = min(minSearchedStatusIDs), then the next
- * pagination request will have [max_id = 2], and we will miss tweet 6.
+ * If welon ask for 3 relonsults, than partition 1 will relonturn twelonelonts 10, 5, 3, and partition 2 will
+ * relonturn twelonelonts 9, 8, 7. If welon selont trimmingMinId = min(minSelonarchelondStatusIDs), thelonn thelon nelonxt
+ * pagination relonquelonst will havelon [max_id = 2], and welon will miss twelonelont 6.
  *
- * So the intuition here is that if we have an early-terminated response, we cannot set
- * trimmingMinId to something lower than the minSearchedStatusID returned by that partition
- * (otherwise we might miss results from that partition). However, if we've exhausted all
- * partitions, then it's OK to not trim any result, because tiers do not intersect, so we will not
- * miss any result from the next tier once we get there.
+ * So thelon intuition helonrelon is that if welon havelon an elonarly-telonrminatelond relonsponselon, welon cannot selont
+ * trimmingMinId to somelonthing lowelonr than thelon minSelonarchelondStatusID relonturnelond by that partition
+ * (othelonrwiselon welon might miss relonsults from that partition). Howelonvelonr, if welon'velon elonxhaustelond all
+ * partitions, thelonn it's OK to not trim any relonsult, beloncauselon tielonrs do not intelonrselonct, so welon will not
+ * miss any relonsult from thelon nelonxt tielonr oncelon welon gelont thelonrelon.
  */
-public class StrictRecencyResponseMerger extends RecencyResponseMerger {
-  private static final SearchTimerStats STRICT_RECENCY_TIMER_AVG =
-      SearchTimerStats.export("merge_recency_strict", TimeUnit.NANOSECONDS, false, true);
+public class StrictReloncelonncyRelonsponselonMelonrgelonr elonxtelonnds ReloncelonncyRelonsponselonMelonrgelonr {
+  privatelon static final SelonarchTimelonrStats STRICT_RelonCelonNCY_TIMelonR_AVG =
+      SelonarchTimelonrStats.elonxport("melonrgelon_reloncelonncy_strict", TimelonUnit.NANOSelonCONDS, falselon, truelon);
 
-  @VisibleForTesting
-  static final EarlyTerminationTrimmingStats PARTITION_MERGING_EARLY_TERMINATION_TRIMMING_STATS =
-      new EarlyTerminationTrimmingStats("strict_recency_partition_merging");
+  @VisiblelonForTelonsting
+  static final elonarlyTelonrminationTrimmingStats PARTITION_MelonRGING_elonARLY_TelonRMINATION_TRIMMING_STATS =
+      nelonw elonarlyTelonrminationTrimmingStats("strict_reloncelonncy_partition_melonrging");
 
-  @VisibleForTesting
-  static final EarlyTerminationTrimmingStats TIER_MERGING_EARLY_TERMINATION_TRIMMING_STATS =
-      new EarlyTerminationTrimmingStats("strict_recency_tier_merging");
+  @VisiblelonForTelonsting
+  static final elonarlyTelonrminationTrimmingStats TIelonR_MelonRGING_elonARLY_TelonRMINATION_TRIMMING_STATS =
+      nelonw elonarlyTelonrminationTrimmingStats("strict_reloncelonncy_tielonr_melonrging");
 
-  private final EarlybirdCluster cluster;
+  privatelon final elonarlybirdClustelonr clustelonr;
 
-  public StrictRecencyResponseMerger(EarlybirdRequestContext requestContext,
-                                     List<Future<EarlybirdResponse>> responses,
-                                     ResponseAccumulator mode,
-                                     EarlybirdFeatureSchemaMerger featureSchemaMerger,
-                                     EarlybirdCluster cluster) {
-    super(requestContext, responses, mode, featureSchemaMerger);
-    this.cluster = cluster;
+  public StrictReloncelonncyRelonsponselonMelonrgelonr(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                                     List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons,
+                                     RelonsponselonAccumulator modelon,
+                                     elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr,
+                                     elonarlybirdClustelonr clustelonr) {
+    supelonr(relonquelonstContelonxt, relonsponselons, modelon, felonaturelonSchelonmaMelonrgelonr);
+    this.clustelonr = clustelonr;
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return STRICT_RECENCY_TIMER_AVG;
-  }
-
-  /**
-   * Unlike {@link com.twitter.search.earlybird_root.mergers.RecencyResponseMerger}, this method
-   * takes a much simpler approach by just taking the max of the maxSearchedStatusIds.
-   *
-   * Also, when no maxSearchedStatusId is available at all, Long.MIN_VALUE is used instead of
-   * Long.MAX_VALUE. This ensures that we don't return any result in these cases.
-   */
-  @Override
-  protected long findMaxFullySearchedStatusID() {
-    return accumulatedResponses.getMaxIds().isEmpty()
-        ? Long.MIN_VALUE : Collections.max(accumulatedResponses.getMaxIds());
+  @Ovelonrridelon
+  protelonctelond SelonarchTimelonrStats gelontMelonrgelondRelonsponselonTimelonr() {
+    relonturn STRICT_RelonCelonNCY_TIMelonR_AVG;
   }
 
   /**
-   * This method is subtly different from the base class version: when no minSearchedStatusId is
-   * available at all, Long.MAX_VALUE is used instead of Long.MIN_VALUE. This ensures that we
-   * don't return any result in these cases.
+   * Unlikelon {@link com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs.ReloncelonncyRelonsponselonMelonrgelonr}, this melonthod
+   * takelons a much simplelonr approach by just taking thelon max of thelon maxSelonarchelondStatusIds.
+   *
+   * Also, whelonn no maxSelonarchelondStatusId is availablelon at all, Long.MIN_VALUelon is uselond instelonad of
+   * Long.MAX_VALUelon. This elonnsurelons that welon don't relonturn any relonsult in thelonselon caselons.
    */
-  @Override
-  protected long findMinFullySearchedStatusID() {
-    List<Long> minIds = accumulatedResponses.getMinIds();
-    if (minIds.isEmpty()) {
-      return Long.MAX_VALUE;
-    }
-
-    if (accumulatedResponses.isMergingPartitionsWithinATier()) {
-      return getTrimmingMinId();
-    }
-
-    // When merging tiers, the min ID should be the smallest among the min IDs.
-    return Collections.min(minIds);
-  }
-
-  @Override
-  protected TrimStats trimResults(
-      ThriftSearchResults searchResults, long mergedMin, long mergedMax) {
-    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
-      // no results, no trimming needed
-      return TrimStats.EMPTY_STATS;
-    }
-
-    TrimStats trimStats = new TrimStats();
-    trimExactDups(searchResults, trimStats);
-    filterResultsByMergedMinMaxIds(searchResults, mergedMax, mergedMin, trimStats);
-    int numResults = computeNumResultsToKeep();
-    if (searchResults.getResultsSize() > numResults) {
-      trimStats.setResultsTruncatedFromTailCount(searchResults.getResultsSize() - numResults);
-      searchResults.setResults(searchResults.getResults().subList(0, numResults));
-    }
-
-    return trimStats;
+  @Ovelonrridelon
+  protelonctelond long findMaxFullySelonarchelondStatusID() {
+    relonturn accumulatelondRelonsponselons.gelontMaxIds().iselonmpty()
+        ? Long.MIN_VALUelon : Collelonctions.max(accumulatelondRelonsponselons.gelontMaxIds());
   }
 
   /**
-   * This method is different from the base class version because when minResultId is bigger
-   * than currentMergedMin, we always take minResultId.
-   * If we don't do this, we would lose results.
-   *
-   * Illustration with an example. Assuming we are outside of the lag threshold.
-   * Num results requested: 3
-   * Response 1:  min: 100   max: 900   results:  400, 500, 600
-   * Response 2:  min: 300   max: 700   results:  350, 450, 550
-   *
-   * Merged results: 600, 550, 500
-   * Merged max: 900
-   * Merged min: we could take 300 (minId), or take 500 (minResultId).
-   *
-   * If we take minId, and use 300 as the pagination cursor, we'd lose results
-   * 350 and 450 when we paginate. So we have to take minResultId here.
+   * This melonthod is subtly diffelonrelonnt from thelon baselon class velonrsion: whelonn no minSelonarchelondStatusId is
+   * availablelon at all, Long.MAX_VALUelon is uselond instelonad of Long.MIN_VALUelon. This elonnsurelons that welon
+   * don't relonturn any relonsult in thelonselon caselons.
    */
-  @Override
-  protected void setMergedMinSearchedStatusId(
-      ThriftSearchResults searchResults,
-      long currentMergedMin,
-      boolean resultsWereTrimmed) {
-    if (accumulatedResponses.getMinIds().isEmpty()) {
-      return;
+  @Ovelonrridelon
+  protelonctelond long findMinFullySelonarchelondStatusID() {
+    List<Long> minIds = accumulatelondRelonsponselons.gelontMinIds();
+    if (minIds.iselonmpty()) {
+      relonturn Long.MAX_VALUelon;
     }
 
-    long minId = currentMergedMin;
-    if (resultsWereTrimmed
-        && (searchResults != null)
-        && searchResults.isSetResults()
-        && (searchResults.getResultsSize() > 0)) {
-      List<ThriftSearchResult> results = searchResults.getResults();
-      minId = results.get(results.size() - 1).getId();
+    if (accumulatelondRelonsponselons.isMelonrgingPartitionsWithinATielonr()) {
+      relonturn gelontTrimmingMinId();
     }
 
-    searchResults.setMinSearchedStatusID(minId);
+    // Whelonn melonrging tielonrs, thelon min ID should belon thelon smallelonst among thelon min IDs.
+    relonturn Collelonctions.min(minIds);
   }
 
-  @Override
-  protected boolean clearEarlyTerminationIfReachingTierBottom(EarlybirdResponse mergedResponse) {
-    if (EarlybirdCluster.isArchive(cluster)) {
-      // We don't need to worry about the tier bottom when merging partition responses in the full
-      // archive cluster: if all partitions were exhausted and we didn't trim the results, then
-      // the early-terminated flag on the merged response will be false. If at least one partition
-      // is early-terminated, or we trimmed some results, then the ealry-terminated flag on the
-      // merged response will be true, and we should continue getting results from this tier before
-      // we move to the next one.
-      return false;
+  @Ovelonrridelon
+  protelonctelond TrimStats trimRelonsults(
+      ThriftSelonarchRelonsults selonarchRelonsults, long melonrgelondMin, long melonrgelondMax) {
+    if (!selonarchRelonsults.isSelontRelonsults() || selonarchRelonsults.gelontRelonsultsSizelon() == 0) {
+      // no relonsults, no trimming nelonelondelond
+      relonturn TrimStats.elonMPTY_STATS;
     }
 
-    ThriftSearchResults searchResults = mergedResponse.getSearchResults();
-    if (searchResults.getMinSearchedStatusID() == getTierBottomId()) {
-      mergedResponse.getEarlyTerminationInfo().setEarlyTerminated(false);
-      mergedResponse.getEarlyTerminationInfo().unsetMergedEarlyTerminationReasons();
-      responseMessageBuilder.debugVerbose(
-          "Set earlytermination to false because minSearchedStatusId is tier bottom");
-      return true;
+    TrimStats trimStats = nelonw TrimStats();
+    trimelonxactDups(selonarchRelonsults, trimStats);
+    filtelonrRelonsultsByMelonrgelondMinMaxIds(selonarchRelonsults, melonrgelondMax, melonrgelondMin, trimStats);
+    int numRelonsults = computelonNumRelonsultsToKelonelonp();
+    if (selonarchRelonsults.gelontRelonsultsSizelon() > numRelonsults) {
+      trimStats.selontRelonsultsTruncatelondFromTailCount(selonarchRelonsults.gelontRelonsultsSizelon() - numRelonsults);
+      selonarchRelonsults.selontRelonsults(selonarchRelonsults.gelontRelonsults().subList(0, numRelonsults));
     }
-    return false;
+
+    relonturn trimStats;
   }
 
-  @Override
-  protected boolean shouldEarlyTerminateWhenEnoughTrimmedResults() {
-    return false;
+  /**
+   * This melonthod is diffelonrelonnt from thelon baselon class velonrsion beloncauselon whelonn minRelonsultId is biggelonr
+   * than currelonntMelonrgelondMin, welon always takelon minRelonsultId.
+   * If welon don't do this, welon would loselon relonsults.
+   *
+   * Illustration with an elonxamplelon. Assuming welon arelon outsidelon of thelon lag threlonshold.
+   * Num relonsults relonquelonstelond: 3
+   * Relonsponselon 1:  min: 100   max: 900   relonsults:  400, 500, 600
+   * Relonsponselon 2:  min: 300   max: 700   relonsults:  350, 450, 550
+   *
+   * Melonrgelond relonsults: 600, 550, 500
+   * Melonrgelond max: 900
+   * Melonrgelond min: welon could takelon 300 (minId), or takelon 500 (minRelonsultId).
+   *
+   * If welon takelon minId, and uselon 300 as thelon pagination cursor, welon'd loselon relonsults
+   * 350 and 450 whelonn welon paginatelon. So welon havelon to takelon minRelonsultId helonrelon.
+   */
+  @Ovelonrridelon
+  protelonctelond void selontMelonrgelondMinSelonarchelondStatusId(
+      ThriftSelonarchRelonsults selonarchRelonsults,
+      long currelonntMelonrgelondMin,
+      boolelonan relonsultsWelonrelonTrimmelond) {
+    if (accumulatelondRelonsponselons.gelontMinIds().iselonmpty()) {
+      relonturn;
+    }
+
+    long minId = currelonntMelonrgelondMin;
+    if (relonsultsWelonrelonTrimmelond
+        && (selonarchRelonsults != null)
+        && selonarchRelonsults.isSelontRelonsults()
+        && (selonarchRelonsults.gelontRelonsultsSizelon() > 0)) {
+      List<ThriftSelonarchRelonsult> relonsults = selonarchRelonsults.gelontRelonsults();
+      minId = relonsults.gelont(relonsults.sizelon() - 1).gelontId();
+    }
+
+    selonarchRelonsults.selontMinSelonarchelondStatusID(minId);
   }
 
-  @Override
-  protected final EarlyTerminationTrimmingStats getEarlyTerminationTrimmingStatsForPartitions() {
-    return PARTITION_MERGING_EARLY_TERMINATION_TRIMMING_STATS;
+  @Ovelonrridelon
+  protelonctelond boolelonan clelonarelonarlyTelonrminationIfRelonachingTielonrBottom(elonarlybirdRelonsponselon melonrgelondRelonsponselon) {
+    if (elonarlybirdClustelonr.isArchivelon(clustelonr)) {
+      // Welon don't nelonelond to worry about thelon tielonr bottom whelonn melonrging partition relonsponselons in thelon full
+      // archivelon clustelonr: if all partitions welonrelon elonxhaustelond and welon didn't trim thelon relonsults, thelonn
+      // thelon elonarly-telonrminatelond flag on thelon melonrgelond relonsponselon will belon falselon. If at lelonast onelon partition
+      // is elonarly-telonrminatelond, or welon trimmelond somelon relonsults, thelonn thelon elonalry-telonrminatelond flag on thelon
+      // melonrgelond relonsponselon will belon truelon, and welon should continuelon gelontting relonsults from this tielonr belonforelon
+      // welon movelon to thelon nelonxt onelon.
+      relonturn falselon;
+    }
+
+    ThriftSelonarchRelonsults selonarchRelonsults = melonrgelondRelonsponselon.gelontSelonarchRelonsults();
+    if (selonarchRelonsults.gelontMinSelonarchelondStatusID() == gelontTielonrBottomId()) {
+      melonrgelondRelonsponselon.gelontelonarlyTelonrminationInfo().selontelonarlyTelonrminatelond(falselon);
+      melonrgelondRelonsponselon.gelontelonarlyTelonrminationInfo().unselontMelonrgelondelonarlyTelonrminationRelonasons();
+      relonsponselonMelonssagelonBuildelonr.delonbugVelonrboselon(
+          "Selont elonarlytelonrmination to falselon beloncauselon minSelonarchelondStatusId is tielonr bottom");
+      relonturn truelon;
+    }
+    relonturn falselon;
   }
 
-  @Override
-  protected final EarlyTerminationTrimmingStats getEarlyTerminationTrimmingStatsForTiers() {
-    return TIER_MERGING_EARLY_TERMINATION_TRIMMING_STATS;
+  @Ovelonrridelon
+  protelonctelond boolelonan shouldelonarlyTelonrminatelonWhelonnelonnoughTrimmelondRelonsults() {
+    relonturn falselon;
   }
 
-  /** Determines the bottom of the realtime cluster, based on the partition responses. */
-  private long getTierBottomId() {
-    Preconditions.checkState(!EarlybirdCluster.isArchive(cluster));
+  @Ovelonrridelon
+  protelonctelond final elonarlyTelonrminationTrimmingStats gelontelonarlyTelonrminationTrimmingStatsForPartitions() {
+    relonturn PARTITION_MelonRGING_elonARLY_TelonRMINATION_TRIMMING_STATS;
+  }
 
-    long tierBottomId = -1;
-    for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-      if (!isEarlyTerminated(response)
-          && response.isSetSearchResults()
-          && response.getSearchResults().isSetMinSearchedStatusID()
-          && (response.getSearchResults().getMinSearchedStatusID() > tierBottomId)) {
-        tierBottomId = response.getSearchResults().getMinSearchedStatusID();
+  @Ovelonrridelon
+  protelonctelond final elonarlyTelonrminationTrimmingStats gelontelonarlyTelonrminationTrimmingStatsForTielonrs() {
+    relonturn TIelonR_MelonRGING_elonARLY_TelonRMINATION_TRIMMING_STATS;
+  }
+
+  /** Delontelonrminelons thelon bottom of thelon relonaltimelon clustelonr, baselond on thelon partition relonsponselons. */
+  privatelon long gelontTielonrBottomId() {
+    Prelonconditions.chelonckStatelon(!elonarlybirdClustelonr.isArchivelon(clustelonr));
+
+    long tielonrBottomId = -1;
+    for (elonarlybirdRelonsponselon relonsponselon : accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons()) {
+      if (!iselonarlyTelonrminatelond(relonsponselon)
+          && relonsponselon.isSelontSelonarchRelonsults()
+          && relonsponselon.gelontSelonarchRelonsults().isSelontMinSelonarchelondStatusID()
+          && (relonsponselon.gelontSelonarchRelonsults().gelontMinSelonarchelondStatusID() > tielonrBottomId)) {
+        tielonrBottomId = relonsponselon.gelontSelonarchRelonsults().gelontMinSelonarchelondStatusID();
       }
     }
 
-    return tierBottomId;
+    relonturn tielonrBottomId;
   }
 
-  /** Determines the minId to which all results should be trimmed. */
-  private long getTrimmingMinId() {
-    List<Long> minIds = accumulatedResponses.getMinIds();
-    Preconditions.checkArgument(!minIds.isEmpty());
+  /** Delontelonrminelons thelon minId to which all relonsults should belon trimmelond. */
+  privatelon long gelontTrimmingMinId() {
+    List<Long> minIds = accumulatelondRelonsponselons.gelontMinIds();
+    Prelonconditions.chelonckArgumelonnt(!minIds.iselonmpty());
 
-    if (!EarlybirdCluster.isArchive(cluster)) {
-      return Collections.max(minIds);
+    if (!elonarlybirdClustelonr.isArchivelon(clustelonr)) {
+      relonturn Collelonctions.max(minIds);
     }
 
-    long maxOfEarlyTerminatedMins = -1;
-    long minOfAllMins = Long.MAX_VALUE;
-    for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-      if (response.isSetSearchResults()
-          && response.getSearchResults().isSetMinSearchedStatusID()) {
-        long minId = response.getSearchResults().getMinSearchedStatusID();
+    long maxOfelonarlyTelonrminatelondMins = -1;
+    long minOfAllMins = Long.MAX_VALUelon;
+    for (elonarlybirdRelonsponselon relonsponselon : accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons()) {
+      if (relonsponselon.isSelontSelonarchRelonsults()
+          && relonsponselon.gelontSelonarchRelonsults().isSelontMinSelonarchelondStatusID()) {
+        long minId = relonsponselon.gelontSelonarchRelonsults().gelontMinSelonarchelondStatusID();
         minOfAllMins = Math.min(minOfAllMins, minId);
-        if (isEarlyTerminated(response)) {
-          maxOfEarlyTerminatedMins = Math.max(maxOfEarlyTerminatedMins, minId);
+        if (iselonarlyTelonrminatelond(relonsponselon)) {
+          maxOfelonarlyTelonrminatelondMins = Math.max(maxOfelonarlyTelonrminatelondMins, minId);
         }
       }
     }
-    if (maxOfEarlyTerminatedMins >= 0) {
-      return maxOfEarlyTerminatedMins;
-    } else {
-      return minOfAllMins;
+    if (maxOfelonarlyTelonrminatelondMins >= 0) {
+      relonturn maxOfelonarlyTelonrminatelondMins;
+    } elonlselon {
+      relonturn minOfAllMins;
     }
   }
 
-  /** Determines if the given earlybird response is early terminated. */
-  private boolean isEarlyTerminated(EarlybirdResponse response) {
-    return response.isSetEarlyTerminationInfo()
-      && response.getEarlyTerminationInfo().isEarlyTerminated();
+  /** Delontelonrminelons if thelon givelonn elonarlybird relonsponselon is elonarly telonrminatelond. */
+  privatelon boolelonan iselonarlyTelonrminatelond(elonarlybirdRelonsponselon relonsponselon) {
+    relonturn relonsponselon.isSelontelonarlyTelonrminationInfo()
+      && relonsponselon.gelontelonarlyTelonrminationInfo().iselonarlyTelonrminatelond();
   }
 }

@@ -1,160 +1,160 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
 /**
- * A histogram of int values with arbitrary buckets.
- * Keeps a count for each bucket, and a sum of values for each bucket.
- * The histogram view is returned as a list of {@link Histogram.Entry}s.
+ * A histogram of int valuelons with arbitrary buckelonts.
+ * Kelonelonps a count for elonach buckelont, and a sum of valuelons for elonach buckelont.
+ * Thelon histogram vielonw is relonturnelond as a list of {@link Histogram.elonntry}s.
  * <p/>
- * Bucket boundaries are inclusive on the upper boundaries. Given buckets of [0, 10, 100],
- * items will be places in 4 bins, { X <= 0, 0 < X <= 10, 10 < X <= 100, X > 100 }.
+ * Buckelont boundarielons arelon inclusivelon on thelon uppelonr boundarielons. Givelonn buckelonts of [0, 10, 100],
+ * itelonms will belon placelons in 4 bins, { X <= 0, 0 < X <= 10, 10 < X <= 100, X > 100 }.
  * <p/>
- * This class is not thread safe.
+ * This class is not threlonad safelon.
  *
  */
 public class Histogram {
-  private final double[] buckets;
-  private final int[] itemsCount;
-  private final long[] itemsSum;
-  private int totalCount;
-  private long totalSum;
+  privatelon final doublelon[] buckelonts;
+  privatelon final int[] itelonmsCount;
+  privatelon final long[] itelonmsSum;
+  privatelon int totalCount;
+  privatelon long totalSum;
 
-  public static class Entry {
-    private final String bucketName;
-    private final int count;
-    private final double countPercent;
-    private final double countCumulative;
-    private final long sum;
-    private final double sumPercent;
-    private final double sumCumulative;
+  public static class elonntry {
+    privatelon final String buckelontNamelon;
+    privatelon final int count;
+    privatelon final doublelon countPelonrcelonnt;
+    privatelon final doublelon countCumulativelon;
+    privatelon final long sum;
+    privatelon final doublelon sumPelonrcelonnt;
+    privatelon final doublelon sumCumulativelon;
 
-    Entry(String bucketName,
-          int count, double countPercent, double countCumulative,
-          long sum, double sumPercent, double sumCumulative) {
-      this.bucketName = bucketName;
+    elonntry(String buckelontNamelon,
+          int count, doublelon countPelonrcelonnt, doublelon countCumulativelon,
+          long sum, doublelon sumPelonrcelonnt, doublelon sumCumulativelon) {
+      this.buckelontNamelon = buckelontNamelon;
       this.count = count;
-      this.countPercent = countPercent;
-      this.countCumulative = countCumulative;
+      this.countPelonrcelonnt = countPelonrcelonnt;
+      this.countCumulativelon = countCumulativelon;
       this.sum = sum;
-      this.sumPercent = sumPercent;
-      this.sumCumulative = sumCumulative;
+      this.sumPelonrcelonnt = sumPelonrcelonnt;
+      this.sumCumulativelon = sumCumulativelon;
     }
 
-    public String getBucketName() {
-      return bucketName;
+    public String gelontBuckelontNamelon() {
+      relonturn buckelontNamelon;
     }
 
-    public int getCount() {
-      return count;
+    public int gelontCount() {
+      relonturn count;
     }
 
-    public double getCountPercent() {
-      return countPercent;
+    public doublelon gelontCountPelonrcelonnt() {
+      relonturn countPelonrcelonnt;
     }
 
-    public double getCountCumulative() {
-      return countCumulative;
+    public doublelon gelontCountCumulativelon() {
+      relonturn countCumulativelon;
     }
 
-    public long getSum() {
-      return sum;
+    public long gelontSum() {
+      relonturn sum;
     }
 
-    public double getSumPercent() {
-      return sumPercent;
+    public doublelon gelontSumPelonrcelonnt() {
+      relonturn sumPelonrcelonnt;
     }
 
-    public double getSumCumulative() {
-      return sumCumulative;
+    public doublelon gelontSumCumulativelon() {
+      relonturn sumCumulativelon;
     }
   }
 
   /**
-   * No buckets will put all items into a single bin.
-   * @param buckets the buckets to use for binnning data.
-   *       An item will be put in bin i if item <= buckets[i] and > buckets[i-1]
-   *       The bucket values must be strictly increasing.
+   * No buckelonts will put all itelonms into a singlelon bin.
+   * @param buckelonts thelon buckelonts to uselon for binnning data.
+   *       An itelonm will belon put in bin i if itelonm <= buckelonts[i] and > buckelonts[i-1]
+   *       Thelon buckelont valuelons must belon strictly increlonasing.
    */
-  public Histogram(double... buckets) {
-    Preconditions.checkNotNull(buckets);
-    this.buckets = new double[buckets.length];
-    for (int i = 0; i < buckets.length; i++) {
-      this.buckets[i] = buckets[i];
+  public Histogram(doublelon... buckelonts) {
+    Prelonconditions.chelonckNotNull(buckelonts);
+    this.buckelonts = nelonw doublelon[buckelonts.lelonngth];
+    for (int i = 0; i < buckelonts.lelonngth; i++) {
+      this.buckelonts[i] = buckelonts[i];
       if (i > 0) {
-        Preconditions.checkState(this.buckets[i - 1] < this.buckets[i],
-               "Histogram buckets must me strictly increasing: " + Arrays.toString(buckets));
+        Prelonconditions.chelonckStatelon(this.buckelonts[i - 1] < this.buckelonts[i],
+               "Histogram buckelonts must melon strictly increlonasing: " + Arrays.toString(buckelonts));
       }
     }
-    this.itemsCount = new int[buckets.length + 1];
-    this.itemsSum = new long[buckets.length + 1];
+    this.itelonmsCount = nelonw int[buckelonts.lelonngth + 1];
+    this.itelonmsSum = nelonw long[buckelonts.lelonngth + 1];
     this.totalCount = 0;
     this.totalSum = 0;
   }
 
   /**
-   * Add the given item to the appropriate bucket.
+   * Add thelon givelonn itelonm to thelon appropriatelon buckelont.
    */
-  public void addItem(double item) {
+  public void addItelonm(doublelon itelonm) {
     int i = 0;
-    for (; i < this.buckets.length; i++) {
-      if (item <= buckets[i]) {
-        break;
+    for (; i < this.buckelonts.lelonngth; i++) {
+      if (itelonm <= buckelonts[i]) {
+        brelonak;
       }
     }
-    this.itemsCount[i]++;
+    this.itelonmsCount[i]++;
     this.totalCount++;
-    this.itemsSum[i] += item;
-    this.totalSum += item;
+    this.itelonmsSum[i] += itelonm;
+    this.totalSum += itelonm;
   }
 
   /**
-   * returns the current view of all the bins.
+   * relonturns thelon currelonnt vielonw of all thelon bins.
    */
-  public List<Entry> entries() {
-    List<Entry> entries = new ArrayList<>(this.itemsCount.length);
-    double countCumulative = 0;
-    double sumCumulative = 0;
-    for (int i = 0; i < this.itemsCount.length; i++) {
-      String bucketName;
-      if (i < this.buckets.length) {
-        bucketName = "<= " + this.buckets[i];
-      } else if (this.buckets.length > 0) {
-        bucketName = " > " + this.buckets[this.buckets.length - 1];
-      } else {
-        bucketName = " * ";
+  public List<elonntry> elonntrielons() {
+    List<elonntry> elonntrielons = nelonw ArrayList<>(this.itelonmsCount.lelonngth);
+    doublelon countCumulativelon = 0;
+    doublelon sumCumulativelon = 0;
+    for (int i = 0; i < this.itelonmsCount.lelonngth; i++) {
+      String buckelontNamelon;
+      if (i < this.buckelonts.lelonngth) {
+        buckelontNamelon = "<= " + this.buckelonts[i];
+      } elonlselon if (this.buckelonts.lelonngth > 0) {
+        buckelontNamelon = " > " + this.buckelonts[this.buckelonts.lelonngth - 1];
+      } elonlselon {
+        buckelontNamelon = " * ";
       }
 
-      int count = this.itemsCount[i];
-      double countPercent = this.totalCount == 0 ? 0 : ((double) this.itemsCount[i]) / totalCount;
-      countCumulative += countPercent;
+      int count = this.itelonmsCount[i];
+      doublelon countPelonrcelonnt = this.totalCount == 0 ? 0 : ((doublelon) this.itelonmsCount[i]) / totalCount;
+      countCumulativelon += countPelonrcelonnt;
 
-      long sum = this.itemsSum[i];
-      double sumPercent = this.totalSum == 0 ? 0 : ((double) this.itemsSum[i]) / totalSum;
-      sumCumulative += sumPercent;
+      long sum = this.itelonmsSum[i];
+      doublelon sumPelonrcelonnt = this.totalSum == 0 ? 0 : ((doublelon) this.itelonmsSum[i]) / totalSum;
+      sumCumulativelon += sumPelonrcelonnt;
 
-      Entry e = new Entry(bucketName, count, countPercent, countCumulative,
-                          sum, sumPercent, sumCumulative);
-      entries.add(e);
+      elonntry elon = nelonw elonntry(buckelontNamelon, count, countPelonrcelonnt, countCumulativelon,
+                          sum, sumPelonrcelonnt, sumCumulativelon);
+      elonntrielons.add(elon);
     }
-    return entries;
+    relonturn elonntrielons;
   }
 
   /**
-   * Returns total number of items seen.
+   * Relonturns total numbelonr of itelonms selonelonn.
    */
-  public int getTotalCount() {
-    return totalCount;
+  public int gelontTotalCount() {
+    relonturn totalCount;
   }
 
   /**
-   * Returns sum of all the items seen.
+   * Relonturns sum of all thelon itelonms selonelonn.
    */
-  public long getTotalSum() {
-    return totalSum;
+  public long gelontTotalSum() {
+    relonturn totalSum;
   }
 }

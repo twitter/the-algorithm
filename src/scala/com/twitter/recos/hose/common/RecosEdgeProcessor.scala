@@ -1,40 +1,40 @@
-package com.twitter.recos.hose.common
+packagelon com.twittelonr.reloncos.hoselon.common
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.recos.internal.thriftscala.RecosHoseMessage
-import com.twitter.util.Future
-import org.apache.kafka.clients.consumer.ConsumerRecord
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.reloncos.intelonrnal.thriftscala.ReloncosHoselonMelonssagelon
+import com.twittelonr.util.Futurelon
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncord
 
 /**
- * The class processes RecosHoseMessage and inserts the message as an edge into a recos graph.
+ * Thelon class procelonsselons ReloncosHoselonMelonssagelon and inselonrts thelon melonssagelon as an elondgelon into a reloncos graph.
  */
-case class RecosEdgeProcessor(
-  edgeCollector: EdgeCollector
+caselon class ReloncoselondgelonProcelonssor(
+  elondgelonCollelonctor: elondgelonCollelonctor
 )(
-  implicit statsReceiver: StatsReceiver) {
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private val scopedStats = statsReceiver.scope("RecosEdgeProcessor")
+  privatelon val scopelondStats = statsReloncelonivelonr.scopelon("ReloncoselondgelonProcelonssor")
 
-  private val processEventsCounter = scopedStats.counter("process_events")
-  private val nullPointerEventCounter = scopedStats.counter("null_pointer_num")
-  private val errorCounter = scopedStats.counter("process_errors")
+  privatelon val procelonsselonvelonntsCountelonr = scopelondStats.countelonr("procelonss_elonvelonnts")
+  privatelon val nullPointelonrelonvelonntCountelonr = scopelondStats.countelonr("null_pointelonr_num")
+  privatelon val elonrrorCountelonr = scopelondStats.countelonr("procelonss_elonrrors")
 
-  def process(record: ConsumerRecord[String, RecosHoseMessage]): Future[Unit] = {
-    processEventsCounter.incr()
-    val message = record.value()
+  delonf procelonss(reloncord: ConsumelonrReloncord[String, ReloncosHoselonMelonssagelon]): Futurelon[Unit] = {
+    procelonsselonvelonntsCountelonr.incr()
+    val melonssagelon = reloncord.valuelon()
     try {
-      // the message is nullable
-      if (message != null) {
-        edgeCollector.addEdge(message)
-      } else {
-        nullPointerEventCounter.incr()
+      // thelon melonssagelon is nullablelon
+      if (melonssagelon != null) {
+        elondgelonCollelonctor.addelondgelon(melonssagelon)
+      } elonlselon {
+        nullPointelonrelonvelonntCountelonr.incr()
       }
-      Future.Unit
+      Futurelon.Unit
     } catch {
-      case e: Throwable =>
-        errorCounter.incr()
-        e.printStackTrace()
-        Future.Unit
+      caselon elon: Throwablelon =>
+        elonrrorCountelonr.incr()
+        elon.printStackTracelon()
+        Futurelon.Unit
     }
   }
 

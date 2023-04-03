@@ -1,31 +1,31 @@
 syntax = "proto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+packagelon telonnsorflow.selonrving;
+option cc_elonnablelon_arelonnas = truelon;
 
-import "tensorflow_serving/apis/classification.proto";
-import "tensorflow_serving/apis/get_model_metadata.proto";
-import "tensorflow_serving/apis/inference.proto";
-import "tensorflow_serving/apis/predict.proto";
-import "tensorflow_serving/apis/regression.proto";
+import "telonnsorflow_selonrving/apis/classification.proto";
+import "telonnsorflow_selonrving/apis/gelont_modelonl_melontadata.proto";
+import "telonnsorflow_selonrving/apis/infelonrelonncelon.proto";
+import "telonnsorflow_selonrving/apis/prelondict.proto";
+import "telonnsorflow_selonrving/apis/relongrelonssion.proto";
 
-// open source marker; do not remove
-// PredictionService provides access to machine-learned models loaded by
-// model_servers.
-service PredictionService {
+// opelonn sourcelon markelonr; do not relonmovelon
+// PrelondictionSelonrvicelon providelons accelonss to machinelon-lelonarnelond modelonls loadelond by
+// modelonl_selonrvelonrs.
+selonrvicelon PrelondictionSelonrvicelon {
   // Classify.
-  rpc Classify(ClassificationRequest) returns (ClassificationResponse);
+  rpc Classify(ClassificationRelonquelonst) relonturns (ClassificationRelonsponselon);
 
-  // Regress.
-  rpc Regress(RegressionRequest) returns (RegressionResponse);
+  // Relongrelonss.
+  rpc Relongrelonss(RelongrelonssionRelonquelonst) relonturns (RelongrelonssionRelonsponselon);
 
-  // Predict -- provides access to loaded TensorFlow model.
-  rpc Predict(PredictRequest) returns (PredictResponse);
+  // Prelondict -- providelons accelonss to loadelond TelonnsorFlow modelonl.
+  rpc Prelondict(PrelondictRelonquelonst) relonturns (PrelondictRelonsponselon);
 
-  // MultiInference API for multi-headed models.
-  rpc MultiInference(MultiInferenceRequest) returns (MultiInferenceResponse);
+  // MultiInfelonrelonncelon API for multi-helonadelond modelonls.
+  rpc MultiInfelonrelonncelon(MultiInfelonrelonncelonRelonquelonst) relonturns (MultiInfelonrelonncelonRelonsponselon);
 
-  // GetModelMetadata - provides access to metadata for loaded models.
-  rpc GetModelMetadata(GetModelMetadataRequest)
-      returns (GetModelMetadataResponse);
+  // GelontModelonlMelontadata - providelons accelonss to melontadata for loadelond modelonls.
+  rpc GelontModelonlMelontadata(GelontModelonlMelontadataRelonquelonst)
+      relonturns (GelontModelonlMelontadataRelonsponselon);
 }

@@ -1,39 +1,39 @@
-package com.twitter.product_mixer.core.pipeline.product
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.model.marshalling.request.Request
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.mixer.MixerPipelineBuilderFactory
-import com.twitter.product_mixer.core.pipeline.recommendation.RecommendationPipelineBuilderFactory
-import com.twitter.product_mixer.core.service.gate_executor.GateExecutor
-import com.twitter.product_mixer.core.service.pipeline_execution_logger.PipelineExecutionLogger
-import com.twitter.product_mixer.core.service.pipeline_executor.PipelineExecutor
-import com.twitter.product_mixer.core.service.pipeline_selector_executor.PipelineSelectorExecutor
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.mixelonr.MixelonrPipelonlinelonBuildelonrFactory
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.reloncommelonndation.ReloncommelonndationPipelonlinelonBuildelonrFactory
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.gatelon_elonxeloncutor.Gatelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncution_loggelonr.PipelonlinelonelonxeloncutionLoggelonr
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_elonxeloncutor.Pipelonlinelonelonxeloncutor
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_selonlelonctor_elonxeloncutor.PipelonlinelonSelonlelonctorelonxeloncutor
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ProductPipelineBuilderFactory @Inject() (
-  gateExecutor: GateExecutor,
-  pipelineSelectorExecutor: PipelineSelectorExecutor,
-  pipelineExecutor: PipelineExecutor,
-  mixerPipelineBuilderFactory: MixerPipelineBuilderFactory,
-  recommendationPipelineBuilderFactory: RecommendationPipelineBuilderFactory,
-  statsReceiver: StatsReceiver,
-  pipelineExecutionLogger: PipelineExecutionLogger) {
-  def get[
-    TRequest <: Request,
-    Query <: PipelineQuery,
-    Response
-  ]: ProductPipelineBuilder[TRequest, Query, Response] = {
-    new ProductPipelineBuilder[TRequest, Query, Response](
-      gateExecutor,
-      pipelineSelectorExecutor,
-      pipelineExecutor,
-      mixerPipelineBuilderFactory,
-      recommendationPipelineBuilderFactory,
-      statsReceiver,
-      pipelineExecutionLogger
+@Singlelonton
+class ProductPipelonlinelonBuildelonrFactory @Injelonct() (
+  gatelonelonxeloncutor: Gatelonelonxeloncutor,
+  pipelonlinelonSelonlelonctorelonxeloncutor: PipelonlinelonSelonlelonctorelonxeloncutor,
+  pipelonlinelonelonxeloncutor: Pipelonlinelonelonxeloncutor,
+  mixelonrPipelonlinelonBuildelonrFactory: MixelonrPipelonlinelonBuildelonrFactory,
+  reloncommelonndationPipelonlinelonBuildelonrFactory: ReloncommelonndationPipelonlinelonBuildelonrFactory,
+  statsReloncelonivelonr: StatsReloncelonivelonr,
+  pipelonlinelonelonxeloncutionLoggelonr: PipelonlinelonelonxeloncutionLoggelonr) {
+  delonf gelont[
+    TRelonquelonst <: Relonquelonst,
+    Quelonry <: PipelonlinelonQuelonry,
+    Relonsponselon
+  ]: ProductPipelonlinelonBuildelonr[TRelonquelonst, Quelonry, Relonsponselon] = {
+    nelonw ProductPipelonlinelonBuildelonr[TRelonquelonst, Quelonry, Relonsponselon](
+      gatelonelonxeloncutor,
+      pipelonlinelonSelonlelonctorelonxeloncutor,
+      pipelonlinelonelonxeloncutor,
+      mixelonrPipelonlinelonBuildelonrFactory,
+      reloncommelonndationPipelonlinelonBuildelonrFactory,
+      statsReloncelonivelonr,
+      pipelonlinelonelonxeloncutionLoggelonr
     )
   }
 }

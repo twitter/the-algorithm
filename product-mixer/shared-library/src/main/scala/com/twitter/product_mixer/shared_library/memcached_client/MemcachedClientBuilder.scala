@@ -1,117 +1,117 @@
-package com.twitter.product_mixer.shared_library.memcached_client
+packagelon com.twittelonr.product_mixelonr.sharelond_library.melonmcachelond_clielonnt
 
-import com.twitter.finagle.memcached.Client
-import com.twitter.finagle.memcached.protocol.Command
-import com.twitter.finagle.memcached.protocol.Response
-import com.twitter.finagle.mtls.client.MtlsStackClient._
-import com.twitter.finagle.service.RetryExceptionsFilter
-import com.twitter.finagle.service.RetryPolicy
-import com.twitter.finagle.service.TimeoutFilter
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.finagle.util.DefaultTimer
-import com.twitter.finagle.GlobalRequestTimeoutException
-import com.twitter.finagle.Memcached
-import com.twitter.finagle.liveness.FailureAccrualFactory
-import com.twitter.finagle.liveness.FailureAccrualPolicy
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier
-import com.twitter.hashing.KeyHasher
-import com.twitter.util.Duration
+import com.twittelonr.finaglelon.melonmcachelond.Clielonnt
+import com.twittelonr.finaglelon.melonmcachelond.protocol.Command
+import com.twittelonr.finaglelon.melonmcachelond.protocol.Relonsponselon
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsStackClielonnt._
+import com.twittelonr.finaglelon.selonrvicelon.RelontryelonxcelonptionsFiltelonr
+import com.twittelonr.finaglelon.selonrvicelon.RelontryPolicy
+import com.twittelonr.finaglelon.selonrvicelon.TimelonoutFiltelonr
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.finaglelon.util.DelonfaultTimelonr
+import com.twittelonr.finaglelon.GlobalRelonquelonstTimelonoutelonxcelonption
+import com.twittelonr.finaglelon.Melonmcachelond
+import com.twittelonr.finaglelon.livelonnelonss.FailurelonAccrualFactory
+import com.twittelonr.finaglelon.livelonnelonss.FailurelonAccrualPolicy
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr
+import com.twittelonr.hashing.KelonyHashelonr
+import com.twittelonr.util.Duration
 
-object MemcachedClientBuilder {
+objelonct MelonmcachelondClielonntBuildelonr {
 
   /**
-   * Build a Finagle Memcached [[Client]].
+   * Build a Finaglelon Melonmcachelond [[Clielonnt]].
    *
-   * @param destName             Destination as a Wily path e.g. "/s/sample/sample".
-   * @param numTries             Maximum number of times to try.
-   * @param requestTimeout       Thrift client timeout per request. The Finagle default
-   *                             is unbounded which is almost never optimal.
-   * @param globalTimeout        Thrift client total timeout. The Finagle default is
-   *                             unbounded which is almost never optimal.
-   * @param connectTimeout       Thrift client transport connect timeout. The Finagle
-   *                             default of one second is reasonable but we lower this
-   *                             to match acquisitionTimeout for consistency.
-   * @param acquisitionTimeout   Thrift client session acquisition timeout. The Finagle
-   *                             default is unbounded which is almost never optimal.
-   * @param serviceIdentifier    Service ID used to S2S Auth.
-   * @param statsReceiver        Stats.
-   * @param failureAccrualPolicy Policy to determine when to mark a cache server as dead.
-   *                             Memcached client will use default failure accrual policy
-   *                             if it is not set.
-   * @param keyHasher            Hash algorithm that hashes a key into a 32-bit or 64-bit
-   *                             number. Memcached client will use default hash algorithm
-   *                             if it is not set.
+   * @param delonstNamelon             Delonstination as a Wily path elon.g. "/s/samplelon/samplelon".
+   * @param numTrielons             Maximum numbelonr of timelons to try.
+   * @param relonquelonstTimelonout       Thrift clielonnt timelonout pelonr relonquelonst. Thelon Finaglelon delonfault
+   *                             is unboundelond which is almost nelonvelonr optimal.
+   * @param globalTimelonout        Thrift clielonnt total timelonout. Thelon Finaglelon delonfault is
+   *                             unboundelond which is almost nelonvelonr optimal.
+   * @param connelonctTimelonout       Thrift clielonnt transport connelonct timelonout. Thelon Finaglelon
+   *                             delonfault of onelon seloncond is relonasonablelon but welon lowelonr this
+   *                             to match acquisitionTimelonout for consistelonncy.
+   * @param acquisitionTimelonout   Thrift clielonnt selonssion acquisition timelonout. Thelon Finaglelon
+   *                             delonfault is unboundelond which is almost nelonvelonr optimal.
+   * @param selonrvicelonIdelonntifielonr    Selonrvicelon ID uselond to S2S Auth.
+   * @param statsReloncelonivelonr        Stats.
+   * @param failurelonAccrualPolicy Policy to delontelonrminelon whelonn to mark a cachelon selonrvelonr as delonad.
+   *                             Melonmcachelond clielonnt will uselon delonfault failurelon accrual policy
+   *                             if it is not selont.
+   * @param kelonyHashelonr            Hash algorithm that hashelons a kelony into a 32-bit or 64-bit
+   *                             numbelonr. Melonmcachelond clielonnt will uselon delonfault hash algorithm
+   *                             if it is not selont.
    *
-   * @see [[https://confluence.twitter.biz/display/CACHE/Finagle-memcached+User+Guide user guide]]
-   * @return Finagle Memcached [[Client]]
+   * @selonelon [[https://confluelonncelon.twittelonr.biz/display/CACHelon/Finaglelon-melonmcachelond+Uselonr+Guidelon uselonr guidelon]]
+   * @relonturn Finaglelon Melonmcachelond [[Clielonnt]]
    */
-  def buildMemcachedClient(
-    destName: String,
-    numTries: Int,
-    requestTimeout: Duration,
-    globalTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-    failureAccrualPolicy: Option[FailureAccrualPolicy] = None,
-    keyHasher: Option[KeyHasher] = None
-  ): Client = {
-    buildRawMemcachedClient(
-      numTries,
-      requestTimeout,
-      globalTimeout,
-      connectTimeout,
-      acquisitionTimeout,
-      serviceIdentifier,
-      statsReceiver,
-      failureAccrualPolicy,
-      keyHasher
-    ).newRichClient(destName)
+  delonf buildMelonmcachelondClielonnt(
+    delonstNamelon: String,
+    numTrielons: Int,
+    relonquelonstTimelonout: Duration,
+    globalTimelonout: Duration,
+    connelonctTimelonout: Duration,
+    acquisitionTimelonout: Duration,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    failurelonAccrualPolicy: Option[FailurelonAccrualPolicy] = Nonelon,
+    kelonyHashelonr: Option[KelonyHashelonr] = Nonelon
+  ): Clielonnt = {
+    buildRawMelonmcachelondClielonnt(
+      numTrielons,
+      relonquelonstTimelonout,
+      globalTimelonout,
+      connelonctTimelonout,
+      acquisitionTimelonout,
+      selonrvicelonIdelonntifielonr,
+      statsReloncelonivelonr,
+      failurelonAccrualPolicy,
+      kelonyHashelonr
+    ).nelonwRichClielonnt(delonstNamelon)
   }
 
-  def buildRawMemcachedClient(
-    numTries: Int,
-    requestTimeout: Duration,
-    globalTimeout: Duration,
-    connectTimeout: Duration,
-    acquisitionTimeout: Duration,
-    serviceIdentifier: ServiceIdentifier,
-    statsReceiver: StatsReceiver,
-    failureAccrualPolicy: Option[FailureAccrualPolicy] = None,
-    keyHasher: Option[KeyHasher] = None
-  ): Memcached.Client = {
-    val globalTimeoutFilter = new TimeoutFilter[Command, Response](
-      timeout = globalTimeout,
-      exception = new GlobalRequestTimeoutException(globalTimeout),
-      timer = DefaultTimer)
-    val retryFilter = new RetryExceptionsFilter[Command, Response](
-      RetryPolicy.tries(numTries),
-      DefaultTimer,
-      statsReceiver)
+  delonf buildRawMelonmcachelondClielonnt(
+    numTrielons: Int,
+    relonquelonstTimelonout: Duration,
+    globalTimelonout: Duration,
+    connelonctTimelonout: Duration,
+    acquisitionTimelonout: Duration,
+    selonrvicelonIdelonntifielonr: SelonrvicelonIdelonntifielonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    failurelonAccrualPolicy: Option[FailurelonAccrualPolicy] = Nonelon,
+    kelonyHashelonr: Option[KelonyHashelonr] = Nonelon
+  ): Melonmcachelond.Clielonnt = {
+    val globalTimelonoutFiltelonr = nelonw TimelonoutFiltelonr[Command, Relonsponselon](
+      timelonout = globalTimelonout,
+      elonxcelonption = nelonw GlobalRelonquelonstTimelonoutelonxcelonption(globalTimelonout),
+      timelonr = DelonfaultTimelonr)
+    val relontryFiltelonr = nelonw RelontryelonxcelonptionsFiltelonr[Command, Relonsponselon](
+      RelontryPolicy.trielons(numTrielons),
+      DelonfaultTimelonr,
+      statsReloncelonivelonr)
 
-    val client = Memcached.client.withTransport
-      .connectTimeout(connectTimeout)
-      .withMutualTls(serviceIdentifier)
-      .withSession
-      .acquisitionTimeout(acquisitionTimeout)
-      .withRequestTimeout(requestTimeout)
-      .withStatsReceiver(statsReceiver)
-      .filtered(globalTimeoutFilter.andThen(retryFilter))
+    val clielonnt = Melonmcachelond.clielonnt.withTransport
+      .connelonctTimelonout(connelonctTimelonout)
+      .withMutualTls(selonrvicelonIdelonntifielonr)
+      .withSelonssion
+      .acquisitionTimelonout(acquisitionTimelonout)
+      .withRelonquelonstTimelonout(relonquelonstTimelonout)
+      .withStatsReloncelonivelonr(statsReloncelonivelonr)
+      .filtelonrelond(globalTimelonoutFiltelonr.andThelonn(relontryFiltelonr))
 
-    (keyHasher, failureAccrualPolicy) match {
-      case (Some(hasher), Some(policy)) =>
-        client
-          .withKeyHasher(hasher)
-          .configured(FailureAccrualFactory.Param(() => policy))
-      case (Some(hasher), None) =>
-        client
-          .withKeyHasher(hasher)
-      case (None, Some(policy)) =>
-        client
-          .configured(FailureAccrualFactory.Param(() => policy))
-      case _ =>
-        client
+    (kelonyHashelonr, failurelonAccrualPolicy) match {
+      caselon (Somelon(hashelonr), Somelon(policy)) =>
+        clielonnt
+          .withKelonyHashelonr(hashelonr)
+          .configurelond(FailurelonAccrualFactory.Param(() => policy))
+      caselon (Somelon(hashelonr), Nonelon) =>
+        clielonnt
+          .withKelonyHashelonr(hashelonr)
+      caselon (Nonelon, Somelon(policy)) =>
+        clielonnt
+          .configurelond(FailurelonAccrualFactory.Param(() => policy))
+      caselon _ =>
+        clielonnt
     }
   }
 }

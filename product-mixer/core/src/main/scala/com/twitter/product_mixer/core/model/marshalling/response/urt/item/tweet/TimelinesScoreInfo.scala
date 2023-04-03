@@ -1,3 +1,3 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont
 
-case class TimelinesScoreInfo(score: Double)
+caselon class TimelonlinelonsScorelonInfo(scorelon: Doublelon)

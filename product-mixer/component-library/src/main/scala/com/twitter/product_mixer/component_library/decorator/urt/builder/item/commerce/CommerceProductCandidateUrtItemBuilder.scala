@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.commelonrcelon
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.commerce.CommerceProductCandidateUrtItemBuilder.CommerceProductClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.CommerceProductCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.commerce.CommerceProductItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.commelonrcelon.CommelonrcelonProductCandidatelonUrtItelonmBuildelonr.CommelonrcelonProductClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CommelonrcelonProductCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.commelonrcelon.CommelonrcelonProductItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object CommerceProductCandidateUrtItemBuilder {
-  val CommerceProductClientEventInfoElement: String = "commerce-product"
+objelonct CommelonrcelonProductCandidatelonUrtItelonmBuildelonr {
+  val CommelonrcelonProductClielonntelonvelonntInfoelonlelonmelonnt: String = "commelonrcelon-product"
 }
 
-case class CommerceProductCandidateUrtItemBuilder[-Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, CommerceProductCandidate],
-  feedbackActionInfoBuilder: Option[BaseFeedbackActionInfoBuilder[Query, CommerceProductCandidate]])
-    extends CandidateUrtEntryBuilder[
-      Query,
-      CommerceProductCandidate,
-      CommerceProductItem
+caselon class CommelonrcelonProductCandidatelonUrtItelonmBuildelonr[-Quelonry <: PipelonlinelonQuelonry](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, CommelonrcelonProductCandidatelon],
+  felonelondbackActionInfoBuildelonr: Option[BaselonFelonelondbackActionInfoBuildelonr[Quelonry, CommelonrcelonProductCandidatelon]])
+    elonxtelonnds CandidatelonUrtelonntryBuildelonr[
+      Quelonry,
+      CommelonrcelonProductCandidatelon,
+      CommelonrcelonProductItelonm
     ] {
 
-  override def apply(
-    query: Query,
-    candidate: CommerceProductCandidate,
-    candidateFeatures: FeatureMap
-  ): CommerceProductItem =
-    CommerceProductItem(
-      id = candidate.id,
-      sortIndex = None,
-      clientEventInfo = clientEventInfoBuilder(
-        query,
-        candidate,
-        candidateFeatures,
-        Some(CommerceProductClientEventInfoElement)),
-      feedbackActionInfo =
-        feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures))
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: CommelonrcelonProductCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): CommelonrcelonProductItelonm =
+    CommelonrcelonProductItelonm(
+      id = candidatelon.id,
+      sortIndelonx = Nonelon,
+      clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+        quelonry,
+        candidatelon,
+        candidatelonFelonaturelons,
+        Somelon(CommelonrcelonProductClielonntelonvelonntInfoelonlelonmelonnt)),
+      felonelondbackActionInfo =
+        felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, candidatelon, candidatelonFelonaturelons))
     )
 }

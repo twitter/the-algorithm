@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt
 
-sealed trait RichTextAlignment
+selonalelond trait RichTelonxtAlignmelonnt
 
-case object Natural extends RichTextAlignment
-case object Center extends RichTextAlignment
+caselon objelonct Natural elonxtelonnds RichTelonxtAlignmelonnt
+caselon objelonct Celonntelonr elonxtelonnds RichTelonxtAlignmelonnt

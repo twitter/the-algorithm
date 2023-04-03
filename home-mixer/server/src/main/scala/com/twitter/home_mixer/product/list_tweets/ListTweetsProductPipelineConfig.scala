@@ -1,94 +1,94 @@
-package com.twitter.home_mixer.product.list_tweets
+packagelon com.twittelonr.homelon_mixelonr.product.list_twelonelonts
 
-import com.twitter.home_mixer.marshaller.timelines.ChronologicalCursorUnmarshaller
-import com.twitter.home_mixer.model.request.HomeMixerRequest
-import com.twitter.home_mixer.model.request.ListTweetsProduct
-import com.twitter.home_mixer.model.request.ListTweetsProductContext
-import com.twitter.home_mixer.product.list_tweets.model.ListTweetsQuery
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParam.ServerMaxResultsParam
-import com.twitter.home_mixer.product.list_tweets.param.ListTweetsParamConfig
-import com.twitter.home_mixer.service.HomeMixerAccessPolicy.DefaultHomeMixerAccessPolicy
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.cursor.UrtCursorSerializer
-import com.twitter.product_mixer.core.functional_component.common.access_policy.AccessPolicy
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.ProductPipelineIdentifier
-import com.twitter.product_mixer.core.model.marshalling.request
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.PipelineConfig
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.BadRequest
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.MalformedCursor
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.product.ProductPipelineConfig
-import com.twitter.product_mixer.core.product.ProductParamConfig
-import com.twitter.product_mixer.core.util.SortIndexBuilder
-import com.twitter.timelines.configapi.Params
-import com.twitter.timelines.render.{thriftscala => urt}
-import com.twitter.timelines.util.RequestCursorSerializer
-import com.twitter.util.Time
-import com.twitter.util.Try
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.marshallelonr.timelonlinelons.ChronologicalCursorUnmarshallelonr
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HomelonMixelonrRelonquelonst
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListTwelonelontsProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ListTwelonelontsProductContelonxt
+import com.twittelonr.homelon_mixelonr.product.list_twelonelonts.modelonl.ListTwelonelontsQuelonry
+import com.twittelonr.homelon_mixelonr.product.list_twelonelonts.param.ListTwelonelontsParam.SelonrvelonrMaxRelonsultsParam
+import com.twittelonr.homelon_mixelonr.product.list_twelonelonts.param.ListTwelonelontsParamConfig
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAccelonssPolicy.DelonfaultHomelonMixelonrAccelonssPolicy
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.cursor.UrtCursorSelonrializelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.accelonss_policy.AccelonssPolicy
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ProductPipelonlinelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.GapCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.TopCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.BadRelonquelonst
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.MalformelondCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.product.ProductPipelonlinelonConfig
+import com.twittelonr.product_mixelonr.corelon.product.ProductParamConfig
+import com.twittelonr.product_mixelonr.corelon.util.SortIndelonxBuildelonr
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import com.twittelonr.timelonlinelons.util.RelonquelonstCursorSelonrializelonr
+import com.twittelonr.util.Timelon
+import com.twittelonr.util.Try
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ListTweetsProductPipelineConfig @Inject() (
-  listTweetsMixerPipelineConfig: ListTweetsMixerPipelineConfig,
-  listTweetsParamConfig: ListTweetsParamConfig)
-    extends ProductPipelineConfig[HomeMixerRequest, ListTweetsQuery, urt.TimelineResponse] {
+@Singlelonton
+class ListTwelonelontsProductPipelonlinelonConfig @Injelonct() (
+  listTwelonelontsMixelonrPipelonlinelonConfig: ListTwelonelontsMixelonrPipelonlinelonConfig,
+  listTwelonelontsParamConfig: ListTwelonelontsParamConfig)
+    elonxtelonnds ProductPipelonlinelonConfig[HomelonMixelonrRelonquelonst, ListTwelonelontsQuelonry, urt.TimelonlinelonRelonsponselon] {
 
-  override val identifier: ProductPipelineIdentifier = ProductPipelineIdentifier("ListTweets")
-  override val product: request.Product = ListTweetsProduct
-  override val paramConfig: ProductParamConfig = listTweetsParamConfig
+  ovelonrridelon val idelonntifielonr: ProductPipelonlinelonIdelonntifielonr = ProductPipelonlinelonIdelonntifielonr("ListTwelonelonts")
+  ovelonrridelon val product: relonquelonst.Product = ListTwelonelontsProduct
+  ovelonrridelon val paramConfig: ProductParamConfig = listTwelonelontsParamConfig
 
-  override def pipelineQueryTransformer(
-    request: HomeMixerRequest,
+  ovelonrridelon delonf pipelonlinelonQuelonryTransformelonr(
+    relonquelonst: HomelonMixelonrRelonquelonst,
     params: Params
-  ): ListTweetsQuery = {
-    val context = request.productContext match {
-      case Some(context: ListTweetsProductContext) => context
-      case _ => throw PipelineFailure(BadRequest, "ListTweetsProductContext not found")
+  ): ListTwelonelontsQuelonry = {
+    val contelonxt = relonquelonst.productContelonxt match {
+      caselon Somelon(contelonxt: ListTwelonelontsProductContelonxt) => contelonxt
+      caselon _ => throw PipelonlinelonFailurelon(BadRelonquelonst, "ListTwelonelontsProductContelonxt not found")
     }
 
-    val debugOptions = request.debugParams.flatMap(_.debugOptions)
+    val delonbugOptions = relonquelonst.delonbugParams.flatMap(_.delonbugOptions)
 
     /**
-     * Unlike other clients, newly created tweets on Android have the sort index set to the current
-     * time instead of the top sort index + 1, so these tweets get stuck at the top of the timeline
-     * if subsequent timeline responses use the sort index from the previous response instead of
-     * the current time.
+     * Unlikelon othelonr clielonnts, nelonwly crelonatelond twelonelonts on Android havelon thelon sort indelonx selont to thelon currelonnt
+     * timelon instelonad of thelon top sort indelonx + 1, so thelonselon twelonelonts gelont stuck at thelon top of thelon timelonlinelon
+     * if subselonquelonnt timelonlinelon relonsponselons uselon thelon sort indelonx from thelon prelonvious relonsponselon instelonad of
+     * thelon currelonnt timelon.
      */
-    val pipelineCursor = request.serializedRequestCursor.flatMap { cursor =>
-      Try(UrtCursorSerializer.deserializeOrderedCursor(cursor))
-        .getOrElse(ChronologicalCursorUnmarshaller(RequestCursorSerializer.deserialize(cursor)))
+    val pipelonlinelonCursor = relonquelonst.selonrializelondRelonquelonstCursor.flatMap { cursor =>
+      Try(UrtCursorSelonrializelonr.delonselonrializelonOrdelonrelondCursor(cursor))
+        .gelontOrelonlselon(ChronologicalCursorUnmarshallelonr(RelonquelonstCursorSelonrializelonr.delonselonrializelon(cursor)))
         .map {
-          case UrtOrderedCursor(_, id, Some(GapCursor), gapBoundaryId)
-              if id.isEmpty || gapBoundaryId.isEmpty =>
-            throw PipelineFailure(MalformedCursor, "Gap Cursor bounds not defined")
-          case topCursor @ UrtOrderedCursor(_, _, Some(TopCursor), _) =>
-            val queryTime = debugOptions.flatMap(_.requestTimeOverride).getOrElse(Time.now)
-            topCursor.copy(initialSortIndex = SortIndexBuilder.timeToId(queryTime))
-          case cursor => cursor
+          caselon UrtOrdelonrelondCursor(_, id, Somelon(GapCursor), gapBoundaryId)
+              if id.iselonmpty || gapBoundaryId.iselonmpty =>
+            throw PipelonlinelonFailurelon(MalformelondCursor, "Gap Cursor bounds not delonfinelond")
+          caselon topCursor @ UrtOrdelonrelondCursor(_, _, Somelon(TopCursor), _) =>
+            val quelonryTimelon = delonbugOptions.flatMap(_.relonquelonstTimelonOvelonrridelon).gelontOrelonlselon(Timelon.now)
+            topCursor.copy(initialSortIndelonx = SortIndelonxBuildelonr.timelonToId(quelonryTimelon))
+          caselon cursor => cursor
         }
     }
 
-    ListTweetsQuery(
+    ListTwelonelontsQuelonry(
       params = params,
-      clientContext = request.clientContext,
-      features = None,
-      pipelineCursor = pipelineCursor,
-      requestedMaxResults = Some(params(ServerMaxResultsParam)),
-      debugOptions = debugOptions,
-      listId = context.listId,
-      deviceContext = context.deviceContext,
-      dspClientContext = context.dspClientContext
+      clielonntContelonxt = relonquelonst.clielonntContelonxt,
+      felonaturelons = Nonelon,
+      pipelonlinelonCursor = pipelonlinelonCursor,
+      relonquelonstelondMaxRelonsults = Somelon(params(SelonrvelonrMaxRelonsultsParam)),
+      delonbugOptions = delonbugOptions,
+      listId = contelonxt.listId,
+      delonvicelonContelonxt = contelonxt.delonvicelonContelonxt,
+      dspClielonntContelonxt = contelonxt.dspClielonntContelonxt
     )
   }
 
-  override def pipelines: Seq[PipelineConfig] = Seq(listTweetsMixerPipelineConfig)
+  ovelonrridelon delonf pipelonlinelons: Selonq[PipelonlinelonConfig] = Selonq(listTwelonelontsMixelonrPipelonlinelonConfig)
 
-  override def pipelineSelector(query: ListTweetsQuery): ComponentIdentifier =
-    listTweetsMixerPipelineConfig.identifier
+  ovelonrridelon delonf pipelonlinelonSelonlelonctor(quelonry: ListTwelonelontsQuelonry): ComponelonntIdelonntifielonr =
+    listTwelonelontsMixelonrPipelonlinelonConfig.idelonntifielonr
 
-  override val debugAccessPolicies: Set[AccessPolicy] = DefaultHomeMixerAccessPolicy
+  ovelonrridelon val delonbugAccelonssPolicielons: Selont[AccelonssPolicy] = DelonfaultHomelonMixelonrAccelonssPolicy
 }

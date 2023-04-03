@@ -1,132 +1,132 @@
-package com.twitter.simclusters_v2.scalding.update_known_for
+packagelon com.twittelonr.simclustelonrs_v2.scalding.updatelon_known_for
 
-import com.twitter.bijection.scrooge.BinaryScalaCodec
-import com.twitter.hermit.candidate.thriftscala.Candidates
-import com.twitter.logging.Logger
-import com.twitter.pluck.source.cassowary.FollowingsCosineSimilaritiesManhattanSource
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding.DateOps
-import com.twitter.scalding.DateParser
-import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossClusterSameDC
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.ModelVersions
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources.AdhocKeyValSources
-import com.twitter.simclusters_v2.hdfs_sources.InternalDataPaths
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2KnownFor20M145KDec11ScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2KnownFor20M145KUpdatedScalaDataset
-import com.twitter.simclusters_v2.hdfs_sources.SimclustersV2RawKnownFor20M145K2020ScalaDataset
-import com.twitter.simclusters_v2.scalding.KnownForSources
-import com.twitter.simclusters_v2.scalding.KnownForSources.fromKeyVal
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.bijelonction.scroogelon.BinaryScalaCodelonc
+import com.twittelonr.helonrmit.candidatelon.thriftscala.Candidatelons
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.pluck.sourcelon.cassowary.FollowingsCosinelonSimilaritielonsManhattanSourcelon
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding.DatelonOps
+import com.twittelonr.scalding.DatelonParselonr
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.RichDatelon
+import com.twittelonr.scalding.TypelondTsv
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.D
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossClustelonrSamelonDC
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.ModelonlVelonrsions
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.AdhocKelonyValSourcelons
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.IntelonrnalDataPaths
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SimclustelonrsV2KnownFor20M145KDelonc11ScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SimclustelonrsV2KnownFor20M145KUpdatelondScalaDataselont
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.SimclustelonrsV2RawKnownFor20M145K2020ScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.KnownForSourcelons
+import com.twittelonr.simclustelonrs_v2.scalding.KnownForSourcelons.fromKelonyVal
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * Scheduled job
+ * Schelondulelond job
  *
- * capesospy-v2 update --build_locally --start_cron update_known_for_20m_145k_2020 \
- * src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+ * capelonsospy-v2 updatelon --build_locally --start_cron updatelon_known_for_20m_145k_2020 \
+ * src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
 
-object UpdateKnownFor20M145K2020 extends ScheduledExecutionApp {
+objelonct UpdatelonKnownFor20M145K2020 elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  override val firstTime: RichDate = RichDate("2020-10-04")
+  ovelonrridelon val firstTimelon: RichDatelon = RichDatelon("2020-10-04")
 
-  override val batchIncrement: Duration = Days(7)
+  ovelonrridelon val batchIncrelonmelonnt: Duration = Days(7)
 
-  private val tempLocationPath = "/user/cassowary/temp/simclusters_v2/known_for_20m_145k_2020"
+  privatelon val telonmpLocationPath = "/uselonr/cassowary/telonmp/simclustelonrs_v2/known_for_20m_145k_2020"
 
-  private val simsGraphPath =
-    "/atla/proc/user/cassowary/manhattan_sequence_files/approximate_cosine_similarity_follow"
+  privatelon val simsGraphPath =
+    "/atla/proc/uselonr/cassowary/manhattan_selonquelonncelon_filelons/approximatelon_cosinelon_similarity_follow"
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    Execution.getConfigMode.flatMap {
-      case (_, mode) =>
-        implicit def valueCodec: BinaryScalaCodec[Candidates] = BinaryScalaCodec(Candidates)
-        // Step - 1 (DataProcessing): Parameters for getting mapped indices for user-ids
-        val minActiveFollowers = args.int("minActiveFollowers", 400)
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (_, modelon) =>
+        implicit delonf valuelonCodelonc: BinaryScalaCodelonc[Candidatelons] = BinaryScalaCodelonc(Candidatelons)
+        // Stelonp - 1 (DataProcelonssing): Paramelontelonrs for gelontting mappelond indicelons for uselonr-ids
+        val minActivelonFollowelonrs = args.int("minActivelonFollowelonrs", 400)
         val topK = args.int("topK", 20000000)
 
-        // Step - 2 (DataProcessing): Parameters to remove users not in the topK most followed users from simsGraph
-        val maxNeighbors = args.int("maxNeighbors", 400)
+        // Stelonp - 2 (DataProcelonssing): Paramelontelonrs to relonmovelon uselonrs not in thelon topK most followelond uselonrs from simsGraph
+        val maxNelonighbors = args.int("maxNelonighbors", 400)
 
-        // Step - 3 (Final Clustering): Parameters to run the clustering algorithm
-        /* squareWeightEnable is a boolean flag that changes the edge weights obtained from the
-          underlying sims graph
-           a) If false -  edge weight between two neighbors is just their cosine similarity.
-           b) If true - edge weight = cosine_sim * cosine_sim * 10. The squaring makes the higher
-           weight edges relatively more important; this is based on the intuition that a neighbor
-           with cosine similarity of 0.1 is more than 2x important compared to a neighbor with
-           cosine similarity of 0.05. The multiplication with 10 brings the weights back into a
-           'nicer' range since squaring will reduce their absolute value.
+        // Stelonp - 3 (Final Clustelonring): Paramelontelonrs to run thelon clustelonring algorithm
+        /* squarelonWelonightelonnablelon is a boolelonan flag that changelons thelon elondgelon welonights obtainelond from thelon
+          undelonrlying sims graph
+           a) If falselon -  elondgelon welonight belontwelonelonn two nelonighbors is just thelonir cosinelon similarity.
+           b) If truelon - elondgelon welonight = cosinelon_sim * cosinelon_sim * 10. Thelon squaring makelons thelon highelonr
+           welonight elondgelons relonlativelonly morelon important; this is baselond on thelon intuition that a nelonighbor
+           with cosinelon similarity of 0.1 is morelon than 2x important comparelond to a nelonighbor with
+           cosinelon similarity of 0.05. Thelon multiplication with 10 brings thelon welonights back into a
+           'nicelonr' rangelon sincelon squaring will relonducelon thelonir absolutelon valuelon.
          */
-        val squareWeightsEnable = args.boolean("squareWeightsEnable")
+        val squarelonWelonightselonnablelon = args.boolelonan("squarelonWelonightselonnablelon")
 
-        val maxEpochsForClustering = args.int("maxEpochs", 3)
-        val wtCoeff = args.double("wtCoeff", 10.0)
+        val maxelonpochsForClustelonring = args.int("maxelonpochs", 3)
+        val wtCoelonff = args.doublelon("wtCoelonff", 10.0)
 
-        val previousKnownFor: TypedPipe[(UserId, Array[(ClusterId, Float)])] =
-          fromKeyVal(
+        val prelonviousKnownFor: TypelondPipelon[(UselonrId, Array[(ClustelonrId, Float)])] =
+          fromKelonyVal(
             DAL
-              .readMostRecentSnapshot(
-                SimclustersV2RawKnownFor20M145K2020ScalaDataset,
-                dateRange.embiggen(Days(30)))
-              .withRemoteReadPolicy(AllowCrossClusterSameDC)
-              .toTypedPipe,
-            ModelVersions.Model20M145K2020
+              .relonadMostReloncelonntSnapshot(
+                SimclustelonrsV2RawKnownFor20M145K2020ScalaDataselont,
+                datelonRangelon.elonmbiggelonn(Days(30)))
+              .withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC)
+              .toTypelondPipelon,
+            ModelonlVelonrsions.Modelonl20M145K2020
           )
 
-        UpdateKnownForSBFRunner
-          .runUpdateKnownFor(
-            TypedPipe
-              .from(FollowingsCosineSimilaritiesManhattanSource(simsGraphPath))
+        UpdatelonKnownForSBFRunnelonr
+          .runUpdatelonKnownFor(
+            TypelondPipelon
+              .from(FollowingsCosinelonSimilaritielonsManhattanSourcelon(simsGraphPath))
               .map(_._2),
-            minActiveFollowers,
+            minActivelonFollowelonrs,
             topK,
-            maxNeighbors,
-            tempLocationPath,
-            previousKnownFor,
-            maxEpochsForClustering,
-            squareWeightsEnable,
-            wtCoeff,
-            mode
+            maxNelonighbors,
+            telonmpLocationPath,
+            prelonviousKnownFor,
+            maxelonpochsForClustelonring,
+            squarelonWelonightselonnablelon,
+            wtCoelonff,
+            modelon
           )
-          .flatMap { updateKnownFor =>
-            Execution
+          .flatMap { updatelonKnownFor =>
+            elonxeloncution
               .zip(
-                KnownForSources
-                  .toKeyVal(updateKnownFor, ModelVersions.Model20M145K2020)
-                  .writeDALVersionedKeyValExecution(
-                    SimclustersV2RawKnownFor20M145K2020ScalaDataset,
-                    D.Suffix(InternalDataPaths.RawKnownFor2020Path)
+                KnownForSourcelons
+                  .toKelonyVal(updatelonKnownFor, ModelonlVelonrsions.Modelonl20M145K2020)
+                  .writelonDALVelonrsionelondKelonyValelonxeloncution(
+                    SimclustelonrsV2RawKnownFor20M145K2020ScalaDataselont,
+                    D.Suffix(IntelonrnalDataPaths.RawKnownFor2020Path)
                   ),
-                UpdateKnownForSBFRunner
-                  .evaluateUpdatedKnownFor(updateKnownFor, previousKnownFor)
-                  .flatMap { emailText =>
+                UpdatelonKnownForSBFRunnelonr
+                  .elonvaluatelonUpdatelondKnownFor(updatelonKnownFor, prelonviousKnownFor)
+                  .flatMap { elonmailTelonxt =>
                     Util
-                      .sendEmail(
-                        emailText,
-                        s"Change in cluster assignments for new KnownFor ModelVersion: 20M145K2020",
-                        "no-reply@twitter.com")
-                    Execution.unit
+                      .selonndelonmail(
+                        elonmailTelonxt,
+                        s"Changelon in clustelonr assignmelonnts for nelonw KnownFor ModelonlVelonrsion: 20M145K2020",
+                        "no-relonply@twittelonr.com")
+                    elonxeloncution.unit
                   }
               ).unit
           }
@@ -134,120 +134,120 @@ object UpdateKnownFor20M145K2020 extends ScheduledExecutionApp {
   }
 }
 /*
-knownFor Week-1:
-scalding remote run \
---target src/scala/com/twitter/simclusters_v2/scalding/update_known_for:update_known_for_20m_145k_2020-adhoc \
---main-class com.twitter.simclusters_v2.scalding.update_known_for.UpdateKnownFor20M145K2020Adhoc \
---submitter  atla-aor-08-sr1 --user cassowary \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+knownFor Welonelonk-1:
+scalding relonmotelon run \
+--targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/updatelon_known_for:updatelon_known_for_20m_145k_2020-adhoc \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.updatelon_known_for.UpdatelonKnownFor20M145K2020Adhoc \
+--submittelonr  atla-aor-08-sr1 --uselonr cassowary \
+--submittelonr-melonmory 128192.melongabytelon --hadoop-propelonrtielons "maprelonducelon.map.melonmory.mb=8192 maprelonducelon.map.java.opts='-Xmx7618M' maprelonducelon.relonducelon.melonmory.mb=8192 maprelonducelon.relonducelon.java.opts='-Xmx7618M'" \
 -- \
---date 2020-08-30  --maxNeighbors 100 --minActiveFollowers 400 --topK 20000000 --numNodesPerCommunity 200  --maxEpochs 4 --squareWeightsEnable --wtCoeff 10.0 \
---inputSimsDir /atla/proc/user/cassowary/manhattan_sequence_files/approximate_cosine_similarity_follow  \
---outputClusterDir /user/cassowary/adhoc/your_ldap/simclusters/clustering_outputs/output_clustering_assignments_2020_readAgain_v4_week_1
+--datelon 2020-08-30  --maxNelonighbors 100 --minActivelonFollowelonrs 400 --topK 20000000 --numNodelonsPelonrCommunity 200  --maxelonpochs 4 --squarelonWelonightselonnablelon --wtCoelonff 10.0 \
+--inputSimsDir /atla/proc/uselonr/cassowary/manhattan_selonquelonncelon_filelons/approximatelon_cosinelon_similarity_follow  \
+--outputClustelonrDir /uselonr/cassowary/adhoc/your_ldap/simclustelonrs/clustelonring_outputs/output_clustelonring_assignmelonnts_2020_relonadAgain_v4_welonelonk_1
 
-knownFor Week-2:
-scalding remote run \
---target src/scala/com/twitter/simclusters_v2/scalding/update_known_for:update_known_for_20m_145k_2020-adhoc \
---main-class com.twitter.simclusters_v2.scalding.update_known_for.UpdateKnownFor20M145K2020Adhoc \
---submitter  atla-aor-08-sr1 --user cassowary \
---submitter-memory 128192.megabyte --hadoop-properties "mapreduce.map.memory.mb=8192 mapreduce.map.java.opts='-Xmx7618M' mapreduce.reduce.memory.mb=8192 mapreduce.reduce.java.opts='-Xmx7618M'" \
+knownFor Welonelonk-2:
+scalding relonmotelon run \
+--targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/updatelon_known_for:updatelon_known_for_20m_145k_2020-adhoc \
+--main-class com.twittelonr.simclustelonrs_v2.scalding.updatelon_known_for.UpdatelonKnownFor20M145K2020Adhoc \
+--submittelonr  atla-aor-08-sr1 --uselonr cassowary \
+--submittelonr-melonmory 128192.melongabytelon --hadoop-propelonrtielons "maprelonducelon.map.melonmory.mb=8192 maprelonducelon.map.java.opts='-Xmx7618M' maprelonducelon.relonducelon.melonmory.mb=8192 maprelonducelon.relonducelon.java.opts='-Xmx7618M'" \
 -- \
---date 2020-08-30  --maxNeighbors 100 --minActiveFollowers 400 --topK 20000000 --numNodesPerCommunity 200  --maxEpochs 4 --squareWeightsEnable --wtCoeff 10.0 \
---inputSimsDir /atla/proc/user/cassowary/manhattan_sequence_files/approximate_cosine_similarity_follow  \
---inputPreviousKnownForDataSet /user/cassowary/adhoc/your_ldap/simclusters/clustering_outputs/output_clustering_assignments_2020_readAgain_v4_week_1_KeyVal \
---outputClusterDir /user/cassowary/adhoc/your_ldap/simclusters/clustering_outputs/output_clustering_assignments_2020_readAgain_v4_week_2
+--datelon 2020-08-30  --maxNelonighbors 100 --minActivelonFollowelonrs 400 --topK 20000000 --numNodelonsPelonrCommunity 200  --maxelonpochs 4 --squarelonWelonightselonnablelon --wtCoelonff 10.0 \
+--inputSimsDir /atla/proc/uselonr/cassowary/manhattan_selonquelonncelon_filelons/approximatelon_cosinelon_similarity_follow  \
+--inputPrelonviousKnownForDataSelont /uselonr/cassowary/adhoc/your_ldap/simclustelonrs/clustelonring_outputs/output_clustelonring_assignmelonnts_2020_relonadAgain_v4_welonelonk_1_KelonyVal \
+--outputClustelonrDir /uselonr/cassowary/adhoc/your_ldap/simclustelonrs/clustelonring_outputs/output_clustelonring_assignmelonnts_2020_relonadAgain_v4_welonelonk_2
  */
 
-object UpdateKnownFor20M145K2020Adhoc extends TwitterExecutionApp {
-  implicit val tz: java.util.TimeZone = DateOps.UTC
-  implicit val dp = DateParser.default
-  val log = Logger()
+objelonct UpdatelonKnownFor20M145K2020Adhoc elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val tz: java.util.TimelonZonelon = DatelonOps.UTC
+  implicit val dp = DatelonParselonr.delonfault
+  val log = Loggelonr()
 
-  def job: Execution[Unit] =
-    Execution.getConfigMode.flatMap {
-      case (config, mode) =>
-        Execution.withId { implicit uniqueId =>
-          val args = config.getArgs
+  delonf job: elonxeloncution[Unit] =
+    elonxeloncution.gelontConfigModelon.flatMap {
+      caselon (config, modelon) =>
+        elonxeloncution.withId { implicit uniquelonId =>
+          val args = config.gelontArgs
 
-          implicit def valueCodec: BinaryScalaCodec[Candidates] = BinaryScalaCodec(Candidates)
-          // Step - 1 (DataProcessing): Parameters for getting mapped indices for user-ids
-          val minActiveFollowers = args.int("minActiveFollowers", 400)
+          implicit delonf valuelonCodelonc: BinaryScalaCodelonc[Candidatelons] = BinaryScalaCodelonc(Candidatelons)
+          // Stelonp - 1 (DataProcelonssing): Paramelontelonrs for gelontting mappelond indicelons for uselonr-ids
+          val minActivelonFollowelonrs = args.int("minActivelonFollowelonrs", 400)
           val topK = args.int("topK", 20000000)
 
-          // Step - 2 (DataProcessing): Parameters to remove users not in the topK most followed users from simsGraph
-          val clusterAssignmentOutput = args("outputClusterDir")
-          val maxNeighbors = args.int("maxNeighbors", 400)
+          // Stelonp - 2 (DataProcelonssing): Paramelontelonrs to relonmovelon uselonrs not in thelon topK most followelond uselonrs from simsGraph
+          val clustelonrAssignmelonntOutput = args("outputClustelonrDir")
+          val maxNelonighbors = args.int("maxNelonighbors", 400)
 
-          // Step - 3 (Final Clustering): Parameters to run the clustering algorithm
-          val squareWeightsEnable = args.boolean("squareWeightsEnable")
+          // Stelonp - 3 (Final Clustelonring): Paramelontelonrs to run thelon clustelonring algorithm
+          val squarelonWelonightselonnablelon = args.boolelonan("squarelonWelonightselonnablelon")
 
-          val maxEpochsForClustering = args.int("maxEpochs", 3)
-          val wtCoeff = args.double("wtCoeff", 10.0)
+          val maxelonpochsForClustelonring = args.int("maxelonpochs", 3)
+          val wtCoelonff = args.doublelon("wtCoelonff", 10.0)
 
           val simsGraphPath =
-            "/atla/proc/user/cassowary/manhattan_sequence_files/approximate_cosine_similarity_follow"
-          // Read in the knownFor dataset, that can be used to initialize the clusters for this week.
-          val inputPreviousKnownFor: TypedPipe[(Long, Array[(Int, Float)])] =
-            args.optional("inputPreviousKnownForDataSet") match {
-              case Some(inputKnownForDir) =>
+            "/atla/proc/uselonr/cassowary/manhattan_selonquelonncelon_filelons/approximatelon_cosinelon_similarity_follow"
+          // Relonad in thelon knownFor dataselont, that can belon uselond to initializelon thelon clustelonrs for this welonelonk.
+          val inputPrelonviousKnownFor: TypelondPipelon[(Long, Array[(Int, Float)])] =
+            args.optional("inputPrelonviousKnownForDataSelont") match {
+              caselon Somelon(inputKnownForDir) =>
                 println(
-                  "Input knownFors provided, using these as the initial cluster assignments for users")
-                TypedPipe
-                  .from(AdhocKeyValSources.knownForSBFResultsDevelSource(inputKnownForDir))
-              case None =>
+                  "Input knownFors providelond, using thelonselon as thelon initial clustelonr assignmelonnts for uselonrs")
+                TypelondPipelon
+                  .from(AdhocKelonyValSourcelons.knownForSBFRelonsultsDelonvelonlSourcelon(inputKnownForDir))
+              caselon Nonelon =>
                 println(
-                  "Using knownFor Assignments from prod as no previous assignment was provided in the input")
-                if (args.boolean("dec11")) {
-                  KnownForSources
-                    .fromKeyVal(
+                  "Using knownFor Assignmelonnts from prod as no prelonvious assignmelonnt was providelond in thelon input")
+                if (args.boolelonan("delonc11")) {
+                  KnownForSourcelons
+                    .fromKelonyVal(
                       DAL
-                        .readMostRecentSnapshotNoOlderThan(
-                          SimclustersV2KnownFor20M145KDec11ScalaDataset,
-                          Days(30)).withRemoteReadPolicy(AllowCrossClusterSameDC).toTypedPipe,
-                      ModelVersions.Model20M145KDec11
+                        .relonadMostReloncelonntSnapshotNoOldelonrThan(
+                          SimclustelonrsV2KnownFor20M145KDelonc11ScalaDataselont,
+                          Days(30)).withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC).toTypelondPipelon,
+                      ModelonlVelonrsions.Modelonl20M145KDelonc11
                     )
-                } else {
-                  KnownForSources
-                    .fromKeyVal(
+                } elonlselon {
+                  KnownForSourcelons
+                    .fromKelonyVal(
                       DAL
-                        .readMostRecentSnapshotNoOlderThan(
-                          SimclustersV2KnownFor20M145KUpdatedScalaDataset,
-                          Days(30)).withRemoteReadPolicy(AllowCrossClusterSameDC).toTypedPipe,
-                      ModelVersions.Model20M145KUpdated
+                        .relonadMostReloncelonntSnapshotNoOldelonrThan(
+                          SimclustelonrsV2KnownFor20M145KUpdatelondScalaDataselont,
+                          Days(30)).withRelonmotelonRelonadPolicy(AllowCrossClustelonrSamelonDC).toTypelondPipelon,
+                      ModelonlVelonrsions.Modelonl20M145KUpdatelond
                     )
                 }
             }
-          UpdateKnownForSBFRunner
-            .runUpdateKnownFor(
-              TypedPipe
-                .from(FollowingsCosineSimilaritiesManhattanSource(simsGraphPath))
+          UpdatelonKnownForSBFRunnelonr
+            .runUpdatelonKnownFor(
+              TypelondPipelon
+                .from(FollowingsCosinelonSimilaritielonsManhattanSourcelon(simsGraphPath))
                 .map(_._2),
-              minActiveFollowers,
+              minActivelonFollowelonrs,
               topK,
-              maxNeighbors,
-              clusterAssignmentOutput,
-              inputPreviousKnownFor,
-              maxEpochsForClustering,
-              squareWeightsEnable,
-              wtCoeff,
-              mode
+              maxNelonighbors,
+              clustelonrAssignmelonntOutput,
+              inputPrelonviousKnownFor,
+              maxelonpochsForClustelonring,
+              squarelonWelonightselonnablelon,
+              wtCoelonff,
+              modelon
             )
-            .flatMap { updateKnownFor =>
-              Execution
+            .flatMap { updatelonKnownFor =>
+              elonxeloncution
                 .zip(
-                  updateKnownFor
-                    .mapValues(_.toList).writeExecution(TypedTsv(clusterAssignmentOutput)),
-                  updateKnownFor.writeExecution(AdhocKeyValSources.knownForSBFResultsDevelSource(
-                    clusterAssignmentOutput + "_KeyVal")),
-                  UpdateKnownForSBFRunner
-                    .evaluateUpdatedKnownFor(updateKnownFor, inputPreviousKnownFor)
-                    .flatMap { emailText =>
+                  updatelonKnownFor
+                    .mapValuelons(_.toList).writelonelonxeloncution(TypelondTsv(clustelonrAssignmelonntOutput)),
+                  updatelonKnownFor.writelonelonxeloncution(AdhocKelonyValSourcelons.knownForSBFRelonsultsDelonvelonlSourcelon(
+                    clustelonrAssignmelonntOutput + "_KelonyVal")),
+                  UpdatelonKnownForSBFRunnelonr
+                    .elonvaluatelonUpdatelondKnownFor(updatelonKnownFor, inputPrelonviousKnownFor)
+                    .flatMap { elonmailTelonxt =>
                       Util
-                        .sendEmail(
-                          emailText,
-                          s"Change in cluster assignments for new KnownFor ModelVersion: 20M145K2020" + clusterAssignmentOutput,
-                          "no-reply@twitter.com")
-                      Execution.unit
+                        .selonndelonmail(
+                          elonmailTelonxt,
+                          s"Changelon in clustelonr assignmelonnts for nelonw KnownFor ModelonlVelonrsion: 20M145K2020" + clustelonrAssignmelonntOutput,
+                          "no-relonply@twittelonr.com")
+                      elonxeloncution.unit
                     }
                 ).unit
             }

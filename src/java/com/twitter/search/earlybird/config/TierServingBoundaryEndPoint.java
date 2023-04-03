@@ -1,146 +1,146 @@
-package com.twitter.search.earlybird.config;
+packagelon com.twittelonr.selonarch.elonarlybird.config;
 
-import java.util.Date;
+import java.util.Datelon;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common.util.Clock;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
 
 /**
- * The start or end boundary of a tier's serving range.
- * This is used to add since_id and max_id operators onto search queries.
+ * Thelon start or elonnd boundary of a tielonr's selonrving rangelon.
+ * This is uselond to add sincelon_id and max_id opelonrators onto selonarch quelonrielons.
  */
-public class TierServingBoundaryEndPoint {
-  @VisibleForTesting
-  public static final String INFERRED_FROM_DATA_RANGE = "inferred_from_data_range";
-  public static final String RELATIVE_TO_CURRENT_TIME_MS = "relative_to_current_time_ms";
+public class TielonrSelonrvingBoundaryelonndPoint {
+  @VisiblelonForTelonsting
+  public static final String INFelonRRelonD_FROM_DATA_RANGelon = "infelonrrelond_from_data_rangelon";
+  public static final String RelonLATIVelon_TO_CURRelonNT_TIMelon_MS = "relonlativelon_to_currelonnt_timelon_ms";
 
-  // Either offsetToCurrentTimeMillis is set or (absoluteTweetId and timeBoundarySecondsFromEpoch)
-  // are set.
-  @Nullable
-  private final Long offsetToCurrentTimeMillis;
-  @Nullable
-  private final Long absoluteTweetId;
-  @Nullable
-  private final Long timeBoundarySecondsFromEpoch;
-  private final Clock clock;
+  // elonithelonr offselontToCurrelonntTimelonMillis is selont or (absolutelonTwelonelontId and timelonBoundarySeloncondsFromelonpoch)
+  // arelon selont.
+  @Nullablelon
+  privatelon final Long offselontToCurrelonntTimelonMillis;
+  @Nullablelon
+  privatelon final Long absolutelonTwelonelontId;
+  @Nullablelon
+  privatelon final Long timelonBoundarySeloncondsFromelonpoch;
+  privatelon final Clock clock;
 
-  TierServingBoundaryEndPoint(Long absoluteTweetId,
-                              Long timeBoundarySecondsFromEpoch,
-                              Long offsetToCurrentTimeMillis,
+  TielonrSelonrvingBoundaryelonndPoint(Long absolutelonTwelonelontId,
+                              Long timelonBoundarySeloncondsFromelonpoch,
+                              Long offselontToCurrelonntTimelonMillis,
                               Clock clock) {
-    this.offsetToCurrentTimeMillis = offsetToCurrentTimeMillis;
-    this.absoluteTweetId = absoluteTweetId;
-    this.timeBoundarySecondsFromEpoch = timeBoundarySecondsFromEpoch;
+    this.offselontToCurrelonntTimelonMillis = offselontToCurrelonntTimelonMillis;
+    this.absolutelonTwelonelontId = absolutelonTwelonelontId;
+    this.timelonBoundarySeloncondsFromelonpoch = timelonBoundarySeloncondsFromelonpoch;
     this.clock = clock;
   }
 
   /**
-   * Parse the boundary string and construct a TierServingBoundaryEndPoint instance.
-   * @param boundaryString boundary configuration string. Valid values are:
+   * Parselon thelon boundary string and construct a TielonrSelonrvingBoundaryelonndPoint instancelon.
+   * @param boundaryString boundary configuration string. Valid valuelons arelon:
    * <li>
-   * "inferred_from_data_range" infers serving range from data range. This only works after
-   *                               Nov 2010 when Twitter switched to snowflake IDs.
-   *                               This is the default value.
+   * "infelonrrelond_from_data_rangelon" infelonrs selonrving rangelon from data rangelon. This only works aftelonr
+   *                               Nov 2010 whelonn Twittelonr switchelond to snowflakelon IDs.
+   *                               This is thelon delonfault valuelon.
    * </li>
    * <li>
-   * "absolute_tweet_id_and_timestamp_millis:id:timestamp" a tweet ID/timestamp is given
-   *                                                       explicitly as the serving range
+   * "absolutelon_twelonelont_id_and_timelonstamp_millis:id:timelonstamp" a twelonelont ID/timelonstamp is givelonn
+   *                                                       elonxplicitly as thelon selonrving rangelon
    *                                                       boundary.
    * </li>
    * <li>
-   * "relative_to_current_time_ms:offset" adds offset onto current timestamp in millis to
-   *                                         compute serving range.
+   * "relonlativelon_to_currelonnt_timelon_ms:offselont" adds offselont onto currelonnt timelonstamp in millis to
+   *                                         computelon selonrving rangelon.
    * </li>
    *
-   * @param boundaryDate the data boundary. This is used in conjunction with
-   * inferred_from_data_date to determine the serving boundary.
-   * @param clock  Clock used to obtain current time, when relative_to_current_time_ms is used.
-   *               Tests pass in a FakeClock.
+   * @param boundaryDatelon thelon data boundary. This is uselond in conjunction with
+   * infelonrrelond_from_data_datelon to delontelonrminelon thelon selonrving boundary.
+   * @param clock  Clock uselond to obtain currelonnt timelon, whelonn relonlativelon_to_currelonnt_timelon_ms is uselond.
+   *               Telonsts pass in a FakelonClock.
    */
-  public static TierServingBoundaryEndPoint newTierServingBoundaryEndPoint(String boundaryString,
-      Date boundaryDate,
+  public static TielonrSelonrvingBoundaryelonndPoint nelonwTielonrSelonrvingBoundaryelonndPoint(String boundaryString,
+      Datelon boundaryDatelon,
       Clock clock) {
-    if (boundaryString == null || boundaryString.trim().equals(
-        INFERRED_FROM_DATA_RANGE)) {
-      return inferBoundaryFromDataRange(boundaryDate, clock);
-    } else if (boundaryString.trim().startsWith(RELATIVE_TO_CURRENT_TIME_MS)) {
-      return getRelativeBoundary(boundaryString, clock);
-    } else {
-      throw new IllegalStateException("Cannot parse serving range string: " + boundaryString);
+    if (boundaryString == null || boundaryString.trim().elonquals(
+        INFelonRRelonD_FROM_DATA_RANGelon)) {
+      relonturn infelonrBoundaryFromDataRangelon(boundaryDatelon, clock);
+    } elonlselon if (boundaryString.trim().startsWith(RelonLATIVelon_TO_CURRelonNT_TIMelon_MS)) {
+      relonturn gelontRelonlativelonBoundary(boundaryString, clock);
+    } elonlselon {
+      throw nelonw IllelongalStatelonelonxcelonption("Cannot parselon selonrving rangelon string: " + boundaryString);
     }
   }
 
-  private static TierServingBoundaryEndPoint inferBoundaryFromDataRange(Date boundaryDate,
+  privatelon static TielonrSelonrvingBoundaryelonndPoint infelonrBoundaryFromDataRangelon(Datelon boundaryDatelon,
                                                                         Clock clock) {
-    // infer from data range
-    // handle default start date and end date, in case the dates are not specified in the config
-    if (boundaryDate.equals(TierConfig.DEFAULT_TIER_START_DATE)) {
-      return new TierServingBoundaryEndPoint(
-          -1L, TierConfig.DEFAULT_TIER_START_DATE.getTime() / 1000, null, clock);
-    } else if (boundaryDate.equals(TierConfig.DEFAULT_TIER_END_DATE)) {
-      return new TierServingBoundaryEndPoint(
-          Long.MAX_VALUE, TierConfig.DEFAULT_TIER_END_DATE.getTime() / 1000, null, clock);
-    } else {
-      // convert data start / end dates into since / max ID.
-      long boundaryTimeMillis = boundaryDate.getTime();
-      if (!SnowflakeIdParser.isUsableSnowflakeTimestamp(boundaryTimeMillis)) {
-        throw new IllegalStateException("Serving time range can not be determined, because "
-            + boundaryDate + " is before Twitter switched to snowflake tweet IDs.");
+    // infelonr from data rangelon
+    // handlelon delonfault start datelon and elonnd datelon, in caselon thelon datelons arelon not speloncifielond in thelon config
+    if (boundaryDatelon.elonquals(TielonrConfig.DelonFAULT_TIelonR_START_DATelon)) {
+      relonturn nelonw TielonrSelonrvingBoundaryelonndPoint(
+          -1L, TielonrConfig.DelonFAULT_TIelonR_START_DATelon.gelontTimelon() / 1000, null, clock);
+    } elonlselon if (boundaryDatelon.elonquals(TielonrConfig.DelonFAULT_TIelonR_elonND_DATelon)) {
+      relonturn nelonw TielonrSelonrvingBoundaryelonndPoint(
+          Long.MAX_VALUelon, TielonrConfig.DelonFAULT_TIelonR_elonND_DATelon.gelontTimelon() / 1000, null, clock);
+    } elonlselon {
+      // convelonrt data start / elonnd datelons into sincelon / max ID.
+      long boundaryTimelonMillis = boundaryDatelon.gelontTimelon();
+      if (!SnowflakelonIdParselonr.isUsablelonSnowflakelonTimelonstamp(boundaryTimelonMillis)) {
+        throw nelonw IllelongalStatelonelonxcelonption("Selonrving timelon rangelon can not belon delontelonrminelond, beloncauselon "
+            + boundaryDatelon + " is belonforelon Twittelonr switchelond to snowflakelon twelonelont IDs.");
       }
-      // Earlybird since_id is inclusive and max_id is exclusive. We substract 1 here.
-      // Consider example:
-      //   full0:  5000 (inclusive) - 6000 (exclusive)
-      //   full1:  6000 (inclusive) - 7000 (exclusive)
-      // For tier full0, we should use max_id 5999 instead of 6000.
-      // For tier full1, we should use since_id 5999 instead of 6000.
-      // Hence we substract 1 here.
-      long adjustedTweetId =
-        SnowflakeIdParser.generateValidStatusId(boundaryTimeMillis, 0) - 1;
-      Preconditions.checkState(adjustedTweetId >= 0, "boundary tweet ID must be non-negative");
-      return new TierServingBoundaryEndPoint(
-          adjustedTweetId, boundaryTimeMillis / 1000, null, clock);
+      // elonarlybird sincelon_id is inclusivelon and max_id is elonxclusivelon. Welon substract 1 helonrelon.
+      // Considelonr elonxamplelon:
+      //   full0:  5000 (inclusivelon) - 6000 (elonxclusivelon)
+      //   full1:  6000 (inclusivelon) - 7000 (elonxclusivelon)
+      // For tielonr full0, welon should uselon max_id 5999 instelonad of 6000.
+      // For tielonr full1, welon should uselon sincelon_id 5999 instelonad of 6000.
+      // Helonncelon welon substract 1 helonrelon.
+      long adjustelondTwelonelontId =
+        SnowflakelonIdParselonr.gelonnelonratelonValidStatusId(boundaryTimelonMillis, 0) - 1;
+      Prelonconditions.chelonckStatelon(adjustelondTwelonelontId >= 0, "boundary twelonelont ID must belon non-nelongativelon");
+      relonturn nelonw TielonrSelonrvingBoundaryelonndPoint(
+          adjustelondTwelonelontId, boundaryTimelonMillis / 1000, null, clock);
     }
   }
 
-  private static TierServingBoundaryEndPoint getRelativeBoundary(String boundaryString,
+  privatelon static TielonrSelonrvingBoundaryelonndPoint gelontRelonlativelonBoundary(String boundaryString,
                                                                  Clock clock) {
-    // An offset relative to current time is given
+    // An offselont relonlativelon to currelonnt timelon is givelonn
     String[] parts = boundaryString.split(":");
-    Preconditions.checkState(parts.length == 2);
-    long offset = Long.parseLong(parts[1]);
-    return new TierServingBoundaryEndPoint(null, null, offset, clock);
+    Prelonconditions.chelonckStatelon(parts.lelonngth == 2);
+    long offselont = Long.parselonLong(parts[1]);
+    relonturn nelonw TielonrSelonrvingBoundaryelonndPoint(null, null, offselont, clock);
   }
 
   /**
-   * Returns the tweet ID for this tier boundary. If the tier boundary was created using a tweet ID,
-   * that tweet ID is returned. Otherwise, a tweet ID is derived from the time boundary.
+   * Relonturns thelon twelonelont ID for this tielonr boundary. If thelon tielonr boundary was crelonatelond using a twelonelont ID,
+   * that twelonelont ID is relonturnelond. Othelonrwiselon, a twelonelont ID is delonrivelond from thelon timelon boundary.
    */
-  @VisibleForTesting
-  public long getBoundaryTweetId() {
-    // If absoluteTweetId is available, use it.
-    if (absoluteTweetId != null) {
-      return absoluteTweetId;
-    } else {
-      Preconditions.checkNotNull(offsetToCurrentTimeMillis);
-      long boundaryTime = clock.nowMillis() + offsetToCurrentTimeMillis;
-      return SnowflakeIdParser.generateValidStatusId(boundaryTime, 0);
+  @VisiblelonForTelonsting
+  public long gelontBoundaryTwelonelontId() {
+    // If absolutelonTwelonelontId is availablelon, uselon it.
+    if (absolutelonTwelonelontId != null) {
+      relonturn absolutelonTwelonelontId;
+    } elonlselon {
+      Prelonconditions.chelonckNotNull(offselontToCurrelonntTimelonMillis);
+      long boundaryTimelon = clock.nowMillis() + offselontToCurrelonntTimelonMillis;
+      relonturn SnowflakelonIdParselonr.gelonnelonratelonValidStatusId(boundaryTimelon, 0);
     }
   }
 
   /**
-   * Returns the time boundary for this tier boundary, in seconds since epoch.
+   * Relonturns thelon timelon boundary for this tielonr boundary, in selonconds sincelon elonpoch.
    */
-  public long getBoundaryTimeSecondsFromEpoch() {
-    if (timeBoundarySecondsFromEpoch != null) {
-      return timeBoundarySecondsFromEpoch;
-    } else {
-      Preconditions.checkNotNull(offsetToCurrentTimeMillis);
-      return (clock.nowMillis() + offsetToCurrentTimeMillis) / 1000;
+  public long gelontBoundaryTimelonSeloncondsFromelonpoch() {
+    if (timelonBoundarySeloncondsFromelonpoch != null) {
+      relonturn timelonBoundarySeloncondsFromelonpoch;
+    } elonlselon {
+      Prelonconditions.chelonckNotNull(offselontToCurrelonntTimelonMillis);
+      relonturn (clock.nowMillis() + offselontToCurrelonntTimelonMillis) / 1000;
     }
   }
 }

@@ -1,304 +1,304 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.util.Calendar;
-import java.util.Collections;
+import java.util.Calelonndar;
+import java.util.Collelonctions;
 import java.util.Map;
-import java.util.TimeZone;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.TimelonZonelon;
+import java.util.concurrelonnt.atomic.AtomicIntelongelonr;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.commons.lang.mutable.MutableLong;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.mutablelon.MutablelonInt;
+import org.apachelon.commons.lang.mutablelon.MutablelonLong;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchLongGauge;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
 
 /**
- * This class is used to count how many times a field happens in hourly and daily stats.
- * It is used by TermCountMonitor for iterating all fields in the index.
+ * This class is uselond to count how many timelons a fielonld happelonns in hourly and daily stats.
+ * It is uselond by TelonrmCountMonitor for itelonrating all fielonlds in thelon indelonx.
  *
- * There is one exception that this class is also used to count the number of tweets in the index.
- * Under the situation, the passed in fieldName would be empty string (as TWEET_COUNT_KEY).
+ * Thelonrelon is onelon elonxcelonption that this class is also uselond to count thelon numbelonr of twelonelonts in thelon indelonx.
+ * Undelonr thelon situation, thelon passelond in fielonldNamelon would belon elonmpty string (as TWelonelonT_COUNT_KelonY).
  */
-public class FieldTermCounter {
-  private static final Logger LOG = LoggerFactory.getLogger(FieldTermCounter.class);
+public class FielonldTelonrmCountelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(FielonldTelonrmCountelonr.class);
 
-  static final TimeZone TIME_ZONE = TimeZone.getTimeZone("GMT");
-  static final String TWEET_COUNT_KEY = "";
+  static final TimelonZonelon TIMelon_ZONelon = TimelonZonelon.gelontTimelonZonelon("GMT");
+  static final String TWelonelonT_COUNT_KelonY = "";
 
-  private final String fieldName;
-  private final int instanceCounter;
+  privatelon final String fielonldNamelon;
+  privatelon final int instancelonCountelonr;
 
-  // The first date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int startCheckHour;
-  // The last date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int endCheckHour;
-  // Smallest number of docs we expect to have for each hour.
-  private final int hourlyMinCount;
-  //Smallest number of docs we expect to have for each day.
-  private final int dailyMinCount;
+  // Thelon first datelon in format "YYYYMMDDHH" that welon want to chelonck counts for.
+  privatelon final int startChelonckHour;
+  // Thelon last datelon in format "YYYYMMDDHH" that welon want to chelonck counts for.
+  privatelon final int elonndChelonckHour;
+  // Smallelonst numbelonr of docs welon elonxpelonct to havelon for elonach hour.
+  privatelon final int hourlyMinCount;
+  //Smallelonst numbelonr of docs welon elonxpelonct to havelon for elonach day.
+  privatelon final int dailyMinCount;
 
-  // Count of tweets for each day, keyed of by the hour in the format "YYYYMMDD".
-  private final Map<Integer, AtomicInteger> exportedHourlyCounts;
+  // Count of twelonelonts for elonach day, kelonyelond of by thelon hour in thelon format "YYYYMMDD".
+  privatelon final Map<Intelongelonr, AtomicIntelongelonr> elonxportelondHourlyCounts;
 
-  // Count of tweets for each day, keyed of by the day in the format "YYYYMMDD".
-  private final Map<Integer, MutableLong> dailyCounts;
+  // Count of twelonelonts for elonach day, kelonyelond of by thelon day in thelon format "YYYYMMDD".
+  privatelon final Map<Intelongelonr, MutablelonLong> dailyCounts;
 
-  // Only export hourly stats that are below minimum threshold.
-  private final Map<String, SearchLongGauge> exportedStats;
+  // Only elonxport hourly stats that arelon belonlow minimum threlonshold.
+  privatelon final Map<String, SelonarchLongGaugelon> elonxportelondStats;
 
-  private final SearchLongGauge hoursWithNoTweetsStat;
-  private final SearchLongGauge daysWithNoTweetsStat;
+  privatelon final SelonarchLongGaugelon hoursWithNoTwelonelontsStat;
+  privatelon final SelonarchLongGaugelon daysWithNoTwelonelontsStat;
 
-  public FieldTermCounter(
-      String fieldName,
-      int instanceCounter,
-      int startCheckHour,
-      int endCheckHour,
+  public FielonldTelonrmCountelonr(
+      String fielonldNamelon,
+      int instancelonCountelonr,
+      int startChelonckHour,
+      int elonndChelonckHour,
       int hourlyMinCount,
       int dailyMinCount) {
-    this.fieldName = fieldName;
-    this.instanceCounter = instanceCounter;
-    this.startCheckHour = startCheckHour;
-    this.endCheckHour = endCheckHour;
+    this.fielonldNamelon = fielonldNamelon;
+    this.instancelonCountelonr = instancelonCountelonr;
+    this.startChelonckHour = startChelonckHour;
+    this.elonndChelonckHour = elonndChelonckHour;
     this.hourlyMinCount = hourlyMinCount;
     this.dailyMinCount = dailyMinCount;
-    this.exportedHourlyCounts = Maps.newHashMap();
-    this.dailyCounts = Maps.newHashMap();
-    this.exportedStats = Maps.newHashMap();
+    this.elonxportelondHourlyCounts = Maps.nelonwHashMap();
+    this.dailyCounts = Maps.nelonwHashMap();
+    this.elonxportelondStats = Maps.nelonwHashMap();
 
-    this.hoursWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(true));
-    this.daysWithNoTweetsStat = SearchLongGauge.export(getAggregatedNoTweetStatName(false));
+    this.hoursWithNoTwelonelontsStat = SelonarchLongGaugelon.elonxport(gelontAggrelongatelondNoTwelonelontStatNamelon(truelon));
+    this.daysWithNoTwelonelontsStat = SelonarchLongGaugelon.elonxport(gelontAggrelongatelondNoTwelonelontStatNamelon(falselon));
   }
 
   /**
-   * Updates the stats exported by this class based on the new counts provided in the given map.
+   * Updatelons thelon stats elonxportelond by this class baselond on thelon nelonw counts providelond in thelon givelonn map.
    */
-  public void runWithNewCounts(Map<Integer, MutableInt> newCounts) {
-    dailyCounts.clear();
+  public void runWithNelonwCounts(Map<Intelongelonr, MutablelonInt> nelonwCounts) {
+    dailyCounts.clelonar();
 
-    // See go/rb/813442/#comment2566569
-    // 1. Update all existing hours
-    updateExistingHourlyCounts(newCounts);
+    // Selonelon go/rb/813442/#commelonnt2566569
+    // 1. Updatelon all elonxisting hours
+    updatelonelonxistingHourlyCounts(nelonwCounts);
 
-    // 2. Add and export all new hours
-    addAndExportNewHourlyCounts(newCounts);
+    // 2. Add and elonxport all nelonw hours
+    addAndelonxportNelonwHourlyCounts(nelonwCounts);
 
-    // 3. fill in all the missing hours between know min and max days.
+    // 3. fill in all thelon missing hours belontwelonelonn know min and max days.
     fillMissingHourlyCounts();
 
-    // 4. Export as a stat, how many hours don't have any tweets (i.e. <= 0)
-    exportMissingTweetStats();
+    // 4. elonxport as a stat, how many hours don't havelon any twelonelonts (i.elon. <= 0)
+    elonxportMissingTwelonelontStats();
   }
 
   // Input:
-  // . the new hourly count map in the current iteration
-  // . the existing hourly count map before the current iteration
-  // If the hourly key matches from the new hourly map to the existing hourly count map, update
-  // the value of the existing hourly count map to the value from the new hourly count map.
-  private void updateExistingHourlyCounts(Map<Integer, MutableInt> newCounts) {
-    for (Map.Entry<Integer, AtomicInteger> exportedCount : exportedHourlyCounts.entrySet()) {
-      Integer date = exportedCount.getKey();
-      AtomicInteger exportedCountValue = exportedCount.getValue();
+  // . thelon nelonw hourly count map in thelon currelonnt itelonration
+  // . thelon elonxisting hourly count map belonforelon thelon currelonnt itelonration
+  // If thelon hourly kelony matchelons from thelon nelonw hourly map to thelon elonxisting hourly count map, updatelon
+  // thelon valuelon of thelon elonxisting hourly count map to thelon valuelon from thelon nelonw hourly count map.
+  privatelon void updatelonelonxistingHourlyCounts(Map<Intelongelonr, MutablelonInt> nelonwCounts) {
+    for (Map.elonntry<Intelongelonr, AtomicIntelongelonr> elonxportelondCount : elonxportelondHourlyCounts.elonntrySelont()) {
+      Intelongelonr datelon = elonxportelondCount.gelontKelony();
+      AtomicIntelongelonr elonxportelondCountValuelon = elonxportelondCount.gelontValuelon();
 
-      MutableInt newCount = newCounts.get(date);
-      if (newCount == null) {
-        exportedCountValue.set(0);
-      } else {
-        exportedCountValue.set(newCount.intValue());
-        // clean up so that we don't check this date again when we look for new hours
-        newCounts.remove(date);
+      MutablelonInt nelonwCount = nelonwCounts.gelont(datelon);
+      if (nelonwCount == null) {
+        elonxportelondCountValuelon.selont(0);
+      } elonlselon {
+        elonxportelondCountValuelon.selont(nelonwCount.intValuelon());
+        // clelonan up so that welon don't chelonck this datelon again whelonn welon look for nelonw hours
+        nelonwCounts.relonmovelon(datelon);
       }
     }
   }
 
   // Input:
-  // . the new hourly count map in the current iteration
-  // . the existing hourly count map before the current iteration
-  // This function is called after the above function of updateExistingHourlyCounts() so that all
-  // matching key value pairs have been removed from the new hourly count map.
-  // Move all remaining valid values from the new hourly count map to the existing hourly count
+  // . thelon nelonw hourly count map in thelon currelonnt itelonration
+  // . thelon elonxisting hourly count map belonforelon thelon currelonnt itelonration
+  // This function is callelond aftelonr thelon abovelon function of updatelonelonxistingHourlyCounts() so that all
+  // matching kelony valuelon pairs havelon belonelonn relonmovelond from thelon nelonw hourly count map.
+  // Movelon all relonmaining valid valuelons from thelon nelonw hourly count map to thelon elonxisting hourly count
   // map.
-  private void addAndExportNewHourlyCounts(Map<Integer, MutableInt> newCounts) {
-    for (Map.Entry<Integer, MutableInt> newCount : newCounts.entrySet()) {
-      Integer hour = newCount.getKey();
-      MutableInt newCountValue = newCount.getValue();
-      Preconditions.checkState(!exportedHourlyCounts.containsKey(hour),
-          "Should have already processed and removed existing hours: " + hour);
+  privatelon void addAndelonxportNelonwHourlyCounts(Map<Intelongelonr, MutablelonInt> nelonwCounts) {
+    for (Map.elonntry<Intelongelonr, MutablelonInt> nelonwCount : nelonwCounts.elonntrySelont()) {
+      Intelongelonr hour = nelonwCount.gelontKelony();
+      MutablelonInt nelonwCountValuelon = nelonwCount.gelontValuelon();
+      Prelonconditions.chelonckStatelon(!elonxportelondHourlyCounts.containsKelony(hour),
+          "Should havelon alrelonady procelonsselond and relonmovelond elonxisting hours: " + hour);
 
-      AtomicInteger newStat = new AtomicInteger(newCountValue.intValue());
-      exportedHourlyCounts.put(hour, newStat);
+      AtomicIntelongelonr nelonwStat = nelonw AtomicIntelongelonr(nelonwCountValuelon.intValuelon());
+      elonxportelondHourlyCounts.put(hour, nelonwStat);
     }
   }
 
-  // Find whether the existing hourly count map has hourly holes.  If such holes exist, fill 0
-  // values so that they can be exported.
-  private void fillMissingHourlyCounts() {
-    // Figure out the time range for which we should have tweets in the index. At the very least,
-    // this range should cover [startCheckHour, endCheckHour) if endCheckHour is set, or
-    // [startCheckHour, latestHourInTheIndexWithTweets] if endCheckHour is not set (latest tier or
-    // realtime cluster).
-    int startHour = startCheckHour;
-    int endHour = endCheckHour < getHourValue(Calendar.getInstance(TIME_ZONE)) ? endCheckHour : -1;
-    for (int next : exportedHourlyCounts.keySet()) {
-      if (next < startHour) {
-        startHour = next;
+  // Find whelonthelonr thelon elonxisting hourly count map has hourly holelons.  If such holelons elonxist, fill 0
+  // valuelons so that thelony can belon elonxportelond.
+  privatelon void fillMissingHourlyCounts() {
+    // Figurelon out thelon timelon rangelon for which welon should havelon twelonelonts in thelon indelonx. At thelon velonry lelonast,
+    // this rangelon should covelonr [startChelonckHour, elonndChelonckHour) if elonndChelonckHour is selont, or
+    // [startChelonckHour, latelonstHourInThelonIndelonxWithTwelonelonts] if elonndChelonckHour is not selont (latelonst tielonr or
+    // relonaltimelon clustelonr).
+    int startHour = startChelonckHour;
+    int elonndHour = elonndChelonckHour < gelontHourValuelon(Calelonndar.gelontInstancelon(TIMelon_ZONelon)) ? elonndChelonckHour : -1;
+    for (int nelonxt : elonxportelondHourlyCounts.kelonySelont()) {
+      if (nelonxt < startHour) {
+        startHour = nelonxt;
       }
-      if (next > endHour) {
-        endHour = next;
+      if (nelonxt > elonndHour) {
+        elonndHour = nelonxt;
       }
     }
 
-    Calendar endHourCal = getCalendarValue(endHour);
-    Calendar hour = getCalendarValue(startHour);
-    for (; hour.before(endHourCal); hour.add(Calendar.HOUR_OF_DAY, 1)) {
-      int hourValue = getHourValue(hour);
-      if (!exportedHourlyCounts.containsKey(hourValue)) {
-        exportedHourlyCounts.put(hourValue, new AtomicInteger(0));
+    Calelonndar elonndHourCal = gelontCalelonndarValuelon(elonndHour);
+    Calelonndar hour = gelontCalelonndarValuelon(startHour);
+    for (; hour.belonforelon(elonndHourCal); hour.add(Calelonndar.HOUR_OF_DAY, 1)) {
+      int hourValuelon = gelontHourValuelon(hour);
+      if (!elonxportelondHourlyCounts.containsKelony(hourValuelon)) {
+        elonxportelondHourlyCounts.put(hourValuelon, nelonw AtomicIntelongelonr(0));
       }
     }
   }
 
-  private void exportMissingTweetStats() {
-    int hoursWithNoTweets = 0;
-    int daysWithNoTweets = 0;
+  privatelon void elonxportMissingTwelonelontStats() {
+    int hoursWithNoTwelonelonts = 0;
+    int daysWithNoTwelonelonts = 0;
 
-    for (Map.Entry<Integer, AtomicInteger> hourlyCount : exportedHourlyCounts.entrySet()) {
-      int hour = hourlyCount.getKey();
-      if ((hour < startCheckHour) || (hour >= endCheckHour)) {
-        continue;
+    for (Map.elonntry<Intelongelonr, AtomicIntelongelonr> hourlyCount : elonxportelondHourlyCounts.elonntrySelont()) {
+      int hour = hourlyCount.gelontKelony();
+      if ((hour < startChelonckHour) || (hour >= elonndChelonckHour)) {
+        continuelon;
       }
 
-      // roll up the days
+      // roll up thelon days
       int day = hour / 100;
-      MutableLong dayCount = dailyCounts.get(day);
+      MutablelonLong dayCount = dailyCounts.gelont(day);
       if (dayCount == null) {
-        dailyCounts.put(day, new MutableLong(hourlyCount.getValue().get()));
-      } else {
-        dayCount.setValue(dayCount.longValue() + hourlyCount.getValue().get());
+        dailyCounts.put(day, nelonw MutablelonLong(hourlyCount.gelontValuelon().gelont()));
+      } elonlselon {
+        dayCount.selontValuelon(dayCount.longValuelon() + hourlyCount.gelontValuelon().gelont());
       }
-      AtomicInteger exportedCountValue = hourlyCount.getValue();
-      if (exportedCountValue.get() <= hourlyMinCount) {
-        // We do not export hourly too few tweets for index fields as it can 10x the existing
-        // exported stats.
-        // We might consider whitelisting some high frequency fields later.
-        if (isFieldForTweet()) {
-          String statsName = getStatName(hourlyCount.getKey());
-          SearchLongGauge stat = SearchLongGauge.export(statsName);
-          stat.set(exportedCountValue.longValue());
-          exportedStats.put(statsName, stat);
+      AtomicIntelongelonr elonxportelondCountValuelon = hourlyCount.gelontValuelon();
+      if (elonxportelondCountValuelon.gelont() <= hourlyMinCount) {
+        // Welon do not elonxport hourly too felonw twelonelonts for indelonx fielonlds as it can 10x thelon elonxisting
+        // elonxportelond stats.
+        // Welon might considelonr whitelonlisting somelon high frelonquelonncy fielonlds latelonr.
+        if (isFielonldForTwelonelont()) {
+          String statsNamelon = gelontStatNamelon(hourlyCount.gelontKelony());
+          SelonarchLongGaugelon stat = SelonarchLongGaugelon.elonxport(statsNamelon);
+          stat.selont(elonxportelondCountValuelon.longValuelon());
+          elonxportelondStats.put(statsNamelon, stat);
         }
-        LOG.warn("Found an hour with too few tweets. Field: <{}> Hour: {} count: {}",
-            fieldName, hour, exportedCountValue);
-        hoursWithNoTweets++;
+        LOG.warn("Found an hour with too felonw twelonelonts. Fielonld: <{}> Hour: {} count: {}",
+            fielonldNamelon, hour, elonxportelondCountValuelon);
+        hoursWithNoTwelonelonts++;
       }
     }
 
-    for (Map.Entry<Integer, MutableLong> dailyCount : dailyCounts.entrySet()) {
-      if (dailyCount.getValue().longValue() <= dailyMinCount) {
-        LOG.warn("Found a day with too few tweets. Field: <{}> Day: {} count: {}",
-            fieldName, dailyCount.getKey(), dailyCount.getValue());
-        daysWithNoTweets++;
+    for (Map.elonntry<Intelongelonr, MutablelonLong> dailyCount : dailyCounts.elonntrySelont()) {
+      if (dailyCount.gelontValuelon().longValuelon() <= dailyMinCount) {
+        LOG.warn("Found a day with too felonw twelonelonts. Fielonld: <{}> Day: {} count: {}",
+            fielonldNamelon, dailyCount.gelontKelony(), dailyCount.gelontValuelon());
+        daysWithNoTwelonelonts++;
       }
     }
 
-    hoursWithNoTweetsStat.set(hoursWithNoTweets);
-    daysWithNoTweetsStat.set(daysWithNoTweets);
+    hoursWithNoTwelonelontsStat.selont(hoursWithNoTwelonelonts);
+    daysWithNoTwelonelontsStat.selont(daysWithNoTwelonelonts);
   }
 
-  // When the fieldName is empty string (as TWEET_COUNT_KEY), it means that we are counting the
-  // number of tweets for the index, not for some specific fields.
-  private boolean isFieldForTweet() {
-    return TWEET_COUNT_KEY.equals(fieldName);
+  // Whelonn thelon fielonldNamelon is elonmpty string (as TWelonelonT_COUNT_KelonY), it melonans that welon arelon counting thelon
+  // numbelonr of twelonelonts for thelon indelonx, not for somelon speloncific fielonlds.
+  privatelon boolelonan isFielonldForTwelonelont() {
+    relonturn TWelonelonT_COUNT_KelonY.elonquals(fielonldNamelon);
   }
 
-  private String getAggregatedNoTweetStatName(boolean hourly) {
-    if (isFieldForTweet()) {
+  privatelon String gelontAggrelongatelondNoTwelonelontStatNamelon(boolelonan hourly) {
+    if (isFielonldForTwelonelont()) {
       if (hourly) {
-        return "hours_with_no_indexed_tweets_v_" + instanceCounter;
-      } else {
-        return "days_with_no_indexed_tweets_v_" + instanceCounter;
+        relonturn "hours_with_no_indelonxelond_twelonelonts_v_" + instancelonCountelonr;
+      } elonlselon {
+        relonturn "days_with_no_indelonxelond_twelonelonts_v_" + instancelonCountelonr;
       }
-    } else {
+    } elonlselon {
       if (hourly) {
-        return "hours_with_no_indexed_fields_v_" + fieldName + "_" + instanceCounter;
-      } else {
-        return "days_with_no_indexed_fields_v_" + fieldName + "_" + instanceCounter;
+        relonturn "hours_with_no_indelonxelond_fielonlds_v_" + fielonldNamelon + "_" + instancelonCountelonr;
+      } elonlselon {
+        relonturn "days_with_no_indelonxelond_fielonlds_v_" + fielonldNamelon + "_" + instancelonCountelonr;
       }
     }
   }
 
-  @VisibleForTesting
-  String getStatName(Integer date) {
-    return getStatName(fieldName, instanceCounter, date);
+  @VisiblelonForTelonsting
+  String gelontStatNamelon(Intelongelonr datelon) {
+    relonturn gelontStatNamelon(fielonldNamelon, instancelonCountelonr, datelon);
   }
 
-  @VisibleForTesting
-  static String getStatName(String field, int instance, Integer date) {
-    if (TWEET_COUNT_KEY.equals(field)) {
-      return "tweets_indexed_on_hour_v_" + instance + "_" + date;
-    } else {
-      return "tweets_indexed_on_hour_v_" + instance + "_" + field + "_" + date;
+  @VisiblelonForTelonsting
+  static String gelontStatNamelon(String fielonld, int instancelon, Intelongelonr datelon) {
+    if (TWelonelonT_COUNT_KelonY.elonquals(fielonld)) {
+      relonturn "twelonelonts_indelonxelond_on_hour_v_" + instancelon + "_" + datelon;
+    } elonlselon {
+      relonturn "twelonelonts_indelonxelond_on_hour_v_" + instancelon + "_" + fielonld + "_" + datelon;
     }
   }
 
-  @VisibleForTesting
-  Map<Integer, AtomicInteger> getExportedCounts() {
-    return Collections.unmodifiableMap(exportedHourlyCounts);
+  @VisiblelonForTelonsting
+  Map<Intelongelonr, AtomicIntelongelonr> gelontelonxportelondCounts() {
+    relonturn Collelonctions.unmodifiablelonMap(elonxportelondHourlyCounts);
   }
 
-  @VisibleForTesting
-  Map<Integer, MutableLong> getDailyCounts() {
-    return Collections.unmodifiableMap(dailyCounts);
+  @VisiblelonForTelonsting
+  Map<Intelongelonr, MutablelonLong> gelontDailyCounts() {
+    relonturn Collelonctions.unmodifiablelonMap(dailyCounts);
   }
 
-  @VisibleForTesting
-  long getHoursWithNoTweets() {
-    return hoursWithNoTweetsStat.get();
+  @VisiblelonForTelonsting
+  long gelontHoursWithNoTwelonelonts() {
+    relonturn hoursWithNoTwelonelontsStat.gelont();
   }
 
-  @VisibleForTesting
-  long getDaysWithNoTweets() {
-    return daysWithNoTweetsStat.get();
+  @VisiblelonForTelonsting
+  long gelontDaysWithNoTwelonelonts() {
+    relonturn daysWithNoTwelonelontsStat.gelont();
   }
 
-  @VisibleForTesting
-  Map<String, SearchLongGauge> getExportedHourlyCountStats() {
-    return exportedStats;
+  @VisiblelonForTelonsting
+  Map<String, SelonarchLongGaugelon> gelontelonxportelondHourlyCountStats() {
+    relonturn elonxportelondStats;
   }
 
   /**
-   * Given a unit time in seconds since epoch UTC, will return the day in format "YYYYMMDDHH"
+   * Givelonn a unit timelon in selonconds sincelon elonpoch UTC, will relonturn thelon day in format "YYYYMMDDHH"
    * as an int.
    */
-  @VisibleForTesting
-  static int getHourValue(Calendar cal, int timeSecs) {
-    cal.setTimeInMillis(timeSecs * 1000L);
-    return getHourValue(cal);
+  @VisiblelonForTelonsting
+  static int gelontHourValuelon(Calelonndar cal, int timelonSeloncs) {
+    cal.selontTimelonInMillis(timelonSeloncs * 1000L);
+    relonturn gelontHourValuelon(cal);
   }
 
-  static int getHourValue(Calendar cal) {
-    int year = cal.get(Calendar.YEAR) * 1000000;
-    int month = (cal.get(Calendar.MONTH) + 1) * 10000; // month is 0-based
-    int day = cal.get(Calendar.DAY_OF_MONTH) * 100;
-    int hour = cal.get(Calendar.HOUR_OF_DAY);
-    return year + month + day + hour;
+  static int gelontHourValuelon(Calelonndar cal) {
+    int yelonar = cal.gelont(Calelonndar.YelonAR) * 1000000;
+    int month = (cal.gelont(Calelonndar.MONTH) + 1) * 10000; // month is 0-baselond
+    int day = cal.gelont(Calelonndar.DAY_OF_MONTH) * 100;
+    int hour = cal.gelont(Calelonndar.HOUR_OF_DAY);
+    relonturn yelonar + month + day + hour;
   }
 
-  @VisibleForTesting
-  static Calendar getCalendarValue(int hour) {
-    Calendar cal = Calendar.getInstance(TIME_ZONE);
+  @VisiblelonForTelonsting
+  static Calelonndar gelontCalelonndarValuelon(int hour) {
+    Calelonndar cal = Calelonndar.gelontInstancelon(TIMelon_ZONelon);
 
-    int year = hour / 1000000;
-    int month = ((hour / 10000) % 100) - 1; // 0-based
+    int yelonar = hour / 1000000;
+    int month = ((hour / 10000) % 100) - 1; // 0-baselond
     int day = (hour / 100) % 100;
     int hr = hour % 100;
-    cal.setTimeInMillis(0);  // reset all time fields
-    cal.set(year, month, day, hr, 0);
-    return cal;
+    cal.selontTimelonInMillis(0);  // relonselont all timelon fielonlds
+    cal.selont(yelonar, month, day, hr, 0);
+    relonturn cal;
   }
 }

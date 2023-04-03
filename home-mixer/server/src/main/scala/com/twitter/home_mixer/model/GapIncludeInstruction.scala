@@ -1,63 +1,63 @@
-package com.twitter.home_mixer.model
+packagelon com.twittelonr.homelon_mixelonr.modelonl
 
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdBottomTweetFeature
-import com.twitter.home_mixer.functional_component.candidate_source.EarlybirdResponseTruncatedFeature
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.IncludeInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineModule
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.GapCursor
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.TopCursor
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.candidatelon_sourcelon.elonarlybirdBottomTwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.functional_componelonnt.candidatelon_sourcelon.elonarlybirdRelonsponselonTruncatelondFelonaturelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.IncludelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonModulelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.GapCursor
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.TopCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Determine whether to include a Gap Cursor in the response based on whether a timeline
- * is truncated because it has more entries than the max response size.
- * There are two ways this can happen:
- *  1) There are unused entries in Earlybird. This is determined by a flag returned from Earlybird.
- *     We respect the Earlybird flag only if there are some entries after deduping and filtering
- *     to ensure that we do not get stuck repeatedly serving gaps which lead to no tweets.
- *  2) Ads injection can take the response size over the max count. Goldfinch truncates tweet
- *     entries in this case. We can check if the bottom tweet from Earlybird is in the response to
- *     determine if all Earlybird tweets have been used.
+ * Delontelonrminelon whelonthelonr to includelon a Gap Cursor in thelon relonsponselon baselond on whelonthelonr a timelonlinelon
+ * is truncatelond beloncauselon it has morelon elonntrielons than thelon max relonsponselon sizelon.
+ * Thelonrelon arelon two ways this can happelonn:
+ *  1) Thelonrelon arelon unuselond elonntrielons in elonarlybird. This is delontelonrminelond by a flag relonturnelond from elonarlybird.
+ *     Welon relonspelonct thelon elonarlybird flag only if thelonrelon arelon somelon elonntrielons aftelonr delonduping and filtelonring
+ *     to elonnsurelon that welon do not gelont stuck relonpelonatelondly selonrving gaps which lelonad to no twelonelonts.
+ *  2) Ads injelonction can takelon thelon relonsponselon sizelon ovelonr thelon max count. Goldfinch truncatelons twelonelont
+ *     elonntrielons in this caselon. Welon can chelonck if thelon bottom twelonelont from elonarlybird is in thelon relonsponselon to
+ *     delontelonrminelon if all elonarlybird twelonelonts havelon belonelonn uselond.
  *
- * While scrolling down to get older tweets (BottomCursor), responses will generally be
- * truncated, but we don't want to render a gap cursor there, so we need to ensure we only
- * apply the truncation check to newer (TopCursor) or middle (GapCursor) requests.
+ * Whilelon scrolling down to gelont oldelonr twelonelonts (BottomCursor), relonsponselons will gelonnelonrally belon
+ * truncatelond, but welon don't want to relonndelonr a gap cursor thelonrelon, so welon nelonelond to elonnsurelon welon only
+ * apply thelon truncation chelonck to nelonwelonr (TopCursor) or middlelon (GapCursor) relonquelonsts.
  *
- * We return either a Gap Cursor or a Bottom Cursor, but not both, so the include instruction
- * for Bottom should be the inverse of Gap.
+ * Welon relonturn elonithelonr a Gap Cursor or a Bottom Cursor, but not both, so thelon includelon instruction
+ * for Bottom should belon thelon invelonrselon of Gap.
  */
-object GapIncludeInstruction
-    extends IncludeInstruction[PipelineQuery with HasPipelineCursor[UrtOrderedCursor]] {
+objelonct GapIncludelonInstruction
+    elonxtelonnds IncludelonInstruction[PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtOrdelonrelondCursor]] {
 
-  override def apply(
-    query: PipelineQuery with HasPipelineCursor[UrtOrderedCursor],
-    entries: Seq[TimelineEntry]
-  ): Boolean = {
-    val wasTruncated = query.features.exists(_.getOrElse(EarlybirdResponseTruncatedFeature, false))
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry with HasPipelonlinelonCursor[UrtOrdelonrelondCursor],
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Boolelonan = {
+    val wasTruncatelond = quelonry.felonaturelons.elonxists(_.gelontOrelonlselon(elonarlybirdRelonsponselonTruncatelondFelonaturelon, falselon))
 
-    // Get oldest tweet or tweets within oldest conversation module
-    val tweetEntries = entries.view.reverse
-      .collectFirst {
-        case item: TweetItem if item.promotedMetadata.isEmpty => Seq(item.id.toString)
-        case module: TimelineModule if module.items.head.item.isInstanceOf[TweetItem] =>
-          module.items.map(_.item.id.toString)
-      }.toSeq.flatten
+    // Gelont oldelonst twelonelont or twelonelonts within oldelonst convelonrsation modulelon
+    val twelonelontelonntrielons = elonntrielons.vielonw.relonvelonrselon
+      .collelonctFirst {
+        caselon itelonm: TwelonelontItelonm if itelonm.promotelondMelontadata.iselonmpty => Selonq(itelonm.id.toString)
+        caselon modulelon: TimelonlinelonModulelon if modulelon.itelonms.helonad.itelonm.isInstancelonOf[TwelonelontItelonm] =>
+          modulelon.itelonms.map(_.itelonm.id.toString)
+      }.toSelonq.flattelonn
 
     val bottomCursor =
-      query.features.flatMap(_.getOrElse(EarlybirdBottomTweetFeature, None)).map(_.toString)
+      quelonry.felonaturelons.flatMap(_.gelontOrelonlselon(elonarlybirdBottomTwelonelontFelonaturelon, Nonelon)).map(_.toString)
 
-    // Ads truncation happened if we have at least max count entries and bottom tweet is missing
-    val adsTruncation = query.requestedMaxResults.exists(_ <= entries.size) &&
-      !bottomCursor.exists(tweetEntries.contains)
+    // Ads truncation happelonnelond if welon havelon at lelonast max count elonntrielons and bottom twelonelont is missing
+    val adsTruncation = quelonry.relonquelonstelondMaxRelonsults.elonxists(_ <= elonntrielons.sizelon) &&
+      !bottomCursor.elonxists(twelonelontelonntrielons.contains)
 
-    query.pipelineCursor.exists(_.cursorType match {
-      case Some(TopCursor) | Some(GapCursor) =>
-        (wasTruncated && tweetEntries.nonEmpty) || adsTruncation
-      case _ => false
+    quelonry.pipelonlinelonCursor.elonxists(_.cursorTypelon match {
+      caselon Somelon(TopCursor) | Somelon(GapCursor) =>
+        (wasTruncatelond && twelonelontelonntrielons.nonelonmpty) || adsTruncation
+      caselon _ => falselon
     })
   }
 }

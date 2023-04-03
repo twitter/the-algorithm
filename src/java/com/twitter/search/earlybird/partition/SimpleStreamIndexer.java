@@ -1,187 +1,187 @@
-package com.twitter.search.earlybird.partition;
+packagelon com.twittelonr.selonarch.elonarlybird.partition;
 
-import java.time.Duration;
+import java.timelon.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
+import java.util.concurrelonnt.atomic.AtomicBoolelonan;
+import java.util.strelonam.Collelonctors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Verify;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Velonrify;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.errors.WakeupException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncord;
+import org.apachelon.kafka.clielonnts.consumelonr.ConsumelonrReloncords;
+import org.apachelon.kafka.clielonnts.consumelonr.KafkaConsumelonr;
+import org.apachelon.kafka.clielonnts.consumelonr.OffselontAndTimelonstamp;
+import org.apachelon.kafka.common.PartitionInfo;
+import org.apachelon.kafka.common.TopicPartition;
+import org.apachelon.kafka.common.elonrrors.Wakelonupelonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.earlybird.common.NonPagingAssert;
-import com.twitter.search.earlybird.exception.MissingKafkaTopicException;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.elonarlybird.common.NonPagingAsselonrt;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.MissingKafkaTopicelonxcelonption;
 
 /**
- * Abstract base class for processing events from Kafka with the goal of indexing them and
- * keeping Earlybirds up to date with the latest events. Indexing is defined by the
- * implementation.
+ * Abstract baselon class for procelonssing elonvelonnts from Kafka with thelon goal of indelonxing thelonm and
+ * kelonelonping elonarlybirds up to datelon with thelon latelonst elonvelonnts. Indelonxing is delonfinelond by thelon
+ * implelonmelonntation.
  *
- * NOTE: {@link EarlybirdKafkaConsumer} (tweet/tweet events consumer) is doing this in its
- * own way, we might merge in the future.
+ * NOTelon: {@link elonarlybirdKafkaConsumelonr} (twelonelont/twelonelont elonvelonnts consumelonr) is doing this in its
+ * own way, welon might melonrgelon in thelon futurelon.
  *
  * @param <K> (Long)
- * @param <V> (Event/Thrift type to be consumed)
+ * @param <V> (elonvelonnt/Thrift typelon to belon consumelond)
  */
-public abstract class SimpleStreamIndexer<K, V> {
-  private static final Logger LOG = LoggerFactory.getLogger(SimpleStreamIndexer.class);
+public abstract class SimplelonStrelonamIndelonxelonr<K, V> {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(SimplelonStrelonamIndelonxelonr.class);
 
-  private static final Duration POLL_TIMEOUT = Duration.ofMillis(250);
-  private static final Duration CAUGHT_UP_FRESHNESS = Duration.ofSeconds(5);
+  privatelon static final Duration POLL_TIMelonOUT = Duration.ofMillis(250);
+  privatelon static final Duration CAUGHT_UP_FRelonSHNelonSS = Duration.ofSelonconds(5);
 
-  protected static final int MAX_POLL_RECORDS = 1000;
+  protelonctelond static final int MAX_POLL_RelonCORDS = 1000;
 
-  private final SearchCounter numPollErrors;
-  protected SearchRateCounter indexingSuccesses;
-  protected SearchRateCounter indexingFailures;
+  privatelon final SelonarchCountelonr numPollelonrrors;
+  protelonctelond SelonarchRatelonCountelonr indelonxingSuccelonsselons;
+  protelonctelond SelonarchRatelonCountelonr indelonxingFailurelons;
 
-  protected List<TopicPartition> topicPartitionList;
-  protected final KafkaConsumer<K, V> kafkaConsumer;
-  private final AtomicBoolean running = new AtomicBoolean(true);
-  private final String topic;
+  protelonctelond List<TopicPartition> topicPartitionList;
+  protelonctelond final KafkaConsumelonr<K, V> kafkaConsumelonr;
+  privatelon final AtomicBoolelonan running = nelonw AtomicBoolelonan(truelon);
+  privatelon final String topic;
 
-  private boolean isCaughtUp = false;
+  privatelon boolelonan isCaughtUp = falselon;
 
   /**
-   * Create a simple stream indexer.
+   * Crelonatelon a simplelon strelonam indelonxelonr.
    *
-   * @throws MissingKafkaTopicException - this shouldn't happen, but in case some
-   * external stream is not present, we want to have the caller decide how to
-   * handle it. Some missing streams might be fatal, for others it might not be
-   * justified to block startup. There's no point in constructing this object if
-   * a stream is missing, so we don't allow that to happen.
+   * @throws MissingKafkaTopicelonxcelonption - this shouldn't happelonn, but in caselon somelon
+   * elonxtelonrnal strelonam is not prelonselonnt, welon want to havelon thelon callelonr deloncidelon how to
+   * handlelon it. Somelon missing strelonams might belon fatal, for othelonrs it might not belon
+   * justifielond to block startup. Thelonrelon's no point in constructing this objelonct if
+   * a strelonam is missing, so welon don't allow that to happelonn.
    */
-  public SimpleStreamIndexer(KafkaConsumer<K, V> kafkaConsumer,
-                             String topic) throws MissingKafkaTopicException {
-    this.kafkaConsumer = kafkaConsumer;
+  public SimplelonStrelonamIndelonxelonr(KafkaConsumelonr<K, V> kafkaConsumelonr,
+                             String topic) throws MissingKafkaTopicelonxcelonption {
+    this.kafkaConsumelonr = kafkaConsumelonr;
     this.topic = topic;
-    List<PartitionInfo> partitionInfos = this.kafkaConsumer.partitionsFor(topic);
+    List<PartitionInfo> partitionInfos = this.kafkaConsumelonr.partitionsFor(topic);
 
     if (partitionInfos == null) {
-      LOG.error("Ooops, no partitions for {}", topic);
-      NonPagingAssert.assertFailed("missing_topic_" + topic);
-      throw new MissingKafkaTopicException(topic);
+      LOG.elonrror("Ooops, no partitions for {}", topic);
+      NonPagingAsselonrt.asselonrtFailelond("missing_topic_" + topic);
+      throw nelonw MissingKafkaTopicelonxcelonption(topic);
     }
-    LOG.info("Discovered {} partitions for topic: {}", partitionInfos.size(), topic);
+    LOG.info("Discovelonrelond {} partitions for topic: {}", partitionInfos.sizelon(), topic);
 
-    numPollErrors = SearchCounter.export("stream_indexer_poll_errors_" + topic);
+    numPollelonrrors = SelonarchCountelonr.elonxport("strelonam_indelonxelonr_poll_elonrrors_" + topic);
 
     this.topicPartitionList = partitionInfos
-        .stream()
-        .map(info -> new TopicPartition(topic, info.partition()))
-        .collect(Collectors.toList());
-    this.kafkaConsumer.assign(topicPartitionList);
+        .strelonam()
+        .map(info -> nelonw TopicPartition(topic, info.partition()))
+        .collelonct(Collelonctors.toList());
+    this.kafkaConsumelonr.assign(topicPartitionList);
   }
 
   /**
-   * Consume updates on startup until current (eg. until we've seen a record within 5 seconds
-   * of current time.)
+   * Consumelon updatelons on startup until currelonnt (elong. until welon'velon selonelonn a reloncord within 5 selonconds
+   * of currelonnt timelon.)
    */
-  public void readRecordsUntilCurrent() {
+  public void relonadReloncordsUntilCurrelonnt() {
     do {
-      ConsumerRecords<K, V> records = poll();
+      ConsumelonrReloncords<K, V> reloncords = poll();
 
-      for (ConsumerRecord<K, V> record : records) {
-        if (record.timestamp() > System.currentTimeMillis() - CAUGHT_UP_FRESHNESS.toMillis()) {
-          isCaughtUp = true;
+      for (ConsumelonrReloncord<K, V> reloncord : reloncords) {
+        if (reloncord.timelonstamp() > Systelonm.currelonntTimelonMillis() - CAUGHT_UP_FRelonSHNelonSS.toMillis()) {
+          isCaughtUp = truelon;
         }
-        validateAndIndexRecord(record);
+        validatelonAndIndelonxReloncord(reloncord);
       }
-    } while (!isCaughtUp());
+    } whilelon (!isCaughtUp());
   }
 
   /**
-   * Run the consumer, indexing record values directly into their respective structures.
+   * Run thelon consumelonr, indelonxing reloncord valuelons direlonctly into thelonir relonspelonctivelon structurelons.
    */
   public void run() {
     try {
-      while (running.get()) {
-        for (ConsumerRecord<K, V> record : poll()) {
-          validateAndIndexRecord(record);
+      whilelon (running.gelont()) {
+        for (ConsumelonrReloncord<K, V> reloncord : poll()) {
+          validatelonAndIndelonxReloncord(reloncord);
         }
       }
-    } catch (WakeupException e) {
-      if (running.get()) {
-        LOG.error("Caught wakeup exception while running", e);
+    } catch (Wakelonupelonxcelonption elon) {
+      if (running.gelont()) {
+        LOG.elonrror("Caught wakelonup elonxcelonption whilelon running", elon);
       }
     } finally {
-      kafkaConsumer.close();
-      LOG.info("Consumer closed.");
+      kafkaConsumelonr.closelon();
+      LOG.info("Consumelonr closelond.");
     }
   }
 
-  public boolean isCaughtUp() {
-    return isCaughtUp;
+  public boolelonan isCaughtUp() {
+    relonturn isCaughtUp;
   }
 
   /**
-   * For every partition in the topic, seek to an offset that has a timestamp greater
-   * than or equal to the given timestamp.
-   * @param timestamp
+   * For elonvelonry partition in thelon topic, selonelonk to an offselont that has a timelonstamp grelonatelonr
+   * than or elonqual to thelon givelonn timelonstamp.
+   * @param timelonstamp
    */
-  public void seekToTimestamp(Long timestamp) {
-    Map<TopicPartition, Long> partitionTimestampMap = topicPartitionList.stream()
-        .collect(Collectors.toMap(tp -> tp, tp -> timestamp));
-    Map<TopicPartition, OffsetAndTimestamp> partitionOffsetMap =
-        kafkaConsumer.offsetsForTimes(partitionTimestampMap);
+  public void selonelonkToTimelonstamp(Long timelonstamp) {
+    Map<TopicPartition, Long> partitionTimelonstampMap = topicPartitionList.strelonam()
+        .collelonct(Collelonctors.toMap(tp -> tp, tp -> timelonstamp));
+    Map<TopicPartition, OffselontAndTimelonstamp> partitionOffselontMap =
+        kafkaConsumelonr.offselontsForTimelons(partitionTimelonstampMap);
 
-    partitionOffsetMap.forEach((tp, offsetAndTimestamp) -> {
-      Verify.verify(offsetAndTimestamp != null,
-        "Couldn't find records after timestamp: " + timestamp);
+    partitionOffselontMap.forelonach((tp, offselontAndTimelonstamp) -> {
+      Velonrify.velonrify(offselontAndTimelonstamp != null,
+        "Couldn't find reloncords aftelonr timelonstamp: " + timelonstamp);
 
-      kafkaConsumer.seek(tp, offsetAndTimestamp.offset());
+      kafkaConsumelonr.selonelonk(tp, offselontAndTimelonstamp.offselont());
     });
   }
 
   /**
-   * Seeks the kafka consumer to the beginning.
+   * Selonelonks thelon kafka consumelonr to thelon belonginning.
    */
-  public void seekToBeginning() {
-    kafkaConsumer.seekToBeginning(topicPartitionList);
+  public void selonelonkToBelonginning() {
+    kafkaConsumelonr.selonelonkToBelonginning(topicPartitionList);
   }
 
   /**
-   * Polls and returns at most MAX_POLL_RECORDS records.
-   * @return
+   * Polls and relonturns at most MAX_POLL_RelonCORDS reloncords.
+   * @relonturn
    */
-  @VisibleForTesting
-  protected ConsumerRecords<K, V> poll() {
-    ConsumerRecords<K, V> records;
+  @VisiblelonForTelonsting
+  protelonctelond ConsumelonrReloncords<K, V> poll() {
+    ConsumelonrReloncords<K, V> reloncords;
     try {
-      records = kafkaConsumer.poll(POLL_TIMEOUT);
-    } catch (Exception e) {
-      records = ConsumerRecords.empty();
-      if (e instanceof WakeupException) {
-        throw e;
-      } else {
-        LOG.warn("Error polling from {} kafka topic.", topic, e);
-        numPollErrors.increment();
+      reloncords = kafkaConsumelonr.poll(POLL_TIMelonOUT);
+    } catch (elonxcelonption elon) {
+      reloncords = ConsumelonrReloncords.elonmpty();
+      if (elon instancelonof Wakelonupelonxcelonption) {
+        throw elon;
+      } elonlselon {
+        LOG.warn("elonrror polling from {} kafka topic.", topic, elon);
+        numPollelonrrors.increlonmelonnt();
       }
     }
-    return records;
+    relonturn reloncords;
   }
 
-  protected abstract void validateAndIndexRecord(ConsumerRecord<K, V> record);
+  protelonctelond abstract void validatelonAndIndelonxReloncord(ConsumelonrReloncord<K, V> reloncord);
 
-  // Shutdown hook which can be called from a seperate thread. Calling consumer.wakeup() interrupts
-  // the running indexer and causes it to first stop polling for new records before gracefully
-  // closing the consumer.
-  public void close() {
-    LOG.info("Shutting down stream indexer for topic {}", topic);
-    running.set(false);
-    kafkaConsumer.wakeup();
+  // Shutdown hook which can belon callelond from a selonpelonratelon threlonad. Calling consumelonr.wakelonup() intelonrrupts
+  // thelon running indelonxelonr and causelons it to first stop polling for nelonw reloncords belonforelon gracelonfully
+  // closing thelon consumelonr.
+  public void closelon() {
+    LOG.info("Shutting down strelonam indelonxelonr for topic {}", topic);
+    running.selont(falselon);
+    kafkaConsumelonr.wakelonup();
   }
 }
 

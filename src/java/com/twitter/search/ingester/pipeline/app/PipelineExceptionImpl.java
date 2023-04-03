@@ -1,30 +1,30 @@
-package com.twitter.search.ingester.pipeline.app;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.app;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.ingester.pipeline.util.PipelineExceptionHandler;
-import com.twitter.util.Duration;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonelonxcelonptionHandlelonr;
+import com.twittelonr.util.Duration;
 
-public class PipelineExceptionImpl implements PipelineExceptionHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(PipelineExceptionImpl.class);
+public class PipelonlinelonelonxcelonptionImpl implelonmelonnts PipelonlinelonelonxcelonptionHandlelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(PipelonlinelonelonxcelonptionImpl.class);
 
-  private final IngesterPipelineApplication app;
+  privatelon final IngelonstelonrPipelonlinelonApplication app;
 
-  public PipelineExceptionImpl(IngesterPipelineApplication app) {
+  public PipelonlinelonelonxcelonptionImpl(IngelonstelonrPipelonlinelonApplication app) {
     this.app = app;
   }
 
-  @Override
-  public void logAndWait(String msg, Duration waitTime) throws InterruptedException {
+  @Ovelonrridelon
+  public void logAndWait(String msg, Duration waitTimelon) throws Intelonrruptelondelonxcelonption {
     LOG.info(msg);
-    long waitTimeInMilliSecond = waitTime.inMilliseconds();
-    Thread.sleep(waitTimeInMilliSecond);
+    long waitTimelonInMilliSeloncond = waitTimelon.inMilliselonconds();
+    Threlonad.slelonelonp(waitTimelonInMilliSeloncond);
   }
 
-  @Override
+  @Ovelonrridelon
   public void logAndShutdown(String msg) {
-    LOG.error(msg);
+    LOG.elonrror(msg);
     app.shutdown();
   }
 }

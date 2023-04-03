@@ -1,147 +1,147 @@
-package com.twitter.simclusters_v2.scalding.tweet_similarity
+packagelon com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity
 
-import com.twitter.ads.dataservice_account.snapshot.jobs.DbSnapshotsPromotedTweetsScalaDataset
-import com.twitter.conversions.DurationOps._
-import com.twitter.dal.client.dataset.TimePartitionedDALDataset
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcrevAtla
-import com.twitter.scalding_internal.job.TwitterExecutionApp
-import com.twitter.simclusters_v2.scalding.tweet_similarity.TweetPairLabelCollectionUtil.MaxFavPerUser
-import com.twitter.simclusters_v2.thriftscala.LabelledTweetPairs
-import com.twitter.simclusters_v2.thriftscala.{FeaturedTweet => FeaturedTweetThrift}
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.ads.dataselonrvicelon_account.snapshot.jobs.DbSnapshotsPromotelondTwelonelontsScalaDataselont
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.dal.clielonnt.dataselont.TimelonPartitionelondDALDataselont
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.ProcrelonvAtla
+import com.twittelonr.scalding_intelonrnal.job.TwittelonrelonxeloncutionApp
+import com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.TwelonelontPairLabelonlCollelonctionUtil.MaxFavPelonrUselonr
+import com.twittelonr.simclustelonrs_v2.thriftscala.LabelonllelondTwelonelontPairs
+import com.twittelonr.simclustelonrs_v2.thriftscala.{FelonaturelondTwelonelont => FelonaturelondTwelonelontThrift}
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * Collect unhydrated training pairs for supervised tweet similarity.
- * Here're the steps for this job
- * 1) Consider non-promoted tweets that are created within the given #lookback days
- * 2) From the tweets in 1), get co-engaged pairs
- * 3) Take all tweets shown in 2), and get co-impressed pairs. Note that we take all tweets (not tweet pairs) in 2).
- *    That is, a co-impressed pairs (t1,t2) will be considered iff t1 appears in 2) and t2 appears in 2).
- *    But (t1, t2) doesn't need to appear as a pair in 2).
- * 4) Compute labels from co-engaged pairs and co-impressed pairs.
- *    A pair is true if its user has co-engaged the pair, and is false if otherwise.
+ * Collelonct unhydratelond training pairs for supelonrviselond twelonelont similarity.
+ * Helonrelon'relon thelon stelonps for this job
+ * 1) Considelonr non-promotelond twelonelonts that arelon crelonatelond within thelon givelonn #lookback days
+ * 2) From thelon twelonelonts in 1), gelont co-elonngagelond pairs
+ * 3) Takelon all twelonelonts shown in 2), and gelont co-imprelonsselond pairs. Notelon that welon takelon all twelonelonts (not twelonelont pairs) in 2).
+ *    That is, a co-imprelonsselond pairs (t1,t2) will belon considelonrelond iff t1 appelonars in 2) and t2 appelonars in 2).
+ *    But (t1, t2) doelonsn't nelonelond to appelonar as a pair in 2).
+ * 4) Computelon labelonls from co-elonngagelond pairs and co-imprelonsselond pairs.
+ *    A pair is truelon if its uselonr has co-elonngagelond thelon pair, and is falselon if othelonrwiselon.
  */
-object UnhydratedPairsCollectionJob {
-  //tweets have to be created within dateRange - lookbackdays in order to be considered
+objelonct UnhydratelondPairsCollelonctionJob {
+  //twelonelonts havelon to belon crelonatelond within datelonRangelon - lookbackdays in ordelonr to belon considelonrelond
   val LookbackDays = 2
 
-  def getLabelledPairs(
-    dateRange: DateRange,
-    timeframe: Long,
-    maxSamplesPerClass: Int,
-    dalDataset: TimePartitionedDALDataset[LabelledTweetPairs],
+  delonf gelontLabelonllelondPairs(
+    datelonRangelon: DatelonRangelon,
+    timelonframelon: Long,
+    maxSamplelonsPelonrClass: Int,
+    dalDataselont: TimelonPartitionelondDALDataselont[LabelonllelondTwelonelontPairs],
     outputPath: String
   )(
-    implicit timeZone: TimeZone
-  ): Execution[Unit] = {
+    implicit timelonZonelon: TimelonZonelon
+  ): elonxeloncution[Unit] = {
 
-    val promotedTweets = DAL
-      .readMostRecentSnapshot(DbSnapshotsPromotedTweetsScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcrevAtla))
-      .toTypedPipe
+    val promotelondTwelonelonts = DAL
+      .relonadMostReloncelonntSnapshot(DbSnapshotsPromotelondTwelonelontsScalaDataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcrelonvAtla))
+      .toTypelondPipelon
 
-    val tweetAuthorPairs =
-      TweetPairLabelCollectionUtil.getTweetAuthorPairs(dateRange.prepend(Days(LookbackDays)))
+    val twelonelontAuthorPairs =
+      TwelonelontPairLabelonlCollelonctionUtil.gelontTwelonelontAuthorPairs(datelonRangelon.prelonpelonnd(Days(LookbackDays)))
 
-    val tweets =
-      TweetPairLabelCollectionUtil.getNonPromotedTweets(promotedTweets, tweetAuthorPairs.keys)
+    val twelonelonts =
+      TwelonelontPairLabelonlCollelonctionUtil.gelontNonPromotelondTwelonelonts(promotelondTwelonelonts, twelonelontAuthorPairs.kelonys)
 
-    val coengagedPairs = TweetPairLabelCollectionUtil.getCoengagedPairs(
-      TweetPairLabelCollectionUtil.getFavEvents(dateRange, MaxFavPerUser),
-      tweets,
-      timeframe)
+    val coelonngagelondPairs = TwelonelontPairLabelonlCollelonctionUtil.gelontCoelonngagelondPairs(
+      TwelonelontPairLabelonlCollelonctionUtil.gelontFavelonvelonnts(datelonRangelon, MaxFavPelonrUselonr),
+      twelonelonts,
+      timelonframelon)
 
-    val engagedTweets = coengagedPairs.map {
-      // Consider only query tweet b/c coengagedPairs contains both (t1,t2) and (t2,t1)
-      case (_, queryFeaturedTweet, _, _) => queryFeaturedTweet.tweet
+    val elonngagelondTwelonelonts = coelonngagelondPairs.map {
+      // Considelonr only quelonry twelonelont b/c coelonngagelondPairs contains both (t1,t2) and (t2,t1)
+      caselon (_, quelonryFelonaturelondTwelonelont, _, _) => quelonryFelonaturelondTwelonelont.twelonelont
     }.distinct
 
-    val coimpressedPairs = TweetPairLabelCollectionUtil
-      .getCoimpressedPairs(
-        TweetPairLabelCollectionUtil.getImpressionEvents(dateRange),
-        engagedTweets,
-        timeframe)
+    val coimprelonsselondPairs = TwelonelontPairLabelonlCollelonctionUtil
+      .gelontCoimprelonsselondPairs(
+        TwelonelontPairLabelonlCollelonctionUtil.gelontImprelonssionelonvelonnts(datelonRangelon),
+        elonngagelondTwelonelonts,
+        timelonframelon)
 
-    val rawLabelledPairs =
-      TweetPairLabelCollectionUtil.computeLabelledTweetPairs(coengagedPairs, coimpressedPairs)
+    val rawLabelonllelondPairs =
+      TwelonelontPairLabelonlCollelonctionUtil.computelonLabelonllelondTwelonelontPairs(coelonngagelondPairs, coimprelonsselondPairs)
 
-    val labelledPairs =
-      if (maxSamplesPerClass > 0)
-        TweetPairLabelCollectionUtil.getQueryTweetBalancedClassPairs(
-          rawLabelledPairs,
-          maxSamplesPerClass)
-      else
-        rawLabelledPairs
+    val labelonllelondPairs =
+      if (maxSamplelonsPelonrClass > 0)
+        TwelonelontPairLabelonlCollelonctionUtil.gelontQuelonryTwelonelontBalancelondClassPairs(
+          rawLabelonllelondPairs,
+          maxSamplelonsPelonrClass)
+      elonlselon
+        rawLabelonllelondPairs
 
-    val perQueryStatsExec =
-      if (maxSamplesPerClass > 0) {
-        Execution
+    val pelonrQuelonryStatselonxelonc =
+      if (maxSamplelonsPelonrClass > 0) {
+        elonxeloncution
           .zip(
-            TweetPairLabelCollectionUtil
-              .getPerQueryStatsExec(rawLabelledPairs, s"$outputPath/per_query_stats", "raw"),
-            TweetPairLabelCollectionUtil
-              .getPerQueryStatsExec(labelledPairs, s"$outputPath/per_query_stats", "final")
+            TwelonelontPairLabelonlCollelonctionUtil
+              .gelontPelonrQuelonryStatselonxelonc(rawLabelonllelondPairs, s"$outputPath/pelonr_quelonry_stats", "raw"),
+            TwelonelontPairLabelonlCollelonctionUtil
+              .gelontPelonrQuelonryStatselonxelonc(labelonllelondPairs, s"$outputPath/pelonr_quelonry_stats", "final")
           ).unit
-      } else {
-        TweetPairLabelCollectionUtil.getPerQueryStatsExec(
-          labelledPairs,
-          s"$outputPath/per_query_stats",
+      } elonlselon {
+        TwelonelontPairLabelonlCollelonctionUtil.gelontPelonrQuelonryStatselonxelonc(
+          labelonllelondPairs,
+          s"$outputPath/pelonr_quelonry_stats",
           "final")
       }
 
-    Execution
+    elonxeloncution
       .zip(
-        labelledPairs
+        labelonllelondPairs
           .map {
-            case (queryFeaturedTweet, candidateFeaturedTweet, label) =>
-              LabelledTweetPairs(
-                FeaturedTweetThrift(
-                  tweetId = queryFeaturedTweet.tweet,
-                  timestamp = queryFeaturedTweet.timestamp),
-                FeaturedTweetThrift(
-                  tweetId = candidateFeaturedTweet.tweet,
-                  timestamp = candidateFeaturedTweet.timestamp),
-                label
+            caselon (quelonryFelonaturelondTwelonelont, candidatelonFelonaturelondTwelonelont, labelonl) =>
+              LabelonllelondTwelonelontPairs(
+                FelonaturelondTwelonelontThrift(
+                  twelonelontId = quelonryFelonaturelondTwelonelont.twelonelont,
+                  timelonstamp = quelonryFelonaturelondTwelonelont.timelonstamp),
+                FelonaturelondTwelonelontThrift(
+                  twelonelontId = candidatelonFelonaturelondTwelonelont.twelonelont,
+                  timelonstamp = candidatelonFelonaturelondTwelonelont.timelonstamp),
+                labelonl
               )
           }
-          .writeDALExecution(dalDataset, D.Daily, D.Suffix(outputPath), D.EBLzo())(dateRange),
-        perQueryStatsExec
+          .writelonDALelonxeloncution(dalDataselont, D.Daily, D.Suffix(outputPath), D.elonBLzo())(datelonRangelon),
+        pelonrQuelonryStatselonxelonc
       ).unit
   }
 }
 
 /** To run:
- * scalding remote run --target src/scala/com/twitter/simclusters_v2/scalding/tweet_similarity:unhydrated_pair_collection-adhoc \
-  --user cassowary \
-  --submitter hadoopnest2.atla.twitter.com \
-  --hadoop-properties "mapreduce.reduce.java.opts=-Xmx8000m mapreduce.reduce.memory.mb=8000 scalding.with.reducers.set.explicitly=true mapreduce.job.reduces=2000 mapreduce.task.timeout=0" \
-  --main-class com.twitter.simclusters_v2.scalding.tweet_similarity.UnhydratedPairsCollectionAdhocApp -- \
-  --date 2020-03-04 \
-  --output_path /user/cassowary/adhoc/unhydrated_pairs/2020-03-04_class_balanced \
-  --samples_per_query_tweet_class 2000
+ * scalding relonmotelon run --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/twelonelont_similarity:unhydratelond_pair_collelonction-adhoc \
+  --uselonr cassowary \
+  --submittelonr hadoopnelonst2.atla.twittelonr.com \
+  --hadoop-propelonrtielons "maprelonducelon.relonducelon.java.opts=-Xmx8000m maprelonducelon.relonducelon.melonmory.mb=8000 scalding.with.relonducelonrs.selont.elonxplicitly=truelon maprelonducelon.job.relonducelons=2000 maprelonducelon.task.timelonout=0" \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.twelonelont_similarity.UnhydratelondPairsCollelonctionAdhocApp -- \
+  --datelon 2020-03-04 \
+  --output_path /uselonr/cassowary/adhoc/unhydratelond_pairs/2020-03-04_class_balancelond \
+  --samplelons_pelonr_quelonry_twelonelont_class 2000
  * */
-object UnhydratedPairsCollectionAdhocApp extends TwitterExecutionApp {
-  implicit val timeZone: TimeZone = DateOps.UTC
-  implicit val dateParser: DateParser = DateParser.default
+objelonct UnhydratelondPairsCollelonctionAdhocApp elonxtelonnds TwittelonrelonxeloncutionApp {
+  implicit val timelonZonelon: TimelonZonelon = DatelonOps.UTC
+  implicit val datelonParselonr: DatelonParselonr = DatelonParselonr.delonfault
 
-  override def job: Execution[Unit] =
-    Execution.withId { implicit uniqueId =>
-      Execution.withArgs { args: Args =>
-        implicit val dateRange: DateRange = DateRange.parse(args.list("date"))
-        val maxSamplesPerClass: Int = args.int("samples_per_query_tweet_class", default = 2000)
-        val timeframe: Int = 30
-        val outputPath: String = s"${args("output_path")}_${timeframe}min"
+  ovelonrridelon delonf job: elonxeloncution[Unit] =
+    elonxeloncution.withId { implicit uniquelonId =>
+      elonxeloncution.withArgs { args: Args =>
+        implicit val datelonRangelon: DatelonRangelon = DatelonRangelon.parselon(args.list("datelon"))
+        val maxSamplelonsPelonrClass: Int = args.int("samplelons_pelonr_quelonry_twelonelont_class", delonfault = 2000)
+        val timelonframelon: Int = 30
+        val outputPath: String = s"${args("output_path")}_${timelonframelon}min"
 
-        UnhydratedPairsCollectionJob.getLabelledPairs(
-          dateRange,
-          timeframe.minute.inMilliseconds,
-          maxSamplesPerClass,
-          TweetSimilarityUnhydratedPairs30MinScalaDataset,
+        UnhydratelondPairsCollelonctionJob.gelontLabelonllelondPairs(
+          datelonRangelon,
+          timelonframelon.minutelon.inMilliselonconds,
+          maxSamplelonsPelonrClass,
+          TwelonelontSimilarityUnhydratelondPairs30MinScalaDataselont,
           outputPath
         )
       }
@@ -149,61 +149,61 @@ object UnhydratedPairsCollectionAdhocApp extends TwitterExecutionApp {
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-unhydrated_pair_collection_30min src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+unhydratelond_pair_collelonction_30min src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object UnhydratedPairsCollection30MinScheduledApp extends ScheduledExecutionApp {
+objelonct UnhydratelondPairsCollelonction30MinSchelondulelondApp elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  override def batchIncrement: Duration = Hours(24)
-  override def firstTime: RichDate = RichDate("2020-03-26")
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Hours(24)
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2020-03-26")
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxSamplesPerClass: Int = args.int("samples_per_query_tweet_class", default = 2000)
-    val timeframe: Int = 30
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val maxSamplelonsPelonrClass: Int = args.int("samplelons_pelonr_quelonry_twelonelont_class", delonfault = 2000)
+    val timelonframelon: Int = 30
     val outputPath: String =
-      s"/user/cassowary/processed/tweet_similarity/unhydrated_pairs_${timeframe}min"
+      s"/uselonr/cassowary/procelonsselond/twelonelont_similarity/unhydratelond_pairs_${timelonframelon}min"
 
-    UnhydratedPairsCollectionJob.getLabelledPairs(
-      dateRange,
-      timeframe.minute.inMilliseconds,
-      maxSamplesPerClass,
-      TweetSimilarityUnhydratedPairs30MinScalaDataset,
+    UnhydratelondPairsCollelonctionJob.gelontLabelonllelondPairs(
+      datelonRangelon,
+      timelonframelon.minutelon.inMilliselonconds,
+      maxSamplelonsPelonrClass,
+      TwelonelontSimilarityUnhydratelondPairs30MinScalaDataselont,
       outputPath)
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-unhydrated_pair_collection_120min src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+unhydratelond_pair_collelonction_120min src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object UnhydratedPairsCollection120MinScheduledApp extends ScheduledExecutionApp {
+objelonct UnhydratelondPairsCollelonction120MinSchelondulelondApp elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  override def batchIncrement: Duration = Hours(24)
-  override def firstTime: RichDate = RichDate("2020-03-26")
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Hours(24)
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2020-03-26")
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    val maxSamplesPerClass: Int = args.int("samples_per_query_tweet_class", default = 2000)
-    val timeframe: Int = 120
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    val maxSamplelonsPelonrClass: Int = args.int("samplelons_pelonr_quelonry_twelonelont_class", delonfault = 2000)
+    val timelonframelon: Int = 120
     val outputPath: String =
-      s"/user/cassowary/processed/tweet_similarity/unhydrated_pairs_${timeframe}min"
+      s"/uselonr/cassowary/procelonsselond/twelonelont_similarity/unhydratelond_pairs_${timelonframelon}min"
 
-    UnhydratedPairsCollectionJob.getLabelledPairs(
-      dateRange,
-      timeframe.minute.inMilliseconds,
-      maxSamplesPerClass,
-      TweetSimilarityUnhydratedPairs120MinScalaDataset,
+    UnhydratelondPairsCollelonctionJob.gelontLabelonllelondPairs(
+      datelonRangelon,
+      timelonframelon.minutelon.inMilliselonconds,
+      maxSamplelonsPelonrClass,
+      TwelonelontSimilarityUnhydratelondPairs120MinScalaDataselont,
       outputPath)
   }
 }

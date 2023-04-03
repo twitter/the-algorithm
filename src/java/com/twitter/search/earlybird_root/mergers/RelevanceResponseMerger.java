@@ -1,267 +1,267 @@
-package com.twitter.search.earlybird_root.mergers;
+packagelon com.twittelonr.selonarch.elonarlybird_root.melonrgelonrs;
 
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
+import java.util.Selont;
+import java.util.TrelonelonMap;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.strelonam.Collelonctors;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Function;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Function;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.util.earlybird.EarlybirdResponseUtil;
-import com.twitter.search.common.util.earlybird.ResultsUtil;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchRankingMode;
-import com.twitter.search.earlybird.thrift.ThriftSearchResult;
-import com.twitter.search.earlybird.thrift.ThriftSearchResults;
-import com.twitter.search.earlybird_root.collectors.RelevanceMergeCollector;
-import com.twitter.search.earlybird_root.common.EarlybirdFeatureSchemaMerger;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.util.elonarlybird.elonarlybirdRelonsponselonUtil;
+import com.twittelonr.selonarch.common.util.elonarlybird.RelonsultsUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRankingModelon;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsult;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsults;
+import com.twittelonr.selonarch.elonarlybird_root.collelonctors.RelonlelonvancelonMelonrgelonCollelonctor;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdFelonaturelonSchelonmaMelonrgelonr;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Merger class to merge relevance search EarlybirdResponse objects
+ * Melonrgelonr class to melonrgelon relonlelonvancelon selonarch elonarlybirdRelonsponselon objeloncts
  */
-public class RelevanceResponseMerger extends EarlybirdResponseMerger {
-  private static final Logger LOG = LoggerFactory.getLogger(RelevanceResponseMerger.class);
+public class RelonlelonvancelonRelonsponselonMelonrgelonr elonxtelonnds elonarlybirdRelonsponselonMelonrgelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(RelonlelonvancelonRelonsponselonMelonrgelonr.class);
 
-  private static final SearchTimerStats TIMER =
-      SearchTimerStats.export("merge_relevance", TimeUnit.NANOSECONDS, false, true);
+  privatelon static final SelonarchTimelonrStats TIMelonR =
+      SelonarchTimelonrStats.elonxport("melonrgelon_relonlelonvancelon", TimelonUnit.NANOSelonCONDS, falselon, truelon);
 
-  private static final SearchCounter RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS =
-      SearchCounter.export("merger_relevance_tier_merge_early_terminated_with_not_enough_results");
+  privatelon static final SelonarchCountelonr RelonLVelonANCelon_TIelonR_MelonRGelon_elonARLY_TelonRMINATelonD_WITH_NOT_elonNOUGH_RelonSULTS =
+      SelonarchCountelonr.elonxport("melonrgelonr_relonlelonvancelon_tielonr_melonrgelon_elonarly_telonrminatelond_with_not_elonnough_relonsults");
 
-  private static final String PARTITION_NUM_RESULTS_COUNTER_SKIP_STATS =
-      "merger_relevance_post_trimmed_results_skip_stat_tier_%s_partition_%d";
+  privatelon static final String PARTITION_NUM_RelonSULTS_COUNTelonR_SKIP_STATS =
+      "melonrgelonr_relonlelonvancelon_post_trimmelond_relonsults_skip_stat_tielonr_%s_partition_%d";
 
-  @VisibleForTesting
-  public static final String PARTITION_NUM_RESULTS_COUNTER_NAME_FORMAT =
-      "merger_relevance_post_trimmed_results_from_tier_%s_partition_%d";
+  @VisiblelonForTelonsting
+  public static final String PARTITION_NUM_RelonSULTS_COUNTelonR_NAMelon_FORMAT =
+      "melonrgelonr_relonlelonvancelon_post_trimmelond_relonsults_from_tielonr_%s_partition_%d";
 
-  protected static final Function<EarlybirdResponse, Map<ThriftLanguage, Integer>> LANG_MAP_GETTER =
-      response -> response.getSearchResults() == null
+  protelonctelond static final Function<elonarlybirdRelonsponselon, Map<ThriftLanguagelon, Intelongelonr>> LANG_MAP_GelonTTelonR =
+      relonsponselon -> relonsponselon.gelontSelonarchRelonsults() == null
           ? null
-          : response.getSearchResults().getLanguageHistogram();
+          : relonsponselon.gelontSelonarchRelonsults().gelontLanguagelonHistogram();
 
-  private static final double SUCCESSFUL_RESPONSE_THRESHOLD = 0.8;
+  privatelon static final doublelon SUCCelonSSFUL_RelonSPONSelon_THRelonSHOLD = 0.8;
 
-  private final EarlybirdFeatureSchemaMerger featureSchemaMerger;
+  privatelon final elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr;
 
-  // The number of partitions are not meaningful when it is invoked through multi-tier merging.
-  private final int numPartitions;
+  // Thelon numbelonr of partitions arelon not melonaningful whelonn it is invokelond through multi-tielonr melonrging.
+  privatelon final int numPartitions;
 
-  public RelevanceResponseMerger(EarlybirdRequestContext requestContext,
-                                 List<Future<EarlybirdResponse>> responses,
-                                 ResponseAccumulator mode,
-                                 EarlybirdFeatureSchemaMerger featureSchemaMerger,
+  public RelonlelonvancelonRelonsponselonMelonrgelonr(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt,
+                                 List<Futurelon<elonarlybirdRelonsponselon>> relonsponselons,
+                                 RelonsponselonAccumulator modelon,
+                                 elonarlybirdFelonaturelonSchelonmaMelonrgelonr felonaturelonSchelonmaMelonrgelonr,
                                  int numPartitions) {
-    super(requestContext, responses, mode);
-    this.featureSchemaMerger = Preconditions.checkNotNull(featureSchemaMerger);
+    supelonr(relonquelonstContelonxt, relonsponselons, modelon);
+    this.felonaturelonSchelonmaMelonrgelonr = Prelonconditions.chelonckNotNull(felonaturelonSchelonmaMelonrgelonr);
     this.numPartitions = numPartitions;
   }
 
-  @Override
-  protected double getDefaultSuccessResponseThreshold() {
-    return SUCCESSFUL_RESPONSE_THRESHOLD;
+  @Ovelonrridelon
+  protelonctelond doublelon gelontDelonfaultSuccelonssRelonsponselonThrelonshold() {
+    relonturn SUCCelonSSFUL_RelonSPONSelon_THRelonSHOLD;
   }
 
-  @Override
-  protected SearchTimerStats getMergedResponseTimer() {
-    return TIMER;
+  @Ovelonrridelon
+  protelonctelond SelonarchTimelonrStats gelontMelonrgelondRelonsponselonTimelonr() {
+    relonturn TIMelonR;
   }
 
-  @Override
-  protected EarlybirdResponse internalMerge(EarlybirdResponse mergedResponse) {
-    final ThriftSearchQuery searchQuery = requestContext.getRequest().getSearchQuery();
-    long maxId = findMaxFullySearchedStatusID();
-    long minId = findMinFullySearchedStatusID();
+  @Ovelonrridelon
+  protelonctelond elonarlybirdRelonsponselon intelonrnalMelonrgelon(elonarlybirdRelonsponselon melonrgelondRelonsponselon) {
+    final ThriftSelonarchQuelonry selonarchQuelonry = relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry();
+    long maxId = findMaxFullySelonarchelondStatusID();
+    long minId = findMinFullySelonarchelondStatusID();
 
-    Preconditions.checkNotNull(searchQuery);
-    Preconditions.checkState(searchQuery.isSetRankingMode());
-    Preconditions.checkState(searchQuery.getRankingMode() == ThriftSearchRankingMode.RELEVANCE);
+    Prelonconditions.chelonckNotNull(selonarchQuelonry);
+    Prelonconditions.chelonckStatelon(selonarchQuelonry.isSelontRankingModelon());
+    Prelonconditions.chelonckStatelon(selonarchQuelonry.gelontRankingModelon() == ThriftSelonarchRankingModelon.RelonLelonVANCelon);
 
-    // First get the results in score order (the default comparator for this merge collector).
-    RelevanceMergeCollector collector = new RelevanceMergeCollector(responses.size());
-    int totalResultSize = addResponsesToCollector(collector);
-    ThriftSearchResults searchResults = collector.getAllSearchResults();
+    // First gelont thelon relonsults in scorelon ordelonr (thelon delonfault comparator for this melonrgelon collelonctor).
+    RelonlelonvancelonMelonrgelonCollelonctor collelonctor = nelonw RelonlelonvancelonMelonrgelonCollelonctor(relonsponselons.sizelon());
+    int totalRelonsultSizelon = addRelonsponselonsToCollelonctor(collelonctor);
+    ThriftSelonarchRelonsults selonarchRelonsults = collelonctor.gelontAllSelonarchRelonsults();
 
-    TrimStats trimStats = trimResults(searchResults);
-    featureSchemaMerger.collectAndSetFeatureSchemaInResponse(
-        searchResults,
-        requestContext,
-        "merger_relevance_tier",
-        accumulatedResponses.getSuccessResponses());
+    TrimStats trimStats = trimRelonsults(selonarchRelonsults);
+    felonaturelonSchelonmaMelonrgelonr.collelonctAndSelontFelonaturelonSchelonmaInRelonsponselon(
+        selonarchRelonsults,
+        relonquelonstContelonxt,
+        "melonrgelonr_relonlelonvancelon_tielonr",
+        accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons());
 
-    mergedResponse.setSearchResults(searchResults);
+    melonrgelondRelonsponselon.selontSelonarchRelonsults(selonarchRelonsults);
 
-    searchResults = mergedResponse.getSearchResults();
-    searchResults
-        .setHitCounts(aggregateHitCountMap())
-        .setLanguageHistogram(aggregateLanguageHistograms());
+    selonarchRelonsults = melonrgelondRelonsponselon.gelontSelonarchRelonsults();
+    selonarchRelonsults
+        .selontHitCounts(aggrelongatelonHitCountMap())
+        .selontLanguagelonHistogram(aggrelongatelonLanguagelonHistograms());
 
-    if (!accumulatedResponses.getMaxIds().isEmpty()) {
-      searchResults.setMaxSearchedStatusID(maxId);
+    if (!accumulatelondRelonsponselons.gelontMaxIds().iselonmpty()) {
+      selonarchRelonsults.selontMaxSelonarchelondStatusID(maxId);
     }
 
-    if (!accumulatedResponses.getMinIds().isEmpty()) {
-      searchResults.setMinSearchedStatusID(minId);
+    if (!accumulatelondRelonsponselons.gelontMinIds().iselonmpty()) {
+      selonarchRelonsults.selontMinSelonarchelondStatusID(minId);
     }
 
-    LOG.debug("Hits: {} Removed duplicates: {}", totalResultSize, trimStats.getRemovedDupsCount());
-    LOG.debug("Hash Partition'ed Earlybird call completed successfully: {}", mergedResponse);
+    LOG.delonbug("Hits: {} Relonmovelond duplicatelons: {}", totalRelonsultSizelon, trimStats.gelontRelonmovelondDupsCount());
+    LOG.delonbug("Hash Partition'elond elonarlybird call complelontelond succelonssfully: {}", melonrgelondRelonsponselon);
 
-    publishNumResultsFromPartitionStatistics(mergedResponse);
+    publishNumRelonsultsFromPartitionStatistics(melonrgelondRelonsponselon);
 
-    return mergedResponse;
-  }
-
-  /**
-   * If any of the partitions has an early termination, the tier merge must also early terminate.
-   *
-   * If a partition early terminated (we haven't fully searched that partition), and we instead
-   * moved onto the next tier, there will be a gap of unsearched results.
-   *
-   * If our early termination condition was only if we had enough results, we could get bad quality
-   * results by only looking at 20 hits when asking for 20 results.
-   */
-  @Override
-  public boolean shouldEarlyTerminateTierMerge(int totalResultsFromSuccessfulShards,
-                                               boolean foundEarlyTermination) {
-
-    // Don't use computeNumResultsToKeep because if returnAllResults is true, it will be
-    // Integer.MAX_VALUE and we will always log a stat that we didn't get enough results
-    int resultsRequested;
-    EarlybirdRequest request = requestContext.getRequest();
-    if (request.isSetNumResultsToReturnAtRoot()) {
-      resultsRequested = request.getNumResultsToReturnAtRoot();
-    } else {
-      resultsRequested = request.getSearchQuery().getCollectorParams().getNumResultsToReturn();
-    }
-    if (foundEarlyTermination && totalResultsFromSuccessfulShards < resultsRequested) {
-      RELVEANCE_TIER_MERGE_EARLY_TERMINATED_WITH_NOT_ENOUGH_RESULTS.increment();
-    }
-
-    return foundEarlyTermination;
+    relonturn melonrgelondRelonsponselon;
   }
 
   /**
-   * Merge language histograms from all queries.
+   * If any of thelon partitions has an elonarly telonrmination, thelon tielonr melonrgelon must also elonarly telonrminatelon.
    *
-   * @return Merge per-language count map.
+   * If a partition elonarly telonrminatelond (welon havelonn't fully selonarchelond that partition), and welon instelonad
+   * movelond onto thelon nelonxt tielonr, thelonrelon will belon a gap of unselonarchelond relonsults.
+   *
+   * If our elonarly telonrmination condition was only if welon had elonnough relonsults, welon could gelont bad quality
+   * relonsults by only looking at 20 hits whelonn asking for 20 relonsults.
    */
-  private Map<ThriftLanguage, Integer> aggregateLanguageHistograms() {
-    Map<ThriftLanguage, Integer> totalLangCounts = new TreeMap<>(
-        ResultsUtil.aggregateCountMap(
-            accumulatedResponses.getSuccessResponses(), LANG_MAP_GETTER));
-    if (totalLangCounts.size() > 0) {
-      if (responseMessageBuilder.isDebugMode()) {
-        responseMessageBuilder.append("Language Distrbution:\n");
+  @Ovelonrridelon
+  public boolelonan shouldelonarlyTelonrminatelonTielonrMelonrgelon(int totalRelonsultsFromSuccelonssfulShards,
+                                               boolelonan foundelonarlyTelonrmination) {
+
+    // Don't uselon computelonNumRelonsultsToKelonelonp beloncauselon if relonturnAllRelonsults is truelon, it will belon
+    // Intelongelonr.MAX_VALUelon and welon will always log a stat that welon didn't gelont elonnough relonsults
+    int relonsultsRelonquelonstelond;
+    elonarlybirdRelonquelonst relonquelonst = relonquelonstContelonxt.gelontRelonquelonst();
+    if (relonquelonst.isSelontNumRelonsultsToRelonturnAtRoot()) {
+      relonsultsRelonquelonstelond = relonquelonst.gelontNumRelonsultsToRelonturnAtRoot();
+    } elonlselon {
+      relonsultsRelonquelonstelond = relonquelonst.gelontSelonarchQuelonry().gelontCollelonctorParams().gelontNumRelonsultsToRelonturn();
+    }
+    if (foundelonarlyTelonrmination && totalRelonsultsFromSuccelonssfulShards < relonsultsRelonquelonstelond) {
+      RelonLVelonANCelon_TIelonR_MelonRGelon_elonARLY_TelonRMINATelonD_WITH_NOT_elonNOUGH_RelonSULTS.increlonmelonnt();
+    }
+
+    relonturn foundelonarlyTelonrmination;
+  }
+
+  /**
+   * Melonrgelon languagelon histograms from all quelonrielons.
+   *
+   * @relonturn Melonrgelon pelonr-languagelon count map.
+   */
+  privatelon Map<ThriftLanguagelon, Intelongelonr> aggrelongatelonLanguagelonHistograms() {
+    Map<ThriftLanguagelon, Intelongelonr> totalLangCounts = nelonw TrelonelonMap<>(
+        RelonsultsUtil.aggrelongatelonCountMap(
+            accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons(), LANG_MAP_GelonTTelonR));
+    if (totalLangCounts.sizelon() > 0) {
+      if (relonsponselonMelonssagelonBuildelonr.isDelonbugModelon()) {
+        relonsponselonMelonssagelonBuildelonr.appelonnd("Languagelon Distrbution:\n");
         int count = 0;
-        for (Map.Entry<ThriftLanguage, Integer> entry : totalLangCounts.entrySet()) {
-          responseMessageBuilder.append(
-              String.format(" %10s:%6d", entry.getKey(), entry.getValue()));
+        for (Map.elonntry<ThriftLanguagelon, Intelongelonr> elonntry : totalLangCounts.elonntrySelont()) {
+          relonsponselonMelonssagelonBuildelonr.appelonnd(
+              String.format(" %10s:%6d", elonntry.gelontKelony(), elonntry.gelontValuelon()));
           if (++count % 5 == 0) {
-            responseMessageBuilder.append("\n");
+            relonsponselonMelonssagelonBuildelonr.appelonnd("\n");
           }
         }
-        responseMessageBuilder.append("\n");
+        relonsponselonMelonssagelonBuildelonr.appelonnd("\n");
       }
     }
-    return totalLangCounts;
+    relonturn totalLangCounts;
   }
 
   /**
-   * Find the min status id that has been searched. Since no results are trimmed for Relevance mode,
-   * it should be the smallest among the min IDs.
+   * Find thelon min status id that has belonelonn selonarchelond. Sincelon no relonsults arelon trimmelond for Relonlelonvancelon modelon,
+   * it should belon thelon smallelonst among thelon min IDs.
    */
-  private long findMinFullySearchedStatusID() {
-    // The min ID should be the smallest among the min IDs
-    return accumulatedResponses.getMinIds().isEmpty() ? 0
-        : Collections.min(accumulatedResponses.getMinIds());
+  privatelon long findMinFullySelonarchelondStatusID() {
+    // Thelon min ID should belon thelon smallelonst among thelon min IDs
+    relonturn accumulatelondRelonsponselons.gelontMinIds().iselonmpty() ? 0
+        : Collelonctions.min(accumulatelondRelonsponselons.gelontMinIds());
   }
 
   /**
-   * Find the max status id that has been searched. Since no results are trimmed for Relevance mode,
-   * it should be the largest among the max IDs.
+   * Find thelon max status id that has belonelonn selonarchelond. Sincelon no relonsults arelon trimmelond for Relonlelonvancelon modelon,
+   * it should belon thelon largelonst among thelon max IDs.
    */
-  private long findMaxFullySearchedStatusID() {
-    // The max ID should be the largest among the max IDs
-    return accumulatedResponses.getMaxIds().isEmpty() ? 0
-        : Collections.max(accumulatedResponses.getMaxIds());
+  privatelon long findMaxFullySelonarchelondStatusID() {
+    // Thelon max ID should belon thelon largelonst among thelon max IDs
+    relonturn accumulatelondRelonsponselons.gelontMaxIds().iselonmpty() ? 0
+        : Collelonctions.max(accumulatelondRelonsponselons.gelontMaxIds());
   }
 
   /**
-   * Return all the searchResults except duplicates.
+   * Relonturn all thelon selonarchRelonsults elonxcelonpt duplicatelons.
    *
-   * @param searchResults ThriftSearchResults that hold the to be trimmed List<ThriftSearchResult>
-   * @return TrimStats containing statistics about how many results being removed
+   * @param selonarchRelonsults ThriftSelonarchRelonsults that hold thelon to belon trimmelond List<ThriftSelonarchRelonsult>
+   * @relonturn TrimStats containing statistics about how many relonsults beloning relonmovelond
    */
-  private TrimStats trimResults(ThriftSearchResults searchResults) {
-    if (!searchResults.isSetResults() || searchResults.getResultsSize() == 0) {
-      // no results, no trimming needed
-      return TrimStats.EMPTY_STATS;
+  privatelon TrimStats trimRelonsults(ThriftSelonarchRelonsults selonarchRelonsults) {
+    if (!selonarchRelonsults.isSelontRelonsults() || selonarchRelonsults.gelontRelonsultsSizelon() == 0) {
+      // no relonsults, no trimming nelonelondelond
+      relonturn TrimStats.elonMPTY_STATS;
     }
 
-    if (requestContext.getRequest().getSearchQuery().isSetSearchStatusIds()) {
-      // Not a normal search, no trimming needed
-      return TrimStats.EMPTY_STATS;
+    if (relonquelonstContelonxt.gelontRelonquelonst().gelontSelonarchQuelonry().isSelontSelonarchStatusIds()) {
+      // Not a normal selonarch, no trimming nelonelondelond
+      relonturn TrimStats.elonMPTY_STATS;
     }
 
-    TrimStats trimStats = new TrimStats();
-    trimExactDups(searchResults, trimStats);
+    TrimStats trimStats = nelonw TrimStats();
+    trimelonxactDups(selonarchRelonsults, trimStats);
 
-    truncateResults(searchResults, trimStats);
+    truncatelonRelonsults(selonarchRelonsults, trimStats);
 
-    return trimStats;
+    relonturn trimStats;
   }
 
-  private void publishNumResultsFromPartitionStatistics(EarlybirdResponse mergedResponse) {
+  privatelon void publishNumRelonsultsFromPartitionStatistics(elonarlybirdRelonsponselon melonrgelondRelonsponselon) {
 
-    // Keep track of all of the results that were kept after merging
-    Set<Long> mergedResults =
-        EarlybirdResponseUtil.getResults(mergedResponse).getResults()
-            .stream()
-            .map(result -> result.getId())
-            .collect(Collectors.toSet());
+    // Kelonelonp track of all of thelon relonsults that welonrelon kelonpt aftelonr melonrging
+    Selont<Long> melonrgelondRelonsults =
+        elonarlybirdRelonsponselonUtil.gelontRelonsults(melonrgelondRelonsponselon).gelontRelonsults()
+            .strelonam()
+            .map(relonsult -> relonsult.gelontId())
+            .collelonct(Collelonctors.toSelont());
 
-    // For each successful response (pre merge), count how many of its results were kept post merge.
-    // Increment the appropriate stat.
-    for (EarlybirdResponse response : accumulatedResponses.getSuccessResponses()) {
-      if (!response.isSetEarlybirdServerStats()) {
-        continue;
+    // For elonach succelonssful relonsponselon (prelon melonrgelon), count how many of its relonsults welonrelon kelonpt post melonrgelon.
+    // Increlonmelonnt thelon appropriatelon stat.
+    for (elonarlybirdRelonsponselon relonsponselon : accumulatelondRelonsponselons.gelontSuccelonssRelonsponselons()) {
+      if (!relonsponselon.isSelontelonarlybirdSelonrvelonrStats()) {
+        continuelon;
       }
-      int numResultsKept = 0;
-      for (ThriftSearchResult result
-          : EarlybirdResponseUtil.getResults(response).getResults()) {
-        if (mergedResults.contains(result.getId())) {
-          ++numResultsKept;
+      int numRelonsultsKelonpt = 0;
+      for (ThriftSelonarchRelonsult relonsult
+          : elonarlybirdRelonsponselonUtil.gelontRelonsults(relonsponselon).gelontRelonsults()) {
+        if (melonrgelondRelonsults.contains(relonsult.gelontId())) {
+          ++numRelonsultsKelonpt;
         }
       }
 
-      // We only update partition stats when the partition ID looks sane.
-      String tierName = response.getEarlybirdServerStats().getTierName();
-      int partition = response.getEarlybirdServerStats().getPartition();
+      // Welon only updatelon partition stats whelonn thelon partition ID looks sanelon.
+      String tielonrNamelon = relonsponselon.gelontelonarlybirdSelonrvelonrStats().gelontTielonrNamelon();
+      int partition = relonsponselon.gelontelonarlybirdSelonrvelonrStats().gelontPartition();
       if (partition >= 0 && partition < numPartitions) {
-        SearchCounter.export(String.format(PARTITION_NUM_RESULTS_COUNTER_NAME_FORMAT,
-            tierName,
+        SelonarchCountelonr.elonxport(String.format(PARTITION_NUM_RelonSULTS_COUNTelonR_NAMelon_FORMAT,
+            tielonrNamelon,
             partition))
-            .add(numResultsKept);
-      } else {
-        SearchCounter.export(String.format(PARTITION_NUM_RESULTS_COUNTER_SKIP_STATS,
-            tierName,
-            partition)).increment();
+            .add(numRelonsultsKelonpt);
+      } elonlselon {
+        SelonarchCountelonr.elonxport(String.format(PARTITION_NUM_RelonSULTS_COUNTelonR_SKIP_STATS,
+            tielonrNamelon,
+            partition)).increlonmelonnt();
       }
     }
   }

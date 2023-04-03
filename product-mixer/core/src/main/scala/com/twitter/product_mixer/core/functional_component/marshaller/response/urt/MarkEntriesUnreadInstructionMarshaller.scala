@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.MarkEntriesUnreadInstruction
-import javax.inject.Inject
-import javax.inject.Singleton
-import com.twitter.timelines.render.{thriftscala => urt}
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.MarkelonntrielonsUnrelonadInstruction
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
 
-@Singleton
-class MarkEntriesUnreadInstructionMarshaller @Inject() () {
+@Singlelonton
+class MarkelonntrielonsUnrelonadInstructionMarshallelonr @Injelonct() () {
 
-  def apply(instruction: MarkEntriesUnreadInstruction): urt.MarkEntriesUnread =
-    urt.MarkEntriesUnread(entryIds = instruction.entryIds)
+  delonf apply(instruction: MarkelonntrielonsUnrelonadInstruction): urt.MarkelonntrielonsUnrelonad =
+    urt.MarkelonntrielonsUnrelonad(elonntryIds = instruction.elonntryIds)
 }

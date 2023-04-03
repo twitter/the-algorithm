@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.cr_ml_ranker
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.quelonry.cr_ml_rankelonr
 
-import com.twitter.cr_ml_ranker.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.cr_ml_rankelonr.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Builds a query hydrator that hydrates Common Features for the given Query from CR ML Ranker
- * to be later used to call CR ML Ranker for scoring using the desired [[RankingConfigBuilder]]
- * for building the ranking config.
+ * Builds a quelonry hydrator that hydratelons Common Felonaturelons for thelon givelonn Quelonry from CR ML Rankelonr
+ * to belon latelonr uselond to call CR ML Rankelonr for scoring using thelon delonsirelond [[RankingConfigBuildelonr]]
+ * for building thelon ranking config.
  */
-@Singleton
-class CrMlRankerCommonQueryFeatureHydratorBuilder @Inject() (
-  crMlRanker: t.CrMLRanker.MethodPerEndpoint) {
+@Singlelonton
+class CrMlRankelonrCommonQuelonryFelonaturelonHydratorBuildelonr @Injelonct() (
+  crMlRankelonr: t.CrMLRankelonr.MelonthodPelonrelonndpoint) {
 
-  def build(rankingConfigSelector: RankingConfigBuilder): CrMlRankerCommonQueryFeatureHydrator =
-    new CrMlRankerCommonQueryFeatureHydrator(crMlRanker, rankingConfigSelector)
+  delonf build(rankingConfigSelonlelonctor: RankingConfigBuildelonr): CrMlRankelonrCommonQuelonryFelonaturelonHydrator =
+    nelonw CrMlRankelonrCommonQuelonryFelonaturelonHydrator(crMlRankelonr, rankingConfigSelonlelonctor)
 }

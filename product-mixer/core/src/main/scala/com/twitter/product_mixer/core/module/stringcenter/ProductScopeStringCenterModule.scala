@@ -1,135 +1,135 @@
-package com.twitter.product_mixer.core.module.stringcenter
+packagelon com.twittelonr.product_mixelonr.corelon.modulelon.stringcelonntelonr
 
-import com.google.inject.Provides
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.conversions.DurationOps._
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.util.jackson.ScalaObjectMapper
-import com.twitter.inject.TwitterModule
-import com.twitter.inject.annotations.Flag
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import com.twitter.stringcenter.client.ExternalStringRegistry
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.StringCenterClientConfig
-import com.twitter.stringcenter.client.sources.RefreshingStringSource
-import com.twitter.stringcenter.client.sources.RefreshingStringSourceConfig
-import com.twitter.stringcenter.client.sources.StringSource
-import com.twitter.translation.Languages
-import javax.inject.Singleton
-import scala.collection.concurrent
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.util.jackson.ScalaObjelonctMappelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.injelonct.annotations.Flag
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
+import com.twittelonr.stringcelonntelonr.clielonnt.elonxtelonrnalStringRelongistry
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonrClielonntConfig
+import com.twittelonr.stringcelonntelonr.clielonnt.sourcelons.RelonfrelonshingStringSourcelon
+import com.twittelonr.stringcelonntelonr.clielonnt.sourcelons.RelonfrelonshingStringSourcelonConfig
+import com.twittelonr.stringcelonntelonr.clielonnt.sourcelons.StringSourcelon
+import com.twittelonr.translation.Languagelons
+import javax.injelonct.Singlelonton
+import scala.collelonction.concurrelonnt
 
 /*
- * Fun trivia - this has to be a Class not an Object, otherwise when you ./bazel test blah/...
- * and glob multiple feature tests together it'll reuse the concurrentMaps below across
- * executions / different server objects.
+ * Fun trivia - this has to belon a Class not an Objelonct, othelonrwiselon whelonn you ./bazelonl telonst blah/...
+ * and glob multiplelon felonaturelon telonsts togelonthelonr it'll relonuselon thelon concurrelonntMaps belonlow across
+ * elonxeloncutions / diffelonrelonnt selonrvelonr objeloncts.
  */
-class ProductScopeStringCenterModule extends TwitterModule {
+class ProductScopelonStringCelonntelonrModulelon elonxtelonnds TwittelonrModulelon {
 
-  private val loadNothing =
-    flag[Boolean](name = "stringcenter.dontload", default = false, help = "Avoid loading any files")
+  privatelon val loadNothing =
+    flag[Boolelonan](namelon = "stringcelonntelonr.dontload", delonfault = falselon, helonlp = "Avoid loading any filelons")
 
-  flag[Boolean](
-    name = "stringcenter.handle.language.fallback",
-    default = true,
-    help = "Handle language fallback for services that don't already handle it")
+  flag[Boolelonan](
+    namelon = "stringcelonntelonr.handlelon.languagelon.fallback",
+    delonfault = truelon,
+    helonlp = "Handlelon languagelon fallback for selonrvicelons that don't alrelonady handlelon it")
 
   flag[String](
-    name = "stringcenter.default_bundle_path",
-    default = "stringcenter",
-    help = "The path on disk to the default bundle available at startup time")
+    namelon = "stringcelonntelonr.delonfault_bundlelon_path",
+    delonfault = "stringcelonntelonr",
+    helonlp = "Thelon path on disk to thelon delonfault bundlelon availablelon at startup timelon")
 
-  private val refreshingInterval = flag[Int](
-    name = "stringcenter.refresh_interval_minutes",
-    default = 3,
-    help = "How often to poll the refreshing bundle path to check for new bundles")
+  privatelon val relonfrelonshingIntelonrval = flag[Int](
+    namelon = "stringcelonntelonr.relonfrelonsh_intelonrval_minutelons",
+    delonfault = 3,
+    helonlp = "How oftelonn to poll thelon relonfrelonshing bundlelon path to chelonck for nelonw bundlelons")
 
-  /* The Guice injector is single threaded, but out of a preponderance of caution we use a concurrent Map.
+  /* Thelon Guicelon injelonctor is singlelon threlonadelond, but out of a prelonpondelonrancelon of caution welon uselon a concurrelonnt Map.
    *
-   * We need to ensure that we only build one StringSource, StringCenter client, and External String
-   * Registry for each String Center Project. @ProductScoped doesn't ensure this on it's own as
-   * two products can have the same String Center Project set.
+   * Welon nelonelond to elonnsurelon that welon only build onelon StringSourcelon, StringCelonntelonr clielonnt, and elonxtelonrnal String
+   * Relongistry for elonach String Celonntelonr Projelonct. @ProductScopelond doelonsn't elonnsurelon this on it's own as
+   * two products can havelon thelon samelon String Celonntelonr Projelonct selont.
    */
-  val stringSources: concurrent.Map[String, StringSource] = concurrent.TrieMap.empty
-  val stringCenterClients: concurrent.Map[String, StringCenter] = concurrent.TrieMap.empty
-  val externalStringRegistries: concurrent.Map[String, ExternalStringRegistry] =
-    concurrent.TrieMap.empty
+  val stringSourcelons: concurrelonnt.Map[String, StringSourcelon] = concurrelonnt.TrielonMap.elonmpty
+  val stringCelonntelonrClielonnts: concurrelonnt.Map[String, StringCelonntelonr] = concurrelonnt.TrielonMap.elonmpty
+  val elonxtelonrnalStringRelongistrielons: concurrelonnt.Map[String, elonxtelonrnalStringRelongistry] =
+    concurrelonnt.TrielonMap.elonmpty
 
-  @ProductScoped
-  @Provides
-  def providesStringCenterClients(
-    abDecider: LoggingABDecider,
-    stringSource: StringSource,
-    languages: Languages,
-    statsReceiver: StatsReceiver,
-    clientConfig: StringCenterClientConfig,
+  @ProductScopelond
+  @Providelons
+  delonf providelonsStringCelonntelonrClielonnts(
+    abDeloncidelonr: LoggingABDeloncidelonr,
+    stringSourcelon: StringSourcelon,
+    languagelons: Languagelons,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
+    clielonntConfig: StringCelonntelonrClielonntConfig,
     product: Product
-  ): StringCenter = {
-    stringCenterClients.getOrElseUpdate(
-      stringCenterForProduct(product), {
-        new StringCenter(
-          abDecider,
-          stringSource,
-          languages,
-          statsReceiver,
-          clientConfig
+  ): StringCelonntelonr = {
+    stringCelonntelonrClielonnts.gelontOrelonlselonUpdatelon(
+      stringCelonntelonrForProduct(product), {
+        nelonw StringCelonntelonr(
+          abDeloncidelonr,
+          stringSourcelon,
+          languagelons,
+          statsReloncelonivelonr,
+          clielonntConfig
         )
       })
   }
 
-  @ProductScoped
-  @Provides
-  def providesExternalStringRegistries(
+  @ProductScopelond
+  @Providelons
+  delonf providelonselonxtelonrnalStringRelongistrielons(
     product: Product
-  ): ExternalStringRegistry = {
-    externalStringRegistries.getOrElseUpdate(
-      stringCenterForProduct(product), {
-        new ExternalStringRegistry()
+  ): elonxtelonrnalStringRelongistry = {
+    elonxtelonrnalStringRelongistrielons.gelontOrelonlselonUpdatelon(
+      stringCelonntelonrForProduct(product), {
+        nelonw elonxtelonrnalStringRelongistry()
       })
   }
 
-  @ProductScoped
-  @Provides
-  def providesStringCenterSources(
-    mapper: ScalaObjectMapper,
-    statsReceiver: StatsReceiver,
+  @ProductScopelond
+  @Providelons
+  delonf providelonsStringCelonntelonrSourcelons(
+    mappelonr: ScalaObjelonctMappelonr,
+    statsReloncelonivelonr: StatsReloncelonivelonr,
     product: Product,
-    @Flag("stringcenter.default_bundle_path") defaultBundlePath: String
-  ): StringSource = {
+    @Flag("stringcelonntelonr.delonfault_bundlelon_path") delonfaultBundlelonPath: String
+  ): StringSourcelon = {
     if (loadNothing()) {
-      StringSource.Empty
-    } else {
-      val stringCenterProduct = stringCenterForProduct(product)
+      StringSourcelon.elonmpty
+    } elonlselon {
+      val stringCelonntelonrProduct = stringCelonntelonrForProduct(product)
 
-      stringSources.getOrElseUpdate(
-        stringCenterProduct, {
-          val config = RefreshingStringSourceConfig(
-            stringCenterProduct,
-            defaultBundlePath,
-            "stringcenter/downloaded/current/stringcenter",
-            refreshingInterval().minutes
+      stringSourcelons.gelontOrelonlselonUpdatelon(
+        stringCelonntelonrProduct, {
+          val config = RelonfrelonshingStringSourcelonConfig(
+            stringCelonntelonrProduct,
+            delonfaultBundlelonPath,
+            "stringcelonntelonr/downloadelond/currelonnt/stringcelonntelonr",
+            relonfrelonshingIntelonrval().minutelons
           )
-          new RefreshingStringSource(
+          nelonw RelonfrelonshingStringSourcelon(
             config,
-            mapper,
-            statsReceiver
-              .scope("StringCenter", "refreshing", "project", stringCenterProduct))
+            mappelonr,
+            statsReloncelonivelonr
+              .scopelon("StringCelonntelonr", "relonfrelonshing", "projelonct", stringCelonntelonrProduct))
         }
       )
     }
   }
 
-  private def stringCenterForProduct(product: Product): String =
-    product.stringCenterProject.getOrElse {
-      throw new UnsupportedOperationException(
-        s"No StringCenter project defined for Product ${product.identifier}")
+  privatelon delonf stringCelonntelonrForProduct(product: Product): String =
+    product.stringCelonntelonrProjelonct.gelontOrelonlselon {
+      throw nelonw UnsupportelondOpelonrationelonxcelonption(
+        s"No StringCelonntelonr projelonct delonfinelond for Product ${product.idelonntifielonr}")
     }
 
-  @Singleton
-  @Provides
-  def providesStringCenterClientConfig(
-    @Flag("stringcenter.handle.language.fallback") handleLanguageFallback: Boolean
-  ): StringCenterClientConfig = {
-    StringCenterClientConfig(handleLanguageFallback = handleLanguageFallback)
+  @Singlelonton
+  @Providelons
+  delonf providelonsStringCelonntelonrClielonntConfig(
+    @Flag("stringcelonntelonr.handlelon.languagelon.fallback") handlelonLanguagelonFallback: Boolelonan
+  ): StringCelonntelonrClielonntConfig = {
+    StringCelonntelonrClielonntConfig(handlelonLanguagelonFallback = handlelonLanguagelonFallback)
   }
 }

@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.richtext
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.richtelonxt
 
-case class RichTextEntity(
-  fromIndex: Int,
-  toIndex: Int,
-  ref: Option[ReferenceObject],
-  format: Option[RichTextFormat])
+caselon class RichTelonxtelonntity(
+  fromIndelonx: Int,
+  toIndelonx: Int,
+  relonf: Option[RelonfelonrelonncelonObjelonct],
+  format: Option[RichTelonxtFormat])

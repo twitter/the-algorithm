@@ -1,20 +1,20 @@
-# Java library for docvalues and common stride field encoding utilities.
+# Java library for docvaluelons and common stridelon fielonld elonncoding utilitielons.
 java_library(
-    sources = ["*.java"],
+    sourcelons = ["*.java"],
     platform = "java8",
-    provides = artifact(
-        org = "com.twitter.search.common",
-        name = "encoding-docvalues",
-        repo = artifactory,
+    providelons = artifact(
+        org = "com.twittelonr.selonarch.common",
+        namelon = "elonncoding-docvaluelons",
+        relonpo = artifactory,
     ),
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "3rdparty/jvm/com/google/guava",
-        "3rdparty/jvm/org/apache/lucene:lucene-analyzers-common",
-        "3rdparty/jvm/org/apache/lucene:lucene-core",
-        "3rdparty/jvm/org/apache/lucene:lucene-facet",
-        "3rdparty/jvm/org/apache/thrift:libthrift",
-        "src/java/com/twitter/search/common/schema/base",
-        "src/thrift/com/twitter/search/common:schema-java",
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "3rdparty/jvm/com/googlelon/guava",
+        "3rdparty/jvm/org/apachelon/lucelonnelon:lucelonnelon-analyzelonrs-common",
+        "3rdparty/jvm/org/apachelon/lucelonnelon:lucelonnelon-corelon",
+        "3rdparty/jvm/org/apachelon/lucelonnelon:lucelonnelon-facelont",
+        "3rdparty/jvm/org/apachelon/thrift:libthrift",
+        "src/java/com/twittelonr/selonarch/common/schelonma/baselon",
+        "src/thrift/com/twittelonr/selonarch/common:schelonma-java",
     ],
 )

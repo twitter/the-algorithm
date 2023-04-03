@@ -1,34 +1,34 @@
-package com.twitter.follow_recommendations.common.rankers.ml_ranker.scoring
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.ml_rankelonr.scoring
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasDisplayLocation
-import com.twitter.follow_recommendations.common.models.HasDebugOptions
-import com.twitter.follow_recommendations.common.models.Score
-import com.twitter.follow_recommendations.common.models.ScoreType
-import com.twitter.follow_recommendations.common.rankers.common.RankerId
-import com.twitter.ml.api.DataRecord
-import com.twitter.product_mixer.core.model.marshalling.request.HasClientContext
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasDelonbugOptions
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Scorelon
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.ScorelonTypelon
+import com.twittelonr.follow_reloncommelonndations.common.rankelonrs.common.RankelonrId
+import com.twittelonr.ml.api.DataReloncord
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.HasClielonntContelonxt
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
 
-trait Scorer {
+trait Scorelonr {
 
-  // unique id of the scorer
-  def id: RankerId.Value
+  // uniquelon id of thelon scorelonr
+  delonf id: RankelonrId.Valuelon
 
-  // type of the output scores
-  def scoreType: Option[ScoreType] = None
+  // typelon of thelon output scorelons
+  delonf scorelonTypelon: Option[ScorelonTypelon] = Nonelon
 
-  // Scoring when an ML model is used.
-  def score(records: Seq[DataRecord]): Stitch[Seq[Score]]
+  // Scoring whelonn an ML modelonl is uselond.
+  delonf scorelon(reloncords: Selonq[DataReloncord]): Stitch[Selonq[Scorelon]]
 
   /**
-   * Scoring when a non-ML method is applied. E.g: Boosting, randomized reordering, etc.
-   * This method assumes that candidates' scores are already retrieved from heavy-ranker models and
-   * are available for use.
+   * Scoring whelonn a non-ML melonthod is applielond. elon.g: Boosting, randomizelond relonordelonring, elontc.
+   * This melonthod assumelons that candidatelons' scorelons arelon alrelonady relontrielonvelond from helonavy-rankelonr modelonls and
+   * arelon availablelon for uselon.
    */
-  def score(
-    target: HasClientContext with HasParams with HasDisplayLocation with HasDebugOptions,
-    candidates: Seq[CandidateUser]
-  ): Seq[Option[Score]]
+  delonf scorelon(
+    targelont: HasClielonntContelonxt with HasParams with HasDisplayLocation with HasDelonbugOptions,
+    candidatelons: Selonq[CandidatelonUselonr]
+  ): Selonq[Option[Scorelon]]
 }

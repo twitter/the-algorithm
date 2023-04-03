@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.product.guice.scope;
+packagelon com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon;
 
-import static java.lang.annotation.ElementType.METHOD;
-import static java.lang.annotation.ElementType.TYPE;
-import java.lang.annotation.Retention;
-import static java.lang.annotation.RetentionPolicy.RUNTIME;
-import java.lang.annotation.Target;
+import static java.lang.annotation.elonlelonmelonntTypelon.MelonTHOD;
+import static java.lang.annotation.elonlelonmelonntTypelon.TYPelon;
+import java.lang.annotation.Relontelonntion;
+import static java.lang.annotation.RelontelonntionPolicy.RUNTIMelon;
+import java.lang.annotation.Targelont;
 
-import com.google.inject.ScopeAnnotation;
+import com.googlelon.injelonct.ScopelonAnnotation;
 
-@Target({ TYPE, METHOD })
-@Retention(RUNTIME)
-@ScopeAnnotation
-public @interface ProductScoped {}
+@Targelont({ TYPelon, MelonTHOD })
+@Relontelonntion(RUNTIMelon)
+@ScopelonAnnotation
+public @intelonrfacelon ProductScopelond {}

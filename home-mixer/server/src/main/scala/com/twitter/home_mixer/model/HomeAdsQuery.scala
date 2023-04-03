@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.model
+packagelon com.twittelonr.homelon_mixelonr.modelonl
 
-import com.twitter.adserver.thriftscala.RequestTriggerType
-import com.twitter.home_mixer.model.HomeFeatures.GetInitialFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetNewerFeature
-import com.twitter.home_mixer.model.HomeFeatures.GetOlderFeature
-import com.twitter.home_mixer.model.HomeFeatures.PollingFeature
-import com.twitter.home_mixer.model.request.HasDeviceContext
-import com.twitter.product_mixer.component_library.model.cursor.UrtOrderedCursor
-import com.twitter.product_mixer.component_library.model.query.ads.AdsQuery
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.pipeline.HasPipelineCursor
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.adselonrvelonr.thriftscala.RelonquelonstTriggelonrTypelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.GelontInitialFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.GelontNelonwelonrFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.GelontOldelonrFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PollingFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasDelonvicelonContelonxt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.cursor.UrtOrdelonrelondCursor
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.quelonry.ads.AdsQuelonry
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.HasPipelonlinelonCursor
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * These are for feeds needed for ads only.
+ * Thelonselon arelon for felonelonds nelonelondelond for ads only.
  */
-trait HomeAdsQuery
-    extends AdsQuery
-    with PipelineQuery
-    with HasDeviceContext
-    with HasPipelineCursor[UrtOrderedCursor] {
+trait HomelonAdsQuelonry
+    elonxtelonnds AdsQuelonry
+    with PipelonlinelonQuelonry
+    with HasDelonvicelonContelonxt
+    with HasPipelonlinelonCursor[UrtOrdelonrelondCursor] {
 
-  private val featureToRequestTriggerType = Seq(
-    (GetInitialFeature, RequestTriggerType.Initial),
-    (GetNewerFeature, RequestTriggerType.Scroll),
-    (GetOlderFeature, RequestTriggerType.Scroll),
-    (PollingFeature, RequestTriggerType.AutoRefresh)
+  privatelon val felonaturelonToRelonquelonstTriggelonrTypelon = Selonq(
+    (GelontInitialFelonaturelon, RelonquelonstTriggelonrTypelon.Initial),
+    (GelontNelonwelonrFelonaturelon, RelonquelonstTriggelonrTypelon.Scroll),
+    (GelontOldelonrFelonaturelon, RelonquelonstTriggelonrTypelon.Scroll),
+    (PollingFelonaturelon, RelonquelonstTriggelonrTypelon.AutoRelonfrelonsh)
   )
 
-  override val autoplayEnabled: Option[Boolean] = deviceContext.flatMap(_.autoplayEnabled)
+  ovelonrridelon val autoplayelonnablelond: Option[Boolelonan] = delonvicelonContelonxt.flatMap(_.autoplayelonnablelond)
 
-  override def requestTriggerType: Option[RequestTriggerType] = {
-    val features = this.features.getOrElse(FeatureMap.empty)
+  ovelonrridelon delonf relonquelonstTriggelonrTypelon: Option[RelonquelonstTriggelonrTypelon] = {
+    val felonaturelons = this.felonaturelons.gelontOrelonlselon(FelonaturelonMap.elonmpty)
 
-    featureToRequestTriggerType.collectFirst {
-      case (feature, requestType) if features.get(feature) => Some(requestType)
-    }.flatten
+    felonaturelonToRelonquelonstTriggelonrTypelon.collelonctFirst {
+      caselon (felonaturelon, relonquelonstTypelon) if felonaturelons.gelont(felonaturelon) => Somelon(relonquelonstTypelon)
+    }.flattelonn
   }
 
-  override val disableNsfwAvoidance: Option[Boolean] = Some(true)
+  ovelonrridelon val disablelonNsfwAvoidancelon: Option[Boolelonan] = Somelon(truelon)
 }

@@ -1,67 +1,67 @@
-package com.twitter.simclusters_v2.common.clustering
+packagelon com.twittelonr.simclustelonrs_v2.common.clustelonring
 
-import com.twitter.sbf.graph.ConnectedComponents
-import com.twitter.sbf.graph.Graph
-import com.twitter.util.Stopwatch
-import it.unimi.dsi.fastutil.ints.IntSet
-import scala.collection.SortedMap
-import scala.jdk.CollectionConverters._
+import com.twittelonr.sbf.graph.ConnelonctelondComponelonnts
+import com.twittelonr.sbf.graph.Graph
+import com.twittelonr.util.Stopwatch
+import it.unimi.dsi.fastutil.ints.IntSelont
+import scala.collelonction.SortelondMap
+import scala.jdk.CollelonctionConvelonrtelonrs._
 
 /**
- * Aggregate entities into clusters such that a cluster contains all embeddings with a similarity
- * above a configurable threshold to any other embedding.
+ * Aggrelongatelon elonntitielons into clustelonrs such that a clustelonr contains all elonmbelonddings with a similarity
+ * abovelon a configurablelon threlonshold to any othelonr elonmbelondding.
  *
- * @param similarityThreshold: When building the edges between entities, edges with weight
- * less than or equal to this threshold will be filtered out.
+ * @param similarityThrelonshold: Whelonn building thelon elondgelons belontwelonelonn elonntitielons, elondgelons with welonight
+ * lelonss than or elonqual to this threlonshold will belon filtelonrelond out.
  */
-class ConnectedComponentsClusteringMethod(
-  similarityThreshold: Double)
-    extends ClusteringMethod {
+class ConnelonctelondComponelonntsClustelonringMelonthod(
+  similarityThrelonshold: Doublelon)
+    elonxtelonnds ClustelonringMelonthod {
 
-  import ClusteringStatistics._
+  import ClustelonringStatistics._
 
-  def cluster[T](
-    embeddings: Map[Long, T],
-    similarityFn: (T, T) => Double,
-    recordStatCallback: (String, Long) => Unit = (_, _) => ()
-  ): Set[Set[Long]] = {
+  delonf clustelonr[T](
+    elonmbelonddings: Map[Long, T],
+    similarityFn: (T, T) => Doublelon,
+    reloncordStatCallback: (String, Long) => Unit = (_, _) => ()
+  ): Selont[Selont[Long]] = {
 
-    val timeSinceGraphBuildStart = Stopwatch.start()
-    // com.twitter.sbf.graph.Graph expects neighbors to be sorted in ascending order.
-    val sourcesById = SortedMap(embeddings.zipWithIndex.map {
-      case (source, idx) => idx -> source
-    }.toSeq: _*)
+    val timelonSincelonGraphBuildStart = Stopwatch.start()
+    // com.twittelonr.sbf.graph.Graph elonxpeloncts nelonighbors to belon sortelond in ascelonnding ordelonr.
+    val sourcelonsById = SortelondMap(elonmbelonddings.zipWithIndelonx.map {
+      caselon (sourcelon, idx) => idx -> sourcelon
+    }.toSelonq: _*)
 
-    val neighbours = sourcesById.map {
-      case (srcIdx, (_, src)) =>
-        sourcesById
-          .collect {
-            case (dstIdx, (_, dst)) if srcIdx != dstIdx => // avoid self-edges
+    val nelonighbours = sourcelonsById.map {
+      caselon (srcIdx, (_, src)) =>
+        sourcelonsById
+          .collelonct {
+            caselon (dstIdx, (_, dst)) if srcIdx != dstIdx => // avoid selonlf-elondgelons
               val similarity = similarityFn(src, dst)
-              recordStatCallback(
-                StatComputedSimilarityBeforeFilter,
-                (similarity * 100).toLong // preserve up to two decimal points
+              reloncordStatCallback(
+                StatComputelondSimilarityBelonforelonFiltelonr,
+                (similarity * 100).toLong // prelonselonrvelon up to two deloncimal points
               )
-              if (similarity > similarityThreshold)
-                Some(dstIdx)
-              else None
-          }.flatten.toArray
+              if (similarity > similarityThrelonshold)
+                Somelon(dstIdx)
+              elonlselon Nonelon
+          }.flattelonn.toArray
     }.toArray
 
-    recordStatCallback(StatSimilarityGraphTotalBuildTime, timeSinceGraphBuildStart().inMilliseconds)
+    reloncordStatCallback(StatSimilarityGraphTotalBuildTimelon, timelonSincelonGraphBuildStart().inMilliselonconds)
 
-    val timeSinceClusteringAlgRunStart = Stopwatch.start()
-    val nEdges = neighbours.map(_.length).sum / 2 // Graph expects count of undirected edges
-    val graph = new Graph(sourcesById.size, nEdges, neighbours)
+    val timelonSincelonClustelonringAlgRunStart = Stopwatch.start()
+    val nelondgelons = nelonighbours.map(_.lelonngth).sum / 2 // Graph elonxpeloncts count of undirelonctelond elondgelons
+    val graph = nelonw Graph(sourcelonsById.sizelon, nelondgelons, nelonighbours)
 
-    val clusters = ConnectedComponents
-      .connectedComponents(graph).asScala.toSet
-      .map { i: IntSet => i.asScala.map(sourcesById(_)._1).toSet }
+    val clustelonrs = ConnelonctelondComponelonnts
+      .connelonctelondComponelonnts(graph).asScala.toSelont
+      .map { i: IntSelont => i.asScala.map(sourcelonsById(_)._1).toSelont }
 
-    recordStatCallback(
-      StatClusteringAlgorithmRunTime,
-      timeSinceClusteringAlgRunStart().inMilliseconds)
+    reloncordStatCallback(
+      StatClustelonringAlgorithmRunTimelon,
+      timelonSincelonClustelonringAlgRunStart().inMilliselonconds)
 
-    clusters
+    clustelonrs
   }
 }

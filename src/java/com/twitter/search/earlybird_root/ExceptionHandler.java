@@ -1,17 +1,17 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
 
-public final class ExceptionHandler {
-  private static final Logger LOG = LoggerFactory.getLogger(ExceptionHandler.class);
+public final class elonxcelonptionHandlelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonxcelonptionHandlelonr.class);
 
-  private ExceptionHandler() {
+  privatelon elonxcelonptionHandlelonr() {
   }
 
-  public static void logException(EarlybirdRequest request, Throwable e) {
-    LOG.error("Exception while handling request: {}", request, e);
+  public static void logelonxcelonption(elonarlybirdRelonquelonst relonquelonst, Throwablelon elon) {
+    LOG.elonrror("elonxcelonption whilelon handling relonquelonst: {}", relonquelonst, elon);
   }
 }

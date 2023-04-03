@@ -1,16 +1,16 @@
-package com.twitter.graph_feature_service.worker.util
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.util
 
-//These classes are to help the GraphContainer choose the right data structure to answer queries
-sealed trait GraphType
+//Thelonselon classelons arelon to helonlp thelon GraphContainelonr chooselon thelon right data structurelon to answelonr quelonrielons
+selonalelond trait GraphTypelon
 
-object FollowGraph extends GraphType
+objelonct FollowGraph elonxtelonnds GraphTypelon
 
-object FavoriteGraph extends GraphType
+objelonct FavoritelonGraph elonxtelonnds GraphTypelon
 
-object RetweetGraph extends GraphType
+objelonct RelontwelonelontGraph elonxtelonnds GraphTypelon
 
-object ReplyGraph extends GraphType
+objelonct RelonplyGraph elonxtelonnds GraphTypelon
 
-object MentionGraph extends GraphType
+objelonct MelonntionGraph elonxtelonnds GraphTypelon
 
-object MutualFollowGraph extends GraphType
+objelonct MutualFollowGraph elonxtelonnds GraphTypelon

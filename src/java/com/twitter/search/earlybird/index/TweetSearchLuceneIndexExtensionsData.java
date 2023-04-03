@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentData;
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdIndexExtensionsData;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntData;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.ColumnStridelonFielonldIndelonx;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdIndelonxelonxtelonnsionsData;
 
-public class TweetSearchLuceneIndexExtensionsData implements EarlybirdIndexExtensionsData {
-  @Override
-  public void setupExtensions(EarlybirdIndexSegmentAtomicReader atomicReader) throws IOException {
-    // If we use stock lucene to back the mappers and column stride fields,
-    // we need to initialize them
-    EarlybirdIndexSegmentData segmentData = atomicReader.getSegmentData();
-    DocValuesBasedTweetIDMapper tweetIDMapper =
-        (DocValuesBasedTweetIDMapper) segmentData.getDocIDToTweetIDMapper();
-    tweetIDMapper.initializeWithLuceneReader(
-        atomicReader,
-        getColumnStrideFieldIndex(segmentData, EarlybirdFieldConstant.ID_CSF_FIELD));
+public class TwelonelontSelonarchLucelonnelonIndelonxelonxtelonnsionsData implelonmelonnts elonarlybirdIndelonxelonxtelonnsionsData {
+  @Ovelonrridelon
+  public void selontupelonxtelonnsions(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr atomicRelonadelonr) throws IOelonxcelonption {
+    // If welon uselon stock lucelonnelon to back thelon mappelonrs and column stridelon fielonlds,
+    // welon nelonelond to initializelon thelonm
+    elonarlybirdIndelonxSelongmelonntData selongmelonntData = atomicRelonadelonr.gelontSelongmelonntData();
+    DocValuelonsBaselondTwelonelontIDMappelonr twelonelontIDMappelonr =
+        (DocValuelonsBaselondTwelonelontIDMappelonr) selongmelonntData.gelontDocIDToTwelonelontIDMappelonr();
+    twelonelontIDMappelonr.initializelonWithLucelonnelonRelonadelonr(
+        atomicRelonadelonr,
+        gelontColumnStridelonFielonldIndelonx(selongmelonntData, elonarlybirdFielonldConstant.ID_CSF_FIelonLD));
 
-    DocValuesBasedTimeMapper timeMapper =
-        (DocValuesBasedTimeMapper) segmentData.getTimeMapper();
-    timeMapper.initializeWithLuceneReader(
-        atomicReader,
-        getColumnStrideFieldIndex(segmentData, EarlybirdFieldConstant.CREATED_AT_CSF_FIELD));
+    DocValuelonsBaselondTimelonMappelonr timelonMappelonr =
+        (DocValuelonsBaselondTimelonMappelonr) selongmelonntData.gelontTimelonMappelonr();
+    timelonMappelonr.initializelonWithLucelonnelonRelonadelonr(
+        atomicRelonadelonr,
+        gelontColumnStridelonFielonldIndelonx(selongmelonntData, elonarlybirdFielonldConstant.CRelonATelonD_AT_CSF_FIelonLD));
   }
 
-  private ColumnStrideFieldIndex getColumnStrideFieldIndex(
-      EarlybirdIndexSegmentData segmentData, EarlybirdFieldConstant csfField) {
-    String csfFieldName = csfField.getFieldName();
-    EarlybirdFieldType fieldType =
-        segmentData.getSchema().getFieldInfo(csfFieldName).getFieldType();
-    Preconditions.checkState(fieldType.isCsfLoadIntoRam());
-    return segmentData.getDocValuesManager().addColumnStrideField(csfFieldName, fieldType);
+  privatelon ColumnStridelonFielonldIndelonx gelontColumnStridelonFielonldIndelonx(
+      elonarlybirdIndelonxSelongmelonntData selongmelonntData, elonarlybirdFielonldConstant csfFielonld) {
+    String csfFielonldNamelon = csfFielonld.gelontFielonldNamelon();
+    elonarlybirdFielonldTypelon fielonldTypelon =
+        selongmelonntData.gelontSchelonma().gelontFielonldInfo(csfFielonldNamelon).gelontFielonldTypelon();
+    Prelonconditions.chelonckStatelon(fielonldTypelon.isCsfLoadIntoRam());
+    relonturn selongmelonntData.gelontDocValuelonsManagelonr().addColumnStridelonFielonld(csfFielonldNamelon, fielonldTypelon);
   }
 }

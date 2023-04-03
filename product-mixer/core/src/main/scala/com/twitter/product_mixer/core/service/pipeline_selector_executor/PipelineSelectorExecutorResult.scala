@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.service.pipeline_selector_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.pipelonlinelon_selonlelonctor_elonxeloncutor
 
-import com.twitter.product_mixer.core.model.common.identifier.ComponentIdentifier
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.ComponelonntIdelonntifielonr
 
-case class PipelineSelectorExecutorResult(pipelineIdentifier: ComponentIdentifier)
+caselon class PipelonlinelonSelonlelonctorelonxeloncutorRelonsult(pipelonlinelonIdelonntifielonr: ComponelonntIdelonntifielonr)

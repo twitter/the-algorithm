@@ -1,12 +1,12 @@
-package com.twitter.search.earlybird_root.filters;
+packagelon com.twittelonr.selonarch.elonarlybird_root.filtelonrs;
 
-import com.twitter.search.earlybird.config.ServingRange;
-import com.twitter.search.earlybird_root.common.EarlybirdRequestContext;
+import com.twittelonr.selonarch.elonarlybird.config.SelonrvingRangelon;
+import com.twittelonr.selonarch.elonarlybird_root.common.elonarlybirdRelonquelonstContelonxt;
 
-public interface ServingRangeProvider {
+public intelonrfacelon SelonrvingRangelonProvidelonr {
   /**
-   * Get a ServingRange implementation.
-   * Usually backed by either TierInfoWrapper or RootClusterBoundaryInfo.
+   * Gelont a SelonrvingRangelon implelonmelonntation.
+   * Usually backelond by elonithelonr TielonrInfoWrappelonr or RootClustelonrBoundaryInfo.
    */
-  ServingRange getServingRange(EarlybirdRequestContext requestContext, boolean useBoundaryOverride);
+  SelonrvingRangelon gelontSelonrvingRangelon(elonarlybirdRelonquelonstContelonxt relonquelonstContelonxt, boolelonan uselonBoundaryOvelonrridelon);
 }

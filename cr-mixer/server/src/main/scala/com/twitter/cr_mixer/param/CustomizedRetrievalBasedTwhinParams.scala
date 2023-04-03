@@ -1,60 +1,60 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.cr_mixer.model.ModelConfig
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.cr_mixelonr.modelonl.ModelonlConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object CustomizedRetrievalBasedTwhinParams {
+objelonct CustomizelondRelontrielonvalBaselondTwhinParams {
 
-  // Model slots available for TwhinCollab and MultiCluster
-  object CustomizedRetrievalBasedTwhinCollabFilterFollowSource
-      extends FSParam[String](
-        name = "customized_retrieval_based_offline_twhin_collab_filter_follow_model_id",
-        default = ModelConfig.TwhinCollabFilterForFollow
+  // Modelonl slots availablelon for TwhinCollab and MultiClustelonr
+  objelonct CustomizelondRelontrielonvalBaselondTwhinCollabFiltelonrFollowSourcelon
+      elonxtelonnds FSParam[String](
+        namelon = "customizelond_relontrielonval_baselond_offlinelon_twhin_collab_filtelonr_follow_modelonl_id",
+        delonfault = ModelonlConfig.TwhinCollabFiltelonrForFollow
       )
 
-  object CustomizedRetrievalBasedTwhinCollabFilterEngagementSource
-      extends FSParam[String](
-        name = "customized_retrieval_based_offline_twhin_collab_filter_engagement_model_id",
-        default = ModelConfig.TwhinCollabFilterForEngagement
+  objelonct CustomizelondRelontrielonvalBaselondTwhinCollabFiltelonrelonngagelonmelonntSourcelon
+      elonxtelonnds FSParam[String](
+        namelon = "customizelond_relontrielonval_baselond_offlinelon_twhin_collab_filtelonr_elonngagelonmelonnt_modelonl_id",
+        delonfault = ModelonlConfig.TwhinCollabFiltelonrForelonngagelonmelonnt
       )
 
-  object CustomizedRetrievalBasedTwhinMultiClusterFollowSource
-      extends FSParam[String](
-        name = "customized_retrieval_based_offline_twhin_multi_cluster_follow_model_id",
-        default = ModelConfig.TwhinMultiClusterForFollow
+  objelonct CustomizelondRelontrielonvalBaselondTwhinMultiClustelonrFollowSourcelon
+      elonxtelonnds FSParam[String](
+        namelon = "customizelond_relontrielonval_baselond_offlinelon_twhin_multi_clustelonr_follow_modelonl_id",
+        delonfault = ModelonlConfig.TwhinMultiClustelonrForFollow
       )
 
-  object CustomizedRetrievalBasedTwhinMultiClusterEngagementSource
-      extends FSParam[String](
-        name = "customized_retrieval_based_offline_twhin_multi_cluster_engagement_model_id",
-        default = ModelConfig.TwhinMultiClusterForEngagement
+  objelonct CustomizelondRelontrielonvalBaselondTwhinMultiClustelonrelonngagelonmelonntSourcelon
+      elonxtelonnds FSParam[String](
+        namelon = "customizelond_relontrielonval_baselond_offlinelon_twhin_multi_clustelonr_elonngagelonmelonnt_modelonl_id",
+        delonfault = ModelonlConfig.TwhinMultiClustelonrForelonngagelonmelonnt
       )
 
-  val AllParams: Seq[Param[_] with FSName] =
-    Seq(
-      CustomizedRetrievalBasedTwhinCollabFilterFollowSource,
-      CustomizedRetrievalBasedTwhinCollabFilterEngagementSource,
-      CustomizedRetrievalBasedTwhinMultiClusterFollowSource,
-      CustomizedRetrievalBasedTwhinMultiClusterEngagementSource,
+  val AllParams: Selonq[Param[_] with FSNamelon] =
+    Selonq(
+      CustomizelondRelontrielonvalBaselondTwhinCollabFiltelonrFollowSourcelon,
+      CustomizelondRelontrielonvalBaselondTwhinCollabFiltelonrelonngagelonmelonntSourcelon,
+      CustomizelondRelontrielonvalBaselondTwhinMultiClustelonrFollowSourcelon,
+      CustomizelondRelontrielonvalBaselondTwhinMultiClustelonrelonngagelonmelonntSourcelon,
     )
 
-  lazy val config: BaseConfig = {
+  lazy val config: BaselonConfig = {
 
-    val stringFSOverrides =
-      FeatureSwitchOverrideUtil.getStringFSOverrides(
-        CustomizedRetrievalBasedTwhinCollabFilterFollowSource,
-        CustomizedRetrievalBasedTwhinCollabFilterEngagementSource,
-        CustomizedRetrievalBasedTwhinMultiClusterFollowSource,
-        CustomizedRetrievalBasedTwhinMultiClusterEngagementSource,
+    val stringFSOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontStringFSOvelonrridelons(
+        CustomizelondRelontrielonvalBaselondTwhinCollabFiltelonrFollowSourcelon,
+        CustomizelondRelontrielonvalBaselondTwhinCollabFiltelonrelonngagelonmelonntSourcelon,
+        CustomizelondRelontrielonvalBaselondTwhinMultiClustelonrFollowSourcelon,
+        CustomizelondRelontrielonvalBaselondTwhinMultiClustelonrelonngagelonmelonntSourcelon,
       )
 
-    BaseConfigBuilder()
-      .set(stringFSOverrides: _*)
+    BaselonConfigBuildelonr()
+      .selont(stringFSOvelonrridelons: _*)
       .build()
   }
 }

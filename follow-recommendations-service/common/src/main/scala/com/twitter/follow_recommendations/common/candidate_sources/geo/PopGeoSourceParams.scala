@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.candidate_sources.geo
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.gelono
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object PopGeoSourceParams {
-  case object PopGeoSourceGeoHashMinPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_geo_hash_min_precision",
-        default = 2,
+objelonct PopGelonoSourcelonParams {
+  caselon objelonct PopGelonoSourcelonGelonoHashMinPreloncision
+      elonxtelonnds FSBoundelondParam[Int](
+        "pop_gelono_sourcelon_gelono_hash_min_preloncision",
+        delonfault = 2,
         min = 0,
         max = 10)
 
-  case object PopGeoSourceGeoHashMaxPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_geo_hash_max_precision",
-        default = 4,
+  caselon objelonct PopGelonoSourcelonGelonoHashMaxPreloncision
+      elonxtelonnds FSBoundelondParam[Int](
+        "pop_gelono_sourcelon_gelono_hash_max_preloncision",
+        delonfault = 4,
         min = 0,
         max = 10)
 
-  case object PopGeoSourceReturnFromAllPrecisions
-      extends FSParam[Boolean]("pop_geo_source_return_from_all_precisions", default = false)
+  caselon objelonct PopGelonoSourcelonRelonturnFromAllPreloncisions
+      elonxtelonnds FSParam[Boolelonan]("pop_gelono_sourcelon_relonturn_from_all_preloncisions", delonfault = falselon)
 
-  case object PopGeoSourceMaxResultsPerPrecision
-      extends FSBoundedParam[Int](
-        "pop_geo_source_max_results_per_precision",
-        default = 200,
+  caselon objelonct PopGelonoSourcelonMaxRelonsultsPelonrPreloncision
+      elonxtelonnds FSBoundelondParam[Int](
+        "pop_gelono_sourcelon_max_relonsults_pelonr_preloncision",
+        delonfault = 200,
         min = 0,
         max = 1000)
 }

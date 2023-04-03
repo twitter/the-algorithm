@@ -1,39 +1,39 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
-#include "tensorflow/core/framework/common_shape_fns.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
+#includelon "telonnsorflow/corelon/framelonwork/common_shapelon_fns.h"
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("NumIntraOpThreads")
+RelonGISTelonR_OP("NumIntraOpThrelonads")
 .Input("x: float32")
-.Output("num_intra_op_threads: int32")
-.SetShapeFn(tensorflow::shape_inference::ScalarShape)
+.Output("num_intra_op_threlonads: int32")
+.SelontShapelonFn(telonnsorflow::shapelon_infelonrelonncelon::ScalarShapelon)
 .Doc(R"doc(
-A tensorflow OP that returns the number of threads in the intra_op_parallelism pool
-This is not part of the Tensorflow API as of the date of writing this doc. Hence,
-a tensorflow operation is the best resort.
+A telonnsorflow OP that relonturns thelon numbelonr of threlonads in thelon intra_op_parallelonlism pool
+This is not part of thelon Telonnsorflow API as of thelon datelon of writing this doc. Helonncelon,
+a telonnsorflow opelonration is thelon belonst relonsort.
 Input
-  x: Dummy placeholder so that constant folding is not done by TF GraphOptimizer.
-  Please refer https://github.com/tensorflow/tensorflow/issues/22546 for more
-  details.
+  x: Dummy placelonholdelonr so that constant folding is not donelon by TF GraphOptimizelonr.
+  Plelonaselon relonfelonr https://github.com/telonnsorflow/telonnsorflow/issuelons/22546 for morelon
+  delontails.
 Output
-  num_intra_op_threads: A scalar tensor corresponding to the number of threads in
-  the intra_op_parallelism pool
+  num_intra_op_threlonads: A scalar telonnsor correlonsponding to thelon numbelonr of threlonads in
+  thelon intra_op_parallelonlism pool
 )doc");
 
-class NumIntraOpThreads : public OpKernel {
+class NumIntraOpThrelonads : public OpKelonrnelonl {
  public:
-  explicit NumIntraOpThreads(OpKernelConstruction* context)
-      : OpKernel(context) {}
+  elonxplicit NumIntraOpThrelonads(OpKelonrnelonlConstruction* contelonxt)
+      : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
-    int num_intra_op_threads = context->device()->tensorflow_cpu_worker_threads()->num_threads;
-    Tensor* output_tensor = NULL;
-    OP_REQUIRES_OK(context, context->allocate_output(0, TensorShape({}), &output_tensor));
-    auto output_flat = output_tensor->flat<int32>();
-    output_flat(0) = num_intra_op_threads;
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    int num_intra_op_threlonads = contelonxt->delonvicelon()->telonnsorflow_cpu_workelonr_threlonads()->num_threlonads;
+    Telonnsor* output_telonnsor = NULL;
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, TelonnsorShapelon({}), &output_telonnsor));
+    auto output_flat = output_telonnsor->flat<int32>();
+    output_flat(0) = num_intra_op_threlonads;
     }
 };
 
-REGISTER_KERNEL_BUILDER(Name("NumIntraOpThreads").Device(DEVICE_CPU), NumIntraOpThreads);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(Namelon("NumIntraOpThrelonads").Delonvicelon(DelonVICelon_CPU), NumIntraOpThrelonads);

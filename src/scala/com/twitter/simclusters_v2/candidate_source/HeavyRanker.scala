@@ -1,69 +1,69 @@
-package com.twitter.simclusters_v2.candidate_source
+packagelon com.twittelonr.simclustelonrs_v2.candidatelon_sourcelon
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.base.Stats
-import com.twitter.simclusters_v2.candidate_source.SimClustersANNCandidateSource.SimClustersTweetCandidate
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ScoreInternalId
-import com.twitter.simclusters_v2.thriftscala.ScoringAlgorithm
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingPairScoreId
-import com.twitter.simclusters_v2.thriftscala.{Score => ThriftScore}
-import com.twitter.simclusters_v2.thriftscala.{ScoreId => ThriftScoreId}
-import com.twitter.util.Future
-import com.twitter.storehaus.ReadableStore
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.baselon.Stats
+import com.twittelonr.simclustelonrs_v2.candidatelon_sourcelon.SimClustelonrsANNCandidatelonSourcelon.SimClustelonrsTwelonelontCandidatelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ScorelonIntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ScoringAlgorithm
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingId
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingPairScorelonId
+import com.twittelonr.simclustelonrs_v2.thriftscala.{Scorelon => ThriftScorelon}
+import com.twittelonr.simclustelonrs_v2.thriftscala.{ScorelonId => ThriftScorelonId}
+import com.twittelonr.util.Futurelon
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
 
-object HeavyRanker {
-  trait HeavyRanker {
-    def rank(
+objelonct HelonavyRankelonr {
+  trait HelonavyRankelonr {
+    delonf rank(
       scoringAlgorithm: ScoringAlgorithm,
-      sourceEmbeddingId: SimClustersEmbeddingId,
-      candidateEmbeddingType: EmbeddingType,
-      minScore: Double,
-      candidates: Seq[SimClustersTweetCandidate]
-    ): Future[Seq[SimClustersTweetCandidate]]
+      sourcelonelonmbelonddingId: SimClustelonrselonmbelonddingId,
+      candidatelonelonmbelonddingTypelon: elonmbelonddingTypelon,
+      minScorelon: Doublelon,
+      candidatelons: Selonq[SimClustelonrsTwelonelontCandidatelon]
+    ): Futurelon[Selonq[SimClustelonrsTwelonelontCandidatelon]]
   }
 
-  class UniformScoreStoreRanker(
-    uniformScoringStore: ReadableStore[ThriftScoreId, ThriftScore],
-    stats: StatsReceiver)
-      extends HeavyRanker {
-    val fetchCandidateEmbeddingsStat = stats.scope("fetchCandidateEmbeddings")
+  class UniformScorelonStorelonRankelonr(
+    uniformScoringStorelon: RelonadablelonStorelon[ThriftScorelonId, ThriftScorelon],
+    stats: StatsReloncelonivelonr)
+      elonxtelonnds HelonavyRankelonr {
+    val felontchCandidatelonelonmbelonddingsStat = stats.scopelon("felontchCandidatelonelonmbelonddings")
 
-    def rank(
+    delonf rank(
       scoringAlgorithm: ScoringAlgorithm,
-      sourceEmbeddingId: SimClustersEmbeddingId,
-      candidateEmbeddingType: EmbeddingType,
-      minScore: Double,
-      candidates: Seq[SimClustersTweetCandidate]
-    ): Future[Seq[SimClustersTweetCandidate]] = {
-      val pairScoreIds = candidates.map { candidate =>
-        ThriftScoreId(
+      sourcelonelonmbelonddingId: SimClustelonrselonmbelonddingId,
+      candidatelonelonmbelonddingTypelon: elonmbelonddingTypelon,
+      minScorelon: Doublelon,
+      candidatelons: Selonq[SimClustelonrsTwelonelontCandidatelon]
+    ): Futurelon[Selonq[SimClustelonrsTwelonelontCandidatelon]] = {
+      val pairScorelonIds = candidatelons.map { candidatelon =>
+        ThriftScorelonId(
           scoringAlgorithm,
-          ScoreInternalId.SimClustersEmbeddingPairScoreId(
-            SimClustersEmbeddingPairScoreId(
-              sourceEmbeddingId,
-              SimClustersEmbeddingId(
-                candidateEmbeddingType,
-                sourceEmbeddingId.modelVersion,
-                InternalId.TweetId(candidate.tweetId)
+          ScorelonIntelonrnalId.SimClustelonrselonmbelonddingPairScorelonId(
+            SimClustelonrselonmbelonddingPairScorelonId(
+              sourcelonelonmbelonddingId,
+              SimClustelonrselonmbelonddingId(
+                candidatelonelonmbelonddingTypelon,
+                sourcelonelonmbelonddingId.modelonlVelonrsion,
+                IntelonrnalId.TwelonelontId(candidatelon.twelonelontId)
               )
             ))
-        ) -> candidate.tweetId
+        ) -> candidatelon.twelonelontId
       }.toMap
 
-      Future
-        .collect {
-          Stats.trackMap(fetchCandidateEmbeddingsStat) {
-            uniformScoringStore.multiGet(pairScoreIds.keySet)
+      Futurelon
+        .collelonct {
+          Stats.trackMap(felontchCandidatelonelonmbelonddingsStat) {
+            uniformScoringStorelon.multiGelont(pairScorelonIds.kelonySelont)
           }
         }
-        .map { candidateScores =>
-          candidateScores.toSeq
-            .collect {
-              case (pairScoreId, Some(score)) if score.score >= minScore =>
-                SimClustersTweetCandidate(pairScoreIds(pairScoreId), score.score, sourceEmbeddingId)
+        .map { candidatelonScorelons =>
+          candidatelonScorelons.toSelonq
+            .collelonct {
+              caselon (pairScorelonId, Somelon(scorelon)) if scorelon.scorelon >= minScorelon =>
+                SimClustelonrsTwelonelontCandidatelon(pairScorelonIds(pairScorelonId), scorelon.scorelon, sourcelonelonmbelonddingId)
             }
         }
     }

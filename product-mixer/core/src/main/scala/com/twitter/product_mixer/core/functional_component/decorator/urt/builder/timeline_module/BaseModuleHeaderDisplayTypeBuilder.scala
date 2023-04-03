@@ -1,16 +1,16 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeaderDisplayType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonHelonadelonrDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait BaseModuleHeaderDisplayTypeBuilder[
-  -Query <: PipelineQuery,
-  -Candidate <: UniversalNoun[Any]] {
+trait BaselonModulelonHelonadelonrDisplayTypelonBuildelonr[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -Candidatelon <: UnivelonrsalNoun[Any]] {
 
-  def apply(
-    query: Query,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): ModuleHeaderDisplayType
+  delonf apply(
+    quelonry: Quelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): ModulelonHelonadelonrDisplayTypelon
 }

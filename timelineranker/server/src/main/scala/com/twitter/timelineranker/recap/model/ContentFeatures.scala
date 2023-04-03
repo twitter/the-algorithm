@@ -1,222 +1,222 @@
-package com.twitter.timelineranker.recap.model
+packagelon com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl
 
-import com.twitter.escherbird.thriftscala.TweetEntityAnnotation
-import com.twitter.timelines.content_features.v1.thriftscala.{ContentFeatures => ContentFeaturesV1}
-import com.twitter.timelines.content_features.{thriftscala => thrift}
-import com.twitter.tweetypie.thriftscala.ConversationControl
-import com.twitter.tweetypie.thriftscala.MediaEntity
-import com.twitter.tweetypie.thriftscala.SelfThreadMetadata
-import scala.util.Failure
-import scala.util.Success
+import com.twittelonr.elonschelonrbird.thriftscala.TwelonelontelonntityAnnotation
+import com.twittelonr.timelonlinelons.contelonnt_felonaturelons.v1.thriftscala.{ContelonntFelonaturelons => ContelonntFelonaturelonsV1}
+import com.twittelonr.timelonlinelons.contelonnt_felonaturelons.{thriftscala => thrift}
+import com.twittelonr.twelonelontypielon.thriftscala.ConvelonrsationControl
+import com.twittelonr.twelonelontypielon.thriftscala.Melondiaelonntity
+import com.twittelonr.twelonelontypielon.thriftscala.SelonlfThrelonadMelontadata
+import scala.util.Failurelon
+import scala.util.Succelonss
 import scala.util.{Try => ScalaTry}
 
-case class ContentFeatures(
-  length: Short,
-  hasQuestion: Boolean,
+caselon class ContelonntFelonaturelons(
+  lelonngth: Short,
+  hasQuelonstion: Boolelonan,
   numCaps: Short,
-  numWhiteSpaces: Short,
-  numNewlines: Option[Short],
-  videoDurationMs: Option[Int],
-  bitRate: Option[Int],
-  aspectRatioNum: Option[Short],
-  aspectRatioDen: Option[Short],
-  widths: Option[Seq[Short]],
-  heights: Option[Seq[Short]],
-  resizeMethods: Option[Seq[Short]],
-  numMediaTags: Option[Short],
-  mediaTagScreenNames: Option[Seq[String]],
-  emojiTokens: Option[Set[String]],
-  emoticonTokens: Option[Set[String]],
-  phrases: Option[Set[String]],
-  faceAreas: Option[Seq[Int]],
-  dominantColorRed: Option[Short],
-  dominantColorBlue: Option[Short],
-  dominantColorGreen: Option[Short],
+  numWhitelonSpacelons: Short,
+  numNelonwlinelons: Option[Short],
+  videlonoDurationMs: Option[Int],
+  bitRatelon: Option[Int],
+  aspelonctRatioNum: Option[Short],
+  aspelonctRatioDelonn: Option[Short],
+  widths: Option[Selonq[Short]],
+  helonights: Option[Selonq[Short]],
+  relonsizelonMelonthods: Option[Selonq[Short]],
+  numMelondiaTags: Option[Short],
+  melondiaTagScrelonelonnNamelons: Option[Selonq[String]],
+  elonmojiTokelonns: Option[Selont[String]],
+  elonmoticonTokelonns: Option[Selont[String]],
+  phraselons: Option[Selont[String]],
+  facelonArelonas: Option[Selonq[Int]],
+  dominantColorRelond: Option[Short],
+  dominantColorBluelon: Option[Short],
+  dominantColorGrelonelonn: Option[Short],
   numColors: Option[Short],
-  stickerIds: Option[Seq[Long]],
-  mediaOriginProviders: Option[Seq[String]],
-  isManaged: Option[Boolean],
-  is360: Option[Boolean],
-  viewCount: Option[Long],
-  isMonetizable: Option[Boolean],
-  isEmbeddable: Option[Boolean],
-  hasSelectedPreviewImage: Option[Boolean],
-  hasTitle: Option[Boolean],
-  hasDescription: Option[Boolean],
-  hasVisitSiteCallToAction: Option[Boolean],
-  hasAppInstallCallToAction: Option[Boolean],
-  hasWatchNowCallToAction: Option[Boolean],
-  media: Option[Seq[MediaEntity]],
-  dominantColorPercentage: Option[Double],
-  posUnigrams: Option[Set[String]],
-  posBigrams: Option[Set[String]],
-  semanticCoreAnnotations: Option[Seq[TweetEntityAnnotation]],
-  selfThreadMetadata: Option[SelfThreadMetadata],
-  tokens: Option[Seq[String]],
-  tweetText: Option[String],
-  conversationControl: Option[ConversationControl]) {
-  def toThrift: thrift.ContentFeatures =
-    thrift.ContentFeatures.V1(toThriftV1)
+  stickelonrIds: Option[Selonq[Long]],
+  melondiaOriginProvidelonrs: Option[Selonq[String]],
+  isManagelond: Option[Boolelonan],
+  is360: Option[Boolelonan],
+  vielonwCount: Option[Long],
+  isMonelontizablelon: Option[Boolelonan],
+  iselonmbelonddablelon: Option[Boolelonan],
+  hasSelonlelonctelondPrelonvielonwImagelon: Option[Boolelonan],
+  hasTitlelon: Option[Boolelonan],
+  hasDelonscription: Option[Boolelonan],
+  hasVisitSitelonCallToAction: Option[Boolelonan],
+  hasAppInstallCallToAction: Option[Boolelonan],
+  hasWatchNowCallToAction: Option[Boolelonan],
+  melondia: Option[Selonq[Melondiaelonntity]],
+  dominantColorPelonrcelonntagelon: Option[Doublelon],
+  posUnigrams: Option[Selont[String]],
+  posBigrams: Option[Selont[String]],
+  selonmanticCorelonAnnotations: Option[Selonq[TwelonelontelonntityAnnotation]],
+  selonlfThrelonadMelontadata: Option[SelonlfThrelonadMelontadata],
+  tokelonns: Option[Selonq[String]],
+  twelonelontTelonxt: Option[String],
+  convelonrsationControl: Option[ConvelonrsationControl]) {
+  delonf toThrift: thrift.ContelonntFelonaturelons =
+    thrift.ContelonntFelonaturelons.V1(toThriftV1)
 
-  def toThriftV1: ContentFeaturesV1 =
-    ContentFeaturesV1(
-      length = length,
-      hasQuestion = hasQuestion,
+  delonf toThriftV1: ContelonntFelonaturelonsV1 =
+    ContelonntFelonaturelonsV1(
+      lelonngth = lelonngth,
+      hasQuelonstion = hasQuelonstion,
       numCaps = numCaps,
-      numWhiteSpaces = numWhiteSpaces,
-      numNewlines = numNewlines,
-      videoDurationMs = videoDurationMs,
-      bitRate = bitRate,
-      aspectRatioNum = aspectRatioNum,
-      aspectRatioDen = aspectRatioDen,
+      numWhitelonSpacelons = numWhitelonSpacelons,
+      numNelonwlinelons = numNelonwlinelons,
+      videlonoDurationMs = videlonoDurationMs,
+      bitRatelon = bitRatelon,
+      aspelonctRatioNum = aspelonctRatioNum,
+      aspelonctRatioDelonn = aspelonctRatioDelonn,
       widths = widths,
-      heights = heights,
-      resizeMethods = resizeMethods,
-      numMediaTags = numMediaTags,
-      mediaTagScreenNames = mediaTagScreenNames,
-      emojiTokens = emojiTokens,
-      emoticonTokens = emoticonTokens,
-      phrases = phrases,
-      faceAreas = faceAreas,
-      dominantColorRed = dominantColorRed,
-      dominantColorBlue = dominantColorBlue,
-      dominantColorGreen = dominantColorGreen,
+      helonights = helonights,
+      relonsizelonMelonthods = relonsizelonMelonthods,
+      numMelondiaTags = numMelondiaTags,
+      melondiaTagScrelonelonnNamelons = melondiaTagScrelonelonnNamelons,
+      elonmojiTokelonns = elonmojiTokelonns,
+      elonmoticonTokelonns = elonmoticonTokelonns,
+      phraselons = phraselons,
+      facelonArelonas = facelonArelonas,
+      dominantColorRelond = dominantColorRelond,
+      dominantColorBluelon = dominantColorBluelon,
+      dominantColorGrelonelonn = dominantColorGrelonelonn,
       numColors = numColors,
-      stickerIds = stickerIds,
-      mediaOriginProviders = mediaOriginProviders,
-      isManaged = isManaged,
+      stickelonrIds = stickelonrIds,
+      melondiaOriginProvidelonrs = melondiaOriginProvidelonrs,
+      isManagelond = isManagelond,
       is360 = is360,
-      viewCount = viewCount,
-      isMonetizable = isMonetizable,
-      isEmbeddable = isEmbeddable,
-      hasSelectedPreviewImage = hasSelectedPreviewImage,
-      hasTitle = hasTitle,
-      hasDescription = hasDescription,
-      hasVisitSiteCallToAction = hasVisitSiteCallToAction,
+      vielonwCount = vielonwCount,
+      isMonelontizablelon = isMonelontizablelon,
+      iselonmbelonddablelon = iselonmbelonddablelon,
+      hasSelonlelonctelondPrelonvielonwImagelon = hasSelonlelonctelondPrelonvielonwImagelon,
+      hasTitlelon = hasTitlelon,
+      hasDelonscription = hasDelonscription,
+      hasVisitSitelonCallToAction = hasVisitSitelonCallToAction,
       hasAppInstallCallToAction = hasAppInstallCallToAction,
       hasWatchNowCallToAction = hasWatchNowCallToAction,
-      dominantColorPercentage = dominantColorPercentage,
+      dominantColorPelonrcelonntagelon = dominantColorPelonrcelonntagelon,
       posUnigrams = posUnigrams,
       posBigrams = posBigrams,
-      semanticCoreAnnotations = semanticCoreAnnotations,
-      selfThreadMetadata = selfThreadMetadata,
-      tokens = tokens,
-      tweetText = tweetText,
-      conversationControl = conversationControl,
-      media = media
+      selonmanticCorelonAnnotations = selonmanticCorelonAnnotations,
+      selonlfThrelonadMelontadata = selonlfThrelonadMelontadata,
+      tokelonns = tokelonns,
+      twelonelontTelonxt = twelonelontTelonxt,
+      convelonrsationControl = convelonrsationControl,
+      melondia = melondia
     )
 }
 
-object ContentFeatures {
-  val Empty: ContentFeatures = ContentFeatures(
+objelonct ContelonntFelonaturelons {
+  val elonmpty: ContelonntFelonaturelons = ContelonntFelonaturelons(
     0.toShort,
-    false,
+    falselon,
     0.toShort,
     0.toShort,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None,
-    None
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon,
+    Nonelon
   )
 
-  def fromThrift(contentFeatures: thrift.ContentFeatures): Option[ContentFeatures] =
-    contentFeatures match {
-      case thrift.ContentFeatures.V1(contentFeaturesV1) =>
-        Some(fromThriftV1(contentFeaturesV1))
-      case _ =>
-        None
+  delonf fromThrift(contelonntFelonaturelons: thrift.ContelonntFelonaturelons): Option[ContelonntFelonaturelons] =
+    contelonntFelonaturelons match {
+      caselon thrift.ContelonntFelonaturelons.V1(contelonntFelonaturelonsV1) =>
+        Somelon(fromThriftV1(contelonntFelonaturelonsV1))
+      caselon _ =>
+        Nonelon
     }
 
-  private val failure =
-    Failure[ContentFeatures](new Exception("Failure to convert content features from thrift"))
+  privatelon val failurelon =
+    Failurelon[ContelonntFelonaturelons](nelonw elonxcelonption("Failurelon to convelonrt contelonnt felonaturelons from thrift"))
 
-  def tryFromThrift(contentFeaturesThrift: thrift.ContentFeatures): ScalaTry[ContentFeatures] =
-    fromThrift(contentFeaturesThrift) match {
-      case Some(contentFeatures) => Success[ContentFeatures](contentFeatures)
-      case None => failure
+  delonf tryFromThrift(contelonntFelonaturelonsThrift: thrift.ContelonntFelonaturelons): ScalaTry[ContelonntFelonaturelons] =
+    fromThrift(contelonntFelonaturelonsThrift) match {
+      caselon Somelon(contelonntFelonaturelons) => Succelonss[ContelonntFelonaturelons](contelonntFelonaturelons)
+      caselon Nonelon => failurelon
     }
 
-  def fromThriftV1(contentFeaturesV1: ContentFeaturesV1): ContentFeatures =
-    ContentFeatures(
-      length = contentFeaturesV1.length,
-      hasQuestion = contentFeaturesV1.hasQuestion,
-      numCaps = contentFeaturesV1.numCaps,
-      numWhiteSpaces = contentFeaturesV1.numWhiteSpaces,
-      numNewlines = contentFeaturesV1.numNewlines,
-      videoDurationMs = contentFeaturesV1.videoDurationMs,
-      bitRate = contentFeaturesV1.bitRate,
-      aspectRatioNum = contentFeaturesV1.aspectRatioNum,
-      aspectRatioDen = contentFeaturesV1.aspectRatioDen,
-      widths = contentFeaturesV1.widths,
-      heights = contentFeaturesV1.heights,
-      resizeMethods = contentFeaturesV1.resizeMethods,
-      numMediaTags = contentFeaturesV1.numMediaTags,
-      mediaTagScreenNames = contentFeaturesV1.mediaTagScreenNames,
-      emojiTokens = contentFeaturesV1.emojiTokens.map(_.toSet),
-      emoticonTokens = contentFeaturesV1.emoticonTokens.map(_.toSet),
-      phrases = contentFeaturesV1.phrases.map(_.toSet),
-      faceAreas = contentFeaturesV1.faceAreas,
-      dominantColorRed = contentFeaturesV1.dominantColorRed,
-      dominantColorBlue = contentFeaturesV1.dominantColorBlue,
-      dominantColorGreen = contentFeaturesV1.dominantColorGreen,
-      numColors = contentFeaturesV1.numColors,
-      stickerIds = contentFeaturesV1.stickerIds,
-      mediaOriginProviders = contentFeaturesV1.mediaOriginProviders,
-      isManaged = contentFeaturesV1.isManaged,
-      is360 = contentFeaturesV1.is360,
-      viewCount = contentFeaturesV1.viewCount,
-      isMonetizable = contentFeaturesV1.isMonetizable,
-      isEmbeddable = contentFeaturesV1.isEmbeddable,
-      hasSelectedPreviewImage = contentFeaturesV1.hasSelectedPreviewImage,
-      hasTitle = contentFeaturesV1.hasTitle,
-      hasDescription = contentFeaturesV1.hasDescription,
-      hasVisitSiteCallToAction = contentFeaturesV1.hasVisitSiteCallToAction,
-      hasAppInstallCallToAction = contentFeaturesV1.hasAppInstallCallToAction,
-      hasWatchNowCallToAction = contentFeaturesV1.hasWatchNowCallToAction,
-      dominantColorPercentage = contentFeaturesV1.dominantColorPercentage,
-      posUnigrams = contentFeaturesV1.posUnigrams.map(_.toSet),
-      posBigrams = contentFeaturesV1.posBigrams.map(_.toSet),
-      semanticCoreAnnotations = contentFeaturesV1.semanticCoreAnnotations,
-      selfThreadMetadata = contentFeaturesV1.selfThreadMetadata,
-      tokens = contentFeaturesV1.tokens.map(_.toSeq),
-      tweetText = contentFeaturesV1.tweetText,
-      conversationControl = contentFeaturesV1.conversationControl,
-      media = contentFeaturesV1.media
+  delonf fromThriftV1(contelonntFelonaturelonsV1: ContelonntFelonaturelonsV1): ContelonntFelonaturelons =
+    ContelonntFelonaturelons(
+      lelonngth = contelonntFelonaturelonsV1.lelonngth,
+      hasQuelonstion = contelonntFelonaturelonsV1.hasQuelonstion,
+      numCaps = contelonntFelonaturelonsV1.numCaps,
+      numWhitelonSpacelons = contelonntFelonaturelonsV1.numWhitelonSpacelons,
+      numNelonwlinelons = contelonntFelonaturelonsV1.numNelonwlinelons,
+      videlonoDurationMs = contelonntFelonaturelonsV1.videlonoDurationMs,
+      bitRatelon = contelonntFelonaturelonsV1.bitRatelon,
+      aspelonctRatioNum = contelonntFelonaturelonsV1.aspelonctRatioNum,
+      aspelonctRatioDelonn = contelonntFelonaturelonsV1.aspelonctRatioDelonn,
+      widths = contelonntFelonaturelonsV1.widths,
+      helonights = contelonntFelonaturelonsV1.helonights,
+      relonsizelonMelonthods = contelonntFelonaturelonsV1.relonsizelonMelonthods,
+      numMelondiaTags = contelonntFelonaturelonsV1.numMelondiaTags,
+      melondiaTagScrelonelonnNamelons = contelonntFelonaturelonsV1.melondiaTagScrelonelonnNamelons,
+      elonmojiTokelonns = contelonntFelonaturelonsV1.elonmojiTokelonns.map(_.toSelont),
+      elonmoticonTokelonns = contelonntFelonaturelonsV1.elonmoticonTokelonns.map(_.toSelont),
+      phraselons = contelonntFelonaturelonsV1.phraselons.map(_.toSelont),
+      facelonArelonas = contelonntFelonaturelonsV1.facelonArelonas,
+      dominantColorRelond = contelonntFelonaturelonsV1.dominantColorRelond,
+      dominantColorBluelon = contelonntFelonaturelonsV1.dominantColorBluelon,
+      dominantColorGrelonelonn = contelonntFelonaturelonsV1.dominantColorGrelonelonn,
+      numColors = contelonntFelonaturelonsV1.numColors,
+      stickelonrIds = contelonntFelonaturelonsV1.stickelonrIds,
+      melondiaOriginProvidelonrs = contelonntFelonaturelonsV1.melondiaOriginProvidelonrs,
+      isManagelond = contelonntFelonaturelonsV1.isManagelond,
+      is360 = contelonntFelonaturelonsV1.is360,
+      vielonwCount = contelonntFelonaturelonsV1.vielonwCount,
+      isMonelontizablelon = contelonntFelonaturelonsV1.isMonelontizablelon,
+      iselonmbelonddablelon = contelonntFelonaturelonsV1.iselonmbelonddablelon,
+      hasSelonlelonctelondPrelonvielonwImagelon = contelonntFelonaturelonsV1.hasSelonlelonctelondPrelonvielonwImagelon,
+      hasTitlelon = contelonntFelonaturelonsV1.hasTitlelon,
+      hasDelonscription = contelonntFelonaturelonsV1.hasDelonscription,
+      hasVisitSitelonCallToAction = contelonntFelonaturelonsV1.hasVisitSitelonCallToAction,
+      hasAppInstallCallToAction = contelonntFelonaturelonsV1.hasAppInstallCallToAction,
+      hasWatchNowCallToAction = contelonntFelonaturelonsV1.hasWatchNowCallToAction,
+      dominantColorPelonrcelonntagelon = contelonntFelonaturelonsV1.dominantColorPelonrcelonntagelon,
+      posUnigrams = contelonntFelonaturelonsV1.posUnigrams.map(_.toSelont),
+      posBigrams = contelonntFelonaturelonsV1.posBigrams.map(_.toSelont),
+      selonmanticCorelonAnnotations = contelonntFelonaturelonsV1.selonmanticCorelonAnnotations,
+      selonlfThrelonadMelontadata = contelonntFelonaturelonsV1.selonlfThrelonadMelontadata,
+      tokelonns = contelonntFelonaturelonsV1.tokelonns.map(_.toSelonq),
+      twelonelontTelonxt = contelonntFelonaturelonsV1.twelonelontTelonxt,
+      convelonrsationControl = contelonntFelonaturelonsV1.convelonrsationControl,
+      melondia = contelonntFelonaturelonsV1.melondia
     )
 }

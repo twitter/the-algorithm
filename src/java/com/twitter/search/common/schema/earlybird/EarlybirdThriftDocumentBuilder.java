@@ -1,897 +1,897 @@
-package com.twitter.search.common.schema.earlybird;
+packagelon com.twittelonr.selonarch.common.schelonma.elonarlybird;
 
-import java.io.IOException;
-import java.util.HashSet;
+import java.io.IOelonxcelonption;
+import java.util.HashSelont;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.Sets;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
+import com.googlelon.common.collelonct.Selonts;
 
-import org.apache.commons.lang.StringUtils;
-import org.apache.lucene.analysis.TokenStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.StringUtils;
+import org.apachelon.lucelonnelon.analysis.TokelonnStrelonam;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.common.text.util.TokenStreamSerializer;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntity;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntityContext;
-import com.twitter.cuad.ner.plain.thriftjava.NamedEntityInputSourceType;
-import com.twitter.cuad.ner.thriftjava.WholeEntityType;
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.indexing.thriftjava.ThriftExpandedUrl;
-import com.twitter.search.common.indexing.thriftjava.ThriftGeoLocationSource;
-import com.twitter.search.common.indexing.thriftjava.TwitterPhotoUrl;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.ThriftDocumentBuilder;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.util.analysis.CharTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.IntTermAttributeSerializer;
-import com.twitter.search.common.util.analysis.TermPayloadAttributeSerializer;
-import com.twitter.search.common.util.analysis.TwitterPhotoTokenStream;
-import com.twitter.search.common.util.spatial.GeoUtil;
-import com.twitter.search.common.util.text.TokenizerHelper;
-import com.twitter.search.common.util.text.TweetTokenStreamSerializer;
-import com.twitter.search.common.util.text.regex.Regex;
-import com.twitter.search.common.util.url.LinkVisibilityUtils;
-import com.twitter.search.common.util.url.URLUtils;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.common.telonxt.util.TokelonnStrelonamSelonrializelonr;
+import com.twittelonr.cuad.nelonr.plain.thriftjava.Namelondelonntity;
+import com.twittelonr.cuad.nelonr.plain.thriftjava.NamelondelonntityContelonxt;
+import com.twittelonr.cuad.nelonr.plain.thriftjava.NamelondelonntityInputSourcelonTypelon;
+import com.twittelonr.cuad.nelonr.thriftjava.WholelonelonntityTypelon;
+import com.twittelonr.selonarch.common.constants.SelonarchCardTypelon;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftelonxpandelondUrl;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftGelonoLocationSourcelon;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.TwittelonrPhotoUrl;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.schelonma.ThriftDocumelonntBuildelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldNamelonToIdMapping;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.util.analysis.CharTelonrmAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.IntTelonrmAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.TelonrmPayloadAttributelonSelonrializelonr;
+import com.twittelonr.selonarch.common.util.analysis.TwittelonrPhotoTokelonnStrelonam;
+import com.twittelonr.selonarch.common.util.spatial.GelonoUtil;
+import com.twittelonr.selonarch.common.util.telonxt.TokelonnizelonrHelonlpelonr;
+import com.twittelonr.selonarch.common.util.telonxt.TwelonelontTokelonnStrelonamSelonrializelonr;
+import com.twittelonr.selonarch.common.util.telonxt.relongelonx.Relongelonx;
+import com.twittelonr.selonarch.common.util.url.LinkVisibilityUtils;
+import com.twittelonr.selonarch.common.util.url.URLUtils;
 
-import geo.google.datamodel.GeoAddressAccuracy;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
+import gelono.googlelon.datamodelonl.GelonoAddrelonssAccuracy;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
 
 /**
- * Builder class for building a {@link ThriftDocument}.
+ * Buildelonr class for building a {@link ThriftDocumelonnt}.
  */
-public final class EarlybirdThriftDocumentBuilder extends ThriftDocumentBuilder {
-  private static final Logger LOG = LoggerFactory.getLogger(EarlybirdThriftDocumentBuilder.class);
+public final class elonarlybirdThriftDocumelonntBuildelonr elonxtelonnds ThriftDocumelonntBuildelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(elonarlybirdThriftDocumelonntBuildelonr.class);
 
-  private static final SearchCounter SERIALIZE_FAILURE_COUNT_NONPENGUIN_DEPENDENT =
-      SearchCounter.export("tokenstream_serialization_failure_non_penguin_dependent");
+  privatelon static final SelonarchCountelonr SelonRIALIZelon_FAILURelon_COUNT_NONPelonNGUIN_DelonPelonNDelonNT =
+      SelonarchCountelonr.elonxport("tokelonnstrelonam_selonrialization_failurelon_non_pelonnguin_delonpelonndelonnt");
 
-  private static final String HASHTAG_SYMBOL = "#";
-  private static final String CASHTAG_SYMBOL = "$";
-  private static final String MENTION_SYMBOL = "@";
+  privatelon static final String HASHTAG_SYMBOL = "#";
+  privatelon static final String CASHTAG_SYMBOL = "$";
+  privatelon static final String MelonNTION_SYMBOL = "@";
 
-  private static final SearchCounter BCP47_LANGUAGE_TAG_COUNTER =
-      SearchCounter.export("bcp47_language_tag");
+  privatelon static final SelonarchCountelonr BCP47_LANGUAGelon_TAG_COUNTelonR =
+      SelonarchCountelonr.elonxport("bcp47_languagelon_tag");
 
   /**
-   * Used to check if a card is video card.
+   * Uselond to chelonck if a card is videlono card.
    *
-   * @see #withSearchCard
+   * @selonelon #withSelonarchCard
    */
-  private static final String AMPLIFY_CARD_NAME = "amplify";
-  private static final String PLAYER_CARD_NAME = "player";
+  privatelon static final String AMPLIFY_CARD_NAMelon = "amplify";
+  privatelon static final String PLAYelonR_CARD_NAMelon = "playelonr";
 
-  // Extra term indexed for native retweets, to ensure that the "-rt" query excludes them.
-  public static final String RETWEET_TERM = "rt";
-  public static final String QUESTION_MARK = "?";
+  // elonxtra telonrm indelonxelond for nativelon relontwelonelonts, to elonnsurelon that thelon "-rt" quelonry elonxcludelons thelonm.
+  public static final String RelonTWelonelonT_TelonRM = "rt";
+  public static final String QUelonSTION_MARK = "?";
 
-  private static final Set<NamedEntityInputSourceType> NAMED_ENTITY_URL_SOURCE_TYPES =
-      ImmutableSet.of(
-          NamedEntityInputSourceType.URL_TITLE, NamedEntityInputSourceType.URL_DESCRIPTION);
+  privatelon static final Selont<NamelondelonntityInputSourcelonTypelon> NAMelonD_elonNTITY_URL_SOURCelon_TYPelonS =
+      ImmutablelonSelont.of(
+          NamelondelonntityInputSourcelonTypelon.URL_TITLelon, NamelondelonntityInputSourcelonTypelon.URL_DelonSCRIPTION);
 
-  private final TokenStreamSerializer intTermAttributeSerializer =
-      new TokenStreamSerializer(ImmutableList.of(
-          new IntTermAttributeSerializer()));
-  private final TokenStreamSerializer photoUrlSerializer =
-      new TokenStreamSerializer(ImmutableList
-          .<TokenStreamSerializer.AttributeSerializer>of(
-              new CharTermAttributeSerializer(), new TermPayloadAttributeSerializer()));
-  private final Schema schema;
+  privatelon final TokelonnStrelonamSelonrializelonr intTelonrmAttributelonSelonrializelonr =
+      nelonw TokelonnStrelonamSelonrializelonr(ImmutablelonList.of(
+          nelonw IntTelonrmAttributelonSelonrializelonr()));
+  privatelon final TokelonnStrelonamSelonrializelonr photoUrlSelonrializelonr =
+      nelonw TokelonnStrelonamSelonrializelonr(ImmutablelonList
+          .<TokelonnStrelonamSelonrializelonr.AttributelonSelonrializelonr>of(
+              nelonw CharTelonrmAttributelonSelonrializelonr(), nelonw TelonrmPayloadAttributelonSelonrializelonr()));
+  privatelon final Schelonma schelonma;
 
-  private boolean isSetLatLonCSF = false;
-  private boolean addLatLonCSF = true;
-  private boolean addEncodedTweetFeatures = true;
+  privatelon boolelonan isSelontLatLonCSF = falselon;
+  privatelon boolelonan addLatLonCSF = truelon;
+  privatelon boolelonan addelonncodelondTwelonelontFelonaturelons = truelon;
 
   @Nonnull
-  private final EarlybirdEncodedFeatures encodedTweetFeatures;
-  @Nullable
-  private final EarlybirdEncodedFeatures extendedEncodedTweetFeatures;
+  privatelon final elonarlybirdelonncodelondFelonaturelons elonncodelondTwelonelontFelonaturelons;
+  @Nullablelon
+  privatelon final elonarlybirdelonncodelondFelonaturelons elonxtelonndelondelonncodelondTwelonelontFelonaturelons;
 
   /**
-   * Default constructor
+   * Delonfault constructor
    */
-  public EarlybirdThriftDocumentBuilder(
-      @Nonnull EarlybirdEncodedFeatures encodedTweetFeatures,
-      @Nullable EarlybirdEncodedFeatures extendedEncodedTweetFeatures,
-      FieldNameToIdMapping idMapping,
-      Schema schema) {
-    super(idMapping);
-    this.schema = schema;
-    this.encodedTweetFeatures = Preconditions.checkNotNull(encodedTweetFeatures);
+  public elonarlybirdThriftDocumelonntBuildelonr(
+      @Nonnull elonarlybirdelonncodelondFelonaturelons elonncodelondTwelonelontFelonaturelons,
+      @Nullablelon elonarlybirdelonncodelondFelonaturelons elonxtelonndelondelonncodelondTwelonelontFelonaturelons,
+      FielonldNamelonToIdMapping idMapping,
+      Schelonma schelonma) {
+    supelonr(idMapping);
+    this.schelonma = schelonma;
+    this.elonncodelondTwelonelontFelonaturelons = Prelonconditions.chelonckNotNull(elonncodelondTwelonelontFelonaturelons);
 
-    this.extendedEncodedTweetFeatures = extendedEncodedTweetFeatures;
+    this.elonxtelonndelondelonncodelondTwelonelontFelonaturelons = elonxtelonndelondelonncodelondTwelonelontFelonaturelons;
   }
 
   /**
-   * Get internal {@link EarlybirdEncodedFeatures}
+   * Gelont intelonrnal {@link elonarlybirdelonncodelondFelonaturelons}
    */
-  public EarlybirdEncodedFeatures getEncodedTweetFeatures() {
-    return encodedTweetFeatures;
+  public elonarlybirdelonncodelondFelonaturelons gelontelonncodelondTwelonelontFelonaturelons() {
+    relonturn elonncodelondTwelonelontFelonaturelons;
   }
 
   /**
-   * Add skip list entry for the given field.
-   * This adds a term __has_fieldName in the INTERNAL field.
+   * Add skip list elonntry for thelon givelonn fielonld.
+   * This adds a telonrm __has_fielonldNamelon in thelon INTelonRNAL fielonld.
    */
-  public EarlybirdThriftDocumentBuilder addFacetSkipList(String fieldName) {
-    withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.getFacetSkipFieldName(fieldName));
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr addFacelontSkipList(String fielonldNamelon) {
+    withStringFielonld(elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
+        elonarlybirdFielonldConstant.gelontFacelontSkipFielonldNamelon(fielonldNamelon));
+    relonturn this;
   }
 
   /**
-   * Add a filter term in the INTERNAL field.
+   * Add a filtelonr telonrm in thelon INTelonRNAL fielonld.
    */
-  public EarlybirdThriftDocumentBuilder addFilterInternalFieldTerm(String filterName) {
-    withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdThriftDocumentUtil.formatFilter(filterName));
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr addFiltelonrIntelonrnalFielonldTelonrm(String filtelonrNamelon) {
+    withStringFielonld(elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
+        elonarlybirdThriftDocumelonntUtil.formatFiltelonr(filtelonrNamelon));
+    relonturn this;
   }
 
   /**
-   * Add id field and id csf field.
+   * Add id fielonld and id csf fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withID(long id) {
-    withLongField(EarlybirdFieldConstant.ID_FIELD.getFieldName(), id);
-    withLongField(EarlybirdFieldConstant.ID_CSF_FIELD.getFieldName(), id);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withID(long id) {
+    withLongFielonld(elonarlybirdFielonldConstant.ID_FIelonLD.gelontFielonldNamelon(), id);
+    withLongFielonld(elonarlybirdFielonldConstant.ID_CSF_FIelonLD.gelontFielonldNamelon(), id);
+    relonturn this;
   }
 
   /**
-   * Add created at field and created at csf field.
+   * Add crelonatelond at fielonld and crelonatelond at csf fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withCreatedAt(int createdAt) {
-    withIntField(EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName(), createdAt);
-    withIntField(EarlybirdFieldConstant.CREATED_AT_CSF_FIELD.getFieldName(), createdAt);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withCrelonatelondAt(int crelonatelondAt) {
+    withIntFielonld(elonarlybirdFielonldConstant.CRelonATelonD_AT_FIelonLD.gelontFielonldNamelon(), crelonatelondAt);
+    withIntFielonld(elonarlybirdFielonldConstant.CRelonATelonD_AT_CSF_FIelonLD.gelontFielonldNamelon(), crelonatelondAt);
+    relonturn this;
   }
 
   /**
-   * Add tweet text field.
+   * Add twelonelont telonxt fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withTweetText(
-      String text, byte[] textTokenStream) throws IOException {
-    withTokenStreamField(EarlybirdFieldConstants.EarlybirdFieldConstant.TEXT_FIELD.getFieldName(),
-        text, textTokenStream);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withTwelonelontTelonxt(
+      String telonxt, bytelon[] telonxtTokelonnStrelonam) throws IOelonxcelonption {
+    withTokelonnStrelonamFielonld(elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.TelonXT_FIelonLD.gelontFielonldNamelon(),
+        telonxt, telonxtTokelonnStrelonam);
+    relonturn this;
   }
 
-  public EarlybirdThriftDocumentBuilder withTweetText(String text) throws IOException {
-    withTweetText(text, null);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withTwelonelontTelonxt(String telonxt) throws IOelonxcelonption {
+    withTwelonelontTelonxt(telonxt, null);
+    relonturn this;
   }
 
   /**
-   * Add a list of cashTags. Like $TWTR.
+   * Add a list of cashTags. Likelon $TWTR.
    */
-  public EarlybirdThriftDocumentBuilder withStocksFields(List<String> cashTags) {
-    if (isNotEmpty(cashTags)) {
-      addFacetSkipList(EarlybirdFieldConstant.STOCKS_FIELD.getFieldName());
+  public elonarlybirdThriftDocumelonntBuildelonr withStocksFielonlds(List<String> cashTags) {
+    if (isNotelonmpty(cashTags)) {
+      addFacelontSkipList(elonarlybirdFielonldConstant.STOCKS_FIelonLD.gelontFielonldNamelon());
       for (String cashTag : cashTags) {
-        withStringField(
-            EarlybirdFieldConstant.STOCKS_FIELD.getFieldName(), CASHTAG_SYMBOL + cashTag);
+        withStringFielonld(
+            elonarlybirdFielonldConstant.STOCKS_FIelonLD.gelontFielonldNamelon(), CASHTAG_SYMBOL + cashTag);
       }
     }
-    return this;
+    relonturn this;
   }
 
   /**
    * Add a list of hashtags.
    */
-  public EarlybirdThriftDocumentBuilder withHashtagsField(List<String> hashtags) {
-    if (isNotEmpty(hashtags)) {
+  public elonarlybirdThriftDocumelonntBuildelonr withHashtagsFielonld(List<String> hashtags) {
+    if (isNotelonmpty(hashtags)) {
       int numHashtags = Math.min(
-          hashtags.size(),
-          schema.getFeatureConfigurationById(
-              EarlybirdFieldConstant.NUM_HASHTAGS.getFieldId()).getMaxValue());
-      encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.NUM_HASHTAGS, numHashtags);
-      addFacetSkipList(EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName());
+          hashtags.sizelon(),
+          schelonma.gelontFelonaturelonConfigurationById(
+              elonarlybirdFielonldConstant.NUM_HASHTAGS.gelontFielonldId()).gelontMaxValuelon());
+      elonncodelondTwelonelontFelonaturelons.selontFelonaturelonValuelon(elonarlybirdFielonldConstant.NUM_HASHTAGS, numHashtags);
+      addFacelontSkipList(elonarlybirdFielonldConstant.HASHTAGS_FIelonLD.gelontFielonldNamelon());
       for (String hashtag : hashtags) {
-        withStringField(
-            EarlybirdFieldConstant.HASHTAGS_FIELD.getFieldName(), HASHTAG_SYMBOL + hashtag);
+        withStringFielonld(
+            elonarlybirdFielonldConstant.HASHTAGS_FIelonLD.gelontFielonldNamelon(), HASHTAG_SYMBOL + hashtag);
       }
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Added a list of mentions.
+   * Addelond a list of melonntions.
    */
-  public EarlybirdThriftDocumentBuilder withMentionsField(List<String> mentions) {
-    if (isNotEmpty(mentions)) {
-      int numMentions = Math.min(
-          mentions.size(),
-          schema.getFeatureConfigurationById(
-              EarlybirdFieldConstant.NUM_HASHTAGS.getFieldId()).getMaxValue());
-      encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.NUM_MENTIONS, numMentions);
-      addFacetSkipList(EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName());
-      for (String mention : mentions) {
-        withStringField(
-            EarlybirdFieldConstant.MENTIONS_FIELD.getFieldName(), MENTION_SYMBOL + mention);
+  public elonarlybirdThriftDocumelonntBuildelonr withMelonntionsFielonld(List<String> melonntions) {
+    if (isNotelonmpty(melonntions)) {
+      int numMelonntions = Math.min(
+          melonntions.sizelon(),
+          schelonma.gelontFelonaturelonConfigurationById(
+              elonarlybirdFielonldConstant.NUM_HASHTAGS.gelontFielonldId()).gelontMaxValuelon());
+      elonncodelondTwelonelontFelonaturelons.selontFelonaturelonValuelon(elonarlybirdFielonldConstant.NUM_MelonNTIONS, numMelonntions);
+      addFacelontSkipList(elonarlybirdFielonldConstant.MelonNTIONS_FIelonLD.gelontFielonldNamelon());
+      for (String melonntion : melonntions) {
+        withStringFielonld(
+            elonarlybirdFielonldConstant.MelonNTIONS_FIelonLD.gelontFielonldNamelon(), MelonNTION_SYMBOL + melonntion);
       }
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add a list of Twitter Photo URLs (twimg URLs). These are different from regular URLs, because
-   * we use the TwitterPhotoTokenStream to index them, and we also include the status ID as payload.
+   * Add a list of Twittelonr Photo URLs (twimg URLs). Thelonselon arelon diffelonrelonnt from relongular URLs, beloncauselon
+   * welon uselon thelon TwittelonrPhotoTokelonnStrelonam to indelonx thelonm, and welon also includelon thelon status ID as payload.
    */
-  public EarlybirdThriftDocumentBuilder withTwimgURLs(
-      List<TwitterPhotoUrl> urls) throws IOException {
-    if (isNotEmpty(urls)) {
-      for (TwitterPhotoUrl photoUrl : urls) {
-        TokenStream ts = new TwitterPhotoTokenStream(photoUrl.getPhotoStatusId(),
-            photoUrl.getMediaUrl());
-        byte[] serializedTs = photoUrlSerializer.serialize(ts);
-        withTokenStreamField(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName(),
-            Long.toString(photoUrl.getPhotoStatusId()), serializedTs);
-        addFacetSkipList(EarlybirdFieldConstant.TWIMG_LINKS_FIELD.getFieldName());
+  public elonarlybirdThriftDocumelonntBuildelonr withTwimgURLs(
+      List<TwittelonrPhotoUrl> urls) throws IOelonxcelonption {
+    if (isNotelonmpty(urls)) {
+      for (TwittelonrPhotoUrl photoUrl : urls) {
+        TokelonnStrelonam ts = nelonw TwittelonrPhotoTokelonnStrelonam(photoUrl.gelontPhotoStatusId(),
+            photoUrl.gelontMelondiaUrl());
+        bytelon[] selonrializelondTs = photoUrlSelonrializelonr.selonrializelon(ts);
+        withTokelonnStrelonamFielonld(elonarlybirdFielonldConstant.TWIMG_LINKS_FIelonLD.gelontFielonldNamelon(),
+            Long.toString(photoUrl.gelontPhotoStatusId()), selonrializelondTs);
+        addFacelontSkipList(elonarlybirdFielonldConstant.TWIMG_LINKS_FIelonLD.gelontFielonldNamelon());
       }
-      encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-      encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_NATIVE_IMAGE_FLAG);
+      elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.HAS_IMAGelon_URL_FLAG);
+      elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.HAS_NATIVelon_IMAGelon_FLAG);
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add a list of URLs. This also add facet skip list terms for news / images / videos if needed.
+   * Add a list of URLs. This also add facelont skip list telonrms for nelonws / imagelons / videlonos if nelonelondelond.
    */
-  public EarlybirdThriftDocumentBuilder withURLs(List<ThriftExpandedUrl> urls) {
-    if (isNotEmpty(urls)) {
-      Set<String> dedupedLinks = Sets.newHashSet();
+  public elonarlybirdThriftDocumelonntBuildelonr withURLs(List<ThriftelonxpandelondUrl> urls) {
+    if (isNotelonmpty(urls)) {
+      Selont<String> delondupelondLinks = Selonts.nelonwHashSelont();
 
-      for (ThriftExpandedUrl expandedUrl : urls) {
-        if (expandedUrl.isSetOriginalUrl()) {
-          String normalizedOriginalUrl = URLUtils.normalizePath(expandedUrl.getOriginalUrl());
-          dedupedLinks.add(normalizedOriginalUrl);
+      for (ThriftelonxpandelondUrl elonxpandelondUrl : urls) {
+        if (elonxpandelondUrl.isSelontOriginalUrl()) {
+          String normalizelondOriginalUrl = URLUtils.normalizelonPath(elonxpandelondUrl.gelontOriginalUrl());
+          delondupelondLinks.add(normalizelondOriginalUrl);
         }
-        if (expandedUrl.isSetExpandedUrl()) {
-          dedupedLinks.add(URLUtils.normalizePath(expandedUrl.getExpandedUrl()));
+        if (elonxpandelondUrl.isSelontelonxpandelondUrl()) {
+          delondupelondLinks.add(URLUtils.normalizelonPath(elonxpandelondUrl.gelontelonxpandelondUrl()));
         }
 
-        if (expandedUrl.isSetCanonicalLastHopUrl()) {
-          String url = URLUtils.normalizePath(expandedUrl.getCanonicalLastHopUrl());
-          dedupedLinks.add(url);
+        if (elonxpandelondUrl.isSelontCanonicalLastHopUrl()) {
+          String url = URLUtils.normalizelonPath(elonxpandelondUrl.gelontCanonicalLastHopUrl());
+          delondupelondLinks.add(url);
 
-          String facetUrl = URLUtils.normalizeFacetURL(url);
+          String facelontUrl = URLUtils.normalizelonFacelontURL(url);
 
-          if (expandedUrl.isSetMediaType()) {
-            switch (expandedUrl.getMediaType()) {
-              case NEWS:
-                withStringField(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName(), url);
-                addFacetSkipList(EarlybirdFieldConstant.NEWS_LINKS_FIELD.getFieldName());
-                encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_NEWS_URL_FLAG);
-                break;
-              case VIDEO:
-                withStringField(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName(), facetUrl);
-                addFacetSkipList(EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName());
-                encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_VIDEO_URL_FLAG);
-                break;
-              case IMAGE:
-                withStringField(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName(), facetUrl);
-                addFacetSkipList(EarlybirdFieldConstant.IMAGE_LINKS_FIELD.getFieldName());
-                encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_IMAGE_URL_FLAG);
-                break;
-              case NATIVE_IMAGE:
-                // Nothing done here. Native images are handled separately.
-                // They are in PhotoUrls instead of expandedUrls.
-                break;
-              case UNKNOWN:
-                break;
-              default:
-                throw new RuntimeException("Unknown Media Type: " + expandedUrl.getMediaType());
+          if (elonxpandelondUrl.isSelontMelondiaTypelon()) {
+            switch (elonxpandelondUrl.gelontMelondiaTypelon()) {
+              caselon NelonWS:
+                withStringFielonld(elonarlybirdFielonldConstant.NelonWS_LINKS_FIelonLD.gelontFielonldNamelon(), url);
+                addFacelontSkipList(elonarlybirdFielonldConstant.NelonWS_LINKS_FIelonLD.gelontFielonldNamelon());
+                elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.HAS_NelonWS_URL_FLAG);
+                brelonak;
+              caselon VIDelonO:
+                withStringFielonld(elonarlybirdFielonldConstant.VIDelonO_LINKS_FIelonLD.gelontFielonldNamelon(), facelontUrl);
+                addFacelontSkipList(elonarlybirdFielonldConstant.VIDelonO_LINKS_FIelonLD.gelontFielonldNamelon());
+                elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.HAS_VIDelonO_URL_FLAG);
+                brelonak;
+              caselon IMAGelon:
+                withStringFielonld(elonarlybirdFielonldConstant.IMAGelon_LINKS_FIelonLD.gelontFielonldNamelon(), facelontUrl);
+                addFacelontSkipList(elonarlybirdFielonldConstant.IMAGelon_LINKS_FIelonLD.gelontFielonldNamelon());
+                elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.HAS_IMAGelon_URL_FLAG);
+                brelonak;
+              caselon NATIVelon_IMAGelon:
+                // Nothing donelon helonrelon. Nativelon imagelons arelon handlelond selonparatelonly.
+                // Thelony arelon in PhotoUrls instelonad of elonxpandelondUrls.
+                brelonak;
+              caselon UNKNOWN:
+                brelonak;
+              delonfault:
+                throw nelonw Runtimelonelonxcelonption("Unknown Melondia Typelon: " + elonxpandelondUrl.gelontMelondiaTypelon());
             }
           }
 
-          if (expandedUrl.isSetLinkCategory()) {
-            withIntField(EarlybirdFieldConstant.LINK_CATEGORY_FIELD.getFieldName(),
-                expandedUrl.getLinkCategory().getValue());
+          if (elonxpandelondUrl.isSelontLinkCatelongory()) {
+            withIntFielonld(elonarlybirdFielonldConstant.LINK_CATelonGORY_FIelonLD.gelontFielonldNamelon(),
+                elonxpandelondUrl.gelontLinkCatelongory().gelontValuelon());
           }
         }
       }
 
-      if (!dedupedLinks.isEmpty()) {
-        encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_LINK_FLAG);
+      if (!delondupelondLinks.iselonmpty()) {
+        elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.HAS_LINK_FLAG);
 
-        addFacetSkipList(EarlybirdFieldConstant.LINKS_FIELD.getFieldName());
+        addFacelontSkipList(elonarlybirdFielonldConstant.LINKS_FIelonLD.gelontFielonldNamelon());
 
-        for (String linkUrl : dedupedLinks) {
-          withStringField(EarlybirdFieldConstant.LINKS_FIELD.getFieldName(), linkUrl);
+        for (String linkUrl : delondupelondLinks) {
+          withStringFielonld(elonarlybirdFielonldConstant.LINKS_FIelonLD.gelontFielonldNamelon(), linkUrl);
         }
       }
 
-      encodedTweetFeatures.setFlagValue(
-          EarlybirdFieldConstant.HAS_VISIBLE_LINK_FLAG,
-          LinkVisibilityUtils.hasVisibleLink(urls));
+      elonncodelondTwelonelontFelonaturelons.selontFlagValuelon(
+          elonarlybirdFielonldConstant.HAS_VISIBLelon_LINK_FLAG,
+          LinkVisibilityUtils.hasVisiblelonLink(urls));
     }
 
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add a list of places. The place are U64 encoded place IDs.
+   * Add a list of placelons. Thelon placelon arelon U64 elonncodelond placelon IDs.
    */
-  public EarlybirdThriftDocumentBuilder withPlacesField(List<String> places) {
-    if (isNotEmpty(places)) {
-      for (String place : places) {
-        withStringField(EarlybirdFieldConstant.PLACE_FIELD.getFieldName(), place);
+  public elonarlybirdThriftDocumelonntBuildelonr withPlacelonsFielonld(List<String> placelons) {
+    if (isNotelonmpty(placelons)) {
+      for (String placelon : placelons) {
+        withStringFielonld(elonarlybirdFielonldConstant.PLACelon_FIelonLD.gelontFielonldNamelon(), placelon);
       }
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add tweet text signature field.
+   * Add twelonelont telonxt signaturelon fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withTweetSignature(int signature) {
-    encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.TWEET_SIGNATURE, signature);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withTwelonelontSignaturelon(int signaturelon) {
+    elonncodelondTwelonelontFelonaturelons.selontFelonaturelonValuelon(elonarlybirdFielonldConstant.TWelonelonT_SIGNATURelon, signaturelon);
+    relonturn this;
   }
 
   /**
-   * Add geo hash field and internal filter field.
+   * Add gelono hash fielonld and intelonrnal filtelonr fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withGeoHash(double lat, double lon, int accuracy) {
-    if (GeoUtil.validateGeoCoordinates(lat, lon)) {
-      withGeoField(
-          EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(),
+  public elonarlybirdThriftDocumelonntBuildelonr withGelonoHash(doublelon lat, doublelon lon, int accuracy) {
+    if (GelonoUtil.validatelonGelonoCoordinatelons(lat, lon)) {
+      withGelonoFielonld(
+          elonarlybirdFielonldConstant.GelonO_HASH_FIelonLD.gelontFielonldNamelon(),
           lat, lon, accuracy);
       withLatLonCSF(lat, lon);
     }
-    return this;
+    relonturn this;
   }
 
-  public EarlybirdThriftDocumentBuilder withGeoHash(double lat, double lon) {
-    withGeoHash(lat, lon, GeoAddressAccuracy.UNKNOWN_LOCATION.getCode());
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withGelonoHash(doublelon lat, doublelon lon) {
+    withGelonoHash(lat, lon, GelonoAddrelonssAccuracy.UNKNOWN_LOCATION.gelontCodelon());
+    relonturn this;
   }
 
   /**
-   * Add geo location source to the internal field with ThriftGeoLocationSource object.
+   * Add gelono location sourcelon to thelon intelonrnal fielonld with ThriftGelonoLocationSourcelon objelonct.
    */
-  public EarlybirdThriftDocumentBuilder withGeoLocationSource(
-      ThriftGeoLocationSource geoLocationSource) {
-    if (geoLocationSource != null) {
-      withGeoLocationSource(EarlybirdFieldConstants.formatGeoType(geoLocationSource));
+  public elonarlybirdThriftDocumelonntBuildelonr withGelonoLocationSourcelon(
+      ThriftGelonoLocationSourcelon gelonoLocationSourcelon) {
+    if (gelonoLocationSourcelon != null) {
+      withGelonoLocationSourcelon(elonarlybirdFielonldConstants.formatGelonoTypelon(gelonoLocationSourcelon));
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add geo location source to the internal field.
+   * Add gelono location sourcelon to thelon intelonrnal fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withGeoLocationSource(String geoLocationSource) {
-    withStringField(EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(), geoLocationSource);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withGelonoLocationSourcelon(String gelonoLocationSourcelon) {
+    withStringFielonld(elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(), gelonoLocationSourcelon);
+    relonturn this;
   }
 
   /**
-   * Add encoded lat and lon to LatLonCSF field.
+   * Add elonncodelond lat and lon to LatLonCSF fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withLatLonCSF(double lat, double lon) {
-    isSetLatLonCSF = true;
-    long encodedLatLon = GeoUtil.encodeLatLonIntoInt64((float) lat, (float) lon);
-    withLongField(EarlybirdFieldConstant.LAT_LON_CSF_FIELD.getFieldName(), encodedLatLon);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withLatLonCSF(doublelon lat, doublelon lon) {
+    isSelontLatLonCSF = truelon;
+    long elonncodelondLatLon = GelonoUtil.elonncodelonLatLonIntoInt64((float) lat, (float) lon);
+    withLongFielonld(elonarlybirdFielonldConstant.LAT_LON_CSF_FIelonLD.gelontFielonldNamelon(), elonncodelondLatLon);
+    relonturn this;
   }
 
   /**
-   * Add from verified account flag to internal field.
+   * Add from velonrifielond account flag to intelonrnal fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withFromVerifiedAccountFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.FROM_VERIFIED_ACCOUNT_FLAG);
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.VERIFIED_FILTER_TERM);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withFromVelonrifielondAccountFlag() {
+    elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.FROM_VelonRIFIelonD_ACCOUNT_FLAG);
+    addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.VelonRIFIelonD_FILTelonR_TelonRM);
+    relonturn this;
   }
 
   /**
-   * Add from blue-verified account flag to internal field.
+   * Add from bluelon-velonrifielond account flag to intelonrnal fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withFromBlueVerifiedAccountFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.FROM_BLUE_VERIFIED_ACCOUNT_FLAG);
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.BLUE_VERIFIED_FILTER_TERM);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withFromBluelonVelonrifielondAccountFlag() {
+    elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.FROM_BLUelon_VelonRIFIelonD_ACCOUNT_FLAG);
+    addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.BLUelon_VelonRIFIelonD_FILTelonR_TelonRM);
+    relonturn this;
   }
 
   /**
-   * Add offensive flag to internal field.
+   * Add offelonnsivelon flag to intelonrnal fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withOffensiveFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.IS_OFFENSIVE_FLAG);
-    withStringField(
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.IS_OFFENSIVE);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withOffelonnsivelonFlag() {
+    elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.IS_OFFelonNSIVelon_FLAG);
+    withStringFielonld(
+        elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
+        elonarlybirdFielonldConstant.IS_OFFelonNSIVelon);
+    relonturn this;
   }
 
   /**
-   * Add user reputation value to encoded feature.
+   * Add uselonr relonputation valuelon to elonncodelond felonaturelon.
    */
-  public EarlybirdThriftDocumentBuilder withUserReputation(byte score) {
-    encodedTweetFeatures.setFeatureValue(EarlybirdFieldConstant.USER_REPUTATION, score);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withUselonrRelonputation(bytelon scorelon) {
+    elonncodelondTwelonelontFelonaturelons.selontFelonaturelonValuelon(elonarlybirdFielonldConstant.USelonR_RelonPUTATION, scorelon);
+    relonturn this;
   }
 
   /**
-   * This method creates the fields related to document language.
-   * For most languages, their isoLanguageCode and bcp47LanguageTag are the same.
-   * For some languages with variants, these two fields are different.
-   * E.g. for simplified Chinese, their isoLanguageCode is zh, but their bcp47LanguageTag is zh-cn.
+   * This melonthod crelonatelons thelon fielonlds relonlatelond to documelonnt languagelon.
+   * For most languagelons, thelonir isoLanguagelonCodelon and bcp47LanguagelonTag arelon thelon samelon.
+   * For somelon languagelons with variants, thelonselon two fielonlds arelon diffelonrelonnt.
+   * elon.g. for simplifielond Chinelonselon, thelonir isoLanguagelonCodelon is zh, but thelonir bcp47LanguagelonTag is zh-cn.
    * <p>
-   * This method adds fields for both the isoLanguageCode and bcp47LanguageTag.
+   * This melonthod adds fielonlds for both thelon isoLanguagelonCodelon and bcp47LanguagelonTag.
    */
-  public EarlybirdThriftDocumentBuilder withLanguageCodes(
-      String isoLanguageCode, String bcp47LanguageTag) {
-    if (isoLanguageCode != null) {
-      withISOLanguage(isoLanguageCode);
+  public elonarlybirdThriftDocumelonntBuildelonr withLanguagelonCodelons(
+      String isoLanguagelonCodelon, String bcp47LanguagelonTag) {
+    if (isoLanguagelonCodelon != null) {
+      withISOLanguagelon(isoLanguagelonCodelon);
     }
-    if (bcp47LanguageTag != null && !bcp47LanguageTag.equals(isoLanguageCode)) {
-      BCP47_LANGUAGE_TAG_COUNTER.increment();
-      withISOLanguage(bcp47LanguageTag);
+    if (bcp47LanguagelonTag != null && !bcp47LanguagelonTag.elonquals(isoLanguagelonCodelon)) {
+      BCP47_LANGUAGelon_TAG_COUNTelonR.increlonmelonnt();
+      withISOLanguagelon(bcp47LanguagelonTag);
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Adds a String field into the ISO_LANGUAGE_FIELD.
+   * Adds a String fielonld into thelon ISO_LANGUAGelon_FIelonLD.
    */
-  public EarlybirdThriftDocumentBuilder withISOLanguage(String languageString) {
-    withStringField(
-        EarlybirdFieldConstant.ISO_LANGUAGE_FIELD.getFieldName(), languageString.toLowerCase());
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withISOLanguagelon(String languagelonString) {
+    withStringFielonld(
+        elonarlybirdFielonldConstant.ISO_LANGUAGelon_FIelonLD.gelontFielonldNamelon(), languagelonString.toLowelonrCaselon());
+    relonturn this;
   }
 
   /**
-   * Add from user ID fields.
+   * Add from uselonr ID fielonlds.
    */
-  public EarlybirdThriftDocumentBuilder withFromUserID(long fromUserId) {
-    withLongField(EarlybirdFieldConstant.FROM_USER_ID_FIELD.getFieldName(), fromUserId);
-    withLongField(EarlybirdFieldConstant.FROM_USER_ID_CSF.getFieldName(), fromUserId);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withFromUselonrID(long fromUselonrId) {
+    withLongFielonld(elonarlybirdFielonldConstant.FROM_USelonR_ID_FIelonLD.gelontFielonldNamelon(), fromUselonrId);
+    withLongFielonld(elonarlybirdFielonldConstant.FROM_USelonR_ID_CSF.gelontFielonldNamelon(), fromUselonrId);
+    relonturn this;
   }
 
   /**
-   * Add from user information fields.
+   * Add from uselonr information fielonlds.
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(
-      long fromUserId, String fromUser) {
-    withFromUser(fromUserId, fromUser, null);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withFromUselonr(
+      long fromUselonrId, String fromUselonr) {
+    withFromUselonr(fromUselonrId, fromUselonr, null);
+    relonturn this;
   }
 
   /**
-   * Add from user information fields.
+   * Add from uselonr information fielonlds.
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(String fromUser) {
-    withFromUser(fromUser, null);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withFromUselonr(String fromUselonr) {
+    withFromUselonr(fromUselonr, null);
+    relonturn this;
   }
 
   /**
-   * Add from user information fields.
+   * Add from uselonr information fielonlds.
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(
-      String fromUser, String tokenizedFromUser) {
-    withStringField(EarlybirdFieldConstant.FROM_USER_FIELD.getFieldName(), fromUser);
-    withStringField(EarlybirdFieldConstant.TOKENIZED_FROM_USER_FIELD.getFieldName(),
-        isNotBlank(tokenizedFromUser) ? tokenizedFromUser : fromUser);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withFromUselonr(
+      String fromUselonr, String tokelonnizelondFromUselonr) {
+    withStringFielonld(elonarlybirdFielonldConstant.FROM_USelonR_FIelonLD.gelontFielonldNamelon(), fromUselonr);
+    withStringFielonld(elonarlybirdFielonldConstant.TOKelonNIZelonD_FROM_USelonR_FIelonLD.gelontFielonldNamelon(),
+        isNotBlank(tokelonnizelondFromUselonr) ? tokelonnizelondFromUselonr : fromUselonr);
+    relonturn this;
   }
 
   /**
-   * Add from user information fields.
+   * Add from uselonr information fielonlds.
    */
-  public EarlybirdThriftDocumentBuilder withFromUser(
-      long fromUserId, String fromUser, String tokenizedFromUser) {
-    withFromUserID(fromUserId);
-    withFromUser(fromUser, tokenizedFromUser);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withFromUselonr(
+      long fromUselonrId, String fromUselonr, String tokelonnizelondFromUselonr) {
+    withFromUselonrID(fromUselonrId);
+    withFromUselonr(fromUselonr, tokelonnizelondFromUselonr);
+    relonturn this;
   }
 
   /**
-   * Add to user field.
+   * Add to uselonr fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withToUser(
-      String toUser) {
-    withStringField(EarlybirdFieldConstant.TO_USER_FIELD.getFieldName(), toUser);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withToUselonr(
+      String toUselonr) {
+    withStringFielonld(elonarlybirdFielonldConstant.TO_USelonR_FIelonLD.gelontFielonldNamelon(), toUselonr);
+    relonturn this;
   }
 
   /**
-   * Add escherbird annotation fields.
+   * Add elonschelonrbird annotation fielonlds.
    */
-  public EarlybirdThriftDocumentBuilder withAnnotationEntities(List<String> entities) {
-    if (isNotEmpty(entities)) {
-      for (String entity : entities) {
-        withStringField(EarlybirdFieldConstant.ENTITY_ID_FIELD.getFieldName(), entity);
+  public elonarlybirdThriftDocumelonntBuildelonr withAnnotationelonntitielons(List<String> elonntitielons) {
+    if (isNotelonmpty(elonntitielons)) {
+      for (String elonntity : elonntitielons) {
+        withStringFielonld(elonarlybirdFielonldConstant.elonNTITY_ID_FIelonLD.gelontFielonldNamelon(), elonntity);
       }
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add replies to internal field and set is reply flag.
+   * Add relonplielons to intelonrnal fielonld and selont is relonply flag.
    */
-  public EarlybirdThriftDocumentBuilder withReplyFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.IS_REPLY_FLAG);
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.REPLIES_FILTER_TERM);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withRelonplyFlag() {
+    elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.IS_RelonPLY_FLAG);
+    addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.RelonPLIelonS_FILTelonR_TelonRM);
+    relonturn this;
   }
 
-  public EarlybirdThriftDocumentBuilder withCameraComposerSourceFlag() {
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.COMPOSER_SOURCE_IS_CAMERA_FLAG);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withCamelonraComposelonrSourcelonFlag() {
+    elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.COMPOSelonR_SOURCelon_IS_CAMelonRA_FLAG);
+    relonturn this;
   }
 
     /**
-     * Add in reply to user id.
+     * Add in relonply to uselonr id.
      * <p>
-     * Notice {@link #withReplyFlag} is not automatically called since retweet a tweet that is
-     * a reply to some other tweet is not considered a reply.
-     * The caller should call {@link #withReplyFlag} separately if this tweet is really a reply tweet.
+     * Noticelon {@link #withRelonplyFlag} is not automatically callelond sincelon relontwelonelont a twelonelont that is
+     * a relonply to somelon othelonr twelonelont is not considelonrelond a relonply.
+     * Thelon callelonr should call {@link #withRelonplyFlag} selonparatelonly if this twelonelont is relonally a relonply twelonelont.
      */
-  public EarlybirdThriftDocumentBuilder withInReplyToUserID(long inReplyToUserID) {
-    withLongField(EarlybirdFieldConstant.IN_REPLY_TO_USER_ID_FIELD.getFieldName(), inReplyToUserID);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withInRelonplyToUselonrID(long inRelonplyToUselonrID) {
+    withLongFielonld(elonarlybirdFielonldConstant.IN_RelonPLY_TO_USelonR_ID_FIelonLD.gelontFielonldNamelon(), inRelonplyToUselonrID);
+    relonturn this;
   }
 
   /**
-   * Add reference tweet author id.
+   * Add relonfelonrelonncelon twelonelont author id.
    */
-  public EarlybirdThriftDocumentBuilder withReferenceAuthorID(long referenceAuthorID) {
-    withLongField(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(), referenceAuthorID);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withRelonfelonrelonncelonAuthorID(long relonfelonrelonncelonAuthorID) {
+    withLongFielonld(elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_CSF.gelontFielonldNamelon(), relonfelonrelonncelonAuthorID);
+    relonturn this;
   }
 
   /**
-   * Add all native retweet related fields/label
+   * Add all nativelon relontwelonelont relonlatelond fielonlds/labelonl
    */
-  @VisibleForTesting
-  public EarlybirdThriftDocumentBuilder withNativeRetweet(final long retweetUserID,
-                                                          final long sharedStatusID) {
-    withLongField(EarlybirdFieldConstant.SHARED_STATUS_ID_CSF.getFieldName(), sharedStatusID);
+  @VisiblelonForTelonsting
+  public elonarlybirdThriftDocumelonntBuildelonr withNativelonRelontwelonelont(final long relontwelonelontUselonrID,
+                                                          final long sharelondStatusID) {
+    withLongFielonld(elonarlybirdFielonldConstant.SHARelonD_STATUS_ID_CSF.gelontFielonldNamelon(), sharelondStatusID);
 
-    withLongField(EarlybirdFieldConstant.RETWEET_SOURCE_TWEET_ID_FIELD.getFieldName(),
-                  sharedStatusID);
-    withLongField(EarlybirdFieldConstant.RETWEET_SOURCE_USER_ID_FIELD.getFieldName(),
-                  retweetUserID);
-    withLongField(EarlybirdFieldConstant.REFERENCE_AUTHOR_ID_CSF.getFieldName(), retweetUserID);
+    withLongFielonld(elonarlybirdFielonldConstant.RelonTWelonelonT_SOURCelon_TWelonelonT_ID_FIelonLD.gelontFielonldNamelon(),
+                  sharelondStatusID);
+    withLongFielonld(elonarlybirdFielonldConstant.RelonTWelonelonT_SOURCelon_USelonR_ID_FIelonLD.gelontFielonldNamelon(),
+                  relontwelonelontUselonrID);
+    withLongFielonld(elonarlybirdFielonldConstant.RelonFelonRelonNCelon_AUTHOR_ID_CSF.gelontFielonldNamelon(), relontwelonelontUselonrID);
 
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.IS_RETWEET_FLAG);
+    elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.IS_RelonTWelonelonT_FLAG);
 
-    // Add native retweet label to the internal field.
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.NATIVE_RETWEETS_FILTER_TERM);
-    withStringField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), RETWEET_TERM);
-    return this;
+    // Add nativelon relontwelonelont labelonl to thelon intelonrnal fielonld.
+    addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.NATIVelon_RelonTWelonelonTS_FILTelonR_TelonRM);
+    withStringFielonld(elonarlybirdFielonldConstant.TelonXT_FIelonLD.gelontFielonldNamelon(), RelonTWelonelonT_TelonRM);
+    relonturn this;
   }
 
   /**
-   * Add quoted tweet id and user id.
+   * Add quotelond twelonelont id and uselonr id.
    */
-  @VisibleForTesting
-  public EarlybirdThriftDocumentBuilder withQuote(
-      final long quotedStatusId, final long quotedUserId) {
-    withLongField(EarlybirdFieldConstant.QUOTED_TWEET_ID_FIELD.getFieldName(), quotedStatusId);
-    withLongField(EarlybirdFieldConstant.QUOTED_USER_ID_FIELD.getFieldName(), quotedUserId);
+  @VisiblelonForTelonsting
+  public elonarlybirdThriftDocumelonntBuildelonr withQuotelon(
+      final long quotelondStatusId, final long quotelondUselonrId) {
+    withLongFielonld(elonarlybirdFielonldConstant.QUOTelonD_TWelonelonT_ID_FIelonLD.gelontFielonldNamelon(), quotelondStatusId);
+    withLongFielonld(elonarlybirdFielonldConstant.QUOTelonD_USelonR_ID_FIelonLD.gelontFielonldNamelon(), quotelondUselonrId);
 
-    withLongField(EarlybirdFieldConstant.QUOTED_TWEET_ID_CSF.getFieldName(), quotedStatusId);
-    withLongField(EarlybirdFieldConstant.QUOTED_USER_ID_CSF.getFieldName(), quotedUserId);
+    withLongFielonld(elonarlybirdFielonldConstant.QUOTelonD_TWelonelonT_ID_CSF.gelontFielonldNamelon(), quotelondStatusId);
+    withLongFielonld(elonarlybirdFielonldConstant.QUOTelonD_USelonR_ID_CSF.gelontFielonldNamelon(), quotelondUselonrId);
 
-    encodedTweetFeatures.setFlag(EarlybirdFieldConstant.HAS_QUOTE_FLAG);
+    elonncodelondTwelonelontFelonaturelons.selontFlag(elonarlybirdFielonldConstant.HAS_QUOTelon_FLAG);
 
-    // Add quote label to the internal field.
-    addFilterInternalFieldTerm(EarlybirdFieldConstant.QUOTE_FILTER_TERM);
-    return this;
+    // Add quotelon labelonl to thelon intelonrnal fielonld.
+    addFiltelonrIntelonrnalFielonldTelonrm(elonarlybirdFielonldConstant.QUOTelon_FILTelonR_TelonRM);
+    relonturn this;
   }
 
   /**
-   * Add resolved links text field.
+   * Add relonsolvelond links telonxt fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withResolvedLinksText(String linksText) {
-    withStringField(EarlybirdFieldConstant.RESOLVED_LINKS_TEXT_FIELD.getFieldName(), linksText);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withRelonsolvelondLinksTelonxt(String linksTelonxt) {
+    withStringFielonld(elonarlybirdFielonldConstant.RelonSOLVelonD_LINKS_TelonXT_FIelonLD.gelontFielonldNamelon(), linksTelonxt);
+    relonturn this;
   }
 
   /**
-   * Add source field.
+   * Add sourcelon fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withSource(String source) {
-    withStringField(EarlybirdFieldConstant.SOURCE_FIELD.getFieldName(), source);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withSourcelon(String sourcelon) {
+    withStringFielonld(elonarlybirdFielonldConstant.SOURCelon_FIelonLD.gelontFielonldNamelon(), sourcelon);
+    relonturn this;
   }
 
   /**
-   * Add normalized source field.
+   * Add normalizelond sourcelon fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withNormalizedSource(String normalizedSource) {
-    withStringField(
-        EarlybirdFieldConstant.NORMALIZED_SOURCE_FIELD.getFieldName(), normalizedSource);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withNormalizelondSourcelon(String normalizelondSourcelon) {
+    withStringFielonld(
+        elonarlybirdFielonldConstant.NORMALIZelonD_SOURCelon_FIelonLD.gelontFielonldNamelon(), normalizelondSourcelon);
+    relonturn this;
   }
 
   /**
-   * Add positive smiley to internal field.
+   * Add positivelon smilelony to intelonrnal fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withPositiveSmiley() {
-    withStringField(
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.HAS_POSITIVE_SMILEY);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withPositivelonSmilelony() {
+    withStringFielonld(
+        elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
+        elonarlybirdFielonldConstant.HAS_POSITIVelon_SMILelonY);
+    relonturn this;
   }
 
   /**
-   * Add negative smiley to internal field.
+   * Add nelongativelon smilelony to intelonrnal fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withNegativeSmiley() {
-    withStringField(
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
-        EarlybirdFieldConstant.HAS_NEGATIVE_SMILEY);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withNelongativelonSmilelony() {
+    withStringFielonld(
+        elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
+        elonarlybirdFielonldConstant.HAS_NelonGATIVelon_SMILelonY);
+    relonturn this;
   }
 
   /**
-   * Add question mark label to a text field.
+   * Add quelonstion mark labelonl to a telonxt fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withQuestionMark() {
-    withStringField(EarlybirdFieldConstant.TEXT_FIELD.getFieldName(), QUESTION_MARK);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withQuelonstionMark() {
+    withStringFielonld(elonarlybirdFielonldConstant.TelonXT_FIelonLD.gelontFielonldNamelon(), QUelonSTION_MARK);
+    relonturn this;
   }
 
   /**
-   * Add card related fields.
+   * Add card relonlatelond fielonlds.
    */
-  public EarlybirdThriftDocumentBuilder withSearchCard(
-      String name,
+  public elonarlybirdThriftDocumelonntBuildelonr withSelonarchCard(
+      String namelon,
       String domain,
-      String title, byte[] serializedTitleStream,
-      String description, byte[] serializedDescriptionStream,
+      String titlelon, bytelon[] selonrializelondTitlelonStrelonam,
+      String delonscription, bytelon[] selonrializelondDelonscriptionStrelonam,
       String lang) {
-    if (isNotBlank(title)) {
-      withTokenStreamField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_TITLE_FIELD.getFieldName(),
-          title, serializedTitleStream);
+    if (isNotBlank(titlelon)) {
+      withTokelonnStrelonamFielonld(
+          elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.CARD_TITLelon_FIelonLD.gelontFielonldNamelon(),
+          titlelon, selonrializelondTitlelonStrelonam);
     }
 
-    if (isNotBlank(description)) {
-      withTokenStreamField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_DESCRIPTION_FIELD.getFieldName(),
-          description, serializedDescriptionStream);
+    if (isNotBlank(delonscription)) {
+      withTokelonnStrelonamFielonld(
+          elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.CARD_DelonSCRIPTION_FIelonLD.gelontFielonldNamelon(),
+          delonscription, selonrializelondDelonscriptionStrelonam);
     }
 
     if (isNotBlank(lang)) {
-      withStringField(EarlybirdFieldConstant.CARD_LANG.getFieldName(), lang);
+      withStringFielonld(elonarlybirdFielonldConstant.CARD_LANG.gelontFielonldNamelon(), lang);
     }
 
     if (isNotBlank(domain)) {
-      withStringField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_DOMAIN_FIELD.getFieldName(), domain);
+      withStringFielonld(
+          elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.CARD_DOMAIN_FIelonLD.gelontFielonldNamelon(), domain);
     }
 
-    if (isNotBlank(name)) {
-      withStringField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_NAME_FIELD.getFieldName(), name);
-      withIntField(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.CARD_TYPE_CSF_FIELD.getFieldName(),
-          SearchCardType.cardTypeFromStringName(name).getByteValue());
+    if (isNotBlank(namelon)) {
+      withStringFielonld(
+          elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.CARD_NAMelon_FIelonLD.gelontFielonldNamelon(), namelon);
+      withIntFielonld(
+          elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.CARD_TYPelon_CSF_FIelonLD.gelontFielonldNamelon(),
+          SelonarchCardTypelon.cardTypelonFromStringNamelon(namelon).gelontBytelonValuelon());
     }
 
-    if (AMPLIFY_CARD_NAME.equalsIgnoreCase(name)
-        || PLAYER_CARD_NAME.equalsIgnoreCase(name)) {
-      // Add into "internal" field so that this tweet is returned by filter:videos.
-      addFacetSkipList(
-          EarlybirdFieldConstants.EarlybirdFieldConstant.VIDEO_LINKS_FIELD.getFieldName());
+    if (AMPLIFY_CARD_NAMelon.elonqualsIgnorelonCaselon(namelon)
+        || PLAYelonR_CARD_NAMelon.elonqualsIgnorelonCaselon(namelon)) {
+      // Add into "intelonrnal" fielonld so that this twelonelont is relonturnelond by filtelonr:videlonos.
+      addFacelontSkipList(
+          elonarlybirdFielonldConstants.elonarlybirdFielonldConstant.VIDelonO_LINKS_FIelonLD.gelontFielonldNamelon());
     }
 
-    return this;
+    relonturn this;
   }
 
-  public EarlybirdThriftDocumentBuilder withNormalizedMinEngagementField(
-      String fieldName, int normalizedNumEngagements) throws IOException {
-    EarlybirdThriftDocumentUtil.addNormalizedMinEngagementField(doc, fieldName,
-        normalizedNumEngagements);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withNormalizelondMinelonngagelonmelonntFielonld(
+      String fielonldNamelon, int normalizelondNumelonngagelonmelonnts) throws IOelonxcelonption {
+    elonarlybirdThriftDocumelonntUtil.addNormalizelondMinelonngagelonmelonntFielonld(doc, fielonldNamelon,
+        normalizelondNumelonngagelonmelonnts);
+    relonturn this;
   }
 
   /**
-   * Add named entity with given canonical name and type to document.
+   * Add namelond elonntity with givelonn canonical namelon and typelon to documelonnt.
    */
-  public EarlybirdThriftDocumentBuilder withNamedEntity(NamedEntity namedEntity) {
-    if (namedEntity.getContexts() == null) {
-      // In this unlikely case, we don't have any context for named entity type or source,
-      // so we can't properly index it in any of our fields. We'll just skip it in this case.
-      return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withNamelondelonntity(Namelondelonntity namelondelonntity) {
+    if (namelondelonntity.gelontContelonxts() == null) {
+      // In this unlikelonly caselon, welon don't havelon any contelonxt for namelond elonntity typelon or sourcelon,
+      // so welon can't propelonrly indelonx it in any of our fielonlds. Welon'll just skip it in this caselon.
+      relonturn this;
     }
 
-    // Keep track of the fields we've applied in the builder already, to ensure we only index
-    // each term (field/value pair) once
-    Set<Pair<EarlybirdFieldConstant, String>> fieldsApplied = new HashSet<>();
-    for (NamedEntityContext context : namedEntity.getContexts()) {
-      if (context.isSetInput_source()
-          && NAMED_ENTITY_URL_SOURCE_TYPES.contains(context.getInput_source().getSource_type())) {
-        // If the source is one of the URL* types, add the named entity to the "from_url" fields,
-        // ensuring we add it only once
-        addNamedEntityFields(
-            fieldsApplied,
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_URL_FIELD,
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_URL_FIELD,
-            namedEntity.getCanonical_name(),
-            context);
-      } else {
-        addNamedEntityFields(
-            fieldsApplied,
-            EarlybirdFieldConstant.NAMED_ENTITY_FROM_TEXT_FIELD,
-            EarlybirdFieldConstant.NAMED_ENTITY_WITH_TYPE_FROM_TEXT_FIELD,
-            namedEntity.getCanonical_name(),
-            context);
+    // Kelonelonp track of thelon fielonlds welon'velon applielond in thelon buildelonr alrelonady, to elonnsurelon welon only indelonx
+    // elonach telonrm (fielonld/valuelon pair) oncelon
+    Selont<Pair<elonarlybirdFielonldConstant, String>> fielonldsApplielond = nelonw HashSelont<>();
+    for (NamelondelonntityContelonxt contelonxt : namelondelonntity.gelontContelonxts()) {
+      if (contelonxt.isSelontInput_sourcelon()
+          && NAMelonD_elonNTITY_URL_SOURCelon_TYPelonS.contains(contelonxt.gelontInput_sourcelon().gelontSourcelon_typelon())) {
+        // If thelon sourcelon is onelon of thelon URL* typelons, add thelon namelond elonntity to thelon "from_url" fielonlds,
+        // elonnsuring welon add it only oncelon
+        addNamelondelonntityFielonlds(
+            fielonldsApplielond,
+            elonarlybirdFielonldConstant.NAMelonD_elonNTITY_FROM_URL_FIelonLD,
+            elonarlybirdFielonldConstant.NAMelonD_elonNTITY_WITH_TYPelon_FROM_URL_FIelonLD,
+            namelondelonntity.gelontCanonical_namelon(),
+            contelonxt);
+      } elonlselon {
+        addNamelondelonntityFielonlds(
+            fielonldsApplielond,
+            elonarlybirdFielonldConstant.NAMelonD_elonNTITY_FROM_TelonXT_FIelonLD,
+            elonarlybirdFielonldConstant.NAMelonD_elonNTITY_WITH_TYPelon_FROM_TelonXT_FIelonLD,
+            namelondelonntity.gelontCanonical_namelon(),
+            contelonxt);
       }
     }
 
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add space id fields.
+   * Add spacelon id fielonlds.
    */
-  public EarlybirdThriftDocumentBuilder withSpaceIdFields(Set<String> spaceIds) {
-    if (!spaceIds.isEmpty()) {
-      addFacetSkipList(EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName());
-      for (String spaceId : spaceIds) {
-        withStringField(EarlybirdFieldConstant.SPACE_ID_FIELD.getFieldName(), spaceId);
+  public elonarlybirdThriftDocumelonntBuildelonr withSpacelonIdFielonlds(Selont<String> spacelonIds) {
+    if (!spacelonIds.iselonmpty()) {
+      addFacelontSkipList(elonarlybirdFielonldConstant.SPACelon_ID_FIelonLD.gelontFielonldNamelon());
+      for (String spacelonId : spacelonIds) {
+        withStringFielonld(elonarlybirdFielonldConstant.SPACelon_ID_FIelonLD.gelontFielonldNamelon(), spacelonId);
       }
     }
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add directed at user.
+   * Add direlonctelond at uselonr.
    */
-  @VisibleForTesting
-  public EarlybirdThriftDocumentBuilder withDirectedAtUser(final long directedAtUserId) {
-    withLongField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_FIELD.getFieldName(),
-        directedAtUserId);
+  @VisiblelonForTelonsting
+  public elonarlybirdThriftDocumelonntBuildelonr withDirelonctelondAtUselonr(final long direlonctelondAtUselonrId) {
+    withLongFielonld(elonarlybirdFielonldConstant.DIRelonCTelonD_AT_USelonR_ID_FIelonLD.gelontFielonldNamelon(),
+        direlonctelondAtUselonrId);
 
-    withLongField(EarlybirdFieldConstant.DIRECTED_AT_USER_ID_CSF.getFieldName(), directedAtUserId);
+    withLongFielonld(elonarlybirdFielonldConstant.DIRelonCTelonD_AT_USelonR_ID_CSF.gelontFielonldNamelon(), direlonctelondAtUselonrId);
 
-    return this;
+    relonturn this;
   }
 
   /**
-   * Add a white space tokenized screen name field.
+   * Add a whitelon spacelon tokelonnizelond screlonelonn namelon fielonld.
    *
-   * Example:
-   *  screenName - "super_hero"
-   *  tokenized version - "super hero"
+   * elonxamplelon:
+   *  screlonelonnNamelon - "supelonr_helonro"
+   *  tokelonnizelond velonrsion - "supelonr helonro"
    */
-  public EarlybirdThriftDocumentBuilder withWhiteSpaceTokenizedScreenNameField(
-      String fieldName,
-      String normalizedScreenName) {
-    String whiteSpaceTokenizableScreenName = StringUtils.join(
-        normalizedScreenName.split(Regex.HASHTAG_USERNAME_PUNCTUATION_REGEX), " ");
-    withStringField(fieldName, whiteSpaceTokenizableScreenName);
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr withWhitelonSpacelonTokelonnizelondScrelonelonnNamelonFielonld(
+      String fielonldNamelon,
+      String normalizelondScrelonelonnNamelon) {
+    String whitelonSpacelonTokelonnizablelonScrelonelonnNamelon = StringUtils.join(
+        normalizelondScrelonelonnNamelon.split(Relongelonx.HASHTAG_USelonRNAMelon_PUNCTUATION_RelonGelonX), " ");
+    withStringFielonld(fielonldNamelon, whitelonSpacelonTokelonnizablelonScrelonelonnNamelon);
+    relonturn this;
   }
 
   /**
-   * Add a camel case tokenized screen name field.
+   * Add a camelonl caselon tokelonnizelond screlonelonn namelon fielonld.
    */
-  public EarlybirdThriftDocumentBuilder withCamelCaseTokenizedScreenNameField(
-      String fieldName,
-      String screenName,
-      String normalizedScreenName,
-      TokenStream screenNameTokenStream) {
+  public elonarlybirdThriftDocumelonntBuildelonr withCamelonlCaselonTokelonnizelondScrelonelonnNamelonFielonld(
+      String fielonldNamelon,
+      String screlonelonnNamelon,
+      String normalizelondScrelonelonnNamelon,
+      TokelonnStrelonam screlonelonnNamelonTokelonnStrelonam) {
 
-    // this normalized text is consistent to how the tokenized stream is created from
-    // TokenizerHelper.getNormalizedCamelcaseTokenStream - ie. just lowercasing.
-    String camelCaseTokenizedScreenNameText =
-        TokenizerHelper.getNormalizedCamelcaseTokenStreamText(screenName);
+    // this normalizelond telonxt is consistelonnt to how thelon tokelonnizelond strelonam is crelonatelond from
+    // TokelonnizelonrHelonlpelonr.gelontNormalizelondCamelonlcaselonTokelonnStrelonam - ielon. just lowelonrcasing.
+    String camelonlCaselonTokelonnizelondScrelonelonnNamelonTelonxt =
+        TokelonnizelonrHelonlpelonr.gelontNormalizelondCamelonlcaselonTokelonnStrelonamTelonxt(screlonelonnNamelon);
     try {
-      // Reset the token stream in case it has been read before.
-      screenNameTokenStream.reset();
-      byte[] camelCaseTokenizedScreenName =
-          TweetTokenStreamSerializer.getTweetTokenStreamSerializer()
-              .serialize(screenNameTokenStream);
+      // Relonselont thelon tokelonn strelonam in caselon it has belonelonn relonad belonforelon.
+      screlonelonnNamelonTokelonnStrelonam.relonselont();
+      bytelon[] camelonlCaselonTokelonnizelondScrelonelonnNamelon =
+          TwelonelontTokelonnStrelonamSelonrializelonr.gelontTwelonelontTokelonnStrelonamSelonrializelonr()
+              .selonrializelon(screlonelonnNamelonTokelonnStrelonam);
 
-      withTokenStreamField(
-          fieldName,
-          camelCaseTokenizedScreenNameText.isEmpty()
-              ? normalizedScreenName : camelCaseTokenizedScreenNameText,
-          camelCaseTokenizedScreenName);
-    } catch (IOException e) {
-      LOG.error("TwitterTokenStream serialization error! Could not serialize: " + screenName);
-      SERIALIZE_FAILURE_COUNT_NONPENGUIN_DEPENDENT.increment();
+      withTokelonnStrelonamFielonld(
+          fielonldNamelon,
+          camelonlCaselonTokelonnizelondScrelonelonnNamelonTelonxt.iselonmpty()
+              ? normalizelondScrelonelonnNamelon : camelonlCaselonTokelonnizelondScrelonelonnNamelonTelonxt,
+          camelonlCaselonTokelonnizelondScrelonelonnNamelon);
+    } catch (IOelonxcelonption elon) {
+      LOG.elonrror("TwittelonrTokelonnStrelonam selonrialization elonrror! Could not selonrializelon: " + screlonelonnNamelon);
+      SelonRIALIZelon_FAILURelon_COUNT_NONPelonNGUIN_DelonPelonNDelonNT.increlonmelonnt();
     }
-    return this;
+    relonturn this;
   }
 
-  private void addNamedEntityFields(
-      Set<Pair<EarlybirdFieldConstant, String>> fieldsApplied,
-      EarlybirdFieldConstant nameOnlyField,
-      EarlybirdFieldConstant nameWithTypeField,
-      String name,
-      NamedEntityContext context) {
-    withOneTimeStringField(fieldsApplied, nameOnlyField, name, false);
-    if (context.isSetEntity_type()) {
-      withOneTimeStringField(fieldsApplied, nameWithTypeField,
-          formatNamedEntityString(name, context.getEntity_type()), true);
+  privatelon void addNamelondelonntityFielonlds(
+      Selont<Pair<elonarlybirdFielonldConstant, String>> fielonldsApplielond,
+      elonarlybirdFielonldConstant namelonOnlyFielonld,
+      elonarlybirdFielonldConstant namelonWithTypelonFielonld,
+      String namelon,
+      NamelondelonntityContelonxt contelonxt) {
+    withOnelonTimelonStringFielonld(fielonldsApplielond, namelonOnlyFielonld, namelon, falselon);
+    if (contelonxt.isSelontelonntity_typelon()) {
+      withOnelonTimelonStringFielonld(fielonldsApplielond, namelonWithTypelonFielonld,
+          formatNamelondelonntityString(namelon, contelonxt.gelontelonntity_typelon()), truelon);
     }
   }
 
-  private void withOneTimeStringField(
-      Set<Pair<EarlybirdFieldConstant, String>> fieldsApplied, EarlybirdFieldConstant field,
-      String value, boolean addToFacets) {
-    Pair<EarlybirdFieldConstant, String> fieldValuePair = new Pair<>(field, value);
-    if (!fieldsApplied.contains(fieldValuePair)) {
-      if (addToFacets) {
-        addFacetSkipList(field.getFieldName());
+  privatelon void withOnelonTimelonStringFielonld(
+      Selont<Pair<elonarlybirdFielonldConstant, String>> fielonldsApplielond, elonarlybirdFielonldConstant fielonld,
+      String valuelon, boolelonan addToFacelonts) {
+    Pair<elonarlybirdFielonldConstant, String> fielonldValuelonPair = nelonw Pair<>(fielonld, valuelon);
+    if (!fielonldsApplielond.contains(fielonldValuelonPair)) {
+      if (addToFacelonts) {
+        addFacelontSkipList(fielonld.gelontFielonldNamelon());
       }
-      withStringField(field.getFieldName(), value);
-      fieldsApplied.add(fieldValuePair);
+      withStringFielonld(fielonld.gelontFielonldNamelon(), valuelon);
+      fielonldsApplielond.add(fielonldValuelonPair);
     }
   }
 
-  private String formatNamedEntityString(String name, WholeEntityType type) {
-    return String.format("%s:%s", name, type).toLowerCase();
+  privatelon String formatNamelondelonntityString(String namelon, WholelonelonntityTypelon typelon) {
+    relonturn String.format("%s:%s", namelon, typelon).toLowelonrCaselon();
   }
 
   /**
-   * Set whether set LAT_LON_CSF_FIELD or not before build
-   * if LAT_LON_CSF_FIELD is not set deliberately.
+   * Selont whelonthelonr selont LAT_LON_CSF_FIelonLD or not belonforelon build
+   * if LAT_LON_CSF_FIelonLD is not selont delonlibelonratelonly.
    *
-   * @see #prepareToBuild()
+   * @selonelon #prelonparelonToBuild()
    */
-  public EarlybirdThriftDocumentBuilder setAddLatLonCSF(boolean isSet) {
-    addLatLonCSF = isSet;
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr selontAddLatLonCSF(boolelonan isSelont) {
+    addLatLonCSF = isSelont;
+    relonturn this;
   }
 
   /**
-   * Set if add encoded tweet feature field in the end.
+   * Selont if add elonncodelond twelonelont felonaturelon fielonld in thelon elonnd.
    *
-   * @see #prepareToBuild()
+   * @selonelon #prelonparelonToBuild()
    */
-  public EarlybirdThriftDocumentBuilder setAddEncodedTweetFeatures(boolean isSet) {
-    addEncodedTweetFeatures = isSet;
-    return this;
+  public elonarlybirdThriftDocumelonntBuildelonr selontAddelonncodelondTwelonelontFelonaturelons(boolelonan isSelont) {
+    addelonncodelondTwelonelontFelonaturelons = isSelont;
+    relonturn this;
   }
 
-  @Override
-  protected void prepareToBuild() {
-    if (!isSetLatLonCSF && addLatLonCSF) {
-      // In lucene archives, this CSF is needed regardless of whether geoLocation is set.
-      withLatLonCSF(GeoUtil.ILLEGAL_LATLON, GeoUtil.ILLEGAL_LATLON);
+  @Ovelonrridelon
+  protelonctelond void prelonparelonToBuild() {
+    if (!isSelontLatLonCSF && addLatLonCSF) {
+      // In lucelonnelon archivelons, this CSF is nelonelondelond relongardlelonss of whelonthelonr gelonoLocation is selont.
+      withLatLonCSF(GelonoUtil.ILLelonGAL_LATLON, GelonoUtil.ILLelonGAL_LATLON);
     }
 
-    if (addEncodedTweetFeatures) {
-      // Add encoded_tweet_features before building the document.
-      withBytesField(
-          EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD.getFieldName(),
-          EarlybirdEncodedFeaturesUtil.toBytesForThriftDocument(encodedTweetFeatures));
+    if (addelonncodelondTwelonelontFelonaturelons) {
+      // Add elonncodelond_twelonelont_felonaturelons belonforelon building thelon documelonnt.
+      withBytelonsFielonld(
+          elonarlybirdFielonldConstant.elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD.gelontFielonldNamelon(),
+          elonarlybirdelonncodelondFelonaturelonsUtil.toBytelonsForThriftDocumelonnt(elonncodelondTwelonelontFelonaturelons));
     }
 
-    if (extendedEncodedTweetFeatures != null) {
-      // Add extended_encoded_tweet_features before building the document.
-      withBytesField(
-          EarlybirdFieldConstant.EXTENDED_ENCODED_TWEET_FEATURES_FIELD.getFieldName(),
-          EarlybirdEncodedFeaturesUtil.toBytesForThriftDocument(extendedEncodedTweetFeatures));
+    if (elonxtelonndelondelonncodelondTwelonelontFelonaturelons != null) {
+      // Add elonxtelonndelond_elonncodelond_twelonelont_felonaturelons belonforelon building thelon documelonnt.
+      withBytelonsFielonld(
+          elonarlybirdFielonldConstant.elonXTelonNDelonD_elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD.gelontFielonldNamelon(),
+          elonarlybirdelonncodelondFelonaturelonsUtil.toBytelonsForThriftDocumelonnt(elonxtelonndelondelonncodelondTwelonelontFelonaturelons));
     }
   }
 
-  private static boolean isNotBlank(String value) {
-    return value != null && !value.isEmpty();
+  privatelon static boolelonan isNotBlank(String valuelon) {
+    relonturn valuelon != null && !valuelon.iselonmpty();
   }
 
-  private static boolean isNotEmpty(List<?> value) {
-    return value != null && !value.isEmpty();
+  privatelon static boolelonan isNotelonmpty(List<?> valuelon) {
+    relonturn valuelon != null && !valuelon.iselonmpty();
   }
 }

@@ -1,174 +1,174 @@
-package com.twitter.timelineranker.parameters.uteg_liked_by_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.utelong_likelond_by_twelonelonts
 
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.Param
-import com.twitter.timelines.util.bounds.BoundsWithDefault
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.Param
+import com.twittelonr.timelonlinelons.util.bounds.BoundsWithDelonfault
 
-object UtegLikedByTweetsParams {
+objelonct UtelongLikelondByTwelonelontsParams {
 
-  val ProbabilityRandomTweet: BoundsWithDefault[Double] = BoundsWithDefault[Double](0.0, 1.0, 0.0)
+  val ProbabilityRandomTwelonelont: BoundsWithDelonfault[Doublelon] = BoundsWithDelonfault[Doublelon](0.0, 1.0, 0.0)
 
-  object DefaultUTEGInNetworkCount extends Param(200)
+  objelonct DelonfaultUTelonGInNelontworkCount elonxtelonnds Param(200)
 
-  object DefaultUTEGOutOfNetworkCount extends Param(800)
+  objelonct DelonfaultUTelonGOutOfNelontworkCount elonxtelonnds Param(800)
 
-  object DefaultMaxTweetCount extends Param(200)
-
-  /**
-   * Enables semantic core, penguin, and tweetypie content features in uteg liked by tweets source.
-   */
-  object EnableContentFeaturesHydrationParam extends Param(false)
+  objelonct DelonfaultMaxTwelonelontCount elonxtelonnds Param(200)
 
   /**
-   * additionally enables tokens when hydrating content features.
+   * elonnablelons selonmantic corelon, pelonnguin, and twelonelontypielon contelonnt felonaturelons in utelong likelond by twelonelonts sourcelon.
    */
-  object EnableTokensInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "uteg_liked_by_tweets_enable_tokens_in_content_features_hydration",
-        default = false
+  objelonct elonnablelonContelonntFelonaturelonsHydrationParam elonxtelonnds Param(falselon)
+
+  /**
+   * additionally elonnablelons tokelonns whelonn hydrating contelonnt felonaturelons.
+   */
+  objelonct elonnablelonTokelonnsInContelonntFelonaturelonsHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "utelong_likelond_by_twelonelonts_elonnablelon_tokelonns_in_contelonnt_felonaturelons_hydration",
+        delonfault = falselon
       )
 
   /**
-   * additionally enables tweet text when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * additionally elonnablelons twelonelont telonxt whelonn hydrating contelonnt felonaturelons.
+   * This only works if elonnablelonContelonntFelonaturelonsHydrationParam is selont to truelon
    */
-  object EnableTweetTextInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "uteg_liked_by_tweets_enable_tweet_text_in_content_features_hydration",
-        default = false
+  objelonct elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "utelong_likelond_by_twelonelonts_elonnablelon_twelonelont_telonxt_in_contelonnt_felonaturelons_hydration",
+        delonfault = falselon
       )
 
   /**
-   * A multiplier for earlybird score when combining earlybird score and real graph score for ranking.
-   * Note multiplier for realgraph score := 1.0, and only change earlybird score multiplier.
+   * A multiplielonr for elonarlybird scorelon whelonn combining elonarlybird scorelon and relonal graph scorelon for ranking.
+   * Notelon multiplielonr for relonalgraph scorelon := 1.0, and only changelon elonarlybird scorelon multiplielonr.
    */
-  object EarlybirdScoreMultiplierParam
-      extends FSBoundedParam(
-        "uteg_liked_by_tweets_earlybird_score_multiplier_param",
+  objelonct elonarlybirdScorelonMultiplielonrParam
+      elonxtelonnds FSBoundelondParam(
+        "utelong_likelond_by_twelonelonts_elonarlybird_scorelon_multiplielonr_param",
         1.0,
         0,
         20.0
       )
 
-  object UTEGRecommendationsFilter {
+  objelonct UTelonGReloncommelonndationsFiltelonr {
 
     /**
-     * enable filtering of UTEG recommendations based on social proof type
+     * elonnablelon filtelonring of UTelonG reloncommelonndations baselond on social proof typelon
      */
-    object EnableParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_enable",
-          false
+    objelonct elonnablelonParam
+        elonxtelonnds FSParam(
+          "utelong_likelond_by_twelonelonts_utelong_reloncommelonndations_filtelonr_elonnablelon",
+          falselon
         )
 
     /**
-     * filters out UTEG recommendations that have been tweeted by someone the user follows
+     * filtelonrs out UTelonG reloncommelonndations that havelon belonelonn twelonelontelond by somelononelon thelon uselonr follows
      */
-    object ExcludeTweetParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_tweet",
-          false
+    objelonct elonxcludelonTwelonelontParam
+        elonxtelonnds FSParam(
+          "utelong_likelond_by_twelonelonts_utelong_reloncommelonndations_filtelonr_elonxcludelon_twelonelont",
+          falselon
         )
 
     /**
-     * filters out UTEG recommendations that have been retweeted by someone the user follows
+     * filtelonrs out UTelonG reloncommelonndations that havelon belonelonn relontwelonelontelond by somelononelon thelon uselonr follows
      */
-    object ExcludeRetweetParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_retweet",
-          false
+    objelonct elonxcludelonRelontwelonelontParam
+        elonxtelonnds FSParam(
+          "utelong_likelond_by_twelonelonts_utelong_reloncommelonndations_filtelonr_elonxcludelon_relontwelonelont",
+          falselon
         )
 
     /**
-     * filters out UTEG recommendations that have been replied to by someone the user follows
-     * not filtering out the replies
+     * filtelonrs out UTelonG reloncommelonndations that havelon belonelonn relonplielond to by somelononelon thelon uselonr follows
+     * not filtelonring out thelon relonplielons
      */
-    object ExcludeReplyParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_reply",
-          false
+    objelonct elonxcludelonRelonplyParam
+        elonxtelonnds FSParam(
+          "utelong_likelond_by_twelonelonts_utelong_reloncommelonndations_filtelonr_elonxcludelon_relonply",
+          falselon
         )
 
     /**
-     * filters out UTEG recommendations that have been quoted by someone the user follows
+     * filtelonrs out UTelonG reloncommelonndations that havelon belonelonn quotelond by somelononelon thelon uselonr follows
      */
-    object ExcludeQuoteTweetParam
-        extends FSParam(
-          "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_quote",
-          false
+    objelonct elonxcludelonQuotelonTwelonelontParam
+        elonxtelonnds FSParam(
+          "utelong_likelond_by_twelonelonts_utelong_reloncommelonndations_filtelonr_elonxcludelon_quotelon",
+          falselon
         )
 
     /**
-     * filters out recommended replies that have been directed at out of network users.
+     * filtelonrs out reloncommelonndelond relonplielons that havelon belonelonn direlonctelond at out of nelontwork uselonrs.
      */
-    object ExcludeRecommendedRepliesToNonFollowedUsersParam
-        extends FSParam(
-          name =
-            "uteg_liked_by_tweets_uteg_recommendations_filter_exclude_recommended_replies_to_non_followed_users",
-          default = false
+    objelonct elonxcludelonReloncommelonndelondRelonplielonsToNonFollowelondUselonrsParam
+        elonxtelonnds FSParam(
+          namelon =
+            "utelong_likelond_by_twelonelonts_utelong_reloncommelonndations_filtelonr_elonxcludelon_reloncommelonndelond_relonplielons_to_non_followelond_uselonrs",
+          delonfault = falselon
         )
   }
 
   /**
-   * Minimum number of favorited-by users required for recommended tweets.
+   * Minimum numbelonr of favoritelond-by uselonrs relonquirelond for reloncommelonndelond twelonelonts.
    */
-  object MinNumFavoritedByUserIdsParam extends Param(1)
+  objelonct MinNumFavoritelondByUselonrIdsParam elonxtelonnds Param(1)
 
   /**
-   * Includes one or multiple random tweets in the response.
+   * Includelons onelon or multiplelon random twelonelonts in thelon relonsponselon.
    */
-  object IncludeRandomTweetParam
-      extends FSParam(name = "uteg_liked_by_tweets_include_random_tweet", default = false)
+  objelonct IncludelonRandomTwelonelontParam
+      elonxtelonnds FSParam(namelon = "utelong_likelond_by_twelonelonts_includelon_random_twelonelont", delonfault = falselon)
 
   /**
-   * One single random tweet (true) or tag tweet as random with given probability (false).
+   * Onelon singlelon random twelonelont (truelon) or tag twelonelont as random with givelonn probability (falselon).
    */
-  object IncludeSingleRandomTweetParam
-      extends FSParam(name = "uteg_liked_by_tweets_include_random_tweet_single", default = false)
+  objelonct IncludelonSinglelonRandomTwelonelontParam
+      elonxtelonnds FSParam(namelon = "utelong_likelond_by_twelonelonts_includelon_random_twelonelont_singlelon", delonfault = falselon)
 
   /**
-   * Probability to tag a tweet as random (will not be ranked).
+   * Probability to tag a twelonelont as random (will not belon rankelond).
    */
-  object ProbabilityRandomTweetParam
-      extends FSBoundedParam(
-        name = "uteg_liked_by_tweets_include_random_tweet_probability",
-        default = ProbabilityRandomTweet.default,
-        min = ProbabilityRandomTweet.bounds.minInclusive,
-        max = ProbabilityRandomTweet.bounds.maxInclusive)
+  objelonct ProbabilityRandomTwelonelontParam
+      elonxtelonnds FSBoundelondParam(
+        namelon = "utelong_likelond_by_twelonelonts_includelon_random_twelonelont_probability",
+        delonfault = ProbabilityRandomTwelonelont.delonfault,
+        min = ProbabilityRandomTwelonelont.bounds.minInclusivelon,
+        max = ProbabilityRandomTwelonelont.bounds.maxInclusivelon)
 
   /**
-   * additionally enables conversationControl when hydrating content features.
-   * This only works if EnableContentFeaturesHydrationParam is set to true
+   * additionally elonnablelons convelonrsationControl whelonn hydrating contelonnt felonaturelons.
+   * This only works if elonnablelonContelonntFelonaturelonsHydrationParam is selont to truelon
    */
 
-  object EnableConversationControlInContentFeaturesHydrationParam
-      extends FSParam(
-        name = "conversation_control_in_content_features_hydration_uteg_liked_by_tweets_enable",
-        default = false
+  objelonct elonnablelonConvelonrsationControlInContelonntFelonaturelonsHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "convelonrsation_control_in_contelonnt_felonaturelons_hydration_utelong_likelond_by_twelonelonts_elonnablelon",
+        delonfault = falselon
       )
 
-  object EnableTweetMediaHydrationParam
-      extends FSParam(
-        name = "tweet_media_hydration_uteg_liked_by_tweets_enable",
-        default = false
+  objelonct elonnablelonTwelonelontMelondiaHydrationParam
+      elonxtelonnds FSParam(
+        namelon = "twelonelont_melondia_hydration_utelong_likelond_by_twelonelonts_elonnablelon",
+        delonfault = falselon
       )
 
-  object NumAdditionalRepliesParam
-      extends FSBoundedParam(
-        name = "uteg_liked_by_tweets_num_additional_replies",
-        default = 0,
+  objelonct NumAdditionalRelonplielonsParam
+      elonxtelonnds FSBoundelondParam(
+        namelon = "utelong_likelond_by_twelonelonts_num_additional_relonplielons",
+        delonfault = 0,
         min = 0,
         max = 1000
       )
 
   /**
-   * Enable relevance search, otherwise recency search from earlybird.
+   * elonnablelon relonlelonvancelon selonarch, othelonrwiselon reloncelonncy selonarch from elonarlybird.
    */
-  object EnableRelevanceSearchParam
-      extends FSParam(
-        name = "uteg_liked_by_tweets_enable_relevance_search",
-        default = true
+  objelonct elonnablelonRelonlelonvancelonSelonarchParam
+      elonxtelonnds FSParam(
+        namelon = "utelong_likelond_by_twelonelonts_elonnablelon_relonlelonvancelon_selonarch",
+        delonfault = truelon
       )
 
 }

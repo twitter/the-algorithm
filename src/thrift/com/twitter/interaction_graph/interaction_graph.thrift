@@ -1,98 +1,98 @@
-namespace java com.twitter.interaction_graph.thriftjava
-#@namespace scala com.twitter.interaction_graph.thriftscala
-#@namespace strato com.twitter.interaction_graph
+namelonspacelon java com.twittelonr.intelonraction_graph.thriftjava
+#@namelonspacelon scala com.twittelonr.intelonraction_graph.thriftscala
+#@namelonspacelon strato com.twittelonr.intelonraction_graph
 
-// These could be either a Vertex or an edge feature name
-// when you add a new feature, update VertexFeatureCombiner.java and EdgeFeatureCombiner.java.
-enum FeatureName {
-  num_retweets = 1
-  num_favorites = 2
-  num_mentions = 3
-  num_direct_messages = 4
-  num_tweet_clicks = 5
+// Thelonselon could belon elonithelonr a Velonrtelonx or an elondgelon felonaturelon namelon
+// whelonn you add a nelonw felonaturelon, updatelon VelonrtelonxFelonaturelonCombinelonr.java and elondgelonFelonaturelonCombinelonr.java.
+elonnum FelonaturelonNamelon {
+  num_relontwelonelonts = 1
+  num_favoritelons = 2
+  num_melonntions = 3
+  num_direlonct_melonssagelons = 4
+  num_twelonelont_clicks = 5
   num_link_clicks = 6
-  num_profile_views = 7
+  num_profilelon_vielonws = 7
   num_follows = 8
   num_unfollows = 9
   num_mutual_follows = 10
-  address_book_email = 11
-  address_book_phone = 12
-  address_book_in_both = 13
-  address_book_mutual_edge_email = 14
-  address_book_mutual_edge_phone = 15
-  address_book_mutual_edge_in_both = 16
-  total_dwell_time = 17
-  num_inspected_statuses = 18
+  addrelonss_book_elonmail = 11
+  addrelonss_book_phonelon = 12
+  addrelonss_book_in_both = 13
+  addrelonss_book_mutual_elondgelon_elonmail = 14
+  addrelonss_book_mutual_elondgelon_phonelon = 15
+  addrelonss_book_mutual_elondgelon_in_both = 16
+  total_dwelonll_timelon = 17
+  num_inspelonctelond_statuselons = 18
   num_photo_tags = 19
   num_blocks = 20 
-  num_mutes = 21 
-  num_report_as_abuses = 22
-  num_report_as_spams = 23
-  num_tweet_quotes = 24
-  num_push_opens = 25
+  num_mutelons = 21
+  num_relonport_as_abuselons = 22
+  num_relonport_as_spams = 23
+  num_twelonelont_quotelons = 24
+  num_push_opelonns = 25
   num_ntab_clicks = 26,
-  num_rt_favories = 27,
-  num_rt_replies = 28,
-  num_rt_tweet_quotes = 29,
-  num_rt_retweets = 30,
-  num_rt_mentions = 31,
-  num_rt_tweet_clicks = 32,
+  num_rt_favorielons = 27,
+  num_rt_relonplielons = 28,
+  num_rt_twelonelont_quotelons = 29,
+  num_rt_relontwelonelonts = 30,
+  num_rt_melonntions = 31,
+  num_rt_twelonelont_clicks = 32,
   num_rt_link_clicks = 33
-  num_shares = 34,
-  num_email_click = 35,
-  num_email_open = 36,
-  num_ntab_dislike_7_days = 37,
+  num_sharelons = 34,
+  num_elonmail_click = 35,
+  num_elonmail_opelonn = 36,
+  num_ntab_dislikelon_7_days = 37,
   num_push_dismiss = 38,
-  num_push_report_tweet_click = 39,
-  num_push_report_user_click = 40,
-  num_replies = 41,
-  // vertex features after 128
-  num_create_tweets = 129,
+  num_push_relonport_twelonelont_click = 39,
+  num_push_relonport_uselonr_click = 40,
+  num_relonplielons = 41,
+  // velonrtelonx felonaturelons aftelonr 128
+  num_crelonatelon_twelonelonts = 129,
 }
-// do remember to update the tests in InteractionGraphAggregationJobTest when adding new features but not updating agg_all
+// do relonmelonmbelonr to updatelon thelon telonsts in IntelonractionGraphAggrelongationJobTelonst whelonn adding nelonw felonaturelons but not updating agg_all
 
-struct TimeSeriesStatistics {
-  1: required double mean;
-  // For computing variance online: http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#On-line_algorithm
-  2: required double m2_for_variance;
-  3: required double ewma; // Exponentially weighted moving average: ewma_t = \alpha x_t + (1-\alpha) ewma_{t-1}
-  4: required i32 num_elapsed_days; // Total number of days since we started counting this feature
-  5: required i32 num_non_zero_days; // Number of days when the interaction was non-zero (used to compute mean/variance)
-  6: optional i32 num_days_since_last; // Number of days since the latest interaction happen
-}(persisted="true", hasPersonalData = 'false') 
+struct TimelonSelonrielonsStatistics {
+  1: relonquirelond doublelon melonan;
+  // For computing variancelon onlinelon: http://elonn.wikipelondia.org/wiki/Algorithms_for_calculating_variancelon#On-linelon_algorithm
+  2: relonquirelond doublelon m2_for_variancelon;
+  3: relonquirelond doublelon elonwma; // elonxponelonntially welonightelond moving avelonragelon: elonwma_t = \alpha x_t + (1-\alpha) elonwma_{t-1}
+  4: relonquirelond i32 num_elonlapselond_days; // Total numbelonr of days sincelon welon startelond counting this felonaturelon
+  5: relonquirelond i32 num_non_zelonro_days; // Numbelonr of days whelonn thelon intelonraction was non-zelonro (uselond to computelon melonan/variancelon)
+  6: optional i32 num_days_sincelon_last; // Numbelonr of days sincelon thelon latelonst intelonraction happelonn
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'falselon')
 
-struct VertexFeature {
-  1: required FeatureName name;
-  2: required bool outgoing; // direction e.g. true is num_retweets_by_user, and false is num_retweets_for_user
-  3: required TimeSeriesStatistics tss;
-}(persisted="true", hasPersonalData = 'false')
+struct VelonrtelonxFelonaturelon {
+  1: relonquirelond FelonaturelonNamelon namelon;
+  2: relonquirelond bool outgoing; // direlonction elon.g. truelon is num_relontwelonelonts_by_uselonr, and falselon is num_relontwelonelonts_for_uselonr
+  3: relonquirelond TimelonSelonrielonsStatistics tss;
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'falselon')
 
-struct Vertex {
-  1: required i64 user_id(personalDataType = 'UserId');
-  2: optional double weight;
-  3: list<VertexFeature> features;
-}(persisted="true", hasPersonalData = 'true')
+struct Velonrtelonx {
+  1: relonquirelond i64 uselonr_id(pelonrsonalDataTypelon = 'UselonrId');
+  2: optional doublelon welonight;
+  3: list<VelonrtelonxFelonaturelon> felonaturelons;
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
 /*
- * These features are for an edge (a->b). Examples:
- * (i) follow is whether a follows b
- * (ii) num_retweets is number of b's tweets retweet by a
+ * Thelonselon felonaturelons arelon for an elondgelon (a->b). elonxamplelons:
+ * (i) follow is whelonthelonr a follows b
+ * (ii) num_relontwelonelonts is numbelonr of b's twelonelonts relontwelonelont by a
  */
-struct EdgeFeature {
-  1: required FeatureName name;
-  2: required TimeSeriesStatistics tss;
-}(persisted="true", hasPersonalData = 'false')
+struct elondgelonFelonaturelon {
+  1: relonquirelond FelonaturelonNamelon namelon;
+  2: relonquirelond TimelonSelonrielonsStatistics tss;
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'falselon')
 
-struct Edge {
-  1: required i64 source_id(personalDataType = 'UserId');
-  2: required i64 destination_id(personalDataType = 'UserId');
-  3: optional double weight;
-  4: list<EdgeFeature> features;
-}(persisted="true", hasPersonalData = 'true')
+struct elondgelon {
+  1: relonquirelond i64 sourcelon_id(pelonrsonalDataTypelon = 'UselonrId');
+  2: relonquirelond i64 delonstination_id(pelonrsonalDataTypelon = 'UselonrId');
+  3: optional doublelon welonight;
+  4: list<elondgelonFelonaturelon> felonaturelons;
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')
 
-// these structs below are used by our ml pipeline
-struct EdgeLabel {
-  1: required i64 source_id(personalDataType = 'UserId');
-  2: required i64 destination_id(personalDataType = 'UserId');
-  3: required set<FeatureName> labels(personalDataType = 'AggregateImpressionEngagementData');
-}(persisted="true", hasPersonalData = 'true')
+// thelonselon structs belonlow arelon uselond by our ml pipelonlinelon
+struct elondgelonLabelonl {
+  1: relonquirelond i64 sourcelon_id(pelonrsonalDataTypelon = 'UselonrId');
+  2: relonquirelond i64 delonstination_id(pelonrsonalDataTypelon = 'UselonrId');
+  3: relonquirelond selont<FelonaturelonNamelon> labelonls(pelonrsonalDataTypelon = 'AggrelongatelonImprelonssionelonngagelonmelonntData');
+}(pelonrsistelond="truelon", hasPelonrsonalData = 'truelon')

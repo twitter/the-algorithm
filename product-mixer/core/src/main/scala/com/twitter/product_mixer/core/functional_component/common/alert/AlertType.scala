@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.common.alert
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt
 
 /**
- * [[AlertType]] is used to indicate which metric an alert is for
+ * [[AlelonrtTypelon]] is uselond to indicatelon which melontric an alelonrt is for
  *
- * @note adding new [[AlertType]]s requires updating the dashboard generation code
+ * @notelon adding nelonw [[AlelonrtTypelon]]s relonquirelons updating thelon dashboard gelonnelonration codelon
  */
-sealed trait AlertType { val metricType: String }
+selonalelond trait AlelonrtTypelon { val melontricTypelon: String }
 
-/** Monitors the latency */
-case object Latency extends AlertType { override val metricType: String = "Latency" }
+/** Monitors thelon latelonncy */
+caselon objelonct Latelonncy elonxtelonnds AlelonrtTypelon { ovelonrridelon val melontricTypelon: String = "Latelonncy" }
 
-/** Monitors the success rate __excluding__ client failures */
-case object SuccessRate extends AlertType { override val metricType: String = "SuccessRate" }
+/** Monitors thelon succelonss ratelon __elonxcluding__ clielonnt failurelons */
+caselon objelonct SuccelonssRatelon elonxtelonnds AlelonrtTypelon { ovelonrridelon val melontricTypelon: String = "SuccelonssRatelon" }
 
-/** Monitors the throughput */
-case object Throughput extends AlertType { override val metricType: String = "Throughput" }
+/** Monitors thelon throughput */
+caselon objelonct Throughput elonxtelonnds AlelonrtTypelon { ovelonrridelon val melontricTypelon: String = "Throughput" }
 
-/** Monitors the empty response rate */
-case object EmptyResponseRate extends AlertType {
-  override val metricType: String = "EmptyResponseRate"
+/** Monitors thelon elonmpty relonsponselon ratelon */
+caselon objelonct elonmptyRelonsponselonRatelon elonxtelonnds AlelonrtTypelon {
+  ovelonrridelon val melontricTypelon: String = "elonmptyRelonsponselonRatelon"
 }
 
-/** Monitors the empty response size */
-case object ResponseSize extends AlertType { override val metricType: String = "ResponseSize" }
+/** Monitors thelon elonmpty relonsponselon sizelon */
+caselon objelonct RelonsponselonSizelon elonxtelonnds AlelonrtTypelon { ovelonrridelon val melontricTypelon: String = "RelonsponselonSizelon" }

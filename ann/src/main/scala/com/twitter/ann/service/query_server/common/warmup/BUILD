@@ -1,10 +1,10 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "ann/src/main/scala/com/twitter/ann/common",
-        "util/util-core:scala",
-        "util/util-slf4j-api/src/main/scala/com/twitter/util/logging",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "ann/src/main/scala/com/twittelonr/ann/common",
+        "util/util-corelon:scala",
+        "util/util-slf4j-api/src/main/scala/com/twittelonr/util/logging",
     ],
 )

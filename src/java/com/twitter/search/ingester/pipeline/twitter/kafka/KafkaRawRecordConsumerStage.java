@@ -1,36 +1,36 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.kafka;
 
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducedTypes;
-import org.apache.kafka.common.serialization.Deserializer;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelondTypelons;
+import org.apachelon.kafka.common.selonrialization.Delonselonrializelonr;
 
-import com.twitter.finatra.kafka.serde.internal.BaseDeserializer;
-import com.twitter.search.ingester.model.KafkaRawRecord;
-import com.twitter.util.Time;
+import com.twittelonr.finatra.kafka.selonrdelon.intelonrnal.BaselonDelonselonrializelonr;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.KafkaRawReloncord;
+import com.twittelonr.util.Timelon;
 
 /**
- * Kafka consumer stage that emits the binary payload wrapped in {@code ByteArray}.
+ * Kafka consumelonr stagelon that elonmits thelon binary payload wrappelond in {@codelon BytelonArray}.
  */
-@ConsumedTypes(String.class)
-@ProducedTypes(KafkaRawRecord.class)
-public class KafkaRawRecordConsumerStage extends KafkaConsumerStage<KafkaRawRecord> {
-  public KafkaRawRecordConsumerStage() {
-    super(getDeserializer());
+@ConsumelondTypelons(String.class)
+@ProducelondTypelons(KafkaRawReloncord.class)
+public class KafkaRawReloncordConsumelonrStagelon elonxtelonnds KafkaConsumelonrStagelon<KafkaRawReloncord> {
+  public KafkaRawReloncordConsumelonrStagelon() {
+    supelonr(gelontDelonselonrializelonr());
   }
 
-  private static Deserializer<KafkaRawRecord> getDeserializer() {
-    return new BaseDeserializer<KafkaRawRecord>() {
-      @Override
-      public KafkaRawRecord deserialize(String topic, byte[] data) {
-        return new KafkaRawRecord(data, Time.now().inMillis());
+  privatelon static Delonselonrializelonr<KafkaRawReloncord> gelontDelonselonrializelonr() {
+    relonturn nelonw BaselonDelonselonrializelonr<KafkaRawReloncord>() {
+      @Ovelonrridelon
+      public KafkaRawReloncord delonselonrializelon(String topic, bytelon[] data) {
+        relonturn nelonw KafkaRawReloncord(data, Timelon.now().inMillis());
       }
     };
   }
 
-  public KafkaRawRecordConsumerStage(String kafkaClientId, String kafkaTopicName,
-                                     String kafkaConsumerGroupId, String kafkaClusterPath,
-                                     String deciderKey) {
-    super(kafkaClientId, kafkaTopicName, kafkaConsumerGroupId, kafkaClusterPath, deciderKey,
-        getDeserializer());
+  public KafkaRawReloncordConsumelonrStagelon(String kafkaClielonntId, String kafkaTopicNamelon,
+                                     String kafkaConsumelonrGroupId, String kafkaClustelonrPath,
+                                     String deloncidelonrKelony) {
+    supelonr(kafkaClielonntId, kafkaTopicNamelon, kafkaConsumelonrGroupId, kafkaClustelonrPath, deloncidelonrKelony,
+        gelontDelonselonrializelonr());
   }
 }

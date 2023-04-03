@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.suggestion
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.suggelonstion
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.highlight.HighlightedSectionMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.highlight.HighlightedSection
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.TextResult
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.highlight.HighlightelondSelonctionMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.highlight.HighlightelondSelonction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.suggelonstion.TelonxtRelonsult
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TextResultMarshaller @Inject() (highlightedSectionMarshaller: HighlightedSectionMarshaller) {
+@Singlelonton
+class TelonxtRelonsultMarshallelonr @Injelonct() (highlightelondSelonctionMarshallelonr: HighlightelondSelonctionMarshallelonr) {
 
-  def apply(textResult: TextResult): urt.TextResult = {
-    val hitHighlights = textResult.hitHighlights.map {
-      highlightedSections: Seq[HighlightedSection] =>
-        highlightedSections.map(highlightedSectionMarshaller(_))
+  delonf apply(telonxtRelonsult: TelonxtRelonsult): urt.TelonxtRelonsult = {
+    val hitHighlights = telonxtRelonsult.hitHighlights.map {
+      highlightelondSelonctions: Selonq[HighlightelondSelonction] =>
+        highlightelondSelonctions.map(highlightelondSelonctionMarshallelonr(_))
     }
 
-    urt.TextResult(
-      text = textResult.text,
+    urt.TelonxtRelonsult(
+      telonxt = telonxtRelonsult.telonxt,
       hitHighlights = hitHighlights,
-      score = textResult.score,
-      querySource = textResult.querySource)
+      scorelon = telonxtRelonsult.scorelon,
+      quelonrySourcelon = telonxtRelonsult.quelonrySourcelon)
   }
 }

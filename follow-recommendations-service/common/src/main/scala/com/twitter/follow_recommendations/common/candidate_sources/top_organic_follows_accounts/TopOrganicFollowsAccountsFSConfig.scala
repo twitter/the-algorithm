@@ -1,18 +1,18 @@
-package com.twitter.follow_recommendations.common.candidate_sources.top_organic_follows_accounts
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.top_organic_follows_accounts
 
-import com.twitter.follow_recommendations.configapi.common.FeatureSwitchConfig
-import com.twitter.timelines.configapi.FSBoundedParam
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.Param
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.configapi.common.FelonaturelonSwitchConfig
+import com.twittelonr.timelonlinelons.configapi.FSBoundelondParam
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.Param
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TopOrganicFollowsAccountsFSConfig @Inject() () extends FeatureSwitchConfig {
-  override val booleanFSParams: Seq[Param[Boolean] with FSName] = Seq(
-    TopOrganicFollowsAccountsParams.CandidateSourceEnabled,
+@Singlelonton
+class TopOrganicFollowsAccountsFSConfig @Injelonct() () elonxtelonnds FelonaturelonSwitchConfig {
+  ovelonrridelon val boolelonanFSParams: Selonq[Param[Boolelonan] with FSNamelon] = Selonq(
+    TopOrganicFollowsAccountsParams.CandidatelonSourcelonelonnablelond,
   )
-  override val doubleFSParams: Seq[FSBoundedParam[Double]] = Seq(
-    TopOrganicFollowsAccountsParams.CandidateSourceWeight,
+  ovelonrridelon val doublelonFSParams: Selonq[FSBoundelondParam[Doublelon]] = Selonq(
+    TopOrganicFollowsAccountsParams.CandidatelonSourcelonWelonight,
   )
 }

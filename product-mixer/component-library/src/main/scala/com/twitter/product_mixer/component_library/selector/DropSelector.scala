@@ -1,111 +1,111 @@
-package com.twitter.product_mixer.component_library.selector
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.selonlelonctor
 
-import com.twitter.product_mixer.component_library.model.candidate.CursorCandidate
-import com.twitter.product_mixer.core.functional_component.common.AllPipelines
-import com.twitter.product_mixer.core.functional_component.common.CandidateScope
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import scala.collection.mutable
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.AllPipelonlinelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.CandidatelonScopelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import scala.collelonction.mutablelon
 
-private[selector] object DropSelector {
+privatelon[selonlelonctor] objelonct DropSelonlelonctor {
 
   /**
-   * Identify and merge duplicates using the supplied key extraction and merger functions. By default
-   * this will keep only the first instance of a candidate in the `candidate` as determined by comparing
-   * the contained candidate ID and class type. Subsequent matching instances will be dropped. For
-   * more details, see DropSelector#dropDuplicates.
+   * Idelonntify and melonrgelon duplicatelons using thelon supplielond kelony elonxtraction and melonrgelonr functions. By delonfault
+   * this will kelonelonp only thelon first instancelon of a candidatelon in thelon `candidatelon` as delontelonrminelond by comparing
+   * thelon containelond candidatelon ID and class typelon. Subselonquelonnt matching instancelons will belon droppelond. For
+   * morelon delontails, selonelon DropSelonlelonctor#dropDuplicatelons.
    *
-   * @note [[com.twitter.product_mixer.component_library.model.candidate.CursorCandidate]] are ignored.
-   * @note [[com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails]] are ignored.
+   * @notelon [[com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.CursorCandidatelon]] arelon ignorelond.
+   * @notelon [[com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails]] arelon ignorelond.
    *
-   * @param candidates which may have elements to drop
-   * @param duplicationKey how to generate a key for a candidate for identifying duplicates
-   * @param mergeStrategy how to merge two candidates with the same key (by default pick the first one)
+   * @param candidatelons which may havelon elonlelonmelonnts to drop
+   * @param duplicationKelony how to gelonnelonratelon a kelony for a candidatelon for idelonntifying duplicatelons
+   * @param melonrgelonStratelongy how to melonrgelon two candidatelons with thelon samelon kelony (by delonfault pick thelon first onelon)
    */
-  def dropDuplicates[Candidate <: CandidateWithDetails, Key](
-    pipelineScope: CandidateScope,
-    candidates: Seq[Candidate],
-    duplicationKey: DeduplicationKey[Key],
-    mergeStrategy: CandidateMergeStrategy
-  ): Seq[Candidate] = {
-    val seenCandidatePositions = mutable.HashMap[Key, Int]()
-    // We assume that, most of the time, most candidates aren't duplicates so the result Seq will be
-    // approximately the size of the candidates Seq.
-    val deduplicatedCandidates = new mutable.ArrayBuffer[Candidate](candidates.length)
+  delonf dropDuplicatelons[Candidatelon <: CandidatelonWithDelontails, Kelony](
+    pipelonlinelonScopelon: CandidatelonScopelon,
+    candidatelons: Selonq[Candidatelon],
+    duplicationKelony: DelonduplicationKelony[Kelony],
+    melonrgelonStratelongy: CandidatelonMelonrgelonStratelongy
+  ): Selonq[Candidatelon] = {
+    val selonelonnCandidatelonPositions = mutablelon.HashMap[Kelony, Int]()
+    // Welon assumelon that, most of thelon timelon, most candidatelons arelonn't duplicatelons so thelon relonsult Selonq will belon
+    // approximatelonly thelon sizelon of thelon candidatelons Selonq.
+    val delonduplicatelondCandidatelons = nelonw mutablelon.ArrayBuffelonr[Candidatelon](candidatelons.lelonngth)
 
-    for (candidate <- candidates) {
-      candidate match {
+    for (candidatelon <- candidatelons) {
+      candidatelon match {
 
-        // candidate is from one of the Pipelines the selector applies to and is not a CursorCandidate
-        case item: ItemCandidateWithDetails
-            if pipelineScope.contains(item) &&
-              !item.candidate.isInstanceOf[CursorCandidate] =>
-          val key = duplicationKey(item)
+        // candidatelon is from onelon of thelon Pipelonlinelons thelon selonlelonctor applielons to and is not a CursorCandidatelon
+        caselon itelonm: ItelonmCandidatelonWithDelontails
+            if pipelonlinelonScopelon.contains(itelonm) &&
+              !itelonm.candidatelon.isInstancelonOf[CursorCandidatelon] =>
+          val kelony = duplicationKelony(itelonm)
 
-          // Perform a merge if the candidate has been seen already
-          if (seenCandidatePositions.contains(key)) {
-            val candidateIndex = seenCandidatePositions(key)
+          // Pelonrform a melonrgelon if thelon candidatelon has belonelonn selonelonn alrelonady
+          if (selonelonnCandidatelonPositions.contains(kelony)) {
+            val candidatelonIndelonx = selonelonnCandidatelonPositions(kelony)
 
-            // Safe because only ItemCandidateWithDetails are added to seenCandidatePositions so
-            // seenCandidatePositions(key) *must* point to an ItemCandidateWithDetails
-            val originalCandidate =
-              deduplicatedCandidates(candidateIndex).asInstanceOf[ItemCandidateWithDetails]
+            // Safelon beloncauselon only ItelonmCandidatelonWithDelontails arelon addelond to selonelonnCandidatelonPositions so
+            // selonelonnCandidatelonPositions(kelony) *must* point to an ItelonmCandidatelonWithDelontails
+            val originalCandidatelon =
+              delonduplicatelondCandidatelons(candidatelonIndelonx).asInstancelonOf[ItelonmCandidatelonWithDelontails]
 
-            deduplicatedCandidates.update(
-              candidateIndex,
-              mergeStrategy(originalCandidate, item).asInstanceOf[Candidate])
-          } else {
-            // Otherwise add a new entry to the list of kept candidates and update our map to track
-            // the new index
-            deduplicatedCandidates.append(item.asInstanceOf[Candidate])
-            seenCandidatePositions.update(key, deduplicatedCandidates.length - 1)
+            delonduplicatelondCandidatelons.updatelon(
+              candidatelonIndelonx,
+              melonrgelonStratelongy(originalCandidatelon, itelonm).asInstancelonOf[Candidatelon])
+          } elonlselon {
+            // Othelonrwiselon add a nelonw elonntry to thelon list of kelonpt candidatelons and updatelon our map to track
+            // thelon nelonw indelonx
+            delonduplicatelondCandidatelons.appelonnd(itelonm.asInstancelonOf[Candidatelon])
+            selonelonnCandidatelonPositions.updatelon(kelony, delonduplicatelondCandidatelons.lelonngth - 1)
           }
-        case item => deduplicatedCandidates.append(item)
+        caselon itelonm => delonduplicatelondCandidatelons.appelonnd(itelonm)
       }
     }
 
-    deduplicatedCandidates
+    delonduplicatelondCandidatelons
   }
 
   /**
-   * Takes `candidates` from all [[CandidateWithDetails.source]]s but only `candidates` in the provided
-   * `pipelineScope` are counted towards the `max` non-cursor candidates are included.
+   * Takelons `candidatelons` from all [[CandidatelonWithDelontails.sourcelon]]s but only `candidatelons` in thelon providelond
+   * `pipelonlinelonScopelon` arelon countelond towards thelon `max` non-cursor candidatelons arelon includelond.
    *
-   * @param max the maximum number of non-cursor candidates from the provided `pipelineScope` to return
-   * @param candidates a sequence of candidates which may have elements dropped
-   * @param pipelineScope the scope of which `candidates` should count towards the `max`
+   * @param max thelon maximum numbelonr of non-cursor candidatelons from thelon providelond `pipelonlinelonScopelon` to relonturn
+   * @param candidatelons a selonquelonncelon of candidatelons which may havelon elonlelonmelonnts droppelond
+   * @param pipelonlinelonScopelon thelon scopelon of which `candidatelons` should count towards thelon `max`
    */
-  def takeUntil[Candidate <: CandidateWithDetails](
+  delonf takelonUntil[Candidatelon <: CandidatelonWithDelontails](
     max: Int,
-    candidates: Seq[Candidate],
-    pipelineScope: CandidateScope = AllPipelines
-  ): Seq[Candidate] = {
-    val resultsBuilder = Seq.newBuilder[Candidate]
-    resultsBuilder.sizeHint(candidates)
+    candidatelons: Selonq[Candidatelon],
+    pipelonlinelonScopelon: CandidatelonScopelon = AllPipelonlinelons
+  ): Selonq[Candidatelon] = {
+    val relonsultsBuildelonr = Selonq.nelonwBuildelonr[Candidatelon]
+    relonsultsBuildelonr.sizelonHint(candidatelons)
 
-    candidates.foldLeft(0) {
-      case (
+    candidatelons.foldLelonft(0) {
+      caselon (
             count,
-            candidate @ ItemCandidateWithDetails(_: CursorCandidate, _, _)
+            candidatelon @ ItelonmCandidatelonWithDelontails(_: CursorCandidatelon, _, _)
           ) =>
-        // keep cursors, not included in the `count`
-        resultsBuilder += candidate.asInstanceOf[Candidate]
+        // kelonelonp cursors, not includelond in thelon `count`
+        relonsultsBuildelonr += candidatelon.asInstancelonOf[Candidatelon]
         count
 
-      case (count, candidate) if !pipelineScope.contains(candidate) =>
-        // keep candidates that don't match the provided `pipelineScope`, not included in the `count`
-        resultsBuilder += candidate
+      caselon (count, candidatelon) if !pipelonlinelonScopelon.contains(candidatelon) =>
+        // kelonelonp candidatelons that don't match thelon providelond `pipelonlinelonScopelon`, not includelond in thelon `count`
+        relonsultsBuildelonr += candidatelon
         count
 
-      case (count, candidate) if count < max =>
-        // keep candidates if theres space and increment the `count`
-        resultsBuilder += candidate
+      caselon (count, candidatelon) if count < max =>
+        // kelonelonp candidatelons if thelonrelons spacelon and increlonmelonnt thelon `count`
+        relonsultsBuildelonr += candidatelon
         count + 1
 
-      case (dropCurrentCandidate, _) =>
-        // drop non-cursor candidate because theres no space left
-        dropCurrentCandidate
+      caselon (dropCurrelonntCandidatelon, _) =>
+        // drop non-cursor candidatelon beloncauselon thelonrelons no spacelon lelonft
+        dropCurrelonntCandidatelon
     }
-    resultsBuilder.result()
+    relonsultsBuildelonr.relonsult()
   }
 }

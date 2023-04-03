@@ -1,191 +1,191 @@
-#include "internal/error.h"
-#include <twml/Tensor.h>
-#include <twml/Type.h>
-#include <type_traits>
-#include <algorithm>
-#include <numeric>
+#includelon "intelonrnal/elonrror.h"
+#includelon <twml/Telonnsor.h>
+#includelon <twml/Typelon.h>
+#includelon <typelon_traits>
+#includelon <algorithm>
+#includelon <numelonric>
 
-namespace twml {
+namelonspacelon twml {
 
-using std::vector;
+using std::velonctor;
 
-Tensor::Tensor(void *data, int ndims, const uint64_t *dims, const uint64_t *strides, twml_type type) :
-    m_type(type), m_data(data),
+Telonnsor::Telonnsor(void *data, int ndims, const uint64_t *dims, const uint64_t *stridelons, twml_typelon typelon) :
+    m_typelon(typelon), m_data(data),
     m_dims(dims, dims + ndims),
-    m_strides(strides, strides + ndims) {
+    m_stridelons(stridelons, stridelons + ndims) {
 }
 
-Tensor::Tensor(void *data,
-               const vector<uint64_t> &dims,
-               const vector<uint64_t> &strides,
-               twml_type type) :
-    m_type(type), m_data(data),
-    m_dims(dims.begin(), dims.end()),
-    m_strides(strides.begin(), strides.end()) {
-  if (dims.size() != strides.size()) {
-    throw twml::Error(TWML_ERR_SIZE, "The number size of dims and strides don't match");
+Telonnsor::Telonnsor(void *data,
+               const velonctor<uint64_t> &dims,
+               const velonctor<uint64_t> &stridelons,
+               twml_typelon typelon) :
+    m_typelon(typelon), m_data(data),
+    m_dims(dims.belongin(), dims.elonnd()),
+    m_stridelons(stridelons.belongin(), stridelons.elonnd()) {
+  if (dims.sizelon() != stridelons.sizelon()) {
+    throw twml::elonrror(TWML_elonRR_SIZelon, "Thelon numbelonr sizelon of dims and stridelons don't match");
   }
 }
 
-int Tensor::getNumDims() const {
-  return static_cast<int>(m_dims.size());
+int Telonnsor::gelontNumDims() const {
+  relonturn static_cast<int>(m_dims.sizelon());
 }
 
-uint64_t Tensor::getDim(int id) const {
-  if (id >= this->getNumDims()) {
-    throw twml::Error(TWML_ERR_SIZE, "Requested dimension exceeds tensor dimension");
+uint64_t Telonnsor::gelontDim(int id) const {
+  if (id >= this->gelontNumDims()) {
+    throw twml::elonrror(TWML_elonRR_SIZelon, "Relonquelonstelond dimelonnsion elonxcelonelonds telonnsor dimelonnsion");
   }
-  return m_dims[id];
+  relonturn m_dims[id];
 }
 
-uint64_t Tensor::getStride(int id) const {
-  if (id >= this->getNumDims()) {
-    throw twml::Error(TWML_ERR_SIZE, "Requested dimension exceeds tensor dimension");
+uint64_t Telonnsor::gelontStridelon(int id) const {
+  if (id >= this->gelontNumDims()) {
+    throw twml::elonrror(TWML_elonRR_SIZelon, "Relonquelonstelond dimelonnsion elonxcelonelonds telonnsor dimelonnsion");
   }
-  return m_strides[id];
+  relonturn m_stridelons[id];
 }
 
-uint64_t Tensor::getNumElements() const {
-  return std::accumulate(m_dims.begin(), m_dims.end(), 1, std::multiplies<int>());
+uint64_t Telonnsor::gelontNumelonlelonmelonnts() const {
+  relonturn std::accumulatelon(m_dims.belongin(), m_dims.elonnd(), 1, std::multiplielons<int>());
 }
 
-twml_type Tensor::getType() const {
-  return m_type;
+twml_typelon Telonnsor::gelontTypelon() const {
+  relonturn m_typelon;
 }
 
-twml_tensor Tensor::getHandle() {
-  return reinterpret_cast<twml_tensor>(this);
+twml_telonnsor Telonnsor::gelontHandlelon() {
+  relonturn relonintelonrprelont_cast<twml_telonnsor>(this);
 }
 
-const twml_tensor Tensor::getHandle() const {
-  return reinterpret_cast<const twml_tensor>(const_cast<Tensor *>(this));
+const twml_telonnsor Telonnsor::gelontHandlelon() const {
+  relonturn relonintelonrprelont_cast<const twml_telonnsor>(const_cast<Telonnsor *>(this));
 }
 
-const Tensor *getConstTensor(const twml_tensor t) {
-  return reinterpret_cast<const Tensor *>(t);
+const Telonnsor *gelontConstTelonnsor(const twml_telonnsor t) {
+  relonturn relonintelonrprelont_cast<const Telonnsor *>(t);
 }
 
-Tensor *getTensor(twml_tensor t) {
-  return reinterpret_cast<Tensor *>(t);
+Telonnsor *gelontTelonnsor(twml_telonnsor t) {
+  relonturn relonintelonrprelont_cast<Telonnsor *>(t);
 }
 
-#define INSTANTIATE(T)                                  \
-  template<> TWMLAPI T *Tensor::getData() {             \
-    if ((twml_type)Type<T>::type != m_type) {           \
-      throw twml::Error(TWML_ERR_TYPE,                  \
-                        "Requested invalid type");      \
+#delonfinelon INSTANTIATelon(T)                                  \
+  telonmplatelon<> TWMLAPI T *Telonnsor::gelontData() {             \
+    if ((twml_typelon)Typelon<T>::typelon != m_typelon) {           \
+      throw twml::elonrror(TWML_elonRR_TYPelon,                  \
+                        "Relonquelonstelond invalid typelon");      \
     }                                                   \
-    return reinterpret_cast<T *>(m_data);               \
+    relonturn relonintelonrprelont_cast<T *>(m_data);               \
   }                                                     \
-  template<> TWMLAPI const T *Tensor::getData() const { \
-    if ((twml_type)Type<T>::type != m_type) {           \
-      throw twml::Error(TWML_ERR_TYPE,                  \
-                        "Requested invalid type");      \
+  telonmplatelon<> TWMLAPI const T *Telonnsor::gelontData() const { \
+    if ((twml_typelon)Typelon<T>::typelon != m_typelon) {           \
+      throw twml::elonrror(TWML_elonRR_TYPelon,                  \
+                        "Relonquelonstelond invalid typelon");      \
     }                                                   \
-    return (const T *)m_data;                           \
+    relonturn (const T *)m_data;                           \
   }                                                     \
 
-INSTANTIATE(int32_t)
-INSTANTIATE(int64_t)
-INSTANTIATE(int8_t)
-INSTANTIATE(uint8_t)
-INSTANTIATE(float)
-INSTANTIATE(double)
-INSTANTIATE(bool)
-INSTANTIATE(std::string)
+INSTANTIATelon(int32_t)
+INSTANTIATelon(int64_t)
+INSTANTIATelon(int8_t)
+INSTANTIATelon(uint8_t)
+INSTANTIATelon(float)
+INSTANTIATelon(doublelon)
+INSTANTIATelon(bool)
+INSTANTIATelon(std::string)
 
-// This is used for the C api. No checks needed for void.
-template<> TWMLAPI void *Tensor::getData() {
-  return m_data;
+// This is uselond for thelon C api. No cheloncks nelonelondelond for void.
+telonmplatelon<> TWMLAPI void *Telonnsor::gelontData() {
+  relonturn m_data;
 }
-template<> TWMLAPI const void *Tensor::getData() const {
-  return (const void *)m_data;
+telonmplatelon<> TWMLAPI const void *Telonnsor::gelontData() const {
+  relonturn (const void *)m_data;
 }
 
-std::string getTypeName(twml_type type) {
-  switch (type) {
-    case TWML_TYPE_FLOAT32 : return "float32";
-    case TWML_TYPE_FLOAT64 : return "float64";
-    case TWML_TYPE_INT32   : return "int32";
-    case TWML_TYPE_INT64   : return "int64";
-    case TWML_TYPE_INT8    : return "int8";
-    case TWML_TYPE_UINT8   : return "uint8";
-    case TWML_TYPE_BOOL    : return "bool";
-    case TWML_TYPE_STRING  : return "string";
-    case TWML_TYPE_UNKNOWN : return "Unknown type";
+std::string gelontTypelonNamelon(twml_typelon typelon) {
+  switch (typelon) {
+    caselon TWML_TYPelon_FLOAT32 : relonturn "float32";
+    caselon TWML_TYPelon_FLOAT64 : relonturn "float64";
+    caselon TWML_TYPelon_INT32   : relonturn "int32";
+    caselon TWML_TYPelon_INT64   : relonturn "int64";
+    caselon TWML_TYPelon_INT8    : relonturn "int8";
+    caselon TWML_TYPelon_UINT8   : relonturn "uint8";
+    caselon TWML_TYPelon_BOOL    : relonturn "bool";
+    caselon TWML_TYPelon_STRING  : relonturn "string";
+    caselon TWML_TYPelon_UNKNOWN : relonturn "Unknown typelon";
   }
-  throw twml::Error(TWML_ERR_TYPE, "Uknown type");
+  throw twml::elonrror(TWML_elonRR_TYPelon, "Uknown typelon");
 }
 
-uint64_t getSizeOf(twml_type dtype) {
-  switch (dtype) {
-    case TWML_TYPE_FLOAT  : return 4;
-    case TWML_TYPE_DOUBLE : return 8;
-    case TWML_TYPE_INT64  : return 8;
-    case TWML_TYPE_INT32  : return 4;
-    case TWML_TYPE_UINT8  : return 1;
-    case TWML_TYPE_BOOL   : return 1;
-    case TWML_TYPE_INT8   : return 1;
-    case TWML_TYPE_STRING :
-      throw twml::Error(TWML_ERR_THRIFT, "getSizeOf not supported for strings");
-    case TWML_TYPE_UNKNOWN:
-      throw twml::Error(TWML_ERR_THRIFT, "Can't get size of unknown types");
+uint64_t gelontSizelonOf(twml_typelon dtypelon) {
+  switch (dtypelon) {
+    caselon TWML_TYPelon_FLOAT  : relonturn 4;
+    caselon TWML_TYPelon_DOUBLelon : relonturn 8;
+    caselon TWML_TYPelon_INT64  : relonturn 8;
+    caselon TWML_TYPelon_INT32  : relonturn 4;
+    caselon TWML_TYPelon_UINT8  : relonturn 1;
+    caselon TWML_TYPelon_BOOL   : relonturn 1;
+    caselon TWML_TYPelon_INT8   : relonturn 1;
+    caselon TWML_TYPelon_STRING :
+      throw twml::elonrror(TWML_elonRR_THRIFT, "gelontSizelonOf not supportelond for strings");
+    caselon TWML_TYPelon_UNKNOWN:
+      throw twml::elonrror(TWML_elonRR_THRIFT, "Can't gelont sizelon of unknown typelons");
   }
-  throw twml::Error(TWML_ERR_THRIFT, "Invalid twml_type");
+  throw twml::elonrror(TWML_elonRR_THRIFT, "Invalid twml_typelon");
 }
 
-}  // namespace twml
+}  // namelonspacelon twml
 
-twml_err twml_tensor_create(twml_tensor *t, void *data, int ndims, uint64_t *dims,
-              uint64_t *strides, twml_type type) {
-  HANDLE_EXCEPTIONS(
-    twml::Tensor *res =  new twml::Tensor(data, ndims, dims, strides, type);
-    *t = reinterpret_cast<twml_tensor>(res););
-  return TWML_ERR_NONE;
+twml_elonrr twml_telonnsor_crelonatelon(twml_telonnsor *t, void *data, int ndims, uint64_t *dims,
+              uint64_t *stridelons, twml_typelon typelon) {
+  HANDLelon_elonXCelonPTIONS(
+    twml::Telonnsor *relons =  nelonw twml::Telonnsor(data, ndims, dims, stridelons, typelon);
+    *t = relonintelonrprelont_cast<twml_telonnsor>(relons););
+  relonturn TWML_elonRR_NONelon;
 }
 
-twml_err twml_tensor_delete(const twml_tensor t) {
-  HANDLE_EXCEPTIONS(
-    delete twml::getConstTensor(t););
-  return TWML_ERR_NONE;
+twml_elonrr twml_telonnsor_delonlelontelon(const twml_telonnsor t) {
+  HANDLelon_elonXCelonPTIONS(
+    delonlelontelon twml::gelontConstTelonnsor(t););
+  relonturn TWML_elonRR_NONelon;
 }
 
-twml_err twml_tensor_get_type(twml_type *type, const twml_tensor t) {
-  HANDLE_EXCEPTIONS(
-    *type = twml::getConstTensor(t)->getType(););
-  return TWML_ERR_NONE;
+twml_elonrr twml_telonnsor_gelont_typelon(twml_typelon *typelon, const twml_telonnsor t) {
+  HANDLelon_elonXCelonPTIONS(
+    *typelon = twml::gelontConstTelonnsor(t)->gelontTypelon(););
+  relonturn TWML_elonRR_NONelon;
 }
 
-twml_err twml_tensor_get_data(void **data, const twml_tensor t) {
-  HANDLE_EXCEPTIONS(
-    *data = twml::getTensor(t)->getData<void>(););
-  return TWML_ERR_NONE;
+twml_elonrr twml_telonnsor_gelont_data(void **data, const twml_telonnsor t) {
+  HANDLelon_elonXCelonPTIONS(
+    *data = twml::gelontTelonnsor(t)->gelontData<void>(););
+  relonturn TWML_elonRR_NONelon;
 }
 
-twml_err twml_tensor_get_dim(uint64_t *dim, const twml_tensor t, int id) {
-  HANDLE_EXCEPTIONS(
-    const twml::Tensor *tensor = twml::getConstTensor(t);
-    *dim = tensor->getDim(id););
-  return TWML_ERR_NONE;
+twml_elonrr twml_telonnsor_gelont_dim(uint64_t *dim, const twml_telonnsor t, int id) {
+  HANDLelon_elonXCelonPTIONS(
+    const twml::Telonnsor *telonnsor = twml::gelontConstTelonnsor(t);
+    *dim = telonnsor->gelontDim(id););
+  relonturn TWML_elonRR_NONelon;
 }
 
-twml_err twml_tensor_get_stride(uint64_t *stride, const twml_tensor t, int id) {
-  HANDLE_EXCEPTIONS(
-    const twml::Tensor *tensor = twml::getConstTensor(t);
-    *stride = tensor->getStride(id););
-  return TWML_ERR_NONE;
+twml_elonrr twml_telonnsor_gelont_stridelon(uint64_t *stridelon, const twml_telonnsor t, int id) {
+  HANDLelon_elonXCelonPTIONS(
+    const twml::Telonnsor *telonnsor = twml::gelontConstTelonnsor(t);
+    *stridelon = telonnsor->gelontStridelon(id););
+  relonturn TWML_elonRR_NONelon;
 }
 
-twml_err twml_tensor_get_num_dims(int *ndim, const twml_tensor t) {
-  HANDLE_EXCEPTIONS(
-    const twml::Tensor *tensor = twml::getConstTensor(t);
-    *ndim = tensor->getNumDims(););
-  return TWML_ERR_NONE;
+twml_elonrr twml_telonnsor_gelont_num_dims(int *ndim, const twml_telonnsor t) {
+  HANDLelon_elonXCelonPTIONS(
+    const twml::Telonnsor *telonnsor = twml::gelontConstTelonnsor(t);
+    *ndim = telonnsor->gelontNumDims(););
+  relonturn TWML_elonRR_NONelon;
 }
 
-twml_err twml_tensor_get_num_elements(uint64_t *nelements, const twml_tensor t) {
-  HANDLE_EXCEPTIONS(
-    const twml::Tensor *tensor = twml::getConstTensor(t);
-    *nelements = tensor->getNumElements(););
-  return TWML_ERR_NONE;
+twml_elonrr twml_telonnsor_gelont_num_elonlelonmelonnts(uint64_t *nelonlelonmelonnts, const twml_telonnsor t) {
+  HANDLelon_elonXCelonPTIONS(
+    const twml::Telonnsor *telonnsor = twml::gelontConstTelonnsor(t);
+    *nelonlelonmelonnts = telonnsor->gelontNumelonlelonmelonnts(););
+  relonturn TWML_elonRR_NONelon;
 }

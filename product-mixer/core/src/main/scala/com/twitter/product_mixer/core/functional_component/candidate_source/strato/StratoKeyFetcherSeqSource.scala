@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.functional_component.candidate_source.strato
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.strato
 
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
-import com.twitter.strato.client.Fetcher
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.clielonnt.Felontchelonr
 
 /**
- * A [[CandidateSource]] for getting Candidates from Strato where the
- * Strato column's View is [[Unit]] and the Value is a Seq of [[StratoResult]]
+ * A [[CandidatelonSourcelon]] for gelontting Candidatelons from Strato whelonrelon thelon
+ * Strato column's Vielonw is [[Unit]] and thelon Valuelon is a Selonq of [[StratoRelonsult]]
  *
- * @tparam StratoKey the column's Key type
- * @tparam StratoResult the column's Value's Seq type
+ * @tparam StratoKelony thelon column's Kelony typelon
+ * @tparam StratoRelonsult thelon column's Valuelon's Selonq typelon
  */
-trait StratoKeyFetcherSeqSource[StratoKey, StratoResult]
-    extends CandidateSource[StratoKey, StratoResult] {
+trait StratoKelonyFelontchelonrSelonqSourcelon[StratoKelony, StratoRelonsult]
+    elonxtelonnds CandidatelonSourcelon[StratoKelony, StratoRelonsult] {
 
-  val fetcher: Fetcher[StratoKey, Unit, Seq[StratoResult]]
+  val felontchelonr: Felontchelonr[StratoKelony, Unit, Selonq[StratoRelonsult]]
 
-  override def apply(key: StratoKey): Stitch[Seq[StratoResult]] = {
-    fetcher
-      .fetch(key)
-      .map { result =>
-        result.v
-          .getOrElse(Seq.empty)
-      }.rescue(StratoErrCategorizer.CategorizeStratoException)
+  ovelonrridelon delonf apply(kelony: StratoKelony): Stitch[Selonq[StratoRelonsult]] = {
+    felontchelonr
+      .felontch(kelony)
+      .map { relonsult =>
+        relonsult.v
+          .gelontOrelonlselon(Selonq.elonmpty)
+      }.relonscuelon(StratoelonrrCatelongorizelonr.CatelongorizelonStratoelonxcelonption)
   }
 }

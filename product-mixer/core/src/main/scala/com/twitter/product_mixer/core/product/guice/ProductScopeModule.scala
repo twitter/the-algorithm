@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.core.product.guice
+packagelon com.twittelonr.product_mixelonr.corelon.product.guicelon
 
-import com.google.inject.Provides
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.product.guice.scope.ProductScoped
-import com.twitter.product_mixer.core.model.marshalling.request.Product
-import javax.inject.Singleton
+import com.googlelon.injelonct.Providelons
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.product_mixelonr.corelon.product.guicelon.scopelon.ProductScopelond
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Product
+import javax.injelonct.Singlelonton
 
 /**
- * Registers the @ProductScoped scope.
+ * Relongistelonrs thelon @ProductScopelond scopelon.
  *
- * See https://github.com/google/guice/wiki/CustomScopes#registering-the-scope
+ * Selonelon https://github.com/googlelon/guicelon/wiki/CustomScopelons#relongistelonring-thelon-scopelon
  */
-@Singleton
-class ProductScopeModule extends TwitterModule {
+@Singlelonton
+class ProductScopelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  val productScope: ProductScope = new ProductScope
+  val productScopelon: ProductScopelon = nelonw ProductScopelon
 
-  override def configure(): Unit = {
-    bindScope(classOf[ProductScoped], productScope)
+  ovelonrridelon delonf configurelon(): Unit = {
+    bindScopelon(classOf[ProductScopelond], productScopelon)
 
-    bind[Product].toProvider(SimpleScope.SEEDED_KEY_PROVIDER).in(classOf[ProductScoped])
+    bind[Product].toProvidelonr(SimplelonScopelon.SelonelonDelonD_KelonY_PROVIDelonR).in(classOf[ProductScopelond])
   }
 
-  @Provides
-  def providesProductScope(): ProductScope = productScope
+  @Providelons
+  delonf providelonsProductScopelon(): ProductScopelon = productScopelon
 }

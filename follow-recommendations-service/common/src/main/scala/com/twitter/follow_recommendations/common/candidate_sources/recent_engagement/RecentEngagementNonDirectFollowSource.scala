@@ -1,38 +1,38 @@
-package com.twitter.follow_recommendations.common.candidate_sources.recent_engagement
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.reloncelonnt_elonngagelonmelonnt
 
-import com.twitter.follow_recommendations.common.clients.real_time_real_graph.RealTimeRealGraphClient
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.clielonnts.relonal_timelon_relonal_graph.RelonalTimelonRelonalGraphClielonnt
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RecentEngagementNonDirectFollowSource @Inject() (
-  realTimeRealGraphClient: RealTimeRealGraphClient)
-    extends CandidateSource[Long, CandidateUser] {
+@Singlelonton
+class ReloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon @Injelonct() (
+  relonalTimelonRelonalGraphClielonnt: RelonalTimelonRelonalGraphClielonnt)
+    elonxtelonnds CandidatelonSourcelon[Long, CandidatelonUselonr] {
 
-  val identifier: CandidateSourceIdentifier =
-    RecentEngagementNonDirectFollowSource.Identifier
+  val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    ReloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon.Idelonntifielonr
 
   /**
-   * Generate a list of candidates for the target using RealtimeGraphClient
-   * and RecentEngagementStore.
+   * Gelonnelonratelon a list of candidatelons for thelon targelont using RelonaltimelonGraphClielonnt
+   * and ReloncelonntelonngagelonmelonntStorelon.
    */
-  override def apply(targetUserId: Long): Stitch[Seq[CandidateUser]] = {
-    realTimeRealGraphClient
-      .getUsersRecentlyEngagedWith(
-        userId = targetUserId,
-        engagementScoreMap = RealTimeRealGraphClient.EngagementScoreMap,
-        includeDirectFollowCandidates = false,
-        includeNonDirectFollowCandidates = true
+  ovelonrridelon delonf apply(targelontUselonrId: Long): Stitch[Selonq[CandidatelonUselonr]] = {
+    relonalTimelonRelonalGraphClielonnt
+      .gelontUselonrsReloncelonntlyelonngagelondWith(
+        uselonrId = targelontUselonrId,
+        elonngagelonmelonntScorelonMap = RelonalTimelonRelonalGraphClielonnt.elonngagelonmelonntScorelonMap,
+        includelonDirelonctFollowCandidatelons = falselon,
+        includelonNonDirelonctFollowCandidatelons = truelon
       )
-      .map(_.map(_.withCandidateSource(identifier)).sortBy(-_.score.getOrElse(0.0)))
+      .map(_.map(_.withCandidatelonSourcelon(idelonntifielonr)).sortBy(-_.scorelon.gelontOrelonlselon(0.0)))
   }
 }
 
-object RecentEngagementNonDirectFollowSource {
-  val Identifier = CandidateSourceIdentifier(Algorithm.RecentEngagementNonDirectFollow.toString)
+objelonct ReloncelonntelonngagelonmelonntNonDirelonctFollowSourcelon {
+  val Idelonntifielonr = CandidatelonSourcelonIdelonntifielonr(Algorithm.ReloncelonntelonngagelonmelonntNonDirelonctFollow.toString)
 }

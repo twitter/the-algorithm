@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon
 
-sealed trait MessageActionType
+selonalelond trait MelonssagelonActionTypelon
 
-case object FollowAllMessageActionType extends MessageActionType
+caselon objelonct FollowAllMelonssagelonActionTypelon elonxtelonnds MelonssagelonActionTypelon

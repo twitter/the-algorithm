@@ -1,65 +1,65 @@
-package com.twitter.ann.featurestore
+packagelon com.twittelonr.ann.felonaturelonstorelon
 
-import com.twitter.ann.common.EmbeddingProducer
-import com.twitter.finagle.stats.{InMemoryStatsReceiver, StatsReceiver}
-import com.twitter.ml.api.embedding.{Embedding, EmbeddingSerDe}
-import com.twitter.ml.api.thriftscala
-import com.twitter.ml.api.thriftscala.{Embedding => TEmbedding}
-import com.twitter.ml.featurestore.lib.dataset.online.VersionedOnlineAccessDataset
-import com.twitter.ml.featurestore.lib.{EntityId, RawFloatTensor}
-import com.twitter.ml.featurestore.lib.dataset.DatasetParams
-import com.twitter.ml.featurestore.lib.entity.EntityWithId
-import com.twitter.ml.featurestore.lib.feature.{BoundFeature, BoundFeatureSet}
-import com.twitter.ml.featurestore.lib.online.{FeatureStoreClient, FeatureStoreRequest}
-import com.twitter.ml.featurestore.lib.params.FeatureStoreParams
-import com.twitter.stitch.Stitch
-import com.twitter.strato.opcontext.Attribution
-import com.twitter.strato.client.Client
+import com.twittelonr.ann.common.elonmbelonddingProducelonr
+import com.twittelonr.finaglelon.stats.{InMelonmoryStatsReloncelonivelonr, StatsReloncelonivelonr}
+import com.twittelonr.ml.api.elonmbelondding.{elonmbelondding, elonmbelonddingSelonrDelon}
+import com.twittelonr.ml.api.thriftscala
+import com.twittelonr.ml.api.thriftscala.{elonmbelondding => Telonmbelondding}
+import com.twittelonr.ml.felonaturelonstorelon.lib.dataselont.onlinelon.VelonrsionelondOnlinelonAccelonssDataselont
+import com.twittelonr.ml.felonaturelonstorelon.lib.{elonntityId, RawFloatTelonnsor}
+import com.twittelonr.ml.felonaturelonstorelon.lib.dataselont.DataselontParams
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntity.elonntityWithId
+import com.twittelonr.ml.felonaturelonstorelon.lib.felonaturelon.{BoundFelonaturelon, BoundFelonaturelonSelont}
+import com.twittelonr.ml.felonaturelonstorelon.lib.onlinelon.{FelonaturelonStorelonClielonnt, FelonaturelonStorelonRelonquelonst}
+import com.twittelonr.ml.felonaturelonstorelon.lib.params.FelonaturelonStorelonParams
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.opcontelonxt.Attribution
+import com.twittelonr.strato.clielonnt.Clielonnt
 
-object FeatureStoreEmbeddingProducer {
-  def apply[T <: EntityId](
-    dataset: VersionedOnlineAccessDataset[T, TEmbedding],
-    version: Long,
-    boundFeature: BoundFeature[T, RawFloatTensor],
-    client: Client,
-    statsReceiver: StatsReceiver = new InMemoryStatsReceiver,
-    featureStoreAttributions: Seq[Attribution] = Seq.empty
-  ): EmbeddingProducer[EntityWithId[T]] = {
-    val featureStoreParams = FeatureStoreParams(
-      perDataset = Map(
-        dataset.id -> DatasetParams(datasetVersion = Some(version))
+objelonct FelonaturelonStorelonelonmbelonddingProducelonr {
+  delonf apply[T <: elonntityId](
+    dataselont: VelonrsionelondOnlinelonAccelonssDataselont[T, Telonmbelondding],
+    velonrsion: Long,
+    boundFelonaturelon: BoundFelonaturelon[T, RawFloatTelonnsor],
+    clielonnt: Clielonnt,
+    statsReloncelonivelonr: StatsReloncelonivelonr = nelonw InMelonmoryStatsReloncelonivelonr,
+    felonaturelonStorelonAttributions: Selonq[Attribution] = Selonq.elonmpty
+  ): elonmbelonddingProducelonr[elonntityWithId[T]] = {
+    val felonaturelonStorelonParams = FelonaturelonStorelonParams(
+      pelonrDataselont = Map(
+        dataselont.id -> DataselontParams(dataselontVelonrsion = Somelon(velonrsion))
       ),
-      global = DatasetParams(attributions = featureStoreAttributions)
+      global = DataselontParams(attributions = felonaturelonStorelonAttributions)
     )
-    val featureStoreClient = FeatureStoreClient(
-      BoundFeatureSet(boundFeature),
-      client,
-      statsReceiver,
-      featureStoreParams
+    val felonaturelonStorelonClielonnt = FelonaturelonStorelonClielonnt(
+      BoundFelonaturelonSelont(boundFelonaturelon),
+      clielonnt,
+      statsReloncelonivelonr,
+      felonaturelonStorelonParams
     )
-    new FeatureStoreEmbeddingProducer(boundFeature, featureStoreClient)
+    nelonw FelonaturelonStorelonelonmbelonddingProducelonr(boundFelonaturelon, felonaturelonStorelonClielonnt)
   }
 }
 
-private[featurestore] class FeatureStoreEmbeddingProducer[T <: EntityId](
-  boundFeature: BoundFeature[T, RawFloatTensor],
-  featureStoreClient: FeatureStoreClient)
-    extends EmbeddingProducer[EntityWithId[T]] {
-  // Looks up embedding from online feature store for an entity.
-  override def produceEmbedding(input: EntityWithId[T]): Stitch[Option[Embedding[Float]]] = {
-    val featureStoreRequest = FeatureStoreRequest(
-      entityIds = Seq(input)
+privatelon[felonaturelonstorelon] class FelonaturelonStorelonelonmbelonddingProducelonr[T <: elonntityId](
+  boundFelonaturelon: BoundFelonaturelon[T, RawFloatTelonnsor],
+  felonaturelonStorelonClielonnt: FelonaturelonStorelonClielonnt)
+    elonxtelonnds elonmbelonddingProducelonr[elonntityWithId[T]] {
+  // Looks up elonmbelondding from onlinelon felonaturelon storelon for an elonntity.
+  ovelonrridelon delonf producelonelonmbelondding(input: elonntityWithId[T]): Stitch[Option[elonmbelondding[Float]]] = {
+    val felonaturelonStorelonRelonquelonst = FelonaturelonStorelonRelonquelonst(
+      elonntityIds = Selonq(input)
     )
 
-    Stitch.callFuture(featureStoreClient(featureStoreRequest).map { predictionRecord =>
-      predictionRecord.getFeatureValue(boundFeature) match {
-        case Some(featureValue) => {
-          val embedding = EmbeddingSerDe.floatEmbeddingSerDe.fromThrift(
-            thriftscala.Embedding(Some(featureValue.value))
+    Stitch.callFuturelon(felonaturelonStorelonClielonnt(felonaturelonStorelonRelonquelonst).map { prelondictionReloncord =>
+      prelondictionReloncord.gelontFelonaturelonValuelon(boundFelonaturelon) match {
+        caselon Somelon(felonaturelonValuelon) => {
+          val elonmbelondding = elonmbelonddingSelonrDelon.floatelonmbelonddingSelonrDelon.fromThrift(
+            thriftscala.elonmbelondding(Somelon(felonaturelonValuelon.valuelon))
           )
-          Some(embedding)
+          Somelon(elonmbelondding)
         }
-        case _ => None
+        caselon _ => Nonelon
       }
     })
   }

@@ -1,26 +1,26 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.timeline_module
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.timelonlinelon_modulelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.icon.HorizonIconMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.ImageVariantMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.timeline_module.ModuleHeader
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.icon.HorizonIconMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.ImagelonVariantMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.SocialContelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.timelonlinelon_modulelon.ModulelonHelonadelonr
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ModuleHeaderMarshaller @Inject() (
-  horizonIconMarshaller: HorizonIconMarshaller,
-  imageVariantMarshaller: ImageVariantMarshaller,
-  socialContextMarshaller: SocialContextMarshaller,
-  moduleHeaderDisplayTypeMarshaller: ModuleHeaderDisplayTypeMarshaller) {
+@Singlelonton
+class ModulelonHelonadelonrMarshallelonr @Injelonct() (
+  horizonIconMarshallelonr: HorizonIconMarshallelonr,
+  imagelonVariantMarshallelonr: ImagelonVariantMarshallelonr,
+  socialContelonxtMarshallelonr: SocialContelonxtMarshallelonr,
+  modulelonHelonadelonrDisplayTypelonMarshallelonr: ModulelonHelonadelonrDisplayTypelonMarshallelonr) {
 
-  def apply(header: ModuleHeader): urt.ModuleHeader = urt.ModuleHeader(
-    text = header.text,
-    sticky = header.sticky,
-    icon = header.icon.map(horizonIconMarshaller(_)),
-    customIcon = header.customIcon.map(imageVariantMarshaller(_)),
-    socialContext = header.socialContext.map(socialContextMarshaller(_)),
-    displayType = moduleHeaderDisplayTypeMarshaller(header.moduleHeaderDisplayType)
+  delonf apply(helonadelonr: ModulelonHelonadelonr): urt.ModulelonHelonadelonr = urt.ModulelonHelonadelonr(
+    telonxt = helonadelonr.telonxt,
+    sticky = helonadelonr.sticky,
+    icon = helonadelonr.icon.map(horizonIconMarshallelonr(_)),
+    customIcon = helonadelonr.customIcon.map(imagelonVariantMarshallelonr(_)),
+    socialContelonxt = helonadelonr.socialContelonxt.map(socialContelonxtMarshallelonr(_)),
+    displayTypelon = modulelonHelonadelonrDisplayTypelonMarshallelonr(helonadelonr.modulelonHelonadelonrDisplayTypelon)
   )
 }

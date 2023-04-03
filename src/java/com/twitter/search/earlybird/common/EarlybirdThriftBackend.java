@@ -1,28 +1,28 @@
-package com.twitter.search.earlybird.common;
+packagelon com.twittelonr.selonarch.elonarlybird.common;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Singlelonton;
 
-import org.apache.thrift.protocol.TProtocolFactory;
+import org.apachelon.thrift.protocol.TProtocolFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.search.common.util.thrift.ThriftToBytesFilter;
-import com.twitter.search.earlybird.thrift.EarlybirdService;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.selonarch.common.util.thrift.ThriftToBytelonsFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdSelonrvicelon;
 
-@Singleton
-public class EarlybirdThriftBackend extends EarlybirdService.ServiceToClient {
+@Singlelonton
+public class elonarlybirdThriftBackelonnd elonxtelonnds elonarlybirdSelonrvicelon.SelonrvicelonToClielonnt {
 
   /**
-   * Wrapping the bytes svc back to a EarlybirdService.ServiceToClient, which
-   * is a EarlybirdService.ServiceIface again.
+   * Wrapping thelon bytelons svc back to a elonarlybirdSelonrvicelon.SelonrvicelonToClielonnt, which
+   * is a elonarlybirdSelonrvicelon.SelonrvicelonIfacelon again.
    */
-  @Inject
-  public EarlybirdThriftBackend(
-      ThriftToBytesFilter thriftToBytesFilter,
-      Service<byte[], byte[]> byteService,
+  @Injelonct
+  public elonarlybirdThriftBackelonnd(
+      ThriftToBytelonsFiltelonr thriftToBytelonsFiltelonr,
+      Selonrvicelon<bytelon[], bytelon[]> bytelonSelonrvicelon,
       TProtocolFactory protocolFactory) {
 
-    super(thriftToBytesFilter.andThen(byteService), protocolFactory);
+    supelonr(thriftToBytelonsFiltelonr.andThelonn(bytelonSelonrvicelon), protocolFactory);
   }
 
 }

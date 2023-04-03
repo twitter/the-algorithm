@@ -1,45 +1,45 @@
-package com.twitter.home_mixer.functional_component.filter
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.filtelonr
 
-import com.twitter.home_mixer.model.HomeFeatures.IsRetweetFeature
-import com.twitter.home_mixer.util.CandidatesUtil
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import scala.collection.mutable
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.IsRelontwelonelontFelonaturelon
+import com.twittelonr.homelon_mixelonr.util.CandidatelonsUtil
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import scala.collelonction.mutablelon
 
-object RetweetDeduplicationFilter extends Filter[PipelineQuery, TweetCandidate] {
+objelonct RelontwelonelontDelonduplicationFiltelonr elonxtelonnds Filtelonr[PipelonlinelonQuelonry, TwelonelontCandidatelon] {
 
-  override val identifier: FilterIdentifier = FilterIdentifier("RetweetDeduplication")
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("RelontwelonelontDelonduplication")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[TweetCandidate]]
-  ): Stitch[FilterResult[TweetCandidate]] = {
-    // If there are 2 retweets of the same native tweet, we will choose the first one
-    // The tweets are returned in descending score order, so we will choose the higher scored tweet
-    val dedupedTweetIdsSet =
-      candidates.partition(_.features.getOrElse(IsRetweetFeature, false)) match {
-        case (retweets, nativeTweets) =>
-          val nativeTweetIds = nativeTweets.map(_.candidate.id)
-          val seenTweetIds = mutable.Set[Long]() ++ nativeTweetIds
-          val dedupedRetweets = retweets.filter { retweet =>
-            val tweetIdAndSourceId = CandidatesUtil.getTweetIdAndSourceId(retweet)
-            val retweetIsUnique = tweetIdAndSourceId.forall(!seenTweetIds.contains(_))
-            if (retweetIsUnique) {
-              seenTweetIds ++= tweetIdAndSourceId
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[TwelonelontCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[TwelonelontCandidatelon]] = {
+    // If thelonrelon arelon 2 relontwelonelonts of thelon samelon nativelon twelonelont, welon will chooselon thelon first onelon
+    // Thelon twelonelonts arelon relonturnelond in delonscelonnding scorelon ordelonr, so welon will chooselon thelon highelonr scorelond twelonelont
+    val delondupelondTwelonelontIdsSelont =
+      candidatelons.partition(_.felonaturelons.gelontOrelonlselon(IsRelontwelonelontFelonaturelon, falselon)) match {
+        caselon (relontwelonelonts, nativelonTwelonelonts) =>
+          val nativelonTwelonelontIds = nativelonTwelonelonts.map(_.candidatelon.id)
+          val selonelonnTwelonelontIds = mutablelon.Selont[Long]() ++ nativelonTwelonelontIds
+          val delondupelondRelontwelonelonts = relontwelonelonts.filtelonr { relontwelonelont =>
+            val twelonelontIdAndSourcelonId = CandidatelonsUtil.gelontTwelonelontIdAndSourcelonId(relontwelonelont)
+            val relontwelonelontIsUniquelon = twelonelontIdAndSourcelonId.forall(!selonelonnTwelonelontIds.contains(_))
+            if (relontwelonelontIsUniquelon) {
+              selonelonnTwelonelontIds ++= twelonelontIdAndSourcelonId
             }
-            retweetIsUnique
+            relontwelonelontIsUniquelon
           }
-          (nativeTweets ++ dedupedRetweets).map(_.candidate.id).toSet
+          (nativelonTwelonelonts ++ delondupelondRelontwelonelonts).map(_.candidatelon.id).toSelont
       }
 
-    val (kept, removed) =
-      candidates
-        .map(_.candidate).partition(candidate => dedupedTweetIdsSet.contains(candidate.id))
-    Stitch.value(FilterResult(kept = kept, removed = removed))
+    val (kelonpt, relonmovelond) =
+      candidatelons
+        .map(_.candidatelon).partition(candidatelon => delondupelondTwelonelontIdsSelont.contains(candidatelon.id))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt = kelonpt, relonmovelond = relonmovelond))
   }
 }

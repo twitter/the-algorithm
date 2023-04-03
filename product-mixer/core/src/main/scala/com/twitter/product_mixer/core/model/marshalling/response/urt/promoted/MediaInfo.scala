@@ -1,11 +1,11 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond
 
-case class MediaInfo(
+caselon class MelondiaInfo(
   uuid: Option[String],
-  publisherId: Option[Long],
+  publishelonrId: Option[Long],
   callToAction: Option[CallToAction],
   durationMillis: Option[Int],
-  videoVariants: Option[Seq[VideoVariant]],
-  advertiserName: Option[String],
-  renderAdByAdvertiserName: Option[Boolean],
-  advertiserProfileImageUrl: Option[String])
+  videlonoVariants: Option[Selonq[VidelonoVariant]],
+  advelonrtiselonrNamelon: Option[String],
+  relonndelonrAdByAdvelonrtiselonrNamelon: Option[Boolelonan],
+  advelonrtiselonrProfilelonImagelonUrl: Option[String])

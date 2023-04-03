@@ -1,215 +1,215 @@
-package com.twitter.visibility.rules
+packagelon com.twittelonr.visibility.rulelons
 
-import com.twitter.abdecider.LoggingABDecider
-import com.twitter.timelines.configapi.HasParams.DependencyProvider
-import com.twitter.timelines.configapi.Params
-import com.twitter.visibility.configapi.params.RuleParam
-import com.twitter.visibility.configapi.params.RuleParams
-import com.twitter.visibility.configapi.params.RuleParams.EnableLikelyIvsUserLabelDropRule
-import com.twitter.visibility.features._
-import com.twitter.visibility.models.UserLabelValue
-import com.twitter.visibility.models.UserLabelValue.LikelyIvs
-import com.twitter.visibility.rules.Condition._
-import com.twitter.visibility.rules.Reason.Unspecified
-import com.twitter.visibility.rules.RuleActionSourceBuilder.UserSafetyLabelSourceBuilder
-import com.twitter.visibility.rules.State._
-import com.twitter.visibility.util.NamingUtils
+import com.twittelonr.abdeloncidelonr.LoggingABDeloncidelonr
+import com.twittelonr.timelonlinelons.configapi.HasParams.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelons.configapi.Params
+import com.twittelonr.visibility.configapi.params.RulelonParam
+import com.twittelonr.visibility.configapi.params.RulelonParams
+import com.twittelonr.visibility.configapi.params.RulelonParams.elonnablelonLikelonlyIvsUselonrLabelonlDropRulelon
+import com.twittelonr.visibility.felonaturelons._
+import com.twittelonr.visibility.modelonls.UselonrLabelonlValuelon
+import com.twittelonr.visibility.modelonls.UselonrLabelonlValuelon.LikelonlyIvs
+import com.twittelonr.visibility.rulelons.Condition._
+import com.twittelonr.visibility.rulelons.Relonason.Unspeloncifielond
+import com.twittelonr.visibility.rulelons.RulelonActionSourcelonBuildelonr.UselonrSafelontyLabelonlSourcelonBuildelonr
+import com.twittelonr.visibility.rulelons.Statelon._
+import com.twittelonr.visibility.util.NamingUtils
 
-trait WithGate {
-  def enabled: Seq[RuleParam[Boolean]] = Seq(RuleParams.True)
+trait WithGatelon {
+  delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] = Selonq(RulelonParams.Truelon)
 
-  def isEnabled(params: Params): Boolean =
-    enabled.forall(enabledParam => params(enabledParam))
+  delonf iselonnablelond(params: Params): Boolelonan =
+    elonnablelond.forall(elonnablelondParam => params(elonnablelondParam))
 
-  def holdbacks: Seq[RuleParam[Boolean]] = Seq(RuleParams.False)
+  delonf holdbacks: Selonq[RulelonParam[Boolelonan]] = Selonq(RulelonParams.Falselon)
 
-  final def shouldHoldback: DependencyProvider[Boolean] =
-    holdbacks.foldLeft(DependencyProvider.from(RuleParams.False)) { (dp, holdbackParam) =>
-      dp.or(DependencyProvider.from(holdbackParam))
+  final delonf shouldHoldback: DelonpelonndelonncyProvidelonr[Boolelonan] =
+    holdbacks.foldLelonft(DelonpelonndelonncyProvidelonr.from(RulelonParams.Falselon)) { (dp, holdbackParam) =>
+      dp.or(DelonpelonndelonncyProvidelonr.from(holdbackParam))
     }
 
-  protected def enableFailClosed: Seq[RuleParam[Boolean]] = Seq(RuleParams.False)
-  def shouldFailClosed(params: Params): Boolean =
-    enableFailClosed.forall(fcParam => params(fcParam))
+  protelonctelond delonf elonnablelonFailCloselond: Selonq[RulelonParam[Boolelonan]] = Selonq(RulelonParams.Falselon)
+  delonf shouldFailCloselond(params: Params): Boolelonan =
+    elonnablelonFailCloselond.forall(fcParam => params(fcParam))
 }
 
-abstract class ActionBuilder[T <: Action] {
-  def actionType: Class[_]
+abstract class ActionBuildelonr[T <: Action] {
+  delonf actionTypelon: Class[_]
 
-  val actionSeverity: Int
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult
+  val actionSelonvelonrity: Int
+  delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult
 }
 
-object ActionBuilder {
-  def apply[T <: Action](action: T): ActionBuilder[T] = action match {
-    case _: InterstitialLimitedEngagements => new PublicInterestActionBuilder()
-    case _ => new ConstantActionBuilder(action)
+objelonct ActionBuildelonr {
+  delonf apply[T <: Action](action: T): ActionBuildelonr[T] = action match {
+    caselon _: IntelonrstitialLimitelondelonngagelonmelonnts => nelonw PublicIntelonrelonstActionBuildelonr()
+    caselon _ => nelonw ConstantActionBuildelonr(action)
   }
 }
 
-class ConstantActionBuilder[T <: Action](action: T) extends ActionBuilder[T] {
-  private val result = RuleResult(action, Evaluated)
+class ConstantActionBuildelonr[T <: Action](action: T) elonxtelonnds ActionBuildelonr[T] {
+  privatelon val relonsult = RulelonRelonsult(action, elonvaluatelond)
 
-  def actionType: Class[_] = action.getClass
+  delonf actionTypelon: Class[_] = action.gelontClass
 
-  override val actionSeverity = action.severity
-  def build(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): RuleResult =
-    result
+  ovelonrridelon val actionSelonvelonrity = action.selonvelonrity
+  delonf build(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): RulelonRelonsult =
+    relonsult
 }
 
-object ConstantActionBuilder {
-  def unapply[T <: Action](builder: ConstantActionBuilder[T]): Option[Action] = Some(
-    builder.result.action)
+objelonct ConstantActionBuildelonr {
+  delonf unapply[T <: Action](buildelonr: ConstantActionBuildelonr[T]): Option[Action] = Somelon(
+    buildelonr.relonsult.action)
 }
 
-abstract class Rule(val actionBuilder: ActionBuilder[_ <: Action], val condition: Condition)
-    extends WithGate {
+abstract class Rulelon(val actionBuildelonr: ActionBuildelonr[_ <: Action], val condition: Condition)
+    elonxtelonnds WithGatelon {
 
-  import Rule._
-  def isExperimental: Boolean = false
+  import Rulelon._
+  delonf iselonxpelonrimelonntal: Boolelonan = falselon
 
-  def actionSourceBuilder: Option[RuleActionSourceBuilder] = None
+  delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Nonelon
 
-  lazy val name: String = NamingUtils.getFriendlyName(this)
+  lazy val namelon: String = NamingUtils.gelontFrielonndlyNamelon(this)
 
-  val featureDependencies: Set[Feature[_]] = condition.features
+  val felonaturelonDelonpelonndelonncielons: Selont[Felonaturelon[_]] = condition.felonaturelons
 
-  val optionalFeatureDependencies: Set[Feature[_]] = condition.optionalFeatures
+  val optionalFelonaturelonDelonpelonndelonncielons: Selont[Felonaturelon[_]] = condition.optionalFelonaturelons
 
-  def preFilter(
-    evaluationContext: EvaluationContext,
-    featureMap: Map[Feature[_], Any],
-    abDecider: LoggingABDecider
-  ): PreFilterResult =
-    condition.preFilter(evaluationContext, featureMap)
+  delonf prelonFiltelonr(
+    elonvaluationContelonxt: elonvaluationContelonxt,
+    felonaturelonMap: Map[Felonaturelon[_], Any],
+    abDeloncidelonr: LoggingABDeloncidelonr
+  ): PrelonFiltelonrRelonsult =
+    condition.prelonFiltelonr(elonvaluationContelonxt, felonaturelonMap)
 
-  def actWhen(evaluationContext: EvaluationContext, featureMap: Map[Feature[_], _]): Boolean =
-    condition(evaluationContext, featureMap).asBoolean
+  delonf actWhelonn(elonvaluationContelonxt: elonvaluationContelonxt, felonaturelonMap: Map[Felonaturelon[_], _]): Boolelonan =
+    condition(elonvaluationContelonxt, felonaturelonMap).asBoolelonan
 
-  val fallbackActionBuilder: Option[ActionBuilder[_ <: Action]] = None
+  val fallbackActionBuildelonr: Option[ActionBuildelonr[_ <: Action]] = Nonelon
 
-  final def evaluate(
-    evaluationContext: EvaluationContext,
-    featureMap: Map[Feature[_], _]
-  ): RuleResult = {
-    val missingFeatures = featureDependencies.filterNot(featureMap.contains)
+  final delonf elonvaluatelon(
+    elonvaluationContelonxt: elonvaluationContelonxt,
+    felonaturelonMap: Map[Felonaturelon[_], _]
+  ): RulelonRelonsult = {
+    val missingFelonaturelons = felonaturelonDelonpelonndelonncielons.filtelonrNot(felonaturelonMap.contains)
 
-    if (missingFeatures.nonEmpty) {
-      fallbackActionBuilder match {
-        case Some(fallbackAction) =>
-          fallbackAction.build(evaluationContext, featureMap)
-        case None =>
-          RuleResult(NotEvaluated, MissingFeature(missingFeatures))
+    if (missingFelonaturelons.nonelonmpty) {
+      fallbackActionBuildelonr match {
+        caselon Somelon(fallbackAction) =>
+          fallbackAction.build(elonvaluationContelonxt, felonaturelonMap)
+        caselon Nonelon =>
+          RulelonRelonsult(Notelonvaluatelond, MissingFelonaturelon(missingFelonaturelons))
       }
-    } else {
+    } elonlselon {
       try {
-        val act = actWhen(evaluationContext, featureMap)
+        val act = actWhelonn(elonvaluationContelonxt, felonaturelonMap)
         if (!act) {
-          EvaluatedRuleResult
-        } else if (shouldHoldback(evaluationContext)) {
+          elonvaluatelondRulelonRelonsult
+        } elonlselon if (shouldHoldback(elonvaluationContelonxt)) {
 
-          HeldbackRuleResult
-        } else {
-          actionBuilder.build(evaluationContext, featureMap)
+          HelonldbackRulelonRelonsult
+        } elonlselon {
+          actionBuildelonr.build(elonvaluationContelonxt, felonaturelonMap)
         }
       } catch {
-        case t: Throwable =>
-          RuleResult(NotEvaluated, RuleFailed(t))
+        caselon t: Throwablelon =>
+          RulelonRelonsult(Notelonvaluatelond, RulelonFailelond(t))
       }
     }
   }
 }
 
-trait ExperimentalRule extends Rule {
-  override def isExperimental: Boolean = true
+trait elonxpelonrimelonntalRulelon elonxtelonnds Rulelon {
+  ovelonrridelon delonf iselonxpelonrimelonntal: Boolelonan = truelon
 }
 
-object Rule {
+objelonct Rulelon {
 
-  val HeldbackRuleResult: RuleResult = RuleResult(Allow, Heldback)
-  val EvaluatedRuleResult: RuleResult = RuleResult(Allow, Evaluated)
-  val DisabledRuleResult: RuleResult = RuleResult(NotEvaluated, Disabled)
+  val HelonldbackRulelonRelonsult: RulelonRelonsult = RulelonRelonsult(Allow, Helonldback)
+  val elonvaluatelondRulelonRelonsult: RulelonRelonsult = RulelonRelonsult(Allow, elonvaluatelond)
+  val DisablelondRulelonRelonsult: RulelonRelonsult = RulelonRelonsult(Notelonvaluatelond, Disablelond)
 
-  def unapply(rule: Rule): Option[(ActionBuilder[_ <: Action], Condition)] =
-    Some((rule.actionBuilder, rule.condition))
+  delonf unapply(rulelon: Rulelon): Option[(ActionBuildelonr[_ <: Action], Condition)] =
+    Somelon((rulelon.actionBuildelonr, rulelon.condition))
 }
 
-abstract class RuleWithConstantAction(val action: Action, override val condition: Condition)
-    extends Rule(ActionBuilder(action), condition)
+abstract class RulelonWithConstantAction(val action: Action, ovelonrridelon val condition: Condition)
+    elonxtelonnds Rulelon(ActionBuildelonr(action), condition)
 
-abstract class UserHasLabelRule(action: Action, userLabelValue: UserLabelValue)
-    extends RuleWithConstantAction(action, AuthorHasLabel(userLabelValue)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(userLabelValue))
+abstract class UselonrHasLabelonlRulelon(action: Action, uselonrLabelonlValuelon: UselonrLabelonlValuelon)
+    elonxtelonnds RulelonWithConstantAction(action, AuthorHasLabelonl(uselonrLabelonlValuelon)) {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    UselonrSafelontyLabelonlSourcelonBuildelonr(uselonrLabelonlValuelon))
 }
 
-abstract class ConditionWithUserLabelRule(
+abstract class ConditionWithUselonrLabelonlRulelon(
   action: Action,
   condition: Condition,
-  userLabelValue: UserLabelValue)
-    extends Rule(
-      ActionBuilder(action),
-      And(NonAuthorViewer, AuthorHasLabel(userLabelValue), condition)) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(userLabelValue))
+  uselonrLabelonlValuelon: UselonrLabelonlValuelon)
+    elonxtelonnds Rulelon(
+      ActionBuildelonr(action),
+      And(NonAuthorVielonwelonr, AuthorHasLabelonl(uselonrLabelonlValuelon), condition)) {
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    UselonrSafelontyLabelonlSourcelonBuildelonr(uselonrLabelonlValuelon))
 }
 
-abstract class WhenAuthorUserLabelPresentRule(action: Action, userLabelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(action, Condition.True, userLabelValue)
+abstract class WhelonnAuthorUselonrLabelonlPrelonselonntRulelon(action: Action, uselonrLabelonlValuelon: UselonrLabelonlValuelon)
+    elonxtelonnds ConditionWithUselonrLabelonlRulelon(action, Condition.Truelon, uselonrLabelonlValuelon)
 
-abstract class ConditionWithNotInnerCircleOfFriendsRule(
+abstract class ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
   action: Action,
   condition: Condition)
-    extends RuleWithConstantAction(
+    elonxtelonnds RulelonWithConstantAction(
       action,
-      And(Not(DoesHaveInnerCircleOfFriendsRelationship), condition))
+      And(Not(DoelonsHavelonInnelonrCirclelonOfFrielonndsRelonlationship), condition))
 
-abstract class AuthorLabelWithNotInnerCircleOfFriendsRule(
+abstract class AuthorLabelonlWithNotInnelonrCirclelonOfFrielonndsRulelon(
   action: Action,
-  userLabelValue: UserLabelValue)
-    extends ConditionWithNotInnerCircleOfFriendsRule(
+  uselonrLabelonlValuelon: UselonrLabelonlValuelon)
+    elonxtelonnds ConditionWithNotInnelonrCirclelonOfFrielonndsRulelon(
       action,
-      AuthorHasLabel(userLabelValue)
+      AuthorHasLabelonl(uselonrLabelonlValuelon)
     ) {
-  override def actionSourceBuilder: Option[RuleActionSourceBuilder] = Some(
-    UserSafetyLabelSourceBuilder(userLabelValue))
+  ovelonrridelon delonf actionSourcelonBuildelonr: Option[RulelonActionSourcelonBuildelonr] = Somelon(
+    UselonrSafelontyLabelonlSourcelonBuildelonr(uselonrLabelonlValuelon))
 }
 
-abstract class OnlyWhenNotAuthorViewerRule(action: Action, condition: Condition)
-    extends RuleWithConstantAction(action, And(NonAuthorViewer, condition))
+abstract class OnlyWhelonnNotAuthorVielonwelonrRulelon(action: Action, condition: Condition)
+    elonxtelonnds RulelonWithConstantAction(action, And(NonAuthorVielonwelonr, condition))
 
-abstract class AuthorLabelAndNonFollowerViewerRule(action: Action, userLabelValue: UserLabelValue)
-    extends ConditionWithUserLabelRule(action, LoggedOutOrViewerNotFollowingAuthor, userLabelValue)
+abstract class AuthorLabelonlAndNonFollowelonrVielonwelonrRulelon(action: Action, uselonrLabelonlValuelon: UselonrLabelonlValuelon)
+    elonxtelonnds ConditionWithUselonrLabelonlRulelon(action, LoggelondOutOrVielonwelonrNotFollowingAuthor, uselonrLabelonlValuelon)
 
-abstract class AlwaysActRule(action: Action) extends Rule(ActionBuilder(action), Condition.True)
+abstract class AlwaysActRulelon(action: Action) elonxtelonnds Rulelon(ActionBuildelonr(action), Condition.Truelon)
 
-abstract class ViewerOptInBlockingOnSearchRule(action: Action, condition: Condition)
-    extends OnlyWhenNotAuthorViewerRule(
+abstract class VielonwelonrOptInBlockingOnSelonarchRulelon(action: Action, condition: Condition)
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
       action,
-      And(condition, ViewerOptInBlockingOnSearch)
+      And(condition, VielonwelonrOptInBlockingOnSelonarch)
     )
 
-abstract class ViewerOptInFilteringOnSearchRule(action: Action, condition: Condition)
-    extends OnlyWhenNotAuthorViewerRule(
+abstract class VielonwelonrOptInFiltelonringOnSelonarchRulelon(action: Action, condition: Condition)
+    elonxtelonnds OnlyWhelonnNotAuthorVielonwelonrRulelon(
       action,
-      And(condition, ViewerOptInFilteringOnSearch)
+      And(condition, VielonwelonrOptInFiltelonringOnSelonarch)
     )
 
-abstract class ViewerOptInFilteringOnSearchUserLabelRule(
+abstract class VielonwelonrOptInFiltelonringOnSelonarchUselonrLabelonlRulelon(
   action: Action,
-  userLabelValue: UserLabelValue,
-  prerequisiteCondition: Condition = True)
-    extends ConditionWithUserLabelRule(
+  uselonrLabelonlValuelon: UselonrLabelonlValuelon,
+  prelonrelonquisitelonCondition: Condition = Truelon)
+    elonxtelonnds ConditionWithUselonrLabelonlRulelon(
       action,
-      And(prerequisiteCondition, LoggedOutOrViewerOptInFiltering),
-      userLabelValue
+      And(prelonrelonquisitelonCondition, LoggelondOutOrVielonwelonrOptInFiltelonring),
+      uselonrLabelonlValuelon
     )
 
-abstract class LikelyIvsLabelNonFollowerDropRule
-    extends AuthorLabelAndNonFollowerViewerRule(
-      Drop(Unspecified),
-      LikelyIvs
+abstract class LikelonlyIvsLabelonlNonFollowelonrDropRulelon
+    elonxtelonnds AuthorLabelonlAndNonFollowelonrVielonwelonrRulelon(
+      Drop(Unspeloncifielond),
+      LikelonlyIvs
     ) {
-  override def enabled: Seq[RuleParam[Boolean]] =
-    Seq(EnableLikelyIvsUserLabelDropRule)
+  ovelonrridelon delonf elonnablelond: Selonq[RulelonParam[Boolelonan]] =
+    Selonq(elonnablelonLikelonlyIvsUselonrLabelonlDropRulelon)
 }

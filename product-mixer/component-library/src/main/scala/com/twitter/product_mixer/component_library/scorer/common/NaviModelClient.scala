@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.scorer.common
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.scorelonr.common
 
-import com.twitter.finagle.Http
-import com.twitter.finagle.grpc.FinagleChannelBuilder
-import com.twitter.finagle.grpc.FutureConverters
-import com.twitter.mlserving.frontend.TFServingInferenceServiceImpl
-import com.twitter.stitch.Stitch
-import tensorflow.serving.PredictionServiceGrpc
-import inference.GrpcService.ModelInferRequest
-import inference.GrpcService.ModelInferResponse
-import io.grpc.ManagedChannel
+import com.twittelonr.finaglelon.Http
+import com.twittelonr.finaglelon.grpc.FinaglelonChannelonlBuildelonr
+import com.twittelonr.finaglelon.grpc.FuturelonConvelonrtelonrs
+import com.twittelonr.mlselonrving.frontelonnd.TFSelonrvingInfelonrelonncelonSelonrvicelonImpl
+import com.twittelonr.stitch.Stitch
+import telonnsorflow.selonrving.PrelondictionSelonrvicelonGrpc
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonquelonst
+import infelonrelonncelon.GrpcSelonrvicelon.ModelonlInfelonrRelonsponselon
+import io.grpc.ManagelondChannelonl
 import io.grpc.Status
 
 /**
- * Client wrapper for calling a Navi Inference Service (go/navi).
- * @param httpClient Finagle HTTP Client to use for connection.
- * @param modelPath Wily path to the ML Model service (e.g. /s/role/service).
+ * Clielonnt wrappelonr for calling a Navi Infelonrelonncelon Selonrvicelon (go/navi).
+ * @param httpClielonnt Finaglelon HTTP Clielonnt to uselon for connelonction.
+ * @param modelonlPath Wily path to thelon ML Modelonl selonrvicelon (elon.g. /s/rolelon/selonrvicelon).
  */
-case class NaviModelClient(
-  httpClient: Http.Client,
-  modelPath: String)
-    extends MLModelInferenceClient {
+caselon class NaviModelonlClielonnt(
+  httpClielonnt: Http.Clielonnt,
+  modelonlPath: String)
+    elonxtelonnds MLModelonlInfelonrelonncelonClielonnt {
 
-  private val channel: ManagedChannel =
-    FinagleChannelBuilder
-      .forTarget(modelPath)
-      .httpClient(httpClient)
-      // Navi enforces an authority name.
-      .overrideAuthority("rustserving")
-      // certain GRPC errors need to be retried.
-      .enableRetryForStatus(Status.UNKNOWN)
-      .enableRetryForStatus(Status.RESOURCE_EXHAUSTED)
-      // this is required at channel level as mTLS is enabled at httpClient level
-      .usePlaintext()
+  privatelon val channelonl: ManagelondChannelonl =
+    FinaglelonChannelonlBuildelonr
+      .forTargelont(modelonlPath)
+      .httpClielonnt(httpClielonnt)
+      // Navi elonnforcelons an authority namelon.
+      .ovelonrridelonAuthority("rustselonrving")
+      // celonrtain GRPC elonrrors nelonelond to belon relontrielond.
+      .elonnablelonRelontryForStatus(Status.UNKNOWN)
+      .elonnablelonRelontryForStatus(Status.RelonSOURCelon_elonXHAUSTelonD)
+      // this is relonquirelond at channelonl lelonvelonl as mTLS is elonnablelond at httpClielonnt lelonvelonl
+      .uselonPlaintelonxt()
       .build()
 
-  private val inferenceServiceStub = PredictionServiceGrpc.newFutureStub(channel)
+  privatelon val infelonrelonncelonSelonrvicelonStub = PrelondictionSelonrvicelonGrpc.nelonwFuturelonStub(channelonl)
 
-  def score(request: ModelInferRequest): Stitch[ModelInferResponse] = {
-    val tfServingRequest = TFServingInferenceServiceImpl.adaptModelInferRequest(request)
+  delonf scorelon(relonquelonst: ModelonlInfelonrRelonquelonst): Stitch[ModelonlInfelonrRelonsponselon] = {
+    val tfSelonrvingRelonquelonst = TFSelonrvingInfelonrelonncelonSelonrvicelonImpl.adaptModelonlInfelonrRelonquelonst(relonquelonst)
     Stitch
-      .callFuture(
-        FutureConverters
-          .RichListenableFuture(inferenceServiceStub.predict(tfServingRequest)).toTwitter
-          .map { response =>
-            TFServingInferenceServiceImpl.adaptModelInferResponse(response)
+      .callFuturelon(
+        FuturelonConvelonrtelonrs
+          .RichListelonnablelonFuturelon(infelonrelonncelonSelonrvicelonStub.prelondict(tfSelonrvingRelonquelonst)).toTwittelonr
+          .map { relonsponselon =>
+            TFSelonrvingInfelonrelonncelonSelonrvicelonImpl.adaptModelonlInfelonrRelonsponselon(relonsponselon)
           }
       )
   }

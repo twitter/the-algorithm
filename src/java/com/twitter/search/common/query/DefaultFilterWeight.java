@@ -1,60 +1,60 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.io.IOException;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.Selont;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonScorelonr;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
 /**
- * An abstract Weight implementation that can be used by all "filter" classes (Query instances that
- * should not contribute to the overall query score).
+ * An abstract Welonight implelonmelonntation that can belon uselond by all "filtelonr" classelons (Quelonry instancelons that
+ * should not contributelon to thelon ovelonrall quelonry scorelon).
  */
-public abstract class DefaultFilterWeight extends Weight {
-  public DefaultFilterWeight(Query query) {
-    super(query);
+public abstract class DelonfaultFiltelonrWelonight elonxtelonnds Welonight {
+  public DelonfaultFiltelonrWelonight(Quelonry quelonry) {
+    supelonr(quelonry);
   }
 
-  @Override
-  public void extractTerms(Set<Term> terms) {
+  @Ovelonrridelon
+  public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
   }
 
-  @Override
-  public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-    Scorer scorer = scorer(context);
-    if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-      return Explanation.match(0f, "Match on id " + doc);
+  @Ovelonrridelon
+  public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc) throws IOelonxcelonption {
+    Scorelonr scorelonr = scorelonr(contelonxt);
+    if ((scorelonr != null) && (scorelonr.itelonrator().advancelon(doc) == doc)) {
+      relonturn elonxplanation.match(0f, "Match on id " + doc);
     }
-    return Explanation.match(0f, "No match on id " + doc);
+    relonturn elonxplanation.match(0f, "No match on id " + doc);
   }
 
-  @Override
-  public Scorer scorer(LeafReaderContext context) throws IOException {
-    DocIdSetIterator disi = getDocIdSetIterator(context);
+  @Ovelonrridelon
+  public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+    DocIdSelontItelonrator disi = gelontDocIdSelontItelonrator(contelonxt);
     if (disi == null) {
-      return null;
+      relonturn null;
     }
 
-    return new ConstantScoreScorer(this, 0.0f, ScoreMode.COMPLETE_NO_SCORES, disi);
+    relonturn nelonw ConstantScorelonScorelonr(this, 0.0f, ScorelonModelon.COMPLelonTelon_NO_SCORelonS, disi);
   }
 
-  @Override
-  public boolean isCacheable(LeafReaderContext ctx) {
-    return false;
+  @Ovelonrridelon
+  public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+    relonturn falselon;
   }
 
   /**
-   * Returns the DocIdSetIterator over which the scorers created by this weight need to iterate.
+   * Relonturns thelon DocIdSelontItelonrator ovelonr which thelon scorelonrs crelonatelond by this welonight nelonelond to itelonratelon.
    *
-   * @param context The LeafReaderContext instance used to create the scorer.
+   * @param contelonxt Thelon LelonafRelonadelonrContelonxt instancelon uselond to crelonatelon thelon scorelonr.
    */
-  protected abstract DocIdSetIterator getDocIdSetIterator(LeafReaderContext context)
-      throws IOException;
+  protelonctelond abstract DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt)
+      throws IOelonxcelonption;
 }

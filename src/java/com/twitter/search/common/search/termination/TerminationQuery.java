@@ -1,66 +1,66 @@
-package com.twitter.search.common.search.termination;
+packagelon com.twittelonr.selonarch.common.selonarch.telonrmination;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Arrays;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
 /**
- * Query implementation that can timeout and return non-exhaustive results.
+ * Quelonry implelonmelonntation that can timelonout and relonturn non-elonxhaustivelon relonsults.
  */
-public class TerminationQuery extends Query {
-  private final Query inner;
-  private final QueryTimeout timeout;
+public class TelonrminationQuelonry elonxtelonnds Quelonry {
+  privatelon final Quelonry innelonr;
+  privatelon final QuelonryTimelonout timelonout;
 
-  public TerminationQuery(Query inner, QueryTimeout timeout) {
-    this.inner = Preconditions.checkNotNull(inner);
-    this.timeout = Preconditions.checkNotNull(timeout);
+  public TelonrminationQuelonry(Quelonry innelonr, QuelonryTimelonout timelonout) {
+    this.innelonr = Prelonconditions.chelonckNotNull(innelonr);
+    this.timelonout = Prelonconditions.chelonckNotNull(timelonout);
   }
 
-  @Override
-  public Weight createWeight(
-      IndexSearcher searcher, ScoreMode scoreMode, float boost) throws IOException {
-    Weight innerWeight = inner.createWeight(searcher, scoreMode, boost);
-    return new TerminationQueryWeight(this, innerWeight, timeout);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(
+      IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) throws IOelonxcelonption {
+    Welonight innelonrWelonight = innelonr.crelonatelonWelonight(selonarchelonr, scorelonModelon, boost);
+    relonturn nelonw TelonrminationQuelonryWelonight(this, innelonrWelonight, timelonout);
   }
 
-  @Override
-  public Query rewrite(IndexReader reader) throws IOException {
-    Query rewritten = inner.rewrite(reader);
-    if (rewritten != inner) {
-      return new TerminationQuery(rewritten, timeout);
+  @Ovelonrridelon
+  public Quelonry relonwritelon(IndelonxRelonadelonr relonadelonr) throws IOelonxcelonption {
+    Quelonry relonwrittelonn = innelonr.relonwritelon(relonadelonr);
+    if (relonwrittelonn != innelonr) {
+      relonturn nelonw TelonrminationQuelonry(relonwrittelonn, timelonout);
     }
-    return this;
+    relonturn this;
   }
 
-  public QueryTimeout getTimeout() {
-    return timeout;
+  public QuelonryTimelonout gelontTimelonout() {
+    relonturn timelonout;
   }
 
-  @Override
-  public int hashCode() {
-    return Arrays.hashCode(new Object[] {inner, timeout});
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn Arrays.hashCodelon(nelonw Objelonct[] {innelonr, timelonout});
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof TerminationQuery)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof TelonrminationQuelonry)) {
+      relonturn falselon;
     }
 
-    TerminationQuery terminationQuery = TerminationQuery.class.cast(obj);
-    return Arrays.equals(new Object[] {inner, timeout},
-                         new Object[] {terminationQuery.inner, terminationQuery.timeout});
+    TelonrminationQuelonry telonrminationQuelonry = TelonrminationQuelonry.class.cast(obj);
+    relonturn Arrays.elonquals(nelonw Objelonct[] {innelonr, timelonout},
+                         nelonw Objelonct[] {telonrminationQuelonry.innelonr, telonrminationQuelonry.timelonout});
   }
 
-  @Override
-  public String toString(String field) {
-    return inner.toString(field);
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    relonturn innelonr.toString(fielonld);
   }
 }

@@ -1,146 +1,146 @@
-package com.twitter.timelineranker.entity_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.elonntity_twelonelonts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.servo.util.FutureArrow
-import com.twitter.storehaus.Store
-import com.twitter.timelineranker.common._
-import com.twitter.timelineranker.core.HydratedCandidatesAndFeaturesEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelineranker.model._
-import com.twitter.timelineranker.parameters.entity_tweets.EntityTweetsParams._
-import com.twitter.timelineranker.recap.model.ContentFeatures
-import com.twitter.timelineranker.util.CopyContentFeaturesIntoHydratedTweetsTransform
-import com.twitter.timelineranker.util.CopyContentFeaturesIntoThriftTweetFeaturesTransform
-import com.twitter.timelineranker.util.TweetFilters
-import com.twitter.timelineranker.visibility.FollowGraphDataProvider
-import com.twitter.timelines.clients.gizmoduck.GizmoduckClient
-import com.twitter.timelines.clients.manhattan.UserMetadataClient
-import com.twitter.timelines.clients.relevance_search.SearchClient
-import com.twitter.timelines.clients.tweetypie.TweetyPieClient
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.util.FailOpenHandler
-import com.twitter.timelines.util.stats.RequestStatsReceiver
-import com.twitter.timelines.visibility.VisibilityEnforcer
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.storelonhaus.Storelon
+import com.twittelonr.timelonlinelonrankelonr.common._
+import com.twittelonr.timelonlinelonrankelonr.corelon.HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelonrankelonr.modelonl._
+import com.twittelonr.timelonlinelonrankelonr.paramelontelonrs.elonntity_twelonelonts.elonntityTwelonelontsParams._
+import com.twittelonr.timelonlinelonrankelonr.reloncap.modelonl.ContelonntFelonaturelons
+import com.twittelonr.timelonlinelonrankelonr.util.CopyContelonntFelonaturelonsIntoHydratelondTwelonelontsTransform
+import com.twittelonr.timelonlinelonrankelonr.util.CopyContelonntFelonaturelonsIntoThriftTwelonelontFelonaturelonsTransform
+import com.twittelonr.timelonlinelonrankelonr.util.TwelonelontFiltelonrs
+import com.twittelonr.timelonlinelonrankelonr.visibility.FollowGraphDataProvidelonr
+import com.twittelonr.timelonlinelons.clielonnts.gizmoduck.GizmoduckClielonnt
+import com.twittelonr.timelonlinelons.clielonnts.manhattan.UselonrMelontadataClielonnt
+import com.twittelonr.timelonlinelons.clielonnts.relonlelonvancelon_selonarch.SelonarchClielonnt
+import com.twittelonr.timelonlinelons.clielonnts.twelonelontypielon.TwelonelontyPielonClielonnt
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.util.FailOpelonnHandlelonr
+import com.twittelonr.timelonlinelons.util.stats.RelonquelonstStatsReloncelonivelonr
+import com.twittelonr.timelonlinelons.visibility.Visibilityelonnforcelonr
+import com.twittelonr.util.Futurelon
 
-class EntityTweetsSource(
-  gizmoduckClient: GizmoduckClient,
-  searchClient: SearchClient,
-  tweetyPieClient: TweetyPieClient,
-  userMetadataClient: UserMetadataClient,
-  followGraphDataProvider: FollowGraphDataProvider,
-  visibilityEnforcer: VisibilityEnforcer,
-  contentFeaturesCache: Store[TweetId, ContentFeatures],
-  statsReceiver: StatsReceiver) {
+class elonntityTwelonelontsSourcelon(
+  gizmoduckClielonnt: GizmoduckClielonnt,
+  selonarchClielonnt: SelonarchClielonnt,
+  twelonelontyPielonClielonnt: TwelonelontyPielonClielonnt,
+  uselonrMelontadataClielonnt: UselonrMelontadataClielonnt,
+  followGraphDataProvidelonr: FollowGraphDataProvidelonr,
+  visibilityelonnforcelonr: Visibilityelonnforcelonr,
+  contelonntFelonaturelonsCachelon: Storelon[TwelonelontId, ContelonntFelonaturelons],
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
 
-  private[this] val baseScope = statsReceiver.scope("entityTweetsSource")
-  private[this] val requestStats = RequestStatsReceiver(baseScope)
+  privatelon[this] val baselonScopelon = statsReloncelonivelonr.scopelon("elonntityTwelonelontsSourcelon")
+  privatelon[this] val relonquelonstStats = RelonquelonstStatsReloncelonivelonr(baselonScopelon)
 
-  private[this] val failOpenScope = baseScope.scope("failOpen")
-  private[this] val userProfileHandler = new FailOpenHandler(failOpenScope, "userProfileInfo")
-  private[this] val userLanguagesHandler = new FailOpenHandler(failOpenScope, "userLanguages")
+  privatelon[this] val failOpelonnScopelon = baselonScopelon.scopelon("failOpelonn")
+  privatelon[this] val uselonrProfilelonHandlelonr = nelonw FailOpelonnHandlelonr(failOpelonnScopelon, "uselonrProfilelonInfo")
+  privatelon[this] val uselonrLanguagelonsHandlelonr = nelonw FailOpelonnHandlelonr(failOpelonnScopelon, "uselonrLanguagelons")
 
-  private[this] val followGraphDataTransform = new FollowGraphDataTransform(
-    followGraphDataProvider = followGraphDataProvider,
-    maxFollowedUsersProvider = DependencyProvider.from(MaxFollowedUsersParam)
+  privatelon[this] val followGraphDataTransform = nelonw FollowGraphDataTransform(
+    followGraphDataProvidelonr = followGraphDataProvidelonr,
+    maxFollowelondUselonrsProvidelonr = DelonpelonndelonncyProvidelonr.from(MaxFollowelondUselonrsParam)
   )
-  private[this] val fetchSearchResultsTransform = new EntityTweetsSearchResultsTransform(
-    searchClient = searchClient,
-    statsReceiver = baseScope
+  privatelon[this] val felontchSelonarchRelonsultsTransform = nelonw elonntityTwelonelontsSelonarchRelonsultsTransform(
+    selonarchClielonnt = selonarchClielonnt,
+    statsReloncelonivelonr = baselonScopelon
   )
-  private[this] val userProfileInfoTransform =
-    new UserProfileInfoTransform(userProfileHandler, gizmoduckClient)
-  private[this] val languagesTransform =
-    new UserLanguagesTransform(userLanguagesHandler, userMetadataClient)
+  privatelon[this] val uselonrProfilelonInfoTransform =
+    nelonw UselonrProfilelonInfoTransform(uselonrProfilelonHandlelonr, gizmoduckClielonnt)
+  privatelon[this] val languagelonsTransform =
+    nelonw UselonrLanguagelonsTransform(uselonrLanguagelonsHandlelonr, uselonrMelontadataClielonnt)
 
-  private[this] val visibilityEnforcingTransform = new VisibilityEnforcingTransform(
-    visibilityEnforcer
-  )
-
-  private[this] val filters = TweetFilters.ValueSet(
-    TweetFilters.DuplicateTweets,
-    TweetFilters.DuplicateRetweets
+  privatelon[this] val visibilityelonnforcingTransform = nelonw VisibilityelonnforcingTransform(
+    visibilityelonnforcelonr
   )
 
-  private[this] val hydratedTweetsFilter = new HydratedTweetsFilterTransform(
-    outerFilters = filters,
-    innerFilters = TweetFilters.None,
-    useFollowGraphData = false,
-    useSourceTweets = false,
-    statsReceiver = baseScope,
-    numRetweetsAllowed = HydratedTweetsFilterTransform.NumDuplicateRetweetsAllowed
+  privatelon[this] val filtelonrs = TwelonelontFiltelonrs.ValuelonSelont(
+    TwelonelontFiltelonrs.DuplicatelonTwelonelonts,
+    TwelonelontFiltelonrs.DuplicatelonRelontwelonelonts
   )
 
-  private[this] val contentFeaturesHydrationTransform =
-    new ContentFeaturesHydrationTransformBuilder(
-      tweetyPieClient = tweetyPieClient,
-      contentFeaturesCache = contentFeaturesCache,
-      enableContentFeaturesGate = RecapQuery.paramGate(EnableContentFeaturesHydrationParam),
-      enableTokensInContentFeaturesGate =
-        RecapQuery.paramGate(EnableTokensInContentFeaturesHydrationParam),
-      enableTweetTextInContentFeaturesGate =
-        RecapQuery.paramGate(EnableTweetTextInContentFeaturesHydrationParam),
-      enableConversationControlContentFeaturesGate =
-        RecapQuery.paramGate(EnableConversationControlInContentFeaturesHydrationParam),
-      enableTweetMediaHydrationGate = RecapQuery.paramGate(EnableTweetMediaHydrationParam),
-      hydrateInReplyToTweets = false,
-      statsReceiver = baseScope
+  privatelon[this] val hydratelondTwelonelontsFiltelonr = nelonw HydratelondTwelonelontsFiltelonrTransform(
+    outelonrFiltelonrs = filtelonrs,
+    innelonrFiltelonrs = TwelonelontFiltelonrs.Nonelon,
+    uselonFollowGraphData = falselon,
+    uselonSourcelonTwelonelonts = falselon,
+    statsReloncelonivelonr = baselonScopelon,
+    numRelontwelonelontsAllowelond = HydratelondTwelonelontsFiltelonrTransform.NumDuplicatelonRelontwelonelontsAllowelond
+  )
+
+  privatelon[this] val contelonntFelonaturelonsHydrationTransform =
+    nelonw ContelonntFelonaturelonsHydrationTransformBuildelonr(
+      twelonelontyPielonClielonnt = twelonelontyPielonClielonnt,
+      contelonntFelonaturelonsCachelon = contelonntFelonaturelonsCachelon,
+      elonnablelonContelonntFelonaturelonsGatelon = ReloncapQuelonry.paramGatelon(elonnablelonContelonntFelonaturelonsHydrationParam),
+      elonnablelonTokelonnsInContelonntFelonaturelonsGatelon =
+        ReloncapQuelonry.paramGatelon(elonnablelonTokelonnsInContelonntFelonaturelonsHydrationParam),
+      elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsGatelon =
+        ReloncapQuelonry.paramGatelon(elonnablelonTwelonelontTelonxtInContelonntFelonaturelonsHydrationParam),
+      elonnablelonConvelonrsationControlContelonntFelonaturelonsGatelon =
+        ReloncapQuelonry.paramGatelon(elonnablelonConvelonrsationControlInContelonntFelonaturelonsHydrationParam),
+      elonnablelonTwelonelontMelondiaHydrationGatelon = ReloncapQuelonry.paramGatelon(elonnablelonTwelonelontMelondiaHydrationParam),
+      hydratelonInRelonplyToTwelonelonts = falselon,
+      statsReloncelonivelonr = baselonScopelon
     ).build()
 
-  private[this] def hydratesContentFeatures(
-    hydratedEnvelope: HydratedCandidatesAndFeaturesEnvelope
-  ): Boolean =
-    hydratedEnvelope.candidateEnvelope.query.hydratesContentFeatures.getOrElse(true)
+  privatelon[this] delonf hydratelonsContelonntFelonaturelons(
+    hydratelondelonnvelonlopelon: HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+  ): Boolelonan =
+    hydratelondelonnvelonlopelon.candidatelonelonnvelonlopelon.quelonry.hydratelonsContelonntFelonaturelons.gelontOrelonlselon(truelon)
 
-  private[this] val contentFeaturesTransformer = FutureArrow.choose(
-    predicate = hydratesContentFeatures,
-    ifTrue = contentFeaturesHydrationTransform
-      .andThen(CopyContentFeaturesIntoThriftTweetFeaturesTransform)
-      .andThen(CopyContentFeaturesIntoHydratedTweetsTransform),
-    ifFalse = FutureArrow[
-      HydratedCandidatesAndFeaturesEnvelope,
-      HydratedCandidatesAndFeaturesEnvelope
-    ](Future.value) // empty transformer
+  privatelon[this] val contelonntFelonaturelonsTransformelonr = FuturelonArrow.chooselon(
+    prelondicatelon = hydratelonsContelonntFelonaturelons,
+    ifTruelon = contelonntFelonaturelonsHydrationTransform
+      .andThelonn(CopyContelonntFelonaturelonsIntoThriftTwelonelontFelonaturelonsTransform)
+      .andThelonn(CopyContelonntFelonaturelonsIntoHydratelondTwelonelontsTransform),
+    ifFalselon = FuturelonArrow[
+      HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon,
+      HydratelondCandidatelonsAndFelonaturelonselonnvelonlopelon
+    ](Futurelon.valuelon) // elonmpty transformelonr
   )
 
-  private[this] val candidateGenerationTransform = new CandidateGenerationTransform(baseScope)
+  privatelon[this] val candidatelonGelonnelonrationTransform = nelonw CandidatelonGelonnelonrationTransform(baselonScopelon)
 
-  private[this] val hydrationAndFilteringPipeline =
-    CreateCandidateEnvelopeTransform
-      .andThen(followGraphDataTransform) // Fetch follow graph data
-      .andThen(fetchSearchResultsTransform) // fetch search results
-      .andThen(SearchResultDedupAndSortingTransform) // dedup and order search results
-      .andThen(CandidateTweetHydrationTransform) // hydrate search results
-      .andThen(visibilityEnforcingTransform) // filter hydrated tweets to visible ones
-      .andThen(hydratedTweetsFilter) // filter hydrated tweets based on predefined filter
-      .andThen(
-        TrimToMatchHydratedTweetsTransform
-      ) // trim search result set to match filtered hydrated tweets (this needs to be accurate for feature hydration)
+  privatelon[this] val hydrationAndFiltelonringPipelonlinelon =
+    CrelonatelonCandidatelonelonnvelonlopelonTransform
+      .andThelonn(followGraphDataTransform) // Felontch follow graph data
+      .andThelonn(felontchSelonarchRelonsultsTransform) // felontch selonarch relonsults
+      .andThelonn(SelonarchRelonsultDelondupAndSortingTransform) // delondup and ordelonr selonarch relonsults
+      .andThelonn(CandidatelonTwelonelontHydrationTransform) // hydratelon selonarch relonsults
+      .andThelonn(visibilityelonnforcingTransform) // filtelonr hydratelond twelonelonts to visiblelon onelons
+      .andThelonn(hydratelondTwelonelontsFiltelonr) // filtelonr hydratelond twelonelonts baselond on prelondelonfinelond filtelonr
+      .andThelonn(
+        TrimToMatchHydratelondTwelonelontsTransform
+      ) // trim selonarch relonsult selont to match filtelonrelond hydratelond twelonelonts (this nelonelonds to belon accuratelon for felonaturelon hydration)
 
-  // runs the main pipeline in parallel with fetching user profile info and user languages
-  private[this] val featureHydrationDataTransform =
-    new FeatureHydrationDataTransform(
-      hydrationAndFilteringPipeline,
-      languagesTransform,
-      userProfileInfoTransform
+  // runs thelon main pipelonlinelon in parallelonl with felontching uselonr profilelon info and uselonr languagelons
+  privatelon[this] val felonaturelonHydrationDataTransform =
+    nelonw FelonaturelonHydrationDataTransform(
+      hydrationAndFiltelonringPipelonlinelon,
+      languagelonsTransform,
+      uselonrProfilelonInfoTransform
     )
 
-  private[this] val tweetFeaturesHydrationTransform =
-    OutOfNetworkTweetsSearchFeaturesHydrationTransform
-      .andThen(contentFeaturesTransformer)
+  privatelon[this] val twelonelontFelonaturelonsHydrationTransform =
+    OutOfNelontworkTwelonelontsSelonarchFelonaturelonsHydrationTransform
+      .andThelonn(contelonntFelonaturelonsTransformelonr)
 
-  private[this] val featureHydrationPipeline =
-    featureHydrationDataTransform
-      .andThen(tweetFeaturesHydrationTransform)
-      .andThen(candidateGenerationTransform)
+  privatelon[this] val felonaturelonHydrationPipelonlinelon =
+    felonaturelonHydrationDataTransform
+      .andThelonn(twelonelontFelonaturelonsHydrationTransform)
+      .andThelonn(candidatelonGelonnelonrationTransform)
 
-  def get(query: RecapQuery): Future[CandidateTweetsResult] = {
-    requestStats.addEventStats {
-      featureHydrationPipeline(query)
+  delonf gelont(quelonry: ReloncapQuelonry): Futurelon[CandidatelonTwelonelontsRelonsult] = {
+    relonquelonstStats.addelonvelonntStats {
+      felonaturelonHydrationPipelonlinelon(quelonry)
     }
   }
 
-  def get(queries: Seq[RecapQuery]): Future[Seq[CandidateTweetsResult]] = {
-    Future.collect(queries.map(get))
+  delonf gelont(quelonrielons: Selonq[ReloncapQuelonry]): Futurelon[Selonq[CandidatelonTwelonelontsRelonsult]] = {
+    Futurelon.collelonct(quelonrielons.map(gelont))
   }
 }

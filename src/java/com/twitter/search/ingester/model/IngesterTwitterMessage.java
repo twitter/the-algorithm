@@ -1,73 +1,73 @@
-package com.twitter.search.ingester.model;
+packagelon com.twittelonr.selonarch.ingelonstelonr.modelonl;
 
 import java.util.List;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
-import com.google.common.primitives.Longs;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.primitivelons.Longs;
 
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.partitioning.base.HashPartitionFunction;
-import com.twitter.search.common.partitioning.base.Partitionable;
-import com.twitter.search.common.relevance.entities.TwitterMessage;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.selonarch.common.delonbug.thriftjava.Delonbugelonvelonnts;
+import com.twittelonr.selonarch.common.partitioning.baselon.HashPartitionFunction;
+import com.twittelonr.selonarch.common.partitioning.baselon.Partitionablelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons.TwittelonrMelonssagelon;
 
 /**
- * A Twitter "status" object (e.g. a message)
+ * A Twittelonr "status" objelonct (elon.g. a melonssagelon)
  *
  */
-public class IngesterTwitterMessage extends TwitterMessage
-    implements Comparable<IndexerStatus>, IndexerStatus, Partitionable {
-  private final DebugEvents debugEvents;
+public class IngelonstelonrTwittelonrMelonssagelon elonxtelonnds TwittelonrMelonssagelon
+    implelonmelonnts Comparablelon<IndelonxelonrStatus>, IndelonxelonrStatus, Partitionablelon {
+  privatelon final Delonbugelonvelonnts delonbugelonvelonnts;
 
-  public IngesterTwitterMessage(Long twitterId, List<PenguinVersion> supportedPenguinVersions) {
-    this(twitterId, supportedPenguinVersions, null);
+  public IngelonstelonrTwittelonrMelonssagelon(Long twittelonrId, List<PelonnguinVelonrsion> supportelondPelonnguinVelonrsions) {
+    this(twittelonrId, supportelondPelonnguinVelonrsions, null);
   }
 
-  public IngesterTwitterMessage(
-      Long twitterId,
-      List<PenguinVersion> penguinVersions,
-      @Nullable DebugEvents debugEvents) {
-    super(twitterId, penguinVersions);
-    this.debugEvents = debugEvents == null ? new DebugEvents() : debugEvents.deepCopy();
+  public IngelonstelonrTwittelonrMelonssagelon(
+      Long twittelonrId,
+      List<PelonnguinVelonrsion> pelonnguinVelonrsions,
+      @Nullablelon Delonbugelonvelonnts delonbugelonvelonnts) {
+    supelonr(twittelonrId, pelonnguinVelonrsions);
+    this.delonbugelonvelonnts = delonbugelonvelonnts == null ? nelonw Delonbugelonvelonnts() : delonbugelonvelonnts.delonelonpCopy();
   }
 
-  @Override
-  public int compareTo(IndexerStatus o) {
-    return Longs.compare(getId(), o.getId());
+  @Ovelonrridelon
+  public int comparelonTo(IndelonxelonrStatus o) {
+    relonturn Longs.comparelon(gelontId(), o.gelontId());
   }
 
-  @Override
-  public boolean equals(Object o) {
-    return (o instanceof IngesterTwitterMessage)
-        && compareTo((IngesterTwitterMessage) o) == 0;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct o) {
+    relonturn (o instancelonof IngelonstelonrTwittelonrMelonssagelon)
+        && comparelonTo((IngelonstelonrTwittelonrMelonssagelon) o) == 0;
   }
 
-  @Override
-  public int hashCode() {
-    return HashPartitionFunction.hashCode(getId());
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn HashPartitionFunction.hashCodelon(gelontId());
   }
 
-  public boolean isIndexable(boolean indexProtectedTweets) {
-    return getFromUserScreenName().isPresent()
-        && getId() != INT_FIELD_NOT_PRESENT
-        && (indexProtectedTweets || !isUserProtected());
+  public boolelonan isIndelonxablelon(boolelonan indelonxProtelonctelondTwelonelonts) {
+    relonturn gelontFromUselonrScrelonelonnNamelon().isPrelonselonnt()
+        && gelontId() != INT_FIelonLD_NOT_PRelonSelonNT
+        && (indelonxProtelonctelondTwelonelonts || !isUselonrProtelonctelond());
   }
 
-  @Override
-  public long getTweetId() {
-    return this.getId();
+  @Ovelonrridelon
+  public long gelontTwelonelontId() {
+    relonturn this.gelontId();
   }
 
-  @Override
-  public long getUserId() {
-    Preconditions.checkState(getFromUserTwitterId().isPresent(), "The author user ID is missing");
-    return getFromUserTwitterId().get();
+  @Ovelonrridelon
+  public long gelontUselonrId() {
+    Prelonconditions.chelonckStatelon(gelontFromUselonrTwittelonrId().isPrelonselonnt(), "Thelon author uselonr ID is missing");
+    relonturn gelontFromUselonrTwittelonrId().gelont();
   }
 
-  @Override
-  public DebugEvents getDebugEvents() {
-    return debugEvents;
+  @Ovelonrridelon
+  public Delonbugelonvelonnts gelontDelonbugelonvelonnts() {
+    relonturn delonbugelonvelonnts;
   }
 }

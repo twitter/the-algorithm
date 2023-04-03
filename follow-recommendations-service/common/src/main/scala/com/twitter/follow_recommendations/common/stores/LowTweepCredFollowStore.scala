@@ -1,39 +1,39 @@
-package com.twitter.follow_recommendations.common.stores
+packagelon com.twittelonr.follow_reloncommelonndations.common.storelons
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.HasRecentFollowedUserIds
-import com.twitter.stitch.Stitch
-import com.twitter.strato.generated.client.onboarding.userrecs.TweepCredOnUserClientColumn
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasReloncelonntFollowelondUselonrIds
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.strato.gelonnelonratelond.clielonnt.onboarding.uselonrreloncs.TwelonelonpCrelondOnUselonrClielonntColumn
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-// Not a candidate source since it's a intermediary.
-@Singleton
-class LowTweepCredFollowStore @Inject() (tweepCredOnUserClientColumn: TweepCredOnUserClientColumn) {
+// Not a candidatelon sourcelon sincelon it's a intelonrmelondiary.
+@Singlelonton
+class LowTwelonelonpCrelondFollowStorelon @Injelonct() (twelonelonpCrelondOnUselonrClielonntColumn: TwelonelonpCrelondOnUselonrClielonntColumn) {
 
-  def getLowTweepCredUsers(target: HasRecentFollowedUserIds): Stitch[Seq[CandidateUser]] = {
-    val newFollowings =
-      target.recentFollowedUserIds.getOrElse(Nil).take(LowTweepCredFollowStore.NumFlockToRetrieve)
+  delonf gelontLowTwelonelonpCrelondUselonrs(targelont: HasReloncelonntFollowelondUselonrIds): Stitch[Selonq[CandidatelonUselonr]] = {
+    val nelonwFollowings =
+      targelont.reloncelonntFollowelondUselonrIds.gelontOrelonlselon(Nil).takelon(LowTwelonelonpCrelondFollowStorelon.NumFlockToRelontrielonvelon)
 
-    val validTweepScoreUserIdsStitch: Stitch[Seq[Long]] = Stitch
-      .traverse(newFollowings) { newFollowingUserId =>
-        val tweepCredScoreOptStitch = tweepCredOnUserClientColumn.fetcher
-          .fetch(newFollowingUserId)
+    val validTwelonelonpScorelonUselonrIdsStitch: Stitch[Selonq[Long]] = Stitch
+      .travelonrselon(nelonwFollowings) { nelonwFollowingUselonrId =>
+        val twelonelonpCrelondScorelonOptStitch = twelonelonpCrelondOnUselonrClielonntColumn.felontchelonr
+          .felontch(nelonwFollowingUselonrId)
           .map(_.v)
-        tweepCredScoreOptStitch.map(_.flatMap(tweepCred =>
-          if (tweepCred < LowTweepCredFollowStore.TweepCredThreshold) {
-            Some(newFollowingUserId)
-          } else {
-            None
+        twelonelonpCrelondScorelonOptStitch.map(_.flatMap(twelonelonpCrelond =>
+          if (twelonelonpCrelond < LowTwelonelonpCrelondFollowStorelon.TwelonelonpCrelondThrelonshold) {
+            Somelon(nelonwFollowingUselonrId)
+          } elonlselon {
+            Nonelon
           }))
-      }.map(_.flatten)
+      }.map(_.flattelonn)
 
-    validTweepScoreUserIdsStitch
-      .map(_.map(CandidateUser(_, Some(CandidateUser.DefaultCandidateScore))))
+    validTwelonelonpScorelonUselonrIdsStitch
+      .map(_.map(CandidatelonUselonr(_, Somelon(CandidatelonUselonr.DelonfaultCandidatelonScorelon))))
   }
 }
 
-object LowTweepCredFollowStore {
-  val NumFlockToRetrieve = 500
-  val TweepCredThreshold = 40
+objelonct LowTwelonelonpCrelondFollowStorelon {
+  val NumFlockToRelontrielonvelon = 500
+  val TwelonelonpCrelondThrelonshold = 40
 }

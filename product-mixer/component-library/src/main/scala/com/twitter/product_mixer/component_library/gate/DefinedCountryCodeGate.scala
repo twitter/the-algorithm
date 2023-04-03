@@ -1,13 +1,13 @@
-package com.twitter.product_mixer.component_library.gate
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.gatelon
 
-import com.twitter.product_mixer.core.functional_component.gate.Gate
-import com.twitter.product_mixer.core.model.common.identifier.GateIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.gatelon.Gatelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.GatelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object DefinedCountryCodeGate extends Gate[PipelineQuery] {
-  override val identifier: GateIdentifier = GateIdentifier("DefinedCountryCode")
+objelonct DelonfinelondCountryCodelonGatelon elonxtelonnds Gatelon[PipelonlinelonQuelonry] {
+  ovelonrridelon val idelonntifielonr: GatelonIdelonntifielonr = GatelonIdelonntifielonr("DelonfinelondCountryCodelon")
 
-  override def shouldContinue(query: PipelineQuery): Stitch[Boolean] =
-    Stitch.value(query.getCountryCode.isDefined)
+  ovelonrridelon delonf shouldContinuelon(quelonry: PipelonlinelonQuelonry): Stitch[Boolelonan] =
+    Stitch.valuelon(quelonry.gelontCountryCodelon.isDelonfinelond)
 }

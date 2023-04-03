@@ -1,53 +1,53 @@
-package com.twitter.search.earlybird.factory;
+packagelon com.twittelonr.selonarch.elonarlybird.factory;
 
-import com.twitter.decider.Decider;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.EarlybirdIndexConfig;
-import com.twitter.search.earlybird.RealtimeEarlybirdIndexConfig;
-import com.twitter.search.earlybird.archive.ArchiveOnDiskEarlybirdIndexConfig;
-import com.twitter.search.earlybird.archive.ArchiveSearchPartitionManager;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.elonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.RelonaltimelonelonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonOnDiskelonarlybirdIndelonxConfig;
+import com.twittelonr.selonarch.elonarlybird.archivelon.ArchivelonSelonarchPartitionManagelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
 
-public final class EarlybirdIndexConfigUtil {
-  private EarlybirdIndexConfigUtil() {
+public final class elonarlybirdIndelonxConfigUtil {
+  privatelon elonarlybirdIndelonxConfigUtil() {
   }
 
   /**
-   * Creates the index config for this earlybird.
+   * Crelonatelons thelon indelonx config for this elonarlybird.
    */
-  public static EarlybirdIndexConfig createEarlybirdIndexConfig(
-      Decider decider, SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    if (isArchiveSearch()) {
-      return new ArchiveOnDiskEarlybirdIndexConfig(decider, searchIndexingMetricSet,
-          criticalExceptionHandler);
-    } else if (isProtectedSearch()) {
-      return new RealtimeEarlybirdIndexConfig(
-          EarlybirdCluster.PROTECTED, decider, searchIndexingMetricSet, criticalExceptionHandler);
-    } else if (isRealtimeCG()) {
-      return new RealtimeEarlybirdIndexConfig(
-          EarlybirdCluster.REALTIME_CG, decider, searchIndexingMetricSet, criticalExceptionHandler);
-    } else {
-      return new RealtimeEarlybirdIndexConfig(
-          EarlybirdCluster.REALTIME, decider, searchIndexingMetricSet, criticalExceptionHandler);
+  public static elonarlybirdIndelonxConfig crelonatelonelonarlybirdIndelonxConfig(
+      Deloncidelonr deloncidelonr, SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    if (isArchivelonSelonarch()) {
+      relonturn nelonw ArchivelonOnDiskelonarlybirdIndelonxConfig(deloncidelonr, selonarchIndelonxingMelontricSelont,
+          criticalelonxcelonptionHandlelonr);
+    } elonlselon if (isProtelonctelondSelonarch()) {
+      relonturn nelonw RelonaltimelonelonarlybirdIndelonxConfig(
+          elonarlybirdClustelonr.PROTelonCTelonD, deloncidelonr, selonarchIndelonxingMelontricSelont, criticalelonxcelonptionHandlelonr);
+    } elonlselon if (isRelonaltimelonCG()) {
+      relonturn nelonw RelonaltimelonelonarlybirdIndelonxConfig(
+          elonarlybirdClustelonr.RelonALTIMelon_CG, deloncidelonr, selonarchIndelonxingMelontricSelont, criticalelonxcelonptionHandlelonr);
+    } elonlselon {
+      relonturn nelonw RelonaltimelonelonarlybirdIndelonxConfig(
+          elonarlybirdClustelonr.RelonALTIMelon, deloncidelonr, selonarchIndelonxingMelontricSelont, criticalelonxcelonptionHandlelonr);
     }
   }
 
-  public static boolean isArchiveSearch() {
-    // Re-reading config on each call so that tests can reliably overwrite this
-    return EarlybirdConfig.getString("partition_manager", "realtime")
-        .equals(ArchiveSearchPartitionManager.CONFIG_NAME);
+  public static boolelonan isArchivelonSelonarch() {
+    // Relon-relonading config on elonach call so that telonsts can relonliably ovelonrwritelon this
+    relonturn elonarlybirdConfig.gelontString("partition_managelonr", "relonaltimelon")
+        .elonquals(ArchivelonSelonarchPartitionManagelonr.CONFIG_NAMelon);
   }
 
-  private static boolean isProtectedSearch() {
-    // Re-reading config on each call so that tests can reliably overwrite this
-    return EarlybirdConfig.getBool("protected_index", false);
+  privatelon static boolelonan isProtelonctelondSelonarch() {
+    // Relon-relonading config on elonach call so that telonsts can relonliably ovelonrwritelon this
+    relonturn elonarlybirdConfig.gelontBool("protelonctelond_indelonx", falselon);
   }
 
-  private static boolean isRealtimeCG() {
-    // Re-reading config on each call so that tests can reliably overwrite this
-    return EarlybirdConfig.getBool("realtime_cg_index", false);
+  privatelon static boolelonan isRelonaltimelonCG() {
+    // Relon-relonading config on elonach call so that telonsts can relonliably ovelonrwritelon this
+    relonturn elonarlybirdConfig.gelontBool("relonaltimelon_cg_indelonx", falselon);
   }
 }

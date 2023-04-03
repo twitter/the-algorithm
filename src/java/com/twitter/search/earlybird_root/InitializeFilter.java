@@ -1,36 +1,36 @@
-package com.twitter.search.earlybird_root;
+packagelon com.twittelonr.selonarch.elonarlybird_root;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.SimpleFilter;
-import com.twitter.search.common.relevance.ranking.ActionChainManager;
-import com.twitter.search.common.runtime.ActionChainDebugManager;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
-import com.twitter.util.FutureEventListener;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.SimplelonFiltelonr;
+import com.twittelonr.selonarch.common.relonlelonvancelon.ranking.ActionChainManagelonr;
+import com.twittelonr.selonarch.common.runtimelon.ActionChainDelonbugManagelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.FuturelonelonvelonntListelonnelonr;
 
 /**
- * Initialize request-scope state and clean them at the end.
+ * Initializelon relonquelonst-scopelon statelon and clelonan thelonm at thelon elonnd.
  */
-public class InitializeFilter extends SimpleFilter<EarlybirdRequest, EarlybirdResponse> {
-  @Override
-  public Future<EarlybirdResponse> apply(EarlybirdRequest request,
-                                         Service<EarlybirdRequest, EarlybirdResponse> service) {
-    ActionChainDebugManager.update(new ActionChainManager(request.getDebugMode()), "EarlybirdRoot");
-    return service.apply(request).addEventListener(new FutureEventListener<EarlybirdResponse>() {
-      @Override
-      public void onSuccess(EarlybirdResponse response) {
-        cleanup();
+public class InitializelonFiltelonr elonxtelonnds SimplelonFiltelonr<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> {
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> apply(elonarlybirdRelonquelonst relonquelonst,
+                                         Selonrvicelon<elonarlybirdRelonquelonst, elonarlybirdRelonsponselon> selonrvicelon) {
+    ActionChainDelonbugManagelonr.updatelon(nelonw ActionChainManagelonr(relonquelonst.gelontDelonbugModelon()), "elonarlybirdRoot");
+    relonturn selonrvicelon.apply(relonquelonst).addelonvelonntListelonnelonr(nelonw FuturelonelonvelonntListelonnelonr<elonarlybirdRelonsponselon>() {
+      @Ovelonrridelon
+      public void onSuccelonss(elonarlybirdRelonsponselon relonsponselon) {
+        clelonanup();
       }
 
-      @Override
-      public void onFailure(Throwable cause) {
-        cleanup();
+      @Ovelonrridelon
+      public void onFailurelon(Throwablelon causelon) {
+        clelonanup();
       }
     });
   }
 
-  private void cleanup() {
-    ActionChainDebugManager.clearLocals();
+  privatelon void clelonanup() {
+    ActionChainDelonbugManagelonr.clelonarLocals();
   }
 }

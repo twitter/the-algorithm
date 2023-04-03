@@ -1,447 +1,447 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
+import java.util.Calelonndar;
+import java.util.Datelon;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.concurrelonnt.atomic.AtomicIntelongelonr;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.collect.Maps;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.collelonct.Maps;
 
-import org.apache.commons.lang.mutable.MutableInt;
-import org.apache.commons.lang.mutable.MutableLong;
-import org.apache.lucene.index.IndexOptions;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.lang.mutablelon.MutablelonInt;
+import org.apachelon.commons.lang.mutablelon.MutablelonLong;
+import org.apachelon.lucelonnelon.indelonx.IndelonxOptions;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.collections.Pair;
-import com.twitter.search.common.concurrent.ScheduledExecutorServiceFactory;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.common.metrics.SearchStatsReceiver;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.common.partitioning.base.Segment;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.TimeMapper;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.index.EarlybirdSingleSegmentSearcher;
-import com.twitter.search.earlybird.partition.SegmentInfo;
-import com.twitter.search.earlybird.partition.SegmentManager;
+import com.twittelonr.common.collelonctions.Pair;
+import com.twittelonr.selonarch.common.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelonFactory;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchStatsReloncelonivelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.common.partitioning.baselon.Selongmelonnt;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.TimelonMappelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.indelonx.elonarlybirdSinglelonSelongmelonntSelonarchelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntInfo;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntManagelonr;
 
 /**
- * A background task that periodically gets and exports the number of tweets per hour that are
- * indexed on this earlybird.
- * Specifically used for making sure that we are not missing data for any hours in the search
- * archives.
- * The task loops though all the segments that are indexed by this earlybird, and for each segment
- * looks at all the createdAt dates for all of the documents in that segment.
+ * A background task that pelonriodically gelonts and elonxports thelon numbelonr of twelonelonts pelonr hour that arelon
+ * indelonxelond on this elonarlybird.
+ * Speloncifically uselond for making surelon that welon arelon not missing data for any hours in thelon selonarch
+ * archivelons.
+ * Thelon task loops though all thelon selongmelonnts that arelon indelonxelond by this elonarlybird, and for elonach selongmelonnt
+ * looks at all thelon crelonatelondAt datelons for all of thelon documelonnts in that selongmelonnt.
  *
- * Also keeps track off an exposes as a stat the number of hours that do not have any tweets in the
- * min/max range of data that IS indexed on this earlybird. i.e if we only have data for
- * 2006/01/01:02 and 2006/01/01:04, it will consider 2006/01/01:03 as a missing hour.
- * Hours before 2006/01/01:02 or after 2006/01/01:04 will not be considered as missing.
+ * Also kelonelonps track off an elonxposelons as a stat thelon numbelonr of hours that do not havelon any twelonelonts in thelon
+ * min/max rangelon of data that IS indelonxelond on this elonarlybird. i.elon if welon only havelon data for
+ * 2006/01/01:02 and 2006/01/01:04, it will considelonr 2006/01/01:03 as a missing hour.
+ * Hours belonforelon 2006/01/01:02 or aftelonr 2006/01/01:04 will not belon considelonrelond as missing.
  */
-public class TweetCountMonitor extends OneTaskScheduledExecutorManager {
-  private static final Logger LOG = LoggerFactory.getLogger(TweetCountMonitor.class);
+public class TwelonelontCountMonitor elonxtelonnds OnelonTaskSchelondulelondelonxeloncutorManagelonr {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(TwelonelontCountMonitor.class);
 
-  private static final String THREAD_NAME_FORMAT = "TweetCountMonitor-%d";
-  private static final boolean THREAD_IS_DAEMON = true;
+  privatelon static final String THRelonAD_NAMelon_FORMAT = "TwelonelontCountMonitor-%d";
+  privatelon static final boolelonan THRelonAD_IS_DAelonMON = truelon;
 
-  public static final String RUN_INTERVAL_MINUTES_CONFIG_NAME =
-      "tweet_count_monitor_run_interval_minutes";
-  public static final String START_CHECK_HOUR_CONFIG_NAME =
-      "tweet_count_monitor_start_check_hour";
-  public static final String HOURLY_MIN_COUNT_CONFIG_NAME =
-      "tweet_count_monitor_hourly_min_count";
-  public static final String DAILY_MIN_COUNT_CONFIG_NAME =
-      "tweet_count_monitor_daily_min_count";
+  public static final String RUN_INTelonRVAL_MINUTelonS_CONFIG_NAMelon =
+      "twelonelont_count_monitor_run_intelonrval_minutelons";
+  public static final String START_CHelonCK_HOUR_CONFIG_NAMelon =
+      "twelonelont_count_monitor_start_chelonck_hour";
+  public static final String HOURLY_MIN_COUNT_CONFIG_NAMelon =
+      "twelonelont_count_monitor_hourly_min_count";
+  public static final String DAILY_MIN_COUNT_CONFIG_NAMelon =
+      "twelonelont_count_monitor_daily_min_count";
 
-  @VisibleForTesting
-  public static final AtomicInteger INSTANCE_COUNTER = new AtomicInteger(0);
+  @VisiblelonForTelonsting
+  public static final AtomicIntelongelonr INSTANCelon_COUNTelonR = nelonw AtomicIntelongelonr(0);
 
-  private static final long MILLIS_IN_A_DAY = TimeUnit.DAYS.toMillis(1);
+  privatelon static final long MILLIS_IN_A_DAY = TimelonUnit.DAYS.toMillis(1);
 
-  private final SegmentManager segmentManager;
+  privatelon final SelongmelonntManagelonr selongmelonntManagelonr;
 
-  private final SearchStatsReceiver searchStatsReceiver;
-  private final int instanceCounter;
+  privatelon final SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr;
+  privatelon final int instancelonCountelonr;
 
-  // The first date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int startCheckHour;
-  // The last date in format "YYYYMMDDHH" that we want to check counts for.
-  private final int endCheckHour;
-  //Smallest number of docs we expect to have for each day.
-  private final int dailyMinCount;
-  // Smallest number of docs we expect to have for each hour.
-  private final int hourlyMinCount;
-  // Binary stat, set to 0 when the monitor is running
-  private final SearchLongGauge isRunningStat;
-  // How long each iteration takes
-  private final SearchTimerStats checkTimeStat;
+  // Thelon first datelon in format "YYYYMMDDHH" that welon want to chelonck counts for.
+  privatelon final int startChelonckHour;
+  // Thelon last datelon in format "YYYYMMDDHH" that welon want to chelonck counts for.
+  privatelon final int elonndChelonckHour;
+  //Smallelonst numbelonr of docs welon elonxpelonct to havelon for elonach day.
+  privatelon final int dailyMinCount;
+  // Smallelonst numbelonr of docs welon elonxpelonct to havelon for elonach hour.
+  privatelon final int hourlyMinCount;
+  // Binary stat, selont to 0 whelonn thelon monitor is running
+  privatelon final SelonarchLongGaugelon isRunningStat;
+  // How long elonach itelonration takelons
+  privatelon final SelonarchTimelonrStats chelonckTimelonStat;
 
-  private final Map<String, FieldTermCounter> fieldTermCounters;
-  private final Map<String, SearchTimerStats> fieldCheckTimeStats;
+  privatelon final Map<String, FielonldTelonrmCountelonr> fielonldTelonrmCountelonrs;
+  privatelon final Map<String, SelonarchTimelonrStats> fielonldChelonckTimelonStats;
 
   /**
-   * Create a TweetCountMonitor to monitor all segments in the given segmentManager
+   * Crelonatelon a TwelonelontCountMonitor to monitor all selongmelonnts in thelon givelonn selongmelonntManagelonr
    */
-  public TweetCountMonitor(
-      SegmentManager segmentManager,
-      ScheduledExecutorServiceFactory executorServiceFactory,
+  public TwelonelontCountMonitor(
+      SelongmelonntManagelonr selongmelonntManagelonr,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory elonxeloncutorSelonrvicelonFactory,
       long shutdownWaitDuration,
-      TimeUnit shutdownWaitUnit,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    this(segmentManager,
-        EarlybirdConfig.getInt(START_CHECK_HOUR_CONFIG_NAME, 0),
-        EarlybirdConfig.getInt(RUN_INTERVAL_MINUTES_CONFIG_NAME, -1),
-        EarlybirdConfig.getInt(HOURLY_MIN_COUNT_CONFIG_NAME, 0),
-        EarlybirdConfig.getInt(DAILY_MIN_COUNT_CONFIG_NAME, 0),
-        executorServiceFactory,
+      TimelonUnit shutdownWaitUnit,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    this(selongmelonntManagelonr,
+        elonarlybirdConfig.gelontInt(START_CHelonCK_HOUR_CONFIG_NAMelon, 0),
+        elonarlybirdConfig.gelontInt(RUN_INTelonRVAL_MINUTelonS_CONFIG_NAMelon, -1),
+        elonarlybirdConfig.gelontInt(HOURLY_MIN_COUNT_CONFIG_NAMelon, 0),
+        elonarlybirdConfig.gelontInt(DAILY_MIN_COUNT_CONFIG_NAMelon, 0),
+        elonxeloncutorSelonrvicelonFactory,
         shutdownWaitDuration,
         shutdownWaitUnit,
-        searchStatsReceiver,
-        criticalExceptionHandler);
+        selonarchStatsReloncelonivelonr,
+        criticalelonxcelonptionHandlelonr);
   }
 
-  @VisibleForTesting
-  TweetCountMonitor(
-      SegmentManager segmentManager,
-      int startCheckHourFromConfig,
-      int schedulePeriodMinutes,
+  @VisiblelonForTelonsting
+  TwelonelontCountMonitor(
+      SelongmelonntManagelonr selongmelonntManagelonr,
+      int startChelonckHourFromConfig,
+      int schelondulelonPelonriodMinutelons,
       int hourlyMinCount,
       int dailyMinCount,
-      ScheduledExecutorServiceFactory executorServiceFactory,
+      SchelondulelondelonxeloncutorSelonrvicelonFactory elonxeloncutorSelonrvicelonFactory,
       long shutdownWaitDuration,
-      TimeUnit shutdownWaitUnit,
-      SearchStatsReceiver searchStatsReceiver,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(
-      executorServiceFactory,
-      THREAD_NAME_FORMAT,
-      THREAD_IS_DAEMON,
-      PeriodicActionParams.atFixedRate(
-        schedulePeriodMinutes,
-        TimeUnit.MINUTES
+      TimelonUnit shutdownWaitUnit,
+      SelonarchStatsReloncelonivelonr selonarchStatsReloncelonivelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    supelonr(
+      elonxeloncutorSelonrvicelonFactory,
+      THRelonAD_NAMelon_FORMAT,
+      THRelonAD_IS_DAelonMON,
+      PelonriodicActionParams.atFixelondRatelon(
+        schelondulelonPelonriodMinutelons,
+        TimelonUnit.MINUTelonS
       ),
-      new ShutdownWaitTimeParams(
+      nelonw ShutdownWaitTimelonParams(
         shutdownWaitDuration,
         shutdownWaitUnit
       ),
-      searchStatsReceiver,
-        criticalExceptionHandler);
-    this.segmentManager = segmentManager;
-    this.searchStatsReceiver = searchStatsReceiver;
-    this.instanceCounter = INSTANCE_COUNTER.incrementAndGet();
+      selonarchStatsReloncelonivelonr,
+        criticalelonxcelonptionHandlelonr);
+    this.selongmelonntManagelonr = selongmelonntManagelonr;
+    this.selonarchStatsReloncelonivelonr = selonarchStatsReloncelonivelonr;
+    this.instancelonCountelonr = INSTANCelon_COUNTelonR.increlonmelonntAndGelont();
     this.hourlyMinCount = hourlyMinCount;
     this.dailyMinCount = dailyMinCount;
 
-    String isRunningStatName = "tweet_count_monitor_is_running_v_" + this.instanceCounter;
-    this.isRunningStat = SearchLongGauge.export(isRunningStatName);
-    String checkTimeStatName = "tweet_count_monitor_check_time_v_" + this.instanceCounter;
-    this.checkTimeStat = SearchTimerStats.export(checkTimeStatName, TimeUnit.MILLISECONDS, true);
+    String isRunningStatNamelon = "twelonelont_count_monitor_is_running_v_" + this.instancelonCountelonr;
+    this.isRunningStat = SelonarchLongGaugelon.elonxport(isRunningStatNamelon);
+    String chelonckTimelonStatNamelon = "twelonelont_count_monitor_chelonck_timelon_v_" + this.instancelonCountelonr;
+    this.chelonckTimelonStat = SelonarchTimelonrStats.elonxport(chelonckTimelonStatNamelon, TimelonUnit.MILLISelonCONDS, truelon);
 
-    this.startCheckHour = Math.max(
-        startCheckHourFromConfig,
-        dateToHourValue(segmentManager.getPartitionConfig().getTierStartDate()));
-    this.endCheckHour = dateToHourValue(segmentManager.getPartitionConfig().getTierEndDate());
+    this.startChelonckHour = Math.max(
+        startChelonckHourFromConfig,
+        datelonToHourValuelon(selongmelonntManagelonr.gelontPartitionConfig().gelontTielonrStartDatelon()));
+    this.elonndChelonckHour = datelonToHourValuelon(selongmelonntManagelonr.gelontPartitionConfig().gelontTielonrelonndDatelon());
 
-    this.fieldTermCounters = Maps.newHashMap();
-    this.fieldTermCounters.put(
-        FieldTermCounter.TWEET_COUNT_KEY,
-        new FieldTermCounter(
-            FieldTermCounter.TWEET_COUNT_KEY,
-            instanceCounter,
-            startCheckHour,
-            endCheckHour,
+    this.fielonldTelonrmCountelonrs = Maps.nelonwHashMap();
+    this.fielonldTelonrmCountelonrs.put(
+        FielonldTelonrmCountelonr.TWelonelonT_COUNT_KelonY,
+        nelonw FielonldTelonrmCountelonr(
+            FielonldTelonrmCountelonr.TWelonelonT_COUNT_KelonY,
+            instancelonCountelonr,
+            startChelonckHour,
+            elonndChelonckHour,
             hourlyMinCount,
             dailyMinCount));
-    this.fieldCheckTimeStats = Maps.newHashMap();
+    this.fielonldChelonckTimelonStats = Maps.nelonwHashMap();
   }
 
-  private int dateToHourValue(Date date) {
-    Calendar cal = Calendar.getInstance(FieldTermCounter.TIME_ZONE);
-    cal.setTime(date);
-    return FieldTermCounter.getHourValue(cal);
+  privatelon int datelonToHourValuelon(Datelon datelon) {
+    Calelonndar cal = Calelonndar.gelontInstancelon(FielonldTelonrmCountelonr.TIMelon_ZONelon);
+    cal.selontTimelon(datelon);
+    relonturn FielonldTelonrmCountelonr.gelontHourValuelon(cal);
   }
 
-  private void updateHourlyCounts() {
-    // Iterate the current index to count all tweets anf field hits.
-    Map<String, Map<Integer, MutableInt>> newCountMap = getNewTweetCountMap();
+  privatelon void updatelonHourlyCounts() {
+    // Itelonratelon thelon currelonnt indelonx to count all twelonelonts anf fielonld hits.
+    Map<String, Map<Intelongelonr, MutablelonInt>> nelonwCountMap = gelontNelonwTwelonelontCountMap();
 
-    for (Map.Entry<String, Map<Integer, MutableInt>> newCounts : newCountMap.entrySet()) {
-      final String fieldName = newCounts.getKey();
-      FieldTermCounter termCounter = fieldTermCounters.get(fieldName);
-      if (termCounter == null) {
-        termCounter = new FieldTermCounter(
-            fieldName,
-            instanceCounter,
-            startCheckHour,
-            endCheckHour,
+    for (Map.elonntry<String, Map<Intelongelonr, MutablelonInt>> nelonwCounts : nelonwCountMap.elonntrySelont()) {
+      final String fielonldNamelon = nelonwCounts.gelontKelony();
+      FielonldTelonrmCountelonr telonrmCountelonr = fielonldTelonrmCountelonrs.gelont(fielonldNamelon);
+      if (telonrmCountelonr == null) {
+        telonrmCountelonr = nelonw FielonldTelonrmCountelonr(
+            fielonldNamelon,
+            instancelonCountelonr,
+            startChelonckHour,
+            elonndChelonckHour,
             hourlyMinCount,
             dailyMinCount);
-        fieldTermCounters.put(fieldName, termCounter);
+        fielonldTelonrmCountelonrs.put(fielonldNamelon, telonrmCountelonr);
       }
-      termCounter.runWithNewCounts(newCounts.getValue());
+      telonrmCountelonr.runWithNelonwCounts(nelonwCounts.gelontValuelon());
     }
   }
 
   /**
-   * Loops through all segments, and all documents in each segment, and for each document
-   * gets the createdAt timestamp (in seconds) from the TimeMapper.
-   * Based on that, returns a map with the count of:
-   * . the number of tweets for each hour
-   * . the number of tweets corresponding to each field for each hour
+   * Loops through all selongmelonnts, and all documelonnts in elonach selongmelonnt, and for elonach documelonnt
+   * gelonts thelon crelonatelondAt timelonstamp (in selonconds) from thelon TimelonMappelonr.
+   * Baselond on that, relonturns a map with thelon count of:
+   * . thelon numbelonr of twelonelonts for elonach hour
+   * . thelon numbelonr of twelonelonts correlonsponding to elonach fielonld for elonach hour
    */
-  private Map<String, Map<Integer, MutableInt>> getNewTweetCountMap() {
-    Iterable<SegmentInfo> segmentInfos = segmentManager.getSegmentInfos(
-        SegmentManager.Filter.Enabled, SegmentManager.Order.NEW_TO_OLD);
-    Map<String, Map<Integer, MutableInt>> newCountMap = Maps.newHashMap();
+  privatelon Map<String, Map<Intelongelonr, MutablelonInt>> gelontNelonwTwelonelontCountMap() {
+    Itelonrablelon<SelongmelonntInfo> selongmelonntInfos = selongmelonntManagelonr.gelontSelongmelonntInfos(
+        SelongmelonntManagelonr.Filtelonr.elonnablelond, SelongmelonntManagelonr.Ordelonr.NelonW_TO_OLD);
+    Map<String, Map<Intelongelonr, MutablelonInt>> nelonwCountMap = Maps.nelonwHashMap();
 
-    Map<Integer, MutableInt> newCounts = Maps.newHashMap();
-    newCountMap.put(FieldTermCounter.TWEET_COUNT_KEY, newCounts);
+    Map<Intelongelonr, MutablelonInt> nelonwCounts = Maps.nelonwHashMap();
+    nelonwCountMap.put(FielonldTelonrmCountelonr.TWelonelonT_COUNT_KelonY, nelonwCounts);
 
-    ImmutableSchemaInterface schemaSnapshot =
-        segmentManager.getEarlybirdIndexConfig().getSchema().getSchemaSnapshot();
-    Calendar cal = Calendar.getInstance(FieldTermCounter.TIME_ZONE);
-    for (SegmentInfo segmentInfo : segmentInfos) {
+    ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot =
+        selongmelonntManagelonr.gelontelonarlybirdIndelonxConfig().gelontSchelonma().gelontSchelonmaSnapshot();
+    Calelonndar cal = Calelonndar.gelontInstancelon(FielonldTelonrmCountelonr.TIMelon_ZONelon);
+    for (SelongmelonntInfo selongmelonntInfo : selongmelonntInfos) {
       try {
-        EarlybirdSingleSegmentSearcher searcher = segmentManager.getSearcher(
-            segmentInfo.getTimeSliceID(), schemaSnapshot);
-        if (searcher != null) {
-          EarlybirdIndexSegmentAtomicReader reader = searcher.getTwitterIndexReader();
-          TimeMapper timeMapper = reader.getSegmentData().getTimeMapper();
-          List<Pair<String, Integer>> outsideEndDateRangeDocList = new ArrayList<>();
+        elonarlybirdSinglelonSelongmelonntSelonarchelonr selonarchelonr = selongmelonntManagelonr.gelontSelonarchelonr(
+            selongmelonntInfo.gelontTimelonSlicelonID(), schelonmaSnapshot);
+        if (selonarchelonr != null) {
+          elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr = selonarchelonr.gelontTwittelonrIndelonxRelonadelonr();
+          TimelonMappelonr timelonMappelonr = relonadelonr.gelontSelongmelonntData().gelontTimelonMappelonr();
+          List<Pair<String, Intelongelonr>> outsidelonelonndDatelonRangelonDocList = nelonw ArrayList<>();
 
-          // Get the number of tweets for each hour.
-          int docsOutsideEndDateRange = getNewTweetCountsForSegment(
-              segmentInfo, reader, timeMapper, cal, newCounts);
-          if (docsOutsideEndDateRange > 0) {
-            outsideEndDateRangeDocList.add(new Pair<>(
-                FieldTermCounter.TWEET_COUNT_KEY, docsOutsideEndDateRange));
+          // Gelont thelon numbelonr of twelonelonts for elonach hour.
+          int docsOutsidelonelonndDatelonRangelon = gelontNelonwTwelonelontCountsForSelongmelonnt(
+              selongmelonntInfo, relonadelonr, timelonMappelonr, cal, nelonwCounts);
+          if (docsOutsidelonelonndDatelonRangelon > 0) {
+            outsidelonelonndDatelonRangelonDocList.add(nelonw Pair<>(
+                FielonldTelonrmCountelonr.TWelonelonT_COUNT_KelonY, docsOutsidelonelonndDatelonRangelon));
           }
 
-          // Get the number of tweets with corresponding field for each hour.
-          for (Schema.FieldInfo fieldInfo : schemaSnapshot.getFieldInfos()) {
-            if (fieldInfo.getFieldType().indexOptions() == IndexOptions.NONE) {
-              continue;
+          // Gelont thelon numbelonr of twelonelonts with correlonsponding fielonld for elonach hour.
+          for (Schelonma.FielonldInfo fielonldInfo : schelonmaSnapshot.gelontFielonldInfos()) {
+            if (fielonldInfo.gelontFielonldTypelon().indelonxOptions() == IndelonxOptions.NONelon) {
+              continuelon;
             }
 
-            String fieldName = fieldInfo.getName();
-            docsOutsideEndDateRange = getNewFieldTweetCountsForSegment(
-                segmentInfo, reader, timeMapper, cal, fieldName, newCountMap);
-            if (docsOutsideEndDateRange > 0) {
-              outsideEndDateRangeDocList.add(new Pair<>(fieldName, docsOutsideEndDateRange));
+            String fielonldNamelon = fielonldInfo.gelontNamelon();
+            docsOutsidelonelonndDatelonRangelon = gelontNelonwFielonldTwelonelontCountsForSelongmelonnt(
+                selongmelonntInfo, relonadelonr, timelonMappelonr, cal, fielonldNamelon, nelonwCountMap);
+            if (docsOutsidelonelonndDatelonRangelon > 0) {
+              outsidelonelonndDatelonRangelonDocList.add(nelonw Pair<>(fielonldNamelon, docsOutsidelonelonndDatelonRangelon));
             }
           }
 
-          LOG.info("Inspected segment: " + segmentInfo + " found "
-              + outsideEndDateRangeDocList.size()
-              + " fields with documents outside of segment end date.");
-          for (Pair<String, Integer> outsideEndRange : outsideEndDateRangeDocList) {
-            LOG.info("  outside end date range - segment: " + segmentInfo.getSegmentName()
-                + " field: " + outsideEndRange.toString());
+          LOG.info("Inspelonctelond selongmelonnt: " + selongmelonntInfo + " found "
+              + outsidelonelonndDatelonRangelonDocList.sizelon()
+              + " fielonlds with documelonnts outsidelon of selongmelonnt elonnd datelon.");
+          for (Pair<String, Intelongelonr> outsidelonelonndRangelon : outsidelonelonndDatelonRangelonDocList) {
+            LOG.info("  outsidelon elonnd datelon rangelon - selongmelonnt: " + selongmelonntInfo.gelontSelongmelonntNamelon()
+                + " fielonld: " + outsidelonelonndRangelon.toString());
           }
         }
-      } catch (IOException e) {
-        LOG.error("Exception getting daily tweet counts for timeslice: " + segmentInfo, e);
+      } catch (IOelonxcelonption elon) {
+        LOG.elonrror("elonxcelonption gelontting daily twelonelont counts for timelonslicelon: " + selongmelonntInfo, elon);
       }
     }
-    return newCountMap;
+    relonturn nelonwCountMap;
   }
 
-  private void incrementNumDocsWithIllegalTimeCounter(String segmentName, String fieldSuffix) {
-    String statName = String.format(
-        "num_docs_with_illegal_time_for_segment_%s%s_counter", segmentName, fieldSuffix);
-    SearchCounter counter = SearchCounter.export(statName);
-    counter.increment();
+  privatelon void increlonmelonntNumDocsWithIllelongalTimelonCountelonr(String selongmelonntNamelon, String fielonldSuffix) {
+    String statNamelon = String.format(
+        "num_docs_with_illelongal_timelon_for_selongmelonnt_%s%s_countelonr", selongmelonntNamelon, fielonldSuffix);
+    SelonarchCountelonr countelonr = SelonarchCountelonr.elonxport(statNamelon);
+    countelonr.increlonmelonnt();
   }
 
-  private int getNewTweetCountsForSegment(
-      SegmentInfo segmentInfo,
-      EarlybirdIndexSegmentAtomicReader reader,
-      TimeMapper timeMapper,
-      Calendar cal,
-      Map<Integer, MutableInt> newTweetCounts) {
-    DocIDToTweetIDMapper tweetIdMapper = reader.getSegmentData().getDocIDToTweetIDMapper();
-    long dataEndTimeExclusiveMillis = getDataEndTimeExclusiveMillis(segmentInfo);
-    int docsOutsideEndDateRange = 0;
-    int docId = Integer.MIN_VALUE;
-    while ((docId = tweetIdMapper.getNextDocID(docId)) != DocIDToTweetIDMapper.ID_NOT_FOUND) {
-      UpdateCountType updateCountType =
-          updateTweetCount(timeMapper, docId, dataEndTimeExclusiveMillis, cal, newTweetCounts);
-      if (updateCountType == UpdateCountType.ILLEGAL_TIME) {
-        incrementNumDocsWithIllegalTimeCounter(segmentInfo.getSegmentName(), "");
-      } else if (updateCountType == UpdateCountType.OUT_OF_RANGE_TIME) {
-        docsOutsideEndDateRange++;
+  privatelon int gelontNelonwTwelonelontCountsForSelongmelonnt(
+      SelongmelonntInfo selongmelonntInfo,
+      elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr,
+      TimelonMappelonr timelonMappelonr,
+      Calelonndar cal,
+      Map<Intelongelonr, MutablelonInt> nelonwTwelonelontCounts) {
+    DocIDToTwelonelontIDMappelonr twelonelontIdMappelonr = relonadelonr.gelontSelongmelonntData().gelontDocIDToTwelonelontIDMappelonr();
+    long dataelonndTimelonelonxclusivelonMillis = gelontDataelonndTimelonelonxclusivelonMillis(selongmelonntInfo);
+    int docsOutsidelonelonndDatelonRangelon = 0;
+    int docId = Intelongelonr.MIN_VALUelon;
+    whilelon ((docId = twelonelontIdMappelonr.gelontNelonxtDocID(docId)) != DocIDToTwelonelontIDMappelonr.ID_NOT_FOUND) {
+      UpdatelonCountTypelon updatelonCountTypelon =
+          updatelonTwelonelontCount(timelonMappelonr, docId, dataelonndTimelonelonxclusivelonMillis, cal, nelonwTwelonelontCounts);
+      if (updatelonCountTypelon == UpdatelonCountTypelon.ILLelonGAL_TIMelon) {
+        increlonmelonntNumDocsWithIllelongalTimelonCountelonr(selongmelonntInfo.gelontSelongmelonntNamelon(), "");
+      } elonlselon if (updatelonCountTypelon == UpdatelonCountTypelon.OUT_OF_RANGelon_TIMelon) {
+        docsOutsidelonelonndDatelonRangelon++;
       }
     }
-    return docsOutsideEndDateRange;
+    relonturn docsOutsidelonelonndDatelonRangelon;
   }
 
-  private int getNewFieldTweetCountsForSegment(
-      SegmentInfo segmentInfo,
-      EarlybirdIndexSegmentAtomicReader reader,
-      TimeMapper timeMapper,
-      Calendar cal,
-      String field,
-      Map<String, Map<Integer, MutableInt>> newCountMap) throws IOException {
-    int docsOutsideEndDateRange = 0;
-    Map<Integer, MutableInt> fieldTweetCounts =
-        newCountMap.computeIfAbsent(field, k -> Maps.newHashMap());
+  privatelon int gelontNelonwFielonldTwelonelontCountsForSelongmelonnt(
+      SelongmelonntInfo selongmelonntInfo,
+      elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr relonadelonr,
+      TimelonMappelonr timelonMappelonr,
+      Calelonndar cal,
+      String fielonld,
+      Map<String, Map<Intelongelonr, MutablelonInt>> nelonwCountMap) throws IOelonxcelonption {
+    int docsOutsidelonelonndDatelonRangelon = 0;
+    Map<Intelongelonr, MutablelonInt> fielonldTwelonelontCounts =
+        nelonwCountMap.computelonIfAbselonnt(fielonld, k -> Maps.nelonwHashMap());
 
-    Terms terms = reader.terms(field);
-    if (terms == null) {
-      LOG.warn("Field <" + field + "> is missing terms in segment: "
-          + segmentInfo.getSegmentName());
-      return 0;
+    Telonrms telonrms = relonadelonr.telonrms(fielonld);
+    if (telonrms == null) {
+      LOG.warn("Fielonld <" + fielonld + "> is missing telonrms in selongmelonnt: "
+          + selongmelonntInfo.gelontSelongmelonntNamelon());
+      relonturn 0;
     }
-    long startTimeMillis = System.currentTimeMillis();
+    long startTimelonMillis = Systelonm.currelonntTimelonMillis();
 
-    long dataEndTimeExclusiveMillis = getDataEndTimeExclusiveMillis(segmentInfo);
-    for (TermsEnum termsEnum = terms.iterator(); termsEnum.next() != null;) {
-      DocIdSetIterator docsIterator = termsEnum.postings(null, PostingsEnum.NONE);
-      for (int docId = docsIterator.nextDoc();
-           docId != DocIdSetIterator.NO_MORE_DOCS; docId = docsIterator.nextDoc()) {
-        UpdateCountType updateCountType = updateTweetCount(
-            timeMapper, docId, dataEndTimeExclusiveMillis, cal, fieldTweetCounts);
-        if (updateCountType == UpdateCountType.ILLEGAL_TIME) {
-          incrementNumDocsWithIllegalTimeCounter(
-              segmentInfo.getSegmentName(), "_and_field_" + field);
-        } else if (updateCountType == UpdateCountType.OUT_OF_RANGE_TIME) {
-          docsOutsideEndDateRange++;
+    long dataelonndTimelonelonxclusivelonMillis = gelontDataelonndTimelonelonxclusivelonMillis(selongmelonntInfo);
+    for (Telonrmselonnum telonrmselonnum = telonrms.itelonrator(); telonrmselonnum.nelonxt() != null;) {
+      DocIdSelontItelonrator docsItelonrator = telonrmselonnum.postings(null, Postingselonnum.NONelon);
+      for (int docId = docsItelonrator.nelonxtDoc();
+           docId != DocIdSelontItelonrator.NO_MORelon_DOCS; docId = docsItelonrator.nelonxtDoc()) {
+        UpdatelonCountTypelon updatelonCountTypelon = updatelonTwelonelontCount(
+            timelonMappelonr, docId, dataelonndTimelonelonxclusivelonMillis, cal, fielonldTwelonelontCounts);
+        if (updatelonCountTypelon == UpdatelonCountTypelon.ILLelonGAL_TIMelon) {
+          increlonmelonntNumDocsWithIllelongalTimelonCountelonr(
+              selongmelonntInfo.gelontSelongmelonntNamelon(), "_and_fielonld_" + fielonld);
+        } elonlselon if (updatelonCountTypelon == UpdatelonCountTypelon.OUT_OF_RANGelon_TIMelon) {
+          docsOutsidelonelonndDatelonRangelon++;
         }
       }
     }
-    updateFieldRunTimeStats(field, System.currentTimeMillis() - startTimeMillis);
+    updatelonFielonldRunTimelonStats(fielonld, Systelonm.currelonntTimelonMillis() - startTimelonMillis);
 
-    return docsOutsideEndDateRange;
+    relonturn docsOutsidelonelonndDatelonRangelon;
   }
 
-  private enum UpdateCountType {
-    OK_TIME,
-    ILLEGAL_TIME,
-    OUT_OF_RANGE_TIME,
+  privatelon elonnum UpdatelonCountTypelon {
+    OK_TIMelon,
+    ILLelonGAL_TIMelon,
+    OUT_OF_RANGelon_TIMelon,
   }
 
-  private static UpdateCountType updateTweetCount(
-      TimeMapper timeMapper,
+  privatelon static UpdatelonCountTypelon updatelonTwelonelontCount(
+      TimelonMappelonr timelonMappelonr,
       int docId,
-      long dataEndTimeExclusiveMillis,
-      Calendar cal,
-      Map<Integer, MutableInt> newTweetCounts) {
-    int timeSecs = timeMapper.getTime(docId);
-    if (timeSecs == TimeMapper.ILLEGAL_TIME) {
-      return UpdateCountType.ILLEGAL_TIME;
+      long dataelonndTimelonelonxclusivelonMillis,
+      Calelonndar cal,
+      Map<Intelongelonr, MutablelonInt> nelonwTwelonelontCounts) {
+    int timelonSeloncs = timelonMappelonr.gelontTimelon(docId);
+    if (timelonSeloncs == TimelonMappelonr.ILLelonGAL_TIMelon) {
+      relonturn UpdatelonCountTypelon.ILLelonGAL_TIMelon;
     }
-    if (dataEndTimeExclusiveMillis == Segment.NO_DATA_END_TIME
-        || timeSecs * 1000L < dataEndTimeExclusiveMillis) {
-      Integer hourlyValue = FieldTermCounter.getHourValue(cal, timeSecs);
-      MutableInt count = newTweetCounts.get(hourlyValue);
+    if (dataelonndTimelonelonxclusivelonMillis == Selongmelonnt.NO_DATA_elonND_TIMelon
+        || timelonSeloncs * 1000L < dataelonndTimelonelonxclusivelonMillis) {
+      Intelongelonr hourlyValuelon = FielonldTelonrmCountelonr.gelontHourValuelon(cal, timelonSeloncs);
+      MutablelonInt count = nelonwTwelonelontCounts.gelont(hourlyValuelon);
       if (count == null) {
-        count = new MutableInt(0);
-        newTweetCounts.put(hourlyValue, count);
+        count = nelonw MutablelonInt(0);
+        nelonwTwelonelontCounts.put(hourlyValuelon, count);
       }
-      count.increment();
-      return UpdateCountType.OK_TIME;
-    } else {
-      return UpdateCountType.OUT_OF_RANGE_TIME;
+      count.increlonmelonnt();
+      relonturn UpdatelonCountTypelon.OK_TIMelon;
+    } elonlselon {
+      relonturn UpdatelonCountTypelon.OUT_OF_RANGelon_TIMelon;
     }
   }
 
   /**
-   * If a segment has an end date, return the last timestamp (exclusive, and in millis) for which
-   * we expect it to have data.
-   * @return Segment.NO_DATA_END_TIME if the segment does not have an end date.
+   * If a selongmelonnt has an elonnd datelon, relonturn thelon last timelonstamp (elonxclusivelon, and in millis) for which
+   * welon elonxpelonct it to havelon data.
+   * @relonturn Selongmelonnt.NO_DATA_elonND_TIMelon if thelon selongmelonnt doelons not havelon an elonnd datelon.
    */
-  private long getDataEndTimeExclusiveMillis(SegmentInfo segmentInfo) {
-    long dataEndDate = segmentInfo.getSegment().getDataEndDateInclusiveMillis();
-    if (dataEndDate == Segment.NO_DATA_END_TIME) {
-      return Segment.NO_DATA_END_TIME;
-    } else {
-      return dataEndDate + MILLIS_IN_A_DAY;
+  privatelon long gelontDataelonndTimelonelonxclusivelonMillis(SelongmelonntInfo selongmelonntInfo) {
+    long dataelonndDatelon = selongmelonntInfo.gelontSelongmelonnt().gelontDataelonndDatelonInclusivelonMillis();
+    if (dataelonndDatelon == Selongmelonnt.NO_DATA_elonND_TIMelon) {
+      relonturn Selongmelonnt.NO_DATA_elonND_TIMelon;
+    } elonlselon {
+      relonturn dataelonndDatelon + MILLIS_IN_A_DAY;
     }
   }
 
-  private void updateFieldRunTimeStats(String fieldName, long runTimeMs) {
-    SearchTimerStats timerStats = fieldCheckTimeStats.get(fieldName);
-    if (timerStats == null) {
-      final String statName = "tweet_count_monitor_check_time_field_" + fieldName;
-      timerStats = searchStatsReceiver.getTimerStats(
-          statName, TimeUnit.MILLISECONDS, false, false, false);
-      fieldCheckTimeStats.put(fieldName, timerStats);
+  privatelon void updatelonFielonldRunTimelonStats(String fielonldNamelon, long runTimelonMs) {
+    SelonarchTimelonrStats timelonrStats = fielonldChelonckTimelonStats.gelont(fielonldNamelon);
+    if (timelonrStats == null) {
+      final String statNamelon = "twelonelont_count_monitor_chelonck_timelon_fielonld_" + fielonldNamelon;
+      timelonrStats = selonarchStatsReloncelonivelonr.gelontTimelonrStats(
+          statNamelon, TimelonUnit.MILLISelonCONDS, falselon, falselon, falselon);
+      fielonldChelonckTimelonStats.put(fielonldNamelon, timelonrStats);
     }
-    timerStats.timerIncrement(runTimeMs);
+    timelonrStats.timelonrIncrelonmelonnt(runTimelonMs);
   }
 
-  @VisibleForTesting
-  String getStatName(String fieldName, Integer date) {
-    return FieldTermCounter.getStatName(fieldName, instanceCounter, date);
+  @VisiblelonForTelonsting
+  String gelontStatNamelon(String fielonldNamelon, Intelongelonr datelon) {
+    relonturn FielonldTelonrmCountelonr.gelontStatNamelon(fielonldNamelon, instancelonCountelonr, datelon);
   }
 
-  @VisibleForTesting
-  Map<Integer, AtomicInteger> getExportedCounts(String fieldName) {
-    if (fieldTermCounters.get(fieldName) == null) {
-      return null;
-    } else {
-      return fieldTermCounters.get(fieldName).getExportedCounts();
-    }
-  }
-
-  @VisibleForTesting
-  Map<Integer, MutableLong> getDailyCounts(String fieldName) {
-    if (fieldTermCounters.get(fieldName) == null) {
-      return null;
-    } else {
-      return fieldTermCounters.get(fieldName).getDailyCounts();
+  @VisiblelonForTelonsting
+  Map<Intelongelonr, AtomicIntelongelonr> gelontelonxportelondCounts(String fielonldNamelon) {
+    if (fielonldTelonrmCountelonrs.gelont(fielonldNamelon) == null) {
+      relonturn null;
+    } elonlselon {
+      relonturn fielonldTelonrmCountelonrs.gelont(fielonldNamelon).gelontelonxportelondCounts();
     }
   }
 
-  @VisibleForTesting
-  long getHoursWithNoTweets(String fieldName) {
-    return fieldTermCounters.get(fieldName).getHoursWithNoTweets();
+  @VisiblelonForTelonsting
+  Map<Intelongelonr, MutablelonLong> gelontDailyCounts(String fielonldNamelon) {
+    if (fielonldTelonrmCountelonrs.gelont(fielonldNamelon) == null) {
+      relonturn null;
+    } elonlselon {
+      relonturn fielonldTelonrmCountelonrs.gelont(fielonldNamelon).gelontDailyCounts();
+    }
   }
 
-  @VisibleForTesting
-  long getDaysWithNoTweets(String fieldName) {
-    return fieldTermCounters.get(fieldName).getDaysWithNoTweets();
+  @VisiblelonForTelonsting
+  long gelontHoursWithNoTwelonelonts(String fielonldNamelon) {
+    relonturn fielonldTelonrmCountelonrs.gelont(fielonldNamelon).gelontHoursWithNoTwelonelonts();
   }
 
-  @VisibleForTesting
-  Map<String, SearchLongGauge> getExportedHourlyCountStats(String fieldName) {
-    return fieldTermCounters.get(fieldName).getExportedHourlyCountStats();
+  @VisiblelonForTelonsting
+  long gelontDaysWithNoTwelonelonts(String fielonldNamelon) {
+    relonturn fielonldTelonrmCountelonrs.gelont(fielonldNamelon).gelontDaysWithNoTwelonelonts();
   }
 
-  @Override
-  protected void runOneIteration() {
-    LOG.info("Starting to get hourly tweet counts");
-    final long startTimeMillis = System.currentTimeMillis();
+  @VisiblelonForTelonsting
+  Map<String, SelonarchLongGaugelon> gelontelonxportelondHourlyCountStats(String fielonldNamelon) {
+    relonturn fielonldTelonrmCountelonrs.gelont(fielonldNamelon).gelontelonxportelondHourlyCountStats();
+  }
 
-    isRunningStat.set(1);
+  @Ovelonrridelon
+  protelonctelond void runOnelonItelonration() {
+    LOG.info("Starting to gelont hourly twelonelont counts");
+    final long startTimelonMillis = Systelonm.currelonntTimelonMillis();
+
+    isRunningStat.selont(1);
     try {
-      updateHourlyCounts();
-    } catch (Exception ex) {
-      LOG.error("Unexpected exception while getting hourly tweet counts", ex);
+      updatelonHourlyCounts();
+    } catch (elonxcelonption elonx) {
+      LOG.elonrror("Unelonxpelonctelond elonxcelonption whilelon gelontting hourly twelonelont counts", elonx);
     } finally {
-      isRunningStat.set(0);
+      isRunningStat.selont(0);
 
-      long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-      checkTimeStat.timerIncrement(elapsedTimeMillis);
-      LOG.info("Done getting daily tweet counts. Hours without tweets: "
-          + getHoursWithNoTweets(FieldTermCounter.TWEET_COUNT_KEY));
-      LOG.info("Updating tweet count takes " + (elapsedTimeMillis / 1000) + " secs.");
+      long elonlapselondTimelonMillis = Systelonm.currelonntTimelonMillis() - startTimelonMillis;
+      chelonckTimelonStat.timelonrIncrelonmelonnt(elonlapselondTimelonMillis);
+      LOG.info("Donelon gelontting daily twelonelont counts. Hours without twelonelonts: "
+          + gelontHoursWithNoTwelonelonts(FielonldTelonrmCountelonr.TWelonelonT_COUNT_KelonY));
+      LOG.info("Updating twelonelont count takelons " + (elonlapselondTimelonMillis / 1000) + " seloncs.");
     }
   }
 }

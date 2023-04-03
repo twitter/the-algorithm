@@ -1,41 +1,41 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.item.suggestion
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.suggelonstion
 
-import com.twitter.product_mixer.component_library.decorator.urt.builder.item.suggestion.SpellingSuggestionCandidateUrtItemBuilder.SpellingItemClientEventInfoElement
-import com.twitter.product_mixer.component_library.model.candidate.suggestion.SpellingSuggestionCandidate
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.CandidateUrtEntryBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseClientEventInfoBuilder
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseFeedbackActionInfoBuilder
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.suggestion.SpellingItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.itelonm.suggelonstion.SpelonllingSuggelonstionCandidatelonUrtItelonmBuildelonr.SpelonllingItelonmClielonntelonvelonntInfoelonlelonmelonnt
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.suggelonstion.SpelonllingSuggelonstionCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.CandidatelonUrtelonntryBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonClielonntelonvelonntInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonFelonelondbackActionInfoBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.suggelonstion.SpelonllingItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-object SpellingSuggestionCandidateUrtItemBuilder {
-  val SpellingItemClientEventInfoElement: String = "spelling"
+objelonct SpelonllingSuggelonstionCandidatelonUrtItelonmBuildelonr {
+  val SpelonllingItelonmClielonntelonvelonntInfoelonlelonmelonnt: String = "spelonlling"
 }
 
-case class SpellingSuggestionCandidateUrtItemBuilder[Query <: PipelineQuery](
-  clientEventInfoBuilder: BaseClientEventInfoBuilder[Query, SpellingSuggestionCandidate],
-  feedbackActionInfoBuilder: Option[
-    BaseFeedbackActionInfoBuilder[Query, SpellingSuggestionCandidate]
-  ] = None,
-) extends CandidateUrtEntryBuilder[Query, SpellingSuggestionCandidate, SpellingItem] {
+caselon class SpelonllingSuggelonstionCandidatelonUrtItelonmBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  clielonntelonvelonntInfoBuildelonr: BaselonClielonntelonvelonntInfoBuildelonr[Quelonry, SpelonllingSuggelonstionCandidatelon],
+  felonelondbackActionInfoBuildelonr: Option[
+    BaselonFelonelondbackActionInfoBuildelonr[Quelonry, SpelonllingSuggelonstionCandidatelon]
+  ] = Nonelon,
+) elonxtelonnds CandidatelonUrtelonntryBuildelonr[Quelonry, SpelonllingSuggelonstionCandidatelon, SpelonllingItelonm] {
 
-  override def apply(
-    query: Query,
-    candidate: SpellingSuggestionCandidate,
-    candidateFeatures: FeatureMap
-  ): SpellingItem = SpellingItem(
-    id = candidate.id,
-    sortIndex = None, // Sort indexes are automatically set in the domain marshaller phase
-    clientEventInfo = clientEventInfoBuilder(
-      query,
-      candidate,
-      candidateFeatures,
-      Some(SpellingItemClientEventInfoElement)),
-    feedbackActionInfo =
-      feedbackActionInfoBuilder.flatMap(_.apply(query, candidate, candidateFeatures)),
-    textResult = candidate.textResult,
-    spellingActionType = candidate.spellingActionType,
-    originalQuery = candidate.originalQuery
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    candidatelon: SpelonllingSuggelonstionCandidatelon,
+    candidatelonFelonaturelons: FelonaturelonMap
+  ): SpelonllingItelonm = SpelonllingItelonm(
+    id = candidatelon.id,
+    sortIndelonx = Nonelon, // Sort indelonxelons arelon automatically selont in thelon domain marshallelonr phaselon
+    clielonntelonvelonntInfo = clielonntelonvelonntInfoBuildelonr(
+      quelonry,
+      candidatelon,
+      candidatelonFelonaturelons,
+      Somelon(SpelonllingItelonmClielonntelonvelonntInfoelonlelonmelonnt)),
+    felonelondbackActionInfo =
+      felonelondbackActionInfoBuildelonr.flatMap(_.apply(quelonry, candidatelon, candidatelonFelonaturelons)),
+    telonxtRelonsult = candidatelon.telonxtRelonsult,
+    spelonllingActionTypelon = candidatelon.spelonllingActionTypelon,
+    originalQuelonry = candidatelon.originalQuelonry
   )
 }

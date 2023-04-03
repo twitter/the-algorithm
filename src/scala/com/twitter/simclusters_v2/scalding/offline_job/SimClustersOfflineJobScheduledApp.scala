@@ -1,112 +1,112 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+packagelon com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job
 
-import com.twitter.scalding._
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJob._
-import com.twitter.simclusters_v2.scalding.offline_job.SimClustersOfflineJobUtil._
-import com.twitter.simclusters_v2.thriftscala.TweetAndClusterScores
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
+import com.twittelonr.scalding._
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.SimClustelonrsOfflinelonJob._
+import com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job.SimClustelonrsOfflinelonJobUtil._
+import com.twittelonr.simclustelonrs_v2.thriftscala.TwelonelontAndClustelonrScorelons
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
 
 /**
- * The offline job runs every 12 hours, and save these two data sets to HDFS.
+ * Thelon offlinelon job runs elonvelonry 12 hours, and savelon thelonselon two data selonts to HDFS.
  *
- * capesospy-v2 update --build_locally --start_cron \
- * --start_cron offline_tweet_job src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc3.yaml
+ * capelonsospy-v2 updatelon --build_locally --start_cron \
+ * --start_cron offlinelon_twelonelont_job src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc3.yaml
  */
-object SimClustersOfflineJobScheduledApp extends ScheduledExecutionApp {
-  import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
+objelonct SimClustelonrsOfflinelonJobSchelondulelondApp elonxtelonnds SchelondulelondelonxeloncutionApp {
+  import com.twittelonr.simclustelonrs_v2.scalding.common.TypelondRichPipelon._
 
-  private val tweetClusterScoresDatasetPath: String =
-    "/user/cassowary/processed/simclusters/tweet_cluster_scores"
-  private val tweetTopKClustersDatasetPath: String =
-    "/user/cassowary/processed/simclusters/tweet_top_k_clusters"
-  private val clusterTopKTweetsDatasetPath: String =
-    "/user/cassowary/processed/simclusters/cluster_top_k_tweets"
+  privatelon val twelonelontClustelonrScorelonsDataselontPath: String =
+    "/uselonr/cassowary/procelonsselond/simclustelonrs/twelonelont_clustelonr_scorelons"
+  privatelon val twelonelontTopKClustelonrsDataselontPath: String =
+    "/uselonr/cassowary/procelonsselond/simclustelonrs/twelonelont_top_k_clustelonrs"
+  privatelon val clustelonrTopKTwelonelontsDataselontPath: String =
+    "/uselonr/cassowary/procelonsselond/simclustelonrs/clustelonr_top_k_twelonelonts"
 
-  override def batchIncrement: Duration = Hours(12)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Hours(12)
 
-  override def firstTime: RichDate = RichDate("2020-05-25")
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2020-05-25")
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val previousTweetClusterScores: TypedPipe[TweetAndClusterScores] =
-      if (firstTime.timestamp == dateRange.start.timestamp) { // if it is the first batch
-        TypedPipe.from(Nil)
-      } else {
+    val prelonviousTwelonelontClustelonrScorelons: TypelondPipelon[TwelonelontAndClustelonrScorelons] =
+      if (firstTimelon.timelonstamp == datelonRangelon.start.timelonstamp) { // if it is thelon first batch
+        TypelondPipelon.from(Nil)
+      } elonlselon {
         DAL
-          .readMostRecentSnapshot(
-            SimclustersOfflineTweetClusterScoresScalaDataset,
-            dateRange - batchIncrement
+          .relonadMostReloncelonntSnapshot(
+            SimclustelonrsOfflinelonTwelonelontClustelonrScorelonsScalaDataselont,
+            datelonRangelon - batchIncrelonmelonnt
           )
-          .toTypedPipe
-          .count("NumPreviousTweetClusterScores")
+          .toTypelondPipelon
+          .count("NumPrelonviousTwelonelontClustelonrScorelons")
       }
 
-    // we have to use some way to throw away old tweets, otherwise the data set will be growing
-    // all the time. We only keep the tweets that received at least 1 engagement in the last day.
-    // This parameter can be adjusted
-    val tweetsToKeep = getSubsetOfValidTweets(Days(1))
-      .count("NumTweetsToKeep")
+    // welon havelon to uselon somelon way to throw away old twelonelonts, othelonrwiselon thelon data selont will belon growing
+    // all thelon timelon. Welon only kelonelonp thelon twelonelonts that reloncelonivelond at lelonast 1 elonngagelonmelonnt in thelon last day.
+    // This paramelontelonr can belon adjustelond
+    val twelonelontsToKelonelonp = gelontSubselontOfValidTwelonelonts(Days(1))
+      .count("NumTwelonelontsToKelonelonp")
 
-    val updatedTweetClusterScores = computeAggregatedTweetClusterScores(
-      dateRange,
-      readInterestedInScalaDataset(dateRange),
-      readTimelineFavoriteData(dateRange),
-      previousTweetClusterScores
-    ).map { tweetClusterScore =>
-        tweetClusterScore.tweetId -> tweetClusterScore
+    val updatelondTwelonelontClustelonrScorelons = computelonAggrelongatelondTwelonelontClustelonrScorelons(
+      datelonRangelon,
+      relonadIntelonrelonstelondInScalaDataselont(datelonRangelon),
+      relonadTimelonlinelonFavoritelonData(datelonRangelon),
+      prelonviousTwelonelontClustelonrScorelons
+    ).map { twelonelontClustelonrScorelon =>
+        twelonelontClustelonrScorelon.twelonelontId -> twelonelontClustelonrScorelon
       }
-      .count("NumUpdatedTweetClusterScoresBeforeFiltering")
-      .join(tweetsToKeep.asKeys) // filter out invalid tweets
+      .count("NumUpdatelondTwelonelontClustelonrScorelonsBelonforelonFiltelonring")
+      .join(twelonelontsToKelonelonp.asKelonys) // filtelonr out invalid twelonelonts
       .map {
-        case (_, (tweetClusterScore, _)) => tweetClusterScore
+        caselon (_, (twelonelontClustelonrScorelon, _)) => twelonelontClustelonrScorelon
       }
-      .count("NumUpdatedTweetClusterScores")
-      .forceToDisk
+      .count("NumUpdatelondTwelonelontClustelonrScorelons")
+      .forcelonToDisk
 
-    val tweetTopKClusters = computeTweetTopKClusters(updatedTweetClusterScores)
-      .count("NumTweetTopKSaved")
-    val clusterTopKTweets = computeClusterTopKTweets(updatedTweetClusterScores)
-      .count("NumClusterTopKSaved")
+    val twelonelontTopKClustelonrs = computelonTwelonelontTopKClustelonrs(updatelondTwelonelontClustelonrScorelons)
+      .count("NumTwelonelontTopKSavelond")
+    val clustelonrTopKTwelonelonts = computelonClustelonrTopKTwelonelonts(updatelondTwelonelontClustelonrScorelons)
+      .count("NumClustelonrTopKSavelond")
 
-    val writeTweetClusterScoresExec = updatedTweetClusterScores
-      .writeDALSnapshotExecution(
-        SimclustersOfflineTweetClusterScoresScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(tweetClusterScoresDatasetPath),
-        D.EBLzo(),
-        dateRange.end
+    val writelonTwelonelontClustelonrScorelonselonxelonc = updatelondTwelonelontClustelonrScorelons
+      .writelonDALSnapshotelonxeloncution(
+        SimclustelonrsOfflinelonTwelonelontClustelonrScorelonsScalaDataselont,
+        D.Hourly, // notelon that welon uselon hourly in ordelonr to makelon it flelonxiblelon for hourly batch sizelon
+        D.Suffix(twelonelontClustelonrScorelonsDataselontPath),
+        D.elonBLzo(),
+        datelonRangelon.elonnd
       )
 
-    val writeTweetTopKClustersExec = tweetTopKClusters
-      .writeDALSnapshotExecution(
-        SimclustersOfflineTweetTopKClustersScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(tweetTopKClustersDatasetPath),
-        D.EBLzo(),
-        dateRange.end
+    val writelonTwelonelontTopKClustelonrselonxelonc = twelonelontTopKClustelonrs
+      .writelonDALSnapshotelonxeloncution(
+        SimclustelonrsOfflinelonTwelonelontTopKClustelonrsScalaDataselont,
+        D.Hourly, // notelon that welon uselon hourly in ordelonr to makelon it flelonxiblelon for hourly batch sizelon
+        D.Suffix(twelonelontTopKClustelonrsDataselontPath),
+        D.elonBLzo(),
+        datelonRangelon.elonnd
       )
 
-    val writeClusterTopKTweetsExec = clusterTopKTweets
-      .writeDALSnapshotExecution(
-        SimclustersOfflineClusterTopKTweetsScalaDataset,
-        D.Hourly, // note that we use hourly in order to make it flexible for hourly batch size
-        D.Suffix(clusterTopKTweetsDatasetPath),
-        D.EBLzo(),
-        dateRange.end
+    val writelonClustelonrTopKTwelonelontselonxelonc = clustelonrTopKTwelonelonts
+      .writelonDALSnapshotelonxeloncution(
+        SimclustelonrsOfflinelonClustelonrTopKTwelonelontsScalaDataselont,
+        D.Hourly, // notelon that welon uselon hourly in ordelonr to makelon it flelonxiblelon for hourly batch sizelon
+        D.Suffix(clustelonrTopKTwelonelontsDataselontPath),
+        D.elonBLzo(),
+        datelonRangelon.elonnd
       )
 
-    Execution
-      .zip(writeTweetClusterScoresExec, writeTweetTopKClustersExec, writeClusterTopKTweetsExec)
+    elonxeloncution
+      .zip(writelonTwelonelontClustelonrScorelonselonxelonc, writelonTwelonelontTopKClustelonrselonxelonc, writelonClustelonrTopKTwelonelontselonxelonc)
       .unit
   }
 

@@ -1,63 +1,63 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.ReplaceEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorOperation
-import com.twitter.product_mixer.core.model.marshalling.response.urt.operation.CursorType
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.RelonplacelonelonntryTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorOpelonration
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.opelonration.CursorTypelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Selects one or more [[TimelineEntry]] instance from the input timeline entries.
+ * Selonleloncts onelon or morelon [[Timelonlinelonelonntry]] instancelon from thelon input timelonlinelon elonntrielons.
  *
- * @tparam Query The domain model for the [[PipelineQuery]] used as input.
+ * @tparam Quelonry Thelon domain modelonl for thelon [[PipelonlinelonQuelonry]] uselond as input.
  */
-trait EntriesToReplace[-Query <: PipelineQuery] {
-  def apply(query: Query, entries: Seq[TimelineEntry]): Seq[TimelineEntry]
+trait elonntrielonsToRelonplacelon[-Quelonry <: PipelonlinelonQuelonry] {
+  delonf apply(quelonry: Quelonry, elonntrielons: Selonq[Timelonlinelonelonntry]): Selonq[Timelonlinelonelonntry]
 }
 
 /**
- * Selects all entries with a non-empty valid entryIdToReplace.
+ * Selonleloncts all elonntrielons with a non-elonmpty valid elonntryIdToRelonplacelon.
  *
- * @note this will result in multiple [[ReplaceEntryTimelineInstruction]]s
+ * @notelon this will relonsult in multiplelon [[RelonplacelonelonntryTimelonlinelonInstruction]]s
  */
-case object ReplaceAllEntries extends EntriesToReplace[PipelineQuery] {
-  def apply(query: PipelineQuery, entries: Seq[TimelineEntry]): Seq[TimelineEntry] =
-    entries.filter(_.entryIdToReplace.isDefined)
+caselon objelonct RelonplacelonAllelonntrielons elonxtelonnds elonntrielonsToRelonplacelon[PipelonlinelonQuelonry] {
+  delonf apply(quelonry: PipelonlinelonQuelonry, elonntrielons: Selonq[Timelonlinelonelonntry]): Selonq[Timelonlinelonelonntry] =
+    elonntrielons.filtelonr(_.elonntryIdToRelonplacelon.isDelonfinelond)
 }
 
 /**
- * Selects a replaceable URT [[CursorOperation]] from the timeline entries, that matches the
- * input cursorType.
+ * Selonleloncts a relonplacelonablelon URT [[CursorOpelonration]] from thelon timelonlinelon elonntrielons, that matchelons thelon
+ * input cursorTypelon.
  */
-case class ReplaceUrtCursor(cursorType: CursorType) extends EntriesToReplace[PipelineQuery] {
-  override def apply(query: PipelineQuery, entries: Seq[TimelineEntry]): Seq[TimelineEntry] =
-    entries.collectFirst {
-      case cursorOperation: CursorOperation
-          if cursorOperation.cursorType == cursorType && cursorOperation.entryIdToReplace.isDefined =>
-        cursorOperation
-    }.toSeq
+caselon class RelonplacelonUrtCursor(cursorTypelon: CursorTypelon) elonxtelonnds elonntrielonsToRelonplacelon[PipelonlinelonQuelonry] {
+  ovelonrridelon delonf apply(quelonry: PipelonlinelonQuelonry, elonntrielons: Selonq[Timelonlinelonelonntry]): Selonq[Timelonlinelonelonntry] =
+    elonntrielons.collelonctFirst {
+      caselon cursorOpelonration: CursorOpelonration
+          if cursorOpelonration.cursorTypelon == cursorTypelon && cursorOpelonration.elonntryIdToRelonplacelon.isDelonfinelond =>
+        cursorOpelonration
+    }.toSelonq
 }
 
 /**
- * Create a ReplaceEntry instruction
+ * Crelonatelon a Relonplacelonelonntry instruction
  *
- * @param entriesToReplace   each replace instruction can contain only one entry. Users specify which
- *                           entry to replace using [[EntriesToReplace]]. If multiple entries are
- *                           specified, multiple [[ReplaceEntryTimelineInstruction]]s will be created.
- * @param includeInstruction whether the instruction should be included in the response
+ * @param elonntrielonsToRelonplacelon   elonach relonplacelon instruction can contain only onelon elonntry. Uselonrs speloncify which
+ *                           elonntry to relonplacelon using [[elonntrielonsToRelonplacelon]]. If multiplelon elonntrielons arelon
+ *                           speloncifielond, multiplelon [[RelonplacelonelonntryTimelonlinelonInstruction]]s will belon crelonatelond.
+ * @param includelonInstruction whelonthelonr thelon instruction should belon includelond in thelon relonsponselon
  */
-case class ReplaceEntryInstructionBuilder[Query <: PipelineQuery](
-  entriesToReplace: EntriesToReplace[Query],
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, ReplaceEntryTimelineInstruction] {
+caselon class RelonplacelonelonntryInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  elonntrielonsToRelonplacelon: elonntrielonsToRelonplacelon[Quelonry],
+  ovelonrridelon val includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon)
+    elonxtelonnds UrtInstructionBuildelonr[Quelonry, RelonplacelonelonntryTimelonlinelonInstruction] {
 
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[ReplaceEntryTimelineInstruction] = {
-    if (includeInstruction(query, entries))
-      entriesToReplace(query, entries).map(ReplaceEntryTimelineInstruction)
-    else
-      Seq.empty
+  ovelonrridelon delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Selonq[RelonplacelonelonntryTimelonlinelonInstruction] = {
+    if (includelonInstruction(quelonry, elonntrielons))
+      elonntrielonsToRelonplacelon(quelonry, elonntrielons).map(RelonplacelonelonntryTimelonlinelonInstruction)
+    elonlselon
+      Selonq.elonmpty
   }
 }

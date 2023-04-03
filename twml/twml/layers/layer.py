@@ -1,50 +1,50 @@
-# pylint: disable=no-member
+# pylint: disablelon=no-melonmbelonr
 """
-Implementing a base layer for twml
+Implelonmelonnting a baselon layelonr for twml
 """
-import tensorflow.compat.v1 as tf
-from tensorflow.python.layers import base
+import telonnsorflow.compat.v1 as tf
+from telonnsorflow.python.layelonrs import baselon
 
 
-class Layer(base.Layer):
+class Layelonr(baselon.Layelonr):
   """
-  Base Layer implementation for twml.
-  Overloads `twml.layers.Layer
-  <https://www.tensorflow.org/versions/master/api_docs/python/tf/layers/Layer>`_
-  from tensorflow and adds a couple of custom methods.
+  Baselon Layelonr implelonmelonntation for twml.
+  Ovelonrloads `twml.layelonrs.Layelonr
+  <https://www.telonnsorflow.org/velonrsions/mastelonr/api_docs/python/tf/layelonrs/Layelonr>`_
+  from telonnsorflow and adds a couplelon of custom melonthods.
   """
 
-  @property
-  def init(self):
+  @propelonrty
+  delonf init(selonlf):
     """
-    Return initializer ops. By default returns tf.no_op().
-    This method is overwritten by classes like twml.layers.MDL, which
-    uses a HashTable internally, that must be initialized with its own op.
+    Relonturn initializelonr ops. By delonfault relonturns tf.no_op().
+    This melonthod is ovelonrwrittelonn by classelons likelon twml.layelonrs.MDL, which
+    uselons a HashTablelon intelonrnally, that must belon initializelond with its own op.
     """
-    return tf.no_op()
+    relonturn tf.no_op()
 
-  def call(self, inputs, **kwargs):
-    """The logic of the layer lives here.
+  delonf call(selonlf, inputs, **kwargs):
+    """Thelon logic of thelon layelonr livelons helonrelon.
 
-    Arguments:
+    Argumelonnts:
       inputs:
-        input tensor(s).
+        input telonnsor(s).
       **kwargs:
-        additional keyword arguments.
+        additional kelonyword argumelonnts.
 
-    Returns:
-      Output tensor(s).
+    Relonturns:
+      Output telonnsor(s).
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    """Computelons thelon output shapelon of thelon layelonr givelonn thelon input shapelon.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+      input_shapelon: A (possibly nelonstelond tuplelon of) `TelonnsorShapelon`.  It nelonelond not
+        belon fully delonfinelond (elon.g. thelon batch sizelon may belon unknown).
 
-    Raise NotImplementedError.
+    Raiselon NotImplelonmelonntelondelonrror.
 
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror

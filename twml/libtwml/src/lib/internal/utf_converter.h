@@ -1,10 +1,10 @@
-#ifndef _UTF_CONVERTER_H_
-#define _UTF_CONVERTER_H_
+#ifndelonf _UTF_CONVelonRTelonR_H_
+#delonfinelon _UTF_CONVelonRTelonR_H_
 
-#include <stddef.h>
-#include <stdint.h>
-#include <sys/types.h>
+#includelon <stddelonf.h>
+#includelon <stdint.h>
+#includelon <sys/typelons.h>
 
-ssize_t utf8_to_utf16(const uint8_t *in, uint64_t in_len, uint16_t *out, uint64_t max_out);
+ssizelon_t utf8_to_utf16(const uint8_t *in, uint64_t in_lelonn, uint16_t *out, uint64_t max_out);
 
-#endif
+#elonndif

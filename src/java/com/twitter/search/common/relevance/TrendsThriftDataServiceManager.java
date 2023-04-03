@@ -1,353 +1,353 @@
-package com.twitter.search.common.relevance;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
+import java.util.Selont;
+import java.util.concurrelonnt.elonxeloncutors;
+import java.util.concurrelonnt.SchelondulelondelonxeloncutorSelonrvicelon;
+import java.util.concurrelonnt.TimelonUnit;
+import java.util.concurrelonnt.atomic.AtomicLong;
+import java.util.strelonam.Collelonctors;
 
-import scala.runtime.BoxedUnit;
+import scala.runtimelon.BoxelondUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Sets;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Selonts;
+import com.googlelon.common.util.concurrelonnt.ThrelonadFactoryBuildelonr;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.finagle.Service;
-import com.twitter.finagle.ThriftMux;
-import com.twitter.finagle.builder.ClientBuilder;
-import com.twitter.finagle.builder.ClientConfig;
-import com.twitter.finagle.mtls.authentication.ServiceIdentifier;
-import com.twitter.finagle.mtls.client.MtlsClientBuilder;
-import com.twitter.finagle.stats.DefaultStatsReceiver;
-import com.twitter.finagle.thrift.ThriftClientRequest;
-import com.twitter.search.common.metrics.RelevanceStats;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.trends.plus.Module;
-import com.twitter.trends.plus.TrendsPlusRequest;
-import com.twitter.trends.plus.TrendsPlusResponse;
-import com.twitter.trends.service.gen.Location;
-import com.twitter.trends.trending_content.thriftjava.TrendingContentService;
-import com.twitter.trends.trends_metadata.thriftjava.TrendsMetadataService;
-import com.twitter.util.Duration;
-import com.twitter.util.Future;
-import com.twitter.util.Try;
+import com.twittelonr.finaglelon.Selonrvicelon;
+import com.twittelonr.finaglelon.ThriftMux;
+import com.twittelonr.finaglelon.buildelonr.ClielonntBuildelonr;
+import com.twittelonr.finaglelon.buildelonr.ClielonntConfig;
+import com.twittelonr.finaglelon.mtls.authelonntication.SelonrvicelonIdelonntifielonr;
+import com.twittelonr.finaglelon.mtls.clielonnt.MtlsClielonntBuildelonr;
+import com.twittelonr.finaglelon.stats.DelonfaultStatsReloncelonivelonr;
+import com.twittelonr.finaglelon.thrift.ThriftClielonntRelonquelonst;
+import com.twittelonr.selonarch.common.melontrics.RelonlelonvancelonStats;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.trelonnds.plus.Modulelon;
+import com.twittelonr.trelonnds.plus.TrelonndsPlusRelonquelonst;
+import com.twittelonr.trelonnds.plus.TrelonndsPlusRelonsponselon;
+import com.twittelonr.trelonnds.selonrvicelon.gelonn.Location;
+import com.twittelonr.trelonnds.trelonnding_contelonnt.thriftjava.TrelonndingContelonntSelonrvicelon;
+import com.twittelonr.trelonnds.trelonnds_melontadata.thriftjava.TrelonndsMelontadataSelonrvicelon;
+import com.twittelonr.util.Duration;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Try;
 
 /**
- * Manages trends data retrieved from trends thrift API and perform automatic refresh.
+ * Managelons trelonnds data relontrielonvelond from trelonnds thrift API and pelonrform automatic relonfrelonsh.
  */
-public final class TrendsThriftDataServiceManager {
-  private static final Logger LOG =
-    LoggerFactory.getLogger(TrendsThriftDataServiceManager.class.getName());
+public final class TrelonndsThriftDataSelonrvicelonManagelonr {
+  privatelon static final Loggelonr LOG =
+    LoggelonrFactory.gelontLoggelonr(TrelonndsThriftDataSelonrvicelonManagelonr.class.gelontNamelon());
 
-  private static final int DEFAULT_TIME_TO_KILL_SEC = 60;
+  privatelon static final int DelonFAULT_TIMelon_TO_KILL_SelonC = 60;
 
-  @VisibleForTesting
-  protected static final Map<String, String> DEFAULT_TRENDS_PARAMS_MAP = ImmutableMap.of(
-      "MAX_ITEMS_TO_RETURN", "10");   // we only take top 10 for each woeid.
+  @VisiblelonForTelonsting
+  protelonctelond static final Map<String, String> DelonFAULT_TRelonNDS_PARAMS_MAP = ImmutablelonMap.of(
+      "MAX_ITelonMS_TO_RelonTURN", "10");   // welon only takelon top 10 for elonach woelonid.
 
-  @VisibleForTesting
-  protected static final int MAX_TRENDS_PER_WOEID = 10;
+  @VisiblelonForTelonsting
+  protelonctelond static final int MAX_TRelonNDS_PelonR_WOelonID = 10;
 
-  private final Duration requestTimeout;
-  private final Duration refreshDelayDuration;
-  private final Duration reloadIntervalDuration;
-  private final int numRetries;
+  privatelon final Duration relonquelonstTimelonout;
+  privatelon final Duration relonfrelonshDelonlayDuration;
+  privatelon final Duration relonloadIntelonrvalDuration;
+  privatelon final int numRelontrielons;
 
-  // a list of trends cache we want to update
-  private final List<NGramCache> trendsCacheList;
+  // a list of trelonnds cachelon welon want to updatelon
+  privatelon final List<NGramCachelon> trelonndsCachelonList;
 
-  private final SearchCounter getAvailableSuccessCounter =
-      RelevanceStats.exportLong("trends_extractor_get_available_success");
-  private final SearchCounter getAvailableFailureCounter =
-      RelevanceStats.exportLong("trends_extractor_get_available_failure");
-  private final SearchCounter getTrendsSuccessCounter =
-      RelevanceStats.exportLong("trends_extractor_success_fetch");
-  private final SearchCounter getTrendsFailureCounter =
-      RelevanceStats.exportLong("trends_extractor_failed_fetch");
-  private final SearchCounter updateFailureCounter =
-      RelevanceStats.exportLong("trends_extractor_failed_update");
+  privatelon final SelonarchCountelonr gelontAvailablelonSuccelonssCountelonr =
+      RelonlelonvancelonStats.elonxportLong("trelonnds_elonxtractor_gelont_availablelon_succelonss");
+  privatelon final SelonarchCountelonr gelontAvailablelonFailurelonCountelonr =
+      RelonlelonvancelonStats.elonxportLong("trelonnds_elonxtractor_gelont_availablelon_failurelon");
+  privatelon final SelonarchCountelonr gelontTrelonndsSuccelonssCountelonr =
+      RelonlelonvancelonStats.elonxportLong("trelonnds_elonxtractor_succelonss_felontch");
+  privatelon final SelonarchCountelonr gelontTrelonndsFailurelonCountelonr =
+      RelonlelonvancelonStats.elonxportLong("trelonnds_elonxtractor_failelond_felontch");
+  privatelon final SelonarchCountelonr updatelonFailurelonCountelonr =
+      RelonlelonvancelonStats.elonxportLong("trelonnds_elonxtractor_failelond_updatelon");
 
-  private final ServiceIdentifier serviceIdentifier;
-  private ScheduledExecutorService scheduler;
+  privatelon final SelonrvicelonIdelonntifielonr selonrvicelonIdelonntifielonr;
+  privatelon SchelondulelondelonxeloncutorSelonrvicelon schelondulelonr;
 
 
-  @VisibleForTesting
-  protected Service<ThriftClientRequest, byte[]> contentService;
-  protected TrendingContentService.ServiceToClient contentClient;
-  protected Service<ThriftClientRequest, byte[]> metadataService;
-  protected TrendsMetadataService.ServiceToClient metadataClient;
+  @VisiblelonForTelonsting
+  protelonctelond Selonrvicelon<ThriftClielonntRelonquelonst, bytelon[]> contelonntSelonrvicelon;
+  protelonctelond TrelonndingContelonntSelonrvicelon.SelonrvicelonToClielonnt contelonntClielonnt;
+  protelonctelond Selonrvicelon<ThriftClielonntRelonquelonst, bytelon[]> melontadataSelonrvicelon;
+  protelonctelond TrelonndsMelontadataSelonrvicelon.SelonrvicelonToClielonnt melontadataClielonnt;
 
-  @VisibleForTesting
-  protected TrendsUpdater trendsUpdater;
+  @VisiblelonForTelonsting
+  protelonctelond TrelonndsUpdatelonr trelonndsUpdatelonr;
 
   /**
-   * Returns an instance of TrendsThriftDataServiceManager.
-   * @param serviceIdentifier The service that wants to call
-   * into Trend's services.
-   * @param numRetries The number of retries in the event of
-   * request failures.
-   * @param requestTimeout The amount of time we wait before we consider a
-   * a request as failed.
-   * @param initTrendsCacheDelay How long to wait before the initial
-   * filling of the Trends cache in milliseconds.
-   * @param reloadInterval How often to refresh the cache with updated trends.
-   * @param trendsCacheList The cache of trends.
-   * @return An instance of TrendsThriftDataServiceManager configured
-   * with respect to the params provided.
+   * Relonturns an instancelon of TrelonndsThriftDataSelonrvicelonManagelonr.
+   * @param selonrvicelonIdelonntifielonr Thelon selonrvicelon that wants to call
+   * into Trelonnd's selonrvicelons.
+   * @param numRelontrielons Thelon numbelonr of relontrielons in thelon elonvelonnt of
+   * relonquelonst failurelons.
+   * @param relonquelonstTimelonout Thelon amount of timelon welon wait belonforelon welon considelonr a
+   * a relonquelonst as failelond.
+   * @param initTrelonndsCachelonDelonlay How long to wait belonforelon thelon initial
+   * filling of thelon Trelonnds cachelon in milliselonconds.
+   * @param relonloadIntelonrval How oftelonn to relonfrelonsh thelon cachelon with updatelond trelonnds.
+   * @param trelonndsCachelonList Thelon cachelon of trelonnds.
+   * @relonturn An instancelon of TrelonndsThriftDataSelonrvicelonManagelonr configurelond
+   * with relonspelonct to thelon params providelond.
    */
-  public static TrendsThriftDataServiceManager newInstance(
-      ServiceIdentifier serviceIdentifier,
-      int numRetries,
-      Duration requestTimeout,
-      Duration initTrendsCacheDelay,
-      Duration reloadInterval,
-      List<NGramCache> trendsCacheList) {
-    return new TrendsThriftDataServiceManager(
-        serviceIdentifier,
-        numRetries,
-        requestTimeout,
-        initTrendsCacheDelay,
-        reloadInterval,
-        trendsCacheList);
+  public static TrelonndsThriftDataSelonrvicelonManagelonr nelonwInstancelon(
+      SelonrvicelonIdelonntifielonr selonrvicelonIdelonntifielonr,
+      int numRelontrielons,
+      Duration relonquelonstTimelonout,
+      Duration initTrelonndsCachelonDelonlay,
+      Duration relonloadIntelonrval,
+      List<NGramCachelon> trelonndsCachelonList) {
+    relonturn nelonw TrelonndsThriftDataSelonrvicelonManagelonr(
+        selonrvicelonIdelonntifielonr,
+        numRelontrielons,
+        relonquelonstTimelonout,
+        initTrelonndsCachelonDelonlay,
+        relonloadIntelonrval,
+        trelonndsCachelonList);
   }
 
   /**
-   * Resume auto refresh. Always called in constructor. Can be invoked after a
-   * stopAuthRefresh call to resume auto refreshing. Invoking it after shutDown is undefined.
+   * Relonsumelon auto relonfrelonsh. Always callelond in constructor. Can belon invokelond aftelonr a
+   * stopAuthRelonfrelonsh call to relonsumelon auto relonfrelonshing. Invoking it aftelonr shutDown is undelonfinelond.
    */
-  public synchronized void startAutoRefresh() {
-    if (scheduler == null) {
-      scheduler = Executors.newSingleThreadScheduledExecutor(
-          new ThreadFactoryBuilder().setDaemon(true).setNameFormat(
-              "trends-data-refresher[%d]").build());
-      scheduler.scheduleAtFixedRate(
-          trendsUpdater,
-          refreshDelayDuration.inSeconds(),
-          reloadIntervalDuration.inSeconds(),
-          TimeUnit.SECONDS);
+  public synchronizelond void startAutoRelonfrelonsh() {
+    if (schelondulelonr == null) {
+      schelondulelonr = elonxeloncutors.nelonwSinglelonThrelonadSchelondulelondelonxeloncutor(
+          nelonw ThrelonadFactoryBuildelonr().selontDaelonmon(truelon).selontNamelonFormat(
+              "trelonnds-data-relonfrelonshelonr[%d]").build());
+      schelondulelonr.schelondulelonAtFixelondRatelon(
+          trelonndsUpdatelonr,
+          relonfrelonshDelonlayDuration.inSelonconds(),
+          relonloadIntelonrvalDuration.inSelonconds(),
+          TimelonUnit.SelonCONDS);
     }
   }
 
   /**
-   * Stop auto refresh. Wait for the current execution thread to finish.
+   * Stop auto relonfrelonsh. Wait for thelon currelonnt elonxeloncution threlonad to finish.
    * This is a blocking call.
    */
-  public synchronized void stopAutoRefresh() {
-    if (scheduler != null) {
-      scheduler.shutdown(); // Disable new tasks from being submitted
+  public synchronizelond void stopAutoRelonfrelonsh() {
+    if (schelondulelonr != null) {
+      schelondulelonr.shutdown(); // Disablelon nelonw tasks from beloning submittelond
       try {
-        // Wait a while for existing tasks to terminate
-        if (!scheduler.awaitTermination(DEFAULT_TIME_TO_KILL_SEC, TimeUnit.SECONDS)) {
-          scheduler.shutdownNow(); // Cancel currently executing tasks
-          // Wait a while for tasks to respond to being cancelled
-          if (!scheduler.awaitTermination(DEFAULT_TIME_TO_KILL_SEC, TimeUnit.SECONDS)) {
-            LOG.info("Executor thread pool did not terminate.");
+        // Wait a whilelon for elonxisting tasks to telonrminatelon
+        if (!schelondulelonr.awaitTelonrmination(DelonFAULT_TIMelon_TO_KILL_SelonC, TimelonUnit.SelonCONDS)) {
+          schelondulelonr.shutdownNow(); // Cancelonl currelonntly elonxeloncuting tasks
+          // Wait a whilelon for tasks to relonspond to beloning cancelonllelond
+          if (!schelondulelonr.awaitTelonrmination(DelonFAULT_TIMelon_TO_KILL_SelonC, TimelonUnit.SelonCONDS)) {
+            LOG.info("elonxeloncutor threlonad pool did not telonrminatelon.");
           }
         }
-      } catch (InterruptedException ie) {
-        // (Re-)Cancel if current thread also interrupted
-        scheduler.shutdownNow();
-        // Preserve interrupt status
-        Thread.currentThread().interrupt();
+      } catch (Intelonrruptelondelonxcelonption ielon) {
+        // (Relon-)Cancelonl if currelonnt threlonad also intelonrruptelond
+        schelondulelonr.shutdownNow();
+        // Prelonselonrvelon intelonrrupt status
+        Threlonad.currelonntThrelonad().intelonrrupt();
       }
-      scheduler = null;
+      schelondulelonr = null;
     }
   }
 
-  /** Shuts down the manager. */
+  /** Shuts down thelon managelonr. */
   public void shutDown() {
-    stopAutoRefresh();
-    // clear the cache
-    for (NGramCache cache : trendsCacheList) {
-      cache.clear();
+    stopAutoRelonfrelonsh();
+    // clelonar thelon cachelon
+    for (NGramCachelon cachelon : trelonndsCachelonList) {
+      cachelon.clelonar();
     }
 
-    if (contentService != null) {
-      contentService.close();
+    if (contelonntSelonrvicelon != null) {
+      contelonntSelonrvicelon.closelon();
     }
 
-    if (metadataService != null) {
-      metadataService.close();
+    if (melontadataSelonrvicelon != null) {
+      melontadataSelonrvicelon.closelon();
     }
   }
 
-  private TrendsThriftDataServiceManager(
-      ServiceIdentifier serviceIdentifier,
-      int numRetries,
-      Duration requestTimeoutMS,
-      Duration refreshDelayDuration,
-      Duration reloadIntervalDuration,
-      List<NGramCache> trendsCacheList) {
-    this.numRetries = numRetries;
-    this.requestTimeout = requestTimeoutMS;
-    this.refreshDelayDuration = refreshDelayDuration;
-    this.reloadIntervalDuration = reloadIntervalDuration;
-    this.serviceIdentifier = serviceIdentifier;
-    this.trendsCacheList = Preconditions.checkNotNull(trendsCacheList);
-    trendsUpdater = new TrendsUpdater();
-    metadataService = buildMetadataService();
-    metadataClient = buildMetadataClient(metadataService);
-    contentService = buildContentService();
-    contentClient = buildContentClient(contentService);
+  privatelon TrelonndsThriftDataSelonrvicelonManagelonr(
+      SelonrvicelonIdelonntifielonr selonrvicelonIdelonntifielonr,
+      int numRelontrielons,
+      Duration relonquelonstTimelonoutMS,
+      Duration relonfrelonshDelonlayDuration,
+      Duration relonloadIntelonrvalDuration,
+      List<NGramCachelon> trelonndsCachelonList) {
+    this.numRelontrielons = numRelontrielons;
+    this.relonquelonstTimelonout = relonquelonstTimelonoutMS;
+    this.relonfrelonshDelonlayDuration = relonfrelonshDelonlayDuration;
+    this.relonloadIntelonrvalDuration = relonloadIntelonrvalDuration;
+    this.selonrvicelonIdelonntifielonr = selonrvicelonIdelonntifielonr;
+    this.trelonndsCachelonList = Prelonconditions.chelonckNotNull(trelonndsCachelonList);
+    trelonndsUpdatelonr = nelonw TrelonndsUpdatelonr();
+    melontadataSelonrvicelon = buildMelontadataSelonrvicelon();
+    melontadataClielonnt = buildMelontadataClielonnt(melontadataSelonrvicelon);
+    contelonntSelonrvicelon = buildContelonntSelonrvicelon();
+    contelonntClielonnt = buildContelonntClielonnt(contelonntSelonrvicelon);
   }
 
-  @VisibleForTesting
-  protected Service<ThriftClientRequest, byte[]> buildContentService() {
-    ClientBuilder<
-        ThriftClientRequest,
-        byte[], ClientConfig.Yes,
-        ClientConfig.Yes,
-        ClientConfig.Yes
+  @VisiblelonForTelonsting
+  protelonctelond Selonrvicelon<ThriftClielonntRelonquelonst, bytelon[]> buildContelonntSelonrvicelon() {
+    ClielonntBuildelonr<
+        ThriftClielonntRelonquelonst,
+        bytelon[], ClielonntConfig.Yelons,
+        ClielonntConfig.Yelons,
+        ClielonntConfig.Yelons
         >
-        builder = ClientBuilder.get()
-          .stack(ThriftMux.client())
-          .name("trends_thrift_data_service_manager_content")
-          .dest("")
-          .retries(numRetries)
-          .reportTo(DefaultStatsReceiver.get())
-          .tcpConnectTimeout(requestTimeout)
-          .requestTimeout(requestTimeout);
-    ClientBuilder mtlsBuilder =
-        new MtlsClientBuilder.MtlsClientBuilderSyntax<>(builder).mutualTls(serviceIdentifier);
+        buildelonr = ClielonntBuildelonr.gelont()
+          .stack(ThriftMux.clielonnt())
+          .namelon("trelonnds_thrift_data_selonrvicelon_managelonr_contelonnt")
+          .delonst("")
+          .relontrielons(numRelontrielons)
+          .relonportTo(DelonfaultStatsReloncelonivelonr.gelont())
+          .tcpConnelonctTimelonout(relonquelonstTimelonout)
+          .relonquelonstTimelonout(relonquelonstTimelonout);
+    ClielonntBuildelonr mtlsBuildelonr =
+        nelonw MtlsClielonntBuildelonr.MtlsClielonntBuildelonrSyntax<>(buildelonr).mutualTls(selonrvicelonIdelonntifielonr);
 
-    return ClientBuilder.safeBuild(mtlsBuilder);
+    relonturn ClielonntBuildelonr.safelonBuild(mtlsBuildelonr);
   }
 
-  @VisibleForTesting
-  protected TrendingContentService.ServiceToClient buildContentClient(
-      Service<ThriftClientRequest, byte[]> service) {
-    return new TrendingContentService.ServiceToClient(service);
+  @VisiblelonForTelonsting
+  protelonctelond TrelonndingContelonntSelonrvicelon.SelonrvicelonToClielonnt buildContelonntClielonnt(
+      Selonrvicelon<ThriftClielonntRelonquelonst, bytelon[]> selonrvicelon) {
+    relonturn nelonw TrelonndingContelonntSelonrvicelon.SelonrvicelonToClielonnt(selonrvicelon);
   }
 
-  @VisibleForTesting
-  protected Service<ThriftClientRequest, byte[]> buildMetadataService() {
-    ClientBuilder<
-        ThriftClientRequest,
-        byte[],
-        ClientConfig.Yes,
-        ClientConfig.Yes,
-        ClientConfig.Yes
+  @VisiblelonForTelonsting
+  protelonctelond Selonrvicelon<ThriftClielonntRelonquelonst, bytelon[]> buildMelontadataSelonrvicelon() {
+    ClielonntBuildelonr<
+        ThriftClielonntRelonquelonst,
+        bytelon[],
+        ClielonntConfig.Yelons,
+        ClielonntConfig.Yelons,
+        ClielonntConfig.Yelons
         >
-        builder = ClientBuilder.get()
-          .stack(ThriftMux.client())
-          .name("trends_thrift_data_service_manager_metadata")
-          .dest("")
-          .retries(numRetries)
-          .reportTo(DefaultStatsReceiver.get())
-          .tcpConnectTimeout(requestTimeout)
-          .requestTimeout(requestTimeout);
-    ClientBuilder mtlsBuilder =
-        new MtlsClientBuilder.MtlsClientBuilderSyntax<>(builder).mutualTls(serviceIdentifier);
+        buildelonr = ClielonntBuildelonr.gelont()
+          .stack(ThriftMux.clielonnt())
+          .namelon("trelonnds_thrift_data_selonrvicelon_managelonr_melontadata")
+          .delonst("")
+          .relontrielons(numRelontrielons)
+          .relonportTo(DelonfaultStatsReloncelonivelonr.gelont())
+          .tcpConnelonctTimelonout(relonquelonstTimelonout)
+          .relonquelonstTimelonout(relonquelonstTimelonout);
+    ClielonntBuildelonr mtlsBuildelonr =
+        nelonw MtlsClielonntBuildelonr.MtlsClielonntBuildelonrSyntax<>(buildelonr).mutualTls(selonrvicelonIdelonntifielonr);
 
-    return ClientBuilder.safeBuild(mtlsBuilder);
+    relonturn ClielonntBuildelonr.safelonBuild(mtlsBuildelonr);
   }
 
-  @VisibleForTesting
-  protected TrendsMetadataService.ServiceToClient buildMetadataClient(
-      Service<ThriftClientRequest, byte[]> service) {
-    return new TrendsMetadataService.ServiceToClient(service);
+  @VisiblelonForTelonsting
+  protelonctelond TrelonndsMelontadataSelonrvicelon.SelonrvicelonToClielonnt buildMelontadataClielonnt(
+      Selonrvicelon<ThriftClielonntRelonquelonst, bytelon[]> selonrvicelon) {
+    relonturn nelonw TrelonndsMelontadataSelonrvicelon.SelonrvicelonToClielonnt(selonrvicelon);
   }
 
   /**
-   * Updater that fetches available woeids and corresponding trending terms.
+   * Updatelonr that felontchelons availablelon woelonids and correlonsponding trelonnding telonrms.
    */
-  @VisibleForTesting
-  protected class TrendsUpdater implements Runnable {
-    @Override
+  @VisiblelonForTelonsting
+  protelonctelond class TrelonndsUpdatelonr implelonmelonnts Runnablelon {
+    @Ovelonrridelon
     public void run() {
-      populateCacheFromTrendsService();
+      populatelonCachelonFromTrelonndsSelonrvicelon();
     }
 
-    private Future<BoxedUnit> populateCacheFromTrendsService() {
-      long startTime = System.currentTimeMillis();
-      AtomicLong numTrendsReceived = new AtomicLong(0);
-      return metadataClient.getAvailable().flatMap(locations -> {
+    privatelon Futurelon<BoxelondUnit> populatelonCachelonFromTrelonndsSelonrvicelon() {
+      long startTimelon = Systelonm.currelonntTimelonMillis();
+      AtomicLong numTrelonndsReloncelonivelond = nelonw AtomicLong(0);
+      relonturn melontadataClielonnt.gelontAvailablelon().flatMap(locations -> {
         if (locations == null) {
-          getAvailableFailureCounter.increment();
-          LOG.warn("Failed to get woeids from trends.");
-          return Future.value(BoxedUnit.UNIT);
+          gelontAvailablelonFailurelonCountelonr.increlonmelonnt();
+          LOG.warn("Failelond to gelont woelonids from trelonnds.");
+          relonturn Futurelon.valuelon(BoxelondUnit.UNIT);
         }
-        getAvailableSuccessCounter.increment();
-        return populateCacheFromTrendLocations(locations, numTrendsReceived);
-      }).onFailure(throwable -> {
-        LOG.info("Update failed", throwable);
-        updateFailureCounter.increment();
-        return BoxedUnit.UNIT;
-      }).ensure(() -> {
-        logRefreshStatus(startTime, numTrendsReceived);
-        return BoxedUnit.UNIT;
+        gelontAvailablelonSuccelonssCountelonr.increlonmelonnt();
+        relonturn populatelonCachelonFromTrelonndLocations(locations, numTrelonndsReloncelonivelond);
+      }).onFailurelon(throwablelon -> {
+        LOG.info("Updatelon failelond", throwablelon);
+        updatelonFailurelonCountelonr.increlonmelonnt();
+        relonturn BoxelondUnit.UNIT;
+      }).elonnsurelon(() -> {
+        logRelonfrelonshStatus(startTimelon, numTrelonndsReloncelonivelond);
+        relonturn BoxelondUnit.UNIT;
       });
     }
 
-    private Future<BoxedUnit> populateCacheFromTrendLocations(
+    privatelon Futurelon<BoxelondUnit> populatelonCachelonFromTrelonndLocations(
         List<Location> locations,
-        AtomicLong numTrendsReceived) {
-      List<Future<TrendsPlusResponse>> trendsPlusFutures = locations.stream()
-          .map(location -> makeTrendsPlusRequest(location))
-          .collect(Collectors.toList());
+        AtomicLong numTrelonndsReloncelonivelond) {
+      List<Futurelon<TrelonndsPlusRelonsponselon>> trelonndsPlusFuturelons = locations.strelonam()
+          .map(location -> makelonTrelonndsPlusRelonquelonst(location))
+          .collelonct(Collelonctors.toList());
 
-      Future<List<Try<TrendsPlusResponse>>> trendsPlusFuture =
-          Future.collectToTry(trendsPlusFutures);
-      return trendsPlusFuture.map(tryResponses -> {
-        populateCacheFromResponses(tryResponses, numTrendsReceived);
-        return BoxedUnit.UNIT;
+      Futurelon<List<Try<TrelonndsPlusRelonsponselon>>> trelonndsPlusFuturelon =
+          Futurelon.collelonctToTry(trelonndsPlusFuturelons);
+      relonturn trelonndsPlusFuturelon.map(tryRelonsponselons -> {
+        populatelonCachelonFromRelonsponselons(tryRelonsponselons, numTrelonndsReloncelonivelond);
+        relonturn BoxelondUnit.UNIT;
       });
     }
 
-    private Future<TrendsPlusResponse> makeTrendsPlusRequest(Location location) {
-      TrendsPlusRequest request = new TrendsPlusRequest()
-          .setWoeid(location.getWoeid())
-          .setMaxTrends(MAX_TRENDS_PER_WOEID);
-      long startTime = System.currentTimeMillis();
-      return contentClient.getTrendsPlus(request)
-          .onSuccess(response -> {
-            getTrendsSuccessCounter.increment();
-            return BoxedUnit.UNIT;
-          }).onFailure(throwable -> {
-            getTrendsFailureCounter.increment();
-            return BoxedUnit.UNIT;
+    privatelon Futurelon<TrelonndsPlusRelonsponselon> makelonTrelonndsPlusRelonquelonst(Location location) {
+      TrelonndsPlusRelonquelonst relonquelonst = nelonw TrelonndsPlusRelonquelonst()
+          .selontWoelonid(location.gelontWoelonid())
+          .selontMaxTrelonnds(MAX_TRelonNDS_PelonR_WOelonID);
+      long startTimelon = Systelonm.currelonntTimelonMillis();
+      relonturn contelonntClielonnt.gelontTrelonndsPlus(relonquelonst)
+          .onSuccelonss(relonsponselon -> {
+            gelontTrelonndsSuccelonssCountelonr.increlonmelonnt();
+            relonturn BoxelondUnit.UNIT;
+          }).onFailurelon(throwablelon -> {
+            gelontTrelonndsFailurelonCountelonr.increlonmelonnt();
+            relonturn BoxelondUnit.UNIT;
           });
     }
 
-    private void populateCacheFromResponses(
-        List<Try<TrendsPlusResponse>> tryResponses,
-        AtomicLong numTrendsReceived) {
-      Set<String> trendStrings = Sets.newHashSet();
+    privatelon void populatelonCachelonFromRelonsponselons(
+        List<Try<TrelonndsPlusRelonsponselon>> tryRelonsponselons,
+        AtomicLong numTrelonndsReloncelonivelond) {
+      Selont<String> trelonndStrings = Selonts.nelonwHashSelont();
 
-      for (Try<TrendsPlusResponse> tryResponse : tryResponses) {
-        if (tryResponse.isThrow()) {
-          LOG.warn("Failed to fetch trends:" + tryResponse.toString());
-          continue;
+      for (Try<TrelonndsPlusRelonsponselon> tryRelonsponselon : tryRelonsponselons) {
+        if (tryRelonsponselon.isThrow()) {
+          LOG.warn("Failelond to felontch trelonnds:" + tryRelonsponselon.toString());
+          continuelon;
         }
 
-        TrendsPlusResponse trendsPlusResponse = tryResponse.get();
-        numTrendsReceived.addAndGet(trendsPlusResponse.modules.size());
-        for (Module module : trendsPlusResponse.modules) {
-          trendStrings.add(module.getTrend().name);
+        TrelonndsPlusRelonsponselon trelonndsPlusRelonsponselon = tryRelonsponselon.gelont();
+        numTrelonndsReloncelonivelond.addAndGelont(trelonndsPlusRelonsponselon.modulelons.sizelon());
+        for (Modulelon modulelon : trelonndsPlusRelonsponselon.modulelons) {
+          trelonndStrings.add(modulelon.gelontTrelonnd().namelon);
         }
       }
 
-      for (NGramCache cache : trendsCacheList) {
-        cache.addAll(trendStrings);
+      for (NGramCachelon cachelon : trelonndsCachelonList) {
+        cachelon.addAll(trelonndStrings);
       }
     }
   }
 
-  private void logRefreshStatus(long startTime, AtomicLong numTrendsReceived) {
-    LOG.info(String.format("Refresh done in [%dms] :\nfetchSuccess[%d] fetchFailure[%d] "
-            + "updateFailure[%d] num trends received [%d]",
-        System.currentTimeMillis() - startTime,
-        getTrendsSuccessCounter.get(),
-        getTrendsFailureCounter.get(),
-        updateFailureCounter.get(),
-        numTrendsReceived.get()));
+  privatelon void logRelonfrelonshStatus(long startTimelon, AtomicLong numTrelonndsReloncelonivelond) {
+    LOG.info(String.format("Relonfrelonsh donelon in [%dms] :\nfelontchSuccelonss[%d] felontchFailurelon[%d] "
+            + "updatelonFailurelon[%d] num trelonnds reloncelonivelond [%d]",
+        Systelonm.currelonntTimelonMillis() - startTimelon,
+        gelontTrelonndsSuccelonssCountelonr.gelont(),
+        gelontTrelonndsFailurelonCountelonr.gelont(),
+        updatelonFailurelonCountelonr.gelont(),
+        numTrelonndsReloncelonivelond.gelont()));
   }
 }

@@ -1,85 +1,85 @@
--- This SQL query generate the cluster to top k tweets index based on tweet engagements.
--- The engagement type is decided by USER_TWEET_ENGAGEMENT_TABLE_SQL.
+-- This SQL quelonry gelonnelonratelon thelon clustelonr to top k twelonelonts indelonx baselond on twelonelont elonngagelonmelonnts.
+-- Thelon elonngagelonmelonnt typelon is deloncidelond by USelonR_TWelonelonT_elonNGAGelonMelonNT_TABLelon_SQL.
 
 with vars as (
-        SELECT {HALF_LIFE} AS halfLife, -- Default: 8 hour halfLife in millis
-        UNIX_MILLIS("{CURRENT_TS}") AS currentTs,
+        SelonLelonCT {HALF_LIFelon} AS halfLifelon, -- Delonfault: 8 hour halfLifelon in millis
+        UNIX_MILLIS("{CURRelonNT_TS}") AS currelonntTs,
     ),
 
-  user_tweet_engagement_pairs AS (
-      {USER_TWEET_ENGAGEMENT_TABLE_SQL}
+  uselonr_twelonelont_elonngagelonmelonnt_pairs AS (
+      {USelonR_TWelonelonT_elonNGAGelonMelonNT_TABLelon_SQL}
   ),
 
-  -- A sequence of filters to get eligible tweetIds for tweet embedding generation
-  -- Apply min interaction count filter
- user_tweet_interaction_with_min_interaction_count_filter AS (
-      SELECT userId, user_tweet_engagement_pairs.tweetId, tsMillis
-      FROM user_tweet_engagement_pairs, vars
+  -- A selonquelonncelon of filtelonrs to gelont elonligiblelon twelonelontIds for twelonelont elonmbelondding gelonnelonration
+  -- Apply min intelonraction count filtelonr
+ uselonr_twelonelont_intelonraction_with_min_intelonraction_count_filtelonr AS (
+      SelonLelonCT uselonrId, uselonr_twelonelont_elonngagelonmelonnt_pairs.twelonelontId, tsMillis
+      FROM uselonr_twelonelont_elonngagelonmelonnt_pairs, vars
       JOIN (
-          SELECT tweetId, COUNT(DISTINCT(userId)) AS interactionCount
-          FROM user_tweet_engagement_pairs
-          GROUP BY tweetId
-          HAVING interactionCount >= {MIN_INTERACTION_COUNT} -- Only generate tweet embeddings for tweets with >= {MIN_INTERACTION_COUNT} interactions
-      ) eligible_tweets USING(tweetId)
+          SelonLelonCT twelonelontId, COUNT(DISTINCT(uselonrId)) AS intelonractionCount
+          FROM uselonr_twelonelont_elonngagelonmelonnt_pairs
+          GROUP BY twelonelontId
+          HAVING intelonractionCount >= {MIN_INTelonRACTION_COUNT} -- Only gelonnelonratelon twelonelont elonmbelonddings for twelonelonts with >= {MIN_INTelonRACTION_COUNT} intelonractions
+      ) elonligiblelon_twelonelonts USING(twelonelontId)
   ),
 
-  -- Apply min fav count filter
-  user_tweet_interaction_with_fav_count_filter AS (
-    {TWEET_INTERACTION_WITH_FAV_COUNT_FILTER_SQL}
+  -- Apply min fav count filtelonr
+  uselonr_twelonelont_intelonraction_with_fav_count_filtelonr AS (
+    {TWelonelonT_INTelonRACTION_WITH_FAV_COUNT_FILTelonR_SQL}
   ),
 
-  -- Apply health and video filter
-  user_tweet_interaction_with_health_filter AS (
-    {TWEET_INTERACTION_WITH_HEALTH_FILTER_SQL}
+  -- Apply helonalth and videlono filtelonr
+  uselonr_twelonelont_intelonraction_with_helonalth_filtelonr AS (
+    {TWelonelonT_INTelonRACTION_WITH_HelonALTH_FILTelonR_SQL}
   ),
 
-  -- Final filtered user tweet interaction table
-  -- Read the result from the last filter
-  user_tweet_interaction_processed_table AS (
-    SELECT *
-    FROM user_tweet_interaction_with_health_filter
+  -- Final filtelonrelond uselonr twelonelont intelonraction tablelon
+  -- Relonad thelon relonsult from thelon last filtelonr
+  uselonr_twelonelont_intelonraction_procelonsselond_tablelon AS (
+    SelonLelonCT *
+    FROM uselonr_twelonelont_intelonraction_with_helonalth_filtelonr
   ),
 
-  -- Read consumer embeddings
-  consumer_embeddings AS (
-     {CONSUMER_EMBEDDINGS_SQL}
+  -- Relonad consumelonr elonmbelonddings
+  consumelonr_elonmbelonddings AS (
+     {CONSUMelonR_elonMBelonDDINGS_SQL}
   ),
 
-  -- Update tweet cluster scores based on interaction events
-  tweet_cluster_scores AS (
-      SELECT tweetId,
+  -- Updatelon twelonelont clustelonr scorelons baselond on intelonraction elonvelonnts
+  twelonelont_clustelonr_scorelons AS (
+      SelonLelonCT twelonelontId,
           STRUCT(
-              clusterId,
-              CASE vars.halfLife
-                -- halfLife = -1 means there is no half life decay and we directly take the sum as the score
-                WHEN -1 THEN SUM(clusterNormalizedLogFavScore)
-                ELSE SUM(clusterNormalizedLogFavScore * POW(0.5, (currentTs - tsMillis) / vars.halfLife))
-                END AS normalizedScore,
-              COUNT(*) AS engagementCount)
-          AS clusterIdToScores
-      FROM user_tweet_interaction_processed_table, vars
-      JOIN consumer_embeddings USING(userId)
-      GROUP BY tweetId, clusterId, vars.halfLife
+              clustelonrId,
+              CASelon vars.halfLifelon
+                -- halfLifelon = -1 melonans thelonrelon is no half lifelon deloncay and welon direlonctly takelon thelon sum as thelon scorelon
+                WHelonN -1 THelonN SUM(clustelonrNormalizelondLogFavScorelon)
+                elonLSelon SUM(clustelonrNormalizelondLogFavScorelon * POW(0.5, (currelonntTs - tsMillis) / vars.halfLifelon))
+                elonND AS normalizelondScorelon,
+              COUNT(*) AS elonngagelonmelonntCount)
+          AS clustelonrIdToScorelons
+      FROM uselonr_twelonelont_intelonraction_procelonsselond_tablelon, vars
+      JOIN consumelonr_elonmbelonddings USING(uselonrId)
+      GROUP BY twelonelontId, clustelonrId, vars.halfLifelon
   ),
 
-  -- Generate tweet embeddings
-  tweet_embeddings_with_top_clusters AS (
-      SELECT tweetId, ARRAY_AGG(
-          clusterIdToScores
-          ORDER BY clusterIdToScores.normalizedScore DESC
-          LIMIT {TWEET_EMBEDDING_LENGTH}
-      ) AS clusterIdToScores
-      FROM tweet_cluster_scores
-      GROUP BY tweetId
+  -- Gelonnelonratelon twelonelont elonmbelonddings
+  twelonelont_elonmbelonddings_with_top_clustelonrs AS (
+      SelonLelonCT twelonelontId, ARRAY_AGG(
+          clustelonrIdToScorelons
+          ORDelonR BY clustelonrIdToScorelons.normalizelondScorelon DelonSC
+          LIMIT {TWelonelonT_elonMBelonDDING_LelonNGTH}
+      ) AS clustelonrIdToScorelons
+      FROM twelonelont_clustelonr_scorelons
+      GROUP BY twelonelontId
   ),
 
-  clusters_top_k_tweets AS (
-    SELECT clusterId, ARRAY_AGG(STRUCT(tweetId, normalizedScore AS tweetScore) ORDER BY normalizedScore DESC LIMIT {CLUSTER_TOP_K_TWEETS}) AS topKTweetsForClusterKey
-    FROM tweet_embeddings_with_top_clusters, UNNEST(clusterIdToScores) AS clusterIdToScores
-    WHERE engagementCount >= {MIN_ENGAGEMENT_PER_CLUSTER}
-    GROUP BY clusterId
+  clustelonrs_top_k_twelonelonts AS (
+    SelonLelonCT clustelonrId, ARRAY_AGG(STRUCT(twelonelontId, normalizelondScorelon AS twelonelontScorelon) ORDelonR BY normalizelondScorelon DelonSC LIMIT {CLUSTelonR_TOP_K_TWelonelonTS}) AS topKTwelonelontsForClustelonrKelony
+    FROM twelonelont_elonmbelonddings_with_top_clustelonrs, UNNelonST(clustelonrIdToScorelons) AS clustelonrIdToScorelons
+    WHelonRelon elonngagelonmelonntCount >= {MIN_elonNGAGelonMelonNT_PelonR_CLUSTelonR}
+    GROUP BY clustelonrId
   )
 
-SELECT *
-FROM clusters_top_k_tweets
+SelonLelonCT *
+FROM clustelonrs_top_k_twelonelonts
 

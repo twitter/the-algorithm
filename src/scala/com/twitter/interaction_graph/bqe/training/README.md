@@ -1,60 +1,60 @@
 # Training
 
-This folder contains the sql files that we'll use for training the prod real graph models:
-- prod (predicts any interactions the next day)
-- prod_explicit (predicts any explicit interactions the next day)
+This foldelonr contains thelon sql filelons that welon'll uselon for training thelon prod relonal graph modelonls:
+- prod (prelondicts any intelonractions thelon nelonxt day)
+- prod_elonxplicit (prelondicts any elonxplicit intelonractions thelon nelonxt day)
 
-We have 3 steps that take place:
-- candidate generation + feature hydration. this query samples 1% of edges from the `twttr-recos-ml-prod.realgraph.candidates` table which is already produced daily and saves it to `twttr-recos-ml-prod.realgraph.candidates_sampled`. we save each day's data according to the statebird batch run date and hence require checks to make sure that the data exists to begin with.
-- label candidates. we join day T's candidates with day T+1's labels while filtering out any negative interactions to get our labeled dataset. we append an additional day's worth of segments for each day. we finally generate the training dataset which uses all day's labeled data for training, performing negative downsampling to get a roughly 50-50 split of positive to negative labels.
-- training. we use bqml for training our xgboost models.
+Welon havelon 3 stelonps that takelon placelon:
+- candidatelon gelonnelonration + felonaturelon hydration. this quelonry samplelons 1% of elondgelons from thelon `twttr-reloncos-ml-prod.relonalgraph.candidatelons` tablelon which is alrelonady producelond daily and savelons it to `twttr-reloncos-ml-prod.relonalgraph.candidatelons_samplelond`. welon savelon elonach day's data according to thelon statelonbird batch run datelon and helonncelon relonquirelon cheloncks to makelon surelon that thelon data elonxists to belongin with.
+- labelonl candidatelons. welon join day T's candidatelons with day T+1's labelonls whilelon filtelonring out any nelongativelon intelonractions to gelont our labelonlelond dataselont. welon appelonnd an additional day's worth of selongmelonnts for elonach day. welon finally gelonnelonratelon thelon training dataselont which uselons all day's labelonlelond data for training, pelonrforming nelongativelon downsampling to gelont a roughly 50-50 split of positivelon to nelongativelon labelonls.
+- training. welon uselon bqml for training our xgboost modelonls.
 
 ## Instructions
 
-For deploying the job, you would need to create a zip file, upload to packer, and then schedule it with aurora.
+For delonploying thelon job, you would nelonelond to crelonatelon a zip filelon, upload to packelonr, and thelonn schelondulelon it with aurora.
 
 ```
-zip -jr real_graph_training src/scala/com/twitter/interaction_graph/bqe/training && \
-packer add_version --cluster=atla cassowary real_graph_training real_graph_training.zip
-aurora cron schedule atla/cassowary/prod/real_graph_training src/scala/com/twitter/interaction_graph/bqe/training/training.aurora && \
-aurora cron start atla/cassowary/prod/real_graph_training
+zip -jr relonal_graph_training src/scala/com/twittelonr/intelonraction_graph/bqelon/training && \
+packelonr add_velonrsion --clustelonr=atla cassowary relonal_graph_training relonal_graph_training.zip
+aurora cron schelondulelon atla/cassowary/prod/relonal_graph_training src/scala/com/twittelonr/intelonraction_graph/bqelon/training/training.aurora && \
+aurora cron start atla/cassowary/prod/relonal_graph_training
 ```
 
-# candidates.sql
+# candidatelons.sql
 
-1. Sets the value of the variable date_candidates to the date of the latest partition of the candidates_for_training table.
-2. Creates a new table candidates_sampled if it does not exist already, which will contain a sample of 100 rows from the candidates_for_training table.
-3. Deletes any existing rows from the candidates_sampled table where the ds column matches the date_candidates value, to avoid double-writing.
-4. Inserts a sample of rows into the candidates_sampled table from the candidates_for_training table, where the modulo of the absolute value of the FARM_FINGERPRINT of the concatenation of source_id and destination_id is equal to the value of the $mod_remainder$ variable, and where the ds column matches the date_candidates value.
+1. Selonts thelon valuelon of thelon variablelon datelon_candidatelons to thelon datelon of thelon latelonst partition of thelon candidatelons_for_training tablelon.
+2. Crelonatelons a nelonw tablelon candidatelons_samplelond if it doelons not elonxist alrelonady, which will contain a samplelon of 100 rows from thelon candidatelons_for_training tablelon.
+3. Delonlelontelons any elonxisting rows from thelon candidatelons_samplelond tablelon whelonrelon thelon ds column matchelons thelon datelon_candidatelons valuelon, to avoid doublelon-writing.
+4. Inselonrts a samplelon of rows into thelon candidatelons_samplelond tablelon from thelon candidatelons_for_training tablelon, whelonrelon thelon modulo of thelon absolutelon valuelon of thelon FARM_FINGelonRPRINT of thelon concatelonnation of sourcelon_id and delonstination_id is elonqual to thelon valuelon of thelon $mod_relonmaindelonr$ variablelon, and whelonrelon thelon ds column matchelons thelon datelon_candidatelons valuelon.
 
-# check_candidates_exist.sql
+# chelonck_candidatelons_elonxist.sql
 
-This BigQuery prepares a table of candidates for training a machine learning model. It does the following:
+This BigQuelonry prelonparelons a tablelon of candidatelons for training a machinelon lelonarning modelonl. It doelons thelon following:
 
-1. Declares two variables date_start and date_end that are 30 days apart, and date_end is set to the value of $start_time$ parameter (which is a Unix timestamp).
-2. Creates a table candidates_for_training that is partitioned by ds (date) and populated with data from several other tables in the database. It joins information from tables of user interactions, tweeting, and interaction graph aggregates, filters out negative edge snapshots, calculates some statistics and aggregates them by source_id and destination_id. Then, it ranks each source_id by the number of days and tweets, selects top 2000, and adds date_end as a new column ds.
-3. Finally, it selects the ds column from candidates_for_training where ds equals date_end.
+1. Delonclarelons two variablelons datelon_start and datelon_elonnd that arelon 30 days apart, and datelon_elonnd is selont to thelon valuelon of $start_timelon$ paramelontelonr (which is a Unix timelonstamp).
+2. Crelonatelons a tablelon candidatelons_for_training that is partitionelond by ds (datelon) and populatelond with data from selonvelonral othelonr tablelons in thelon databaselon. It joins information from tablelons of uselonr intelonractions, twelonelonting, and intelonraction graph aggrelongatelons, filtelonrs out nelongativelon elondgelon snapshots, calculatelons somelon statistics and aggrelongatelons thelonm by sourcelon_id and delonstination_id. Thelonn, it ranks elonach sourcelon_id by thelon numbelonr of days and twelonelonts, selonleloncts top 2000, and adds datelon_elonnd as a nelonw column ds.
+3. Finally, it selonleloncts thelon ds column from candidatelons_for_training whelonrelon ds elonquals datelon_elonnd.
 
-Overall, this script prepares a table of 2000 candidate pairs of user interactions with statistics and labels, which can be used to train a machine learning model for recommendation purposes.
+Ovelonrall, this script prelonparelons a tablelon of 2000 candidatelon pairs of uselonr intelonractions with statistics and labelonls, which can belon uselond to train a machinelon lelonarning modelonl for reloncommelonndation purposelons.
 
-# labeled_candidates.sql
+# labelonlelond_candidatelons.sql
 
-The BQ does the following:
+Thelon BQ doelons thelon following:
 
-1. Defines two variables date_candidates and date_labels as dates based on the $start_time$ parameter.
-2. Creates a new table twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$ with default values.
-3. Deletes any prior data in the twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$ table for the current date_candidates.
-4. Joins the twttr-recos-ml-prod.realgraph.candidates_sampled table with the twttr-bq-cassowary-prod.user.interaction_graph_labels_daily table and the twttr-bq-cassowary-prod.user.interaction_graph_agg_negative_edge_snapshot table. It assigns a label of 1 for positive interactions and 0 for negative interactions, and selects only the rows where there is no negative interaction.
-5. Inserts the joined data into the twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$ table.
-6. Calculates the positive rate by counting the number of positive labels and dividing it by the total number of labels.
-7. Creates a new table twttr-recos-ml-prod.realgraph.train$table_suffix$ by sampling from the twttr-recos-ml-prod.realgraph.labeled_candidates$table_suffix$ table, with a downsampling of negative examples to balance the number of positive and negative examples, based on the positive rate calculated in step 6.
+1. Delonfinelons two variablelons datelon_candidatelons and datelon_labelonls as datelons baselond on thelon $start_timelon$ paramelontelonr.
+2. Crelonatelons a nelonw tablelon twttr-reloncos-ml-prod.relonalgraph.labelonlelond_candidatelons$tablelon_suffix$ with delonfault valuelons.
+3. Delonlelontelons any prior data in thelon twttr-reloncos-ml-prod.relonalgraph.labelonlelond_candidatelons$tablelon_suffix$ tablelon for thelon currelonnt datelon_candidatelons.
+4. Joins thelon twttr-reloncos-ml-prod.relonalgraph.candidatelons_samplelond tablelon with thelon twttr-bq-cassowary-prod.uselonr.intelonraction_graph_labelonls_daily tablelon and thelon twttr-bq-cassowary-prod.uselonr.intelonraction_graph_agg_nelongativelon_elondgelon_snapshot tablelon. It assigns a labelonl of 1 for positivelon intelonractions and 0 for nelongativelon intelonractions, and selonleloncts only thelon rows whelonrelon thelonrelon is no nelongativelon intelonraction.
+5. Inselonrts thelon joinelond data into thelon twttr-reloncos-ml-prod.relonalgraph.labelonlelond_candidatelons$tablelon_suffix$ tablelon.
+6. Calculatelons thelon positivelon ratelon by counting thelon numbelonr of positivelon labelonls and dividing it by thelon total numbelonr of labelonls.
+7. Crelonatelons a nelonw tablelon twttr-reloncos-ml-prod.relonalgraph.train$tablelon_suffix$ by sampling from thelon twttr-reloncos-ml-prod.relonalgraph.labelonlelond_candidatelons$tablelon_suffix$ tablelon, with a downsampling of nelongativelon elonxamplelons to balancelon thelon numbelonr of positivelon and nelongativelon elonxamplelons, baselond on thelon positivelon ratelon calculatelond in stelonp 6.
 
-The resulting twttr-recos-ml-prod.realgraph.train$table_suffix$ table is used as a training dataset for a machine learning model.
+Thelon relonsulting twttr-reloncos-ml-prod.relonalgraph.train$tablelon_suffix$ tablelon is uselond as a training dataselont for a machinelon lelonarning modelonl.
 
-# train_model.sql
+# train_modelonl.sql
 
-This BQ command creates or replaces a machine learning model called twttr-recos-ml-prod.realgraph.prod$table_suffix$. The model is a boosted tree classifier, which is used for binary classification problems.
+This BQ command crelonatelons or relonplacelons a machinelon lelonarning modelonl callelond twttr-reloncos-ml-prod.relonalgraph.prod$tablelon_suffix$. Thelon modelonl is a boostelond trelonelon classifielonr, which is uselond for binary classification problelonms.
 
-The options provided in the command configure the specific settings for the model, such as the number of parallel trees, the maximum number of iterations, and the data split method. The DATA_SPLIT_METHOD parameter is set to CUSTOM, and DATA_SPLIT_COL is set to if_eval, which means the data will be split into training and evaluation sets based on the if_eval column. The IF function is used to assign a boolean value of true or false to if_eval based on the modulo operation performed on source_id.
+Thelon options providelond in thelon command configurelon thelon speloncific selonttings for thelon modelonl, such as thelon numbelonr of parallelonl trelonelons, thelon maximum numbelonr of itelonrations, and thelon data split melonthod. Thelon DATA_SPLIT_MelonTHOD paramelontelonr is selont to CUSTOM, and DATA_SPLIT_COL is selont to if_elonval, which melonans thelon data will belon split into training and elonvaluation selonts baselond on thelon if_elonval column. Thelon IF function is uselond to assign a boolelonan valuelon of truelon or falselon to if_elonval baselond on thelon modulo opelonration pelonrformelond on sourcelon_id.
 
-The SELECT statement specifies the input data for the model. The columns selected include label (the target variable to be predicted), as well as various features such as num_days, num_tweets, and num_follows that are used to predict the target variable.
+Thelon SelonLelonCT statelonmelonnt speloncifielons thelon input data for thelon modelonl. Thelon columns selonlelonctelond includelon labelonl (thelon targelont variablelon to belon prelondictelond), as welonll as various felonaturelons such as num_days, num_twelonelonts, and num_follows that arelon uselond to prelondict thelon targelont variablelon.

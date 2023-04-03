@@ -1,14 +1,14 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import org.apache.lucene.facet.sortedset.SortedSetDocValuesReaderState;
+import org.apachelon.lucelonnelon.facelont.sortelondselont.SortelondSelontDocValuelonsRelonadelonrStatelon;
 
 /**
- * We have to check if the facet field (dim called by lucene) is supported or
- * not by the SortedSetDocValuesReaderState. The method we have to call is
- * private to the lucene package, so we have this helper to do the call for us.
+ * Welon havelon to chelonck if thelon facelont fielonld (dim callelond by lucelonnelon) is supportelond or
+ * not by thelon SortelondSelontDocValuelonsRelonadelonrStatelon. Thelon melonthod welon havelon to call is
+ * privatelon to thelon lucelonnelon packagelon, so welon havelon this helonlpelonr to do thelon call for us.
  */
-public abstract class SortedSetDocValuesReaderStateHelper {
-  public static boolean isDimSupported(SortedSetDocValuesReaderState state, String dim) {
-    return state.getOrdRange(dim) != null;
+public abstract class SortelondSelontDocValuelonsRelonadelonrStatelonHelonlpelonr {
+  public static boolelonan isDimSupportelond(SortelondSelontDocValuelonsRelonadelonrStatelon statelon, String dim) {
+    relonturn statelon.gelontOrdRangelon(dim) != null;
   }
 }

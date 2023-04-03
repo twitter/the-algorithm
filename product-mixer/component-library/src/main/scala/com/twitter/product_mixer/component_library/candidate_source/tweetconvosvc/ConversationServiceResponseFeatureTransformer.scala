@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.twelonelontconvosvc
 
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.thriftscala.SuggelonstTypelon
 
-object AuthorIdFeature extends Feature[TweetCandidate, Option[Long]]
-object AncestorIdsFeature extends Feature[TweetCandidate, Seq[Long]]
-object ConversationModuleFocalTweetIdFeature extends Feature[TweetCandidate, Option[Long]]
-object InReplyToFeature extends Feature[TweetCandidate, Option[Long]]
-object IsRetweetFeature extends Feature[TweetCandidate, Boolean]
-object SourceTweetIdFeature extends Feature[TweetCandidate, Option[Long]]
-object SourceUserIdFeature extends Feature[TweetCandidate, Option[Long]]
-object SuggestTypeFeature extends Feature[TweetCandidate, Option[SuggestType]]
+objelonct AuthorIdFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Option[Long]]
+objelonct AncelonstorIdsFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Selonq[Long]]
+objelonct ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Option[Long]]
+objelonct InRelonplyToFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Option[Long]]
+objelonct IsRelontwelonelontFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Boolelonan]
+objelonct SourcelonTwelonelontIdFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Option[Long]]
+objelonct SourcelonUselonrIdFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Option[Long]]
+objelonct SuggelonstTypelonFelonaturelon elonxtelonnds Felonaturelon[TwelonelontCandidatelon, Option[SuggelonstTypelon]]
 
-object ConversationServiceResponseFeatureTransformer
-    extends CandidateFeatureTransformer[TweetWithConversationMetadata] {
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ConversationServiceResponse")
+objelonct ConvelonrsationSelonrvicelonRelonsponselonFelonaturelonTransformelonr
+    elonxtelonnds CandidatelonFelonaturelonTransformelonr[TwelonelontWithConvelonrsationMelontadata] {
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr =
+    TransformelonrIdelonntifielonr("ConvelonrsationSelonrvicelonRelonsponselon")
 
-  override val features: Set[Feature[_, _]] =
-    Set(
-      AuthorIdFeature,
-      InReplyToFeature,
-      IsRetweetFeature,
-      SourceTweetIdFeature,
-      SourceUserIdFeature,
-      ConversationModuleFocalTweetIdFeature,
-      AncestorIdsFeature,
-      SuggestTypeFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] =
+    Selont(
+      AuthorIdFelonaturelon,
+      InRelonplyToFelonaturelon,
+      IsRelontwelonelontFelonaturelon,
+      SourcelonTwelonelontIdFelonaturelon,
+      SourcelonUselonrIdFelonaturelon,
+      ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon,
+      AncelonstorIdsFelonaturelon,
+      SuggelonstTypelonFelonaturelon
     )
 
-  override def transform(candidate: TweetWithConversationMetadata): FeatureMap = {
-    FeatureMapBuilder()
-      .add(AuthorIdFeature, candidate.userId)
-      .add(InReplyToFeature, candidate.inReplyToTweetId)
-      .add(IsRetweetFeature, candidate.sourceTweetId.isDefined)
-      .add(SourceTweetIdFeature, candidate.sourceTweetId)
-      .add(SourceUserIdFeature, candidate.sourceUserId)
-      .add(ConversationModuleFocalTweetIdFeature, candidate.conversationId)
-      .add(AncestorIdsFeature, candidate.ancestors.map(_.tweetId))
-      .add(SuggestTypeFeature, Some(SuggestType.OrganicConversation))
+  ovelonrridelon delonf transform(candidatelon: TwelonelontWithConvelonrsationMelontadata): FelonaturelonMap = {
+    FelonaturelonMapBuildelonr()
+      .add(AuthorIdFelonaturelon, candidatelon.uselonrId)
+      .add(InRelonplyToFelonaturelon, candidatelon.inRelonplyToTwelonelontId)
+      .add(IsRelontwelonelontFelonaturelon, candidatelon.sourcelonTwelonelontId.isDelonfinelond)
+      .add(SourcelonTwelonelontIdFelonaturelon, candidatelon.sourcelonTwelonelontId)
+      .add(SourcelonUselonrIdFelonaturelon, candidatelon.sourcelonUselonrId)
+      .add(ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon, candidatelon.convelonrsationId)
+      .add(AncelonstorIdsFelonaturelon, candidatelon.ancelonstors.map(_.twelonelontId))
+      .add(SuggelonstTypelonFelonaturelon, Somelon(SuggelonstTypelon.OrganicConvelonrsation))
       .build()
   }
 }

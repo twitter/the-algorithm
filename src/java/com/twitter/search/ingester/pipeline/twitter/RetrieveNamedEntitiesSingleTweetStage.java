@@ -1,75 +1,75 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.util.concurrent.CompletableFuture;
-import javax.naming.NamingException;
+import java.util.concurrelonnt.ComplelontablelonFuturelon;
+import javax.naming.Namingelonxcelonption;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.apache.commons.pipeline.validation.ProducesConsumed;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.apachelon.commons.pipelonlinelon.validation.ProducelonsConsumelond;
 
-import com.twitter.search.ingester.model.IngesterTwitterMessage;
-import com.twitter.util.Function;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrTwittelonrMelonssagelon;
+import com.twittelonr.util.Function;
 
-@ConsumedTypes(IngesterTwitterMessage.class)
-@ProducesConsumed
-public class RetrieveNamedEntitiesSingleTweetStage extends TwitterBaseStage
-    <IngesterTwitterMessage, CompletableFuture<IngesterTwitterMessage>> {
+@ConsumelondTypelons(IngelonstelonrTwittelonrMelonssagelon.class)
+@ProducelonsConsumelond
+public class RelontrielonvelonNamelondelonntitielonsSinglelonTwelonelontStagelon elonxtelonnds TwittelonrBaselonStagelon
+    <IngelonstelonrTwittelonrMelonssagelon, ComplelontablelonFuturelon<IngelonstelonrTwittelonrMelonssagelon>> {
 
-  private NamedEntityHandler namedEntityHandler;
+  privatelon NamelondelonntityHandlelonr namelondelonntityHandlelonr;
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    innerSetup();
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    innelonrSelontup();
   }
 
-  @Override
-  protected void innerSetup() {
-    namedEntityHandler = new NamedEntityHandler(
-        wireModule.getNamedEntityFetcher(), decider, getStageNamePrefix(),
-        "single_tweet");
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() {
+    namelondelonntityHandlelonr = nelonw NamelondelonntityHandlelonr(
+        wirelonModulelon.gelontNamelondelonntityFelontchelonr(), deloncidelonr, gelontStagelonNamelonPrelonfix(),
+        "singlelon_twelonelont");
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterTwitterMessage)) {
-      throw new StageException(this, "Object is not a IngesterTwitterMessage object: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrTwittelonrMelonssagelon)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not a IngelonstelonrTwittelonrMelonssagelon objelonct: " + obj);
     }
-    IngesterTwitterMessage twitterMessage = (IngesterTwitterMessage) obj;
+    IngelonstelonrTwittelonrMelonssagelon twittelonrMelonssagelon = (IngelonstelonrTwittelonrMelonssagelon) obj;
 
-    if (namedEntityHandler.shouldRetrieve(twitterMessage)) {
-      namedEntityHandler.retrieve(twitterMessage)
-          .onSuccess(Function.cons(result -> {
-            namedEntityHandler.addEntitiesToMessage(twitterMessage, result);
-            emitAndCount(twitterMessage);
+    if (namelondelonntityHandlelonr.shouldRelontrielonvelon(twittelonrMelonssagelon)) {
+      namelondelonntityHandlelonr.relontrielonvelon(twittelonrMelonssagelon)
+          .onSuccelonss(Function.cons(relonsult -> {
+            namelondelonntityHandlelonr.addelonntitielonsToMelonssagelon(twittelonrMelonssagelon, relonsult);
+            elonmitAndCount(twittelonrMelonssagelon);
           }))
-          .onFailure(Function.cons(throwable -> {
-            namedEntityHandler.incrementErrorCount();
-            emitAndCount(twitterMessage);
+          .onFailurelon(Function.cons(throwablelon -> {
+            namelondelonntityHandlelonr.increlonmelonntelonrrorCount();
+            elonmitAndCount(twittelonrMelonssagelon);
           }));
-    } else {
-      emitAndCount(twitterMessage);
+    } elonlselon {
+      elonmitAndCount(twittelonrMelonssagelon);
     }
   }
 
-  @Override
-  protected CompletableFuture<IngesterTwitterMessage> innerRunStageV2(IngesterTwitterMessage
-                                                                      message) {
-    CompletableFuture<IngesterTwitterMessage> cf = new CompletableFuture<>();
+  @Ovelonrridelon
+  protelonctelond ComplelontablelonFuturelon<IngelonstelonrTwittelonrMelonssagelon> innelonrRunStagelonV2(IngelonstelonrTwittelonrMelonssagelon
+                                                                      melonssagelon) {
+    ComplelontablelonFuturelon<IngelonstelonrTwittelonrMelonssagelon> cf = nelonw ComplelontablelonFuturelon<>();
 
-    if (namedEntityHandler.shouldRetrieve(message)) {
-      namedEntityHandler.retrieve(message)
-          .onSuccess(Function.cons(result -> {
-            namedEntityHandler.addEntitiesToMessage(message, result);
-            cf.complete(message);
+    if (namelondelonntityHandlelonr.shouldRelontrielonvelon(melonssagelon)) {
+      namelondelonntityHandlelonr.relontrielonvelon(melonssagelon)
+          .onSuccelonss(Function.cons(relonsult -> {
+            namelondelonntityHandlelonr.addelonntitielonsToMelonssagelon(melonssagelon, relonsult);
+            cf.complelontelon(melonssagelon);
           }))
-          .onFailure(Function.cons(throwable -> {
-            namedEntityHandler.incrementErrorCount();
-            cf.complete(message);
+          .onFailurelon(Function.cons(throwablelon -> {
+            namelondelonntityHandlelonr.increlonmelonntelonrrorCount();
+            cf.complelontelon(melonssagelon);
           }));
-    } else {
-      cf.complete(message);
+    } elonlselon {
+      cf.complelontelon(melonssagelon);
     }
 
-    return cf;
+    relonturn cf;
   }
 }

@@ -1,30 +1,30 @@
-package com.twitter.recosinjector.clients
+packagelon com.twittelonr.reloncosinjelonctor.clielonnts
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.tweetypie.TweetyPie.{TweetyPieException, TweetyPieResult}
-import com.twitter.storehaus.ReadableStore
-import com.twitter.tweetypie.thriftscala.Tweet
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.twelonelontypielon.TwelonelontyPielon.{TwelonelontyPielonelonxcelonption, TwelonelontyPielonRelonsult}
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.twelonelontypielon.thriftscala.Twelonelont
+import com.twittelonr.util.Futurelon
 
-class Tweetypie(
-  tweetyPieStore: ReadableStore[Long, TweetyPieResult]
+class Twelonelontypielon(
+  twelonelontyPielonStorelon: RelonadablelonStorelon[Long, TwelonelontyPielonRelonsult]
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val failureStats = stats.scope("getTweetFailure")
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val failurelonStats = stats.scopelon("gelontTwelonelontFailurelon")
 
-  def getTweet(tweetId: Long): Future[Option[Tweet]] = {
-    tweetyPieStore
-      .get(tweetId)
-      .map { _.map(_.tweet) }
-      .rescue {
-        case e: TweetyPieException =>
-          // Usually results from trying to query a protected or unsafe tweet
-          failureStats.scope("TweetyPieException").counter(e.result.tweetState.toString).incr()
-          Future.None
-        case e =>
-          failureStats.counter(e.getClass.getSimpleName).incr()
-          Future.None
+  delonf gelontTwelonelont(twelonelontId: Long): Futurelon[Option[Twelonelont]] = {
+    twelonelontyPielonStorelon
+      .gelont(twelonelontId)
+      .map { _.map(_.twelonelont) }
+      .relonscuelon {
+        caselon elon: TwelonelontyPielonelonxcelonption =>
+          // Usually relonsults from trying to quelonry a protelonctelond or unsafelon twelonelont
+          failurelonStats.scopelon("TwelonelontyPielonelonxcelonption").countelonr(elon.relonsult.twelonelontStatelon.toString).incr()
+          Futurelon.Nonelon
+        caselon elon =>
+          failurelonStats.countelonr(elon.gelontClass.gelontSimplelonNamelon).incr()
+          Futurelon.Nonelon
       }
   }
 }

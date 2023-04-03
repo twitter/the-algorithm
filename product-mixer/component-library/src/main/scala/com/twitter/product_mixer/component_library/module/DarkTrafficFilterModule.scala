@@ -1,27 +1,27 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.twitter.decider.Decider
-import com.twitter.decider.RandomRecipient
-import com.twitter.finagle.thrift.ClientId
-import com.twitter.finagle.thrift.service.Filterable
-import com.twitter.finagle.thrift.service.ReqRepServicePerEndpointBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.Injector
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.thrift.modules.ReqRepDarkTrafficFilterModule
-import scala.reflect.ClassTag
+import com.twittelonr.deloncidelonr.Deloncidelonr
+import com.twittelonr.deloncidelonr.RandomReloncipielonnt
+import com.twittelonr.finaglelon.thrift.ClielonntId
+import com.twittelonr.finaglelon.thrift.selonrvicelon.Filtelonrablelon
+import com.twittelonr.finaglelon.thrift.selonrvicelon.RelonqRelonpSelonrvicelonPelonrelonndpointBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.annotations.Flags
+import com.twittelonr.injelonct.thrift.modulelons.RelonqRelonpDarkTrafficFiltelonrModulelon
+import scala.relonflelonct.ClassTag
 
-class DarkTrafficFilterModule[MethodIface <: Filterable[MethodIface]: ClassTag](
-  implicit serviceBuilder: ReqRepServicePerEndpointBuilder[MethodIface])
-    extends ReqRepDarkTrafficFilterModule
-    with MtlsClient {
+class DarkTrafficFiltelonrModulelon[MelonthodIfacelon <: Filtelonrablelon[MelonthodIfacelon]: ClassTag](
+  implicit selonrvicelonBuildelonr: RelonqRelonpSelonrvicelonPelonrelonndpointBuildelonr[MelonthodIfacelon])
+    elonxtelonnds RelonqRelonpDarkTrafficFiltelonrModulelon
+    with MtlsClielonnt {
 
-  override protected def enableSampling(injector: Injector): Any => Boolean = _ => {
-    val decider = injector.instance[Decider]
-    val deciderKey =
-      injector.instance[String](Flags.named("thrift.dark.traffic.filter.decider_key"))
-    val fromProxy = ClientId.current
-      .map(_.name).exists(name => name.contains("diffy") || name.contains("darktraffic"))
-    !fromProxy && decider.isAvailable(deciderKey, recipient = Some(RandomRecipient))
+  ovelonrridelon protelonctelond delonf elonnablelonSampling(injelonctor: Injelonctor): Any => Boolelonan = _ => {
+    val deloncidelonr = injelonctor.instancelon[Deloncidelonr]
+    val deloncidelonrKelony =
+      injelonctor.instancelon[String](Flags.namelond("thrift.dark.traffic.filtelonr.deloncidelonr_kelony"))
+    val fromProxy = ClielonntId.currelonnt
+      .map(_.namelon).elonxists(namelon => namelon.contains("diffy") || namelon.contains("darktraffic"))
+    !fromProxy && deloncidelonr.isAvailablelon(deloncidelonrKelony, reloncipielonnt = Somelon(RandomReloncipielonnt))
   }
 }

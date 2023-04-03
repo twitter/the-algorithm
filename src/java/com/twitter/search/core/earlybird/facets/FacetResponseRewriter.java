@@ -1,16 +1,16 @@
-package com.twitter.search.core.earlybird.facets;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.facelonts;
 
-import com.twitter.search.common.facets.thriftjava.FacetResponse;
+import com.twittelonr.selonarch.common.facelonts.thriftjava.FacelontRelonsponselon;
 
 /**
- * Rewrite facet responses
+ * Relonwritelon facelont relonsponselons
  */
-public interface FacetResponseRewriter {
+public intelonrfacelon FacelontRelonsponselonRelonwritelonr {
   /**
-   * Do the response rewrite
+   * Do thelon relonsponselon relonwritelon
    *
-   * @param facetResponse the response before the rewriting
-   * @return the rewrited response
+   * @param facelontRelonsponselon thelon relonsponselon belonforelon thelon relonwriting
+   * @relonturn thelon relonwritelond relonsponselon
    */
-  FacetResponse rewrite(FacetResponse facetResponse);
+  FacelontRelonsponselon relonwritelon(FacelontRelonsponselon facelontRelonsponselon);
 }

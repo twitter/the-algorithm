@@ -1,35 +1,35 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator.offline_aggregates
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator.offlinelon_aggrelongatelons
 
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregateMetadataRepository
-import com.twitter.home_mixer.param.HomeMixerInjectionNames.TimelineAggregatePartARepository
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.servo.repository.Repository
-import com.twitter.timelines.data_processing.jobs.timeline_ranking_user_features.TimelinesPartAStoreRegister
-import com.twitter.timelines.data_processing.ml_util.aggregation_framework.StoreConfig
-import com.twitter.timelines.suggests.common.dense_data_record.thriftscala.DenseFeatureMetadata
-import com.twitter.user_session_store.thriftjava.UserSession
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TimelonlinelonAggrelongatelonMelontadataRelonpository
+import com.twittelonr.homelon_mixelonr.param.HomelonMixelonrInjelonctionNamelons.TimelonlinelonAggrelongatelonPartARelonpository
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.selonrvo.relonpository.Relonpository
+import com.twittelonr.timelonlinelons.data_procelonssing.jobs.timelonlinelon_ranking_uselonr_felonaturelons.TimelonlinelonsPartAStorelonRelongistelonr
+import com.twittelonr.timelonlinelons.data_procelonssing.ml_util.aggrelongation_framelonwork.StorelonConfig
+import com.twittelonr.timelonlinelons.suggelonsts.common.delonnselon_data_reloncord.thriftscala.DelonnselonFelonaturelonMelontadata
+import com.twittelonr.uselonr_selonssion_storelon.thriftjava.UselonrSelonssion
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-object PartAAggregateRootFeature extends BaseAggregateRootFeature {
-  override val aggregateStores: Set[StoreConfig[_]] = TimelinesPartAStoreRegister.allStores
+objelonct PartAAggrelongatelonRootFelonaturelon elonxtelonnds BaselonAggrelongatelonRootFelonaturelon {
+  ovelonrridelon val aggrelongatelonStorelons: Selont[StorelonConfig[_]] = TimelonlinelonsPartAStorelonRelongistelonr.allStorelons
 }
 
-@Singleton
-class PartAAggregateQueryFeatureHydrator @Inject() (
-  @Named(TimelineAggregatePartARepository)
-  repository: Repository[Long, Option[UserSession]],
-  @Named(TimelineAggregateMetadataRepository)
-  metadataRepository: Repository[Int, Option[DenseFeatureMetadata]])
-    extends BaseAggregateQueryFeatureHydrator(
-      repository,
-      metadataRepository,
-      PartAAggregateRootFeature
+@Singlelonton
+class PartAAggrelongatelonQuelonryFelonaturelonHydrator @Injelonct() (
+  @Namelond(TimelonlinelonAggrelongatelonPartARelonpository)
+  relonpository: Relonpository[Long, Option[UselonrSelonssion]],
+  @Namelond(TimelonlinelonAggrelongatelonMelontadataRelonpository)
+  melontadataRelonpository: Relonpository[Int, Option[DelonnselonFelonaturelonMelontadata]])
+    elonxtelonnds BaselonAggrelongatelonQuelonryFelonaturelonHydrator(
+      relonpository,
+      melontadataRelonpository,
+      PartAAggrelongatelonRootFelonaturelon
     ) {
 
-  override val identifier: FeatureHydratorIdentifier =
-    FeatureHydratorIdentifier("PartAAggregateQuery")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr =
+    FelonaturelonHydratorIdelonntifielonr("PartAAggrelongatelonQuelonry")
 
-  override val features = Set(PartAAggregateRootFeature)
+  ovelonrridelon val felonaturelons = Selont(PartAAggrelongatelonRootFelonaturelon)
 }

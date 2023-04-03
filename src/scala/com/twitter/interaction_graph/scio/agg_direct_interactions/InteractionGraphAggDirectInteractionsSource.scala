@@ -1,51 +1,51 @@
-package com.twitter.interaction_graph.scio.agg_direct_interactions
+packagelon com.twittelonr.intelonraction_graph.scio.agg_direlonct_intelonractions
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.cde.scio.dal_read.SourceUtil
-import com.twitter.timelineservice.thriftscala.ContextualizedFavoriteEvent
-import com.twitter.twadoop.user.gen.thriftscala.CombinedUser
-import com.twitter.tweetsource.common.thriftscala.UnhydratedFlatTweet
-import com.twitter.tweetypie.thriftscala.TweetMediaTagEvent
-import com.twitter.usersource.snapshot.combined.UsersourceScalaDataset
-import com.twitter.util.Duration
-import org.joda.time.Interval
-import twadoop_config.configuration.log_categories.group.timeline.TimelineServiceFavoritesScalaDataset
-import twadoop_config.configuration.log_categories.group.tweetypie.TweetypieMediaTagEventsScalaDataset
-import tweetsource.common.UnhydratedFlatScalaDataset
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.belonam.job.SelonrvicelonIdelonntifielonrOptions
+import com.twittelonr.cdelon.scio.dal_relonad.SourcelonUtil
+import com.twittelonr.timelonlinelonselonrvicelon.thriftscala.ContelonxtualizelondFavoritelonelonvelonnt
+import com.twittelonr.twadoop.uselonr.gelonn.thriftscala.CombinelondUselonr
+import com.twittelonr.twelonelontsourcelon.common.thriftscala.UnhydratelondFlatTwelonelont
+import com.twittelonr.twelonelontypielon.thriftscala.TwelonelontMelondiaTagelonvelonnt
+import com.twittelonr.uselonrsourcelon.snapshot.combinelond.UselonrsourcelonScalaDataselont
+import com.twittelonr.util.Duration
+import org.joda.timelon.Intelonrval
+import twadoop_config.configuration.log_catelongorielons.group.timelonlinelon.TimelonlinelonSelonrvicelonFavoritelonsScalaDataselont
+import twadoop_config.configuration.log_catelongorielons.group.twelonelontypielon.TwelonelontypielonMelondiaTagelonvelonntsScalaDataselont
+import twelonelontsourcelon.common.UnhydratelondFlatScalaDataselont
 
-case class InteractionGraphAggDirectInteractionsSource(
-  pipelineOptions: InteractionGraphAggDirectInteractionsOption
+caselon class IntelonractionGraphAggDirelonctIntelonractionsSourcelon(
+  pipelonlinelonOptions: IntelonractionGraphAggDirelonctIntelonractionsOption
 )(
-  implicit sc: ScioContext) {
-  val dalEnvironment: String = pipelineOptions
-    .as(classOf[ServiceIdentifierOptions])
-    .getEnvironment()
+  implicit sc: ScioContelonxt) {
+  val dalelonnvironmelonnt: String = pipelonlinelonOptions
+    .as(classOf[SelonrvicelonIdelonntifielonrOptions])
+    .gelontelonnvironmelonnt()
 
-  def readFavorites(dateInterval: Interval): SCollection[ContextualizedFavoriteEvent] =
-    SourceUtil.readDALDataset[ContextualizedFavoriteEvent](
-      dataset = TimelineServiceFavoritesScalaDataset,
-      interval = dateInterval,
-      dalEnvironment = dalEnvironment
+  delonf relonadFavoritelons(datelonIntelonrval: Intelonrval): SCollelonction[ContelonxtualizelondFavoritelonelonvelonnt] =
+    SourcelonUtil.relonadDALDataselont[ContelonxtualizelondFavoritelonelonvelonnt](
+      dataselont = TimelonlinelonSelonrvicelonFavoritelonsScalaDataselont,
+      intelonrval = datelonIntelonrval,
+      dalelonnvironmelonnt = dalelonnvironmelonnt
     )
 
-  def readPhotoTags(dateInterval: Interval): SCollection[TweetMediaTagEvent] =
-    SourceUtil.readDALDataset[TweetMediaTagEvent](
-      dataset = TweetypieMediaTagEventsScalaDataset,
-      interval = dateInterval,
-      dalEnvironment = dalEnvironment)
+  delonf relonadPhotoTags(datelonIntelonrval: Intelonrval): SCollelonction[TwelonelontMelondiaTagelonvelonnt] =
+    SourcelonUtil.relonadDALDataselont[TwelonelontMelondiaTagelonvelonnt](
+      dataselont = TwelonelontypielonMelondiaTagelonvelonntsScalaDataselont,
+      intelonrval = datelonIntelonrval,
+      dalelonnvironmelonnt = dalelonnvironmelonnt)
 
-  def readTweetSource(dateInterval: Interval): SCollection[UnhydratedFlatTweet] =
-    SourceUtil.readDALDataset[UnhydratedFlatTweet](
-      dataset = UnhydratedFlatScalaDataset,
-      interval = dateInterval,
-      dalEnvironment = dalEnvironment)
+  delonf relonadTwelonelontSourcelon(datelonIntelonrval: Intelonrval): SCollelonction[UnhydratelondFlatTwelonelont] =
+    SourcelonUtil.relonadDALDataselont[UnhydratelondFlatTwelonelont](
+      dataselont = UnhydratelondFlatScalaDataselont,
+      intelonrval = datelonIntelonrval,
+      dalelonnvironmelonnt = dalelonnvironmelonnt)
 
-  def readCombinedUsers(): SCollection[CombinedUser] =
-    SourceUtil.readMostRecentSnapshotNoOlderThanDALDataset[CombinedUser](
-      dataset = UsersourceScalaDataset,
-      noOlderThan = Duration.fromDays(5),
-      dalEnvironment = dalEnvironment
+  delonf relonadCombinelondUselonrs(): SCollelonction[CombinelondUselonr] =
+    SourcelonUtil.relonadMostReloncelonntSnapshotNoOldelonrThanDALDataselont[CombinelondUselonr](
+      dataselont = UselonrsourcelonScalaDataselont,
+      noOldelonrThan = Duration.fromDays(5),
+      dalelonnvironmelonnt = dalelonnvironmelonnt
     )
 }

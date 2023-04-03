@@ -1,101 +1,101 @@
-package com.twitter.recos.user_video_graph
+packagelon com.twittelonr.reloncos.uselonr_videlono_graph
 
-import com.twitter.finagle.Service
-import com.twitter.finagle.http.Request
-import com.twitter.finagle.http.Response
-import com.twitter.finagle.http.Status
-import com.twitter.finagle.http.Version
-import com.twitter.frigate.common.util.HTMLUtil
-import com.twitter.graphjet.algorithms.TweetIDMask
-import com.twitter.graphjet.bipartite.segment.BipartiteGraphSegment
-import com.twitter.graphjet.bipartite.MultiSegmentIterator
-import com.twitter.graphjet.bipartite.MultiSegmentPowerLawBipartiteGraph
-import com.twitter.logging.Logger
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.Selonrvicelon
+import com.twittelonr.finaglelon.http.Relonquelonst
+import com.twittelonr.finaglelon.http.Relonsponselon
+import com.twittelonr.finaglelon.http.Status
+import com.twittelonr.finaglelon.http.Velonrsion
+import com.twittelonr.frigatelon.common.util.HTMLUtil
+import com.twittelonr.graphjelont.algorithms.TwelonelontIDMask
+import com.twittelonr.graphjelont.bipartitelon.selongmelonnt.BipartitelonGraphSelongmelonnt
+import com.twittelonr.graphjelont.bipartitelon.MultiSelongmelonntItelonrator
+import com.twittelonr.graphjelont.bipartitelon.MultiSelongmelonntPowelonrLawBipartitelonGraph
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.util.Futurelon
 import java.util.Random
-import scala.collection.mutable.ListBuffer
+import scala.collelonction.mutablelon.ListBuffelonr
 
-class UserTweetGraphEdgeHttpHandler(graph: MultiSegmentPowerLawBipartiteGraph)
-    extends Service[Request, Response] {
-  private val log = Logger("UserTweetGraphEdgeHttpHandler")
-  private val tweetIDMask = new TweetIDMask()
+class UselonrTwelonelontGraphelondgelonHttpHandlelonr(graph: MultiSelongmelonntPowelonrLawBipartitelonGraph)
+    elonxtelonnds Selonrvicelon[Relonquelonst, Relonsponselon] {
+  privatelon val log = Loggelonr("UselonrTwelonelontGraphelondgelonHttpHandlelonr")
+  privatelon val twelonelontIDMask = nelonw TwelonelontIDMask()
 
-  def getCardInfo(rightNode: Long): String = {
-    val bits: Long = rightNode & TweetIDMask.METAMASK
+  delonf gelontCardInfo(rightNodelon: Long): String = {
+    val bits: Long = rightNodelon & TwelonelontIDMask.MelonTAMASK
     bits match {
-      case TweetIDMask.PHOTO => "Photo"
-      case TweetIDMask.PLAYER => "Video"
-      case TweetIDMask.SUMMARY => "Url"
-      case TweetIDMask.PROMOTION => "Promotion"
-      case _ => "Regular"
+      caselon TwelonelontIDMask.PHOTO => "Photo"
+      caselon TwelonelontIDMask.PLAYelonR => "Videlono"
+      caselon TwelonelontIDMask.SUMMARY => "Url"
+      caselon TwelonelontIDMask.PROMOTION => "Promotion"
+      caselon _ => "Relongular"
     }
   }
 
-  private def getUserEdges(userId: Long): ListBuffer[Edge] = {
-    val random = new Random()
-    val iterator =
+  privatelon delonf gelontUselonrelondgelons(uselonrId: Long): ListBuffelonr[elondgelon] = {
+    val random = nelonw Random()
+    val itelonrator =
       graph
-        .getRandomLeftNodeEdges(userId, 10, random).asInstanceOf[MultiSegmentIterator[
-          BipartiteGraphSegment
+        .gelontRandomLelonftNodelonelondgelons(uselonrId, 10, random).asInstancelonOf[MultiSelongmelonntItelonrator[
+          BipartitelonGraphSelongmelonnt
         ]]
-    val tweets = new ListBuffer[Edge]()
-    if (iterator != null) {
-      while (iterator.hasNext) {
-        val rightNode = iterator.nextLong()
-        val edgeType = iterator.currentEdgeType()
-        tweets += Edge(
-          tweetIDMask.restore(rightNode),
-          UserVideoEdgeTypeMask(edgeType).toString,
-          getCardInfo(rightNode),
+    val twelonelonts = nelonw ListBuffelonr[elondgelon]()
+    if (itelonrator != null) {
+      whilelon (itelonrator.hasNelonxt) {
+        val rightNodelon = itelonrator.nelonxtLong()
+        val elondgelonTypelon = itelonrator.currelonntelondgelonTypelon()
+        twelonelonts += elondgelon(
+          twelonelontIDMask.relonstorelon(rightNodelon),
+          UselonrVidelonoelondgelonTypelonMask(elondgelonTypelon).toString,
+          gelontCardInfo(rightNodelon),
         )
       }
     }
-    tweets
+    twelonelonts
   }
 
-  def apply(httpRequest: Request): Future[Response] = {
-    log.info("UserTweetGraphEdgeHttpHandler params: " + httpRequest.getParams())
-    val time0 = System.currentTimeMillis
+  delonf apply(httpRelonquelonst: Relonquelonst): Futurelon[Relonsponselon] = {
+    log.info("UselonrTwelonelontGraphelondgelonHttpHandlelonr params: " + httpRelonquelonst.gelontParams())
+    val timelon0 = Systelonm.currelonntTimelonMillis
 
-    val tweetId = httpRequest.getLongParam("tweetId")
-    val queryTweetDegree = graph.getRightNodeDegree(tweetId)
-    val tweetEdges = getTweetEdges(tweetId)
+    val twelonelontId = httpRelonquelonst.gelontLongParam("twelonelontId")
+    val quelonryTwelonelontDelongrelonelon = graph.gelontRightNodelonDelongrelonelon(twelonelontId)
+    val twelonelontelondgelons = gelontTwelonelontelondgelons(twelonelontId)
 
-    val userId = httpRequest.getLongParam("userId")
-    val queryUserDegree = graph.getLeftNodeDegree(userId)
+    val uselonrId = httpRelonquelonst.gelontLongParam("uselonrId")
+    val quelonryUselonrDelongrelonelon = graph.gelontLelonftNodelonDelongrelonelon(uselonrId)
 
-    val response = Response(Version.Http11, Status.Ok)
-    val userEdges = getUserEdges(userId)
-    val elapsed = System.currentTimeMillis - time0
-    val comment = ("Please specify \"userId\"  or \"tweetId\" param." +
-      "\n query tweet degree = " + queryTweetDegree +
-      "\n query user degree = " + queryUserDegree +
-      "\n done in %d ms<br>").format(elapsed)
-    val tweetContent = userEdges.toList
-      .map { edge =>
-        s"<b>TweetId</b>: ${edge.tweetId},\n<b>Action type</b>: ${edge.actionType},\n<b>Card type</b>: ${edge.cardType}"
-          .replaceAll("\n", " ")
+    val relonsponselon = Relonsponselon(Velonrsion.Http11, Status.Ok)
+    val uselonrelondgelons = gelontUselonrelondgelons(uselonrId)
+    val elonlapselond = Systelonm.currelonntTimelonMillis - timelon0
+    val commelonnt = ("Plelonaselon speloncify \"uselonrId\"  or \"twelonelontId\" param." +
+      "\n quelonry twelonelont delongrelonelon = " + quelonryTwelonelontDelongrelonelon +
+      "\n quelonry uselonr delongrelonelon = " + quelonryUselonrDelongrelonelon +
+      "\n donelon in %d ms<br>").format(elonlapselond)
+    val twelonelontContelonnt = uselonrelondgelons.toList
+      .map { elondgelon =>
+        s"<b>TwelonelontId</b>: ${elondgelon.twelonelontId},\n<b>Action typelon</b>: ${elondgelon.actionTypelon},\n<b>Card typelon</b>: ${elondgelon.cardTypelon}"
+          .relonplacelonAll("\n", " ")
       }.mkString("\n<br>\n")
 
-    response.setContentString(
-      HTMLUtil.html.replace("XXXXX", comment + tweetContent + "\n<hr/>\n" + tweetEdges.toString()))
-    Future.value(response)
+    relonsponselon.selontContelonntString(
+      HTMLUtil.html.relonplacelon("XXXXX", commelonnt + twelonelontContelonnt + "\n<hr/>\n" + twelonelontelondgelons.toString()))
+    Futurelon.valuelon(relonsponselon)
   }
 
-  private def getTweetEdges(tweetId: Long): ListBuffer[Long] = {
-    val random = new Random()
-    val iterator =
+  privatelon delonf gelontTwelonelontelondgelons(twelonelontId: Long): ListBuffelonr[Long] = {
+    val random = nelonw Random()
+    val itelonrator =
       graph
-        .getRandomRightNodeEdges(tweetId, 500, random).asInstanceOf[MultiSegmentIterator[
-          BipartiteGraphSegment
+        .gelontRandomRightNodelonelondgelons(twelonelontId, 500, random).asInstancelonOf[MultiSelongmelonntItelonrator[
+          BipartitelonGraphSelongmelonnt
         ]]
-    val terms = new ListBuffer[Long]()
-    if (iterator != null) {
-      while (iterator.hasNext) { terms += iterator.nextLong() }
+    val telonrms = nelonw ListBuffelonr[Long]()
+    if (itelonrator != null) {
+      whilelon (itelonrator.hasNelonxt) { telonrms += itelonrator.nelonxtLong() }
     }
-    terms.distinct
+    telonrms.distinct
   }
 
 }
 
-case class Edge(tweetId: Long, actionType: String, cardType: String)
+caselon class elondgelon(twelonelontId: Long, actionTypelon: String, cardTypelon: String)

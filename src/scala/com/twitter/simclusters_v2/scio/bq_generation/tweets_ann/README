@@ -1,95 +1,95 @@
-To run iikf-tweets-ann-adhoc-job (adhoc):
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-tweets-ann-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-tweets-ann-adhoc-job.d6w \
-  --jar dist/iikf-tweets-ann-adhoc-job.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-03-28" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-tweets-ann-adhoc-job" --ignore-existing
+To run iikf-twelonelonts-ann-adhoc-job (adhoc):
+bin/d6w crelonatelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/iikf-twelonelonts-ann-adhoc-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/twelonelonts_ann/iikf-twelonelonts-ann-adhoc-job.d6w \
+  --jar dist/iikf-twelonelonts-ann-adhoc-job.jar \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=your_ldap \
+  --bind=profilelon.datelon="2022-03-28" \
+  --bind=profilelon.machinelon="n2-highmelonm-4" \
+  --bind=profilelon.job_namelon="iikf-twelonelonts-ann-adhoc-job" --ignorelon-elonxisting
 
-To run iikf-hl-8-el-50-tweets-ann-adhoc-job (adhoc):
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-8-el-50-tweets-ann-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-8-el-50-tweets-ann-adhoc-job.d6w \
-  --jar dist/iikf-hl-8-el-50-tweets-ann-adhoc-job.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-03-28" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-8-el-50-tweets-ann-adhoc-job" --ignore-existing
+To run iikf-hl-8-elonl-50-twelonelonts-ann-adhoc-job (adhoc):
+bin/d6w crelonatelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/iikf-hl-8-elonl-50-twelonelonts-ann-adhoc-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/twelonelonts_ann/iikf-hl-8-elonl-50-twelonelonts-ann-adhoc-job.d6w \
+  --jar dist/iikf-hl-8-elonl-50-twelonelonts-ann-adhoc-job.jar \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=your_ldap \
+  --bind=profilelon.datelon="2022-03-28" \
+  --bind=profilelon.machinelon="n2-highmelonm-4" \
+  --bind=profilelon.job_namelon="iikf-hl-8-elonl-50-twelonelonts-ann-adhoc-job" --ignorelon-elonxisting
 
-To run mts-consumer-embeddings-tweets-ann-adhoc-job (adhoc)
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/mts-consumer-embeddings-tweets-ann-adhoc-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/mts-consumer-embeddings-tweets-ann-adhoc-job.d6w \
-  --jar dist/mts-consumer-embeddings-tweets-ann-adhoc-job.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=your_ldap \
-  --bind=profile.date="2022-03-28" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="mts-consumer-embeddings-tweets-ann-adhoc-job" --ignore-existing
+To run mts-consumelonr-elonmbelonddings-twelonelonts-ann-adhoc-job (adhoc)
+bin/d6w crelonatelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/mts-consumelonr-elonmbelonddings-twelonelonts-ann-adhoc-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/twelonelonts_ann/mts-consumelonr-elonmbelonddings-twelonelonts-ann-adhoc-job.d6w \
+  --jar dist/mts-consumelonr-elonmbelonddings-twelonelonts-ann-adhoc-job.jar \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=your_ldap \
+  --bind=profilelon.datelon="2022-03-28" \
+  --bind=profilelon.machinelon="n2-highmelonm-4" \
+  --bind=profilelon.job_namelon="mts-consumelonr-elonmbelonddings-twelonelonts-ann-adhoc-job" --ignorelon-elonxisting
 
 
-To schedule iikf-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-tweets-ann-batch-job"
+To schelondulelon iikf-twelonelonts-ann-batch-job (batch)
+bin/d6w schelondulelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/iikf-twelonelonts-ann-batch-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/twelonelonts_ann/iikf-twelonelonts-ann-batch-job.d6w \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.datelon="2022-03-26" \
+  --bind=profilelon.machinelon="n2-highmelonm-4" \
+  --bind=profilelon.job_namelon="iikf-twelonelonts-ann-batch-job"
 
-To schedule iikf-hl-0-el-15-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-0-el-15-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-0-el-15-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-0-el-15-tweets-ann-batch-job"
+To schelondulelon iikf-hl-0-elonl-15-twelonelonts-ann-batch-job (batch)
+bin/d6w schelondulelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/iikf-hl-0-elonl-15-twelonelonts-ann-batch-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/twelonelonts_ann/iikf-hl-0-elonl-15-twelonelonts-ann-batch-job.d6w \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.datelon="2022-03-26" \
+  --bind=profilelon.machinelon="n2-highmelonm-4" \
+  --bind=profilelon.job_namelon="iikf-hl-0-elonl-15-twelonelonts-ann-batch-job"
 
-To schedule iikf-hl-2-el-15-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-2-el-15-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-2-el-15-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-2-el-15-tweets-ann-batch-job"
+To schelondulelon iikf-hl-2-elonl-15-twelonelonts-ann-batch-job (batch)
+bin/d6w schelondulelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/iikf-hl-2-elonl-15-twelonelonts-ann-batch-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/twelonelonts_ann/iikf-hl-2-elonl-15-twelonelonts-ann-batch-job.d6w \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.datelon="2022-03-26" \
+  --bind=profilelon.machinelon="n2-highmelonm-4" \
+  --bind=profilelon.job_namelon="iikf-hl-2-elonl-15-twelonelonts-ann-batch-job"
 
-To schedule iikf-hl-2-el-50-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-2-el-50-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-2-el-50-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-2-el-50-tweets-ann-batch-job"
+To schelondulelon iikf-hl-2-elonl-50-twelonelonts-ann-batch-job (batch)
+bin/d6w schelondulelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/iikf-hl-2-elonl-50-twelonelonts-ann-batch-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/twelonelonts_ann/iikf-hl-2-elonl-50-twelonelonts-ann-batch-job.d6w \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.datelon="2022-03-26" \
+  --bind=profilelon.machinelon="n2-highmelonm-4" \
+  --bind=profilelon.job_namelon="iikf-hl-2-elonl-50-twelonelonts-ann-batch-job"
 
-To schedule iikf-hl-8-el-50-tweets-ann-batch-job (batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/iikf-hl-8-el-50-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/iikf-hl-8-el-50-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="iikf-hl-8-el-50-tweets-ann-batch-job"
+To schelondulelon iikf-hl-8-elonl-50-twelonelonts-ann-batch-job (batch)
+bin/d6w schelondulelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/iikf-hl-8-elonl-50-twelonelonts-ann-batch-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/twelonelonts_ann/iikf-hl-8-elonl-50-twelonelonts-ann-batch-job.d6w \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.datelon="2022-03-26" \
+  --bind=profilelon.machinelon="n2-highmelonm-4" \
+  --bind=profilelon.job_namelon="iikf-hl-8-elonl-50-twelonelonts-ann-batch-job"
 
-To schedule mts-consumer-embeddings-tweets-ann-batch-job(batch)
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/mts-consumer-embeddings-tweets-ann-batch-job \
-  src/scala/com/twitter/simclusters_v2/scio/bq_generation/tweets_ann/mts-consumer-embeddings-tweets-ann-batch-job.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=cassowary \
-  --bind=profile.date="2022-03-26" \
-  --bind=profile.machine="n2-highmem-4" \
-  --bind=profile.job_name="mts-consumer-embeddings-tweets-ann-batch-job"
+To schelondulelon mts-consumelonr-elonmbelonddings-twelonelonts-ann-batch-job(batch)
+bin/d6w schelondulelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/mts-consumelonr-elonmbelonddings-twelonelonts-ann-batch-job \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/bq_gelonnelonration/twelonelonts_ann/mts-consumelonr-elonmbelonddings-twelonelonts-ann-batch-job.d6w \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=cassowary \
+  --bind=profilelon.datelon="2022-03-26" \
+  --bind=profilelon.machinelon="n2-highmelonm-4" \
+  --bind=profilelon.job_namelon="mts-consumelonr-elonmbelonddings-twelonelonts-ann-batch-job"
 
 

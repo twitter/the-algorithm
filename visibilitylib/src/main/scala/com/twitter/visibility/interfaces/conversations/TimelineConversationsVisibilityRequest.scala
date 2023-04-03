@@ -1,20 +1,20 @@
-package com.twitter.visibility.interfaces.conversations
+packagelon com.twittelonr.visibility.intelonrfacelons.convelonrsations
 
-import com.twitter.gizmoduck.thriftscala.Label
-import com.twitter.gizmoduck.thriftscala.LabelValue
-import com.twitter.servo.repository.KeyValueResult
-import com.twitter.spam.rtf.thriftscala.SafetyLabel
-import com.twitter.spam.rtf.thriftscala.SafetyLabelType
-import com.twitter.visibility.models.ViewerContext
+import com.twittelonr.gizmoduck.thriftscala.Labelonl
+import com.twittelonr.gizmoduck.thriftscala.LabelonlValuelon
+import com.twittelonr.selonrvo.relonpository.KelonyValuelonRelonsult
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonl
+import com.twittelonr.spam.rtf.thriftscala.SafelontyLabelonlTypelon
+import com.twittelonr.visibility.modelonls.VielonwelonrContelonxt
 
-case class TimelineConversationsVisibilityRequest(
-  conversationId: Long,
-  tweetIds: Seq[Long],
-  viewerContext: ViewerContext,
-  minimalSectioningOnly: Boolean = false,
-  prefetchedSafetyLabels: Option[KeyValueResult[Long, Map[SafetyLabelType, SafetyLabel]]] = None,
-  prefetchedTweetAuthorUserLabels: Option[KeyValueResult[Long, Map[LabelValue, Label]]] = None,
-  innerCircleOfFriendsRelationships: Option[KeyValueResult[Long, Boolean]] = None,
-  tweetParentIdMap: Option[Map[Long, Option[Long]]] = None,
-  rootAuthorIsVerified: Boolean = false,
-  tweetAuthors: Option[KeyValueResult[Long, Long]] = None)
+caselon class TimelonlinelonConvelonrsationsVisibilityRelonquelonst(
+  convelonrsationId: Long,
+  twelonelontIds: Selonq[Long],
+  vielonwelonrContelonxt: VielonwelonrContelonxt,
+  minimalSelonctioningOnly: Boolelonan = falselon,
+  prelonfelontchelondSafelontyLabelonls: Option[KelonyValuelonRelonsult[Long, Map[SafelontyLabelonlTypelon, SafelontyLabelonl]]] = Nonelon,
+  prelonfelontchelondTwelonelontAuthorUselonrLabelonls: Option[KelonyValuelonRelonsult[Long, Map[LabelonlValuelon, Labelonl]]] = Nonelon,
+  innelonrCirclelonOfFrielonndsRelonlationships: Option[KelonyValuelonRelonsult[Long, Boolelonan]] = Nonelon,
+  twelonelontParelonntIdMap: Option[Map[Long, Option[Long]]] = Nonelon,
+  rootAuthorIsVelonrifielond: Boolelonan = falselon,
+  twelonelontAuthors: Option[KelonyValuelonRelonsult[Long, Long]] = Nonelon)

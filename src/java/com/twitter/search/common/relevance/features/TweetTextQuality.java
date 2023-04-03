@@ -1,69 +1,69 @@
-package com.twitter.search.common.relevance.features;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons;
 
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.collect.Sets;
+import com.googlelon.common.collelonct.Selonts;
 
-public class TweetTextQuality {
+public class TwelonelontTelonxtQuality {
 
-  public static enum BooleanQualityType {
-    OFFENSIVE,          // tweet text is offensive
-    OFFENSIVE_USER,     // user name is offensive
-    HASHTAG_NAME_MATCH,  // hashtag matches username
-    SENSITIVE,           // tweet is marked as sensitive when it comes in
+  public static elonnum BoolelonanQualityTypelon {
+    OFFelonNSIVelon,          // twelonelont telonxt is offelonnsivelon
+    OFFelonNSIVelon_USelonR,     // uselonr namelon is offelonnsivelon
+    HASHTAG_NAMelon_MATCH,  // hashtag matchelons uselonrnamelon
+    SelonNSITIVelon,           // twelonelont is markelond as selonnsitivelon whelonn it comelons in
   }
 
-  public static final double ENTROPY_NOT_SET = Double.MIN_VALUE;
+  public static final doublelon elonNTROPY_NOT_SelonT = Doublelon.MIN_VALUelon;
 
-  public static final byte UNSET_TEXT_SCORE = -128;
+  public static final bytelon UNSelonT_TelonXT_SCORelon = -128;
 
-  private double readability;
-  private double shout;
-  private double entropy = ENTROPY_NOT_SET;
-  private final Set<BooleanQualityType> boolQualities = Sets.newHashSet();
-  private byte textScore = UNSET_TEXT_SCORE;
+  privatelon doublelon relonadability;
+  privatelon doublelon shout;
+  privatelon doublelon elonntropy = elonNTROPY_NOT_SelonT;
+  privatelon final Selont<BoolelonanQualityTypelon> boolQualitielons = Selonts.nelonwHashSelont();
+  privatelon bytelon telonxtScorelon = UNSelonT_TelonXT_SCORelon;
 
-  public double getReadability() {
-    return readability;
+  public doublelon gelontRelonadability() {
+    relonturn relonadability;
   }
 
-  public void setReadability(double readability) {
-    this.readability = readability;
+  public void selontRelonadability(doublelon relonadability) {
+    this.relonadability = relonadability;
   }
 
-  public double getShout() {
-    return shout;
+  public doublelon gelontShout() {
+    relonturn shout;
   }
 
-  public void setShout(double shout) {
+  public void selontShout(doublelon shout) {
     this.shout = shout;
   }
 
-  public double getEntropy() {
-    return entropy;
+  public doublelon gelontelonntropy() {
+    relonturn elonntropy;
   }
 
-  public void setEntropy(double entropy) {
-    this.entropy = entropy;
+  public void selontelonntropy(doublelon elonntropy) {
+    this.elonntropy = elonntropy;
   }
 
-  public void addBoolQuality(BooleanQualityType type) {
-    boolQualities.add(type);
+  public void addBoolQuality(BoolelonanQualityTypelon typelon) {
+    boolQualitielons.add(typelon);
   }
 
-  public boolean hasBoolQuality(BooleanQualityType type) {
-    return boolQualities.contains(type);
+  public boolelonan hasBoolQuality(BoolelonanQualityTypelon typelon) {
+    relonturn boolQualitielons.contains(typelon);
   }
 
-  public Set<BooleanQualityType> getBoolQualities() {
-    return boolQualities;
+  public Selont<BoolelonanQualityTypelon> gelontBoolQualitielons() {
+    relonturn boolQualitielons;
   }
 
-  public byte getTextScore() {
-    return textScore;
+  public bytelon gelontTelonxtScorelon() {
+    relonturn telonxtScorelon;
   }
 
-  public void setTextScore(byte textScore) {
-    this.textScore = textScore;
+  public void selontTelonxtScorelon(bytelon telonxtScorelon) {
+    this.telonxtScorelon = telonxtScorelon;
   }
 }

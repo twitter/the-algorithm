@@ -1,245 +1,245 @@
-package com.twitter.search.feature_update_service;
+packagelon com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collelonctions;
 import java.util.List;
-import javax.inject.Inject;
-import javax.inject.Named;
+import javax.injelonct.Injelonct;
+import javax.injelonct.Namelond;
 
-import scala.runtime.BoxedUnit;
+import scala.runtimelon.BoxelondUnit;
 
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.ImmutablelonMap;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.kafka.clients.producer.ProducerRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.kafka.clielonnts.producelonr.ProducelonrReloncord;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.common_internal.text.version.PenguinVersion;
-import com.twitter.decider.Decider;
-import com.twitter.finagle.mux.ClientDiscardedRequestException;
-import com.twitter.finagle.thrift.ClientId;
-import com.twitter.finatra.kafka.producers.BlockingFinagleKafkaProducer;
-import com.twitter.inject.annotations.Flag;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchRateCounter;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEventType;
-import com.twitter.search.feature_update_service.modules.EarlybirdUtilModule;
-import com.twitter.search.feature_update_service.modules.FinagleKafkaProducerModule;
-import com.twitter.search.feature_update_service.stats.FeatureUpdateStats;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateRequest;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponse;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateResponseCode;
-import com.twitter.search.feature_update_service.thriftjava.FeatureUpdateService;
-import com.twitter.search.feature_update_service.util.FeatureUpdateValidator;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.tweetypie.thriftjava.GetTweetFieldsOptions;
-import com.twitter.tweetypie.thriftjava.GetTweetFieldsRequest;
-import com.twitter.tweetypie.thriftjava.TweetInclude;
-import com.twitter.tweetypie.thriftjava.TweetService;
-import com.twitter.tweetypie.thriftjava.TweetVisibilityPolicy;
-import com.twitter.util.ExecutorServiceFuturePool;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
-import com.twitter.util.Futures;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.common_intelonrnal.telonxt.velonrsion.PelonnguinVelonrsion;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.finaglelon.mux.ClielonntDiscardelondRelonquelonstelonxcelonption;
+import com.twittelonr.finaglelon.thrift.ClielonntId;
+import com.twittelonr.finatra.kafka.producelonrs.BlockingFinaglelonKafkaProducelonr;
+import com.twittelonr.injelonct.annotations.Flag;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchRatelonCountelonr;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonntTypelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons.elonarlybirdUtilModulelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.modulelons.FinaglelonKafkaProducelonrModulelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.stats.FelonaturelonUpdatelonStats;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonquelonst;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonsponselon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonRelonsponselonCodelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.thriftjava.FelonaturelonUpdatelonSelonrvicelon;
+import com.twittelonr.selonarch.felonaturelon_updatelon_selonrvicelon.util.FelonaturelonUpdatelonValidator;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.twelonelontypielon.thriftjava.GelontTwelonelontFielonldsOptions;
+import com.twittelonr.twelonelontypielon.thriftjava.GelontTwelonelontFielonldsRelonquelonst;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontIncludelon;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontSelonrvicelon;
+import com.twittelonr.twelonelontypielon.thriftjava.TwelonelontVisibilityPolicy;
+import com.twittelonr.util.elonxeloncutorSelonrvicelonFuturelonPool;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
+import com.twittelonr.util.Futurelons;
 
-import static com.twitter.tweetypie.thriftjava.Tweet._Fields.CORE_DATA;
+import static com.twittelonr.twelonelontypielon.thriftjava.Twelonelont._Fielonlds.CORelon_DATA;
 
-public class FeatureUpdateController implements FeatureUpdateService.ServiceIface {
-  private static final Logger LOG = LoggerFactory.getLogger(FeatureUpdateController.class);
-  private static final Logger REQUEST_LOG =
-      LoggerFactory.getLogger("feature_update_service_requests");
-  private static final String KAFKA_SEND_COUNT_FORMAT = "kafka_%s_partition_%d_send_count";
-  private static final String WRITE_TO_KAFKA_DECIDER_KEY = "write_events_to_kafka_update_events";
-  private static final String WRITE_TO_KAFKA_DECIDER_KEY_REALTIME_CG =
-          "write_events_to_kafka_update_events_realtime_cg";
+public class FelonaturelonUpdatelonControllelonr implelonmelonnts FelonaturelonUpdatelonSelonrvicelon.SelonrvicelonIfacelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(FelonaturelonUpdatelonControllelonr.class);
+  privatelon static final Loggelonr RelonQUelonST_LOG =
+      LoggelonrFactory.gelontLoggelonr("felonaturelon_updatelon_selonrvicelon_relonquelonsts");
+  privatelon static final String KAFKA_SelonND_COUNT_FORMAT = "kafka_%s_partition_%d_selonnd_count";
+  privatelon static final String WRITelon_TO_KAFKA_DelonCIDelonR_KelonY = "writelon_elonvelonnts_to_kafka_updatelon_elonvelonnts";
+  privatelon static final String WRITelon_TO_KAFKA_DelonCIDelonR_KelonY_RelonALTIMelon_CG =
+          "writelon_elonvelonnts_to_kafka_updatelon_elonvelonnts_relonaltimelon_cg";
 
-  private final SearchRateCounter droppedKafkaUpdateEvents =
-      SearchRateCounter.export("dropped_kafka_update_events");
+  privatelon final SelonarchRatelonCountelonr droppelondKafkaUpdatelonelonvelonnts =
+      SelonarchRatelonCountelonr.elonxport("droppelond_kafka_updatelon_elonvelonnts");
 
-  private final SearchRateCounter droppedKafkaUpdateEventsRealtimeCg =
-          SearchRateCounter.export("dropped_kafka_update_events_realtime_cg");
-  private final Clock clock;
-  private final Decider decider;
-  private final BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer;
-  private final BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducerRealtimeCg;
+  privatelon final SelonarchRatelonCountelonr droppelondKafkaUpdatelonelonvelonntsRelonaltimelonCg =
+          SelonarchRatelonCountelonr.elonxport("droppelond_kafka_updatelon_elonvelonnts_relonaltimelon_cg");
+  privatelon final Clock clock;
+  privatelon final Deloncidelonr deloncidelonr;
+  privatelon final BlockingFinaglelonKafkaProducelonr<Long, ThriftVelonrsionelondelonvelonnts> kafkaProducelonr;
+  privatelon final BlockingFinaglelonKafkaProducelonr<Long, ThriftVelonrsionelondelonvelonnts> kafkaProducelonrRelonaltimelonCg;
 
-  private final List<PenguinVersion> penguinVersions;
-  private final FeatureUpdateStats stats;
-  private final String kafkaUpdateEventsTopicName;
-  private final String kafkaUpdateEventsTopicNameRealtimeCg;
-  private final ExecutorServiceFuturePool futurePool;
-  private final TweetService.ServiceIface tweetService;
+  privatelon final List<PelonnguinVelonrsion> pelonnguinVelonrsions;
+  privatelon final FelonaturelonUpdatelonStats stats;
+  privatelon final String kafkaUpdatelonelonvelonntsTopicNamelon;
+  privatelon final String kafkaUpdatelonelonvelonntsTopicNamelonRelonaltimelonCg;
+  privatelon final elonxeloncutorSelonrvicelonFuturelonPool futurelonPool;
+  privatelon final TwelonelontSelonrvicelon.SelonrvicelonIfacelon twelonelontSelonrvicelon;
 
-  @Inject
-  public FeatureUpdateController(
+  @Injelonct
+  public FelonaturelonUpdatelonControllelonr(
       Clock clock,
-      Decider decider,
-      @Named("KafkaProducer")
-      BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducer,
-      @Named("KafkaProducerRealtimeCg")
-      BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> kafkaProducerRealtimeCg,
-      @Flag(EarlybirdUtilModule.PENGUIN_VERSIONS_FLAG) String penguinVersions,
-      FeatureUpdateStats stats,
-      @Flag(FinagleKafkaProducerModule.KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG)
-      String kafkaUpdateEventsTopicName,
-      @Flag(FinagleKafkaProducerModule.KAFKA_TOPIC_NAME_UPDATE_EVENTS_FLAG_REALTIME_CG)
-      String kafkaUpdateEventsTopicNameRealtimeCg,
-      ExecutorServiceFuturePool futurePool,
-      TweetService.ServiceIface tweetService
+      Deloncidelonr deloncidelonr,
+      @Namelond("KafkaProducelonr")
+      BlockingFinaglelonKafkaProducelonr<Long, ThriftVelonrsionelondelonvelonnts> kafkaProducelonr,
+      @Namelond("KafkaProducelonrRelonaltimelonCg")
+      BlockingFinaglelonKafkaProducelonr<Long, ThriftVelonrsionelondelonvelonnts> kafkaProducelonrRelonaltimelonCg,
+      @Flag(elonarlybirdUtilModulelon.PelonNGUIN_VelonRSIONS_FLAG) String pelonnguinVelonrsions,
+      FelonaturelonUpdatelonStats stats,
+      @Flag(FinaglelonKafkaProducelonrModulelon.KAFKA_TOPIC_NAMelon_UPDATelon_elonVelonNTS_FLAG)
+      String kafkaUpdatelonelonvelonntsTopicNamelon,
+      @Flag(FinaglelonKafkaProducelonrModulelon.KAFKA_TOPIC_NAMelon_UPDATelon_elonVelonNTS_FLAG_RelonALTIMelon_CG)
+      String kafkaUpdatelonelonvelonntsTopicNamelonRelonaltimelonCg,
+      elonxeloncutorSelonrvicelonFuturelonPool futurelonPool,
+      TwelonelontSelonrvicelon.SelonrvicelonIfacelon twelonelontSelonrvicelon
   ) {
     this.clock = clock;
-    this.decider = decider;
-    this.kafkaProducer = kafkaProducer;
-    this.kafkaProducerRealtimeCg = kafkaProducerRealtimeCg;
-    this.penguinVersions = getPenguinVersions(penguinVersions);
+    this.deloncidelonr = deloncidelonr;
+    this.kafkaProducelonr = kafkaProducelonr;
+    this.kafkaProducelonrRelonaltimelonCg = kafkaProducelonrRelonaltimelonCg;
+    this.pelonnguinVelonrsions = gelontPelonnguinVelonrsions(pelonnguinVelonrsions);
     this.stats = stats;
-    this.kafkaUpdateEventsTopicName = kafkaUpdateEventsTopicName;
-    this.kafkaUpdateEventsTopicNameRealtimeCg = kafkaUpdateEventsTopicNameRealtimeCg;
-    this.futurePool = futurePool;
-    this.tweetService = tweetService;
+    this.kafkaUpdatelonelonvelonntsTopicNamelon = kafkaUpdatelonelonvelonntsTopicNamelon;
+    this.kafkaUpdatelonelonvelonntsTopicNamelonRelonaltimelonCg = kafkaUpdatelonelonvelonntsTopicNamelonRelonaltimelonCg;
+    this.futurelonPool = futurelonPool;
+    this.twelonelontSelonrvicelon = twelonelontSelonrvicelon;
   }
 
-  @Override
-  public Future<FeatureUpdateResponse> process(FeatureUpdateRequest featureUpdate) {
-    long requestStartTimeMillis = clock.nowMillis();
+  @Ovelonrridelon
+  public Futurelon<FelonaturelonUpdatelonRelonsponselon> procelonss(FelonaturelonUpdatelonRelonquelonst felonaturelonUpdatelon) {
+    long relonquelonstStartTimelonMillis = clock.nowMillis();
 
-    // Export overall and per-client request rate stats
-    final String requestClientId;
-    if (featureUpdate.getRequestClientId() != null
-        && !featureUpdate.getRequestClientId().isEmpty()) {
-      requestClientId = featureUpdate.getRequestClientId();
-    } else if (ClientId.current().nonEmpty()) {
-      requestClientId =  ClientId.current().get().name();
-    } else {
-      requestClientId = "unknown";
+    // elonxport ovelonrall and pelonr-clielonnt relonquelonst ratelon stats
+    final String relonquelonstClielonntId;
+    if (felonaturelonUpdatelon.gelontRelonquelonstClielonntId() != null
+        && !felonaturelonUpdatelon.gelontRelonquelonstClielonntId().iselonmpty()) {
+      relonquelonstClielonntId = felonaturelonUpdatelon.gelontRelonquelonstClielonntId();
+    } elonlselon if (ClielonntId.currelonnt().nonelonmpty()) {
+      relonquelonstClielonntId =  ClielonntId.currelonnt().gelont().namelon();
+    } elonlselon {
+      relonquelonstClielonntId = "unknown";
     }
-    stats.clientRequest(requestClientId);
-    REQUEST_LOG.info("{} {}", requestClientId, featureUpdate);
+    stats.clielonntRelonquelonst(relonquelonstClielonntId);
+    RelonQUelonST_LOG.info("{} {}", relonquelonstClielonntId, felonaturelonUpdatelon);
 
-    FeatureUpdateResponse errorResponse = FeatureUpdateValidator.validate(featureUpdate);
-    if (errorResponse != null) {
-      stats.clientResponse(requestClientId, errorResponse.getResponseCode());
-      LOG.warn("client error: clientID {} - reason: {}",
-          requestClientId, errorResponse.getDetailMessage());
-      return Future.value(errorResponse);
+    FelonaturelonUpdatelonRelonsponselon elonrrorRelonsponselon = FelonaturelonUpdatelonValidator.validatelon(felonaturelonUpdatelon);
+    if (elonrrorRelonsponselon != null) {
+      stats.clielonntRelonsponselon(relonquelonstClielonntId, elonrrorRelonsponselon.gelontRelonsponselonCodelon());
+      LOG.warn("clielonnt elonrror: clielonntID {} - relonason: {}",
+          relonquelonstClielonntId, elonrrorRelonsponselon.gelontDelontailMelonssagelon());
+      relonturn Futurelon.valuelon(elonrrorRelonsponselon);
     }
 
-    ThriftIndexingEvent event = featureUpdate.getEvent();
-    return writeToKafka(event, requestStartTimeMillis)
-        .map(responsesList -> {
-          stats.clientResponse(requestClientId, FeatureUpdateResponseCode.SUCCESS);
-          // only when both Realtime & RealtimeCG succeed, then it will return a success flag
-          return new FeatureUpdateResponse(FeatureUpdateResponseCode.SUCCESS);
+    ThriftIndelonxingelonvelonnt elonvelonnt = felonaturelonUpdatelon.gelontelonvelonnt();
+    relonturn writelonToKafka(elonvelonnt, relonquelonstStartTimelonMillis)
+        .map(relonsponselonsList -> {
+          stats.clielonntRelonsponselon(relonquelonstClielonntId, FelonaturelonUpdatelonRelonsponselonCodelon.SUCCelonSS);
+          // only whelonn both Relonaltimelon & RelonaltimelonCG succelonelond, thelonn it will relonturn a succelonss flag
+          relonturn nelonw FelonaturelonUpdatelonRelonsponselon(FelonaturelonUpdatelonRelonsponselonCodelon.SUCCelonSS);
         })
-        .handle(Function.func(throwable -> {
-          FeatureUpdateResponseCode responseCode;
-          // if either Realtime or RealtimeCG throws an exception, it will return a failure
-          if (throwable instanceof ClientDiscardedRequestException) {
-            responseCode = FeatureUpdateResponseCode.CLIENT_CANCEL_ERROR;
-            LOG.info("ClientDiscardedRequestException received from client: " + requestClientId,
-                throwable);
-          } else {
-            responseCode = FeatureUpdateResponseCode.TRANSIENT_ERROR;
-            LOG.error("Error occurred while writing to output stream: "
-                + kafkaUpdateEventsTopicName + ", "
-                + kafkaUpdateEventsTopicNameRealtimeCg, throwable);
+        .handlelon(Function.func(throwablelon -> {
+          FelonaturelonUpdatelonRelonsponselonCodelon relonsponselonCodelon;
+          // if elonithelonr Relonaltimelon or RelonaltimelonCG throws an elonxcelonption, it will relonturn a failurelon
+          if (throwablelon instancelonof ClielonntDiscardelondRelonquelonstelonxcelonption) {
+            relonsponselonCodelon = FelonaturelonUpdatelonRelonsponselonCodelon.CLIelonNT_CANCelonL_elonRROR;
+            LOG.info("ClielonntDiscardelondRelonquelonstelonxcelonption reloncelonivelond from clielonnt: " + relonquelonstClielonntId,
+                throwablelon);
+          } elonlselon {
+            relonsponselonCodelon = FelonaturelonUpdatelonRelonsponselonCodelon.TRANSIelonNT_elonRROR;
+            LOG.elonrror("elonrror occurrelond whilelon writing to output strelonam: "
+                + kafkaUpdatelonelonvelonntsTopicNamelon + ", "
+                + kafkaUpdatelonelonvelonntsTopicNamelonRelonaltimelonCg, throwablelon);
           }
-          stats.clientResponse(requestClientId, responseCode);
-          return new FeatureUpdateResponse(responseCode)
-              .setDetailMessage(throwable.getMessage());
+          stats.clielonntRelonsponselon(relonquelonstClielonntId, relonsponselonCodelon);
+          relonturn nelonw FelonaturelonUpdatelonRelonsponselon(relonsponselonCodelon)
+              .selontDelontailMelonssagelon(throwablelon.gelontMelonssagelon());
         }));
   }
 
   /**
-   * In writeToKafka(), we use Futures.collect() to aggregate results for two RPC calls
-   * Futures.collect() means that if either one of the Future fails then it will return an Exception
-   * only when both Realtime & RealtimeCG succeed, then it will return a success flag
-   * The FeatureUpdateResponse is more like an ACK message, and the upstream (feature update ingester)
-   * will not be affected much even if it failed (as long as the kafka message is written)
+   * In writelonToKafka(), welon uselon Futurelons.collelonct() to aggrelongatelon relonsults for two RPC calls
+   * Futurelons.collelonct() melonans that if elonithelonr onelon of thelon Futurelon fails thelonn it will relonturn an elonxcelonption
+   * only whelonn both Relonaltimelon & RelonaltimelonCG succelonelond, thelonn it will relonturn a succelonss flag
+   * Thelon FelonaturelonUpdatelonRelonsponselon is morelon likelon an ACK melonssagelon, and thelon upstrelonam (felonaturelon updatelon ingelonstelonr)
+   * will not belon affelonctelond much elonvelonn if it failelond (as long as thelon kafka melonssagelon is writtelonn)
    */
-  private Future<List<BoxedUnit>> writeToKafka(ThriftIndexingEvent event,
-                                               long requestStartTimeMillis) {
-    return Futures.collect(Lists.newArrayList(
-        writeToKafkaInternal(event, WRITE_TO_KAFKA_DECIDER_KEY, droppedKafkaUpdateEvents,
-            kafkaUpdateEventsTopicName, -1, kafkaProducer),
-        Futures.flatten(getUserId(event.getUid()).map(
-            userId -> writeToKafkaInternal(event, WRITE_TO_KAFKA_DECIDER_KEY_REALTIME_CG,
-            droppedKafkaUpdateEventsRealtimeCg,
-            kafkaUpdateEventsTopicNameRealtimeCg, userId, kafkaProducerRealtimeCg)))));
+  privatelon Futurelon<List<BoxelondUnit>> writelonToKafka(ThriftIndelonxingelonvelonnt elonvelonnt,
+                                               long relonquelonstStartTimelonMillis) {
+    relonturn Futurelons.collelonct(Lists.nelonwArrayList(
+        writelonToKafkaIntelonrnal(elonvelonnt, WRITelon_TO_KAFKA_DelonCIDelonR_KelonY, droppelondKafkaUpdatelonelonvelonnts,
+            kafkaUpdatelonelonvelonntsTopicNamelon, -1, kafkaProducelonr),
+        Futurelons.flattelonn(gelontUselonrId(elonvelonnt.gelontUid()).map(
+            uselonrId -> writelonToKafkaIntelonrnal(elonvelonnt, WRITelon_TO_KAFKA_DelonCIDelonR_KelonY_RelonALTIMelon_CG,
+            droppelondKafkaUpdatelonelonvelonntsRelonaltimelonCg,
+            kafkaUpdatelonelonvelonntsTopicNamelonRelonaltimelonCg, uselonrId, kafkaProducelonrRelonaltimelonCg)))));
 
   }
 
-  private Future<BoxedUnit> writeToKafkaInternal(ThriftIndexingEvent event, String deciderKey,
-     SearchRateCounter droppedStats, String topicName, long userId,
-     BlockingFinagleKafkaProducer<Long, ThriftVersionedEvents> producer) {
-    if (!DeciderUtil.isAvailableForRandomRecipient(decider, deciderKey)) {
-      droppedStats.increment();
-      return Future.Unit();
+  privatelon Futurelon<BoxelondUnit> writelonToKafkaIntelonrnal(ThriftIndelonxingelonvelonnt elonvelonnt, String deloncidelonrKelony,
+     SelonarchRatelonCountelonr droppelondStats, String topicNamelon, long uselonrId,
+     BlockingFinaglelonKafkaProducelonr<Long, ThriftVelonrsionelondelonvelonnts> producelonr) {
+    if (!DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr, deloncidelonrKelony)) {
+      droppelondStats.increlonmelonnt();
+      relonturn Futurelon.Unit();
     }
 
-    ProducerRecord<Long, ThriftVersionedEvents> producerRecord = new ProducerRecord<>(
-            topicName,
-            convertToThriftVersionedEvents(userId, event));
+    ProducelonrReloncord<Long, ThriftVelonrsionelondelonvelonnts> producelonrReloncord = nelonw ProducelonrReloncord<>(
+            topicNamelon,
+            convelonrtToThriftVelonrsionelondelonvelonnts(uselonrId, elonvelonnt));
 
     try {
-      return Futures.flatten(futurePool.apply(() ->
-              producer.send(producerRecord)
-                      .map(record -> {
-                        SearchCounter.export(String.format(
-                          KAFKA_SEND_COUNT_FORMAT, record.topic(), record.partition())).increment();
-                        return BoxedUnit.UNIT;
+      relonturn Futurelons.flattelonn(futurelonPool.apply(() ->
+              producelonr.selonnd(producelonrReloncord)
+                      .map(reloncord -> {
+                        SelonarchCountelonr.elonxport(String.format(
+                          KAFKA_SelonND_COUNT_FORMAT, reloncord.topic(), reloncord.partition())).increlonmelonnt();
+                        relonturn BoxelondUnit.UNIT;
                       })));
-    } catch (Exception e) {
-      return Future.exception(e);
+    } catch (elonxcelonption elon) {
+      relonturn Futurelon.elonxcelonption(elon);
     }
   }
 
-  private List<PenguinVersion> getPenguinVersions(String penguinVersionsStr) {
-    String[] tokens = penguinVersionsStr.split("\\s*,\\s*");
-    List<PenguinVersion> listOfPenguinVersions = Lists.newArrayListWithCapacity(tokens.length);
-    for (String token : tokens) {
-      listOfPenguinVersions.add(PenguinVersion.valueOf(token.toUpperCase()));
+  privatelon List<PelonnguinVelonrsion> gelontPelonnguinVelonrsions(String pelonnguinVelonrsionsStr) {
+    String[] tokelonns = pelonnguinVelonrsionsStr.split("\\s*,\\s*");
+    List<PelonnguinVelonrsion> listOfPelonnguinVelonrsions = Lists.nelonwArrayListWithCapacity(tokelonns.lelonngth);
+    for (String tokelonn : tokelonns) {
+      listOfPelonnguinVelonrsions.add(PelonnguinVelonrsion.valuelonOf(tokelonn.toUppelonrCaselon()));
     }
-    LOG.info(String.format("Using Penguin Versions: %s", listOfPenguinVersions));
-    return listOfPenguinVersions;
+    LOG.info(String.format("Using Pelonnguin Velonrsions: %s", listOfPelonnguinVelonrsions));
+    relonturn listOfPelonnguinVelonrsions;
   }
 
-  private Future<Long> getUserId(long tweetId) {
-    TweetInclude tweetInclude = new TweetInclude();
-    tweetInclude.setTweetFieldId(CORE_DATA.getThriftFieldId());
-    GetTweetFieldsOptions getTweetFieldsOptions = new GetTweetFieldsOptions().setTweet_includes(
-        Collections.singleton(tweetInclude)).setVisibilityPolicy(
-        TweetVisibilityPolicy.NO_FILTERING);
-    GetTweetFieldsRequest getTweetFieldsRequest = new GetTweetFieldsRequest().setTweetIds(
-        Arrays.asList(tweetId)).setOptions(getTweetFieldsOptions);
+  privatelon Futurelon<Long> gelontUselonrId(long twelonelontId) {
+    TwelonelontIncludelon twelonelontIncludelon = nelonw TwelonelontIncludelon();
+    twelonelontIncludelon.selontTwelonelontFielonldId(CORelon_DATA.gelontThriftFielonldId());
+    GelontTwelonelontFielonldsOptions gelontTwelonelontFielonldsOptions = nelonw GelontTwelonelontFielonldsOptions().selontTwelonelont_includelons(
+        Collelonctions.singlelonton(twelonelontIncludelon)).selontVisibilityPolicy(
+        TwelonelontVisibilityPolicy.NO_FILTelonRING);
+    GelontTwelonelontFielonldsRelonquelonst gelontTwelonelontFielonldsRelonquelonst = nelonw GelontTwelonelontFielonldsRelonquelonst().selontTwelonelontIds(
+        Arrays.asList(twelonelontId)).selontOptions(gelontTwelonelontFielonldsOptions);
     try {
-      return tweetService.get_tweet_fields(getTweetFieldsRequest).map(
-          tweetFieldsResults -> tweetFieldsResults.get(
-              0).tweetResult.getFound().tweet.core_data.user_id);
-    } catch (Exception e) {
-      return Future.exception(e);
+      relonturn twelonelontSelonrvicelon.gelont_twelonelont_fielonlds(gelontTwelonelontFielonldsRelonquelonst).map(
+          twelonelontFielonldsRelonsults -> twelonelontFielonldsRelonsults.gelont(
+              0).twelonelontRelonsult.gelontFound().twelonelont.corelon_data.uselonr_id);
+    } catch (elonxcelonption elon) {
+      relonturn Futurelon.elonxcelonption(elon);
     }
   }
 
-  private ThriftVersionedEvents convertToThriftVersionedEvents(
-      long userId, ThriftIndexingEvent event) {
-    ThriftIndexingEvent thriftIndexingEvent = event.deepCopy()
-        .setEventType(ThriftIndexingEventType.PARTIAL_UPDATE);
+  privatelon ThriftVelonrsionelondelonvelonnts convelonrtToThriftVelonrsionelondelonvelonnts(
+      long uselonrId, ThriftIndelonxingelonvelonnt elonvelonnt) {
+    ThriftIndelonxingelonvelonnt thriftIndelonxingelonvelonnt = elonvelonnt.delonelonpCopy()
+        .selontelonvelonntTypelon(ThriftIndelonxingelonvelonntTypelon.PARTIAL_UPDATelon);
 
-    ImmutableMap.Builder<Byte, ThriftIndexingEvent> versionedEventsBuilder =
-        new ImmutableMap.Builder<>();
-    for (PenguinVersion penguinVersion : penguinVersions) {
-      versionedEventsBuilder.put(penguinVersion.getByteValue(), thriftIndexingEvent);
+    ImmutablelonMap.Buildelonr<Bytelon, ThriftIndelonxingelonvelonnt> velonrsionelondelonvelonntsBuildelonr =
+        nelonw ImmutablelonMap.Buildelonr<>();
+    for (PelonnguinVelonrsion pelonnguinVelonrsion : pelonnguinVelonrsions) {
+      velonrsionelondelonvelonntsBuildelonr.put(pelonnguinVelonrsion.gelontBytelonValuelon(), thriftIndelonxingelonvelonnt);
     }
 
-    IngesterThriftVersionedEvents thriftVersionedEvents =
-        new IngesterThriftVersionedEvents(userId, versionedEventsBuilder.build());
-    thriftVersionedEvents.setId(thriftIndexingEvent.getUid());
-    return thriftVersionedEvents;
+    IngelonstelonrThriftVelonrsionelondelonvelonnts thriftVelonrsionelondelonvelonnts =
+        nelonw IngelonstelonrThriftVelonrsionelondelonvelonnts(uselonrId, velonrsionelondelonvelonntsBuildelonr.build());
+    thriftVelonrsionelondelonvelonnts.selontId(thriftIndelonxingelonvelonnt.gelontUid());
+    relonturn thriftVelonrsionelondelonvelonnts;
   }
 }

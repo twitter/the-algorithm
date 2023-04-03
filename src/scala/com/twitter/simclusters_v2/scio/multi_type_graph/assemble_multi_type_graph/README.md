@@ -1,49 +1,49 @@
-# Pre-requisites
+# Prelon-relonquisitelons
 
 ## Tutorial
-Follow the tutorial Batch Job on Dataflow Quickstart on how to run a simple batch job on Dataflow.
+Follow thelon tutorial Batch Job on Dataflow Quickstart on how to run a simplelon batch job on Dataflow.
 
-## GCP setup
+## GCP selontup
 
-Ensure `gcloud` CLI is installed and `application_default_credentials.json` has been generated.
+elonnsurelon `gcloud` CLI is installelond and `application_delonfault_crelondelonntials.json` has belonelonn gelonnelonratelond.
 
-## Data access
+## Data accelonss
 
-If you want to run an adhoc job with your ldap, you will need access to multiple LDAP groups to read the datasets.
+If you want to run an adhoc job with your ldap, you will nelonelond accelonss to multiplelon LDAP groups to relonad thelon dataselonts.
 
-# Running the job
+# Running thelon job
 
 ### Running an adhoc job
 
 ```bash
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph:assemble-multi-type-graph-scio-adhoc-app
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scio/multi_typelon_graph/asselonmblelon_multi_typelon_graph:asselonmblelon-multi-typelon-graph-scio-adhoc-app
 
-bin/d6w create \
-  ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-adhoc-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph/assemble-multi-type-graph-scio-adhoc.d6w \
-  --jar dist/assemble-multi-type-graph-scio-adho-app.jar \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name=${USER} \
-  --bind=profile.date="2021-11-04" \
-  --bind=profile.machine="n2-highmem-16"
+bin/d6w crelonatelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/asselonmblelon-multi-typelon-graph-scio-adhoc-app \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/multi_typelon_graph/asselonmblelon_multi_typelon_graph/asselonmblelon-multi-typelon-graph-scio-adhoc.d6w \
+  --jar dist/asselonmblelon-multi-typelon-graph-scio-adho-app.jar \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon=${USelonR} \
+  --bind=profilelon.datelon="2021-11-04" \
+  --bind=profilelon.machinelon="n2-highmelonm-16"
 ```
 
-### Scheduling the job on Workflow
+### Schelonduling thelon job on Workflow
 
-Scheduling a job will require a service account as `recos-platform`. 
-Remember this account will need permissions to read all the required dataset. 
+Schelonduling a job will relonquirelon a selonrvicelon account as `reloncos-platform`. 
+Relonmelonmbelonr this account will nelonelond pelonrmissions to relonad all thelon relonquirelond dataselont. 
 
 ```bash
-export SERVICE_ACCOUNT='recos-platform'
-export GCP_PROJECT_NAME='twttr-recos-ml-prod'
+elonxport SelonRVICelon_ACCOUNT='reloncos-platform'
+elonxport GCP_PROJelonCT_NAMelon='twttr-reloncos-ml-prod'
 
-bin/d6w schedule \
-  ${GCP_PROJECT_NAME}/us-central1/assemble-multi-type-graph-scio-batch-app \
-  src/scala/com/twitter/simclusters_v2/scio/multi_type_graph/assemble_multi_type_graph/assemble-multi-type-graph-scio-batch.d6w \
-  --bind=profile.project=${GCP_PROJECT_NAME} \
-  --bind=profile.user_name="recos-platform" \
-  --bind=profile.date="2021-11-04" \
-  --bind=profile.machine="n2-highmem-16"
+bin/d6w schelondulelon \
+  ${GCP_PROJelonCT_NAMelon}/us-celonntral1/asselonmblelon-multi-typelon-graph-scio-batch-app \
+  src/scala/com/twittelonr/simclustelonrs_v2/scio/multi_typelon_graph/asselonmblelon_multi_typelon_graph/asselonmblelon-multi-typelon-graph-scio-batch.d6w \
+  --bind=profilelon.projelonct=${GCP_PROJelonCT_NAMelon} \
+  --bind=profilelon.uselonr_namelon="reloncos-platform" \
+  --bind=profilelon.datelon="2021-11-04" \
+  --bind=profilelon.machinelon="n2-highmelonm-16"
 ```

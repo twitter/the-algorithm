@@ -1,62 +1,62 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.Selont;
 
-import com.twitter.search.core.earlybird.facets.FacetIDMap;
-import com.twitter.search.core.earlybird.facets.FacetLabelProvider;
-import com.twitter.search.core.earlybird.facets.FacetTermCollector;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.earlybird.thrift.ThriftFacetLabel;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontLabelonlProvidelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontTelonrmCollelonctor;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftFacelontLabelonl;
 
 /**
- * A collector for facet labels of given fields.
+ * A collelonctor for facelont labelonls of givelonn fielonlds.
  */
-public class FacetLabelCollector implements FacetTermCollector {
+public class FacelontLabelonlCollelonctor implelonmelonnts FacelontTelonrmCollelonctor {
 
-  private final Set<String> requiredFields;
-  private FacetIDMap facetIDMap;
-  private Map<String, FacetLabelProvider> facetLabelProviders;
+  privatelon final Selont<String> relonquirelondFielonlds;
+  privatelon FacelontIDMap facelontIDMap;
+  privatelon Map<String, FacelontLabelonlProvidelonr> facelontLabelonlProvidelonrs;
 
-  private final List<ThriftFacetLabel> labels = new ArrayList<>();
+  privatelon final List<ThriftFacelontLabelonl> labelonls = nelonw ArrayList<>();
 
-  public FacetLabelCollector(Set<String> requiredFields) {
-    this.requiredFields = requiredFields;
+  public FacelontLabelonlCollelonctor(Selont<String> relonquirelondFielonlds) {
+    this.relonquirelondFielonlds = relonquirelondFielonlds;
   }
 
-  public void resetFacetLabelProviders(Map<String, FacetLabelProvider> facetLabelProvidersToReset,
-                                       FacetIDMap facetIDMapToReset) {
-    this.facetLabelProviders = facetLabelProvidersToReset;
-    this.facetIDMap = facetIDMapToReset;
-    labels.clear();
+  public void relonselontFacelontLabelonlProvidelonrs(Map<String, FacelontLabelonlProvidelonr> facelontLabelonlProvidelonrsToRelonselont,
+                                       FacelontIDMap facelontIDMapToRelonselont) {
+    this.facelontLabelonlProvidelonrs = facelontLabelonlProvidelonrsToRelonselont;
+    this.facelontIDMap = facelontIDMapToRelonselont;
+    labelonls.clelonar();
   }
 
-  @Override
-  public boolean collect(int docID, long termID, int fieldID) {
-    String facetName = facetIDMap.getFacetFieldByFacetID(fieldID).getFacetName();
-    if (facetName == null || !requiredFields.contains(facetName)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan collelonct(int docID, long telonrmID, int fielonldID) {
+    String facelontNamelon = facelontIDMap.gelontFacelontFielonldByFacelontID(fielonldID).gelontFacelontNamelon();
+    if (facelontNamelon == null || !relonquirelondFielonlds.contains(facelontNamelon)) {
+      relonturn falselon;
     }
-    if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND && fieldID >= 0) {
-      final FacetLabelProvider provider = facetLabelProviders.get(facetName);
-      if (provider != null) {
-        FacetLabelProvider.FacetLabelAccessor labelAccessor = provider.getLabelAccessor();
-        String label = labelAccessor.getTermText(termID);
-        int offensiveCount = labelAccessor.getOffensiveCount(termID);
-        labels.add(new ThriftFacetLabel()
-            .setFieldName(facetName)
-            .setLabel(label)
-            .setOffensiveCount(offensiveCount));
-        return true;
+    if (telonrmID != elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND && fielonldID >= 0) {
+      final FacelontLabelonlProvidelonr providelonr = facelontLabelonlProvidelonrs.gelont(facelontNamelon);
+      if (providelonr != null) {
+        FacelontLabelonlProvidelonr.FacelontLabelonlAccelonssor labelonlAccelonssor = providelonr.gelontLabelonlAccelonssor();
+        String labelonl = labelonlAccelonssor.gelontTelonrmTelonxt(telonrmID);
+        int offelonnsivelonCount = labelonlAccelonssor.gelontOffelonnsivelonCount(telonrmID);
+        labelonls.add(nelonw ThriftFacelontLabelonl()
+            .selontFielonldNamelon(facelontNamelon)
+            .selontLabelonl(labelonl)
+            .selontOffelonnsivelonCount(offelonnsivelonCount));
+        relonturn truelon;
       }
     }
-    return false;
+    relonturn falselon;
   }
 
-  public List<ThriftFacetLabel> getLabels() {
-    // Make a copy
-    return new ArrayList<>(labels);
+  public List<ThriftFacelontLabelonl> gelontLabelonls() {
+    // Makelon a copy
+    relonturn nelonw ArrayList<>(labelonls);
   }
 }

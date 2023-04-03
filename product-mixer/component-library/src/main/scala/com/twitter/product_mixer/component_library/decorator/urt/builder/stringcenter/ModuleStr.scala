@@ -1,31 +1,31 @@
-package com.twitter.product_mixer.component_library.decorator.urt.builder.stringcenter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.deloncorator.urt.buildelonr.stringcelonntelonr
 
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.metadata.BaseModuleStr
-import com.twitter.product_mixer.core.functional_component.decorator.urt.builder.stringcenter.BaseModuleStringCenterPlaceholderBuilder
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stringcenter.client.StringCenter
-import com.twitter.stringcenter.client.core.ExternalString
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.melontadata.BaselonModulelonStr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr.stringcelonntelonr.BaselonModulelonStringCelonntelonrPlacelonholdelonrBuildelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stringcelonntelonr.clielonnt.StringCelonntelonr
+import com.twittelonr.stringcelonntelonr.clielonnt.corelon.elonxtelonrnalString
 
 /**
- * This class works the same as [[Str]] but passes in a list of candidates to the
- * [[BaseModuleStringCenterPlaceholderBuilder]] when building the placeholders.
+ * This class works thelon samelon as [[Str]] but passelons in a list of candidatelons to thelon
+ * [[BaselonModulelonStringCelonntelonrPlacelonholdelonrBuildelonr]] whelonn building thelon placelonholdelonrs.
  */
-case class ModuleStr[-Query <: PipelineQuery, -Candidate <: UniversalNoun[Any]](
-  text: ExternalString,
-  stringCenter: StringCenter,
-  stringCenterPlaceholderBuilder: Option[
-    BaseModuleStringCenterPlaceholderBuilder[Query, Candidate]
-  ] = None)
-    extends BaseModuleStr[Query, Candidate] {
+caselon class ModulelonStr[-Quelonry <: PipelonlinelonQuelonry, -Candidatelon <: UnivelonrsalNoun[Any]](
+  telonxt: elonxtelonrnalString,
+  stringCelonntelonr: StringCelonntelonr,
+  stringCelonntelonrPlacelonholdelonrBuildelonr: Option[
+    BaselonModulelonStringCelonntelonrPlacelonholdelonrBuildelonr[Quelonry, Candidatelon]
+  ] = Nonelon)
+    elonxtelonnds BaselonModulelonStr[Quelonry, Candidatelon] {
 
-  def apply(query: Query, candidates: Seq[CandidateWithFeatures[Candidate]]): String = {
-    val placeholderMapOpt =
-      stringCenterPlaceholderBuilder.map(_.apply(query, candidates))
-    stringCenter.prepare(
-      externalString = text,
-      placeholders = placeholderMapOpt.getOrElse(Map.empty[String, Any])
+  delonf apply(quelonry: Quelonry, candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]): String = {
+    val placelonholdelonrMapOpt =
+      stringCelonntelonrPlacelonholdelonrBuildelonr.map(_.apply(quelonry, candidatelons))
+    stringCelonntelonr.prelonparelon(
+      elonxtelonrnalString = telonxt,
+      placelonholdelonrs = placelonholdelonrMapOpt.gelontOrelonlselon(Map.elonmpty[String, Any])
     )
   }
 }

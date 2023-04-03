@@ -1,376 +1,376 @@
-package com.twitter.simclusters_v2.scalding.inferred_entities
+packagelon com.twittelonr.simclustelonrs_v2.scalding.infelonrrelond_elonntitielons
 
-import com.twitter.algebird.Max
-import com.twitter.scalding.Args
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Duration
-import com.twitter.scalding.Execution
-import com.twitter.scalding.RichDate
-import com.twitter.scalding.TypedPipe
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.ExplicitLocation
-import com.twitter.scalding_internal.dalv2.remote_access.ProcAtla
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.ClusterId
-import com.twitter.simclusters_v2.common.UTTEntityId
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.hdfs_sources._
-import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
-import com.twitter.simclusters_v2.thriftscala.EntitySource
-import com.twitter.simclusters_v2.thriftscala.InferredEntity
-import com.twitter.simclusters_v2.thriftscala.SemanticCoreEntityWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersInferredEntities
-import com.twitter.simclusters_v2.thriftscala.SimClustersSource
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.wtf.scalding.jobs.common.AdhocExecutionApp
-import com.twitter.wtf.scalding.jobs.common.ScheduledExecutionApp
-import java.util.TimeZone
-import com.twitter.onboarding.relevance.source.UttAccountRecommendationsScalaDataset
-import com.twitter.scalding_internal.dalv2.DALWrite.D
-import com.twitter.wtf.entity_real_graph.scalding.common.SemanticCoreFilters.getValidSemanticCoreEntities
-import com.twitter.wtf.entity_real_graph.scalding.common.DataSources
+import com.twittelonr.algelonbird.Max
+import com.twittelonr.scalding.Args
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.Duration
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.RichDatelon
+import com.twittelonr.scalding.TypelondPipelon
+import com.twittelonr.scalding.TypelondTsv
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.elonxplicitLocation
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.ProcAtla
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.ClustelonrId
+import com.twittelonr.simclustelonrs_v2.common.UTTelonntityId
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons._
+import com.twittelonr.simclustelonrs_v2.scalding.common.TypelondRichPipelon._
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonntitySourcelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.Infelonrrelondelonntity
+import com.twittelonr.simclustelonrs_v2.thriftscala.SelonmanticCorelonelonntityWithScorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsInfelonrrelondelonntitielons
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsSourcelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.UselonrAndNelonighbors
+import com.twittelonr.wtf.scalding.jobs.common.AdhocelonxeloncutionApp
+import com.twittelonr.wtf.scalding.jobs.common.SchelondulelondelonxeloncutionApp
+import java.util.TimelonZonelon
+import com.twittelonr.onboarding.relonlelonvancelon.sourcelon.UttAccountReloncommelonndationsScalaDataselont
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon.D
+import com.twittelonr.wtf.elonntity_relonal_graph.scalding.common.SelonmanticCorelonFiltelonrs.gelontValidSelonmanticCorelonelonntitielons
+import com.twittelonr.wtf.elonntity_relonal_graph.scalding.common.DataSourcelons
 
 /**
- * Infer interested-in entities for a given user. Depending on how and where the entity source comes
- * from, this can be achieve a number of ways. For example, we can use user->interested-in clusters
- * and cluster-> semanticcore entity embeddings to derive user->entity. Or, we can use a producers'
- * UTT embeddings and user-user engagement graph to aggregate UTT engagement history.
+ * Infelonr intelonrelonstelond-in elonntitielons for a givelonn uselonr. Delonpelonnding on how and whelonrelon thelon elonntity sourcelon comelons
+ * from, this can belon achielonvelon a numbelonr of ways. For elonxamplelon, welon can uselon uselonr->intelonrelonstelond-in clustelonrs
+ * and clustelonr-> selonmanticcorelon elonntity elonmbelonddings to delonrivelon uselonr->elonntity. Or, welon can uselon a producelonrs'
+ * UTT elonmbelonddings and uselonr-uselonr elonngagelonmelonnt graph to aggrelongatelon UTT elonngagelonmelonnt history.
  */
-object InferredEntitiesFromInterestedIn {
+objelonct InfelonrrelondelonntitielonsFromIntelonrelonstelondIn {
 
-  def getUserToKnownForUttEntities(
-    dateRange: DateRange,
-    maxUttEntitiesPerUser: Int
+  delonf gelontUselonrToKnownForUttelonntitielons(
+    datelonRangelon: DatelonRangelon,
+    maxUttelonntitielonsPelonrUselonr: Int
   )(
-    implicit timeZone: TimeZone
-  ): TypedPipe[(UserId, Seq[(Long, Double)])] = {
+    implicit timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[(UselonrId, Selonq[(Long, Doublelon)])] = {
 
-    val validEntities = getValidSemanticCoreEntities(
-      DataSources.semanticCoreMetadataSource(dateRange, timeZone)).distinct.map { entityId =>
-      Set(entityId)
+    val validelonntitielons = gelontValidSelonmanticCorelonelonntitielons(
+      DataSourcelons.selonmanticCorelonMelontadataSourcelon(datelonRangelon, timelonZonelon)).distinct.map { elonntityId =>
+      Selont(elonntityId)
     }.sum
 
     DAL
-      .readMostRecentSnapshot(UttAccountRecommendationsScalaDataset, dateRange)
-      .withRemoteReadPolicy(ExplicitLocation(ProcAtla))
-      .toTypedPipe
-      .flatMapWithValue(validEntities) {
-        // Keep only valid Entities
-        case (KeyVal(interest, candidates), Some(validUTTEntities))
-            if validUTTEntities.contains(interest.uttID) =>
-          candidates.recommendations.map { rec =>
-            (rec.candidateUserID, (interest.uttID, rec.score.getOrElse(0.0)))
+      .relonadMostReloncelonntSnapshot(UttAccountReloncommelonndationsScalaDataselont, datelonRangelon)
+      .withRelonmotelonRelonadPolicy(elonxplicitLocation(ProcAtla))
+      .toTypelondPipelon
+      .flatMapWithValuelon(validelonntitielons) {
+        // Kelonelonp only valid elonntitielons
+        caselon (KelonyVal(intelonrelonst, candidatelons), Somelon(validUTTelonntitielons))
+            if validUTTelonntitielons.contains(intelonrelonst.uttID) =>
+          candidatelons.reloncommelonndations.map { relonc =>
+            (relonc.candidatelonUselonrID, (intelonrelonst.uttID, relonc.scorelon.gelontOrelonlselon(0.0)))
           }
-        case _ => None
+        caselon _ => Nonelon
       }
       .group
-      .sortedReverseTake(maxUttEntitiesPerUser)(Ordering.by(_._2))
-      .toTypedPipe
+      .sortelondRelonvelonrselonTakelon(maxUttelonntitielonsPelonrUselonr)(Ordelonring.by(_._2))
+      .toTypelondPipelon
   }
 
-  def filterUTTEntities(
-    interestedInEntities: TypedPipe[(UserId, Seq[(UTTEntityId, Int)])],
-    minSocialProofThreshold: Int,
-    maxInterestsPerUser: Int
-  ): TypedPipe[(UserId, Seq[UTTEntityId])] = {
+  delonf filtelonrUTTelonntitielons(
+    intelonrelonstelondInelonntitielons: TypelondPipelon[(UselonrId, Selonq[(UTTelonntityId, Int)])],
+    minSocialProofThrelonshold: Int,
+    maxIntelonrelonstsPelonrUselonr: Int
+  ): TypelondPipelon[(UselonrId, Selonq[UTTelonntityId])] = {
 
-    interestedInEntities
+    intelonrelonstelondInelonntitielons
       .map {
-        case (userId, entities) =>
-          val topEntities = entities
-            .filter(_._2 >= minSocialProofThreshold)
+        caselon (uselonrId, elonntitielons) =>
+          val topelonntitielons = elonntitielons
+            .filtelonr(_._2 >= minSocialProofThrelonshold)
             .sortBy(-_._2)
-            .take(maxInterestsPerUser)
+            .takelon(maxIntelonrelonstsPelonrUselonr)
             .map(_._1)
 
-          (userId, topEntities)
+          (uselonrId, topelonntitielons)
       }
-      .filter(_._2.nonEmpty)
+      .filtelonr(_._2.nonelonmpty)
   }
 
-  def getUserToUTTEntities(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    knownForEntities: TypedPipe[(UserId, Seq[UTTEntityId])]
+  delonf gelontUselonrToUTTelonntitielons(
+    uselonrUselonrGraph: TypelondPipelon[UselonrAndNelonighbors],
+    knownForelonntitielons: TypelondPipelon[(UselonrId, Selonq[UTTelonntityId])]
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(UserId, Seq[(UTTEntityId, Int)])] = {
-    val flatEngagementGraph =
-      userUserGraph
-        .count("num_user_user_graph_records")
-        .flatMap { userAndNeighbors =>
-          userAndNeighbors.neighbors.flatMap { neighbor =>
-            val producerId = neighbor.neighborId
-            val hasFav = neighbor.favScoreHalfLife100Days.exists(_ > 0)
-            val hasFollow = neighbor.isFollowed.contains(true)
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[(UselonrId, Selonq[(UTTelonntityId, Int)])] = {
+    val flatelonngagelonmelonntGraph =
+      uselonrUselonrGraph
+        .count("num_uselonr_uselonr_graph_reloncords")
+        .flatMap { uselonrAndNelonighbors =>
+          uselonrAndNelonighbors.nelonighbors.flatMap { nelonighbor =>
+            val producelonrId = nelonighbor.nelonighborId
+            val hasFav = nelonighbor.favScorelonHalfLifelon100Days.elonxists(_ > 0)
+            val hasFollow = nelonighbor.isFollowelond.contains(truelon)
 
             if (hasFav || hasFollow) {
-              Some((producerId, userAndNeighbors.userId))
-            } else {
-              None
+              Somelon((producelonrId, uselonrAndNelonighbors.uselonrId))
+            } elonlselon {
+              Nonelon
             }
           }
         }
-        .count("num_flat_user_user_graph_edges")
+        .count("num_flat_uselonr_uselonr_graph_elondgelons")
 
-    flatEngagementGraph
-      .join(knownForEntities.count("num_producer_to_entities"))
-      .withReducers(3000)
+    flatelonngagelonmelonntGraph
+      .join(knownForelonntitielons.count("num_producelonr_to_elonntitielons"))
+      .withRelonducelonrs(3000)
       .flatMap {
-        case (producerId, (userId, entities)) =>
-          entities.map { entityId => ((userId, entityId), 1) }
+        caselon (producelonrId, (uselonrId, elonntitielons)) =>
+          elonntitielons.map { elonntityId => ((uselonrId, elonntityId), 1) }
       }
-      .count("num_flat_user_to_entity")
-      .sumByKey
-      .withReducers(2999)
-      .toTypedPipe
-      .count("num_user_with_entities")
-      .collect {
-        case ((userId, uttEntityId), numEngagements) =>
-          (userId, Seq((uttEntityId, numEngagements)))
+      .count("num_flat_uselonr_to_elonntity")
+      .sumByKelony
+      .withRelonducelonrs(2999)
+      .toTypelondPipelon
+      .count("num_uselonr_with_elonntitielons")
+      .collelonct {
+        caselon ((uselonrId, uttelonntityId), numelonngagelonmelonnts) =>
+          (uselonrId, Selonq((uttelonntityId, numelonngagelonmelonnts)))
       }
-      .sumByKey
+      .sumByKelony
   }
 
   /**
-   * Infer entities using user-interestedIn clusters and entity embeddings for those clusters,
-   * based on a threshold
+   * Infelonr elonntitielons using uselonr-intelonrelonstelondIn clustelonrs and elonntity elonmbelonddings for thoselon clustelonrs,
+   * baselond on a threlonshold
    */
-  def getInterestedInFromEntityEmbeddings(
-    userToInterestedIn: TypedPipe[(UserId, ClustersUserIsInterestedIn)],
-    clusterToEntities: TypedPipe[(ClusterId, Seq[SemanticCoreEntityWithScore])],
-    inferredFromCluster: Option[SimClustersSource],
-    inferredFromEntity: Option[EntitySource]
+  delonf gelontIntelonrelonstelondInFromelonntityelonmbelonddings(
+    uselonrToIntelonrelonstelondIn: TypelondPipelon[(UselonrId, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    clustelonrToelonntitielons: TypelondPipelon[(ClustelonrId, Selonq[SelonmanticCorelonelonntityWithScorelon])],
+    infelonrrelondFromClustelonr: Option[SimClustelonrsSourcelon],
+    infelonrrelondFromelonntity: Option[elonntitySourcelon]
   )(
-    implicit uniqueId: UniqueID
-  ): TypedPipe[(UserId, Seq[InferredEntity])] = {
-    val clusterToUsers = userToInterestedIn
+    implicit uniquelonId: UniquelonID
+  ): TypelondPipelon[(UselonrId, Selonq[Infelonrrelondelonntity])] = {
+    val clustelonrToUselonrs = uselonrToIntelonrelonstelondIn
       .flatMap {
-        case (userId, clusters) =>
-          clusters.clusterIdToScores.map {
-            case (clusterId, score) =>
-              (clusterId, (userId, score))
+        caselon (uselonrId, clustelonrs) =>
+          clustelonrs.clustelonrIdToScorelons.map {
+            caselon (clustelonrId, scorelon) =>
+              (clustelonrId, (uselonrId, scorelon))
           }
       }
-      .count("num_flat_user_to_interested_in_cluster")
+      .count("num_flat_uselonr_to_intelonrelonstelond_in_clustelonr")
 
-    clusterToUsers
-      .join(clusterToEntities)
-      .withReducers(3000)
+    clustelonrToUselonrs
+      .join(clustelonrToelonntitielons)
+      .withRelonducelonrs(3000)
       .map {
-        case (clusterId, ((userId, interestedInScore), entitiesWithScores)) =>
-          (userId, entitiesWithScores)
+        caselon (clustelonrId, ((uselonrId, intelonrelonstelondInScorelon), elonntitielonsWithScorelons)) =>
+          (uselonrId, elonntitielonsWithScorelons)
       }
       .flatMap {
-        case (userId, entitiesWithScore) =>
-          // Dedup by entityIds in case user is associated with an entity from different clusters
-          entitiesWithScore.map { entity => (userId, Map(entity.entityId -> Max(entity.score))) }
+        caselon (uselonrId, elonntitielonsWithScorelon) =>
+          // Delondup by elonntityIds in caselon uselonr is associatelond with an elonntity from diffelonrelonnt clustelonrs
+          elonntitielonsWithScorelon.map { elonntity => (uselonrId, Map(elonntity.elonntityId -> Max(elonntity.scorelon))) }
       }
-      .sumByKey
+      .sumByKelony
       .map {
-        case (userId, entitiesWithMaxScore) =>
-          val inferredEntities = entitiesWithMaxScore.map { entityWithScore =>
-            InferredEntity(
-              entityId = entityWithScore._1,
-              score = entityWithScore._2.get,
-              simclusterSource = inferredFromCluster,
-              entitySource = inferredFromEntity
+        caselon (uselonrId, elonntitielonsWithMaxScorelon) =>
+          val infelonrrelondelonntitielons = elonntitielonsWithMaxScorelon.map { elonntityWithScorelon =>
+            Infelonrrelondelonntity(
+              elonntityId = elonntityWithScorelon._1,
+              scorelon = elonntityWithScorelon._2.gelont,
+              simclustelonrSourcelon = infelonrrelondFromClustelonr,
+              elonntitySourcelon = infelonrrelondFromelonntity
             )
-          }.toSeq
-          (userId, inferredEntities)
+          }.toSelonq
+          (uselonrId, infelonrrelondelonntitielons)
       }
-      .count("num_user_with_inferred_entities")
+      .count("num_uselonr_with_infelonrrelond_elonntitielons")
   }
 }
 
 /**
-capesospy-v2 update --build_locally --start_cron \
-  --start_cron inferred_entities_from_interested_in \
-  src/scala/com/twitter/simclusters_v2/capesos_config/atla_proc.yaml
+capelonsospy-v2 updatelon --build_locally --start_cron \
+  --start_cron infelonrrelond_elonntitielons_from_intelonrelonstelond_in \
+  src/scala/com/twittelonr/simclustelonrs_v2/capelonsos_config/atla_proc.yaml
  */
-object InferredInterestedInSemanticCoreEntitiesBatchApp extends ScheduledExecutionApp {
+objelonct InfelonrrelondIntelonrelonstelondInSelonmanticCorelonelonntitielonsBatchApp elonxtelonnds SchelondulelondelonxeloncutionApp {
 
-  override def firstTime: RichDate = RichDate("2023-01-01")
+  ovelonrridelon delonf firstTimelon: RichDatelon = RichDatelon("2023-01-01")
 
-  override def batchIncrement: Duration = Days(1)
+  ovelonrridelon delonf batchIncrelonmelonnt: Duration = Days(1)
 
-  private val outputPath = InferredEntities.MHRootPath + "/interested_in"
+  privatelon val outputPath = Infelonrrelondelonntitielons.MHRootPath + "/intelonrelonstelond_in"
 
-  private val outputPathKeyedByCluster =
-    InferredEntities.MHRootPath + "/interested_in_keyed_by_cluster"
+  privatelon val outputPathKelonyelondByClustelonr =
+    Infelonrrelondelonntitielons.MHRootPath + "/intelonrelonstelond_in_kelonyelond_by_clustelonr"
 
-  import InferredEntitiesFromInterestedIn._
+  import InfelonrrelondelonntitielonsFromIntelonrelonstelondIn._
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
-    Execution.unit
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
+    elonxeloncution.unit
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange, timeZone)
-      .count("num_legible_cluster_to_entities")
-      .forceToDisk
+    val clustelonrToelonntitielons = Infelonrrelondelonntitielons
+      .gelontLelongiblelonelonntityelonmbelonddings(datelonRangelon, timelonZonelon)
+      .count("num_lelongiblelon_clustelonr_to_elonntitielons")
+      .forcelonToDisk
 
-    // inferred interests. Only support 2020 model version
-    val userToClusters2020 =
-      InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone)
+    // infelonrrelond intelonrelonsts. Only support 2020 modelonl velonrsion
+    val uselonrToClustelonrs2020 =
+      IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondIn2020Sourcelon(datelonRangelon, timelonZonelon)
 
-    val inferredEntities2020 = getInterestedInFromEntityEmbeddings(
-      userToInterestedIn = userToClusters2020,
-      clusterToEntities = clusterToEntities,
-      inferredFromCluster = Some(InferredEntities.InterestedIn2020),
-      inferredFromEntity = Some(EntitySource.SimClusters20M145K2020EntityEmbeddingsByFavScore)
-    )(uniqueID)
-      .count("num_user_with_inferred_entities_2020")
+    val infelonrrelondelonntitielons2020 = gelontIntelonrelonstelondInFromelonntityelonmbelonddings(
+      uselonrToIntelonrelonstelondIn = uselonrToClustelonrs2020,
+      clustelonrToelonntitielons = clustelonrToelonntitielons,
+      infelonrrelondFromClustelonr = Somelon(Infelonrrelondelonntitielons.IntelonrelonstelondIn2020),
+      infelonrrelondFromelonntity = Somelon(elonntitySourcelon.SimClustelonrs20M145K2020elonntityelonmbelonddingsByFavScorelon)
+    )(uniquelonID)
+      .count("num_uselonr_with_infelonrrelond_elonntitielons_2020")
 
-    val combinedInferredInterests =
-      InferredEntities.combineResults(inferredEntities2020)
+    val combinelondInfelonrrelondIntelonrelonsts =
+      Infelonrrelondelonntitielons.combinelonRelonsults(infelonrrelondelonntitielons2020)
 
-    // output cluster -> entity mapping
-    val clusterToEntityExec = clusterToEntities
+    // output clustelonr -> elonntity mapping
+    val clustelonrToelonntityelonxelonc = clustelonrToelonntitielons
       .map {
-        case (clusterId, entities) =>
-          val inferredEntities = SimClustersInferredEntities(
-            entities.map(entity => InferredEntity(entity.entityId, entity.score))
+        caselon (clustelonrId, elonntitielons) =>
+          val infelonrrelondelonntitielons = SimClustelonrsInfelonrrelondelonntitielons(
+            elonntitielons.map(elonntity => Infelonrrelondelonntity(elonntity.elonntityId, elonntity.scorelon))
           )
-          KeyVal(clusterId, inferredEntities)
+          KelonyVal(clustelonrId, infelonrrelondelonntitielons)
       }
-      .writeDALVersionedKeyValExecution(
-        SimclustersInferredEntitiesFromInterestedInKeyedByClusterScalaDataset,
-        D.Suffix(outputPathKeyedByCluster)
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        SimclustelonrsInfelonrrelondelonntitielonsFromIntelonrelonstelondInKelonyelondByClustelonrScalaDataselont,
+        D.Suffix(outputPathKelonyelondByClustelonr)
       )
 
-    // output user -> entity mapping
-    val userToEntityExec = combinedInferredInterests
-      .map { case (userId, entities) => KeyVal(userId, entities) }
-      .writeDALVersionedKeyValExecution(
-        SimclustersInferredEntitiesFromInterestedInScalaDataset,
+    // output uselonr -> elonntity mapping
+    val uselonrToelonntityelonxelonc = combinelondInfelonrrelondIntelonrelonsts
+      .map { caselon (uselonrId, elonntitielons) => KelonyVal(uselonrId, elonntitielons) }
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        SimclustelonrsInfelonrrelondelonntitielonsFromIntelonrelonstelondInScalaDataselont,
         D.Suffix(outputPath)
       )
 
-    Execution.zip(clusterToEntityExec, userToEntityExec).unit
+    elonxeloncution.zip(clustelonrToelonntityelonxelonc, uselonrToelonntityelonxelonc).unit
   }
 }
 
 /**
-Adhob debugging job. Uses Entity Embeddings dataset to infer user interests
+Adhob delonbugging job. Uselons elonntity elonmbelonddings dataselont to infelonr uselonr intelonrelonsts
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/inferred_entities/ &&\
-scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.inferred_entities.InferredInterestedInSemanticCoreEntitiesAdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/inferred_entities:inferred_entities_from_interested_in-adhoc \
-  --user recos-platform \
-  -- --date 2019-11-11 --email your_ldap@twitter.com
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/infelonrrelond_elonntitielons/ &&\
+scalding relonmotelon run \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.infelonrrelond_elonntitielons.InfelonrrelondIntelonrelonstelondInSelonmanticCorelonelonntitielonsAdhocApp \
+  --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/infelonrrelond_elonntitielons:infelonrrelond_elonntitielons_from_intelonrelonstelond_in-adhoc \
+  --uselonr reloncos-platform \
+  -- --datelon 2019-11-11 --elonmail your_ldap@twittelonr.com
  */
-object InferredInterestedInSemanticCoreEntitiesAdhocApp extends AdhocExecutionApp {
-  import InferredEntitiesFromInterestedIn._
-  override def runOnDateRange(
+objelonct InfelonrrelondIntelonrelonstelondInSelonmanticCorelonelonntitielonsAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
+  import InfelonrrelondelonntitielonsFromIntelonrelonstelondIn._
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val interestedIn = InterestedInSources.simClustersInterestedIn2020Source(dateRange, timeZone)
+    val intelonrelonstelondIn = IntelonrelonstelondInSourcelons.simClustelonrsIntelonrelonstelondIn2020Sourcelon(datelonRangelon, timelonZonelon)
 
-    val clusterToEntities = InferredEntities
-      .getLegibleEntityEmbeddings(dateRange, timeZone)
-      .count("num_legible_cluster_to_entities")
+    val clustelonrToelonntitielons = Infelonrrelondelonntitielons
+      .gelontLelongiblelonelonntityelonmbelonddings(datelonRangelon, timelonZonelon)
+      .count("num_lelongiblelon_clustelonr_to_elonntitielons")
 
-    // Debugging InterestedIn -> EntityEmbeddings approach
-    val interestedInFromEntityEmbeddings = getInterestedInFromEntityEmbeddings(
-      interestedIn,
-      clusterToEntities,
-      None,
-      None
-    )(uniqueID)
+    // Delonbugging IntelonrelonstelondIn -> elonntityelonmbelonddings approach
+    val intelonrelonstelondInFromelonntityelonmbelonddings = gelontIntelonrelonstelondInFromelonntityelonmbelonddings(
+      intelonrelonstelondIn,
+      clustelonrToelonntitielons,
+      Nonelon,
+      Nonelon
+    )(uniquelonID)
 
     val distribution = Util
-      .printSummaryOfNumericColumn(
-        interestedInFromEntityEmbeddings.map { case (k, v) => v.size },
-        Some("# of interestedIn entities per user")
-      ).map { results =>
-        Util.sendEmail(results, "# of interestedIn entities per user", args.getOrElse("email", ""))
+      .printSummaryOfNumelonricColumn(
+        intelonrelonstelondInFromelonntityelonmbelonddings.map { caselon (k, v) => v.sizelon },
+        Somelon("# of intelonrelonstelondIn elonntitielons pelonr uselonr")
+      ).map { relonsults =>
+        Util.selonndelonmail(relonsults, "# of intelonrelonstelondIn elonntitielons pelonr uselonr", args.gelontOrelonlselon("elonmail", ""))
       }
 
-    Execution
+    elonxeloncution
       .zip(
         distribution,
-        interestedInFromEntityEmbeddings
-          .writeExecution(
-            TypedTsv("/user/recos-platform/adhoc/debug/interested_in_from_entity_embeddings"))
+        intelonrelonstelondInFromelonntityelonmbelonddings
+          .writelonelonxeloncution(
+            TypelondTsv("/uselonr/reloncos-platform/adhoc/delonbug/intelonrelonstelond_in_from_elonntity_elonmbelonddings"))
       ).unit
   }
 }
 
 /**
- Adhob debuggingjob. Runs through the UTT interest inference, analyze the size & distribution of
- interests per user.
+ Adhob delonbuggingjob. Runs through thelon UTT intelonrelonst infelonrelonncelon, analyzelon thelon sizelon & distribution of
+ intelonrelonsts pelonr uselonr.
 
-./bazel bundle src/scala/com/twitter/simclusters_v2/scalding/inferred_entities/ &&\
-scalding remote run \
-  --main-class com.twitter.simclusters_v2.scalding.inferred_entities.InferredUTTEntitiesFromInterestedInAdhocApp \
-  --target src/scala/com/twitter/simclusters_v2/scalding/inferred_entities:inferred_entities_from_interested_in-adhoc \
-  --user recos-platform \
-  -- --date 2019-11-03 --email your_ldap@twitter.com
+./bazelonl bundlelon src/scala/com/twittelonr/simclustelonrs_v2/scalding/infelonrrelond_elonntitielons/ &&\
+scalding relonmotelon run \
+  --main-class com.twittelonr.simclustelonrs_v2.scalding.infelonrrelond_elonntitielons.InfelonrrelondUTTelonntitielonsFromIntelonrelonstelondInAdhocApp \
+  --targelont src/scala/com/twittelonr/simclustelonrs_v2/scalding/infelonrrelond_elonntitielons:infelonrrelond_elonntitielons_from_intelonrelonstelond_in-adhoc \
+  --uselonr reloncos-platform \
+  -- --datelon 2019-11-03 --elonmail your_ldap@twittelonr.com
  */
-object InferredUTTEntitiesFromInterestedInAdhocApp extends AdhocExecutionApp {
-  import InferredEntitiesFromInterestedIn._
+objelonct InfelonrrelondUTTelonntitielonsFromIntelonrelonstelondInAdhocApp elonxtelonnds AdhocelonxeloncutionApp {
+  import InfelonrrelondelonntitielonsFromIntelonrelonstelondIn._
 
-  override def runOnDateRange(
+  ovelonrridelon delonf runOnDatelonRangelon(
     args: Args
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val employeeGraphPath = "/user/recos-platform/adhoc/employee_graph_from_user_user/"
-    val employeeGraph = TypedPipe.from(UserAndNeighborsFixedPathSource(employeeGraphPath))
+    val elonmployelonelonGraphPath = "/uselonr/reloncos-platform/adhoc/elonmployelonelon_graph_from_uselonr_uselonr/"
+    val elonmployelonelonGraph = TypelondPipelon.from(UselonrAndNelonighborsFixelondPathSourcelon(elonmployelonelonGraphPath))
 
-    val maxKnownForUttsPerProducer = 100
-    val minSocialProofThreshold = 10
-    val maxInferredInterestsPerUser = 500
+    val maxKnownForUttsPelonrProducelonr = 100
+    val minSocialProofThrelonshold = 10
+    val maxInfelonrrelondIntelonrelonstsPelonrUselonr = 500
 
-    // KnownFor UTT entities
-    val userToUttEntities = getUserToKnownForUttEntities(
-      dateRange.embiggen(Days(7)),
-      maxKnownForUttsPerProducer
-    ).map { case (userId, entities) => (userId, entities.map(_._1)) }
+    // KnownFor UTT elonntitielons
+    val uselonrToUttelonntitielons = gelontUselonrToKnownForUttelonntitielons(
+      datelonRangelon.elonmbiggelonn(Days(7)),
+      maxKnownForUttsPelonrProducelonr
+    ).map { caselon (uselonrId, elonntitielons) => (uselonrId, elonntitielons.map(_._1)) }
 
-    val userToInterestsEngagementCounts = getUserToUTTEntities(employeeGraph, userToUttEntities)
+    val uselonrToIntelonrelonstselonngagelonmelonntCounts = gelontUselonrToUTTelonntitielons(elonmployelonelonGraph, uselonrToUttelonntitielons)
 
-    val topInterests = filterUTTEntities(
-      userToInterestsEngagementCounts,
-      minSocialProofThreshold,
-      maxInferredInterestsPerUser
-    ).count("num_users_with_inferred_interests")
+    val topIntelonrelonsts = filtelonrUTTelonntitielons(
+      uselonrToIntelonrelonstselonngagelonmelonntCounts,
+      minSocialProofThrelonshold,
+      maxInfelonrrelondIntelonrelonstsPelonrUselonr
+    ).count("num_uselonrs_with_infelonrrelond_intelonrelonsts")
 
-    // Debugging UTT entities
+    // Delonbugging UTT elonntitielons
     val analysis = Util
-      .printSummaryOfNumericColumn(
-        topInterests.map { case (k, v) => v.size },
-        Some(
-          "# of UTT entities per user, maxKnownForUtt=100, minSocialProof=10, maxInferredPerUser=500")
-      ).map { results =>
-        Util.sendEmail(results, "# of UTT entities per user", args.getOrElse("email", ""))
+      .printSummaryOfNumelonricColumn(
+        topIntelonrelonsts.map { caselon (k, v) => v.sizelon },
+        Somelon(
+          "# of UTT elonntitielons pelonr uselonr, maxKnownForUtt=100, minSocialProof=10, maxInfelonrrelondPelonrUselonr=500")
+      ).map { relonsults =>
+        Util.selonndelonmail(relonsults, "# of UTT elonntitielons pelonr uselonr", args.gelontOrelonlselon("elonmail", ""))
       }
 
-    val outputPath = "/user/recos-platform/adhoc/inferred_utt_interests"
+    val outputPath = "/uselonr/reloncos-platform/adhoc/infelonrrelond_utt_intelonrelonsts"
 
-    Execution
+    elonxeloncution
       .zip(
-        topInterests.writeExecution(TypedTsv(outputPath)),
+        topIntelonrelonsts.writelonelonxeloncution(TypelondTsv(outputPath)),
         analysis
       ).unit
   }

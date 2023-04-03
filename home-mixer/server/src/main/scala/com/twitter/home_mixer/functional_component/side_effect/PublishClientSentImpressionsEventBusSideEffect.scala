@@ -1,92 +1,92 @@
-package com.twitter.home_mixer.functional_component.side_effect
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.sidelon_elonffelonct
 
-import com.twitter.eventbus.client.EventBusPublisher
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.model.request.HasSeenTweetIds
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.functional_component.side_effect.PipelineResultSideEffect
-import com.twitter.product_mixer.core.model.common.identifier.SideEffectIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.HasMarshalling
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.impressionstore.thriftscala.Impression
-import com.twitter.timelines.impressionstore.thriftscala.ImpressionList
-import com.twitter.timelines.impressionstore.thriftscala.PublishedImpressionList
-import com.twitter.timelines.impressionstore.thriftscala.SurfaceArea
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.elonvelonntbus.clielonnt.elonvelonntBusPublishelonr
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ForYouProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasSelonelonnTwelonelontIds
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.sidelon_elonffelonct.PipelonlinelonRelonsultSidelonelonffelonct
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.SidelonelonffelonctIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.HasMarshalling
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.thriftscala.Imprelonssion
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.thriftscala.ImprelonssionList
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.thriftscala.PublishelondImprelonssionList
+import com.twittelonr.timelonlinelons.imprelonssionstorelon.thriftscala.SurfacelonArelona
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-object PublishClientSentImpressionsEventBusSideEffect {
-  val HomeSurfaceArea: Option[Set[SurfaceArea]] = Some(Set(SurfaceArea.HomeTimeline))
-  val HomeLatestSurfaceArea: Option[Set[SurfaceArea]] = Some(Set(SurfaceArea.HomeLatestTimeline))
+objelonct PublishClielonntSelonntImprelonssionselonvelonntBusSidelonelonffelonct {
+  val HomelonSurfacelonArelona: Option[Selont[SurfacelonArelona]] = Somelon(Selont(SurfacelonArelona.HomelonTimelonlinelon))
+  val HomelonLatelonstSurfacelonArelona: Option[Selont[SurfacelonArelona]] = Somelon(Selont(SurfacelonArelona.HomelonLatelonstTimelonlinelon))
 }
 
 /**
- * Side effect that publishes seen tweet IDs sent from clients. The seen tweet IDs are sent to a
- * heron topology which writes to a memcache dataset.
+ * Sidelon elonffelonct that publishelons selonelonn twelonelont IDs selonnt from clielonnts. Thelon selonelonn twelonelont IDs arelon selonnt to a
+ * helonron topology which writelons to a melonmcachelon dataselont.
  */
-@Singleton
-class PublishClientSentImpressionsEventBusSideEffect @Inject() (
-  eventBusPublisher: EventBusPublisher[PublishedImpressionList])
-    extends PipelineResultSideEffect[PipelineQuery with HasSeenTweetIds, HasMarshalling]
-    with PipelineResultSideEffect.Conditionally[
-      PipelineQuery with HasSeenTweetIds,
+@Singlelonton
+class PublishClielonntSelonntImprelonssionselonvelonntBusSidelonelonffelonct @Injelonct() (
+  elonvelonntBusPublishelonr: elonvelonntBusPublishelonr[PublishelondImprelonssionList])
+    elonxtelonnds PipelonlinelonRelonsultSidelonelonffelonct[PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds, HasMarshalling]
+    with PipelonlinelonRelonsultSidelonelonffelonct.Conditionally[
+      PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds,
       HasMarshalling
     ] {
-  import PublishClientSentImpressionsEventBusSideEffect._
+  import PublishClielonntSelonntImprelonssionselonvelonntBusSidelonelonffelonct._
 
-  override val identifier: SideEffectIdentifier =
-    SideEffectIdentifier("PublishClientSentImpressionsEventBus")
+  ovelonrridelon val idelonntifielonr: SidelonelonffelonctIdelonntifielonr =
+    SidelonelonffelonctIdelonntifielonr("PublishClielonntSelonntImprelonssionselonvelonntBus")
 
-  override def onlyIf(
-    query: PipelineQuery with HasSeenTweetIds,
-    selectedCandidates: Seq[CandidateWithDetails],
-    remainingCandidates: Seq[CandidateWithDetails],
-    droppedCandidates: Seq[CandidateWithDetails],
-    response: HasMarshalling
-  ): Boolean = query.seenTweetIds.exists(_.nonEmpty)
+  ovelonrridelon delonf onlyIf(
+    quelonry: PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds,
+    selonlelonctelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonmainingCandidatelons: Selonq[CandidatelonWithDelontails],
+    droppelondCandidatelons: Selonq[CandidatelonWithDelontails],
+    relonsponselon: HasMarshalling
+  ): Boolelonan = quelonry.selonelonnTwelonelontIds.elonxists(_.nonelonmpty)
 
-  def buildEvents(
-    query: PipelineQuery with HasSeenTweetIds,
-    currentTime: Long
-  ): Option[Seq[Impression]] = {
-    val surfaceArea = query.product match {
-      case ForYouProduct => HomeSurfaceArea
-      case FollowingProduct => HomeLatestSurfaceArea
-      case _ => None
+  delonf buildelonvelonnts(
+    quelonry: PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds,
+    currelonntTimelon: Long
+  ): Option[Selonq[Imprelonssion]] = {
+    val surfacelonArelona = quelonry.product match {
+      caselon ForYouProduct => HomelonSurfacelonArelona
+      caselon FollowingProduct => HomelonLatelonstSurfacelonArelona
+      caselon _ => Nonelon
     }
-    query.seenTweetIds.map { seenTweetIds =>
-      seenTweetIds.map { tweetId =>
-        Impression(
-          tweetId = tweetId,
-          impressionTime = Some(currentTime),
-          surfaceAreas = surfaceArea
+    quelonry.selonelonnTwelonelontIds.map { selonelonnTwelonelontIds =>
+      selonelonnTwelonelontIds.map { twelonelontId =>
+        Imprelonssion(
+          twelonelontId = twelonelontId,
+          imprelonssionTimelon = Somelon(currelonntTimelon),
+          surfacelonArelonas = surfacelonArelona
         )
       }
     }
   }
 
-  final override def apply(
-    inputs: PipelineResultSideEffect.Inputs[PipelineQuery with HasSeenTweetIds, HasMarshalling]
+  final ovelonrridelon delonf apply(
+    inputs: PipelonlinelonRelonsultSidelonelonffelonct.Inputs[PipelonlinelonQuelonry with HasSelonelonnTwelonelontIds, HasMarshalling]
   ): Stitch[Unit] = {
-    val currentTime = Time.now.inMilliseconds
-    val impressions = buildEvents(inputs.query, currentTime)
+    val currelonntTimelon = Timelon.now.inMilliselonconds
+    val imprelonssions = buildelonvelonnts(inputs.quelonry, currelonntTimelon)
 
-    Stitch.callFuture(
-      eventBusPublisher.publish(
-        PublishedImpressionList(
-          inputs.query.getRequiredUserId,
-          ImpressionList(impressions),
-          currentTime
+    Stitch.callFuturelon(
+      elonvelonntBusPublishelonr.publish(
+        PublishelondImprelonssionList(
+          inputs.quelonry.gelontRelonquirelondUselonrId,
+          ImprelonssionList(imprelonssions),
+          currelonntTimelon
         )
       )
     )
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.4)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.4)
   )
 }

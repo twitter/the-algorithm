@@ -1,62 +1,62 @@
-package com.twitter.follow_recommendations.common.models
+packagelon com.twittelonr.follow_reloncommelonndations.common.modelonls
 
-import com.twitter.follow_recommendations.thriftscala.{EngagementType => TEngagementType}
-import com.twitter.follow_recommendations.logging.thriftscala.{
-  EngagementType => OfflineEngagementType
+import com.twittelonr.follow_reloncommelonndations.thriftscala.{elonngagelonmelonntTypelon => TelonngagelonmelonntTypelon}
+import com.twittelonr.follow_reloncommelonndations.logging.thriftscala.{
+  elonngagelonmelonntTypelon => OfflinelonelonngagelonmelonntTypelon
 }
-sealed trait EngagementType {
-  def toThrift: TEngagementType
-  def toOfflineThrift: OfflineEngagementType
+selonalelond trait elonngagelonmelonntTypelon {
+  delonf toThrift: TelonngagelonmelonntTypelon
+  delonf toOfflinelonThrift: OfflinelonelonngagelonmelonntTypelon
 }
 
-object EngagementType {
-  object Click extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Click
+objelonct elonngagelonmelonntTypelon {
+  objelonct Click elonxtelonnds elonngagelonmelonntTypelon {
+    ovelonrridelon val toThrift: TelonngagelonmelonntTypelon = TelonngagelonmelonntTypelon.Click
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Click
+    ovelonrridelon val toOfflinelonThrift: OfflinelonelonngagelonmelonntTypelon = OfflinelonelonngagelonmelonntTypelon.Click
   }
-  object Like extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Like
+  objelonct Likelon elonxtelonnds elonngagelonmelonntTypelon {
+    ovelonrridelon val toThrift: TelonngagelonmelonntTypelon = TelonngagelonmelonntTypelon.Likelon
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Like
+    ovelonrridelon val toOfflinelonThrift: OfflinelonelonngagelonmelonntTypelon = OfflinelonelonngagelonmelonntTypelon.Likelon
   }
-  object Mention extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Mention
+  objelonct Melonntion elonxtelonnds elonngagelonmelonntTypelon {
+    ovelonrridelon val toThrift: TelonngagelonmelonntTypelon = TelonngagelonmelonntTypelon.Melonntion
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Mention
+    ovelonrridelon val toOfflinelonThrift: OfflinelonelonngagelonmelonntTypelon = OfflinelonelonngagelonmelonntTypelon.Melonntion
   }
-  object Retweet extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.Retweet
+  objelonct Relontwelonelont elonxtelonnds elonngagelonmelonntTypelon {
+    ovelonrridelon val toThrift: TelonngagelonmelonntTypelon = TelonngagelonmelonntTypelon.Relontwelonelont
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.Retweet
+    ovelonrridelon val toOfflinelonThrift: OfflinelonelonngagelonmelonntTypelon = OfflinelonelonngagelonmelonntTypelon.Relontwelonelont
   }
-  object ProfileView extends EngagementType {
-    override val toThrift: TEngagementType = TEngagementType.ProfileView
+  objelonct ProfilelonVielonw elonxtelonnds elonngagelonmelonntTypelon {
+    ovelonrridelon val toThrift: TelonngagelonmelonntTypelon = TelonngagelonmelonntTypelon.ProfilelonVielonw
 
-    override val toOfflineThrift: OfflineEngagementType = OfflineEngagementType.ProfileView
-  }
-
-  def fromThrift(engagementType: TEngagementType): EngagementType = engagementType match {
-    case TEngagementType.Click => Click
-    case TEngagementType.Like => Like
-    case TEngagementType.Mention => Mention
-    case TEngagementType.Retweet => Retweet
-    case TEngagementType.ProfileView => ProfileView
-    case TEngagementType.EnumUnknownEngagementType(i) =>
-      throw new UnknownEngagementTypeException(
-        s"Unknown engagement type thrift enum with value: ${i}")
+    ovelonrridelon val toOfflinelonThrift: OfflinelonelonngagelonmelonntTypelon = OfflinelonelonngagelonmelonntTypelon.ProfilelonVielonw
   }
 
-  def fromOfflineThrift(engagementType: OfflineEngagementType): EngagementType =
-    engagementType match {
-      case OfflineEngagementType.Click => Click
-      case OfflineEngagementType.Like => Like
-      case OfflineEngagementType.Mention => Mention
-      case OfflineEngagementType.Retweet => Retweet
-      case OfflineEngagementType.ProfileView => ProfileView
-      case OfflineEngagementType.EnumUnknownEngagementType(i) =>
-        throw new UnknownEngagementTypeException(
-          s"Unknown engagement type offline thrift enum with value: ${i}")
+  delonf fromThrift(elonngagelonmelonntTypelon: TelonngagelonmelonntTypelon): elonngagelonmelonntTypelon = elonngagelonmelonntTypelon match {
+    caselon TelonngagelonmelonntTypelon.Click => Click
+    caselon TelonngagelonmelonntTypelon.Likelon => Likelon
+    caselon TelonngagelonmelonntTypelon.Melonntion => Melonntion
+    caselon TelonngagelonmelonntTypelon.Relontwelonelont => Relontwelonelont
+    caselon TelonngagelonmelonntTypelon.ProfilelonVielonw => ProfilelonVielonw
+    caselon TelonngagelonmelonntTypelon.elonnumUnknownelonngagelonmelonntTypelon(i) =>
+      throw nelonw UnknownelonngagelonmelonntTypelonelonxcelonption(
+        s"Unknown elonngagelonmelonnt typelon thrift elonnum with valuelon: ${i}")
+  }
+
+  delonf fromOfflinelonThrift(elonngagelonmelonntTypelon: OfflinelonelonngagelonmelonntTypelon): elonngagelonmelonntTypelon =
+    elonngagelonmelonntTypelon match {
+      caselon OfflinelonelonngagelonmelonntTypelon.Click => Click
+      caselon OfflinelonelonngagelonmelonntTypelon.Likelon => Likelon
+      caselon OfflinelonelonngagelonmelonntTypelon.Melonntion => Melonntion
+      caselon OfflinelonelonngagelonmelonntTypelon.Relontwelonelont => Relontwelonelont
+      caselon OfflinelonelonngagelonmelonntTypelon.ProfilelonVielonw => ProfilelonVielonw
+      caselon OfflinelonelonngagelonmelonntTypelon.elonnumUnknownelonngagelonmelonntTypelon(i) =>
+        throw nelonw UnknownelonngagelonmelonntTypelonelonxcelonption(
+          s"Unknown elonngagelonmelonnt typelon offlinelon thrift elonnum with valuelon: ${i}")
     }
 }
-class UnknownEngagementTypeException(message: String) extends Exception(message)
+class UnknownelonngagelonmelonntTypelonelonxcelonption(melonssagelon: String) elonxtelonnds elonxcelonption(melonssagelon)

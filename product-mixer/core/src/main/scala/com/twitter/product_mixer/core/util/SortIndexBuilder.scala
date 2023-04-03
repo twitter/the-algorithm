@@ -1,17 +1,17 @@
-package com.twitter.product_mixer.core.util
+packagelon com.twittelonr.product_mixelonr.corelon.util
 
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.util.Time
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.util.Timelon
 
-object SortIndexBuilder {
+objelonct SortIndelonxBuildelonr {
 
-  /** the [[Time]] from a [[SnowflakeId]] */
-  def idToTime(id: Long): Time =
-    Time.fromMilliseconds(SnowflakeId.unixTimeMillisOrFloorFromId(id))
+  /** thelon [[Timelon]] from a [[SnowflakelonId]] */
+  delonf idToTimelon(id: Long): Timelon =
+    Timelon.fromMilliselonconds(SnowflakelonId.unixTimelonMillisOrFloorFromId(id))
 
-  /** the first [[SnowflakeId]] possible for a given [[Time]]  */
-  def timeToId(time: Time): Long = SnowflakeId.firstIdFor(time)
+  /** thelon first [[SnowflakelonId]] possiblelon for a givelonn [[Timelon]]  */
+  delonf timelonToId(timelon: Timelon): Long = SnowflakelonId.firstIdFor(timelon)
 
-  /** the first [[SnowflakeId]] possible for a given unix epoch millis  */
-  def timeToId(timeMillis: Long): Long = SnowflakeId.firstIdFor(timeMillis)
+  /** thelon first [[SnowflakelonId]] possiblelon for a givelonn unix elonpoch millis  */
+  delonf timelonToId(timelonMillis: Long): Long = SnowflakelonId.firstIdFor(timelonMillis)
 }

@@ -1,148 +1,148 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt
 
-import com.twitter.product_mixer.component_library.model.candidate.ArticleCandidate
-import com.twitter.product_mixer.component_library.model.candidate.AudioSpaceCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TopicCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TwitterListCandidate
-import com.twitter.product_mixer.component_library.model.candidate.UserCandidate
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.AddEntriesInstructionBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.BaseUrtMetadataBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorBuilder
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtCursorUpdater
-import com.twitter.product_mixer.component_library.premarshaller.urt.builder.UrtInstructionBuilder
-import com.twitter.product_mixer.core.functional_component.premarshaller.DomainMarshaller
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedCandidateDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedModuleDomainMarshallerException
-import com.twitter.product_mixer.core.functional_component.premarshaller.UnsupportedPresentationDomainMarshallerException
-import com.twitter.product_mixer.core.model.common.identifier.DomainMarshallerIdentifier
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ItemCandidateWithDetails
-import com.twitter.product_mixer.core.model.common.presentation.ModuleCandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Timeline
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.FollowingListSeed
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.audio_space.AudioSpaceItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.topic.TopicItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.Tweet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet.TweetItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.twitter_list.TwitterListItem
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.User
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.user.UserItem
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ArticlelonCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.AudioSpacelonCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TopicCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwittelonrListCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.UselonrCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.AddelonntrielonsInstructionBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.BaselonUrtMelontadataBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UrtBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UrtCursorBuildelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UrtCursorUpdatelonr
+import com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr.UrtInstructionBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.DomainMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.UnsupportelondCandidatelonDomainMarshallelonrelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.UnsupportelondModulelonDomainMarshallelonrelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.prelonmarshallelonr.UnsupportelondPrelonselonntationDomainMarshallelonrelonxcelonption
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.DomainMarshallelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ItelonmCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.ModulelonCandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.TimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.ArticlelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.FollowingListSelonelond
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.audio_spacelon.AudioSpacelonItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.topic.TopicItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.Twelonelont
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont.TwelonelontItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twittelonr_list.TwittelonrListItelonm
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.Uselonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.uselonr.UselonrItelonm
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Decorator that is useful for fast prototyping, as it will generate URT entries from only
- * candidate IDs (no ItemPresentations or ModulePresentations from candidate pipeline decorators
- * are required).
+ * Deloncorator that is uselonful for fast prototyping, as it will gelonnelonratelon URT elonntrielons from only
+ * candidatelon IDs (no ItelonmPrelonselonntations or ModulelonPrelonselonntations from candidatelon pipelonlinelon deloncorators
+ * arelon relonquirelond).
  */
-case class UndecoratedUrtDomainMarshaller[Query <: PipelineQuery](
-  override val instructionBuilders: Seq[UrtInstructionBuilder[Query, TimelineInstruction]] =
-    Seq(AddEntriesInstructionBuilder()),
-  override val cursorBuilders: Seq[UrtCursorBuilder[Query]] = Seq.empty,
-  override val cursorUpdaters: Seq[UrtCursorUpdater[Query]] = Seq.empty,
-  override val metadataBuilder: Option[BaseUrtMetadataBuilder[Query]] = None,
-  override val sortIndexStep: Int = 1,
-  override val identifier: DomainMarshallerIdentifier =
-    DomainMarshallerIdentifier("UndecoratedUnifiedRichTimeline"))
-    extends DomainMarshaller[Query, Timeline]
-    with UrtBuilder[Query, TimelineInstruction] {
+caselon class UndeloncoratelondUrtDomainMarshallelonr[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val instructionBuildelonrs: Selonq[UrtInstructionBuildelonr[Quelonry, TimelonlinelonInstruction]] =
+    Selonq(AddelonntrielonsInstructionBuildelonr()),
+  ovelonrridelon val cursorBuildelonrs: Selonq[UrtCursorBuildelonr[Quelonry]] = Selonq.elonmpty,
+  ovelonrridelon val cursorUpdatelonrs: Selonq[UrtCursorUpdatelonr[Quelonry]] = Selonq.elonmpty,
+  ovelonrridelon val melontadataBuildelonr: Option[BaselonUrtMelontadataBuildelonr[Quelonry]] = Nonelon,
+  ovelonrridelon val sortIndelonxStelonp: Int = 1,
+  ovelonrridelon val idelonntifielonr: DomainMarshallelonrIdelonntifielonr =
+    DomainMarshallelonrIdelonntifielonr("UndeloncoratelondUnifielondRichTimelonlinelon"))
+    elonxtelonnds DomainMarshallelonr[Quelonry, Timelonlinelon]
+    with UrtBuildelonr[Quelonry, TimelonlinelonInstruction] {
 
-  override def apply(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): Timeline = {
-    val entries = selections.map {
-      case itemCandidateWithDetails @ ItemCandidateWithDetails(candidate, None, _) =>
-        candidate match {
-          case candidate: ArticleCandidate =>
-            ArticleItem(
-              id = candidate.id,
-              articleSeedType = FollowingListSeed,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              displayType = None,
-              socialContext = None,
+  ovelonrridelon delonf apply(
+    quelonry: Quelonry,
+    selonlelonctions: Selonq[CandidatelonWithDelontails]
+  ): Timelonlinelon = {
+    val elonntrielons = selonlelonctions.map {
+      caselon itelonmCandidatelonWithDelontails @ ItelonmCandidatelonWithDelontails(candidatelon, Nonelon, _) =>
+        candidatelon match {
+          caselon candidatelon: ArticlelonCandidatelon =>
+            ArticlelonItelonm(
+              id = candidatelon.id,
+              articlelonSelonelondTypelon = FollowingListSelonelond,
+              sortIndelonx = Nonelon,
+              clielonntelonvelonntInfo = Nonelon,
+              felonelondbackActionInfo = Nonelon,
+              displayTypelon = Nonelon,
+              socialContelonxt = Nonelon,
             )
-          case candidate: AudioSpaceCandidate =>
-            AudioSpaceItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None)
-          case candidate: TopicCandidate =>
-            TopicItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              topicFunctionalityType = None,
-              topicDisplayType = None
+          caselon candidatelon: AudioSpacelonCandidatelon =>
+            AudioSpacelonItelonm(
+              id = candidatelon.id,
+              sortIndelonx = Nonelon,
+              clielonntelonvelonntInfo = Nonelon,
+              felonelondbackActionInfo = Nonelon)
+          caselon candidatelon: TopicCandidatelon =>
+            TopicItelonm(
+              id = candidatelon.id,
+              sortIndelonx = Nonelon,
+              clielonntelonvelonntInfo = Nonelon,
+              felonelondbackActionInfo = Nonelon,
+              topicFunctionalityTypelon = Nonelon,
+              topicDisplayTypelon = Nonelon
             )
-          case candidate: TweetCandidate =>
-            TweetItem(
-              id = candidate.id,
-              entryNamespace = TweetItem.TweetEntryNamespace,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              isPinned = None,
-              entryIdToReplace = None,
-              socialContext = None,
-              highlights = None,
-              displayType = Tweet,
-              innerTombstoneInfo = None,
-              timelinesScoreInfo = None,
-              hasModeratedReplies = None,
-              forwardPivot = None,
-              innerForwardPivot = None,
-              promotedMetadata = None,
-              conversationAnnotation = None,
-              contextualTweetRef = None,
-              prerollMetadata = None,
-              replyBadge = None,
-              destination = None
+          caselon candidatelon: TwelonelontCandidatelon =>
+            TwelonelontItelonm(
+              id = candidatelon.id,
+              elonntryNamelonspacelon = TwelonelontItelonm.TwelonelontelonntryNamelonspacelon,
+              sortIndelonx = Nonelon,
+              clielonntelonvelonntInfo = Nonelon,
+              felonelondbackActionInfo = Nonelon,
+              isPinnelond = Nonelon,
+              elonntryIdToRelonplacelon = Nonelon,
+              socialContelonxt = Nonelon,
+              highlights = Nonelon,
+              displayTypelon = Twelonelont,
+              innelonrTombstonelonInfo = Nonelon,
+              timelonlinelonsScorelonInfo = Nonelon,
+              hasModelonratelondRelonplielons = Nonelon,
+              forwardPivot = Nonelon,
+              innelonrForwardPivot = Nonelon,
+              promotelondMelontadata = Nonelon,
+              convelonrsationAnnotation = Nonelon,
+              contelonxtualTwelonelontRelonf = Nonelon,
+              prelonrollMelontadata = Nonelon,
+              relonplyBadgelon = Nonelon,
+              delonstination = Nonelon
             )
-          case candidate: TwitterListCandidate =>
-            TwitterListItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              displayType = None
+          caselon candidatelon: TwittelonrListCandidatelon =>
+            TwittelonrListItelonm(
+              id = candidatelon.id,
+              sortIndelonx = Nonelon,
+              clielonntelonvelonntInfo = Nonelon,
+              felonelondbackActionInfo = Nonelon,
+              displayTypelon = Nonelon
             )
-          case candidate: UserCandidate =>
-            UserItem(
-              id = candidate.id,
-              sortIndex = None,
-              clientEventInfo = None,
-              feedbackActionInfo = None,
-              isMarkUnread = None,
-              displayType = User,
-              promotedMetadata = None,
-              socialContext = None,
-              reactiveTriggers = None,
-              enableReactiveBlending = None
+          caselon candidatelon: UselonrCandidatelon =>
+            UselonrItelonm(
+              id = candidatelon.id,
+              sortIndelonx = Nonelon,
+              clielonntelonvelonntInfo = Nonelon,
+              felonelondbackActionInfo = Nonelon,
+              isMarkUnrelonad = Nonelon,
+              displayTypelon = Uselonr,
+              promotelondMelontadata = Nonelon,
+              socialContelonxt = Nonelon,
+              relonactivelonTriggelonrs = Nonelon,
+              elonnablelonRelonactivelonBlelonnding = Nonelon
             )
-          case candidate =>
-            throw new UnsupportedCandidateDomainMarshallerException(
-              candidate,
-              itemCandidateWithDetails.source)
+          caselon candidatelon =>
+            throw nelonw UnsupportelondCandidatelonDomainMarshallelonrelonxcelonption(
+              candidatelon,
+              itelonmCandidatelonWithDelontails.sourcelon)
         }
-      case itemCandidateWithDetails @ ItemCandidateWithDetails(candidate, Some(presentation), _) =>
-        throw new UnsupportedPresentationDomainMarshallerException(
-          candidate,
-          presentation,
-          itemCandidateWithDetails.source)
-      case moduleCandidateWithDetails @ ModuleCandidateWithDetails(_, presentation, _) =>
-        throw new UnsupportedModuleDomainMarshallerException(
-          presentation,
-          moduleCandidateWithDetails.source)
+      caselon itelonmCandidatelonWithDelontails @ ItelonmCandidatelonWithDelontails(candidatelon, Somelon(prelonselonntation), _) =>
+        throw nelonw UnsupportelondPrelonselonntationDomainMarshallelonrelonxcelonption(
+          candidatelon,
+          prelonselonntation,
+          itelonmCandidatelonWithDelontails.sourcelon)
+      caselon modulelonCandidatelonWithDelontails @ ModulelonCandidatelonWithDelontails(_, prelonselonntation, _) =>
+        throw nelonw UnsupportelondModulelonDomainMarshallelonrelonxcelonption(
+          prelonselonntation,
+          modulelonCandidatelonWithDelontails.sourcelon)
     }
 
-    buildTimeline(query, entries)
+    buildTimelonlinelon(quelonry, elonntrielons)
   }
 }

@@ -1,10 +1,10 @@
-Trust and Safety Models
+Trust and Safelonty Modelonls
 =======================
 
-We decided to open source the training code of the following models:
-- pNSFWMedia: Model to detect tweets with NSFW images. This includes adult and porn content.
-- pNSFWText: Model to detect tweets with NSFW text, adult/sexual topics
-- pToxicity: Model to detect toxic tweets. Toxicity includes marginal content like insults and certain types of harassment. Toxic content does not violate Twitter terms of service
-- pAbuse: Model to detect abusive content. This includes violations of Twitter terms of service, including hate speech, targeted harassment and abusive behavior.
+Welon deloncidelond to opelonn sourcelon thelon training codelon of thelon following modelonls:
+- pNSFWMelondia: Modelonl to delontelonct twelonelonts with NSFW imagelons. This includelons adult and porn contelonnt.
+- pNSFWTelonxt: Modelonl to delontelonct twelonelonts with NSFW telonxt, adult/selonxual topics
+- pToxicity: Modelonl to delontelonct toxic twelonelonts. Toxicity includelons marginal contelonnt likelon insults and celonrtain typelons of harassmelonnt. Toxic contelonnt doelons not violatelon Twittelonr telonrms of selonrvicelon
+- pAbuselon: Modelonl to delontelonct abusivelon contelonnt. This includelons violations of Twittelonr telonrms of selonrvicelon, including hatelon spelonelonch, targelontelond harassmelonnt and abusivelon belonhavior.
 
-We have several more models and rules that we are not going to open source at this time because of the adversarial nature of this area. The team is considering open sourcing more models going forward and will keep the community posted accordingly. 
+Welon havelon selonvelonral morelon modelonls and rulelons that welon arelon not going to opelonn sourcelon at this timelon beloncauselon of thelon advelonrsarial naturelon of this arelona. Thelon telonam is considelonring opelonn sourcing morelon modelonls going forward and will kelonelonp thelon community postelond accordingly. 

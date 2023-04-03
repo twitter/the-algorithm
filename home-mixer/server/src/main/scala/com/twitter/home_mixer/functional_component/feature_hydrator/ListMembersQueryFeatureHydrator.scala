@@ -1,42 +1,42 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.home_mixer.model.request.HasListId
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.FeatureWithDefaultOnFailure
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.socialgraph.{thriftscala => sg}
-import com.twitter.stitch.Stitch
-import com.twitter.stitch.socialgraph.SocialGraph
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.HasListId
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.FelonaturelonWithDelonfaultOnFailurelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.socialgraph.{thriftscala => sg}
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.stitch.socialgraph.SocialGraph
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-case object ListMembersFeature extends FeatureWithDefaultOnFailure[PipelineQuery, Seq[Long]] {
-  override val defaultValue: Seq[Long] = Seq.empty
+caselon objelonct ListMelonmbelonrsFelonaturelon elonxtelonnds FelonaturelonWithDelonfaultOnFailurelon[PipelonlinelonQuelonry, Selonq[Long]] {
+  ovelonrridelon val delonfaultValuelon: Selonq[Long] = Selonq.elonmpty
 }
 
-@Singleton
-class ListMembersQueryFeatureHydrator @Inject() (socialGraph: SocialGraph)
-    extends QueryFeatureHydrator[PipelineQuery with HasListId] {
+@Singlelonton
+class ListMelonmbelonrsQuelonryFelonaturelonHydrator @Injelonct() (socialGraph: SocialGraph)
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry with HasListId] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("ListMembers")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("ListMelonmbelonrs")
 
-  override val features: Set[Feature[_, _]] = Set(ListMembersFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(ListMelonmbelonrsFelonaturelon)
 
-  private val MaxRecentMembers = 10
+  privatelon val MaxReloncelonntMelonmbelonrs = 10
 
-  override def hydrate(query: PipelineQuery with HasListId): Stitch[FeatureMap] = {
-    val request = sg.IdsRequest(
-      relationships = Seq(sg
-        .SrcRelationship(query.listId, sg.RelationshipType.ListHasMember, hasRelationship = true)),
-      pageRequest = Some(sg.PageRequest(selectAll = Some(true), count = Some(MaxRecentMembers)))
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry with HasListId): Stitch[FelonaturelonMap] = {
+    val relonquelonst = sg.IdsRelonquelonst(
+      relonlationships = Selonq(sg
+        .SrcRelonlationship(quelonry.listId, sg.RelonlationshipTypelon.ListHasMelonmbelonr, hasRelonlationship = truelon)),
+      pagelonRelonquelonst = Somelon(sg.PagelonRelonquelonst(selonlelonctAll = Somelon(truelon), count = Somelon(MaxReloncelonntMelonmbelonrs)))
     )
-    socialGraph.ids(request).map(_.ids).map { listMembers =>
-      FeatureMapBuilder().add(ListMembersFeature, listMembers).build()
+    socialGraph.ids(relonquelonst).map(_.ids).map { listMelonmbelonrs =>
+      FelonaturelonMapBuildelonr().add(ListMelonmbelonrsFelonaturelon, listMelonmbelonrs).build()
     }
   }
 }

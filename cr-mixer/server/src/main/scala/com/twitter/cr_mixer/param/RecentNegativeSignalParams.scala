@@ -1,39 +1,39 @@
-package com.twitter.cr_mixer.param
+packagelon com.twittelonr.cr_mixelonr.param
 
-import com.twitter.finagle.stats.NullStatsReceiver
-import com.twitter.logging.Logger
-import com.twitter.timelines.configapi.BaseConfig
-import com.twitter.timelines.configapi.BaseConfigBuilder
-import com.twitter.timelines.configapi.FSName
-import com.twitter.timelines.configapi.FSParam
-import com.twitter.timelines.configapi.FeatureSwitchOverrideUtil
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.finaglelon.stats.NullStatsReloncelonivelonr
+import com.twittelonr.logging.Loggelonr
+import com.twittelonr.timelonlinelons.configapi.BaselonConfig
+import com.twittelonr.timelonlinelons.configapi.BaselonConfigBuildelonr
+import com.twittelonr.timelonlinelons.configapi.FSNamelon
+import com.twittelonr.timelonlinelons.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FelonaturelonSwitchOvelonrridelonUtil
+import com.twittelonr.timelonlinelons.configapi.Param
 
-object RecentNegativeSignalParams {
-  object EnableSourceParam
-      extends FSParam[Boolean](
-        name = "twistly_recentnegativesignals_enable_source",
-        default = false
+objelonct ReloncelonntNelongativelonSignalParams {
+  objelonct elonnablelonSourcelonParam
+      elonxtelonnds FSParam[Boolelonan](
+        namelon = "twistly_reloncelonntnelongativelonsignals_elonnablelon_sourcelon",
+        delonfault = falselon
       )
 
-  val AllParams: Seq[Param[_] with FSName] = Seq(
-    EnableSourceParam
+  val AllParams: Selonq[Param[_] with FSNamelon] = Selonq(
+    elonnablelonSourcelonParam
   )
 
-  lazy val config: BaseConfig = {
-    val enumOverrides = FeatureSwitchOverrideUtil.getEnumFSOverrides(
-      NullStatsReceiver,
-      Logger(getClass),
+  lazy val config: BaselonConfig = {
+    val elonnumOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontelonnumFSOvelonrridelons(
+      NullStatsReloncelonivelonr,
+      Loggelonr(gelontClass),
     )
 
-    val booleanOverrides = FeatureSwitchOverrideUtil.getBooleanFSOverrides(
-      EnableSourceParam
+    val boolelonanOvelonrridelons = FelonaturelonSwitchOvelonrridelonUtil.gelontBoolelonanFSOvelonrridelons(
+      elonnablelonSourcelonParam
     )
 
-    val doubleOverrides =
-      FeatureSwitchOverrideUtil.getBoundedDoubleFSOverrides()
+    val doublelonOvelonrridelons =
+      FelonaturelonSwitchOvelonrridelonUtil.gelontBoundelondDoublelonFSOvelonrridelons()
 
-    BaseConfigBuilder()
-      .set(booleanOverrides: _*).set(doubleOverrides: _*).set(enumOverrides: _*).build()
+    BaselonConfigBuildelonr()
+      .selont(boolelonanOvelonrridelons: _*).selont(doublelonOvelonrridelons: _*).selont(elonnumOvelonrridelons: _*).build()
   }
 }

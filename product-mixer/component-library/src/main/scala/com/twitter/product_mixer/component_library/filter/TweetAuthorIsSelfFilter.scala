@@ -1,37 +1,37 @@
-package com.twitter.product_mixer.component_library.filter
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.filtelonr
 
-import com.twitter.product_mixer.component_library.model.candidate.BaseTweetCandidate
-import com.twitter.product_mixer.component_library.model.candidate.TweetAuthorIdFeature
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.BaselonTwelonelontCandidatelon
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.TwelonelontAuthorIdFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * A [[filter]] that filters based on whether query user is the author of the tweet. This will NOT filter empty user ids
- * @note It is recommended to apply [[HasAuthorIdFeatureFilter]] before this, as this will FAIL if feature is unavailable
+ * A [[filtelonr]] that filtelonrs baselond on whelonthelonr quelonry uselonr is thelon author of thelon twelonelont. This will NOT filtelonr elonmpty uselonr ids
+ * @notelon It is reloncommelonndelond to apply [[HasAuthorIdFelonaturelonFiltelonr]] belonforelon this, as this will FAIL if felonaturelon is unavailablelon
  *
- * @tparam Candidate The type of the candidates
+ * @tparam Candidatelon Thelon typelon of thelon candidatelons
  */
-case class TweetAuthorIsSelfFilter[Candidate <: BaseTweetCandidate]()
-    extends Filter[PipelineQuery, Candidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("TweetAuthorIsSelf")
+caselon class TwelonelontAuthorIsSelonlfFiltelonr[Candidatelon <: BaselonTwelonelontCandidatelon]()
+    elonxtelonnds Filtelonr[PipelonlinelonQuelonry, Candidatelon] {
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("TwelonelontAuthorIsSelonlf")
 
-  override def apply(
-    query: PipelineQuery,
-    candidates: Seq[CandidateWithFeatures[Candidate]]
-  ): Stitch[FilterResult[Candidate]] = {
-    val (kept, removed) = candidates.partition { candidate =>
-      val authorId = candidate.features.get(TweetAuthorIdFeature)
-      !query.getOptionalUserId.contains(authorId)
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelons: Selonq[CandidatelonWithFelonaturelons[Candidatelon]]
+  ): Stitch[FiltelonrRelonsult[Candidatelon]] = {
+    val (kelonpt, relonmovelond) = candidatelons.partition { candidatelon =>
+      val authorId = candidatelon.felonaturelons.gelont(TwelonelontAuthorIdFelonaturelon)
+      !quelonry.gelontOptionalUselonrId.contains(authorId)
     }
 
-    val filterResult = FilterResult(
-      kept = kept.map(_.candidate),
-      removed = removed.map(_.candidate)
+    val filtelonrRelonsult = FiltelonrRelonsult(
+      kelonpt = kelonpt.map(_.candidatelon),
+      relonmovelond = relonmovelond.map(_.candidatelon)
     )
-    Stitch.value(filterResult)
+    Stitch.valuelon(filtelonrRelonsult)
   }
 }

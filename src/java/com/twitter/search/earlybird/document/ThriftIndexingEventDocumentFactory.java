@@ -1,246 +1,246 @@
-package com.twitter.search.earlybird.document;
+packagelon com.twittelonr.selonarch.elonarlybird.documelonnt;
 
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
+import java.io.IOelonxcelonption;
+import java.util.concurrelonnt.TimelonUnit;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.collect.Lists;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.lucene.document.Document;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.documelonnt.Documelonnt;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.util.Clock;
-import com.twitter.decider.Decider;
-import com.twitter.search.common.decider.DeciderUtil;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.partitioning.snowflakeparser.SnowflakeIdParser;
-import com.twitter.search.common.schema.SchemaDocumentFactory;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftIndexingEvent;
-import com.twitter.search.common.util.text.filter.NormalizedTokenFilter;
-import com.twitter.search.common.util.text.splitter.HashtagMentionPunctuationSplitter;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.partition.SearchIndexingMetricSet;
+import com.twittelonr.common.util.Clock;
+import com.twittelonr.deloncidelonr.Deloncidelonr;
+import com.twittelonr.selonarch.common.deloncidelonr.DeloncidelonrUtil;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.partitioning.snowflakelonparselonr.SnowflakelonIdParselonr;
+import com.twittelonr.selonarch.common.schelonma.SchelonmaDocumelonntFactory;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldNamelonToIdMapping;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.common.schelonma.baselon.ThriftDocumelonntUtil;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdThriftDocumelonntUtil;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftIndelonxingelonvelonnt;
+import com.twittelonr.selonarch.common.util.telonxt.filtelonr.NormalizelondTokelonnFiltelonr;
+import com.twittelonr.selonarch.common.util.telonxt.splittelonr.HashtagMelonntionPunctuationSplittelonr;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.partition.SelonarchIndelonxingMelontricSelont;
 
-public class ThriftIndexingEventDocumentFactory extends DocumentFactory<ThriftIndexingEvent> {
-  private static final Logger LOG =
-      LoggerFactory.getLogger(ThriftIndexingEventDocumentFactory.class);
+public class ThriftIndelonxingelonvelonntDocumelonntFactory elonxtelonnds DocumelonntFactory<ThriftIndelonxingelonvelonnt> {
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(ThriftIndelonxingelonvelonntDocumelonntFactory.class);
 
-  private static final FieldNameToIdMapping ID_MAPPING = new EarlybirdFieldConstants();
-  private static final long TIMESTAMP_ALLOWED_FUTURE_DELTA_MS = TimeUnit.SECONDS.toMillis(60);
-  private static final String FILTER_TWEETS_WITH_FUTURE_TWEET_ID_AND_CREATED_AT_DECIDER_KEY =
-      "filter_tweets_with_future_tweet_id_and_created_at";
+  privatelon static final FielonldNamelonToIdMapping ID_MAPPING = nelonw elonarlybirdFielonldConstants();
+  privatelon static final long TIMelonSTAMP_ALLOWelonD_FUTURelon_DelonLTA_MS = TimelonUnit.SelonCONDS.toMillis(60);
+  privatelon static final String FILTelonR_TWelonelonTS_WITH_FUTURelon_TWelonelonT_ID_AND_CRelonATelonD_AT_DelonCIDelonR_KelonY =
+      "filtelonr_twelonelonts_with_futurelon_twelonelont_id_and_crelonatelond_at";
 
-  private static final SearchCounter NUM_TWEETS_WITH_FUTURE_TWEET_ID_AND_CREATED_AT_MS =
-      SearchCounter.export("num_tweets_with_future_tweet_id_and_created_at_ms");
-  private static final SearchCounter NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_FOUND =
-      SearchCounter.export("num_tweets_with_inconsistent_tweet_id_and_created_at_ms_found");
-  private static final SearchCounter
-    NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_ADJUSTED =
-      SearchCounter.export("num_tweets_with_inconsistent_tweet_id_and_created_at_ms_adjusted");
-  private static final SearchCounter NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_DROPPED
-    = SearchCounter.export("num_tweets_with_inconsistent_tweet_id_and_created_at_ms_dropped");
+  privatelon static final SelonarchCountelonr NUM_TWelonelonTS_WITH_FUTURelon_TWelonelonT_ID_AND_CRelonATelonD_AT_MS =
+      SelonarchCountelonr.elonxport("num_twelonelonts_with_futurelon_twelonelont_id_and_crelonatelond_at_ms");
+  privatelon static final SelonarchCountelonr NUM_TWelonelonTS_WITH_INCONSISTelonNT_TWelonelonT_ID_AND_CRelonATelonD_AT_MS_FOUND =
+      SelonarchCountelonr.elonxport("num_twelonelonts_with_inconsistelonnt_twelonelont_id_and_crelonatelond_at_ms_found");
+  privatelon static final SelonarchCountelonr
+    NUM_TWelonelonTS_WITH_INCONSISTelonNT_TWelonelonT_ID_AND_CRelonATelonD_AT_MS_ADJUSTelonD =
+      SelonarchCountelonr.elonxport("num_twelonelonts_with_inconsistelonnt_twelonelont_id_and_crelonatelond_at_ms_adjustelond");
+  privatelon static final SelonarchCountelonr NUM_TWelonelonTS_WITH_INCONSISTelonNT_TWelonelonT_ID_AND_CRelonATelonD_AT_MS_DROPPelonD
+    = SelonarchCountelonr.elonxport("num_twelonelonts_with_inconsistelonnt_twelonelont_id_and_crelonatelond_at_ms_droppelond");
 
-  @VisibleForTesting
-  static final String ENABLE_ADJUST_CREATED_AT_TIME_IF_MISMATCH_WITH_SNOWFLAKE =
-      "enable_adjust_created_at_time_if_mismatch_with_snowflake";
+  @VisiblelonForTelonsting
+  static final String elonNABLelon_ADJUST_CRelonATelonD_AT_TIMelon_IF_MISMATCH_WITH_SNOWFLAKelon =
+      "elonnablelon_adjust_crelonatelond_at_timelon_if_mismatch_with_snowflakelon";
 
-  @VisibleForTesting
-  static final String ENABLE_DROP_CREATED_AT_TIME_IF_MISMATCH_WITH_SNOWFLAKE =
-      "enable_drop_created_at_time_if_mismatch_with_snowflake";
+  @VisiblelonForTelonsting
+  static final String elonNABLelon_DROP_CRelonATelonD_AT_TIMelon_IF_MISMATCH_WITH_SNOWFLAKelon =
+      "elonnablelon_drop_crelonatelond_at_timelon_if_mismatch_with_snowflakelon";
 
-  private final SchemaDocumentFactory schemaDocumentFactory;
-  private final EarlybirdCluster cluster;
-  private final SearchIndexingMetricSet searchIndexingMetricSet;
-  private final Decider decider;
-  private final Schema schema;
-  private final Clock clock;
+  privatelon final SchelonmaDocumelonntFactory schelonmaDocumelonntFactory;
+  privatelon final elonarlybirdClustelonr clustelonr;
+  privatelon final SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont;
+  privatelon final Deloncidelonr deloncidelonr;
+  privatelon final Schelonma schelonma;
+  privatelon final Clock clock;
 
-  public ThriftIndexingEventDocumentFactory(
-      Schema schema,
-      EarlybirdCluster cluster,
-      Decider decider,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      CriticalExceptionHandler criticalExceptionHandler) {
+  public ThriftIndelonxingelonvelonntDocumelonntFactory(
+      Schelonma schelonma,
+      elonarlybirdClustelonr clustelonr,
+      Deloncidelonr deloncidelonr,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
     this(
-        schema,
-        getSchemaDocumentFactory(schema, cluster, decider),
-        cluster,
-        searchIndexingMetricSet,
-        decider,
-        Clock.SYSTEM_CLOCK,
-        criticalExceptionHandler
+        schelonma,
+        gelontSchelonmaDocumelonntFactory(schelonma, clustelonr, deloncidelonr),
+        clustelonr,
+        selonarchIndelonxingMelontricSelont,
+        deloncidelonr,
+        Clock.SYSTelonM_CLOCK,
+        criticalelonxcelonptionHandlelonr
     );
   }
 
   /**
-   * Returns a document factory that knows how to convert ThriftDocuments to Documents based on the
-   * provided schema.
+   * Relonturns a documelonnt factory that knows how to convelonrt ThriftDocumelonnts to Documelonnts baselond on thelon
+   * providelond schelonma.
    */
-  public static SchemaDocumentFactory getSchemaDocumentFactory(
-      Schema schema,
-      EarlybirdCluster cluster,
-      Decider decider) {
-    return new SchemaDocumentFactory(schema,
-        Lists.newArrayList(
-            new TruncationTokenStreamWriter(cluster, decider),
-            (fieldInfo, stream) -> {
-              // Strip # @ $ symbols, and break up underscore connected tokens.
-              if (fieldInfo.getFieldType().useTweetSpecificNormalization()) {
-                return new HashtagMentionPunctuationSplitter(new NormalizedTokenFilter(stream));
+  public static SchelonmaDocumelonntFactory gelontSchelonmaDocumelonntFactory(
+      Schelonma schelonma,
+      elonarlybirdClustelonr clustelonr,
+      Deloncidelonr deloncidelonr) {
+    relonturn nelonw SchelonmaDocumelonntFactory(schelonma,
+        Lists.nelonwArrayList(
+            nelonw TruncationTokelonnStrelonamWritelonr(clustelonr, deloncidelonr),
+            (fielonldInfo, strelonam) -> {
+              // Strip # @ $ symbols, and brelonak up undelonrscorelon connelonctelond tokelonns.
+              if (fielonldInfo.gelontFielonldTypelon().uselonTwelonelontSpeloncificNormalization()) {
+                relonturn nelonw HashtagMelonntionPunctuationSplittelonr(nelonw NormalizelondTokelonnFiltelonr(strelonam));
               }
 
-              return stream;
+              relonturn strelonam;
             }));
   }
 
-  @VisibleForTesting
-  protected ThriftIndexingEventDocumentFactory(
-      Schema schema,
-      SchemaDocumentFactory schemaDocumentFactory,
-      EarlybirdCluster cluster,
-      SearchIndexingMetricSet searchIndexingMetricSet,
-      Decider decider,
+  @VisiblelonForTelonsting
+  protelonctelond ThriftIndelonxingelonvelonntDocumelonntFactory(
+      Schelonma schelonma,
+      SchelonmaDocumelonntFactory schelonmaDocumelonntFactory,
+      elonarlybirdClustelonr clustelonr,
+      SelonarchIndelonxingMelontricSelont selonarchIndelonxingMelontricSelont,
+      Deloncidelonr deloncidelonr,
       Clock clock,
-      CriticalExceptionHandler criticalExceptionHandler) {
-    super(criticalExceptionHandler);
-    this.schema = schema;
-    this.schemaDocumentFactory = schemaDocumentFactory;
-    this.cluster = cluster;
-    this.searchIndexingMetricSet = searchIndexingMetricSet;
-    this.decider = decider;
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr) {
+    supelonr(criticalelonxcelonptionHandlelonr);
+    this.schelonma = schelonma;
+    this.schelonmaDocumelonntFactory = schelonmaDocumelonntFactory;
+    this.clustelonr = clustelonr;
+    this.selonarchIndelonxingMelontricSelont = selonarchIndelonxingMelontricSelont;
+    this.deloncidelonr = deloncidelonr;
     this.clock = clock;
   }
 
-  @Override
-  public long getStatusId(ThriftIndexingEvent event) {
-    Preconditions.checkNotNull(event);
-    if (event.isSetDocument() && event.getDocument() != null) {
-      ThriftDocument thriftDocument = event.getDocument();
+  @Ovelonrridelon
+  public long gelontStatusId(ThriftIndelonxingelonvelonnt elonvelonnt) {
+    Prelonconditions.chelonckNotNull(elonvelonnt);
+    if (elonvelonnt.isSelontDocumelonnt() && elonvelonnt.gelontDocumelonnt() != null) {
+      ThriftDocumelonnt thriftDocumelonnt = elonvelonnt.gelontDocumelonnt();
       try {
-        // Ideally, we should not call getSchemaSnapshot() here.  But, as this is called only to
-        // retrieve status id and the ID field is static, this is fine for the purpose.
-        thriftDocument = ThriftDocumentPreprocessor.preprocess(
-            thriftDocument, cluster, schema.getSchemaSnapshot());
-      } catch (IOException e) {
-        throw new IllegalStateException("Unable to obtain tweet ID from ThriftDocument", e);
+        // Idelonally, welon should not call gelontSchelonmaSnapshot() helonrelon.  But, as this is callelond only to
+        // relontrielonvelon status id and thelon ID fielonld is static, this is finelon for thelon purposelon.
+        thriftDocumelonnt = ThriftDocumelonntPrelonprocelonssor.prelonprocelonss(
+            thriftDocumelonnt, clustelonr, schelonma.gelontSchelonmaSnapshot());
+      } catch (IOelonxcelonption elon) {
+        throw nelonw IllelongalStatelonelonxcelonption("Unablelon to obtain twelonelont ID from ThriftDocumelonnt", elon);
       }
-      return ThriftDocumentUtil.getLongValue(
-          thriftDocument, EarlybirdFieldConstant.ID_FIELD.getFieldName(), ID_MAPPING);
-    } else {
-      throw new IllegalArgumentException("ThriftDocument is null inside ThriftIndexingEvent.");
+      relonturn ThriftDocumelonntUtil.gelontLongValuelon(
+          thriftDocumelonnt, elonarlybirdFielonldConstant.ID_FIelonLD.gelontFielonldNamelon(), ID_MAPPING);
+    } elonlselon {
+      throw nelonw IllelongalArgumelonntelonxcelonption("ThriftDocumelonnt is null insidelon ThriftIndelonxingelonvelonnt.");
     }
   }
 
-  @Override
-  protected Document innerNewDocument(ThriftIndexingEvent event) throws IOException {
-    Preconditions.checkNotNull(event);
-    Preconditions.checkNotNull(event.getDocument());
+  @Ovelonrridelon
+  protelonctelond Documelonnt innelonrNelonwDocumelonnt(ThriftIndelonxingelonvelonnt elonvelonnt) throws IOelonxcelonption {
+    Prelonconditions.chelonckNotNull(elonvelonnt);
+    Prelonconditions.chelonckNotNull(elonvelonnt.gelontDocumelonnt());
 
-    ImmutableSchemaInterface schemaSnapshot = schema.getSchemaSnapshot();
+    ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot = schelonma.gelontSchelonmaSnapshot();
 
-    // If the tweet id and create_at are in the future, do not index it.
-    if (areTweetIDAndCreateAtInTheFuture(event)
-        && DeciderUtil.isAvailableForRandomRecipient(decider,
-        FILTER_TWEETS_WITH_FUTURE_TWEET_ID_AND_CREATED_AT_DECIDER_KEY)) {
-      NUM_TWEETS_WITH_FUTURE_TWEET_ID_AND_CREATED_AT_MS.increment();
-      return null;
+    // If thelon twelonelont id and crelonatelon_at arelon in thelon futurelon, do not indelonx it.
+    if (arelonTwelonelontIDAndCrelonatelonAtInThelonFuturelon(elonvelonnt)
+        && DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(deloncidelonr,
+        FILTelonR_TWelonelonTS_WITH_FUTURelon_TWelonelonT_ID_AND_CRelonATelonD_AT_DelonCIDelonR_KelonY)) {
+      NUM_TWelonelonTS_WITH_FUTURelon_TWelonelonT_ID_AND_CRelonATelonD_AT_MS.increlonmelonnt();
+      relonturn null;
     }
 
-    if (isNullcastBitAndFilterConsistent(schemaSnapshot, event)) {
-      ThriftDocument thriftDocument =
-          adjustOrDropIfTweetIDAndCreatedAtAreInconsistent(
-              ThriftDocumentPreprocessor.preprocess(event.getDocument(), cluster, schemaSnapshot));
+    if (isNullcastBitAndFiltelonrConsistelonnt(schelonmaSnapshot, elonvelonnt)) {
+      ThriftDocumelonnt thriftDocumelonnt =
+          adjustOrDropIfTwelonelontIDAndCrelonatelondAtArelonInconsistelonnt(
+              ThriftDocumelonntPrelonprocelonssor.prelonprocelonss(elonvelonnt.gelontDocumelonnt(), clustelonr, schelonmaSnapshot));
 
-      if (thriftDocument != null) {
-        return schemaDocumentFactory.newDocument(thriftDocument);
-      } else {
-        return null;
+      if (thriftDocumelonnt != null) {
+        relonturn schelonmaDocumelonntFactory.nelonwDocumelonnt(thriftDocumelonnt);
+      } elonlselon {
+        relonturn null;
       }
-    } else {
-      return null;
+    } elonlselon {
+      relonturn null;
     }
   }
 
-  private ThriftDocument adjustOrDropIfTweetIDAndCreatedAtAreInconsistent(ThriftDocument document) {
-    final long tweetID = EarlybirdThriftDocumentUtil.getID(document);
-    // Thrift document is storing created at in seconds.
-    final long createdAtMs = EarlybirdThriftDocumentUtil.getCreatedAtMs(document);
+  privatelon ThriftDocumelonnt adjustOrDropIfTwelonelontIDAndCrelonatelondAtArelonInconsistelonnt(ThriftDocumelonnt documelonnt) {
+    final long twelonelontID = elonarlybirdThriftDocumelonntUtil.gelontID(documelonnt);
+    // Thrift documelonnt is storing crelonatelond at in selonconds.
+    final long crelonatelondAtMs = elonarlybirdThriftDocumelonntUtil.gelontCrelonatelondAtMs(documelonnt);
 
-    if (!SnowflakeIdParser.isTweetIDAndCreatedAtConsistent(tweetID, createdAtMs)) {
-      // Increment found counter.
-      NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_FOUND.increment();
-      LOG.error(
-          "Found inconsistent tweet ID and created at timestamp: [tweetID={}], [createdAtMs={}]",
-          tweetID, createdAtMs);
+    if (!SnowflakelonIdParselonr.isTwelonelontIDAndCrelonatelondAtConsistelonnt(twelonelontID, crelonatelondAtMs)) {
+      // Increlonmelonnt found countelonr.
+      NUM_TWelonelonTS_WITH_INCONSISTelonNT_TWelonelonT_ID_AND_CRelonATelonD_AT_MS_FOUND.increlonmelonnt();
+      LOG.elonrror(
+          "Found inconsistelonnt twelonelont ID and crelonatelond at timelonstamp: [twelonelontID={}], [crelonatelondAtMs={}]",
+          twelonelontID, crelonatelondAtMs);
 
-      if (DeciderUtil.isAvailableForRandomRecipient(
-          decider, ENABLE_ADJUST_CREATED_AT_TIME_IF_MISMATCH_WITH_SNOWFLAKE)) {
-        // Update created at (and csf) with the time stamp in snow flake ID.
-        final long createdAtMsInID = SnowflakeIdParser.getTimestampFromTweetId(tweetID);
-        EarlybirdThriftDocumentUtil.replaceCreatedAtAndCreatedAtCSF(
-            document, (int) (createdAtMsInID / 1000));
+      if (DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(
+          deloncidelonr, elonNABLelon_ADJUST_CRelonATelonD_AT_TIMelon_IF_MISMATCH_WITH_SNOWFLAKelon)) {
+        // Updatelon crelonatelond at (and csf) with thelon timelon stamp in snow flakelon ID.
+        final long crelonatelondAtMsInID = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(twelonelontID);
+        elonarlybirdThriftDocumelonntUtil.relonplacelonCrelonatelondAtAndCrelonatelondAtCSF(
+            documelonnt, (int) (crelonatelondAtMsInID / 1000));
 
-        // Increment adjusted counter.
-        NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_ADJUSTED.increment();
-        LOG.error(
-            "Updated created at to match tweet ID: createdAtMs={}, tweetID={}, createdAtMsInID={}",
-            createdAtMs, tweetID, createdAtMsInID);
-      } else if (DeciderUtil.isAvailableForRandomRecipient(
-          decider, ENABLE_DROP_CREATED_AT_TIME_IF_MISMATCH_WITH_SNOWFLAKE)) {
-        // Drop and increment counter!
-        NUM_TWEETS_WITH_INCONSISTENT_TWEET_ID_AND_CREATED_AT_MS_DROPPED.increment();
-        LOG.error(
-            "Dropped tweet with inconsistent ID and timestamp: createdAtMs={}, tweetID={}",
-            createdAtMs, tweetID);
-        return null;
+        // Increlonmelonnt adjustelond countelonr.
+        NUM_TWelonelonTS_WITH_INCONSISTelonNT_TWelonelonT_ID_AND_CRelonATelonD_AT_MS_ADJUSTelonD.increlonmelonnt();
+        LOG.elonrror(
+            "Updatelond crelonatelond at to match twelonelont ID: crelonatelondAtMs={}, twelonelontID={}, crelonatelondAtMsInID={}",
+            crelonatelondAtMs, twelonelontID, crelonatelondAtMsInID);
+      } elonlselon if (DeloncidelonrUtil.isAvailablelonForRandomReloncipielonnt(
+          deloncidelonr, elonNABLelon_DROP_CRelonATelonD_AT_TIMelon_IF_MISMATCH_WITH_SNOWFLAKelon)) {
+        // Drop and increlonmelonnt countelonr!
+        NUM_TWelonelonTS_WITH_INCONSISTelonNT_TWelonelonT_ID_AND_CRelonATelonD_AT_MS_DROPPelonD.increlonmelonnt();
+        LOG.elonrror(
+            "Droppelond twelonelont with inconsistelonnt ID and timelonstamp: crelonatelondAtMs={}, twelonelontID={}",
+            crelonatelondAtMs, twelonelontID);
+        relonturn null;
       }
     }
 
-    return document;
+    relonturn documelonnt;
   }
 
-  private boolean isNullcastBitAndFilterConsistent(
-      ImmutableSchemaInterface schemaSnapshot,
-      ThriftIndexingEvent event) {
-    return ThriftDocumentPreprocessor.isNullcastBitAndFilterConsistent(
-        event.getDocument(), schemaSnapshot);
+  privatelon boolelonan isNullcastBitAndFiltelonrConsistelonnt(
+      ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot,
+      ThriftIndelonxingelonvelonnt elonvelonnt) {
+    relonturn ThriftDocumelonntPrelonprocelonssor.isNullcastBitAndFiltelonrConsistelonnt(
+        elonvelonnt.gelontDocumelonnt(), schelonmaSnapshot);
   }
 
   /**
-   * Check if the tweet ID and create_at are in the future and beyond the allowed
-   * TIMESTAMP_ALLOWED_FUTURE_DELTA_MS range from current time stamp.
+   * Chelonck if thelon twelonelont ID and crelonatelon_at arelon in thelon futurelon and belonyond thelon allowelond
+   * TIMelonSTAMP_ALLOWelonD_FUTURelon_DelonLTA_MS rangelon from currelonnt timelon stamp.
    */
-  private boolean areTweetIDAndCreateAtInTheFuture(ThriftIndexingEvent event) {
-    ThriftDocument document = event.getDocument();
+  privatelon boolelonan arelonTwelonelontIDAndCrelonatelonAtInThelonFuturelon(ThriftIndelonxingelonvelonnt elonvelonnt) {
+    ThriftDocumelonnt documelonnt = elonvelonnt.gelontDocumelonnt();
 
-    final long tweetID = EarlybirdThriftDocumentUtil.getID(document);
-    if (tweetID < SnowflakeIdParser.SNOWFLAKE_ID_LOWER_BOUND) {
-      return false;
+    final long twelonelontID = elonarlybirdThriftDocumelonntUtil.gelontID(documelonnt);
+    if (twelonelontID < SnowflakelonIdParselonr.SNOWFLAKelon_ID_LOWelonR_BOUND) {
+      relonturn falselon;
     }
 
-    final long tweetIDTimestampMs = SnowflakeIdParser.getTimestampFromTweetId(tweetID);
-    final long allowedFutureTimestampMs = clock.nowMillis() + TIMESTAMP_ALLOWED_FUTURE_DELTA_MS;
+    final long twelonelontIDTimelonstampMs = SnowflakelonIdParselonr.gelontTimelonstampFromTwelonelontId(twelonelontID);
+    final long allowelondFuturelonTimelonstampMs = clock.nowMillis() + TIMelonSTAMP_ALLOWelonD_FUTURelon_DelonLTA_MS;
 
-    final long createdAtMs = EarlybirdThriftDocumentUtil.getCreatedAtMs(document);
-    if (tweetIDTimestampMs > allowedFutureTimestampMs && createdAtMs > allowedFutureTimestampMs) {
-      LOG.error(
-          "Found future tweet ID and created at timestamp: "
-              + "[tweetID={}], [createdAtMs={}], [compareDeltaMs={}]",
-          tweetID, createdAtMs, TIMESTAMP_ALLOWED_FUTURE_DELTA_MS);
-      return true;
+    final long crelonatelondAtMs = elonarlybirdThriftDocumelonntUtil.gelontCrelonatelondAtMs(documelonnt);
+    if (twelonelontIDTimelonstampMs > allowelondFuturelonTimelonstampMs && crelonatelondAtMs > allowelondFuturelonTimelonstampMs) {
+      LOG.elonrror(
+          "Found futurelon twelonelont ID and crelonatelond at timelonstamp: "
+              + "[twelonelontID={}], [crelonatelondAtMs={}], [comparelonDelonltaMs={}]",
+          twelonelontID, crelonatelondAtMs, TIMelonSTAMP_ALLOWelonD_FUTURelon_DelonLTA_MS);
+      relonturn truelon;
     }
 
-    return false;
+    relonturn falselon;
   }
 }

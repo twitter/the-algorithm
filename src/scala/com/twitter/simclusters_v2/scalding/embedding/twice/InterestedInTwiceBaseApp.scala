@@ -1,494 +1,494 @@
-package com.twitter.simclusters_v2.scalding.embedding.twice
+packagelon com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.twicelon
 
-import com.twitter.bijection.Injection
-import com.twitter.dal.client.dataset.KeyValDALDataset
-import com.twitter.scalding.DateRange
-import com.twitter.scalding.Days
-import com.twitter.scalding.Execution
-import com.twitter.scalding.Stat
-import com.twitter.scalding.TypedTsv
-import com.twitter.scalding.UniqueID
-import com.twitter.scalding.typed.TypedPipe
-import com.twitter.scalding_internal.dalv2.DAL
-import com.twitter.scalding_internal.dalv2.DALWrite._
-import com.twitter.scalding_internal.dalv2.remote_access.AllowCrossDC
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyVal
-import com.twitter.simclusters_v2.common.SimClustersEmbedding
-import com.twitter.simclusters_v2.common.UserId
-import com.twitter.simclusters_v2.common.clustering.ClusteringMethod
-import com.twitter.simclusters_v2.common.clustering.ClusteringStatistics._
-import com.twitter.simclusters_v2.common.clustering.ClusterRepresentativeSelectionMethod
-import com.twitter.simclusters_v2.common.clustering.ClusterRepresentativeSelectionStatistics._
-import com.twitter.simclusters_v2.hdfs_sources.ProducerEmbeddingSources
-import com.twitter.simclusters_v2.hdfs_sources.UserUserGraphScalaDataset
-import com.twitter.simclusters_v2.scalding.common.Util
-import com.twitter.simclusters_v2.scalding.embedding.common.EmbeddingUtil
-import com.twitter.simclusters_v2.thriftscala.EmbeddingType
-import com.twitter.simclusters_v2.thriftscala.InternalId
-import com.twitter.simclusters_v2.thriftscala.ModelVersion
-import com.twitter.simclusters_v2.thriftscala.MultiEmbeddingType
-import com.twitter.simclusters_v2.thriftscala.NeighborWithWeights
-import com.twitter.simclusters_v2.thriftscala.OrderedClustersAndMembers
-import com.twitter.simclusters_v2.thriftscala.ClusterMembers
-import com.twitter.simclusters_v2.thriftscala.SimClustersEmbeddingIdWithScore
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbedding.Ids
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingByIds
-import com.twitter.simclusters_v2.thriftscala.SimClustersMultiEmbeddingId
-import com.twitter.simclusters_v2.thriftscala.UserAndNeighbors
-import com.twitter.simclusters_v2.thriftscala.{
-  SimClustersEmbeddingId => SimClustersEmbeddingIdThrift
+import com.twittelonr.bijelonction.Injelonction
+import com.twittelonr.dal.clielonnt.dataselont.KelonyValDALDataselont
+import com.twittelonr.scalding.DatelonRangelon
+import com.twittelonr.scalding.Days
+import com.twittelonr.scalding.elonxeloncution
+import com.twittelonr.scalding.Stat
+import com.twittelonr.scalding.TypelondTsv
+import com.twittelonr.scalding.UniquelonID
+import com.twittelonr.scalding.typelond.TypelondPipelon
+import com.twittelonr.scalding_intelonrnal.dalv2.DAL
+import com.twittelonr.scalding_intelonrnal.dalv2.DALWritelon._
+import com.twittelonr.scalding_intelonrnal.dalv2.relonmotelon_accelonss.AllowCrossDC
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyVal
+import com.twittelonr.simclustelonrs_v2.common.SimClustelonrselonmbelondding
+import com.twittelonr.simclustelonrs_v2.common.UselonrId
+import com.twittelonr.simclustelonrs_v2.common.clustelonring.ClustelonringMelonthod
+import com.twittelonr.simclustelonrs_v2.common.clustelonring.ClustelonringStatistics._
+import com.twittelonr.simclustelonrs_v2.common.clustelonring.ClustelonrRelonprelonselonntativelonSelonlelonctionMelonthod
+import com.twittelonr.simclustelonrs_v2.common.clustelonring.ClustelonrRelonprelonselonntativelonSelonlelonctionStatistics._
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.ProducelonrelonmbelonddingSourcelons
+import com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.UselonrUselonrGraphScalaDataselont
+import com.twittelonr.simclustelonrs_v2.scalding.common.Util
+import com.twittelonr.simclustelonrs_v2.scalding.elonmbelondding.common.elonmbelonddingUtil
+import com.twittelonr.simclustelonrs_v2.thriftscala.elonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.IntelonrnalId
+import com.twittelonr.simclustelonrs_v2.thriftscala.ModelonlVelonrsion
+import com.twittelonr.simclustelonrs_v2.thriftscala.MultielonmbelonddingTypelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.NelonighborWithWelonights
+import com.twittelonr.simclustelonrs_v2.thriftscala.OrdelonrelondClustelonrsAndMelonmbelonrs
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrMelonmbelonrs
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrselonmbelonddingIdWithScorelon
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelondding
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelondding.Ids
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelonddingByIds
+import com.twittelonr.simclustelonrs_v2.thriftscala.SimClustelonrsMultielonmbelonddingId
+import com.twittelonr.simclustelonrs_v2.thriftscala.UselonrAndNelonighbors
+import com.twittelonr.simclustelonrs_v2.thriftscala.{
+  SimClustelonrselonmbelonddingId => SimClustelonrselonmbelonddingIdThrift
 }
-import com.twitter.util.Stopwatch
-import java.util.TimeZone
-import scala.util.Random.shuffle
+import com.twittelonr.util.Stopwatch
+import java.util.TimelonZonelon
+import scala.util.Random.shufflelon
 
 /**
- * Base app for computing User InterestedIn multi-embedding representation.
- * TWICE: Capturing users’ long-term interests using multiple SimClusters embeddings.
+ * Baselon app for computing Uselonr IntelonrelonstelondIn multi-elonmbelondding relonprelonselonntation.
+ * TWICelon: Capturing uselonrs’ long-telonrm intelonrelonsts using multiplelon SimClustelonrs elonmbelonddings.
  * This job will
- * - Randomly select K follow/fav actions for each user,
- * - cluster the follow/fav actions for each user,
- * - for each cluster, construct a representation (e.g. average or medoid).
+ * - Randomly selonlelonct K follow/fav actions for elonach uselonr,
+ * - clustelonr thelon follow/fav actions for elonach uselonr,
+ * - for elonach clustelonr, construct a relonprelonselonntation (elon.g. avelonragelon or melondoid).
  *
- * @tparam T type of producer embedding. e.g. SimClustersEmbedding
+ * @tparam T typelon of producelonr elonmbelondding. elon.g. SimClustelonrselonmbelondding
  */
-trait InterestedInTwiceBaseApp[T] {
+trait IntelonrelonstelondInTwicelonBaselonApp[T] {
 
-  import InterestedInTwiceBaseApp._
+  import IntelonrelonstelondInTwicelonBaselonApp._
 
-  def modelVersion: ModelVersion = ModelVersion.Model20m145k2020
-
-  /**
-   * function to output similarity (>=0, the larger, more similar), given two producer embeddings.
-   */
-  def producerProducerSimilarityFnForClustering: (T, T) => Double
-  def producerProducerSimilarityFnForClusterRepresentative: (T, T) => Double
-
-  // Sort clusters by decreasing size, fall back to entity ID to break tie
-  val clusterOrdering: Ordering[Set[Long]] = math.Ordering.by(c => (-c.size, c.min))
+  delonf modelonlVelonrsion: ModelonlVelonrsion = ModelonlVelonrsion.Modelonl20m145k2020
 
   /**
-   * Read user-user graph.
+   * function to output similarity (>=0, thelon largelonr, morelon similar), givelonn two producelonr elonmbelonddings.
    */
-  def getUserUserGraph(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone
-  ): TypedPipe[UserAndNeighbors] = {
+  delonf producelonrProducelonrSimilarityFnForClustelonring: (T, T) => Doublelon
+  delonf producelonrProducelonrSimilarityFnForClustelonrRelonprelonselonntativelon: (T, T) => Doublelon
+
+  // Sort clustelonrs by deloncrelonasing sizelon, fall back to elonntity ID to brelonak tielon
+  val clustelonrOrdelonring: Ordelonring[Selont[Long]] = math.Ordelonring.by(c => (-c.sizelon, c.min))
+
+  /**
+   * Relonad uselonr-uselonr graph.
+   */
+  delonf gelontUselonrUselonrGraph(
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon
+  ): TypelondPipelon[UselonrAndNelonighbors] = {
     DAL
-      .readMostRecentSnapshot(
-        UserUserGraphScalaDataset
+      .relonadMostReloncelonntSnapshot(
+        UselonrUselonrGraphScalaDataselont
       )
-      .withRemoteReadPolicy(AllowCrossDC)
-      .toTypedPipe
+      .withRelonmotelonRelonadPolicy(AllowCrossDC)
+      .toTypelondPipelon
   }
 
   /**
-   * Randomly select up to maxNeighborsByUser neighbors for each user.
-   * Attempts to equally sample both follow and fav edges (e.g. maxNeighborsByUser/2 for each).
-   * However, if one type of edge is insufficient, backfill with other type up to maxNeighborsByUser neighbours.
-   * @param userUserGraph User-User follow/fav graph.
-   * @param maxNeighborsByUser How many neighbors to keep for each user.
+   * Randomly selonlelonct up to maxNelonighborsByUselonr nelonighbors for elonach uselonr.
+   * Attelonmpts to elonqually samplelon both follow and fav elondgelons (elon.g. maxNelonighborsByUselonr/2 for elonach).
+   * Howelonvelonr, if onelon typelon of elondgelon is insufficielonnt, backfill with othelonr typelon up to maxNelonighborsByUselonr nelonighbours.
+   * @param uselonrUselonrGraph Uselonr-Uselonr follow/fav graph.
+   * @param maxNelonighborsByUselonr How many nelonighbors to kelonelonp for elonach uselonr.
    */
-  def selectMaxProducersPerUser(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    maxNeighborsByUser: Int = MaxNeighborsByUser
+  delonf selonlelonctMaxProducelonrsPelonrUselonr(
+    uselonrUselonrGraph: TypelondPipelon[UselonrAndNelonighbors],
+    maxNelonighborsByUselonr: Int = MaxNelonighborsByUselonr
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[UserAndNeighbors] = {
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[UselonrAndNelonighbors] = {
 
-    val numOfFollowEdgesStat = Stat(StatNumOfFollowEdges)
-    val numOfFavEdgesStat = Stat(StatNumOfFavEdges)
-    val numOfEdgesCumulativeFrequencyBeforeFilter = Util.CumulativeStat(
-      StatCFNumProducersPerConsumerBeforeFilter,
-      StatCFNumProducersPerConsumerBeforeFilterBuckets)
+    val numOfFollowelondgelonsStat = Stat(StatNumOfFollowelondgelons)
+    val numOfFavelondgelonsStat = Stat(StatNumOfFavelondgelons)
+    val numOfelondgelonsCumulativelonFrelonquelonncyBelonforelonFiltelonr = Util.CumulativelonStat(
+      StatCFNumProducelonrsPelonrConsumelonrBelonforelonFiltelonr,
+      StatCFNumProducelonrsPelonrConsumelonrBelonforelonFiltelonrBuckelonts)
 
-    userUserGraph.map { userAndNeighbors: UserAndNeighbors =>
-      numOfEdgesCumulativeFrequencyBeforeFilter.incForValue(userAndNeighbors.neighbors.size)
+    uselonrUselonrGraph.map { uselonrAndNelonighbors: UselonrAndNelonighbors =>
+      numOfelondgelonsCumulativelonFrelonquelonncyBelonforelonFiltelonr.incForValuelon(uselonrAndNelonighbors.nelonighbors.sizelon)
 
-      val (followEdges, favEdges) =
-        userAndNeighbors.neighbors.partition(_.isFollowed.contains(true))
-      val randomFollowEdges = shuffle(followEdges)
-      val randomFavEdges = shuffle(favEdges)
+      val (followelondgelons, favelondgelons) =
+        uselonrAndNelonighbors.nelonighbors.partition(_.isFollowelond.contains(truelon))
+      val randomFollowelondgelons = shufflelon(followelondgelons)
+      val randomFavelondgelons = shufflelon(favelondgelons)
 
-      // interleave follow and fav edges, and select top k
-      val interleavedTopKEdges: Seq[NeighborWithWeights] = randomFollowEdges
-        .map(Some(_))
+      // intelonrlelonavelon follow and fav elondgelons, and selonlelonct top k
+      val intelonrlelonavelondTopKelondgelons: Selonq[NelonighborWithWelonights] = randomFollowelondgelons
+        .map(Somelon(_))
         .zipAll(
-          randomFavEdges.map(Some(_)),
-          None,
-          None
-        ) // default None value when one edge Seq is shorter than another
+          randomFavelondgelons.map(Somelon(_)),
+          Nonelon,
+          Nonelon
+        ) // delonfault Nonelon valuelon whelonn onelon elondgelon Selonq is shortelonr than anothelonr
         .flatMap {
-          case (followEdgeOpt, favEdgeOpt) =>
-            Seq(followEdgeOpt, favEdgeOpt)
-        }.flatten
-        .take(maxNeighborsByUser)
+          caselon (followelondgelonOpt, favelondgelonOpt) =>
+            Selonq(followelondgelonOpt, favelondgelonOpt)
+        }.flattelonn
+        .takelon(maxNelonighborsByUselonr)
 
-      // edge stats
-      interleavedTopKEdges
-        .foreach { edge =>
-          if (edge.isFollowed.contains(true)) numOfFollowEdgesStat.inc()
-          else numOfFavEdgesStat.inc()
+      // elondgelon stats
+      intelonrlelonavelondTopKelondgelons
+        .forelonach { elondgelon =>
+          if (elondgelon.isFollowelond.contains(truelon)) numOfFollowelondgelonsStat.inc()
+          elonlselon numOfFavelondgelonsStat.inc()
         }
 
-      userAndNeighbors.copy(neighbors = interleavedTopKEdges)
+      uselonrAndNelonighbors.copy(nelonighbors = intelonrlelonavelondTopKelondgelons)
     }
   }
 
   /**
-   * Get multi embedding for each user:
-   * - For each user, join their follow / fav - based neighbors to producer embeddings,
-   * - Group these neighbors into clusters using the specified clusteringMethod,
-   * - For each cluster, select the medoid as the representation.
+   * Gelont multi elonmbelondding for elonach uselonr:
+   * - For elonach uselonr, join thelonir follow / fav - baselond nelonighbors to producelonr elonmbelonddings,
+   * - Group thelonselon nelonighbors into clustelonrs using thelon speloncifielond clustelonringMelonthod,
+   * - For elonach clustelonr, selonlelonct thelon melondoid as thelon relonprelonselonntation.
    *
-   * @param userUserGraph User-User follow/fav graph.
-   * @param producerEmbedding producer embedding dataset. e.g. simclusters embeddings, simhash, etc.
-   * @param clusteringMethod A method to group embeddings together.
-   * @param maxClustersPerUser How many clusters to keep per user.
-   * @param clusterRepresentativeSelectionMethod A method to select a cluster representative.
-   * @param numReducers How many reducers to use for sketch operation.
+   * @param uselonrUselonrGraph Uselonr-Uselonr follow/fav graph.
+   * @param producelonrelonmbelondding producelonr elonmbelondding dataselont. elon.g. simclustelonrs elonmbelonddings, simhash, elontc.
+   * @param clustelonringMelonthod A melonthod to group elonmbelonddings togelonthelonr.
+   * @param maxClustelonrsPelonrUselonr How many clustelonrs to kelonelonp pelonr uselonr.
+   * @param clustelonrRelonprelonselonntativelonSelonlelonctionMelonthod A melonthod to selonlelonct a clustelonr relonprelonselonntativelon.
+   * @param numRelonducelonrs How many relonducelonrs to uselon for skelontch opelonration.
    */
-  def getMultiEmbeddingPerUser(
-    userUserGraph: TypedPipe[UserAndNeighbors],
-    producerEmbedding: TypedPipe[(UserId, T)],
-    clusteringMethod: ClusteringMethod,
-    maxClustersPerUser: Int = MaxClustersPerUser,
-    clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
-    numReducers: Int
+  delonf gelontMultielonmbelonddingPelonrUselonr(
+    uselonrUselonrGraph: TypelondPipelon[UselonrAndNelonighbors],
+    producelonrelonmbelondding: TypelondPipelon[(UselonrId, T)],
+    clustelonringMelonthod: ClustelonringMelonthod,
+    maxClustelonrsPelonrUselonr: Int = MaxClustelonrsPelonrUselonr,
+    clustelonrRelonprelonselonntativelonSelonlelonctionMelonthod: ClustelonrRelonprelonselonntativelonSelonlelonctionMelonthod[T],
+    numRelonducelonrs: Int
   )(
-    implicit uniqueID: UniqueID
-  ): TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] = {
+    implicit uniquelonID: UniquelonID
+  ): TypelondPipelon[(UselonrId, Selonq[Selont[UselonrId]], SimClustelonrsMultielonmbelondding)] = {
 
-    val truncatedUserUserGraph: TypedPipe[UserAndNeighbors] = selectMaxProducersPerUser(
-      userUserGraph)
-    val validEdges: TypedPipe[(UserId, NeighborWithWeights)] =
-      truncatedUserUserGraph.flatMap {
-        case UserAndNeighbors(srcId, neighborsWithWeights) =>
-          neighborsWithWeights.map { neighborWithWeights =>
+    val truncatelondUselonrUselonrGraph: TypelondPipelon[UselonrAndNelonighbors] = selonlelonctMaxProducelonrsPelonrUselonr(
+      uselonrUselonrGraph)
+    val validelondgelons: TypelondPipelon[(UselonrId, NelonighborWithWelonights)] =
+      truncatelondUselonrUselonrGraph.flatMap {
+        caselon UselonrAndNelonighbors(srcId, nelonighborsWithWelonights) =>
+          nelonighborsWithWelonights.map { nelonighborWithWelonights =>
             (
-              neighborWithWeights.neighborId, // producerId
-              neighborWithWeights.copy(neighborId = srcId))
+              nelonighborWithWelonights.nelonighborId, // producelonrId
+              nelonighborWithWelonights.copy(nelonighborId = srcId))
           }
       }
 
-    implicit val l2b: UserId => Array[Byte] = Injection.long2BigEndian
+    implicit val l2b: UselonrId => Array[Bytelon] = Injelonction.long2Bigelonndian
 
-    val totalEdgesNonEmptyProducerEmbeddingsStat = Stat(StatTotalEdgesNonEmptyProducerEmbeddings)
-    val userClusterPairsBeforeTruncation = Stat(StatNumUserClusterPairsBeforeTruncation)
-    val userClusterPairsAfterTruncation = Stat(StatNumUserClusterPairsAfterTruncation)
-    val numUsers = Stat(StatNumUsers)
-    val numOfClustersCumulativeFrequencyBeforeFilter =
-      Util.CumulativeStat(StatCFNumOfClustersBeforeFilter, StatCFNumOfClustersBeforeFilterBuckets)
+    val totalelondgelonsNonelonmptyProducelonrelonmbelonddingsStat = Stat(StatTotalelondgelonsNonelonmptyProducelonrelonmbelonddings)
+    val uselonrClustelonrPairsBelonforelonTruncation = Stat(StatNumUselonrClustelonrPairsBelonforelonTruncation)
+    val uselonrClustelonrPairsAftelonrTruncation = Stat(StatNumUselonrClustelonrPairsAftelonrTruncation)
+    val numUselonrs = Stat(StatNumUselonrs)
+    val numOfClustelonrsCumulativelonFrelonquelonncyBelonforelonFiltelonr =
+      Util.CumulativelonStat(StatCFNumOfClustelonrsBelonforelonFiltelonr, StatCFNumOfClustelonrsBelonforelonFiltelonrBuckelonts)
 
-    // map each clustering statistic to a scalding.Stat
-    val clusteringStatsMap: Map[String, Stat] = Map(
-      StatSimilarityGraphTotalBuildTime -> Stat(StatSimilarityGraphTotalBuildTime),
-      StatClusteringAlgorithmRunTime -> Stat(StatClusteringAlgorithmRunTime),
-      StatMedoidSelectionTime -> Stat(StatMedoidSelectionTime)
+    // map elonach clustelonring statistic to a scalding.Stat
+    val clustelonringStatsMap: Map[String, Stat] = Map(
+      StatSimilarityGraphTotalBuildTimelon -> Stat(StatSimilarityGraphTotalBuildTimelon),
+      StatClustelonringAlgorithmRunTimelon -> Stat(StatClustelonringAlgorithmRunTimelon),
+      StatMelondoidSelonlelonctionTimelon -> Stat(StatMelondoidSelonlelonctionTimelon)
     )
-    val cosineSimilarityCumulativeFrequencyBeforeFilter = Util.CumulativeStat(
-      StatCFCosineSimilarityBeforeFilter,
-      StatCFCosineSimilarityBeforeFilterBuckets)
+    val cosinelonSimilarityCumulativelonFrelonquelonncyBelonforelonFiltelonr = Util.CumulativelonStat(
+      StatCFCosinelonSimilarityBelonforelonFiltelonr,
+      StatCFCosinelonSimilarityBelonforelonFiltelonrBuckelonts)
 
-    val clusterRepresentativeSelectionTime = Stat(StatClusterRepresentativeSelectionTime)
+    val clustelonrRelonprelonselonntativelonSelonlelonctionTimelon = Stat(StatClustelonrRelonprelonselonntativelonSelonlelonctionTimelon)
 
-    validEdges
-      .sketch(numReducers)
-      .join(producerEmbedding)
+    validelondgelons
+      .skelontch(numRelonducelonrs)
+      .join(producelonrelonmbelondding)
       .map {
-        case (producerId: UserId, (srcWithWeights: NeighborWithWeights, embedding)) =>
-          totalEdgesNonEmptyProducerEmbeddingsStat.inc()
-          (srcWithWeights.neighborId, (srcWithWeights.copy(neighborId = producerId), embedding))
+        caselon (producelonrId: UselonrId, (srcWithWelonights: NelonighborWithWelonights, elonmbelondding)) =>
+          totalelondgelonsNonelonmptyProducelonrelonmbelonddingsStat.inc()
+          (srcWithWelonights.nelonighborId, (srcWithWelonights.copy(nelonighborId = producelonrId), elonmbelondding))
       }
       .group
       .toList
       .map {
-        case (userId: UserId, embeddings: Seq[(NeighborWithWeights, T)]) =>
-          numUsers.inc()
-          val embeddingsMap: Map[Long, T] = embeddings.map {
-            case (n: NeighborWithWeights, e) => (n.neighborId, e)
+        caselon (uselonrId: UselonrId, elonmbelonddings: Selonq[(NelonighborWithWelonights, T)]) =>
+          numUselonrs.inc()
+          val elonmbelonddingsMap: Map[Long, T] = elonmbelonddings.map {
+            caselon (n: NelonighborWithWelonights, elon) => (n.nelonighborId, elon)
           }.toMap
-          val weightsMap: Map[Long, NeighborWithWeights] = embeddings.map {
-            case (n: NeighborWithWeights, _) => (n.neighborId, n)
+          val welonightsMap: Map[Long, NelonighborWithWelonights] = elonmbelonddings.map {
+            caselon (n: NelonighborWithWelonights, _) => (n.nelonighborId, n)
           }.toMap
-          // 1. Cluster embeddings
-          val clusters: Set[Set[UserId]] =
-            clusteringMethod
-              .cluster[T](
-                embeddingsMap,
-                producerProducerSimilarityFnForClustering,
-                // Map.get() returns an Option, so will not throw.
-                // Use .foreach() to filter out potential Nones.
-                (name, incr) => {
-                  clusteringStatsMap.get(name).foreach(ctr => ctr.incBy(incr))
-                  if (name == StatComputedSimilarityBeforeFilter)
-                    cosineSimilarityCumulativeFrequencyBeforeFilter.incForValue(incr)
+          // 1. Clustelonr elonmbelonddings
+          val clustelonrs: Selont[Selont[UselonrId]] =
+            clustelonringMelonthod
+              .clustelonr[T](
+                elonmbelonddingsMap,
+                producelonrProducelonrSimilarityFnForClustelonring,
+                // Map.gelont() relonturns an Option, so will not throw.
+                // Uselon .forelonach() to filtelonr out potelonntial Nonelons.
+                (namelon, incr) => {
+                  clustelonringStatsMap.gelont(namelon).forelonach(ctr => ctr.incBy(incr))
+                  if (namelon == StatComputelondSimilarityBelonforelonFiltelonr)
+                    cosinelonSimilarityCumulativelonFrelonquelonncyBelonforelonFiltelonr.incForValuelon(incr)
                 }
               )
 
-          // 2. Sort clusters
-          val sortedClusters: Seq[Set[UserId]] = clusters.toSeq.sorted(clusterOrdering)
+          // 2. Sort clustelonrs
+          val sortelondClustelonrs: Selonq[Selont[UselonrId]] = clustelonrs.toSelonq.sortelond(clustelonrOrdelonring)
 
-          // 3. Keep only a max number of clusters (avoid OOM)
-          userClusterPairsBeforeTruncation.incBy(sortedClusters.size)
-          numOfClustersCumulativeFrequencyBeforeFilter.incForValue(sortedClusters.size)
-          val truncatedClusters = sortedClusters.take(maxClustersPerUser)
-          userClusterPairsAfterTruncation.incBy(truncatedClusters.size)
+          // 3. Kelonelonp only a max numbelonr of clustelonrs (avoid OOM)
+          uselonrClustelonrPairsBelonforelonTruncation.incBy(sortelondClustelonrs.sizelon)
+          numOfClustelonrsCumulativelonFrelonquelonncyBelonforelonFiltelonr.incForValuelon(sortelondClustelonrs.sizelon)
+          val truncatelondClustelonrs = sortelondClustelonrs.takelon(maxClustelonrsPelonrUselonr)
+          uselonrClustelonrPairsAftelonrTruncation.incBy(truncatelondClustelonrs.sizelon)
 
-          // 4. Get list of cluster representatives
-          val truncatedIdWithScoreList: Seq[SimClustersEmbeddingIdWithScore] =
-            truncatedClusters.map { members: Set[UserId] =>
-              val clusterRepresentationSelectionElapsed = Stopwatch.start()
-              val medoid: UserId = clusterRepresentativeSelectionMethod.selectClusterRepresentative(
-                members.map(id => weightsMap(id)),
-                embeddingsMap)
-              clusterRepresentativeSelectionTime.incBy(
-                clusterRepresentationSelectionElapsed().inMilliseconds)
+          // 4. Gelont list of clustelonr relonprelonselonntativelons
+          val truncatelondIdWithScorelonList: Selonq[SimClustelonrselonmbelonddingIdWithScorelon] =
+            truncatelondClustelonrs.map { melonmbelonrs: Selont[UselonrId] =>
+              val clustelonrRelonprelonselonntationSelonlelonctionelonlapselond = Stopwatch.start()
+              val melondoid: UselonrId = clustelonrRelonprelonselonntativelonSelonlelonctionMelonthod.selonlelonctClustelonrRelonprelonselonntativelon(
+                melonmbelonrs.map(id => welonightsMap(id)),
+                elonmbelonddingsMap)
+              clustelonrRelonprelonselonntativelonSelonlelonctionTimelon.incBy(
+                clustelonrRelonprelonselonntationSelonlelonctionelonlapselond().inMilliselonconds)
 
-              SimClustersEmbeddingIdWithScore(
-                id = SimClustersEmbeddingIdThrift(
-                  EmbeddingType.TwiceUserInterestedIn,
-                  modelVersion,
-                  InternalId.UserId(medoid)),
-                score = members.size)
+              SimClustelonrselonmbelonddingIdWithScorelon(
+                id = SimClustelonrselonmbelonddingIdThrift(
+                  elonmbelonddingTypelon.TwicelonUselonrIntelonrelonstelondIn,
+                  modelonlVelonrsion,
+                  IntelonrnalId.UselonrId(melondoid)),
+                scorelon = melonmbelonrs.sizelon)
             }
 
           (
-            userId,
-            sortedClusters,
-            SimClustersMultiEmbedding.Ids(
-              SimClustersMultiEmbeddingByIds(ids = truncatedIdWithScoreList)))
+            uselonrId,
+            sortelondClustelonrs,
+            SimClustelonrsMultielonmbelondding.Ids(
+              SimClustelonrsMultielonmbelonddingByIds(ids = truncatelondIdWithScorelonList)))
       }
   }
 
   /**
-   * Write the output to disk as a TypedTsv.
+   * Writelon thelon output to disk as a TypelondTsv.
    */
-  def writeOutputToTypedTSV(
-    output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)],
-    userToClusterRepresentativesIndexOutputPath: String,
-    userToClusterMembersIndexOutputPath: String
-  ): Execution[(Unit, Unit)] = {
+  delonf writelonOutputToTypelondTSV(
+    output: TypelondPipelon[(UselonrId, Selonq[Selont[UselonrId]], SimClustelonrsMultielonmbelondding)],
+    uselonrToClustelonrRelonprelonselonntativelonsIndelonxOutputPath: String,
+    uselonrToClustelonrMelonmbelonrsIndelonxOutputPath: String
+  ): elonxeloncution[(Unit, Unit)] = {
 
-    // write the user -> cluster representatives index
-    val writeClusterRepresentatives = output
-      .collect {
-        case (userId: Long, _, Ids(ids)) => (userId, ids.ids)
+    // writelon thelon uselonr -> clustelonr relonprelonselonntativelons indelonx
+    val writelonClustelonrRelonprelonselonntativelons = output
+      .collelonct {
+        caselon (uselonrId: Long, _, Ids(ids)) => (uselonrId, ids.ids)
       }
       //.shard(partitions = 1)
-      .writeExecution(TypedTsv[(UserId, Seq[SimClustersEmbeddingIdWithScore])](
-        userToClusterRepresentativesIndexOutputPath))
+      .writelonelonxeloncution(TypelondTsv[(UselonrId, Selonq[SimClustelonrselonmbelonddingIdWithScorelon])](
+        uselonrToClustelonrRelonprelonselonntativelonsIndelonxOutputPath))
 
-    // write the user -> cluster members index
-    val writeClusterMembers = output
-      .collect {
-        case (userId: Long, clusters: Seq[Set[UserId]], _) => (userId, clusters)
+    // writelon thelon uselonr -> clustelonr melonmbelonrs indelonx
+    val writelonClustelonrMelonmbelonrs = output
+      .collelonct {
+        caselon (uselonrId: Long, clustelonrs: Selonq[Selont[UselonrId]], _) => (uselonrId, clustelonrs)
       }
       //.shard(partitions = 1)
-      .writeExecution(TypedTsv[(UserId, Seq[Set[UserId]])](userToClusterMembersIndexOutputPath))
+      .writelonelonxeloncution(TypelondTsv[(UselonrId, Selonq[Selont[UselonrId]])](uselonrToClustelonrMelonmbelonrsIndelonxOutputPath))
 
-    Execution.zip(writeClusterRepresentatives, writeClusterMembers)
+    elonxeloncution.zip(writelonClustelonrRelonprelonselonntativelons, writelonClustelonrMelonmbelonrs)
 
   }
 
   /**
-   * Write the output to disk as a KeyValDataset.
+   * Writelon thelon output to disk as a KelonyValDataselont.
    */
-  def writeOutputToKeyValDataset(
-    output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)],
-    embeddingType: MultiEmbeddingType,
-    userToClusterRepresentativesIndexDataset: KeyValDALDataset[
-      KeyVal[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding]
+  delonf writelonOutputToKelonyValDataselont(
+    output: TypelondPipelon[(UselonrId, Selonq[Selont[UselonrId]], SimClustelonrsMultielonmbelondding)],
+    elonmbelonddingTypelon: MultielonmbelonddingTypelon,
+    uselonrToClustelonrRelonprelonselonntativelonsIndelonxDataselont: KelonyValDALDataselont[
+      KelonyVal[SimClustelonrsMultielonmbelonddingId, SimClustelonrsMultielonmbelondding]
     ],
-    userToClusterMembersIndexDataset: KeyValDALDataset[KeyVal[UserId, OrderedClustersAndMembers]],
-    userToClusterRepresentativesIndexOutputPath: String,
-    userToClusterMembersIndexOutputPath: String
+    uselonrToClustelonrMelonmbelonrsIndelonxDataselont: KelonyValDALDataselont[KelonyVal[UselonrId, OrdelonrelondClustelonrsAndMelonmbelonrs]],
+    uselonrToClustelonrRelonprelonselonntativelonsIndelonxOutputPath: String,
+    uselonrToClustelonrMelonmbelonrsIndelonxOutputPath: String
   )(
-    implicit dateRange: DateRange
-  ): Execution[(Unit, Unit)] = {
-    // write the user -> cluster representatives index
-    val writeClusterRepresentatives = output
+    implicit datelonRangelon: DatelonRangelon
+  ): elonxeloncution[(Unit, Unit)] = {
+    // writelon thelon uselonr -> clustelonr relonprelonselonntativelons indelonx
+    val writelonClustelonrRelonprelonselonntativelons = output
       .map {
-        case (userId: UserId, _, embeddings: SimClustersMultiEmbedding) =>
-          KeyVal(
-            key = SimClustersMultiEmbeddingId(
-              embeddingType = embeddingType,
-              modelVersion = modelVersion,
-              internalId = InternalId.UserId(userId)
+        caselon (uselonrId: UselonrId, _, elonmbelonddings: SimClustelonrsMultielonmbelondding) =>
+          KelonyVal(
+            kelony = SimClustelonrsMultielonmbelonddingId(
+              elonmbelonddingTypelon = elonmbelonddingTypelon,
+              modelonlVelonrsion = modelonlVelonrsion,
+              intelonrnalId = IntelonrnalId.UselonrId(uselonrId)
             ),
-            value = embeddings
+            valuelon = elonmbelonddings
           )
       }
-      .writeDALVersionedKeyValExecution(
-        userToClusterRepresentativesIndexDataset,
-        D.Suffix(userToClusterRepresentativesIndexOutputPath),
-        ExplicitEndTime(dateRange.end)
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        uselonrToClustelonrRelonprelonselonntativelonsIndelonxDataselont,
+        D.Suffix(uselonrToClustelonrRelonprelonselonntativelonsIndelonxOutputPath),
+        elonxplicitelonndTimelon(datelonRangelon.elonnd)
       )
 
-    // write the user -> cluster members index
-    val writeClusterMembers = output
+    // writelon thelon uselonr -> clustelonr melonmbelonrs indelonx
+    val writelonClustelonrMelonmbelonrs = output
       .map {
-        case (userId: UserId, clusters: Seq[Set[UserId]], _) =>
-          KeyVal(
-            key = userId,
-            value = OrderedClustersAndMembers(clusters, Some(clusters.map(ClusterMembers(_)))))
+        caselon (uselonrId: UselonrId, clustelonrs: Selonq[Selont[UselonrId]], _) =>
+          KelonyVal(
+            kelony = uselonrId,
+            valuelon = OrdelonrelondClustelonrsAndMelonmbelonrs(clustelonrs, Somelon(clustelonrs.map(ClustelonrMelonmbelonrs(_)))))
       }
-      .writeDALVersionedKeyValExecution(
-        userToClusterMembersIndexDataset,
-        D.Suffix(userToClusterMembersIndexOutputPath),
-        ExplicitEndTime(dateRange.end)
+      .writelonDALVelonrsionelondKelonyValelonxeloncution(
+        uselonrToClustelonrMelonmbelonrsIndelonxDataselont,
+        D.Suffix(uselonrToClustelonrMelonmbelonrsIndelonxOutputPath),
+        elonxplicitelonndTimelon(datelonRangelon.elonnd)
       )
 
-    Execution.zip(writeClusterRepresentatives, writeClusterMembers)
+    elonxeloncution.zip(writelonClustelonrRelonprelonselonntativelons, writelonClustelonrMelonmbelonrs)
   }
 
   /**
-   * Main method for scheduled jobs.
+   * Main melonthod for schelondulelond jobs.
    */
-  def runScheduledApp(
-    clusteringMethod: ClusteringMethod,
-    clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
-    producerEmbedding: TypedPipe[(UserId, T)],
-    userToClusterRepresentativesIndexPathSuffix: String,
-    userToClusterMembersIndexPathSuffix: String,
-    userToClusterRepresentativesIndexDataset: KeyValDALDataset[
-      KeyVal[SimClustersMultiEmbeddingId, SimClustersMultiEmbedding]
+  delonf runSchelondulelondApp(
+    clustelonringMelonthod: ClustelonringMelonthod,
+    clustelonrRelonprelonselonntativelonSelonlelonctionMelonthod: ClustelonrRelonprelonselonntativelonSelonlelonctionMelonthod[T],
+    producelonrelonmbelondding: TypelondPipelon[(UselonrId, T)],
+    uselonrToClustelonrRelonprelonselonntativelonsIndelonxPathSuffix: String,
+    uselonrToClustelonrMelonmbelonrsIndelonxPathSuffix: String,
+    uselonrToClustelonrRelonprelonselonntativelonsIndelonxDataselont: KelonyValDALDataselont[
+      KelonyVal[SimClustelonrsMultielonmbelonddingId, SimClustelonrsMultielonmbelondding]
     ],
-    userToClusterMembersIndexDataset: KeyValDALDataset[KeyVal[UserId, OrderedClustersAndMembers]],
-    numReducers: Int
+    uselonrToClustelonrMelonmbelonrsIndelonxDataselont: KelonyValDALDataselont[KelonyVal[UselonrId, OrdelonrelondClustelonrsAndMelonmbelonrs]],
+    numRelonducelonrs: Int
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonId: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val userToClusterRepresentativesIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = false,
-      isManhattanKeyVal = true,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterRepresentativesIndexPathSuffix
+    val uselonrToClustelonrRelonprelonselonntativelonsIndelonxOutputPath: String = elonmbelonddingUtil.gelontHdfsPath(
+      isAdhoc = falselon,
+      isManhattanKelonyVal = truelon,
+      modelonlVelonrsion = modelonlVelonrsion,
+      pathSuffix = uselonrToClustelonrRelonprelonselonntativelonsIndelonxPathSuffix
     )
 
-    val userToClusterMembersIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = false,
-      isManhattanKeyVal = true,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterMembersIndexPathSuffix
+    val uselonrToClustelonrMelonmbelonrsIndelonxOutputPath: String = elonmbelonddingUtil.gelontHdfsPath(
+      isAdhoc = falselon,
+      isManhattanKelonyVal = truelon,
+      modelonlVelonrsion = modelonlVelonrsion,
+      pathSuffix = uselonrToClustelonrMelonmbelonrsIndelonxPathSuffix
     )
 
-    val execution = Execution.withId { implicit uniqueId =>
-      val output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] =
-        getMultiEmbeddingPerUser(
-          userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)), implicitly),
-          producerEmbedding = producerEmbedding,
-          clusteringMethod = clusteringMethod,
-          clusterRepresentativeSelectionMethod = clusterRepresentativeSelectionMethod,
-          numReducers = numReducers
+    val elonxeloncution = elonxeloncution.withId { implicit uniquelonId =>
+      val output: TypelondPipelon[(UselonrId, Selonq[Selont[UselonrId]], SimClustelonrsMultielonmbelondding)] =
+        gelontMultielonmbelonddingPelonrUselonr(
+          uselonrUselonrGraph = gelontUselonrUselonrGraph(datelonRangelon.prelonpelonnd(Days(30)), implicitly),
+          producelonrelonmbelondding = producelonrelonmbelondding,
+          clustelonringMelonthod = clustelonringMelonthod,
+          clustelonrRelonprelonselonntativelonSelonlelonctionMelonthod = clustelonrRelonprelonselonntativelonSelonlelonctionMelonthod,
+          numRelonducelonrs = numRelonducelonrs
         )
 
-      writeOutputToKeyValDataset(
+      writelonOutputToKelonyValDataselont(
         output = output,
-        embeddingType = MultiEmbeddingType.TwiceUserInterestedIn,
-        userToClusterRepresentativesIndexDataset = userToClusterRepresentativesIndexDataset,
-        userToClusterMembersIndexDataset = userToClusterMembersIndexDataset,
-        userToClusterRepresentativesIndexOutputPath = userToClusterRepresentativesIndexOutputPath,
-        userToClusterMembersIndexOutputPath = userToClusterMembersIndexOutputPath
+        elonmbelonddingTypelon = MultielonmbelonddingTypelon.TwicelonUselonrIntelonrelonstelondIn,
+        uselonrToClustelonrRelonprelonselonntativelonsIndelonxDataselont = uselonrToClustelonrRelonprelonselonntativelonsIndelonxDataselont,
+        uselonrToClustelonrMelonmbelonrsIndelonxDataselont = uselonrToClustelonrMelonmbelonrsIndelonxDataselont,
+        uselonrToClustelonrRelonprelonselonntativelonsIndelonxOutputPath = uselonrToClustelonrRelonprelonselonntativelonsIndelonxOutputPath,
+        uselonrToClustelonrMelonmbelonrsIndelonxOutputPath = uselonrToClustelonrMelonmbelonrsIndelonxOutputPath
       )
 
     }
 
-    execution.unit
+    elonxeloncution.unit
   }
 
   /**
-   * Main method for adhoc jobs.
+   * Main melonthod for adhoc jobs.
    */
-  def runAdhocApp(
-    clusteringMethod: ClusteringMethod,
-    clusterRepresentativeSelectionMethod: ClusterRepresentativeSelectionMethod[T],
-    producerEmbedding: TypedPipe[(UserId, T)],
-    userToClusterRepresentativesIndexPathSuffix: String,
-    userToClusterMembersIndexPathSuffix: String,
-    numReducers: Int
+  delonf runAdhocApp(
+    clustelonringMelonthod: ClustelonringMelonthod,
+    clustelonrRelonprelonselonntativelonSelonlelonctionMelonthod: ClustelonrRelonprelonselonntativelonSelonlelonctionMelonthod[T],
+    producelonrelonmbelondding: TypelondPipelon[(UselonrId, T)],
+    uselonrToClustelonrRelonprelonselonntativelonsIndelonxPathSuffix: String,
+    uselonrToClustelonrMelonmbelonrsIndelonxPathSuffix: String,
+    numRelonducelonrs: Int
   )(
-    implicit dateRange: DateRange,
-    timeZone: TimeZone,
-    uniqueId: UniqueID
-  ): Execution[Unit] = {
+    implicit datelonRangelon: DatelonRangelon,
+    timelonZonelon: TimelonZonelon,
+    uniquelonId: UniquelonID
+  ): elonxeloncution[Unit] = {
 
-    val userToClusterRepresentativesIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = true,
-      isManhattanKeyVal = false,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterRepresentativesIndexPathSuffix
+    val uselonrToClustelonrRelonprelonselonntativelonsIndelonxOutputPath: String = elonmbelonddingUtil.gelontHdfsPath(
+      isAdhoc = truelon,
+      isManhattanKelonyVal = falselon,
+      modelonlVelonrsion = modelonlVelonrsion,
+      pathSuffix = uselonrToClustelonrRelonprelonselonntativelonsIndelonxPathSuffix
     )
 
-    val userToClusterMembersIndexOutputPath: String = EmbeddingUtil.getHdfsPath(
-      isAdhoc = true,
-      isManhattanKeyVal = false,
-      modelVersion = modelVersion,
-      pathSuffix = userToClusterMembersIndexPathSuffix
+    val uselonrToClustelonrMelonmbelonrsIndelonxOutputPath: String = elonmbelonddingUtil.gelontHdfsPath(
+      isAdhoc = truelon,
+      isManhattanKelonyVal = falselon,
+      modelonlVelonrsion = modelonlVelonrsion,
+      pathSuffix = uselonrToClustelonrMelonmbelonrsIndelonxPathSuffix
     )
 
-    val execution = Execution.withId { implicit uniqueId =>
-      val output: TypedPipe[(UserId, Seq[Set[UserId]], SimClustersMultiEmbedding)] =
-        getMultiEmbeddingPerUser(
-          userUserGraph = getUserUserGraph(dateRange.prepend(Days(30)), implicitly),
-          producerEmbedding = producerEmbedding,
-          clusteringMethod = clusteringMethod,
-          clusterRepresentativeSelectionMethod = clusterRepresentativeSelectionMethod,
-          numReducers = numReducers
+    val elonxeloncution = elonxeloncution.withId { implicit uniquelonId =>
+      val output: TypelondPipelon[(UselonrId, Selonq[Selont[UselonrId]], SimClustelonrsMultielonmbelondding)] =
+        gelontMultielonmbelonddingPelonrUselonr(
+          uselonrUselonrGraph = gelontUselonrUselonrGraph(datelonRangelon.prelonpelonnd(Days(30)), implicitly),
+          producelonrelonmbelondding = producelonrelonmbelondding,
+          clustelonringMelonthod = clustelonringMelonthod,
+          clustelonrRelonprelonselonntativelonSelonlelonctionMelonthod = clustelonrRelonprelonselonntativelonSelonlelonctionMelonthod,
+          numRelonducelonrs = numRelonducelonrs
         )
 
-      writeOutputToTypedTSV(
+      writelonOutputToTypelondTSV(
         output,
-        userToClusterRepresentativesIndexOutputPath,
-        userToClusterMembersIndexOutputPath)
+        uselonrToClustelonrRelonprelonselonntativelonsIndelonxOutputPath,
+        uselonrToClustelonrMelonmbelonrsIndelonxOutputPath)
     }
 
-    execution.unit
+    elonxeloncution.unit
   }
 
 }
 
-object InterestedInTwiceBaseApp {
+objelonct IntelonrelonstelondInTwicelonBaselonApp {
 
   // Statistics
-  val StatNumOfFollowEdges = "num_of_follow_edges"
-  val StatNumOfFavEdges = "num_of_fav_edges"
-  val StatTotalEdgesNonEmptyProducerEmbeddings = "total_edges_with_non_empty_producer_embeddings"
-  val StatNumUserClusterPairsBeforeTruncation = "num_user_cluster_pairs_before_truncation"
-  val StatNumUserClusterPairsAfterTruncation = "num_user_cluster_pairs_after_truncation"
-  val StatNumUsers = "num_users"
-  // Cumulative Frequency
-  val StatCFNumProducersPerConsumerBeforeFilter = "num_producers_per_consumer_cf_before_filter"
-  val StatCFNumProducersPerConsumerBeforeFilterBuckets: Seq[Double] =
-    Seq(0, 10, 20, 50, 100, 500, 1000)
-  val StatCFCosineSimilarityBeforeFilter = "cosine_similarity_cf_before_filter"
-  val StatCFCosineSimilarityBeforeFilterBuckets: Seq[Double] =
-    Seq(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
-  val StatCFNumOfClustersBeforeFilter = "num_of_clusters_cf_before_filter"
-  val StatCFNumOfClustersBeforeFilterBuckets: Seq[Double] =
-    Seq(1, 3, 5, 10, 15, 20, 50, 100, 200, 300, 500)
+  val StatNumOfFollowelondgelons = "num_of_follow_elondgelons"
+  val StatNumOfFavelondgelons = "num_of_fav_elondgelons"
+  val StatTotalelondgelonsNonelonmptyProducelonrelonmbelonddings = "total_elondgelons_with_non_elonmpty_producelonr_elonmbelonddings"
+  val StatNumUselonrClustelonrPairsBelonforelonTruncation = "num_uselonr_clustelonr_pairs_belonforelon_truncation"
+  val StatNumUselonrClustelonrPairsAftelonrTruncation = "num_uselonr_clustelonr_pairs_aftelonr_truncation"
+  val StatNumUselonrs = "num_uselonrs"
+  // Cumulativelon Frelonquelonncy
+  val StatCFNumProducelonrsPelonrConsumelonrBelonforelonFiltelonr = "num_producelonrs_pelonr_consumelonr_cf_belonforelon_filtelonr"
+  val StatCFNumProducelonrsPelonrConsumelonrBelonforelonFiltelonrBuckelonts: Selonq[Doublelon] =
+    Selonq(0, 10, 20, 50, 100, 500, 1000)
+  val StatCFCosinelonSimilarityBelonforelonFiltelonr = "cosinelon_similarity_cf_belonforelon_filtelonr"
+  val StatCFCosinelonSimilarityBelonforelonFiltelonrBuckelonts: Selonq[Doublelon] =
+    Selonq(0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100)
+  val StatCFNumOfClustelonrsBelonforelonFiltelonr = "num_of_clustelonrs_cf_belonforelon_filtelonr"
+  val StatCFNumOfClustelonrsBelonforelonFiltelonrBuckelonts: Selonq[Doublelon] =
+    Selonq(1, 3, 5, 10, 15, 20, 50, 100, 200, 300, 500)
 
-  val MaxClustersPerUser: Int = 10
-  val MaxNeighborsByUser: Int = 500
+  val MaxClustelonrsPelonrUselonr: Int = 10
+  val MaxNelonighborsByUselonr: Int = 500
 
-  object ProducerEmbeddingSource {
+  objelonct ProducelonrelonmbelonddingSourcelon {
 
     /**
-     * Read log-fav based Aggregatable Producer embeddings dataset.
+     * Relonad log-fav baselond Aggrelongatablelon Producelonr elonmbelonddings dataselont.
      */
-    def getAggregatableProducerEmbeddings(
-      implicit dateRange: DateRange,
-      timeZone: TimeZone
-    ): TypedPipe[(UserId, SimClustersEmbedding)] =
-      ProducerEmbeddingSources
-        .producerEmbeddingSource(
-          EmbeddingType.AggregatableLogFavBasedProducer,
-          ModelVersion.Model20m145k2020)(dateRange.prepend(Days(30)))
-        .mapValues(s => SimClustersEmbedding(s))
+    delonf gelontAggrelongatablelonProducelonrelonmbelonddings(
+      implicit datelonRangelon: DatelonRangelon,
+      timelonZonelon: TimelonZonelon
+    ): TypelondPipelon[(UselonrId, SimClustelonrselonmbelondding)] =
+      ProducelonrelonmbelonddingSourcelons
+        .producelonrelonmbelonddingSourcelon(
+          elonmbelonddingTypelon.AggrelongatablelonLogFavBaselondProducelonr,
+          ModelonlVelonrsion.Modelonl20m145k2020)(datelonRangelon.prelonpelonnd(Days(30)))
+        .mapValuelons(s => SimClustelonrselonmbelondding(s))
 
   }
 

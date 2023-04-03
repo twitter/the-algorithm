@@ -1,33 +1,33 @@
-package com.twitter.graph_feature_service.worker.modules
+packagelon com.twittelonr.graph_felonaturelon_selonrvicelon.workelonr.modulelons
 
-import com.twitter.inject.TwitterModule
+import com.twittelonr.injelonct.TwittelonrModulelon
 
-object WorkerFlagNames {
-  final val ServiceRole = "service.role"
-  final val ServiceEnv = "service.env"
-  final val ShardId = "service.shardId"
-  final val NumShards = "service.numShards"
-  final val HdfsCluster = "service.hdfsCluster"
-  final val HdfsClusterUrl = "service.hdfsClusterUrl"
+objelonct WorkelonrFlagNamelons {
+  final val SelonrvicelonRolelon = "selonrvicelon.rolelon"
+  final val Selonrvicelonelonnv = "selonrvicelon.elonnv"
+  final val ShardId = "selonrvicelon.shardId"
+  final val NumShards = "selonrvicelon.numShards"
+  final val HdfsClustelonr = "selonrvicelon.hdfsClustelonr"
+  final val HdfsClustelonrUrl = "selonrvicelon.hdfsClustelonrUrl"
 }
 
 /**
- * Initializes references to the flag values defined in the aurora.deploy file.
- * To check what the flag values are initialized in runtime, search FlagsModule in stdout
+ * Initializelons relonfelonrelonncelons to thelon flag valuelons delonfinelond in thelon aurora.delonploy filelon.
+ * To chelonck what thelon flag valuelons arelon initializelond in runtimelon, selonarch FlagsModulelon in stdout
  */
-object WorkerFlagModule extends TwitterModule {
+objelonct WorkelonrFlagModulelon elonxtelonnds TwittelonrModulelon {
 
-  import WorkerFlagNames._
+  import WorkelonrFlagNamelons._
 
   flag[Int](ShardId, "Shard Id")
 
   flag[Int](NumShards, "Num of Graph Shards")
 
-  flag[String](ServiceRole, "Service Role")
+  flag[String](SelonrvicelonRolelon, "Selonrvicelon Rolelon")
 
-  flag[String](ServiceEnv, "Service Env")
+  flag[String](Selonrvicelonelonnv, "Selonrvicelon elonnv")
 
-  flag[String](HdfsCluster, "Hdfs cluster to download graph files from")
+  flag[String](HdfsClustelonr, "Hdfs clustelonr to download graph filelons from")
 
-  flag[String](HdfsClusterUrl, "Hdfs cluster url to download graph files from")
+  flag[String](HdfsClustelonrUrl, "Hdfs clustelonr url to download graph filelons from")
 }

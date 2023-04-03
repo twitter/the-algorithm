@@ -1,9 +1,9 @@
 """
-This module is responsible for running saved_model_cli.
+This modulelon is relonsponsiblelon for running savelond_modelonl_cli.
 """
 import sys
 
-from tensorflow.python.tools import saved_model_cli
+from telonnsorflow.python.tools import savelond_modelonl_cli
 
-if __name__ == '__main__':
-  sys.exit(saved_model_cli.main())
+if __namelon__ == '__main__':
+  sys.elonxit(savelond_modelonl_cli.main())

@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.component_library.module
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.modulelon
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.explore_ranker.thriftscala.ExploreRanker
-import com.twitter.finagle.thriftmux.MethodBuilder
-import com.twitter.finatra.mtls.thriftmux.modules.MtlsClient
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.Injector
-import com.twitter.inject.thrift.modules.ThriftMethodBuilderClientModule
-import com.twitter.util.Duration
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.elonxplorelon_rankelonr.thriftscala.elonxplorelonRankelonr
+import com.twittelonr.finaglelon.thriftmux.MelonthodBuildelonr
+import com.twittelonr.finatra.mtls.thriftmux.modulelons.MtlsClielonnt
+import com.twittelonr.injelonct.annotations.Flags
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.thrift.modulelons.ThriftMelonthodBuildelonrClielonntModulelon
+import com.twittelonr.util.Duration
 
-object ExploreRankerClientModule
-    extends ThriftMethodBuilderClientModule[
-      ExploreRanker.ServicePerEndpoint,
-      ExploreRanker.MethodPerEndpoint
+objelonct elonxplorelonRankelonrClielonntModulelon
+    elonxtelonnds ThriftMelonthodBuildelonrClielonntModulelon[
+      elonxplorelonRankelonr.SelonrvicelonPelonrelonndpoint,
+      elonxplorelonRankelonr.MelonthodPelonrelonndpoint
     ]
-    with MtlsClient {
+    with MtlsClielonnt {
 
-  override val label: String = "explore-ranker"
-  override val dest: String = "/s/explore-ranker/explore-ranker"
+  ovelonrridelon val labelonl: String = "elonxplorelon-rankelonr"
+  ovelonrridelon val delonst: String = "/s/elonxplorelon-rankelonr/elonxplorelon-rankelonr"
 
-  private final val ExploreRankerTimeoutTotal = "explore_ranker.timeout_total"
+  privatelon final val elonxplorelonRankelonrTimelonoutTotal = "elonxplorelon_rankelonr.timelonout_total"
 
   flag[Duration](
-    name = ExploreRankerTimeoutTotal,
-    default = 800.milliseconds,
-    help = "Timeout total for ExploreRanker")
+    namelon = elonxplorelonRankelonrTimelonoutTotal,
+    delonfault = 800.milliselonconds,
+    helonlp = "Timelonout total for elonxplorelonRankelonr")
 
-  override protected def configureMethodBuilder(
-    injector: Injector,
-    methodBuilder: MethodBuilder
-  ): MethodBuilder = {
-    val timeoutTotal: Duration = injector.instance[Duration](Flags.named(ExploreRankerTimeoutTotal))
-    methodBuilder
-      .withTimeoutTotal(timeoutTotal)
-      .nonIdempotent
+  ovelonrridelon protelonctelond delonf configurelonMelonthodBuildelonr(
+    injelonctor: Injelonctor,
+    melonthodBuildelonr: MelonthodBuildelonr
+  ): MelonthodBuildelonr = {
+    val timelonoutTotal: Duration = injelonctor.instancelon[Duration](Flags.namelond(elonxplorelonRankelonrTimelonoutTotal))
+    melonthodBuildelonr
+      .withTimelonoutTotal(timelonoutTotal)
+      .nonIdelonmpotelonnt
   }
 }

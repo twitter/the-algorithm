@@ -1,31 +1,31 @@
-package com.twitter.simclusters_v2.stores
+packagelon com.twittelonr.simclustelonrs_v2.storelons
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.{
-  Long2BigEndian,
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.{
+  Long2Bigelonndian,
   ScalaBinaryThrift
 }
-import com.twitter.storage.client.manhattan.kv.ManhattanKVClientMtlsParams
-import com.twitter.storehaus.ReadableStore
-import com.twitter.storehaus_internal.manhattan.{Apollo, ManhattanRO, ManhattanROConfig}
-import com.twitter.storehaus_internal.util.{ApplicationID, DatasetName, HDFSPath}
-import com.twitter.wtf.candidate.thriftscala.CandidateSeq
+import com.twittelonr.storagelon.clielonnt.manhattan.kv.ManhattanKVClielonntMtlsParams
+import com.twittelonr.storelonhaus.RelonadablelonStorelon
+import com.twittelonr.storelonhaus_intelonrnal.manhattan.{Apollo, ManhattanRO, ManhattanROConfig}
+import com.twittelonr.storelonhaus_intelonrnal.util.{ApplicationID, DataselontNamelon, HDFSPath}
+import com.twittelonr.wtf.candidatelon.thriftscala.CandidatelonSelonq
 
-object WtfMbcgStore {
+objelonct WtfMbcgStorelon {
 
-  val appId = "recos_platform_apollo"
+  val appId = "reloncos_platform_apollo"
 
-  implicit val keyInj = Long2BigEndian
-  implicit val valInj = ScalaBinaryThrift(CandidateSeq)
+  implicit val kelonyInj = Long2Bigelonndian
+  implicit val valInj = ScalaBinaryThrift(CandidatelonSelonq)
 
-  def getWtfMbcgStore(
-    mhMtlsParams: ManhattanKVClientMtlsParams,
-    datasetName: String
-  ): ReadableStore[Long, CandidateSeq] = {
-    ManhattanRO.getReadableStoreWithMtls[Long, CandidateSeq](
+  delonf gelontWtfMbcgStorelon(
+    mhMtlsParams: ManhattanKVClielonntMtlsParams,
+    dataselontNamelon: String
+  ): RelonadablelonStorelon[Long, CandidatelonSelonq] = {
+    ManhattanRO.gelontRelonadablelonStorelonWithMtls[Long, CandidatelonSelonq](
       ManhattanROConfig(
         HDFSPath(""),
         ApplicationID(appId),
-        DatasetName(datasetName),
+        DataselontNamelon(dataselontNamelon),
         Apollo
       ),
       mhMtlsParams

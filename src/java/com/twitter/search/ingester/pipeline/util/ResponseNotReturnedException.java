@@ -1,7 +1,7 @@
-package com.twitter.search.ingester.pipeline.util;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util;
 
-public class ResponseNotReturnedException extends Exception {
-  ResponseNotReturnedException(Object request) {
-    super("Response not returned in batch for request: " + request);
+public class RelonsponselonNotRelonturnelondelonxcelonption elonxtelonnds elonxcelonption {
+  RelonsponselonNotRelonturnelondelonxcelonption(Objelonct relonquelonst) {
+    supelonr("Relonsponselon not relonturnelond in batch for relonquelonst: " + relonquelonst);
   }
 }

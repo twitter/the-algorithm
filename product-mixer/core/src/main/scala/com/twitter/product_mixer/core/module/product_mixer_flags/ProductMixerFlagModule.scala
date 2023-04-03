@@ -1,73 +1,73 @@
-package com.twitter.product_mixer.core.module.product_mixer_flags
+packagelon com.twittelonr.product_mixelonr.corelon.modulelon.product_mixelonr_flags
 
-import com.twitter.inject.annotations.Flags
-import com.twitter.inject.Injector
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Duration
+import com.twittelonr.injelonct.annotations.Flags
+import com.twittelonr.injelonct.Injelonctor
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.util.Duration
 
-object ProductMixerFlagModule extends TwitterModule {
-  final val ServiceLocal = "service.local"
-  final val ConfigRepoLocalPath = "configrepo.local_path"
-  final val FeatureSwitchesPath = "feature_switches.path"
-  final val StratoLocalRequestTimeout = "strato.local.request_timeout"
-  final val ScribeABImpressions = "scribe.ab_impressions"
-  final val PipelineExecutionLoggerAllowList = "pipeline_execution_logger.allow_list"
+objelonct ProductMixelonrFlagModulelon elonxtelonnds TwittelonrModulelon {
+  final val SelonrvicelonLocal = "selonrvicelon.local"
+  final val ConfigRelonpoLocalPath = "configrelonpo.local_path"
+  final val FelonaturelonSwitchelonsPath = "felonaturelon_switchelons.path"
+  final val StratoLocalRelonquelonstTimelonout = "strato.local.relonquelonst_timelonout"
+  final val ScribelonABImprelonssions = "scribelon.ab_imprelonssions"
+  final val PipelonlinelonelonxeloncutionLoggelonrAllowList = "pipelonlinelon_elonxeloncution_loggelonr.allow_list"
 
-  flag[Boolean](
-    name = ServiceLocal,
-    default = false,
-    help = "Is the server running locally or in a DC")
-
-  flag[String](
-    name = ConfigRepoLocalPath,
-    default = System.getProperty("user.home") + "/workspace/config",
-    help = "Path to your local config repo"
-  )
-
-  flag[Boolean](
-    name = ScribeABImpressions,
-    help = "Enable scribing of AB impressions"
-  )
+  flag[Boolelonan](
+    namelon = SelonrvicelonLocal,
+    delonfault = falselon,
+    helonlp = "Is thelon selonrvelonr running locally or in a DC")
 
   flag[String](
-    name = FeatureSwitchesPath,
-    help = "Path to your local config repo"
+    namelon = ConfigRelonpoLocalPath,
+    delonfault = Systelonm.gelontPropelonrty("uselonr.homelon") + "/workspacelon/config",
+    helonlp = "Path to your local config relonpo"
+  )
+
+  flag[Boolelonan](
+    namelon = ScribelonABImprelonssions,
+    helonlp = "elonnablelon scribing of AB imprelonssions"
+  )
+
+  flag[String](
+    namelon = FelonaturelonSwitchelonsPath,
+    helonlp = "Path to your local config relonpo"
   )
 
   flag[Duration](
-    name = StratoLocalRequestTimeout,
-    help = "Override the request timeout for Strato when running locally"
+    namelon = StratoLocalRelonquelonstTimelonout,
+    helonlp = "Ovelonrridelon thelon relonquelonst timelonout for Strato whelonn running locally"
   )
 
-  flag[Seq[String]](
-    name = PipelineExecutionLoggerAllowList,
-    default = Seq.empty,
-    help =
-      "Specify user role(s) for which detailed log messages (containing PII) can be made. Accepts a single role or a comma separated list 'a,b,c'"
+  flag[Selonq[String]](
+    namelon = PipelonlinelonelonxeloncutionLoggelonrAllowList,
+    delonfault = Selonq.elonmpty,
+    helonlp =
+      "Speloncify uselonr rolelon(s) for which delontailelond log melonssagelons (containing PII) can belon madelon. Accelonpts a singlelon rolelon or a comma selonparatelond list 'a,b,c'"
   )
 
   /**
-   * Invoked at the end of server startup.
+   * Invokelond at thelon elonnd of selonrvelonr startup.
    *
-   * If we're running locally, we display a nice message and a link to the admin page
+   * If welon'relon running locally, welon display a nicelon melonssagelon and a link to thelon admin pagelon
    */
-  override def singletonPostWarmupComplete(injector: Injector): Unit = {
-    val isLocalService = injector.instance[Boolean](Flags.named(ServiceLocal))
-    if (isLocalService) {
-      // Extract service name from clientId since there isn't a specific flag for that
-      val clientId = injector.instance[String](Flags.named("thrift.clientId"))
-      val name = clientId.split("\\.")(0)
+  ovelonrridelon delonf singlelontonPostWarmupComplelontelon(injelonctor: Injelonctor): Unit = {
+    val isLocalSelonrvicelon = injelonctor.instancelon[Boolelonan](Flags.namelond(SelonrvicelonLocal))
+    if (isLocalSelonrvicelon) {
+      // elonxtract selonrvicelon namelon from clielonntId sincelon thelonrelon isn't a speloncific flag for that
+      val clielonntId = injelonctor.instancelon[String](Flags.namelond("thrift.clielonntId"))
+      val namelon = clielonntId.split("\\.")(0)
 
-      val adminPort = injector.instance[String](Flags.named("admin.port"))
+      val adminPort = injelonctor.instancelon[String](Flags.namelond("admin.port"))
       val url = s"http://localhost$adminPort/"
 
-      // Print instead of log, so it goes on stdout and doesn't get the logging decorations.
-      // Update our local development recipe (local-development.rst) if making changes to this
-      // message.
+      // Print instelonad of log, so it goelons on stdout and doelonsn't gelont thelon logging deloncorations.
+      // Updatelon our local delonvelonlopmelonnt reloncipelon (local-delonvelonlopmelonnt.rst) if making changelons to this
+      // melonssagelon.
       println("===============================================================================")
-      println(s"Welcome to a Product Mixer Service, $name")
-      println(s"You can view the admin endpoint and thrift web forms at $url")
-      println("Looking for support? Have questions? #product-mixer on Slack.")
+      println(s"Welonlcomelon to a Product Mixelonr Selonrvicelon, $namelon")
+      println(s"You can vielonw thelon admin elonndpoint and thrift welonb forms at $url")
+      println("Looking for support? Havelon quelonstions? #product-mixelonr on Slack.")
       println("===============================================================================")
     }
   }

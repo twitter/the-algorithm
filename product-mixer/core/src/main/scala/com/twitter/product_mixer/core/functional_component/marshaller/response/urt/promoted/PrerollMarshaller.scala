@@ -1,19 +1,19 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.promoted
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.promotelond
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.promoted.Preroll
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.promotelond.Prelonroll
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class PrerollMarshaller @Inject() (
-  dynamicPrerollTypeMarshaller: DynamicPrerollTypeMarshaller,
-  mediaInfoMarshaller: MediaInfoMarshaller) {
+@Singlelonton
+class PrelonrollMarshallelonr @Injelonct() (
+  dynamicPrelonrollTypelonMarshallelonr: DynamicPrelonrollTypelonMarshallelonr,
+  melondiaInfoMarshallelonr: MelondiaInfoMarshallelonr) {
 
-  def apply(preroll: Preroll): urt.Preroll =
-    urt.Preroll(
-      prerollId = preroll.prerollId,
-      dynamicPrerollType = preroll.dynamicPrerollType.map(dynamicPrerollTypeMarshaller(_)),
-      mediaInfo = preroll.mediaInfo.map(mediaInfoMarshaller(_))
+  delonf apply(prelonroll: Prelonroll): urt.Prelonroll =
+    urt.Prelonroll(
+      prelonrollId = prelonroll.prelonrollId,
+      dynamicPrelonrollTypelon = prelonroll.dynamicPrelonrollTypelon.map(dynamicPrelonrollTypelonMarshallelonr(_)),
+      melondiaInfo = prelonroll.melondiaInfo.map(melondiaInfoMarshallelonr(_))
     )
 }

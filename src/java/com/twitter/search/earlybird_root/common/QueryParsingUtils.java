@@ -1,86 +1,86 @@
-package com.twitter.search.earlybird_root.common;
+packagelon com.twittelonr.selonarch.elonarlybird_root.common;
 
-import java.util.concurrent.TimeUnit;
+import java.util.concurrelonnt.TimelonUnit;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTimerStats;
-import com.twitter.search.earlybird.thrift.EarlybirdRequest;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.search.earlybird.thrift.EarlybirdResponseCode;
-import com.twitter.search.queryparser.parser.SerializedQueryParser;
-import com.twitter.search.queryparser.query.Query;
-import com.twitter.search.queryparser.query.QueryParserException;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTimelonrStats;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselonCodelon;
+import com.twittelonr.selonarch.quelonryparselonr.parselonr.SelonrializelondQuelonryParselonr;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.Quelonry;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Common utils for parsing serialized queries, and handling query parser exceptions.
+ * Common utils for parsing selonrializelond quelonrielons, and handling quelonry parselonr elonxcelonptions.
  */
-public final class QueryParsingUtils {
+public final class QuelonryParsingUtils {
 
-  private static final Logger LOG = LoggerFactory.getLogger(QueryParsingUtils.class);
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(QuelonryParsingUtils.class);
 
-  @VisibleForTesting
-  public static final SearchCounter QUERYPARSE_COUNT =
-      SearchCounter.export("root_queryparse_count");
-  private static final SearchTimerStats QUERYPARSE_TIMER =
-      SearchTimerStats.export("root_queryparse_time", TimeUnit.NANOSECONDS, false, true);
-  private static final SearchCounter NO_PARSED_QUERY_COUNT =
-      SearchCounter.export("root_no_parsed_query_count");
+  @VisiblelonForTelonsting
+  public static final SelonarchCountelonr QUelonRYPARSelon_COUNT =
+      SelonarchCountelonr.elonxport("root_quelonryparselon_count");
+  privatelon static final SelonarchTimelonrStats QUelonRYPARSelon_TIMelonR =
+      SelonarchTimelonrStats.elonxport("root_quelonryparselon_timelon", TimelonUnit.NANOSelonCONDS, falselon, truelon);
+  privatelon static final SelonarchCountelonr NO_PARSelonD_QUelonRY_COUNT =
+      SelonarchCountelonr.elonxport("root_no_parselond_quelonry_count");
 
-  private QueryParsingUtils() { }
+  privatelon QuelonryParsingUtils() { }
 
   /**
-   * Takes an earlybird request, and parses its serialized query (if it is set).
-   * Expects the required ThriftSearchQuery to be set on the passed in EarlybirdRequest.
+   * Takelons an elonarlybird relonquelonst, and parselons its selonrializelond quelonry (if it is selont).
+   * elonxpeloncts thelon relonquirelond ThriftSelonarchQuelonry to belon selont on thelon passelond in elonarlybirdRelonquelonst.
    *
-   * @param request the earlybird request to parse.
-   * @return null if the request does not specify a serialized query.
-   * @throws QueryParserException if querry parsing fails.
+   * @param relonquelonst thelon elonarlybird relonquelonst to parselon.
+   * @relonturn null if thelon relonquelonst doelons not speloncify a selonrializelond quelonry.
+   * @throws QuelonryParselonrelonxcelonption if quelonrry parsing fails.
    */
-  @Nullable
-  static Query getParsedQuery(EarlybirdRequest request) throws QueryParserException {
-    // searchQuery is required on EarlybirdRequest.
-    Preconditions.checkState(request.isSetSearchQuery());
-    Query parsedQuery;
-    if (request.getSearchQuery().isSetSerializedQuery()) {
-      long startTime = System.nanoTime();
+  @Nullablelon
+  static Quelonry gelontParselondQuelonry(elonarlybirdRelonquelonst relonquelonst) throws QuelonryParselonrelonxcelonption {
+    // selonarchQuelonry is relonquirelond on elonarlybirdRelonquelonst.
+    Prelonconditions.chelonckStatelon(relonquelonst.isSelontSelonarchQuelonry());
+    Quelonry parselondQuelonry;
+    if (relonquelonst.gelontSelonarchQuelonry().isSelontSelonrializelondQuelonry()) {
+      long startTimelon = Systelonm.nanoTimelon();
       try {
-        String serializedQuery = request.getSearchQuery().getSerializedQuery();
+        String selonrializelondQuelonry = relonquelonst.gelontSelonarchQuelonry().gelontSelonrializelondQuelonry();
 
-        parsedQuery = new SerializedQueryParser().parse(serializedQuery);
+        parselondQuelonry = nelonw SelonrializelondQuelonryParselonr().parselon(selonrializelondQuelonry);
       } finally {
-        QUERYPARSE_COUNT.increment();
-        QUERYPARSE_TIMER.timerIncrement(System.nanoTime() - startTime);
+        QUelonRYPARSelon_COUNT.increlonmelonnt();
+        QUelonRYPARSelon_TIMelonR.timelonrIncrelonmelonnt(Systelonm.nanoTimelon() - startTimelon);
       }
-    } else {
-      NO_PARSED_QUERY_COUNT.increment();
-      parsedQuery = null;
+    } elonlselon {
+      NO_PARSelonD_QUelonRY_COUNT.increlonmelonnt();
+      parselondQuelonry = null;
     }
-    return parsedQuery;
+    relonturn parselondQuelonry;
   }
 
   /**
-   * Creates a new EarlybirdResponse with a CLIENT_ERROR response code, to be used as a response
-   * to a request where we failed to parse a user passed in serialized query.
+   * Crelonatelons a nelonw elonarlybirdRelonsponselon with a CLIelonNT_elonRROR relonsponselon codelon, to belon uselond as a relonsponselon
+   * to a relonquelonst whelonrelon welon failelond to parselon a uselonr passelond in selonrializelond quelonry.
    */
-  public static Future<EarlybirdResponse> newClientErrorResponse(
-      EarlybirdRequest request,
-      QueryParserException e) {
+  public static Futurelon<elonarlybirdRelonsponselon> nelonwClielonntelonrrorRelonsponselon(
+      elonarlybirdRelonquelonst relonquelonst,
+      QuelonryParselonrelonxcelonption elon) {
 
-    String msg = "Failed to parse query";
-    LOG.warn(msg, e);
+    String msg = "Failelond to parselon quelonry";
+    LOG.warn(msg, elon);
 
-    EarlybirdResponse errorResponse =
-        new EarlybirdResponse(EarlybirdResponseCode.CLIENT_ERROR, 0);
-    errorResponse.setDebugString(msg + ": " + e.getMessage());
-    return Future.value(errorResponse);
+    elonarlybirdRelonsponselon elonrrorRelonsponselon =
+        nelonw elonarlybirdRelonsponselon(elonarlybirdRelonsponselonCodelon.CLIelonNT_elonRROR, 0);
+    elonrrorRelonsponselon.selontDelonbugString(msg + ": " + elon.gelontMelonssagelon());
+    relonturn Futurelon.valuelon(elonrrorRelonsponselon);
   }
 }

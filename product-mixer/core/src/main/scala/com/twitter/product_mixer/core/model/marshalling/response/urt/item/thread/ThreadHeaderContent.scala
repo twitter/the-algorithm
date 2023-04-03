@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.item.thread
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.threlonad
 
-sealed trait ThreadHeaderContent
+selonalelond trait ThrelonadHelonadelonrContelonnt
 
-case class UserThreadHeader(userId: Long) extends ThreadHeaderContent
+caselon class UselonrThrelonadHelonadelonr(uselonrId: Long) elonxtelonnds ThrelonadHelonadelonrContelonnt

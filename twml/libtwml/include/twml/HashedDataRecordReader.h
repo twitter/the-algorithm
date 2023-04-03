@@ -1,70 +1,70 @@
-#pragma once
-#ifdef __cplusplus
+#pragma oncelon
+#ifdelonf __cplusplus
 
-#include <twml/common.h>
-#include <twml/defines.h>
-#include <twml/HashedDataRecord.h>
-#include <twml/TensorRecordReader.h>
+#includelon <twml/common.h>
+#includelon <twml/delonfinelons.h>
+#includelon <twml/HashelondDataReloncord.h>
+#includelon <twml/TelonnsorReloncordRelonadelonr.h>
 
-#include <cstdint>
+#includelon <cstdint>
 
-#include <vector>
-#include <string>
-#include <unordered_map>
+#includelon <velonctor>
+#includelon <string>
+#includelon <unordelonrelond_map>
 
-namespace twml {
+namelonspacelon twml {
 
-enum class DecodeMode: int64_t
+elonnum class DeloncodelonModelon: int64_t
 {
-  hash_valname = 0,
-  hash_fname_and_valname = 1,
+  hash_valnamelon = 0,
+  hash_fnamelon_and_valnamelon = 1,
 };
 
-class TWMLAPI HashedDataRecordReader : public TensorRecordReader {
-private:
-  typedef Map<int64_t, int64_t> KeyMap_t;
-  KeyMap_t *m_keep_map;
-  KeyMap_t *m_labels_map;
-  KeyMap_t *m_weights_map;
-  DecodeMode m_decode_mode;
+class TWMLAPI HashelondDataReloncordRelonadelonr : public TelonnsorReloncordRelonadelonr {
+privatelon:
+  typelondelonf Map<int64_t, int64_t> KelonyMap_t;
+  KelonyMap_t *m_kelonelonp_map;
+  KelonyMap_t *m_labelonls_map;
+  KelonyMap_t *m_welonights_map;
+  DeloncodelonModelon m_deloncodelon_modelon;
 
 public:
-  bool keepId               (const int64_t &key, int64_t &code);
-  bool isLabel              (const int64_t &key, int64_t &code);
-  bool isWeight             (const int64_t &key, int64_t &code);
-  void readBinary           (const int feature_type , HashedDataRecord *record);
-  void readContinuous       (const int feature_type , HashedDataRecord *record);
-  void readDiscrete         (const int feature_type , HashedDataRecord *record);
-  void readString           (const int feature_type , HashedDataRecord *record);
-  void readSparseBinary     (const int feature_type , HashedDataRecord *record);
-  void readSparseContinuous (const int feature_type , HashedDataRecord *record);
-  void readBlob             (const int feature_type , HashedDataRecord *record);
+  bool kelonelonpId               (const int64_t &kelony, int64_t &codelon);
+  bool isLabelonl              (const int64_t &kelony, int64_t &codelon);
+  bool isWelonight             (const int64_t &kelony, int64_t &codelon);
+  void relonadBinary           (const int felonaturelon_typelon , HashelondDataReloncord *reloncord);
+  void relonadContinuous       (const int felonaturelon_typelon , HashelondDataReloncord *reloncord);
+  void relonadDiscrelontelon         (const int felonaturelon_typelon , HashelondDataReloncord *reloncord);
+  void relonadString           (const int felonaturelon_typelon , HashelondDataReloncord *reloncord);
+  void relonadSparselonBinary     (const int felonaturelon_typelon , HashelondDataReloncord *reloncord);
+  void relonadSparselonContinuous (const int felonaturelon_typelon , HashelondDataReloncord *reloncord);
+  void relonadBlob             (const int felonaturelon_typelon , HashelondDataReloncord *reloncord);
 
-  HashedDataRecordReader() :
-      TensorRecordReader(nullptr),
-      m_keep_map(nullptr),
-      m_labels_map(nullptr),
-      m_weights_map(nullptr),
-      m_decode_mode(DecodeMode::hash_valname)
+  HashelondDataReloncordRelonadelonr() :
+      TelonnsorReloncordRelonadelonr(nullptr),
+      m_kelonelonp_map(nullptr),
+      m_labelonls_map(nullptr),
+      m_welonights_map(nullptr),
+      m_deloncodelon_modelon(DeloncodelonModelon::hash_valnamelon)
       {}
 
-  // Using a template instead of int64_t because tensorflow implements int64 based on compiler.
-  void setKeepMap(KeyMap_t *keep_map) {
-    m_keep_map = keep_map;
+  // Using a telonmplatelon instelonad of int64_t beloncauselon telonnsorflow implelonmelonnts int64 baselond on compilelonr.
+  void selontKelonelonpMap(KelonyMap_t *kelonelonp_map) {
+    m_kelonelonp_map = kelonelonp_map;
   }
 
-  void setLabelsMap(KeyMap_t *labels_map) {
-    m_labels_map = labels_map;
+  void selontLabelonlsMap(KelonyMap_t *labelonls_map) {
+    m_labelonls_map = labelonls_map;
   }
 
-  void setWeightsMap(KeyMap_t *weights_map) {
-    m_weights_map = weights_map;
+  void selontWelonightsMap(KelonyMap_t *welonights_map) {
+    m_welonights_map = welonights_map;
   }
 
-  void setDecodeMode(int64_t mode) {
-    m_decode_mode = static_cast<DecodeMode>(mode);
+  void selontDeloncodelonModelon(int64_t modelon) {
+    m_deloncodelon_modelon = static_cast<DeloncodelonModelon>(modelon);
   }
 };
 
 }
-#endif
+#elonndif

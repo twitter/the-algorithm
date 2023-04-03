@@ -1,71 +1,71 @@
-package com.twitter.search.core.earlybird.index.column;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column;
 
-import com.twitter.search.common.encoding.features.IntegerEncodedFeatures;
-import com.twitter.search.common.schema.base.FeatureConfiguration;
-import com.twitter.search.common.schema.base.Schema;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
+import com.twittelonr.selonarch.common.elonncoding.felonaturelons.IntelongelonrelonncodelondFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.baselon.FelonaturelonConfiguration;
+import com.twittelonr.selonarch.common.schelonma.baselon.Schelonma;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
 
 /**
- * An Int CSF view on top of an {@link AbstractColumnStrideMultiIntIndex}.
+ * An Int CSF vielonw on top of an {@link AbstractColumnStridelonMultiIntIndelonx}.
  *
- * Used for decoding encoded packed features and exposing them as
- * {@link org.apache.lucene.index.NumericDocValues}.
+ * Uselond for deloncoding elonncodelond packelond felonaturelons and elonxposing thelonm as
+ * {@link org.apachelon.lucelonnelon.indelonx.NumelonricDocValuelons}.
  */
-public class ColumnStrideIntViewIndex extends ColumnStrideFieldIndex {
-  private static class IntViewIntegerEncodedFeatures extends IntegerEncodedFeatures {
-    private final AbstractColumnStrideMultiIntIndex baseIndex;
-    private final int docID;
+public class ColumnStridelonIntVielonwIndelonx elonxtelonnds ColumnStridelonFielonldIndelonx {
+  privatelon static class IntVielonwIntelongelonrelonncodelondFelonaturelons elonxtelonnds IntelongelonrelonncodelondFelonaturelons {
+    privatelon final AbstractColumnStridelonMultiIntIndelonx baselonIndelonx;
+    privatelon final int docID;
 
-    public IntViewIntegerEncodedFeatures(AbstractColumnStrideMultiIntIndex baseIndex, int docID) {
-      this.baseIndex = baseIndex;
+    public IntVielonwIntelongelonrelonncodelondFelonaturelons(AbstractColumnStridelonMultiIntIndelonx baselonIndelonx, int docID) {
+      this.baselonIndelonx = baselonIndelonx;
       this.docID = docID;
     }
 
-    @Override
-    public int getInt(int pos) {
-      return baseIndex.get(docID, pos);
+    @Ovelonrridelon
+    public int gelontInt(int pos) {
+      relonturn baselonIndelonx.gelont(docID, pos);
     }
 
-    @Override
-    public void setInt(int pos, int value) {
-      baseIndex.setValue(docID, pos, value);
+    @Ovelonrridelon
+    public void selontInt(int pos, int valuelon) {
+      baselonIndelonx.selontValuelon(docID, pos, valuelon);
     }
 
-    @Override
-    public int getNumInts() {
-      return baseIndex.getNumIntsPerField();
+    @Ovelonrridelon
+    public int gelontNumInts() {
+      relonturn baselonIndelonx.gelontNumIntsPelonrFielonld();
     }
   }
 
-  private final AbstractColumnStrideMultiIntIndex baseIndex;
-  private final FeatureConfiguration featureConfiguration;
+  privatelon final AbstractColumnStridelonMultiIntIndelonx baselonIndelonx;
+  privatelon final FelonaturelonConfiguration felonaturelonConfiguration;
 
   /**
-   * Creates a new ColumnStrideIntViewIndex on top of an existing AbstractColumnStrideMultiIntIndex.
+   * Crelonatelons a nelonw ColumnStridelonIntVielonwIndelonx on top of an elonxisting AbstractColumnStridelonMultiIntIndelonx.
    */
-  public ColumnStrideIntViewIndex(Schema.FieldInfo info,
-                                  AbstractColumnStrideMultiIntIndex baseIndex) {
-    super(info.getName());
-    this.baseIndex = baseIndex;
-    this.featureConfiguration = info.getFieldType().getCsfViewFeatureConfiguration();
+  public ColumnStridelonIntVielonwIndelonx(Schelonma.FielonldInfo info,
+                                  AbstractColumnStridelonMultiIntIndelonx baselonIndelonx) {
+    supelonr(info.gelontNamelon());
+    this.baselonIndelonx = baselonIndelonx;
+    this.felonaturelonConfiguration = info.gelontFielonldTypelon().gelontCsfVielonwFelonaturelonConfiguration();
   }
 
-  @Override
-  public long get(int docID) {
-    IntegerEncodedFeatures encodedFeatures = new IntViewIntegerEncodedFeatures(baseIndex, docID);
-    return encodedFeatures.getFeatureValue(featureConfiguration);
+  @Ovelonrridelon
+  public long gelont(int docID) {
+    IntelongelonrelonncodelondFelonaturelons elonncodelondFelonaturelons = nelonw IntVielonwIntelongelonrelonncodelondFelonaturelons(baselonIndelonx, docID);
+    relonturn elonncodelondFelonaturelons.gelontFelonaturelonValuelon(felonaturelonConfiguration);
   }
 
-  @Override
-  public void setValue(int docID, long value) {
-    IntegerEncodedFeatures encodedFeatures = new IntViewIntegerEncodedFeatures(baseIndex, docID);
-    encodedFeatures.setFeatureValue(featureConfiguration, (int) value);
+  @Ovelonrridelon
+  public void selontValuelon(int docID, long valuelon) {
+    IntelongelonrelonncodelondFelonaturelons elonncodelondFelonaturelons = nelonw IntVielonwIntelongelonrelonncodelondFelonaturelons(baselonIndelonx, docID);
+    elonncodelondFelonaturelons.selontFelonaturelonValuelon(felonaturelonConfiguration, (int) valuelon);
   }
 
-  @Override
-  public ColumnStrideFieldIndex optimize(
-      DocIDToTweetIDMapper originalTweetIdMapper, DocIDToTweetIDMapper optimizedTweetIdMapper) {
-    throw new UnsupportedOperationException(
-        "ColumnStrideIntViewIndex instances do not support optimization");
+  @Ovelonrridelon
+  public ColumnStridelonFielonldIndelonx optimizelon(
+      DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr, DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) {
+    throw nelonw UnsupportelondOpelonrationelonxcelonption(
+        "ColumnStridelonIntVielonwIndelonx instancelons do not support optimization");
   }
 }

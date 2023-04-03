@@ -1,10 +1,10 @@
-package com.twitter.home_mixer.param
+packagelon com.twittelonr.homelon_mixelonr.param
 
-import com.twitter.inject.TwitterModule
-import com.twitter.product_mixer.core.functional_component.configapi.registry.GlobalParamConfig
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.configapi.relongistry.GlobalParamConfig
 
-object GlobalParamConfigModule extends TwitterModule {
-  override def configure(): Unit = {
-    bind[GlobalParamConfig].to[HomeGlobalParamConfig]
+objelonct GlobalParamConfigModulelon elonxtelonnds TwittelonrModulelon {
+  ovelonrridelon delonf configurelon(): Unit = {
+    bind[GlobalParamConfig].to[HomelonGlobalParamConfig]
   }
 }

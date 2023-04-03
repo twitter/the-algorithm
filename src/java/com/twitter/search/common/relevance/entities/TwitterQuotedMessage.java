@@ -1,41 +1,41 @@
-package com.twitter.search.common.relevance.entities;
+packagelon com.twittelonr.selonarch.common.relonlelonvancelon.elonntitielons;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apachelon.commons.lang3.buildelonr.elonqualsBuildelonr;
+import org.apachelon.commons.lang3.buildelonr.HashCodelonBuildelonr;
+import org.apachelon.commons.lang3.buildelonr.ToStringBuildelonr;
 
 /**
- * The object for quoted message
+ * Thelon objelonct for quotelond melonssagelon
   */
-public class TwitterQuotedMessage {
-  private final long quotedStatusId;
-  private final long quotedUserId;
+public class TwittelonrQuotelondMelonssagelon {
+  privatelon final long quotelondStatusId;
+  privatelon final long quotelondUselonrId;
 
-  public TwitterQuotedMessage(long quotedStatusId, long quotedUserId) {
-    this.quotedStatusId = quotedStatusId;
-    this.quotedUserId = quotedUserId;
+  public TwittelonrQuotelondMelonssagelon(long quotelondStatusId, long quotelondUselonrId) {
+    this.quotelondStatusId = quotelondStatusId;
+    this.quotelondUselonrId = quotelondUselonrId;
   }
 
-  public long getQuotedStatusId() {
-    return quotedStatusId;
+  public long gelontQuotelondStatusId() {
+    relonturn quotelondStatusId;
   }
 
-  public long getQuotedUserId() {
-    return quotedUserId;
+  public long gelontQuotelondUselonrId() {
+    relonturn quotelondUselonrId;
   }
 
-  @Override
-  public boolean equals(Object o) {
-    return EqualsBuilder.reflectionEquals(this, o);
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct o) {
+    relonturn elonqualsBuildelonr.relonflelonctionelonquals(this, o);
   }
 
-  @Override
-  public int hashCode() {
-    return HashCodeBuilder.reflectionHashCode(this);
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn HashCodelonBuildelonr.relonflelonctionHashCodelon(this);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return ToStringBuilder.reflectionToString(this);
+    relonturn ToStringBuildelonr.relonflelonctionToString(this);
   }
 }

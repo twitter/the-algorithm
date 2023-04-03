@@ -1,69 +1,69 @@
-package com.twitter.recosinjector.filters
+packagelon com.twittelonr.reloncosinjelonctor.filtelonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.gizmoduck.thriftscala.{LabelValue, User}
-import com.twitter.recosinjector.clients.Gizmoduck
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.gizmoduck.thriftscala.{LabelonlValuelon, Uselonr}
+import com.twittelonr.reloncosinjelonctor.clielonnts.Gizmoduck
+import com.twittelonr.util.Futurelon
 
-class UserFilter(
+class UselonrFiltelonr(
   gizmoduck: Gizmoduck
 )(
-  implicit statsReceiver: StatsReceiver) {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val requests = stats.counter("requests")
-  private val filtered = stats.counter("filtered")
+  implicit statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val relonquelonsts = stats.countelonr("relonquelonsts")
+  privatelon val filtelonrelond = stats.countelonr("filtelonrelond")
 
-  private def isUnsafe(user: User): Boolean =
-    user.safety.exists { s =>
-      s.deactivated || s.suspended || s.restricted || s.nsfwUser || s.nsfwAdmin || s.isProtected
+  privatelon delonf isUnsafelon(uselonr: Uselonr): Boolelonan =
+    uselonr.safelonty.elonxists { s =>
+      s.delonactivatelond || s.suspelonndelond || s.relonstrictelond || s.nsfwUselonr || s.nsfwAdmin || s.isProtelonctelond
     }
 
-  private def hasNsfwHighPrecisionLabel(user: User): Boolean =
-    user.labels.exists {
-      _.labels.exists(_.labelValue == LabelValue.NsfwHighPrecision)
+  privatelon delonf hasNsfwHighPreloncisionLabelonl(uselonr: Uselonr): Boolelonan =
+    uselonr.labelonls.elonxists {
+      _.labelonls.elonxists(_.labelonlValuelon == LabelonlValuelon.NsfwHighPreloncision)
     }
 
   /**
-   * NOTE: This will by-pass Gizmoduck's safety level, and might allow invalid users to pass filter.
-   * Consider using filterByUserId instead.
-   * Return true if the user is valid, otherwise return false.
-   * It will first attempt to use the user object provided by the caller, and will call Gizmoduck
-   * to back fill if the caller does not provide it. This helps reduce Gizmoduck traffic.
+   * NOTelon: This will by-pass Gizmoduck's safelonty lelonvelonl, and might allow invalid uselonrs to pass filtelonr.
+   * Considelonr using filtelonrByUselonrId instelonad.
+   * Relonturn truelon if thelon uselonr is valid, othelonrwiselon relonturn falselon.
+   * It will first attelonmpt to uselon thelon uselonr objelonct providelond by thelon callelonr, and will call Gizmoduck
+   * to back fill if thelon callelonr doelons not providelon it. This helonlps relonducelon Gizmoduck traffic.
    */
-  def filterByUser(
-    userId: Long,
-    userOpt: Option[User] = None
-  ): Future[Boolean] = {
-    requests.incr()
-    val userFut = userOpt match {
-      case Some(user) => Future(Some(user))
-      case _ => gizmoduck.getUser(userId)
+  delonf filtelonrByUselonr(
+    uselonrId: Long,
+    uselonrOpt: Option[Uselonr] = Nonelon
+  ): Futurelon[Boolelonan] = {
+    relonquelonsts.incr()
+    val uselonrFut = uselonrOpt match {
+      caselon Somelon(uselonr) => Futurelon(Somelon(uselonr))
+      caselon _ => gizmoduck.gelontUselonr(uselonrId)
     }
 
-    userFut.map(_.exists { user =>
-      val isValidUser = !isUnsafe(user) && !hasNsfwHighPrecisionLabel(user)
-      if (!isValidUser) filtered.incr()
-      isValidUser
+    uselonrFut.map(_.elonxists { uselonr =>
+      val isValidUselonr = !isUnsafelon(uselonr) && !hasNsfwHighPreloncisionLabelonl(uselonr)
+      if (!isValidUselonr) filtelonrelond.incr()
+      isValidUselonr
     })
   }
 
   /**
-   * Given a userId, return true if the user is valid. This id done in 2 steps:
-   * 1. Applying Gizmoduck's safety level while querying for the user from Gizmoduck
-   * 2. If a user passes Gizmoduck's safety level, check its specific user status
+   * Givelonn a uselonrId, relonturn truelon if thelon uselonr is valid. This id donelon in 2 stelonps:
+   * 1. Applying Gizmoduck's safelonty lelonvelonl whilelon quelonrying for thelon uselonr from Gizmoduck
+   * 2. If a uselonr passelons Gizmoduck's safelonty lelonvelonl, chelonck its speloncific uselonr status
    */
-  def filterByUserId(userId: Long): Future[Boolean] = {
-    requests.incr()
+  delonf filtelonrByUselonrId(uselonrId: Long): Futurelon[Boolelonan] = {
+    relonquelonsts.incr()
     gizmoduck
-      .getUser(userId)
-      .map { userOpt =>
-        val isValidUser = userOpt.exists { user =>
-          !(isUnsafe(user) || hasNsfwHighPrecisionLabel(user))
+      .gelontUselonr(uselonrId)
+      .map { uselonrOpt =>
+        val isValidUselonr = uselonrOpt.elonxists { uselonr =>
+          !(isUnsafelon(uselonr) || hasNsfwHighPreloncisionLabelonl(uselonr))
         }
-        if (!isValidUser) {
-          filtered.incr()
+        if (!isValidUselonr) {
+          filtelonrelond.incr()
         }
-        isValidUser
+        isValidUselonr
       }
   }
 }

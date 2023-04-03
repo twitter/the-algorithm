@@ -1,23 +1,23 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.PinEntryTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.PinnableEntry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.PinelonntryTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Pinnablelonelonntry
 
-case class PinEntryInstructionBuilder()
-    extends UrtInstructionBuilder[PipelineQuery, PinEntryTimelineInstruction] {
+caselon class PinelonntryInstructionBuildelonr()
+    elonxtelonnds UrtInstructionBuildelonr[PipelonlinelonQuelonry, PinelonntryTimelonlinelonInstruction] {
 
-  override def build(
-    query: PipelineQuery,
-    entries: Seq[TimelineEntry]
-  ): Seq[PinEntryTimelineInstruction] = {
-    // Only one entry can be pinned and the desirable behavior is to pick the entry with the highest
-    // sort index in the event that multiple pinned items exist. Since the entries are already
-    // sorted we can accomplish this by picking the first one.
-    entries.collectFirst {
-      case entry: PinnableEntry if entry.isPinned.getOrElse(false) =>
-        PinEntryTimelineInstruction(entry)
-    }.toSeq
+  ovelonrridelon delonf build(
+    quelonry: PipelonlinelonQuelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Selonq[PinelonntryTimelonlinelonInstruction] = {
+    // Only onelon elonntry can belon pinnelond and thelon delonsirablelon belonhavior is to pick thelon elonntry with thelon highelonst
+    // sort indelonx in thelon elonvelonnt that multiplelon pinnelond itelonms elonxist. Sincelon thelon elonntrielons arelon alrelonady
+    // sortelond welon can accomplish this by picking thelon first onelon.
+    elonntrielons.collelonctFirst {
+      caselon elonntry: Pinnablelonelonntry if elonntry.isPinnelond.gelontOrelonlselon(falselon) =>
+        PinelonntryTimelonlinelonInstruction(elonntry)
+    }.toSelonq
   }
 }

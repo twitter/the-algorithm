@@ -1,3 +1,3 @@
-package com.twitter.visibility.models
+packagelon com.twittelonr.visibility.modelonls
 
-case class SemanticCoreAnnotation(groupId: Long, domainId: Long, entityId: Long)
+caselon class SelonmanticCorelonAnnotation(groupId: Long, domainId: Long, elonntityId: Long)

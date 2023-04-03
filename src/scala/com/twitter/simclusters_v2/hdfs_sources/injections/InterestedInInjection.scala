@@ -1,13 +1,13 @@
-package com.twitter.simclusters_v2.hdfs_sources.injections
+packagelon com.twittelonr.simclustelonrs_v2.hdfs_sourcelons.injelonctions
 
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.StringUtf8
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.Long2BigEndian
-import com.twitter.scalding_internal.multiformat.format.keyval.KeyValInjection.ScalaCompactThrift
-import com.twitter.simclusters_v2.thriftscala.ClustersUserIsInterestedIn
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.StringUtf8
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.Long2Bigelonndian
+import com.twittelonr.scalding_intelonrnal.multiformat.format.kelonyval.KelonyValInjelonction.ScalaCompactThrift
+import com.twittelonr.simclustelonrs_v2.thriftscala.ClustelonrsUselonrIsIntelonrelonstelondIn
 
-object InterestedInInjection {
-  val injection = KeyValInjection(Long2BigEndian, ScalaCompactThrift(ClustersUserIsInterestedIn))
-  val languageInjection =
-    KeyValInjection(StringUtf8, ScalaCompactThrift(ClustersUserIsInterestedIn))
+objelonct IntelonrelonstelondInInjelonction {
+  val injelonction = KelonyValInjelonction(Long2Bigelonndian, ScalaCompactThrift(ClustelonrsUselonrIsIntelonrelonstelondIn))
+  val languagelonInjelonction =
+    KelonyValInjelonction(StringUtf8, ScalaCompactThrift(ClustelonrsUselonrIsIntelonrelonstelondIn))
 }

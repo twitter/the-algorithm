@@ -1,49 +1,49 @@
-package com.twitter.product_mixer.component_library.candidate_source.timeline_ranker
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.timelonlinelon_rankelonr
 
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSourceWithExtractedFeatures
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidatesWithSourceFeatures
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.PipelineFailure
-import com.twitter.product_mixer.core.pipeline.pipeline_failure.UnexpectedCandidateResult
-import com.twitter.stitch.Stitch
-import com.twitter.timelineranker.{thriftscala => t}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelonWithelonxtractelondFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonsWithSourcelonFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.PipelonlinelonFailurelon
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.pipelonlinelon_failurelon.UnelonxpelonctelondCandidatelonRelonsult
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelonrankelonr.{thriftscala => t}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
 /**
- * Source tweets of retweets present in Timeline Ranker candidates list.
- * These tweets are used only for further ranking. They are not returned to the end user.
+ * Sourcelon twelonelonts of relontwelonelonts prelonselonnt in Timelonlinelon Rankelonr candidatelons list.
+ * Thelonselon twelonelonts arelon uselond only for furthelonr ranking. Thelony arelon not relonturnelond to thelon elonnd uselonr.
  */
-case object TimelineRankerUtegSourceTweetsFeature
-    extends Feature[PipelineQuery, Seq[t.CandidateTweet]]
+caselon objelonct TimelonlinelonRankelonrUtelongSourcelonTwelonelontsFelonaturelon
+    elonxtelonnds Felonaturelon[PipelonlinelonQuelonry, Selonq[t.CandidatelonTwelonelont]]
 
-@Singleton
-class TimelineRankerUtegCandidateSource @Inject() (
-  timelineRankerClient: t.TimelineRanker.MethodPerEndpoint)
-    extends CandidateSourceWithExtractedFeatures[t.UtegLikedByTweetsQuery, t.CandidateTweet] {
+@Singlelonton
+class TimelonlinelonRankelonrUtelongCandidatelonSourcelon @Injelonct() (
+  timelonlinelonRankelonrClielonnt: t.TimelonlinelonRankelonr.MelonthodPelonrelonndpoint)
+    elonxtelonnds CandidatelonSourcelonWithelonxtractelondFelonaturelons[t.UtelongLikelondByTwelonelontsQuelonry, t.CandidatelonTwelonelont] {
 
-  override val identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier("TimelineRankerUteg")
+  ovelonrridelon val idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr("TimelonlinelonRankelonrUtelong")
 
-  override def apply(
-    request: t.UtegLikedByTweetsQuery
-  ): Stitch[CandidatesWithSourceFeatures[t.CandidateTweet]] = {
+  ovelonrridelon delonf apply(
+    relonquelonst: t.UtelongLikelondByTwelonelontsQuelonry
+  ): Stitch[CandidatelonsWithSourcelonFelonaturelons[t.CandidatelonTwelonelont]] = {
     Stitch
-      .callFuture(timelineRankerClient.getUtegLikedByTweetCandidates(Seq(request)))
-      .map { response =>
-        val result = response.headOption.getOrElse(
-          throw PipelineFailure(UnexpectedCandidateResult, "Empty Timeline Ranker response"))
-        val candidates = result.candidates.toSeq.flatten
-        val sourceTweets = result.sourceTweets.toSeq.flatten
+      .callFuturelon(timelonlinelonRankelonrClielonnt.gelontUtelongLikelondByTwelonelontCandidatelons(Selonq(relonquelonst)))
+      .map { relonsponselon =>
+        val relonsult = relonsponselon.helonadOption.gelontOrelonlselon(
+          throw PipelonlinelonFailurelon(UnelonxpelonctelondCandidatelonRelonsult, "elonmpty Timelonlinelon Rankelonr relonsponselon"))
+        val candidatelons = relonsult.candidatelons.toSelonq.flattelonn
+        val sourcelonTwelonelonts = relonsult.sourcelonTwelonelonts.toSelonq.flattelonn
 
-        val candidateSourceFeatures = FeatureMapBuilder()
-          .add(TimelineRankerUtegSourceTweetsFeature, sourceTweets)
+        val candidatelonSourcelonFelonaturelons = FelonaturelonMapBuildelonr()
+          .add(TimelonlinelonRankelonrUtelongSourcelonTwelonelontsFelonaturelon, sourcelonTwelonelonts)
           .build()
 
-        CandidatesWithSourceFeatures(candidates = candidates, features = candidateSourceFeatures)
+        CandidatelonsWithSourcelonFelonaturelons(candidatelons = candidatelons, felonaturelons = candidatelonSourcelonFelonaturelons)
       }
   }
 }

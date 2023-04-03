@@ -1,13 +1,13 @@
-package com.twitter.follow_recommendations.modules
+packagelon com.twittelonr.follow_reloncommelonndations.modulelons
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.finagle.memcached.ZookeeperStateMonitor.DefaultTimer
-import com.twitter.inject.TwitterModule
-import com.twitter.util.Timer
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.finaglelon.melonmcachelond.ZookelonelonpelonrStatelonMonitor.DelonfaultTimelonr
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.util.Timelonr
 
-object TimerModule extends TwitterModule {
-  @Provides
-  @Singleton
-  def providesTimer: Timer = DefaultTimer
+objelonct TimelonrModulelon elonxtelonnds TwittelonrModulelon {
+  @Providelons
+  @Singlelonton
+  delonf providelonsTimelonr: Timelonr = DelonfaultTimelonr
 }

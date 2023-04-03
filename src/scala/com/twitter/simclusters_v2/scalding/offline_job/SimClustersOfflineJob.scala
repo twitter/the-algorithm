@@ -1,176 +1,176 @@
-package com.twitter.simclusters_v2.scalding.offline_job
+packagelon com.twittelonr.simclustelonrs_v2.scalding.offlinelon_job
 
-import com.twitter.scalding._
-import com.twitter.simclusters_v2.common._
-import com.twitter.simclusters_v2.summingbird.common.{Configs, SimClustersInterestedInUtil}
-import com.twitter.simclusters_v2.thriftscala._
-import java.util.TimeZone
+import com.twittelonr.scalding._
+import com.twittelonr.simclustelonrs_v2.common._
+import com.twittelonr.simclustelonrs_v2.summingbird.common.{Configs, SimClustelonrsIntelonrelonstelondInUtil}
+import com.twittelonr.simclustelonrs_v2.thriftscala._
+import java.util.TimelonZonelon
 
-object SimClustersOfflineJob {
-  import SimClustersOfflineJobUtil._
-  import com.twitter.simclusters_v2.scalding.common.TypedRichPipe._
+objelonct SimClustelonrsOfflinelonJob {
+  import SimClustelonrsOfflinelonJobUtil._
+  import com.twittelonr.simclustelonrs_v2.scalding.common.TypelondRichPipelon._
 
-  val modelVersionMap: Map[String, PersistedModelVersion] = Map(
-    ModelVersions.Model20M145KDec11 -> PersistedModelVersion.Model20m145kDec11,
-    ModelVersions.Model20M145KUpdated -> PersistedModelVersion.Model20m145kUpdated
+  val modelonlVelonrsionMap: Map[String, PelonrsistelondModelonlVelonrsion] = Map(
+    ModelonlVelonrsions.Modelonl20M145KDelonc11 -> PelonrsistelondModelonlVelonrsion.Modelonl20m145kDelonc11,
+    ModelonlVelonrsions.Modelonl20M145KUpdatelond -> PelonrsistelondModelonlVelonrsion.Modelonl20m145kUpdatelond
   )
 
   /**
-   * Get a list of tweets that received at least one fav in the last tweetTtl Duration
+   * Gelont a list of twelonelonts that reloncelonivelond at lelonast onelon fav in thelon last twelonelontTtl Duration
    */
-  def getSubsetOfValidTweets(tweetTtl: Duration)(implicit dateRange: DateRange): TypedPipe[Long] = {
-    readTimelineFavoriteData(DateRange(dateRange.end - tweetTtl, dateRange.end)).map(_._2).distinct
+  delonf gelontSubselontOfValidTwelonelonts(twelonelontTtl: Duration)(implicit datelonRangelon: DatelonRangelon): TypelondPipelon[Long] = {
+    relonadTimelonlinelonFavoritelonData(DatelonRangelon(datelonRangelon.elonnd - twelonelontTtl, datelonRangelon.elonnd)).map(_._2).distinct
   }
 
   /**
-   * Note that this job will write several types of scores into the same data set. Please use filter
-   * to take the score types you need.
+   * Notelon that this job will writelon selonvelonral typelons of scorelons into thelon samelon data selont. Plelonaselon uselon filtelonr
+   * to takelon thelon scorelon typelons you nelonelond.
    */
-  def computeAggregatedTweetClusterScores(
-    dateRange: DateRange,
-    userInterestsData: TypedPipe[(Long, ClustersUserIsInterestedIn)],
-    favoriteData: TypedPipe[(UserId, TweetId, Timestamp)],
-    previousTweetClusterScores: TypedPipe[TweetAndClusterScores]
+  delonf computelonAggrelongatelondTwelonelontClustelonrScorelons(
+    datelonRangelon: DatelonRangelon,
+    uselonrIntelonrelonstsData: TypelondPipelon[(Long, ClustelonrsUselonrIsIntelonrelonstelondIn)],
+    favoritelonData: TypelondPipelon[(UselonrId, TwelonelontId, Timelonstamp)],
+    prelonviousTwelonelontClustelonrScorelons: TypelondPipelon[TwelonelontAndClustelonrScorelons]
   )(
-    implicit timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[TweetAndClusterScores] = {
+    implicit timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[TwelonelontAndClustelonrScorelons] = {
 
-    val latestTimeStamp = dateRange.end.timestamp
+    val latelonstTimelonStamp = datelonRangelon.elonnd.timelonstamp
 
-    val currentScores: TypedPipe[
-      ((Long, Int, PersistedModelVersion, Option[PersistedScoreType]), PersistedScores)
+    val currelonntScorelons: TypelondPipelon[
+      ((Long, Int, PelonrsistelondModelonlVelonrsion, Option[PelonrsistelondScorelonTypelon]), PelonrsistelondScorelons)
     ] =
-      favoriteData
+      favoritelonData
         .map {
-          case (userId, tweetId, timestamp) =>
-            (userId, (tweetId, timestamp))
+          caselon (uselonrId, twelonelontId, timelonstamp) =>
+            (uselonrId, (twelonelontId, timelonstamp))
         }
-        .count("NumFavEvents")
-        .leftJoin(userInterestsData)
-        .withReducers(600)
+        .count("NumFavelonvelonnts")
+        .lelonftJoin(uselonrIntelonrelonstsData)
+        .withRelonducelonrs(600)
         .flatMap {
-          case (_, ((tweetId, timestamp), Some(userInterests))) =>
-            val clustersWithScores =
-              SimClustersInterestedInUtil.topClustersWithScores(userInterests)
+          caselon (_, ((twelonelontId, timelonstamp), Somelon(uselonrIntelonrelonsts))) =>
+            val clustelonrsWithScorelons =
+              SimClustelonrsIntelonrelonstelondInUtil.topClustelonrsWithScorelons(uselonrIntelonrelonsts)
             (
               for {
-                (clusterId, scores) <- clustersWithScores
-                if scores.favScore >= Configs.favScoreThresholdForUserInterest(
-                  userInterests.knownForModelVersion)
-              } yield {
-                // write several types of scores
-                Seq(
+                (clustelonrId, scorelons) <- clustelonrsWithScorelons
+                if scorelons.favScorelon >= Configs.favScorelonThrelonsholdForUselonrIntelonrelonst(
+                  uselonrIntelonrelonsts.knownForModelonlVelonrsion)
+              } yielonld {
+                // writelon selonvelonral typelons of scorelons
+                Selonq(
                   (
-                    tweetId,
-                    clusterId,
-                    modelVersionMap(userInterests.knownForModelVersion),
-                    Some(PersistedScoreType.NormalizedFav8HrHalfLife)) ->
-                    // let the score decay to latestTimeStamp
-                    persistedScoresMonoid.plus(
-                      persistedScoresMonoid
-                        .build(scores.clusterNormalizedFavScore, timestamp),
-                      persistedScoresMonoid.build(0.0, latestTimeStamp)
+                    twelonelontId,
+                    clustelonrId,
+                    modelonlVelonrsionMap(uselonrIntelonrelonsts.knownForModelonlVelonrsion),
+                    Somelon(PelonrsistelondScorelonTypelon.NormalizelondFav8HrHalfLifelon)) ->
+                    // lelont thelon scorelon deloncay to latelonstTimelonStamp
+                    pelonrsistelondScorelonsMonoid.plus(
+                      pelonrsistelondScorelonsMonoid
+                        .build(scorelons.clustelonrNormalizelondFavScorelon, timelonstamp),
+                      pelonrsistelondScorelonsMonoid.build(0.0, latelonstTimelonStamp)
                     ),
                   (
-                    tweetId,
-                    clusterId,
-                    modelVersionMap(userInterests.knownForModelVersion),
-                    Some(PersistedScoreType.NormalizedFollow8HrHalfLife)) ->
-                    // let the score decay to latestTimeStamp
-                    persistedScoresMonoid.plus(
-                      persistedScoresMonoid
-                        .build(scores.clusterNormalizedFollowScore, timestamp),
-                      persistedScoresMonoid.build(0.0, latestTimeStamp)
+                    twelonelontId,
+                    clustelonrId,
+                    modelonlVelonrsionMap(uselonrIntelonrelonsts.knownForModelonlVelonrsion),
+                    Somelon(PelonrsistelondScorelonTypelon.NormalizelondFollow8HrHalfLifelon)) ->
+                    // lelont thelon scorelon deloncay to latelonstTimelonStamp
+                    pelonrsistelondScorelonsMonoid.plus(
+                      pelonrsistelondScorelonsMonoid
+                        .build(scorelons.clustelonrNormalizelondFollowScorelon, timelonstamp),
+                      pelonrsistelondScorelonsMonoid.build(0.0, latelonstTimelonStamp)
                     ),
                   (
-                    tweetId,
-                    clusterId,
-                    modelVersionMap(userInterests.knownForModelVersion),
-                    Some(PersistedScoreType.NormalizedLogFav8HrHalfLife)) ->
-                    // let the score decay to latestTimeStamp
-                    persistedScoresMonoid.plus(
-                      persistedScoresMonoid
-                        .build(scores.clusterNormalizedLogFavScore, timestamp),
-                      persistedScoresMonoid.build(0.0, latestTimeStamp)
+                    twelonelontId,
+                    clustelonrId,
+                    modelonlVelonrsionMap(uselonrIntelonrelonsts.knownForModelonlVelonrsion),
+                    Somelon(PelonrsistelondScorelonTypelon.NormalizelondLogFav8HrHalfLifelon)) ->
+                    // lelont thelon scorelon deloncay to latelonstTimelonStamp
+                    pelonrsistelondScorelonsMonoid.plus(
+                      pelonrsistelondScorelonsMonoid
+                        .build(scorelons.clustelonrNormalizelondLogFavScorelon, timelonstamp),
+                      pelonrsistelondScorelonsMonoid.build(0.0, latelonstTimelonStamp)
                     )
                 )
               }
-            ).flatten
-          case _ =>
+            ).flattelonn
+          caselon _ =>
             Nil
         }
-        .count("NumTweetClusterScoreUpdates")
-        .sumByLocalKeys // there is a .sumByKey later, so just doing a local sum here.
+        .count("NumTwelonelontClustelonrScorelonUpdatelons")
+        .sumByLocalKelonys // thelonrelon is a .sumByKelony latelonr, so just doing a local sum helonrelon.
 
-    val previousScores: TypedPipe[
-      ((Long, Int, PersistedModelVersion, Option[PersistedScoreType]), PersistedScores)
+    val prelonviousScorelons: TypelondPipelon[
+      ((Long, Int, PelonrsistelondModelonlVelonrsion, Option[PelonrsistelondScorelonTypelon]), PelonrsistelondScorelons)
     ] =
-      previousTweetClusterScores.map { v =>
-        (v.tweetId, v.clusterId, v.modelVersion, v.scoreType) -> v.scores
+      prelonviousTwelonelontClustelonrScorelons.map { v =>
+        (v.twelonelontId, v.clustelonrId, v.modelonlVelonrsion, v.scorelonTypelon) -> v.scorelons
       }
 
-    // add current scores and previous scores
-    (currentScores ++ previousScores).sumByKey
-      .withReducers(1000)
+    // add currelonnt scorelons and prelonvious scorelons
+    (currelonntScorelons ++ prelonviousScorelons).sumByKelony
+      .withRelonducelonrs(1000)
       .map {
-        case ((tweetId, clusterId, modelVersion, scoreType), scores) =>
-          TweetAndClusterScores(tweetId, clusterId, modelVersion, scores, scoreType)
+        caselon ((twelonelontId, clustelonrId, modelonlVelonrsion, scorelonTypelon), scorelons) =>
+          TwelonelontAndClustelonrScorelons(twelonelontId, clustelonrId, modelonlVelonrsion, scorelons, scorelonTypelon)
       }
-      .count("NumAggregatedTweetClusterScores")
+      .count("NumAggrelongatelondTwelonelontClustelonrScorelons")
   }
 
-  def computeTweetTopKClusters(
-    latestTweetClusterScores: TypedPipe[TweetAndClusterScores],
-    topK: Int = Configs.topKClustersPerTweet,
-    scoreThreshold: Double = Configs.scoreThresholdForEntityTopKClustersCache
+  delonf computelonTwelonelontTopKClustelonrs(
+    latelonstTwelonelontClustelonrScorelons: TypelondPipelon[TwelonelontAndClustelonrScorelons],
+    topK: Int = Configs.topKClustelonrsPelonrTwelonelont,
+    scorelonThrelonshold: Doublelon = Configs.scorelonThrelonsholdForelonntityTopKClustelonrsCachelon
   )(
-    implicit timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[TweetTopKClustersWithScores] = {
-    latestTweetClusterScores
+    implicit timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[TwelonelontTopKClustelonrsWithScorelons] = {
+    latelonstTwelonelontClustelonrScorelons
       .flatMap { v =>
-        val score = v.scores.score.map(_.value).getOrElse(0.0)
-        if (score < scoreThreshold) {
-          None
-        } else {
-          Some((v.tweetId, v.modelVersion, v.scoreType) -> (v.clusterId, v.scores))
+        val scorelon = v.scorelons.scorelon.map(_.valuelon).gelontOrelonlselon(0.0)
+        if (scorelon < scorelonThrelonshold) {
+          Nonelon
+        } elonlselon {
+          Somelon((v.twelonelontId, v.modelonlVelonrsion, v.scorelonTypelon) -> (v.clustelonrId, v.scorelons))
         }
       }
-      .count("NumAggregatedTweetClusterScoresAfterFilteringInTweetTopK")
+      .count("NumAggrelongatelondTwelonelontClustelonrScorelonsAftelonrFiltelonringInTwelonelontTopK")
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_._2))
       .map {
-        case ((tweetId, modelVersion, scoreType), topKClusters) =>
-          TweetTopKClustersWithScores(tweetId, modelVersion, topKClusters.toMap, scoreType)
+        caselon ((twelonelontId, modelonlVelonrsion, scorelonTypelon), topKClustelonrs) =>
+          TwelonelontTopKClustelonrsWithScorelons(twelonelontId, modelonlVelonrsion, topKClustelonrs.toMap, scorelonTypelon)
       }
-      .count("NumTweetTopK")
+      .count("NumTwelonelontTopK")
   }
 
-  def computeClusterTopKTweets(
-    latestTweetClusterScores: TypedPipe[TweetAndClusterScores],
-    topK: Int = Configs.topKTweetsPerCluster,
-    scoreThreshold: Double = Configs.scoreThresholdForClusterTopKTweetsCache
+  delonf computelonClustelonrTopKTwelonelonts(
+    latelonstTwelonelontClustelonrScorelons: TypelondPipelon[TwelonelontAndClustelonrScorelons],
+    topK: Int = Configs.topKTwelonelontsPelonrClustelonr,
+    scorelonThrelonshold: Doublelon = Configs.scorelonThrelonsholdForClustelonrTopKTwelonelontsCachelon
   )(
-    implicit timeZone: TimeZone,
-    uniqueID: UniqueID
-  ): TypedPipe[ClusterTopKTweetsWithScores] = {
-    latestTweetClusterScores
+    implicit timelonZonelon: TimelonZonelon,
+    uniquelonID: UniquelonID
+  ): TypelondPipelon[ClustelonrTopKTwelonelontsWithScorelons] = {
+    latelonstTwelonelontClustelonrScorelons
       .flatMap { v =>
-        val score = v.scores.score.map(_.value).getOrElse(0.0)
-        if (score < scoreThreshold) {
-          None
-        } else {
-          Some((v.clusterId, v.modelVersion, v.scoreType) -> (v.tweetId, v.scores))
+        val scorelon = v.scorelons.scorelon.map(_.valuelon).gelontOrelonlselon(0.0)
+        if (scorelon < scorelonThrelonshold) {
+          Nonelon
+        } elonlselon {
+          Somelon((v.clustelonrId, v.modelonlVelonrsion, v.scorelonTypelon) -> (v.twelonelontId, v.scorelons))
         }
       }
-      .count("NumAggregatedTweetClusterScoresAfterFilteringInClusterTopK")
+      .count("NumAggrelongatelondTwelonelontClustelonrScorelonsAftelonrFiltelonringInClustelonrTopK")
       .group
-      .sortedReverseTake(topK)(Ordering.by(_._2))
+      .sortelondRelonvelonrselonTakelon(topK)(Ordelonring.by(_._2))
       .map {
-        case ((clusterId, modelVersion, scoreType), topKTweets) =>
-          ClusterTopKTweetsWithScores(clusterId, modelVersion, topKTweets.toMap, scoreType)
+        caselon ((clustelonrId, modelonlVelonrsion, scorelonTypelon), topKTwelonelonts) =>
+          ClustelonrTopKTwelonelontsWithScorelons(clustelonrId, modelonlVelonrsion, topKTwelonelonts.toMap, scorelonTypelon)
       }
-      .count("NumClusterTopK")
+      .count("NumClustelonrTopK")
   }
 }

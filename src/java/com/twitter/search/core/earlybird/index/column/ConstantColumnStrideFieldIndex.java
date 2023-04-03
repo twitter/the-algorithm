@@ -1,18 +1,18 @@
-package com.twitter.search.core.earlybird.index.column;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column;
 
 /**
- * A ColumnStrideFieldIndex implementation that always returns the same value.
+ * A ColumnStridelonFielonldIndelonx implelonmelonntation that always relonturns thelon samelon valuelon.
  */
-public class ConstantColumnStrideFieldIndex extends ColumnStrideFieldIndex {
-  private final long defaultValue;
+public class ConstantColumnStridelonFielonldIndelonx elonxtelonnds ColumnStridelonFielonldIndelonx {
+  privatelon final long delonfaultValuelon;
 
-  public ConstantColumnStrideFieldIndex(String name, long defaultValue) {
-    super(name);
-    this.defaultValue = defaultValue;
+  public ConstantColumnStridelonFielonldIndelonx(String namelon, long delonfaultValuelon) {
+    supelonr(namelon);
+    this.delonfaultValuelon = delonfaultValuelon;
   }
 
-  @Override
-  public long get(int docID) {
-    return defaultValue;
+  @Ovelonrridelon
+  public long gelont(int docID) {
+    relonturn delonfaultValuelon;
   }
 }

@@ -1,5 +1,5 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata
 
-trait ReplaceableEntry {
-  def entryIdToReplace: Option[String] = None
+trait Relonplacelonablelonelonntry {
+  delonf elonntryIdToRelonplacelon: Option[String] = Nonelon
 }

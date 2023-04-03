@@ -1,15 +1,15 @@
 scala_library(
-    sources = ["*.scala"],
+    sourcelons = ["*.scala"],
     platform = "java8",
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "src/thrift/com/twitter/escherbird:tweet-annotation-scala",
-        "src/thrift/com/twitter/timelines/content_features:thrift-scala",
-        "src/thrift/com/twitter/tweetypie:media-entity-scala",
-        "src/thrift/com/twitter/tweetypie:tweet-scala",
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "src/thrift/com/twittelonr/elonschelonrbird:twelonelont-annotation-scala",
+        "src/thrift/com/twittelonr/timelonlinelons/contelonnt_felonaturelons:thrift-scala",
+        "src/thrift/com/twittelonr/twelonelontypielon:melondia-elonntity-scala",
+        "src/thrift/com/twittelonr/twelonelontypielon:twelonelont-scala",
     ],
-    exports = [
-        "src/thrift/com/twitter/timelines/content_features:thrift-scala",
+    elonxports = [
+        "src/thrift/com/twittelonr/timelonlinelons/contelonnt_felonaturelons:thrift-scala",
     ],
 )

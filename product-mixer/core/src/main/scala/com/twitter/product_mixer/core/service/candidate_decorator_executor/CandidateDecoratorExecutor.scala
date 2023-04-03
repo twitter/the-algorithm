@@ -1,38 +1,38 @@
-package com.twitter.product_mixer.core.service.candidate_decorator_executor
+packagelon com.twittelonr.product_mixelonr.corelon.selonrvicelon.candidatelon_deloncorator_elonxeloncutor
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.product_mixer.core.functional_component.decorator.CandidateDecorator
-import com.twitter.product_mixer.core.functional_component.decorator.Decoration
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.product_mixer.core.service.Executor
-import com.twitter.stitch.Arrow
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.CandidatelonDeloncorator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.Deloncoration
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.product_mixelonr.corelon.selonrvicelon.elonxeloncutor
+import com.twittelonr.stitch.Arrow
 
-import javax.inject.Inject
-import javax.inject.Singleton
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class CandidateDecoratorExecutor @Inject() (override val statsReceiver: StatsReceiver)
-    extends Executor {
-  def arrow[Query <: PipelineQuery, Candidate <: UniversalNoun[Any]](
-    decoratorOpt: Option[CandidateDecorator[Query, Candidate]],
-    context: Executor.Context
-  ): Arrow[(Query, Seq[CandidateWithFeatures[Candidate]]), CandidateDecoratorExecutorResult] = {
-    val decoratorArrow =
-      decoratorOpt match {
-        case Some(decorator) =>
-          val candidateDecoratorArrow =
-            Arrow.flatMap[(Query, Seq[CandidateWithFeatures[Candidate]]), Seq[Decoration]] {
-              case (query, candidatesWithFeatures) => decorator.apply(query, candidatesWithFeatures)
+@Singlelonton
+class CandidatelonDeloncoratorelonxeloncutor @Injelonct() (ovelonrridelon val statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds elonxeloncutor {
+  delonf arrow[Quelonry <: PipelonlinelonQuelonry, Candidatelon <: UnivelonrsalNoun[Any]](
+    deloncoratorOpt: Option[CandidatelonDeloncorator[Quelonry, Candidatelon]],
+    contelonxt: elonxeloncutor.Contelonxt
+  ): Arrow[(Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]), CandidatelonDeloncoratorelonxeloncutorRelonsult] = {
+    val deloncoratorArrow =
+      deloncoratorOpt match {
+        caselon Somelon(deloncorator) =>
+          val candidatelonDeloncoratorArrow =
+            Arrow.flatMap[(Quelonry, Selonq[CandidatelonWithFelonaturelons[Candidatelon]]), Selonq[Deloncoration]] {
+              caselon (quelonry, candidatelonsWithFelonaturelons) => deloncorator.apply(quelonry, candidatelonsWithFelonaturelons)
             }
 
-          wrapComponentWithExecutorBookkeeping(context, decorator.identifier)(
-            candidateDecoratorArrow)
+          wrapComponelonntWithelonxeloncutorBookkelonelonping(contelonxt, deloncorator.idelonntifielonr)(
+            candidatelonDeloncoratorArrow)
 
-        case _ => Arrow.value(Seq.empty[Decoration])
+        caselon _ => Arrow.valuelon(Selonq.elonmpty[Deloncoration])
       }
 
-    decoratorArrow.map(CandidateDecoratorExecutorResult)
+    deloncoratorArrow.map(CandidatelonDeloncoratorelonxeloncutorRelonsult)
   }
 }

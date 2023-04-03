@@ -1,23 +1,23 @@
-package com.twitter.search.earlybird.exception;
+packagelon com.twittelonr.selonarch.elonarlybird.elonxcelonption;
 
-import com.twitter.util.AbstractMonitor;
+import com.twittelonr.util.AbstractMonitor;
 
-public class UncaughtExceptionHandler extends AbstractMonitor {
-  private final CriticalExceptionHandler criticalExceptionHandler;
+public class UncaughtelonxcelonptionHandlelonr elonxtelonnds AbstractMonitor {
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
 
-  public UncaughtExceptionHandler() {
-    this.criticalExceptionHandler = new CriticalExceptionHandler();
+  public UncaughtelonxcelonptionHandlelonr() {
+    this.criticalelonxcelonptionHandlelonr = nelonw CriticalelonxcelonptionHandlelonr();
   }
 
-  public void setShutdownHook(Runnable shutdown) {
-    this.criticalExceptionHandler.setShutdownHook(shutdown);
+  public void selontShutdownHook(Runnablelon shutdown) {
+    this.criticalelonxcelonptionHandlelonr.selontShutdownHook(shutdown);
   }
 
-  @Override
-  public boolean handle(Throwable e) {
-    criticalExceptionHandler.handle(this, e);
+  @Ovelonrridelon
+  public boolelonan handlelon(Throwablelon elon) {
+    criticalelonxcelonptionHandlelonr.handlelon(this, elon);
 
-    // We return true here because we handle all exceptions.
-    return true;
+    // Welon relonturn truelon helonrelon beloncauselon welon handlelon all elonxcelonptions.
+    relonturn truelon;
   }
 }

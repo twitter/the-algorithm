@@ -1,94 +1,94 @@
-package com.twitter.search.earlybird.search.facets;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.facelonts;
 
-import java.util.LinkedList;
+import java.util.LinkelondList;
 import java.util.List;
-import java.util.Set;
+import java.util.Selont;
 
-import com.google.common.base.Preconditions;
-import com.google.common.collect.ImmutableSet;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.collelonct.ImmutablelonSelont;
 
-import org.apache.lucene.search.Query;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.search.TerminationTracker;
-import com.twitter.search.common.util.text.NormalizerHelper;
-import com.twitter.search.common.util.url.URLUtils;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.search.SearchRequestInfo;
-import com.twitter.search.earlybird.thrift.ThriftHistogramSettings;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftTermRequest;
-import com.twitter.search.earlybird.thrift.ThriftTermStatisticsRequest;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.selonarch.TelonrminationTrackelonr;
+import com.twittelonr.selonarch.common.util.telonxt.NormalizelonrHelonlpelonr;
+import com.twittelonr.selonarch.common.util.url.URLUtils;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.selonarch.SelonarchRelonquelonstInfo;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftHistogramSelonttings;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmRelonquelonst;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftTelonrmStatisticsRelonquelonst;
 
-public class TermStatisticsRequestInfo extends SearchRequestInfo {
-  private static final Set<String> FACET_URL_FIELDS_TO_NORMALIZE = new ImmutableSet.Builder()
-      .add(EarlybirdFieldConstant.IMAGES_FACET)
-      .add(EarlybirdFieldConstant.VIDEOS_FACET)
-      .add(EarlybirdFieldConstant.NEWS_FACET)
+public class TelonrmStatisticsRelonquelonstInfo elonxtelonnds SelonarchRelonquelonstInfo {
+  privatelon static final Selont<String> FACelonT_URL_FIelonLDS_TO_NORMALIZelon = nelonw ImmutablelonSelont.Buildelonr()
+      .add(elonarlybirdFielonldConstant.IMAGelonS_FACelonT)
+      .add(elonarlybirdFielonldConstant.VIDelonOS_FACelonT)
+      .add(elonarlybirdFielonldConstant.NelonWS_FACelonT)
       .build();
 
-  protected final List<ThriftTermRequest> termRequests;
-  protected final ThriftHistogramSettings histogramSettings;
+  protelonctelond final List<ThriftTelonrmRelonquelonst> telonrmRelonquelonsts;
+  protelonctelond final ThriftHistogramSelonttings histogramSelonttings;
 
   /**
-   * Creates a new TermStatisticsRequestInfo instance using the provided query.
+   * Crelonatelons a nelonw TelonrmStatisticsRelonquelonstInfo instancelon using thelon providelond quelonry.
    */
-  public TermStatisticsRequestInfo(ThriftSearchQuery searchQuery,
-                                   Query luceneQuery,
-                                   ThriftTermStatisticsRequest termStatsRequest,
-                                   TerminationTracker terminationTracker) {
-    super(searchQuery, luceneQuery, terminationTracker);
-    this.termRequests = termStatsRequest.isSetTermRequests()
-                        ? termStatsRequest.getTermRequests() : new LinkedList<>();
-    this.histogramSettings = termStatsRequest.getHistogramSettings();
-    if (termStatsRequest.isIncludeGlobalCounts()) {
-      // Add an empty request to indicate we need a global count across all fields.
-      termRequests.add(new ThriftTermRequest().setFieldName("").setTerm(""));
+  public TelonrmStatisticsRelonquelonstInfo(ThriftSelonarchQuelonry selonarchQuelonry,
+                                   Quelonry lucelonnelonQuelonry,
+                                   ThriftTelonrmStatisticsRelonquelonst telonrmStatsRelonquelonst,
+                                   TelonrminationTrackelonr telonrminationTrackelonr) {
+    supelonr(selonarchQuelonry, lucelonnelonQuelonry, telonrminationTrackelonr);
+    this.telonrmRelonquelonsts = telonrmStatsRelonquelonst.isSelontTelonrmRelonquelonsts()
+                        ? telonrmStatsRelonquelonst.gelontTelonrmRelonquelonsts() : nelonw LinkelondList<>();
+    this.histogramSelonttings = telonrmStatsRelonquelonst.gelontHistogramSelonttings();
+    if (telonrmStatsRelonquelonst.isIncludelonGlobalCounts()) {
+      // Add an elonmpty relonquelonst to indicatelon welon nelonelond a global count across all fielonlds.
+      telonrmRelonquelonsts.add(nelonw ThriftTelonrmRelonquelonst().selontFielonldNamelon("").selontTelonrm(""));
     }
 
-    // We only normalize TEXT terms and urls. All other terms, e.g. topics (named entities) are
-    // not normalized. Here the assumption is that the caller passes the exact terms back that
-    // the facet API returned
-    for (ThriftTermRequest termReq : termRequests) {
-      if (termReq.getTerm().isEmpty()) {
-        continue;  // the special catch-all term.
+    // Welon only normalizelon TelonXT telonrms and urls. All othelonr telonrms, elon.g. topics (namelond elonntitielons) arelon
+    // not normalizelond. Helonrelon thelon assumption is that thelon callelonr passelons thelon elonxact telonrms back that
+    // thelon facelont API relonturnelond
+    for (ThriftTelonrmRelonquelonst telonrmRelonq : telonrmRelonquelonsts) {
+      if (telonrmRelonq.gelontTelonrm().iselonmpty()) {
+        continuelon;  // thelon speloncial catch-all telonrm.
       }
 
-      if (!termReq.isSetFieldName()
-          || termReq.getFieldName().equals(EarlybirdFieldConstant.TEXT_FIELD.getFieldName())) {
-        // normalize the TEXT term as it's normalized during ingestion
-        termReq.setTerm(NormalizerHelper.normalizeWithUnknownLocale(
-                            termReq.getTerm(), EarlybirdConfig.getPenguinVersion()));
-      } else if (FACET_URL_FIELDS_TO_NORMALIZE.contains(termReq.getFieldName())) {
-        // remove the trailing slash from the URL path. This operation is idempotent,
-        // so either a spiderduck URL or a facet URL can be used here. The latter would just
-        // be normalized twice, which is fine.
-        termReq.setTerm(URLUtils.normalizePath(termReq.getTerm()));
+      if (!telonrmRelonq.isSelontFielonldNamelon()
+          || telonrmRelonq.gelontFielonldNamelon().elonquals(elonarlybirdFielonldConstant.TelonXT_FIelonLD.gelontFielonldNamelon())) {
+        // normalizelon thelon TelonXT telonrm as it's normalizelond during ingelonstion
+        telonrmRelonq.selontTelonrm(NormalizelonrHelonlpelonr.normalizelonWithUnknownLocalelon(
+                            telonrmRelonq.gelontTelonrm(), elonarlybirdConfig.gelontPelonnguinVelonrsion()));
+      } elonlselon if (FACelonT_URL_FIelonLDS_TO_NORMALIZelon.contains(telonrmRelonq.gelontFielonldNamelon())) {
+        // relonmovelon thelon trailing slash from thelon URL path. This opelonration is idelonmpotelonnt,
+        // so elonithelonr a spidelonrduck URL or a facelont URL can belon uselond helonrelon. Thelon lattelonr would just
+        // belon normalizelond twicelon, which is finelon.
+        telonrmRelonq.selontTelonrm(URLUtils.normalizelonPath(telonrmRelonq.gelontTelonrm()));
       }
     }
   }
 
-  @Override
-  protected int calculateMaxHitsToProcess(ThriftSearchQuery searchQuery) {
-    Preconditions.checkNotNull(searchQuery.getCollectorParams());
-    if (!searchQuery.getCollectorParams().isSetTerminationParams()
-        || !searchQuery.getCollectorParams().getTerminationParams().isSetMaxHitsToProcess()) {
-      // Override the default value to all hits.
-      return Integer.MAX_VALUE;
-    } else {
-      return super.calculateMaxHitsToProcess(searchQuery);
+  @Ovelonrridelon
+  protelonctelond int calculatelonMaxHitsToProcelonss(ThriftSelonarchQuelonry selonarchQuelonry) {
+    Prelonconditions.chelonckNotNull(selonarchQuelonry.gelontCollelonctorParams());
+    if (!selonarchQuelonry.gelontCollelonctorParams().isSelontTelonrminationParams()
+        || !selonarchQuelonry.gelontCollelonctorParams().gelontTelonrminationParams().isSelontMaxHitsToProcelonss()) {
+      // Ovelonrridelon thelon delonfault valuelon to all hits.
+      relonturn Intelongelonr.MAX_VALUelon;
+    } elonlselon {
+      relonturn supelonr.calculatelonMaxHitsToProcelonss(selonarchQuelonry);
     }
   }
 
-  public final List<ThriftTermRequest> getTermRequests() {
-    return this.termRequests;
+  public final List<ThriftTelonrmRelonquelonst> gelontTelonrmRelonquelonsts() {
+    relonturn this.telonrmRelonquelonsts;
   }
 
-  public final ThriftHistogramSettings getHistogramSettings() {
-    return this.histogramSettings;
+  public final ThriftHistogramSelonttings gelontHistogramSelonttings() {
+    relonturn this.histogramSelonttings;
   }
 
-  public final boolean isReturnHistogram() {
-    return this.histogramSettings != null;
+  public final boolelonan isRelonturnHistogram() {
+    relonturn this.histogramSelonttings != null;
   }
 }

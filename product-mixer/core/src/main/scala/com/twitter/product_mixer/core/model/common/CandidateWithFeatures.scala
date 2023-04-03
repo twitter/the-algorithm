@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.model.common
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.common
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
 
-/** [[Candidate]] and it's FeatureMap */
-trait CandidateWithFeatures[+Candidate <: UniversalNoun[Any]] {
-  val candidate: Candidate
-  val features: FeatureMap
+/** [[Candidatelon]] and it's FelonaturelonMap */
+trait CandidatelonWithFelonaturelons[+Candidatelon <: UnivelonrsalNoun[Any]] {
+  val candidatelon: Candidatelon
+  val felonaturelons: FelonaturelonMap
 }
 
-object CandidateWithFeatures {
-  def unapply[Candidate <: UniversalNoun[Any]](
-    candidateWithFeatures: CandidateWithFeatures[Candidate]
-  ): Option[(Candidate, FeatureMap)] =
-    Some(
-      (candidateWithFeatures.candidate, candidateWithFeatures.features)
+objelonct CandidatelonWithFelonaturelons {
+  delonf unapply[Candidatelon <: UnivelonrsalNoun[Any]](
+    candidatelonWithFelonaturelons: CandidatelonWithFelonaturelons[Candidatelon]
+  ): Option[(Candidatelon, FelonaturelonMap)] =
+    Somelon(
+      (candidatelonWithFelonaturelons.candidatelon, candidatelonWithFelonaturelons.felonaturelons)
     )
 }

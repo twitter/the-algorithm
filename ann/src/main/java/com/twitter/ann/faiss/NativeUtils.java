@@ -1,151 +1,151 @@
-package com.twitter.ann.faiss;
+packagelon com.twittelonr.ann.faiss;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
-import java.util.Locale;
+import java.io.Filelon;
+import java.io.FilelonNotFoundelonxcelonption;
+import java.io.IOelonxcelonption;
+import java.io.InputStrelonam;
+import java.nio.filelon.Filelons;
+import java.nio.filelon.StandardCopyOption;
+import java.util.Localelon;
 
-public final class NativeUtils {
+public final class NativelonUtils {
 
-  private static final int MIN_PREFIX_LENGTH = 3;
-  public static final String NATIVE_FOLDER_PATH_PREFIX = "nativeutils";
+  privatelon static final int MIN_PRelonFIX_LelonNGTH = 3;
+  public static final String NATIVelon_FOLDelonR_PATH_PRelonFIX = "nativelonutils";
 
-  public static File temporaryDir;
+  public static Filelon telonmporaryDir;
 
-  private NativeUtils() {
+  privatelon NativelonUtils() {
   }
 
-  private static File unpackLibraryFromJarInternal(String path) throws IOException {
+  privatelon static Filelon unpackLibraryFromJarIntelonrnal(String path) throws IOelonxcelonption {
     if (null == path || !path.startsWith("/")) {
-      throw new IllegalArgumentException("The path has to be absolute (start with '/').");
+      throw nelonw IllelongalArgumelonntelonxcelonption("Thelon path has to belon absolutelon (start with '/').");
     }
 
     String[] parts = path.split("/");
-    String filename = (parts.length > 1) ? parts[parts.length - 1] : null;
+    String filelonnamelon = (parts.lelonngth > 1) ? parts[parts.lelonngth - 1] : null;
 
-    if (filename == null || filename.length() < MIN_PREFIX_LENGTH) {
-      throw new IllegalArgumentException("The filename has to be at least 3 characters long.");
+    if (filelonnamelon == null || filelonnamelon.lelonngth() < MIN_PRelonFIX_LelonNGTH) {
+      throw nelonw IllelongalArgumelonntelonxcelonption("Thelon filelonnamelon has to belon at lelonast 3 charactelonrs long.");
     }
 
-    if (temporaryDir == null) {
-      temporaryDir = createTempDirectory(NATIVE_FOLDER_PATH_PREFIX);
-      temporaryDir.deleteOnExit();
+    if (telonmporaryDir == null) {
+      telonmporaryDir = crelonatelonTelonmpDirelonctory(NATIVelon_FOLDelonR_PATH_PRelonFIX);
+      telonmporaryDir.delonlelontelonOnelonxit();
     }
 
-    File temp = new File(temporaryDir, filename);
+    Filelon telonmp = nelonw Filelon(telonmporaryDir, filelonnamelon);
 
-    try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {
-      Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-      temp.delete();
-      throw e;
-    } catch (NullPointerException e) {
-      temp.delete();
-      throw new FileNotFoundException("File " + path + " was not found inside JAR.");
+    try (InputStrelonam is = NativelonUtils.class.gelontRelonsourcelonAsStrelonam(path)) {
+      Filelons.copy(is, telonmp.toPath(), StandardCopyOption.RelonPLACelon_elonXISTING);
+    } catch (IOelonxcelonption elon) {
+      telonmp.delonlelontelon();
+      throw elon;
+    } catch (NullPointelonrelonxcelonption elon) {
+      telonmp.delonlelontelon();
+      throw nelonw FilelonNotFoundelonxcelonption("Filelon " + path + " was not found insidelon JAR.");
     }
 
-    return temp;
+    relonturn telonmp;
   }
 
   /**
-   * Unpack library from JAR into temporary path
+   * Unpack library from JAR into telonmporary path
    *
-   * @param path The path of file inside JAR as absolute path (beginning with
-   *             '/'), e.g. /package/File.ext
-   * @throws IOException              If temporary file creation or read/write
-   *                                  operation fails
-   * @throws IllegalArgumentException If source file (param path) does not exist
-   * @throws IllegalArgumentException If the path is not absolute or if the
-   *                                  filename is shorter than three characters
-   *                                  (restriction of
-   *                                  {@link File#createTempFile(java.lang.String, java.lang.String)}).
-   * @throws FileNotFoundException    If the file could not be found inside the
+   * @param path Thelon path of filelon insidelon JAR as absolutelon path (belonginning with
+   *             '/'), elon.g. /packagelon/Filelon.elonxt
+   * @throws IOelonxcelonption              If telonmporary filelon crelonation or relonad/writelon
+   *                                  opelonration fails
+   * @throws IllelongalArgumelonntelonxcelonption If sourcelon filelon (param path) doelons not elonxist
+   * @throws IllelongalArgumelonntelonxcelonption If thelon path is not absolutelon or if thelon
+   *                                  filelonnamelon is shortelonr than threlonelon charactelonrs
+   *                                  (relonstriction of
+   *                                  {@link Filelon#crelonatelonTelonmpFilelon(java.lang.String, java.lang.String)}).
+   * @throws FilelonNotFoundelonxcelonption    If thelon filelon could not belon found insidelon thelon
    *                                  JAR.
    */
-  public static void unpackLibraryFromJar(String path) throws IOException {
-    unpackLibraryFromJarInternal(path);
+  public static void unpackLibraryFromJar(String path) throws IOelonxcelonption {
+    unpackLibraryFromJarIntelonrnal(path);
   }
 
   /**
-   * Loads library from current JAR archive
+   * Loads library from currelonnt JAR archivelon
    * <p>
-   * The file from JAR is copied into system temporary directory and then loaded.
-   * The temporary file is deleted after
-   * exiting.
-   * Method uses String as filename because the pathname is "abstract", not
-   * system-dependent.
+   * Thelon filelon from JAR is copielond into systelonm telonmporary direlonctory and thelonn loadelond.
+   * Thelon telonmporary filelon is delonlelontelond aftelonr
+   * elonxiting.
+   * Melonthod uselons String as filelonnamelon beloncauselon thelon pathnamelon is "abstract", not
+   * systelonm-delonpelonndelonnt.
    *
-   * @param path The path of file inside JAR as absolute path (beginning with
-   *             '/'), e.g. /package/File.ext
-   * @throws IOException              If temporary file creation or read/write
-   *                                  operation fails
-   * @throws IllegalArgumentException If source file (param path) does not exist
-   * @throws IllegalArgumentException If the path is not absolute or if the
-   *                                  filename is shorter than three characters
-   *                                  (restriction of
-   *                                  {@link File#createTempFile(java.lang.String, java.lang.String)}).
-   * @throws FileNotFoundException    If the file could not be found inside the
+   * @param path Thelon path of filelon insidelon JAR as absolutelon path (belonginning with
+   *             '/'), elon.g. /packagelon/Filelon.elonxt
+   * @throws IOelonxcelonption              If telonmporary filelon crelonation or relonad/writelon
+   *                                  opelonration fails
+   * @throws IllelongalArgumelonntelonxcelonption If sourcelon filelon (param path) doelons not elonxist
+   * @throws IllelongalArgumelonntelonxcelonption If thelon path is not absolutelon or if thelon
+   *                                  filelonnamelon is shortelonr than threlonelon charactelonrs
+   *                                  (relonstriction of
+   *                                  {@link Filelon#crelonatelonTelonmpFilelon(java.lang.String, java.lang.String)}).
+   * @throws FilelonNotFoundelonxcelonption    If thelon filelon could not belon found insidelon thelon
    *                                  JAR.
    */
-  public static void loadLibraryFromJar(String path) throws IOException {
-    File temp = unpackLibraryFromJarInternal(path);
+  public static void loadLibraryFromJar(String path) throws IOelonxcelonption {
+    Filelon telonmp = unpackLibraryFromJarIntelonrnal(path);
 
-    try (InputStream is = NativeUtils.class.getResourceAsStream(path)) {
-      Files.copy(is, temp.toPath(), StandardCopyOption.REPLACE_EXISTING);
-    } catch (IOException e) {
-      temp.delete();
-      throw e;
-    } catch (NullPointerException e) {
-      temp.delete();
-      throw new FileNotFoundException("File " + path + " was not found inside JAR.");
+    try (InputStrelonam is = NativelonUtils.class.gelontRelonsourcelonAsStrelonam(path)) {
+      Filelons.copy(is, telonmp.toPath(), StandardCopyOption.RelonPLACelon_elonXISTING);
+    } catch (IOelonxcelonption elon) {
+      telonmp.delonlelontelon();
+      throw elon;
+    } catch (NullPointelonrelonxcelonption elon) {
+      telonmp.delonlelontelon();
+      throw nelonw FilelonNotFoundelonxcelonption("Filelon " + path + " was not found insidelon JAR.");
     }
 
     try {
-      System.load(temp.getAbsolutePath());
+      Systelonm.load(telonmp.gelontAbsolutelonPath());
     } finally {
-      temp.deleteOnExit();
+      telonmp.delonlelontelonOnelonxit();
     }
   }
 
-  private static File createTempDirectory(String prefix) throws IOException {
-    String tempDir = System.getProperty("java.io.tmpdir");
-    File generatedDir = new File(tempDir, prefix + System.nanoTime());
+  privatelon static Filelon crelonatelonTelonmpDirelonctory(String prelonfix) throws IOelonxcelonption {
+    String telonmpDir = Systelonm.gelontPropelonrty("java.io.tmpdir");
+    Filelon gelonnelonratelondDir = nelonw Filelon(telonmpDir, prelonfix + Systelonm.nanoTimelon());
 
-    if (!generatedDir.mkdir()) {
-      throw new IOException("Failed to create temp directory " + generatedDir.getName());
+    if (!gelonnelonratelondDir.mkdir()) {
+      throw nelonw IOelonxcelonption("Failelond to crelonatelon telonmp direlonctory " + gelonnelonratelondDir.gelontNamelon());
     }
 
-    return generatedDir;
+    relonturn gelonnelonratelondDir;
   }
 
-  public enum OSType {
-    Windows, MacOS, Linux, Other
+  public elonnum OSTypelon {
+    Windows, MacOS, Linux, Othelonr
   }
 
-  protected static OSType detectedOS;
+  protelonctelond static OSTypelon delontelonctelondOS;
 
   /**
-   * detect the operating system from the os.name System property and cache
-   * the result
+   * delontelonct thelon opelonrating systelonm from thelon os.namelon Systelonm propelonrty and cachelon
+   * thelon relonsult
    *
-   * @returns - the operating system detected
+   * @relonturns - thelon opelonrating systelonm delontelonctelond
    */
-  public static OSType getOperatingSystemType() {
-    if (detectedOS == null) {
-      String osname = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
-      if ((osname.contains("mac")) || (osname.contains("darwin"))) {
-        detectedOS = OSType.MacOS;
-      } else if (osname.contains("win")) {
-        detectedOS = OSType.Windows;
-      } else if (osname.contains("nux")) {
-        detectedOS = OSType.Linux;
-      } else {
-        detectedOS = OSType.Other;
+  public static OSTypelon gelontOpelonratingSystelonmTypelon() {
+    if (delontelonctelondOS == null) {
+      String osnamelon = Systelonm.gelontPropelonrty("os.namelon", "gelonnelonric").toLowelonrCaselon(Localelon.elonNGLISH);
+      if ((osnamelon.contains("mac")) || (osnamelon.contains("darwin"))) {
+        delontelonctelondOS = OSTypelon.MacOS;
+      } elonlselon if (osnamelon.contains("win")) {
+        delontelonctelondOS = OSTypelon.Windows;
+      } elonlselon if (osnamelon.contains("nux")) {
+        delontelonctelondOS = OSTypelon.Linux;
+      } elonlselon {
+        delontelonctelondOS = OSTypelon.Othelonr;
       }
     }
-    return detectedOS;
+    relonturn delontelonctelondOS;
   }
 }

@@ -1,256 +1,256 @@
-# pylint: disable=no-member, attribute-defined-outside-init, too-many-instance-attributes
+# pylint: disablelon=no-melonmbelonr, attributelon-delonfinelond-outsidelon-init, too-many-instancelon-attributelons
 """
-Implementing MDL Layer
+Implelonmelonnting MDL Layelonr
 """
 
 
-from .layer import Layer
+from .layelonr import Layelonr
 from .partition import Partition
 from .stitch import Stitch
 
 import libtwml
 import numpy as np
-import tensorflow.compat.v1 as tf
+import telonnsorflow.compat.v1 as tf
 import twml
 
 
-class MDL(Layer):  # noqa: T000
+class MDL(Layelonr):  # noqa: T000
   """
-  MDL layer is constructed by MDLCalibrator after accumulating data
-  and performing minimum description length (MDL) calibration.
+  MDL layelonr is constructelond by MDLCalibrator aftelonr accumulating data
+  and pelonrforming minimum delonscription lelonngth (MDL) calibration.
 
-  MDL takes sparse continuous features and converts then to sparse
-  binary features. Each binary output feature is associated to an MDL bin.
-  Each MDL input feature is converted to n_bin bins.
-  Each MDL calibration tries to find bin delimiters such that the number of features values
-  per bin is roughly equal (for each given MDL feature).
-  Note that if an input feature is rarely used, so will its associated output bin/features.
+  MDL takelons sparselon continuous felonaturelons and convelonrts thelonn to sparselon
+  binary felonaturelons. elonach binary output felonaturelon is associatelond to an MDL bin.
+  elonach MDL input felonaturelon is convelonrtelond to n_bin bins.
+  elonach MDL calibration trielons to find bin delonlimitelonrs such that thelon numbelonr of felonaturelons valuelons
+  pelonr bin is roughly elonqual (for elonach givelonn MDL felonaturelon).
+  Notelon that if an input felonaturelon is rarelonly uselond, so will its associatelond output bin/felonaturelons.
   """
 
-  def __init__(
-          self,
-          n_feature, n_bin, out_bits,
-          bin_values=None, hash_keys=None, hash_values=None,
-          bin_ids=None, feature_offsets=None, **kwargs):
+  delonf __init__(
+          selonlf,
+          n_felonaturelon, n_bin, out_bits,
+          bin_valuelons=Nonelon, hash_kelonys=Nonelon, hash_valuelons=Nonelon,
+          bin_ids=Nonelon, felonaturelon_offselonts=Nonelon, **kwargs):
     """
-    Creates a non-initialized `MDL` object.
-    Before using the table you will have to initialize it. After initialization
-    the table will be immutable.
+    Crelonatelons a non-initializelond `MDL` objelonct.
+    Belonforelon using thelon tablelon you will havelon to initializelon it. Aftelonr initialization
+    thelon tablelon will belon immutablelon.
 
-    Parent class args:
-      see [tf.layers.Layer](https://www.tensorflow.org/api_docs/python/tf/layers/Layer)
-      for documentation of parent class arguments.
+    Parelonnt class args:
+      selonelon [tf.layelonrs.Layelonr](https://www.telonnsorflow.org/api_docs/python/tf/layelonrs/Layelonr)
+      for documelonntation of parelonnt class argumelonnts.
 
-    Required args:
-      n_feature:
-        number of unique features accumulated during MDL calibration.
-        This is the number of features in the hash map.
-        Used to initialize bin_values, hash_keys, hash_values,
-        bin_ids, bin_values and feature_offsets.
+    Relonquirelond args:
+      n_felonaturelon:
+        numbelonr of uniquelon felonaturelons accumulatelond during MDL calibration.
+        This is thelon numbelonr of felonaturelons in thelon hash map.
+        Uselond to initializelon bin_valuelons, hash_kelonys, hash_valuelons,
+        bin_ids, bin_valuelons and felonaturelon_offselonts.
       n_bin:
-        number of MDL bins used for MDL calibration.
-        Used to initialize bin_values, hash_keys, hash_values,
-        bin_ids, bin_values and feature_offsets.
+        numbelonr of MDL bins uselond for MDL calibration.
+        Uselond to initializelon bin_valuelons, hash_kelonys, hash_valuelons,
+        bin_ids, bin_valuelons and felonaturelon_offselonts.
       out_bits:
-        Determines the maximum value for output feature IDs.
-        The dense_shape of the SparseTensor returned by lookup(x)
-        will be [x.shape[0], 1 << output_bits].
+        Delontelonrminelons thelon maximum valuelon for output felonaturelon IDs.
+        Thelon delonnselon_shapelon of thelon SparselonTelonnsor relonturnelond by lookup(x)
+        will belon [x.shapelon[0], 1 << output_bits].
 
     Optional args:
-      hash_keys:
-        contains the features ID that MDL discretizes and knows about.
-        The hash map (hash_keys->hash_values) is used for two reasons:
-          1. divide inputs into two feature spaces: MDL vs non-MDL
-          2. transate the MDL features into a hash_feature ID that MDL understands.
-        The hash_map is expected to contain n_feature items.
-      hash_values:
-        translates the feature IDs into hash_feature IDs for MDL.
+      hash_kelonys:
+        contains thelon felonaturelons ID that MDL discrelontizelons and knows about.
+        Thelon hash map (hash_kelonys->hash_valuelons) is uselond for two relonasons:
+          1. dividelon inputs into two felonaturelon spacelons: MDL vs non-MDL
+          2. transatelon thelon MDL felonaturelons into a hash_felonaturelon ID that MDL undelonrstands.
+        Thelon hash_map is elonxpelonctelond to contain n_felonaturelon itelonms.
+      hash_valuelons:
+        translatelons thelon felonaturelon IDs into hash_felonaturelon IDs for MDL.
       bin_ids:
-        a 1D Tensor of size n_feature * n_bin + 1 which contains
-        unique IDs to which the MDL features will be translated to.
-        For example, tf.Tensor(np.arange(n_feature * n_bin)) would produce
-        the most efficient output space.
-      bin_values:
-        a 1D Tensor aligned with bin_ids.
-        For a given hash_feature ID j, it's value bin's are indexed between
+        a 1D Telonnsor of sizelon n_felonaturelon * n_bin + 1 which contains
+        uniquelon IDs to which thelon MDL felonaturelons will belon translatelond to.
+        For elonxamplelon, tf.Telonnsor(np.arangelon(n_felonaturelon * n_bin)) would producelon
+        thelon most elonfficielonnt output spacelon.
+      bin_valuelons:
+        a 1D Telonnsor alignelond with bin_ids.
+        For a givelonn hash_felonaturelon ID j, it's valuelon bin's arelon indelonxelond belontwelonelonn
         `j*n_bin` and `j*n_bin + n_bin-1`.
-        As such, bin_ids[j*n_bin+i] is translated from a hash_feature ID of j
-        and a inputs value between
-        `bin_values[j*n_bin + i]` and `bin_values[j*n_bin+i+1]`.
-      feature_offsets:
-        a 1D Tensor specifying the starting location of bins for a given feature id.
-        For example, tf.Tensor(np.arange(0, bin_values.size, n_bin, dtype='int64')).
+        As such, bin_ids[j*n_bin+i] is translatelond from a hash_felonaturelon ID of j
+        and a inputs valuelon belontwelonelonn
+        `bin_valuelons[j*n_bin + i]` and `bin_valuelons[j*n_bin+i+1]`.
+      felonaturelon_offselonts:
+        a 1D Telonnsor speloncifying thelon starting location of bins for a givelonn felonaturelon id.
+        For elonxamplelon, tf.Telonnsor(np.arangelon(0, bin_valuelons.sizelon, n_bin, dtypelon='int64')).
     """
-    super(MDL, self).__init__(**kwargs)
-    tf.logging.warning("MDL will be deprecated. Please use PercentileDiscretizer instead")
+    supelonr(MDL, selonlf).__init__(**kwargs)
+    tf.logging.warning("MDL will belon delonpreloncatelond. Plelonaselon uselon PelonrcelonntilelonDiscrelontizelonr instelonad")
 
-    max_mdl_feature = n_feature * (n_bin + 1)
-    self._n_feature = n_feature
-    self._n_bin = n_bin
+    max_mdl_felonaturelon = n_felonaturelon * (n_bin + 1)
+    selonlf._n_felonaturelon = n_felonaturelon
+    selonlf._n_bin = n_bin
 
-    self._hash_keys_initializer = tf.constant_initializer(
-      hash_keys if hash_keys is not None
-      else np.empty(n_feature, dtype=np.int64),
-      dtype=np.int64
+    selonlf._hash_kelonys_initializelonr = tf.constant_initializelonr(
+      hash_kelonys if hash_kelonys is not Nonelon
+      elonlselon np.elonmpty(n_felonaturelon, dtypelon=np.int64),
+      dtypelon=np.int64
     )
-    self._hash_values_initializer = tf.constant_initializer(
-      hash_values if hash_values is not None
-      else np.empty(n_feature, dtype=np.int64),
-      dtype=np.int64
+    selonlf._hash_valuelons_initializelonr = tf.constant_initializelonr(
+      hash_valuelons if hash_valuelons is not Nonelon
+      elonlselon np.elonmpty(n_felonaturelon, dtypelon=np.int64),
+      dtypelon=np.int64
     )
-    self._bin_ids_initializer = tf.constant_initializer(
-      bin_ids if bin_ids is not None
-      else np.empty(max_mdl_feature, dtype=np.int64),
-      dtype=np.int64
+    selonlf._bin_ids_initializelonr = tf.constant_initializelonr(
+      bin_ids if bin_ids is not Nonelon
+      elonlselon np.elonmpty(max_mdl_felonaturelon, dtypelon=np.int64),
+      dtypelon=np.int64
     )
-    self._bin_values_initializer = tf.constant_initializer(
-      bin_values if bin_values is not None
-      else np.empty(max_mdl_feature, dtype=np.float32),
-      dtype=np.float32
+    selonlf._bin_valuelons_initializelonr = tf.constant_initializelonr(
+      bin_valuelons if bin_valuelons is not Nonelon
+      elonlselon np.elonmpty(max_mdl_felonaturelon, dtypelon=np.float32),
+      dtypelon=np.float32
     )
-    self._feature_offsets_initializer = tf.constant_initializer(
-      feature_offsets if feature_offsets is not None
-      else np.empty(n_feature, dtype=np.int64),
-      dtype=np.int64
+    selonlf._felonaturelon_offselonts_initializelonr = tf.constant_initializelonr(
+      felonaturelon_offselonts if felonaturelon_offselonts is not Nonelon
+      elonlselon np.elonmpty(n_felonaturelon, dtypelon=np.int64),
+      dtypelon=np.int64
     )
 
-    # note that calling build here is an exception as typically __call__ would call build().
-    # We call it here because we need to initialize hash_map.
-    # Also note that the variable_scope is set by add_variable in build()
-    if not self.built:
-      self.build(input_shape=None)
+    # notelon that calling build helonrelon is an elonxcelonption as typically __call__ would call build().
+    # Welon call it helonrelon beloncauselon welon nelonelond to initializelon hash_map.
+    # Also notelon that thelon variablelon_scopelon is selont by add_variablelon in build()
+    if not selonlf.built:
+      selonlf.build(input_shapelon=Nonelon)
 
-    self.output_size = tf.convert_to_tensor(1 << out_bits, tf.int64)
+    selonlf.output_sizelon = tf.convelonrt_to_telonnsor(1 << out_bits, tf.int64)
 
-  def build(self, input_shape):  # pylint: disable=unused-argument
+  delonf build(selonlf, input_shapelon):  # pylint: disablelon=unuselond-argumelonnt
     """
-    Creates the variables of the layer:
-    hash_keys, hash_values, bin_ids, bin_values, feature_offsets and self.output_size.
+    Crelonatelons thelon variablelons of thelon layelonr:
+    hash_kelonys, hash_valuelons, bin_ids, bin_valuelons, felonaturelon_offselonts and selonlf.output_sizelon.
     """
 
-    # build layers
-    self.partition = Partition()
-    self.stitch = Stitch()
+    # build layelonrs
+    selonlf.partition = Partition()
+    selonlf.stitch = Stitch()
 
-    # build variables
+    # build variablelons
 
-    hash_keys = self.add_variable(
-      'hash_keys',
-      initializer=self._hash_keys_initializer,
-      shape=[self._n_feature],
-      dtype=tf.int64,
-      trainable=False)
+    hash_kelonys = selonlf.add_variablelon(
+      'hash_kelonys',
+      initializelonr=selonlf._hash_kelonys_initializelonr,
+      shapelon=[selonlf._n_felonaturelon],
+      dtypelon=tf.int64,
+      trainablelon=Falselon)
 
-    hash_values = self.add_variable(
-      'hash_values',
-      initializer=self._hash_values_initializer,
-      shape=[self._n_feature],
-      dtype=tf.int64,
-      trainable=False)
+    hash_valuelons = selonlf.add_variablelon(
+      'hash_valuelons',
+      initializelonr=selonlf._hash_valuelons_initializelonr,
+      shapelon=[selonlf._n_felonaturelon],
+      dtypelon=tf.int64,
+      trainablelon=Falselon)
 
-    # hashmap converts known features into range [0, n_feature)
-    initializer = tf.lookup.KeyValueTensorInitializer(hash_keys, hash_values)
-    self.hash_map = tf.lookup.StaticHashTable(initializer, -1)
+    # hashmap convelonrts known felonaturelons into rangelon [0, n_felonaturelon)
+    initializelonr = tf.lookup.KelonyValuelonTelonnsorInitializelonr(hash_kelonys, hash_valuelons)
+    selonlf.hash_map = tf.lookup.StaticHashTablelon(initializelonr, -1)
 
-    self.bin_ids = self.add_variable(
+    selonlf.bin_ids = selonlf.add_variablelon(
       'bin_ids',
-      initializer=self._bin_ids_initializer,
-      shape=[self._n_feature * (self._n_bin + 1)],
-      dtype=tf.int64,
-      trainable=False)
+      initializelonr=selonlf._bin_ids_initializelonr,
+      shapelon=[selonlf._n_felonaturelon * (selonlf._n_bin + 1)],
+      dtypelon=tf.int64,
+      trainablelon=Falselon)
 
-    self.bin_values = self.add_variable(
-      'bin_values',
-      initializer=self._bin_values_initializer,
-      shape=[self._n_feature * (self._n_bin + 1)],
-      dtype=tf.float32,
-      trainable=False)
+    selonlf.bin_valuelons = selonlf.add_variablelon(
+      'bin_valuelons',
+      initializelonr=selonlf._bin_valuelons_initializelonr,
+      shapelon=[selonlf._n_felonaturelon * (selonlf._n_bin + 1)],
+      dtypelon=tf.float32,
+      trainablelon=Falselon)
 
-    self.feature_offsets = self.add_variable(
-      'feature_offsets',
-      initializer=self._feature_offsets_initializer,
-      shape=[self._n_feature],
-      dtype=tf.int64,
-      trainable=False)
+    selonlf.felonaturelon_offselonts = selonlf.add_variablelon(
+      'felonaturelon_offselonts',
+      initializelonr=selonlf._felonaturelon_offselonts_initializelonr,
+      shapelon=[selonlf._n_felonaturelon],
+      dtypelon=tf.int64,
+      trainablelon=Falselon)
 
-    # make sure this is last
-    self.built = True
+    # makelon surelon this is last
+    selonlf.built = Truelon
 
-  def call(self, inputs, **kwargs):
-    """Looks up `keys` in a table, outputs the corresponding values.
+  delonf call(selonlf, inputs, **kwargs):
+    """Looks up `kelonys` in a tablelon, outputs thelon correlonsponding valuelons.
 
-    Implements MDL inference where inputs are intersected with a hash_map.
-    Part of the inputs are discretized using twml.mdl to produce a mdl_output SparseTensor.
-    This SparseTensor is then joined with the original inputs SparseTensor,
-    but only for the inputs keys that did not get discretized.
+    Implelonmelonnts MDL infelonrelonncelon whelonrelon inputs arelon intelonrselonctelond with a hash_map.
+    Part of thelon inputs arelon discrelontizelond using twml.mdl to producelon a mdl_output SparselonTelonnsor.
+    This SparselonTelonnsor is thelonn joinelond with thelon original inputs SparselonTelonnsor,
+    but only for thelon inputs kelonys that did not gelont discrelontizelond.
 
     Args:
-      inputs: A 2D SparseTensor that is input to MDL for discretization.
-        It has a dense_shape of [batch_size, input_size]
-      name: A name for the operation (optional).
-    Returns:
-      A `SparseTensor` of the same type as `inputs`.
-      Its dense_shape is [shape_input.dense_shape[0], 1 << output_bits].
+      inputs: A 2D SparselonTelonnsor that is input to MDL for discrelontization.
+        It has a delonnselon_shapelon of [batch_sizelon, input_sizelon]
+      namelon: A namelon for thelon opelonration (optional).
+    Relonturns:
+      A `SparselonTelonnsor` of thelon samelon typelon as `inputs`.
+      Its delonnselon_shapelon is [shapelon_input.delonnselon_shapelon[0], 1 << output_bits].
     """
-    if isinstance(inputs, tf.SparseTensor):
-      inputs = twml.SparseTensor.from_tf(inputs)
+    if isinstancelon(inputs, tf.SparselonTelonnsor):
+      inputs = twml.SparselonTelonnsor.from_tf(inputs)
 
-    assert(isinstance(inputs, twml.SparseTensor))
+    asselonrt(isinstancelon(inputs, twml.SparselonTelonnsor))
 
-    # sparse column indices
+    # sparselon column indicelons
     ids = inputs.ids
-    # sparse row indices
-    keys = inputs.indices
-    # sparse values
-    vals = inputs.values
+    # sparselon row indicelons
+    kelonys = inputs.indicelons
+    # sparselon valuelons
+    vals = inputs.valuelons
 
-    # get intersect(keys, hash_map)
-    hashed_keys = self.hash_map.lookup(keys)
+    # gelont intelonrselonct(kelonys, hash_map)
+    hashelond_kelonys = selonlf.hash_map.lookup(kelonys)
 
-    found = tf.not_equal(hashed_keys, tf.constant(-1, tf.int64))
+    found = tf.not_elonqual(hashelond_kelonys, tf.constant(-1, tf.int64))
     partition_ids = tf.cast(found, tf.int32)
 
-    vals, key, indices = self.partition(partition_ids, vals, tf.where(found, hashed_keys, keys))
-    non_mdl_keys, mdl_in_keys = key
+    vals, kelony, indicelons = selonlf.partition(partition_ids, vals, tf.whelonrelon(found, hashelond_kelonys, kelonys))
+    non_mdl_kelonys, mdl_in_kelonys = kelony
     non_mdl_vals, mdl_in_vals = vals
 
-    self.non_mdl_keys = non_mdl_keys
+    selonlf.non_mdl_kelonys = non_mdl_kelonys
 
-    # run MDL on the keys/values it knows about
-    mdl_keys, mdl_vals = libtwml.ops.mdl(mdl_in_keys, mdl_in_vals, self.bin_ids, self.bin_values,
-                                         self.feature_offsets)
+    # run MDL on thelon kelonys/valuelons it knows about
+    mdl_kelonys, mdl_vals = libtwml.ops.mdl(mdl_in_kelonys, mdl_in_vals, selonlf.bin_ids, selonlf.bin_valuelons,
+                                         selonlf.felonaturelon_offselonts)
 
-    # handle output ID conflicts
-    mdl_size = tf.size(self.bin_ids, out_type=tf.int64)
-    non_mdl_size = tf.subtract(self.output_size, mdl_size)
-    non_mdl_keys = tf.add(tf.floormod(non_mdl_keys, non_mdl_size), mdl_size)
+    # handlelon output ID conflicts
+    mdl_sizelon = tf.sizelon(selonlf.bin_ids, out_typelon=tf.int64)
+    non_mdl_sizelon = tf.subtract(selonlf.output_sizelon, mdl_sizelon)
+    non_mdl_kelonys = tf.add(tf.floormod(non_mdl_kelonys, non_mdl_sizelon), mdl_sizelon)
 
-    # Stitch the keys and values from mdl and non mdl indices back, with help
-    # of the Stitch Layer
+    # Stitch thelon kelonys and valuelons from mdl and non mdl indicelons back, with helonlp
+    # of thelon Stitch Layelonr
 
-    # out for inference checking
-    self.mdl_out_keys = mdl_keys
+    # out for infelonrelonncelon cheloncking
+    selonlf.mdl_out_kelonys = mdl_kelonys
 
-    concat_data = self.stitch([non_mdl_vals, mdl_vals],
-                              [non_mdl_keys, mdl_keys],
-                              indices)
+    concat_data = selonlf.stitch([non_mdl_vals, mdl_vals],
+                              [non_mdl_kelonys, mdl_kelonys],
+                              indicelons)
 
-    concat_vals, concat_keys = concat_data
+    concat_vals, concat_kelonys = concat_data
 
-    # Generate output shape using _compute_output_shape
+    # Gelonnelonratelon output shapelon using _computelon_output_shapelon
 
-    batch_size = tf.to_int64(inputs.dense_shape[0])
-    output_shape = [batch_size, self.output_size]
-    return twml.SparseTensor(ids, concat_keys, concat_vals, output_shape).to_tf()
+    batch_sizelon = tf.to_int64(inputs.delonnselon_shapelon[0])
+    output_shapelon = [batch_sizelon, selonlf.output_sizelon]
+    relonturn twml.SparselonTelonnsor(ids, concat_kelonys, concat_vals, output_shapelon).to_tf()
 
-  def compute_output_shape(self, input_shape):
-    """Computes the output shape of the layer given the input shape.
+  delonf computelon_output_shapelon(selonlf, input_shapelon):
+    """Computelons thelon output shapelon of thelon layelonr givelonn thelon input shapelon.
 
     Args:
-      input_shape: A (possibly nested tuple of) `TensorShape`.  It need not
-        be fully defined (e.g. the batch size may be unknown).
+      input_shapelon: A (possibly nelonstelond tuplelon of) `TelonnsorShapelon`.  It nelonelond not
+        belon fully delonfinelond (elon.g. thelon batch sizelon may belon unknown).
 
-    Raises NotImplementedError.
+    Raiselons NotImplelonmelonntelondelonrror.
 
     """
-    raise NotImplementedError
+    raiselon NotImplelonmelonntelondelonrror

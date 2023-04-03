@@ -1,376 +1,376 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Itelonrator;
 import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Objeloncts;
+import java.util.Selont;
+import java.util.strelonam.Collelonctors;
 
-import org.apache.lucene.index.FilteredTermsEnum;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.index.TermState;
-import org.apache.lucene.index.TermStates;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.BooleanClause.Occur;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.BulkScorer;
-import org.apache.lucene.search.ConstantScoreQuery;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.ConstantScoreWeight;
-import org.apache.lucene.search.DocIdSet;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.MultiTermQuery;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.Weight;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.DocIdSetBuilder;
+import org.apachelon.lucelonnelon.indelonx.FiltelonrelondTelonrmselonnum;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.indelonx.TelonrmStatelon;
+import org.apachelon.lucelonnelon.indelonx.TelonrmStatelons;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon.Occur;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.BulkScorelonr;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonQuelonry;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonScorelonr;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonWelonight;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelont;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.MultiTelonrmQuelonry;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.TelonrmQuelonry;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
+import org.apachelon.lucelonnelon.util.AttributelonSourcelon;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.apachelon.lucelonnelon.util.DocIdSelontBuildelonr;
 
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.IndexedNumericFieldSettings;
-import com.twitter.search.common.util.analysis.LongTermAttributeImpl;
-import com.twitter.search.common.util.analysis.SortableLongTermAttributeImpl;
-import com.twitter.search.queryparser.query.QueryParserException;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.IndelonxelondNumelonricFielonldSelonttings;
+import com.twittelonr.selonarch.common.util.analysis.LongTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.common.util.analysis.SortablelonLongTelonrmAttributelonImpl;
+import com.twittelonr.selonarch.quelonryparselonr.quelonry.QuelonryParselonrelonxcelonption;
 
 /**
- * An extension of Lucene's MultiTermQuery which creates a disjunction of
- * long ID terms. Lucene tries to rewrite the Query depending on the number
- * of clauses to perform as efficiently as possible.
+ * An elonxtelonnsion of Lucelonnelon's MultiTelonrmQuelonry which crelonatelons a disjunction of
+ * long ID telonrms. Lucelonnelon trielons to relonwritelon thelon Quelonry delonpelonnding on thelon numbelonr
+ * of clauselons to pelonrform as elonfficielonntly as possiblelon.
  */
-public class IDDisjunctionQuery extends MultiTermQuery {
-  private final List<Long> ids;
-  private final boolean useOrderPreservingEncoding;
+public class IDDisjunctionQuelonry elonxtelonnds MultiTelonrmQuelonry {
+  privatelon final List<Long> ids;
+  privatelon final boolelonan uselonOrdelonrPrelonselonrvingelonncoding;
 
-  /** Creates a new IDDisjunctionQuery instance. */
-  public IDDisjunctionQuery(List<Long> ids, String field, ImmutableSchemaInterface schemaSnapshot)
-      throws QueryParserException {
-    super(field);
+  /** Crelonatelons a nelonw IDDisjunctionQuelonry instancelon. */
+  public IDDisjunctionQuelonry(List<Long> ids, String fielonld, ImmutablelonSchelonmaIntelonrfacelon schelonmaSnapshot)
+      throws QuelonryParselonrelonxcelonption {
+    supelonr(fielonld);
     this.ids = ids;
 
-    setRewriteMethod(new Rewrite());
+    selontRelonwritelonMelonthod(nelonw Relonwritelon());
 
-    if (!schemaSnapshot.hasField(field)) {
-      throw new QueryParserException(
-          "Tried to search a field which does not exist in schema: " + field);
+    if (!schelonmaSnapshot.hasFielonld(fielonld)) {
+      throw nelonw QuelonryParselonrelonxcelonption(
+          "Trielond to selonarch a fielonld which doelons not elonxist in schelonma: " + fielonld);
     }
 
-    IndexedNumericFieldSettings numericFieldSettings =
-        schemaSnapshot.getFieldInfo(field).getFieldType().getNumericFieldSettings();
+    IndelonxelondNumelonricFielonldSelonttings numelonricFielonldSelonttings =
+        schelonmaSnapshot.gelontFielonldInfo(fielonld).gelontFielonldTypelon().gelontNumelonricFielonldSelonttings();
 
-    if (numericFieldSettings == null) {
-      throw new QueryParserException("Requested id field is not numerical: " + field);
+    if (numelonricFielonldSelonttings == null) {
+      throw nelonw QuelonryParselonrelonxcelonption("Relonquelonstelond id fielonld is not numelonrical: " + fielonld);
     }
 
-    this.useOrderPreservingEncoding = numericFieldSettings.isUseSortableEncoding();
+    this.uselonOrdelonrPrelonselonrvingelonncoding = numelonricFielonldSelonttings.isUselonSortablelonelonncoding();
   }
 
   /**
-   * Work around for an issue where LongTerms are not valid utf8, so calling
-   * toString on any TermQuery containing a LongTerm may cause exceptions.
+   * Work around for an issuelon whelonrelon LongTelonrms arelon not valid utf8, so calling
+   * toString on any TelonrmQuelonry containing a LongTelonrm may causelon elonxcelonptions.
    */
-  private class Rewrite extends RewriteMethod {
-    @Override
-    public Query rewrite(IndexReader reader, MultiTermQuery query) throws IOException {
-      Query result = new MultiTermQueryConstantScoreWrapper(
-          (IDDisjunctionQuery) query, useOrderPreservingEncoding);
-      return result;
+  privatelon class Relonwritelon elonxtelonnds RelonwritelonMelonthod {
+    @Ovelonrridelon
+    public Quelonry relonwritelon(IndelonxRelonadelonr relonadelonr, MultiTelonrmQuelonry quelonry) throws IOelonxcelonption {
+      Quelonry relonsult = nelonw MultiTelonrmQuelonryConstantScorelonWrappelonr(
+          (IDDisjunctionQuelonry) quelonry, uselonOrdelonrPrelonselonrvingelonncoding);
+      relonturn relonsult;
     }
   }
 
-  @Override
-  protected TermsEnum getTermsEnum(final Terms terms, AttributeSource atts) throws IOException {
-    final Iterator<Long> it = this.ids.iterator();
-    final TermsEnum termsEnum = terms.iterator();
+  @Ovelonrridelon
+  protelonctelond Telonrmselonnum gelontTelonrmselonnum(final Telonrms telonrms, AttributelonSourcelon atts) throws IOelonxcelonption {
+    final Itelonrator<Long> it = this.ids.itelonrator();
+    final Telonrmselonnum telonrmselonnum = telonrms.itelonrator();
 
-    return new FilteredTermsEnum(termsEnum) {
-      private final BytesRef term = useOrderPreservingEncoding
-          ? SortableLongTermAttributeImpl.newBytesRef()
-          : LongTermAttributeImpl.newBytesRef();
+    relonturn nelonw FiltelonrelondTelonrmselonnum(telonrmselonnum) {
+      privatelon final BytelonsRelonf telonrm = uselonOrdelonrPrelonselonrvingelonncoding
+          ? SortablelonLongTelonrmAttributelonImpl.nelonwBytelonsRelonf()
+          : LongTelonrmAttributelonImpl.nelonwBytelonsRelonf();
 
-      @Override protected AcceptStatus accept(BytesRef term) throws IOException {
-        return AcceptStatus.YES;
+      @Ovelonrridelon protelonctelond AccelonptStatus accelonpt(BytelonsRelonf telonrm) throws IOelonxcelonption {
+        relonturn AccelonptStatus.YelonS;
       }
 
-      @Override public BytesRef next() throws IOException {
-        while (it.hasNext()) {
-          Long longTerm = it.next();
-          if (useOrderPreservingEncoding) {
-            SortableLongTermAttributeImpl.copyLongToBytesRef(term, longTerm);
-          } else {
-            LongTermAttributeImpl.copyLongToBytesRef(term, longTerm);
+      @Ovelonrridelon public BytelonsRelonf nelonxt() throws IOelonxcelonption {
+        whilelon (it.hasNelonxt()) {
+          Long longTelonrm = it.nelonxt();
+          if (uselonOrdelonrPrelonselonrvingelonncoding) {
+            SortablelonLongTelonrmAttributelonImpl.copyLongToBytelonsRelonf(telonrm, longTelonrm);
+          } elonlselon {
+            LongTelonrmAttributelonImpl.copyLongToBytelonsRelonf(telonrm, longTelonrm);
           }
-          if (termsEnum.seekExact(term)) {
-            return term;
+          if (telonrmselonnum.selonelonkelonxact(telonrm)) {
+            relonturn telonrm;
           }
         }
 
-        return null;
+        relonturn null;
       }
     };
   }
 
-  @Override
-  public String toString(String field) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("IDDisjunction[").append(this.field).append(":");
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    StringBuildelonr buildelonr = nelonw StringBuildelonr();
+    buildelonr.appelonnd("IDDisjunction[").appelonnd(this.fielonld).appelonnd(":");
     for (Long id : this.ids) {
-      builder.append(id);
-      builder.append(",");
+      buildelonr.appelonnd(id);
+      buildelonr.appelonnd(",");
     }
-    builder.setLength(builder.length() - 1);
-    builder.append("]");
-    return builder.toString();
+    buildelonr.selontLelonngth(buildelonr.lelonngth() - 1);
+    buildelonr.appelonnd("]");
+    relonturn buildelonr.toString();
   }
 
-  private static class TermQueryWithToString extends TermQuery {
-    private final boolean useOrderPreservingEncoding;
+  privatelon static class TelonrmQuelonryWithToString elonxtelonnds TelonrmQuelonry {
+    privatelon final boolelonan uselonOrdelonrPrelonselonrvingelonncoding;
 
-    public TermQueryWithToString(Term t, TermStates states, boolean useOrderPreservingEncoding) {
-      super(t, states);
-      this.useOrderPreservingEncoding = useOrderPreservingEncoding;
+    public TelonrmQuelonryWithToString(Telonrm t, TelonrmStatelons statelons, boolelonan uselonOrdelonrPrelonselonrvingelonncoding) {
+      supelonr(t, statelons);
+      this.uselonOrdelonrPrelonselonrvingelonncoding = uselonOrdelonrPrelonselonrvingelonncoding;
     }
 
-    @Override
-    public String toString(String field) {
-      StringBuilder buffer = new StringBuilder();
-      if (!getTerm().field().equals(field)) {
-        buffer.append(getTerm().field());
-        buffer.append(":");
+    @Ovelonrridelon
+    public String toString(String fielonld) {
+      StringBuildelonr buffelonr = nelonw StringBuildelonr();
+      if (!gelontTelonrm().fielonld().elonquals(fielonld)) {
+        buffelonr.appelonnd(gelontTelonrm().fielonld());
+        buffelonr.appelonnd(":");
       }
-      long longTerm;
-      BytesRef termBytes = getTerm().bytes();
-      if (useOrderPreservingEncoding) {
-        longTerm = SortableLongTermAttributeImpl.copyBytesRefToLong(termBytes);
-      } else {
-        longTerm = LongTermAttributeImpl.copyBytesRefToLong(termBytes);
+      long longTelonrm;
+      BytelonsRelonf telonrmBytelons = gelontTelonrm().bytelons();
+      if (uselonOrdelonrPrelonselonrvingelonncoding) {
+        longTelonrm = SortablelonLongTelonrmAttributelonImpl.copyBytelonsRelonfToLong(telonrmBytelons);
+      } elonlselon {
+        longTelonrm = LongTelonrmAttributelonImpl.copyBytelonsRelonfToLong(telonrmBytelons);
       }
-      buffer.append(longTerm);
-      return buffer.toString();
+      buffelonr.appelonnd(longTelonrm);
+      relonturn buffelonr.toString();
     }
   }
 
   /**
-   * This class provides the functionality behind {@link MultiTermQuery#CONSTANT_SCORE_REWRITE}.
-   * It tries to rewrite per-segment as a boolean query that returns a constant score and otherwise
-   * fills a DocIdSet with matches and builds a Scorer on top of this DocIdSet.
+   * This class providelons thelon functionality belonhind {@link MultiTelonrmQuelonry#CONSTANT_SCORelon_RelonWRITelon}.
+   * It trielons to relonwritelon pelonr-selongmelonnt as a boolelonan quelonry that relonturns a constant scorelon and othelonrwiselon
+   * fills a DocIdSelont with matchelons and builds a Scorelonr on top of this DocIdSelont.
    */
-  static final class MultiTermQueryConstantScoreWrapper extends Query {
-    // disable the rewrite option which will scan all posting lists sequentially and perform
-    // the intersection using a temporary DocIdSet. In earlybird this mode is slower than a "normal"
-    // disjunctive BooleanQuery, due to early termination and the fact that everything is in memory.
-    private static final int BOOLEAN_REWRITE_TERM_COUNT_THRESHOLD = 3000;
+  static final class MultiTelonrmQuelonryConstantScorelonWrappelonr elonxtelonnds Quelonry {
+    // disablelon thelon relonwritelon option which will scan all posting lists selonquelonntially and pelonrform
+    // thelon intelonrselonction using a telonmporary DocIdSelont. In elonarlybird this modelon is slowelonr than a "normal"
+    // disjunctivelon BoolelonanQuelonry, duelon to elonarly telonrmination and thelon fact that elonvelonrything is in melonmory.
+    privatelon static final int BOOLelonAN_RelonWRITelon_TelonRM_COUNT_THRelonSHOLD = 3000;
 
-    private static class TermAndState {
-      private final BytesRef term;
-      private final TermState state;
-      private final int docFreq;
-      private final long totalTermFreq;
+    privatelon static class TelonrmAndStatelon {
+      privatelon final BytelonsRelonf telonrm;
+      privatelon final TelonrmStatelon statelon;
+      privatelon final int docFrelonq;
+      privatelon final long totalTelonrmFrelonq;
 
-      TermAndState(BytesRef term, TermState state, int docFreq, long totalTermFreq) {
-        this.term = term;
-        this.state = state;
-        this.docFreq = docFreq;
-        this.totalTermFreq = totalTermFreq;
+      TelonrmAndStatelon(BytelonsRelonf telonrm, TelonrmStatelon statelon, int docFrelonq, long totalTelonrmFrelonq) {
+        this.telonrm = telonrm;
+        this.statelon = statelon;
+        this.docFrelonq = docFrelonq;
+        this.totalTelonrmFrelonq = totalTelonrmFrelonq;
       }
     }
 
-    private static class WeightOrDocIdSet {
-      private final Weight weight;
-      private final DocIdSet docIdSet;
+    privatelon static class WelonightOrDocIdSelont {
+      privatelon final Welonight welonight;
+      privatelon final DocIdSelont docIdSelont;
 
-      WeightOrDocIdSet(Weight weight) {
-        this.weight = Objects.requireNonNull(weight);
-        this.docIdSet = null;
+      WelonightOrDocIdSelont(Welonight welonight) {
+        this.welonight = Objeloncts.relonquirelonNonNull(welonight);
+        this.docIdSelont = null;
       }
 
-      WeightOrDocIdSet(DocIdSet docIdSet) {
-        this.docIdSet = docIdSet;
-        this.weight = null;
+      WelonightOrDocIdSelont(DocIdSelont docIdSelont) {
+        this.docIdSelont = docIdSelont;
+        this.welonight = null;
       }
     }
 
-    protected final IDDisjunctionQuery query;
-    private final boolean useOrderPreservingEncoding;
+    protelonctelond final IDDisjunctionQuelonry quelonry;
+    privatelon final boolelonan uselonOrdelonrPrelonselonrvingelonncoding;
 
     /**
-     * Wrap a {@link MultiTermQuery} as a Filter.
+     * Wrap a {@link MultiTelonrmQuelonry} as a Filtelonr.
      */
-    protected MultiTermQueryConstantScoreWrapper(
-        IDDisjunctionQuery query,
-        boolean useOrderPreservingEncoding) {
-      this.query = query;
-      this.useOrderPreservingEncoding = useOrderPreservingEncoding;
+    protelonctelond MultiTelonrmQuelonryConstantScorelonWrappelonr(
+        IDDisjunctionQuelonry quelonry,
+        boolelonan uselonOrdelonrPrelonselonrvingelonncoding) {
+      this.quelonry = quelonry;
+      this.uselonOrdelonrPrelonselonrvingelonncoding = uselonOrdelonrPrelonselonrvingelonncoding;
     }
 
-    @Override
-    public String toString(String field) {
-      // query.toString should be ok for the filter, too, if the query boost is 1.0f
-      return query.toString(field);
+    @Ovelonrridelon
+    public String toString(String fielonld) {
+      // quelonry.toString should belon ok for thelon filtelonr, too, if thelon quelonry boost is 1.0f
+      relonturn quelonry.toString(fielonld);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof MultiTermQueryConstantScoreWrapper)) {
-        return false;
+    @Ovelonrridelon
+    public boolelonan elonquals(Objelonct obj) {
+      if (!(obj instancelonof MultiTelonrmQuelonryConstantScorelonWrappelonr)) {
+        relonturn falselon;
       }
 
-      return query.equals(MultiTermQueryConstantScoreWrapper.class.cast(obj).query);
+      relonturn quelonry.elonquals(MultiTelonrmQuelonryConstantScorelonWrappelonr.class.cast(obj).quelonry);
     }
 
-    @Override
-    public int hashCode() {
-      return query == null ? 0 : query.hashCode();
+    @Ovelonrridelon
+    public int hashCodelon() {
+      relonturn quelonry == null ? 0 : quelonry.hashCodelon();
     }
 
-    /** Returns the field name for this query */
-    public String getField() {
-      return query.getField();
+    /** Relonturns thelon fielonld namelon for this quelonry */
+    public String gelontFielonld() {
+      relonturn quelonry.gelontFielonld();
     }
 
-    private List<Long> getIDs() {
-      return query.ids;
+    privatelon List<Long> gelontIDs() {
+      relonturn quelonry.ids;
     }
 
-    @Override
-    public Weight createWeight(
-        final IndexSearcher searcher,
-        final ScoreMode scoreMode,
-        final float boost) throws IOException {
-      return new ConstantScoreWeight(this, boost) {
-        /** Try to collect terms from the given terms enum and return true iff all
-         *  terms could be collected. If {@code false} is returned, the enum is
-         *  left positioned on the next term. */
-        private boolean collectTerms(LeafReaderContext context,
-                                     TermsEnum termsEnum,
-                                     List<TermAndState> terms) throws IOException {
-          final int threshold = Math.min(BOOLEAN_REWRITE_TERM_COUNT_THRESHOLD,
-                                         BooleanQuery.getMaxClauseCount());
-          for (int i = 0; i < threshold; ++i) {
-            final BytesRef term = termsEnum.next();
-            if (term == null) {
-              return true;
+    @Ovelonrridelon
+    public Welonight crelonatelonWelonight(
+        final IndelonxSelonarchelonr selonarchelonr,
+        final ScorelonModelon scorelonModelon,
+        final float boost) throws IOelonxcelonption {
+      relonturn nelonw ConstantScorelonWelonight(this, boost) {
+        /** Try to collelonct telonrms from thelon givelonn telonrms elonnum and relonturn truelon iff all
+         *  telonrms could belon collelonctelond. If {@codelon falselon} is relonturnelond, thelon elonnum is
+         *  lelonft positionelond on thelon nelonxt telonrm. */
+        privatelon boolelonan collelonctTelonrms(LelonafRelonadelonrContelonxt contelonxt,
+                                     Telonrmselonnum telonrmselonnum,
+                                     List<TelonrmAndStatelon> telonrms) throws IOelonxcelonption {
+          final int threlonshold = Math.min(BOOLelonAN_RelonWRITelon_TelonRM_COUNT_THRelonSHOLD,
+                                         BoolelonanQuelonry.gelontMaxClauselonCount());
+          for (int i = 0; i < threlonshold; ++i) {
+            final BytelonsRelonf telonrm = telonrmselonnum.nelonxt();
+            if (telonrm == null) {
+              relonturn truelon;
             }
-            TermState state = termsEnum.termState();
-            terms.add(new TermAndState(BytesRef.deepCopyOf(term),
-                                       state,
-                                       termsEnum.docFreq(),
-                                       termsEnum.totalTermFreq()));
+            TelonrmStatelon statelon = telonrmselonnum.telonrmStatelon();
+            telonrms.add(nelonw TelonrmAndStatelon(BytelonsRelonf.delonelonpCopyOf(telonrm),
+                                       statelon,
+                                       telonrmselonnum.docFrelonq(),
+                                       telonrmselonnum.totalTelonrmFrelonq()));
           }
-          return termsEnum.next() == null;
+          relonturn telonrmselonnum.nelonxt() == null;
         }
 
         /**
-         * On the given leaf context, try to either rewrite to a disjunction if
-         * there are few terms, or build a DocIdSet containing matching docs.
+         * On thelon givelonn lelonaf contelonxt, try to elonithelonr relonwritelon to a disjunction if
+         * thelonrelon arelon felonw telonrms, or build a DocIdSelont containing matching docs.
          */
-        private WeightOrDocIdSet rewrite(LeafReaderContext context)
-            throws IOException {
-          final Terms terms = context.reader().terms(query.getField());
-          if (terms == null) {
-            // field does not exist
-            return new WeightOrDocIdSet((DocIdSet) null);
+        privatelon WelonightOrDocIdSelont relonwritelon(LelonafRelonadelonrContelonxt contelonxt)
+            throws IOelonxcelonption {
+          final Telonrms telonrms = contelonxt.relonadelonr().telonrms(quelonry.gelontFielonld());
+          if (telonrms == null) {
+            // fielonld doelons not elonxist
+            relonturn nelonw WelonightOrDocIdSelont((DocIdSelont) null);
           }
 
-          final TermsEnum termsEnum = query.getTermsEnum(terms);
-          assert termsEnum != null;
+          final Telonrmselonnum telonrmselonnum = quelonry.gelontTelonrmselonnum(telonrms);
+          asselonrt telonrmselonnum != null;
 
-          PostingsEnum docs = null;
+          Postingselonnum docs = null;
 
-          final List<TermAndState> collectedTerms = new ArrayList<>();
-          if (collectTerms(context, termsEnum, collectedTerms)) {
-            // build a boolean query
-            BooleanQuery.Builder bqBuilder = new BooleanQuery.Builder();
-            for (TermAndState t : collectedTerms) {
-              final TermStates termStates = new TermStates(searcher.getTopReaderContext());
-              termStates.register(t.state, context.ord, t.docFreq, t.totalTermFreq);
-              final Term term = new Term(query.getField(), t.term);
-              bqBuilder.add(
-                  new TermQueryWithToString(term, termStates, useOrderPreservingEncoding),
+          final List<TelonrmAndStatelon> collelonctelondTelonrms = nelonw ArrayList<>();
+          if (collelonctTelonrms(contelonxt, telonrmselonnum, collelonctelondTelonrms)) {
+            // build a boolelonan quelonry
+            BoolelonanQuelonry.Buildelonr bqBuildelonr = nelonw BoolelonanQuelonry.Buildelonr();
+            for (TelonrmAndStatelon t : collelonctelondTelonrms) {
+              final TelonrmStatelons telonrmStatelons = nelonw TelonrmStatelons(selonarchelonr.gelontTopRelonadelonrContelonxt());
+              telonrmStatelons.relongistelonr(t.statelon, contelonxt.ord, t.docFrelonq, t.totalTelonrmFrelonq);
+              final Telonrm telonrm = nelonw Telonrm(quelonry.gelontFielonld(), t.telonrm);
+              bqBuildelonr.add(
+                  nelonw TelonrmQuelonryWithToString(telonrm, telonrmStatelons, uselonOrdelonrPrelonselonrvingelonncoding),
                   Occur.SHOULD);
             }
-            Query q = BoostUtils.maybeWrapInBoostQuery(
-                new ConstantScoreQuery(bqBuilder.build()), score());
-            return new WeightOrDocIdSet(
-                searcher.rewrite(q).createWeight(searcher, scoreMode, boost));
+            Quelonry q = BoostUtils.maybelonWrapInBoostQuelonry(
+                nelonw ConstantScorelonQuelonry(bqBuildelonr.build()), scorelon());
+            relonturn nelonw WelonightOrDocIdSelont(
+                selonarchelonr.relonwritelon(q).crelonatelonWelonight(selonarchelonr, scorelonModelon, boost));
           }
 
-          // Too many terms: go back to the terms we already collected and start building
-          // the DocIdSet
-          DocIdSetBuilder builder = new DocIdSetBuilder(context.reader().maxDoc());
-          if (!collectedTerms.isEmpty()) {
-            TermsEnum termsEnum2 = terms.iterator();
-            for (TermAndState t : collectedTerms) {
-              termsEnum2.seekExact(t.term, t.state);
-              docs = termsEnum2.postings(docs, PostingsEnum.NONE);
-              builder.add(docs);
+          // Too many telonrms: go back to thelon telonrms welon alrelonady collelonctelond and start building
+          // thelon DocIdSelont
+          DocIdSelontBuildelonr buildelonr = nelonw DocIdSelontBuildelonr(contelonxt.relonadelonr().maxDoc());
+          if (!collelonctelondTelonrms.iselonmpty()) {
+            Telonrmselonnum telonrmselonnum2 = telonrms.itelonrator();
+            for (TelonrmAndStatelon t : collelonctelondTelonrms) {
+              telonrmselonnum2.selonelonkelonxact(t.telonrm, t.statelon);
+              docs = telonrmselonnum2.postings(docs, Postingselonnum.NONelon);
+              buildelonr.add(docs);
             }
           }
 
-          // Then keep filling the DocIdSet with remaining terms
+          // Thelonn kelonelonp filling thelon DocIdSelont with relonmaining telonrms
           do {
-            docs = termsEnum.postings(docs, PostingsEnum.NONE);
-            builder.add(docs);
-          } while (termsEnum.next() != null);
+            docs = telonrmselonnum.postings(docs, Postingselonnum.NONelon);
+            buildelonr.add(docs);
+          } whilelon (telonrmselonnum.nelonxt() != null);
 
-          return new WeightOrDocIdSet(builder.build());
+          relonturn nelonw WelonightOrDocIdSelont(buildelonr.build());
         }
 
-        private Scorer scorer(DocIdSet set) throws IOException {
-          if (set == null) {
-            return null;
+        privatelon Scorelonr scorelonr(DocIdSelont selont) throws IOelonxcelonption {
+          if (selont == null) {
+            relonturn null;
           }
-          final DocIdSetIterator disi = set.iterator();
+          final DocIdSelontItelonrator disi = selont.itelonrator();
           if (disi == null) {
-            return null;
+            relonturn null;
           }
-          return new ConstantScoreScorer(this, score(), ScoreMode.COMPLETE_NO_SCORES, disi);
+          relonturn nelonw ConstantScorelonScorelonr(this, scorelon(), ScorelonModelon.COMPLelonTelon_NO_SCORelonS, disi);
         }
 
-        @Override
-        public BulkScorer bulkScorer(LeafReaderContext context) throws IOException {
-          final WeightOrDocIdSet weightOrDocIdSet = rewrite(context);
-          if (weightOrDocIdSet.weight != null) {
-            return weightOrDocIdSet.weight.bulkScorer(context);
-          } else {
-            final Scorer scorer = scorer(weightOrDocIdSet.docIdSet);
-            if (scorer == null) {
-              return null;
+        @Ovelonrridelon
+        public BulkScorelonr bulkScorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+          final WelonightOrDocIdSelont welonightOrDocIdSelont = relonwritelon(contelonxt);
+          if (welonightOrDocIdSelont.welonight != null) {
+            relonturn welonightOrDocIdSelont.welonight.bulkScorelonr(contelonxt);
+          } elonlselon {
+            final Scorelonr scorelonr = scorelonr(welonightOrDocIdSelont.docIdSelont);
+            if (scorelonr == null) {
+              relonturn null;
             }
-            return new DefaultBulkScorer(scorer);
+            relonturn nelonw DelonfaultBulkScorelonr(scorelonr);
           }
         }
 
-        @Override
-        public Scorer scorer(LeafReaderContext context) throws IOException {
-          final WeightOrDocIdSet weightOrDocIdSet = rewrite(context);
-          if (weightOrDocIdSet.weight != null) {
-            return weightOrDocIdSet.weight.scorer(context);
-          } else {
-            return scorer(weightOrDocIdSet.docIdSet);
+        @Ovelonrridelon
+        public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+          final WelonightOrDocIdSelont welonightOrDocIdSelont = relonwritelon(contelonxt);
+          if (welonightOrDocIdSelont.welonight != null) {
+            relonturn welonightOrDocIdSelont.welonight.scorelonr(contelonxt);
+          } elonlselon {
+            relonturn scorelonr(welonightOrDocIdSelont.docIdSelont);
           }
         }
 
-        @Override
-        public void extractTerms(Set<Term> terms) {
-          terms.addAll(getIDs()
-              .stream()
-              .map(id -> new Term(getField(), LongTermAttributeImpl.copyIntoNewBytesRef(id)))
-              .collect(Collectors.toSet()));
+        @Ovelonrridelon
+        public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
+          telonrms.addAll(gelontIDs()
+              .strelonam()
+              .map(id -> nelonw Telonrm(gelontFielonld(), LongTelonrmAttributelonImpl.copyIntoNelonwBytelonsRelonf(id)))
+              .collelonct(Collelonctors.toSelont()));
         }
 
-        @Override
-        public boolean isCacheable(LeafReaderContext ctx) {
-          return false;
+        @Ovelonrridelon
+        public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+          relonturn falselon;
         }
       };
     }

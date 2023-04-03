@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf
 
-import com.twitter.product_mixer.core.model.marshalling.response.rtf.safety_level.SafetyLevel
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.rtf.safelonty_lelonvelonl.SafelontyLelonvelonl
 
-case class TweetHydrationContext(
-  safetyLevelOverride: Option[SafetyLevel],
-  outerTweetContext: Option[OuterTweetContext])
+caselon class TwelonelontHydrationContelonxt(
+  safelontyLelonvelonlOvelonrridelon: Option[SafelontyLelonvelonl],
+  outelonrTwelonelontContelonxt: Option[OutelonrTwelonelontContelonxt])

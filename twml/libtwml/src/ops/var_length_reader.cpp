@@ -1,46 +1,46 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("VarLengthReader")
+RelonGISTelonR_OP("VarLelonngthRelonadelonr")
 .Input("input1: int32")
 .Output("output: int32")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-    ::tensorflow::shape_inference::ShapeHandle input;
-    // check that input has only 1 dimension.
-    TF_RETURN_IF_ERROR(c->WithRank(c->input(0), 1, &input));
-    // there's no inference on output shape.
-    return Status::OK();
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+    ::telonnsorflow::shapelon_infelonrelonncelon::ShapelonHandlelon input;
+    // chelonck that input has only 1 dimelonnsion.
+    TF_RelonTURN_IF_elonRROR(c->WithRank(c->input(0), 1, &input));
+    // thelonrelon's no infelonrelonncelon on output shapelon.
+    relonturn Status::OK();
   });
 
 
-class VarLengthReaderOp : public OpKernel {
+class VarLelonngthRelonadelonrOp : public OpKelonrnelonl {
  public:
-  explicit VarLengthReaderOp(OpKernelConstruction* context) : OpKernel(context) {}
+  elonxplicit VarLelonngthRelonadelonrOp(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {}
 
-  void Compute(OpKernelContext* context) override {
-    // Grab the input tensor
-    const Tensor& input_tensor = context->input(0);
-    auto input = input_tensor.flat<int32>();
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    // Grab thelon input telonnsor
+    const Telonnsor& input_telonnsor = contelonxt->input(0);
+    auto input = input_telonnsor.flat<int32>();
 
-    // get the first element in the input tensor, use it as output shape.
-    int32 len = input(0);
-    TensorShape output_shape = {1, len};
+    // gelont thelon first elonlelonmelonnt in thelon input telonnsor, uselon it as output shapelon.
+    int32 lelonn = input(0);
+    TelonnsorShapelon output_shapelon = {1, lelonn};
 
-    // Create an output tensor, the size is determined by the content of input.
-    Tensor* output_tensor = nullptr;
-    OP_REQUIRES_OK(context, context->allocate_output(0, output_shape, &output_tensor));
+    // Crelonatelon an output telonnsor, thelon sizelon is delontelonrminelond by thelon contelonnt of input.
+    Telonnsor* output_telonnsor = nullptr;
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(0, output_shapelon, &output_telonnsor));
 
-    auto output_flat = output_tensor->flat<int32>();
+    auto output_flat = output_telonnsor->flat<int32>();
 
-    // Fill output with ones.
-    const int N = output_flat.size();
+    // Fill output with onelons.
+    const int N = output_flat.sizelon();
     for (int i = 0; i < N; i++) {
       output_flat(i) = 1;
     }
   }
 };
 
-REGISTER_KERNEL_BUILDER(Name("VarLengthReader").Device(DEVICE_CPU), VarLengthReaderOp);
+RelonGISTelonR_KelonRNelonL_BUILDelonR(Namelon("VarLelonngthRelonadelonr").Delonvicelon(DelonVICelon_CPU), VarLelonngthRelonadelonrOp);

@@ -1,39 +1,39 @@
-package com.twitter.home_mixer.candidate_pipeline
+packagelon com.twittelonr.homelon_mixelonr.candidatelon_pipelonlinelon
 
-import com.twitter.home_mixer.model.HomeFeatures._
-import com.twitter.product_mixer.component_library.candidate_source.tweetconvosvc.TweetWithConversationMetadata
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.transformer.CandidateFeatureTransformer
-import com.twitter.product_mixer.core.model.common.identifier.TransformerIdentifier
-import com.twitter.timelineservice.suggests.thriftscala.SuggestType
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons._
+import com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.twelonelontconvosvc.TwelonelontWithConvelonrsationMelontadata
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.transformelonr.CandidatelonFelonaturelonTransformelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.TransformelonrIdelonntifielonr
+import com.twittelonr.timelonlinelonselonrvicelon.suggelonsts.thriftscala.SuggelonstTypelon
 
-object ConversationServiceResponseFeatureTransformer
-    extends CandidateFeatureTransformer[TweetWithConversationMetadata] {
+objelonct ConvelonrsationSelonrvicelonRelonsponselonFelonaturelonTransformelonr
+    elonxtelonnds CandidatelonFelonaturelonTransformelonr[TwelonelontWithConvelonrsationMelontadata] {
 
-  override val identifier: TransformerIdentifier =
-    TransformerIdentifier("ConversationServiceResponse")
+  ovelonrridelon val idelonntifielonr: TransformelonrIdelonntifielonr =
+    TransformelonrIdelonntifielonr("ConvelonrsationSelonrvicelonRelonsponselon")
 
-  override val features: Set[Feature[_, _]] = Set(
-    AuthorIdFeature,
-    InReplyToTweetIdFeature,
-    IsRetweetFeature,
-    SourceTweetIdFeature,
-    SourceUserIdFeature,
-    ConversationModuleFocalTweetIdFeature,
-    AncestorsFeature,
-    SuggestTypeFeature
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = Selont(
+    AuthorIdFelonaturelon,
+    InRelonplyToTwelonelontIdFelonaturelon,
+    IsRelontwelonelontFelonaturelon,
+    SourcelonTwelonelontIdFelonaturelon,
+    SourcelonUselonrIdFelonaturelon,
+    ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon,
+    AncelonstorsFelonaturelon,
+    SuggelonstTypelonFelonaturelon
   )
 
-  override def transform(candidate: TweetWithConversationMetadata): FeatureMap = FeatureMapBuilder()
-    .add(AuthorIdFeature, candidate.userId)
-    .add(InReplyToTweetIdFeature, candidate.inReplyToTweetId)
-    .add(IsRetweetFeature, candidate.sourceTweetId.isDefined)
-    .add(SourceTweetIdFeature, candidate.sourceTweetId)
-    .add(SourceUserIdFeature, candidate.sourceUserId)
-    .add(ConversationModuleFocalTweetIdFeature, candidate.conversationId)
-    .add(AncestorsFeature, candidate.ancestors)
-    .add(SuggestTypeFeature, Some(SuggestType.RankedOrganicTweet))
+  ovelonrridelon delonf transform(candidatelon: TwelonelontWithConvelonrsationMelontadata): FelonaturelonMap = FelonaturelonMapBuildelonr()
+    .add(AuthorIdFelonaturelon, candidatelon.uselonrId)
+    .add(InRelonplyToTwelonelontIdFelonaturelon, candidatelon.inRelonplyToTwelonelontId)
+    .add(IsRelontwelonelontFelonaturelon, candidatelon.sourcelonTwelonelontId.isDelonfinelond)
+    .add(SourcelonTwelonelontIdFelonaturelon, candidatelon.sourcelonTwelonelontId)
+    .add(SourcelonUselonrIdFelonaturelon, candidatelon.sourcelonUselonrId)
+    .add(ConvelonrsationModulelonFocalTwelonelontIdFelonaturelon, candidatelon.convelonrsationId)
+    .add(AncelonstorsFelonaturelon, candidatelon.ancelonstors)
+    .add(SuggelonstTypelonFelonaturelon, Somelon(SuggelonstTypelon.RankelondOrganicTwelonelont))
     .build()
 }

@@ -1,6 +1,6 @@
-package com.twitter.product_mixer.core.model.marshalling.response.urt.contextual_ref
+packagelon com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.contelonxtual_relonf
 
-sealed trait OuterTweetContext
+selonalelond trait OutelonrTwelonelontContelonxt
 
-case class QuoteTweetId(id: Long) extends OuterTweetContext
-case class RetweetId(id: Long) extends OuterTweetContext
+caselon class QuotelonTwelonelontId(id: Long) elonxtelonnds OutelonrTwelonelontContelonxt
+caselon class RelontwelonelontId(id: Long) elonxtelonnds OutelonrTwelonelontContelonxt

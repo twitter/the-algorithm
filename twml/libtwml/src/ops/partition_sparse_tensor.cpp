@@ -1,125 +1,125 @@
-#include "tensorflow/core/framework/op.h"
-#include "tensorflow/core/framework/shape_inference.h"
-#include "tensorflow/core/framework/op_kernel.h"
+#includelon "telonnsorflow/corelon/framelonwork/op.h"
+#includelon "telonnsorflow/corelon/framelonwork/shapelon_infelonrelonncelon.h"
+#includelon "telonnsorflow/corelon/framelonwork/op_kelonrnelonl.h"
 
-#include <twml.h>
-#include "tensorflow_utils.h"
+#includelon <twml.h>
+#includelon "telonnsorflow_utils.h"
 
-using namespace tensorflow;
+using namelonspacelon telonnsorflow;
 
-REGISTER_OP("PartitionSparseTensorMod")
-.Attr("T: {float, double}")
-.Input("indices: int64")
-.Input("values: T")
-.Output("result: output_types")
+RelonGISTelonR_OP("PartitionSparselonTelonnsorMod")
+.Attr("T: {float, doublelon}")
+.Input("indicelons: int64")
+.Input("valuelons: T")
+.Output("relonsult: output_typelons")
 .Attr("num_partitions: int")
-.Attr("output_types: list({int64, float, double})")
-.SetShapeFn([](::tensorflow::shape_inference::InferenceContext* c) {
-  return Status::OK();
+.Attr("output_typelons: list({int64, float, doublelon})")
+.SelontShapelonFn([](::telonnsorflow::shapelon_infelonrelonncelon::InfelonrelonncelonContelonxt* c) {
+  relonturn Status::OK();
 }).Doc(R"doc(
 
-A tensorflow OP that partitions an input batch represented as a sparse tensor
-(indices are [ids, keys]) into separate sparse tensors to more optimally place
-sparse computations in distributed training.
+A telonnsorflow OP that partitions an input batch relonprelonselonntelond as a sparselon telonnsor
+(indicelons arelon [ids, kelonys]) into selonparatelon sparselon telonnsors to morelon optimally placelon
+sparselon computations in distributelond training.
 
 Inputs
-  indices: Indices from sparse tensor ([ids, keys] from the batch).
-  values: Batch values from the original features dict.
+  indicelons: Indicelons from sparselon telonnsor ([ids, kelonys] from thelon batch).
+  valuelons: Batch valuelons from thelon original felonaturelons dict.
 
 Attr
-  num_partitions: Number of partitions to generate.
-  output_types: A list of types for the output tensors like
+  num_partitions: Numbelonr of partitions to gelonnelonratelon.
+  output_typelons: A list of typelons for thelon output telonnsors likelon
                 [tf.int64, tf.float32, tf.int64, tf.float32, ...]
-                The length must be 2 * num_partitions (see Outputs below)
+                Thelon lelonngth must belon 2 * num_partitions (selonelon Outputs belonlow)
 
 Outputs
-  List of dense tensors containing for each partition:
-    - partitioned indices tensor ([ids, keys] from partitioned batch)
-    - partitioned values tensor
-  The list lenth is 2 * num_partitions. Example:
-  [ [ids_1, keys_1], values_1, [ids_2, keys_2], values_2, ... ]
+  List of delonnselon telonnsors containing for elonach partition:
+    - partitionelond indicelons telonnsor ([ids, kelonys] from partitionelond batch)
+    - partitionelond valuelons telonnsor
+  Thelon list lelonnth is 2 * num_partitions. elonxamplelon:
+  [ [ids_1, kelonys_1], valuelons_1, [ids_2, kelonys_2], valuelons_2, ... ]
 )doc");
 
-template<typename T>
-class PartitionSparseTensorMod : public OpKernel {
- private:
+telonmplatelon<typelonnamelon T>
+class PartitionSparselonTelonnsorMod : public OpKelonrnelonl {
+ privatelon:
   int64 num_partitions;
 
  public:
-  explicit PartitionSparseTensorMod(OpKernelConstruction* context) : OpKernel(context) {
-    OP_REQUIRES_OK(context, context->GetAttr("num_partitions", &num_partitions));
-    OP_REQUIRES(context, num_partitions > 0,
-                errors::InvalidArgument("Number of partitions must be positive"));
+  elonxplicit PartitionSparselonTelonnsorMod(OpKelonrnelonlConstruction* contelonxt) : OpKelonrnelonl(contelonxt) {
+    OP_RelonQUIRelonS_OK(contelonxt, contelonxt->GelontAttr("num_partitions", &num_partitions));
+    OP_RelonQUIRelonS(contelonxt, num_partitions > 0,
+                elonrrors::InvalidArgumelonnt("Numbelonr of partitions must belon positivelon"));
   }
 
-  void Compute(OpKernelContext* context) override {
-    // grab input tensors
-    const Tensor& indices_tensor = context->input(0);  // (ids, keys)
-    const Tensor& values_tensor = context->input(1);
+  void Computelon(OpKelonrnelonlContelonxt* contelonxt) ovelonrridelon {
+    // grab input telonnsors
+    const Telonnsor& indicelons_telonnsor = contelonxt->input(0);  // (ids, kelonys)
+    const Telonnsor& valuelons_telonnsor = contelonxt->input(1);
 
-    // check sizes
-    int64 num_keys = indices_tensor.shape().dim_size(0);
-    OP_REQUIRES(context, indices_tensor.dims() == 2,
-                errors::InvalidArgument("Indices tensor must be 2D [ids, keys]"));
-    OP_REQUIRES(context, indices_tensor.shape().dim_size(1) == 2,
-                errors::InvalidArgument("Indices tensor must have 2 cols [ids, keys]"));
-    OP_REQUIRES(context, values_tensor.shape().dim_size(0) == num_keys,
-                errors::InvalidArgument("Number of values must match number of keys"));
+    // chelonck sizelons
+    int64 num_kelonys = indicelons_telonnsor.shapelon().dim_sizelon(0);
+    OP_RelonQUIRelonS(contelonxt, indicelons_telonnsor.dims() == 2,
+                elonrrors::InvalidArgumelonnt("Indicelons telonnsor must belon 2D [ids, kelonys]"));
+    OP_RelonQUIRelonS(contelonxt, indicelons_telonnsor.shapelon().dim_sizelon(1) == 2,
+                elonrrors::InvalidArgumelonnt("Indicelons telonnsor must havelon 2 cols [ids, kelonys]"));
+    OP_RelonQUIRelonS(contelonxt, valuelons_telonnsor.shapelon().dim_sizelon(0) == num_kelonys,
+                elonrrors::InvalidArgumelonnt("Numbelonr of valuelons must match numbelonr of kelonys"));
 
-    // grab input vectors
-    auto indices = indices_tensor.flat<int64>();
-    auto values = values_tensor.flat<T>();
+    // grab input velonctors
+    auto indicelons = indicelons_telonnsor.flat<int64>();
+    auto valuelons = valuelons_telonnsor.flat<T>();
 
-    // count the number of features that fall in each partition
-    std::vector<int64> partition_counts(num_partitions);
+    // count thelon numbelonr of felonaturelons that fall in elonach partition
+    std::velonctor<int64> partition_counts(num_partitions);
 
-    for (int i = 0; i < num_keys; i++) {
-      int64 key = indices(2 * i + 1);
-      int64 partition_id = key % num_partitions;
+    for (int i = 0; i < num_kelonys; i++) {
+      int64 kelony = indicelons(2 * i + 1);
+      int64 partition_id = kelony % num_partitions;
       partition_counts[partition_id]++;
     }
 
-    // allocate outputs for each partition and keep references
-    std::vector<int64*> output_indices_partitions;
-    std::vector<T*> output_values_partitions;
-    output_indices_partitions.reserve(num_partitions);
-    output_values_partitions.reserve(num_partitions);
+    // allocatelon outputs for elonach partition and kelonelonp relonfelonrelonncelons
+    std::velonctor<int64*> output_indicelons_partitions;
+    std::velonctor<T*> output_valuelons_partitions;
+    output_indicelons_partitions.relonselonrvelon(num_partitions);
+    output_valuelons_partitions.relonselonrvelon(num_partitions);
 
     for (int i = 0; i < num_partitions; i++) {
-      Tensor *output_indices = nullptr, *output_values = nullptr;
-      TensorShape shape_indices = TensorShape({partition_counts[i], 2});
-      TensorShape shape_values = TensorShape({partition_counts[i]});
+      Telonnsor *output_indicelons = nullptr, *output_valuelons = nullptr;
+      TelonnsorShapelon shapelon_indicelons = TelonnsorShapelon({partition_counts[i], 2});
+      TelonnsorShapelon shapelon_valuelons = TelonnsorShapelon({partition_counts[i]});
 
-      OP_REQUIRES_OK(context, context->allocate_output(2 * i, shape_indices, &output_indices));
-      OP_REQUIRES_OK(context, context->allocate_output(2 * i + 1, shape_values, &output_values));
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(2 * i, shapelon_indicelons, &output_indicelons));
+      OP_RelonQUIRelonS_OK(contelonxt, contelonxt->allocatelon_output(2 * i + 1, shapelon_valuelons, &output_valuelons));
 
-      output_indices_partitions.push_back(output_indices->flat<int64>().data());
-      output_values_partitions.push_back(output_values->flat<T>().data());
+      output_indicelons_partitions.push_back(output_indicelons->flat<int64>().data());
+      output_valuelons_partitions.push_back(output_valuelons->flat<T>().data());
     }
 
-    // assign a partition id to each feature
-    // populate tensors for each partition
-    std::vector<int64> partition_indices(num_partitions);
+    // assign a partition id to elonach felonaturelon
+    // populatelon telonnsors for elonach partition
+    std::velonctor<int64> partition_indicelons(num_partitions);
 
-    for (int i = 0; i < num_keys; i++) {
-      int64 key = indices(2 * i + 1);
-      int64 pid = key % num_partitions;  // partition id
-      int64 idx = partition_indices[pid]++;
+    for (int i = 0; i < num_kelonys; i++) {
+      int64 kelony = indicelons(2 * i + 1);
+      int64 pid = kelony % num_partitions;  // partition id
+      int64 idx = partition_indicelons[pid]++;
 
-      output_indices_partitions[pid][2 * idx] = indices(2 * i);
-      output_indices_partitions[pid][2 * idx + 1] = key / num_partitions;
-      output_values_partitions[pid][idx] = values(i);
+      output_indicelons_partitions[pid][2 * idx] = indicelons(2 * i);
+      output_indicelons_partitions[pid][2 * idx + 1] = kelony / num_partitions;
+      output_valuelons_partitions[pid][idx] = valuelons(i);
     }
   }
 };
 
-#define REGISTER(Type)                \
+#delonfinelon RelonGISTelonR(Typelon)                \
                                       \
-  REGISTER_KERNEL_BUILDER(            \
-    Name("PartitionSparseTensorMod")  \
-    .Device(DEVICE_CPU)               \
-    .TypeConstraint<Type>("T"),       \
-    PartitionSparseTensorMod<Type>);  \
+  RelonGISTelonR_KelonRNelonL_BUILDelonR(            \
+    Namelon("PartitionSparselonTelonnsorMod")  \
+    .Delonvicelon(DelonVICelon_CPU)               \
+    .TypelonConstraint<Typelon>("T"),       \
+    PartitionSparselonTelonnsorMod<Typelon>);  \
 
-REGISTER(float);
-REGISTER(double);
+RelonGISTelonR(float);
+RelonGISTelonR(doublelon);

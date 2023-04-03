@@ -1,41 +1,41 @@
-package com.twitter.search.earlybird.factory;
+packagelon com.twittelonr.selonarch.elonarlybird.factory;
 
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apachelon.kafka.clielonnts.consumelonr.KafkaConsumelonr;
 
-import com.twitter.search.common.indexing.thriftjava.ThriftVersionedEvents;
-import com.twitter.search.common.util.io.kafka.CompactThriftDeserializer;
-import com.twitter.search.common.util.io.kafka.FinagleKafkaClientUtils;
+import com.twittelonr.selonarch.common.indelonxing.thriftjava.ThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.common.util.io.kafka.CompactThriftDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.kafka.FinaglelonKafkaClielonntUtils;
 
 /**
- * Responsible for creating kafka consumers.
+ * Relonsponsiblelon for crelonating kafka consumelonrs.
  */
-public class ProductionEarlybirdKafkaConsumersFactory implements EarlybirdKafkaConsumersFactory {
-  private final String kafkaPath;
-  private final int defaultMaxPollRecords;
+public class ProductionelonarlybirdKafkaConsumelonrsFactory implelonmelonnts elonarlybirdKafkaConsumelonrsFactory {
+  privatelon final String kafkaPath;
+  privatelon final int delonfaultMaxPollReloncords;
 
-  ProductionEarlybirdKafkaConsumersFactory(String kafkaPath, int defaultMaxPollRecords) {
+  ProductionelonarlybirdKafkaConsumelonrsFactory(String kafkaPath, int delonfaultMaxPollReloncords) {
     this.kafkaPath = kafkaPath;
-    this.defaultMaxPollRecords = defaultMaxPollRecords;
+    this.delonfaultMaxPollReloncords = delonfaultMaxPollReloncords;
   }
 
   /**
-   * Create a kafka consumer with set maximum of records to be polled.
+   * Crelonatelon a kafka consumelonr with selont maximum of reloncords to belon pollelond.
    */
-  @Override
-  public KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(
-      String clientID, int maxPollRecords) {
-    return FinagleKafkaClientUtils.newKafkaConsumerForAssigning(
+  @Ovelonrridelon
+  public KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> crelonatelonKafkaConsumelonr(
+      String clielonntID, int maxPollReloncords) {
+    relonturn FinaglelonKafkaClielonntUtils.nelonwKafkaConsumelonrForAssigning(
         kafkaPath,
-        new CompactThriftDeserializer<>(ThriftVersionedEvents.class),
-        clientID,
-        maxPollRecords);
+        nelonw CompactThriftDelonselonrializelonr<>(ThriftVelonrsionelondelonvelonnts.class),
+        clielonntID,
+        maxPollReloncords);
   }
 
   /**
-   * Create a kafka consumer with default records to be polled.
+   * Crelonatelon a kafka consumelonr with delonfault reloncords to belon pollelond.
    */
-  @Override
-  public KafkaConsumer<Long, ThriftVersionedEvents> createKafkaConsumer(String clientID) {
-    return createKafkaConsumer(clientID, defaultMaxPollRecords);
+  @Ovelonrridelon
+  public KafkaConsumelonr<Long, ThriftVelonrsionelondelonvelonnts> crelonatelonKafkaConsumelonr(String clielonntID) {
+    relonturn crelonatelonKafkaConsumelonr(clielonntID, delonfaultMaxPollReloncords);
   }
 }

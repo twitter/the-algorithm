@@ -1,40 +1,40 @@
-package com.twitter.follow_recommendations.common.candidate_sources.two_hop_random_walk
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.two_hop_random_walk
 
-import com.twitter.follow_recommendations.common.candidate_sources.base.StratoFetcherWithUnitViewSource
-import com.twitter.follow_recommendations.common.constants.GuiceNamedConstants
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.hermit.model.Algorithm
-import com.twitter.product_mixer.core.model.common.identifier.CandidateSourceIdentifier
-import com.twitter.strato.client.Fetcher
-import com.twitter.wtf.candidate.thriftscala.{CandidateSeq => TCandidateSeq}
-import javax.inject.Inject
-import javax.inject.Named
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.baselon.StratoFelontchelonrWithUnitVielonwSourcelon
+import com.twittelonr.follow_reloncommelonndations.common.constants.GuicelonNamelondConstants
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.helonrmit.modelonl.Algorithm
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.CandidatelonSourcelonIdelonntifielonr
+import com.twittelonr.strato.clielonnt.Felontchelonr
+import com.twittelonr.wtf.candidatelon.thriftscala.{CandidatelonSelonq => TCandidatelonSelonq}
+import javax.injelonct.Injelonct
+import javax.injelonct.Namelond
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TwoHopRandomWalkSource @Inject() (
-  @Named(GuiceNamedConstants.TWO_HOP_RANDOM_WALK_FETCHER) fetcher: Fetcher[
+@Singlelonton
+class TwoHopRandomWalkSourcelon @Injelonct() (
+  @Namelond(GuicelonNamelondConstants.TWO_HOP_RANDOM_WALK_FelonTCHelonR) felontchelonr: Felontchelonr[
     Long,
     Unit,
-    TCandidateSeq
-  ]) extends StratoFetcherWithUnitViewSource[Long, TCandidateSeq](
-      fetcher,
-      TwoHopRandomWalkSource.Identifier) {
+    TCandidatelonSelonq
+  ]) elonxtelonnds StratoFelontchelonrWithUnitVielonwSourcelon[Long, TCandidatelonSelonq](
+      felontchelonr,
+      TwoHopRandomWalkSourcelon.Idelonntifielonr) {
 
-  override def map(targetUserId: Long, tCandidateSeq: TCandidateSeq): Seq[CandidateUser] =
-    TwoHopRandomWalkSource.map(targetUserId, tCandidateSeq)
+  ovelonrridelon delonf map(targelontUselonrId: Long, tCandidatelonSelonq: TCandidatelonSelonq): Selonq[CandidatelonUselonr] =
+    TwoHopRandomWalkSourcelon.map(targelontUselonrId, tCandidatelonSelonq)
 
 }
 
-object TwoHopRandomWalkSource {
-  def map(targetUserId: Long, tCandidateSeq: TCandidateSeq): Seq[CandidateUser] = {
-    tCandidateSeq.candidates
-      .sortBy(-_.score)
-      .map { tCandidate =>
-        CandidateUser(id = tCandidate.userId, score = Some(tCandidate.score))
+objelonct TwoHopRandomWalkSourcelon {
+  delonf map(targelontUselonrId: Long, tCandidatelonSelonq: TCandidatelonSelonq): Selonq[CandidatelonUselonr] = {
+    tCandidatelonSelonq.candidatelons
+      .sortBy(-_.scorelon)
+      .map { tCandidatelon =>
+        CandidatelonUselonr(id = tCandidatelon.uselonrId, scorelon = Somelon(tCandidatelon.scorelon))
       }
   }
 
-  val Identifier: CandidateSourceIdentifier =
-    CandidateSourceIdentifier(Algorithm.TwoHopRandomWalk.toString)
+  val Idelonntifielonr: CandidatelonSourcelonIdelonntifielonr =
+    CandidatelonSourcelonIdelonntifielonr(Algorithm.TwoHopRandomWalk.toString)
 }

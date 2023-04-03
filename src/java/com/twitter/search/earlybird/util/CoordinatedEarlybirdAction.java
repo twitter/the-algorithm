@@ -1,409 +1,409 @@
-package com.twitter.search.earlybird.util;
+packagelon com.twittelonr.selonarch.elonarlybird.util;
 
 import java.util.Optional;
 import java.util.Random;
-import java.util.concurrent.atomic.AtomicBoolean;
-import javax.annotation.Nullable;
+import java.util.concurrelonnt.atomic.AtomicBoolelonan;
+import javax.annotation.Nullablelon;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Stopwatch;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
+import com.googlelon.common.baselon.Stopwatch;
 
-import org.apache.zookeeper.KeeperException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.zookelonelonpelonr.Kelonelonpelonrelonxcelonption;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.common.base.ExceptionalFunction;
-import com.twitter.common.quantity.Amount;
-import com.twitter.common.quantity.Time;
-import com.twitter.common.zookeeper.ServerSet;
-import com.twitter.common.zookeeper.ZooKeeperClient;
-import com.twitter.search.common.config.Config;
-import com.twitter.search.common.database.DatabaseConfig;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchCustomGauge;
-import com.twitter.search.common.util.zktrylock.TryLock;
-import com.twitter.search.common.util.zktrylock.ZooKeeperTryLockFactory;
-import com.twitter.search.earlybird.ServerSetMember;
-import com.twitter.search.earlybird.common.config.EarlybirdConfig;
-import com.twitter.search.earlybird.common.config.EarlybirdProperty;
-import com.twitter.search.earlybird.exception.AlreadyInServerSetUpdateException;
-import com.twitter.search.earlybird.exception.EarlybirdException;
-import com.twitter.search.earlybird.exception.CriticalExceptionHandler;
-import com.twitter.search.earlybird.exception.NotInServerSetUpdateException;
-import com.twitter.search.earlybird.partition.DynamicPartitionConfig;
-import com.twitter.search.earlybird.partition.PartitionConfig;
-import com.twitter.search.earlybird.partition.SegmentSyncConfig;
+import com.twittelonr.common.baselon.elonxcelonptionalFunction;
+import com.twittelonr.common.quantity.Amount;
+import com.twittelonr.common.quantity.Timelon;
+import com.twittelonr.common.zookelonelonpelonr.SelonrvelonrSelont;
+import com.twittelonr.common.zookelonelonpelonr.ZooKelonelonpelonrClielonnt;
+import com.twittelonr.selonarch.common.config.Config;
+import com.twittelonr.selonarch.common.databaselon.DatabaselonConfig;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCustomGaugelon;
+import com.twittelonr.selonarch.common.util.zktrylock.TryLock;
+import com.twittelonr.selonarch.common.util.zktrylock.ZooKelonelonpelonrTryLockFactory;
+import com.twittelonr.selonarch.elonarlybird.SelonrvelonrSelontMelonmbelonr;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdConfig;
+import com.twittelonr.selonarch.elonarlybird.common.config.elonarlybirdPropelonrty;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.AlrelonadyInSelonrvelonrSelontUpdatelonelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.elonarlybirdelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.CriticalelonxcelonptionHandlelonr;
+import com.twittelonr.selonarch.elonarlybird.elonxcelonption.NotInSelonrvelonrSelontUpdatelonelonxcelonption;
+import com.twittelonr.selonarch.elonarlybird.partition.DynamicPartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.PartitionConfig;
+import com.twittelonr.selonarch.elonarlybird.partition.SelongmelonntSyncConfig;
 
 /**
- * Utility class for executing tasks on Earlybirds that need to be coordinated across replicas
- * on the same hash partition.
- * Can be used for things like coordinating optimization on the same timeslice.
- * When enabled, a try-lock will be taken out in zookeeper while the task is performed.
- * The action will attempt to leave the partition's server set. If the attempt fails, the action
- * is aborted.
+ * Utility class for elonxeloncuting tasks on elonarlybirds that nelonelond to belon coordinatelond across relonplicas
+ * on thelon samelon hash partition.
+ * Can belon uselond for things likelon coordinating optimization on thelon samelon timelonslicelon.
+ * Whelonn elonnablelond, a try-lock will belon takelonn out in zookelonelonpelonr whilelon thelon task is pelonrformelond.
+ * Thelon action will attelonmpt to lelonavelon thelon partition's selonrvelonr selont. If thelon attelonmpt fails, thelon action
+ * is abortelond.
  */
-public class CoordinatedEarlybirdAction implements CoordinatedEarlybirdActionInterface {
-  private static final Logger LOG = LoggerFactory.getLogger(CoordinatedEarlybirdAction.class);
+public class CoordinatelondelonarlybirdAction implelonmelonnts CoordinatelondelonarlybirdActionIntelonrfacelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(CoordinatelondelonarlybirdAction.class);
 
-  private static final Boolean COORDINATED_ACTION_FLAG = Boolean.TRUE;
-  private static final Boolean NOT_COORDINATED_ACTION_FLAG = Boolean.FALSE;
+  privatelon static final Boolelonan COORDINATelonD_ACTION_FLAG = Boolelonan.TRUelon;
+  privatelon static final Boolelonan NOT_COORDINATelonD_ACTION_FLAG = Boolelonan.FALSelon;
 
-  private final String actionName;
-  private final DynamicPartitionConfig dynamicPartitionConfig;
-  @Nullable private final ServerSetMember serverSetMember;
-  private final ZooKeeperTryLockFactory zooKeeperTryLockFactory;
+  privatelon final String actionNamelon;
+  privatelon final DynamicPartitionConfig dynamicPartitionConfig;
+  @Nullablelon privatelon final SelonrvelonrSelontMelonmbelonr selonrvelonrSelontMelonmbelonr;
+  privatelon final ZooKelonelonpelonrTryLockFactory zooKelonelonpelonrTryLockFactory;
 
-  // Whether this action should be coordinated through zookeeper in the first place (could be
-  // config'ed off).
-  // If the action is coordinated, this earlybird will leave its server set when performing the
-  // coordinated action.
-  private final AtomicBoolean shouldSynchronize;
-  // Whether this action should ensure that there are enough replicas in the serverset (defined by
-  // maxAllowedReplicasNotInServerSet) before leaving the serverset.
-  private final boolean checkNumReplicasInServerSet;
-  // If this many (or more) servers have left the partition, we cannot perform a coordinated action
-  private final int maxAllowedReplicasNotInServerSet;
-  // How long to lock out all other replicas in this hash partition for.
-  // Should be some small multiple of how long the action is expected to take, to allow for longer
-  // running cases.
-  private final long zkLockExpirationTimeMinutes;
-  // Prefix for the zookeeper lock used when coordinating daily updates.
-  // Full name should include the hash partition number.
-  private final String zkLockNamePrefix;
-  // If we're unable to re-join this earlybird's server set during coordinated updates,
-  // how many times to retry.
-  private final int joinServerSetRetries;
-  // How long to sleep between retries if unable to job back into server set.
-  private final int joinServerSetRetrySleepMillis;
-  // How long to sleep between leaving the serverset and executing the action
-  private final int sleepAfterLeaveServerSetMillis;
+  // Whelonthelonr this action should belon coordinatelond through zookelonelonpelonr in thelon first placelon (could belon
+  // config'elond off).
+  // If thelon action is coordinatelond, this elonarlybird will lelonavelon its selonrvelonr selont whelonn pelonrforming thelon
+  // coordinatelond action.
+  privatelon final AtomicBoolelonan shouldSynchronizelon;
+  // Whelonthelonr this action should elonnsurelon that thelonrelon arelon elonnough relonplicas in thelon selonrvelonrselont (delonfinelond by
+  // maxAllowelondRelonplicasNotInSelonrvelonrSelont) belonforelon lelonaving thelon selonrvelonrselont.
+  privatelon final boolelonan chelonckNumRelonplicasInSelonrvelonrSelont;
+  // If this many (or morelon) selonrvelonrs havelon lelonft thelon partition, welon cannot pelonrform a coordinatelond action
+  privatelon final int maxAllowelondRelonplicasNotInSelonrvelonrSelont;
+  // How long to lock out all othelonr relonplicas in this hash partition for.
+  // Should belon somelon small multiplelon of how long thelon action is elonxpelonctelond to takelon, to allow for longelonr
+  // running caselons.
+  privatelon final long zkLockelonxpirationTimelonMinutelons;
+  // Prelonfix for thelon zookelonelonpelonr lock uselond whelonn coordinating daily updatelons.
+  // Full namelon should includelon thelon hash partition numbelonr.
+  privatelon final String zkLockNamelonPrelonfix;
+  // If welon'relon unablelon to relon-join this elonarlybird's selonrvelonr selont during coordinatelond updatelons,
+  // how many timelons to relontry.
+  privatelon final int joinSelonrvelonrSelontRelontrielons;
+  // How long to slelonelonp belontwelonelonn relontrielons if unablelon to job back into selonrvelonr selont.
+  privatelon final int joinSelonrvelonrSelontRelontrySlelonelonpMillis;
+  // How long to slelonelonp belontwelonelonn lelonaving thelon selonrvelonrselont and elonxeloncuting thelon action
+  privatelon final int slelonelonpAftelonrLelonavelonSelonrvelonrSelontMillis;
 
-  // How many times a this action was called within a lock block.
-  private final SearchCounter numCoordinatedFunctionCalls;
-  private final SearchCounter numCoordinatedLeaveServersetCalls;
+  // How many timelons a this action was callelond within a lock block.
+  privatelon final SelonarchCountelonr numCoordinatelondFunctionCalls;
+  privatelon final SelonarchCountelonr numCoordinatelondLelonavelonSelonrvelonrselontCalls;
 
-  private final CriticalExceptionHandler criticalExceptionHandler;
-  private final SegmentSyncConfig segmentSyncConfig;
+  privatelon final CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr;
+  privatelon final SelongmelonntSyncConfig selongmelonntSyncConfig;
 
   /**
-   * Create a CoordinatedEarlybirdAction.
+   * Crelonatelon a CoordinatelondelonarlybirdAction.
    *
-   * @param actionName the name to be used for logging and the prefix for config options.
-   * @param dynamicPartitionConfig maintains the current partitioning configuration for this
-   * earlybird. Used mainly to determine the hash partition of this earlybird.
-   * @param serverSetMember the server that this action is running on. To be used to leaving and
-   * rejoining the server's server set.
+   * @param actionNamelon thelon namelon to belon uselond for logging and thelon prelonfix for config options.
+   * @param dynamicPartitionConfig maintains thelon currelonnt partitioning configuration for this
+   * elonarlybird. Uselond mainly to delontelonrminelon thelon hash partition of this elonarlybird.
+   * @param selonrvelonrSelontMelonmbelonr thelon selonrvelonr that this action is running on. To belon uselond to lelonaving and
+   * relonjoining thelon selonrvelonr's selonrvelonr selont.
    */
-  public CoordinatedEarlybirdAction(
-      ZooKeeperTryLockFactory zooKeeperTryLockFactory,
-      String actionName,
+  public CoordinatelondelonarlybirdAction(
+      ZooKelonelonpelonrTryLockFactory zooKelonelonpelonrTryLockFactory,
+      String actionNamelon,
       DynamicPartitionConfig dynamicPartitionConfig,
-      @Nullable ServerSetMember serverSetMember,
-      CriticalExceptionHandler criticalExceptionHandler,
-      SegmentSyncConfig segmentSyncConfig) {
-    this.actionName = actionName;
+      @Nullablelon SelonrvelonrSelontMelonmbelonr selonrvelonrSelontMelonmbelonr,
+      CriticalelonxcelonptionHandlelonr criticalelonxcelonptionHandlelonr,
+      SelongmelonntSyncConfig selongmelonntSyncConfig) {
+    this.actionNamelon = actionNamelon;
     this.dynamicPartitionConfig = dynamicPartitionConfig;
-    this.serverSetMember = serverSetMember;
-    this.criticalExceptionHandler = criticalExceptionHandler;
-    this.segmentSyncConfig = segmentSyncConfig;
-    this.zooKeeperTryLockFactory = zooKeeperTryLockFactory;
-    if (serverSetMember == null) {
-      Preconditions.checkState(Config.environmentIsTest(),
-          "Should only have a null server in tests");
+    this.selonrvelonrSelontMelonmbelonr = selonrvelonrSelontMelonmbelonr;
+    this.criticalelonxcelonptionHandlelonr = criticalelonxcelonptionHandlelonr;
+    this.selongmelonntSyncConfig = selongmelonntSyncConfig;
+    this.zooKelonelonpelonrTryLockFactory = zooKelonelonpelonrTryLockFactory;
+    if (selonrvelonrSelontMelonmbelonr == null) {
+      Prelonconditions.chelonckStatelon(Config.elonnvironmelonntIsTelonst(),
+          "Should only havelon a null selonrvelonr in telonsts");
     }
 
-    this.shouldSynchronize = new AtomicBoolean(
-            EarlybirdConfig.getBool(actionName + "_should_synchronize", false));
+    this.shouldSynchronizelon = nelonw AtomicBoolelonan(
+            elonarlybirdConfig.gelontBool(actionNamelon + "_should_synchronizelon", falselon));
 
-    // Export whether or not synchronization is enabled as a stat
-    SearchCustomGauge.export(
-        actionName + "_should_synchronize", () -> shouldSynchronize.get() ? 1 : 0);
+    // elonxport whelonthelonr or not synchronization is elonnablelond as a stat
+    SelonarchCustomGaugelon.elonxport(
+        actionNamelon + "_should_synchronizelon", () -> shouldSynchronizelon.gelont() ? 1 : 0);
 
-    this.checkNumReplicasInServerSet = EarlybirdProperty.CHECK_NUM_REPLICAS_IN_SERVER_SET.get();
+    this.chelonckNumRelonplicasInSelonrvelonrSelont = elonarlybirdPropelonrty.CHelonCK_NUM_RelonPLICAS_IN_SelonRVelonR_SelonT.gelont();
 
-    int numReplicas =
-        dynamicPartitionConfig.getCurrentPartitionConfig().getNumReplicasInHashPartition();
-    this.maxAllowedReplicasNotInServerSet =
-        EarlybirdProperty.MAX_ALLOWED_REPLICAS_NOT_IN_SERVER_SET.get(numReplicas);
+    int numRelonplicas =
+        dynamicPartitionConfig.gelontCurrelonntPartitionConfig().gelontNumRelonplicasInHashPartition();
+    this.maxAllowelondRelonplicasNotInSelonrvelonrSelont =
+        elonarlybirdPropelonrty.MAX_ALLOWelonD_RelonPLICAS_NOT_IN_SelonRVelonR_SelonT.gelont(numRelonplicas);
 
-    this.zkLockExpirationTimeMinutes =
-        EarlybirdConfig.getLong(actionName + "_lock_expiration_time_minutes", 60L);
-    this.zkLockNamePrefix = actionName + "_for_hash_partition_";
-    this.joinServerSetRetries =
-        EarlybirdConfig.getInt(actionName + "_join_server_set_retries", 20);
-    this.joinServerSetRetrySleepMillis =
-        EarlybirdConfig.getInt(actionName + "_join_server_retry_sleep_millis", 2000);
-    this.sleepAfterLeaveServerSetMillis =
-        EarlybirdConfig.getInt("coordinated_action_sleep_after_leave_server_set_millis", 30000);
+    this.zkLockelonxpirationTimelonMinutelons =
+        elonarlybirdConfig.gelontLong(actionNamelon + "_lock_elonxpiration_timelon_minutelons", 60L);
+    this.zkLockNamelonPrelonfix = actionNamelon + "_for_hash_partition_";
+    this.joinSelonrvelonrSelontRelontrielons =
+        elonarlybirdConfig.gelontInt(actionNamelon + "_join_selonrvelonr_selont_relontrielons", 20);
+    this.joinSelonrvelonrSelontRelontrySlelonelonpMillis =
+        elonarlybirdConfig.gelontInt(actionNamelon + "_join_selonrvelonr_relontry_slelonelonp_millis", 2000);
+    this.slelonelonpAftelonrLelonavelonSelonrvelonrSelontMillis =
+        elonarlybirdConfig.gelontInt("coordinatelond_action_slelonelonp_aftelonr_lelonavelon_selonrvelonr_selont_millis", 30000);
 
-    this.numCoordinatedFunctionCalls = SearchCounter.export(actionName + "_num_coordinated_calls");
-    this.numCoordinatedLeaveServersetCalls =
-        SearchCounter.export(actionName + "_num_coordinated_leave_serverset_calls");
+    this.numCoordinatelondFunctionCalls = SelonarchCountelonr.elonxport(actionNamelon + "_num_coordinatelond_calls");
+    this.numCoordinatelondLelonavelonSelonrvelonrselontCalls =
+        SelonarchCountelonr.elonxport(actionNamelon + "_num_coordinatelond_lelonavelon_selonrvelonrselont_calls");
 
-    if (this.checkNumReplicasInServerSet) {
+    if (this.chelonckNumRelonplicasInSelonrvelonrSelont) {
       LOG.info(
-          "Coordinate action config ({}): allowedNotIn: {}, current number of replicas: {}, "
-              + "synchronization enabled: {}, checkNumReplicasInServerSet enabled: {}",
-          actionName,
-          maxAllowedReplicasNotInServerSet,
-          dynamicPartitionConfig.getCurrentPartitionConfig().getNumReplicasInHashPartition(),
-          shouldSynchronize,
-          this.checkNumReplicasInServerSet);
-    } else {
+          "Coordinatelon action config ({}): allowelondNotIn: {}, currelonnt numbelonr of relonplicas: {}, "
+              + "synchronization elonnablelond: {}, chelonckNumRelonplicasInSelonrvelonrSelont elonnablelond: {}",
+          actionNamelon,
+          maxAllowelondRelonplicasNotInSelonrvelonrSelont,
+          dynamicPartitionConfig.gelontCurrelonntPartitionConfig().gelontNumRelonplicasInHashPartition(),
+          shouldSynchronizelon,
+          this.chelonckNumRelonplicasInSelonrvelonrSelont);
+    } elonlselon {
       LOG.info(
-          "Coordinate action config ({}): synchronization enabled: {}, "
-              + "checkNumReplicasInServerSet enabled: {}",
-          actionName,
-          shouldSynchronize,
-          this.checkNumReplicasInServerSet);
+          "Coordinatelon action config ({}): synchronization elonnablelond: {}, "
+              + "chelonckNumRelonplicasInSelonrvelonrSelont elonnablelond: {}",
+          actionNamelon,
+          shouldSynchronizelon,
+          this.chelonckNumRelonplicasInSelonrvelonrSelont);
     }
   }
 
 
-  @Override
-  public <E extends Exception> boolean execute(
-      String description,
-      ExceptionalFunction<Boolean, Boolean, E> function)
-          throws E, CoordinatedEarlybirdActionLockFailed {
-    if (this.shouldSynchronize.get()) {
-      return executeWithCoordination(description, function);
-    } else {
-      return function.apply(NOT_COORDINATED_ACTION_FLAG);
+  @Ovelonrridelon
+  public <elon elonxtelonnds elonxcelonption> boolelonan elonxeloncutelon(
+      String delonscription,
+      elonxcelonptionalFunction<Boolelonan, Boolelonan, elon> function)
+          throws elon, CoordinatelondelonarlybirdActionLockFailelond {
+    if (this.shouldSynchronizelon.gelont()) {
+      relonturn elonxeloncutelonWithCoordination(delonscription, function);
+    } elonlselon {
+      relonturn function.apply(NOT_COORDINATelonD_ACTION_FLAG);
     }
   }
 
-  enum LeaveServerSetResult {
-    SUCCESS,
-    FAILURE,
-    NOT_IN_SERVER_SET,
-    NO_SERVER_SET_MEMBER
+  elonnum LelonavelonSelonrvelonrSelontRelonsult {
+    SUCCelonSS,
+    FAILURelon,
+    NOT_IN_SelonRVelonR_SelonT,
+    NO_SelonRVelonR_SelonT_MelonMBelonR
   }
 
-  private LeaveServerSetResult leaveServerSet() {
-    LOG.info("Leaving serving server set for " + actionName);
+  privatelon LelonavelonSelonrvelonrSelontRelonsult lelonavelonSelonrvelonrSelont() {
+    LOG.info("Lelonaving selonrving selonrvelonr selont for " + actionNamelon);
     try {
-      serverSetMember.leaveServerSet("CoordinatedAction: " + actionName);
-      return LeaveServerSetResult.SUCCESS;
-    } catch (ServerSet.UpdateException ex) {
-      if (ex instanceof NotInServerSetUpdateException) {
-        LOG.info("No need to leave; already out of server set during: "
-            + actionName, ex);
-        return LeaveServerSetResult.NOT_IN_SERVER_SET;
-      } else {
-        LOG.warn("Unable to leave server set during: " + actionName, ex);
-        return LeaveServerSetResult.FAILURE;
+      selonrvelonrSelontMelonmbelonr.lelonavelonSelonrvelonrSelont("CoordinatelondAction: " + actionNamelon);
+      relonturn LelonavelonSelonrvelonrSelontRelonsult.SUCCelonSS;
+    } catch (SelonrvelonrSelont.Updatelonelonxcelonption elonx) {
+      if (elonx instancelonof NotInSelonrvelonrSelontUpdatelonelonxcelonption) {
+        LOG.info("No nelonelond to lelonavelon; alrelonady out of selonrvelonr selont during: "
+            + actionNamelon, elonx);
+        relonturn LelonavelonSelonrvelonrSelontRelonsult.NOT_IN_SelonRVelonR_SelonT;
+      } elonlselon {
+        LOG.warn("Unablelon to lelonavelon selonrvelonr selont during: " + actionNamelon, elonx);
+        relonturn LelonavelonSelonrvelonrSelontRelonsult.FAILURelon;
       }
     }
   }
 
-  private LeaveServerSetResult maybeLeaveServerSet() {
-    if (serverSetMember != null) {
-      if (serverSetMember.isInServerSet()) {
+  privatelon LelonavelonSelonrvelonrSelontRelonsult maybelonLelonavelonSelonrvelonrSelont() {
+    if (selonrvelonrSelontMelonmbelonr != null) {
+      if (selonrvelonrSelontMelonmbelonr.isInSelonrvelonrSelont()) {
 
-        if (!checkNumReplicasInServerSet) {
-          return leaveServerSet();
-        } else {
-          PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-          final int minNumServers =
-              curPartitionConfig.getNumReplicasInHashPartition() - maxAllowedReplicasNotInServerSet;
-          Optional<Integer> numServerSetMembers = getNumberOfServerSetMembers();
-          LOG.info("Checking number of replicas before leaving server set for " + actionName
-              + ". Number of members is: " + numServerSetMembers + " minMembers: " + minNumServers);
-          if (numServerSetMembers.isPresent() && numServerSetMembers.get() > minNumServers) {
-            return leaveServerSet();
-          } else {
-            LOG.warn("Not leaving server set during: " + actionName);
-            return LeaveServerSetResult.FAILURE;
+        if (!chelonckNumRelonplicasInSelonrvelonrSelont) {
+          relonturn lelonavelonSelonrvelonrSelont();
+        } elonlselon {
+          PartitionConfig curPartitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
+          final int minNumSelonrvelonrs =
+              curPartitionConfig.gelontNumRelonplicasInHashPartition() - maxAllowelondRelonplicasNotInSelonrvelonrSelont;
+          Optional<Intelongelonr> numSelonrvelonrSelontMelonmbelonrs = gelontNumbelonrOfSelonrvelonrSelontMelonmbelonrs();
+          LOG.info("Cheloncking numbelonr of relonplicas belonforelon lelonaving selonrvelonr selont for " + actionNamelon
+              + ". Numbelonr of melonmbelonrs is: " + numSelonrvelonrSelontMelonmbelonrs + " minMelonmbelonrs: " + minNumSelonrvelonrs);
+          if (numSelonrvelonrSelontMelonmbelonrs.isPrelonselonnt() && numSelonrvelonrSelontMelonmbelonrs.gelont() > minNumSelonrvelonrs) {
+            relonturn lelonavelonSelonrvelonrSelont();
+          } elonlselon {
+            LOG.warn("Not lelonaving selonrvelonr selont during: " + actionNamelon);
+            relonturn LelonavelonSelonrvelonrSelontRelonsult.FAILURelon;
           }
         }
-      } else {
-        LOG.info("Not in server set, no need to leave it.");
-        return LeaveServerSetResult.NOT_IN_SERVER_SET;
+      } elonlselon {
+        LOG.info("Not in selonrvelonr selont, no nelonelond to lelonavelon it.");
+        relonturn LelonavelonSelonrvelonrSelontRelonsult.NOT_IN_SelonRVelonR_SelonT;
       }
     }
 
-    return LeaveServerSetResult.NO_SERVER_SET_MEMBER;
+    relonturn LelonavelonSelonrvelonrSelontRelonsult.NO_SelonRVelonR_SelonT_MelonMBelonR;
   }
 
-  private <E extends Exception> boolean executeWithCoordination(
-      final String description,
-      final ExceptionalFunction<Boolean, Boolean, E> function)
-      throws E, CoordinatedEarlybirdActionLockFailed {
-    PartitionConfig curPartitionConfig = dynamicPartitionConfig.getCurrentPartitionConfig();
-    TryLock lock = zooKeeperTryLockFactory.createTryLock(
-        DatabaseConfig.getLocalHostname(),
-        segmentSyncConfig.getZooKeeperSyncFullPath(),
-        zkLockNamePrefix
-        + curPartitionConfig.getIndexingHashPartitionID(),
-        Amount.of(zkLockExpirationTimeMinutes, Time.MINUTES)
+  privatelon <elon elonxtelonnds elonxcelonption> boolelonan elonxeloncutelonWithCoordination(
+      final String delonscription,
+      final elonxcelonptionalFunction<Boolelonan, Boolelonan, elon> function)
+      throws elon, CoordinatelondelonarlybirdActionLockFailelond {
+    PartitionConfig curPartitionConfig = dynamicPartitionConfig.gelontCurrelonntPartitionConfig();
+    TryLock lock = zooKelonelonpelonrTryLockFactory.crelonatelonTryLock(
+        DatabaselonConfig.gelontLocalHostnamelon(),
+        selongmelonntSyncConfig.gelontZooKelonelonpelonrSyncFullPath(),
+        zkLockNamelonPrelonfix
+        + curPartitionConfig.gelontIndelonxingHashPartitionID(),
+        Amount.of(zkLockelonxpirationTimelonMinutelons, Timelon.MINUTelonS)
     );
 
-    final AtomicBoolean success = new AtomicBoolean(false);
+    final AtomicBoolelonan succelonss = nelonw AtomicBoolelonan(falselon);
 
-    boolean gotLock = lock.tryWithLock(() -> {
-      Stopwatch actionTiming = Stopwatch.createStarted();
+    boolelonan gotLock = lock.tryWithLock(() -> {
+      Stopwatch actionTiming = Stopwatch.crelonatelonStartelond();
 
-      LeaveServerSetResult leftServerSet = maybeLeaveServerSet();
-      if (leftServerSet == LeaveServerSetResult.FAILURE) {
-        LOG.info("Failed to leave the server set, will not execute action.");
-        return;
+      LelonavelonSelonrvelonrSelontRelonsult lelonftSelonrvelonrSelont = maybelonLelonavelonSelonrvelonrSelont();
+      if (lelonftSelonrvelonrSelont == LelonavelonSelonrvelonrSelontRelonsult.FAILURelon) {
+        LOG.info("Failelond to lelonavelon thelon selonrvelonr selont, will not elonxeloncutelon action.");
+        relonturn;
       }
 
-      LOG.info("maybeLeaveServerSet returned: {}", leftServerSet);
+      LOG.info("maybelonLelonavelonSelonrvelonrSelont relonturnelond: {}", lelonftSelonrvelonrSelont);
 
-      // Sleep for a short time to give the server some time to finish requests that it is currently
-      // executing and allow roots some time to register that this host has left the server set.
-      // If we didn't do this and the coordinated action included a full GC, then latency and error
-      // rate at the root layer would spike higher at the time of the GC. SEARCH-35456
+      // Slelonelonp for a short timelon to givelon thelon selonrvelonr somelon timelon to finish relonquelonsts that it is currelonntly
+      // elonxeloncuting and allow roots somelon timelon to relongistelonr that this host has lelonft thelon selonrvelonr selont.
+      // If welon didn't do this and thelon coordinatelond action includelond a full GC, thelonn latelonncy and elonrror
+      // ratelon at thelon root layelonr would spikelon highelonr at thelon timelon of thelon GC. SelonARCH-35456
       try {
-        Thread.sleep(sleepAfterLeaveServerSetMillis);
-      } catch (InterruptedException ex) {
-        Thread.currentThread().interrupt();
+        Threlonad.slelonelonp(slelonelonpAftelonrLelonavelonSelonrvelonrSelontMillis);
+      } catch (Intelonrruptelondelonxcelonption elonx) {
+        Threlonad.currelonntThrelonad().intelonrrupt();
       }
 
-      LOG.info(actionName + " synchronization action for " + description);
+      LOG.info(actionNamelon + " synchronization action for " + delonscription);
 
       try {
-        numCoordinatedFunctionCalls.increment();
-        numCoordinatedLeaveServersetCalls.increment();
+        numCoordinatelondFunctionCalls.increlonmelonnt();
+        numCoordinatelondLelonavelonSelonrvelonrselontCalls.increlonmelonnt();
 
-        Boolean successValue = function.apply(COORDINATED_ACTION_FLAG);
-        success.set(successValue);
+        Boolelonan succelonssValuelon = function.apply(COORDINATelonD_ACTION_FLAG);
+        succelonss.selont(succelonssValuelon);
       } finally {
-        if (leftServerSet == LeaveServerSetResult.SUCCESS) {
-          joinServerSet();
+        if (lelonftSelonrvelonrSelont == LelonavelonSelonrvelonrSelontRelonsult.SUCCelonSS) {
+          joinSelonrvelonrSelont();
         }
-        LOG.info("{} synchronization action for {} completed after {}, success: {}",
-            actionName,
-            description,
+        LOG.info("{} synchronization action for {} complelontelond aftelonr {}, succelonss: {}",
+            actionNamelon,
+            delonscription,
             actionTiming,
-            success.get());
+            succelonss.gelont());
       }
     });
 
     if (!gotLock) {
-      String errorMsg = actionName + ": Failed to get zk indexing lock for " + description;
-      LOG.info(errorMsg);
-      throw new CoordinatedEarlybirdActionLockFailed(errorMsg);
+      String elonrrorMsg = actionNamelon + ": Failelond to gelont zk indelonxing lock for " + delonscription;
+      LOG.info(elonrrorMsg);
+      throw nelonw CoordinatelondelonarlybirdActionLockFailelond(elonrrorMsg);
     }
-    return success.get();
+    relonturn succelonss.gelont();
   }
 
-  @Override
-  public void retryActionUntilRan(String description, Runnable action) {
-    Random random = new Random(System.currentTimeMillis());
+  @Ovelonrridelon
+  public void relontryActionUntilRan(String delonscription, Runnablelon action) {
+    Random random = nelonw Random(Systelonm.currelonntTimelonMillis());
 
-    boolean actionExecuted = false;
-    int attempts = 0;
-    while (!actionExecuted) {
+    boolelonan actionelonxeloncutelond = falselon;
+    int attelonmpts = 0;
+    whilelon (!actionelonxeloncutelond) {
       try {
-        attempts++;
-        actionExecuted = this.execute(description, isCoordinated -> {
+        attelonmpts++;
+        actionelonxeloncutelond = this.elonxeloncutelon(delonscription, isCoordinatelond -> {
           action.run();
-          return true;
+          relonturn truelon;
         });
-      } catch (CoordinatedEarlybirdActionLockFailed ex) {
+      } catch (CoordinatelondelonarlybirdActionLockFailelond elonx) {
       }
 
-      if (!actionExecuted) {
-        // Variable sleep amount. The reason for the random sleeps
-        // is so that across multiple earlybirds this doesn't get
-        // executed in some sequence that depends on something else
-        // like maybe deploy times. It might be easier to catch possible
-        // problems if implicit orderings like this are not introduced.
-        long msToSleep = (10 + random.nextInt(5)) * 1000L;
+      if (!actionelonxeloncutelond) {
+        // Variablelon slelonelonp amount. Thelon relonason for thelon random slelonelonps
+        // is so that across multiplelon elonarlybirds this doelonsn't gelont
+        // elonxeloncutelond in somelon selonquelonncelon that delonpelonnds on somelonthing elonlselon
+        // likelon maybelon delonploy timelons. It might belon elonasielonr to catch possiblelon
+        // problelonms if implicit ordelonrings likelon this arelon not introducelond.
+        long msToSlelonelonp = (10 + random.nelonxtInt(5)) * 1000L;
         try {
-          Thread.sleep(msToSleep);
-        } catch (InterruptedException ex) {
-          LOG.info("Interrupted while trying to execute");
-          Thread.currentThread().interrupt();
+          Threlonad.slelonelonp(msToSlelonelonp);
+        } catch (Intelonrruptelondelonxcelonption elonx) {
+          LOG.info("Intelonrruptelond whilelon trying to elonxeloncutelon");
+          Threlonad.currelonntThrelonad().intelonrrupt();
         }
-      } else {
-        LOG.info("Executed {} after {} attempts", actionName, attempts);
+      } elonlselon {
+        LOG.info("elonxeloncutelond {} aftelonr {} attelonmpts", actionNamelon, attelonmpts);
       }
     }
   }
 
   /**
-   * Gets the current number of servers in this server's server set.
-   * @return absent Optional if we encountered an exception getting the number of hosts.
+   * Gelonts thelon currelonnt numbelonr of selonrvelonrs in this selonrvelonr's selonrvelonr selont.
+   * @relonturn abselonnt Optional if welon elonncountelonrelond an elonxcelonption gelontting thelon numbelonr of hosts.
    */
-  private Optional<Integer> getNumberOfServerSetMembers() {
+  privatelon Optional<Intelongelonr> gelontNumbelonrOfSelonrvelonrSelontMelonmbelonrs() {
     try {
-      return serverSetMember != null ? Optional.of(serverSetMember.getNumberOfServerSetMembers())
-          : Optional.empty();
-    } catch (InterruptedException ex) {
-      LOG.warn("Action " + actionName + " was interrupted.", ex);
-      Thread.currentThread().interrupt();
-      return Optional.empty();
-    } catch (ZooKeeperClient.ZooKeeperConnectionException | KeeperException ex) {
-      LOG.warn("Exception during " + actionName, ex);
-      return Optional.empty();
+      relonturn selonrvelonrSelontMelonmbelonr != null ? Optional.of(selonrvelonrSelontMelonmbelonr.gelontNumbelonrOfSelonrvelonrSelontMelonmbelonrs())
+          : Optional.elonmpty();
+    } catch (Intelonrruptelondelonxcelonption elonx) {
+      LOG.warn("Action " + actionNamelon + " was intelonrruptelond.", elonx);
+      Threlonad.currelonntThrelonad().intelonrrupt();
+      relonturn Optional.elonmpty();
+    } catch (ZooKelonelonpelonrClielonnt.ZooKelonelonpelonrConnelonctionelonxcelonption | Kelonelonpelonrelonxcelonption elonx) {
+      LOG.warn("elonxcelonption during " + actionNamelon, elonx);
+      relonturn Optional.elonmpty();
     }
   }
 
   /**
-   * After a coordinated action, join back this earlybird's server set with retries
-   * and sleeps in between.
+   * Aftelonr a coordinatelond action, join back this elonarlybird's selonrvelonr selont with relontrielons
+   * and slelonelonps in belontwelonelonn.
    */
-  private void joinServerSet() {
-    Preconditions.checkNotNull(serverSetMember);
+  privatelon void joinSelonrvelonrSelont() {
+    Prelonconditions.chelonckNotNull(selonrvelonrSelontMelonmbelonr);
 
-    boolean joined = false;
-    for (int i = 0; i < joinServerSetRetries; i++) {
+    boolelonan joinelond = falselon;
+    for (int i = 0; i < joinSelonrvelonrSelontRelontrielons; i++) {
       try {
-        serverSetMember.joinServerSet("CoordinatedAction: " + actionName);
-        joined = true;
-        break;
-      } catch (AlreadyInServerSetUpdateException ex) {
-        // Most likely leaving the server set failed
-        joined = true;
-        break;
-      } catch (ServerSet.UpdateException ex) {
-        LOG.warn("Unable to join server set after " + actionName + " on attempt "
-                + i, ex);
-        if (i < (joinServerSetRetries - 1)) {
+        selonrvelonrSelontMelonmbelonr.joinSelonrvelonrSelont("CoordinatelondAction: " + actionNamelon);
+        joinelond = truelon;
+        brelonak;
+      } catch (AlrelonadyInSelonrvelonrSelontUpdatelonelonxcelonption elonx) {
+        // Most likelonly lelonaving thelon selonrvelonr selont failelond
+        joinelond = truelon;
+        brelonak;
+      } catch (SelonrvelonrSelont.Updatelonelonxcelonption elonx) {
+        LOG.warn("Unablelon to join selonrvelonr selont aftelonr " + actionNamelon + " on attelonmpt "
+                + i, elonx);
+        if (i < (joinSelonrvelonrSelontRelontrielons - 1)) {
           try {
-            Thread.sleep(joinServerSetRetrySleepMillis);
-          } catch (InterruptedException e) {
-            LOG.warn("Interrupted while waiting to join back server set for: " + actionName);
-            // Preserve interrupt status.
-            Thread.currentThread().interrupt();
-            break;
+            Threlonad.slelonelonp(joinSelonrvelonrSelontRelontrySlelonelonpMillis);
+          } catch (Intelonrruptelondelonxcelonption elon) {
+            LOG.warn("Intelonrruptelond whilelon waiting to join back selonrvelonr selont for: " + actionNamelon);
+            // Prelonselonrvelon intelonrrupt status.
+            Threlonad.currelonntThrelonad().intelonrrupt();
+            brelonak;
           }
         }
       }
     }
-    if (!joined) {
-      String message = String.format(
-          "Unable to join server set after %s, setting fatal flag.",
-          actionName);
-      EarlybirdException exception = new EarlybirdException(message);
+    if (!joinelond) {
+      String melonssagelon = String.format(
+          "Unablelon to join selonrvelonr selont aftelonr %s, selontting fatal flag.",
+          actionNamelon);
+      elonarlybirdelonxcelonption elonxcelonption = nelonw elonarlybirdelonxcelonption(melonssagelon);
 
-      LOG.error(message, exception);
-      criticalExceptionHandler.handle(this, exception);
+      LOG.elonrror(melonssagelon, elonxcelonption);
+      criticalelonxcelonptionHandlelonr.handlelon(this, elonxcelonption);
     }
   }
 
 
-  @Override
-  public boolean setShouldSynchronize(boolean shouldSynchronizeParam) {
-    boolean oldValue = this.shouldSynchronize.getAndSet(shouldSynchronizeParam);
-    LOG.info("Updated shouldSynchronize for: " + actionName + " from " + oldValue
-            + " to " + shouldSynchronizeParam);
-    return oldValue;
+  @Ovelonrridelon
+  public boolelonan selontShouldSynchronizelon(boolelonan shouldSynchronizelonParam) {
+    boolelonan oldValuelon = this.shouldSynchronizelon.gelontAndSelont(shouldSynchronizelonParam);
+    LOG.info("Updatelond shouldSynchronizelon for: " + actionNamelon + " from " + oldValuelon
+            + " to " + shouldSynchronizelonParam);
+    relonturn oldValuelon;
   }
 
-  @Override
-  @VisibleForTesting
-  public long getNumCoordinatedFunctionCalls() {
-    return this.numCoordinatedFunctionCalls.get();
+  @Ovelonrridelon
+  @VisiblelonForTelonsting
+  public long gelontNumCoordinatelondFunctionCalls() {
+    relonturn this.numCoordinatelondFunctionCalls.gelont();
   }
 
-  @Override
-  @VisibleForTesting
-  public long getNumCoordinatedLeaveServersetCalls() {
-    return this.numCoordinatedLeaveServersetCalls.get();
+  @Ovelonrridelon
+  @VisiblelonForTelonsting
+  public long gelontNumCoordinatelondLelonavelonSelonrvelonrselontCalls() {
+    relonturn this.numCoordinatelondLelonavelonSelonrvelonrselontCalls.gelont();
   }
 }

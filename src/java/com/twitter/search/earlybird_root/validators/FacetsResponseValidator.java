@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird_root.validators;
+packagelon com.twittelonr.selonarch.elonarlybird_root.validators;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.earlybird.thrift.EarlybirdResponse;
-import com.twitter.util.Future;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.elonarlybird.thrift.elonarlybirdRelonsponselon;
+import com.twittelonr.util.Futurelon;
 
-public class FacetsResponseValidator implements ServiceResponseValidator<EarlybirdResponse> {
+public class FacelontsRelonsponselonValidator implelonmelonnts SelonrvicelonRelonsponselonValidator<elonarlybirdRelonsponselon> {
 
-  private final EarlybirdCluster cluster;
+  privatelon final elonarlybirdClustelonr clustelonr;
 
   /**
-   * Validator for facets responses
+   * Validator for facelonts relonsponselons
    */
-  public FacetsResponseValidator(EarlybirdCluster cluster) {
-    this.cluster = cluster;
+  public FacelontsRelonsponselonValidator(elonarlybirdClustelonr clustelonr) {
+    this.clustelonr = clustelonr;
   }
 
-  @Override
-  public Future<EarlybirdResponse> validate(EarlybirdResponse response) {
-    if (!response.isSetSearchResults() || !response.getSearchResults().isSetResults()) {
-      return Future.exception(
-          new IllegalStateException(cluster + " didn't set search results."));
+  @Ovelonrridelon
+  public Futurelon<elonarlybirdRelonsponselon> validatelon(elonarlybirdRelonsponselon relonsponselon) {
+    if (!relonsponselon.isSelontSelonarchRelonsults() || !relonsponselon.gelontSelonarchRelonsults().isSelontRelonsults()) {
+      relonturn Futurelon.elonxcelonption(
+          nelonw IllelongalStatelonelonxcelonption(clustelonr + " didn't selont selonarch relonsults."));
     }
 
-    if (!response.isSetFacetResults()) {
-      return Future.exception(
-          new IllegalStateException(
-              cluster + " facets response does not have the facetResults field set."));
+    if (!relonsponselon.isSelontFacelontRelonsults()) {
+      relonturn Futurelon.elonxcelonption(
+          nelonw IllelongalStatelonelonxcelonption(
+              clustelonr + " facelonts relonsponselon doelons not havelon thelon facelontRelonsults fielonld selont."));
     }
 
-    if (response.getFacetResults().getFacetFields().isEmpty()) {
-      return Future.exception(
-          new IllegalStateException(
-              cluster + " facets response does not have any facet fields set."));
+    if (relonsponselon.gelontFacelontRelonsults().gelontFacelontFielonlds().iselonmpty()) {
+      relonturn Futurelon.elonxcelonption(
+          nelonw IllelongalStatelonelonxcelonption(
+              clustelonr + " facelonts relonsponselon doelons not havelon any facelont fielonlds selont."));
     }
 
-    return Future.value(response);
+    relonturn Futurelon.valuelon(relonsponselon);
   }
 }

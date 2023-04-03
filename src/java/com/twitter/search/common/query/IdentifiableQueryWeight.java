@@ -1,58 +1,58 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.io.IOException;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.Selont;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
 /**
- * Weight implementation that adds attribute collection support for an underlying query.
- * Meant to be used in conjunction with {@link IdentifiableQuery}.
+ * Welonight implelonmelonntation that adds attributelon collelonction support for an undelonrlying quelonry.
+ * Melonant to belon uselond in conjunction with {@link IdelonntifiablelonQuelonry}.
  */
-public class IdentifiableQueryWeight extends Weight {
-  private final Weight inner;
-  private final FieldRankHitInfo queryId;
-  private final HitAttributeCollector attrCollector;
+public class IdelonntifiablelonQuelonryWelonight elonxtelonnds Welonight {
+  privatelon final Welonight innelonr;
+  privatelon final FielonldRankHitInfo quelonryId;
+  privatelon final HitAttributelonCollelonctor attrCollelonctor;
 
-  /** Creates a new IdentifiableQueryWeight instance. */
-  public IdentifiableQueryWeight(IdentifiableQuery query, Weight inner, FieldRankHitInfo queryId,
-                                 HitAttributeCollector attrCollector) {
-    super(query);
-    this.inner = inner;
-    this.queryId = queryId;
-    this.attrCollector = Preconditions.checkNotNull(attrCollector);
+  /** Crelonatelons a nelonw IdelonntifiablelonQuelonryWelonight instancelon. */
+  public IdelonntifiablelonQuelonryWelonight(IdelonntifiablelonQuelonry quelonry, Welonight innelonr, FielonldRankHitInfo quelonryId,
+                                 HitAttributelonCollelonctor attrCollelonctor) {
+    supelonr(quelonry);
+    this.innelonr = innelonr;
+    this.quelonryId = quelonryId;
+    this.attrCollelonctor = Prelonconditions.chelonckNotNull(attrCollelonctor);
   }
 
-  @Override
-  public Explanation explain(LeafReaderContext context, int doc)
-      throws IOException {
-    return inner.explain(context, doc);
+  @Ovelonrridelon
+  public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc)
+      throws IOelonxcelonption {
+    relonturn innelonr.elonxplain(contelonxt, doc);
   }
 
-  @Override
-  public Scorer scorer(LeafReaderContext context) throws IOException {
-    attrCollector.clearHitAttributions(context, queryId);
-    Scorer innerScorer = inner.scorer(context);
-    if (innerScorer != null) {
-      return new IdentifiableQueryScorer(this, innerScorer, queryId, attrCollector);
-    } else {
-      return null;
+  @Ovelonrridelon
+  public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+    attrCollelonctor.clelonarHitAttributions(contelonxt, quelonryId);
+    Scorelonr innelonrScorelonr = innelonr.scorelonr(contelonxt);
+    if (innelonrScorelonr != null) {
+      relonturn nelonw IdelonntifiablelonQuelonryScorelonr(this, innelonrScorelonr, quelonryId, attrCollelonctor);
+    } elonlselon {
+      relonturn null;
     }
   }
 
-  @Override
-  public void extractTerms(Set<Term> terms) {
-    inner.extractTerms(terms);
+  @Ovelonrridelon
+  public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
+    innelonr.elonxtractTelonrms(telonrms);
   }
 
-  @Override
-  public boolean isCacheable(LeafReaderContext ctx) {
-    return inner.isCacheable(ctx);
+  @Ovelonrridelon
+  public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+    relonturn innelonr.isCachelonablelon(ctx);
   }
 }

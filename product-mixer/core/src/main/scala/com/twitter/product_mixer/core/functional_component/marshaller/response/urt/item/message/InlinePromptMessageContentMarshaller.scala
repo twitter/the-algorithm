@@ -1,32 +1,32 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.message
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.melonssagelon
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.SocialContextMarshaller
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.richtext.RichTextMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.message.InlinePromptMessageContent
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.SocialContelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.richtelonxt.RichTelonxtMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.melonssagelon.InlinelonPromptMelonssagelonContelonnt
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class InlinePromptMessageContentMarshaller @Inject() (
-  messageTextActionMarshaller: MessageTextActionMarshaller,
-  richTextMarshaller: RichTextMarshaller,
-  socialContextMarshaller: SocialContextMarshaller,
-  userFacepileMarshaller: UserFacepileMarshaller) {
+@Singlelonton
+class InlinelonPromptMelonssagelonContelonntMarshallelonr @Injelonct() (
+  melonssagelonTelonxtActionMarshallelonr: MelonssagelonTelonxtActionMarshallelonr,
+  richTelonxtMarshallelonr: RichTelonxtMarshallelonr,
+  socialContelonxtMarshallelonr: SocialContelonxtMarshallelonr,
+  uselonrFacelonpilelonMarshallelonr: UselonrFacelonpilelonMarshallelonr) {
 
-  def apply(inlinePromptMessageContent: InlinePromptMessageContent): urt.MessageContent =
-    urt.MessageContent.InlinePrompt(
-      urt.InlinePrompt(
-        headerText = inlinePromptMessageContent.headerText,
-        bodyText = inlinePromptMessageContent.bodyText,
+  delonf apply(inlinelonPromptMelonssagelonContelonnt: InlinelonPromptMelonssagelonContelonnt): urt.MelonssagelonContelonnt =
+    urt.MelonssagelonContelonnt.InlinelonPrompt(
+      urt.InlinelonPrompt(
+        helonadelonrTelonxt = inlinelonPromptMelonssagelonContelonnt.helonadelonrTelonxt,
+        bodyTelonxt = inlinelonPromptMelonssagelonContelonnt.bodyTelonxt,
         primaryButtonAction =
-          inlinePromptMessageContent.primaryButtonAction.map(messageTextActionMarshaller(_)),
-        secondaryButtonAction =
-          inlinePromptMessageContent.secondaryButtonAction.map(messageTextActionMarshaller(_)),
-        headerRichText = inlinePromptMessageContent.headerRichText.map(richTextMarshaller(_)),
-        bodyRichText = inlinePromptMessageContent.bodyRichText.map(richTextMarshaller(_)),
-        socialContext = inlinePromptMessageContent.socialContext.map(socialContextMarshaller(_)),
-        userFacepile = inlinePromptMessageContent.userFacepile.map(userFacepileMarshaller(_))
+          inlinelonPromptMelonssagelonContelonnt.primaryButtonAction.map(melonssagelonTelonxtActionMarshallelonr(_)),
+        seloncondaryButtonAction =
+          inlinelonPromptMelonssagelonContelonnt.seloncondaryButtonAction.map(melonssagelonTelonxtActionMarshallelonr(_)),
+        helonadelonrRichTelonxt = inlinelonPromptMelonssagelonContelonnt.helonadelonrRichTelonxt.map(richTelonxtMarshallelonr(_)),
+        bodyRichTelonxt = inlinelonPromptMelonssagelonContelonnt.bodyRichTelonxt.map(richTelonxtMarshallelonr(_)),
+        socialContelonxt = inlinelonPromptMelonssagelonContelonnt.socialContelonxt.map(socialContelonxtMarshallelonr(_)),
+        uselonrFacelonpilelon = inlinelonPromptMelonssagelonContelonnt.uselonrFacelonpilelon.map(uselonrFacelonpilelonMarshallelonr(_))
       )
     )
 }

@@ -1,237 +1,237 @@
-package com.twitter.search.earlybird.search.relevance.scoring;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import com.google.common.collect.Lists;
+import com.googlelon.common.collelonct.Lists;
 
-import org.apache.lucene.search.Explanation;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
 
-import com.twitter.search.common.relevance.features.MutableFeatureNormalizers;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.earlybird.common.userupdates.UserTable;
-import com.twitter.search.earlybird.search.AntiGamingFilter;
-import com.twitter.search.earlybird.search.relevance.LinearScoringData;
-import com.twitter.search.earlybird.search.relevance.LinearScoringParams;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultType;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.MutablelonFelonaturelonNormalizelonrs;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.elonarlybird.common.uselonrupdatelons.UselonrTablelon;
+import com.twittelonr.selonarch.elonarlybird.selonarch.AntiGamingFiltelonr;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.LinelonarScoringData;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.LinelonarScoringParams;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultTypelon;
 
 /**
- * Scoring function that uses the weights and boosts provided in the scoring parameters from the
- * request.
+ * Scoring function that uselons thelon welonights and boosts providelond in thelon scoring paramelontelonrs from thelon
+ * relonquelonst.
  */
-public class LinearScoringFunction extends FeatureBasedScoringFunction {
-  private static final double BASE_SCORE = 0.0001;
+public class LinelonarScoringFunction elonxtelonnds FelonaturelonBaselondScoringFunction {
+  privatelon static final doublelon BASelon_SCORelon = 0.0001;
 
-  public LinearScoringFunction(
-      ImmutableSchemaInterface schema,
-      ThriftSearchQuery searchQuery,
-      AntiGamingFilter antiGamingFilter,
-      ThriftSearchResultType searchResultType,
-      UserTable userTable) throws IOException {
-    super("LinearScoringFunction", schema, searchQuery, antiGamingFilter, searchResultType,
-        userTable);
+  public LinelonarScoringFunction(
+      ImmutablelonSchelonmaIntelonrfacelon schelonma,
+      ThriftSelonarchQuelonry selonarchQuelonry,
+      AntiGamingFiltelonr antiGamingFiltelonr,
+      ThriftSelonarchRelonsultTypelon selonarchRelonsultTypelon,
+      UselonrTablelon uselonrTablelon) throws IOelonxcelonption {
+    supelonr("LinelonarScoringFunction", schelonma, selonarchQuelonry, antiGamingFiltelonr, selonarchRelonsultTypelon,
+        uselonrTablelon);
   }
 
-  @Override
-  protected double computeScore(LinearScoringData data, boolean forExplanation) throws IOException {
-    double score = BASE_SCORE;
+  @Ovelonrridelon
+  protelonctelond doublelon computelonScorelon(LinelonarScoringData data, boolelonan forelonxplanation) throws IOelonxcelonption {
+    doublelon scorelon = BASelon_SCORelon;
 
-    data.luceneContrib = params.useLuceneScoreAsBoost
-        ? 0.0 : params.luceneWeight * data.luceneScore;
+    data.lucelonnelonContrib = params.uselonLucelonnelonScorelonAsBoost
+        ? 0.0 : params.lucelonnelonWelonight * data.lucelonnelonScorelon;
 
-    data.reputationContrib = params.reputationWeight * data.userRep;
-    data.textScoreContrib = params.textScoreWeight * data.textScore;
-    data.parusContrib = params.parusWeight * data.parusScore;
+    data.relonputationContrib = params.relonputationWelonight * data.uselonrRelonp;
+    data.telonxtScorelonContrib = params.telonxtScorelonWelonight * data.telonxtScorelon;
+    data.parusContrib = params.parusWelonight * data.parusScorelon;
 
-    // contributions from engagement counters. Note that we have "true" argument for all getters,
-    // which means all values will get scaled down for scoring, they were unbounded in raw form.
-    data.retweetContrib = params.retweetWeight * data.retweetCountPostLog2;
-    data.favContrib = params.favWeight * data.favCountPostLog2;
-    data.replyContrib = params.replyWeight * data.replyCountPostLog2;
-    data.embedsImpressionContrib =
-        params.embedsImpressionWeight * data.getEmbedsImpressionCount(true);
-    data.embedsUrlContrib =
-        params.embedsUrlWeight * data.getEmbedsUrlCount(true);
-    data.videoViewContrib =
-        params.videoViewWeight * data.getVideoViewCount(true);
-    data.quotedContrib =
-        params.quotedCountWeight * data.quotedCount;
+    // contributions from elonngagelonmelonnt countelonrs. Notelon that welon havelon "truelon" argumelonnt for all gelonttelonrs,
+    // which melonans all valuelons will gelont scalelond down for scoring, thelony welonrelon unboundelond in raw form.
+    data.relontwelonelontContrib = params.relontwelonelontWelonight * data.relontwelonelontCountPostLog2;
+    data.favContrib = params.favWelonight * data.favCountPostLog2;
+    data.relonplyContrib = params.relonplyWelonight * data.relonplyCountPostLog2;
+    data.elonmbelondsImprelonssionContrib =
+        params.elonmbelondsImprelonssionWelonight * data.gelontelonmbelondsImprelonssionCount(truelon);
+    data.elonmbelondsUrlContrib =
+        params.elonmbelondsUrlWelonight * data.gelontelonmbelondsUrlCount(truelon);
+    data.videlonoVielonwContrib =
+        params.videlonoVielonwWelonight * data.gelontVidelonoVielonwCount(truelon);
+    data.quotelondContrib =
+        params.quotelondCountWelonight * data.quotelondCount;
 
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
-      data.offlineExpFeatureContributions[i] =
-          params.rankingOfflineExpWeights[i] * data.offlineExpFeatureValues[i];
+    for (int i = 0; i < LinelonarScoringData.MAX_OFFLINelon_elonXPelonRIMelonNTAL_FIelonLDS; i++) {
+      data.offlinelonelonxpFelonaturelonContributions[i] =
+          params.rankingOfflinelonelonxpWelonights[i] * data.offlinelonelonxpFelonaturelonValuelons[i];
     }
 
-    data.hasUrlContrib = params.urlWeight * (data.hasUrl ? 1.0 : 0.0);
-    data.isReplyContrib = params.isReplyWeight * (data.isReply ? 1.0 : 0.0);
-    data.isFollowRetweetContrib =
-        params.followRetweetWeight * (data.isRetweet && data.isFollow ? 1.0 : 0.0);
-    data.isTrustedRetweetContrib =
-        params.trustedRetweetWeight * (data.isRetweet && data.isTrusted ? 1.0 : 0.0);
-    double replyCountOriginal = getUnscaledReplyCountFeatureValue();
-    data.multipleReplyContrib = params.multipleReplyWeight
-        * (replyCountOriginal < params.multipleReplyMinVal ? 0.0 : replyCountOriginal);
+    data.hasUrlContrib = params.urlWelonight * (data.hasUrl ? 1.0 : 0.0);
+    data.isRelonplyContrib = params.isRelonplyWelonight * (data.isRelonply ? 1.0 : 0.0);
+    data.isFollowRelontwelonelontContrib =
+        params.followRelontwelonelontWelonight * (data.isRelontwelonelont && data.isFollow ? 1.0 : 0.0);
+    data.isTrustelondRelontwelonelontContrib =
+        params.trustelondRelontwelonelontWelonight * (data.isRelontwelonelont && data.isTrustelond ? 1.0 : 0.0);
+    doublelon relonplyCountOriginal = gelontUnscalelondRelonplyCountFelonaturelonValuelon();
+    data.multiplelonRelonplyContrib = params.multiplelonRelonplyWelonight
+        * (relonplyCountOriginal < params.multiplelonRelonplyMinVal ? 0.0 : relonplyCountOriginal);
 
-    // We directly the query specific score as the contribution below as it doesn't need a weight
+    // Welon direlonctly thelon quelonry speloncific scorelon as thelon contribution belonlow as it doelonsn't nelonelond a welonight
     // for contribution computation.
-    score += data.luceneContrib
-        + data.reputationContrib
-        + data.textScoreContrib
-        + data.replyContrib
-        + data.multipleReplyContrib
-        + data.retweetContrib
+    scorelon += data.lucelonnelonContrib
+        + data.relonputationContrib
+        + data.telonxtScorelonContrib
+        + data.relonplyContrib
+        + data.multiplelonRelonplyContrib
+        + data.relontwelonelontContrib
         + data.favContrib
         + data.parusContrib
-        + data.embedsImpressionContrib
-        + data.embedsUrlContrib
-        + data.videoViewContrib
-        + data.quotedContrib
+        + data.elonmbelondsImprelonssionContrib
+        + data.elonmbelondsUrlContrib
+        + data.videlonoVielonwContrib
+        + data.quotelondContrib
         + data.hasUrlContrib
-        + data.isReplyContrib
-        + data.isFollowRetweetContrib
-        + data.isTrustedRetweetContrib
-        + data.querySpecificScore
-        + data.authorSpecificScore;
+        + data.isRelonplyContrib
+        + data.isFollowRelontwelonelontContrib
+        + data.isTrustelondRelontwelonelontContrib
+        + data.quelonrySpeloncificScorelon
+        + data.authorSpeloncificScorelon;
 
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
-      score += data.offlineExpFeatureContributions[i];
+    for (int i = 0; i < LinelonarScoringData.MAX_OFFLINelon_elonXPelonRIMelonNTAL_FIelonLDS; i++) {
+      scorelon += data.offlinelonelonxpFelonaturelonContributions[i];
     }
 
-    return score;
+    relonturn scorelon;
   }
 
   /**
-   * Generates the explanation for the linear score.
+   * Gelonnelonratelons thelon elonxplanation for thelon linelonar scorelon.
    */
-  @Override
-  protected void generateExplanationForScoring(
-      LinearScoringData scoringData, boolean isHit, List<Explanation> details) throws IOException {
-    // 1. Linear components
-    final List<Explanation> linearDetails = Lists.newArrayList();
-    addLinearElementExplanation(
-        linearDetails, "[LuceneQueryScore]",
-        params.luceneWeight, scoringData.luceneScore, scoringData.luceneContrib);
+  @Ovelonrridelon
+  protelonctelond void gelonnelonratelonelonxplanationForScoring(
+      LinelonarScoringData scoringData, boolelonan isHit, List<elonxplanation> delontails) throws IOelonxcelonption {
+    // 1. Linelonar componelonnts
+    final List<elonxplanation> linelonarDelontails = Lists.nelonwArrayList();
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "[LucelonnelonQuelonryScorelon]",
+        params.lucelonnelonWelonight, scoringData.lucelonnelonScorelon, scoringData.lucelonnelonContrib);
     if (scoringData.hasCard) {
-      if (scoringData.cardAuthorMatchBoostApplied) {
-        linearDetails.add(Explanation.match(
-            (float) params.cardAuthorMatchBoosts[scoringData.cardType],
+      if (scoringData.cardAuthorMatchBoostApplielond) {
+        linelonarDelontails.add(elonxplanation.match(
+            (float) params.cardAuthorMatchBoosts[scoringData.cardTypelon],
             "[x] card author match boost"));
       }
-      if (scoringData.cardDescriptionMatchBoostApplied) {
-        linearDetails.add(Explanation.match(
-            (float) params.cardDescriptionMatchBoosts[scoringData.cardType],
-            "[x] card description match boost"));
+      if (scoringData.cardDelonscriptionMatchBoostApplielond) {
+        linelonarDelontails.add(elonxplanation.match(
+            (float) params.cardDelonscriptionMatchBoosts[scoringData.cardTypelon],
+            "[x] card delonscription match boost"));
       }
-      if (scoringData.cardDomainMatchBoostApplied) {
-        linearDetails.add(Explanation.match(
-            (float) params.cardDomainMatchBoosts[scoringData.cardType],
+      if (scoringData.cardDomainMatchBoostApplielond) {
+        linelonarDelontails.add(elonxplanation.match(
+            (float) params.cardDomainMatchBoosts[scoringData.cardTypelon],
             "[x] card domain match boost"));
       }
-      if (scoringData.cardTitleMatchBoostApplied) {
-        linearDetails.add(Explanation.match(
-            (float) params.cardTitleMatchBoosts[scoringData.cardType],
-            "[x] card title match boost"));
+      if (scoringData.cardTitlelonMatchBoostApplielond) {
+        linelonarDelontails.add(elonxplanation.match(
+            (float) params.cardTitlelonMatchBoosts[scoringData.cardTypelon],
+            "[x] card titlelon match boost"));
       }
     }
-    addLinearElementExplanation(
-        linearDetails, "reputation",
-        params.reputationWeight, scoringData.userRep, scoringData.reputationContrib);
-    addLinearElementExplanation(
-        linearDetails, "text score",
-        params.textScoreWeight, scoringData.textScore, scoringData.textScoreContrib);
-    addLinearElementExplanation(
-        linearDetails, "reply count (log2)",
-        params.replyWeight, scoringData.replyCountPostLog2, scoringData.replyContrib);
-    addLinearElementExplanation(
-        linearDetails, "multi reply",
-        params.multipleReplyWeight,
-        getUnscaledReplyCountFeatureValue() > params.multipleReplyMinVal ? 1 : 0,
-        scoringData.multipleReplyContrib);
-    addLinearElementExplanation(
-        linearDetails, "retweet count (log2)",
-        params.retweetWeight, scoringData.retweetCountPostLog2, scoringData.retweetContrib);
-    addLinearElementExplanation(
-        linearDetails, "fav count (log2)",
-        params.favWeight, scoringData.favCountPostLog2, scoringData.favContrib);
-    addLinearElementExplanation(
-        linearDetails, "parus score",
-        params.parusWeight, scoringData.parusScore, scoringData.parusContrib);
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
-      if (params.rankingOfflineExpWeights[i] != LinearScoringParams.DEFAULT_FEATURE_WEIGHT) {
-        addLinearElementExplanation(linearDetails,
-            "ranking exp score offline experimental #" + i,
-            params.rankingOfflineExpWeights[i], scoringData.offlineExpFeatureValues[i],
-            scoringData.offlineExpFeatureContributions[i]);
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "relonputation",
+        params.relonputationWelonight, scoringData.uselonrRelonp, scoringData.relonputationContrib);
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "telonxt scorelon",
+        params.telonxtScorelonWelonight, scoringData.telonxtScorelon, scoringData.telonxtScorelonContrib);
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "relonply count (log2)",
+        params.relonplyWelonight, scoringData.relonplyCountPostLog2, scoringData.relonplyContrib);
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "multi relonply",
+        params.multiplelonRelonplyWelonight,
+        gelontUnscalelondRelonplyCountFelonaturelonValuelon() > params.multiplelonRelonplyMinVal ? 1 : 0,
+        scoringData.multiplelonRelonplyContrib);
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "relontwelonelont count (log2)",
+        params.relontwelonelontWelonight, scoringData.relontwelonelontCountPostLog2, scoringData.relontwelonelontContrib);
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "fav count (log2)",
+        params.favWelonight, scoringData.favCountPostLog2, scoringData.favContrib);
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "parus scorelon",
+        params.parusWelonight, scoringData.parusScorelon, scoringData.parusContrib);
+    for (int i = 0; i < LinelonarScoringData.MAX_OFFLINelon_elonXPelonRIMelonNTAL_FIelonLDS; i++) {
+      if (params.rankingOfflinelonelonxpWelonights[i] != LinelonarScoringParams.DelonFAULT_FelonATURelon_WelonIGHT) {
+        addLinelonarelonlelonmelonntelonxplanation(linelonarDelontails,
+            "ranking elonxp scorelon offlinelon elonxpelonrimelonntal #" + i,
+            params.rankingOfflinelonelonxpWelonights[i], scoringData.offlinelonelonxpFelonaturelonValuelons[i],
+            scoringData.offlinelonelonxpFelonaturelonContributions[i]);
       }
     }
-    addLinearElementExplanation(linearDetails,
-        "embedded tweet impression count",
-        params.embedsImpressionWeight, scoringData.getEmbedsImpressionCount(false),
-        scoringData.embedsImpressionContrib);
-    addLinearElementExplanation(linearDetails,
-        "embedded tweet url count",
-        params.embedsUrlWeight, scoringData.getEmbedsUrlCount(false),
-        scoringData.embedsUrlContrib);
-    addLinearElementExplanation(linearDetails,
-        "video view count",
-        params.videoViewWeight, scoringData.getVideoViewCount(false),
-        scoringData.videoViewContrib);
-    addLinearElementExplanation(linearDetails,
-        "quoted count",
-        params.quotedCountWeight, scoringData.quotedCount, scoringData.quotedContrib);
+    addLinelonarelonlelonmelonntelonxplanation(linelonarDelontails,
+        "elonmbelonddelond twelonelont imprelonssion count",
+        params.elonmbelondsImprelonssionWelonight, scoringData.gelontelonmbelondsImprelonssionCount(falselon),
+        scoringData.elonmbelondsImprelonssionContrib);
+    addLinelonarelonlelonmelonntelonxplanation(linelonarDelontails,
+        "elonmbelonddelond twelonelont url count",
+        params.elonmbelondsUrlWelonight, scoringData.gelontelonmbelondsUrlCount(falselon),
+        scoringData.elonmbelondsUrlContrib);
+    addLinelonarelonlelonmelonntelonxplanation(linelonarDelontails,
+        "videlono vielonw count",
+        params.videlonoVielonwWelonight, scoringData.gelontVidelonoVielonwCount(falselon),
+        scoringData.videlonoVielonwContrib);
+    addLinelonarelonlelonmelonntelonxplanation(linelonarDelontails,
+        "quotelond count",
+        params.quotelondCountWelonight, scoringData.quotelondCount, scoringData.quotelondContrib);
 
-    addLinearElementExplanation(
-        linearDetails, "has url", params.urlWeight, scoringData.hasUrl ? 1.0 : 0.0,
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "has url", params.urlWelonight, scoringData.hasUrl ? 1.0 : 0.0,
         scoringData.hasUrlContrib);
 
-    addLinearElementExplanation(
-        linearDetails, "is reply", params.isReplyWeight,
-        scoringData.isReply ? 1.0 : 0.0, scoringData.isReplyContrib);
-    addLinearElementExplanation(
-        linearDetails, "is follow retweet", params.followRetweetWeight,
-        scoringData.isRetweet && scoringData.isFollow ? 1.0 : 0.0,
-        scoringData.isFollowRetweetContrib);
-    addLinearElementExplanation(
-        linearDetails, "is trusted retweet", params.trustedRetweetWeight,
-        scoringData.isRetweet && scoringData.isTrusted ? 1.0 : 0.0,
-        scoringData.isTrustedRetweetContrib);
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "is relonply", params.isRelonplyWelonight,
+        scoringData.isRelonply ? 1.0 : 0.0, scoringData.isRelonplyContrib);
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "is follow relontwelonelont", params.followRelontwelonelontWelonight,
+        scoringData.isRelontwelonelont && scoringData.isFollow ? 1.0 : 0.0,
+        scoringData.isFollowRelontwelonelontContrib);
+    addLinelonarelonlelonmelonntelonxplanation(
+        linelonarDelontails, "is trustelond relontwelonelont", params.trustelondRelontwelonelontWelonight,
+        scoringData.isRelontwelonelont && scoringData.isTrustelond ? 1.0 : 0.0,
+        scoringData.isTrustelondRelontwelonelontContrib);
 
-    if (scoringData.querySpecificScore != 0.0) {
-      linearDetails.add(Explanation.match((float) scoringData.querySpecificScore,
-          "[+] query specific score adjustment"));
+    if (scoringData.quelonrySpeloncificScorelon != 0.0) {
+      linelonarDelontails.add(elonxplanation.match((float) scoringData.quelonrySpeloncificScorelon,
+          "[+] quelonry speloncific scorelon adjustmelonnt"));
     }
-    if (scoringData.authorSpecificScore != 0.0) {
-      linearDetails.add(Explanation.match((float) scoringData.authorSpecificScore,
-          "[+] author specific score adjustment"));
+    if (scoringData.authorSpeloncificScorelon != 0.0) {
+      linelonarDelontails.add(elonxplanation.match((float) scoringData.authorSpeloncificScorelon,
+          "[+] author speloncific scorelon adjustmelonnt"));
     }
 
 
-    Explanation linearCombo = isHit
-        ? Explanation.match((float) scoringData.scoreBeforeBoost,
-          "(MATCH) Linear components, sum of:", linearDetails)
-        : Explanation.noMatch("Linear components, sum of:", linearDetails);
+    elonxplanation linelonarCombo = isHit
+        ? elonxplanation.match((float) scoringData.scorelonBelonforelonBoost,
+          "(MATCH) Linelonar componelonnts, sum of:", linelonarDelontails)
+        : elonxplanation.noMatch("Linelonar componelonnts, sum of:", linelonarDelontails);
 
 
-    details.add(linearCombo);
+    delontails.add(linelonarCombo);
   }
 
-  private void addLinearElementExplanation(List<Explanation> explanation,
-                                           String name,
-                                           double weight,
-                                           double componentValue,
-                                           double contrib) {
+  privatelon void addLinelonarelonlelonmelonntelonxplanation(List<elonxplanation> elonxplanation,
+                                           String namelon,
+                                           doublelon welonight,
+                                           doublelon componelonntValuelon,
+                                           doublelon contrib) {
     if (contrib == 0.0) {
-      return;
+      relonturn;
     }
-    explanation.add(
-        Explanation.match((float) contrib,
-            String.format("[+] %s=%.3f weight=%.3f", name, componentValue, weight)));
+    elonxplanation.add(
+        elonxplanation.match((float) contrib,
+            String.format("[+] %s=%.3f welonight=%.3f", namelon, componelonntValuelon, welonight)));
   }
 
-  private double getUnscaledReplyCountFeatureValue() throws IOException {
-    byte featureValue = (byte) documentFeatures.getFeatureValue(EarlybirdFieldConstant.REPLY_COUNT);
-    return MutableFeatureNormalizers.BYTE_NORMALIZER.unnormLowerBound(featureValue);
+  privatelon doublelon gelontUnscalelondRelonplyCountFelonaturelonValuelon() throws IOelonxcelonption {
+    bytelon felonaturelonValuelon = (bytelon) documelonntFelonaturelons.gelontFelonaturelonValuelon(elonarlybirdFielonldConstant.RelonPLY_COUNT);
+    relonturn MutablelonFelonaturelonNormalizelonrs.BYTelon_NORMALIZelonR.unnormLowelonrBound(felonaturelonValuelon);
   }
 }

@@ -1,130 +1,130 @@
-package com.twitter.search.core.earlybird.index;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx;
 
-import java.io.Closeable;
-import java.io.IOException;
+import java.io.Closelonablelon;
+import java.io.IOelonxcelonption;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.search.Collector;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.LeafCollector;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorable;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.store.Directory;
+import org.apachelon.lucelonnelon.documelonnt.Documelonnt;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.selonarch.Collelonctor;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.LelonafCollelonctor;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorablelon;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.storelon.Direlonctory;
 
-import com.twitter.search.core.earlybird.index.column.ColumnStrideFieldIndex;
-import com.twitter.search.core.earlybird.index.column.DocValuesUpdate;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.ColumnStridelonFielonldIndelonx;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.column.DocValuelonsUpdatelon;
 
 /**
- * IndexSegmentWriter combines some common functionality between the Lucene and Realtime index
- * segment writers.
+ * IndelonxSelongmelonntWritelonr combinelons somelon common functionality belontwelonelonn thelon Lucelonnelon and Relonaltimelon indelonx
+ * selongmelonnt writelonrs.
  */
-public abstract class EarlybirdIndexSegmentWriter implements Closeable {
+public abstract class elonarlybirdIndelonxSelongmelonntWritelonr implelonmelonnts Closelonablelon {
 
-  public EarlybirdIndexSegmentWriter() {
+  public elonarlybirdIndelonxSelongmelonntWritelonr() {
   }
 
   /**
-   * Gets the segment data this segment write is associated with.
-   * @return
+   * Gelonts thelon selongmelonnt data this selongmelonnt writelon is associatelond with.
+   * @relonturn
    */
-  public abstract EarlybirdIndexSegmentData getSegmentData();
+  public abstract elonarlybirdIndelonxSelongmelonntData gelontSelongmelonntData();
 
   /**
-   * Appends terms from the document to the document matching the query. Does not replace a field or
-   * document, actually adds to the the field in the segment.
+   * Appelonnds telonrms from thelon documelonnt to thelon documelonnt matching thelon quelonry. Doelons not relonplacelon a fielonld or
+   * documelonnt, actually adds to thelon thelon fielonld in thelon selongmelonnt.
    */
-  public final void appendOutOfOrder(Query query, Document doc) throws IOException {
-    runQuery(query, docID -> appendOutOfOrder(doc, docID));
+  public final void appelonndOutOfOrdelonr(Quelonry quelonry, Documelonnt doc) throws IOelonxcelonption {
+    runQuelonry(quelonry, docID -> appelonndOutOfOrdelonr(doc, docID));
   }
 
-  protected abstract void appendOutOfOrder(Document doc, int docId) throws IOException;
+  protelonctelond abstract void appelonndOutOfOrdelonr(Documelonnt doc, int docId) throws IOelonxcelonption;
 
   /**
-   * Deletes a document in this segment that matches this query.
+   * Delonlelontelons a documelonnt in this selongmelonnt that matchelons this quelonry.
    */
-  public void deleteDocuments(Query query) throws IOException {
-    runQuery(query, docID -> getSegmentData().getDeletedDocs().deleteDoc(docID));
+  public void delonlelontelonDocumelonnts(Quelonry quelonry) throws IOelonxcelonption {
+    runQuelonry(quelonry, docID -> gelontSelongmelonntData().gelontDelonlelontelondDocs().delonlelontelonDoc(docID));
   }
 
   /**
-   * Updates the docvalues of a document in this segment that matches this query.
+   * Updatelons thelon docvaluelons of a documelonnt in this selongmelonnt that matchelons this quelonry.
    */
-  public void updateDocValues(Query query, String field, DocValuesUpdate update)
-      throws IOException {
-    runQuery(query, docID -> {
-        ColumnStrideFieldIndex docValues =
-            getSegmentData().getDocValuesManager().getColumnStrideFieldIndex(field);
-        if (docValues == null) {
-          return;
+  public void updatelonDocValuelons(Quelonry quelonry, String fielonld, DocValuelonsUpdatelon updatelon)
+      throws IOelonxcelonption {
+    runQuelonry(quelonry, docID -> {
+        ColumnStridelonFielonldIndelonx docValuelons =
+            gelontSelongmelonntData().gelontDocValuelonsManagelonr().gelontColumnStridelonFielonldIndelonx(fielonld);
+        if (docValuelons == null) {
+          relonturn;
         }
 
-        update.update(docValues, docID);
+        updatelon.updatelon(docValuelons, docID);
       });
   }
 
-  private void runQuery(final Query query, final OnHit onHit) throws IOException {
-    try (IndexReader reader = getSegmentData().createAtomicReader()) {
-      new IndexSearcher(reader).search(query, new Collector() {
-        @Override
-        public LeafCollector getLeafCollector(LeafReaderContext context) throws IOException {
-          return new LeafCollector() {
-            @Override
-            public void setScorer(Scorable scorer) {
+  privatelon void runQuelonry(final Quelonry quelonry, final OnHit onHit) throws IOelonxcelonption {
+    try (IndelonxRelonadelonr relonadelonr = gelontSelongmelonntData().crelonatelonAtomicRelonadelonr()) {
+      nelonw IndelonxSelonarchelonr(relonadelonr).selonarch(quelonry, nelonw Collelonctor() {
+        @Ovelonrridelon
+        public LelonafCollelonctor gelontLelonafCollelonctor(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+          relonturn nelonw LelonafCollelonctor() {
+            @Ovelonrridelon
+            public void selontScorelonr(Scorablelon scorelonr) {
             }
 
-            @Override
-            public void collect(int docID) throws IOException {
+            @Ovelonrridelon
+            public void collelonct(int docID) throws IOelonxcelonption {
               onHit.hit(docID);
             }
           };
         }
 
-        @Override
-        public ScoreMode scoreMode() {
-          return ScoreMode.COMPLETE_NO_SCORES;
+        @Ovelonrridelon
+        public ScorelonModelon scorelonModelon() {
+          relonturn ScorelonModelon.COMPLelonTelon_NO_SCORelonS;
         }
       });
     }
   }
 
-  private interface OnHit {
-    void hit(int docID) throws IOException;
+  privatelon intelonrfacelon OnHit {
+    void hit(int docID) throws IOelonxcelonption;
   }
 
   /**
-   * Adds a new document to this segment. In production, this method should be called only by
-   * Expertsearch.
+   * Adds a nelonw documelonnt to this selongmelonnt. In production, this melonthod should belon callelond only by
+   * elonxpelonrtselonarch.
    */
-  public abstract void addDocument(Document doc) throws IOException;
+  public abstract void addDocumelonnt(Documelonnt doc) throws IOelonxcelonption;
 
   /**
-   * Adds a new tweet to this segment. This method should be called only by Earlybird.
+   * Adds a nelonw twelonelont to this selongmelonnt. This melonthod should belon callelond only by elonarlybird.
    */
-  public abstract void addTweet(Document doc, long tweetId, boolean docIsOffensive)
-      throws IOException;
+  public abstract void addTwelonelont(Documelonnt doc, long twelonelontId, boolelonan docIsOffelonnsivelon)
+      throws IOelonxcelonption;
 
   /**
-   * Returns the total number of documents in the segment.
+   * Relonturns thelon total numbelonr of documelonnts in thelon selongmelonnt.
    */
-  public abstract int numDocs() throws IOException;
+  public abstract int numDocs() throws IOelonxcelonption;
 
   /**
-   * Returns the number of documents in this segment without taking deleted docs into account.
-   * E.g. if 10 documents were added to this segments, and 5 were deleted,
-   * this method still returns 10.
+   * Relonturns thelon numbelonr of documelonnts in this selongmelonnt without taking delonlelontelond docs into account.
+   * elon.g. if 10 documelonnts welonrelon addelond to this selongmelonnts, and 5 welonrelon delonlelontelond,
+   * this melonthod still relonturns 10.
    */
-  public abstract int numDocsNoDelete() throws IOException;
+  public abstract int numDocsNoDelonlelontelon() throws IOelonxcelonption;
 
   /**
-   * Forces the underlying index to be merged down to a single segment.
+   * Forcelons thelon undelonrlying indelonx to belon melonrgelond down to a singlelon selongmelonnt.
    */
-  public abstract void forceMerge() throws IOException;
+  public abstract void forcelonMelonrgelon() throws IOelonxcelonption;
 
   /**
-   * Appends the provides Lucene indexes to this segment.
+   * Appelonnds thelon providelons Lucelonnelon indelonxelons to this selongmelonnt.
    */
-  public abstract void addIndexes(Directory... dirs) throws IOException;
+  public abstract void addIndelonxelons(Direlonctory... dirs) throws IOelonxcelonption;
 }

@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.BottomSheet
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.ConfirmationDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.metadata.Inline
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.BottomShelonelont
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.ConfirmationDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.melontadata.Inlinelon
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ConfirmationDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class ConfirmationDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(confirmationDisplayType: ConfirmationDisplayType): urt.ConfirmationDisplayType =
-    confirmationDisplayType match {
-      case Inline => urt.ConfirmationDisplayType.Inline
-      case BottomSheet => urt.ConfirmationDisplayType.BottomSheet
+  delonf apply(confirmationDisplayTypelon: ConfirmationDisplayTypelon): urt.ConfirmationDisplayTypelon =
+    confirmationDisplayTypelon match {
+      caselon Inlinelon => urt.ConfirmationDisplayTypelon.Inlinelon
+      caselon BottomShelonelont => urt.ConfirmationDisplayTypelon.BottomShelonelont
     }
 }

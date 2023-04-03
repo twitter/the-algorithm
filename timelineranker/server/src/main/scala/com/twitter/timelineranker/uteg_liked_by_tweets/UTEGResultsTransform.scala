@@ -1,74 +1,74 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.utelong_likelond_by_twelonelonts
 
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetEntityDisplayLocation
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.servo.util.FutureArrow
-import com.twitter.snowflake.id.SnowflakeId
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.core.DependencyTransformer
-import com.twitter.timelineranker.model.RecapQuery
-import com.twitter.timelineranker.model.TimeRange
-import com.twitter.timelineranker.model.TweetIdRange
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelines.clients.user_tweet_entity_graph.RecommendTweetEntityQuery
-import com.twitter.timelines.clients.user_tweet_entity_graph.UserTweetEntityGraphClient
-import com.twitter.util.Future
+import com.twittelonr.reloncos.reloncos_common.thriftscala.SocialProofTypelon
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.TwelonelontelonntityDisplayLocation
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.TwelonelontReloncommelonndation
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.snowflakelon.id.SnowflakelonId
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.corelon.DelonpelonndelonncyTransformelonr
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry
+import com.twittelonr.timelonlinelonrankelonr.modelonl.TimelonRangelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.TwelonelontIdRangelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelons.clielonnts.uselonr_twelonelont_elonntity_graph.ReloncommelonndTwelonelontelonntityQuelonry
+import com.twittelonr.timelonlinelons.clielonnts.uselonr_twelonelont_elonntity_graph.UselonrTwelonelontelonntityGraphClielonnt
+import com.twittelonr.util.Futurelon
 
-object UTEGResultsTransform {
-  val MaxUserSocialProofSize = 10
-  val MaxTweetSocialProofSize = 10
-  val MinUserSocialProofSize = 1
+objelonct UTelonGRelonsultsTransform {
+  val MaxUselonrSocialProofSizelon = 10
+  val MaxTwelonelontSocialProofSizelon = 10
+  val MinUselonrSocialProofSizelon = 1
 
-  def requiredTweetAuthors(query: RecapQuery): Option[Set[Long]] = {
-    query.utegLikedByTweetsOptions
-      .filter(_.isInNetwork)
-      .map(_.weightedFollowings.keySet)
+  delonf relonquirelondTwelonelontAuthors(quelonry: ReloncapQuelonry): Option[Selont[Long]] = {
+    quelonry.utelongLikelondByTwelonelontsOptions
+      .filtelonr(_.isInNelontwork)
+      .map(_.welonightelondFollowings.kelonySelont)
   }
 
-  def makeUTEGQuery(
-    query: RecapQuery,
-    socialProofTypes: Seq[SocialProofType],
-    utegCountProvider: DependencyProvider[Int]
-  ): RecommendTweetEntityQuery = {
-    val utegLikedByTweetsOpt = query.utegLikedByTweetsOptions
-    RecommendTweetEntityQuery(
-      userId = query.userId,
-      displayLocation = TweetEntityDisplayLocation.HomeTimeline,
-      seedUserIdsWithWeights = utegLikedByTweetsOpt.map(_.weightedFollowings).getOrElse(Map.empty),
-      maxTweetResults = utegCountProvider(query),
-      maxTweetAgeInMillis = // the "to" in the Range field is not supported by this new endpoint
-        query.range match {
-          case Some(TimeRange(from, _)) => from.map(_.untilNow.inMillis)
-          case Some(TweetIdRange(from, _)) => from.map(SnowflakeId.timeFromId(_).untilNow.inMillis)
-          case _ => None
+  delonf makelonUTelonGQuelonry(
+    quelonry: ReloncapQuelonry,
+    socialProofTypelons: Selonq[SocialProofTypelon],
+    utelongCountProvidelonr: DelonpelonndelonncyProvidelonr[Int]
+  ): ReloncommelonndTwelonelontelonntityQuelonry = {
+    val utelongLikelondByTwelonelontsOpt = quelonry.utelongLikelondByTwelonelontsOptions
+    ReloncommelonndTwelonelontelonntityQuelonry(
+      uselonrId = quelonry.uselonrId,
+      displayLocation = TwelonelontelonntityDisplayLocation.HomelonTimelonlinelon,
+      selonelondUselonrIdsWithWelonights = utelongLikelondByTwelonelontsOpt.map(_.welonightelondFollowings).gelontOrelonlselon(Map.elonmpty),
+      maxTwelonelontRelonsults = utelongCountProvidelonr(quelonry),
+      maxTwelonelontAgelonInMillis = // thelon "to" in thelon Rangelon fielonld is not supportelond by this nelonw elonndpoint
+        quelonry.rangelon match {
+          caselon Somelon(TimelonRangelon(from, _)) => from.map(_.untilNow.inMillis)
+          caselon Somelon(TwelonelontIdRangelon(from, _)) => from.map(SnowflakelonId.timelonFromId(_).untilNow.inMillis)
+          caselon _ => Nonelon
         },
-      excludedTweetIds = query.excludedTweetIds,
-      maxUserSocialProofSize = Some(MaxUserSocialProofSize),
-      maxTweetSocialProofSize = Some(MaxTweetSocialProofSize),
-      minUserSocialProofSize = Some(MinUserSocialProofSize),
-      socialProofTypes = socialProofTypes,
-      tweetAuthors = requiredTweetAuthors(query)
+      elonxcludelondTwelonelontIds = quelonry.elonxcludelondTwelonelontIds,
+      maxUselonrSocialProofSizelon = Somelon(MaxUselonrSocialProofSizelon),
+      maxTwelonelontSocialProofSizelon = Somelon(MaxTwelonelontSocialProofSizelon),
+      minUselonrSocialProofSizelon = Somelon(MinUselonrSocialProofSizelon),
+      socialProofTypelons = socialProofTypelons,
+      twelonelontAuthors = relonquirelondTwelonelontAuthors(quelonry)
     )
   }
 }
 
-class UTEGResultsTransform(
-  userTweetEntityGraphClient: UserTweetEntityGraphClient,
-  utegCountProvider: DependencyProvider[Int],
-  recommendationsFilter: DependencyTransformer[Seq[TweetRecommendation], Seq[TweetRecommendation]],
-  socialProofTypes: Seq[SocialProofType])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+class UTelonGRelonsultsTransform(
+  uselonrTwelonelontelonntityGraphClielonnt: UselonrTwelonelontelonntityGraphClielonnt,
+  utelongCountProvidelonr: DelonpelonndelonncyProvidelonr[Int],
+  reloncommelonndationsFiltelonr: DelonpelonndelonncyTransformelonr[Selonq[TwelonelontReloncommelonndation], Selonq[TwelonelontReloncommelonndation]],
+  socialProofTypelons: Selonq[SocialProofTypelon])
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val utegQuery =
-      UTEGResultsTransform.makeUTEGQuery(envelope.query, socialProofTypes, utegCountProvider)
-    userTweetEntityGraphClient.findTweetRecommendations(utegQuery).map { recommendations =>
-      val filteredRecommendations = recommendationsFilter(envelope.query, recommendations)
-      val utegResultsMap = filteredRecommendations.map { recommendation =>
-        recommendation.tweetId -> recommendation
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val utelongQuelonry =
+      UTelonGRelonsultsTransform.makelonUTelonGQuelonry(elonnvelonlopelon.quelonry, socialProofTypelons, utelongCountProvidelonr)
+    uselonrTwelonelontelonntityGraphClielonnt.findTwelonelontReloncommelonndations(utelongQuelonry).map { reloncommelonndations =>
+      val filtelonrelondReloncommelonndations = reloncommelonndationsFiltelonr(elonnvelonlopelon.quelonry, reloncommelonndations)
+      val utelongRelonsultsMap = filtelonrelondReloncommelonndations.map { reloncommelonndation =>
+        reloncommelonndation.twelonelontId -> reloncommelonndation
       }.toMap
-      envelope.copy(utegResults = utegResultsMap)
+      elonnvelonlopelon.copy(utelongRelonsults = utelongRelonsultsMap)
     }
   }
 }

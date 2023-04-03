@@ -1,52 +1,52 @@
-package com.twitter.product_mixer.core.functional_component.common.alert.predicate
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.prelondicatelon
 
 /**
- * [[Predicate]]s will trigger if the metric's value is past the
- * `threshold` for `datapointsPastThreshold` or more datapoints
- * in a given `duration`
+ * [[Prelondicatelon]]s will triggelonr if thelon melontric's valuelon is past thelon
+ * `threlonshold` for `datapointsPastThrelonshold` or morelon datapoints
+ * in a givelonn `duration`
  *
- * @see [[https://docbird.twitter.biz/mon/reference.html#predicate Predicate]]
+ * @selonelon [[https://docbird.twittelonr.biz/mon/relonfelonrelonncelon.html#prelondicatelon Prelondicatelon]]
  */
-trait Predicate {
+trait Prelondicatelon {
 
-  /** @see [[https://docbird.twitter.biz/mon/reference.html#predicate OPERATOR]] */
-  val operator: Operator
+  /** @selonelon [[https://docbird.twittelonr.biz/mon/relonfelonrelonncelon.html#prelondicatelon OPelonRATOR]] */
+  val opelonrator: Opelonrator
 
-  /** @see [[https://docbird.twitter.biz/mon/reference.html#predicate THRESHOLD]] */
-  val threshold: Double
+  /** @selonelon [[https://docbird.twittelonr.biz/mon/relonfelonrelonncelon.html#prelondicatelon THRelonSHOLD]] */
+  val threlonshold: Doublelon
 
   /**
-   * The number of datapoints in a given duration beyond the threshold that will trigger an alert
-   * @see [[https://docbird.twitter.biz/mon/reference.html#predicate DATAPOINTS]]
+   * Thelon numbelonr of datapoints in a givelonn duration belonyond thelon threlonshold that will triggelonr an alelonrt
+   * @selonelon [[https://docbird.twittelonr.biz/mon/relonfelonrelonncelon.html#prelondicatelon DATAPOINTS]]
    */
-  val datapointsPastThreshold: Int
+  val datapointsPastThrelonshold: Int
 
   /**
-   * @note if using a [[metricGranularity]] of [[Minutes]] then this must be >= 3
-   * @see [[https://docbird.twitter.biz/mon/reference.html#predicate DURATION]]
+   * @notelon if using a [[melontricGranularity]] of [[Minutelons]] thelonn this must belon >= 3
+   * @selonelon [[https://docbird.twittelonr.biz/mon/relonfelonrelonncelon.html#prelondicatelon DURATION]]
    */
   val duration: Int
 
   /**
-   * Specifies the metric granularity
-   * @see [[https://docbird.twitter.biz/mon/reference.html#predicate DURATION]]
+   * Speloncifielons thelon melontric granularity
+   * @selonelon [[https://docbird.twittelonr.biz/mon/relonfelonrelonncelon.html#prelondicatelon DURATION]]
    */
-  val metricGranularity: MetricGranularity
+  val melontricGranularity: MelontricGranularity
 
-  require(
-    datapointsPastThreshold > 0,
-    s"`datapointsPastThreshold` must be > 0 but got `datapointsPastThreshold` = $datapointsPastThreshold"
+  relonquirelon(
+    datapointsPastThrelonshold > 0,
+    s"`datapointsPastThrelonshold` must belon > 0 but got `datapointsPastThrelonshold` = $datapointsPastThrelonshold"
   )
 
-  require(
-    datapointsPastThreshold <= duration,
-    s"`datapointsPastThreshold` must be <= than `duration.inMinutes` but got `datapointsPastThreshold` = $datapointsPastThreshold `duration` = $duration"
+  relonquirelon(
+    datapointsPastThrelonshold <= duration,
+    s"`datapointsPastThrelonshold` must belon <= than `duration.inMinutelons` but got `datapointsPastThrelonshold` = $datapointsPastThrelonshold `duration` = $duration"
   )
-  require(
-    metricGranularity != Minutes || duration >= 3,
-    s"Predicate durations must be at least 3 minutes but got $duration"
+  relonquirelon(
+    melontricGranularity != Minutelons || duration >= 3,
+    s"Prelondicatelon durations must belon at lelonast 3 minutelons but got $duration"
   )
 }
 
-/** [[ThroughputPredicate]]s are predicates that can trigger when the throughput is too low or high */
-trait ThroughputPredicate extends Predicate
+/** [[ThroughputPrelondicatelon]]s arelon prelondicatelons that can triggelonr whelonn thelon throughput is too low or high */
+trait ThroughputPrelondicatelon elonxtelonnds Prelondicatelon

@@ -1,7 +1,7 @@
-package com.twitter.timelineranker.core
+packagelon com.twittelonr.timelonlinelonrankelonr.corelon
 
-import com.twitter.timelines.model.tweet.HydratedTweet
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
 
-case class HydratedTweets(
-  outerTweets: Seq[HydratedTweet],
-  innerTweets: Seq[HydratedTweet] = Seq.empty)
+caselon class HydratelondTwelonelonts(
+  outelonrTwelonelonts: Selonq[HydratelondTwelonelont],
+  innelonrTwelonelonts: Selonq[HydratelondTwelonelont] = Selonq.elonmpty)

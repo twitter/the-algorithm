@@ -1,29 +1,29 @@
-package com.twitter.product_mixer.component_library.premarshaller.urt.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urt.buildelonr
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.AddEntriesTimelineInstruction
-import com.twitter.product_mixer.core.model.marshalling.response.urt.Cover
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.AddelonntrielonsTimelonlinelonInstruction
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Covelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Build AddEntries instruction with special handling for Covers.
+ * Build Addelonntrielons instruction with speloncial handling for Covelonrs.
  *
- * Cover Entries should be collected and transformed into ShowCover instructions. These should be
- * filtered out of the AddEntries instruction. We avoid doing this as part of the regular
- * AddEntriesInstructionBuilder because covers are used only used when using a Flip Pipeline and
- * detecting cover entries takes linear time.
+ * Covelonr elonntrielons should belon collelonctelond and transformelond into ShowCovelonr instructions. Thelonselon should belon
+ * filtelonrelond out of thelon Addelonntrielons instruction. Welon avoid doing this as part of thelon relongular
+ * AddelonntrielonsInstructionBuildelonr beloncauselon covelonrs arelon uselond only uselond whelonn using a Flip Pipelonlinelon and
+ * delonteloncting covelonr elonntrielons takelons linelonar timelon.
  */
-case class AddEntriesWithShowCoverInstructionBuilder[Query <: PipelineQuery](
-  override val includeInstruction: IncludeInstruction[Query] = AlwaysInclude)
-    extends UrtInstructionBuilder[Query, AddEntriesTimelineInstruction] {
-  override def build(
-    query: Query,
-    entries: Seq[TimelineEntry]
-  ): Seq[AddEntriesTimelineInstruction] = {
-    if (includeInstruction(query, entries)) {
-      val entriesToAdd = entries.filterNot(_.isInstanceOf[Cover])
-      if (entriesToAdd.nonEmpty) Seq(AddEntriesTimelineInstruction(entriesToAdd)) else Seq.empty
-    } else
-      Seq.empty
+caselon class AddelonntrielonsWithShowCovelonrInstructionBuildelonr[Quelonry <: PipelonlinelonQuelonry](
+  ovelonrridelon val includelonInstruction: IncludelonInstruction[Quelonry] = AlwaysIncludelon)
+    elonxtelonnds UrtInstructionBuildelonr[Quelonry, AddelonntrielonsTimelonlinelonInstruction] {
+  ovelonrridelon delonf build(
+    quelonry: Quelonry,
+    elonntrielons: Selonq[Timelonlinelonelonntry]
+  ): Selonq[AddelonntrielonsTimelonlinelonInstruction] = {
+    if (includelonInstruction(quelonry, elonntrielons)) {
+      val elonntrielonsToAdd = elonntrielons.filtelonrNot(_.isInstancelonOf[Covelonr])
+      if (elonntrielonsToAdd.nonelonmpty) Selonq(AddelonntrielonsTimelonlinelonInstruction(elonntrielonsToAdd)) elonlselon Selonq.elonmpty
+    } elonlselon
+      Selonq.elonmpty
   }
 }

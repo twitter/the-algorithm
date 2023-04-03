@@ -1,31 +1,31 @@
-package com.twitter.follow_recommendations.common.candidate_sources.salsa
+packagelon com.twittelonr.follow_reloncommelonndations.common.candidatelon_sourcelons.salsa
 
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.product_mixer.core.functional_component.candidate_source.CandidateSource
-import com.twitter.stitch.Stitch
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.candidatelon_sourcelon.CandidatelonSourcelon
+import com.twittelonr.stitch.Stitch
 
-abstract class SalsaExpansionBasedCandidateSource[Target](salsaExpander: SalsaExpander)
-    extends CandidateSource[Target, CandidateUser] {
+abstract class SalsaelonxpansionBaselondCandidatelonSourcelon[Targelont](salsaelonxpandelonr: Salsaelonxpandelonr)
+    elonxtelonnds CandidatelonSourcelon[Targelont, CandidatelonUselonr] {
 
-  // Define first/second degree as empty sequences in cases of subclasses
-  // that don't implement one or the other.
-  // Example: MagicRecs only uses first degree nodes, and can ignore implementing secondDegreeNodes
+  // Delonfinelon first/seloncond delongrelonelon as elonmpty selonquelonncelons in caselons of subclasselons
+  // that don't implelonmelonnt onelon or thelon othelonr.
+  // elonxamplelon: MagicReloncs only uselons first delongrelonelon nodelons, and can ignorelon implelonmelonnting seloncondDelongrelonelonNodelons
   //
-  // This allows apply(target) to combine both in the base class
-  def firstDegreeNodes(target: Target): Stitch[Seq[Long]] = Stitch.value(Seq())
+  // This allows apply(targelont) to combinelon both in thelon baselon class
+  delonf firstDelongrelonelonNodelons(targelont: Targelont): Stitch[Selonq[Long]] = Stitch.valuelon(Selonq())
 
-  def secondDegreeNodes(target: Target): Stitch[Seq[Long]] = Stitch.value(Seq())
+  delonf seloncondDelongrelonelonNodelons(targelont: Targelont): Stitch[Selonq[Long]] = Stitch.valuelon(Selonq())
 
-  // max number output results
-  def maxResults(target: Target): Int
+  // max numbelonr output relonsults
+  delonf maxRelonsults(targelont: Targelont): Int
 
-  override def apply(target: Target): Stitch[Seq[CandidateUser]] = {
-    val nodes = Stitch.join(firstDegreeNodes(target), secondDegreeNodes(target))
+  ovelonrridelon delonf apply(targelont: Targelont): Stitch[Selonq[CandidatelonUselonr]] = {
+    val nodelons = Stitch.join(firstDelongrelonelonNodelons(targelont), seloncondDelongrelonelonNodelons(targelont))
 
-    nodes.flatMap {
-      case (firstDegreeCandidates, secondDegreeCandidates) => {
-        salsaExpander(firstDegreeCandidates, secondDegreeCandidates, maxResults(target))
-          .map(_.map(_.withCandidateSource(identifier)).sortBy(-_.score.getOrElse(0.0)))
+    nodelons.flatMap {
+      caselon (firstDelongrelonelonCandidatelons, seloncondDelongrelonelonCandidatelons) => {
+        salsaelonxpandelonr(firstDelongrelonelonCandidatelons, seloncondDelongrelonelonCandidatelons, maxRelonsults(targelont))
+          .map(_.map(_.withCandidatelonSourcelon(idelonntifielonr)).sortBy(-_.scorelon.gelontOrelonlselon(0.0)))
       }
     }
   }

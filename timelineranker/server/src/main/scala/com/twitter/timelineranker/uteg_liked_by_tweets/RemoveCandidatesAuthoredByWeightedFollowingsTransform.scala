@@ -1,29 +1,29 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.utelong_likelond_by_twelonelonts
 
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelines.model.UserId
-import com.twitter.util.Future
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.util.Futurelon
 
-object RemoveCandidatesAuthoredByWeightedFollowingsTransform
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filteredSearchResults = envelope.query.utegLikedByTweetsOptions match {
-      case Some(opts) =>
-        envelope.searchResults.filterNot(isAuthorInWeightedFollowings(_, opts.weightedFollowings))
-      case None => envelope.searchResults
+objelonct RelonmovelonCandidatelonsAuthorelondByWelonightelondFollowingsTransform
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val filtelonrelondSelonarchRelonsults = elonnvelonlopelon.quelonry.utelongLikelondByTwelonelontsOptions match {
+      caselon Somelon(opts) =>
+        elonnvelonlopelon.selonarchRelonsults.filtelonrNot(isAuthorInWelonightelondFollowings(_, opts.welonightelondFollowings))
+      caselon Nonelon => elonnvelonlopelon.selonarchRelonsults
     }
-    Future.value(envelope.copy(searchResults = filteredSearchResults))
+    Futurelon.valuelon(elonnvelonlopelon.copy(selonarchRelonsults = filtelonrelondSelonarchRelonsults))
   }
 
-  private def isAuthorInWeightedFollowings(
-    searchResult: ThriftSearchResult,
-    weightedFollowings: Map[UserId, Double]
-  ): Boolean = {
-    searchResult.metadata match {
-      case Some(metadata) => weightedFollowings.contains(metadata.fromUserId)
-      case None => false
+  privatelon delonf isAuthorInWelonightelondFollowings(
+    selonarchRelonsult: ThriftSelonarchRelonsult,
+    welonightelondFollowings: Map[UselonrId, Doublelon]
+  ): Boolelonan = {
+    selonarchRelonsult.melontadata match {
+      caselon Somelon(melontadata) => welonightelondFollowings.contains(melontadata.fromUselonrId)
+      caselon Nonelon => falselon
     }
   }
 }

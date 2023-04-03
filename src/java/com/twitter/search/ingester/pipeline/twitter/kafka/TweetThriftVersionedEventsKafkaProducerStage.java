@@ -1,108 +1,108 @@
-package com.twitter.search.ingester.pipeline.twitter.kafka;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr.kafka;
 
-import javax.naming.NamingException;
+import javax.naming.Namingelonxcelonption;
 
-import org.apache.commons.pipeline.StageException;
-import org.apache.commons.pipeline.validation.ConsumedTypes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.commons.pipelonlinelon.Stagelonelonxcelonption;
+import org.apachelon.commons.pipelonlinelon.validation.ConsumelondTypelons;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.debug.DebugEventUtil;
-import com.twitter.search.common.debug.thriftjava.DebugEvents;
-import com.twitter.search.common.metrics.SearchLongGauge;
-import com.twitter.search.ingester.model.IngesterThriftVersionedEvents;
-import com.twitter.search.ingester.pipeline.util.PipelineStageException;
+import com.twittelonr.selonarch.common.delonbug.DelonbugelonvelonntUtil;
+import com.twittelonr.selonarch.common.delonbug.thriftjava.Delonbugelonvelonnts;
+import com.twittelonr.selonarch.common.melontrics.SelonarchLongGaugelon;
+import com.twittelonr.selonarch.ingelonstelonr.modelonl.IngelonstelonrThriftVelonrsionelondelonvelonnts;
+import com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.util.PipelonlinelonStagelonelonxcelonption;
 
 /**
- * Kafka producer stage to write tweet indexing data as {@code ThriftVersionedEvents}. This stage
- * also handles extra debug event processing.
+ * Kafka producelonr stagelon to writelon twelonelont indelonxing data as {@codelon ThriftVelonrsionelondelonvelonnts}. This stagelon
+ * also handlelons elonxtra delonbug elonvelonnt procelonssing.
  */
-@ConsumedTypes(IngesterThriftVersionedEvents.class)
-public class TweetThriftVersionedEventsKafkaProducerStage extends KafkaProducerStage
-    <IngesterThriftVersionedEvents> {
-  private static final int PROCESSING_LATENCY_THRESHOLD_FOR_UPDATES_MILLIS = 30000;
+@ConsumelondTypelons(IngelonstelonrThriftVelonrsionelondelonvelonnts.class)
+public class TwelonelontThriftVelonrsionelondelonvelonntsKafkaProducelonrStagelon elonxtelonnds KafkaProducelonrStagelon
+    <IngelonstelonrThriftVelonrsionelondelonvelonnts> {
+  privatelon static final int PROCelonSSING_LATelonNCY_THRelonSHOLD_FOR_UPDATelonS_MILLIS = 30000;
 
-  private static final Logger LOG =
-      LoggerFactory.getLogger(TweetThriftVersionedEventsKafkaProducerStage.class);
+  privatelon static final Loggelonr LOG =
+      LoggelonrFactory.gelontLoggelonr(TwelonelontThriftVelonrsionelondelonvelonntsKafkaProducelonrStagelon.class);
 
-  private long processedTweetCount = 0;
+  privatelon long procelonsselondTwelonelontCount = 0;
 
-  private SearchLongGauge kafkaProducerLag;
+  privatelon SelonarchLongGaugelon kafkaProducelonrLag;
 
-  private int debugEventLogPeriod = -1;
+  privatelon int delonbugelonvelonntLogPelonriod = -1;
 
-  public TweetThriftVersionedEventsKafkaProducerStage(String kafkaTopic, String clientId,
-                                            String clusterPath) {
-    super(kafkaTopic, clientId, clusterPath);
+  public TwelonelontThriftVelonrsionelondelonvelonntsKafkaProducelonrStagelon(String kafkaTopic, String clielonntId,
+                                            String clustelonrPath) {
+    supelonr(kafkaTopic, clielonntId, clustelonrPath);
   }
 
-  public TweetThriftVersionedEventsKafkaProducerStage() {
-    super();
+  public TwelonelontThriftVelonrsionelondelonvelonntsKafkaProducelonrStagelon() {
+    supelonr();
   }
 
-  @Override
-  protected void initStats() {
-    super.initStats();
-    setupCommonStats();
+  @Ovelonrridelon
+  protelonctelond void initStats() {
+    supelonr.initStats();
+    selontupCommonStats();
   }
 
-  @Override
-  protected void innerSetupStats() {
-    super.innerSetupStats();
-    setupCommonStats();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontupStats() {
+    supelonr.innelonrSelontupStats();
+    selontupCommonStats();
   }
 
-  private void setupCommonStats() {
-    kafkaProducerLag = SearchLongGauge.export(
-        getStageNamePrefix() + "_kafka_producer_lag_millis");
+  privatelon void selontupCommonStats() {
+    kafkaProducelonrLag = SelonarchLongGaugelon.elonxport(
+        gelontStagelonNamelonPrelonfix() + "_kafka_producelonr_lag_millis");
   }
 
-  @Override
-  protected void innerSetup() throws PipelineStageException, NamingException {
-    super.innerSetup();
+  @Ovelonrridelon
+  protelonctelond void innelonrSelontup() throws PipelonlinelonStagelonelonxcelonption, Namingelonxcelonption {
+    supelonr.innelonrSelontup();
   }
 
-  @Override
-  protected void doInnerPreprocess() throws StageException, NamingException {
-    super.doInnerPreprocess();
-    commonInnerSetup();
+  @Ovelonrridelon
+  protelonctelond void doInnelonrPrelonprocelonss() throws Stagelonelonxcelonption, Namingelonxcelonption {
+    supelonr.doInnelonrPrelonprocelonss();
+    commonInnelonrSelontup();
   }
 
-  private void commonInnerSetup() {
-    setProcessingLatencyThresholdMillis(PROCESSING_LATENCY_THRESHOLD_FOR_UPDATES_MILLIS);
+  privatelon void commonInnelonrSelontup() {
+    selontProcelonssingLatelonncyThrelonsholdMillis(PROCelonSSING_LATelonNCY_THRelonSHOLD_FOR_UPDATelonS_MILLIS);
   }
 
-  @Override
-  public void innerProcess(Object obj) throws StageException {
-    if (!(obj instanceof IngesterThriftVersionedEvents)) {
-      throw new StageException(this, "Object is not IngesterThriftVersionedEvents: " + obj);
+  @Ovelonrridelon
+  public void innelonrProcelonss(Objelonct obj) throws Stagelonelonxcelonption {
+    if (!(obj instancelonof IngelonstelonrThriftVelonrsionelondelonvelonnts)) {
+      throw nelonw Stagelonelonxcelonption(this, "Objelonct is not IngelonstelonrThriftVelonrsionelondelonvelonnts: " + obj);
     }
 
-    IngesterThriftVersionedEvents events = (IngesterThriftVersionedEvents) obj;
-    innerRunFinalStageOfBranchV2(events);
+    IngelonstelonrThriftVelonrsionelondelonvelonnts elonvelonnts = (IngelonstelonrThriftVelonrsionelondelonvelonnts) obj;
+    innelonrRunFinalStagelonOfBranchV2(elonvelonnts);
   }
 
-  @Override
-  protected void innerRunFinalStageOfBranchV2(IngesterThriftVersionedEvents events) {
-    if ((debugEventLogPeriod > 0)
-        && (processedTweetCount % debugEventLogPeriod == 0)
-        && (events.getDebugEvents() != null)) {
-      LOG.info("DebugEvents for tweet {}: {}",
-          events.getTweetId(), DebugEventUtil.debugEventsToString(events.getDebugEvents()));
+  @Ovelonrridelon
+  protelonctelond void innelonrRunFinalStagelonOfBranchV2(IngelonstelonrThriftVelonrsionelondelonvelonnts elonvelonnts) {
+    if ((delonbugelonvelonntLogPelonriod > 0)
+        && (procelonsselondTwelonelontCount % delonbugelonvelonntLogPelonriod == 0)
+        && (elonvelonnts.gelontDelonbugelonvelonnts() != null)) {
+      LOG.info("Delonbugelonvelonnts for twelonelont {}: {}",
+          elonvelonnts.gelontTwelonelontId(), DelonbugelonvelonntUtil.delonbugelonvelonntsToString(elonvelonnts.gelontDelonbugelonvelonnts()));
     }
-    processedTweetCount++;
+    procelonsselondTwelonelontCount++;
 
-    DebugEvents debugEvents = events.getDebugEvents();
-    if ((debugEvents != null) && debugEvents.isSetProcessingStartedAt()) {
-      kafkaProducerLag.set(
-          clock.nowMillis() - debugEvents.getProcessingStartedAt().getEventTimestampMillis());
+    Delonbugelonvelonnts delonbugelonvelonnts = elonvelonnts.gelontDelonbugelonvelonnts();
+    if ((delonbugelonvelonnts != null) && delonbugelonvelonnts.isSelontProcelonssingStartelondAt()) {
+      kafkaProducelonrLag.selont(
+          clock.nowMillis() - delonbugelonvelonnts.gelontProcelonssingStartelondAt().gelontelonvelonntTimelonstampMillis());
     }
 
-    super.tryToSendEventsToKafka(events);
+    supelonr.tryToSelonndelonvelonntsToKafka(elonvelonnts);
   }
 
-  @SuppressWarnings("unused")  // set from pipeline config
-  public void setDebugEventLogPeriod(int debugEventLogPeriod) {
-    this.debugEventLogPeriod = debugEventLogPeriod;
+  @SupprelonssWarnings("unuselond")  // selont from pipelonlinelon config
+  public void selontDelonbugelonvelonntLogPelonriod(int delonbugelonvelonntLogPelonriod) {
+    this.delonbugelonvelonntLogPelonriod = delonbugelonvelonntLogPelonriod;
   }
 }

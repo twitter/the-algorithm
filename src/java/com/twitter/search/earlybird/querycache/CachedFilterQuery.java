@@ -1,310 +1,310 @@
-package com.twitter.search.earlybird.querycache;
+packagelon com.twittelonr.selonarch.elonarlybird.quelonrycachelon;
 
-import java.io.IOException;
-import java.util.Objects;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.Objeloncts;
+import java.util.Selont;
 
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.LeafReaderContext;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.ConstantScoreScorer;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.search.Explanation;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.Query;
-import org.apache.lucene.search.Scorer;
-import org.apache.lucene.search.ScoreMode;
-import org.apache.lucene.search.Weight;
+import org.apachelon.lucelonnelon.indelonx.IndelonxRelonadelonr;
+import org.apachelon.lucelonnelon.indelonx.LelonafRelonadelonrContelonxt;
+import org.apachelon.lucelonnelon.indelonx.Telonrm;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanClauselon;
+import org.apachelon.lucelonnelon.selonarch.BoolelonanQuelonry;
+import org.apachelon.lucelonnelon.selonarch.ConstantScorelonScorelonr;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.selonarch.elonxplanation;
+import org.apachelon.lucelonnelon.selonarch.IndelonxSelonarchelonr;
+import org.apachelon.lucelonnelon.selonarch.Quelonry;
+import org.apachelon.lucelonnelon.selonarch.Scorelonr;
+import org.apachelon.lucelonnelon.selonarch.ScorelonModelon;
+import org.apachelon.lucelonnelon.selonarch.Welonight;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.query.DefaultFilterWeight;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.QueryCacheResultForSegment;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.quelonry.DelonfaultFiltelonrWelonight;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.QuelonryCachelonRelonsultForSelongmelonnt;
 
 /**
- * Query to iterate QueryCache result (the cache)
+ * Quelonry to itelonratelon QuelonryCachelon relonsult (thelon cachelon)
  */
-public final class CachedFilterQuery extends Query {
-  private static final String STAT_PREFIX = "querycache_serving_";
-  private static final SearchCounter REWRITE_CALLS = SearchCounter.export(
-      STAT_PREFIX + "rewrite_calls");
-  private static final SearchCounter NO_CACHE_FOUND = SearchCounter.export(
-      STAT_PREFIX + "no_cache_found");
-  private static final SearchCounter USED_CACHE_AND_FRESH_DOCS = SearchCounter.export(
-      STAT_PREFIX + "used_cache_and_fresh_docs");
-  private static final SearchCounter USED_CACHE_ONLY = SearchCounter.export(
-      STAT_PREFIX + "used_cache_only");
+public final class CachelondFiltelonrQuelonry elonxtelonnds Quelonry {
+  privatelon static final String STAT_PRelonFIX = "quelonrycachelon_selonrving_";
+  privatelon static final SelonarchCountelonr RelonWRITelon_CALLS = SelonarchCountelonr.elonxport(
+      STAT_PRelonFIX + "relonwritelon_calls");
+  privatelon static final SelonarchCountelonr NO_CACHelon_FOUND = SelonarchCountelonr.elonxport(
+      STAT_PRelonFIX + "no_cachelon_found");
+  privatelon static final SelonarchCountelonr USelonD_CACHelon_AND_FRelonSH_DOCS = SelonarchCountelonr.elonxport(
+      STAT_PRelonFIX + "uselond_cachelon_and_frelonsh_docs");
+  privatelon static final SelonarchCountelonr USelonD_CACHelon_ONLY = SelonarchCountelonr.elonxport(
+      STAT_PRelonFIX + "uselond_cachelon_only");
 
 
-  public static class NoSuchFilterException extends Exception {
-    NoSuchFilterException(String filterName) {
-      super("Filter [" + filterName + "] does not exists");
+  public static class NoSuchFiltelonrelonxcelonption elonxtelonnds elonxcelonption {
+    NoSuchFiltelonrelonxcelonption(String filtelonrNamelon) {
+      supelonr("Filtelonr [" + filtelonrNamelon + "] doelons not elonxists");
     }
   }
 
-  private static class CachedResultQuery extends Query {
-    private final QueryCacheResultForSegment cachedResult;
+  privatelon static class CachelondRelonsultQuelonry elonxtelonnds Quelonry {
+    privatelon final QuelonryCachelonRelonsultForSelongmelonnt cachelondRelonsult;
 
-    public CachedResultQuery(QueryCacheResultForSegment cachedResult) {
-      this.cachedResult = cachedResult;
+    public CachelondRelonsultQuelonry(QuelonryCachelonRelonsultForSelongmelonnt cachelondRelonsult) {
+      this.cachelondRelonsult = cachelondRelonsult;
     }
 
-    @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-      return new DefaultFilterWeight(this) {
-        @Override
-        protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context)
-            throws IOException {
-          return cachedResult.getDocIdSet().iterator();
+    @Ovelonrridelon
+    public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+      relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+        @Ovelonrridelon
+        protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt)
+            throws IOelonxcelonption {
+          relonturn cachelondRelonsult.gelontDocIdSelont().itelonrator();
         }
       };
     }
 
-    @Override
-    public int hashCode() {
-      return cachedResult == null ? 0 : cachedResult.hashCode();
+    @Ovelonrridelon
+    public int hashCodelon() {
+      relonturn cachelondRelonsult == null ? 0 : cachelondRelonsult.hashCodelon();
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof CachedResultQuery)) {
-        return false;
+    @Ovelonrridelon
+    public boolelonan elonquals(Objelonct obj) {
+      if (!(obj instancelonof CachelondRelonsultQuelonry)) {
+        relonturn falselon;
       }
 
-      CachedResultQuery query = (CachedResultQuery) obj;
-      return Objects.equals(cachedResult, query.cachedResult);
+      CachelondRelonsultQuelonry quelonry = (CachelondRelonsultQuelonry) obj;
+      relonturn Objeloncts.elonquals(cachelondRelonsult, quelonry.cachelondRelonsult);
     }
 
-    @Override
-    public String toString(String field) {
-      return "CACHED_RESULT";
+    @Ovelonrridelon
+    public String toString(String fielonld) {
+      relonturn "CACHelonD_RelonSULT";
     }
   }
 
-  private static class CachedResultAndFreshDocsQuery extends Query {
-    private final Query cacheLuceneQuery;
-    private final QueryCacheResultForSegment cachedResult;
+  privatelon static class CachelondRelonsultAndFrelonshDocsQuelonry elonxtelonnds Quelonry {
+    privatelon final Quelonry cachelonLucelonnelonQuelonry;
+    privatelon final QuelonryCachelonRelonsultForSelongmelonnt cachelondRelonsult;
 
-    public CachedResultAndFreshDocsQuery(
-        Query cacheLuceneQuery, QueryCacheResultForSegment cachedResult) {
-      this.cacheLuceneQuery = cacheLuceneQuery;
-      this.cachedResult = cachedResult;
+    public CachelondRelonsultAndFrelonshDocsQuelonry(
+        Quelonry cachelonLucelonnelonQuelonry, QuelonryCachelonRelonsultForSelongmelonnt cachelondRelonsult) {
+      this.cachelonLucelonnelonQuelonry = cachelonLucelonnelonQuelonry;
+      this.cachelondRelonsult = cachelondRelonsult;
     }
 
-    @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-      return new Weight(this) {
-        @Override
-        public void extractTerms(Set<Term> terms) {
+    @Ovelonrridelon
+    public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+      relonturn nelonw Welonight(this) {
+        @Ovelonrridelon
+        public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
         }
 
-        @Override
-        public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-          Scorer scorer = scorer(context);
-          if ((scorer != null) && (scorer.iterator().advance(doc) == doc)) {
-            return Explanation.match(0f, "Match on id " + doc);
+        @Ovelonrridelon
+        public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc) throws IOelonxcelonption {
+          Scorelonr scorelonr = scorelonr(contelonxt);
+          if ((scorelonr != null) && (scorelonr.itelonrator().advancelon(doc) == doc)) {
+            relonturn elonxplanation.match(0f, "Match on id " + doc);
           }
-          return Explanation.match(0f, "No match on id " + doc);
+          relonturn elonxplanation.match(0f, "No match on id " + doc);
         }
 
-        @Override
-        public Scorer scorer(LeafReaderContext context) throws IOException {
-          Weight luceneWeight;
+        @Ovelonrridelon
+        public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+          Welonight lucelonnelonWelonight;
           try  {
-            luceneWeight = cacheLuceneQuery.createWeight(searcher, scoreMode, boost);
-          } catch (UnsupportedOperationException e) {
-            // Some queries do not support weights. This is fine, it simply means the query has
-            // no docs, and means the same thing as a null scorer.
-            return null;
+            lucelonnelonWelonight = cachelonLucelonnelonQuelonry.crelonatelonWelonight(selonarchelonr, scorelonModelon, boost);
+          } catch (UnsupportelondOpelonrationelonxcelonption elon) {
+            // Somelon quelonrielons do not support welonights. This is finelon, it simply melonans thelon quelonry has
+            // no docs, and melonans thelon samelon thing as a null scorelonr.
+            relonturn null;
           }
 
-          Scorer luceneScorer = luceneWeight.scorer(context);
-          if (luceneScorer == null) {
-            return null;
+          Scorelonr lucelonnelonScorelonr = lucelonnelonWelonight.scorelonr(contelonxt);
+          if (lucelonnelonScorelonr == null) {
+            relonturn null;
           }
 
-          DocIdSetIterator iterator = new CachedResultDocIdSetIterator(
-              cachedResult.getSmallestDocID(),
-              luceneScorer.iterator(),
-              cachedResult.getDocIdSet().iterator());
-          return new ConstantScoreScorer(luceneWeight, 0.0f, scoreMode, iterator);
+          DocIdSelontItelonrator itelonrator = nelonw CachelondRelonsultDocIdSelontItelonrator(
+              cachelondRelonsult.gelontSmallelonstDocID(),
+              lucelonnelonScorelonr.itelonrator(),
+              cachelondRelonsult.gelontDocIdSelont().itelonrator());
+          relonturn nelonw ConstantScorelonScorelonr(lucelonnelonWelonight, 0.0f, scorelonModelon, itelonrator);
         }
 
-        @Override
-        public boolean isCacheable(LeafReaderContext ctx) {
-          return true;
+        @Ovelonrridelon
+        public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+          relonturn truelon;
         }
       };
     }
 
-    @Override
-    public int hashCode() {
-      return (cacheLuceneQuery == null ? 0 : cacheLuceneQuery.hashCode()) * 13
-          + (cachedResult == null ? 0 : cachedResult.hashCode());
+    @Ovelonrridelon
+    public int hashCodelon() {
+      relonturn (cachelonLucelonnelonQuelonry == null ? 0 : cachelonLucelonnelonQuelonry.hashCodelon()) * 13
+          + (cachelondRelonsult == null ? 0 : cachelondRelonsult.hashCodelon());
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      if (!(obj instanceof CachedResultAndFreshDocsQuery)) {
-        return false;
+    @Ovelonrridelon
+    public boolelonan elonquals(Objelonct obj) {
+      if (!(obj instancelonof CachelondRelonsultAndFrelonshDocsQuelonry)) {
+        relonturn falselon;
       }
 
-      CachedResultAndFreshDocsQuery query = (CachedResultAndFreshDocsQuery) obj;
-      return Objects.equals(cacheLuceneQuery, query.cacheLuceneQuery)
-          && Objects.equals(cachedResult, query.cachedResult);
+      CachelondRelonsultAndFrelonshDocsQuelonry quelonry = (CachelondRelonsultAndFrelonshDocsQuelonry) obj;
+      relonturn Objeloncts.elonquals(cachelonLucelonnelonQuelonry, quelonry.cachelonLucelonnelonQuelonry)
+          && Objeloncts.elonquals(cachelondRelonsult, quelonry.cachelondRelonsult);
     }
 
-    @Override
-    public String toString(String field) {
-      return "CACHED_RESULT_AND_FRESH_DOCS";
+    @Ovelonrridelon
+    public String toString(String fielonld) {
+      relonturn "CACHelonD_RelonSULT_AND_FRelonSH_DOCS";
     }
   }
 
-  private static final Query DUMMY_FILTER = wrapFilter(new Query() {
-    @Override
-    public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost) {
-      return new DefaultFilterWeight(this) {
-        @Override
-        protected DocIdSetIterator getDocIdSetIterator(LeafReaderContext context) {
-          return null;
+  privatelon static final Quelonry DUMMY_FILTelonR = wrapFiltelonr(nelonw Quelonry() {
+    @Ovelonrridelon
+    public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost) {
+      relonturn nelonw DelonfaultFiltelonrWelonight(this) {
+        @Ovelonrridelon
+        protelonctelond DocIdSelontItelonrator gelontDocIdSelontItelonrator(LelonafRelonadelonrContelonxt contelonxt) {
+          relonturn null;
         }
       };
     }
 
-    @Override
-    public int hashCode() {
-      return System.identityHashCode(this);
+    @Ovelonrridelon
+    public int hashCodelon() {
+      relonturn Systelonm.idelonntityHashCodelon(this);
     }
 
-    @Override
-    public boolean equals(Object obj) {
-      return this == obj;
+    @Ovelonrridelon
+    public boolelonan elonquals(Objelonct obj) {
+      relonturn this == obj;
     }
 
-    @Override
-    public String toString(String field) {
-      return "DUMMY_FILTER";
+    @Ovelonrridelon
+    public String toString(String fielonld) {
+      relonturn "DUMMY_FILTelonR";
     }
   });
 
-  private final QueryCacheFilter queryCacheFilter;
+  privatelon final QuelonryCachelonFiltelonr quelonryCachelonFiltelonr;
 
-  // Lucene Query used to fill the cache
-  private final Query cacheLuceneQuery;
+  // Lucelonnelon Quelonry uselond to fill thelon cachelon
+  privatelon final Quelonry cachelonLucelonnelonQuelonry;
 
-  public static Query getCachedFilterQuery(String filterName, QueryCacheManager queryCacheManager)
-      throws NoSuchFilterException {
-    return wrapFilter(new CachedFilterQuery(filterName, queryCacheManager));
+  public static Quelonry gelontCachelondFiltelonrQuelonry(String filtelonrNamelon, QuelonryCachelonManagelonr quelonryCachelonManagelonr)
+      throws NoSuchFiltelonrelonxcelonption {
+    relonturn wrapFiltelonr(nelonw CachelondFiltelonrQuelonry(filtelonrNamelon, quelonryCachelonManagelonr));
   }
 
-  private static Query wrapFilter(Query filter) {
-    return new BooleanQuery.Builder()
-        .add(filter, BooleanClause.Occur.FILTER)
+  privatelon static Quelonry wrapFiltelonr(Quelonry filtelonr) {
+    relonturn nelonw BoolelonanQuelonry.Buildelonr()
+        .add(filtelonr, BoolelonanClauselon.Occur.FILTelonR)
         .build();
   }
 
-  private CachedFilterQuery(String filterName, QueryCacheManager queryCacheManager)
-      throws NoSuchFilterException {
-    queryCacheFilter = queryCacheManager.getFilter(filterName);
-    if (queryCacheFilter == null) {
-      throw new NoSuchFilterException(filterName);
+  privatelon CachelondFiltelonrQuelonry(String filtelonrNamelon, QuelonryCachelonManagelonr quelonryCachelonManagelonr)
+      throws NoSuchFiltelonrelonxcelonption {
+    quelonryCachelonFiltelonr = quelonryCachelonManagelonr.gelontFiltelonr(filtelonrNamelon);
+    if (quelonryCachelonFiltelonr == null) {
+      throw nelonw NoSuchFiltelonrelonxcelonption(filtelonrNamelon);
     }
-    queryCacheFilter.incrementUsageStat();
+    quelonryCachelonFiltelonr.increlonmelonntUsagelonStat();
 
-    // retrieve the query that was used to populate the cache
-    cacheLuceneQuery = queryCacheFilter.getLuceneQuery();
+    // relontrielonvelon thelon quelonry that was uselond to populatelon thelon cachelon
+    cachelonLucelonnelonQuelonry = quelonryCachelonFiltelonr.gelontLucelonnelonQuelonry();
   }
 
   /**
-   * Creates a query base on the cache situation
+   * Crelonatelons a quelonry baselon on thelon cachelon situation
    */
-  @Override
-  public Query rewrite(IndexReader reader) {
-    EarlybirdIndexSegmentAtomicReader twitterReader = (EarlybirdIndexSegmentAtomicReader) reader;
-    QueryCacheResultForSegment cachedResult =
-        twitterReader.getSegmentData().getQueryCacheResult(queryCacheFilter.getFilterName());
-    REWRITE_CALLS.increment();
+  @Ovelonrridelon
+  public Quelonry relonwritelon(IndelonxRelonadelonr relonadelonr) {
+    elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr twittelonrRelonadelonr = (elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr) relonadelonr;
+    QuelonryCachelonRelonsultForSelongmelonnt cachelondRelonsult =
+        twittelonrRelonadelonr.gelontSelongmelonntData().gelontQuelonryCachelonRelonsult(quelonryCachelonFiltelonr.gelontFiltelonrNamelon());
+    RelonWRITelon_CALLS.increlonmelonnt();
 
-    if (cachedResult == null || cachedResult.getSmallestDocID() == -1) {
-      // No cached result, or cache has never been updated
-      // This happens to the newly created segment, between the segment creation and first
-      // query cache update
-      NO_CACHE_FOUND.increment();
+    if (cachelondRelonsult == null || cachelondRelonsult.gelontSmallelonstDocID() == -1) {
+      // No cachelond relonsult, or cachelon has nelonvelonr belonelonn updatelond
+      // This happelonns to thelon nelonwly crelonatelond selongmelonnt, belontwelonelonn thelon selongmelonnt crelonation and first
+      // quelonry cachelon updatelon
+      NO_CACHelon_FOUND.increlonmelonnt();
 
-      if (queryCacheFilter.getCacheModeOnly()) {
-        // since this query cache filter allows cache mode only, we return a query that
-        // matches no doc
-        return DUMMY_FILTER;
+      if (quelonryCachelonFiltelonr.gelontCachelonModelonOnly()) {
+        // sincelon this quelonry cachelon filtelonr allows cachelon modelon only, welon relonturn a quelonry that
+        // matchelons no doc
+        relonturn DUMMY_FILTelonR;
       }
 
-      return wrapFilter(cacheLuceneQuery);
+      relonturn wrapFiltelonr(cachelonLucelonnelonQuelonry);
     }
 
-    if (!queryCacheFilter.getCacheModeOnly() && // is this a cache mode only filter?
-        // the following check is only necessary for the realtime segment, which
-        // grows. Since we decrement docIds in the realtime segment, a reader
-        // having a smallestDocID less than the one in the cachedResult indicates
-        // that the segment/reader has new documents.
-        cachedResult.getSmallestDocID() > twitterReader.getSmallestDocID()) {
-      // The segment has more documents than the cached result. IOW, there are new
-      // documents that are not cached. This happens to latest segment that we're indexing to.
-      USED_CACHE_AND_FRESH_DOCS.increment();
-      return wrapFilter(new CachedResultAndFreshDocsQuery(cacheLuceneQuery, cachedResult));
+    if (!quelonryCachelonFiltelonr.gelontCachelonModelonOnly() && // is this a cachelon modelon only filtelonr?
+        // thelon following chelonck is only neloncelonssary for thelon relonaltimelon selongmelonnt, which
+        // grows. Sincelon welon deloncrelonmelonnt docIds in thelon relonaltimelon selongmelonnt, a relonadelonr
+        // having a smallelonstDocID lelonss than thelon onelon in thelon cachelondRelonsult indicatelons
+        // that thelon selongmelonnt/relonadelonr has nelonw documelonnts.
+        cachelondRelonsult.gelontSmallelonstDocID() > twittelonrRelonadelonr.gelontSmallelonstDocID()) {
+      // Thelon selongmelonnt has morelon documelonnts than thelon cachelond relonsult. IOW, thelonrelon arelon nelonw
+      // documelonnts that arelon not cachelond. This happelonns to latelonst selongmelonnt that welon'relon indelonxing to.
+      USelonD_CACHelon_AND_FRelonSH_DOCS.increlonmelonnt();
+      relonturn wrapFiltelonr(nelonw CachelondRelonsultAndFrelonshDocsQuelonry(cachelonLucelonnelonQuelonry, cachelondRelonsult));
     }
 
-    // The segment has not grown since the cache was last updated.
-    // This happens mostly to old segments that we're no longer indexing to.
-    USED_CACHE_ONLY.increment();
-    return wrapFilter(new CachedResultQuery(cachedResult));
+    // Thelon selongmelonnt has not grown sincelon thelon cachelon was last updatelond.
+    // This happelonns mostly to old selongmelonnts that welon'relon no longelonr indelonxing to.
+    USelonD_CACHelon_ONLY.increlonmelonnt();
+    relonturn wrapFiltelonr(nelonw CachelondRelonsultQuelonry(cachelondRelonsult));
   }
 
-  @Override
-  public Weight createWeight(IndexSearcher searcher, ScoreMode scoreMode, float boost)
-      throws IOException {
-    final Weight luceneWeight = cacheLuceneQuery.createWeight(searcher, scoreMode, boost);
+  @Ovelonrridelon
+  public Welonight crelonatelonWelonight(IndelonxSelonarchelonr selonarchelonr, ScorelonModelon scorelonModelon, float boost)
+      throws IOelonxcelonption {
+    final Welonight lucelonnelonWelonight = cachelonLucelonnelonQuelonry.crelonatelonWelonight(selonarchelonr, scorelonModelon, boost);
 
-    return new Weight(this) {
-      @Override
-      public Scorer scorer(LeafReaderContext context) throws IOException {
-        return luceneWeight.scorer(context);
+    relonturn nelonw Welonight(this) {
+      @Ovelonrridelon
+      public Scorelonr scorelonr(LelonafRelonadelonrContelonxt contelonxt) throws IOelonxcelonption {
+        relonturn lucelonnelonWelonight.scorelonr(contelonxt);
       }
 
-      @Override
-      public void extractTerms(Set<Term> terms) {
-        luceneWeight.extractTerms(terms);
+      @Ovelonrridelon
+      public void elonxtractTelonrms(Selont<Telonrm> telonrms) {
+        lucelonnelonWelonight.elonxtractTelonrms(telonrms);
       }
 
-      @Override
-      public Explanation explain(LeafReaderContext context, int doc) throws IOException {
-        return luceneWeight.explain(context, doc);
+      @Ovelonrridelon
+      public elonxplanation elonxplain(LelonafRelonadelonrContelonxt contelonxt, int doc) throws IOelonxcelonption {
+        relonturn lucelonnelonWelonight.elonxplain(contelonxt, doc);
       }
 
-      @Override
-      public boolean isCacheable(LeafReaderContext ctx) {
-        return luceneWeight.isCacheable(ctx);
+      @Ovelonrridelon
+      public boolelonan isCachelonablelon(LelonafRelonadelonrContelonxt ctx) {
+        relonturn lucelonnelonWelonight.isCachelonablelon(ctx);
       }
     };
   }
 
-  @Override
-  public int hashCode() {
-    return cacheLuceneQuery == null ? 0 : cacheLuceneQuery.hashCode();
+  @Ovelonrridelon
+  public int hashCodelon() {
+    relonturn cachelonLucelonnelonQuelonry == null ? 0 : cachelonLucelonnelonQuelonry.hashCodelon();
   }
 
-  @Override
-  public boolean equals(Object obj) {
-    if (!(obj instanceof CachedFilterQuery)) {
-      return false;
+  @Ovelonrridelon
+  public boolelonan elonquals(Objelonct obj) {
+    if (!(obj instancelonof CachelondFiltelonrQuelonry)) {
+      relonturn falselon;
     }
 
-    CachedFilterQuery filter = (CachedFilterQuery) obj;
-    return Objects.equals(cacheLuceneQuery, filter.cacheLuceneQuery);
+    CachelondFiltelonrQuelonry filtelonr = (CachelondFiltelonrQuelonry) obj;
+    relonturn Objeloncts.elonquals(cachelonLucelonnelonQuelonry, filtelonr.cachelonLucelonnelonQuelonry);
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString(String s) {
-    return "CachedFilterQuery[" + queryCacheFilter.getFilterName() + "]";
+    relonturn "CachelondFiltelonrQuelonry[" + quelonryCachelonFiltelonr.gelontFiltelonrNamelon() + "]";
   }
 }

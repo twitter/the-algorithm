@@ -1,50 +1,50 @@
-package com.twitter.follow_recommendations.products.explore_tab
+packagelon com.twittelonr.follow_reloncommelonndations.products.elonxplorelon_tab
 
-import com.twitter.follow_recommendations.common.base.BaseRecommendationFlow
-import com.twitter.follow_recommendations.common.base.IdentityTransform
-import com.twitter.follow_recommendations.common.base.Transform
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.common.models.Recommendation
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlFlow
-import com.twitter.follow_recommendations.flows.post_nux_ml.PostNuxMlRequestBuilder
-import com.twitter.follow_recommendations.products.common.Product
-import com.twitter.follow_recommendations.products.common.ProductRequest
-import com.twitter.follow_recommendations.products.explore_tab.configapi.ExploreTabParams
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.baselon.BaselonReloncommelonndationFlow
+import com.twittelonr.follow_reloncommelonndations.common.baselon.IdelonntityTransform
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Transform
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.Reloncommelonndation
+import com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml.PostNuxMlFlow
+import com.twittelonr.follow_reloncommelonndations.flows.post_nux_ml.PostNuxMlRelonquelonstBuildelonr
+import com.twittelonr.follow_reloncommelonndations.products.common.Product
+import com.twittelonr.follow_reloncommelonndations.products.common.ProductRelonquelonst
+import com.twittelonr.follow_reloncommelonndations.products.elonxplorelon_tab.configapi.elonxplorelonTabParams
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ExploreTabProduct @Inject() (
+@Singlelonton
+class elonxplorelonTabProduct @Injelonct() (
   postNuxMlFlow: PostNuxMlFlow,
-  postNuxMlRequestBuilder: PostNuxMlRequestBuilder)
-    extends Product {
-  override val name: String = "Explore Tab"
+  postNuxMlRelonquelonstBuildelonr: PostNuxMlRelonquelonstBuildelonr)
+    elonxtelonnds Product {
+  ovelonrridelon val namelon: String = "elonxplorelon Tab"
 
-  override val identifier: String = "explore-tab"
+  ovelonrridelon val idelonntifielonr: String = "elonxplorelon-tab"
 
-  override val displayLocation: DisplayLocation = DisplayLocation.ExploreTab
+  ovelonrridelon val displayLocation: DisplayLocation = DisplayLocation.elonxplorelonTab
 
-  override def selectWorkflows(
-    request: ProductRequest
-  ): Stitch[Seq[BaseRecommendationFlow[ProductRequest, _ <: Recommendation]]] = {
-    postNuxMlRequestBuilder.build(request).map { postNuxMlRequest =>
-      Seq(postNuxMlFlow.mapKey({ _: ProductRequest => postNuxMlRequest }))
+  ovelonrridelon delonf selonlelonctWorkflows(
+    relonquelonst: ProductRelonquelonst
+  ): Stitch[Selonq[BaselonReloncommelonndationFlow[ProductRelonquelonst, _ <: Reloncommelonndation]]] = {
+    postNuxMlRelonquelonstBuildelonr.build(relonquelonst).map { postNuxMlRelonquelonst =>
+      Selonq(postNuxMlFlow.mapKelony({ _: ProductRelonquelonst => postNuxMlRelonquelonst }))
     }
   }
 
-  override val blender: Transform[ProductRequest, Recommendation] =
-    new IdentityTransform[ProductRequest, Recommendation]
+  ovelonrridelon val blelonndelonr: Transform[ProductRelonquelonst, Reloncommelonndation] =
+    nelonw IdelonntityTransform[ProductRelonquelonst, Reloncommelonndation]
 
-  override def resultsTransformer(
-    request: ProductRequest
-  ): Stitch[Transform[ProductRequest, Recommendation]] =
-    Stitch.value(new IdentityTransform[ProductRequest, Recommendation])
+  ovelonrridelon delonf relonsultsTransformelonr(
+    relonquelonst: ProductRelonquelonst
+  ): Stitch[Transform[ProductRelonquelonst, Reloncommelonndation]] =
+    Stitch.valuelon(nelonw IdelonntityTransform[ProductRelonquelonst, Reloncommelonndation])
 
-  override def enabled(request: ProductRequest): Stitch[Boolean] = {
-    // Ideally we should hook up is_soft_user as custom FS field and disable the product through FS
-    val enabledForUserType = !request.recommendationRequest.isSoftUser || request.params(
-      ExploreTabParams.EnableProductForSoftUser)
-    Stitch.value(request.params(ExploreTabParams.EnableProduct) && enabledForUserType)
+  ovelonrridelon delonf elonnablelond(relonquelonst: ProductRelonquelonst): Stitch[Boolelonan] = {
+    // Idelonally welon should hook up is_soft_uselonr as custom FS fielonld and disablelon thelon product through FS
+    val elonnablelondForUselonrTypelon = !relonquelonst.reloncommelonndationRelonquelonst.isSoftUselonr || relonquelonst.params(
+      elonxplorelonTabParams.elonnablelonProductForSoftUselonr)
+    Stitch.valuelon(relonquelonst.params(elonxplorelonTabParams.elonnablelonProduct) && elonnablelondForUselonrTypelon)
   }
 }

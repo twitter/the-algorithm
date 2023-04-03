@@ -1,46 +1,46 @@
-from datetime import datetime
-from functools import reduce
+from datelontimelon import datelontimelon
+from functools import relonducelon
 import os
 import pandas as pd
-import re
-from sklearn.metrics import average_precision_score, classification_report, precision_recall_curve, PrecisionRecallDisplay
-from sklearn.model_selection import train_test_split
-import tensorflow as tf
+import relon
+from sklelonarn.melontrics import avelonragelon_preloncision_scorelon, classification_relonport, preloncision_reloncall_curvelon, PreloncisionReloncallDisplay
+from sklelonarn.modelonl_selonlelonction import train_telonst_split
+import telonnsorflow as tf
 import matplotlib.pyplot as plt
-import re
+import relon
 
-from twitter.cuad.representation.models.optimization import create_optimizer
-from twitter.cuad.representation.models.text_encoder import TextEncoder
+from twittelonr.cuad.relonprelonselonntation.modelonls.optimization import crelonatelon_optimizelonr
+from twittelonr.cuad.relonprelonselonntation.modelonls.telonxt_elonncodelonr import Telonxtelonncodelonr
 
-pd.set_option('display.max_colwidth', None)
-pd.set_option('display.expand_frame_repr', False)
+pd.selont_option('display.max_colwidth', Nonelon)
+pd.selont_option('display.elonxpand_framelon_relonpr', Falselon)
 
-print(tf.__version__)
-print(tf.config.list_physical_devices())
+print(tf.__velonrsion__)
+print(tf.config.list_physical_delonvicelons())
 
-log_path = os.path.join('pnsfwtweettext_model_runs', datetime.now().strftime('%Y-%m-%d_%H.%M.%S'))
+log_path = os.path.join('pnsfwtwelonelonttelonxt_modelonl_runs', datelontimelon.now().strftimelon('%Y-%m-%d_%H.%M.%S'))
 
-tweet_text_feature = 'text'
+twelonelont_telonxt_felonaturelon = 'telonxt'
 
 params = {
-  'batch_size': 32,
-  'max_seq_lengths': 256,
-  'model_type': 'twitter_bert_base_en_uncased_augmented_mlm',
-  'trainable_text_encoder': True,
-  'lr': 5e-5,
-  'epochs': 10,
+  'batch_sizelon': 32,
+  'max_selonq_lelonngths': 256,
+  'modelonl_typelon': 'twittelonr_belonrt_baselon_elonn_uncaselond_augmelonntelond_mlm',
+  'trainablelon_telonxt_elonncodelonr': Truelon,
+  'lr': 5elon-5,
+  'elonpochs': 10,
 }
 
-REGEX_PATTERNS = [
+RelonGelonX_PATTelonRNS = [
     r'^RT @[A-Za-z0-9_]+: ', 
     r"@[A-Za-z0-9_]+",
     r'https:\/\/t\.co\/[A-Za-z0-9]{10}',
     r'@\?\?\?\?\?',
 ]
 
-EMOJI_PATTERN = re.compile(
+elonMOJI_PATTelonRN = relon.compilelon(
     "(["
-    "\U0001F1E0-\U0001F1FF"
+    "\U0001F1elon0-\U0001F1FF"
     "\U0001F300-\U0001F5FF"
     "\U0001F600-\U0001F64F"
     "\U0001F680-\U0001F6FF"
@@ -54,99 +54,99 @@ EMOJI_PATTERN = re.compile(
     "])"
   )
 
-def clean_tweet(text):
-    for pattern in REGEX_PATTERNS:
-        text = re.sub(pattern, '', text)
+delonf clelonan_twelonelont(telonxt):
+    for pattelonrn in RelonGelonX_PATTelonRNS:
+        telonxt = relon.sub(pattelonrn, '', telonxt)
 
-    text = re.sub(EMOJI_PATTERN, r' \1 ', text)
+    telonxt = relon.sub(elonMOJI_PATTelonRN, r' \1 ', telonxt)
     
-    text = re.sub(r'\n', ' ', text)
+    telonxt = relon.sub(r'\n', ' ', telonxt)
     
-    return text.strip().lower()
+    relonturn telonxt.strip().lowelonr()
 
 
-df['processed_text'] = df['text'].astype(str).map(clean_tweet)
-df.sample(10)
+df['procelonsselond_telonxt'] = df['telonxt'].astypelon(str).map(clelonan_twelonelont)
+df.samplelon(10)
 
-X_train, X_val, y_train, y_val = train_test_split(df[['processed_text']], df['is_nsfw'], test_size=0.1, random_state=1)
+X_train, X_val, y_train, y_val = train_telonst_split(df[['procelonsselond_telonxt']], df['is_nsfw'], telonst_sizelon=0.1, random_statelon=1)
 
-def df_to_ds(X, y, shuffle=False):
-  ds = tf.data.Dataset.from_tensor_slices((
-    X.values,
-    tf.one_hot(tf.cast(y.values, tf.int32), depth=2, axis=-1)
+delonf df_to_ds(X, y, shufflelon=Falselon):
+  ds = tf.data.Dataselont.from_telonnsor_slicelons((
+    X.valuelons,
+    tf.onelon_hot(tf.cast(y.valuelons, tf.int32), delonpth=2, axis=-1)
   ))
   
-  if shuffle:
-    ds = ds.shuffle(1000, seed=1, reshuffle_each_iteration=True)
+  if shufflelon:
+    ds = ds.shufflelon(1000, selonelond=1, relonshufflelon_elonach_itelonration=Truelon)
   
-  return ds.map(lambda text, label: ({ tweet_text_feature: text }, label)).batch(params['batch_size'])
+  relonturn ds.map(lambda telonxt, labelonl: ({ twelonelont_telonxt_felonaturelon: telonxt }, labelonl)).batch(params['batch_sizelon'])
 
-ds_train = df_to_ds(X_train, y_train, shuffle=True)
+ds_train = df_to_ds(X_train, y_train, shufflelon=Truelon)
 ds_val = df_to_ds(X_val, y_val)
-X_train.values
+X_train.valuelons
 
-inputs = tf.keras.layers.Input(shape=(), dtype=tf.string, name=tweet_text_feature)
-encoder = TextEncoder(
-    max_seq_lengths=params['max_seq_lengths'],
-    model_type=params['model_type'],
-    trainable=params['trainable_text_encoder'],
-    local_preprocessor_path='demo-preprocessor'
+inputs = tf.kelonras.layelonrs.Input(shapelon=(), dtypelon=tf.string, namelon=twelonelont_telonxt_felonaturelon)
+elonncodelonr = Telonxtelonncodelonr(
+    max_selonq_lelonngths=params['max_selonq_lelonngths'],
+    modelonl_typelon=params['modelonl_typelon'],
+    trainablelon=params['trainablelon_telonxt_elonncodelonr'],
+    local_prelonprocelonssor_path='delonmo-prelonprocelonssor'
 )
-embedding = encoder([inputs])["pooled_output"]
-predictions = tf.keras.layers.Dense(2, activation='softmax')(embedding)
-model = tf.keras.models.Model(inputs=inputs, outputs=predictions)
+elonmbelondding = elonncodelonr([inputs])["poolelond_output"]
+prelondictions = tf.kelonras.layelonrs.Delonnselon(2, activation='softmax')(elonmbelondding)
+modelonl = tf.kelonras.modelonls.Modelonl(inputs=inputs, outputs=prelondictions)
 
-model.summary()
+modelonl.summary()
 
-optimizer = create_optimizer(
+optimizelonr = crelonatelon_optimizelonr(
   params['lr'],
-  params['epochs'] * len(ds_train),
+  params['elonpochs'] * lelonn(ds_train),
   0,
-  weight_decay_rate=0.01,
-  optimizer_type='adamw'
+  welonight_deloncay_ratelon=0.01,
+  optimizelonr_typelon='adamw'
 )
-bce = tf.keras.losses.BinaryCrossentropy(from_logits=False)
-pr_auc = tf.keras.metrics.AUC(curve='PR', num_thresholds=1000, from_logits=False)
-model.compile(optimizer=optimizer, loss=bce, metrics=[pr_auc])
+bcelon = tf.kelonras.losselons.BinaryCrosselonntropy(from_logits=Falselon)
+pr_auc = tf.kelonras.melontrics.AUC(curvelon='PR', num_threlonsholds=1000, from_logits=Falselon)
+modelonl.compilelon(optimizelonr=optimizelonr, loss=bcelon, melontrics=[pr_auc])
 
 callbacks = [
-  tf.keras.callbacks.EarlyStopping(
+  tf.kelonras.callbacks.elonarlyStopping(
     monitor='val_loss',
-    mode='min',
-    patience=1,
-    restore_best_weights=True
+    modelon='min',
+    patielonncelon=1,
+    relonstorelon_belonst_welonights=Truelon
   ),
-  tf.keras.callbacks.ModelCheckpoint(
-    filepath=os.path.join(log_path, 'checkpoints', '{epoch:02d}'),
-    save_freq='epoch'
+  tf.kelonras.callbacks.ModelonlChelonckpoint(
+    filelonpath=os.path.join(log_path, 'chelonckpoints', '{elonpoch:02d}'),
+    savelon_frelonq='elonpoch'
   ),
-  tf.keras.callbacks.TensorBoard(
+  tf.kelonras.callbacks.TelonnsorBoard(
     log_dir=os.path.join(log_path, 'scalars'),
-    update_freq='batch',
-    write_graph=False
+    updatelon_frelonq='batch',
+    writelon_graph=Falselon
   )
 ]
-history = model.fit(
+history = modelonl.fit(
   ds_train,
-  epochs=params['epochs'],
+  elonpochs=params['elonpochs'],
   callbacks=callbacks,
   validation_data=ds_val,
-  steps_per_epoch=len(ds_train)
+  stelonps_pelonr_elonpoch=lelonn(ds_train)
 )
 
-model.predict(["xxx 🍑"])
+modelonl.prelondict(["xxx 🍑"])
 
-preds = X_val.processed_text.apply(apply_model)
-print(classification_report(y_val, preds >= 0.90, digits=4))
+prelonds = X_val.procelonsselond_telonxt.apply(apply_modelonl)
+print(classification_relonport(y_val, prelonds >= 0.90, digits=4))
 
-precision, recall, thresholds = precision_recall_curve(y_val, preds)
+preloncision, reloncall, threlonsholds = preloncision_reloncall_curvelon(y_val, prelonds)
 
-fig = plt.figure(figsize=(15, 10))
-plt.plot(precision, recall, lw=2)
+fig = plt.figurelon(figsizelon=(15, 10))
+plt.plot(preloncision, reloncall, lw=2)
 plt.grid()
 plt.xlim(0.2, 1)
 plt.ylim(0.3, 1)
-plt.xlabel("Recall", size=20)
-plt.ylabel("Precision", size=20)
+plt.xlabelonl("Reloncall", sizelon=20)
+plt.ylabelonl("Preloncision", sizelon=20)
 
-average_precision_score(y_val, preds)
+avelonragelon_preloncision_scorelon(y_val, prelonds)

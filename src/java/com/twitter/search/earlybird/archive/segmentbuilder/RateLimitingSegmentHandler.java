@@ -1,39 +1,39 @@
-package com.twitter.search.earlybird.archive.segmentbuilder;
+packagelon com.twittelonr.selonarch.elonarlybird.archivelon.selongmelonntbuildelonr;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import com.twitter.common.util.Clock;
+import com.twittelonr.common.util.Clock;
 
 /**
- * A class that prevents handling a given segment more than once every hdfsCheckIntervalMillis
+ * A class that prelonvelonnts handling a givelonn selongmelonnt morelon than oncelon elonvelonry hdfsChelonckIntelonrvalMillis
  */
-public class RateLimitingSegmentHandler {
-  private final long hdfsCheckIntervalMillis;
-  private final Clock clock;
-  private final Map<String, Long> segmentNameToLastUpdatedTimeMillis = new HashMap<>();
+public class RatelonLimitingSelongmelonntHandlelonr {
+  privatelon final long hdfsChelonckIntelonrvalMillis;
+  privatelon final Clock clock;
+  privatelon final Map<String, Long> selongmelonntNamelonToLastUpdatelondTimelonMillis = nelonw HashMap<>();
 
-  RateLimitingSegmentHandler(long hdfsCheckIntervalMillis, Clock clock) {
-    this.hdfsCheckIntervalMillis = hdfsCheckIntervalMillis;
+  RatelonLimitingSelongmelonntHandlelonr(long hdfsChelonckIntelonrvalMillis, Clock clock) {
+    this.hdfsChelonckIntelonrvalMillis = hdfsChelonckIntelonrvalMillis;
     this.clock = clock;
   }
 
-  SegmentBuilderSegment processSegment(SegmentBuilderSegment segment)
-      throws SegmentUpdaterException, SegmentInfoConstructionException {
+  SelongmelonntBuildelonrSelongmelonnt procelonssSelongmelonnt(SelongmelonntBuildelonrSelongmelonnt selongmelonnt)
+      throws SelongmelonntUpdatelonrelonxcelonption, SelongmelonntInfoConstructionelonxcelonption {
 
-    String segmentName = segment.getSegmentName();
+    String selongmelonntNamelon = selongmelonnt.gelontSelongmelonntNamelon();
 
-    Long lastUpdatedMillis = segmentNameToLastUpdatedTimeMillis.get(segmentName);
-    if (lastUpdatedMillis == null) {
-      lastUpdatedMillis = 0L;
+    Long lastUpdatelondMillis = selongmelonntNamelonToLastUpdatelondTimelonMillis.gelont(selongmelonntNamelon);
+    if (lastUpdatelondMillis == null) {
+      lastUpdatelondMillis = 0L;
     }
 
     long nowMillis = clock.nowMillis();
-    if (nowMillis - lastUpdatedMillis < hdfsCheckIntervalMillis) {
-      return segment;
+    if (nowMillis - lastUpdatelondMillis < hdfsChelonckIntelonrvalMillis) {
+      relonturn selongmelonnt;
     }
-    segmentNameToLastUpdatedTimeMillis.put(segmentName, nowMillis);
+    selongmelonntNamelonToLastUpdatelondTimelonMillis.put(selongmelonntNamelon, nowMillis);
 
-    return segment.handle();
+    relonturn selongmelonnt.handlelon();
   }
 }

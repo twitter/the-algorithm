@@ -1,15 +1,15 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.article
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.articlelon
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.ArticleDisplayType
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.article.Default
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.ArticlelonDisplayTypelon
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.articlelon.Delonfault
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class ArticleDisplayTypeMarshaller @Inject() () {
-  def apply(articleDisplayType: ArticleDisplayType): urt.ArticleDisplayType =
-    articleDisplayType match {
-      case Default => urt.ArticleDisplayType.Default
+@Singlelonton
+class ArticlelonDisplayTypelonMarshallelonr @Injelonct() () {
+  delonf apply(articlelonDisplayTypelon: ArticlelonDisplayTypelon): urt.ArticlelonDisplayTypelon =
+    articlelonDisplayTypelon match {
+      caselon Delonfault => urt.ArticlelonDisplayTypelon.Delonfault
     }
 }

@@ -1,25 +1,25 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.tweet
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.twelonelont
 
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.tweet._
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.twelonelont._
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class TweetDisplayTypeMarshaller @Inject() () {
+@Singlelonton
+class TwelonelontDisplayTypelonMarshallelonr @Injelonct() () {
 
-  def apply(tweetDisplayType: TweetDisplayType): urt.TweetDisplayType = tweetDisplayType match {
-    case Tweet => urt.TweetDisplayType.Tweet
-    case TweetFollowOnly => urt.TweetDisplayType.TweetFollowOnly
-    case Media => urt.TweetDisplayType.Media
-    case MomentTimelineTweet => urt.TweetDisplayType.MomentTimelineTweet
-    case EmphasizedPromotedTweet => urt.TweetDisplayType.EmphasizedPromotedTweet
-    case QuotedTweet => urt.TweetDisplayType.QuotedTweet
-    case SelfThread => urt.TweetDisplayType.SelfThread
-    case CompactPromotedTweet => urt.TweetDisplayType.CompactPromotedTweet
-    case TweetWithoutCard => urt.TweetDisplayType.TweetWithoutCard
-    case ReaderModeRoot => urt.TweetDisplayType.ReaderModeRoot
-    case ReaderMode => urt.TweetDisplayType.ReaderMode
-    case CondensedTweet => urt.TweetDisplayType.CondensedTweet
+  delonf apply(twelonelontDisplayTypelon: TwelonelontDisplayTypelon): urt.TwelonelontDisplayTypelon = twelonelontDisplayTypelon match {
+    caselon Twelonelont => urt.TwelonelontDisplayTypelon.Twelonelont
+    caselon TwelonelontFollowOnly => urt.TwelonelontDisplayTypelon.TwelonelontFollowOnly
+    caselon Melondia => urt.TwelonelontDisplayTypelon.Melondia
+    caselon MomelonntTimelonlinelonTwelonelont => urt.TwelonelontDisplayTypelon.MomelonntTimelonlinelonTwelonelont
+    caselon elonmphasizelondPromotelondTwelonelont => urt.TwelonelontDisplayTypelon.elonmphasizelondPromotelondTwelonelont
+    caselon QuotelondTwelonelont => urt.TwelonelontDisplayTypelon.QuotelondTwelonelont
+    caselon SelonlfThrelonad => urt.TwelonelontDisplayTypelon.SelonlfThrelonad
+    caselon CompactPromotelondTwelonelont => urt.TwelonelontDisplayTypelon.CompactPromotelondTwelonelont
+    caselon TwelonelontWithoutCard => urt.TwelonelontDisplayTypelon.TwelonelontWithoutCard
+    caselon RelonadelonrModelonRoot => urt.TwelonelontDisplayTypelon.RelonadelonrModelonRoot
+    caselon RelonadelonrModelon => urt.TwelonelontDisplayTypelon.RelonadelonrModelon
+    caselon CondelonnselondTwelonelont => urt.TwelonelontDisplayTypelon.CondelonnselondTwelonelont
   }
 }

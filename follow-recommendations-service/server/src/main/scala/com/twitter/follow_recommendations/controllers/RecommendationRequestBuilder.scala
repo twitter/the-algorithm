@@ -1,39 +1,39 @@
-package com.twitter.follow_recommendations.controllers
+packagelon com.twittelonr.follow_reloncommelonndations.controllelonrs
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.follow_recommendations.common.models.ClientContextConverter
-import com.twitter.follow_recommendations.common.models.DisplayLocation
-import com.twitter.follow_recommendations.models.DebugParams
-import com.twitter.follow_recommendations.models.DisplayContext
-import com.twitter.follow_recommendations.models.RecommendationRequest
-import com.twitter.follow_recommendations.{thriftscala => t}
-import com.twitter.gizmoduck.thriftscala.UserType
-import com.twitter.stitch.Stitch
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.ClielonntContelonxtConvelonrtelonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.DisplayLocation
+import com.twittelonr.follow_reloncommelonndations.modelonls.DelonbugParams
+import com.twittelonr.follow_reloncommelonndations.modelonls.DisplayContelonxt
+import com.twittelonr.follow_reloncommelonndations.modelonls.ReloncommelonndationRelonquelonst
+import com.twittelonr.follow_reloncommelonndations.{thriftscala => t}
+import com.twittelonr.gizmoduck.thriftscala.UselonrTypelon
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class RecommendationRequestBuilder @Inject() (
-  requestBuilderUserFetcher: RequestBuilderUserFetcher,
-  statsReceiver: StatsReceiver) {
-  private val scopedStats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val isSoftUserCounter = scopedStats.counter("is_soft_user")
+@Singlelonton
+class ReloncommelonndationRelonquelonstBuildelonr @Injelonct() (
+  relonquelonstBuildelonrUselonrFelontchelonr: RelonquelonstBuildelonrUselonrFelontchelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val scopelondStats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val isSoftUselonrCountelonr = scopelondStats.countelonr("is_soft_uselonr")
 
-  def fromThrift(tRequest: t.RecommendationRequest): Stitch[RecommendationRequest] = {
-    requestBuilderUserFetcher.fetchUser(tRequest.clientContext.userId).map { userOpt =>
-      val isSoftUser = userOpt.exists(_.userType == UserType.Soft)
-      if (isSoftUser) isSoftUserCounter.incr()
-      RecommendationRequest(
-        clientContext = ClientContextConverter.fromThrift(tRequest.clientContext),
-        displayLocation = DisplayLocation.fromThrift(tRequest.displayLocation),
-        displayContext = tRequest.displayContext.map(DisplayContext.fromThrift),
-        maxResults = tRequest.maxResults,
-        cursor = tRequest.cursor,
-        excludedIds = tRequest.excludedIds,
-        fetchPromotedContent = tRequest.fetchPromotedContent,
-        debugParams = tRequest.debugParams.map(DebugParams.fromThrift),
-        userLocationState = tRequest.userLocationState,
-        isSoftUser = isSoftUser
+  delonf fromThrift(tRelonquelonst: t.ReloncommelonndationRelonquelonst): Stitch[ReloncommelonndationRelonquelonst] = {
+    relonquelonstBuildelonrUselonrFelontchelonr.felontchUselonr(tRelonquelonst.clielonntContelonxt.uselonrId).map { uselonrOpt =>
+      val isSoftUselonr = uselonrOpt.elonxists(_.uselonrTypelon == UselonrTypelon.Soft)
+      if (isSoftUselonr) isSoftUselonrCountelonr.incr()
+      ReloncommelonndationRelonquelonst(
+        clielonntContelonxt = ClielonntContelonxtConvelonrtelonr.fromThrift(tRelonquelonst.clielonntContelonxt),
+        displayLocation = DisplayLocation.fromThrift(tRelonquelonst.displayLocation),
+        displayContelonxt = tRelonquelonst.displayContelonxt.map(DisplayContelonxt.fromThrift),
+        maxRelonsults = tRelonquelonst.maxRelonsults,
+        cursor = tRelonquelonst.cursor,
+        elonxcludelondIds = tRelonquelonst.elonxcludelondIds,
+        felontchPromotelondContelonnt = tRelonquelonst.felontchPromotelondContelonnt,
+        delonbugParams = tRelonquelonst.delonbugParams.map(DelonbugParams.fromThrift),
+        uselonrLocationStatelon = tRelonquelonst.uselonrLocationStatelon,
+        isSoftUselonr = isSoftUselonr
       )
     }
 

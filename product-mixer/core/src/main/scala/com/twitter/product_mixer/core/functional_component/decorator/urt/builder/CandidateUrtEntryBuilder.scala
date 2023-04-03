@@ -1,14 +1,14 @@
-package com.twitter.product_mixer.core.functional_component.decorator.urt.builder
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.deloncorator.urt.buildelonr
 
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.model.common.UniversalNoun
-import com.twitter.product_mixer.core.model.marshalling.response.urt.TimelineEntry
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.UnivelonrsalNoun
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.Timelonlinelonelonntry
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
-trait CandidateUrtEntryBuilder[
-  -Query <: PipelineQuery,
-  -BuilderInput <: UniversalNoun[Any],
-  BuilderOutput <: TimelineEntry] {
+trait CandidatelonUrtelonntryBuildelonr[
+  -Quelonry <: PipelonlinelonQuelonry,
+  -BuildelonrInput <: UnivelonrsalNoun[Any],
+  BuildelonrOutput <: Timelonlinelonelonntry] {
 
-  def apply(query: Query, candidate: BuilderInput, candidateFeatures: FeatureMap): BuilderOutput
+  delonf apply(quelonry: Quelonry, candidatelon: BuildelonrInput, candidatelonFelonaturelons: FelonaturelonMap): BuildelonrOutput
 }

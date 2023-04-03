@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package tensorflow;
+packagelon telonnsorflow;
 
-option go_package = "github.com/tensorflow/tensorflow/tensorflow/go/core/protobuf/for_core_protos_go_proto";
+option go_packagelon = "github.com/telonnsorflow/telonnsorflow/telonnsorflow/go/corelon/protobuf/for_corelon_protos_go_proto";
 
-// If included as a payload, this message flags the Status to be a "derived"
-// Status. Used by StatusGroup to ignore certain Statuses when reporting
-// errors to end users.
-message DerivedStatus {}
+// If includelond as a payload, this melonssagelon flags thelon Status to belon a "delonrivelond"
+// Status. Uselond by StatusGroup to ignorelon celonrtain Statuselons whelonn relonporting
+// elonrrors to elonnd uselonrs.
+melonssagelon DelonrivelondStatus {}

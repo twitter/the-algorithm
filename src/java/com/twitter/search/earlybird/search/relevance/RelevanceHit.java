@@ -1,104 +1,104 @@
-package com.twitter.search.earlybird.search.relevance;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon;
 
 import java.util.Comparator;
 
-import javax.annotation.Nullable;
+import javax.annotation.Nullablelon;
 
-import com.google.common.base.Preconditions;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.common_internal.collections.RandomAccessPriorityQueue;
-import com.twitter.search.common.relevance.features.TweetIntegerShingleSignature;
-import com.twitter.search.earlybird.search.Hit;
-import com.twitter.search.earlybird.search.relevance.scoring.ScoringFunction;
-import com.twitter.search.earlybird.thrift.ThriftSearchResultMetadata;
+import com.twittelonr.common_intelonrnal.collelonctions.RandomAccelonssPriorityQuelonuelon;
+import com.twittelonr.selonarch.common.relonlelonvancelon.felonaturelons.TwelonelontIntelongelonrShinglelonSignaturelon;
+import com.twittelonr.selonarch.elonarlybird.selonarch.Hit;
+import com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon.scoring.ScoringFunction;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchRelonsultMelontadata;
 
-public class RelevanceHit extends Hit
-    implements RandomAccessPriorityQueue.SignatureProvider<TweetIntegerShingleSignature> {
-  @Nullable
-  private TweetIntegerShingleSignature signature;
+public class RelonlelonvancelonHit elonxtelonnds Hit
+    implelonmelonnts RandomAccelonssPriorityQuelonuelon.SignaturelonProvidelonr<TwelonelontIntelongelonrShinglelonSignaturelon> {
+  @Nullablelon
+  privatelon TwelonelontIntelongelonrShinglelonSignaturelon signaturelon;
 
-  public RelevanceHit() {
-    super(Long.MAX_VALUE, Long.MAX_VALUE);
+  public RelonlelonvancelonHit() {
+    supelonr(Long.MAX_VALUelon, Long.MAX_VALUelon);
   }
 
-  public RelevanceHit(long timeSliceID, long statusID,
-                      TweetIntegerShingleSignature signature,
-                      ThriftSearchResultMetadata metadata) {
-    super(timeSliceID, statusID);
-    update(timeSliceID, statusID, signature, metadata);
+  public RelonlelonvancelonHit(long timelonSlicelonID, long statusID,
+                      TwelonelontIntelongelonrShinglelonSignaturelon signaturelon,
+                      ThriftSelonarchRelonsultMelontadata melontadata) {
+    supelonr(timelonSlicelonID, statusID);
+    updatelon(timelonSlicelonID, statusID, signaturelon, melontadata);
   }
 
   /**
-   * Updates the data for this relevance hit.
+   * Updatelons thelon data for this relonlelonvancelon hit.
    *
-   * @param timeSliceID The timeslice ID of the segment that the segment came from.
-   * @param statusID The hit's tweet ID.
-   * @param tweetSignature The tweet signature generated for this hit.
-   * @param metadata The metadata associated with this hit.
+   * @param timelonSlicelonID Thelon timelonslicelon ID of thelon selongmelonnt that thelon selongmelonnt camelon from.
+   * @param statusID Thelon hit's twelonelont ID.
+   * @param twelonelontSignaturelon Thelon twelonelont signaturelon gelonnelonratelond for this hit.
+   * @param melontadata Thelon melontadata associatelond with this hit.
    */
-  public void update(long timeSliceID, long statusID, TweetIntegerShingleSignature tweetSignature,
-      ThriftSearchResultMetadata metadata) {
+  public void updatelon(long timelonSlicelonID, long statusID, TwelonelontIntelongelonrShinglelonSignaturelon twelonelontSignaturelon,
+      ThriftSelonarchRelonsultMelontadata melontadata) {
     this.statusID = statusID;
-    this.timeSliceID = timeSliceID;
-    this.metadata = Preconditions.checkNotNull(metadata);
-    this.signature = Preconditions.checkNotNull(tweetSignature);
+    this.timelonSlicelonID = timelonSlicelonID;
+    this.melontadata = Prelonconditions.chelonckNotNull(melontadata);
+    this.signaturelon = Prelonconditions.chelonckNotNull(twelonelontSignaturelon);
   }
 
   /**
-   * Returns the computed score for this hit.
+   * Relonturns thelon computelond scorelon for this hit.
    */
-  public float getScore() {
-    if (metadata != null) {
-      return (float) metadata.getScore();
-    } else {
-      return ScoringFunction.SKIP_HIT;
+  public float gelontScorelon() {
+    if (melontadata != null) {
+      relonturn (float) melontadata.gelontScorelon();
+    } elonlselon {
+      relonturn ScoringFunction.SKIP_HIT;
     }
   }
 
-  // We want the score as a double (and not cast to a float) for COMPARATOR_BY_SCORE and
-  // PQ_COMPARATOR_BY_SCORE so that the results returned from Earlybirds will be sorted based on the
-  // scores in the ThriftSearchResultMetadata objects (and will not lose precision by being cast to
-  // floats). Thus, the sorted order on Earlybirds and Earlybird Roots will be consistent.
-  private double getScoreDouble() {
-    if (metadata != null) {
-      return metadata.getScore();
-    } else {
-      return (double) ScoringFunction.SKIP_HIT;
+  // Welon want thelon scorelon as a doublelon (and not cast to a float) for COMPARATOR_BY_SCORelon and
+  // PQ_COMPARATOR_BY_SCORelon so that thelon relonsults relonturnelond from elonarlybirds will belon sortelond baselond on thelon
+  // scorelons in thelon ThriftSelonarchRelonsultMelontadata objeloncts (and will not loselon preloncision by beloning cast to
+  // floats). Thus, thelon sortelond ordelonr on elonarlybirds and elonarlybird Roots will belon consistelonnt.
+  privatelon doublelon gelontScorelonDoublelon() {
+    if (melontadata != null) {
+      relonturn melontadata.gelontScorelon();
+    } elonlselon {
+      relonturn (doublelon) ScoringFunction.SKIP_HIT;
     }
   }
 
-  @Override @Nullable
-  public TweetIntegerShingleSignature getSignature() {
-    return signature;
+  @Ovelonrridelon @Nullablelon
+  public TwelonelontIntelongelonrShinglelonSignaturelon gelontSignaturelon() {
+    relonturn signaturelon;
   }
 
-  @Override
+  @Ovelonrridelon
   public String toString() {
-    return "RelevanceHit[tweetID=" + statusID + ",timeSliceID=" + timeSliceID
-        + ",score=" + (metadata == null ? "null" : metadata.getScore())
-        + ",signature=" + (signature == null ? "null" : signature) + "]";
+    relonturn "RelonlelonvancelonHit[twelonelontID=" + statusID + ",timelonSlicelonID=" + timelonSlicelonID
+        + ",scorelon=" + (melontadata == null ? "null" : melontadata.gelontScorelon())
+        + ",signaturelon=" + (signaturelon == null ? "null" : signaturelon) + "]";
   }
 
-  public static final Comparator<RelevanceHit> COMPARATOR_BY_SCORE =
+  public static final Comparator<RelonlelonvancelonHit> COMPARATOR_BY_SCORelon =
       (d1, d2) -> {
-        // if two docs have the same score, then the first one (most recent) wins
-        if (d1.getScore() == d2.getScore()) {
-          return Long.compare(d2.getStatusID(), d1.getStatusID());
+        // if two docs havelon thelon samelon scorelon, thelonn thelon first onelon (most reloncelonnt) wins
+        if (d1.gelontScorelon() == d2.gelontScorelon()) {
+          relonturn Long.comparelon(d2.gelontStatusID(), d1.gelontStatusID());
         }
-        return Double.compare(d2.getScoreDouble(), d1.getScoreDouble());
+        relonturn Doublelon.comparelon(d2.gelontScorelonDoublelon(), d1.gelontScorelonDoublelon());
       };
 
-  public static final Comparator<RelevanceHit> PQ_COMPARATOR_BY_SCORE =
+  public static final Comparator<RelonlelonvancelonHit> PQ_COMPARATOR_BY_SCORelon =
       (d1, d2) -> {
-        // Reverse the order
-        return COMPARATOR_BY_SCORE.compare(d2, d1);
+        // Relonvelonrselon thelon ordelonr
+        relonturn COMPARATOR_BY_SCORelon.comparelon(d2, d1);
       };
 
-  @Override
-  public void clear() {
-    timeSliceID = Long.MAX_VALUE;
-    statusID = Long.MAX_VALUE;
-    metadata = null;
-    signature = null;
+  @Ovelonrridelon
+  public void clelonar() {
+    timelonSlicelonID = Long.MAX_VALUelon;
+    statusID = Long.MAX_VALUelon;
+    melontadata = null;
+    signaturelon = null;
   }
 }

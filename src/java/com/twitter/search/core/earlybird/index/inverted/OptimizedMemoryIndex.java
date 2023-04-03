@@ -1,432 +1,432 @@
-package com.twitter.search.core.earlybird.index.inverted;
+packagelon com.twittelonr.selonarch.corelon.elonarlybird.indelonx.invelonrtelond;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.Comparator;
 import java.util.Map;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import org.apache.lucene.index.PostingsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.DocIdSetIterator;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.packed.PackedInts;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apachelon.lucelonnelon.indelonx.Postingselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.DocIdSelontItelonrator;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
+import org.apachelon.lucelonnelon.util.packelond.PackelondInts;
+import org.slf4j.Loggelonr;
+import org.slf4j.LoggelonrFactory;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.schema.base.EarlybirdFieldType;
-import com.twitter.search.common.util.hash.BDZAlgorithm;
-import com.twitter.search.common.util.hash.BDZAlgorithm.MPHFNotFoundException;
-import com.twitter.search.common.util.hash.KeysSource;
-import com.twitter.search.common.util.io.flushable.DataDeserializer;
-import com.twitter.search.common.util.io.flushable.DataSerializer;
-import com.twitter.search.common.util.io.flushable.FlushInfo;
-import com.twitter.search.common.util.io.flushable.Flushable;
-import com.twitter.search.core.earlybird.facets.FacetIDMap.FacetField;
-import com.twitter.search.core.earlybird.index.DocIDToTweetIDMapper;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.elonarlybirdFielonldTypelon;
+import com.twittelonr.selonarch.common.util.hash.BDZAlgorithm;
+import com.twittelonr.selonarch.common.util.hash.BDZAlgorithm.MPHFNotFoundelonxcelonption;
+import com.twittelonr.selonarch.common.util.hash.KelonysSourcelon;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataDelonselonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.DataSelonrializelonr;
+import com.twittelonr.selonarch.common.util.io.flushablelon.FlushInfo;
+import com.twittelonr.selonarch.common.util.io.flushablelon.Flushablelon;
+import com.twittelonr.selonarch.corelon.elonarlybird.facelonts.FacelontIDMap.FacelontFielonld;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.DocIDToTwelonelontIDMappelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
 
-public class OptimizedMemoryIndex extends InvertedIndex implements Flushable {
-  private static final Logger LOG = LoggerFactory.getLogger(OptimizedMemoryIndex.class);
-  private static final Comparator<BytesRef> BYTES_REF_COMPARATOR = Comparator.naturalOrder();
+public class OptimizelondMelonmoryIndelonx elonxtelonnds InvelonrtelondIndelonx implelonmelonnts Flushablelon {
+  privatelon static final Loggelonr LOG = LoggelonrFactory.gelontLoggelonr(OptimizelondMelonmoryIndelonx.class);
+  privatelon static final Comparator<BytelonsRelonf> BYTelonS_RelonF_COMPARATOR = Comparator.naturalOrdelonr();
 
-  private static final SearchCounter MPH_NOT_FOUND_COUNT =
-      SearchCounter.export("twitter_optimized_index_mph_not_found_count");
+  privatelon static final SelonarchCountelonr MPH_NOT_FOUND_COUNT =
+      SelonarchCountelonr.elonxport("twittelonr_optimizelond_indelonx_mph_not_found_count");
 
-  private final PackedInts.Reader numPostings;
-  private final PackedInts.Reader postingListPointers;
-  private final PackedInts.Reader offensiveCounters;
-  private final MultiPostingLists postingLists;
+  privatelon final PackelondInts.Relonadelonr numPostings;
+  privatelon final PackelondInts.Relonadelonr postingListPointelonrs;
+  privatelon final PackelondInts.Relonadelonr offelonnsivelonCountelonrs;
+  privatelon final MultiPostingLists postingLists;
 
-  private final TermDictionary dictionary;
+  privatelon final TelonrmDictionary dictionary;
 
-  private final int numDocs;
-  private final int sumTotalTermFreq;
-  private final int sumTermDocFreq;
+  privatelon final int numDocs;
+  privatelon final int sumTotalTelonrmFrelonq;
+  privatelon final int sumTelonrmDocFrelonq;
 
-  private OptimizedMemoryIndex(EarlybirdFieldType fieldType,
+  privatelon OptimizelondMelonmoryIndelonx(elonarlybirdFielonldTypelon fielonldTypelon,
                                int numDocs,
-                               int sumTermDocFreq,
-                               int sumTotalTermFreq,
-                               PackedInts.Reader numPostings,
-                               PackedInts.Reader postingListPointers,
-                               PackedInts.Reader offensiveCounters,
+                               int sumTelonrmDocFrelonq,
+                               int sumTotalTelonrmFrelonq,
+                               PackelondInts.Relonadelonr numPostings,
+                               PackelondInts.Relonadelonr postingListPointelonrs,
+                               PackelondInts.Relonadelonr offelonnsivelonCountelonrs,
                                MultiPostingLists postingLists,
-                               TermDictionary dictionary) {
-    super(fieldType);
+                               TelonrmDictionary dictionary) {
+    supelonr(fielonldTypelon);
     this.numDocs = numDocs;
-    this.sumTermDocFreq = sumTermDocFreq;
-    this.sumTotalTermFreq = sumTotalTermFreq;
+    this.sumTelonrmDocFrelonq = sumTelonrmDocFrelonq;
+    this.sumTotalTelonrmFrelonq = sumTotalTelonrmFrelonq;
     this.numPostings = numPostings;
-    this.postingListPointers = postingListPointers;
-    this.offensiveCounters = offensiveCounters;
+    this.postingListPointelonrs = postingListPointelonrs;
+    this.offelonnsivelonCountelonrs = offelonnsivelonCountelonrs;
     this.postingLists = postingLists;
     this.dictionary = dictionary;
   }
 
-  public OptimizedMemoryIndex(
-      EarlybirdFieldType fieldType,
-      String field,
-      InvertedRealtimeIndex source,
-      Map<Integer, int[]> termIDMapper,
-      FacetField facetField,
-      DocIDToTweetIDMapper originalTweetIdMapper,
-      DocIDToTweetIDMapper optimizedTweetIdMapper) throws IOException {
-    super(fieldType);
+  public OptimizelondMelonmoryIndelonx(
+      elonarlybirdFielonldTypelon fielonldTypelon,
+      String fielonld,
+      InvelonrtelondRelonaltimelonIndelonx sourcelon,
+      Map<Intelongelonr, int[]> telonrmIDMappelonr,
+      FacelontFielonld facelontFielonld,
+      DocIDToTwelonelontIDMappelonr originalTwelonelontIdMappelonr,
+      DocIDToTwelonelontIDMappelonr optimizelondTwelonelontIdMappelonr) throws IOelonxcelonption {
+    supelonr(fielonldTypelon);
 
-    numDocs = source.getNumDocs();
-    sumTermDocFreq = source.getSumTermDocFreq();
-    sumTotalTermFreq = source.getSumTotalTermFreq();
+    numDocs = sourcelon.gelontNumDocs();
+    sumTelonrmDocFrelonq = sourcelon.gelontSumTelonrmDocFrelonq();
+    sumTotalTelonrmFrelonq = sourcelon.gelontSumTotalTelonrmFrelonq();
 
-    Preconditions.checkNotNull(originalTweetIdMapper, "The segment must have a tweet ID mapper.");
-    Preconditions.checkNotNull(optimizedTweetIdMapper,
-                               "The optimized tweet ID mapper cannot be null.");
+    Prelonconditions.chelonckNotNull(originalTwelonelontIdMappelonr, "Thelon selongmelonnt must havelon a twelonelont ID mappelonr.");
+    Prelonconditions.chelonckNotNull(optimizelondTwelonelontIdMappelonr,
+                               "Thelon optimizelond twelonelont ID mappelonr cannot belon null.");
 
-    // We rely on the fact that new terms always have a greater term ID. We ignore all terms that
-    // are equal to or greater than numTerms, as they may be incompletely applied. If new terms are
-    // added while optimizing, they will be re-added when we re-apply updates.
-    final KeysSource termsIterator = source.getKeysSource();
-    int numTerms = termsIterator.getNumberOfKeys();
-    int maxPublishedPointer = source.getMaxPublishedPointer();
+    // Welon relonly on thelon fact that nelonw telonrms always havelon a grelonatelonr telonrm ID. Welon ignorelon all telonrms that
+    // arelon elonqual to or grelonatelonr than numTelonrms, as thelony may belon incomplelontelonly applielond. If nelonw telonrms arelon
+    // addelond whilelon optimizing, thelony will belon relon-addelond whelonn welon relon-apply updatelons.
+    final KelonysSourcelon telonrmsItelonrator = sourcelon.gelontKelonysSourcelon();
+    int numTelonrms = telonrmsItelonrator.gelontNumbelonrOfKelonys();
+    int maxPublishelondPointelonr = sourcelon.gelontMaxPublishelondPointelonr();
 
-    int[] tempPostingListPointers = new int[numTerms];
+    int[] telonmpPostingListPointelonrs = nelonw int[numTelonrms];
 
-    BDZAlgorithm termsHashFunction = null;
+    BDZAlgorithm telonrmsHashFunction = null;
 
-    final boolean supportTermTextLookup = facetField != null || fieldType.isSupportTermTextLookup();
-    if (supportTermTextLookup) {
+    final boolelonan supportTelonrmTelonxtLookup = facelontFielonld != null || fielonldTypelon.isSupportTelonrmTelonxtLookup();
+    if (supportTelonrmTelonxtLookup) {
       try {
-        termsHashFunction = new BDZAlgorithm(termsIterator);
-      } catch (MPHFNotFoundException e) {
-        // we couldn't find a mphf for this field
-        // no problem, this can happen for very small fields
-        // - just use the fst in that case
-        LOG.warn("Unable to build MPH for field: {}", field);
-        MPH_NOT_FOUND_COUNT.increment();
+        telonrmsHashFunction = nelonw BDZAlgorithm(telonrmsItelonrator);
+      } catch (MPHFNotFoundelonxcelonption elon) {
+        // welon couldn't find a mphf for this fielonld
+        // no problelonm, this can happelonn for velonry small fielonlds
+        // - just uselon thelon fst in that caselon
+        LOG.warn("Unablelon to build MPH for fielonld: {}", fielonld);
+        MPH_NOT_FOUND_COUNT.increlonmelonnt();
       }
     }
 
-    // Make sure to only call the expensive computeNumPostings() once.
-    int[] numPostingsSource = computeNumPostings(source, numTerms, maxPublishedPointer);
+    // Makelon surelon to only call thelon elonxpelonnsivelon computelonNumPostings() oncelon.
+    int[] numPostingsSourcelon = computelonNumPostings(sourcelon, numTelonrms, maxPublishelondPointelonr);
 
-    // The BDZ Algorithm returns a function from bytesref to term ID. However, these term IDs are
-    // different than the original term IDs (it's a hash function, not a hash _table_), so we have
-    // to remap the term IDs to match the ones generated by BDZ. We track that using the termIDMap.
-    int[] termIDMap = null;
+    // Thelon BDZ Algorithm relonturns a function from bytelonsrelonf to telonrm ID. Howelonvelonr, thelonselon telonrm IDs arelon
+    // diffelonrelonnt than thelon original telonrm IDs (it's a hash function, not a hash _tablelon_), so welon havelon
+    // to relonmap thelon telonrm IDs to match thelon onelons gelonnelonratelond by BDZ. Welon track that using thelon telonrmIDMap.
+    int[] telonrmIDMap = null;
 
-    if (termsHashFunction != null) {
-      termsIterator.rewind();
-      termIDMap = BDZAlgorithm.createIdMap(termsHashFunction, termsIterator);
-      if (facetField != null) {
-        termIDMapper.put(facetField.getFacetId(), termIDMap);
+    if (telonrmsHashFunction != null) {
+      telonrmsItelonrator.relonwind();
+      telonrmIDMap = BDZAlgorithm.crelonatelonIdMap(telonrmsHashFunction, telonrmsItelonrator);
+      if (facelontFielonld != null) {
+        telonrmIDMappelonr.put(facelontFielonld.gelontFacelontId(), telonrmIDMap);
       }
 
-      PackedInts.Reader termPointers = getPackedInts(source.getTermPointers(), termIDMap);
-      this.numPostings = getPackedInts(numPostingsSource, termIDMap);
-      this.offensiveCounters = source.getOffensiveCounters() == null ? null
-              : getPackedInts(source.getOffensiveCounters(), termIDMap);
+      PackelondInts.Relonadelonr telonrmPointelonrs = gelontPackelondInts(sourcelon.gelontTelonrmPointelonrs(), telonrmIDMap);
+      this.numPostings = gelontPackelondInts(numPostingsSourcelon, telonrmIDMap);
+      this.offelonnsivelonCountelonrs = sourcelon.gelontOffelonnsivelonCountelonrs() == null ? null
+              : gelontPackelondInts(sourcelon.gelontOffelonnsivelonCountelonrs(), telonrmIDMap);
 
-      this.dictionary = new MPHTermDictionary(
-          numTerms,
-          termsHashFunction,
-          termPointers,
-          source.getTermPool(),
-          TermPointerEncoding.DEFAULT_ENCODING);
-    } else {
-      this.dictionary = FSTTermDictionary.buildFST(
-          source.getTermPool(),
-          source.getTermPointers(),
-          numTerms,
-          BYTES_REF_COMPARATOR,
-          supportTermTextLookup,
-          TermPointerEncoding.DEFAULT_ENCODING);
+      this.dictionary = nelonw MPHTelonrmDictionary(
+          numTelonrms,
+          telonrmsHashFunction,
+          telonrmPointelonrs,
+          sourcelon.gelontTelonrmPool(),
+          TelonrmPointelonrelonncoding.DelonFAULT_elonNCODING);
+    } elonlselon {
+      this.dictionary = FSTTelonrmDictionary.buildFST(
+          sourcelon.gelontTelonrmPool(),
+          sourcelon.gelontTelonrmPointelonrs(),
+          numTelonrms,
+          BYTelonS_RelonF_COMPARATOR,
+          supportTelonrmTelonxtLookup,
+          TelonrmPointelonrelonncoding.DelonFAULT_elonNCODING);
 
-      this.numPostings = getPackedInts(numPostingsSource);
-      this.offensiveCounters = source.getOffensiveCounters() == null ? null
-              : getPackedInts(source.getOffensiveCounters());
+      this.numPostings = gelontPackelondInts(numPostingsSourcelon);
+      this.offelonnsivelonCountelonrs = sourcelon.gelontOffelonnsivelonCountelonrs() == null ? null
+              : gelontPackelondInts(sourcelon.gelontOffelonnsivelonCountelonrs());
     }
 
-    TermsEnum allTerms = source.createTermsEnum(maxPublishedPointer);
+    Telonrmselonnum allTelonrms = sourcelon.crelonatelonTelonrmselonnum(maxPublishelondPointelonr);
 
-    this.postingLists = new MultiPostingLists(
-        !fieldType.hasPositions(),
-        numPostingsSource,
-        source.getMaxPosition());
+    this.postingLists = nelonw MultiPostingLists(
+        !fielonldTypelon.hasPositions(),
+        numPostingsSourcelon,
+        sourcelon.gelontMaxPosition());
 
-    for (int termID = 0; termID < numTerms; termID++) {
-      allTerms.seekExact(termID);
-      PostingsEnum postingsEnum = new OptimizingPostingsEnumWrapper(
-          allTerms.postings(null), originalTweetIdMapper, optimizedTweetIdMapper);
-      int mappedTermID = termIDMap != null ? termIDMap[termID] : termID;
-      tempPostingListPointers[mappedTermID] =
-          postingLists.copyPostingList(postingsEnum, numPostingsSource[termID]);
+    for (int telonrmID = 0; telonrmID < numTelonrms; telonrmID++) {
+      allTelonrms.selonelonkelonxact(telonrmID);
+      Postingselonnum postingselonnum = nelonw OptimizingPostingselonnumWrappelonr(
+          allTelonrms.postings(null), originalTwelonelontIdMappelonr, optimizelondTwelonelontIdMappelonr);
+      int mappelondTelonrmID = telonrmIDMap != null ? telonrmIDMap[telonrmID] : telonrmID;
+      telonmpPostingListPointelonrs[mappelondTelonrmID] =
+          postingLists.copyPostingList(postingselonnum, numPostingsSourcelon[telonrmID]);
     }
 
-    this.postingListPointers = getPackedInts(tempPostingListPointers);
+    this.postingListPointelonrs = gelontPackelondInts(telonmpPostingListPointelonrs);
   }
 
-  private static int[] map(int[] source, int[] map) {
-    int[] target = new int[map.length];
-    for (int i = 0; i < map.length; i++) {
-      target[map[i]] = source[i];
+  privatelon static int[] map(int[] sourcelon, int[] map) {
+    int[] targelont = nelonw int[map.lelonngth];
+    for (int i = 0; i < map.lelonngth; i++) {
+      targelont[map[i]] = sourcelon[i];
     }
-    return target;
+    relonturn targelont;
   }
 
-  static PackedInts.Reader getPackedInts(int[] values) {
-    return getPackedInts(values, null);
+  static PackelondInts.Relonadelonr gelontPackelondInts(int[] valuelons) {
+    relonturn gelontPackelondInts(valuelons, null);
   }
 
-  private static PackedInts.Reader getPackedInts(int[] values, int[] map) {
-    int[] mappedValues = values;
+  privatelon static PackelondInts.Relonadelonr gelontPackelondInts(int[] valuelons, int[] map) {
+    int[] mappelondValuelons = valuelons;
     if (map != null) {
-      mappedValues = map(mappedValues, map);
+      mappelondValuelons = map(mappelondValuelons, map);
     }
 
-    // first determine max value
-    long maxValue = Long.MIN_VALUE;
-    for (int value : mappedValues) {
-      if (value > maxValue) {
-        maxValue = value;
+    // first delontelonrminelon max valuelon
+    long maxValuelon = Long.MIN_VALUelon;
+    for (int valuelon : mappelondValuelons) {
+      if (valuelon > maxValuelon) {
+        maxValuelon = valuelon;
       }
     }
 
-    PackedInts.Mutable packed =
-            PackedInts.getMutable(mappedValues.length, PackedInts.bitsRequired(maxValue),
-                    PackedInts.DEFAULT);
-    for (int i = 0; i < mappedValues.length; i++) {
-      packed.set(i, mappedValues[i]);
+    PackelondInts.Mutablelon packelond =
+            PackelondInts.gelontMutablelon(mappelondValuelons.lelonngth, PackelondInts.bitsRelonquirelond(maxValuelon),
+                    PackelondInts.DelonFAULT);
+    for (int i = 0; i < mappelondValuelons.lelonngth; i++) {
+      packelond.selont(i, mappelondValuelons[i]);
     }
 
-    return packed;
+    relonturn packelond;
   }
 
   /**
-   * Returns per-term array containing the number of posting in this index for each term.
-   * This call is extremely slow.
+   * Relonturns pelonr-telonrm array containing thelon numbelonr of posting in this indelonx for elonach telonrm.
+   * This call is elonxtrelonmelonly slow.
    */
-  private static int[] computeNumPostings(
-      InvertedRealtimeIndex source,
-      int numTerms,
-      int maxPublishedPointer
-  ) throws IOException {
-    int[] numPostings = new int[numTerms];
-    TermsEnum allTerms = source.createTermsEnum(maxPublishedPointer);
+  privatelon static int[] computelonNumPostings(
+      InvelonrtelondRelonaltimelonIndelonx sourcelon,
+      int numTelonrms,
+      int maxPublishelondPointelonr
+  ) throws IOelonxcelonption {
+    int[] numPostings = nelonw int[numTelonrms];
+    Telonrmselonnum allTelonrms = sourcelon.crelonatelonTelonrmselonnum(maxPublishelondPointelonr);
 
-    for (int termID = 0; termID < numTerms; termID++) {
-      allTerms.seekExact(termID);
-      PostingsEnum docsEnum = allTerms.postings(null);
-      while (docsEnum.nextDoc() != DocIdSetIterator.NO_MORE_DOCS) {
-        numPostings[termID] += docsEnum.freq();
+    for (int telonrmID = 0; telonrmID < numTelonrms; telonrmID++) {
+      allTelonrms.selonelonkelonxact(telonrmID);
+      Postingselonnum docselonnum = allTelonrms.postings(null);
+      whilelon (docselonnum.nelonxtDoc() != DocIdSelontItelonrator.NO_MORelon_DOCS) {
+        numPostings[telonrmID] += docselonnum.frelonq();
       }
     }
 
-    return numPostings;
+    relonturn numPostings;
   }
 
-  @Override
-  public int getNumDocs() {
-    return numDocs;
+  @Ovelonrridelon
+  public int gelontNumDocs() {
+    relonturn numDocs;
   }
 
-  @Override
-  public int getSumTotalTermFreq() {
-    return sumTotalTermFreq;
+  @Ovelonrridelon
+  public int gelontSumTotalTelonrmFrelonq() {
+    relonturn sumTotalTelonrmFrelonq;
   }
 
-  @Override
-  public int getSumTermDocFreq() {
-    return sumTermDocFreq;
+  @Ovelonrridelon
+  public int gelontSumTelonrmDocFrelonq() {
+    relonturn sumTelonrmDocFrelonq;
   }
 
-  public OptimizedPostingLists getPostingLists() {
-    Preconditions.checkState(hasPostingLists());
-    return postingLists;
+  public OptimizelondPostingLists gelontPostingLists() {
+    Prelonconditions.chelonckStatelon(hasPostingLists());
+    relonturn postingLists;
   }
 
-  int getPostingListPointer(int termID) {
-    Preconditions.checkState(hasPostingLists());
-    return (int) postingListPointers.get(termID);
+  int gelontPostingListPointelonr(int telonrmID) {
+    Prelonconditions.chelonckStatelon(hasPostingLists());
+    relonturn (int) postingListPointelonrs.gelont(telonrmID);
   }
 
-  int getNumPostings(int termID) {
-    Preconditions.checkState(hasPostingLists());
-    return (int) numPostings.get(termID);
+  int gelontNumPostings(int telonrmID) {
+    Prelonconditions.chelonckStatelon(hasPostingLists());
+    relonturn (int) numPostings.gelont(telonrmID);
   }
 
-  public boolean getTerm(int termID, BytesRef text, BytesRef termPayload) {
-    return dictionary.getTerm(termID, text, termPayload);
+  public boolelonan gelontTelonrm(int telonrmID, BytelonsRelonf telonxt, BytelonsRelonf telonrmPayload) {
+    relonturn dictionary.gelontTelonrm(telonrmID, telonxt, telonrmPayload);
   }
 
-  @Override
-  public FacetLabelAccessor getLabelAccessor() {
-    return new FacetLabelAccessor() {
-      @Override
-      protected boolean seek(long termID) {
-        if (termID != EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-          hasTermPayload = getTerm((int) termID, termRef, termPayload);
-          offensiveCount = offensiveCounters != null
-                  ? (int) offensiveCounters.get((int) termID) : 0;
-          return true;
-        } else {
-          return false;
+  @Ovelonrridelon
+  public FacelontLabelonlAccelonssor gelontLabelonlAccelonssor() {
+    relonturn nelonw FacelontLabelonlAccelonssor() {
+      @Ovelonrridelon
+      protelonctelond boolelonan selonelonk(long telonrmID) {
+        if (telonrmID != elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND) {
+          hasTelonrmPayload = gelontTelonrm((int) telonrmID, telonrmRelonf, telonrmPayload);
+          offelonnsivelonCount = offelonnsivelonCountelonrs != null
+                  ? (int) offelonnsivelonCountelonrs.gelont((int) telonrmID) : 0;
+          relonturn truelon;
+        } elonlselon {
+          relonturn falselon;
         }
       }
     };
   }
 
-  @Override
-  public Terms createTerms(int maxPublishedPointer) {
-    return new OptimizedIndexTerms(this);
+  @Ovelonrridelon
+  public Telonrms crelonatelonTelonrms(int maxPublishelondPointelonr) {
+    relonturn nelonw OptimizelondIndelonxTelonrms(this);
   }
 
-  @Override
-  public TermsEnum createTermsEnum(int maxPublishedPointer) {
-    return dictionary.createTermsEnum(this);
+  @Ovelonrridelon
+  public Telonrmselonnum crelonatelonTelonrmselonnum(int maxPublishelondPointelonr) {
+    relonturn dictionary.crelonatelonTelonrmselonnum(this);
   }
 
-  @Override
-  public int lookupTerm(BytesRef term) throws IOException {
-    return dictionary.lookupTerm(term);
+  @Ovelonrridelon
+  public int lookupTelonrm(BytelonsRelonf telonrm) throws IOelonxcelonption {
+    relonturn dictionary.lookupTelonrm(telonrm);
   }
 
-  @Override
-  public int getLargestDocIDForTerm(int termID) throws IOException {
-    Preconditions.checkState(hasPostingLists());
-    if (termID == EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND) {
-      return EarlybirdIndexSegmentAtomicReader.TERM_NOT_FOUND;
-    } else {
-      return postingLists.getLargestDocID((int) postingListPointers.get(termID),
-              (int) numPostings.get(termID));
+  @Ovelonrridelon
+  public int gelontLargelonstDocIDForTelonrm(int telonrmID) throws IOelonxcelonption {
+    Prelonconditions.chelonckStatelon(hasPostingLists());
+    if (telonrmID == elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND) {
+      relonturn elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr.TelonRM_NOT_FOUND;
+    } elonlselon {
+      relonturn postingLists.gelontLargelonstDocID((int) postingListPointelonrs.gelont(telonrmID),
+              (int) numPostings.gelont(telonrmID));
     }
   }
 
-  @Override
-  public int getDF(int termID) {
-    return (int) numPostings.get(termID);
+  @Ovelonrridelon
+  public int gelontDF(int telonrmID) {
+    relonturn (int) numPostings.gelont(telonrmID);
   }
 
-  @Override
-  public int getNumTerms() {
-    return dictionary.getNumTerms();
+  @Ovelonrridelon
+  public int gelontNumTelonrms() {
+    relonturn dictionary.gelontNumTelonrms();
   }
 
-  @Override
-  public void getTerm(int termID, BytesRef text) {
-    dictionary.getTerm(termID, text, null);
+  @Ovelonrridelon
+  public void gelontTelonrm(int telonrmID, BytelonsRelonf telonxt) {
+    dictionary.gelontTelonrm(telonrmID, telonxt, null);
   }
 
-  @VisibleForTesting TermDictionary getTermDictionary() {
-    return dictionary;
+  @VisiblelonForTelonsting TelonrmDictionary gelontTelonrmDictionary() {
+    relonturn dictionary;
   }
 
-  @Override
-  public FlushHandler getFlushHandler() {
-    return new FlushHandler(this);
+  @Ovelonrridelon
+  public FlushHandlelonr gelontFlushHandlelonr() {
+    relonturn nelonw FlushHandlelonr(this);
   }
 
-  public boolean hasPostingLists() {
-    return postingListPointers != null
+  public boolelonan hasPostingLists() {
+    relonturn postingListPointelonrs != null
         && postingLists != null
         && numPostings != null;
   }
 
-  @VisibleForTesting
-  OptimizedPostingLists getOptimizedPostingLists() {
-    return postingLists;
+  @VisiblelonForTelonsting
+  OptimizelondPostingLists gelontOptimizelondPostingLists() {
+    relonturn postingLists;
   }
 
-  public static class FlushHandler extends Flushable.Handler<OptimizedMemoryIndex> {
-    private static final String NUM_DOCS_PROP_NAME = "numDocs";
-    private static final String SUM_TOTAL_TERM_FREQ_PROP_NAME = "sumTotalTermFreq";
-    private static final String SUM_TERM_DOC_FREQ_PROP_NAME = "sumTermDocFreq";
-    private static final String USE_MIN_PERFECT_HASH_PROP_NAME = "useMinimumPerfectHashFunction";
-    private static final String SKIP_POSTING_LIST_PROP_NAME = "skipPostingLists";
-    private static final String HAS_OFFENSIVE_COUNTERS_PROP_NAME = "hasOffensiveCounters";
-    public static final String IS_OPTIMIZED_PROP_NAME = "isOptimized";
+  public static class FlushHandlelonr elonxtelonnds Flushablelon.Handlelonr<OptimizelondMelonmoryIndelonx> {
+    privatelon static final String NUM_DOCS_PROP_NAMelon = "numDocs";
+    privatelon static final String SUM_TOTAL_TelonRM_FRelonQ_PROP_NAMelon = "sumTotalTelonrmFrelonq";
+    privatelon static final String SUM_TelonRM_DOC_FRelonQ_PROP_NAMelon = "sumTelonrmDocFrelonq";
+    privatelon static final String USelon_MIN_PelonRFelonCT_HASH_PROP_NAMelon = "uselonMinimumPelonrfelonctHashFunction";
+    privatelon static final String SKIP_POSTING_LIST_PROP_NAMelon = "skipPostingLists";
+    privatelon static final String HAS_OFFelonNSIVelon_COUNTelonRS_PROP_NAMelon = "hasOffelonnsivelonCountelonrs";
+    public static final String IS_OPTIMIZelonD_PROP_NAMelon = "isOptimizelond";
 
-    private final EarlybirdFieldType fieldType;
+    privatelon final elonarlybirdFielonldTypelon fielonldTypelon;
 
-    public FlushHandler(EarlybirdFieldType fieldType) {
-      super();
-      this.fieldType = fieldType;
+    public FlushHandlelonr(elonarlybirdFielonldTypelon fielonldTypelon) {
+      supelonr();
+      this.fielonldTypelon = fielonldTypelon;
     }
 
-    public FlushHandler(OptimizedMemoryIndex objectToFlush) {
-      super(objectToFlush);
-      fieldType = objectToFlush.fieldType;
+    public FlushHandlelonr(OptimizelondMelonmoryIndelonx objelonctToFlush) {
+      supelonr(objelonctToFlush);
+      fielonldTypelon = objelonctToFlush.fielonldTypelon;
     }
 
-    @Override
-    protected void doFlush(FlushInfo flushInfo, DataSerializer out) throws IOException {
-      long startTime = getClock().nowMillis();
-      OptimizedMemoryIndex objectToFlush = getObjectToFlush();
-      boolean useHashFunction = objectToFlush.dictionary instanceof MPHTermDictionary;
-      boolean skipPostingLists = !objectToFlush.hasPostingLists();
+    @Ovelonrridelon
+    protelonctelond void doFlush(FlushInfo flushInfo, DataSelonrializelonr out) throws IOelonxcelonption {
+      long startTimelon = gelontClock().nowMillis();
+      OptimizelondMelonmoryIndelonx objelonctToFlush = gelontObjelonctToFlush();
+      boolelonan uselonHashFunction = objelonctToFlush.dictionary instancelonof MPHTelonrmDictionary;
+      boolelonan skipPostingLists = !objelonctToFlush.hasPostingLists();
 
-      flushInfo.addIntProperty(NUM_DOCS_PROP_NAME, objectToFlush.numDocs);
-      flushInfo.addIntProperty(SUM_TERM_DOC_FREQ_PROP_NAME, objectToFlush.sumTermDocFreq);
-      flushInfo.addIntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME, objectToFlush.sumTotalTermFreq);
-      flushInfo.addBooleanProperty(USE_MIN_PERFECT_HASH_PROP_NAME, useHashFunction);
-      flushInfo.addBooleanProperty(SKIP_POSTING_LIST_PROP_NAME, skipPostingLists);
-      flushInfo.addBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME,
-          objectToFlush.offensiveCounters != null);
-      flushInfo.addBooleanProperty(IS_OPTIMIZED_PROP_NAME, true);
-
-      if (!skipPostingLists) {
-        out.writePackedInts(objectToFlush.postingListPointers);
-        out.writePackedInts(objectToFlush.numPostings);
-      }
-      if (objectToFlush.offensiveCounters != null) {
-        out.writePackedInts(objectToFlush.offensiveCounters);
-      }
+      flushInfo.addIntPropelonrty(NUM_DOCS_PROP_NAMelon, objelonctToFlush.numDocs);
+      flushInfo.addIntPropelonrty(SUM_TelonRM_DOC_FRelonQ_PROP_NAMelon, objelonctToFlush.sumTelonrmDocFrelonq);
+      flushInfo.addIntPropelonrty(SUM_TOTAL_TelonRM_FRelonQ_PROP_NAMelon, objelonctToFlush.sumTotalTelonrmFrelonq);
+      flushInfo.addBoolelonanPropelonrty(USelon_MIN_PelonRFelonCT_HASH_PROP_NAMelon, uselonHashFunction);
+      flushInfo.addBoolelonanPropelonrty(SKIP_POSTING_LIST_PROP_NAMelon, skipPostingLists);
+      flushInfo.addBoolelonanPropelonrty(HAS_OFFelonNSIVelon_COUNTelonRS_PROP_NAMelon,
+          objelonctToFlush.offelonnsivelonCountelonrs != null);
+      flushInfo.addBoolelonanPropelonrty(IS_OPTIMIZelonD_PROP_NAMelon, truelon);
 
       if (!skipPostingLists) {
-        objectToFlush.postingLists.getFlushHandler().flush(
-            flushInfo.newSubProperties("postingLists"), out);
+        out.writelonPackelondInts(objelonctToFlush.postingListPointelonrs);
+        out.writelonPackelondInts(objelonctToFlush.numPostings);
       }
-      objectToFlush.dictionary.getFlushHandler().flush(flushInfo.newSubProperties("dictionary"),
+      if (objelonctToFlush.offelonnsivelonCountelonrs != null) {
+        out.writelonPackelondInts(objelonctToFlush.offelonnsivelonCountelonrs);
+      }
+
+      if (!skipPostingLists) {
+        objelonctToFlush.postingLists.gelontFlushHandlelonr().flush(
+            flushInfo.nelonwSubPropelonrtielons("postingLists"), out);
+      }
+      objelonctToFlush.dictionary.gelontFlushHandlelonr().flush(flushInfo.nelonwSubPropelonrtielons("dictionary"),
               out);
-      getFlushTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      gelontFlushTimelonrStats().timelonrIncrelonmelonnt(gelontClock().nowMillis() - startTimelon);
     }
 
-    @Override
-    protected OptimizedMemoryIndex doLoad(
-        FlushInfo flushInfo, DataDeserializer in) throws IOException {
-      long startTime = getClock().nowMillis();
-      boolean useHashFunction = flushInfo.getBooleanProperty(USE_MIN_PERFECT_HASH_PROP_NAME);
-      boolean skipPostingLists = flushInfo.getBooleanProperty(SKIP_POSTING_LIST_PROP_NAME);
+    @Ovelonrridelon
+    protelonctelond OptimizelondMelonmoryIndelonx doLoad(
+        FlushInfo flushInfo, DataDelonselonrializelonr in) throws IOelonxcelonption {
+      long startTimelon = gelontClock().nowMillis();
+      boolelonan uselonHashFunction = flushInfo.gelontBoolelonanPropelonrty(USelon_MIN_PelonRFelonCT_HASH_PROP_NAMelon);
+      boolelonan skipPostingLists = flushInfo.gelontBoolelonanPropelonrty(SKIP_POSTING_LIST_PROP_NAMelon);
 
-      PackedInts.Reader postingListPointers = skipPostingLists ? null : in.readPackedInts();
-      PackedInts.Reader numPostings = skipPostingLists ? null : in.readPackedInts();
-      PackedInts.Reader offensiveCounters =
-              flushInfo.getBooleanProperty(HAS_OFFENSIVE_COUNTERS_PROP_NAME)
-                  ? in.readPackedInts() : null;
+      PackelondInts.Relonadelonr postingListPointelonrs = skipPostingLists ? null : in.relonadPackelondInts();
+      PackelondInts.Relonadelonr numPostings = skipPostingLists ? null : in.relonadPackelondInts();
+      PackelondInts.Relonadelonr offelonnsivelonCountelonrs =
+              flushInfo.gelontBoolelonanPropelonrty(HAS_OFFelonNSIVelon_COUNTelonRS_PROP_NAMelon)
+                  ? in.relonadPackelondInts() : null;
 
       MultiPostingLists postingLists =  skipPostingLists ? null
-              : (new MultiPostingLists.FlushHandler())
-                      .load(flushInfo.getSubProperties("postingLists"), in);
+              : (nelonw MultiPostingLists.FlushHandlelonr())
+                      .load(flushInfo.gelontSubPropelonrtielons("postingLists"), in);
 
-      TermDictionary dictionary;
-      if (useHashFunction) {
-        dictionary = (new MPHTermDictionary.FlushHandler(TermPointerEncoding.DEFAULT_ENCODING))
-            .load(flushInfo.getSubProperties("dictionary"), in);
-      } else {
-        dictionary = (new FSTTermDictionary.FlushHandler(TermPointerEncoding.DEFAULT_ENCODING))
-            .load(flushInfo.getSubProperties("dictionary"), in);
+      TelonrmDictionary dictionary;
+      if (uselonHashFunction) {
+        dictionary = (nelonw MPHTelonrmDictionary.FlushHandlelonr(TelonrmPointelonrelonncoding.DelonFAULT_elonNCODING))
+            .load(flushInfo.gelontSubPropelonrtielons("dictionary"), in);
+      } elonlselon {
+        dictionary = (nelonw FSTTelonrmDictionary.FlushHandlelonr(TelonrmPointelonrelonncoding.DelonFAULT_elonNCODING))
+            .load(flushInfo.gelontSubPropelonrtielons("dictionary"), in);
       }
-      getLoadTimerStats().timerIncrement(getClock().nowMillis() - startTime);
+      gelontLoadTimelonrStats().timelonrIncrelonmelonnt(gelontClock().nowMillis() - startTimelon);
 
-      return new OptimizedMemoryIndex(fieldType,
-                                      flushInfo.getIntProperty(NUM_DOCS_PROP_NAME),
-                                      flushInfo.getIntProperty(SUM_TERM_DOC_FREQ_PROP_NAME),
-                                      flushInfo.getIntProperty(SUM_TOTAL_TERM_FREQ_PROP_NAME),
+      relonturn nelonw OptimizelondMelonmoryIndelonx(fielonldTypelon,
+                                      flushInfo.gelontIntPropelonrty(NUM_DOCS_PROP_NAMelon),
+                                      flushInfo.gelontIntPropelonrty(SUM_TelonRM_DOC_FRelonQ_PROP_NAMelon),
+                                      flushInfo.gelontIntPropelonrty(SUM_TOTAL_TelonRM_FRelonQ_PROP_NAMelon),
                                       numPostings,
-                                      postingListPointers,
-                                      offensiveCounters,
+                                      postingListPointelonrs,
+                                      offelonnsivelonCountelonrs,
                                       postingLists,
                                       dictionary);
     }

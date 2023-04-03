@@ -1,8 +1,8 @@
-package com.twitter.follow_recommendations.common.rankers.interleave_ranker
+packagelon com.twittelonr.follow_reloncommelonndations.common.rankelonrs.intelonrlelonavelon_rankelonr
 
-import com.twitter.timelines.configapi.FSParam
+import com.twittelonr.timelonlinelons.configapi.FSParam
 
-object InterleaveRankerParams {
-  case object ScribeRankingInfoInInterleaveRanker
-      extends FSParam[Boolean]("interleave_ranker_scribe_ranking_info", true)
+objelonct IntelonrlelonavelonRankelonrParams {
+  caselon objelonct ScribelonRankingInfoInIntelonrlelonavelonRankelonr
+      elonxtelonnds FSParam[Boolelonan]("intelonrlelonavelon_rankelonr_scribelon_ranking_info", truelon)
 }

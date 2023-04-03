@@ -1,95 +1,95 @@
-package com.twitter.home_mixer.functional_component.feature_hydrator
+packagelon com.twittelonr.homelon_mixelonr.functional_componelonnt.felonaturelon_hydrator
 
-import com.twitter.conversions.DurationOps._
-import com.twitter.common_internal.analytics.twitter_client_user_agent_parser.UserAgent
-import com.twitter.home_mixer.model.HomeFeatures.PersistenceEntriesFeature
-import com.twitter.home_mixer.model.HomeFeatures.ServedTweetIdsFeature
-import com.twitter.home_mixer.model.HomeFeatures.WhoToFollowExcludedUserIdsFeature
-import com.twitter.home_mixer.model.request.FollowingProduct
-import com.twitter.home_mixer.model.request.ForYouProduct
-import com.twitter.home_mixer.service.HomeMixerAlertConfig
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMapBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseBatchesClient
-import com.twitter.timelinemixer.clients.persistence.TimelineResponseV3
-import com.twitter.timelines.util.client_info.ClientPlatform
-import com.twitter.timelineservice.model.TimelineQuery
-import com.twitter.timelineservice.model.core.TimelineKind
-import com.twitter.timelineservice.model.rich.EntityIdType
-import com.twitter.util.Time
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.convelonrsions.DurationOps._
+import com.twittelonr.common_intelonrnal.analytics.twittelonr_clielonnt_uselonr_agelonnt_parselonr.UselonrAgelonnt
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.PelonrsistelonncelonelonntrielonsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.SelonrvelondTwelonelontIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.HomelonFelonaturelons.WhoToFollowelonxcludelondUselonrIdsFelonaturelon
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.FollowingProduct
+import com.twittelonr.homelon_mixelonr.modelonl.relonquelonst.ForYouProduct
+import com.twittelonr.homelon_mixelonr.selonrvicelon.HomelonMixelonrAlelonrtConfig
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMapBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonRelonsponselonBatchelonsClielonnt
+import com.twittelonr.timelonlinelonmixelonr.clielonnts.pelonrsistelonncelon.TimelonlinelonRelonsponselonV3
+import com.twittelonr.timelonlinelons.util.clielonnt_info.ClielonntPlatform
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.TimelonlinelonQuelonry
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.corelon.TimelonlinelonKind
+import com.twittelonr.timelonlinelonselonrvicelon.modelonl.rich.elonntityIdTypelon
+import com.twittelonr.util.Timelon
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-case class PersistenceStoreQueryFeatureHydrator @Inject() (
-  timelineResponseBatchesClient: TimelineResponseBatchesClient[TimelineResponseV3])
-    extends QueryFeatureHydrator[PipelineQuery] {
+@Singlelonton
+caselon class PelonrsistelonncelonStorelonQuelonryFelonaturelonHydrator @Injelonct() (
+  timelonlinelonRelonsponselonBatchelonsClielonnt: TimelonlinelonRelonsponselonBatchelonsClielonnt[TimelonlinelonRelonsponselonV3])
+    elonxtelonnds QuelonryFelonaturelonHydrator[PipelonlinelonQuelonry] {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier("PersistenceStore")
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr("PelonrsistelonncelonStorelon")
 
-  private val WhoToFollowExcludedUserIdsLimit = 1000
-  private val ServedTweetIdsDuration = 1.hour
-  private val ServedTweetIdsLimit = 100
+  privatelon val WhoToFollowelonxcludelondUselonrIdsLimit = 1000
+  privatelon val SelonrvelondTwelonelontIdsDuration = 1.hour
+  privatelon val SelonrvelondTwelonelontIdsLimit = 100
 
-  override val features: Set[Feature[_, _]] =
-    Set(ServedTweetIdsFeature, PersistenceEntriesFeature, WhoToFollowExcludedUserIdsFeature)
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] =
+    Selont(SelonrvelondTwelonelontIdsFelonaturelon, PelonrsistelonncelonelonntrielonsFelonaturelon, WhoToFollowelonxcludelondUselonrIdsFelonaturelon)
 
-  private val supportedClients = Seq(
-    ClientPlatform.IPhone,
-    ClientPlatform.IPad,
-    ClientPlatform.Mac,
-    ClientPlatform.Android,
-    ClientPlatform.Web,
-    ClientPlatform.RWeb,
-    ClientPlatform.TweetDeckGryphon
+  privatelon val supportelondClielonnts = Selonq(
+    ClielonntPlatform.IPhonelon,
+    ClielonntPlatform.IPad,
+    ClielonntPlatform.Mac,
+    ClielonntPlatform.Android,
+    ClielonntPlatform.Welonb,
+    ClielonntPlatform.RWelonb,
+    ClielonntPlatform.TwelonelontDelonckGryphon
   )
 
-  override def hydrate(query: PipelineQuery): Stitch[FeatureMap] = {
-    val timelineKind = query.product match {
-      case FollowingProduct => TimelineKind.homeLatest
-      case ForYouProduct => TimelineKind.home
-      case other => throw new UnsupportedOperationException(s"Unknown product: $other")
+  ovelonrridelon delonf hydratelon(quelonry: PipelonlinelonQuelonry): Stitch[FelonaturelonMap] = {
+    val timelonlinelonKind = quelonry.product match {
+      caselon FollowingProduct => TimelonlinelonKind.homelonLatelonst
+      caselon ForYouProduct => TimelonlinelonKind.homelon
+      caselon othelonr => throw nelonw UnsupportelondOpelonrationelonxcelonption(s"Unknown product: $othelonr")
     }
-    val timelineQuery = TimelineQuery(id = query.getRequiredUserId, kind = timelineKind)
+    val timelonlinelonQuelonry = TimelonlinelonQuelonry(id = quelonry.gelontRelonquirelondUselonrId, kind = timelonlinelonKind)
 
-    Stitch.callFuture {
-      timelineResponseBatchesClient
-        .get(query = timelineQuery, clientPlatforms = supportedClients)
-        .map { timelineResponses =>
-          // Note that the WTF entries are not being scoped by ClientPlatform
-          val whoToFollowUserIds = timelineResponses
-            .flatMap { timelineResponse =>
-              timelineResponse.entries
-                .filter(_.entityIdType == EntityIdType.WhoToFollow)
-                .flatMap(_.itemIds.toSeq.flatMap(_.flatMap(_.userId)))
-            }.take(WhoToFollowExcludedUserIdsLimit)
+    Stitch.callFuturelon {
+      timelonlinelonRelonsponselonBatchelonsClielonnt
+        .gelont(quelonry = timelonlinelonQuelonry, clielonntPlatforms = supportelondClielonnts)
+        .map { timelonlinelonRelonsponselons =>
+          // Notelon that thelon WTF elonntrielons arelon not beloning scopelond by ClielonntPlatform
+          val whoToFollowUselonrIds = timelonlinelonRelonsponselons
+            .flatMap { timelonlinelonRelonsponselon =>
+              timelonlinelonRelonsponselon.elonntrielons
+                .filtelonr(_.elonntityIdTypelon == elonntityIdTypelon.WhoToFollow)
+                .flatMap(_.itelonmIds.toSelonq.flatMap(_.flatMap(_.uselonrId)))
+            }.takelon(WhoToFollowelonxcludelondUselonrIdsLimit)
 
-          val clientPlatform = ClientPlatform.fromQueryOptions(
-            clientAppId = query.clientContext.appId,
-            userAgent = query.clientContext.userAgent.flatMap(UserAgent.fromString))
+          val clielonntPlatform = ClielonntPlatform.fromQuelonryOptions(
+            clielonntAppId = quelonry.clielonntContelonxt.appId,
+            uselonrAgelonnt = quelonry.clielonntContelonxt.uselonrAgelonnt.flatMap(UselonrAgelonnt.fromString))
 
-          val servedTweetIds = timelineResponses
-            .filter(_.clientPlatform == clientPlatform)
-            .filter(_.servedTime >= Time.now - ServedTweetIdsDuration)
-            .sortBy(-_.servedTime.inMilliseconds)
+          val selonrvelondTwelonelontIds = timelonlinelonRelonsponselons
+            .filtelonr(_.clielonntPlatform == clielonntPlatform)
+            .filtelonr(_.selonrvelondTimelon >= Timelon.now - SelonrvelondTwelonelontIdsDuration)
+            .sortBy(-_.selonrvelondTimelon.inMilliselonconds)
             .flatMap(
-              _.entries.flatMap(_.tweetIds(includeSourceTweets = true)).take(ServedTweetIdsLimit))
+              _.elonntrielons.flatMap(_.twelonelontIds(includelonSourcelonTwelonelonts = truelon)).takelon(SelonrvelondTwelonelontIdsLimit))
 
-          FeatureMapBuilder()
-            .add(ServedTweetIdsFeature, servedTweetIds)
-            .add(PersistenceEntriesFeature, timelineResponses)
-            .add(WhoToFollowExcludedUserIdsFeature, whoToFollowUserIds)
+          FelonaturelonMapBuildelonr()
+            .add(SelonrvelondTwelonelontIdsFelonaturelon, selonrvelondTwelonelontIds)
+            .add(PelonrsistelonncelonelonntrielonsFelonaturelon, timelonlinelonRelonsponselons)
+            .add(WhoToFollowelonxcludelondUselonrIdsFelonaturelon, whoToFollowUselonrIds)
             .build()
         }
     }
   }
 
-  override val alerts = Seq(
-    HomeMixerAlertConfig.BusinessHours.defaultSuccessRateAlert(99.7, 50, 60, 60)
+  ovelonrridelon val alelonrts = Selonq(
+    HomelonMixelonrAlelonrtConfig.BusinelonssHours.delonfaultSuccelonssRatelonAlelonrt(99.7, 50, 60, 60)
   )
 }

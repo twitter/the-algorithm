@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.core.pipeline.state
+packagelon com.twittelonr.product_mixelonr.corelon.pipelonlinelon.statelon
 
-import com.twitter.product_mixer.core.model.marshalling.request.Request
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonquelonst.Relonquelonst
 
-trait HasRequest[TRequest <: Request] {
-  def request: TRequest
+trait HasRelonquelonst[TRelonquelonst <: Relonquelonst] {
+  delonf relonquelonst: TRelonquelonst
 }

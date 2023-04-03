@@ -1,7 +1,7 @@
-package com.twitter.product_mixer.component_library.candidate_source.social_graph
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.candidatelon_sourcelon.social_graph
 
-object SocialgraphCursorConstants {
-  val EndCursor: Long = 0L
+objelonct SocialgraphCursorConstants {
+  val elonndCursor: Long = 0L
   val StartCursor: Long = -1L
-  val LastSortIndex: Long = 0L
+  val LastSortIndelonx: Long = 0L
 }

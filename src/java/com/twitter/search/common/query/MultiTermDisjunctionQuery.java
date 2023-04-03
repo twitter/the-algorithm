@@ -1,61 +1,61 @@
-package com.twitter.search.common.query;
+packagelon com.twittelonr.selonarch.common.quelonry;
 
-import java.io.IOException;
-import java.util.Iterator;
-import java.util.Set;
+import java.io.IOelonxcelonption;
+import java.util.Itelonrator;
+import java.util.Selont;
 
-import org.apache.lucene.index.FilteredTermsEnum;
-import org.apache.lucene.index.Terms;
-import org.apache.lucene.index.TermsEnum;
-import org.apache.lucene.search.MultiTermQuery;
-import org.apache.lucene.util.AttributeSource;
-import org.apache.lucene.util.BytesRef;
+import org.apachelon.lucelonnelon.indelonx.FiltelonrelondTelonrmselonnum;
+import org.apachelon.lucelonnelon.indelonx.Telonrms;
+import org.apachelon.lucelonnelon.indelonx.Telonrmselonnum;
+import org.apachelon.lucelonnelon.selonarch.MultiTelonrmQuelonry;
+import org.apachelon.lucelonnelon.util.AttributelonSourcelon;
+import org.apachelon.lucelonnelon.util.BytelonsRelonf;
 
 
-public class MultiTermDisjunctionQuery extends MultiTermQuery {
+public class MultiTelonrmDisjunctionQuelonry elonxtelonnds MultiTelonrmQuelonry {
 
-  private final Set<BytesRef> values;
+  privatelon final Selont<BytelonsRelonf> valuelons;
 
-  /** Creates a new MultiTermDisjunctionQuery instance. */
-  public MultiTermDisjunctionQuery(String field, Set<BytesRef> values) {
-    super(field);
-    this.values = values;
+  /** Crelonatelons a nelonw MultiTelonrmDisjunctionQuelonry instancelon. */
+  public MultiTelonrmDisjunctionQuelonry(String fielonld, Selont<BytelonsRelonf> valuelons) {
+    supelonr(fielonld);
+    this.valuelons = valuelons;
   }
 
-  @Override
-  protected TermsEnum getTermsEnum(Terms terms, AttributeSource atts)
-      throws IOException {
-    final TermsEnum termsEnum = terms.iterator();
-    final Iterator<BytesRef> it = values.iterator();
+  @Ovelonrridelon
+  protelonctelond Telonrmselonnum gelontTelonrmselonnum(Telonrms telonrms, AttributelonSourcelon atts)
+      throws IOelonxcelonption {
+    final Telonrmselonnum telonrmselonnum = telonrms.itelonrator();
+    final Itelonrator<BytelonsRelonf> it = valuelons.itelonrator();
 
-    return new FilteredTermsEnum(termsEnum) {
-      @Override protected AcceptStatus accept(BytesRef term) throws IOException {
-        return AcceptStatus.YES;
+    relonturn nelonw FiltelonrelondTelonrmselonnum(telonrmselonnum) {
+      @Ovelonrridelon protelonctelond AccelonptStatus accelonpt(BytelonsRelonf telonrm) throws IOelonxcelonption {
+        relonturn AccelonptStatus.YelonS;
       }
 
-      @Override public BytesRef next() throws IOException {
-        while (it.hasNext()) {
-          BytesRef termRef = it.next();
-          if (termsEnum.seekExact(termRef)) {
-            return termRef;
+      @Ovelonrridelon public BytelonsRelonf nelonxt() throws IOelonxcelonption {
+        whilelon (it.hasNelonxt()) {
+          BytelonsRelonf telonrmRelonf = it.nelonxt();
+          if (telonrmselonnum.selonelonkelonxact(telonrmRelonf)) {
+            relonturn telonrmRelonf;
           }
         }
 
-        return null;
+        relonturn null;
       }
     };
   }
 
-  @Override
-  public String toString(String field) {
-    StringBuilder builder = new StringBuilder();
-    builder.append("MultiTermDisjunctionQuery[");
-    for (BytesRef termVal : this.values) {
-      builder.append(termVal);
-      builder.append(",");
+  @Ovelonrridelon
+  public String toString(String fielonld) {
+    StringBuildelonr buildelonr = nelonw StringBuildelonr();
+    buildelonr.appelonnd("MultiTelonrmDisjunctionQuelonry[");
+    for (BytelonsRelonf telonrmVal : this.valuelons) {
+      buildelonr.appelonnd(telonrmVal);
+      buildelonr.appelonnd(",");
     }
-    builder.setLength(builder.length() - 1);
-    builder.append("]");
-    return builder.toString();
+    buildelonr.selontLelonngth(buildelonr.lelonngth() - 1);
+    buildelonr.appelonnd("]");
+    relonturn buildelonr.toString();
   }
 }

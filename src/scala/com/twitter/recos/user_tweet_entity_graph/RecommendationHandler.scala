@@ -1,75 +1,75 @@
-package com.twitter.recos.user_tweet_entity_graph
+packagelon com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.frigate.common.util.StatsUtil
-import com.twitter.graphjet.algorithms.RecommendationType
-import com.twitter.graphjet.algorithms.counting.tweet.TweetMetadataRecommendationInfo
-import com.twitter.graphjet.algorithms.counting.tweet.TweetRecommendationInfo
-import com.twitter.recos.user_tweet_entity_graph.thriftscala._
-import com.twitter.recos.util.Stats
-import com.twitter.servo.request._
-import com.twitter.util.Future
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.frigatelon.common.util.StatsUtil
+import com.twittelonr.graphjelont.algorithms.ReloncommelonndationTypelon
+import com.twittelonr.graphjelont.algorithms.counting.twelonelont.TwelonelontMelontadataReloncommelonndationInfo
+import com.twittelonr.graphjelont.algorithms.counting.twelonelont.TwelonelontReloncommelonndationInfo
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala._
+import com.twittelonr.reloncos.util.Stats
+import com.twittelonr.selonrvo.relonquelonst._
+import com.twittelonr.util.Futurelon
 
 /**
- * Implementation of the Thrift-defined service interface.
+ * Implelonmelonntation of thelon Thrift-delonfinelond selonrvicelon intelonrfacelon.
  *
-* A wrapper of magicRecsRunner.
+* A wrappelonr of magicReloncsRunnelonr.
  */
-class RecommendationHandler(
-  tweetRecsRunner: TweetRecommendationsRunner,
-  statsReceiver: StatsReceiver)
-    extends RequestHandler[RecommendTweetEntityRequest, RecommendTweetEntityResponse] {
-  private val stats = statsReceiver.scope(this.getClass.getSimpleName)
-  private val socialProofHydrator = new SocialProofHydrator(stats)
+class ReloncommelonndationHandlelonr(
+  twelonelontReloncsRunnelonr: TwelonelontReloncommelonndationsRunnelonr,
+  statsReloncelonivelonr: StatsReloncelonivelonr)
+    elonxtelonnds RelonquelonstHandlelonr[ReloncommelonndTwelonelontelonntityRelonquelonst, ReloncommelonndTwelonelontelonntityRelonsponselon] {
+  privatelon val stats = statsReloncelonivelonr.scopelon(this.gelontClass.gelontSimplelonNamelon)
+  privatelon val socialProofHydrator = nelonw SocialProofHydrator(stats)
 
-  override def apply(request: RecommendTweetEntityRequest): Future[RecommendTweetEntityResponse] = {
-    val scopedStats: StatsReceiver = stats.scope(request.displayLocation.toString)
+  ovelonrridelon delonf apply(relonquelonst: ReloncommelonndTwelonelontelonntityRelonquelonst): Futurelon[ReloncommelonndTwelonelontelonntityRelonsponselon] = {
+    val scopelondStats: StatsReloncelonivelonr = stats.scopelon(relonquelonst.displayLocation.toString)
 
-    StatsUtil.trackBlockStats(scopedStats) {
-      val candidatesFuture = tweetRecsRunner.apply(request)
+    StatsUtil.trackBlockStats(scopelondStats) {
+      val candidatelonsFuturelon = twelonelontReloncsRunnelonr.apply(relonquelonst)
 
-      candidatesFuture.map { candidates =>
-        if (candidates.isEmpty) scopedStats.counter(Stats.EmptyResult).incr()
-        else scopedStats.counter(Stats.Served).incr(candidates.size)
+      candidatelonsFuturelon.map { candidatelons =>
+        if (candidatelons.iselonmpty) scopelondStats.countelonr(Stats.elonmptyRelonsult).incr()
+        elonlselon scopelondStats.countelonr(Stats.Selonrvelond).incr(candidatelons.sizelon)
 
-        RecommendTweetEntityResponse(candidates.flatMap {
+        ReloncommelonndTwelonelontelonntityRelonsponselon(candidatelons.flatMap {
           _ match {
-            case tweetRec: TweetRecommendationInfo =>
-              Some(
-                UserTweetEntityRecommendationUnion.TweetRec(
-                  TweetRecommendation(
-                    tweetRec.getRecommendation,
-                    tweetRec.getWeight,
-                    socialProofHydrator.addTweetSocialProofByType(tweetRec),
-                    socialProofHydrator.addTweetSocialProofs(tweetRec)
+            caselon twelonelontRelonc: TwelonelontReloncommelonndationInfo =>
+              Somelon(
+                UselonrTwelonelontelonntityReloncommelonndationUnion.TwelonelontRelonc(
+                  TwelonelontReloncommelonndation(
+                    twelonelontRelonc.gelontReloncommelonndation,
+                    twelonelontRelonc.gelontWelonight,
+                    socialProofHydrator.addTwelonelontSocialProofByTypelon(twelonelontRelonc),
+                    socialProofHydrator.addTwelonelontSocialProofs(twelonelontRelonc)
                   )
                 )
               )
-            case tweetMetadataRec: TweetMetadataRecommendationInfo =>
-              if (tweetMetadataRec.getRecommendationType == RecommendationType.HASHTAG) {
-                Some(
-                  UserTweetEntityRecommendationUnion.HashtagRec(
-                    HashtagRecommendation(
-                      tweetMetadataRec.getRecommendation,
-                      tweetMetadataRec.getWeight,
-                      socialProofHydrator.addMetadataSocialProofByType(tweetMetadataRec)
+            caselon twelonelontMelontadataRelonc: TwelonelontMelontadataReloncommelonndationInfo =>
+              if (twelonelontMelontadataRelonc.gelontReloncommelonndationTypelon == ReloncommelonndationTypelon.HASHTAG) {
+                Somelon(
+                  UselonrTwelonelontelonntityReloncommelonndationUnion.HashtagRelonc(
+                    HashtagReloncommelonndation(
+                      twelonelontMelontadataRelonc.gelontReloncommelonndation,
+                      twelonelontMelontadataRelonc.gelontWelonight,
+                      socialProofHydrator.addMelontadataSocialProofByTypelon(twelonelontMelontadataRelonc)
                     )
                   )
                 )
-              } else if (tweetMetadataRec.getRecommendationType == RecommendationType.URL) {
-                Some(
-                  UserTweetEntityRecommendationUnion.UrlRec(
-                    UrlRecommendation(
-                      tweetMetadataRec.getRecommendation,
-                      tweetMetadataRec.getWeight,
-                      socialProofHydrator.addMetadataSocialProofByType(tweetMetadataRec)
+              } elonlselon if (twelonelontMelontadataRelonc.gelontReloncommelonndationTypelon == ReloncommelonndationTypelon.URL) {
+                Somelon(
+                  UselonrTwelonelontelonntityReloncommelonndationUnion.UrlRelonc(
+                    UrlReloncommelonndation(
+                      twelonelontMelontadataRelonc.gelontReloncommelonndation,
+                      twelonelontMelontadataRelonc.gelontWelonight,
+                      socialProofHydrator.addMelontadataSocialProofByTypelon(twelonelontMelontadataRelonc)
                     )
                   )
                 )
-              } else {
-                None: Option[UserTweetEntityRecommendationUnion]
+              } elonlselon {
+                Nonelon: Option[UselonrTwelonelontelonntityReloncommelonndationUnion]
               }
-            case _ => None
+            caselon _ => Nonelon
           }
         })
       }

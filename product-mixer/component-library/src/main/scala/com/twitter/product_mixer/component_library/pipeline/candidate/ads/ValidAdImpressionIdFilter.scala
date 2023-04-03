@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.component_library.pipeline.candidate.ads
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.pipelonlinelon.candidatelon.ads
 
-import com.twitter.product_mixer.component_library.model.candidate.ads.AdsCandidate
-import com.twitter.product_mixer.core.functional_component.filter.Filter
-import com.twitter.product_mixer.core.functional_component.filter.FilterResult
-import com.twitter.product_mixer.core.model.common.CandidateWithFeatures
-import com.twitter.product_mixer.core.model.common.identifier.FilterIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.product_mixelonr.componelonnt_library.modelonl.candidatelon.ads.AdsCandidatelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.Filtelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.filtelonr.FiltelonrRelonsult
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.CandidatelonWithFelonaturelons
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FiltelonrIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
-object ValidAdImpressionIdFilter extends Filter[PipelineQuery, AdsCandidate] {
-  override val identifier: FilterIdentifier = FilterIdentifier("ValidAdImpressionId")
+objelonct ValidAdImprelonssionIdFiltelonr elonxtelonnds Filtelonr[PipelonlinelonQuelonry, AdsCandidatelon] {
+  ovelonrridelon val idelonntifielonr: FiltelonrIdelonntifielonr = FiltelonrIdelonntifielonr("ValidAdImprelonssionId")
 
-  override def apply(
-    query: PipelineQuery,
-    candidatesWithFeatures: Seq[CandidateWithFeatures[AdsCandidate]]
-  ): Stitch[FilterResult[AdsCandidate]] = {
-    val (kept, removed) = candidatesWithFeatures
-      .map(_.candidate)
-      .partition(candidate => candidate.adImpression.impressionString.exists(_.nonEmpty))
+  ovelonrridelon delonf apply(
+    quelonry: PipelonlinelonQuelonry,
+    candidatelonsWithFelonaturelons: Selonq[CandidatelonWithFelonaturelons[AdsCandidatelon]]
+  ): Stitch[FiltelonrRelonsult[AdsCandidatelon]] = {
+    val (kelonpt, relonmovelond) = candidatelonsWithFelonaturelons
+      .map(_.candidatelon)
+      .partition(candidatelon => candidatelon.adImprelonssion.imprelonssionString.elonxists(_.nonelonmpty))
 
-    Stitch.value(FilterResult(kept, removed))
+    Stitch.valuelon(FiltelonrRelonsult(kelonpt, relonmovelond))
   }
 }

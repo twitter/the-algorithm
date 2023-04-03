@@ -1,18 +1,18 @@
-package com.twitter.product_mixer.component_library.premarshaller.urp.builder
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.prelonmarshallelonr.urp.buildelonr
 
-import com.twitter.product_mixer.core.model.common.presentation.CandidateWithDetails
-import com.twitter.product_mixer.core.model.marshalling.response.urp.PageNavBar
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.prelonselonntation.CandidatelonWithDelontails
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urp.PagelonNavBar
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
 
 /**
- * Trait for our builder which given a query and selections will return an `Option[PageNavBar]`
+ * Trait for our buildelonr which givelonn a quelonry and selonlelonctions will relonturn an `Option[PagelonNavBar]`
  *
- * @tparam Query
+ * @tparam Quelonry
  */
-trait PageNavBarBuilder[-Query <: PipelineQuery] {
+trait PagelonNavBarBuildelonr[-Quelonry <: PipelonlinelonQuelonry] {
 
-  def build(
-    query: Query,
-    selections: Seq[CandidateWithDetails]
-  ): Option[PageNavBar]
+  delonf build(
+    quelonry: Quelonry,
+    selonlelonctions: Selonq[CandidatelonWithDelontails]
+  ): Option[PagelonNavBar]
 }

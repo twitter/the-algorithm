@@ -1,168 +1,168 @@
-# pylint: disable=too-many-branches
-""" This module includes functions for managing learning rate decay """
-import tensorflow.compat.v1 as tf
+# pylint: disablelon=too-many-branchelons
+""" This modulelon includelons functions for managing lelonarning ratelon deloncay """
+import telonnsorflow.compat.v1 as tf
 
 
-def get_learning_rate_decay_fn(params):
+delonf gelont_lelonarning_ratelon_deloncay_fn(params):
   """
-  Returns a learning rate decay function that takes the initial
-  learning_rate and global_step
-  as arguments and returns the current learning rate.
+  Relonturns a lelonarning ratelon deloncay function that takelons thelon initial
+  lelonarning_ratelon and global_stelonp
+  as argumelonnts and relonturns thelon currelonnt lelonarning ratelon.
 
-  Currently supports params.learning_rate_decay values of:
-  exponential | polynomial | piecewise_constant | cosine | cosine restarts.
-  See `Decaying the Leanring Rate
-  <https://www.tensorflow.org/api_guides/python/train#Decaying_the_learning_rate>`_ for details.
+  Currelonntly supports params.lelonarning_ratelon_deloncay valuelons of:
+  elonxponelonntial | polynomial | pieloncelonwiselon_constant | cosinelon | cosinelon relonstarts.
+  Selonelon `Deloncaying thelon Lelonanring Ratelon
+  <https://www.telonnsorflow.org/api_guidelons/python/train#Deloncaying_thelon_lelonarning_ratelon>`_ for delontails.
 
-  Arguments:
+  Argumelonnts:
     params:
-      a tensorflow.contrib.train.HParams object containing the relevant hyperparameters.
+      a telonnsorflow.contrib.train.HParams objelonct containing thelon relonlelonvant hypelonrparamelontelonrs.
   """
-  paramsv = params.values()
-  if 'learning_rate_decay' not in paramsv or params.learning_rate_decay == 'no_learning_rate_decay':
-    return None
-  elif params.learning_rate_decay == 'exponential_learning_rate_decay':
-    if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
-                       "params.learning_rate_decay == 'exponential'")
-    if 'exponential_decay_rate' not in paramsv:
-      raise ValueError("Expecting params.exponential_decay_rate for "
-                       "params.learning_rate_decay == 'exponential'")
+  paramsv = params.valuelons()
+  if 'lelonarning_ratelon_deloncay' not in paramsv or params.lelonarning_ratelon_deloncay == 'no_lelonarning_ratelon_deloncay':
+    relonturn Nonelon
+  elonlif params.lelonarning_ratelon_deloncay == 'elonxponelonntial_lelonarning_ratelon_deloncay':
+    if 'deloncay_stelonps' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.deloncay_stelonps for "
+                       "params.lelonarning_ratelon_deloncay == 'elonxponelonntial'")
+    if 'elonxponelonntial_deloncay_ratelon' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.elonxponelonntial_deloncay_ratelon for "
+                       "params.lelonarning_ratelon_deloncay == 'elonxponelonntial'")
 
-    def exponential_decay_fn(learning_rate, global_step):
-      """ exponential decay function to be passed to optimize_loss """
-      return tf.train.exponential_decay(
-        learning_rate=learning_rate,
-        global_step=global_step,
-        decay_steps=params.decay_steps,
-        decay_rate=params.exponential_decay_rate
+    delonf elonxponelonntial_deloncay_fn(lelonarning_ratelon, global_stelonp):
+      """ elonxponelonntial deloncay function to belon passelond to optimizelon_loss """
+      relonturn tf.train.elonxponelonntial_deloncay(
+        lelonarning_ratelon=lelonarning_ratelon,
+        global_stelonp=global_stelonp,
+        deloncay_stelonps=params.deloncay_stelonps,
+        deloncay_ratelon=params.elonxponelonntial_deloncay_ratelon
       )
-    return exponential_decay_fn
-  elif params.learning_rate_decay == 'piecewise_constant_learning_rate_decay':
-    if 'piecewise_constant_boundaries' not in paramsv:
-      raise ValueError("Expecting params.piecewise_constant_boundaries for "
-                       "params.learning_rate_decay == 'piecewise_constant'")
-    if 'piecewise_constant_values' not in paramsv:
-      raise ValueError("Expecting params.piecewise_constant_values for "
-                       "params.learning_rate_decay == 'piecewise_constant'")
-    # pylint: disable=unused-argument
+    relonturn elonxponelonntial_deloncay_fn
+  elonlif params.lelonarning_ratelon_deloncay == 'pieloncelonwiselon_constant_lelonarning_ratelon_deloncay':
+    if 'pieloncelonwiselon_constant_boundarielons' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.pieloncelonwiselon_constant_boundarielons for "
+                       "params.lelonarning_ratelon_deloncay == 'pieloncelonwiselon_constant'")
+    if 'pieloncelonwiselon_constant_valuelons' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.pieloncelonwiselon_constant_valuelons for "
+                       "params.lelonarning_ratelon_deloncay == 'pieloncelonwiselon_constant'")
+    # pylint: disablelon=unuselond-argumelonnt
 
-    def piecewise_constant_fn(learning_rate, global_step):
-      """ piecewise_constant decay function to be passed to optimize_loss """
-      return tf.train.piecewise_constant(
-        x=global_step,
-        boundaries=params.piecewise_constant_boundaries,
-        values=params.piecewise_constant_values
+    delonf pieloncelonwiselon_constant_fn(lelonarning_ratelon, global_stelonp):
+      """ pieloncelonwiselon_constant deloncay function to belon passelond to optimizelon_loss """
+      relonturn tf.train.pieloncelonwiselon_constant(
+        x=global_stelonp,
+        boundarielons=params.pieloncelonwiselon_constant_boundarielons,
+        valuelons=params.pieloncelonwiselon_constant_valuelons
       )
-    return piecewise_constant_fn
-  elif params.learning_rate_decay == 'polynomial_learning_rate_decay':
-    if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
-                       "params.learning_rate_decay == 'polynomial'")
-    if 'end_learning_rate' not in paramsv:
-      raise ValueError("Expecting params.end_learning_rate for "
-                       "params.learning_rate_decay == 'polynomial'")
+    relonturn pieloncelonwiselon_constant_fn
+  elonlif params.lelonarning_ratelon_deloncay == 'polynomial_lelonarning_ratelon_deloncay':
+    if 'deloncay_stelonps' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.deloncay_stelonps for "
+                       "params.lelonarning_ratelon_deloncay == 'polynomial'")
+    if 'elonnd_lelonarning_ratelon' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.elonnd_lelonarning_ratelon for "
+                       "params.lelonarning_ratelon_deloncay == 'polynomial'")
 
-    def polynomial_decay_fn(learning_rate, global_step):
-      """ polynomial decay function to be passed to optimize_loss """
-      return tf.train.polynomial_decay(
-        learning_rate=learning_rate,
-        global_step=global_step,
-        decay_steps=params.decay_steps,
-        end_learning_rate=params.end_learning_rate,
-        power=params.polynomial_power if 'polynomial_power' in paramsv else 1.0,
+    delonf polynomial_deloncay_fn(lelonarning_ratelon, global_stelonp):
+      """ polynomial deloncay function to belon passelond to optimizelon_loss """
+      relonturn tf.train.polynomial_deloncay(
+        lelonarning_ratelon=lelonarning_ratelon,
+        global_stelonp=global_stelonp,
+        deloncay_stelonps=params.deloncay_stelonps,
+        elonnd_lelonarning_ratelon=params.elonnd_lelonarning_ratelon,
+        powelonr=params.polynomial_powelonr if 'polynomial_powelonr' in paramsv elonlselon 1.0,
       )
-    return polynomial_decay_fn
+    relonturn polynomial_deloncay_fn
 
-  elif params.learning_rate_decay == 'inverse_learning_rate_decay':
-    if 'min_learning_rate' not in paramsv:
-      raise ValueError("Expecting params.min_learning_rate for "
-                       "params.learning_rate_decay == 'inverse'")
-    if 'decay_rate' not in paramsv:
-      raise ValueError("Expecting params.decay_rate for "
-                       "params.learning_rate_decay == 'inverse'")
-    if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
-                       "params.learning_rate_decay == 'inverse'")
+  elonlif params.lelonarning_ratelon_deloncay == 'invelonrselon_lelonarning_ratelon_deloncay':
+    if 'min_lelonarning_ratelon' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.min_lelonarning_ratelon for "
+                       "params.lelonarning_ratelon_deloncay == 'invelonrselon'")
+    if 'deloncay_ratelon' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.deloncay_ratelon for "
+                       "params.lelonarning_ratelon_deloncay == 'invelonrselon'")
+    if 'deloncay_stelonps' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.deloncay_stelonps for "
+                       "params.lelonarning_ratelon_deloncay == 'invelonrselon'")
 
-    def bounded_inverse_time_decay_fn(learning_rate, global_step):
+    delonf boundelond_invelonrselon_timelon_deloncay_fn(lelonarning_ratelon, global_stelonp):
       '''
-      Returns the decayed learning_rate by applying the function:
-      decayed_lr = max(lr /(1 + decay_rate * floor(global_step /decay_step)),
-                       min_learning_rate)
-      Arguments:
-        learning_rate:
-          A scalar `float32` or `float64` `Tensor` or a Python number.
-          The initial learning rate.
-        global_step:
-          A scalar `int32` or `int64` `Tensor` or a Python number.
-          Global step to use for the decay computation.  Must not be negative.
-        min_learning_rate:
-          A scalar `int32` or `int64` `Tensor` or a Python number.
-          Minimum possible learning_rate. The decayed learning_rate will not be
-          smaller than the min_learning_rate
-        decay_steps:
-          How often to apply decay. In dbv1, this should be 1.
-        decay_rate:
-          A scalar `int32` or `int64` `Tensor` or a Python number.
-          Rate in which we decay the learning rate.
-        Returns:
-        A scalar `Tensor` of the same type as `learning_rate`.  The decayed
-        learning rate.
+      Relonturns thelon deloncayelond lelonarning_ratelon by applying thelon function:
+      deloncayelond_lr = max(lr /(1 + deloncay_ratelon * floor(global_stelonp /deloncay_stelonp)),
+                       min_lelonarning_ratelon)
+      Argumelonnts:
+        lelonarning_ratelon:
+          A scalar `float32` or `float64` `Telonnsor` or a Python numbelonr.
+          Thelon initial lelonarning ratelon.
+        global_stelonp:
+          A scalar `int32` or `int64` `Telonnsor` or a Python numbelonr.
+          Global stelonp to uselon for thelon deloncay computation.  Must not belon nelongativelon.
+        min_lelonarning_ratelon:
+          A scalar `int32` or `int64` `Telonnsor` or a Python numbelonr.
+          Minimum possiblelon lelonarning_ratelon. Thelon deloncayelond lelonarning_ratelon will not belon
+          smallelonr than thelon min_lelonarning_ratelon
+        deloncay_stelonps:
+          How oftelonn to apply deloncay. In dbv1, this should belon 1.
+        deloncay_ratelon:
+          A scalar `int32` or `int64` `Telonnsor` or a Python numbelonr.
+          Ratelon in which welon deloncay thelon lelonarning ratelon.
+        Relonturns:
+        A scalar `Telonnsor` of thelon samelon typelon as `lelonarning_ratelon`.  Thelon deloncayelond
+        lelonarning ratelon.
       '''
-      decayed_rate = tf.train.inverse_time_decay(
-        learning_rate=learning_rate,
-        global_step=global_step,
-        decay_steps=params.decay_steps,
-        decay_rate=params.decay_rate)
-      # Getting dtype of returned Tensor
-      dtype = decayed_rate.dtype
-      # Casting the min_learning rate the same dtype as decayes rate
-      min_learning_rate = tf.cast(params.min_learning_rate, dtype)
-      # Returning the maximum between the two
-      return tf.maximum(decayed_rate, min_learning_rate)
+      deloncayelond_ratelon = tf.train.invelonrselon_timelon_deloncay(
+        lelonarning_ratelon=lelonarning_ratelon,
+        global_stelonp=global_stelonp,
+        deloncay_stelonps=params.deloncay_stelonps,
+        deloncay_ratelon=params.deloncay_ratelon)
+      # Gelontting dtypelon of relonturnelond Telonnsor
+      dtypelon = deloncayelond_ratelon.dtypelon
+      # Casting thelon min_lelonarning ratelon thelon samelon dtypelon as deloncayelons ratelon
+      min_lelonarning_ratelon = tf.cast(params.min_lelonarning_ratelon, dtypelon)
+      # Relonturning thelon maximum belontwelonelonn thelon two
+      relonturn tf.maximum(deloncayelond_ratelon, min_lelonarning_ratelon)
 
-    return bounded_inverse_time_decay_fn
+    relonturn boundelond_invelonrselon_timelon_deloncay_fn
 
-  elif params.learning_rate_decay == 'cosine_learning_rate_decay':
-    if 'decay_steps' not in paramsv:
-      raise ValueError("Expecting params.decay_steps for "
-                       "params.learning_rate_decay == 'cosine_decay'")
+  elonlif params.lelonarning_ratelon_deloncay == 'cosinelon_lelonarning_ratelon_deloncay':
+    if 'deloncay_stelonps' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.deloncay_stelonps for "
+                       "params.lelonarning_ratelon_deloncay == 'cosinelon_deloncay'")
     if "alpha" not in paramsv:
-      raise ValueError("Expecting params.alpha for "
-                       "params.learning_rate_decay == 'cosine_decay'")
-    def cosine_decay_fn(learning_rate, global_step):
-      """ cosine decay function to be passed to optimize_loss """
-      return tf.train.cosine_decay(
-        learning_rate=learning_rate,
-        global_step=global_step,
-        decay_steps=params.decay_steps,
+      raiselon Valuelonelonrror("elonxpeloncting params.alpha for "
+                       "params.lelonarning_ratelon_deloncay == 'cosinelon_deloncay'")
+    delonf cosinelon_deloncay_fn(lelonarning_ratelon, global_stelonp):
+      """ cosinelon deloncay function to belon passelond to optimizelon_loss """
+      relonturn tf.train.cosinelon_deloncay(
+        lelonarning_ratelon=lelonarning_ratelon,
+        global_stelonp=global_stelonp,
+        deloncay_stelonps=params.deloncay_stelonps,
         alpha=params.alpha
       )
-    return cosine_decay_fn
-  elif params.learning_rate_decay == 'cosine_restarts_learning_rate_decay':
-    if 'first_decay_steps' not in paramsv:
-      raise ValueError("Expecting params.first_decay_steps for "
-                       "params.learning_rate_decay == 'cosine_restarts_decay'")
+    relonturn cosinelon_deloncay_fn
+  elonlif params.lelonarning_ratelon_deloncay == 'cosinelon_relonstarts_lelonarning_ratelon_deloncay':
+    if 'first_deloncay_stelonps' not in paramsv:
+      raiselon Valuelonelonrror("elonxpeloncting params.first_deloncay_stelonps for "
+                       "params.lelonarning_ratelon_deloncay == 'cosinelon_relonstarts_deloncay'")
     if 't_mul' not in paramsv:
-      raise ValueError("Expecting params.t_mul for "
-                       "params.learning_rate_decay == 'cosine_restarts_decay'")
+      raiselon Valuelonelonrror("elonxpeloncting params.t_mul for "
+                       "params.lelonarning_ratelon_deloncay == 'cosinelon_relonstarts_deloncay'")
     if 'm_mul' not in paramsv:
-      raise ValueError("Expecting params.m_mul for "
-                       "params.learning_rate_decay == 'cosine_restarts_decay'")
+      raiselon Valuelonelonrror("elonxpeloncting params.m_mul for "
+                       "params.lelonarning_ratelon_deloncay == 'cosinelon_relonstarts_deloncay'")
     if "alpha" not in paramsv:
-      raise ValueError("Expecting params.alpha for "
-                       "params.learning_rate_decay == 'cosine_restarts_decay'")
-    def cosine_restart_decay_fn(learning_rate, global_step):
-      """ cosine decay function to be passed to optimize_loss """
-      return tf.train.cosine_decay_restarts(
-        learning_rate=learning_rate,
-        global_step=global_step,
-        first_decay_steps=params.first_decay_steps,
+      raiselon Valuelonelonrror("elonxpeloncting params.alpha for "
+                       "params.lelonarning_ratelon_deloncay == 'cosinelon_relonstarts_deloncay'")
+    delonf cosinelon_relonstart_deloncay_fn(lelonarning_ratelon, global_stelonp):
+      """ cosinelon deloncay function to belon passelond to optimizelon_loss """
+      relonturn tf.train.cosinelon_deloncay_relonstarts(
+        lelonarning_ratelon=lelonarning_ratelon,
+        global_stelonp=global_stelonp,
+        first_deloncay_stelonps=params.first_deloncay_stelonps,
         t_mul=params.t_mul,
         m_mul=params.m_mul,
         alpha=params.alpha
       )
-    return cosine_restart_decay_fn
+    relonturn cosinelon_relonstart_deloncay_fn
 
-  raise ValueError("Unsupported params.learning_rate_decay: %s" % params.learning_rate_decay)
+  raiselon Valuelonelonrror("Unsupportelond params.lelonarning_ratelon_deloncay: %s" % params.lelonarning_ratelon_deloncay)

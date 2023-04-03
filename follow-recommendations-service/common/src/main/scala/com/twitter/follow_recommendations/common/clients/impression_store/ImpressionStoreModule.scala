@@ -1,30 +1,30 @@
-package com.twitter.follow_recommendations.common.clients.impression_store
+packagelon com.twittelonr.follow_reloncommelonndations.common.clielonnts.imprelonssion_storelon
 
-import com.google.inject.Provides
-import com.google.inject.Singleton
-import com.twitter.follow_recommendations.thriftscala.DisplayLocation
-import com.twitter.inject.TwitterModule
-import com.twitter.strato.catalog.Scan.Slice
-import com.twitter.strato.client.Client
-import com.twitter.strato.thrift.ScroogeConvImplicits._
+import com.googlelon.injelonct.Providelons
+import com.googlelon.injelonct.Singlelonton
+import com.twittelonr.follow_reloncommelonndations.thriftscala.DisplayLocation
+import com.twittelonr.injelonct.TwittelonrModulelon
+import com.twittelonr.strato.catalog.Scan.Slicelon
+import com.twittelonr.strato.clielonnt.Clielonnt
+import com.twittelonr.strato.thrift.ScroogelonConvImplicits._
 
-object ImpressionStoreModule extends TwitterModule {
+objelonct ImprelonssionStorelonModulelon elonxtelonnds TwittelonrModulelon {
 
-  val columnPath: String = "onboarding/userrecs/wtfImpressionCountsStore"
+  val columnPath: String = "onboarding/uselonrreloncs/wtfImprelonssionCountsStorelon"
 
-  type PKey = (Long, DisplayLocation)
-  type LKey = Long
-  type Value = (Long, Int)
+  typelon PKelony = (Long, DisplayLocation)
+  typelon LKelony = Long
+  typelon Valuelon = (Long, Int)
 
-  @Provides
-  @Singleton
-  def providesImpressionStore(stratoClient: Client): WtfImpressionStore = {
-    new WtfImpressionStore(
-      stratoClient.scanner[
-        (PKey, Slice[LKey]),
+  @Providelons
+  @Singlelonton
+  delonf providelonsImprelonssionStorelon(stratoClielonnt: Clielonnt): WtfImprelonssionStorelon = {
+    nelonw WtfImprelonssionStorelon(
+      stratoClielonnt.scannelonr[
+        (PKelony, Slicelon[LKelony]),
         Unit,
-        (PKey, LKey),
-        Value
+        (PKelony, LKelony),
+        Valuelon
       ](columnPath)
     )
   }

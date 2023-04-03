@@ -1,66 +1,66 @@
-package com.twitter.search.ingester.pipeline.twitter;
+packagelon com.twittelonr.selonarch.ingelonstelonr.pipelonlinelon.twittelonr;
 
-import java.util.Collection;
+import java.util.Collelonction;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.Maps;
+import com.googlelon.common.collelonct.ImmutablelonList;
+import com.googlelon.common.collelonct.Maps;
 
-import com.twitter.pink_floyd.thrift.ClientIdentifier;
-import com.twitter.pink_floyd.thrift.Mask;
-import com.twitter.pink_floyd.thrift.Storer;
-import com.twitter.pink_floyd.thrift.UrlData;
-import com.twitter.pink_floyd.thrift.UrlReadRequest;
-import com.twitter.util.Function;
-import com.twitter.util.Future;
+import com.twittelonr.pink_floyd.thrift.ClielonntIdelonntifielonr;
+import com.twittelonr.pink_floyd.thrift.Mask;
+import com.twittelonr.pink_floyd.thrift.Storelonr;
+import com.twittelonr.pink_floyd.thrift.UrlData;
+import com.twittelonr.pink_floyd.thrift.UrlRelonadRelonquelonst;
+import com.twittelonr.util.Function;
+import com.twittelonr.util.Futurelon;
 
 /**
- * Resolve compressed URL via Pink
+ * Relonsolvelon comprelonsselond URL via Pink
  */
-public class AsyncPinkUrlsResolver {
-  private final Storer.ServiceIface storerClient;
-  private final ClientIdentifier pinkClientId;
-  private final Mask requestMask;
+public class AsyncPinkUrlsRelonsolvelonr {
+  privatelon final Storelonr.SelonrvicelonIfacelon storelonrClielonnt;
+  privatelon final ClielonntIdelonntifielonr pinkClielonntId;
+  privatelon final Mask relonquelonstMask;
 
-  // Use ServerSet to construct a metadata store client
-  public AsyncPinkUrlsResolver(Storer.ServiceIface storerClient, String pinkClientId) {
-    this.storerClient = storerClient;
-    this.pinkClientId = ClientIdentifier.valueOf(pinkClientId);
+  // Uselon SelonrvelonrSelont to construct a melontadata storelon clielonnt
+  public AsyncPinkUrlsRelonsolvelonr(Storelonr.SelonrvicelonIfacelon storelonrClielonnt, String pinkClielonntId) {
+    this.storelonrClielonnt = storelonrClielonnt;
+    this.pinkClielonntId = ClielonntIdelonntifielonr.valuelonOf(pinkClielonntId);
 
-    requestMask = new Mask();
-    requestMask.setResolution(true);
-    requestMask.setHtmlBasics(true);
-    requestMask.setUrlDirectInfo(true);
+    relonquelonstMask = nelonw Mask();
+    relonquelonstMask.selontRelonsolution(truelon);
+    relonquelonstMask.selontHtmlBasics(truelon);
+    relonquelonstMask.selontUrlDirelonctInfo(truelon);
   }
 
   /**
-   * resolve urls calling pink asynchronously
-   * @param urls urls to resolve
-   * @return Future map of resolved urls
+   * relonsolvelon urls calling pink asynchronously
+   * @param urls urls to relonsolvelon
+   * @relonturn Futurelon map of relonsolvelond urls
    */
-  public Future<Map<String, ResolveCompressedUrlsUtils.UrlInfo>> resolveUrls(
-      Collection<String> urls) {
-    if (urls == null || urls.size() == 0) {
-      Future.value(Maps.newHashMap());
+  public Futurelon<Map<String, RelonsolvelonComprelonsselondUrlsUtils.UrlInfo>> relonsolvelonUrls(
+      Collelonction<String> urls) {
+    if (urls == null || urls.sizelon() == 0) {
+      Futurelon.valuelon(Maps.nelonwHashMap());
     }
 
-    List<String> urlsList = ImmutableList.copyOf(urls);
+    List<String> urlsList = ImmutablelonList.copyOf(urls);
 
-    UrlReadRequest request = new UrlReadRequest();
-    request.setUrls(urlsList);
-    request.setClientId(pinkClientId);
-    request.setMask(requestMask);
+    UrlRelonadRelonquelonst relonquelonst = nelonw UrlRelonadRelonquelonst();
+    relonquelonst.selontUrls(urlsList);
+    relonquelonst.selontClielonntId(pinkClielonntId);
+    relonquelonst.selontMask(relonquelonstMask);
 
-    return storerClient.read(request).map(Function.func(
-        response -> {
-          Map<String, ResolveCompressedUrlsUtils.UrlInfo> resultMap = Maps.newHashMap();
-          for (UrlData urlData : response.getData()) {
-            if (ResolveCompressedUrlsUtils.isResolved(urlData)) {
-              resultMap.put(urlData.url, ResolveCompressedUrlsUtils.getUrlInfo(urlData));
+    relonturn storelonrClielonnt.relonad(relonquelonst).map(Function.func(
+        relonsponselon -> {
+          Map<String, RelonsolvelonComprelonsselondUrlsUtils.UrlInfo> relonsultMap = Maps.nelonwHashMap();
+          for (UrlData urlData : relonsponselon.gelontData()) {
+            if (RelonsolvelonComprelonsselondUrlsUtils.isRelonsolvelond(urlData)) {
+              relonsultMap.put(urlData.url, RelonsolvelonComprelonsselondUrlsUtils.gelontUrlInfo(urlData));
             }
           }
-          return resultMap;
+          relonturn relonsultMap;
         }
     ));
   }

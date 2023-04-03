@@ -1,24 +1,24 @@
-package com.twitter.product_mixer.core.functional_component.marshaller.response.urt.item.label
+packagelon com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.itelonm.labelonl
 
-import com.twitter.product_mixer.core.functional_component.marshaller.response.urt.metadata.UrlMarshaller
-import com.twitter.product_mixer.core.model.marshalling.response.urt.item.label.LabelItem
-import com.twitter.timelines.render.{thriftscala => urt}
-import javax.inject.Inject
-import javax.inject.Singleton
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.marshallelonr.relonsponselon.urt.melontadata.UrlMarshallelonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.marshalling.relonsponselon.urt.itelonm.labelonl.LabelonlItelonm
+import com.twittelonr.timelonlinelons.relonndelonr.{thriftscala => urt}
+import javax.injelonct.Injelonct
+import javax.injelonct.Singlelonton
 
-@Singleton
-class LabelItemMarshaller @Inject() (
-  displayTypeMarshaller: LabelDisplayTypeMarshaller,
-  urlMarshaller: UrlMarshaller) {
+@Singlelonton
+class LabelonlItelonmMarshallelonr @Injelonct() (
+  displayTypelonMarshallelonr: LabelonlDisplayTypelonMarshallelonr,
+  urlMarshallelonr: UrlMarshallelonr) {
 
-  def apply(labelItem: LabelItem): urt.TimelineItemContent = {
-    urt.TimelineItemContent.Label(
-      urt.Label(
-        text = labelItem.text,
-        subtext = labelItem.subtext,
-        disclosureIndicator = labelItem.disclosureIndicator,
-        url = labelItem.url.map(urlMarshaller(_)),
-        displayType = labelItem.displayType.map(displayTypeMarshaller(_))
+  delonf apply(labelonlItelonm: LabelonlItelonm): urt.TimelonlinelonItelonmContelonnt = {
+    urt.TimelonlinelonItelonmContelonnt.Labelonl(
+      urt.Labelonl(
+        telonxt = labelonlItelonm.telonxt,
+        subtelonxt = labelonlItelonm.subtelonxt,
+        disclosurelonIndicator = labelonlItelonm.disclosurelonIndicator,
+        url = labelonlItelonm.url.map(urlMarshallelonr(_)),
+        displayTypelon = labelonlItelonm.displayTypelon.map(displayTypelonMarshallelonr(_))
       )
     )
   }

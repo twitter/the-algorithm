@@ -1,39 +1,39 @@
-package com.twitter.timelineranker.uteg_liked_by_tweets
+packagelon com.twittelonr.timelonlinelonrankelonr.utelong_likelond_by_twelonelonts
 
-import com.twitter.recos.recos_common.thriftscala.SocialProofType
-import com.twitter.recos.user_tweet_entity_graph.thriftscala.TweetRecommendation
-import com.twitter.search.earlybird.thriftscala.ThriftSearchResult
-import com.twitter.servo.util.FutureArrow
-import com.twitter.timelineranker.core.CandidateEnvelope
-import com.twitter.timelineranker.model.RecapQuery.DependencyProvider
-import com.twitter.timelines.model.TweetId
-import com.twitter.util.Future
+import com.twittelonr.reloncos.reloncos_common.thriftscala.SocialProofTypelon
+import com.twittelonr.reloncos.uselonr_twelonelont_elonntity_graph.thriftscala.TwelonelontReloncommelonndation
+import com.twittelonr.selonarch.elonarlybird.thriftscala.ThriftSelonarchRelonsult
+import com.twittelonr.selonrvo.util.FuturelonArrow
+import com.twittelonr.timelonlinelonrankelonr.corelon.Candidatelonelonnvelonlopelon
+import com.twittelonr.timelonlinelonrankelonr.modelonl.ReloncapQuelonry.DelonpelonndelonncyProvidelonr
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.util.Futurelon
 
-class MinNumNonAuthorFavoritedByUserIdsFilterTransform(
-  minNumFavoritedByUserIdsProvider: DependencyProvider[Int])
-    extends FutureArrow[CandidateEnvelope, CandidateEnvelope] {
+class MinNumNonAuthorFavoritelondByUselonrIdsFiltelonrTransform(
+  minNumFavoritelondByUselonrIdsProvidelonr: DelonpelonndelonncyProvidelonr[Int])
+    elonxtelonnds FuturelonArrow[Candidatelonelonnvelonlopelon, Candidatelonelonnvelonlopelon] {
 
-  override def apply(envelope: CandidateEnvelope): Future[CandidateEnvelope] = {
-    val filteredSearchResults = envelope.searchResults.filter { searchResult =>
+  ovelonrridelon delonf apply(elonnvelonlopelon: Candidatelonelonnvelonlopelon): Futurelon[Candidatelonelonnvelonlopelon] = {
+    val filtelonrelondSelonarchRelonsults = elonnvelonlopelon.selonarchRelonsults.filtelonr { selonarchRelonsult =>
       numNonAuthorFavs(
-        searchResult = searchResult,
-        utegResultsMap = envelope.utegResults
-      ).exists(_ >= minNumFavoritedByUserIdsProvider(envelope.query))
+        selonarchRelonsult = selonarchRelonsult,
+        utelongRelonsultsMap = elonnvelonlopelon.utelongRelonsults
+      ).elonxists(_ >= minNumFavoritelondByUselonrIdsProvidelonr(elonnvelonlopelon.quelonry))
     }
-    Future.value(envelope.copy(searchResults = filteredSearchResults))
+    Futurelon.valuelon(elonnvelonlopelon.copy(selonarchRelonsults = filtelonrelondSelonarchRelonsults))
   }
 
-  // return number of non-author users that faved the tweet in a searchResult
-  // return None if author is None or if the tweet is not found in utegResultsMap
-  protected def numNonAuthorFavs(
-    searchResult: ThriftSearchResult,
-    utegResultsMap: Map[TweetId, TweetRecommendation]
+  // relonturn numbelonr of non-author uselonrs that favelond thelon twelonelont in a selonarchRelonsult
+  // relonturn Nonelon if author is Nonelon or if thelon twelonelont is not found in utelongRelonsultsMap
+  protelonctelond delonf numNonAuthorFavs(
+    selonarchRelonsult: ThriftSelonarchRelonsult,
+    utelongRelonsultsMap: Map[TwelonelontId, TwelonelontReloncommelonndation]
   ): Option[Int] = {
     for {
-      metadata <- searchResult.metadata
-      authorId = metadata.fromUserId
-      tweetRecommendation <- utegResultsMap.get(searchResult.id)
-      favedByUserIds <- tweetRecommendation.socialProofByType.get(SocialProofType.Favorite)
-    } yield favedByUserIds.filterNot(_ == authorId).size
+      melontadata <- selonarchRelonsult.melontadata
+      authorId = melontadata.fromUselonrId
+      twelonelontReloncommelonndation <- utelongRelonsultsMap.gelont(selonarchRelonsult.id)
+      favelondByUselonrIds <- twelonelontReloncommelonndation.socialProofByTypelon.gelont(SocialProofTypelon.Favoritelon)
+    } yielonld favelondByUselonrIds.filtelonrNot(_ == authorId).sizelon
   }
 }

@@ -1,17 +1,17 @@
-package com.twitter.follow_recommendations.common.base
+packagelon com.twittelonr.follow_reloncommelonndations.common.baselon
 
-import com.twitter.follow_recommendations.common.models.FilterReason.ParamReason
-import com.twitter.stitch.Stitch
-import com.twitter.timelines.configapi.HasParams
-import com.twitter.timelines.configapi.Param
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason.ParamRelonason
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.timelonlinelons.configapi.HasParams
+import com.twittelonr.timelonlinelons.configapi.Param
 
-case class ParamPredicate[Request <: HasParams](param: Param[Boolean]) extends Predicate[Request] {
+caselon class ParamPrelondicatelon[Relonquelonst <: HasParams](param: Param[Boolelonan]) elonxtelonnds Prelondicatelon[Relonquelonst] {
 
-  def apply(request: Request): Stitch[PredicateResult] = {
-    if (request.params(param)) {
-      Stitch.value(PredicateResult.Valid)
-    } else {
-      Stitch.value(PredicateResult.Invalid(Set(ParamReason(param.statName))))
+  delonf apply(relonquelonst: Relonquelonst): Stitch[PrelondicatelonRelonsult] = {
+    if (relonquelonst.params(param)) {
+      Stitch.valuelon(PrelondicatelonRelonsult.Valid)
+    } elonlselon {
+      Stitch.valuelon(PrelondicatelonRelonsult.Invalid(Selont(ParamRelonason(param.statNamelon))))
     }
   }
 }

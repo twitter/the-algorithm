@@ -1,70 +1,70 @@
-package com.twitter.interaction_graph.scio.agg_address_book
+packagelon com.twittelonr.intelonraction_graph.scio.agg_addrelonss_book
 
-import com.spotify.scio.ScioContext
-import com.spotify.scio.values.SCollection
-import com.twitter.addressbook.matches.thriftscala.UserMatchesRecord
-import com.twitter.beam.io.dal.DAL
-import com.twitter.beam.io.dal.DAL.DiskFormat
-import com.twitter.beam.io.dal.DAL.PathLayout
-import com.twitter.beam.io.dal.DAL.WriteOptions
-import com.twitter.beam.job.ServiceIdentifierOptions
-import com.twitter.scio_internal.job.ScioBeamJob
-import com.twitter.statebird.v2.thriftscala.Environment
-import com.twitter.interaction_graph.thriftscala.Edge
-import com.twitter.interaction_graph.thriftscala.Vertex
-import java.time.Instant
-import org.joda.time.Interval
+import com.spotify.scio.ScioContelonxt
+import com.spotify.scio.valuelons.SCollelonction
+import com.twittelonr.addrelonssbook.matchelons.thriftscala.UselonrMatchelonsReloncord
+import com.twittelonr.belonam.io.dal.DAL
+import com.twittelonr.belonam.io.dal.DAL.DiskFormat
+import com.twittelonr.belonam.io.dal.DAL.PathLayout
+import com.twittelonr.belonam.io.dal.DAL.WritelonOptions
+import com.twittelonr.belonam.job.SelonrvicelonIdelonntifielonrOptions
+import com.twittelonr.scio_intelonrnal.job.ScioBelonamJob
+import com.twittelonr.statelonbird.v2.thriftscala.elonnvironmelonnt
+import com.twittelonr.intelonraction_graph.thriftscala.elondgelon
+import com.twittelonr.intelonraction_graph.thriftscala.Velonrtelonx
+import java.timelon.Instant
+import org.joda.timelon.Intelonrval
 
-object InteractionGraphAddressBookJob extends ScioBeamJob[InteractionGraphAddressBookOption] {
-  override protected def configurePipeline(
-    scioContext: ScioContext,
-    pipelineOptions: InteractionGraphAddressBookOption
+objelonct IntelonractionGraphAddrelonssBookJob elonxtelonnds ScioBelonamJob[IntelonractionGraphAddrelonssBookOption] {
+  ovelonrridelon protelonctelond delonf configurelonPipelonlinelon(
+    scioContelonxt: ScioContelonxt,
+    pipelonlinelonOptions: IntelonractionGraphAddrelonssBookOption
   ): Unit = {
-    @transient
-    implicit lazy val sc: ScioContext = scioContext
-    implicit lazy val dateInterval: Interval = pipelineOptions.interval
-    implicit lazy val addressBookCounters: InteractionGraphAddressBookCountersTrait =
-      InteractionGraphAddressBookCounters
+    @transielonnt
+    implicit lazy val sc: ScioContelonxt = scioContelonxt
+    implicit lazy val datelonIntelonrval: Intelonrval = pipelonlinelonOptions.intelonrval
+    implicit lazy val addrelonssBookCountelonrs: IntelonractionGraphAddrelonssBookCountelonrsTrait =
+      IntelonractionGraphAddrelonssBookCountelonrs
 
-    val interactionGraphAddressBookSource = InteractionGraphAddressBookSource(pipelineOptions)
+    val intelonractionGraphAddrelonssBookSourcelon = IntelonractionGraphAddrelonssBookSourcelon(pipelonlinelonOptions)
 
-    val addressBook: SCollection[UserMatchesRecord] =
-      interactionGraphAddressBookSource.readSimpleUserMatches(
-        dateInterval.withStart(dateInterval.getStart.minusDays(3))
+    val addrelonssBook: SCollelonction[UselonrMatchelonsReloncord] =
+      intelonractionGraphAddrelonssBookSourcelon.relonadSimplelonUselonrMatchelons(
+        datelonIntelonrval.withStart(datelonIntelonrval.gelontStart.minusDays(3))
       )
-    val (vertex, edges) = InteractionGraphAddressBookUtil.process(addressBook)
+    val (velonrtelonx, elondgelons) = IntelonractionGraphAddrelonssBookUtil.procelonss(addrelonssBook)
 
-    val dalEnvironment: String = pipelineOptions
-      .as(classOf[ServiceIdentifierOptions])
-      .getEnvironment()
-    val dalWriteEnvironment = if (pipelineOptions.getDALWriteEnvironment != null) {
-      pipelineOptions.getDALWriteEnvironment
-    } else {
-      dalEnvironment
+    val dalelonnvironmelonnt: String = pipelonlinelonOptions
+      .as(classOf[SelonrvicelonIdelonntifielonrOptions])
+      .gelontelonnvironmelonnt()
+    val dalWritelonelonnvironmelonnt = if (pipelonlinelonOptions.gelontDALWritelonelonnvironmelonnt != null) {
+      pipelonlinelonOptions.gelontDALWritelonelonnvironmelonnt
+    } elonlselon {
+      dalelonnvironmelonnt
     }
 
-    vertex.saveAsCustomOutput(
-      "Write Vertex Records",
-      DAL.writeSnapshot[Vertex](
-        InteractionGraphAggAddressBookVertexSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/address_book_vertex_daily"),
-        Instant.ofEpochMilli(dateInterval.getEndMillis),
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption =
-          WriteOptions(numOfShards = Some((pipelineOptions.getNumberOfShards / 16.0).ceil.toInt))
+    velonrtelonx.savelonAsCustomOutput(
+      "Writelon Velonrtelonx Reloncords",
+      DAL.writelonSnapshot[Velonrtelonx](
+        IntelonractionGraphAggAddrelonssBookVelonrtelonxSnapshotScalaDataselont,
+        PathLayout.DailyPath(pipelonlinelonOptions.gelontOutputPath + "/addrelonss_book_velonrtelonx_daily"),
+        Instant.ofelonpochMilli(datelonIntelonrval.gelontelonndMillis),
+        DiskFormat.Parquelont,
+        elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption =
+          WritelonOptions(numOfShards = Somelon((pipelonlinelonOptions.gelontNumbelonrOfShards / 16.0).celonil.toInt))
       )
     )
 
-    edges.saveAsCustomOutput(
-      "Write Edge Records",
-      DAL.writeSnapshot[Edge](
-        InteractionGraphAggAddressBookEdgeSnapshotScalaDataset,
-        PathLayout.DailyPath(pipelineOptions.getOutputPath + "/address_book_edge_daily"),
-        Instant.ofEpochMilli(dateInterval.getEndMillis),
-        DiskFormat.Parquet,
-        Environment.valueOf(dalWriteEnvironment),
-        writeOption = WriteOptions(numOfShards = Some(pipelineOptions.getNumberOfShards))
+    elondgelons.savelonAsCustomOutput(
+      "Writelon elondgelon Reloncords",
+      DAL.writelonSnapshot[elondgelon](
+        IntelonractionGraphAggAddrelonssBookelondgelonSnapshotScalaDataselont,
+        PathLayout.DailyPath(pipelonlinelonOptions.gelontOutputPath + "/addrelonss_book_elondgelon_daily"),
+        Instant.ofelonpochMilli(datelonIntelonrval.gelontelonndMillis),
+        DiskFormat.Parquelont,
+        elonnvironmelonnt.valuelonOf(dalWritelonelonnvironmelonnt),
+        writelonOption = WritelonOptions(numOfShards = Somelon(pipelonlinelonOptions.gelontNumbelonrOfShards))
       )
     )
   }

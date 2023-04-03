@@ -1,170 +1,170 @@
-package com.twitter.search.earlybird.document;
+packagelon com.twittelonr.selonarch.elonarlybird.documelonnt;
 
-import java.io.IOException;
+import java.io.IOelonxcelonption;
 import java.util.List;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.base.Preconditions;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
+import com.googlelon.common.baselon.Prelonconditions;
 
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.metrics.SearchTruthTableCounter;
-import com.twitter.search.common.schema.base.FieldNameToIdMapping;
-import com.twitter.search.common.schema.base.ImmutableSchemaInterface;
-import com.twitter.search.common.schema.base.ThriftDocumentUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdCluster;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeatures;
-import com.twitter.search.common.schema.earlybird.EarlybirdEncodedFeaturesUtil;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants;
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.common.schema.earlybird.EarlybirdThriftDocumentUtil;
-import com.twitter.search.common.schema.thriftjava.ThriftDocument;
-import com.twitter.search.common.schema.thriftjava.ThriftField;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.melontrics.SelonarchTruthTablelonCountelonr;
+import com.twittelonr.selonarch.common.schelonma.baselon.FielonldNamelonToIdMapping;
+import com.twittelonr.selonarch.common.schelonma.baselon.ImmutablelonSchelonmaIntelonrfacelon;
+import com.twittelonr.selonarch.common.schelonma.baselon.ThriftDocumelonntUtil;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdClustelonr;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdelonncodelondFelonaturelons;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdelonncodelondFelonaturelonsUtil;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdThriftDocumelonntUtil;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftDocumelonnt;
+import com.twittelonr.selonarch.common.schelonma.thriftjava.ThriftFielonld;
 
-import geo.google.datamodel.GeoAddressAccuracy;
+import gelono.googlelon.datamodelonl.GelonoAddrelonssAccuracy;
 
 /**
- * Used to preprocess a ThriftDocument before indexing.
+ * Uselond to prelonprocelonss a ThriftDocumelonnt belonforelon indelonxing.
  */
-public final class ThriftDocumentPreprocessor {
-  private static final FieldNameToIdMapping ID_MAP = new EarlybirdFieldConstants();
-  private static final String FILTER_LINK_VALUE = EarlybirdThriftDocumentUtil.formatFilter(
-      EarlybirdFieldConstant.LINKS_FIELD.getFieldName());
-  private static final String HAS_LINK_VALUE = EarlybirdFieldConstant.getFacetSkipFieldName(
-      EarlybirdFieldConstant.LINKS_FIELD.getFieldName());
+public final class ThriftDocumelonntPrelonprocelonssor {
+  privatelon static final FielonldNamelonToIdMapping ID_MAP = nelonw elonarlybirdFielonldConstants();
+  privatelon static final String FILTelonR_LINK_VALUelon = elonarlybirdThriftDocumelonntUtil.formatFiltelonr(
+      elonarlybirdFielonldConstant.LINKS_FIelonLD.gelontFielonldNamelon());
+  privatelon static final String HAS_LINK_VALUelon = elonarlybirdFielonldConstant.gelontFacelontSkipFielonldNamelon(
+      elonarlybirdFielonldConstant.LINKS_FIelonLD.gelontFielonldNamelon());
 
-  private ThriftDocumentPreprocessor() {
+  privatelon ThriftDocumelonntPrelonprocelonssor() {
   }
 
   /**
-   * Processes the given document.
+   * Procelonsselons thelon givelonn documelonnt.
    */
-  public static ThriftDocument preprocess(
-      ThriftDocument doc, EarlybirdCluster cluster, ImmutableSchemaInterface schema)
-      throws IOException {
-    patchArchiveThriftDocumentAccuracy(doc, cluster);
-    patchArchiveHasLinks(doc, cluster);
-    addAllMissingMinEngagementFields(doc, cluster, schema);
-    return doc;
+  public static ThriftDocumelonnt prelonprocelonss(
+      ThriftDocumelonnt doc, elonarlybirdClustelonr clustelonr, ImmutablelonSchelonmaIntelonrfacelon schelonma)
+      throws IOelonxcelonption {
+    patchArchivelonThriftDocumelonntAccuracy(doc, clustelonr);
+    patchArchivelonHasLinks(doc, clustelonr);
+    addAllMissingMinelonngagelonmelonntFielonlds(doc, clustelonr, schelonma);
+    relonturn doc;
   }
 
-  private static final SearchCounter GEO_SCRUBBED_COUNT =
-      SearchCounter.export("geo_scrubbed_count");
-  private static final SearchCounter GEO_ARCHIVE_PATCHED_ACCURACY_COUNT =
-      SearchCounter.export("geo_archive_patched_accuracy_count");
-  private static final SearchCounter GEO_MISSING_COORDINATE_COUNT =
-      SearchCounter.export("geo_missing_coordinate_count");
-  private static final SearchCounter ARCHIVED_LINKS_FIELD_PATCHED_COUNT =
-      SearchCounter.export("links_field_patched_count");
+  privatelon static final SelonarchCountelonr GelonO_SCRUBBelonD_COUNT =
+      SelonarchCountelonr.elonxport("gelono_scrubbelond_count");
+  privatelon static final SelonarchCountelonr GelonO_ARCHIVelon_PATCHelonD_ACCURACY_COUNT =
+      SelonarchCountelonr.elonxport("gelono_archivelon_patchelond_accuracy_count");
+  privatelon static final SelonarchCountelonr GelonO_MISSING_COORDINATelon_COUNT =
+      SelonarchCountelonr.elonxport("gelono_missing_coordinatelon_count");
+  privatelon static final SelonarchCountelonr ARCHIVelonD_LINKS_FIelonLD_PATCHelonD_COUNT =
+      SelonarchCountelonr.elonxport("links_fielonld_patchelond_count");
 
   /**
-   * Counter for all the combinations of nullcast bit set and nullcast filter set.
+   * Countelonr for all thelon combinations of nullcast bit selont and nullcast filtelonr selont.
    *
-   * Sum over `ThriftDocumentPreprocessor_nullcast_doc_stats__nullcastBitSet_true_*` to get all docs
-   * with nullcast bit set to true.
+   * Sum ovelonr `ThriftDocumelonntPrelonprocelonssor_nullcast_doc_stats__nullcastBitSelont_truelon_*` to gelont all docs
+   * with nullcast bit selont to truelon.
    */
-  private static final SearchTruthTableCounter NULLCAST_DOC_STATS =
-      SearchTruthTableCounter.export(
-          "ThriftDocumentPreprocessor_nullcast_doc_stats",
-          "nullcastBitSet",
-          "nullcastFilterSet");
+  privatelon static final SelonarchTruthTablelonCountelonr NULLCAST_DOC_STATS =
+      SelonarchTruthTablelonCountelonr.elonxport(
+          "ThriftDocumelonntPrelonprocelonssor_nullcast_doc_stats",
+          "nullcastBitSelont",
+          "nullcastFiltelonrSelont");
 
   /***
-   * See JIRA SEARCH-7329
+   * Selonelon JIRA SelonARCH-7329
    */
-  private static void patchArchiveThriftDocumentAccuracy(ThriftDocument doc,
-                                                         EarlybirdCluster cluster) {
-    ThriftField geoField = ThriftDocumentUtil.getField(
+  privatelon static void patchArchivelonThriftDocumelonntAccuracy(ThriftDocumelonnt doc,
+                                                         elonarlybirdClustelonr clustelonr) {
+    ThriftFielonld gelonoFielonld = ThriftDocumelonntUtil.gelontFielonld(
         doc,
-        EarlybirdFieldConstant.GEO_HASH_FIELD.getFieldName(),
+        elonarlybirdFielonldConstant.GelonO_HASH_FIelonLD.gelontFielonldNamelon(),
         ID_MAP);
-    if (geoField != null) {
-      if (!geoField.getFieldData().isSetGeoCoordinate()) {
-        GEO_MISSING_COORDINATE_COUNT.increment();
-        return;
+    if (gelonoFielonld != null) {
+      if (!gelonoFielonld.gelontFielonldData().isSelontGelonoCoordinatelon()) {
+        GelonO_MISSING_COORDINATelon_COUNT.increlonmelonnt();
+        relonturn;
       }
 
-      // -1 means that the data is geo scrubbed.
-      if (geoField.getFieldData().getGeoCoordinate().getAccuracy() == -1) {
-        doc.getFields().remove(geoField);
-        GEO_SCRUBBED_COUNT.increment();
-      } else if (EarlybirdCluster.isArchive(cluster)) {
-        // In archive indexing, we base precision on SearchArchiveStatus.getPrecision, which is not
-        // in the scale we want.  We always use POINT_LEVEL scale for now.
-        geoField.getFieldData().getGeoCoordinate().setAccuracy(
-            GeoAddressAccuracy.POINT_LEVEL.getCode());
-        GEO_ARCHIVE_PATCHED_ACCURACY_COUNT.increment();
+      // -1 melonans that thelon data is gelono scrubbelond.
+      if (gelonoFielonld.gelontFielonldData().gelontGelonoCoordinatelon().gelontAccuracy() == -1) {
+        doc.gelontFielonlds().relonmovelon(gelonoFielonld);
+        GelonO_SCRUBBelonD_COUNT.increlonmelonnt();
+      } elonlselon if (elonarlybirdClustelonr.isArchivelon(clustelonr)) {
+        // In archivelon indelonxing, welon baselon preloncision on SelonarchArchivelonStatus.gelontPreloncision, which is not
+        // in thelon scalelon welon want.  Welon always uselon POINT_LelonVelonL scalelon for now.
+        gelonoFielonld.gelontFielonldData().gelontGelonoCoordinatelon().selontAccuracy(
+            GelonoAddrelonssAccuracy.POINT_LelonVelonL.gelontCodelon());
+        GelonO_ARCHIVelon_PATCHelonD_ACCURACY_COUNT.increlonmelonnt();
       }
     }
   }
 
   /**
-   * See SEARCH-9635
-   * This patch is used to replace
-   *   ("field":"internal","term":"__filter_links") with
-   *   ("field":"internal","term":"__has_links").
+   * Selonelon SelonARCH-9635
+   * This patch is uselond to relonplacelon
+   *   ("fielonld":"intelonrnal","telonrm":"__filtelonr_links") with
+   *   ("fielonld":"intelonrnal","telonrm":"__has_links").
    */
-  private static void patchArchiveHasLinks(ThriftDocument doc, EarlybirdCluster cluster) {
-    if (!EarlybirdCluster.isArchive(cluster)) {
-      return;
+  privatelon static void patchArchivelonHasLinks(ThriftDocumelonnt doc, elonarlybirdClustelonr clustelonr) {
+    if (!elonarlybirdClustelonr.isArchivelon(clustelonr)) {
+      relonturn;
     }
 
-    List<ThriftField> fieldList = ThriftDocumentUtil.getFields(doc,
-        EarlybirdFieldConstant.INTERNAL_FIELD.getFieldName(),
+    List<ThriftFielonld> fielonldList = ThriftDocumelonntUtil.gelontFielonlds(doc,
+        elonarlybirdFielonldConstant.INTelonRNAL_FIelonLD.gelontFielonldNamelon(),
         ID_MAP);
-    for (ThriftField field : fieldList) {
-      if (field.getFieldData().getStringValue().equals(FILTER_LINK_VALUE)) {
-        field.getFieldData().setStringValue(HAS_LINK_VALUE);
-        ARCHIVED_LINKS_FIELD_PATCHED_COUNT.increment();
-        break;
+    for (ThriftFielonld fielonld : fielonldList) {
+      if (fielonld.gelontFielonldData().gelontStringValuelon().elonquals(FILTelonR_LINK_VALUelon)) {
+        fielonld.gelontFielonldData().selontStringValuelon(HAS_LINK_VALUelon);
+        ARCHIVelonD_LINKS_FIelonLD_PATCHelonD_COUNT.increlonmelonnt();
+        brelonak;
       }
     }
   }
 
   /**
-   * Check whether the nullcast bit and nullcast filter are consistent in the given doc.
+   * Chelonck whelonthelonr thelon nullcast bit and nullcast filtelonr arelon consistelonnt in thelon givelonn doc.
    */
-  public static boolean isNullcastBitAndFilterConsistent(ThriftDocument doc,
-                                                         ImmutableSchemaInterface schema) {
-    return isNullcastBitAndFilterConsistent(doc, schema, NULLCAST_DOC_STATS);
+  public static boolelonan isNullcastBitAndFiltelonrConsistelonnt(ThriftDocumelonnt doc,
+                                                         ImmutablelonSchelonmaIntelonrfacelon schelonma) {
+    relonturn isNullcastBitAndFiltelonrConsistelonnt(doc, schelonma, NULLCAST_DOC_STATS);
   }
 
-  @VisibleForTesting
-  static boolean isNullcastBitAndFilterConsistent(
-      ThriftDocument doc, ImmutableSchemaInterface schema, SearchTruthTableCounter nullCastStats) {
-    final boolean isNullcastBitSet = EarlybirdThriftDocumentUtil.isNullcastBitSet(schema, doc);
-    final boolean isNullcastFilterSet = EarlybirdThriftDocumentUtil.isNullcastFilterSet(doc);
+  @VisiblelonForTelonsting
+  static boolelonan isNullcastBitAndFiltelonrConsistelonnt(
+      ThriftDocumelonnt doc, ImmutablelonSchelonmaIntelonrfacelon schelonma, SelonarchTruthTablelonCountelonr nullCastStats) {
+    final boolelonan isNullcastBitSelont = elonarlybirdThriftDocumelonntUtil.isNullcastBitSelont(schelonma, doc);
+    final boolelonan isNullcastFiltelonrSelont = elonarlybirdThriftDocumelonntUtil.isNullcastFiltelonrSelont(doc);
 
     // Track stats.
-    nullCastStats.record(isNullcastBitSet, isNullcastFilterSet);
+    nullCastStats.reloncord(isNullcastBitSelont, isNullcastFiltelonrSelont);
 
-    return isNullcastBitSet == isNullcastFilterSet;
+    relonturn isNullcastBitSelont == isNullcastFiltelonrSelont;
   }
 
-  @VisibleForTesting
-  static void addAllMissingMinEngagementFields(
-      ThriftDocument doc, EarlybirdCluster cluster, ImmutableSchemaInterface schema
-  ) throws IOException {
-    if (!EarlybirdCluster.isArchive(cluster)) {
-      return;
+  @VisiblelonForTelonsting
+  static void addAllMissingMinelonngagelonmelonntFielonlds(
+      ThriftDocumelonnt doc, elonarlybirdClustelonr clustelonr, ImmutablelonSchelonmaIntelonrfacelon schelonma
+  ) throws IOelonxcelonption {
+    if (!elonarlybirdClustelonr.isArchivelon(clustelonr)) {
+      relonturn;
     }
-    EarlybirdFieldConstants.EarlybirdFieldConstant encodedFeatureFieldConstant =
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD;
-    byte[] encodedFeaturesBytes = ThriftDocumentUtil.getBytesValue(doc,
-        encodedFeatureFieldConstant.getFieldName(), ID_MAP);
-    if (encodedFeaturesBytes == null) {
-      return;
+    elonarlybirdFielonldConstants.elonarlybirdFielonldConstant elonncodelondFelonaturelonFielonldConstant =
+        elonarlybirdFielonldConstant.elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD;
+    bytelon[] elonncodelondFelonaturelonsBytelons = ThriftDocumelonntUtil.gelontBytelonsValuelon(doc,
+        elonncodelondFelonaturelonFielonldConstant.gelontFielonldNamelon(), ID_MAP);
+    if (elonncodelondFelonaturelonsBytelons == null) {
+      relonturn;
     }
-    EarlybirdEncodedFeatures encodedFeatures = EarlybirdEncodedFeaturesUtil.fromBytes(
-        schema,
-        EarlybirdFieldConstant.ENCODED_TWEET_FEATURES_FIELD,
-        encodedFeaturesBytes,
+    elonarlybirdelonncodelondFelonaturelons elonncodelondFelonaturelons = elonarlybirdelonncodelondFelonaturelonsUtil.fromBytelons(
+        schelonma,
+        elonarlybirdFielonldConstant.elonNCODelonD_TWelonelonT_FelonATURelonS_FIelonLD,
+        elonncodelondFelonaturelonsBytelons,
         0);
-    for (String field: EarlybirdFieldConstants.MIN_ENGAGEMENT_FIELD_TO_CSF_NAME_MAP.keySet()) {
-      EarlybirdFieldConstant csfEngagementField = EarlybirdFieldConstants
-          .MIN_ENGAGEMENT_FIELD_TO_CSF_NAME_MAP.get(field);
-      Preconditions.checkState(csfEngagementField != null);
-      int engagementCounter = encodedFeatures.getFeatureValue(csfEngagementField);
-      EarlybirdThriftDocumentUtil.addNormalizedMinEngagementField(doc, field, engagementCounter);
+    for (String fielonld: elonarlybirdFielonldConstants.MIN_elonNGAGelonMelonNT_FIelonLD_TO_CSF_NAMelon_MAP.kelonySelont()) {
+      elonarlybirdFielonldConstant csfelonngagelonmelonntFielonld = elonarlybirdFielonldConstants
+          .MIN_elonNGAGelonMelonNT_FIelonLD_TO_CSF_NAMelon_MAP.gelont(fielonld);
+      Prelonconditions.chelonckStatelon(csfelonngagelonmelonntFielonld != null);
+      int elonngagelonmelonntCountelonr = elonncodelondFelonaturelons.gelontFelonaturelonValuelon(csfelonngagelonmelonntFielonld);
+      elonarlybirdThriftDocumelonntUtil.addNormalizelondMinelonngagelonmelonntFielonld(doc, fielonld, elonngagelonmelonntCountelonr);
     }
   }
 }

@@ -1,33 +1,33 @@
-package com.twitter.search.earlybird.index;
+packagelon com.twittelonr.selonarch.elonarlybird.indelonx;
 
-import com.twitter.search.common.schema.earlybird.EarlybirdFieldConstants.EarlybirdFieldConstant;
-import com.twitter.search.core.earlybird.index.EarlybirdIndexSegmentAtomicReader;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter.InvertedDocConsumerBuilder;
-import com.twitter.search.core.earlybird.index.EarlybirdRealtimeIndexSegmentWriter.StoredFieldsConsumerBuilder;
-import com.twitter.search.core.earlybird.index.extensions.EarlybirdRealtimeIndexExtensionsData;
+import com.twittelonr.selonarch.common.schelonma.elonarlybird.elonarlybirdFielonldConstants.elonarlybirdFielonldConstant;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr.InvelonrtelondDocConsumelonrBuildelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonarlybirdRelonaltimelonIndelonxSelongmelonntWritelonr.StorelondFielonldsConsumelonrBuildelonr;
+import com.twittelonr.selonarch.corelon.elonarlybird.indelonx.elonxtelonnsions.elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData;
 
-public class TweetSearchRealtimeIndexExtensionsData
-    implements EarlybirdRealtimeIndexExtensionsData {
-  @Override
-  public void createStoredFieldsConsumer(StoredFieldsConsumerBuilder builder) {
-    // no extensions necessary here
+public class TwelonelontSelonarchRelonaltimelonIndelonxelonxtelonnsionsData
+    implelonmelonnts elonarlybirdRelonaltimelonIndelonxelonxtelonnsionsData {
+  @Ovelonrridelon
+  public void crelonatelonStorelondFielonldsConsumelonr(StorelondFielonldsConsumelonrBuildelonr buildelonr) {
+    // no elonxtelonnsions neloncelonssary helonrelon
   }
 
-  @Override
-  public void createInvertedDocConsumer(InvertedDocConsumerBuilder builder) {
-    if (EarlybirdFieldConstant.ID_FIELD.getFieldName().equals(builder.getFieldName())) {
-      // The tweet ID should've already been added to the tweet ID <-> doc ID mapper.
-      builder.setUseDefaultConsumer(false);
+  @Ovelonrridelon
+  public void crelonatelonInvelonrtelondDocConsumelonr(InvelonrtelondDocConsumelonrBuildelonr buildelonr) {
+    if (elonarlybirdFielonldConstant.ID_FIelonLD.gelontFielonldNamelon().elonquals(buildelonr.gelontFielonldNamelon())) {
+      // Thelon twelonelont ID should'velon alrelonady belonelonn addelond to thelon twelonelont ID <-> doc ID mappelonr.
+      buildelonr.selontUselonDelonfaultConsumelonr(falselon);
     }
 
-    if (EarlybirdFieldConstant.CREATED_AT_FIELD.getFieldName().equals(builder.getFieldName())) {
-      RealtimeTimeMapper timeMapper = (RealtimeTimeMapper) builder.getSegmentData().getTimeMapper();
-      builder.addConsumer(new TimeMappingWriter(timeMapper));
-      builder.setUseDefaultConsumer(false);
+    if (elonarlybirdFielonldConstant.CRelonATelonD_AT_FIelonLD.gelontFielonldNamelon().elonquals(buildelonr.gelontFielonldNamelon())) {
+      RelonaltimelonTimelonMappelonr timelonMappelonr = (RelonaltimelonTimelonMappelonr) buildelonr.gelontSelongmelonntData().gelontTimelonMappelonr();
+      buildelonr.addConsumelonr(nelonw TimelonMappingWritelonr(timelonMappelonr));
+      buildelonr.selontUselonDelonfaultConsumelonr(falselon);
     }
   }
 
-  @Override
-  public void setupExtensions(EarlybirdIndexSegmentAtomicReader atomicReader) {
+  @Ovelonrridelon
+  public void selontupelonxtelonnsions(elonarlybirdIndelonxSelongmelonntAtomicRelonadelonr atomicRelonadelonr) {
   }
 }

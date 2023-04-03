@@ -1,24 +1,24 @@
 syntax = "proto3";
 
-option cc_enable_arenas = true;
+option cc_elonnablelon_arelonnas = truelon;
 
-import "tensorflow_serving/apis/get_model_status.proto";
-import "tensorflow_serving/apis/model_management.proto";
+import "telonnsorflow_selonrving/apis/gelont_modelonl_status.proto";
+import "telonnsorflow_selonrving/apis/modelonl_managelonmelonnt.proto";
 
-package tensorflow.serving;
+packagelon telonnsorflow.selonrving;
 
-// ModelService provides methods to query and update the state of the server,
-// e.g. which models/versions are being served.
-service ModelService {
-  // Gets status of model. If the ModelSpec in the request does not specify
-  // version, information about all versions of the model will be returned. If
-  // the ModelSpec in the request does specify a version, the status of only
-  // that version will be returned.
-  rpc GetModelStatus(GetModelStatusRequest) returns (GetModelStatusResponse);
+// ModelonlSelonrvicelon providelons melonthods to quelonry and updatelon thelon statelon of thelon selonrvelonr,
+// elon.g. which modelonls/velonrsions arelon beloning selonrvelond.
+selonrvicelon ModelonlSelonrvicelon {
+  // Gelonts status of modelonl. If thelon ModelonlSpelonc in thelon relonquelonst doelons not speloncify
+  // velonrsion, information about all velonrsions of thelon modelonl will belon relonturnelond. If
+  // thelon ModelonlSpelonc in thelon relonquelonst doelons speloncify a velonrsion, thelon status of only
+  // that velonrsion will belon relonturnelond.
+  rpc GelontModelonlStatus(GelontModelonlStatusRelonquelonst) relonturns (GelontModelonlStatusRelonsponselon);
 
-  // Reloads the set of served models. The new config supersedes the old one,
-  // so if a model is omitted from the new config it will be unloaded and no
-  // longer served.
-  rpc HandleReloadConfigRequest(ReloadConfigRequest)
-      returns (ReloadConfigResponse);
+  // Relonloads thelon selont of selonrvelond modelonls. Thelon nelonw config supelonrselondelons thelon old onelon,
+  // so if a modelonl is omittelond from thelon nelonw config it will belon unloadelond and no
+  // longelonr selonrvelond.
+  rpc HandlelonRelonloadConfigRelonquelonst(RelonloadConfigRelonquelonst)
+      relonturns (RelonloadConfigRelonsponselon);
 }

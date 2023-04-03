@@ -1,67 +1,67 @@
-package com.twitter.cr_mixer.param.decider
+packagelon com.twittelonr.cr_mixelonr.param.deloncidelonr
 
-import com.twitter.servo.decider.DeciderKeyEnum
+import com.twittelonr.selonrvo.deloncidelonr.DeloncidelonrKelonyelonnum
 
-object DeciderConstants {
-  val enableHealthSignalsScoreDeciderKey = "enable_tweet_health_score"
-  val enableUTGRealTimeTweetEngagementScoreDeciderKey = "enable_utg_realtime_tweet_engagement_score"
-  val enableUserAgathaScoreDeciderKey = "enable_user_agatha_score"
-  val enableUserTweetEntityGraphTrafficDeciderKey = "enable_user_tweet_entity_graph_traffic"
-  val enableUserTweetGraphTrafficDeciderKey = "enable_user_tweet_graph_traffic"
-  val enableUserVideoGraphTrafficDeciderKey = "enable_user_video_graph_traffic"
-  val enableUserAdGraphTrafficDeciderKey = "enable_user_ad_graph_traffic"
-  val enableSimClustersANN2DarkTrafficDeciderKey = "enable_simclusters_ann_2_dark_traffic"
-  val enableQigSimilarTweetsTrafficDeciderKey = "enable_qig_similar_tweets_traffic"
-  val enableFRSTrafficDeciderKey = "enable_frs_traffic"
-  val upperFunnelPerStepScribeRate = "upper_funnel_per_step_scribe_rate"
-  val kafkaMessageScribeSampleRate = "kafka_message_scribe_sample_rate"
-  val enableRealGraphMhStoreDeciderKey = "enable_real_graph_mh_store"
-  val topLevelApiDdgMetricsScribeRate = "top_level_api_ddg_metrics_scribe_rate"
-  val adsRecommendationsPerExperimentScribeRate = "ads_recommendations_per_experiment_scribe_rate"
-  val enableScribeForBlueVerifiedTweetCandidates =
-    "enable_scribe_for_blue_verified_tweet_candidates"
+objelonct DeloncidelonrConstants {
+  val elonnablelonHelonalthSignalsScorelonDeloncidelonrKelony = "elonnablelon_twelonelont_helonalth_scorelon"
+  val elonnablelonUTGRelonalTimelonTwelonelontelonngagelonmelonntScorelonDeloncidelonrKelony = "elonnablelon_utg_relonaltimelon_twelonelont_elonngagelonmelonnt_scorelon"
+  val elonnablelonUselonrAgathaScorelonDeloncidelonrKelony = "elonnablelon_uselonr_agatha_scorelon"
+  val elonnablelonUselonrTwelonelontelonntityGraphTrafficDeloncidelonrKelony = "elonnablelon_uselonr_twelonelont_elonntity_graph_traffic"
+  val elonnablelonUselonrTwelonelontGraphTrafficDeloncidelonrKelony = "elonnablelon_uselonr_twelonelont_graph_traffic"
+  val elonnablelonUselonrVidelonoGraphTrafficDeloncidelonrKelony = "elonnablelon_uselonr_videlono_graph_traffic"
+  val elonnablelonUselonrAdGraphTrafficDeloncidelonrKelony = "elonnablelon_uselonr_ad_graph_traffic"
+  val elonnablelonSimClustelonrsANN2DarkTrafficDeloncidelonrKelony = "elonnablelon_simclustelonrs_ann_2_dark_traffic"
+  val elonnablelonQigSimilarTwelonelontsTrafficDeloncidelonrKelony = "elonnablelon_qig_similar_twelonelonts_traffic"
+  val elonnablelonFRSTrafficDeloncidelonrKelony = "elonnablelon_frs_traffic"
+  val uppelonrFunnelonlPelonrStelonpScribelonRatelon = "uppelonr_funnelonl_pelonr_stelonp_scribelon_ratelon"
+  val kafkaMelonssagelonScribelonSamplelonRatelon = "kafka_melonssagelon_scribelon_samplelon_ratelon"
+  val elonnablelonRelonalGraphMhStorelonDeloncidelonrKelony = "elonnablelon_relonal_graph_mh_storelon"
+  val topLelonvelonlApiDdgMelontricsScribelonRatelon = "top_lelonvelonl_api_ddg_melontrics_scribelon_ratelon"
+  val adsReloncommelonndationsPelonrelonxpelonrimelonntScribelonRatelon = "ads_reloncommelonndations_pelonr_elonxpelonrimelonnt_scribelon_ratelon"
+  val elonnablelonScribelonForBluelonVelonrifielondTwelonelontCandidatelons =
+    "elonnablelon_scribelon_for_bluelon_velonrifielond_twelonelont_candidatelons"
 
-  val enableUserStateStoreDeciderKey = "enable_user_state_store"
-  val enableUserMediaRepresentationStoreDeciderKey =
-    "enable_user_media_representation_store"
-  val enableMagicRecsRealTimeAggregatesStoreDeciderKey =
-    "enable_magic_recs_real_time_aggregates_store"
+  val elonnablelonUselonrStatelonStorelonDeloncidelonrKelony = "elonnablelon_uselonr_statelon_storelon"
+  val elonnablelonUselonrMelondiaRelonprelonselonntationStorelonDeloncidelonrKelony =
+    "elonnablelon_uselonr_melondia_relonprelonselonntation_storelon"
+  val elonnablelonMagicReloncsRelonalTimelonAggrelongatelonsStorelonDeloncidelonrKelony =
+    "elonnablelon_magic_reloncs_relonal_timelon_aggrelongatelons_storelon"
 
-  val enableEarlybirdTrafficDeciderKey = "enable_earlybird_traffic"
+  val elonnablelonelonarlybirdTrafficDeloncidelonrKelony = "elonnablelon_elonarlybird_traffic"
 
-  val enableTopicTweetTrafficDeciderKey = "enable_topic_tweet_traffic"
+  val elonnablelonTopicTwelonelontTrafficDeloncidelonrKelony = "elonnablelon_topic_twelonelont_traffic"
 
-  val getTweetRecommendationsCacheRate = "get_tweet_recommendations_cache_rate"
+  val gelontTwelonelontReloncommelonndationsCachelonRatelon = "gelont_twelonelont_reloncommelonndations_cachelon_ratelon"
 }
 
-object DeciderKey extends DeciderKeyEnum {
+objelonct DeloncidelonrKelony elonxtelonnds DeloncidelonrKelonyelonnum {
 
-  val enableHealthSignalsScoreDeciderKey: Value = Value(
-    DeciderConstants.enableHealthSignalsScoreDeciderKey
-  )
-
-  val enableUtgRealTimeTweetEngagementScoreDeciderKey: Value = Value(
-    DeciderConstants.enableUTGRealTimeTweetEngagementScoreDeciderKey
-  )
-  val enableUserAgathaScoreDeciderKey: Value = Value(
-    DeciderConstants.enableUserAgathaScoreDeciderKey
-  )
-  val enableUserMediaRepresentationStoreDeciderKey: Value = Value(
-    DeciderConstants.enableUserMediaRepresentationStoreDeciderKey
+  val elonnablelonHelonalthSignalsScorelonDeloncidelonrKelony: Valuelon = Valuelon(
+    DeloncidelonrConstants.elonnablelonHelonalthSignalsScorelonDeloncidelonrKelony
   )
 
-  val enableMagicRecsRealTimeAggregatesStore: Value = Value(
-    DeciderConstants.enableMagicRecsRealTimeAggregatesStoreDeciderKey
+  val elonnablelonUtgRelonalTimelonTwelonelontelonngagelonmelonntScorelonDeloncidelonrKelony: Valuelon = Valuelon(
+    DeloncidelonrConstants.elonnablelonUTGRelonalTimelonTwelonelontelonngagelonmelonntScorelonDeloncidelonrKelony
+  )
+  val elonnablelonUselonrAgathaScorelonDeloncidelonrKelony: Valuelon = Valuelon(
+    DeloncidelonrConstants.elonnablelonUselonrAgathaScorelonDeloncidelonrKelony
+  )
+  val elonnablelonUselonrMelondiaRelonprelonselonntationStorelonDeloncidelonrKelony: Valuelon = Valuelon(
+    DeloncidelonrConstants.elonnablelonUselonrMelondiaRelonprelonselonntationStorelonDeloncidelonrKelony
   )
 
-  val enableUserStateStoreDeciderKey: Value = Value(
-    DeciderConstants.enableUserStateStoreDeciderKey
+  val elonnablelonMagicReloncsRelonalTimelonAggrelongatelonsStorelon: Valuelon = Valuelon(
+    DeloncidelonrConstants.elonnablelonMagicReloncsRelonalTimelonAggrelongatelonsStorelonDeloncidelonrKelony
   )
 
-  val enableRealGraphMhStoreDeciderKey: Value = Value(
-    DeciderConstants.enableRealGraphMhStoreDeciderKey
+  val elonnablelonUselonrStatelonStorelonDeloncidelonrKelony: Valuelon = Valuelon(
+    DeloncidelonrConstants.elonnablelonUselonrStatelonStorelonDeloncidelonrKelony
   )
 
-  val enableEarlybirdTrafficDeciderKey: Value = Value(
-    DeciderConstants.enableEarlybirdTrafficDeciderKey)
+  val elonnablelonRelonalGraphMhStorelonDeloncidelonrKelony: Valuelon = Valuelon(
+    DeloncidelonrConstants.elonnablelonRelonalGraphMhStorelonDeloncidelonrKelony
+  )
+
+  val elonnablelonelonarlybirdTrafficDeloncidelonrKelony: Valuelon = Valuelon(
+    DeloncidelonrConstants.elonnablelonelonarlybirdTrafficDeloncidelonrKelony)
 }

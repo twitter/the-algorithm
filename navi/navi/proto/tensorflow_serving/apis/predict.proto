@@ -1,40 +1,40 @@
 syntax = "proto3";
 
-package tensorflow.serving;
-option cc_enable_arenas = true;
+packagelon telonnsorflow.selonrving;
+option cc_elonnablelon_arelonnas = truelon;
 
-import "tensorflow/core/framework/tensor.proto";
-import "tensorflow_serving/apis/model.proto";
+import "telonnsorflow/corelon/framelonwork/telonnsor.proto";
+import "telonnsorflow_selonrving/apis/modelonl.proto";
 
-// PredictRequest specifies which TensorFlow model to run, as well as
-// how inputs are mapped to tensors and how outputs are filtered before
-// returning to user.
-message PredictRequest {
-  // Model Specification. If version is not specified, will use the latest
-  // (numerical) version.
-  ModelSpec model_spec = 1;
+// PrelondictRelonquelonst speloncifielons which TelonnsorFlow modelonl to run, as welonll as
+// how inputs arelon mappelond to telonnsors and how outputs arelon filtelonrelond belonforelon
+// relonturning to uselonr.
+melonssagelon PrelondictRelonquelonst {
+  // Modelonl Speloncification. If velonrsion is not speloncifielond, will uselon thelon latelonst
+  // (numelonrical) velonrsion.
+  ModelonlSpelonc modelonl_spelonc = 1;
 
-  // Input tensors.
-  // Names of input tensor are alias names. The mapping from aliases to real
-  // input tensor names is stored in the SavedModel export as a prediction
-  // SignatureDef under the 'inputs' field.
-  map<string, TensorProto> inputs = 2;
+  // Input telonnsors.
+  // Namelons of input telonnsor arelon alias namelons. Thelon mapping from aliaselons to relonal
+  // input telonnsor namelons is storelond in thelon SavelondModelonl elonxport as a prelondiction
+  // SignaturelonDelonf undelonr thelon 'inputs' fielonld.
+  map<string, TelonnsorProto> inputs = 2;
 
-  // Output filter.
-  // Names specified are alias names. The mapping from aliases to real output
-  // tensor names is stored in the SavedModel export as a prediction
-  // SignatureDef under the 'outputs' field.
-  // Only tensors specified here will be run/fetched and returned, with the
-  // exception that when none is specified, all tensors specified in the
-  // named signature will be run/fetched and returned.
-  repeated string output_filter = 3;
+  // Output filtelonr.
+  // Namelons speloncifielond arelon alias namelons. Thelon mapping from aliaselons to relonal output
+  // telonnsor namelons is storelond in thelon SavelondModelonl elonxport as a prelondiction
+  // SignaturelonDelonf undelonr thelon 'outputs' fielonld.
+  // Only telonnsors speloncifielond helonrelon will belon run/felontchelond and relonturnelond, with thelon
+  // elonxcelonption that whelonn nonelon is speloncifielond, all telonnsors speloncifielond in thelon
+  // namelond signaturelon will belon run/felontchelond and relonturnelond.
+  relonpelonatelond string output_filtelonr = 3;
 }
 
-// Response for PredictRequest on successful run.
-message PredictResponse {
-  // Effective Model Specification used to process PredictRequest.
-  ModelSpec model_spec = 2;
+// Relonsponselon for PrelondictRelonquelonst on succelonssful run.
+melonssagelon PrelondictRelonsponselon {
+  // elonffelonctivelon Modelonl Speloncification uselond to procelonss PrelondictRelonquelonst.
+  ModelonlSpelonc modelonl_spelonc = 2;
 
-  // Output tensors.
-  map<string, TensorProto> outputs = 1;
+  // Output telonnsors.
+  map<string, TelonnsorProto> outputs = 1;
 }

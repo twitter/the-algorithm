@@ -1,17 +1,17 @@
 scala_library(
-    sources = ["*.scala"],
-    compiler_option_sets = ["fatal_warnings"],
-    strict_deps = True,
-    tags = ["bazel-compatible"],
-    dependencies = [
-        "product-mixer/component-library/src/main/scala/com/twitter/product_mixer/component_library/model/candidate",
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/filter",
-        "src/thrift/com/twitter/socialgraph:thrift-scala",
-        "strato/config/columns/lists/reads:core-strato-client",
-        "strato/src/main/scala/com/twitter/strato/client",
+    sourcelons = ["*.scala"],
+    compilelonr_option_selonts = ["fatal_warnings"],
+    strict_delonps = Truelon,
+    tags = ["bazelonl-compatiblelon"],
+    delonpelonndelonncielons = [
+        "product-mixelonr/componelonnt-library/src/main/scala/com/twittelonr/product_mixelonr/componelonnt_library/modelonl/candidatelon",
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/filtelonr",
+        "src/thrift/com/twittelonr/socialgraph:thrift-scala",
+        "strato/config/columns/lists/relonads:corelon-strato-clielonnt",
+        "strato/src/main/scala/com/twittelonr/strato/clielonnt",
     ],
-    exports = [
-        "product-mixer/core/src/main/scala/com/twitter/product_mixer/core/functional_component/filter",
-        "strato/config/columns/lists/reads:core-strato-client",
+    elonxports = [
+        "product-mixelonr/corelon/src/main/scala/com/twittelonr/product_mixelonr/corelon/functional_componelonnt/filtelonr",
+        "strato/config/columns/lists/relonads:corelon-strato-clielonnt",
     ],
 )

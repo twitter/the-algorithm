@@ -1,72 +1,72 @@
-package com.twitter.timelineranker.util
+packagelon com.twittelonr.timelonlinelonrankelonr.util
 
-import com.twitter.timelines.model.TweetId
-import com.twitter.timelines.model.UserId
-import com.twitter.timelines.model.tweet.HydratedTweet
+import com.twittelonr.timelonlinelons.modelonl.TwelonelontId
+import com.twittelonr.timelonlinelons.modelonl.UselonrId
+import com.twittelonr.timelonlinelons.modelonl.twelonelont.HydratelondTwelonelont
 
-object ExtendedRepliesFilter {
-  private[util] def isExtendedReply(tweet: HydratedTweet, followedUserIds: Seq[UserId]): Boolean = {
-    tweet.hasReply &&
-    tweet.directedAtUser.exists(!followedUserIds.contains(_)) &&
-    followedUserIds.contains(tweet.userId)
+objelonct elonxtelonndelondRelonplielonsFiltelonr {
+  privatelon[util] delonf iselonxtelonndelondRelonply(twelonelont: HydratelondTwelonelont, followelondUselonrIds: Selonq[UselonrId]): Boolelonan = {
+    twelonelont.hasRelonply &&
+    twelonelont.direlonctelondAtUselonr.elonxists(!followelondUselonrIds.contains(_)) &&
+    followelondUselonrIds.contains(twelonelont.uselonrId)
   }
 
-  private[util] def isNotQualifiedExtendedReply(
-    tweet: HydratedTweet,
-    userId: UserId,
-    followedUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId],
-    sourceTweetsById: Map[TweetId, HydratedTweet]
-  ): Boolean = {
-    val currentUserId = userId
-    isExtendedReply(tweet, followedUserIds) &&
+  privatelon[util] delonf isNotQualifielondelonxtelonndelondRelonply(
+    twelonelont: HydratelondTwelonelont,
+    uselonrId: UselonrId,
+    followelondUselonrIds: Selonq[UselonrId],
+    mutelondUselonrIds: Selont[UselonrId],
+    sourcelonTwelonelontsById: Map[TwelonelontId, HydratelondTwelonelont]
+  ): Boolelonan = {
+    val currelonntUselonrId = uselonrId
+    iselonxtelonndelondRelonply(twelonelont, followelondUselonrIds) &&
     !(
-      !tweet.isRetweet &&
-        // and the extended reply must be directed at someone other than the current user
-        tweet.directedAtUser.exists(_ != currentUserId) &&
-        // There must be a source tweet
-        tweet.inReplyToTweetId
-          .flatMap(sourceTweetsById.get)
-          .filter { c =>
-            // and the author of the source tweet must be non zero
-            (c.userId != 0) &&
-            (c.userId != currentUserId) && // and not by the current user
-            (!c.hasReply) && // and a root tweet, i.e. not a reply
-            (!c.isRetweet) && // and not a retweet
-            (c.userId != tweet.userId) // and not a by the same user
+      !twelonelont.isRelontwelonelont &&
+        // and thelon elonxtelonndelond relonply must belon direlonctelond at somelononelon othelonr than thelon currelonnt uselonr
+        twelonelont.direlonctelondAtUselonr.elonxists(_ != currelonntUselonrId) &&
+        // Thelonrelon must belon a sourcelon twelonelont
+        twelonelont.inRelonplyToTwelonelontId
+          .flatMap(sourcelonTwelonelontsById.gelont)
+          .filtelonr { c =>
+            // and thelon author of thelon sourcelon twelonelont must belon non zelonro
+            (c.uselonrId != 0) &&
+            (c.uselonrId != currelonntUselonrId) && // and not by thelon currelonnt uselonr
+            (!c.hasRelonply) && // and a root twelonelont, i.elon. not a relonply
+            (!c.isRelontwelonelont) && // and not a relontwelonelont
+            (c.uselonrId != twelonelont.uselonrId) // and not a by thelon samelon uselonr
           }
-          // and not by a muted user
-          .exists(sourceTweet => !mutedUserIds.contains(sourceTweet.userId))
+          // and not by a mutelond uselonr
+          .elonxists(sourcelonTwelonelont => !mutelondUselonrIds.contains(sourcelonTwelonelont.uselonrId))
     )
   }
 
-  private[util] def isNotValidExpandedExtendedReply(
-    tweet: HydratedTweet,
-    viewingUserId: UserId,
-    followedUserIds: Seq[UserId],
-    mutedUserIds: Set[UserId],
-    sourceTweetsById: Map[TweetId, HydratedTweet]
-  ): Boolean = {
-    // An extended reply is valid if we hydrated the in-reply to tweet
-    val isValidExtendedReply =
-      !tweet.isRetweet && // extended replies must be source tweets
-        tweet.directedAtUser.exists(
-          _ != viewingUserId) && // the extended reply must be directed at someone other than the viewing user
-        tweet.inReplyToTweetId
+  privatelon[util] delonf isNotValidelonxpandelondelonxtelonndelondRelonply(
+    twelonelont: HydratelondTwelonelont,
+    vielonwingUselonrId: UselonrId,
+    followelondUselonrIds: Selonq[UselonrId],
+    mutelondUselonrIds: Selont[UselonrId],
+    sourcelonTwelonelontsById: Map[TwelonelontId, HydratelondTwelonelont]
+  ): Boolelonan = {
+    // An elonxtelonndelond relonply is valid if welon hydratelond thelon in-relonply to twelonelont
+    val isValidelonxtelonndelondRelonply =
+      !twelonelont.isRelontwelonelont && // elonxtelonndelond relonplielons must belon sourcelon twelonelonts
+        twelonelont.direlonctelondAtUselonr.elonxists(
+          _ != vielonwingUselonrId) && // thelon elonxtelonndelond relonply must belon direlonctelond at somelononelon othelonr than thelon vielonwing uselonr
+        twelonelont.inRelonplyToTwelonelontId
           .flatMap(
-            sourceTweetsById.get
-          ) // there must be an in-reply-to tweet matching the following properities
-          .exists { inReplyToTweet =>
-            (inReplyToTweet.userId > 0) && // and the in-reply to author is valid
-            (inReplyToTweet.userId != viewingUserId) && // the reply can not be in reply to the viewing user's tweet
-            !inReplyToTweet.isRetweet && // and the in-reply-to tweet is not a retweet (this should always be true?)
-            !mutedUserIds.contains(
-              inReplyToTweet.userId) && // and the in-reply-to user is not muted
-            inReplyToTweet.inReplyToUserId.forall(r =>
-              !mutedUserIds
-                .contains(r)) // if there is an in-reply-to-in-reply-to user they are not muted
+            sourcelonTwelonelontsById.gelont
+          ) // thelonrelon must belon an in-relonply-to twelonelont matching thelon following propelonritielons
+          .elonxists { inRelonplyToTwelonelont =>
+            (inRelonplyToTwelonelont.uselonrId > 0) && // and thelon in-relonply to author is valid
+            (inRelonplyToTwelonelont.uselonrId != vielonwingUselonrId) && // thelon relonply can not belon in relonply to thelon vielonwing uselonr's twelonelont
+            !inRelonplyToTwelonelont.isRelontwelonelont && // and thelon in-relonply-to twelonelont is not a relontwelonelont (this should always belon truelon?)
+            !mutelondUselonrIds.contains(
+              inRelonplyToTwelonelont.uselonrId) && // and thelon in-relonply-to uselonr is not mutelond
+            inRelonplyToTwelonelont.inRelonplyToUselonrId.forall(r =>
+              !mutelondUselonrIds
+                .contains(r)) // if thelonrelon is an in-relonply-to-in-relonply-to uselonr thelony arelon not mutelond
           }
-    // filter any invalid extended reply
-    isExtendedReply(tweet, followedUserIds) && !isValidExtendedReply
+    // filtelonr any invalid elonxtelonndelond relonply
+    iselonxtelonndelondRelonply(twelonelont, followelondUselonrIds) && !isValidelonxtelonndelondRelonply
   }
 }

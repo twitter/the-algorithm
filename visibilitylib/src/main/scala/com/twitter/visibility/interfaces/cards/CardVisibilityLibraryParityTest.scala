@@ -1,35 +1,35 @@
-package com.twitter.visibility.interfaces.cards
+packagelon com.twittelonr.visibility.intelonrfacelons.cards
 
-import com.twitter.finagle.stats.StatsReceiver
-import com.twitter.stitch.Stitch
-import com.twitter.visibility.builder.VisibilityResult
+import com.twittelonr.finaglelon.stats.StatsReloncelonivelonr
+import com.twittelonr.stitch.Stitch
+import com.twittelonr.visibility.buildelonr.VisibilityRelonsult
 
-class CardVisibilityLibraryParityTest(statsReceiver: StatsReceiver) {
-  private val parityTestScope = statsReceiver.scope("card_visibility_library_parity")
-  private val requests = parityTestScope.counter("requests")
-  private val equal = parityTestScope.counter("equal")
-  private val incorrect = parityTestScope.counter("incorrect")
-  private val failures = parityTestScope.counter("failures")
+class CardVisibilityLibraryParityTelonst(statsReloncelonivelonr: StatsReloncelonivelonr) {
+  privatelon val parityTelonstScopelon = statsReloncelonivelonr.scopelon("card_visibility_library_parity")
+  privatelon val relonquelonsts = parityTelonstScopelon.countelonr("relonquelonsts")
+  privatelon val elonqual = parityTelonstScopelon.countelonr("elonqual")
+  privatelon val incorrelonct = parityTelonstScopelon.countelonr("incorrelonct")
+  privatelon val failurelons = parityTelonstScopelon.countelonr("failurelons")
 
-  def runParityTest(
-    preHydratedFeatureVisibilityResult: Stitch[VisibilityResult],
-    resp: VisibilityResult
+  delonf runParityTelonst(
+    prelonHydratelondFelonaturelonVisibilityRelonsult: Stitch[VisibilityRelonsult],
+    relonsp: VisibilityRelonsult
   ): Stitch[Unit] = {
-    requests.incr()
+    relonquelonsts.incr()
 
-    preHydratedFeatureVisibilityResult
-      .flatMap { parityResponse =>
-        if (parityResponse.verdict == resp.verdict) {
-          equal.incr()
-        } else {
-          incorrect.incr()
+    prelonHydratelondFelonaturelonVisibilityRelonsult
+      .flatMap { parityRelonsponselon =>
+        if (parityRelonsponselon.velonrdict == relonsp.velonrdict) {
+          elonqual.incr()
+        } elonlselon {
+          incorrelonct.incr()
         }
 
-        Stitch.Done
-      }.rescue {
-        case t: Throwable =>
-          failures.incr()
-          Stitch.Done
+        Stitch.Donelon
+      }.relonscuelon {
+        caselon t: Throwablelon =>
+          failurelons.incr()
+          Stitch.Donelon
       }.unit
   }
 }

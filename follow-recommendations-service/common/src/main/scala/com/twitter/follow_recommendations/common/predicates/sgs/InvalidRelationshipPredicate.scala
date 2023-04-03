@@ -1,36 +1,36 @@
-package com.twitter.follow_recommendations.common.predicates.sgs
+packagelon com.twittelonr.follow_reloncommelonndations.common.prelondicatelons.sgs
 
-import com.twitter.follow_recommendations.common.base.Predicate
-import com.twitter.follow_recommendations.common.base.PredicateResult
-import com.twitter.follow_recommendations.common.models.CandidateUser
-import com.twitter.follow_recommendations.common.models.FilterReason
-import com.twitter.follow_recommendations.common.models.HasInvalidRelationshipUserIds
-import com.twitter.stitch.Stitch
-import javax.inject.Singleton
+import com.twittelonr.follow_reloncommelonndations.common.baselon.Prelondicatelon
+import com.twittelonr.follow_reloncommelonndations.common.baselon.PrelondicatelonRelonsult
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.CandidatelonUselonr
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.FiltelonrRelonason
+import com.twittelonr.follow_reloncommelonndations.common.modelonls.HasInvalidRelonlationshipUselonrIds
+import com.twittelonr.stitch.Stitch
+import javax.injelonct.Singlelonton
 
-@Singleton
-class InvalidRelationshipPredicate
-    extends Predicate[(HasInvalidRelationshipUserIds, CandidateUser)] {
+@Singlelonton
+class InvalidRelonlationshipPrelondicatelon
+    elonxtelonnds Prelondicatelon[(HasInvalidRelonlationshipUselonrIds, CandidatelonUselonr)] {
 
-  override def apply(
-    pair: (HasInvalidRelationshipUserIds, CandidateUser)
-  ): Stitch[PredicateResult] = {
+  ovelonrridelon delonf apply(
+    pair: (HasInvalidRelonlationshipUselonrIds, CandidatelonUselonr)
+  ): Stitch[PrelondicatelonRelonsult] = {
 
-    val (targetUser, candidate) = pair
-    targetUser.invalidRelationshipUserIds match {
-      case Some(users) =>
-        if (!users.contains(candidate.id)) {
-          InvalidRelationshipPredicate.ValidStitch
-        } else {
-          Stitch.value(InvalidRelationshipPredicate.InvalidRelationshipStitch)
+    val (targelontUselonr, candidatelon) = pair
+    targelontUselonr.invalidRelonlationshipUselonrIds match {
+      caselon Somelon(uselonrs) =>
+        if (!uselonrs.contains(candidatelon.id)) {
+          InvalidRelonlationshipPrelondicatelon.ValidStitch
+        } elonlselon {
+          Stitch.valuelon(InvalidRelonlationshipPrelondicatelon.InvalidRelonlationshipStitch)
         }
-      case None => Stitch.value(PredicateResult.Valid)
+      caselon Nonelon => Stitch.valuelon(PrelondicatelonRelonsult.Valid)
     }
   }
 }
 
-object InvalidRelationshipPredicate {
-  val ValidStitch: Stitch[PredicateResult.Valid.type] = Stitch.value(PredicateResult.Valid)
-  val InvalidRelationshipStitch: PredicateResult.Invalid =
-    PredicateResult.Invalid(Set(FilterReason.InvalidRelationship))
+objelonct InvalidRelonlationshipPrelondicatelon {
+  val ValidStitch: Stitch[PrelondicatelonRelonsult.Valid.typelon] = Stitch.valuelon(PrelondicatelonRelonsult.Valid)
+  val InvalidRelonlationshipStitch: PrelondicatelonRelonsult.Invalid =
+    PrelondicatelonRelonsult.Invalid(Selont(FiltelonrRelonason.InvalidRelonlationship))
 }

@@ -1,97 +1,97 @@
-package com.twitter.product_mixer.component_library.feature_hydrator.query.async
+packagelon com.twittelonr.product_mixelonr.componelonnt_library.felonaturelon_hydrator.quelonry.async
 
-import com.twitter.ml.featurestore.lib.EntityId
-import com.twitter.product_mixer.core.feature.Feature
-import com.twitter.product_mixer.core.feature.featuremap.FeatureMap
-import com.twitter.product_mixer.core.feature.featurestorev1.BaseFeatureStoreV1QueryFeature
-import com.twitter.product_mixer.core.functional_component.common.alert.Alert
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.AsyncHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.QueryFeatureHydrator
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1DynamicClientBuilder
-import com.twitter.product_mixer.core.functional_component.feature_hydrator.featurestorev1.FeatureStoreV1QueryFeatureHydrator
-import com.twitter.product_mixer.core.model.common.identifier.FeatureHydratorIdentifier
-import com.twitter.product_mixer.core.model.common.identifier.PipelineStepIdentifier
-import com.twitter.product_mixer.core.pipeline.PipelineQuery
-import com.twitter.stitch.Stitch
+import com.twittelonr.ml.felonaturelonstorelon.lib.elonntityId
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.Felonaturelon
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonmap.FelonaturelonMap
+import com.twittelonr.product_mixelonr.corelon.felonaturelon.felonaturelonstorelonv1.BaselonFelonaturelonStorelonV1QuelonryFelonaturelon
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.common.alelonrt.Alelonrt
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.AsyncHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1.FelonaturelonStorelonV1DynamicClielonntBuildelonr
+import com.twittelonr.product_mixelonr.corelon.functional_componelonnt.felonaturelon_hydrator.felonaturelonstorelonv1.FelonaturelonStorelonV1QuelonryFelonaturelonHydrator
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.FelonaturelonHydratorIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.modelonl.common.idelonntifielonr.PipelonlinelonStelonpIdelonntifielonr
+import com.twittelonr.product_mixelonr.corelon.pipelonlinelon.PipelonlinelonQuelonry
+import com.twittelonr.stitch.Stitch
 
 /**
- * A [[QueryFeatureHydrator]] with [[AsyncQueryFeatureHydrator]] that hydrated asynchronously for features
- * to be before the step identified in [[hydrateBefore]]
+ * A [[QuelonryFelonaturelonHydrator]] with [[AsyncQuelonryFelonaturelonHydrator]] that hydratelond asynchronously for felonaturelons
+ * to belon belonforelon thelon stelonp idelonntifielond in [[hydratelonBelonforelon]]
  *
- * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
- * @tparam Query The domain model for the query or request
+ * @param hydratelonBelonforelon        thelon [[PipelonlinelonStelonpIdelonntifielonr]] stelonp to makelon surelon this felonaturelon is hydratelond belonforelon.
+ * @param quelonryFelonaturelonHydrator thelon undelonrlying [[QuelonryFelonaturelonHydrator]] to run asynchronously
+ * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
  */
-case class AsyncQueryFeatureHydrator[-Query <: PipelineQuery] private[async] (
-  override val hydrateBefore: PipelineStepIdentifier,
-  queryFeatureHydrator: QueryFeatureHydrator[Query])
-    extends QueryFeatureHydrator[Query]
+caselon class AsyncQuelonryFelonaturelonHydrator[-Quelonry <: PipelonlinelonQuelonry] privatelon[async] (
+  ovelonrridelon val hydratelonBelonforelon: PipelonlinelonStelonpIdelonntifielonr,
+  quelonryFelonaturelonHydrator: QuelonryFelonaturelonHydrator[Quelonry])
+    elonxtelonnds QuelonryFelonaturelonHydrator[Quelonry]
     with AsyncHydrator {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "Async" + queryFeatureHydrator.identifier.name)
-  override val alerts: Seq[Alert] = queryFeatureHydrator.alerts
-  override val features: Set[Feature[_, _]] = queryFeatureHydrator.features
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr(
+    "Async" + quelonryFelonaturelonHydrator.idelonntifielonr.namelon)
+  ovelonrridelon val alelonrts: Selonq[Alelonrt] = quelonryFelonaturelonHydrator.alelonrts
+  ovelonrridelon val felonaturelons: Selont[Felonaturelon[_, _]] = quelonryFelonaturelonHydrator.felonaturelons
 
-  override def hydrate(query: Query): Stitch[FeatureMap] = queryFeatureHydrator.hydrate(query)
+  ovelonrridelon delonf hydratelon(quelonry: Quelonry): Stitch[FelonaturelonMap] = quelonryFelonaturelonHydrator.hydratelon(quelonry)
 }
 
 /**
- * A [[FeatureStoreV1QueryFeatureHydrator]] with [[AsyncHydrator]] that hydrated asynchronously for features
- * to be before the step identified in [[hydrateBefore]]. We need a standalone class for feature store,
- * different from the above as FStore hydrators are exempt from validations at run time.
+ * A [[FelonaturelonStorelonV1QuelonryFelonaturelonHydrator]] with [[AsyncHydrator]] that hydratelond asynchronously for felonaturelons
+ * to belon belonforelon thelon stelonp idelonntifielond in [[hydratelonBelonforelon]]. Welon nelonelond a standalonelon class for felonaturelon storelon,
+ * diffelonrelonnt from thelon abovelon as FStorelon hydrators arelon elonxelonmpt from validations at run timelon.
  *
- * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
- * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
- * @tparam Query The domain model for the query or request
+ * @param hydratelonBelonforelon        thelon [[PipelonlinelonStelonpIdelonntifielonr]] stelonp to makelon surelon this felonaturelon is hydratelond belonforelon.
+ * @param quelonryFelonaturelonHydrator thelon undelonrlying [[QuelonryFelonaturelonHydrator]] to run asynchronously
+ * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
  */
-case class AsyncFeatureStoreV1QueryFeatureHydrator[Query <: PipelineQuery] private[async] (
-  override val hydrateBefore: PipelineStepIdentifier,
-  featureStoreV1QueryFeatureHydrator: FeatureStoreV1QueryFeatureHydrator[Query])
-    extends FeatureStoreV1QueryFeatureHydrator[
-      Query
+caselon class AsyncFelonaturelonStorelonV1QuelonryFelonaturelonHydrator[Quelonry <: PipelonlinelonQuelonry] privatelon[async] (
+  ovelonrridelon val hydratelonBelonforelon: PipelonlinelonStelonpIdelonntifielonr,
+  felonaturelonStorelonV1QuelonryFelonaturelonHydrator: FelonaturelonStorelonV1QuelonryFelonaturelonHydrator[Quelonry])
+    elonxtelonnds FelonaturelonStorelonV1QuelonryFelonaturelonHydrator[
+      Quelonry
     ]
     with AsyncHydrator {
 
-  override val identifier: FeatureHydratorIdentifier = FeatureHydratorIdentifier(
-    "Async" + featureStoreV1QueryFeatureHydrator.identifier.name)
-  override val alerts: Seq[Alert] = featureStoreV1QueryFeatureHydrator.alerts
+  ovelonrridelon val idelonntifielonr: FelonaturelonHydratorIdelonntifielonr = FelonaturelonHydratorIdelonntifielonr(
+    "Async" + felonaturelonStorelonV1QuelonryFelonaturelonHydrator.idelonntifielonr.namelon)
+  ovelonrridelon val alelonrts: Selonq[Alelonrt] = felonaturelonStorelonV1QuelonryFelonaturelonHydrator.alelonrts
 
-  override val features: Set[BaseFeatureStoreV1QueryFeature[Query, _ <: EntityId, _]] =
-    featureStoreV1QueryFeatureHydrator.features
+  ovelonrridelon val felonaturelons: Selont[BaselonFelonaturelonStorelonV1QuelonryFelonaturelon[Quelonry, _ <: elonntityId, _]] =
+    felonaturelonStorelonV1QuelonryFelonaturelonHydrator.felonaturelons
 
-  override val clientBuilder: FeatureStoreV1DynamicClientBuilder =
-    featureStoreV1QueryFeatureHydrator.clientBuilder
+  ovelonrridelon val clielonntBuildelonr: FelonaturelonStorelonV1DynamicClielonntBuildelonr =
+    felonaturelonStorelonV1QuelonryFelonaturelonHydrator.clielonntBuildelonr
 }
 
-object AsyncQueryFeatureHydrator {
+objelonct AsyncQuelonryFelonaturelonHydrator {
 
   /**
-   * A [[QueryFeatureHydrator]] with [[AsyncQueryFeatureHydrator]] that hydrated asynchronously for features
-   * to be before the step identified in [[hydrateBefore]]
+   * A [[QuelonryFelonaturelonHydrator]] with [[AsyncQuelonryFelonaturelonHydrator]] that hydratelond asynchronously for felonaturelons
+   * to belon belonforelon thelon stelonp idelonntifielond in [[hydratelonBelonforelon]]
    *
-   * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
-   * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
-   * @tparam Query The domain model for the query or request
+   * @param hydratelonBelonforelon        thelon [[PipelonlinelonStelonpIdelonntifielonr]] stelonp to makelon surelon this felonaturelon is hydratelond belonforelon.
+   * @param quelonryFelonaturelonHydrator thelon undelonrlying [[QuelonryFelonaturelonHydrator]] to run asynchronously
+   * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
    */
-  def apply[Query <: PipelineQuery](
-    hydrateBefore: PipelineStepIdentifier,
-    queryFeatureHydrator: QueryFeatureHydrator[Query]
-  ): AsyncQueryFeatureHydrator[Query] =
-    new AsyncQueryFeatureHydrator(hydrateBefore, queryFeatureHydrator)
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    hydratelonBelonforelon: PipelonlinelonStelonpIdelonntifielonr,
+    quelonryFelonaturelonHydrator: QuelonryFelonaturelonHydrator[Quelonry]
+  ): AsyncQuelonryFelonaturelonHydrator[Quelonry] =
+    nelonw AsyncQuelonryFelonaturelonHydrator(hydratelonBelonforelon, quelonryFelonaturelonHydrator)
 
   /**
-   * A [[FeatureStoreV1QueryFeatureHydrator]] with [[AsyncHydrator]] that hydrated asynchronously for features
-   * to be before the step identified in [[hydrateBefore]]. We need a standalone class for feature store,
-   * different from the above as FStore hydrators are exempt from validations at run time.
+   * A [[FelonaturelonStorelonV1QuelonryFelonaturelonHydrator]] with [[AsyncHydrator]] that hydratelond asynchronously for felonaturelons
+   * to belon belonforelon thelon stelonp idelonntifielond in [[hydratelonBelonforelon]]. Welon nelonelond a standalonelon class for felonaturelon storelon,
+   * diffelonrelonnt from thelon abovelon as FStorelon hydrators arelon elonxelonmpt from validations at run timelon.
    *
-   * @param hydrateBefore        the [[PipelineStepIdentifier]] step to make sure this feature is hydrated before.
-   * @param queryFeatureHydrator the underlying [[QueryFeatureHydrator]] to run asynchronously
-   * @tparam Query The domain model for the query or request
+   * @param hydratelonBelonforelon        thelon [[PipelonlinelonStelonpIdelonntifielonr]] stelonp to makelon surelon this felonaturelon is hydratelond belonforelon.
+   * @param quelonryFelonaturelonHydrator thelon undelonrlying [[QuelonryFelonaturelonHydrator]] to run asynchronously
+   * @tparam Quelonry Thelon domain modelonl for thelon quelonry or relonquelonst
    */
-  def apply[Query <: PipelineQuery](
-    hydrateBefore: PipelineStepIdentifier,
-    featureStoreV1QueryFeatureHydrator: FeatureStoreV1QueryFeatureHydrator[Query]
-  ): AsyncFeatureStoreV1QueryFeatureHydrator[Query] =
-    new AsyncFeatureStoreV1QueryFeatureHydrator(hydrateBefore, featureStoreV1QueryFeatureHydrator)
+  delonf apply[Quelonry <: PipelonlinelonQuelonry](
+    hydratelonBelonforelon: PipelonlinelonStelonpIdelonntifielonr,
+    felonaturelonStorelonV1QuelonryFelonaturelonHydrator: FelonaturelonStorelonV1QuelonryFelonaturelonHydrator[Quelonry]
+  ): AsyncFelonaturelonStorelonV1QuelonryFelonaturelonHydrator[Quelonry] =
+    nelonw AsyncFelonaturelonStorelonV1QuelonryFelonaturelonHydrator(hydratelonBelonforelon, felonaturelonStorelonV1QuelonryFelonaturelonHydrator)
 }

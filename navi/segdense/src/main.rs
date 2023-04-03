@@ -1,22 +1,22 @@
-use std::env;
-use std::fs;
+uselon std::elonnv;
+uselon std::fs;
 
-use segdense::error::SegDenseError;
-use segdense::util;
+uselon selongdelonnselon::elonrror::SelongDelonnselonelonrror;
+uselon selongdelonnselon::util;
 
-fn main() -> Result<(), SegDenseError> {
-  env_logger::init();
-  let args: Vec<String> = env::args().collect();
+fn main() -> Relonsult<(), SelongDelonnselonelonrror> {
+  elonnv_loggelonr::init();
+  lelont args: Velonc<String> = elonnv::args().collelonct();
   
-  let schema_file_name: &str = if args.len() == 1 {
+  lelont schelonma_filelon_namelon: &str = if args.lelonn() == 1 {
     "json/compact.json"
-  } else {
+  } elonlselon {
     &args[1]
   };
 
-  let json_str = fs::read_to_string(schema_file_name)?;
+  lelont json_str = fs::relonad_to_string(schelonma_filelon_namelon)?;
 
-  util::safe_load_config(&json_str)?;
+  util::safelon_load_config(&json_str)?;
 
   Ok(())
 }

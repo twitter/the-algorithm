@@ -1,304 +1,304 @@
-package com.twitter.search.earlybird.search.relevance;
+packagelon com.twittelonr.selonarch.elonarlybird.selonarch.relonlelonvancelon;
 
 import java.util.Arrays;
 import java.util.Map;
 
-import com.google.common.annotations.VisibleForTesting;
+import com.googlelon.common.annotations.VisiblelonForTelonsting;
 
-import com.twitter.search.common.constants.SearchCardType;
-import com.twitter.search.common.constants.thriftjava.ThriftLanguage;
-import com.twitter.search.common.metrics.SearchCounter;
-import com.twitter.search.common.ranking.thriftjava.ThriftAgeDecayRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftCardRankingParams;
-import com.twitter.search.common.ranking.thriftjava.ThriftRankingParams;
-import com.twitter.search.common.util.lang.ThriftLanguageUtil;
-import com.twitter.search.earlybird.thrift.ThriftSearchQuery;
-import com.twitter.search.earlybird.thrift.ThriftSocialFilterType;
+import com.twittelonr.selonarch.common.constants.SelonarchCardTypelon;
+import com.twittelonr.selonarch.common.constants.thriftjava.ThriftLanguagelon;
+import com.twittelonr.selonarch.common.melontrics.SelonarchCountelonr;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftAgelonDeloncayRankingParams;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftCardRankingParams;
+import com.twittelonr.selonarch.common.ranking.thriftjava.ThriftRankingParams;
+import com.twittelonr.selonarch.common.util.lang.ThriftLanguagelonUtil;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSelonarchQuelonry;
+import com.twittelonr.selonarch.elonarlybird.thrift.ThriftSocialFiltelonrTypelon;
 
 /*
- * The class for all query specific parameters, including the parameters from the relevanceOptions and
- * values that are extracted from the request itself.
+ * Thelon class for all quelonry speloncific paramelontelonrs, including thelon paramelontelonrs from thelon relonlelonvancelonOptions and
+ * valuelons that arelon elonxtractelond from thelon relonquelonst itselonlf.
  */
-public class LinearScoringParams {
+public class LinelonarScoringParams {
 
-  public static final double DEFAULT_FEATURE_WEIGHT = 0;
-  public static final double DEFAULT_FEATURE_MIN_VAL = 0;
-  public static final double DEFAULT_NO_BOOST = 1.0;
-  @VisibleForTesting
-  static final SearchCounter NULL_USER_LANGS_KEY =
-      SearchCounter.export("linear_scoring_params_null_user_langs_key");
+  public static final doublelon DelonFAULT_FelonATURelon_WelonIGHT = 0;
+  public static final doublelon DelonFAULT_FelonATURelon_MIN_VAL = 0;
+  public static final doublelon DelonFAULT_NO_BOOST = 1.0;
+  @VisiblelonForTelonsting
+  static final SelonarchCountelonr NULL_USelonR_LANGS_KelonY =
+      SelonarchCountelonr.elonxport("linelonar_scoring_params_null_uselonr_langs_kelony");
 
-  public final double luceneWeight;
-  public final double textScoreWeight;
-  public final double textScoreMinVal;
-  public final double retweetWeight;
-  public final double retweetMinVal;
-  public final double favWeight;
-  public final double favMinVal;
-  public final double replyWeight;
-  public final double multipleReplyWeight;
-  public final double multipleReplyMinVal;
-  public final double isReplyWeight;
-  public final double parusWeight;
-  public final double embedsImpressionWeight;
-  public final double embedsUrlWeight;
-  public final double videoViewWeight;
-  public final double quotedCountWeight;
+  public final doublelon lucelonnelonWelonight;
+  public final doublelon telonxtScorelonWelonight;
+  public final doublelon telonxtScorelonMinVal;
+  public final doublelon relontwelonelontWelonight;
+  public final doublelon relontwelonelontMinVal;
+  public final doublelon favWelonight;
+  public final doublelon favMinVal;
+  public final doublelon relonplyWelonight;
+  public final doublelon multiplelonRelonplyWelonight;
+  public final doublelon multiplelonRelonplyMinVal;
+  public final doublelon isRelonplyWelonight;
+  public final doublelon parusWelonight;
+  public final doublelon elonmbelondsImprelonssionWelonight;
+  public final doublelon elonmbelondsUrlWelonight;
+  public final doublelon videlonoVielonwWelonight;
+  public final doublelon quotelondCountWelonight;
 
-  public final double[] rankingOfflineExpWeights =
-      new double[LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS];
+  public final doublelon[] rankingOfflinelonelonxpWelonights =
+      nelonw doublelon[LinelonarScoringData.MAX_OFFLINelon_elonXPelonRIMelonNTAL_FIelonLDS];
 
-  public final boolean applyBoosts;
+  public final boolelonan applyBoosts;
 
-  // Storing ranking params for cards, avoid using maps for faster lookup
-  public final double[] hasCardBoosts = new double[SearchCardType.values().length];
-  public final double[] cardDomainMatchBoosts = new double[SearchCardType.values().length];
-  public final double[] cardAuthorMatchBoosts = new double[SearchCardType.values().length];
-  public final double[] cardTitleMatchBoosts = new double[SearchCardType.values().length];
-  public final double[] cardDescriptionMatchBoosts = new double[SearchCardType.values().length];
+  // Storing ranking params for cards, avoid using maps for fastelonr lookup
+  public final doublelon[] hasCardBoosts = nelonw doublelon[SelonarchCardTypelon.valuelons().lelonngth];
+  public final doublelon[] cardDomainMatchBoosts = nelonw doublelon[SelonarchCardTypelon.valuelons().lelonngth];
+  public final doublelon[] cardAuthorMatchBoosts = nelonw doublelon[SelonarchCardTypelon.valuelons().lelonngth];
+  public final doublelon[] cardTitlelonMatchBoosts = nelonw doublelon[SelonarchCardTypelon.valuelons().lelonngth];
+  public final doublelon[] cardDelonscriptionMatchBoosts = nelonw doublelon[SelonarchCardTypelon.valuelons().lelonngth];
 
-  public final double urlWeight;
-  public final double reputationWeight;
-  public final double reputationMinVal;
-  public final double followRetweetWeight;
-  public final double trustedRetweetWeight;
+  public final doublelon urlWelonight;
+  public final doublelon relonputationWelonight;
+  public final doublelon relonputationMinVal;
+  public final doublelon followRelontwelonelontWelonight;
+  public final doublelon trustelondRelontwelonelontWelonight;
 
-  // Adjustments for specific tweets (tweetId -> score)
-  public final Map<Long, Double> querySpecificScoreAdjustments;
+  // Adjustmelonnts for speloncific twelonelonts (twelonelontId -> scorelon)
+  public final Map<Long, Doublelon> quelonrySpeloncificScorelonAdjustmelonnts;
 
-  // Adjustments for tweets posted by specific authors (userId -> score)
-  public final Map<Long, Double> authorSpecificScoreAdjustments;
+  // Adjustmelonnts for twelonelonts postelond by speloncific authors (uselonrId -> scorelon)
+  public final Map<Long, Doublelon> authorSpeloncificScorelonAdjustmelonnts;
 
-  public final double offensiveDamping;
-  public final double spamUserDamping;
-  public final double nsfwUserDamping;
-  public final double botUserDamping;
-  public final double trustedCircleBoost;
-  public final double directFollowBoost;
-  public final double minScore;
+  public final doublelon offelonnsivelonDamping;
+  public final doublelon spamUselonrDamping;
+  public final doublelon nsfwUselonrDamping;
+  public final doublelon botUselonrDamping;
+  public final doublelon trustelondCirclelonBoost;
+  public final doublelon direlonctFollowBoost;
+  public final doublelon minScorelon;
 
-  public final boolean applyFiltersAlways;
+  public final boolelonan applyFiltelonrsAlways;
 
-  public final boolean useLuceneScoreAsBoost;
-  public final double maxLuceneScoreBoost;
+  public final boolelonan uselonLucelonnelonScorelonAsBoost;
+  public final doublelon maxLucelonnelonScorelonBoost;
 
-  public final double langEnglishTweetDemote;
-  public final double langEnglishUIDemote;
-  public final double langDefaultDemote;
-  public final boolean useUserLanguageInfo;
-  public final double unknownLanguageBoost;
+  public final doublelon langelonnglishTwelonelontDelonmotelon;
+  public final doublelon langelonnglishUIDelonmotelon;
+  public final doublelon langDelonfaultDelonmotelon;
+  public final boolelonan uselonUselonrLanguagelonInfo;
+  public final doublelon unknownLanguagelonBoost;
 
-  public final double outOfNetworkReplyPenalty;
+  public final doublelon outOfNelontworkRelonplyPelonnalty;
 
-  public final boolean useAgeDecay;
-  public final double ageDecayHalflife;
-  public final double ageDecayBase;
-  public final double ageDecaySlope;
+  public final boolelonan uselonAgelonDeloncay;
+  public final doublelon agelonDeloncayHalflifelon;
+  public final doublelon agelonDeloncayBaselon;
+  public final doublelon agelonDeloncaySlopelon;
 
-  // hit attribute demotions
-  public final boolean enableHitDemotion;
-  public final double noTextHitDemotion;
-  public final double urlOnlyHitDemotion;
-  public final double nameOnlyHitDemotion;
-  public final double separateTextAndNameHitDemotion;
-  public final double separateTextAndUrlHitDemotion;
+  // hit attributelon delonmotions
+  public final boolelonan elonnablelonHitDelonmotion;
+  public final doublelon noTelonxtHitDelonmotion;
+  public final doublelon urlOnlyHitDelonmotion;
+  public final doublelon namelonOnlyHitDelonmotion;
+  public final doublelon selonparatelonTelonxtAndNamelonHitDelonmotion;
+  public final doublelon selonparatelonTelonxtAndUrlHitDelonmotion;
 
-  // trends related params
-  public final double tweetHasTrendBoost;
-  public final double multipleHashtagsOrTrendsDamping;
+  // trelonnds relonlatelond params
+  public final doublelon twelonelontHasTrelonndBoost;
+  public final doublelon multiplelonHashtagsOrTrelonndsDamping;
 
-  public final double tweetFromVerifiedAccountBoost;
+  public final doublelon twelonelontFromVelonrifielondAccountBoost;
 
-  public final double tweetFromBlueVerifiedAccountBoost;
+  public final doublelon twelonelontFromBluelonVelonrifielondAccountBoost;
 
-  public final ThriftSocialFilterType socialFilterType;
+  public final ThriftSocialFiltelonrTypelon socialFiltelonrTypelon;
   public final int uiLangId;
-  // Confidences of the understandability of different languages for this user.
-  public final double[] userLangs = new double[ThriftLanguage.values().length];
+  // Confidelonncelons of thelon undelonrstandability of diffelonrelonnt languagelons for this uselonr.
+  public final doublelon[] uselonrLangs = nelonw doublelon[ThriftLanguagelon.valuelons().lelonngth];
 
-  public final long searcherId;
-  public final double selfTweetBoost;
+  public final long selonarchelonrId;
+  public final doublelon selonlfTwelonelontBoost;
 
-  public final double tweetHasMediaUrlBoost;
-  public final double tweetHasNewsUrlBoost;
+  public final doublelon twelonelontHasMelondiaUrlBoost;
+  public final doublelon twelonelontHasNelonwsUrlBoost;
 
-  // whether we need meta-data for replies what the reply is to.
-  public final boolean getInReplyToStatusId;
+  // whelonthelonr welon nelonelond melonta-data for relonplielons what thelon relonply is to.
+  public final boolelonan gelontInRelonplyToStatusId;
 
-  // Initialize from a ranking parameter
-  public LinearScoringParams(ThriftSearchQuery searchQuery, ThriftRankingParams params) {
-    // weights
-    luceneWeight = params.isSetLuceneScoreParams()
-        ? params.getLuceneScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    textScoreWeight = params.isSetTextScoreParams()
-        ? params.getTextScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    retweetWeight = params.isSetRetweetCountParams()
-        ? params.getRetweetCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    favWeight = params.isSetFavCountParams()
-        ? params.getFavCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    replyWeight = params.isSetReplyCountParams()
-        ? params.getReplyCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    multipleReplyWeight = params.isSetMultipleReplyCountParams()
-        ? params.getMultipleReplyCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    parusWeight = params.isSetParusScoreParams()
-        ? params.getParusScoreParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    for (int i = 0; i < LinearScoringData.MAX_OFFLINE_EXPERIMENTAL_FIELDS; i++) {
-      Byte featureTypeByte = (byte) i;
-      // default weight is 0, thus contribution for unset feature value will be 0.
-      rankingOfflineExpWeights[i] = params.getOfflineExperimentalFeatureRankingParamsSize() > 0
-          && params.getOfflineExperimentalFeatureRankingParams().containsKey(featureTypeByte)
-              ? params.getOfflineExperimentalFeatureRankingParams().get(featureTypeByte).getWeight()
-              : DEFAULT_FEATURE_WEIGHT;
+  // Initializelon from a ranking paramelontelonr
+  public LinelonarScoringParams(ThriftSelonarchQuelonry selonarchQuelonry, ThriftRankingParams params) {
+    // welonights
+    lucelonnelonWelonight = params.isSelontLucelonnelonScorelonParams()
+        ? params.gelontLucelonnelonScorelonParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    telonxtScorelonWelonight = params.isSelontTelonxtScorelonParams()
+        ? params.gelontTelonxtScorelonParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    relontwelonelontWelonight = params.isSelontRelontwelonelontCountParams()
+        ? params.gelontRelontwelonelontCountParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    favWelonight = params.isSelontFavCountParams()
+        ? params.gelontFavCountParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    relonplyWelonight = params.isSelontRelonplyCountParams()
+        ? params.gelontRelonplyCountParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    multiplelonRelonplyWelonight = params.isSelontMultiplelonRelonplyCountParams()
+        ? params.gelontMultiplelonRelonplyCountParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    parusWelonight = params.isSelontParusScorelonParams()
+        ? params.gelontParusScorelonParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    for (int i = 0; i < LinelonarScoringData.MAX_OFFLINelon_elonXPelonRIMelonNTAL_FIelonLDS; i++) {
+      Bytelon felonaturelonTypelonBytelon = (bytelon) i;
+      // delonfault welonight is 0, thus contribution for unselont felonaturelon valuelon will belon 0.
+      rankingOfflinelonelonxpWelonights[i] = params.gelontOfflinelonelonxpelonrimelonntalFelonaturelonRankingParamsSizelon() > 0
+          && params.gelontOfflinelonelonxpelonrimelonntalFelonaturelonRankingParams().containsKelony(felonaturelonTypelonBytelon)
+              ? params.gelontOfflinelonelonxpelonrimelonntalFelonaturelonRankingParams().gelont(felonaturelonTypelonBytelon).gelontWelonight()
+              : DelonFAULT_FelonATURelon_WelonIGHT;
     }
-    embedsImpressionWeight = params.isSetEmbedsImpressionCountParams()
-        ? params.getEmbedsImpressionCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    embedsUrlWeight = params.isSetEmbedsUrlCountParams()
-        ? params.getEmbedsUrlCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    videoViewWeight = params.isSetVideoViewCountParams()
-        ? params.getVideoViewCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    quotedCountWeight = params.isSetQuotedCountParams()
-        ? params.getQuotedCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
+    elonmbelondsImprelonssionWelonight = params.isSelontelonmbelondsImprelonssionCountParams()
+        ? params.gelontelonmbelondsImprelonssionCountParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    elonmbelondsUrlWelonight = params.isSelontelonmbelondsUrlCountParams()
+        ? params.gelontelonmbelondsUrlCountParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    videlonoVielonwWelonight = params.isSelontVidelonoVielonwCountParams()
+        ? params.gelontVidelonoVielonwCountParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    quotelondCountWelonight = params.isSelontQuotelondCountParams()
+        ? params.gelontQuotelondCountParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
 
     applyBoosts = params.isApplyBoosts();
 
-    // configure card values
-    Arrays.fill(hasCardBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardAuthorMatchBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardDomainMatchBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardTitleMatchBoosts, DEFAULT_NO_BOOST);
-    Arrays.fill(cardDescriptionMatchBoosts, DEFAULT_NO_BOOST);
-    if (params.isSetCardRankingParams()) {
-      for (SearchCardType cardType : SearchCardType.values()) {
-        byte cardTypeIndex = cardType.getByteValue();
-        ThriftCardRankingParams rankingParams = params.getCardRankingParams().get(cardTypeIndex);
+    // configurelon card valuelons
+    Arrays.fill(hasCardBoosts, DelonFAULT_NO_BOOST);
+    Arrays.fill(cardAuthorMatchBoosts, DelonFAULT_NO_BOOST);
+    Arrays.fill(cardDomainMatchBoosts, DelonFAULT_NO_BOOST);
+    Arrays.fill(cardTitlelonMatchBoosts, DelonFAULT_NO_BOOST);
+    Arrays.fill(cardDelonscriptionMatchBoosts, DelonFAULT_NO_BOOST);
+    if (params.isSelontCardRankingParams()) {
+      for (SelonarchCardTypelon cardTypelon : SelonarchCardTypelon.valuelons()) {
+        bytelon cardTypelonIndelonx = cardTypelon.gelontBytelonValuelon();
+        ThriftCardRankingParams rankingParams = params.gelontCardRankingParams().gelont(cardTypelonIndelonx);
         if (rankingParams != null) {
-          hasCardBoosts[cardTypeIndex] = rankingParams.getHasCardBoost();
-          cardAuthorMatchBoosts[cardTypeIndex] = rankingParams.getAuthorMatchBoost();
-          cardDomainMatchBoosts[cardTypeIndex] = rankingParams.getDomainMatchBoost();
-          cardTitleMatchBoosts[cardTypeIndex] = rankingParams.getTitleMatchBoost();
-          cardDescriptionMatchBoosts[cardTypeIndex] = rankingParams.getDescriptionMatchBoost();
+          hasCardBoosts[cardTypelonIndelonx] = rankingParams.gelontHasCardBoost();
+          cardAuthorMatchBoosts[cardTypelonIndelonx] = rankingParams.gelontAuthorMatchBoost();
+          cardDomainMatchBoosts[cardTypelonIndelonx] = rankingParams.gelontDomainMatchBoost();
+          cardTitlelonMatchBoosts[cardTypelonIndelonx] = rankingParams.gelontTitlelonMatchBoost();
+          cardDelonscriptionMatchBoosts[cardTypelonIndelonx] = rankingParams.gelontDelonscriptionMatchBoost();
         }
       }
     }
 
-    urlWeight = params.isSetUrlParams()
-        ? params.getUrlParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    reputationWeight = params.isSetReputationParams()
-        ? params.getReputationParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    isReplyWeight = params.isSetIsReplyParams()
-        ? params.getIsReplyParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    followRetweetWeight = params.isSetDirectFollowRetweetCountParams()
-        ? params.getDirectFollowRetweetCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
-    trustedRetweetWeight = params.isSetTrustedCircleRetweetCountParams()
-        ? params.getTrustedCircleRetweetCountParams().getWeight() : DEFAULT_FEATURE_WEIGHT;
+    urlWelonight = params.isSelontUrlParams()
+        ? params.gelontUrlParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    relonputationWelonight = params.isSelontRelonputationParams()
+        ? params.gelontRelonputationParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    isRelonplyWelonight = params.isSelontIsRelonplyParams()
+        ? params.gelontIsRelonplyParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    followRelontwelonelontWelonight = params.isSelontDirelonctFollowRelontwelonelontCountParams()
+        ? params.gelontDirelonctFollowRelontwelonelontCountParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
+    trustelondRelontwelonelontWelonight = params.isSelontTrustelondCirclelonRelontwelonelontCountParams()
+        ? params.gelontTrustelondCirclelonRelontwelonelontCountParams().gelontWelonight() : DelonFAULT_FelonATURelon_WelonIGHT;
 
-    querySpecificScoreAdjustments = params.getQuerySpecificScoreAdjustments();
-    authorSpecificScoreAdjustments = params.getAuthorSpecificScoreAdjustments();
+    quelonrySpeloncificScorelonAdjustmelonnts = params.gelontQuelonrySpeloncificScorelonAdjustmelonnts();
+    authorSpeloncificScorelonAdjustmelonnts = params.gelontAuthorSpeloncificScorelonAdjustmelonnts();
 
-    // min/max filters
-    textScoreMinVal = params.isSetTextScoreParams()
-        ? params.getTextScoreParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    reputationMinVal = params.isSetReputationParams()
-        ? params.getReputationParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    multipleReplyMinVal = params.isSetMultipleReplyCountParams()
-        ? params.getMultipleReplyCountParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    retweetMinVal = params.isSetRetweetCountParams() && params.getRetweetCountParams().isSetMin()
-        ? params.getRetweetCountParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
-    favMinVal = params.isSetFavCountParams() && params.getFavCountParams().isSetMin()
-        ? params.getFavCountParams().getMin() : DEFAULT_FEATURE_MIN_VAL;
+    // min/max filtelonrs
+    telonxtScorelonMinVal = params.isSelontTelonxtScorelonParams()
+        ? params.gelontTelonxtScorelonParams().gelontMin() : DelonFAULT_FelonATURelon_MIN_VAL;
+    relonputationMinVal = params.isSelontRelonputationParams()
+        ? params.gelontRelonputationParams().gelontMin() : DelonFAULT_FelonATURelon_MIN_VAL;
+    multiplelonRelonplyMinVal = params.isSelontMultiplelonRelonplyCountParams()
+        ? params.gelontMultiplelonRelonplyCountParams().gelontMin() : DelonFAULT_FelonATURelon_MIN_VAL;
+    relontwelonelontMinVal = params.isSelontRelontwelonelontCountParams() && params.gelontRelontwelonelontCountParams().isSelontMin()
+        ? params.gelontRelontwelonelontCountParams().gelontMin() : DelonFAULT_FelonATURelon_MIN_VAL;
+    favMinVal = params.isSelontFavCountParams() && params.gelontFavCountParams().isSelontMin()
+        ? params.gelontFavCountParams().gelontMin() : DelonFAULT_FelonATURelon_MIN_VAL;
 
     // boosts
-    spamUserDamping = params.isSetSpamUserBoost() ? params.getSpamUserBoost() : 1.0;
-    nsfwUserDamping = params.isSetNsfwUserBoost() ? params.getNsfwUserBoost() : 1.0;
-    botUserDamping = params.isSetBotUserBoost() ? params.getBotUserBoost() : 1.0;
-    offensiveDamping = params.getOffensiveBoost();
-    trustedCircleBoost = params.getInTrustedCircleBoost();
-    directFollowBoost = params.getInDirectFollowBoost();
+    spamUselonrDamping = params.isSelontSpamUselonrBoost() ? params.gelontSpamUselonrBoost() : 1.0;
+    nsfwUselonrDamping = params.isSelontNsfwUselonrBoost() ? params.gelontNsfwUselonrBoost() : 1.0;
+    botUselonrDamping = params.isSelontBotUselonrBoost() ? params.gelontBotUselonrBoost() : 1.0;
+    offelonnsivelonDamping = params.gelontOffelonnsivelonBoost();
+    trustelondCirclelonBoost = params.gelontInTrustelondCirclelonBoost();
+    direlonctFollowBoost = params.gelontInDirelonctFollowBoost();
 
-    // language boosts
-    langEnglishTweetDemote = params.getLangEnglishTweetBoost();
-    langEnglishUIDemote = params.getLangEnglishUIBoost();
-    langDefaultDemote = params.getLangDefaultBoost();
-    useUserLanguageInfo = params.isUseUserLanguageInfo();
-    unknownLanguageBoost = params.getUnknownLanguageBoost();
+    // languagelon boosts
+    langelonnglishTwelonelontDelonmotelon = params.gelontLangelonnglishTwelonelontBoost();
+    langelonnglishUIDelonmotelon = params.gelontLangelonnglishUIBoost();
+    langDelonfaultDelonmotelon = params.gelontLangDelonfaultBoost();
+    uselonUselonrLanguagelonInfo = params.isUselonUselonrLanguagelonInfo();
+    unknownLanguagelonBoost = params.gelontUnknownLanguagelonBoost();
 
-    // hit demotions
-    enableHitDemotion = params.isEnableHitDemotion();
-    noTextHitDemotion = params.getNoTextHitDemotion();
-    urlOnlyHitDemotion = params.getUrlOnlyHitDemotion();
-    nameOnlyHitDemotion = params.getNameOnlyHitDemotion();
-    separateTextAndNameHitDemotion = params.getSeparateTextAndNameHitDemotion();
-    separateTextAndUrlHitDemotion = params.getSeparateTextAndUrlHitDemotion();
+    // hit delonmotions
+    elonnablelonHitDelonmotion = params.iselonnablelonHitDelonmotion();
+    noTelonxtHitDelonmotion = params.gelontNoTelonxtHitDelonmotion();
+    urlOnlyHitDelonmotion = params.gelontUrlOnlyHitDelonmotion();
+    namelonOnlyHitDelonmotion = params.gelontNamelonOnlyHitDelonmotion();
+    selonparatelonTelonxtAndNamelonHitDelonmotion = params.gelontSelonparatelonTelonxtAndNamelonHitDelonmotion();
+    selonparatelonTelonxtAndUrlHitDelonmotion = params.gelontSelonparatelonTelonxtAndUrlHitDelonmotion();
 
-    outOfNetworkReplyPenalty = params.getOutOfNetworkReplyPenalty();
+    outOfNelontworkRelonplyPelonnalty = params.gelontOutOfNelontworkRelonplyPelonnalty();
 
-    if (params.isSetAgeDecayParams()) {
-      // new age decay settings
-      ThriftAgeDecayRankingParams ageDecayParams = params.getAgeDecayParams();
-      ageDecaySlope = ageDecayParams.getSlope();
-      ageDecayHalflife = ageDecayParams.getHalflife();
-      ageDecayBase = ageDecayParams.getBase();
-      useAgeDecay = true;
-    } else if (params.isSetDeprecatedAgeDecayBase()
-        && params.isSetDeprecatedAgeDecayHalflife()
-        && params.isSetDeprecatedAgeDecaySlope()) {
-      ageDecaySlope = params.getDeprecatedAgeDecaySlope();
-      ageDecayHalflife = params.getDeprecatedAgeDecayHalflife();
-      ageDecayBase = params.getDeprecatedAgeDecayBase();
-      useAgeDecay = true;
-    } else {
-      ageDecaySlope = 0.0;
-      ageDecayHalflife = 0.0;
-      ageDecayBase = 0.0;
-      useAgeDecay = false;
+    if (params.isSelontAgelonDeloncayParams()) {
+      // nelonw agelon deloncay selonttings
+      ThriftAgelonDeloncayRankingParams agelonDeloncayParams = params.gelontAgelonDeloncayParams();
+      agelonDeloncaySlopelon = agelonDeloncayParams.gelontSlopelon();
+      agelonDeloncayHalflifelon = agelonDeloncayParams.gelontHalflifelon();
+      agelonDeloncayBaselon = agelonDeloncayParams.gelontBaselon();
+      uselonAgelonDeloncay = truelon;
+    } elonlselon if (params.isSelontDelonpreloncatelondAgelonDeloncayBaselon()
+        && params.isSelontDelonpreloncatelondAgelonDeloncayHalflifelon()
+        && params.isSelontDelonpreloncatelondAgelonDeloncaySlopelon()) {
+      agelonDeloncaySlopelon = params.gelontDelonpreloncatelondAgelonDeloncaySlopelon();
+      agelonDeloncayHalflifelon = params.gelontDelonpreloncatelondAgelonDeloncayHalflifelon();
+      agelonDeloncayBaselon = params.gelontDelonpreloncatelondAgelonDeloncayBaselon();
+      uselonAgelonDeloncay = truelon;
+    } elonlselon {
+      agelonDeloncaySlopelon = 0.0;
+      agelonDeloncayHalflifelon = 0.0;
+      agelonDeloncayBaselon = 0.0;
+      uselonAgelonDeloncay = falselon;
     }
 
-    // trends
-    tweetHasTrendBoost = params.getTweetHasTrendBoost();
-    multipleHashtagsOrTrendsDamping = params.getMultipleHashtagsOrTrendsBoost();
+    // trelonnds
+    twelonelontHasTrelonndBoost = params.gelontTwelonelontHasTrelonndBoost();
+    multiplelonHashtagsOrTrelonndsDamping = params.gelontMultiplelonHashtagsOrTrelonndsBoost();
 
-    // verified accounts
-    tweetFromVerifiedAccountBoost = params.getTweetFromVerifiedAccountBoost();
-    tweetFromBlueVerifiedAccountBoost = params.getTweetFromBlueVerifiedAccountBoost();
+    // velonrifielond accounts
+    twelonelontFromVelonrifielondAccountBoost = params.gelontTwelonelontFromVelonrifielondAccountBoost();
+    twelonelontFromBluelonVelonrifielondAccountBoost = params.gelontTwelonelontFromBluelonVelonrifielondAccountBoost();
 
-    // score filter
-    minScore = params.getMinScore();
+    // scorelon filtelonr
+    minScorelon = params.gelontMinScorelon();
 
-    applyFiltersAlways = params.isApplyFiltersAlways();
+    applyFiltelonrsAlways = params.isApplyFiltelonrsAlways();
 
-    useLuceneScoreAsBoost = params.isUseLuceneScoreAsBoost();
-    maxLuceneScoreBoost = params.getMaxLuceneScoreBoost();
+    uselonLucelonnelonScorelonAsBoost = params.isUselonLucelonnelonScorelonAsBoost();
+    maxLucelonnelonScorelonBoost = params.gelontMaxLucelonnelonScorelonBoost();
 
-    searcherId = searchQuery.isSetSearcherId() ? searchQuery.getSearcherId() : -1;
-    selfTweetBoost = params.getSelfTweetBoost();
+    selonarchelonrId = selonarchQuelonry.isSelontSelonarchelonrId() ? selonarchQuelonry.gelontSelonarchelonrId() : -1;
+    selonlfTwelonelontBoost = params.gelontSelonlfTwelonelontBoost();
 
-    socialFilterType = searchQuery.getSocialFilterType();
+    socialFiltelonrTypelon = selonarchQuelonry.gelontSocialFiltelonrTypelon();
 
-    // the UI language and the confidences of the languages user can understand.
-    if (!searchQuery.isSetUiLang() || searchQuery.getUiLang().isEmpty()) {
-      uiLangId = ThriftLanguage.UNKNOWN.getValue();
-    } else {
-      uiLangId = ThriftLanguageUtil.getThriftLanguageOf(searchQuery.getUiLang()).getValue();
+    // thelon UI languagelon and thelon confidelonncelons of thelon languagelons uselonr can undelonrstand.
+    if (!selonarchQuelonry.isSelontUiLang() || selonarchQuelonry.gelontUiLang().iselonmpty()) {
+      uiLangId = ThriftLanguagelon.UNKNOWN.gelontValuelon();
+    } elonlselon {
+      uiLangId = ThriftLanguagelonUtil.gelontThriftLanguagelonOf(selonarchQuelonry.gelontUiLang()).gelontValuelon();
     }
-    if (searchQuery.getUserLangsSize() > 0) {
-      for (Map.Entry<ThriftLanguage, Double> lang : searchQuery.getUserLangs().entrySet()) {
-        ThriftLanguage thriftLanguage = lang.getKey();
-        // SEARCH-13441
-        if (thriftLanguage != null) {
-          userLangs[thriftLanguage.getValue()] = lang.getValue();
-        } else {
-          NULL_USER_LANGS_KEY.increment();
+    if (selonarchQuelonry.gelontUselonrLangsSizelon() > 0) {
+      for (Map.elonntry<ThriftLanguagelon, Doublelon> lang : selonarchQuelonry.gelontUselonrLangs().elonntrySelont()) {
+        ThriftLanguagelon thriftLanguagelon = lang.gelontKelony();
+        // SelonARCH-13441
+        if (thriftLanguagelon != null) {
+          uselonrLangs[thriftLanguagelon.gelontValuelon()] = lang.gelontValuelon();
+        } elonlselon {
+          NULL_USelonR_LANGS_KelonY.increlonmelonnt();
         }
       }
     }
 
-    // For now, we will use the same boost for both image, and video.
-    tweetHasMediaUrlBoost = params.getTweetHasImageUrlBoost();
-    tweetHasNewsUrlBoost = params.getTweetHasNewsUrlBoost();
+    // For now, welon will uselon thelon samelon boost for both imagelon, and videlono.
+    twelonelontHasMelondiaUrlBoost = params.gelontTwelonelontHasImagelonUrlBoost();
+    twelonelontHasNelonwsUrlBoost = params.gelontTwelonelontHasNelonwsUrlBoost();
 
-    getInReplyToStatusId =
-        searchQuery.isSetResultMetadataOptions()
-            && searchQuery.getResultMetadataOptions().isSetGetInReplyToStatusId()
-            && searchQuery.getResultMetadataOptions().isGetInReplyToStatusId();
+    gelontInRelonplyToStatusId =
+        selonarchQuelonry.isSelontRelonsultMelontadataOptions()
+            && selonarchQuelonry.gelontRelonsultMelontadataOptions().isSelontGelontInRelonplyToStatusId()
+            && selonarchQuelonry.gelontRelonsultMelontadataOptions().isGelontInRelonplyToStatusId();
   }
 }
